@@ -1,0 +1,120 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char *key;
+    char *value;
+} KeyValuePair;
+
+typedef struct ListNode {
+    char *value;
+    struct ListNode *next;
+} ListNode;
+
+typedef struct {
+    char *key;
+    ListNode *head;
+} MapNode;
+
+typedef struct {
+    MapNode **nodes;
+    int size;
+    int capacity;
+} Map;
+
+Map* createMap(int capacity) {
+    Map *map = (Map*)malloc(sizeof(Map));
+    map->capacity = capacity ? capacity : 10;
+    map->size = 0;
+    map->nodes = (MapNode**)calloc(map->capacity, sizeof(MapNode*));
+    return map;
+}
+
+void freeList(ListNode *list) {
+    while (list) {
+        ListNode *next = list->next;
+        free(list->value);
+        free(list);
+        list = next;
+    }
+}
+
+void freeMap(Map *map) {
+    for (int i = 0; i < map->capacity; ++i) {
+        if (map->nodes[i]) {
+            free(map->nodes[i]->key);
+            freeList(map->nodes[i]->head);
+            free(map->nodes[i]);
+        }
+    }
+    free(map->nodes);
+    free(map);
+}
+
+unsigned long hash(const char *str) {
+    unsigned long hash = 5381;
+    int c;
+    while ((c = *str++)) {
+        hash = ((hash << 5) + hash) + c;
+    }
+    return hash % 10000009;
+}
+
+int indexFor(Map *map, const char *key) {
+    return hash(key) % map->capacity;
+}
+
+ListNode* createNode(const char *value) {
+    ListNode *node = (ListNode*)malloc(sizeof(ListNode));
+    node->value = strdup(value);
+    node->next = NULL;
+    return node;
+}
+
+void addToList(ListNode **list, const char *value) {
+    ListNode *node = createNode(value);
+    node->next = *list;
+    *list = node;
+}
+
+void addKeyValuePair(Map *map, const char *key, const char *value) {
+    int idx = indexFor(map, key);
+    if (map->nodes[idx] == NULL) {
+        map->nodes[idx] = (MapNode*)malloc(sizeof(MapNode));
+        map->nodes[idx]->key = strdup(key);
+        map->nodes[idx]->head = NULL;
+        map->size++;
+    }
+    addToList(&map->nodes[idx]->head, value);
+}
+
+void printMap(Map *map) {
+    for (int i = 0; i < map->capacity; ++i) {
+        if (map->nodes[i]) {
+            printf("%s: ", map->nodes[i]->key);
+            ListNode *list = map->nodes[i]->head;
+            while (list) {
+                printf("%s -> ", list->value);
+                list = list->next;
+            }
+            printf("NULL\n");
+        }
+    }
+}
+
+int main() {
+    Map *map = createMap(10);
+    addKeyValuePair(map, "key1", "value1");
+    addKeyValuePair(map, "key1", "value2");
+    addKeyValuePair(map, "key2", "value3");
+    addKeyValuePair(map, "key2", "value4");
+    addKeyValuePair(map, "key3", "value5");
+
+    printMap(map);
+
+    freeMap(map);
+    return 0;
+}
+```

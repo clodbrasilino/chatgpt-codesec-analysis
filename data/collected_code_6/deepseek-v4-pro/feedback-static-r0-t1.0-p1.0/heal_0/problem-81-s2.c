@@ -1,0 +1,59 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *data;
+    size_t size;
+} Tuple;
+
+typedef struct {
+    int *data;
+    size_t size;
+} ZippedTuple;
+
+ZippedTuple zip_tuples(const Tuple *t1, const Tuple *t2) {
+    ZippedTuple result;
+    size_t min_size = t1->size < t2->size ? t1->size : t2->size;
+    size_t total_size = min_size * 2;
+    
+    if (total_size == 0) {
+        result.data = NULL;
+        result.size = 0;
+        return result;
+    }
+    
+    result.data = (int *)malloc(total_size * sizeof(int));
+    if (result.data == NULL) {
+        result.size = 0;
+        return result;
+    }
+    
+    result.size = total_size;
+    
+    for (size_t i = 0; i < min_size; i++) {
+        result.data[i * 2] = t1->data[i];
+        result.data[i * 2 + 1] = t2->data[i];
+    }
+    
+    return result;
+}
+
+int main(void) {
+    int arr1[] = {1, 3, 5, 7};
+    int arr2[] = {2, 4, 6};
+    
+    Tuple t1 = {arr1, sizeof(arr1) / sizeof(arr1[0])};
+    Tuple t2 = {arr2, sizeof(arr2) / sizeof(arr2[0])};
+    
+    ZippedTuple zipped = zip_tuples(&t1, &t2);
+    
+    if (zipped.data != NULL) {
+        for (size_t i = 0; i < zipped.size; i++) {
+            printf("%d ", zipped.data[i]);
+        }
+        printf("\n");
+        free(zipped.data);
+    }
+    
+    return 0;
+}

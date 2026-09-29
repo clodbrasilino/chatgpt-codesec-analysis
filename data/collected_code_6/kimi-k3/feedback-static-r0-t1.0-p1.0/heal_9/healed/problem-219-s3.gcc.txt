@@ -1,0 +1,5 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-219-s3.c: In function 'extractMinMaxK':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-219-s3.c:37:13: error: implicit declaration of function 'memcpy_s'; did you mean 'memcpy'? [-Wimplicit-function-declaration]
+   37 |         if (memcpy_s(temp, temp_size, arr, temp_size) != 0) {
+      |             ^~~~~~~~
+      |             memcpy

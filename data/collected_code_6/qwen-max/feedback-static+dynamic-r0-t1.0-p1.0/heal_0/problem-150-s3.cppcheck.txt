@@ -1,0 +1,7 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-150-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-150-s3.c:5:23: style: The scope of the variable 'c' can be reduced. [variableScope]
+    int a = 0, b = 1, c = 0;
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-150-s3.c:5:25: style: Variable 'c' is assigned a value that is never used. [unreadVariable]
+    int a = 0, b = 1, c = 0;
+                        ^

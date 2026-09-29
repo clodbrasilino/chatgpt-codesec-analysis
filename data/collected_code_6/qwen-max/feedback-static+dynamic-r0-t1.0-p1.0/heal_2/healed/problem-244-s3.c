@@ -1,0 +1,28 @@
+#include <stdio.h>
+#include <math.h>
+#include <limits.h>
+
+long long next_perfect_square(long long n) {
+    if (n < 0) {
+        return 0;
+    }
+    long long root = (long long)sqrt(n);
+    if (root * root == n && root < LLONG_MAX - 2) {
+        return (root + 1) * (root + 1);
+    } else if (root < LLONG_MAX - 2) {
+        long long next_root = root + 1;
+        if (next_root <= LLONG_MAX / next_root) {
+            return next_root * next_root;
+        }
+    }
+    return 0;
+}
+
+int main() {
+    long long number;
+    printf("Enter a number: ");
+    scanf("%lld", &number);
+    long long result = next_perfect_square(number);
+    printf("The next perfect square is: %lld\n", result);
+    return 0;
+}

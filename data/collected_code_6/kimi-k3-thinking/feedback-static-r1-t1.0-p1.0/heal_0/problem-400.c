@@ -1,0 +1,214 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+typedef struct {
+    int *elements;
+    size_t size;
+} Tuple;
+
+typedef struct {
+    Tuple tuple;
+    size_t frequency;
+} TupleFrequency;
+
+static int compare_ints(const void *a, const void *b)
+{
+    int lhs = *(const int *)a;
+    int rhs = *(const int *)b;
+
+    if (lhs < rhs) {
+        return -1;
+    }
+    if (lhs > rhs) {
+        return 1;
+    }
+    return 0;
+}
+
+static int normalize_tuple(Tuple *tuple)
+{
+    if (tuple == NULL) {
+        return -1;
+    }
+    if (tuple->size > 0 && tuple->elements == NULL) {
+        return -1;
+    }
+    if (tuple->size > 1) {
+        qsort(tuple->elements, tuple->size, sizeof(int), compare_ints);
+    }
+    return 0;
+}
+
+static int tuples_equal(const Tuple *first, const Tuple *second)
+{
+    size_t i;
+
+    if (first == NULL || second == NULL) {
+        return 0;
+    }
+    if (first->size != second->size) {
+        return 0;
+    }
+    for (i = 0; i < first->size; i++) {
+        if (first->elements[i] != second->elements[i]) {
+            return 0;
+        }
+    }
+    return 1;
+}
+
+static void free_frequencies(TupleFrequency *frequencies, size_t count)
+{
+    size_t i;
+
+    if (frequencies == NULL) {
+        return;
+    }
+    for (i = 0; i < count; i++) {
+        free(frequencies[i].tuple.elements);
+        frequencies[i].tuple.elements = NULL;
+    }
+    free(frequencies);
+}
+
+static TupleFrequency *extract_tuple_frequencies(Tuple *tuples, size_t tuple_count, size_t *unique_count)
+{
+    TupleFrequency *frequencies = NULL;
+    size_t used = 0;
+    size_t capacity = 0;
+    size_t i;
+
+    if (unique_count == NULL) {
+        return NULL;
+    }
+    *unique_count = 0;
+
+    if (tuples == NULL && tuple_count > 0) {
+        return NULL;
+    }
+
+    for (i = 0; i < tuple_count; i++) {
+        size_t j;
+        int found = 0;
+
+        if (normalize_tuple(&tuples[i]) != 0) {
+            free_frequencies(frequencies, used);
+            return NULL;
+        }
+
+        for (j = 0; j < used; j++) {
+            if (tuples_equal(&frequencies[j].tuple, &tuples[i])) {
+                frequencies[j].frequency++;
+                found = 1;
+                break;
+            }
+        }
+
+        if (!found) {
+            int *elements_copy = NULL;
+
+            if (used == capacity) {
+                size_t new_capacity;
+                TupleFrequency *resized;
+
+                if (capacity > SIZE_MAX / 2) {
+                    free_frequencies(frequencies, used);
+                    return NULL;
+                }
+                new_capacity = (capacity == 0) ? 8 : capacity * 2;
+                if (new_capacity > SIZE_MAX / sizeof(*resized)) {
+                    free_frequencies(frequencies, used);
+                    return NULL;
+                }
+                resized = realloc(frequencies, new_capacity * sizeof(*resized));
+                if (resized == NULL) {
+                    free_frequencies(frequencies, used);
+                    return NULL;
+                }
+                frequencies = resized;
+                capacity = new_capacity;
+            }
+
+            if (tuples[i].size > 0) {
+                if (tuples[i].size > SIZE_MAX / sizeof(int)) {
+                    free_frequencies(frequencies, used);
+                    return NULL;
+                }
+                elements_copy = malloc(tuples[i].size * sizeof(int));
+                if (elements_copy == NULL) {
+                    free_frequencies(frequencies, used);
+                    return NULL;
+                }
+                memcpy(elements_copy, tuples[i].elements, tuples[i].size * sizeof(int));
+            }
+
+            frequencies[used].tuple.elements = elements_copy;
+            frequencies[used].tuple.size = tuples[i].size;
+            frequencies[used].frequency = 1;
+            used++;
+        }
+    }
+
+    *unique_count = used;
+    return frequencies;
+}
+
+static void print_frequencies(const TupleFrequency *frequencies, size_t count)
+{
+    size_t i;
+    size_t j;
+
+    if (frequencies == NULL && count > 0) {
+        return;
+    }
+    for (i = 0; i < count; i++) {
+        printf("(");
+        for (j = 0; j < frequencies[i].tuple.size; j++) {
+            if (j > 0) {
+                printf(", ");
+            }
+            printf("%d", frequencies[i].tuple.elements[j]);
+        }
+        printf(") -> %zu\n", frequencies[i].frequency);
+    }
+}
+
+int main(void)
+{
+    int data0[] = {1, 2, 3};
+    int data1[] = {3, 2, 1};
+    int data2[] = {4, 5};
+    int data3[] = {2, 3, 1};
+    int data4[] = {5, 4};
+    int data5[] = {1, 2, 3};
+    int data6[] = {7};
+
+    Tuple tuples[] = {
+        {data0, 3},
+        {data1, 3},
+        {data2, 2},
+        {data3, 3},
+        {data4, 2},
+        {data5, 3},
+        {data6, 1}
+    };
+
+    size_t tuple_count = sizeof(tuples) / sizeof(tuples[0]);
+    size_t unique_count = 0;
+    TupleFrequency *frequencies;
+
+    frequencies = extract_tuple_frequencies(tuples, tuple_count, &unique_count);
+    if (frequencies == NULL && tuple_count > 0) {
+        fprintf(stderr, "Failed to extract tuple frequencies\n");
+        return EXIT_FAILURE;
+    }
+
+    print_frequencies(frequencies, unique_count);
+
+    free_frequencies(frequencies, unique_count);
+    frequencies = NULL;
+
+    return EXIT_SUCCESS;
+}

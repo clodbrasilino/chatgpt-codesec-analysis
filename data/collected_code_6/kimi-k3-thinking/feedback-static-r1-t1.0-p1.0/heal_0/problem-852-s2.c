@@ -1,0 +1,76 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+
+int remove_negatives(int *arr, size_t size, size_t *new_size)
+{
+    size_t i;
+    size_t write_index = 0;
+
+    if (arr == NULL || new_size == NULL) {
+        return -1;
+    }
+
+    for (i = 0; i < size; i++) {
+        if (arr[i] >= 0) {
+            arr[write_index] = arr[i];
+            write_index++;
+        }
+    }
+
+    *new_size = write_index;
+    return 0;
+}
+
+int main(void)
+{
+    int *numbers = NULL;
+    size_t count = 0;
+    size_t new_size = 0;
+    size_t i = 0;
+
+    printf("Enter the number of elements: ");
+    if (scanf("%zu", &count) != 1 || count == 0) {
+        fprintf(stderr, "Invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (count > SIZE_MAX / sizeof(*numbers)) {
+        fprintf(stderr, "Requested size is too large.\n");
+        return EXIT_FAILURE;
+    }
+
+    numbers = malloc(count * sizeof(*numbers));
+    if (numbers == NULL) {
+        fprintf(stderr, "Memory allocation failed.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter %zu integers: ", count);
+    for (i = 0; i < count; i++) {
+        if (scanf("%d", &numbers[i]) != 1) {
+            fprintf(stderr, "Invalid input.\n");
+            free(numbers);
+            numbers = NULL;
+            return EXIT_FAILURE;
+        }
+    }
+
+    if (remove_negatives(numbers, count, &new_size) != 0) {
+        fprintf(stderr, "Failed to remove negative numbers.\n");
+        free(numbers);
+        numbers = NULL;
+        return EXIT_FAILURE;
+    }
+
+    printf("List after removing negative numbers: ");
+    for (i = 0; i < new_size; i++) {
+        printf("%d ", numbers[i]);
+    }
+    printf("\n");
+
+    free(numbers);
+    numbers = NULL;
+
+    return EXIT_SUCCESS;
+}

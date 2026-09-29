@@ -1,0 +1,30 @@
+#include <stdio.h>
+#include <string.h>
+
+int is_even_length(const char *word) {
+    if (word == NULL) {
+        return -1;
+    }
+    return (int)(strnlen(word, 1024) % 2 == 0);
+}
+
+int main(void) {
+    const char *test1 = "hello";
+    const char *test2 = "world";
+    const char *test3 = "C";
+    const char *test4 = "";
+    
+    printf("%s: %s\n", test1, is_even_length(test1) == 1 ? "even" : "odd");
+    printf("%s: %s\n", test2, is_even_length(test2) == 1 ? "even" : "odd");
+    printf("%s: %s\n", test3, is_even_length(test3) == 1 ? "even" : "odd");
+    printf("%s: %s\n", test4, is_even_length(test4) == 1 ? "even" : "odd");
+    
+    int null_result = is_even_length(NULL);
+    if (null_result == -1) {
+        printf("NULL: invalid input\n");
+    } else {
+        printf("NULL: %s\n", null_result == 1 ? "even" : "odd");
+    }
+    
+    return 0;
+}

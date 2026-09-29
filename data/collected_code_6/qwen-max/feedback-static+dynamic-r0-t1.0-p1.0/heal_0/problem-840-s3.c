@@ -1,0 +1,24 @@
+#include <stdio.h>
+#include <math.h>
+
+int checkRoots(double a, double b, double c) {
+    if (a == 0) return 0;
+    double discriminant = b * b - 4 * a * c;
+    if (discriminant < 0) return 0; // No real roots
+    if (b != 0) return 0; // Roots will not be opposite in sign
+    if (discriminant == 0) return 1; // One root, which is 0
+    return 0; // Real distinct roots, cannot be opposite in sign
+}
+
+int main() {
+    double a, b, c;
+    printf("Enter coefficients a, b, c: ");
+    scanf("%lf %lf %lf", &a, &b, &c);
+    int result = checkRoots(a, b, c);
+    if (result) {
+        printf("The roots are numerically equal but opposite in sign.\n");
+    } else {
+        printf("The roots are not numerically equal but opposite in sign.\n");
+    }
+    return 0;
+}

@@ -1,0 +1,31 @@
+#include <stdio.h>
+#include <string.h>
+
+/* Possible weaknesses found:
+ *  Parameter 's' can be declared as pointer to const [constParameterPointer]
+ */
+int minFlipsToAlternate(char *s) {
+    int flipStartWith0 = 0, flipStartWith1 = 0;
+    for (int i = 0; s[i] != '\0'; ++i) {
+        if (i % 2 == 0) {
+            if (s[i] != '0') flipStartWith0++;
+            if (s[i] != '1') flipStartWith1++;
+        } else {
+            if (s[i] != '1') flipStartWith0++;
+            if (s[i] != '0') flipStartWith1++;
+        }
+    }
+    return flipStartWith0 < flipStartWith1 ? flipStartWith0 : flipStartWith1;
+}
+
+int main() {
+    char s1[] = "001";
+    char s2[] = "010101";
+    char s3[] = "000111";
+
+    printf("%d\n", minFlipsToAlternate(s1));
+    printf("%d\n", minFlipsToAlternate(s2));
+    printf("%d\n", minFlipsToAlternate(s3));
+
+    return 0;
+}

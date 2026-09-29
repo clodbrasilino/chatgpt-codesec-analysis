@@ -1,0 +1,111 @@
+./collected_code_4/round1//heal_0//problem-607.c: In function 'search_pattern':
+./collected_code_4/round1//heal_0//problem-607.c:23:22: warning: leak of 'matches' [CWE-401] [-Wanalyzer-malloc-leak]
+   23 |             *matches = realloc(*matches, (n + 1) * sizeof(int));
+      |             ~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  'main': events 1-2
+    |
+    |   39 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   45 |     n = search_pattern(str, pattern, &matches);
+    |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |         |
+    |      |         (2) calling 'search_pattern' from 'main'
+    |
+    +--> 'search_pattern': events 3-4
+           |
+           |    6 | int search_pattern(const char *str, const char *pattern, int **matches) {
+           |      |     ^~~~~~~~~~~~~~
+           |      |     |
+           |      |     (3) entry to 'search_pattern'
+           |......
+           |   14 |     if ((error = regcomp(&reg, pattern, REG_EXTENDED)) != 0) {
+           |      |        ~
+           |      |        |
+           |      |        (4) following 'false' branch (when 'error == 0')...
+           |
+         'search_pattern': event 5
+           |
+           |cc1:
+           | (5): ...to here
+           |
+         'search_pattern': events 6-9
+           |
+           |   20 |     while (res != REG_NOMATCH) {
+           |      |                ^
+           |      |                |
+           |      |                (6) following 'true' branch (when 'res != 1')...
+           |   21 |         res = regexec(&reg, str, 1, &match, 0);
+           |      |               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |               |
+           |      |               (7) ...to here
+           |   22 |         if (!res) {
+           |   23 |             *matches = realloc(*matches, (n + 1) * sizeof(int));
+           |      |                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                        |
+           |      |                        (8) allocated here
+           |      |                        (9) when 'realloc' succeeds, moving buffer
+           |
+         'search_pattern': events 10-15
+           |
+           |   20 |     while (res != REG_NOMATCH) {
+           |      |                ^
+           |      |                |
+           |      |                (10) following 'true' branch (when 'res != 1')...
+           |   21 |         res = regexec(&reg, str, 1, &match, 0);
+           |      |               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |               |
+           |      |               (11) ...to here
+           |   22 |         if (!res) {
+           |      |            ~    
+           |      |            |
+           |      |            (12) following 'true' branch (when 'res == 0')...
+           |   23 |             *matches = realloc(*matches, (n + 1) * sizeof(int));
+           |      |             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                      | |                    |
+           |      |                      | |                    (13) ...to here
+           |      |                      | (14) when 'realloc' fails
+           |      |                      (15) 'matches' leaks here; was allocated at (8)
+           |
+./collected_code_4/round1//heal_0//problem-607.c:24:27: warning: dereference of NULL '0' [CWE-476] [-Wanalyzer-null-dereference]
+   24 |             (*matches)[n] = match.rm_so;
+      |             ~~~~~~~~~~~~~~^~~~~~~~~~~~~
+  'search_pattern': event 1
+    |
+    |   14 |     if ((error = regcomp(&reg, pattern, REG_EXTENDED)) != 0) {
+    |      |        ^
+    |      |        |
+    |      |        (1) following 'false' branch (when 'error == 0')...
+    |
+  'search_pattern': event 2
+    |
+    |cc1:
+    | (2): ...to here
+    |
+  'search_pattern': events 3-9
+    |
+    |   20 |     while (res != REG_NOMATCH) {
+    |      |                ^
+    |      |                |
+    |      |                (3) following 'true' branch (when 'res != 1')...
+    |   21 |         res = regexec(&reg, str, 1, &match, 0);
+    |      |               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |               |
+    |      |               (4) ...to here
+    |   22 |         if (!res) {
+    |      |            ~    
+    |      |            |
+    |      |            (5) following 'true' branch (when 'res == 0')...
+    |   23 |             *matches = realloc(*matches, (n + 1) * sizeof(int));
+    |      |                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                        |                    |
+    |      |                        |                    (6) ...to here
+    |      |                        (7) when 'realloc' fails
+    |   24 |             (*matches)[n] = match.rm_so;
+    |      |             ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                       |   |
+    |      |                       |   (9) dereference of NULL '*matches + (long unsigned int)n * 4'
+    |      |                       (8) '0' is NULL
+    |

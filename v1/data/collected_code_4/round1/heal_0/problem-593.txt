@@ -1,0 +1,42 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+char *removeLeadingZeroes(char *ip) {
+    char buf[4];
+    char *newIP = malloc(sizeof(char) * strlen(ip));
+    if(newIP == NULL)
+        return NULL;
+    
+    newIP[0] = '\0';
+
+    char *token = strtok(ip, ".");
+    while(token != NULL) {
+        sprintf(buf, "%d.", atoi(token));
+        strcat(newIP, buf);
+        token = strtok(NULL, ".");
+    }
+    newIP[strlen(newIP) - 1] = '\0'; 
+   
+    return newIP;
+}
+
+int main() {
+    char ip[15];
+    printf("Enter an IP address: ");
+    scanf("%s", ip);
+
+    char *newIP = removeLeadingZeroes(ip);
+    if(newIP != NULL) {
+        printf("IP address after removing leading zeros: %s\n", newIP);
+        free(newIP);
+    } else {
+        printf("Memory allocation failed\n");
+    }
+    return 0;
+}
+```
+In the given C code, firstly the standard libraries are included for IO operations, manipulating strings and dynamic memory allocation. Then a function `removeLeadingZeroes()` is declared which takes a ip address as string and remove leading zeros from it.
+
+In the `main()` function, an ip address is taken as input from the user and then it passed into the method `removeLeadingZeroes()`. The returned string from the function is the new IP address without leading zeroes. This string is printed on the console. Please note that the memory allocated for this string is freed after using to avoid the memory leaks.

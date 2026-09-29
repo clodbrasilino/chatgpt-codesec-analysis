@@ -1,0 +1,17 @@
+```C
+#include <stdio.h>
+
+int countCubes(int n, int k) {
+    return (n - k + 1) * (n - k + 1) * (n - k + 1);
+}
+
+int main() {
+    int n, k;
+    printf("Enter the size of the large cube: ");
+    scanf("%d", &n);
+    printf("Enter the size of the small cube: ");
+    scanf("%d", &k);
+    printf("Number of small cubes in large cube: %d\n", countCubes(n, k));
+    return 0;
+}
+```

@@ -1,0 +1,15 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_4/healed/problem-102-s2.c: In function 'snake_to_camel':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_4/healed/problem-102-s2.c:19:21: error: implicit declaration of function 'count_char'; did you mean 'putchar'? [-Wimplicit-function-declaration]
+   19 |     camel_str[len - count_char(snake_str, '_')] = '\0';
+      |                     ^~~~~~~~~~
+      |                     putchar
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_4/healed/problem-102-s2.c: At top level:
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_4/healed/problem-102-s2.c:23:5: error: conflicting types for 'count_char'; have 'int(const char *, char)'
+   23 | int count_char(const char *str, char c) {
+      |     ^~~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_4/healed/problem-102-s2.c:23:1: note: an argument type that has a default promotion cannot match an empty parameter name list declaration
+   23 | int count_char(const char *str, char c) {
+      | ^~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_4/healed/problem-102-s2.c:19:21: note: previous implicit declaration of 'count_char' with type 'int()'
+   19 |     camel_str[len - count_char(snake_str, '_')] = '\0';
+      |                     ^~~~~~~~~~

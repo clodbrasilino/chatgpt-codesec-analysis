@@ -1,0 +1,95 @@
+{
+  "task_id": 875,
+  "text": "Write a C function to find the minimum difference in the tuple pairs of given tuples.",
+  "fn_candidates": [
+    "min_difference",
+    "MinDifference",
+    "minDifference",
+    "mindifference"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "min_difference",
+      "args": [
+        [
+          [
+            3,
+            5
+          ],
+          [
+            1,
+            7
+          ],
+          [
+            10,
+            3
+          ],
+          [
+            1,
+            2
+          ]
+        ]
+      ],
+      "expected": 1,
+      "assert_src": "assert min_difference([(3, 5), (1, 7), (10, 3), (1, 2)]) == 1"
+    },
+    {
+      "fn_name": "min_difference",
+      "args": [
+        [
+          [
+            4,
+            6
+          ],
+          [
+            12,
+            8
+          ],
+          [
+            11,
+            4
+          ],
+          [
+            2,
+            13
+          ]
+        ]
+      ],
+      "expected": 2,
+      "assert_src": "assert min_difference([(4, 6), (12, 8), (11, 4), (2, 13)]) == 2"
+    },
+    {
+      "fn_name": "min_difference",
+      "args": [
+        [
+          [
+            5,
+            17
+          ],
+          [
+            3,
+            9
+          ],
+          [
+            12,
+            5
+          ],
+          [
+            3,
+            24
+          ]
+        ]
+      ],
+      "expected": 6,
+      "assert_src": "assert min_difference([(5, 17), (3, 9), (12, 5), (3, 24)]) == 6"
+    }
+  ],
+  "arg_kinds": [
+    "2d-int-list"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

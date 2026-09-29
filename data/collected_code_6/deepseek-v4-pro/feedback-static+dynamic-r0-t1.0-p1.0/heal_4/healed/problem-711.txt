@@ -1,0 +1,86 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <errno.h>
+#include <limits.h>
+#include <stdbool.h>
+#include <stdint.h>
+
+bool check_product_equal(int n) {
+    char str[12];
+    int written = snprintf(str, sizeof(str), "%d", n);
+    if (written < 0 || written >= (int)sizeof(str)) {
+        return false;
+    }
+    
+    int len = written;
+    int64_t even_product = 1;
+    int64_t odd_product = 1;
+
+    for (int i = 0; i < len; i++) {
+        if (str[i] < '0' || str[i] > '9') {
+            return false;
+        }
+        int digit = str[i] - '0';
+        if (digit == 0) {
+            continue;
+        }
+        if (i % 2 == 0) {
+            if (even_product > INT64_MAX / digit) {
+                return false;
+            }
+            even_product *= digit;
+        } else {
+            if (odd_product > INT64_MAX / digit) {
+                return false;
+            }
+            odd_product *= digit;
+        }
+    }
+
+    return even_product == odd_product;
+}
+
+int main(void) {
+    char input[32];
+    char *endptr;
+    
+    printf("Enter a number: ");
+    if (fgets(input, sizeof(input), stdin) == NULL) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    size_t len = strlen(input);
+    if (len > 0 && input[len - 1] == '\n') {
+        input[len - 1] = '\0';
+    } else if (len == sizeof(input) - 1) {
+        int c;
+        while ((c = getchar()) != '\n' && c != EOF);
+    }
+    
+    errno = 0;
+    long val = strtol(input, &endptr, 10);
+    
+    if (errno == ERANGE || val > INT_MAX || val < INT_MIN) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    if (endptr == input || *endptr != '\0') {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    int num = (int)val;
+
+    if (check_product_equal(num)) {
+        printf("True\n");
+    } else {
+        printf("False\n");
+    }
+
+    return EXIT_SUCCESS;
+}
+```

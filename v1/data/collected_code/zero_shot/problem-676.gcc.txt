@@ -1,0 +1,26 @@
+collected_code/problem-676-0.c: In function 'removeNonAlphanumeric':
+collected_code/problem-676-0.c:12:36: error: 'NULL' undeclared (first use in this function)
+   12 |     reti = regexec(&regex, str, 0, NULL, 0);
+      |                                    ^~~~
+collected_code/problem-676-0.c:2:1: note: 'NULL' is defined in header '<stddef.h>'; did you forget to '#include <stddef.h>'?
+    1 | #include <regex.h>
+  +++ |+#include <stddef.h>
+    2 | 
+collected_code/problem-676-0.c:12:36: note: each undeclared identifier is reported only once for each function it appears in
+   12 |     reti = regexec(&regex, str, 0, NULL, 0);
+      |                                    ^~~~
+collected_code/problem-676-0.c:18:22: warning: implicit declaration of function 'regreplace' [-Wimplicit-function-declaration]
+   18 |       char *result = regreplace(str, regex);
+      |                      ^~~~~~~~~~
+collected_code/problem-676-0.c:18:22: warning: initialization of 'char *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
+collected_code/problem-676-0.c:21:7: warning: implicit declaration of function 'strcpy' [-Wimplicit-function-declaration]
+   21 |       strcpy(str, result);
+      |       ^~~~~~
+collected_code/problem-676-0.c:2:1: note: include '<string.h>' or provide a declaration of 'strcpy'
+    1 | #include <regex.h>
+  +++ |+#include <string.h>
+    2 | 
+collected_code/problem-676-0.c:21:7: warning: incompatible implicit declaration of built-in function 'strcpy' [-Wbuiltin-declaration-mismatch]
+   21 |       strcpy(str, result);
+      |       ^~~~~~
+collected_code/problem-676-0.c:21:7: note: include '<string.h>' or provide a declaration of 'strcpy'

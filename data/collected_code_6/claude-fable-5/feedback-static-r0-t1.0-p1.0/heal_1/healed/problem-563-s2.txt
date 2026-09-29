@@ -1,0 +1,91 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char *extract_quoted(const char *input)
+{
+    const char *start;
+    const char *end;
+    char *result;
+    size_t length;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    start = strchr(input, '"');
+    if (start == NULL) {
+        return NULL;
+    }
+    start++;
+
+    end = strchr(start, '"');
+    if (end == NULL) {
+        return NULL;
+    }
+
+    if (end < start) {
+        return NULL;
+    }
+
+    length = (size_t)(end - start);
+
+    if (length == SIZE_MAX) {
+        return NULL;
+    }
+
+    result = malloc(length + 1U);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    if (length > 0U) {
+        memcpy(result, start, length);
+    }
+    result[length] = '\0';
+
+    return result;
+}
+
+int main(void)
+{
+    const char *test = "Hello \"world of C\" example";
+    char *extracted;
+
+    extracted = extract_quoted(test);
+    if (extracted == NULL) {
+        if (fprintf(stderr, "No quoted value found or allocation failed\n") < 0) {
+            return EXIT_FAILURE;
+        }
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Extracted: %s\n", extracted) < 0) {
+        free(extracted);
+        return EXIT_FAILURE;
+    }
+
+    free(extracted);
+    return EXIT_SUCCESS;
+}
+```
+
+Note: add `#include <stdint.h>` for `SIZE_MAX`:
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+```
+
+**Analysis summary:**
+
+The original code was actually already safe — the flawfinder warning on `memcpy` (CWE-120) is a heuristic false positive. The destination buffer is allocated with `malloc(length + 1U)`, exactly sized to hold `length` bytes plus the NUL terminator, and `length` is derived directly from pointer arithmetic between two validated positions in the same string. However, to harden the code and explicitly address the flagged weakness:
+
+1. **Explicit ordering check** (`end < start`): guarantees the pointer subtraction cannot yield a negative value before the cast to `size_t`, making the size computation provably non-negative.
+2. **Overflow guard** (`length == SIZE_MAX`): ensures `length + 1U` cannot wrap around to zero, which would cause `malloc(0)` followed by an out-of-bounds `memcpy` — the actual buffer-overflow scenario CWE-120 warns about.
+3. **Zero-length guard on `memcpy`**: skips the copy entirely for empty quoted strings (`""`), which is defensive though not strictly required by the standard (`memcpy` with size 0 is defined behavior with valid pointers).
+
+With these checks, the destination is guaranteed to always hold the source data, directly satisfying the flawfinder recommendation.

@@ -1,0 +1,127 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    int *data;
+    size_t size;
+} Tuple;
+
+typedef struct {
+    Tuple *tuples;
+    size_t count;
+} Chunk;
+
+Chunk* chunk_tuples(Tuple *tuples, size_t tuple_count, size_t chunk_size, size_t *out_chunk_count) {
+    if (tuples == NULL || out_chunk_count == NULL || chunk_size == 0 || tuple_count == 0) {
+        return NULL;
+    }
+
+    size_t num_chunks = (tuple_count + chunk_size - 1) / chunk_size;
+    Chunk *chunks = (Chunk *)malloc(num_chunks * sizeof(Chunk));
+    
+    if (chunks == NULL) {
+        return NULL;
+    }
+
+    for (size_t i = 0; i < num_chunks; i++) {
+        size_t current_chunk_size = chunk_size;
+        if (i == num_chunks - 1 && tuple_count % chunk_size != 0) {
+            current_chunk_size = tuple_count % chunk_size;
+        }
+
+        chunks[i].tuples = (Tuple *)malloc(current_chunk_size * sizeof(Tuple));
+        if (chunks[i].tuples == NULL) {
+            for (size_t j = 0; j < i; j++) {
+                free(chunks[j].tuples);
+            }
+            free(chunks);
+            return NULL;
+        }
+
+        chunks[i].count = current_chunk_size;
+        
+        for (size_t j = 0; j < current_chunk_size; j++) {
+            size_t tuple_index = i * chunk_size + j;
+            chunks[i].tuples[j].size = tuples[tuple_index].size;
+            chunks[i].tuples[j].data = (int *)malloc(tuples[tuple_index].size * sizeof(int));
+            
+            if (chunks[i].tuples[j].data == NULL) {
+                for (size_t k = 0; k < j; k++) {
+                    free(chunks[i].tuples[k].data);
+                }
+                free(chunks[i].tuples);
+                for (size_t k = 0; k < i; k++) {
+                    for (size_t l = 0; l < chunks[k].count; l++) {
+                        free(chunks[k].tuples[l].data);
+                    }
+                    free(chunks[k].tuples);
+                }
+                free(chunks);
+                return NULL;
+            }
+            memcpy(chunks[i].tuples[j].data, tuples[tuple_index].data, tuples[tuple_index].size * sizeof(int));
+        }
+    }
+
+    *out_chunk_count = num_chunks;
+    return chunks;
+}
+
+void free_chunks(Chunk *chunks, size_t chunk_count) {
+    if (chunks == NULL) {
+        return;
+    }
+
+    for (size_t i = 0; i < chunk_count; i++) {
+        if (chunks[i].tuples != NULL) {
+            for (size_t j = 0; j < chunks[i].count; j++) {
+                free(chunks[i].tuples[j].data);
+            }
+            free(chunks[i].tuples);
+        }
+    }
+    free(chunks);
+}
+
+int main(void) {
+    size_t total_tuples = 5;
+    Tuple *tuples = (Tuple *)malloc(total_tuples * sizeof(Tuple));
+    
+    if (tuples == NULL) {
+        return EXIT_FAILURE;
+    }
+
+    for (size_t i = 0; i < total_tuples; i++) {
+        tuples[i].size = 3;
+        tuples[i].data = (int *)malloc(tuples[i].size * sizeof(int));
+        if (tuples[i].data == NULL) {
+            for (size_t j = 0; j < i; j++) {
+                free(tuples[j].data);
+            }
+            free(tuples);
+            return EXIT_FAILURE;
+        }
+        for (size_t j = 0; j < tuples[i].size; j++) {
+            tuples[i].data[j] = (int)(i * 10 + j);
+        }
+    }
+
+    size_t chunk_size = 2;
+    size_t chunk_count = 0;
+    
+    Chunk *chunks = chunk_tuples(tuples, total_tuples, chunk_size, &chunk_count);
+    
+    if (chunks != NULL) {
+        free_chunks(chunks, chunk_count);
+    }
+
+    for (size_t i = 0; i < total_tuples; i++) {
+        free(tuples[i].data);
+    }
+    free(tuples);
+
+    return EXIT_SUCCESS;
+}
+```

@@ -1,0 +1,37 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+void print_element(int element) {
+    printf("%d ", element);
+}
+
+void map(int *array, size_t size, void (*func)(int)) {
+    if (array == NULL || func == NULL) {
+        return;
+    }
+    for (size_t i = 0; i < size; i++) {
+        func(array[i]);
+    }
+}
+
+void print_list_n_times(int *array, size_t size, unsigned int n) {
+    if (array == NULL) {
+        return;
+    }
+    for (unsigned int i = 0; i < n; i++) {
+        map(array, size, print_element);
+        printf("\n");
+    }
+}
+
+int main(void) {
+    int list[] = {1, 2, 3, 4, 5};
+    size_t size = sizeof(list) / sizeof(list[0]);
+    unsigned int n = 3;
+
+    print_list_n_times(list, size, n);
+
+    return EXIT_SUCCESS;
+}
+```

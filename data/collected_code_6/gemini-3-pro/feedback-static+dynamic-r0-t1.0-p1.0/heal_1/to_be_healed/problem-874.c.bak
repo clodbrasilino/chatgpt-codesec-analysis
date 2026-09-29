@@ -1,0 +1,53 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+bool isConcatenation(const char *str) {
+    if (str == NULL) {
+        return false;
+    }
+
+    size_t len = strlen(str);
+    if (len == 0) {
+        return false;
+    }
+
+    for (size_t i = 1; i <= len / 2; ++i) {
+        if (len % i == 0) {
+            bool match = true;
+            for (size_t j = i; j < len; j += i) {
+                if (strncmp(str, str + j, i) != 0) {
+                    match = false;
+                    break;
+                }
+            }
+            if (match) {
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+
+int main(void) {
+    const char *test1 = "abcabc";
+    const char *test2 = "ababab";
+    const char *test3 = "abcdef";
+    const char *test4 = "";
+    const char *test5 = NULL;
+
+    printf("'%s': %s\n", test1, isConcatenation(test1) ? "true" : "false");
+    printf("'%s': %s\n", test2, isConcatenation(test2) ? "true" : "false");
+    printf("'%s': %s\n", test3, isConcatenation(test3) ? "true" : "false");
+    printf("'%s': %s\n", test4, isConcatenation(test4) ? "true" : "false");
+    /* Possible weaknesses found:
+     *  Calling function 'isConcatenation' returns 0
+     *  Condition 'isConcatenation(test5)' is always false [knownConditionTrueFalse]
+     *  Condition 'isConcatenation(test5)' is always false
+     */
+    printf("NULL: %s\n", isConcatenation(test5) ? "true" : "false");
+
+    return 0;
+}

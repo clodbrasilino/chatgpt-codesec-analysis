@@ -1,0 +1,155 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *items;
+    size_t count;
+} SubList;
+
+typedef struct {
+    SubList *lists;
+    size_t count;
+} ListOfLists;
+
+static int sublist_in_range(const SubList *s, int low, int high)
+{
+    if (s == NULL || s->items == NULL || s->count == 0) {
+        return 0;
+    }
+    for (size_t i = 0; i < s->count; i++) {
+        if (s->items[i] < low || s->items[i] > high) {
+            return 0;
+        }
+    }
+    return 1;
+}
+
+int remove_sublists_outside_range(ListOfLists *lol, int low, int high)
+{
+    size_t write_idx = 0;
+
+    if (lol == NULL || lol->lists == NULL) {
+        return -1;
+    }
+    if (low > high) {
+        return -1;
+    }
+
+    for (size_t read_idx = 0; read_idx < lol->count; read_idx++) {
+        if (sublist_in_range(&lol->lists[read_idx], low, high)) {
+            lol->lists[write_idx] = lol->lists[read_idx];
+            write_idx++;
+        } else {
+            free(lol->lists[read_idx].items);
+            lol->lists[read_idx].items = NULL;
+            lol->lists[read_idx].count = 0;
+        }
+    }
+    lol->count = write_idx;
+    return 0;
+}
+
+static int add_sublist(ListOfLists *lol, size_t capacity, const int *values, size_t n)
+{
+    SubList *s;
+
+    if (lol == NULL || values == NULL || n == 0) {
+        return -1;
+    }
+    if (lol->count >= capacity) {
+        return -1;
+    }
+    s = &lol->lists[lol->count];
+    s->items = malloc(n * sizeof(int));
+    if (s->items == NULL) {
+        return -1;
+    }
+    for (size_t i = 0; i < n; i++) {
+        s->items[i] = values[i];
+    }
+    s->count = n;
+    lol->count++;
+    return 0;
+}
+
+static void free_list_of_lists(ListOfLists *lol)
+{
+    if (lol == NULL) {
+        return;
+    }
+    if (lol->lists != NULL) {
+        for (size_t i = 0; i < lol->count; i++) {
+            free(lol->lists[i].items);
+            lol->lists[i].items = NULL;
+        }
+        free(lol->lists);
+        lol->lists = NULL;
+    }
+    lol->count = 0;
+}
+
+static void print_list_of_lists(const ListOfLists *lol)
+{
+    if (lol == NULL || lol->lists == NULL) {
+        printf("[]\n");
+        return;
+    }
+    printf("[");
+    for (size_t i = 0; i < lol->count; i++) {
+        printf("[");
+        for (size_t j = 0; j < lol->lists[i].count; j++) {
+            printf("%d", lol->lists[i].items[j]);
+            if (j + 1 < lol->lists[i].count) {
+                printf(", ");
+            }
+        }
+        printf("]");
+        if (i + 1 < lol->count) {
+            printf(", ");
+        }
+    }
+    printf("]\n");
+}
+
+int main(void)
+{
+    ListOfLists lol;
+    const size_t capacity = 5;
+    int a[] = {2, 3};
+    int b[] = {1, 10};
+    int c[] = {4, 5, 6};
+    int d[] = {0, 7};
+    int e[] = {8, 9};
+
+    lol.lists = malloc(capacity * sizeof(SubList));
+    if (lol.lists == NULL) {
+        fprintf(stderr, "Allocation failure\n");
+        return EXIT_FAILURE;
+    }
+    lol.count = 0;
+
+    if (add_sublist(&lol, capacity, a, sizeof(a) / sizeof(a[0])) != 0 ||
+        add_sublist(&lol, capacity, b, sizeof(b) / sizeof(b[0])) != 0 ||
+        add_sublist(&lol, capacity, c, sizeof(c) / sizeof(c[0])) != 0 ||
+        add_sublist(&lol, capacity, d, sizeof(d) / sizeof(d[0])) != 0 ||
+        add_sublist(&lol, capacity, e, sizeof(e) / sizeof(e[0])) != 0) {
+        fprintf(stderr, "Failed to build list of lists\n");
+        free_list_of_lists(&lol);
+        return EXIT_FAILURE;
+    }
+
+    printf("Original: ");
+    print_list_of_lists(&lol);
+
+    if (remove_sublists_outside_range(&lol, 2, 9) != 0) {
+        fprintf(stderr, "Removal failed\n");
+        free_list_of_lists(&lol);
+        return EXIT_FAILURE;
+    }
+
+    printf("Filtered (range 2..9): ");
+    print_list_of_lists(&lol);
+
+    free_list_of_lists(&lol);
+    return EXIT_SUCCESS;
+}

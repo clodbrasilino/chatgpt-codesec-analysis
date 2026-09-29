@@ -1,0 +1,84 @@
+#define _POSIX_C_SOURCE 200809L
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_INPUT_LEN 1048576
+
+char* abbreviate_road(const char* input) {
+    if (input == NULL) {
+        return NULL;
+    }
+
+    const char* target = "road";
+    const char* replacement = "rd.";
+    
+    size_t target_len = sizeof("road") - 1;
+    size_t replacement_len = sizeof("rd.") - 1;
+
+    size_t input_len = strnlen(input, MAX_INPUT_LEN);
+    if (input_len == MAX_INPUT_LEN) {
+        return NULL;
+    }
+
+    int count = 0;
+    const char* tmp = input;
+    while ((tmp = strstr(tmp, target)) != NULL) {
+        count++;
+        tmp += target_len;
+    }
+
+    size_t new_size = input_len + count * (replacement_len - target_len) + 1;
+    char* result = (char*)malloc(new_size);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    char* dest = result;
+    const char* src = input;
+    size_t remaining_size = new_size;
+
+    while ((tmp = strstr(src, target)) != NULL) {
+        size_t len = tmp - src;
+        
+        if (remaining_size <= len) break;
+        
+        memcpy(dest, src, len);
+        dest += len;
+        remaining_size -= len;
+        
+        if (remaining_size <= replacement_len) break;
+        
+        memcpy(dest, replacement, replacement_len);
+        dest += replacement_len;
+        remaining_size -= replacement_len;
+        
+        src = tmp + target_len;
+    }
+    
+    size_t remaining_src_len = input_len - (src - input);
+    if (remaining_size > remaining_src_len) {
+        memcpy(dest, src, remaining_src_len);
+        dest[remaining_src_len] = '\0';
+    } else {
+        result[new_size - 1] = '\0';
+    }
+
+    return result;
+}
+
+int main(void) {
+    const char* test_str = "The road to the road is a long road.";
+    char* abbreviated = abbreviate_road(test_str);
+
+    if (abbreviated != NULL) {
+        printf("Original: %s\n", test_str);
+        printf("Abbreviated: %s\n", abbreviated);
+        free(abbreviated);
+    } else {
+        fprintf(stderr, "Memory allocation failed, input was NULL, or input too long.\n");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

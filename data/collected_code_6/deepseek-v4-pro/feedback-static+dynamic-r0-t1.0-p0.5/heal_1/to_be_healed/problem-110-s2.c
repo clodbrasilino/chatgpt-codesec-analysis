@@ -1,0 +1,149 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int start;
+    int end;
+} Range;
+
+typedef struct {
+    Range *ranges;
+    int count;
+    int capacity;
+} RangeList;
+
+void initRangeList(RangeList *list) {
+    list->ranges = NULL;
+    list->count = 0;
+    list->capacity = 0;
+}
+
+void freeRangeList(RangeList *list) {
+    free(list->ranges);
+    list->ranges = NULL;
+    list->count = 0;
+    list->capacity = 0;
+}
+
+int addRange(RangeList *list, int start, int end) {
+    if (list->count >= list->capacity) {
+        int newCapacity = list->capacity == 0 ? 8 : list->capacity * 2;
+        Range *newRanges = (Range *)realloc(list->ranges, newCapacity * sizeof(Range));
+        if (newRanges == NULL) {
+            return 0;
+        }
+        list->ranges = newRanges;
+        list->capacity = newCapacity;
+    }
+    list->ranges[list->count].start = start;
+    list->ranges[list->count].end = end;
+    list->count++;
+    return 1;
+}
+
+int compareRanges(const void *a, const void *b) {
+    const Range *rangeA = (const Range *)a;
+    const Range *rangeB = (const Range *)b;
+    if (rangeA->start != rangeB->start) {
+        return rangeA->start - rangeB->start;
+    }
+    return rangeA->end - rangeB->end;
+}
+
+/* Possible weaknesses found:
+ *  Parameter 'ranges' can be declared as pointer to const [constParameterPointer]
+ */
+RangeList findMissingRanges(Range *ranges, int rangeCount, int startRange, int endRange) {
+    RangeList missing;
+    initRangeList(&missing);
+    
+    if (rangeCount == 0) {
+        if (startRange <= endRange) {
+            if (!addRange(&missing, startRange, endRange)) {
+                freeRangeList(&missing);
+                return missing;
+            }
+        }
+        return missing;
+    }
+    
+    Range *sortedRanges = (Range *)malloc(rangeCount * sizeof(Range));
+    if (sortedRanges == NULL) {
+        return missing;
+    }
+    
+    for (int i = 0; i < rangeCount; i++) {
+        sortedRanges[i] = ranges[i];
+    }
+    
+    qsort(sortedRanges, rangeCount, sizeof(Range), compareRanges);
+    
+    int currentPos = startRange;
+    
+    for (int i = 0; i < rangeCount; i++) {
+        if (sortedRanges[i].end < currentPos) {
+            continue;
+        }
+        
+        if (sortedRanges[i].start > endRange) {
+            break;
+        }
+        
+        if (sortedRanges[i].start > currentPos) {
+            int missingStart = currentPos;
+            int missingEnd = sortedRanges[i].start - 1;
+            if (missingEnd > endRange) {
+                missingEnd = endRange;
+            }
+            if (missingStart <= missingEnd) {
+                if (!addRange(&missing, missingStart, missingEnd)) {
+                    free(sortedRanges);
+                    freeRangeList(&missing);
+                    return missing;
+                }
+            }
+        }
+        
+        if (sortedRanges[i].end >= currentPos) {
+            currentPos = sortedRanges[i].end + 1;
+        }
+        
+        if (currentPos > endRange) {
+            break;
+        }
+    }
+    
+    if (currentPos <= endRange) {
+        if (!addRange(&missing, currentPos, endRange)) {
+            free(sortedRanges);
+            freeRangeList(&missing);
+            return missing;
+        }
+    }
+    
+    free(sortedRanges);
+    return missing;
+}
+
+int main(void) {
+    Range ranges[] = {
+        {1, 3},
+        {5, 7},
+        {10, 12},
+        {15, 15}
+    };
+    int rangeCount = sizeof(ranges) / sizeof(ranges[0]);
+    int startRange = 0;
+    int endRange = 20;
+    
+    RangeList missing = findMissingRanges(ranges, rangeCount, startRange, endRange);
+    
+    printf("Missing ranges from %d to %d:\n", startRange, endRange);
+    for (int i = 0; i < missing.count; i++) {
+        printf("[%d, %d]\n", missing.ranges[i].start, missing.ranges[i].end);
+    }
+    
+    freeRangeList(&missing);
+    
+    return 0;
+}

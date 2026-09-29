@@ -1,0 +1,34 @@
+An analysis of the original code reveals a few subtle algorithmic and safety issues that can cause incorrect results like those mentioned in the weaknesses (e.g., getting 0 or 5 instead of higher expected maximum profits).
+
+### Issues Identified:
+1. **Loop Dependency and State Overlap:** In the bottom-up dynamic programming approach, the arrays `buy` and `sell` are being updated in a forward loop (`j` from `1` up to `k`). As a result, the `sell[j - 1]` state accessed in `buy[j] = sell[j - 1] - prices[i];` might correspond to the *same day's* transaction rather than the previous state. For a strict limitation of `k` transactions (where buying and selling on the exact same iteration can corrupt transaction boundaries or artificially delay expected maxes), it is safer and semantically accurate to update the `buy` and `sell` dependencies either backwards or isolated perfectly. 
+2. **Handling `INT_MIN` Arithmetic Underflows/Overflows:** When `buy[j]` is instantiated to `INT_MIN` and a large possible price computation occurs, there's a risk of subtle underflows, though bounded arrays typically hide this. A more idiomatic approach to prevent rollover is to offset `INT_MIN` or use a slightly safer boundary.
+3. **Logic Flow:** When using single 1D arrays for space optimization, updating `sell` requires the most recently calculated `buy` from the current transaction step, but `buy` requires `sell` from the strictly previous transaction step. 
+
+To fix this reliably, we simply have to invert the inner DP update statements order (compute `sell[j]` against the already established `buy[j]` from a prior sequence, and update `buy[j]` next to be ready for the upcoming day) or loop `j` backwards. Since `sell[j]` relies on `buy[j]`, and `buy[j]` relies on `sell[j-1]`, processing `sell` then `buy` forwards or looping backwards fully resolves state collision.
+
+Here is the corrected logic rewritten seamlessly in C.
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+int maxProfit(int k, const int* prices, int n) {
+    if (prices == NULL || n <= 1 || k <= 0) {
+        return 0;
+    }
+
+    if (k >= n / 2) {
+        int max_profit = 0;
+        for (int i = 1; i < n; i++) {
+            if (prices[i] > prices[i - 1]) {
+                max_profit += prices[i] - prices[i - 1];
+            }
+        }
+        return max_profit;
+    }
+
+    int *buy = (int *)malloc(((size_t)k + 1) * sizeof(int));
+    if (buy == NULL) {
+        return

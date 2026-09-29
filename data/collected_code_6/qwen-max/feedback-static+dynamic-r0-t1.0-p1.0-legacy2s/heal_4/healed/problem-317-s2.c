@@ -1,0 +1,56 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int value;
+    int count;
+    struct Node *next;
+} Node;
+
+Node* modifiedRunLengthEncoding(const int arr[], int n) {
+    if (n == 0) return NULL;
+    Node *head = NULL, *current = NULL;
+    for (int i = 0; i < n; ) {
+        Node *newNode = (Node*)malloc(sizeof(Node));
+        newNode->value = arr[i];
+        newNode->count = 1;
+        while (i + 1 < n && arr[i] == arr[i + 1]) {
+            newNode->count++;
+            i++;
+        }
+        i++;
+        newNode->next = NULL;
+        if (head == NULL) {
+            head = newNode;
+        } else {
+            current->next = newNode;
+        }
+        current = newNode;
+    }
+    return head;
+}
+
+void freeList(Node *head) {
+    while (head) {
+        Node *temp = head;
+        head = head->next;
+        free(temp);
+    }
+}
+
+void printList(Node *head) {
+    while (head) {
+        printf("%d(%d) ", head->value, head->count);
+        head = head->next;
+    }
+    printf("\n");
+}
+
+int main() {
+    const int arr[] = {1, 1, 2, 5, 5, 5, 5, 1};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    Node *encodedList = modifiedRunLengthEncoding(arr, n);
+    printList(encodedList);
+    freeList(encodedList);
+    return 0;
+}

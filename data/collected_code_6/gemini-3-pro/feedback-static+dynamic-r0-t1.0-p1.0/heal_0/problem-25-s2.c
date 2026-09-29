@@ -1,0 +1,42 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+long long productOfNonRepeatedElements(int* arr, size_t size) {
+    if (arr == NULL || size == 0) {
+        return 0;
+    }
+
+    long long product = 1;
+    int hasNonRepeated = 0;
+
+    for (size_t i = 0; i < size; ++i) {
+        int isRepeated = 0;
+        for (size_t j = 0; j < size; ++j) {
+            if (i != j && arr[i] == arr[j]) {
+                isRepeated = 1;
+                break;
+            }
+        }
+        if (!isRepeated) {
+            product *= arr[i];
+            hasNonRepeated = 1;
+        }
+    }
+
+    if (!hasNonRepeated) {
+        return 0;
+    }
+
+    return product;
+}
+
+int main(void) {
+    int arr[] = {1, 2, 3, 1, 4, 5, 2};
+    size_t size = sizeof(arr) / sizeof(arr[0]);
+
+    long long result = productOfNonRepeatedElements(arr, size);
+    
+    printf("Result: %lld\n", result);
+
+    return 0;
+}

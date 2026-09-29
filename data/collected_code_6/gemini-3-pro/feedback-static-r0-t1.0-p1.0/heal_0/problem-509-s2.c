@@ -1,0 +1,35 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+double average_of_odd_numbers(int n) {
+    if (n < 1 || n % 2 == 0) {
+        return 0.0;
+    }
+    
+    double sum = 0.0;
+    int count = 0;
+    
+    for (int i = 1; i <= n; i += 2) {
+        sum += i;
+        count++;
+    }
+    
+    return sum / count;
+}
+
+int main() {
+    int input;
+    
+    if (scanf("%d", &input) != 1) {
+        return EXIT_FAILURE;
+    }
+    
+    if (input < 1 || input % 2 == 0) {
+        return EXIT_FAILURE;
+    }
+    
+    double average = average_of_odd_numbers(input);
+    printf("%f\n", average);
+    
+    return EXIT_SUCCESS;
+}

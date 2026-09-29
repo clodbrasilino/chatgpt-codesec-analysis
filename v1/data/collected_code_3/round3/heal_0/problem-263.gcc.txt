@@ -1,0 +1,86 @@
+collected_code_3/problem-263-3.c: In function 'createDictionary':
+collected_code_3/problem-263-3.c:17:23: warning: dereference of possibly-NULL 'dictionary' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   17 |     dictionary->items = malloc(sizeof(Item) * 10);
+      |     ~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~
+  'main': events 1-2
+    |
+    |   50 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |   51 |     Dictionary* dict1 = createDictionary();
+    |      |                         ~~~~~~~~~~~~~~~~~~
+    |      |                         |
+    |      |                         (2) calling 'createDictionary' from 'main'
+    |
+    +--> 'createDictionary': events 3-5
+           |
+           |   15 | Dictionary* createDictionary() {
+           |      |             ^~~~~~~~~~~~~~~~
+           |      |             |
+           |      |             (3) entry to 'createDictionary'
+           |   16 |     Dictionary* dictionary = malloc(sizeof(Dictionary));
+           |      |                              ~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                              |
+           |      |                              (4) this call could return NULL
+           |   17 |     dictionary->items = malloc(sizeof(Item) * 10);
+           |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                       |
+           |      |                       (5) 'dictionary' could be NULL: unchecked value from (4)
+           |
+collected_code_3/problem-263-3.c: In function 'add':
+collected_code_3/problem-263-3.c:28:45: warning: dereference of possibly-NULL '*dictionary.items + (long unsigned int)*dictionary.size * 16' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   28 |     dictionary->items[dictionary->size].key = key;
+      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~
+  'main': events 1-2
+    |
+    |   50 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |   51 |     Dictionary* dict1 = createDictionary();
+    |      |                         ~~~~~~~~~~~~~~~~~~
+    |      |                         |
+    |      |                         (2) calling 'createDictionary' from 'main'
+    |
+    +--> 'createDictionary': events 3-4
+           |
+           |   15 | Dictionary* createDictionary() {
+           |      |             ^~~~~~~~~~~~~~~~
+           |      |             |
+           |      |             (3) entry to 'createDictionary'
+           |   16 |     Dictionary* dictionary = malloc(sizeof(Dictionary));
+           |   17 |     dictionary->items = malloc(sizeof(Item) * 10);
+           |      |                         ~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                         |
+           |      |                         (4) this call could return NULL
+           |
+    <------+
+    |
+  'main': events 5-6
+    |
+    |   51 |     Dictionary* dict1 = createDictionary();
+    |      |                         ^~~~~~~~~~~~~~~~~~
+    |      |                         |
+    |      |                         (5) returning to 'main' from 'createDictionary'
+    |   52 |     add(dict1, "key1", "value1");
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (6) calling 'add' from 'main'
+    |
+    +--> 'add': events 7-10
+           |
+           |   23 | void add(Dictionary* dictionary, char* key, char* value) {
+           |      |      ^~~
+           |      |      |
+           |      |      (7) entry to 'add'
+           |   24 |     if (dictionary->size == dictionary->capacity) {
+           |      |        ~
+           |      |        |
+           |      |        (8) following 'false' branch...
+           |......
+           |   28 |     dictionary->items[dictionary->size].key = key;
+           |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |               |                             |
+           |      |               (9) ...to here                (10) '*dictionary.items + (long unsigned int)*dictionary.size * 16' could be NULL: unchecked value from (4)
+           |

@@ -1,0 +1,39 @@
+```C
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+typedef struct {
+    char *first;
+    char *second;
+} Tuple;
+
+Tuple concatenate_tuples(Tuple t1, Tuple t2) {
+    Tuple result;
+    result.first = malloc(strlen(t1.first) + strlen(t2.first) + 1);
+    result.second = malloc(strlen(t1.second) + strlen(t2.second) + 1);
+
+    strcpy(result.first, t1.first);
+    strcat(result.first, t2.first);
+
+    strcpy(result.second, t1.second);
+    strcat(result.second, t2.second);
+
+    return result;
+}
+
+int main() {
+    Tuple t1 = {"Hello", "World"};
+    Tuple t2 = {" ", "!"};
+
+    Tuple result = concatenate_tuples(t1, t2);
+
+    printf("First: %s\n", result.first);
+    printf("Second: %s\n", result.second);
+
+    free(result.first);
+    free(result.second);
+
+    return 0;
+}
+```

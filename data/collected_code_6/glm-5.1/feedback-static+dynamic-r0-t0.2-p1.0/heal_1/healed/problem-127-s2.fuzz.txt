@@ -1,0 +1,4 @@
+problem-127-s2.c:23:11:medium:UBSan: left shift of 1073741824 by 1 places cannot be represented in type 'int' (AFL crash: id:000000,sig:06,src:000003,time:390,execs:190,op:havoc,rep:1)
+problem-127-s2.c:23:11:medium:UBSan: left shift of 1422222208 by 1 places cannot be represented in type 'int' (AFL crash: id:000001,sig:06,src:000003,time:1346,execs:623,op:havoc,rep:2)
+problem-127-s2.c:23:11:medium:UBSan: left shift of 1923267956 by 1 places cannot be represented in type 'int' (AFL crash: id:000002,sig:06,src:000003,time:1370,execs:633,op:havoc,rep:8)
+problem-127-s2.c:23:11:medium:UBSan: left shift of 2066312932 by 1 places cannot be represented in type 'int' (AFL crash: id:000003,sig:06,src:000003,time:1471,execs:677,op:havoc,rep:2)

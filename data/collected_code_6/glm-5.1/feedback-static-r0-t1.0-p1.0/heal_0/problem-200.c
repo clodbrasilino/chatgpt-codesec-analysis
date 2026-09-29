@@ -1,0 +1,69 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int* find_max_indices(const int* arr, size_t size, size_t* result_size) {
+    if (arr == NULL || result_size == NULL || size == 0) {
+        if (result_size != NULL) {
+            *result_size = 0;
+        }
+        return NULL;
+    }
+
+    int max_val = arr[0];
+    for (size_t i = 1; i < size; ++i) {
+        if (arr[i] > max_val) {
+            max_val = arr[i];
+        }
+    }
+
+    size_t count = 0;
+    for (size_t i = 0; i < size; ++i) {
+        if (arr[i] == max_val) {
+            ++count;
+        }
+    }
+
+    if (count == 0) {
+        *result_size = 0;
+        return NULL;
+    }
+
+    int* indices = (int*)malloc(count * sizeof(int));
+    if (indices == NULL) {
+        *result_size = 0;
+        return NULL;
+    }
+
+    size_t idx = 0;
+    for (size_t i = 0; i < size; ++i) {
+        if (arr[i] == max_val) {
+            indices[idx++] = (int)i;
+        }
+    }
+
+    *result_size = count;
+    return indices;
+}
+
+int main(void) {
+    int arr[] = {1, 5, 2, 5, 3, 5, 4};
+    size_t size = sizeof(arr) / sizeof(arr[0]);
+    size_t result_size = 0;
+
+    int* max_indices = find_max_indices(arr, size, &result_size);
+
+    if (max_indices != NULL && result_size > 0) {
+        printf("Maximum value found at indices: ");
+        for (size_t i = 0; i < result_size; ++i) {
+            printf("%d ", max_indices[i]);
+        }
+        printf("\n");
+    } else {
+        printf("No maximum value found or invalid input.\n");
+    }
+
+    free(max_indices);
+    max_indices = NULL;
+
+    return 0;
+}

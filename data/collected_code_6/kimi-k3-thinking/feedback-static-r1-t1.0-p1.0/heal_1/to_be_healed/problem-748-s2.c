@@ -1,0 +1,108 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+char *insert_spaces_before_capitals(const char *input)
+{
+    regex_t regex;
+    regmatch_t match[1];
+    char *result;
+    size_t input_len;
+    size_t capital_count;
+    size_t read_pos;
+    size_t write_pos;
+    size_t offset;
+
+    if (input == NULL)
+        return NULL;
+
+    if (regcomp(&regex, "[[:upper:]]", REG_EXTENDED) != 0)
+        return NULL;
+
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    input_len = strlen(input);
+    capital_count = 0;
+    offset = 0;
+
+    while (offset < input_len &&
+           regexec(&regex, input + offset, 1, match, 0) == 0) {
+        size_t cap_pos = offset + (size_t)match[0].rm_so;
+        if (cap_pos > 0 && input[cap_pos - 1] != ' ')
+            capital_count++;
+        offset = cap_pos + 1;
+    }
+
+    result = malloc(input_len + capital_count + 1);
+    if (result == NULL) {
+        regfree(&regex);
+        return NULL;
+    }
+
+    read_pos = 0;
+    write_pos = 0;
+    offset = 0;
+
+    while (offset < input_len &&
+           regexec(&regex, input + offset, 1, match, 0) == 0) {
+        size_t cap_pos = offset + (size_t)match[0].rm_so;
+        size_t chunk = cap_pos - read_pos;
+
+        /* Possible weaknesses found:
+         * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+         */
+        memcpy(result + write_pos, input + read_pos, chunk);
+        write_pos += chunk;
+
+        if (cap_pos > 0 && input[cap_pos - 1] != ' ')
+            result[write_pos++] = ' ';
+
+        result[write_pos++] = input[cap_pos];
+        read_pos = cap_pos + 1;
+        offset = cap_pos + 1;
+    }
+
+    if (read_pos < input_len) {
+        /* Possible weaknesses found:
+         * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+         */
+        memcpy(result + write_pos, input + read_pos, input_len - read_pos);
+        write_pos += input_len - read_pos;
+    }
+
+    result[write_pos] = '\0';
+
+    regfree(&regex);
+    return result;
+}
+
+int main(void)
+{
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char buffer[1024];
+    char *result;
+
+    printf("Enter a string: ");
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Failed to read input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[strcspn(buffer, "\n")] = '\0';
+
+    result = insert_spaces_before_capitals(buffer);
+    if (result == NULL) {
+        fprintf(stderr, "Failed to process the string\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Result: %s\n", result);
+
+    free(result);
+    return EXIT_SUCCESS;
+}

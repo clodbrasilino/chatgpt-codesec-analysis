@@ -1,0 +1,46 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+
+char find_first_repeated_char(const char *str) {
+    if (str == NULL) {
+        return '\0';
+    }
+    
+    bool seen[256] = {false};
+    
+    for (size_t i = 0; str[i] != '\0'; i++) {
+        unsigned char index = (unsigned char)str[i];
+        if (seen[index]) {
+            return str[i];
+        }
+        seen[index] = true;
+    }
+    
+    return '\0';
+}
+
+int main(void) {
+    const char *test_strings[] = {
+        "hello",
+        "programming",
+        "abcdef",
+        "aabbcc",
+        "",
+        "123451",
+        NULL
+    };
+    
+    for (size_t i = 0; test_strings[i] != NULL; i++) {
+        char result = find_first_repeated_char(test_strings[i]);
+        printf("String: \"%s\"\n", test_strings[i]);
+        if (result != '\0') {
+            printf("First repeated character: '%c'\n", result);
+        } else {
+            printf("No repeated character found\n");
+        }
+        printf("\n");
+    }
+    
+    return 0;
+}

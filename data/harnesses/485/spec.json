@@ -1,0 +1,66 @@
+{
+  "task_id": 485,
+  "text": "Write a C function to find the largest palindromic number in the given array.",
+  "fn_candidates": [
+    "largest_palindrome",
+    "LargestPalindrome",
+    "largestPalindrome",
+    "largestpalindrome"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "largest_palindrome",
+      "args": [
+        [
+          1,
+          232,
+          54545,
+          999991
+        ],
+        4
+      ],
+      "expected": 54545,
+      "assert_src": "assert largest_palindrome([1, 232, 54545, 999991], 4) == 54545"
+    },
+    {
+      "fn_name": "largest_palindrome",
+      "args": [
+        [
+          1,
+          2,
+          3,
+          4,
+          5,
+          50
+        ],
+        6
+      ],
+      "expected": 5,
+      "assert_src": "assert largest_palindrome([1, 2, 3, 4, 5, 50], 6) == 5"
+    },
+    {
+      "fn_name": "largest_palindrome",
+      "args": [
+        [
+          1,
+          3,
+          7,
+          9,
+          45
+        ],
+        5
+      ],
+      "expected": 9,
+      "assert_src": "assert largest_palindrome([1, 3, 7, 9, 45], 5)  == 9"
+    }
+  ],
+  "arg_kinds": [
+    "int",
+    "int-list"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

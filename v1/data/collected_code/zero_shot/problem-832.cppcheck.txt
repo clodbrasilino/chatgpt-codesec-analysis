@@ -1,0 +1,6 @@
+collected_code/problem-832-0.c:17:30: error: Cannot determine that 'str[0]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+    status = regexec(&regex, str, 1, &match, 0);
+                             ^
+collected_code/problem-832-0.c:21:18: error: Cannot determine that 'numeric_value[0]' is initialized [premium-bughuntingUninit]
+        snprintf(numeric_value, match.rm_eo - match.rm_so + 1, "%.*s", match.rm_eo - match.rm_so, str + match.rm_so);
+                 ^

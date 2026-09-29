@@ -1,0 +1,76 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+static int compare_ints(const void *a, const void *b)
+{
+    int x = *(const int *)a;
+    int y = *(const int *)b;
+
+    if (x < y) {
+        return -1;
+    }
+    if (x > y) {
+        return 1;
+    }
+    return 0;
+}
+
+int *set_to_ordered_tuple(const int *set, size_t size)
+{
+    int *tuple = NULL;
+    size_t total_bytes = 0U;
+
+    if (set == NULL || size == 0U) {
+        return NULL;
+    }
+
+    if (size > SIZE_MAX / sizeof(int)) {
+        return NULL;
+    }
+
+    total_bytes = size * sizeof(int);
+
+    tuple = malloc(total_bytes);
+    if (tuple == NULL) {
+        return NULL;
+    }
+
+    memcpy(tuple, set, total_bytes);
+    qsort(tuple, size, sizeof(int), compare_ints);
+
+    return tuple;
+}
+
+int main(void)
+{
+    int set[] = {7, 2, 9, 4, 1};
+    size_t size = sizeof(set) / sizeof(set[0]);
+    size_t i = 0U;
+    int *tuple = NULL;
+
+    tuple = set_to_ordered_tuple(set, size);
+    if (tuple == NULL) {
+        fprintf(stderr, "Failed to create ordered tuple\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("(");
+    for (i = 0U; i < size; i++) {
+        if (i > 0U) {
+            printf(", ");
+        }
+        printf("%d", tuple[i]);
+    }
+    printf(")\n");
+
+    free(tuple);
+    tuple = NULL;
+
+    return EXIT_SUCCESS;
+}
+```
+
+Analysis of the flagged weakness: the Flawfinder warning on `memcpy` (CWE-120) is a false positive in this code. The destination buffer `tuple` is allocated with exactly `total_bytes`, which is the same value used as the copy length, so the destination is always guaranteed to hold the source data. Additionally, the code already guards against the integer-overflow path that could otherwise make `size * sizeof(int)` wrap around (`size > SIZE_MAX / sizeof(int)` check), validates the input pointer and size, and checks the `malloc` return value. No functional changes were required — the rewrite simply removes the comments, as the existing bounds and overflow checks already constitute the fix Flawfinder asks you to verify.

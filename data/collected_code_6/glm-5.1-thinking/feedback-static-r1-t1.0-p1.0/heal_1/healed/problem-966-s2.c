@@ -1,0 +1,107 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *elements;
+    size_t length;
+} Tuple;
+
+typedef struct {
+    Tuple *tuples;
+    size_t count;
+} TupleList;
+
+Tuple create_tuple(const int *data, size_t length) {
+    Tuple t;
+    t.length = 0;
+    t.elements = NULL;
+    if (length > 0) {
+        t.elements = malloc(length * sizeof(int));
+        if (t.elements == NULL) {
+            return t;
+        }
+        for (size_t i = 0; i < length; i++) {
+            t.elements[i] = data[i];
+        }
+        t.length = length;
+    }
+    return t;
+}
+
+int remove_empty_tuples(TupleList *list) {
+    if (list == NULL) {
+        return -1;
+    }
+
+    size_t valid_count = 0;
+    for (size_t i = 0; i < list->count; i++) {
+        if (list->tuples[i].length > 0) {
+            list->tuples[valid_count] = list->tuples[i];
+            valid_count++;
+        } else {
+            free(list->tuples[i].elements);
+            list->tuples[i].elements = NULL;
+        }
+    }
+
+    list->count = valid_count;
+
+    if (valid_count == 0) {
+        free(list->tuples);
+        list->tuples = NULL;
+        return 0;
+    }
+
+    Tuple *temp = realloc(list->tuples, valid_count * sizeof(Tuple));
+    if (temp != NULL) {
+        list->tuples = temp;
+    }
+
+    return 0;
+}
+
+void free_tuple_list(TupleList *list) {
+    if (list == NULL) {
+        return;
+    }
+    for (size_t i = 0; i < list->count; i++) {
+        free(list->tuples[i].elements);
+    }
+    free(list->tuples);
+    list->tuples = NULL;
+    list->count = 0;
+}
+
+int main(void) {
+    TupleList list;
+    list.count = 4;
+    list.tuples = malloc(list.count * sizeof(Tuple));
+    if (list.tuples == NULL) {
+        return EXIT_FAILURE;
+    }
+
+    int data1[] = {1, 2};
+    int data3[] = {3};
+
+    list.tuples[0] = create_tuple(data1, 2);
+    list.tuples[1] = create_tuple(NULL, 0);
+    list.tuples[2] = create_tuple(data3, 1);
+    list.tuples[3] = create_tuple(NULL, 0);
+
+    if (remove_empty_tuples(&list) != 0) {
+        free_tuple_list(&list);
+        return EXIT_FAILURE;
+    }
+
+    for (size_t i = 0; i < list.count; i++) {
+        printf("Tuple %zu: ", i);
+        for (size_t j = 0; j < list.tuples[i].length; j++) {
+            printf("%d ", list.tuples[i].elements[j]);
+        }
+        printf("\n");
+    }
+
+    free_tuple_list(&list);
+
+    return EXIT_SUCCESS;
+}

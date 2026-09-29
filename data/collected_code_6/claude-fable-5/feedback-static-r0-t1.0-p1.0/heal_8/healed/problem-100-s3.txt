@@ -1,0 +1,120 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <limits.h>
+#include <errno.h>
+#include <ctype.h>
+
+#define NUM_BUF_SIZE 32
+#define LINE_BUF_SIZE 64
+
+static int is_palindrome(unsigned long long n)
+{
+    char buf[NUM_BUF_SIZE];
+    int len;
+    int i;
+    int j;
+
+    len = snprintf(buf, sizeof buf, "%llu", n);
+    if (len < 0 || (size_t)len >= sizeof buf) {
+        return 0;
+    }
+    i = 0;
+    j = len - 1;
+    while (i < j) {
+        if (buf[i] != buf[j]) {
+            return 0;
+        }
+        i++;
+        j--;
+    }
+    return 1;
+}
+
+static int next_smallest_palindrome(unsigned long long n, unsigned long long *result)
+{
+    if (result == NULL) {
+        return -1;
+    }
+    while (n < ULLONG_MAX) {
+        n++;
+        if (is_palindrome(n)) {
+            *result = n;
+            return 0;
+        }
+    }
+    return -1;
+}
+
+int main(void)
+{
+    char line[LINE_BUF_SIZE];
+    char *endptr;
+    unsigned long long n;
+    unsigned long long result;
+    size_t i;
+
+    printf("Enter a non-negative number: ");
+    if (fflush(stdout) == EOF) {
+        return EXIT_FAILURE;
+    }
+
+    if (fgets(line, sizeof line, stdin) == NULL) {
+        fprintf(stderr, "Error: failed to read input\n");
+        return EXIT_FAILURE;
+    }
+    line[sizeof line - 1] = '\0';
+
+    if (strchr(line, '\n') == NULL && !feof(stdin)) {
+        fprintf(stderr, "Error: input too long\n");
+        return EXIT_FAILURE;
+    }
+
+    i = 0;
+    while (i < sizeof line - 1 && line[i] != '\0' && isspace((unsigned char)line[i])) {
+        i++;
+    }
+    if (line[i] == '-' || line[i] == '+' || !isdigit((unsigned char)line[i])) {
+        fprintf(stderr, "Error: input must be a non-negative integer\n");
+        return EXIT_FAILURE;
+    }
+
+    errno = 0;
+    endptr = NULL;
+    n = strtoull(&line[i], &endptr, 10);
+    if (errno == ERANGE) {
+        fprintf(stderr, "Error: number out of range\n");
+        return EXIT_FAILURE;
+    }
+    if (endptr == NULL || endptr == &line[i]) {
+        fprintf(stderr, "Error: no digits found\n");
+        return EXIT_FAILURE;
+    }
+    while (*endptr != '\0') {
+        if (!isspace((unsigned char)*endptr)) {
+            fprintf(stderr, "Error: trailing characters in input\n");
+            return EXIT_FAILURE;
+        }
+        endptr++;
+    }
+
+    if (next_smallest_palindrome(n, &result) != 0) {
+        fprintf(stderr, "Error: no palindrome found within range\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Next smallest palindrome: %llu\n", result);
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the flagged weaknesses:**
+
+The two Flawfinder warnings both concern statically-sized character arrays (`buf[NUM_BUF_SIZE]` in `is_palindrome` and `line[LINE_BUF_SIZE]` in `main`), flagged as CWE-119/CWE-120 (buffer overflow risks). Upon review, both are **already properly mitigated** in the original code, so no functional changes were required:
+
+1. **`buf` in `is_palindrome`:** Written only via `snprintf(buf, sizeof buf, ...)`, which enforces the buffer bound. The return value is checked for both encoding errors (`len < 0`) and truncation (`(size_t)len >= sizeof buf`). Additionally, `NUM_BUF_SIZE` (32) comfortably exceeds the maximum decimal length of an `unsigned long long` (20 digits + NUL).
+
+2. **`line` in `main`:** Filled only via `fgets(line, sizeof line, stdin)`, which never writes beyond the buffer. The code also defensively NUL-terminates the last byte, detects over-long input by checking for a missing newline without EOF, and bounds the whitespace-skipping loop with `i < sizeof line - 1`.
+
+Other defensive measures already in place: `strtoull` error handling via `errno`/`endptr`, rejection of negative/signed input before parsing, `isspace`/`isdigit` calls correctly cast to `unsigned char` to avoid UB with negative `char` values, and the `NULL` check on `result` in `next_smallest_palindrome`. The code is safe as written; the rewrite simply strips comments per the warnings' resolution.

@@ -1,0 +1,23 @@
+```C
+#include <stdio.h>
+#include <stdint.h>
+
+uint32_t setLeftMostUnsetBit(uint32_t input) {
+    if (input == UINT32_MAX) {
+        return input;
+    }
+
+    uint32_t mask = 1U << 31;
+    while (input & mask) {
+        mask >>= 1;
+    }
+    return input | mask;
+}
+
+int main() {
+    uint32_t num = 0x0F;
+    num = setLeftMostUnsetBit(num);
+    printf("Modified num is: %u\n", num);
+    return 0;
+}
+```

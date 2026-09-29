@@ -1,0 +1,106 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+char **split_at_lowercase(const char *input, size_t *count)
+{
+    char **result = NULL;
+    char **temp = NULL;
+    size_t capacity = 8;
+    size_t num_tokens = 0;
+    size_t i = 0;
+    size_t start = 0;
+    size_t len;
+
+    if (input == NULL || count == NULL) {
+        return NULL;
+    }
+
+    *count = 0;
+    len = strlen(input);
+
+    result = malloc(capacity * sizeof(char *));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    while (i <= len) {
+        if (i == len || islower((unsigned char)input[i])) {
+            if (i > start) {
+                size_t token_len = i - start;
+                char *token = malloc(token_len + 1);
+                if (token == NULL) {
+                    for (size_t j = 0; j < num_tokens; j++) {
+                        free(result[j]);
+                    }
+                    free(result);
+                    return NULL;
+                }
+                memcpy(token, &input[start], token_len);
+                token[token_len] = '\0';
+
+                if (num_tokens == capacity) {
+                    capacity *= 2;
+                    temp = realloc(result, capacity * sizeof(char *));
+                    if (temp == NULL) {
+                        free(token);
+                        for (size_t j = 0; j < num_tokens; j++) {
+                            free(result[j]);
+                        }
+                        free(result);
+                        return NULL;
+                    }
+                    result = temp;
+                }
+                result[num_tokens] = token;
+                num_tokens++;
+            }
+            start = i + 1;
+        }
+        i++;
+    }
+
+    *count = num_tokens;
+    return result;
+}
+
+void free_tokens(char **tokens, size_t count)
+{
+    if (tokens == NULL) {
+        return;
+    }
+    for (size_t i = 0; i < count; i++) {
+        free(tokens[i]);
+    }
+    free(tokens);
+}
+
+int main(void)
+{
+    const char *test = "HELLOworldFOObarBAZ123";
+    size_t count = 0;
+    char **tokens = split_at_lowercase(test, &count);
+
+    if (tokens == NULL) {
+        fprintf(stderr, "Failed to split string\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Input: %s\n", test);
+    printf("Tokens: %zu\n", count);
+    for (size_t i = 0; i < count; i++) {
+        printf("  [%zu]: %s\n", i, tokens[i]);
+    }
+
+    free_tokens(tokens, count);
+    return EXIT_SUCCESS;
+}
+```
+
+This program splits a string using lowercase letters as delimiters. Key safety points:
+
+- **CWE-664**: Every allocation has a clear owner. `free_tokens` provides a single cleanup path, and on any failure mid-allocation, all previously allocated tokens are freed before returning.
+- **CWE-703**: All `malloc`/`realloc` return values are checked, `NULL` inputs are rejected, and `main` checks the function's result before use.
+- **CWE-710**: `islower` receives an `unsigned char` cast to avoid undefined behavior with negative `char` values, `realloc` uses a temporary pointer to avoid leaking the original buffer, and standard exit codes are used.

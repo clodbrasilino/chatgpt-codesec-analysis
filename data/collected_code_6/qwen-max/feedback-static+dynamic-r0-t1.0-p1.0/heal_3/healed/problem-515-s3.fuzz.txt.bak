@@ -1,0 +1,2 @@
+problem-515-s3.c:24:31:medium:UBSan: index -1 out of bounds for type 'bool[m]' (AFL crash: id:000002,sig:06,src:000000,time:628,execs:283,op:havoc,rep:2)
+problem-515-s3.c:30:0:error:Fuzzing found a crash (signal 6) on input id:000000,sig:06,src:000000,time:31,execs:22,op:havoc,rep:1; likely memory-safety defect

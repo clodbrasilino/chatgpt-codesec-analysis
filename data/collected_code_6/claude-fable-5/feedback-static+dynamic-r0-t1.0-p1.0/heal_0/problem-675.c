@@ -1,0 +1,51 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+static int safe_add(int a, int b, long low, long high, int *result)
+{
+    long sum;
+
+    if (result == NULL) {
+        return -1;
+    }
+
+    if ((b > 0 && a > INT_MAX - b) || (b < 0 && a < INT_MIN - b)) {
+        return -1;
+    }
+
+    sum = (long)a + (long)b;
+
+    if (sum >= low && sum <= high) {
+        *result = 20;
+    } else {
+        *result = (int)sum;
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    int result = 0;
+
+    if (safe_add(5, 7, 10, 19, &result) != 0) {
+        fprintf(stderr, "Addition failed due to overflow or invalid input.\n");
+        return EXIT_FAILURE;
+    }
+    printf("Result: %d\n", result);
+
+    if (safe_add(100, 200, 250, 400, &result) != 0) {
+        fprintf(stderr, "Addition failed due to overflow or invalid input.\n");
+        return EXIT_FAILURE;
+    }
+    printf("Result: %d\n", result);
+
+    if (safe_add(INT_MAX, 1, 0, 100, &result) != 0) {
+        fprintf(stderr, "Addition failed due to overflow or invalid input.\n");
+    } else {
+        printf("Result: %d\n", result);
+    }
+
+    return EXIT_SUCCESS;
+}

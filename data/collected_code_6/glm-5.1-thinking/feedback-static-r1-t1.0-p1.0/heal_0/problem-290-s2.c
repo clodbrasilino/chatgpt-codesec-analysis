@@ -1,0 +1,114 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stddef.h>
+
+typedef struct {
+    int *items;
+    size_t size;
+} List;
+
+typedef struct {
+    List *elements;
+    size_t size;
+} ListCollection;
+
+ListCollection find_max_length_lists(ListCollection input) {
+    ListCollection result;
+    result.elements = NULL;
+    result.size = 0;
+
+    if (input.elements == NULL || input.size == 0) {
+        return result;
+    }
+
+    size_t max_len = 0;
+    for (size_t i = 0; i < input.size; i++) {
+        if (input.elements[i].size > max_len) {
+            max_len = input.elements[i].size;
+        }
+    }
+
+    size_t count = 0;
+    for (size_t i = 0; i < input.size; i++) {
+        if (input.elements[i].size == max_len) {
+            count++;
+        }
+    }
+
+    if (count == 0) {
+        return result;
+    }
+
+    result.elements = malloc(count * sizeof(List));
+    if (result.elements == NULL) {
+        result.size = 0;
+        return result;
+    }
+
+    result.size = count;
+    size_t index = 0;
+    for (size_t i = 0; i < input.size; i++) {
+        if (input.elements[i].size == max_len) {
+            result.elements[index] = input.elements[i];
+            index++;
+        }
+    }
+
+    return result;
+}
+
+int main(void) {
+    List lists[3];
+
+    lists[0].items = malloc(2 * sizeof(int));
+    if (lists[0].items == NULL) {
+        return 1;
+    }
+    lists[0].items[0] = 1;
+    lists[0].items[1] = 2;
+    lists[0].size = 2;
+
+    lists[1].items = malloc(4 * sizeof(int));
+    if (lists[1].items == NULL) {
+        free(lists[0].items);
+        return 1;
+    }
+    lists[1].items[0] = 3;
+    lists[1].items[1] = 4;
+    lists[1].items[2] = 5;
+    lists[1].items[3] = 6;
+    lists[1].size = 4;
+
+    lists[2].items = malloc(4 * sizeof(int));
+    if (lists[2].items == NULL) {
+        free(lists[0].items);
+        free(lists[1].items);
+        return 1;
+    }
+    lists[2].items[0] = 7;
+    lists[2].items[1] = 8;
+    lists[2].items[2] = 9;
+    lists[2].items[3] = 10;
+    lists[2].size = 4;
+
+    ListCollection input;
+    input.elements = lists;
+    input.size = 3;
+
+    ListCollection output = find_max_length_lists(input);
+
+    for (size_t i = 0; i < output.size; i++) {
+        printf("List %zu (length %zu): ", i, output.elements[i].size);
+        for (size_t j = 0; j < output.elements[i].size; j++) {
+            printf("%d ", output.elements[i].items[j]);
+        }
+        printf("\n");
+    }
+
+    free(lists[0].items);
+    free(lists[1].items);
+    free(lists[2].items);
+    free(output.elements);
+
+    return 0;
+}

@@ -1,0 +1,54 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+#include <stdlib.h>
+
+bool all_items_equal(const char *const *list, size_t count, const char *target)
+{
+    size_t i;
+
+    if (list == NULL || target == NULL) {
+        return false;
+    }
+
+    for (i = 0; i < count; i++) {
+        if (list[i] == NULL) {
+            return false;
+        }
+        if (strcmp(list[i], target) != 0) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+int main(void)
+{
+    const char *list1[] = { "apple", "apple", "apple" };
+    const char *list2[] = { "apple", "banana", "apple" };
+    size_t count1 = sizeof(list1) / sizeof(list1[0]);
+    size_t count2 = sizeof(list2) / sizeof(list2[0]);
+
+    if (all_items_equal(list1, count1, "apple")) {
+        if (printf("list1: all items equal to \"apple\"\n") < 0) {
+            return EXIT_FAILURE;
+        }
+    } else {
+        if (printf("list1: not all items equal to \"apple\"\n") < 0) {
+            return EXIT_FAILURE;
+        }
+    }
+
+    if (all_items_equal(list2, count2, "apple")) {
+        if (printf("list2: all items equal to \"apple\"\n") < 0) {
+            return EXIT_FAILURE;
+        }
+    } else {
+        if (printf("list2: not all items equal to \"apple\"\n") < 0) {
+            return EXIT_FAILURE;
+        }
+    }
+
+    return EXIT_SUCCESS;
+}

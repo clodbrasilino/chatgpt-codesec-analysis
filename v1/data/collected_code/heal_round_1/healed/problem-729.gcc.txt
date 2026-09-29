@@ -1,0 +1,32 @@
+collected_code/healed/problem-729.c: In function 'addTwoLists':
+collected_code/healed/problem-729.c:41:22: warning: use of uninitialized value '*dummy.next' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   41 |     struct ListNode* result = dummy->next;
+      |                      ^~~~~~
+  'addTwoLists': events 1-6
+    |
+    |   10 |     struct ListNode* dummy = (struct ListNode*)malloc(sizeof(struct ListNode));
+    |      |                                                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                                                |
+    |      |                                                (1) region created on heap here
+    |   11 |     if (!dummy) return NULL;
+    |      |        ~                                        
+    |      |        |
+    |      |        (2) following 'false' branch (when 'dummy' is non-NULL)...
+    |   12 | 
+    |   13 |     struct ListNode* current = dummy;
+    |      |                      ~~~~~~~                    
+    |      |                      |
+    |      |                      (3) ...to here
+    |......
+    |   16 |     while (l1 || l2 || carry) {
+    |      |            ~~~~~~~~~~~~~~~~~                    
+    |      |                     |
+    |      |                     (4) following 'false' branch...
+    |......
+    |   41 |     struct ListNode* result = dummy->next;
+    |      |                      ~~~~~~                     
+    |      |                      |
+    |      |                      (5) ...to here
+    |      |                      (6) use of uninitialized value '*dummy.next' here
+    |
+-macosx_version_min has been renamed to -macos_version_min

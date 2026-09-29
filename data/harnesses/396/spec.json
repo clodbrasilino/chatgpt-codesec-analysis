@@ -1,0 +1,44 @@
+{
+  "task_id": 396,
+  "text": "Write a C function to check whether the given string starts and ends with the same character or not using regex.",
+  "fn_candidates": [
+    "check_char",
+    "CheckChar",
+    "checkChar",
+    "checkchar"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "check_char",
+      "args": [
+        "abba"
+      ],
+      "expected": "Valid",
+      "assert_src": "assert check_char(\"abba\") == \"Valid\""
+    },
+    {
+      "fn_name": "check_char",
+      "args": [
+        "a"
+      ],
+      "expected": "Valid",
+      "assert_src": "assert check_char(\"a\") == \"Valid\""
+    },
+    {
+      "fn_name": "check_char",
+      "args": [
+        "abcd"
+      ],
+      "expected": "Invalid",
+      "assert_src": "assert check_char(\"abcd\") == \"Invalid\""
+    }
+  ],
+  "arg_kinds": [
+    "str"
+  ],
+  "return_kind": "str",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

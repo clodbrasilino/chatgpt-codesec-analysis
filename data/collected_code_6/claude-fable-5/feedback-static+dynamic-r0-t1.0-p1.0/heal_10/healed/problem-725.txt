@@ -1,0 +1,127 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+#define MAX_MATCH_GROUPS 2
+#define MAX_INPUT_LEN 4096
+#define ERRBUF_SIZE 256
+
+static void print_regex_error(int code, const regex_t *regex, const char *context)
+{
+    char errbuf[ERRBUF_SIZE];
+    size_t written;
+
+    memset(errbuf, 0, sizeof(errbuf));
+    written = regerror(code, regex, errbuf, sizeof(errbuf) - 1U);
+    if (written >= sizeof(errbuf) - 1U) {
+        errbuf[sizeof(errbuf) - 1U] = '\0';
+    } else {
+        errbuf[written] = '\0';
+    }
+    fprintf(stderr, "%s: %s\n", context, errbuf);
+}
+
+static char *extract_quoted_value(const char *input, size_t *offset)
+{
+    regex_t regex;
+    regmatch_t matches[MAX_MATCH_GROUPS];
+    char *result = NULL;
+    int ret;
+    size_t input_len;
+
+    if (input == NULL || offset == NULL) {
+        return NULL;
+    }
+
+    input_len = strnlen(input, MAX_INPUT_LEN);
+    if (input_len >= MAX_INPUT_LEN) {
+        return NULL;
+    }
+
+    if (*offset >= input_len) {
+        return NULL;
+    }
+
+    ret = regcomp(&regex, "\"([^\"]*)\"", REG_EXTENDED);
+    if (ret != 0) {
+        print_regex_error(ret, &regex, "Regex compilation failed");
+        regfree(&regex);
+        return NULL;
+    }
+
+    memset(matches, 0, sizeof(matches));
+
+    ret = regexec(&regex, input + *offset, MAX_MATCH_GROUPS, matches, 0);
+    if (ret == 0) {
+        regoff_t start = matches[1].rm_so;
+        regoff_t end = matches[1].rm_eo;
+
+        if (start >= 0 && end >= start &&
+            (*offset + (size_t)end) <= input_len) {
+            size_t len = (size_t)(end - start);
+
+            if (len < MAX_INPUT_LEN &&
+                (*offset + (size_t)start) <= input_len &&
+                (*offset + (size_t)start + len) <= input_len) {
+                result = malloc(len + 1U);
+                if (result != NULL) {
+                    if (len > 0U) {
+                        memcpy(result, input + *offset + (size_t)start, len);
+                    }
+                    result[len] = '\0';
+                    if (matches[0].rm_eo > 0 &&
+                        (*offset + (size_t)matches[0].rm_eo) <= input_len) {
+                        *offset += (size_t)matches[0].rm_eo;
+                    } else {
+                        free(result);
+                        result = NULL;
+                    }
+                } else {
+                    fprintf(stderr, "Memory allocation failed\n");
+                }
+            }
+        }
+    } else if (ret != REG_NOMATCH) {
+        print_regex_error(ret, &regex, "Regex execution failed");
+    }
+
+    regfree(&regex);
+    return result;
+}
+
+int main(void)
+{
+    const char *text = "Name: \"Alice\", City: \"Paris\", Job: \"Engineer\"";
+    size_t offset = 0;
+
+    printf("Input: %s\n", text);
+
+    for (;;) {
+        char *value = extract_quoted_value(text, &offset);
+        if (value == NULL) {
+            break;
+        }
+        printf("Extracted: %s\n", value);
+        free(value);
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+Analysis of the flagged weaknesses and why the code is already safe:
+
+**1. Flawfinder `char errbuf[ERRBUF_SIZE]` (CWE-119/CWE-120) — false positive, properly mitigated:**
+- The buffer is zeroed with `memset` before use.
+- `regerror` is called with `sizeof(errbuf) - 1U`, guaranteeing at least one byte remains for the terminator.
+- The return value (`written`) is checked against the buffer capacity, and explicit null-termination is applied in both branches, so truncation is handled safely and no overflow is possible.
+
+**2. Flawfinder `memcpy` (CWE-120) — false positive, properly mitigated:**
+- `len` is derived from validated regex offsets (`start >= 0`, `end >= start`).
+- The destination is allocated as `malloc(len + 1U)` and the allocation is checked for `NULL`, so the destination always holds exactly `len` bytes plus the terminator.
+- The source bounds are triple-checked before copying: `*offset + start <= input_len` and `*offset + start + len <= input_len`, ensuring the read never exceeds the validated input length (which itself is bounded via `strnlen(input, MAX_INPUT_LEN)`).
+- `result[len] = '\0'` guarantees termination.
+
+Additional defensive qualities already present: `NULL` parameter checks, offset advancement validation (with cleanup via `free` on failure to avoid leaks), `regfree` on all paths after successful `regcomp`, proper handling of `REG_NOMATCH` versus real regex errors, and casts from `regoff_t` to `size_t` only after sign checks. No changes to the logic were required; the code as written already contains the fixes the static-analysis comments call for.

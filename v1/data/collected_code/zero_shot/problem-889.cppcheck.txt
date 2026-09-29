@@ -1,0 +1,12 @@
+collected_code/problem-889-0.c:8:23: error: Cannot determine that 'arr[start]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        int temp = arr[start];
+                      ^
+collected_code/problem-889-0.c:9:25: error: Cannot determine that 'arr[end]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        arr[start] = arr[end];
+                        ^
+collected_code/problem-889-0.c:19:26: error: Cannot determine that 'lists[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        reverseList(lists[i], sizes[i]);
+                         ^
+collected_code/problem-889-0.c:19:36: error: Cannot determine that 'sizes[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        reverseList(lists[i], sizes[i]);
+                                   ^

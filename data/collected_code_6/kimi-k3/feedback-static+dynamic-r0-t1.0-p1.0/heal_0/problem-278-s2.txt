@@ -1,0 +1,72 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *data;
+    size_t size;
+} Tuple;
+
+int count_before_record(const Tuple *tuple, int record, size_t *count) {
+    size_t i;
+    
+    if (tuple == NULL || count == NULL) {
+        return -1;
+    }
+    
+    if (tuple->data == NULL && tuple->size > 0) {
+        return -1;
+    }
+    
+    *count = 0;
+    
+    for (i = 0; i < tuple->size; i++) {
+        if (tuple->data[i] == record) {
+            return 0;
+        }
+        (*count)++;
+    }
+    
+    return 1;
+}
+
+int main(void) {
+    Tuple tuple;
+    int *data = NULL;
+    size_t count = 0;
+    int result;
+    int record = 30;
+    size_t i;
+    size_t size = 5;
+    
+    data = (int *)malloc(size * sizeof(int));
+    if (data == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+    
+    for (i = 0; i < size; i++) {
+        data[i] = (int)((i + 1) * 10);
+    }
+    
+    tuple.data = data;
+    tuple.size = size;
+    
+    result = count_before_record(&tuple, record, &count);
+    
+    if (result == 0) {
+        printf("Elements before record %d: %zu\n", record, count);
+    } else if (result == 1) {
+        printf("Record %d not found in tuple\n", record);
+    } else {
+        fprintf(stderr, "Invalid input parameters\n");
+    }
+    
+    free(data);
+    data = NULL;
+    tuple.data = NULL;
+    tuple.size = 0;
+    
+    return EXIT_SUCCESS;
+}
+```

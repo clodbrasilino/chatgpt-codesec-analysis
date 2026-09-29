@@ -1,0 +1,79 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *data;
+    size_t length;
+    size_t capacity;
+} Set;
+
+Set* create_set(size_t capacity) {
+    Set *set = (Set *)malloc(sizeof(Set));
+    if (set == NULL) {
+        return NULL;
+    }
+    set->data = (int *)malloc(capacity * sizeof(int));
+    if (set->data == NULL) {
+        free(set);
+        return NULL;
+    }
+    set->length = 0;
+    set->capacity = capacity;
+    return set;
+}
+
+void add_to_set(Set **set, int element) {
+    for (size_t i = 0; i < (*set)->length; ++i) {
+        if ((*set)->data[i] == element) {
+            return;
+        }
+    }
+    if ((*set)->length == (*set)->capacity) {
+        return;
+    }
+    (*set)->data[(*set)->length] = element;
+    (*set)->length++;
+}
+
+Set* convert_tuples_to_set(const int tuples[], size_t tuple_count) {
+    if (tuple_count == 0) {
+        return NULL;
+    }
+    Set *set = create_set(tuple_count);
+    if (set == NULL) {
+        return NULL;
+    }
+    for (size_t i = 0; i < tuple_count; ++i) {
+        add_to_set(&set, tuples[i]);
+    }
+    return set;
+}
+
+void print_set(Set *set) {
+    printf("{ ");
+    for (size_t i = 0; i < set->length; ++i) {
+        printf("%d", set->data[i]);
+        if (i < set->length - 1) {
+            printf(", ");
+        }
+    }
+    printf(" }\n");
+}
+
+void free_set(Set *set) {
+    free(set->data);
+    free(set);
+}
+
+int main() {
+    const int tuples[] = { 1, 2, 2, 3, 4, 4, 5 };
+    size_t tuple_count = sizeof(tuples) / sizeof(tuples[0]);
+
+    Set *set = convert_tuples_to_set(tuples, tuple_count);
+    if (set != NULL) {
+        print_set(set);
+        free_set(set);
+    }
+
+    return 0;
+}

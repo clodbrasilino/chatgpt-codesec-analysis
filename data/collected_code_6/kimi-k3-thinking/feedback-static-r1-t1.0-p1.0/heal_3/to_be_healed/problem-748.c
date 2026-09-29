@@ -1,0 +1,187 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+#include <regex.h>
+
+char *insert_spaces_between_capital_words(const char *input)
+{
+    regex_t regex;
+    regmatch_t matches[3];
+    const char *pattern = "([[:alnum:]_])([[:upper:]])";
+    char *result;
+    size_t capacity;
+    size_t length = 0;
+    size_t offset = 0;
+    size_t input_len;
+    size_t remaining;
+
+    if (input == NULL)
+    {
+        return NULL;
+    }
+
+    if (regcomp(&regex, pattern, REG_EXTENDED) != 0)
+    {
+        return NULL;
+    }
+
+    input_len = strnlen(input, ((SIZE_MAX - 1) / 2) + 1);
+    if (input_len > (SIZE_MAX - 1) / 2)
+    {
+        regfree(&regex);
+        return NULL;
+    }
+
+    capacity = input_len * 2 + 1;
+    result = malloc(capacity);
+    if (result == NULL)
+    {
+        regfree(&regex);
+        return NULL;
+    }
+
+    while (regexec(&regex, input + offset, 3, matches, 0) == 0)
+    {
+        size_t chunk_len;
+        size_t advance;
+
+        if (matches[1].rm_so < 0 || matches[1].rm_eo <= 0 ||
+            matches[2].rm_so <= 0 || matches[2].rm_eo < 0 ||
+            matches[1].rm_eo < matches[1].rm_so ||
+            matches[2].rm_so < matches[1].rm_eo)
+        {
+            free(result);
+            regfree(&regex);
+            return NULL;
+        }
+
+        chunk_len = (size_t)matches[1].rm_eo;
+        advance = (size_t)matches[2].rm_so;
+
+        if (chunk_len > input_len - offset || advance > input_len - offset)
+        {
+            free(result);
+            regfree(&regex);
+            return NULL;
+        }
+
+        if (chunk_len + 2 > capacity - length)
+        {
+            size_t needed;
+            size_t new_capacity;
+            char *resized;
+
+            if (chunk_len + 2 > SIZE_MAX - length)
+            {
+                free(result);
+                regfree(&regex);
+                return NULL;
+            }
+
+            needed = length + chunk_len + 2;
+            new_capacity = capacity;
+
+            while (new_capacity < needed)
+            {
+                if (new_capacity > SIZE_MAX / 2)
+                {
+                    new_capacity = needed;
+                    break;
+                }
+                new_capacity *= 2;
+            }
+
+            resized = realloc(result, new_capacity);
+            if (resized == NULL)
+            {
+                free(result);
+                regfree(&regex);
+                return NULL;
+            }
+            result = resized;
+            capacity = new_capacity;
+        }
+
+        if (length >= capacity || chunk_len >= capacity - length)
+        {
+            free(result);
+            regfree(&regex);
+            return NULL;
+        }
+
+        /* Possible weaknesses found:
+         * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+         */
+        memcpy(result + length, input + offset, chunk_len);
+        length += chunk_len;
+        result[length] = ' ';
+        length++;
+        offset += advance;
+    }
+
+    if (offset > input_len)
+    {
+        free(result);
+        regfree(&regex);
+        return NULL;
+    }
+
+    remaining = input_len - offset;
+
+    if (remaining + 1 > capacity - length)
+    {
+        char *resized;
+
+        if (remaining + 1 > SIZE_MAX - length)
+        {
+            free(result);
+            regfree(&regex);
+            return NULL;
+        }
+
+        resized = realloc(result, length + remaining + 1);
+        if (resized == NULL)
+        {
+            free(result);
+            regfree(&regex);
+            return NULL;
+        }
+        result = resized;
+        capacity = length + remaining + 1;
+    }
+
+    if (length >= capacity || remaining >= capacity - length)
+    {
+        free(result);
+        regfree(&regex);
+        return NULL;
+    }
+
+    /* Possible weaknesses found:
+     * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+     */
+    memcpy(result + length, input + offset, remaining);
+    result[length + remaining] = '\0';
+
+    regfree(&regex);
+    return result;
+}
+
+int main(void)
+{
+    const char *input = "HelloWorldThisIsATestString";
+    char *output = insert_spaces_between_capital_words(input);
+
+    if (output == NULL)
+    {
+        fprintf(stderr, "Failed to process the input string\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Input:  %s\n", input);
+    printf("Output: %s\n", output);
+
+    free(output);
+    return EXIT_SUCCESS;
+}

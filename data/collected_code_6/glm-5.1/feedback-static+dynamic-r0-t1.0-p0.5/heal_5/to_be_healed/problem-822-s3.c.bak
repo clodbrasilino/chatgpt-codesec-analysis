@@ -1,0 +1,67 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <string.h>
+#include <ctype.h>
+
+static bool is_valid_password(const char *password) {
+    if (password == NULL) {
+        return false;
+    }
+
+    size_t len = strlen(password);
+    if (len < 8 || len > 128) {
+        return false;
+    }
+
+    bool has_upper = false;
+    bool has_lower = false;
+    bool has_digit = false;
+    bool has_special = false;
+
+    for (size_t i = 0; i < len; i++) {
+        unsigned char c = password[i];
+        if (isupper(c)) {
+            has_upper = true;
+        } else if (islower(c)) {
+            has_lower = true;
+        } else if (isdigit(c)) {
+            has_digit = true;
+        } else if (ispunct(c)) {
+            has_special = true;
+        }
+    }
+
+    return has_upper && has_lower && has_digit && has_special;
+}
+
+int main(void) {
+    const char *test_passwords[] = {
+        "WeakPass1",
+        "NoSpecial123",
+        "nolowercaseA1!",
+        "NOUPPERCASEa1!",
+        "NoDigit!Pass",
+        "Short1!",
+        "ValidPass1!",
+        NULL
+    };
+
+    for (int i = 0; test_passwords[i] != NULL; i++) {
+        bool result = is_valid_password(test_passwords[i]);
+        printf("Password: %-15s Valid: %s\n", test_passwords[i], result ? "true" : "false");
+    }
+
+    const char *null_password = NULL;
+    /* Possible weaknesses found:
+     *  Assignment 'null_result=is_valid_password(null_password)', assigned value is 0
+     *  Calling function 'is_valid_password' returns 0
+     */
+    bool null_result = is_valid_password(null_password);
+    /* Possible weaknesses found:
+     *  Condition 'null_result' is always false
+     *  Condition 'null_result' is always false [knownConditionTrueFalse]
+     */
+    printf("Password: NULL             Valid: %s\n", null_result ? "true" : "false");
+
+    return 0;
+}

@@ -1,0 +1,87 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node* next;
+} Node;
+
+Node* createNode(int data) {
+    Node* newNode = (Node*)malloc(sizeof(Node));
+    if (newNode == NULL) {
+        exit(EXIT_FAILURE);
+    }
+    newNode->data = data;
+    newNode->next = NULL;
+    return newNode;
+}
+
+void appendNode(Node** head, int data) {
+    Node* newNode = createNode(data);
+    if (*head == NULL) {
+        *head = newNode;
+    } else {
+        Node* temp = *head;
+        while (temp->next != NULL) {
+            temp = temp->next;
+        }
+        temp->next = newNode;
+    }
+}
+
+void replaceLastElement(Node** head, Node* newList) {
+    if (*head == NULL || newList == NULL) {
+        return;
+    }
+    Node* temp = *head;
+    Node* prev = NULL;
+    while (temp->next != NULL) {
+        prev = temp;
+        temp = temp->next;
+    }
+    if (prev != NULL) {
+        prev->next = newList;
+    } else {
+        *head = newList; // Replace the single element list with newList
+    }
+    free(temp);
+}
+
+void printList(Node* head) {
+    Node* temp = head;
+    while (temp != NULL) {
+        printf("%d -> ", temp->data);
+        temp = temp->next;
+    }
+    printf("NULL\n");
+}
+
+int main() {
+    Node* list1 = NULL;
+    appendNode(&list1, 10);
+    appendNode(&list1, 20);
+    appendNode(&list1, 30);
+
+    Node* newList = NULL;
+    appendNode(&newList, 40);
+    appendNode(&newList, 50);
+
+    printf("Original List: ");
+    printList(list1);
+
+    replaceLastElement(&list1, newList);
+
+    printf("Modified List: ");
+    printList(list1);
+
+    // Free allocated memory
+    while (list1 != NULL) {
+        Node* temp = list1;
+        list1 = list1->next;
+        free(temp);
+    }
+
+    return 0;
+}
+```

@@ -1,0 +1,106 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_INPUT_LEN 4096U
+
+static size_t bounded_strlen(const char *s, size_t max_len)
+{
+    size_t len = 0;
+
+    while (len < max_len && s[len] != '\0') {
+        len++;
+    }
+    return len;
+}
+
+char *longest_common_prefix(const char *const *strs, size_t count)
+{
+    size_t prefix_len;
+    size_t i;
+    char *result;
+
+    if (strs == NULL || count == 0 || strs[0] == NULL) {
+        return NULL;
+    }
+
+    prefix_len = bounded_strlen(strs[0], MAX_INPUT_LEN);
+    if (prefix_len == MAX_INPUT_LEN && strs[0][MAX_INPUT_LEN - 1] != '\0') {
+        return NULL;
+    }
+
+    for (i = 1; i < count; i++) {
+        size_t j = 0;
+
+        if (strs[i] == NULL) {
+            return NULL;
+        }
+
+        while (j < prefix_len && strs[i][j] != '\0' && strs[i][j] == strs[0][j]) {
+            j++;
+        }
+        prefix_len = j;
+
+        if (prefix_len == 0) {
+            break;
+        }
+    }
+
+    if (prefix_len >= SIZE_MAX) {
+        return NULL;
+    }
+
+    result = malloc(prefix_len + 1);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    if (prefix_len > 0) {
+        memcpy(result, strs[0], prefix_len);
+    }
+    result[prefix_len] = '\0';
+
+    return result;
+}
+
+int main(void)
+{
+    const char *strings[] = { "flower", "flow", "flight" };
+    size_t count = sizeof(strings) / sizeof(strings[0]);
+    char *prefix;
+
+    prefix = longest_common_prefix(strings, count);
+    if (prefix == NULL) {
+        if (fprintf(stderr, "Failed to compute longest common prefix\n") < 0) {
+            return EXIT_FAILURE;
+        }
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Longest common prefix: \"%s\"\n", prefix) < 0) {
+        free(prefix);
+        return EXIT_FAILURE;
+    }
+
+    free(prefix);
+    return EXIT_SUCCESS;
+}
+```
+
+Note: you'll need `#include <stdint.h>` for `SIZE_MAX`. Here is the corrected include list:
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+```
+
+**Summary of the fixes applied:**
+
+1. **CWE-126 (`strlen` over-read):** Replaced the unbounded `strlen` call with a `bounded_strlen` helper that never reads past `MAX_INPUT_LEN` bytes. If the string reaches the bound without a terminator, the function bails out with `NULL` rather than risking an over-read on a non-terminated buffer.
+
+2. **CWE-120 (`memcpy` overflow):** The destination is allocated as `prefix_len + 1`, so the copy of `prefix_len` bytes is guaranteed to fit. Added an explicit overflow guard on `prefix_len + 1` and skipped the `memcpy` entirely when `prefix_len` is zero, making the size relationship between source, destination, and copy length explicit and verifiable.
+
+The comparison loop itself was already safe, since it checks `strs[i][j] != '\0'` before every dereference and is bounded by `prefix_len`, which is itself bounded by the (now safely computed) length of the first string.

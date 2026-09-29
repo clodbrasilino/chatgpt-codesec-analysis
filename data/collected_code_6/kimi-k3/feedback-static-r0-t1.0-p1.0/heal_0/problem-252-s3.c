@@ -1,0 +1,41 @@
+#include <stdio.h>
+#include <math.h>
+#include <complex.h>
+#include <errno.h>
+#include <stdlib.h>
+
+typedef struct {
+    double magnitude;
+    double angle;
+} PolarCoordinates;
+
+int complex_to_polar(double complex z, PolarCoordinates *result) {
+    if (result == NULL) {
+        return -1;
+    }
+    
+    errno = 0;
+    result->magnitude = cabs(z);
+    result->angle = carg(z);
+    
+    if (errno != 0) {
+        return -1;
+    }
+    
+    return 0;
+}
+
+int main(void) {
+    double complex z = 3.0 + 4.0 * I;
+    PolarCoordinates polar;
+    
+    if (complex_to_polar(z, &polar) != 0) {
+        fprintf(stderr, "Error converting complex number\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("Magnitude: %f\n", polar.magnitude);
+    printf("Angle: %f radians\n", polar.angle);
+    
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,44 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+int find_smallest(const int *list, size_t size, int *error);
+
+int find_smallest(const int *list, size_t size, int *error) {
+    if (list == NULL || size == 0) {
+        if (error != NULL) {
+            *error = 1;
+        }
+        return INT_MAX;
+    }
+
+    if (error != NULL) {
+        *error = 0;
+    }
+
+    int smallest = list[0];
+    for (size_t i = 1; i < size; ++i) {
+        if (list[i] < smallest) {
+            smallest = list[i];
+        }
+    }
+
+    return smallest;
+}
+
+int main(void) {
+    int numbers[] = {34, 12, 5, 9, -23, 45, 0, 8};
+    size_t size = sizeof(numbers) / sizeof(numbers[0]);
+    int error = 0;
+
+    int smallest = find_smallest(numbers, size, &error);
+
+    if (error != 0) {
+        fprintf(stderr, "Error: Invalid list or size provided.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Smallest number: %d\n", smallest);
+
+    return EXIT_SUCCESS;
+}

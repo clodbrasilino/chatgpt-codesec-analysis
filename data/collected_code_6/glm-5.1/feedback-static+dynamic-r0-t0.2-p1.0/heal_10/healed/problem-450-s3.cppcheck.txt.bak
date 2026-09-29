@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_10/healed/problem-450-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_10/healed/problem-450-s3.c:51:25: style: Condition 'len>extract_len' is always false [knownConditionTrueFalse]
+                if (len > extract_len) {
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_10/healed/problem-450-s3.c:41:32: note: extract_len is assigned 'len<size?len:size' here.
+            size_t extract_len = len < size ? len : size;
+                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_10/healed/problem-450-s3.c:43:39: note: Assuming condition is false
+            if (substrings[sub_count] == NULL) {
+                                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_10/healed/problem-450-s3.c:51:25: note: Condition 'len>extract_len' is always false
+                if (len > extract_len) {
+                        ^

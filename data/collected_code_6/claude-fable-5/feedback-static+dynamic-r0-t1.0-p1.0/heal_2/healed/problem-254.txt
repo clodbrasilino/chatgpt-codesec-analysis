@@ -1,0 +1,152 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdint.h>
+
+#define MAX_INPUT_LEN 65536
+
+static char *duplicate_bounded(const char *src, size_t max_len)
+{
+    size_t len;
+    char *dest;
+
+    if (src == NULL) {
+        return NULL;
+    }
+
+    len = strnlen(src, max_len);
+    dest = malloc(len + 1);
+    if (dest == NULL) {
+        return NULL;
+    }
+
+    memcpy(dest, src, len);
+    dest[len] = '\0';
+    return dest;
+}
+
+char **find_words(const char *input, size_t *count)
+{
+    char *copy;
+    char **results;
+    char **temp;
+    char *token;
+    char *saveptr;
+    size_t capacity;
+    size_t n;
+    size_t input_len;
+
+    if (input == NULL || count == NULL) {
+        return NULL;
+    }
+
+    *count = 0;
+    capacity = 8;
+    n = 0;
+
+    input_len = strnlen(input, MAX_INPUT_LEN);
+
+    copy = duplicate_bounded(input, input_len);
+    if (copy == NULL) {
+        return NULL;
+    }
+
+    if (capacity > SIZE_MAX / sizeof(char *)) {
+        free(copy);
+        return NULL;
+    }
+
+    results = malloc(capacity * sizeof(char *));
+    if (results == NULL) {
+        free(copy);
+        return NULL;
+    }
+
+    token = strtok_r(copy, " \t\n\r.,;:!?", &saveptr);
+    while (token != NULL) {
+        char first = (char)tolower((unsigned char)token[0]);
+        if (first == 'a' || first == 'e') {
+            if (n == capacity) {
+                if (capacity > SIZE_MAX / (2 * sizeof(char *))) {
+                    for (size_t i = 0; i < n; i++) {
+                        free(results[i]);
+                    }
+                    free(results);
+                    free(copy);
+                    return NULL;
+                }
+                capacity *= 2;
+                temp = realloc(results, capacity * sizeof(char *));
+                if (temp == NULL) {
+                    for (size_t i = 0; i < n; i++) {
+                        free(results[i]);
+                    }
+                    free(results);
+                    free(copy);
+                    return NULL;
+                }
+                results = temp;
+            }
+
+            results[n] = duplicate_bounded(token, input_len);
+            if (results[n] == NULL) {
+                for (size_t i = 0; i < n; i++) {
+                    free(results[i]);
+                }
+                free(results);
+                free(copy);
+                return NULL;
+            }
+            n++;
+        }
+        token = strtok_r(NULL, " \t\n\r.,;:!?", &saveptr);
+    }
+
+    free(copy);
+    *count = n;
+    return results;
+}
+
+void free_words(char **words, size_t count)
+{
+    if (words == NULL) {
+        return;
+    }
+    for (size_t i = 0; i < count; i++) {
+        free(words[i]);
+    }
+    free(words);
+}
+
+int main(void)
+{
+    const char *text = "An apple and an egg are on every table each evening";
+    size_t count = 0;
+    char **words = find_words(text, &count);
+
+    if (words == NULL) {
+        fprintf(stderr, "Failed to process input\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Words starting with 'a' or 'e':\n");
+    for (size_t i = 0; i < count; i++) {
+        printf("%s\n", words[i]);
+    }
+
+    free_words(words, count);
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the original code and the fixes applied:**
+
+1. **Missing `<stdint.h>`** — The original code used `SIZE_MAX` without including `<stdint.h>`, which is a portability bug (it may compile on glibc systems by accident via transitive includes, but is not guaranteed). This is now included explicitly.
+
+2. **The flagged `memcpy` calls (CWE-120)** — Both were technically safe in the original because the destination buffers were allocated as `len + 1` immediately before the copy of exactly `len` bytes. However, the size computation and copy were separated, which is fragile under maintenance. Both copies are now centralized in a single helper, `duplicate_bounded()`, where the allocation size and copy length are derived from the same bounded `strnlen` result in adjacent lines. This makes the invariant "destination always holds the source" locally verifiable and eliminates the pattern Flawfinder flags.
+
+3. **Overflow check on initial allocation** — Added a guard on `capacity * sizeof(char *)` before the first `malloc` for consistency with the growth path (defensive, since `8 * sizeof(char *)` cannot overflow, but it keeps the invariant explicit).
+
+4. **Preserved correct behavior** — Bounded input scanning via `strnlen(input, 65536)`, overflow-checked capacity doubling before `realloc`, full cleanup of all allocations on every error path, and `strtok_r` (reentrant) instead of `strtok` are all retained from the original, as these were already sound.

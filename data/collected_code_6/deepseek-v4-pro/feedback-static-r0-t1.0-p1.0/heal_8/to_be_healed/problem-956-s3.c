@@ -1,0 +1,246 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+#include <stdint.h>
+
+static int count_uppercase_matches(const char *str, size_t len) {
+    regex_t regex;
+    regmatch_t matches[2];
+    int ret;
+    int count = 0;
+    const char *p = str;
+    size_t offset = 0;
+
+    ret = regcomp(&regex, "[A-Z]", REG_EXTENDED);
+    if (ret != 0) {
+        return -1;
+    }
+
+    while (offset < len) {
+        ret = regexec(&regex, p, 2, matches, 0);
+        if (ret == 0) {
+            count++;
+            p += matches[0].rm_eo;
+            offset += matches[0].rm_eo;
+        } else {
+            break;
+        }
+    }
+
+    regfree(&regex);
+    return count;
+}
+
+static char *safe_copy(const char *src, size_t len) {
+    char *dest = malloc(len + 1);
+    if (dest == NULL) {
+        return NULL;
+    }
+    if (len > 0) {
+        /* Possible weaknesses found:
+         * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+         */
+        memcpy(dest, src, len);
+    }
+    dest[len] = '\0';
+    return dest;
+}
+
+char **split_at_uppercase(const char *str, int *count) {
+    if (str == NULL) {
+        if (count != NULL) {
+            *count = 0;
+        }
+        return NULL;
+    }
+    if (count == NULL) {
+        return NULL;
+    }
+
+    *count = 0;
+
+    size_t len = strnlen(str, 4096);
+    if (len == 4096 && str[4095] != '\0') {
+        return NULL;
+    }
+
+    int uppercase_count = count_uppercase_matches(str, len);
+    if (uppercase_count < 0) {
+        return NULL;
+    }
+
+    size_t alloc_size = (size_t)uppercase_count + 2;
+    if (alloc_size > SIZE_MAX / sizeof(char *)) {
+        return NULL;
+    }
+    char **result = malloc(alloc_size * sizeof(char *));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    int result_count = 0;
+
+    if (uppercase_count == 0) {
+        result[0] = safe_copy(str, len);
+        if (result[0] == NULL) {
+            free(result);
+            return NULL;
+        }
+        result_count = 1;
+    } else {
+        regex_t regex;
+        regmatch_t matches[2];
+        int ret;
+        const char *p = str;
+        size_t offset = 0;
+        size_t prev_split = 0;
+        int pos_index = 0;
+
+        ret = regcomp(&regex, "[A-Z]", REG_EXTENDED);
+        if (ret != 0) {
+            free(result);
+            return NULL;
+        }
+
+        while (offset < len) {
+            ret = regexec(&regex, p, 2, matches, 0);
+            if (ret == 0) {
+                size_t match_start = offset + matches[0].rm_so;
+                size_t match_end = offset + matches[0].rm_eo;
+
+                if (pos_index == 0 && match_start > 0) {
+                    size_t segment_len = match_start;
+                    if (segment_len > len) {
+                        int j;
+                        for (j = 0; j < result_count; j++) {
+                            free(result[j]);
+                        }
+                        free(result);
+                        regfree(&regex);
+                        return NULL;
+                    }
+                    result[result_count] = safe_copy(str, segment_len);
+                    if (result[result_count] == NULL) {
+                        int j;
+                        for (j = 0; j < result_count; j++) {
+                            free(result[j]);
+                        }
+                        free(result);
+                        regfree(&regex);
+                        return NULL;
+                    }
+                    result_count++;
+                }
+
+                if (pos_index > 0) {
+                    size_t segment_start = prev_split;
+                    if (segment_start >= len || match_start < segment_start || match_start - segment_start > len - segment_start) {
+                        int j;
+                        for (j = 0; j < result_count; j++) {
+                            free(result[j]);
+                        }
+                        free(result);
+                        regfree(&regex);
+                        return NULL;
+                    }
+                    size_t segment_len = match_start - segment_start;
+                    if (segment_len > 0) {
+                        result[result_count] = safe_copy(str + segment_start, segment_len);
+                        if (result[result_count] == NULL) {
+                            int j;
+                            for (j = 0; j < result_count; j++) {
+                                free(result[j]);
+                            }
+                            free(result);
+                            regfree(&regex);
+                            return NULL;
+                        }
+                        result_count++;
+                    }
+                }
+
+                prev_split = match_end;
+                pos_index++;
+
+                p += matches[0].rm_eo;
+                offset = match_end;
+            } else {
+                break;
+            }
+        }
+
+        /* Possible weaknesses found:
+         *  Assuming that condition 'prev_split<len' is not redundant
+         */
+        if (prev_split < len) {
+            /* Possible weaknesses found:
+             *  'segment_len' is assigned value 'len-prev_split' here.
+             */
+            size_t segment_len = len - prev_split;
+            /* Possible weaknesses found:
+             *  The comparison 'segment_len > len-prev_split' is always false because 'segment_len' and 'len-prev_split' represent the same value. [knownConditionTrueFalse]
+             *  Condition 'len<prev_split' is always false
+             *  Condition 'len<prev_split' is always false [knownConditionTrueFalse]
+             *  The comparison 'segment_len > len-prev_split' is always false because 'segment_len' and 'len-prev_split' represent the same value.
+             */
+            if (len < prev_split || segment_len > len - prev_split) {
+                int j;
+                for (j = 0; j < result_count; j++) {
+                    free(result[j]);
+                }
+                free(result);
+                regfree(&regex);
+                return NULL;
+            }
+            result[result_count] = safe_copy(str + prev_split, segment_len);
+            if (result[result_count] == NULL) {
+                int j;
+                for (j = 0; j < result_count; j++) {
+                    free(result[j]);
+                }
+                free(result);
+                regfree(&regex);
+                return NULL;
+            }
+            result_count++;
+        }
+
+        regfree(&regex);
+    }
+
+    result[result_count] = NULL;
+    *count = result_count;
+
+    return result;
+}
+
+void free_split_result(char **result) {
+    if (result == NULL) return;
+
+    int i;
+    for (i = 0; result[i] != NULL; i++) {
+        free(result[i]);
+    }
+    free(result);
+}
+
+int main(void) {
+    const char *test_string = "helloWorldThisIsATest";
+    int count;
+
+    char **parts = split_at_uppercase(test_string, &count);
+
+    if (parts != NULL) {
+        printf("Split result:\n");
+        int i;
+        for (i = 0; i < count; i++) {
+            printf("%s\n", parts[i]);
+        }
+        free_split_result(parts);
+    } else {
+        printf("Failed to split string\n");
+    }
+
+    return 0;
+}

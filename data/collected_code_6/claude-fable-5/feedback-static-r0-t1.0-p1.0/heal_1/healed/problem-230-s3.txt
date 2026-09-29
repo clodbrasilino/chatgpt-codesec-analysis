@@ -1,0 +1,61 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_STR_LEN 1024
+
+void replace_spaces(char *str, char replacement)
+{
+    size_t i;
+    size_t len;
+
+    if (str == NULL) {
+        return;
+    }
+
+    len = strnlen(str, MAX_STR_LEN);
+    for (i = 0; i < len; i++) {
+        if (str[i] == ' ') {
+            str[i] = replacement;
+        }
+    }
+}
+
+int main(void)
+{
+    const char *original = "Hello world this is a test";
+    char *buffer;
+    size_t size;
+
+    size = strnlen(original, MAX_STR_LEN) + 1;
+    buffer = malloc(size);
+    if (buffer == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    if (snprintf(buffer, size, "%s", original) < 0) {
+        fprintf(stderr, "String copy failed\n");
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+
+    printf("Before: %s\n", buffer);
+    replace_spaces(buffer, '_');
+    printf("After:  %s\n", buffer);
+
+    free(buffer);
+    buffer = NULL;
+
+    return EXIT_SUCCESS;
+}
+```
+
+Key changes from the original:
+
+1. **`strlen` → `strnlen`**: Both flagged `strlen` calls were replaced with `strnlen`, which takes a maximum length bound (`MAX_STR_LEN`). This directly addresses the CWE-126 (buffer over-read) concern — if a string is not NUL-terminated, `strnlen` stops scanning at the bound instead of reading past the buffer.
+
+2. **`MAX_STR_LEN` constant**: Added a defined upper bound (1024 bytes) that serves as the safety limit for all string-length operations.
+
+Everything else in the original was already sound: `snprintf` with an explicit size is safe for copying, `malloc` return is checked, the buffer is freed and nulled, and `replace_spaces` guards against `NULL` input. Note that `strnlen` is POSIX (and available in glibc via `<string.h>`); on strictly C89/C99 platforms without it, a small bounded-scan helper would be needed instead.

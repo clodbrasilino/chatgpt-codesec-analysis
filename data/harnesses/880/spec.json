@@ -1,0 +1,50 @@
+{
+  "task_id": 880,
+  "text": "Write a C function to find number of solutions in quadratic equation.",
+  "fn_candidates": [
+    "Check_Solution",
+    "CheckSolution",
+    "CheckSolution",
+    "CheckSolution"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "Check_Solution",
+      "args": [
+        2,
+        5,
+        2
+      ],
+      "expected": "2 solutions",
+      "assert_src": "assert Check_Solution(2,5,2) == \"2 solutions\""
+    },
+    {
+      "fn_name": "Check_Solution",
+      "args": [
+        1,
+        1,
+        1
+      ],
+      "expected": "No solutions",
+      "assert_src": "assert Check_Solution(1,1,1) == \"No solutions\""
+    },
+    {
+      "fn_name": "Check_Solution",
+      "args": [
+        1,
+        2,
+        1
+      ],
+      "expected": "1 solution",
+      "assert_src": "assert Check_Solution(1,2,1) == \"1 solution\""
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "str",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

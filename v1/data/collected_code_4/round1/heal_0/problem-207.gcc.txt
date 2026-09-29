@@ -1,0 +1,17 @@
+./collected_code_4/round1//heal_0//problem-207.c: In function 'min':
+./collected_code_4/round1//heal_0//problem-207.c:9:16: error: too few arguments to function 'min'
+    9 |     return min(min(x, y), z);
+      |                ^~~
+./collected_code_4/round1//heal_0//problem-207.c:8:5: note: declared here
+    8 | int min(int x, int y, int z) {
+      |     ^~~
+./collected_code_4/round1//heal_0//problem-207.c:9:12: error: too few arguments to function 'min'
+    9 |     return min(min(x, y), z);
+      |            ^~~
+./collected_code_4/round1//heal_0//problem-207.c:8:5: note: declared here
+    8 | int min(int x, int y, int z) {
+      |     ^~~
+./collected_code_4/round1//heal_0//problem-207.c: In function 'longestRepeatingSubsequences':
+./collected_code_4/round1//heal_0//problem-207.c:30:40: warning: implicit declaration of function 'max' [-Wimplicit-function-declaration]
+   30 |                 dp[i][j][str[i - 1]] = max(dp[i][j][str[i - 1]],
+      |                                        ^~~

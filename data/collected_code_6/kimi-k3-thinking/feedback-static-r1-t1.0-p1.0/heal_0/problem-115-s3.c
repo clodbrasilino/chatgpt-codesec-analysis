@@ -1,0 +1,129 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdbool.h>
+
+#define MAX_KEY_LEN 64
+#define MAX_VALUE_LEN 256
+
+typedef struct {
+    char key[MAX_KEY_LEN];
+    char value[MAX_VALUE_LEN];
+} DictEntry;
+
+typedef struct {
+    DictEntry *entries;
+    size_t count;
+    size_t capacity;
+} Dictionary;
+
+static bool dict_init(Dictionary *dict, size_t capacity)
+{
+    if (dict == NULL) {
+        return false;
+    }
+    dict->entries = NULL;
+    dict->count = 0;
+    dict->capacity = 0;
+    if (capacity == 0) {
+        return true;
+    }
+    dict->entries = calloc(capacity, sizeof(DictEntry));
+    if (dict->entries == NULL) {
+        return false;
+    }
+    dict->capacity = capacity;
+    return true;
+}
+
+static void dict_free(Dictionary *dict)
+{
+    if (dict == NULL) {
+        return;
+    }
+    free(dict->entries);
+    dict->entries = NULL;
+    dict->count = 0;
+    dict->capacity = 0;
+}
+
+static bool dict_add(Dictionary *dict, const char *key, const char *value)
+{
+    if (dict == NULL || key == NULL || value == NULL) {
+        return false;
+    }
+    if (dict->entries == NULL || dict->count >= dict->capacity) {
+        return false;
+    }
+    if (snprintf(dict->entries[dict->count].key, MAX_KEY_LEN, "%s", key) >= MAX_KEY_LEN) {
+        return false;
+    }
+    if (snprintf(dict->entries[dict->count].value, MAX_VALUE_LEN, "%s", value) >= MAX_VALUE_LEN) {
+        return false;
+    }
+    dict->count++;
+    return true;
+}
+
+static bool dict_is_empty(const Dictionary *dict)
+{
+    if (dict == NULL) {
+        return true;
+    }
+    return dict->count == 0;
+}
+
+bool all_dicts_empty(const Dictionary *dicts, size_t num_dicts)
+{
+    if (dicts == NULL && num_dicts > 0) {
+        return false;
+    }
+    for (size_t i = 0; i < num_dicts; i++) {
+        if (!dict_is_empty(&dicts[i])) {
+            return false;
+        }
+    }
+    return true;
+}
+
+int main(void)
+{
+    Dictionary dicts[3];
+    const size_t num_dicts = 3;
+    int status = EXIT_SUCCESS;
+
+    for (size_t i = 0; i < num_dicts; i++) {
+        if (!dict_init(&dicts[i], 10)) {
+            fprintf(stderr, "Failed to initialize dictionary %zu\n", i);
+            for (size_t j = 0; j < i; j++) {
+                dict_free(&dicts[j]);
+            }
+            return EXIT_FAILURE;
+        }
+    }
+
+    if (all_dicts_empty(dicts, num_dicts)) {
+        printf("All dictionaries are empty\n");
+    } else {
+        printf("Not all dictionaries are empty\n");
+    }
+
+    if (!dict_add(&dicts[1], "name", "Alice")) {
+        fprintf(stderr, "Failed to add entry\n");
+        status = EXIT_FAILURE;
+        goto cleanup;
+    }
+
+    if (all_dicts_empty(dicts, num_dicts)) {
+        printf("All dictionaries are empty\n");
+    } else {
+        printf("Not all dictionaries are empty\n");
+    }
+
+cleanup:
+    for (size_t i = 0; i < num_dicts; i++) {
+        dict_free(&dicts[i]);
+    }
+
+    return status;
+}

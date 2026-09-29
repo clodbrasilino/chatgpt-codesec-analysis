@@ -1,0 +1,71 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+
+bool is_alternating(const char *str) {
+    if (str == NULL || str[0] == '\0' || str[1] == '\0') {
+        return false;
+    }
+
+    char first = str[0];
+    char second = str[1];
+
+    if (first == second) {
+        return false;
+    }
+
+    for (size_t i = 2; str[i] != '\0'; i++) {
+        if (i % 2 == 0) {
+            if (str[i] != first) {
+                return false;
+            }
+        } else {
+            if (str[i] != second) {
+                return false;
+            }
+        }
+    }
+
+    return true;
+}
+
+int main(void) {
+    const char *test1 = "ababab";
+    const char *test2 = "abcabc";
+    const char *test3 = "a";
+    const char *test4 = "aaaa";
+    const char *test5 = "ababa";
+
+    if (is_alternating(test1)) {
+        printf("test1: Alternating\n");
+    } else {
+        printf("test1: Not Alternating\n");
+    }
+
+    if (is_alternating(test2)) {
+        printf("test2: Alternating\n");
+    } else {
+        printf("test2: Not Alternating\n");
+    }
+
+    if (is_alternating(test3)) {
+        printf("test3: Alternating\n");
+    } else {
+        printf("test3: Not Alternating\n");
+    }
+
+    if (is_alternating(test4)) {
+        printf("test4: Alternating\n");
+    } else {
+        printf("test4: Not Alternating\n");
+    }
+
+    if (is_alternating(test5)) {
+        printf("test5: Alternating\n");
+    } else {
+        printf("test5: Not Alternating\n");
+    }
+
+    return 0;
+}
+```

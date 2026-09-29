@@ -1,0 +1,54 @@
+#include <stdio.h>
+#include <string.h>
+#include <regex.h>
+
+int regsub(regex_t *preg, const char *string, size_t nmatch, regmatch_t pmatch[], char *buffer, size_t len, const char *replacement);
+
+void swap_spaces_underscores(char *str) {
+    regex_t space_regex, underscore_regex;
+    char tmp[1024];
+
+    if (regcomp(&space_regex, " ", REG_EXTENDED) || regcomp(&underscore_regex, "_", REG_EXTENDED)) {
+        return;
+    }
+
+    if (regexec(&space_regex, str, 0, NULL, 0) == 0) {
+        regsub(&space_regex, str, 0, NULL, tmp, sizeof(tmp), "_");
+        strcpy(str, tmp);
+    }
+
+    if (regexec(&underscore_regex, str, 0, NULL, 0) == 0) {
+        regsub(&space_regex, str, 0, NULL, tmp, sizeof(tmp), " ");
+        strcpy(str, tmp);
+    }
+
+    regfree(&space_regex);
+    regfree(&underscore_regex);
+}
+
+int regsub(regex_t *preg, const char *string, size_t nmatch, regmatch_t pmatch[], char *buffer, size_t len, const char *replacement) {
+    size_t pos = 0, match_pos = 0, match_len;
+    for (int i = 0; i < nmatch; ++i) {
+        if (pmatch[i].rm_so != -1) {
+            match_pos = pmatch[i].rm_so;
+            match_len = pmatch[i].rm_eo - pmatch[i].rm_so;
+            strncpy(buffer + pos, string + pos, match_pos - pos);
+            pos += match_pos - pos;
+            strncpy(buffer + pos, replacement, strlen(replacement));
+            pos += strlen(replacement);
+            pos = match_pos + match_len;
+        }
+    }
+    strcpy(buffer + pos, string + pos);
+    return 0;
+}
+
+int main() {
+    char test_str[] = "Hello World and_Hello_Under_Score";
+
+    swap_spaces_underscores(test_str);
+
+    printf("%s\n", test_str);
+
+    return 0;
+}

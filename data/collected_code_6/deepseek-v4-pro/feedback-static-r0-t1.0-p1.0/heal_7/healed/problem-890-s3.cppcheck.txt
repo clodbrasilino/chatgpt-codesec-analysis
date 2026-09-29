@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-890-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-890-s3.c:26:12: style: Condition 'n1>n2' is always false [knownConditionTrueFalse]
+    if (n1 > n2) {
+           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-890-s3.c:23:27: note: Assignment 'n1=sizeof(arr1)/sizeof(arr1[0])', assigned value is 6
+    int n1 = sizeof(arr1) / sizeof(arr1[0]);
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-890-s3.c:26:12: note: Condition 'n1>n2' is always false
+    if (n1 > n2) {
+           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-890-s3.c:28:19: style: Condition 'n2>n1' is always true [knownConditionTrueFalse]
+    } else if (n2 > n1) {
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-890-s3.c:24:27: note: Assignment 'n2=sizeof(arr2)/sizeof(arr2[0])', assigned value is 7
+    int n2 = sizeof(arr2) / sizeof(arr2[0]);
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-890-s3.c:28:19: note: Condition 'n2>n1' is always true
+    } else if (n2 > n1) {
+                  ^

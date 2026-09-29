@@ -1,0 +1,86 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+#include <stdlib.h>
+
+#define MAX_WORD_LEN 128
+
+bool is_word_length_even(const char *word, size_t max_len)
+{
+    size_t len;
+
+    if (word == NULL) {
+        return false;
+    }
+
+    len = strnlen(word, max_len);
+    return (len % 2U) == 0U;
+}
+
+static int flush_stdin(void)
+{
+    int ch;
+
+    do {
+        ch = getchar();
+    } while (ch != '\n' && ch != EOF);
+
+    return ch;
+}
+
+int main(void)
+{
+    char buffer[MAX_WORD_LEN];
+    size_t len;
+
+    printf("Enter a word: ");
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error: failed to read input.\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1U] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+
+    if (len == sizeof(buffer) - 1U && buffer[len - 1U] != '\n') {
+        fprintf(stderr, "Error: input too long (maximum %u characters).\n",
+                (unsigned int)(sizeof(buffer) - 2U));
+        (void)flush_stdin();
+        return EXIT_FAILURE;
+    }
+
+    if (len > 0U && buffer[len - 1U] == '\n') {
+        buffer[len - 1U] = '\0';
+        len--;
+    }
+
+    if (len == 0U) {
+        fprintf(stderr, "Error: no word entered.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (is_word_length_even(buffer, sizeof(buffer))) {
+        printf("The word \"%s\" has an even length (%zu).\n", buffer, len);
+    } else {
+        printf("The word \"%s\" has an odd length (%zu).\n", buffer, len);
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+Key changes addressing the flagged weaknesses:
+
+1. **CWE-126 (`strlen` over-read):** Replaced both `strlen` calls with `strnlen`, which takes an explicit maximum length and can never read past the buffer bounds, even if the string were somehow not NUL-terminated.
+
+2. **CWE-119/CWE-120 (statically-sized array):** The fixed-size buffer is retained (it's appropriate here), but it is now hardened:
+   - An explicit `buffer[sizeof(buffer) - 1U] = '\0';` guarantees NUL-termination as defense-in-depth.
+   - Truncated input is detected (buffer full with no trailing newline) and rejected with a clear error, instead of silently processing a partial word.
+   - Leftover characters in `stdin` are drained via `flush_stdin()` so the stream is left in a sane state.
+
+3. `is_word_length_even` now receives a bound parameter so it cannot over-read regardless of caller behavior, and the `NULL` check is preserved.
+
+The original code was already largely safe (`fgets` bounds the read and NUL-terminates), so the warnings were mostly low-risk, but these changes eliminate the residual concerns and improve robustness against truncated input.

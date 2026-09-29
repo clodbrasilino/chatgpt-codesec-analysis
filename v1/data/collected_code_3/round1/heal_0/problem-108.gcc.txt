@@ -1,0 +1,11 @@
+collected_code_3/problem-108-1.c: In function 'mergeSortedArrays':
+collected_code_3/problem-108-1.c:60:25: error: 'INT_MAX' undeclared (first use in this function)
+   60 |             root->val = INT_MAX;
+      |                         ^~~~~~~
+collected_code_3/problem-108-1.c:3:1: note: 'INT_MAX' is defined in header '<limits.h>'; did you forget to '#include <limits.h>'?
+    2 | #include <stdlib.h>
+  +++ |+#include <limits.h>
+    3 | 
+collected_code_3/problem-108-1.c:60:25: note: each undeclared identifier is reported only once for each function it appears in
+   60 |             root->val = INT_MAX;
+      |                         ^~~~~~~

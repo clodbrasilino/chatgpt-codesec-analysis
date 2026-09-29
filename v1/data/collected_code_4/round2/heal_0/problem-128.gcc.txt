@@ -1,0 +1,15 @@
+./collected_code_4/round2//heal_0/problem-128.c: In function 'main':
+./collected_code_4/round2//heal_0/problem-128.c:40:14: warning: dereference of possibly-NULL 'words' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   40 |     words[0] = "Horse";
+      |     ~~~~~~~~~^~~~~~~~~
+  'main': events 1-2
+    |
+    |   39 |     char **words = (char **)malloc(size * sizeof(char *));
+    |      |                             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                             |
+    |      |                             (1) this call could return NULL
+    |   40 |     words[0] = "Horse";
+    |      |     ~~~~~~~~~~~~~~~~~~       
+    |      |              |
+    |      |              (2) 'words' could be NULL: unchecked value from (1)
+    |

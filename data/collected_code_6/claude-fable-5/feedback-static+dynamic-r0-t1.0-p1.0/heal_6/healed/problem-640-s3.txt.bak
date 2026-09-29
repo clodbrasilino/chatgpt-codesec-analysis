@@ -1,0 +1,100 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char *remove_parentheses(const char *input)
+{
+    size_t len;
+    size_t i;
+    size_t j;
+    int depth;
+    char *result;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    len = strlen(input);
+    result = calloc(len + 1, sizeof(char));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    depth = 0;
+    j = 0;
+    for (i = 0; i < len; i++) {
+        if (input[i] == '(') {
+            depth++;
+        } else if (input[i] == ')') {
+            if (depth > 0) {
+                depth--;
+            }
+        } else if (depth == 0) {
+            result[j] = input[i];
+            j++;
+        }
+    }
+    result[j] = '\0';
+
+    return result;
+}
+
+int main(void)
+{
+    const char *tests[] = {
+        "python(java)",
+        "string(remove)",
+        "alpha(beta(gamma)delta)",
+        "Hello (remove me) World",
+        "abc(def(ghi)jkl)mno",
+        "no parentheses here"
+    };
+    size_t num_tests;
+    size_t i;
+
+    num_tests = sizeof(tests) / sizeof(tests[0]);
+
+    for (i = 0; i < num_tests; i++) {
+        char *output = remove_parentheses(tests[i]);
+        if (output == NULL) {
+            fprintf(stderr, "Memory allocation failed\n");
+            return EXIT_FAILURE;
+        }
+        if (printf("%s\n", output) < 0) {
+            free(output);
+            return EXIT_FAILURE;
+        }
+        free(output);
+        output = NULL;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The weaknesses described in the comments (garbage output such as `@��` and `���` instead of the expected strings) are the classic symptoms of one of the following defects in an earlier revision:
+
+1. **Uninitialized buffer** — allocating with `malloc` and never writing the null terminator, so `printf("%s", ...)` reads past valid data into uninitialized heap memory.
+2. **Use-after-free** — freeing the buffer before printing it, so the output reflects heap metadata or reused memory.
+3. **Returning a pointer to a stack-local array** — the buffer goes out of scope, and the caller reads clobbered stack memory.
+
+The version above is safe against all three:
+
+- `calloc` zero-initializes the buffer, so the string is always terminated even before the explicit `result[j] = '\0';` (which is kept as defense in depth).
+- The allocation size `len + 1` guarantees room for the terminator; since output length can never exceed input length, no overflow is possible.
+- The buffer is heap-allocated and returned to the caller, which frees it only *after* printing, and the pointer is nulled after `free` to prevent accidental reuse.
+- `NULL` input and allocation failure are both handled explicitly, and `printf`'s return value is checked.
+
+Expected output:
+
+```
+python
+string
+alpha
+Hello  World
+abcmno
+no parentheses here
+```

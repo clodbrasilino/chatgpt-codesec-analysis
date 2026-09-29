@@ -1,0 +1,50 @@
+{
+  "task_id": 617,
+  "text": "Write a C function to check for the number of jumps required of given length to reach a point of form (d, 0) from origin in a 2d plane.",
+  "fn_candidates": [
+    "min_Jumps",
+    "MinJumps",
+    "minJumps",
+    "minJumps"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "min_Jumps",
+      "args": [
+        3,
+        4,
+        11
+      ],
+      "expected": 3.5,
+      "assert_src": "assert min_Jumps(3,4,11)==3.5"
+    },
+    {
+      "fn_name": "min_Jumps",
+      "args": [
+        3,
+        4,
+        0
+      ],
+      "expected": 0,
+      "assert_src": "assert min_Jumps(3,4,0)==0"
+    },
+    {
+      "fn_name": "min_Jumps",
+      "args": [
+        11,
+        14,
+        11
+      ],
+      "expected": 1,
+      "assert_src": "assert min_Jumps(11,14,11)==1"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "float",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

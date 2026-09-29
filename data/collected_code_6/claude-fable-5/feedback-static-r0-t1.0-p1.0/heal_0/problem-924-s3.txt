@@ -1,0 +1,44 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int max_of_two(int a, int b);
+
+int max_of_two(int a, int b)
+{
+    return (a > b) ? a : b;
+}
+
+int main(void)
+{
+    int x;
+    int y;
+    int result;
+
+    printf("Enter first number: ");
+    if (scanf("%d", &x) != 1) {
+        fprintf(stderr, "Invalid input for first number\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter second number: ");
+    if (scanf("%d", &y) != 1) {
+        fprintf(stderr, "Invalid input for second number\n");
+        return EXIT_FAILURE;
+    }
+
+    result = max_of_two(x, y);
+
+    if (printf("Maximum: %d\n", result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+This implementation addresses the specified weaknesses as follows:
+
+- **CWE-703**: Every call to `scanf` is checked against its expected return value, and even the final `printf` return value is verified. Failure paths exit with `EXIT_FAILURE`.
+- **CWE-664**: No dynamically allocated resources, file handles, or other lifetime-managed resources are used, so there is nothing left unreleased or used outside its valid lifetime.
+- **CWE-710**: The code follows standard conventions — `int main(void)` signature, a forward declaration before use, `EXIT_SUCCESS`/`EXIT_FAILURE` from `<stdlib.h>`, braces on all control structures, and no implicit conversions or undefined behavior.

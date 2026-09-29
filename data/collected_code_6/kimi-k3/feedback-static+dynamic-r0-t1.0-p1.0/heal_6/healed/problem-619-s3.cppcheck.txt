@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-619-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-619-s3.c:103:40: style: Condition 'out_pos+nlen<=output_size' is always true [knownConditionTrueFalse]
+        if (nlen > 0 && out_pos + nlen <= output_size)
+                                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-619-s3.c:100:32: note: Assuming that condition 'out_pos+nlen+2>output_size' is not redundant
+            out_pos + nlen + 2 > output_size)
+                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-619-s3.c:103:40: note: Condition 'out_pos+nlen<=output_size' is always true
+        if (nlen > 0 && out_pos + nlen <= output_size)
+                                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-619-s3.c:118:42: style: Condition 'out_pos+rem_len<=output_size' is always true [knownConditionTrueFalse]
+    if (rem_len > 0 && out_pos + rem_len <= output_size)
+                                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-619-s3.c:115:31: note: Assuming that condition 'out_pos+rem_len+1>output_size' is not redundant
+        out_pos + rem_len + 1 > output_size)
+                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-619-s3.c:118:42: note: Condition 'out_pos+rem_len<=output_size' is always true
+    if (rem_len > 0 && out_pos + rem_len <= output_size)
+                                         ^

@@ -1,0 +1,73 @@
+```c
+#include <stdio.h>
+#include <stddef.h>
+#include <ctype.h>
+
+size_t longest_word_length(const char *str)
+{
+    size_t max_len = 0;
+    size_t current_len = 0;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    while (*str != '\0') {
+        if (isspace((unsigned char)*str)) {
+            if (current_len > max_len) {
+                max_len = current_len;
+            }
+            current_len = 0;
+        } else {
+            current_len++;
+        }
+        str++;
+    }
+
+    if (current_len > max_len) {
+        max_len = current_len;
+    }
+
+    return max_len;
+}
+
+int main(void)
+{
+    char buffer[1024];
+    size_t result;
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    result = longest_word_length(buffer);
+
+    if (printf("Longest word length: %zu\n", result) < 0) {
+        return 1;
+    }
+
+    return 0;
+}
+```
+
+**Analysis of the original code and applied fixes:**
+
+The original code was already in good shape regarding the Flawfinder warning (CWE-119/CWE-120). Here's why:
+
+1. **The statically-sized buffer warning (`char buffer[1024]`)** — Flawfinder flags all fixed-size arrays as *potential* overflow risks, but this is a heuristic, not a confirmed vulnerability. The actual risk depends on how the buffer is filled.
+
+2. **Bounds checking was already correct** — The code uses `fgets(buffer, sizeof(buffer), stdin)`, which limits input to `sizeof(buffer) - 1` characters and always null-terminates. This is the canonical safe pattern, unlike `gets()` or unbounded `scanf("%s", ...)`.
+
+3. **Defensive additions in the rewrite:**
+   - Explicit `buffer[sizeof(buffer) - 1] = '\0';` as a belt-and-suspenders guarantee of null termination (harmless and makes the invariant explicit for auditors and static analyzers).
+
+4. **Other good practices already present and preserved:**
+   - `isspace((unsigned char)*str)` — the cast prevents undefined behavior when `char` is signed and holds negative values.
+   - `NULL` check in `longest_word_length` guards against null pointer dereference.
+   - Return values of `fgets` and `printf` are checked.
+   - `size_t` is used consistently for lengths with the correct `%zu` format specifier.
+
+The code is safe as written; the Flawfinder finding is a false positive that is properly mitigated by the bounded `fgets` call.

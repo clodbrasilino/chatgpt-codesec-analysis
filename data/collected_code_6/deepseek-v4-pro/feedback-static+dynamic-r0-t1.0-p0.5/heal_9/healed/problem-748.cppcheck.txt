@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_9/healed/problem-748.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_9/healed/problem-748.c:43:32: style: Condition 'output_pos<max_output_len-1' is always true [knownConditionTrueFalse]
+                if (output_pos < max_output_len - 1) {
+                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_9/healed/problem-748.c:38:48: note: Assuming that condition 'output_pos<max_output_len-1' is not redundant
+    while (input_pos < input_len && output_pos < max_output_len - 1) {
+                                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_9/healed/problem-748.c:43:32: note: Condition 'output_pos<max_output_len-1' is always true
+                if (output_pos < max_output_len - 1) {
+                               ^

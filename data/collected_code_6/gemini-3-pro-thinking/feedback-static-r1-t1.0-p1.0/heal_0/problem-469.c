@@ -1,0 +1,85 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int maxProfit(int k, const int* prices, int pricesSize, int* err) {
+    if (err != NULL) {
+        *err = 0;
+    }
+
+    if (prices == NULL || pricesSize <= 0 || k < 0) {
+        if (err != NULL) {
+            *err = 1;
+        }
+        return 0;
+    }
+
+    if (pricesSize < 2 || k == 0) {
+        return 0;
+    }
+
+    if (k >= pricesSize / 2) {
+        int profit = 0;
+        for (int i = 1; i < pricesSize; ++i) {
+            if (prices[i] > prices[i - 1]) {
+                profit += prices[i] - prices[i - 1];
+            }
+        }
+        return profit;
+    }
+
+    int* prev = (int*)malloc(pricesSize * sizeof(int));
+    int* curr = (int*)malloc(pricesSize * sizeof(int));
+
+    if (prev == NULL || curr == NULL) {
+        free(prev);
+        free(curr);
+        if (err != NULL) {
+            *err = 1;
+        }
+        return 0;
+    }
+
+    for (int i = 0; i < pricesSize; ++i) {
+        prev[i] = 0;
+        curr[i] = 0;
+    }
+
+    for (int i = 1; i <= k; ++i) {
+        int max_diff = -prices[0];
+        for (int j = 1; j < pricesSize; ++j) {
+            int profit_if_sell = prices[j] + max_diff;
+            curr[j] = (curr[j - 1] > profit_if_sell) ? curr[j - 1] : profit_if_sell;
+
+            int diff = prev[j] - prices[j];
+            max_diff = (max_diff > diff) ? max_diff : diff;
+        }
+        for (int j = 0; j < pricesSize; ++j) {
+            prev[j] = curr[j];
+        }
+    }
+
+    int result = curr[pricesSize - 1];
+
+    free(prev);
+    free(curr);
+
+    return result;
+}
+
+int main(void) {
+    int prices[] = {3, 2, 6, 5, 0, 3};
+    int k = 2;
+    int pricesSize = sizeof(prices) / sizeof(prices[0]);
+    int err = 0;
+
+    int profit = maxProfit(k, prices, pricesSize, &err);
+
+    if (err != 0) {
+        fprintf(stderr, "Error encountered during maxProfit execution.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("%d\n", profit);
+
+    return EXIT_SUCCESS;
+}

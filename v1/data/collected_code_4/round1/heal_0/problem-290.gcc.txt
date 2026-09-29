@@ -1,0 +1,17 @@
+./collected_code_4/round1//heal_0//problem-290.c: In function 'main':
+./collected_code_4/round1//heal_0//problem-290.c:37:22: warning: use of uninitialized value 'lol' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   37 |     int** maxLists = findMaxLenList(lol, &sizeMax);
+      |                      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  'main': events 1-3
+    |
+    |   34 |     struct ListOfLists lol;
+    |      |                        ^~~
+    |      |                        |
+    |      |                        (1) region created on stack here
+    |      |                        (2) capacity: 24 bytes
+    |......
+    |   37 |     int** maxLists = findMaxLenList(lol, &sizeMax);
+    |      |                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                      |
+    |      |                      (3) use of uninitialized value 'lol' here
+    |

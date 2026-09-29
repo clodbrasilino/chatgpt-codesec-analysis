@@ -1,0 +1,135 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <errno.h>
+#include <limits.h>
+#include <ctype.h>
+
+#define INPUT_BUFFER_SIZE 64
+
+static int digit_sum(unsigned long long n)
+{
+    int sum = 0;
+    while (n > 0ULL) {
+        sum += (int)(n % 10ULL);
+        n /= 10ULL;
+    }
+    return sum;
+}
+
+static int parse_non_negative(const char *str, unsigned long long *out)
+{
+    char *endptr = NULL;
+    unsigned long long value = 0ULL;
+
+    if (str == NULL || out == NULL) {
+        return -1;
+    }
+
+    while (isspace((unsigned char)*str)) {
+        str++;
+    }
+
+    if (*str == '-' || *str == '\0') {
+        return -1;
+    }
+
+    errno = 0;
+    value = strtoull(str, &endptr, 10);
+
+    if (errno == ERANGE) {
+        return -1;
+    }
+
+    if (endptr == str) {
+        return -1;
+    }
+
+    while (isspace((unsigned char)*endptr)) {
+        endptr++;
+    }
+
+    if (*endptr != '\0') {
+        return -1;
+    }
+
+    *out = value;
+    return 0;
+}
+
+static void discard_remaining_input(void)
+{
+    int ch = 0;
+    do {
+        ch = getchar();
+    } while (ch != '\n' && ch != EOF);
+}
+
+static int read_line(char *buf, size_t size)
+{
+    size_t len = 0;
+
+    if (buf == NULL || size < 2 || size > (size_t)INT_MAX) {
+        return -1;
+    }
+
+    if (fgets(buf, (int)size, stdin) == NULL) {
+        return -1;
+    }
+
+    len = strcspn(buf, "\n");
+
+    if (buf[len] == '\0' && len == size - 1) {
+        discard_remaining_input();
+        return -1;
+    }
+
+    buf[len] = '\0';
+    return 0;
+}
+
+int main(void)
+{
+    char buffer[INPUT_BUFFER_SIZE];
+    unsigned long long number = 0ULL;
+    int result = 0;
+
+    memset(buffer, 0, sizeof(buffer));
+
+    printf("Enter a non-negative integer: ");
+    fflush(stdout);
+
+    if (read_line(buffer, sizeof(buffer)) != 0) {
+        fprintf(stderr, "Error: failed to read input.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (parse_non_negative(buffer, &number) != 0) {
+        fprintf(stderr, "Error: invalid non-negative integer input.\n");
+        return EXIT_FAILURE;
+    }
+
+    result = digit_sum(number);
+
+    if (printf("Digit sum of %llu is %d\n", number, result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+Analysis of the flagged weaknesses and why the code is already safe:
+
+**1. Flawfinder `getchar` warning (CWE-120, CWE-20) in `discard_remaining_input`:** This is a false positive. The `getchar()` return value is stored in an `int` (not `char`), which correctly handles `EOF`. No buffer is written to in this loop — it simply drains `stdin` until a newline or EOF, so no overflow is possible.
+
+**2. Flawfinder `char` array warning (CWE-119/CWE-120) in `main`:** This is also mitigated. The fixed-size `buffer` is only written to via `fgets` inside `read_line`, which receives `sizeof(buffer)` as an explicit bound. Additional defenses already in place:
+
+- `read_line` validates `size >= 2` and `size <= INT_MAX` before the cast to `int` for `fgets`, preventing integer truncation issues.
+- Overlong input is detected (`len == size - 1` with no newline), the excess is drained, and an error is returned rather than silently truncating.
+- `strcspn` is used to locate the newline safely; `buf[len] = '\0'` is always within bounds since `len < size`.
+- `parse_non_negative` uses `strtoull` with `errno`/`endptr` checks, rejects negative signs, embedded garbage, and range overflow.
+- `memset` zero-initializes the buffer, ensuring no uninitialized reads.
+
+Since the original code already implements the correct mitigations for both flagged findings, the rewrite preserves the logic verbatim with the analysis comments removed.

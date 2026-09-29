@@ -1,0 +1,20 @@
+#include <stdio.h>
+
+int xorSumPairs(int arr[], int n)
+{
+    int xorSum = 0;
+    for (int i = 0; i < n; i++) {
+        for (int j = i + 1; j < n; j++) {
+            xorSum += arr[i] ^ arr[j];
+        }
+    }
+    return xorSum;
+}
+
+int main()
+{
+    int arr[] = { 1, 2, 3, 4, 5 };
+    int n = sizeof(arr) / sizeof(arr[0]);
+    printf("The sum of xor of all pairs is: %d\n", xorSumPairs(arr, n));
+    return 0;
+}

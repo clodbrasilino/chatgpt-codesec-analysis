@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-513.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-513.c:104:36: style: Condition 'length+token_len<=capacity' is always true [knownConditionTrueFalse]
+            if (length + token_len <= capacity) {
+                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-513.c:98:36: note: Assuming that condition 'length+token_len>=capacity' is not redundant
+            if (length + token_len >= capacity) {
+                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-513.c:104:36: note: Condition 'length+token_len<=capacity' is always true
+            if (length + token_len <= capacity) {
+                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-513.c:123:37: style: Condition 'length+suffix_len<=capacity' is always true [knownConditionTrueFalse]
+            if (length + suffix_len <= capacity) {
+                                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-513.c:117:37: note: Assuming that condition 'length+suffix_len>=capacity' is not redundant
+            if (length + suffix_len >= capacity) {
+                                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-513.c:123:37: note: Condition 'length+suffix_len<=capacity' is always true
+            if (length + suffix_len <= capacity) {
+                                    ^

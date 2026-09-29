@@ -1,0 +1,73 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+bool contains_only_k_elements(const int *tuple, size_t size, size_t k, bool *result)
+{
+    if (result == NULL) {
+        return false;
+    }
+    if (tuple == NULL) {
+        *result = false;
+        return false;
+    }
+    *result = (size == k);
+    return true;
+}
+
+static void report(const char *name, bool result, size_t k)
+{
+    if (result) {
+        printf("%s contains exactly %zu elements\n", name, k);
+    } else {
+        printf("%s does not contain exactly %zu elements\n", name, k);
+    }
+}
+
+int main(void)
+{
+    int tuple1[] = {1, 2, 3, 4};
+    int tuple2[] = {7, 8, 9};
+    size_t size1 = sizeof(tuple1) / sizeof(tuple1[0]);
+    size_t size2 = sizeof(tuple2) / sizeof(tuple2[0]);
+    const int *null_tuple = NULL;
+    bool result = false;
+
+    if (contains_only_k_elements(tuple1, size1, 4, &result)) {
+        report("Tuple 1", result, 4);
+    } else {
+        printf("Tuple 1 is invalid\n");
+    }
+
+    if (contains_only_k_elements(tuple2, size2, 4, &result)) {
+        report("Tuple 2", result, 4);
+    } else {
+        printf("Tuple 2 is invalid\n");
+    }
+
+    if (contains_only_k_elements(null_tuple, 0, 0, &result)) {
+        report("NULL tuple", result, 0);
+    } else {
+        printf("NULL tuple rejected\n");
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the original code and the fix applied:**
+
+The static analyzer flagged that `contains_only_k_elements(null_tuple, 0, 0)` is always false. This happened because the original function conflated two distinct outcomes into a single boolean return value:
+
+1. **Validity failure** — the input pointer is `NULL` (returns `false`)
+2. **Semantic result** — the tuple does not contain exactly `k` elements (also returns `false`)
+
+Since the call site passed a pointer known to be `NULL` at compile time, the analyzer could prove the branch was dead code, meaning `printf("NULL tuple handled safely\n")` was unreachable.
+
+**The fix** separates these concerns:
+
+- The **return value** now indicates whether the operation was valid (non-`NULL` inputs).
+- An **output parameter** (`bool *result`) carries the actual answer to the question "does the tuple contain exactly k elements?"
+
+This removes the ambiguity, eliminates the dead branch, makes error handling explicit at every call site, and also guards against a `NULL` output pointer. The condition is no longer provably constant, so the `knownConditionTrueFalse` warning is resolved.

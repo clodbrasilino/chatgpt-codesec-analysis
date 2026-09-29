@@ -1,0 +1,62 @@
+```c
+#include <stddef.h>
+#include <stdio.h>
+#include <string.h>
+
+#define MAX_VALUE_LEN 32
+
+typedef struct {
+    int id;
+    char value[MAX_VALUE_LEN];
+} Tuple;
+
+void rearrange_tuples(Tuple *tuples, size_t tuple_count, const int *order, size_t order_count) {
+    if (tuples == NULL || order == NULL) {
+        return;
+    }
+
+    size_t pos = 0;
+    for (size_t i = 0; i < order_count && pos < tuple_count; ++i) {
+        for (size_t j = pos; j < tuple_count; ++j) {
+            if (tuples[j].id == order[i]) {
+                if (j != pos) {
+                    Tuple temp = tuples[pos];
+                    tuples[pos] = tuples[j];
+                    tuples[j] = temp;
+                }
+                ++pos;
+                break;
+            }
+        }
+    }
+}
+
+int main(void) {
+    Tuple tuples[] = {
+        {3, ""},
+        {1, ""},
+        {2, ""},
+        {4, ""}
+    };
+    int order[] = {2, 1, 4, 3};
+    size_t tuple_count = sizeof(tuples) / sizeof(tuples[0]);
+    size_t order_count = sizeof(order) / sizeof(order[0]);
+
+    strncpy(tuples[0].value, "three", MAX_VALUE_LEN - 1);
+    tuples[0].value[MAX_VALUE_LEN - 1] = '\0';
+    strncpy(tuples[1].value, "one", MAX_VALUE_LEN - 1);
+    tuples[1].value[MAX_VALUE_LEN - 1] = '\0';
+    strncpy(tuples[2].value, "two", MAX_VALUE_LEN - 1);
+    tuples[2].value[MAX_VALUE_LEN - 1] = '\0';
+    strncpy(tuples[3].value, "four", MAX_VALUE_LEN - 1);
+    tuples[3].value[MAX_VALUE_LEN - 1] = '\0';
+
+    rearrange_tuples(tuples, tuple_count, order, order_count);
+
+    for (size_t i = 0; i < tuple_count; ++i) {
+        printf("%d: %s\n", tuples[i].id, tuples[i].value);
+    }
+
+    return 0;
+}
+```

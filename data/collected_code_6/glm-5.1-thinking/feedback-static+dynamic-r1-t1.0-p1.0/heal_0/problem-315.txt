@@ -1,0 +1,43 @@
+```c
+#include <stdio.h>
+#include <ctype.h>
+
+int find_first_max_even_word_length(const char *str) {
+    if (str == NULL) {
+        return 0;
+    }
+
+    int max_len = 0;
+    int current_len = 0;
+    size_t i = 0;
+
+    while (str[i] != '\0') {
+        if (!isspace((unsigned char)str[i])) {
+            current_len++;
+        } else {
+            if (current_len > 0 && current_len % 2 == 0) {
+                if (current_len > max_len) {
+                    max_len = current_len;
+                }
+            }
+            current_len = 0;
+        }
+        i++;
+    }
+
+    if (current_len > 0 && current_len % 2 == 0) {
+        if (current_len > max_len) {
+            max_len = current_len;
+        }
+    }
+
+    return max_len;
+}
+
+int main(void) {
+    const char *text = "This is a test string with several even length words";
+    int result = find_first_max_even_word_length(text);
+    printf("%d\n", result);
+    return 0;
+}
+```

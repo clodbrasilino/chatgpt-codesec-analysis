@@ -1,0 +1,74 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int first;
+    int second;
+} Tuple;
+
+int find_combinations(const Tuple *tuples, size_t count, Tuple **result, size_t *result_count)
+{
+    size_t total;
+    size_t idx;
+    size_t i;
+    size_t j;
+    Tuple *out;
+
+    if (tuples == NULL || result == NULL || result_count == NULL) {
+        return -1;
+    }
+
+    if (count < 2U) {
+        *result = NULL;
+        *result_count = 0U;
+        return 0;
+    }
+
+    total = (count * (count - 1U)) / 2U;
+
+    out = malloc(total * sizeof(Tuple));
+    if (out == NULL) {
+        return -1;
+    }
+
+    idx = 0U;
+    for (i = 0U; i < count; i++) {
+        for (j = i + 1U; j < count; j++) {
+            out[idx].first = tuples[i].first + tuples[j].first;
+            out[idx].second = tuples[i].second + tuples[j].second;
+            idx++;
+        }
+    }
+
+    *result = out;
+    *result_count = total;
+    return 0;
+}
+
+int main(void)
+{
+    Tuple input[] = { {2, 4}, {6, 7}, {5, 1}, {6, 10} };
+    size_t input_count = sizeof(input) / sizeof(input[0]);
+    Tuple *sums = NULL;
+    size_t sums_count = 0U;
+    size_t i;
+
+    if (find_combinations(input, input_count, &sums, &sums_count) != 0) {
+        fprintf(stderr, "Failed to compute combinations\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("[");
+    for (i = 0U; i < sums_count; i++) {
+        printf("(%d, %d)", sums[i].first, sums[i].second);
+        if (i + 1U < sums_count) {
+            printf(", ");
+        }
+    }
+    printf("]\n");
+
+    free(sums);
+    return EXIT_SUCCESS;
+}
+```

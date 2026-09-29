@@ -1,0 +1,44 @@
+Flawfinder version 2.0.19, (C) 2001-2019 David A. Wheeler.
+Number of rules (primarily dangerous function names) in C/C++ ruleset: 222
+Examining collected_code/healed/problem-699.c
+
+FINAL RESULTS:
+
+collected_code/healed/problem-699.c:23:  [1] (buffer) strlen:
+  Does not handle strings that are not \0-terminated; if given one it may
+  perform an over-read (it could cause a crash if unprotected) (CWE-126).
+collected_code/healed/problem-699.c:24:  [1] (buffer) strlen:
+  Does not handle strings that are not \0-terminated; if given one it may
+  perform an over-read (it could cause a crash if unprotected) (CWE-126).
+collected_code/healed/problem-699.c:43:  [1] (buffer) mismatch:
+  Function does not check the second iterator for over-read conditions
+  (CWE-126). This function is often discouraged by most C++ coding standards
+  in favor of its safer alternatives provided since C++14. Consider using a
+  form of this function that checks the second iterator before potentially
+  overflowing it.
+collected_code/healed/problem-699.c:47:  [1] (buffer) mismatch:
+  Function does not check the second iterator for over-read conditions
+  (CWE-126). This function is often discouraged by most C++ coding standards
+  in favor of its safer alternatives provided since C++14. Consider using a
+  form of this function that checks the second iterator before potentially
+  overflowing it.
+
+ANALYSIS SUMMARY:
+
+Hits = 4
+Lines analyzed = 58 in approximately 0.00 seconds (16224 lines/second)
+Physical Source Lines of Code (SLOC) = 47
+Hits@level = [0]   1 [1]   4 [2]   0 [3]   0 [4]   0 [5]   0
+Hits@level+ = [0+]   5 [1+]   4 [2+]   0 [3+]   0 [4+]   0 [5+]   0
+Hits/KSLOC@level+ = [0+] 106.383 [1+] 85.1064 [2+]   0 [3+]   0 [4+]   0 [5+]   0
+Minimum risk level = 1
+
+Not every hit is necessarily a security vulnerability.
+You can inhibit a report by adding a comment in this form:
+// flawfinder: ignore
+Make *sure* it's a false positive!
+You can use the option --neverignore to show these.
+
+There may be other security vulnerabilities; review your code!
+See 'Secure Programming HOWTO'
+(https://dwheeler.com/secure-programs) for more information.

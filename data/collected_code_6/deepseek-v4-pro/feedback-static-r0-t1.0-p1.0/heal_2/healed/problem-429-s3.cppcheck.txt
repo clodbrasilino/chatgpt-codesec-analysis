@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-429-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-429-s3.c:40:27: style: The comparison 'bytes_to_copy > data_size' is always false because 'bytes_to_copy' and 'data_size' represent the same value. [knownConditionTrueFalse]
+        if (bytes_to_copy > data_size) {
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-429-s3.c:39:28: note: 'data_size' is assigned value 'bytes_to_copy' here.
+        size_t data_size = bytes_to_copy;
+                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-429-s3.c:40:27: note: The comparison 'bytes_to_copy > data_size' is always false because 'bytes_to_copy' and 'data_size' represent the same value.
+        if (bytes_to_copy > data_size) {
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-429-s3.c:99:27: style: The comparison 'bytes_to_copy > t1->size*sizeof(int)' is always false because 'bytes_to_copy' and 't1->size*sizeof(int)' represent the same value. [knownConditionTrueFalse]
+        if (bytes_to_copy > t1->size * sizeof(int)) {
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-429-s3.c:98:41: note: 'bytes_to_copy' is assigned value 't1->size*sizeof(int)' here.
+        size_t bytes_to_copy = t1->size * sizeof(int);
+                                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-429-s3.c:99:27: note: The comparison 'bytes_to_copy > t1->size*sizeof(int)' is always false because 'bytes_to_copy' and 't1->size*sizeof(int)' represent the same value.
+        if (bytes_to_copy > t1->size * sizeof(int)) {
+                          ^

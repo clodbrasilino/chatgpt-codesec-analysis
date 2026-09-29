@@ -1,0 +1,61 @@
+{
+  "task_id": 757,
+  "text": "Write a C function to count the pairs of reverse strings in the given string list.",
+  "fn_candidates": [
+    "count_reverse_pairs",
+    "CountReversePairs",
+    "countReversePairs",
+    "countreversepairs"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "count_reverse_pairs",
+      "args": [
+        [
+          "julia",
+          "best",
+          "tseb",
+          "for",
+          "ailuj"
+        ]
+      ],
+      "expected": "2",
+      "assert_src": "assert count_reverse_pairs([\"julia\", \"best\", \"tseb\", \"for\", \"ailuj\"])== '2'"
+    },
+    {
+      "fn_name": "count_reverse_pairs",
+      "args": [
+        [
+          "geeks",
+          "best",
+          "for",
+          "skeeg"
+        ]
+      ],
+      "expected": "1",
+      "assert_src": "assert count_reverse_pairs([\"geeks\", \"best\", \"for\", \"skeeg\"]) == '1'"
+    },
+    {
+      "fn_name": "count_reverse_pairs",
+      "args": [
+        [
+          "makes",
+          "best",
+          "sekam",
+          "for",
+          "rof"
+        ]
+      ],
+      "expected": "2",
+      "assert_src": "assert count_reverse_pairs([\"makes\", \"best\", \"sekam\", \"for\", \"rof\"]) == '2' "
+    }
+  ],
+  "arg_kinds": [
+    "str-list"
+  ],
+  "return_kind": "str",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

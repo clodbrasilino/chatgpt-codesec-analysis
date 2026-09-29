@@ -1,0 +1,44 @@
+{
+  "task_id": 268,
+  "text": "Write a C function to find the n'th star number.",
+  "fn_candidates": [
+    "find_star_num",
+    "FindStarNum",
+    "findStarNum",
+    "findstarnum"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "find_star_num",
+      "args": [
+        3
+      ],
+      "expected": 37,
+      "assert_src": "assert find_star_num(3) == 37"
+    },
+    {
+      "fn_name": "find_star_num",
+      "args": [
+        4
+      ],
+      "expected": 73,
+      "assert_src": "assert find_star_num(4) == 73"
+    },
+    {
+      "fn_name": "find_star_num",
+      "args": [
+        5
+      ],
+      "expected": 121,
+      "assert_src": "assert find_star_num(5) == 121"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

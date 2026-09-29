@@ -1,0 +1,131 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node *next;
+} Node;
+
+static Node *create_node(int data)
+{
+    Node *new_node = malloc(sizeof *new_node);
+    if (new_node == NULL) {
+        return NULL;
+    }
+    new_node->data = data;
+    new_node->next = NULL;
+    return new_node;
+}
+
+static int append_node(Node **head, int data)
+{
+    Node *new_node;
+    Node *current;
+
+    if (head == NULL) {
+        return -1;
+    }
+
+    new_node = create_node(data);
+    if (new_node == NULL) {
+        return -1;
+    }
+
+    if (*head == NULL) {
+        *head = new_node;
+        return 0;
+    }
+
+    current = *head;
+    while (current->next != NULL) {
+        current = current->next;
+    }
+    current->next = new_node;
+    return 0;
+}
+
+static void free_list(Node *head)
+{
+    Node *temp;
+
+    while (head != NULL) {
+        temp = head;
+        head = head->next;
+        free(temp);
+    }
+}
+
+static Node *subtract_lists(const Node *list1, const Node *list2)
+{
+    Node *result = NULL;
+
+    while (list1 != NULL && list2 != NULL) {
+        if (append_node(&result, list1->data - list2->data) != 0) {
+            free_list(result);
+            return NULL;
+        }
+        list1 = list1->next;
+        list2 = list2->next;
+    }
+
+    return result;
+}
+
+static void print_list(const Node *head)
+{
+    while (head != NULL) {
+        printf("%d", head->data);
+        if (head->next != NULL) {
+            printf(" -> ");
+        }
+        head = head->next;
+    }
+    printf("\n");
+}
+
+int main(void)
+{
+    Node *list1 = NULL;
+    Node *list2 = NULL;
+    Node *result = NULL;
+
+    if (append_node(&list1, 10) != 0 ||
+        append_node(&list1, 20) != 0 ||
+        append_node(&list1, 30) != 0 ||
+        append_node(&list1, 40) != 0) {
+        fprintf(stderr, "Failed to build list 1\n");
+        free_list(list1);
+        return EXIT_FAILURE;
+    }
+
+    if (append_node(&list2, 1) != 0 ||
+        append_node(&list2, 2) != 0 ||
+        append_node(&list2, 3) != 0 ||
+        append_node(&list2, 4) != 0) {
+        fprintf(stderr, "Failed to build list 2\n");
+        free_list(list1);
+        free_list(list2);
+        return EXIT_FAILURE;
+    }
+
+    result = subtract_lists(list1, list2);
+    if (result == NULL) {
+        fprintf(stderr, "List subtraction failed\n");
+        free_list(list1);
+        free_list(list2);
+        return EXIT_FAILURE;
+    }
+
+    printf("List 1: ");
+    print_list(list1);
+    printf("List 2: ");
+    print_list(list2);
+    printf("Result: ");
+    print_list(result);
+
+    free_list(list1);
+    free_list(list2);
+    free_list(result);
+
+    return EXIT_SUCCESS;
+}

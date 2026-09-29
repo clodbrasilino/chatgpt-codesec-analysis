@@ -1,0 +1,157 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int id;
+    double value;
+    char name[32];
+} Tuple;
+
+typedef struct Node {
+    Tuple data;
+    struct Node *next;
+} Node;
+
+typedef struct {
+    Node *head;
+    Node *tail;
+    size_t size;
+} TupleList;
+
+void tuple_list_init(TupleList *list)
+{
+    if (list == NULL) {
+        return;
+    }
+    list->head = NULL;
+    list->tail = NULL;
+    list->size = 0U;
+}
+
+int tuple_list_append(TupleList *list, const Tuple *tuple)
+{
+    Node *node;
+
+    if (list == NULL || tuple == NULL) {
+        return -1;
+    }
+
+    node = malloc(sizeof(*node));
+    if (node == NULL) {
+        return -1;
+    }
+
+    node->data = *tuple;
+    node->next = NULL;
+
+    if (list->tail != NULL) {
+        list->tail->next = node;
+    } else {
+        list->head = node;
+    }
+
+    list->tail = node;
+    list->size++;
+
+    return 0;
+}
+
+int tuple_list_extract_rear(TupleList *list, Tuple *out)
+{
+    Node *prev;
+    Node *rear;
+
+    if (list == NULL || out == NULL) {
+        return -1;
+    }
+
+    if (list->tail == NULL) {
+        return 1;
+    }
+
+    rear = list->tail;
+
+    if (list->head == rear) {
+        list->head = NULL;
+        list->tail = NULL;
+    } else {
+        prev = list->head;
+        while (prev->next != rear) {
+            prev = prev->next;
+        }
+        prev->next = NULL;
+        list->tail = prev;
+    }
+
+    *out = rear->data;
+    free(rear);
+    rear = NULL;
+
+    if (list->size > 0U) {
+        list->size--;
+    }
+
+    return 0;
+}
+
+void tuple_list_destroy(TupleList *list)
+{
+    Node *current;
+    Node *next;
+
+    if (list == NULL) {
+        return;
+    }
+
+    current = list->head;
+    while (current != NULL) {
+        next = current->next;
+        free(current);
+        current = next;
+    }
+
+    list->head = NULL;
+    list->tail = NULL;
+    list->size = 0U;
+}
+
+int main(void)
+{
+    TupleList list;
+    Tuple extracted;
+    size_t i;
+    size_t count;
+    Tuple samples[] = {
+        {1, 10.5, "alpha"},
+        {2, 20.25, "beta"},
+        {3, 30.75, "gamma"},
+        {4, 40.0, "delta"}
+    };
+
+    count = sizeof(samples) / sizeof(samples[0]);
+
+    tuple_list_init(&list);
+
+    for (i = 0U; i < count; i++) {
+        if (tuple_list_append(&list, &samples[i]) != 0) {
+            fprintf(stderr, "Failed to append tuple at index %zu\n", i);
+            tuple_list_destroy(&list);
+            return EXIT_FAILURE;
+        }
+    }
+
+    while (tuple_list_extract_rear(&list, &extracted) == 0) {
+        printf("Extracted rear: id=%d value=%.2f name=%s\n",
+               extracted.id, extracted.value, extracted.name);
+    }
+
+    if (list.size != 0U) {
+        fprintf(stderr, "List size inconsistency detected\n");
+        tuple_list_destroy(&list);
+        return EXIT_FAILURE;
+    }
+
+    tuple_list_destroy(&list);
+
+    return EXIT_SUCCESS;
+}

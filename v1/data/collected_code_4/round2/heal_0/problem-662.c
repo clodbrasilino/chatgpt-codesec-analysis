@@ -1,0 +1,33 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define SIZE 5
+
+void sort_list(char *list[], int size){
+    int a, b;
+    char *tmp;
+
+    for (a = 0; a < size - 1; a++) {
+        for (b = a + 1; b < size; b++) {
+            if (strcmp(list[a], list[b]) > 0){
+                tmp = list[a];
+                list[a] = list[b];
+                list[b] = tmp;
+            }
+        }
+    }
+}
+
+int main(){
+    char *list[SIZE] = {"Apple", "Orange", "Banana", "Mango", "Grapes"};
+    int a;
+
+    sort_list(list, SIZE);
+    
+    for(a = 0; a < SIZE; a++){
+        printf("%s\n", list[a]);
+    }
+
+    return 0;
+}

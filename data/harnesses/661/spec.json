@@ -1,0 +1,69 @@
+{
+  "task_id": 661,
+  "text": "Write a C function to find the maximum sum that can be formed which has no three consecutive elements present.",
+  "fn_candidates": [
+    "max_sum_of_three_consecutive",
+    "MaxSumOfThreeConsecutive",
+    "maxSumOfThreeConsecutive",
+    "maxsumofthreeconsecutive"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "max_sum_of_three_consecutive",
+      "args": [
+        [
+          100,
+          1000,
+          100,
+          1000,
+          1
+        ],
+        5
+      ],
+      "expected": 2101,
+      "assert_src": "assert max_sum_of_three_consecutive([100, 1000, 100, 1000, 1], 5) == 2101"
+    },
+    {
+      "fn_name": "max_sum_of_three_consecutive",
+      "args": [
+        [
+          3000,
+          2000,
+          1000,
+          3,
+          10
+        ],
+        5
+      ],
+      "expected": 5013,
+      "assert_src": "assert max_sum_of_three_consecutive([3000, 2000, 1000, 3, 10], 5) == 5013"
+    },
+    {
+      "fn_name": "max_sum_of_three_consecutive",
+      "args": [
+        [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        8
+      ],
+      "expected": 27,
+      "assert_src": "assert max_sum_of_three_consecutive([1, 2, 3, 4, 5, 6, 7, 8], 8) == 27"
+    }
+  ],
+  "arg_kinds": [
+    "int",
+    "int-list"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

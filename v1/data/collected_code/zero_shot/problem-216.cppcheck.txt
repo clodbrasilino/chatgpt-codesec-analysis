@@ -1,0 +1,6 @@
+collected_code/problem-216-0.c:10:14: error: Cannot determine that 'list1[0]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+    if (list1[0] == list2[0]) {
+             ^
+collected_code/problem-216-0.c:10:26: error: Cannot determine that 'list2[0]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+    if (list1[0] == list2[0]) {
+                         ^

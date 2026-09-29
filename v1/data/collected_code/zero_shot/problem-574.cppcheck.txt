@@ -1,0 +1,12 @@
+collected_code/problem-574-0.c:13:19: error: Cannot determine that 'radius' is initialized [premium-bughuntingUninit]
+    scanf("%lf", &radius);
+                  ^
+collected_code/problem-574-0.c:15:19: error: Cannot determine that 'height' is initialized [premium-bughuntingUninit]
+    scanf("%lf", &height);
+                  ^
+collected_code/problem-574-0.c:17:35: error: Cannot determine that 'radius' is initialized [premium-bughuntingUninit]
+    double area = findSurfaceArea(radius, height);
+                                  ^
+collected_code/problem-574-0.c:17:43: error: Cannot determine that 'height' is initialized [premium-bughuntingUninit]
+    double area = findSurfaceArea(radius, height);
+                                          ^

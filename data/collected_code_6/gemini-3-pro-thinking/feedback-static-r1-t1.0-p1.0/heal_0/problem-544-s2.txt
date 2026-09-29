@@ -1,0 +1,79 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int a;
+    int b;
+} Tuple;
+
+char* flatten_tuples(const Tuple* tuples, size_t count);
+
+char* flatten_tuples(const Tuple* tuples, size_t count) {
+    if (!tuples && count > 0) {
+        return NULL;
+    }
+
+    if (count == 0) {
+        char* empty_str = malloc(1);
+        if (!empty_str) {
+            return NULL;
+        }
+        empty_str[0] = '\0';
+        return empty_str;
+    }
+
+    size_t total_length = 0;
+    for (size_t i = 0; i < count; ++i) {
+        int len = snprintf(NULL, 0, "(%d, %d)", tuples[i].a, tuples[i].b);
+        if (len < 0) {
+            return NULL;
+        }
+        total_length += (size_t)len;
+    }
+    
+    total_length += (count - 1) * 2; 
+
+    char* result = malloc(total_length + 1);
+    if (!result) {
+        return NULL;
+    }
+
+    size_t current_pos = 0;
+    for (size_t i = 0; i < count; ++i) {
+        int len;
+        if (i < count - 1) {
+            len = snprintf(result + current_pos, total_length - current_pos + 1, "(%d, %d), ", tuples[i].a, tuples[i].b);
+        } else {
+            len = snprintf(result + current_pos, total_length - current_pos + 1, "(%d, %d)", tuples[i].a, tuples[i].b);
+        }
+        
+        if (len < 0 || (size_t)len >= total_length - current_pos + 1) {
+            free(result);
+            return NULL;
+        }
+        current_pos += (size_t)len;
+    }
+
+    return result;
+}
+
+int main(void) {
+    Tuple tuples[] = {
+        {1, 2},
+        {3, 4},
+        {10, 20}
+    };
+    size_t count = sizeof(tuples) / sizeof(tuples[0]);
+
+    char* flattened = flatten_tuples(tuples, count);
+    if (!flattened) {
+        return EXIT_FAILURE;
+    }
+
+    printf("%s\n", flattened);
+    free(flattened);
+
+    return EXIT_SUCCESS;
+}
+```

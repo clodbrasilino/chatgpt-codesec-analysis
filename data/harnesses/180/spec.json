@@ -1,0 +1,54 @@
+{
+  "task_id": 180,
+  "text": "Write a C function to calculate distance between two points using latitude and longitude.",
+  "fn_candidates": [
+    "distance_lat_long",
+    "DistanceLatLong",
+    "distanceLatLong",
+    "distancelatlong"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "distance_lat_long",
+      "args": [
+        23.5,
+        67.5,
+        25.5,
+        69.5
+      ],
+      "expected": 12179.372041317429,
+      "assert_src": "assert distance_lat_long(23.5,67.5,25.5,69.5)==12179.372041317429"
+    },
+    {
+      "fn_name": "distance_lat_long",
+      "args": [
+        10.5,
+        20.5,
+        30.5,
+        40.5
+      ],
+      "expected": 6069.397933300514,
+      "assert_src": "assert distance_lat_long(10.5,20.5,30.5,40.5)==6069.397933300514"
+    },
+    {
+      "fn_name": "distance_lat_long",
+      "args": [
+        10,
+        20,
+        30,
+        40
+      ],
+      "expected": 6783.751974994595,
+      "assert_src": "assert distance_lat_long(10,20,30,40)==6783.751974994595"
+    }
+  ],
+  "arg_kinds": [
+    "float",
+    "int"
+  ],
+  "return_kind": "float",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

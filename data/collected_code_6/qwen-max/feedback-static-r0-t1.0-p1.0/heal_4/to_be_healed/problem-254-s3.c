@@ -1,0 +1,73 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+void findWordsStartingAorE(const char *input, char ***result, int *count) {
+    const int MAX_WORD_LENGTH = 64;
+    char **words = NULL;
+    int wordsCount = 0;
+    int capacity = 10;
+
+    words = (char **)malloc(capacity * sizeof(char *));
+    if (words == NULL) return;
+
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    while (strlen(input) > 0) {
+        /* Possible weaknesses found:
+         *  Unused variable: token [unusedVariable]
+         */
+        char *token;
+        size_t tokenLength = strcspn(input, " ");
+        if (tokenLength > 0 && (input[0] == 'a' || input[0] == 'e')) {
+            if (wordsCount >= capacity) {
+                capacity *= 2;
+                char **temp = (char **)realloc(words, capacity * sizeof(char *));
+                if (temp == NULL) {
+                    free(words);
+                    goto cleanup;
+                }
+                words = temp;
+            }
+            words[wordsCount] = (char *)malloc((tokenLength + 1) * sizeof(char));
+            if (words[wordsCount] == NULL) goto cleanup;
+            /* Possible weaknesses found:
+             * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+             */
+            memcpy(words[wordsCount], input, tokenLength);
+            words[wordsCount][tokenLength] = '\0';
+            wordsCount++;
+        }
+        if (input[tokenLength] == '\0') break;
+        input += tokenLength + 1;
+    }
+
+    *result = words;
+    *count = wordsCount;
+    return;
+
+cleanup:
+    for (int i = 0; i < wordsCount; i++) {
+        free(words[i]);
+    }
+    free(words);
+    *result = NULL;
+    *count = 0;
+}
+
+int main() {
+    const char *input = "an apple a day keeps the doctor away everyone enjoys an early morning";
+    char **result;
+    int count;
+
+    findWordsStartingAorE(input, &result, &count);
+
+    for (int i = 0; i < count; i++) {
+        printf("%s\n", result[i]);
+        free(result[i]);
+    }
+    free(result);
+
+    return 0;
+}

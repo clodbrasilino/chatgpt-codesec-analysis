@@ -1,0 +1,69 @@
+#include <stdio.h>
+#include <ctype.h>
+#include <stdlib.h>
+#include <string.h>
+
+int remove_ip_leading_zeroes(const char *src, char *dest, size_t dest_size) {
+    if (src == NULL || dest == NULL || dest_size == 0) {
+        return -1;
+    }
+
+    size_t j = 0;
+    int at_octet_start = 1;
+    size_t i;
+
+    for (i = 0; src[i] != '\0'; ++i) {
+        if (at_octet_start && src[i] == '0' && isdigit((unsigned char)src[i + 1])) {
+            continue;
+        }
+
+        if (j >= dest_size - 1) {
+            break;
+        }
+
+        dest[j++] = src[i];
+        at_octet_start = (src[i] == '.');
+    }
+
+    dest[j] = '\0';
+
+    if (src[i] != '\0') {
+        return -1;
+    }
+
+    return 0;
+}
+
+int main(void) {
+    const char *addresses[] = {
+        "192.168.001.010",
+        "010.000.000.001",
+        "0.0.0.0",
+        "255.255.255.255",
+        "001.002.003.004"
+    };
+    size_t count = sizeof(addresses) / sizeof(addresses[0]);
+
+    for (size_t i = 0; i < count; ++i) {
+        /* Possible weaknesses found:
+         * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+         */
+        size_t buffer_size = strlen(addresses[i]) + 1;
+        char *buffer = malloc(buffer_size);
+        
+        if (buffer == NULL) {
+            printf("Error processing: %s\n", addresses[i]);
+            continue;
+        }
+        
+        if (remove_ip_leading_zeroes(addresses[i], buffer, buffer_size) == 0) {
+            printf("%s -> %s\n", addresses[i], buffer);
+        } else {
+            printf("Error processing: %s\n", addresses[i]);
+        }
+        
+        free(buffer);
+    }
+
+    return 0;
+}

@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_5/healed/problem-464-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_5/healed/problem-464-s2.c:79:17: style: Condition 'key_len>=key_buf_size' is always false [knownConditionTrueFalse]
+    if (key_len >= key_buf_size) {
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_5/healed/problem-464-s2.c:73:18: note: key_buf_size is assigned 'key_len+1' here.
+    key_buf_size = key_len + 1;
+                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_5/healed/problem-464-s2.c:75:18: note: Assuming condition is false
+    if (key_copy == NULL) {
+                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_5/healed/problem-464-s2.c:79:17: note: Condition 'key_len>=key_buf_size' is always false
+    if (key_len >= key_buf_size) {
+                ^

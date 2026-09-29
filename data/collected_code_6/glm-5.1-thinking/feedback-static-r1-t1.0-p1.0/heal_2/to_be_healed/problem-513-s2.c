@@ -1,0 +1,88 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char **convert_tuple_to_list(const char **tuple, size_t len, const char *suffix, size_t *out_len) {
+    if (tuple == NULL || suffix == NULL || out_len == NULL) {
+        return NULL;
+    }
+
+    *out_len = len * 2;
+    if (len == 0) {
+        return NULL;
+    }
+
+    char **list = malloc(*out_len * sizeof(char *));
+    if (list == NULL) {
+        return NULL;
+    }
+
+    for (size_t i = 0; i < len; i++) {
+        if (tuple[i] == NULL) {
+            for (size_t j = 0; j < i * 2; j++) {
+                free(list[j]);
+            }
+            free(list);
+            return NULL;
+        }
+
+        /* Possible weaknesses found:
+         * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+         */
+        size_t t_len = strlen(tuple[i]);
+        list[i * 2] = malloc(t_len + 1);
+        if (list[i * 2] == NULL) {
+            for (size_t j = 0; j < i * 2; j++) {
+                free(list[j]);
+            }
+            free(list);
+            return NULL;
+        }
+        snprintf(list[i * 2], t_len + 1, "%s", tuple[i]);
+
+        /* Possible weaknesses found:
+         * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+         */
+        size_t s_len = strlen(suffix);
+        list[i * 2 + 1] = malloc(s_len + 1);
+        if (list[i * 2 + 1] == NULL) {
+            free(list[i * 2]);
+            for (size_t j = 0; j < i * 2; j++) {
+                free(list[j]);
+            }
+            free(list);
+            return NULL;
+        }
+        snprintf(list[i * 2 + 1], s_len + 1, "%s", suffix);
+    }
+
+    return list;
+}
+
+void free_list(char **list, size_t len) {
+    if (list == NULL) {
+        return;
+    }
+    for (size_t i = 0; i < len; i++) {
+        free(list[i]);
+    }
+    free(list);
+}
+
+int main(void) {
+    const char *tuple[] = {"apple", "banana", "cherry"};
+    size_t len = sizeof(tuple) / sizeof(tuple[0]);
+    const char *suffix = "fruit";
+    size_t out_len = 0;
+
+    char **list = convert_tuple_to_list(tuple, len, suffix, &out_len);
+
+    if (list != NULL) {
+        for (size_t i = 0; i < out_len; i++) {
+            printf("%s\n", list[i]);
+        }
+        free_list(list, out_len);
+    }
+
+    return 0;
+}

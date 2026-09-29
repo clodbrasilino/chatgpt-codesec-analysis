@@ -1,0 +1,57 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+long long sum_of_squares(int n) {
+    if (n < 1) {
+        return 0;
+    }
+    
+    if (n > 23438) {
+        return -1;
+    }
+    
+    long long term1 = (long long)n;
+    long long term2 = (long long)n + 1;
+    long long term3 = 2LL * n + 1;
+    
+    if (term1 > LLONG_MAX / term2) {
+        return -1;
+    }
+    long long product12 = term1 * term2;
+    
+    if (product12 > LLONG_MAX / term3) {
+        return -1;
+    }
+    long long product123 = product12 * term3;
+    
+    return product123 / 6;
+}
+
+int main(void) {
+    int n;
+    long long result;
+    
+    printf("Enter a positive integer: ");
+    if (scanf("%d", &n) != 1) {
+        printf("Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    if (n < 1) {
+        printf("Please enter a positive integer\n");
+        return EXIT_FAILURE;
+    }
+    
+    result = sum_of_squares(n);
+    if (result == -1) {
+        printf("Input too large, would cause overflow\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("Sum of squares from 1 to %d is %lld\n", n, result);
+    
+    return EXIT_SUCCESS;
+}
+```

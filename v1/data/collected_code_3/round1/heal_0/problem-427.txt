@@ -1,0 +1,37 @@
+The C programming language does not support regular expressions natively. You would need to use an external library like POSIX or PCRE to use regular expressions in C. However, you can achieve the desired result without using regular expressions. Here is a simple C program that does the job:
+
+```c
+#include <stdio.h>
+#include <string.h>
+
+void convertDateFormat(char* date, char* newDate) {
+    char year[5], month[3], day[3];
+
+    strncpy(year, &date[0], 4);
+    year[4] = '\0';
+    strncpy(month, &date[5], 2);
+    month[2] = '\0';
+    strncpy(day, &date[8], 2);
+    day[2] = '\0';
+
+    strcpy(newDate, day);
+    strcat(newDate, "-");
+    strcat(newDate, month);
+    strcat(newDate, "-");
+    strcat(newDate, year);
+}
+
+int main() {
+    char date[] = "2022-09-29";
+    char newDate[11];
+
+    convertDateFormat(date, newDate);
+
+    printf("Original date: %s\n", date);
+    printf("Converted date: %s\n", newDate);
+
+    return 0;
+}
+```
+
+This program first extracts the year, month, and day from the input date string using the `strncpy` function. Then it constructs the new date string in the desired format using the `strcpy` and `strcat` functions. The `printf` function is used to print the original and converted dates.

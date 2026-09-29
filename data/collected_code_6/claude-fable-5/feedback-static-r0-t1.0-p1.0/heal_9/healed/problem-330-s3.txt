@@ -1,0 +1,102 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+#define ERRBUF_SIZE 256
+#define WORD_SIZE 256
+#define MIN_WORD_LEN 3
+#define MAX_WORD_LEN 5
+
+static void print_regex_error(int code, const regex_t *regex, const char *prefix)
+{
+    char errbuf[ERRBUF_SIZE];
+
+    if (prefix == NULL) {
+        prefix = "regex error";
+    }
+
+    memset(errbuf, 0, sizeof(errbuf));
+    regerror(code, regex, errbuf, sizeof(errbuf) - 1);
+    errbuf[sizeof(errbuf) - 1] = '\0';
+    fprintf(stderr, "%s: %s\n", prefix, errbuf);
+}
+
+static int find_words(const char *text)
+{
+    regex_t regex;
+    regmatch_t match;
+    const char *cursor;
+    int ret;
+    char word[WORD_SIZE];
+    int found;
+
+    if (text == NULL) {
+        return -1;
+    }
+
+    ret = regcomp(&regex, "[[:alpha:]]+", REG_EXTENDED);
+    if (ret != 0) {
+        print_regex_error(ret, &regex, "regcomp failed");
+        return -1;
+    }
+
+    cursor = text;
+    found = 0;
+
+    while ((ret = regexec(&regex, cursor, 1, &match, 0)) == 0) {
+        if (match.rm_so >= 0 && match.rm_eo >= match.rm_so) {
+            const size_t length = (size_t)(match.rm_eo - match.rm_so);
+
+            if (length >= MIN_WORD_LEN &&
+                length <= MAX_WORD_LEN &&
+                length < sizeof(word)) {
+                memset(word, 0, sizeof(word));
+                memcpy(word, cursor + match.rm_so, length);
+                word[length] = '\0';
+                printf("%s\n", word);
+                found++;
+            }
+        }
+        if (match.rm_eo == 0) {
+            break;
+        }
+        cursor += match.rm_eo;
+    }
+
+    if (ret != 0 && ret != REG_NOMATCH) {
+        print_regex_error(ret, &regex, "regexec failed");
+        regfree(&regex);
+        return -1;
+    }
+
+    regfree(&regex);
+    return found;
+}
+
+int main(void)
+{
+    const char *text = "The quick brown fox jumps over a lazy dog nearby";
+    int count;
+
+    count = find_words(text);
+    if (count < 0) {
+        fprintf(stderr, "Error while searching for words\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Total words found: %d\n", count);
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the flagged weaknesses:**
+
+Both Flawfinder findings are false positives in this code — the original already contained the correct mitigations, so the rewrite preserves them:
+
+1. **`errbuf` (CWE-119/CWE-120):** The buffer is zeroed with `memset`, `regerror` is called with `sizeof(errbuf) - 1` to reserve space for the terminator, and an explicit NUL is written at the last byte. No overflow is possible. I added a defensive `NULL` check on `prefix` to avoid undefined behavior in `fprintf` if a caller ever passes `NULL`.
+
+2. **`word` buffer and `memcpy` (CWE-120):** The copy is guarded by three conditions before it executes: `length >= MIN_WORD_LEN`, `length <= MAX_WORD_LEN`, and critically `length < sizeof(word)`, which guarantees room for both the copied bytes and the terminating `'\0'` written at `word[length]`. Since `MAX_WORD_LEN` (5) is far below `WORD_SIZE` (256), the bound is doubly enforced.
+
+Other correctness points already handled: `rm_so`/`rm_eo` are validated before use, the `rm_eo == 0` check prevents an infinite loop on a zero-width match at the cursor, `regfree` is called on every exit path after successful `regcomp`, and `REG_NOMATCH` is correctly distinguished from real `regexec` failures.

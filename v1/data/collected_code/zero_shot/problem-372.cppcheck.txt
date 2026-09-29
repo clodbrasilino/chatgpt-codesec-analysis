@@ -1,0 +1,27 @@
+collected_code/problem-372-0.c:11:24: error: Cannot determine that 'arr[left]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+    if (left < n && arr[left] > arr[largest])
+                       ^
+collected_code/problem-372-0.c:11:36: error: Cannot determine that 'arr[largest]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+    if (left < n && arr[left] > arr[largest])
+                                   ^
+collected_code/problem-372-0.c:15:25: error: Cannot determine that 'arr[right]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+    if (right < n && arr[right] > arr[largest])
+                        ^
+collected_code/problem-372-0.c:15:38: error: Cannot determine that 'arr[largest]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+    if (right < n && arr[right] > arr[largest])
+                                     ^
+collected_code/problem-372-0.c:21:23: error: Cannot determine that 'arr[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        int temp = arr[i];
+                      ^
+collected_code/problem-372-0.c:22:21: error: Cannot determine that 'arr[largest]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        arr[i] = arr[largest];
+                    ^
+collected_code/problem-372-0.c:39:23: error: Cannot determine that 'arr[0]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        int temp = arr[0];
+                      ^
+collected_code/problem-372-0.c:40:21: error: Cannot determine that 'arr[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        arr[0] = arr[i];
+                    ^
+collected_code/problem-372-0.c:51:26: error: Cannot determine that 'arr[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        printf("%d ", arr[i]);
+                         ^

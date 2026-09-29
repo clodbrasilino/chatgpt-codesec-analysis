@@ -1,0 +1,31 @@
+#include <stdio.h>
+#include <stdint.h>
+#include <inttypes.h>
+
+uint64_t sum_of_fifth_power(int n) {
+    uint64_t sum = 0;
+    int count = 0;
+    int current = 1;
+
+    while (count < n) {
+        sum += (uint64_t)current * current * current * current * current;
+        current += 2;
+        count++;
+    }
+
+    return sum;
+}
+
+int main() {
+    int n;
+    printf("Enter the value of n: ");
+    if (scanf("%d", &n) != 1 || n <= 0) {
+        fprintf(stderr, "Invalid input. Please enter a positive integer.\n");
+        return 1;
+    }
+
+    uint64_t result = sum_of_fifth_power(n);
+    printf("The sum of the fifth powers of the first %d odd natural numbers is: %" PRIu64 "\n", n, result);
+
+    return 0;
+}

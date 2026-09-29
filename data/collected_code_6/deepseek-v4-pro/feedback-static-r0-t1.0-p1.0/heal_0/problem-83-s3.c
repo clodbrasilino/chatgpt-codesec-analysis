@@ -1,0 +1,24 @@
+#include <stdio.h>
+#include <string.h>
+
+char string_sum(const char *str) {
+    char sum = 0;
+    size_t len = strlen(str);
+    size_t i;
+    
+    for (i = 0; i < len; i++) {
+        sum += str[i];
+    }
+    
+    return sum;
+}
+
+int main(void) {
+    const char *test = "Hello";
+    char result = string_sum(test);
+    
+    printf("String: %s\n", test);
+    printf("Character sum: %d\n", result);
+    
+    return 0;
+}

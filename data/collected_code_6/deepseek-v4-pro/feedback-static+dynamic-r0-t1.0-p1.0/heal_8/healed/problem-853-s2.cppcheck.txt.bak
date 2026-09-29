@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-853-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-853-s2.c:30:25: style: Condition 'working%2!=0' is always true [knownConditionTrueFalse]
+        if (working % 2 != 0) {
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-853-s2.c:16:27: note: Assignment 'working=9223372036854775807', assigned value is 9223372036854775807
+        int64_t working = INT64_MAX;
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-853-s2.c:30:25: note: Condition 'working%2!=0' is always true
+        if (working % 2 != 0) {
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-853-s2.c:34:29: style: Condition '-(int64_t)1%2!=0' is always true [knownConditionTrueFalse]
+        if (-(int64_t)1 % 2 != 0) {
+                            ^

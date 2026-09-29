@@ -1,0 +1,38 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char name[50];
+    int count;
+} Record;
+
+int checkOccurrences(Record *records, int size) {
+    int i, j;
+    for(i = 0; i < size; i++) {
+        for(j = i + 1; j < size; j++) {
+            if(records[i].count == records[j].count) {
+                return 1;
+            }
+        }
+    }
+    return 0;
+}
+
+int main() {
+    int n, i;
+    printf("Enter the number of records: ");
+    scanf("%d", &n);
+    Record *records = (Record *)malloc(n * sizeof(Record));
+    for(i = 0; i < n; i++) {
+        printf("Enter the name and count for record %d: ", i + 1);
+        scanf("%s %d", records[i].name, &records[i].count);
+    }
+    if(checkOccurrences(records, n)) {
+        printf("There are records with similar counts.\n");
+    } else {
+        printf("No records with similar counts found.\n");
+    }
+    free(records);
+    return 0;
+}

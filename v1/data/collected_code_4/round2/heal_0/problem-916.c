@@ -1,0 +1,56 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX_INT 1000000
+
+void sort(int array[], int n) {
+    for (int i = 0; i < n-1; i++) {
+        for (int j = 0; j < n-i-1; j++) {
+            if (array[j] > array[j+1]) {
+                int temp = array[j];
+                array[j] = array[j+1];
+                array[j+1] = temp;
+            }
+        }
+    }
+}
+
+int isTripletSumPresent(int array[], int n, int sum) {
+    sort(array, n);
+    for (int i = 0; i < n-2; i++) {
+        int left = i + 1;
+        int right = n - 1;
+        while (left < right){
+            if(array[i] + array[left] + array[right] == sum){
+                return 1;
+            }
+            else if(array[i] + array[left] + array[right] < sum){
+                left++;
+            }
+            else{
+                right--;
+            }
+        }
+    }
+    return 0;
+}
+
+int main(){
+    int n, sum;
+    printf("Enter size of array: ");
+    scanf("%d", &n);
+    int array[n];
+    printf("Enter array elements: ");
+    for(int i=0; i<n; i++){
+        scanf("%d", &array[i]);
+    }
+    printf("Enter desired sum: ");
+    scanf("%d", &sum);
+    int result = isTripletSumPresent(array, n, sum);
+    if(result == 1){
+        printf("Yes, there is a triplet in the array whose sum is equal to the given value.\n");
+    }else{
+        printf("No, there is no such triplet in the array.\n");
+    }
+    return 0;
+}

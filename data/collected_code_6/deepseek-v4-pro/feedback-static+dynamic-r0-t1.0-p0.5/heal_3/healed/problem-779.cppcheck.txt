@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_3/healed/problem-779.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_3/healed/problem-779.c:35:18: style: Condition 'size>0' is always true [knownConditionTrueFalse]
+        if (size > 0 && (size_t)size > SIZE_MAX / sizeof(int)) {
+                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_3/healed/problem-779.c:33:14: note: Assuming that condition 'size>0' is not redundant
+    if (size > 0) {
+             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_3/healed/problem-779.c:35:18: note: Condition 'size>0' is always true
+        if (size > 0 && (size_t)size > SIZE_MAX / sizeof(int)) {
+                 ^

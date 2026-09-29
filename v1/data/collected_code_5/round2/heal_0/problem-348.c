@@ -1,0 +1,23 @@
+#include<stdio.h>
+
+long long int countSeq(int arr[], int sum, int len, int n) {
+    if(len == 0) return sum == 0;
+
+    long long int res = 0;
+
+    for(int i = 0; i<n; i++) {
+        if(sum-arr[i] >= 0)
+            res += countSeq(arr, sum-arr[i], len-1, n);
+    }
+    return res;
+}
+
+int main() {
+    int arr[] = {1, 2, 3};
+    int n = sizeof(arr) / sizeof(int);
+    int sum = 5, len = 3;
+ 
+    printf("%lld\n", countSeq(arr, sum, len, n));
+
+    return 0;
+}

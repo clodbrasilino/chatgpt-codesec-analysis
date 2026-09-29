@@ -1,0 +1,44 @@
+{
+  "task_id": 136,
+  "text": "Write a C function to calculate electricity bill.",
+  "fn_candidates": [
+    "cal_electbill",
+    "CalElectbill",
+    "calElectbill",
+    "calelectbill"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "cal_electbill",
+      "args": [
+        75
+      ],
+      "expected": 246.25,
+      "assert_src": "assert cal_electbill(75)==246.25"
+    },
+    {
+      "fn_name": "cal_electbill",
+      "args": [
+        265
+      ],
+      "expected": 1442.75,
+      "assert_src": "assert cal_electbill(265)==1442.75"
+    },
+    {
+      "fn_name": "cal_electbill",
+      "args": [
+        100
+      ],
+      "expected": 327.5,
+      "assert_src": "assert cal_electbill(100)==327.5"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "float",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

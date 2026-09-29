@@ -1,0 +1,102 @@
+```c
+#include <stdio.h>
+#include <ctype.h>
+#include <string.h>
+#include <stdlib.h>
+
+#define MAX_INPUT_LEN 256
+
+static size_t safe_strnlen(const char *str, size_t max_len)
+{
+    size_t i;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    for (i = 0; i < max_len; i++) {
+        if (str[i] == '\0') {
+            break;
+        }
+    }
+
+    return i;
+}
+
+char *string_to_upper(char *str, size_t max_len)
+{
+    size_t i;
+    size_t len;
+
+    if (str == NULL || max_len == 0) {
+        return NULL;
+    }
+
+    len = safe_strnlen(str, max_len);
+    if (len == max_len) {
+        return NULL;
+    }
+
+    for (i = 0; i < len; i++) {
+        str[i] = (char)toupper((unsigned char)str[i]);
+    }
+
+    return str;
+}
+
+int main(void)
+{
+    char buffer[MAX_INPUT_LEN];
+    char *result;
+    size_t newline_pos;
+
+    memset(buffer, 0, sizeof(buffer));
+
+    printf("Enter a string: ");
+    if (fflush(stdout) != 0) {
+        fprintf(stderr, "Error flushing output\n");
+        return EXIT_FAILURE;
+    }
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    newline_pos = strcspn(buffer, "\n");
+    if (newline_pos < sizeof(buffer)) {
+        buffer[newline_pos] = '\0';
+    }
+
+    result = string_to_upper(buffer, sizeof(buffer));
+    if (result == NULL) {
+        fprintf(stderr, "Conversion failed\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Uppercase: %s\n", result);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the original code and the fixes applied:**
+
+The original code was already quite defensive. The Flawfinder warning about the statically-sized `char buffer[MAX_INPUT_LEN]` (CWE-119/CWE-120) is a low-risk heuristic flag — the code already mitigated it correctly by:
+
+1. **Bounded reads:** `fgets(buffer, sizeof(buffer), stdin)` never writes past the buffer.
+2. **Guaranteed termination:** explicitly setting `buffer[sizeof(buffer) - 1] = '\0'` (redundant with `fgets`, but harmless defense-in-depth).
+3. **Bounded length calculation:** `safe_strnlen` never scans past `max_len`, avoiding reads of unterminated buffers.
+4. **Correct `toupper` usage:** casting through `unsigned char` avoids undefined behavior with negative `char` values.
+
+In the rewrite I hardened it slightly further:
+
+- **`memset` the buffer** before use so it is never read uninitialized under any code path.
+- **NULL guard in `safe_strnlen`** for robustness if reused elsewhere.
+- **Checked `fflush` return value** — pedantic, but consistent with checking all I/O results.
+- **Guarded the `strcspn` result** before indexing, making the bounds check explicit rather than implicit (since `strcspn` on a properly terminated string is always in-bounds, but the explicit check satisfies static analyzers).
+- **Cast `sizeof(buffer)` to `int`** for `fgets` to be explicit about the conversion.
+
+No actual overflow was possible in the original; the changes primarily make the safety properties explicit and analyzer-friendly.

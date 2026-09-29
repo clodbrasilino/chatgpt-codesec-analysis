@@ -1,0 +1,82 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+static int findMaxDifference(const char *str, size_t len)
+{
+    int currentSum;
+    int maxSum;
+    size_t i;
+
+    if (str == NULL || len == 0U) {
+        return -1;
+    }
+
+    currentSum = 0;
+    maxSum = -1;
+
+    for (i = 0U; i < len; i++) {
+        if (str[i] == '0') {
+            currentSum += 1;
+        } else if (str[i] == '1') {
+            currentSum -= 1;
+        } else {
+            return -1;
+        }
+
+        if (currentSum < 0) {
+            currentSum = 0;
+        }
+
+        if (currentSum > maxSum) {
+            maxSum = currentSum;
+        }
+    }
+
+    return maxSum;
+}
+
+int main(void)
+{
+    static const char testStrings[][16] = {
+        "11000010001",
+        "1111",
+        "0000",
+        "101010"
+    };
+    size_t numTests;
+    size_t i;
+
+    numTests = sizeof(testStrings) / sizeof(testStrings[0]);
+
+    for (i = 0U; i < numTests; i++) {
+        size_t len = strnlen(testStrings[i], sizeof(testStrings[i]));
+        int result = findMaxDifference(testStrings[i], len);
+
+        if (result < 0) {
+            if (printf("String: %s -> No valid substring with more 0s than 1s\n",
+                       testStrings[i]) < 0) {
+                return EXIT_FAILURE;
+            }
+        } else {
+            if (printf("String: %s -> Maximum difference: %d\n",
+                       testStrings[i], result) < 0) {
+                return EXIT_FAILURE;
+            }
+        }
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+Key changes made:
+
+1. **`variableScope` fix**: The `result` variable is now declared inside the loop body, reducing its scope to where it is actually used.
+
+2. **Flawfinder `strlen` (CWE-126) fix**: Replaced `strlen` with `strnlen`, bounded by the size of the fixed-width array elements. The test strings are now stored in a fixed-size 2D array (`char[][16]`) so the maximum readable length is known at compile time, guaranteeing no over-read even if a string were not NUL-terminated.
+
+3. **Minor hardening**: `findMaxDifference` is declared `static` since it has internal linkage only, and the test data is `static const` so it resides in read-only storage rather than being rebuilt on the stack at each invocation.
+
+The program's observable behavior is unchanged: it still validates input (rejecting non-binary characters and NULL/empty input via the `-1` sentinel), applies the Kadane-style scan treating `'0'` as `+1` and `'1'` as `-1`, and checks the return value of `printf` for I/O failure.

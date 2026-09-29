@@ -1,0 +1,146 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+#include <regex.h>
+
+#define MAX_INPUT_LEN 4096u
+
+static char *insert_spaces(const char *input)
+{
+    regex_t re;
+    regmatch_t match;
+    char *output;
+    size_t len;
+    size_t out_size;
+    size_t out_pos;
+    size_t offset;
+    size_t tail;
+    int rc;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    len = strnlen(input, MAX_INPUT_LEN);
+    if (len >= MAX_INPUT_LEN) {
+        return NULL;
+    }
+
+    if (len > ((SIZE_MAX - 1u) / 2u)) {
+        return NULL;
+    }
+
+    out_size = (len * 2u) + 1u;
+    output = (char *)malloc(out_size);
+    if (output == NULL) {
+        return NULL;
+    }
+
+    rc = regcomp(&re, "[A-Z]", REG_EXTENDED);
+    if (rc != 0) {
+        free(output);
+        return NULL;
+    }
+
+    out_pos = 0u;
+    offset = 0u;
+
+    while ((offset < len) &&
+           (regexec(&re, input + offset, 1u, &match, 0) == 0)) {
+        size_t start;
+        size_t chunk;
+
+        if (match.rm_so < 0) {
+            goto fail;
+        }
+
+        start = offset + (size_t)match.rm_so;
+        chunk = (size_t)match.rm_so;
+
+        if (start >= len) {
+            goto fail;
+        }
+
+        if ((chunk + 2u) > (out_size - out_pos)) {
+            goto fail;
+        }
+
+        if (chunk > 0u) {
+            memcpy(output + out_pos, input + offset, chunk);
+            out_pos += chunk;
+        }
+
+        if ((start > 0u) && (input[start - 1u] != ' ')) {
+            output[out_pos] = ' ';
+            out_pos++;
+        }
+
+        output[out_pos] = input[start];
+        out_pos++;
+        offset = start + 1u;
+    }
+
+    if (offset > len) {
+        goto fail;
+    }
+
+    tail = len - offset;
+
+    if ((tail + 1u) > (out_size - out_pos)) {
+        goto fail;
+    }
+
+    if (tail > 0u) {
+        memcpy(output + out_pos, input + offset, tail);
+        out_pos += tail;
+    }
+
+    output[out_pos] = '\0';
+
+    regfree(&re);
+    return output;
+
+fail:
+    regfree(&re);
+    free(output);
+    return NULL;
+}
+
+int main(void)
+{
+    const char *text = "HelloWorldThisIsATestString";
+    char *result;
+
+    result = insert_spaces(text);
+    if (result == NULL) {
+        (void)fprintf(stderr, "Error: failed to process string\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("%s\n", result) < 0) {
+        free(result);
+        return EXIT_FAILURE;
+    }
+
+    free(result);
+    return EXIT_SUCCESS;
+}
+```
+
+**Key changes made:**
+
+1. **Added `<stdint.h>`** — the original code used `SIZE_MAX` without including the header that defines it, which would fail to compile on strict toolchains.
+
+2. **Removed the redundant/always-false condition** flagged by cppcheck (`(out_pos + chunk) > out_size` inside the `if (chunk > 0u)` block). It was provably unreachable because the preceding combined check already guaranteed capacity.
+
+3. **Consolidated the bounds checks into a single sufficient guard** per write region:
+   - In the loop: `(chunk + 2u) > (out_size - out_pos)` guarantees room for the chunk, an optional space, and the matched character in one check. Since `out_pos <= out_size` is an invariant and `chunk < MAX_INPUT_LEN`, neither the subtraction nor the addition can wrap.
+   - For the tail: `(tail + 1u) > (out_size - out_pos)` guarantees room for the tail plus the NUL terminator, making the separate post-copy `out_pos >= out_size` check unnecessary.
+
+4. **Addressed the Flawfinder `memcpy` findings (CWE-120)** — each `memcpy` is now immediately dominated by exactly one explicit capacity check that provably covers the copy length, making the destination guarantee auditable rather than scattered across multiple partially-overlapping conditions.
+
+5. **Replaced the repeated `regfree`/`free`/`return NULL` blocks with a single `fail:` cleanup path**, eliminating duplicated cleanup logic and the risk of a future edit missing one of the release calls (a common source of leaks in this pattern).
+
+The functional behavior is unchanged: the program prints `Hello World This Is A Test String`.

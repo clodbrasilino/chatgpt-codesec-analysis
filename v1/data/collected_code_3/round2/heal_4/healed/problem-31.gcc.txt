@@ -1,0 +1,156 @@
+./collected_code_3/round2/heal_4/healed/problem-31.c: In function 'heapify':
+./collected_code_3/round2/heal_4/healed/problem-31.c:25:40: warning: use of uninitialized value '*_4 + _6.freq' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   25 |     if (left < h->size && h->heap[left].freq < h->heap[smallest].freq)
+      |                           ~~~~~~~~~~~~~^~~~~
+  'main': events 1-2
+    |
+    |   91 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   95 |     topKFrequent(nums, numsSize, k);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) calling 'topKFrequent' from 'main'
+    |
+    +--> 'topKFrequent': events 3-15
+           |
+           |   61 | void topKFrequent(int* nums, int numsSize, int k) {
+           |      |      ^~~~~~~~~~~~
+           |      |      |
+           |      |      (3) entry to 'topKFrequent'
+           |   62 |     int freq[100] = {0};
+           |   63 |     for (int i = 0; i < numsSize; ++i)
+           |      |                     ~~~~~~~~~~~~
+           |      |                       |
+           |      |                       (4) following 'true' branch (when 'i < numsSize')...
+           |   64 |         ++freq[nums[i] + 50];
+           |      |                    ~
+           |      |                    |
+           |      |                    (5) ...to here
+           |......
+           |   67 |     if(h != NULL){
+           |      |       ~
+           |      |       |
+           |      |       (6) following 'true' branch (when 'h' is non-NULL)...
+           |   68 |         h->heap = (Node*)malloc(sizeof(Node) * k);
+           |      |                          ~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                          |
+           |      |                          (7) ...to here
+           |      |                          (8) region created on heap here
+           |   69 |         if(h->heap != NULL){
+           |      |           ~
+           |      |           |
+           |      |           (9) following 'true' branch...
+           |   70 |             h->size = 0;
+           |      |             ~~~~~~~~~~~
+           |      |                     |
+           |      |                     (10) ...to here
+           |   71 |             for (int i = 0; i < 100; ++i) {
+           |      |                             ~~~~~~~
+           |      |                               |
+           |      |                               (11) following 'true' branch (when 'i <= 99')...
+           |   72 |                 Node node = {i - 50, freq[i]};
+           |      |                              ~~~~~~
+           |      |                                |
+           |      |                                (12) ...to here
+           |   73 |                 if (h->size < k) {
+           |      |                    ~
+           |      |                    |
+           |      |                    (13) following 'true' branch...
+           |   74 |                     insert(h, node);
+           |      |                     ~~~~~~~~~~~~~~~
+           |      |                     |
+           |      |                     (14) ...to here
+           |      |                     (15) calling 'insert' from 'topKFrequent'
+           |
+           +--> 'insert': events 16-20
+                  |
+                  |   37 | void insert(Heap* h, Node node) {
+                  |      |      ^~~~~~
+                  |      |      |
+                  |      |      (16) entry to 'insert'
+                  |   38 |     if(h->heap != NULL){
+                  |      |       ~
+                  |      |       |
+                  |      |       (17) following 'true' branch...
+                  |   39 |         ++h->size;
+                  |      |           ~~~~~~~
+                  |      |            |
+                  |      |            (18) ...to here
+                  |   40 |         int i = h->size - 1;
+                  |   41 |         while (i && node.freq < h->heap[(i - 1) / 2].freq) {
+                  |      |                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                  |      |                  |
+                  |      |                  (19) following 'false' branch (when 'i == 0')...
+                  |......
+                  |   45 |         h->heap[i] = node;
+                  |      |         ~~~~~~~
+                  |      |          |
+                  |      |          (20) ...to here
+                  |
+           <------+
+           |
+         'topKFrequent': events 21-26
+           |
+           |   71 |             for (int i = 0; i < 100; ++i) {
+           |      |                             ~~~~~~~
+           |      |                               |
+           |      |                               (22) following 'true' branch (when 'i <= 99')...
+           |   72 |                 Node node = {i - 50, freq[i]};
+           |      |                              ~~~~~~
+           |      |                                |
+           |      |                                (23) ...to here
+           |   73 |                 if (h->size < k) {
+           |      |                    ~ 
+           |      |                    |
+           |      |                    (24) following 'false' branch...
+           |   74 |                     insert(h, node);
+           |      |                     ^~~~~~~~~~~~~~~
+           |      |                     |
+           |      |                     (21) returning to 'topKFrequent' from 'insert'
+           |   75 |                 } else if (h->heap[0].freq < node.freq) {
+           |      |                            ~~~~~~~
+           |      |                             |
+           |      |                             (25) ...to here
+           |   76 |                     pop(h);
+           |      |                     ~~~~~~
+           |      |                     |
+           |      |                     (26) calling 'pop' from 'topKFrequent'
+           |
+           +--> 'pop': events 27-30
+                  |
+                  |   49 | Node pop(Heap* h) {
+                  |      |      ^~~
+                  |      |      |
+                  |      |      (27) entry to 'pop'
+                  |   50 |     Node root = h->heap[0];
+                  |   51 |     if (h->size > 1) {
+                  |      |        ~
+                  |      |        |
+                  |      |        (28) following 'true' branch...
+                  |   52 |         h->heap[0] = h->heap[h->size - 1];
+                  |      |                      ~~~~~~~
+                  |      |                       |
+                  |      |                       (29) ...to here
+                  |   53 |         --h->size;
+                  |   54 |         heapify(h, 0);
+                  |      |         ~~~~~~~~~~~~~
+                  |      |         |
+                  |      |         (30) calling 'heapify' from 'pop'
+                  |
+                  +--> 'heapify': events 31-34
+                         |
+                         |   20 | void heapify(Heap* h, int i) {
+                         |      |      ^~~~~~~
+                         |      |      |
+                         |      |      (31) entry to 'heapify'
+                         |......
+                         |   25 |     if (left < h->size && h->heap[left].freq < h->heap[smallest].freq)
+                         |      |        ~                  ~~~~~~~~~~~~~~~~~~
+                         |      |        |                   |           |
+                         |      |        |                   |           (34) use of uninitialized value '*_4 + _6.freq' here
+                         |      |        |                   (33) ...to here
+                         |      |        (32) following 'true' branch...
+                         |

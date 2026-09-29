@@ -1,0 +1,6 @@
+collected_code/problem-809-0.c:5:19: error: Cannot determine that 'second[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        if (second[i] >= i && first[i] >= second[i]) {
+                  ^
+collected_code/problem-809-0.c:5:36: error: Cannot determine that 'first[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        if (second[i] >= i && first[i] >= second[i]) {
+                                   ^

@@ -1,0 +1,59 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <limits.h>
+
+long long centered_hexagonal(int n)
+{
+    if (n < 0) {
+        return -1;
+    }
+    if (n > 303700049) {
+        return -1;
+    }
+    return 3LL * n * (n - 1) + 1;
+}
+
+int main(void)
+{
+    int n;
+    char *input = NULL;
+    size_t input_size = 0;
+    ssize_t input_length;
+    char *endptr;
+    long val;
+    long long result;
+
+    input_length = getline(&input, &input_size, stdin);
+    if (input_length == -1) {
+        fprintf(stderr, "Error reading input\n");
+        free(input);
+        return EXIT_FAILURE;
+    }
+
+    errno = 0;
+    val = strtol(input, &endptr, 10);
+    if (errno != 0 || endptr == input || (*endptr != '\n' && *endptr != '\0')) {
+        fprintf(stderr, "Invalid input: not a valid integer\n");
+        free(input);
+        return EXIT_FAILURE;
+    }
+
+    if (val < 0 || val > INT_MAX) {
+        fprintf(stderr, "Input out of valid range\n");
+        free(input);
+        return EXIT_FAILURE;
+    }
+
+    n = (int)val;
+    result = centered_hexagonal(n);
+    if (result == -1) {
+        fprintf(stderr, "Invalid input: n must be non-negative and within bounds\n");
+        free(input);
+        return EXIT_FAILURE;
+    }
+
+    printf("%lld\n", result);
+    free(input);
+    return EXIT_SUCCESS;
+}

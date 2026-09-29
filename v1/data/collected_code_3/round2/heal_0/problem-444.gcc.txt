@@ -1,0 +1,46 @@
+collected_code_3/problem-444-2.c: In function 'trimTuple':
+collected_code_3/problem-444-2.c:19:20: warning: dereference of possibly-NULL 'newData' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   19 |         newData[i] = tuple->data[i];
+      |         ~~~~~~~~~~~^~~~~~~~~~~~~~~~
+  'trimTuple': events 1-6
+    |
+    |   10 |     if (k >= tuple->size) {
+    |      |        ^
+    |      |        |
+    |      |        (1) following 'false' branch...
+    |......
+    |   17 |     int *newData = (int *)malloc(sizeof(int) * (tuple->size - k));
+    |      |                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                           |                          |
+    |      |                           |                          (2) ...to here
+    |      |                           (3) this call could return NULL
+    |   18 |     for (int i = 0; i < tuple->size - k; i++) {
+    |      |                     ~~~~~~~~~~~~~~~~~~~
+    |      |                       |
+    |      |                       (4) following 'true' branch...
+    |   19 |         newData[i] = tuple->data[i];
+    |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                    |      |
+    |      |                    |      (5) ...to here
+    |      |                    (6) 'newData + (long unsigned int)i * 4' could be NULL: unchecked value from (3)
+    |
+collected_code_3/problem-444-2.c: In function 'main':
+collected_code_3/problem-444-2.c:32:23: warning: dereference of possibly-NULL 'tuple.data' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   32 |         tuple.data[i] = i + 1;
+      |         ~~~~~~~~~~~~~~^~~~~~~
+  'main': events 1-4
+    |
+    |   30 |     tuple.data = (int *)malloc(sizeof(int) * tuple.size);
+    |      |                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                         |
+    |      |                         (1) this call could return NULL
+    |   31 |     for (int i = 0; i < tuple.size; i++) {
+    |      |                     ~~~~~~~~~~~~~~
+    |      |                       |
+    |      |                       (2) following 'true' branch...
+    |   32 |         tuple.data[i] = i + 1;
+    |      |         ~~~~~~~~~~~~~~~~~~~~~
+    |      |              |        |
+    |      |              |        (4) 'tuple.data + (long unsigned int)i * 4' could be NULL: unchecked value from (1)
+    |      |              (3) ...to here
+    |

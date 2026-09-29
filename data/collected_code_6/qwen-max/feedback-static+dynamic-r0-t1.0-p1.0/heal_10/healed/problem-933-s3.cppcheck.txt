@@ -1,0 +1,7 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-933-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-933-s3.c:14:29: style: Variable 'replacement' is assigned a value that is never used. [unreadVariable]
+    const char *replacement = "\\1_\\2";
+                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-933-s3.c:38:32: style: Variable 'pmatches' is assigned a value that is never used. [unreadVariable]
+        regmatch_t pmatches[2] = {pmatch[0], pmatch[1]};
+                               ^

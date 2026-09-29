@@ -1,0 +1,47 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+#include <stddef.h>
+
+bool is_greater_than_all(int number, const int *array, size_t size)
+{
+    size_t i;
+
+    if (array == NULL || size == 0U) {
+        return false;
+    }
+
+    for (i = 0U; i < size; i++) {
+        if (number <= array[i]) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+int main(void)
+{
+    int array[] = { 12, 45, 7, 89, 23, 56 };
+    size_t size = sizeof(array) / sizeof(array[0]);
+    int number = 0;
+    int result;
+
+    printf("Enter a number: ");
+    result = scanf("%d", &number);
+
+    if (result != 1) {
+        fprintf(stderr, "Error: invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (is_greater_than_all(number, array, size)) {
+        printf("%d is greater than all elements of the array.\n", number);
+    } else {
+        printf("%d is not greater than all elements of the array.\n", number);
+    }
+
+    return EXIT_SUCCESS;
+}
+```

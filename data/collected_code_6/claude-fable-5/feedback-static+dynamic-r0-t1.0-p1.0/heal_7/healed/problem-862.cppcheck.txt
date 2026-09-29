@@ -1,0 +1,16 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-862.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-862.c:102:18: style: Condition 'word_len>=dest_size' is always false [knownConditionTrueFalse]
+    if (word_len >= dest_size) {
+                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-862.c:80:35: note: Assuming that condition 'word_len>=64' is not redundant
+    if (word_len == 0 || word_len >= MAX_WORD_LEN) {
+                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-862.c:85:64: note: Assuming condition is false
+        if (strncmp(list->entries[i].word, word, MAX_WORD_LEN) == 0) {
+                                                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-862.c:101:23: note: Assignment 'dest_size=sizeof(entry->word)', assigned value is 64
+    dest_size = sizeof(entry->word);
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-862.c:102:18: note: Condition 'word_len>=dest_size' is always false
+    if (word_len >= dest_size) {
+                 ^

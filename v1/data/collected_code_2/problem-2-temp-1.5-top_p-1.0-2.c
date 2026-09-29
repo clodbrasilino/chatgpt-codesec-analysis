@@ -1,0 +1,33 @@
+refactor
+#include <stdio.h>
+
+void get_duplicates(int A[], size_t a_length, 
+               int B[], size_t b_length){
+	for(int i = 0; i<a_length; i++)
+	{
+		for(int j = 0; j<b_length; j++)
+		{
+			if(A[i]==B[j])
+			{
+				printf("Duplicate: %d\n", A[i]);
+				break;
+			}
+		}
+	}
+}
+
+
+int main()
+{
+	
+	int arr1[4] = {15,7,2,8};
+				int arr2[5] = {19,43,16,22,86,1,00};
+    			    
+          	
+ get_duplicates(arr1,sizeof(arr1)/sizeof(int)),
+	get_duplicates(arr2,�(element));
+
+    system("PAUSE");
+   return 0;
+ }
+

@@ -1,0 +1,89 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_INPUT_LEN 4096U
+
+char *abbreviate_road(const char *input);
+
+char *abbreviate_road(const char *input)
+{
+    size_t len;
+    size_t i = 0;
+    size_t j = 0;
+    char *result;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    len = strnlen(input, MAX_INPUT_LEN);
+    if (len >= MAX_INPUT_LEN) {
+        return NULL;
+    }
+
+    result = malloc(len + 1U);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    while (i < len) {
+        if ((len - i) >= 4U && strncmp(&input[i], "road", 4U) == 0) {
+            result[j] = 'r';
+            j++;
+            result[j] = 'd';
+            j++;
+            result[j] = '.';
+            j++;
+            i += 4U;
+        } else {
+            result[j] = input[i];
+            j++;
+            i++;
+        }
+    }
+    result[j] = '\0';
+
+    return result;
+}
+
+int main(void)
+{
+    const char *text = "Take the main road until the road ends.";
+    char *abbreviated;
+
+    abbreviated = abbreviate_road(text);
+    if (abbreviated == NULL) {
+        (void)fprintf(stderr, "Error: failed to process string\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Original:    %s\n", text) < 0) {
+        free(abbreviated);
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Abbreviated: %s\n", abbreviated) < 0) {
+        free(abbreviated);
+        return EXIT_FAILURE;
+    }
+
+    free(abbreviated);
+    abbreviated = NULL;
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the changes:**
+
+1. **CWE-126 mitigation (`strlen` over-read):** Replaced `strlen` with `strnlen` bounded by `MAX_INPUT_LEN`. If the input is not NUL-terminated within that bound, the function rejects it by returning `NULL` instead of reading past the buffer.
+
+2. **Bounded `strncmp` comparison:** Added a `(len - i) >= 4U` guard before the `strncmp` call. While `strncmp` stops at a NUL byte and was technically safe in the original, the explicit length check makes the bounds reasoning provable to static analyzers and removes any dependence on terminator semantics near the end of the buffer.
+
+3. **Loop bounded by validated length:** The `while` loop now iterates against the validated `len` rather than scanning for `'\0'`, so all reads are within `[0, len)` by construction.
+
+4. **Buffer sizing remains correct:** Since `"road"` (4 chars) is replaced by `"rd."` (3 chars), the output can never exceed the input length, so `malloc(len + 1U)` is sufficient and `result[j] = '\0'` is always in bounds.
+
+The rest of the program (NULL checks on `malloc` and the function return, checked `printf` return values, `free` plus pointer reset) was already defensive and is preserved.

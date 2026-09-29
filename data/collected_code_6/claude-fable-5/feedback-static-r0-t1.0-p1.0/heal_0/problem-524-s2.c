@@ -1,0 +1,60 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int max_sum_increasing_subsequence(const int *arr, size_t n, int *result)
+{
+    int *dp;
+    size_t i;
+    size_t j;
+    int max_sum;
+
+    if (arr == NULL || result == NULL || n == 0) {
+        return -1;
+    }
+
+    dp = malloc(n * sizeof(*dp));
+    if (dp == NULL) {
+        return -1;
+    }
+
+    for (i = 0; i < n; i++) {
+        dp[i] = arr[i];
+    }
+
+    for (i = 1; i < n; i++) {
+        for (j = 0; j < i; j++) {
+            if (arr[j] < arr[i] && dp[j] + arr[i] > dp[i]) {
+                dp[i] = dp[j] + arr[i];
+            }
+        }
+    }
+
+    max_sum = dp[0];
+    for (i = 1; i < n; i++) {
+        if (dp[i] > max_sum) {
+            max_sum = dp[i];
+        }
+    }
+
+    free(dp);
+    *result = max_sum;
+    return 0;
+}
+
+int main(void)
+{
+    int arr[] = {1, 101, 2, 3, 100, 4, 5};
+    size_t n = sizeof(arr) / sizeof(arr[0]);
+    int result;
+
+    if (max_sum_increasing_subsequence(arr, n, &result) != 0) {
+        fprintf(stderr, "Error computing maximum sum increasing subsequence\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Maximum sum of increasing subsequence: %d\n", result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

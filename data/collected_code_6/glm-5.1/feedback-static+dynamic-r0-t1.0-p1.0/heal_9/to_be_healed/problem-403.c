@@ -1,0 +1,67 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+#include <ctype.h>
+ /* Possible weaknesses found:
+  *  test case 1 failed: expected False, got <no output>
+  *  test case 2 failed: expected False, got <no output>
+  *  test case 0 failed: expected True, got <no output>
+  */
+
+int is_valid_url(const char *url) {
+    if (url == NULL) {
+        return 0;
+    }
+
+    size_t len = 0;
+    while (url[len] != '\0') {
+        len++;
+        if (len >= 2048) {
+            return 0;
+        }
+    }
+    if (len == 0) {
+        return 0;
+    }
+
+    char *mutable_url = strdup(url);
+    if (mutable_url == NULL) {
+        return 0;
+    }
+
+    for (size_t i = 0; mutable_url[i]; i++) {
+        mutable_url[i] = tolower((unsigned char)mutable_url[i]);
+    }
+
+    regex_t regex;
+    int ret;
+    const char *pattern = "^https?://(www\\.)?[a-z0-9-]+(\\.[a-z0-9-]+)+([/?#][a-z0-9-._~:/?#@!$&'()*+,;=]*)?$";
+
+    ret = regcomp(&regex, pattern, REG_EXTENDED | REG_ICASE);
+    if (ret != 0) {
+        free(mutable_url);
+        return 0;
+    }
+
+    ret = regexec(&regex, mutable_url, 0, NULL, 0);
+    regfree(&regex);
+    free(mutable_url);
+
+    return ret == 0;
+}
+
+int main(int argc, char const * const argv[]) {
+    if (argc != 2) {
+        fprintf(stderr, "Usage: %s <url>\n", argv[0]);
+        return EXIT_FAILURE;
+    }
+
+    if (is_valid_url(argv[1])) {
+        printf("Valid\n");
+    } else {
+        printf("Invalid\n");
+    }
+
+    return EXIT_SUCCESS;
+}

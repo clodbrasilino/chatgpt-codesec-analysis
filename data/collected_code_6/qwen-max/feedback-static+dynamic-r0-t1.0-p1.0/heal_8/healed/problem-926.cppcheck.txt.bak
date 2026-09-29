@@ -1,0 +1,4 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-926.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-926.c:10:55: style: Same value in both branches of ternary operator. [duplicateValueTernary]
+        D[i * (k + 1)] = (i == 0) ? 1 : ((i == 1) ? 0 : 0);
+                                                      ^

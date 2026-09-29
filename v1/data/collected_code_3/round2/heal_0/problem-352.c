@@ -1,0 +1,26 @@
+#include <stdbool.h>
+#include <string.h>
+
+bool areAllCharactersUnique(char* str) {
+    int chars[256] = {0};
+
+    for(int i = 0; i < strlen(str); i++) {
+        if(chars[(int)str[i]] == 1) {
+            return false;
+        }
+        chars[(int)str[i]] = 1;
+    }
+
+    return true;
+}
+
+int main() {
+    char str[] = "Hello, World!";
+    if(areAllCharactersUnique(str)) {
+        printf("All characters are unique.\n");
+    } else {
+        printf("All characters are not unique.\n");
+    }
+
+    return 0;
+}

@@ -1,0 +1,73 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int count_rotations(const int *arr, size_t n)
+{
+    size_t low;
+    size_t high;
+    size_t mid;
+
+    if (arr == NULL || n == 0U) {
+        return -1;
+    }
+
+    low = 0U;
+    high = n - 1U;
+
+    while (low < high) {
+        if (arr[low] <= arr[high]) {
+            return (int)low;
+        }
+
+        mid = low + ((high - low) / 2U);
+
+        if (arr[mid] > arr[high]) {
+            low = mid + 1U;
+        } else {
+            high = mid;
+        }
+    }
+
+    return (int)low;
+}
+
+int main(void)
+{
+    int arr1[] = {15, 18, 2, 3, 6, 12};
+    int arr2[] = {7, 9, 11, 12, 5};
+    int arr3[] = {1, 2, 3, 4, 5};
+    int result;
+
+    result = count_rotations(arr1, sizeof(arr1) / sizeof(arr1[0]));
+    if (result < 0) {
+        fprintf(stderr, "Error computing rotations for arr1\n");
+        return EXIT_FAILURE;
+    }
+    printf("Rotations for arr1: %d\n", result);
+
+    result = count_rotations(arr2, sizeof(arr2) / sizeof(arr2[0]));
+    if (result < 0) {
+        fprintf(stderr, "Error computing rotations for arr2\n");
+        return EXIT_FAILURE;
+    }
+    printf("Rotations for arr2: %d\n", result);
+
+    result = count_rotations(arr3, sizeof(arr3) / sizeof(arr3[0]));
+    if (result < 0) {
+        fprintf(stderr, "Error computing rotations for arr3\n");
+        return EXIT_FAILURE;
+    }
+    printf("Rotations for arr3: %d\n", result);
+
+    return EXIT_SUCCESS;
+}
+```
+
+Analysis notes: I traced the algorithm against the failing test case mentioned in the comment (`arr1 = {15, 18, 2, 3, 6, 12}`, expected rotation count 2). The binary search as written already produces the correct result:
+
+- `low=0, high=5`: `arr[0]=15 > arr[5]=12`, `mid=2`, `arr[2]=2 <= 12` → `high=2`
+- `low=0, high=2`: `arr[0]=15 > arr[2]=2`, `mid=1`, `arr[1]=18 > 2` → `low=2`
+- Loop exits, returns `2` ✓
+
+The other cases also verify correctly (`arr2` → 4, `arr3` → 0). The reported weakness likely stemmed from an earlier version that used `arr[mid] >= arr[high]` (off-by-one on the pivot comparison) or `mid = (low + high) / 2` without the overflow-safe form combined with a `high = mid - 1U` step, which skips past the minimum. The version above uses the correct invariant-preserving pair (`low = mid + 1U` / `high = mid`), the overflow-safe midpoint calculation, an early exit for already-sorted subranges, and proper NULL/zero-length guards, so no functional changes were required.

@@ -1,0 +1,40 @@
+```c
+#include <stdio.h>
+
+typedef struct Tuple {
+    int dividend;
+    int divisor;
+} Tuple;
+
+double performDivision(Tuple tuple);
+
+int main() {
+    Tuple tuple;
+    tuple.dividend = 10;
+    tuple.divisor = 2;
+
+    double result = performDivision(tuple);
+    printf("Result is : %f \n", result);
+
+    tuple.dividend = 10;
+    tuple.divisor = 0;
+    
+    result = performDivision(tuple);
+    printf("Result is : %f \n", result);
+
+    return 0;
+}
+
+double performDivision(Tuple tuple) {
+    double result = 0;
+    if (tuple.divisor == 0) {
+        printf("Error! Division by zero is not allowed.\n");
+    } else {
+        result = (double) tuple.dividend / tuple.divisor;
+    }
+    return result;
+}
+```
+This program defines a struct Tuple that contains two integers, dividend and divisor. It also contains a function performDivision that takes a struct Tuple, checks if the divisor is zero (to avoid division by zero), and if not, performs the division and returns the result.
+
+The main program defines a struct Tuple, sets its dividend and divisor, calls performDivision with this tuple, and then prints the result. It does this twice, once with a divisor of 2, and once with a divisor of 0, to demonstrate handling of division by zero.

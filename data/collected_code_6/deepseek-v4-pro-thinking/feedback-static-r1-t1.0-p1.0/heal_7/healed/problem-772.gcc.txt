@@ -1,0 +1,4 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_7/healed/problem-772.c: In function 'remove_words_of_length':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_7/healed/problem-772.c:55:20: error: assignment of read-only location '*(end + -1)'
+   55 |         *(end - 1) = '\0';
+      |                    ^

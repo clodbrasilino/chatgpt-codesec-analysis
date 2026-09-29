@@ -1,0 +1,22 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-909-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-909-s2.c:62:25: style: Condition 'len-1>0' is always true [knownConditionTrueFalse]
+            if (len - 1 > 0) {
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-909-s2.c:54:17: note: Assuming that condition 'len==1' is not redundant
+        if (len == 1) {
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-909-s2.c:62:25: note: Condition 'len-1>0' is always true
+            if (len - 1 > 0) {
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-909-s2.c:77:18: style: Condition 'left_len>0' is always true [knownConditionTrueFalse]
+    if (left_len > 0) {
+                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-909-s2.c:52:18: note: Assuming that condition 'left_len==0' is not redundant
+    if (left_len == 0 || (left_len == 1 && left[0] == '0')) {
+                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-909-s2.c:71:19: note: Assuming condition is false
+    if (total_len >= capacity) {
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-909-s2.c:77:18: note: Condition 'left_len>0' is always true
+    if (left_len > 0) {
+                 ^

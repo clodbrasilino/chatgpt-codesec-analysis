@@ -1,0 +1,77 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+void reverse_string(char *str, size_t cap) {
+    if (str == NULL) {
+        return;
+    }
+
+    size_t len = strnlen(str, cap);
+    if (len == 0) {
+        return;
+    }
+
+    size_t left = 0;
+    size_t right = len - 1;
+
+    while (left < right) {
+        char temp = str[left];
+        str[left] = str[right];
+        str[right] = temp;
+        left++;
+        right--;
+    }
+}
+
+void reverse_strings_in_list(char **list, const size_t *caps) {
+    if (list == NULL) {
+        return;
+    }
+
+    size_t i = 0;
+    while (list[i] != NULL) {
+        reverse_string(list[i], caps[i]);
+        i++;
+    }
+}
+
+int main(void) {
+    size_t list_capacity = 4;
+    char **list = calloc(list_capacity, sizeof(char *));
+    size_t caps[4];
+    
+    if (list == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    list[0] = strdup("hello");
+    caps[0] = sizeof("hello");
+    list[1] = strdup("world");
+    caps[1] = sizeof("world");
+    list[2] = strdup("C programming");
+    caps[2] = sizeof("C programming");
+
+    for (size_t i = 0; i < 3; i++) {
+        if (list[i] == NULL) {
+            fprintf(stderr, "Memory allocation failed\n");
+            for (size_t j = 0; j < list_capacity; j++) {
+                free(list[j]);
+            }
+            free(list);
+            return EXIT_FAILURE;
+        }
+    }
+
+    reverse_strings_in_list(list, caps);
+
+    for (size_t i = 0; list[i] != NULL; i++) {
+        printf("%s\n", list[i]);
+        free(list[i]);
+        list[i] = NULL;
+    }
+
+    free(list);
+    return EXIT_SUCCESS;
+}

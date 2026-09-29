@@ -1,0 +1,2 @@
+problem-320.c:43:24:medium:UBSan: signed integer overflow: 4938272839506 * 4444445 cannot be represented in type 'long long' (AFL crash: id:000000,sig:06,src:000004,time:417,execs:243,op:quick,pos:7)
+problem-320.c:43:24:medium:UBSan: signed integer overflow: 493827128395062 * -44444443 cannot be represented in type 'long long' (AFL crash: id:000001,sig:06,src:000004,time:6514,execs:3049,op:havoc,rep:2)

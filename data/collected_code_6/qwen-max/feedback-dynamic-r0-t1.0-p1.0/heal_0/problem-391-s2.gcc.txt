@@ -1,0 +1,8 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-391-s2.c: In function 'findEntry':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-391-s2.c:37:13: error: implicit declaration of function 'strcmp' [-Wimplicit-function-declaration]
+   37 |         if (strcmp(curr->key, key) == 0) {
+      |             ^~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-391-s2.c:4:1: note: include '<string.h>' or provide a declaration of 'strcmp'
+    3 | #include <stdbool.h>
+  +++ |+#include <string.h>
+    4 | 

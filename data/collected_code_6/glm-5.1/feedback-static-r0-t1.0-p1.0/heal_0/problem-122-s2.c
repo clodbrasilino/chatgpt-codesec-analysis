@@ -1,0 +1,42 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int find_nth_smart_number(int n) {
+    if (n <= 0) {
+        return -1;
+    }
+
+    int count = 0;
+    int num = 1;
+
+    while (1) {
+        int factors = 0;
+        for (int i = 1; i <= num; i++) {
+            if (num % i == 0) {
+                factors++;
+            }
+        }
+
+        if (factors > 3) {
+            count++;
+            if (count == n) {
+                return num;
+            }
+        }
+        num++;
+    }
+}
+
+int main(int argc, char *argv[]) {
+    int n = 4;
+    int result = find_nth_smart_number(n);
+
+    if (result != -1) {
+        printf("%d\n", result);
+    } else {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

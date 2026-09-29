@@ -1,0 +1,48 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+int list_to_integer(const int *list, size_t count, long long *result)
+{
+    size_t i;
+    long long value = 0;
+
+    if (list == NULL || result == NULL || count == 0U) {
+        return -1;
+    }
+
+    for (i = 0U; i < count; i++) {
+        if (list[i] < 0 || list[i] > 9) {
+            return -1;
+        }
+        if (value > (LLONG_MAX - (long long)list[i]) / 10LL) {
+            return -1;
+        }
+        value = (value * 10LL) + (long long)list[i];
+    }
+
+    *result = value;
+    return 0;
+}
+
+int main(void)
+{
+    int numbers[] = {4, 7, 2, 9, 1};
+    size_t count = sizeof(numbers) / sizeof(numbers[0]);
+    long long combined = 0;
+    int status;
+
+    status = list_to_integer(numbers, count, &combined);
+    if (status != 0) {
+        if (fprintf(stderr, "Conversion failed\n") < 0) {
+            return EXIT_FAILURE;
+        }
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Combined integer: %lld\n", combined) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

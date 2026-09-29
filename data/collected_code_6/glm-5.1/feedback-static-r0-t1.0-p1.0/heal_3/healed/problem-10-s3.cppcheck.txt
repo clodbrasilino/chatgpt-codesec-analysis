@@ -1,0 +1,37 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-10-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-10-s3.c:117:22: style: Condition 'data_len>0' is always true [knownConditionTrueFalse]
+        if (data_len > 0 && n > 0) {
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-10-s3.c:112:36: note: Assignment 'data_len=sizeof(data)/sizeof(data[0])', assigned value is 10
+    size_t data_len = sizeof(data) / sizeof(data[0]);
+                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-10-s3.c:117:22: note: Condition 'data_len>0' is always true
+        if (data_len > 0 && n > 0) {
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-10-s3.c:117:31: style: Condition 'n>0' is always true [knownConditionTrueFalse]
+        if (data_len > 0 && n > 0) {
+                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-10-s3.c:113:16: note: Assignment 'n=4', assigned value is 4
+    size_t n = 4;
+               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-10-s3.c:117:31: note: Condition 'n>0' is always true
+        if (data_len > 0 && n > 0) {
+                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-10-s3.c:124:11: style: Condition 'n>data_len' is always false [knownConditionTrueFalse]
+    if (n > data_len) {
+          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-10-s3.c:113:16: note: Assignment 'n=4', assigned value is 4
+    size_t n = 4;
+               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-10-s3.c:116:18: note: Assuming condition is false
+    if (smallest == NULL) {
+                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-10-s3.c:123:23: note: Assignment 'actual_n=n', assigned value is 4
+    size_t actual_n = n;
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-10-s3.c:123:21: note: actual_n is assigned 'n' here.
+    size_t actual_n = n;
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-10-s3.c:124:11: note: Condition 'n>data_len' is always false
+    if (n > data_len) {
+          ^

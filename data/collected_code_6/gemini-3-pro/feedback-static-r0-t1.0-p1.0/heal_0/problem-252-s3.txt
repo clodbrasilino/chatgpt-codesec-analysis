@@ -1,0 +1,53 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+typedef struct {
+    double real;
+    double imag;
+} Complex;
+
+typedef struct {
+    double radius;
+    double angle;
+} Polar;
+
+int complex_to_polar(const Complex* c, Polar* p) {
+    if (c == NULL || p == NULL) {
+        return -1;
+    }
+
+    p->radius = hypot(c->real, c->imag);
+    p->angle = atan2(c->imag, c->real);
+
+    return 0;
+}
+
+int main(void) {
+    Complex* c = (Complex*)malloc(sizeof(Complex));
+    Polar* p = (Polar*)malloc(sizeof(Polar));
+
+    if (c == NULL || p == NULL) {
+        free(c);
+        free(p);
+        return EXIT_FAILURE;
+    }
+
+    c->real = 3.0;
+    c->imag = 4.0;
+
+    if (complex_to_polar(c, p) == 0) {
+        printf("Radius: %f\n", p->radius);
+        printf("Angle: %f\n", p->angle);
+    } else {
+        free(c);
+        free(p);
+        return EXIT_FAILURE;
+    }
+
+    free(c);
+    free(p);
+    return EXIT_SUCCESS;
+}
+```

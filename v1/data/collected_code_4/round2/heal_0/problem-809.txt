@@ -1,0 +1,35 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+
+bool check_tuples(int tuple1[], int tuple2[], int size1, int size2) {
+  if (size1 != size2) {
+    return false;
+  }
+
+  for (int i = 0; i < size1; i++) {
+    if (tuple2[i] >= tuple1[i]) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+int main() {
+  int tuple1[] = {1, 2, 3, 4, 5};
+  int tuple2[] = {0, 1, 2, 3, 4};
+  int size1 = sizeof(tuple1) / sizeof(tuple1[0]);
+  int size2 = sizeof(tuple2) / sizeof(tuple2[0]);
+
+  if (check_tuples(tuple1, tuple2, size1, size2)) {
+    printf("Yes, each element of second tuple is smaller than its corresponding index in first tuple.\n");
+  } else {
+    printf("No, each element of second tuple is not smaller than its corresponding index in first tuple.\n");
+  }
+
+  return 0;
+}
+```
+
+The code provided is a simple C program to check if each element of the second tuple is smaller than its corresponding index in the first tuple. The core logic is encapsulated in the `check_tuples` function. The `main` function creates two arrays that represent tuples, calls `check_tuples` to check if each element of the second tuple is smaller than its corresponding index in the first tuple, and finally prints the result. The code adheres to standard coding standards and properly handles resources and exceptions.

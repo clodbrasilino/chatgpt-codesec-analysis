@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_0/problem-108-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_0/problem-108-s2.c:59:12: error: Returning pointer to member variable 'value' that will be invalid when returning. [returnDanglingLifetime]
+    return &min_node.value;
+           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_0/problem-108-s2.c:59:12: note: Address of variable taken here.
+    return &min_node.value;
+           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_0/problem-108-s2.c:59:12: note: Returning pointer to member variable 'value' that will be invalid when returning.
+    return &min_node.value;
+           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_0/problem-108-s2.c:40:64: style: Parameter 'list_sizes' can be declared as pointer to const [constParameterPointer]
+int* getNext(HeapNode *heap, int *heap_size, int **lists, int *list_sizes, int num_lists, CompareFunc cmp) {
+                                                               ^

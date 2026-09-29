@@ -1,0 +1,54 @@
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+
+int is_vowel(char c) {
+    c = tolower(c);
+    return c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u';
+}
+
+void reverse_vowels(char *str) {
+    if (str == NULL) {
+        return;
+    }
+    
+    int left = 0;
+    int right = strlen(str) - 1;
+    
+    while (left < right) {
+        while (left < right && !is_vowel(str[left])) {
+            left++;
+        }
+        
+        while (left < right && !is_vowel(str[right])) {
+            right--;
+        }
+        
+        if (left < right) {
+            char temp = str[left];
+            str[left] = str[right];
+            str[right] = temp;
+            left++;
+            right--;
+        }
+    }
+}
+
+int main(void) {
+    char str1[] = "hello";
+    char str2[] = "leetcode";
+    char str3[] = "aA";
+    char str4[] = "xyz";
+    
+    reverse_vowels(str1);
+    reverse_vowels(str2);
+    reverse_vowels(str3);
+    reverse_vowels(str4);
+    
+    printf("%s\n", str1);
+    printf("%s\n", str2);
+    printf("%s\n", str3);
+    printf("%s\n", str4);
+    
+    return 0;
+}

@@ -1,0 +1,68 @@
+{
+  "task_id": 627,
+  "text": "Write a C function to find the smallest missing number from the given array.",
+  "fn_candidates": [
+    "find_First_Missing",
+    "FindFirstMissing",
+    "findFirstMissing",
+    "findFirstMissing"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "find_First_Missing",
+      "args": [
+        [
+          0,
+          1,
+          2,
+          3
+        ],
+        0,
+        3
+      ],
+      "expected": 4,
+      "assert_src": "assert find_First_Missing([0,1,2,3],0,3) == 4"
+    },
+    {
+      "fn_name": "find_First_Missing",
+      "args": [
+        [
+          0,
+          1,
+          2,
+          6,
+          9
+        ],
+        0,
+        4
+      ],
+      "expected": 3,
+      "assert_src": "assert find_First_Missing([0,1,2,6,9],0,4) == 3"
+    },
+    {
+      "fn_name": "find_First_Missing",
+      "args": [
+        [
+          2,
+          3,
+          5,
+          8,
+          9
+        ],
+        0,
+        4
+      ],
+      "expected": 0,
+      "assert_src": "assert find_First_Missing([2,3,5,8,9],0,4) == 0"
+    }
+  ],
+  "arg_kinds": [
+    "int",
+    "int-list"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

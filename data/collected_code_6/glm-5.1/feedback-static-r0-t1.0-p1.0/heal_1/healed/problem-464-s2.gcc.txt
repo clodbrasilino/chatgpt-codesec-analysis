@@ -1,0 +1,37 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-464-s2.c: In function 'main':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-464-s2.c:36:49: error: excess elements in 'char[]' initializer
+   36 |     DictionaryEntry entries1[] = {(char[]){"a", 1}, (char[]){"b", 1}, (char[]){"c", 1}};
+      |                                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-464-s2.c:36:49: note: (near initialization for '(anonymous)')
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-464-s2.c:36:67: error: excess elements in 'char[]' initializer
+   36 |     DictionaryEntry entries1[] = {(char[]){"a", 1}, (char[]){"b", 1}, (char[]){"c", 1}};
+      |                                                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-464-s2.c:36:67: note: (near initialization for '(anonymous)')
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-464-s2.c:36:53: error: initialization of 'int' from 'char *' makes integer from pointer without a cast [-Wint-conversion]
+   36 |     DictionaryEntry entries1[] = {(char[]){"a", 1}, (char[]){"b", 1}, (char[]){"c", 1}};
+      |                                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-464-s2.c:36:53: note: (near initialization for 'entries1[0].value')
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-464-s2.c:36:85: error: excess elements in 'char[]' initializer
+   36 |     DictionaryEntry entries1[] = {(char[]){"a", 1}, (char[]){"b", 1}, (char[]){"c", 1}};
+      |                                                                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-464-s2.c:36:85: note: (near initialization for '(anonymous)')
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-464-s2.c:39:49: error: excess elements in 'char[]' initializer
+   39 |     DictionaryEntry entries2[] = {(char[]){"a", 1}, (char[]){"b", 2}, (char[]){"c", 1}};
+      |                                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-464-s2.c:39:49: note: (near initialization for '(anonymous)')
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-464-s2.c:39:67: error: excess elements in 'char[]' initializer
+   39 |     DictionaryEntry entries2[] = {(char[]){"a", 1}, (char[]){"b", 2}, (char[]){"c", 1}};
+      |                                                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-464-s2.c:39:67: note: (near initialization for '(anonymous)')
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-464-s2.c:39:53: error: initialization of 'int' from 'char *' makes integer from pointer without a cast [-Wint-conversion]
+   39 |     DictionaryEntry entries2[] = {(char[]){"a", 1}, (char[]){"b", 2}, (char[]){"c", 1}};
+      |                                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-464-s2.c:39:53: note: (near initialization for 'entries2[0].value')
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-464-s2.c:39:85: error: excess elements in 'char[]' initializer
+   39 |     DictionaryEntry entries2[] = {(char[]){"a", 1}, (char[]){"b", 2}, (char[]){"c", 1}};
+      |                                                                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-464-s2.c:39:85: note: (near initialization for '(anonymous)')
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-464-s2.c:44:49: error: excess elements in 'char[]' initializer
+   44 |     DictionaryEntry entries4[] = {(char[]){"a", 5}};
+      |                                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-464-s2.c:44:49: note: (near initialization for '(anonymous)')

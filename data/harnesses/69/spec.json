@@ -1,0 +1,74 @@
+{
+  "task_id": 69,
+  "text": "Write a C function to check whether a list contains the given sublist or not.",
+  "fn_candidates": [
+    "is_sublist",
+    "IsSublist",
+    "isSublist",
+    "issublist"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "is_sublist",
+      "args": [
+        [
+          2,
+          4,
+          3,
+          5,
+          7
+        ],
+        [
+          3,
+          7
+        ]
+      ],
+      "expected": false,
+      "assert_src": "assert is_sublist([2,4,3,5,7],[3,7])==False"
+    },
+    {
+      "fn_name": "is_sublist",
+      "args": [
+        [
+          2,
+          4,
+          3,
+          5,
+          7
+        ],
+        [
+          4,
+          3
+        ]
+      ],
+      "expected": true,
+      "assert_src": "assert is_sublist([2,4,3,5,7],[4,3])==True"
+    },
+    {
+      "fn_name": "is_sublist",
+      "args": [
+        [
+          2,
+          4,
+          3,
+          5,
+          7
+        ],
+        [
+          1,
+          6
+        ]
+      ],
+      "expected": false,
+      "assert_src": "assert is_sublist([2,4,3,5,7],[1,6])==False"
+    }
+  ],
+  "arg_kinds": [
+    "int-list"
+  ],
+  "return_kind": "bool",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

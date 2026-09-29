@@ -1,0 +1,94 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+#define MAX_INPUT_LEN ((size_t)4096)
+
+long long count_substrings(const char *str, size_t max_len);
+
+long long count_substrings(const char *str, size_t max_len)
+{
+    size_t n;
+    size_t i;
+    size_t table_size;
+    long long *freq;
+    long long prefix;
+    long long count;
+
+    if (str == NULL) {
+        return -1;
+    }
+
+    n = strnlen(str, max_len);
+    if (n == max_len && str[n] != '\0') {
+        return -1;
+    }
+
+    if (n == 0) {
+        return 0;
+    }
+
+    for (i = 0; i < n; i++) {
+        if (str[i] < '0' || str[i] > '9') {
+            return -1;
+        }
+    }
+
+    if (n > (SIZE_MAX - 1u) / 9u) {
+        return -1;
+    }
+
+    table_size = 9u * n + 1u;
+    freq = calloc(table_size, sizeof *freq);
+    if (freq == NULL) {
+        return -1;
+    }
+
+    prefix = 0;
+    count = 0;
+    freq[n] = 1;
+
+    for (i = 0; i < n; i++) {
+        prefix += (long long)(str[i] - '0') - 1;
+        count += freq[(size_t)(prefix + (long long)n)];
+        freq[(size_t)(prefix + (long long)n)] += 1;
+    }
+
+    free(freq);
+    return count;
+}
+
+int main(void)
+{
+    const char *tests[] = { "112112", "111", "0", "1101112", "9" };
+    size_t num_tests = sizeof tests / sizeof tests[0];
+    size_t i;
+    int status;
+
+    status = EXIT_SUCCESS;
+
+    for (i = 0; i < num_tests; i++) {
+        long long result = count_substrings(tests[i], MAX_INPUT_LEN);
+        if (result < 0) {
+            (void)fprintf(stderr, "Error processing input: %s\n", tests[i]);
+            status = EXIT_FAILURE;
+        } else {
+            if (printf("Input: %s -> Count: %lld\n", tests[i], result) < 0) {
+                status = EXIT_FAILURE;
+            }
+        }
+    }
+
+    return status;
+}
+```
+
+**Analysis summary:**
+
+The original code counts substrings whose digits sum to exactly their length (i.e., average digit value of 1), using a prefix-sum trick: each digit contributes `digit - 1` to a running sum, and substrings where this adjusted prefix sum repeats are counted via a frequency table offset by `n` to handle negative values.
+
+The code was already quite robust — it validates input for NULL and non-digit characters, guards against `size_t` overflow before computing `9*n + 1`, checks the `calloc` return value, and frees allocated memory on the success path.
+
+The one flagged weakness (CWE-126, Flawfinder warning on `strlen`) concerns over-reads on strings lacking a null terminator. The fix replaces `strlen` with `strnlen` bounded by an explicit maximum length passed by the caller. If `strnlen` hits the bound without finding a terminator, the function rejects the input rather than reading beyond the permitted region. The caller supplies `MAX_INPUT_LEN` as the trust boundary, making the contract explicit in the API signature rather than implicit.

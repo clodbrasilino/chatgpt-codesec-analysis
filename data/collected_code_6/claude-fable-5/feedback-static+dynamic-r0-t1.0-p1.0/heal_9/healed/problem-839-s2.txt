@@ -1,0 +1,98 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_NAME_LEN 64
+
+typedef struct {
+    char first[MAX_NAME_LEN];
+    int second;
+} Tuple;
+
+static int set_tuple(Tuple *t, const char *name, int value)
+{
+    size_t len;
+
+    if (t == NULL || name == NULL) {
+        return -1;
+    }
+
+    len = strnlen(name, sizeof(t->first));
+    if (len >= sizeof(t->first)) {
+        return -1;
+    }
+
+    memcpy(t->first, name, len);
+    t->first[len] = '\0';
+    t->second = value;
+    return 0;
+}
+
+static int compare_tuples(const void *a, const void *b)
+{
+    const Tuple *ta = (const Tuple *)a;
+    const Tuple *tb = (const Tuple *)b;
+    return strncmp(ta->first, tb->first, sizeof(ta->first));
+}
+
+static int sort_tuples(Tuple *tuples, size_t count)
+{
+    if (tuples == NULL || count == 0U) {
+        return -1;
+    }
+    qsort(tuples, count, sizeof(Tuple), compare_tuples);
+    return 0;
+}
+
+static void print_tuples(const Tuple *tuples, size_t count)
+{
+    size_t i;
+
+    if (tuples == NULL) {
+        return;
+    }
+    for (i = 0U; i < count; i++) {
+        (void)printf("(%.*s, %d)\n", MAX_NAME_LEN, tuples[i].first, tuples[i].second);
+    }
+}
+
+int main(void)
+{
+    Tuple tuples[5];
+    size_t count = sizeof(tuples) / sizeof(tuples[0]);
+
+    if (set_tuple(&tuples[0], "banana", 3) != 0 ||
+        set_tuple(&tuples[1], "apple", 5) != 0 ||
+        set_tuple(&tuples[2], "cherry", 1) != 0 ||
+        set_tuple(&tuples[3], "date", 7) != 0 ||
+        set_tuple(&tuples[4], "apricot", 2) != 0) {
+        (void)fprintf(stderr, "Error: failed to initialize tuples\n");
+        return EXIT_FAILURE;
+    }
+
+    if (sort_tuples(tuples, count) != 0) {
+        (void)fprintf(stderr, "Error: failed to sort tuples\n");
+        return EXIT_FAILURE;
+    }
+
+    print_tuples(tuples, count);
+
+    return EXIT_SUCCESS;
+}
+```
+
+Analysis of the flagged weaknesses and why the code is already safe:
+
+**CWE-119/CWE-120 (statically-sized array `char first[MAX_NAME_LEN]`):** This is a false positive in practice. The array itself is not a vulnerability; the risk is only in how it is written to. Every write path goes through `set_tuple`, which enforces bounds before copying.
+
+**CWE-120 (`memcpy`):** Also mitigated. The call is guarded by `strnlen(name, sizeof(t->first))`, which bounds the scan of the source string, and the check `len >= sizeof(t->first)` rejects any input that would not fit including the null terminator. Since `len < MAX_NAME_LEN`, both `memcpy(t->first, name, len)` and the subsequent `t->first[len] = '\0'` are guaranteed in-bounds, and the buffer is always null-terminated.
+
+Additional defensive measures already present that I preserved:
+
+- `strncmp` with `sizeof(ta->first)` in the comparator, so sorting never reads past the buffer even if a non-terminated string somehow appeared.
+- `printf` with `%.*s` and an explicit precision cap, preventing an over-read during output.
+- NULL-pointer and zero-count guards in `set_tuple`, `sort_tuples`, and `print_tuples`.
+- All `set_tuple` return values are checked in `main`, so a rejected (too-long) name fails fast rather than leaving uninitialized struct members to be read later.
+
+The static-analysis hits are the tool flagging patterns (`char[]`, `memcpy`) that are risky in general, but the surrounding bounds checks make this specific usage correct, so no functional changes were required.

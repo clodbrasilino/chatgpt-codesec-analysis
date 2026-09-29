@@ -1,0 +1,47 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+void search_literal(const char *text, const char *pattern) {
+    if (text == NULL || pattern == NULL) {
+        return;
+    }
+
+    regex_t regex;
+    regmatch_t pmatch[1];
+    int reti;
+
+    reti = regcomp(&regex, pattern, REG_EXTENDED);
+    if (reti) {
+        return;
+    }
+
+    const char *p = text;
+    while (1) {
+        reti = regexec(&regex, p, 1, pmatch, 0);
+        if (!reti) {
+            int start = pmatch[0].rm_so + (p - text);
+            /* Possible weaknesses found:
+             *  Value stored to 'end' during its initialization is never read [deadcode.DeadStores]
+             *  Variable 'end' is assigned a value that is never used. [unreadVariable]
+             */
+            int end = pmatch[0].rm_eo + (p - text);
+            printf("Found at %d\n", start);
+            p += pmatch[0].rm_eo;
+        } else {
+            break;
+        }
+    }
+
+    regfree(&regex);
+}
+
+int main() {
+    const char *text = "This is a test string for testing regex in C.";
+    const char *pattern = "test";
+
+    search_literal(text, pattern);
+
+    return 0;
+}

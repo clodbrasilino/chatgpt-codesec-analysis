@@ -1,0 +1,60 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int compare(const void *a, const void *b) {
+    return (*(int*)a - *(int*)b);
+}
+
+int* findIntersection(int* arr1, int arr1Size, int* arr2, int arr2Size, int* returnSize) {
+    qsort(arr1, arr1Size, sizeof(int), compare);
+    qsort(arr2, arr2Size, sizeof(int), compare);
+
+    int* intersection = (int*)malloc((arr1Size + arr2Size) * sizeof(int));
+    if (!intersection) return NULL;
+
+    int i = 0, j = 0, k = 0;
+    while (i < arr1Size && j < arr2Size) {
+        if (arr1[i] == arr2[j]) {
+            intersection[k++] = arr1[i];
+            i++;
+            j++;
+        } else if (arr1[i] < arr2[j]) {
+            i++;
+        } else {
+            j++;
+        }
+    }
+
+    *returnSize = k;
+    int* result = (int*)malloc(k * sizeof(int));
+    if (!result) {
+        free(intersection);
+        return NULL;
+    }
+    for (int m = 0; m < k; m++) {
+        result[m] = intersection[m];
+    }
+    free(intersection);
+    return result;
+}
+
+int main() {
+    int arr1[] = {1, 2, 2, 3, 4};
+    int arr2[] = {2, 2, 3, 5};
+    int arr1Size = sizeof(arr1) / sizeof(arr1[0]);
+    int arr2Size = sizeof(arr2) / sizeof(arr2[0]);
+
+    int returnSize;
+    int* intersection = findIntersection(arr1, arr1Size, arr2, arr2Size, &returnSize);
+
+    if (intersection) {
+        for (int i = 0; i < returnSize; i++) {
+            printf("%d ", intersection[i]);
+        }
+        free(intersection);
+    } else {
+        printf("No intersection found or memory allocation failed.\n");
+    }
+
+    return 0;
+}

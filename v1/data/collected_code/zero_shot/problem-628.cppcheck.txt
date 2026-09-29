@@ -1,0 +1,9 @@
+collected_code/problem-628-0.c:9:12: error: Cannot determine that 'str[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+    if (str[i] == ' ')
+           ^
+collected_code/problem-628-0.c:16:12: error: Cannot determine that 'str[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+    if (str[i] == ' ') {
+           ^
+collected_code/problem-628-0.c:22:31: error: Cannot determine that 'str[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+      str[newLength - 1] = str[i];
+                              ^

@@ -1,0 +1,112 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+void generateNextPalindrome(char *num, int n) {
+    int mid = n / 2;
+    int leftsmaller = 0;
+    int i = mid - 1;
+    int j = (n % 2) ? mid + 1 : mid;
+
+    while (i >= 0 && num[i] == num[j]) {
+        i--;
+        j++;
+    }
+
+    if (i < 0 || num[i] < num[j]) {
+        leftsmaller = 1;
+    }
+
+    while (i >= 0) {
+        num[j] = num[i];
+        j++;
+        i--;
+    }
+
+    if (leftsmaller == 1) {
+        int carry = 1;
+        i = mid - 1;
+
+        if (n % 2 == 1) {
+            num[mid] += carry;
+            carry = num[mid] / 10;
+            num[mid] %= 10;
+            j = mid + 1;
+        } else {
+            j = mid;
+        }
+
+        while (i >= 0) {
+            num[i] += carry;
+            carry = num[i] / 10;
+            num[i] %= 10;
+            num[j++] = num[i--];
+        }
+    }
+}
+
+void findNextPalindrome(char *num, int n) {
+    int i;
+    int all9s = 1;
+
+    for (i = 0; i < n; i++) {
+        num[i] -= '0';
+        if (num[i] != 9) {
+            all9s = 0;
+        }
+    }
+
+    if (all9s) {
+        printf("1");
+        for (i = 1; i < n; i++) {
+            printf("0");
+        }
+        printf("1\n");
+    } else {
+        generateNextPalindrome(num, n);
+        for (i = 0; i < n; i++) {
+            printf("%d", num[i]);
+        }
+        printf("\n");
+    }
+}
+
+int main(int argc, char *argv[]) {
+    if (argc < 2) {
+        fprintf(stderr, "Usage: %s <number>\n", argv[0]);
+        return EXIT_FAILURE;
+    }
+
+    /* Possible weaknesses found:
+     *  Variable 'num' can be declared as pointer to const [constVariablePointer]
+     */
+    char *num = argv[1];
+    int n = 0;
+    
+    /* Possible weaknesses found:
+     *  Array index 'n' is used before limits check. [arrayIndexThenCheck]
+     */
+    while (num[n] != '\0' && n < 1000000) {
+        n++;
+    }
+
+    if (n == 0) {
+        return EXIT_FAILURE;
+    }
+
+    char *numArray = malloc(n + 1);
+
+    if (numArray == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    for (int i = 0; i < n; i++) {
+        numArray[i] = num[i];
+    }
+    numArray[n] = '\0';
+
+    findNextPalindrome(numArray, n);
+
+    free(numArray);
+    return EXIT_SUCCESS;
+}

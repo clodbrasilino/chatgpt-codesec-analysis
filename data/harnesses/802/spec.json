@@ -1,0 +1,65 @@
+{
+  "task_id": 802,
+  "text": "Write a C function to count the number of rotations required to generate a sorted array.",
+  "fn_candidates": [
+    "count_Rotation",
+    "CountRotation",
+    "countRotation",
+    "countRotation"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "count_Rotation",
+      "args": [
+        [
+          3,
+          2,
+          1
+        ],
+        3
+      ],
+      "expected": 1,
+      "assert_src": "assert count_Rotation([3,2,1],3) == 1"
+    },
+    {
+      "fn_name": "count_Rotation",
+      "args": [
+        [
+          4,
+          5,
+          1,
+          2,
+          3
+        ],
+        5
+      ],
+      "expected": 2,
+      "assert_src": "assert count_Rotation([4,5,1,2,3],5) == 2"
+    },
+    {
+      "fn_name": "count_Rotation",
+      "args": [
+        [
+          7,
+          8,
+          9,
+          1,
+          2,
+          3
+        ],
+        6
+      ],
+      "expected": 3,
+      "assert_src": "assert count_Rotation([7,8,9,1,2,3],6) == 3"
+    }
+  ],
+  "arg_kinds": [
+    "int",
+    "int-list"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

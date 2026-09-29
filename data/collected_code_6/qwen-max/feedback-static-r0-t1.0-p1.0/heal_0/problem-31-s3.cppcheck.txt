@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-31-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-31-s3.c:10:14: style: Variable 'elemA' can be declared as pointer to const [constVariablePointer]
+    Element *elemA = (Element *)a;
+             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-31-s3.c:11:14: style: Variable 'elemB' can be declared as pointer to const [constVariablePointer]
+    Element *elemB = (Element *)b;
+             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-31-s3.c:15:24: style: Parameter 'arr' can be declared as pointer to const [constParameterPointer]
+void topKFrequent(int *arr, int arrSize, int k, int *result) {
+                       ^

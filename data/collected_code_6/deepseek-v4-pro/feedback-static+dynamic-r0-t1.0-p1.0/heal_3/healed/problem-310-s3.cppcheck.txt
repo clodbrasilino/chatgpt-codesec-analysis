@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-310-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-310-s3.c:46:34: warning: Either the condition 'max_len<65537' is redundant or the array 'str[1]' is accessed at index 65536, which is out of bounds. [arrayIndexOutOfBoundsCond]
+    while (max_len < 65537 && str[max_len] != '\0') {
+                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-310-s3.c:46:20: note: Assuming that condition 'max_len<65537' is not redundant
+    while (max_len < 65537 && str[max_len] != '\0') {
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-310-s3.c:46:34: note: Array index out of bounds
+    while (max_len < 65537 && str[max_len] != '\0') {
+                                 ^

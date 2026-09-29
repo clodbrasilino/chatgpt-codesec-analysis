@@ -1,0 +1,30 @@
+#include <stdio.h>
+#include <ctype.h>
+#include <string.h>
+
+void capitalize_first_last(const char *in_str, char *out_str) {
+    size_t len = strlen(in_str);
+    for (size_t i = 0; i < len; ++i) {
+        out_str[i] = in_str[i];
+        if (i == 0 || (i > 0 && in_str[i - 1] == ' ') || (i < len - 1 && in_str[i + 1] == ' ')) {
+            out_str[i] = toupper(out_str[i]);
+        }
+    }
+    out_str[len] = '\0';
+}
+
+int main() {
+    char input[256];
+    char output[256];
+
+    printf("Enter a string: ");
+    if (fgets(input, sizeof(input), stdin) != NULL) {
+        input[strcspn(input, "\n")] = 0; // Remove newline character if present
+        capitalize_first_last(input, output);
+        printf("Capitalized: %s\n", output);
+    } else {
+        printf("Error reading input.\n");
+    }
+
+    return 0;
+}

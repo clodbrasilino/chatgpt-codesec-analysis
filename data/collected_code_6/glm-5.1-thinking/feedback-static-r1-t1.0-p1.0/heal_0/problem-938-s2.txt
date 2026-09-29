@@ -1,0 +1,83 @@
+```c
+#include <stdio.h>
+#include <limits.h>
+
+typedef struct {
+    int a;
+    int b;
+    int c;
+} Triplet;
+
+static int max_val(int x, int y, int z) {
+    int m = x;
+    if (y > m) m = y;
+    if (z > m) m = z;
+    return m;
+}
+
+static int min_val(int x, int y, int z) {
+    int m = x;
+    if (y < m) m = y;
+    if (z < m) m = z;
+    return m;
+}
+
+Triplet find_closest(const int *arr1, size_t n1, const int *arr2, size_t n2, const int *arr3, size_t n3) {
+    Triplet res = {0, 0, 0};
+    if (arr1 == NULL || arr2 == NULL || arr3 == NULL || n1 == 0 || n2 == 0 || n3 == 0) {
+        return res;
+    }
+
+    size_t i = 0;
+    size_t j = 0;
+    size_t k = 0;
+    long long diff = LLONG_MAX;
+
+    while (i < n1 && j < n2 && k < n3) {
+        int a = arr1[i];
+        int b = arr2[j];
+        int c = arr3[k];
+
+        int cur_max = max_val(a, b, c);
+        int cur_min = min_val(a, b, c);
+        long long cur_diff = (long long)cur_max - (long long)cur_min;
+
+        if (cur_diff < diff) {
+            diff = cur_diff;
+            res.a = a;
+            res.b = b;
+            res.c = c;
+        }
+
+        if (diff == 0) {
+            break;
+        }
+
+        if (cur_min == a) {
+            i++;
+        } else if (cur_min == b) {
+            j++;
+        } else {
+            k++;
+        }
+    }
+
+    return res;
+}
+
+int main(void) {
+    int arr1[] = {1, 4, 10};
+    int arr2[] = {2, 15, 20};
+    int arr3[] = {10, 12};
+
+    size_t n1 = sizeof(arr1) / sizeof(arr1[0]);
+    size_t n2 = sizeof(arr2) / sizeof(arr2[0]);
+    size_t n3 = sizeof(arr3) / sizeof(arr3[0]);
+
+    Triplet result = find_closest(arr1, n1, arr2, n2, arr3, n3);
+
+    printf("%d %d %d\n", result.a, result.b, result.c);
+
+    return 0;
+}
+```

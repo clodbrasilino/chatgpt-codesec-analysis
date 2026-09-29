@@ -1,0 +1,57 @@
+#include <stdio.h>
+#include <string.h>
+#include <limits.h>
+
+char first_repeated_char(const char *str) {
+    int first_pos[UCHAR_MAX + 1];
+    int i;
+    int min_pos = INT_MAX;
+    char result = '\0';
+
+    if (str == NULL) {
+        return '\0';
+    }
+
+    for (i = 0; i <= UCHAR_MAX; i++) {
+        first_pos[i] = -1;
+    }
+
+    for (i = 0; str[i] != '\0'; i++) {
+        unsigned char c = (unsigned char)str[i];
+        if (first_pos[c] == -1) {
+            first_pos[c] = i;
+        } else if (first_pos[c] < min_pos) {
+            min_pos = first_pos[c];
+            result = str[i];
+        }
+    }
+
+    return result;
+}
+
+int main(void) {
+    const char *test1 = "hello";
+    const char *test2 = "abcdef";
+    const char *test3 = "abca";
+    const char *test4 = "";
+    const char *test5 = NULL;
+
+    char result;
+
+    result = first_repeated_char(test1);
+    printf("First repeated in \"%s\": %c\n", test1, result ? result : 'N');
+
+    result = first_repeated_char(test2);
+    printf("First repeated in \"%s\": %c\n", test2, result ? result : 'N');
+
+    result = first_repeated_char(test3);
+    printf("First repeated in \"%s\": %c\n", test3, result ? result : 'N');
+
+    result = first_repeated_char(test4);
+    printf("First repeated in \"%s\": %c\n", test4, result ? result : 'N');
+
+    result = first_repeated_char(test5);
+    printf("First repeated in NULL: %c\n", result ? result : 'N');
+
+    return 0;
+}

@@ -1,0 +1,46 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+#define MAX 256
+
+int compare(const void *a, const void *b) { 
+    return (*(char *)a - *(char *)b); 
+} 
+
+int areAnagram(char *str1, char *str2) {
+    int n1 = strlen(str1); 
+    int n2 = strlen(str2); 
+
+    if (n1 != n2) 
+      return 0; 
+
+    qsort(str1, n1, sizeof( char ), compare); 
+    qsort(str2, n2, sizeof( char ), compare); 
+
+    for (int i = 0; i < n1;  i++) 
+       if (str1[i] != str2[i]) 
+         return 0; 
+
+    return 1; 
+} 
+
+void findAnagrams(char* str, char** list, int n) {
+    int i;
+    for (i = 0; i < n; i++) {
+        if (areAnagram(str, list[i]))
+            printf("%s ", list[i]);
+    }
+}
+  
+int main() {
+    int n = 5;
+    char str[] = "listen";
+    char* list[] = {"enlists", "google", "inlets", "banana", "istlen"};
+  
+    findAnagrams(str, list, n);
+    return 0;
+}
+```
+In this C program, the `findAnagrams` function finds all anagrams of a given string from a list of strings by using the `areAnagram` function which checks whether two strings are anagrams of each other. The strings are first sorted using the `qsort` standard library function and then compared character by character. If all characters match, then the strings are anagrams of each other. The `findAnagrams` function prints out the strings that are anagrams of the given string. The program includes a `main` function where an array of strings and a string to look for anagrams are defined. The array of strings and its size are passed to the `findAnagrams` function to output the strings that are anagrams.

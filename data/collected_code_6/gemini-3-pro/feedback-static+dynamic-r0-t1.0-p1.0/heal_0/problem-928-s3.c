@@ -1,0 +1,52 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char* convert_date_format(const char* input_date) {
+    if (input_date == NULL) {
+        return NULL;
+    }
+
+    if (strlen(input_date) != 10) {
+        return NULL;
+    }
+
+    if (input_date[4] != '-' || input_date[7] != '-') {
+        return NULL;
+    }
+
+    char* output_date = (char*)malloc(11 * sizeof(char));
+    if (output_date == NULL) {
+        return NULL;
+    }
+
+    output_date[0] = input_date[8];
+    output_date[1] = input_date[9];
+    output_date[2] = '-';
+    output_date[3] = input_date[5];
+    output_date[4] = input_date[6];
+    output_date[5] = '-';
+    output_date[6] = input_date[0];
+    output_date[7] = input_date[1];
+    output_date[8] = input_date[2];
+    output_date[9] = input_date[3];
+    output_date[10] = '\0';
+
+    return output_date;
+}
+
+int main(void) {
+    const char* original_date = "2023-10-25";
+    
+    char* converted_date = convert_date_format(original_date);
+    
+    if (converted_date != NULL) {
+        printf("Original: %s\n", original_date);
+        printf("Converted: %s\n", converted_date);
+        free(converted_date);
+    } else {
+        printf("Invalid input or memory allocation failure.\n");
+    }
+
+    return 0;
+}

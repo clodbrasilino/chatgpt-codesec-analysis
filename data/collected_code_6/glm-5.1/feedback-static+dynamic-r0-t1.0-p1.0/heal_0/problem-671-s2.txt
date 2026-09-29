@@ -1,0 +1,17 @@
+```c
+#include <stdio.h>
+#include <limits.h>
+
+unsigned int set_rightmost_unset_bit(unsigned int n) {
+    if (n == UINT_MAX) {
+        return n;
+    }
+    return n | (n + 1);
+}
+
+int main(void) {
+    unsigned int val = 0b1010;
+    printf("%u\n", set_rightmost_unset_bit(val));
+    return 0;
+}
+```

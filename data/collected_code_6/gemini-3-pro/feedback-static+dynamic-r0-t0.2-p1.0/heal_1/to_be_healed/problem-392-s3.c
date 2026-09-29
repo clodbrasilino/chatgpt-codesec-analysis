@@ -1,0 +1,104 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define HASH_SIZE 1000003
+
+typedef struct Node {
+    long long key;
+    long long value;
+    struct Node* next;
+} Node;
+
+Node* hashTable[HASH_SIZE];
+
+long long hashFunction(long long key) {
+    return key % HASH_SIZE;
+}
+
+void insert(long long key, long long value) {
+    long long hashIndex = hashFunction(key);
+    Node* newNode = (Node*)malloc(sizeof(Node));
+    if (!newNode) {
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(EXIT_FAILURE);
+    }
+    newNode->key = key;
+    newNode->value = value;
+    newNode->next = hashTable[hashIndex];
+    hashTable[hashIndex] = newNode;
+}
+
+long long search(long long key) {
+    long long hashIndex = hashFunction(key);
+    Node* current = hashTable[hashIndex];
+    while (current != NULL) {
+        if (current->key == key) {
+            return current->value;
+        }
+        current = current->next;
+    }
+    return -1;
+}
+
+void freeHashTable() {
+    for (int i = 0; i < HASH_SIZE; i++) {
+        Node* current = hashTable[i];
+        while (current != NULL) {
+            Node* temp = current;
+            current = current->next;
+            free(temp);
+        }
+        hashTable[i] = NULL;
+    }
+}
+
+long long findMaxSum(long long n) {
+    if (n == 0) {
+        return 0;
+    }
+    
+    long long cachedValue = search(n);
+    if (cachedValue != -1) {
+        return cachedValue;
+    }
+    
+    /* Possible weaknesses found:
+     * UBSan: signed integer overflow: 5757701318346536355 + 3494343368814437927 cannot be represented in type 'long long' (AFL crash: id:000000,sig:06,src:000003,time:2568,execs:124,op:havoc,rep:1)
+     * UBSan: signed integer overflow: 8762773519409443733 + 2316365529566657209 cannot be represented in type 'long long' (AFL crash: id:000002,sig:06,src:000003,time:34393,execs:1105,op:havoc,rep:4)
+     * UBSan: signed integer overflow: 7786195350590628170 + 4714614397334871699 cannot be represented in type 'long long' (AFL crash: id:000002,sig:06,src:000003,time:34393,execs:1105,op:havoc,rep:4)
+     * UBSan: signed integer overflow: 8226523486358938340 + 5757701318346536355 cannot be represented in type 'long long' (AFL crash: id:000000,sig:06,src:000003,time:2568,execs:124,op:havoc,rep:1)
+     * UBSan: signed integer overflow: 5921852867245483028 + 4154950881553800643 cannot be represented in type 'long long' (AFL crash: id:000001,sig:06,src:000003,time:17557,execs:565,op:havoc,rep:3)
+     * UBSan: signed integer overflow: 8859266286050122341 + 1405200995841481409 cannot be represented in type 'long long' (AFL crash: id:000000,sig:06,src:000003,time:2568,execs:124,op:havoc,rep:1)
+     * UBSan: signed integer overflow: 8435011612928124701 + 1346047382789966990 cannot be represented in type 'long long' (AFL crash: id:000001,sig:06,src:000003,time:17557,execs:565,op:havoc,rep:3)
+     * UBSan: signed integer overflow: 5918380645023260806 + 3576286739178380131 cannot be represented in type 'long long' (AFL crash: id:000001,sig:06,src:000003,time:17557,execs:565,op:havoc,rep:3)
+     */
+    long long sum = findMaxSum(n / 2) + findMaxSum(n / 3) + findMaxSum(n / 4) + findMaxSum(n / 5);
+    long long result = (sum > n) ? sum : n;
+    
+    insert(n, result);
+    return result;
+}
+
+int main() {
+    long long n;
+    if (scanf("%lld", &n) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    if (n < 0) {
+        fprintf(stderr, "Input must be non-negative\n");
+        return EXIT_FAILURE;
+    }
+    
+    for (int i = 0; i < HASH_SIZE; i++) {
+        hashTable[i] = NULL;
+    }
+    
+    long long maxSum = findMaxSum(n);
+    printf("%lld\n", maxSum);
+    
+    freeHashTable();
+    
+    return EXIT_SUCCESS;
+}

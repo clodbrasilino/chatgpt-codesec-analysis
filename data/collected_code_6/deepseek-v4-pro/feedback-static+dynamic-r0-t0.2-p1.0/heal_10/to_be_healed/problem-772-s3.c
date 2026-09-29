@@ -1,0 +1,106 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+size_t safe_strnlen(const char *str, size_t max_len) {
+    size_t len = 0;
+    /* Possible weaknesses found:
+     *  Assuming that condition 'len<max_len' is not redundant
+     *  Either the condition 'len<max_len' is redundant or the array 'str[52]' is accessed at index 263, which is out of bounds. [arrayIndexOutOfBoundsCond]
+     *  Array index out of bounds
+     */
+    while (len < max_len && str[len] != '\0') {
+        len++;
+    }
+    return len;
+}
+
+char* remove_words_with_length(char* str, size_t max_len, int k) {
+    if (str == NULL || k <= 0 || max_len == 0) {
+        return str;
+    }
+
+    size_t len = safe_strnlen(str, max_len);
+    if (len >= max_len) {
+        return NULL;
+    }
+
+    char* result = (char*)malloc(len + 1);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    size_t i = 0, j = 0;
+    while (i < len) {
+        while (i < len && isspace((unsigned char)str[i])) {
+            if (j < len) {
+                result[j++] = str[i++];
+            } else {
+                free(result);
+                return NULL;
+            }
+        }
+
+        if (i >= len) {
+            break;
+        }
+
+        size_t word_start = i;
+        while (i < len && !isspace((unsigned char)str[i])) {
+            i++;
+        }
+        size_t word_length = i - word_start;
+
+        if (word_length != (size_t)k) {
+            if (j + word_length <= len) {
+                memmove(result + j, str + word_start, word_length);
+                j += word_length;
+            } else {
+                free(result);
+                return NULL;
+            }
+        }
+    }
+
+    if (j <= len) {
+        result[j] = '\0';
+    } else {
+        free(result);
+        return NULL;
+    }
+
+    size_t result_len = j + 1;
+    size_t copy_len = (result_len <= max_len) ? result_len : max_len;
+    memmove(str, result, copy_len);
+    if (result_len > max_len) {
+        str[max_len - 1] = '\0';
+    }
+    
+    free(result);
+    return str;
+}
+
+int main(void) {
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char str[256];
+    const char *source = "This is a test string with words of various lengths";
+    /* Possible weaknesses found:
+     *  Calling function 'safe_strnlen', 2nd argument 'sizeof(source)+sizeof(str)' value is 264
+     */
+    size_t source_len = safe_strnlen(source, sizeof(source) + sizeof(str));
+    
+    size_t copy_len = (source_len < sizeof(str)) ? source_len : sizeof(str) - 1;
+    memmove(str, source, copy_len);
+    str[copy_len] = '\0';
+    
+    int k = 2;
+    
+    printf("Original: %s\n", str);
+    remove_words_with_length(str, sizeof(str), k);
+    printf("After removing words of length %d: %s\n", k, str);
+    
+    return 0;
+}

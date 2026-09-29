@@ -1,0 +1,16 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-683-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-683-s3.c:7:38: warning: Invalid sqrt() argument nr 1. The value is -1 but the valid values are '0.0:'. [invalidFunctionArg]
+    long long root = (long long)sqrt((double)n);
+                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-683-s3.c:21:24: note: Assignment 'a=0', assigned value is 0
+    for (long long a = 0; a * a <= n; a++) {
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-683-s3.c:22:29: note: remainder is assigned 'n-a*a' here.
+        long long remainder = n - a * a;
+                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-683-s3.c:23:36: note: Calling function 'integer_sqrt', 1st argument 'remainder' value is -1
+        long long b = integer_sqrt(remainder);
+                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-683-s3.c:7:38: note: Invalid argument
+    long long root = (long long)sqrt((double)n);
+                                     ^

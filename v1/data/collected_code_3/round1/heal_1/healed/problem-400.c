@@ -1,0 +1,55 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_SIZE 100
+
+typedef struct {
+    char tuple[MAX_SIZE];
+    int count;
+} Tuple;
+
+int findTuple(Tuple *tuples, int tupleCount, char *tuple) {
+    for (int i = 0; i < tupleCount; i++) {
+        if (strcmp(tuples[i].tuple, tuple) == 0) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+void extractFrequency(char tuples[][MAX_SIZE], int size) {
+    Tuple *tupleArray = (Tuple *)malloc(sizeof(Tuple) * size);
+    if (tupleArray == NULL) {
+        printf("Memory allocation failed.\n");
+        return;
+    }
+
+    int tupleCount = 0;
+
+    for (int i = 0; i < size; i++) {
+        int index = findTuple(tupleArray, tupleCount, tuples[i]);
+        if (index == -1) {
+            strcpy(tupleArray[tupleCount].tuple, tuples[i]);
+            tupleArray[tupleCount].count = 1;
+            tupleCount++;
+        } else {
+            tupleArray[index].count++;
+        }
+    }
+
+    for (int i = 0; i < tupleCount; i++) {
+        printf("%s: %d\n", tupleArray[i].tuple, tupleArray[i].count);
+    }
+
+    free(tupleArray);
+}
+
+int main() {
+    char tuples[][MAX_SIZE] = {"tuple1", "tuple2", "tuple3", "tuple1", "tuple2", "tuple1"};
+    int size = sizeof(tuples) / sizeof(tuples[0]);
+
+    extractFrequency(tuples, size);
+
+    return 0;
+}

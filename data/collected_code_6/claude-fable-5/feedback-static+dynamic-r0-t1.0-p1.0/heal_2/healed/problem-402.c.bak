@@ -1,0 +1,4 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+static long long mul_mod(long long a, long long b, long

@@ -1,0 +1,74 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+
+#define BUFFER_SIZE 256
+
+bool is_binary_string(const char *str)
+{
+    size_t i;
+
+    if (str == NULL) {
+        return false;
+    }
+
+    if (str[0] == '\0') {
+        return false;
+    }
+
+    for (i = 0; str[i] != '\0'; i++) {
+        if (str[i] != '0' && str[i] != '1') {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t len;
+
+    printf("Enter a string: ");
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    }
+
+    if (is_binary_string(buffer)) {
+        printf("\"%s\" is a binary string\n", buffer);
+    } else {
+        printf("\"%s\" is not a binary string\n", buffer);
+    }
+
+    return 0;
+}
+```
+
+**Analysis summary:**
+
+The original code was already well-hardened against the flagged weakness (CWE-119/CWE-120, buffer overflow risks with statically-sized arrays). The Flawfinder warning on `char buffer[BUFFER_SIZE]` is a heuristic flag on any fixed-size buffer declaration, and the code properly mitigates it:
+
+1. **Bounded input**: `fgets(buffer, sizeof(buffer), stdin)` limits the read to the buffer size, preventing overflow — unlike unsafe alternatives such as `gets()` or `scanf("%s", ...)`.
+
+2. **Guaranteed null termination**: `buffer[sizeof(buffer) - 1] = '\0'` is a defensive (technically redundant with `fgets`, but harmless) safeguard ensuring the string is always terminated.
+
+3. **Bounded length calculation**: `strnlen(buffer, sizeof(buffer))` is used instead of `strlen()`, avoiding out-of-bounds reads even if termination were somehow missing.
+
+4. **Safe newline stripping**: The `len > 0` check prevents an out-of-bounds access at `buffer[len - 1]` for empty input.
+
+5. **Robust helper function**: `is_binary_string()` guards against `NULL` pointers and empty strings before iterating.
+
+6. **Error handling**: The `fgets` return value is checked, handling EOF/read errors gracefully with a nonzero exit code.
+
+No functional changes were required — the rewrite preserves the existing mitigations with comments removed as requested.

@@ -1,0 +1,93 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    char *key;
+    char *value;
+} DictEntry;
+
+typedef struct {
+    DictEntry *entries;
+    size_t size;
+    size_t capacity;
+} Dict;
+
+typedef struct {
+    Dict **items;
+    size_t size;
+    size_t capacity;
+} DictList;
+
+Dict *create_empty_dict(void) {
+    Dict *dict = malloc(sizeof(Dict));
+    if (dict == NULL) {
+        return NULL;
+    }
+    dict->entries = NULL;
+    dict->size = 0;
+    dict->capacity = 0;
+    return dict;
+}
+
+void free_dict(Dict *dict) {
+    if (dict == NULL) {
+        return;
+    }
+    for (size_t i = 0; i < dict->size; i++) {
+        free(dict->entries[i].key);
+        free(dict->entries[i].value);
+    }
+    free(dict->entries);
+    free(dict);
+}
+
+DictList *create_dict_list(size_t count) {
+    DictList *list = malloc(sizeof(DictList));
+    if (list == NULL) {
+        return NULL;
+    }
+    list->items = calloc(count, sizeof(Dict *));
+    if (list->items == NULL && count > 0) {
+        free(list);
+        return NULL;
+    }
+    list->size = 0;
+    list->capacity = count;
+    for (size_t i = 0; i < count; i++) {
+        Dict *dict = create_empty_dict();
+        if (dict == NULL) {
+            for (size_t j = 0; j < list->size; j++) {
+                free_dict(list->items[j]);
+            }
+            free(list->items);
+            free(list);
+            return NULL;
+        }
+        list->items[i] = dict;
+        list->size++;
+    }
+    return list;
+}
+
+void free_dict_list(DictList *list) {
+    if (list == NULL) {
+        return;
+    }
+    for (size_t i = 0; i < list->size; i++) {
+        free_dict(list->items[i]);
+    }
+    free(list->items);
+    free(list);
+}
+
+int main(void) {
+    size_t count = 5;
+    DictList *list = create_dict_list(count);
+    if (list == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+    printf("Created list with %zu empty dictionaries\n", list->size);
+    free_dict_list(list);
+    return EXIT_SUCCESS;
+}

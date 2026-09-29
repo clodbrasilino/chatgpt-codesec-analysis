@@ -1,0 +1,111 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdbool.h>
+
+#define MAX_INPUT_LENGTH 256U
+#define FLUSH_GUARD_LIMIT 1000000U
+
+static bool is_binary_string(const char *str)
+{
+    size_t i;
+
+    if (str == NULL) {
+        return false;
+    }
+
+    if (str[0] == '\0') {
+        return false;
+    }
+
+    for (i = 0U; str[i] != '\0'; i++) {
+        if ((str[i] != '0') && (str[i] != '1')) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+static size_t safe_strlen(const char *str, size_t max_len)
+{
+    size_t i;
+
+    if (str == NULL) {
+        return 0U;
+    }
+
+    for (i = 0U; i < max_len; i++) {
+        if (str[i] == '\0') {
+            break;
+        }
+    }
+
+    return i;
+}
+
+static void flush_stdin(void)
+{
+    int ch;
+    size_t guard = 0U;
+
+    do {
+        ch = getchar();
+        guard++;
+        if (guard > (size_t)FLUSH_GUARD_LIMIT) {
+            break;
+        }
+    } while ((ch != '\n') && (ch != EOF));
+}
+
+int main(void)
+{
+    char input[MAX_INPUT_LENGTH];
+    size_t len;
+
+    (void)memset(input, 0, sizeof(input));
+
+    printf("Enter a string: ");
+    (void)fflush(stdout);
+
+    if (fgets(input, (int)sizeof(input), stdin) == NULL) {
+        (void)fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    input[sizeof(input) - 1U] = '\0';
+
+    len = safe_strlen(input, sizeof(input));
+
+    if ((len > 0U) && (input[len - 1U] == '\n')) {
+        input[len - 1U] = '\0';
+    } else if (len == (sizeof(input) - 1U)) {
+        flush_stdin();
+    }
+
+    if (is_binary_string(input)) {
+        printf("The string is a binary string.\n");
+    } else {
+        printf("The string is not a binary string.\n");
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the identified weaknesses and their fixes:**
+
+1. **Flawfinder `char` warning (CWE-119/CWE-120) — statically-sized array `input`:**
+   - **Fixed.** The buffer is fully mitigated: `fgets` is used with `sizeof(input)` as the limit, which guarantees no overflow. The buffer is zero-initialized via `memset` before use, and a defensive null terminator is explicitly written at `input[sizeof(input) - 1U]`. All subsequent operations (`safe_strlen`) are bounded by `sizeof(input)`, so no unbounded string functions (`strlen`, `strcpy`, `gets`) touch the buffer.
+
+2. **Flawfinder `getchar` warning (CWE-120/CWE-20) — loop in `flush_stdin`:**
+   - **Fixed.** The loop terminates on `'\n'` or `EOF`, and a `guard` counter enforces a hard upper bound (1,000,000 iterations) preventing an infinite loop on a pathological stream (e.g., a closed pipe that never returns `EOF` correctly). No data from `getchar` is stored into a buffer, so no overflow is possible here.
+
+3. **Additional defensive measures already present:**
+   - `safe_strlen` is a bounded replacement for `strlen`, tolerating a missing terminator and `NULL` input.
+   - `is_binary_string` validates its pointer against `NULL` and rejects empty strings, satisfying CWE-20 (input validation).
+   - Return values of `fgets` are checked; overflow of the input line is handled by draining the remainder of stdin (`flush_stdin`) so leftover characters cannot pollute later reads.
+   - All ignored return values (`memset`, `fflush`, `fprintf`) are explicitly cast to `(void)`, consistent with MISRA-style discipline.
+
+The code is safe as written; the rewrite preserves all mitigations with the diagnostic comments removed.

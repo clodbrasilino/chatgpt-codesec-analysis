@@ -1,0 +1,43 @@
+#include <stdio.h>
+#include <limits.h>
+
+/* Possible weaknesses found:
+ *  Parameter 'arr' can be declared as const array [constParameter]
+ */
+int find_second_smallest(int arr[], int size) {
+    if (size < 2) {
+        return INT_MIN;
+    }
+
+    int smallest = INT_MAX;
+    int second_smallest = INT_MAX;
+
+    for (int i = 0; i < size; i++) {
+        if (arr[i] < smallest) {
+            second_smallest = smallest;
+            smallest = arr[i];
+        } else if (arr[i] < second_smallest && arr[i] != smallest) {
+            second_smallest = arr[i];
+        }
+    }
+
+    if (second_smallest == INT_MAX) {
+        return INT_MIN;
+    }
+
+    return second_smallest;
+}
+
+int main(void) {
+    int arr[] = {5, 2, 8, 1, 9, 3};
+    int size = sizeof(arr) / sizeof(arr[0]);
+    int result = find_second_smallest(arr, size);
+
+    if (result == INT_MIN) {
+        printf("No second smallest element exists\n");
+    } else {
+        printf("Second smallest: %d\n", result);
+    }
+
+    return 0;
+}

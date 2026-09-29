@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-754-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-754-s3.c:4:32: style: Parameter 'list1' can be declared as pointer to const [constParameterPointer]
+void find_common_elements(int *list1, int size1, int *list2, int size2, int *list3, int size3) {
+                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-754-s3.c:4:55: style: Parameter 'list2' can be declared as pointer to const [constParameterPointer]
+void find_common_elements(int *list1, int size1, int *list2, int size2, int *list3, int size3) {
+                                                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-754-s3.c:4:78: style: Parameter 'list3' can be declared as pointer to const [constParameterPointer]
+void find_common_elements(int *list1, int size1, int *list2, int size2, int *list3, int size3) {
+                                                                             ^

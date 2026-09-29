@@ -1,0 +1,28 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-890-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-890-s2.c:28:11: style: Condition 'n<=0' is always false [knownConditionTrueFalse]
+    if (n <= 0 || ptr1 == NULL || ptr2 == NULL) {
+          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-890-s2.c:26:26: note: Assignment 'n=sizeof(arr1)/sizeof(arr1[0])', assigned value is 7
+    int n = sizeof(arr1) / sizeof(arr1[0]);
+                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-890-s2.c:28:11: note: Condition 'n<=0' is always false
+    if (n <= 0 || ptr1 == NULL || ptr2 == NULL) {
+          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-890-s2.c:28:24: style: Condition 'ptr1==NULL' is always false [knownConditionTrueFalse]
+    if (n <= 0 || ptr1 == NULL || ptr2 == NULL) {
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-890-s2.c:24:23: note: Assignment 'ptr1=arr1', assigned value is {
+    const int *ptr1 = arr1;
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-890-s2.c:28:24: note: Condition 'ptr1==NULL' is always false
+    if (n <= 0 || ptr1 == NULL || ptr2 == NULL) {
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-890-s2.c:28:40: style: Condition 'ptr2==NULL' is always false [knownConditionTrueFalse]
+    if (n <= 0 || ptr1 == NULL || ptr2 == NULL) {
+                                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-890-s2.c:25:23: note: Assignment 'ptr2=arr2', assigned value is {
+    const int *ptr2 = arr2;
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-890-s2.c:28:40: note: Condition 'ptr2==NULL' is always false
+    if (n <= 0 || ptr1 == NULL || ptr2 == NULL) {
+                                       ^

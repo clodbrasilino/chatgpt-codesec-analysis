@@ -1,0 +1,55 @@
+{
+  "task_id": 118,
+  "text": "Write a C function to convert a string to a list.",
+  "fn_candidates": [
+    "string_to_list",
+    "StringToList",
+    "stringToList",
+    "stringtolist"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "string_to_list",
+      "args": [
+        "python programming"
+      ],
+      "expected": [
+        "python",
+        "programming"
+      ],
+      "assert_src": "assert string_to_list(\"python programming\")==['python','programming']"
+    },
+    {
+      "fn_name": "string_to_list",
+      "args": [
+        "lists tuples strings"
+      ],
+      "expected": [
+        "lists",
+        "tuples",
+        "strings"
+      ],
+      "assert_src": "assert string_to_list(\"lists tuples strings\")==['lists','tuples','strings']"
+    },
+    {
+      "fn_name": "string_to_list",
+      "args": [
+        "write a program"
+      ],
+      "expected": [
+        "write",
+        "a",
+        "program"
+      ],
+      "assert_src": "assert string_to_list(\"write a program\")==['write','a','program']"
+    }
+  ],
+  "arg_kinds": [
+    "str"
+  ],
+  "return_kind": "str-list",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

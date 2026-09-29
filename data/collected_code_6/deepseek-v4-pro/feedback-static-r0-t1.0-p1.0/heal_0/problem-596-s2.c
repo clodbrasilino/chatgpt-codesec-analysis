@@ -1,0 +1,76 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdarg.h>
+
+typedef struct {
+    void **elements;
+    size_t size;
+} Tuple;
+
+Tuple* tuple_create(size_t count, ...) {
+    Tuple *tuple = (Tuple*)malloc(sizeof(Tuple));
+    if (tuple == NULL) {
+        return NULL;
+    }
+    
+    tuple->elements = (void**)calloc(count, sizeof(void*));
+    if (tuple->elements == NULL && count > 0) {
+        free(tuple);
+        return NULL;
+    }
+    
+    tuple->size = count;
+    
+    va_list args;
+    va_start(args, count);
+    for (size_t i = 0; i < count; i++) {
+        tuple->elements[i] = va_arg(args, void*);
+    }
+    va_end(args);
+    
+    return tuple;
+}
+
+void tuple_destroy(Tuple *tuple) {
+    if (tuple != NULL) {
+        free(tuple->elements);
+        free(tuple);
+    }
+}
+
+size_t tuple_size(const Tuple *tuple) {
+    if (tuple == NULL) {
+        return 0;
+    }
+    return tuple->size;
+}
+
+int main(void) {
+    int a = 10;
+    double b = 3.14;
+    char c = 'x';
+    
+    Tuple *t1 = tuple_create(3, &a, &b, &c);
+    if (t1 == NULL) {
+        return 1;
+    }
+    
+    printf("Tuple size: %zu\n", tuple_size(t1));
+    
+    tuple_destroy(t1);
+    t1 = NULL;
+    
+    Tuple *t2 = tuple_create(0);
+    if (t2 == NULL) {
+        return 1;
+    }
+    
+    printf("Empty tuple size: %zu\n", tuple_size(t2));
+    
+    tuple_destroy(t2);
+    t2 = NULL;
+    
+    printf("NULL tuple size: %zu\n", tuple_size(NULL));
+    
+    return 0;
+}

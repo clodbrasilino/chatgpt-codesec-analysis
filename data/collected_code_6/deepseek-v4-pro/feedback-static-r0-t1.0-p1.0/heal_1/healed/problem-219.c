@@ -1,0 +1,63 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+void extract_min_max_k(const int *arr, int n, int k, int *min_k, int *max_k) {
+    int *sorted = malloc(n * sizeof(int));
+    if (sorted == NULL) {
+        exit(1);
+    }
+    
+    for (int i = 0; i < n; i++) {
+        sorted[i] = arr[i];
+    }
+    
+    for (int i = 0; i < n - 1; i++) {
+        for (int j = 0; j < n - i - 1; j++) {
+            if (sorted[j] > sorted[j + 1]) {
+                int temp = sorted[j];
+                sorted[j] = sorted[j + 1];
+                sorted[j + 1] = temp;
+            }
+        }
+    }
+    
+    for (int i = 0; i < k; i++) {
+        min_k[i] = sorted[i];
+        max_k[i] = sorted[n - 1 - i];
+    }
+    
+    free(sorted);
+}
+
+int main(void) {
+    int tuple[] = {7, 2, 9, 1, 5, 8, 3, 6, 4, 0};
+    int n = sizeof(tuple) / sizeof(tuple[0]);
+    int k = 3;
+    int *min_k = malloc(k * sizeof(int));
+    int *max_k = malloc(k * sizeof(int));
+    
+    if (min_k == NULL || max_k == NULL) {
+        free(min_k);
+        free(max_k);
+        return 1;
+    }
+    
+    extract_min_max_k(tuple, n, k, min_k, max_k);
+    
+    printf("Minimum %d elements: ", k);
+    for (int i = 0; i < k; i++) {
+        printf("%d ", min_k[i]);
+    }
+    printf("\n");
+    
+    printf("Maximum %d elements: ", k);
+    for (int i = 0; i < k; i++) {
+        printf("%d ", max_k[i]);
+    }
+    printf("\n");
+    
+    free(min_k);
+    free(max_k);
+    
+    return 0;
+}

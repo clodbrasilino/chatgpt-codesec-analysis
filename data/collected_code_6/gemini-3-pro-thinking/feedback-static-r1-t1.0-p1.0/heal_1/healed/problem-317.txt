@@ -1,0 +1,92 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef enum {
+    RLE_SINGLE,
+    RLE_MULTIPLE
+} RLEType;
+
+typedef struct {
+    RLEType type;
+    size_t count;
+    char value;
+} RLENode;
+
+RLENode* encode_modified_rle(const char* input, size_t input_len, size_t* out_size) {
+    if (input == NULL || out_size == NULL) {
+        return NULL;
+    }
+
+    if (input_len == 0) {
+        *out_size = 0;
+        return NULL;
+    }
+
+    RLENode* encoded_list = malloc(input_len * sizeof(RLENode));
+    if (encoded_list == NULL) {
+        return NULL;
+    }
+
+    size_t list_index = 0;
+    size_t i = 0;
+
+    while (i < input_len) {
+        size_t count = 1;
+        while (i + count < input_len && input[i] == input[i + count]) {
+            count++;
+        }
+
+        if (count == 1) {
+            encoded_list[list_index].type = RLE_SINGLE;
+            encoded_list[list_index].count = 1;
+            encoded_list[list_index].value = input[i];
+        } else {
+            encoded_list[list_index].type = RLE_MULTIPLE;
+            encoded_list[list_index].count = count;
+            encoded_list[list_index].value = input[i];
+        }
+
+        list_index++;
+        i += count;
+    }
+
+    *out_size = list_index;
+
+    if (list_index == 0) {
+        free(encoded_list);
+        return NULL;
+    }
+
+    RLENode* optimized_list = realloc(encoded_list, list_index * sizeof(RLENode));
+    
+    if (optimized_list == NULL) {
+        return encoded_list;
+    }
+
+    return optimized_list;
+}
+
+int main(void) {
+    const char original_string[] = "aaaabccaadeeee";
+    size_t input_len = sizeof(original_string) - 1;
+    size_t encoded_size = 0;
+    
+    RLENode* rle_list = encode_modified_rle(original_string, input_len, &encoded_size);
+    
+    if (rle_list != NULL) {
+        for (size_t i = 0; i < encoded_size; i++) {
+            if (rle_list[i].type == RLE_SINGLE) {
+                printf("%c\n", rle_list[i].value);
+            } else {
+                printf("%zu%c\n", rle_list[i].count, rle_list[i].value);
+            }
+        }
+        free(rle_list);
+        rle_list = NULL;
+    }
+    
+    return 0;
+}
+```

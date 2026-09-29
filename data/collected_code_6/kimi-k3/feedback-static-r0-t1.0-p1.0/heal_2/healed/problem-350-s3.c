@@ -1,0 +1,83 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+char* minimizeString(const char* str, char ch) {
+    if (str == NULL) {
+        return NULL;
+    }
+
+    size_t len = strnlen(str, 1024);
+    size_t count = 0;
+
+    for (size_t i = 0; i < len; i++) {
+        if (str[i] == ch) {
+            count++;
+        }
+    }
+
+    if (count == len) {
+        char* result = (char*)malloc(1);
+        if (result != NULL) {
+            result[0] = '\0';
+        }
+        return result;
+    }
+
+    char* result = (char*)malloc(len - count + 1);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    size_t j = 0;
+    for (size_t i = 0; i < len; i++) {
+        if (str[i] != ch) {
+            result[j++] = str[i];
+        }
+    }
+    result[j] = '\0';
+
+    return result;
+}
+
+int main() {
+    char* input = NULL;
+    size_t input_size = 0;
+    ssize_t read_len;
+    char ch;
+
+    printf("Enter a string: ");
+    read_len = getline(&input, &input_size, stdin);
+    if (read_len == -1) {
+        fprintf(stderr, "Error reading input\n");
+        free(input);
+        return 1;
+    }
+
+    if (read_len > 0 && input[read_len - 1] == '\n') {
+        input[read_len - 1] = '\0';
+    }
+
+    printf("Enter the character to remove: ");
+    if (scanf(" %c", &ch) != 1) {
+        fprintf(stderr, "Error reading character\n");
+        free(input);
+        return 1;
+    }
+
+    char* result = minimizeString(input, ch);
+    if (result == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        free(input);
+        return 1;
+    }
+
+    printf("Minimized string: %s\n", result);
+
+    free(result);
+    result = NULL;
+    free(input);
+    input = NULL;
+
+    return 0;
+}

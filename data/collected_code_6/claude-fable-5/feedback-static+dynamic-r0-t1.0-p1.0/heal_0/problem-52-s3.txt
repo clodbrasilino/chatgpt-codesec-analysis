@@ -1,0 +1,46 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+double parallelogram_area(double base, double height)
+{
+    return base * height;
+}
+
+int main(void)
+{
+    double base;
+    double height;
+    double area;
+
+    printf("Enter base: ");
+    if (scanf("%lf", &base) != 1) {
+        fprintf(stderr, "Invalid input for base\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter height: ");
+    if (scanf("%lf", &height) != 1) {
+        fprintf(stderr, "Invalid input for height\n");
+        return EXIT_FAILURE;
+    }
+
+    if (base <= 0.0 || height <= 0.0) {
+        fprintf(stderr, "Base and height must be positive values\n");
+        return EXIT_FAILURE;
+    }
+
+    area = parallelogram_area(base, height);
+    printf("Area of parallelogram: %f\n", area);
+
+    return EXIT_SUCCESS;
+}
+```
+
+Key points about how this code avoids the specified weaknesses:
+
+- **CWE-664 (Improper Control of a Resource Through its Lifetime):** No dynamic memory or file handles are allocated, so there are no resources that could be leaked, double-freed, or used after release. All variables are stack-allocated with well-defined lifetimes.
+
+- **CWE-703 (Improper Check or Handling of Exceptional Conditions):** Every `scanf` return value is checked to ensure input was successfully parsed. Invalid or non-numeric input results in a clear error message and a failure exit code rather than operating on uninitialized values. Non-positive dimensions are also rejected.
+
+- **CWE-710 (Improper Adherence to Coding Standards):** The code uses `int main(void)`, returns standard exit codes (`EXIT_SUCCESS`/`EXIT_FAILURE`), matches format specifiers to types (`%lf` for `double`), writes errors to `stderr`, and avoids implicit declarations by including the proper headers.

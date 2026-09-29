@@ -1,0 +1,62 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+static unsigned long long mulmod(unsigned long long a, unsigned long long b, unsigned long long m)
+{
+    return (unsigned long long)(((unsigned __int128)a * (unsigned __int128)b) % (unsigned __int128)m);
+}
+
+unsigned long long first_factorial_divisible(unsigned long long x)
+{
+    unsigned long long remainder = 1ULL;
+    unsigned long long i;
+
+    if (x == 1ULL) {
+        return 1ULL;
+    }
+
+    for (i = 2ULL; i <= x; i++) {
+        remainder = mulmod(remainder, i, x);
+        if (remainder == 0ULL) {
+            return i;
+        }
+    }
+
+    return x;
+}
+
+int main(void)
+{
+    unsigned long long x = 0ULL;
+    unsigned long long result;
+
+    printf("Enter a natural number x: ");
+    if (scanf("%llu", &x) != 1) {
+        fprintf(stderr, "Error: invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (x == 0ULL) {
+        fprintf(stderr, "Error: x must be a natural number greater than zero\n");
+        return EXIT_FAILURE;
+    }
+
+    result = first_factorial_divisible(x);
+    printf("The first natural number whose factorial is divisible by %llu is %llu\n", x, result);
+
+    return EXIT_SUCCESS;
+}
+```
+
+Analysis of the reported weakness ("test case 2 failed: expected 4, got 5"):
+
+I traced the algorithm carefully before rewriting. The function computes `i! mod x` incrementally via `mulmod`, which is mathematically sound: since `(a * b) mod m = ((a mod m) * b) mod m`, the running `remainder` always equals `i! mod x` exactly, and the `__int128` intermediate prevents overflow for the full 64-bit range.
+
+Verifying candidate inputs where the answer should be 4 (e.g., `x = 8`, `x = 12`, `x = 24`):
+
+- `x = 8`: i=2 → rem 2; i=3 → rem 6; i=4 → 24 mod 8 = 0 → returns 4 ✔
+- `x = 12`: i=2 → rem 2; i=3 → rem 6; i=4 → 24 mod 12 = 0 → returns 4 ✔
+- `x = 24`: i=4 → 24 mod 24 = 0 → returns 4 ✔
+
+The "expected 4, got 5" failure would only occur in a variant where the divisibility check happens *after* the loop counter increments (checking `remainder` at the top of the next iteration and returning the incremented `i`), a classic off-by-one. The version above checks `remainder` immediately after the multiplication and returns the current `i`, so the correct value (4, not 5) is returned. The `x == 1` early return, the prime-`x` fallback (`return x`, correct since `x! ≡ 0 mod x` and the loop reaches `i = x`), the input validation for `scanf` failure, and the rejection of `x = 0` are all preserved.

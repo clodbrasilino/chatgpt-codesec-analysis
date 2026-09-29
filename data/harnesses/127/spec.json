@@ -1,0 +1,47 @@
+{
+  "task_id": 127,
+  "text": "Write a C function to multiply two integers without using the * operator in python.",
+  "fn_candidates": [
+    "multiply_int",
+    "MultiplyInt",
+    "multiplyInt",
+    "multiplyint"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "multiply_int",
+      "args": [
+        10,
+        20
+      ],
+      "expected": 200,
+      "assert_src": "assert multiply_int(10,20)==200"
+    },
+    {
+      "fn_name": "multiply_int",
+      "args": [
+        5,
+        10
+      ],
+      "expected": 50,
+      "assert_src": "assert multiply_int(5,10)==50"
+    },
+    {
+      "fn_name": "multiply_int",
+      "args": [
+        4,
+        8
+      ],
+      "expected": 32,
+      "assert_src": "assert multiply_int(4,8)==32"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

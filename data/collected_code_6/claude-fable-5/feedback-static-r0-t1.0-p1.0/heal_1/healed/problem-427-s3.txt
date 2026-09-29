@@ -1,0 +1,81 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+#define DATE_BUFFER_SIZE 11
+
+int convert_date(const char *input, char *output, size_t output_size)
+{
+    regex_t regex;
+    regmatch_t matches[4];
+    int ret;
+    int written;
+
+    if (input == NULL || output == NULL || output_size < DATE_BUFFER_SIZE) {
+        return -1;
+    }
+
+    ret = regcomp(&regex, "^([0-9]{4})-([0-9]{2})-([0-9]{2})$", REG_EXTENDED);
+    if (ret != 0) {
+        return -1;
+    }
+
+    ret = regexec(&regex, input, 4, matches, 0);
+    if (ret != 0) {
+        regfree(&regex);
+        return -1;
+    }
+
+    written = snprintf(output, output_size, "%.*s-%.*s-%.*s",
+                       (int)(matches[3].rm_eo - matches[3].rm_so),
+                       input + matches[3].rm_so,
+                       (int)(matches[2].rm_eo - matches[2].rm_so),
+                       input + matches[2].rm_so,
+                       (int)(matches[1].rm_eo - matches[1].rm_so),
+                       input + matches[1].rm_so);
+
+    regfree(&regex);
+
+    if (written < 0 || (size_t)written >= output_size) {
+        return -1;
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    const char *input = "2024-05-17";
+    char output[DATE_BUFFER_SIZE];
+
+    memset(output, 0, sizeof(output));
+
+    if (convert_date(input, output, sizeof(output)) != 0) {
+        fprintf(stderr, "Failed to convert date: %s\n", input);
+        return EXIT_FAILURE;
+    }
+
+    output[DATE_BUFFER_SIZE - 1] = '\0';
+
+    if (printf("Input:  %s\nOutput: %s\n", input, output) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis summary:**
+
+The Flawfinder warning on `char output[DATE_BUFFER_SIZE]` is a low-risk (risk 2) advisory that flags *any* statically-sized array. The original code was already largely safe against the flagged weakness (CWE-119/CWE-120) because:
+
+1. **Size is passed explicitly** — `convert_date` receives `sizeof(output)` rather than assuming a length.
+2. **Precondition check** — the function rejects calls where `output_size < DATE_BUFFER_SIZE`, guaranteeing the buffer can hold `YYYY-MM-DD` plus the NUL terminator (10 + 1 = 11 bytes).
+3. **Bounded write** — `snprintf` with `output_size` guarantees no overflow and always NUL-terminates within bounds.
+4. **Truncation detection** — the `written < 0 || (size_t)written >= output_size` check catches both encoding errors and silent truncation.
+5. **Input validation** — the anchored `REG_EXTENDED` regex ensures the match offsets used with the `%.*s` precision specifiers are well-defined and correctly bounded before any copy occurs.
+6. **Resource hygiene** — `regfree` is called on every path after successful `regcomp`, preventing leaks.
+
+The rewrite adds two defense-in-depth hardenings to fully satisfy the static analyzer's concern: `memset` zero-initializes the buffer before use (so it is never read uninitialized on any code path), and an explicit final NUL termination guards against any hypothetical downstream misuse of the buffer as a string.

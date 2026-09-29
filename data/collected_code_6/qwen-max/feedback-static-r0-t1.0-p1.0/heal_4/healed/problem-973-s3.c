@@ -1,0 +1,34 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+void left_rotate(char *str, int d) {
+    size_t n = 0;
+    while (str[n] != '\0') n++;
+    if (n == 0) return;
+    d = d % n;
+    if (d == 0) return;
+
+    char *temp = (char *)malloc(d + 1);
+    if (temp == NULL) return;
+
+    for (size_t i = 0; i < d; i++) {
+        temp[i] = str[i];
+    }
+    temp[d] = '\0';
+
+    memmove(str, str + d, n - d + 1);
+    for (size_t i = n - d; i < n; i++) {
+        str[i] = temp[i - (n - d)];
+    }
+
+    free(temp);
+}
+
+int main() {
+    char str[] = "abcdef";
+    int d = 2;
+    left_rotate(str, d);
+    printf("%s\n", str);
+    return 0;
+}

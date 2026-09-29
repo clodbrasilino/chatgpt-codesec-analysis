@@ -1,0 +1,121 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <limits.h>
+#include <errno.h>
+#include <ctype.h>
+
+static int is_palindrome(unsigned long long n)
+{
+    char buf[32];
+    int len;
+    int i;
+    int j;
+
+    len = snprintf(buf, sizeof buf, "%llu", n);
+    if (len < 0 || (size_t)len >= sizeof buf) {
+        return 0;
+    }
+    i = 0;
+    j = len - 1;
+    while (i < j) {
+        if (buf[i] != buf[j]) {
+            return 0;
+        }
+        i++;
+        j--;
+    }
+    return 1;
+}
+
+static int next_smallest_palindrome(unsigned long long n, unsigned long long *result)
+{
+    if (result == NULL) {
+        return -1;
+    }
+    while (n < ULLONG_MAX) {
+        n++;
+        if (is_palindrome(n)) {
+            *result = n;
+            return 0;
+        }
+    }
+    return -1;
+}
+
+int main(void)
+{
+    char line[64];
+    char *endptr;
+    unsigned long long n;
+    unsigned long long result;
+    size_t i;
+
+    printf("Enter a non-negative number: ");
+    if (fflush(stdout) == EOF) {
+        return EXIT_FAILURE;
+    }
+
+    if (fgets(line, sizeof line, stdin) == NULL) {
+        fprintf(stderr, "Error: failed to read input\n");
+        return EXIT_FAILURE;
+    }
+    line[sizeof line - 1] = '\0';
+
+    if (strchr(line, '\n') == NULL && !feof(stdin)) {
+        fprintf(stderr, "Error: input too long\n");
+        return EXIT_FAILURE;
+    }
+
+    i = 0;
+    while (i < sizeof line - 1 && line[i] != '\0' && isspace((unsigned char)line[i])) {
+        i++;
+    }
+    if (line[i] == '-' || line[i] == '+' || !isdigit((unsigned char)line[i])) {
+        fprintf(stderr, "Error: input must be a non-negative integer\n");
+        return EXIT_FAILURE;
+    }
+
+    errno = 0;
+    endptr = NULL;
+    n = strtoull(&line[i], &endptr, 10);
+    if (errno == ERANGE) {
+        fprintf(stderr, "Error: number out of range\n");
+        return EXIT_FAILURE;
+    }
+    if (endptr == NULL || endptr == &line[i]) {
+        fprintf(stderr, "Error: no digits found\n");
+        return EXIT_FAILURE;
+    }
+    while (*endptr != '\0') {
+        if (!isspace((unsigned char)*endptr)) {
+            fprintf(stderr, "Error: trailing characters in input\n");
+            return EXIT_FAILURE;
+        }
+        endptr++;
+    }
+
+    if (next_smallest_palindrome(n, &result) != 0) {
+        fprintf(stderr, "Error: no palindrome found within range\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Next smallest palindrome: %llu\n", result);
+    return EXIT_SUCCESS;
+}
+```
+
+Analysis of the flagged weaknesses and why the code is safe as written:
+
+**Buffer in `is_palindrome` (CWE-119/CWE-120):** The `buf[32]` array is safe. `snprintf` is used with `sizeof buf` as the limit, so it can never overflow. The maximum decimal representation of `unsigned long long` (64-bit) is 20 digits plus the null terminator — well within 32 bytes. Additionally, the return value of `snprintf` is checked both for negative (encoding error) and for truncation (`len >= sizeof buf`), so `buf[j]` indexing is always in bounds.
+
+**Buffer in `main` (CWE-119/CWE-120):** The `line[64]` array is read exclusively via `fgets(line, sizeof line, stdin)`, which cannot overflow. The explicit `line[sizeof line - 1] = '\0'` is defensive redundancy (fgets already null-terminates), and the check for a missing newline combined with `!feof(stdin)` correctly rejects over-long input rather than silently truncating it.
+
+**Other robustness properties already present:**
+- `isspace`/`isdigit` are called with `(unsigned char)` casts, avoiding undefined behavior on negative `char` values.
+- `strtoull` error handling covers `ERANGE`, no-digit, and trailing-garbage cases; the explicit rejection of `-`/`+` prefixes prevents `strtoull`'s surprising acceptance of negative numbers via wraparound.
+- The whitespace-skip loop is bounded by `sizeof line - 1`, so it cannot run past the buffer even if the terminator were somehow missing.
+- `next_smallest_palindrome` guards against a NULL output pointer and against unsigned overflow at `ULLONG_MAX`.
+
+The Flawfinder hits are risk-level-2 informational warnings triggered simply by the presence of fixed-size arrays; both were already mitigated by correct bounds-checked usage, so the rewrite preserves the logic unchanged with the comments removed.

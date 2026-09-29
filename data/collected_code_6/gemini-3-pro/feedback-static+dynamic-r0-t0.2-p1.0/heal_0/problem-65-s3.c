@@ -1,0 +1,53 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node* next;
+};
+
+struct Node* create_node(int data) {
+    struct Node* new_node = (struct Node*)malloc(sizeof(struct Node));
+    if (new_node == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(EXIT_FAILURE);
+    }
+    new_node->data = data;
+    new_node->next = NULL;
+    return new_node;
+}
+
+void free_list(struct Node* head) {
+    struct Node* current = head;
+    struct Node* next_node = NULL;
+    
+    while (current != NULL) {
+        next_node = current->next;
+        free(current);
+        current = next_node;
+    }
+}
+
+long long recursive_sum(const struct Node* head) {
+    if (head == NULL) {
+        return 0;
+    }
+    return (long long)head->data + recursive_sum(head->next);
+}
+
+int main(void) {
+    struct Node* head = create_node(10);
+    head->next = create_node(20);
+    head->next->next = create_node(30);
+    head->next->next->next = create_node(40);
+    head->next->next->next->next = create_node(50);
+
+    long long total_sum = recursive_sum(head);
+    
+    printf("%lld\n", total_sum);
+
+    free_list(head);
+    head = NULL;
+
+    return EXIT_SUCCESS;
+}

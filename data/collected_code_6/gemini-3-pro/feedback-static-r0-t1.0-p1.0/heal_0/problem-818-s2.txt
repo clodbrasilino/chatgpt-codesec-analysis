@@ -1,0 +1,32 @@
+```c
+#include <stdio.h>
+
+int count_lowercase_letters(const char *str) {
+    if (str == NULL) {
+        return -1;
+    }
+
+    int count = 0;
+    while (*str != '\0') {
+        if (*str >= 'a' && *str <= 'z') {
+            count++;
+        }
+        str++;
+    }
+
+    return count;
+}
+
+int main(void) {
+    const char *test_string = "Hello World! This Is A Test String.";
+    int lowercase_count = count_lowercase_letters(test_string);
+
+    if (lowercase_count != -1) {
+        printf("Number of lowercase letters: %d\n", lowercase_count);
+    } else {
+        printf("Error: Invalid string provided.\n");
+    }
+
+    return 0;
+}
+```

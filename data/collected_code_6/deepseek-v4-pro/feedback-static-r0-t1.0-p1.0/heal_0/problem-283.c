@@ -1,0 +1,39 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+bool check_digit_frequency(long long n) {
+    int freq[10] = {0};
+    
+    if (n < 0) n = -n;
+    
+    if (n == 0) return true;
+    
+    while (n > 0) {
+        freq[n % 10]++;
+        n /= 10;
+    }
+    
+    for (int i = 0; i < 10; i++) {
+        if (freq[i] > i) return false;
+    }
+    
+    return true;
+}
+
+int main(void) {
+    long long num;
+    
+    printf("Enter a number: ");
+    if (scanf("%lld", &num) != 1) {
+        printf("Invalid input\n");
+        return 1;
+    }
+    
+    if (check_digit_frequency(num)) {
+        printf("Yes\n");
+    } else {
+        printf("No\n");
+    }
+    
+    return 0;
+}

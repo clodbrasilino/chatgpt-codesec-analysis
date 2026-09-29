@@ -1,0 +1,87 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+static int count_rotations(const int *arr, size_t n)
+{
+    size_t low;
+    size_t high;
+
+    if (arr == NULL || n == 0U) {
+        return -1;
+    }
+
+    low = 0U;
+    high = n - 1U;
+
+    while (low < high) {
+        size_t mid = low + ((high - low) / 2U);
+
+        if (arr[mid] > arr[high]) {
+            low = mid + 1U;
+        } else if (arr[mid] < arr[high]) {
+            high = mid;
+        } else {
+            high--;
+        }
+    }
+
+    return (int)low;
+}
+
+static int report_rotations(const int *arr, size_t n)
+{
+    int rotations = count_rotations(arr, n);
+
+    if (rotations < 0) {
+        if (fprintf(stderr, "Invalid input array\n") < 0) {
+            return -1;
+        }
+        return -1;
+    }
+
+    if (printf("Number of rotations: %d\n", rotations) < 0) {
+        return -1;
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    int arr1[] = {15, 18, 2, 3, 6, 12};
+    int arr2[] = {7, 9, 11, 12, 5};
+    int arr3[] = {7, 9, 11, 12, 15, 18, 2};
+    size_t n1 = sizeof(arr1) / sizeof(arr1[0]);
+    size_t n2 = sizeof(arr2) / sizeof(arr2[0]);
+    size_t n3 = sizeof(arr3) / sizeof(arr3[0]);
+
+    if (report_rotations(arr1, n1) != 0) {
+        return EXIT_FAILURE;
+    }
+
+    if (report_rotations(arr2, n2) != 0) {
+        return EXIT_FAILURE;
+    }
+
+    if (report_rotations(arr3, n3) != 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+Analysis notes on the identified weaknesses:
+
+The failures described in the original comments ("expected 2, got 3" and "expected 3, got 5") are symptomatic of a buggy binary search that either used `arr[mid] >= arr[high]` (off-by-one causing the boundary to skip past the minimum) or compared `arr[mid]` against `arr[low]` instead of `arr[high]`, which misidentifies the pivot in arrays where the rotation point lies in the right half.
+
+The corrected implementation above:
+
+1. **Compares `arr[mid]` with `arr[high]`** — this reliably determines which half contains the minimum element (the rotation point). If `arr[mid] > arr[high]`, the pivot must be to the right of `mid`; if smaller, the pivot is at `mid` or to its left.
+2. **Uses strict inequality with `low = mid + 1U` / `high = mid`** — this avoids the off-by-one errors that produced the wrong indices in the failing test cases, and guarantees loop termination.
+3. **Handles duplicates safely** via the `high--` branch rather than risking an incorrect discard of the pivot half.
+4. **Avoids overflow** in the midpoint calculation with `low + ((high - low) / 2U)`.
+5. **Validates input** (`NULL` pointer, zero length) and checks the return values of `printf`/`fprintf`, propagating failures to `main` which returns `EXIT_FAILURE` accordingly.
+
+Expected output for the three test arrays is `2`, `4`, and `6` respectively — the index of the minimum element, which equals the number of left rotations applied to the originally sorted array.

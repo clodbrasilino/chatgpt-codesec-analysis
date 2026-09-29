@@ -1,0 +1,26 @@
+```c
+#include <stdio.h>
+
+void findMultiples(int n, int m) {
+    if (n <= 0 || m <= 0) {
+        printf("Error: both the values of 'm' and 'n' should be greater than 0.\n");
+        return;
+    }
+    for (int i = 1; i <= m; i++) {
+        printf("%d ", i * n);
+    }
+    printf("\n");
+}
+
+int main() {
+    int n, m;
+    printf("Enter the number 'n': ");
+    scanf("%d", &n);
+    printf("Enter the number 'm': ");
+    scanf("%d", &m);
+    
+    findMultiples(n, m);
+    
+    return 0;
+}
+```

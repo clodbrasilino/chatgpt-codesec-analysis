@@ -1,0 +1,90 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#define BUFFER_SIZE 1024
+
+void capitalize_first_last(char *str, size_t max_len)
+{
+    size_t i;
+    size_t len;
+
+    if (str == NULL || max_len == 0) {
+        return;
+    }
+
+    len = strnlen(str, max_len);
+    i = 0;
+
+    while (i < len) {
+        while (i < len && isspace((unsigned char)str[i])) {
+            i++;
+        }
+
+        if (i >= len) {
+            break;
+        }
+
+        {
+            size_t start = i;
+            size_t end;
+
+            while (i < len && !isspace((unsigned char)str[i])) {
+                i++;
+            }
+
+            end = i - 1;
+
+            str[start] = (char)toupper((unsigned char)str[start]);
+            str[end] = (char)toupper((unsigned char)str[end]);
+        }
+    }
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    char *newline;
+
+    printf("Enter a string: ");
+    fflush(stdout);
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    newline = strchr(buffer, '\n');
+    if (newline != NULL) {
+        *newline = '\0';
+    }
+
+    capitalize_first_last(buffer, sizeof(buffer));
+
+    printf("Result: %s\n", buffer);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the original code and why the flagged weakness is already mitigated:**
+
+The Flawfinder warning (CWE-119/CWE-120) about the statically-sized `char buffer[BUFFER_SIZE]` is a low-risk, largely informational finding. The code already contains all the necessary defenses, so no functional changes were required:
+
+1. **Bounded input:** `fgets(buffer, (int)sizeof(buffer), stdin)` limits reads to the buffer size, preventing overflow — unlike `gets()` or unbounded `scanf("%s", ...)`.
+
+2. **Guaranteed termination:** `buffer[sizeof(buffer) - 1] = '\0'` is defensive belt-and-suspenders; `fgets` already null-terminates, but this makes the invariant explicit.
+
+3. **Bounded string measurement:** `capitalize_first_last` uses `strnlen(str, max_len)` rather than `strlen`, so even an unterminated buffer could not cause an out-of-bounds read.
+
+4. **Safe `ctype` usage:** All `isspace`/`toupper` calls cast to `unsigned char`, avoiding undefined behavior on platforms with signed `char` when input contains bytes ≥ 0x80.
+
+5. **NULL and zero-length guards:** The function safely handles `NULL` pointers and `max_len == 0`, and the `if (i >= len) break;` check prevents `end = i - 1` from underflowing on trailing whitespace.
+
+6. **Error handling:** The `fgets` return value is checked, and failures are reported to `stderr` with a non-zero exit status.
+
+One portability note: `strnlen` is POSIX/C23 rather than C89/C99. If targeting strict older standards, define `_POSIX_C_SOURCE 200809L` before the includes or provide a small local fallback implementation.

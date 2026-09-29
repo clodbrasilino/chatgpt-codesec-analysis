@@ -1,0 +1,16 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-846.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-846.c:61:11: style: Condition 'n!=m' is always false [knownConditionTrueFalse]
+    if (n != m) {
+          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-846.c:50:43: note: Assignment 'arrival_size=sizeof(arrival)/sizeof(arrival[0])', assigned value is 6
+    size_t arrival_size = sizeof(arrival) / sizeof(arrival[0]);
+                                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-846.c:53:40: note: Assuming condition is false
+    if (arrival_size > (size_t)INT_MAX || departure_size > (size_t)INT_MAX) {
+                                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-846.c:58:13: note: Assignment 'n=(int)arrival_size', assigned value is 6
+    int n = (int)arrival_size;
+            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-846.c:61:11: note: Condition 'n!=m' is always false
+    if (n != m) {
+          ^

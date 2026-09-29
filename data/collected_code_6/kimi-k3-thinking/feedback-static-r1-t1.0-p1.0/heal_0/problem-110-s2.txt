@@ -1,0 +1,81 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    long long start;
+    long long end;
+} Range;
+
+static Range *find_missing_ranges(const int *nums, size_t n, int lower, int upper, size_t *out_count)
+{
+    Range *ranges;
+    size_t count;
+    size_t i;
+    long long prev;
+    long long last;
+
+    if (out_count == NULL) {
+        return NULL;
+    }
+    *out_count = 0;
+    if (lower > upper) {
+        return NULL;
+    }
+    if (n > 0 && nums == NULL) {
+        return NULL;
+    }
+
+    ranges = (Range *)malloc((n + 1) * sizeof(*ranges));
+    if (ranges == NULL) {
+        return NULL;
+    }
+
+    count = 0;
+    prev = (long long)lower - 1;
+    last = (long long)upper + 1;
+
+    for (i = 0; i <= n; ++i) {
+        long long curr = (i < n) ? (long long)nums[i] : last;
+        if (curr - prev >= 2) {
+            ranges[count].start = prev + 1;
+            ranges[count].end = curr - 1;
+            ++count;
+        }
+        if (curr > prev) {
+            prev = curr;
+        }
+    }
+
+    *out_count = count;
+    return ranges;
+}
+
+int main(void)
+{
+    int nums[] = {0, 1, 3, 50, 75};
+    size_t n = sizeof(nums) / sizeof(nums[0]);
+    int lower = 0;
+    int upper = 99;
+    size_t count = 0;
+    size_t i;
+    Range *missing;
+
+    missing = find_missing_ranges(nums, n, lower, upper, &count);
+    if (missing == NULL) {
+        fprintf(stderr, "failed to compute missing ranges\n");
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i < count; ++i) {
+        if (missing[i].start == missing[i].end) {
+            printf("%lld\n", missing[i].start);
+        } else {
+            printf("%lld->%lld\n", missing[i].start, missing[i].end);
+        }
+    }
+
+    free(missing);
+    return EXIT_SUCCESS;
+}
+```

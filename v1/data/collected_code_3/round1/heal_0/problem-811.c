@@ -1,0 +1,40 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+typedef struct {
+    int a;
+    int b;
+} Tuple;
+
+bool areIdentical(Tuple list1[], Tuple list2[], int m, int n) {
+    if (m != n)
+        return false;
+
+    for (int i = 0; i < n; i++)
+        if (list1[i].a != list2[i].a || list1[i].b != list2[i].b)
+            return false;
+
+    return true;
+}
+
+int main() {
+    Tuple list1[] = {{1, 2}, {3, 4}, {5, 6}};
+    Tuple list2[] = {{1, 2}, {3, 4}, {5, 6}};
+    Tuple list3[] = {{1, 2}, {3, 4}, {5, 7}};
+
+    int m = sizeof(list1) / sizeof(list1[0]);
+    int n = sizeof(list2) / sizeof(list2[0]);
+    int p = sizeof(list3) / sizeof(list3[0]);
+
+    if (areIdentical(list1, list2, m, n))
+        printf("list1 and list2 are identical.\n");
+    else
+        printf("list1 and list2 are not identical.\n");
+
+    if (areIdentical(list1, list3, m, p))
+        printf("list1 and list3 are identical.\n");
+    else
+        printf("list1 and list3 are not identical.\n");
+
+    return 0;
+}

@@ -1,0 +1,26 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int largest_adjacent_product(const int *arr, int len) {
+    if (arr == NULL || len < 2) {
+        return 0;
+    }
+    int max_product = arr[0] * arr[1];
+    for (int i = 1; i < len - 1; i++) {
+        int product = arr[i] * arr[i + 1];
+        if (product > max_product) {
+            max_product = product;
+        }
+    }
+    return max_product;
+}
+
+int main(void) {
+    int arr[] = {3, 6, -2, -5, 7, 3};
+    int len = sizeof(arr) / sizeof(arr[0]);
+    int result = largest_adjacent_product(arr, len);
+    printf("%d\n", result);
+    return 0;
+}
+```

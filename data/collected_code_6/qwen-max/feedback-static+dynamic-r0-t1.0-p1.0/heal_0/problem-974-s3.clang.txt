@@ -1,0 +1,5 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-974-s3.c:10:31: error: call to undeclared library function 'fmin' with type 'double (double, double)'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   10 |             triangle[i][j] += fmin(triangle[i + 1][j], triangle[i + 1][j + 1]);
+      |                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-974-s3.c:10:31: note: include the header <math.h> or explicitly provide a declaration for 'fmin'
+1 error generated.

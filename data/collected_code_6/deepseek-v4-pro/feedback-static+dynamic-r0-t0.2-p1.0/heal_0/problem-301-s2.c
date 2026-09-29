@@ -1,0 +1,137 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct DictNode {
+    char *key;
+    struct DictNode *value;
+    struct DictNode *next;
+} DictNode;
+
+typedef struct {
+    DictNode *head;
+} Dictionary;
+
+Dictionary *create_dictionary(void) {
+    Dictionary *dict = (Dictionary *)malloc(sizeof(Dictionary));
+    if (dict == NULL) {
+        return NULL;
+    }
+    dict->head = NULL;
+    return dict;
+}
+
+DictNode *create_node(const char *key, DictNode *value) {
+    DictNode *node = (DictNode *)malloc(sizeof(DictNode));
+    if (node == NULL) {
+        return NULL;
+    }
+    node->key = (char *)malloc(strlen(key) + 1);
+    if (node->key == NULL) {
+        free(node);
+        return NULL;
+    }
+    strcpy(node->key, key);
+    node->value = value;
+    node->next = NULL;
+    return node;
+}
+
+void dict_insert(Dictionary *dict, const char *key, DictNode *value) {
+    if (dict == NULL || key == NULL) {
+        return;
+    }
+    DictNode *node = create_node(key, value);
+    if (node == NULL) {
+        return;
+    }
+    node->next = dict->head;
+    dict->head = node;
+}
+
+DictNode *dict_find(Dictionary *dict, const char *key) {
+    if (dict == NULL || key == NULL) {
+        return NULL;
+    }
+    DictNode *current = dict->head;
+    while (current != NULL) {
+        if (strcmp(current->key, key) == 0) {
+            return current->value;
+        }
+        current = current->next;
+    }
+    return NULL;
+}
+
+void free_dict_node(DictNode *node) {
+    if (node == NULL) {
+        return;
+    }
+    free(node->key);
+    if (node->value != NULL) {
+        free_dict_node(node->value);
+    }
+    free(node);
+}
+
+void free_dictionary(Dictionary *dict) {
+    if (dict == NULL) {
+        return;
+    }
+    DictNode *current = dict->head;
+    while (current != NULL) {
+        DictNode *next = current->next;
+        free_dict_node(current);
+        current = next;
+    }
+    free(dict);
+}
+
+int dict_depth(Dictionary *dict) {
+    if (dict == NULL || dict->head == NULL) {
+        return 0;
+    }
+    int max_depth = 0;
+    DictNode *current = dict->head;
+    while (current != NULL) {
+        if (current->value != NULL) {
+            Dictionary *sub_dict = (Dictionary *)current->value;
+            int sub_depth = dict_depth(sub_dict);
+            if (sub_depth > max_depth) {
+                max_depth = sub_depth;
+            }
+        }
+        current = current->next;
+    }
+    return max_depth + 1;
+}
+
+int main(void) {
+    Dictionary *dict = create_dictionary();
+    if (dict == NULL) {
+        return 1;
+    }
+
+    Dictionary *inner_dict = create_dictionary();
+    if (inner_dict == NULL) {
+        free_dictionary(dict);
+        return 1;
+    }
+
+    Dictionary *deep_dict = create_dictionary();
+    if (deep_dict == NULL) {
+        free_dictionary(inner_dict);
+        free_dictionary(dict);
+        return 1;
+    }
+
+    dict_insert(dict, "key1", (DictNode *)inner_dict);
+    dict_insert(inner_dict, "key2", (DictNode *)deep_dict);
+    dict_insert(deep_dict, "key3", NULL);
+
+    int depth = dict_depth(dict);
+    printf("%d\n", depth);
+
+    free_dictionary(dict);
+    return 0;
+}

@@ -1,0 +1,77 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+int count_substrings_with_sum_equal_length(const char *str, int len) {
+    int count = 0;
+    int *prefix_sum = (int *)malloc((len + 1) * sizeof(int));
+
+    if (prefix_sum == NULL) {
+        return -1;
+    }
+
+    prefix_sum[0] = 0;
+    for (int i = 0; i < len; i++) {
+        prefix_sum[i + 1] = prefix_sum[i] + (str[i] - '0');
+    }
+
+    for (int i = 0; i < len; i++) {
+        for (int j = i + 1; j <= len; j++) {
+            int substring_len = j - i;
+            int sum = prefix_sum[j] - prefix_sum[i];
+            if (sum == substring_len) {
+                count++;
+            }
+        }
+    }
+
+    free(prefix_sum);
+    return count;
+}
+
+int main(void) {
+    char *input = NULL;
+    size_t buffer_size = 0;
+    ssize_t read_length;
+
+    read_length = getline(&input, &buffer_size, stdin);
+    if (read_length == -1) {
+        free(input);
+        return 1;
+    }
+
+    if (read_length > 0 && input[read_length - 1] == '\n') {
+        input[read_length - 1] = '\0';
+        read_length--;
+    }
+
+    if (read_length == 0) {
+        printf("0\n");
+        free(input);
+        return 0;
+    }
+
+    if (read_length > 100000) {
+        printf("Invalid input\n");
+        free(input);
+        return 1;
+    }
+
+    for (ssize_t i = 0; i < read_length; i++) {
+        if (input[i] < '0' || input[i] > '9') {
+            printf("Invalid input\n");
+            free(input);
+            return 1;
+        }
+    }
+
+    int result = count_substrings_with_sum_equal_length(input, (int)read_length);
+    if (result == -1) {
+        free(input);
+        return 1;
+    }
+
+    printf("%d\n", result);
+    free(input);
+    return 0;
+}

@@ -1,0 +1,41 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <regex.h>
+#include <string.h>
+
+void add_spaces_between_capital_words(char *str) {
+    regex_t regex;
+    regmatch_t matches[2];
+    char pattern[] = "([A-Z][^A-Z]*)";
+    char replacement[] = " \\1";
+    char result[1024] = "";
+    /* Possible weaknesses found:
+     *  The scope of the variable 'end' can be reduced. [variableScope]
+     */
+    int rc, start = 0, end;
+
+    if (regcomp(&regex, pattern, REG_EXTENDED|REG_NEWLINE) != 0) {
+        return;
+    }
+
+    /* Possible weaknesses found:
+     *  Although the value stored to 'rc' is used in the enclosing expression, the value is never actually read from 'rc' [deadcode.DeadStores]
+     */
+    while ((rc = regexec(&regex, str + start, 2, matches, 0)) == 0) {
+        end = matches[0].rm_so + start;
+        strncat(result, str + start, end - start);
+        strncat(result, replacement, sizeof(replacement) - 1);
+        start = matches[0].rm_eo + start;
+    }
+    strncat(result, str + start, strlen(str + start));
+    strcpy(str, result);
+
+    regfree(&regex);
+}
+
+int main() {
+    char str[] = "HelloWorldThisIsATest";
+    add_spaces_between_capital_words(str);
+    printf("%s\n", str);
+    return 0;
+}

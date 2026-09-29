@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-822.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-822.c:77:28: style: Condition 'password[used]=='\r'' is always false [knownConditionTrueFalse]
+        if (password[used] == '\r') {
+                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-822.c:74:26: note: Assignment 'password[used]='\0'', assigned value is 0
+        password[used] = '\0';
+                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-822.c:77:28: note: Condition 'password[used]=='\r'' is always false
+        if (password[used] == '\r') {
+                           ^

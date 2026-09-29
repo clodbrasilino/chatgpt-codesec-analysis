@@ -1,0 +1,74 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define NAME_SIZE 32
+
+typedef struct {
+    int id;
+    char name[NAME_SIZE];
+    float value;
+} Tuple;
+
+static int copy_name(char dest[NAME_SIZE], const char *src) {
+    size_t len;
+
+    if (dest == NULL || src == NULL) {
+        return -1;
+    }
+
+    len = strlen(src);
+    if (len >= NAME_SIZE) {
+        return -1;
+    }
+
+    memcpy(dest, src, len + 1);
+    return 0;
+}
+
+int compare_tuples(const void *a, const void *b) {
+    const Tuple *ta = (const Tuple *)a;
+    const Tuple *tb = (const Tuple *)b;
+
+    if (ta->value < tb->value) return -1;
+    if (ta->value > tb->value) return 1;
+    return 0;
+}
+
+int sort_tuples_by_float(Tuple *arr, size_t count) {
+    if (arr == NULL || count == 0) {
+        return -1;
+    }
+    qsort(arr, count, sizeof(Tuple), compare_tuples);
+    return 0;
+}
+
+int main(void) {
+    Tuple data[] = {
+        {1, "", 3.14f},
+        {2, "", 1.41f},
+        {3, "", 2.72f},
+        {4, "", 0.58f}
+    };
+    const char *names[] = {"alpha", "beta", "gamma", "delta"};
+    size_t count = sizeof(data) / sizeof(data[0)];
+
+    for (size_t i = 0; i < count; i++) {
+        if (copy_name(data[i].name, names[i]) != 0) {
+            fprintf(stderr, "Error: Name too long\n");
+            return EXIT_FAILURE;
+        }
+    }
+
+    if (sort_tuples_by_float(data, count) != 0) {
+        fprintf(stderr, "Error: Invalid input to sort function\n");
+        return EXIT_FAILURE;
+    }
+
+    for (size_t i = 0; i < count; i++) {
+        printf("ID: %d, Name: %s, Value: %.2f\n",
+               data[i].id, data[i].name, (double)data[i].value);
+    }
+
+    return EXIT_SUCCESS;
+}

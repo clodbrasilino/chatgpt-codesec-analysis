@@ -1,0 +1,4 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-73-s2.c:18:13: warning: Although the value stored to 'status' is used in the enclosing expression, the value is never actually read from 'status' [deadcode.DeadStores]
+   18 |     while ((status = regexec(&regex, p, 1, pmatch, 0)) == 0) {
+      |             ^        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1 warning generated.

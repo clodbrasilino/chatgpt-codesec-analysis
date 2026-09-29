@@ -1,0 +1,27 @@
+#include <stdio.h>
+#include <regex.h>
+#include <stdbool.h>
+
+bool is_valid_ip(const char *ip) {
+    const char *pattern = "^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$";
+    regex_t reg;
+    int ret;
+
+    ret = regcomp(&reg, pattern, REG_EXTENDED);
+    if (ret) {
+        return false;
+    }
+
+    ret = regexec(&reg, ip, 0, NULL, 0);
+    regfree(&reg);
+
+    return !ret;
+}
+
+int main() {
+    const char *test_ips[] = {"192.168.1.1", "255.255.255.255", "256.256.256.256", "192.168.1.256", "192.168.1", "192.168.1.1.1"};
+    for (int i = 0; i < 6; ++i) {
+        printf("%s: %s\n", test_ips[i], is_valid_ip(test_ips[i]) ? "Valid" : "Invalid");
+    }
+    return 0;
+}

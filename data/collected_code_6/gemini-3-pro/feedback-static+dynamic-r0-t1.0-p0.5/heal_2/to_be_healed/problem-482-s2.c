@@ -1,0 +1,48 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+void find_sequences(const char *str) {
+    if (str == NULL) {
+        return;
+    }
+
+    regex_t regex;
+    int reti;
+    regmatch_t pmatch[1];
+    const char *pattern = "[A-Z][a-z]+";
+    const char *cursor = str;
+
+    reti = regcomp(&regex, pattern, REG_EXTENDED);
+    if (reti) {
+        return;
+    }
+
+    while (regexec(&regex, cursor, 1, pmatch, 0) == 0) {
+        int start = pmatch[0].rm_so;
+        int end = pmatch[0].rm_eo;
+        int len = end - start;
+
+        char *match = (char *)malloc((len + 1) * sizeof(char));
+        if (match != NULL) {
+            /* Possible weaknesses found:
+             * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+             */
+            memcpy(match, cursor + start, len);
+            match[len] = '\0';
+            printf("%s\n", match);
+            free(match);
+        }
+
+        cursor += end;
+    }
+
+    regfree(&regex);
+}
+
+int main(void) {
+    const char *test_string = "Hello world, This Is a Test String with Some Sequences.";
+    find_sequences(test_string);
+    return 0;
+}

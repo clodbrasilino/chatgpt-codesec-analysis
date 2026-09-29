@@ -1,0 +1,201 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+#include <string.h>
+#include <stdint.h>
+
+typedef struct {
+    int *elements;
+    size_t size;
+} IntList;
+
+typedef struct {
+    IntList **lists;
+    size_t count;
+    size_t capacity;
+} ListOfLists;
+
+IntList *create_int_list(const int *elements, size_t size) {
+    if (size > 0 && !elements) {
+        return NULL;
+    }
+    if (size > SIZE_MAX / sizeof(int)) {
+        return NULL;
+    }
+
+    IntList *list = (IntList *)malloc(sizeof(IntList));
+    if (!list) {
+        return NULL;
+    }
+
+    list->size = size;
+    if (size > 0) {
+        list->elements = (int *)malloc(size * sizeof(int));
+        if (!list->elements) {
+            free(list);
+            return NULL;
+        }
+        memcpy(list->elements, elements, size * sizeof(int));
+    } else {
+        list->elements = NULL;
+    }
+    return list;
+}
+
+void free_int_list(IntList *list) {
+    if (!list) {
+        return;
+    }
+    free(list->elements);
+    free(list);
+}
+
+ListOfLists *create_list_of_lists(size_t capacity) {
+    ListOfLists *lol = (ListOfLists *)malloc(sizeof(ListOfLists));
+    if (!lol) {
+        return NULL;
+    }
+
+    lol->count = 0;
+    lol->capacity = capacity > 0 ? capacity : 1;
+    
+    if (lol->capacity > SIZE_MAX / sizeof(IntList *)) {
+        free(lol);
+        return NULL;
+    }
+    
+    lol->lists = (IntList **)malloc(lol->capacity * sizeof(IntList *));
+    if (!lol->lists) {
+        free(lol);
+        return NULL;
+    }
+    return lol;
+}
+
+void free_list_of_lists(ListOfLists *lol) {
+    if (!lol) {
+        return;
+    }
+    for (size_t i = 0; i < lol->count; i++) {
+        free_int_list(lol->lists[i]);
+    }
+    free(lol->lists);
+    free(lol);
+}
+
+bool add_list(ListOfLists *lol, IntList *list) {
+    if (!lol || !list) {
+        return false;
+    }
+
+    if (lol->count >= lol->capacity) {
+        if (lol->capacity > SIZE_MAX / 2 / sizeof(IntList *)) {
+            return false;
+        }
+        size_t new_capacity = lol->capacity * 2;
+        IntList **new_lists = (IntList **)realloc(lol->lists, new_capacity * sizeof(IntList *));
+        if (!new_lists) {
+            return false;
+        }
+        lol->lists = new_lists;
+        lol->capacity = new_capacity;
+    }
+
+    lol->lists[lol->count++] = list;
+    return true;
+}
+
+bool append_new_list(ListOfLists *lol, const int *elements, size_t size) {
+    if (!lol) {
+        return false;
+    }
+    IntList *list = create_int_list(elements, size);
+    if (!list) {
+        return false;
+    }
+    if (!add_list(lol, list)) {
+        free_int_list(list);
+        return false;
+    }
+    return true;
+}
+
+bool are_lists_equal(const IntList *a, const IntList *b) {
+    if (!a || !b) {
+        return false;
+    }
+    if (a->size != b->size) {
+        return false;
+    }
+    if (a->size == 0) {
+        return true;
+    }
+    return memcmp(a->elements, b->elements, a->size * sizeof(int)) == 0;
+}
+
+bool remove_duplicates(ListOfLists *lol) {
+    if (!lol) {
+        return false;
+    }
+
+    for (size_t i = 0; i < lol->count; i++) {
+        for (size_t j = i + 1; j < lol->count; ) {
+            if (are_lists_equal(lol->lists[i], lol->lists[j])) {
+                free_int_list(lol->lists[j]);
+                for (size_t k = j; k < lol->count - 1; k++) {
+                    lol->lists[k] = lol->lists[k + 1];
+                }
+                lol->count--;
+            } else {
+                j++;
+            }
+        }
+    }
+    return true;
+}
+
+void print_list_of_lists(const ListOfLists *lol) {
+    if (!lol) {
+        return;
+    }
+    for (size_t i = 0; i < lol->count; i++) {
+        printf("[ ");
+        for (size_t j = 0; j < lol->lists[i]->size; j++) {
+            printf("%d ", lol->lists[i]->elements[j]);
+        }
+        printf("]\n");
+    }
+}
+
+int main(void) {
+    ListOfLists *lol = create_list_of_lists(4);
+    if (!lol) {
+        return EXIT_FAILURE;
+    }
+
+    int arr1[] = {1, 2, 3};
+    int arr2[] = {4, 5};
+    int arr3[] = {1, 2, 3};
+    int arr4[] = {1, 2};
+
+    if (!append_new_list(lol, arr1, sizeof(arr1) / sizeof(arr1[0])) ||
+        !append_new_list(lol, arr2, sizeof(arr2) / sizeof(arr2[0])) ||
+        !append_new_list(lol, arr3, sizeof(arr3) / sizeof(arr3[0])) ||
+        !append_new_list(lol, arr4, sizeof(arr4) / sizeof(arr4[0])) ||
+        !append_new_list(lol, arr1, sizeof(arr1) / sizeof(arr1[0]))) {
+        free_list_of_lists(lol);
+        return EXIT_FAILURE;
+    }
+
+    if (!remove_duplicates(lol)) {
+        free_list_of_lists(lol);
+        return EXIT_FAILURE;
+    }
+
+    print_list_of_lists(lol);
+
+    free_list_of_lists(lol);
+    return EXIT_SUCCESS;
+}
+```

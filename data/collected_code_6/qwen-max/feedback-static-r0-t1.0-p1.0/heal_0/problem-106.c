@@ -1,0 +1,36 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *data;
+    size_t size;
+} TupleList;
+
+void addToList(TupleList *tuple, int num) {
+    tuple->data = realloc(tuple->data, (tuple->size + 1) * sizeof(int));
+    if (tuple->data == NULL) {
+        perror("Failed to allocate memory");
+        exit(EXIT_FAILURE);
+    }
+    tuple->data[tuple->size++] = num;
+}
+
+int main() {
+    int nums[] = {4, 5, 6};
+    size_t nums_size = sizeof(nums)/sizeof(nums[0]);
+
+    TupleList tuple = {NULL, 0};
+
+    for (size_t i = 0; i < nums_size; ++i) {
+        addToList(&tuple, nums[i]);
+    }
+
+    for (size_t i = 0; i < tuple.size; ++i) {
+        printf("%d ", tuple.data[i]);
+    }
+    putchar('\n');
+
+    free(tuple.data);
+
+    return 0;
+}

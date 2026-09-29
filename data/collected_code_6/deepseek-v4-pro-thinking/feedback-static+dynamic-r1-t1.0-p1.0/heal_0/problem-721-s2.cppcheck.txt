@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-721-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-721-s2.c:41:9: style: Same expression used in consecutive assignments of 'row' and 'col'. [duplicateAssignExpression]
+    int row = n - 1;
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-721-s2.c:42:9: note: Same expression used in consecutive assignments of 'row' and 'col'.
+    int col = n - 1;
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-721-s2.c:41:9: note: Same expression used in consecutive assignments of 'row' and 'col'.
+    int row = n - 1;
+        ^

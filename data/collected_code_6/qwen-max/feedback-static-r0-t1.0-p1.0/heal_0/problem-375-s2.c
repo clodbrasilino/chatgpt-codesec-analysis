@@ -1,0 +1,17 @@
+#include <stdio.h>
+#include <math.h>
+
+int round_to_nearest_multiple(int number, int multiple) {
+    if (multiple == 0) {
+        return 0;
+    }
+    return (int)(round((double)number / multiple) * multiple);
+}
+
+int main() {
+    int number = 123;
+    int multiple = 10;
+    int result = round_to_nearest_multiple(number, multiple);
+    printf("Rounded to nearest multiple: %d\n", result);
+    return 0;
+}

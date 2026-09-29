@@ -1,0 +1,41 @@
+```C
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Point{
+    double x, y;
+};
+
+struct Parabola{
+    double a, b, c;
+};
+
+struct Point getFocus(struct Parabola p){
+    struct Point focus;
+    focus.x = -p.b/(2*p.a);
+    focus.y = (1-(p.b*p.b-4*p.a*p.c))/(4*p.a);
+    return focus;
+}
+
+int main(){
+    struct Parabola p;
+    struct Point focus;
+
+    printf("Enter the coefficients a, b and c for the parabola ax^2 + bx + c:\n");
+    if(scanf("%lf %lf %lf", &p.a, &p.b, &p.c) != 3){
+        printf("\nError while reading the input\n");
+        return EXIT_FAILURE;
+    }
+
+    if(p.a == 0){
+        printf("\nCoefficient a cannot be zero. Not a parabola.\n");
+        return EXIT_FAILURE;
+    }
+
+    focus = getFocus(p);
+    printf("\nFocus of the parabola is at (%.2lf, %.2lf)\n", focus.x, focus.y);
+
+    return 0;
+}
+
+```

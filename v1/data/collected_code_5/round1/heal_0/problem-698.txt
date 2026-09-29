@@ -1,0 +1,51 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct data {
+    int key[2];
+    int val;
+} data;
+
+int compare(const void *p, const void *q) {
+    const data *a = p;
+    const data *b = q;
+
+    int res1 = a->key[0] * a->key[1];
+    int res2 = b->key[0] * b->key[1];
+
+    if (res1 < res2) return -1;
+    if (res1 > res2) return 1;
+    return 0;
+}
+
+void sort_dictionary(data *dict, int length) {
+    qsort(dict, length, sizeof(data), compare);
+}
+
+int main() {
+    int length = 5;
+    data dictionary[] = { 
+        {{2, 5}, 0},
+        {{3, 1}, 1}, 
+        {{8, 9}, 2}, 
+        {{4, 2}, 3}, 
+        {{1, 7}, 4}
+    };
+
+    sort_dictionary(dictionary, length);
+
+    for (int i = 0; i < length; i++) {
+        printf("Key: [%d, %d], Value: %d\n", dictionary[i].key[0], dictionary[i].key[1], dictionary[i].val);
+    }
+
+    return 0;
+}
+```
+In this code, a data structure `data`, is defined to represent dictionary items with tuple keys and values. The tuple keys are a two-dimensional array and stored in the `key` field, and the value is stored in the `val`.
+
+An `compare()` function is defined for the comparison in the `qsort()` function. It calculates the product of each tuple-key and compares these products.
+
+The `sort_dictionary()` function, using `qsort()`, sorts the given dictionary by keys as desired.
+
+In the main function, it creates a dictionary with 5 items, then invokes `sort_dictionary()` to sort this dictionary, and print out all items for verification.

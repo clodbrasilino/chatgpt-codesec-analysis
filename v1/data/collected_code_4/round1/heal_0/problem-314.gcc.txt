@@ -1,0 +1,8 @@
+./collected_code_4/round1//heal_0//problem-314.c:4:20: error: array type has incomplete element type 'int[]'
+    4 | int findMaxSum(int matrix[2][], int n) {
+      |                    ^~~~~~
+./collected_code_4/round1//heal_0//problem-314.c:4:20: note: declaration of 'matrix' as multidimensional array must have bounds for all dimensions except the first
+./collected_code_4/round1//heal_0//problem-314.c: In function 'main':
+./collected_code_4/round1//heal_0//problem-314.c:21:31: error: type of formal parameter 1 is incomplete
+   21 |     printf("%d\n", findMaxSum(matrix, n));
+      |                               ^~~~~~

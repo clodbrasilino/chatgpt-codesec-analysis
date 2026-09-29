@@ -1,0 +1,57 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int find_max(const int *arr, size_t n) {
+    if (arr == NULL || n == 0) {
+        return -1;
+    }
+    
+    if (n == 1) {
+        return arr[0];
+    }
+    
+    size_t low = 0;
+    size_t high = n - 1;
+    
+    if (arr[low] < arr[high]) {
+        return arr[high];
+    }
+    
+    while (low < high) {
+        size_t mid = low + (high - low) / 2;
+        
+        if (mid < n - 1 && arr[mid] > arr[mid + 1]) {
+            return arr[mid];
+        }
+        
+        if (mid > 0 && arr[mid] < arr[mid - 1]) {
+            return arr[mid - 1];
+        }
+        
+        if (arr[mid] >= arr[low]) {
+            low = mid + 1;
+        } else {
+            high = mid - 1;
+        }
+    }
+    
+    return arr[low];
+}
+
+int main(void) {
+    int arr[] = {5, 6, 7, 8, 9, 10, 1, 2, 3, 4};
+    size_t n = sizeof(arr) / sizeof(arr[0]);
+    
+    int max = find_max(arr, n);
+    
+    if (max == -1) {
+        fprintf(stderr, "Error: Invalid array\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("Maximum element: %d\n", max);
+    
+    return EXIT_SUCCESS;
+}
+```

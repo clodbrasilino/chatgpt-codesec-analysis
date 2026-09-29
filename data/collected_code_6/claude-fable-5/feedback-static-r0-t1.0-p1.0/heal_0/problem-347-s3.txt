@@ -1,0 +1,60 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+static unsigned long long count_squares(unsigned int m, unsigned int n)
+{
+    unsigned long long total = 0ULL;
+    unsigned int limit = (m < n) ? m : n;
+    unsigned int k;
+
+    for (k = 1; k <= limit; k++) {
+        total += (unsigned long long)(m - k + 1U) * (unsigned long long)(n - k + 1U);
+    }
+
+    return total;
+}
+
+int main(void)
+{
+    unsigned int m = 0U;
+    unsigned int n = 0U;
+    int result;
+
+    printf("Enter rectangle dimensions (m n): ");
+
+    result = scanf("%u %u", &m, &n);
+    if (result != 2) {
+        fprintf(stderr, "Error: invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (m == 0U || n == 0U) {
+        fprintf(stderr, "Error: dimensions must be positive.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (m > 100000U || n > 100000U) {
+        fprintf(stderr, "Error: dimensions too large.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Number of squares in a %ux%u rectangle: %llu\n", m, n, count_squares(m, n));
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Explanation:**
+
+The function uses the mathematical formula: the number of squares in an `m × n` rectangle is the sum of `(m - k + 1) × (n - k + 1)` for each square size `k` from 1 to `min(m, n)`.
+
+**How the code avoids the specified weaknesses:**
+
+- **CWE-664 (Improper Control of a Resource Through its Lifetime):** No dynamic memory or file handles are used, so there are no resources that could leak or be used after release. All variables are stack-allocated with clearly defined lifetimes.
+
+- **CWE-703 (Improper Check or Handling of Exceptional Conditions):** The return value of `scanf` is checked to confirm both values were read successfully, zero dimensions are rejected, and errors are reported to `stderr` with a proper failure exit code.
+
+- **CWE-710 (Improper Adherence to Coding Standards):** The code uses `main(void)`, returns `EXIT_SUCCESS`/`EXIT_FAILURE`, initializes all variables, uses `unsigned long long` arithmetic with explicit casts to prevent integer overflow, bounds the input size so the result cannot overflow a 64-bit value, and declares the helper function `static` to limit its linkage scope.
+
+**Example:** A 2×3 rectangle contains 6 (1×1) + 2 (2×2) = 8 squares.

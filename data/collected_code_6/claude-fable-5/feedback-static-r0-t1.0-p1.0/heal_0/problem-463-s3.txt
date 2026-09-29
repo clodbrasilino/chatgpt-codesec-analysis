@@ -1,0 +1,69 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+long long max_product_subarray(const int *arr, size_t n, int *status)
+{
+    if (arr == NULL || n == 0 || status == NULL) {
+        if (status != NULL) {
+            *status = -1;
+        }
+        return 0;
+    }
+
+    long long max_ending = (long long)arr[0];
+    long long min_ending = (long long)arr[0];
+    long long result = (long long)arr[0];
+
+    for (size_t i = 1; i < n; i++) {
+        long long current = (long long)arr[i];
+        long long candidates[3];
+
+        candidates[0] = current;
+        candidates[1] = max_ending * current;
+        candidates[2] = min_ending * current;
+
+        long long new_max = candidates[0];
+        long long new_min = candidates[0];
+
+        for (int j = 1; j < 3; j++) {
+            if (candidates[j] > new_max) {
+                new_max = candidates[j];
+            }
+            if (candidates[j] < new_min) {
+                new_min = candidates[j];
+            }
+        }
+
+        max_ending = new_max;
+        min_ending = new_min;
+
+        if (max_ending > result) {
+            result = max_ending;
+        }
+    }
+
+    *status = 0;
+    return result;
+}
+
+int main(void)
+{
+    int arr[] = { 2, 3, -2, 4, -1, 0, 5, -3 };
+    size_t n = sizeof(arr) / sizeof(arr[0]);
+    int status = 0;
+
+    long long result = max_product_subarray(arr, n, &status);
+
+    if (status != 0) {
+        fprintf(stderr, "Error: invalid input to max_product_subarray\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Maximum product subarray: %lld\n", result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```

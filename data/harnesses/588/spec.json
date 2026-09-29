@@ -1,0 +1,57 @@
+{
+  "task_id": 588,
+  "text": "Write a C function to find the difference between largest and smallest value in a given array.",
+  "fn_candidates": [
+    "big_diff",
+    "BigDiff",
+    "bigDiff",
+    "bigdiff"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "big_diff",
+      "args": [
+        [
+          1,
+          2,
+          3,
+          4
+        ]
+      ],
+      "expected": 3,
+      "assert_src": "assert big_diff([1,2,3,4]) == 3"
+    },
+    {
+      "fn_name": "big_diff",
+      "args": [
+        [
+          4,
+          5,
+          12
+        ]
+      ],
+      "expected": 8,
+      "assert_src": "assert big_diff([4,5,12]) == 8"
+    },
+    {
+      "fn_name": "big_diff",
+      "args": [
+        [
+          9,
+          2,
+          3
+        ]
+      ],
+      "expected": 7,
+      "assert_src": "assert big_diff([9,2,3]) == 7"
+    }
+  ],
+  "arg_kinds": [
+    "int-list"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_4/healed/problem-411.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_4/healed/problem-411.c:141:39: style: Condition 'len<max_len' is always true [knownConditionTrueFalse]
+        if (len < capacity - 1 && len < max_len) {
+                                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_4/healed/problem-411.c:110:17: note: Assuming that condition 'len>=max_len' is not redundant
+        if (len >= max_len) {
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_4/healed/problem-411.c:141:39: note: Condition 'len<max_len' is always true
+        if (len < capacity - 1 && len < max_len) {
+                                      ^

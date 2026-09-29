@@ -1,0 +1,1 @@
+buffer[sizeof(buffer) - 1U] = '\0';

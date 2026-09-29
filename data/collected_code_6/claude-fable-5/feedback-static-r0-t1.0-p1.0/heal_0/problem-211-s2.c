@@ -1,0 +1,57 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+unsigned long countNumbers(unsigned int n)
+{
+    unsigned long count;
+    unsigned long limit;
+    unsigned long i;
+    unsigned long lowMask;
+    unsigned long highMask;
+
+    if (n == 0U || n >= 63U) {
+        return 0UL;
+    }
+
+    if (n == 1U) {
+        return 1UL;
+    }
+
+    count = 0UL;
+    limit = 1UL << n;
+    lowMask = 1UL;
+    highMask = 1UL << (n - 1U);
+
+    for (i = 1UL; i < limit; i++) {
+        if (((i & lowMask) != 0UL) && ((i & highMask) != 0UL)) {
+            count++;
+        }
+    }
+
+    return count;
+}
+
+int main(void)
+{
+    unsigned int n;
+    int scanResult;
+    unsigned long result;
+
+    printf("Enter the value of n (1 to 62): ");
+
+    scanResult = scanf("%u", &n);
+    if (scanResult != 1) {
+        fprintf(stderr, "Error: invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (n == 0U || n >= 63U) {
+        fprintf(stderr, "Error: n must be between 1 and 62.\n");
+        return EXIT_FAILURE;
+    }
+
+    result = countNumbers(n);
+    printf("Count of numbers with 0th and %uth bits set: %lu\n", n, result);
+
+    return EXIT_SUCCESS;
+}

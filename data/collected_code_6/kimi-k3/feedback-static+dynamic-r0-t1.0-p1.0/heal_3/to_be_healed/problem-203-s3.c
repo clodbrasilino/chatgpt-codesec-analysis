@@ -1,0 +1,73 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <limits.h>
+
+int hamming_distance(unsigned int x, unsigned int y)
+{
+    unsigned int diff = x ^ y;
+    int distance = 0;
+
+    while (diff != 0U)
+    {
+        diff &= (diff - 1U);
+        distance++;
+    }
+
+    return distance;
+}
+
+int main(void)
+{
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char input_buffer[256];
+    char *end_ptr;
+    unsigned long val1;
+    unsigned long val2;
+    unsigned int num1;
+    unsigned int num2;
+    int result;
+
+    if (fgets(input_buffer, sizeof(input_buffer), stdin) == NULL)
+    {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    errno = 0;
+    val1 = strtoul(input_buffer, &end_ptr, 10);
+    if (errno != 0 || end_ptr == input_buffer || val1 > UINT_MAX)
+    {
+        fprintf(stderr, "Invalid first integer\n");
+        return EXIT_FAILURE;
+    }
+
+    if (*end_ptr != ' ' && *end_ptr != '\t' && *end_ptr != '\n')
+    {
+        fprintf(stderr, "Invalid input format\n");
+        return EXIT_FAILURE;
+    }
+
+    while (*end_ptr == ' ' || *end_ptr == '\t')
+    {
+        end_ptr++;
+    }
+
+    errno = 0;
+    val2 = strtoul(end_ptr, &end_ptr, 10);
+    if (errno != 0 || val2 > UINT_MAX)
+    {
+        fprintf(stderr, "Invalid second integer\n");
+        return EXIT_FAILURE;
+    }
+
+    num1 = (unsigned int)val1;
+    num2 = (unsigned int)val2;
+
+    result = hamming_distance(num1, num2);
+    printf("%d\n", result);
+
+    return EXIT_SUCCESS;
+}

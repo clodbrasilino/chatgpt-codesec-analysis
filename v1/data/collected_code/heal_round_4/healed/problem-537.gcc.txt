@@ -1,0 +1,110 @@
+collected_code/heal_round_4/healed/problem-537.c: In function 'findFirstRepeatedWord':
+collected_code/heal_round_4/healed/problem-537.c:42:29: warning: leak of 'words' [CWE-401] [-Wanalyzer-malloc-leak]
+   42 |                 return words[i];
+      |                        ~~~~~^~~
+  'main': events 1-2
+    |
+    |   55 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |   56 |     char str[] = "This is a sample string with repeated words";
+    |   57 |     char* repeatedWord = findFirstRepeatedWord(str);
+    |      |                          ~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                          |
+    |      |                          (2) calling 'findFirstRepeatedWord' from 'main'
+    |
+    +--> 'findFirstRepeatedWord': events 3-6
+           |
+           |    5 | char* findFirstRepeatedWord(char* str) {
+           |      |       ^~~~~~~~~~~~~~~~~~~~~
+           |      |       |
+           |      |       (3) entry to 'findFirstRepeatedWord'
+           |......
+           |    9 |     if(str == NULL) {
+           |      |       ~
+           |      |       |
+           |      |       (4) following 'false' branch (when 'str' is non-NULL)...
+           |......
+           |   13 |     size_t len = strlen(str);
+           |      |                  ~~~~~~~~~~~
+           |      |                  |
+           |      |                  (5) ...to here
+           |   14 |     temp = (char*)calloc(len + 1, sizeof(char));
+           |   15 |     if(temp == NULL) {
+           |      |       ~
+           |      |       |
+           |      |       (6) following 'false' branch (when 'temp' is non-NULL)...
+           |
+         'findFirstRepeatedWord': event 7
+           |
+           |   20 |     strncpy(temp, str, len);
+           |      |     ^~~~~~~
+           |      |     |
+           |      |     (7) ...to here
+           |
+         'findFirstRepeatedWord': events 8-11
+           |
+           |   22 |     words = calloc(100, sizeof(char*));
+           |      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |             |
+           |      |             (8) allocated here
+           |   23 |     if(words == NULL) {
+           |      |       ~      
+           |      |       |
+           |      |       (9) assuming 'words' is non-NULL
+           |      |       (10) following 'false' branch (when 'words' is non-NULL)...
+           |......
+           |   29 |     i = 0;
+           |      |     ~~~~~    
+           |      |       |
+           |      |       (11) ...to here
+           |
+         'findFirstRepeatedWord': events 12-15
+           |
+           |   31 |     while (words[i] != NULL) {
+           |      |                     ^
+           |      |                     |
+           |      |                     (12) following 'true' branch...
+           |   32 |         for (j = 0; j < i; j++) {
+           |      |              ~~~~~  ~~~~~
+           |      |                |      |
+           |      |                |      (14) following 'false' branch (when 'j >= i')...
+           |      |                (13) ...to here
+           |......
+           |   46 |         i++;
+           |      |         ~~~          
+           |      |          |
+           |      |          (15) ...to here
+           |
+         'findFirstRepeatedWord': events 16-22
+           |
+           |   31 |     while (words[i] != NULL) {
+           |      |                     ^
+           |      |                     |
+           |      |                     (16) following 'true' branch...
+           |   32 |         for (j = 0; j < i; j++) {
+           |      |              ~~~~~  ~~~~~
+           |      |                |      |
+           |      |                |      (18) following 'true' branch (when 'j < i')...
+           |      |                (17) ...to here
+           |   33 |             if (strcmp(words[j], words[i]) == 0) {
+           |      |                                       ~
+           |      |                                       |
+           |      |                                       (19) ...to here
+           |   34 |                 words[i] = strdup(words[i]);
+           |   35 |                 if(words[i] == NULL) {
+           |      |                   ~  
+           |      |                   |
+           |      |                   (20) following 'false' branch...
+           |......
+           |   41 |                 free(temp);
+           |      |                 ~~~~~~~~~~
+           |      |                 |
+           |      |                 (21) ...to here
+           |   42 |                 return words[i];
+           |      |                        ~~~~~~~~
+           |      |                             |
+           |      |                             (22) 'words' leaks here; was allocated at (8)
+           |
+-macosx_version_min has been renamed to -macos_version_min

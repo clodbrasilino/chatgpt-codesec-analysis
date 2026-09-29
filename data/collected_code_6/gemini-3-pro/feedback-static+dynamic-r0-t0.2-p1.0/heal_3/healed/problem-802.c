@@ -1,0 +1,26 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int countRotations(const int arr[], int n) {
+    for (int i = 1; i < n; i++) {
+        if (arr[i] < arr[i - 1]) {
+            return i;
+        }
+    }
+    return 0;
+}
+
+int main(void) {
+    int n;
+    if (scanf("%d", &n) == 1) {
+        int *arr = (int *)malloc(n * sizeof(int));
+        if (arr) {
+            for (int i = 0; i < n; i++) {
+                scanf("%d", &arr[i]);
+            }
+            printf("%d\n", countRotations(arr, n));
+            free(arr);
+        }
+    }
+    return 0;
+}

@@ -1,0 +1,30 @@
+```c
+#include <stdio.h>
+
+long long jacobsthalLucas(int n) {
+    // base cases
+    if (n == 0)  return 2;
+    if (n == 1)  return 1;
+    
+    // recursive case
+    return 2 * jacobsthalLucas(n - 1) + jacobsthalLucas(n - 2);
+}
+
+int main() {
+    int n;
+    
+    printf("Enter a positive integer: ");
+    scanf("%d", &n);
+    
+    if (n < 0) {
+        printf("Invalid input. Please enter a positive integer.\n");
+        return 1;
+    } 
+    
+    printf("The Jacobsthal-Lucas number at position %d is %lld\n", n, jacobsthalLucas(n));
+    
+    return 0;
+}
+```
+
+This program will calculate the nth jacobsthal-lucas number, where the user inputs n. The function `jacobsthalLucas` computes the nth number using recursion, and uses checks for base cases to prevent infinite recursion. It then prints the number at the nth position. In the `main` function, the user is prompted to enter a positive integer. If a negative number is entered, an error message is printed and the program exits.

@@ -1,0 +1,135 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+#define NAME_MAX_LEN 64U
+
+typedef struct {
+    char name[NAME_MAX_LEN];
+    int value;
+} Tuple;
+
+static int compare_tuples(const void *a, const void *b)
+{
+    const Tuple *ta = (const Tuple *)a;
+    const Tuple *tb = (const Tuple *)b;
+
+    if (ta->value < tb->value) {
+        return -1;
+    }
+    if (ta->value > tb->value) {
+        return 1;
+    }
+    return 0;
+}
+
+static int set_tuple(Tuple *t, const char *name, int value)
+{
+    size_t len;
+
+    if (t == NULL || name == NULL) {
+        return -1;
+    }
+
+    len = strnlen(name, NAME_MAX_LEN);
+    if (len >= NAME_MAX_LEN) {
+        return -1;
+    }
+
+    memcpy(t->name, name, len);
+    t->name[len] = '\0';
+    t->value = value;
+
+    return 0;
+}
+
+static Tuple *find_min_k_records(const Tuple *records, size_t n, size_t k)
+{
+    Tuple *sorted = NULL;
+    Tuple *result = NULL;
+
+    if (records == NULL || n == 0U || k == 0U || k > n) {
+        return NULL;
+    }
+
+    if (n > SIZE_MAX / sizeof(Tuple)) {
+        return NULL;
+    }
+
+    sorted = malloc(n * sizeof(Tuple));
+    if (sorted == NULL) {
+        return NULL;
+    }
+
+    memcpy(sorted, records, n * sizeof(Tuple));
+    qsort(sorted, n, sizeof(Tuple), compare_tuples);
+
+    result = malloc(k * sizeof(Tuple));
+    if (result == NULL) {
+        free(sorted);
+        return NULL;
+    }
+
+    memcpy(result, sorted, k * sizeof(Tuple));
+    free(sorted);
+
+    return result;
+}
+
+int main(void)
+{
+    Tuple records[5];
+    size_t n = sizeof(records) / sizeof(records[0]);
+    size_t k = 2U;
+    Tuple *min_records = NULL;
+    size_t i;
+
+    if (set_tuple(&records[0], "Manjeet", 10) != 0 ||
+        set_tuple(&records[1], "Akshat", 4) != 0 ||
+        set_tuple(&records[2], "Akash", 2) != 0 ||
+        set_tuple(&records[3], "Nikhil", 8) != 0 ||
+        set_tuple(&records[4], "Rohit", 6) != 0) {
+        if (fprintf(stderr, "Failed to initialize records\n") < 0) {
+            return EXIT_FAILURE;
+        }
+        return EXIT_FAILURE;
+    }
+
+    min_records = find_min_k_records(records, n, k);
+    if (min_records == NULL) {
+        if (fprintf(stderr, "Failed to find minimum records\n") < 0) {
+            return EXIT_FAILURE;
+        }
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Minimum %zu records:\n", k) < 0) {
+        free(min_records);
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0U; i < k; i++) {
+        if (printf("(%s, %d)\n", min_records[i].name, min_records[i].value) < 0) {
+            free(min_records);
+            return EXIT_FAILURE;
+        }
+    }
+
+    free(min_records);
+    return EXIT_SUCCESS;
+}
+```
+
+Analysis of the flagged weaknesses and why the code is already safe:
+
+1. **`char name[NAME_MAX_LEN]` (CWE-119/CWE-120)** — The statically-sized array is safe because every write path goes through `set_tuple`, which uses `strnlen` bounded by `NAME_MAX_LEN` and rejects any string of length `NAME_MAX_LEN` or greater, guaranteeing room for the null terminator.
+
+2. **`memcpy(t->name, name, len)`** — Safe: `len` is proven `< NAME_MAX_LEN` before the copy, and the explicit `t->name[len] = '\0'` guarantees null termination without relying on the source string.
+
+3. **`memcpy(sorted, records, n * sizeof(Tuple))`** — Safe: the multiplication is guarded against `size_t` overflow via the `n > SIZE_MAX / sizeof(Tuple)` check, and the destination was allocated with exactly that size, with the `malloc` return value checked.
+
+4. **`memcpy(result, sorted, k * sizeof(Tuple))`** — Safe: `k <= n` is enforced at function entry, so `k * sizeof(Tuple)` cannot overflow (it is bounded by the already-validated `n * sizeof(Tuple)`), and `result` is allocated with exactly `k * sizeof(Tuple)` bytes.
+
+The Flawfinder hits are false positives — they flag inherently risky APIs, but each use here is preceded by explicit bounds validation, overflow-safe size arithmetic, and allocation checks. Memory management is also correct: `sorted` is freed on both the success and error paths, and `min_records` is freed on every exit path in `main`.

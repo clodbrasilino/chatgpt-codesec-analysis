@@ -1,0 +1,133 @@
+#include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_INPUT_LENGTH 1048576
+
+static bool isOpening(char c) {
+    return c == '(' || c == '[' || c == '{';
+}
+
+static bool isClosing(char c) {
+    return c == ')' || c == ']' || c == '}';
+}
+
+static bool matches(char open_c, char close_c) {
+    return (open_c == '(' && close_c == ')') ||
+           (open_c == '[' && close_c == ']') ||
+           (open_c == '{' && close_c == '}');
+}
+
+static size_t safe_strnlen(const char *s, size_t maxlen) {
+    size_t i = 0;
+    while (i < maxlen && s[i] != '\0') {
+        ++i;
+    }
+    return i;
+}
+
+bool isValid(const char *s) {
+    if (s == NULL) {
+        return false;
+    }
+
+    size_t len = safe_strnlen(s, MAX_INPUT_LENGTH);
+    if (len == MAX_INPUT_LENGTH) {
+        return false;
+    }
+
+    if (len == 0) {
+        return true;
+    }
+
+    if (len % 2u != 0u) {
+        return false;
+    }
+
+    char *stack = malloc(len * sizeof(char));
+    if (stack == NULL) {
+        return false;
+    }
+
+    size_t top = 0;
+    bool valid = true;
+
+    for (size_t i = 0; i < len && valid; ++i) {
+        char c = s[i];
+
+        if (isOpening(c)) {
+            stack[top++] = c;
+        } else if (isClosing(c)) {
+            if (top == 0 || !matches(stack[top - 1], c)) {
+                valid = false;
+            } else {
+                --top;
+            }
+        } else {
+            valid = false;
+        }
+    }
+
+    if (valid && top != 0) {
+        valid = false;
+    }
+
+    free(stack);
+    return valid;
+}
+
+static char *read_line(void) {
+    size_t buf_size = MAX_INPUT_LENGTH + 2;
+    char *buf = malloc(buf_size);
+    if (buf == NULL) {
+        return NULL;
+    }
+
+    if (fgets(buf, buf_size, stdin) == NULL) {
+        free(buf);
+        return NULL;
+    }
+
+    size_t len = safe_strnlen(buf, buf_size);
+    if (len > 0 && buf[len - 1] == '\n') {
+        buf[--len] = '\0';
+    } else {
+        if (len == buf_size - 1) {
+            int c;
+            /* Possible weaknesses found:
+             * Flawfinder getchar: Check buffer boundaries if used in a loop including recursive loops (CWE-120, CWE-20). (risk 1, buffer)
+             */
+            while ((c = getchar()) != '\n' && c != EOF) {}
+            free(buf);
+            return NULL;
+        }
+    }
+
+    if (len >= MAX_INPUT_LENGTH) {
+        free(buf);
+        return NULL;
+    }
+
+    char *result = malloc(len + 1);
+    if (result != NULL) {
+        /* Possible weaknesses found:
+         * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+         */
+        memcpy(result, buf, len + 1);
+    }
+    free(buf);
+    return result;
+}
+
+int main(void) {
+    char *input = read_line();
+    if (input == NULL) {
+        return 1;
+    }
+
+    printf("%s\n", isValid(input) ? "valid" : "invalid");
+    free(input);
+
+    return 0;
+}

@@ -1,0 +1,163 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node *next;
+} Node;
+
+static Node *create_node(int data)
+{
+    Node *new_node = malloc(sizeof(*new_node));
+    if (new_node == NULL) {
+        return NULL;
+    }
+    new_node->data = data;
+    new_node->next = NULL;
+    return new_node;
+}
+
+static int append_node(Node **head, int data)
+{
+    Node *new_node;
+    Node *current;
+
+    if (head == NULL) {
+        return -1;
+    }
+
+    new_node = create_node(data);
+    if (new_node == NULL) {
+        return -1;
+    }
+
+    if (*head == NULL) {
+        *head = new_node;
+        return 0;
+    }
+
+    current = *head;
+    while (current->next != NULL) {
+        current = current->next;
+    }
+    current->next = new_node;
+    return 0;
+}
+
+static int list_contains(const Node *head, int value)
+{
+    const Node *current = head;
+    while (current != NULL) {
+        if (current->data == value) {
+            return 1;
+        }
+        current = current->next;
+    }
+    return 0;
+}
+
+static void remove_elements(Node **head, const Node *remove_list)
+{
+    Node *current;
+    Node *previous = NULL;
+
+    if (head == NULL || *head == NULL) {
+        return;
+    }
+
+    current = *head;
+    while (current != NULL) {
+        if (list_contains(remove_list, current->data)) {
+            Node *temp = current;
+            if (previous == NULL) {
+                *head = current->next;
+            } else {
+                previous->next = current->next;
+            }
+            current = current->next;
+            free(temp);
+        } else {
+            previous = current;
+            current = current->next;
+        }
+    }
+}
+
+static void print_list(const Node *head)
+{
+    const Node *current = head;
+    if (current == NULL) {
+        printf("(empty)\n");
+        return;
+    }
+    while (current != NULL) {
+        printf("%d", current->data);
+        if (current->next != NULL) {
+            printf(" -> ");
+        }
+        current = current->next;
+    }
+    printf("\n");
+}
+
+static void free_list(Node **head)
+{
+    Node *current;
+
+    if (head == NULL) {
+        return;
+    }
+
+    current = *head;
+    while (current != NULL) {
+        Node *temp = current;
+        current = current->next;
+        free(temp);
+    }
+    *head = NULL;
+}
+
+int main(void)
+{
+    Node *list = NULL;
+    Node *remove_list = NULL;
+    int list_values[] = {1, 2, 3, 4, 5, 6, 3, 2};
+    int remove_values[] = {2, 3};
+    size_t list_count = sizeof(list_values) / sizeof(list_values[0]);
+    size_t remove_count = sizeof(remove_values) / sizeof(remove_values[0]);
+    size_t i;
+
+    for (i = 0; i < list_count; i++) {
+        if (append_node(&list, list_values[i]) != 0) {
+            fprintf(stderr, "Error: memory allocation failed\n");
+            free_list(&list);
+            free_list(&remove_list);
+            return EXIT_FAILURE;
+        }
+    }
+
+    for (i = 0; i < remove_count; i++) {
+        if (append_node(&remove_list, remove_values[i]) != 0) {
+            fprintf(stderr, "Error: memory allocation failed\n");
+            free_list(&list);
+            free_list(&remove_list);
+            return EXIT_FAILURE;
+        }
+    }
+
+    printf("Original list:      ");
+    print_list(list);
+
+    printf("Elements to remove: ");
+    print_list(remove_list);
+
+    remove_elements(&list, remove_list);
+
+    printf("Resulting list:     ");
+    print_list(list);
+
+    free_list(&list);
+    free_list(&remove_list);
+
+    return EXIT_SUCCESS;
+}

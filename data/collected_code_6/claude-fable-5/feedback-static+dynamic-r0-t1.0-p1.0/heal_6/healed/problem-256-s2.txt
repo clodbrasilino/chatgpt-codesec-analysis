@@ -1,0 +1,165 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <errno.h>
+#include <ctype.h>
+#include <limits.h>
+#include <stdint.h>
+
+#define INPUT_BUFFER_SIZE 64
+
+static int count_primes(unsigned long n, unsigned long *result)
+{
+    unsigned char *sieve;
+    unsigned long i;
+    unsigned long j;
+    unsigned long count;
+
+    if (result == NULL) {
+        return -1;
+    }
+
+    if (n < 3UL) {
+        *result = 0UL;
+        return 0;
+    }
+
+    if (n > (unsigned long)SIZE_MAX) {
+        return -1;
+    }
+
+    sieve = calloc((size_t)n, sizeof(unsigned char));
+    if (sieve == NULL) {
+        return -1;
+    }
+
+    for (i = 2UL; i < n; i++) {
+        sieve[i] = 1;
+    }
+
+    for (i = 2UL; i <= (n - 1UL) / i; i++) {
+        if (sieve[i] == 1) {
+            for (j = i * i; j < n; j += i) {
+                sieve[j] = 0;
+            }
+        }
+    }
+
+    count = 0UL;
+    for (i = 2UL; i < n; i++) {
+        if (sieve[i] == 1) {
+            count++;
+        }
+    }
+
+    free(sieve);
+    *result = count;
+    return 0;
+}
+
+static void discard_remaining_input(void)
+{
+    int ch;
+
+    do {
+        ch = fgetc(stdin);
+    } while (ch != '\n' && ch != EOF);
+}
+
+static int read_line(char *buffer, size_t size)
+{
+    size_t len;
+
+    if (buffer == NULL || size < 2 || size > (size_t)INT_MAX) {
+        return -1;
+    }
+
+    if (fgets(buffer, (int)size, stdin) == NULL) {
+        return -1;
+    }
+
+    buffer[size - 1] = '\0';
+
+    len = strnlen(buffer, size);
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    } else if (len == size - 1) {
+        discard_remaining_input();
+        return -1;
+    }
+
+    return 0;
+}
+
+static int parse_unsigned_long(const char *input, unsigned long *value)
+{
+    const char *p;
+    char *endptr;
+    unsigned long n;
+
+    if (input == NULL || value == NULL) {
+        return -1;
+    }
+
+    p = input;
+    while (isspace((unsigned char)*p)) {
+        p++;
+    }
+
+    if (*p == '-' || *p == '\0') {
+        return -1;
+    }
+
+    errno = 0;
+    n = strtoul(p, &endptr, 10);
+    if (endptr == p || errno != 0) {
+        return -1;
+    }
+
+    while (isspace((unsigned char)*endptr)) {
+        endptr++;
+    }
+    if (*endptr != '\0') {
+        return -1;
+    }
+
+    *value = n;
+    return 0;
+}
+
+int main(void)
+{
+    unsigned long n;
+    unsigned long result;
+    char buffer[INPUT_BUFFER_SIZE];
+
+    memset(buffer, 0, sizeof(buffer));
+
+    if (read_line(buffer, sizeof(buffer)) != 0) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (parse_unsigned_long(buffer, &n) != 0) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (count_primes(n, &result) != 0) {
+        fprintf(stderr, "Failed to count primes\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("%lu\n", result);
+    return EXIT_SUCCESS;
+}
+```
+
+The two flagged findings were addressed as follows:
+
+**CWE-120/CWE-20 (`getchar` in a loop):** The original code was already safe since the loop only discards characters without storing them, so no buffer can overflow. I moved the drain logic into a dedicated `discard_remaining_input()` function using `fgetc(stdin)`, which makes the intent explicit and keeps no buffer involved at all — the flawfinder hit was a false positive, and this refactoring makes that auditable at a glance.
+
+**CWE-119/CWE-120 (statically-sized `char buffer`):** The fixed-size array remains, but every access is bounds-safe: `read_line()` validates the size parameter (`size >= 2`, `size <= INT_MAX`), passes the exact capacity to `fgets`, force-terminates with `buffer[size - 1] = '\0'`, uses `strnlen` (never `strlen`), and rejects over-long input rather than truncating it silently. `sizeof(buffer)` is used at the call site so the size can never drift from the declaration.
+
+Additionally, I replaced `malloc` + `memset` with `calloc`, which performs an internal overflow-checked size computation and yields zero-initialized memory, eliminating any chance of reading uninitialized bytes if the initialization logic were ever modified.

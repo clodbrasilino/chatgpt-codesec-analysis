@@ -1,0 +1,21 @@
+#include<stdio.h>
+
+void findSingle(int arr[], int arr_size){
+    int count = 0;
+    for (int i = 0; i < arr_size; i++){
+        for (int j = 0; j < arr_size; j++){
+            if(arr[i] == arr[j])
+                count++;
+        }
+        if(count == 1)
+            printf("%d ", arr[i]);
+        count = 0;
+    }
+}
+
+int main(){
+    int arr[] = {2, 3, 5, 4, 5, 2, 4, 3, 5, 2, 4, 4, 2};
+    int n = sizeof(arr)/sizeof(arr[0]);
+    findSingle(arr, n);
+    return 0;
+}

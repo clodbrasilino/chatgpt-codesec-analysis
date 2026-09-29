@@ -1,0 +1,26 @@
+#include <stdio.h>
+
+int minSwaps(int arr[], int n) {
+    int count = 0;
+    int i, j;
+
+    for (i = 0; i < n; i++) {
+        if (arr[i] == 1) {
+            for (j = i + 1; j < n; j++) {
+                if (arr[j] == 0) {
+                    count++;
+                }
+            }
+        }
+    }
+    return count;
+}
+
+int main() {
+    int arr[] = {0, 0, 1, 0, 1, 0, 1, 1};
+    int n = sizeof(arr) / sizeof(arr[0]);
+
+    printf("Minimum swaps required to sort the array is %d", minSwaps(arr, n));
+
+    return 0;
+}

@@ -1,0 +1,27 @@
+#include <stdio.h>
+
+long long sumOfFourthPower(int n) {
+    int i, odd = 1;
+    long long sum = 0;
+    for(i = 0; i < n; i++){
+        long long fourthPower = (long long)odd * odd * odd * odd;
+        sum += fourthPower;
+        odd += 2;
+    }
+    return sum;
+}
+
+int main() {
+    int n;
+    printf("Enter a number: ");
+    if (scanf("%d", &n) != 1) {
+        printf("Invalid input.\n");
+        return -1;
+    }
+    if (n < 1) {
+        printf("Number should be greater than 0.\n");
+        return -1;
+    }
+    printf("The sum of the fourth powers of the first %d odd natural numbers is %lld\n", n, sumOfFourthPower(n));
+    return 0;
+}

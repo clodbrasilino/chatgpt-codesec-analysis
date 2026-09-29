@@ -1,0 +1,49 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+long long* multiply_consecutive(const int* list, size_t length, size_t* out_length) {
+    if (list == NULL || out_length == NULL) {
+        return NULL;
+    }
+
+    if (length < 2) {
+        *out_length = 0;
+        return NULL;
+    }
+
+    *out_length = length - 1;
+    long long* result = (long long*)malloc(*out_length * sizeof(long long));
+    
+    if (result == NULL) {
+        *out_length = 0;
+        return NULL;
+    }
+
+    for (size_t i = 0; i < *out_length; i++) {
+        result[i] = (long long)list[i] * list[i + 1];
+    }
+
+    return result;
+}
+
+int main(void) {
+    int list[] = {1, 2, 3, 4, 5};
+    size_t length = sizeof(list) / sizeof(list[0]);
+    size_t out_length = 0;
+
+    long long* result = multiply_consecutive(list, length, &out_length);
+
+    if (result != NULL) {
+        for (size_t i = 0; i < out_length; i++) {
+            printf("%lld ", result[i]);
+        }
+        printf("\n");
+        free(result);
+    } else if (out_length == 0) {
+        printf("List too short for consecutive multiplication or memory allocation failed.\n");
+    } else {
+        printf("Invalid input.\n");
+    }
+
+    return 0;
+}

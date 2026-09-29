@@ -1,0 +1,30 @@
+./collected_code_4/round2//heal_0/problem-548.c: In function 'longestIncreasingSubsequence':
+./collected_code_4/round2//heal_0/problem-548.c:13:16: warning: dereference of possibly-NULL 'lis' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   13 |         lis[i] = 1;
+      |         ~~~~~~~^~~
+  'longestIncreasingSubsequence': events 1-6
+    |
+    |    5 |     if (n == 0) {
+    |      |        ^
+    |      |        |
+    |      |        (1) following 'false' branch (when 'n != 0')...
+    |......
+    |    9 |     int *lis, i, j, max = 0;
+    |      |                     ~~~
+    |      |                     |
+    |      |                     (2) ...to here
+    |   10 |     lis = (int*) malloc (sizeof(int) * n);
+    |      |                  ~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                  |
+    |      |                  (3) this call could return NULL
+    |   11 | 
+    |   12 |     for (i = 0; i < n; i++ ) {
+    |      |                 ~~~~~
+    |      |                   |
+    |      |                   (4) following 'true' branch (when 'i < n')...
+    |   13 |         lis[i] = 1;
+    |      |         ~~~~~~~~~~
+    |      |            |   |
+    |      |            |   (6) 'lis + (long unsigned int)i * 4' could be NULL: unchecked value from (3)
+    |      |            (5) ...to here
+    |

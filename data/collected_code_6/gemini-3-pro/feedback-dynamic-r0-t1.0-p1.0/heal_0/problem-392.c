@@ -1,0 +1,55 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+long long solve(long long n, long long* memo) {
+    if (n < 12) {
+        return n;
+    }
+
+    if (n <= 1000000 && memo[n] != -1) {
+        return memo[n];
+    }
+
+    long long val1 = solve(n / 2, memo);
+    long long val2 = solve(n / 3, memo);
+    long long val3 = solve(n / 4, memo);
+    long long val4 = solve(n / 5, memo);
+
+    long long sum = val1 + val2 + val3 + val4;
+    long long result = (sum > n) ? sum : n;
+
+    if (n <= 1000000) {
+        memo[n] = result;
+    }
+
+    return result;
+}
+
+int main() {
+    long long n;
+    
+    if (scanf("%lld", &n) != 1) {
+        return EXIT_FAILURE;
+    }
+
+    if (n < 0) {
+        return EXIT_FAILURE;
+    }
+
+    long long* memo = (long long*)malloc((1000001) * sizeof(long long));
+    if (memo == NULL) {
+        return EXIT_FAILURE;
+    }
+
+    for (int i = 0; i <= 1000000; i++) {
+        memo[i] = -1;
+    }
+
+    long long max_sum = solve(n, memo);
+    printf("%lld\n", max_sum);
+
+    free(memo);
+    memo = NULL;
+
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,28 @@
+```C
+#include <stdio.h>
+
+void find_xy(int a, int b, int n, int* x, int* y) {
+    if (a == 0 && b == 0) {
+        printf("No solution exists\n");
+        return;
+    }
+    if (a == 0) {
+        *x = 0;
+        *y = n / b;
+    } else {
+        *x = n / a;
+        int remainder = n % a;
+        *y = remainder / b;
+    }
+}
+
+int main() {
+    int a = 3, b = 2, n = 9;
+    int x, y;
+    find_xy(a, b, n, &x, &y);
+    printf("x = %d, y = %d\n", x, y);
+    return 0;
+}
+```
+This code solves the equation `ax + by = n` for `x` and `y` given `a`, `b`, and `n`. If `a` and `b` are both zero, there are no unique solutions for `x` and `y`, so the function prints a message and returns. Otherwise, it calculates `x` by dividing `n` by `a`, and calculates `y` by dividing the remainder by `b`. The calculated values of `x` and `y` are then printed in the main function. The initial values of `a`, `b`, and `n` can be changed to solve different equations.
+Please note, the code works exclusively with integer division, which means for some `a`, `b`, and `n` combination, the solution might be incorrect. You would have to work with floating point numbers and include floating point error checks for a proper C program that accurately calculates `x` and `y` without any loss.

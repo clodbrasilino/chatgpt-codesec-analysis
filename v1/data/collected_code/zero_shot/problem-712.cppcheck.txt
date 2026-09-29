@@ -1,0 +1,12 @@
+collected_code/problem-712-0.c:11:21: error: Cannot determine that 'list[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+            if (list[i] == result[k]) {
+                    ^
+collected_code/problem-712-0.c:11:34: error: Cannot determine that 'result[k]' is initialized [premium-bughuntingUninit]
+            if (list[i] == result[k]) {
+                                 ^
+collected_code/problem-712-0.c:18:31: error: Cannot determine that 'list[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+            result[j++] = list[i];
+                              ^
+collected_code/problem-712-0.c:24:29: error: Cannot determine that 'result[i]' is initialized [premium-bughuntingUninit]
+        printf("%d ", result[i]);
+                            ^

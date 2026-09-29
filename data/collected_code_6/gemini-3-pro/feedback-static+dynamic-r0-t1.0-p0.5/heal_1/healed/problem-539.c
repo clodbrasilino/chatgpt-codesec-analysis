@@ -1,0 +1,41 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+double* power_of_bases(const double* bases, const double* indices, size_t length) {
+    if (bases == NULL || indices == NULL || length == 0) {
+        return NULL;
+    }
+
+    double* result = (double*)malloc(length * sizeof(double));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    for (size_t i = 0; i < length; ++i) {
+        result[i] = pow(bases[i], indices[i]);
+    }
+
+    return result;
+}
+
+int main(void) {
+    const double bases[] = {2.0, 3.0, 4.0, 5.0};
+    const double indices[] = {1.0, 2.0, 3.0, 4.0};
+    size_t length = sizeof(bases) / sizeof(bases[0]);
+
+    double* result = power_of_bases(bases, indices, length);
+
+    if (result != NULL) {
+        for (size_t i = 0; i < length; ++i) {
+            printf("%.2f ", result[i]);
+        }
+        printf("\n");
+        free(result);
+    } else {
+        fprintf(stderr, "Memory allocation failed or invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

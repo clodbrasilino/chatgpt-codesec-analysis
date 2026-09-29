@@ -1,0 +1,48 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+typedef struct {
+    double x;
+    double y;
+} Point;
+
+typedef struct {
+    double a;
+    double b;
+    double c;
+} Parabola;
+
+Point find_focus(const Parabola *p) {
+    Point focus;
+    double h = -p->b / (2.0 * p->a);
+    double k = p->a * h * h + p->b * h + p->c;
+    double p_value = 1.0 / (4.0 * p->a);
+    
+    focus.x = h;
+    focus.y = k + p_value;
+    
+    return focus;
+}
+
+int main(void) {
+    Parabola par;
+    Point focus;
+    
+    printf("Enter coefficients a, b, c for y = ax^2 + bx + c: ");
+    if (scanf("%lf %lf %lf", &par.a, &par.b, &par.c) != 3) {
+        fprintf(stderr, "Error: Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    if (fabs(par.a) < 1e-10) {
+        fprintf(stderr, "Error: Coefficient 'a' must be non-zero\n");
+        return EXIT_FAILURE;
+    }
+    
+    focus = find_focus(&par);
+    
+    printf("Focus: (%.6f, %.6f)\n", focus.x, focus.y);
+    
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,50 @@
+{
+  "task_id": 677,
+  "text": "Write a C function to check if the triangle is valid or not.",
+  "fn_candidates": [
+    "validity_triangle",
+    "ValidityTriangle",
+    "validityTriangle",
+    "validitytriangle"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "validity_triangle",
+      "args": [
+        60,
+        50,
+        90
+      ],
+      "expected": false,
+      "assert_src": "assert validity_triangle(60,50,90)==False"
+    },
+    {
+      "fn_name": "validity_triangle",
+      "args": [
+        45,
+        75,
+        60
+      ],
+      "expected": true,
+      "assert_src": "assert validity_triangle(45,75,60)==True"
+    },
+    {
+      "fn_name": "validity_triangle",
+      "args": [
+        30,
+        50,
+        100
+      ],
+      "expected": true,
+      "assert_src": "assert validity_triangle(30,50,100)==True"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "bool",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

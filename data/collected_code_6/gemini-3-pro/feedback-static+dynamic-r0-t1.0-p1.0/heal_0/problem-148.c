@@ -1,0 +1,54 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int sum_of_digits(int n) {
+    int sum = 0;
+    while (n > 0) {
+        sum += n % 10;
+        n /= 10;
+    }
+    return sum;
+}
+
+void divide_for_max_digit_sum(int n, int *part1, int *part2) {
+    if (n < 0 || part1 == NULL || part2 == NULL) {
+        return;
+    }
+
+    int n1 = 0;
+    int multiplier = 1;
+    int temp = n;
+
+    while (temp > 9) {
+        n1 = n1 + 9 * multiplier;
+        multiplier *= 10;
+        temp /= 10;
+    }
+
+    if (n1 >= n) {
+        n1 = n1 / 10;
+    }
+
+    *part1 = n1;
+    *part2 = n - n1;
+}
+
+int main(void) {
+    int n, part1, part2;
+
+    if (scanf("%d", &n) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (n < 0) {
+        fprintf(stderr, "Number must be non-negative\n");
+        return EXIT_FAILURE;
+    }
+
+    divide_for_max_digit_sum(n, &part1, &part2);
+
+    printf("%d %d\n", part1, part2);
+
+    return EXIT_SUCCESS;
+}

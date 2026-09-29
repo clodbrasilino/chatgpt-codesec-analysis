@@ -1,0 +1,25 @@
+#include <stdio.h>
+#include <string.h>
+
+void abbreviate_road(char *str) {
+    char *pos;
+    while ((pos = strstr(str, "road")) != NULL) {
+        if (pos[4] == ' ' || pos[4] == '\0' || pos[4] == ',' || pos[4] == '.') {
+            size_t len = strlen(pos + 4);
+            if (len + 2 <= (size_t)(-1 - (ptrdiff_t)(pos - str))) {
+                memmove(pos + 2, pos + 4, len + 1);
+                memcpy(pos, "rd.", 3);
+            }
+            str = pos + 3;
+        } else {
+            str = pos + 1;
+        }
+    }
+}
+
+int main() {
+    char input[] = "Please use the road or the other road.";
+    abbreviate_road(input);
+    printf("%s\n", input);
+    return 0;
+}

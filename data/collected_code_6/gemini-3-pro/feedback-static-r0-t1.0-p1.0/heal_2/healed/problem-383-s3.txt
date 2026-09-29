@@ -1,0 +1,40 @@
+#include <stdio.h>
+#include <stdint.h>
+#include <stdlib.h>
+
+uint32_t toggle_odd_bits(uint32_t num) {
+    uint32_t mask = 0xAAAAAAAA;
+    return num ^ mask;
+}
+
+int main(void) {
+    size_t buffer_size = 256;
+    char *buffer = (char *)malloc(buffer_size);
+    
+    if (buffer == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    if (fgets(buffer, buffer_size, stdin) != NULL) {
+        char *endptr;
+        unsigned long val = strtoul(buffer, &endptr, 10);
+        
+        if (endptr != buffer && (*endptr == '\n' || *endptr == '\0')) {
+            uint32_t num = (uint32_t)val;
+            uint32_t result = toggle_odd_bits(num);
+            printf("%u\n", result);
+        } else {
+            fprintf(stderr, "Invalid input\n");
+            free(buffer);
+            return EXIT_FAILURE;
+        }
+    } else {
+        fprintf(stderr, "Error reading input\n");
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+
+    free(buffer);
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,83 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    char *key;
+    char *value;
+} KeyValue;
+
+typedef struct {
+    KeyValue *pairs;
+    size_t count;
+} Dictionary;
+
+Dictionary tuple_to_dict(const char *tuple[], size_t size) {
+    Dictionary dict = {NULL, 0};
+
+    if (tuple == NULL || size == 0 || size % 2 != 0) {
+        return dict;
+    }
+
+    size_t pair_count = size / 2;
+    dict.pairs = malloc(pair_count * sizeof(KeyValue));
+    
+    if (dict.pairs == NULL) {
+        return dict;
+    }
+
+    dict.count = pair_count;
+
+    for (size_t i = 0; i < pair_count; i++) {
+        /* Possible weaknesses found:
+         * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+         */
+        dict.pairs[i].key = (char *)tuple[i * 2];
+        /* Possible weaknesses found:
+         * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+         */
+        dict.pairs[i].value = (char *)tuple[i * 2 + 1];
+    }
+
+    return dict;
+}
+
+void free_dictionary(Dictionary *dict) {
+    if (dict != NULL) {
+        free(dict->pairs);
+        dict->pairs = NULL;
+        dict->count = 0;
+    }
+}
+
+int main(void) {
+    const char *tuple[] = {"name", "Alice", "age", "30", "city", "Wonderland"};
+    /* Possible weaknesses found:
+     *  Assignment 'size=sizeof(tuple)/sizeof(tuple[0])', assigned value is 6
+     */
+    size_t size = sizeof(tuple) / sizeof(tuple[0]);
+
+    Dictionary dict = tuple_to_dict(tuple, size);
+
+    if (dict.pairs == NULL) {
+        /* Possible weaknesses found:
+         *  Condition 'size>0' is always true
+         *  Condition 'size>0' is always true [knownConditionTrueFalse]
+         *  Condition 'size%2!=0' is always false [knownConditionTrueFalse]
+         *  Condition 'size%2!=0' is always false
+         */
+        if (size > 0 && size % 2 != 0) {
+            fprintf(stderr, "Invalid tuple size: must be even\n");
+        } else {
+            fprintf(stderr, "Memory allocation failed or empty tuple\n");
+        }
+        return 1;
+    }
+
+    for (size_t i = 0; i < dict.count; i++) {
+        printf("Key: %s, Value: %s\n", dict.pairs[i].key, dict.pairs[i].value);
+    }
+
+    free_dictionary(&dict);
+
+    return 0;
+}

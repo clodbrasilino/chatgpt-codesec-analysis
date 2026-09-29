@@ -1,0 +1,121 @@
+#include <stdio.h>
+#include <math.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <float.h>
+
+typedef struct {
+    double x;
+    double y;
+    double z;
+} Point3D;
+
+double calculate_tetrahedron_area(const Point3D *vertices, int *error_code)
+{
+    double ab[3], ac[3], ad[3];
+    double cross_ab_ac[3], cross_ab_ad[3], cross_ac_ad[3];
+    double area1, area2, area3, area4, total_area;
+    double dot_ab_ac_ad;
+    
+    if (vertices == NULL || error_code == NULL) {
+        if (error_code != NULL) {
+            *error_code = EINVAL;
+        }
+        return -1.0;
+    }
+    
+    *error_code = 0;
+    
+    ab[0] = vertices[1].x - vertices[0].x;
+    ab[1] = vertices[1].y - vertices[0].y;
+    ab[2] = vertices[1].z - vertices[0].z;
+    
+    ac[0] = vertices[2].x - vertices[0].x;
+    ac[1] = vertices[2].y - vertices[0].y;
+    ac[2] = vertices[2].z - vertices[0].z;
+    
+    ad[0] = vertices[3].x - vertices[0].x;
+    ad[1] = vertices[3].y - vertices[0].y;
+    ad[2] = vertices[3].z - vertices[0].z;
+    
+    cross_ab_ac[0] = ab[1] * ac[2] - ab[2] * ac[1];
+    cross_ab_ac[1] = ab[2] * ac[0] - ab[0] * ac[2];
+    cross_ab_ac[2] = ab[0] * ac[1] - ab[1] * ac[0];
+    
+    cross_ab_ad[0] = ab[1] * ad[2] - ab[2] * ad[1];
+    cross_ab_ad[1] = ab[2] * ad[0] - ab[0] * ad[2];
+    cross_ab_ad[2] = ab[0] * ad[1] - ab[1] * ad[0];
+    
+    cross_ac_ad[0] = ac[1] * ad[2] - ac[2] * ad[1];
+    cross_ac_ad[1] = ac[2] * ad[0] - ac[0] * ad[2];
+    cross_ac_ad[2] = ac[0] * ad[1] - ac[1] * ad[0];
+    
+    dot_ab_ac_ad = ab[0] * cross_ac_ad[0] + ab[1] * cross_ac_ad[1] + ab[2] * cross_ac_ad[2];
+    
+    if (fabs(dot_ab_ac_ad) < DBL_EPSILON) {
+        *error_code = EDOM;
+        return -1.0;
+    }
+    
+    area1 = 0.5 * sqrt(cross_ab_ac[0] * cross_ab_ac[0] + 
+                       cross_ab_ac[1] * cross_ab_ac[1] + 
+                       cross_ab_ac[2] * cross_ab_ac[2]);
+    
+    area2 = 0.5 * sqrt(cross_ab_ad[0] * cross_ab_ad[0] + 
+                       cross_ab_ad[1] * cross_ab_ad[1] + 
+                       cross_ab_ad[2] * cross_ab_ad[2]);
+    
+    area3 = 0.5 * sqrt(cross_ac_ad[0] * cross_ac_ad[0] + 
+                       cross_ac_ad[1] * cross_ac_ad[1] + 
+                       cross_ac_ad[2] * cross_ac_ad[2]);
+    
+    area4 = 0.5 * sqrt((cross_ab_ac[0] - cross_ab_ad[0] + cross_ac_ad[0]) * (cross_ab_ac[0] - cross_ab_ad[0] + cross_ac_ad[0]) +
+                       (cross_ab_ac[1] - cross_ab_ad[1] + cross_ac_ad[1]) * (cross_ab_ac[1] - cross_ab_ad[1] + cross_ac_ad[1]) +
+                       (cross_ab_ac[2] - cross_ab_ad[2] + cross_ac_ad[2]) * (cross_ab_ac[2] - cross_ab_ad[2] + cross_ac_ad[2]));
+    
+    total_area = area1 + area2 + area3 + area4;
+    
+    if (isnan(total_area) || isinf(total_area) || total_area < 0.0) {
+        *error_code = ERANGE;
+        return -1.0;
+    }
+    
+    return total_area;
+}
+
+int main(void)
+{
+    Point3D vertices[4];
+    int error_code = 0;
+    double area;
+    
+    printf("Enter coordinates for 4 vertices of the tetrahedron:\n");
+    
+    for (int i = 0; i < 4; i++) {
+        int scan_result;
+        printf("Vertex %d (x y z): ", i + 1);
+        scan_result = scanf("%lf %lf %lf", &vertices[i].x, &vertices[i].y, &vertices[i].z);
+        
+        if (scan_result != 3) {
+            fprintf(stderr, "Error: Invalid input for vertex %d\n", i + 1);
+            return EXIT_FAILURE;
+        }
+    }
+    
+    area = calculate_tetrahedron_area(vertices, &error_code);
+    
+    if (error_code != 0) {
+        if (error_code == EDOM) {
+            fprintf(stderr, "Error: The four points are coplanar or degenerate\n");
+        } else if (error_code == ERANGE) {
+            fprintf(stderr, "Error: Numerical overflow or invalid result\n");
+        } else {
+            fprintf(stderr, "Error: Invalid parameters\n");
+        }
+        return EXIT_FAILURE;
+    }
+    
+    printf("Surface area of tetrahedron: %.6f\n", area);
+    
+    return EXIT_SUCCESS;
+}

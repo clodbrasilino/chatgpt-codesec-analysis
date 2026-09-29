@@ -1,0 +1,134 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    char *key;
+    struct Node *next;
+} Node;
+
+typedef struct Dict {
+    char *key;
+    void *value;
+    struct Dict *parent;
+    struct Dict *first_child;
+} Dict;
+
+Dict* dict_new(char *key, void *value) {
+    Dict *d = (Dict *)malloc(sizeof(Dict));
+    d->key = key;
+    d->value = value;
+    d->parent = NULL;
+    d->first_child = NULL;
+    return d;
+}
+
+void dict_insert(Dict *parent, char *key, void *value) {
+    if (parent == NULL) return;
+    Dict *new_child = dict_new(key, value);
+    new_child->parent = parent;
+    if (parent->first_child == NULL) {
+        parent->first_child = new_child;
+    } else {
+        Dict *current = parent->first_child;
+        while (current->first_child != NULL) {
+            current = current->first_child;
+        }
+        current->first_child = new_child;
+    }
+}
+
+Dict* lists_to_nested_dict(Node **lists, int list_count) {
+    if (list_count <= 0 || lists == NULL) return NULL;
+
+    Dict *root = dict_new("root", NULL);
+    Dict *current_dict = root;
+
+    for (int i = 0; i < list_count; ++i) {
+        Node *current_node = lists[i];
+        while (current_node != NULL) {
+            dict_insert(current_dict, current_node->key, (void *)"value");
+            if (current_dict->first_child) {
+                current_dict = current_dict->first_child;
+            }
+            current_node = current_node->next;
+        }
+        while (current_dict && current_dict->parent) {
+            current_dict = current_dict->parent;
+            if (current_dict->first_child) {
+                Dict *tmp = current_dict->first_child;
+                while (tmp->first_child) {
+                    tmp = tmp->first_child;
+                }
+                if (tmp->first_child == NULL) {
+                    break;
+                }
+            }
+        }
+    }
+
+    return root->first_child;
+}
+
+int main() {
+    Node *list1 = (Node *)malloc(sizeof(Node));
+    list1->key = "a";
+    list1->next = (Node *)malloc(sizeof(Node));
+    list1->next->key = "b";
+    list1->next->next = NULL;
+
+    Node *list2 = (Node *)malloc(sizeof(Node));
+    list2->key = "x";
+    list2->next = (Node *)malloc(sizeof(Node));
+    list2->next->key = "y";
+    list2->next->next = (Node *)malloc(sizeof(Node));
+    list2->next->next->key = "z";
+    list2->next->next->next = NULL;
+
+    Node *list3 = (Node *)malloc(sizeof(Node));
+    list3->key = "m";
+    list3->next = (Node *)malloc(sizeof(Node));
+    list3->next->key = "n";
+    list3->next->next = NULL;
+
+    Node *lists[] = {list1, list2, list3};
+    Dict *nested_dict = lists_to_nested_dict(lists, 3);
+
+    while (list1) {
+        Node *temp = list1;
+        list1 = list1->next;
+        free(temp);
+    }
+    while (list2) {
+        Node *temp = list2;
+        list2 = list2->next;
+        free(temp);
+    }
+    while (list3) {
+        Node *temp = list3;
+        list3 = list3->next;
+        free(temp);
+    }
+
+    while (nested_dict) {
+        printf("%s -> ", nested_dict->key);
+        Dict *child = nested_dict->first_child;
+        while (child) {
+            printf("%s -> ", child->key);
+            child = child->first_child;
+        }
+        printf("\n");
+        child = nested_dict->first_child;
+        while (child) {
+            Dict *temp = child;
+            child = child->first_child;
+            free(temp);
+        }
+        Dict *temp_dict = nested_dict;
+        nested_dict = nested_dict->first_child;
+        free(temp_dict);
+    }
+
+    return 0;
+}
+```

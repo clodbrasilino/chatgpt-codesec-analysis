@@ -1,0 +1,10 @@
+In file included from /Library/Developer/CommandLineTools/SDKs/MacOSX15.sdk/usr/include/_string.h:228,
+                 from /Library/Developer/CommandLineTools/SDKs/MacOSX15.sdk/usr/include/string.h:58,
+                 from /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_9/healed/problem-450-s2.c:3:
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_9/healed/problem-450-s2.c: In function 'extract_substrings':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_9/healed/problem-450-s2.c:32:13: error: expected ']' before ')' token
+   32 |             memcpy(result[valid_count], strings[i, alloc_size);
+      |             ^~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_9/healed/problem-450-s2.c:32:13: error: too few arguments to function '__builtin___memcpy_chk'; expected 4, have 2
+   32 |             memcpy(result[valid_count], strings[i, alloc_size);
+      |             ^~~~~~

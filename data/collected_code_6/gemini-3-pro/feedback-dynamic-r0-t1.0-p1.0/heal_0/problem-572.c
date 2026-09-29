@@ -1,0 +1,118 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node* next;
+} Node;
+
+Node* createNode(int data) {
+    Node* newNode = (Node*)malloc(sizeof(Node));
+    if (!newNode) {
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(EXIT_FAILURE);
+    }
+    newNode->data = data;
+    newNode->next = NULL;
+    return newNode;
+}
+
+void append(Node** head, int data) {
+    Node* newNode = createNode(data);
+    if (!*head) {
+        *head = newNode;
+        return;
+    }
+    Node* temp = *head;
+    while (temp->next) {
+        temp = temp->next;
+    }
+    temp->next = newNode;
+}
+
+void printList(Node* head) {
+    Node* temp = head;
+    while (temp) {
+        printf("%d ", temp->data);
+        temp = temp->next;
+    }
+    printf("\n");
+}
+
+void freeList(Node* head) {
+    Node* temp;
+    while (head) {
+        temp = head;
+        head = head->next;
+        free(temp);
+    }
+}
+
+void removeTwoDuplicates(Node** head, int val1, int val2) {
+    if (!head || !*head) {
+        return;
+    }
+
+    int count1 = 0;
+    int count2 = 0;
+    Node* temp = *head;
+    Node* prev = NULL;
+
+    while (temp) {
+        if (temp->data == val1) {
+            count1++;
+        } else if (temp->data == val2) {
+            count2++;
+        }
+        temp = temp->next;
+    }
+
+    temp = *head;
+    prev = NULL;
+
+    while (temp) {
+        int shouldDelete = 0;
+        
+        if (temp->data == val1 && count1 > 1) {
+            shouldDelete = 1;
+            count1--;
+        } else if (temp->data == val2 && count2 > 1) {
+            shouldDelete = 1;
+            count2--;
+        }
+
+        if (shouldDelete) {
+            Node* nodeToDelete = temp;
+            if (prev) {
+                prev->next = temp->next;
+            } else {
+                *head = temp->next;
+            }
+            temp = temp->next;
+            free(nodeToDelete);
+        } else {
+            prev = temp;
+            temp = temp->next;
+        }
+    }
+}
+
+int main(void) {
+    Node* list = NULL;
+
+    append(&list, 1);
+    append(&list, 2);
+    append(&list, 3);
+    append(&list, 2);
+    append(&list, 4);
+    append(&list, 1);
+    append(&list, 5);
+
+    removeTwoDuplicates(&list, 1, 2);
+
+    printList(list);
+
+    freeList(list);
+
+    return EXIT_SUCCESS;
+}

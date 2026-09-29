@@ -1,0 +1,76 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char **extract_strings_by_size(char **list, size_t list_len, size_t target_size, size_t *out_len) {
+    if (list == NULL || out_len == NULL) {
+        return NULL;
+    }
+
+    size_t count = 0;
+    for (size_t i = 0; i < list_len; ++i) {
+        if (list[i] != NULL && strlen(list[i]) == target_size) {
+            count++;
+        }
+    }
+
+    if (count == 0) {
+        *out_len = 0;
+        return NULL;
+    }
+
+    char **result = malloc((count + 1) * sizeof(char *));
+    if (result == NULL) {
+        *out_len = 0;
+        return NULL;
+    }
+
+    size_t j = 0;
+    for (size_t i = 0; i < list_len; ++i) {
+        if (list[i] != NULL && strlen(list[i]) == target_size) {
+            result[j] = malloc(target_size + 1);
+            if (result[j] == NULL) {
+                for (size_t k = 0; k < j; ++k) {
+                    free(result[k]);
+                }
+                free(result);
+                *out_len = 0;
+                return NULL;
+            }
+            memcpy(result[j], list[i], target_size + 1);
+            j++;
+        }
+    }
+
+    result[j] = NULL;
+    *out_len = count;
+    return result;
+}
+
+void free_extracted_strings(char **list) {
+    if (list == NULL) {
+        return;
+    }
+    for (size_t i = 0; list[i] != NULL; ++i) {
+        free(list[i]);
+    }
+    free(list);
+}
+
+int main(void) {
+    char *input[] = {"apple", "bat", "cat", "dog", "elephant", "fox"};
+    size_t input_len = sizeof(input) / sizeof(input[0]);
+    size_t target_size = 3;
+    size_t out_len = 0;
+
+    char **result = extract_strings_by_size(input, input_len, target_size, &out_len);
+
+    if (result != NULL) {
+        for (size_t i = 0; i < out_len; ++i) {
+            printf("%s\n", result[i]);
+        }
+        free_extracted_strings(result);
+    }
+
+    return 0;
+}

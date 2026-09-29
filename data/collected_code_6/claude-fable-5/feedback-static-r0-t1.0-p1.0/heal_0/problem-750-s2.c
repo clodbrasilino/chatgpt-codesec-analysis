@@ -1,0 +1,77 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int add_tuple_to_list(int **list, size_t *list_size, const int *tuple, size_t tuple_size)
+{
+    int *temp;
+    size_t new_size;
+    size_t i;
+
+    if (list == NULL || list_size == NULL || tuple == NULL) {
+        return -1;
+    }
+
+    if (tuple_size == 0) {
+        return 0;
+    }
+
+    if (*list_size > (size_t)-1 - tuple_size) {
+        return -1;
+    }
+
+    new_size = *list_size + tuple_size;
+
+    if (new_size > (size_t)-1 / sizeof(int)) {
+        return -1;
+    }
+
+    temp = realloc(*list, new_size * sizeof(int));
+    if (temp == NULL) {
+        return -1;
+    }
+
+    *list = temp;
+
+    for (i = 0; i < tuple_size; i++) {
+        (*list)[*list_size + i] = tuple[i];
+    }
+
+    *list_size = new_size;
+    return 0;
+}
+
+int main(void)
+{
+    int *list = NULL;
+    size_t list_size = 3;
+    int tuple[2] = { 9, 10 };
+    size_t i;
+
+    list = malloc(list_size * sizeof(int));
+    if (list == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    list[0] = 5;
+    list[1] = 6;
+    list[2] = 7;
+
+    if (add_tuple_to_list(&list, &list_size, tuple, 2) != 0) {
+        fprintf(stderr, "Failed to add tuple to list\n");
+        free(list);
+        return EXIT_FAILURE;
+    }
+
+    printf("[");
+    for (i = 0; i < list_size; i++) {
+        if (i > 0) {
+            printf(", ");
+        }
+        printf("%d", list[i]);
+    }
+    printf("]\n");
+
+    free(list);
+    return EXIT_SUCCESS;
+}

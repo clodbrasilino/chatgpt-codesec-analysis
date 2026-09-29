@@ -1,0 +1,87 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#define BUFFER_SIZE 1024
+
+void capitalize_first_last(char *str, size_t max_len)
+{
+    size_t i;
+    size_t len;
+
+    if (str == NULL) {
+        return;
+    }
+
+    len = strnlen(str, max_len);
+    i = 0;
+
+    while (i < len) {
+        while (i < len && isspace((unsigned char)str[i])) {
+            i++;
+        }
+
+        if (i >= len) {
+            break;
+        }
+
+        {
+            size_t start = i;
+            size_t end;
+
+            while (i < len && !isspace((unsigned char)str[i])) {
+                i++;
+            }
+
+            end = i - 1;
+
+            str[start] = (char)toupper((unsigned char)str[start]);
+            str[end] = (char)toupper((unsigned char)str[end]);
+        }
+    }
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    char *newline;
+
+    printf("Enter a string: ");
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    newline = strchr(buffer, '\n');
+    if (newline != NULL) {
+        *newline = '\0';
+    }
+
+    capitalize_first_last(buffer, sizeof(buffer));
+
+    printf("Result: %s\n", buffer);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis summary:**
+
+The original code was already largely safe, but the rewrite hardens it further against the Flawfinder CWE-119/CWE-120 warning:
+
+1. **Bounded input** — `fgets(buffer, sizeof(buffer), stdin)` guarantees no more than `BUFFER_SIZE - 1` characters are read, preventing buffer overflow on input.
+
+2. **Guaranteed termination** — `buffer[sizeof(buffer) - 1] = '\0'` is defensive (technically redundant after `fgets`, but harmless and explicit).
+
+3. **Bounded length calculation** — `strnlen` with an explicit maximum instead of `strlen` protects against unterminated strings. In the rewrite, the buffer size is now passed as a parameter rather than hardcoding `1024` inside the function, removing the hidden coupling between the function and its caller's buffer size.
+
+4. **Safe character classification** — all `isspace`/`toupper` calls cast to `unsigned char`, avoiding undefined behavior with negative `char` values on platforms where `char` is signed.
+
+5. **Named constant** — `BUFFER_SIZE` replaces magic numbers, so the buffer size and the length limit can never silently diverge.
+
+One subtle point worth noting: `end = i - 1` is safe here only because the loop guarantees at least one non-space character was consumed before reaching that line, so `i > start >= 0` always holds — no underflow is possible.

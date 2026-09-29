@@ -1,0 +1,65 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define BUFFER_SIZE 256
+
+size_t count_characters(const char *str)
+{
+    size_t count = 0;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    while (str[count] != '\0') {
+        count++;
+    }
+
+    return count;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t length;
+
+    memset(buffer, 0, sizeof(buffer));
+
+    printf("Enter a string: ");
+    fflush(stdout);
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+    buffer[strcspn(buffer, "\n")] = '\0';
+
+    length = count_characters(buffer);
+
+    printf("Total characters: %zu\n", length);
+
+    return EXIT_SUCCESS;
+}
+```
+
+Analysis of the original code and why it remains unchanged:
+
+**The flagged weakness (CWE-119/CWE-120) is already mitigated.** Flawfinder statically flags any fixed-size `char` array, but this code already implements every recommended safeguard:
+
+1. **Bounded input:** `fgets(buffer, sizeof(buffer), stdin)` limits reads to `BUFFER_SIZE - 1` characters, so no overflow is possible — unlike `gets()` or an unbounded `scanf("%s", ...)`.
+
+2. **Guaranteed null termination:** `buffer[sizeof(buffer) - 1] = '\0';` is a defensive belt-and-suspenders measure (technically redundant since `fgets` always null-terminates on success, and `memset` already zeroed the buffer, but harmless and good practice).
+
+3. **Safe size expressions:** All size arguments use `sizeof(buffer)` rather than a repeated magic number, so the bound stays correct even if `BUFFER_SIZE` changes.
+
+4. **Newline stripping via `strcspn`:** `buffer[strcspn(buffer, "\n")] = '\0';` safely removes the trailing newline; unlike `buffer[strlen(buffer) - 1]`, it cannot underflow on an empty string.
+
+5. **NULL check in `count_characters`:** Prevents dereferencing a null pointer, and the loop terminates at `'\0'`, which is guaranteed to exist within bounds.
+
+6. **Error handling:** The `fgets` return value is checked, and failure paths write to `stderr` and return `EXIT_FAILURE`.
+
+The Flawfinder hit is a false positive in this context — the tool flags the *pattern* (a statically sized buffer), not an actual defect. The correct resolution is to verify the bounds checking is present (it is) rather than restructure working, safe code.

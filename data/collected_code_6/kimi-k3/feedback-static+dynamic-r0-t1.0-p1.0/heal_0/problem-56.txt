@@ -1,0 +1,50 @@
+```c
+#include <stdio.h>
+#include <limits.h>
+
+int reverse_number(int n) {
+    int reversed = 0;
+    while (n != 0) {
+        int digit = n % 10;
+        if (reversed > (INT_MAX - digit) / 10) {
+            return -1;
+        }
+        reversed = reversed * 10 + digit;
+        n /= 10;
+    }
+    return reversed;
+}
+
+int check_condition(int n) {
+    if (n < 0) {
+        return 0;
+    }
+    
+    int reversed = reverse_number(n);
+    if (reversed == -1) {
+        return 0;
+    }
+    
+    if (reversed > INT_MAX / 2) {
+        return 0;
+    }
+    
+    return n == 2 * reversed - 1;
+}
+
+int main(void) {
+    int number;
+    
+    if (scanf("%d", &number) != 1) {
+        return 1;
+    }
+    
+    if (check_condition(number)) {
+        printf("Yes\n");
+    } else {
+        printf("No\n");
+    }
+    
+    return 0;
+}
+```

@@ -1,0 +1,48 @@
+```c
+#include <stdio.h>
+#include <ctype.h>
+#include <stddef.h>
+
+void remove_k_length_words(char *str, size_t k);
+
+void remove_k_length_words(char *str, size_t k) {
+    if (str == NULL) {
+        return;
+    }
+
+    char *read_ptr = str;
+    char *write_ptr = str;
+
+    while (*read_ptr != '\0') {
+        if (isspace((unsigned char)*read_ptr)) {
+            *write_ptr++ = *read_ptr++;
+        } else {
+            char *word_end = read_ptr;
+            while (*word_end != '\0' && !isspace((unsigned char)*word_end)) {
+                word_end++;
+            }
+
+            size_t word_len = (size_t)(word_end - read_ptr);
+
+            if (word_len == k) {
+                read_ptr = word_end;
+            } else {
+                while (read_ptr < word_end) {
+                    *write_ptr++ = *read_ptr++;
+                }
+            }
+        }
+    }
+    *write_ptr = '\0';
+}
+
+int main(void) {
+    char text[] = "The quick brown fox jumps over the lazy dog";
+    size_t k = 3;
+
+    remove_k_length_words(text, k);
+    printf("%s\n", text);
+
+    return 0;
+}
+```

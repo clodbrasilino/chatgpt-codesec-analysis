@@ -1,0 +1,51 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX 10
+
+typedef struct {
+    int x;
+    int y;
+} Coordinate;
+
+typedef struct {
+    Coordinate coordinates[MAX];
+    int size;
+} CoordinateArray;
+
+CoordinateArray get_adjacent_coordinates(Coordinate c) {
+    CoordinateArray adj_coords;
+    adj_coords.size = 0;
+
+    for (int dx = -1; dx <= 1; dx++) {
+        for (int dy = -1; dy <= 1; dy++) {
+            if (dx == 0 && dy == 0) continue;
+            if (adj_coords.size < MAX) {
+                Coordinate adj = { .x = c.x + dx, .y = c.y + dy };
+                adj_coords.coordinates[adj_coords.size++] = adj;
+                if (adj_coords.size >= MAX) {
+                    break;
+                }
+            }
+        }
+        if (adj_coords.size >= MAX) {
+            break;
+        }
+    }
+    return adj_coords;
+}
+
+int main() {
+    Coordinate c = { .x = 5, .y = 5};
+    CoordinateArray adj_coords = get_adjacent_coordinates(c);
+
+    for (int i = 0; i < adj_coords.size; i++) {
+        printf("Adjacent Coordinate of (%d, %d) is (%d, %d)\n", c.x, c.y,
+                                                             adj_coords.coordinates[i].x, 
+                                                             adj_coords.coordinates[i].y);
+    }
+
+    return 0;
+}
+```

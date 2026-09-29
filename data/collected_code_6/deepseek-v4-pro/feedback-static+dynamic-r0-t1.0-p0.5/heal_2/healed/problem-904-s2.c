@@ -1,0 +1,33 @@
+#include <stdbool.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <limits.h>
+
+bool is_even(int number) {
+    return number % 2 == 0;
+}
+
+int main(int argc, const char *argv[]) {
+    int test_number = 0;
+    
+    if (argc > 1) {
+        char *endptr;
+        errno = 0;
+        long val = strtol(argv[1], &endptr, 10);
+        
+        if (errno != 0 || endptr == argv[1] || *endptr != '\0' || 
+            val > INT_MAX || val < INT_MIN) {
+            test_number = 42;
+        } else {
+            test_number = (int)val;
+        }
+    } else {
+        test_number = 42;
+    }
+    
+    if (is_even(test_number)) {
+        return 0;
+    }
+    
+    return 1;
+}

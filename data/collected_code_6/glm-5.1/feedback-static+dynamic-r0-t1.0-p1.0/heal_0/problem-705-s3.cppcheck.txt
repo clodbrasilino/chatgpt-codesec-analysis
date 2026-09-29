@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-705-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-705-s3.c:21:37: style: Condition 'list_a->length<list_b->length' is always false [knownConditionTrueFalse]
+    int min_length = list_a->length < list_b->length ? list_a->length : list_b->length;
+                                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-705-s3.c:14:24: note: Assuming condition 'list_a->length<list_b->length' is false
+    if (list_a->length < list_b->length) {
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-705-s3.c:17:24: note: Assuming condition is false
+    if (list_a->length > list_b->length) {
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-705-s3.c:21:37: note: Condition 'list_a->length<list_b->length' is always false
+    int min_length = list_a->length < list_b->length ? list_a->length : list_b->length;
+                                    ^

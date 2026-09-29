@@ -1,0 +1,35 @@
+#include <stdio.h>
+
+void addElements(int* tuple, int size, int k) {
+    if (tuple == NULL) {
+        printf("Error: NULL tuple pointer\n");
+        return;
+    }
+    
+    if (size <= 0) {
+        printf("Error: Invalid tuple size\n");
+        return;
+    }
+    
+    for (int i = 0; i < size; i++) {
+        tuple[i] += k;
+    }
+}
+
+int main() {
+    int size = 5;
+    int k = 10;
+    int tuple[size];
+    
+    for (int i = 0; i < size; i++) {
+        tuple[i] = i;
+    }
+    
+    addElements(tuple, size, k);
+    
+    for (int i = 0; i < size; i++) {
+        printf("%d ", tuple[i]);
+    }
+    
+    return 0;
+}

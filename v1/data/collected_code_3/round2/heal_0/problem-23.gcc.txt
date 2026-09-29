@@ -1,0 +1,20 @@
+collected_code_3/problem-23-2.c: In function 'main':
+collected_code_3/problem-23-2.c:23:17: warning: dereference of possibly-NULL 'list' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   23 |         list[i] = (int *)malloc(cols * sizeof(int));
+      |         ~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  'main': events 1-4
+    |
+    |   21 |     int **list = (int **)malloc(rows * sizeof(int *));
+    |      |                          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                          |
+    |      |                          (1) this call could return NULL
+    |   22 |     for(int i = 0; i < rows; i++) {
+    |      |                    ~~~~~~~~
+    |      |                      |
+    |      |                      (2) following 'true' branch (when 'i < rows')...
+    |   23 |         list[i] = (int *)malloc(cols * sizeof(int));
+    |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                 |        |
+    |      |                 |        (3) ...to here
+    |      |                 (4) 'list + (long unsigned int)i * 8' could be NULL: unchecked value from (1)
+    |

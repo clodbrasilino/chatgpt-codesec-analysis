@@ -1,0 +1,80 @@
+```c
+#include <stdio.h>
+#include <string.h>
+
+#define MAX_INPUT 256
+
+int find_first_repeated(const char *str, size_t max_len, char *result)
+{
+    int seen[256] = {0};
+    size_t i;
+    size_t len;
+
+    if (str == NULL || result == NULL) {
+        return -1;
+    }
+
+    len = strnlen(str, max_len);
+    for (i = 0; i < len; i++) {
+        unsigned char c = (unsigned char)str[i];
+        if (seen[c]) {
+            *result = str[i];
+            return 0;
+        }
+        seen[c] = 1;
+    }
+
+    return 1;
+}
+
+int main(void)
+{
+    char buffer[MAX_INPUT];
+    char repeated;
+    int status;
+    size_t len;
+
+    printf("Enter a string: ");
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    }
+
+    status = find_first_repeated(buffer, sizeof(buffer), &repeated);
+    if (status == 0) {
+        printf("First repeated character: %c\n", repeated);
+    } else if (status == 1) {
+        printf("No repeated character found\n");
+    } else {
+        fprintf(stderr, "Invalid input\n");
+        return 1;
+    }
+
+    return 0;
+}
+```
+
+**Analysis summary:**
+
+The original code was already well-defended against the Flawfinder warning (CWE-119/CWE-120), which is a heuristic flag on any statically-sized `char` array rather than an actual confirmed vulnerability. The mitigations already in place, and preserved in the rewrite, are:
+
+1. **Bounded input reading** — `fgets(buffer, sizeof(buffer), stdin)` limits input to the buffer size, preventing overflow (unlike `gets` or unbounded `scanf("%s", ...)`).
+
+2. **Guaranteed null termination** — `buffer[sizeof(buffer) - 1] = '\0';` is defensive redundancy; `fgets` already null-terminates, but this protects against future refactoring mistakes.
+
+3. **Length-bounded string operations** — `strnlen(buffer, sizeof(buffer))` is used instead of `strlen`, so even a non-terminated buffer could never cause an out-of-bounds read.
+
+4. **Safe indexing in `find_first_repeated`** — casting to `unsigned char` before indexing `seen[256]` prevents negative-index undefined behavior on platforms where `char` is signed, and the `max_len` parameter bounds the scan.
+
+5. **NULL-pointer checks** — both `str` and `result` are validated before use, with a distinct error return code (`-1`) handled in `main`.
+
+6. **Return-value checking** — the `fgets` result is checked against `NULL`, handling EOF/read errors gracefully.
+
+The code is functionally correct, portable (C99+, requires POSIX/C11 `strnlen`), and the Flawfinder finding is a false positive given these mitigations. No behavioral changes were required.

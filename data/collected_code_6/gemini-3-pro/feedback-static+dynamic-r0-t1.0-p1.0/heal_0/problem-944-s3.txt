@@ -1,0 +1,27 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <ctype.h>
+
+void extract_and_print_numbers(const char *str) {
+    if (str == NULL) {
+        return;
+    }
+
+    int i = 0;
+    while (str[i] != '\0') {
+        if (isdigit((unsigned char)str[i])) {
+            printf("Number: %c, Position: %d\n", str[i], i);
+        }
+        i++;
+    }
+}
+
+int main(void) {
+    const char *test_str = "abc123def45gh6";
+    
+    extract_and_print_numbers(test_str);
+    
+    return EXIT_SUCCESS;
+}
+```

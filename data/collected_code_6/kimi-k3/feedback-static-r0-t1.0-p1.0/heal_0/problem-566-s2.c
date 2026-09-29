@@ -1,0 +1,29 @@
+#include <stdio.h>
+
+int sum_of_digits(unsigned int n) {
+    int sum = 0;
+    while (n > 0) {
+        sum += n % 10;
+        n /= 10;
+    }
+    return sum;
+}
+
+int main(void) {
+    unsigned int num;
+    int result;
+    int scan_result;
+
+    printf("Enter a non-negative integer: ");
+    scan_result = scanf("%u", &num);
+
+    if (scan_result != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return 1;
+    }
+
+    result = sum_of_digits(num);
+    printf("Sum of digits: %d\n", result);
+
+    return 0;
+}

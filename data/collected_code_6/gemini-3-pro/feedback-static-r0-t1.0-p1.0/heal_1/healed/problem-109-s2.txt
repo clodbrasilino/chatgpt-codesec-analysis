@@ -1,0 +1,50 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int countOddRotations(const char *binaryString) {
+    if (binaryString == NULL) {
+        return 0;
+    }
+
+    int oddCount = 0;
+    size_t i = 0;
+    
+    while (binaryString[i] != '\0') {
+        if (binaryString[i] != '0' && binaryString[i] != '1') {
+            return -1;
+        }
+        if (binaryString[i] == '1') {
+            oddCount++;
+        }
+        i++;
+    }
+
+    return oddCount;
+}
+
+int main(void) {
+    const char *binaryStrings[] = {
+        "101",
+        "000",
+        "111",
+        "1001",
+        "",
+        NULL,
+        "102"
+    };
+
+    size_t numTests = sizeof(binaryStrings) / sizeof(binaryStrings[0]);
+
+    for (size_t i = 0; i < numTests; i++) {
+        int result = countOddRotations(binaryStrings[i]);
+        if (result == -1) {
+            printf("Invalid binary string encountered.\n");
+        } else {
+            printf("Count of odd rotations: %d\n", result);
+        }
+    }
+
+    return EXIT_SUCCESS;
+}
+```

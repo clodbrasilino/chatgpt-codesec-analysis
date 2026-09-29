@@ -1,0 +1,111 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <limits.h>
+
+#define INPUT_BUFFER_SIZE 64
+
+int is_woodall(long long num)
+{
+    long long n = 1;
+    long long power = 2;
+
+    if (num < 1)
+    {
+        return 0;
+    }
+
+    while (1)
+    {
+        long long woodall;
+
+        if (power > LLONG_MAX / n)
+        {
+            break;
+        }
+
+        woodall = n * power - 1;
+
+        if (woodall == num)
+        {
+            return 1;
+        }
+
+        if (woodall > num)
+        {
+            break;
+        }
+
+        if (power > LLONG_MAX / 2)
+        {
+            break;
+        }
+
+        power = power * 2;
+        n = n + 1;
+    }
+
+    return 0;
+}
+
+int main(int argc, char *const argv[])
+{
+    char *buffer = NULL;
+    const char *input;
+    char *endptr;
+    long long num;
+
+    if (argc > 1)
+    {
+        input = argv[1];
+    }
+    else
+    {
+        buffer = malloc(INPUT_BUFFER_SIZE);
+        if (buffer == NULL)
+        {
+            fprintf(stderr, "Error: failed to allocate memory.\n");
+            return 1;
+        }
+
+        if (fgets(buffer, INPUT_BUFFER_SIZE, stdin) == NULL)
+        {
+            fprintf(stderr, "Error: failed to read input.\n");
+            free(buffer);
+            return 1;
+        }
+
+        input = buffer;
+    }
+
+    errno = 0;
+    num = strtoll(input, &endptr, 10);
+
+    if (errno == ERANGE || endptr == input)
+    {
+        fprintf(stderr, "Error: invalid input.\n");
+        free(buffer);
+        return 1;
+    }
+
+    if (*endptr != '\n' && *endptr != '\0')
+    {
+        fprintf(stderr, "Error: invalid input.\n");
+        free(buffer);
+        return 1;
+    }
+
+    if (is_woodall(num))
+    {
+        printf("True\n");
+    }
+    else
+    {
+        printf("False\n");
+    }
+
+    free(buffer);
+    return 0;
+}
+```

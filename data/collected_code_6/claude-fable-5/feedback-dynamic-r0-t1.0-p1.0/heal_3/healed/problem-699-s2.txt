@@ -1,0 +1,86 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+int min_swaps(const char *s1, const char *s2)
+{
+    size_t len1;
+    size_t len2;
+    size_t i;
+    int diff10 = 0;
+    int diff01 = 0;
+    int swaps;
+
+    if (s1 == NULL || s2 == NULL) {
+        return -1;
+    }
+
+    len1 = strlen(s1);
+    len2 = strlen(s2);
+
+    if (len1 != len2) {
+        return -1;
+    }
+
+    for (i = 0; i < len1; i++) {
+        if ((s1[i] != '0' && s1[i] != '1') || (s2[i] != '0' && s2[i] != '1')) {
+            return -1;
+        }
+        if (s1[i] == '1' && s2[i] == '0') {
+            diff10++;
+        } else if (s1[i] == '0' && s2[i] == '1') {
+            diff01++;
+        }
+    }
+
+    if ((diff10 + diff01) % 2 != 0) {
+        return -1;
+    }
+
+    swaps = diff10 / 2 + diff01 / 2;
+    if (diff10 % 2 != 0) {
+        swaps += 2;
+    }
+
+    return swaps;
+}
+
+int main(void)
+{
+    const char *str1 = "1101";
+    const char *str2 = "0011";
+    int result;
+
+    result = min_swaps(str1, str2);
+
+    if (result < 0) {
+        if (printf("Not Possible\n") < 0) {
+            return EXIT_FAILURE;
+        }
+    } else {
+        if (printf("Minimum swaps required: %d\n", result) < 0) {
+            return EXIT_FAILURE;
+        }
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+### Analysis of the original code and the fix
+
+**The identified weakness:** The original algorithm was incorrect for the classic "minimum swaps to make two binary strings equal" problem. It only allowed a solution when `diff10 == diff01` and returned `diff10` as the answer, which mishandles cases and could surface raw `-1` values to test harnesses expecting proper results.
+
+**Key corrections made:**
+
+1. **Feasibility condition fixed:** A solution exists whenever the *total* number of mismatches (`diff10 + diff01`) is even, not only when `diff10 == diff01`. The original condition incorrectly rejected solvable inputs and accepted the wrong swap count for others.
+
+2. **Correct swap count formula:** 
+   - Each pair of `1→0` mismatches can be fixed with one swap (`diff10 / 2`).
+   - Each pair of `0→1` mismatches likewise (`diff01 / 2`).
+   - If one odd mismatch of each type remains (`diff10 % 2 != 0`), fixing them requires **two** swaps, hence the `swaps += 2`.
+
+3. **Retained defensive checks:** NULL pointer validation, length equality check, character validation (only `'0'`/`'1'` allowed), and `printf` return-value checking are all preserved, keeping the code robust against invalid input and I/O failures.
+
+For the given test case (`"1101"` vs `"0011"`), `diff10 = 2` and `diff01 = 1`, giving an odd total of 3 mismatches — the program now correctly prints `Not Possible` rather than leaking an internal error code.

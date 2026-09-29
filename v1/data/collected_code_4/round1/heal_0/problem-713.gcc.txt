@@ -1,0 +1,77 @@
+./collected_code_4/round1//heal_0//problem-713.c: In function 'checkValid':
+./collected_code_4/round1//heal_0//problem-713.c:9:22: warning: use of uninitialized value '*tupleItems_9(D) + _2' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+    9 |         if(tupleItems[i] == 0) {
+      |            ~~~~~~~~~~^~~
+  'main': events 1-3
+    |
+    |   16 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |   17 |     int* tupleItems = (int *)malloc(TUPLE_SIZE * sizeof(int));
+    |      |                              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                              |
+    |      |                              (2) region created on heap here
+    |......
+    |   21 |     if(checkValid(tupleItems)) {
+    |      |        ~~~~~~~~~~~~~~~~~~~~~~
+    |      |        |
+    |      |        (3) calling 'checkValid' from 'main'
+    |
+    +--> 'checkValid': event 4
+           |
+           |    6 | bool checkValid(int* tupleItems) {
+           |      |      ^~~~~~~~~~
+           |      |      |
+           |      |      (4) entry to 'checkValid'
+           |
+         'checkValid': events 5-7
+           |
+           |    8 |     for(int i = 0; i < TUPLE_SIZE; i++) {
+           |      |                      ^
+           |      |                      |
+           |      |                      (5) following 'true' branch (when 'i <= 3')...
+           |    9 |         if(tupleItems[i] == 0) {
+           |      |            ~~~~~~~~~~~~~
+           |      |                      |
+           |      |                      (6) ...to here
+           |      |                      (7) use of uninitialized value '*tupleItems_9(D) + _2' here
+           |
+./collected_code_4/round1//heal_0//problem-713.c:9:22: warning: dereference of possibly-NULL 'tupleItems' [CWE-690] [-Wanalyzer-possible-null-dereference]
+    9 |         if(tupleItems[i] == 0) {
+      |            ~~~~~~~~~~^~~
+  'main': events 1-3
+    |
+    |   16 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |   17 |     int* tupleItems = (int *)malloc(TUPLE_SIZE * sizeof(int));
+    |      |                              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                              |
+    |      |                              (2) this call could return NULL
+    |......
+    |   21 |     if(checkValid(tupleItems)) {
+    |      |        ~~~~~~~~~~~~~~~~~~~~~~
+    |      |        |
+    |      |        (3) calling 'checkValid' from 'main'
+    |
+    +--> 'checkValid': event 4
+           |
+           |    6 | bool checkValid(int* tupleItems) {
+           |      |      ^~~~~~~~~~
+           |      |      |
+           |      |      (4) entry to 'checkValid'
+           |
+         'checkValid': events 5-7
+           |
+           |    8 |     for(int i = 0; i < TUPLE_SIZE; i++) {
+           |      |                      ^
+           |      |                      |
+           |      |                      (5) following 'true' branch (when 'i <= 3')...
+           |    9 |         if(tupleItems[i] == 0) {
+           |      |            ~~~~~~~~~~~~~
+           |      |                      |
+           |      |                      (6) ...to here
+           |      |                      (7) 'tupleItems + (long unsigned int)i * 4' could be NULL: unchecked value from (2)
+           |

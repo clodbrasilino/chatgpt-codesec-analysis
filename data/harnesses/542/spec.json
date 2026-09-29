@@ -1,0 +1,44 @@
+{
+  "task_id": 542,
+  "text": "Write a C function to replace all occurrences of spaces, commas, or dots with a colon in the given string by using regex.",
+  "fn_candidates": [
+    "fill_spaces",
+    "FillSpaces",
+    "fillSpaces",
+    "fillspaces"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "fill_spaces",
+      "args": [
+        "Boult Curve Wireless Neckband"
+      ],
+      "expected": "Boult:Curve:Wireless:Neckband",
+      "assert_src": "assert fill_spaces('Boult Curve Wireless Neckband') == 'Boult:Curve:Wireless:Neckband'"
+    },
+    {
+      "fn_name": "fill_spaces",
+      "args": [
+        "Stereo Sound Sweatproof"
+      ],
+      "expected": "Stereo:Sound:Sweatproof",
+      "assert_src": "assert fill_spaces('Stereo Sound Sweatproof') == 'Stereo:Sound:Sweatproof'"
+    },
+    {
+      "fn_name": "fill_spaces",
+      "args": [
+        "Probass Curve Audio"
+      ],
+      "expected": "Probass:Curve:Audio",
+      "assert_src": "assert fill_spaces('Probass Curve Audio') == 'Probass:Curve:Audio'"
+    }
+  ],
+  "arg_kinds": [
+    "str"
+  ],
+  "return_kind": "str",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

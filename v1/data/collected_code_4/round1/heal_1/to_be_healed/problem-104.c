@@ -1,0 +1,62 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+void sort_sublist(char **arr, int n){
+    int i, j;
+    char *tmp;
+    for (i = 0; i < n-1; i++){
+        for (j = 0; j < n-i-1; j++){
+            if (strcmp(arr[j], arr[j+1]) > 0){
+                tmp = arr[j];
+                arr[j] = arr[j+1];
+                arr[j+1] = tmp;
+            }
+        }
+    }
+}
+
+void sort_list_of_lists(char ***list_of_lists, int *list_sizes, int num_lists){
+    for (int i = 0; i < num_lists; i++)
+        sort_sublist(list_of_lists[i], list_sizes[i]);
+}
+
+int main() {
+    int num_lists = 2;
+    int list_sizes[] = {4, 3};
+    char ***list_of_lists = malloc(num_lists * sizeof(char **));
+    
+    /* Possible weaknesses found:
+     *  dereference of possibly-NULL 'list_of_lists' [CWE-690] [-Wanalyzer-possible-null-dereference]
+     */
+    list_of_lists[0] = malloc(list_sizes[0]* sizeof(char *));
+    /* Possible weaknesses found:
+     *  dereference of possibly-NULL '*list_of_lists' [CWE-690] [-Wanalyzer-possible-null-dereference]
+     */
+    list_of_lists[0][0] = "jack";
+    list_of_lists[0][1] = "bob";
+    list_of_lists[0][2] = "alice";
+    list_of_lists[0][3] = "bill";
+
+    list_of_lists[1] = malloc(list_sizes[1]* sizeof(char *));
+    /* Possible weaknesses found:
+     *  dereference of possibly-NULL '*list_of_lists_51 + 8' [CWE-690] [-Wanalyzer-possible-null-dereference]
+     */
+    list_of_lists[1][0] = "zack";
+    list_of_lists[1][1] = "tim";
+    list_of_lists[1][2] = "lily";
+    
+    sort_list_of_lists(list_of_lists, list_sizes, num_lists);
+    
+    for (int i = 0; i < num_lists; i++){
+        for (int j = 0; j < list_sizes[i]; j++)
+            printf("%s ", list_of_lists[i][j]);
+	    printf("\n");
+    }
+    
+    for(int i = 0; i<num_lists; i++)
+        free(list_of_lists[i]);
+    free(list_of_lists);
+    
+    return 0;
+}

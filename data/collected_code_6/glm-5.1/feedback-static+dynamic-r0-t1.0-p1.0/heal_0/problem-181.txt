@@ -1,0 +1,82 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char* longestCommonPrefix(char** strs, int strsSize) {
+    if (strs == NULL || strsSize <= 0) {
+        char* empty = (char*)malloc(1);
+        if (empty == NULL) return NULL;
+        empty[0] = '\0';
+        return empty;
+    }
+
+    int minLen = strlen(strs[0]);
+    for (int i = 1; i < strsSize; i++) {
+        if (strs[i] == NULL) {
+            char* empty = (char*)malloc(1);
+            if (empty == NULL) return NULL;
+            empty[0] = '\0';
+            return empty;
+        }
+        int currentLen = strlen(strs[i]);
+        if (currentLen < minLen) {
+            minLen = currentLen;
+        }
+    }
+
+    char* prefix = (char*)malloc(minLen + 1);
+    if (prefix == NULL) return NULL;
+
+    int prefixLength = 0;
+    for (int i = 0; i < minLen; i++) {
+        char currentChar = strs[0][i];
+        for (int j = 1; j < strsSize; j++) {
+            if (strs[j][i] != currentChar) {
+                prefix[prefixLength] = '\0';
+                return prefix;
+            }
+        }
+        prefix[prefixLength++] = currentChar;
+    }
+
+    prefix[prefixLength] = '\0';
+    return prefix;
+}
+
+int main() {
+    char* strs1[] = {"flower", "flow", "flight"};
+    int size1 = 3;
+    char* result1 = longestCommonPrefix(strs1, size1);
+    if (result1 != NULL) {
+        printf("%s\n", result1);
+        free(result1);
+    }
+
+    char* strs2[] = {"dog", "racecar", "car"};
+    int size2 = 3;
+    char* result2 = longestCommonPrefix(strs2, size2);
+    if (result2 != NULL) {
+        printf("%s\n", result2);
+        free(result2);
+    }
+
+    char* strs3[] = {"interspecies", "interstellar", "interstate"};
+    int size3 = 3;
+    char* result3 = longestCommonPrefix(strs3, size3);
+    if (result3 != NULL) {
+        printf("%s\n", result3);
+        free(result3);
+    }
+
+    char* strs4[] = {""};
+    int size4 = 1;
+    char* result4 = longestCommonPrefix(strs4, size4);
+    if (result4 != NULL) {
+        printf("%s\n", result4);
+        free(result4);
+    }
+
+    return 0;
+}
+```

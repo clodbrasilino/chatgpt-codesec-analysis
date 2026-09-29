@@ -1,0 +1,67 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+bool is_min_heap(const int *arr, size_t n)
+{
+    size_t i;
+
+    if (arr == NULL) {
+        return false;
+    }
+
+    if (n < 2U) {
+        return true;
+    }
+
+    for (i = 0U; i <= (n - 2U) / 2U; i++) {
+        size_t left = (2U * i) + 1U;
+        size_t right = (2U * i) + 2U;
+
+        if (left < n) {
+            if (arr[i] > arr[left]) {
+                return false;
+            }
+        }
+
+        if (right < n) {
+            if (arr[i] > arr[right]) {
+                return false;
+            }
+        }
+    }
+
+    return true;
+}
+
+int main(void)
+{
+    int heap1[] = {1, 3, 5, 7, 9, 11};
+    int heap2[] = {10, 3, 5, 7, 9, 11};
+    size_t n1 = sizeof(heap1) / sizeof(heap1[0]);
+    size_t n2 = sizeof(heap2) / sizeof(heap2[0]);
+
+    if (is_min_heap(heap1, n1)) {
+        if (printf("Array 1 is a min heap\n") < 0) {
+            return EXIT_FAILURE;
+        }
+    } else {
+        if (printf("Array 1 is not a min heap\n") < 0) {
+            return EXIT_FAILURE;
+        }
+    }
+
+    if (is_min_heap(heap2, n2)) {
+        if (printf("Array 2 is a min heap\n") < 0) {
+            return EXIT_FAILURE;
+        }
+    } else {
+        if (printf("Array 2 is not a min heap\n") < 0) {
+            return EXIT_FAILURE;
+        }
+    }
+
+    return EXIT_SUCCESS;
+}
+```

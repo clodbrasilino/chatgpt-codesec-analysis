@@ -1,0 +1,33 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-779-s3.c: In function 'main':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-779-s3.c:52:11: error: array index in non-array initializer
+   52 |         {[0].items[0].item = "a", .count = 1},
+      |           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-779-s3.c:52:11: note: (near initialization for 'lists[0]')
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-779-s3.c:53:11: error: array index in non-array initializer
+   53 |         {[0].items[0].item = "a", [0].items[1].item = "c", .count = 2},
+      |           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-779-s3.c:53:11: note: (near initialization for 'lists[1]')
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-779-s3.c:53:36: error: array index in non-array initializer
+   53 |         {[0].items[0].item = "a", [0].items[1].item = "c", .count = 2},
+      |                                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-779-s3.c:53:36: note: (near initialization for 'lists[1]')
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-779-s3.c:53:55: error: initialization of 'int' from 'char *' makes integer from pointer without a cast [-Wint-conversion]
+   53 |         {[0].items[0].item = "a", [0].items[1].item = "c", .count = 2},
+      |                                                       ^~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-779-s3.c:53:55: note: (near initialization for 'lists[1].count')
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-779-s3.c:54:11: error: array index in non-array initializer
+   54 |         {[0].items[0].item = "b", [0].items[1].item = "a", [0].items[2].item = "c", .count = 3}
+      |           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-779-s3.c:54:11: note: (near initialization for 'lists[2]')
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-779-s3.c:54:36: error: array index in non-array initializer
+   54 |         {[0].items[0].item = "b", [0].items[1].item = "a", [0].items[2].item = "c", .count = 3}
+      |                                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-779-s3.c:54:36: note: (near initialization for 'lists[2]')
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-779-s3.c:54:55: error: initialization of 'int' from 'char *' makes integer from pointer without a cast [-Wint-conversion]
+   54 |         {[0].items[0].item = "b", [0].items[1].item = "a", [0].items[2].item = "c", .count = 3}
+      |                                                       ^~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-779-s3.c:54:55: note: (near initialization for 'lists[2].count')
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-779-s3.c:54:61: error: array index in non-array initializer
+   54 |         {[0].items[0].item = "b", [0].items[1].item = "a", [0].items[2].item = "c", .count = 3}
+      |                                                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-779-s3.c:54:61: note: (near initialization for 'lists[2]')

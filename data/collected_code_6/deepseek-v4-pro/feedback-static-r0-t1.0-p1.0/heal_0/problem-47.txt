@@ -1,0 +1,30 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int last_digit_of_factorial_division(int a, int b) {
+    if (a < 0 || b < 0 || a > b) return -1;
+    if (a == b) return 1;
+    if (b >= a + 10) return 0;
+
+    long long result = 1;
+    for (int i = a + 1; i <= b; i++) {
+        result = (result * (i % 10)) % 10;
+        if (result == 0) break;
+    }
+    return (int)result;
+}
+
+int main(void) {
+    int a, b;
+    if (scanf("%d %d", &a, &b) != 2) {
+        return 1;
+    }
+    int result = last_digit_of_factorial_division(a, b);
+    if (result == -1) {
+        return 1;
+    }
+    printf("%d\n", result);
+    return 0;
+}
+```

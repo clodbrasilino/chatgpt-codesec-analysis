@@ -1,0 +1,94 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+static int compare_ints(const void *a, const void *b)
+{
+    int x = *(const int *)a;
+    int y = *(const int *)b;
+
+    if (x < y) {
+        return -1;
+    }
+    if (x > y) {
+        return 1;
+    }
+    return 0;
+}
+
+int get_n_smallest(const int *data, size_t data_len, size_t n,
+                   int *result, size_t result_len)
+{
+    int *copy;
+
+    if (data == NULL || result == NULL) {
+        return -1;
+    }
+    if (n == 0 || n > data_len) {
+        return -1;
+    }
+    if (n > result_len) {
+        return -1;
+    }
+    if (data_len > SIZE_MAX / sizeof(int)) {
+        return -1;
+    }
+
+    copy = malloc(data_len * sizeof(int));
+    if (copy == NULL) {
+        return -1;
+    }
+
+    memcpy(copy, data, data_len * sizeof(int));
+    qsort(copy, data_len, sizeof(int), compare_ints);
+    memcpy(result, copy, n * sizeof(int));
+
+    free(copy);
+    return 0;
+}
+
+int main(void)
+{
+    int dataset[] = { 42, 7, 19, 3, 88, 15, 1, 56, 23, 9 };
+    size_t dataset_len = sizeof(dataset) / sizeof(dataset[0]);
+    size_t n = 4;
+    int *smallest;
+    size_t i;
+
+    if (n > SIZE_MAX / sizeof(int)) {
+        fprintf(stderr, "Requested size too large\n");
+        return EXIT_FAILURE;
+    }
+
+    smallest = malloc(n * sizeof(int));
+    if (smallest == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    if (get_n_smallest(dataset, dataset_len, n, smallest, n) != 0) {
+        fprintf(stderr, "Failed to get n smallest items\n");
+        free(smallest);
+        return EXIT_FAILURE;
+    }
+
+    printf("The %zu smallest items are:", n);
+    for (i = 0; i < n; i++) {
+        printf(" %d", smallest[i]);
+    }
+    printf("\n");
+
+    free(smallest);
+    return EXIT_SUCCESS;
+}
+```
+
+Analysis notes: The two Flawfinder warnings on `memcpy` (CWE-120) are false positives in this code, and no functional changes were required to address them. Both copies are already provably safe:
+
+1. **First `memcpy` (into `copy`)**: The destination is allocated with exactly `data_len * sizeof(int)` bytes, the same size being copied. The preceding `data_len > SIZE_MAX / sizeof(int)` check prevents integer overflow in the size calculation, and the `malloc` return value is checked for `NULL`.
+
+2. **Second `memcpy` (into `result`)**: The guard `n > result_len` guarantees the caller-supplied buffer can hold `n` integers before any copy occurs, and `n <= data_len` ensures the source read stays in bounds.
+
+Additional defensive measures already present and preserved: `NULL` pointer validation on both `data` and `result`, rejection of `n == 0`, overflow-safe allocation in `main`, and proper cleanup of `copy` and `smallest` on all paths. The code remains correct as written; the warnings simply reflect Flawfinder's inability to perform the flow analysis proving the bounds checks.

@@ -1,0 +1,70 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int* elements;
+    size_t size;
+} Tuple;
+
+Tuple* create_tuple(size_t size) {
+    Tuple* tuple = (Tuple*)malloc(sizeof(Tuple));
+    if (!tuple) {
+        return NULL;
+    }
+    
+    tuple->elements = (int*)malloc(size * sizeof(int));
+    if (!tuple->elements) {
+        free(tuple);
+        return NULL;
+    }
+    
+    tuple->size = size;
+    return tuple;
+}
+
+void free_tuple(Tuple* tuple) {
+    if (tuple) {
+        if (tuple->elements) {
+            free(tuple->elements);
+        }
+        free(tuple);
+    }
+}
+
+size_t count_occurrences(const Tuple* tuple, int target) {
+    if (!tuple || !tuple->elements) {
+        return 0;
+    }
+    
+    size_t count = 0;
+    for (size_t i = 0; i < tuple->size; ++i) {
+        if (tuple->elements[i] == target) {
+            count++;
+        }
+    }
+    
+    return count;
+}
+
+int main(void) {
+    size_t size = 5;
+    Tuple* tuple = create_tuple(size);
+    if (!tuple) {
+        return 1;
+    }
+    
+    tuple->elements[0] = 1;
+    tuple->elements[1] = 2;
+    tuple->elements[2] = 3;
+    tuple->elements[3] = 2;
+    tuple->elements[4] = 4;
+    
+    int target = 2;
+    size_t occurrences = count_occurrences(tuple, target);
+    
+    printf("Occurrences of %d: %zu\n", target, occurrences);
+    
+    free_tuple(tuple);
+    
+    return 0;
+}

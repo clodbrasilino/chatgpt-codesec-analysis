@@ -1,0 +1,47 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
+
+double radians_to_degrees(double radians);
+
+double radians_to_degrees(double radians)
+{
+    return radians * (180.0 / M_PI);
+}
+
+int main(void)
+{
+    double radians = 0.0;
+    double degrees = 0.0;
+    int result = 0;
+
+    printf("Enter value in radians: ");
+
+    result = scanf("%lf", &radians);
+    if (result != 1) {
+        fprintf(stderr, "Error: invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (isnan(radians) || isinf(radians)) {
+        fprintf(stderr, "Error: input is not a finite number.\n");
+        return EXIT_FAILURE;
+    }
+
+    degrees = radians_to_degrees(radians);
+
+    if (isnan(degrees) || isinf(degrees)) {
+        fprintf(stderr, "Error: conversion resulted in an invalid value.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("%f radians = %f degrees\n", radians, degrees);
+
+    return EXIT_SUCCESS;
+}
+```

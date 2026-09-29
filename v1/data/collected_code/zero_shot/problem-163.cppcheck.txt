@@ -1,0 +1,9 @@
+collected_code/problem-163-0.c:14:18: error: Cannot determine that 'numSides' is initialized [premium-bughuntingUninit]
+    scanf("%d", &numSides);
+                 ^
+collected_code/problem-163-0.c:16:18: error: Cannot determine that 'sideLength' is initialized [premium-bughuntingUninit]
+    scanf("%f", &sideLength);
+                 ^
+collected_code/problem-163-0.c:17:98: error: Cannot determine that 'sideLength' is initialized [premium-bughuntingUninit]
+    printf("The area of the regular polygon is: %.2f\n", calculateAreaOfRegularPolygon(numSides, sideLength));
+                                                                                                 ^

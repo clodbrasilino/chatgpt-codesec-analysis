@@ -1,0 +1,58 @@
+{
+  "task_id": 68,
+  "text": "Write a C function to check whether the given array is monotonic or not.",
+  "fn_candidates": [
+    "is_Monotonic",
+    "IsMonotonic",
+    "isMonotonic",
+    "isMonotonic"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "is_Monotonic",
+      "args": [
+        [
+          6,
+          5,
+          4,
+          4
+        ]
+      ],
+      "expected": true,
+      "assert_src": "assert is_Monotonic([6, 5, 4, 4]) == True"
+    },
+    {
+      "fn_name": "is_Monotonic",
+      "args": [
+        [
+          1,
+          2,
+          2,
+          3
+        ]
+      ],
+      "expected": true,
+      "assert_src": "assert is_Monotonic([1, 2, 2, 3]) == True"
+    },
+    {
+      "fn_name": "is_Monotonic",
+      "args": [
+        [
+          1,
+          3,
+          2
+        ]
+      ],
+      "expected": false,
+      "assert_src": "assert is_Monotonic([1, 3, 2]) == False"
+    }
+  ],
+  "arg_kinds": [
+    "int-list"
+  ],
+  "return_kind": "bool",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

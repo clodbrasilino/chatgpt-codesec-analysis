@@ -1,0 +1,60 @@
+#include <stdio.h>
+
+int max(int a, int b) {
+    return (a > b) ? a : b;
+}
+
+int min(int a, int b) {
+    return (a < b) ? a : b;
+}
+
+double median(int arr[], int n) {
+    if (n % 2 == 0)
+        return (arr[n/2] + arr[n/2 - 1]) / 2.0;
+    else
+        return arr[n/2];
+}
+
+double findMedian(int arr1[], int arr2[], int n) {
+    if (n <= 0)
+        return -1;
+    if (n == 1)
+        return (arr1[0] + arr2[0]) / 2.0;
+    if (n == 2)
+        return (max(arr1[0], arr2[0]) + min(arr1[1], arr2[1])) / 2.0;
+
+    double m1 = median(arr1, n);
+    double m2 = median(arr2, n);
+
+    if (m1 == m2)
+        return m1;
+
+    if (m1 < m2) {
+        if (n % 2 == 0)
+            return findMedian(arr1 + n/2 - 1, arr2, n - n/2 + 1);
+        else
+            return findMedian(arr1 + n/2, arr2, n - n/2);
+    }
+
+    if (n % 2 == 0)
+        return findMedian(arr2 + n/2 - 1, arr1, n - n/2 + 1);
+    else
+        return findMedian(arr2 + n/2, arr1, n - n/2);
+}
+
+int main(void) {
+    int arr1[] = {1, 12, 15, 26, 38};
+    int arr2[] = {2, 13, 17, 30, 45};
+
+    int n1 = sizeof(arr1) / sizeof(arr1[0]);
+    int n2 = sizeof(arr2) / sizeof(arr2[0]);
+
+    if (n1 != n2 || n1 == 0) {
+        printf("Arrays must be of same non-zero size\n");
+        return 1;
+    }
+
+    printf("Median is %.1f\n", findMedian(arr1, arr2, n1));
+
+    return 0;
+}

@@ -1,0 +1,138 @@
+#include <ctype.h>
+#include <errno.h>
+#include <regex.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char *camel_to_snake(const char *input)
+{
+    regex_t uppercase_regex;
+    regmatch_t match;
+    size_t input_length;
+    size_t capacity;
+    size_t input_position = 0;
+    size_t output_position = 0;
+    char *output;
+    int regex_status;
+
+    if (input == NULL) {
+        errno = EINVAL;
+        return NULL;
+    }
+
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    input_length = strlen(input);
+
+    if (input_length > (SIZE_MAX - 1U) / 2U) {
+        errno = EOVERFLOW;
+        return NULL;
+    }
+
+    capacity = input_length * 2U + 1U;
+    output = malloc(capacity);
+    if (output == NULL) {
+        return NULL;
+    }
+
+    regex_status = regcomp(&uppercase_regex, "[A-Z]", REG_EXTENDED);
+    if (regex_status != 0) {
+        free(output);
+        errno = regex_status == REG_ESPACE ? ENOMEM : EINVAL;
+        return NULL;
+    }
+
+    while (input_position < input_length) {
+        size_t match_start;
+        size_t remaining = input_length - input_position;
+
+        regex_status = regexec(
+            &uppercase_regex,
+            input + input_position,
+            1,
+            &match,
+            0
+        );
+
+        if (regex_status == REG_NOMATCH) {
+            while (input_position < input_length) {
+                output[output_position++] = (char)tolower(
+                    (unsigned char)input[input_position++]
+                );
+            }
+            break;
+        }
+
+        if (regex_status != 0 ||
+            match.rm_so < 0 ||
+            match.rm_eo <= match.rm_so ||
+            (uintmax_t)match.rm_eo > (uintmax_t)remaining ||
+            match.rm_eo - match.rm_so != 1) {
+            regfree(&uppercase_regex);
+            free(output);
+            errno = regex_status == REG_ESPACE ? ENOMEM : EINVAL;
+            return NULL;
+        }
+
+        match_start = input_position + (size_t)match.rm_so;
+
+        while (input_position < match_start) {
+            output[output_position++] = (char)tolower(
+                (unsigned char)input[input_position++]
+            );
+        }
+
+        if (match_start > 0U) {
+            unsigned char previous = (unsigned char)input[match_start - 1U];
+            int next_is_lower = match_start + 1U < input_length &&
+                                islower((unsigned char)input[match_start + 1U]);
+
+            if (islower(previous) ||
+                isdigit(previous) ||
+                (isupper(previous) && next_is_lower)) {
+                output[output_position++] = '_';
+            }
+        }
+
+        output[output_position++] = (char)tolower(
+            (unsigned char)input[match_start]
+        );
+        input_position = match_start + 1U;
+    }
+
+    output[output_position] = '\0';
+    regfree(&uppercase_regex);
+    return output;
+}
+
+/* Possible weaknesses found:
+ *  Parameter 'argv' can be declared as const array [constParameter]
+ */
+int main(int argc, char *argv[])
+{
+    char *result;
+
+    if (argc != 2) {
+        if (fprintf(stderr, "Usage: %s <camelCaseString>\n", argv[0]) < 0) {
+            return EXIT_FAILURE;
+        }
+        return EXIT_FAILURE;
+    }
+
+    result = camel_to_snake(argv[1]);
+    if (result == NULL) {
+        perror("camel_to_snake");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("%s\n", result) < 0) {
+        free(result);
+        return EXIT_FAILURE;
+    }
+
+    free(result);
+    return EXIT_SUCCESS;
+}

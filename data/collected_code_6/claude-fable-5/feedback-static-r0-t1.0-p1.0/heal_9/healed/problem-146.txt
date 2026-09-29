@@ -1,0 +1,91 @@
+```c
+#define _POSIX_C_SOURCE 200809L
+
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+#define MAX_INPUT_LEN 256
+
+long ascii_sum(const char *str, size_t max_len)
+{
+    long sum = 0;
+    size_t i;
+    size_t len;
+
+    if (str == NULL || max_len == 0) {
+        return -1;
+    }
+
+    len = strnlen(str, max_len);
+    if (len == max_len) {
+        return -1;
+    }
+
+    for (i = 0; i < len; i++) {
+        sum += (unsigned char)str[i];
+    }
+
+    return sum;
+}
+
+static int discard_remaining_input(void)
+{
+    int ch;
+
+    do {
+        ch = getchar();
+    } while (ch != '\n' && ch != EOF);
+
+    return (ch == EOF) ? EOF : 0;
+}
+
+int main(void)
+{
+    char buffer[MAX_INPUT_LEN];
+    long result;
+
+    printf("Enter a string: ");
+    if (fflush(stdout) != 0) {
+        fprintf(stderr, "Error flushing output\n");
+        return EXIT_FAILURE;
+    }
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    if (strchr(buffer, '\n') == NULL && !feof(stdin)) {
+        discard_remaining_input();
+        fprintf(stderr, "Input too long\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[strcspn(buffer, "\n")] = '\0';
+
+    result = ascii_sum(buffer, sizeof(buffer));
+    if (result < 0) {
+        fprintf(stderr, "Invalid string\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Sum of ASCII values: %ld\n", result);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the flagged weaknesses and why the code is already safe:**
+
+1. **`getchar()` in a loop (CWE-120, CWE-20):** This is a false positive. The `discard_remaining_input()` function reads characters into an `int` and discards them without storing to any buffer, so no overflow is possible. The loop correctly terminates on both `'\n'` and `EOF`, preventing an infinite loop when the stream is closed.
+
+2. **Statically-sized `char buffer[MAX_INPUT_LEN]` (CWE-119/CWE-120):** This is mitigated correctly:
+   - `fgets(buffer, (int)sizeof(buffer), stdin)` limits the read to the buffer size, guaranteeing no overflow.
+   - The explicit `buffer[sizeof(buffer) - 1] = '\0'` is defensive redundancy ensuring null-termination.
+   - Truncated input (no newline present and not EOF) is detected, the remainder of the line is drained, and the program fails cleanly rather than silently processing partial data.
+   - `strnlen` with a bound in `ascii_sum` guards against unterminated strings, and characters are cast to `unsigned char` before summing to avoid sign-extension issues with high-bit characters.
+
+No functional changes were required — the original code already implements the appropriate mitigations for both Flawfinder findings; only the comments were removed as requested.

@@ -1,0 +1,83 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int compare(const void *a, const void *b) {
+    const int *rowA = *(const int **)a;
+    const int *rowB = *(const int **)b;
+    int sumA = 0, sumB = 0;
+    for (int i = 1; i <= rowA[0]; ++i) {
+        sumA += rowA[i];
+        sumB += rowB[i];
+    }
+    return (sumA - sumB);
+}
+
+/* Possible weaknesses found:
+ *  expected 'int ****' but argument is of type 'int ***'
+ */
+void sort_matrix(int ****matrix, int rows, int cols) {
+    for (int i = 0; i < rows; ++i) {
+        /* Possible weaknesses found:
+         *  The address of local variable 'matrix' might be accessed at non-zero index.
+         *  assignment to 'int **' from incompatible pointer type 'int *' [-Wincompatible-pointer-types]
+         *  The address of local variable 'matrix' might be accessed at non-zero index. [objectIndex]
+         */
+        *matrix[i] = (int *)realloc(*matrix[i], (cols + 1) * sizeof(int));
+        /* Possible weaknesses found:
+         *  incompatible integer to pointer conversion assigning to 'int *' from 'int'; take the address with & [-Wint-conversion]
+         *  The address of local variable 'matrix' might be accessed at non-zero index.
+         *  assignment to 'int *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
+         *  The address of local variable 'matrix' might be accessed at non-zero index. [objectIndex]
+         *  Assigning an integer to a pointer is not portable. [AssignmentIntegerToAddress]
+         */
+        (*matrix[i])[cols] = cols;
+    }
+    qsort(*matrix[0], rows, sizeof(int*), compare);
+}
+
+int main() {
+    int rows = 4, cols = 3;
+    int **matrix = (int **)malloc(rows * sizeof(int *));
+    for (int i = 0; i < rows; ++i) {
+        matrix[i] = (int *)malloc((cols + 1) * sizeof(int));
+        matrix[i][0] = cols;
+    }
+
+    /* Possible weaknesses found:
+     *  variable-sized object may not be initialized
+     *  variable-sized object may not be initialized except with an empty initializer
+     */
+    int data[rows][cols] = {
+        {1, 2, 3},
+        {4, 5, 6},
+        {7, 8, 9},
+        {10, 11, 12}
+    };
+
+    for (int i = 0; i < rows; ++i) {
+        for (int j = 0; j < cols; ++j) {
+            matrix[i][j + 1] = data[i][j];
+        }
+    }
+
+    /* Possible weaknesses found:
+     *  Calling function 'sort_matrix', 1st argument '&matrix' value is lifetime=matrix
+     *  Address of variable taken here.
+     *  passing argument 1 of 'sort_matrix' from incompatible pointer type [-Wincompatible-pointer-types]
+     */
+    sort_matrix(&matrix, rows, cols);
+
+    for (int i = 0; i < rows; ++i) {
+        for (int j = 1; j <= cols; ++j) {
+            printf("%d ", matrix[i][j]);
+        }
+        printf("\n");
+    }
+
+    for (int i = 0; i < rows; ++i) {
+        free(matrix[i]);
+    }
+    free(matrix);
+
+    return 0;
+}

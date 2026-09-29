@@ -1,0 +1,14 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-894-s3.c: In function 'str_to_float_tuple':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-894-s3.c:22:9: error: 'errno' undeclared (first use in this function)
+   22 |     if (errno == ERANGE) {
+      |         ^~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-894-s3.c:4:1: note: 'errno' is defined in header '<errno.h>'; this is probably fixable by adding '#include <errno.h>'
+    3 | #include <string.h>
+  +++ |+#include <errno.h>
+    4 | 
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-894-s3.c:22:9: note: each undeclared identifier is reported only once for each function it appears in
+   22 |     if (errno == ERANGE) {
+      |         ^~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-894-s3.c:22:18: error: 'ERANGE' undeclared (first use in this function)
+   22 |     if (errno == ERANGE) {
+      |                  ^~~~~~

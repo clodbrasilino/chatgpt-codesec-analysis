@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-326-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-326-s2.c:16:35: style: Condition 'dup==NULL' is always false [knownConditionTrueFalse]
+        if (len + 1 <= len || dup == NULL) {
+                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-326-s2.c:14:9: note: Assuming condition '!dup' is false
+    if (!dup) return NULL;
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-326-s2.c:16:35: note: Condition 'dup==NULL' is always false
+        if (len + 1 <= len || dup == NULL) {
+                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-326-s2.c:56:54: style: Condition 'buffer==NULL' is always false [knownConditionTrueFalse]
+            if (input_len + 1 <= input_len || buffer == NULL) {
+                                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-326-s2.c:51:13: note: Assuming condition '!buffer' is false
+        if (!buffer) {
+            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-326-s2.c:56:54: note: Condition 'buffer==NULL' is always false
+            if (input_len + 1 <= input_len || buffer == NULL) {
+                                                     ^

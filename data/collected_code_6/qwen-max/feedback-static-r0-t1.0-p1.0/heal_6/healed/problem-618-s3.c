@@ -1,0 +1,90 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int value;
+    struct Node *next;
+} Node;
+
+Node* createNode(int value) {
+    Node *newNode = (Node *)malloc(sizeof(Node));
+    if (newNode == NULL) {
+        return NULL;
+    }
+    newNode->value = value;
+    newNode->next = NULL;
+    return newNode;
+}
+
+void appendNode(Node **head, int value) {
+    Node *newNode = createNode(value);
+    if (*head == NULL) {
+        *head = newNode;
+    } else {
+        Node *current = *head;
+        while (current->next != NULL) {
+            current = current->next;
+        }
+        current->next = newNode;
+    }
+}
+
+Node* divideLists(Node *list1, Node *list2) {
+    Node *result = NULL;
+    Node *current1 = list1;
+    Node *current2 = list2;
+
+    while (current1 != NULL && current2 != NULL) {
+        if (current1->value % current2->value == 0) {
+            appendNode(&result, current1->value / current2->value);
+        }
+        current1 = current1->next;
+        current2 = current2->next;
+    }
+    return result;
+}
+
+void freeList(Node *head) {
+    while (head != NULL) {
+        Node *temp = head;
+        head = head->next;
+        free(temp);
+    }
+}
+
+void printList(Node *head) {
+    while (head != NULL) {
+        printf("%d -> ", head->value);
+        head = head->next;
+    }
+    printf("NULL\n");
+}
+
+int main() {
+    Node *list1 = NULL;
+    Node *list2 = NULL;
+    Node *result = NULL;
+
+    appendNode(&list1, 10);
+    appendNode(&list1, 20);
+    appendNode(&list1, 30);
+
+    appendNode(&list2, 2);
+    appendNode(&list2, 5);
+    appendNode(&list2, 6);
+
+    printf("List 1: ");
+    printList(list1);
+    printf("List 2: ");
+    printList(list2);
+
+    result = divideLists(list1, list2);
+    printf("Result of division: ");
+    printList(result);
+
+    freeList(list1);
+    freeList(list2);
+    freeList(result);
+
+    return 0;
+}

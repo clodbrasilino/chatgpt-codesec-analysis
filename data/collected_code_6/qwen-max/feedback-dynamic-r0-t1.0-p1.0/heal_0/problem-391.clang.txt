@@ -1,0 +1,28 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-391.c:33:25: error: no member named 'next' in 'struct Dict'
+   33 |         while (current->next != NULL) {
+      |                ~~~~~~~  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-391.c:34:32: error: no member named 'next' in 'struct Dict'
+   34 |             current = current->next;
+      |                       ~~~~~~~  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-391.c:36:18: error: no member named 'next' in 'struct Dict'
+   36 |         current->next = new_child;
+      |         ~~~~~~~  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-391.c:53:70: error: no member named 'next' in 'struct Dict'
+   53 |         while (current_dict && current_dict->parent && current_dict->next == NULL) {
+      |                                                        ~~~~~~~~~~~~  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-391.c:56:43: error: no member named 'next' in 'struct Dict'
+   56 |         if (current_dict && current_dict->next) {
+      |                             ~~~~~~~~~~~~  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-391.c:57:42: error: no member named 'next' in 'struct Dict'
+   57 |             current_dict = current_dict->next;
+      |                            ~~~~~~~~~~~~  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-391.c:111:28: error: no member named 'next' in 'struct Dict'
+  111 |             child = child->next;
+      |                     ~~~~~  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-391.c:117:28: error: no member named 'next' in 'struct Dict'
+  117 |             child = child->next;
+      |                     ~~~~~  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-391.c:120:36: error: no member named 'next' in 'struct Dict'
+  120 |         nested_dict = nested_dict->next;
+      |                       ~~~~~~~~~~~  ^
+9 errors generated.

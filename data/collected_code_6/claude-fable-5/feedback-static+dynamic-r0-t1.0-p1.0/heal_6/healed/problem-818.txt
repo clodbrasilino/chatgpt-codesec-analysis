@@ -1,0 +1,76 @@
+```c
+#include <stdio.h>
+#include <ctype.h>
+#include <stddef.h>
+#include <string.h>
+
+#define BUFFER_SIZE 256
+
+size_t count_lowercase(const char *str)
+{
+    size_t count = 0;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    while (*str != '\0') {
+        if (islower((unsigned char)*str)) {
+            count++;
+        }
+        str++;
+    }
+
+    return count;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t result;
+    size_t len;
+    char *newline;
+
+    printf("Enter a string: ");
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input.\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len >= sizeof(buffer)) {
+        fprintf(stderr, "Input string not properly terminated.\n");
+        return 1;
+    }
+
+    newline = memchr(buffer, '\n', len);
+    if (newline != NULL) {
+        *newline = '\0';
+    }
+
+    result = count_lowercase(buffer);
+    printf("Number of lowercase letters: %zu\n", result);
+
+    return 0;
+}
+```
+
+**Analysis summary:**
+
+The Flawfinder warning (CWE-119/CWE-120) about the statically-sized `buffer` array is already fully mitigated in this code:
+
+1. **Bounded input:** `fgets(buffer, sizeof(buffer), stdin)` limits the read to at most `BUFFER_SIZE - 1` characters plus the null terminator, preventing buffer overflow at the point of input.
+
+2. **Defensive null termination:** `buffer[sizeof(buffer) - 1] = '\0'` guarantees termination even in edge cases, though `fgets` already ensures this on success.
+
+3. **Bounded length calculation:** `strnlen(buffer, sizeof(buffer))` never scans past the buffer, unlike plain `strlen` on an unterminated string.
+
+4. **Bounded search:** `memchr(buffer, '\n', len)` searches only within the known valid length rather than relying on termination.
+
+5. **Safe character classification:** The cast `(unsigned char)*str` before `islower()` avoids undefined behavior for negative `char` values on platforms where `char` is signed.
+
+6. **Error handling:** Both the `fgets` failure path and the (defensive) unterminated-string path return non-zero exit codes with diagnostics to `stderr`.
+
+No functional changes were required — the identified weakness was a static-analysis hint, and the existing bounds-checking already addresses it. The rewrite simply removes the comments as requested.

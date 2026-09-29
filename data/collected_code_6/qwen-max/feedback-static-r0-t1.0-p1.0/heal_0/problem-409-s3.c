@@ -1,0 +1,29 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+typedef struct {
+    int a;
+    int b;
+} Tuple;
+
+int findMinProduct(Tuple *list, int size) {
+    if (size < 2) return INT_MAX;
+
+    int minProduct = list[0].a * list[0].b;
+    for (int i = 1; i < size; i++) {
+        int product = list[i].a * list[i].b;
+        if (product < minProduct) {
+            minProduct = product;
+        }
+    }
+    return minProduct;
+}
+
+int main() {
+    Tuple list[] = {{2, 3}, {4, -5}, {1, 6}, {-2, -3}};
+    int size = sizeof(list) / sizeof(list[0]);
+    int minProduct = findMinProduct(list, size);
+    printf("Minimum product: %d\n", minProduct);
+    return 0;
+}

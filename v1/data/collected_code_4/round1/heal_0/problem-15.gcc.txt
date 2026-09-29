@@ -1,0 +1,74 @@
+./collected_code_4/round1//heal_0//problem-15.c: In function 'string_splitter':
+./collected_code_4/round1//heal_0//problem-15.c:16:33: warning: dereference of possibly-NULL 'buffer' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   16 |             buffer[buffer_size] = '\0';
+      |             ~~~~~~~~~~~~~~~~~~~~^~~~~~
+  'string_splitter': events 1-4
+    |
+    |   10 |     char* buffer = malloc((len+1)*sizeof(char));
+    |      |                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                    |
+    |      |                    (1) this call could return NULL
+    |......
+    |   14 |     while(i <= len){
+    |      |           ~~~~~~~~  
+    |      |             |
+    |      |             (2) following 'true' branch (when 'i <= len')...
+    |   15 |         if (input_string[i] == '\0' || islower(input_string[i])){
+    |      |                         ~
+    |      |                         |
+    |      |                         (3) ...to here
+    |   16 |             buffer[buffer_size] = '\0';
+    |      |             ~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                                 |
+    |      |                                 (4) 'buffer + (sizetype)buffer_size' could be NULL: unchecked value from (1)
+    |
+./collected_code_4/round1//heal_0//problem-15.c:17:32: warning: dereference of possibly-NULL 'str_array' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   17 |             str_array[counter] = malloc((buffer_size+1)*sizeof(char));
+      |             ~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  'string_splitter': events 1-4
+    |
+    |    9 |     char** str_array = malloc((len+1)*sizeof(char*));
+    |      |                        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                        |
+    |      |                        (1) this call could return NULL
+    |......
+    |   14 |     while(i <= len){
+    |      |           ~~~~~~~~      
+    |      |             |
+    |      |             (2) following 'true' branch (when 'i <= len')...
+    |   15 |         if (input_string[i] == '\0' || islower(input_string[i])){
+    |      |                         ~
+    |      |                         |
+    |      |                         (3) ...to here
+    |   16 |             buffer[buffer_size] = '\0';
+    |   17 |             str_array[counter] = malloc((buffer_size+1)*sizeof(char));
+    |      |             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                                |
+    |      |                                (4) 'str_array + (long unsigned int)counter * 8' could be NULL: unchecked value from (1)
+    |
+./collected_code_4/round1//heal_0//problem-15.c:23:33: warning: dereference of possibly-NULL 'buffer' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   23 |             buffer[buffer_size] = input_string[i];
+      |             ~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~
+  'string_splitter': events 1-6
+    |
+    |   10 |     char* buffer = malloc((len+1)*sizeof(char));
+    |      |                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                    |
+    |      |                    (1) this call could return NULL
+    |......
+    |   14 |     while(i <= len){
+    |      |           ~~~~~~~~  
+    |      |             |
+    |      |             (2) following 'true' branch (when 'i <= len')...
+    |   15 |         if (input_string[i] == '\0' || islower(input_string[i])){
+    |      |            ~            ~
+    |      |            |            |
+    |      |            |            (3) ...to here
+    |      |            (4) following 'false' branch...
+    |......
+    |   23 |             buffer[buffer_size] = input_string[i];
+    |      |             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                                 |             |
+    |      |                                 |             (5) ...to here
+    |      |                                 (6) 'buffer + (sizetype)buffer_size' could be NULL: unchecked value from (1)
+    |

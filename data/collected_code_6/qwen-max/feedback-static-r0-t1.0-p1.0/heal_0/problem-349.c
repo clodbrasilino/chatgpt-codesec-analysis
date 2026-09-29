@@ -1,0 +1,30 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <string.h>
+
+bool is_binary_string(const char *str) {
+    for (int i = 0; str[i] != '\0'; ++i) {
+        if (str[i] != '0' && str[i] != '1') {
+            return false;
+        }
+    }
+    return true;
+}
+
+int main() {
+    const char *test_str = "101010";
+    if (is_binary_string(test_str)) {
+        printf("%s is a binary string.\n", test_str);
+    } else {
+        printf("%s is not a binary string.\n", test_str);
+    }
+
+    const char *test_str2 = "1010210";
+    if (is_binary_string(test_str2)) {
+        printf("%s is a binary string.\n", test_str2);
+    } else {
+        printf("%s is not a binary string.\n", test_str2);
+    }
+
+    return 0;
+}

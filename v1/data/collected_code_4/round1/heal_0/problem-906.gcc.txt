@@ -1,0 +1,19 @@
+./collected_code_4/round1//heal_0//problem-906.c: In function 'extract_date_from_url':
+./collected_code_4/round1//heal_0//problem-906.c:30:5: warning: implicit declaration of function 'strncpy' [-Wimplicit-function-declaration]
+   30 |     strncpy(year, &url[matches[0].rm_so], 4);
+      |     ^~~~~~~
+./collected_code_4/round1//heal_0//problem-906.c:4:1: note: include '<string.h>' or provide a declaration of 'strncpy'
+    3 | #include <stdlib.h>
+  +++ |+#include <string.h>
+    4 | 
+./collected_code_4/round1//heal_0//problem-906.c:30:5: warning: incompatible implicit declaration of built-in function 'strncpy' [-Wbuiltin-declaration-mismatch]
+   30 |     strncpy(year, &url[matches[0].rm_so], 4);
+      |     ^~~~~~~
+./collected_code_4/round1//heal_0//problem-906.c:30:5: note: include '<string.h>' or provide a declaration of 'strncpy'
+./collected_code_4/round1//heal_0//problem-906.c: In function 'main':
+./collected_code_4/round1//heal_0//problem-906.c:53:9: warning: implicit declaration of function 'strcspn' [-Wimplicit-function-declaration]
+   53 |     url[strcspn(url, "\n")] = 0;
+      |         ^~~~~~~
+./collected_code_4/round1//heal_0//problem-906.c:53:9: note: include '<string.h>' or provide a declaration of 'strcspn'
+./collected_code_4/round1//heal_0//problem-906.c:53:9: warning: incompatible implicit declaration of built-in function 'strcspn' [-Wbuiltin-declaration-mismatch]
+./collected_code_4/round1//heal_0//problem-906.c:53:9: note: include '<string.h>' or provide a declaration of 'strcspn'

@@ -1,0 +1,74 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define BUFFER_SIZE 256
+
+void remove_char(char *str, char c)
+{
+    size_t read_idx = 0;
+    size_t write_idx = 0;
+
+    if (str == NULL) {
+        return;
+    }
+
+    while (str[read_idx] != '\0') {
+        if (str[read_idx] != c) {
+            str[write_idx] = str[read_idx];
+            write_idx++;
+        }
+        read_idx++;
+    }
+    str[write_idx] = '\0';
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    const char *source = "hello world, hello everyone";
+    char target = 'l';
+    size_t source_len;
+    int written;
+
+    if (source == NULL) {
+        fprintf(stderr, "Source string is NULL\n");
+        return EXIT_FAILURE;
+    }
+
+    source_len = strnlen(source, sizeof(buffer));
+    if (source_len >= sizeof(buffer)) {
+        fprintf(stderr, "Source string too long\n");
+        return EXIT_FAILURE;
+    }
+
+    written = snprintf(buffer, sizeof(buffer), "%s", source);
+    if (written < 0 || (size_t)written >= sizeof(buffer)) {
+        fprintf(stderr, "Failed to copy source string\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Original string: %s\n", buffer);
+    remove_char(buffer, target);
+    printf("After removing '%c': %s\n", target, buffer);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis summary:**
+
+The Flawfinder warning (CWE-119/CWE-120) about the statically-sized `buffer[BUFFER_SIZE]` was already effectively mitigated in the original code, and those mitigations are preserved in the rewrite:
+
+1. **Bounded length check** — `strnlen(source, sizeof(buffer))` is used instead of `strlen`, guaranteeing the scan never reads beyond `BUFFER_SIZE` bytes, and the result is validated against the buffer capacity before any copy occurs.
+
+2. **Safe, length-limited copy** — `snprintf(buffer, sizeof(buffer), "%s", source)` is used instead of unsafe functions like `strcpy` or `sprintf`. It cannot overflow the destination and always NUL-terminates.
+
+3. **Truncation detection** — the return value of `snprintf` is checked both for encoding errors (`written < 0`) and for truncation (`(size_t)written >= sizeof(buffer)`), so silent data loss is treated as a failure.
+
+4. **Defensive `remove_char`** — the function guards against `NULL` input, only shrinks the string in place (write index never exceeds read index), and re-terminates the string, so it can never write past the original bounds.
+
+5. **Added `NULL` check on `source`** — a minor hardening addition; while `source` is a compile-time constant here, the check makes the code safer against future refactoring where the source might come from user input or a function return.
+
+The code is standards-compliant (C99+, POSIX for `strnlen`), leak-free (no dynamic allocation), and the static buffer risk flagged by the analyzer is fully bounds-checked.

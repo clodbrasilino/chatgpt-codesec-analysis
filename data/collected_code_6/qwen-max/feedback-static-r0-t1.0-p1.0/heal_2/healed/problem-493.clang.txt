@@ -1,0 +1,15 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-493.c:19:35: error: array type 'PointList' (aka 'Point *[6]') is not assignable
+   19 |             hexGrid[i * cols + j] = malloc(6 * sizeof(Point));
+      |             ~~~~~~~~~~~~~~~~~~~~~ ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-493.c:28:45: error: unexpected type name 'Point': expected expression
+   28 |                 hexGrid[i * cols + j][k] = &Point{0.0, 0.0};
+      |                                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-493.c:28:50: error: expected ';' after expression
+   28 |                 hexGrid[i * cols + j][k] = &Point{0.0, 0.0};
+      |                                                  ^
+      |                                                  ;
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-493.c:28:59: error: expected ';' after expression
+   28 |                 hexGrid[i * cols + j][k] = &Point{0.0, 0.0};
+      |                                                           ^
+      |                                                           ;
+4 errors generated.

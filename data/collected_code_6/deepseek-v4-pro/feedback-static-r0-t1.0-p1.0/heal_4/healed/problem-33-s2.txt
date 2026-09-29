@@ -1,0 +1,86 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <limits.h>
+
+void decimalToBinary(int decimal, char *binary, size_t size) {
+    if (size == 0) {
+        return;
+    }
+
+    if (decimal == 0) {
+        if (size < 2) {
+            binary[0] = '\0';
+            return;
+        }
+        binary[0] = '0';
+        binary[1] = '\0';
+        return;
+    }
+
+    size_t index = 0;
+    unsigned int value;
+
+    if (decimal < 0) {
+        if (size < 2) {
+            binary[0] = '\0';
+            return;
+        }
+        binary[index++] = '-';
+        value = (unsigned int)(-(decimal + 1)) + 1;
+    } else {
+        value = (unsigned int)decimal;
+    }
+
+    size_t remaining = size - index;
+    char *temp = malloc(remaining);
+    if (temp == NULL) {
+        if (index < size) {
+            binary[index] = '\0';
+        }
+        return;
+    }
+
+    size_t temp_index = 0;
+    while (value > 0 && temp_index < remaining - 1) {
+        temp[temp_index++] = (value % 2) + '0';
+        value /= 2;
+    }
+    temp[temp_index] = '\0';
+
+    for (size_t i = 0; i < temp_index && index < size - 1; i++) {
+        binary[index++] = temp[temp_index - i - 1];
+    }
+
+    if (index < size) {
+        binary[index] = '\0';
+    } else {
+        binary[size - 1] = '\0';
+    }
+
+    free(temp);
+}
+
+int main(void) {
+    int decimal;
+    char *binary = malloc(sizeof(int) * CHAR_BIT + 2);
+    if (binary == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter a decimal number: ");
+    if (scanf("%d", &decimal) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        free(binary);
+        return EXIT_FAILURE;
+    }
+
+    decimalToBinary(decimal, binary, sizeof(int) * CHAR_BIT + 2);
+    printf("Binary representation: %s\n", binary);
+
+    free(binary);
+    return EXIT_SUCCESS;
+}
+```

@@ -1,0 +1,42 @@
+#include <stdio.h>
+#include <limits.h>
+
+typedef struct {
+    int a;
+    int b;
+} Tuple;
+
+int find_min_tuple_difference(Tuple *tuples, size_t size) {
+    if (tuples == NULL || size == 0) {
+        return -1;
+    }
+
+    long long min_diff = LLONG_MAX;
+
+    for (size_t i = 0; i < size; i++) {
+        long long diff = tuples[i].a > tuples[i].b ? 
+                         (long long)tuples[i].a - tuples[i].b : 
+                         (long long)tuples[i].b - tuples[i].a;
+        
+        if (diff < min_diff) {
+            min_diff = diff;
+        }
+    }
+
+    if (min_diff > INT_MAX) {
+        return INT_MAX;
+    }
+
+    return (int)min_diff;
+}
+
+int main(void) {
+    Tuple tuples[] = {{5, 2}, {10, 1}, {3, 4}};
+    size_t size = sizeof(tuples) / sizeof(tuples[0]);
+    
+    int result = find_min_tuple_difference(tuples, size);
+    
+    printf("%d\n", result);
+    
+    return 0;
+}

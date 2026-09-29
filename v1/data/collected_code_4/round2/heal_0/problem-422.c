@@ -1,0 +1,23 @@
+#include <stdio.h>
+
+float averageOfCubes(int n) {
+    float sum = 0;
+    if(n<=0) {
+        printf("Invalid input. Number should be greater than 0.\n");
+        return 0;
+    }
+
+    for(int i = 1; i <= n; i++) {
+        sum += i*i*i;
+    }
+
+    return sum/n;
+}
+
+int main() {
+    int n;
+    printf("Enter a number: ");
+    scanf("%d", &n);
+    printf("Average of cubes of first %d natural numbers is %.2f\n", n, averageOfCubes(n));
+    return 0;
+}

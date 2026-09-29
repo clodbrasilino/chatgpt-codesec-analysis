@@ -1,0 +1,54 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+double tetrahedron_area(double side)
+{
+    return sqrt(3.0) * side * side;
+}
+
+int main(void)
+{
+    double side = 0.0;
+    double area = 0.0;
+    int result = 0;
+
+    printf("Enter the side length of the tetrahedron: ");
+    result = scanf("%lf", &side);
+
+    if (result != 1) {
+        fprintf(stderr, "Error: invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (side <= 0.0) {
+        fprintf(stderr, "Error: side length must be positive.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (!isfinite(side)) {
+        fprintf(stderr, "Error: side length must be a finite number.\n");
+        return EXIT_FAILURE;
+    }
+
+    area = tetrahedron_area(side);
+
+    if (!isfinite(area)) {
+        fprintf(stderr, "Error: computation overflow.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("The surface area of the tetrahedron is: %f\n", area);
+
+    return EXIT_SUCCESS;
+}
+```
+
+This program calculates the surface area of a regular tetrahedron using the formula **A = √3 × a²**, where `a` is the side length. Key safety measures:
+
+- **CWE-703 avoidance**: The return value of `scanf` is checked, the side length is validated as positive and finite, and the computed result is verified against overflow with `isfinite`.
+- **CWE-664 avoidance**: No dynamic resources (memory, files) are allocated, so there are no lifetime management issues; all variables are initialized before use.
+- **CWE-710 avoidance**: The code follows standard C conventions — `int main(void)`, explicit return codes via `EXIT_SUCCESS`/`EXIT_FAILURE`, errors written to `stderr`, and consistent use of `double` throughout.
+
+Compile with: `gcc -Wall -Wextra -o tetrahedron tetrahedron.c -lm`

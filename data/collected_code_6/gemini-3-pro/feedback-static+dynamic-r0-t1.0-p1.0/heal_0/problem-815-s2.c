@@ -1,0 +1,49 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+void sort_012(int *arr, size_t size) {
+    if (arr == NULL || size == 0) {
+        return;
+    }
+
+    size_t count0 = 0;
+    size_t count1 = 0;
+    size_t count2 = 0;
+
+    for (size_t i = 0; i < size; ++i) {
+        if (arr[i] == 0) {
+            count0++;
+        } else if (arr[i] == 1) {
+            count1++;
+        } else if (arr[i] == 2) {
+            count2++;
+        } else {
+            return; 
+        }
+    }
+
+    size_t index = 0;
+    for (size_t i = 0; i < count0; ++i) {
+        arr[index++] = 0;
+    }
+    for (size_t i = 0; i < count1; ++i) {
+        arr[index++] = 1;
+    }
+    for (size_t i = 0; i < count2; ++i) {
+        arr[index++] = 2;
+    }
+}
+
+int main(void) {
+    int arr[] = {0, 1, 1, 0, 1, 2, 1, 2, 0, 0, 0, 1};
+    size_t size = sizeof(arr) / sizeof(arr[0]);
+
+    sort_012(arr, size);
+
+    for (size_t i = 0; i < size; ++i) {
+        printf("%d ", arr[i]);
+    }
+    printf("\n");
+
+    return 0;
+}

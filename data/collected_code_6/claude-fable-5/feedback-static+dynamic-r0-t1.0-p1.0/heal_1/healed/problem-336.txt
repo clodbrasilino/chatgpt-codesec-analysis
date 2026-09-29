@@ -1,0 +1,84 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdlib.h>
+
+#define MONTH_BUF_SIZE 32
+#define INPUT_BUF_SIZE 64
+
+static int has_28_days(const char *month)
+{
+    char normalized[MONTH_BUF_SIZE];
+    size_t len;
+    size_t i;
+
+    if (month == NULL) {
+        return 0;
+    }
+
+    len = strnlen(month, sizeof(normalized));
+    if (len == 0 || len >= sizeof(normalized)) {
+        return 0;
+    }
+
+    for (i = 0; i < len; i++) {
+        normalized[i] = (char)tolower((unsigned char)month[i]);
+    }
+    normalized[len] = '\0';
+
+    if (strcmp(normalized, "february") == 0) {
+        return 1;
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    char input[INPUT_BUF_SIZE];
+    size_t len;
+
+    printf("Enter a month name: ");
+    fflush(stdout);
+
+    if (fgets(input, sizeof(input), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    input[sizeof(input) - 1] = '\0';
+
+    len = strnlen(input, sizeof(input));
+    if (len > 0 && input[len - 1] == '\n') {
+        input[len - 1] = '\0';
+    } else if (len == sizeof(input) - 1) {
+        int c;
+        while ((c = getchar()) != '\n' && c != EOF) {
+        }
+    }
+
+    if (has_28_days(input)) {
+        printf("%s has 28 days.\n", input);
+    } else {
+        printf("%s does not have exactly 28 days.\n", input);
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the original code and the fixes applied:**
+
+The original code was already in reasonably good shape — the Flawfinder hits were mostly low-risk, informational warnings. Here's how each was addressed:
+
+1. **`char normalized[32]` / `char input[64]` (CWE-119/CWE-120, statically-sized arrays):** Both buffers were already protected — `normalized` by an explicit `len >= sizeof(normalized)` check before copying, and `input` by `fgets(input, sizeof(input), stdin)`, which limits the read length. I kept those protections and replaced magic numbers with named constants (`MONTH_BUF_SIZE`, `INPUT_BUF_SIZE`) to keep the size and its checks consistent.
+
+2. **`strlen` on possibly non-terminated strings (CWE-126):** Replaced both `strlen` calls with `strnlen`, bounded by the relevant buffer size. This guarantees no over-read even if a caller ever passes a non-terminated buffer to `has_28_days`. For `input`, `fgets` always NUL-terminates on success, but I added a defensive `input[sizeof(input) - 1] = '\0';` as a belt-and-braces guarantee before calling `strnlen`.
+
+3. **Additional hardening (beyond Flawfinder's findings):**
+   - `fflush(stdout)` after the prompt ensures it's displayed before blocking on input (the prompt has no trailing newline).
+   - If input exceeds the buffer (no newline found and buffer full), the remainder of the line is drained from `stdin` so leftover characters can't affect subsequent reads.
+   - The `tolower` call already correctly casts to `unsigned char`, avoiding undefined behavior on negative `char` values — that was preserved.
+
+The overall structure, logic, and behavior are unchanged; the rewrite simply makes the implicit safety guarantees explicit and removes any reliance on assumptions about NUL termination.

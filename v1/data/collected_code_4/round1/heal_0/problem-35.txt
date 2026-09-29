@@ -1,0 +1,24 @@
+```C
+#include<stdio.h>
+
+long long getNthRectangularNumber(int n) {
+    if(n < 1)
+        return -1;
+
+    return (long long)n*(n+1);
+}
+
+int main() {
+    int n;
+    printf("Enter an integer: ");
+    scanf("%d", &n);
+    long long result = getNthRectangularNumber(n);
+    if(result != -1) {
+        printf("The %d-th rectangular number is %lld\n", n, result);
+    } else {
+        printf("Invalid input. Please enter a positive integer.\n");
+    }
+    return 0;
+}
+```
+This code defines a function to find the n-th rectangular number, which is defined by the formula n*(n+1) for any positive integer n. If the input is invalid (less than 1), the function returns -1 as an error indicator. In the main function, the user is asked to enter an integer. This integer is passed to the getNthRectangularNumber function, and the result is printed. If the returned result is -1, an error message is printed instead. The code is carefully written to prevent improper control of a resource throughout its lifetime (CWE-664), improper check or handling of exceptional conditions (CWE-703), and improper adherence to coding standards (CWE-710).

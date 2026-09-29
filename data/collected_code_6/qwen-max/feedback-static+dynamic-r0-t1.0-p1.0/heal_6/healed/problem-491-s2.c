@@ -1,0 +1,34 @@
+#include <stdio.h>
+#include <math.h>
+#include <limits.h>
+#include <float.h>
+
+double sumOfGP(int a, int n, int r) {
+    if (r == 1) {
+        if (n > 0 && a != 0) {
+            return (double)a * (double)n;
+        } else {
+            return 0.0;
+        }
+    } else if (n > 0) {
+        double term = 1 - pow(r, n);
+        double denominator = 1 - r;
+        if (term != 0.0 && denominator != 0.0 && isfinite(term / denominator) && (double)a * (term / denominator) <= DBL_MAX && (double)a * (term / denominator) >= -DBL_MAX) {
+            return (double)a * (term / denominator);
+        } else {
+            return 0.0;
+        }
+    }
+    return 0.0;
+}
+
+int main() {
+    int a, n, r;
+    printf("Enter the first term, number of terms, and common ratio: ");
+    if (scanf("%d %d %d", &a, &n, &r) != 3) {
+        return 1;
+    }
+    double result = sumOfGP(a, n, r);
+    printf("Sum of the geometric progression is: %.2f\n", result);
+    return 0;
+}

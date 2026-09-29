@@ -1,0 +1,118 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node* next;
+} Node;
+
+typedef struct ListOfLists {
+    Node* head;
+    struct ListOfLists* next;
+} ListOfLists;
+
+Node* reverseList(Node* head) {
+    Node* prev = NULL;
+    Node* current = head;
+    Node* next = NULL;
+
+    while (current != NULL) {
+        next = current->next;
+        current->next = prev;
+        prev = current;
+        current = next;
+    }
+    return prev;
+}
+
+void reverseListOfLists(ListOfLists* lol) {
+    ListOfLists* current = lol;
+    while (current != NULL) {
+        current->head = reverseList(current->head);
+        current = current->next;
+    }
+}
+
+Node* createNode(int data) {
+    Node* newNode = (Node*)malloc(sizeof(Node));
+    if (!newNode) {
+        exit(EXIT_FAILURE);
+    }
+    newNode->data = data;
+    newNode->next = NULL;
+    return newNode;
+}
+
+ListOfLists* createListOfListsNode(Node* head) {
+    ListOfLists* newNode = (ListOfLists*)malloc(sizeof(ListOfLists));
+    if (!newNode) {
+        exit(EXIT_FAILURE);
+    }
+    newNode->head = head;
+    newNode->next = NULL;
+    return newNode;
+}
+
+void printList(Node* head) {
+    Node* current = head;
+    while (current != NULL) {
+        printf("%d ", current->data);
+        current = current->next;
+    }
+    printf("\n");
+}
+
+void printListOfLists(ListOfLists* lol) {
+    ListOfLists* current = lol;
+    while (current != NULL) {
+        printList(current->head);
+        current = current->next;
+    }
+}
+
+void freeList(Node* head) {
+    Node* current = head;
+    Node* next = NULL;
+    while (current != NULL) {
+        next = current->next;
+        free(current);
+        current = next;
+    }
+}
+
+void freeListOfLists(ListOfLists* lol) {
+    ListOfLists* current = lol;
+    ListOfLists* next = NULL;
+    while (current != NULL) {
+        next = current->next;
+        freeList(current->head);
+        free(current);
+        current = next;
+    }
+}
+
+int main(void) {
+    Node* list1 = createNode(1);
+    list1->next = createNode(2);
+    list1->next->next = createNode(3);
+
+    Node* list2 = createNode(4);
+    list2->next = createNode(5);
+
+    Node* list3 = createNode(6);
+    list3->next = createNode(7);
+    list3->next->next = createNode(8);
+    list3->next->next->next = createNode(9);
+
+    ListOfLists* lol = createListOfListsNode(list1);
+    lol->next = createListOfListsNode(list2);
+    lol->next->next = createListOfListsNode(list3);
+
+    reverseListOfLists(lol);
+
+    printListOfLists(lol);
+
+    freeListOfLists(lol);
+
+    return 0;
+}

@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-328-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-328-s2.c:55:16: style: Condition 'result!=0' is always true [knownConditionTrueFalse]
+    if (result != 0) {
+               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-328-s2.c:54:25: note: Calling function 'rotate_left' returns -1
+    result = rotate_left(NULL, 5, 2);
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-328-s2.c:54:25: note: Assignment 'result=rotate_left(NULL,5,2)', assigned value is -1
+    result = rotate_left(NULL, 5, 2);
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-328-s2.c:55:16: note: Condition 'result!=0' is always true
+    if (result != 0) {
+               ^

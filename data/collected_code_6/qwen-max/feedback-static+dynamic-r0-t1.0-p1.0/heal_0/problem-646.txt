@@ -1,0 +1,20 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+long long count_cubes(long n, long k) {
+    return (n - k + 1) * (n - k + 1) * (n - k + 1);
+}
+
+int main() {
+    long n, k;
+    scanf("%ld %ld", &n, &k);
+    if (n >= k && k > 0) {
+        printf("%lld\n", count_cubes(n, k));
+    } else {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    return EXIT_SUCCESS;
+}
+```

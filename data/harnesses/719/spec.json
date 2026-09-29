@@ -1,0 +1,44 @@
+{
+  "task_id": 719,
+  "text": "Write a C function that matches a string that has an a followed by zero or more b's.",
+  "fn_candidates": [
+    "text_match",
+    "TextMatch",
+    "textMatch",
+    "textmatch"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "text_match",
+      "args": [
+        "ac"
+      ],
+      "expected": "Found a match!",
+      "assert_src": "assert text_match(\"ac\")==('Found a match!')"
+    },
+    {
+      "fn_name": "text_match",
+      "args": [
+        "dc"
+      ],
+      "expected": "Not matched!",
+      "assert_src": "assert text_match(\"dc\")==('Not matched!')"
+    },
+    {
+      "fn_name": "text_match",
+      "args": [
+        "abba"
+      ],
+      "expected": "Found a match!",
+      "assert_src": "assert text_match(\"abba\")==('Found a match!')"
+    }
+  ],
+  "arg_kinds": [
+    "str"
+  ],
+  "return_kind": "str",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

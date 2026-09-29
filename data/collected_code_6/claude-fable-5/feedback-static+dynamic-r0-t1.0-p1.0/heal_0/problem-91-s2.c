@@ -1,0 +1,47 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+#include <stddef.h>
+
+bool substring_in_list(const char *substr, const char *const *list, size_t count);
+
+bool substring_in_list(const char *substr, const char *const *list, size_t count)
+{
+    size_t i;
+
+    if (substr == NULL || list == NULL) {
+        return false;
+    }
+
+    for (i = 0; i < count; i++) {
+        if (list[i] != NULL && strstr(list[i], substr) != NULL) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+int main(void)
+{
+    const char *const words[] = {
+        "apple pie",
+        "banana split",
+        "cherry cake",
+        "grape juice"
+    };
+    size_t count = sizeof(words) / sizeof(words[0]);
+    const char *target = "banana";
+
+    if (substring_in_list(target, words, count)) {
+        if (printf("Substring \"%s\" found in the list.\n", target) < 0) {
+            return 1;
+        }
+    } else {
+        if (printf("Substring \"%s\" not found in the list.\n", target) < 0) {
+            return 1;
+        }
+    }
+
+    return 0;
+}

@@ -1,0 +1,60 @@
+#include <stdio.h>
+#include <limits.h>
+#include <errno.h>
+
+double average_of_odd_numbers(int limit)
+{
+    if (limit <= 0 || (limit % 2) == 0) {
+        return -1.0;
+    }
+    
+    long long sum = 0;
+    int count = 0;
+    
+    for (int i = 1; i <= limit; i += 2) {
+        if (sum > LLONG_MAX - i) {
+            return -1.0;
+        }
+        sum += i;
+        count++;
+    }
+    
+    if (count == 0) {
+        return -1.0;
+    }
+    
+    return (double)sum / count;
+}
+
+int main(void)
+{
+    int limit;
+    
+    printf("Enter an odd positive number: ");
+    
+    if (scanf("%d", &limit) != 1) {
+        fprintf(stderr, "Error: Invalid input\n");
+        return 1;
+    }
+    
+    if (limit <= 0) {
+        fprintf(stderr, "Error: Number must be positive\n");
+        return 1;
+    }
+    
+    if ((limit % 2) == 0) {
+        fprintf(stderr, "Error: Number must be odd\n");
+        return 1;
+    }
+    
+    double result = average_of_odd_numbers(limit);
+    
+    if (result < 0.0) {
+        fprintf(stderr, "Error: Calculation failed\n");
+        return 1;
+    }
+    
+    printf("Average of odd numbers from 1 to %d: %.2f\n", limit, result);
+    
+    return 0;
+}

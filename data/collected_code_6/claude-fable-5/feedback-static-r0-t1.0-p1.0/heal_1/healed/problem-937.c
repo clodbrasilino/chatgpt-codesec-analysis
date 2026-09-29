@@ -1,0 +1,53 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <limits.h>
+
+#define MAX_INPUT_LEN 4096
+
+int most_common_char(const char *str, size_t max_len, char *result)
+{
+    size_t counts[UCHAR_MAX + 1] = {0};
+    size_t max_count = 0;
+    size_t i;
+    size_t len;
+    unsigned char best = 0;
+
+    if (str == NULL || result == NULL) {
+        return -1;
+    }
+
+    len = strnlen(str, max_len);
+    if (len == 0 || len == max_len) {
+        return -1;
+    }
+
+    for (i = 0; i < len; i++) {
+        unsigned char c = (unsigned char)str[i];
+        counts[c]++;
+        if (counts[c] > max_count) {
+            max_count = counts[c];
+            best = c;
+        }
+    }
+
+    *result = (char)best;
+    return 0;
+}
+
+int main(void)
+{
+    const char *text = "programming in c is powerful";
+    char most_common;
+
+    if (most_common_char(text, MAX_INPUT_LEN, &most_common) != 0) {
+        fprintf(stderr, "Error: invalid or empty input string\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Most common character: '%c'\n", most_common) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

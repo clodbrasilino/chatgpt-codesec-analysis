@@ -1,0 +1,30 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int findParity(unsigned int num) {
+    int parity = 0;
+    while (num) {
+        parity = !parity;
+        num = num & (num - 1);
+    }
+    return parity;
+}
+
+int main(void) {
+    unsigned int number;
+    int result;
+
+    printf("Enter a positive integer: ");
+    if (scanf("%u", &number) != 1) {
+        fprintf(stderr, "Invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    result = findParity(number);
+
+    printf("Parity of %u is %d\n", number, result);
+
+    return EXIT_SUCCESS;
+}
+```

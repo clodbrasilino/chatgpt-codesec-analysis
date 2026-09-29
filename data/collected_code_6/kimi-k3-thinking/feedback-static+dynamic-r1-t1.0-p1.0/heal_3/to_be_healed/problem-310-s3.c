@@ -1,0 +1,212 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+#define MAX_INPUT_LENGTH 4096
+
+typedef struct {
+    char **elements;
+    size_t count;
+    size_t capacity;
+} Tuple;
+
+static size_t bounded_strlen(const char *s, size_t max_len)
+{
+    size_t len = 0;
+
+    if (s == NULL) {
+        return 0;
+    }
+    while (len < max_len && s[len] != '\0') {
+        len++;
+    }
+    return len;
+}
+
+static int tuple_init(Tuple *tuple, size_t capacity)
+{
+    if (tuple == NULL || capacity == 0) {
+        return -1;
+    }
+    tuple->elements = calloc(capacity, sizeof(*tuple->elements));
+    if (tuple->elements == NULL) {
+        return -1;
+    }
+    tuple->count = 0;
+    tuple->capacity = capacity;
+    return 0;
+}
+
+static void tuple_destroy(Tuple *tuple)
+{
+    if (tuple == NULL) {
+        return;
+    }
+    if (tuple->elements != NULL) {
+        for (size_t i = 0; i < tuple->count; i++) {
+            free(tuple->elements[i]);
+        }
+        free(tuple->elements);
+        tuple->elements = NULL;
+    }
+    tuple->count = 0;
+    tuple->capacity = 0;
+}
+
+static void trim_segment(const char **start, size_t *length)
+{
+    if (start == NULL || *start == NULL || length == NULL) {
+        return;
+    }
+    while (*length > 0 && (*start)[0] == ' ') {
+        (*start)++;
+        (*length)--;
+    }
+    while (*length > 0 && (*start)[*length - 1] == ' ') {
+        (*length)--;
+    }
+}
+
+static int tuple_append(Tuple *tuple, const char *data, size_t length)
+{
+    char *element;
+
+    if (tuple == NULL || data == NULL || tuple->elements == NULL ||
+        tuple->count >= tuple->capacity) {
+        return -1;
+    }
+    if (length == SIZE_MAX) {
+        return -1;
+    }
+    element = malloc(length + 1);
+    if (element == NULL) {
+        return -1;
+    }
+    if (length > 0) {
+        /* Possible weaknesses found:
+         * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+         */
+        memcpy(element, data, length);
+    }
+    element[length] = '\0';
+    tuple->elements[tuple->count] = element;
+    tuple->count++;
+    return 0;
+}
+
+int string_to_tuple(const char *str, Tuple *tuple)
+{
+    size_t length;
+    size_t start = 0;
+    size_t end;
+    size_t span;
+    size_t commas = 0;
+    const char *body;
+    const char *cursor;
+    const char *segment_start;
+
+    if (str == NULL || tuple == NULL) {
+        return -1;
+    }
+
+    length = bounded_strlen(str, MAX_INPUT_LENGTH);
+    if (length >= MAX_INPUT_LENGTH) {
+        return -1;
+    }
+
+    while (start < length && str[start] == ' ') {
+        start++;
+    }
+    if (start == length) {
+        return -1;
+    }
+
+    end = length;
+    while (str[end - 1] == ' ') {
+        end--;
+    }
+
+    span = end - start;
+    if (span < 2) {
+        return -1;
+    }
+
+    body = str + start;
+    if (body[0] != '(' || body[span - 1] != ')') {
+        return -1;
+    }
+
+    for (size_t i = 1; i + 1 < span; i++) {
+        if (body[i] == ',') {
+            commas++;
+        }
+    }
+
+    if (tuple_init(tuple, commas + 1) != 0) {
+        return -1;
+    }
+
+    cursor = body + 1;
+    segment_start = cursor;
+
+    while (cursor < body + span - 1) {
+        if (*cursor == ',') {
+            size_t seg_len = (size_t)(cursor - segment_start);
+            trim_segment(&segment_start, &seg_len);
+            if (tuple_append(tuple, segment_start, seg_len) != 0) {
+                tuple_destroy(tuple);
+                return -1;
+            }
+            segment_start = cursor + 1;
+        }
+        cursor++;
+    }
+
+    {
+        size_t seg_len = (size_t)(cursor - segment_start);
+        trim_segment(&segment_start, &seg_len);
+        if (seg_len > 0) {
+            if (tuple_append(tuple, segment_start, seg_len) != 0) {
+                tuple_destroy(tuple);
+                return -1;
+            }
+        }
+    }
+
+    return 0;
+}
+
+static void tuple_print(const Tuple *tuple)
+{
+    if (tuple == NULL) {
+        return;
+    }
+    putchar('(');
+    for (size_t i = 0; i < tuple->count; i++) {
+        if (i > 0) {
+            printf(", ");
+        }
+        printf("%s", tuple->elements[i]);
+    }
+    printf(")\n");
+}
+
+int main(void)
+{
+    Tuple tuple;
+    const char *input = "(C, is, a, powerful, language)";
+
+    if (string_to_tuple(input, &tuple) != 0) {
+        fprintf(stderr, "Error: unable to convert string to tuple.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Input string: %s\n", input);
+    printf("Tuple element count: %zu\n", tuple.count);
+    printf("Resulting tuple: ");
+    tuple_print(&tuple);
+
+    tuple_destroy(&tuple);
+    return EXIT_SUCCESS;
+}

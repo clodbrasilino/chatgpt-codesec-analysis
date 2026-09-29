@@ -1,0 +1,138 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdbool.h>
+#include <stddef.h>
+
+#define MAX_INPUT_LEN 128
+
+static bool is_decimal_precision_two(const char *str, size_t max_len)
+{
+    size_t len;
+    size_t i = 0;
+    size_t digits_before = 0;
+    size_t digits_after = 0;
+    bool dot_found = false;
+
+    if (str == NULL || max_len == 0) {
+        return false;
+    }
+
+    len = strnlen(str, max_len);
+    if (len == 0 || len == max_len) {
+        return false;
+    }
+
+    if (str[i] == '+' || str[i] == '-') {
+        i++;
+        if (i == len) {
+            return false;
+        }
+    }
+
+    for (; i < len; i++) {
+        if (isdigit((unsigned char)str[i])) {
+            if (dot_found) {
+                digits_after++;
+            } else {
+                digits_before++;
+            }
+        } else if (str[i] == '.') {
+            if (dot_found) {
+                return false;
+            }
+            dot_found = true;
+        } else {
+            return false;
+        }
+    }
+
+    if (digits_before == 0) {
+        return false;
+    }
+
+    if (dot_found && (digits_after == 0 || digits_after > 2)) {
+        return false;
+    }
+
+    return true;
+}
+
+static void discard_remaining_input(void)
+{
+    int ch;
+
+    do {
+        ch = getchar();
+    } while (ch != '\n' && ch != EOF);
+}
+
+static bool read_line(char *buffer, size_t size)
+{
+    size_t len;
+
+    if (buffer == NULL || size < 2 || size > (size_t)INT_MAX) {
+        return false;
+    }
+
+    if (fgets(buffer, (int)size, stdin) == NULL) {
+        return false;
+    }
+
+    buffer[size - 1] = '\0';
+
+    len = strnlen(buffer, size);
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+        return true;
+    }
+
+    if (len == size - 1) {
+        discard_remaining_input();
+        return false;
+    }
+
+    return true;
+}
+
+int main(void)
+{
+    char buffer[MAX_INPUT_LEN] = {0};
+
+    printf("Enter a number: ");
+    fflush(stdout);
+
+    if (!read_line(buffer, sizeof(buffer))) {
+        fprintf(stderr, "Input error or input too long\n");
+        return 1;
+    }
+
+    if (is_decimal_precision_two(buffer, sizeof(buffer))) {
+        printf("Valid decimal with precision of 2: %s\n", buffer);
+    } else {
+        printf("Invalid decimal with precision of 2: %s\n", buffer);
+    }
+
+    return 0;
+}
+```
+
+Note: the above uses `INT_MAX`, so `#include <limits.h>` must be added. Here is the corrected include list:
+
+```c
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdbool.h>
+#include <stddef.h>
+#include <limits.h>
+```
+
+Summary of the changes made to address the flagged weaknesses:
+
+1. **Flawfinder `getchar` (CWE-120, CWE-20)**: The `getchar` loop was already bounded correctly (it reads until newline or EOF without storing into any buffer, so no overflow is possible). It was factored into a dedicated `discard_remaining_input()` function to make its intent explicit and keep it isolated from buffer-handling logic.
+
+2. **Flawfinder `char` statically-sized array (CWE-119/CWE-120)**: The fixed-size `buffer` is safe because every access is bounds-checked: `fgets` is limited by `sizeof(buffer)`, forced NUL termination is applied at `size - 1`, and `strnlen` is used instead of `strlen`. As hardening, the buffer is now zero-initialized, and `read_line` validates that `size` fits in an `int` before the cast passed to `fgets`, eliminating a potential signed-conversion issue for very large sizes.
+
+3. All other defensive measures (NULL checks, `strnlen` bounds, unsigned-char cast for `isdigit`, overflow-line detection and stream draining) were preserved, as they already correctly mitigate the reported CWE categories.

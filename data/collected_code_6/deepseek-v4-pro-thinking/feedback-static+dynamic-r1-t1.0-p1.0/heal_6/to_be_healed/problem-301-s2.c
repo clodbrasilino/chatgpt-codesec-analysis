@@ -1,0 +1,112 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_KEY_LEN 255
+
+typedef struct Dict Dict;
+typedef struct DictEntry DictEntry;
+
+struct DictEntry {
+    char *key;
+    Dict *nested;
+    DictEntry *next;
+};
+
+struct Dict {
+    DictEntry *entries;
+};
+
+static Dict *dict_create(void) {
+    Dict *dict = malloc(sizeof(*dict));
+    if (dict) {
+        dict->entries = NULL;
+    }
+    return dict;
+}
+
+static int dict_add(Dict *dict, const char *key, Dict *nested) {
+    if (!dict || !key) return -1;
+    size_t len = strnlen(key, MAX_KEY_LEN);
+    if (len >= MAX_KEY_LEN) return -1;
+    DictEntry *entry = malloc(sizeof(*entry));
+    if (!entry) return -1;
+    entry->key = malloc(len + 1);
+    if (!entry->key) {
+        free(entry);
+        return -1;
+    }
+    /* Possible weaknesses found:
+     * Flawfinder strcpy: Does not check for buffer overflows when copying to destination [MS-banned] (CWE-120). Consider using snprintf, strcpy_s, or strlcpy (warning: strncpy easily misused). (risk 4, buffer)
+     */
+    strcpy(entry->key, key);
+    entry->nested = nested;
+    entry->next = dict->entries;
+    dict->entries = entry;
+    return 0;
+}
+
+static void dict_free(Dict *dict) {
+    if (!dict) return;
+    DictEntry *entry = dict->entries;
+    while (entry) {
+        DictEntry *next = entry->next;
+        free(entry->key);
+        dict_free(entry->nested);
+        free(entry);
+        entry = next;
+    }
+    free(dict);
+}
+
+int dict_depth(const Dict *dict) {
+    if (!dict) return 0;
+    int max_child_depth = 0;
+    const DictEntry *entry = dict->entries;
+    while (entry) {
+        if (entry->nested) {
+            int child_depth = dict_depth(entry->nested);
+            if (child_depth > max_child_depth)
+                max_child_depth = child_depth;
+        }
+        entry = entry->next;
+    }
+    return max_child_depth + 1;
+}
+
+int main(void) {
+    Dict *root = NULL;
+    Dict *level1 = NULL;
+    Dict *level2 = NULL;
+
+    root = dict_create();
+    if (!root) return 1;
+    level1 = dict_create();
+    if (!level1) {
+        dict_free(root);
+        return 1;
+    }
+    level2 = dict_create();
+    if (!level2) {
+        dict_free(level1);
+        dict_free(root);
+        return 1;
+    }
+
+    if (dict_add(level2, "a", NULL) != 0) goto fail;
+    if (dict_add(level1, "b", level2) != 0) goto fail;
+    level2 = NULL;
+    if (dict_add(root, "c", NULL) != 0) goto fail;
+    if (dict_add(root, "d", level1) != 0) goto fail;
+    level1 = NULL;
+
+    printf("%d\n", dict_depth(root));
+    dict_free(root);
+    return 0;
+
+fail:
+    dict_free(level2);
+    dict_free(level1);
+    dict_free(root);
+    return 1;
+}

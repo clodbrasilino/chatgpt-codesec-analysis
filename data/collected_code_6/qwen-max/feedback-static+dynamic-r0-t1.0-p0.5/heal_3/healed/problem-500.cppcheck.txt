@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_3/healed/problem-500.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_3/healed/problem-500.c:11:30: style: Condition 'len>0' is always true [knownConditionTrueFalse]
+        if (len == 0 || (len > 0 && list[i][len-1] == '\0')) {
+                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_3/healed/problem-500.c:11:17: note: Assuming that condition 'len==0' is not redundant
+        if (len == 0 || (len > 0 && list[i][len-1] == '\0')) {
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_3/healed/problem-500.c:11:30: note: Condition 'len>0' is always true
+        if (len == 0 || (len > 0 && list[i][len-1] == '\0')) {
+                             ^

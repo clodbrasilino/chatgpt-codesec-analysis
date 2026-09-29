@@ -1,0 +1,63 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int value;
+    int count;
+    struct Node *next;
+} Node;
+
+/* Possible weaknesses found:
+ *  Parameter 'arr' can be declared as pointer to const [constParameterPointer]
+ */
+Node* run_length_encode(int *arr, int arr_len) {
+    Node *head = NULL;
+    Node **current = &head;
+    
+    if (arr_len == 0) return head;
+    
+    int current_value = arr[0];
+    int count = 1;
+
+    for (int i = 1; i < arr_len; ++i) {
+        if (arr[i] == current_value) {
+            count++;
+        } else {
+            *current = (Node*)malloc(sizeof(Node));
+            if (*current == NULL) exit(EXIT_FAILURE);
+            (*current)->value = current_value;
+            (*current)->count = count;
+            (*current)->next = NULL;
+            current = &(*current)->next;
+            current_value = arr[i];
+            count = 1;
+        }
+    }
+
+    *current = (Node*)malloc(sizeof(Node));
+    if (*current == NULL) exit(EXIT_FAILURE);
+    (*current)->value = current_value;
+    (*current)->count = count;
+    (*current)->next = NULL;
+
+    return head;
+}
+
+void print_encoded_list(Node *head) {
+    while (head != NULL) {
+        printf("(%d, %d) ", head->value, head->count);
+        head = head->next;
+    }
+    printf("\n");
+}
+
+int main() {
+    int arr[] = {1, 1, 2, 3, 3, 3, 4, 5, 5};
+    int arr_len = sizeof(arr) / sizeof(arr[0]);
+
+    Node *encoded_head = run_length_encode(arr, arr_len);
+
+    print_encoded_list(encoded_head);
+
+    return 0;
+}

@@ -1,0 +1,5 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-704-s2.c:16:15: error: call to undeclared library function 'log' with type 'double (double)'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   16 |         sum = log((double)n) + gamma + 1.0 / (2.0 * n) - 1.0 / (12.0 * n * n) + 1.0 / (120.0 * n * n * n * n);
+      |               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-704-s2.c:16:15: note: include the header <math.h> or explicitly provide a declaration for 'log'
+1 error generated.

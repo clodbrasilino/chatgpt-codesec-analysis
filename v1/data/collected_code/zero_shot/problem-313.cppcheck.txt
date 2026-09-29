@@ -1,0 +1,6 @@
+collected_code/problem-313-0.c:5:20: error: Cannot determine that 'numbers[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        if (numbers[i] > 0) {
+                   ^
+collected_code/problem-313-0.c:6:35: error: Cannot determine that 'numbers[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+            printf("%d\n", numbers[i]);
+                                  ^

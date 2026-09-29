@@ -1,0 +1,75 @@
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdbool.h>
+#include <errno.h>
+#include <limits.h>
+#include <stdlib.h>
+
+int binary_to_decimal(const char *binary, size_t max_len) {
+    long decimal = 0;
+    size_t i = 0;
+    
+    if (binary == NULL) {
+        return -1;
+    }
+    
+    while (i < max_len && binary[i] != '\0') {
+        if (binary[i] != '0' && binary[i] != '1') {
+            return -1;
+        }
+        
+        if (decimal > (INT_MAX - (binary[i] - '0')) / 2) {
+            return -1;
+        }
+        
+        decimal = decimal * 2 + (binary[i] - '0');
+        i++;
+    }
+    
+    if (i == 0) {
+        return -1;
+    }
+    
+    return (int)decimal;
+}
+
+int main(void) {
+    char *input = NULL;
+    size_t buffer_size = 0;
+    ssize_t bytes_read;
+    
+    printf("Enter a binary number: ");
+    
+    bytes_read = getline(&input, &buffer_size, stdin);
+    
+    if (bytes_read == -1) {
+        free(input);
+        printf("Error reading input\n");
+        return 1;
+    }
+    
+    if (bytes_read > 0 && input[bytes_read - 1] == '\n') {
+        input[bytes_read - 1] = '\0';
+        bytes_read--;
+    }
+    
+    if (bytes_read > 64) {
+        free(input);
+        printf("Input too long\n");
+        return 1;
+    }
+    
+    int result = binary_to_decimal(input, (size_t)bytes_read);
+    
+    free(input);
+    
+    if (result == -1) {
+        printf("Invalid binary number\n");
+        return 1;
+    }
+    
+    printf("Decimal equivalent: %d\n", result);
+    
+    return 0;
+}

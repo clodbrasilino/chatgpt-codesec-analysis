@@ -1,0 +1,32 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+int find_smallest(const int *arr, size_t size) {
+    if (arr == NULL || size == 0) {
+        return INT_MIN;
+    }
+    
+    int smallest = arr[0];
+    for (size_t i = 1; i < size; i++) {
+        if (arr[i] < smallest) {
+            smallest = arr[i];
+        }
+    }
+    return smallest;
+}
+
+int main(void) {
+    int numbers[] = {34, 15, 88, 2, 47, 19};
+    size_t size = sizeof(numbers) / sizeof(numbers[0]);
+    
+    int result = find_smallest(numbers, size);
+    
+    if (result == INT_MIN && size == 0) {
+        fprintf(stderr, "Error: Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("Smallest number: %d\n", result);
+    return EXIT_SUCCESS;
+}

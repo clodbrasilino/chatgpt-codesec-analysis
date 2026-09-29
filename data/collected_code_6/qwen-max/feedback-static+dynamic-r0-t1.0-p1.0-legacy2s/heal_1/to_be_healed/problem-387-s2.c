@@ -1,0 +1,24 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+bool is_hex_even(long hex_num) {
+    return (hex_num & 1) == 0;
+}
+
+int main() {
+    long hex_num;
+    printf("Enter a hexadecimal number: ");
+    /* Possible weaknesses found:
+     *  %lx in format string (no. 1) requires 'unsigned long *' but the argument type is 'signed long *'. [invalidScanfArgType_int]
+     */
+    if (scanf("%lx", &hex_num) != 1) {
+        printf("Invalid input\n");
+        return 1;
+    }
+    if (is_hex_even(hex_num)) {
+        printf("The hexadecimal number is even.\n");
+    } else {
+        printf("The hexadecimal number is odd.\n");
+    }
+    return 0;
+}

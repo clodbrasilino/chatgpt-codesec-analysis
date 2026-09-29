@@ -1,0 +1,7 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-512.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-512.c:121:22: style: Variable 'inner_items_2[1]' is assigned a value that is never used. [unreadVariable]
+    inner_items_2[1] = create_tuple_node(NULL, 0);
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-512.c:140:19: style: Variable 'root_items[2]' is assigned a value that is never used. [unreadVariable]
+    root_items[2] = create_int_node(3);
+                  ^

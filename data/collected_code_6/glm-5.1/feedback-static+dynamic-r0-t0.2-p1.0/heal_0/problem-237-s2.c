@@ -1,0 +1,123 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    int *elements;
+    int length;
+} Tuple;
+
+typedef struct {
+    Tuple *key;
+    int count;
+} TupleRecord;
+
+typedef struct {
+    int frequency;
+    int count;
+} FrequencyRecord;
+
+int compare_ints(const void *a, const void *b) {
+    return (*(int *)a - *(int *)b);
+}
+
+int tuples_equal(const Tuple *a, const Tuple *b) {
+    if (a->length != b->length) {
+        return 0;
+    }
+    for (int i = 0; i < a->length; i++) {
+        if (a->elements[i] != b->elements[i]) {
+            return 0;
+        }
+    }
+    return 1;
+}
+
+FrequencyRecord *check_occurrences(Tuple *tuples, int num_tuples, int *result_size) {
+    if (tuples == NULL || num_tuples <= 0 || result_size == NULL) {
+        if (result_size != NULL) {
+            *result_size = 0;
+        }
+        return NULL;
+    }
+
+    TupleRecord *records = (TupleRecord *)malloc(num_tuples * sizeof(TupleRecord));
+    if (records == NULL) {
+        *result_size = 0;
+        return NULL;
+    }
+
+    int unique_count = 0;
+    for (int i = 0; i < num_tuples; i++) {
+        int found = 0;
+        for (int j = 0; j < unique_count; j++) {
+            if (tuples_equal(&tuples[i], records[j].key)) {
+                records[j].count++;
+                found = 1;
+                break;
+            }
+        }
+        if (!found) {
+            records[unique_count].key = &tuples[i];
+            records[unique_count].count = 1;
+            unique_count++;
+        }
+    }
+
+    FrequencyRecord *freq_records = (FrequencyRecord *)malloc(unique_count * sizeof(FrequencyRecord));
+    if (freq_records == NULL) {
+        free(records);
+        *result_size = 0;
+        return NULL;
+    }
+
+    int freq_count = 0;
+    for (int i = 0; i < unique_count; i++) {
+        int found = 0;
+        for (int j = 0; j < freq_count; j++) {
+            if (records[i].count == freq_records[j].frequency) {
+                freq_records[j].count++;
+                found = 1;
+                break;
+            }
+        }
+        if (!found) {
+            freq_records[freq_count].frequency = records[i].count;
+            freq_records[freq_count].count = 1;
+            freq_count++;
+        }
+    }
+
+    free(records);
+    *result_size = freq_count;
+    return freq_records;
+}
+
+int main(void) {
+    int data1[] = {1, 2};
+    int data2[] = {3, 4};
+    int data3[] = {1, 2};
+    int data4[] = {5, 6};
+    int data5[] = {1, 2};
+    int data6[] = {3, 4};
+
+    Tuple tuples[6];
+    tuples[0].elements = data1; tuples[0].length = 2;
+    tuples[1].elements = data2; tuples[1].length = 2;
+    tuples[2].elements = data3; tuples[2].length = 2;
+    tuples[3].elements = data4; tuples[3].length = 2;
+    tuples[4].elements = data5; tuples[4].length = 2;
+    tuples[5].elements = data6; tuples[5].length = 2;
+
+    int result_size = 0;
+    FrequencyRecord *results = check_occurrences(tuples, 6, &result_size);
+
+    if (results != NULL) {
+        for (int i = 0; i < result_size; i++) {
+            printf("Frequency: %d, Number of Records: %d\n", results[i].frequency, results[i].count);
+        }
+        free(results);
+    }
+
+    return 0;
+}

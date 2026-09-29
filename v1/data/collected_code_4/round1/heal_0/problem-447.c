@@ -1,0 +1,24 @@
+#include<stdio.h>
+
+void cube_elements(int* list, int n) {
+  for(int i=0; i<n; i++) {
+    list[i] = list[i]*list[i]*list[i];
+  }
+}
+
+int main() {
+  int n = 5;
+  int arr[n];
+
+  for(int i = 0; i < n; i++) {
+    arr[i] = i;
+  }
+  
+  cube_elements(arr, n);
+  
+  for(int i = 0; i < n; i++) {
+    printf("%d ", arr[i]);
+  }
+  
+  return 0;
+}

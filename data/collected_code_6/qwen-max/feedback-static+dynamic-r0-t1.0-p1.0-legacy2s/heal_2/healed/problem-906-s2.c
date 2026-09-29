@@ -1,0 +1,57 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <regex.h>
+#include <string.h>
+
+typedef struct {
+    int year;
+    int month;
+    int day;
+} DateParts;
+
+int extract_date_from_url(const char *url, DateParts *date) {
+    regex_t regex;
+    regmatch_t matches[4];
+
+    if (regcomp(&regex, "/([0-9]{4})/([0-9]{2})/([0-9]{2})", REG_EXTENDED) != 0) {
+        return -1;
+    }
+
+    if (regexec(&regex, url, 4, matches, 0) == 0) {
+        for (int i = 1; i <= 3; ++i) {
+            char *ptr;
+            long val;
+            ptr = malloc(matches[i].rm_eo - matches[i].rm_so + 1);
+            if (!ptr) {
+                regfree(&regex);
+                return -1;
+            }
+            strncpy(ptr, url + matches[i].rm_so, matches[i].rm_eo - matches[i].rm_so);
+            ptr[matches[i].rm_eo - matches[i].rm_so] = '\0';
+            val = strtol(ptr, NULL, 10);
+            free(ptr);
+            switch (i) {
+                case 1: date->year = val; break;
+                case 2: date->month = val; break;
+                case 3: date->day = val; break;
+            }
+        }
+    } else {
+        regfree(&regex);
+        return -1;
+    }
+
+    regfree(&regex);
+    return 0;
+}
+
+int main() {
+    const char *url = "http://example.com/2023/10/01";
+    DateParts date;
+    if (extract_date_from_url(url, &date) == 0) {
+        printf("Year: %d, Month: %d, Day: %d\n", date.year, date.month, date.day);
+    } else {
+        printf("Date extraction failed\n");
+    }
+    return 0;
+}

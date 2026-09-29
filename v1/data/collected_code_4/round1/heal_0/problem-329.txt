@@ -1,0 +1,30 @@
+```c
+#include <stdio.h>
+
+int count_negatives(int *arr, int size) {
+    int i, count = 0;
+    
+    if(arr == NULL || size < 1) {
+        return 0;
+    }
+
+    for(i = 0; i < size; i++) {
+        if(arr[i] < 0) {
+            count++;
+        }
+    }
+
+    return count;
+}
+
+int main() {
+    int arr[] = {-1, 2, -3, 4, -5, 6, -7};
+    int size = sizeof(arr)/sizeof(arr[0]);
+    int count = count_negatives(arr, size);
+
+    printf("Count of negative numbers: %d\n", count);
+
+    return 0;
+}
+```
+This C program includes a function, count_negatives, that counts and returns the number of negative integers in a given array, and a main function to test it. In count_negatives, the function checks whether the array is NULL or empty to prevent dereferencing null pointer or accessing an empty array. If it is, the function returns 0. It then iterates over the array, incrementing a count each time it encounters a negative integer. At the end of the function, it returns this count. The main function creates a test array, invokes count_negatives, and displays the results.

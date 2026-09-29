@@ -1,0 +1,62 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char* remove_k_length_words(const char *str, int k) {
+    size_t len = 0;
+    size_t cap = 0;
+    char *result = NULL;
+    char *token;
+    char *temp = strdup(str);
+
+    if (temp == NULL) {
+        return NULL;
+    }
+
+    for (token = strtok(temp, " "); token != NULL; token = strtok(NULL, " ")) {
+        size_t token_len = strlen(token);
+        if (token_len != (size_t)k) {
+            size_t new_len = len + token_len + 1;
+            if (new_len > cap) {
+                cap = (new_len > cap * 2) ? new_len : cap * 2;
+                char *new_result = realloc(result, cap * sizeof(char));
+                if (new_result == NULL) {
+                    free(temp);
+                    free(result);
+                    return NULL;
+                }
+                result = new_result;
+            }
+            memcpy(result + len, token, token_len);
+            len += token_len;
+            result[len++] = ' ';
+        }
+    }
+
+    if (len > 0) {
+        result[len - 1] = '\0';
+    } else {
+        result = realloc(result, 1);
+        if (result != NULL) {
+            *result = '\0';
+        }
+    }
+
+    free(temp);
+    return result;
+}
+
+int main() {
+    const char str[] = "This is a test string with some words of length five";
+    int k = 5;
+    char *new_str = remove_k_length_words(str, k);
+
+    if (new_str != NULL) {
+        printf("%s\n", new_str);
+        free(new_str);
+    } else {
+        printf("Memory allocation failed.\n");
+    }
+
+    return 0;
+}

@@ -1,0 +1,5 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-921.c: In function 'chunk_tuples':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-921.c:145:13: error: implicit declaration of function 'memcpy_s'; did you mean 'memcpy'? [-Wimplicit-function-declaration]
+  145 |         if (memcpy_s(result->chunks[i].data, dest_size, source + source_offset, copy_size) != 0) {
+      |             ^~~~~~~~
+      |             memcpy

@@ -1,0 +1,54 @@
+#include <stdio.h>
+#include <ctype.h>
+#include <stdbool.h>
+#include <stdlib.h>
+#include <string.h>
+
+char* convert_snake_to_camel(char* string) {
+    size_t length = strlen(string);
+    char* result = malloc(length + 1);
+
+    if (result == NULL) {
+        return NULL;
+    }
+
+    size_t i, j;
+    bool capitalize = false;
+
+    for (i = 0, j = 0; i < length; i++) {
+         if (string[i] == '_') {
+            capitalize = true;
+            continue;
+         }
+
+         if (capitalize) {
+            result[j++] = toupper((unsigned char)string[i]);
+            capitalize = false;
+         } else {
+            result[j++] = string[i];
+         }
+    }
+
+    result[j] = '\0';
+    return result;
+}
+
+int main() {
+    char string[100];
+
+    printf("Enter the snake_case string: ");
+    gets(string);
+
+    char* result = convert_snake_to_camel(string);
+
+    if (result == NULL) {
+        printf("Failed to allocate memory.\n");
+        return -1;
+    }
+
+    printf("CamelCase string is: %s\n", result);
+
+    free(result);
+
+    return 0;
+}

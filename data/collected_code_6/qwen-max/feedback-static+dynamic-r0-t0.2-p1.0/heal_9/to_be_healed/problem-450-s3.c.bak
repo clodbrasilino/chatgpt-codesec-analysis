@@ -1,0 +1,59 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+ /* Possible weaknesses found:
+  *  test case 1 failed: expected ['Python'], got <no output>
+  *  test case 2 failed: expected ['exercises'], got <no output>
+  *  test case 0 failed: expected ['practice', 'solution'], got <no output>
+  */
+
+char **extract_strings(const char *const *input, size_t count, size_t size, size_t *output_count) {
+    if (input == NULL || output_count == NULL) return NULL;
+    *output_count = 0;
+
+    for (size_t i = 0; i < count; ++i) {
+        if (strlen(input[i]) >= size) {
+            (*output_count)++;
+        }
+    }
+
+    if (*output_count == 0) return NULL;
+
+    char **result = (char **)malloc(*output_count * sizeof(char *));
+    if (result == NULL) return NULL;
+
+    *output_count = 0;
+    for (size_t i = 0; i < count; ++i) {
+        if (strlen(input[i]) >= size) {
+            result[*output_count] = (char *)malloc(strlen(input[i]) + 1);
+            if (result[*output_count] == NULL) {
+                while (*output_count > 0) free(result[--(*output_count)]);
+                free(result);
+                return NULL;
+            }
+            strcpy(result[*output_count], input[i]);
+            (*output_count)++;
+        }
+    }
+
+    return result;
+}
+
+int main() {
+    const char *input[] = {"practice", "solution", "exercises", "Python", "C programming"};
+    size_t count = 5;
+    size_t size = 5;
+    size_t output_count = 0;
+
+    char **result = extract_strings(input, count, size, &output_count);
+
+    if (result != NULL) {
+        for (size_t i = 0; i < output_count; ++i) {
+            printf("%s\n", result[i]);
+            free(result[i]);
+        }
+        free(result);
+    }
+
+    return 0;
+}

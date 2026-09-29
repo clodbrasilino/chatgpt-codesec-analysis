@@ -1,0 +1,50 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+int findKthElement(int arr1[], int arr2[], int size1, int size2, int k) {
+    if (k < 1 || k > size1 + size2) {
+        return INT_MIN;
+    }
+    
+    if (size1 > size2) {
+        return findKthElement(arr2, arr1, size2, size1, k);
+    }
+    
+    if (size1 == 0) {
+        return arr2[k - 1];
+    }
+    
+    if (k == 1) {
+        return arr1[0] < arr2[0] ? arr1[0] : arr2[0];
+    }
+    
+    int i = size1 < k / 2 ? size1 : k / 2;
+    int j = size2 < k / 2 ? size2 : k / 2;
+    
+    if (arr1[i - 1] < arr2[j - 1]) {
+        return findKthElement(arr1 + i, arr2, size1 - i, size2, k - i);
+    } else {
+        return findKthElement(arr1, arr2 + j, size1, size2 - j, k - j);
+    }
+}
+
+int main(void) {
+    int arr1[] = {2, 3, 6, 7, 9};
+    int arr2[] = {1, 4, 8, 10};
+    int size1 = sizeof(arr1) / sizeof(arr1[0]);
+    int size2 = sizeof(arr2) / sizeof(arr2[0]);
+    
+    int k = 5;
+    int result = findKthElement(arr1, arr2, size1, size2, k);
+    
+    if (result != INT_MIN) {
+        printf("%d\n", result);
+    } else {
+        printf("Invalid k\n");
+    }
+    
+    return 0;
+}
+```

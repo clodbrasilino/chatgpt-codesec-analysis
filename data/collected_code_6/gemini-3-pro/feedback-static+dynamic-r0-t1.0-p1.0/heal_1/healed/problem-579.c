@@ -1,0 +1,86 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+void findDissimilarElements(const int* tuple1, int size1, const int* tuple2, int size2, int** result, int* resultSize) {
+    if (!tuple1 || !tuple2 || !result || !resultSize || size1 < 0 || size2 < 0) {
+        return;
+    }
+
+    int i, j;
+    int maxDissimilar = size1 + size2;
+    *result = (int*)malloc(maxDissimilar * sizeof(int));
+    if (!*result) {
+        *resultSize = 0;
+        return;
+    }
+
+    int count = 0;
+
+    for (i = 0; i < size1; i++) {
+        int found = 0;
+        for (j = 0; j < size2; j++) {
+            if (tuple1[i] == tuple2[j]) {
+                found = 1;
+                break;
+            }
+        }
+        if (!found) {
+            int alreadyAdded = 0;
+            for (int k = 0; k < count; k++) {
+                if ((*result)[k] == tuple1[i]) {
+                    alreadyAdded = 1;
+                    break;
+                }
+            }
+            if (!alreadyAdded) {
+                (*result)[count++] = tuple1[i];
+            }
+        }
+    }
+
+    for (i = 0; i < size2; i++) {
+        int found = 0;
+        for (j = 0; j < size1; j++) {
+            if (tuple2[i] == tuple1[j]) {
+                found = 1;
+                break;
+            }
+        }
+        if (!found) {
+            int alreadyAdded = 0;
+            for (int k = 0; k < count; k++) {
+                if ((*result)[k] == tuple2[i]) {
+                    alreadyAdded = 1;
+                    break;
+                }
+            }
+            if (!alreadyAdded) {
+                (*result)[count++] = tuple2[i];
+            }
+        }
+    }
+
+    *resultSize = count;
+}
+
+int main(void) {
+    int tuple1[] = {1, 2, 3, 4, 5};
+    int tuple2[] = {4, 5, 6, 7, 8};
+    int size1 = sizeof(tuple1) / sizeof(tuple1[0]);
+    int size2 = sizeof(tuple2) / sizeof(tuple2[0]);
+    int* result = NULL;
+    int resultSize = 0;
+
+    findDissimilarElements(tuple1, size1, tuple2, size2, &result, &resultSize);
+
+    if (result) {
+        for (int i = 0; i < resultSize; i++) {
+            printf("%d ", result[i]);
+        }
+        printf("\n");
+        free(result);
+        result = NULL;
+    }
+
+    return 0;
+}

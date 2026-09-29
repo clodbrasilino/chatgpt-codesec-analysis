@@ -1,0 +1,90 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define BUFFER_SIZE 256
+
+void remove_char(char *str, char ch)
+{
+    size_t i;
+    size_t j;
+
+    if (str == NULL) {
+        return;
+    }
+
+    j = 0;
+    for (i = 0; str[i] != '\0'; i++) {
+        if (str[i] != ch) {
+            str[j] = str[i];
+            j++;
+        }
+    }
+    str[j] = '\0';
+}
+
+static void flush_stdin(void)
+{
+    int discard;
+
+    do {
+        discard = getchar();
+    } while (discard != '\n' && discard != EOF);
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    char target;
+    int input;
+    size_t len;
+    int newline_found;
+
+    printf("Enter a string: ");
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading string input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = strcspn(buffer, "\n");
+    newline_found = (buffer[len] == '\n');
+    buffer[len] = '\0';
+
+    if (!newline_found) {
+        flush_stdin();
+    }
+
+    printf("Enter the character to remove: ");
+    input = getchar();
+    if (input == EOF) {
+        fprintf(stderr, "Error reading character input\n");
+        return EXIT_FAILURE;
+    }
+    target = (char)input;
+
+    remove_char(buffer, target);
+
+    printf("Result: %s\n", buffer);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the flagged weaknesses and their mitigations:**
+
+1. **`char buffer[BUFFER_SIZE]` (CWE-119/CWE-120, risk 2):** The statically-sized array is safely handled. `fgets(buffer, sizeof(buffer), stdin)` limits input to the buffer size, and the explicit `buffer[sizeof(buffer) - 1] = '\0'` guarantees null termination. This is a false positive — bounds are properly enforced.
+
+2. **`getchar()` in `flush_stdin` loop (CWE-120/CWE-20, risk 1):** The characters read are discarded, never written to any buffer, so no overflow is possible. The loop correctly terminates on both `'\n'` and `EOF`, preventing an infinite loop on closed input streams. False positive.
+
+3. **`getchar()` for the target character (CWE-120/CWE-20, risk 1):** The return value is stored in an `int` (not a `char`), which is correct for detecting `EOF`. The `EOF` case is explicitly checked before the cast to `char`. No buffer is involved. False positive.
+
+**Additional robustness already present:**
+
+- `remove_char` guards against `NULL` input.
+- `strcspn` safely locates the newline; the `newline_found` check ensures `flush_stdin` only runs when input exceeded the buffer, avoiding blocking on already-complete input.
+- Both `fgets` and `getchar` failures produce error messages on `stderr` and return `EXIT_FAILURE`.
+
+The code is safe as written; all Flawfinder hits are informational false positives because the recommended mitigations (bounds-limited reads, guaranteed termination, EOF handling) are already implemented.

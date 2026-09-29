@@ -1,0 +1,33 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int a;
+    int b;
+    int c;
+} Tuple;
+
+int has_none_value(Tuple t) {
+    return !t.a || !t.b || !t.c;
+}
+
+int main() {
+    Tuple t1 = {1, 2, 3};
+    Tuple t2 = {0, 2, 3};
+
+    if (has_none_value(t1)) {
+        printf("Tuple t1 has a none value\n");
+    } else {
+        printf("Tuple t1 does not have any none value\n");
+    }
+
+    if (has_none_value(t2)) {
+        printf("Tuple t2 has a none value\n");
+    } else {
+        printf("Tuple t2 does not have any none value\n");
+    }
+
+    return 0;
+}
+```

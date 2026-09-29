@@ -1,0 +1,74 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    const char *first;
+    const char *second;
+} Tuple;
+
+char *flatten_tuple_list(const Tuple *tuples, size_t count, const char *delimiter)
+{
+    if (tuples == NULL || delimiter == NULL) {
+        return NULL;
+    }
+
+    const size_t delim_len = strlen(delimiter);
+    size_t total_length = 1;
+
+    for (size_t i = 0; i < count; i++) {
+        if (tuples[i].first == NULL || tuples[i].second == NULL) {
+            return NULL;
+        }
+        total_length += strlen(tuples[i].first) + strlen(tuples[i].second) + (2 * delim_len);
+    }
+
+    char *result = malloc(total_length);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    char *ptr = result;
+    for (size_t i = 0; i < count; i++) {
+        size_t len = strlen(tuples[i].first);
+        memcpy(ptr, tuples[i].first, len);
+        ptr += len;
+
+        memcpy(ptr, delimiter, delim_len);
+        ptr += delim_len;
+
+        len = strlen(tuples[i].second);
+        memcpy(ptr, tuples[i].second, len);
+        ptr += len;
+
+        if (i + 1 < count) {
+            memcpy(ptr, delimiter, delim_len);
+            ptr += delim_len;
+        }
+    }
+    *ptr = '\0';
+
+    return result;
+}
+
+int main(void)
+{
+    const Tuple tuples[] = {
+        {"apple", "red"},
+        {"banana", "yellow"},
+        {"grape", "purple"},
+        {"orange", "orange"}
+    };
+    const size_t count = sizeof(tuples) / sizeof(tuples[0]);
+
+    char *flattened = flatten_tuple_list(tuples, count, ", ");
+    if (flattened == NULL) {
+        fprintf(stderr, "Failed to flatten tuple list.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("%s\n", flattened);
+    free(flattened);
+
+    return EXIT_SUCCESS;
+}

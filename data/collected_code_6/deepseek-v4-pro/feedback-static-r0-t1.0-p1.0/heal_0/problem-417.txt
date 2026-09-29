@@ -1,0 +1,45 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    int first;
+    int second;
+} Tuple;
+
+int find_common_first_element(Tuple *tuples, size_t count, int *result) {
+    if (tuples == NULL || result == NULL || count == 0) {
+        return 0;
+    }
+
+    int candidate = tuples[0].first;
+    for (size_t i = 1; i < count; i++) {
+        if (tuples[i].first != candidate) {
+            return 0;
+        }
+    }
+
+    *result = candidate;
+    return 1;
+}
+
+int main(void) {
+    Tuple tuples[] = {
+        {10, 20},
+        {10, 30},
+        {10, 40},
+        {10, 50}
+    };
+    size_t count = sizeof(tuples) / sizeof(tuples[0]);
+    int common_first;
+
+    if (find_common_first_element(tuples, count, &common_first)) {
+        printf("Common first element: %d\n", common_first);
+    } else {
+        printf("No common first element found\n");
+    }
+
+    return EXIT_SUCCESS;
+}
+```

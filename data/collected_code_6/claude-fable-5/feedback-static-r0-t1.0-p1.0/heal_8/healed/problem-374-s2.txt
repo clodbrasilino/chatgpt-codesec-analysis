@@ -1,0 +1,105 @@
+```c
+#define _POSIX_C_SOURCE 200809L
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_INPUT_LEN 1024U
+
+static void swap_chars(char *a, char *b)
+{
+    char tmp = *a;
+    *a = *b;
+    *b = tmp;
+}
+
+static int permute(char *str, size_t left, size_t right)
+{
+    size_t i;
+
+    if (left == right) {
+        if (puts(str) == EOF) {
+            return -1;
+        }
+        return 0;
+    }
+
+    for (i = left; i <= right; i++) {
+        swap_chars(&str[left], &str[i]);
+        if (permute(str, left + 1U, right) != 0) {
+            swap_chars(&str[left], &str[i]);
+            return -1;
+        }
+        swap_chars(&str[left], &str[i]);
+    }
+
+    return 0;
+}
+
+static int print_permutations(const char *input)
+{
+    char *buffer;
+    size_t len;
+    size_t buf_size;
+    int result;
+
+    if (input == NULL) {
+        return -1;
+    }
+
+    len = strnlen(input, MAX_INPUT_LEN);
+    if (len == 0U || len >= MAX_INPUT_LEN) {
+        return -1;
+    }
+
+    buf_size = len + 1U;
+
+    buffer = malloc(buf_size);
+    if (buffer == NULL) {
+        return -1;
+    }
+
+    if (len >= buf_size) {
+        free(buffer);
+        return -1;
+    }
+
+    memcpy(buffer, input, len);
+    buffer[len] = '\0';
+
+    result = permute(buffer, 0U, len - 1U);
+
+    free(buffer);
+
+    return result;
+}
+
+int main(void)
+{
+    const char *test = "ABC";
+
+    if (print_permutations(test) != 0) {
+        (void)fprintf(stderr, "Failed to print permutations\n");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the fix:**
+
+The Flawfinder warning on `memcpy` (CWE-120) was a low-risk, largely informational finding. In the original code the copy was already safe, because:
+
+1. `len` is bounded by `strnlen(input, MAX_INPUT_LEN)` and rejected if `len >= MAX_INPUT_LEN`, so it can never exceed 1023.
+2. `buf_size = len + 1U` cannot overflow (`len < 1024`), and `malloc(buf_size)` guarantees the destination holds `len` bytes plus the terminator.
+
+The rewritten version adds an explicit guard (`len >= buf_size`) immediately before the `memcpy`, making the invariant *destination can always hold the source data* locally verifiable rather than depending on reasoning across the whole function. This silences the static-analysis concern defensively without changing behavior.
+
+Other notable properties preserved from the original:
+
+- **NULL and empty-input validation** before any allocation.
+- **Error propagation** from `puts` through the recursion, with swaps correctly undone on the failure path so the buffer state stays consistent.
+- **No memory leaks**: `buffer` is freed on every exit path after allocation.
+- **Recursion depth** equals string length, capped at 1023 by `MAX_INPUT_LEN`, so stack exhaustion is not a practical concern (though factorial output growth means long inputs are impractical anyway).

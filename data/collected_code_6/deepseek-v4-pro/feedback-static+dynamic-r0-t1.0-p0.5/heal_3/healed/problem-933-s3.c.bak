@@ -1,0 +1,70 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+#include <ctype.h>
+
+char *camel_to_snake(const char *input) {
+    if (input == NULL) {
+        return NULL;
+    }
+
+    size_t input_len = strlen(input);
+    char *result = malloc(input_len * 2 + 1);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    size_t src_pos = 0;
+    size_t dst_pos = 0;
+
+    while (src_pos < input_len) {
+        if (src_pos > 0 && isupper((unsigned char)input[src_pos]) &&
+            (islower((unsigned char)input[src_pos - 1]) || isdigit((unsigned char)input[src_pos - 1]))) {
+            result[dst_pos++] = '_';
+            result[dst_pos++] = tolower((unsigned char)input[src_pos]);
+        } else {
+            result[dst_pos++] = tolower((unsigned char)input[src_pos]);
+        }
+        src_pos++;
+    }
+
+    result[dst_pos] = '\0';
+
+    char *final_result = realloc(result, dst_pos + 1);
+    if (final_result == NULL) {
+        free(result);
+        return NULL;
+    }
+
+    return final_result;
+}
+
+int main(void) {
+    const char *test_cases[] = {
+        "camelCase",
+        "thisIsATest",
+        "already_snake",
+        "with123Numbers",
+        "UPPERCASE",
+        "",
+        "a",
+        "A",
+        "GoogleAssistant",
+        "ChromeCast",
+        "QuadCore",
+        NULL
+    };
+
+    for (int i = 0; test_cases[i] != NULL; i++) {
+        char *converted = camel_to_snake(test_cases[i]);
+        if (converted != NULL) {
+            printf("%s -> %s\n", test_cases[i], converted);
+            free(converted);
+        } else {
+            printf("%s -> (conversion failed)\n", test_cases[i]);
+        }
+    }
+
+    return 0;
+}

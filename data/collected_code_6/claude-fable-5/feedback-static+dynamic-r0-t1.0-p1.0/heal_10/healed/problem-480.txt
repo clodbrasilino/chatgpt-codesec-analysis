@@ -1,0 +1,85 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+#include <stddef.h>
+#include <string.h>
+
+#define INPUT_SIZE 256
+
+int find_max_occurring_char(const char *str, char *result)
+{
+    size_t counts[UCHAR_MAX + 1] = {0};
+    size_t max_count = 0;
+    size_t i;
+    unsigned char max_char = 0;
+    int found = 0;
+
+    if (str == NULL || result == NULL) {
+        return -1;
+    }
+
+    for (i = 0; str[i] != '\0'; i++) {
+        unsigned char c = (unsigned char)str[i];
+        counts[c]++;
+        if (counts[c] > max_count) {
+            max_count = counts[c];
+            max_char = c;
+            found = 1;
+        }
+    }
+
+    if (found == 0) {
+        return -1;
+    }
+
+    *result = (char)max_char;
+    return 0;
+}
+
+int main(void)
+{
+    char input[INPUT_SIZE];
+    char max_char;
+    size_t len;
+
+    if (fgets(input, (int)sizeof(input), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    input[sizeof(input) - 1] = '\0';
+
+    len = strnlen(input, sizeof(input));
+    if (len > 0 && input[len - 1] == '\n') {
+        input[len - 1] = '\0';
+    }
+
+    if (find_max_occurring_char(input, &max_char) != 0) {
+        fprintf(stderr, "Empty string or invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Maximum occurring character: %c\n", max_char) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis summary:**
+
+The original code was already well-hardened against the Flawfinder warning (CWE-119/CWE-120 regarding statically-sized buffers). The rewritten version preserves all of those mitigations:
+
+1. **Bounded input reading** — `fgets(input, (int)sizeof(input), stdin)` limits reads to the buffer size, unlike `gets()` or unbounded `scanf("%s", ...)`, eliminating the classic buffer overflow risk.
+
+2. **Guaranteed null termination** — `input[sizeof(input) - 1] = '\0';` is defensive belt-and-suspenders; `fgets` already null-terminates, but this guards against any edge case.
+
+3. **Bounded string length calculation** — `strnlen(input, sizeof(input))` instead of `strlen()` ensures the scan never runs past the buffer even if termination were somehow missing.
+
+4. **Safe character counting** — the counts array is sized `UCHAR_MAX + 1` and indexed via an `unsigned char` cast, preventing negative-index undefined behavior with signed `char` values above 127.
+
+5. **NULL-pointer and empty-input checks** — `find_max_occurring_char` validates its arguments and signals failure via return code rather than crashing, and `main` checks every I/O operation's return value (`fgets`, `printf`).
+
+No functional changes were required — the only modification is removal of comments as requested. The code is portable C (note: `strnlen` requires POSIX or C23; if strict C99 portability is needed, it could be replaced with a bounded manual loop).

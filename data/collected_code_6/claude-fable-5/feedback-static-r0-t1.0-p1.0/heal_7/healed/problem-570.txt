@@ -1,0 +1,139 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+#define MAX_WORD_LEN 4096
+
+char **remove_words(const char **words, size_t count, const char *pattern, size_t *out_count);
+void free_word_list(char **list, size_t count);
+static char *duplicate_word(const char *word);
+
+static char *duplicate_word(const char *word)
+{
+    size_t len;
+    size_t dest_size;
+    char *copy;
+
+    if (word == NULL) {
+        return NULL;
+    }
+
+    len = strnlen(word, MAX_WORD_LEN);
+    if (len >= MAX_WORD_LEN) {
+        len = MAX_WORD_LEN - 1;
+    }
+
+    if (len > SIZE_MAX - 1) {
+        return NULL;
+    }
+
+    dest_size = len + 1;
+    copy = malloc(dest_size);
+    if (copy == NULL) {
+        return NULL;
+    }
+
+    if (len > 0 && len < dest_size) {
+        memcpy(copy, word, len);
+    }
+    copy[len] = '\0';
+
+    return copy;
+}
+
+char **remove_words(const char **words, size_t count, const char *pattern, size_t *out_count)
+{
+    char **result = NULL;
+    size_t kept = 0;
+    size_t i;
+
+    if (words == NULL || pattern == NULL || out_count == NULL) {
+        return NULL;
+    }
+
+    *out_count = 0;
+
+    if (count == 0) {
+        return NULL;
+    }
+
+    if (count > SIZE_MAX / sizeof(char *)) {
+        return NULL;
+    }
+
+    result = calloc(count, sizeof(char *));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    for (i = 0; i < count; i++) {
+        if (words[i] == NULL) {
+            continue;
+        }
+        if (strstr(words[i], pattern) == NULL) {
+            char *copy = duplicate_word(words[i]);
+            if (copy == NULL) {
+                free_word_list(result, kept);
+                return NULL;
+            }
+            result[kept] = copy;
+            kept++;
+        }
+    }
+
+    *out_count = kept;
+    return result;
+}
+
+void free_word_list(char **list, size_t count)
+{
+    size_t i;
+
+    if (list == NULL) {
+        return;
+    }
+    for (i = 0; i < count; i++) {
+        free(list[i]);
+    }
+    free(list);
+}
+
+int main(void)
+{
+    const char *words[] = { "apple", "banana", "cherry", "grape", "apricot" };
+    size_t count = sizeof(words) / sizeof(words[0]);
+    const char *pattern = "ap";
+    size_t result_count = 0;
+    char **filtered;
+    size_t i;
+
+    filtered = remove_words(words, count, pattern, &result_count);
+    if (filtered == NULL) {
+        fprintf(stderr, "Failed to filter word list\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Words not containing \"%s\":\n", pattern);
+    for (i = 0; i < result_count; i++) {
+        printf("%s\n", filtered[i]);
+    }
+
+    free_word_list(filtered, result_count);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the flagged weakness and the fix applied:**
+
+The Flawfinder warning on `memcpy` (CWE-120) was already effectively mitigated in the original code, since the destination buffer is allocated with `dest_size = len + 1` bytes and exactly `len` bytes are copied. In the rewritten version, I made the safety invariant explicit by guarding the copy with `len < dest_size`, so the copy can never exceed the destination capacity even if the surrounding logic were modified later.
+
+Other defensive measures preserved in the code:
+
+- **Bounded string reads:** `strnlen` with `MAX_WORD_LEN` prevents unbounded scans of non-terminated input.
+- **Integer overflow checks:** `len > SIZE_MAX - 1` guards the `len + 1` allocation size, and `count > SIZE_MAX / sizeof(char *)` guards the `calloc` multiplication.
+- **NULL handling:** All public entry points validate pointer arguments; `NULL` entries in the input array are skipped rather than dereferenced.
+- **Cleanup on failure:** Partial allocations are released via `free_word_list` before returning `NULL`, preventing memory leaks on error paths.
+- **Guaranteed termination:** `copy[len] = '\0'` ensures every duplicated string is NUL-terminated regardless of the source.

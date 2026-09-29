@@ -1,0 +1,60 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int compare(const void *a, const void *b) {
+    return (*(int*)a - *(int*)b);
+}
+
+int minSubsets(int *arr, int n) {
+    if (arr == NULL || n <= 0) {
+        return 0;
+    }
+
+    qsort(arr, n, sizeof(int), compare);
+
+    int maxCount = 1;
+    int currentCount = 1;
+
+    for (int i = 1; i < n; i++) {
+        if (arr[i] == arr[i - 1]) {
+            currentCount++;
+        } else {
+            if (currentCount > maxCount) {
+                maxCount = currentCount;
+            }
+            currentCount = 1;
+        }
+    }
+
+    if (currentCount > maxCount) {
+        maxCount = currentCount;
+    }
+
+    return maxCount;
+}
+
+int main() {
+    int n;
+    
+    if (scanf("%d", &n) != 1 || n <= 0) {
+        return 1;
+    }
+
+    int *arr = (int *)malloc(n * sizeof(int));
+    if (arr == NULL) {
+        return 1;
+    }
+
+    for (int i = 0; i < n; i++) {
+        if (scanf("%d", &arr[i]) != 1) {
+            free(arr);
+            return 1;
+        }
+    }
+
+    int result = minSubsets(arr, n);
+    printf("%d\n", result);
+
+    free(arr);
+    return 0;
+}

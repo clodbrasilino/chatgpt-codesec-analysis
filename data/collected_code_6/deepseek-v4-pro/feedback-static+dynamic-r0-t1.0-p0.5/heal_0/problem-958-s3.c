@@ -1,0 +1,30 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+void int_to_roman(int num, char *result) {
+    const int values[] = {1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1};
+    const char *symbols[] = {"M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I"};
+    
+    result[0] = '\0';
+    
+    for (int i = 0; i < 13; i++) {
+        while (num >= values[i]) {
+            strcat(result, symbols[i]);
+            num -= values[i];
+        }
+    }
+}
+
+int main(void) {
+    int numbers[] = {1, 4, 9, 58, 1994, 2023, 3999};
+    int count = sizeof(numbers) / sizeof(numbers[0]);
+    
+    for (int i = 0; i < count; i++) {
+        char roman[32];
+        int_to_roman(numbers[i], roman);
+        printf("%d = %s\n", numbers[i], roman);
+    }
+    
+    return 0;
+}

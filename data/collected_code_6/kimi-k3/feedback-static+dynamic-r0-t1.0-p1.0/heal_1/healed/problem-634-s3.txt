@@ -1,0 +1,49 @@
+```c
+#include <stdio.h>
+#include <limits.h>
+
+long long sumFourthPowerEven(int n) {
+    long long sum = 0;
+    int i;
+    
+    if (n < 0) {
+        return 0;
+    }
+    
+    for (i = 1; i <= n; i++) {
+        long long even = 2LL * i;
+        long long fourth = even * even * even * even;
+        
+        if (sum > LLONG_MAX - fourth) {
+            return -1;
+        }
+        
+        sum += fourth;
+    }
+    
+    return sum;
+}
+
+int main(void) {
+    int n;
+    long long result;
+    
+    if (scanf("%d", &n) != 1) {
+        return 1;
+    }
+    
+    if (n < 0) {
+        return 1;
+    }
+    
+    result = sumFourthPowerEven(n);
+    
+    if (result == -1) {
+        return 1;
+    }
+    
+    printf("%lld\n", result);
+    
+    return 0;
+}
+```

@@ -1,0 +1,93 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <errno.h>
+
+void replace_spaces(char *str, char replacement) {
+    if (str == NULL) {
+        fprintf(stderr, "Error: NULL pointer passed to replace_spaces\n");
+        return;
+    }
+
+    if (replacement == '\0') {
+        fprintf(stderr, "Error: Replacement character cannot be null terminator\n");
+        return;
+    }
+
+    for (size_t i = 0; str[i] != '\0'; i++) {
+        if (str[i] == ' ') {
+            str[i] = replacement;
+        }
+    }
+}
+
+static void clear_input_buffer(void) {
+    int c;
+    while ((c = getchar()) != '\n' && c != EOF) {
+        if (c == EOF) {
+            if (ferror(stdin)) {
+                fprintf(stderr, "Error reading from stdin\n");
+            }
+            break;
+        }
+    }
+}
+
+int main(void) {
+    char buffer[8192];
+    char replacement;
+    size_t len;
+
+    printf("Enter a string: ");
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    len = strlen(buffer);
+
+    if (len == 0 || buffer[0] == '\n') {
+        fprintf(stderr, "Error: Empty input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (len == sizeof(buffer) - 1 && buffer[len - 1] != '\n') {
+        clear_input_buffer();
+    }
+
+    if (buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+        len--;
+    }
+
+    if (len >= sizeof(buffer) - 1) {
+        fprintf(stderr, "Error: String exceeds buffer capacity\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter replacement character: ");
+    errno = 0;
+    if (scanf(" %c", &replacement) != 1) {
+        if (errno != 0) {
+            fprintf(stderr, "Error reading replacement character\n");
+        } else {
+            fprintf(stderr, "Error: Invalid input for replacement character\n");
+        }
+        clear_input_buffer();
+        return EXIT_FAILURE;
+    }
+
+    clear_input_buffer();
+
+    if (replacement == '\0') {
+        fprintf(stderr, "Error: Replacement character cannot be null terminator\n");
+        return EXIT_FAILURE;
+    }
+
+    replace_spaces(buffer, replacement);
+    printf("Modified string: %s\n", buffer);
+
+    return EXIT_SUCCESS;
+}
+```

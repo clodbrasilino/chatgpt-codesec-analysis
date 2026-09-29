@@ -1,0 +1,26 @@
+```C
+#include <stdio.h>
+
+int findLastRemoved(int arr[], int n, int removedElement) {
+    int i;
+    for(i = n-1; i >= 0; i--) {
+        if(arr[i] == removedElement) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+int main() {
+    int arr[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    int n = sizeof(arr)/sizeof(arr[0]);
+    int removedElement = 5;
+    int position = findLastRemoved(arr, n, removedElement);
+    if(position != -1) {
+        printf("The position of the last removed element is: %d\n", position);
+    } else {
+        printf("Element not found in the array.\n");
+    }
+    return 0;
+}
+```

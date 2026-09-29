@@ -1,0 +1,57 @@
+#include <stdio.h>
+#include <string.h>
+
+void remove_first_last_occurrence(char *str, char ch) {
+    if (str == NULL || *str == '\0') {
+        return;
+    }
+
+    int len = strlen(str);
+    int first = -1, last = -1;
+
+    for (int i = 0; i < len; i++) {
+        if (str[i] == ch) {
+            if (first == -1) {
+                first = i;
+            }
+            last = i;
+        }
+    }
+
+    if (first == -1) {
+        return;
+    }
+
+    int write_idx = 0;
+    for (int i = 0; i < len; i++) {
+        if (i == first || i == last) {
+            continue;
+        }
+        str[write_idx++] = str[i];
+    }
+    str[write_idx] = '\0';
+}
+
+int main(void) {
+    char str1[] = "hello world";
+    remove_first_last_occurrence(str1, 'o');
+    printf("%s\n", str1);
+
+    char str2[] = "aaaa";
+    remove_first_last_occurrence(str2, 'a');
+    printf("%s\n", str2);
+
+    char str3[] = "abcdef";
+    remove_first_last_occurrence(str3, 'z');
+    printf("%s\n", str3);
+
+    char str4[] = "a";
+    remove_first_last_occurrence(str4, 'a');
+    printf("%s\n", str4);
+
+    char str5[] = "";
+    remove_first_last_occurrence(str5, 'a');
+    printf("%s\n", str5);
+
+    return 0;
+}

@@ -1,0 +1,120 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+typedef struct {
+    size_t position;
+    size_t length;
+} SubstringMatch;
+
+typedef struct {
+    SubstringMatch *matches;
+    size_t count;
+    size_t capacity;
+} MatchResult;
+
+int init_match_result(MatchResult *result, size_t initial_capacity) {
+    if (result == NULL || initial_capacity == 0) {
+        return -1;
+    }
+    
+    result->matches = malloc(initial_capacity * sizeof(SubstringMatch));
+    if (result->matches == NULL) {
+        return -1;
+    }
+    
+    result->count = 0;
+    result->capacity = initial_capacity;
+    return 0;
+}
+
+void free_match_result(MatchResult *result) {
+    if (result != NULL && result->matches != NULL) {
+        free(result->matches);
+        result->matches = NULL;
+        result->count = 0;
+        result->capacity = 0;
+    }
+}
+
+int add_match(MatchResult *result, size_t position, size_t length) {
+    if (result == NULL) {
+        return -1;
+    }
+    
+    if (result->count >= result->capacity) {
+        size_t new_capacity = result->capacity * 2;
+        SubstringMatch *new_matches = realloc(result->matches, 
+                                               new_capacity * sizeof(SubstringMatch));
+        if (new_matches == NULL) {
+            return -1;
+        }
+        result->matches = new_matches;
+        result->capacity = new_capacity;
+    }
+    
+    result->matches[result->count].position = position;
+    result->matches[result->count].length = length;
+    result->count++;
+    return 0;
+}
+
+int find_substring_occurrences(const char *str, const char *substr, MatchResult *result) {
+    if (str == NULL || substr == NULL || result == NULL) {
+        return -1;
+    }
+    
+    size_t str_len = strlen(str);
+    size_t substr_len = strlen(substr);
+    
+    if (substr_len == 0 || str_len == 0 || substr_len > str_len) {
+        return 0;
+    }
+    
+    size_t i;
+    for (i = 0; i <= str_len - substr_len; i++) {
+        if (strncmp(str + i, substr, substr_len) == 0) {
+            if (add_match(result, i, substr_len) != 0) {
+                return -1;
+            }
+        }
+    }
+    
+    return 0;
+}
+
+int main(void) {
+    const char *text = "The quick brown fox jumps over the lazy dog. The fox is quick.";
+    const char *pattern = "fox";
+    
+    MatchResult result;
+    
+    if (init_match_result(&result, 10) != 0) {
+        fprintf(stderr, "Failed to initialize match result\n");
+        return EXIT_FAILURE;
+    }
+    
+    if (find_substring_occurrences(text, pattern, &result) != 0) {
+        fprintf(stderr, "Error finding substring occurrences\n");
+        free_match_result(&result);
+        return EXIT_FAILURE;
+    }
+    
+    printf("Text: \"%s\"\n", text);
+    printf("Pattern: \"%s\"\n", pattern);
+    printf("Found %zu occurrence(s):\n", result.count);
+    
+    size_t i;
+    for (i = 0; i < result.count; i++) {
+        printf("  Position %zu: \"%.*s\"\n", 
+               result.matches[i].position,
+               (int)result.matches[i].length,
+               text + result.matches[i].position);
+    }
+    
+    free_match_result(&result);
+    
+    return EXIT_SUCCESS;
+}
+```

@@ -1,0 +1,26 @@
+#include <stdio.h>
+#include <stddef.h>
+
+long long calculate_sum(const int *array, size_t size) {
+    if (array == NULL || size == 0) {
+        return 0;
+    }
+
+    long long sum = 0;
+    for (size_t i = 0; i < size; ++i) {
+        sum += array[i];
+    }
+
+    return sum;
+}
+
+int main(void) {
+    int data[] = {10, 20, 30, 40, 50};
+    size_t size = sizeof(data) / sizeof(data[0]);
+
+    long long result = calculate_sum(data, size);
+
+    printf("%lld\n", result);
+
+    return 0;
+}

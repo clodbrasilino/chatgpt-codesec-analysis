@@ -1,0 +1,32 @@
+#include <stdio.h>
+#define MAX 500
+
+void bellNumbers(int n) {
+    int bell[MAX][MAX];
+    bell[0][0] = 1;
+    
+    for (int i = 1; i < n+1; i++) {
+        bell[i][0] = bell[i-1][i-1];
+
+        for (int j = 1; j <= i; j++){
+            bell[i][j] = bell[i-1][j-1] + bell[i][j-1];
+        }
+    }
+    
+    printf("%d\n", bell[n][0]);
+}
+
+int main() {
+    int n;
+    printf("Enter the value of n: ");
+    scanf("%d", &n);
+
+    if(n >= 0 && n < MAX) {
+        bellNumbers(n);
+    }
+    else {
+        printf("Enter a positive integer less than %d\n", MAX);
+    }
+
+    return 0;
+}

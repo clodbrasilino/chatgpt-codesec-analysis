@@ -1,0 +1,231 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef enum {
+    VAL_STRING,
+    VAL_DICT
+} ValueType;
+
+typedef struct Dict Dict;
+
+typedef struct DictEntry {
+    char *key;
+    ValueType type;
+    union {
+        char *str_val;
+        Dict *dict_val;
+    } val;
+    struct DictEntry *next;
+} DictEntry;
+
+struct Dict {
+    DictEntry *head;
+};
+
+Dict *create_dict();
+DictEntry *find_entry(Dict *d, const char *key);
+int insert_dict_str(Dict *d, const char *key, const char *val);
+Dict *insert_dict_dict(Dict *d, const char *key);
+void free_dict(Dict *d);
+Dict *lists_to_nested_dict(const char ***lists, const int *sizes, int num_lists);
+void print_dict(const Dict *d, int indent);
+
+char *my_strdup(const char *s) {
+    if (!s) return NULL;
+    size_t len = strlen(s) + 1;
+    char *new_s = (char *)malloc(len);
+    if (new_s) {
+        memcpy(new_s, s, len);
+    }
+    return new_s;
+}
+
+Dict *create_dict() {
+    Dict *d = (Dict *)malloc(sizeof(Dict));
+    if (!d) return NULL;
+    d->head = NULL;
+    return d;
+}
+
+DictEntry *find_entry(Dict *d, const char *key) {
+    if (!d || !key) return NULL;
+    DictEntry *e = d->head;
+    while (e) {
+        if (strcmp(e->key, key) == 0) return e;
+        e = e->next;
+    }
+    return NULL;
+}
+
+int insert_dict_str(Dict *d, const char *key, const char *val) {
+    if (!d || !key || !val) return -1;
+    DictEntry *e = find_entry(d, key);
+    if (e) {
+        if (e->type == VAL_STRING) {
+            free(e->val.str_val);
+        } else {
+            free_dict(e->val.dict_val);
+        }
+        e->type = VAL_STRING;
+        e->val.str_val = my_strdup(val);
+        if (!e->val.str_val) return -1;
+    } else {
+        e = (DictEntry *)malloc(sizeof(DictEntry));
+        if (!e) return -1;
+        e->key = my_strdup(key);
+        if (!e->key) {
+            free(e);
+            return -1;
+        }
+        e->type = VAL_STRING;
+        e->val.str_val = my_strdup(val);
+        if (!e->val.str_val) {
+            free(e->key);
+            free(e);
+            return -1;
+        }
+        e->next = d->head;
+        d->head = e;
+    }
+    return 0;
+}
+
+Dict *insert_dict_dict(Dict *d, const char *key) {
+    if (!d || !key) return NULL;
+    DictEntry *e = find_entry(d, key);
+    if (e) {
+        if (e->type == VAL_DICT) {
+            return e->val.dict_val;
+        } else {
+            free(e->val.str_val);
+            e->type = VAL_DICT;
+            e->val.dict_val = create_dict();
+            return e->val.dict_val;
+        }
+    } else {
+        e = (DictEntry *)malloc(sizeof(DictEntry));
+        if (!e) return NULL;
+        e->key = my_strdup(key);
+        if (!e->key) {
+            free(e);
+            return NULL;
+        }
+        e->type = VAL_DICT;
+        e->val.dict_val = create_dict();
+        if (!e->val.dict_val) {
+            free(e->key);
+            free(e);
+            return NULL;
+        }
+        e->next = d->head;
+        d->head = e;
+        return e->val.dict_val;
+    }
+}
+
+void free_dict(Dict *d) {
+    if (!d) return;
+    DictEntry *e = d->head;
+    while (e) {
+        DictEntry *next = e->next;
+        free(e->key);
+        if (e->type == VAL_STRING) {
+            free(e->val.str_val);
+        } else if (e->type == VAL_DICT) {
+            free_dict(e->val.dict_val);
+        }
+        free(e);
+        e = next;
+    }
+    free(d);
+}
+
+Dict *lists_to_nested_dict(const char ***lists, const int *sizes, int num_lists) {
+    if (!lists || num_lists < 2 || !sizes) return NULL;
+
+    int min_size = sizes[0];
+    for (int i = 0; i < num_lists; i++) {
+        if (!lists[i]) return NULL;
+        if (sizes[i] < 0) return NULL;
+        if (sizes[i] < min_size) {
+            min_size = sizes[i];
+        }
+    }
+
+    Dict *root = create_dict();
+    if (!root) return NULL;
+
+    for (int i = 0; i < min_size; i++) {
+        Dict *current = root;
+        for (int j = 0; j < num_lists - 2; j++) {
+            const char *key = lists[j][i];
+            if (!key) {
+                free_dict(root);
+                return NULL;
+            }
+            current = insert_dict_dict(current, key);
+            if (!current) {
+                free_dict(root);
+                return NULL;
+            }
+        }
+        const char *last_key = lists[num_lists - 2][i];
+        const char *val = lists[num_lists - 1][i];
+        if (!last_key || !val) {
+            free_dict(root);
+            return NULL;
+        }
+        if (insert_dict_str(current, last_key, val) != 0) {
+            free_dict(root);
+            return NULL;
+        }
+    }
+    return root;
+}
+
+void print_dict(const Dict *d, int indent) {
+    if (!d) return;
+    const DictEntry *e = d->head;
+    while (e) {
+        for (int i = 0; i < indent; i++) printf("  ");
+        printf("%s: ", e->key);
+        if (e->type == VAL_STRING) {
+            printf("%s\n", e->val.str_val);
+        } else {
+            printf("\n");
+            print_dict(e->val.dict_val, indent + 1);
+        }
+        e = e->next;
+    }
+}
+
+int main() {
+    const char *keys1[] = {"a", "b", "a"};
+    const char *keys2[] = {"x", "y", "z"};
+    const char *vals[] = {"1", "2", "3"};
+
+    const char **lists[] = {keys1, keys2, vals};
+    const int sizes[] = {3, 3, 3};
+
+    Dict *d = lists_to_nested_dict(lists, sizes, 3);
+    if (d) {
+        print_dict(d, 0);
+        free_dict(d);
+    }
+
+    const char *single_keys[] = {"foo", "bar"};
+    const char *single_vals[] = {"baz", "qux"};
+    const char **lists2[] = {single_keys, single_vals};
+    const int sizes2[] = {2, 2};
+
+    Dict *d2 = lists_to_nested_dict(lists2, sizes2, 2);
+    if (d2) {
+        print_dict(d2, 0);
+        free_dict(d2);
+    }
+
+    return 0;
+}
+```

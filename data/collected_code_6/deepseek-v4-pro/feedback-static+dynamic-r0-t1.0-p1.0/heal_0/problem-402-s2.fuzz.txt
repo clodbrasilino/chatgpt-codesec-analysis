@@ -1,0 +1,8 @@
+problem-402-s2.c:9:30:medium:UBSan: signed integer overflow: 181883485772840960 * 1052446703539687692 cannot be represented in type 'long long' (AFL crash: id:000002,sig:06,src:000001,time:5136,execs:2186,op:havoc,rep:14)
+problem-402-s2.c:9:30:medium:UBSan: signed integer overflow: 13060694016 * 2821109907456 cannot be represented in type 'long long' (AFL crash: id:000003,sig:06,src:000001,time:9424,execs:4115,op:havoc,rep:11)
+problem-402-s2.c:10:22:medium:UBSan: signed integer overflow: 4294967296 * 4294967296 cannot be represented in type 'long long' (AFL crash: id:000001,sig:06,src:000001,time:4942,execs:2090,op:havoc,rep:2)
+problem-402-s2.c:10:22:medium:UBSan: signed integer overflow: 131681894400 * 131681894400 cannot be represented in type 'long long' (AFL crash: id:000002,sig:06,src:000001,time:5136,execs:2186,op:havoc,rep:14)
+problem-402-s2.c:10:22:medium:UBSan: signed integer overflow: 2821109907456 * 2821109907456 cannot be represented in type 'long long' (AFL crash: id:000003,sig:06,src:000001,time:9424,execs:4115,op:havoc,rep:11)
+problem-402-s2.c:30:32:medium:UBSan: signed integer overflow: 260604664090630650 * 1111106 cannot be represented in type 'long long' (AFL crash: id:000002,sig:06,src:000001,time:5136,execs:2186,op:havoc,rep:14)
+problem-402-s2.c:36:23:medium:UBSan: signed integer overflow: -380641327901655940 * -22138960838035186 cannot be represented in type 'long long' (AFL crash: id:000002,sig:06,src:000001,time:5136,execs:2186,op:havoc,rep:14)
+problem-402-s2.c:38:0:error:Fuzzing found a crash (signal 6) on input id:000000,sig:06,src:000001,time:2346,execs:1071,op:havoc,rep:2; likely memory-safety defect

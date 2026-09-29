@@ -1,0 +1,121 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+typedef struct {
+    void **elements;
+    size_t size;
+    size_t element_size;
+} tuple_t;
+
+int tuple_count_element(const tuple_t *tuple, const void *element) {
+    if (tuple == NULL || element == NULL || tuple->elements == NULL) {
+        return 0;
+    }
+    
+    int count = 0;
+    for (size_t i = 0; i < tuple->size; i++) {
+        if (memcmp(tuple->elements[i], element, tuple->element_size) == 0) {
+            count++;
+        }
+    }
+    
+    return count;
+}
+
+tuple_t *tuple_create(size_t element_size) {
+    if (element_size == 0) {
+        return NULL;
+    }
+    
+    tuple_t *tuple = (tuple_t *)malloc(sizeof(tuple_t));
+    if (tuple == NULL) {
+        return NULL;
+    }
+    
+    tuple->elements = NULL;
+    tuple->size = 0;
+    tuple->element_size = element_size;
+    return tuple;
+}
+
+int tuple_add(tuple_t *tuple, const void *element) {
+    if (tuple == NULL || element == NULL) {
+        return -1;
+    }
+    
+    if (tuple->element_size == 0) {
+        return -1;
+    }
+    
+    if (tuple->size == SIZE_MAX) {
+        return -1;
+    }
+    
+    size_t new_size = tuple->size + 1;
+    
+    if (new_size > SIZE_MAX / sizeof(void *)) {
+        return -1;
+    }
+    
+    void **new_elements = (void **)realloc(tuple->elements, new_size * sizeof(void *));
+    if (new_elements == NULL) {
+        return -1;
+    }
+    
+    tuple->elements = new_elements;
+    
+    void *new_element = malloc(tuple->element_size);
+    if (new_element == NULL) {
+        return -1;
+    }
+    
+    if (tuple->element_size > 0) {
+        /* Possible weaknesses found:
+         * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+         */
+        memcpy(new_element, element, tuple->element_size);
+    }
+    
+    tuple->elements[tuple->size] = new_element;
+    tuple->size++;
+    return 0;
+}
+
+void tuple_destroy(tuple_t *tuple) {
+    if (tuple == NULL) {
+        return;
+    }
+    
+    if (tuple->elements != NULL) {
+        for (size_t i = 0; i < tuple->size; i++) {
+            free(tuple->elements[i]);
+        }
+        free(tuple->elements);
+    }
+    
+    free(tuple);
+}
+
+int main(void) {
+    tuple_t *tuple = tuple_create(sizeof(int));
+    if (tuple == NULL) {
+        return 1;
+    }
+    
+    int values[] = {3, 1, 4, 1, 5, 9, 2, 6, 5, 3, 5};
+    for (size_t i = 0; i < sizeof(values) / sizeof(values[0]); i++) {
+        if (tuple_add(tuple, &values[i]) != 0) {
+            tuple_destroy(tuple);
+            return 1;
+        }
+    }
+    
+    int target = 5;
+    int result = tuple_count_element(tuple, &target);
+    printf("Element %d occurs %d time(s)\n", target, result);
+    
+    tuple_destroy(tuple);
+    return 0;
+}

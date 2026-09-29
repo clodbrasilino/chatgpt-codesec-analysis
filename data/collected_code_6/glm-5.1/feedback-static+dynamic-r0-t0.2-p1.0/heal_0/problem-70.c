@@ -1,0 +1,42 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int check_equal_length(int **tuples, int num_tuples, const int *lengths) {
+    if (num_tuples <= 0 || lengths == NULL) {
+        return 0;
+    }
+    if (tuples == NULL) {
+        return 0;
+    }
+    for (int i = 1; i < num_tuples; i++) {
+        if (lengths[i] != lengths[0]) {
+            return 0;
+        }
+    }
+    return 1;
+}
+
+int main(void) {
+    int a[] = {1, 2, 3};
+    int b[] = {4, 5, 6};
+    int c[] = {7, 8, 9};
+    int d[] = {10, 11};
+
+    int *tuples1[] = {a, b, c};
+    int lengths1[] = {3, 3, 3};
+    int result1 = check_equal_length(tuples1, 3, lengths1);
+    printf("%d\n", result1);
+
+    int *tuples2[] = {a, b, d};
+    int lengths2[] = {3, 3, 2};
+    int result2 = check_equal_length(tuples2, 3, lengths2);
+    printf("%d\n", result2);
+
+    int result3 = check_equal_length(NULL, 3, lengths1);
+    printf("%d\n", result3);
+
+    int result4 = check_equal_length(tuples1, 0, lengths1);
+    printf("%d\n", result4);
+
+    return 0;
+}

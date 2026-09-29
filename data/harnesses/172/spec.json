@@ -1,0 +1,44 @@
+{
+  "task_id": 172,
+  "text": "Write a C function to find the occurence of characters 'std' in the given string 1. list item 1. list item 1. list item 2. list item 2. list item 2. list item",
+  "fn_candidates": [
+    "count_occurance",
+    "CountOccurance",
+    "countOccurance",
+    "countoccurance"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "count_occurance",
+      "args": [
+        "letstdlenstdporstd"
+      ],
+      "expected": 3,
+      "assert_src": "assert count_occurance(\"letstdlenstdporstd\") == 3"
+    },
+    {
+      "fn_name": "count_occurance",
+      "args": [
+        "truststdsolensporsd"
+      ],
+      "expected": 1,
+      "assert_src": "assert count_occurance(\"truststdsolensporsd\") == 1"
+    },
+    {
+      "fn_name": "count_occurance",
+      "args": [
+        "makestdsostdworthit"
+      ],
+      "expected": 2,
+      "assert_src": "assert count_occurance(\"makestdsostdworthit\") == 2"
+    }
+  ],
+  "arg_kinds": [
+    "str"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

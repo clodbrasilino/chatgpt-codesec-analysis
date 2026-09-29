@@ -1,0 +1,92 @@
+{
+  "task_id": 429,
+  "text": "Write a C function to extract the elementwise and tuples from the given two tuples.",
+  "fn_candidates": [
+    "and_tuples",
+    "AndTuples",
+    "andTuples",
+    "andtuples"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "and_tuples",
+      "args": [
+        [
+          10,
+          4,
+          6,
+          9
+        ],
+        [
+          5,
+          2,
+          3,
+          3
+        ]
+      ],
+      "expected": [
+        0,
+        0,
+        2,
+        1
+      ],
+      "assert_src": "assert and_tuples((10, 4, 6, 9), (5, 2, 3, 3)) == (0, 0, 2, 1)"
+    },
+    {
+      "fn_name": "and_tuples",
+      "args": [
+        [
+          1,
+          2,
+          3,
+          4
+        ],
+        [
+          5,
+          6,
+          7,
+          8
+        ]
+      ],
+      "expected": [
+        1,
+        2,
+        3,
+        0
+      ],
+      "assert_src": "assert and_tuples((1, 2, 3, 4), (5, 6, 7, 8)) == (1, 2, 3, 0)"
+    },
+    {
+      "fn_name": "and_tuples",
+      "args": [
+        [
+          8,
+          9,
+          11,
+          12
+        ],
+        [
+          7,
+          13,
+          14,
+          17
+        ]
+      ],
+      "expected": [
+        0,
+        9,
+        10,
+        0
+      ],
+      "assert_src": "assert and_tuples((8, 9, 11, 12), (7, 13, 14, 17)) == (0, 9, 10, 0)"
+    }
+  ],
+  "arg_kinds": [
+    "int-list"
+  ],
+  "return_kind": "int-list",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

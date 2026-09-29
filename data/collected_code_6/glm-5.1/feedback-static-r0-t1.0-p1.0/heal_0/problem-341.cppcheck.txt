@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-341.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-341.c:104:42: style: Condition 'set_size>0' is always true [knownConditionTrueFalse]
+        if (tuple_count == 0 && set_size > 0) {
+                                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-341.c:91:35: note: Assignment 'set_size=sizeof(set)/sizeof(set[0])', assigned value is 8
+    size_t set_size = sizeof(set) / sizeof(set[0]);
+                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-341.c:104:42: note: Condition 'set_size>0' is always true
+        if (tuple_count == 0 && set_size > 0) {
+                                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-341.c:106:29: style: Condition 'set_size==0' is always false [knownConditionTrueFalse]
+        } else if (set_size == 0) {
+                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-341.c:91:35: note: Assignment 'set_size=sizeof(set)/sizeof(set[0])', assigned value is 8
+    size_t set_size = sizeof(set) / sizeof(set[0]);
+                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-341.c:106:29: note: Condition 'set_size==0' is always false
+        } else if (set_size == 0) {
+                            ^

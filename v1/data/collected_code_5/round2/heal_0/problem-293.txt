@@ -1,0 +1,38 @@
+```c
+#include<stdio.h>
+#include<math.h>
+
+double find_third_side(double side1, double side2){
+    if(side1 > 0 && side2 > 0){
+        double square_side1 = pow(side1, 2);
+        double square_side2 = pow(side2, 2);
+        
+        double square_side3 = square_side1 + square_side2;
+        double side3 = sqrt(square_side3);
+        
+        return side3;
+    }else{
+        printf("\nNote: Both input sides must be positive.");
+        return -1;
+    }
+}
+
+int main(){
+    double side1, side2;
+
+    printf("Enter the first side: ");
+    scanf("%lf", &side1);
+
+    printf("Enter the second side: ");
+    scanf("%lf", &side2);
+
+    double side3 = find_third_side(side1, side2);
+    if(side3 != -1)
+        printf("\nThe third side of the right angled triangle is: %.2lf\n", side3);
+
+    return 0;
+}
+```
+The function `find_third_side()` is defined to calculate the third side of a right angled triangle, considering the two sides as inputs. It checks if both inputs are positive. If they are, it will calculate the third side using the theorem of Pythagoras and return it. If at least one input is non-positive, it prints a note and returns -1.
+
+The `main()` function requests the user to input the two sides of a right angled triangle, calls the function `find_third_side()`, checks whether the return value is -1 and, if it is not, prints the third side. Otherwise, no action is taken.

@@ -1,0 +1,41 @@
+```C
+#include <stdio.h>
+
+int count_equal_numbers(int num1, int num2, int num3) {
+    int count = 0;
+
+    if (num1 == num2) {
+        count++;
+    }
+    if (num1 == num3) {
+        count++;
+    }
+    if (num2 == num3) {
+        count++;
+    }
+
+    switch (count) {
+        case 1:
+            return 2;
+        case 2:
+            return 3;
+        default:
+            return count;
+    }
+}
+
+int main() {
+    int num1, num2, num3;
+
+    printf("Enter three numbers: \n");
+    if (scanf("%d %d %d", &num1, &num2, &num3) != 3) {
+        printf("Invalid input! Please enter three integers.\n");
+        return 1;
+    }
+
+    int result = count_equal_numbers(num1, num2, num3);
+    printf("%d number(s) are the same.\n", result);
+
+    return 0;
+}
+```

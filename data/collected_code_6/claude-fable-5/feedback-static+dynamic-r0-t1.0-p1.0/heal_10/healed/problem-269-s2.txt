@@ -1,0 +1,76 @@
+## Analysis
+
+The Flawfinder warnings on `getchar()` (CWE-120/CWE-20) are largely false positives here — `getchar()` returns a single `int` and no buffer is written to, so no buffer overflow is possible. The existing code already mitigates the real risks:
+
+- **EOF handling**: `getchar()` result is stored in an `int` (not `char`), so `EOF` is distinguishable from valid characters.
+- **Unbounded loop**: `flush_input()` has a counter guard, though checking `count >= ULONG_MAX` after increment is effectively dead logic since the loop would terminate on `EOF` long before wrapping; a saner explicit bound is preferable.
+- **Input validation**: `isprint()` is correctly called with an `unsigned char` cast, avoiding UB for negative `char` values.
+
+Remaining improvements: use a realistic bound in `flush_input()`, stop draining once `EOF` is seen (don't count `EOF` iterations), and avoid the redundant `char` round-trip cast when computing the ASCII value.
+
+## Rewritten Code
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <ctype.h>
+
+#define FLUSH_LIMIT 4096UL
+
+static int get_ascii_value(int c)
+{
+    return (int)(unsigned char)c;
+}
+
+static void flush_input(void)
+{
+    int c;
+    unsigned long count = 0;
+
+    while (count < FLUSH_LIMIT) {
+        c = getchar();
+        if (c == '\n' || c == EOF) {
+            break;
+        }
+        count++;
+    }
+}
+
+int main(void)
+{
+    int input;
+
+    printf("Enter a character: ");
+    if (fflush(stdout) != 0) {
+        fprintf(stderr, "Error: failed to flush output\n");
+        return EXIT_FAILURE;
+    }
+
+    input = getchar();
+    if (input == EOF) {
+        fprintf(stderr, "Error: failed to read input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (input != '\n') {
+        flush_input();
+    }
+
+    if (!isprint((unsigned char)input)) {
+        fprintf(stderr, "Error: input is not a printable character\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("The ASCII value of '%c' is %d\n", input, get_ascii_value(input));
+
+    return EXIT_SUCCESS;
+}
+```
+
+### Key changes
+
+1. **`flush_input()` bound**: replaced the near-meaningless `ULONG_MAX` check with a concrete `FLUSH_LIMIT`, checked *before* reading, and `EOF`/newline break happens before incrementing — the loop can never spin indefinitely or wrap.
+2. **Dropped `<limits.h>`**: no longer needed after removing the `ULONG_MAX` comparison.
+3. **`get_ascii_value(int)`**: takes the `int` directly, avoiding the implementation-defined `int → char → unsigned char` narrowing round-trip; the value is already validated as printable before the call.
+4. **`printf("%c", input)`**: `%c` expects an `int` argument anyway (default promotion), so the explicit `(char)` cast was removed as noise.
+5. The `getchar()` Flawfinder hits require no code change — single-character reads into an `int` with `EOF` checks are the correct, safe idiom; the fix is bounding the drain loop, which is done.

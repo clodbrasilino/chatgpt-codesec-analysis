@@ -1,0 +1,46 @@
+```C
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+  int first;
+  int second;
+} tuple;
+
+void add_list_to_tuples(tuple* tuples_array, int* list, int size) {
+  if(!tuples_array || !list) { 
+    printf("Error: Null point referenced.\n");
+    return;
+  }
+  
+  for(int i = 0; i < size; ++i){
+    tuples_array[i].first += list[i];
+    tuples_array[i].second += list[i];
+  }
+}
+
+int main(void) {
+  int size = 3;
+  tuple* tuples_array = malloc(sizeof(tuple) * size);
+  
+  if(!tuples_array) {
+    printf("Error: Memory allocation failed.\n");
+    return -1;
+  }
+  
+  tuples_array[0].first = 1; tuples_array[0].second = 2;
+  tuples_array[1].first = 3; tuples_array[1].second = 4;
+  tuples_array[2].first = 5; tuples_array[2].second = 6;
+  
+  int list[3] = {1, 2, 3};
+  add_list_to_tuples(tuples_array, list, size);
+  
+  for(int i = 0; i < size; ++i) {
+    printf("Tuple%d: first = %d, second = %d\n", i+1, tuples_array[i].first, tuples_array[i].second);
+  }
+  
+  free(tuples_array);
+  
+  return 0;
+}
+```

@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-843.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-843.c:92:27: style: Condition 'n==1' is always false [knownConditionTrueFalse]
+    if (result != 0 || (n == 1 && primes != NULL && k > 0)) {
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-843.c:89:13: note: Assignment 'n=12', assigned value is 12
+    int n = 12;
+            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-843.c:92:27: note: Condition 'n==1' is always false
+    if (result != 0 || (n == 1 && primes != NULL && k > 0)) {
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-843.c:92:42: style: Condition 'primes!=NULL' is always true [knownConditionTrueFalse]
+    if (result != 0 || (n == 1 && primes != NULL && k > 0)) {
+                                         ^

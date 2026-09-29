@@ -1,0 +1,45 @@
+```c
+#include <stdio.h>
+#include <string.h>
+
+int match(char *input_str) {
+    int state = 0;
+    int i = 0;
+    while(i < strlen(input_str)) {
+        switch(state) {
+            case 0:
+                if (input_str[i] == 'a') {
+                    state = 1;
+                } else {
+                    return 0;
+                }
+                break;
+            case 1:
+                if (input_str[i] != 'b') {
+                    return 0;
+                }        
+                break;
+        }
+        i++;
+    }
+    if (state == 1) {
+        return 1;
+    } else {
+        return 0;
+    }
+}
+
+int main() {
+    char test_str[100];
+    printf("Enter a test string: \n");
+    scanf("%s", test_str);
+    int result = match(test_str);
+    if(result) {
+        printf("The string matches the condition.\n");    
+    } else {
+        printf("The string does not match the condition.\n");
+    }
+    return 0;
+}
+```
+This C function uses a state machine approach to check whether the input string matches the condition (an 'a' followed by zero or more 'b's). It first reads in the input string, then iterates through each character. During each iteration, it checks the current state and the current character to determine what the next state should be. If the string does not match the condition, it immediately returns 0. If the function finishes iterating through the string and the final state is 1 (which indicates that the string ended with zero or more 'b's after an 'a'), then the function returns 1. Otherwise, it also returns 0. The main function calls the match function and prints out a message based on the return value.

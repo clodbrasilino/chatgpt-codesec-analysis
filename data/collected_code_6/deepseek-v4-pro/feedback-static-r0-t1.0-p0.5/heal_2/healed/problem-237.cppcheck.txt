@@ -1,0 +1,16 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p0.5/heal_2/healed/problem-237.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p0.5/heal_2/healed/problem-237.c:147:24: style: Variable 'occ_array.size' is reassigned a value before the old one has been used. [redundantAssignment]
+        occ_array.size = 0;
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p0.5/heal_2/healed/problem-237.c:144:24: note: occ_array.size is assigned
+        occ_array.size = group2.count;
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p0.5/heal_2/healed/problem-237.c:147:24: note: occ_array.size is overwritten
+        occ_array.size = 0;
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p0.5/heal_2/healed/problem-237.c:131:20: style: Variable 'occ_array.size' is assigned a value that is never used. [unreadVariable]
+    occ_array.size = 0;
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p0.5/heal_2/healed/problem-237.c:147:24: style: Variable 'occ_array.size' is assigned a value that is never used. [unreadVariable]
+        occ_array.size = 0;
+                       ^

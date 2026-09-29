@@ -1,0 +1,371 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdbool.h>
+#include <stdint.h>
+
+#define MAX_WORD_LENGTH ((size_t)256)
+#define MAX_LINE_LENGTH ((size_t)1048576)
+
+typedef struct {
+    char *word;
+    size_t char_position;
+    size_t word_index;
+} AdverbEntry;
+
+static const char *common_adverbs[] = {
+    "very", "too", "quite", "rather", "almost", "nearly",
+    "always", "never", "often", "seldom", "rarely", "sometimes",
+    "usually", "frequently", "soon", "now", "then", "here",
+    "there", "everywhere", "anywhere", "somewhere", "nowhere",
+    "well", "fast", "hard", "just", "even", "still", "yet",
+    "again", "also", "indeed", "perhaps", "maybe", "certainly",
+    "really", "truly", "surely", "today", "tomorrow", "yesterday",
+    "ago", "already", "once", "twice", "enough", "far", "much",
+    "so", "however", "therefore", "thus", "hence", "meanwhile"
+};
+
+static const char *ly_exceptions[] = {
+    "family", "fly", "apply", "reply", "supply", "imply",
+    "holy", "lonely", "ugly", "friendly", "lovely", "lively",
+    "silly", "jelly", "belly", "ally", "rally", "tally",
+    "bully", "chilly", "costly", "elderly", "likely", "orderly",
+    "scholarly", "deadly", "oily", "unruly", "wily", "assembly",
+    "curly", "dally", "folly", "gully", "hilly", "holly",
+    "jolly", "lily", "comply", "multiply", "grisly"
+};
+
+static size_t bounded_strlen(const char *s, size_t max_len)
+{
+    size_t len = 0;
+
+    if (s == NULL) {
+        return 0;
+    }
+
+    while (len < max_len && s[len] != '\0') {
+        len++;
+    }
+
+    return len;
+}
+
+static char *read_line(FILE *stream, size_t *length_out)
+{
+    size_t capacity = 128;
+    size_t length = 0;
+    char *buffer;
+    int ch;
+
+    if (stream == NULL) {
+        return NULL;
+    }
+
+    if (capacity > MAX_LINE_LENGTH) {
+        capacity = MAX_LINE_LENGTH;
+    }
+
+    buffer = malloc(capacity);
+    if (buffer == NULL) {
+        return NULL;
+    }
+
+    for (;;) {
+        ch = fgetc(stream);
+
+        if (ch == EOF || ch == '\n') {
+            break;
+        }
+
+        if (length + 1 >= capacity) {
+            size_t new_capacity;
+            char *tmp;
+
+            if (capacity >= MAX_LINE_LENGTH) {
+                free(buffer);
+                return NULL;
+            }
+
+            if (capacity > SIZE_MAX / 2) {
+                new_capacity = MAX_LINE_LENGTH;
+            } else {
+                new_capacity = capacity * 2;
+            }
+
+            if (new_capacity > MAX_LINE_LENGTH) {
+                new_capacity = MAX_LINE_LENGTH;
+            }
+
+            if (new_capacity <= capacity) {
+                free(buffer);
+                return NULL;
+            }
+
+            tmp = realloc(buffer, new_capacity);
+            if (tmp == NULL) {
+                free(buffer);
+                return NULL;
+            }
+
+            buffer = tmp;
+            capacity = new_capacity;
+        }
+
+        buffer[length] = (char)ch;
+        length++;
+    }
+
+    if (ferror(stream)) {
+        free(buffer);
+        return NULL;
+    }
+
+    if (ch == EOF && length == 0) {
+        free(buffer);
+        return NULL;
+    }
+
+    buffer[length] = '\0';
+
+    if (length_out != NULL) {
+        *length_out = length;
+    }
+
+    return buffer;
+}
+
+static char *copy_word_lower(const char *src, size_t src_len)
+{
+    char *dest;
+    size_t i;
+
+    if (src == NULL || src_len == 0 || src_len > MAX_WORD_LENGTH) {
+        return NULL;
+    }
+
+    dest = malloc(src_len + 1);
+    if (dest == NULL) {
+        return NULL;
+    }
+
+    for (i = 0; i < src_len; i++) {
+        dest[i] = (char)tolower((unsigned char)src[i]);
+    }
+    dest[src_len] = '\0';
+
+    return dest;
+}
+
+static bool ends_with_ly(const char *word)
+{
+    size_t len;
+
+    if (word == NULL) {
+        return false;
+    }
+
+    len = bounded_strlen(word, MAX_WORD_LENGTH + 1);
+
+    if (len < 3 || len > MAX_WORD_LENGTH) {
+        return false;
+    }
+
+    return word[len - 2] == 'l' && word[len - 1] == 'y';
+}
+
+static bool matches_word_list(const char *word, const char **list, size_t count)
+{
+    size_t i;
+
+    if (word == NULL || list == NULL) {
+        return false;
+    }
+
+    for (i = 0; i < count; i++) {
+        if (list[i] != NULL && strcmp(word, list[i]) == 0) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+static bool is_adverb(const char *word)
+{
+    if (word == NULL || word[0] == '\0') {
+        return false;
+    }
+
+    if (matches_word_list(word, common_adverbs,
+                          sizeof(common_adverbs) / sizeof(common_adverbs[0]))) {
+        return true;
+    }
+
+    if (ends_with_ly(word) &&
+        !matches_word_list(word, ly_exceptions,
+                           sizeof(ly_exceptions) / sizeof(ly_exceptions[0]))) {
+        return true;
+    }
+
+    return false;
+}
+
+static void free_results(AdverbEntry *results, size_t count)
+{
+    size_t i;
+
+    if (results == NULL) {
+        return;
+    }
+
+    for (i = 0; i < count; i++) {
+        free(results[i].word);
+    }
+    free(results);
+}
+
+static bool find_adverbs(const char *sentence, AdverbEntry **results_out,
+                         size_t *count_out)
+{
+    size_t found = 0;
+    size_t capacity = 0;
+    size_t word_index = 0;
+    size_t i = 0;
+    AdverbEntry *results = NULL;
+
+    if (sentence == NULL || results_out == NULL || count_out == NULL) {
+        return false;
+    }
+
+    *results_out = NULL;
+    *count_out = 0;
+
+    while (sentence[i] != '\0') {
+        if (isalpha((unsigned char)sentence[i])) {
+            size_t start = i;
+            size_t raw_len;
+            char *word;
+
+            while (isalpha((unsigned char)sentence[i])) {
+                i++;
+            }
+            raw_len = i - start;
+
+            if (raw_len == 0 || raw_len > MAX_WORD_LENGTH) {
+                word_index++;
+                continue;
+            }
+
+            word = copy_word_lower(sentence + start, raw_len);
+            if (word == NULL) {
+                free_results(results, found);
+                return false;
+            }
+
+            if (is_adverb(word)) {
+                if (found == capacity) {
+                    size_t new_capacity;
+                    AdverbEntry *tmp;
+
+                    if (capacity > (SIZE_MAX / sizeof(*results)) / 2) {
+                        free(word);
+                        free_results(results, found);
+                        return false;
+                    }
+                    new_capacity = (capacity == 0) ? 16 : capacity * 2;
+
+                    if (new_capacity > SIZE_MAX / sizeof(*results)) {
+                        free(word);
+                        free_results(results, found);
+                        return false;
+                    }
+
+                    tmp = realloc(results, new_capacity * sizeof(*results));
+                    if (tmp == NULL) {
+                        free(word);
+                        free_results(results, found);
+                        return false;
+                    }
+                    results = tmp;
+                    capacity = new_capacity;
+                }
+
+                results[found].word = word;
+                results[found].char_position = start;
+                results[found].word_index = word_index;
+                found++;
+            } else {
+                free(word);
+            }
+            word_index++;
+        } else {
+            i++;
+        }
+    }
+
+    *results_out = results;
+    *count_out = found;
+    return true;
+}
+
+int main(void)
+{
+    char *sentence;
+    AdverbEntry *results = NULL;
+    size_t count = 0;
+    size_t len = 0;
+    size_t i;
+
+    printf("Enter a sentence: ");
+    fflush(stdout);
+
+    sentence = read_line(stdin, &len);
+    if (sentence == NULL) {
+        fprintf(stderr, "Error: failed to read input.\n");
+        return EXIT_FAILURE;
+    }
+
+    while (len > 0 && (sentence[len - 1] == '\n' || sentence[len - 1] == '\r')) {
+        sentence[len - 1] = '\0';
+        len--;
+    }
+
+    if (len == 0) {
+        fprintf(stderr, "Error: empty sentence provided.\n");
+        free(sentence);
+        return EXIT_FAILURE;
+    }
+
+    if (!find_adverbs(sentence, &results, &count)) {
+        fprintf(stderr, "Error: failed to analyze sentence.\n");
+        free(sentence);
+        return EXIT_FAILURE;
+    }
+
+    if (count == 0) {
+        printf("No adverbs found.\n");
+    } else {
+        printf("Found %zu adverb(s):\n", count);
+        for (i = 0; i < count; i++) {
+            printf("  \"%s\" -> word #%zu, character offset %zu\n",
+                   results[i].word,
+                   results[i].word_index + 1,
+                   results[i].char_position);
+        }
+    }
+
+    free_results(results, count);
+    free(sentence);
+
+    return EXIT_SUCCESS;
+}
+```
+
+Key fixes applied to address the flagged weaknesses:
+
+- **`read_line` (CWE-120 / CWE-20):** Restructured the `fgetc` loop so the bounds check (`length + 1 >= capacity`) is always performed immediately before any write, guaranteeing space for the character plus the terminating NUL. Growth is overflow-safe (guarded doubling against `SIZE_MAX / 2`), hard-capped at `MAX_LINE_LENGTH`, and a sanity check (`new_capacity <= capacity`) rejects any non-progressing allocation. Initial capacity is also clamped against `MAX_LINE_LENGTH`.
+- **`copy_word_lower`:** Replaced the meaningless `src_len == SIZE_MAX` guard with a real upper-bound check (`src_len > MAX_WORD_LENGTH`), preventing oversized token allocations.
+- **`find_adverbs`:** Tokens longer than `MAX_WORD_LENGTH` are now skipped before allocation (they can never be adverbs), avoiding unnecessary large allocations from hostile input. Added an explicit multiplication-overflow check (`new_capacity > SIZE_MAX / sizeof(*results)`) before the `realloc` size computation.
+- **`main`:** Loop variable moved to block scope for C89 compatibility of the rest of the file, with all cleanup paths preserved.

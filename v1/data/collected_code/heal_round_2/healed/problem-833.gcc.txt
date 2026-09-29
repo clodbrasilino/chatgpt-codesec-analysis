@@ -1,0 +1,94 @@
+collected_code/heal_round_2/healed/problem-833.c: In function 'main':
+collected_code/heal_round_2/healed/problem-833.c:45:17: warning: use of possibly-NULL '*keys_43 + _11' where non-null expected [CWE-690] [-Wanalyzer-possible-null-argument]
+   45 |                 printf("%s\n", keys[i]);
+      |                 ^~~~~~~~~~~~~~~~~~~~~~~
+  'main': events 1-4
+    |
+    |   24 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   28 |     if (dictionary != NULL)
+    |      |        ~
+    |      |        |
+    |      |        (2) following 'true' branch (when 'dictionary' is non-NULL)...
+    |   29 |     {
+    |   30 |         dictionary[0].key = strdup("apple");
+    |      |                             ~~~~~~~~~~~~~~~
+    |      |                             |
+    |      |                             (3) ...to here
+    |......
+    |   40 |         char** keys = getDictionaryKeys(dictionary, size);
+    |      |                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                       |
+    |      |                       (4) calling 'getDictionaryKeys' from 'main'
+    |
+    +--> 'getDictionaryKeys': events 5-18
+           |
+           |   10 | char** getDictionaryKeys(Dictionary* dictionary, int size) {
+           |      |        ^~~~~~~~~~~~~~~~~
+           |      |        |
+           |      |        (5) entry to 'getDictionaryKeys'
+           |   11 |     if (dictionary == NULL)
+           |      |        ~
+           |      |        |
+           |      |        (6) following 'false' branch (when 'dictionary' is non-NULL)...
+           |......
+           |   14 |     char** keys = (char**) malloc(size * sizeof(char*));
+           |      |                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                            |
+           |      |                            (7) ...to here
+           |   15 |     if (keys == NULL)
+           |      |        ~
+           |      |        |
+           |      |        (8) following 'false' branch (when 'keys' is non-NULL)...
+           |......
+           |   18 |     for (int i = 0; i < size; i++) {
+           |      |              ~      ~~~~~~~~
+           |      |              |        |
+           |      |              |        (10) following 'true' branch (when 'i < size')...
+           |      |              |        (13) following 'true' branch (when 'i < size')...
+           |      |              |        (15) following 'true' branch (when 'i < size')...
+           |      |              |        (17) following 'false' branch (when 'i >= size')...
+           |      |              (9) ...to here
+           |   19 |         keys[i] = strdup(dictionary[i].key);
+           |      |                   ~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                   |                |
+           |      |                   |                (11) ...to here
+           |      |                   |                (14) ...to here
+           |      |                   |                (16) ...to here
+           |      |                   (12) this call could return NULL
+           |   20 |     }
+           |   21 |     return keys;
+           |      |            ~~~~
+           |      |            |
+           |      |            (18) ...to here
+           |
+    <------+
+    |
+  'main': events 19-24
+    |
+    |   40 |         char** keys = getDictionaryKeys(dictionary, size);
+    |      |                       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                       |
+    |      |                       (19) returning to 'main' from 'getDictionaryKeys'
+    |   41 | 
+    |   42 |         if (keys != NULL)
+    |      |            ~           
+    |      |            |
+    |      |            (20) following 'true' branch (when 'keys' is non-NULL)...
+    |   43 |         {
+    |   44 |             for (int i = 0; i < size; i++) {
+    |      |                      ~      ~~~~~~~~
+    |      |                      |        |
+    |      |                      |        (22) following 'true' branch (when 'i < size')...
+    |      |                      (21) ...to here
+    |   45 |                 printf("%s\n", keys[i]);
+    |      |                 ~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                 |                  |
+    |      |                 |                  (23) ...to here
+    |      |                 (24) argument 1 ('*keys_43 + _11') from (12) could be NULL where non-null expected
+    |
+<built-in>: note: argument 1 of '__builtin_puts' must be non-null
+-macosx_version_min has been renamed to -macos_version_min

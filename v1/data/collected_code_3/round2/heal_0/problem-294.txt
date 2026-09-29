@@ -1,0 +1,24 @@
+In C, there is no built-in support for heterogeneous lists (lists that can contain different types of data). C is a statically typed language, which means that the type of data a variable can hold must be known at compile time. However, you can create a heterogeneous list using structures and unions. But, finding the maximum value in such a list would be a complex task, because you would need to know the type of each element to compare them correctly.
+
+Here is an example of how you might implement a homogeneous list (a list that contains only one type of data, such as integers) and find the maximum value:
+
+```c
+#include <stdio.h>
+
+int findMax(int arr[], int n) {
+    int max = arr[0];
+    for (int i = 1; i < n; i++)
+        if (arr[i] > max)
+            max = arr[i];
+    return max;
+}
+
+int main() {
+    int arr[] = {10, 324, 45, 90, 9808};
+    int n = sizeof(arr)/sizeof(arr[0]);
+    printf("The maximum element is %d", findMax(arr, n));
+    return 0;
+}
+```
+
+In this code, `findMax` is a function that takes an array of integers and its size as arguments, and returns the maximum value in the array. The `main` function defines an array of integers, calculates its size, and then calls `findMax` to find the maximum value in the array. The result is then printed to the console.

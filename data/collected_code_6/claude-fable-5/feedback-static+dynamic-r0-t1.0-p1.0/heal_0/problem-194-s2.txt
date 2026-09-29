@@ -1,0 +1,69 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+int octal_to_decimal(long octal, long *result)
+{
+    long decimal = 0;
+    long base = 1;
+
+    if (result == NULL) {
+        return -1;
+    }
+
+    if (octal < 0) {
+        return -1;
+    }
+
+    while (octal > 0) {
+        long digit = octal % 10;
+
+        if (digit > 7) {
+            return -1;
+        }
+
+        if (decimal > (LONG_MAX - digit * base)) {
+            return -1;
+        }
+
+        decimal += digit * base;
+
+        if (base > LONG_MAX / 8) {
+            octal /= 10;
+            if (octal > 0) {
+                return -1;
+            }
+            break;
+        }
+
+        base *= 8;
+        octal /= 10;
+    }
+
+    *result = decimal;
+    return 0;
+}
+
+int main(void)
+{
+    long octal = 0;
+    long decimal = 0;
+
+    printf("Enter an octal number: ");
+
+    if (scanf("%ld", &octal) != 1) {
+        fprintf(stderr, "Error: invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (octal_to_decimal(octal, &decimal) != 0) {
+        fprintf(stderr, "Error: invalid octal number or overflow\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Decimal equivalent: %ld\n", decimal);
+
+    return EXIT_SUCCESS;
+}
+```

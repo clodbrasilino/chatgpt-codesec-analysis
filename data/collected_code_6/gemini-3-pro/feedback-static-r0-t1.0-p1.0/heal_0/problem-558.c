@@ -1,0 +1,34 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int digit_distance(int num1, int num2) {
+    int distance = 0;
+    
+    num1 = abs(num1);
+    num2 = abs(num2);
+
+    while (num1 > 0 || num2 > 0) {
+        int digit1 = num1 % 10;
+        int digit2 = num2 % 10;
+        
+        distance += abs(digit1 - digit2);
+        
+        num1 /= 10;
+        num2 /= 10;
+    }
+
+    return distance;
+}
+
+int main(void) {
+    int a, b;
+    
+    if (scanf("%d %d", &a, &b) == 2) {
+        int dist = digit_distance(a, b);
+        printf("%d\n", dist);
+    } else {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

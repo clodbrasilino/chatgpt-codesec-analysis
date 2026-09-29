@@ -1,0 +1,17 @@
+collected_code/heal_round_3/healed/problem-523.c: In function 'checkString':
+collected_code/heal_round_3/healed/problem-523.c:11:7: warning: check of 'str' for NULL after already dereferencing it [-Wanalyzer-deref-before-check]
+   11 |     if(str == NULL || length <= 0 || length > MAX_STR_LENGTH) {
+      |       ^
+  'checkString': events 1-2
+    |
+    |    9 |     int length = strlen(str);
+    |      |                  ^~~~~~~~~~~
+    |      |                  |
+    |      |                  (1) pointer 'str' is dereferenced here
+    |   10 | 
+    |   11 |     if(str == NULL || length <= 0 || length > MAX_STR_LENGTH) {
+    |      |       ~           
+    |      |       |
+    |      |       (2) pointer 'str' is checked for NULL here but it was already dereferenced at (1)
+    |
+-macosx_version_min has been renamed to -macos_version_min

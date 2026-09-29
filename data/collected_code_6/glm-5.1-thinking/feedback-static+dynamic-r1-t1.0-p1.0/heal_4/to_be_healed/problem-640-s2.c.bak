@@ -1,0 +1,71 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+ /* Possible weaknesses found:
+  *  test case 1 failed: expected 'string', got ��
+  *  test case 0 failed: expected 'python', got ��
+  *  test case 2 failed: expected 'alpha', got  �
+  */
+
+char *remove_parenthesis(char *str) {
+    if (str == NULL) {
+        return NULL;
+    }
+
+    size_t len = strlen(str);
+    char *result = malloc(len + 1);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    size_t write_idx = 0;
+    int depth = 0;
+
+    for (size_t read_idx = 0; read_idx < len; ++read_idx) {
+        if (str[read_idx] == '(') {
+            depth++;
+        } else if (str[read_idx] == ')') {
+            if (depth > 0) {
+                depth--;
+            }
+        } else {
+            if (depth == 0) {
+                result[write_idx++] = str[read_idx];
+            }
+        }
+    }
+
+    result[write_idx] = '\0';
+    return result;
+}
+
+int main(void) {
+    char str1[] = "Hello (World)!";
+    char str2[] = "(Nested (Parentheses)) Example";
+    char str3[] = "Unbalanced ( Open";
+    char str4[] = "Unbalanced ) Close";
+
+    char *res1 = remove_parenthesis(str1);
+    char *res2 = remove_parenthesis(str2);
+    char *res3 = remove_parenthesis(str3);
+    char *res4 = remove_parenthesis(str4);
+
+    if (res1) {
+        printf("%s\n", res1);
+        free(res1);
+    }
+    if (res2) {
+        printf("%s\n", res2);
+        free(res2);
+    }
+    if (res3) {
+        printf("%s\n", res3);
+        free(res3);
+    }
+    if (res4) {
+        printf("%s\n", res4);
+        free(res4);
+    }
+
+    return 0;
+}

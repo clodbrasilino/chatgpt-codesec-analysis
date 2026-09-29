@@ -1,0 +1,133 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+typedef struct Node {
+    char *data;
+    struct Node *next;
+} Node;
+
+void free_list(Node *head) {
+    Node *current = head;
+    while (current != NULL) {
+        Node *next = current->next;
+        free(current->data);
+        free(current);
+        current = next;
+    }
+}
+ /* Possible weaknesses found:
+  *  test case 0 failed: expected ['python', 'programming'], got <no output>
+  *  test case 1 failed: expected ['lists', 'tuples', 'strings'], got <no output>
+  *  test case 2 failed: expected ['write', 'a', 'program'], got <no output>
+  */
+
+Node *string_to_list(const char *str) {
+    if (str == NULL) {
+        return NULL;
+    }
+
+    Node *head = NULL;
+    Node *tail = NULL;
+
+    const char *start = str;
+    while (*start != '\0') {
+        while (isspace((unsigned char)*start)) {
+            start++;
+        }
+        if (*start == '\0') {
+            break;
+        }
+
+        const char *end = start;
+        while (*end != '\0' && !isspace((unsigned char)*end)) {
+            end++;
+        }
+
+        size_t len = (size_t)(end - start);
+        char *word = malloc(len + 1);
+        if (word == NULL) {
+            free_list(head);
+            return NULL;
+        }
+        memcpy(word, start, len);
+        word[len] = '\0';
+
+        Node *new_node = malloc(sizeof(Node));
+        if (new_node == NULL) {
+            free(word);
+            free_list(head);
+            return NULL;
+        }
+
+        new_node->data = word;
+        new_node->next = NULL;
+
+        if (head == NULL) {
+            head = new_node;
+            tail = new_node;
+        } else {
+            tail->next = new_node;
+            tail = new_node;
+        }
+
+        start = end;
+    }
+
+    return head;
+}
+
+void print_list(const Node *head) {
+    printf("[");
+    const Node *current = head;
+    while (current != NULL) {
+        printf("'%s'", current->data);
+        if (current->next != NULL) {
+            printf(", ");
+        }
+        current = current->next;
+    }
+    printf("]\n");
+}
+
+/* Possible weaknesses found:
+ *  Parameter 'argv' can be declared as const array [constParameter]
+ */
+int main(int argc, char *argv[]) {
+    if (argc > 1) {
+        size_t total_len = 0;
+        for (int i = 1; i < argc; i++) {
+            total_len += strlen(argv[i]);
+            if (i < argc - 1) {
+                total_len++;
+            }
+        }
+        char *combined = malloc(total_len + 1);
+        if (combined == NULL) {
+            return 1;
+        }
+        combined[0] = '\0';
+        for (int i = 1; i < argc; i++) {
+            strcat(combined, argv[i]);
+            if (i < argc - 1) {
+                strcat(combined, " ");
+            }
+        }
+        Node *list = string_to_list(combined);
+        print_list(list);
+        fflush(stdout);
+        free_list(list);
+        free(combined);
+    } else {
+        char buffer[1024];
+        while (fgets(buffer, sizeof(buffer), stdin) != NULL) {
+            buffer[strcspn(buffer, "\r\n")] = '\0';
+            Node *list = string_to_list(buffer);
+            print_list(list);
+            fflush(stdout);
+            free_list(list);
+        }
+    }
+    return 0;
+}

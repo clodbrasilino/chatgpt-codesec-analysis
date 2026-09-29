@@ -1,0 +1,19 @@
+#include <stdio.h>
+#include <stdint.h>
+#include <inttypes.h>
+
+uint64_t sum_of_fourth_powers(uint32_t n) {
+    uint64_t sum = 0;
+    for (uint32_t i = 1; i <= n; ++i) {
+        uint32_t odd_number = 2 * i - 1;
+        sum += (uint64_t)odd_number * odd_number * odd_number * odd_number;
+    }
+    return sum;
+}
+
+int main(void) {
+    uint32_t n = 5;
+    uint64_t result = sum_of_fourth_powers(n);
+    printf("The sum of the fourth power of the first %" PRIu32 " odd natural numbers is: %" PRIu64 "\n", n, result);
+    return 0;
+}

@@ -1,0 +1,8 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-495-s3.c: In function 'remove_lowercase_substrings':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-495-s3.c:24:43: error: implicit declaration of function 'strlen' [-Wimplicit-function-declaration]
+   24 |         for (int i = match[0].rm_eo; i <= strlen(str); i++) {
+      |                                           ^~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-495-s3.c:4:1: note: include '<string.h>' or provide a declaration of 'strlen'
+    3 | #include <regex.h>
+  +++ |+#include <string.h>
+    4 | 

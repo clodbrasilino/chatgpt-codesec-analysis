@@ -1,0 +1,40 @@
+#include <stdio.h>
+#include <stdint.h>
+#include <limits.h>
+
+uint64_t countSetBits(uint64_t n) {
+    uint64_t count = 0;
+    int i = 0;
+    int totalBits = sizeof(uint64_t) * 8;
+    uint64_t power = 1;
+    
+    while (i < totalBits && power <= n) {
+        uint64_t totalPairs = (n + 1) / (power * 2);
+        uint64_t remainder = (n + 1) % (power * 2);
+        
+        count += totalPairs * power;
+        if (remainder > power) {
+            count += remainder - power;
+        }
+        
+        power <<= 1;
+        i++;
+    }
+    
+    return count;
+}
+
+int main(void) {
+    unsigned int input;
+    
+    printf("Enter a number: ");
+    if (scanf("%u", &input) != 1) {
+        printf("Invalid input\n");
+        return 1;
+    }
+    
+    uint64_t n = (uint64_t)input;
+    printf("Total set bits from 1 to %u: %llu\n", input, (unsigned long long)countSetBits(n));
+    
+    return 0;
+}

@@ -1,0 +1,44 @@
+{
+  "task_id": 781,
+  "text": "Write a C function to check whether the count of divisors is even or odd.",
+  "fn_candidates": [
+    "count_Divisors",
+    "CountDivisors",
+    "countDivisors",
+    "countDivisors"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "count_Divisors",
+      "args": [
+        10
+      ],
+      "expected": "Even",
+      "assert_src": "assert count_Divisors(10) == \"Even\""
+    },
+    {
+      "fn_name": "count_Divisors",
+      "args": [
+        100
+      ],
+      "expected": "Odd",
+      "assert_src": "assert count_Divisors(100) == \"Odd\""
+    },
+    {
+      "fn_name": "count_Divisors",
+      "args": [
+        125
+      ],
+      "expected": "Even",
+      "assert_src": "assert count_Divisors(125) == \"Even\""
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "str",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

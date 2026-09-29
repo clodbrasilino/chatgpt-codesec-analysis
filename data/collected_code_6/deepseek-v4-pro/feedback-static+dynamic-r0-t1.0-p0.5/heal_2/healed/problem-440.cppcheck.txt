@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_2/healed/problem-440.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_2/healed/problem-440.c:19:13: style: Condition 'len>=2' is always true [knownConditionTrueFalse]
+    if (len >= 2 && strcmp(word + len - 2, "ly") == 0) return 1;
+            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_2/healed/problem-440.c:18:13: note: Assuming that condition 'len<3' is not redundant
+    if (len < 3) return 0;
+            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_2/healed/problem-440.c:19:13: note: Condition 'len>=2' is always true
+    if (len >= 2 && strcmp(word + len - 2, "ly") == 0) return 1;
+            ^

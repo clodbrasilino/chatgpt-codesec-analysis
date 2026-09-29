@@ -1,0 +1,102 @@
+#include <stdio.h>
+#include <stdlib.h>
+ /* Possible weaknesses found:
+  *  'bool' is defined in header '<stdbool.h>'; did you forget to '#include <stdbool.h>'?
+  */
+
+struct Node
+{
+    int data;
+    struct Node *next;
+};
+
+void push(struct Node **head_ref, int new_data)
+{
+    struct Node *new_node = (struct Node *) malloc(sizeof(struct Node));
+    new_node->data  = new_data;
+    new_node->next = (*head_ref);
+    (*head_ref)    = new_node;
+}
+
+/* Possible weaknesses found:
+ *  unknown type name 'bool'
+ */
+bool isPresent (struct Node *head, int data)
+{
+    struct Node *t = head;
+    while (t != NULL)
+    {
+        if (t->data == data)
+            return 1;
+        t = t->next;
+    }
+    return 0;
+}
+
+struct Node *getIntersection(struct Node *head1, struct Node *head2)
+{
+    struct Node *result = NULL;
+    struct Node *t1 = head1;
+
+    while(t1 != NULL)
+    {
+        if(isPresent(head2, t1->data))
+            push(&result, t1->data);
+        t1 = t1->next;
+    }
+
+    return result;
+}
+
+void printList (struct Node *node)
+{
+    while (node != NULL)
+    {
+        printf ("%d ", node->data);
+        node = node->next;
+    }
+}
+
+int main()
+{
+    struct Node *newNode;
+
+    struct Node *head1 =
+            (struct Node*) malloc(sizeof(struct Node));
+
+    struct Node *head2 =
+            (struct Node*) malloc(sizeof(struct Node));
+            
+    struct Node *intersection =
+            (struct Node*) malloc(sizeof(struct Node));
+
+    head1->data  = 1;
+
+    newNode = (struct Node*) malloc (sizeof(struct Node));
+    newNode->data = 2;
+    head1->next = newNode;
+
+    newNode = (struct Node*) malloc (sizeof(struct Node));
+    newNode->data = 3;
+    head1->next->next  = newNode;
+
+    newNode = (struct Node*) malloc (sizeof(struct Node));
+    newNode->data = 4;
+    head1->next ->next->next  = newNode;
+
+    head2->data  = 1;
+
+    newNode = (struct Node*) malloc (sizeof(struct Node));
+    newNode->data = 3;
+    head2->next = newNode;
+
+    newNode = (struct Node*) malloc (sizeof(struct Node));
+    newNode->data = 5;
+    head2->next->next  = newNode;
+
+    intersection = getIntersection(head1, head2);
+
+    printList(intersection);
+
+    return 0;
+}

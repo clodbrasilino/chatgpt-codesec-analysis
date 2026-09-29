@@ -1,0 +1,54 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int xor_tuples(const int *tup1, const int *tup2, int *result, size_t len)
+{
+    size_t i;
+
+    if (tup1 == NULL || tup2 == NULL || result == NULL || len == 0U) {
+        return -1;
+    }
+
+    for (i = 0U; i < len; i++) {
+        result[i] = tup1[i] ^ tup2[i];
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    int tup1[] = {10, 4, 6, 9};
+    int tup2[] = {5, 2, 3, 3};
+    size_t len = sizeof(tup1) / sizeof(tup1[0]);
+    int *result;
+    size_t i;
+    int status;
+
+    result = malloc(len * sizeof(int));
+    if (result == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    status = xor_tuples(tup1, tup2, result, len);
+    if (status != 0) {
+        fprintf(stderr, "XOR operation failed\n");
+        free(result);
+        return EXIT_FAILURE;
+    }
+
+    printf("(");
+    for (i = 0U; i < len; i++) {
+        printf("%d", result[i]);
+        if (i < len - 1U) {
+            printf(", ");
+        }
+    }
+    printf(")\n");
+
+    free(result);
+    return EXIT_SUCCESS;
+}
+```

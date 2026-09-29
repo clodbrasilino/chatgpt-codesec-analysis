@@ -1,0 +1,198 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <errno.h>
+#include <limits.h>
+#include <ctype.h>
+#include <stdint.h>
+
+#define MAX_INPUT_LENGTH 4096
+
+typedef struct {
+    int *items;
+    size_t count;
+} Tuple;
+
+static int parse_int(const char *token, int *out)
+{
+    char *end = NULL;
+    long value;
+
+    if (token == NULL || out == NULL) {
+        return -1;
+    }
+
+    errno = 0;
+    value = strtol(token, &end, 10);
+
+    if (end == token) {
+        return -1;
+    }
+
+    while (*end != '\0') {
+        if (!isspace((unsigned char)*end)) {
+            return -1;
+        }
+        end++;
+    }
+
+    if (errno == ERANGE || value > INT_MAX || value < INT_MIN) {
+        return -1;
+    }
+
+    *out = (int)value;
+    return 0;
+}
+
+static char *duplicate_input(const char *input, size_t length)
+{
+    char *copy = NULL;
+    size_t copy_size = 0;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    if (length >= SIZE_MAX) {
+        return NULL;
+    }
+
+    copy_size = length + 1;
+    copy = malloc(copy_size);
+    if (copy == NULL) {
+        return NULL;
+    }
+
+    if (length + 1 > copy_size) {
+        free(copy);
+        return NULL;
+    }
+
+    memcpy(copy, input, length);
+    copy[length] = '\0';
+    return copy;
+}
+
+Tuple *string_to_tuple(const char *input)
+{
+    Tuple *tuple = NULL;
+    char *copy = NULL;
+    char *saveptr = NULL;
+    char *token = NULL;
+    size_t capacity = 4;
+    size_t count = 0;
+    size_t length = 0;
+    int *items = NULL;
+    int *resized = NULL;
+    int value = 0;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    length = strnlen(input, MAX_INPUT_LENGTH);
+    if (length >= MAX_INPUT_LENGTH) {
+        return NULL;
+    }
+
+    copy = duplicate_input(input, length);
+    if (copy == NULL) {
+        return NULL;
+    }
+
+    items = malloc(capacity * sizeof(int));
+    if (items == NULL) {
+        free(copy);
+        return NULL;
+    }
+
+    token = strtok_r(copy, ",", &saveptr);
+    while (token != NULL) {
+        if (parse_int(token, &value) != 0) {
+            free(items);
+            free(copy);
+            return NULL;
+        }
+
+        if (count == capacity) {
+            if (capacity > SIZE_MAX / (2 * sizeof(int))) {
+                free(items);
+                free(copy);
+                return NULL;
+            }
+            capacity *= 2;
+            resized = realloc(items, capacity * sizeof(int));
+            if (resized == NULL) {
+                free(items);
+                free(copy);
+                return NULL;
+            }
+            items = resized;
+        }
+
+        items[count] = value;
+        count++;
+        token = strtok_r(NULL, ",", &saveptr);
+    }
+
+    free(copy);
+
+    if (count == 0) {
+        free(items);
+        return NULL;
+    }
+
+    tuple = malloc(sizeof(Tuple));
+    if (tuple == NULL) {
+        free(items);
+        return NULL;
+    }
+
+    tuple->items = items;
+    tuple->count = count;
+    return tuple;
+}
+
+void free_tuple(Tuple *tuple)
+{
+    if (tuple != NULL) {
+        free(tuple->items);
+        free(tuple);
+    }
+}
+
+void print_tuple(const Tuple *tuple)
+{
+    size_t i;
+
+    if (tuple == NULL) {
+        return;
+    }
+
+    printf("(");
+    for (i = 0; i < tuple->count; i++) {
+        printf("%d", tuple->items[i]);
+        if (i + 1 < tuple->count) {
+            printf(", ");
+        }
+    }
+    printf(")\n");
+}
+
+int main(void)
+{
+    const char *input = "1, 5, 7, -3, 42";
+    Tuple *tuple = string_to_tuple(input);
+
+    if (tuple == NULL) {
+        fprintf(stderr, "Failed to convert string to tuple\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Input string: \"%s\"\n", input);
+    printf("Tuple: ");
+    print_tuple(tuple);
+
+    free_tuple(tuple);
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,51 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+char findFirstRepeatedChar(const char *str) {
+    if (str == NULL) {
+        return '\0';
+    }
+
+    int count[256] = {0};
+
+    for (int i = 0; str[i] != '\0'; i++) {
+        unsigned char c = (unsigned char)str[i];
+        if (count[c] == 1) {
+            return str[i];
+        }
+        count[c]++;
+    }
+
+    return '\0';
+}
+
+int main(void) {
+    const char *testStrings[] = {
+        "programming",
+        "abcdef",
+        "hello",
+        NULL
+    };
+
+    size_t num_tests = sizeof(testStrings) / sizeof(testStrings[0]);
+
+    for (size_t i = 0; i < num_tests; i++) {
+        const char *current_test = testStrings[i];
+        char res = findFirstRepeatedChar(current_test);
+        
+        if (current_test != NULL) {
+            if (res != '\0') {
+                printf("First repeated char in '%s': %c\n", current_test, res);
+            } else {
+                printf("No repeated char in '%s'\n", current_test);
+            }
+        } else {
+            printf("No repeated char in NULL\n");
+        }
+    }
+
+    return 0;
+}
+```

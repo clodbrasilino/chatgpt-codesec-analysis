@@ -1,0 +1,58 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int is_break_even(double cost_price, double selling_price);
+
+int is_break_even(double cost_price, double selling_price)
+{
+    double difference = selling_price - cost_price;
+    const double epsilon = 1e-9;
+
+    if (difference > -epsilon && difference < epsilon)
+    {
+        return 1;
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    double cost_price = 0.0;
+    double selling_price = 0.0;
+
+    printf("Enter cost price: ");
+    if (scanf("%lf", &cost_price) != 1)
+    {
+        fprintf(stderr, "Invalid input for cost price.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter selling price: ");
+    if (scanf("%lf", &selling_price) != 1)
+    {
+        fprintf(stderr, "Invalid input for selling price.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (cost_price < 0.0 || selling_price < 0.0)
+    {
+        fprintf(stderr, "Prices must be non-negative.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (is_break_even(cost_price, selling_price))
+    {
+        printf("No profit and no loss.\n");
+    }
+    else if (selling_price > cost_price)
+    {
+        printf("Profit of %.2f\n", selling_price - cost_price);
+    }
+    else
+    {
+        printf("Loss of %.2f\n", cost_price - selling_price);
+    }
+
+    return EXIT_SUCCESS;
+}

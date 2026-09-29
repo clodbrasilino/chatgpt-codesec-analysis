@@ -1,0 +1,119 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int value;
+} Tuple;
+
+int compare_ints(const void* a, const void* b) {
+    int int_a = *((const int*)a);
+    int int_b = *((const int*)b);
+    return (int_a > int_b) - (int_a < int_b);
+}
+
+int* find_similar_elements(Tuple* list1, int size1, Tuple* list2, int size2, int* result_size) {
+    if (list1 == NULL || list2 == NULL || result_size == NULL) {
+        if (result_size != NULL) {
+            *result_size = -1;
+        }
+        return NULL;
+    }
+
+    if (size1 <= 0 || size2 <= 0) {
+        *result_size = 0;
+        return NULL;
+    }
+
+    int* temp1 = (int*)malloc(size1 * sizeof(int));
+    int* temp2 = (int*)malloc(size2 * sizeof(int));
+    if (temp1 == NULL || temp2 == NULL) {
+        free(temp1);
+        free(temp2);
+        *result_size = -1;
+        return NULL;
+    }
+
+    for (int i = 0; i < size1; i++) {
+        temp1[i] = list1[i].value;
+    }
+    for (int i = 0; i < size2; i++) {
+        temp2[i] = list2[i].value;
+    }
+
+    qsort(temp1, size1, sizeof(int), compare_ints);
+    qsort(temp2, size2, sizeof(int), compare_ints);
+
+    int max_size = size1 < size2 ? size1 : size2;
+    int* result = (int*)malloc(max_size * sizeof(int));
+    if (result == NULL) {
+        free(temp1);
+        free(temp2);
+        *result_size = -1;
+        return NULL;
+    }
+
+    int count = 0;
+    int i = 0, j = 0;
+    while (i < size1 && j < size2) {
+        if (temp1[i] == temp2[j]) {
+            if (count == 0 || result[count - 1] != temp1[i]) {
+                result[count] = temp1[i];
+                count++;
+            }
+            i++;
+            j++;
+        } else if (temp1[i] < temp2[j]) {
+            i++;
+        } else {
+            j++;
+        }
+    }
+
+    free(temp1);
+    free(temp2);
+
+    if (count == 0) {
+        free(result);
+        *result_size = 0;
+        return NULL;
+    }
+
+    int* final_result = (int*)realloc(result, count * sizeof(int));
+    if (final_result == NULL) {
+        free(result);
+        *result_size = -1;
+        return NULL;
+    }
+
+    *result_size = count;
+    return final_result;
+}
+
+int main(void) {
+    Tuple list1[] = {{1}, {2}, {3}, {4}, {5}};
+    Tuple list2[] = {{3}, {4}, {5}, {6}, {7}};
+    int result_size = 0;
+    
+    int* similar = find_similar_elements(list1, 5, list2, 5, &result_size);
+    
+    if (result_size == -1) {
+        printf("Memory allocation failed\n");
+        return 1;
+    }
+    
+    if (similar == NULL) {
+        if (result_size == 0) {
+            printf("No similar elements found\n");
+        }
+        return 0;
+    }
+    
+    printf("Similar elements: ");
+    for (int i = 0; i < result_size; i++) {
+        printf("%d ", similar[i]);
+    }
+    printf("\n");
+    
+    free(similar);
+    return 0;
+}

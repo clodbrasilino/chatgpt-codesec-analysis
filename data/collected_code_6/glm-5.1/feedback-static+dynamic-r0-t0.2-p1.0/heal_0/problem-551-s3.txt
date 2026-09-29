@@ -1,0 +1,69 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int* extract_column(int** nested_list, int rows, int cols, int col_index, int* result_size) {
+    if (nested_list == NULL || rows <= 0 || cols <= 0 || result_size == NULL) {
+        if (result_size != NULL) {
+            *result_size = 0;
+        }
+        return NULL;
+    }
+    if (col_index < 0 || col_index >= cols) {
+        *result_size = 0;
+        return NULL;
+    }
+    int* column = (int*)malloc(rows * sizeof(int));
+    if (column == NULL) {
+        *result_size = 0;
+        return NULL;
+    }
+    for (int i = 0; i < rows; i++) {
+        if (nested_list[i] == NULL) {
+            free(column);
+            *result_size = 0;
+            return NULL;
+        }
+        column[i] = nested_list[i][col_index];
+    }
+    *result_size = rows;
+    return column;
+}
+
+int main(void) {
+    int rows = 3;
+    int cols = 4;
+    int** nested_list = (int**)malloc(rows * sizeof(int*));
+    if (nested_list == NULL) {
+        return 1;
+    }
+    for (int i = 0; i < rows; i++) {
+        nested_list[i] = (int*)malloc(cols * sizeof(int));
+        if (nested_list[i] == NULL) {
+            for (int j = 0; j < i; j++) {
+                free(nested_list[j]);
+            }
+            free(nested_list);
+            return 1;
+        }
+        for (int j = 0; j < cols; j++) {
+            nested_list[i][j] = i * cols + j;
+        }
+    }
+    int result_size = 0;
+    int col_index = 2;
+    int* column = extract_column(nested_list, rows, cols, col_index, &result_size);
+    if (column != NULL) {
+        for (int i = 0; i < result_size; i++) {
+            printf("%d ", column[i]);
+        }
+        printf("\n");
+        free(column);
+    }
+    for (int i = 0; i < rows; i++) {
+        free(nested_list[i]);
+    }
+    free(nested_list);
+    return 0;
+}
+```

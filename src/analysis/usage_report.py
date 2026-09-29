@@ -95,7 +95,7 @@ def estimate_cell(model: str, slug: str, tasks: dict[int, str],
     """Char-based token estimate for rounds that predate the ledger.
     ``covered`` = ledger keys to exclude (already counted exactly)."""
     covered = covered or set()
-    root = REPO_ROOT / "collected_code_6" / model / slug
+    root = REPO_ROOT / "data" / "collected_code_6" / model / slug
     if not root.exists():
         return {}
     prompt_tok = comp_tok = 0
@@ -139,7 +139,7 @@ def estimate_cell(model: str, slug: str, tasks: dict[int, str],
 
 def discover_cells() -> list[tuple[str, str]]:
     cells = []
-    for model_dir in sorted((REPO_ROOT / "collected_code_6").iterdir()):
+    for model_dir in sorted((REPO_ROOT / "data" / "collected_code_6").iterdir()):
         if not model_dir.is_dir():
             continue
         for slug_dir in sorted(model_dir.iterdir()):

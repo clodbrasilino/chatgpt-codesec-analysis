@@ -1,0 +1,12 @@
+collected_code_3/problem-486-2.c: In function 'binomial_probability':
+collected_code_3/problem-486-2.c:18:17: warning: implicit declaration of function 'pow' [-Wimplicit-function-declaration]
+   18 |     bin_prob *= pow(p, k);
+      |                 ^~~
+collected_code_3/problem-486-2.c:2:1: note: include '<math.h>' or provide a declaration of 'pow'
+    1 | #include <stdio.h>
+  +++ |+#include <math.h>
+    2 | 
+collected_code_3/problem-486-2.c:18:17: warning: incompatible implicit declaration of built-in function 'pow' [-Wbuiltin-declaration-mismatch]
+   18 |     bin_prob *= pow(p, k);
+      |                 ^~~
+collected_code_3/problem-486-2.c:18:17: note: include '<math.h>' or provide a declaration of 'pow'

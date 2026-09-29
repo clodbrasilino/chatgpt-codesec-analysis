@@ -1,0 +1,56 @@
+{
+  "task_id": 116,
+  "text": "Write a C function to convert a given tuple of positive integers into an integer.",
+  "fn_candidates": [
+    "tuple_to_int",
+    "TupleToInt",
+    "tupleToInt",
+    "tupletoint"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "tuple_to_int",
+      "args": [
+        [
+          1,
+          2,
+          3
+        ]
+      ],
+      "expected": 123,
+      "assert_src": "assert tuple_to_int((1,2,3))==123"
+    },
+    {
+      "fn_name": "tuple_to_int",
+      "args": [
+        [
+          4,
+          5,
+          6
+        ]
+      ],
+      "expected": 456,
+      "assert_src": "assert tuple_to_int((4,5,6))==456"
+    },
+    {
+      "fn_name": "tuple_to_int",
+      "args": [
+        [
+          5,
+          6,
+          7
+        ]
+      ],
+      "expected": 567,
+      "assert_src": "assert tuple_to_int((5,6,7))==567"
+    }
+  ],
+  "arg_kinds": [
+    "int-list"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

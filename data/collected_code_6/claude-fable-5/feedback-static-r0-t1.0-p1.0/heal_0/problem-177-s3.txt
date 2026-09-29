@@ -1,0 +1,47 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int find_lcm_pair(long long l, long long r, long long *x, long long *y)
+{
+    if (l <= 0 || r <= 0 || l > r) {
+        return -1;
+    }
+    if (2 * l <= r) {
+        *x = l;
+        *y = 2 * l;
+        return 0;
+    }
+    return -1;
+}
+
+int main(void)
+{
+    long long l;
+    long long r;
+    long long x;
+    long long y;
+
+    printf("Enter range (l r): ");
+    if (scanf("%lld %lld", &l, &r) != 2) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (find_lcm_pair(l, r, &x, &y) == 0) {
+        printf("%lld %lld\n", x, y);
+    } else {
+        printf("-1 -1\n");
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+This solution works on the mathematical fact that for any positive integer `l`, the pair `(l, 2l)` has an LCM of exactly `2l`. So if `2l <= r`, that pair's LCM falls within `[l, r]`. If `2l > r`, no valid pair exists, because any two distinct positive integers `x < y` in a valid configuration must have `LCM(x, y) >= 2x >= 2l > r`.
+
+Key safety measures included:
+- The return value of `scanf` is checked to handle malformed input (addresses CWE-703).
+- Input validation rejects non-positive or inverted ranges before computation.
+- The function communicates failure through a return code rather than sentinel output values, and output pointers are only written on success (addresses CWE-664).
+- `int main(void)` with explicit `EXIT_SUCCESS`/`EXIT_FAILURE` and fully braced control flow follows standard coding conventions (addresses CWE-710).

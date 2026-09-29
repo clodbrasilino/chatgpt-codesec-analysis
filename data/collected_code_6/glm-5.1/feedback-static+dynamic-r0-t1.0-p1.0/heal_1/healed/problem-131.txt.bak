@@ -1,0 +1,54 @@
+#include <ctype.h>
+#include <stdio.h>
+#include <stdbool.h>
+#include <stdlib.h>
+#include <string.h>
+
+bool is_vowel(char c) {
+    char lower = tolower((unsigned char)c);
+    return lower == 'a' || lower == 'e' || lower == 'i' || lower == 'o' || lower == 'u';
+}
+
+void reverse_vowels(char *s) {
+    if (s == NULL) return;
+    size_t len = strlen(s);
+    if (len == 0) return;
+    
+    size_t left = 0;
+    size_t right = len - 1;
+    
+    while (left < right) {
+        while (left < right && !is_vowel(s[left])) left++;
+        while (left < right && !is_vowel(s[right])) right--;
+        
+        if (left < right) {
+            char temp = s[left];
+            s[left] = s[right];
+            s[right] = temp;
+            left++;
+            right--;
+        }
+    }
+}
+
+int main(int argc, char * const argv[const]) {
+    if (argc != 2) {
+        fprintf(stderr, "Usage: %s <string>\n", argv[0]);
+        return EXIT_FAILURE;
+    }
+    
+    char *input = malloc(strlen(argv[1]) + 1);
+    if (input == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+    strcpy(input, argv[1]);
+    
+    reverse_vowels(input);
+    printf("%s\n", input);
+    
+    free(input);
+    input = NULL;
+    
+    return EXIT_SUCCESS;
+}

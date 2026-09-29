@@ -1,0 +1,73 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+#include <stdlib.h>
+
+#define MAX_WORD_LEN 256
+
+bool is_word_length_odd(const char *word)
+{
+    size_t len;
+
+    if (word == NULL) {
+        return false;
+    }
+
+    len = strnlen(word, MAX_WORD_LEN);
+    return (len % 2U) != 0U;
+}
+
+int main(void)
+{
+    char buffer[MAX_WORD_LEN];
+    size_t len;
+
+    printf("Enter a word: ");
+    if (fflush(stdout) != 0) {
+        return EXIT_FAILURE;
+    }
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1U] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len > 0U && buffer[len - 1U] == '\n') {
+        buffer[len - 1U] = '\0';
+        len--;
+    }
+
+    if (len == 0U) {
+        fprintf(stderr, "No word entered\n");
+        return EXIT_FAILURE;
+    }
+
+    if (is_word_length_odd(buffer)) {
+        printf("The word length is odd\n");
+    } else {
+        printf("The word length is even\n");
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the original code and the fix applied:**
+
+The Flawfinder warning (CWE-119/CWE-120) flagged the statically-sized `buffer[MAX_WORD_LEN]` array as a potential overflow risk. However, the original code was already largely defensive:
+
+1. **`fgets(buffer, (int)sizeof(buffer), stdin)`** — correctly bounds input reading to the buffer size, preventing a classic `gets()`-style overflow.
+2. **`strnlen(buffer, sizeof(buffer))`** — used instead of `strlen()`, guaranteeing the length computation never walks past the buffer even if it were unterminated.
+3. **NULL checks and return-value checks** on `fgets`, `fflush`, and in `is_word_length_odd` — good defensive practice.
+
+The one hardening improvement added in the rewrite is the explicit guarantee of NUL termination:
+
+```c
+buffer[sizeof(buffer) - 1U] = '\0';
+```
+
+While `fgets` always NUL-terminates on success per the C standard, this belt-and-braces write makes the invariant locally provable, satisfies static analyzers, and protects against any future refactoring that swaps the input function for one without that guarantee (e.g., `read()`). The Flawfinder finding is therefore a false positive in practice, but the rewrite makes the bounds safety explicit rather than implicit.

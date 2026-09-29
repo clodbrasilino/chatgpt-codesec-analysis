@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-679-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-679-s2.c:58:19: style: Condition 'copy_size<=len' is always false [knownConditionTrueFalse]
+    if (copy_size <= len) {
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-679-s2.c:57:15: note: copy_size is assigned 'len+1' here.
+    copy_size = len + 1;
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-679-s2.c:58:19: note: Condition 'copy_size<=len' is always false
+    if (copy_size <= len) {
+                  ^

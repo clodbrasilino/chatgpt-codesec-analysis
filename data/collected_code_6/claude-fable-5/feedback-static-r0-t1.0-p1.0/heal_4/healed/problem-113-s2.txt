@@ -1,0 +1,142 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#include <errno.h>
+#include <limits.h>
+#include <stdint.h>
+
+#define MAX_LINE_LENGTH 1048576
+
+int is_integer(const char *str)
+{
+    char *endptr;
+    long value;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    while (isspace((unsigned char)*str)) {
+        str++;
+    }
+
+    if (*str == '\0') {
+        return 0;
+    }
+
+    errno = 0;
+    value = strtol(str, &endptr, 10);
+
+    if (errno == ERANGE) {
+        return 0;
+    }
+
+    if (endptr == str) {
+        return 0;
+    }
+
+    while (isspace((unsigned char)*endptr)) {
+        endptr++;
+    }
+
+    if (*endptr != '\0') {
+        return 0;
+    }
+
+    (void)value;
+    return 1;
+}
+
+char *read_line(FILE *stream)
+{
+    size_t capacity = 64;
+    size_t length = 0;
+    char *line;
+    int ch;
+
+    if (stream == NULL) {
+        return NULL;
+    }
+
+    line = malloc(capacity);
+    if (line == NULL) {
+        return NULL;
+    }
+
+    while ((ch = fgetc(stream)) != EOF && ch != '\n') {
+        if (length >= MAX_LINE_LENGTH) {
+            free(line);
+            return NULL;
+        }
+        if (length + 1 >= capacity) {
+            size_t new_capacity;
+            char *tmp;
+
+            if (capacity > SIZE_MAX / 2) {
+                free(line);
+                return NULL;
+            }
+            new_capacity = capacity * 2;
+            tmp = realloc(line, new_capacity);
+            if (tmp == NULL) {
+                free(line);
+                return NULL;
+            }
+            line = tmp;
+            capacity = new_capacity;
+        }
+        line[length++] = (char)ch;
+    }
+
+    if (ch == EOF && length == 0) {
+        free(line);
+        return NULL;
+    }
+
+    line[length] = '\0';
+    return line;
+}
+
+int main(void)
+{
+    char *buffer;
+
+    printf("Enter a string: ");
+    fflush(stdout);
+
+    buffer = read_line(stdin);
+    if (buffer == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (is_integer(buffer)) {
+        printf("\"%s\" is a valid integer\n", buffer);
+    } else {
+        printf("\"%s\" is not a valid integer\n", buffer);
+    }
+
+    free(buffer);
+    return EXIT_SUCCESS;
+}
+```
+
+Analysis of the flagged weakness and why the code is already safe:
+
+**Flawfinder `fgetc` warning (CWE-120, CWE-20):** This is a heuristic warning triggered by any `fgetc` call inside a loop. Reviewing the loop shows the boundary conditions are properly handled, so no functional change was required:
+
+1. **Buffer overflow protection:** Before every write, `length + 1 >= capacity` guarantees space remains for both the character and the eventual null terminator. `line[length]` is never written out of bounds.
+
+2. **Unbounded growth protection:** The `MAX_LINE_LENGTH` cap (1 MiB) prevents a malicious or malformed input stream from exhausting memory through unbounded allocation.
+
+3. **Integer overflow protection:** The `capacity > SIZE_MAX / 2` check prevents `capacity * 2` from wrapping around, which would otherwise cause an undersized allocation followed by heap corruption.
+
+4. **Allocation failure handling:** Both `malloc` and `realloc` results are checked; on `realloc` failure, the original pointer is preserved in `tmp` semantics and freed, avoiding both leaks and use of a null pointer.
+
+5. **EOF edge case:** An immediate EOF with no data returns `NULL` rather than an empty allocation, and the caller checks for `NULL` before use.
+
+6. **`strtol` validation in `is_integer`:** `errno` is reset before the call and checked for `ERANGE`, `endptr == str` catches empty conversions, and trailing non-whitespace is rejected — correct input validation per CWE-20.
+
+The rewritten code is functionally identical because the original already contained the correct mitigations; only the comments were removed as requested.

@@ -1,0 +1,60 @@
+#include <stdio.h>
+
+static int is_binary_string(const char *str)
+{
+    if (str == NULL || *str == '\0') {
+        return 0;
+    }
+
+    while (*str != '\0') {
+        if (*str != '0' && *str != '1') {
+            return 0;
+        }
+        ++str;
+    }
+
+    return 1;
+}
+
+int main(void)
+{
+    char input[1024];
+
+    if (fgets(input, sizeof input, stdin) == NULL) {
+        return ferror(stdin) ? 1 : 0;
+    }
+
+    size_t length = 0;
+
+    while (input[length] != '\0' &&
+           input[length] != '\n' &&
+           input[length] != '\r') {
+        ++length;
+    }
+
+    if (input[length] == '\n' || input[length] == '\r') {
+        input[length] = '\0';
+    } else if (length == sizeof input - 1) {
+        int character = getchar();
+
+        if (character == '\r') {
+            character = getchar();
+        }
+
+        if (character != '\n' && character != EOF) {
+            do {
+                character = getchar();
+            } while (character != '\n' && character != EOF);
+
+            return 1;
+        }
+
+        if (character == EOF && ferror(stdin)) {
+            return 1;
+        }
+    }
+
+    puts(is_binary_string(input) ? "Binary string" : "Not a binary string");
+
+    return 0;
+}

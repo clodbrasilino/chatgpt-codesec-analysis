@@ -1,0 +1,76 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-909-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-909-s2.c:108:21: warning: Identical inner 'if' condition is always true. [identicalInnerCondition]
+        if (len + 1 <= capacity) {
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-909-s2.c:107:17: note: outer condition: len+1<=capacity
+    if (len + 1 <= capacity) {
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-909-s2.c:108:21: note: identical inner condition: len+1<=capacity
+        if (len + 1 <= capacity) {
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-909-s2.c:123:23: warning: Identical inner 'if' condition is always true. [identicalInnerCondition]
+                if (2 <= capacity) {
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-909-s2.c:122:19: note: outer condition: 2<=capacity
+            if (2 <= capacity) {
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-909-s2.c:123:23: note: identical inner condition: 2<=capacity
+                if (2 <= capacity) {
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-909-s2.c:136:33: warning: Identical inner 'if' condition is always true. [identicalInnerCondition]
+                if (new_len + 1 <= capacity) {
+                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-909-s2.c:135:29: note: outer condition: new_len+1<=capacity
+            if (new_len + 1 <= capacity) {
+                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-909-s2.c:136:33: note: identical inner condition: new_len+1<=capacity
+                if (new_len + 1 <= capacity) {
+                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-909-s2.c:151:25: warning: Identical inner 'if' condition is always true. [identicalInnerCondition]
+            if (len + 1 <= capacity) {
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-909-s2.c:150:21: note: outer condition: len+1<=capacity
+        if (len + 1 <= capacity) {
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-909-s2.c:151:25: note: identical inner condition: len+1<=capacity
+            if (len + 1 <= capacity) {
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-909-s2.c:161:25: warning: Identical inner 'if' condition is always true. [identicalInnerCondition]
+            if (len + 1 <= capacity) {
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-909-s2.c:160:21: note: outer condition: len+1<=capacity
+        if (len + 1 <= capacity) {
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-909-s2.c:161:25: note: identical inner condition: len+1<=capacity
+            if (len + 1 <= capacity) {
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-909-s2.c:167:25: warning: Identical inner 'if' condition is always true. [identicalInnerCondition]
+            if (len + 1 <= capacity) {
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-909-s2.c:166:21: note: outer condition: len+1<=capacity
+        if (len + 1 <= capacity) {
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-909-s2.c:167:25: note: identical inner condition: len+1<=capacity
+            if (len + 1 <= capacity) {
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-909-s2.c:67:25: style: Condition 'len-1>0' is always true [knownConditionTrueFalse]
+            if (len - 1 > 0) {
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-909-s2.c:59:17: note: Assuming that condition 'len==1' is not redundant
+        if (len == 1) {
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-909-s2.c:67:25: note: Condition 'len-1>0' is always true
+            if (len - 1 > 0) {
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-909-s2.c:82:18: style: Condition 'left_len>0' is always true [knownConditionTrueFalse]
+    if (left_len > 0) {
+                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-909-s2.c:57:18: note: Assuming that condition 'left_len==0' is not redundant
+    if (left_len == 0 || (left_len == 1 && left[0] == '0')) {
+                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-909-s2.c:76:19: note: Assuming condition is false
+    if (total_len >= capacity) {
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-909-s2.c:82:18: note: Condition 'left_len>0' is always true
+    if (left_len > 0) {
+                 ^

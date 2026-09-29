@@ -1,0 +1,37 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int max_segments(int n, int a, int b, int c) {
+    if (a <= 0 || b <= 0 || c <= 0) return 0;
+    int max = 0;
+    for (int i = 0; i * a <= n; ++i) {
+        for (int j = 0; j * b <= n - i * a; ++j) {
+            int k = n - i * a - j * b;
+            if (k >= 0 && k % c == 0 && i * a + j * b + k == n) {
+                if (i + j + (k / c) > max) {
+                    max = i + j + (k / c);
+                }
+            }
+        }
+    }
+    return max;
+}
+
+int main() {
+    int n, a, b, c;
+    printf("Enter the total length n: ");
+    if (scanf("%d", &n) != 1 || n < 0) {
+        fprintf(stderr, "Invalid input for n\n");
+        return 1;
+    }
+    printf("Enter the segment lengths a, b, and c: ");
+    if (scanf("%d %d %d", &a, &b, &c) != 3 || a <= 0 || b <= 0 || c <= 0) {
+        fprintf(stderr, "Invalid input for a, b, or c\n");
+        return 1;
+    }
+
+    int result = max_segments(n, a, b, c);
+    printf("Maximum number of segments: %d\n", result);
+
+    return 0;
+}

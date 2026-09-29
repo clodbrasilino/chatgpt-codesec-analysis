@@ -1,0 +1,37 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+double calculate_mean(const double *data, size_t size) {
+    double sum = 0.0;
+    for (size_t i = 0; i < size; i++) {
+        sum += data[i];
+    }
+    return sum / size;
+}
+
+double calculate_standard_deviation(const double *data, size_t size) {
+    if (size < 2) {
+        return 0.0;
+    }
+    
+    double mean = calculate_mean(data, size);
+    double sum_squared_diff = 0.0;
+    
+    for (size_t i = 0; i < size; i++) {
+        double diff = data[i] - mean;
+        sum_squared_diff += diff * diff;
+    }
+    
+    return sqrt(sum_squared_diff / (size - 1));
+}
+
+int main(void) {
+    double test_data[] = {2.0, 4.0, 4.0, 4.0, 5.0, 5.0, 7.0, 9.0};
+    size_t test_size = sizeof(test_data) / sizeof(test_data[0]);
+    
+    double std_dev = calculate_standard_deviation(test_data, test_size);
+    printf("Standard Deviation: %.6f\n", std_dev);
+    
+    return EXIT_SUCCESS;
+}

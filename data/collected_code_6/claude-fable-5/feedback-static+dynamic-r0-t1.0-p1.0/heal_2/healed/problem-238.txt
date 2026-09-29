@@ -1,0 +1,79 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <limits.h>
+
+#define BUFFER_SIZE 1024
+
+static unsigned long long count_substrings(const char *str, size_t max_len)
+{
+    unsigned long long n;
+
+    if (str == NULL)
+    {
+        return 0ULL;
+    }
+
+    n = (unsigned long long)strnlen(str, max_len);
+
+    if (n > 0ULL && n > (ULLONG_MAX / (n + 1ULL)))
+    {
+        return 0ULL;
+    }
+
+    return (n * (n + 1ULL)) / 2ULL;
+}
+
+int main(void)
+{
+    char *buffer;
+    unsigned long long result;
+    size_t len;
+
+    buffer = (char *)calloc(BUFFER_SIZE, sizeof(char));
+    if (buffer == NULL)
+    {
+        fprintf(stderr, "Error: memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    if (fgets(buffer, BUFFER_SIZE, stdin) == NULL)
+    {
+        fprintf(stderr, "Error: failed to read input\n");
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+
+    buffer[BUFFER_SIZE - 1] = '\0';
+
+    len = strnlen(buffer, BUFFER_SIZE);
+    if (len > 0 && buffer[len - 1] == '\n')
+    {
+        buffer[len - 1] = '\0';
+    }
+
+    result = count_substrings(buffer, BUFFER_SIZE);
+
+    if (printf("%llu\n", result) < 0)
+    {
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+
+    free(buffer);
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the original code and the fix applied:**
+
+The original code was already quite defensive. It correctly:
+
+1. **Bounded the read** — `fgets(buffer, (int)sizeof(buffer), stdin)` limits input to the buffer size, mitigating CWE-120 (classic buffer overflow).
+2. **Guaranteed null-termination** — explicitly writing `buffer[sizeof(buffer) - 1] = '\0'` (technically redundant since `fgets` always null-terminates on success, but harmless belt-and-braces).
+3. **Used length-bounded string functions** — `strnlen` instead of `strlen`, eliminating over-read risk on a non-terminated buffer (CWE-119).
+4. **Checked for integer overflow** — the `n > ULLONG_MAX / (n + 1ULL)` guard prevents wraparound in `n * (n + 1)`, which matters if `max_len` were ever large.
+5. **Checked return values** — of `fgets` and `printf`.
+
+The Flawfinder hit on `char buffer[BUFFER_SIZE]` was a low-risk (level 2) heuristic warning about statically-sized stack arrays. The rewrite addresses it by moving the buffer to the heap via `calloc` (which also zero-initializes, ensuring the buffer is always terminated even in edge cases), pairing every exit path with `free`, and keeping all size arguments tied to the single `BUFFER_SIZE` constant so the bounds cannot drift out of sync.

@@ -1,0 +1,94 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <errno.h>
+#include <limits.h>
+
+void multiply_by_base(char *result, int base, int len) {
+    int carry = 0;
+    for (int i = 0; i < len; i++) {
+        int product = (result[i] - '0') * base + carry;
+        result[i] = (product % 10) + '0';
+        carry = product / 10;
+    }
+    while (carry > 0) {
+        result[len] = (carry % 10) + '0';
+        carry /= 10;
+        len++;
+    }
+    result[len] = '\0';
+}
+
+int sum_of_digits(int base, int exponent) {
+    if (base < 0 || exponent < 0) {
+        return -1;
+    }
+    if (base == 0) {
+        return exponent == 0 ? 1 : 0;
+    }
+    if (exponent == 0) {
+        return 1;
+    }
+
+    char *result = (char *)malloc(10000 * sizeof(char));
+    if (result == NULL) {
+        return -1;
+    }
+
+    result[0] = '1';
+    result[1] = '\0';
+
+    for (int i = 0; i < exponent; i++) {
+        /* Possible weaknesses found:
+         * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+         */
+        size_t current_len = strlen(result);
+        if (current_len >= 9999) {
+            free(result);
+            return -1;
+        }
+        multiply_by_base(result, base, (int)current_len);
+    }
+
+    int sum = 0;
+    for (int i = 0; result[i] != '\0'; i++) {
+        sum += result[i] - '0';
+    }
+
+    free(result);
+    return sum;
+}
+
+int main(int argc, const char *argv[]) {
+    if (argc != 3) {
+        fprintf(stderr, "Usage: %s <base> <exponent>\n", argv[0]);
+        return 1;
+    }
+
+    char *endptr;
+    errno = 0;
+
+    long base_long = strtol(argv[1], &endptr, 10);
+    if (errno == ERANGE || base_long < 0 || base_long > INT_MAX || *endptr != '\0' || endptr == argv[1]) {
+        fprintf(stderr, "Error: Invalid base value.\n");
+        return 1;
+    }
+
+    long exponent_long = strtol(argv[2], &endptr, 10);
+    if (errno == ERANGE || exponent_long < 0 || exponent_long > INT_MAX || *endptr != '\0' || endptr == argv[2]) {
+        fprintf(stderr, "Error: Invalid exponent value.\n");
+        return 1;
+    }
+
+    int base = (int)base_long;
+    int exponent = (int)exponent_long;
+
+    int result = sum_of_digits(base, exponent);
+    if (result < 0) {
+        fprintf(stderr, "Error: Calculation failed or invalid input.\n");
+        return 1;
+    }
+
+    printf("%d\n", result);
+    return 0;
+}

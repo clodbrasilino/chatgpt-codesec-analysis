@@ -1,0 +1,35 @@
+```c
+#include <stdio.h>
+
+size_t find_frequency(const int *array, size_t size, int target)
+{
+    size_t count = 0;
+    size_t i;
+
+    if (array == NULL) {
+        return 0;
+    }
+
+    for (i = 0; i < size; i++) {
+        if (array[i] == target) {
+            count++;
+        }
+    }
+
+    return count;
+}
+
+int main(void)
+{
+    int numbers[] = {1, 2, 3, 2, 4, 2, 5, 2};
+    size_t size = sizeof(numbers) / sizeof(numbers[0]);
+    int target = 2;
+    size_t frequency;
+
+    frequency = find_frequency(numbers, size, target);
+
+    printf("Frequency of %d: %zu\n", target, frequency);
+
+    return 0;
+}
+```

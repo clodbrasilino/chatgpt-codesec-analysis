@@ -1,0 +1,38 @@
+#include <stdio.h>
+#include <string.h>
+#include <regex.h>
+
+void remove_uppercase_substrings(char *str, size_t str_len) {
+    regex_t reg;
+    regmatch_t matches[1];
+    int status = regcomp(&reg, "[A-Z]+", REG_EXTENDED);
+    if (!status) {
+        char result[512] = "";
+        int last_index = 0;
+        while (regexec(&reg, str + last_index, 1, matches, 0) == 0) {
+            int match_start = matches[0].rm_so + last_index;
+            int match_end = matches[0].rm_eo + last_index;
+            size_t len = (size_t)(match_start - last_index);
+            if (strlen(result) + len < sizeof(result) - 1) {
+                memcpy(result + strlen(result), str + last_index, len);
+                result[strlen(result) + len] = '\0';
+            }
+            last_index = match_end;
+            if (strlen(result) >= sizeof(result) - 2) break;
+        }
+        size_t remaining_len = (str_len - last_index - 1) < (sizeof(result) - 1 - strlen(result)) ? (str_len - last_index - 1) : (sizeof(result) - 1 - strlen(result));
+        if (strlen(result) + remaining_len < sizeof(result) - 1) {
+            memcpy(result + strlen(result), str + last_index, remaining_len);
+            result[strlen(result) + remaining_len] = '\0';
+            snprintf(str, str_len, "%s", result);
+        }
+        regfree(&reg);
+    }
+}
+
+int main() {
+    char test_string[] = "tHis IS a TeSt String";
+    remove_uppercase_substrings(test_string, sizeof(test_string));
+    printf("%s\n", test_string);
+    return 0;
+}

@@ -1,0 +1,200 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+#define MAX_WORD_LEN 256
+
+struct WordCount {
+    char *word;
+    size_t len;
+    size_t count;
+};
+
+static int add_word(struct WordCount **words, size_t *size, size_t *capacity,
+                    const char *word, size_t word_len)
+{
+    size_t i;
+    char *new_word;
+
+    if (words == NULL || size == NULL || capacity == NULL) {
+        return -1;
+    }
+
+    if (word == NULL || word_len == 0 || word_len >= MAX_WORD_LEN) {
+        return -1;
+    }
+
+    for (i = 0; i < *size; i++) {
+        if ((*words)[i].len == word_len &&
+            (*words)[i].word != NULL &&
+            memcmp((*words)[i].word, word, word_len) == 0) {
+            if ((*words)[i].count == SIZE_MAX) {
+                return -1;
+            }
+            (*words)[i].count++;
+            return 0;
+        }
+    }
+
+    if (*size == *capacity) {
+        size_t new_capacity;
+        struct WordCount *tmp;
+
+        if (*capacity == 0) {
+            new_capacity = 8;
+        } else {
+            if (*capacity > SIZE_MAX / 2) {
+                return -1;
+            }
+            new_capacity = *capacity * 2;
+        }
+
+        if (new_capacity > SIZE_MAX / sizeof(struct WordCount)) {
+            return -1;
+        }
+        tmp = realloc(*words, new_capacity * sizeof(struct WordCount));
+        if (tmp == NULL) {
+            return -1;
+        }
+        *words = tmp;
+        *capacity = new_capacity;
+    }
+
+    if (word_len > SIZE_MAX - 1) {
+        return -1;
+    }
+
+    new_word = malloc(word_len + 1);
+    if (new_word == NULL) {
+        return -1;
+    }
+
+    memcpy(new_word, word, word_len);
+    new_word[word_len] = '\0';
+
+    (*words)[*size].word = new_word;
+    (*words)[*size].len = word_len;
+    (*words)[*size].count = 1;
+    (*size)++;
+    return 0;
+}
+
+static void free_words(struct WordCount *words, size_t size)
+{
+    size_t i;
+
+    if (words == NULL) {
+        return;
+    }
+
+    for (i = 0; i < size; i++) {
+        free(words[i].word);
+    }
+    free(words);
+}
+
+char *most_frequent_word(const char **strings, size_t num_strings)
+{
+    struct WordCount *words = NULL;
+    size_t size = 0;
+    size_t capacity = 0;
+    size_t i;
+    size_t best_index = 0;
+    char *result = NULL;
+    char buffer[MAX_WORD_LEN];
+
+    if (strings == NULL || num_strings == 0) {
+        return NULL;
+    }
+
+    for (i = 0; i < num_strings; i++) {
+        const char *p = strings[i];
+        if (p == NULL) {
+            continue;
+        }
+        while (*p != '\0') {
+            size_t len = 0;
+            int truncated = 0;
+
+            while (*p == ' ' || *p == '\t' || *p == '\n') {
+                p++;
+            }
+            while (*p != '\0' && *p != ' ' && *p != '\t' && *p != '\n') {
+                if (len < sizeof(buffer) - 1) {
+                    buffer[len] = *p;
+                    len++;
+                } else {
+                    truncated = 1;
+                }
+                p++;
+            }
+            buffer[len] = '\0';
+            if (len > 0 && !truncated) {
+                if (add_word(&words, &size, &capacity, buffer, len) != 0) {
+                    free_words(words, size);
+                    return NULL;
+                }
+            }
+        }
+    }
+
+    if (size == 0) {
+        free_words(words, size);
+        return NULL;
+    }
+
+    for (i = 1; i < size; i++) {
+        if (words[i].count > words[best_index].count) {
+            best_index = i;
+        }
+    }
+
+    if (words[best_index].word != NULL &&
+        words[best_index].len <= SIZE_MAX - 1) {
+        result = malloc(words[best_index].len + 1);
+        if (result != NULL) {
+            memcpy(result, words[best_index].word, words[best_index].len);
+            result[words[best_index].len] = '\0';
+        }
+    }
+
+    free_words(words, size);
+    return result;
+}
+
+int main(void)
+{
+    const char *strings[] = {
+        "the quick brown fox",
+        "the lazy dog and the cat",
+        "quick quick fox"
+    };
+    size_t num_strings = sizeof(strings) / sizeof(strings[0]);
+    char *word = most_frequent_word(strings, num_strings);
+
+    if (word == NULL) {
+        fprintf(stderr, "Failed to find most frequent word\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Most frequent word: %s\n", word) < 0) {
+        free(word);
+        return EXIT_FAILURE;
+    }
+
+    free(word);
+    return EXIT_SUCCESS;
+}
+```
+
+Analysis of the flagged weaknesses and why the code is safe:
+
+1. **`memcpy` in `add_word` (CWE-120):** The destination is allocated with `malloc(word_len + 1)` immediately before the copy, and the allocation is checked for `NULL`. Exactly `word_len` bytes are copied, so the destination always holds the source data plus the null terminator. The `word_len > SIZE_MAX - 1` guard prevents integer overflow in the allocation size. This is a false positive; no fix needed beyond what exists. I did restructure it to write into a local `new_word` pointer first, so the struct slot is only populated after a fully successful allocation and copy.
+
+2. **Statically-sized `buffer[MAX_WORD_LEN]` (CWE-119/CWE-120):** The tokenizer writes into `buffer` only while `len < sizeof(buffer) - 1`, guaranteeing space for the null terminator. Overlong words set `truncated` and are skipped entirely rather than being counted in mangled form. This is correct bounds checking; false positive.
+
+3. **`memcpy` in `most_frequent_word` (CWE-120):** The destination `result` is allocated as `len + 1` bytes with a `NULL` check, and exactly `len` bytes are copied followed by manual null termination. Also a false positive.
+
+Other correctness properties preserved: overflow-checked capacity doubling (`SIZE_MAX / 2` and `SIZE_MAX / sizeof(struct WordCount)` guards), `SIZE_MAX` count saturation check, `realloc` result assigned to a temporary to avoid leaking on failure, all resources freed on every exit path, and `NULL` input strings tolerated. The program prints `Most frequent word: the` as expected.

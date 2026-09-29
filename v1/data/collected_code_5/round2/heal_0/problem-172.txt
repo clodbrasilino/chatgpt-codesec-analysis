@@ -1,0 +1,36 @@
+Sure, here is an example implementation:
+
+```C
+#include <stdio.h>
+#include <string.h>
+
+int find_occurrence(const char* str, const char* sub)
+{
+    int count = 0;
+    const char* temp = str;
+
+    while((temp = strstr(temp, sub)) != NULL)
+    {
+        count++;
+        temp++;
+    }
+
+    return count;
+}
+
+int main()
+{
+    const char* str = "1. list item 1. list item 1. list item 2. list item 2. list item 2. list item";
+    const char* sub = "std";
+   
+    int res = find_occurrence(str, sub);
+
+    printf("Number of occurrences of 'std' in the string is: %d\n", res);
+
+    return 0;
+}
+```
+
+In this code, the `find_occurrence` function takes two string arguments, `str` and `sub`. It then uses the `strstr` function from the `string.h` library to find occurrences of `sub` within `str`. It keeps looping as long as it finds an occurrence, and increments a counter each time. The counter is then returned by the function.
+
+The main function then creates a string, `str`, and the sub-string, `sub`, to look for, then calls `find_occurrence` and prints the result to the terminal.

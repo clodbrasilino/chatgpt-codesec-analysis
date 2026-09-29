@@ -1,0 +1,100 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Tuple {
+    int value;
+    struct Tuple *next;
+} Tuple;
+
+typedef struct {
+    Tuple *head;
+} TupleChain;
+
+int sum_alternate_chains(TupleChain *chains, int chain_count) {
+    int total = 0;
+    
+    if (chains == NULL || chain_count <= 0) {
+        return 0;
+    }
+    
+    for (int i = 0; i < chain_count; i += 2) {
+        Tuple *current = chains[i].head;
+        while (current != NULL) {
+            total += current->value;
+            current = current->next;
+        }
+    }
+    
+    return total;
+}
+
+Tuple* create_tuple(int value) {
+    Tuple *new_tuple = (Tuple*)malloc(sizeof(Tuple));
+    if (new_tuple == NULL) {
+        return NULL;
+    }
+    new_tuple->value = value;
+    new_tuple->next = NULL;
+    return new_tuple;
+}
+
+void add_tuple_to_chain(TupleChain *chain, int value) {
+    Tuple *new_tuple = create_tuple(value);
+    if (new_tuple == NULL) {
+        return;
+    }
+    
+    if (chain->head == NULL) {
+        chain->head = new_tuple;
+    } else {
+        Tuple *current = chain->head;
+        while (current->next != NULL) {
+            current = current->next;
+        }
+        current->next = new_tuple;
+    }
+}
+
+void free_chain(TupleChain *chain) {
+    Tuple *current = chain->head;
+    while (current != NULL) {
+        Tuple *next = current->next;
+        free(current);
+        current = next;
+    }
+    chain->head = NULL;
+}
+
+int main(void) {
+    TupleChain chains[4] = {
+        {NULL},
+        {NULL},
+        {NULL},
+        {NULL}
+    };
+    
+    add_tuple_to_chain(&chains[0], 1);
+    add_tuple_to_chain(&chains[0], 2);
+    add_tuple_to_chain(&chains[0], 3);
+    
+    add_tuple_to_chain(&chains[1], 10);
+    add_tuple_to_chain(&chains[1], 20);
+    
+    add_tuple_to_chain(&chains[2], 100);
+    add_tuple_to_chain(&chains[2], 200);
+    add_tuple_to_chain(&chains[2], 300);
+    add_tuple_to_chain(&chains[2], 400);
+    
+    add_tuple_to_chain(&chains[3], 1000);
+    
+    int result = sum_alternate_chains(chains, 4);
+    printf("Sum of alternate chains: %d\n", result);
+    
+    for (int i = 0; i < 4; i++) {
+        free_chain(&chains[i]);
+    }
+    
+    return 0;
+}
+```

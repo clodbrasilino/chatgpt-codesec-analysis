@@ -1,0 +1,63 @@
+```c
+#include <stdio.h>
+#include <ctype.h>
+#include <stddef.h>
+#include <string.h>
+
+size_t count_lowercase(const char *str)
+{
+    size_t count = 0;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    while (*str != '\0') {
+        if (islower((unsigned char)*str)) {
+            count++;
+        }
+        str++;
+    }
+
+    return count;
+}
+
+int main(void)
+{
+    char buffer[256];
+    size_t result;
+    size_t len;
+
+    printf("Enter a string: ");
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input.\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = strlen(buffer);
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    }
+
+    result = count_lowercase(buffer);
+    printf("Number of lowercase letters: %zu\n", result);
+
+    return 0;
+}
+```
+
+**Analysis of the original code and applied fixes:**
+
+The original code was already in reasonably good shape regarding the flagged weakness (CWE-119/CWE-120). Here's my assessment:
+
+1. **Statically-sized buffer (the flagged issue):** The Flawfinder warning about `char buffer[256]` is a low-risk heuristic hit. The original code already mitigated it correctly by using `fgets(buffer, sizeof(buffer), stdin)`, which limits input length and guarantees null termination within bounds. No overflow was actually possible.
+
+2. **Defensive hardening added:** I added an explicit `buffer[sizeof(buffer) - 1] = '\0'` as belt-and-suspenders null termination, which is a common defensive pattern in security-reviewed code.
+
+3. **Trailing newline stripping:** `fgets` retains the `\n` character. While `\n` is not a lowercase letter and wouldn't affect the count, stripping it is good hygiene and prevents subtle bugs if the buffer is later reused for comparison or output.
+
+4. **Correct `ctype.h` usage preserved:** The cast to `(unsigned char)` before `islower()` is essential — passing a plain `char` that happens to be negative (e.g., extended characters on platforms with signed `char`) invokes undefined behavior. The original code got this right, and I kept it.
+
+5. **NULL check and `fgets` return check preserved:** Both defensive checks from the original were retained.

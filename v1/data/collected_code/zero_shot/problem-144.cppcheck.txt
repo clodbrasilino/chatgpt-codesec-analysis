@@ -1,0 +1,6 @@
+collected_code/problem-144-0.c:11:27: error: Cannot determine that 'arr[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+            sum += abs(arr[i] - arr[j]);
+                          ^
+collected_code/problem-144-0.c:11:36: error: Cannot determine that 'arr[j]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+            sum += abs(arr[i] - arr[j]);
+                                   ^

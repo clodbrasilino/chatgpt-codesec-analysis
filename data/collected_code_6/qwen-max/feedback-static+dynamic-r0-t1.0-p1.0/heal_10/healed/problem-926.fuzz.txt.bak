@@ -1,0 +1,7 @@
+problem-926.c:5:38:medium:UBSan: signed integer overflow: 8 * -812156814 cannot be represented in type 'int' (AFL crash: id:000002,sig:06,src:000001,time:674,execs:382,op:havoc,rep:3)
+problem-926.c:16:0:high:ASan: SEGV (AFL crash: id:000002,sig:06,src:000001,time:674,execs:382,op:havoc,rep:3)
+problem-926.c:16:9:medium:UBSan: pointer index expression with base 0x00011266d800 overflowed to 0xffffffff8f229b90 (AFL crash: id:000002,sig:06,src:000001,time:674,execs:382,op:havoc,rep:3)
+problem-926.c:24:46:medium:UBSan: signed integer overflow: 20 * 939765362752547227 cannot be represented in type 'long' (AFL crash: id:000000,sig:06,src:000002,time:210,execs:130,op:havoc,rep:3)
+problem-926.c:24:74:medium:UBSan: signed integer overflow: -5784077728986054255 + -5188895624805881368 cannot be represented in type 'long' (AFL crash: id:000000,sig:06,src:000002,time:210,execs:130,op:havoc,rep:3)
+problem-926.c:26:46:medium:UBSan: signed integer overflow: 19 * 2663061078075722802 cannot be represented in type 'long' (AFL crash: id:000001,sig:06,src:000001,time:385,execs:234,op:havoc,rep:4)
+problem-926.c:26:74:medium:UBSan: signed integer overflow: 8956132703650815840 + 2261482144869433824 cannot be represented in type 'long' (AFL crash: id:000001,sig:06,src:000001,time:385,execs:234,op:havoc,rep:4)

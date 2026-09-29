@@ -1,0 +1,55 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX 100
+
+int count_inversion_type1(int arr[], int n) {
+    int count = 0;
+    for (int i = 0; i < n - 1; i++) {
+        for (int j = i + 1; j < n; j++) {
+            if (arr[i] > arr[j]) {
+                count++;
+            }
+        }
+    }
+    return count;
+}
+
+int count_inversion_type2(int arr[], int n) {
+    int count = 0;
+    for (int i = n - 1; i >= 0; i--) {
+        for (int j = i - 1; j >= 0; j--) {
+            if (arr[i] < arr[j]) {
+                count++;
+            }
+        }
+    }
+    return count;
+}
+
+int are_counts_same(int arr[], int n) {
+    int count1 = count_inversion_type1(arr, n);
+    int count2 = count_inversion_type2(arr, n);
+    return count1 == count2;
+}
+
+int main() {
+    int arr[MAX], n, i;
+
+    printf("Enter number of elements\n");
+    scanf("%d", &n);
+
+    printf("Enter %d integers\n", n);
+    for (i = 0; i < n; i++) {
+        scanf("%d", &arr[i]);
+    }
+
+    int result = are_counts_same(arr, n);
+    if (result) {
+        printf("Counts of inversions of both types are same.\n");
+    } else {
+        printf("Counts of inversions of both types are not same.\n");
+    }
+
+    return 0;
+}

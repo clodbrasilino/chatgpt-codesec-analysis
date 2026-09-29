@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t0.2-p1.0/heal_0/problem-691.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t0.2-p1.0/heal_0/problem-691.c:58:54: warning: Uninitialized variable: groups [uninitvar]
+        if (*group_count == 0 || tuples[i].second != groups[*group_count - 1]->key) {
+                                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t0.2-p1.0/heal_0/problem-691.c:73:29: note: Calling function 'group_tuples', 3rd argument 'groups' value is <Uninit>
+    group_tuples(tuples, n, groups, &group_count);
+                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t0.2-p1.0/heal_0/problem-691.c:58:54: note: Uninitialized variable: groups
+        if (*group_count == 0 || tuples[i].second != groups[*group_count - 1]->key) {
+                                                     ^

@@ -1,0 +1,25 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int* extractElements(int* arr, int start, int count) {
+    int* result = (int*)malloc(sizeof(int) * count);
+    for(int i = 0; i < count; i++) {
+        /* Possible weaknesses found:
+         *  dereference of possibly-NULL 'result' [CWE-690] [-Wanalyzer-possible-null-dereference]
+         */
+        result[i] = arr[start + i];
+    }
+    return result;
+}
+
+int main() {
+    int arr[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    int count = 5;
+    int start = 2;
+    int* result = extractElements(arr, start, count);
+    for(int i = 0; i < count; i++) {
+        printf("%d ", result[i]);
+    }
+    free(result);
+    return 0;
+}

@@ -1,0 +1,62 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+int is_numeric(const char* s) {
+    if (!s || !*s) return 0;
+    if (*s == '-' && s[1]) s++;
+    while (*s) {
+        if (!isdigit((unsigned char)*s)) return 0;
+        s++;
+    }
+    return 1;
+}
+
+int main(void) {
+    char input_line[4096] = {0};
+    char k_line[1024] = {0};
+    
+    if (!fgets(input_line, sizeof(input_line), stdin)) {
+        return 0;
+    }
+    input_line[strcspn(input_line, "\r\n")] = '\0';
+    
+    int k = 0;
+    if (fgets(k_line, sizeof(k_line), stdin)) {
+        k_line[strcspn(k_line, "\r\n")] = '\0';
+        if (strlen(k_line) > 0) {
+            k = atoi(k_line);
+        } else {
+            char *last_space = strrchr(input_line, ' ');
+            if (last_space) {
+                k = atoi(last_space + 1);
+                *last_space = '\0';
+            }
+        }
+    } else {
+        char *last_space = strrchr(input_line, ' ');
+        if (last_space) {
+            k = atoi(last_space + 1);
+            *last_space = '\0';
+        }
+    }
+
+    printf("[");
+    int first = 1;
+    char* token = strtok(input_line, " ");
+    while (token) {
+        if (!first) printf(", ");
+        if (is_numeric(token)) {
+            long long val = strtoll(token, NULL, 10);
+            printf("'%lld'", val + k);
+        } else {
+            printf("'%s'", token);
+        }
+        first = 0;
+        token = strtok(NULL, " ");
+    }
+    printf("]\n");
+    
+    return 0;
+}

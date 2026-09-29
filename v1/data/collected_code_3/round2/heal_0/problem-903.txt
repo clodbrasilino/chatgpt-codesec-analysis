@@ -1,0 +1,20 @@
+```C
+#include <stdio.h>
+
+int countUnsetBits(int n) {
+    int totalBits = sizeof(int) * n * 8;
+    while(n) {
+        totalBits -= __builtin_popcount(n);
+        n--;
+    }
+    return totalBits;
+}
+
+int main() {
+    int n;
+    printf("Enter a number: ");
+    scanf("%d", &n);
+    printf("Total unset bits from 1 to %d: %d\n", n, countUnsetBits(n));
+    return 0;
+}
+```

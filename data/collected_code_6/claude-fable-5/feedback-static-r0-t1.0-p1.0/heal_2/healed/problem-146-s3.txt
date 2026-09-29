@@ -1,0 +1,74 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define BUFFER_SIZE 256
+
+long ascii_sum(const char *str, size_t max_len)
+{
+    long sum = 0;
+    size_t i;
+    size_t len;
+
+    if (str == NULL) {
+        return -1;
+    }
+
+    len = strnlen(str, max_len);
+    for (i = 0; i < len; i++) {
+        sum += (long)(unsigned char)str[i];
+    }
+
+    return sum;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    long result;
+    size_t len;
+
+    printf("Enter a string: ");
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    }
+
+    result = ascii_sum(buffer, sizeof(buffer));
+    if (result < 0) {
+        fprintf(stderr, "Invalid string\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Total ASCII value: %ld\n", result);
+
+    return EXIT_SUCCESS;
+}
+```
+
+The code as provided already mitigates the flagged weakness (CWE-119/CWE-120). Here's why the fixes hold:
+
+**Buffer overflow protection (the Flawfinder warning):** The statically-sized `buffer[BUFFER_SIZE]` is flagged because fixed-size arrays are a common overflow source. However, the code correctly bounds all operations:
+
+- `fgets(buffer, sizeof(buffer), stdin)` limits input to `BUFFER_SIZE - 1` characters plus the null terminator — no unbounded `gets()` or `scanf("%s")` here.
+- `sizeof(buffer)` is used consistently rather than a repeated magic number, so the size argument can never drift out of sync with the array declaration.
+- `buffer[sizeof(buffer) - 1] = '\0'` is defensive null termination (redundant after `fgets`, but harmless and protects against future refactoring).
+- `strnlen()` is used instead of `strlen()`, guaranteeing the scan never runs past the buffer even if termination were somehow lost.
+
+**Other correctness points worth noting:**
+
+- The `NULL` check in `ascii_sum` combined with the `result < 0` check in `main` gives a clean error path.
+- The cast to `(unsigned char)` before widening to `long` avoids sign-extension bugs on platforms where `char` is signed and input contains bytes ≥ 0x80.
+- `fgets` return value is checked, handling EOF and read errors.
+- Newline stripping guards against `len == 0` before indexing `buffer[len - 1]`, avoiding an out-of-bounds read.
+
+One theoretical limitation: `sum` could overflow `long` only if the string were astronomically long, which is impossible here given the 256-byte cap (max sum ≈ 255 × 255 = 65,025), so no additional overflow guard is needed.

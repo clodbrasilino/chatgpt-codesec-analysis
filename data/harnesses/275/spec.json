@@ -1,0 +1,63 @@
+{
+  "task_id": 275,
+  "text": "Write a C function to find the position of the last removed element from the given array.",
+  "fn_candidates": [
+    "get_Position",
+    "GetPosition",
+    "getPosition",
+    "getPosition"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "get_Position",
+      "args": [
+        [
+          2,
+          5,
+          4
+        ],
+        3,
+        2
+      ],
+      "expected": 2,
+      "assert_src": "assert get_Position([2,5,4],3,2) == 2"
+    },
+    {
+      "fn_name": "get_Position",
+      "args": [
+        [
+          4,
+          3
+        ],
+        2,
+        2
+      ],
+      "expected": 2,
+      "assert_src": "assert get_Position([4,3],2,2) == 2"
+    },
+    {
+      "fn_name": "get_Position",
+      "args": [
+        [
+          1,
+          2,
+          3,
+          4
+        ],
+        4,
+        1
+      ],
+      "expected": 4,
+      "assert_src": "assert get_Position([1,2,3,4],4,1) == 4"
+    }
+  ],
+  "arg_kinds": [
+    "int",
+    "int-list"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

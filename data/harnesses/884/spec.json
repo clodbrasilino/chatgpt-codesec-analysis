@@ -1,0 +1,50 @@
+{
+  "task_id": 884,
+  "text": "Write a C function to check whether all the bits are within a given range or not.",
+  "fn_candidates": [
+    "all_Bits_Set_In_The_Given_Range",
+    "AllBitsSetInTheGivenRange",
+    "allBitsSetInTheGivenRange",
+    "allBitsSetInTheGivenRange"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "all_Bits_Set_In_The_Given_Range",
+      "args": [
+        10,
+        2,
+        1
+      ],
+      "expected": true,
+      "assert_src": "assert all_Bits_Set_In_The_Given_Range(10,2,1) == True "
+    },
+    {
+      "fn_name": "all_Bits_Set_In_The_Given_Range",
+      "args": [
+        5,
+        2,
+        4
+      ],
+      "expected": false,
+      "assert_src": "assert all_Bits_Set_In_The_Given_Range(5,2,4) == False"
+    },
+    {
+      "fn_name": "all_Bits_Set_In_The_Given_Range",
+      "args": [
+        22,
+        2,
+        3
+      ],
+      "expected": true,
+      "assert_src": "assert all_Bits_Set_In_The_Given_Range(22,2,3) == True "
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "bool",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

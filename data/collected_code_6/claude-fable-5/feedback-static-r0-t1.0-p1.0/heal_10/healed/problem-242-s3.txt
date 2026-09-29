@@ -1,0 +1,63 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define BUFFER_SIZE 256
+
+size_t count_characters(const char *str, size_t max_len)
+{
+    size_t count = 0;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    while (count < max_len && str[count] != '\0') {
+        count++;
+    }
+
+    return count;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t length;
+
+    memset(buffer, 0, sizeof(buffer));
+
+    printf("Enter a string: ");
+    fflush(stdout);
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+    buffer[strcspn(buffer, "\n")] = '\0';
+
+    length = count_characters(buffer, sizeof(buffer));
+
+    printf("Total characters: %zu\n", length);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The original code already addresses the Flawfinder warning (CWE-119/CWE-120) correctly. The warning about `char buffer[BUFFER_SIZE]` is a heuristic flag on any statically-sized array, not an actual vulnerability here. The mitigations in place are:
+
+1. **Bounded input reading** — `fgets(buffer, sizeof(buffer), stdin)` limits input to the buffer size, preventing overflow (unlike `gets()` or unbounded `scanf("%s", ...)`).
+
+2. **Guaranteed null termination** — `buffer[sizeof(buffer) - 1] = '\0'` is defensive (technically redundant since `fgets` always null-terminates on success, but harmless).
+
+3. **Safe newline stripping** — `strcspn(buffer, "\n")` returns an index within bounds even if no newline exists, so the write is always valid.
+
+4. **Bounds-checked counting** — `count_characters` takes an explicit `max_len` and checks for `NULL`, so it never reads past the buffer even if termination were somehow missing.
+
+5. **Return value checking** — the `fgets` result is validated before use, handling EOF/error conditions.
+
+No functional changes were required; the code as written is a correct fix for the flagged weakness.

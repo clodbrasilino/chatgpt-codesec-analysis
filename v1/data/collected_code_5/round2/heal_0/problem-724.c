@@ -1,0 +1,43 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <math.h>
+
+char* power(int base, int exponent) {
+    double result = pow(base, exponent);
+    char* str = (char*)malloc(50 * sizeof(char));
+    sprintf(str, "%.0lf", result);
+    return str;
+}
+
+int sumDigits(char* input) {
+    int sum = 0;
+    for (int i = 0; i < strlen(input); i++) {
+        sum += input[i] - '0';
+    }
+    return sum;
+}
+
+int main() {
+    int base, exponent;
+    
+    printf("Enter base: ");
+    if(scanf("%d", &base) != 1) {
+        printf("Invalid input\n");
+        return 0;
+    }
+    
+    printf("Enter exponent: ");
+    if(scanf("%d", &exponent) != 1) {
+        printf("Invalid input\n");
+        return 0;
+    }
+    
+    char *power_val = power(base, exponent);
+    int sum = sumDigits(power_val);
+    printf("Sum of digits = %d\n", sum);
+    
+    free(power_val);
+    
+    return 0;
+}

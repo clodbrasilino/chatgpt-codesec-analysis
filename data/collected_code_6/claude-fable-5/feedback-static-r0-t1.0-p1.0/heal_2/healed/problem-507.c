@@ -1,0 +1,148 @@
+#define _POSIX_C_SOURCE 200809L
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_WORD_LENGTH 4096
+
+static int is_word_in_set(const char *word, const char *const *set, size_t set_count)
+{
+    size_t i;
+
+    if (word == NULL || set == NULL) {
+        return 0;
+    }
+
+    for (i = 0; i < set_count; i++) {
+        if (set[i] != NULL && strcmp(word, set[i]) == 0) {
+            return 1;
+        }
+    }
+
+    return 0;
+}
+
+static int remove_words(char **list, size_t *count, const char *const *words_to_remove, size_t remove_count)
+{
+    size_t read_index;
+    size_t write_index;
+
+    if (list == NULL || count == NULL || words_to_remove == NULL) {
+        return -1;
+    }
+
+    write_index = 0;
+
+    for (read_index = 0; read_index < *count; read_index++) {
+        if (list[read_index] == NULL) {
+            continue;
+        }
+        if (is_word_in_set(list[read_index], words_to_remove, remove_count)) {
+            free(list[read_index]);
+            list[read_index] = NULL;
+        } else {
+            list[write_index] = list[read_index];
+            if (write_index != read_index) {
+                list[read_index] = NULL;
+            }
+            write_index++;
+        }
+    }
+
+    *count = write_index;
+    return 0;
+}
+
+static char *duplicate_string(const char *source)
+{
+    size_t length;
+    size_t i;
+    char *copy;
+
+    if (source == NULL) {
+        return NULL;
+    }
+
+    length = strnlen(source, MAX_WORD_LENGTH);
+    if (length >= MAX_WORD_LENGTH) {
+        return NULL;
+    }
+
+    copy = malloc(length + 1);
+    if (copy == NULL) {
+        return NULL;
+    }
+
+    for (i = 0; i < length; i++) {
+        copy[i] = source[i];
+    }
+    copy[length] = '\0';
+    return copy;
+}
+
+static void free_word_list(char **list, size_t count)
+{
+    size_t i;
+
+    if (list == NULL) {
+        return;
+    }
+
+    for (i = 0; i < count; i++) {
+        free(list[i]);
+        list[i] = NULL;
+    }
+
+    free(list);
+}
+
+int main(void)
+{
+    const char *initial_words[] = { "apple", "banana", "cherry", "date", "banana", "fig" };
+    const char *words_to_remove[] = { "banana", "date" };
+    size_t initial_count;
+    size_t remove_count;
+    size_t count;
+    size_t i;
+    char **list;
+
+    initial_count = sizeof(initial_words) / sizeof(initial_words[0]);
+    remove_count = sizeof(words_to_remove) / sizeof(words_to_remove[0]);
+
+    list = calloc(initial_count, sizeof(char *));
+    if (list == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i < initial_count; i++) {
+        list[i] = duplicate_string(initial_words[i]);
+        if (list[i] == NULL) {
+            fprintf(stderr, "Memory allocation failed\n");
+            free_word_list(list, i);
+            return EXIT_FAILURE;
+        }
+    }
+
+    count = initial_count;
+
+    printf("Original list:\n");
+    for (i = 0; i < count; i++) {
+        printf("  %s\n", list[i]);
+    }
+
+    if (remove_words(list, &count, words_to_remove, remove_count) != 0) {
+        fprintf(stderr, "Failed to remove words\n");
+        free_word_list(list, count);
+        return EXIT_FAILURE;
+    }
+
+    printf("List after removal:\n");
+    for (i = 0; i < count; i++) {
+        printf("  %s\n", list[i]);
+    }
+
+    free_word_list(list, count);
+    return EXIT_SUCCESS;
+}

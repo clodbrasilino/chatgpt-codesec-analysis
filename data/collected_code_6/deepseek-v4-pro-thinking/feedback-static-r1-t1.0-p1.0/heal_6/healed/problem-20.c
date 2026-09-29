@@ -1,0 +1,106 @@
+#include <errno.h>
+#include <limits.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+int isWoodall(unsigned long long number) {
+    unsigned int n;
+    unsigned int bits = (unsigned int)(sizeof(number) * CHAR_BIT);
+
+    for (n = 1; n < bits; ++n) {
+        unsigned long long power = 1ULL << n;
+
+        if (power > ULLONG_MAX / n) {
+            break;
+        }
+
+        unsigned long long woodall = n * power - 1;
+
+        if (woodall == number) {
+            return 1;
+        }
+
+        if (woodall > number) {
+            break;
+        }
+    }
+
+    return 0;
+}
+
+char *read_line(void) {
+    size_t size = 128;
+    char *buffer = malloc(size);
+    if (buffer == NULL) {
+        return NULL;
+    }
+
+    size_t len = 0;
+    int found_newline = 0;
+
+    while (1) {
+        if (fgets(buffer + len, size - len, stdin) == NULL) {
+            if (len == 0) {
+                free(buffer);
+                return NULL;
+            }
+            break;
+        }
+
+        len += strlen(buffer + len);
+
+        if (len > 0 && buffer[len - 1] == '\n') {
+            buffer[len - 1] = '\0';
+            found_newline = 1;
+            break;
+        }
+
+        if (feof(stdin)) {
+            break;
+        }
+
+        if (size > SIZE_MAX / 2) {
+            free(buffer);
+            return NULL;
+        }
+
+        size *= 2;
+        char *tmp = realloc(buffer, size);
+        if (tmp == NULL) {
+            free(buffer);
+            return NULL;
+        }
+        buffer = tmp;
+    }
+
+    if (!found_newline && len == 0) {
+        free(buffer);
+        return NULL;
+    }
+
+    return buffer;
+}
+
+int main(void) {
+    unsigned long long number;
+    char *endptr;
+    char *line = read_line();
+    if (line == NULL) {
+        return 1;
+    }
+
+    errno = 0;
+    number = strtoull(line, &endptr, 10);
+
+    if (errno == ERANGE || endptr == line || *endptr != '\0') {
+        free(line);
+        return 1;
+    }
+
+    free(line);
+
+    printf("%s\n", isWoodall(number) ? "Yes" : "No");
+
+    return 0;
+}

@@ -1,0 +1,8 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-59-s3.c:6:30: error: unknown type name 'int62_t'; did you mean 'int64_t'?
+    6 | int64_t nth_octagonal_number(int62_t n) {
+      |                              ^~~~~~~
+      |                              int64_t
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-59-s3.c: In function 'main':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-59-s3.c:39:22: error: implicit declaration of function 'nth_octagonal_number' [-Wimplicit-function-declaration]
+   39 |     int64_t result = nth_octagonal_number(n);
+      |                      ^~~~~~~~~~~~~~~~~~~~

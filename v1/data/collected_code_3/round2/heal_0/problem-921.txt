@@ -1,0 +1,52 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Tuple {
+    int *elements;
+    int size;
+} Tuple;
+
+Tuple* chunk_tuples(int *arr, int arr_size, int n, int *chunk_count) {
+    *chunk_count = (arr_size + n - 1) / n;
+    Tuple *chunks = (Tuple*)malloc(*chunk_count * sizeof(Tuple));
+
+    for (int i = 0; i < *chunk_count; i++) {
+        chunks[i].size = (i == *chunk_count - 1 && arr_size % n != 0) ? arr_size % n : n;
+        chunks[i].elements = (int*)malloc(chunks[i].size * sizeof(int));
+
+        for (int j = 0; j < chunks[i].size; j++) {
+            chunks[i].elements[j] = arr[i * n + j];
+        }
+    }
+
+    return chunks;
+}
+
+void print_chunks(Tuple *chunks, int chunk_count) {
+    for (int i = 0; i < chunk_count; i++) {
+        printf("Chunk %d: ", i + 1);
+        for (int j = 0; j < chunks[i].size; j++) {
+            printf("%d ", chunks[i].elements[j]);
+        }
+        printf("\n");
+    }
+}
+
+int main() {
+    int arr[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    int arr_size = sizeof(arr) / sizeof(arr[0]);
+    int n = 3;
+    int chunk_count;
+
+    Tuple *chunks = chunk_tuples(arr, arr_size, n, &chunk_count);
+    print_chunks(chunks, chunk_count);
+
+    for (int i = 0; i < chunk_count; i++) {
+        free(chunks[i].elements);
+    }
+    free(chunks);
+
+    return 0;
+}
+```

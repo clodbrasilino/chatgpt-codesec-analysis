@@ -1,0 +1,22 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_5/healed/problem-440.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_5/healed/problem-440.c:145:23: style: Condition 'dest_capacity<=wlen' is always false [knownConditionTrueFalse]
+    if (dest_capacity <= wlen) {
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_5/healed/problem-440.c:144:19: note: dest_capacity is assigned 'wlen+1' here.
+    dest_capacity = wlen + 1;
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_5/healed/problem-440.c:145:23: note: Condition 'dest_capacity<=wlen' is always false
+    if (dest_capacity <= wlen) {
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_5/healed/problem-440.c:154:14: style: Condition 'wlen>=dest_capacity' is always false [knownConditionTrueFalse]
+    if (wlen >= dest_capacity) {
+             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_5/healed/problem-440.c:145:23: note: Assuming condition 'dest_capacity<=wlen' is false
+    if (dest_capacity <= wlen) {
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_5/healed/problem-440.c:150:14: note: Assuming condition is false
+    if (copy == NULL) {
+             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_5/healed/problem-440.c:154:14: note: Condition 'wlen>=dest_capacity' is always false
+    if (wlen >= dest_capacity) {
+             ^

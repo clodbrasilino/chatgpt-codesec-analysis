@@ -1,0 +1,47 @@
+{
+  "task_id": 891,
+  "text": "Write a C function to check whether the given two numbers have same number of digits or not.",
+  "fn_candidates": [
+    "same_Length",
+    "SameLength",
+    "sameLength",
+    "sameLength"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "same_Length",
+      "args": [
+        12,
+        1
+      ],
+      "expected": false,
+      "assert_src": "assert same_Length(12,1) == False"
+    },
+    {
+      "fn_name": "same_Length",
+      "args": [
+        2,
+        2
+      ],
+      "expected": true,
+      "assert_src": "assert same_Length(2,2) == True"
+    },
+    {
+      "fn_name": "same_Length",
+      "args": [
+        10,
+        20
+      ],
+      "expected": true,
+      "assert_src": "assert same_Length(10,20) == True"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "bool",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

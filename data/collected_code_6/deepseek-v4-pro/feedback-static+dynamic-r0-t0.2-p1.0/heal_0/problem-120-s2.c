@@ -1,0 +1,57 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+typedef struct {
+    int first;
+    int second;
+} Tuple;
+
+long long max_product_pairs(Tuple *tuples, int size) {
+    if (tuples == NULL || size < 2) {
+        return LLONG_MIN;
+    }
+
+    long long max_product = LLONG_MIN;
+
+    for (int i = 0; i < size - 1; i++) {
+        for (int j = i + 1; j < size; j++) {
+            long long product1 = (long long)tuples[i].first * tuples[j].first;
+            long long product2 = (long long)tuples[i].first * tuples[j].second;
+            long long product3 = (long long)tuples[i].second * tuples[j].first;
+            long long product4 = (long long)tuples[i].second * tuples[j].second;
+
+            long long current_max = product1;
+            if (product2 > current_max) current_max = product2;
+            if (product3 > current_max) current_max = product3;
+            if (product4 > current_max) current_max = product4;
+
+            if (current_max > max_product) {
+                max_product = current_max;
+            }
+        }
+    }
+
+    return max_product;
+}
+
+int main(void) {
+    Tuple tuples[] = {
+        {1, 2},
+        {3, 4},
+        {-5, 6},
+        {7, -8},
+        {9, 10}
+    };
+    int size = sizeof(tuples) / sizeof(tuples[0]);
+
+    long long result = max_product_pairs(tuples, size);
+
+    if (result != LLONG_MIN) {
+        printf("Maximum product: %lld\n", result);
+    } else {
+        printf("Invalid input\n");
+    }
+
+    return 0;
+}

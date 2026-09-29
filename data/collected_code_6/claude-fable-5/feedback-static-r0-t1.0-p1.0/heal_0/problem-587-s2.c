@@ -1,0 +1,129 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int value;
+    struct Node *next;
+} Node;
+
+typedef struct Tuple {
+    int *items;
+    size_t size;
+} Tuple;
+
+Node *list_append(Node *head, int value)
+{
+    Node *node = malloc(sizeof(Node));
+    if (node == NULL) {
+        return NULL;
+    }
+    node->value = value;
+    node->next = NULL;
+
+    if (head == NULL) {
+        return node;
+    }
+
+    Node *cur = head;
+    while (cur->next != NULL) {
+        cur = cur->next;
+    }
+    cur->next = node;
+    return head;
+}
+
+void list_free(Node *head)
+{
+    while (head != NULL) {
+        Node *next = head->next;
+        free(head);
+        head = next;
+    }
+}
+
+Tuple *list_to_tuple(const Node *head)
+{
+    size_t count = 0;
+    const Node *cur = head;
+    while (cur != NULL) {
+        count++;
+        cur = cur->next;
+    }
+
+    Tuple *tuple = malloc(sizeof(Tuple));
+    if (tuple == NULL) {
+        return NULL;
+    }
+
+    tuple->size = count;
+    tuple->items = NULL;
+
+    if (count > 0) {
+        tuple->items = malloc(count * sizeof(int));
+        if (tuple->items == NULL) {
+            free(tuple);
+            return NULL;
+        }
+        cur = head;
+        for (size_t i = 0; i < count; i++) {
+            tuple->items[i] = cur->value;
+            cur = cur->next;
+        }
+    }
+
+    return tuple;
+}
+
+void tuple_free(Tuple *tuple)
+{
+    if (tuple != NULL) {
+        free(tuple->items);
+        free(tuple);
+    }
+}
+
+void tuple_print(const Tuple *tuple)
+{
+    if (tuple == NULL) {
+        return;
+    }
+    printf("(");
+    for (size_t i = 0; i < tuple->size; i++) {
+        printf("%d", tuple->items[i]);
+        if (i + 1 < tuple->size) {
+            printf(", ");
+        }
+    }
+    printf(")\n");
+}
+
+int main(void)
+{
+    Node *head = NULL;
+    int values[] = {10, 20, 30, 40, 50};
+    size_t n = sizeof(values) / sizeof(values[0]);
+
+    for (size_t i = 0; i < n; i++) {
+        Node *result = list_append(head, values[i]);
+        if (result == NULL) {
+            fprintf(stderr, "Memory allocation failed\n");
+            list_free(head);
+            return EXIT_FAILURE;
+        }
+        head = result;
+    }
+
+    Tuple *tuple = list_to_tuple(head);
+    if (tuple == NULL) {
+        fprintf(stderr, "Failed to convert list to tuple\n");
+        list_free(head);
+        return EXIT_FAILURE;
+    }
+
+    tuple_print(tuple);
+
+    tuple_free(tuple);
+    list_free(head);
+
+    return EXIT_SUCCESS;
+}

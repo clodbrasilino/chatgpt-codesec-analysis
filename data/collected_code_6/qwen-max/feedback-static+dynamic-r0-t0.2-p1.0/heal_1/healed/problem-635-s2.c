@@ -1,0 +1,92 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *array;
+    size_t capacity;
+    size_t count;
+} MinHeap;
+
+MinHeap* create_min_heap(size_t capacity) {
+    MinHeap *heap = (MinHeap *)malloc(sizeof(MinHeap));
+    if (!heap) return NULL;
+    heap->array = (int *)malloc(capacity * sizeof(int));
+    if (!heap->array) {
+        free(heap);
+        return NULL;
+    }
+    heap->capacity = capacity;
+    heap->count = 0;
+    return heap;
+}
+
+void free_min_heap(MinHeap *heap) {
+    if (heap) {
+        free(heap->array);
+        free(heap);
+    }
+}
+
+void min_heapify(MinHeap *heap, size_t index) {
+    size_t smallest = index;
+    size_t left = 2 * index + 1;
+    size_t right = 2 * index + 2;
+
+    if (left < heap->count && heap->array[left] < heap->array[smallest]) {
+        smallest = left;
+    }
+
+    if (right < heap->count && heap->array[right] < heap->array[smallest]) {
+        smallest = right;
+    }
+
+    if (smallest != index) {
+        int temp = heap->array[index];
+        heap->array[index] = heap->array[smallest];
+        heap->array[smallest] = temp;
+        min_heapify(heap, smallest);
+    }
+}
+
+void push(MinHeap *heap, int value) {
+    if (heap->count == heap->capacity) return;
+    size_t i = heap->count;
+    heap->array[i] = value;
+    while (i > 0 && heap->array[(i - 1) / 2] > heap->array[i]) {
+        int temp = heap->array[i];
+        heap->array[i] = heap->array[(i - 1) / 2];
+        heap->array[(i - 1) / 2] = temp;
+        i = (i - 1) / 2;
+    }
+    heap->count++;
+}
+
+int pop(MinHeap *heap) {
+    if (heap->count == 0) return -1;
+    int root = heap->array[0];
+    heap->array[0] = heap->array[heap->count - 1];
+    heap->count--;
+    min_heapify(heap, 0);
+    return root;
+}
+
+int main() {
+    MinHeap *heap = create_min_heap(10);
+    if (!heap) return 1;
+
+    const int values[] = {3, 1, 4, 1, 5, 9, 2, 6, 5, 3};
+    for (size_t i = 0; i < 10; ++i) {
+        push(heap, values[i]);
+    }
+
+    for (size_t i = 0; i < 10; ++i) {
+        int val = pop(heap);
+        if (val != -1) {
+            printf("%d ", val);
+        }
+    }
+    printf("\n");
+
+    free_min_heap(heap);
+    return 0;
+}

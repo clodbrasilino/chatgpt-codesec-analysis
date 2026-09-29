@@ -1,0 +1,56 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <math.h>
+
+#define EPSILON 0.0001
+
+double findThirdAngle(double angle1, double angle2, bool *isValid)
+{
+    double thirdAngle;
+    
+    if (angle1 <= 0.0 || angle2 <= 0.0 || 
+        (angle1 + angle2) >= 180.0 || 
+        !isfinite(angle1) || !isfinite(angle2)) {
+        *isValid = false;
+        return 0.0;
+    }
+    
+    thirdAngle = 180.0 - angle1 - angle2;
+    
+    if (thirdAngle <= EPSILON) {
+        *isValid = false;
+        return 0.0;
+    }
+    
+    *isValid = true;
+    return thirdAngle;
+}
+
+int main(void)
+{
+    double angle1, angle2, angle3;
+    bool isValid;
+    
+    printf("Enter first angle: ");
+    if (scanf("%lf", &angle1) != 1) {
+        printf("Invalid input.\n");
+        return 1;
+    }
+    
+    printf("Enter second angle: ");
+    if (scanf("%lf", &angle2) != 1) {
+        printf("Invalid input.\n");
+        return 1;
+    }
+    
+    angle3 = findThirdAngle(angle1, angle2, &isValid);
+    
+    if (isValid) {
+        printf("Third angle: %.2f\n", angle3);
+    } else {
+        printf("Invalid angles. Sum must be less than 180 and both must be positive.\n");
+        return 1;
+    }
+    
+    return 0;
+}

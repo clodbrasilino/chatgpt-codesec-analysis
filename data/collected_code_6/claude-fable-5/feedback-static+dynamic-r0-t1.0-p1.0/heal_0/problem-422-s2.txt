@@ -1,0 +1,44 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+double average_of_cubes(unsigned int n)
+{
+    double sum;
+    double dn;
+
+    dn = (double)n;
+    sum = (dn * dn * (dn + 1.0) * (dn + 1.0)) / 4.0;
+    return sum / dn;
+}
+
+int main(void)
+{
+    unsigned int n;
+    int result;
+    double avg;
+
+    printf("Enter a positive integer n: ");
+    result = scanf("%u", &n);
+
+    if (result != 1) {
+        fprintf(stderr, "Error: invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (n == 0U) {
+        fprintf(stderr, "Error: n must be greater than zero.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (n > 100000U) {
+        fprintf(stderr, "Error: n is too large.\n");
+        return EXIT_FAILURE;
+    }
+
+    avg = average_of_cubes(n);
+    printf("Average of cubes of first %u natural numbers: %.6f\n", n, avg);
+
+    return EXIT_SUCCESS;
+}
+```

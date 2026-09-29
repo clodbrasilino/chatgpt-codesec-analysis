@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-725.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-725.c:59:27: warning: Opposite inner 'if' condition leads to a dead code block. [oppositeInnerCondition]
+                if (count >= max_matches)
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-725.c:32:18: note: outer condition: count<max_matches
+    while (count < max_matches)
+                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-725.c:59:27: note: opposite inner condition: count>=max_matches
+                if (count >= max_matches)
+                          ^

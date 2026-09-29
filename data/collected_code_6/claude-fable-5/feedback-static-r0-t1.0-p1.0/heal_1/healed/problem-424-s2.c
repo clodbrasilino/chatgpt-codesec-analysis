@@ -1,0 +1,71 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_STRING_LEN 4096U
+
+char *extract_rear(const char *const *strings, size_t count)
+{
+    char *result = NULL;
+    size_t i;
+
+    if (strings == NULL || count == 0U) {
+        return NULL;
+    }
+
+    if (count >= (size_t)-1) {
+        return NULL;
+    }
+
+    result = malloc(count + 1U);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    for (i = 0U; i < count; i++) {
+        size_t len;
+
+        if (strings[i] == NULL) {
+            free(result);
+            return NULL;
+        }
+
+        len = strnlen(strings[i], MAX_STRING_LEN);
+        if (len == MAX_STRING_LEN) {
+            free(result);
+            return NULL;
+        }
+
+        if (len == 0U) {
+            result[i] = ' ';
+        } else {
+            result[i] = strings[i][len - 1U];
+        }
+    }
+
+    result[count] = '\0';
+    return result;
+}
+
+int main(void)
+{
+    const char *const words[] = { "Mers", "for", "Vers" };
+    size_t count = sizeof(words) / sizeof(words[0]);
+    char *rear = extract_rear(words, count);
+    size_t i;
+
+    if (rear == NULL) {
+        fprintf(stderr, "Failed to extract rear elements\n");
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0U; i < count; i++) {
+        if (printf("%c\n", rear[i]) < 0) {
+            free(rear);
+            return EXIT_FAILURE;
+        }
+    }
+
+    free(rear);
+    return EXIT_SUCCESS;
+}

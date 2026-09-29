@@ -1,0 +1,66 @@
+#include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
+ /* Possible weaknesses found:
+  *  test case 2 failed: expected True, got <no output>
+  *  test case 0 failed: expected True, got <no output>
+  *  test case 1 failed: expected False, got <no output>
+  */
+
+bool is_valid_parentheses(const char *str)
+{
+    size_t balance = 0;
+
+    if (str == NULL)
+    {
+        return false;
+    }
+
+    for (const char *p = str; *p != '\0'; ++p)
+    {
+        if (*p == '(')
+        {
+            ++balance;
+        }
+        else if (*p == ')')
+        {
+            if (balance == 0)
+            {
+                return false;
+            }
+            --balance;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    return balance == 0;
+}
+
+int main(void)
+{
+    const char *tests[] = {
+        "()",
+        "(())",
+        "()()",
+        "(()())",
+        "(()",
+        ")(",
+        "())(",
+        "",
+        "abc",
+        NULL
+    };
+
+    for (size_t i = 0; tests[i] != NULL; ++i)
+    {
+        printf("\"%s\" -> %s\n", tests[i],
+               is_valid_parentheses(tests[i]) ? "valid" : "invalid");
+    }
+
+    printf("NULL -> %s\n", is_valid_parentheses(NULL) ? "valid" : "invalid");
+
+    return EXIT_SUCCESS;
+}

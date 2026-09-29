@@ -1,0 +1,82 @@
+```c
+#include <stdio.h>
+#include <limits.h>
+#include <stdint.h>
+
+long long safe_multiply(long long a, long long b) {
+    if (a > 0 && b > 0 && a > LLONG_MAX / b) return -1;
+    if (a > 0 && b < 0 && b < LLONG_MIN / a) return -1;
+    if (a < 0 && b > 0 && a < LLONG_MIN / b) return -1;
+    if (a < 0 && b < 0) {
+        if (a == LLONG_MIN || b == LLONG_MIN) return -1;
+        if (a < LLONG_MAX / b) return -1;
+    }
+    return a * b;
+}
+
+long long safe_add(long long a, long long b) {
+    if (b > 0 && a > LLONG_MAX - b) return -1;
+    if (b < 0 && a < LLONG_MIN - b) return -1;
+    return a + b;
+}
+
+long long difference_square_sum(long long n) {
+    if (n < 1) return -1;
+    
+    long long temp;
+    long long sum;
+    long long sum_squares;
+    long long square_sum;
+    
+    temp = safe_add(n, 1);
+    if (temp == -1) return -1;
+    
+    sum = safe_multiply(n, temp);
+    if (sum == -1) return -1;
+    sum = sum / 2;
+    
+    square_sum = safe_multiply(sum, sum);
+    if (square_sum == -1) return -1;
+    
+    temp = safe_multiply(2, n);
+    if (temp == -1) return -1;
+    temp = safe_add(temp, 1);
+    if (temp == -1) return -1;
+    
+    long long temp2 = safe_add(n, 1);
+    if (temp2 == -1) return -1;
+    
+    long long temp3 = safe_multiply(n, temp2);
+    if (temp3 == -1) return -1;
+    
+    long long temp4 = safe_multiply(temp3, temp);
+    if (temp4 == -1) return -1;
+    
+    sum_squares = temp4 / 6;
+    
+    long long result = square_sum - sum_squares;
+    
+    if (result < 0 && square_sum > 0 && sum_squares < 0) return -1;
+    
+    return result;
+}
+
+int main(void) {
+    long long n;
+    printf("Enter a natural number n: ");
+    if (scanf("%lld", &n) != 1 || n < 1) {
+        printf("Invalid input. Please enter a valid natural number.\n");
+        return 1;
+    }
+
+    long long result = difference_square_sum(n);
+    if (result == -1) {
+        printf("Overflow detected. Input too large.\n");
+        return 1;
+    }
+    
+    printf("Difference: %lld\n", result);
+
+    return 0;
+}
+```

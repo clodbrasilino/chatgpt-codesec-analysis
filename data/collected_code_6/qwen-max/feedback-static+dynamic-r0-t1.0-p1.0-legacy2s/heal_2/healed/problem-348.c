@@ -1,0 +1,34 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+long long count_sequences(const int arr[], int n, int k) {
+    long long *dp;
+    if (k + 1 > 0) {
+        dp = calloc(k + 1, sizeof(long long));
+        if (dp == NULL) {
+            fprintf(stderr, "Memory allocation failed\n");
+            exit(1);
+        }
+        dp[0] = 1;
+    } else {
+        return 0;
+    }
+
+    for (int i = 0; i < n; ++i) {
+        for (int j = k; j >= arr[i]; --j) {
+            dp[j] += dp[j - arr[i]];
+        }
+    }
+
+    long long result = dp[k];
+    free(dp);
+    return result;
+}
+
+int main() {
+    const int arr[] = {1, 2, 3};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    int k = 5;
+    printf("%lld\n", count_sequences(arr, n, k));
+    return 0;
+}

@@ -1,0 +1,129 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct Node {
+    char *key;
+    int value;
+    struct Node *next;
+} Node;
+
+typedef struct Dictionary {
+    Node **buckets;
+    size_t size;
+} Dictionary;
+
+Dictionary *dict_create(size_t size) {
+    Dictionary *dict = malloc(sizeof(Dictionary));
+    if (!dict) return NULL;
+    dict->buckets = calloc(size, sizeof(Node *));
+    if (!dict->buckets) {
+        free(dict);
+        return NULL;
+    }
+    dict->size = size;
+    return dict;
+}
+
+int dict_insert(Dictionary *dict, const char *key, int value) {
+    if (!dict || !key) return 0;
+    size_t index = 0;
+    for (size_t i = 0; key[i]; i++) {
+        index = (index * 31 + key[i]) % dict->size;
+    }
+    Node *current = dict->buckets[index];
+    while (current) {
+        if (strcmp(current->key, key) == 0) {
+            current->value = value;
+            return 1;
+        }
+        current = current->next;
+    }
+    Node *new_node = malloc(sizeof(Node));
+    if (!new_node) return 0;
+    new_node->key = strdup(key);
+    if (!new_node->key) {
+        free(new_node);
+        return 0;
+    }
+    new_node->value = value;
+    new_node->next = dict->buckets[index];
+    dict->buckets[index] = new_node;
+    return 1;
+}
+
+char **dict_keys(Dictionary *dict, size_t *out_count) {
+    if (!dict || !out_count) return NULL;
+    size_t count = 0;
+    for (size_t i = 0; i < dict->size; i++) {
+        Node *current = dict->buckets[i];
+        while (current) {
+            count++;
+            current = current->next;
+        }
+    }
+    char **keys = malloc((count + 1) * sizeof(char *));
+    if (!keys) return NULL;
+    size_t j = 0;
+    for (size_t i = 0; i < dict->size; i++) {
+        Node *current = dict->buckets[i];
+        while (current) {
+            keys[j] = strdup(current->key);
+            if (!keys[j]) {
+                for (size_t k = 0; k < j; k++) {
+                    free(keys[k]);
+                }
+                free(keys);
+                return NULL;
+            }
+            j++;
+            current = current->next;
+        }
+    }
+    keys[count] = NULL;
+    *out_count = count;
+    return keys;
+}
+
+void dict_free(Dictionary *dict) {
+    if (!dict) return;
+    for (size_t i = 0; i < dict->size; i++) {
+        Node *current = dict->buckets[i];
+        while (current) {
+            Node *next = current->next;
+            free(current->key);
+            free(current);
+            current = next;
+        }
+    }
+    free(dict->buckets);
+    free(dict);
+}
+
+void keys_free(char **keys) {
+    if (!keys) return;
+    for (size_t i = 0; keys[i]; i++) {
+        free(keys[i]);
+    }
+    free(keys);
+}
+
+int main(void) {
+    Dictionary *dict = dict_create(16);
+    if (!dict) return 1;
+    dict_insert(dict, "apple", 1);
+    dict_insert(dict, "banana", 2);
+    dict_insert(dict, "cherry", 3);
+    size_t count = 0;
+    char **keys = dict_keys(dict, &count);
+    if (!keys) {
+        dict_free(dict);
+        return 1;
+    }
+    for (size_t i = 0; i < count; i++) {
+        printf("%s\n", keys[i]);
+    }
+    keys_free(keys);
+    dict_free(dict);
+    return 0;
+}

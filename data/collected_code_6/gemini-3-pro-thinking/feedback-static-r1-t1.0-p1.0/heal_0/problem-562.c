@@ -1,0 +1,89 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int* data;
+    size_t length;
+} Sublist;
+
+typedef struct {
+    Sublist* sublists;
+    size_t count;
+} ListOfSublists;
+
+size_t get_max_sublist_length(const ListOfSublists* list) {
+    if (list == NULL || list->sublists == NULL || list->count == 0) {
+        return 0;
+    }
+
+    size_t max_len = 0;
+    for (size_t i = 0; i < list->count; i++) {
+        if (list->sublists[i].length > max_len) {
+            max_len = list->sublists[i].length;
+        }
+    }
+
+    return max_len;
+}
+
+void free_list_of_sublists(ListOfSublists* list) {
+    if (list != NULL) {
+        if (list->sublists != NULL) {
+            for (size_t i = 0; i < list->count; i++) {
+                if (list->sublists[i].data != NULL) {
+                    free(list->sublists[i].data);
+                    list->sublists[i].data = NULL;
+                }
+            }
+            free(list->sublists);
+            list->sublists = NULL;
+        }
+        free(list);
+    }
+}
+
+ListOfSublists* create_example_list(void) {
+    ListOfSublists* list = (ListOfSublists*)malloc(sizeof(ListOfSublists));
+    if (list == NULL) {
+        return NULL;
+    }
+
+    list->count = 3;
+    list->sublists = (Sublist*)calloc(list->count, sizeof(Sublist));
+    if (list->sublists == NULL) {
+        free(list);
+        return NULL;
+    }
+
+    list->sublists[0].length = 2;
+    list->sublists[0].data = (int*)malloc(list->sublists[0].length * sizeof(int));
+    
+    list->sublists[1].length = 5;
+    list->sublists[1].data = (int*)malloc(list->sublists[1].length * sizeof(int));
+    
+    list->sublists[2].length = 3;
+    list->sublists[2].data = (int*)malloc(list->sublists[2].length * sizeof(int));
+
+    for (size_t i = 0; i < list->count; i++) {
+        if (list->sublists[i].data == NULL && list->sublists[i].length > 0) {
+            free_list_of_sublists(list);
+            return NULL;
+        }
+    }
+
+    return list;
+}
+
+int main(void) {
+    ListOfSublists* list = create_example_list();
+    if (list == NULL) {
+        return EXIT_FAILURE;
+    }
+
+    size_t max_length = get_max_sublist_length(list);
+    printf("%zu\n", max_length);
+
+    free_list_of_sublists(list);
+
+    return EXIT_SUCCESS;
+}

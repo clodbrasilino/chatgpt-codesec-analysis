@@ -1,0 +1,111 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define TUPLE_SIZE 3
+
+typedef struct {
+    int elements[TUPLE_SIZE];
+} Tuple;
+
+static int is_tuple_divisible(const Tuple *t, int k)
+{
+    int i;
+
+    if (t == NULL || k == 0) {
+        return 0;
+    }
+
+    for (i = 0; i < TUPLE_SIZE; i++) {
+        if (t->elements[i] % k != 0) {
+            return 0;
+        }
+    }
+
+    return 1;
+}
+
+static Tuple *find_divisible_tuples(const Tuple *tuples, size_t count, int k, size_t *result_count)
+{
+    Tuple *result;
+    size_t i;
+    size_t found;
+
+    if (result_count == NULL) {
+        return NULL;
+    }
+
+    *result_count = 0;
+
+    if (tuples == NULL || count == 0 || k == 0) {
+        return NULL;
+    }
+
+    result = malloc(count * sizeof(Tuple));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    found = 0;
+    for (i = 0; i < count; i++) {
+        if (is_tuple_divisible(&tuples[i], k)) {
+            result[found] = tuples[i];
+            found++;
+        }
+    }
+
+    if (found == 0) {
+        free(result);
+        return NULL;
+    }
+
+    *result_count = found;
+    return result;
+}
+
+static void print_tuples(const Tuple *tuples, size_t count)
+{
+    size_t i;
+    int j;
+
+    if (tuples == NULL) {
+        return;
+    }
+
+    for (i = 0; i < count; i++) {
+        printf("(");
+        for (j = 0; j < TUPLE_SIZE; j++) {
+            printf("%d", tuples[i].elements[j]);
+            if (j < TUPLE_SIZE - 1) {
+                printf(", ");
+            }
+        }
+        printf(")\n");
+    }
+}
+
+int main(void)
+{
+    Tuple tuples[] = {
+        {{6, 24, 12}},
+        {{7, 9, 6}},
+        {{12, 18, 21}},
+        {{12, 24, 36}},
+        {{5, 10, 15}}
+    };
+    size_t count = sizeof(tuples) / sizeof(tuples[0]);
+    int k = 6;
+    size_t result_count = 0;
+    Tuple *result;
+
+    result = find_divisible_tuples(tuples, count, k, &result_count);
+
+    if (result != NULL && result_count > 0) {
+        printf("Tuples with all elements divisible by %d:\n", k);
+        print_tuples(result, result_count);
+        free(result);
+    } else {
+        printf("No tuples found with all elements divisible by %d\n", k);
+    }
+
+    return EXIT_SUCCESS;
+}

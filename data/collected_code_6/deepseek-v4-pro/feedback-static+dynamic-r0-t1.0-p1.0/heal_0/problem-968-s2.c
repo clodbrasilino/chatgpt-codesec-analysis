@@ -1,0 +1,98 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+#define PI 3.14159265358979323846
+
+double f(double x, int n, double *coeffs, int period) {
+    double result = 0.0;
+    for (int k = 0; k < n; k++) {
+        result += coeffs[2*k] * cos(2 * PI * k * x / period) 
+               + coeffs[2*k+1] * sin(2 * PI * k * x / period);
+    }
+    return result;
+}
+
+double find_max(double a, double b, double tol, int n, double *coeffs, int period) {
+    double c, d, fc, fd;
+    double gr = (sqrt(5.0) - 1.0) / 2.0;
+    
+    c = b - gr * (b - a);
+    d = a + gr * (b - a);
+    fc = f(c, n, coeffs, period);
+    fd = f(d, n, coeffs, period);
+    
+    while (fabs(b - a) > tol) {
+        if (fc < fd) {
+            a = c;
+            c = d;
+            fc = fd;
+            d = a + gr * (b - a);
+            fd = f(d, n, coeffs, period);
+        } else {
+            b = d;
+            d = c;
+            fd = fc;
+            c = b - gr * (b - a);
+            fc = f(c, n, coeffs, period);
+        }
+    }
+    
+    return (a + b) / 2.0;
+}
+
+int main(void) {
+    int n, period;
+    double *coeffs;
+    double a, b, tol;
+    
+    printf("Enter number of harmonics (including fundamental): ");
+    if (scanf("%d", &n) != 1 || n <= 0) {
+        fprintf(stderr, "Invalid input\n");
+        return 1;
+    }
+    
+    coeffs = malloc(2 * n * sizeof(double));
+    if (coeffs == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return 1;
+    }
+    
+    printf("Enter period: ");
+    if (scanf("%d", &period) != 1 || period <= 0) {
+        fprintf(stderr, "Invalid input\n");
+        free(coeffs);
+        return 1;
+    }
+    
+    printf("Enter %d coefficients (a0, b0, a1, b1, ...):\n", 2*n);
+    for (int i = 0; i < 2*n; i++) {
+        if (scanf("%lf", &coeffs[i]) != 1) {
+            fprintf(stderr, "Invalid input\n");
+            free(coeffs);
+            return 1;
+        }
+    }
+    
+    printf("Enter interval [a, b] to search: ");
+    if (scanf("%lf %lf", &a, &b) != 2 || a >= b) {
+        fprintf(stderr, "Invalid interval\n");
+        free(coeffs);
+        return 1;
+    }
+    
+    printf("Enter tolerance: ");
+    if (scanf("%lf", &tol) != 1 || tol <= 0) {
+        fprintf(stderr, "Invalid tolerance\n");
+        free(coeffs);
+        return 1;
+    }
+    
+    double x_max = find_max(a, b, tol, n, coeffs, period);
+    double max_val = f(x_max, n, coeffs, period);
+    
+    printf("Maximum value f(%.10f) = %.10f\n", x_max, max_val);
+    
+    free(coeffs);
+    return 0;
+}

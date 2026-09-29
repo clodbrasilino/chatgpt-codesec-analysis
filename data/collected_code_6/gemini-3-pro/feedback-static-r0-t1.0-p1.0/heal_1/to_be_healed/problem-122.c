@@ -1,0 +1,72 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int count_distinct_prime_factors(int num);
+int find_nth_smart_number(int n);
+
+int count_distinct_prime_factors(int num) {
+    int count = 0;
+    
+    if (num <= 1) {
+        return 0;
+    }
+
+    for (int i = 2; i * i <= num; i++) {
+        if (num % i == 0) {
+            count++;
+            while (num % i == 0) {
+                num /= i;
+            }
+        }
+    }
+    if (num > 1) {
+        count++;
+    }
+    
+    return count;
+}
+
+int find_nth_smart_number(int n) {
+    if (n <= 0) {
+        return -1;
+    }
+    
+    int count = 0;
+    int num = 1;
+    
+    while (count < n) {
+        num++;
+        if (count_distinct_prime_factors(num) >= 3) {
+            count++;
+        }
+    }
+    
+    return num;
+}
+
+int main(void) {
+    /* Possible weaknesses found:
+     *  Assignment 'n=10', assigned value is 10
+     */
+    int n = 10;
+    
+    /* Possible weaknesses found:
+     *  Condition 'n<=0' is always false
+     *  Condition 'n<=0' is always false [knownConditionTrueFalse]
+     */
+    if (n <= 0) {
+        fprintf(stderr, "Invalid input. n must be strictly positive.\n");
+        return EXIT_FAILURE;
+    }
+    
+    int nth_smart_number = find_nth_smart_number(n);
+    
+    if (nth_smart_number == -1) {
+        fprintf(stderr, "An error occurred while finding the smart number.\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("%d\n", nth_smart_number);
+    
+    return EXIT_SUCCESS;
+}

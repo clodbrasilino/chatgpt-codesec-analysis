@@ -1,0 +1,37 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int a;
+    int b;
+} Tuple;
+
+/* Possible weaknesses found:
+ *  Parameter 'order' can be declared as pointer to const [constParameterPointer]
+ */
+void rearrange_tuples(Tuple *tuples, int *order, int n) {
+    Tuple *temp = (Tuple *)malloc(n * sizeof(Tuple));
+    for (int i = 0; i < n; ++i) {
+        if (order[i] >= 0 && order[i] < n) {
+            temp[i] = tuples[order[i]];
+        }
+    }
+    for (int i = 0; i < n; ++i) {
+        tuples[i] = temp[i];
+    }
+    free(temp);
+}
+
+int main() {
+    Tuple tuples[] = {{1, 2}, {3, 4}, {5, 6}};
+    int order[] = {2, 0, 1};
+    int n = sizeof(tuples) / sizeof(tuples[0]);
+
+    rearrange_tuples(tuples, order, n);
+
+    for (int i = 0; i < n; ++i) {
+        printf("(%d, %d) ", tuples[i].a, tuples[i].b);
+    }
+
+    return 0;
+}

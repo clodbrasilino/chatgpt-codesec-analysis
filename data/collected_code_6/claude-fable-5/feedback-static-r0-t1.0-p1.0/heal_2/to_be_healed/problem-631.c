@@ -1,0 +1,110 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+static void print_regex_error(int errcode, const regex_t *regex, const char *prefix)
+{
+    size_t errbuf_size;
+    char *errbuf;
+
+    errbuf_size = regerror(errcode, regex, NULL, 0);
+    errbuf = malloc(errbuf_size);
+    if (errbuf == NULL) {
+        fprintf(stderr, "%s: unable to allocate error buffer\n", prefix);
+        return;
+    }
+    regerror(errcode, regex, errbuf, errbuf_size);
+    fprintf(stderr, "%s: %s\n", prefix, errbuf);
+    free(errbuf);
+}
+
+int swap_spaces_underscores(char *str, size_t max_len)
+{
+    regex_t regex;
+    regmatch_t match;
+    int ret;
+    size_t offset = 0;
+    size_t len;
+
+    if (str == NULL) {
+        return -1;
+    }
+
+    len = strnlen(str, max_len);
+    if (len == max_len) {
+        return -1;
+    }
+
+    ret = regcomp(&regex, "[ _]", REG_EXTENDED);
+    if (ret != 0) {
+        print_regex_error(ret, &regex, "regcomp failed");
+        return -1;
+    }
+
+    while (offset < len && str[offset] != '\0') {
+        ret = regexec(&regex, str + offset, 1, &match, 0);
+        if (ret == REG_NOMATCH) {
+            break;
+        }
+        if (ret != 0) {
+            print_regex_error(ret, &regex, "regexec failed");
+            regfree(&regex);
+            return -1;
+        }
+        if (match.rm_so < 0 || match.rm_eo <= match.rm_so) {
+            break;
+        }
+        if (offset + (size_t)match.rm_so >= len) {
+            break;
+        }
+        if (str[offset + (size_t)match.rm_so] == ' ') {
+            str[offset + (size_t)match.rm_so] = '_';
+        } else {
+            str[offset + (size_t)match.rm_so] = ' ';
+        }
+        offset += (size_t)match.rm_eo;
+    }
+
+    regfree(&regex);
+    return 0;
+}
+
+int main(void)
+{
+    static const char original[] = "hello world_this is_a test";
+    size_t len = strnlen(original, sizeof(original));
+    size_t buf_size;
+    char *buffer;
+
+    if (len >= sizeof(original)) {
+        fprintf(stderr, "input string not terminated\n");
+        return EXIT_FAILURE;
+    }
+
+    buf_size = len + 1;
+    buffer = malloc(buf_size);
+    if (buffer == NULL) {
+        fprintf(stderr, "malloc failed\n");
+        return EXIT_FAILURE;
+    }
+
+    /* Possible weaknesses found:
+     * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+     */
+    memcpy(buffer, original, len);
+    buffer[len] = '\0';
+
+    printf("Before: %s\n", buffer);
+
+    if (swap_spaces_underscores(buffer, buf_size) != 0) {
+        fprintf(stderr, "swap_spaces_underscores failed\n");
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+
+    printf("After:  %s\n", buffer);
+
+    free(buffer);
+    return EXIT_SUCCESS;
+}

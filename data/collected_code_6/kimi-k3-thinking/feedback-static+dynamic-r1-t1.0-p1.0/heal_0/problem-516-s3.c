@@ -1,0 +1,119 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+static void print_array(const int *arr, size_t n)
+{
+    size_t i;
+
+    for (i = 0; i < n; i++) {
+        printf("%d ", arr[i]);
+    }
+    printf("\n");
+}
+
+static int get_max(const int *arr, size_t n, int *max_out)
+{
+    int max;
+    size_t i;
+
+    if (arr == NULL || max_out == NULL || n == 0) {
+        return -1;
+    }
+
+    max = arr[0];
+    for (i = 0; i < n; i++) {
+        if (arr[i] < 0) {
+            return -1;
+        }
+        if (arr[i] > max) {
+            max = arr[i];
+        }
+    }
+
+    *max_out = max;
+    return 0;
+}
+
+static int counting_sort_by_digit(int *arr, size_t n, long long exp)
+{
+    int *output;
+    size_t count[10] = {0};
+    size_t i;
+    size_t digit;
+
+    output = (int *)malloc(n * sizeof(int));
+    if (output == NULL) {
+        return -1;
+    }
+
+    for (i = 0; i < n; i++) {
+        digit = (size_t)(((long long)arr[i] / exp) % 10);
+        count[digit]++;
+    }
+
+    for (i = 1; i < 10; i++) {
+        count[i] += count[i - 1];
+    }
+
+    for (i = n; i-- > 0; ) {
+        digit = (size_t)(((long long)arr[i] / exp) % 10);
+        output[count[digit] - 1] = arr[i];
+        count[digit]--;
+    }
+
+    for (i = 0; i < n; i++) {
+        arr[i] = output[i];
+    }
+
+    free(output);
+    output = NULL;
+    return 0;
+}
+
+int radix_sort(int *arr, size_t n)
+{
+    int max;
+    long long exp;
+
+    if (arr == NULL) {
+        return -1;
+    }
+
+    if (n < 2) {
+        return 0;
+    }
+
+    if (get_max(arr, n, &max) != 0) {
+        return -1;
+    }
+
+    exp = 1;
+    while ((long long)max / exp > 0) {
+        if (counting_sort_by_digit(arr, n, exp) != 0) {
+            return -1;
+        }
+        exp *= 10;
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    int arr[] = {170, 45, 75, 90, 802, 24, 2, 66};
+    size_t n = sizeof(arr) / sizeof(arr[0]);
+
+    printf("Original array:\n");
+    print_array(arr, n);
+
+    if (radix_sort(arr, n) != 0) {
+        fprintf(stderr, "Error: radix_sort failed\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Sorted array:\n");
+    print_array(arr, n);
+
+    return EXIT_SUCCESS;
+}

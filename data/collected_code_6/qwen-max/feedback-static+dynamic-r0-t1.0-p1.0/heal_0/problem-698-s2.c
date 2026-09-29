@@ -1,0 +1,36 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int key1;
+    int key2;
+    int value;
+} DictionaryItem;
+
+int compare(const void *a, const void *b) {
+    const DictionaryItem *itemA = (const DictionaryItem *)a;
+    const DictionaryItem *itemB = (const DictionaryItem *)b;
+    return (itemA->key1 * itemA->key2) - (itemB->key1 * itemB->key2);
+}
+
+void sortDictionary(DictionaryItem *items, size_t count) {
+    qsort(items, count, sizeof(DictionaryItem), compare);
+}
+
+int main() {
+    DictionaryItem items[] = {
+        {3, 4, 10},
+        {1, 5, 20},
+        {2, 2, 5},
+        {6, 1, 15}
+    };
+    size_t count = sizeof(items) / sizeof(items[0]);
+
+    sortDictionary(items, count);
+
+    for (size_t i = 0; i < count; ++i) {
+        printf("(%d, %d) -> %d\n", items[i].key1, items[i].key2, items[i].value);
+    }
+
+    return 0;
+}

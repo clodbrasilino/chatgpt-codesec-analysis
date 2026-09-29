@@ -1,0 +1,105 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    void *data;
+    struct Node *next;
+} Node;
+
+typedef struct {
+    int start;
+    int end;
+} Range;
+
+Node *create_node(void *data) {
+    Node *node = (Node *)malloc(sizeof(Node));
+    if (node == NULL) {
+        exit(EXIT_FAILURE);
+    }
+    node->data = data;
+    node->next = NULL;
+    return node;
+}
+
+Node *create_sublist(int start, int end) {
+    Range *range = (Range *)malloc(sizeof(Range));
+    if (range == NULL) {
+        exit(EXIT_FAILURE);
+    }
+    range->start = start;
+    range->end = end;
+    return create_node(range);
+}
+
+void free_sublist(Node *node) {
+    if (node != NULL) {
+        free(node->data);
+        free(node);
+    }
+}
+
+Node *remove_out_of_range(Node *head, int min, int max) {
+    Node *current = head;
+    Node *prev = NULL;
+    Node *new_head = head;
+
+    while (current != NULL) {
+        Range *range = (Range *)current->data;
+        Node *next = current->next;
+
+        if (range->start < min || range->end > max) {
+            if (prev == NULL) {
+                new_head = next;
+            } else {
+                prev->next = next;
+            }
+            free_sublist(current);
+        } else {
+            prev = current;
+        }
+        current = next;
+    }
+
+    return new_head;
+}
+
+void print_list(Node *head) {
+    Node *current = head;
+    while (current != NULL) {
+        Range *range = (Range *)current->data;
+        printf("[%d, %d] ", range->start, range->end);
+        current = current->next;
+    }
+    printf("\n");
+}
+
+void free_list(Node *head) {
+    Node *current = head;
+    while (current != NULL) {
+        Node *next = current->next;
+        free_sublist(current);
+        current = next;
+    }
+}
+
+int main(void) {
+    Node *head = create_sublist(1, 5);
+    head->next = create_sublist(6, 10);
+    head->next->next = create_sublist(11, 15);
+    head->next->next->next = create_sublist(16, 20);
+
+    printf("Original list: ");
+    print_list(head);
+
+    int min = 5;
+    int max = 15;
+
+    head = remove_out_of_range(head, min, max);
+
+    printf("List after removing sublists outside [%d, %d]: ", min, max);
+    print_list(head);
+
+    free_list(head);
+
+    return 0;
+}

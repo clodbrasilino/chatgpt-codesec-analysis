@@ -1,0 +1,9 @@
+collected_code_5/round1/heal_0/problem-822.c:34:5: error: call to undeclared library function 'printf' with type 'int (const char *, ...)'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   34 |     printf("Enter a password: ");
+      |     ^
+collected_code_5/round1/heal_0/problem-822.c:34:5: note: include the header <stdio.h> or explicitly provide a declaration for 'printf'
+collected_code_5/round1/heal_0/problem-822.c:35:5: error: call to undeclared library function 'scanf' with type 'int (const char *restrict, ...)'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   35 |     scanf("%20s", password);
+      |     ^
+collected_code_5/round1/heal_0/problem-822.c:35:5: note: include the header <stdio.h> or explicitly provide a declaration for 'scanf'
+2 errors generated.

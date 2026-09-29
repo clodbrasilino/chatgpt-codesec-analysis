@@ -1,0 +1,33 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+
+bool differ_by_one_bit(int a, int b) {
+    unsigned int xor_result = (unsigned int)a ^ (unsigned int)b;
+    return xor_result != 0 && (xor_result & (xor_result - 1)) == 0;
+}
+
+int main(void) {
+    int num1, num2;
+    
+    printf("Enter first number: ");
+    if (scanf("%d", &num1) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return 1;
+    }
+    
+    printf("Enter second number: ");
+    if (scanf("%d", &num2) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return 1;
+    }
+    
+    if (differ_by_one_bit(num1, num2)) {
+        printf("Numbers differ by exactly one bit position\n");
+    } else {
+        printf("Numbers do not differ by exactly one bit position\n");
+    }
+    
+    return 0;
+}
+```

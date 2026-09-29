@@ -1,0 +1,170 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+#define MAX_VALUE_LENGTH 1024
+
+typedef struct {
+    const char *key;
+    const char *value;
+} DictEntry;
+
+static size_t bounded_strlen(const char *s, size_t max_len)
+{
+    size_t len = 0;
+
+    if (s == NULL) {
+        return 0;
+    }
+    while (len < max_len && s[len] != '\0') {
+        len++;
+    }
+    return len;
+}
+
+static int safe_copy_string(char *dest, size_t dest_size, const char *src, size_t src_len)
+{
+    if (dest == NULL || src == NULL || src_len + 1 > dest_size) {
+        return -1;
+    }
+    memcpy(dest, src, src_len);
+    dest[src_len] = '\0';
+    return 0;
+}
+
+static int value_exists(char **values, size_t count, const char *value)
+{
+    size_t i;
+
+    for (i = 0; i < count; i++) {
+        if (strcmp(values[i], value) == 0) {
+            return 1;
+        }
+    }
+    return 0;
+}
+
+static void cleanup_values(char **values, size_t count)
+{
+    size_t j;
+
+    for (j = 0; j < count; j++) {
+        free(values[j]);
+    }
+    free(values);
+}
+
+char **extract_unique_values(const DictEntry *dict, size_t dict_size, size_t *unique_count)
+{
+    char **unique_values;
+    size_t count;
+    size_t i;
+
+    if (dict == NULL || unique_count == NULL) {
+        return NULL;
+    }
+
+    *unique_count = 0;
+
+    if (dict_size == 0) {
+        return NULL;
+    }
+
+    if (dict_size > SIZE_MAX / sizeof(*unique_values)) {
+        return NULL;
+    }
+
+    unique_values = malloc(dict_size * sizeof(*unique_values));
+    if (unique_values == NULL) {
+        return NULL;
+    }
+
+    count = 0;
+    for (i = 0; i < dict_size; i++) {
+        size_t value_len;
+        size_t alloc_size;
+
+        if (dict[i].value == NULL) {
+            continue;
+        }
+
+        value_len = bounded_strlen(dict[i].value, MAX_VALUE_LENGTH + 1);
+        if (value_len > MAX_VALUE_LENGTH) {
+            cleanup_values(unique_values, count);
+            return NULL;
+        }
+
+        if (value_exists(unique_values, count, dict[i].value)) {
+            continue;
+        }
+
+        alloc_size = value_len + 1;
+        unique_values[count] = malloc(alloc_size);
+        if (unique_values[count] == NULL) {
+            cleanup_values(unique_values, count);
+            return NULL;
+        }
+
+        if (safe_copy_string(unique_values[count], alloc_size, dict[i].value, value_len) != 0) {
+            free(unique_values[count]);
+            cleanup_values(unique_values, count);
+            return NULL;
+        }
+        count++;
+    }
+
+    *unique_count = count;
+    return unique_values;
+}
+
+void free_unique_values(char **values, size_t count)
+{
+    size_t i;
+
+    if (values == NULL) {
+        return;
+    }
+    for (i = 0; i < count; i++) {
+        free(values[i]);
+    }
+    free(values);
+}
+
+int main(void)
+{
+    DictEntry dict[] = {
+        {"key1", "apple"},
+        {"key2", "banana"},
+        {"key3", "apple"},
+        {"key4", "cherry"},
+        {"key5", "banana"},
+        {"key6", "date"}
+    };
+    size_t dict_size = sizeof(dict) / sizeof(dict[0]);
+    size_t unique_count = 0;
+    char **unique_values;
+    size_t i;
+
+    printf("Dictionary contents:\n");
+    for (i = 0; i < dict_size; i++) {
+        if (dict[i].key != NULL && dict[i].value != NULL) {
+            printf("%s: %s\n", dict[i].key, dict[i].value);
+        }
+    }
+
+    unique_values = extract_unique_values(dict, dict_size, &unique_count);
+    if (unique_values == NULL) {
+        fprintf(stderr, "Error: failed to extract unique values\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Unique values:\n");
+    for (i = 0; i < unique_count; i++) {
+        printf("%s\n", unique_values[i]);
+    }
+
+    free_unique_values(unique_values, unique_count);
+
+    return EXIT_SUCCESS;
+}

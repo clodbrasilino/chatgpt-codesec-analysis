@@ -1,0 +1,75 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node *next;
+};
+
+struct Node *create_node(int data) {
+    struct Node *node = (struct Node *)malloc(sizeof(struct Node));
+    if (node == NULL) {
+        exit(EXIT_FAILURE);
+    }
+    node->data = data;
+    node->next = NULL;
+    return node;
+}
+
+struct Node *add_lists(struct Node *l1, struct Node *l2) {
+    struct Node dummy;
+    dummy.next = NULL;
+    struct Node *tail = &dummy;
+    int carry = 0;
+
+    while (l1 != NULL || l2 != NULL || carry > 0) {
+        int sum = carry;
+        if (l1 != NULL) {
+            sum += l1->data;
+            l1 = l1->next;
+        }
+        if (l2 != NULL) {
+            sum += l2->data;
+            l2 = l2->next;
+        }
+        carry = sum / 10;
+        struct Node *new_node = create_node(sum % 10);
+        tail->next = new_node;
+        tail = tail->next;
+    }
+
+    return dummy.next;
+}
+
+void free_list(struct Node *head) {
+    struct Node *current = head;
+    while (current != NULL) {
+        struct Node *next = current->next;
+        free(current);
+        current = next;
+    }
+}
+
+int main(void) {
+    struct Node *l1 = create_node(9);
+    l1->next = create_node(9);
+    l1->next->next = create_node(9);
+
+    struct Node *l2 = create_node(1);
+    l2->next = create_node(8);
+
+    struct Node *result = add_lists(l1, l2);
+
+    struct Node *curr = result;
+    while (curr != NULL) {
+        printf("%d ", curr->data);
+        curr = curr->next;
+    }
+    printf("\n");
+
+    free_list(l1);
+    free_list(l2);
+    free_list(result);
+
+    return 0;
+}

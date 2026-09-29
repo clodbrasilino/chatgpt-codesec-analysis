@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-314-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-314-s3.c:8:9: style: The scope of the variable 'col1' can be reduced. [variableScope]
+    int col1, col2;
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-314-s3.c:8:15: style: The scope of the variable 'col2' can be reduced. [variableScope]
+    int col1, col2;
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-314-s3.c:11:14: style: Variable 'col1' is assigned a value that is never used. [unreadVariable]
+        col1 = (i > 0) ? grid[0][i-1] + grid[1][i-1] : 0;
+             ^

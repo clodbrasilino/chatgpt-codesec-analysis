@@ -1,0 +1,109 @@
+#include <stdio.h>
+#include <math.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <float.h>
+#include <string.h>
+#include <limits.h>
+#include <stdint.h>
+
+#define INPUT_BUFFER_SIZE 512
+
+double calculate_polygon_perimeter(int sides, double side_length) {
+    if (sides < 3) {
+        errno = EINVAL;
+        return -1.0;
+    }
+    if (side_length < 0.0 || !isfinite(side_length)) {
+        errno = EINVAL;
+        return -1.0;
+    }
+    if (side_length > DBL_MAX / (double)sides) {
+        errno = ERANGE;
+        return -1.0;
+    }
+    return (double)sides * side_length;
+}
+
+static int read_line(char *buffer, size_t buffer_size) {
+    size_t len;
+
+    if (buffer == NULL || buffer_size == 0 || buffer_size > (size_t)INT_MAX) {
+        return -1;
+    }
+
+    if (fgets(buffer, (int)buffer_size, stdin) == NULL) {
+        return -1;
+    }
+
+    len = strnlen(buffer, buffer_size);
+    if (len == 0) {
+        return -1;
+    }
+
+    if (buffer[len - 1] != '\n') {
+        int c;
+        /* Possible weaknesses found:
+         * Flawfinder getchar: Check buffer boundaries if used in a loop including recursive loops (CWE-120, CWE-20). (risk 1, buffer)
+         */
+        while ((c = getchar()) != '\n' && c != EOF) {
+        }
+        return -1;
+    }
+
+    buffer[len - 1] = '\0';
+    return 0;
+}
+
+int main(void) {
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char input_buffer[INPUT_BUFFER_SIZE];
+    int num_sides = 0;
+    double side_len = 0.0;
+    double perimeter = 0.0;
+    char *end_ptr = NULL;
+    long parsed_sides = 0;
+
+    printf("Enter number of sides: ");
+    if (read_line(input_buffer, sizeof(input_buffer)) != 0) {
+        fprintf(stderr, "Invalid input for number of sides.\n");
+        return EXIT_FAILURE;
+    }
+
+    errno = 0;
+    parsed_sides = strtol(input_buffer, &end_ptr, 10);
+    if (errno == ERANGE || end_ptr == input_buffer || *end_ptr != '\0') {
+        fprintf(stderr, "Invalid input for number of sides.\n");
+        return EXIT_FAILURE;
+    }
+    if (parsed_sides < (long)INT_MIN || parsed_sides > (long)INT_MAX) {
+        fprintf(stderr, "Invalid input for number of sides.\n");
+        return EXIT_FAILURE;
+    }
+    num_sides = (int)parsed_sides;
+
+    printf("Enter side length: ");
+    if (read_line(input_buffer, sizeof(input_buffer)) != 0) {
+        fprintf(stderr, "Invalid input for side length.\n");
+        return EXIT_FAILURE;
+    }
+
+    errno = 0;
+    side_len = strtod(input_buffer, &end_ptr);
+    if (errno == ERANGE || end_ptr == input_buffer || *end_ptr != '\0') {
+        fprintf(stderr, "Invalid input for side length.\n");
+        return EXIT_FAILURE;
+    }
+
+    errno = 0;
+    perimeter = calculate_polygon_perimeter(num_sides, side_len);
+    if (errno != 0 || perimeter < 0.0) {
+        fprintf(stderr, "Invalid polygon parameters.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Perimeter: %.15g\n", perimeter);
+    return EXIT_SUCCESS;
+}

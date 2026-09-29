@@ -1,0 +1,117 @@
+collected_code/heal_round_4/healed/problem-586.c: In function 'splitAndAdd':
+collected_code/heal_round_4/healed/problem-586.c:8:24: warning: implicit declaration of function 'malloc' [-Wimplicit-function-declaration]
+    8 |     int *temp = (int *)malloc(k * sizeof(int));
+      |                        ^~~~~~
+collected_code/heal_round_4/healed/problem-586.c:2:1: note: include '<stdlib.h>' or provide a declaration of 'malloc'
+    1 | #include <stdio.h>
+  +++ |+#include <stdlib.h>
+    2 | 
+collected_code/heal_round_4/healed/problem-586.c:8:24: warning: incompatible implicit declaration of built-in function 'malloc' [-Wbuiltin-declaration-mismatch]
+    8 |     int *temp = (int *)malloc(k * sizeof(int));
+      |                        ^~~~~~
+collected_code/heal_round_4/healed/problem-586.c:8:24: note: include '<stdlib.h>' or provide a declaration of 'malloc'
+collected_code/heal_round_4/healed/problem-586.c:22:5: warning: implicit declaration of function 'free' [-Wimplicit-function-declaration]
+   22 |     free(temp);
+      |     ^~~~
+collected_code/heal_round_4/healed/problem-586.c:22:5: note: include '<stdlib.h>' or provide a declaration of 'free'
+collected_code/heal_round_4/healed/problem-586.c:22:5: warning: incompatible implicit declaration of built-in function 'free' [-Wbuiltin-declaration-mismatch]
+collected_code/heal_round_4/healed/problem-586.c:22:5: note: include '<stdlib.h>' or provide a declaration of 'free'
+collected_code/heal_round_4/healed/problem-586.c:11:17: warning: dereference of possibly-NULL 'temp' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   11 |         temp[i] = arr[i];
+      |         ~~~~~~~~^~~~~~~~
+  'splitAndAdd': events 1-6
+    |
+    |    4 |     if (k > n) {
+    |      |        ^
+    |      |        |
+    |      |        (1) following 'false' branch (when 'k <= n')...
+    |......
+    |    8 |     int *temp = (int *)malloc(k * sizeof(int));
+    |      |                        ~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                        |
+    |      |                        (2) ...to here
+    |      |                        (3) this call could return NULL
+    |    9 | 
+    |   10 |     for (int i = 0; i < k; i++) {
+    |      |                     ~~~~~
+    |      |                       |
+    |      |                       (4) following 'true' branch (when 'i < k')...
+    |   11 |         temp[i] = arr[i];
+    |      |         ~~~~~~~~~~~~~~~~
+    |      |                 |    |
+    |      |                 |    (5) ...to here
+    |      |                 (6) 'temp + (long unsigned int)i * 4' could be NULL: unchecked value from (3)
+    |
+collected_code/heal_round_4/healed/problem-586.c:19:22: warning: use of uninitialized value '*temp_38 + _20' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   19 |         arr[i] = temp[j];
+      |                  ~~~~^~~
+  'splitAndAdd': events 1-8
+    |
+    |    4 |     if (k > n) {
+    |      |        ^
+    |      |        |
+    |      |        (1) following 'false' branch (when 'k <= n')...
+    |......
+    |    8 |     int *temp = (int *)malloc(k * sizeof(int));
+    |      |                        ~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                        |
+    |      |                        (2) ...to here
+    |      |                        (3) region created on heap here
+    |    9 | 
+    |   10 |     for (int i = 0; i < k; i++) {
+    |      |                     ~~~~~
+    |      |                       |
+    |      |                       (4) following 'false' branch (when 'i >= k')...
+    |......
+    |   14 |     for (int i = 0; i < n - k; i++) {
+    |      |              ~
+    |      |              |
+    |      |              (5) ...to here
+    |......
+    |   18 |     for (int i = n - k, j = 0; i < n; i++, j++) {
+    |      |                                ~~~~~
+    |      |                                  |
+    |      |                                  (6) following 'true' branch (when 'i < n')...
+    |   19 |         arr[i] = temp[j];
+    |      |                  ~~~~~~~
+    |      |                      |
+    |      |                      (7) ...to here
+    |      |                      (8) use of uninitialized value '*temp_38 + _20' here
+    |
+collected_code/heal_round_4/healed/problem-586.c:19:22: warning: dereference of possibly-NULL 'temp' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   19 |         arr[i] = temp[j];
+      |                  ~~~~^~~
+  'splitAndAdd': events 1-8
+    |
+    |    4 |     if (k > n) {
+    |      |        ^
+    |      |        |
+    |      |        (1) following 'false' branch (when 'k <= n')...
+    |......
+    |    8 |     int *temp = (int *)malloc(k * sizeof(int));
+    |      |                        ~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                        |
+    |      |                        (2) ...to here
+    |      |                        (3) this call could return NULL
+    |    9 | 
+    |   10 |     for (int i = 0; i < k; i++) {
+    |      |                     ~~~~~
+    |      |                       |
+    |      |                       (4) following 'false' branch (when 'i >= k')...
+    |......
+    |   14 |     for (int i = 0; i < n - k; i++) {
+    |      |              ~
+    |      |              |
+    |      |              (5) ...to here
+    |......
+    |   18 |     for (int i = n - k, j = 0; i < n; i++, j++) {
+    |      |                                ~~~~~
+    |      |                                  |
+    |      |                                  (6) following 'true' branch (when 'i < n')...
+    |   19 |         arr[i] = temp[j];
+    |      |                  ~~~~~~~
+    |      |                      |
+    |      |                      (7) ...to here
+    |      |                      (8) 'temp + (long unsigned int)j * 4' could be NULL: unchecked value from (3)
+    |
+-macosx_version_min has been renamed to -macos_version_min

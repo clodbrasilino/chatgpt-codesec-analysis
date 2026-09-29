@@ -1,0 +1,23 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <math.h>
+
+bool check_decimal_precision(double num){
+    double round_num = round(num * 100) / 100;
+    return fabs(round_num - num) < 0.001;
+}
+
+int main(){
+    double num;
+
+    printf("Enter a decimal number: ");
+    scanf("%lf", &num);
+
+    if(check_decimal_precision(num)){
+        printf("The decimal number has a precision of 2.\n");
+    } else {
+        printf("The decimal number does not have a precision of 2.\n");
+    }
+
+    return 0;
+}

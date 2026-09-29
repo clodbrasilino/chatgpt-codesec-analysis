@@ -1,0 +1,22 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-226-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-226-s2.c:11:20: style: Condition 'alloc_size==0' is always false [knownConditionTrueFalse]
+    if (alloc_size == 0) {
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-226-s2.c:10:33: note: Assignment 'alloc_size=len/2+2', assigned value is greater than 1
+    size_t alloc_size = len / 2 + 2;
+                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-226-s2.c:11:20: note: Condition 'alloc_size==0' is always false
+    if (alloc_size == 0) {
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-226-s2.c:40:19: style: Condition 'null_test==NULL' is always true [knownConditionTrueFalse]
+    if (null_test == NULL) {
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-226-s2.c:39:45: note: Calling function 'remove_odd_index_chars' returns 0
+    char *null_test = remove_odd_index_chars(NULL, 0);
+                                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-226-s2.c:39:45: note: Assignment 'null_test=remove_odd_index_chars(NULL,0)', assigned value is 0
+    char *null_test = remove_odd_index_chars(NULL, 0);
+                                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-226-s2.c:40:19: note: Condition 'null_test==NULL' is always true
+    if (null_test == NULL) {
+                  ^

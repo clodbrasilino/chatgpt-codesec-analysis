@@ -1,0 +1,52 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <math.h>
+
+static double calculate_perimeter(int sides, double side_length)
+{
+    return sides * side_length;
+}
+
+int main(void)
+{
+    char input_buffer[256];
+    char *endptr;
+    long sides;
+    double side_length;
+    double perimeter;
+
+    if (fgets(input_buffer, sizeof(input_buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    errno = 0;
+    sides = strtol(input_buffer, &endptr, 10);
+    if (errno != 0 || endptr == input_buffer || *endptr != '\n' || sides < 3 || sides > 1000) {
+        fprintf(stderr, "Invalid number of sides\n");
+        return EXIT_FAILURE;
+    }
+
+    if (fgets(input_buffer, sizeof(input_buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    errno = 0;
+    side_length = strtod(input_buffer, &endptr);
+    if (errno != 0 || endptr == input_buffer || *endptr != '\n' || side_length <= 0.0 || !isfinite(side_length)) {
+        fprintf(stderr, "Invalid side length\n");
+        return EXIT_FAILURE;
+    }
+
+    perimeter = calculate_perimeter((int)sides, side_length);
+    
+    if (!isfinite(perimeter)) {
+        fprintf(stderr, "Calculation overflow\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("%.6f\n", perimeter);
+    return EXIT_SUCCESS;
+}

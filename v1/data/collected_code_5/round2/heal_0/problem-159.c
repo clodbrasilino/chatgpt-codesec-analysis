@@ -1,0 +1,61 @@
+#include <stdio.h>
+
+void printSeason(int month, int day) {
+    switch (month) {
+        case 1:
+        case 2:
+        case 3:
+            if (month == 3 && day >= 20) {
+                printf("Spring\n");
+            } else {
+                printf("Winter\n");
+            }
+            break;
+        case 4:
+        case 5:
+        case 6:
+            if (month == 6 && day >= 21) {
+                printf("Summer\n");
+            } else {
+                printf("Spring\n");
+            }
+            break;
+        case 7:
+        case 8:
+        case 9:
+            if (month == 9 && day >= 23) {
+                printf("Autumn\n");
+            } else {
+                printf("Summer\n");
+            }
+            break;
+        case 10:
+        case 11:
+        case 12:
+            if (month == 12 && day >= 21) {
+                printf("Winter\n");
+            } else {
+                printf("Autumn\n");
+            }
+            break;
+        default:
+            printf("Invalid month or day\n");
+            break;
+    }
+}
+
+int main() {
+    int day, month;
+    printf("Enter the Month : ");
+    scanf("%d", &month);
+    printf("Enter the Day : ");
+    scanf("%d", &day);
+    
+    if(month > 12 || month < 1 || day < 1 || day > 31) { 
+        printf("Invalid Date\n"); 
+    } else {
+        printSeason(month, day);
+    }
+
+    return 0;
+}

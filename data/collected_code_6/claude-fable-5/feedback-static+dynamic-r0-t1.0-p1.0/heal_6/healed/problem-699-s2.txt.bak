@@ -1,0 +1,73 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+int min_swaps(const char *s1, const char *s2)
+{
+    size_t len1;
+    size_t len2;
+    size_t i;
+    int diff10 = 0;
+    int diff01 = 0;
+
+    if (s1 == NULL || s2 == NULL) {
+        return -1;
+    }
+
+    len1 = strlen(s1);
+    len2 = strlen(s2);
+
+    if (len1 != len2) {
+        return -1;
+    }
+
+    for (i = 0; i < len1; i++) {
+        if ((s1[i] != '0' && s1[i] != '1') || (s2[i] != '0' && s2[i] != '1')) {
+            return -1;
+        }
+        if (s1[i] == '1' && s2[i] == '0') {
+            diff10++;
+        } else if (s1[i] == '0' && s2[i] == '1') {
+            diff01++;
+        }
+    }
+
+    if (diff10 != diff01) {
+        return -1;
+    }
+
+    return diff10;
+}
+
+int main(void)
+{
+    const char *str1 = "1101";
+    const char *str2 = "0011";
+    int result;
+
+    result = min_swaps(str1, str2);
+
+    if (result < 0) {
+        if (printf("Not Possible\n") < 0) {
+            return EXIT_FAILURE;
+        }
+    } else {
+        if (printf("Minimum swaps required: %d\n", result) < 0) {
+            return EXIT_FAILURE;
+        }
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the weaknesses and the fixes applied:**
+
+The original code implemented the wrong swap model, which explains all three test failures:
+
+1. **Wrong formula (test 0: expected 1, got 2; test 2: expected 3, got 4):** The original used `(diff10 / 2) + (diff01 / 2) + 2 * (diff10 % 2)`, which is the formula for a different problem variant. In this problem, a single swap exchanges any two characters within `s1`, so one swap pairing a `1→0` mismatch with a `0→1` mismatch fixes *both* positions simultaneously. The minimum number of swaps is therefore simply `diff10` (which must equal `diff01`). For one mismatched pair the answer is 1 (not 2), and for three pairs the answer is 3 (not 4) — exactly matching the expected test values.
+
+2. **Wrong feasibility condition (test 1: expected 'Not Possible', got -1):** The original checked only parity equality (`diff10 % 2 != diff01 % 2`), which is too permissive. Strings are transformable only when `s1` and `s2` contain the same number of `1`s, i.e., when `diff10 == diff01`. The provided example (`"1101"` vs `"0011"`, with `diff10 = 2`, `diff01 = 1`) is genuinely impossible and now correctly falls through to the `"Not Possible"` output path rather than leaking a raw `-1` result value.
+
+The defensive checks (NULL pointers, length mismatch, non-binary character validation, and `printf` return-value checking) were sound and have been retained.

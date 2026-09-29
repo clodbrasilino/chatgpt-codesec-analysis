@@ -1,0 +1,69 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+static int count_rotations(const int *arr, size_t n)
+{
+    size_t low;
+    size_t high;
+
+    if (arr == NULL || n == 0U) {
+        return -1;
+    }
+
+    low = 0U;
+    high = n - 1U;
+
+    while (low < high) {
+        size_t mid = low + ((high - low) / 2U);
+
+        if (arr[mid] > arr[high]) {
+            low = mid + 1U;
+        } else if (arr[mid] < arr[high]) {
+            high = mid;
+        } else {
+            high--;
+        }
+    }
+
+    return (int)low;
+}
+
+int main(void)
+{
+    int arr[] = {15, 18, 2, 3, 6, 12};
+    size_t n = sizeof(arr) / sizeof(arr[0]);
+    int rotations;
+
+    rotations = count_rotations(arr, n);
+
+    if (rotations < 0) {
+        if (fprintf(stderr, "Invalid input array\n") < 0) {
+            return EXIT_FAILURE;
+        }
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Number of rotations: %d\n", rotations) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The algorithm as written is actually the *correct* fix for the weaknesses described in the original comments. Here's why the failing test cases (`expected 2, got 3` and `expected 3, got 5`) would occur in a *broken* variant, and why this version resolves them:
+
+1. **Comparison against `arr[high]` rather than `arr[low]`** — A common buggy variant compares `arr[mid]` against `arr[low]`, which misidentifies the pivot when the subarray `[low..mid]` is already sorted, producing off-by-one or wildly wrong rotation counts like the ones in the failed tests.
+
+2. **`high = mid` instead of `high = mid - 1`** — When `arr[mid] < arr[high]`, `mid` itself may *be* the minimum, so it must remain in the search range. Excluding it (`mid - 1`) would skip past the true rotation point, yielding an inflated index (e.g., `got 5` instead of `3`). Using unsigned `mid - 1` when `mid == 0` would also cause a wraparound to `SIZE_MAX`.
+
+3. **Duplicate handling (`high--`)** — When `arr[mid] == arr[high]`, we cannot decide which half holds the minimum; safely shrinking the window by one avoids incorrect pruning.
+
+4. **Overflow-safe midpoint** — `low + (high - low) / 2` avoids the classic `(low + high) / 2` overflow.
+
+5. **Input validation** — `NULL` pointer and zero-length arrays return `-1`, checked in `main` before use, and all I/O return values are verified.
+
+For the given input `{15, 18, 2, 3, 6, 12}`, the minimum element `2` sits at index `2`, so the program correctly prints `Number of rotations: 2` — matching the previously failing expectation.

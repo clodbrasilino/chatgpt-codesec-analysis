@@ -1,0 +1,20 @@
+collected_code_3/problem-791-2.c: In function 'main':
+collected_code_3/problem-791-2.c:23:31: warning: dereference of possibly-NULL 'tuple.nestedRecord' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   23 |         tuple.nestedRecord[i] = i;
+      |         ~~~~~~~~~~~~~~~~~~~~~~^~~
+  'main': events 1-4
+    |
+    |   20 |     tuple.nestedRecord = (int*) malloc(tuple.nestedRecordSize * sizeof(int));
+    |      |                                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                                 |
+    |      |                                 (1) this call could return NULL
+    |   21 | 
+    |   22 |     for(int i = 0; i < tuple.nestedRecordSize; i++) {
+    |      |                    ~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                      |
+    |      |                      (2) following 'true' branch...
+    |   23 |         tuple.nestedRecord[i] = i;
+    |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |              |                |
+    |      |              (3) ...to here   (4) 'tuple.nestedRecord + (long unsigned int)i * 4' could be NULL: unchecked value from (1)
+    |

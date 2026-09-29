@@ -1,0 +1,54 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int x;
+    int y;
+    int z;
+} Tuple;
+
+char *tuple_to_string(const Tuple *t)
+{
+    char *str;
+    int len;
+
+    if (t == NULL) {
+        return NULL;
+    }
+
+    len = snprintf(NULL, 0, "(%d, %d, %d)", t->x, t->y, t->z);
+    if (len < 0) {
+        return NULL;
+    }
+
+    str = malloc((size_t)len + 1);
+    if (str == NULL) {
+        return NULL;
+    }
+
+    if (snprintf(str, (size_t)len + 1, "(%d, %d, %d)", t->x, t->y, t->z) < 0) {
+        free(str);
+        return NULL;
+    }
+
+    return str;
+}
+
+int main(void)
+{
+    Tuple t = {1, 2, 3};
+    char *result;
+
+    result = tuple_to_string(&t);
+    if (result == NULL) {
+        fprintf(stderr, "Error converting tuple to string\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("%s\n", result);
+    free(result);
+
+    return EXIT_SUCCESS;
+}
+```

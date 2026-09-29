@@ -1,0 +1,51 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct
+{
+    const int *data;
+    size_t length;
+} Sublist;
+
+size_t max_sublist_length(const Sublist *sublists, size_t count)
+{
+    size_t max_length = 0;
+    size_t i;
+
+    if (sublists == NULL || count == 0)
+    {
+        return 0;
+    }
+
+    for (i = 0; i < count; i++)
+    {
+        if (sublists[i].data != NULL && sublists[i].length > max_length)
+        {
+            max_length = sublists[i].length;
+        }
+    }
+
+    return max_length;
+}
+
+int main(void)
+{
+    int first[] = {1, 2, 3};
+    int second[] = {4, 5};
+    int third[] = {6, 7, 8, 9, 10};
+    int fourth[] = {11};
+
+    Sublist sublists[] = {
+        {first, sizeof(first) / sizeof(first[0])},
+        {second, sizeof(second) / sizeof(second[0])},
+        {third, sizeof(third) / sizeof(third[0])},
+        {fourth, sizeof(fourth) / sizeof(fourth[0])}
+    };
+
+    size_t count = sizeof(sublists) / sizeof(sublists[0]);
+    size_t result = max_sublist_length(sublists, count);
+
+    printf("Maximum length of sublist: %zu\n", result);
+
+    return EXIT_SUCCESS;
+}

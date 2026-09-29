@@ -1,0 +1,17 @@
+#include <stdio.h>
+#include <stdint.h>
+#include <inttypes.h>
+
+uint64_t nonagonal_number(uint64_t n) {
+    return n * (7 * n - 5) / 2;
+}
+
+int main(void) {
+    uint64_t n;
+    if (scanf("%" SCNu64, &n) == 1) {
+        printf("%" PRIu64 "\n", nonagonal_number(n));
+    } else {
+        return 1;
+    }
+    return 0;
+}

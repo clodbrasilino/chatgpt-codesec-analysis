@@ -1,0 +1,69 @@
+{
+  "task_id": 132,
+  "text": "Write a C function to convert tuple to a string.",
+  "fn_candidates": [
+    "tup_string",
+    "TupString",
+    "tupString",
+    "tupstring"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "tup_string",
+      "args": [
+        [
+          "e",
+          "x",
+          "e",
+          "r",
+          "c",
+          "i",
+          "s",
+          "e",
+          "s"
+        ]
+      ],
+      "expected": "exercises",
+      "assert_src": "assert tup_string(('e', 'x', 'e', 'r', 'c', 'i', 's', 'e', 's'))==(\"exercises\")"
+    },
+    {
+      "fn_name": "tup_string",
+      "args": [
+        [
+          "p",
+          "y",
+          "t",
+          "h",
+          "o",
+          "n"
+        ]
+      ],
+      "expected": "python",
+      "assert_src": "assert tup_string(('p','y','t','h','o','n'))==(\"python\")"
+    },
+    {
+      "fn_name": "tup_string",
+      "args": [
+        [
+          "p",
+          "r",
+          "o",
+          "g",
+          "r",
+          "a",
+          "m"
+        ]
+      ],
+      "expected": "program",
+      "assert_src": "assert tup_string(('p','r','o','g','r','a','m'))==(\"program\")"
+    }
+  ],
+  "arg_kinds": [
+    "str-list"
+  ],
+  "return_kind": "str",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

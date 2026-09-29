@@ -1,0 +1,46 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int compare(const void *a, const void *b){
+    return *(int *)a - *(int *)b;
+}
+
+void find_pairs(int *array1, int *array2, int size1, int size2, int k){
+    int i = 0;
+    int j = size2 - 1;
+
+    while (k > 0 && i < size1 && j >= 0){
+        printf("(%d, %d) ", array1[i], array2[j]);
+        i++;
+        j--;
+        k--;
+    }
+    printf("\n");
+}
+
+int main(){
+    int array1[] = {10, 20, 30, 40, 50};
+    int array2[] = {60, 70, 80, 90, 100};
+    int size1 = sizeof(array1) / sizeof(array1[0]);
+    int size2 = sizeof(array2) / sizeof(array2[0]);
+
+    if (size1 > 0 && size2 > 0){
+        qsort(array1, size1, sizeof(int), compare);
+        qsort(array2, size2, sizeof(int), compare);
+
+        int k = 3;
+        if (k <= size1 && k <= size2){
+            find_pairs(array1, array2, size1, size2, k);
+        }
+        else {
+            printf("Not enough elements in the arrays to find %d pairs.\n", k);
+        }
+    }
+    else {
+        printf("One or both arrays are empty.\n");
+    }
+
+    return 0;
+}
+```

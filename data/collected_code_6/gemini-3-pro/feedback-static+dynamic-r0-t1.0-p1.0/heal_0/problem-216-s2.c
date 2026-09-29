@@ -1,0 +1,129 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+#include <string.h>
+
+typedef enum {
+    TYPE_INT,
+    TYPE_LIST
+} ElementType;
+
+typedef struct ListNode ListNode;
+
+typedef struct Element {
+    ElementType type;
+    union {
+        int value;
+        ListNode* list;
+    } data;
+} Element;
+
+struct ListNode {
+    Element val;
+    struct ListNode* next;
+};
+
+void freeList(ListNode* head) {
+    while (head != NULL) {
+        ListNode* temp = head;
+        head = head->next;
+        if (temp->val.type == TYPE_LIST) {
+            freeList(temp->val.data.list);
+        }
+        free(temp);
+    }
+}
+
+bool areElementsEqual(Element* e1, Element* e2) {
+    if (e1 == NULL || e2 == NULL) return false;
+    if (e1->type != e2->type) return false;
+
+    if (e1->type == TYPE_INT) {
+        return e1->data.value == e2->data.value;
+    } else {
+        ListNode* l1 = e1->data.list;
+        ListNode* l2 = e2->data.list;
+
+        while (l1 != NULL && l2 != NULL) {
+            if (!areElementsEqual(&l1->val, &l2->val)) {
+                return false;
+            }
+            l1 = l1->next;
+            l2 = l2->next;
+        }
+        return l1 == NULL && l2 == NULL;
+    }
+}
+
+bool isElementInList(Element* e, ListNode* list) {
+    while (list != NULL) {
+        if (areElementsEqual(e, &list->val)) {
+            return true;
+        }
+        list = list->next;
+    }
+    return false;
+}
+
+bool isSubset(ListNode* sub, ListNode* super) {
+    if (sub == NULL) return true;
+    if (super == NULL) return false;
+
+    ListNode* curr = sub;
+    while (curr != NULL) {
+        if (!isElementInList(&curr->val, super)) {
+            return false;
+        }
+        curr = curr->next;
+    }
+    return true;
+}
+
+ListNode* createElementNodeList(Element e) {
+    ListNode* node = (ListNode*)malloc(sizeof(ListNode));
+    if (!node) exit(EXIT_FAILURE);
+    node->val = e;
+    node->next = NULL;
+    return node;
+}
+
+ListNode* createIntNode(int val) {
+    Element e;
+    e.type = TYPE_INT;
+    e.data.value = val;
+    return createElementNodeList(e);
+}
+
+ListNode* createListNode(ListNode* list) {
+    Element e;
+    e.type = TYPE_LIST;
+    e.data.list = list;
+    return createElementNodeList(e);
+}
+
+int main(void) {
+    ListNode* subList = createIntNode(1);
+    subList->next = createIntNode(2);
+
+    ListNode* superList = createIntNode(1);
+    superList->next = createIntNode(2);
+    superList->next->next = createIntNode(3);
+
+    bool result1 = isSubset(subList, superList);
+    printf("%d\n", result1 ? 1 : 0);
+
+    ListNode* nestedSub = createListNode(createIntNode(4));
+    ListNode* nestedSuper = createIntNode(1);
+    nestedSuper->next = createListNode(createIntNode(4));
+    nestedSuper->next->next = createIntNode(2);
+
+    bool result2 = isSubset(nestedSub, nestedSuper);
+    printf("%d\n", result2 ? 1 : 0);
+
+    freeList(subList);
+    freeList(superList);
+    freeList(nestedSub);
+    freeList(nestedSuper);
+
+    return 0;
+}

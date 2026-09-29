@@ -1,0 +1,58 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+/* Possible weaknesses found:
+ *  Parameter 'list' can be declared as pointer to const [constParameterPointer]
+ */
+int* find_odd_numbers(int* list, int size, int* odd_count) {
+    *odd_count = 0;
+    for (int i = 0; i < size; i++) {
+        if (list[i] % 2 != 0) {
+            (*odd_count)++;
+        }
+    }
+
+    int* odd_numbers = (int*)malloc(*odd_count * sizeof(int));
+    if (odd_numbers == NULL) {
+        *odd_count = 0;
+        return NULL;
+    }
+
+    int index = 0;
+    for (int i = 0; i < size; i++) {
+        if (list[i] % 2 != 0) {
+            odd_numbers[index] = list[i];
+            index++;
+        }
+    }
+
+    return odd_numbers;
+}
+
+int main(void) {
+    int list[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, -11, 12, 13, 0};
+    int size = sizeof(list) / sizeof(list[0]);
+    int odd_count = 0;
+
+    int* odd_numbers = find_odd_numbers(list, size, &odd_count);
+
+    if (odd_numbers == NULL) {
+        if (odd_count == 0) {
+            printf("No odd numbers found.\n");
+        } else {
+            printf("Memory allocation failed.\n");
+        }
+        return EXIT_FAILURE;
+    }
+
+    printf("Odd numbers (%d): ", odd_count);
+    for (int i = 0; i < odd_count; i++) {
+        printf("%d ", odd_numbers[i]);
+    }
+    printf("\n");
+
+    free(odd_numbers);
+    odd_numbers = NULL;
+
+    return EXIT_SUCCESS;
+}

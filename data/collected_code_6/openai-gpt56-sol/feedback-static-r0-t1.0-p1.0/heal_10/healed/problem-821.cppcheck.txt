@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-821.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-821.c:176:26: style: Condition 'new_capacity==0U' is always true [knownConditionTrueFalse]
+        if (new_capacity == 0U) {
+                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-821.c:175:46: note: Assignment 'new_capacity=maximum_capacity<4U?maximum_capacity:4U', assigned value is less than 1
+        new_capacity = maximum_capacity < 4U ? maximum_capacity : 4U;
+                                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-821.c:176:26: note: Condition 'new_capacity==0U' is always true
+        if (new_capacity == 0U) {
+                         ^

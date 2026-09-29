@@ -1,0 +1,53 @@
+```c
+#include <stdio.h>
+#include <stddef.h>
+#include <stdbool.h>
+
+bool is_subarray(const int *arr, size_t arr_len, const int *sub, size_t sub_len) {
+    if (sub == NULL || arr == NULL || sub_len > arr_len) {
+        return false;
+    }
+
+    if (sub_len == 0) {
+        return true;
+    }
+
+    size_t limit = arr_len - sub_len;
+
+    for (size_t i = 0; i <= limit; i++) {
+        bool match = true;
+        for (size_t j = 0; j < sub_len; j++) {
+            if (arr[i + j] != sub[j]) {
+                match = false;
+                break;
+            }
+        }
+        if (match) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+int main(void) {
+    int arr1[] = {1, 2, 3, 4, 5, 6};
+    int sub1[] = {3, 4, 5};
+    int sub2[] = {1, 2};
+    int sub3[] = {5, 6};
+    int sub4[] = {6, 7};
+    int sub5[] = {};
+    int sub6[] = {4, 6};
+
+    bool r1 = is_subarray(arr1, sizeof(arr1) / sizeof(arr1[0]), sub1, sizeof(sub1) / sizeof(sub1[0]));
+    bool r2 = is_subarray(arr1, sizeof(arr1) / sizeof(arr1[0]), sub2, sizeof(sub2) / sizeof(sub2[0]));
+    bool r3 = is_subarray(arr1, sizeof(arr1) / sizeof(arr1[0]), sub3, sizeof(sub3) / sizeof(sub3[0]));
+    bool r4 = is_subarray(arr1, sizeof(arr1) / sizeof(arr1[0]), sub4, sizeof(sub4) / sizeof(sub4[0]));
+    bool r5 = is_subarray(arr1, sizeof(arr1) / sizeof(arr1[0]), sub5, sizeof(sub5) / sizeof(sub5[0]));
+    bool r6 = is_subarray(arr1, sizeof(arr1) / sizeof(arr1[0]), sub6, sizeof(sub6) / sizeof(sub6[0]));
+    
+    printf("%d %d %d %d %d %d\n", r1, r2, r3, r4, r5, r6);
+
+    return 0;
+}
+```

@@ -1,0 +1,15 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-13-s2.c: In function 'count_most_common_words':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-13-s2.c:204:14: error: implicit declaration of function 'open'; did you mean 'popen'? [-Wimplicit-function-declaration]
+  204 |     int fd = open(filename, O_RDONLY | O_NOFOLLOW | O_CLOEXEC);
+      |              ^~~~
+      |              popen
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-13-s2.c:204:29: error: 'O_RDONLY' undeclared (first use in this function)
+  204 |     int fd = open(filename, O_RDONLY | O_NOFOLLOW | O_CLOEXEC);
+      |                             ^~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-13-s2.c:204:29: note: each undeclared identifier is reported only once for each function it appears in
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-13-s2.c:204:40: error: 'O_NOFOLLOW' undeclared (first use in this function)
+  204 |     int fd = open(filename, O_RDONLY | O_NOFOLLOW | O_CLOEXEC);
+      |                                        ^~~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-13-s2.c:204:53: error: 'O_CLOEXEC' undeclared (first use in this function)
+  204 |     int fd = open(filename, O_RDONLY | O_NOFOLLOW | O_CLOEXEC);
+      |                                                     ^~~~~~~~~

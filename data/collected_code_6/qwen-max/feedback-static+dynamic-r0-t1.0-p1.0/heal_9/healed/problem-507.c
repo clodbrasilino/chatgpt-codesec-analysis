@@ -1,0 +1,105 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct Node {
+    char *word;
+    struct Node *next;
+} Node;
+
+Node* create_node(char *w) {
+    Node *new_node = (Node *)malloc(sizeof(Node));
+    if (new_node == NULL) return NULL;
+    new_node->word = strdup(w);
+    if (new_node->word == NULL) {
+        free(new_node);
+        return NULL;
+    }
+    new_node->next = NULL;
+    return new_node;
+}
+
+void free_list(Node *head) {
+    while (head != NULL) {
+        Node *temp = head;
+        head = head->next;
+        free(temp->word);
+        free(temp);
+    }
+}
+
+Node* add_to_list(Node *head, char *word) {
+    Node *new_node = create_node(word);
+    if (new_node == NULL) return head;
+    if (head == NULL) {
+        return new_node;
+    }
+    Node *current = head;
+    while (current->next != NULL) {
+        current = current->next;
+    }
+    current->next = new_node;
+    return head;
+}
+
+Node* remove_words(Node *head, char *word_to_remove) {
+    Node *dummy = (Node *)malloc(sizeof(Node));
+    if (dummy == NULL) return head;
+    dummy->word = NULL;
+    dummy->next = head;
+    Node *prev = dummy;
+    Node *current = head;
+
+    while (current != NULL) {
+        if (strcmp(current->word, word_to_remove) == 0) {
+            prev->next = current->next;
+            free(current->word);
+            free(current);
+            current = prev->next;
+        } else {
+            prev = current;
+            current = current->next;
+        }
+    }
+    Node *new_head = dummy->next;
+    free(dummy);
+    return new_head;
+}
+
+void print_list(Node *head) {
+    while (head != NULL) {
+        printf("%s\n", head->word);
+        head = head->next;
+    }
+}
+
+int main() {
+    Node *words = NULL;
+    words = add_to_list(words, "red");
+    words = add_to_list(words, "green");
+    words = add_to_list(words, "blue");
+    words = add_to_list(words, "black");
+
+    printf("Original list:\n");
+    print_list(words);
+
+    words = remove_words(words, "black");
+
+    printf("List after removal:\n");
+    print_list(words);
+
+    words = add_to_list(words, "white");
+    printf("List after adding 'white':\n");
+    print_list(words);
+
+    words = add_to_list(words, "orange");
+    printf("List after adding 'orange':\n");
+    print_list(words);
+
+    words = remove_words(words, "red");
+    printf("List after removal of 'red':\n");
+    print_list(words);
+
+    free_list(words);
+    return 0;
+}

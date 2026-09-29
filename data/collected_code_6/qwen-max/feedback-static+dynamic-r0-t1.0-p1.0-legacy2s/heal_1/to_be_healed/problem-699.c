@@ -1,0 +1,57 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+ /* Possible weaknesses found:
+  *  test case 1 failed: expected 'Not Possible', got -1
+  */
+
+/* Possible weaknesses found:
+ *  Parameter 'B' can be declared as pointer to const [constParameterPointer]
+ */
+int minSwaps(char* A, char* B) {
+    int len = strlen(A);
+    int count1[2] = {0}, count2[2] = {0};
+    for (int i = 0; i < len; ++i) {
+        count1[A[i] - '0']++;
+        count2[B[i] - '0']++;
+    }
+    if (count1[0] != count2[0] || count1[1] != count2[1]) return -1;
+
+    int swapCount = 0;
+    for (int i = 0; i < len; ++i) {
+        if (A[i] != B[i]) {
+            if (A[i] == '1') {
+                for (int j = i + 1; j < len && A[i] != B[i]; ++j) {
+                    if (A[j] == '0' && B[j] == '1') {
+                        A[i] = '0';
+                        A[j] = '1';
+                        swapCount++;
+                        break;
+                    }
+                }
+            } else {
+                for (int j = i + 1; j < len && A[i] != B[i]; ++j) {
+                    if (A[j] == '1' && B[j] == '0') {
+                        A[i] = '1';
+                        A[j] = '0';
+                        swapCount++;
+                        break;
+                    }
+                }
+            }
+        }
+    }
+    return swapCount;
+}
+
+int main() {
+    char A[] = "100110";
+    char B[] = "010001";
+    int result = minSwaps(A, B);
+    if (result != -1) {
+        printf("Minimum number of swaps: %d\n", result);
+    } else {
+        printf("Binary strings are not compatible.\n");
+    }
+    return 0;
+}

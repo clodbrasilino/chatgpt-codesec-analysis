@@ -1,0 +1,48 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct Tuple {
+    int *values;
+    size_t size;
+} Tuple;
+
+void clear_tuple(Tuple *tuple) {
+    if (tuple == NULL || tuple->values == NULL) {
+        return;
+    }
+    memset(tuple->values, 0, tuple->size * sizeof(int));
+}
+
+int main(void) {
+    int vals1[] = {1, 2, 3, 4, 5};
+    int vals2[] = {10, 20, 30};
+    int vals3[] = {7, -3, 0, 42};
+
+    Tuple tuples[3];
+    tuples[0].values = vals1;
+    tuples[0].size = sizeof(vals1) / sizeof(vals1[0]);
+    tuples[1].values = vals2;
+    tuples[1].size = sizeof(vals2) / sizeof(vals2[0]);
+    tuples[2].values = vals3;
+    tuples[2].size = sizeof(vals3) / sizeof(vals3[0]);
+
+    for (int i = 0; i < 3; i++) {
+        clear_tuple(&tuples[i]);
+    }
+
+    for (int i = 0; i < 3; i++) {
+        printf("Tuple %d: ", i + 1);
+        for (size_t j = 0; j < tuples[i].size; j++) {
+            printf("%d ", tuples[i].values[j]);
+        }
+        printf("\n");
+    }
+
+    clear_tuple(NULL);
+
+    Tuple empty = {NULL, 0};
+    clear_tuple(&empty);
+
+    return 0;
+}

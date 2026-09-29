@@ -1,0 +1,92 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char *key;
+    int count;
+} FreqMap;
+
+char *second_most_repeated(char **strings, int size) {
+    if (strings == NULL || size < 2) {
+        return NULL;
+    }
+
+    FreqMap *map = malloc(size * sizeof(FreqMap));
+    if (map == NULL) {
+        return NULL;
+    }
+
+    int map_size = 0;
+    for (int i = 0; i < size; i++) {
+        if (strings[i] == NULL) {
+            free(map);
+            return NULL;
+        }
+
+        int found = 0;
+        for (int j = 0; j < map_size; j++) {
+            if (strcmp(strings[i], map[j].key) == 0) {
+                map[j].count++;
+                found = 1;
+                break;
+            }
+        }
+
+        if (!found) {
+            map[map_size].key = strings[i];
+            map[map_size].count = 1;
+            map_size++;
+        }
+    }
+
+    if (map_size < 2) {
+        free(map);
+        return NULL;
+    }
+
+    int max_freq = 0;
+    int second_max_freq = 0;
+
+    for (int i = 0; i < map_size; i++) {
+        if (map[i].count > max_freq) {
+            max_freq = map[i].count;
+        }
+    }
+
+    for (int i = 0; i < map_size; i++) {
+        if (map[i].count > second_max_freq && map[i].count < max_freq) {
+            second_max_freq = map[i].count;
+        }
+    }
+
+    char *result = NULL;
+    if (second_max_freq > 0) {
+        for (int i = 0; i < map_size; i++) {
+            if (map[i].count == second_max_freq) {
+                result = map[i].key;
+                break;
+            }
+        }
+    }
+
+    free(map);
+    return result;
+}
+
+int main(void) {
+    char *array[] = {"apple", "banana", "apple", "cherry", "banana", "apple", "banana"};
+    int n = sizeof(array) / sizeof(array[0]);
+
+    char *result = second_most_repeated(array, n);
+
+    if (result != NULL) {
+        printf("%s\n", result);
+    } else {
+        printf("Not found\n");
+    }
+
+    return 0;
+}
+```

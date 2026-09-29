@@ -1,0 +1,51 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+
+int case_insensitive_match(const char *str1, const char *str2) {
+    while (*str1 && *str2) {
+        if (tolower((unsigned char)*str1) != tolower((unsigned char)*str2)) {
+            return 0;
+        }
+        str1++;
+        str2++;
+    }
+    return *str1 == *str2;
+}
+
+int has_31_days(const char *month_name) {
+    if (month_name == NULL) {
+        return 0;
+    }
+
+    if (case_insensitive_match(month_name, "january") || case_insensitive_match(month_name, "jan")) return 1;
+    if (case_insensitive_match(month_name, "march") || case_insensitive_match(month_name, "mar")) return 1;
+    if (case_insensitive_match(month_name, "may")) return 1;
+    if (case_insensitive_match(month_name, "july") || case_insensitive_match(month_name, "jul")) return 1;
+    if (case_insensitive_match(month_name, "august") || case_insensitive_match(month_name, "aug")) return 1;
+    if (case_insensitive_match(month_name, "october") || case_insensitive_match(month_name, "oct")) return 1;
+    if (case_insensitive_match(month_name, "december") || case_insensitive_match(month_name, "dec")) return 1;
+
+    return 0;
+}
+
+int main(void) {
+    const char *test_months[] = {
+        "January", "February", "MARCH", "april", "May", "june",
+        "JULY", "August", "September", "OCTOBER", "November", "December",
+        "Jan", "Feb", "INVALID", NULL
+    };
+
+    size_t num_tests = sizeof(test_months) / sizeof(test_months[0]);
+
+    for (size_t i = 0; i < num_tests; i++) {
+        if (test_months[i] != NULL) {
+            int result = has_31_days(test_months[i]);
+            printf("%s: %s\n", test_months[i], result ? "Yes" : "No");
+        }
+    }
+
+    return 0;
+}
+```

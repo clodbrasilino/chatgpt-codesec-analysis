@@ -1,0 +1,182 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int **rows;
+    size_t *lengths;
+    size_t count;
+} ListOfLists;
+
+static ListOfLists *zip_lists(const ListOfLists *a, const ListOfLists *b);
+static void free_list(ListOfLists *list);
+static ListOfLists *make_list(const int data[][3], const size_t *lens, size_t count);
+static void print_list(const ListOfLists *list);
+
+static void free_list(ListOfLists *list)
+{
+    size_t i;
+
+    if (list == NULL) {
+        return;
+    }
+    if (list->rows != NULL) {
+        for (i = 0; i < list->count; i++) {
+            free(list->rows[i]);
+        }
+        free(list->rows);
+    }
+    free(list->lengths);
+    free(list);
+}
+
+static ListOfLists *make_list(const int data[][3], const size_t *lens, size_t count)
+{
+    ListOfLists *list;
+    size_t i;
+    size_t j;
+
+    list = (ListOfLists *)malloc(sizeof(ListOfLists));
+    if (list == NULL) {
+        return NULL;
+    }
+    list->count = count;
+    list->rows = (int **)calloc(count, sizeof(int *));
+    list->lengths = (size_t *)calloc(count, sizeof(size_t));
+    if (list->rows == NULL || list->lengths == NULL) {
+        free_list(list);
+        return NULL;
+    }
+    for (i = 0; i < count; i++) {
+        list->lengths[i] = lens[i];
+        list->rows[i] = (int *)malloc(lens[i] * sizeof(int));
+        if (list->rows[i] == NULL) {
+            free_list(list);
+            return NULL;
+        }
+        for (j = 0; j < lens[i]; j++) {
+            list->rows[i][j] = data[i][j];
+        }
+    }
+    return list;
+}
+
+static ListOfLists *zip_lists(const ListOfLists *a, const ListOfLists *b)
+{
+    ListOfLists *result;
+    size_t count;
+    size_t i;
+    size_t j;
+    size_t total;
+
+    if (a == NULL || b == NULL) {
+        return NULL;
+    }
+    count = (a->count < b->count) ? a->count : b->count;
+    result = (ListOfLists *)malloc(sizeof(ListOfLists));
+    if (result == NULL) {
+        return NULL;
+    }
+    result->count = count;
+    result->rows = (int **)calloc(count, sizeof(int *));
+    result->lengths = (size_t *)calloc(count, sizeof(size_t));
+    if (result->rows == NULL || result->lengths == NULL) {
+        free_list(result);
+        return NULL;
+    }
+    for (i = 0; i < count; i++) {
+        if (a->lengths[i] > SIZE_MAX - b->lengths[i]) {
+            free_list(result);
+            return NULL;
+        }
+        total = a->lengths[i] + b->lengths[i];
+        result->lengths[i] = total;
+        result->rows[i] = (int *)malloc(total * sizeof(int));
+        if (result->rows[i] == NULL) {
+            free_list(result);
+            return NULL;
+        }
+        for (j = 0; j < a->lengths[i]; j++) {
+            result->rows[i][j] = a->rows[i][j];
+        }
+        for (j = 0; j < b->lengths[i]; j++) {
+            result->rows[i][a->lengths[i] + j] = b->rows[i][j];
+        }
+    }
+    return result;
+}
+
+static void print_list(const ListOfLists *list)
+{
+    size_t i;
+    size_t j;
+
+    if (list == NULL) {
+        printf("(null)\n");
+        return;
+    }
+    printf("[");
+    for (i = 0; i < list->count; i++) {
+        printf("[");
+        for (j = 0; j < list->lengths[i]; j++) {
+            printf("%d", list->rows[i][j]);
+            if (j + 1 < list->lengths[i]) {
+                printf(", ");
+            }
+        }
+        printf("]");
+        if (i + 1 < list->count) {
+            printf(", ");
+        }
+    }
+    printf("]\n");
+}
+
+int main(void)
+{
+    static const int data_a[3][3] = { {1, 2, 3}, {4, 5, 0}, {6, 0, 0} };
+    static const size_t lens_a[3] = { 3, 2, 1 };
+    static const int data_b[3][3] = { {7, 8, 0}, {9, 10, 11}, {12, 13, 0} };
+    static const size_t lens_b[3] = { 2, 3, 2 };
+    ListOfLists *a;
+    ListOfLists *b;
+    ListOfLists *zipped;
+
+    a = make_list(data_a, lens_a, 3);
+    if (a == NULL) {
+        fprintf(stderr, "allocation failure\n");
+        return EXIT_FAILURE;
+    }
+    b = make_list(data_b, lens_b, 3);
+    if (b == NULL) {
+        free_list(a);
+        fprintf(stderr, "allocation failure\n");
+        return EXIT_FAILURE;
+    }
+    zipped = zip_lists(a, b);
+    if (zipped == NULL) {
+        free_list(a);
+        free_list(b);
+        fprintf(stderr, "zip failure\n");
+        return EXIT_FAILURE;
+    }
+    printf("List A: ");
+    print_list(a);
+    printf("List B: ");
+    print_list(b);
+    printf("Zipped: ");
+    print_list(zipped);
+    free_list(a);
+    free_list(b);
+    free_list(zipped);
+    return EXIT_SUCCESS;
+}
+```
+
+Note: add `#include <stdint.h>` at the top for `SIZE_MAX` — here is the corrected include block:
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+```

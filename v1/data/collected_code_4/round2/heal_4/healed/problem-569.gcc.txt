@@ -1,0 +1,161 @@
+./collected_code_4/round2//heal_4/healed/problem-569.c: In function 'freeMemory':
+./collected_code_4/round2//heal_4/healed/problem-569.c:25:9: warning: leak of '<unknown>' [CWE-401] [-Wanalyzer-malloc-leak]
+   25 |         free(list[i]);
+      |         ^~~~~~~~~~~~~
+  'main': events 1-36
+    |
+    |   30 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   37 |     if (!list) return 1;
+    |      |        ~
+    |      |        |
+    |      |        (2) following 'false' branch (when 'list' is non-NULL)...
+    |   38 | 
+    |   39 |     for (i = 0; i < row; i++) {
+    |      |          ~~~~~  ~~~~~~~  ~~~
+    |      |            |      |       |
+    |      |            |      |       (27) ...to here
+    |      |            |      (4) following 'true' branch (when 'i < row')...
+    |      |            |      (28) following 'true' branch (when 'i < row')...
+    |      |            (3) ...to here
+    |   40 |         list[i] = malloc(col * sizeof(char*));
+    |      |                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                   |
+    |      |                   (5) ...to here
+    |      |                   (29) ...to here
+    |   41 |         if (!list[i]) {
+    |      |            ~
+    |      |            |
+    |      |            (6) following 'false' branch...
+    |      |            (30) following 'false' branch...
+    |......
+    |   46 |         for (j = 0; j < col; j++) {
+    |      |              ~~~~~  ~~~~~~~  ~~~
+    |      |                |      |       |
+    |      |                |      |       (11) ...to here
+    |      |                |      |       (17) ...to here
+    |      |                |      |       (21) ...to here
+    |      |                |      |       (25) ...to here
+    |      |                |      (8) following 'true' branch (when 'j < col')...
+    |      |                |      (12) following 'true' branch (when 'j < col')...
+    |      |                |      (18) following 'true' branch (when 'j < col')...
+    |      |                |      (22) following 'true' branch (when 'j < col')...
+    |      |                |      (26) following 'false' branch (when 'j >= col')...
+    |      |                |      (32) following 'true' branch (when 'j < col')...
+    |      |                (7) ...to here
+    |      |                (31) ...to here
+    |   47 |             list[i][j] = malloc(50 * sizeof(char));
+    |      |                 ~        ~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                 |        |
+    |      |                 |        (14) allocated here
+    |      |                 (9) ...to here
+    |      |                 (13) ...to here
+    |      |                 (19) ...to here
+    |      |                 (23) ...to here
+    |      |                 (33) ...to here
+    |   48 |             if (!list[i][j]) {
+    |      |                ~
+    |      |                |
+    |      |                (10) following 'false' branch...
+    |      |                (15) assuming '<unknown>' is non-NULL
+    |      |                (16) following 'false' branch...
+    |      |                (20) following 'false' branch...
+    |      |                (24) following 'false' branch...
+    |      |                (34) following 'true' branch...
+    |   49 |                 freeMemory(list, i);
+    |      |                 ~~~~~~~~~~~~~~~~~~~
+    |      |                 |
+    |      |                 (35) ...to here
+    |      |                 (36) calling 'freeMemory' from 'main'
+    |
+    +--> 'freeMemory': events 37-40
+           |
+           |   21 | void freeMemory(char*** list, int row) {
+           |      |      ^~~~~~~~~~
+           |      |      |
+           |      |      (37) entry to 'freeMemory'
+           |   22 |     int i;
+           |   23 |     for (i = 0; i < row; i++) {
+           |      |                 ~~~~~~~
+           |      |                   |
+           |      |                   (38) following 'true' branch (when 'i < row')...
+           |   24 |         free(list[i][0]);
+           |      |                  ~
+           |      |                  |
+           |      |                  (39) ...to here
+           |   25 |         free(list[i]);
+           |      |         ~~~~~~~~~~~~~
+           |      |         |
+           |      |         (40) '<unknown>' leaks here; was allocated at (14)
+           |
+./collected_code_4/round2//heal_4/healed/problem-569.c:27:5: warning: leak of '<unknown>' [CWE-401] [-Wanalyzer-malloc-leak]
+   27 |     free(list);
+      |     ^~~~~~~~~~
+  'main': events 1-14
+    |
+    |   30 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   37 |     if (!list) return 1;
+    |      |        ~
+    |      |        |
+    |      |        (2) following 'false' branch (when 'list' is non-NULL)...
+    |   38 | 
+    |   39 |     for (i = 0; i < row; i++) {
+    |      |          ~~~~~  ~~~~~~~
+    |      |            |      |
+    |      |            |      (4) following 'true' branch (when 'i < row')...
+    |      |            (3) ...to here
+    |   40 |         list[i] = malloc(col * sizeof(char*));
+    |      |                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                   |
+    |      |                   (5) ...to here
+    |      |                   (6) allocated here
+    |   41 |         if (!list[i]) {
+    |      |            ~
+    |      |            |
+    |      |            (7) assuming '<unknown>' is non-NULL
+    |      |            (8) following 'false' branch...
+    |......
+    |   46 |         for (j = 0; j < col; j++) {
+    |      |              ~~~~~  ~~~~~~~
+    |      |                |      |
+    |      |                |      (10) following 'true' branch (when 'j < col')...
+    |      |                (9) ...to here
+    |   47 |             list[i][j] = malloc(50 * sizeof(char));
+    |      |                 ~
+    |      |                 |
+    |      |                 (11) ...to here
+    |   48 |             if (!list[i][j]) {
+    |      |                ~
+    |      |                |
+    |      |                (12) following 'true' branch...
+    |   49 |                 freeMemory(list, i);
+    |      |                 ~~~~~~~~~~~~~~~~~~~
+    |      |                 |
+    |      |                 (13) ...to here
+    |      |                 (14) calling 'freeMemory' from 'main'
+    |
+    +--> 'freeMemory': events 15-18
+           |
+           |   21 | void freeMemory(char*** list, int row) {
+           |      |      ^~~~~~~~~~
+           |      |      |
+           |      |      (15) entry to 'freeMemory'
+           |   22 |     int i;
+           |   23 |     for (i = 0; i < row; i++) {
+           |      |                 ~~~~~~~
+           |      |                   |
+           |      |                   (16) following 'false' branch (when 'i >= row')...
+           |......
+           |   27 |     free(list);
+           |      |     ~~~~~~~~~~
+           |      |     |
+           |      |     (17) ...to here
+           |      |     (18) '<unknown>' leaks here; was allocated at (6)
+           |

@@ -1,0 +1,50 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+#define SIZE 256
+
+int isIsomorphic(char* str1, char* str2)
+{
+    int map[SIZE];
+    int mapinv[SIZE];
+    int i;
+    for(i = 0; i < SIZE; i++) {
+        map[i] = -1;
+        mapinv[i] = -1;
+    }
+
+    for(i = 0; i < strlen(str1); i++) {
+        if(map[str1[i]] == -1) {
+            if(mapinv[str2[i]] != -1)
+                return 0;
+            map[str1[i]] = str2[i];
+            mapinv[str2[i]] = str1[i];
+        }
+        else if(map[str1[i]] != str2[i])
+            return 0;
+
+    }
+    return 1;
+}
+
+int main() {
+    char str1[SIZE], str2[SIZE];
+    printf("Enter two strings:\n");
+    scanf("%s", str1);
+    scanf("%s", str2);
+
+    if(strlen(str1) != strlen(str2)) {
+        printf("Strings are not isomorphic.\n");
+        return 0;
+    }
+
+    if(isIsomorphic(str1, str2))
+        printf("Strings are isomorphic.\n");
+    else
+        printf("Strings are not isomorphic.\n");
+
+    return 0;
+}
+```

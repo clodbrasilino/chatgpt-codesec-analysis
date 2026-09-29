@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-857.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-857.c:14:24: style: Parameter 'data' can be declared as pointer to const. However it seems that 'printString' is a callback function, if 'data' is declared with const you might also need to cast function pointer(s). [constParameterCallback]
+void printString(void *data) {
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-857.c:30:34: note: You might need to cast the function pointer here
+        map((void *)&strings[i], printString);
+                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-857.c:14:24: note: Parameter 'data' can be declared as pointer to const
+void printString(void *data) {
+                       ^

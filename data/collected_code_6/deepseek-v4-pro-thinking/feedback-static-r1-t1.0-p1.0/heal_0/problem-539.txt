@@ -1,0 +1,91 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+#include <errno.h>
+
+typedef int (*map_func)(int value, void *context);
+
+struct power_context {
+    int number;
+};
+
+static int int_pow(int base, int exponent) {
+    if (exponent < 0) {
+        errno = EDOM;
+        return 0;
+    }
+    if (exponent == 0) {
+        return 1;
+    }
+    if (base == 0) {
+        return 0;
+    }
+    if (base == 1) {
+        return 1;
+    }
+    if (base == -1) {
+        return (exponent % 2 == 0) ? 1 : -1;
+    }
+    long long result = 1;
+    for (int i = 0; i < exponent; i++) {
+        result *= base;
+        if (result > INT_MAX || result < INT_MIN) {
+            errno = ERANGE;
+            return 0;
+        }
+    }
+    return (int)result;
+}
+
+static int power_of_number(int exponent, void *context) {
+    if (context == NULL) {
+        errno = EINVAL;
+        return 0;
+    }
+    const struct power_context *ctx = context;
+    return int_pow(ctx->number, exponent);
+}
+
+int *map_int(const int *input, size_t len, map_func func, void *context) {
+    if (func == NULL) {
+        errno = EINVAL;
+        return NULL;
+    }
+    if (input == NULL && len > 0) {
+        errno = EINVAL;
+        return NULL;
+    }
+    size_t alloc_len = len > 0 ? len : 1;
+    int *output = malloc(alloc_len * sizeof(*output));
+    if (output == NULL) {
+        return NULL;
+    }
+    for (size_t i = 0; i < len; i++) {
+        errno = 0;
+        output[i] = func(input[i], context);
+        if (errno != 0) {
+            free(output);
+            return NULL;
+        }
+    }
+    return output;
+}
+
+int main(void) {
+    int bases[] = {0, 1, 2, 3, 4, 5, 10};
+    size_t len = sizeof(bases) / sizeof(bases[0]);
+    struct power_context ctx;
+    ctx.number = 2;
+    int *powers = map_int(bases, len, power_of_number, &ctx);
+    if (powers == NULL) {
+        perror("map_int");
+        return EXIT_FAILURE;
+    }
+    for (size_t i = 0; i < len; i++) {
+        printf("%d%s", powers[i], (i + 1 < len) ? " " : "\n");
+    }
+    free(powers);
+    return EXIT_SUCCESS;
+}
+```

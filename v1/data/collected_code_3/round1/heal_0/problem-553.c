@@ -1,0 +1,24 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+float tupleToFloat(char *tuple) {
+    float result;
+    result = atof(tuple);
+    return result;
+}
+
+int main() {
+    char tuple[] = "(3.14)";
+    float floatNum;
+
+    // Removing the parentheses
+    for(int i = 0; tuple[i]; i++){
+        tuple[i] = tuple[i + 1];
+    }
+    tuple[strlen(tuple) - 2] = '\0';
+
+    floatNum = tupleToFloat(tuple);
+    printf("The floating point number is: %.2f\n", floatNum);
+
+    return 0;
+}

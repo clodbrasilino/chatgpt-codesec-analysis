@@ -1,0 +1,111 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+typedef struct Tuple {
+    char *str;
+    int *list;
+    size_t list_len;
+} Tuple;
+
+Tuple create_tuple(const char *str, const int *list, size_t list_len) {
+    Tuple t;
+
+    if (str == NULL) {
+        t.str = NULL;
+    } else {
+        size_t str_length = strnlen(str, list_len > 0 ? list_len + 256 : 256);
+        t.str = malloc(str_length + 1);
+        if (t.str == NULL) {
+            fprintf(stderr, "Memory allocation failed\n");
+            exit(EXIT_FAILURE);
+        }
+        if (str_length + 1 > str_length) {
+            /* Possible weaknesses found:
+             * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+             */
+            memcpy(t.str, str, str_length);
+            /* Possible weaknesses found:
+             *  t.str[str_length] is assigned
+             */
+            t.str[str_length] = '\0';
+        }
+        /* Possible weaknesses found:
+         *  Variable 't.str[str_length]' is reassigned a value before the old one has been used. [redundantAssignment]
+         *  t.str[str_length] is overwritten
+         */
+        t.str[str_length] = '\0';
+    }
+
+    t.list_len = list_len;
+
+    if (list == NULL || list_len == 0) {
+        t.list = NULL;
+    } else {
+        if (list_len > SIZE_MAX / sizeof(int)) {
+            free(t.str);
+            fprintf(stderr, "Integer overflow detected\n");
+            exit(EXIT_FAILURE);
+        }
+        /* Possible weaknesses found:
+         *  'alloc_size' is assigned value 'list_len*sizeof(int)' here.
+         */
+        size_t alloc_size = list_len * sizeof(int);
+        /* Possible weaknesses found:
+         *  The comparison 'alloc_size >= list_len*sizeof(int)' is always true because 'alloc_size' and 'list_len*sizeof(int)' represent the same value. [knownConditionTrueFalse]
+         *  The comparison 'alloc_size >= list_len*sizeof(int)' is always true because 'alloc_size' and 'list_len*sizeof(int)' represent the same value.
+         */
+        if (alloc_size > 0 && alloc_size >= list_len * sizeof(int)) {
+            t.list = malloc(alloc_size);
+            if (t.list == NULL) {
+                free(t.str);
+                fprintf(stderr, "Memory allocation failed\n");
+                exit(EXIT_FAILURE);
+            }
+            /* Possible weaknesses found:
+             * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+             */
+            memcpy(t.list, list, alloc_size);
+        } else {
+            free(t.str);
+            fprintf(stderr, "Integer overflow detected\n");
+            exit(EXIT_FAILURE);
+        }
+    }
+
+    return t;
+}
+
+void free_tuple(Tuple *t) {
+    if (t == NULL) return;
+    free(t->str);
+    free(t->list);
+    t->str = NULL;
+    t->list = NULL;
+    t->list_len = 0;
+}
+
+int main(void) {
+    const char *str = "hello";
+    const int arr[] = {1, 2, 3, 4, 5};
+    Tuple t;
+
+    t = create_tuple(str, arr, 5);
+
+    if (t.str != NULL) {
+        printf("String: %s\n", t.str);
+    }
+
+    if (t.list != NULL) {
+        printf("List: ");
+        for (size_t i = 0; i < t.list_len; i++) {
+            printf("%d ", t.list[i]);
+        }
+        printf("\n");
+    }
+
+    free_tuple(&t);
+
+    return 0;
+}

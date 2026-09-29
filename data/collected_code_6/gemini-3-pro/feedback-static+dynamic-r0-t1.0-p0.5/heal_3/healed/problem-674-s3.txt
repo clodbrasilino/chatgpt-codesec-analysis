@@ -1,0 +1,96 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char* remove_duplicate_words(const char* input) {
+    if (!input) {
+        return NULL;
+    }
+
+    size_t len = 0;
+    while (input[len] != '\0') {
+        len++;
+    }
+    
+    char* input_copy = (char*)malloc(len + 1);
+    if (!input_copy) {
+        return NULL;
+    }
+    
+    for (size_t i = 0; i <= len; i++) {
+        input_copy[i] = input[i];
+    }
+
+    char* result = (char*)malloc(len + 1);
+    if (!result) {
+        free(input_copy);
+        return NULL;
+    }
+    result[0] = '\0';
+    size_t result_len = 0;
+
+    char** seen_words = (char**)malloc((len / 2 + 1) * sizeof(char*));
+    if (!seen_words) {
+        free(input_copy);
+        free(result);
+        return NULL;
+    }
+
+    size_t seen_count = 0;
+    char* token = strtok(input_copy, " \t\n");
+
+    while (token != NULL) {
+        int is_duplicate = 0;
+        for (size_t i = 0; i < seen_count; i++) {
+            if (strcmp(seen_words[i], token) == 0) {
+                is_duplicate = 1;
+                break;
+            }
+        }
+
+        if (!is_duplicate) {
+            seen_words[seen_count++] = token;
+            
+            size_t token_len = 0;
+            while (token[token_len] != '\0') {
+                token_len++;
+            }
+
+            if (result_len > 0 && result_len < len) {
+                result[result_len] = ' ';
+                result_len++;
+            }
+            
+            if (result_len + token_len <= len) {
+                for (size_t i = 0; i < token_len; i++) {
+                    result[result_len + i] = token[i];
+                }
+                result_len += token_len;
+                result[result_len] = '\0';
+            }
+        }
+        token = strtok(NULL, " \t\n");
+    }
+
+    free(seen_words);
+    free(input_copy);
+
+    return result;
+}
+
+int main(void) {
+    const char* test_str = "hello world hello C developer C world";
+    char* unique_str = remove_duplicate_words(test_str);
+    
+    if (unique_str) {
+        printf("%s\n", unique_str);
+        free(unique_str);
+    } else {
+        fprintf(stderr, "Memory allocation failed or invalid input.\n");
+        return EXIT_FAILURE;
+    }
+    
+    return EXIT_SUCCESS;
+}
+```

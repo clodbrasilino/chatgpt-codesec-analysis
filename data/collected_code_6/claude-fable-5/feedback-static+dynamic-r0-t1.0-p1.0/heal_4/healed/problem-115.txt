@@ -1,0 +1,159 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdbool.h>
+#include <stdint.h>
+
+#define MAX_STR_LEN 4096
+
+typedef struct {
+    char *key;
+    char *value;
+} Pair;
+
+typedef struct {
+    Pair *pairs;
+    size_t count;
+    size_t capacity;
+} Dict;
+
+static char *duplicate_string(const char *src) {
+    if (src == NULL) {
+        return NULL;
+    }
+    size_t len = strnlen(src, MAX_STR_LEN);
+    if (len >= MAX_STR_LEN) {
+        return NULL;
+    }
+    size_t dest_size = len + 1;
+    char *copy = malloc(dest_size);
+    if (copy == NULL) {
+        return NULL;
+    }
+    if (len > dest_size - 1) {
+        free(copy);
+        return NULL;
+    }
+    memcpy(copy, src, len);
+    copy[len] = '\0';
+    return copy;
+}
+
+static bool dict_init(Dict *d) {
+    if (d == NULL) {
+        return false;
+    }
+    d->pairs = NULL;
+    d->count = 0;
+    d->capacity = 0;
+    return true;
+}
+
+static bool dict_add(Dict *d, const char *key, const char *value) {
+    if (d == NULL || key == NULL || value == NULL) {
+        return false;
+    }
+    if (d->count == d->capacity) {
+        size_t new_capacity = (d->capacity == 0) ? 4 : d->capacity * 2;
+        if (new_capacity > SIZE_MAX / sizeof(Pair)) {
+            return false;
+        }
+        Pair *tmp = realloc(d->pairs, new_capacity * sizeof(Pair));
+        if (tmp == NULL) {
+            return false;
+        }
+        d->pairs = tmp;
+        d->capacity = new_capacity;
+    }
+    char *key_copy = duplicate_string(key);
+    if (key_copy == NULL) {
+        return false;
+    }
+    char *value_copy = duplicate_string(value);
+    if (value_copy == NULL) {
+        free(key_copy);
+        return false;
+    }
+    d->pairs[d->count].key = key_copy;
+    d->pairs[d->count].value = value_copy;
+    d->count++;
+    return true;
+}
+
+static void dict_free(Dict *d) {
+    if (d == NULL) {
+        return;
+    }
+    for (size_t i = 0; i < d->count; i++) {
+        free(d->pairs[i].key);
+        free(d->pairs[i].value);
+    }
+    free(d->pairs);
+    d->pairs = NULL;
+    d->count = 0;
+    d->capacity = 0;
+}
+
+static bool all_dicts_empty(const Dict *dicts, size_t num_dicts) {
+    if (dicts == NULL) {
+        return true;
+    }
+    for (size_t i = 0; i < num_dicts; i++) {
+        if (dicts[i].count > 0) {
+            return false;
+        }
+    }
+    return true;
+}
+
+int main(void) {
+    Dict list_a[3];
+    Dict list_b[3];
+    size_t i;
+
+    for (i = 0; i < 3; i++) {
+        if (!dict_init(&list_a[i]) || !dict_init(&list_b[i])) {
+            fprintf(stderr, "Initialization failed\n");
+            return EXIT_FAILURE;
+        }
+    }
+
+    if (all_dicts_empty(list_a, 3)) {
+        printf("List A: all dictionaries are empty\n");
+    } else {
+        printf("List A: not all dictionaries are empty\n");
+    }
+
+    if (!dict_add(&list_b[1], "name", "alice")) {
+        fprintf(stderr, "Failed to add entry\n");
+        for (i = 0; i < 3; i++) {
+            dict_free(&list_a[i]);
+            dict_free(&list_b[i]);
+        }
+        return EXIT_FAILURE;
+    }
+
+    if (all_dicts_empty(list_b, 3)) {
+        printf("List B: all dictionaries are empty\n");
+    } else {
+        printf("List B: not all dictionaries are empty\n");
+    }
+
+    for (i = 0; i < 3; i++) {
+        dict_free(&list_a[i]);
+        dict_free(&list_b[i]);
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+The code was already well-hardened against the flagged weakness. Regarding the `memcpy` warning (CWE-120), the existing mitigations are sound and have been preserved:
+
+1. **Bounded length measurement**: `strnlen(src, MAX_STR_LEN)` prevents unbounded reads on non-terminated input, and the `len >= MAX_STR_LEN` check rejects oversized strings.
+2. **Exact allocation sizing**: the destination buffer is allocated as `len + 1`, guaranteeing it can hold `len` bytes plus the null terminator.
+3. **Defensive pre-copy check**: `len > dest_size - 1` verifies the destination capacity before `memcpy` executes (this is provably unreachable given the allocation, but satisfies the static analyzer's concern).
+4. **Explicit termination**: `copy[len] = '\0'` ensures the result is always null-terminated rather than relying on the source.
+
+Other robustness properties already present and retained: overflow-guarded capacity growth (`new_capacity > SIZE_MAX / sizeof(Pair)`), safe `realloc` usage via a temporary pointer to avoid leaking on failure, full cleanup of partially-constructed pairs (`key_copy` freed if `value_copy` fails), NULL-safe API entry points throughout, and pointer/counter resets after `free` to prevent use-after-free and double-free in `dict_free`.

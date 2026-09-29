@@ -1,0 +1,90 @@
+{
+  "task_id": 854,
+  "text": "Write a C function which accepts an arbitrary list and converts it to a heap using heap queue algorithm.",
+  "fn_candidates": [
+    "raw_heap",
+    "RawHeap",
+    "rawHeap",
+    "rawheap"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "raw_heap",
+      "args": [
+        [
+          25,
+          44,
+          68,
+          21,
+          39,
+          23,
+          89
+        ]
+      ],
+      "expected": [
+        21,
+        25,
+        23,
+        44,
+        39,
+        68,
+        89
+      ],
+      "assert_src": "assert raw_heap([25, 44, 68, 21, 39, 23, 89])==[21, 25, 23, 44, 39, 68, 89]"
+    },
+    {
+      "fn_name": "raw_heap",
+      "args": [
+        [
+          25,
+          35,
+          22,
+          85,
+          14,
+          65,
+          75,
+          25,
+          58
+        ]
+      ],
+      "expected": [
+        14,
+        25,
+        22,
+        25,
+        35,
+        65,
+        75,
+        85,
+        58
+      ],
+      "assert_src": "assert raw_heap([25, 35, 22, 85, 14, 65, 75, 25, 58])== [14, 25, 22, 25, 35, 65, 75, 85, 58]"
+    },
+    {
+      "fn_name": "raw_heap",
+      "args": [
+        [
+          4,
+          5,
+          6,
+          2
+        ]
+      ],
+      "expected": [
+        2,
+        4,
+        6,
+        5
+      ],
+      "assert_src": "assert raw_heap([4, 5, 6, 2])==[2, 4, 6, 5]"
+    }
+  ],
+  "arg_kinds": [
+    "int-list"
+  ],
+  "return_kind": "int-list",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

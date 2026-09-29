@@ -1,0 +1,34 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+int compare_strings(const void *a, const void *b) {
+    return strcmp(*(const char *const *)a, *(const char *const *)b);
+}
+
+void sort_sublists(char ***list, const int *sublist_lengths, int num_sublists) {
+    for (int i = 0; i < num_sublists; ++i) {
+        qsort(list[i], sublist_lengths[i], sizeof(char *), compare_strings);
+    }
+}
+
+int main() {
+    char *list1[] = {"banana", "apple", "orange"};
+    char *list2[] = {"zebra", "ant", "elephant"};
+    char *list3[] = {"charlie", "bravo", "alpha"};
+
+    char **lists[] = {list1, list2, list3};
+    const int sublist_lengths[] = {3, 3, 3};
+    int num_sublists = 3;
+
+    sort_sublists(lists, sublist_lengths, num_sublists);
+
+    for (int i = 0; i < num_sublists; ++i) {
+        for (int j = 0; j < sublist_lengths[i]; ++j) {
+            printf("%s ", lists[i][j]);
+        }
+        printf("\n");
+    }
+
+    return 0;
+}

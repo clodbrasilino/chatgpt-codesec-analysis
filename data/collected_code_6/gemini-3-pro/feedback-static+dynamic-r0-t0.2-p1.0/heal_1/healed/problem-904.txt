@@ -1,0 +1,25 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+
+bool is_even(int number) {
+    return (number % 2) == 0;
+}
+
+int main(int argc, char *argv[]) {
+    int test_numbers[] = {42, 43};
+    int count = sizeof(test_numbers) / sizeof(test_numbers[0]);
+
+    for (int i = 0; i < count; i++) {
+        int test_number = test_numbers[i];
+        
+        if (is_even(test_number)) {
+            printf("%d is even.\n", test_number);
+        } else {
+            printf("%d is odd.\n", test_number);
+        }
+    }
+    
+    return 0;
+}
+```

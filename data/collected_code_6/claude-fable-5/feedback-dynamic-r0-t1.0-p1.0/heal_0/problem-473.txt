@@ -1,0 +1,108 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int a;
+    int b;
+} Tuple;
+
+static Tuple normalize(Tuple t)
+{
+    Tuple r;
+    if (t.a <= t.b) {
+        r.a = t.a;
+        r.b = t.b;
+    } else {
+        r.a = t.b;
+        r.b = t.a;
+    }
+    return r;
+}
+
+static int tuples_equal(Tuple x, Tuple y)
+{
+    Tuple nx = normalize(x);
+    Tuple ny = normalize(y);
+    return (nx.a == ny.a) && (nx.b == ny.b);
+}
+
+int tuple_intersection(const Tuple *list1, size_t n1,
+                       const Tuple *list2, size_t n2,
+                       Tuple **result, size_t *result_count)
+{
+    size_t i;
+    size_t j;
+    size_t count = 0;
+    unsigned char *used;
+    Tuple *out;
+
+    if (result == NULL || result_count == NULL) {
+        return -1;
+    }
+
+    *result = NULL;
+    *result_count = 0;
+
+    if (list1 == NULL || list2 == NULL || n1 == 0 || n2 == 0) {
+        return 0;
+    }
+
+    used = calloc(n2, sizeof(unsigned char));
+    if (used == NULL) {
+        return -1;
+    }
+
+    out = malloc(n1 * sizeof(Tuple));
+    if (out == NULL) {
+        free(used);
+        return -1;
+    }
+
+    for (i = 0; i < n1; i++) {
+        for (j = 0; j < n2; j++) {
+            if (!used[j] && tuples_equal(list1[i], list2[j])) {
+                used[j] = 1;
+                out[count] = normalize(list1[i]);
+                count++;
+                break;
+            }
+        }
+    }
+
+    free(used);
+
+    if (count == 0) {
+        free(out);
+        return 0;
+    }
+
+    *result = out;
+    *result_count = count;
+    return 0;
+}
+
+int main(void)
+{
+    Tuple list1[] = { {3, 4}, {5, 6}, {9, 10}, {4, 5} };
+    Tuple list2[] = { {5, 4}, {3, 4}, {6, 5}, {9, 11} };
+    Tuple *result = NULL;
+    size_t result_count = 0;
+    size_t i;
+
+    if (tuple_intersection(list1, sizeof(list1) / sizeof(list1[0]),
+                           list2, sizeof(list2) / sizeof(list2[0]),
+                           &result, &result_count) != 0) {
+        fprintf(stderr, "Error computing tuple intersection\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Intersection:\n");
+    for (i = 0; i < result_count; i++) {
+        printf("(%d, %d)\n", result[i].a, result[i].b);
+    }
+
+    free(result);
+    return EXIT_SUCCESS;
+}
+```

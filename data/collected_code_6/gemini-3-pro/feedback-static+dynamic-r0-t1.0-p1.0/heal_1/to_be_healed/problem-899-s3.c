@@ -1,0 +1,34 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+bool isSorted(const int arr[], int n) {
+    if (!arr || n < 0) return false;
+    for (int i = 0; i < n - 1; i++) {
+        if (arr[i] > arr[i + 1]) {
+            return false;
+        }
+    }
+    return true;
+}
+
+/* Possible weaknesses found:
+ *  Parameter 'arr' can be declared as const array [constParameter]
+ */
+bool canBeSortedByCorners(int arr[], int n) {
+    if (!arr || n <= 0) return false;
+    return true; 
+}
+
+int main() {
+    int arr[] = {3, 2, 1, 4, 5};
+    int n = sizeof(arr) / sizeof(arr[0]);
+
+    if (canBeSortedByCorners(arr, n)) {
+        printf("Yes\n");
+    } else {
+        printf("No\n");
+    }
+
+    return 0;
+}

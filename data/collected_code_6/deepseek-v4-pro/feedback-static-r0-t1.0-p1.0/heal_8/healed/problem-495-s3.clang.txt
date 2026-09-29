@@ -1,0 +1,10 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-495-s3.c:46:48: error: use of undeclared identifier 'ptrdiff_t'
+   46 |             if (cursor + prefix_len - input > (ptrdiff_t)input_len) {
+      |                                                ^~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-495-s3.c:59:27: error: use of undeclared identifier 'ptrdiff_t'
+   59 |     if (cursor - input < (ptrdiff_t)input_len) {
+      |                           ^~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-495-s3.c:65:48: error: use of undeclared identifier 'ptrdiff_t'
+   65 |             if (cursor + remaining - input <= (ptrdiff_t)input_len) {
+      |                                                ^~~~~~~~~
+3 errors generated.

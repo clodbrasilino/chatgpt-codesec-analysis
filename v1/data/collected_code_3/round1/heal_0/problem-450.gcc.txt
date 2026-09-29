@@ -1,0 +1,411 @@
+collected_code_3/problem-450-1.c: In function 'extractStrings':
+collected_code_3/problem-450-1.c:10:27: warning: dereference of possibly-NULL 'result' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   10 |             result[count] = malloc((stringSize + 1) * sizeof(char));
+      |             ~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  'extractStrings': events 1-6
+    |
+    |    6 |     char **result = malloc(listSize * sizeof(char *));
+    |      |                     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                     |
+    |      |                     (1) this call could return NULL
+    |    7 |     int count = 0;
+    |    8 |     for(int i = 0; i < listSize; i++) {
+    |      |                    ~~~~~~~~~~~~
+    |      |                      |
+    |      |                      (2) following 'true' branch (when 'i < listSize')...
+    |    9 |         if(strlen(list[i]) == stringSize) {
+    |      |           ~           ~
+    |      |           |           |
+    |      |           |           (3) ...to here
+    |      |           (4) following 'true' branch...
+    |   10 |             result[count] = malloc((stringSize + 1) * sizeof(char));
+    |      |             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                           |                    |
+    |      |                           |                    (5) ...to here
+    |      |                           (6) 'result + (long unsigned int)count * 8' could be NULL: unchecked value from (1)
+    |
+collected_code_3/problem-450-1.c:10:27: warning: heap-based buffer overflow [CWE-122] [-Wanalyzer-out-of-bounds]
+   10 |             result[count] = malloc((stringSize + 1) * sizeof(char));
+      |             ~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  'main': events 1-2
+    |
+    |   19 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   23 |     char **result = extractStrings(list, listSize, stringSize);
+    |      |                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                     |
+    |      |                     (2) calling 'extractStrings' from 'main'
+    |
+    +--> 'extractStrings': events 3-25
+           |
+           |    5 | char **extractStrings(char **list, int listSize, int stringSize) {
+           |      |        ^~~~~~~~~~~~~~
+           |      |        |
+           |      |        (3) entry to 'extractStrings'
+           |    6 |     char **result = malloc(listSize * sizeof(char *));
+           |      |                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                     |
+           |      |                     (4) capacity: 40 bytes
+           |    7 |     int count = 0;
+           |    8 |     for(int i = 0; i < listSize; i++) {
+           |      |                    ~~~~~~~~~~~~  ~~~
+           |      |                      |            |
+           |      |                      |            (16) ...to here
+           |      |                      (5) following 'true' branch (when 'i < listSize')...
+           |      |                      (9) following 'true' branch (when 'i < listSize')...
+           |      |                      (13) following 'true' branch (when 'i < listSize')...
+           |      |                      (17) following 'true' branch (when 'i < listSize')...
+           |      |                      (19) following 'true' branch (when 'i < listSize')...
+           |      |                      (21) following 'true' branch (when 'i < listSize')...
+           |      |                      (23) following 'true' branch (when 'i < listSize')...
+           |    9 |         if(strlen(list[i]) == stringSize) {
+           |      |           ~           ~
+           |      |           |           |
+           |      |           |           (6) ...to here
+           |      |           |           (10) ...to here
+           |      |           |           (14) ...to here
+           |      |           |           (18) ...to here
+           |      |           |           (20) ...to here
+           |      |           |           (22) ...to here
+           |      |           |           (24) ...to here
+           |      |           (7) following 'true' branch...
+           |      |           (11) following 'true' branch...
+           |      |           (15) following 'false' branch...
+           |   10 |             result[count] = malloc((stringSize + 1) * sizeof(char));
+           |      |             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                           |                    |
+           |      |                           |                    (8) ...to here
+           |      |                           |                    (12) ...to here
+           |      |                           (25) out-of-bounds write from byte 40 till byte 47 but region ends at byte 40
+           |
+collected_code_3/problem-450-1.c:10:27: note: write of 8 bytes to beyond the end of the region
+   10 |             result[count] = malloc((stringSize + 1) * sizeof(char));
+      |             ~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+collected_code_3/problem-450-1.c:10:27: warning: heap-based buffer overflow [CWE-122] [-Wanalyzer-out-of-bounds]
+  'main': events 1-2
+    |
+    |   19 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   23 |     char **result = extractStrings(list, listSize, stringSize);
+    |      |                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                     |
+    |      |                     (2) calling 'extractStrings' from 'main'
+    |
+    +--> 'extractStrings': events 3-27
+           |
+           |    5 | char **extractStrings(char **list, int listSize, int stringSize) {
+           |      |        ^~~~~~~~~~~~~~
+           |      |        |
+           |      |        (3) entry to 'extractStrings'
+           |    6 |     char **result = malloc(listSize * sizeof(char *));
+           |      |                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                     |
+           |      |                     (4) capacity: 40 bytes
+           |    7 |     int count = 0;
+           |    8 |     for(int i = 0; i < listSize; i++) {
+           |      |                    ~~~~~~~~~~~~  ~~~
+           |      |                      |            |
+           |      |                      |            (16) ...to here
+           |      |                      (5) following 'true' branch (when 'i < listSize')...
+           |      |                      (9) following 'true' branch (when 'i < listSize')...
+           |      |                      (13) following 'true' branch (when 'i < listSize')...
+           |      |                      (17) following 'true' branch (when 'i < listSize')...
+           |      |                      (19) following 'true' branch (when 'i < listSize')...
+           |      |                      (21) following 'true' branch (when 'i < listSize')...
+           |      |                      (23) following 'true' branch (when 'i < listSize')...
+           |      |                      (25) following 'true' branch (when 'i < listSize')...
+           |    9 |         if(strlen(list[i]) == stringSize) {
+           |      |           ~           ~
+           |      |           |           |
+           |      |           |           (6) ...to here
+           |      |           |           (10) ...to here
+           |      |           |           (14) ...to here
+           |      |           |           (18) ...to here
+           |      |           |           (20) ...to here
+           |      |           |           (22) ...to here
+           |      |           |           (24) ...to here
+           |      |           |           (26) ...to here
+           |      |           (7) following 'true' branch...
+           |      |           (11) following 'true' branch...
+           |      |           (15) following 'false' branch...
+           |   10 |             result[count] = malloc((stringSize + 1) * sizeof(char));
+           |      |             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                           |                    |
+           |      |                           |                    (8) ...to here
+           |      |                           |                    (12) ...to here
+           |      |                           (27) out-of-bounds write from byte 48 till byte 55 but region ends at byte 40
+           |
+collected_code_3/problem-450-1.c:10:27: note: write of 8 bytes to beyond the end of the region
+   10 |             result[count] = malloc((stringSize + 1) * sizeof(char));
+      |             ~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+collected_code_3/problem-450-1.c:16:12: warning: leak of 'result' [CWE-401] [-Wanalyzer-malloc-leak]
+   16 |     return result;
+      |            ^~~~~~
+  'main': events 1-2
+    |
+    |   19 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   23 |     char **result = extractStrings(list, listSize, stringSize);
+    |      |                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                     |
+    |      |                     (2) calling 'extractStrings' from 'main'
+    |
+    +--> 'extractStrings': events 3-19
+           |
+           |    5 | char **extractStrings(char **list, int listSize, int stringSize) {
+           |      |        ^~~~~~~~~~~~~~
+           |      |        |
+           |      |        (3) entry to 'extractStrings'
+           |    6 |     char **result = malloc(listSize * sizeof(char *));
+           |      |                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                     |
+           |      |                     (4) allocated here
+           |    7 |     int count = 0;
+           |    8 |     for(int i = 0; i < listSize; i++) {
+           |      |                    ~~~~~~~~~~~~  ~~~
+           |      |                      |            |
+           |      |                      |            (17) ...to here
+           |      |                      (5) following 'true' branch (when 'i < listSize')...
+           |      |                      (10) following 'true' branch (when 'i < listSize')...
+           |      |                      (14) following 'true' branch (when 'i < listSize')...
+           |    9 |         if(strlen(list[i]) == stringSize) {
+           |      |           ~           ~
+           |      |           |           |
+           |      |           |           (6) ...to here
+           |      |           |           (11) ...to here
+           |      |           |           (15) ...to here
+           |      |           (7) following 'true' branch...
+           |      |           (12) following 'true' branch...
+           |      |           (16) following 'false' branch...
+           |   10 |             result[count] = malloc((stringSize + 1) * sizeof(char));
+           |      |             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                           |                    |
+           |      |                           |                    (8) ...to here
+           |      |                           |                    (13) ...to here
+           |      |                           (9) assuming 'result' is non-NULL
+           |......
+           |   15 |     result = realloc(result, count * sizeof(char *));
+           |      |              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |              |
+           |      |              (18) when 'realloc' fails
+           |   16 |     return result;
+           |      |            ~~~~~~
+           |      |            |
+           |      |            (19) 'result' leaks here; was allocated at (4)
+           |
+collected_code_3/problem-450-1.c:16:12: warning: leak of '<unknown>' [CWE-401] [-Wanalyzer-malloc-leak]
+   16 |     return result;
+      |            ^~~~~~
+  'main': events 1-2
+    |
+    |   19 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   23 |     char **result = extractStrings(list, listSize, stringSize);
+    |      |                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                     |
+    |      |                     (2) calling 'extractStrings' from 'main'
+    |
+    +--> 'extractStrings': events 3-8
+           |
+           |    5 | char **extractStrings(char **list, int listSize, int stringSize) {
+           |      |        ^~~~~~~~~~~~~~
+           |      |        |
+           |      |        (3) entry to 'extractStrings'
+           |......
+           |    8 |     for(int i = 0; i < listSize; i++) {
+           |      |                    ~~~~~~~~~~~~
+           |      |                      |
+           |      |                      (4) following 'true' branch (when 'i < listSize')...
+           |    9 |         if(strlen(list[i]) == stringSize) {
+           |      |           ~           ~
+           |      |           |           |
+           |      |           |           (5) ...to here
+           |      |           (6) following 'true' branch...
+           |   10 |             result[count] = malloc((stringSize + 1) * sizeof(char));
+           |      |                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                             |                  |
+           |      |                             (8) allocated here (7) ...to here
+           |
+         'extractStrings': event 9
+           |
+           |   11 |             strcpy(result[count], list[i]);
+           |      |             ^~~~~~
+           |      |             |
+           |      |             (9) assuming '<unknown>' is non-NULL
+           |
+         'extractStrings': events 10-19
+           |
+           |    8 |     for(int i = 0; i < listSize; i++) {
+           |      |                    ~~^~~~~~~~~~  ~~~
+           |      |                      |            |
+           |      |                      |            (17) ...to here
+           |      |                      (10) following 'true' branch (when 'i < listSize')...
+           |      |                      (14) following 'true' branch (when 'i < listSize')...
+           |    9 |         if(strlen(list[i]) == stringSize) {
+           |      |           ~           ~
+           |      |           |           |
+           |      |           |           (11) ...to here
+           |      |           |           (15) ...to here
+           |      |           (12) following 'true' branch...
+           |      |           (16) following 'false' branch...
+           |   10 |             result[count] = malloc((stringSize + 1) * sizeof(char));
+           |      |                                    ~~~~~~~~~~~~~~~~
+           |      |                                                |
+           |      |                                                (13) ...to here
+           |......
+           |   15 |     result = realloc(result, count * sizeof(char *));
+           |      |              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |              |
+           |      |              (18) when 'realloc' fails
+           |   16 |     return result;
+           |      |            ~~~~~~     
+           |      |            |
+           |      |            (19) '<unknown>' leaks here; was allocated at (8)
+           |
+collected_code_3/problem-450-1.c:16:12: warning: leak of '<unknown>' [CWE-401] [-Wanalyzer-malloc-leak]
+   16 |     return result;
+      |            ^~~~~~
+  'main': events 1-2
+    |
+    |   19 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   23 |     char **result = extractStrings(list, listSize, stringSize);
+    |      |                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                     |
+    |      |                     (2) calling 'extractStrings' from 'main'
+    |
+    +--> 'extractStrings': events 3-24
+           |
+           |    5 | char **extractStrings(char **list, int listSize, int stringSize) {
+           |      |        ^~~~~~~~~~~~~~
+           |      |        |
+           |      |        (3) entry to 'extractStrings'
+           |......
+           |    8 |     for(int i = 0; i < listSize; i++) {
+           |      |                    ~~~~~~~~~~~~  ~~~
+           |      |                      |            |
+           |      |                      |            (15) ...to here
+           |      |                      (4) following 'true' branch (when 'i < listSize')...
+           |      |                      (8) following 'true' branch (when 'i < listSize')...
+           |      |                      (12) following 'true' branch (when 'i < listSize')...
+           |      |                      (16) following 'true' branch (when 'i < listSize')...
+           |      |                      (18) following 'true' branch (when 'i < listSize')...
+           |      |                      (20) following 'true' branch (when 'i < listSize')...
+           |      |                      (22) following 'true' branch (when 'i < listSize')...
+           |    9 |         if(strlen(list[i]) == stringSize) {
+           |      |           ~           ~
+           |      |           |           |
+           |      |           |           (5) ...to here
+           |      |           |           (9) ...to here
+           |      |           |           (13) ...to here
+           |      |           |           (17) ...to here
+           |      |           |           (19) ...to here
+           |      |           |           (21) ...to here
+           |      |           |           (23) ...to here
+           |      |           (6) following 'true' branch...
+           |      |           (10) following 'true' branch...
+           |      |           (14) following 'false' branch...
+           |   10 |             result[count] = malloc((stringSize + 1) * sizeof(char));
+           |      |                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                             |                  |
+           |      |                             |                  (7) ...to here
+           |      |                             |                  (11) ...to here
+           |      |                             (24) allocated here
+           |
+         'extractStrings': event 25
+           |
+           |   11 |             strcpy(result[count], list[i]);
+           |      |             ^~~~~~
+           |      |             |
+           |      |             (25) assuming '<unknown>' is non-NULL
+           |
+         'extractStrings': event 26
+           |
+           |   16 |     return result;
+           |      |            ^~~~~~
+           |      |            |
+           |      |            (26) '<unknown>' leaks here; was allocated at (24)
+           |
+collected_code_3/problem-450-1.c: In function 'main':
+collected_code_3/problem-450-1.c:24:26: warning: dereference of NULL 'result' [CWE-476] [-Wanalyzer-null-dereference]
+   24 |     for(int i = 0; result[i] != NULL; i++) {
+      |                    ~~~~~~^~~
+  'main': events 1-2
+    |
+    |   19 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   23 |     char **result = extractStrings(list, listSize, stringSize);
+    |      |                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                     |
+    |      |                     (2) calling 'extractStrings' from 'main'
+    |
+    +--> 'extractStrings': events 3-17
+           |
+           |    5 | char **extractStrings(char **list, int listSize, int stringSize) {
+           |      |        ^~~~~~~~~~~~~~
+           |      |        |
+           |      |        (3) entry to 'extractStrings'
+           |......
+           |    8 |     for(int i = 0; i < listSize; i++) {
+           |      |                    ~~~~~~~~~~~~  ~~~
+           |      |                      |            |
+           |      |                      |            (15) ...to here
+           |      |                      (4) following 'true' branch (when 'i < listSize')...
+           |      |                      (8) following 'true' branch (when 'i < listSize')...
+           |      |                      (12) following 'true' branch (when 'i < listSize')...
+           |    9 |         if(strlen(list[i]) == stringSize) {
+           |      |           ~           ~
+           |      |           |           |
+           |      |           |           (5) ...to here
+           |      |           |           (9) ...to here
+           |      |           |           (13) ...to here
+           |      |           (6) following 'true' branch...
+           |      |           (10) following 'true' branch...
+           |      |           (14) following 'false' branch...
+           |   10 |             result[count] = malloc((stringSize + 1) * sizeof(char));
+           |      |                                    ~~~~~~~~~~~~~~~~
+           |      |                                                |
+           |      |                                                (7) ...to here
+           |      |                                                (11) ...to here
+           |......
+           |   15 |     result = realloc(result, count * sizeof(char *));
+           |      |              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |              |
+           |      |              (16) when 'realloc' fails
+           |   16 |     return result;
+           |      |            ~~~~~~
+           |      |            |
+           |      |            (17) 'result' is NULL
+           |
+    <------+
+    |
+  'main': events 18-20
+    |
+    |   23 |     char **result = extractStrings(list, listSize, stringSize);
+    |      |                     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                     |
+    |      |                     (18) returning to 'main' from 'extractStrings'
+    |   24 |     for(int i = 0; result[i] != NULL; i++) {
+    |      |                    ~~~~~~~~~
+    |      |                          |
+    |      |                          (19) 'result' is NULL
+    |      |                          (20) dereference of NULL 'result + (long unsigned int)i * 8'
+    |

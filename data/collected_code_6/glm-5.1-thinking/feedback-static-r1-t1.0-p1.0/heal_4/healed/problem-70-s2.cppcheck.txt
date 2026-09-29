@@ -1,0 +1,25 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static-r1-t1.0-p1.0/heal_4/healed/problem-70-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static-r1-t1.0-p1.0/heal_4/healed/problem-70-s2.c:57:20: style: Condition 'res3' is always false [knownConditionTrueFalse]
+    printf("%s\n", res3 ? "true" : "false");
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static-r1-t1.0-p1.0/heal_4/healed/problem-70-s2.c:56:36: note: Calling function 'check_equal_lengths' returns 0
+    bool res3 = check_equal_lengths(NULL, 0);
+                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static-r1-t1.0-p1.0/heal_4/healed/problem-70-s2.c:56:36: note: Assignment 'res3=check_equal_lengths(NULL,0)', assigned value is 0
+    bool res3 = check_equal_lengths(NULL, 0);
+                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static-r1-t1.0-p1.0/heal_4/healed/problem-70-s2.c:57:20: note: Condition 'res3' is always false
+    printf("%s\n", res3 ? "true" : "false");
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static-r1-t1.0-p1.0/heal_4/healed/problem-70-s2.c:60:20: style: Condition 'res4' is always false [knownConditionTrueFalse]
+    printf("%s\n", res4 ? "true" : "false");
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static-r1-t1.0-p1.0/heal_4/healed/problem-70-s2.c:59:36: note: Calling function 'check_equal_lengths' returns 0
+    bool res4 = check_equal_lengths(NULL, 1);
+                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static-r1-t1.0-p1.0/heal_4/healed/problem-70-s2.c:59:36: note: Assignment 'res4=check_equal_lengths(NULL,1)', assigned value is 0
+    bool res4 = check_equal_lengths(NULL, 1);
+                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static-r1-t1.0-p1.0/heal_4/healed/problem-70-s2.c:60:20: note: Condition 'res4' is always false
+    printf("%s\n", res4 ? "true" : "false");
+                   ^

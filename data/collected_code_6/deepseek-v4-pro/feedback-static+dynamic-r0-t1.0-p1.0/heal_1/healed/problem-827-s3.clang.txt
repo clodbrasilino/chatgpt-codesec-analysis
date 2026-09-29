@@ -1,0 +1,31 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-827-s3.c:37:13: error: call to undeclared function 'free_list'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   37 |             free_list(head);
+      |             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-827-s3.c:37:13: note: did you mean 'create_list'?
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-827-s3.c:25:7: note: 'create_list' declared here
+   25 | Node *create_list(void) {
+      |       ^
+   26 |     Node *head = NULL;
+   27 |     Node *tail = NULL;
+   28 |     const int sizes[] = {3, 3, 3};
+   29 |     int values[][3] = {
+   30 |         {1, 2, 3},
+   31 |         {4, 5, 6},
+   32 |         {7, 8, 9}
+   33 |     };
+   34 |     for (int i = 0; i < 3; i++) {
+   35 |         Node *new_node = (Node *)malloc(sizeof(Node));
+   36 |         if (new_node == NULL) {
+   37 |             free_list(head);
+      |             ~~~~~~~~~
+      |             create_list
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-827-s3.c:44:13: error: call to undeclared function 'free_list'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   44 |             free_list(head);
+      |             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-827-s3.c:62:6: error: conflicting types for 'free_list'
+   62 | void free_list(Node *head) {
+      |      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-827-s3.c:37:13: note: previous implicit declaration is here
+   37 |             free_list(head);
+      |             ^
+3 errors generated.

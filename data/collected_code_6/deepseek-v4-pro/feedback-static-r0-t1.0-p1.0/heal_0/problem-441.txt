@@ -1,0 +1,27 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+double cube_surface_area(double side) {
+    if (side <= 0) {
+        fprintf(stderr, "Error: side length must be positive\n");
+        exit(EXIT_FAILURE);
+    }
+    return 6.0 * side * side;
+}
+
+int main(void) {
+    double side;
+    
+    printf("Enter the side length of the cube: ");
+    if (scanf("%lf", &side) != 1) {
+        fprintf(stderr, "Error: invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    double area = cube_surface_area(side);
+    printf("Surface area of the cube: %.2f\n", area);
+    
+    return EXIT_SUCCESS;
+}
+```

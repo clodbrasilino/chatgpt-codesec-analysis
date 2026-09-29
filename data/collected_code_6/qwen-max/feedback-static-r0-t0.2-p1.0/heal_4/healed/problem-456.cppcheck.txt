@@ -1,0 +1,4 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t0.2-p1.0/heal_4/healed/problem-456.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t0.2-p1.0/heal_4/healed/problem-456.c:20:41: style: Redundant condition: If 'list[i][len] != '\0'', the comparison 'list[i][len] != 0' is always true. [redundantCondition]
+            while (list[i][len] != '\0' && list[i][len] != 0) len++;
+                                        ^

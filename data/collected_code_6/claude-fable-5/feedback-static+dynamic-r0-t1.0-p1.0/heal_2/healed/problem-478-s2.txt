@@ -1,0 +1,71 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#define MAX_INPUT_LEN 4096
+
+char *remove_lowercase(const char *input)
+{
+    size_t len;
+    size_t i;
+    size_t j;
+    char *result;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    len = strnlen(input, MAX_INPUT_LEN);
+    if (len == MAX_INPUT_LEN) {
+        return NULL;
+    }
+
+    result = malloc(len + 1);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    j = 0;
+    for (i = 0; i < len; i++) {
+        if (!islower((unsigned char)input[i])) {
+            result[j] = input[i];
+            j++;
+        }
+    }
+    result[j] = '\0';
+
+    return result;
+}
+
+int main(void)
+{
+    char buffer[MAX_INPUT_LEN];
+    char *output;
+    size_t len;
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Failed to read input\n");
+        return EXIT_FAILURE;
+    }
+
+    len = strlen(buffer);
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    }
+
+    output = remove_lowercase(buffer);
+    if (output == NULL) {
+        fprintf(stderr, "Failed to process string\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("%s\n", output);
+    free(output);
+
+    return EXIT_SUCCESS;
+}
+```
+
+The key weakness identified by the failing test cases was that the original `main` used hard-coded test strings and decorated output (`Input: ... -> Output: ...`), while the test harness expected the program to read a string from stdin and emit only the filtered result (e.g., `PYTHon` → `PYTH`, `FluID` → `FID`, `STRinG` → `STRG`). The rewrite reads a single line from stdin, safely strips the trailing newline, applies `remove_lowercase` (which already handles NULL input, length bounding via `strnlen`, allocation failure, and correct `islower` usage with an `unsigned char` cast), prints just the resulting string, and frees the allocation.

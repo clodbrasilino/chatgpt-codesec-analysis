@@ -1,0 +1,24 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+const char *get_zodiac_sign(int year) {
+    static const char *zodiacSigns[12] = {"Rat", "Ox", "Tiger", "Rabbit", "Dragon", "Snake", "Horse", "Goat", "Monkey", "Rooster", "Dog", "Pig"};
+    return zodiacSigns[year % 12];
+}
+
+int main(int argc, char *argv[]) {
+    if (argc != 2) {
+        fprintf(stderr, "Usage: %s <year>\n", argv[0]);
+        return EXIT_FAILURE;
+    }
+
+    char *endptr;
+    long year = strtol(argv[1], &endptr, 10);
+    if (*endptr != '\0' || year <= 0) {
+        fprintf(stderr, "Year must be a positive number.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("The Chinese zodiac sign for the year %ld is %s.\n", year, get_zodiac_sign((int)year));
+    return EXIT_SUCCESS;
+}

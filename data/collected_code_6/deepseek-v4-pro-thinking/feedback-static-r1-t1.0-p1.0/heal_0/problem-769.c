@@ -1,0 +1,120 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+typedef struct Node {
+    int data;
+    struct Node *next;
+} Node;
+
+static bool list_contains(const Node *head, int value) {
+    for (const Node *current = head; current != NULL; current = current->next) {
+        if (current->data == value) {
+            return true;
+        }
+    }
+    return false;
+}
+
+static void list_free(Node *head) {
+    while (head != NULL) {
+        Node *next = head->next;
+        free(head);
+        head = next;
+    }
+}
+
+static Node *list_from_array(const int *values, size_t count) {
+    Node *head = NULL;
+    Node *tail = NULL;
+
+    for (size_t i = 0; i < count; ++i) {
+        Node *node = malloc(sizeof(*node));
+        if (node == NULL) {
+            list_free(head);
+            return NULL;
+        }
+
+        node->data = values[i];
+        node->next = NULL;
+
+        if (head == NULL) {
+            head = node;
+        } else {
+            tail->next = node;
+        }
+        tail = node;
+    }
+
+    return head;
+}
+
+int list_difference(const Node *list1, const Node *list2, Node **result) {
+    if (result == NULL) {
+        return -1;
+    }
+
+    Node *head = NULL;
+    Node *tail = NULL;
+
+    for (const Node *current = list1; current != NULL; current = current->next) {
+        if (!list_contains(list2, current->data)) {
+            Node *node = malloc(sizeof(*node));
+            if (node == NULL) {
+                list_free(head);
+                return -1;
+            }
+
+            node->data = current->data;
+            node->next = NULL;
+
+            if (head == NULL) {
+                head = node;
+            } else {
+                tail->next = node;
+            }
+            tail = node;
+        }
+    }
+
+    *result = head;
+    return 0;
+}
+
+static void list_print(const Node *head) {
+    for (const Node *current = head; current != NULL; current = current->next) {
+        printf("%d ", current->data);
+    }
+    printf("\n");
+}
+
+int main(void) {
+    int values1[] = {1, 2, 3, 4, 5};
+    int values2[] = {3, 5, 7};
+
+    Node *list1 = list_from_array(values1, sizeof(values1) / sizeof(values1[0]));
+    Node *list2 = list_from_array(values2, sizeof(values2) / sizeof(values2[0]));
+
+    if (list1 == NULL || list2 == NULL) {
+        list_free(list1);
+        list_free(list2);
+        return EXIT_FAILURE;
+    }
+
+    Node *difference = NULL;
+
+    if (list_difference(list1, list2, &difference) != 0) {
+        list_free(list1);
+        list_free(list2);
+        list_free(difference);
+        return EXIT_FAILURE;
+    }
+
+    list_print(difference);
+
+    list_free(difference);
+    list_free(list1);
+    list_free(list2);
+
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,76 @@
+#include <stdio.h>
+#include <stdlib.h>
+ /* Possible weaknesses found:
+  *  test case 2 failed: expected 3, got <no output>
+  *  test case 0 failed: expected 5, got <no output>
+  *  test case 1 failed: expected 6, got <no output>
+  */
+
+int findNthDigit(int numerator, int denominator, int n)
+{
+    long long rem;
+    long long den;
+    int i;
+    int digit = -1;
+
+    if (denominator == 0 || n <= 0) {
+        return -1;
+    }
+
+    den = denominator;
+    if (den < 0) {
+        den = -den;
+    }
+
+    rem = numerator;
+    if (rem < 0) {
+        rem = -rem;
+    }
+
+    rem %= den;
+
+    for (i = 1; i <= n; i++) {
+        rem *= 10;
+        digit = (int)(rem / den);
+        rem %= den;
+    }
+
+    return digit;
+}
+
+int main(void)
+{
+    int numerator;
+    int denominator;
+    int n;
+    int digit;
+
+    printf("Enter numerator: ");
+    if (scanf("%d", &numerator) != 1) {
+        fprintf(stderr, "Invalid input for numerator.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter denominator: ");
+    if (scanf("%d", &denominator) != 1) {
+        fprintf(stderr, "Invalid input for denominator.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter position n: ");
+    if (scanf("%d", &n) != 1) {
+        fprintf(stderr, "Invalid input for n.\n");
+        return EXIT_FAILURE;
+    }
+
+    digit = findNthDigit(numerator, denominator, n);
+
+    if (digit < 0) {
+        fprintf(stderr, "Error: denominator must be non-zero and n must be positive.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("The %d-th digit in the fraction of %d/%d is %d\n", n, numerator, denominator, digit);
+
+    return EXIT_SUCCESS;
+}

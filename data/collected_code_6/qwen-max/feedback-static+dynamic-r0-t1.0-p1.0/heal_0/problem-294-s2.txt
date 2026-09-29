@@ -1,0 +1,61 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int type;  // 0 for integer, 1 for float
+    union {
+        int ival;
+        float fval;
+    } value;
+} HeteroListElement;
+
+typedef struct {
+    HeteroListElement *elements;
+    size_t count;
+} HeteroList;
+
+void initializeHeteroList(HeteroList *list, size_t count) {
+    list->elements = (HeteroListElement *)malloc(count * sizeof(HeteroListElement));
+    list->count = count;
+}
+
+void freeHeteroList(HeteroList *list) {
+    free(list->elements);
+}
+
+double findMaxInHeteroList(HeteroList *list) {
+    if (list->count == 0) return -1.0;
+
+    double maxVal = -1.0;
+    for (size_t i = 0; i < list->count; i++) {
+        double currentVal = (list->elements[i].type == 0) ? (double)list->elements[i].value.ival : (double)list->elements[i].value.fval;
+        if (currentVal > maxVal) {
+            maxVal = currentVal;
+        }
+    }
+    return maxVal;
+}
+
+int main() {
+    HeteroList list;
+    initializeHeteroList(&list, 5);
+
+    list.elements[0].type = 0;
+    list.elements[0].value.ival = 100;
+    list.elements[1].type = 1;
+    list.elements[1].value.fval = 200.5f;
+    list.elements[2].type = 0;
+    list.elements[2].value.ival = 50;
+    list.elements[3].type = 1;
+    list.elements[3].value.fval = 150.75f;
+    list.elements[4].type = 0;
+    list.elements[4].value.ival = 20;
+
+    double maxVal = findMaxInHeteroList(&list);
+    printf("Maximum value: %f\n", maxVal);
+
+    freeHeteroList(&list);
+    return 0;
+}
+```

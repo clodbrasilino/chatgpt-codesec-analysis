@@ -1,0 +1,27 @@
+#include <stdio.h>
+
+int calc_remainder(int num1, int num2) {
+    if (num2 == 0) {
+        printf("Error: Division by zero is undefined.\n");
+        return -1;
+    }
+    return num1 % num2;
+}
+
+int main() {
+    int num1, num2;
+
+    printf("Enter the first number: ");
+    scanf("%d", &num1);
+
+    printf("Enter the second number: ");
+    scanf("%d", &num2);
+
+    int result = calc_remainder(num1, num2);
+
+    if (result != -1) {
+        printf("The remainder of the division is %d\n", result);
+    }
+
+    return 0;
+}

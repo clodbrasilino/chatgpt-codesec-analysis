@@ -1,0 +1,132 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+#define MAX_STR_LEN 4096
+
+char **prepend_to_all(const char *prefix, const char **items, size_t count)
+{
+    char **result;
+    size_t i;
+    size_t prefix_len;
+
+    if (prefix == NULL || items == NULL || count == 0) {
+        return NULL;
+    }
+
+    if (count > SIZE_MAX / sizeof(char *)) {
+        return NULL;
+    }
+
+    prefix_len = strnlen(prefix, MAX_STR_LEN);
+    if (prefix_len == MAX_STR_LEN && prefix[MAX_STR_LEN - 1] != '\0') {
+        return NULL;
+    }
+
+    result = malloc(count * sizeof(char *));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    for (i = 0; i < count; i++) {
+        size_t item_len;
+        size_t total_len;
+
+        if (items[i] == NULL) {
+            while (i > 0) {
+                i--;
+                free(result[i]);
+            }
+            free(result);
+            return NULL;
+        }
+
+        item_len = strnlen(items[i], MAX_STR_LEN);
+        if (item_len == MAX_STR_LEN && items[i][MAX_STR_LEN - 1] != '\0') {
+            while (i > 0) {
+                i--;
+                free(result[i]);
+            }
+            free(result);
+            return NULL;
+        }
+
+        if (prefix_len > SIZE_MAX - item_len - 1) {
+            while (i > 0) {
+                i--;
+                free(result[i]);
+            }
+            free(result);
+            return NULL;
+        }
+
+        total_len = prefix_len + item_len + 1;
+
+        result[i] = malloc(total_len);
+        if (result[i] == NULL) {
+            while (i > 0) {
+                i--;
+                free(result[i]);
+            }
+            free(result);
+            return NULL;
+        }
+
+        memcpy(result[i], prefix, prefix_len);
+        memcpy(result[i] + prefix_len, items[i], item_len);
+        result[i][total_len - 1] = '\0';
+    }
+
+    return result;
+}
+
+void free_list(char **list, size_t count)
+{
+    size_t i;
+
+    if (list == NULL) {
+        return;
+    }
+
+    for (i = 0; i < count; i++) {
+        free(list[i]);
+    }
+    free(list);
+}
+
+int main(void)
+{
+    const char *items[] = { "apple", "banana", "cherry" };
+    size_t count = sizeof(items) / sizeof(items[0]);
+    char **result;
+    size_t i;
+
+    result = prepend_to_all("fruit_", items, count);
+    if (result == NULL) {
+        fprintf(stderr, "Failed to build list\n");
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i < count; i++) {
+        if (printf("%s\n", result[i]) < 0) {
+            free_list(result, count);
+            return EXIT_FAILURE;
+        }
+    }
+
+    free_list(result, count);
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the changes made:**
+
+1. **CWE-126 (`strlen` over-read):** Both `strlen` calls were replaced with `strnlen` bounded by `MAX_STR_LEN`. If the returned length hits the bound and no terminator is present, the function bails out safely instead of reading past the end of an unterminated buffer.
+
+2. **CWE-120 (`memcpy` overflow):** The `memcpy` calls were already correct in the original (the destination was sized as `prefix_len + item_len + 1`), but they are now additionally hardened by an explicit integer-overflow check on `prefix_len + item_len + 1` before allocation, guaranteeing `total_len` cannot wrap around and produce an undersized buffer.
+
+3. **Allocation-size overflow:** Added a `count > SIZE_MAX / sizeof(char *)` guard so `malloc(count * sizeof(char *))` cannot silently wrap on extreme inputs.
+
+4. **Cleanup paths preserved:** All error paths still unwind previously allocated strings before freeing the outer array, so no leaks are introduced by the new failure branches.

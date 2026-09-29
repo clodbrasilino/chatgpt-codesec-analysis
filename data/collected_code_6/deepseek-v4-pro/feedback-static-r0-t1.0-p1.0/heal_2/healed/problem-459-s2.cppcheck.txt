@@ -1,0 +1,31 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-459-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-459-s2.c:50:45: style: Condition 'result_len+prefix_len<=input_len' is always true [knownConditionTrueFalse]
+                if (result_len + prefix_len <= input_len) {
+                                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-459-s2.c:45:45: note: Assuming that condition 'result_len+prefix_len>input_len' is not redundant
+                if (result_len + prefix_len > input_len) {
+                                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-459-s2.c:50:45: note: Condition 'result_len+prefix_len<=input_len' is always true
+                if (result_len + prefix_len <= input_len) {
+                                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-459-s2.c:62:27: style: Condition 'remaining>0' is always true [knownConditionTrueFalse]
+            if (remaining > 0) {
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-459-s2.c:41:19: note: Assuming that condition 'cursor<input+input_len' is not redundant
+    while (cursor < input + input_len) {
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-459-s2.c:61:25: note: Assignment 'remaining=(unsigned long)(input+input_len-cursor)', assigned value is greater than 0
+            remaining = (size_t)(input + input_len - cursor);
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-459-s2.c:62:27: note: Condition 'remaining>0' is always true
+            if (remaining > 0) {
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-459-s2.c:68:44: style: Condition 'result_len+remaining<=input_len' is always true [knownConditionTrueFalse]
+                if (result_len + remaining <= input_len) {
+                                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-459-s2.c:63:44: note: Assuming that condition 'result_len+remaining>input_len' is not redundant
+                if (result_len + remaining > input_len) {
+                                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-459-s2.c:68:44: note: Condition 'result_len+remaining<=input_len' is always true
+                if (result_len + remaining <= input_len) {
+                                           ^

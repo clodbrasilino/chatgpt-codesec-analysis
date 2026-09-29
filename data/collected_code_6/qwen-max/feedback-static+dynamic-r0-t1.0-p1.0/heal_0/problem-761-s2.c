@@ -1,0 +1,14 @@
+#include <stdio.h>
+#include <math.h>
+
+double calculate_arc_length(double angle, double radius) {
+    return 2 * M_PI * radius * (angle / 360.0);
+}
+
+int main() {
+    double angle = 90.0;
+    double radius = 10.0;
+    double arc_length = calculate_arc_length(angle, radius);
+    printf("Arc length: %.2f\n", arc_length);
+    return 0;
+}

@@ -1,0 +1,111 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+#define MAX_MATCHES 100
+#define MAX_WORD_LEN 256
+
+char **find_words(const char *input, int *count) {
+    regex_t regex;
+    regmatch_t matches[1];
+    char **words = NULL;
+    int ret;
+    size_t offset = 0;
+    int capacity = 10;
+    *count = 0;
+
+    if (!input) {
+        return NULL;
+    }
+
+    words = (char **)malloc(capacity * sizeof(char *));
+    if (!words) {
+        return NULL;
+    }
+
+    ret = regcomp(&regex, "[[:alnum:]]{4,}", REG_EXTENDED);
+    if (ret) {
+        free(words);
+        return NULL;
+    }
+
+    size_t input_len = strlen(input);
+
+    while (offset < input_len) {
+        ret = regexec(&regex, input + offset, 1, matches, 0);
+        if (ret == REG_NOMATCH) {
+            break;
+        }
+        if (ret != 0) {
+            regfree(&regex);
+            for (int i = 0; i < *count; i++) {
+                free(words[i]);
+            }
+            free(words);
+            return NULL;
+        }
+
+        int start = offset + matches[0].rm_so;
+        int end = offset + matches[0].rm_eo;
+        int len = end - start;
+
+        if (len >= 4 && len < MAX_WORD_LEN) {
+            if (*count >= capacity) {
+                capacity *= 2;
+                char **temp = (char **)realloc(words, capacity * sizeof(char *));
+                if (!temp) {
+                    regfree(&regex);
+                    for (int i = 0; i < *count; i++) {
+                        free(words[i]);
+                    }
+                    free(words);
+                    return NULL;
+                }
+                words = temp;
+            }
+
+            words[*count] = (char *)malloc((len + 1) * sizeof(char));
+            if (!words[*count]) {
+                regfree(&regex);
+                for (int i = 0; i < *count; i++) {
+                    free(words[i]);
+                }
+                free(words);
+                return NULL;
+            }
+
+            memcpy(words[*count], input + start, len);
+            words[*count][len] = '\0';
+            (*count)++;
+        }
+
+        offset = end;
+        if (matches[0].rm_eo == 0) {
+            offset++;
+        }
+    }
+
+    regfree(&regex);
+    return words;
+}
+
+int main(void) {
+    const char *text = "Hello world, this is a test of regex matching for words.";
+    int count = 0;
+    char **words = find_words(text, &count);
+
+    if (!words) {
+        fprintf(stderr, "Error processing text\n");
+        return 1;
+    }
+
+    printf("Found %d words:\n", count);
+    for (int i = 0; i < count; i++) {
+        printf("%s\n", words[i]);
+        free(words[i]);
+    }
+    free(words);
+
+    return 0;
+}

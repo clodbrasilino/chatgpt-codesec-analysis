@@ -1,0 +1,44 @@
+#include <stdio.h>
+
+#define MAX_SIZE 100
+#define CUSTOM_VALUE -1
+
+void removeDuplicates(int arr[], int size) {
+    int i, j, k;
+
+    for(i = 0; i < size; i++) {
+        for(j = i + 1; j < size; j++) {
+            if(arr[i] == arr[j]) {
+                for(k = j; k < size; k++) {
+                    arr[k] = arr[k + 1];
+                }
+                size--;
+                j--;
+                arr[i] = CUSTOM_VALUE;
+            }
+        }
+    }
+}
+
+int main() {
+    int arr[MAX_SIZE], i, num;
+
+    printf("Enter size of the array : ");
+    scanf("%d", &num);
+
+    printf("Enter elements in array : ");
+    for(i = 0; i < num; i++) {
+        scanf("%d", &arr[i]);
+    }
+
+    removeDuplicates(arr, num);
+
+    printf("\nArray elements after removing duplicates : ");
+    for(i = 0; i < num; i++) {
+        if(arr[i] != CUSTOM_VALUE) {
+            printf("%d\t", arr[i]);
+        }
+    }
+
+    return 0;
+}

@@ -1,0 +1,102 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#include <limits.h>
+
+typedef struct {
+    int *array;
+    size_t size;
+} Tuple;
+
+Tuple* convertStringToIntTuple(const char* str) {
+    if (str == NULL) {
+        return NULL;
+    }
+
+    Tuple* tuple = (Tuple*)malloc(sizeof(Tuple));
+    if (tuple == NULL) {
+        return NULL;
+    }
+
+    size_t count = 0;
+    const char* ptr = str;
+    while (*ptr != '\0') {
+        while (*ptr != '\0' && !isdigit(*ptr) && *ptr != '-' && *ptr != '+') {
+            ptr++;
+        }
+        if (*ptr != '\0') {
+            char* endptr;
+            strtol(ptr, &endptr, 10);
+            if (endptr == ptr) {
+                ptr++;
+            } else {
+                count++;
+                ptr = endptr;
+            }
+        }
+    }
+
+    tuple->array = (int*)malloc(count * sizeof(int));
+    if (tuple->array == NULL) {
+        free(tuple);
+        return NULL;
+    }
+    tuple->size = count;
+
+    ptr = str;
+    size_t i = 0;
+    while (*ptr != '\0' && i < count) {
+        while (*ptr != '\0' && !isdigit(*ptr) && *ptr != '-' && *ptr != '+') {
+            ptr++;
+        }
+        if (*ptr != '\0') {
+            char* endptr;
+            long val = strtol(ptr, &endptr, 10);
+            if (endptr == ptr) {
+                ptr++;
+            } else {
+                if (val > INT_MAX) {
+                    val = INT_MAX;
+                } else if (val < INT_MIN) {
+                    val = INT_MIN;
+                }
+                tuple->array[i++] = (int)val;
+                ptr = endptr;
+            }
+        }
+    }
+
+    tuple->size = i;
+    return tuple;
+}
+
+void freeTuple(Tuple* tuple) {
+    if (tuple != NULL) {
+        if (tuple->array != NULL) {
+            free(tuple->array);
+        }
+        free(tuple);
+    }
+}
+
+int main(void) {
+    const char* str = "12, 34, 56, -78, 90";
+    
+    Tuple* tuple = convertStringToIntTuple(str);
+    
+    if (tuple != NULL) {
+        printf("(");
+        for (size_t i = 0; i < tuple->size; i++) {
+            printf("%d", tuple->array[i]);
+            if (i < tuple->size - 1) {
+                printf(", ");
+            }
+        }
+        printf(")\n");
+        
+        freeTuple(tuple);
+    }
+    
+    return 0;
+}

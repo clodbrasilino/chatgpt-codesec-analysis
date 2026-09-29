@@ -1,0 +1,127 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    int key;
+    int *values;
+    int value_count;
+} DictEntry;
+
+typedef struct {
+    DictEntry *entries;
+    int entry_count;
+} Dictionary;
+
+typedef struct {
+    int *values;
+    int count;
+} UniqueValues;
+
+UniqueValues extract_unique_values(const Dictionary *dict) {
+    UniqueValues result;
+    result.values = NULL;
+    result.count = 0;
+
+    if (dict == NULL || dict->entries == NULL || dict->entry_count <= 0) {
+        return result;
+    }
+
+    int total_values = 0;
+    for (int i = 0; i < dict->entry_count; i++) {
+        if (dict->entries[i].values != NULL && dict->entries[i].value_count > 0) {
+            total_values += dict->entries[i].value_count;
+        }
+    }
+
+    if (total_values == 0) {
+        return result;
+    }
+
+    int *all_values = (int *)malloc((size_t)total_values * sizeof(int));
+    if (all_values == NULL) {
+        return result;
+    }
+
+    int index = 0;
+    for (int i = 0; i < dict->entry_count; i++) {
+        if (dict->entries[i].values != NULL && dict->entries[i].value_count > 0) {
+            memcpy(all_values + index, dict->entries[i].values,
+                   (size_t)dict->entries[i].value_count * sizeof(int));
+            index += dict->entries[i].value_count;
+        }
+    }
+
+    int *unique_values = (int *)malloc((size_t)total_values * sizeof(int));
+    if (unique_values == NULL) {
+        free(all_values);
+        return result;
+    }
+
+    int unique_count = 0;
+    for (int i = 0; i < total_values; i++) {
+        int is_duplicate = 0;
+        for (int j = 0; j < unique_count; j++) {
+            if (unique_values[j] == all_values[i]) {
+                is_duplicate = 1;
+                break;
+            }
+        }
+        if (!is_duplicate) {
+            unique_values[unique_count] = all_values[i];
+            unique_count++;
+        }
+    }
+
+    free(all_values);
+
+    if (unique_count == 0) {
+        free(unique_values);
+        return result;
+    }
+
+    result.values = (int *)malloc((size_t)unique_count * sizeof(int));
+    if (result.values == NULL) {
+        free(unique_values);
+        return result;
+    }
+
+    memcpy(result.values, unique_values, (size_t)unique_count * sizeof(int));
+    result.count = unique_count;
+
+    free(unique_values);
+    return result;
+}
+
+int main(void) {
+    int values1[] = {1, 2, 3, 4};
+    int values2[] = {3, 4, 5, 6};
+    int values3[] = {7, 8, 9};
+
+    DictEntry entries[3];
+    entries[0].key = 1;
+    entries[0].values = values1;
+    entries[0].value_count = 4;
+    entries[1].key = 2;
+    entries[1].values = values2;
+    entries[1].value_count = 4;
+    entries[2].key = 3;
+    entries[2].values = values3;
+    entries[2].value_count = 3;
+
+    Dictionary dict;
+    dict.entries = entries;
+    dict.entry_count = 3;
+
+    UniqueValues result = extract_unique_values(&dict);
+
+    if (result.values != NULL) {
+        for (int i = 0; i < result.count; i++) {
+            printf("%d ", result.values[i]);
+        }
+        printf("\n");
+        free(result.values);
+    }
+
+    return 0;
+}

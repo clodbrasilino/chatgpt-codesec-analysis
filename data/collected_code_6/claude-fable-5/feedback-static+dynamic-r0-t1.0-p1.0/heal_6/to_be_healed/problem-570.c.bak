@@ -1,0 +1,79 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+static char *read_line(FILE *fp)
+{
+    size_t capacity = 128;
+    size_t len = 0;
+    char *line;
+    int c;
+    int got_any = 0;
+
+    line = malloc(capacity);
+    if (line == NULL) {
+        return NULL;
+    }
+
+    while ((c = fgetc(fp)) != EOF) {
+        got_any = 1;
+        if (c == '\n') {
+            break;
+        }
+        if (len + 1 >= capacity) {
+            size_t new_capacity = capacity * 2;
+            char *tmp;
+
+            if (new_capacity < capacity) {
+                free(line);
+                return NULL;
+            }
+            tmp = realloc(line, new_capacity);
+            if (tmp == NULL) {
+                free(line);
+                return NULL;
+            }
+            line = tmp;
+            capacity = new_capacity;
+        }
+        line[len++] = (char)c;
+    }
+
+    if (!got_any && len == 0) {
+        free(line);
+        return NULL;
+    }
+
+    line[len] = '\0';
+    return line;
+}
+
+/* Possible weaknesses found:
+ *  Parameter 'argv' can be declared as const array [constParameter]
+ */
+int main(int argc, char *argv[])
+{
+    FILE *fp;
+    char *line;
+
+    if (argc > 1) {
+        fp = fopen(argv[1], "r");
+        if (fp == NULL) {
+            fprintf(stderr, "Error: cannot open file '%s'\n", argv[1]);
+            return EXIT_FAILURE;
+        }
+    } else {
+        fp = stdin;
+    }
+
+    while ((line = read_line(fp)) != NULL) {
+        printf("%s\n", line);
+        free(line);
+    }
+
+    if (fp != stdin) {
+        fclose(fp);
+    }
+
+    return EXIT_SUCCESS;
+}

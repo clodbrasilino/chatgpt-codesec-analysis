@@ -1,0 +1,16 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-552.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-552.c:33:35: style: Condition 'res4' is always false [knownConditionTrueFalse]
+    printf("NULL sequence: %s\n", res4 ? "true" : "false");
+                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-552.c:28:26: note: Calling function 'is_linear' returns 0
+    bool res4 = is_linear(NULL, 0);
+                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-552.c:28:26: note: Assignment 'res4=is_linear(NULL,0)', assigned value is 0
+    bool res4 = is_linear(NULL, 0);
+                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-552.c:33:35: note: Condition 'res4' is always false
+    printf("NULL sequence: %s\n", res4 ? "true" : "false");
+                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-552.c:5:21: style: Parameter 'sequence' can be declared as pointer to const [constParameterPointer]
+bool is_linear(int *sequence, size_t length) {
+                    ^

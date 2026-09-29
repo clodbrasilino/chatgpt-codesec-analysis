@@ -1,0 +1,44 @@
+{
+  "task_id": 86,
+  "text": "Write a C function to find nth centered hexagonal number.",
+  "fn_candidates": [
+    "centered_hexagonal_number",
+    "CenteredHexagonalNumber",
+    "centeredHexagonalNumber",
+    "centeredhexagonalnumber"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "centered_hexagonal_number",
+      "args": [
+        10
+      ],
+      "expected": 271,
+      "assert_src": "assert centered_hexagonal_number(10) == 271"
+    },
+    {
+      "fn_name": "centered_hexagonal_number",
+      "args": [
+        2
+      ],
+      "expected": 7,
+      "assert_src": "assert centered_hexagonal_number(2) == 7"
+    },
+    {
+      "fn_name": "centered_hexagonal_number",
+      "args": [
+        9
+      ],
+      "expected": 217,
+      "assert_src": "assert centered_hexagonal_number(9) == 217"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

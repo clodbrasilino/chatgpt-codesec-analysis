@@ -1,0 +1,51 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int index;
+    int value;
+} Tuple;
+
+int extract_min_index(Tuple *tuples, int size) {
+    if (tuples == NULL || size <= 0) {
+        return -1;
+    }
+    
+    int min_value = tuples[0].value;
+    int min_index = tuples[0].index;
+    
+    for (int i = 1; i < size; i++) {
+        if (tuples[i].value < min_value) {
+            min_value = tuples[i].value;
+            min_index = tuples[i].index;
+        } else if (tuples[i].value == min_value && tuples[i].index < min_index) {
+            min_index = tuples[i].index;
+        }
+    }
+    
+    return min_index;
+}
+
+int main(void) {
+    Tuple tuples[] = {
+        {3, 10},
+        {1, 20},
+        {2, 10},
+        {5, 15},
+        {4, 10}
+    };
+    
+    int size = sizeof(tuples) / sizeof(tuples[0]);
+    
+    int min_index = extract_min_index(tuples, size);
+    
+    if (min_index != -1) {
+        printf("Index with minimum value: %d\n", min_index);
+    } else {
+        printf("Error: Invalid input\n");
+    }
+    
+    return 0;
+}
+```

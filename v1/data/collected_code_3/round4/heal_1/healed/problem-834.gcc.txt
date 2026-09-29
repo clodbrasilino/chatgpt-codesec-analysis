@@ -1,0 +1,156 @@
+./collected_code_3/round4/heal_1/healed/problem-834.c: In function 'generateSpiralMatrix':
+./collected_code_3/round4/heal_1/healed/problem-834.c:32:19: warning: use of uninitialized value '*matrix_92 + _27' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   32 |             matrix[i][colEnd] = value++;
+      |             ~~~~~~^~~
+  'main': events 1-4
+    |
+    |   57 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   61 |     if (n > 0) {
+    |      |        ~
+    |      |        |
+    |      |        (2) following 'true' branch...
+    |   62 |         generateSpiralMatrix(n);
+    |      |         ~~~~~~~~~~~~~~~~~~~~~~~
+    |      |         |
+    |      |         (3) ...to here
+    |      |         (4) calling 'generateSpiralMatrix' from 'main'
+    |
+    +--> 'generateSpiralMatrix': events 5-21
+           |
+           |    4 | void generateSpiralMatrix(int n) {
+           |      |      ^~~~~~~~~~~~~~~~~~~~
+           |      |      |
+           |      |      (5) entry to 'generateSpiralMatrix'
+           |    5 |     int **matrix = (int **)malloc(n * sizeof(int *));
+           |      |                            ~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                            |
+           |      |                            (6) region created on heap here
+           |    6 |     if (matrix == NULL) {
+           |      |        ~
+           |      |        |
+           |      |        (7) following 'false' branch (when 'matrix' is non-NULL)...
+           |......
+           |   10 |     for (int i = 0; i < n; i++) {
+           |      |              ~      ~~~~~  ~~~
+           |      |              |        |     |
+           |      |              |        |     (12) ...to here
+           |      |              |        (9) following 'true' branch (when 'i < n')...
+           |      |              |        (13) following 'false' branch (when 'i >= n')...
+           |      |              (8) ...to here
+           |   11 |         matrix[i] = (int *)malloc(n * sizeof(int));
+           |      |                            ~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                            |
+           |      |                            (10) ...to here
+           |   12 |         if (matrix[i] == NULL) {
+           |      |            ~
+           |      |            |
+           |      |            (11) following 'false' branch...
+           |......
+           |   21 |     int value = 1;
+           |      |         ~~~~~
+           |      |         |
+           |      |         (14) ...to here
+           |......
+           |   25 |     while (value <= n * n) {
+           |      |            ~~~~~~~~~~~~~~
+           |      |                  |
+           |      |                  (15) following 'true' branch...
+           |   26 |         for (int i = colStart; i <= colEnd; i++) {
+           |      |                  ~             ~~~~~~~~~~~
+           |      |                  |               |
+           |      |                  (16) ...to here (17) following 'false' branch (when 'i > colEnd')...
+           |......
+           |   29 |         rowStart++;
+           |      |         ~~~~~~~~~~
+           |      |                 |
+           |      |                 (18) ...to here
+           |   30 | 
+           |   31 |         for (int i = rowStart; i <= rowEnd; i++) {
+           |      |                                ~~~~~~~~~~~
+           |      |                                  |
+           |      |                                  (19) following 'true' branch (when 'i <= rowEnd')...
+           |   32 |             matrix[i][colEnd] = value++;
+           |      |             ~~~~~~~~~           ~~~~~~~
+           |      |                   |                  |
+           |      |                   |                  (20) ...to here
+           |      |                   (21) use of uninitialized value '*matrix_92 + _27' here
+           |
+./collected_code_3/round4/heal_1/healed/problem-834.c:49:13: warning: use of uninitialized value '*_53 + _55' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   49 |             printf("%d ", matrix[i][j]);
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+  'main': events 1-4
+    |
+    |   57 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   61 |     if (n > 0) {
+    |      |        ~
+    |      |        |
+    |      |        (2) following 'true' branch...
+    |   62 |         generateSpiralMatrix(n);
+    |      |         ~~~~~~~~~~~~~~~~~~~~~~~
+    |      |         |
+    |      |         (3) ...to here
+    |      |         (4) calling 'generateSpiralMatrix' from 'main'
+    |
+    +--> 'generateSpiralMatrix': events 5-21
+           |
+           |    4 | void generateSpiralMatrix(int n) {
+           |      |      ^~~~~~~~~~~~~~~~~~~~
+           |      |      |
+           |      |      (5) entry to 'generateSpiralMatrix'
+           |    5 |     int **matrix = (int **)malloc(n * sizeof(int *));
+           |    6 |     if (matrix == NULL) {
+           |      |        ~
+           |      |        |
+           |      |        (6) following 'false' branch (when 'matrix' is non-NULL)...
+           |......
+           |   10 |     for (int i = 0; i < n; i++) {
+           |      |              ~      ~~~~~  ~~~
+           |      |              |        |     |
+           |      |              |        |     (12) ...to here
+           |      |              |        (8) following 'true' branch (when 'i < n')...
+           |      |              |        (13) following 'false' branch (when 'i >= n')...
+           |      |              (7) ...to here
+           |   11 |         matrix[i] = (int *)malloc(n * sizeof(int));
+           |      |                            ~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                            |
+           |      |                            (9) ...to here
+           |      |                            (10) region created on heap here
+           |   12 |         if (matrix[i] == NULL) {
+           |      |            ~
+           |      |            |
+           |      |            (11) following 'false' branch...
+           |......
+           |   21 |     int value = 1;
+           |      |         ~~~~~
+           |      |         |
+           |      |         (14) ...to here
+           |......
+           |   25 |     while (value <= n * n) {
+           |      |            ~~~~~~~~~~~~~~
+           |      |                  |
+           |      |                  (15) following 'false' branch...
+           |......
+           |   47 |     for (int i = 0; i < n; i++) {
+           |      |              ~      ~~~~~
+           |      |              |        |
+           |      |              |        (17) following 'true' branch (when 'i < n')...
+           |      |              (16) ...to here
+           |   48 |         for (int j = 0; j < n; j++) {
+           |      |                  ~      ~~~~~
+           |      |                  |        |
+           |      |                  |        (19) following 'true' branch (when 'j < n')...
+           |      |                  (18) ...to here
+           |   49 |             printf("%d ", matrix[i][j]);
+           |      |             ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |             |                   |
+           |      |             |                   (20) ...to here
+           |      |             (21) use of uninitialized value '*_53 + _55' here
+           |

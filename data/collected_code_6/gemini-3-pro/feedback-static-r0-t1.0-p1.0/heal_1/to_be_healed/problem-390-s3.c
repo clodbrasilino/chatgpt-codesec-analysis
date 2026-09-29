@@ -1,0 +1,119 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct Node {
+    char *data;
+    struct Node *next;
+} Node;
+
+Node* create_node(const char *str) {
+    if (str == NULL) {
+        return NULL;
+    }
+    
+    Node *new_node = (Node *)malloc(sizeof(Node));
+    if (new_node == NULL) {
+        return NULL;
+    }
+    
+    new_node->data = strdup(str);
+    if (new_node->data == NULL) {
+        free(new_node);
+        return NULL;
+    }
+    
+    new_node->next = NULL;
+    return new_node;
+}
+
+void append_node(Node **head, const char *str) {
+    if (head == NULL || str == NULL) {
+        return;
+    }
+    
+    Node *new_node = create_node(str);
+    if (new_node == NULL) {
+        return;
+    }
+    
+    if (*head == NULL) {
+        *head = new_node;
+        return;
+    }
+    
+    Node *temp = *head;
+    while (temp->next != NULL) {
+        temp = temp->next;
+    }
+    temp->next = new_node;
+}
+
+void prepend_string_to_list(Node *head, const char *prefix) {
+    if (head == NULL || prefix == NULL) {
+        return;
+    }
+    
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    size_t prefix_len = strlen(prefix);
+    Node *current = head;
+    
+    while (current != NULL) {
+        /* Possible weaknesses found:
+         * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+         */
+        size_t data_len = strlen(current->data);
+        char *new_data = (char *)malloc(prefix_len + data_len + 1);
+        
+        if (new_data != NULL) {
+            /* Possible weaknesses found:
+             * Flawfinder strcpy: Does not check for buffer overflows when copying to destination [MS-banned] (CWE-120). Consider using snprintf, strcpy_s, or strlcpy (warning: strncpy easily misused). (risk 4, buffer)
+             */
+            strcpy(new_data, prefix);
+            /* Possible weaknesses found:
+             * Flawfinder strcat: Does not check for buffer overflows when concatenating to destination [MS-banned] (CWE-120). Consider using strcat_s, strncat, strlcat, or snprintf (warning: strncat is easily misused). (risk 4, buffer)
+             */
+            strcat(new_data, current->data);
+            
+            free(current->data);
+            current->data = new_data;
+        }
+        current = current->next;
+    }
+}
+
+void free_list(Node *head) {
+    Node *current = head;
+    while (current != NULL) {
+        Node *temp = current;
+        current = current->next;
+        free(temp->data);
+        free(temp);
+    }
+}
+
+void print_list(Node *head) {
+    Node *current = head;
+    while (current != NULL) {
+        printf("%s\n", current->data);
+        current = current->next;
+    }
+}
+
+int main(void) {
+    Node *head = NULL;
+    
+    append_node(&head, "apple");
+    append_node(&head, "banana");
+    append_node(&head, "cherry");
+    
+    prepend_string_to_list(head, "fruit_");
+    
+    print_list(head);
+    
+    free_list(head);
+    
+    return 0;
+}

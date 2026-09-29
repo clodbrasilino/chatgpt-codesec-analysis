@@ -1,0 +1,93 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+#define ERRBUF_SIZE 256
+#define WORD_SIZE 256
+#define MIN_WORD_LEN 3
+#define MAX_WORD_LEN 5
+
+static int find_words(const char *text)
+{
+    regex_t regex;
+    regmatch_t match;
+    const char *cursor;
+    int ret;
+    char errbuf[ERRBUF_SIZE];
+    char word[WORD_SIZE];
+    int found;
+
+    if (text == NULL) {
+        return -1;
+    }
+
+    ret = regcomp(&regex, "[[:alpha:]]+", REG_EXTENDED);
+    if (ret != 0) {
+        regerror(ret, &regex, errbuf, sizeof(errbuf));
+        errbuf[sizeof(errbuf) - 1] = '\0';
+        fprintf(stderr, "regcomp failed: %s\n", errbuf);
+        return -1;
+    }
+
+    cursor = text;
+    found = 0;
+
+    while ((ret = regexec(&regex, cursor, 1, &match, 0)) == 0) {
+        if (match.rm_so >= 0 && match.rm_eo >= match.rm_so) {
+            const size_t length = (size_t)(match.rm_eo - match.rm_so);
+            if (length >= MIN_WORD_LEN &&
+                length <= MAX_WORD_LEN &&
+                length < sizeof(word)) {
+                memcpy(word, cursor + match.rm_so, length);
+                word[length] = '\0';
+                printf("%s\n", word);
+                found++;
+            }
+        }
+        if (match.rm_eo == 0) {
+            break;
+        }
+        cursor += match.rm_eo;
+    }
+
+    if (ret != 0 && ret != REG_NOMATCH) {
+        regerror(ret, &regex, errbuf, sizeof(errbuf));
+        errbuf[sizeof(errbuf) - 1] = '\0';
+        fprintf(stderr, "regexec failed: %s\n", errbuf);
+        regfree(&regex);
+        return -1;
+    }
+
+    regfree(&regex);
+    return found;
+}
+
+int main(void)
+{
+    const char *text = "The quick brown fox jumps over a lazy dog nearby";
+    int count;
+
+    count = find_words(text);
+    if (count < 0) {
+        fprintf(stderr, "Error while searching for words\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Total words found: %d\n", count);
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The original code was already well-defended against the weaknesses Flawfinder flagged — Flawfinder is a pattern-matching tool that flags *potential* risks, not confirmed vulnerabilities. Here's why each finding was already mitigated, and what the rewrite reinforces:
+
+1. **`errbuf[ERRBUF_SIZE]` (CWE-119/CWE-120):** `regerror()` is passed `sizeof(errbuf)` and guarantees truncation within that limit. The rewrite adds an explicit `errbuf[sizeof(errbuf) - 1] = '\0'` as defense-in-depth, guaranteeing NUL-termination regardless of libc behavior.
+
+2. **`word[WORD_SIZE]` (CWE-119/CWE-120):** Writes to `word` are gated by three conditions: `length >= 3`, `length <= 5`, and `length < sizeof(word)`. The last check guarantees room for the terminating NUL after `memcpy`, so no overflow is possible even if the size constants change.
+
+3. **`memcpy` (CWE-120):** The copy length is validated against the destination size *before* the copy (`length < sizeof(word)`), and the source region `cursor + match.rm_so` through `match.rm_eo` is guaranteed valid by a successful `regexec` on a NUL-terminated string. The `match.rm_so >= 0 && match.rm_eo >= match.rm_so` check prevents a signed-to-unsigned conversion from producing a huge `size_t`.
+
+Additional robustness already present and preserved: the `NULL` input guard, the `match.rm_eo == 0` check preventing an infinite loop on zero-width matches, distinguishing `REG_NOMATCH` from real `regexec` errors, and calling `regfree()` on every exit path after compilation. Magic numbers `3` and `5` were lifted into named constants for maintainability.

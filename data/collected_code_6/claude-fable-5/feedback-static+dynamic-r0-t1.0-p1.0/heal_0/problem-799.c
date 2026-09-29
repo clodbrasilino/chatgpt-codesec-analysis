@@ -1,0 +1,42 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+static unsigned int rotate_left(unsigned int value, unsigned int shift)
+{
+    const unsigned int bits = (unsigned int)(sizeof(unsigned int) * CHAR_BIT);
+    shift %= bits;
+    if (shift == 0U)
+    {
+        return value;
+    }
+    return (value << shift) | (value >> (bits - shift));
+}
+
+int main(void)
+{
+    unsigned int number = 0U;
+    unsigned int shift = 0U;
+    int result;
+
+    printf("Enter an unsigned integer: ");
+    result = scanf("%u", &number);
+    if (result != 1)
+    {
+        fprintf(stderr, "Invalid input for number.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter number of positions to rotate left: ");
+    result = scanf("%u", &shift);
+    if (result != 1)
+    {
+        fprintf(stderr, "Invalid input for shift.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Original number: %u\n", number);
+    printf("After left rotation by %u: %u\n", shift, rotate_left(number, shift));
+
+    return EXIT_SUCCESS;
+}

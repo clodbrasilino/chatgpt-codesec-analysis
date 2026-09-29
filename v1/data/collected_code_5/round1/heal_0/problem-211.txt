@@ -1,0 +1,42 @@
+The following program will count the numbers where the 0th and nth bits are set in C language.
+
+```c
+#include <stdio.h>
+
+int count_set_bits(int n, int bit) {
+    int count = 0;
+    for (int i = 0; i < n; i++) {
+        if (((i >> bit) & 1) && (i & 1)) {
+            count++;
+        }
+    }
+    return count;
+}
+
+int main() {
+    int n, bit;
+    printf("Enter n value: ");
+    scanf("%d", &n);
+    printf("Enter bit position: ");
+    scanf("%d", &bit);
+    
+    if(bit > 31) {
+        printf("Bit position should be between 0 and 31\n");
+        return -1;
+    }
+    
+    int count = count_set_bits(n, bit);
+    printf("Count of numbers where 0th and %dth bit is set: %d\n", bit, count);
+
+    return 0;
+}
+```
+In the above code, `count_set_bits()` is the function that counts the numbers where the 0th-bit and nth-bit are both set, where n is the value of `bit`. 
+
+This function iterates over all the numbers from 0 to n, checks whether the nth-bit and the 0th-bit are set or not. If they are set, then it increments the counter. 
+
+In the main function, it is checked if the bit position entered by the user is within the permissible range (i.e., between 0 to 31, as an `int` is 32-bits). If not, a message is printed, informing the user of the permissible range, and the program exits returning -1. 
+
+Then, it will call the `count_set_bits()` function with `n` and `bit` as parameters. The returned value is the count of numbers where 0th and nth bits are set, which is then printed out. 
+
+The counter is initialized to 0, so there won't be any Resource Initialization issues (CWE-664). We have checked for the condition where the `bit` may be set outside the permissible range, thus avoiding any Improper Check or Handling of Exceptional Conditions (CWE-703). Also, this code is consistent with the C90/C99 Coding Standards (CWE-710).

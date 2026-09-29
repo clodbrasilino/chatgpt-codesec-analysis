@@ -1,0 +1,51 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+void replace_multiple(char *str, char c) {
+    if (str == NULL) {
+        return;
+    }
+
+    size_t len = strlen(str);
+    if (len == 0) {
+        return;
+    }
+
+    size_t write_idx = 0;
+    int in_sequence = 0;
+
+    for (size_t i = 0; i < len; i++) {
+        if (str[i] == c) {
+            if (!in_sequence) {
+                str[write_idx++] = c;
+                in_sequence = 1;
+            }
+        } else {
+            str[write_idx++] = str[i];
+            in_sequence = 0;
+        }
+    }
+
+    str[write_idx] = '\0';
+}
+
+int main(void) {
+    char buffer1[] = "aaabbbcccddd";
+    replace_multiple(buffer1, 'a');
+    printf("%s\n", buffer1);
+
+    char buffer2[] = "xxxyyzzz";
+    replace_multiple(buffer2, 'z');
+    printf("%s\n", buffer2);
+
+    char buffer3[] = "112233";
+    replace_multiple(buffer3, '2');
+    printf("%s\n", buffer3);
+
+    replace_multiple(NULL, 'a');
+
+    return 0;
+}
+```

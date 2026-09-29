@@ -1,0 +1,61 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *elements;
+    int length;
+} Tuple;
+
+int *pairwise_addition(const Tuple *tuple1, const Tuple *tuple2, int *result_length) {
+    if (tuple1 == NULL || tuple2 == NULL || result_length == NULL) {
+        return NULL;
+    }
+    
+    if (tuple1->length != tuple2->length || tuple1->length <= 0) {
+        return NULL;
+    }
+    
+    if (tuple1->elements == NULL || tuple2->elements == NULL) {
+        return NULL;
+    }
+    
+    int *result = (int *)malloc(sizeof(int) * tuple1->length);
+    if (result == NULL) {
+        return NULL;
+    }
+    
+    for (int i = 0; i < tuple1->length; i++) {
+        result[i] = tuple1->elements[i] + tuple2->elements[i];
+    }
+    
+    *result_length = tuple1->length;
+    return result;
+}
+
+int main(void) {
+    int elements1[] = {1, 2, 3, 4, 5};
+    int elements2[] = {10, 20, 30, 40, 50};
+    
+    Tuple tuple1 = {elements1, 5};
+    Tuple tuple2 = {elements2, 5};
+    
+    int result_length = 0;
+    int *result = pairwise_addition(&tuple1, &tuple2, &result_length);
+    
+    if (result == NULL) {
+        printf("Error: Invalid input or allocation failure\n");
+        return 1;
+    }
+    
+    printf("Result: ");
+    for (int i = 0; i < result_length; i++) {
+        printf("%d ", result[i]);
+    }
+    printf("\n");
+    
+    free(result);
+    
+    return 0;
+}
+```

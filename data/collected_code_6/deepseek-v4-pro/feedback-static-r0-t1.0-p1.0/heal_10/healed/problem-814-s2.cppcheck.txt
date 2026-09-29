@@ -1,0 +1,4 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-814-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-814-s2.c:56:32: style: Redundant condition: The condition 'input[len-1] != '\0'' is redundant since 'input[len-1] == '\n'' is sufficient. [redundantCondition]
+    if (input[len - 1] != '\0' && input[len - 1] == '\n') {
+                               ^

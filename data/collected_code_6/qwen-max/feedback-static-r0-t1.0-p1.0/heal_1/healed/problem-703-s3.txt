@@ -1,0 +1,52 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+typedef struct {
+    int key;
+    char *value;
+} DictionaryEntry;
+
+typedef struct {
+    DictionaryEntry *entries;
+    int size;
+} Dictionary;
+
+bool isKeyPresent(Dictionary *dict, int key) {
+    for (int i = 0; i < dict->size; ++i) {
+        if (dict->entries[i].key == key) {
+            return true;
+        }
+    }
+    return false;
+}
+
+int main() {
+    Dictionary dict;
+    dict.size = 3;
+    dict.entries = (DictionaryEntry *)malloc(dict.size * sizeof(DictionaryEntry));
+
+    if (dict.entries == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return 1;
+    }
+
+    dict.entries[0].key = 1;
+    dict.entries[0].value = "one";
+    dict.entries[1].key = 2;
+    dict.entries[1].value = "two";
+    dict.entries[2].key = 3;
+    dict.entries[2].value = "three";
+
+    int keyToCheck = 2;
+    if (isKeyPresent(&dict, keyToCheck)) {
+        printf("Key %d is present in the dictionary.\n", keyToCheck);
+    } else {
+        printf("Key %d is not present in the dictionary.\n", keyToCheck);
+    }
+
+    free(dict.entries);
+    return 0;
+}
+```

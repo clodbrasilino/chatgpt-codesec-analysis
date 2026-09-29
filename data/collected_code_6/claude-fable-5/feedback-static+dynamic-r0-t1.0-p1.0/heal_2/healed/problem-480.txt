@@ -1,0 +1,83 @@
+```c
+#include <stdio.h>
+#include <limits.h>
+#include <stddef.h>
+#include <string.h>
+
+#define INPUT_SIZE 256
+
+int find_max_occurring_char(const char *str, char *result)
+{
+    size_t counts[UCHAR_MAX + 1] = {0};
+    size_t max_count = 0;
+    size_t i;
+    unsigned char max_char = 0;
+    int found = 0;
+
+    if (str == NULL || result == NULL) {
+        return -1;
+    }
+
+    for (i = 0; str[i] != '\0'; i++) {
+        unsigned char c = (unsigned char)str[i];
+        counts[c]++;
+        if (counts[c] > max_count) {
+            max_count = counts[c];
+            max_char = c;
+            found = 1;
+        }
+    }
+
+    if (found == 0) {
+        return -1;
+    }
+
+    *result = (char)max_char;
+    return 0;
+}
+
+int main(void)
+{
+    char input[INPUT_SIZE];
+    char max_char;
+    size_t len;
+
+    if (fgets(input, (int)sizeof(input), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    input[sizeof(input) - 1] = '\0';
+
+    len = strnlen(input, sizeof(input));
+    if (len > 0 && input[len - 1] == '\n') {
+        input[len - 1] = '\0';
+    }
+
+    if (find_max_occurring_char(input, &max_char) != 0) {
+        fprintf(stderr, "Empty string or invalid input\n");
+        return 1;
+    }
+
+    if (printf("Maximum occurring character: %c\n", max_char) < 0) {
+        return 1;
+    }
+
+    return 0;
+}
+```
+
+**Analysis of the original code and fixes applied:**
+
+The original code was already quite defensive, and the Flawfinder hits were largely low-risk. Here's my assessment as reviewer:
+
+1. **CWE-119/CWE-120 (statically-sized buffer `input`)** — This was already mitigated in the original: `fgets(input, sizeof(input), stdin)` bounds the read to the buffer size, and `sizeof(input)` is used rather than a repeated magic number, so the size and buffer cannot drift apart. The explicit `input[sizeof(input) - 1] = '\0'` is technically redundant (since `fgets` always NUL-terminates on success) but harmless as belt-and-braces.
+
+2. **CWE-126 (`strlen` over-read on non-terminated strings)** — In practice `fgets` guarantees termination, but to fully satisfy the finding I replaced `strlen` with `strnlen(input, sizeof(input))`, which bounds the scan to the buffer size and can never over-read regardless of the buffer's contents.
+
+3. **Other correctness points preserved:**
+   - `counts[UCHAR_MAX + 1]` correctly sizes the frequency table for all byte values.
+   - Casting `str[i]` to `unsigned char` before indexing avoids negative-index UB on platforms where `char` is signed.
+   - NULL checks on both pointer parameters, the empty-string check via `found`, and the checked `printf` return value are all retained.
+
+One behavioral note: on ties, the function returns the character whose count *first reaches* the maximum, which effectively favors the earliest character to accumulate the winning count — acceptable, but worth documenting in a real codebase.

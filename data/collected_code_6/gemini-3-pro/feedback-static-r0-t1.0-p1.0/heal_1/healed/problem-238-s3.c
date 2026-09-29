@@ -1,0 +1,36 @@
+#include <stdio.h>
+#include <stddef.h>
+
+unsigned long long count_substrings(const char *str);
+
+unsigned long long count_substrings(const char *str) {
+    size_t len = 0;
+    
+    if (str == NULL) {
+        return 0;
+    }
+    
+    while (str[len] != '\0') {
+        len++;
+    }
+    
+    return (unsigned long long)len * (len + 1) / 2;
+}
+
+int main(int argc, const char *const argv[]) {
+    int i;
+    unsigned long long result;
+
+    if (argc < 2) {
+        return 1;
+    }
+
+    for (i = 1; i < argc; i++) {
+        if (argv[i] != NULL) {
+            result = count_substrings(argv[i]);
+            printf("%llu\n", result);
+        }
+    }
+
+    return 0;
+}

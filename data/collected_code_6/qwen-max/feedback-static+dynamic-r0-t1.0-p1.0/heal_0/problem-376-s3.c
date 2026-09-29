@@ -1,0 +1,27 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+void remove_duplicates(int *array, int size, int custom_value) {
+    for (int i = 0; i < size; i++) {
+        for (int j = i + 1; j < size; j++) {
+            if (array[i] == array[j]) {
+                array[j] = custom_value;
+            }
+        }
+    }
+}
+
+int main() {
+    int array[] = {1, 2, 3, 2, 4, 3, 5};
+    int size = sizeof(array) / sizeof(array[0]);
+    int custom_value = -1;
+
+    remove_duplicates(array, size, custom_value);
+
+    for (int i = 0; i < size; i++) {
+        printf("%d ", array[i]);
+    }
+    printf("\n");
+
+    return 0;
+}

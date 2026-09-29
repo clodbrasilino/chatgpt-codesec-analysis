@@ -1,0 +1,19 @@
+#include <stdio.h>
+#include <string.h>
+
+void replace_chars(char *str) {
+    if (str == NULL) return;
+    for (char *p = str; *p; p++) {
+        if (*p == ' ' || *p == ',' || *p == '.') {
+            *p = ':';
+        }
+    }
+}
+
+int main() {
+    char input[] = "This, is a test. string with spaces, and punctuation.";
+    printf("Original: %s\n", input);
+    replace_chars(input);
+    printf("Modified: %s\n", input);
+    return 0;
+}

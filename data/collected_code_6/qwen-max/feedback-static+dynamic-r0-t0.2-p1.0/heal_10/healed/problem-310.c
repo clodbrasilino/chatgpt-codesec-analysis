@@ -1,0 +1,50 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char *str;
+    size_t len;
+} StringTuple;
+
+StringTuple* string_to_tuple(const char *input) {
+    if (input == NULL) return NULL;
+    size_t len = input ? strlen(input) : 0;
+    
+    StringTuple *tuple = malloc(sizeof(StringTuple));
+    if (tuple == NULL) return NULL;
+    
+    tuple->str = malloc((len + 1) * sizeof(char));
+    if (tuple->str == NULL) {
+        free(tuple);
+        return NULL;
+    }
+    
+    tuple->len = len;
+    memcpy(tuple->str, input, len * sizeof(char));
+    tuple->str[len] = '\0';
+    
+    return tuple;
+}
+
+void free_tuple(StringTuple *tuple) {
+    if (tuple != NULL) {
+        free(tuple->str);
+        free(tuple);
+    }
+}
+
+int main() {
+    const char *test_cases[] = {"python3.0", "item1", "15.10", NULL, "Hello, World!"};
+    for (size_t i = 0; i < 5; i++) {
+        StringTuple *result = string_to_tuple(test_cases[i]);
+        if (result != NULL) {
+            printf("Converted to tuple: %s\n", result->str);
+            free_tuple(result);
+        } else {
+            printf("Failed to convert to tuple.\n");
+        }
+    }
+
+    return 0;
+}

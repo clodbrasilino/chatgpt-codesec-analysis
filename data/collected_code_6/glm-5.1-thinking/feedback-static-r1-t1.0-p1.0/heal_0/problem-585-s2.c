@@ -1,0 +1,162 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    double price;
+    int id;
+} Item;
+
+typedef struct {
+    Item *data;
+    size_t capacity;
+    size_t size;
+} MinHeap;
+
+static void swap(Item *a, Item *b) {
+    Item temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+static void heapify_up(MinHeap *heap, size_t index) {
+    while (index > 0) {
+        size_t parent = (index - 1) / 2;
+        if (heap->data[index].price >= heap->data[parent].price) {
+            break;
+        }
+        swap(&heap->data[index], &heap->data[parent]);
+        index = parent;
+    }
+}
+
+static void heapify_down(MinHeap *heap, size_t index) {
+    while (1) {
+        size_t left = 2 * index + 1;
+        size_t right = 2 * index + 2;
+        size_t smallest = index;
+
+        if (left < heap->size && heap->data[left].price < heap->data[smallest].price) {
+            smallest = left;
+        }
+        if (right < heap->size && heap->data[right].price < heap->data[smallest].price) {
+            smallest = right;
+        }
+
+        if (smallest == index) {
+            break;
+        }
+
+        swap(&heap->data[index], &heap->data[smallest]);
+        index = smallest;
+    }
+}
+
+static MinHeap* create_heap(size_t capacity) {
+    MinHeap *heap = (MinHeap*)malloc(sizeof(MinHeap));
+    if (!heap) {
+        return NULL;
+    }
+
+    heap->data = (Item*)malloc(capacity * sizeof(Item));
+    if (!heap->data) {
+        free(heap);
+        return NULL;
+    }
+
+    heap->capacity = capacity;
+    heap->size = 0;
+    return heap;
+}
+
+static void free_heap(MinHeap *heap) {
+    if (heap) {
+        free(heap->data);
+        free(heap);
+    }
+}
+
+static int push_heap(MinHeap *heap, Item item) {
+    if (!heap || heap->size >= heap->capacity) {
+        return 0;
+    }
+    heap->data[heap->size] = item;
+    heapify_up(heap, heap->size);
+    heap->size++;
+    return 1;
+}
+
+static void replace_root(MinHeap *heap, Item item) {
+    if (!heap || heap->size == 0) {
+        return;
+    }
+    heap->data[0] = item;
+    heapify_down(heap, 0);
+}
+
+Item* find_n_expensive(Item *dataset, size_t dataset_size, size_t n, size_t *result_size) {
+    if (!dataset || dataset_size == 0 || n == 0 || !result_size) {
+        if (result_size) {
+            *result_size = 0;
+        }
+        return NULL;
+    }
+
+    size_t actual_n = n < dataset_size ? n : dataset_size;
+
+    MinHeap *heap = create_heap(actual_n);
+    if (!heap) {
+        *result_size = 0;
+        return NULL;
+    }
+
+    for (size_t i = 0; i < dataset_size; i++) {
+        if (heap->size < heap->capacity) {
+            push_heap(heap, dataset[i]);
+        } else if (dataset[i].price > heap->data[0].price) {
+            replace_root(heap, dataset[i]);
+        }
+    }
+
+    Item *result = (Item*)malloc(actual_n * sizeof(Item));
+    if (!result) {
+        free_heap(heap);
+        *result_size = 0;
+        return NULL;
+    }
+
+    for (size_t i = 0; i < heap->size; i++) {
+        result[i] = heap->data[i];
+    }
+
+    *result_size = heap->size;
+    free_heap(heap);
+    return result;
+}
+
+int main(void) {
+    Item dataset[] = {
+        {10.50, 1},
+        {25.00, 2},
+        {15.75, 3},
+        {50.00, 4},
+        {5.25, 5},
+        {30.00, 6},
+        {45.00, 7}
+    };
+    size_t dataset_size = sizeof(dataset) / sizeof(dataset[0]);
+    size_t n = 3;
+    size_t result_size = 0;
+
+    Item *expensive_items = find_n_expensive(dataset, dataset_size, n, &result_size);
+
+    if (expensive_items) {
+        for (size_t i = 0; i < result_size; i++) {
+            printf("Item ID: %d, Price: %.2f\n", expensive_items[i].id, expensive_items[i].price);
+        }
+        free(expensive_items);
+    } else {
+        printf("No items found or memory allocation failed.\n");
+    }
+
+    return 0;
+}

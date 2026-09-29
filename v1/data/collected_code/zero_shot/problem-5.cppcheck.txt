@@ -1,0 +1,12 @@
+collected_code/problem-5-0.c:9:30: error: Array 'A[2147483648]' accessed at index -1, which is out of bounds. [negativeIndex]
+        A[i] = A[i-2] * 4 - A[i-4];
+                             ^
+collected_code/problem-5-0.c:8:18: note: Assignment 'i=3', assigned value is 3
+    for (int i = 3; i <= n; i++) {
+                 ^
+collected_code/problem-5-0.c:9:30: note: Negative array index
+        A[i] = A[i-2] * 4 - A[i-4];
+                             ^
+collected_code/problem-5-0.c:17:18: error: Cannot determine that 'n' is initialized [premium-bughuntingUninit]
+    scanf("%d", &n);
+                 ^

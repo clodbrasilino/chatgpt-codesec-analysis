@@ -1,0 +1,29 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+void remove_whitespaces(char *str) {
+    if (str == NULL) {
+        return;
+    }
+
+    int i = 0;
+    int j = 0;
+
+    while (str[i] != '\0') {
+        if (str[i] != ' ' && str[i] != '\t' && str[i] != '\n' && str[i] != '\r' && str[i] != '\v' && str[i] != '\f') {
+            str[j++] = str[i];
+        }
+        i++;
+    }
+    str[j] = '\0';
+}
+
+int main(void) {
+    char str[] = "  This \t is \n a test \r string.  ";
+    
+    remove_whitespaces(str);
+    
+    printf("%s\n", str);
+    
+    return 0;
+}

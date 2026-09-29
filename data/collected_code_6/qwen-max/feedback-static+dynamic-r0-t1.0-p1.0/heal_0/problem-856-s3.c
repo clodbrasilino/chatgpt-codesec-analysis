@@ -1,0 +1,36 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int minSwaps(int arr[], int n) {
+    int cnt_0 = 0, cnt_1 = 0;
+    for (int i = 0; i < n; i++) {
+        if (arr[i] == 0) {
+            cnt_0++;
+        } else {
+            cnt_1++;
+        }
+    }
+
+    int start = 0, end = 0, max_ones = 0, ones_count = 0;
+    while (end < n) {
+        if (arr[end] == 1) {
+            ones_count++;
+        }
+        if (end - start + 1 > cnt_1) {
+            if (arr[start] == 1) {
+                ones_count--;
+            }
+            start++;
+        }
+        max_ones = (max_ones > ones_count) ? max_ones : ones_count;
+        end++;
+    }
+    return cnt_1 - max_ones;
+}
+
+int main() {
+    int arr[] = {1, 0, 1, 0, 1, 0, 0, 1};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    printf("Minimum swaps required: %d\n", minSwaps(arr, n));
+    return 0;
+}

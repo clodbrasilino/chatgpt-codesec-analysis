@@ -1,0 +1,14 @@
+In file included from /Library/Developer/CommandLineTools/SDKs/MacOSX15.sdk/usr/include/_string.h:228,
+                 from /Library/Developer/CommandLineTools/SDKs/MacOSX15.sdk/usr/include/string.h:58,
+                 from /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_7/healed/problem-957.c:7:
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_7/healed/problem-957.c: In function 'read_input_line':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_7/healed/problem-957.c:39:20: error: 'UCHAR_MAX' undeclared (first use in this function)
+   39 |     memset(buffer, UCHAR_MAX, capacity);
+      |                    ^~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_7/healed/problem-957.c:8:1: note: 'UCHAR_MAX' is defined in header '<limits.h>'; this is probably fixable by adding '#include <limits.h>'
+    7 | #include <string.h>
+  +++ |+#include <limits.h>
+    8 | 
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_7/healed/problem-957.c:39:20: note: each undeclared identifier is reported only once for each function it appears in
+   39 |     memset(buffer, UCHAR_MAX, capacity);
+      |                    ^~~~~~~~~

@@ -1,0 +1,12 @@
+collected_code_3/problem-510-1.c: In function 'countSubsequences':
+collected_code_3/problem-510-1.c:5:5: warning: implicit declaration of function 'memset' [-Wimplicit-function-declaration]
+    5 |     memset(dp, 0, sizeof(dp));
+      |     ^~~~~~
+collected_code_3/problem-510-1.c:2:1: note: include '<string.h>' or provide a declaration of 'memset'
+    1 | #include <stdio.h>
+  +++ |+#include <string.h>
+    2 | 
+collected_code_3/problem-510-1.c:5:5: warning: incompatible implicit declaration of built-in function 'memset' [-Wbuiltin-declaration-mismatch]
+    5 |     memset(dp, 0, sizeof(dp));
+      |     ^~~~~~
+collected_code_3/problem-510-1.c:5:5: note: include '<string.h>' or provide a declaration of 'memset'

@@ -1,0 +1,13 @@
+#include <stdio.h>
+
+long long decagonalNumber(int n) {
+    return 4*n*n - 3*n;
+}
+
+int main() {
+    int n;
+    printf("Enter a number: ");
+    scanf("%d", &n);
+    printf("The %dth decagonal number is: %lld\n", n, decagonalNumber(n));
+    return 0;
+}

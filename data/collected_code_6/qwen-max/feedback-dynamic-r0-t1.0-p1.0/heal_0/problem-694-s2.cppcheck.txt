@@ -1,0 +1,7 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-694-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-694-s2.c:35:13: error: Common realloc mistake: 'unique_values' nulled but not freed upon failure [memleakOnRealloc]
+            unique_values = realloc(unique_values, (*unique_count + 1) * sizeof(void *));
+            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-694-s2.c:22:53: style: Parameter 'item' can be declared as pointer to const [constParameterPointer]
+int is_in_list(void **list, size_t list_size, void *item) {
+                                                    ^

@@ -1,0 +1,36 @@
+#include <stdio.h>
+#include <regex.h>
+
+int is_valid_string(const char *str) {
+    regex_t regex;
+    int result;
+    
+    if (regcomp(&regex, "^[a-zA-Z0-9]+$", REG_EXTENDED | REG_NOSUB) != 0) {
+        return -1;
+    }
+    
+    result = regexec(&regex, str, 0, NULL, 0);
+    regfree(&regex);
+    
+    return result == 0;
+}
+
+int main(void) {
+    const char *test_strings[] = {
+        "hello123",
+        "HelloWorld",
+        "test@string",
+        "12345",
+        "",
+        "with space"
+    };
+    
+    int num_tests = sizeof(test_strings) / sizeof(test_strings[0]);
+    
+    for (int i = 0; i < num_tests; i++) {
+        printf("'%s': %s\n", test_strings[i], 
+               is_valid_string(test_strings[i]) == 1 ? "valid" : "invalid");
+    }
+    
+    return 0;
+}

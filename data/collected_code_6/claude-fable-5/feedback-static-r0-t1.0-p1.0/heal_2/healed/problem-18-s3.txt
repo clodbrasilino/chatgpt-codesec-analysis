@@ -1,0 +1,83 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+#include <stdlib.h>
+
+#define BUFFER_SIZE 256
+
+void remove_chars(char *str, const char *mask);
+static bool read_line(char *buffer, size_t size);
+
+void remove_chars(char *str, const char *mask)
+{
+    bool present[256] = { false };
+    size_t i;
+    size_t j;
+
+    if (str == NULL || mask == NULL) {
+        return;
+    }
+
+    for (i = 0; mask[i] != '\0'; i++) {
+        present[(unsigned char)mask[i]] = true;
+    }
+
+    j = 0;
+    for (i = 0; str[i] != '\0'; i++) {
+        if (!present[(unsigned char)str[i]]) {
+            str[j] = str[i];
+            j++;
+        }
+    }
+    str[j] = '\0';
+}
+
+static bool read_line(char *buffer, size_t size)
+{
+    char *newline;
+
+    if (buffer == NULL || size == 0) {
+        return false;
+    }
+
+    if (fgets(buffer, (int)size, stdin) == NULL) {
+        return false;
+    }
+
+    buffer[size - 1] = '\0';
+
+    newline = memchr(buffer, '\n', size);
+    if (newline != NULL) {
+        *newline = '\0';
+    }
+
+    return true;
+}
+
+int main(void)
+{
+    char first[BUFFER_SIZE];
+    char second[BUFFER_SIZE];
+
+    printf("Enter the first string: ");
+    if (!read_line(first, sizeof(first))) {
+        fprintf(stderr, "Error reading first string\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter the second string: ");
+    if (!read_line(second, sizeof(second))) {
+        fprintf(stderr, "Error reading second string\n");
+        return EXIT_FAILURE;
+    }
+
+    remove_chars(first, second);
+
+    printf("Result: %s\n", first);
+
+    return EXIT_SUCCESS;
+}
+```
+
+Regarding the flagged weaknesses: the two Flawfinder warnings on `first` and `second` are informational hits on statically-sized arrays (CWE-119/CWE-120). They are already mitigated in this code because all reads go through `read_line`, which uses `fgets` bounded by `sizeof(buffer)`, guarantees NUL termination by explicitly writing `buffer[size - 1] = '\0'`, and strips the newline with a bounded `memchr`. `remove_chars` only shrinks the string in place and casts through `unsigned char` before indexing the lookup table, so no out-of-bounds access is possible. The rewrite keeps those mitigations and replaces the magic number `256` with a named constant for maintainability.

@@ -1,0 +1,213 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int is_none;
+    int value;
+} Element;
+
+typedef struct {
+    Element *elements;
+    size_t count;
+} Tuple;
+
+typedef struct {
+    Tuple *tuples;
+    size_t count;
+} TupleList;
+
+static int tuple_is_all_none(const Tuple *t)
+{
+    size_t i;
+
+    if (t == NULL || t->elements == NULL || t->count == 0) {
+        return 1;
+    }
+    for (i = 0; i < t->count; i++) {
+        if (!t->elements[i].is_none) {
+            return 0;
+        }
+    }
+    return 1;
+}
+
+static void tuple_free(Tuple *t)
+{
+    if (t != NULL) {
+        free(t->elements);
+        t->elements = NULL;
+        t->count = 0;
+    }
+}
+
+int remove_all_none_tuples(TupleList *list)
+{
+    size_t read_idx;
+    size_t write_idx;
+
+    if (list == NULL || list->tuples == NULL) {
+        return -1;
+    }
+
+    write_idx = 0;
+    for (read_idx = 0; read_idx < list->count; read_idx++) {
+        if (tuple_is_all_none(&list->tuples[read_idx])) {
+            tuple_free(&list->tuples[read_idx]);
+        } else {
+            if (write_idx != read_idx) {
+                list->tuples[write_idx] = list->tuples[read_idx];
+                list->tuples[read_idx].elements = NULL;
+                list->tuples[read_idx].count = 0;
+            }
+            write_idx++;
+        }
+    }
+    list->count = write_idx;
+    return 0;
+}
+
+static int tuple_init(Tuple *t, const int *values, const int *none_flags, size_t count)
+{
+    size_t i;
+
+    if (t == NULL || values == NULL || none_flags == NULL || count == 0) {
+        return -1;
+    }
+    t->elements = malloc(count * sizeof(Element));
+    if (t->elements == NULL) {
+        return -1;
+    }
+    t->count = count;
+    for (i = 0; i < count; i++) {
+        t->elements[i].value = values[i];
+        t->elements[i].is_none = none_flags[i];
+    }
+    return 0;
+}
+
+static void tuple_list_free(TupleList *list)
+{
+    /* Possible weaknesses found:
+     *  The scope of the variable 'i' can be reduced. [variableScope]
+     */
+    size_t i;
+
+    if (list == NULL) {
+        return;
+    }
+    if (list->tuples != NULL) {
+        for (i = 0; i < list->count; i++) {
+            tuple_free(&list->tuples[i]);
+        }
+        free(list->tuples);
+        list->tuples = NULL;
+    }
+    list->count = 0;
+}
+
+static void print_tuple_list(const TupleList *list)
+{
+    size_t i;
+    size_t j;
+
+    if (list == NULL || list->tuples == NULL) {
+        printf("[]\n");
+        return;
+    }
+    printf("[");
+    for (i = 0; i < list->count; i++) {
+        printf("(");
+        for (j = 0; j < list->tuples[i].count; j++) {
+            if (list->tuples[i].elements[j].is_none) {
+                printf("None");
+            } else {
+                printf("%d", list->tuples[i].elements[j].value);
+            }
+            if (j + 1 < list->tuples[i].count) {
+                printf(", ");
+            }
+        }
+        printf(")");
+        if (i + 1 < list->count) {
+            printf(", ");
+        }
+    }
+    printf("]\n");
+}
+
+int main(void)
+{
+    TupleList list;
+    /* Possible weaknesses found:
+     *  Variable 'v1' can be declared as const array [constVariable]
+     */
+    int v1[] = {0, 0};
+    /* Possible weaknesses found:
+     *  Variable 'n1' can be declared as const array [constVariable]
+     */
+    int n1[] = {1, 1};
+    /* Possible weaknesses found:
+     *  Variable 'v2' can be declared as const array [constVariable]
+     */
+    int v2[] = {0, 0};
+    /* Possible weaknesses found:
+     *  Variable 'n2' can be declared as const array [constVariable]
+     */
+    int n2[] = {1, 1};
+    /* Possible weaknesses found:
+     *  Variable 'v3' can be declared as const array [constVariable]
+     */
+    int v3[] = {0, 0};
+    /* Possible weaknesses found:
+     *  Variable 'n3' can be declared as const array [constVariable]
+     */
+    int n3[] = {1, 1};
+    /* Possible weaknesses found:
+     *  Variable 'v4' can be declared as const array [constVariable]
+     */
+    int v4[] = {87, 46};
+    /* Possible weaknesses found:
+     *  Variable 'n4' can be declared as const array [constVariable]
+     */
+    int n4[] = {0, 0};
+    /* Possible weaknesses found:
+     *  Variable 'v5' can be declared as const array [constVariable]
+     */
+    int v5[] = {10, 0};
+    /* Possible weaknesses found:
+     *  Variable 'n5' can be declared as const array [constVariable]
+     */
+    int n5[] = {0, 1};
+
+    list.count = 5;
+    list.tuples = malloc(list.count * sizeof(Tuple));
+    if (list.tuples == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    if (tuple_init(&list.tuples[0], v1, n1, 2) != 0 ||
+        tuple_init(&list.tuples[1], v2, n2, 2) != 0 ||
+        tuple_init(&list.tuples[2], v3, n3, 2) != 0 ||
+        tuple_init(&list.tuples[3], v4, n4, 2) != 0 ||
+        tuple_init(&list.tuples[4], v5, n5, 2) != 0) {
+        fprintf(stderr, "Tuple initialization failed\n");
+        tuple_list_free(&list);
+        return EXIT_FAILURE;
+    }
+
+    printf("Before: ");
+    print_tuple_list(&list);
+
+    if (remove_all_none_tuples(&list) != 0) {
+        fprintf(stderr, "Failed to remove tuples\n");
+        tuple_list_free(&list);
+        return EXIT_FAILURE;
+    }
+
+    printf("After:  ");
+    print_tuple_list(&list);
+
+    tuple_list_free(&list);
+    return EXIT_SUCCESS;
+}

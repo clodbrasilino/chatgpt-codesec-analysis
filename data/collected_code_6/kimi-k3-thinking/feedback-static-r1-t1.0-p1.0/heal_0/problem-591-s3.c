@@ -1,0 +1,48 @@
+#include <stdio.h>
+#include <stddef.h>
+
+int swap_first_last(int arr[], size_t size)
+{
+    int temp;
+
+    if (arr == NULL || size == 0) {
+        return -1;
+    }
+    if (size == 1) {
+        return 0;
+    }
+
+    temp = arr[0];
+    arr[0] = arr[size - 1];
+    arr[size - 1] = temp;
+
+    return 0;
+}
+
+int main(void)
+{
+    int numbers[] = {10, 20, 30, 40, 50};
+    size_t size = sizeof(numbers) / sizeof(numbers[0]);
+    size_t i;
+    int status;
+
+    printf("Original list: ");
+    for (i = 0; i < size; i++) {
+        printf("%d ", numbers[i]);
+    }
+    printf("\n");
+
+    status = swap_first_last(numbers, size);
+    if (status != 0) {
+        fprintf(stderr, "Error: unable to swap elements\n");
+        return 1;
+    }
+
+    printf("Swapped list:  ");
+    for (i = 0; i < size; i++) {
+        printf("%d ", numbers[i]);
+    }
+    printf("\n");
+
+    return 0;
+}

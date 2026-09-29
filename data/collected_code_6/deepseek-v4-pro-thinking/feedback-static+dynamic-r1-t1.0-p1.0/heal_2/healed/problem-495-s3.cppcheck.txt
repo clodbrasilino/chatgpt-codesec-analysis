@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_2/healed/problem-495-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_2/healed/problem-495-s3.c:35:40: style: Condition 'remain>0' is always true [knownConditionTrueFalse]
+            if (write < size && remain > 0) {
+                                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_2/healed/problem-495-s3.c:34:45: note: Assignment 'remain=len_orig-read+1', assigned value is greater than 0
+            size_t remain = len_orig - read + 1;
+                                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_2/healed/problem-495-s3.c:35:40: note: Condition 'remain>0' is always true
+            if (write < size && remain > 0) {
+                                       ^

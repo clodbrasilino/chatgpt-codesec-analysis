@@ -1,0 +1,32 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+
+int findKthElement(int arr[], int n, int k) {
+    if (k < 1 || k > n) return -1;
+    int oddCount = 0;
+    for (int i = 0; i < n && oddCount < k; ++i) {
+        if (arr[i] % 2 != 0) {
+            ++oddCount;
+            if (oddCount == k) return arr[i];
+        }
+    }
+    k -= oddCount;
+    for (int i = 0; i < n && k > 0; ++i) {
+        if (arr[i] % 2 == 0) {
+            --k;
+            if (k == 0) return arr[i];
+        }
+    }
+    return -1;
+}
+
+int main() {
+    int arr[] = {1, 3, 5, 2, 4, 6};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    int k = 3;
+    int result = findKthElement(arr, n, k);
+    printf("The %dth element is: %d\n", k, result);
+    return 0;
+}
+```

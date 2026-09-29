@@ -1,0 +1,84 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *array;
+    size_t length;
+} List;
+
+typedef struct {
+    List *lists;
+    size_t count;
+} ListOfLists;
+
+List* find_max_length_lists(ListOfLists input, size_t *out_count) {
+    if (input.lists == NULL || input.count == 0 || out_count == NULL) {
+        if (out_count != NULL) {
+            *out_count = 0;
+        }
+        return NULL;
+    }
+
+    size_t max_len = 0;
+    for (size_t i = 0; i < input.count; i++) {
+        if (input.lists[i].length > max_len) {
+            max_len = input.lists[i].length;
+        }
+    }
+
+    size_t max_count = 0;
+    for (size_t i = 0; i < input.count; i++) {
+        if (input.lists[i].length == max_len) {
+            max_count++;
+        }
+    }
+
+    List* max_lists = malloc(max_count * sizeof(List));
+    if (max_lists == NULL) {
+        *out_count = 0;
+        return NULL;
+    }
+
+    size_t idx = 0;
+    for (size_t i = 0; i < input.count; i++) {
+        if (input.lists[i].length == max_len) {
+            max_lists[idx].array = input.lists[i].array;
+            max_lists[idx].length = input.lists[i].length;
+            idx++;
+        }
+    }
+
+    *out_count = max_count;
+    return max_lists;
+}
+
+int main() {
+    int arr1[] = {1, 2, 3};
+    int arr2[] = {4, 5, 6, 7};
+    int arr3[] = {8, 9};
+    int arr4[] = {10, 11, 12, 13};
+
+    List lists[] = {
+        {arr1, 3},
+        {arr2, 4},
+        {arr3, 2},
+        {arr4, 4}
+    };
+
+    ListOfLists in_lists = {lists, 4};
+    size_t out_count = 0;
+
+    List* max_lists = find_max_length_lists(in_lists, &out_count);
+
+    if (max_lists != NULL) {
+        for (size_t i = 0; i < out_count; i++) {
+            for (size_t j = 0; j < max_lists[i].length; j++) {
+                printf("%d ", max_lists[i].array[j]);
+            }
+            printf("\n");
+        }
+        free(max_lists);
+    }
+
+    return 0;
+}

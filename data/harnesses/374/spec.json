@@ -1,0 +1,79 @@
+{
+  "task_id": 374,
+  "text": "Write a C function to print all permutations of a given string including duplicates.",
+  "fn_candidates": [
+    "permute_string",
+    "PermuteString",
+    "permuteString",
+    "permutestring"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "permute_string",
+      "args": [
+        "ab"
+      ],
+      "expected": [
+        "ab",
+        "ba"
+      ],
+      "assert_src": "assert permute_string('ab')==['ab', 'ba']"
+    },
+    {
+      "fn_name": "permute_string",
+      "args": [
+        "abc"
+      ],
+      "expected": [
+        "abc",
+        "bac",
+        "bca",
+        "acb",
+        "cab",
+        "cba"
+      ],
+      "assert_src": "assert permute_string('abc')==['abc', 'bac', 'bca', 'acb', 'cab', 'cba']"
+    },
+    {
+      "fn_name": "permute_string",
+      "args": [
+        "abcd"
+      ],
+      "expected": [
+        "abcd",
+        "bacd",
+        "bcad",
+        "bcda",
+        "acbd",
+        "cabd",
+        "cbad",
+        "cbda",
+        "acdb",
+        "cadb",
+        "cdab",
+        "cdba",
+        "abdc",
+        "badc",
+        "bdac",
+        "bdca",
+        "adbc",
+        "dabc",
+        "dbac",
+        "dbca",
+        "adcb",
+        "dacb",
+        "dcab",
+        "dcba"
+      ],
+      "assert_src": "assert permute_string('abcd')==['abcd', 'bacd', 'bcad', 'bcda', 'acbd', 'cabd', 'cbad', 'cbda', 'acdb', 'cadb', 'cdab', 'cdba', 'abdc', 'badc', 'bdac', 'bdca', 'adbc', 'dabc', 'dbac', 'dbca', 'adcb', 'dacb', 'dcab', 'dcba']"
+    }
+  ],
+  "arg_kinds": [
+    "str"
+  ],
+  "return_kind": "str-list",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-823-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-823-s2.c:70:13: style: Condition 'str!=NULL' is always true [knownConditionTrueFalse]
+    if (str != NULL) {
+            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-823-s2.c:65:23: note: Assignment 'str="hello world"', assigned value is "hello world"
+    const char *str = "hello world";
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-823-s2.c:70:13: note: Condition 'str!=NULL' is always true
+    if (str != NULL) {
+            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-823-s2.c:73:17: style: Condition 'pattern!=NULL' is always true [knownConditionTrueFalse]
+    if (pattern != NULL) {
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-823-s2.c:66:27: note: Assignment 'pattern="hello"', assigned value is "hello"
+    const char *pattern = "hello";
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-823-s2.c:73:17: note: Condition 'pattern!=NULL' is always true
+    if (pattern != NULL) {
+                ^

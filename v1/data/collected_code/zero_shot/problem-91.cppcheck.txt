@@ -1,0 +1,6 @@
+collected_code/problem-91-0.c:7:27: error: Cannot determine that 'strings[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        if (strstr(strings[i], substring) != NULL) {
+                          ^
+collected_code/problem-91-0.c:7:32: error: Cannot determine that 'substring[0]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        if (strstr(strings[i], substring) != NULL) {
+                               ^

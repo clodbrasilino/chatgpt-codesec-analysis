@@ -1,0 +1,80 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct dict_entry {
+    char *key;
+    int value;
+    struct dict_entry *next;
+} dict_entry;
+
+typedef struct {
+    dict_entry *head;
+    size_t size;
+} dictionary;
+
+dictionary *dict_create(void) {
+    dictionary *d = malloc(sizeof(*d));
+    if (!d) return NULL;
+    d->head = NULL;
+    d->size = 0;
+    return d;
+}
+
+int dict_insert(dictionary *d, const char *key, int value) {
+    if (!d || !key) return -1;
+    dict_entry *e = malloc(sizeof(*e));
+    if (!e) return -1;
+    e->key = malloc(strlen(key) + 1);
+    if (!e->key) {
+        free(e);
+        return -1;
+    }
+    strcpy(e->key, key);
+    e->value = value;
+    e->next = d->head;
+    d->head = e;
+    d->size++;
+    return 0;
+}
+
+void dict_free(dictionary *d) {
+    if (!d) return;
+    dict_entry *cur = d->head;
+    while (cur) {
+        dict_entry *next = cur->next;
+        free(cur->key);
+        free(cur);
+        cur = next;
+    }
+    free(d);
+}
+
+int all_values_same(const dictionary *d) {
+    if (!d || d->size == 0) return 1;
+    dict_entry *cur = d->head;
+    int first = cur->value;
+    while (cur) {
+        if (cur->value != first) return 0;
+        cur = cur->next;
+    }
+    return 1;
+}
+
+int main(void) {
+    dictionary *d = dict_create();
+    if (!d) return 1;
+
+    dict_insert(d, "a", 5);
+    dict_insert(d, "b", 5);
+    dict_insert(d, "c", 5);
+    printf("%d\n", all_values_same(d));
+
+    dict_insert(d, "d", 7);
+    printf("%d\n", all_values_same(d));
+
+    dict_free(d);
+    return 0;
+}
+```

@@ -1,0 +1,70 @@
+#include <stdio.h>
+#include <string.h>
+#include <limits.h>
+#include <stdlib.h>
+
+char findMaxOccurringChar(const char *str, size_t len) {
+    if (str == NULL || len == 0) {
+        return '\0';
+    }
+
+    size_t count[256] = {0};
+    size_t i;
+
+    for (i = 0; i < len; i++) {
+        count[(unsigned char)str[i]]++;
+    }
+
+    size_t maxCount = 0;
+    char maxChar = '\0';
+    size_t j;
+
+    for (j = 0; j < 256; j++) {
+        if (count[j] > maxCount) {
+            maxCount = count[j];
+            maxChar = (char)j;
+        }
+    }
+
+    return maxChar;
+}
+
+int main(void) {
+    char *str = NULL;
+    size_t buffer_size = 0;
+    ssize_t bytes_read;
+
+    printf("Enter a string: ");
+    
+    bytes_read = getline(&str, &buffer_size, stdin);
+    
+    if (bytes_read == -1) {
+        fprintf(stderr, "Error reading input\n");
+        free(str);
+        return 1;
+    }
+
+    size_t len = (size_t)bytes_read;
+    
+    if (len > 0 && str[len - 1] == '\n') {
+        str[len - 1] = '\0';
+        len--;
+    }
+
+    if (len == 0) {
+        printf("Empty string provided\n");
+        free(str);
+        return 1;
+    }
+
+    char maxChar = findMaxOccurringChar(str, len);
+
+    if (maxChar != '\0') {
+        printf("Maximum occurring character: '%c'\n", maxChar);
+    } else {
+        printf("No characters found\n");
+    }
+
+    free(str);
+    return 0;
+}

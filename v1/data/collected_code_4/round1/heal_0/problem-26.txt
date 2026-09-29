@@ -1,0 +1,31 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+
+bool is_k_elements(int tuple_list[], int size, int k){
+    if (size != k){
+        return false;
+    }
+    for(int i = 0; i < size; i++){
+        if(tuple_list[i] == 0){
+            return false;
+        }
+    }
+    return true;
+}
+
+int main(){
+    int tuple_list[4] = {1, 2, 3, 4};
+    int size = sizeof(tuple_list)/sizeof(tuple_list[0]);
+    int k = 4;
+    
+    if(is_k_elements(tuple_list, size, k)){
+        printf("The given tuple list has all k elements\n");
+    }else{
+        printf("The given tuple list does not have all k elements\n");
+    }
+
+    return 0;
+}
+```
+The function `is_k_elements` checks if given tuple list has `k` elements. It first verifies if the size of the list is equal to `k` and then if all the elements in the tuple are non-zero. The non-zero check is necessary to make sure the tuple list is indeed fully filled with `k` elements. Zero in C usually means the absence of a value. If both these conditions are met, then the function returns true. Otherwise, it returns false. This function is used in the `main` function where a tuple list and its supposed size `k` are created. Then the `is_k_elements` function is called with these variables and depending on its return value, a corresponding message is printed on the screen.

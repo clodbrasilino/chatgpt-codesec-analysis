@@ -1,0 +1,67 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+#include <string.h>
+
+#define BUFFER_SIZE 256
+
+int first_repeated_char(const char *str)
+{
+    bool seen[256] = { false };
+    size_t i;
+
+    if (str == NULL) {
+        return -1;
+    }
+
+    for (i = 0; str[i] != '\0'; i++) {
+        unsigned char c = (unsigned char)str[i];
+        if (seen[c]) {
+            return (int)c;
+        }
+        seen[c] = true;
+    }
+
+    return -1;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    int result;
+
+    printf("Enter a string: ");
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[strcspn(buffer, "\n")] = '\0';
+
+    result = first_repeated_char(buffer);
+
+    if (result == -1) {
+        printf("No repeated character found\n");
+    } else {
+        printf("First repeated character: %c\n", (char)result);
+    }
+
+    return 0;
+}
+```
+
+**Analysis notes:**
+
+The Flawfinder warning about the statically-sized `char buffer[256]` (CWE-119/CWE-120) is a false positive in this code, and the original already contained the correct mitigations. My rewrite preserves them:
+
+1. **Bounded input**: `fgets(buffer, sizeof(buffer), stdin)` limits reads to the buffer size, guaranteeing null-termination and preventing overflow. Using `sizeof(buffer)` rather than a hardcoded literal means the bound stays correct if the size changes.
+
+2. **NULL check on `fgets`**: Handles EOF or read errors gracefully instead of processing an indeterminate buffer.
+
+3. **Safe newline stripping**: `buffer[strcspn(buffer, "\n")] = '\0'` never indexes out of bounds — `strcspn` returns at most the string length, which is always within the buffer after a successful `fgets`.
+
+4. **Safe array indexing in `first_repeated_char`**: The cast to `unsigned char` before indexing `seen[256]` is essential. Plain `char` may be signed, and a negative index (e.g., from bytes ≥ 0x80) would cause out-of-bounds access. The 256-element array covers the entire `unsigned char` range.
+
+5. **NULL guard** on the function parameter protects against misuse by future callers.
+
+The only change of substance is replacing the magic number with a `BUFFER_SIZE` macro for maintainability; the code was already free of the flagged weakness.

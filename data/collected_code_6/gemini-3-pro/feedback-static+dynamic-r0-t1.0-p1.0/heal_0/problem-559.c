@@ -1,0 +1,41 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+long long max_subarray_sum(const int *array, size_t length) {
+    if (array == NULL || length == 0) {
+        return LLONG_MIN;
+    }
+
+    long long max_so_far = array[0];
+    long long curr_max = array[0];
+
+    for (size_t i = 1; i < length; i++) {
+        if (curr_max < 0) {
+            curr_max = array[i];
+        } else {
+            curr_max += array[i];
+        }
+
+        if (max_so_far < curr_max) {
+            max_so_far = curr_max;
+        }
+    }
+
+    return max_so_far;
+}
+
+int main(void) {
+    int arr[] = {-2, -3, 4, -1, -2, 1, 5, -3};
+    size_t length = sizeof(arr) / sizeof(arr[0]);
+
+    long long result = max_subarray_sum(arr, length);
+
+    if (result != LLONG_MIN) {
+        printf("Largest sum of contiguous subarray is %lld\n", result);
+    } else {
+        printf("Invalid input array.\n");
+    }
+
+    return 0;
+}

@@ -1,0 +1,75 @@
+```c
+#include <stdio.h>
+#include <ctype.h>
+#include <string.h>
+#include <stdlib.h>
+
+char *remove_non_alnum(char *str, size_t max_len);
+
+char *remove_non_alnum(char *str, size_t max_len)
+{
+    size_t read;
+    size_t write;
+
+    if (str == NULL || max_len == 0) {
+        return NULL;
+    }
+
+    if (strnlen(str, max_len) >= max_len) {
+        return NULL;
+    }
+
+    write = 0;
+    for (read = 0; read < max_len && str[read] != '\0'; read++) {
+        if (isalnum((unsigned char)str[read])) {
+            if (write < max_len - 1) {
+                str[write] = str[read];
+                write++;
+            }
+        }
+    }
+
+    if (write >= max_len) {
+        return NULL;
+    }
+    str[write] = '\0';
+
+    return str;
+}
+
+int main(void)
+{
+    char input[] = "Hello, World! 123 #$%^ test_case-42";
+    char *result;
+
+    result = remove_non_alnum(input, sizeof(input));
+    if (result == NULL) {
+        fprintf(stderr, "Error: invalid input string\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Result: %s\n", result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The original code was already well-defended against the Flawfinder warnings, which are largely low-risk (risk 1) heuristic hits on array indexing inside loops rather than genuine defects:
+
+1. **NULL / zero-length guard** — `str == NULL || max_len == 0` prevents dereferencing invalid input.
+
+2. **Termination guarantee** — the `strnlen(str, max_len) >= max_len` check rejects any buffer that is not NUL-terminated within `max_len`, which is the key defense against CWE-120 (buffer overflow) and CWE-20 (improper input validation). This ensures the loop condition `str[read] != '\0'` will always trigger before `read` reaches `max_len`.
+
+3. **Bounded loop** — `read < max_len` acts as a hard ceiling even if the terminator check were bypassed.
+
+4. **In-place compaction is safe** — `write <= read` always holds, so `str[write] = str[read]` can never write past what was already read. In my rewrite I added an explicit `write < max_len - 1` guard and a post-loop `write >= max_len` check as belt-and-suspenders hardening, making the invariant locally verifiable without reasoning about the loop.
+
+5. **`isalnum` cast** — the `(unsigned char)` cast is correct and necessary: passing a plain `char` with a negative value to `isalnum` is undefined behavior per the C standard.
+
+6. **`sizeof(input)` at the call site** — correct for a stack array; note this would silently break if `input` were a pointer, but as written it's fine.
+
+The remaining Flawfinder hits after these fixes are false positives inherent to any indexed buffer access.

@@ -1,0 +1,61 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int* filter_even(const int *input, size_t input_size, size_t *output_size)
+{
+    int *output;
+    size_t i;
+    size_t count = 0;
+
+    if (input == NULL || output_size == NULL) {
+        return NULL;
+    }
+
+    if (input_size == 0) {
+        *output_size = 0;
+        return NULL;
+    }
+
+    output = (int*)malloc(input_size * sizeof(int));
+    if (output == NULL) {
+        *output_size = 0;
+        return NULL;
+    }
+
+    for (i = 0; i < input_size; i++) {
+        if (input[i] % 2 == 0) {
+            output[count] = input[i];
+            count++;
+        }
+    }
+
+    *output_size = count;
+    return output;
+}
+
+int main(void)
+{
+    int data[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    size_t data_size = sizeof(data) / sizeof(data[0]);
+    size_t result_size = 0;
+    int *result;
+    /* Possible weaknesses found:
+     *  The scope of the variable 'i' can be reduced. [variableScope]
+     */
+    size_t i;
+
+    result = filter_even(data, data_size, &result_size);
+
+    if (result != NULL) {
+        printf("Even numbers: ");
+        for (i = 0; i < result_size; i++) {
+            printf("%d ", result[i]);
+        }
+        printf("\n");
+        free(result);
+    } else {
+        printf("No even numbers found or error occurred.\n");
+    }
+
+    return 0;
+}

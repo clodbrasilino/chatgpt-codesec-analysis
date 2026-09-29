@@ -1,0 +1,63 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+int first_digit_of_factorial(int n);
+
+int first_digit_of_factorial(int n)
+{
+    double log_sum;
+    double fractional_part;
+    int i;
+
+    if (n < 0) {
+        return -1;
+    }
+
+    if (n <= 1) {
+        return 1;
+    }
+
+    log_sum = 0.0;
+    for (i = 2; i <= n; i++) {
+        log_sum += log10((double)i);
+    }
+
+    fractional_part = log_sum - floor(log_sum);
+
+    return (int)floor(pow(10.0, fractional_part));
+}
+
+int main(void)
+{
+    int n;
+    int result;
+
+    printf("Enter a non-negative integer: ");
+
+    if (scanf("%d", &n) != 1) {
+        fprintf(stderr, "Error: invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    result = first_digit_of_factorial(n);
+
+    if (result < 0) {
+        fprintf(stderr, "Error: factorial is not defined for negative numbers.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("The first digit of %d! is %d\n", n, result);
+
+    return EXIT_SUCCESS;
+}
+```
+
+A few notes on the design choices:
+
+- **Logarithm-based approach**: Computing the factorial directly overflows even `unsigned long long` at `n = 21`. By summing `log10(i)`, the fractional part of the total gives the leading digit via `10^frac`, so this works correctly for very large `n` without overflow (addressing CWE-664 concerns about resource limits).
+- **Input validation**: The return value of `scanf` is checked, and negative inputs are rejected with a distinct error path (addressing CWE-703).
+- **Standards adherence**: Uses `int main(void)`, `EXIT_SUCCESS`/`EXIT_FAILURE`, explicit casts, and all control paths return a defined value (addressing CWE-710).
+
+Compile with the math library linked: `gcc -Wall -Wextra -o factdigit factdigit.c -lm`

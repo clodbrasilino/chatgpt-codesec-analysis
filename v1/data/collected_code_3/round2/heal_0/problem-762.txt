@@ -1,0 +1,24 @@
+```C
+#include <stdio.h>
+#include <stdbool.h>
+
+bool isThirtyDays(int month) {
+    if(month == 4 || month == 6 || month == 9 || month == 11) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+int main() {
+    int month;
+    printf("Enter month number: ");
+    scanf("%d", &month);
+    if(isThirtyDays(month)) {
+        printf("Month %d has 30 days.\n", month);
+    } else {
+        printf("Month %d does not have 30 days.\n", month);
+    }
+    return 0;
+}
+```

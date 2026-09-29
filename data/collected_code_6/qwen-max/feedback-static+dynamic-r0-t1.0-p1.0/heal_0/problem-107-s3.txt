@@ -1,0 +1,24 @@
+```c
+#include <stdio.h>
+#include <inttypes.h>
+
+int count_hex_numbers(int from, int to) {
+    if (from > to) return 0;
+    int count = 0;
+    for (int i = from; i <= to; i++) {
+        char buf[9];
+        snprintf(buf, 9, "%x", i);
+        if (strspn(buf, "0123456789abcdef") == strlen(buf)) count++;
+    }
+    return count;
+}
+
+int main() {
+    int from, to;
+    printf("Enter the range (from to): ");
+    scanf("%d %d", &from, &to);
+    int result = count_hex_numbers(from, to);
+    printf("Count: %d\n", result);
+    return 0;
+}
+```

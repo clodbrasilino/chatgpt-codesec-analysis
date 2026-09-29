@@ -1,0 +1,103 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node* next;
+};
+
+struct Node* createNode(int data) {
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    if (newNode == NULL) {
+        exit(EXIT_FAILURE);
+    }
+    newNode->data = data;
+    newNode->next = NULL;
+    return newNode;
+}
+
+void appendNode(struct Node** head, int data) {
+    if (head == NULL) {
+        return;
+    }
+    struct Node* newNode = createNode(data);
+    if (*head == NULL) {
+        *head = newNode;
+        return;
+    }
+    struct Node* temp = *head;
+    while (temp->next != NULL) {
+        temp = temp->next;
+    }
+    temp->next = newNode;
+}
+
+void printList(struct Node* head) {
+    struct Node* temp = head;
+    while (temp != NULL) {
+        printf("%d ", temp->data);
+        temp = temp->next;
+    }
+    printf("\n");
+}
+
+void freeList(struct Node* head) {
+    /* Possible weaknesses found:
+     *  The scope of the variable 'temp' can be reduced. [variableScope]
+     */
+    struct Node* temp;
+    while (head != NULL) {
+        temp = head;
+        head = head->next;
+        free(temp);
+    }
+}
+
+struct Node* rotateRight(struct Node* head, int k) {
+    if (head == NULL || head->next == NULL || k < 0) {
+        return head;
+    }
+
+    struct Node* temp = head;
+    int length = 1;
+    while (temp->next != NULL) {
+        temp = temp->next;
+        length++;
+    }
+
+    k = k % length;
+    if (k == 0) {
+        return head;
+    }
+
+    temp->next = head;
+
+    int stepsToNewTail = length - k;
+    struct Node* newTail = head;
+    for (int i = 1; i < stepsToNewTail; i++) {
+        newTail = newTail->next;
+    }
+
+    struct Node* newHead = newTail->next;
+    newTail->next = NULL;
+
+    return newHead;
+}
+
+int main(void) {
+    struct Node* head = NULL;
+
+    appendNode(&head, 1);
+    appendNode(&head, 2);
+    appendNode(&head, 3);
+    appendNode(&head, 4);
+    appendNode(&head, 5);
+
+    head = rotateRight(head, 2);
+
+    printList(head);
+
+    freeList(head);
+
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,10 @@
+collected_code_3/round4/heal_0/problem-381.c: In function 'sortListOfLists':
+collected_code_3/round4/heal_0/problem-381.c:19:48: warning: passing argument 5 of 'qsort_r' from incompatible pointer type [-Wincompatible-pointer-types]
+   19 |     qsort_r(lists, len, sizeof(List), compare, &index);
+      |                                                ^~~~~~
+      |                                                |
+      |                                                int *
+In file included from collected_code_3/round4/heal_0/problem-381.c:2:
+/Library/Developer/CommandLineTools/SDKs/MacOSX14.sdk/usr/include/stdlib.h:347:29: note: expected 'int (*)(void *, const void *, const void *)' but argument is of type 'int *'
+  347 |             int (* _Nonnull __compar)(void *, const void *, const void *));
+      |             ~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

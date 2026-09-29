@@ -1,0 +1,59 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+static int replace_chars(char *str, size_t max_len)
+{
+    size_t i;
+    size_t len;
+
+    if (str == NULL) {
+        return -1;
+    }
+
+    len = strnlen(str, max_len);
+
+    if (len == max_len) {
+        return -1;
+    }
+
+    for (i = 0U; i < len; i++) {
+        if ((str[i] == ' ') || (str[i] == ',') || (str[i] == '.')) {
+            str[i] = ':';
+        }
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    char text[] = "Hello, world. This is a test string.";
+    int result;
+
+    result = replace_chars(text, sizeof(text));
+    if (result != 0) {
+        (void)fprintf(stderr, "Error: invalid input string\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("%s\n", text) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Key changes made:**
+
+1. **`strlen` → `strnlen`**: The Flawfinder warning (CWE-126) concerned potential over-reads on non-NUL-terminated strings. `strnlen` bounds the scan to `max_len` bytes, so it can never read past the buffer even if the terminator is missing.
+
+2. **New `max_len` parameter**: Since a bare `char *` carries no size information, the caller must now supply the buffer's capacity. This is the only robust way to make the function safe against unterminated input.
+
+3. **Termination check**: If `strnlen` returns `max_len`, no NUL was found within the buffer — the string is malformed, so the function rejects it with `-1` rather than processing potentially invalid data.
+
+4. **`sizeof(text)` at the call site**: For a true array (not a decayed pointer), `sizeof` yields the full buffer size including the NUL terminator, which is exactly the bound `strnlen` needs.
+
+Note that `strnlen` is POSIX.1-2008 (and available on all mainstream platforms); if strict C99 portability were required, an equivalent bounded loop could replace it.

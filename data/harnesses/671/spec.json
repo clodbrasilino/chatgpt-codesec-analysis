@@ -1,0 +1,44 @@
+{
+  "task_id": 671,
+  "text": "Write a C function to set the right most unset bit.",
+  "fn_candidates": [
+    "set_Right_most_Unset_Bit",
+    "SetRightMostUnsetBit",
+    "setRightMostUnsetBit",
+    "setRightmostUnsetBit"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "set_Right_most_Unset_Bit",
+      "args": [
+        21
+      ],
+      "expected": 23,
+      "assert_src": "assert set_Right_most_Unset_Bit(21) == 23"
+    },
+    {
+      "fn_name": "set_Right_most_Unset_Bit",
+      "args": [
+        11
+      ],
+      "expected": 15,
+      "assert_src": "assert set_Right_most_Unset_Bit(11) == 15"
+    },
+    {
+      "fn_name": "set_Right_most_Unset_Bit",
+      "args": [
+        15
+      ],
+      "expected": 15,
+      "assert_src": "assert set_Right_most_Unset_Bit(15) == 15"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

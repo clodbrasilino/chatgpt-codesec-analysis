@@ -1,0 +1,187 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdbool.h>
+
+#define DICT_MAX_KEY_LEN 1024
+
+typedef struct {
+    char *key;
+    int value;
+    bool occupied;
+} DictEntry;
+
+typedef struct {
+    DictEntry *entries;
+    size_t capacity;
+    size_t size;
+} Dictionary;
+
+static size_t safe_strnlen(const char *str, size_t max_len)
+{
+    size_t len = 0;
+    while (len < max_len && str[len] != '\0') {
+        len++;
+    }
+    return len;
+}
+
+static unsigned long hash_string_n(const char *str, size_t max_len)
+{
+    unsigned long hash = 5381UL;
+    size_t i = 0;
+    while (i < max_len && str[i] != '\0') {
+        hash = ((hash << 5) + hash) + (unsigned long)(unsigned char)str[i];
+        i++;
+    }
+    return hash;
+}
+
+bool dict_init(Dictionary *dict, size_t capacity)
+{
+    if (dict == NULL || capacity == 0) {
+        return false;
+    }
+    dict->entries = calloc(capacity, sizeof(DictEntry));
+    if (dict->entries == NULL) {
+        return false;
+    }
+    dict->capacity = capacity;
+    dict->size = 0;
+    return true;
+}
+
+bool dict_set(Dictionary *dict, const char *key, int value)
+{
+    if (dict == NULL || dict->entries == NULL || key == NULL || dict->capacity == 0) {
+        return false;
+    }
+    size_t key_len = safe_strnlen(key, DICT_MAX_KEY_LEN + 1);
+    if (key_len > DICT_MAX_KEY_LEN) {
+        return false;
+    }
+    size_t start = hash_string_n(key, key_len + 1) % dict->capacity;
+    size_t index = start;
+    do {
+        if (!dict->entries[index].occupied) {
+            if (dict->size >= dict->capacity) {
+                return false;
+            }
+            char *key_copy = malloc(key_len + 1);
+            if (key_copy == NULL) {
+                return false;
+            }
+            /* Possible weaknesses found:
+             * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+             */
+            memcpy(key_copy, key, key_len + 1);
+            dict->entries[index].key = key_copy;
+            dict->entries[index].value = value;
+            dict->entries[index].occupied = true;
+            dict->size++;
+            return true;
+        }
+        if (strncmp(dict->entries[index].key, key, DICT_MAX_KEY_LEN + 1) == 0) {
+            dict->entries[index].value = value;
+            return true;
+        }
+        index = (index + 1) % dict->capacity;
+    } while (index != start);
+    return false;
+}
+
+char **dict_keys(const Dictionary *dict, size_t *out_count)
+{
+    if (dict == NULL || out_count == NULL) {
+        return NULL;
+    }
+    *out_count = 0;
+    if (dict->entries == NULL || dict->size == 0) {
+        return NULL;
+    }
+    char **keys = malloc(dict->size * sizeof(*keys));
+    if (keys == NULL) {
+        return NULL;
+    }
+    size_t count = 0;
+    for (size_t i = 0; i < dict->capacity && count < dict->size; i++) {
+        if (dict->entries[i].occupied) {
+            size_t len = safe_strnlen(dict->entries[i].key, DICT_MAX_KEY_LEN + 1);
+            if (len > DICT_MAX_KEY_LEN) {
+                for (size_t j = 0; j < count; j++) {
+                    free(keys[j]);
+                }
+                free(keys);
+                return NULL;
+            }
+            keys[count] = malloc(len + 1);
+            if (keys[count] == NULL) {
+                for (size_t j = 0; j < count; j++) {
+                    free(keys[j]);
+                }
+                free(keys);
+                return NULL;
+            }
+            /* Possible weaknesses found:
+             * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+             */
+            memcpy(keys[count], dict->entries[i].key, len + 1);
+            count++;
+        }
+    }
+    *out_count = count;
+    return keys;
+}
+
+void dict_free(Dictionary *dict)
+{
+    if (dict == NULL) {
+        return;
+    }
+    if (dict->entries != NULL) {
+        for (size_t i = 0; i < dict->capacity; i++) {
+            if (dict->entries[i].occupied) {
+                free(dict->entries[i].key);
+                dict->entries[i].key = NULL;
+            }
+        }
+        free(dict->entries);
+        dict->entries = NULL;
+    }
+    dict->capacity = 0;
+    dict->size = 0;
+}
+
+int main(void)
+{
+    Dictionary dict;
+    if (!dict_init(&dict, 16)) {
+        fprintf(stderr, "Failed to initialize dictionary\n");
+        return EXIT_FAILURE;
+    }
+
+    if (!dict_set(&dict, "apple", 1) ||
+        !dict_set(&dict, "banana", 2) ||
+        !dict_set(&dict, "cherry", 3)) {
+        fprintf(stderr, "Failed to insert into dictionary\n");
+        dict_free(&dict);
+        return EXIT_FAILURE;
+    }
+
+    size_t count = 0;
+    char **keys = dict_keys(&dict, &count);
+    if (keys == NULL) {
+        fprintf(stderr, "Failed to retrieve keys\n");
+        dict_free(&dict);
+        return EXIT_FAILURE;
+    }
+
+    for (size_t i = 0; i < count; i++) {
+        printf("%s\n", keys[i]);
+        free(keys[i]);
+    }
+    free(keys);
+
+    dict_free(&dict);
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,72 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+static int binomial_coefficient(unsigned int n, unsigned int k, unsigned long long *result)
+{
+    unsigned long long value = 1ULL;
+    unsigned int i;
+
+    if (result == NULL) {
+        return -1;
+    }
+
+    if (k > n) {
+        *result = 0ULL;
+        return 0;
+    }
+
+    if (k > n - k) {
+        k = n - k;
+    }
+
+    for (i = 0U; i < k; i++) {
+        unsigned long long numerator = (unsigned long long)(n - i);
+
+        if (value > ULLONG_MAX / numerator) {
+            return -1;
+        }
+        value = value * numerator;
+        value = value / ((unsigned long long)i + 1ULL);
+    }
+
+    *result = value;
+    return 0;
+}
+
+static int sum_of_squares_of_binomials(unsigned int n, unsigned long long *result)
+{
+    if (result == NULL) {
+        return -1;
+    }
+
+    if (n > (UINT_MAX / 2U)) {
+        return -1;
+    }
+
+    return binomial_coefficient(2U * n, n, result);
+}
+
+int main(void)
+{
+    unsigned int n = 0U;
+    unsigned long long sum = 0ULL;
+    int scan_status;
+
+    printf("Enter n: ");
+
+    scan_status = scanf("%u", &n);
+    if (scan_status != 1) {
+        fprintf(stderr, "Invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (sum_of_squares_of_binomials(n, &sum) != 0) {
+        fprintf(stderr, "Computation failed due to overflow or invalid arguments.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Sum of squares of binomial coefficients for n = %u is %llu\n", n, sum);
+
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,98 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+#include <string.h>
+
+typedef struct Node {
+    char data;
+    struct Node* next;
+} Node;
+
+void push(Node** top_ref, char new_data) {
+    if (top_ref == NULL) {
+        return;
+    }
+    Node* new_node = (Node*)malloc(sizeof(Node));
+    if (new_node == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(EXIT_FAILURE);
+    }
+    new_node->data = new_data;
+    new_node->next = *top_ref;
+    *top_ref = new_node;
+}
+
+char pop(Node** top_ref) {
+    if (top_ref == NULL || *top_ref == NULL) {
+        return '\0';
+    }
+    Node* top = *top_ref;
+    char res = top->data;
+    *top_ref = top->next;
+    free(top);
+    return res;
+}
+
+bool isMatchingPair(char character1, char character2) {
+    if (character1 == '(' && character2 == ')') {
+        return true;
+    } else if (character1 == '{' && character2 == '}') {
+        return true;
+    } else if (character1 == '[' && character2 == ']') {
+        return true;
+    }
+    return false;
+}
+
+bool isBalanced(const char* exp) {
+    if (exp == NULL) {
+        return false;
+    }
+    
+    Node* stack = NULL;
+    
+    for (size_t i = 0; i < strlen(exp); i++) {
+        if (exp[i] == '{' || exp[i] == '(' || exp[i] == '[') {
+            push(&stack, exp[i]);
+        } else if (exp[i] == '}' || exp[i] == ')' || exp[i] == ']') {
+            if (stack == NULL) {
+                return false;
+            }
+            char popped = pop(&stack);
+            if (!isMatchingPair(popped, exp[i])) {
+                while (stack != NULL) {
+                    pop(&stack);
+                }
+                return false;
+            }
+        }
+    }
+    
+    if (stack == NULL) {
+        return true;
+    } else {
+        while (stack != NULL) {
+            pop(&stack);
+        }
+        return false;
+    }
+}
+
+int main(void) {
+    const char* exp1 = "{()}[]";
+    const char* exp2 = "{([)]}";
+    
+    if (isBalanced(exp1)) {
+        printf("Expression 1 is balanced\n");
+    } else {
+        printf("Expression 1 is not balanced\n");
+    }
+    
+    if (isBalanced(exp2)) {
+        printf("Expression 2 is balanced\n");
+    } else {
+        printf("Expression 2 is not balanced\n");
+    }
+    
+    return EXIT_SUCCESS;
+}

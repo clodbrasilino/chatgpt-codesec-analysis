@@ -1,0 +1,175 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct DictEntry {
+    char *key;
+    char **values;
+    int count;
+    int capacity;
+    struct DictEntry *next;
+} DictEntry;
+
+typedef struct Dictionary {
+    DictEntry *head;
+} Dictionary;
+
+static char *strdup_local(const char *s) {
+    if (s == NULL) {
+        return NULL;
+    }
+    size_t len = 0;
+    while (s[len] != '\0') {
+        len++;
+        if (len >= ((size_t)-1) / 2) {
+            return NULL;
+        }
+    }
+    len++;
+    char *copy = (char *)malloc(len);
+    if (copy != NULL) {
+        size_t i;
+        for (i = 0; i < len; i++) {
+            copy[i] = s[i];
+        }
+    }
+    return copy;
+}
+
+static DictEntry *find_entry(Dictionary *dict, const char *key) {
+    DictEntry *entry = dict->head;
+    while (entry != NULL) {
+        if (strcmp(entry->key, key) == 0) {
+            return entry;
+        }
+        entry = entry->next;
+    }
+    return NULL;
+}
+
+static int add_value(DictEntry *entry, const char *value) {
+    if (entry->count >= entry->capacity) {
+        int new_capacity = entry->capacity == 0 ? 4 : entry->capacity * 2;
+        if (new_capacity < 0) {
+            return 0;
+        }
+        char **new_values = (char **)realloc(entry->values, (size_t)new_capacity * sizeof(char *));
+        if (new_values == NULL) {
+            return 0;
+        }
+        entry->values = new_values;
+        entry->capacity = new_capacity;
+    }
+    entry->values[entry->count] = strdup_local(value);
+    if (entry->values[entry->count] == NULL) {
+        return 0;
+    }
+    entry->count++;
+    return 1;
+}
+
+static DictEntry *create_entry(const char *key, const char *value) {
+    DictEntry *entry = (DictEntry *)malloc(sizeof(DictEntry));
+    if (entry == NULL) {
+        return NULL;
+    }
+    entry->key = strdup_local(key);
+    if (entry->key == NULL) {
+        free(entry);
+        return NULL;
+    }
+    entry->values = NULL;
+    entry->count = 0;
+    entry->capacity = 0;
+    entry->next = NULL;
+    if (!add_value(entry, value)) {
+        free(entry->key);
+        free(entry);
+        return NULL;
+    }
+    return entry;
+}
+
+static void free_entry(DictEntry *entry) {
+    if (entry == NULL) {
+        return;
+    }
+    for (int i = 0; i < entry->count; i++) {
+        free(entry->values[i]);
+    }
+    free(entry->values);
+    free(entry->key);
+    free(entry);
+}
+
+static void free_dictionary(Dictionary *dict) {
+    DictEntry *current = dict->head;
+    while (current != NULL) {
+        DictEntry *next = current->next;
+        free_entry(current);
+        current = next;
+    }
+    dict->head = NULL;
+}
+
+static Dictionary *group_by_key(const char **keys, const char **values, int pair_count) {
+    Dictionary *dict = (Dictionary *)malloc(sizeof(Dictionary));
+    if (dict == NULL) {
+        return NULL;
+    }
+    dict->head = NULL;
+
+    for (int i = 0; i < pair_count; i++) {
+        DictEntry *entry = find_entry(dict, keys[i]);
+        if (entry == NULL) {
+            entry = create_entry(keys[i], values[i]);
+            if (entry == NULL) {
+                free_dictionary(dict);
+                free(dict);
+                return NULL;
+            }
+            entry->next = dict->head;
+            dict->head = entry;
+        } else {
+            if (!add_value(entry, values[i])) {
+                free_dictionary(dict);
+                free(dict);
+                return NULL;
+            }
+        }
+    }
+    return dict;
+}
+
+static void print_dictionary(Dictionary *dict) {
+    DictEntry *entry = dict->head;
+    while (entry != NULL) {
+        printf("%s: [", entry->key);
+        for (int i = 0; i < entry->count; i++) {
+            printf("%s", entry->values[i]);
+            if (i < entry->count - 1) {
+                printf(", ");
+            }
+        }
+        printf("]\n");
+        entry = entry->next;
+    }
+}
+
+int main(void) {
+    const char *keys[] = {"fruit", "fruit", "vegetable", "fruit", "vegetable", "grain"};
+    const char *values[] = {"apple", "banana", "carrot", "orange", "broccoli", "rice"};
+    int pair_count = sizeof(keys) / sizeof(keys[0]);
+
+    Dictionary *dict = group_by_key(keys, values, pair_count);
+    if (dict == NULL) {
+        fprintf(stderr, "Failed to group key-value pairs\n");
+        return 1;
+    }
+
+    print_dictionary(dict);
+    free_dictionary(dict);
+    free(dict);
+
+    return 0;
+}

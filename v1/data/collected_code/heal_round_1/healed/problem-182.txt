@@ -1,0 +1,44 @@
+```C
+#include <stdio.h>
+#include <regex.h>
+
+void find_characters(const char* str) {
+  regex_t regex;
+  regmatch_t matches[1];
+
+  regcomp(&regex, "[A-Z]", REG_EXTENDED);
+  while (regexec(&regex, str, 1, matches, 0) == 0) {
+    printf("Uppercase letter found: %.*s\n", matches[0].rm_eo - matches[0].rm_so, &str[matches[0].rm_so]);
+    str += matches[0].rm_eo;
+  }
+  regfree(&regex);
+
+  regcomp(&regex, "[a-z]", REG_EXTENDED);
+  while (regexec(&regex, str, 1, matches, 0) == 0) {
+    printf("Lowercase letter found: %.*s\n", matches[0].rm_eo - matches[0].rm_so, &str[matches[0].rm_so]);
+    str += matches[0].rm_eo;
+  }
+  regfree(&regex);
+
+  regcomp(&regex, "[^A-Za-z0-9]", REG_EXTENDED);
+  while (regexec(&regex, str, 1, matches, 0) == 0) {
+    printf("Special character found: %.*s\n", matches[0].rm_eo - matches[0].rm_so, &str[matches[0].rm_so]);
+    str += matches[0].rm_eo;
+  }
+  regfree(&regex);
+
+  regcomp(&regex, "[0-9]", REG_EXTENDED);
+  while (regexec(&regex, str, 1, matches, 0) == 0) {
+    printf("Numeric value found: %.*s\n", matches[0].rm_eo - matches[0].rm_so, &str[matches[0].rm_so]);
+    str += matches[0].rm_eo;
+  }
+  regfree(&regex);
+}
+
+int main() {
+  const char* str = "Hello, World! 123";
+  find_characters(str);
+  return 0;
+}
+```
+This version of the code appears almost identical to the original because the reported initialization issues are likely false alarms. The `regexec` function initializes `matches[0]` upon successful match, and it's not called when no match occurs. Thus, `matches[0]` should already be initialized when used in `printf` calls or as part of `str` offset calculation. This is why no changes appear in the re-written version.

@@ -1,0 +1,76 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <stddef.h>
+
+#define BUFFER_SIZE 256
+
+int count_digits_letters(const char *str, size_t *digits, size_t *letters)
+{
+    size_t i;
+
+    if (str == NULL || digits == NULL || letters == NULL) {
+        return -1;
+    }
+
+    *digits = 0;
+    *letters = 0;
+
+    for (i = 0; str[i] != '\0'; i++) {
+        unsigned char c = (unsigned char)str[i];
+        if (isdigit(c)) {
+            (*digits)++;
+        } else if (isalpha(c)) {
+            (*letters)++;
+        }
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t digits = 0;
+    size_t letters = 0;
+    size_t len;
+
+    printf("Enter a string: ");
+    fflush(stdout);
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    }
+
+    if (count_digits_letters(buffer, &digits, &letters) != 0) {
+        fprintf(stderr, "Error counting characters\n");
+        return 1;
+    }
+
+    printf("Digits: %zu\n", digits);
+    printf("Letters: %zu\n", letters);
+
+    return 0;
+}
+```
+
+**Analysis of the original code and the flagged weakness:**
+
+The Flawfinder warning (CWE-119/CWE-120) on the `char buffer[BUFFER_SIZE]` declaration is a low-risk, largely informational hit. The original code already mitigates it correctly:
+
+1. **Bounded input:** `fgets(buffer, sizeof(buffer), stdin)` limits reads to `BUFFER_SIZE - 1` characters plus the null terminator, preventing buffer overflow (unlike `gets()` or unbounded `scanf("%s", ...)`).
+2. **Guaranteed termination:** `buffer[sizeof(buffer) - 1] = '\0'` is defensive redundancy since `fgets` always null-terminates on success, but it's harmless and protects against future refactoring.
+3. **Bounded length calculation:** `strnlen(buffer, sizeof(buffer))` instead of `strlen` avoids reading past the buffer even if termination were somehow missing.
+4. **Safe `ctype` usage:** Casting to `unsigned char` before calling `isdigit`/`isalpha` avoids undefined behavior for negative `char` values.
+5. **NULL checks:** `count_digits_letters` validates all pointer arguments before dereferencing.
+
+The only minor addition in the rewrite is `fflush(stdout)` after the prompt, ensuring the prompt is visible before blocking on input when stdout is fully buffered (e.g., when piped). The code was already sound; the static-analysis finding is a false positive given the existing bounds discipline.

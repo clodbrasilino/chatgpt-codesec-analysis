@@ -1,0 +1,14 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-903-s3.c: In function 'main':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-903-s3.c:30:28: error: 'errno' undeclared (first use in this function)
+   30 |     if (*endptr != '\0' || errno == ERANGE) {
+      |                            ^~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-903-s3.c:3:1: note: 'errno' is defined in header '<errno.h>'; this is probably fixable by adding '#include <errno.h>'
+    2 | #include <stdlib.h>
+  +++ |+#include <errno.h>
+    3 | 
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-903-s3.c:30:28: note: each undeclared identifier is reported only once for each function it appears in
+   30 |     if (*endptr != '\0' || errno == ERANGE) {
+      |                            ^~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-903-s3.c:30:37: error: 'ERANGE' undeclared (first use in this function)
+   30 |     if (*endptr != '\0' || errno == ERANGE) {
+      |                                     ^~~~~~

@@ -1,0 +1,9 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-81.c: In function 'create_string_tuple':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-81.c:67:13: error: implicit declaration of function 'free_string_tuple'; did you mean 'create_string_tuple'? [-Wimplicit-function-declaration]
+   67 |             free_string_tuple(tuple);
+      |             ^~~~~~~~~~~~~~~~~
+      |             create_string_tuple
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-81.c: In function 'zip_tuples':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-81.c:107:13: error: implicit declaration of function 'free_zipped_result' [-Wimplicit-function-declaration]
+  107 |             free_zipped_result(result);
+      |             ^~~~~~~~~~~~~~~~~~

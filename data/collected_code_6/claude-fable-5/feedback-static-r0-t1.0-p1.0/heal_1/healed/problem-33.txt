@@ -1,0 +1,96 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+int decimal_to_binary(long decimal, char *buffer, size_t buffer_size);
+
+int decimal_to_binary(long decimal, char *buffer, size_t buffer_size)
+{
+    size_t index = 0;
+    size_t start;
+    size_t end;
+    unsigned long value;
+
+    if (buffer == NULL || buffer_size < 2) {
+        return -1;
+    }
+
+    if (decimal < 0) {
+        if (index + 1 >= buffer_size) {
+            return -1;
+        }
+        buffer[index] = '-';
+        index++;
+        value = (unsigned long)(-(decimal + 1)) + 1UL;
+    } else {
+        value = (unsigned long)decimal;
+    }
+
+    start = index;
+
+    if (value == 0UL) {
+        if (index + 1 >= buffer_size) {
+            return -1;
+        }
+        buffer[index] = '0';
+        index++;
+    } else {
+        while (value > 0UL) {
+            if (index + 1 >= buffer_size) {
+                return -1;
+            }
+            buffer[index] = (char)('0' + (char)(value % 2UL));
+            index++;
+            value /= 2UL;
+        }
+    }
+
+    buffer[index] = '\0';
+
+    end = index - 1;
+    while (start < end) {
+        char temp = buffer[start];
+        buffer[start] = buffer[end];
+        buffer[end] = temp;
+        start++;
+        end--;
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    long decimal = 0;
+    char binary[CHAR_BIT * sizeof(long) + 2] = {0};
+    int scan_result;
+
+    printf("Enter a decimal number: ");
+
+    scan_result = scanf("%ld", &decimal);
+    if (scan_result != 1) {
+        fprintf(stderr, "Error: invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (decimal_to_binary(decimal, binary, sizeof(binary)) != 0) {
+        fprintf(stderr, "Error: conversion failed.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Binary representation: %s\n", binary);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Summary of changes made to address the flagged weaknesses:**
+
+1. **Unsigned underflow (`unsignedLessThanZero`)**: All checks of the form `index >= buffer_size - 1` were rewritten as `index + 1 >= buffer_size`. This avoids the unsigned subtraction that could theoretically wrap around if `buffer_size` were `0`, which is what the static analyzer was warning about. Although the early guard `buffer_size < 2` already prevented this in practice, the rewritten form makes the code provably safe and silences the analyzer.
+
+2. **Flawfinder CWE-119/CWE-120 (statically-sized buffer)**: The buffer `binary` is now zero-initialized at declaration (`= {0}`), and its size is still derived from `CHAR_BIT * sizeof(long) + 2`, which guarantees enough space for the sign character, all bits of a `long`, and the null terminator. Bounds checking inside `decimal_to_binary` remains in place via `sizeof(binary)` being passed as the size argument.
+
+3. **The `index = 0` assignment warning** is a false positive (a benign initialization), so it is retained as-is — initializing variables at declaration is good practice.
+
+4. **Negative-value handling** remains via `(unsigned long)(-(decimal + 1)) + 1UL`, which safely computes the magnitude of `LONG_MIN` without signed overflow (undefined behavior).

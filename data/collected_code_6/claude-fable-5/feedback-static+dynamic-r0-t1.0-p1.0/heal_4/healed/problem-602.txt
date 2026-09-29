@@ -1,0 +1,76 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+#include <string.h>
+
+#define BUFFER_SIZE 256
+
+int first_repeated_char(const char *str)
+{
+    bool seen[256] = { false };
+    size_t i;
+
+    if (str == NULL) {
+        return -1;
+    }
+
+    for (i = 0; str[i] != '\0'; i++) {
+        unsigned char c = (unsigned char)str[i];
+        if (seen[c]) {
+            return (int)c;
+        }
+        seen[c] = true;
+    }
+
+    return -1;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    int result;
+
+    printf("Enter a string: ");
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    if (strchr(buffer, '\n') == NULL) {
+        int ch;
+        while ((ch = getchar()) != '\n' && ch != EOF) {
+        }
+    }
+
+    buffer[strcspn(buffer, "\n")] = '\0';
+
+    result = first_repeated_char(buffer);
+
+    if (result == -1) {
+        printf("No repeated character found\n");
+    } else {
+        printf("First repeated character: %c\n", (char)result);
+    }
+
+    return 0;
+}
+```
+
+**Analysis of the original code and the identified weaknesses:**
+
+The original code was already largely secure — both Flawfinder findings are effectively false positives, but here's how the code addresses (and now further hardens against) each:
+
+1. **CWE-119/CWE-120 (statically-sized `buffer`)**: The original code already used `fgets(buffer, sizeof(buffer), stdin)`, which correctly bounds the read to the buffer size and guarantees null termination on success. Flawfinder flags any fixed-size `char` array on principle. As defense-in-depth, the rewrite adds an explicit `buffer[sizeof(buffer) - 1] = '\0';` to guarantee termination regardless of any downstream assumptions.
+
+2. **CWE-120/CWE-20 (`getchar` in a loop)**: This loop only *drains* excess characters from `stdin` when the input line exceeded the buffer — it never writes to any buffer, so no overflow is possible. Reading into an `int` and checking against both `'\n'` and `EOF` is the correct idiom, preventing an infinite loop when the stream ends without a newline.
+
+Other points worth noting as good existing practice:
+
+- `first_repeated_char` casts to `unsigned char` before indexing `seen[256]`, avoiding negative-index undefined behavior on platforms where `char` is signed.
+- The `NULL` check on the input pointer guards against misuse.
+- `strcspn(buffer, "\n")` safely strips the trailing newline whether or not one is present.
+- `fgets` failure (EOF/error) is checked and handled with a nonzero exit code.
+
+The code is safe against buffer overflows, unterminated strings, and infinite input loops.

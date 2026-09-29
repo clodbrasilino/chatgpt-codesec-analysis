@@ -1,0 +1,55 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+static unsigned int toggle_first_and_last_bits(unsigned int n)
+{
+    unsigned int highest;
+
+    if (n == 0U) {
+        return 1U;
+    }
+
+    highest = n;
+    highest |= highest >> 1;
+    highest |= highest >> 2;
+    highest |= highest >> 4;
+    highest |= highest >> 8;
+    highest |= highest >> 16;
+    highest = highest - (highest >> 1);
+
+    n ^= 1U;
+    n ^= highest;
+
+    return n;
+}
+
+int main(void)
+{
+    unsigned int number;
+    unsigned int result;
+
+    printf("Enter a non-negative number: ");
+    if (scanf("%u", &number) != 1) {
+        fprintf(stderr, "Error: invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    result = toggle_first_and_last_bits(number);
+
+    printf("Original number: %u\n", number);
+    printf("After toggling first and last bits: %u\n", result);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**How it works:**
+
+1. **`toggle_first_and_last_bits`**: For a nonzero input, it computes the highest set bit using bit-smearing (propagating the top bit downward, then isolating it). It then XORs the number with `1U` (toggles the lowest bit) and with the highest set bit mask (toggles the topmost set bit). For `0`, it simply returns `1`, since the only meaningful toggle is bit 0.
+
+2. **Safety considerations addressed:**
+   - **CWE-703**: The return value of `scanf` is checked, and failure exits with a diagnostic to `stderr` and `EXIT_FAILURE`.
+   - **CWE-664 / CWE-710**: Only `unsigned int` is used for bit manipulation (avoiding undefined behavior from shifting signed values), all variables are properly initialized before use, `main` uses the standard `int main(void)` signature, and standard exit codes (`EXIT_SUCCESS`/`EXIT_FAILURE`) are returned.
+
+**Example:** Input `10` (binary `1010`) → toggling the last bit gives `1011`, toggling the first (highest set) bit gives `0011` → output `3`.

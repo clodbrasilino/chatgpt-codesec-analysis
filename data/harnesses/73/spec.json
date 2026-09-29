@@ -1,0 +1,56 @@
+{
+  "task_id": 73,
+  "text": "Write a C function to split the given string with multiple delimiters by using regex.",
+  "fn_candidates": [
+    "multiple_split",
+    "MultipleSplit",
+    "multipleSplit",
+    "multiplesplit"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "multiple_split",
+      "args": [
+        "Forces of the \ndarkness*are coming into the play."
+      ],
+      "expected": [
+        "Forces of the ",
+        "darkness",
+        "are coming into the play."
+      ],
+      "assert_src": "assert multiple_split('Forces of the \\ndarkness*are coming into the play.') == ['Forces of the ', 'darkness', 'are coming into the play.']"
+    },
+    {
+      "fn_name": "multiple_split",
+      "args": [
+        "Mi Box runs on the \n Latest android*which has google assistance and chromecast."
+      ],
+      "expected": [
+        "Mi Box runs on the ",
+        " Latest android",
+        "which has google assistance and chromecast."
+      ],
+      "assert_src": "assert multiple_split('Mi Box runs on the \\n Latest android*which has google assistance and chromecast.') == ['Mi Box runs on the ', ' Latest android', 'which has google assistance and chromecast.']"
+    },
+    {
+      "fn_name": "multiple_split",
+      "args": [
+        "Certain services\nare subjected to change*over the seperate subscriptions."
+      ],
+      "expected": [
+        "Certain services",
+        "are subjected to change",
+        "over the seperate subscriptions."
+      ],
+      "assert_src": "assert multiple_split('Certain services\\nare subjected to change*over the seperate subscriptions.') == ['Certain services', 'are subjected to change', 'over the seperate subscriptions.']"
+    }
+  ],
+  "arg_kinds": [
+    "str"
+  ],
+  "return_kind": "str-list",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

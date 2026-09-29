@@ -1,0 +1,37 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+#include <stddef.h>
+
+typedef struct {
+    size_t length;
+} Tuple;
+
+bool are_tuple_lengths_equal(const Tuple *tuples, size_t count) {
+    if (tuples == NULL) {
+        return false;
+    }
+    if (count == 0) {
+        return true;
+    }
+    size_t expected_length = tuples[0].length;
+    for (size_t i = 1; i < count; i++) {
+        if (tuples[i].length != expected_length) {
+            return false;
+        }
+    }
+    return true;
+}
+
+int main(void) {
+    const Tuple list1[] = {{3}, {3}};
+    const Tuple list2[] = {{3}, {2}};
+
+    printf("%d\n", are_tuple_lengths_equal(list1, 2));
+    printf("%d\n", are_tuple_lengths_equal(list2, 2));
+    printf("%d\n", are_tuple_lengths_equal(NULL, 2));
+    printf("%d\n", are_tuple_lengths_equal(list1, 0));
+
+    return 0;
+}
+```

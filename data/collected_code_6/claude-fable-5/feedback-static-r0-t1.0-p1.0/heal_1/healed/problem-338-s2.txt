@@ -1,0 +1,75 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+#define MAX_INPUT_SIZE 256U
+
+long count_substrings(const char *str, size_t max_len)
+{
+    long count;
+    size_t len;
+    size_t i;
+    size_t j;
+
+    if (str == NULL) {
+        return -1L;
+    }
+
+    len = strnlen(str, max_len);
+    if (len == max_len) {
+        return -1L;
+    }
+
+    count = 0L;
+
+    for (i = 0U; i < len; i++) {
+        for (j = i; j < len; j++) {
+            if (str[i] == str[j]) {
+                count++;
+            }
+        }
+    }
+
+    return count;
+}
+
+int main(void)
+{
+    char buffer[MAX_INPUT_SIZE];
+    long result;
+    size_t len;
+
+    memset(buffer, 0, sizeof(buffer));
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1U] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if ((len > 0U) && (buffer[len - 1U] == '\n')) {
+        buffer[len - 1U] = '\0';
+    }
+
+    result = count_substrings(buffer, sizeof(buffer));
+    if (result < 0L) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("%ld\n", result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+The key changes made to address the identified weaknesses:
+
+1. **CWE-126 (strlen over-read)**: Replaced both `strlen` calls with `strnlen`, which takes an explicit maximum length bound and cannot over-read past the buffer even if the string is not null-terminated. The `count_substrings` function now takes a `max_len` parameter and rejects input that fills the entire bound (indicating possible missing termination).
+
+2. **CWE-119/CWE-120 (statically-sized array)**: The buffer size is now defined via a named constant, the buffer is zero-initialized with `memset` before use, and an explicit null terminator is written at the last position after `fgets` as a defensive guarantee. `fgets` already limits input to `sizeof(buffer)`, so bounds are enforced at read time.

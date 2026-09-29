@@ -1,0 +1,23 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+void generateCombinations(char *colors, int numColors, int toChoose, char *combination, int at, int index) {
+    if (index == toChoose) {
+        combination[index] = '\0';
+        printf("%s\n", combination);
+        return;
+    }
+    for (int i = 0; i < numColors; ++i) {
+        combination[index] = colors[i];
+        generateCombinations(colors, numColors, toChoose, combination, i, index + 1);
+    }
+}
+
+int main() {
+    char colors[] = "RGB";
+    int numColors = 3;
+    int toChoose = 2;
+    char combination[toChoose + 1];
+    generateCombinations(colors, numColors, toChoose, combination, 0, 0);
+    return 0;
+}

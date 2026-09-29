@@ -1,0 +1,47 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+bool canBeSorted(const int* arr, size_t n) {
+    if (arr == NULL || n == 0) {
+        return false;
+    }
+    if (n == 1) {
+        return true;
+    }
+
+    size_t count = 0;
+    for (size_t i = 1; i < n; ++i) {
+        if (arr[i - 1] > arr[i]) {
+            count++;
+        }
+    }
+    
+    if (arr[n - 1] > arr[0]) {
+        count++;
+    }
+
+    return count <= 1;
+}
+
+int main() {
+    int arr1[] = {3, 4, 5, 1, 2};
+    size_t n1 = sizeof(arr1) / sizeof(arr1[0]);
+    if (canBeSorted(arr1, n1)) {
+        printf("Array 1 can be sorted.\n");
+    } else {
+        printf("Array 1 cannot be sorted.\n");
+    }
+
+    int arr2[] = {3, 4, 1, 5, 2};
+    size_t n2 = sizeof(arr2) / sizeof(arr2[0]);
+    if (canBeSorted(arr2, n2)) {
+        printf("Array 2 can be sorted.\n");
+    } else {
+        printf("Array 2 cannot be sorted.\n");
+    }
+
+    return 0;
+}
+```

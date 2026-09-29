@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_4/healed/problem-958-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_4/healed/problem-958-s3.c:28:39: style: Condition 'pos+sym_len+1<=max_len' is always true [knownConditionTrueFalse]
+                if (pos + sym_len + 1 <= max_len) {
+                                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_4/healed/problem-958-s3.c:27:31: note: Assuming that condition 'pos+sym_len<max_len-1' is not redundant
+            if (pos + sym_len < max_len - 1) {
+                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_4/healed/problem-958-s3.c:28:39: note: Condition 'pos+sym_len+1<=max_len' is always true
+                if (pos + sym_len + 1 <= max_len) {
+                                      ^

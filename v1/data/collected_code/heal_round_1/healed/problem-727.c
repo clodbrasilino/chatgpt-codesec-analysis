@@ -1,0 +1,56 @@
+#include <stdio.h>
+#include <regex.h>
+#include <string.h>
+#include <stdlib.h>
+
+void removeSpecialCharacters(char* str) {
+    regex_t regex;
+    int ret;
+
+    ret = regcomp(&regex, "[^a-zA-Z0-9]", REG_EXTENDED);
+    if (ret) {
+        fprintf(stderr, "Could not compile regex\n");
+        return;
+    }
+
+    ret = regexec(&regex, str, 0, NULL, 0);
+    if(!ret){
+        regfree(&regex);
+        regex_t regex2;
+        ret = regcomp(&regex2,"[^a-zA-Z0-9]", REG_EXTENDED);  
+        char* result = (char*)malloc(sizeof(char) * (strlen(str) + 1));
+        memset(result, 0, sizeof(char) * (strlen(str) + 1));
+        regmatch_t pmatch;
+        int index = 0;
+
+        while(regexec(&regex2, str + index, 1, &pmatch, 0) == 0){
+            if ((result+index) != NULL  && (str+index+pmatch.rm_so) != NULL && (pmatch.rm_eo - pmatch.rm_so) >= 0)
+                strncpy(result+index, str+index+pmatch.rm_so, pmatch.rm_eo - pmatch.rm_so);
+            else
+                break;
+
+            index += pmatch.rm_eo - pmatch.rm_so;
+        }
+
+        if ((result+index) != NULL  && (str+index+pmatch.rm_so) != NULL && (pmatch.rm_eo - pmatch.rm_so) >= 0)
+            strncpy(result + index, str + index + pmatch.rm_so, pmatch.rm_eo - pmatch.rm_so);
+        else
+            return;
+
+        if(str!=NULL && strlen(str)>=strlen(result) )
+            strncpy(str, result, strlen(result));
+        else
+            return;
+
+        free(result);
+        regfree(&regex2);
+    }
+    regfree(&regex);
+}
+
+int main() {
+    char str[100] = "Hello! How are you? 123";
+    removeSpecialCharacters(str);
+    printf("%s\n", str);
+    return 0;
+}

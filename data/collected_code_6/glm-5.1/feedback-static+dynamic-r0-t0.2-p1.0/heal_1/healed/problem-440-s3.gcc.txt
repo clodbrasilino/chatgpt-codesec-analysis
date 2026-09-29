@@ -1,0 +1,6 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_1/healed/problem-440-s3.c: In function 'find_adverbs':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_1/healed/problem-440-s3.c:48:38: error: 'word_end' undeclared (first use in this function); did you mean 'word_len'?
+   48 |         if (word_len > suffix_len && word_end - suffix_len >= start) {
+      |                                      ^~~~~~~~
+      |                                      word_len
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_1/healed/problem-440-s3.c:48:38: note: each undeclared identifier is reported only once for each function it appears in

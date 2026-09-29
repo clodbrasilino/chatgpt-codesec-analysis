@@ -1,0 +1,37 @@
+#include <stdio.h>
+#include <limits.h>
+
+int frequency_of_largest(int arr[], int size, int *largest_value) {
+    if (arr == NULL || size <= 0 || largest_value == NULL) {
+        return -1;
+    }
+
+    int max = INT_MIN;
+    int count = 0;
+
+    for (int i = 0; i < size; i++) {
+        if (arr[i] > max) {
+            max = arr[i];
+            count = 1;
+        } else if (arr[i] == max) {
+            count++;
+        }
+    }
+
+    *largest_value = max;
+    return count;
+}
+
+int main(void) {
+    int arr[] = {3, 5, 5, 2, 5, 1, 3};
+    int size = sizeof(arr) / sizeof(arr[0]);
+    int largest;
+    int freq = frequency_of_largest(arr, size, &largest);
+
+    if (freq != -1) {
+        printf("Largest value: %d\n", largest);
+        printf("Frequency: %d\n", freq);
+    }
+
+    return 0;
+}

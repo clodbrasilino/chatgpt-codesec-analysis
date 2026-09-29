@@ -1,0 +1,106 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-797-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-797-s3.c:100:27: style: Condition 'n>0' is always true [knownConditionTrueFalse]
+                    if (n > 0 && div_l > INT64_MAX / n) {
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-797-s3.c:92:15: note: Assuming condition 'n>0' is true
+        if (n > 0) {
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-797-s3.c:100:27: note: Condition 'n>0' is always true
+                    if (n > 0 && div_l > INT64_MAX / n) {
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-797-s3.c:103:27: style: Condition 'n<0' is always false [knownConditionTrueFalse]
+                    if (n < 0 && div_l < INT64_MIN / n) {
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-797-s3.c:92:15: note: Assuming that condition 'n>0' is not redundant
+        if (n > 0) {
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-797-s3.c:100:31: note: Assuming condition is false
+                    if (n > 0 && div_l > INT64_MAX / n) {
+                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-797-s3.c:103:27: note: Condition 'n<0' is always false
+                    if (n < 0 && div_l < INT64_MIN / n) {
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-797-s3.c:110:49: style: Condition 'half_sum<0' is always true [knownConditionTrueFalse]
+                int64_t abs_half_sum = half_sum < 0 ? -half_sum : half_sum;
+                                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-797-s3.c:108:33: note: Assuming condition 'half_sum<0' is true
+            } else if (half_sum < 0 && half_sum < INT64_MIN / n) {
+                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-797-s3.c:110:49: note: Condition 'half_sum<0' is always true
+                int64_t abs_half_sum = half_sum < 0 ? -half_sum : half_sum;
+                                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-797-s3.c:117:27: style: Condition 'n>0' is always true [knownConditionTrueFalse]
+                    if (n > 0 && div_l > INT64_MAX / n) {
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-797-s3.c:92:15: note: Assuming condition 'n>0' is true
+        if (n > 0) {
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-797-s3.c:117:27: note: Condition 'n>0' is always true
+                    if (n > 0 && div_l > INT64_MAX / n) {
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-797-s3.c:120:27: style: Condition 'n<0' is always false [knownConditionTrueFalse]
+                    if (n < 0 && div_l < INT64_MIN / n) {
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-797-s3.c:92:15: note: Assuming that condition 'n>0' is not redundant
+        if (n > 0) {
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-797-s3.c:117:31: note: Assuming condition is false
+                    if (n > 0 && div_l > INT64_MAX / n) {
+                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-797-s3.c:120:27: note: Condition 'n<0' is always false
+                    if (n < 0 && div_l < INT64_MIN / n) {
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-797-s3.c:37:48: warning: Expression 'half_n' can have a negative value. That is converted to an unsigned value and used in an unsigned calculation. [signConversionCond]
+        else if (half_n < 0 && l < INT64_MIN / half_n) safe = false;
+                                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-797-s3.c:37:25: note: Assuming that condition 'half_n<0' is not redundant
+        else if (half_n < 0 && l < INT64_MIN / half_n) safe = false;
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-797-s3.c:37:48: note: Negative value is converted to an unsigned value
+        else if (half_n < 0 && l < INT64_MIN / half_n) safe = false;
+                                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-797-s3.c:39:48: warning: Expression 'half_n' can have a negative value. That is converted to an unsigned value and used in an unsigned calculation. [signConversionCond]
+        else if (half_n < 0 && r < INT64_MIN / half_n) safe = false;
+                                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-797-s3.c:37:25: note: Assuming that condition 'half_n<0' is not redundant
+        else if (half_n < 0 && l < INT64_MIN / half_n) safe = false;
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-797-s3.c:39:48: note: Negative value is converted to an unsigned value
+        else if (half_n < 0 && r < INT64_MIN / half_n) safe = false;
+                                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-797-s3.c:59:54: warning: Expression 'n' can have a negative value. That is converted to an unsigned value and used in an unsigned calculation. [signConversionCond]
+                if (n < 0 && half_sum1 < INT64_MIN / n) {
+                                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-797-s3.c:59:23: note: Assuming that condition 'n<0' is not redundant
+                if (n < 0 && half_sum1 < INT64_MIN / n) {
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-797-s3.c:59:54: note: Negative value is converted to an unsigned value
+                if (n < 0 && half_sum1 < INT64_MIN / n) {
+                                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-797-s3.c:73:56: warning: Expression 'half_n' can have a negative value. That is converted to an unsigned value and used in an unsigned calculation. [signConversionCond]
+        if (half_n < 0 && sum > 0 && sum < INT64_MIN / half_n) {
+                                                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-797-s3.c:73:20: note: Assuming that condition 'half_n<0' is not redundant
+        if (half_n < 0 && sum > 0 && sum < INT64_MIN / half_n) {
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-797-s3.c:73:56: note: Negative value is converted to an unsigned value
+        if (half_n < 0 && sum > 0 && sum < INT64_MIN / half_n) {
+                                                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-797-s3.c:103:54: warning: Expression 'n' can have a negative value. That is converted to an unsigned value and used in an unsigned calculation. [signConversionCond]
+                    if (n < 0 && div_l < INT64_MIN / n) {
+                                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-797-s3.c:103:27: note: Assuming that condition 'n<0' is not redundant
+                    if (n < 0 && div_l < INT64_MIN / n) {
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-797-s3.c:103:54: note: Negative value is converted to an unsigned value
+                    if (n < 0 && div_l < INT64_MIN / n) {
+                                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-797-s3.c:120:54: warning: Expression 'n' can have a negative value. That is converted to an unsigned value and used in an unsigned calculation. [signConversionCond]
+                    if (n < 0 && div_l < INT64_MIN / n) {
+                                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-797-s3.c:120:27: note: Assuming that condition 'n<0' is not redundant
+                    if (n < 0 && div_l < INT64_MIN / n) {
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-797-s3.c:120:54: note: Negative value is converted to an unsigned value
+                    if (n < 0 && div_l < INT64_MIN / n) {
+                                                     ^

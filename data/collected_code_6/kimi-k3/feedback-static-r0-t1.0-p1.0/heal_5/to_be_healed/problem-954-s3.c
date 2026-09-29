@@ -1,0 +1,89 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <limits.h>
+#include <string.h>
+
+int calculate_profit(double amount, double *result)
+{
+    const double threshold = 1000.0;
+    const double profit_rate = 0.15;
+
+    if (result == NULL) {
+        return -1;
+    }
+
+    if (amount < 0.0) {
+        return -1;
+    }
+
+    if (amount > threshold) {
+        *result = amount * profit_rate;
+        return 1;
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char input_buffer[256];
+    char *end_ptr = NULL;
+    double input_amount = 0.0;
+    double profit_result = 0.0;
+    int status = 0;
+
+    printf("Enter amount: ");
+
+    if (fgets(input_buffer, sizeof(input_buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (strchr(input_buffer, '\n') == NULL) {
+        int c;
+        /* Possible weaknesses found:
+         * Flawfinder getchar: Check buffer boundaries if used in a loop including recursive loops (CWE-120, CWE-20). (risk 1, buffer)
+         */
+        while ((c = getchar()) != '\n' && c != EOF) {
+        }
+        fprintf(stderr, "Error: Input too long\n");
+        return EXIT_FAILURE;
+    }
+
+    errno = 0;
+    input_amount = strtod(input_buffer, &end_ptr);
+
+    if (errno == ERANGE) {
+        fprintf(stderr, "Error: Number out of range\n");
+        return EXIT_FAILURE;
+    }
+
+    if (end_ptr == input_buffer) {
+        fprintf(stderr, "Error: No digits found\n");
+        return EXIT_FAILURE;
+    }
+
+    if (*end_ptr != '\n' && *end_ptr != '\0') {
+        fprintf(stderr, "Error: Invalid characters in input\n");
+        return EXIT_FAILURE;
+    }
+
+    status = calculate_profit(input_amount, &profit_result);
+
+    if (status == -1) {
+        fprintf(stderr, "Error: Invalid amount provided\n");
+        return EXIT_FAILURE;
+    }
+
+    if (status == 1) {
+        printf("Profit amount: %.2f\n", profit_result);
+    } else {
+        printf("No profit applicable\n");
+    }
+
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,146 @@
+#include <stddef.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char *key;
+    char *value;
+} DictEntry;
+
+typedef struct {
+    DictEntry *entries;
+    size_t size;
+    size_t capacity;
+} Dict;
+
+static int dict_init(Dict *dict, size_t capacity) {
+    if (dict == NULL || capacity == 0) {
+        return -1;
+    }
+    dict->entries = malloc(capacity * sizeof(DictEntry));
+    if (dict->entries == NULL) {
+        dict->entries = NULL;
+        dict->size = 0;
+        dict->capacity = 0;
+        return -1;
+    }
+    dict->size = 0;
+    dict->capacity = capacity;
+    return 0;
+}
+
+static int dict_add(Dict *dict, const char *key, const char *value) {
+    size_t key_len;
+    size_t value_len;
+
+    if (dict == NULL || key == NULL || value == NULL) {
+        return -1;
+    }
+
+    if (dict->size == dict->capacity) {
+        size_t new_capacity;
+        DictEntry *new_entries;
+
+        if (dict->capacity > (size_t)-1 / 2) {
+            return -1;
+        }
+        new_capacity = dict->capacity * 2;
+        new_entries = realloc(dict->entries, new_capacity * sizeof(DictEntry));
+        if (new_entries == NULL) {
+            return -1;
+        }
+        dict->entries = new_entries;
+        dict->capacity = new_capacity;
+    }
+
+    key_len = strlen(key);
+    value_len = strlen(value);
+
+    dict->entries[dict->size].key = NULL;
+    dict->entries[dict->size].value = NULL;
+
+    dict->entries[dict->size].key = malloc(key_len + 1);
+    if (dict->entries[dict->size].key == NULL) {
+        return -1;
+    }
+
+    dict->entries[dict->size].value = malloc(value_len + 1);
+    if (dict->entries[dict->size].value == NULL) {
+        free(dict->entries[dict->size].key);
+        dict->entries[dict->size].key = NULL;
+        return -1;
+    }
+
+    memcpy(dict->entries[dict->size].key, key, key_len + 1);
+    memcpy(dict->entries[dict->size].value, value, value_len + 1);
+    dict->size++;
+
+    return 0;
+}
+
+static const char *dict_get_key(const Dict *dict, size_t index) {
+    if (dict == NULL || index >= dict->size) {
+        return NULL;
+    }
+    return dict->entries[index].key;
+}
+
+static const char *dict_get_value(const Dict *dict, size_t index) {
+    if (dict == NULL || index >= dict->size) {
+        return NULL;
+    }
+    return dict->entries[index].value;
+}
+
+static void dict_free(Dict *dict) {
+    size_t i;
+
+    if (dict == NULL) {
+        return;
+    }
+
+    for (i = 0; i < dict->size; i++) {
+        free(dict->entries[i].key);
+        free(dict->entries[i].value);
+    }
+
+    free(dict->entries);
+    dict->entries = NULL;
+    dict->size = 0;
+    dict->capacity = 0;
+}
+
+int main(void) {
+    Dict dict;
+    const char *key;
+    const char *value;
+
+    if (dict_init(&dict, 2) != 0) {
+        return 1;
+    }
+
+    if (dict_add(&dict, "name", "Alice") != 0) {
+        dict_free(&dict);
+        return 1;
+    }
+
+    if (dict_add(&dict, "age", "30") != 0) {
+        dict_free(&dict);
+        return 1;
+    }
+
+    key = dict_get_key(&dict, 0);
+    value = dict_get_value(&dict, 0);
+
+    if (key != NULL) {
+        printf("%s\n", key);
+    }
+
+    if (value != NULL) {
+        printf("%s\n", value);
+    }
+
+    dict_free(&dict);
+    return 0;
+}

@@ -1,0 +1,60 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+#define BUFFER_SIZE 1024
+
+static unsigned long long count_substrings(const char *str, size_t max_len)
+{
+    unsigned long long n;
+
+    if (str == NULL)
+    {
+        return 0ULL;
+    }
+
+    n = (unsigned long long)strnlen(str, max_len);
+    return (n * (n + 1ULL)) / 2ULL;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    unsigned long long result;
+    size_t len;
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL)
+    {
+        fprintf(stderr, "Error: failed to read input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len > 0 && buffer[len - 1] == '\n')
+    {
+        buffer[len - 1] = '\0';
+    }
+
+    result = count_substrings(buffer, sizeof(buffer));
+
+    if (printf("%llu\n", result) < 0)
+    {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the fixes applied:**
+
+1. **CWE-126 (over-read via `strlen`)** — Both uses of `strlen` were replaced with `strnlen`, which bounds the scan to the buffer size. Even if the buffer were somehow not NUL-terminated, the read can never exceed the buffer's extent. Additionally, `buffer[sizeof(buffer) - 1] = '\0';` defensively guarantees termination after the read (technically redundant since `fgets` always NUL-terminates on success, but it hardens the code against future modifications).
+
+2. **CWE-119/CWE-120 (statically-sized array)** — The buffer size is now defined once via `BUFFER_SIZE` and all length-limited operations (`fgets`, `strnlen`) consistently use `sizeof(buffer)`, so the bound cannot silently drift out of sync with the declaration. `fgets` already limits input to the buffer size, so no overflow is possible on write.
+
+3. **Robustness improvements** — `count_substrings` now takes an explicit maximum length parameter rather than trusting the caller's string, and it retains the `NULL` check. The function is also marked `static` since it has internal linkage only.
+
+The arithmetic `n * (n + 1) / 2` remains safe in practice here: with a maximum input of 1023 characters, the intermediate product (~524,000) is nowhere near `ULLONG_MAX`, so no overflow guard is required for this buffer size.

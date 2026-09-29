@@ -1,0 +1,152 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stddef.h>
+
+#define MAX_STRING_LEN 1024
+
+typedef struct {
+    char *key;
+    char *value;
+} DictEntry;
+
+typedef struct {
+    DictEntry *entries;
+    size_t size;
+    size_t capacity;
+} Dictionary;
+
+static char *duplicate_string(const char *str) {
+    if (str == NULL) return NULL;
+    size_t len = 0;
+    for (; len < MAX_STRING_LEN; len++) {
+        if (str[len] == '\0') break;
+    }
+    if (len == MAX_STRING_LEN) return NULL;
+    char *copy = malloc(len + 1);
+    if (copy == NULL) return NULL;
+    /* Possible weaknesses found:
+     * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+     */
+    memcpy(copy, str, len + 1);
+    return copy;
+}
+
+int dictionary_init(Dictionary *dict, size_t initial_capacity) {
+    if (dict == NULL || initial_capacity == 0) {
+        return -1;
+    }
+    dict->entries = malloc(initial_capacity * sizeof(DictEntry));
+    if (dict->entries == NULL) {
+        return -1;
+    }
+    dict->size = 0;
+    dict->capacity = initial_capacity;
+    return 0;
+}
+
+void dictionary_free(Dictionary *dict) {
+    if (dict == NULL) {
+        return;
+    }
+    for (size_t i = 0; i < dict->size; i++) {
+        free(dict->entries[i].key);
+        free(dict->entries[i].value);
+    }
+    free(dict->entries);
+    dict->entries = NULL;
+    dict->size = 0;
+    dict->capacity = 0;
+}
+
+int dictionary_add(Dictionary *dict, const char *key, const char *value) {
+    if (dict == NULL || key == NULL) {
+        return -1;
+    }
+    if (dict->size >= dict->capacity) {
+        size_t new_capacity = dict->capacity * 2;
+        DictEntry *new_entries = realloc(dict->entries, new_capacity * sizeof(DictEntry));
+        if (new_entries == NULL) {
+            return -1;
+        }
+        dict->entries = new_entries;
+        dict->capacity = new_capacity;
+    }
+    char *key_copy = duplicate_string(key);
+    if (key_copy == NULL) {
+        return -1;
+    }
+    char *value_copy = NULL;
+    if (value != NULL) {
+        value_copy = duplicate_string(value);
+        if (value_copy == NULL) {
+            free(key_copy);
+            return -1;
+        }
+    }
+    dict->entries[dict->size].key = key_copy;
+    dict->entries[dict->size].value = value_copy;
+    dict->size++;
+    return 0;
+}
+
+static int dictionary_entry_is_empty(const DictEntry *entry) {
+    if (entry == NULL) {
+        return 1;
+    }
+    if (entry->value == NULL) {
+        return 1;
+    }
+    if (entry->value[0] == '\0') {
+        return 1;
+    }
+    return 0;
+}
+
+void dictionary_drop_empty(Dictionary *dict) {
+    if (dict == NULL || dict->entries == NULL) {
+        return;
+    }
+    size_t new_size = 0;
+    for (size_t i = 0; i < dict->size; i++) {
+        DictEntry *entry = &dict->entries[i];
+        if (!dictionary_entry_is_empty(entry)) {
+            if (new_size != i) {
+                dict->entries[new_size] = *entry;
+                entry->key = NULL;
+                entry->value = NULL;
+            }
+            new_size++;
+        } else {
+            free(entry->key);
+            free(entry->value);
+            entry->key = NULL;
+            entry->value = NULL;
+        }
+    }
+    dict->size = new_size;
+}
+
+int main(void) {
+    Dictionary dict;
+    if (dictionary_init(&dict, 4) != 0) {
+        return 1;
+    }
+    if (dictionary_add(&dict, "name", "Alice") != 0 ||
+        dictionary_add(&dict, "empty", "") != 0 ||
+        dictionary_add(&dict, "city", "Paris") != 0 ||
+        dictionary_add(&dict, "null", NULL) != 0 ||
+        dictionary_add(&dict, "country", "France") != 0) {
+        dictionary_free(&dict);
+        return 1;
+    }
+
+    dictionary_drop_empty(&dict);
+
+    for (size_t i = 0; i < dict.size; i++) {
+        printf("%s: %s\n", dict.entries[i].key, dict.entries[i].value);
+    }
+
+    dictionary_free(&dict);
+    return 0;
+}

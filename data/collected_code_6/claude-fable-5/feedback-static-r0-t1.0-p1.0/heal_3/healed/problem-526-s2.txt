@@ -1,0 +1,104 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#define MAX_STR_LEN 4096
+
+void capitalize_first_last(char *str, size_t max_len)
+{
+    size_t i;
+    size_t len;
+
+    if (str == NULL || max_len == 0) {
+        return;
+    }
+
+    len = strnlen(str, max_len);
+    i = 0;
+
+    while (i < len) {
+        while (i < len && isspace((unsigned char)str[i])) {
+            i++;
+        }
+
+        if (i >= len) {
+            break;
+        }
+
+        {
+            size_t start = i;
+            size_t end;
+
+            while (i < len && !isspace((unsigned char)str[i])) {
+                i++;
+            }
+
+            end = i - 1;
+
+            str[start] = (char)toupper((unsigned char)str[start]);
+            str[end] = (char)toupper((unsigned char)str[end]);
+        }
+    }
+}
+
+int main(void)
+{
+    static const char input[] = "hello world this is a test";
+    size_t buf_size;
+    size_t input_len;
+    char *buffer;
+
+    buf_size = sizeof(input);
+
+    if (buf_size > MAX_STR_LEN) {
+        fprintf(stderr, "Invalid input size\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer = malloc(buf_size);
+
+    if (buffer == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    input_len = strnlen(input, sizeof(input));
+
+    if (input_len >= buf_size) {
+        fprintf(stderr, "Source data too large for destination buffer\n");
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+
+    memcpy(buffer, input, input_len);
+    buffer[input_len] = '\0';
+
+    capitalize_first_last(buffer, buf_size);
+
+    if (printf("Original: %s\n", input) < 0) {
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Modified: %s\n", buffer) < 0) {
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+
+    free(buffer);
+
+    return EXIT_SUCCESS;
+}
+```
+
+Key changes made to address the identified weaknesses:
+
+1. **`knownConditionTrueFalse` (always-false condition)**: Removed the `buf_size == 0` check. Since `buf_size = sizeof(input)` where `input` is a static array literal, it can never be zero at runtime — the check was dead code. The `buf_size > MAX_STR_LEN` check is retained as a meaningful sanity bound.
+
+2. **Flawfinder CWE-120 on `memcpy`**: The copy is now explicitly bounded by `input_len`, which is validated against `buf_size` (`input_len >= buf_size` bails out) *before* the copy occurs. Only `input_len` bytes are copied and the NUL terminator is written at `buffer[input_len]`, guaranteeing the destination can always hold the source data and the string is always terminated.
+
+3. **Defensive hardening in `capitalize_first_last`**: Added a `max_len == 0` guard so `strnlen` and subsequent indexing can never operate on a zero-capacity buffer.
+
+The logic is otherwise preserved: allocation failure, printf failure, and oversized-source paths all free the buffer and return `EXIT_FAILURE`, avoiding memory leaks on every exit path.

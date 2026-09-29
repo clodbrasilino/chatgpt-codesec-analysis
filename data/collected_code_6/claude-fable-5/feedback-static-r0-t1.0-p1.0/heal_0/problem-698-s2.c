@@ -1,0 +1,101 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    int key1;
+    int key2;
+    int value;
+} DictItem;
+
+static long long tuple_product(const DictItem *item)
+{
+    return (long long)item->key1 * (long long)item->key2;
+}
+
+static int compare_items(const void *a, const void *b)
+{
+    const DictItem *ia = (const DictItem *)a;
+    const DictItem *ib = (const DictItem *)b;
+    long long pa = tuple_product(ia);
+    long long pb = tuple_product(ib);
+
+    if (pa < pb) {
+        return -1;
+    }
+    if (pa > pb) {
+        return 1;
+    }
+    return 0;
+}
+
+static int sort_dict_by_tuple_product(DictItem *items, size_t count)
+{
+    if (items == NULL || count == 0U) {
+        return -1;
+    }
+    qsort(items, count, sizeof(DictItem), compare_items);
+    return 0;
+}
+
+static void print_items(const DictItem *items, size_t count)
+{
+    size_t i;
+
+    if (items == NULL) {
+        return;
+    }
+    for (i = 0U; i < count; i++) {
+        if (printf("(%d, %d): %d\n", items[i].key1, items[i].key2, items[i].value) < 0) {
+            break;
+        }
+    }
+}
+
+int main(void)
+{
+    size_t count = 4U;
+    DictItem *items = malloc(count * sizeof(DictItem));
+
+    if (items == NULL) {
+        (void)fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    items[0].key1 = 2;
+    items[0].key2 = 3;
+    items[0].value = 10;
+
+    items[1].key1 = 1;
+    items[1].key2 = 1;
+    items[1].value = 20;
+
+    items[2].key1 = 4;
+    items[2].key2 = 5;
+    items[2].value = 30;
+
+    items[3].key1 = 3;
+    items[3].key2 = 2;
+    items[3].value = 40;
+
+    if (printf("Before sorting:\n") < 0) {
+        free(items);
+        return EXIT_FAILURE;
+    }
+    print_items(items, count);
+
+    if (sort_dict_by_tuple_product(items, count) != 0) {
+        (void)fprintf(stderr, "Sorting failed\n");
+        free(items);
+        return EXIT_FAILURE;
+    }
+
+    if (printf("After sorting:\n") < 0) {
+        free(items);
+        return EXIT_FAILURE;
+    }
+    print_items(items, count);
+
+    free(items);
+    return EXIT_SUCCESS;
+}

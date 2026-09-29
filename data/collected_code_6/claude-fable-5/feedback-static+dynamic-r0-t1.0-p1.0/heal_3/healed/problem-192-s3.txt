@@ -1,0 +1,80 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdbool.h>
+#include <stdlib.h>
+
+#define BUFFER_SIZE 256U
+
+bool has_letter_and_number(const char *str, size_t max_len)
+{
+    bool has_letter = false;
+    bool has_digit = false;
+    size_t i;
+
+    if (str == NULL) {
+        return false;
+    }
+
+    for (i = 0U; i < max_len && str[i] != '\0'; i++) {
+        unsigned char ch = (unsigned char)str[i];
+        if (isalpha(ch)) {
+            has_letter = true;
+        } else if (isdigit(ch)) {
+            has_digit = true;
+        }
+        if (has_letter && has_digit) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t len;
+
+    memset(buffer, 0, sizeof(buffer));
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1U] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len > 0U && buffer[len - 1U] == '\n') {
+        buffer[len - 1U] = '\0';
+    }
+
+    if (has_letter_and_number(buffer, sizeof(buffer))) {
+        printf("The string contains at least one letter and one number.\n");
+    } else {
+        printf("The string does not contain both a letter and a number.\n");
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the original code and the flagged weakness:**
+
+The Flawfinder warning (CWE-119/CWE-120) about the statically-sized `char buffer[BUFFER_SIZE]` is a low-risk, informational finding. The original code already mitigates it correctly, and the rewrite preserves those mitigations:
+
+1. **Bounded input:** `fgets(buffer, (int)sizeof(buffer), stdin)` limits the read to the buffer size, preventing overflow — unlike `gets()` or unbounded `scanf("%s", ...)`.
+
+2. **Guaranteed NUL termination:** `buffer[sizeof(buffer) - 1U] = '\0'` is a defensive belt-and-suspenders measure (fgets already NUL-terminates on success, but this guards against any edge cases).
+
+3. **Bounded length calculation:** `strnlen(buffer, sizeof(buffer))` is used instead of `strlen()`, so the scan can never run past the buffer even if termination were somehow lost.
+
+4. **Bounded character scan:** `has_letter_and_number()` takes an explicit `max_len` parameter and checks both the bound and the NUL terminator, plus a `NULL` pointer guard.
+
+5. **Correct `ctype` usage:** Characters are cast to `unsigned char` before being passed to `isalpha()`/`isdigit()`, avoiding undefined behavior for negative `char` values (e.g., high-bit characters on platforms where `char` is signed).
+
+6. **Safe newline stripping:** The `len > 0U` check prevents an underflow when indexing `buffer[len - 1U]` on an empty string.
+
+The only changes made were removing comments and using `EXIT_SUCCESS`/`EXIT_FAILURE` from `<stdlib.h>` for portability of return codes. No functional security fixes were needed — the original code is a good example of defensive C programming around a fixed-size buffer.

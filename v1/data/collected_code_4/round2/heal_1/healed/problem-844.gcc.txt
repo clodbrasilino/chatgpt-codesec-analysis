@@ -1,0 +1,71 @@
+./collected_code_4/round2//heal_1/healed/problem-844.c: In function 'findKth':
+./collected_code_4/round2//heal_1/healed/problem-844.c:12:16: warning: leak of 'evens' [CWE-401] [-Wanalyzer-malloc-leak]
+   12 |         return -1;
+      |                ^
+  'findKth': events 1-6
+    |
+    |    5 |     if(k < 0 || k >= size){
+    |      |       ^
+    |      |       |
+    |      |       (1) following 'false' branch...
+    |......
+    |    8 |     int* odds = (int*)malloc(size*sizeof(int));
+    |      |                       ~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                       |
+    |      |                       (2) ...to here
+    |    9 |     int* evens = (int*)malloc(size*sizeof(int));
+    |      |                        ~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                        |
+    |      |                        (3) allocated here
+    |   10 | 
+    |   11 |     if(odds == NULL || evens == NULL) {
+    |      |       ~
+    |      |       |
+    |      |       (4) following 'true' branch (when 'odds' is NULL)...
+    |   12 |         return -1;
+    |      |                ~
+    |      |                |
+    |      |                (5) ...to here
+    |      |                (6) 'evens' leaks here; was allocated at (3)
+    |
+./collected_code_4/round2//heal_1/healed/problem-844.c:12:16: warning: leak of 'odds' [CWE-401] [-Wanalyzer-malloc-leak]
+   12 |         return -1;
+      |                ^
+  'findKth': events 1-5
+    |
+    |    5 |     if(k < 0 || k >= size){
+    |      |       ^
+    |      |       |
+    |      |       (1) following 'false' branch...
+    |......
+    |    8 |     int* odds = (int*)malloc(size*sizeof(int));
+    |      |                       ~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                       |
+    |      |                       (2) ...to here
+    |      |                       (3) allocated here
+    |......
+    |   11 |     if(odds == NULL || evens == NULL) {
+    |      |       ~
+    |      |       |
+    |      |       (4) assuming 'odds' is non-NULL
+    |      |       (5) following 'false' branch (when 'odds' is non-NULL)...
+    |
+  'findKth': event 6
+    |
+    |   11 |     if(odds == NULL || evens == NULL) {
+    |      |                     ^
+    |      |                     |
+    |      |                     (6) ...to here
+    |
+  'findKth': events 7-9
+    |
+    |   11 |     if(odds == NULL || evens == NULL) {
+    |      |                     ^
+    |      |                     |
+    |      |                     (7) following 'true' branch (when 'evens' is NULL)...
+    |   12 |         return -1;
+    |      |                ~     
+    |      |                |
+    |      |                (8) ...to here
+    |      |                (9) 'odds' leaks here; was allocated at (3)
+    |

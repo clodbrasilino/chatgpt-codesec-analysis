@@ -1,0 +1,24 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+bool isMinHeap(int array[], int n) {
+    for (int i = 0; i <= n / 2 - 1; i++) {
+        if (2 * i + 1 < n && array[i] > array[2 * i + 1]) 
+            return false;
+        if (2 * i + 2 < n && array[i] > array[2 * i + 2]) 
+            return false;
+    }
+    return true;
+}
+
+int main() {
+    int array[7] = {1, 2, 3, 4, 5, 6, 7};
+    int size = sizeof(array) / sizeof(array[0]);
+
+    if (isMinHeap(array, size)) 
+        printf("Array represents a min heap\n");
+    else
+        printf("Array does not represent a min heap\n");
+
+    return 0;
+}

@@ -1,0 +1,74 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int* extract_elements(int** list, int rows, int columns, int index, int* out_size) {
+    if (list == NULL || out_size == NULL || rows <= 0 || columns <= 0 || index < 0 || index >= columns) {
+        if (out_size != NULL) {
+            *out_size = 0;
+        }
+        return NULL;
+    }
+
+    int* result = (int*)malloc(rows * sizeof(int));
+    if (result == NULL) {
+        *out_size = 0;
+        return NULL;
+    }
+
+    for (int i = 0; i < rows; ++i) {
+        if (list[i] == NULL) {
+            free(result);
+            *out_size = 0;
+            return NULL;
+        }
+        result[i] = list[i][index];
+    }
+
+    *out_size = rows;
+    return result;
+}
+
+int main() {
+    int rows = 3;
+    int columns = 3;
+    int index_to_extract = 0;
+
+    int** list = (int**)malloc(rows * sizeof(int*));
+    if (list == NULL) {
+        return 1;
+    }
+
+    for (int i = 0; i < rows; ++i) {
+        list[i] = (int*)malloc(columns * sizeof(int));
+        if (list[i] == NULL) {
+            for (int j = 0; j < i; ++j) {
+                free(list[j]);
+            }
+            free(list);
+            return 1;
+        }
+        for (int j = 0; j < columns; ++j) {
+            list[i][j] = (i * columns) + j + 1;
+        }
+    }
+
+    int out_size = 0;
+    int* extracted = extract_elements(list, rows, columns, index_to_extract, &out_size);
+
+    if (extracted != NULL) {
+        for (int i = 0; i < out_size; ++i) {
+            printf("%d ", extracted[i]);
+        }
+        printf("\n");
+        free(extracted);
+    }
+
+    for (int i = 0; i < rows; ++i) {
+        free(list[i]);
+    }
+    free(list);
+
+    return 0;
+}
+```

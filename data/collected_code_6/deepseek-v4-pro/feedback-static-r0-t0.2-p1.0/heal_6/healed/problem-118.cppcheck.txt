@@ -1,0 +1,16 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_6/healed/problem-118.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_6/healed/problem-118.c:43:44: style: Condition 'alloc_size<=len+1' is always true [knownConditionTrueFalse]
+    memcpy(new_node->data, str, alloc_size <= len + 1 ? len : len);
+                                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_6/healed/problem-118.c:35:23: note: alloc_size is assigned 'len+1' here.
+    size_t alloc_size = len + 1;
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_6/healed/problem-118.c:38:24: note: Assuming condition is false
+    if (new_node->data == NULL) {
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_6/healed/problem-118.c:43:44: note: Condition 'alloc_size<=len+1' is always true
+    memcpy(new_node->data, str, alloc_size <= len + 1 ? len : len);
+                                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_6/healed/problem-118.c:43:61: style: Same expression in both branches of ternary operator. [duplicateExpressionTernary]
+    memcpy(new_node->data, str, alloc_size <= len + 1 ? len : len);
+                                                            ^

@@ -1,0 +1,37 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+double average_of_cubes(unsigned int n)
+{
+    double sum;
+
+    sum = ((double)n * (double)(n + 1U)) / 2.0;
+    sum = sum * sum;
+
+    return sum / (double)n;
+}
+
+int main(void)
+{
+    unsigned int n = 0U;
+    int status;
+
+    printf("Enter a positive integer n: ");
+
+    status = scanf("%u", &n);
+    if (status != 1) {
+        fprintf(stderr, "Error: invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (n == 0U) {
+        fprintf(stderr, "Error: n must be a natural number greater than zero.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Average of cubes of first %u natural numbers: %.2f\n", n, average_of_cubes(n));
+
+    return EXIT_SUCCESS;
+}
+```

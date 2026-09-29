@@ -1,0 +1,18 @@
+./collected_code_4/round1//heal_0//problem-582.c: In function 'createDictionary':
+./collected_code_4/round1//heal_0//problem-582.c:16:22: warning: dereference of possibly-NULL 'dictionary' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   16 |     dictionary->head = NULL;
+      |                      ^
+  'createDictionary': event 1
+    |
+    |   15 |     Dictionary* dictionary = (Dictionary*)malloc(sizeof(Dictionary));
+    |      |                                           ^~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                                           |
+    |      |                                           (1) this call could return NULL
+    |
+  'createDictionary': event 2
+    |
+    |   16 |     dictionary->head = NULL;
+    |      |                      ^
+    |      |                      |
+    |      |                      (2) 'dictionary' could be NULL: unchecked value from (1)
+    |

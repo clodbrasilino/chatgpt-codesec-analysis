@@ -1,0 +1,62 @@
+{
+  "task_id": 515,
+  "text": "Write a C function to check if there is a subset with sum divisible by m.",
+  "fn_candidates": [
+    "modular_sum",
+    "ModularSum",
+    "modularSum",
+    "modularsum"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "modular_sum",
+      "args": [
+        [
+          3,
+          1,
+          7,
+          5
+        ],
+        4,
+        6
+      ],
+      "expected": true,
+      "assert_src": "assert modular_sum([3, 1, 7, 5], 4, 6) == True"
+    },
+    {
+      "fn_name": "modular_sum",
+      "args": [
+        [
+          1,
+          7
+        ],
+        2,
+        5
+      ],
+      "expected": false,
+      "assert_src": "assert modular_sum([1, 7], 2, 5) == False"
+    },
+    {
+      "fn_name": "modular_sum",
+      "args": [
+        [
+          1,
+          6
+        ],
+        2,
+        5
+      ],
+      "expected": false,
+      "assert_src": "assert modular_sum([1, 6], 2, 5) == False"
+    }
+  ],
+  "arg_kinds": [
+    "int",
+    "int-list"
+  ],
+  "return_kind": "bool",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

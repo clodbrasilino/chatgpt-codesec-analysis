@@ -1,0 +1,129 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+#include <string.h>
+
+typedef struct Node {
+    char *key;
+    struct Node *value;
+    struct Node *next;
+} Node;
+
+typedef struct Dictionary {
+    Node *head;
+} Dictionary;
+
+Dictionary *createDictionary() {
+    Dictionary *dict = (Dictionary *)malloc(sizeof(Dictionary));
+    dict->head = NULL;
+    return dict;
+}
+
+Node *createNode(char *key, Node *value) {
+    Node *node = (Node *)malloc(sizeof(Node));
+    node->key = key;
+    node->value = value;
+    node->next = NULL;
+    return node;
+}
+
+void addEntry(Dictionary *dict, char *key, Node *value) {
+    Node *newNode = createNode(key, value);
+    newNode->next = dict->head;
+    dict->head = newNode;
+}
+
+Node *findEntry(Dictionary *dict, const char *key) {
+    for (Node *curr = dict->head; curr != NULL; curr = curr->next) {
+        if (strcmp(curr->key, key) == 0) {
+            return curr;
+        }
+    }
+    return NULL;
+}
+
+void freeDictionary(Dictionary *dict) {
+    while (dict->head != NULL) {
+        Node *temp = dict->head;
+        dict->head = dict->head->next;
+        free(temp->key);
+        if (temp->value != NULL) {
+            freeDictionary((Dictionary *)temp->value);
+        }
+        free(temp);
+    }
+    free(dict);
+}
+
+bool isList(const Node *node) {
+    if (node == NULL || node->key != NULL) {
+        return false;
+    }
+    return true;
+}
+
+void printDictionary(Dictionary *dict, int level) {
+    for (int i = 0; i < level; i++) {
+        printf("  ");
+    }
+    for (Node *curr = dict->head; curr != NULL; curr = curr->next) {
+        if (isList(curr)) {
+            printf("[\n");
+            printDictionary((Dictionary *)curr->value, level + 1);
+            for (int i = 0; i < level; i++) {
+                printf("  ");
+            }
+            printf("]\n");
+        } else {
+            printf("%s: ", curr->key);
+            if (isList(curr->value)) {
+                printf("[\n");
+                printDictionary((Dictionary *)curr->value, level + 1);
+                for (int i = 0; i < level; i++) {
+                    printf("  ");
+                }
+                printf("]\n");
+            } else {
+                printf("{\n");
+                printDictionary((Dictionary *)curr->value, level + 1);
+                for (int i = 0; i < level; i++) {
+                    printf("  ");
+                }
+                printf("}\n");
+            }
+        }
+    }
+}
+
+void convertListsToNestedDictionary(const char ***lists, const int *sizes, int listCount, Dictionary *dict) {
+    for (int i = 0; i < listCount; ++i) {
+        if (sizes[i] % 2 != 0) {
+            continue;
+        }
+        Dictionary *subDict = createDictionary();
+        for (int j = 0; j < sizes[i]; j += 2) {
+            char *key = lists[i][j];
+            Node *value = (j + 1 < sizes[i]) ? createNode(NULL, NULL) : NULL;
+            addEntry(subDict, key, value);
+        }
+        addEntry(dict, (char *)"list", (Node *)subDict);
+    }
+}
+
+int main() {
+    char *list1[] = {"a", "b", "c", "d"};
+    char *list2[] = {"e", "f", "g", "h"};
+    char *list3[] = {"i", "j", "k", "l"};
+
+    char **lists[3] = {list1, list2, list3};
+    int sizes[3] = {4, 4, 4};
+    int listCount = 3;
+
+    Dictionary *rootDict = createDictionary();
+    convertListsToNestedDictionary((const char ***)lists, (const int *)sizes, listCount, rootDict);
+
+    printDictionary(rootDict, 0);
+
+    freeDictionary(rootDict);
+    return 0;
+}

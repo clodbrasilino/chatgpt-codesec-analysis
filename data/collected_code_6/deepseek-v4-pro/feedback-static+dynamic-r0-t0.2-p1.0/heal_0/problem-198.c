@@ -1,0 +1,54 @@
+#include <stdio.h>
+#include <math.h>
+#include <stdlib.h>
+
+typedef struct {
+    double x;
+    double y;
+} Point;
+
+typedef struct {
+    Point a;
+    Point b;
+    Point c;
+    double area;
+} Triangle;
+
+double triangle_area(Point a, Point b, Point c) {
+    return fabs((a.x * (b.y - c.y) + b.x * (c.y - a.y) + c.x * (a.y - b.y)) / 2.0);
+}
+
+Triangle largest_inscribed_triangle(double a, double b) {
+    Triangle result;
+    double angle = 2.0 * M_PI / 3.0;
+    
+    result.a.x = a * cos(0.0);
+    result.a.y = b * sin(0.0);
+    result.b.x = a * cos(angle);
+    result.b.y = b * sin(angle);
+    result.c.x = a * cos(2.0 * angle);
+    result.c.y = b * sin(2.0 * angle);
+    
+    result.area = triangle_area(result.a, result.b, result.c);
+    return result;
+}
+
+int main(void) {
+    double semi_major = 5.0;
+    double semi_minor = 3.0;
+    
+    if (semi_major <= 0.0 || semi_minor <= 0.0) {
+        fprintf(stderr, "Error: semi-axes must be positive\n");
+        return EXIT_FAILURE;
+    }
+    
+    Triangle max_triangle = largest_inscribed_triangle(semi_major, semi_minor);
+    
+    printf("Largest inscribed triangle in ellipse (a=%.2f, b=%.2f):\n", semi_major, semi_minor);
+    printf("Vertex A: (%.6f, %.6f)\n", max_triangle.a.x, max_triangle.a.y);
+    printf("Vertex B: (%.6f, %.6f)\n", max_triangle.b.x, max_triangle.b.y);
+    printf("Vertex C: (%.6f, %.6f)\n", max_triangle.c.x, max_triangle.c.y);
+    printf("Area: %.6f\n", max_triangle.area);
+    
+    return EXIT_SUCCESS;
+}

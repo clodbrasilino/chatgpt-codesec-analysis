@@ -1,0 +1,43 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <ctype.h>
+
+bool has_letter_and_number(const char *str) {
+    if (str == NULL) {
+        return false;
+    }
+
+    bool has_letter = false;
+    bool has_number = false;
+
+    while (*str != '\0') {
+        if (isalpha((unsigned char)*str)) {
+            has_letter = true;
+        } else if (isdigit((unsigned char)*str)) {
+            has_number = true;
+        }
+
+        if (has_letter && has_number) {
+            return true;
+        }
+        str++;
+    }
+
+    return false;
+}
+
+int main(void) {
+    const char *test1 = "Password123";
+    const char *test2 = "OnlyLetters";
+    const char *test3 = "123456789";
+    const char *test4 = "!@#$%^&*()";
+    const char *test5 = "L3tt3rsAndNumb3rs";
+
+    printf("%s: %d\n", test1, has_letter_and_number(test1));
+    printf("%s: %d\n", test2, has_letter_and_number(test2));
+    printf("%s: %d\n", test3, has_letter_and_number(test3));
+    printf("%s: %d\n", test4, has_letter_and_number(test4));
+    printf("%s: %d\n", test5, has_letter_and_number(test5));
+
+    return 0;
+}

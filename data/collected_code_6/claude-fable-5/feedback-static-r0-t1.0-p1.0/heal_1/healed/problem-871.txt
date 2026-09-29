@@ -1,0 +1,91 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_INPUT_LEN 4096U
+
+int are_rotations(const char *s1, const char *s2)
+{
+    size_t len1;
+    size_t len2;
+    size_t temp_size;
+    char *temp;
+    int result;
+
+    if (s1 == NULL || s2 == NULL) {
+        return 0;
+    }
+
+    len1 = strnlen(s1, MAX_INPUT_LEN);
+    len2 = strnlen(s2, MAX_INPUT_LEN);
+
+    if (len1 >= MAX_INPUT_LEN || len2 >= MAX_INPUT_LEN) {
+        return -1;
+    }
+
+    if (len1 != len2) {
+        return 0;
+    }
+
+    if (len1 == 0) {
+        return 1;
+    }
+
+    if (len1 > (SIZE_MAX - 1U) / 2U) {
+        return -1;
+    }
+
+    temp_size = 2U * len1 + 1U;
+
+    temp = (char *)malloc(temp_size);
+    if (temp == NULL) {
+        return -1;
+    }
+
+    memcpy(temp, s1, len1);
+    memcpy(temp + len1, s1, len1);
+    temp[temp_size - 1U] = '\0';
+
+    result = (strstr(temp, s2) != NULL) ? 1 : 0;
+
+    free(temp);
+    return result;
+}
+
+int main(void)
+{
+    const char *str1 = "ABCD";
+    const char *str2 = "CDAB";
+    const char *str3 = "ACBD";
+    int res;
+
+    res = are_rotations(str1, str2);
+    if (res < 0) {
+        fprintf(stderr, "Error: allocation failure or input too long\n");
+        return EXIT_FAILURE;
+    }
+    printf("\"%s\" and \"%s\": %s\n", str1, str2,
+           (res == 1) ? "rotations" : "not rotations");
+
+    res = are_rotations(str1, str3);
+    if (res < 0) {
+        fprintf(stderr, "Error: allocation failure or input too long\n");
+        return EXIT_FAILURE;
+    }
+    printf("\"%s\" and \"%s\": %s\n", str1, str3,
+           (res == 1) ? "rotations" : "not rotations");
+
+    return EXIT_SUCCESS;
+}
+```
+
+Key changes made to address the identified weaknesses:
+
+1. **CWE-126 (`strlen` over-read):** Replaced both `strlen` calls with `strnlen` bounded by `MAX_INPUT_LEN`. If a string is not `\0`-terminated within the bound, the function rejects it (`len >= MAX_INPUT_LEN` returns an error) instead of reading past the buffer indefinitely.
+
+2. **CWE-120 (`memcpy` overflow):** The destination size is now computed with an explicit integer-overflow guard (`len1 > (SIZE_MAX - 1U) / 2U`) before `malloc`, guaranteeing `temp_size` is valid and that both `memcpy` calls (`len1` bytes each, totaling `2 * len1`) always fit within the allocated `temp_size` buffer, with the final byte reserved for the terminator.
+
+3. The `strstr` search remains safe because `temp` is explicitly `\0`-terminated and `s2` is verified to be terminated within bounds via `strnlen`.
+
+Note: `strnlen` requires POSIX (`_POSIX_C_SOURCE >= 200809L`) or C23; on stricter C90/C99 toolchains you may need to define the feature-test macro or provide a small portable fallback.

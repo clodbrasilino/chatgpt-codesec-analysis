@@ -1,0 +1,71 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+unsigned long long delannoy(int n, int m) {
+    if (n < 0 || m < 0) {
+        return 0;
+    }
+    
+    int rows = n + 1;
+    int cols = m + 1;
+    unsigned long long **dp = (unsigned long long **)malloc(rows * sizeof(unsigned long long *));
+    if (!dp) {
+        return 0;
+    }
+    
+    for (int i = 0; i < rows; i++) {
+        dp[i] = (unsigned long long *)malloc(cols * sizeof(unsigned long long));
+        if (!dp[i]) {
+            for (int j = 0; j < i; j++) {
+                free(dp[j]);
+            }
+            free(dp);
+            return 0;
+        }
+    }
+    
+    for (int i = 0; i < rows; i++) {
+        dp[i][0] = 1;
+    }
+    for (int j = 0; j < cols; j++) {
+        dp[0][j] = 1;
+    }
+    
+    for (int i = 1; i < rows; i++) {
+        for (int j = 1; j < cols; j++) {
+            dp[i][j] = dp[i-1][j] + dp[i][j-1] + dp[i-1][j-1];
+        }
+    }
+    
+    unsigned long long result = dp[n][m];
+    
+    for (int i = 0; i < rows; i++) {
+        free(dp[i]);
+    }
+    free(dp);
+    
+    return result;
+}
+
+unsigned long long nth_delannoy(int n) {
+    return delannoy(n, n);
+}
+
+int main(void) {
+    int n;
+    printf("Enter n: ");
+    if (scanf("%d", &n) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return 1;
+    }
+    
+    if (n < 0) {
+        fprintf(stderr, "n must be non-negative\n");
+        return 1;
+    }
+    
+    unsigned long long result = nth_delannoy(n);
+    printf("D(%d,%d) = %llu\n", n, n, result);
+    
+    return 0;
+}

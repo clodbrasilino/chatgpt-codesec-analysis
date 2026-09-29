@@ -1,0 +1,90 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+ /* Possible weaknesses found:
+  *  test case 0 failed: expected ['practice', 'solution'], got ["exercises","practice","solution"]
+  *  test case 1 failed: expected ['Python'], got ["Python","exercises","practice","solution"]
+  */
+
+char **extract_strings(const char *const *list, size_t list_size, size_t min_length)
+{
+    char **result;
+    size_t i;
+    size_t n = 0;
+
+    if (list == NULL) {
+        return NULL;
+    }
+
+    result = calloc(list_size + 1, sizeof(*result));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    for (i = 0; i < list_size; i++) {
+        size_t len;
+
+        if (list[i] == NULL) {
+            continue;
+        }
+
+        len = strlen(list[i]);
+        if (len < min_length) {
+            continue;
+        }
+
+        len++;
+        result[n] = malloc(len);
+        if (result[n] == NULL) {
+            size_t j;
+            for (j = 0; j < n; j++) {
+                free(result[j]);
+            }
+            free(result);
+            return NULL;
+        }
+        memcpy(result[n], list[i], len);
+        n++;
+    }
+
+    result[n] = NULL;
+
+    return result;
+}
+
+void free_strings(char **strings)
+{
+    size_t i;
+
+    if (strings == NULL) {
+        return;
+    }
+
+    for (i = 0; strings[i] != NULL; i++) {
+        free(strings[i]);
+    }
+    free(strings);
+}
+
+int main(void)
+{
+    const char *list[] = {"practice", "code", "solution", "C", "exercises", "Python"};
+    const size_t list_size = sizeof(list) / sizeof(list[0]);
+    const size_t min_length = 8;
+    char **extracted;
+    size_t i;
+
+    extracted = extract_strings(list, list_size, min_length);
+    if (extracted == NULL) {
+        fprintf(stderr, "Error: failed to extract strings\n");
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; extracted[i] != NULL; i++) {
+        printf("%s\n", extracted[i]);
+    }
+
+    free_strings(extracted);
+
+    return EXIT_SUCCESS;
+}

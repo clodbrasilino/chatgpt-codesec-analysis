@@ -1,0 +1,114 @@
+#include <stdio.h>
+#include <limits.h>
+
+typedef struct range {
+    int min;
+    int max;
+} Range;
+
+typedef struct node {
+    int val;
+    int i;
+    int j;
+} Node;
+
+void swap(Node* a, Node* b) {
+    Node temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+int parent(int i) {
+    return (i - 1) / 2;
+}
+
+int leftChild(int i) {
+    return (2 * i + 1);
+}
+
+int rightChild(int i) {
+    return (2 * i + 2);
+}
+
+void minHeapify(Node harr[], int i, int heap_size) {
+    int l = leftChild(i);
+    int r = rightChild(i);
+    int smallest = i;
+
+    if (l < heap_size && harr[l].val < harr[smallest].val)
+        smallest = l;
+
+    if (r < heap_size && harr[r].val < harr[smallest].val)
+        smallest = r;
+
+    if (smallest != i) {
+        swap(&harr[i], &harr[smallest]);
+        minHeapify(harr, smallest, heap_size);
+    }
+}
+
+void buildMinHeap(Node harr[], int n) {
+    int i = (n - 1) / 2;
+    while (i >= 0) {
+        minHeapify(harr, i, n);
+        i--;
+    }
+}
+
+Range findSmallestRange(int** arr, int N, int K) {
+    int range = INT_MAX, min = INT_MAX, max = INT_MIN;
+    int i, j;
+
+    Node* harr = new Node[K];
+    for (i = 0; i < K; i++) {
+        harr[i].val = arr[i][0];
+        harr[i].i = i;
+        harr[i].j = 1;
+
+        if (harr[i].val > max)
+            max = harr[i].val;
+    }
+
+    buildMinHeap(harr, K);
+
+    while (1) {
+        Node root = harr[0];
+
+        min = harr[0].val;
+        if (range > max - min + 1) {
+            range = max - min + 1;
+        }
+
+        if (root.j < N) {
+            root.val = arr[root.i][root.j];
+            root.j += 1;
+
+            if (root.val > max)
+                max = root.val;
+        } else {
+            break;
+        }
+
+        harr[0] = root;
+        minHeapify(harr, 0, K);
+    }
+
+    Range r = { min, max };
+    return r;
+}
+
+int main() {
+    int arr[][3] = {
+        { 4, 7, 9 },
+        { 1, 2, 3 },
+        { 5, 6, 8 }
+    };
+
+    int N = 3, K = sizeof(arr) / sizeof(arr[0]);
+
+    Range r = findSmallestRange((int**)arr, N, K);
+
+    printf("Smallest range is [%d, %d]", r.min, r.max);
+    getchar();
+    return 0;
+}

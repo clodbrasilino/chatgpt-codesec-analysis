@@ -1,0 +1,12 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-222.c: In function 'get_type':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-222.c:21:5: error: implicit declaration of function 'memcpy' [-Wimplicit-function-declaration]
+   21 |     memcpy(&u, ptr, sizeof(u));
+      |     ^~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-222.c:4:1: note: include '<string.h>' or provide a declaration of 'memcpy'
+    3 | #include <stdint.h>
+  +++ |+#include <string.h>
+    4 | 
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-222.c: In function 'main':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-222.c:37:5: error: cannot convert to a pointer type
+   37 |     const void *tuple[] = {(const void *)1, (const void *)2.0, (const void *)"hello"};
+      |     ^~~~~

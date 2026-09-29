@@ -1,0 +1,76 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+static unsigned int count_set_bits(unsigned int num)
+{
+    unsigned int count = 0U;
+
+    while (num > 0U)
+    {
+        count += (num & 1U);
+        num >>= 1U;
+    }
+
+    return count;
+}
+
+static unsigned long long total_set_bits(unsigned int n)
+{
+    unsigned long long total = 0ULL;
+    unsigned int i;
+
+    for (i = 1U; i <= n; i++)
+    {
+        total += (unsigned long long)count_set_bits(i);
+
+        if (i == n)
+        {
+            break;
+        }
+    }
+
+    return total;
+}
+
+int main(void)
+{
+    unsigned int n = 0U;
+    int result;
+
+    printf("Enter a positive integer n: ");
+
+    result = scanf("%u", &n);
+    if (result != 1)
+    {
+        fprintf(stderr, "Error: invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (n == 0U)
+    {
+        fprintf(stderr, "Error: n must be greater than 0\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Total set bits from 1 to %u: %llu\n", n, total_set_bits(n));
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the original code and the reported weaknesses:**
+
+The test failures in the comments (`expected 4, got 2` and `expected 17, got 3`) indicate an earlier version of the code was under-counting. `total_set_bits(3)` should yield `1+1+2 = 4`, and `total_set_bits(10)` should yield `17`. Results of `2` and `3` suggest the original loop was either skipping values or only counting the bits of `n` itself plus an off-by-one range error.
+
+Key points in the corrected version:
+
+1. **Loop bounds** – The summation now uses a standard bounded `for` loop (`i = 1; i <= n; i++`), ensuring every value from `1` through `n` inclusive is counted exactly once. The `i == n` break guard is retained as a defensive measure against the `n == UINT_MAX` wraparound case, where `i++` would overflow and `i <= n` would loop forever.
+
+2. **Overflow safety** – The accumulator remains `unsigned long long`, since the worst case (`n = UINT_MAX`) yields roughly `2^32 × 16` set bits, which exceeds `unsigned int` range but fits comfortably in 64 bits.
+
+3. **Input validation** – The `scanf` return value is checked, and `n == 0` is rejected, preserving the original defensive behavior.
+
+4. **Correct kernel** – `count_set_bits` uses the standard shift-and-mask technique (Kernighan's alternative `num &= num - 1` would also work and iterate fewer times, but the current form is correct and clear).
+
+With these bounds fixed, `total_set_bits(3)` returns `4` and `total_set_bits(10)` returns `17`, satisfying both failing test cases.

@@ -1,0 +1,83 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+static int count_tilings(int n, unsigned long long *result)
+{
+    unsigned long long prev;
+    unsigned long long curr;
+    unsigned long long next;
+    int i;
+
+    if (result == NULL || n < 0)
+    {
+        return -1;
+    }
+
+    if (n == 0)
+    {
+        *result = 1ULL;
+        return 0;
+    }
+
+    if (n == 1)
+    {
+        *result = 1ULL;
+        return 0;
+    }
+
+    prev = 1ULL;
+    curr = 1ULL;
+
+    for (i = 2; i <= n; i++)
+    {
+        if (curr > (unsigned long long)-1 - prev)
+        {
+            return -2;
+        }
+        next = curr + prev;
+        prev = curr;
+        curr = next;
+    }
+
+    *result = curr;
+    return 0;
+}
+
+int main(void)
+{
+    int n;
+    unsigned long long ways;
+    int status;
+
+    printf("Enter board length n (2 x n board, 2 x 1 tiles): ");
+
+    if (scanf("%d", &n) != 1)
+    {
+        fprintf(stderr, "Error: invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (n < 0)
+    {
+        fprintf(stderr, "Error: n must be non-negative.\n");
+        return EXIT_FAILURE;
+    }
+
+    status = count_tilings(n, &ways);
+
+    if (status == -1)
+    {
+        fprintf(stderr, "Error: invalid arguments.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (status == -2)
+    {
+        fprintf(stderr, "Error: result overflow for n = %d.\n", n);
+        return EXIT_FAILURE;
+    }
+
+    printf("Number of ways to tile a 2 x %d board: %llu\n", n, ways);
+
+    return EXIT_SUCCESS;
+}

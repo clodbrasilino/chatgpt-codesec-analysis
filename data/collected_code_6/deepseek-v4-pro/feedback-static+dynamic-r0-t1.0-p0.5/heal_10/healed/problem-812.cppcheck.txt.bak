@@ -1,0 +1,22 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_10/healed/problem-812.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_10/healed/problem-812.c:72:26: style: Condition 'test10' is always false [knownConditionTrueFalse]
+    printf("%s -> %s\n", test10 ? test10 : "(null)", result10 ? result10 : "(null)");
+                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_10/healed/problem-812.c:50:26: note: Assignment 'test10=NULL', assigned value is 0
+    const char *test10 = NULL;
+                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_10/healed/problem-812.c:72:26: note: Condition 'test10' is always false
+    printf("%s -> %s\n", test10 ? test10 : "(null)", result10 ? result10 : "(null)");
+                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_10/healed/problem-812.c:72:54: style: Condition 'result10' is always false [knownConditionTrueFalse]
+    printf("%s -> %s\n", test10 ? test10 : "(null)", result10 ? result10 : "(null)");
+                                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_10/healed/problem-812.c:61:37: note: Calling function 'abbreviate_road' returns 0
+    char *result10 = abbreviate_road(test10);
+                                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_10/healed/problem-812.c:61:37: note: Assignment 'result10=abbreviate_road(test10)', assigned value is 0
+    char *result10 = abbreviate_road(test10);
+                                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_10/healed/problem-812.c:72:54: note: Condition 'result10' is always false
+    printf("%s -> %s\n", test10 ? test10 : "(null)", result10 ? result10 : "(null)");
+                                                     ^

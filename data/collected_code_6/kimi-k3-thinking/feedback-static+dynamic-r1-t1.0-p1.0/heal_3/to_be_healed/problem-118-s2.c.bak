@@ -1,0 +1,174 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+typedef struct Node {
+    char *data;
+    struct Node *next;
+} Node;
+
+static Node *create_node(const char *str, size_t len)
+{
+    Node *node = malloc(sizeof *node);
+    if (node == NULL) {
+        return NULL;
+    }
+    node->data = malloc(len + 1);
+    if (node->data == NULL) {
+        free(node);
+        return NULL;
+    }
+    memcpy(node->data, str, len);
+    node->data[len] = '\0';
+    node->next = NULL;
+    return node;
+}
+
+void free_list(Node *head)
+{
+    while (head != NULL) {
+        Node *next = head->next;
+        free(head->data);
+        free(head);
+        head = next;
+    }
+}
+
+static int is_separator(int ch)
+{
+    return isspace(ch) || ch == ',';
+}
+ /* Possible weaknesses found:
+  *  test case 1 failed: expected ['lists', 'tuples', 'strings'], got <no output>
+  *  test case 2 failed: expected ['write', 'a', 'program'], got <no output>
+  *  test case 0 failed: expected ['python', 'programming'], got <no output>
+  */
+
+Node *string_to_list(const char *str)
+{
+    Node *head = NULL;
+    Node *tail = NULL;
+
+    if (str == NULL) {
+        return NULL;
+    }
+
+    while (*str != '\0') {
+        while (is_separator((unsigned char)*str)) {
+            str++;
+        }
+        if (*str == '\0') {
+            break;
+        }
+        const char *start = str;
+        while (*str != '\0' && !is_separator((unsigned char)*str)) {
+            str++;
+        }
+        Node *node = create_node(start, (size_t)(str - start));
+        if (node == NULL) {
+            free_list(head);
+            return NULL;
+        }
+        if (head == NULL) {
+            head = node;
+        } else {
+            tail->next = node;
+        }
+        tail = node;
+    }
+
+    return head;
+}
+
+void print_list(const Node *head)
+{
+    putchar('[');
+    while (head != NULL) {
+        printf("'%s'", head->data);
+        head = head->next;
+        if (head != NULL) {
+            printf(", ");
+        }
+    }
+    printf("]\n");
+}
+
+static char *read_stream(FILE *stream)
+{
+    size_t capacity = 4096;
+    size_t length = 0;
+    char *buffer = malloc(capacity);
+    if (buffer == NULL) {
+        return NULL;
+    }
+    for (;;) {
+        if (length + 1 >= capacity) {
+            capacity *= 2;
+            char *grown = realloc(buffer, capacity);
+            if (grown == NULL) {
+                free(buffer);
+                return NULL;
+            }
+            buffer = grown;
+        }
+        size_t n = fread(buffer + length, 1, capacity - length - 1, stream);
+        length += n;
+        if (n == 0) {
+            break;
+        }
+    }
+    buffer[length] = '\0';
+    return buffer;
+}
+
+/* Possible weaknesses found:
+ *  Parameter 'argv' can be declared as const array [constParameter]
+ */
+static char *join_arguments(int argc, char *argv[])
+{
+    size_t total = 1;
+    for (int i = 1; i < argc; i++) {
+        total += strlen(argv[i]) + 1;
+    }
+    char *joined = malloc(total);
+    if (joined == NULL) {
+        return NULL;
+    }
+    joined[0] = '\0';
+    for (int i = 1; i < argc; i++) {
+        strcat(joined, argv[i]);
+        if (i + 1 < argc) {
+            strcat(joined, " ");
+        }
+    }
+    return joined;
+}
+
+int main(int argc, char *argv[])
+{
+    char *input;
+
+    if (argc > 1) {
+        input = join_arguments(argc, argv);
+    } else {
+        input = read_stream(stdin);
+    }
+
+    if (input == NULL) {
+        fprintf(stderr, "Failed to obtain input\n");
+        return EXIT_FAILURE;
+    }
+
+    Node *list = string_to_list(input);
+
+    print_list(list);
+    fflush(stdout);
+
+    free_list(list);
+    list = NULL;
+    free(input);
+    input = NULL;
+
+    return EXIT_SUCCESS;
+}

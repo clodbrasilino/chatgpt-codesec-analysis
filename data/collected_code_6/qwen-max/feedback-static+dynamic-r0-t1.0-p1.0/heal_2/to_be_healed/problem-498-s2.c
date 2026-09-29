@@ -1,0 +1,40 @@
+#include <stdio.h>
+
+int gcd(int a, int b) {
+    if (b == 0) {
+        return a;
+    }
+    return gcd(b, a % b);
+}
+
+int main() {
+    int num1 = 56;
+    int num2 = 98;
+    printf("GCD of %d and %d is %d\n", num1, num2, gcd(num1, num2));
+
+    int test_cases[] = {1, 2, 1};
+    /* Possible weaknesses found:
+     *  Variable 'expected_results' can be declared as const array [constVariable]
+     */
+    int expected_results[] = {1, 2, 1};
+    /* Possible weaknesses found:
+     *  Variable 'a' can be declared as const array [constVariable]
+     */
+    int a[] = {3, 6, 4};
+    /* Possible weaknesses found:
+     *  Variable 'b' can be declared as const array [constVariable]
+     */
+    int b[] = {3, 6, 2};
+    int n = sizeof(test_cases) / sizeof(test_cases[0]);
+
+    for (int i = 0; i < n; i++) {
+        int result = gcd(a[i], b[i]);
+        if (result == expected_results[i]) {
+            printf("Test case %d passed: GCD of %d and %d is %d\n", i, a[i], b[i], result);
+        } else {
+            printf("Test case %d failed: Expected %d, got %d\n", i, expected_results[i], result);
+        }
+    }
+
+    return 0;
+}

@@ -1,0 +1,47 @@
+{
+  "task_id": 532,
+  "text": "Write a C function to check if the two given strings are permutations of each other.",
+  "fn_candidates": [
+    "check_permutation",
+    "CheckPermutation",
+    "checkPermutation",
+    "checkpermutation"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "check_permutation",
+      "args": [
+        "abc",
+        "cba"
+      ],
+      "expected": true,
+      "assert_src": "assert check_permutation(\"abc\", \"cba\") == True"
+    },
+    {
+      "fn_name": "check_permutation",
+      "args": [
+        "test",
+        "ttew"
+      ],
+      "expected": false,
+      "assert_src": "assert check_permutation(\"test\", \"ttew\") == False"
+    },
+    {
+      "fn_name": "check_permutation",
+      "args": [
+        "xxyz",
+        "yxzx"
+      ],
+      "expected": true,
+      "assert_src": "assert check_permutation(\"xxyz\", \"yxzx\") == True"
+    }
+  ],
+  "arg_kinds": [
+    "str"
+  ],
+  "return_kind": "bool",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

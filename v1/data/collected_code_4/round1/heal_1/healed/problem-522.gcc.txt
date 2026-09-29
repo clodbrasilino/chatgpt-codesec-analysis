@@ -1,0 +1,31 @@
+./collected_code_4/round1//heal_1/healed//problem-522.c: In function 'Bitonic':
+./collected_code_4/round1//heal_1/healed//problem-522.c:14:12: warning: dereference of possibly-NULL 'incr' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   14 |    incr[0] = 1;
+      |    ~~~~~~~~^~~
+  'Bitonic': events 1-2
+    |
+    |   11 |    int* incr = (int*)malloc(n * sizeof(int));
+    |      |                      ^~~~~~~~~~~~~~~~~~~~~~~
+    |      |                      |
+    |      |                      (1) this call could return NULL
+    |......
+    |   14 |    incr[0] = 1;
+    |      |    ~~~~~~~~~~~        
+    |      |            |
+    |      |            (2) 'incr' could be NULL: unchecked value from (1)
+    |
+./collected_code_4/round1//heal_1/healed//problem-522.c:25:28: warning: dereference of possibly-NULL 'decr' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   25 |    int max = incr[0] + decr[0] - 1;
+      |                        ~~~~^~~
+  'Bitonic': events 1-2
+    |
+    |   12 |    int* decr = (int*)malloc(n * sizeof(int));
+    |      |                      ^~~~~~~~~~~~~~~~~~~~~~~
+    |      |                      |
+    |      |                      (1) this call could return NULL
+    |......
+    |   25 |    int max = incr[0] + decr[0] - 1;
+    |      |                        ~~~~~~~
+    |      |                            |
+    |      |                            (2) 'decr' could be NULL: unchecked value from (1)
+    |

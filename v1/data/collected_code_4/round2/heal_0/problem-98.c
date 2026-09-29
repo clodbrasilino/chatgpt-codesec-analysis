@@ -1,0 +1,28 @@
+#include <stdio.h>
+
+float calculateAverageMultiplication(int arr[], int size) {
+    int i;
+    double product = 1;
+
+    if (size == 0) {
+        return 0;
+    }
+
+    for (i = 0; i < size; i++) {
+        if (arr[i] == 0) {
+            return 0;
+        }
+        product *= arr[i];
+    }
+    return product / size;
+}
+
+int main() {
+    int arr[] = {1, 2, 3, 4, 5};
+    int arrSize = sizeof(arr)/sizeof(arr[0]);
+    float result = calculateAverageMultiplication(arr, arrSize);
+  
+    printf("%f", result);
+  
+    return 0;
+}

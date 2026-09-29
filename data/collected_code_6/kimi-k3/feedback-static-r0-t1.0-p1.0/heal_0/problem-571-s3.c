@@ -1,0 +1,37 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+int max_pair_sum(int *arr, int n, int k) {
+    if (arr == NULL || n < 2 || k < 1) {
+        return 0;
+    }
+    
+    int max_sum = INT_MIN;
+    int found = 0;
+    
+    for (int i = 0; i < n - 1; i++) {
+        for (int j = i + 1; j < n; j++) {
+            if (abs(arr[i] - arr[j]) <= k) {
+                int sum = arr[i] + arr[j];
+                if (sum > max_sum) {
+                    max_sum = sum;
+                    found = 1;
+                }
+            }
+        }
+    }
+    
+    return found ? max_sum : 0;
+}
+
+int main(void) {
+    int arr[] = {3, 5, 10, 15, 20};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    int k = 10;
+    
+    int result = max_pair_sum(arr, n, k);
+    printf("%d\n", result);
+    
+    return 0;
+}

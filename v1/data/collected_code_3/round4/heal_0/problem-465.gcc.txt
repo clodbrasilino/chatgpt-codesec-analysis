@@ -1,0 +1,465 @@
+collected_code_3/round4/heal_0/problem-465.c: In function 'create_node':
+collected_code_3/round4/heal_0/problem-465.c:13:19: warning: dereference of possibly-NULL 'new_node' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   13 |     new_node->key = strdup(key);
+      |     ~~~~~~~~~~~~~~^~~~~~~~~~~~~
+  'create_node': events 1-2
+    |
+    |   12 |     node *new_node = (node*)malloc(sizeof(node));
+    |      |                             ^~~~~~~~~~~~~~~~~~~~
+    |      |                             |
+    |      |                             (1) this call could return NULL
+    |   13 |     new_node->key = strdup(key);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                   |
+    |      |                   (2) 'new_node' could be NULL: unchecked value from (1)
+    |
+collected_code_3/round4/heal_0/problem-465.c: In function 'drop_empty':
+collected_code_3/round4/heal_0/problem-465.c:21:39: warning: dereference of possibly-NULL '*temp.value' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   21 |     while (temp != NULL && temp->value[0] == '\0') {
+      |                            ~~~~~~~~~~~^~~
+  'main': events 1-2
+    |
+    |   38 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |   39 |     node *head = create_node("key1", "value1");
+    |      |                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                  |
+    |      |                  (2) calling 'create_node' from 'main'
+    |
+    +--> 'create_node': events 3-4
+           |
+           |   11 | node *create_node(char *key, char *value) {
+           |      |       ^~~~~~~~~~~
+           |      |       |
+           |      |       (3) entry to 'create_node'
+           |......
+           |   14 |     new_node->value = strdup(value);
+           |      |                       ~~~~~~~~~~~~~
+           |      |                       |
+           |      |                       (4) this call could return NULL
+           |
+    <------+
+    |
+  'main': events 5-6
+    |
+    |   39 |     node *head = create_node("key1", "value1");
+    |      |                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                  |
+    |      |                  (5) returning to 'main' from 'create_node'
+    |......
+    |   44 |     drop_empty(&head);
+    |      |     ~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (6) calling 'drop_empty' from 'main'
+    |
+    +--> 'drop_empty': events 7-10
+           |
+           |   19 | void drop_empty(node **head) {
+           |      |      ^~~~~~~~~~
+           |      |      |
+           |      |      (7) entry to 'drop_empty'
+           |   20 |     node *temp = *head, *prev;
+           |   21 |     while (temp != NULL && temp->value[0] == '\0') {
+           |      |            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                         |      |      |
+           |      |                         |      |      (10) '*temp.value' could be NULL: unchecked value from (4)
+           |      |                         |      (9) ...to here
+           |      |                         (8) following 'true' branch (when 'temp' is non-NULL)...
+           |
+collected_code_3/round4/heal_0/problem-465.c:23:9: warning: leak of '<unknown>' [CWE-401] [-Wanalyzer-malloc-leak]
+   23 |         free(temp);
+      |         ^~~~~~~~~~
+  'main': events 1-2
+    |
+    |   38 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |   39 |     node *head = create_node("key1", "value1");
+    |      |                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                  |
+    |      |                  (2) calling 'create_node' from 'main'
+    |
+    +--> 'create_node': events 3-4
+           |
+           |   11 | node *create_node(char *key, char *value) {
+           |      |       ^~~~~~~~~~~
+           |      |       |
+           |      |       (3) entry to 'create_node'
+           |   12 |     node *new_node = (node*)malloc(sizeof(node));
+           |   13 |     new_node->key = strdup(key);
+           |      |                     ~~~~~~~~~~~
+           |      |                     |
+           |      |                     (4) allocated here
+           |
+    <------+
+    |
+  'main': events 5-6
+    |
+    |   39 |     node *head = create_node("key1", "value1");
+    |      |                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                  |
+    |      |                  (5) returning to 'main' from 'create_node'
+    |......
+    |   44 |     drop_empty(&head);
+    |      |     ~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (6) calling 'drop_empty' from 'main'
+    |
+    +--> 'drop_empty': events 7-10
+           |
+           |   19 | void drop_empty(node **head) {
+           |      |      ^~~~~~~~~~
+           |      |      |
+           |      |      (7) entry to 'drop_empty'
+           |   20 |     node *temp = *head, *prev;
+           |   21 |     while (temp != NULL && temp->value[0] == '\0') {
+           |      |            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                         |
+           |      |                         (8) following 'true' branch...
+           |   22 |         *head = temp->next;
+           |      |                 ~~~~~~~~~~
+           |      |                     |
+           |      |                     (9) ...to here
+           |   23 |         free(temp);
+           |      |         ~~~~~~~~~~
+           |      |         |
+           |      |         (10) '<unknown>' leaks here; was allocated at (4)
+           |
+collected_code_3/round4/heal_0/problem-465.c:23:9: warning: leak of '<unknown>' [CWE-401] [-Wanalyzer-malloc-leak]
+   23 |         free(temp);
+      |         ^~~~~~~~~~
+  'main': events 1-2
+    |
+    |   38 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |   39 |     node *head = create_node("key1", "value1");
+    |      |                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                  |
+    |      |                  (2) calling 'create_node' from 'main'
+    |
+    +--> 'create_node': events 3-4
+           |
+           |   11 | node *create_node(char *key, char *value) {
+           |      |       ^~~~~~~~~~~
+           |      |       |
+           |      |       (3) entry to 'create_node'
+           |......
+           |   14 |     new_node->value = strdup(value);
+           |      |                       ~~~~~~~~~~~~~
+           |      |                       |
+           |      |                       (4) allocated here
+           |
+    <------+
+    |
+  'main': events 5-6
+    |
+    |   39 |     node *head = create_node("key1", "value1");
+    |      |                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                  |
+    |      |                  (5) returning to 'main' from 'create_node'
+    |......
+    |   44 |     drop_empty(&head);
+    |      |     ~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (6) calling 'drop_empty' from 'main'
+    |
+    +--> 'drop_empty': events 7-13
+           |
+           |   19 | void drop_empty(node **head) {
+           |      |      ^~~~~~~~~~
+           |      |      |
+           |      |      (7) entry to 'drop_empty'
+           |   20 |     node *temp = *head, *prev;
+           |   21 |     while (temp != NULL && temp->value[0] == '\0') {
+           |      |            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                         |      |      |
+           |      |                         |      |      (10) assuming '<unknown>' is non-NULL
+           |      |                         |      (9) ...to here
+           |      |                         (8) following 'true' branch (when 'temp' is non-NULL)...
+           |      |                         (11) following 'true' branch...
+           |   22 |         *head = temp->next;
+           |      |                 ~~~~~~~~~~
+           |      |                     |
+           |      |                     (12) ...to here
+           |   23 |         free(temp);
+           |      |         ~~~~~~~~~~
+           |      |         |
+           |      |         (13) '<unknown>' leaks here; was allocated at (4)
+           |
+collected_code_3/round4/heal_0/problem-465.c:27:43: warning: dereference of possibly-NULL '*temp.value' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   27 |         while (temp != NULL && temp->value[0] != '\0') {
+      |                                ~~~~~~~~~~~^~~
+  'main': events 1-2
+    |
+    |   38 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   41 |     head->next->next = create_node("key3", "value3");
+    |      |                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                        |
+    |      |                        (2) calling 'create_node' from 'main'
+    |
+    +--> 'create_node': events 3-4
+           |
+           |   11 | node *create_node(char *key, char *value) {
+           |      |       ^~~~~~~~~~~
+           |      |       |
+           |      |       (3) entry to 'create_node'
+           |......
+           |   14 |     new_node->value = strdup(value);
+           |      |                       ~~~~~~~~~~~~~
+           |      |                       |
+           |      |                       (4) this call could return NULL
+           |
+    <------+
+    |
+  'main': events 5-6
+    |
+    |   41 |     head->next->next = create_node("key3", "value3");
+    |      |                        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                        |
+    |      |                        (5) returning to 'main' from 'create_node'
+    |......
+    |   44 |     drop_empty(&head);
+    |      |     ~~~~~~~~~~~~~~~~~   
+    |      |     |
+    |      |     (6) calling 'drop_empty' from 'main'
+    |
+    +--> 'drop_empty': events 7-10
+           |
+           |   19 | void drop_empty(node **head) {
+           |      |      ^~~~~~~~~~
+           |      |      |
+           |      |      (7) entry to 'drop_empty'
+           |   20 |     node *temp = *head, *prev;
+           |   21 |     while (temp != NULL && temp->value[0] == '\0') {
+           |      |            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                         |      |
+           |      |                         |      (9) ...to here
+           |      |                         (8) following 'true' branch...
+           |      |                         (10) following 'false' branch...
+           |
+         'drop_empty': event 11
+           |
+           |cc1:
+           | (11): ...to here
+           |
+         'drop_empty': event 12
+           |
+           |   26 |     while (temp != NULL) {
+           |      |                 ^
+           |      |                 |
+           |      |                 (12) following 'true' branch (when 'temp' is non-NULL)...
+           |
+         'drop_empty': event 13
+           |
+           |cc1:
+           | (13): ...to here
+           |
+         'drop_empty': events 14-16
+           |
+           |   27 |         while (temp != NULL && temp->value[0] != '\0') {
+           |      |                ~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                             |      |      |
+           |      |                             |      |      (16) '*temp.value' could be NULL: unchecked value from (4)
+           |      |                             |      (15) ...to here
+           |      |                             (14) following 'true' branch...
+           |
+collected_code_3/round4/heal_0/problem-465.c:33:9: warning: leak of '<unknown>' [CWE-401] [-Wanalyzer-malloc-leak]
+   33 |         free(temp);
+      |         ^~~~~~~~~~
+  'main': events 1-2
+    |
+    |   38 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   41 |     head->next->next = create_node("key3", "value3");
+    |      |                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                        |
+    |      |                        (2) calling 'create_node' from 'main'
+    |
+    +--> 'create_node': events 3-4
+           |
+           |   11 | node *create_node(char *key, char *value) {
+           |      |       ^~~~~~~~~~~
+           |      |       |
+           |      |       (3) entry to 'create_node'
+           |......
+           |   14 |     new_node->value = strdup(value);
+           |      |                       ~~~~~~~~~~~~~
+           |      |                       |
+           |      |                       (4) allocated here
+           |
+    <------+
+    |
+  'main': events 5-6
+    |
+    |   41 |     head->next->next = create_node("key3", "value3");
+    |      |                        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                        |
+    |      |                        (5) returning to 'main' from 'create_node'
+    |......
+    |   44 |     drop_empty(&head);
+    |      |     ~~~~~~~~~~~~~~~~~   
+    |      |     |
+    |      |     (6) calling 'drop_empty' from 'main'
+    |
+    +--> 'drop_empty': events 7-10
+           |
+           |   19 | void drop_empty(node **head) {
+           |      |      ^~~~~~~~~~
+           |      |      |
+           |      |      (7) entry to 'drop_empty'
+           |   20 |     node *temp = *head, *prev;
+           |   21 |     while (temp != NULL && temp->value[0] == '\0') {
+           |      |            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                         |      |
+           |      |                         |      (9) ...to here
+           |      |                         (8) following 'true' branch...
+           |      |                         (10) following 'false' branch...
+           |
+         'drop_empty': event 11
+           |
+           |cc1:
+           | (11): ...to here
+           |
+         'drop_empty': event 12
+           |
+           |   26 |     while (temp != NULL) {
+           |      |                 ^
+           |      |                 |
+           |      |                 (12) following 'true' branch (when 'temp' is non-NULL)...
+           |
+         'drop_empty': event 13
+           |
+           |cc1:
+           | (13): ...to here
+           |
+         'drop_empty': events 14-21
+           |
+           |   27 |         while (temp != NULL && temp->value[0] != '\0') {
+           |      |                ~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                             |      |      |
+           |      |                             |      |      (16) assuming '<unknown>' is non-NULL
+           |      |                             |      (15) ...to here
+           |      |                             (14) following 'true' branch...
+           |      |                             (17) following 'false' branch...
+           |......
+           |   31 |         if (temp == NULL) return;
+           |      |            ~                 
+           |      |            |
+           |      |            (18) ...to here
+           |      |            (19) following 'false' branch (when 'temp' is non-NULL)...
+           |   32 |         prev->next = temp->next;
+           |      |                      ~~~~~~~~~~
+           |      |                          |
+           |      |                          (20) ...to here
+           |   33 |         free(temp);
+           |      |         ~~~~~~~~~~           
+           |      |         |
+           |      |         (21) '<unknown>' leaks here; was allocated at (4)
+           |
+collected_code_3/round4/heal_0/problem-465.c:33:9: warning: leak of '<unknown>' [CWE-401] [-Wanalyzer-malloc-leak]
+   33 |         free(temp);
+      |         ^~~~~~~~~~
+  'main': events 1-2
+    |
+    |   38 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   41 |     head->next->next = create_node("key3", "value3");
+    |      |                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                        |
+    |      |                        (2) calling 'create_node' from 'main'
+    |
+    +--> 'create_node': events 3-4
+           |
+           |   11 | node *create_node(char *key, char *value) {
+           |      |       ^~~~~~~~~~~
+           |      |       |
+           |      |       (3) entry to 'create_node'
+           |   12 |     node *new_node = (node*)malloc(sizeof(node));
+           |   13 |     new_node->key = strdup(key);
+           |      |                     ~~~~~~~~~~~
+           |      |                     |
+           |      |                     (4) allocated here
+           |
+    <------+
+    |
+  'main': events 5-6
+    |
+    |   41 |     head->next->next = create_node("key3", "value3");
+    |      |                        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                        |
+    |      |                        (5) returning to 'main' from 'create_node'
+    |......
+    |   44 |     drop_empty(&head);
+    |      |     ~~~~~~~~~~~~~~~~~   
+    |      |     |
+    |      |     (6) calling 'drop_empty' from 'main'
+    |
+    +--> 'drop_empty': events 7-10
+           |
+           |   19 | void drop_empty(node **head) {
+           |      |      ^~~~~~~~~~
+           |      |      |
+           |      |      (7) entry to 'drop_empty'
+           |   20 |     node *temp = *head, *prev;
+           |   21 |     while (temp != NULL && temp->value[0] == '\0') {
+           |      |            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                         |      |
+           |      |                         |      (9) ...to here
+           |      |                         (8) following 'true' branch...
+           |      |                         (10) following 'false' branch...
+           |
+         'drop_empty': event 11
+           |
+           |cc1:
+           | (11): ...to here
+           |
+         'drop_empty': event 12
+           |
+           |   26 |     while (temp != NULL) {
+           |      |                 ^
+           |      |                 |
+           |      |                 (12) following 'true' branch (when 'temp' is non-NULL)...
+           |
+         'drop_empty': event 13
+           |
+           |cc1:
+           | (13): ...to here
+           |
+         'drop_empty': events 14-20
+           |
+           |   27 |         while (temp != NULL && temp->value[0] != '\0') {
+           |      |                ~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                             |      |
+           |      |                             |      (15) ...to here
+           |      |                             (14) following 'true' branch...
+           |      |                             (16) following 'false' branch...
+           |......
+           |   31 |         if (temp == NULL) return;
+           |      |            ~                 
+           |      |            |
+           |      |            (17) ...to here
+           |      |            (18) following 'false' branch (when 'temp' is non-NULL)...
+           |   32 |         prev->next = temp->next;
+           |      |                      ~~~~~~~~~~
+           |      |                          |
+           |      |                          (19) ...to here
+           |   33 |         free(temp);
+           |      |         ~~~~~~~~~~           
+           |      |         |
+           |      |         (20) '<unknown>' leaks here; was allocated at (4)
+           |

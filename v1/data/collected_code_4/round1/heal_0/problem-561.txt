@@ -1,0 +1,33 @@
+```cpp
+#include <stdio.h>
+
+typedef struct {
+  int first;
+  int second;
+} pair;
+
+void assign_pairs(pair *p1, pair *p2, size_t n) {
+  if (p1 != NULL && p2 != NULL) {
+    for (size_t i = 0; i < n; ++i) {
+      p1[i].first = p2[i].first;
+      p1[i].second = p2[i].second;
+    }
+  }
+}
+
+int main() {
+  pair p1[3] = {{1, 2}, {3, 4}, {5, 6}};
+  pair p2[3] = {{7, 8}, {9, 10}, {11, 12}};
+  
+  assign_pairs(p1, p2, 3);
+  
+  for (int i = 0; i < 3; ++i) {
+      printf("Pair %d: (%d, %d)\n", i+1, p1[i].first, p1[i].second);
+  }
+  
+  return 0;
+}
+```
+The above code demonstrates a simple function in C that takes as parameters two arrays of `pair` type and assigns for each element in the first array the corresponding element from the second array. The `pair` struct represents a pair of integers. The code also contains a `main` function which initializes two arrays of `pair` type and demonstrates the usage of the `assign_pairs` function.
+
+This function properly handles resources and checks for potential exceptions. In order to avoid invalid memory access, the function first checks if the input pointers are not null before proceeding. Besides that, it also adheres well to the C coding standards.

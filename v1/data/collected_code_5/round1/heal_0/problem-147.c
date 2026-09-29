@@ -1,0 +1,26 @@
+#include<stdio.h>
+
+#define N 3 
+
+int maxTotalPathSum(int triangle[N][N]) {
+    for (int i = N - 2; i >= 0; i--) {
+        for (int j = 0; j <= i; j++) {
+            if (triangle[i+1][j] > triangle[i+1][j+1]) {
+                triangle[i][j] += triangle[i+1][j];
+            } else {
+                triangle[i][j] += triangle[i+1][j+1];
+            }
+        }
+    }
+
+    return triangle[0][0];
+}
+
+int main() {
+    int triangle[N][N] = { {1, 0, 0},
+                           {4, 8, 0},
+                           {1, 5, 6} };
+  
+    printf("Maximum path sum is : %d\n", maxTotalPathSum(triangle));
+    return 0;
+}

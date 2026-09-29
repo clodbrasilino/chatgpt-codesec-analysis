@@ -1,0 +1,67 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_SIZE 100
+
+typedef struct Node {
+    char data[MAX_SIZE];
+    struct Node* next;
+} Node;
+
+Node* insertAtBeginning(Node* head, char* str) {
+    Node* temp = head;
+    while(temp != NULL) {
+        char buffer[MAX_SIZE];
+        strcpy(buffer, str);
+        strcat(buffer, temp->data);
+        strcpy(temp->data, buffer);
+        temp = temp->next;
+    }
+    return head;
+}
+
+Node* createNode(char* data) {
+    Node* newNode = (Node*)malloc(sizeof(Node));
+    if(newNode == NULL) {
+        printf("Error! unable to create a new node\n");
+        exit(-1);
+    }
+    strcpy(newNode->data, data);
+    newNode->next = NULL;
+    return newNode;
+}
+
+Node* insertNode(Node* head, char* data) {
+    if(head == NULL) {
+        head = createNode(data);
+    } else {
+        Node* temp = head;
+        while(temp->next != NULL) {
+            temp = temp->next;
+        }
+        temp->next = createNode(data);
+    }
+    return head;
+}
+
+void printList(Node* head) {
+    Node* temp = head;
+    while(temp != NULL) {
+        printf("%s\n", temp->data);
+        temp = temp->next;
+    }
+}
+
+int main() {
+    Node* head = NULL;
+    head = insertNode(head, "Hello");
+    head = insertNode(head, "World");
+    head = insertNode(head, "!");
+    printList(head);
+    head = insertAtBeginning(head, "New-");
+    printList(head);
+    return 0;
+}
+```

@@ -1,0 +1,68 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+ /* Possible weaknesses found:
+  *  'errno' is defined in header '<errno.h>'; this is probably fixable by adding '#include <errno.h>'
+  */
+
+long long sum_of_digits(long long number) {
+    long long absolute_number = llabs(number);
+    long long sum = 0;
+    while (absolute_number > 0) {
+        sum += absolute_number % 10;
+        absolute_number /= 10;
+    }
+    return sum;
+}
+
+/* Possible weaknesses found:
+ *  Parameter 'argv' can be declared as const array [constParameter]
+ */
+int main(int argc, char *argv[]) {
+    if (argc != 3) {
+        fprintf(stderr, "Usage: %s <base> <exponent>\n", argv[0]);
+        return EXIT_FAILURE;
+    }
+
+    char *endptr_base = NULL;
+    char *endptr_exp = NULL;
+    long long base = strtoll(argv[1], &endptr_base, 10);
+    long long exponent = strtoll(argv[2], &endptr_exp, 10);
+
+    if (endptr_base == argv[1] || *endptr_base != '\0' || endptr_exp == argv[2] || *endptr_exp != '\0') {
+        fprintf(stderr, "Error: Invalid numeric input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (exponent < 0) {
+        fprintf(stderr, "Error: Exponent must be non-negative\n");
+        return EXIT_FAILURE;
+    }
+
+    if (base == 0 && exponent == 0) {
+        fprintf(stderr, "Error: Zero to the power of zero is undefined\n");
+        return EXIT_FAILURE;
+    }
+
+    /* Possible weaknesses found:
+     *  use of undeclared identifier 'errno'
+     *  each undeclared identifier is reported only once for each function it appears in
+     *  'errno' undeclared (first use in this function)
+     */
+    errno = 0;
+    long long result = (long long)pow((double)base, (double)exponent);
+    /* Possible weaknesses found:
+     *  'ERANGE' undeclared (first use in this function)
+     *  use of undeclared identifier 'errno'
+     *  use of undeclared identifier 'ERANGE'
+     */
+    if (errno == ERANGE) {
+        fprintf(stderr, "Error: Numeric overflow during power calculation\n");
+        return EXIT_FAILURE;
+    }
+
+    long long digit_sum = sum_of_digits(result);
+    printf("%lld\n", digit_sum);
+
+    return EXIT_SUCCESS;
+}

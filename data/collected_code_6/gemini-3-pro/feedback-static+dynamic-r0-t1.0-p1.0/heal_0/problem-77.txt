@@ -1,0 +1,47 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+int find_sum_difference(long long num) {
+    int even_sum = 0;
+    int odd_sum = 0;
+    
+    if (num < 0) {
+        if (num == LLONG_MIN) {
+            num = -(num + 1); 
+        } else {
+            num = -num;
+        }
+    }
+
+    if (num == 0) {
+        return 0; 
+    }
+
+    while (num > 0) {
+        int digit = num % 10;
+        if (digit % 2 == 0) {
+            even_sum += digit;
+        } else {
+            odd_sum += digit;
+        }
+        num /= 10;
+    }
+
+    return even_sum - odd_sum;
+}
+
+int main() {
+    long long num;
+    
+    if (scanf("%lld", &num) != 1) {
+        return EXIT_FAILURE;
+    }
+
+    int difference = find_sum_difference(num);
+    printf("%d\n", difference);
+
+    return EXIT_SUCCESS;
+}
+```

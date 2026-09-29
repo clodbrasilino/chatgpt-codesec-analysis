@@ -1,0 +1,12 @@
+collected_code/problem-868-0.c:8:13: error: Cannot determine that 's[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+    while (s[i] != '\0') {
+            ^
+collected_code/problem-868-0.c:9:14: error: Cannot determine that 's[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        if (s[i] != ' ') {
+             ^
+collected_code/problem-868-0.c:16:13: error: Cannot determine that 's[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+    while (s[i] != '\0') {
+            ^
+collected_code/problem-868-0.c:17:14: error: Cannot determine that 's[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        if (s[i] != ' ') {
+             ^

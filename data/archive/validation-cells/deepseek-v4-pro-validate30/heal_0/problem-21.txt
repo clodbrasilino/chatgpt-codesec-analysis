@@ -1,0 +1,49 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+void find_multiples(int n, int m) {
+    if (n <= 0 || m <= 0) {
+        printf("Invalid input: n and m must be positive integers.\n");
+        return;
+    }
+
+    int *multiples = (int *)malloc(m * sizeof(int));
+    if (multiples == NULL) {
+        printf("Memory allocation failed.\n");
+        return;
+    }
+
+    for (int i = 0; i < m; i++) {
+        multiples[i] = n * (i + 1);
+    }
+
+    printf("First %d multiples of %d are:\n", m, n);
+    for (int i = 0; i < m; i++) {
+        printf("%d ", multiples[i]);
+    }
+    printf("\n");
+
+    free(multiples);
+}
+
+int main(void) {
+    int n, m;
+
+    printf("Enter the number (n): ");
+    if (scanf("%d", &n) != 1) {
+        printf("Invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter the count of multiples (m): ");
+    if (scanf("%d", &m) != 1) {
+        printf("Invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    find_multiples(n, m);
+
+    return EXIT_SUCCESS;
+}
+```

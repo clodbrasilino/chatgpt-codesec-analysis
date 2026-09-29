@@ -1,0 +1,63 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+static void free_nested_list(int **nested_list, size_t rows)
+{
+    if (nested_list == NULL) {
+        return;
+    }
+    for (size_t i = 0; i < rows; i++) {
+        free(nested_list[i]);
+    }
+    free(nested_list);
+}
+
+int *extract_column(int **nested_list, const size_t *row_lengths, size_t rows, size_t column_index)
+{
+    if (nested_list == NULL || row_lengths == NULL || rows == 0) {
+        return NULL;
+    }
+    int *column = calloc(rows, sizeof(*column));
+    if (column == NULL) {
+        return NULL;
+    }
+    for (size_t i = 0; i < rows; i++) {
+        if (nested_list[i] == NULL || column_index >= row_lengths[i]) {
+            free(column);
+            return NULL;
+        }
+        column[i] = nested_list[i][column_index];
+    }
+    return column;
+}
+
+int main(void)
+{
+    size_t row_lengths[] = {3, 2, 4};
+    size_t rows = sizeof(row_lengths) / sizeof(row_lengths[0]);
+    int **nested_list = calloc(rows, sizeof(*nested_list));
+    if (nested_list == NULL) {
+        return 1;
+    }
+    for (size_t i = 0; i < rows; i++) {
+        nested_list[i] = calloc(row_lengths[i], sizeof(*nested_list[i]));
+        if (nested_list[i] == NULL) {
+            free_nested_list(nested_list, rows);
+            return 1;
+        }
+        for (size_t j = 0; j < row_lengths[i]; j++) {
+            nested_list[i][j] = (int)(i * 10 + j + 1);
+        }
+    }
+    int *column = extract_column(nested_list, row_lengths, rows, 1);
+    if (column == NULL) {
+        free_nested_list(nested_list, rows);
+        return 1;
+    }
+    for (size_t i = 0; i < rows; i++) {
+        printf("%d\n", column[i]);
+    }
+    free(column);
+    free_nested_list(nested_list, rows);
+    return 0;
+}

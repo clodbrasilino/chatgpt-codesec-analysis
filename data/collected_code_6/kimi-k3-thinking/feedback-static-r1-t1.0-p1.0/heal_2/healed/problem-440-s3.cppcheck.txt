@@ -1,0 +1,22 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_2/healed/problem-440-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_2/healed/problem-440-s3.c:57:26: style: Condition 'wlen<word_size' is always true [knownConditionTrueFalse]
+                if (wlen < word_size) {
+                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_2/healed/problem-440-s3.c:52:27: note: word_size is assigned 'wlen+1' here.
+                word_size = wlen + 1;
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_2/healed/problem-440-s3.c:54:26: note: Assuming condition is false
+                if (word == NULL) {
+                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_2/healed/problem-440-s3.c:57:26: note: Condition 'wlen<word_size' is always true
+                if (wlen < word_size) {
+                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_2/healed/problem-440-s3.c:105:24: style: Condition 'length+1<capacity' is always true [knownConditionTrueFalse]
+        if (length + 1 < capacity) {
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_2/healed/problem-440-s3.c:89:24: note: Assuming that condition 'length+1>=capacity' is not redundant
+        if (length + 1 >= capacity) {
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_2/healed/problem-440-s3.c:105:24: note: Condition 'length+1<capacity' is always true
+        if (length + 1 < capacity) {
+                       ^

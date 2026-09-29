@@ -1,0 +1,81 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int find_common_index_elements(const int *list1, const int *list2, const int *list3,
+                               size_t length, int *result, size_t *result_count)
+{
+    size_t i;
+
+    if (list1 == NULL || list2 == NULL || list3 == NULL ||
+        result == NULL || result_count == NULL)
+    {
+        return -1;
+    }
+
+    *result_count = 0;
+
+    for (i = 0; i < length; i++)
+    {
+        if (list1[i] == list2[i] && list2[i] == list3[i])
+        {
+            result[*result_count] = list1[i];
+            (*result_count)++;
+        }
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    int list1[] = {1, 2, 3, 4, 5, 6};
+    /* Possible weaknesses found:
+     *  Variable 'list2' can be declared as const array [constVariable]
+     */
+    int list2[] = {1, 9, 3, 8, 5, 7};
+    /* Possible weaknesses found:
+     *  Variable 'list3' can be declared as const array [constVariable]
+     */
+    int list3[] = {1, 0, 3, 2, 5, 6};
+    size_t length = sizeof(list1) / sizeof(list1[0]);
+    int *result;
+    size_t result_count = 0;
+    /* Possible weaknesses found:
+     *  The scope of the variable 'i' can be reduced. [variableScope]
+     */
+    size_t i;
+    int status;
+
+    result = malloc(length * sizeof(int));
+    if (result == NULL)
+    {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    status = find_common_index_elements(list1, list2, list3, length,
+                                        result, &result_count);
+    if (status != 0)
+    {
+        fprintf(stderr, "Error finding common index elements\n");
+        free(result);
+        return EXIT_FAILURE;
+    }
+
+    if (result_count == 0)
+    {
+        printf("No common index elements found\n");
+    }
+    else
+    {
+        printf("Common index elements: ");
+        for (i = 0; i < result_count; i++)
+        {
+            printf("%d ", result[i]);
+        }
+        printf("\n");
+    }
+
+    free(result);
+    return EXIT_SUCCESS;
+}

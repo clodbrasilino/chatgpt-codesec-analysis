@@ -1,0 +1,108 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct heap {
+    int *h;
+    int hsize;
+    int last;
+} HEAP;
+
+HEAP *heap_construct(int hsize);
+int heap_isempty(HEAP *);
+void heap_swap(HEAP *, int, int);
+void heap_bubble_up(HEAP *, int);
+void heap_insert(HEAP *, int);
+void heap_bubble_down(HEAP *, int);
+int heap_minchild(HEAP *, int);
+int heap_deletemin(HEAP *);
+
+int main() {
+    HEAP *heap = heap_construct(10);
+    if (!heap){
+        return -1;
+    }
+    heap_insert(heap, 10);
+    heap_insert(heap, 20);
+    heap_insert(heap, 30);
+    printf("%d\n", heap_deletemin(heap));
+    heap_insert(heap, 15);
+    printf("%d\n", heap_deletemin(heap));
+    free(heap->h);
+    free(heap);
+    return 0;
+}
+
+HEAP *heap_construct(int hsize) {
+    HEAP *heap = malloc(sizeof(HEAP));
+    if (!heap) {
+        return NULL;
+    }
+    heap->hsize = hsize + 1;
+    heap->last = 0;
+    heap->h = calloc(heap->hsize, sizeof(int));
+    if (!heap->h) {
+        free(heap);
+        return NULL;
+    }
+    return heap;
+}
+
+int heap_isempty(HEAP *heap) {
+    return heap && heap->last == 0;
+}
+
+void heap_insert(HEAP *heap, int data) {
+    if (heap && heap->last < heap->hsize - 1) {
+         heap->h[++heap->last] = data;
+         heap_bubble_up(heap, heap->last);
+    }
+}
+
+void heap_swap(HEAP *heap, int i, int j) {
+    if(heap){
+        int t = heap->h[i];
+        heap->h[i] = heap->h[j];
+        heap->h[j] = t;
+    }
+}
+
+void heap_bubble_up(HEAP *heap, int i) {
+    if (heap && i != 1) {
+        int parent = i/2;
+        if (heap->h[parent] > heap->h[i]) {
+            heap_swap(heap, i, parent);
+            heap_bubble_up(heap, parent);
+        }
+    }
+}
+
+void heap_bubble_down(HEAP *heap, int i) {
+    if(heap){
+        int child = heap_minchild(heap, i);
+        if (child != -1 && heap->h[i] > heap->h[child]) {
+            heap_swap(heap, i, child);
+            heap_bubble_down(heap, child);
+        }
+    }
+}
+
+int heap_minchild(HEAP *heap, int i) {
+    if (heap && 2*i <= heap->last) {
+        if (2*i == heap->last || heap->h[2*i] <= heap->h[2*i + 1]) {
+            return 2*i;
+        } else {
+            return 2*i + 1;
+        }
+    }
+    return -1;
+}
+
+int heap_deletemin(HEAP *heap) {
+    if (heap && !heap_isempty(heap)) {
+        int min = heap->h[1];
+        heap->h[1] = heap->h[heap->last--];
+        heap_bubble_down(heap, 1);
+        return min;
+    }
+    return -1;
+}

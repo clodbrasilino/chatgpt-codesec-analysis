@@ -1,0 +1,35 @@
+```C
+#include <stdio.h>
+#include <string.h>
+
+int search_string(char *str, char *search) {
+    char *pos = strstr(str, search);
+    if (pos) {
+        return pos - str;
+    }
+    return -1;
+}
+
+int main() {
+    char str[100];
+    char search[50];
+
+    printf("Enter a string: ");
+    fgets(str, sizeof(str), stdin);
+    str[strlen(str) - 1] = '\0';
+
+    printf("Enter a string to search: ");
+    fgets(search, sizeof(search), stdin);
+    search[strlen(search) - 1] = '\0';
+
+    int result = search_string(str, search);
+
+    if (result != -1) {
+        printf("Found at position: %d\n", result);
+    } else {
+        printf("Not found\n");
+    }
+
+    return 0;
+}
+```

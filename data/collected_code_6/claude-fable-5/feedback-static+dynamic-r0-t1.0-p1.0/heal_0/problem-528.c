@@ -1,0 +1,87 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct IntList {
+    int *data;
+    size_t length;
+};
+
+const struct IntList *find_min_length_list(const struct IntList *lists, size_t count)
+{
+    size_t i;
+    const struct IntList *min_list;
+
+    if (lists == NULL || count == 0U) {
+        return NULL;
+    }
+
+    min_list = &lists[0];
+    for (i = 1U; i < count; i++) {
+        if (lists[i].length < min_list->length) {
+            min_list = &lists[i];
+        }
+    }
+
+    return min_list;
+}
+
+static int print_list(const struct IntList *list)
+{
+    size_t i;
+
+    if (list == NULL || list->data == NULL) {
+        return -1;
+    }
+
+    if (printf("[") < 0) {
+        return -1;
+    }
+    for (i = 0U; i < list->length; i++) {
+        if (i > 0U) {
+            if (printf(", ") < 0) {
+                return -1;
+            }
+        }
+        if (printf("%d", list->data[i]) < 0) {
+            return -1;
+        }
+    }
+    if (printf("]\n") < 0) {
+        return -1;
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    int a[] = { 1, 2, 3, 4, 5 };
+    int b[] = { 10, 20 };
+    int c[] = { 7, 8, 9 };
+    struct IntList lists[3];
+    const struct IntList *result;
+
+    lists[0].data = a;
+    lists[0].length = sizeof(a) / sizeof(a[0]);
+    lists[1].data = b;
+    lists[1].length = sizeof(b) / sizeof(b[0]);
+    lists[2].data = c;
+    lists[2].length = sizeof(c) / sizeof(c[0]);
+
+    result = find_min_length_list(lists, sizeof(lists) / sizeof(lists[0]));
+    if (result == NULL) {
+        if (fprintf(stderr, "No lists provided\n") < 0) {
+            return EXIT_FAILURE;
+        }
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Minimum length: %zu\n", result->length) < 0) {
+        return EXIT_FAILURE;
+    }
+    if (print_list(result) != 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

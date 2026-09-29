@@ -1,0 +1,130 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+#include <string.h>
+
+typedef struct {
+    char *key;
+    int value;
+} Entry;
+
+typedef struct {
+    Entry *entries;
+    size_t size;
+    size_t capacity;
+} Dictionary;
+
+static char *duplicate_string(const char *str)
+{
+    if (str == NULL) {
+        return NULL;
+    }
+
+    size_t len = strlen(str) + 1;
+    char *copy = malloc(len);
+
+    if (copy != NULL) {
+        memcpy(copy, str, len);
+    }
+
+    return copy;
+}
+
+Dictionary *dictionary_create(size_t initial_capacity)
+{
+    if (initial_capacity == 0) {
+        initial_capacity = 1;
+    }
+
+    Dictionary *dict = malloc(sizeof(*dict));
+    if (dict == NULL) {
+        return NULL;
+    }
+
+    dict->entries = malloc(initial_capacity * sizeof(*dict->entries));
+    if (dict->entries == NULL) {
+        free(dict);
+        return NULL;
+    }
+
+    dict->size = 0;
+    dict->capacity = initial_capacity;
+
+    return dict;
+}
+
+void dictionary_destroy(Dictionary *dict)
+{
+    if (dict == NULL) {
+        return;
+    }
+
+    for (size_t i = 0; i < dict->size; ++i) {
+        free(dict->entries[i].key);
+    }
+
+    free(dict->entries);
+    free(dict);
+}
+
+bool dictionary_is_empty(const Dictionary *dict)
+{
+    if (dict == NULL) {
+        return true;
+    }
+
+    return dict->size == 0;
+}
+
+int dictionary_add(Dictionary *dict, const char *key, int value)
+{
+    if (dict == NULL || key == NULL) {
+        return -1;
+    }
+
+    if (dict->size == dict->capacity) {
+        size_t new_capacity = dict->capacity * 2;
+        Entry *new_entries = realloc(dict->entries, new_capacity * sizeof(*new_entries));
+
+        if (new_entries == NULL) {
+            return -1;
+        }
+
+        dict->entries = new_entries;
+        dict->capacity = new_capacity;
+    }
+
+    char *key_copy = duplicate_string(key);
+    if (key_copy == NULL) {
+        return -1;
+    }
+
+    dict->entries[dict->size].key = key_copy;
+    dict->entries[dict->size].value = value;
+    ++dict->size;
+
+    return 0;
+}
+
+int main(void)
+{
+    Dictionary *dict = dictionary_create(2);
+    if (dict == NULL) {
+        return EXIT_FAILURE;
+    }
+
+    printf("empty: %s\n", dictionary_is_empty(dict) ? "true" : "false");
+
+    if (dictionary_add(dict, "alpha", 1) != 0) {
+        dictionary_destroy(dict);
+        return EXIT_FAILURE;
+    }
+
+    printf("empty: %s\n", dictionary_is_empty(dict) ? "true" : "false");
+
+    dictionary_destroy(dict);
+
+    return EXIT_SUCCESS;
+}
+```

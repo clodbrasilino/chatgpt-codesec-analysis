@@ -1,0 +1,12 @@
+collected_code/problem-276-0.c:12:18: error: Cannot determine that 'radius' is initialized [premium-bughuntingUninit]
+    scanf("%f", &radius);
+                 ^
+collected_code/problem-276-0.c:14:18: error: Cannot determine that 'height' is initialized [premium-bughuntingUninit]
+    scanf("%f", &height);
+                 ^
+collected_code/problem-276-0.c:15:35: error: Cannot determine that 'radius' is initialized [premium-bughuntingUninit]
+    volume = findVolumeOfCylinder(radius, height);
+                                  ^
+collected_code/problem-276-0.c:15:43: error: Cannot determine that 'height' is initialized [premium-bughuntingUninit]
+    volume = findVolumeOfCylinder(radius, height);
+                                          ^

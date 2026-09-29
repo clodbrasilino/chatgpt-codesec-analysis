@@ -1,0 +1,62 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+#include <limits.h>
+ /* Possible weaknesses found:
+  *  test case 0 failed: expected 3.5, got 3
+  */
+
+int min_jumps(int a, int b, int d) {
+    if (d == 0) return 0;
+    
+    a = abs(a);
+    b = abs(b);
+    d = abs(d);
+    
+    if (a == 0 && b == 0) return -1;
+    
+    int max_step = (a > b) ? a : b;
+    int min_step = (a < b) ? a : b;
+    
+    if (max_step == 0) return -1;
+    
+    if (min_step == 0) {
+        if (d % max_step == 0) {
+            return d / max_step;
+        }
+        return -1;
+    }
+    
+    int min_jumps = INT_MAX;
+    
+    int max_count = d / min_step;
+    for (int i = 0; i <= max_count; i++) {
+        int remaining = d - i * min_step;
+        if (remaining % max_step == 0) {
+            int j = remaining / max_step;
+            int total = i + j;
+            if (total < min_jumps) {
+                min_jumps = total;
+            }
+        }
+    }
+    
+    if (min_jumps == INT_MAX) {
+        return -1;
+    }
+    
+    return min_jumps;
+}
+
+int main(void) {
+    int a, b, d;
+    
+    if (scanf("%d %d %d", &a, &b, &d) != 3) {
+        return 1;
+    }
+    
+    int result = min_jumps(a, b, d);
+    printf("%d\n", result);
+    
+    return 0;
+}

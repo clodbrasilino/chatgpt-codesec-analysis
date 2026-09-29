@@ -1,0 +1,36 @@
+Unfortunately, C language does not support regular expressions natively like languages such as Python or JavaScript. However, we can achieve the desired result without using regular expressions. Here is a simple C program that converts a camel case string to a snake case string:
+
+```c
+#include <stdio.h>
+#include <ctype.h>
+#include <string.h>
+
+void camel_to_snake(char *input, char *output) {
+    while (*input) {
+        if (isupper(*input)) {
+            *output++ = '_';
+            *output++ = tolower(*input);
+        } else {
+            *output++ = *input;
+        }
+        input++;
+    }
+    *output = '\0';
+}
+
+int main() {
+    char input[100];
+    char output[200];
+
+    printf("Enter a camel case string: ");
+    scanf("%s", input);
+
+    camel_to_snake(input, output);
+
+    printf("Snake case string: %s\n", output);
+
+    return 0;
+}
+```
+
+This program reads a camel case string from the user, converts it to a snake case string, and then prints the result. The `camel_to_snake` function iterates over each character in the input string. If the character is an uppercase letter, it adds an underscore and the lowercase version of the letter to the output string. If the character is not an uppercase letter, it simply adds the character to the output string.

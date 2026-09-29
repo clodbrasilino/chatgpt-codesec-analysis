@@ -1,0 +1,9 @@
+collected_code_3/problem-757-3.c: In function 'count_reverse_pairs':
+collected_code_3/problem-757-3.c:9:9: warning: implicit declaration of function 'strrev'; did you mean 'strsep'? [-Wimplicit-function-declaration]
+    9 |         strrev(temp);
+      |         ^~~~~~
+      |         strsep
+ld: Undefined symbols:
+  _strrev, referenced from:
+      _count_reverse_pairs in ccgdEbuM.o
+collect2: error: ld returned 1 exit status

@@ -1,0 +1,80 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node* next;
+};
+
+void swapFirstAndLast(struct Node** head_ref) {
+    if (head_ref == NULL || *head_ref == NULL || (*head_ref)->next == NULL) {
+        return;
+    }
+
+    struct Node* secLast = NULL;
+    struct Node* last = *head_ref;
+
+    while (last->next != NULL) {
+        secLast = last;
+        last = last->next;
+    }
+
+    struct Node* first = *head_ref;
+
+    if (secLast != NULL) {
+        secLast->next = first;
+    }
+
+    last->next = first->next;
+    first->next = NULL;
+
+    *head_ref = last;
+}
+
+void push(struct Node** head_ref, int new_data) {
+    if (head_ref == NULL) {
+        return;
+    }
+    struct Node* new_node = (struct Node*)malloc(sizeof(struct Node));
+    if (new_node == NULL) {
+        return;
+    }
+    new_node->data = new_data;
+    new_node->next = (*head_ref);
+    (*head_ref) = new_node;
+}
+
+void printList(struct Node* node) {
+    while (node != NULL) {
+        printf("%d ", node->data);
+        node = node->next;
+    }
+    printf("\n");
+}
+
+void freeList(struct Node* node) {
+    struct Node* temp;
+    while (node != NULL) {
+        temp = node;
+        node = node->next;
+        free(temp);
+    }
+}
+
+int main(void) {
+    struct Node* head = NULL;
+
+    push(&head, 5);
+    push(&head, 4);
+    push(&head, 3);
+    push(&head, 2);
+    push(&head, 1);
+
+    swapFirstAndLast(&head);
+    printList(head);
+
+    freeList(head);
+    head = NULL;
+
+    return 0;
+}

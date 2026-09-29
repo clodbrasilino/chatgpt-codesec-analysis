@@ -1,0 +1,91 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#define BUFFER_SIZE 256
+
+static size_t bounded_strlen(const char *str, size_t max_len)
+{
+    size_t i;
+
+    for (i = 0; i < max_len; i++) {
+        if (str[i] == '\0') {
+            break;
+        }
+    }
+    return i;
+}
+
+void toggle_case(char *str, size_t max_len)
+{
+    size_t i;
+    size_t len;
+
+    if (str == NULL || max_len == 0) {
+        return;
+    }
+
+    len = bounded_strlen(str, max_len);
+    for (i = 0; i < len; i++) {
+        unsigned char c = (unsigned char)str[i];
+        if (isupper(c)) {
+            str[i] = (char)tolower(c);
+        } else if (islower(c)) {
+            str[i] = (char)toupper(c);
+        }
+    }
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    char *newline;
+
+    if (printf("Enter a string: ") < 0) {
+        return EXIT_FAILURE;
+    }
+
+    if (fflush(stdout) != 0) {
+        return EXIT_FAILURE;
+    }
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    newline = strchr(buffer, '\n');
+    if (newline != NULL) {
+        *newline = '\0';
+    }
+
+    toggle_case(buffer, sizeof(buffer));
+
+    if (printf("Toggled string: %s\n", buffer) < 0) {
+        fprintf(stderr, "Error writing output\n");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the flagged weakness (CWE-119/CWE-120):**
+
+The Flawfinder warning on `char buffer[BUFFER_SIZE]` is a low-risk, informational flag triggered by any statically-sized array. In this code the concern is already fully mitigated:
+
+1. **Bounded input:** `fgets(buffer, (int)sizeof(buffer), stdin)` reads at most `BUFFER_SIZE - 1` bytes and always null-terminates within bounds — unlike `gets()` or unbounded `scanf("%s")`, it cannot overflow.
+
+2. **Defensive termination:** `buffer[sizeof(buffer) - 1] = '\0';` is technically redundant after a successful `fgets`, but it's a cheap belt-and-suspenders guarantee that later string functions (`strchr`, `printf %s`) operate on a terminated string.
+
+3. **Bounded processing:** `toggle_case` takes an explicit `max_len` and uses `bounded_strlen` (equivalent to `strnlen`) instead of trusting `strlen`, so even a non-terminated buffer could not cause an out-of-bounds read or write.
+
+4. **Correct `ctype` usage:** Casting to `unsigned char` before calling `isupper`/`islower`/`toupper`/`tolower` avoids undefined behavior for negative `char` values on platforms where `char` is signed.
+
+5. **Error handling:** Return values of `printf`, `fflush`, and `fgets` are all checked.
+
+No functional changes were required — the code as written already contains the fixes for the identified weakness; only the comments were removed per the requirement.

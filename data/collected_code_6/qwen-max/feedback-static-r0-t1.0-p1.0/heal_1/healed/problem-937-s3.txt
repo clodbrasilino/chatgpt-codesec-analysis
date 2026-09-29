@@ -1,0 +1,32 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <limits.h>
+
+#define MAX_CHAR 256
+
+int findMaxChar(const char *str) {
+    int count[MAX_CHAR] = {0};
+    int max = 0;
+    char result = '\0';
+
+    while (*str) {
+        unsigned char ch = (unsigned char)*str;
+        count[ch]++;
+        if (max < count[ch]) {
+            max = count[ch];
+            result = *str;
+        }
+        str++;
+    }
+
+    return (int)result;
+}
+
+int main() {
+    const char *testStr = "example string with a lot of eee characters";
+    int maxChar = findMaxChar(testStr);
+    printf("The most common character is: %c\n", (char)maxChar);
+    return 0;
+}
+```

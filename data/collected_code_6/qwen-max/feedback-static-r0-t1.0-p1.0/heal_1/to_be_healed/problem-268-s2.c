@@ -1,0 +1,28 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+long nth_star_number(long n) {
+    return 6 * n * (n - 1) + 1;
+}
+
+/* Possible weaknesses found:
+ *  Parameter 'argv' can be declared as const array [constParameter]
+ */
+int main(int argc, char *argv[]) {
+    if (argc != 2) {
+        fprintf(stderr, "Usage: %s <n>\n", argv[0]);
+        return EXIT_FAILURE;
+    }
+
+    char *endptr;
+    long n = strtol(argv[1], &endptr, 10);
+
+    if (*endptr != '\0' || n <= 0) {
+        fprintf(stderr, "Error: Invalid input. Please enter a positive integer.\n");
+        return EXIT_FAILURE;
+    }
+
+    long result = nth_star_number(n);
+    printf("The %ld'th star number is: %ld\n", n, result);
+    return EXIT_SUCCESS;
+}

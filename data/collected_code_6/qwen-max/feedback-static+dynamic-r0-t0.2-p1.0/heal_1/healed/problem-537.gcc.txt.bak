@@ -1,0 +1,8 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_1/healed/problem-537.c: In function 'find_first_repeated_word':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_1/healed/problem-537.c:25:13: error: implicit declaration of function 'free' [-Wimplicit-function-declaration]
+   25 |             free(str_copy);
+      |             ^~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_1/healed/problem-537.c:5:1: note: include '<stdlib.h>' or provide a declaration of 'free'
+    4 | #include <ctype.h>
+  +++ |+#include <stdlib.h>
+    5 | 

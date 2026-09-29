@@ -1,0 +1,2 @@
+problem-575-s3.c:12:18:medium:UBSan: signed integer overflow: 9223372036854775807 * 2 cannot be represented in type 'long long' (AFL crash: id:000001,sig:06,src:000004,time:24250,execs:12611,op:havoc,rep:3)
+problem-575-s3.c:14:18:medium:UBSan: signed integer overflow: 1844674407370955161 * 6 cannot be represented in type 'long long' (AFL crash: id:000000,sig:06,src:000002,time:686,execs:386,op:havoc,rep:3)

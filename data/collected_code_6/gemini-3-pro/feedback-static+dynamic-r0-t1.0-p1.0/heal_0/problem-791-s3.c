@@ -1,0 +1,42 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    int id;
+    char name[50];
+} NestedRecord;
+
+typedef struct {
+    int id;
+    char data[50];
+    NestedRecord* nested;
+} Tuple;
+
+void remove_nested_record(Tuple* tuple) {
+    if (tuple != NULL && tuple->nested != NULL) {
+        free(tuple->nested);
+        tuple->nested = NULL;
+    }
+}
+
+int main() {
+    Tuple tuple;
+    tuple.id = 1;
+    strncpy(tuple.data, "Tuple Data", sizeof(tuple.data) - 1);
+    tuple.data[sizeof(tuple.data) - 1] = '\0';
+    
+    tuple.nested = (NestedRecord*)malloc(sizeof(NestedRecord));
+    if (tuple.nested == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return 1;
+    }
+    
+    tuple.nested->id = 2;
+    strncpy(tuple.nested->name, "Nested Data", sizeof(tuple.nested->name) - 1);
+    tuple.nested->name[sizeof(tuple.nested->name) - 1] = '\0';
+    
+    remove_nested_record(&tuple);
+    
+    return 0;
+}

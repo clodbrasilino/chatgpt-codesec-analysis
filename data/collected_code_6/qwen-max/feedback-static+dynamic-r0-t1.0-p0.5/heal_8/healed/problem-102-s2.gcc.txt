@@ -1,0 +1,13 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_8/healed/problem-102-s2.c: In function 'snake_to_camel':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_8/healed/problem-102-s2.c:7:31: error: implicit declaration of function 'malloc' [-Wimplicit-function-declaration]
+    7 |     char *camel_str = (char *)malloc(len + 1);
+      |                               ^~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_8/healed/problem-102-s2.c:4:1: note: include '<stdlib.h>' or provide a declaration of 'malloc'
+    3 | #include <ctype.h>
+  +++ |+#include <stdlib.h>
+    4 | 
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_8/healed/problem-102-s2.c: In function 'main':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_8/healed/problem-102-s2.c:31:5: error: implicit declaration of function 'free' [-Wimplicit-function-declaration]
+   31 |     free(result0);
+      |     ^~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_8/healed/problem-102-s2.c:31:5: note: include '<stdlib.h>' or provide a declaration of 'free'

@@ -1,0 +1,58 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define BUFFER_SIZE 256
+
+size_t count_characters(const char *str)
+{
+    size_t count = 0;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    while (str[count] != '\0') {
+        count++;
+    }
+
+    return count;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t length;
+
+    memset(buffer, 0, sizeof(buffer));
+
+    printf("Enter a string: ");
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+    buffer[strcspn(buffer, "\n")] = '\0';
+
+    length = count_characters(buffer);
+
+    printf("Total characters: %zu\n", length);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the original code and the applied fixes:**
+
+The Flawfinder warning about the statically-sized array (`CWE-119`/`CWE-120`) was already largely mitigated in the original code, since `fgets(buffer, sizeof(buffer), stdin)` performs proper bounds checking — it never writes more than `BUFFER_SIZE - 1` characters plus the null terminator. This is the correct pattern, as opposed to unsafe alternatives like `gets()` or `scanf("%s", ...)`.
+
+The rewritten version adds defense-in-depth hardening:
+
+1. **`memset(buffer, 0, sizeof(buffer))`** — zero-initializes the buffer so it never contains indeterminate stack data, avoiding any chance of reading uninitialized memory in edge cases.
+2. **`buffer[sizeof(buffer) - 1] = '\0'`** — explicitly guarantees null termination. While `fgets` already null-terminates on success, this makes the invariant locally provable regardless of how the code evolves.
+3. **Retained safe practices** — `sizeof(buffer)` instead of a repeated magic number (keeping size and buffer coupled), the `NULL` return check on `fgets`, the `strcspn` idiom for stripping the trailing newline (which safely handles the no-newline case), and the `NULL` guard in `count_characters`.
+
+The remaining Flawfinder hit is effectively a false positive at this point; the buffer is bounds-checked at every write site.

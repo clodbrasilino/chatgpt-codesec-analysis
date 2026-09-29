@@ -1,0 +1,4 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-933-s3.c: In function 'camel_to_snake':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-933-s3.c:39:22: error: implicit declaration of function 'regsub' [-Wimplicit-function-declaration]
+   39 |         size_t len = regsub(&reg, tmp, 1, pmatches, replacement, tmp_result, n * 2 + 1);
+      |                      ^~~~~~

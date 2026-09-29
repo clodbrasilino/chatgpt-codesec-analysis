@@ -1,0 +1,40 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <stddef.h>
+
+char* remove_odd_index_chars(const char* str) {
+    if (str == NULL) {
+        return NULL;
+    }
+    
+    size_t len = strnlen(str, SIZE_MAX);
+    size_t result_len = (len + 1) / 2;
+    char* result = (char*)malloc(result_len + 1);
+    if (result == NULL) {
+        return NULL;
+    }
+    
+    size_t j = 0;
+    for (size_t i = 0; i < len; i += 2) {
+        result[j++] = str[i];
+    }
+    result[j] = '\0';
+    
+    return result;
+}
+
+int main(void) {
+    const char* test_string = "abcdefghij";
+    char* modified = remove_odd_index_chars(test_string);
+    
+    if (modified != NULL) {
+        printf("Original: %s\n", test_string);
+        printf("Modified: %s\n", modified);
+        free(modified);
+    } else {
+        printf("Failed to process string\n");
+    }
+    
+    return 0;
+}

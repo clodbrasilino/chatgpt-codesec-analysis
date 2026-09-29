@@ -1,0 +1,9 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_1/healed/problem-932-s2.c: In function 'main':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_1/healed/problem-932-s2.c:43:42: error: passing argument 1 of 'remove_duplicates' from incompatible pointer type [-Wincompatible-pointer-types]
+   43 |     int unique_count = remove_duplicates(words, input_count, unique_words);
+      |                                          ^~~~~
+      |                                          |
+      |                                          char **
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_1/healed/problem-932-s2.c:17:35: note: expected 'const char **' but argument is of type 'char **'
+   17 | int remove_duplicates(const char *input[], int input_count, char output[][MAX_WORD_LEN]) {
+      |                       ~~~~~~~~~~~~^~~~~~~

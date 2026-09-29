@@ -1,0 +1,55 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_0/problem-952-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_0/problem-952-s2.c:16:7: warning: Either the condition 'n!=0U' is redundant or there is division by zero at line 16. [zerodivcond]
+    a %= mod;
+      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_0/problem-952-s2.c:139:14: note: Assuming that condition 'n!=0U' is not redundant
+    while (n != 0U || r != 0U) {
+             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_0/problem-952-s2.c:148:14: note: Assignment to 'n/=p'
+        n /= p;
+             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_0/problem-952-s2.c:147:66: note: Calling function 'mul_mod', 3rd argument 'p' value is 0
+        result = mul_mod(result, ncr_digit_mod_prime(ni, ri, p), p);
+                                                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_0/problem-952-s2.c:16:7: note: Division by zero
+    a %= mod;
+      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_0/problem-952-s2.c:140:25: warning: Either the condition 'n!=0U' is redundant or there is division by zero at line 140. [zerodivcond]
+        uint64_t ni = n % p;
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_0/problem-952-s2.c:139:14: note: Assuming that condition 'n!=0U' is not redundant
+    while (n != 0U || r != 0U) {
+             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_0/problem-952-s2.c:148:14: note: Assignment to 'n/=p'
+        n /= p;
+             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_0/problem-952-s2.c:140:25: note: Division by zero
+        uint64_t ni = n % p;
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_0/problem-952-s2.c:141:25: warning: Either the condition 'n!=0U' is redundant or there is division by zero at line 141. [zerodivcond]
+        uint64_t ri = r % p;
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_0/problem-952-s2.c:139:14: note: Assuming that condition 'n!=0U' is not redundant
+    while (n != 0U || r != 0U) {
+             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_0/problem-952-s2.c:148:14: note: Assignment to 'n/=p'
+        n /= p;
+             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_0/problem-952-s2.c:141:25: note: Division by zero
+        uint64_t ri = r % p;
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_0/problem-952-s2.c:148:11: warning: Either the condition 'r!=0U' is redundant or there is division by zero at line 148. [zerodivcond]
+        n /= p;
+          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_0/problem-952-s2.c:139:25: note: Assuming that condition 'r!=0U' is not redundant
+    while (n != 0U || r != 0U) {
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_0/problem-952-s2.c:149:14: note: Assignment to 'r/=p'
+        r /= p;
+             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_0/problem-952-s2.c:148:11: note: Division by zero
+        n /= p;
+          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_0/problem-952-s2.c:174:26: style: Parameter 'argv' can be declared as const array [constParameter]
+int main(int argc, char *argv[])
+                         ^

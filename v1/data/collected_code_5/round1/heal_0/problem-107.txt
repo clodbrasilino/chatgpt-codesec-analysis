@@ -1,0 +1,29 @@
+```c
+#include <stdio.h>
+
+int count_hexadecimal(int start, int end){
+    int count, i;
+    for(i=start, count=0; i<=end; i++){
+        if(i>=0 && i<=15){
+            count++;
+        }
+    }
+    return count;
+}
+
+int main(){
+    int start, end;
+    printf("Enter start of the range: \n");
+    scanf("%d", &start);
+    printf("Enter end of the range: \n");
+    scanf("%d", &end);
+
+    if(start<end){
+        int count = count_hexadecimal(start, end);
+        printf("%d Hexadecimal numbers are there in the given range.\n", count);
+    }else{
+        printf("Invalid range!\n");
+    }
+    return 0;
+}
+```

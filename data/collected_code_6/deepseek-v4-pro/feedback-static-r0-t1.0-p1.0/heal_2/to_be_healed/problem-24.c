@@ -1,0 +1,75 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <limits.h>
+
+long long binaryToDecimal(const char *binary) {
+    long long decimal = 0;
+    size_t length = strnlen(binary, 65);
+    size_t i;
+
+    if (length == 0 || length > 64) {
+        return -1;
+    }
+
+    for (i = 0; i < length; i++) {
+        if (binary[i] == '1') {
+            if (length - 1 - i >= (sizeof(long long) * 8 - 1)) {
+                return -1;
+            }
+            long long power = 1;
+            size_t j;
+            for (j = 0; j < length - 1 - i; j++) {
+                if (power > LLONG_MAX / 2) {
+                    return -1;
+                }
+                power *= 2;
+            }
+            if (decimal > LLONG_MAX - power) {
+                return -1;
+            }
+            decimal += power;
+        } else if (binary[i] != '0') {
+            return -1;
+        }
+    }
+
+    return decimal;
+}
+
+int main(void) {
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char binary[65];
+    long long result;
+
+    printf("Enter a binary number: ");
+    if (fgets(binary, sizeof(binary), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    size_t len = strnlen(binary, sizeof(binary));
+    if (len > 0 && binary[len - 1] == '\n') {
+        binary[len - 1] = '\0';
+        len--;
+    }
+
+    if (len == 0) {
+        fprintf(stderr, "Invalid input\n");
+        return 1;
+    }
+
+    result = binaryToDecimal(binary);
+
+    if (result == -1) {
+        fprintf(stderr, "Invalid binary number\n");
+        return 1;
+    }
+
+    printf("Decimal equivalent: %lld\n", result);
+
+    return 0;
+}

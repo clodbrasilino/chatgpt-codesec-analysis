@@ -1,0 +1,50 @@
+#if defined(__linux__) || defined(__APPLE__) || defined(__POSIX_VERSION)
+#define _POSIX_C_SOURCE 200809L
+#endif
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_STRING_LENGTH 4096
+
+char* extract_rear_elements(char** strings, int num_strings) {
+    if (strings == NULL || num_strings <= 0) {
+        return NULL;
+    }
+
+    char* result = (char*)malloc((num_strings + 1) * sizeof(char));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    int result_index = 0;
+    for (int i = 0; i < num_strings; i++) {
+        if (strings[i] != NULL) {
+            size_t len = strnlen(strings[i], MAX_STRING_LENGTH);
+            if (len > 0) {
+                result[result_index++] = strings[i][len - 1];
+            }
+        }
+    }
+
+    result[result_index] = '\0';
+
+    return result;
+}
+
+int main(void) {
+    char* string_array[] = {"apple", "banana", "cherry", "date"};
+    int num_strings = sizeof(string_array) / sizeof(string_array[0]);
+
+    char* rear_elements = extract_rear_elements(string_array, num_strings);
+
+    if (rear_elements != NULL) {
+        printf("%s\n", rear_elements);
+        free(rear_elements);
+    } else {
+        printf("Failed to extract rear elements.\n");
+    }
+
+    return 0;
+}

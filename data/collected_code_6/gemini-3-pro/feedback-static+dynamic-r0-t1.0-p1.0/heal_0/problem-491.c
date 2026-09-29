@@ -1,0 +1,36 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+double sum_geometric_progression(double a, double r, int n) {
+    if (n < 0) {
+        return 0.0;
+    }
+    
+    if (r == 1.0) {
+        return a * n;
+    }
+    
+    return a * (1.0 - pow(r, n)) / (1.0 - r);
+}
+
+int main(void) {
+    double a;
+    double r;
+    int n;
+    double sum;
+
+    if (scanf("%lf %lf %d", &a, &r, &n) != 3) {
+        return EXIT_FAILURE;
+    }
+
+    if (n <= 0) {
+        return EXIT_FAILURE;
+    }
+
+    sum = sum_geometric_progression(a, r, n);
+
+    printf("%.6f\n", sum);
+
+    return EXIT_SUCCESS;
+}

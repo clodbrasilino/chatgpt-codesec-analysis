@@ -1,0 +1,44 @@
+{
+  "task_id": 234,
+  "text": "Write a C function to find the volume of a cube.",
+  "fn_candidates": [
+    "volume_cube",
+    "VolumeCube",
+    "volumeCube",
+    "volumecube"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "volume_cube",
+      "args": [
+        3
+      ],
+      "expected": 27,
+      "assert_src": "assert volume_cube(3)==27"
+    },
+    {
+      "fn_name": "volume_cube",
+      "args": [
+        2
+      ],
+      "expected": 8,
+      "assert_src": "assert volume_cube(2)==8"
+    },
+    {
+      "fn_name": "volume_cube",
+      "args": [
+        5
+      ],
+      "expected": 125,
+      "assert_src": "assert volume_cube(5)==125"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

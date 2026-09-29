@@ -1,0 +1,41 @@
+#include <stdio.h>
+
+typedef struct {
+    int whole;
+    int fraction;
+} NumberTuple;
+
+static double tuple_to_float(NumberTuple tuple)
+{
+    double magnitude;
+    double fraction;
+    int negative;
+
+    negative = (tuple.whole < 0) || (tuple.whole == 0 && tuple.fraction < 0);
+
+    fraction = (tuple.fraction < 0) ? -(double)tuple.fraction : (double)tuple.fraction;
+
+    while (fraction >= 1.0) {
+        fraction /= 10.0;
+    }
+
+    magnitude = (tuple.whole < 0) ? -(double)tuple.whole : (double)tuple.whole;
+    magnitude += fraction;
+
+    return negative ? -magnitude : magnitude;
+}
+
+int main(void)
+{
+    NumberTuple t1 = { 4, 5 };
+    NumberTuple t2 = { -3, 75 };
+    NumberTuple t3 = { 0, -125 };
+    NumberTuple t4 = { 12, 0 };
+
+    printf("%g\n", tuple_to_float(t1));
+    printf("%g\n", tuple_to_float(t2));
+    printf("%g\n", tuple_to_float(t3));
+    printf("%g\n", tuple_to_float(t4));
+
+    return 0;
+}

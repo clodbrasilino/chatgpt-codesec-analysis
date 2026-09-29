@@ -1,0 +1,73 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+size_t replace_chars(char *str, size_t n)
+{
+    size_t count = 0;
+    size_t i;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    for (i = 0; str[i] != '\0' && count < n; i++) {
+        if (str[i] == ' ' || str[i] == ',' || str[i] == '.') {
+            str[i] = ':';
+            count++;
+        }
+    }
+
+    return count;
+}
+
+int main(void)
+{
+    const char source[] = "Hello world, this is a test. Replace them all.";
+    char *buffer;
+    size_t len;
+    size_t buffer_size;
+    size_t replaced;
+
+    len = strnlen(source, sizeof(source));
+    if (len >= sizeof(source)) {
+        fprintf(stderr, "Source string is not null-terminated\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer_size = len + 1U;
+    buffer = malloc(buffer_size);
+    if (buffer == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    if (buffer_size < len + 1U) {
+        fprintf(stderr, "Buffer too small for copy\n");
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+
+    memcpy(buffer, source, len);
+    buffer[len] = '\0';
+
+    replaced = replace_chars(buffer, 5U);
+
+    if (printf("Original: %s\n", source) < 0) {
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+    if (printf("Modified: %s\n", buffer) < 0) {
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+    if (printf("Replacements made: %zu\n", replaced) < 0) {
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+
+    free(buffer);
+    buffer = NULL;
+
+    return EXIT_SUCCESS;
+}

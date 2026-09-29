@@ -1,0 +1,4 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_0/problem-50.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_0/problem-50.c:63:52: style: Parameter 'lists' can be declared as const array [constParameter]
+static int find_min_length_list(struct Node *const lists[], size_t num_lists, size_t *min_index)
+                                                   ^

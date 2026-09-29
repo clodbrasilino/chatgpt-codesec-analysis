@@ -1,0 +1,66 @@
+./collected_code_3/round3/heal_1/healed/problem-805.c: In function 'main':
+./collected_code_3/round3/heal_1/healed/problem-805.c:40:22: warning: use of uninitialized value 'highestSumListSize' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   40 |     for(int i = 0; i < highestSumListSize; i++) {
+      |                    ~~^~~~~~~~~~~~~~~~~~~~
+  'main': events 1-4
+    |
+    |   25 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   35 |     int highestSumListSize;
+    |      |         ~~~~~~~~~~~~~~~~~~
+    |      |         |
+    |      |         (2) region created on stack here
+    |      |         (3) capacity: 4 bytes
+    |   36 | 
+    |   37 |     int *maxList = findHighestSumList(lists, listSize, numLists, &highestSumListSize);
+    |      |                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                    |
+    |      |                    (4) calling 'findHighestSumList' from 'main'
+    |
+    +--> 'findHighestSumList': events 5-11
+           |
+           |    6 | int* findHighestSumList(int lists[MAX_LISTS][MAX_ELEMENTS], int listSize[MAX_LISTS], int numLists, int *highestSumListSize) {
+           |      |      ^~~~~~~~~~~~~~~~~~
+           |      |      |
+           |      |      (5) entry to 'findHighestSumList'
+           |......
+           |   10 |     for(int i = 0; i < numLists; i++) {
+           |      |                    ~~~~~~~~~~~~  ~~~
+           |      |                      |            |
+           |      |                      |            (11) ...to here
+           |      |                      (6) following 'true' branch (when 'i < numLists')...
+           |   11 |         int currentSum = 0;
+           |      |             ~~~~~~~~~~
+           |      |             |
+           |      |             (7) ...to here
+           |   12 |         for(int j = 0; j < listSize[i]; j++) {
+           |      |                        ~~~~~~~~~~~~~~~
+           |      |                          |
+           |      |                          (8) following 'true' branch...
+           |   13 |             currentSum += lists[i][j];
+           |      |                                ~
+           |      |                                |
+           |      |                                (9) ...to here
+           |   14 |         }
+           |   15 |         if(currentSum > maxSum) {
+           |      |           ~
+           |      |           |
+           |      |           (10) following 'false' branch (when 'currentSum <= maxSum')...
+           |
+    <------+
+    |
+  'main': events 12-13
+    |
+    |   37 |     int *maxList = findHighestSumList(lists, listSize, numLists, &highestSumListSize);
+    |      |                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                    |
+    |      |                    (12) returning to 'main' from 'findHighestSumList'
+    |......
+    |   40 |     for(int i = 0; i < highestSumListSize; i++) {
+    |      |                    ~~~~~~~~~~~~~~~~~~~~~~
+    |      |                      |
+    |      |                      (13) use of uninitialized value 'highestSumListSize' here
+    |

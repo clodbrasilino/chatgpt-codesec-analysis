@@ -1,0 +1,109 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <limits.h>
+#include <string.h>
+#include <ctype.h>
+
+#define INPUT_BUFFER_SIZE 256
+
+unsigned long long sum_fifth_power(int n) {
+    unsigned long long sum = 0;
+    for (int i = 1; i <= n; i++) {
+        unsigned long long term = (unsigned long long)i * i * i * i * i;
+        sum += term;
+    }
+    return sum;
+}
+
+int main(void) {
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char input[INPUT_BUFFER_SIZE] = {0};
+
+    printf("Enter a positive integer: ");
+    if (fgets(input, sizeof(input), stdin) == NULL) {
+        fprintf(stderr, "Error reading input.\n");
+        return EXIT_FAILURE;
+    }
+
+    size_t len = 0;
+    int has_newline = 0;
+    for (size_t i = 0; i < sizeof(input); i++) {
+        if (input[i] == '\0') {
+            break;
+        }
+        if (input[i] == '\n') {
+            input[i] = '\0';
+            has_newline = 1;
+            break;
+        }
+        len++;
+    }
+
+    if (!has_newline) {
+        int c;
+        /* Possible weaknesses found:
+         * Flawfinder getchar: Check buffer boundaries if used in a loop including recursive loops (CWE-120, CWE-20). (risk 1, buffer)
+         */
+        while ((c = getchar()) != '\n' && c != EOF) {
+            /* Possible weaknesses found:
+             *  'continue' is redundant since it is the last statement in a loop. [redundantContinue]
+             */
+            continue;
+        }
+        if (len >= sizeof(input) - 1) {
+            fprintf(stderr, "Input too long.\n");
+            return EXIT_FAILURE;
+        }
+    }
+
+    if (len == 0) {
+        fprintf(stderr, "Invalid input. Please enter a positive integer.\n");
+        return EXIT_FAILURE;
+    }
+
+    char *endptr = input;
+    while (*endptr != '\0' && isspace((unsigned char)*endptr)) {
+        endptr++;
+    }
+
+    if (*endptr == '\0') {
+        fprintf(stderr, "Invalid input. Please enter a positive integer.\n");
+        return EXIT_FAILURE;
+    }
+
+    for (char *check = endptr; *check != '\0'; check++) {
+        if (!isdigit((unsigned char)*check)) {
+            fprintf(stderr, "Invalid input. Please enter a positive integer.\n");
+            return EXIT_FAILURE;
+        }
+    }
+
+    errno = 0;
+    long val = strtol(endptr, &endptr, 10);
+
+    while (*endptr != '\0') {
+        if (!isspace((unsigned char)*endptr)) {
+            fprintf(stderr, "Invalid input. Please enter a positive integer.\n");
+            return EXIT_FAILURE;
+        }
+        endptr++;
+    }
+
+    if (errno == ERANGE || val > INT_MAX || val < 0) {
+        fprintf(stderr, "Number out of range.\n");
+        return EXIT_FAILURE;
+    }
+
+    int n = (int)val;
+
+    if (n <= 0) {
+        fprintf(stderr, "Number must be positive.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Sum of fifth powers: %llu\n", sum_fifth_power(n));
+    return EXIT_SUCCESS;
+}

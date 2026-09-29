@@ -1,0 +1,43 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int count_sequences(long long arr[], int n, int k, long long dp[51][201]) {
+    if (n == 0) {
+        return k == 0 ? 1 : 0;
+    }
+    if (dp[n][100 + arr[0]] != -1) {
+        return dp[n][100 + arr[0]];
+    }
+    if (arr[0] > k) {
+        return dp[n][100 + arr[0]] = count_sequences(arr + 1, n - 1, k, dp);
+    } else {
+        return dp[n][100 + arr[0]] = (count_sequences(arr + 1, n - 1, k - arr[0], dp) + 
+                                     count_sequences(arr + 1, n - 1, k, dp)) % 1000000007;
+    }
+}
+
+int main() {
+    long long arr[] = {1, 2, 3};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    int k;
+
+    printf("Enter the value of k: ");
+    scanf("%d", &k);
+
+    if (k < 0 || k > 100) {
+        fprintf(stderr, "k must be between 0 and 100\n");
+        return 1;
+    }
+
+    long long dp[51][201];
+    for (int i = 0; i <= n; ++i) {
+        for (int l = 0; l < 201; ++l) {
+            dp[i][l] = -1;
+        }
+    }
+
+    int result = count_sequences(arr, n, k, dp);
+    printf("Total sequences: %d\n", result);
+
+    return 0;
+}

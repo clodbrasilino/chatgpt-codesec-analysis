@@ -1,0 +1,24 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+/* Possible weaknesses found:
+ *  Parameter 'counts' can be declared as pointer to const [constParameterPointer]
+ *  Parameter 'elements' can be declared as pointer to const [constParameterPointer]
+ */
+void repeat_elements(int *elements, int *counts, int size) {
+    for (int i = 0; i < size; i++) {
+        for (int j = 0; j < counts[i]; j++) {
+            printf("%d ", elements[i]);
+        }
+    }
+}
+
+int main() {
+    int elements[] = {1, 2, 3};
+    int counts[] = {3, 2, 1};
+    int size = sizeof(elements) / sizeof(elements[0]);
+
+    repeat_elements(elements, counts, size);
+
+    return 0;
+}

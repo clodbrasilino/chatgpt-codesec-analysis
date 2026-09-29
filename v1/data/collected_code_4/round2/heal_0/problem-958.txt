@@ -1,0 +1,43 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+void intToRoman(int num, char* result) {
+    int values[] = {1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1};
+    char* symbols[] = {"M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I"};
+
+    while (num > 0) {
+        for (int i = 0; i < 13; i++) {
+            while (num >= values[i]) {
+                num -= values[i];
+                strcat(result, symbols[i]);
+            }
+        }
+    }
+}
+
+int main() {
+    int num;
+    printf("Enter a number: ");
+    scanf("%d", &num);
+
+    if (num < 1 || num > 3999) {
+        printf("Number out of range. Please enter a number between 1 and 3999.\n");
+        return 1;
+    }
+
+    char* result = malloc(16);
+    if (result == NULL) {
+        printf("Memory allocation failed. Exiting program.\n");
+        return 1;
+    }
+
+    intToRoman(num, result);
+
+    printf("Roman numeral: %s\n", result);
+
+    free(result);
+    return 0;
+}
+```
+This C program takes an integer input from the user, converts it into a roman numeral, and then prints it. The integer to roman conversion is done by subtracting values from the input number and appending the corresponding roman symbols to the result string. The program also handles the exceptional conditions by checking if the number is within the valid range of 1 to 3999 for roman numerals, and by checking if memory allocation for the result string is successful.

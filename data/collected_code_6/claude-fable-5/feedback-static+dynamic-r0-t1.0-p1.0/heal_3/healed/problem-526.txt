@@ -1,0 +1,88 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#define BUFFER_SIZE 1024
+
+void capitalize_first_last(char *str, size_t max_len)
+{
+    size_t i;
+    size_t len;
+
+    if (str == NULL || max_len == 0) {
+        return;
+    }
+
+    len = strnlen(str, max_len);
+    i = 0;
+
+    while (i < len) {
+        while (i < len && isspace((unsigned char)str[i])) {
+            i++;
+        }
+
+        if (i >= len) {
+            break;
+        }
+
+        {
+            size_t start = i;
+            size_t end;
+
+            while (i < len && !isspace((unsigned char)str[i])) {
+                i++;
+            }
+
+            end = i - 1;
+
+            str[start] = (char)toupper((unsigned char)str[start]);
+            str[end] = (char)toupper((unsigned char)str[end]);
+        }
+    }
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    char *newline;
+
+    printf("Enter a string: ");
+    fflush(stdout);
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    newline = strchr(buffer, '\n');
+    if (newline != NULL) {
+        *newline = '\0';
+    }
+
+    capitalize_first_last(buffer, sizeof(buffer));
+
+    printf("Result: %s\n", buffer);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the original code and applied fixes:**
+
+The Flawfinder warning (CWE-119/CWE-120) about the statically-sized `buffer` array was already well mitigated in the original code, and I preserved and slightly hardened those mitigations:
+
+1. **Bounded input read** — `fgets(buffer, sizeof(buffer), stdin)` limits input to the buffer size, preventing the classic `gets()`-style overflow. Using `sizeof(buffer)` rather than a repeated literal keeps the bound tied to the declaration.
+
+2. **Guaranteed null termination** — `buffer[sizeof(buffer) - 1] = '\0';` is defensive (technically redundant after a successful `fgets`, but harmless and protects against future refactoring).
+
+3. **Bounded string length calculation** — `strnlen(str, max_len)` instead of `strlen` ensures the function never reads past the caller-supplied boundary even if handed a non-terminated buffer.
+
+4. **Safe `ctype` usage** — all `isspace`/`toupper` calls cast to `unsigned char`, avoiding undefined behavior on platforms where `char` is signed and the input contains bytes ≥ 0x80.
+
+5. **Minor additions** — a `max_len == 0` guard in `capitalize_first_last` to prevent any edge-case underflow, and `fflush(stdout)` so the prompt reliably appears before blocking on input when stdout is line/fully buffered.
+
+One subtle point worth noting: the `end = i - 1` computation is safe only because the surrounding logic guarantees at least one non-space character was consumed before it executes — the `if (i >= len) break;` check ensures `start < len` and the inner loop advances `i` at least once, so `i >= 1` always holds at that line.

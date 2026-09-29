@@ -1,0 +1,44 @@
+```c
+#include <stdio.h>
+#include <limits.h>
+
+typedef struct {
+    int x;
+    int y;
+} Tuple;
+
+long long find_minimum_product(Tuple* tuples, size_t size) {
+    if (tuples == NULL || size == 0) {
+        return 0;
+    }
+
+    long long min_product = LLONG_MAX;
+
+    for (size_t i = 0; i < size; i++) {
+        long long product = (long long)tuples[i].x * (long long)tuples[i].y;
+        if (product < min_product) {
+            min_product = product;
+        }
+    }
+
+    return min_product;
+}
+
+int main() {
+    Tuple tuples[] = {
+        {3, 4},
+        {-2, 5},
+        {10, -10},
+        {7, 8},
+        {0, 5}
+    };
+    
+    size_t size = sizeof(tuples) / sizeof(tuples[0]);
+    
+    long long min_product = find_minimum_product(tuples, size);
+    
+    printf("%lld\n", min_product);
+    
+    return 0;
+}
+```

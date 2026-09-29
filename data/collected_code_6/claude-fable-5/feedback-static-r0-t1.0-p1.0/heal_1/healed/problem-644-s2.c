@@ -1,0 +1,51 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+void reverse_array_upto(int *arr, size_t len, size_t pos)
+{
+    size_t left;
+    size_t right;
+
+    if (arr == NULL || len == 0U || pos == 0U) {
+        return;
+    }
+
+    if (pos > len) {
+        pos = len;
+    }
+
+    left = 0U;
+    right = pos - 1U;
+
+    while (left < right) {
+        int temp = arr[left];
+        arr[left] = arr[right];
+        arr[right] = temp;
+        left++;
+        right--;
+    }
+}
+
+int main(void)
+{
+    int arr[] = {1, 2, 3, 4, 5, 6, 7, 8};
+    size_t len = sizeof(arr) / sizeof(arr[0]);
+    size_t pos = 5U;
+    size_t i;
+
+    printf("Original array: ");
+    for (i = 0U; i < len; i++) {
+        printf("%d ", arr[i]);
+    }
+    printf("\n");
+
+    reverse_array_upto(arr, len, pos);
+
+    printf("Array after reversing up to position %zu: ", pos);
+    for (i = 0U; i < len; i++) {
+        printf("%d ", arr[i]);
+    }
+    printf("\n");
+
+    return EXIT_SUCCESS;
+}

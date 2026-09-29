@@ -1,0 +1,54 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+int minSquares(int n) {
+    if (n <= 3) {
+        return n;
+    }
+
+    int *dp = (int *)malloc((n + 1) * sizeof(int));
+    if (dp == NULL) {
+        exit(EXIT_FAILURE);
+    }
+
+    dp[0] = 0;
+    dp[1] = 1;
+    dp[2] = 2;
+    dp[3] = 3;
+
+    for (int i = 4; i <= n; i++) {
+        dp[i] = i;
+        for (int x = 1; x <= i; x++) {
+            int temp = x * x;
+            if (temp > i) {
+                break;
+            } else {
+                if (1 + dp[i - temp] < dp[i]) {
+                    dp[i] = 1 + dp[i - temp];
+                }
+            }
+        }
+    }
+
+    int res = dp[n];
+    free(dp);
+    return res;
+}
+
+int main(void) {
+    int n;
+    
+    if (scanf("%d", &n) != 1) {
+        return EXIT_FAILURE;
+    }
+
+    if (n < 0) {
+        return EXIT_FAILURE;
+    }
+
+    int result = minSquares(n);
+    printf("%d\n", result);
+
+    return EXIT_SUCCESS;
+}

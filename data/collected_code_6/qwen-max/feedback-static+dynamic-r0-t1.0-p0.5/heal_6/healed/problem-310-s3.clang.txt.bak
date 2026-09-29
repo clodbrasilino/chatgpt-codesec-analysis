@@ -1,0 +1,7 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_6/healed/problem-310-s3.c:46:49: error: incompatible pointer to integer conversion passing 'char[3]' to parameter of type 'int' [-Wint-conversion]
+   46 |                 if (j < tuple->len - 1) putchar(", ");
+      |                                                 ^~~~
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/_stdio.h:266:17: note: passing argument to parameter here
+  266 | int      putchar(int);
+      |                     ^
+1 error generated.

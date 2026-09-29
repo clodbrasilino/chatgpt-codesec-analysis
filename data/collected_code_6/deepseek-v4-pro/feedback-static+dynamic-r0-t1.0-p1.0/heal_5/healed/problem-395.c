@@ -1,0 +1,67 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+#define TABLE_SIZE 256
+#define INPUT_BUFFER_SIZE 1024
+
+char find_first_non_repeated_char(const char *str) {
+    int count[TABLE_SIZE] = {0};
+    
+    if (str == NULL) {
+        return '\0';
+    }
+    
+    const char *ptr = str;
+    while (*ptr != '\0') {
+        count[(unsigned char)*ptr]++;
+        ptr++;
+    }
+    
+    ptr = str;
+    while (*ptr != '\0') {
+        if (count[(unsigned char)*ptr] == 1) {
+            return *ptr;
+        }
+        ptr++;
+    }
+    
+    return '\0';
+}
+
+int main(void) {
+    char *input = NULL;
+    size_t buffer_size = 0;
+    ssize_t bytes_read;
+    
+    printf("Enter a string: ");
+    bytes_read = getline(&input, &buffer_size, stdin);
+    
+    if (bytes_read == -1) {
+        fprintf(stderr, "Error reading input\n");
+        free(input);
+        return EXIT_FAILURE;
+    }
+    
+    if (bytes_read > 0 && input[bytes_read - 1] == '\n') {
+        input[bytes_read - 1] = '\0';
+        bytes_read--;
+    }
+    
+    if (bytes_read == 0) {
+        printf("No non-repeated character found\n");
+        free(input);
+        return EXIT_SUCCESS;
+    }
+    
+    char result = find_first_non_repeated_char(input);
+    
+    if (result != '\0') {
+        printf("First non-repeated character: %c\n", result);
+    } else {
+        printf("No non-repeated character found\n");
+    }
+    
+    free(input);
+    return EXIT_SUCCESS;
+}

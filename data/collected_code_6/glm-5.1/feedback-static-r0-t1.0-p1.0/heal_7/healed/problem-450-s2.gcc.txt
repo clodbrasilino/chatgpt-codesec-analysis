@@ -1,0 +1,5 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-450-s2.c: In function 'extract_substrings':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-450-s2.c:34:13: error: implicit declaration of function 'memcpy_s'; did you mean 'memcpy'? [-Wimplicit-function-declaration]
+   34 |             memcpy_s(result[i], size + 1, strings[i], len + 1);
+      |             ^~~~~~~~
+      |             memcpy

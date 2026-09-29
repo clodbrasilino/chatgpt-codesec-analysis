@@ -1,0 +1,79 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    struct Node* next;
+} Node;
+
+typedef struct ListOfLists {
+    Node* list;
+    struct ListOfLists* next;
+} ListOfLists;
+
+long long int count_and_square_lists(const ListOfLists* head) {
+    long long int count = 0;
+    const ListOfLists* current = head;
+    
+    while (current != NULL) {
+        count++;
+        current = current->next;
+    }
+    
+    return count * count;
+}
+
+void free_nodes(Node* head) {
+    /* Possible weaknesses found:
+     *  The scope of the variable 'temp' can be reduced. [variableScope]
+     */
+    Node* temp;
+    while (head != NULL) {
+        temp = head;
+        head = head->next;
+        free(temp);
+    }
+}
+
+int main(void) {
+    ListOfLists* head = NULL;
+    ListOfLists* temp = NULL;
+    
+    head = (ListOfLists*)malloc(sizeof(ListOfLists));
+    if (head == NULL) {
+        return 1;
+    }
+    head->list = NULL;
+    head->next = NULL;
+    
+    head->next = (ListOfLists*)malloc(sizeof(ListOfLists));
+    if (head->next == NULL) {
+        free(head);
+        return 1;
+    }
+    head->next->list = NULL;
+    head->next->next = NULL;
+    
+    head->next->next = (ListOfLists*)malloc(sizeof(ListOfLists));
+    if (head->next->next == NULL) {
+        free(head->next);
+        free(head);
+        return 1;
+    }
+    head->next->next->list = NULL;
+    head->next->next->next = NULL;
+    
+    long long int result = count_and_square_lists(head);
+    
+    printf("%lld\n", result);
+    
+    while (head != NULL) {
+        temp = head;
+        head = head->next;
+        if (temp->list != NULL) {
+            free_nodes(temp->list);
+        }
+        free(temp);
+    }
+    
+    return 0;
+}

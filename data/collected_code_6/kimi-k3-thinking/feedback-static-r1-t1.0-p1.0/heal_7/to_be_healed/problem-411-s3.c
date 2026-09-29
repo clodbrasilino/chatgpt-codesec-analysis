@@ -1,0 +1,149 @@
+#define _GNU_SOURCE
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#include <regex.h>
+
+#define MAX_INPUT_LEN 4096
+
+char *snake_to_camel(const char *input, size_t input_len)
+{
+    regex_t regex;
+    regmatch_t match[1];
+    char *result;
+    size_t pos;
+    size_t i;
+    size_t capacity;
+    int ret;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    if (input_len > MAX_INPUT_LEN) {
+        return NULL;
+    }
+
+    ret = regcomp(&regex, "_([a-zA-Z0-9])", REG_EXTENDED);
+    if (ret != 0) {
+        return NULL;
+    }
+
+    capacity = input_len + 1;
+    result = malloc(capacity);
+    if (result == NULL) {
+        regfree(&regex);
+        return NULL;
+    }
+
+    pos = 0;
+    i = 0;
+
+    while (pos < input_len) {
+        size_t remaining = input_len - pos;
+
+        match[0].rm_so = 0;
+        match[0].rm_eo = (regoff_t)remaining;
+
+        ret = regexec(&regex, input + pos, 1, match, REG_STARTEND);
+        if (ret == 0) {
+            size_t offset;
+            size_t match_end;
+
+            if (match[0].rm_so < 0 || match[0].rm_eo < 0) {
+                free(result);
+                regfree(&regex);
+                return NULL;
+            }
+
+            offset = (size_t)match[0].rm_so;
+            match_end = (size_t)match[0].rm_eo;
+
+            if (offset > remaining || match_end > remaining ||
+                match_end < offset + 2) {
+                free(result);
+                regfree(&regex);
+                return NULL;
+            }
+
+            if (offset > 0) {
+                if (i >= capacity || offset > (capacity - 1) - i) {
+                    free(result);
+                    regfree(&regex);
+                    return NULL;
+                }
+                /* Possible weaknesses found:
+                 * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+                 */
+                memcpy(result + i, input + pos, offset);
+                i += offset;
+            }
+
+            if (i >= capacity - 1) {
+                free(result);
+                regfree(&regex);
+                return NULL;
+            }
+
+            result[i++] = (char)toupper((unsigned char)input[pos + offset + 1]);
+            pos += match_end;
+        } else if (ret == REG_NOMATCH) {
+            size_t rest = input_len - pos;
+
+            if (rest > 0) {
+                if (i >= capacity || rest > (capacity - 1) - i) {
+                    free(result);
+                    regfree(&regex);
+                    return NULL;
+                }
+                /* Possible weaknesses found:
+                 * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+                 */
+                memcpy(result + i, input + pos, rest);
+                i += rest;
+            }
+            break;
+        } else {
+            free(result);
+            regfree(&regex);
+            return NULL;
+        }
+    }
+
+    result[i] = '\0';
+    regfree(&regex);
+    return result;
+}
+
+int main(void)
+{
+    const char *tests[] = {
+        "hello_world",
+        "snake_case_string",
+        "convert_this_to_camel",
+        "already",
+        NULL
+    };
+    size_t t;
+
+    for (t = 0; tests[t] != NULL; t++) {
+        size_t len = strnlen(tests[t], MAX_INPUT_LEN + 1);
+        char *camel;
+
+        if (len > MAX_INPUT_LEN) {
+            fprintf(stderr, "Input too long or not null-terminated\n");
+            return EXIT_FAILURE;
+        }
+
+        camel = snake_to_camel(tests[t], len);
+        if (camel == NULL) {
+            fprintf(stderr, "Conversion failed for: %s\n", tests[t]);
+            return EXIT_FAILURE;
+        }
+        printf("%s -> %s\n", tests[t], camel);
+        free(camel);
+    }
+
+    return EXIT_SUCCESS;
+}

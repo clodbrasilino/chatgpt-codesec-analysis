@@ -1,0 +1,71 @@
+collected_code_3/round4/heal_0/problem-812.c: In function 'abbreviateRoad':
+collected_code_3/round4/heal_0/problem-812.c:5:20: warning: implicit declaration of function 'malloc' [-Wimplicit-function-declaration]
+    5 |     char* result = malloc(strlen(str) + 1);
+      |                    ^~~~~~
+collected_code_3/round4/heal_0/problem-812.c:3:1: note: include '<stdlib.h>' or provide a declaration of 'malloc'
+    2 | #include <string.h>
+  +++ |+#include <stdlib.h>
+    3 | 
+collected_code_3/round4/heal_0/problem-812.c:5:20: warning: incompatible implicit declaration of built-in function 'malloc' [-Wbuiltin-declaration-mismatch]
+    5 |     char* result = malloc(strlen(str) + 1);
+      |                    ^~~~~~
+collected_code_3/round4/heal_0/problem-812.c:5:20: note: include '<stdlib.h>' or provide a declaration of 'malloc'
+collected_code_3/round4/heal_0/problem-812.c: In function 'main':
+collected_code_3/round4/heal_0/problem-812.c:23:5: warning: implicit declaration of function 'free' [-Wimplicit-function-declaration]
+   23 |     free(result);
+      |     ^~~~
+collected_code_3/round4/heal_0/problem-812.c:23:5: note: include '<stdlib.h>' or provide a declaration of 'free'
+collected_code_3/round4/heal_0/problem-812.c:23:5: warning: incompatible implicit declaration of built-in function 'free' [-Wbuiltin-declaration-mismatch]
+collected_code_3/round4/heal_0/problem-812.c:23:5: note: include '<stdlib.h>' or provide a declaration of 'free'
+collected_code_3/round4/heal_0/problem-812.c:22:5: warning: use of possibly-NULL 'result' where non-null expected [CWE-690] [-Wanalyzer-possible-null-argument]
+   22 |     printf("%s\n", result);
+      |     ^~~~~~~~~~~~~~~~~~~~~~
+  'main': events 1-2
+    |
+    |   19 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |   20 |     char str[] = "I live on a long road";
+    |   21 |     char* result = abbreviateRoad(str);
+    |      |                    ~~~~~~~~~~~~~~~~~~~
+    |      |                    |
+    |      |                    (2) calling 'abbreviateRoad' from 'main'
+    |
+    +--> 'abbreviateRoad': events 3-4
+           |
+           |    4 | char* abbreviateRoad(char* str) {
+           |      |       ^~~~~~~~~~~~~~
+           |      |       |
+           |      |       (3) entry to 'abbreviateRoad'
+           |    5 |     char* result = malloc(strlen(str) + 1);
+           |      |                    ~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                    |
+           |      |                    (4) this call could return NULL
+           |
+         'abbreviateRoad': events 5-6
+           |
+           |    7 |     while (token != NULL) {
+           |      |                  ^
+           |      |                  |
+           |      |                  (5) following 'false' branch (when 'token' is NULL)...
+           |......
+           |   16 |     return result;
+           |      |            ~~~~~~ 
+           |      |            |
+           |      |            (6) ...to here
+           |
+    <------+
+    |
+  'main': events 7-8
+    |
+    |   21 |     char* result = abbreviateRoad(str);
+    |      |                    ^~~~~~~~~~~~~~~~~~~
+    |      |                    |
+    |      |                    (7) possible return of NULL to 'main' from 'abbreviateRoad'
+    |   22 |     printf("%s\n", result);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (8) argument 1 ('result') from (4) could be NULL where non-null expected
+    |
+<built-in>: note: argument 1 of '__builtin_puts' must be non-null

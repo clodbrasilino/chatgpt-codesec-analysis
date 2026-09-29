@@ -1,0 +1,151 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+#define MAX_INPUT_LEN 4096u
+
+static char *insert_spaces(const char *input)
+{
+    regex_t re;
+    regmatch_t match;
+    char *output;
+    size_t len;
+    size_t out_size;
+    size_t out_pos;
+    size_t offset;
+    size_t tail;
+    int rc;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    len = strnlen(input, MAX_INPUT_LEN);
+    if (len >= MAX_INPUT_LEN) {
+        return NULL;
+    }
+
+    if (len > ((SIZE_MAX - 1u) / 2u)) {
+        return NULL;
+    }
+
+    out_size = (len * 2u) + 1u;
+    output = (char *)malloc(out_size);
+    if (output == NULL) {
+        return NULL;
+    }
+
+    rc = regcomp(&re, "[A-Z]", REG_EXTENDED);
+    if (rc != 0) {
+        free(output);
+        return NULL;
+    }
+
+    out_pos = 0u;
+    offset = 0u;
+
+    while ((offset < len) &&
+           (regexec(&re, input + offset, 1u, &match, 0) == 0)) {
+        size_t start;
+        size_t chunk;
+
+        if (match.rm_so < 0) {
+            regfree(&re);
+            free(output);
+            return NULL;
+        }
+
+        start = offset + (size_t)match.rm_so;
+        chunk = (size_t)match.rm_so;
+
+        if ((start >= len) ||
+            (out_pos > out_size) ||
+            (chunk > (out_size - out_pos)) ||
+            ((out_pos + chunk + 2u) > out_size)) {
+            regfree(&re);
+            free(output);
+            return NULL;
+        }
+
+        if (chunk > 0u) {
+            if ((out_pos + chunk) > out_size) {
+                regfree(&re);
+                free(output);
+                return NULL;
+            }
+            memcpy(output + out_pos, input + offset, chunk);
+            out_pos += chunk;
+        }
+
+        if ((start > 0u) && (input[start - 1u] != ' ')) {
+            if (out_pos >= out_size) {
+                regfree(&re);
+                free(output);
+                return NULL;
+            }
+            output[out_pos] = ' ';
+            out_pos++;
+        }
+
+        if (out_pos >= out_size) {
+            regfree(&re);
+            free(output);
+            return NULL;
+        }
+        output[out_pos] = input[start];
+        out_pos++;
+        offset = start + 1u;
+    }
+
+    if (offset > len) {
+        regfree(&re);
+        free(output);
+        return NULL;
+    }
+
+    tail = len - offset;
+
+    if ((out_pos > out_size) ||
+        (tail > (out_size - out_pos)) ||
+        ((out_pos + tail + 1u) > out_size)) {
+        regfree(&re);
+        free(output);
+        return NULL;
+    }
+
+    if (tail > 0u) {
+        memcpy(output + out_pos, input + offset, tail);
+        out_pos += tail;
+    }
+
+    if (out_pos >= out_size) {
+        regfree(&re);
+        free(output);
+        return NULL;
+    }
+    output[out_pos] = '\0';
+
+    regfree(&re);
+    return output;
+}
+
+int main(void)
+{
+    const char *text = "HelloWorldThisIsATestString";
+    char *result;
+
+    result = insert_spaces(text);
+    if (result == NULL) {
+        (void)fprintf(stderr, "Error: failed to process string\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("%s\n", result) < 0) {
+        free(result);
+        return EXIT_FAILURE;
+    }
+
+    free(result);
+    return EXIT_SUCCESS;
+}

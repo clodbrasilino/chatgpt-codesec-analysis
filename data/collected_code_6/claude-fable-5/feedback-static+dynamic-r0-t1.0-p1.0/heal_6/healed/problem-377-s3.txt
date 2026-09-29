@@ -1,0 +1,63 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+void remove_char(char *str, char c)
+{
+    size_t read_idx = 0;
+    size_t write_idx = 0;
+
+    if (str == NULL) {
+        return;
+    }
+
+    while (str[read_idx] != '\0') {
+        if (str[read_idx] != c) {
+            str[write_idx] = str[read_idx];
+            write_idx++;
+        }
+        read_idx++;
+    }
+    str[write_idx] = '\0';
+}
+
+int main(void)
+{
+    const char source[] = "hello world, hello everyone";
+    char target = 'l';
+    size_t source_len;
+    char *buffer;
+
+    source_len = strlen(source);
+
+    buffer = malloc(source_len + 1);
+    if (buffer == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    memcpy(buffer, source, source_len);
+    buffer[source_len] = '\0';
+
+    printf("Original string: %s\n", buffer);
+    remove_char(buffer, target);
+    printf("After removing '%c': %s\n", target, buffer);
+
+    free(buffer);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Key changes made to address the identified weaknesses:**
+
+1. **CWE-119!/CWE-120 (statically-sized array, risk 2):** Replaced the fixed `char buffer[BUFFER_SIZE]` with a heap allocation sized exactly to the source string length plus the null terminator. This eliminates the class of overflow risks tied to a statically-sized buffer and removes the need for the length-versus-capacity guard entirely — the buffer cannot be too small by construction.
+
+2. **`Condition 'source==NULL' is always false` (knownConditionTrueFalse):** Removed the dead NULL check on `source`. Since `source` is now a `const char[]` initialized with a string literal, it can never be NULL, so the check was unreachable code flagged by cppcheck. The meaningful NULL check that remains is on `malloc`'s return value, which genuinely can fail.
+
+3. **Copy mechanism:** Replaced `snprintf` (and its truncation/return-value checks) with `memcpy` plus explicit null termination. Since the allocation is sized from `strlen`, the copy is exact by construction — no truncation path exists, so no error handling for it is required.
+
+4. **Resource hygiene:** Added the matching `free(buffer)` before returning to avoid a leak introduced by moving to dynamic allocation.
+
+The `remove_char` function itself was already sound — it performs an in-place compaction that only ever shrinks the string, retains its defensive NULL check (appropriate for a reusable function whose callers aren't statically known), and correctly re-terminates the result.

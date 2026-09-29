@@ -1,0 +1,56 @@
+./collected_code_4/round2//heal_1/healed/problem-623.c: In function 'nth_power':
+./collected_code_4/round2//heal_1/healed/problem-623.c:8:38: warning: use of uninitialized value '*arr_18(D) + _3' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+    8 |         arr[i] = (int)pow((double)arr[i], n);
+      |                                   ~~~^~~
+  'main': events 1-7
+    |
+    |   12 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   19 |     arr = (int*) malloc(size * sizeof(int));
+    |      |                  ~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                  |
+    |      |                  (2) region created on heap here
+    |   20 |     if(arr == NULL) {
+    |      |       ~
+    |      |       |
+    |      |       (3) following 'false' branch (when 'arr' is non-NULL)...
+    |......
+    |   25 |     printf("Enter the elements in the array: ");
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (4) ...to here
+    |   26 |     for(i = 0; i < size; i++) {
+    |      |                ~~~~~~~~
+    |      |                  |
+    |      |                  (5) following 'false' branch...
+    |......
+    |   30 |     printf("Enter the power: ");
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (6) ...to here
+    |......
+    |   33 |     nth_power(arr, n, size);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (7) calling 'nth_power' from 'main'
+    |
+    +--> 'nth_power': events 8-11
+           |
+           |    5 | void nth_power(int *arr, int n, int size) {
+           |      |      ^~~~~~~~~
+           |      |      |
+           |      |      (8) entry to 'nth_power'
+           |    6 |     int i;
+           |    7 |     for(i = 0; i < size; i++) {
+           |      |                ~~~~~~~~
+           |      |                  |
+           |      |                  (9) following 'true' branch (when 'i < size')...
+           |    8 |         arr[i] = (int)pow((double)arr[i], n);
+           |      |                       ~~~~~~~~~~~~~~~~~~~~~~
+           |      |                       |              |
+           |      |                       |              (11) use of uninitialized value '*arr_18(D) + _3' here
+           |      |                       (10) ...to here
+           |

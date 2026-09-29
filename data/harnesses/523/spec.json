@@ -1,0 +1,52 @@
+{
+  "task_id": 523,
+  "text": "Write a C function to check whether a given string has a capital letter, a lower case letter, a number and specified length.",
+  "fn_candidates": [
+    "check_string",
+    "CheckString",
+    "checkString",
+    "checkstring"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "check_string",
+      "args": [
+        "python"
+      ],
+      "expected": [
+        "String must have 1 upper case character.",
+        "String must have 1 number.",
+        "String length should be atleast 8."
+      ],
+      "assert_src": "assert check_string('python')==['String must have 1 upper case character.', 'String must have 1 number.', 'String length should be atleast 8.']"
+    },
+    {
+      "fn_name": "check_string",
+      "args": [
+        "123python"
+      ],
+      "expected": [
+        "String must have 1 upper case character."
+      ],
+      "assert_src": "assert check_string('123python')==['String must have 1 upper case character.']"
+    },
+    {
+      "fn_name": "check_string",
+      "args": [
+        "123Python"
+      ],
+      "expected": [
+        "Valid string."
+      ],
+      "assert_src": "assert check_string('123Python')==['Valid string.']"
+    }
+  ],
+  "arg_kinds": [
+    "str"
+  ],
+  "return_kind": "str-list",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

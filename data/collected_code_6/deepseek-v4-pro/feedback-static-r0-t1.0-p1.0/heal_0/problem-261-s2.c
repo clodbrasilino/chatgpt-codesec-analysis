@@ -1,0 +1,63 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int numerator;
+    int denominator;
+} Tuple;
+
+int divide_tuples(Tuple *tuples, int count, int *results) {
+    if (tuples == NULL || results == NULL || count <= 0) {
+        return -1;
+    }
+    
+    for (int i = 0; i < count; i++) {
+        if (tuples[i].denominator == 0) {
+            return -2;
+        }
+        results[i] = tuples[i].numerator / tuples[i].denominator;
+    }
+    
+    return 0;
+}
+
+int main(void) {
+    Tuple test_tuples[] = {
+        {10, 2},
+        {20, 5},
+        {15, 3},
+        {7, 2},
+        {100, 10}
+    };
+    
+    int tuple_count = sizeof(test_tuples) / sizeof(test_tuples[0]);
+    int *results = malloc((size_t)tuple_count * sizeof(int));
+    
+    if (results == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return 1;
+    }
+    
+    int status = divide_tuples(test_tuples, tuple_count, results);
+    
+    if (status == -1) {
+        fprintf(stderr, "Invalid input parameters\n");
+        free(results);
+        return 1;
+    }
+    
+    if (status == -2) {
+        fprintf(stderr, "Division by zero encountered\n");
+        free(results);
+        return 1;
+    }
+    
+    printf("Division results:\n");
+    for (int i = 0; i < tuple_count; i++) {
+        printf("%d / %d = %d\n", test_tuples[i].numerator, 
+               test_tuples[i].denominator, results[i]);
+    }
+    
+    free(results);
+    return 0;
+}

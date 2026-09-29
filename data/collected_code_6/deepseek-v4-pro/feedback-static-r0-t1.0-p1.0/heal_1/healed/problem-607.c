@@ -1,0 +1,98 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+int regex_search_literal(const char *text, const char *pattern, regmatch_t *pmatch, size_t nmatch) {
+    if (text == NULL || pattern == NULL || pmatch == NULL || nmatch == 0) {
+        return -1;
+    }
+
+    regex_t regex;
+    int ret;
+    char *escaped_pattern;
+    size_t pattern_len = strnlen(pattern, 65536);
+    size_t escaped_len = pattern_len * 2 + 1;
+    size_t i, j;
+
+    escaped_pattern = (char *)malloc(escaped_len);
+    if (escaped_pattern == NULL) {
+        return -1;
+    }
+
+    j = 0;
+    for (i = 0; i < pattern_len && j < escaped_len - 1; i++) {
+        if (pattern[i] == '.' || pattern[i] == '^' || pattern[i] == '$' ||
+            pattern[i] == '*' || pattern[i] == '+' || pattern[i] == '?' ||
+            pattern[i] == '(' || pattern[i] == ')' || pattern[i] == '[' ||
+            pattern[i] == ']' || pattern[i] == '{' || pattern[i] == '}' ||
+            pattern[i] == '\\' || pattern[i] == '|') {
+            if (j >= escaped_len - 2) break;
+            escaped_pattern[j++] = '\\';
+        }
+        if (j >= escaped_len - 1) break;
+        escaped_pattern[j++] = pattern[i];
+    }
+    escaped_pattern[j] = '\0';
+
+    ret = regcomp(&regex, escaped_pattern, REG_EXTENDED);
+    if (ret != 0) {
+        free(escaped_pattern);
+        return ret;
+    }
+
+    ret = regexec(&regex, text, nmatch, pmatch, 0);
+
+    regfree(&regex);
+    free(escaped_pattern);
+
+    return ret;
+}
+
+void print_match(const char *text, const char *pattern, regmatch_t *pmatch, size_t nmatch) {
+    int ret = regex_search_literal(text, pattern, pmatch, nmatch);
+
+    if (ret == 0) {
+        size_t i;
+        printf("Pattern \"%s\" found in \"%s\"\n", pattern, text);
+        for (i = 0; i < nmatch && pmatch[i].rm_so != -1; i++) {
+            printf("Match %zu at position %lld: ", i, (long long)pmatch[i].rm_so);
+            printf("\"%.*s\"\n", (int)(pmatch[i].rm_eo - pmatch[i].rm_so), text + pmatch[i].rm_so);
+        }
+    } else if (ret == REG_NOMATCH) {
+        printf("Pattern \"%s\" not found in \"%s\"\n", pattern, text);
+    } else {
+        char *errbuf = (char *)calloc(1, 1024);
+        if (errbuf != NULL) {
+            regerror(ret, NULL, errbuf, 1024);
+            fprintf(stderr, "Regex error: %s\n", errbuf);
+            free(errbuf);
+        } else {
+            fprintf(stderr, "Regex error: unknown\n");
+        }
+    }
+}
+
+int main(void) {
+    const char *text = "The quick brown fox jumps over the lazy dog. The fox is quick.";
+    const char *pattern;
+    regmatch_t pmatch[10];
+
+    pattern = "fox";
+    memset(pmatch, 0, sizeof(pmatch));
+    print_match(text, pattern, pmatch, 10);
+
+    pattern = "dog";
+    memset(pmatch, 0, sizeof(pmatch));
+    print_match(text, pattern, pmatch, 10);
+
+    pattern = "quick brown";
+    memset(pmatch, 0, sizeof(pmatch));
+    print_match(text, pattern, pmatch, 10);
+
+    pattern = "cat";
+    memset(pmatch, 0, sizeof(pmatch));
+    print_match(text, pattern, pmatch, 10);
+
+    return 0;
+}

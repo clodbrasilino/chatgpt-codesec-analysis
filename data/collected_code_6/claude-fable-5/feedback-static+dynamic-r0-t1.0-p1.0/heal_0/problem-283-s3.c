@@ -1,0 +1,46 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+bool digits_valid(unsigned long long num)
+{
+    int freq[10] = {0};
+    int i;
+
+    if (num == 0ULL) {
+        freq[0] = 1;
+    } else {
+        while (num > 0ULL) {
+            freq[num % 10ULL]++;
+            num /= 10ULL;
+        }
+    }
+
+    for (i = 0; i < 10; i++) {
+        if (freq[i] > i) {
+            return false;
+        }
+    }
+    return true;
+}
+
+int main(void)
+{
+    unsigned long long num;
+    int result;
+
+    printf("Enter a non-negative integer: ");
+    result = scanf("%llu", &num);
+    if (result != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (digits_valid(num)) {
+        printf("True: every digit's frequency is <= the digit itself\n");
+    } else {
+        printf("False: some digit's frequency exceeds the digit itself\n");
+    }
+
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,59 @@
+```c
+#include <stdio.h>
+#include <ctype.h>
+#include <stddef.h>
+
+void remove_whitespace(char *str, size_t max_len)
+{
+    size_t read;
+    size_t write;
+
+    if (str == NULL || max_len == 0) {
+        return;
+    }
+
+    read = 0;
+    write = 0;
+
+    while (read < max_len && str[read] != '\0') {
+        if (!isspace((unsigned char)str[read])) {
+            str[write] = str[read];
+            write++;
+        }
+        read++;
+    }
+
+    if (write < max_len) {
+        str[write] = '\0';
+    } else {
+        str[max_len - 1] = '\0';
+    }
+}
+
+int main(void)
+{
+    char text[] = "  Hello,   World! \t This is a\ntest.  ";
+
+    printf("Before: \"%s\"\n", text);
+    remove_whitespace(text, sizeof(text));
+    printf("After:  \"%s\"\n", text);
+
+    return 0;
+}
+```
+
+**Analysis notes:**
+
+The Flawfinder warnings here are risk-level 1 (the lowest) and are essentially informational — they flag any indexed buffer access inside a loop. Reviewing the actual logic, the code already mitigates each concern:
+
+1. **Bounded reads/writes (CWE-120, CWE-20):** Every access `str[read]` and `str[write]` is guarded by `read < max_len`, and since `write <= read` always holds, `str[write]` can never exceed the bound. No overflow is possible.
+
+2. **NULL and zero-length guard:** The early return on `str == NULL || max_len == 0` prevents dereferencing invalid pointers and makes the `max_len - 1` expression safe from unsigned underflow.
+
+3. **`isspace` correctness:** The cast to `(unsigned char)` is correct and necessary — passing a raw `char` that happens to be negative (e.g., extended characters on platforms with signed `char`) would invoke undefined behavior.
+
+4. **Guaranteed termination:** The final block ensures the string is always NUL-terminated within the buffer, even in the edge case where the input fills the entire buffer without a terminator.
+
+5. **Caller usage:** `main` passes `sizeof(text)`, which is the true buffer size (including the NUL), so the contract between caller and callee is consistent.
+
+The code is safe as written; no functional changes were required, so the rewrite simply strips the comments while preserving all defensive checks.

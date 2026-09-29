@@ -1,0 +1,29 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+/* Possible weaknesses found:
+ *  Parameter 'arr' can be declared as pointer to const [constParameterPointer]
+ */
+int count_odd_set_bits(int *arr, int size) {
+    int count = 0;
+    for (int i = 0; i < size; i++) {
+        int num = arr[i];
+        int bits = 0;
+        while (num) {
+            bits += num & 1;
+            num >>= 1;
+        }
+        if (bits % 2 != 0) {
+            count++;
+        }
+    }
+    return count;
+}
+
+int main(void) {
+    int arr[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    int size = sizeof(arr) / sizeof(arr[0]);
+    int result = count_odd_set_bits(arr, size);
+    printf("%d\n", result);
+    return 0;
+}

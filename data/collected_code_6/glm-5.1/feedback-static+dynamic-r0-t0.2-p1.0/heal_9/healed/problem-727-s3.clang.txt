@@ -1,0 +1,43 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_9/healed/problem-727-s3.c:26:5: error: use of undeclared identifier 'regex_t'
+   26 |     regex_t regex;
+      |     ^~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_9/healed/problem-727-s3.c:27:15: error: call to undeclared function 'regcomp'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   27 |     int ret = regcomp(&regex, "[^a-zA-Z0-9]", REG_EXTENDED);
+      |               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_9/healed/problem-727-s3.c:27:24: error: use of undeclared identifier 'regex'
+   27 |     int ret = regcomp(&regex, "[^a-zA-Z0-9]", REG_EXTENDED);
+      |                        ^~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_9/healed/problem-727-s3.c:27:47: error: use of undeclared identifier 'REG_EXTENDED'
+   27 |     int ret = regcomp(&regex, "[^a-zA-Z0-9]", REG_EXTENDED);
+      |                                               ^~~~~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_9/healed/problem-727-s3.c:37:9: error: use of undeclared identifier 'regmatch_t'
+   37 |         regmatch_t match;
+      |         ^~~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_9/healed/problem-727-s3.c:38:24: error: call to undeclared function 'regexec'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   38 |         int exec_ret = regexec(&regex, cursor, 1, &match, 0);
+      |                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_9/healed/problem-727-s3.c:38:33: error: use of undeclared identifier 'regex'
+   38 |         int exec_ret = regexec(&regex, cursor, 1, &match, 0);
+      |                                 ^~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_9/healed/problem-727-s3.c:38:52: error: use of undeclared identifier 'match'
+   38 |         int exec_ret = regexec(&regex, cursor, 1, &match, 0);
+      |                                                    ^~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_9/healed/problem-727-s3.c:41:17: error: use of undeclared identifier 'match'
+   41 |             if (match.rm_so > 0) {
+      |                 ^~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_9/healed/problem-727-s3.c:42:35: error: use of undeclared identifier 'match'
+   42 |                 size_t copy_len = match.rm_so;
+      |                                   ^~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_9/healed/problem-727-s3.c:48:17: error: use of undeclared identifier 'match'
+   48 |             if (match.rm_eo == 0) {
+      |                 ^~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_9/healed/problem-727-s3.c:51:27: error: use of undeclared identifier 'match'
+   51 |                 cursor += match.rm_eo;
+      |                           ^~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_9/healed/problem-727-s3.c:70:5: error: call to undeclared function 'regfree'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   70 |     regfree(&regex);
+      |     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_9/healed/problem-727-s3.c:70:14: error: use of undeclared identifier 'regex'
+   70 |     regfree(&regex);
+      |              ^~~~~
+14 errors generated.

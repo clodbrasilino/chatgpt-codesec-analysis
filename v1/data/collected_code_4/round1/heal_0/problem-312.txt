@@ -1,0 +1,33 @@
+```C
+
+#include <stdio.h>
+#include <math.h>
+
+double coneVolume(double radius, double height) {
+  double volume = (M_PI * pow(radius, 2) * height) / 3;
+  return volume;
+}
+
+int main() {
+  double radius, height, volume;
+
+  printf("Enter radius of the cone: ");
+  scanf("%lf", &radius);
+
+  printf("Enter height of the cone: ");
+  scanf("%lf", &height);
+
+  if(radius < 0 || height < 0) {
+    printf("Error: Negative values are not allowed for radius or height.\n");
+
+    return -1;
+  }
+
+  volume = coneVolume(radius, height);
+
+  printf("The volume of the cone is: %.2lf\n", volume);
+
+  return 0;
+}
+
+```

@@ -1,0 +1,47 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+void flip(int *arr, int k) {
+    for (int i = 0; i < k / 2; i++) {
+        int temp = arr[i];
+        arr[i] = arr[k - i - 1];
+        arr[k - i - 1] = temp;
+    }
+}
+
+/* Possible weaknesses found:
+ *  Parameter 'arr' can be declared as pointer to const [constParameterPointer]
+ */
+int findMaxIndex(int *arr, int n) {
+    int maxIndex = 0;
+    for (int i = 1; i < n; i++) {
+        if (arr[i] > arr[maxIndex]) {
+            maxIndex = i;
+        }
+    }
+    return maxIndex;
+}
+
+void pancakeSort(int *arr, int n) {
+    for (int size = n; size > 1; --size) {
+        int maxIndex = findMaxIndex(arr, size);
+        if (maxIndex != size - 1) {
+            flip(arr, maxIndex + 1);
+            flip(arr, size);
+        }
+    }
+}
+
+int main() {
+    int arr[] = {3, 6, 1, 7, 2, 5, 4};
+    int n = sizeof(arr) / sizeof(arr[0]);
+
+    pancakeSort(arr, n);
+
+    for (int i = 0; i < n; i++) {
+        printf("%d ", arr[i]);
+    }
+    printf("\n");
+
+    return 0;
+}

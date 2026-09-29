@@ -1,0 +1,46 @@
+#include <stdio.h>
+#include <stddef.h>
+
+int max_value_frequency(const int *arr, size_t size, size_t *frequency)
+{
+    size_t i;
+    int max;
+    size_t count;
+
+    if (arr == NULL || size == 0 || frequency == NULL) {
+        return -1;
+    }
+
+    max = arr[0];
+    count = 1;
+
+    for (i = 1; i < size; i++) {
+        if (arr[i] > max) {
+            max = arr[i];
+            count = 1;
+        } else if (arr[i] == max) {
+            count++;
+        }
+    }
+
+    *frequency = count;
+    return 0;
+}
+
+int main(void)
+{
+    int numbers[] = {3, 7, 1, 7, 4, 7, 2};
+    size_t size = sizeof(numbers) / sizeof(numbers[0]);
+    size_t frequency = 0;
+
+    if (max_value_frequency(numbers, size, &frequency) != 0) {
+        fprintf(stderr, "Error: invalid input\n");
+        return 1;
+    }
+
+    if (printf("Frequency of largest value: %zu\n", frequency) < 0) {
+        return 1;
+    }
+
+    return 0;
+}

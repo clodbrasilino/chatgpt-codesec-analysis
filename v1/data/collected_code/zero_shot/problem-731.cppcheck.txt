@@ -1,0 +1,12 @@
+collected_code/problem-731-0.c:12:18: error: Cannot determine that 'radius' is initialized [premium-bughuntingUninit]
+    scanf("%f", &radius);
+                 ^
+collected_code/problem-731-0.c:14:18: error: Cannot determine that 'height' is initialized [premium-bughuntingUninit]
+    scanf("%f", &height);
+                 ^
+collected_code/problem-731-0.c:15:55: error: Cannot determine that 'radius' is initialized [premium-bughuntingUninit]
+    float lateralSurfaceArea = findLateralSurfaceArea(radius, height);
+                                                      ^
+collected_code/problem-731-0.c:15:63: error: Cannot determine that 'height' is initialized [premium-bughuntingUninit]
+    float lateralSurfaceArea = findLateralSurfaceArea(radius, height);
+                                                              ^

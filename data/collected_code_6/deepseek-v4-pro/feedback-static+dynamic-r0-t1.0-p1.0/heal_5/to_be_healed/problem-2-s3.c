@@ -1,0 +1,184 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *elements;
+    int size;
+} Tuple;
+ /* Possible weaknesses found:
+  *  test case 2 failed: expected [13, 14], got <no output>
+  *  test case 1 failed: expected [3, 4], got <no output>
+  *  test case 0 failed: expected [4, 5], got <no output>
+  */
+
+int *find_similar_elements(Tuple *list1, int size1, Tuple *list2, int size2, int *result_size) {
+    if (list1 == NULL || list2 == NULL || result_size == NULL) {
+        return NULL;
+    }
+    
+    int max_result_size = 0;
+    for (int i = 0; i < size1; i++) {
+        max_result_size += list1[i].size;
+    }
+    for (int i = 0; i < size2; i++) {
+        max_result_size += list2[i].size;
+    }
+    
+    int *result = (int *)malloc(max_result_size * sizeof(int));
+    if (result == NULL) {
+        return NULL;
+    }
+    
+    int count = 0;
+    
+    for (int i = 0; i < size1; i++) {
+        for (int j = 0; j < list1[i].size; j++) {
+            int current = list1[i].elements[j];
+            int found = 0;
+            
+            for (int k = 0; k < size2; k++) {
+                for (int l = 0; l < list2[k].size; l++) {
+                    if (list2[k].elements[l] == current) {
+                        found = 1;
+                        break;
+                    }
+                }
+                if (found) {
+                    break;
+                }
+            }
+            
+            if (found) {
+                int already_exists = 0;
+                for (int m = 0; m < count; m++) {
+                    if (result[m] == current) {
+                        already_exists = 1;
+                        break;
+                    }
+                }
+                
+                if (!already_exists) {
+                    result[count++] = current;
+                }
+            }
+        }
+    }
+    
+    *result_size = count;
+    
+    if (count == 0) {
+        free(result);
+        return NULL;
+    }
+    
+    int *final_result = (int *)realloc(result, count * sizeof(int));
+    if (final_result == NULL) {
+        free(result);
+        return NULL;
+    }
+    
+    return final_result;
+}
+
+void free_tuple_list(Tuple *list, int size) {
+    if (list == NULL) {
+        return;
+    }
+    
+    for (int i = 0; i < size; i++) {
+        free(list[i].elements);
+    }
+    free(list);
+}
+
+int main(void) {
+    int *elements1_1 = (int *)malloc(4 * sizeof(int));
+    int *elements1_2 = (int *)malloc(3 * sizeof(int));
+    int *elements1_3 = (int *)malloc(5 * sizeof(int));
+    
+    if (elements1_1 == NULL || elements1_2 == NULL || elements1_3 == NULL) {
+        free(elements1_1);
+        free(elements1_2);
+        free(elements1_3);
+        return 1;
+    }
+    
+    elements1_1[0] = 1; elements1_1[1] = 2; elements1_1[2] = 3; elements1_1[3] = 4;
+    elements1_2[0] = 5; elements1_2[1] = 6; elements1_2[2] = 7;
+    elements1_3[0] = 8; elements1_3[1] = 9; elements1_3[2] = 10; elements1_3[3] = 11; elements1_3[4] = 12;
+    
+    Tuple *list1 = (Tuple *)malloc(3 * sizeof(Tuple));
+    if (list1 == NULL) {
+        free(elements1_1);
+        free(elements1_2);
+        free(elements1_3);
+        return 1;
+    }
+    
+    list1[0].elements = elements1_1;
+    list1[0].size = 4;
+    list1[1].elements = elements1_2;
+    list1[1].size = 3;
+    list1[2].elements = elements1_3;
+    list1[2].size = 5;
+    
+    int *elements2_1 = (int *)malloc(4 * sizeof(int));
+    int *elements2_2 = (int *)malloc(3 * sizeof(int));
+    int *elements2_3 = (int *)malloc(2 * sizeof(int));
+    int *elements2_4 = (int *)malloc(5 * sizeof(int));
+    
+    if (elements2_1 == NULL || elements2_2 == NULL || elements2_3 == NULL || elements2_4 == NULL) {
+        free(elements2_1);
+        free(elements2_2);
+        free(elements2_3);
+        free(elements2_4);
+        free_tuple_list(list1, 3);
+        return 1;
+    }
+    
+    elements2_1[0] = 3; elements2_1[1] = 4; elements2_1[2] = 5; elements2_1[3] = 6;
+    elements2_2[0] = 7; elements2_2[1] = 8; elements2_2[2] = 9;
+    elements2_3[0] = 10; elements2_3[1] = 11;
+    elements2_4[0] = 12; elements2_4[1] = 13; elements2_4[2] = 14; elements2_4[3] = 15; elements2_4[4] = 16;
+    
+    Tuple *list2 = (Tuple *)malloc(4 * sizeof(Tuple));
+    if (list2 == NULL) {
+        free(elements2_1);
+        free(elements2_2);
+        free(elements2_3);
+        free(elements2_4);
+        free_tuple_list(list1, 3);
+        return 1;
+    }
+    
+    list2[0].elements = elements2_1;
+    list2[0].size = 4;
+    list2[1].elements = elements2_2;
+    list2[1].size = 3;
+    list2[2].elements = elements2_3;
+    list2[2].size = 2;
+    list2[3].elements = elements2_4;
+    list2[3].size = 5;
+    
+    int result_size = 0;
+    int *similar = find_similar_elements(list1, 3, list2, 4, &result_size);
+    
+    if (similar != NULL) {
+        printf("[");
+        for (int i = 0; i < result_size; i++) {
+            printf("%d", similar[i]);
+            if (i < result_size - 1) {
+                printf(", ");
+            }
+        }
+        printf("]\n");
+        free(similar);
+    } else {
+        printf("[]\n");
+    }
+    
+    free_tuple_list(list1, 3);
+    free_tuple_list(list2, 4);
+    
+    return 0;
+}

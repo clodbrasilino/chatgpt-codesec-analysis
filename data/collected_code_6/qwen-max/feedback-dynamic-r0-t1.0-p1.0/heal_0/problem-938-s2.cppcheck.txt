@@ -1,0 +1,37 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-938-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-938-s2.c:14:32: style: Parameter 'A' can be declared as pointer to const [constParameterPointer]
+void find_closest_triplet(int *A, int *B, int *C, int len1, int len2, int len3) {
+                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-938-s2.c:14:40: style: Parameter 'B' can be declared as pointer to const [constParameterPointer]
+void find_closest_triplet(int *A, int *B, int *C, int len1, int len2, int len3) {
+                                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-938-s2.c:14:48: style: Parameter 'C' can be declared as pointer to const [constParameterPointer]
+void find_closest_triplet(int *A, int *B, int *C, int len1, int len2, int len3) {
+                                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-938-s2.c:40:48: warning: Uninitialized variable: res_i [uninitvar]
+    printf("Closest elements: %d, %d, %d\n", A[res_i], B[res_j], C[res_k]);
+                                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-938-s2.c:20:19: note: Assuming condition is false
+    for (i = 0; i < len1; ++i) {
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-938-s2.c:40:48: note: Uninitialized variable: res_i
+    printf("Closest elements: %d, %d, %d\n", A[res_i], B[res_j], C[res_k]);
+                                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-938-s2.c:40:58: warning: Uninitialized variable: res_j [uninitvar]
+    printf("Closest elements: %d, %d, %d\n", A[res_i], B[res_j], C[res_k]);
+                                                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-938-s2.c:20:19: note: Assuming condition is false
+    for (i = 0; i < len1; ++i) {
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-938-s2.c:40:58: note: Uninitialized variable: res_j
+    printf("Closest elements: %d, %d, %d\n", A[res_i], B[res_j], C[res_k]);
+                                                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-938-s2.c:40:68: warning: Uninitialized variable: res_k [uninitvar]
+    printf("Closest elements: %d, %d, %d\n", A[res_i], B[res_j], C[res_k]);
+                                                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-938-s2.c:20:19: note: Assuming condition is false
+    for (i = 0; i < len1; ++i) {
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-938-s2.c:40:68: note: Uninitialized variable: res_k
+    printf("Closest elements: %d, %d, %d\n", A[res_i], B[res_j], C[res_k]);
+                                                                   ^

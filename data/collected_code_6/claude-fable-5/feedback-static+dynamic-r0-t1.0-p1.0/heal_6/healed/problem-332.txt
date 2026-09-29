@@ -1,0 +1,92 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <limits.h>
+#include <stdlib.h>
+
+#define BUFFER_SIZE 256
+#define FREQ_SIZE ((size_t)UCHAR_MAX + 1)
+
+int count_char_frequency(const char *str, size_t str_max, size_t freq_size, unsigned long freq[]);
+
+int count_char_frequency(const char *str, size_t str_max, size_t freq_size, unsigned long freq[])
+{
+    size_t i;
+
+    if (str == NULL || freq == NULL || freq_size < FREQ_SIZE || str_max == 0) {
+        return -1;
+    }
+
+    for (i = 0; i < freq_size; i++) {
+        freq[i] = 0;
+    }
+
+    for (i = 0; i < str_max && str[i] != '\0'; i++) {
+        unsigned char c = (unsigned char)str[i];
+        if (freq[c] < ULONG_MAX) {
+            freq[c]++;
+        }
+    }
+
+    if (i == str_max) {
+        return -1;
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    unsigned long freq[FREQ_SIZE];
+    size_t len;
+    int i;
+
+    printf("Enter a string: ");
+    if (fflush(stdout) != 0) {
+        fprintf(stderr, "Error flushing output\n");
+        return EXIT_FAILURE;
+    }
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    }
+
+    if (count_char_frequency(buffer, sizeof(buffer), sizeof(freq) / sizeof(freq[0]), freq) != 0) {
+        fprintf(stderr, "Error counting character frequency\n");
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i <= UCHAR_MAX; i++) {
+        if (freq[i] > 0) {
+            if (i >= 32 && i < 127) {
+                printf("'%c' : %lu\n", (char)i, freq[i]);
+            } else {
+                printf("0x%02X : %lu\n", (unsigned int)i, freq[i]);
+            }
+        }
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The original code was already well-defended against the Flawfinder warning (CWE-119/CWE-120). The flagged issue is about statically-sized arrays potentially being overflowed, but the code mitigates this correctly:
+
+1. **Bounded input:** `fgets(buffer, sizeof(buffer), stdin)` limits input to the buffer size, preventing overflow at the read site.
+2. **Guaranteed termination:** `buffer[sizeof(buffer) - 1] = '\0'` is a defensive redundancy (fgets already null-terminates), ensuring no unterminated string reaches `strnlen`.
+3. **Bounded scanning:** `strnlen` and the `str_max` parameter in `count_char_frequency` prevent reads past the buffer even if termination were somehow missing.
+4. **Safe indexing:** The cast to `unsigned char` before indexing `freq[]` prevents negative-index undefined behavior on platforms where `char` is signed, and `freq_size < FREQ_SIZE` validation guarantees the frequency array covers all 256 possible byte values.
+5. **Counter saturation:** The `freq[c] < ULONG_MAX` check prevents unsigned wraparound of counts.
+
+Changes made in the rewrite: added a `str_max == 0` guard to avoid the degenerate case where the termination check `i == str_max` would misfire on an empty range, cast `sizeof(buffer)` to `int` for the `fgets` parameter to match its signature cleanly, and checked the return value of `fflush`. The static buffer sizing is acceptable here because every access path is length-bounded.

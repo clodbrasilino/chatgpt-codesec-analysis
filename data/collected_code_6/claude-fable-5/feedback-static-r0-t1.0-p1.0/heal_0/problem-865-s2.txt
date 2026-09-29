@@ -1,0 +1,58 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef void (*map_fn)(int value);
+
+static int map(const int *list, size_t length, map_fn fn)
+{
+    size_t i;
+
+    if (list == NULL || fn == NULL) {
+        return -1;
+    }
+
+    for (i = 0; i < length; i++) {
+        fn(list[i]);
+    }
+
+    return 0;
+}
+
+static void print_element(int value)
+{
+    (void)printf("%d ", value);
+}
+
+static int print_list_n_times(const int *list, size_t length, unsigned int n)
+{
+    unsigned int i;
+
+    if (list == NULL || length == 0U) {
+        return -1;
+    }
+
+    for (i = 0U; i < n; i++) {
+        if (map(list, length, print_element) != 0) {
+            return -1;
+        }
+        (void)printf("\n");
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    int list[] = { 1, 2, 3, 4, 5 };
+    size_t length = sizeof(list) / sizeof(list[0]);
+    unsigned int n = 3U;
+
+    if (print_list_n_times(list, length, n) != 0) {
+        (void)fprintf(stderr, "Error: failed to print list\n");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```

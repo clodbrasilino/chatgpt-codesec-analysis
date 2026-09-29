@@ -1,0 +1,62 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+size_t max_sum_subarray_length(const int *arr, size_t n)
+{
+    long long max_sum;
+    long long current_sum;
+    size_t max_len;
+    size_t current_start;
+    size_t i;
+
+    if (arr == NULL || n == 0U) {
+        return 0U;
+    }
+
+    max_sum = (long long)arr[0];
+    current_sum = (long long)arr[0];
+    max_len = 1U;
+    current_start = 0U;
+
+    for (i = 1U; i < n; i++) {
+        if (current_sum < 0LL) {
+            current_sum = (long long)arr[i];
+            current_start = i;
+        } else {
+            current_sum += (long long)arr[i];
+        }
+
+        if (current_sum > max_sum) {
+            max_sum = current_sum;
+            max_len = i - current_start + 1U;
+        } else if (current_sum == max_sum) {
+            if ((i - current_start + 1U) > max_len) {
+                max_len = i - current_start + 1U;
+            }
+        }
+    }
+
+    return max_len;
+}
+
+int main(void)
+{
+    int arr[] = { -2, 1, -3, 4, -1, 2, 1, -5, 4 };
+    size_t n = sizeof(arr) / sizeof(arr[0]);
+    size_t result;
+
+    result = max_sum_subarray_length(arr, n);
+
+    if (result == 0U) {
+        if (fprintf(stderr, "Invalid input array\n") < 0) {
+            return EXIT_FAILURE;
+        }
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Length of subarray with maximum sum: %zu\n", result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

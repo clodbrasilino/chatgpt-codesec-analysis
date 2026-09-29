@@ -1,0 +1,34 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int count_equal(int a, int b, int c);
+
+int count_equal(int a, int b, int c)
+{
+    if (a == b && b == c) {
+        return 3;
+    }
+    if (a == b || b == c || a == c) {
+        return 2;
+    }
+    return 0;
+}
+
+int main(void)
+{
+    int a;
+    int b;
+    int c;
+    int result;
+
+    printf("Enter three integers: ");
+    if (scanf("%d %d %d", &a, &b, &c) != 3) {
+        fprintf(stderr, "Invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    result = count_equal(a, b, c);
+    printf("Number of equal integers: %d\n", result);
+
+    return EXIT_SUCCESS;
+}

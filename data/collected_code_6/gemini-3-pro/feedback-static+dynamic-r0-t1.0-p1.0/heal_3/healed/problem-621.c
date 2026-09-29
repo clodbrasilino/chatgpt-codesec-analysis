@@ -1,0 +1,114 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+char* increment_numeric_values(const char* str, int k) {
+    if (str == NULL) {
+        return NULL;
+    }
+
+    size_t len = strlen(str);
+    size_t new_len = len * 2 + 1;
+    char* result = (char*)malloc(new_len);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    size_t res_idx = 0;
+    size_t i = 0;
+
+    while (i < len) {
+        if (isdigit((unsigned char)str[i])) {
+            long val = 0;
+            while (i < len && isdigit((unsigned char)str[i])) {
+                val = val * 10 + (str[i] - '0');
+                i++;
+            }
+            val += k;
+
+            int req = snprintf(NULL, 0, "%ld", val);
+            if (req > 0) {
+                char* num_str = (char*)malloc(req + 1);
+                if (num_str != NULL) {
+                    snprintf(num_str, req + 1, "%ld", val);
+                    if (res_idx + req >= new_len) {
+                        new_len = (res_idx + req) * 2 + 1;
+                        char* temp = (char*)realloc(result, new_len);
+                        if (temp == NULL) {
+                            free(num_str);
+                            free(result);
+                            return NULL;
+                        }
+                        result = temp;
+                    }
+                    for (int j = 0; j < req; j++) {
+                        result[res_idx++] = num_str[j];
+                    }
+                    free(num_str);
+                }
+            }
+        } else {
+            if (res_idx + 1 >= new_len) {
+                new_len = new_len * 2 + 1;
+                char* temp = (char*)realloc(result, new_len);
+                if (temp == NULL) {
+                    free(result);
+                    return NULL;
+                }
+                result = temp;
+            }
+            result[res_idx++] = str[i++];
+        }
+    }
+
+    result[res_idx] = '\0';
+    return result;
+}
+
+int main(void) {
+    int k;
+    size_t max_size = 8192;
+    char* buffer = (char*)malloc(max_size);
+
+    if (buffer != NULL) {
+        if (fgets(buffer, max_size, stdin) != NULL) {
+            size_t len = strlen(buffer);
+            if (len > 0 && buffer[len - 1] == '\n') {
+                buffer[len - 1] = '\0';
+            }
+            
+            if (scanf("%d", &k) == 1) {
+                char* output = increment_numeric_values(buffer, k);
+                if (output != NULL) {
+                    printf("['");
+                    size_t out_len = strlen(output);
+                    
+                    int first = 1;
+                    size_t i = 0;
+                    while (i < out_len) {
+                        while (i < out_len && isspace((unsigned char)output[i])) {
+                            i++;
+                        }
+                        if (i >= out_len) break;
+                        
+                        if (!first) {
+                            printf("', '");
+                        }
+                        first = 0;
+                        
+                        while (i < out_len && !isspace((unsigned char)output[i])) {
+                            putchar(output[i]);
+                            i++;
+                        }
+                    }
+                    printf("']\n");
+                    free(output);
+                }
+            }
+        }
+        free(buffer);
+    }
+
+    return 0;
+}

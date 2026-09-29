@@ -1,0 +1,13 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-460-s3.c: In function 'main':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-460-s3.c:18:10: error: initialization of 'int (*)[4]' from 'int' makes pointer from integer without a cast [-Wint-conversion]
+   18 |         {1, 2, 3, 0},
+      |          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-460-s3.c:18:10: note: (near initialization for '(anonymous)')
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-460-s3.c:19:10: error: initialization of 'int (*)[4]' from 'int' makes pointer from integer without a cast [-Wint-conversion]
+   19 |         {4, 5, 0, 0},
+      |          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-460-s3.c:19:10: note: (near initialization for '(anonymous)')
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-460-s3.c:20:10: error: initialization of 'int (*)[4]' from 'int' makes pointer from integer without a cast [-Wint-conversion]
+   20 |         {6, 7, 8, 9}
+      |          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-460-s3.c:20:10: note: (near initialization for '(anonymous)')

@@ -1,0 +1,51 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+void add_spaces_between_capital_words(char *str) {
+    regex_t regex;
+    regmatch_t pmatch[1];
+    int reti;
+    char *ptr = str;
+    char *new_str = (char *)malloc(strlen(str) * 2 + 1);
+    int new_index = 0;
+
+    if (regcomp(&regex, "([A-Z][a-z]*)", REG_EXTENDED) != 0) {
+        /* Possible weaknesses found:
+         *  Memory leak: new_str [memleak]
+         */
+        return;
+    }
+
+    while ((reti = regexec(&regex, ptr, 1, pmatch, 0)) == 0) {
+        if (pmatch[0].rm_so > 0) {
+            for (int i = 0; i < pmatch[0].rm_so; i++) {
+                new_str[new_index++] = *ptr++;
+            }
+            new_str[new_index++] = ' ';
+        }
+        for (int i = 0; i < pmatch[0].rm_eo - pmatch[0].rm_so; i++) {
+            new_str[new_index++] = *ptr++;
+        }
+        ptr += pmatch[0].rm_eo - pmatch[0].rm_so;
+    }
+
+    strcpy(new_str + new_index, ptr);
+
+    regfree(&regex);
+
+    free(str);
+    /* Possible weaknesses found:
+     *  Assignment of function parameter has no effect outside the function. Did you forget dereferencing it? [uselessAssignmentPtrArg]
+     */
+    str = (char *)realloc(new_str, strlen(new_str) + 1);
+}
+
+int main() {
+    char *input = strdup("HelloWorldThisIsATest");
+    add_spaces_between_capital_words(input);
+    printf("%s\n", input);
+    free(input);
+    return 0;
+}

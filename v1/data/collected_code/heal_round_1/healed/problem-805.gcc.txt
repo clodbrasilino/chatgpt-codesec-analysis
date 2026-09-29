@@ -1,0 +1,6 @@
+collected_code/healed/problem-805.c: In function 'main':
+collected_code/healed/problem-805.c:34:50: error: invalid operands to binary - (have 'const int *' and 'const int (*)[100]')
+   34 |     for (int i = 0; i < listSizes[highestSumList - listOfLists]; i++) {
+      |                                                  ^
+      |                                                  |
+      |                                                  const int (*)[100]

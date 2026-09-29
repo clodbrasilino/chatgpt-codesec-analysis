@@ -1,0 +1,56 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+#define MAX_BUFFER_SIZE 256
+
+void minStringLength(char *str, size_t max_len) {
+    if (str == NULL) {
+        return;
+    }
+
+    size_t n = strnlen(str, max_len);
+    if (n == 0) {
+        return;
+    }
+
+    int freq[256] = {0};
+    int maxFreq = 0;
+    char charToRemove = '\0';
+
+    for (size_t i = 0; i < n; i++) {
+        freq[(unsigned char)str[i]]++;
+        if (freq[(unsigned char)str[i]] > maxFreq) {
+            maxFreq = freq[(unsigned char)str[i]];
+            charToRemove = str[i];
+        }
+    }
+
+    size_t dest = 0;
+    for (size_t src = 0; src < n; src++) {
+        if (str[src] != charToRemove) {
+            str[dest++] = str[src];
+        }
+    }
+    str[dest] = '\0';
+}
+
+int main(void) {
+    char *str = calloc(MAX_BUFFER_SIZE, sizeof(char));
+    if (str == NULL) {
+        return EXIT_FAILURE;
+    }
+
+    if (fgets(str, MAX_BUFFER_SIZE, stdin) != NULL) {
+        size_t len = strnlen(str, MAX_BUFFER_SIZE);
+        if (len > 0 && str[len - 1] == '\n') {
+            str[len - 1] = '\0';
+        }
+
+        minStringLength(str, MAX_BUFFER_SIZE);
+        printf("%s\n", str);
+    }
+
+    free(str);
+    return EXIT_SUCCESS;
+}

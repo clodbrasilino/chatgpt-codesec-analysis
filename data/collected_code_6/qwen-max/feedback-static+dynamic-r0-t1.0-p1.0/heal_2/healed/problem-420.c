@@ -1,0 +1,27 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <inttypes.h>
+#include <limits.h>
+
+uint64_t cube_sum_of_evens(int n) {
+    if (n < 1 || n > INT_MAX / 2) {
+        return 0;
+    }
+    uint64_t sum = 0;
+    for (int i = 1; i <= n; ++i) {
+        int64_t even_number = 2 * i;
+        sum += (uint64_t)even_number * even_number * even_number;
+    }
+    return sum;
+}
+
+int main() {
+    int n;
+    if (scanf("%d", &n) != 1 || n < 1) {
+        fprintf(stderr, "Invalid input. Please enter a positive integer.\n");
+        return EXIT_FAILURE;
+    }
+    uint64_t result = cube_sum_of_evens(n);
+    printf("The cube sum of the first %d even natural numbers is: %" PRIu64 "\n", n, result);
+    return EXIT_SUCCESS;
+}

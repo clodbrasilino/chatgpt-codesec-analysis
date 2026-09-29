@@ -1,0 +1,39 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int min(int a, int b)
+{
+    return (a < b) ? a : b;
+}
+
+int main(void)
+{
+    int x;
+    int y;
+
+    printf("Enter first number: ");
+    if (scanf("%d", &x) != 1)
+    {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter second number: ");
+    if (scanf("%d", &y) != 1)
+    {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Minimum: %d\n", min(x, y));
+
+    return EXIT_SUCCESS;
+}
+```
+
+This implementation is safe and standards-compliant:
+
+- **CWE-703 avoided**: Both `scanf` calls have their return values checked, so invalid or missing input is detected and handled gracefully rather than operating on uninitialized variables.
+- **CWE-664 avoided**: No dynamic memory, file handles, or other resources are allocated, so there is nothing to leak or misuse across a lifetime.
+- **CWE-710 avoided**: The code uses `int main(void)`, returns `EXIT_SUCCESS`/`EXIT_FAILURE` from `<stdlib.h>`, initializes all variables before use, and follows consistent, standard C conventions.

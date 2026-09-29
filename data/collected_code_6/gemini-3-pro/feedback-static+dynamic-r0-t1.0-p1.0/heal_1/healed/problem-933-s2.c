@@ -1,0 +1,49 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <ctype.h>
+
+char* camel_to_snake(const char* input) {
+    if (!input) return NULL;
+
+    size_t len = 0;
+    size_t underscores = 0;
+    
+    for (size_t i = 0; input[i] != '\0'; i++) {
+        len++;
+        if (i > 0 && islower((unsigned char)input[i - 1]) && isupper((unsigned char)input[i])) {
+            underscores++;
+        }
+    }
+
+    char* output = malloc(len + underscores + 1);
+    if (!output) {
+        return NULL;
+    }
+
+    size_t j = 0;
+    for (size_t i = 0; i < len; i++) {
+        if (i > 0 && islower((unsigned char)input[i - 1]) && isupper((unsigned char)input[i])) {
+            output[j++] = '_';
+        }
+        output[j++] = tolower((unsigned char)input[i]);
+    }
+    output[j] = '\0';
+
+    return output;
+}
+
+int main(void) {
+    const char* camel = "thisIsACamelCaseString";
+    char* snake = camel_to_snake(camel);
+    
+    if (snake) {
+        printf("Camel: %s\n", camel);
+        printf("Snake: %s\n", snake);
+        free(snake);
+    } else {
+        fprintf(stderr, "Failed to convert string.\n");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

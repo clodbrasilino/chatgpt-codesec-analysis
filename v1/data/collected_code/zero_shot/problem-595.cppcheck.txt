@@ -1,0 +1,6 @@
+collected_code/problem-595-0.c:5:21: error: Cannot determine that 'str1[0]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+  int len1 = strlen(str1);
+                    ^
+collected_code/problem-595-0.c:6:21: error: Cannot determine that 'str2[0]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+  int len2 = strlen(str2);
+                    ^

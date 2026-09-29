@@ -1,0 +1,55 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+#include <stdbool.h>
+
+bool check_decimal_precision(const char *input) {
+    if (input == NULL) {
+        return false;
+    }
+
+    regex_t regex;
+    int reti;
+    bool is_valid = false;
+    const char *pattern = "^[0-9]+\\.[0-9]{2}$";
+
+    reti = regcomp(&regex, pattern, REG_EXTENDED);
+    if (reti != 0) {
+        return false;
+    }
+
+    reti = regexec(&regex, input, 0, NULL, 0);
+    if (reti == 0) {
+        is_valid = true;
+    } else if (reti != REG_NOMATCH) {
+        is_valid = false;
+    }
+
+    regfree(&regex);
+    return is_valid;
+}
+
+int main(void) {
+    const char *test_strings[] = {
+        "123.45",
+        "0.99",
+        "1.2",
+        "123.456",
+        "abc",
+        "12.",
+        NULL
+    };
+
+    size_t num_tests = sizeof(test_strings) / sizeof(test_strings[0]) - 1;
+
+    for (size_t i = 0; i < num_tests; i++) {
+        if (check_decimal_precision(test_strings[i])) {
+            printf("'%s' is valid.\n", test_strings[i]);
+        } else {
+            printf("'%s' is invalid.\n", test_strings[i]);
+        }
+    }
+
+    return 0;
+}

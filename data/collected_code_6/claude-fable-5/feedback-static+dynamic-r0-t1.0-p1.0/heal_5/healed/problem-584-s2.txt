@@ -1,0 +1,130 @@
+## Analysis
+
+The original code is already defensively written. The Flawfinder hits are largely false positives, but here's the verdict on each:
+
+1. **`char errbuf[MAX_ERR_LEN]` (CWE-119/120):** Safe as written — `regerror()` receives `sizeof(errbuf)` and truncates. The manual NUL-termination is redundant but harmless.
+2. **`char word[MAX_WORD_LEN]` (CWE-119/120):** Safe — the guard `word_len >= sizeof(word)` runs *before* the copy, leaving room for the terminator.
+3. **`memcpy` (CWE-120):** Safe — bounded by the prior check. Still, replacing the fixed buffer + `memcpy` with `printf("%.*s")` (precision-limited output directly from the source) eliminates the copy entirely, removing the flagged sink and the intermediate buffer.
+
+Other robustness points already handled: NULL check, `strnlen` with a cap (guards against unterminated input), validation of `rm_so`/`rm_eo`, guaranteed forward progress in the loop (no infinite-loop risk), `regfree` on all exit paths.
+
+The rewrite below removes the `word` buffer and `memcpy` entirely (fix for weakness #3), and keeps `regerror` safely bounded (weaknesses #1–2 need no change beyond that).
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#include <regex.h>
+
+#define MAX_ERR_LEN 256
+#define MAX_SENTENCE_LEN 4096
+#define MAX_WORD_LEN 256
+
+int find_adverbs(const char *sentence)
+{
+    regex_t regex;
+    regmatch_t match;
+    const char *pattern = "[A-Za-z]+ly";
+    char errbuf[MAX_ERR_LEN];
+    int ret;
+    size_t offset = 0;
+    size_t len;
+    int count = 0;
+
+    if (sentence == NULL) {
+        fprintf(stderr, "Error: sentence is NULL\n");
+        return -1;
+    }
+
+    len = strnlen(sentence, MAX_SENTENCE_LEN);
+    if (len >= MAX_SENTENCE_LEN) {
+        fprintf(stderr, "Error: sentence too long or not null-terminated\n");
+        return -1;
+    }
+
+    ret = regcomp(&regex, pattern, REG_EXTENDED);
+    if (ret != 0) {
+        regerror(ret, &regex, errbuf, sizeof(errbuf));
+        fprintf(stderr, "Regex compilation failed: %s\n", errbuf);
+        return -1;
+    }
+
+    while (offset < len) {
+        ret = regexec(&regex, sentence + offset, 1, &match, 0);
+        if (ret == REG_NOMATCH) {
+            break;
+        }
+        if (ret != 0) {
+            regerror(ret, &regex, errbuf, sizeof(errbuf));
+            fprintf(stderr, "Regex execution failed: %s\n", errbuf);
+            regfree(&regex);
+            return -1;
+        }
+
+        if (match.rm_so < 0 || match.rm_eo < 0 || match.rm_eo < match.rm_so) {
+            fprintf(stderr, "Error: invalid match offsets\n");
+            regfree(&regex);
+            return -1;
+        }
+
+        size_t start = offset + (size_t)match.rm_so;
+        size_t end = offset + (size_t)match.rm_eo;
+
+        if (start > len || end > len || start > end) {
+            fprintf(stderr, "Error: match out of bounds\n");
+            regfree(&regex);
+            return -1;
+        }
+
+        size_t word_len = end - start;
+
+        if (word_len == 0 || word_len >= MAX_WORD_LEN) {
+            offset = (end > offset) ? end : offset + 1;
+            continue;
+        }
+
+        if (end < len && isalpha((unsigned char)sentence[end])) {
+            offset = end;
+            continue;
+        }
+
+        printf("Adverb: %-15.*s Position: %zu-%zu\n",
+               (int)word_len, sentence + start, start, end - 1);
+        count++;
+
+        offset = end;
+    }
+
+    regfree(&regex);
+    return count;
+}
+
+int main(void)
+{
+    const char *sentence = "She quickly ran to the store and quietly bought some milk, then happily walked home.";
+    int result;
+
+    printf("Sentence: %s\n\n", sentence);
+
+    result = find_adverbs(sentence);
+    if (result < 0) {
+        fprintf(stderr, "Failed to search for adverbs\n");
+        return EXIT_FAILURE;
+    }
+
+    if (result == 0) {
+        printf("No adverbs found.\n");
+    } else {
+        printf("\nTotal adverbs found: %d\n", result);
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+### Key changes
+
+- **Removed `word[MAX_WORD_LEN]` and `memcpy` entirely** — the match is printed directly from `sentence` using `%.*s` with an explicit, bounds-checked length cast to `int`. No intermediate buffer means no overflow sink for CWE-120.
+- **Dropped the redundant manual NUL-termination** after `regerror()` — POSIX guarantees termination when a non-zero buffer size is passed.
+- All original safety invariants preserved: input validation, `strnlen` length cap, offset sanity checks, guaranteed loop progress, and `regfree` on every path.

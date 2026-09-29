@@ -1,0 +1,52 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+int compute_list_modulo(const int *list1, size_t size1, const int *list2, size_t size2, int *result);
+
+int compute_list_modulo(const int *list1, size_t size1, const int *list2, size_t size2, int *result) {
+    if (list1 == NULL || list2 == NULL || result == NULL) {
+        return -1;
+    }
+
+    if (size1 != size2) {
+        return -1;
+    }
+
+    for (size_t i = 0; i < size1; i++) {
+        if (list2[i] == 0) {
+            return -1;
+        }
+        if (list1[i] == INT_MIN && list2[i] == -1) {
+            return -1;
+        }
+        result[i] = list1[i] % list2[i];
+    }
+
+    return 0;
+}
+
+int main(void) {
+    const int list1[] = {10, 25, -33, INT_MIN, 14};
+    const int list2[] = {3, 7, 4, 8, 9};
+    
+    size_t size1 = sizeof(list1) / sizeof(list1[0]);
+    size_t size2 = sizeof(list2) / sizeof(list2[0]);
+    int status = EXIT_SUCCESS;
+
+    int *result = (int *)malloc(size1 * sizeof(int));
+    if (result == NULL) {
+        return EXIT_FAILURE;
+    }
+
+    if (compute_list_modulo(list1, size1, list2, size2, result) == 0) {
+        for (size_t i = 0; i < size1; i++) {
+            printf("%d\n", result[i]);
+        }
+    } else {
+        status = EXIT_FAILURE;
+    }
+
+    free(result);
+    return status;
+}

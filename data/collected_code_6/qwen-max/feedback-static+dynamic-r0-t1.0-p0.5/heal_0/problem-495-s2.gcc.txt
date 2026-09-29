@@ -1,0 +1,16 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-495-s2.c: In function 'remove_lowercase_substrings':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-495-s2.c:22:13: error: implicit declaration of function 'strncat' [-Wimplicit-function-declaration]
+   22 |             strncat(result, str + pos, match_start - pos);
+      |             ^~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-495-s2.c:4:1: note: include '<string.h>' or provide a declaration of 'strncat'
+    3 | #include <regex.h>
+  +++ |+#include <string.h>
+    4 | 
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-495-s2.c:27:20: error: implicit declaration of function 'strlen' [-Wimplicit-function-declaration]
+   27 |     if (pos < (int)strlen(str)) {
+      |                    ^~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-495-s2.c:27:20: note: include '<string.h>' or provide a declaration of 'strlen'
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-495-s2.c:31:5: error: implicit declaration of function 'strcpy' [-Wimplicit-function-declaration]
+   31 |     strcpy(str, result);
+      |     ^~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-495-s2.c:31:5: note: include '<string.h>' or provide a declaration of 'strcpy'

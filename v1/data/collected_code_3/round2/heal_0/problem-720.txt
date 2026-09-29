@@ -1,0 +1,42 @@
+In C, there are no built-in data structures like dictionary or tuple as in Python. But we can use struct and array to implement similar functionality. Here is a simple example of how you can do it:
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_SIZE 100
+
+typedef struct {
+    char key[MAX_SIZE];
+    int value;
+} Dictionary;
+
+typedef struct {
+    Dictionary dict[MAX_SIZE];
+    int size;
+} Tuple;
+
+void add_to_tuple(Tuple *tuple, char *key, int value) {
+    strcpy(tuple->dict[tuple->size].key, key);
+    tuple->dict[tuple->size].value = value;
+    tuple->size++;
+}
+
+int main() {
+    Tuple tuple;
+    tuple.size = 0;
+
+    add_to_tuple(&tuple, "key1", 1);
+    add_to_tuple(&tuple, "key2", 2);
+    add_to_tuple(&tuple, "key3", 3);
+
+    for(int i = 0; i < tuple.size; i++) {
+        printf("Key: %s, Value: %d\n", tuple.dict[i].key, tuple.dict[i].value);
+    }
+
+    return 0;
+}
+```
+
+In this code, we define a `Dictionary` struct to hold key-value pairs, and a `Tuple` struct to hold an array of `Dictionary`. The `add_to_tuple` function is used to add a new dictionary to the tuple. In the `main` function, we create a `Tuple` and add some dictionaries to it, then print them out.

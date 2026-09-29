@@ -1,0 +1,70 @@
+{
+  "task_id": 74,
+  "text": "Write a C function to check whether it follows the sequence given in the patterns array.",
+  "fn_candidates": [
+    "is_samepatterns",
+    "IsSamepatterns",
+    "isSamepatterns",
+    "issamepatterns"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "is_samepatterns",
+      "args": [
+        [
+          "red",
+          "green",
+          "green"
+        ],
+        [
+          "a",
+          "b",
+          "b"
+        ]
+      ],
+      "expected": true,
+      "assert_src": "assert is_samepatterns([\"red\",\"green\",\"green\"], [\"a\", \"b\", \"b\"])==True "
+    },
+    {
+      "fn_name": "is_samepatterns",
+      "args": [
+        [
+          "red",
+          "green",
+          "greenn"
+        ],
+        [
+          "a",
+          "b",
+          "b"
+        ]
+      ],
+      "expected": false,
+      "assert_src": "assert is_samepatterns([\"red\",\"green\",\"greenn\"], [\"a\",\"b\",\"b\"])==False "
+    },
+    {
+      "fn_name": "is_samepatterns",
+      "args": [
+        [
+          "red",
+          "green",
+          "greenn"
+        ],
+        [
+          "a",
+          "b"
+        ]
+      ],
+      "expected": false,
+      "assert_src": "assert is_samepatterns([\"red\",\"green\",\"greenn\"], [\"a\",\"b\"])==False "
+    }
+  ],
+  "arg_kinds": [
+    "str-list"
+  ],
+  "return_kind": "bool",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

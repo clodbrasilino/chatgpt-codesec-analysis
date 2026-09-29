@@ -1,0 +1,85 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+#include <stddef.h>
+
+static bool is_palindrome(int num)
+{
+    long long original;
+    long long reversed = 0;
+    long long n;
+
+    if (num < 0) {
+        return false;
+    }
+
+    original = (long long)num;
+    n = original;
+
+    while (n > 0) {
+        reversed = (reversed * 10) + (n % 10);
+        n /= 10;
+    }
+
+    return reversed == original;
+}
+
+static bool find_largest_palindrome(const int *arr, size_t size, int *result)
+{
+    size_t i;
+    bool found = false;
+    int largest = 0;
+
+    if (arr == NULL || result == NULL || size == 0) {
+        return false;
+    }
+
+    for (i = 0; i < size; i++) {
+        if (is_palindrome(arr[i])) {
+            if (!found || arr[i] > largest) {
+                largest = arr[i];
+                found = true;
+            }
+        }
+    }
+
+    if (found) {
+        *result = largest;
+    }
+
+    return found;
+}
+
+int main(void)
+{
+    int numbers[] = { 123, 121, 45654, 989, 76567, 1000, 44, 7 };
+    size_t count = sizeof(numbers) / sizeof(numbers[0]);
+    int largest = 0;
+
+    if (find_largest_palindrome(numbers, count, &largest)) {
+        if (printf("Largest palindromic number: %d\n", largest) < 0) {
+            return 1;
+        }
+    } else {
+        if (printf("No palindromic number found.\n") < 0) {
+            return 1;
+        }
+    }
+
+    return 0;
+}
+```
+
+**Analysis of the changes:**
+
+The original code was actually already well-defended — the `snprintf` call was bounded by `sizeof(buffer)`, and the return value was validated against both negative results and truncation. However, the Flawfinder warning (CWE-119/CWE-120) flags the statically-sized `char buffer[32]` as a potential risk surface regardless.
+
+The rewrite eliminates the weakness entirely rather than merely mitigating it:
+
+1. **Buffer removed** — The palindrome check now uses pure integer arithmetic (digit reversal) instead of string conversion, so there is no buffer to overflow. This removes the CWE-119/CWE-120 risk category from the code completely rather than relying on correct bounds checking.
+
+2. **Overflow safety in reversal** — The reversal accumulates into a `long long`. Since `INT_MAX` (2147483647) reversed is 7463847412, which exceeds `INT_MAX` but fits comfortably in a 64-bit `long long`, no signed integer overflow (undefined behavior) can occur.
+
+3. **Preserved defensive checks** — The `NULL` pointer guards, zero-size guard, negative-number rejection, and `printf` return-value checks from the original are all retained.
+
+4. **Semantics unchanged** — Output for the given input remains `Largest palindromic number: 76567`.

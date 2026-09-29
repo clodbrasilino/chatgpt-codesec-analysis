@@ -1,0 +1,99 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node* next;
+} Node;
+
+typedef struct {
+    Node* head;
+    Node* tail;
+    size_t size;
+} TupleRecord;
+
+TupleRecord* createTupleRecord() {
+    TupleRecord* record = (TupleRecord*)malloc(sizeof(TupleRecord));
+    if (record == NULL) {
+        exit(EXIT_FAILURE);
+    }
+    record->head = NULL;
+    record->tail = NULL;
+    record->size = 0;
+    return record;
+}
+
+void addData(TupleRecord* record, int data) {
+    if (record == NULL) {
+        return;
+    }
+    
+    Node* newNode = (Node*)malloc(sizeof(Node));
+    if (newNode == NULL) {
+        exit(EXIT_FAILURE);
+    }
+    newNode->data = data;
+    newNode->next = NULL;
+
+    if (record->size == 0) {
+        record->head = newNode;
+        record->tail = newNode;
+    } else {
+        record->tail->next = newNode;
+        record->tail = newNode;
+    }
+    record->size++;
+}
+
+void getInitialAndLastData(const TupleRecord* record, int* initialData, int* lastData) {
+    if (record == NULL || record->size == 0 || initialData == NULL || lastData == NULL) {
+        return;
+    }
+    
+    *initialData = record->head->data;
+    *lastData = record->tail->data;
+}
+
+void freeTupleRecord(TupleRecord* record) {
+    if (record == NULL) {
+        return;
+    }
+    
+    Node* current = record->head;
+    Node* next;
+    
+    while (current != NULL) {
+        next = current->next;
+        free(current);
+        current = next;
+    }
+    
+    free(record);
+}
+
+int main() {
+    TupleRecord* record = createTupleRecord();
+    
+    addData(record, 10);
+    addData(record, 20);
+    addData(record, 30);
+    addData(record, 40);
+    addData(record, 50);
+    
+    int initialData = 0;
+    int lastData = 0;
+    
+    if (record->size > 0) {
+        getInitialAndLastData(record, &initialData, &lastData);
+        printf("Initial Data: %d\n", initialData);
+        printf("Last Data: %d\n", lastData);
+    } else {
+        printf("Record is empty.\n");
+    }
+    
+    freeTupleRecord(record);
+    
+    return 0;
+}
+```

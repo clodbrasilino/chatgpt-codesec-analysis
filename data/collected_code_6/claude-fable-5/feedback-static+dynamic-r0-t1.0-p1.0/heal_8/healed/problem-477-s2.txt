@@ -1,0 +1,73 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#define BUFFER_SIZE 256
+
+void string_to_lower(char *str)
+{
+    size_t i;
+
+    if (str == NULL) {
+        return;
+    }
+
+    for (i = 0; str[i] != '\0'; i++) {
+        str[i] = (char)tolower((unsigned char)str[i]);
+    }
+}
+
+static void flush_stdin(void)
+{
+    int ch;
+
+    do {
+        ch = getchar();
+    } while (ch != '\n' && ch != EOF);
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+
+    printf("Enter a string: ");
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    if (strchr(buffer, '\n') == NULL && !feof(stdin)) {
+        flush_stdin();
+    }
+
+    buffer[strcspn(buffer, "\n")] = '\0';
+
+    string_to_lower(buffer);
+
+    printf("Lowercase: %s\n", buffer);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the flagged weaknesses and why the code is already safe:**
+
+1. **`char buffer[BUFFER_SIZE]` (CWE-119/CWE-120, risk 2):** This is a generic warning about statically-sized arrays. The code mitigates it correctly:
+   - `fgets(buffer, (int)sizeof(buffer), stdin)` limits input to the buffer size, guaranteeing no overflow.
+   - `buffer[sizeof(buffer) - 1] = '\0';` is a defensive (technically redundant, since `fgets` always null-terminates) guarantee of termination.
+   - `strcspn` is used to strip the newline safely rather than assuming its position.
+
+2. **`getchar()` in a loop (CWE-120/CWE-20, risk 1):** This warning concerns reading into a buffer inside a loop. Here, `getchar()` results are only compared against `'\n'`/`EOF` and discarded — nothing is stored, so no boundary issue exists. Note the return value is correctly stored in an `int` (not `char`), which is essential for reliable `EOF` detection.
+
+3. **Additional correctness points already handled:**
+   - `tolower()` receives its argument cast to `unsigned char`, avoiding undefined behavior with negative `char` values.
+   - The `NULL` return from `fgets` is checked, handling I/O errors and immediate EOF.
+   - The `feof(stdin)` check prevents `flush_stdin` from spinning on `getchar()` unnecessarily when input ended without a newline (and `EOF` in the loop condition prevents an infinite loop regardless).
+   - A `NULL` guard exists in `string_to_lower`.
+
+The Flawfinder hits are informational (risk levels 1–2) rather than actual defects; the original code already implements the recommended mitigations, so the rewrite preserves the logic verbatim with comments removed.

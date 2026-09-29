@@ -1,0 +1,112 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char *remove_parentheses(const char *input)
+{
+    size_t len;
+    size_t i;
+    size_t j;
+    int depth;
+    char *result;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    len = strlen(input);
+    result = calloc(len + 1, sizeof(char));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    depth = 0;
+    j = 0;
+    for (i = 0; i < len; i++) {
+        if (input[i] == '(') {
+            depth++;
+        } else if (input[i] == ')') {
+            if (depth > 0) {
+                depth--;
+            }
+        } else if (depth == 0) {
+            result[j] = input[i];
+            j++;
+        }
+    }
+    result[j] = '\0';
+
+    return result;
+}
+
+static int run_test(const char *input, const char *expected)
+{
+    char *output;
+    int status;
+
+    if (input == NULL || expected == NULL) {
+        fprintf(stderr, "Invalid test parameters\n");
+        return -1;
+    }
+
+    output = remove_parentheses(input);
+    if (output == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return -1;
+    }
+
+    status = 0;
+    if (strcmp(output, expected) != 0) {
+        fprintf(stderr, "Test failed: expected '%s', got '%s'\n",
+                expected, output);
+        status = -1;
+    }
+
+    if (printf("%s\n", output) < 0) {
+        status = -1;
+    }
+
+    free(output);
+    output = NULL;
+    return status;
+}
+
+int main(void)
+{
+    const char *test1 = "Hello (remove me) World";
+    const char *expected1 = "Hello  World";
+    const char *test2 = "abc(def(ghi)jkl)mno";
+    const char *expected2 = "abcmno";
+    const char *test3 = "no parentheses here";
+    const char *expected3 = "no parentheses here";
+
+    if (run_test(test1, expected1) != 0) {
+        return EXIT_FAILURE;
+    }
+    if (run_test(test2, expected2) != 0) {
+        return EXIT_FAILURE;
+    }
+    if (run_test(test3, expected3) != 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The symptoms in the comments (garbage output like `�[` instead of the expected strings) point to reading uninitialized or non-null-terminated memory in the original faulty version. The key defenses in this rewrite:
+
+1. **Zero-initialized allocation** — `calloc(len + 1, sizeof(char))` guarantees the buffer is zero-filled, so even if the explicit terminator write were skipped, the string could never contain stack/heap garbage.
+
+2. **Explicit null termination** — `result[j] = '\0';` is written after the copy loop as a belt-and-braces measure. The garbage output in the failing test cases is the classic signature of a missing terminator, where `strcmp`/`printf` run past the buffer into adjacent heap memory.
+
+3. **Correct buffer sizing** — the allocation is `len + 1`, ensuring room for the terminator even when no characters are removed (test case 3, "no parentheses here", would otherwise overflow by one byte).
+
+4. **NULL guards** — both `input` in `remove_parentheses` and the test parameters in `run_test` are validated before use, and the allocation result is checked before writing.
+
+5. **Depth underflow protection** — unbalanced closing parentheses (`depth > 0` check) can't drive `depth` negative, which would incorrectly suppress subsequent output.
+
+6. **No leaks** — `output` is freed on every path after use, and the pointer is cleared to avoid accidental reuse of a dangling pointer.

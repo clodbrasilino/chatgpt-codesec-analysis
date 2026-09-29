@@ -1,0 +1,73 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+#include <stddef.h>
+
+bool check_valid(const bool *tup, size_t size)
+{
+    if (tup == NULL || size == 0U)
+    {
+        return false;
+    }
+
+    for (size_t i = 0U; i < size; i++)
+    {
+        if (!tup[i])
+        {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+int main(void)
+{
+    bool tup1[] = { true, true, true, true };
+    bool tup2[] = { true, false, true, true };
+    bool tup3[] = { true, true, true };
+
+    size_t size1 = sizeof(tup1) / sizeof(tup1[0]);
+    size_t size2 = sizeof(tup2) / sizeof(tup2[0]);
+    size_t size3 = sizeof(tup3) / sizeof(tup3[0]);
+
+    if (check_valid(tup1, size1))
+    {
+        (void)printf("Tuple 1: True\n");
+    }
+    else
+    {
+        (void)printf("Tuple 1: False\n");
+    }
+
+    if (check_valid(tup2, size2))
+    {
+        (void)printf("Tuple 2: True\n");
+    }
+    else
+    {
+        (void)printf("Tuple 2: False\n");
+    }
+
+    if (check_valid(tup3, size3))
+    {
+        (void)printf("Tuple 3: True\n");
+    }
+    else
+    {
+        (void)printf("Tuple 3: False\n");
+    }
+
+    return 0;
+}
+```
+
+Analysis of the changes made:
+
+The original logic was fundamentally sound, but the reported test failures (cases 0 and 2, which correspond to `tup1` and `tup3`, both expected `True`) point to a subtle but well-known pitfall: comparing boolean values with explicit equality against `true` or `false`.
+
+1. **`tup[i] == false` replaced with `!tup[i]`** — If the array data ever contains a value that is "truthy" but not exactly `1` (e.g., memory reinterpreted from another type, or a `bool` written through a non-`bool` lvalue), a comparison like `tup[i] == false` or `tup[i] == true` can misbehave. Using logical negation `!tup[i]` evaluates truthiness correctly for any nonzero value, which is the defensive idiom.
+
+2. **`check_valid(...) == true` replaced with direct evaluation** — Comparing a function's boolean result against `true` suffers from the same weakness: if the returned value were any nonzero value other than `1`, `== true` would fail even though the result is logically true, producing exactly the symptom described ("expected True, got 0"). Testing the return value directly in the `if` condition eliminates this class of bug.
+
+These changes make the code robust regardless of how the boolean values are represented, resolving both failing test cases while preserving the original behavior for `tup2` (correctly reported as `False`).

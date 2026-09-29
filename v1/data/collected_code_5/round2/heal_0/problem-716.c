@@ -1,0 +1,25 @@
+#include <stdio.h>
+
+double calculateRombusPerimeter(double a) {
+    return 4 * a;
+}
+
+int main(void) {
+    double a;
+
+    printf("Enter the length of the side of the rombus: ");
+    if (scanf("%lf", &a) != 1) {
+        printf("Invalid input. Please enter a number.\n");
+        return 1;
+    }
+
+    if (a <= 0) {
+        printf("Invalid input. The side length of a rombus should be greater than 0.\n");
+        return 1;
+    }
+
+    double perimeter = calculateRombusPerimeter(a);
+    printf("The perimeter of the rombus is: %.2f\n", perimeter);
+
+    return 0;
+}

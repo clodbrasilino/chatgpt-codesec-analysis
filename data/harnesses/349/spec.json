@@ -1,0 +1,44 @@
+{
+  "task_id": 349,
+  "text": "Write a C function to check whether the given string is a binary string or not.",
+  "fn_candidates": [
+    "check",
+    "Check",
+    "check",
+    "check"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "check",
+      "args": [
+        "01010101010"
+      ],
+      "expected": "Yes",
+      "assert_src": "assert check(\"01010101010\") == \"Yes\""
+    },
+    {
+      "fn_name": "check",
+      "args": [
+        "name0"
+      ],
+      "expected": "No",
+      "assert_src": "assert check(\"name0\") == \"No\""
+    },
+    {
+      "fn_name": "check",
+      "args": [
+        "101"
+      ],
+      "expected": "Yes",
+      "assert_src": "assert check(\"101\") == \"Yes\""
+    }
+  ],
+  "arg_kinds": [
+    "str"
+  ],
+  "return_kind": "str",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

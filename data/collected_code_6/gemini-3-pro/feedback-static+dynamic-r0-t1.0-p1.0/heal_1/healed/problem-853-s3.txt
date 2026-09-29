@@ -1,0 +1,55 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+long long sum_of_odd_factors(long long n) {
+    unsigned long long un;
+    if (n < 0) {
+        un = -(unsigned long long)n;
+    } else {
+        un = (unsigned long long)n;
+    }
+    
+    if (un == 0) {
+        return 0;
+    }
+
+    while (un % 2 == 0) {
+        un /= 2;
+    }
+
+    unsigned long long sum = 1;
+    for (unsigned long long i = 3; i * i <= un; i += 2) {
+        if (un % i == 0) {
+            unsigned long long term = 1;
+            unsigned long long current_sum = 1;
+            while (un % i == 0) {
+                term *= i;
+                current_sum += term;
+                un /= i;
+            }
+            sum *= current_sum;
+        }
+    }
+
+    if (un > 2) {
+        sum *= (1ULL + un);
+    }
+
+    return (long long)sum;
+}
+
+int main(void) {
+    long long n;
+    int result = scanf("%lld", &n);
+    
+    if (result != 1) {
+        return EXIT_FAILURE;
+    }
+
+    long long sum = sum_of_odd_factors(n);
+    printf("%lld\n", sum);
+
+    return EXIT_SUCCESS;
+}
+```

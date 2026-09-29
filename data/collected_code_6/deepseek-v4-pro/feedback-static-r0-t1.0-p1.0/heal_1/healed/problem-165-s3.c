@@ -1,0 +1,59 @@
+#include <stdio.h>
+#include <ctype.h>
+#include <string.h>
+#include <stdlib.h>
+#include <stdint.h>
+
+int count_same_position(const char *str) {
+    int count = 0;
+    
+    if (str == NULL) {
+        return 0;
+    }
+    
+    for (size_t i = 0; str[i] != '\0'; i++) {
+        if (i > INT_MAX) {
+            break;
+        }
+        
+        if (isalpha((unsigned char)str[i])) {
+            char lower = tolower((unsigned char)str[i]);
+            if (lower - 'a' == (int)i) {
+                count++;
+            }
+        }
+    }
+    
+    return count;
+}
+
+int main(void) {
+    char *input = NULL;
+    size_t len = 0;
+    ssize_t read;
+    
+    printf("Enter a string: ");
+    
+    if (ferror(stdin) || feof(stdin)) {
+        return 1;
+    }
+    
+    read = getline(&input, &len, stdin);
+    
+    if (read == -1) {
+        free(input);
+        return 1;
+    }
+    
+    if (read > 0 && input[read - 1] == '\n') {
+        input[read - 1] = '\0';
+        read--;
+    }
+    
+    int result = count_same_position(input);
+    printf("Count: %d\n", result);
+    
+    free(input);
+    input = NULL;
+    return 0;
+}

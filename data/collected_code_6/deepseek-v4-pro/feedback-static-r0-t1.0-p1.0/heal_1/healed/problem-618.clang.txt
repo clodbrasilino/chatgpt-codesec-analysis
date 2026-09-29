@@ -1,0 +1,10 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-618.c:71:13: error: call to undeclared function 'freeList'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   71 |             freeList(resultHead);
+      |             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-618.c:82:6: error: conflicting types for 'freeList'
+   82 | void freeList(Node* head) {
+      |      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-618.c:71:13: note: previous implicit declaration is here
+   71 |             freeList(resultHead);
+      |             ^
+2 errors generated.

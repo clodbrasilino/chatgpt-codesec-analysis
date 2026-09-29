@@ -1,0 +1,39 @@
+#include <stdio.h>
+
+int max_of_three(int a, int b, int c)
+{
+    int max = a;
+    
+    if (b > max)
+    {
+        max = b;
+    }
+    
+    if (c > max)
+    {
+        max = c;
+    }
+    
+    return max;
+}
+
+int main(void)
+{
+    int num1;
+    int num2;
+    int num3;
+    int result;
+    int scan_result;
+    
+    scan_result = scanf("%d %d %d", &num1, &num2, &num3);
+    
+    if (scan_result != 3)
+    {
+        return 1;
+    }
+    
+    result = max_of_three(num1, num2, num3);
+    printf("%d\n", result);
+    
+    return 0;
+}

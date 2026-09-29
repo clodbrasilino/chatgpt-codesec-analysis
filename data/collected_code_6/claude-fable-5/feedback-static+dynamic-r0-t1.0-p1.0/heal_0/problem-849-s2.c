@@ -1,0 +1,64 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+static long sum_of_prime_divisors(long n);
+
+static long sum_of_prime_divisors(long n)
+{
+    long sum = 0;
+    long divisor = 2;
+
+    if (n < 2)
+    {
+        return 0;
+    }
+
+    while (divisor * divisor <= n)
+    {
+        if (n % divisor == 0)
+        {
+            sum += divisor;
+            while (n % divisor == 0)
+            {
+                n /= divisor;
+            }
+        }
+        divisor++;
+    }
+
+    if (n > 1)
+    {
+        sum += n;
+    }
+
+    return sum;
+}
+
+int main(void)
+{
+    long number = 0;
+    long result = 0;
+    int scan_status = 0;
+
+    printf("Enter a positive integer: ");
+
+    scan_status = scanf("%ld", &number);
+
+    if (scan_status != 1)
+    {
+        fprintf(stderr, "Error: invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (number < 2)
+    {
+        fprintf(stderr, "Error: number must be 2 or greater.\n");
+        return EXIT_FAILURE;
+    }
+
+    result = sum_of_prime_divisors(number);
+
+    printf("Sum of prime divisors of %ld is %ld\n", number, result);
+
+    return EXIT_SUCCESS;
+}

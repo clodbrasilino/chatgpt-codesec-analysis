@@ -1,0 +1,187 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node* next;
+} Node;
+
+typedef struct List {
+    Node* head;
+    struct List* next;
+} List;
+
+Node* create_node(int data) {
+    Node* new_node = (Node*)malloc(sizeof(Node));
+    if (new_node == NULL) {
+        return NULL;
+    }
+    new_node->data = data;
+    new_node->next = NULL;
+    return new_node;
+}
+
+List* create_list() {
+    List* new_list = (List*)malloc(sizeof(List));
+    if (new_list == NULL) {
+        return NULL;
+    }
+    new_list->head = NULL;
+    new_list->next = NULL;
+    return new_list;
+}
+
+void append_node(List* list, int data) {
+    if (list == NULL) {
+        return;
+    }
+    Node* new_node = create_node(data);
+    if (new_node == NULL) {
+        return;
+    }
+    if (list->head == NULL) {
+        list->head = new_node;
+        return;
+    }
+    Node* current = list->head;
+    while (current->next != NULL) {
+        current = current->next;
+    }
+    current->next = new_node;
+}
+
+void free_list(List* list) {
+    if (list == NULL) {
+        return;
+    }
+    Node* current = list->head;
+    while (current != NULL) {
+        Node* temp = current;
+        current = current->next;
+        free(temp);
+    }
+    free(list);
+}
+
+void free_list_of_lists(List* list_of_lists) {
+    List* current = list_of_lists;
+    while (current != NULL) {
+        List* temp = current;
+        current = current->next;
+        free_list(temp);
+    }
+}
+
+int lists_equal(List* list1, List* list2) {
+    if (list1 == NULL || list2 == NULL) {
+        return 0;
+    }
+    Node* current1 = list1->head;
+    Node* current2 = list2->head;
+    while (current1 != NULL && current2 != NULL) {
+        if (current1->data != current2->data) {
+            return 0;
+        }
+        current1 = current1->next;
+        current2 = current2->next;
+    }
+    return current1 == NULL && current2 == NULL;
+}
+
+List* remove_duplicates(List* list_of_lists) {
+    if (list_of_lists == NULL) {
+        return NULL;
+    }
+    List* current = list_of_lists;
+    while (current != NULL) {
+        List* runner = current;
+        while (runner->next != NULL) {
+            if (lists_equal(current, runner->next)) {
+                List* duplicate = runner->next;
+                runner->next = duplicate->next;
+                free_list(duplicate);
+            } else {
+                runner = runner->next;
+            }
+        }
+        current = current->next;
+    }
+    return list_of_lists;
+}
+
+void print_list_of_lists(List* list_of_lists) {
+    List* current = list_of_lists;
+    while (current != NULL) {
+        Node* node = current->head;
+        printf("[");
+        while (node != NULL) {
+            printf("%d", node->data);
+            if (node->next != NULL) {
+                printf(", ");
+            }
+            node = node->next;
+        }
+        printf("] ");
+        current = current->next;
+    }
+    printf("\n");
+}
+
+int main() {
+    List* list_of_lists = create_list();
+    if (list_of_lists == NULL) {
+        return 1;
+    }
+    
+    List* list1 = create_list();
+    if (list1 == NULL) {
+        free_list_of_lists(list_of_lists);
+        return 1;
+    }
+    append_node(list1, 1);
+    append_node(list1, 2);
+    append_node(list1, 3);
+    list_of_lists->head = list1->head;
+    list_of_lists->next = list1;
+    
+    List* list2 = create_list();
+    if (list2 == NULL) {
+        free_list_of_lists(list_of_lists);
+        return 1;
+    }
+    append_node(list2, 4);
+    append_node(list2, 5);
+    list1->next = list2;
+    
+    List* list3 = create_list();
+    if (list3 == NULL) {
+        free_list_of_lists(list_of_lists);
+        return 1;
+    }
+    append_node(list3, 1);
+    append_node(list3, 2);
+    append_node(list3, 3);
+    list2->next = list3;
+    
+    List* list4 = create_list();
+    if (list4 == NULL) {
+        free_list_of_lists(list_of_lists);
+        return 1;
+    }
+    append_node(list4, 6);
+    list3->next = list4;
+    
+    printf("Original list of lists: ");
+    print_list_of_lists(list_of_lists);
+    
+    list_of_lists = remove_duplicates(list_of_lists);
+    
+    printf("After removing duplicates: ");
+    print_list_of_lists(list_of_lists);
+    
+    free_list_of_lists(list_of_lists);
+    
+    return 0;
+}
+```

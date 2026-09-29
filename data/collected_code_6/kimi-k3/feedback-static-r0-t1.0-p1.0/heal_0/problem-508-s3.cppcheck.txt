@@ -1,0 +1,7 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_0/problem-508-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_0/problem-508-s3.c:4:38: style: Parameter 'list1' can be declared as pointer to const [constParameterPointer]
+int check_common_elements_order(int *list1, int size1, int *list2, int size2) {
+                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_0/problem-508-s3.c:4:61: style: Parameter 'list2' can be declared as pointer to const [constParameterPointer]
+int check_common_elements_order(int *list1, int size1, int *list2, int size2) {
+                                                            ^

@@ -1,0 +1,16 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-956-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-956-s2.c:66:38: style: Condition 'start>end' is always true [knownConditionTrueFalse]
+        if (end > remaining || start > end) {
+                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-956-s2.c:59:44: note: Assuming that condition 'match.rm_eo<=match.rm_so' is not redundant
+        if (match.rm_so < 0 || match.rm_eo <= match.rm_so) {
+                                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-956-s2.c:63:22: note: start is assigned '(unsigned long)match.rm_so' here.
+        size_t start = (size_t)match.rm_so;
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-956-s2.c:64:22: note: Assignment 'end=(unsigned long)match.rm_eo', assigned value is less than symbolic=start
+        size_t end = (size_t)match.rm_eo;
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-956-s2.c:66:38: note: Condition 'start>end' is always true
+        if (end > remaining || start > end) {
+                                     ^

@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-928.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-928.c:91:32: style: Condition 'input[length]=='\r'' is always false [knownConditionTrueFalse]
+            if ((input[length] == '\r' && ch != '\n') ||
+                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-928.c:88:25: note: Assignment 'input[length]='\0'', assigned value is 0
+        input[length] = '\0';
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-928.c:91:32: note: Condition 'input[length]=='\r'' is always false
+            if ((input[length] == '\r' && ch != '\n') ||
+                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-928.c:92:32: style: Condition 'input[length]=='\n'' is always false [knownConditionTrueFalse]
+                (input[length] == '\n' && ch != '\r')) {
+                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-928.c:88:25: note: Assignment 'input[length]='\0'', assigned value is 0
+        input[length] = '\0';
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-928.c:92:32: note: Condition 'input[length]=='\n'' is always false
+                (input[length] == '\n' && ch != '\r')) {
+                               ^

@@ -1,0 +1,6 @@
+collected_code/problem-156-0.c:8:31: error: Cannot determine that 'input[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        output[i] = atoi(input[i]);
+                              ^
+collected_code/problem-156-0.c:24:29: error: Cannot determine that 'output[i]' is initialized [premium-bughuntingUninit]
+        printf("%d ", output[i]);
+                            ^

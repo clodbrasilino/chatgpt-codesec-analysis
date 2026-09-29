@@ -1,0 +1,69 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node* next;
+} Node;
+
+Node* createNode(int data) {
+    Node* newNode = (Node*)malloc(sizeof(Node));
+    newNode->data = data;
+    newNode->next = NULL;
+    return newNode;
+}
+
+void printList(Node* head) {
+    while (head != NULL) {
+        printf("%d -> ", head->data);
+        head = head->next;
+    }
+    printf("NULL\n");
+}
+
+Node* removeOddNumbers(Node* head) {
+    Node* dummy = createNode(0);
+    dummy->next = head;
+    Node* prev = dummy;
+    Node* current = head;
+
+    while (current != NULL) {
+        if (current->data % 2 != 0) {
+            prev->next = current->next;
+            free(current);
+            current = prev->next;
+        } else {
+            prev = current;
+            current = current->next;
+        }
+    }
+
+    head = dummy->next;
+    free(dummy);
+    return head;
+}
+
+int main() {
+    Node* head = createNode(1);
+    head->next = createNode(2);
+    head->next->next = createNode(3);
+    head->next->next->next = createNode(4);
+    head->next->next->next->next = createNode(5);
+
+    printf("Original list: ");
+    printList(head);
+
+    head = removeOddNumbers(head);
+
+    printf("List after removing odd numbers: ");
+    printList(head);
+
+    // Free remaining nodes
+    while (head != NULL) {
+        Node* temp = head;
+        head = head->next;
+        free(temp);
+    }
+
+    return 0;
+}

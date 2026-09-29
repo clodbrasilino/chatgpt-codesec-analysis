@@ -1,0 +1,30 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int check_even_parity(unsigned int num);
+
+int check_even_parity(unsigned int num) {
+    int parity = 0;
+    while (num > 0) {
+        parity = !parity;
+        num = num & (num - 1);
+    }
+    return !parity;
+}
+
+int main(void) {
+    unsigned int number = 0;
+    int result = 0;
+
+    if (scanf("%u", &number) != 1) {
+        return EXIT_FAILURE;
+    }
+
+    result = check_even_parity(number);
+    
+    if (printf("%d\n", result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

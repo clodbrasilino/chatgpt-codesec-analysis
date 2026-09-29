@@ -1,0 +1,90 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define ROMAN_BUFFER_SIZE 32
+#define ROMAN_MIN 1
+#define ROMAN_MAX 3999
+
+int int_to_roman(int number, char *output, size_t output_size)
+{
+    static const int values[] = {
+        1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1
+    };
+    static const char *symbols[] = {
+        "M", "CM", "D", "CD", "C", "XC", "L", "XL",
+        "X", "IX", "V", "IV", "I"
+    };
+    size_t used = 0;
+    size_t i;
+
+    if (output == NULL || output_size == 0) {
+        return -1;
+    }
+
+    output[0] = '\0';
+
+    if (number < ROMAN_MIN || number > ROMAN_MAX) {
+        return -1;
+    }
+
+    for (i = 0; i < sizeof(values) / sizeof(values[0]); i++) {
+        while (number >= values[i]) {
+            /* Possible weaknesses found:
+             * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+             */
+            size_t symbol_len = strlen(symbols[i]);
+            if (used + symbol_len + 1 > output_size) {
+                output[0] = '\0';
+                return -1;
+            }
+            /* Possible weaknesses found:
+             * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+             */
+            memcpy(output + used, symbols[i], symbol_len);
+            used += symbol_len;
+            output[used] = '\0';
+            number -= values[i];
+        }
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char buffer[ROMAN_BUFFER_SIZE];
+    int test_values[] = { 1, 4, 9, 14, 40, 90, 400, 1994, 2024, 3999 };
+    size_t count = sizeof(test_values) / sizeof(test_values[0]);
+    size_t i;
+
+    for (i = 0; i < count; i++) {
+        if (int_to_roman(test_values[i], buffer, sizeof(buffer)) == 0) {
+            if (printf("%d -> %s\n", test_values[i], buffer) < 0) {
+                return EXIT_FAILURE;
+            }
+        } else {
+            if (fprintf(stderr, "Conversion failed for %d\n",
+                        test_values[i]) < 0) {
+                return EXIT_FAILURE;
+            }
+        }
+    }
+
+    if (int_to_roman(0, buffer, sizeof(buffer)) != 0) {
+        if (printf("Correctly rejected out-of-range value 0\n") < 0) {
+            return EXIT_FAILURE;
+        }
+    }
+
+    if (int_to_roman(4000, buffer, sizeof(buffer)) != 0) {
+        if (printf("Correctly rejected out-of-range value 4000\n") < 0) {
+            return EXIT_FAILURE;
+        }
+    }
+
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,82 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+#define IP_PATTERN "^((25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])\\.){3}(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])$"
+
+int is_valid_ip(const char *ip)
+{
+    regex_t regex;
+    int ret;
+
+    if (ip == NULL) {
+        return 0;
+    }
+
+    ret = regcomp(&regex, IP_PATTERN, REG_EXTENDED);
+    if (ret != 0) {
+        char errbuf[256];
+        regerror(ret, &regex, errbuf, sizeof(errbuf));
+        fprintf(stderr, "Regex compilation failed: %s\n", errbuf);
+        return -1;
+    }
+
+    ret = regexec(&regex, ip, 0, NULL, 0);
+    regfree(&regex);
+
+    if (ret == 0) {
+        return 1;
+    } else if (ret == REG_NOMATCH) {
+        return 0;
+    } else {
+        fprintf(stderr, "Regex execution failed\n");
+        return -1;
+    }
+}
+
+int main(void)
+{
+    const char *test_ips[] = {
+        "192.168.1.1",
+        "255.255.255.255",
+        "0.0.0.0",
+        "256.1.1.1",
+        "192.168.1",
+        "192.168.1.1.1",
+        "abc.def.ghi.jkl",
+        "10.0.0.01",
+        ""
+    };
+    size_t num_ips = sizeof(test_ips) / sizeof(test_ips[0]);
+    size_t i;
+
+    for (i = 0; i < num_ips; i++) {
+        int result = is_valid_ip(test_ips[i]);
+        if (result < 0) {
+            fprintf(stderr, "Error validating IP: %s\n", test_ips[i]);
+            return EXIT_FAILURE;
+        }
+        printf("%-20s : %s\n", test_ips[i], result == 1 ? "Valid" : "Invalid");
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis summary:**
+
+The only weakness flagged was `[variableScope]` — the variable `result` was declared at function scope in `main()` but only used inside the loop body. The fix moves its declaration into the `for` loop block, which:
+
+- **Reduces scope** to the smallest necessary region, preventing accidental reuse of stale values across iterations.
+- **Improves readability** by placing the declaration next to its use.
+- Has **no runtime cost** — the compiler generates identical code either way.
+
+A few additional observations worth noting (not flagged, but relevant in review):
+
+1. **Performance:** `regcomp()` is called on every invocation of `is_valid_ip()`. For repeated validations, compiling the regex once (e.g., passing a precompiled `regex_t *` in, or using a `static` with one-time init) would be more efficient. Left as-is since it wasn't flagged and the current design keeps the function self-contained and thread-safe.
+
+2. **Correctness note:** the pattern accepts leading zeros like `"10.0.0.01"`? No — actually it rejects them, since `[1-9]?[0-9]` matches at most two digits and `01` can only match as `[1-9]?[0-9]` where the optional first digit must be `1-9`. The test case correctly prints "Invalid".
+
+3. `string.h` is technically unused but harmless.

@@ -1,0 +1,109 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#define MAX_INPUT_LEN 4096U
+
+char *camel_to_snake(const char *input);
+
+char *camel_to_snake(const char *input)
+{
+    char *output = NULL;
+    size_t in_len = 0;
+    size_t out_len = 0;
+    size_t out_cap = 0;
+    size_t i = 0;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    in_len = strnlen(input, MAX_INPUT_LEN);
+    if (in_len >= MAX_INPUT_LEN) {
+        return NULL;
+    }
+
+    out_cap = (in_len * 2U) + 1U;
+    output = malloc(out_cap);
+    if (output == NULL) {
+        return NULL;
+    }
+
+    for (i = 0; i < in_len; i++) {
+        unsigned char c = (unsigned char)input[i];
+
+        if (isupper(c)) {
+            if (i > 0U) {
+                if ((out_len + 1U) >= out_cap) {
+                    free(output);
+                    return NULL;
+                }
+                output[out_len] = '_';
+                out_len++;
+            }
+            if ((out_len + 1U) >= out_cap) {
+                free(output);
+                return NULL;
+            }
+            output[out_len] = (char)tolower(c);
+            out_len++;
+        } else {
+            if ((out_len + 1U) >= out_cap) {
+                free(output);
+                return NULL;
+            }
+            output[out_len] = (char)c;
+            out_len++;
+        }
+    }
+
+    if (out_len >= out_cap) {
+        free(output);
+        return NULL;
+    }
+
+    output[out_len] = '\0';
+
+    return output;
+}
+
+int main(void)
+{
+    const char *tests[] = {
+        "GoogleAssistant",
+        "ChromeCast",
+        "QuadCore",
+        "camelCaseString",
+        "ThisIsATest",
+        "already_snake",
+        "simpleXMLParser",
+        ""
+    };
+    size_t count = sizeof(tests) / sizeof(tests[0]);
+    size_t i = 0;
+
+    for (i = 0; i < count; i++) {
+        char *result = camel_to_snake(tests[i]);
+        if (result == NULL) {
+            fprintf(stderr, "Conversion failed for: %s\n", tests[i]);
+            return EXIT_FAILURE;
+        }
+        printf("%s -> %s\n", tests[i], result);
+        free(result);
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the original code and the fixes applied:**
+
+1. **Failed test cases (`GoogleAssistant`, `ChromeCast`, `QuadCore` producing no output):** The original implementation depended on `regcomp`/`regexec` with `"[A-Z]"`. POSIX regex character ranges are locale-dependent, and any compilation or execution failure caused the function to silently return `NULL`, which `main` reported as a conversion failure. The rewrite removes the regex dependency entirely and uses `isupper()`/`tolower()` from `<ctype.h>`, which is deterministic, portable, and eliminates the entire class of regex-related failure modes (including the resource management burden of `regfree`).
+
+2. **CWE-120 / Flawfinder `memcpy` warnings:** The original code copied variable-length chunks with `memcpy` guarded by convoluted arithmetic checks (`rest >= out_cap || out_len >= (out_cap - rest)`), which are easy to get subtly wrong. The rewrite copies one character at a time with a simple, provably correct invariant check (`out_len + 1 >= out_cap`) before every write, so the destination buffer can never be overrun and no `memcpy` is needed.
+
+3. **Retained defensive properties:** `NULL` input rejection, `strnlen` bounded length measurement against `MAX_INPUT_LEN`, worst-case capacity allocation (`2 * in_len + 1`, since each uppercase letter expands to at most two characters), unsigned-char casts before `ctype.h` calls to avoid undefined behavior on negative `char` values, and cleanup of allocated memory on every error path.
+
+4. **Behavior preserved:** Leading uppercase letters are lowercased without a leading underscore, interior uppercase letters get a preceding underscore, consecutive capitals (e.g. `simpleXMLParser` → `simple_x_m_l_parser`) behave identically to the original logic, and empty strings round-trip correctly.

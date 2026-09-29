@@ -1,0 +1,56 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int id;
+    double value;
+} Tuple;
+
+Tuple* rearrange_tuples(const Tuple* original, size_t num_original, const size_t* order, size_t num_order);
+
+Tuple* rearrange_tuples(const Tuple* original, size_t num_original, const size_t* order, size_t num_order) {
+    if (original == NULL || order == NULL || num_original == 0 || num_order == 0) {
+        return NULL;
+    }
+
+    Tuple* rearranged = malloc(num_order * sizeof(Tuple));
+    if (rearranged == NULL) {
+        return NULL;
+    }
+
+    for (size_t i = 0; i < num_order; ++i) {
+        if (order[i] >= num_original) {
+            free(rearranged);
+            return NULL;
+        }
+        rearranged[i] = original[order[i]];
+    }
+
+    return rearranged;
+}
+
+int main(void) {
+    Tuple original_tuples[] = {
+        {1, 10.5},
+        {2, 20.5},
+        {3, 30.5},
+        {4, 40.5}
+    };
+    size_t num_original = sizeof(original_tuples) / sizeof(original_tuples[0]);
+
+    size_t order[] = {3, 1, 0, 2};
+    size_t num_order = sizeof(order) / sizeof(order[0]);
+
+    Tuple* rearranged = rearrange_tuples(original_tuples, num_original, order, num_order);
+    if (rearranged == NULL) {
+        fprintf(stderr, "Error: Invalid input, out-of-bounds index, or memory allocation failure.\n");
+        return EXIT_FAILURE;
+    }
+
+    for (size_t i = 0; i < num_order; ++i) {
+        printf("{%d, %.1f}\n", rearranged[i].id, rearranged[i].value);
+    }
+
+    free(rearranged);
+    return EXIT_SUCCESS;
+}

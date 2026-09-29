@@ -1,0 +1,48 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+long long* multiply_consecutive(const int* arr, size_t size, size_t* out_size) {
+    if (arr == NULL || out_size == NULL) {
+        return NULL;
+    }
+
+    if (size < 2) {
+        *out_size = 0;
+        return NULL;
+    }
+
+    *out_size = size - 1;
+    long long* result = (long long*)malloc(*out_size * sizeof(long long));
+    
+    if (result == NULL) {
+        *out_size = 0;
+        return NULL;
+    }
+
+    for (size_t i = 0; i < *out_size; i++) {
+        result[i] = (long long)arr[i] * (long long)arr[i + 1];
+    }
+
+    return result;
+}
+
+int main(void) {
+    int arr[] = {1, 2, 3, 4, 5};
+    size_t size = sizeof(arr) / sizeof(arr[0]);
+    size_t out_size = 0;
+
+    long long* result = multiply_consecutive(arr, size, &out_size);
+
+    if (result != NULL) {
+        for (size_t i = 0; i < out_size; i++) {
+            printf("%lld ", result[i]);
+        }
+        printf("\n");
+        free(result);
+        result = NULL;
+    }
+
+    return 0;
+}
+```

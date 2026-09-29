@@ -1,0 +1,60 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <stddef.h>
+
+bool canBeSortedByCorners(const int *arr, size_t n)
+{
+    size_t i = 0;
+
+    if (arr == NULL || n == 0) {
+        return false;
+    }
+
+    while ((i + 1U) < n && arr[i] >= arr[i + 1U]) {
+        i++;
+    }
+
+    while ((i + 1U) < n && arr[i] <= arr[i + 1U]) {
+        i++;
+    }
+
+    return ((i + 1U) == n);
+}
+
+static void runTest(const int *arr, size_t n)
+{
+    size_t i;
+
+    if (arr == NULL || n == 0) {
+        (void)printf("Invalid input array\n");
+        return;
+    }
+
+    (void)printf("Array: ");
+    for (i = 0; i < n; i++) {
+        (void)printf("%d ", arr[i]);
+    }
+
+    if (canBeSortedByCorners(arr, n)) {
+        (void)printf("-> Yes, it can be sorted using corner elements\n");
+    } else {
+        (void)printf("-> No, it cannot be sorted using corner elements\n");
+    }
+}
+
+int main(void)
+{
+    int test1[] = {8, 5, 3, 1, 2, 4, 7};
+    int test2[] = {1, 5, 3, 2, 4};
+    int test3[] = {10, 9, 8, 7};
+    int test4[] = {1, 2, 3, 4};
+    int test5[] = {42};
+
+    runTest(test1, sizeof(test1) / sizeof(test1[0]));
+    runTest(test2, sizeof(test2) / sizeof(test2[0]));
+    runTest(test3, sizeof(test3) / sizeof(test3[0]));
+    runTest(test4, sizeof(test4) / sizeof(test4[0]));
+    runTest(test5, sizeof(test5) / sizeof(test5[0]));
+
+    return 0;
+}

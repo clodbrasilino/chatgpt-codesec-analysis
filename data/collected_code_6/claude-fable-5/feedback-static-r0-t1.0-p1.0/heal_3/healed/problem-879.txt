@@ -1,0 +1,100 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+#define ERROR_BUFFER_SIZE 256
+
+static void report_regex_error(int errcode, const regex_t *regex, const char *context)
+{
+    char error_buffer[ERROR_BUFFER_SIZE];
+    size_t needed;
+
+    memset(error_buffer, 0, sizeof(error_buffer));
+    needed = regerror(errcode, regex, error_buffer, sizeof(error_buffer) - 1);
+    error_buffer[sizeof(error_buffer) - 1] = '\0';
+
+    if (needed >= sizeof(error_buffer)) {
+        fprintf(stderr, "%s: %s (message truncated)\n", context, error_buffer);
+    } else {
+        fprintf(stderr, "%s: %s\n", context, error_buffer);
+    }
+}
+
+static int match_pattern(const char *text)
+{
+    regex_t regex;
+    int ret;
+
+    if (text == NULL) {
+        fprintf(stderr, "match_pattern: NULL input\n");
+        return -1;
+    }
+
+    ret = regcomp(&regex, "a.*b$", REG_EXTENDED | REG_NOSUB);
+    if (ret != 0) {
+        report_regex_error(ret, &regex, "Regex compilation failed");
+        regfree(&regex);
+        return -1;
+    }
+
+    ret = regexec(&regex, text, 0, NULL, 0);
+
+    if (ret == 0) {
+        regfree(&regex);
+        return 1;
+    }
+
+    if (ret == REG_NOMATCH) {
+        regfree(&regex);
+        return 0;
+    }
+
+    report_regex_error(ret, &regex, "Regex execution failed");
+    regfree(&regex);
+    return -1;
+}
+
+int main(void)
+{
+    const char *tests[] = {
+        "acb",
+        "ab",
+        "axyzb",
+        "a123b",
+        "bca",
+        "abc",
+        "b",
+        "a"
+    };
+    size_t count = sizeof(tests) / sizeof(tests[0]);
+    size_t i;
+
+    for (i = 0; i < count; i++) {
+        int result = match_pattern(tests[i]);
+        if (result < 0) {
+            return EXIT_FAILURE;
+        }
+        if (result == 1) {
+            printf("\"%s\" matches\n", tests[i]);
+        } else {
+            printf("\"%s\" does not match\n", tests[i]);
+        }
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the original code and the fix applied:**
+
+The Flawfinder warning flagged `char error_buffer[ERROR_BUFFER_SIZE]` as a potential CWE-119/CWE-120 (buffer overflow) risk. This is a heuristic warning triggered by the mere presence of a statically-sized array — the original code already mitigated it correctly through three layers of defense:
+
+1. **Zero-initialization** via `memset` ensures no uninitialized reads even if `regerror` misbehaves.
+2. **Bounded write**: passing `sizeof(error_buffer) - 1` to `regerror` guarantees the function never writes past the buffer while reserving one byte.
+3. **Explicit termination**: forcing `'\0'` at the last index guarantees the buffer is always a valid C string before it reaches `fprintf`.
+
+In the rewrite I additionally captured `regerror`'s return value (the required buffer size) to detect and report truncation, which makes the bounds-checking intent explicit rather than implicit.
+
+One genuine (non-Flawfinder) improvement worth noting: the original code did not call `regfree` after a failed `regcomp`. While POSIX leaves the state of `regex_t` unspecified on compile failure, glibc may allocate partial state; the rewrite frees it defensively. All other resource paths (`regfree` on match, no-match, and exec-error) were already leak-free, and the `NULL` input guard prevents undefined behavior in `regexec`.

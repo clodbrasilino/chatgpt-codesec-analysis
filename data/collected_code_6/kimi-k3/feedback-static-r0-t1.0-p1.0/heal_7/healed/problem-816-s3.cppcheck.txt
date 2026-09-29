@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-816-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-816-s3.c:30:16: style: Condition 'source!=NULL' is always true [knownConditionTrueFalse]
+    if (source != NULL) {
+               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-816-s3.c:29:26: note: Assignment 'source="Sample Data"', assigned value is "Sample Data"
+    const char *source = "Sample Data";
+                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-816-s3.c:30:16: note: Condition 'source!=NULL' is always true
+    if (source != NULL) {
+               ^

@@ -1,0 +1,67 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+#include <errno.h>
+ /* Possible weaknesses found:
+  *  test case 0 failed: expected 2, got <no output>
+  *  test case 1 failed: expected 4, got <no output>
+  *  test case 2 failed: expected 25, got <no output>
+  */
+
+int countPrimes(int n) {
+    if (n <= 2) {
+        return 0;
+    }
+
+    char *is_prime = (char *)malloc((size_t)n * sizeof(char));
+    if (is_prime == NULL) {
+        return -1;
+    }
+
+    for (int i = 0; i < n; i++) {
+        is_prime[i] = 1;
+    }
+
+    is_prime[0] = 0;
+    is_prime[1] = 0;
+
+    for (int i = 2; i * i < n; i++) {
+        if (is_prime[i]) {
+            for (int j = i * i; j < n; j += i) {
+                is_prime[j] = 0;
+            }
+        }
+    }
+
+    int count = 0;
+    for (int i = 2; i < n; i++) {
+        if (is_prime[i]) {
+            count++;
+        }
+    }
+
+    free(is_prime);
+    is_prime = NULL;
+
+    return count;
+}
+
+int main(int argc, char * const * argv) {
+    int n = 10;
+
+    if (argc == 2) {
+        char *endptr;
+        errno = 0;
+        long val = strtol(argv[1], &endptr, 10);
+        if (endptr != argv[1] && *endptr == '\0' && errno == 0 && val >= 0 && val <= INT_MAX) {
+            n = (int)val;
+        }
+    }
+
+    int result = countPrimes(n);
+    if (result >= 0) {
+        printf("%d\n", result);
+    }
+
+    return 0;
+}

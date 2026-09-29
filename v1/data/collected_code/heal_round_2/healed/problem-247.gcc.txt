@@ -1,0 +1,142 @@
+collected_code/heal_round_2/healed/problem-247.c: In function 'longestPalindromicSubsequence':
+collected_code/heal_round_2/healed/problem-247.c:28:13: warning: leak of '<unknown>' [CWE-401] [-Wanalyzer-malloc-leak]
+   28 |             free(L);
+      |             ^~~~~~~
+  'main': events 1-2
+    |
+    |   56 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |   57 |     char str[] = "ABCBDEFGCDCFEDGHIJKL";
+    |   58 |     int length = longestPalindromicSubsequence(str);
+    |      |                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                  |
+    |      |                  (2) calling 'longestPalindromicSubsequence' from 'main'
+    |
+    +--> 'longestPalindromicSubsequence': events 3-16
+           |
+           |    9 | int longestPalindromicSubsequence(const char* str) {
+           |      |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |     |
+           |      |     (3) entry to 'longestPalindromicSubsequence'
+           |   10 |     if(str == NULL) {
+           |      |       ~
+           |      |       |
+           |      |       (4) following 'false' branch (when 'str' is non-NULL)...
+           |......
+           |   14 |     int n = strlen(str);
+           |      |             ~~~~~~~~~~~
+           |      |             |
+           |      |             (5) ...to here
+           |......
+           |   18 |     if(L == NULL) {
+           |      |       ~
+           |      |       |
+           |      |       (6) following 'false' branch (when 'L' is non-NULL)...
+           |......
+           |   22 |     for (i = 0; i < n; i++) {
+           |      |          ~~~~~  ~~~~~
+           |      |            |      |
+           |      |            |      (8) following 'true' branch (when 'i < n')...
+           |      |            |      (14) following 'true' branch (when 'i < n')...
+           |      |            (7) ...to here
+           |   23 | 
+           |   24 |         L[i] = (int *)malloc(n * sizeof(int));
+           |      |                       ~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                       |
+           |      |                       (9) ...to here
+           |      |                       (10) allocated here
+           |      |                       (15) ...to here
+           |   25 |         if(L[i] == NULL) {
+           |      |           ~
+           |      |           |
+           |      |           (11) assuming '<unknown>' is non-NULL
+           |      |           (12) following 'false' branch...
+           |      |           (16) following 'true' branch...
+           |......
+           |   31 |         L[i][i] = 1;
+           |      |          ~
+           |      |          |
+           |      |          (13) ...to here
+           |
+         'longestPalindromicSubsequence': event 17
+           |
+           |cc1:
+           | (17): ...to here
+           |
+         'longestPalindromicSubsequence': events 18-20
+           |
+           |   26 |             for(; i >= 0; i--)
+           |      |                   ~~^~~~
+           |      |                     |
+           |      |                     (18) following 'true' branch (when 'i >= 0')...
+           |   27 |                 free(L[i]);
+           |      |                       ~
+           |      |                       |
+           |      |                       (19) ...to here
+           |   28 |             free(L);
+           |      |             ~~~~~~~  
+           |      |             |
+           |      |             (20) '<unknown>' leaks here; was allocated at (10)
+           |
+collected_code/heal_round_2/healed/problem-247.c:48:16: warning: use of uninitialized value '*L' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   48 |     int res = L[0][n - 1];
+      |               ~^~~
+  'main': events 1-2
+    |
+    |   56 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |   57 |     char str[] = "ABCBDEFGCDCFEDGHIJKL";
+    |   58 |     int length = longestPalindromicSubsequence(str);
+    |      |                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                  |
+    |      |                  (2) calling 'longestPalindromicSubsequence' from 'main'
+    |
+    +--> 'longestPalindromicSubsequence': events 3-13
+           |
+           |    9 | int longestPalindromicSubsequence(const char* str) {
+           |      |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |     |
+           |      |     (3) entry to 'longestPalindromicSubsequence'
+           |   10 |     if(str == NULL) {
+           |      |       ~
+           |      |       |
+           |      |       (4) following 'false' branch (when 'str' is non-NULL)...
+           |......
+           |   14 |     int n = strlen(str);
+           |      |             ~~~~~~~~~~~
+           |      |             |
+           |      |             (5) ...to here
+           |   15 |     int i, j, cl;
+           |   16 |     int **L = (int **)malloc(n * sizeof(int *));
+           |      |                       ~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                       |
+           |      |                       (6) region created on heap here
+           |   17 | 
+           |   18 |     if(L == NULL) {
+           |      |       ~
+           |      |       |
+           |      |       (7) following 'false' branch (when 'L' is non-NULL)...
+           |......
+           |   22 |     for (i = 0; i < n; i++) {
+           |      |          ~~~~~  ~~~~~
+           |      |            |      |
+           |      |            |      (9) following 'false' branch (when 'i >= n')...
+           |      |            (8) ...to here
+           |......
+           |   35 |     for (cl = 2; cl <= n; cl++) {
+           |      |          ~~~~~~  ~~~~~~~
+           |      |             |       |
+           |      |             |       (11) following 'false' branch (when 'cl > n')...
+           |      |             (10) ...to here
+           |......
+           |   48 |     int res = L[0][n - 1];
+           |      |               ~~~~
+           |      |                |
+           |      |                (12) ...to here
+           |      |                (13) use of uninitialized value '*L' here
+           |
+-macosx_version_min has been renamed to -macos_version_min

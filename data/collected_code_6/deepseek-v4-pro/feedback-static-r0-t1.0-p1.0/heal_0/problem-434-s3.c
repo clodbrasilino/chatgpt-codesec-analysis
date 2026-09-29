@@ -1,0 +1,43 @@
+#include <stdio.h>
+#include <string.h>
+
+int match_a_followed_by_bs(const char *str) {
+    if (str == NULL || str[0] != 'a') {
+        return 0;
+    }
+    
+    size_t i = 1;
+    if (str[i] == '\0') {
+        return 0;
+    }
+    
+    for (; str[i] != '\0'; i++) {
+        if (str[i] != 'b') {
+            return 0;
+        }
+    }
+    
+    return 1;
+}
+
+int main(void) {
+    const char *test1 = "ab";
+    const char *test2 = "abb";
+    const char *test3 = "abbb";
+    const char *test4 = "a";
+    const char *test5 = "b";
+    const char *test6 = "abc";
+    const char *test7 = "ac";
+    const char *test8 = "abbbc";
+    
+    printf("%s: %d\n", test1, match_a_followed_by_bs(test1));
+    printf("%s: %d\n", test2, match_a_followed_by_bs(test2));
+    printf("%s: %d\n", test3, match_a_followed_by_bs(test3));
+    printf("%s: %d\n", test4, match_a_followed_by_bs(test4));
+    printf("%s: %d\n", test5, match_a_followed_by_bs(test5));
+    printf("%s: %d\n", test6, match_a_followed_by_bs(test6));
+    printf("%s: %d\n", test7, match_a_followed_by_bs(test7));
+    printf("%s: %d\n", test8, match_a_followed_by_bs(test8));
+    
+    return 0;
+}

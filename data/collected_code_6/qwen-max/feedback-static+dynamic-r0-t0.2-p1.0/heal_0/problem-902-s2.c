@@ -1,0 +1,107 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char *key;
+    int value;
+} DictionaryEntry;
+
+typedef struct {
+    DictionaryEntry *entries;
+    size_t count;
+    size_t capacity;
+} Dictionary;
+
+Dictionary* create_dictionary(size_t initial_capacity) {
+    Dictionary *dict = (Dictionary *)malloc(sizeof(Dictionary));
+    if (dict == NULL) return NULL;
+    dict->capacity = initial_capacity;
+    dict->count = 0;
+    dict->entries = (DictionaryEntry *)calloc(initial_capacity, sizeof(DictionaryEntry));
+    if (dict->entries == NULL) {
+        free(dict);
+        return NULL;
+    }
+    return dict;
+}
+
+void free_dictionary(Dictionary *dict) {
+    for (size_t i = 0; i < dict->count; ++i) {
+        free(dict->entries[i].key);
+    }
+    free(dict->entries);
+    free(dict);
+}
+
+int find_entry(Dictionary *dict, const char *key) {
+    for (size_t i = 0; i < dict->count; ++i) {
+        if (strcmp(dict->entries[i].key, key) == 0) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+int add_or_update_entry(Dictionary *dict, const char *key, int value) {
+    int index = find_entry(dict, key);
+    if (index != -1) {
+        dict->entries[index].value += value;
+        return 0;
+    }
+
+    if (dict->count >= dict->capacity) {
+        dict->capacity *= 2;
+        dict->entries = (DictionaryEntry *)realloc(dict->entries, dict->capacity * sizeof(DictionaryEntry));
+        if (dict->entries == NULL) return -1;
+    }
+
+    dict->entries[dict->count].key = strdup(key);
+    if (dict->entries[dict->count].key == NULL) return -1;
+    dict->entries[dict->count].value = value;
+    dict->count++;
+    return 0;
+}
+
+Dictionary* combine_dictionaries(Dictionary *dict1, Dictionary *dict2) {
+    Dictionary *combined = create_dictionary(dict1->count + dict2->count);
+    if (combined == NULL) return NULL;
+
+    for (size_t i = 0; i < dict1->count; ++i) {
+        if (add_or_update_entry(combined, dict1->entries[i].key, dict1->entries[i].value) != 0) {
+            free_dictionary(combined);
+            return NULL;
+        }
+    }
+
+    for (size_t i = 0; i < dict2->count; ++i) {
+        if (add_or_update_entry(combined, dict2->entries[i].key, dict2->entries[i].value) != 0) {
+            free_dictionary(combined);
+            return NULL;
+        }
+    }
+
+    return combined;
+}
+
+int main() {
+    Dictionary *dict1 = create_dictionary(2);
+    add_or_update_entry(dict1, "apple", 3);
+    add_or_update_entry(dict1, "banana", 5);
+
+    Dictionary *dict2 = create_dictionary(2);
+    add_or_update_entry(dict2, "apple", 2);
+    add_or_update_entry(dict2, "orange", 4);
+
+    Dictionary *combined = combine_dictionaries(dict1, dict2);
+    if (combined != NULL) {
+        for (size_t i = 0; i < combined->count; ++i) {
+            printf("%s: %d\n", combined->entries[i].key, combined->entries[i].value);
+        }
+        free_dictionary(combined);
+    }
+
+    free_dictionary(dict1);
+    free_dictionary(dict2);
+    return 0;
+}

@@ -1,0 +1,52 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+int findMinimumRotations(const char* str) {
+    if (str == NULL) {
+        return -1;
+    }
+
+    int len = strlen(str);
+    if (len == 0) {
+        return 0;
+    }
+
+    char* concatStr = (char*)malloc(2 * len + 1);
+    if (concatStr == NULL) {
+        return -1;
+    }
+
+    strcpy(concatStr, str);
+    strcat(concatStr, str);
+
+    int minRotations = len;
+
+    for (int i = 1; i <= len; i++) {
+        if (strncmp(concatStr + i, str, len) == 0) {
+            minRotations = i;
+            break;
+        }
+    }
+
+    free(concatStr);
+    concatStr = NULL;
+
+    return minRotations == len ? len : minRotations;
+}
+
+int main(void) {
+    const char* str1 = "abc";
+    int result1 = findMinimumRotations(str1);
+    printf("%d\n", result1);
+
+    const char* str2 = "aaaa";
+    int result2 = findMinimumRotations(str2);
+    printf("%d\n", result2);
+
+    const char* str3 = "abab";
+    int result3 = findMinimumRotations(str3);
+    printf("%d\n", result3);
+
+    return 0;
+}

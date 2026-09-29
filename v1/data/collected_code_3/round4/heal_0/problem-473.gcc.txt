@@ -1,0 +1,30 @@
+collected_code_3/round4/heal_0/problem-473.c: In function 'findIntersection':
+collected_code_3/round4/heal_0/problem-473.c:17:33: warning: dereference of possibly-NULL 'result' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   17 |                 result[k].first = list1[i].first;
+      |                 ~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~
+  'findIntersection': events 1-6
+    |
+    |   11 |     Tuple* result = (Tuple*)malloc(sizeof(Tuple) * ((size1 < size2) ? size1 : size2));
+    |      |                             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                             |
+    |      |                             (1) this call could return NULL
+    |   12 | 
+    |   13 |     for(i = 0; i < size1; i++) {
+    |      |                ~~~~~~~~~     
+    |      |                  |
+    |      |                  (2) following 'true' branch (when 'i < size1')...
+    |   14 |         for(j = 0; j < size2; j++) {
+    |      |             ~~~~~  ~~~~~~~~~ 
+    |      |               |      |
+    |      |               |      (4) following 'true' branch (when 'j < size2')...
+    |      |               (3) ...to here
+    |   15 |             if((list1[i].first == list2[j].first && list1[i].second == list2[j].second) ||
+    |      |                      ~       
+    |      |                      |
+    |      |                      (5) ...to here
+    |   16 |                (list1[i].first == list2[j].second && list1[i].second == list2[j].first)) {
+    |   17 |                 result[k].first = list1[i].first;
+    |      |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                                 |
+    |      |                                 (6) 'result + (long unsigned int)k * 8' could be NULL: unchecked value from (1)
+    |

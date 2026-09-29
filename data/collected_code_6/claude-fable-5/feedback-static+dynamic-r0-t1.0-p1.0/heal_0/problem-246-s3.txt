@@ -1,0 +1,68 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+double babylonian_sqrt(double value, double tolerance)
+{
+    double guess;
+    double next;
+
+    if (value < 0.0) {
+        return -1.0;
+    }
+
+    if (value == 0.0) {
+        return 0.0;
+    }
+
+    guess = value / 2.0;
+    if (guess <= 0.0) {
+        guess = 1.0;
+    }
+
+    for (;;) {
+        next = 0.5 * (guess + value / guess);
+        if (fabs(next - guess) <= tolerance * fabs(next)) {
+            break;
+        }
+        guess = next;
+    }
+
+    return next;
+}
+
+int main(void)
+{
+    double input;
+    double result;
+    int status;
+
+    printf("Enter a non-negative number: ");
+    status = scanf("%lf", &input);
+    if (status != 1) {
+        fprintf(stderr, "Error: invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (input < 0.0) {
+        fprintf(stderr, "Error: cannot compute square root of a negative number.\n");
+        return EXIT_FAILURE;
+    }
+
+    result = babylonian_sqrt(input, 1e-12);
+    if (result < 0.0) {
+        fprintf(stderr, "Error: computation failed.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Square root of %.10f is %.10f\n", input, result);
+    return EXIT_SUCCESS;
+}
+```
+
+Key design decisions from a defensive-programming standpoint:
+
+- **CWE-703 (Improper Check or Handling of Exceptional Conditions):** The return value of `scanf` is checked before using `input`, negative inputs are rejected explicitly, and the function returns a sentinel that the caller verifies. Division by zero is impossible because `value == 0.0` is handled early and `guess` is guaranteed positive.
+- **CWE-664 (Improper Control of a Resource Through its Lifetime):** No dynamic memory or file handles are acquired, so there is nothing to leak; all variables are stack-scoped with well-defined lifetimes and initialized before use.
+- **CWE-710 (Improper Adherence to Coding Standards):** Uses `int main(void)`, returns `EXIT_SUCCESS`/`EXIT_FAILURE`, writes diagnostics to `stderr`, avoids magic behavior, and uses a relative-tolerance convergence test (`fabs(next - guess) <= tolerance * fabs(next)`) so the loop terminates correctly for both very large and very small values.

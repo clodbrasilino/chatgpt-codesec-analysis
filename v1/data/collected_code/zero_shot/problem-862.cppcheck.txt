@@ -1,0 +1,18 @@
+collected_code/problem-862-0.c:21:20: error: Cannot determine that 'str[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+    for (i = 0; str[i] != '\0'; i++) {
+                   ^
+collected_code/problem-862-0.c:22:24: error: Cannot determine that 'str[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        if (isalpha(str[i]) || str[i] == ' ') {
+                       ^
+collected_code/problem-862-0.c:23:35: error: Cannot determine that 'str[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+            str[j++] = tolower(str[i]);
+                                  ^
+collected_code/problem-862-0.c:35:26: error: Cannot determine that 'text[0]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+    char *token = strtok(text, " ");
+                         ^
+collected_code/problem-862-0.c:88:11: error: Cannot determine that 'text[0]' is initialized [premium-bughuntingUninit]
+    fgets(text, sizeof(text), stdin);
+          ^
+collected_code/problem-862-0.c:90:18: error: Cannot determine that 'n' is initialized [premium-bughuntingUninit]
+    scanf("%d", &n);
+                 ^

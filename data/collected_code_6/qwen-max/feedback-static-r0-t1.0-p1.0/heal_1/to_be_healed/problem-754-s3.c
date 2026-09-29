@@ -1,0 +1,44 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+/* Possible weaknesses found:
+ *  Parameter 'list3' can be declared as pointer to const [constParameterPointer]
+ *  Parameter 'list1' can be declared as pointer to const [constParameterPointer]
+ *  Parameter 'list2' can be declared as pointer to const [constParameterPointer]
+ */
+int* findCommonIndices(int* list1, int* list2, int* list3, int size, int* returnSize) {
+    *returnSize = 0;
+    int *result = (int*)malloc(size * sizeof(int));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    for (int i = 0; i < size; i++) {
+        if (list1[i] == list2[i] && list1[i] == list3[i]) {
+            result[(*returnSize)++] = list1[i];
+        }
+    }
+
+    return result;
+}
+
+int main() {
+    int size = 5;
+    int list1[] = {1, 2, 3, 4, 5};
+    int list2[] = {1, 2, 9, 4, 8};
+    int list3[] = {1, 7, 3, 4, 2};
+
+    int returnSize;
+    int* commonElements = findCommonIndices(list1, list2, list3, size, &returnSize);
+
+    if (commonElements != NULL) {
+        for (int i = 0; i < returnSize; i++) {
+            printf("%d ", commonElements[i]);
+        }
+        free(commonElements);
+    } else {
+        printf("Memory allocation failed\n");
+    }
+
+    return 0;
+}

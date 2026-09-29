@@ -1,0 +1,16 @@
+#include <stdio.h>
+
+double calculate_volume(double length, double width, double height) {
+    return length * width * height;
+}
+
+int main() {
+    double length = 5.0;
+    double width = 3.0;
+    double height = 2.0;
+
+    double volume = calculate_volume(length, width, height);
+
+    printf("Volume of the cuboid: %f\n", volume);
+    return 0;
+}

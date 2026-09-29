@@ -1,0 +1,81 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+char *extract_quoted(const char *input)
+{
+    const char *start;
+    const char *end;
+    size_t length;
+    size_t alloc_size;
+    char *result;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    start = strchr(input, '"');
+    if (start == NULL) {
+        return NULL;
+    }
+
+    start++;
+    end = strchr(start, '"');
+    if (end == NULL) {
+        return NULL;
+    }
+
+    length = (size_t)(end - start);
+
+    if (length >= SIZE_MAX) {
+        return NULL;
+    }
+
+    alloc_size = length + 1U;
+    result = malloc(alloc_size);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    if (length > 0U) {
+        memcpy(result, start, length);
+    }
+    result[length] = '\0';
+
+    return result;
+}
+
+int main(void)
+{
+    const char *test = "The value is \"hello world\" in this string";
+    char *extracted;
+
+    extracted = extract_quoted(test);
+    if (extracted == NULL) {
+        if (fprintf(stderr, "No quoted value found or allocation failed\n") < 0) {
+            return EXIT_FAILURE;
+        }
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Extracted: %s\n", extracted) < 0) {
+        free(extracted);
+        return EXIT_FAILURE;
+    }
+
+    free(extracted);
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the changes made:**
+
+1. **Redundant condition removed (`knownConditionTrueFalse`):** The original code checked `length < alloc_size` inside the copy guard. Since `alloc_size = length + 1U` and the overflow case was already excluded beforehand, that condition was tautologically true. Static analyzers flag such dead conditions because they suggest the developer misunderstood the invariants. The check is now simply `length > 0U`.
+
+2. **Overflow guard consolidated:** The check `length == SIZE_MAX` was changed to `length >= SIZE_MAX` — semantically identical for `size_t`, but it expresses the intent (preventing `length + 1U` from wrapping to `0`) more explicitly and defensively. This guarantees `malloc` is never called with a wrapped-around size of `0` followed by an out-of-bounds write at `result[length]`.
+
+3. **`memcpy` (CWE-120, Flawfinder risk 2):** This is a heuristic warning rather than a real defect here. The destination buffer is provably large enough: it is allocated with exactly `length + 1U` bytes, and exactly `length` bytes are copied, with the terminator written at index `length`. Since overflow of the allocation size is excluded before `malloc`, the copy is safe. No functional change was required — the fix is ensuring the invariant (`alloc_size > length`) holds by construction, which it does.
+
+4. **Preserved correct behavior:** `NULL` input handling, missing-quote handling, `malloc` failure handling, empty-string case (`""` yields a valid empty allocation of 1 byte), and checked return values of `printf`/`fprintf` with proper `free()` on all exit paths remain intact, so there are no memory leaks or unchecked I/O errors.

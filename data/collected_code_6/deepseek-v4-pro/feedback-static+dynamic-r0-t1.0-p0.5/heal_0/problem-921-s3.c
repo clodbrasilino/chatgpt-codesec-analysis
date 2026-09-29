@@ -1,0 +1,153 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    void **data;
+    size_t size;
+} Chunk;
+
+typedef struct {
+    Chunk *chunks;
+    size_t count;
+} ChunkResult;
+
+ChunkResult chunk_tuples(const void *tuples, size_t tuple_size, size_t tuple_count, size_t chunk_size) {
+    ChunkResult result;
+    result.chunks = NULL;
+    result.count = 0;
+
+    if (tuples == NULL || tuple_size == 0 || tuple_count == 0 || chunk_size == 0) {
+        return result;
+    }
+
+    size_t full_chunks = tuple_count / chunk_size;
+    size_t remainder = tuple_count % chunk_size;
+    result.count = full_chunks + (remainder > 0 ? 1 : 0);
+
+    result.chunks = (Chunk *)malloc(result.count * sizeof(Chunk));
+    if (result.chunks == NULL) {
+        result.count = 0;
+        return result;
+    }
+
+    const unsigned char *src = (const unsigned char *)tuples;
+    size_t chunk_index = 0;
+
+    for (size_t i = 0; i < full_chunks; i++) {
+        result.chunks[chunk_index].size = chunk_size;
+        result.chunks[chunk_index].data = (void **)malloc(chunk_size * sizeof(void *));
+        if (result.chunks[chunk_index].data == NULL) {
+            for (size_t j = 0; j < chunk_index; j++) {
+                free(result.chunks[j].data);
+            }
+            free(result.chunks);
+            result.chunks = NULL;
+            result.count = 0;
+            return result;
+        }
+
+        for (size_t j = 0; j < chunk_size; j++) {
+            result.chunks[chunk_index].data[j] = malloc(tuple_size);
+            if (result.chunks[chunk_index].data[j] == NULL) {
+                for (size_t k = 0; k < j; k++) {
+                    free(result.chunks[chunk_index].data[k]);
+                }
+                free(result.chunks[chunk_index].data);
+                for (size_t k = 0; k < chunk_index; k++) {
+                    for (size_t l = 0; l < result.chunks[k].size; l++) {
+                        free(result.chunks[k].data[l]);
+                    }
+                    free(result.chunks[k].data);
+                }
+                free(result.chunks);
+                result.chunks = NULL;
+                result.count = 0;
+                return result;
+            }
+            memcpy(result.chunks[chunk_index].data[j], src + (i * chunk_size + j) * tuple_size, tuple_size);
+        }
+        chunk_index++;
+    }
+
+    if (remainder > 0) {
+        result.chunks[chunk_index].size = remainder;
+        result.chunks[chunk_index].data = (void **)malloc(remainder * sizeof(void *));
+        if (result.chunks[chunk_index].data == NULL) {
+            for (size_t j = 0; j < chunk_index; j++) {
+                for (size_t k = 0; k < result.chunks[j].size; k++) {
+                    free(result.chunks[j].data[k]);
+                }
+                free(result.chunks[j].data);
+            }
+            free(result.chunks);
+            result.chunks = NULL;
+            result.count = 0;
+            return result;
+        }
+
+        for (size_t j = 0; j < remainder; j++) {
+            result.chunks[chunk_index].data[j] = malloc(tuple_size);
+            if (result.chunks[chunk_index].data[j] == NULL) {
+                for (size_t k = 0; k < j; k++) {
+                    free(result.chunks[chunk_index].data[k]);
+                }
+                free(result.chunks[chunk_index].data);
+                for (size_t k = 0; k < chunk_index; k++) {
+                    for (size_t l = 0; l < result.chunks[k].size; l++) {
+                        free(result.chunks[k].data[l]);
+                    }
+                    free(result.chunks[k].data);
+                }
+                free(result.chunks);
+                result.chunks = NULL;
+                result.count = 0;
+                return result;
+            }
+            memcpy(result.chunks[chunk_index].data[j], src + (full_chunks * chunk_size + j) * tuple_size, tuple_size);
+        }
+    }
+
+    return result;
+}
+
+void free_chunk_result(ChunkResult *result) {
+    if (result == NULL || result->chunks == NULL) {
+        return;
+    }
+
+    for (size_t i = 0; i < result->count; i++) {
+        for (size_t j = 0; j < result->chunks[i].size; j++) {
+            free(result->chunks[i].data[j]);
+        }
+        free(result->chunks[i].data);
+    }
+    free(result->chunks);
+    result->chunks = NULL;
+    result->count = 0;
+}
+
+int main(void) {
+    int tuples[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    size_t tuple_size = sizeof(int);
+    size_t tuple_count = sizeof(tuples) / sizeof(tuples[0]);
+    size_t chunk_size = 3;
+
+    ChunkResult result = chunk_tuples(tuples, tuple_size, tuple_count, chunk_size);
+
+    if (result.chunks == NULL) {
+        fprintf(stderr, "Failed to chunk tuples\n");
+        return 1;
+    }
+
+    for (size_t i = 0; i < result.count; i++) {
+        printf("Chunk %zu: ", i);
+        for (size_t j = 0; j < result.chunks[i].size; j++) {
+            printf("%d ", *(int *)result.chunks[i].data[j]);
+        }
+        printf("\n");
+    }
+
+    free_chunk_result(&result);
+    return 0;
+}

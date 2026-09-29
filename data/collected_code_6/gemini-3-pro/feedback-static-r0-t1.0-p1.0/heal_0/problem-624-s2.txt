@@ -1,0 +1,24 @@
+```c
+#include <stdio.h>
+#include <ctype.h>
+
+void convertToUpper(char *str) {
+    if (str == NULL) {
+        return;
+    }
+    
+    while (*str) {
+        *str = (char)toupper((unsigned char)*str);
+        str++;
+    }
+}
+
+int main(void) {
+    char testString[] = "Hello, World! 123";
+    
+    convertToUpper(testString);
+    printf("%s\n", testString);
+    
+    return 0;
+}
+```

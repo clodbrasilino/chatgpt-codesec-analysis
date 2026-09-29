@@ -1,0 +1,80 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int first;
+    int second;
+} Tuple;
+
+int* extract_singletons(Tuple* tuples, int num_tuples, int* out_count) {
+    if (tuples == NULL || out_count == NULL || num_tuples <= 0) {
+        if (out_count) *out_count = 0;
+        return NULL;
+    }
+
+    int max_val = -1;
+    for (int i = 0; i < num_tuples; i++) {
+        if (tuples[i].first > max_val) max_val = tuples[i].first;
+        if (tuples[i].second > max_val) max_val = tuples[i].second;
+    }
+
+    if (max_val < 0) {
+        *out_count = 0;
+        return NULL;
+    }
+
+    int* counts = (int*)calloc(max_val + 1, sizeof(int));
+    if (counts == NULL) {
+        *out_count = 0;
+        return NULL;
+    }
+
+    for (int i = 0; i < num_tuples; i++) {
+        counts[tuples[i].first]++;
+        counts[tuples[i].second]++;
+    }
+
+    int single_count = 0;
+    for (int i = 0; i <= max_val; i++) {
+        if (counts[i] == 1) {
+            single_count++;
+        }
+    }
+
+    int* singletons = NULL;
+    if (single_count > 0) {
+        singletons = (int*)malloc(single_count * sizeof(int));
+        if (singletons != NULL) {
+            int idx = 0;
+            for (int i = 0; i <= max_val; i++) {
+                if (counts[i] == 1) {
+                    singletons[idx++] = i;
+                }
+            }
+        } else {
+            single_count = 0;
+        }
+    }
+
+    free(counts);
+    *out_count = single_count;
+    return singletons;
+}
+
+int main(void) {
+    Tuple tuples[] = {{1, 2}, {2, 3}, {4, 5}, {1, 6}};
+    int num_tuples = sizeof(tuples) / sizeof(tuples[0]);
+    int out_count = 0;
+
+    int* singletons = extract_singletons(tuples, num_tuples, &out_count);
+
+    for (int i = 0; i < out_count; i++) {
+        printf("%d ", singletons[i]);
+    }
+    printf("\n");
+
+    free(singletons);
+    return 0;
+}
+```

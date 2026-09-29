@@ -1,0 +1,36 @@
+collected_code/problem-407-0.c:7:17: error: Cannot determine that '*a' is initialized [premium-bughuntingUninit]
+    char temp = *a;
+                ^
+collected_code/problem-407-0.c:8:10: error: Cannot determine that '*b' is initialized [premium-bughuntingUninit]
+    *a = *b;
+         ^
+collected_code/problem-407-0.c:17:19: error: Cannot determine that 'digits[i-1]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        if (digits[i - 1] < digits[i])
+                  ^
+collected_code/problem-407-0.c:17:35: error: Cannot determine that 'digits[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        if (digits[i - 1] < digits[i])
+                                  ^
+collected_code/problem-407-0.c:28:19: error: Cannot determine that 'digits[i-1]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+    int x = digits[i - 1];
+                  ^
+collected_code/problem-407-0.c:33:19: error: Cannot determine that 'digits[j]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        if (digits[j] > x && digits[j] < digits[smallest_index])
+                  ^
+collected_code/problem-407-0.c:33:48: error: Cannot determine that 'digits[smallest_index]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        if (digits[j] > x && digits[j] < digits[smallest_index])
+                                               ^
+collected_code/problem-407-0.c:44:28: error: Cannot determine that 'digits[0]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+    int next_bigger = atoi(digits);
+                           ^
+collected_code/problem-407-0.c:50:13: error: Cannot determine that '*(char*)a' is initialized [premium-bughuntingUninit]
+    return (*(char *) a - *(char *) b);
+            ^
+collected_code/problem-407-0.c:50:27: error: Cannot determine that '*(char*)b' is initialized [premium-bughuntingUninit]
+    return (*(char *) a - *(char *) b);
+                          ^
+collected_code/problem-407-0.c:56:18: error: Cannot determine that 'number' is initialized [premium-bughuntingUninit]
+    scanf("%d", &number);
+                 ^
+collected_code/problem-407-0.c:60:13: error: Cannot determine that 'digits[0]' is initialized [premium-bughuntingUninit]
+    sprintf(digits, "%d", number);
+            ^

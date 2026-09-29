@@ -1,0 +1,8 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-817-s3.c: In function 'read_long':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-817-s3.c:31:16: error: implicit declaration of function 'strlen' [-Wimplicit-function-declaration]
+   31 |     if (buffer[strlen(buffer) - 1] != '\n') {
+      |                ^~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-817-s3.c:7:1: note: include '<string.h>' or provide a declaration of 'strlen'
+    6 | #include <stdlib.h>
+  +++ |+#include <string.h>
+    7 | 

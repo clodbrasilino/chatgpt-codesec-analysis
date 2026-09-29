@@ -1,0 +1,137 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    int id;
+    char name[50];
+    int value;
+} Record;
+
+typedef struct {
+    Record *records;
+    int count;
+} RecordGroup;
+
+typedef struct {
+    int *occurrences;
+    int size;
+} OccurrenceArray;
+
+static int compare_ints(const void *a, const void *b) {
+    int arg1 = *(const int *)a;
+    int arg2 = *(const int *)b;
+    return (arg1 > arg2) - (arg1 < arg2);
+}
+
+static int count_occurrences(const Record *records, int count, const Record *target) {
+    int occurrences = 0;
+    for (int i = 0; i < count; i++) {
+        if (records[i].id == target->id &&
+            strcmp(records[i].name, target->name) == 0 &&
+            records[i].value == target->value) {
+            occurrences++;
+        }
+    }
+    return occurrences;
+}
+
+static int is_duplicate(const Record *unique_records, int unique_count, const Record *target) {
+    for (int i = 0; i < unique_count; i++) {
+        if (unique_records[i].id == target->id &&
+            strcmp(unique_records[i].name, target->name) == 0 &&
+            unique_records[i].value == target->value) {
+            return 1;
+        }
+    }
+    return 0;
+}
+
+static int check_similar_occurrences(const Record *records, int count) {
+    if (records == NULL || count <= 0) {
+        return 0;
+    }
+
+    RecordGroup group;
+    group.records = (Record *)malloc((size_t)count * sizeof(Record));
+    if (group.records == NULL) {
+        return -1;
+    }
+    group.count = 0;
+
+    for (int i = 0; i < count; i++) {
+        if (!is_duplicate(group.records, group.count, &records[i])) {
+            group.records[group.count] = records[i];
+            group.count++;
+        }
+    }
+
+    OccurrenceArray occ_array;
+    occ_array.occurrences = (int *)malloc((size_t)group.count * sizeof(int));
+    if (occ_array.occurrences == NULL) {
+        free(group.records);
+        return -1;
+    }
+    /* Possible weaknesses found:
+     *  Variable 'occ_array.size' is assigned a value that is never used. [unreadVariable]
+     */
+    occ_array.size = group.count;
+
+    for (int i = 0; i < group.count; i++) {
+        occ_array.occurrences[i] = count_occurrences(records, count, &group.records[i]);
+    }
+
+    qsort(occ_array.occurrences, (size_t)group.count, sizeof(int), compare_ints);
+
+    int result = 1;
+    for (int i = 1; i < group.count; i++) {
+        if (occ_array.occurrences[i] != occ_array.occurrences[0]) {
+            result = 0;
+            break;
+        }
+    }
+
+    free(group.records);
+    free(occ_array.occurrences);
+    return result;
+}
+
+int main(void) {
+    Record records[] = {
+        {1, "alpha", 100},
+        {2, "beta", 200},
+        {1, "alpha", 100},
+        {3, "gamma", 300},
+        {2, "beta", 200},
+        {3, "gamma", 300}
+    };
+    int count = sizeof(records) / sizeof(records[0]);
+
+    int result = check_similar_occurrences(records, count);
+    if (result == 1) {
+        printf("All records occur similar times\n");
+    } else if (result == 0) {
+        printf("Records do not occur similar times\n");
+    } else {
+        printf("Error processing records\n");
+    }
+
+    Record records2[] = {
+        {1, "alpha", 100},
+        {2, "beta", 200},
+        {1, "alpha", 100},
+        {3, "gamma", 300}
+    };
+    count = sizeof(records2) / sizeof(records2[0]);
+
+    result = check_similar_occurrences(records2, count);
+    if (result == 1) {
+        printf("All records occur similar times\n");
+    } else if (result == 0) {
+        printf("Records do not occur similar times\n");
+    } else {
+        printf("Error processing records\n");
+    }
+
+    return 0;
+}

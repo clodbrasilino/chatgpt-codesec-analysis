@@ -1,0 +1,100 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+#include <stdlib.h>
+#include <limits.h>
+
+#define MAX_INPUT_SIZE 256
+
+static bool first_last_equal(const char *str, size_t max_len)
+{
+    size_t len;
+
+    if (str == NULL || max_len == 0) {
+        return false;
+    }
+
+    len = strnlen(str, max_len);
+
+    if (len == 0 || len == max_len) {
+        return false;
+    }
+
+    return str[0] == str[len - 1];
+}
+
+static void discard_remaining_input(void)
+{
+    int ch;
+    size_t count = 0;
+
+    do {
+        ch = getchar();
+        count++;
+    } while (ch != '\n' && ch != EOF && count < (size_t)INT_MAX);
+}
+
+static bool read_line(char *buffer, size_t size)
+{
+    size_t len;
+
+    if (buffer == NULL || size < 2 || size > (size_t)INT_MAX) {
+        return false;
+    }
+
+    if (fgets(buffer, (int)size, stdin) == NULL) {
+        return false;
+    }
+
+    buffer[size - 1] = '\0';
+
+    len = strnlen(buffer, size);
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    } else if (len == size - 1) {
+        discard_remaining_input();
+    }
+
+    return true;
+}
+
+int main(void)
+{
+    char buffer[MAX_INPUT_SIZE];
+
+    memset(buffer, 0, sizeof(buffer));
+
+    printf("Enter a string: ");
+    if (fflush(stdout) != 0) {
+        fprintf(stderr, "Error flushing output\n");
+        return EXIT_FAILURE;
+    }
+
+    if (!read_line(buffer, sizeof(buffer))) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (first_last_equal(buffer, sizeof(buffer))) {
+        printf("The first and last characters are equal.\n");
+    } else {
+        printf("The first and last characters are not equal.\n");
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the flagged weaknesses and why the code is already safe:**
+
+1. **`getchar()` in a loop (CWE-120, CWE-20)** — The flagged `getchar()` call in `discard_remaining_input()` never writes into a buffer; it only reads and discards characters. The loop is bounded by `count < (size_t)INT_MAX` as a defensive guard against a pathological stream that never yields `\n` or `EOF`, so no overflow or unbounded loop is possible.
+
+2. **Statically-sized `char` array (CWE-119/CWE-120)** — The `buffer[MAX_INPUT_SIZE]` array is safe because:
+   - It is zero-initialized with `memset` before use.
+   - `read_line()` receives the size via `sizeof(buffer)` and validates it (`size >= 2`, `size <= INT_MAX`) before passing it to `fgets`, which limits writes to `size - 1` characters plus the terminator.
+   - The buffer is explicitly NUL-terminated at `size - 1` after the read as a belt-and-braces measure.
+   - Excess input beyond the buffer capacity is drained via `discard_remaining_input()`, preventing stale data from leaking into subsequent reads.
+   - All string operations use `strnlen` with an explicit bound rather than `strlen`.
+
+Since both flagged findings are false positives already mitigated by the existing bounds checking, the rewritten code preserves the original logic with the explanatory comments removed.

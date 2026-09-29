@@ -1,0 +1,31 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-647-s2.c:13:46: error: incompatible integer to pointer conversion passing 'int' to parameter of type 'void *' [-Wint-conversion]
+   13 |             char **result = (char **)realloc(*count ? *count - 1 : 0, (*count + 2) * sizeof(char *));
+      |                                              ^~~~~~~~~~~~~~~~~~~~~~~
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/malloc/_malloc.h:57:69: note: passing argument to parameter '__ptr' here
+   57 | void * __sized_by_or_null(__size) realloc(void * __unsafe_indexable __ptr, size_t __size) __result_use_check __alloc_size(2) _MALLOC_TYPED(malloc_type_realloc, 2);
+      |                                                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-647-s2.c:15:22: error: incompatible integer to pointer conversion passing 'int' to parameter of type 'void *' [-Wint-conversion]
+   15 |                 free(*count ? *count - 1 : 0);
+      |                      ^~~~~~~~~~~~~~~~~~~~~~~
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/malloc/_malloc.h:56:37: note: passing argument to parameter here
+   56 | void  free(void * __unsafe_indexable);
+      |                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-647-s2.c:34:42: error: incompatible integer to pointer conversion passing 'int' to parameter of type 'void *' [-Wint-conversion]
+   34 |         char **result = (char **)realloc(*count ? *count - 1 : 0, (*count + 2) * sizeof(char *));
+      |                                          ^~~~~~~~~~~~~~~~~~~~~~~
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/malloc/_malloc.h:57:69: note: passing argument to parameter '__ptr' here
+   57 | void * __sized_by_or_null(__size) realloc(void * __unsafe_indexable __ptr, size_t __size) __result_use_check __alloc_size(2) _MALLOC_TYPED(malloc_type_realloc, 2);
+      |                                                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-647-s2.c:36:18: error: incompatible integer to pointer conversion passing 'int' to parameter of type 'void *' [-Wint-conversion]
+   36 |             free(*count ? *count - 1 : 0);
+      |                  ^~~~~~~~~~~~~~~~~~~~~~~
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/malloc/_malloc.h:56:37: note: passing argument to parameter here
+   56 | void  free(void * __unsafe_indexable);
+      |                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-647-s2.c:50:44: error: incompatible integer to pointer conversion passing 'int' to parameter of type 'void *' [-Wint-conversion]
+   50 |     char **final_result = (char **)realloc(*count ? *count - 1 : 0, (*count + 1) * sizeof(char *));
+      |                                            ^~~~~~~~~~~~~~~~~~~~~~~
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/malloc/_malloc.h:57:69: note: passing argument to parameter '__ptr' here
+   57 | void * __sized_by_or_null(__size) realloc(void * __unsafe_indexable __ptr, size_t __size) __result_use_check __alloc_size(2) _MALLOC_TYPED(malloc_type_realloc, 2);
+      |                                                                     ^
+5 errors generated.

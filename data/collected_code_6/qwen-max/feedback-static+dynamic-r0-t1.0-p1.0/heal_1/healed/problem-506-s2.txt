@@ -1,0 +1,40 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+long long factorial(long long n) {
+    if (n == 0) return 1;
+    if (n < 0 || n > 20) return -1; // Limit to avoid overflow and large computations
+    return n * factorial(n - 1);
+}
+
+long long permutation(long long n, long long k) {
+    if (k > n) return 0;
+    if (n < 0 || k < 0) return -1; // Ensure non-negative values
+    long long fact_n = factorial(n);
+    long long fact_n_k = factorial(n - k);
+    if (fact_n == -1 || fact_n_k == -1) return -1; // Check for overflow or invalid input
+    return fact_n / fact_n_k;
+}
+
+int main() {
+    long long n, k;
+    printf("Enter n and k: ");
+    if (scanf("%lld %lld", &n, &k) != 2) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    if (n < 0 || k < 0) {
+        fprintf(stderr, "Input values must be non-negative\n");
+        return EXIT_FAILURE;
+    }
+    long long result = permutation(n, k);
+    if (result == -1) {
+        fprintf(stderr, "Computation failed due to overflow or invalid input\n");
+        return EXIT_FAILURE;
+    }
+    printf("P(%lld, %lld) = %lld\n", n, k, result);
+    return EXIT_SUCCESS;
+}
+```

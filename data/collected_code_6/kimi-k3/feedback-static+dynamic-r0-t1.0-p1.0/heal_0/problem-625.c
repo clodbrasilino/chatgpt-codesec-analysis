@@ -1,0 +1,34 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+void interchange_first_last(int *arr, size_t size)
+{
+    if (arr != NULL && size > 1) {
+        int temp = arr[0];
+        arr[0] = arr[size - 1];
+        arr[size - 1] = temp;
+    }
+}
+
+int main(void)
+{
+    int arr[] = {1, 2, 3, 4, 5};
+    size_t size = sizeof(arr) / sizeof(arr[0]);
+    size_t i;
+
+    printf("Original array: ");
+    for (i = 0; i < size; i++) {
+        printf("%d ", arr[i]);
+    }
+    printf("\n");
+
+    interchange_first_last(arr, size);
+
+    printf("Modified array: ");
+    for (i = 0; i < size; i++) {
+        printf("%d ", arr[i]);
+    }
+    printf("\n");
+
+    return 0;
+}

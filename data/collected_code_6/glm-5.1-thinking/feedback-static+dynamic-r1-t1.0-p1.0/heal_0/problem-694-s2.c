@@ -1,0 +1,69 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int key;
+    int value;
+} DictEntry;
+
+int* get_unique_values(const DictEntry* dict, size_t dict_size, size_t* unique_size) {
+    if (dict == NULL || unique_size == NULL) {
+        return NULL;
+    }
+
+    *unique_size = 0;
+
+    if (dict_size == 0) {
+        return NULL;
+    }
+
+    int* unique_vals = (int*)malloc(dict_size * sizeof(int));
+    if (unique_vals == NULL) {
+        return NULL;
+    }
+
+    for (size_t i = 0; i < dict_size; i++) {
+        int current_val = dict[i].value;
+        int is_duplicate = 0;
+        for (size_t j = 0; j < *unique_size; j++) {
+            if (unique_vals[j] == current_val) {
+                is_duplicate = 1;
+                break;
+            }
+        }
+        if (!is_duplicate) {
+            unique_vals[*unique_size] = current_val;
+            (*unique_size)++;
+        }
+    }
+
+    if (*unique_size == 0) {
+        free(unique_vals);
+        return NULL;
+    }
+
+    int* shrunk_vals = (int*)realloc(unique_vals, (*unique_size) * sizeof(int));
+    if (shrunk_vals != NULL) {
+        return shrunk_vals;
+    }
+
+    return unique_vals;
+}
+
+int main() {
+    DictEntry dict[] = {{1, 10}, {2, 20}, {3, 10}, {4, 30}, {5, 20}};
+    size_t dict_size = sizeof(dict) / sizeof(dict[0]);
+    size_t unique_size = 0;
+
+    int* unique = get_unique_values(dict, dict_size, &unique_size);
+
+    if (unique != NULL) {
+        for (size_t i = 0; i < unique_size; i++) {
+            printf("%d ", unique[i]);
+        }
+        printf("\n");
+        free(unique);
+    }
+
+    return 0;
+}

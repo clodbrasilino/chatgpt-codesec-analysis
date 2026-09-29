@@ -1,0 +1,44 @@
+```c
+#include <stdio.h>
+#include <stddef.h>
+
+long long array_sum(const int *arr, size_t len)
+{
+    long long sum = 0;
+
+    if (arr == NULL) {
+        return 0;
+    }
+
+    for (size_t i = 0; i < len; i++) {
+        sum += arr[i];
+    }
+
+    return sum;
+}
+
+int main(void)
+{
+    int numbers[] = {3, 7, 1, 9, 4, 6};
+    size_t count = sizeof(numbers) / sizeof(numbers[0]);
+    long long result;
+
+    result = array_sum(numbers, count);
+
+    if (printf("Sum of array: %lld\n", result) < 0) {
+        return 1;
+    }
+
+    return 0;
+}
+```
+
+Key design decisions:
+
+- **`long long` for the sum**: An array of `int` values can easily overflow an `int` accumulator. Using a wider type mitigates integer overflow, which falls under improper handling of exceptional conditions (CWE-703).
+- **`size_t` for length and indexing**: This is the correct, standards-compliant type for object sizes and array indices (CWE-710), avoiding signed/unsigned mismatch issues.
+- **NULL pointer check**: The function defensively handles a `NULL` array pointer rather than dereferencing it (CWE-703, CWE-664).
+- **`const` correctness**: The function does not modify the array, so the parameter is declared `const int *` (CWE-710).
+- **Checked return value of `printf`**: I/O functions can fail; ignoring their return values is an improper check of exceptional conditions (CWE-703).
+- **`int main(void)` with explicit return**: Conforms to the C standard signature (CWE-710).
+- **No dynamic resources**: By using a stack-allocated array, there are no allocation/deallocation lifetime concerns (CWE-664).

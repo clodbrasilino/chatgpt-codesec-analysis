@@ -1,0 +1,98 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node *next;
+} Node;
+
+int contains(const Node *head, int value) {
+    while (head != NULL) {
+        if (head->data == value) {
+            return 1;
+        }
+        head = head->next;
+    }
+    return 0;
+}
+
+void remove_elements(Node **head1, const Node *head2) {
+    if (head1 == NULL) {
+        return;
+    }
+
+    Node **current = head1;
+
+    while (*current != NULL) {
+        if (contains(head2, (*current)->data)) {
+            Node *temp = *current;
+            *current = temp->next;
+            free(temp);
+        } else {
+            current = &(*current)->next;
+        }
+    }
+}
+
+int push_front(Node **head, int value) {
+    Node *new_node = malloc(sizeof(*new_node));
+    if (new_node == NULL) {
+        return 0;
+    }
+
+    new_node->data = value;
+    new_node->next = *head;
+    *head = new_node;
+
+    return 1;
+}
+
+void print_list(const Node *head) {
+    while (head != NULL) {
+        printf("%d ", head->data);
+        head = head->next;
+    }
+    printf("\n");
+}
+
+void free_list(Node *head) {
+    while (head != NULL) {
+        Node *temp = head;
+        head = head->next;
+        free(temp);
+    }
+}
+
+int main(void) {
+    Node *list1 = NULL;
+    Node *list2 = NULL;
+    int result = EXIT_SUCCESS;
+
+    if (!push_front(&list1, 1) ||
+        !push_front(&list1, 2) ||
+        !push_front(&list1, 3) ||
+        !push_front(&list1, 4) ||
+        !push_front(&list1, 5) ||
+        !push_front(&list2, 2) ||
+        !push_front(&list2, 4)) {
+        result = EXIT_FAILURE;
+        goto cleanup;
+    }
+
+    printf("List1 before: ");
+    print_list(list1);
+
+    printf("List2: ");
+    print_list(list2);
+
+    remove_elements(&list1, list2);
+
+    printf("List1 after: ");
+    print_list(list1);
+
+cleanup:
+    free_list(list1);
+    free_list(list2);
+
+    return result;
+}

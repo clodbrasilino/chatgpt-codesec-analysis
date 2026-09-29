@@ -1,0 +1,35 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+
+char* snake_to_camel(char *snake_case) {
+    char *original = snake_case;
+    int i = 0, j = 0;
+    if (islower(snake_case[0])) {
+        snake_case[j++] = toupper(snake_case[i++]);
+    }
+    while (snake_case[i]) {
+        if (snake_case[i] == '_') {
+            snake_case[j++] = toupper(snake_case[i + 1]);
+            i += 2;
+        } else {
+            snake_case[j++] = snake_case[i++];
+        }
+    }
+    snake_case[j] = '\0';
+    return original;
+}
+
+int main() {
+    char snake_case1[] = "python_program";
+    char snake_case2[] = "python_language";
+    char snake_case3[] = "programming_language";
+
+    printf("Original: %s, CamelCase: %s\n", snake_case1, snake_to_camel(snake_case1));
+    printf("Original: %s, CamelCase: %s\n", snake_case2, snake_to_camel(snake_case2));
+    printf("Original: %s, CamelCase: %s\n", snake_case3, snake_to_camel(snake_case3));
+
+    return 0;
+}
+```

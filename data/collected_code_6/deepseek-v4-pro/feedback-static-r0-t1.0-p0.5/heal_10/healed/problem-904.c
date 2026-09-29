@@ -1,0 +1,17 @@
+#include <stdbool.h>
+#include <stdlib.h>
+
+bool is_even(int number) {
+    return number % 2 == 0;
+}
+
+int main(void) {
+    int test_number = 11;
+    bool result = is_even(test_number);
+    
+    if (result) {
+        return 0;
+    } else {
+        return 1;
+    }
+}

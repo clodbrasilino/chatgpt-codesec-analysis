@@ -1,0 +1,21 @@
+./collected_code_4/round1//heal_0//problem-88.c: In function 'getFrequency':
+./collected_code_4/round1//heal_0//problem-88.c:13:26: warning: dereference of possibly-NULL 'freq_arr' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   13 |         freq_arr[i].item = arr[i];
+      |         ~~~~~~~~~~~~~~~~~^~~~~~~~
+  'getFrequency': events 1-4
+    |
+    |   10 |     struct itemFrequency* freq_arr = (struct itemFrequency*) malloc(n * sizeof(struct itemFrequency));
+    |      |                                                              ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                                                              |
+    |      |                                                              (1) this call could return NULL
+    |   11 | 
+    |   12 |     for(int i=0; i<n; i++) {
+    |      |                  ~~~                                          
+    |      |                   |
+    |      |                   (2) following 'true' branch (when 'i < n')...
+    |   13 |         freq_arr[i].item = arr[i];
+    |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~                             
+    |      |                          |    |
+    |      |                          |    (3) ...to here
+    |      |                          (4) 'freq_arr + (long unsigned int)i * 8' could be NULL: unchecked value from (1)
+    |

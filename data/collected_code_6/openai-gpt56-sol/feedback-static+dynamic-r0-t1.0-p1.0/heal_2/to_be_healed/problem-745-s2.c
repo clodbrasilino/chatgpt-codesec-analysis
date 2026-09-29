@@ -1,0 +1,107 @@
+#include <errno.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+static int is_self_dividing(long long number)
+{
+    long long remaining;
+
+    if (number <= 0) {
+        return 0;
+    }
+
+    remaining = number;
+
+    while (remaining != 0) {
+        int digit = (int)(remaining % 10);
+
+        if (digit == 0 || number % digit != 0) {
+            return 0;
+        }
+
+        remaining /= 10;
+    }
+
+    return 1;
+}
+
+static int find_self_dividing_numbers(long long start, long long end)
+{
+    long long number;
+
+    if (start > end) {
+        return 0;
+    }
+
+    if (start < 1) {
+        start = 1;
+    }
+
+    number = start;
+
+    for (;;) {
+        if (is_self_dividing(number) && printf("%lld\n", number) < 0) {
+            return 0;
+        }
+
+        if (number == end) {
+            break;
+        }
+
+        ++number;
+    }
+
+    return 1;
+}
+
+static int parse_long_long(const char *text, long long *value)
+{
+    char *end;
+    long long parsed;
+
+    if (text == NULL || value == NULL || *text == '\0') {
+        return 0;
+    }
+
+    errno = 0;
+    parsed = strtoll(text, &end, 10);
+
+    if (errno == ERANGE || end == text || *end != '\0') {
+        return 0;
+    }
+
+    *value = parsed;
+    return 1;
+}
+
+/* Possible weaknesses found:
+ *  Parameter 'argv' can be declared as const array [constParameter]
+ */
+int main(int argc, char * const argv[])
+{
+    long long start;
+    long long end;
+
+    if (argc != 3) {
+        fprintf(stderr, "Usage: %s <start> <end>\n",
+                argc > 0 && argv[0] != NULL ? argv[0] : "program");
+        return EXIT_FAILURE;
+    }
+
+    if (!parse_long_long(argv[1], &start) ||
+        !parse_long_long(argv[2], &end) ||
+        start > end) {
+        fprintf(stderr, "Invalid range\n");
+        return EXIT_FAILURE;
+    }
+
+    if (!find_self_dividing_numbers(start, end)) {
+        return EXIT_FAILURE;
+    }
+
+    if (fflush(stdout) == EOF) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

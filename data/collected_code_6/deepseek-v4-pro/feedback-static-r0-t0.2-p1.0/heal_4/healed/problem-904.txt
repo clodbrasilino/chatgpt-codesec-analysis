@@ -1,0 +1,24 @@
+```c
+#include <stdbool.h>
+#include <stdlib.h>
+#include <time.h>
+
+bool is_even(int number) {
+    return number % 2 == 0;
+}
+
+int main(void) {
+    int test_number;
+    bool result;
+    
+    test_number = rand() % 100;
+    
+    result = is_even(test_number);
+    
+    if (result) {
+        return 0;
+    }
+    
+    return 1;
+}
+```

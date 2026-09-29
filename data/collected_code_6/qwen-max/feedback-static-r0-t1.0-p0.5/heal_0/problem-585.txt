@@ -1,0 +1,46 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int price;
+    int index;
+} Item;
+
+int compare(const void *a, const void *b) {
+    return ((Item *)a)->price - ((Item *)b)->price;
+}
+
+void find_n_expensive_items(int *prices, int n, int size, Item *result) {
+    Item *items = (Item *)malloc(size * sizeof(Item));
+    if (!items) exit(EXIT_FAILURE);
+
+    for (int i = 0; i < size; ++i) {
+        items[i].price = prices[i];
+        items[i].index = i;
+    }
+
+    qsort(items, size, sizeof(Item), compare);
+
+    for (int i = 0; i < n; ++i) {
+        result[i] = items[size - 1 - i];
+    }
+
+    free(items);
+}
+
+int main() {
+    int prices[] = {100, 200, 50, 300, 75, 150};
+    int n = 3;
+    int size = sizeof(prices) / sizeof(prices[0]);
+    Item result[n];
+
+    find_n_expensive_items(prices, n, size, result);
+
+    for (int i = 0; i < n; ++i) {
+        printf("Price: %d, Index: %d\n", result[i].price, result[i].index);
+    }
+
+    return 0;
+}
+```

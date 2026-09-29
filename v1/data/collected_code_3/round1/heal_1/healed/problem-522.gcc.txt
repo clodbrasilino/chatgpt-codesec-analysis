@@ -1,0 +1,89 @@
+collected_code_3/round1/heal_1/healed/problem-522.c: In function 'longestBitonic':
+collected_code_3/round1/heal_1/healed/problem-522.c:10:16: warning: leak of 'dec' [CWE-401] [-Wanalyzer-malloc-leak]
+   10 |         return -1;
+      |                ^
+  'main': events 1-2
+    |
+    |   37 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   40 |     printf("Length of max length Bitonic Subsequence is %d\n", longestBitonic(arr, n));
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) calling 'longestBitonic' from 'main'
+    |
+    +--> 'longestBitonic': events 3-7
+           |
+           |    4 | int longestBitonic(int arr[], int n) {
+           |      |     ^~~~~~~~~~~~~~
+           |      |     |
+           |      |     (3) entry to 'longestBitonic'
+           |    5 |     int* inc = (int*)malloc(sizeof(int) * n);
+           |    6 |     int* dec = (int*)malloc(sizeof(int) * n);
+           |      |                      ~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                      |
+           |      |                      (4) allocated here
+           |......
+           |    9 |     if (inc == NULL || dec == NULL) {
+           |      |        ~
+           |      |        |
+           |      |        (5) following 'true' branch (when 'inc' is NULL)...
+           |   10 |         return -1;
+           |      |                ~
+           |      |                |
+           |      |                (6) ...to here
+           |      |                (7) 'dec' leaks here; was allocated at (4)
+           |
+collected_code_3/round1/heal_1/healed/problem-522.c:10:16: warning: leak of 'inc' [CWE-401] [-Wanalyzer-malloc-leak]
+   10 |         return -1;
+      |                ^
+  'main': events 1-2
+    |
+    |   37 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   40 |     printf("Length of max length Bitonic Subsequence is %d\n", longestBitonic(arr, n));
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) calling 'longestBitonic' from 'main'
+    |
+    +--> 'longestBitonic': events 3-6
+           |
+           |    4 | int longestBitonic(int arr[], int n) {
+           |      |     ^~~~~~~~~~~~~~
+           |      |     |
+           |      |     (3) entry to 'longestBitonic'
+           |    5 |     int* inc = (int*)malloc(sizeof(int) * n);
+           |      |                      ~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                      |
+           |      |                      (4) allocated here
+           |......
+           |    9 |     if (inc == NULL || dec == NULL) {
+           |      |        ~
+           |      |        |
+           |      |        (5) assuming 'inc' is non-NULL
+           |      |        (6) following 'false' branch (when 'inc' is non-NULL)...
+           |
+         'longestBitonic': event 7
+           |
+           |    9 |     if (inc == NULL || dec == NULL) {
+           |      |                     ^
+           |      |                     |
+           |      |                     (7) ...to here
+           |
+         'longestBitonic': events 8-10
+           |
+           |    9 |     if (inc == NULL || dec == NULL) {
+           |      |                     ^
+           |      |                     |
+           |      |                     (8) following 'true' branch (when 'dec' is NULL)...
+           |   10 |         return -1;
+           |      |                ~     
+           |      |                |
+           |      |                (9) ...to here
+           |      |                (10) 'inc' leaks here; was allocated at (4)
+           |

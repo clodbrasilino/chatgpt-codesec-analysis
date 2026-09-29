@@ -1,0 +1,36 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+double calculate_cube_volume(double side);
+
+double calculate_cube_volume(double side) {
+    if (side < 0.0) {
+        return -1.0;
+    }
+    return side * side * side;
+}
+
+int main(void) {
+    double side = 0.0;
+    double volume = 0.0;
+
+    if (scanf("%lf", &side) != 1) {
+        return EXIT_FAILURE;
+    }
+
+    if (side < 0.0) {
+        return EXIT_FAILURE;
+    }
+
+    volume = calculate_cube_volume(side);
+    
+    if (volume < 0.0) {
+        return EXIT_FAILURE;
+    }
+
+    if (printf("%.6f\n", volume) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

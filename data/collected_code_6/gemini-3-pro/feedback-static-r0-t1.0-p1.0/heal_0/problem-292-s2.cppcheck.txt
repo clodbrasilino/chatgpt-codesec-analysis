@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-292-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-292-s2.c:31:53: style: Condition 'find_quotient(dividend,divisor,&quotient)==0' is always false [knownConditionTrueFalse]
+    if (find_quotient(dividend, divisor, &quotient) == 0) {
+                                                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-292-s2.c:31:22: note: Calling function 'find_quotient' returns -1
+    if (find_quotient(dividend, divisor, &quotient) == 0) {
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-292-s2.c:31:53: note: Condition 'find_quotient(dividend,divisor,&quotient)==0' is always false
+    if (find_quotient(dividend, divisor, &quotient) == 0) {
+                                                    ^

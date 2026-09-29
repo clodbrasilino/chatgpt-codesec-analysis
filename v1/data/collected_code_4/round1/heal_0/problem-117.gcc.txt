@@ -1,0 +1,15 @@
+./collected_code_4/round1//heal_0//problem-117.c: In function 'addToLinkedList':
+./collected_code_4/round1//heal_0//problem-117.c:47:19: warning: dereference of possibly-NULL 'newNode' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   47 |     newNode->data = (char*) malloc(strlen(data) + 1);
+      |     ~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  'addToLinkedList': events 1-2
+    |
+    |   46 |     Node* newNode = (Node*) malloc(sizeof(Node));
+    |      |                             ^~~~~~~~~~~~~~~~~~~~
+    |      |                             |
+    |      |                             (1) this call could return NULL
+    |   47 |     newNode->data = (char*) malloc(strlen(data) + 1);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                   |
+    |      |                   (2) 'newNode' could be NULL: unchecked value from (1)
+    |

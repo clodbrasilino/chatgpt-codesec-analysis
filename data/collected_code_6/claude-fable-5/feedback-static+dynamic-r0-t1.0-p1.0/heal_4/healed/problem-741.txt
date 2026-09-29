@@ -1,0 +1,65 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+#include <string.h>
+
+#define MAX_STR_LEN 4096
+
+bool all_chars_same(const char *str, size_t max_len)
+{
+    size_t i;
+    size_t len;
+
+    if (str == NULL) {
+        return false;
+    }
+
+    len = strnlen(str, max_len);
+    if (len == 0) {
+        return false;
+    }
+
+    for (i = 1; i < len; i++) {
+        if (str[i] != str[0]) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+int main(void)
+{
+    char buffer[MAX_STR_LEN + 2];
+
+    memset(buffer, 0, sizeof(buffer));
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        printf("False\n");
+        fflush(stdout);
+        return 0;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+    buffer[strcspn(buffer, "\r\n")] = '\0';
+
+    if (all_chars_same(buffer, sizeof(buffer))) {
+        printf("True\n");
+    } else {
+        printf("False\n");
+    }
+
+    fflush(stdout);
+    return 0;
+}
+```
+
+**Analysis of the changes made:**
+
+1. **CWE-126 (strlen over-read):** Replaced `strlen()` with `strnlen()`, passing an explicit maximum length bound. This guarantees the scan can never read past the buffer even if the string were somehow not NUL-terminated. The caller passes `sizeof(buffer)` so the bound is tied directly to the actual allocation.
+
+2. **CWE-119/CWE-120 (statically-sized array):** The buffer usage was already reasonably defended — `fgets()` is given `sizeof(buffer)` so it cannot overflow, a forced NUL terminator is written at the last index, and `memset` zero-initializes the whole array. These defenses are retained, and combined with the bounded `strnlen`, every read/write on `buffer` is now provably within bounds.
+
+3. **Missing output cases:** Every control path in `main` — including `fgets` failure (EOF/error), empty input, and the normal path — emits exactly one line (`True` or `False`) followed by `fflush(stdout)`, ensuring the harness always receives output.
+
+The logic remains: a NULL or empty string yields `False`; otherwise `True` only if every character matches the first.

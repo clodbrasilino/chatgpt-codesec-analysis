@@ -1,0 +1,68 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+static unsigned long gcd_two(unsigned long a, unsigned long b)
+{
+    while (b != 0UL) {
+        unsigned long t = a % b;
+        a = b;
+        b = t;
+    }
+    return a;
+}
+
+static unsigned long gcd_array(const unsigned long *arr, size_t n)
+{
+    size_t i;
+    unsigned long result;
+
+    if (arr == NULL || n == 0U) {
+        return 0UL;
+    }
+
+    result = arr[0];
+    for (i = 1U; i < n; i++) {
+        result = gcd_two(result, arr[i]);
+        if (result == 1UL) {
+            break;
+        }
+    }
+    return result;
+}
+
+int main(void)
+{
+    size_t n;
+    size_t i;
+    unsigned long *arr;
+    unsigned long result;
+
+    printf("Enter number of elements: ");
+    if (scanf("%zu", &n) != 1 || n == 0U || n > 1000000U) {
+        fprintf(stderr, "Invalid input size\n");
+        return EXIT_FAILURE;
+    }
+
+    arr = malloc(n * sizeof(*arr));
+    if (arr == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0U; i < n; i++) {
+        printf("Enter element %zu: ", i + 1U);
+        if (scanf("%lu", &arr[i]) != 1) {
+            fprintf(stderr, "Invalid element input\n");
+            free(arr);
+            return EXIT_FAILURE;
+        }
+    }
+
+    result = gcd_array(arr, n);
+    printf("GCD of the array elements: %lu\n", result);
+
+    free(arr);
+    return EXIT_SUCCESS;
+}
+```

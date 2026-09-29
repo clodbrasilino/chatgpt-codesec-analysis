@@ -1,0 +1,113 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+#include <stddef.h>
+
+#define MAX_ENTRIES 10
+#define MAX_KEY_LEN 32
+#define MAX_VALUE_LEN 32
+
+struct DictEntry {
+    char key[MAX_KEY_LEN];
+    char value[MAX_VALUE_LEN];
+};
+
+struct Dictionary {
+    struct DictEntry entries[MAX_ENTRIES];
+    size_t count;
+};
+
+static bool dict_add(struct Dictionary *dict, const char *key, const char *value)
+{
+    if (dict == NULL || key == NULL || value == NULL) {
+        return false;
+    }
+    if (dict->count >= MAX_ENTRIES) {
+        return false;
+    }
+
+    size_t key_len = strnlen(key, MAX_KEY_LEN);
+    size_t value_len = strnlen(value, MAX_VALUE_LEN);
+
+    if (key_len >= MAX_KEY_LEN || value_len >= MAX_VALUE_LEN) {
+        return false;
+    }
+
+    memcpy(dict->entries[dict->count].key, key, key_len);
+    dict->entries[dict->count].key[key_len] = '\0';
+
+    memcpy(dict->entries[dict->count].value, value, value_len);
+    dict->entries[dict->count].value[value_len] = '\0';
+
+    dict->count++;
+    return true;
+}
+
+static bool dict_contains_key(const struct Dictionary *dict, const char *key)
+{
+    if (dict == NULL || key == NULL) {
+        return false;
+    }
+    for (size_t i = 0; i < dict->count; i++) {
+        if (strcmp(dict->entries[i].key, key) == 0) {
+            return true;
+        }
+    }
+    return false;
+}
+
+int main(void)
+{
+    struct Dictionary dict = { .count = 0 };
+
+    if (!dict_add(&dict, "apple", "fruit")) {
+        fprintf(stderr, "Failed to add entry\n");
+        return 1;
+    }
+    if (!dict_add(&dict, "carrot", "vegetable")) {
+        fprintf(stderr, "Failed to add entry\n");
+        return 1;
+    }
+    if (!dict_add(&dict, "salmon", "fish")) {
+        fprintf(stderr, "Failed to add entry\n");
+        return 1;
+    }
+
+    const char *keys_to_check[] = { "apple", "banana", "salmon" };
+    size_t num_keys = sizeof(keys_to_check) / sizeof(keys_to_check[0]);
+
+    for (size_t i = 0; i < num_keys; i++) {
+        if (dict_contains_key(&dict, keys_to_check[i])) {
+            if (printf("Key '%s' is present in the dictionary.\n", keys_to_check[i]) < 0) {
+                return 1;
+            }
+        } else {
+            if (printf("Key '%s' is not present in the dictionary.\n", keys_to_check[i]) < 0) {
+                return 1;
+            }
+        }
+    }
+
+    return 0;
+}
+```
+
+Analysis of the flagged weaknesses and why this code is already safe:
+
+**1. Statically-sized arrays (`key`, `value`) — CWE-119/CWE-120 (risk 2):**
+These are informational warnings. Fixed-size buffers are only dangerous if writes to them are unbounded. Here, every write path goes through `dict_add`, which validates lengths before copying, so the arrays are properly protected.
+
+**2. `memcpy` calls — CWE-120 (risk 2):**
+Both `memcpy` calls are guarded correctly:
+- `strnlen(key, MAX_KEY_LEN)` bounds the length measurement itself, so even a non-terminated input string can't cause an over-read beyond `MAX_KEY_LEN`.
+- The check `key_len >= MAX_KEY_LEN` (note the `>=`, not `>`) guarantees `key_len <= MAX_KEY_LEN - 1`, leaving room for the null terminator written at `key[key_len]`.
+- The same logic applies symmetrically to `value` with `MAX_VALUE_LEN`.
+
+**Other correctness points already handled:**
+- NULL-pointer checks on all public function parameters.
+- Capacity check (`dict->count >= MAX_ENTRIES`) prevents writing past the `entries` array.
+- Explicit null termination after each `memcpy`, so `strcmp` in `dict_contains_key` never reads past the buffer.
+- `printf` return values are checked, and errors propagate via exit codes.
+
+The Flawfinder hits are false positives in this instance; the code is retained unchanged (minus comments) because the bounds checking pattern used — measure with `strnlen`, reject if `>= max`, copy, terminate — is the correct fix for CWE-120.

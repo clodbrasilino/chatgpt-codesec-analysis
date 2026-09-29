@@ -1,0 +1,72 @@
+```c
+#include <stdio.h>
+#include <string.h>
+
+#define BUFFER_SIZE 256
+
+int count_matching_positions(const char *str, size_t max_len)
+{
+    int count = 0;
+    size_t len;
+    size_t i;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    len = strnlen(str, max_len);
+
+    for (i = 0; i < len; i++) {
+        char c = str[i];
+        if (c >= 'a' && c <= 'z') {
+            if ((size_t)(c - 'a') == i) {
+                count++;
+            }
+        } else if (c >= 'A' && c <= 'Z') {
+            if ((size_t)(c - 'A') == i) {
+                count++;
+            }
+        }
+    }
+
+    return count;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    int result;
+
+    printf("Enter a string: ");
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+    buffer[strcspn(buffer, "\n")] = '\0';
+
+    result = count_matching_positions(buffer, sizeof(buffer));
+
+    printf("Number of characters at same position as in alphabet: %d\n", result);
+
+    return 0;
+}
+```
+
+**Analysis of the original code and how the weaknesses are addressed:**
+
+The Flawfinder warning about the statically-sized `buffer` array (CWE-119/CWE-120) is a low-risk advisory rather than an actual defect, and the code already mitigates it correctly:
+
+1. **Bounded input reading** — `fgets(buffer, sizeof(buffer), stdin)` limits input to the buffer size, preventing overflow. Using `sizeof(buffer)` rather than a repeated magic number ensures the bound stays correct if the size changes.
+
+2. **Guaranteed null termination** — `buffer[sizeof(buffer) - 1] = '\0';` is defensive; `fgets` already null-terminates, but this makes the invariant explicit and robust.
+
+3. **Safe newline stripping** — `buffer[strcspn(buffer, "\n")] = '\0';` handles both the presence and absence of a trailing newline without out-of-bounds access, unlike the common `buffer[strlen(buffer) - 1]` pattern which breaks on empty strings.
+
+4. **Bounded string measurement** — `strnlen(str, max_len)` in `count_matching_positions` guards against unterminated strings, and the `NULL` check prevents dereferencing a null pointer.
+
+5. **Correct signed/size comparisons** — casting `(c - 'a')` to `size_t` before comparing with the index `i` avoids signed/unsigned comparison warnings, and the cast is safe because the range checks guarantee a non-negative result.
+
+The code is functionally sound: it counts characters whose position in the string (0-indexed) matches their position in the alphabet, case-insensitively. No changes were required beyond removing comments, as the identified weakness was already properly mitigated.

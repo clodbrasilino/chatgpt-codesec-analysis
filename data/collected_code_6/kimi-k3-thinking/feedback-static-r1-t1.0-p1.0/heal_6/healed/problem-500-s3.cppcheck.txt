@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_6/healed/problem-500-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_6/healed/problem-500-s3.c:87:31: style: Condition 'dst_remaining==0' is always false [knownConditionTrueFalse]
+            if (dst_remaining == 0 || len > dst_remaining - 1)
+                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_6/healed/problem-500-s3.c:77:20: note: Assuming that condition 'offset>=capacity' is not redundant
+        if (offset >= capacity)
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_6/healed/problem-500-s3.c:83:34: note: Assignment 'dst_remaining=capacity-offset', assigned value is greater than 0
+        dst_remaining = capacity - offset;
+                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_6/healed/problem-500-s3.c:87:31: note: Condition 'dst_remaining==0' is always false
+            if (dst_remaining == 0 || len > dst_remaining - 1)
+                              ^

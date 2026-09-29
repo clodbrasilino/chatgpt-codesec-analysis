@@ -1,0 +1,38 @@
+collected_code/problem-920-0.c: In function 'removeNoneValues':
+collected_code/problem-920-0.c:13:23: warning: use of uninitialized value '*tuples_29(D) + _2.isEmpty' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   13 |         if (!tuples[i].isEmpty) {
+      |              ~~~~~~~~~^~~~~~~~
+  'main': events 1-3
+    |
+    |   24 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |   25 |     int size = 5; // replace with actual size of tuple list
+    |   26 |     Tuple tuples[size]; // replace with actual tuple list
+    |      |           ~~~~~~
+    |      |           |
+    |      |           (2) region created on stack here
+    |   27 |     // call removeNoneValues function passing the tuple list and size
+    |   28 |     removeNoneValues(tuples, size);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (3) calling 'removeNoneValues' from 'main'
+    |
+    +--> 'removeNoneValues': events 4-7
+           |
+           |   10 | void removeNoneValues(Tuple tuples[], int size) {
+           |      |      ^~~~~~~~~~~~~~~~
+           |      |      |
+           |      |      (4) entry to 'removeNoneValues'
+           |   11 |     int count = 0;
+           |   12 |     for (int i = 0; i < size; i++) {
+           |      |                     ~~~~~~~~
+           |      |                       |
+           |      |                       (5) following 'true' branch (when 'i < size')...
+           |   13 |         if (!tuples[i].isEmpty) {
+           |      |              ~~~~~~~~~~~~~~~~~
+           |      |                    |  |
+           |      |                    |  (7) use of uninitialized value '*tuples_29(D) + _2.isEmpty' here
+           |      |                    (6) ...to here
+           |

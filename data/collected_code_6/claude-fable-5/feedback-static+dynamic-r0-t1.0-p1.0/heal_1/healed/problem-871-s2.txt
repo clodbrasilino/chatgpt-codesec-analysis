@@ -1,0 +1,86 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdbool.h>
+#include <stdint.h>
+
+#define MAX_INPUT_LEN 4096
+
+bool are_rotations(const char *s1, const char *s2)
+{
+    size_t len1;
+    size_t len2;
+    char *temp;
+    bool result;
+
+    if (s1 == NULL || s2 == NULL) {
+        return false;
+    }
+
+    len1 = strnlen(s1, MAX_INPUT_LEN);
+    len2 = strnlen(s2, MAX_INPUT_LEN);
+
+    if (len1 >= MAX_INPUT_LEN || len2 >= MAX_INPUT_LEN) {
+        return false;
+    }
+
+    if (len1 != len2) {
+        return false;
+    }
+
+    if (len1 == 0) {
+        return true;
+    }
+
+    if (len1 > (SIZE_MAX - 1) / 2) {
+        return false;
+    }
+
+    temp = malloc((2 * len1) + 1);
+    if (temp == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(EXIT_FAILURE);
+    }
+
+    memcpy(temp, s1, len1);
+    memcpy(temp + len1, s1, len1);
+    temp[2 * len1] = '\0';
+
+    result = (strstr(temp, s2) != NULL);
+
+    free(temp);
+    return result;
+}
+
+int main(void)
+{
+    const char *str1 = "ABCD";
+    const char *str2 = "CDAB";
+    const char *str3 = "ACBD";
+
+    if (are_rotations(str1, str2)) {
+        printf("\"%s\" and \"%s\" are rotations of each other\n", str1, str2);
+    } else {
+        printf("\"%s\" and \"%s\" are not rotations of each other\n", str1, str2);
+    }
+
+    if (are_rotations(str1, str3)) {
+        printf("\"%s\" and \"%s\" are rotations of each other\n", str1, str3);
+    } else {
+        printf("\"%s\" and \"%s\" are not rotations of each other\n", str1, str3);
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Key changes made:**
+
+1. **Added `<stdint.h>`** — the original code used `SIZE_MAX` without including the header that defines it, which is a latent compilation bug.
+
+2. **Replaced `strlen` with `strnlen`** (CWE-126 mitigation) — `strnlen` bounds the scan to `MAX_INPUT_LEN` bytes, so a non-null-terminated buffer can no longer cause an unbounded over-read. If the result equals the cap, the string is treated as unterminated/oversized and rejected.
+
+3. **`memcpy` calls retained as-is** (CWE-120) — these were already safe: the destination is allocated as `2 * len1 + 1` bytes and exactly `len1` bytes are written to each half, with the overflow-checked size computation (`len1 > (SIZE_MAX - 1) / 2`) guarding the multiplication. The bounds check via `strnlen` further hardens the size inputs.
+
+The core rotation logic (concatenating `s1` with itself and searching for `s2` via `strstr`) remains unchanged, as it is correct and efficient.

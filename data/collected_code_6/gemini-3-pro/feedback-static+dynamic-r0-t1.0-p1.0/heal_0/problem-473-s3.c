@@ -1,0 +1,137 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+#include <string.h>
+
+typedef struct {
+    int* elements;
+    size_t size;
+} Tuple;
+
+typedef struct {
+    Tuple* tuples;
+    size_t count;
+} TupleList;
+
+int compare_ints(const void* a, const void* b) {
+    return (*(int*)a - *(int*)b);
+}
+
+Tuple* find_tuple_intersection(const TupleList* list) {
+    if (list == NULL || list->count == 0) {
+        return NULL;
+    }
+
+    Tuple* result = (Tuple*)malloc(sizeof(Tuple));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    result->elements = (int*)malloc(list->tuples[0].size * sizeof(int));
+    if (result->elements == NULL) {
+        free(result);
+        return NULL;
+    }
+    
+    result->size = 0;
+
+    int* current_intersection = (int*)malloc(list->tuples[0].size * sizeof(int));
+    if (current_intersection == NULL) {
+        free(result->elements);
+        free(result);
+        return NULL;
+    }
+
+    memcpy(current_intersection, list->tuples[0].elements, list->tuples[0].size * sizeof(int));
+    size_t current_size = list->tuples[0].size;
+    qsort(current_intersection, current_size, sizeof(int), compare_ints);
+
+    for (size_t i = 1; i < list->count; i++) {
+        int* temp_tuple = (int*)malloc(list->tuples[i].size * sizeof(int));
+        if (temp_tuple == NULL) {
+            free(current_intersection);
+            free(result->elements);
+            free(result);
+            return NULL;
+        }
+        memcpy(temp_tuple, list->tuples[i].elements, list->tuples[i].size * sizeof(int));
+        qsort(temp_tuple, list->tuples[i].size, sizeof(int), compare_ints);
+
+        int* next_intersection = (int*)malloc(current_size * sizeof(int));
+        if (next_intersection == NULL) {
+            free(temp_tuple);
+            free(current_intersection);
+            free(result->elements);
+            free(result);
+            return NULL;
+        }
+
+        size_t j = 0, k = 0, next_size = 0;
+        while (j < current_size && k < list->tuples[i].size) {
+            if (current_intersection[j] < temp_tuple[k]) {
+                j++;
+            } else if (current_intersection[j] > temp_tuple[k]) {
+                k++;
+            } else {
+                next_intersection[next_size++] = current_intersection[j];
+                j++;
+                k++;
+            }
+        }
+
+        free(temp_tuple);
+        free(current_intersection);
+        current_intersection = next_intersection;
+        current_size = next_size;
+    }
+
+    memcpy(result->elements, current_intersection, current_size * sizeof(int));
+    result->size = current_size;
+    free(current_intersection);
+
+    return result;
+}
+
+void print_tuple(const Tuple* tuple) {
+    if (tuple == NULL) {
+        printf("NULL\n");
+        return;
+    }
+    printf("(");
+    for (size_t i = 0; i < tuple->size; i++) {
+        printf("%d%s", tuple->elements[i], i < tuple->size - 1 ? ", " : "");
+    }
+    printf(")\n");
+}
+
+void free_tuple(Tuple* tuple) {
+    if (tuple != NULL) {
+        free(tuple->elements);
+        free(tuple);
+    }
+}
+
+int main() {
+    int arr1[] = {1, 2, 3, 4, 5};
+    int arr2[] = {5, 4, 3, 8, 9};
+    int arr3[] = {3, 5, 4, 10, 11};
+
+    Tuple tuples[3] = {
+        {arr1, 5},
+        {arr2, 5},
+        {arr3, 5}
+    };
+
+    TupleList list = {tuples, 3};
+
+    Tuple* intersection = find_tuple_intersection(&list);
+
+    if (intersection != NULL) {
+        print_tuple(intersection);
+        free_tuple(intersection);
+    } else {
+        printf("Intersection failed or is empty.\n");
+    }
+
+    return 0;
+}

@@ -1,0 +1,72 @@
+collected_code_3/round4/heal_0/problem-653.c: In function 'createNode':
+collected_code_3/round4/heal_0/problem-653.c:18:20: warning: dereference of possibly-NULL 'newNode' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   18 |     newNode->value = value;
+      |     ~~~~~~~~~~~~~~~^~~~~~~
+  'main': events 1-2
+    |
+    |   58 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |   59 |     Map *map = createMap("key1", "value1");
+    |      |                ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                |
+    |      |                (2) calling 'createMap' from 'main'
+    |
+    +--> 'createMap': events 3-4
+           |
+           |   23 | Map* createMap(char *key, char *value) {
+           |      |      ^~~~~~~~~
+           |      |      |
+           |      |      (3) entry to 'createMap'
+           |......
+           |   26 |     newMap->values = createNode(value);
+           |      |                      ~~~~~~~~~~~~~~~~~
+           |      |                      |
+           |      |                      (4) calling 'createNode' from 'createMap'
+           |
+           +--> 'createNode': events 5-7
+                  |
+                  |   16 | Node* createNode(char *value) {
+                  |      |       ^~~~~~~~~~
+                  |      |       |
+                  |      |       (5) entry to 'createNode'
+                  |   17 |     Node *newNode = (Node*) malloc(sizeof(Node));
+                  |      |                             ~~~~~~~~~~~~~~~~~~~~
+                  |      |                             |
+                  |      |                             (6) this call could return NULL
+                  |   18 |     newNode->value = value;
+                  |      |     ~~~~~~~~~~~~~~~~~~~~~~
+                  |      |                    |
+                  |      |                    (7) 'newNode' could be NULL: unchecked value from (6)
+                  |
+collected_code_3/round4/heal_0/problem-653.c: In function 'createMap':
+collected_code_3/round4/heal_0/problem-653.c:25:17: warning: dereference of possibly-NULL 'newMap' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   25 |     newMap->key = key;
+      |     ~~~~~~~~~~~~^~~~~
+  'main': events 1-2
+    |
+    |   58 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |   59 |     Map *map = createMap("key1", "value1");
+    |      |                ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                |
+    |      |                (2) calling 'createMap' from 'main'
+    |
+    +--> 'createMap': events 3-5
+           |
+           |   23 | Map* createMap(char *key, char *value) {
+           |      |      ^~~~~~~~~
+           |      |      |
+           |      |      (3) entry to 'createMap'
+           |   24 |     Map *newMap = (Map*) malloc(sizeof(Map));
+           |      |                          ~~~~~~~~~~~~~~~~~~~
+           |      |                          |
+           |      |                          (4) this call could return NULL
+           |   25 |     newMap->key = key;
+           |      |     ~~~~~~~~~~~~~~~~~
+           |      |                 |
+           |      |                 (5) 'newMap' could be NULL: unchecked value from (4)
+           |

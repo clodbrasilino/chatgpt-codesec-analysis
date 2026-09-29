@@ -1,0 +1,47 @@
+{
+  "task_id": 218,
+  "text": "Write a C function to find the minimum operations required to make two numbers equal.",
+  "fn_candidates": [
+    "min_Operations",
+    "MinOperations",
+    "minOperations",
+    "minOperations"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "min_Operations",
+      "args": [
+        2,
+        4
+      ],
+      "expected": 1,
+      "assert_src": "assert min_Operations(2,4) == 1"
+    },
+    {
+      "fn_name": "min_Operations",
+      "args": [
+        4,
+        10
+      ],
+      "expected": 4,
+      "assert_src": "assert min_Operations(4,10) == 4"
+    },
+    {
+      "fn_name": "min_Operations",
+      "args": [
+        1,
+        4
+      ],
+      "expected": 3,
+      "assert_src": "assert min_Operations(1,4) == 3"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

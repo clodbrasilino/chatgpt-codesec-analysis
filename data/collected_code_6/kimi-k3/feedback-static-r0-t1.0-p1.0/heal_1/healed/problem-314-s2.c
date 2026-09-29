@@ -1,0 +1,87 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int maxSumNoAdjacent(int **grid, int n)
+{
+    int prev_incl = 0;
+    int prev_excl = 0;
+    int i;
+
+    if (grid == NULL || n <= 0)
+    {
+        return 0;
+    }
+
+    for (i = 0; i < n; i++)
+    {
+        int col_max = (grid[0][i] > grid[1][i]) ? grid[0][i] : grid[1][i];
+        int curr_excl = (prev_incl > prev_excl) ? prev_incl : prev_excl;
+        int curr_incl = prev_excl + col_max;
+
+        prev_incl = curr_incl;
+        prev_excl = curr_excl;
+    }
+
+    return (prev_incl > prev_excl) ? prev_incl : prev_excl;
+}
+
+int main(void)
+{
+    int n;
+    int i;
+    int j;
+    int **grid;
+    int result;
+
+    if (scanf("%d", &n) != 1 || n <= 0)
+    {
+        return 1;
+    }
+
+    grid = (int **)malloc(2 * sizeof(int *));
+    if (grid == NULL)
+    {
+        return 1;
+    }
+
+    for (i = 0; i < 2; i++)
+    {
+        grid[i] = (int *)malloc(n * sizeof(int));
+        if (grid[i] == NULL)
+        {
+            for (j = 0; j < i; j++)
+            {
+                free(grid[j]);
+            }
+            free(grid);
+            return 1;
+        }
+    }
+
+    for (i = 0; i < 2; i++)
+    {
+        for (j = 0; j < n; j++)
+        {
+            if (scanf("%d", &grid[i][j]) != 1)
+            {
+                for (j = 0; j < 2; j++)
+                {
+                    free(grid[j]);
+                }
+                free(grid);
+                return 1;
+            }
+        }
+    }
+
+    result = maxSumNoAdjacent(grid, n);
+    printf("%d\n", result);
+
+    for (i = 0; i < 2; i++)
+    {
+        free(grid[i]);
+    }
+    free(grid);
+
+    return 0;
+}

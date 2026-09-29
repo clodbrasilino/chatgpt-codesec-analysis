@@ -1,0 +1,44 @@
+{
+  "task_id": 427,
+  "text": "Write a C function to convert a date of yyyy-mm-dd format to dd-mm-yyyy format by using regex.",
+  "fn_candidates": [
+    "change_date_format",
+    "ChangeDateFormat",
+    "changeDateFormat",
+    "changedateformat"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "change_date_format",
+      "args": [
+        "2026-01-02"
+      ],
+      "expected": "02-01-2026",
+      "assert_src": "assert change_date_format(\"2026-01-02\") == '02-01-2026'"
+    },
+    {
+      "fn_name": "change_date_format",
+      "args": [
+        "2020-11-13"
+      ],
+      "expected": "13-11-2020",
+      "assert_src": "assert change_date_format(\"2020-11-13\") == '13-11-2020'"
+    },
+    {
+      "fn_name": "change_date_format",
+      "args": [
+        "2021-04-26"
+      ],
+      "expected": "26-04-2021",
+      "assert_src": "assert change_date_format(\"2021-04-26\") == '26-04-2021'"
+    }
+  ],
+  "arg_kinds": [
+    "str"
+  ],
+  "return_kind": "str",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

@@ -1,0 +1,41 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+#define PI 3.14159265358979323846
+
+double calculateConeVolume(double radius, double height);
+
+double calculateConeVolume(double radius, double height) {
+    if (radius < 0.0 || height < 0.0) {
+        return -1.0;
+    }
+    return (PI * radius * radius * height) / 3.0;
+}
+
+int main(void) {
+    double radius = 0.0;
+    double height = 0.0;
+    double volume = 0.0;
+
+    if (scanf("%lf %lf", &radius, &height) != 2) {
+        return EXIT_FAILURE;
+    }
+
+    if (radius <= 0.0 || height <= 0.0) {
+        return EXIT_FAILURE;
+    }
+
+    volume = calculateConeVolume(radius, height);
+
+    if (volume < 0.0) {
+        return EXIT_FAILURE;
+    }
+
+    if (printf("%.6f\n", volume) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```

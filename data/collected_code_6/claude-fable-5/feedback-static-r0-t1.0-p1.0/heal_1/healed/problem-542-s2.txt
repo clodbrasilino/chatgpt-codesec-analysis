@@ -1,0 +1,86 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+static void print_regex_error(int errcode, const regex_t *regex, const char *prefix)
+{
+    size_t needed;
+    char *errbuf;
+
+    needed = regerror(errcode, regex, NULL, 0);
+    errbuf = malloc(needed);
+    if (errbuf == NULL) {
+        fprintf(stderr, "%s: unable to allocate memory for error message\n", prefix);
+        return;
+    }
+
+    regerror(errcode, regex, errbuf, needed);
+    fprintf(stderr, "%s: %s\n", prefix, errbuf);
+    free(errbuf);
+}
+
+int replace_with_colon(char *str)
+{
+    regex_t regex;
+    regmatch_t match;
+    int ret;
+    char *cursor;
+
+    if (str == NULL) {
+        return -1;
+    }
+
+    ret = regcomp(&regex, "[ ,.]", REG_EXTENDED);
+    if (ret != 0) {
+        print_regex_error(ret, &regex, "Regex compilation failed");
+        return -1;
+    }
+
+    cursor = str;
+    while ((ret = regexec(&regex, cursor, 1, &match, 0)) == 0) {
+        cursor[match.rm_so] = ':';
+        cursor += match.rm_eo;
+    }
+
+    if (ret != REG_NOMATCH) {
+        print_regex_error(ret, &regex, "Regex execution failed");
+        regfree(&regex);
+        return -1;
+    }
+
+    regfree(&regex);
+    return 0;
+}
+
+int main(void)
+{
+    char input[] = "Hello World, this is a test. Goodbye.";
+
+    printf("Original: %s\n", input);
+
+    if (replace_with_colon(input) != 0) {
+        fprintf(stderr, "Replacement failed\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Modified: %s\n", input);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the changes:**
+
+The Flawfinder warnings flagged the statically-sized `char errbuf[256]` arrays (CWE-119/CWE-120). While the original code was technically safe because `regerror()` respects the `sizeof(errbuf)` bound and always null-terminates, a 256-byte buffer could silently truncate longer error messages.
+
+The rewritten version eliminates the fixed-size buffers entirely by:
+
+1. **Two-pass `regerror()` usage** — calling `regerror(errcode, regex, NULL, 0)` first returns the exact buffer size required (including the null terminator), so the buffer is always precisely sized. This removes any possibility of truncation or size miscalculation.
+
+2. **Dynamic allocation with error checking** — `malloc()` failure is handled gracefully rather than assumed to succeed, and the buffer is freed immediately after use to avoid leaks.
+
+3. **Deduplication** — the error-reporting logic appeared twice in the original; extracting it into `print_regex_error()` reduces the attack/bug surface to a single audited code path.
+
+The core replacement logic remains unchanged as it was already correct: it operates in-place on a mutable buffer, advances the cursor past each match to guarantee termination, and properly distinguishes `REG_NOMATCH` (normal loop exit) from genuine `regexec()` failures. `regfree()` is called on all paths after successful compilation, so no resources leak.

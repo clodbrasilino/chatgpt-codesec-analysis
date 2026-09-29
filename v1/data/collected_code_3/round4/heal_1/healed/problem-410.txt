@@ -1,0 +1,63 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+typedef struct Node {
+    int type;
+    union {
+        int i;
+        float f;
+    } value;
+    struct Node* next;
+} Node;
+
+Node* createNode(int type, int i, float f) {
+    Node* newNode = (Node*)malloc(sizeof(Node));
+    if(!newNode)
+        return NULL;
+     
+    newNode->type = type;
+    if (type == 0) {
+        newNode->value.i = i;
+    } else {
+        newNode->value.f = f;
+    }
+    newNode->next = NULL;
+    return newNode;
+}
+
+void insertNode(Node** head, int type, int i, float f) {
+    Node* newNode = createNode(type, i, f);
+    if(!newNode)
+        return; 
+     
+    newNode->next = *head;
+    *head = newNode;
+}
+
+float findMin(Node* head) {
+    float min = INT_MAX;
+    while (head != NULL) {
+        if (head->type == 0) {
+            if (head->value.i < min) {
+                min = head->value.i;
+            }
+        } else {
+            if (head->value.f < min) {
+                min = head->value.f;
+            }
+        }
+        head = head->next;
+    }
+    return min;
+}
+
+int main() {
+    Node* head = NULL;
+    insertNode(&head, 0, 10, 0.0);
+    insertNode(&head, 0, 20, 0.0);
+    insertNode(&head, 1, 0, 15.5);
+    insertNode(&head, 1, 0, 5.5);
+    printf("Minimum value in the list is: %.2f\n", findMin(head));
+    return 0;
+}

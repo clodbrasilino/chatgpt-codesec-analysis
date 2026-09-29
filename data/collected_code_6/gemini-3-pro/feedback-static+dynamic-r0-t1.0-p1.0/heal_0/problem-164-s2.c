@@ -1,0 +1,38 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int sum_of_divisors(int n) {
+    if (n <= 0) {
+        return 0;
+    }
+    int sum = 0;
+    for (int i = 1; i <= n / 2; i++) {
+        if (n % i == 0) {
+            sum += i;
+        }
+    }
+    sum += n;
+    return sum;
+}
+
+int check_same_sum_of_divisors(int num1, int num2) {
+    int sum1 = sum_of_divisors(num1);
+    int sum2 = sum_of_divisors(num2);
+    return sum1 == sum2;
+}
+
+int main(void) {
+    int num1, num2;
+    
+    if (scanf("%d %d", &num1, &num2) != 2) {
+        return EXIT_FAILURE;
+    }
+    
+    if (check_same_sum_of_divisors(num1, num2)) {
+        printf("1\n");
+    } else {
+        printf("0\n");
+    }
+    
+    return EXIT_SUCCESS;
+}

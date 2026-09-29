@@ -1,0 +1,33 @@
+```c
+#include <stdio.h>
+
+int is_abundant(int num){
+    int sum = 1;
+    for(int i = 2; i * i <= num; i++){
+        if(num % i == 0){
+            if(i * i != num)
+                sum = sum + i + num / i;
+            else
+                sum = sum + i;
+        }
+    }
+    if (sum > num)
+        return 1;
+    else
+        return 0;
+}
+
+int main(){
+    int num;
+    printf("Enter a number: ");
+    scanf("%d",&num);
+    if(is_abundant(num))
+        printf("%d is an abundant number.\n", num);
+    else
+        printf("%d is not an abundant number.\n", num);
+    return 0;
+}
+```
+
+In this code, a number is said to be abundant if the sum of its proper divisors (excluding the number itself) is greater than the number. Therefore, in the is_abundant function, we find all of the given number's divisors, add them all up, and then check whether their total is greater than the original number.
+In the main function, it accepts a number from user input, checks whether it is abundant using the is_abundant function, and then prints the result.

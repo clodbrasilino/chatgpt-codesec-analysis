@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-148.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-148.c:33:35: style: Condition '(int)sizeof(left_str)<split+1' is always false [knownConditionTrueFalse]
+        if ((int)sizeof(left_str) < split + 1) continue;
+                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-148.c:32:19: note: Assuming that condition 'split>=(int)sizeof(left_str)' is not redundant
+        if (split >= (int)sizeof(left_str)) continue;
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-148.c:33:35: note: Condition '(int)sizeof(left_str)<split+1' is always false
+        if ((int)sizeof(left_str) < split + 1) continue;
+                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-148.c:42:36: style: Condition '(int)sizeof(right_str)<right_len+1' is always false [knownConditionTrueFalse]
+        if ((int)sizeof(right_str) < right_len + 1) continue;
+                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-148.c:41:41: note: Assuming that condition 'right_len>=(int)sizeof(right_str)' is not redundant
+        if (right_len <= 0 || right_len >= (int)sizeof(right_str)) continue;
+                                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-148.c:42:36: note: Condition '(int)sizeof(right_str)<right_len+1' is always false
+        if ((int)sizeof(right_str) < right_len + 1) continue;
+                                   ^

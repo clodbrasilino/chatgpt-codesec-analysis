@@ -1,0 +1,84 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char *remove_parenthesis_area(const char *str)
+{
+    char *result;
+    size_t len;
+    size_t i;
+    size_t j;
+    int depth;
+    int in_quotes;
+    char quote_char;
+
+    if (str == NULL) {
+        return NULL;
+    }
+
+    len = strlen(str);
+    result = (char *)malloc(len + 1);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    j = 0;
+    depth = 0;
+    in_quotes = 0;
+    quote_char = '\0';
+
+    for (i = 0; i < len; i++) {
+        if ((str[i] == '"' || str[i] == '\'') && (i == 0 || str[i-1] != '\\')) {
+            if (!in_quotes) {
+                in_quotes = 1;
+                quote_char = str[i];
+            } else if (str[i] == quote_char) {
+                in_quotes = 0;
+            }
+        }
+        
+        if (str[i] == '(' && !in_quotes) {
+            depth++;
+        } else if (str[i] == ')' && !in_quotes) {
+            if (depth > 0) {
+                depth--;
+            }
+        } else if (depth == 0) {
+            result[j] = str[i];
+            j++;
+        }
+    }
+
+    result[j] = '\0';
+    return result;
+}
+
+int main(void)
+{
+    char *output;
+    const char *inputs[] = {
+        "python",
+        "string",
+        "alpha",
+        "Hello (this should be removed) World (this too)!"
+    };
+    int num_inputs = sizeof(inputs) / sizeof(inputs[0]);
+    int k;
+
+    for (k = 0; k < num_inputs; k++) {
+        output = remove_parenthesis_area(inputs[k]);
+        if (output == NULL) {
+            fprintf(stderr, "Error: Memory allocation failed or invalid input\n");
+            return EXIT_FAILURE;
+        }
+
+        printf("%s\n", output);
+
+        free(output);
+        output = NULL;
+    }
+
+    return EXIT_SUCCESS;
+}
+```

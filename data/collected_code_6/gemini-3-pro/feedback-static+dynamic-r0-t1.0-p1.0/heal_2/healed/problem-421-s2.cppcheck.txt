@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-421-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-421-s2.c:21:47: warning: Either the condition 'delim_length<max_len' is redundant or the array 'delimiter[2]' is accessed at index 4095, which is out of bounds. [arrayIndexOutOfBoundsCond]
+    while (delim_length < max_len && delimiter[delim_length] != '\0') {
+                                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-421-s2.c:18:22: note: Assignment 'max_len=4096', assigned value is 4096
+    size_t max_len = 4096;
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-421-s2.c:21:25: note: Assuming that condition 'delim_length<max_len' is not redundant
+    while (delim_length < max_len && delimiter[delim_length] != '\0') {
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-421-s2.c:21:47: note: Array index out of bounds
+    while (delim_length < max_len && delimiter[delim_length] != '\0') {
+                                              ^

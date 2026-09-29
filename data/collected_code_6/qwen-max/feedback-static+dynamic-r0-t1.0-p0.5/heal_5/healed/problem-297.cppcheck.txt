@@ -1,0 +1,16 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_5/healed/problem-297.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_5/healed/problem-297.c:46:22: error: Memory leak: head [memleak]
+    if (!head->next) return 1;
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_5/healed/problem-297.c:49:28: error: Memory leak: head [memleak]
+    if (!head->next->next) return 1;
+                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_5/healed/problem-297.c:53:29: error: Memory leak: head [memleak]
+    if (!head->next->child) return 1;
+                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_5/healed/problem-297.c:56:35: error: Memory leak: head [memleak]
+    if (!head->next->child->next) return 1;
+                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_5/healed/problem-297.c:59:41: error: Memory leak: head [memleak]
+    if (!head->next->child->next->next) return 1;
+                                        ^

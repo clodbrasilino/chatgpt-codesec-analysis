@@ -1,0 +1,13 @@
+collected_code/heal_round_4/healed/problem-965.c: In function 'camelToSnake':
+collected_code/heal_round_4/healed/problem-965.c:26:9: warning: implicit declaration of function 'exit' [-Wimplicit-function-declaration]
+   26 |         exit(1);
+      |         ^~~~
+collected_code/heal_round_4/healed/problem-965.c:5:1: note: include '<stdlib.h>' or provide a declaration of 'exit'
+    4 | #include <stdbool.h>
+  +++ |+#include <stdlib.h>
+    5 | 
+collected_code/heal_round_4/healed/problem-965.c:26:9: warning: incompatible implicit declaration of built-in function 'exit' [-Wbuiltin-declaration-mismatch]
+   26 |         exit(1);
+      |         ^~~~
+collected_code/heal_round_4/healed/problem-965.c:26:9: note: include '<stdlib.h>' or provide a declaration of 'exit'
+-macosx_version_min has been renamed to -macos_version_min

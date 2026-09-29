@@ -1,0 +1,41 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int find_remainder(int numerator, int denominator, int *result) {
+    if (result == NULL) {
+        return -1;
+    }
+    
+    if (denominator == 0) {
+        return -1;
+    }
+    
+    *result = numerator % denominator;
+    return 0;
+}
+
+int main(void) {
+    int numerator = 10;
+    int denominator = 3;
+    int remainder = 0;
+    
+    if (find_remainder(numerator, denominator, &remainder) == 0) {
+        printf("Remainder of %d divided by %d is %d\n", numerator, denominator, remainder);
+    } else {
+        fprintf(stderr, "Error calculating remainder.\n");
+        return EXIT_FAILURE;
+    }
+    
+    numerator = 15;
+    denominator = 0;
+    
+    if (find_remainder(numerator, denominator, &remainder) == 0) {
+        printf("Remainder of %d divided by %d is %d\n", numerator, denominator, remainder);
+    } else {
+        fprintf(stderr, "Error calculating remainder.\n");
+    }
+    
+    return EXIT_SUCCESS;
+}
+```

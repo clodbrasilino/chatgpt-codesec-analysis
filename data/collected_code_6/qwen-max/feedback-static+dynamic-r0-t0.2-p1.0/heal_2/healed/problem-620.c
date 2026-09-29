@@ -1,0 +1,59 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int compare(const void* a, const void* b) {
+    return (*(int*)a - *(int*)b);
+}
+
+int* largestDivisibleSubset(int* nums, int numsSize, int* returnSize) {
+    if (numsSize == 0) {
+        *returnSize = 0;
+        return NULL;
+    }
+
+    qsort(nums, numsSize, sizeof(int), (int(*)(const void*, const void*))compare);
+    int* dp = (int*)calloc(numsSize, sizeof(int));
+    int* parent = (int*)calloc(numsSize, sizeof(int));
+    int maxIndex = 0;
+
+    for (int i = 0; i < numsSize; ++i) {
+        for (int j = 0; j < i; ++j) {
+            if (nums[i] % nums[j] == 0 && dp[i] < dp[j] + 1) {
+                dp[i] = dp[j] + 1;
+                parent[i] = j;
+            }
+        }
+        if (dp[i] > dp[maxIndex]) {
+            maxIndex = i;
+        }
+    }
+
+    *returnSize = dp[maxIndex] + 1;
+    int* result = (int*)malloc(*returnSize * sizeof(int));
+    int index = *returnSize - 1;
+    while (maxIndex >= 0 && *returnSize > 0) {
+        result[index--] = nums[maxIndex];
+        --*returnSize;
+        maxIndex = parent[maxIndex];
+    }
+
+    free(dp);
+    free(parent);
+    return result;
+}
+
+int main() {
+    int nums[] = {1, 2, 3, 4, 8, 9, 27};
+    int numsSize = sizeof(nums) / sizeof(nums[0]);
+    int returnSize;
+
+    int* result = largestDivisibleSubset(nums, numsSize, &returnSize);
+
+    for (int i = 0; i < returnSize; ++i) {
+        printf("%d ", result[i]);
+    }
+    printf("\n");
+
+    free(result);
+    return 0;
+}

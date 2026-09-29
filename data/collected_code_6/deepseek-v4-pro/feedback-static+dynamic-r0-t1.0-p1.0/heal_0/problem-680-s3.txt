@@ -1,0 +1,55 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+
+bool has_increasing_trend(const int *sequence, size_t length) {
+    if (sequence == NULL || length == 0) {
+        return false;
+    }
+    
+    if (length == 1) {
+        return true;
+    }
+    
+    for (size_t i = 0; i < length - 1; i++) {
+        if (sequence[i + 1] <= sequence[i]) {
+            return false;
+        }
+    }
+    
+    return true;
+}
+
+int main(void) {
+    int seq1[] = {1, 2, 3, 4, 5};
+    int seq2[] = {1, 3, 2, 4, 5};
+    int seq3[] = {5};
+    int seq4[] = {1, 2, 2, 3};
+    
+    if (has_increasing_trend(seq1, sizeof(seq1) / sizeof(seq1[0]))) {
+        printf("seq1 has increasing trend\n");
+    } else {
+        printf("seq1 does not have increasing trend\n");
+    }
+    
+    if (has_increasing_trend(seq2, sizeof(seq2) / sizeof(seq2[0]))) {
+        printf("seq2 has increasing trend\n");
+    } else {
+        printf("seq2 does not have increasing trend\n");
+    }
+    
+    if (has_increasing_trend(seq3, sizeof(seq3) / sizeof(seq3[0]))) {
+        printf("seq3 has increasing trend\n");
+    } else {
+        printf("seq3 does not have increasing trend\n");
+    }
+    
+    if (has_increasing_trend(seq4, sizeof(seq4) / sizeof(seq4[0]))) {
+        printf("seq4 has increasing trend\n");
+    } else {
+        printf("seq4 does not have increasing trend\n");
+    }
+    
+    return 0;
+}
+```

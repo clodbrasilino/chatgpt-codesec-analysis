@@ -1,0 +1,15 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t0.2-p1.0/heal_0/problem-73.c: In function 'split_string':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t0.2-p1.0/heal_0/problem-73.c:8:17: error: implicit declaration of function 'strdup' [-Wimplicit-function-declaration]
+    8 |     char *str = strdup(input);
+      |                 ^~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t0.2-p1.0/heal_0/problem-73.c:9:15: error: implicit declaration of function 'strlen' [-Wimplicit-function-declaration]
+    9 |     int len = strlen(str);
+      |               ^~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t0.2-p1.0/heal_0/problem-73.c:4:1: note: include '<string.h>' or provide a declaration of 'strlen'
+    3 | #include <regex.h>
+  +++ |+#include <string.h>
+    4 | 
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t0.2-p1.0/heal_0/problem-73.c:52:13: error: implicit declaration of function 'strncpy' [-Wimplicit-function-declaration]
+   52 |             strncpy(result[*count], str + offset, matches[0].rm_so);
+      |             ^~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t0.2-p1.0/heal_0/problem-73.c:52:13: note: include '<string.h>' or provide a declaration of 'strncpy'

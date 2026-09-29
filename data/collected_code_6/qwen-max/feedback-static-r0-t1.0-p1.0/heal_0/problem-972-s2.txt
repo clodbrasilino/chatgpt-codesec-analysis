@@ -1,0 +1,61 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int* data;
+    size_t length;
+} Tuple;
+
+Tuple create_tuple(int arr[], size_t size) {
+    Tuple t = { .data = malloc(size * sizeof(int)), .length = size };
+    for (size_t i = 0; i < size; ++i) {
+        t.data[i] = arr[i];
+    }
+    return t;
+}
+
+Tuple concatenate_tuples(Tuple t1, Tuple t2) {
+    size_t new_size = t1.length + t2.length;
+    Tuple result = { .data = malloc(new_size * sizeof(int)), .length = new_size };
+    
+    for (size_t i = 0; i < t1.length; ++i) {
+        result.data[i] = t1.data[i];
+    }
+    for (size_t i = 0; i < t2.length; ++i) {
+        result.data[t1.length + i] = t2.data[i];
+    }
+    
+    free(t1.data);
+    free(t2.data);
+    
+    return result;
+}
+
+void print_tuple(Tuple t) {
+    printf("(");
+    for (size_t i = 0; i < t.length; ++i) {
+        printf("%d", t.data[i]);
+        if (i < t.length - 1) {
+            printf(", ");
+        }
+    }
+    printf(")\n");
+}
+
+int main() {
+    int arr1[] = {1, 2, 3};
+    int arr2[] = {4, 5, 6};
+
+    Tuple t1 = create_tuple(arr1, 3);
+    Tuple t2 = create_tuple(arr2, 3);
+
+    Tuple concatenated = concatenate_tuples(t1, t2);
+
+    print_tuple(concatenated);
+
+    free(concatenated.data);
+
+    return 0;
+}
+```

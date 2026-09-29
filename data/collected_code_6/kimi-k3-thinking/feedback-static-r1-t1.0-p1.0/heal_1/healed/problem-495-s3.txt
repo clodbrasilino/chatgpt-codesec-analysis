@@ -1,0 +1,138 @@
+```c
+#define _POSIX_C_SOURCE 200809L
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+#define MAX_INPUT_LENGTH 4096
+
+char *remove_lowercase_substrings(const char *input)
+{
+    regex_t regex;
+    regmatch_t match;
+    const char *cursor;
+    char *work;
+    char *result;
+    size_t result_len;
+    size_t capacity;
+    size_t input_len;
+    size_t remaining;
+    int status;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    input_len = strnlen(input, MAX_INPUT_LENGTH);
+
+    work = malloc(input_len + 1);
+    if (work == NULL) {
+        return NULL;
+    }
+    memcpy(work, input, input_len);
+    work[input_len] = '\0';
+
+    status = regcomp(&regex, "[a-z]+", REG_EXTENDED);
+    if (status != 0) {
+        free(work);
+        return NULL;
+    }
+
+    capacity = input_len + 1;
+    result = malloc(capacity);
+    if (result == NULL) {
+        regfree(&regex);
+        free(work);
+        return NULL;
+    }
+
+    cursor = work;
+    result_len = 0;
+
+    while (*cursor != '\0') {
+        status = regexec(&regex, cursor, 1, &match, 0);
+
+        if (status == REG_NOMATCH) {
+            remaining = (size_t)((work + input_len) - cursor);
+            if (remaining >= capacity - result_len) {
+                free(work);
+                free(result);
+                regfree(&regex);
+                return NULL;
+            }
+            memcpy(result + result_len, cursor, remaining);
+            result_len += remaining;
+            break;
+        }
+
+        if (status != 0) {
+            free(work);
+            free(result);
+            regfree(&regex);
+            return NULL;
+        }
+
+        if (match.rm_so < 0 || match.rm_eo < 0 || match.rm_eo < match.rm_so) {
+            free(work);
+            free(result);
+            regfree(&regex);
+            return NULL;
+        }
+
+        if ((size_t)match.rm_so >= capacity - result_len) {
+            free(work);
+            free(result);
+            regfree(&regex);
+            return NULL;
+        }
+        memcpy(result + result_len, cursor, (size_t)match.rm_so);
+        result_len += (size_t)match.rm_so;
+        cursor += match.rm_eo;
+
+        if (match.rm_eo == 0) {
+            if (result_len + 1 >= capacity) {
+                free(work);
+                free(result);
+                regfree(&regex);
+                return NULL;
+            }
+            result[result_len] = *cursor;
+            result_len++;
+            cursor++;
+        }
+    }
+
+    result[result_len] = '\0';
+    free(work);
+    regfree(&regex);
+    return result;
+}
+
+int main(void)
+{
+    const char *test_strings[] = {
+        "HELLOworldTHISisATEST123abcXYZ",
+        "nolowercaseHERE",
+        "onlylower",
+        "12345!@#$%",
+        ""
+    };
+    size_t count = sizeof(test_strings) / sizeof(test_strings[0]);
+    size_t i;
+
+    for (i = 0; i < count; i++) {
+        char *cleaned = remove_lowercase_substrings(test_strings[i]);
+        if (cleaned == NULL) {
+            fprintf(stderr, "Error: failed to process string %zu\n", i);
+            return EXIT_FAILURE;
+        }
+        printf("Original: \"%s\"\n", test_strings[i]);
+        printf("Cleaned:  \"%s\"\n\n", cleaned);
+        free(cleaned);
+    }
+
+    return EXIT_SUCCESS;
+}
+```

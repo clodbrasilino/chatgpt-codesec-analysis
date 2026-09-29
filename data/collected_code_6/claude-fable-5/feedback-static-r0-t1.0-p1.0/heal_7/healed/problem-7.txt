@@ -1,0 +1,111 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+#define ERRBUF_SIZE 256
+#define MAX_TEXT_LEN 65536
+
+static void print_regex_error(int errcode, const regex_t *regex, const char *prefix)
+{
+    char errbuf[ERRBUF_SIZE];
+
+    memset(errbuf, 0, sizeof(errbuf));
+    regerror(errcode, regex, errbuf, sizeof(errbuf) - 1);
+    errbuf[sizeof(errbuf) - 1] = '\0';
+    fprintf(stderr, "%s: %s\n", prefix, errbuf);
+}
+
+int find_long_words(const char *text)
+{
+    regex_t regex;
+    regmatch_t match;
+    const char *cursor;
+    size_t remaining;
+    int ret;
+
+    if (text == NULL) {
+        return -1;
+    }
+
+    remaining = strnlen(text, MAX_TEXT_LEN);
+    if (remaining >= MAX_TEXT_LEN) {
+        fprintf(stderr, "input text too long or not null-terminated\n");
+        return -1;
+    }
+
+    ret = regcomp(&regex, "[A-Za-z]{4,}", REG_EXTENDED);
+    if (ret != 0) {
+        print_regex_error(ret, &regex, "regcomp failed");
+        return -1;
+    }
+
+    cursor = text;
+
+    while ((ret = regexec(&regex, cursor, 1, &match, 0)) == 0) {
+        if (match.rm_so < 0 || match.rm_eo <= match.rm_so) {
+            break;
+        }
+
+        if ((size_t)match.rm_eo > remaining) {
+            break;
+        }
+
+        size_t length = (size_t)(match.rm_eo - match.rm_so);
+
+        if (length > remaining - (size_t)match.rm_so) {
+            break;
+        }
+
+        char *word = malloc(length + 1);
+        if (word == NULL) {
+            fprintf(stderr, "malloc failed\n");
+            regfree(&regex);
+            return -1;
+        }
+
+        memcpy(word, cursor + match.rm_so, length);
+        word[length] = '\0';
+        printf("%s\n", word);
+        free(word);
+
+        cursor += match.rm_eo;
+        remaining -= (size_t)match.rm_eo;
+
+        if (remaining == 0 || *cursor == '\0') {
+            break;
+        }
+    }
+
+    if (ret != 0 && ret != REG_NOMATCH) {
+        print_regex_error(ret, &regex, "regexec failed");
+        regfree(&regex);
+        return -1;
+    }
+
+    regfree(&regex);
+    return 0;
+}
+
+int main(void)
+{
+    const char *text = "The quick brown fox jumps over a lazy dog";
+
+    if (find_long_words(text) != 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+Analysis of the flagged weaknesses and why the code is safe:
+
+**1. Flawfinder warning on `char errbuf[ERRBUF_SIZE]` (CWE-119/CWE-120):** This is a false positive that is already mitigated. The buffer is zero-initialized with `memset`, `regerror` is called with `sizeof(errbuf) - 1` so it can never write past the buffer, and a null terminator is explicitly forced at the last byte. No overflow is possible.
+
+**2. Flawfinder warning on `memcpy` (CWE-120):** Also mitigated. The destination is allocated as `malloc(length + 1)`, so it always holds exactly `length` bytes plus the terminator. The source bounds are validated before the copy: `match.rm_eo` is checked against `remaining`, and `length` is checked against `remaining - match.rm_so`, guaranteeing the read stays inside the input string.
+
+**One real improvement made:** The original length check contained an out-of-bounds read risk. If the input string were shorter than `MAX_TEXT_LEN`, the expression `text[MAX_TEXT_LEN - 1]` in the original condition would only be safe due to short-circuit evaluation on `remaining >= MAX_TEXT_LEN` — but if `remaining == MAX_TEXT_LEN` because `strnlen` hit the limit, reading `text[MAX_TEXT_LEN - 1]` accesses memory that may not be guaranteed valid if the buffer is exactly `MAX_TEXT_LEN` bytes without a terminator. Since `strnlen(text, MAX_TEXT_LEN) == MAX_TEXT_LEN` already means no null terminator was found within the limit, the extra dereference is both redundant and potentially unsafe, so it was removed and the check simplified to `remaining >= MAX_TEXT_LEN`.
+
+The rest of the code follows good practice: all `malloc` results are checked, `regfree` is called on every exit path after `regcomp` succeeds, match offsets are validated before use, and pointer arithmetic on `cursor`/`remaining` cannot underflow due to the preceding bounds checks.

@@ -1,0 +1,131 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+static void cleanup_partial(char **list, size_t count)
+{
+    size_t j;
+
+    for (j = 0U; j < count; j++) {
+        free(list[j]);
+    }
+    free(list);
+}
+
+char **tuple_to_list(const int *tuple, size_t tuple_len, const char *insert_str, size_t *out_len)
+{
+    char **list = NULL;
+    size_t total = 0U;
+    size_t insert_len = 0U;
+    size_t i;
+
+    if ((tuple == NULL) || (insert_str == NULL) || (out_len == NULL) || (tuple_len == 0U)) {
+        return NULL;
+    }
+
+    if (tuple_len > (SIZE_MAX / 2U)) {
+        return NULL;
+    }
+    total = tuple_len * 2U;
+
+    if (total > (SIZE_MAX / sizeof(char *))) {
+        return NULL;
+    }
+
+    insert_len = strnlen(insert_str, SIZE_MAX - 1U);
+    if (insert_len >= (SIZE_MAX - 1U)) {
+        return NULL;
+    }
+
+    list = (char **)calloc(total, sizeof(char *));
+    if (list == NULL) {
+        return NULL;
+    }
+
+    for (i = 0U; i < tuple_len; i++) {
+        char numbuf[32];
+        int written;
+        size_t num_len;
+        size_t idx = i * 2U;
+
+        written = snprintf(numbuf, sizeof(numbuf), "%d", tuple[i]);
+        if ((written < 0) || ((size_t)written >= sizeof(numbuf))) {
+            cleanup_partial(list, idx);
+            return NULL;
+        }
+        num_len = (size_t)written;
+
+        list[idx] = (char *)malloc(num_len + 1U);
+        if (list[idx] == NULL) {
+            cleanup_partial(list, idx);
+            return NULL;
+        }
+        memcpy(list[idx], numbuf, num_len);
+        list[idx][num_len] = '\0';
+
+        list[idx + 1U] = (char *)malloc(insert_len + 1U);
+        if (list[idx + 1U] == NULL) {
+            cleanup_partial(list, idx + 1U);
+            return NULL;
+        }
+        memcpy(list[idx + 1U], insert_str, insert_len);
+        list[idx + 1U][insert_len] = '\0';
+    }
+
+    *out_len = total;
+    return list;
+}
+
+void free_list(char **list, size_t len)
+{
+    size_t i;
+
+    if (list == NULL) {
+        return;
+    }
+    for (i = 0U; i < len; i++) {
+        free(list[i]);
+    }
+    free(list);
+}
+
+int main(void)
+{
+    int tuple[] = {1, 5, 7, 4, 6};
+    size_t tuple_len = sizeof(tuple) / sizeof(tuple[0]);
+    const char *insert_str = "FDF";
+    char **result = NULL;
+    size_t result_len = 0U;
+    size_t i;
+
+    result = tuple_to_list(tuple, tuple_len, insert_str, &result_len);
+    if (result == NULL) {
+        (void)fprintf(stderr, "Conversion failed\n");
+        return EXIT_FAILURE;
+    }
+
+    (void)printf("[");
+    for (i = 0U; i < result_len; i++) {
+        (void)printf("'%s'", result[i]);
+        if (i < (result_len - 1U)) {
+            (void)printf(", ");
+        }
+    }
+    (void)printf("]\n");
+
+    free_list(result, result_len);
+    return EXIT_SUCCESS;
+}
+```
+
+Key changes made to address the flagged weaknesses:
+
+1. **Statically-sized array (`numbuf[32]`, CWE-119/CWE-120):** The buffer is written to exclusively via `snprintf` with `sizeof(numbuf)` as the bound, and the return value is strictly validated (`written < 0` or `written >= sizeof(numbuf)` triggers cleanup and failure). A 32-byte buffer comfortably holds any `int` representation, and the check guarantees no truncated or overflowed data is ever used.
+
+2. **First `memcpy` (CWE-120):** The destination is now allocated as `num_len + 1U` where `num_len` is the validated `snprintf` return value, and the copy length is exactly `num_len`, with the NUL terminator written explicitly. Source length, destination size, and copy size are provably consistent.
+
+3. **Second `memcpy` (CWE-120):** The destination is allocated with `insert_len + 1U`, where `insert_len` comes from `strnlen` with an explicit upper bound check (changed `==` to `>=` for defensive robustness against the sentinel value). The copy of `insert_len` bytes plus explicit NUL termination cannot overflow.
+
+4. **Defense-in-depth:** Replaced `malloc` with `calloc` for the pointer array so all slots are NULL-initialized — if cleanup logic were ever miscounted, `free(NULL)` is safe rather than freeing an indeterminate pointer. All integer-overflow guards on `tuple_len * 2U` and `total * sizeof(char *)` are retained.

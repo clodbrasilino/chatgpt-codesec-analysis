@@ -1,0 +1,82 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+#define ZODIAC_COUNT 12
+#define MIN_YEAR 1
+#define MAX_YEAR 9999
+
+static const char *get_chinese_zodiac(int year)
+{
+    static const char *const signs[ZODIAC_COUNT] = {
+        "Monkey", "Rooster", "Dog", "Pig",
+        "Rat", "Ox", "Tiger", "Rabbit",
+        "Dragon", "Snake", "Horse", "Goat"
+    };
+    int index;
+
+    index = year % ZODIAC_COUNT;
+    if (index < 0) {
+        index += ZODIAC_COUNT;
+    }
+    if (index < 0 || index >= ZODIAC_COUNT) {
+        return NULL;
+    }
+    return signs[index];
+}
+
+static int display_zodiac(int year)
+{
+    const char *sign;
+
+    if (year < MIN_YEAR || year > MAX_YEAR) {
+        fprintf(stderr, "Error: year must be between %d and %d.\n", MIN_YEAR, MAX_YEAR);
+        return -1;
+    }
+    sign = get_chinese_zodiac(year);
+    if (sign == NULL) {
+        fprintf(stderr, "Error: could not determine zodiac sign.\n");
+        return -1;
+    }
+    if (printf("The Chinese zodiac sign for year %d is: %s\n", year, sign) < 0) {
+        return -1;
+    }
+    return 0;
+}
+
+int main(void)
+{
+    int year;
+    int result;
+
+    printf("Enter a year: ");
+    if (fflush(stdout) != 0) {
+        return EXIT_FAILURE;
+    }
+    result = scanf("%d", &year);
+    if (result != 1) {
+        fprintf(stderr, "Error: invalid input, expected an integer year.\n");
+        return EXIT_FAILURE;
+    }
+    if (display_zodiac(year) != 0) {
+        return EXIT_FAILURE;
+    }
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis summary:**
+
+The original code was already largely safe. The Flawfinder warning about the statically-sized array (CWE-119/CWE-120) was a low-risk heuristic hit — the original code did perform bounds correction for negative modulo results. The rewrite hardens it further:
+
+1. **Named constant `ZODIAC_COUNT`** — eliminates magic-number drift between the array size and the modulo operand, so the bounds logic can never silently desynchronize from the array declaration.
+
+2. **Explicit defensive bounds check** — `index` is verified to be strictly within `[0, ZODIAC_COUNT)` before indexing, returning `NULL` on failure rather than reading out of bounds. This directly addresses the CWE-119 concern with an unconditional guard.
+
+3. **`NULL` check at the call site** — `display_zodiac` now handles a failed lookup gracefully instead of passing `NULL` to `printf("%s")`, which is undefined behavior.
+
+4. **`const char *const signs[]`** — the pointer array itself is now immutable, preventing accidental modification of the table.
+
+5. **Range validation retained** — year is constrained to `[1, 9999]` before the lookup, and negative-modulo handling is kept as defense in depth even though validated input makes it unreachable.
+
+All I/O return values (`fflush`, `scanf`, `printf`) remain checked, which is good practice the original already followed.

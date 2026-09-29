@@ -1,0 +1,58 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+#include <inttypes.h>
+
+uint64_t calculate_max_sum(uint64_t n, uint64_t *memo, uint64_t memo_size) {
+    if (n == 0) {
+        return 0;
+    }
+    
+    if (n < memo_size && memo[n] != 0) {
+        return memo[n];
+    }
+
+    uint64_t val1 = calculate_max_sum(n / 2, memo, memo_size);
+    uint64_t val2 = calculate_max_sum(n / 3, memo, memo_size);
+    uint64_t val3 = calculate_max_sum(n / 4, memo, memo_size);
+    uint64_t val4 = calculate_max_sum(n / 5, memo, memo_size);
+
+    uint64_t sum = val1 + val2 + val3 + val4;
+    uint64_t max_val = (sum > n) ? sum : n;
+
+    if (n < memo_size) {
+        memo[n] = max_val;
+    }
+
+    return max_val;
+}
+
+int main(void) {
+    uint64_t n = 0;
+    
+    /* Possible weaknesses found:
+     * Flawfinder scanf: The scanf() family's %s operation, without a limit specification, permits buffer overflows (CWE-120, CWE-20). Specify a limit to %s, or use a different input function. If the scanf format is influenceable by an attacker, it's exploitable. (risk 4, buffer)
+     */
+    if (scanf("%" SCNu64, &n) != 1) {
+        return EXIT_FAILURE;
+    }
+
+    uint64_t memo_size = 1000000;
+    uint64_t *memo = (uint64_t *)calloc(memo_size, sizeof(uint64_t));
+    
+    if (memo == NULL) {
+        return EXIT_FAILURE;
+    }
+
+    uint64_t result = calculate_max_sum(n, memo, memo_size);
+    
+    if (printf("%" PRIu64 "\n", result) < 0) {
+        free(memo);
+        return EXIT_FAILURE;
+    }
+
+    free(memo);
+    memo = NULL;
+    
+    return EXIT_SUCCESS;
+}

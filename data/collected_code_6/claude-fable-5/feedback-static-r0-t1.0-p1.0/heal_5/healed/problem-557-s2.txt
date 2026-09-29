@@ -1,0 +1,72 @@
+```c
+#define _POSIX_C_SOURCE 200809L
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#define BUFFER_SIZE 256
+
+void toggle_case(char *str, size_t max_len)
+{
+    size_t i;
+    size_t len;
+
+    if (str == NULL || max_len == 0) {
+        return;
+    }
+
+    len = strnlen(str, max_len);
+    for (i = 0; i < len; i++) {
+        unsigned char c = (unsigned char)str[i];
+        if (isupper(c)) {
+            str[i] = (char)tolower(c);
+        } else if (islower(c)) {
+            str[i] = (char)toupper(c);
+        }
+    }
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    char *newline;
+
+    printf("Enter a string: ");
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    newline = strchr(buffer, '\n');
+    if (newline != NULL) {
+        *newline = '\0';
+    }
+
+    toggle_case(buffer, sizeof(buffer));
+
+    if (printf("Toggled string: %s\n", buffer) < 0) {
+        fprintf(stderr, "Error writing output\n");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis summary:**
+
+The original code was already well-hardened against the flagged weakness (CWE-119/CWE-120, statically-sized buffer). The rewritten version preserves all of the existing mitigations:
+
+1. **Bounded input** – `fgets(buffer, sizeof(buffer), stdin)` limits reads to the buffer size, preventing overflow, and its return value is checked for I/O failure.
+2. **Guaranteed null termination** – `buffer[sizeof(buffer) - 1] = '\0'` is defensive belt-and-suspenders (fgets already null-terminates, but this protects against future refactoring).
+3. **Bounded string operations** – `strnlen(str, max_len)` is used instead of `strlen`, so `toggle_case` never walks past the caller-supplied limit even if handed a non-terminated buffer.
+4. **NULL/zero-length guards** – `toggle_case` validates its arguments before dereferencing.
+5. **Correct ctype usage** – characters are cast to `unsigned char` before being passed to `isupper`/`islower`/`toupper`/`tolower`, avoiding undefined behavior with negative `char` values.
+6. **Newline stripping via `strchr`** – safe, bounded search within the terminated buffer.
+7. **Checked output** – the `printf` return value is verified, and appropriate exit codes (`EXIT_SUCCESS`/`EXIT_FAILURE`) are returned.
+
+The `_POSIX_C_SOURCE 200809L` feature-test macro is retained since `strnlen` is a POSIX.1-2008 function. No functional or security changes were required; the flagged risk was already mitigated.

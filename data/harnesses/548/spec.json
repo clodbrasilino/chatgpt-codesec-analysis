@@ -1,0 +1,66 @@
+{
+  "task_id": 548,
+  "text": "Write a C function to find the length of the longest increasing subsequence of the given sequence.",
+  "fn_candidates": [
+    "longest_increasing_subsequence",
+    "LongestIncreasingSubsequence",
+    "longestIncreasingSubsequence",
+    "longestincreasingsubsequence"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "longest_increasing_subsequence",
+      "args": [
+        [
+          10,
+          22,
+          9,
+          33,
+          21,
+          50,
+          41,
+          60
+        ]
+      ],
+      "expected": 5,
+      "assert_src": "assert longest_increasing_subsequence([10, 22, 9, 33, 21, 50, 41, 60]) == 5"
+    },
+    {
+      "fn_name": "longest_increasing_subsequence",
+      "args": [
+        [
+          3,
+          10,
+          2,
+          1,
+          20
+        ]
+      ],
+      "expected": 3,
+      "assert_src": "assert longest_increasing_subsequence([3, 10, 2, 1, 20]) == 3"
+    },
+    {
+      "fn_name": "longest_increasing_subsequence",
+      "args": [
+        [
+          50,
+          3,
+          10,
+          7,
+          40,
+          80
+        ]
+      ],
+      "expected": 4,
+      "assert_src": "assert longest_increasing_subsequence([50, 3, 10, 7, 40, 80]) == 4 "
+    }
+  ],
+  "arg_kinds": [
+    "int-list"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

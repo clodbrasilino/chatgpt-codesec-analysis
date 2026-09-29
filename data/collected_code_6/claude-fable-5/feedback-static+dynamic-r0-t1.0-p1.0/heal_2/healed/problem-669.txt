@@ -1,0 +1,91 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+#define IP_PATTERN "^((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])\\.){3}(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])$"
+
+static void print_regex_error(int errcode, const regex_t *regex)
+{
+    size_t needed = regerror(errcode, regex, NULL, 0);
+    char *errbuf = malloc(needed);
+
+    if (errbuf == NULL) {
+        fprintf(stderr, "Regex compilation failed: unable to allocate error buffer\n");
+        return;
+    }
+
+    regerror(errcode, regex, errbuf, needed);
+    fprintf(stderr, "Regex compilation failed: %s\n", errbuf);
+    free(errbuf);
+}
+
+int is_valid_ip(const char *ip)
+{
+    regex_t regex;
+    int result;
+
+    if (ip == NULL) {
+        return 0;
+    }
+
+    result = regcomp(&regex, IP_PATTERN, REG_EXTENDED | REG_NOSUB);
+    if (result != 0) {
+        print_regex_error(result, &regex);
+        return -1;
+    }
+
+    result = regexec(&regex, ip, 0, NULL, 0);
+    regfree(&regex);
+
+    if (result == 0) {
+        return 1;
+    } else if (result == REG_NOMATCH) {
+        return 0;
+    } else {
+        fprintf(stderr, "Regex execution failed\n");
+        return -1;
+    }
+}
+
+int main(void)
+{
+    const char *test_ips[] = {
+        "192.168.1.1",
+        "255.255.255.255",
+        "0.0.0.0",
+        "256.1.1.1",
+        "192.168.1",
+        "abc.def.ghi.jkl",
+        "10.0.0.1",
+        "999.999.999.999",
+        "1.2.3.4.5",
+        ""
+    };
+    size_t count = sizeof(test_ips) / sizeof(test_ips[0]);
+    size_t i;
+
+    for (i = 0; i < count; i++) {
+        int status = is_valid_ip(test_ips[i]);
+        if (status < 0) {
+            fprintf(stderr, "Error validating IP: %s\n", test_ips[i]);
+            return EXIT_FAILURE;
+        }
+        printf("%-20s : %s\n", test_ips[i], status == 1 ? "Valid" : "Invalid");
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the fix:**
+
+The original code already handled the Flawfinder warning reasonably well — it zeroed the buffer, passed `sizeof(errbuf) - 1` to `regerror()`, and forced NUL termination. However, the statically-sized buffer approach still has two residual weaknesses:
+
+1. **Potential truncation:** If the error message exceeds 255 characters, it gets silently truncated. While not a security flaw per se, it loses diagnostic information.
+2. **The warning itself (CWE-119/CWE-120):** Static buffers are flagged because any future modification (e.g., someone removing the `- 1` or the manual termination) reintroduces risk.
+
+The rewrite eliminates the statically-sized array entirely by using the two-call idiom that `regerror()` explicitly supports: calling it first with a `NULL` buffer and size `0` returns the exact number of bytes required (including the terminating NUL), then allocating precisely that amount. This removes the CWE-119/CWE-120 concern at its root — there is no fixed-size buffer to overflow or truncate into — and `regerror()` guarantees NUL termination when given an adequately sized buffer.
+
+The allocation failure path is also handled gracefully, and the buffer is freed to avoid a leak on the error path. The rest of the program (correct `regfree()` on all `regexec()` paths, NULL-pointer guard, distinct return codes for valid/invalid/error) was already sound and is preserved unchanged.

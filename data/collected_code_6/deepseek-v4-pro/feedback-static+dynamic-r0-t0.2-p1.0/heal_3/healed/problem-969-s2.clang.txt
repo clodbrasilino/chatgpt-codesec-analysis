@@ -1,0 +1,10 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_3/healed/problem-969-s2.c:85:55: error: call to undeclared function 'offsetof'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   85 |     size_t add_len = safe_strlen(src, sizeof(Tuple) - offsetof(Tuple, value));
+      |                                                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_3/healed/problem-969-s2.c:85:64: error: unexpected type name 'Tuple': expected expression
+   85 |     size_t add_len = safe_strlen(src, sizeof(Tuple) - offsetof(Tuple, value));
+      |                                                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_3/healed/problem-969-s2.c:85:71: error: use of undeclared identifier 'value'
+   85 |     size_t add_len = safe_strlen(src, sizeof(Tuple) - offsetof(Tuple, value));
+      |                                                                       ^~~~~
+3 errors generated.

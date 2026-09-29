@@ -1,0 +1,112 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node* next;
+} Node;
+
+typedef struct List {
+    Node* head;
+    struct List* next;
+} List;
+
+int count_lists(const List* lists) {
+    int count = 0;
+    const List* current = lists;
+    
+    while (current != NULL) {
+        count++;
+        current = current->next;
+    }
+    
+    return count;
+}
+
+List* create_list(const int* values, int size) {
+    if (size <= 0) {
+        return NULL;
+    }
+    
+    List* list = (List*)malloc(sizeof(List));
+    if (list == NULL) {
+        return NULL;
+    }
+    
+    list->head = NULL;
+    list->next = NULL;
+    
+    Node* current = NULL;
+    for (int i = 0; i < size; i++) {
+        Node* new_node = (Node*)malloc(sizeof(Node));
+        if (new_node == NULL) {
+            Node* temp = list->head;
+            while (temp != NULL) {
+                Node* next = temp->next;
+                free(temp);
+                temp = next;
+            }
+            free(list);
+            return NULL;
+        }
+        
+        new_node->data = values[i];
+        new_node->next = NULL;
+        
+        if (list->head == NULL) {
+            list->head = new_node;
+            current = new_node;
+        } else {
+            current->next = new_node;
+            current = new_node;
+        }
+    }
+    
+    return list;
+}
+
+void free_lists(List* lists) {
+    List* current_list = lists;
+    
+    while (current_list != NULL) {
+        List* next_list = current_list->next;
+        
+        Node* current_node = current_list->head;
+        while (current_node != NULL) {
+            Node* next_node = current_node->next;
+            free(current_node);
+            current_node = next_node;
+        }
+        
+        free(current_list);
+        current_list = next_list;
+    }
+}
+
+int main(void) {
+    int values1[] = {1, 2, 3};
+    int values2[] = {4, 5};
+    int values3[] = {6, 7, 8, 9};
+    
+    List* list1 = create_list(values1, 3);
+    List* list2 = create_list(values2, 2);
+    List* list3 = create_list(values3, 4);
+    
+    if (list1 == NULL || list2 == NULL || list3 == NULL) {
+        free_lists(list1);
+        free_lists(list2);
+        free_lists(list3);
+        return 1;
+    }
+    
+    list1->next = list2;
+    list2->next = list3;
+    list3->next = NULL;
+    
+    int result = count_lists(list1);
+    printf("Number of lists: %d\n", result);
+    
+    free_lists(list1);
+    
+    return 0;
+}

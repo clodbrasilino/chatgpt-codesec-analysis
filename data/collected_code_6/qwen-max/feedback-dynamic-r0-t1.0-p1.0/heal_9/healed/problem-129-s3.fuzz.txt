@@ -1,0 +1,5 @@
+problem-129-s3.c:39:32:medium:UBSan: signed integer overflow: -812156815 * -812156815 cannot be represented in type 'int' (AFL crash: id:000001,sig:06,src:000000,time:7451,execs:3748,op:havoc,rep:2)
+problem-129-s3.c:56:0:high:ASan: SEGV (AFL crash: id:000001,sig:06,src:000000,time:7451,execs:3748,op:havoc,rep:2)
+problem-129-s3.c:56:9:medium:UBSan: index -812156816 out of bounds for type 'int[10]' (AFL crash: id:000001,sig:06,src:000000,time:7451,execs:3748,op:havoc,rep:2)
+problem-129-s3.c:56:9:medium:UBSan: index -4 out of bounds for type 'int[10]' (AFL crash: id:000002,sig:06,src:000008,time:14597,execs:7003,op:havoc,rep:3)
+problem-129-s3.c:61:0:error:Fuzzing found a crash (signal 6) on input id:000000,sig:06,src:000000,time:940,execs:560,op:havoc,rep:4; likely memory-safety defect

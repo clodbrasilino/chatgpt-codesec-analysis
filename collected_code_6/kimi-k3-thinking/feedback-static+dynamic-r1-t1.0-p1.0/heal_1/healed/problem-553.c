@@ -1,1 +1,0 @@
-const int tuple[2] = {4, 5};

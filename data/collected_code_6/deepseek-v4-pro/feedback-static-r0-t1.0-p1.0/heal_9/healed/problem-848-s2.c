@@ -1,0 +1,47 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+double trapezium_area(double base1, double base2, double height) {
+    if (base1 < 0 || base2 < 0 || height < 0) {
+        return -1.0;
+    }
+    return 0.5 * (base1 + base2) * height;
+}
+
+int main(int argc, char *const argv[]) {
+    if (argc != 4) {
+        return 1;
+    }
+
+    const char *const *args = (const char *const *)argv;
+
+    const char *arg1 = args[1];
+    const char *arg2 = args[2];
+    const char *arg3 = args[3];
+
+    char *endptr1;
+    char *endptr2;
+    char *endptr3;
+
+    double base1 = strtod(arg1, &endptr1);
+    double base2 = strtod(arg2, &endptr2);
+    double height = strtod(arg3, &endptr3);
+
+    if (endptr1 == arg1 || endptr2 == arg2 || endptr3 == arg3) {
+        return 1;
+    }
+
+    if (*endptr1 != '\0' || *endptr2 != '\0' || *endptr3 != '\0') {
+        return 1;
+    }
+
+    double result = trapezium_area(base1, base2, height);
+
+    if (result < 0) {
+        return 1;
+    }
+
+    printf("%.6f\n", result);
+
+    return 0;
+}

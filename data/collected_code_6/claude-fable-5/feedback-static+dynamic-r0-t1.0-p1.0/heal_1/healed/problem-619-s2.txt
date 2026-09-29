@@ -1,0 +1,81 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#define MAX_INPUT_LEN 4096U
+
+char *move_numbers_to_end(const char *input)
+{
+    size_t len;
+    size_t i;
+    size_t pos;
+    char *result;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    len = strnlen(input, MAX_INPUT_LEN);
+    if (len >= MAX_INPUT_LEN) {
+        return NULL;
+    }
+
+    result = malloc(len + 1U);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    pos = 0U;
+    for (i = 0U; i < len; i++) {
+        if (isdigit((unsigned char)input[i]) == 0) {
+            result[pos] = input[i];
+            pos++;
+        }
+    }
+
+    for (i = 0U; i < len; i++) {
+        if (isdigit((unsigned char)input[i]) != 0) {
+            result[pos] = input[i];
+            pos++;
+        }
+    }
+
+    result[pos] = '\0';
+    return result;
+}
+
+int main(void)
+{
+    const char *test = "a1b2c3d4";
+    char *moved;
+
+    moved = move_numbers_to_end(test);
+    if (moved == NULL) {
+        fprintf(stderr, "Failed to process string\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Original: %s\n", test) < 0) {
+        free(moved);
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Result:   %s\n", moved) < 0) {
+        free(moved);
+        return EXIT_FAILURE;
+    }
+
+    free(moved);
+    moved = NULL;
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Key change addressing the identified weakness (CWE-126):**
+
+The flagged `strlen` call was replaced with `strnlen` bounded by `MAX_INPUT_LEN`. This ensures that if the function ever receives a buffer that is not properly `\0`-terminated, the read is capped at a defined maximum rather than over-reading arbitrary memory. If the string reaches the bound (meaning no terminator was found within the limit, or the input is excessively long), the function safely rejects it by returning `NULL`, which the caller already handles.
+
+The rest of the code was already sound: `isdigit` is correctly called with an `unsigned char` cast (avoiding UB with negative `char` values), `malloc` results are checked, the output buffer is exactly sized with room for the terminator, and all allocations are freed on every exit path.

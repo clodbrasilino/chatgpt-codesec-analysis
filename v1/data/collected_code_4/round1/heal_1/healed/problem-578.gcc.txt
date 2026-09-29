@@ -1,0 +1,893 @@
+./collected_code_4/round1//heal_1/healed//problem-578.c: In function 'main':
+./collected_code_4/round1//heal_1/healed//problem-578.c:71:23: warning: dereference of NULL '0' [CWE-476] [-Wanalyzer-null-dereference]
+   71 |     first->next->next = newNode(3);
+      |     ~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~
+  'main': events 1-2
+    |
+    |   62 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |   63 |     Node* first = newNode(1);
+    |      |                   ~~~~~~~~~~
+    |      |                   |
+    |      |                   (2) calling 'newNode' from 'main'
+    |
+    +--> 'newNode': events 3-5
+           |
+           |   49 | Node* newNode(int new_data) {
+           |      |       ^~~~~~~
+           |      |       |
+           |      |       (3) entry to 'newNode'
+           |......
+           |   52 |     if (!new_node) {
+           |      |        ~
+           |      |        |
+           |      |        (4) following 'false' branch (when 'new_node' is non-NULL)...
+           |......
+           |   56 |     new_node->data = new_data;
+           |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                    |
+           |      |                    (5) ...to here
+           |
+    <------+
+    |
+  'main': events 6-7
+    |
+    |   63 |     Node* first = newNode(1);
+    |      |                   ^~~~~~~~~~
+    |      |                   |
+    |      |                   (6) returning to 'main' from 'newNode'
+    |   64 |     Node* second = newNode(5);
+    |      |                    ~~~~~~~~~~
+    |      |                    |
+    |      |                    (7) calling 'newNode' from 'main'
+    |
+    +--> 'newNode': events 8-10
+           |
+           |   49 | Node* newNode(int new_data) {
+           |      |       ^~~~~~~
+           |      |       |
+           |      |       (8) entry to 'newNode'
+           |......
+           |   52 |     if (!new_node) {
+           |      |        ~
+           |      |        |
+           |      |        (9) following 'false' branch (when 'new_node' is non-NULL)...
+           |......
+           |   56 |     new_node->data = new_data;
+           |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                    |
+           |      |                    (10) ...to here
+           |
+    <------+
+    |
+  'main': events 11-14
+    |
+    |   64 |     Node* second = newNode(5);
+    |      |                    ^~~~~~~~~~
+    |      |                    |
+    |      |                    (11) returning to 'main' from 'newNode'
+    |   65 | 
+    |   66 |     if (!first || !second) {
+    |      |        ~            
+    |      |        |
+    |      |        (12) following 'false' branch...
+    |......
+    |   70 |     first->next = newNode(2);
+    |      |                   ~~~~~~~~~~
+    |      |                   |
+    |      |                   (13) ...to here
+    |      |                   (14) calling 'newNode' from 'main'
+    |
+    +--> 'newNode': events 15-16
+           |
+           |   49 | Node* newNode(int new_data) {
+           |      |       ^~~~~~~
+           |      |       |
+           |      |       (15) entry to 'newNode'
+           |......
+           |   52 |     if (!new_node) {
+           |      |        ~
+           |      |        |
+           |      |        (16) following 'true' branch (when 'new_node' is NULL)...
+           |
+         'newNode': event 17
+           |
+           |   53 |         return NULL;
+           |      |                ^~~~
+           |      |                |
+           |      |                (17) ...to here
+           |
+         'newNode': event 18
+           |
+           |   53 |         return NULL;
+           |      |                ^~~~
+           |      |                |
+           |      |                (18) '0' is NULL
+           |
+    <------+
+    |
+  'main': events 19-21
+    |
+    |   70 |     first->next = newNode(2);
+    |      |                   ^~~~~~~~~~
+    |      |                   |
+    |      |                   (19) returning to 'main' from 'newNode'
+    |   71 |     first->next->next = newNode(3);
+    |      |     ~~~~~~~~~~~         ~~~~~~~~~~
+    |      |          |              |
+    |      |          |              (21) calling 'newNode' from 'main'
+    |      |          (20) '0' is NULL
+    |
+    +--> 'newNode': events 22-23
+           |
+           |   49 | Node* newNode(int new_data) {
+           |      |       ^~~~~~~
+           |      |       |
+           |      |       (22) entry to 'newNode'
+           |......
+           |   52 |     if (!new_node) {
+           |      |        ~
+           |      |        |
+           |      |        (23) following 'true' branch (when 'new_node' is NULL)...
+           |
+         'newNode': event 24
+           |
+           |   53 |         return NULL;
+           |      |                ^~~~
+           |      |                |
+           |      |                (24) ...to here
+           |
+         'newNode': event 25
+           |
+           |   53 |         return NULL;
+           |      |                ^~~~
+           |      |                |
+           |      |                (25) '0' is NULL
+           |
+    <------+
+    |
+  'main': events 26-28
+    |
+    |   71 |     first->next->next = newNode(3);
+    |      |     ~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~
+    |      |                       | |
+    |      |                       | (26) returning to 'main' from 'newNode'
+    |      |                       (27) '0' is NULL
+    |      |                       (28) dereference of NULL '*first.next'
+    |
+./collected_code_4/round1//heal_1/healed//problem-578.c:72:29: warning: dereference of NULL '0' [CWE-476] [-Wanalyzer-null-dereference]
+   72 |     first->next->next->next = newNode(4);
+      |     ~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~
+  'main': events 1-2
+    |
+    |   62 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |   63 |     Node* first = newNode(1);
+    |      |                   ~~~~~~~~~~
+    |      |                   |
+    |      |                   (2) calling 'newNode' from 'main'
+    |
+    +--> 'newNode': events 3-5
+           |
+           |   49 | Node* newNode(int new_data) {
+           |      |       ^~~~~~~
+           |      |       |
+           |      |       (3) entry to 'newNode'
+           |......
+           |   52 |     if (!new_node) {
+           |      |        ~
+           |      |        |
+           |      |        (4) following 'false' branch (when 'new_node' is non-NULL)...
+           |......
+           |   56 |     new_node->data = new_data;
+           |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                    |
+           |      |                    (5) ...to here
+           |
+    <------+
+    |
+  'main': events 6-7
+    |
+    |   63 |     Node* first = newNode(1);
+    |      |                   ^~~~~~~~~~
+    |      |                   |
+    |      |                   (6) returning to 'main' from 'newNode'
+    |   64 |     Node* second = newNode(5);
+    |      |                    ~~~~~~~~~~
+    |      |                    |
+    |      |                    (7) calling 'newNode' from 'main'
+    |
+    +--> 'newNode': events 8-10
+           |
+           |   49 | Node* newNode(int new_data) {
+           |      |       ^~~~~~~
+           |      |       |
+           |      |       (8) entry to 'newNode'
+           |......
+           |   52 |     if (!new_node) {
+           |      |        ~
+           |      |        |
+           |      |        (9) following 'false' branch (when 'new_node' is non-NULL)...
+           |......
+           |   56 |     new_node->data = new_data;
+           |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                    |
+           |      |                    (10) ...to here
+           |
+    <------+
+    |
+  'main': events 11-14
+    |
+    |   64 |     Node* second = newNode(5);
+    |      |                    ^~~~~~~~~~
+    |      |                    |
+    |      |                    (11) returning to 'main' from 'newNode'
+    |   65 | 
+    |   66 |     if (!first || !second) {
+    |      |        ~            
+    |      |        |
+    |      |        (12) following 'false' branch...
+    |......
+    |   70 |     first->next = newNode(2);
+    |      |                   ~~~~~~~~~~
+    |      |                   |
+    |      |                   (13) ...to here
+    |      |                   (14) calling 'newNode' from 'main'
+    |
+    +--> 'newNode': events 15-17
+           |
+           |   49 | Node* newNode(int new_data) {
+           |      |       ^~~~~~~
+           |      |       |
+           |      |       (15) entry to 'newNode'
+           |......
+           |   52 |     if (!new_node) {
+           |      |        ~
+           |      |        |
+           |      |        (16) following 'false' branch (when 'new_node' is non-NULL)...
+           |......
+           |   56 |     new_node->data = new_data;
+           |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                    |
+           |      |                    (17) ...to here
+           |
+    <------+
+    |
+  'main': events 18-19
+    |
+    |   70 |     first->next = newNode(2);
+    |      |                   ^~~~~~~~~~
+    |      |                   |
+    |      |                   (18) returning to 'main' from 'newNode'
+    |   71 |     first->next->next = newNode(3);
+    |      |                         ~~~~~~~~~~
+    |      |                         |
+    |      |                         (19) calling 'newNode' from 'main'
+    |
+    +--> 'newNode': events 20-21
+           |
+           |   49 | Node* newNode(int new_data) {
+           |      |       ^~~~~~~
+           |      |       |
+           |      |       (20) entry to 'newNode'
+           |......
+           |   52 |     if (!new_node) {
+           |      |        ~
+           |      |        |
+           |      |        (21) following 'true' branch (when 'new_node' is NULL)...
+           |
+         'newNode': event 22
+           |
+           |   53 |         return NULL;
+           |      |                ^~~~
+           |      |                |
+           |      |                (22) ...to here
+           |
+         'newNode': event 23
+           |
+           |   53 |         return NULL;
+           |      |                ^~~~
+           |      |                |
+           |      |                (23) '0' is NULL
+           |
+    <------+
+    |
+  'main': events 24-26
+    |
+    |   71 |     first->next->next = newNode(3);
+    |      |                         ^~~~~~~~~~
+    |      |                         |
+    |      |                         (24) returning to 'main' from 'newNode'
+    |   72 |     first->next->next->next = newNode(4);
+    |      |     ~~~~~~~~~~~~~~~~~         ~~~~~~~~~~
+    |      |                |              |
+    |      |                |              (26) calling 'newNode' from 'main'
+    |      |                (25) '0' is NULL
+    |
+    +--> 'newNode': events 27-28
+           |
+           |   49 | Node* newNode(int new_data) {
+           |      |       ^~~~~~~
+           |      |       |
+           |      |       (27) entry to 'newNode'
+           |......
+           |   52 |     if (!new_node) {
+           |      |        ~
+           |      |        |
+           |      |        (28) following 'true' branch (when 'new_node' is NULL)...
+           |
+         'newNode': event 29
+           |
+           |   53 |         return NULL;
+           |      |                ^~~~
+           |      |                |
+           |      |                (29) ...to here
+           |
+         'newNode': event 30
+           |
+           |   53 |         return NULL;
+           |      |                ^~~~
+           |      |                |
+           |      |                (30) '0' is NULL
+           |
+    <------+
+    |
+  'main': events 31-33
+    |
+    |   72 |     first->next->next->next = newNode(4);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~
+    |      |                             | |
+    |      |                             | (31) returning to 'main' from 'newNode'
+    |      |                             (32) '0' is NULL
+    |      |                             (33) dereference of NULL '*first_17->next.next'
+    |
+./collected_code_4/round1//heal_1/healed//problem-578.c:75:24: warning: dereference of NULL '0' [CWE-476] [-Wanalyzer-null-dereference]
+   75 |     second->next->next = newNode(7);
+      |     ~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~
+  'main': events 1-2
+    |
+    |   62 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |   63 |     Node* first = newNode(1);
+    |      |                   ~~~~~~~~~~
+    |      |                   |
+    |      |                   (2) calling 'newNode' from 'main'
+    |
+    +--> 'newNode': events 3-5
+           |
+           |   49 | Node* newNode(int new_data) {
+           |      |       ^~~~~~~
+           |      |       |
+           |      |       (3) entry to 'newNode'
+           |......
+           |   52 |     if (!new_node) {
+           |      |        ~
+           |      |        |
+           |      |        (4) following 'false' branch (when 'new_node' is non-NULL)...
+           |......
+           |   56 |     new_node->data = new_data;
+           |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                    |
+           |      |                    (5) ...to here
+           |
+    <------+
+    |
+  'main': events 6-7
+    |
+    |   63 |     Node* first = newNode(1);
+    |      |                   ^~~~~~~~~~
+    |      |                   |
+    |      |                   (6) returning to 'main' from 'newNode'
+    |   64 |     Node* second = newNode(5);
+    |      |                    ~~~~~~~~~~
+    |      |                    |
+    |      |                    (7) calling 'newNode' from 'main'
+    |
+    +--> 'newNode': events 8-10
+           |
+           |   49 | Node* newNode(int new_data) {
+           |      |       ^~~~~~~
+           |      |       |
+           |      |       (8) entry to 'newNode'
+           |......
+           |   52 |     if (!new_node) {
+           |      |        ~
+           |      |        |
+           |      |        (9) following 'false' branch (when 'new_node' is non-NULL)...
+           |......
+           |   56 |     new_node->data = new_data;
+           |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                    |
+           |      |                    (10) ...to here
+           |
+    <------+
+    |
+  'main': events 11-14
+    |
+    |   64 |     Node* second = newNode(5);
+    |      |                    ^~~~~~~~~~
+    |      |                    |
+    |      |                    (11) returning to 'main' from 'newNode'
+    |   65 | 
+    |   66 |     if (!first || !second) {
+    |      |        ~            
+    |      |        |
+    |      |        (12) following 'false' branch...
+    |......
+    |   70 |     first->next = newNode(2);
+    |      |                   ~~~~~~~~~~
+    |      |                   |
+    |      |                   (13) ...to here
+    |      |                   (14) calling 'newNode' from 'main'
+    |
+    +--> 'newNode': events 15-17
+           |
+           |   49 | Node* newNode(int new_data) {
+           |      |       ^~~~~~~
+           |      |       |
+           |      |       (15) entry to 'newNode'
+           |......
+           |   52 |     if (!new_node) {
+           |      |        ~
+           |      |        |
+           |      |        (16) following 'false' branch (when 'new_node' is non-NULL)...
+           |......
+           |   56 |     new_node->data = new_data;
+           |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                    |
+           |      |                    (17) ...to here
+           |
+    <------+
+    |
+  'main': events 18-19
+    |
+    |   70 |     first->next = newNode(2);
+    |      |                   ^~~~~~~~~~
+    |      |                   |
+    |      |                   (18) returning to 'main' from 'newNode'
+    |   71 |     first->next->next = newNode(3);
+    |      |                         ~~~~~~~~~~
+    |      |                         |
+    |      |                         (19) calling 'newNode' from 'main'
+    |
+    +--> 'newNode': events 20-22
+           |
+           |   49 | Node* newNode(int new_data) {
+           |      |       ^~~~~~~
+           |      |       |
+           |      |       (20) entry to 'newNode'
+           |......
+           |   52 |     if (!new_node) {
+           |      |        ~
+           |      |        |
+           |      |        (21) following 'false' branch (when 'new_node' is non-NULL)...
+           |......
+           |   56 |     new_node->data = new_data;
+           |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                    |
+           |      |                    (22) ...to here
+           |
+    <------+
+    |
+  'main': events 23-24
+    |
+    |   71 |     first->next->next = newNode(3);
+    |      |                         ^~~~~~~~~~
+    |      |                         |
+    |      |                         (23) returning to 'main' from 'newNode'
+    |   72 |     first->next->next->next = newNode(4);
+    |      |                               ~~~~~~~~~~
+    |      |                               |
+    |      |                               (24) calling 'newNode' from 'main'
+    |
+    +--> 'newNode': events 25-26
+           |
+           |   49 | Node* newNode(int new_data) {
+           |      |       ^~~~~~~
+           |      |       |
+           |      |       (25) entry to 'newNode'
+           |......
+           |   52 |     if (!new_node) {
+           |      |        ~
+           |      |        |
+           |      |        (26) following 'true' branch (when 'new_node' is NULL)...
+           |
+         'newNode': event 27
+           |
+           |   53 |         return NULL;
+           |      |                ^~~~
+           |      |                |
+           |      |                (27) ...to here
+           |
+         'newNode': event 28
+           |
+           |   53 |         return NULL;
+           |      |                ^~~~
+           |      |                |
+           |      |                (28) '0' is NULL
+           |
+    <------+
+    |
+  'main': events 29-30
+    |
+    |   72 |     first->next->next->next = newNode(4);
+    |      |                               ^~~~~~~~~~
+    |      |                               |
+    |      |                               (29) returning to 'main' from 'newNode'
+    |   73 | 
+    |   74 |     second->next = newNode(6);
+    |      |                    ~~~~~~~~~~  
+    |      |                    |
+    |      |                    (30) calling 'newNode' from 'main'
+    |
+    +--> 'newNode': events 31-32
+           |
+           |   49 | Node* newNode(int new_data) {
+           |      |       ^~~~~~~
+           |      |       |
+           |      |       (31) entry to 'newNode'
+           |......
+           |   52 |     if (!new_node) {
+           |      |        ~
+           |      |        |
+           |      |        (32) following 'true' branch (when 'new_node' is NULL)...
+           |
+         'newNode': event 33
+           |
+           |   53 |         return NULL;
+           |      |                ^~~~
+           |      |                |
+           |      |                (33) ...to here
+           |
+         'newNode': event 34
+           |
+           |   53 |         return NULL;
+           |      |                ^~~~
+           |      |                |
+           |      |                (34) '0' is NULL
+           |
+    <------+
+    |
+  'main': events 35-37
+    |
+    |   74 |     second->next = newNode(6);
+    |      |                    ^~~~~~~~~~
+    |      |                    |
+    |      |                    (35) returning to 'main' from 'newNode'
+    |   75 |     second->next->next = newNode(7);
+    |      |     ~~~~~~~~~~~~         ~~~~~~~~~~
+    |      |           |              |
+    |      |           |              (37) calling 'newNode' from 'main'
+    |      |           (36) '0' is NULL
+    |
+    +--> 'newNode': events 38-39
+           |
+           |   49 | Node* newNode(int new_data) {
+           |      |       ^~~~~~~
+           |      |       |
+           |      |       (38) entry to 'newNode'
+           |......
+           |   52 |     if (!new_node) {
+           |      |        ~
+           |      |        |
+           |      |        (39) following 'true' branch (when 'new_node' is NULL)...
+           |
+         'newNode': event 40
+           |
+           |   53 |         return NULL;
+           |      |                ^~~~
+           |      |                |
+           |      |                (40) ...to here
+           |
+         'newNode': event 41
+           |
+           |   53 |         return NULL;
+           |      |                ^~~~
+           |      |                |
+           |      |                (41) '0' is NULL
+           |
+    <------+
+    |
+  'main': events 42-44
+    |
+    |   75 |     second->next->next = newNode(7);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~
+    |      |                        | |
+    |      |                        | (42) returning to 'main' from 'newNode'
+    |      |                        (43) '0' is NULL
+    |      |                        (44) dereference of NULL '*second.next'
+    |
+./collected_code_4/round1//heal_1/healed//problem-578.c:76:30: warning: dereference of NULL '0' [CWE-476] [-Wanalyzer-null-dereference]
+   76 |     second->next->next->next = newNode(8);
+      |     ~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~
+  'main': events 1-2
+    |
+    |   62 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |   63 |     Node* first = newNode(1);
+    |      |                   ~~~~~~~~~~
+    |      |                   |
+    |      |                   (2) calling 'newNode' from 'main'
+    |
+    +--> 'newNode': events 3-5
+           |
+           |   49 | Node* newNode(int new_data) {
+           |      |       ^~~~~~~
+           |      |       |
+           |      |       (3) entry to 'newNode'
+           |......
+           |   52 |     if (!new_node) {
+           |      |        ~
+           |      |        |
+           |      |        (4) following 'false' branch (when 'new_node' is non-NULL)...
+           |......
+           |   56 |     new_node->data = new_data;
+           |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                    |
+           |      |                    (5) ...to here
+           |
+    <------+
+    |
+  'main': events 6-7
+    |
+    |   63 |     Node* first = newNode(1);
+    |      |                   ^~~~~~~~~~
+    |      |                   |
+    |      |                   (6) returning to 'main' from 'newNode'
+    |   64 |     Node* second = newNode(5);
+    |      |                    ~~~~~~~~~~
+    |      |                    |
+    |      |                    (7) calling 'newNode' from 'main'
+    |
+    +--> 'newNode': events 8-10
+           |
+           |   49 | Node* newNode(int new_data) {
+           |      |       ^~~~~~~
+           |      |       |
+           |      |       (8) entry to 'newNode'
+           |......
+           |   52 |     if (!new_node) {
+           |      |        ~
+           |      |        |
+           |      |        (9) following 'false' branch (when 'new_node' is non-NULL)...
+           |......
+           |   56 |     new_node->data = new_data;
+           |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                    |
+           |      |                    (10) ...to here
+           |
+    <------+
+    |
+  'main': events 11-14
+    |
+    |   64 |     Node* second = newNode(5);
+    |      |                    ^~~~~~~~~~
+    |      |                    |
+    |      |                    (11) returning to 'main' from 'newNode'
+    |   65 | 
+    |   66 |     if (!first || !second) {
+    |      |        ~            
+    |      |        |
+    |      |        (12) following 'false' branch...
+    |......
+    |   70 |     first->next = newNode(2);
+    |      |                   ~~~~~~~~~~
+    |      |                   |
+    |      |                   (13) ...to here
+    |      |                   (14) calling 'newNode' from 'main'
+    |
+    +--> 'newNode': events 15-17
+           |
+           |   49 | Node* newNode(int new_data) {
+           |      |       ^~~~~~~
+           |      |       |
+           |      |       (15) entry to 'newNode'
+           |......
+           |   52 |     if (!new_node) {
+           |      |        ~
+           |      |        |
+           |      |        (16) following 'false' branch (when 'new_node' is non-NULL)...
+           |......
+           |   56 |     new_node->data = new_data;
+           |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                    |
+           |      |                    (17) ...to here
+           |
+    <------+
+    |
+  'main': events 18-19
+    |
+    |   70 |     first->next = newNode(2);
+    |      |                   ^~~~~~~~~~
+    |      |                   |
+    |      |                   (18) returning to 'main' from 'newNode'
+    |   71 |     first->next->next = newNode(3);
+    |      |                         ~~~~~~~~~~
+    |      |                         |
+    |      |                         (19) calling 'newNode' from 'main'
+    |
+    +--> 'newNode': events 20-22
+           |
+           |   49 | Node* newNode(int new_data) {
+           |      |       ^~~~~~~
+           |      |       |
+           |      |       (20) entry to 'newNode'
+           |......
+           |   52 |     if (!new_node) {
+           |      |        ~
+           |      |        |
+           |      |        (21) following 'false' branch (when 'new_node' is non-NULL)...
+           |......
+           |   56 |     new_node->data = new_data;
+           |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                    |
+           |      |                    (22) ...to here
+           |
+    <------+
+    |
+  'main': events 23-24
+    |
+    |   71 |     first->next->next = newNode(3);
+    |      |                         ^~~~~~~~~~
+    |      |                         |
+    |      |                         (23) returning to 'main' from 'newNode'
+    |   72 |     first->next->next->next = newNode(4);
+    |      |                               ~~~~~~~~~~
+    |      |                               |
+    |      |                               (24) calling 'newNode' from 'main'
+    |
+    +--> 'newNode': events 25-26
+           |
+           |   49 | Node* newNode(int new_data) {
+           |      |       ^~~~~~~
+           |      |       |
+           |      |       (25) entry to 'newNode'
+           |......
+           |   52 |     if (!new_node) {
+           |      |        ~
+           |      |        |
+           |      |        (26) following 'true' branch (when 'new_node' is NULL)...
+           |
+         'newNode': event 27
+           |
+           |   53 |         return NULL;
+           |      |                ^~~~
+           |      |                |
+           |      |                (27) ...to here
+           |
+         'newNode': event 28
+           |
+           |   53 |         return NULL;
+           |      |                ^~~~
+           |      |                |
+           |      |                (28) '0' is NULL
+           |
+    <------+
+    |
+  'main': events 29-30
+    |
+    |   72 |     first->next->next->next = newNode(4);
+    |      |                               ^~~~~~~~~~
+    |      |                               |
+    |      |                               (29) returning to 'main' from 'newNode'
+    |   73 | 
+    |   74 |     second->next = newNode(6);
+    |      |                    ~~~~~~~~~~  
+    |      |                    |
+    |      |                    (30) calling 'newNode' from 'main'
+    |
+    +--> 'newNode': events 31-33
+           |
+           |   49 | Node* newNode(int new_data) {
+           |      |       ^~~~~~~
+           |      |       |
+           |      |       (31) entry to 'newNode'
+           |......
+           |   52 |     if (!new_node) {
+           |      |        ~
+           |      |        |
+           |      |        (32) following 'false' branch (when 'new_node' is non-NULL)...
+           |......
+           |   56 |     new_node->data = new_data;
+           |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                    |
+           |      |                    (33) ...to here
+           |
+    <------+
+    |
+  'main': events 34-35
+    |
+    |   74 |     second->next = newNode(6);
+    |      |                    ^~~~~~~~~~
+    |      |                    |
+    |      |                    (34) returning to 'main' from 'newNode'
+    |   75 |     second->next->next = newNode(7);
+    |      |                          ~~~~~~~~~~
+    |      |                          |
+    |      |                          (35) calling 'newNode' from 'main'
+    |
+    +--> 'newNode': events 36-37
+           |
+           |   49 | Node* newNode(int new_data) {
+           |      |       ^~~~~~~
+           |      |       |
+           |      |       (36) entry to 'newNode'
+           |......
+           |   52 |     if (!new_node) {
+           |      |        ~
+           |      |        |
+           |      |        (37) following 'true' branch (when 'new_node' is NULL)...
+           |
+         'newNode': event 38
+           |
+           |   53 |         return NULL;
+           |      |                ^~~~
+           |      |                |
+           |      |                (38) ...to here
+           |
+         'newNode': event 39
+           |
+           |   53 |         return NULL;
+           |      |                ^~~~
+           |      |                |
+           |      |                (39) '0' is NULL
+           |
+    <------+
+    |
+  'main': events 40-42
+    |
+    |   75 |     second->next->next = newNode(7);
+    |      |                          ^~~~~~~~~~
+    |      |                          |
+    |      |                          (40) returning to 'main' from 'newNode'
+    |   76 |     second->next->next->next = newNode(8);
+    |      |     ~~~~~~~~~~~~~~~~~~         ~~~~~~~~~~
+    |      |                 |              |
+    |      |                 |              (42) calling 'newNode' from 'main'
+    |      |                 (41) '0' is NULL
+    |
+    +--> 'newNode': events 43-44
+           |
+           |   49 | Node* newNode(int new_data) {
+           |      |       ^~~~~~~
+           |      |       |
+           |      |       (43) entry to 'newNode'
+           |......
+           |   52 |     if (!new_node) {
+           |      |        ~
+           |      |        |
+           |      |        (44) following 'true' branch (when 'new_node' is NULL)...
+           |
+         'newNode': event 45
+           |
+           |   53 |         return NULL;
+           |      |                ^~~~
+           |      |                |
+           |      |                (45) ...to here
+           |
+         'newNode': event 46
+           |
+           |   53 |         return NULL;
+           |      |                ^~~~
+           |      |                |
+           |      |                (46) '0' is NULL
+           |
+    <------+
+    |
+  'main': events 47-49
+    |
+    |   76 |     second->next->next->next = newNode(8);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~
+    |      |                              | |
+    |      |                              | (47) returning to 'main' from 'newNode'
+    |      |                              (48) '0' is NULL
+    |      |                              (49) dereference of NULL '*second_19->next.next'
+    |

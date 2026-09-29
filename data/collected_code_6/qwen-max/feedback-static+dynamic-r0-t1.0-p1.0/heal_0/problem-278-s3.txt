@@ -1,0 +1,28 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int find_occurrences_before(const int *array, size_t length, int target) {
+    if (array == NULL || length == 0) return 0;
+
+    int count = 0;
+    for (size_t i = 0; i < length; ++i) {
+        if (array[i] == target) {
+            break;
+        }
+        ++count;
+    }
+    return count;
+}
+
+int main() {
+    int array[] = {1, 2, 3, 4, 5, 3, 6};
+    size_t length = sizeof(array) / sizeof(array[0]);
+    int target = 3;
+
+    int count = find_occurrences_before(array, length, target);
+    printf("Elements before first occurrence of %d: %d\n", target, count);
+
+    return 0;
+}
+```

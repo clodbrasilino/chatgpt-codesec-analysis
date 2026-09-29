@@ -1,0 +1,57 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+#include <stdlib.h>
+
+bool is_substring_present(char **strings, int count, const char *substring) {
+    if (strings == NULL || substring == NULL || count <= 0) {
+        return false;
+    }
+
+    for (int i = 0; i < count; i++) {
+        if (strings[i] == NULL) {
+            continue;
+        }
+        if (strstr(strings[i], substring) != NULL) {
+            return true;
+        }
+    }
+    return false;
+}
+
+int main(void) {
+    char *strings[] = {
+        "hello world",
+        "programming in C",
+        "substring search",
+        "test string",
+        NULL
+    };
+    
+    int count = 4;
+    const char *search1 = "gram";
+    const char *search2 = "xyz";
+    const char *search3 = "string";
+    
+    if (is_substring_present(strings, count, search1)) {
+        printf("\"%s\" is present\n", search1);
+    } else {
+        printf("\"%s\" is not present\n", search1);
+    }
+    
+    if (is_substring_present(strings, count, search2)) {
+        printf("\"%s\" is present\n", search2);
+    } else {
+        printf("\"%s\" is not present\n", search2);
+    }
+    
+    if (is_substring_present(strings, count, search3)) {
+        printf("\"%s\" is present\n", search3);
+    } else {
+        printf("\"%s\" is not present\n", search3);
+    }
+    
+    return 0;
+}
+```

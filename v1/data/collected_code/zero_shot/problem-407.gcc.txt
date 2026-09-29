@@ -1,0 +1,5 @@
+collected_code/problem-407-0.c: In function 'findNextBigger':
+collected_code/problem-407-0.c:41:49: error: 'compare' undeclared (first use in this function)
+   41 |     qsort(&digits[i], n - i, sizeof(digits[0]), compare);
+      |                                                 ^~~~~~~
+collected_code/problem-407-0.c:41:49: note: each undeclared identifier is reported only once for each function it appears in

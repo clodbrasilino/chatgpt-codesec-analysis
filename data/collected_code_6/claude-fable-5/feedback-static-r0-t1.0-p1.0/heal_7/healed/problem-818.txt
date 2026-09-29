@@ -1,0 +1,67 @@
+```c
+#include <stdio.h>
+#include <ctype.h>
+#include <stddef.h>
+#include <string.h>
+
+#define BUFFER_SIZE 256
+
+size_t count_lowercase(const char *str)
+{
+    size_t count = 0;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    while (*str != '\0') {
+        if (islower((unsigned char)*str)) {
+            count++;
+        }
+        str++;
+    }
+
+    return count;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t result;
+    size_t len;
+
+    printf("Enter a string: ");
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input.\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    }
+
+    result = count_lowercase(buffer);
+    printf("Number of lowercase letters: %zu\n", result);
+
+    return 0;
+}
+```
+
+**Analysis notes:**
+
+The original code already addresses the Flawfinder warning (CWE-119/CWE-120) correctly, so the rewritten version preserves those mitigations:
+
+1. **Bounded input reading** — `fgets(buffer, sizeof(buffer), stdin)` limits input to the buffer size, preventing the classic `gets()`-style overflow that the static analyzer warns about with fixed-size arrays.
+
+2. **Guaranteed null termination** — `buffer[sizeof(buffer) - 1] = '\0';` is defensive; `fgets` already null-terminates, but this ensures termination even under unusual conditions.
+
+3. **Bounded length calculation** — `strnlen(buffer, sizeof(buffer))` instead of `strlen()` guarantees the scan never runs past the buffer, even if termination somehow failed.
+
+4. **Safe `ctype` usage** — casting to `(unsigned char)` before calling `islower()` avoids undefined behavior when `char` is signed and holds negative values (e.g., extended characters).
+
+5. **Return value checking** — the `NULL` check on `fgets` handles EOF/read errors, and `count_lowercase` guards against a `NULL` pointer argument.
+
+The Flawfinder hit on `char buffer[BUFFER_SIZE]` is a low-risk (risk 2) informational warning inherent to any statically-sized array; since all accesses are bounds-checked, no further changes are required.

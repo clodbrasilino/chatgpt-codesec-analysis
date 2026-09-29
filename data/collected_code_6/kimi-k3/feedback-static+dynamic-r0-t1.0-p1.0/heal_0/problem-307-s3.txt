@@ -1,0 +1,102 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char **elements;
+    size_t count;
+} Tuple;
+
+void tuple_init(Tuple *t) {
+    if (t == NULL) {
+        return;
+    }
+    t->elements = NULL;
+    t->count = 0;
+}
+
+int tuple_add(Tuple *t, const char *element) {
+    char **new_elements;
+    char *new_element;
+    
+    if (t == NULL || element == NULL) {
+        return -1;
+    }
+    
+    new_elements = realloc(t->elements, (t->count + 1) * sizeof(char *));
+    if (new_elements == NULL) {
+        return -1;
+    }
+    t->elements = new_elements;
+    
+    new_element = malloc(strlen(element) + 1);
+    if (new_element == NULL) {
+        return -1;
+    }
+    strcpy(new_element, element);
+    
+    t->elements[t->count] = new_element;
+    t->count++;
+    
+    return 0;
+}
+
+const char *tuple_get_colon(const Tuple *t, size_t index) {
+    if (t == NULL || index >= t->count) {
+        return NULL;
+    }
+    return t->elements[index];
+}
+
+void tuple_free(Tuple *t) {
+    size_t i;
+    
+    if (t == NULL) {
+        return;
+    }
+    
+    for (i = 0; i < t->count; i++) {
+        free(t->elements[i]);
+    }
+    free(t->elements);
+    t->elements = NULL;
+    t->count = 0;
+}
+
+int main(void) {
+    Tuple t;
+    const char *result;
+    
+    tuple_init(&t);
+    
+    if (tuple_add(&t, "first") != 0) {
+        fprintf(stderr, "Failed to add element\n");
+        tuple_free(&t);
+        return EXIT_FAILURE;
+    }
+    
+    if (tuple_add(&t, "second") != 0) {
+        fprintf(stderr, "Failed to add element\n");
+        tuple_free(&t);
+        return EXIT_FAILURE;
+    }
+    
+    if (tuple_add(&t, "third") != 0) {
+        fprintf(stderr, "Failed to add element\n");
+        tuple_free(&t);
+        return EXIT_FAILURE;
+    }
+    
+    result = tuple_get_colon(&t, 1);
+    if (result != NULL) {
+        printf("Element at index 1: %s\n", result);
+    } else {
+        printf("Invalid index\n");
+    }
+    
+    tuple_free(&t);
+    
+    return EXIT_SUCCESS;
+}
+```

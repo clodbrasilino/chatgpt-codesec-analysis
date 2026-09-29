@@ -1,0 +1,45 @@
+```c
+#include <stddef.h>
+#include <stdio.h>
+
+int find_most_frequent(const int *items, size_t length, int *item, size_t *frequency) {
+    if (items == NULL || length == 0 || item == NULL || frequency == NULL) {
+        return -1;
+    }
+
+    int max_item = items[0];
+    size_t max_frequency = 0;
+
+    for (size_t i = 0; i < length; ++i) {
+        size_t count = 0;
+        for (size_t j = 0; j < length; ++j) {
+            if (items[j] == items[i]) {
+                ++count;
+            }
+        }
+        if (count > max_frequency) {
+            max_frequency = count;
+            max_item = items[i];
+        }
+    }
+
+    *item = max_item;
+    *frequency = max_frequency;
+    return 0;
+}
+
+int main(void) {
+    int values[] = {1, 2, 3, 2, 2, 4, 3, 3, 3, 3};
+    size_t length = sizeof(values) / sizeof(values[0]);
+    int item = 0;
+    size_t frequency = 0;
+
+    if (find_most_frequent(values, length, &item, &frequency) != 0) {
+        fprintf(stderr, "Error: invalid input\n");
+        return 1;
+    }
+
+    printf("Most frequent item: %d, frequency: %zu\n", item, frequency);
+    return 0;
+}
+```

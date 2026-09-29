@@ -1,0 +1,87 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdbool.h>
+
+typedef struct {
+    const char *str;
+    int count;
+} StringCount;
+
+const char* get_second_most_frequent(const char **seq, size_t seq_len);
+
+const char* get_second_most_frequent(const char **seq, size_t seq_len) {
+    if (!seq || seq_len == 0) {
+        return NULL;
+    }
+
+    StringCount *counts = (StringCount *)malloc(seq_len * sizeof(StringCount));
+    if (!counts) {
+        return NULL;
+    }
+
+    size_t unique_count = 0;
+
+    for (size_t i = 0; i < seq_len; ++i) {
+        if (!seq[i]) {
+            free(counts);
+            return NULL;
+        }
+
+        bool found = false;
+        for (size_t j = 0; j < unique_count; ++j) {
+            if (strcmp(counts[j].str, seq[i]) == 0) {
+                counts[j].count++;
+                found = true;
+                break;
+            }
+        }
+
+        if (!found) {
+            counts[unique_count].str = seq[i];
+            counts[unique_count].count = 1;
+            unique_count++;
+        }
+    }
+
+    int max_count = -1;
+    int second_max_count = -1;
+    const char *first_str = NULL;
+    const char *second_str = NULL;
+
+    for (size_t i = 0; i < unique_count; ++i) {
+        if (counts[i].count > max_count) {
+            second_max_count = max_count;
+            second_str = first_str;
+            max_count = counts[i].count;
+            first_str = counts[i].str;
+        } else if (counts[i].count > second_max_count) {
+            second_max_count = counts[i].count;
+            second_str = counts[i].str;
+        }
+    }
+
+    free(counts);
+    return second_str;
+}
+
+int main(void) {
+    const char *sequence[] = {
+        "apple", "banana", "apple", "orange",
+        "banana", "apple", "grape", "banana",
+        "banana", "orange"
+    };
+    
+    size_t seq_len = sizeof(sequence) / sizeof(sequence[0]);
+    const char *result = get_second_most_frequent(sequence, seq_len);
+
+    if (result) {
+        printf("%s\n", result);
+    } else {
+        printf("None\n");
+    }
+
+    return 0;
+}
+```

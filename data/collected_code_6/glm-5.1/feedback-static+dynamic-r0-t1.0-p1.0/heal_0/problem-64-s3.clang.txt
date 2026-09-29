@@ -1,0 +1,41 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-64-s3.c:14:37: error: incompatible function pointer types passing 'int (*)(const Tuple *, const Tuple *)' to parameter of type 'int (* _Nonnull)(const void *, const void *)' [-Wincompatible-function-pointer-types]
+   14 |     qsort(tuples, n, sizeof(Tuple), lambda);
+      |                                     ^~~~~~
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/_stdlib.h:181:22: note: passing argument to parameter '__compar' here
+  181 |             int (* _Nonnull __compar)(const void *, const void *));
+      |                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-64-s3.c:24:56: error: call to undeclared function 'lambda'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   24 |     cmp_first = (int (*)(const Tuple *, const Tuple *))lambda(int a, int b) {
+      |                                                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-64-s3.c:24:63: error: expected expression
+   24 |     cmp_first = (int (*)(const Tuple *, const Tuple *))lambda(int a, int b) {
+      |                                                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-64-s3.c:24:70: error: expected expression
+   24 |     cmp_first = (int (*)(const Tuple *, const Tuple *))lambda(int a, int b) {
+      |                                                                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-64-s3.c:24:76: error: expected ';' after expression
+   24 |     cmp_first = (int (*)(const Tuple *, const Tuple *))lambda(int a, int b) {
+      |                                                                            ^
+      |                                                                            ;
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-64-s3.c:25:13: error: use of undeclared identifier 'a'
+   25 |         if (a < b) return -1;
+      |             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-64-s3.c:25:17: error: use of undeclared identifier 'b'
+   25 |         if (a < b) return -1;
+      |                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-64-s3.c:26:13: error: use of undeclared identifier 'a'
+   26 |         if (a > b) return 1;
+      |             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-64-s3.c:26:17: error: use of undeclared identifier 'b'
+   26 |         if (a > b) return 1;
+      |                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-64-s3.c:28:21: error: expected ')'
+   28 |     }((const Tuple *x, const Tuple *y) { return (x->a > y->a) - (x->a < y->a); });
+      |                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-64-s3.c:28:7: note: to match this '('
+   28 |     }((const Tuple *x, const Tuple *y) { return (x->a > y->a) - (x->a < y->a); });
+      |       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-64-s3.c:28:42: error: expected expression
+   28 |     }((const Tuple *x, const Tuple *y) { return (x->a > y->a) - (x->a < y->a); });
+      |                                          ^
+11 errors generated.

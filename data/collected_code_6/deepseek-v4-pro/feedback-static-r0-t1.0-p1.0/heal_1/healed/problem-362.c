@@ -1,0 +1,82 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *items;
+    int count;
+} Occurrence;
+
+int find_max_occurrence(const int *arr, int size) {
+    if (arr == NULL || size <= 0) {
+        return -1;
+    }
+
+    Occurrence *occurrences = (Occurrence *)malloc(size * sizeof(Occurrence));
+    if (occurrences == NULL) {
+        return -1;
+    }
+
+    int unique_count = 0;
+    int allocation_failed = 0;
+
+    for (int i = 0; i < size; i++) {
+        int found = 0;
+        for (int j = 0; j < unique_count; j++) {
+            if (occurrences[j].items[0] == arr[i]) {
+                occurrences[j].count++;
+                found = 1;
+                break;
+            }
+        }
+        if (!found) {
+            occurrences[unique_count].items = (int *)malloc(sizeof(int));
+            if (occurrences[unique_count].items == NULL) {
+                allocation_failed = 1;
+                break;
+            }
+            occurrences[unique_count].items[0] = arr[i];
+            occurrences[unique_count].count = 1;
+            unique_count++;
+        }
+    }
+
+    if (allocation_failed) {
+        for (int k = 0; k < unique_count; k++) {
+            free(occurrences[k].items);
+        }
+        free(occurrences);
+        return -1;
+    }
+
+    int max_count = 0;
+    int max_item = occurrences[0].items[0];
+
+    for (int i = 0; i < unique_count; i++) {
+        if (occurrences[i].count > max_count) {
+            max_count = occurrences[i].count;
+            max_item = occurrences[i].items[0];
+        }
+    }
+
+    for (int i = 0; i < unique_count; i++) {
+        free(occurrences[i].items);
+    }
+    free(occurrences);
+
+    return max_item;
+}
+
+int main() {
+    int arr[] = {1, 3, 2, 1, 4, 1, 3, 3, 3};
+    int size = sizeof(arr) / sizeof(arr[0]);
+
+    int result = find_max_occurrence(arr, size);
+
+    if (result != -1) {
+        printf("Item with maximum occurrences: %d\n", result);
+    } else {
+        printf("Invalid input or memory allocation failed.\n");
+    }
+
+    return 0;
+}

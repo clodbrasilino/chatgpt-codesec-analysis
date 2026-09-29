@@ -1,0 +1,92 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int value;
+    int count;
+} Frequency;
+
+int find_frequency(const int *const *lists, const size_t *sizes, size_t num_lists,
+                   Frequency **result, size_t *result_size)
+{
+    size_t total = 0;
+    size_t i;
+    size_t j;
+    size_t k;
+    size_t unique = 0;
+    Frequency *freq = NULL;
+
+    if (lists == NULL || sizes == NULL || result == NULL || result_size == NULL) {
+        return -1;
+    }
+
+    for (i = 0; i < num_lists; i++) {
+        if (lists[i] == NULL && sizes[i] > 0) {
+            return -1;
+        }
+        total += sizes[i];
+    }
+
+    if (total == 0) {
+        *result = NULL;
+        *result_size = 0;
+        return 0;
+    }
+
+    freq = calloc(total, sizeof(Frequency));
+    if (freq == NULL) {
+        return -1;
+    }
+
+    for (i = 0; i < num_lists; i++) {
+        for (j = 0; j < sizes[i]; j++) {
+            int value = lists[i][j];
+            int found = 0;
+            for (k = 0; k < unique; k++) {
+                if (freq[k].value == value) {
+                    freq[k].count++;
+                    found = 1;
+                    break;
+                }
+            }
+            if (found == 0) {
+                freq[unique].value = value;
+                freq[unique].count = 1;
+                unique++;
+            }
+        }
+    }
+
+    *result = freq;
+    *result_size = unique;
+    return 0;
+}
+
+int main(void)
+{
+    int list1[] = {1, 2, 3, 2};
+    int list2[] = {4, 2, 3};
+    int list3[] = {1, 1, 5};
+    const int *lists[] = {list1, list2, list3};
+    size_t sizes[] = {4, 3, 3};
+    Frequency *result = NULL;
+    size_t result_size = 0;
+    size_t i;
+
+    if (find_frequency(lists, sizes, 3, &result, &result_size) != 0) {
+        fprintf(stderr, "Error computing frequency count\n");
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i < result_size; i++) {
+        if (printf("%d: %d\n", result[i].value, result[i].count) < 0) {
+            free(result);
+            return EXIT_FAILURE;
+        }
+    }
+
+    free(result);
+    return EXIT_SUCCESS;
+}
+```

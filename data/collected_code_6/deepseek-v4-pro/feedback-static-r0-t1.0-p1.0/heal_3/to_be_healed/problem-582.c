@@ -1,0 +1,107 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define DICT_SIZE 100
+#define KEY_SIZE 50
+
+typedef struct {
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char key[KEY_SIZE];
+    int value;
+    int is_used;
+} Entry;
+
+typedef struct {
+    Entry entries[DICT_SIZE];
+    int count;
+} Dictionary;
+
+void dict_init(Dictionary *dict) {
+    if (dict == NULL) {
+        return;
+    }
+    dict->count = 0;
+    for (int i = 0; i < DICT_SIZE; i++) {
+        dict->entries[i].is_used = 0;
+        dict->entries[i].value = 0;
+        dict->entries[i].key[0] = '\0';
+    }
+}
+
+int dict_is_empty(const Dictionary *dict) {
+    if (dict == NULL) {
+        return -1;
+    }
+    return (dict->count == 0) ? 1 : 0;
+}
+
+int dict_set(Dictionary *dict, const char *key, int value) {
+    if (dict == NULL || key == NULL) {
+        return -1;
+    }
+    if (dict->count >= DICT_SIZE) {
+        return -1;
+    }
+    
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    size_t key_len = strlen(key);
+    if (key_len >= KEY_SIZE) {
+        return -1;
+    }
+    
+    for (int i = 0; i < DICT_SIZE; i++) {
+        if (dict->entries[i].is_used && strcmp(dict->entries[i].key, key) == 0) {
+            dict->entries[i].value = value;
+            return 0;
+        }
+    }
+    
+    for (int i = 0; i < DICT_SIZE; i++) {
+        if (!dict->entries[i].is_used) {
+            /* Possible weaknesses found:
+             * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+             */
+            memcpy(dict->entries[i].key, key, key_len + 1);
+            dict->entries[i].value = value;
+            dict->entries[i].is_used = 1;
+            dict->count++;
+            return 0;
+        }
+    }
+    
+    return -1;
+}
+
+int main(void) {
+    Dictionary dict;
+    int result;
+
+    dict_init(&dict);
+
+    result = dict_is_empty(&dict);
+    if (result == 1) {
+        printf("Dictionary is empty\n");
+    } else if (result == 0) {
+        printf("Dictionary is not empty\n");
+    } else {
+        printf("Invalid dictionary pointer\n");
+    }
+
+    dict_set(&dict, "test", 42);
+
+    result = dict_is_empty(&dict);
+    if (result == 1) {
+        printf("Dictionary is empty\n");
+    } else if (result == 0) {
+        printf("Dictionary is not empty\n");
+    } else {
+        printf("Invalid dictionary pointer\n");
+    }
+
+    return 0;
+}

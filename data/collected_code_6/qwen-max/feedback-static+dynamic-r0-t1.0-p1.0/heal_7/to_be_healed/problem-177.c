@@ -1,0 +1,73 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+#include <limits.h>
+#include <inttypes.h>
+
+long gcd(long a, long b) {
+    if (b == 0)
+        return a;
+    return gcd(b, a % b);
+}
+
+bool safe_lcm(long a, long b, long *result) {
+    if (a == 0 || b == 0) {
+        *result = 0;
+        return true;
+    }
+    long g = gcd(a, b);
+    /* Possible weaknesses found:
+     * UBSan: negation of -9223372036854775808 cannot be represented in type 'long'; cast to an unsigned type to negate this value to itself (AFL crash: id:000001,sig:06,src:000023,time:53616,execs:12952,op:havoc,rep:2)
+     */
+    long abs_a = labs(a);
+    long abs_b = labs(b);
+    /* Possible weaknesses found:
+     * ASan: FPE (AFL crash: id:000001,sig:06,src:000023,time:53616,execs:12952,op:havoc,rep:2)
+     * UBSan: division of -9223372036854775808 by -1 cannot be represented in type 'long' (AFL crash: id:000001,sig:06,src:000023,time:53616,execs:12952,op:havoc,rep:2)
+     */
+    long abs_a_over_g = abs_a / g;
+    if (LONG_MAX / abs_a_over_g < abs_b) {
+        *result = 0;
+        return false;
+    }
+    long lcm = (a / g) * b;
+    if (lcm / b == a / g && lcm <= LONG_MAX) {
+        *result = lcm;
+        return true;
+    } else {
+        *result = 0;
+        return false;
+    }
+}
+
+int find_two_numbers_within_lcm_range(long l, long r) {
+    for (long i = l; i <= r; i++) {
+        for (long j = i + 1; j <= r; j++) {
+            long lcm_result;
+            if (safe_lcm(i, j, &lcm_result) && lcm_result >= l && lcm_result <= r) {
+                printf("Two numbers: %" PRId64 " and %" PRId64 "\n", (int64_t)i, (int64_t)j);
+                return 1;
+            }
+        }
+    }
+    return 0;
+}
+ /* Possible weaknesses found:
+  * Fuzzing found a crash (signal 6) on input id:000000,sig:06,src:000011,time:17232,execs:6507,op:havoc,rep:3; likely memory-safety defect
+  */
+
+int main() {
+    long l, r;
+    printf("Enter the range (l r): ");
+    int ret = scanf("%ld %ld", &l, &r);
+    if (ret != 2 || l > r) {
+        fprintf(stderr, "Invalid input. Please enter two integers where the first is less than or equal to the second.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (find_two_numbers_within_lcm_range(l, r) == 0) {
+        printf("No such pair found in the given range.\n");
+    }
+
+    return EXIT_SUCCESS;
+}

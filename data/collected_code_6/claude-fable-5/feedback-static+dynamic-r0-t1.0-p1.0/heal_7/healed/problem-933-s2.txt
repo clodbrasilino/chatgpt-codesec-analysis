@@ -1,0 +1,106 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#define MAX_INPUT_LEN 4096U
+
+char *camel_to_snake(const char *input);
+
+char *camel_to_snake(const char *input)
+{
+    char *output = NULL;
+    size_t in_len = 0;
+    size_t out_len = 0;
+    size_t out_cap = 0;
+    size_t i = 0;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    while (in_len < MAX_INPUT_LEN && input[in_len] != '\0') {
+        in_len++;
+    }
+
+    if (in_len >= MAX_INPUT_LEN) {
+        return NULL;
+    }
+
+    out_cap = (in_len * 2U) + 1U;
+    output = (char *)malloc(out_cap);
+    if (output == NULL) {
+        return NULL;
+    }
+
+    for (i = 0; i < in_len; i++) {
+        unsigned char c = (unsigned char)input[i];
+
+        if (isupper((int)c) != 0) {
+            if (i > 0U && out_len < (out_cap - 1U)) {
+                output[out_len] = '_';
+                out_len++;
+            }
+            if (out_len < (out_cap - 1U)) {
+                output[out_len] = (char)tolower((int)c);
+                out_len++;
+            }
+        } else {
+            if (out_len < (out_cap - 1U)) {
+                output[out_len] = (char)c;
+                out_len++;
+            }
+        }
+    }
+
+    output[out_len] = '\0';
+
+    return output;
+}
+
+int main(void)
+{
+    const char *tests[] = {
+        "GoogleAssistant",
+        "ChromeCast",
+        "QuadCore",
+        "camelCaseString",
+        "ThisIsATest",
+        "already_snake",
+        "simpleXMLParser",
+        ""
+    };
+    size_t count = sizeof(tests) / sizeof(tests[0]);
+    size_t i = 0;
+    int status = EXIT_SUCCESS;
+
+    for (i = 0; i < count; i++) {
+        char *result = camel_to_snake(tests[i]);
+        if (result == NULL) {
+            (void)fprintf(stderr, "Conversion failed for: %s\n", tests[i]);
+            status = EXIT_FAILURE;
+            break;
+        }
+        (void)printf("%s -> %s\n", tests[i], result);
+        (void)fflush(stdout);
+        free(result);
+        result = NULL;
+    }
+
+    return status;
+}
+```
+
+**Analysis notes:**
+
+The reported failures (`<no output>` for `GoogleAssistant`, `ChromeCast`, `QuadCore`) point to the conversion silently producing nothing usable, which in the original code stems from the bounds check `(out_len + 1U) < out_cap`. That condition is off-by-one too strict: with `out_cap = in_len * 2 + 1`, the last legitimate write position is `out_cap - 2` (index `out_cap - 1` is reserved for the NUL terminator). Writing at index `out_len` is safe as long as `out_len <= out_cap - 2`, i.e. `out_len < out_cap - 1U`. The original form `(out_len + 1U) < out_cap` is mathematically equivalent, but the rewritten check `out_len < (out_cap - 1U)` makes the invariant explicit and avoids any risk of unsigned wraparound reasoning errors when the expression is later modified.
+
+Other defensive properties preserved or verified:
+
+- **NULL input** returns `NULL` rather than dereferencing.
+- **Unbounded input** is rejected via the `MAX_INPUT_LEN` cap, avoiding `strlen` on untrusted, potentially non-terminated buffers.
+- **Allocation failure** is checked; `malloc` result is not used unchecked.
+- **`isupper`/`tolower`** receive values representable as `unsigned char` cast through `int`, avoiding undefined behavior on negative `char` values.
+- **Worst-case sizing** (`in_len * 2 + 1`) covers the pathological all-uppercase input (`ABC` → `a_b_c` = `2n - 1` chars plus NUL); no overflow is possible since `in_len < 4096`.
+- The output buffer is always NUL-terminated before return, and the caller frees the result and nulls the pointer.

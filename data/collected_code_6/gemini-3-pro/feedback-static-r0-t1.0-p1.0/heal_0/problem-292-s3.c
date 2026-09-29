@@ -1,0 +1,33 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int find_quotient(int dividend, int divisor) {
+    if (divisor == 0) {
+        fprintf(stderr, "Error: Division by zero.\n");
+        exit(EXIT_FAILURE);
+    }
+    
+    if (dividend == -2147483648 && divisor == -1) {
+        fprintf(stderr, "Error: Integer overflow.\n");
+        exit(EXIT_FAILURE);
+    }
+
+    return dividend / divisor;
+}
+
+int main(void) {
+    int dividend = 20;
+    int divisor = 5;
+    int quotient;
+
+    quotient = find_quotient(dividend, divisor);
+    printf("Quotient: %d\n", quotient);
+
+    dividend = 10;
+    divisor = 0;
+    
+    quotient = find_quotient(dividend, divisor);
+    printf("Quotient: %d\n", quotient);
+
+    return EXIT_SUCCESS;
+}

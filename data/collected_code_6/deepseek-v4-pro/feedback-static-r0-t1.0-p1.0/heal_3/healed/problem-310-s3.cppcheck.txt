@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-310-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-310-s3.c:78:27: style: Condition 'remaining>0' is always true [knownConditionTrueFalse]
+            if (remaining > 0) {
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-310-s3.c:77:69: note: Assignment 'remaining=safe_strlen(p+1,len-(p-copy))+1', assigned value is greater than 0
+            size_t remaining = safe_strlen(p + 1, len - (p - copy)) + 1;
+                                                                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-310-s3.c:78:27: note: Condition 'remaining>0' is always true
+            if (remaining > 0) {
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-310-s3.c:157:22: style: Variable 'capacity' is assigned a value that is never used. [unreadVariable]
+            capacity = new_capacity;
+                     ^

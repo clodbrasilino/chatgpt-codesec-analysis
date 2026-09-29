@@ -1,0 +1,19 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+void print PositiveNumbers(int *numbers, int size) {
+    for (int i = 0; i < size; i++) {
+        if (numbers[i] > 0) {
+            printf("%d\n", numbers[i]);
+        }
+    }
+}
+
+int main() {
+    int numbers[] = {3, -1, 4, -1, 5, 9, 2, -6, 5, 3, 5};
+    int size = sizeof(numbers) / sizeof(numbers[0]);
+    printPositiveNumbers(numbers, size);
+    return 0;
+}
+```

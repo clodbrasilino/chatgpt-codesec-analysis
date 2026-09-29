@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-459-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-459-s3.c:13:26: style: Condition 'input[input_len]!='\0'' is always false [knownConditionTrueFalse]
+    if (input[input_len] != '\0') {
+                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-459-s3.c:12:22: note: input_len is assigned 'strlen(input)' here.
+    size_t input_len = strlen(input);
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-459-s3.c:12:30: note: Return index of string to the first element that is 0
+    size_t input_len = strlen(input);
+                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-459-s3.c:13:26: note: Condition 'input[input_len]!='\0'' is always false
+    if (input[input_len] != '\0') {
+                         ^

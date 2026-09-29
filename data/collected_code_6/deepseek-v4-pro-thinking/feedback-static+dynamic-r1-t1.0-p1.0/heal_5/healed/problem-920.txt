@@ -1,0 +1,125 @@
+```c
+#include <stdio.h>
+#include <stddef.h>
+#include <stdbool.h>
+#include <stdlib.h>
+
+#define TUPLE_FIELDS 3
+#define MAX_STRING_LEN 256
+
+typedef struct {
+    const char **fields;
+    size_t num_fields;
+} Tuple;
+
+int remove_all_none_tuples(Tuple *tuples, size_t *count) {
+    if (tuples == NULL || count == NULL) {
+        return -1;
+    }
+
+    size_t original_count = *count;
+    size_t write_index = 0;
+
+    for (size_t read_index = 0; read_index < original_count; ++read_index) {
+        bool all_none = true;
+        for (size_t i = 0; i < tuples[read_index].num_fields; ++i) {
+            if (tuples[read_index].fields[i] != NULL) {
+                all_none = false;
+                break;
+            }
+        }
+
+        if (!all_none) {
+            if (read_index != write_index) {
+                tuples[write_index] = tuples[read_index];
+                tuples[read_index].fields = NULL;
+                tuples[read_index].num_fields = 0;
+            }
+            ++write_index;
+        }
+    }
+
+    for (size_t i = write_index; i < original_count; ++i) {
+        free(tuples[i].fields);
+        tuples[i].fields = NULL;
+        tuples[i].num_fields = 0;
+    }
+
+    *count = write_index;
+    return 0;
+}
+
+void print_field(const char *str) {
+    if (str == NULL) {
+        printf("none");
+    } else {
+        printf("%.255s", str);
+    }
+}
+
+void print_tuple_list(const Tuple *tuples, size_t count) {
+    if (tuples == NULL) {
+        return;
+    }
+
+    for (size_t i = 0; i < count; ++i) {
+        printf("(");
+        for (size_t j = 0; j < tuples[i].num_fields; ++j) {
+            print_field(tuples[i].fields[j]);
+            if (j + 1 < tuples[i].num_fields) {
+                printf(", ");
+            }
+        }
+        printf(")\n");
+    }
+}
+
+int main(void) {
+    size_t count = 5;
+    Tuple tuples[5];
+
+    for (size_t i = 0; i < 5; ++i) {
+        tuples[i].num_fields = TUPLE_FIELDS;
+        tuples[i].fields = calloc(TUPLE_FIELDS, sizeof(const char *));
+        if (tuples[i].fields == NULL) {
+            for (size_t j = 0; j < i; ++j) {
+                free(tuples[j].fields);
+            }
+            return 1;
+        }
+    }
+
+    tuples[0].fields[0] = "Alice";
+    tuples[1].fields[0] = NULL;
+    tuples[1].fields[1] = NULL;
+    tuples[1].fields[2] = NULL;
+    tuples[2].fields[0] = NULL;
+    tuples[2].fields[1] = "Bob";
+    tuples[2].fields[2] = "bob@example.com";
+    tuples[3].fields[0] = NULL;
+    tuples[3].fields[1] = NULL;
+    tuples[3].fields[2] = NULL;
+    tuples[4].fields[0] = "Carol";
+    tuples[4].fields[1] = "carol@example.com";
+    tuples[4].fields[2] = NULL;
+
+    printf("Before:\n");
+    print_tuple_list(tuples, count);
+
+    if (remove_all_none_tuples(tuples, &count) != 0) {
+        for (size_t i = 0; i < 5; ++i) {
+            free(tuples[i].fields);
+        }
+        return 1;
+    }
+
+    printf("After:\n");
+    print_tuple_list(tuples, count);
+
+    for (size_t i = 0; i < count; ++i) {
+        free(tuples[i].fields);
+    }
+
+    return 0;
+}
+```

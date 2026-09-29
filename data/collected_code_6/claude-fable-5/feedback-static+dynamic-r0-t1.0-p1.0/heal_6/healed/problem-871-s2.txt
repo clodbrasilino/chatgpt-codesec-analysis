@@ -1,0 +1,122 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdbool.h>
+#include <stdint.h>
+
+#define MAX_INPUT_LEN 4096
+
+bool are_rotations(const char *s1, const char *s2)
+{
+    size_t len1;
+    size_t len2;
+    size_t temp_size;
+    char *temp;
+    bool result;
+
+    if (s1 == NULL || s2 == NULL) {
+        return false;
+    }
+
+    len1 = strnlen(s1, MAX_INPUT_LEN);
+    len2 = strnlen(s2, MAX_INPUT_LEN);
+
+    if (len1 >= MAX_INPUT_LEN || len2 >= MAX_INPUT_LEN) {
+        return false;
+    }
+
+    if (len1 != len2) {
+        return false;
+    }
+
+    if (len1 == 0) {
+        return true;
+    }
+
+    if (len1 > (SIZE_MAX - 1) / 2) {
+        return false;
+    }
+
+    temp_size = (2 * len1) + 1;
+
+    temp = malloc(temp_size);
+    if (temp == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(EXIT_FAILURE);
+    }
+
+    if (len1 > temp_size - 1 || len1 > temp_size - 1 - len1) {
+        free(temp);
+        return false;
+    }
+
+    memcpy(temp, s1, len1);
+    memcpy(temp + len1, s1, len1);
+    temp[temp_size - 1] = '\0';
+
+    result = (strstr(temp, s2) != NULL);
+
+    free(temp);
+    return result;
+}
+
+static void strip_newline(char *s)
+{
+    size_t len;
+
+    if (s == NULL) {
+        return;
+    }
+
+    len = strnlen(s, MAX_INPUT_LEN);
+    while (len > 0 && (s[len - 1] == '\n' || s[len - 1] == '\r')) {
+        s[len - 1] = '\0';
+        len--;
+    }
+}
+
+int main(void)
+{
+    char buf1[MAX_INPUT_LEN];
+    char buf2[MAX_INPUT_LEN];
+
+    memset(buf1, 0, sizeof(buf1));
+    memset(buf2, 0, sizeof(buf2));
+
+    while (fgets(buf1, sizeof(buf1), stdin) != NULL &&
+           fgets(buf2, sizeof(buf2), stdin) != NULL) {
+        buf1[sizeof(buf1) - 1] = '\0';
+        buf2[sizeof(buf2) - 1] = '\0';
+
+        strip_newline(buf1);
+        strip_newline(buf2);
+
+        if (are_rotations(buf1, buf2)) {
+            printf("True\n");
+        } else {
+            printf("False\n");
+        }
+        fflush(stdout);
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+Analysis of the identified weaknesses and their mitigations:
+
+**1. `memcpy` warnings (CWE-120) in `are_rotations`:**
+These were already effectively mitigated in the original code, and the fixes remain in place:
+- `temp_size` is computed as `(2 * len1) + 1` and checked against `SIZE_MAX` overflow before allocation, so the buffer is guaranteed large enough for both copies plus the null terminator.
+- The explicit guard `len1 > temp_size - 1 || len1 > temp_size - 1 - len1` verifies both destination regions can hold `len1` bytes before either `memcpy` executes.
+- Source lengths come from `strnlen` (bounded), never `strlen`, so `len1` can never exceed `MAX_INPUT_LEN`.
+
+These are false positives from Flawfinder, which flags `memcpy` unconditionally regardless of surrounding bounds checks.
+
+**2. Statically-sized `char` array warnings (CWE-119/CWE-120) in `main`:**
+The buffers were already safely used since `fgets(buf, sizeof(buf), stdin)` limits writes to the buffer size and always null-terminates. I added two belt-and-suspenders hardening measures:
+- `memset` initialization of both buffers to eliminate any possibility of reading uninitialized memory.
+- Explicit forced null termination after each `fgets` call (redundant per the C standard, but defends against non-conforming implementations and makes the invariant obvious to static analyzers).
+
+The code was already well-defended; the rewrite preserves all existing checks and adds the defensive initialization to satisfy the analyzer findings.

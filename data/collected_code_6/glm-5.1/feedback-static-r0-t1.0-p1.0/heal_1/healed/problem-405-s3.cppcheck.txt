@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-405-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-405-s3.c:56:9: style: Condition '!tuple_contains(NULL,10)' is always true [knownConditionTrueFalse]
+    if (!tuple_contains(NULL, 10)) {
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-405-s3.c:56:24: note: Calling function 'tuple_contains' returns 0
+    if (!tuple_contains(NULL, 10)) {
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-405-s3.c:56:9: note: Condition '!tuple_contains(NULL,10)' is always true
+    if (!tuple_contains(NULL, 10)) {
+        ^

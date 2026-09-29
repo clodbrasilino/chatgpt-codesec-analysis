@@ -1,0 +1,21 @@
+collected_code/problem-920-0.c:20:21: error: Uninitialized variables: noneTuple.x, noneTuple.y [uninitvar]
+        tuples[i] = noneTuple;
+                    ^
+collected_code/problem-920-0.c:13:14: warning: Uninitialized variable: tuples [uninitvar]
+        if (!tuples[i].isEmpty) {
+             ^
+collected_code/problem-920-0.c:28:22: note: Calling function 'removeNoneValues', 1st argument 'tuples' value is <Uninit>
+    removeNoneValues(tuples, size);
+                     ^
+collected_code/problem-920-0.c:13:14: note: Uninitialized variable: tuples
+        if (!tuples[i].isEmpty) {
+             ^
+collected_code/problem-920-0.c:20:21: error: Uninitialized struct member: noneTuple.x [uninitStructMember]
+        tuples[i] = noneTuple;
+                    ^
+collected_code/problem-920-0.c:20:21: error: Uninitialized struct member: noneTuple.y [uninitStructMember]
+        tuples[i] = noneTuple;
+                    ^
+collected_code/problem-920-0.c:32:36: error: Cannot determine that 'tuples[i] members' is initialized [premium-bughuntingUninit]
+        printf("(%d, %d)\n", tuples[i].x, tuples[i].y);
+                                   ^

@@ -1,0 +1,74 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+
+int is_even_hex(const char *hex_str) {
+    if (hex_str == NULL || *hex_str == '\0') {
+        return -1;
+    }
+
+    const char *p = hex_str;
+    while (*p == ' ' || *p == '\t') {
+        p++;
+    }
+
+    if (*p == '\0') {
+        return -1;
+    }
+
+    if (p[0] == '0' && (p[1] == 'x' || p[1] == 'X')) {
+        p += 2;
+    }
+
+    if (*p == '\0') {
+        return -1;
+    }
+
+    const char *last = p;
+    while (*last != '\0') {
+        if (!isxdigit((unsigned char)*last)) {
+            return -1;
+        }
+        last++;
+    }
+    last--;
+
+    char last_char = tolower((unsigned char)*last);
+    return (last_char >= '0' && last_char <= '9') 
+           ? ((last_char - '0') % 2 == 0) 
+           : ((last_char - 'a' + 10) % 2 == 0);
+}
+
+int main(void) {
+    const char *test_cases[] = {
+        "0x1A",
+        "0x1B",
+        "FF",
+        "FE",
+        "0x10",
+        "0x11",
+        "123",
+        "124",
+        "0x0",
+        "0x1",
+        "  0x2A  ",
+        "0x",
+        "",
+        NULL,
+        "0xGG"
+    };
+
+    for (int i = 0; i < (int)(sizeof(test_cases) / sizeof(test_cases[0])); i++) {
+        const char *hex = test_cases[i];
+        int result = is_even_hex(hex);
+        if (result == -1) {
+            printf("Invalid input: %s\n", hex ? hex : "(null)");
+        } else {
+            printf("%s is %s\n", hex, result ? "even" : "odd");
+        }
+    }
+
+    return 0;
+}
+```

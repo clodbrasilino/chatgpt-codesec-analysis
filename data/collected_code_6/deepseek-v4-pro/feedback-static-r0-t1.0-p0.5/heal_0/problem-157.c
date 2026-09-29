@@ -1,0 +1,126 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    int count;
+    char value;
+} RLEToken;
+
+typedef struct {
+    RLEToken *tokens;
+    size_t length;
+    size_t capacity;
+} RLEList;
+
+static int rle_list_init(RLEList *list, size_t initial_capacity) {
+    if (list == NULL || initial_capacity == 0) {
+        return -1;
+    }
+    list->tokens = (RLEToken *)malloc(initial_capacity * sizeof(RLEToken));
+    if (list->tokens == NULL) {
+        return -1;
+    }
+    list->length = 0;
+    list->capacity = initial_capacity;
+    return 0;
+}
+
+static void rle_list_free(RLEList *list) {
+    if (list != NULL) {
+        free(list->tokens);
+        list->tokens = NULL;
+        list->length = 0;
+        list->capacity = 0;
+    }
+}
+
+static int rle_list_append(RLEList *list, int count, char value) {
+    if (list == NULL || count <= 0) {
+        return -1;
+    }
+    if (list->length >= list->capacity) {
+        size_t new_capacity = list->capacity * 2;
+        RLEToken *new_tokens = (RLEToken *)realloc(list->tokens, new_capacity * sizeof(RLEToken));
+        if (new_tokens == NULL) {
+            return -1;
+        }
+        list->tokens = new_tokens;
+        list->capacity = new_capacity;
+    }
+    list->tokens[list->length].count = count;
+    list->tokens[list->length].value = value;
+    list->length++;
+    return 0;
+}
+
+static int rle_list_reflect(RLEList *list) {
+    if (list == NULL) {
+        return -1;
+    }
+    size_t original_length = list->length;
+    if (original_length == 0) {
+        return 0;
+    }
+    size_t new_length = original_length * 2;
+    if (new_length < original_length) {
+        return -1;
+    }
+    if (new_length > list->capacity) {
+        RLEToken *new_tokens = (RLEToken *)realloc(list->tokens, new_length * sizeof(RLEToken));
+        if (new_tokens == NULL) {
+            return -1;
+        }
+        list->tokens = new_tokens;
+        list->capacity = new_length;
+    }
+    for (size_t i = 0; i < original_length; i++) {
+        list->tokens[original_length + i] = list->tokens[original_length - 1 - i];
+    }
+    list->length = new_length;
+    return 0;
+}
+
+static void rle_list_print(const RLEList *list) {
+    if (list == NULL) {
+        return;
+    }
+    for (size_t i = 0; i < list->length; i++) {
+        printf("%d%c", list->tokens[i].count, list->tokens[i].value);
+        if (i < list->length - 1) {
+            printf(" ");
+        }
+    }
+    printf("\n");
+}
+
+int main(void) {
+    RLEList list;
+    if (rle_list_init(&list, 4) != 0) {
+        fprintf(stderr, "Failed to initialize list\n");
+        return EXIT_FAILURE;
+    }
+
+    if (rle_list_append(&list, 3, 'A') != 0 ||
+        rle_list_append(&list, 2, 'B') != 0 ||
+        rle_list_append(&list, 1, 'C') != 0) {
+        fprintf(stderr, "Failed to append tokens\n");
+        rle_list_free(&list);
+        return EXIT_FAILURE;
+    }
+
+    printf("Original: ");
+    rle_list_print(&list);
+
+    if (rle_list_reflect(&list) != 0) {
+        fprintf(stderr, "Failed to reflect list\n");
+        rle_list_free(&list);
+        return EXIT_FAILURE;
+    }
+
+    printf("Reflected: ");
+    rle_list_print(&list);
+
+    rle_list_free(&list);
+    return EXIT_SUCCESS;
+}

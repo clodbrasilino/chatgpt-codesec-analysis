@@ -1,0 +1,29 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+/* Possible weaknesses found:
+ *  Parameter 'arr' can be declared as pointer to const [constParameterPointer]
+ */
+long long countSequences(int *arr, int n, int k) {
+    long long dp[k + 1];
+    for (int i = 0; i <= k; ++i) {
+        dp[i] = 0;
+    }
+    dp[0] = 1;
+
+    for (int i = 0; i < n; ++i) {
+        for (int j = k; j >= arr[i]; --j) {
+            dp[j] += dp[j - arr[i]];
+        }
+    }
+
+    return dp[k];
+}
+
+int main() {
+    int arr[] = {1, 2, 3};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    int k = 5;
+    printf("%lld\n", countSequences(arr, n, k));
+    return 0;
+}

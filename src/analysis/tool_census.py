@@ -22,7 +22,7 @@ from src.analysis.cwe_map import (
 )
 
 REPO = Path(__file__).resolve().parents[2]
-CODE = REPO / "collected_code_6"
+CODE = REPO / "data" / "collected_code_6"
 MODELS = ["deepseek-v4-pro", "qwen-max", "glm-5.1", "kimi-k3",
           "openai-gpt56-sol", "claude-fable-5", "gemini-3-pro"]
 OUT = REPO / "results" / "tool_findings_census.md"

@@ -1,0 +1,25 @@
+```c
+#include <stdio.h>
+
+double rectangle_area(double length, double width) {
+    return length * width;
+}
+
+int main(void) {
+    double length, width;
+    
+    printf("Enter rectangle length: ");
+    if (scanf("%lf", &length) != 1) {
+        return 1;
+    }
+    
+    printf("Enter rectangle width: ");
+    if (scanf("%lf", &width) != 1) {
+        return 1;
+    }
+    
+    printf("Area: %.2f\n", rectangle_area(length, width));
+    
+    return 0;
+}
+```

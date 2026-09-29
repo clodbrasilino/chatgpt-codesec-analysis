@@ -1,0 +1,109 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+typedef struct {
+    int *values;
+    size_t length;
+} IntTuple;
+
+IntTuple string_to_tuple(const char *str) {
+    IntTuple tuple = {NULL, 0};
+    
+    if (str == NULL) {
+        return tuple;
+    }
+    
+    size_t len = strlen(str);
+    if (len == 0) {
+        return tuple;
+    }
+    
+    size_t capacity = 8;
+    tuple.values = (int *)malloc(capacity * sizeof(int));
+    if (tuple.values == NULL) {
+        return tuple;
+    }
+    
+    const char *p = str;
+    while (*p) {
+        while (*p && isspace((unsigned char)*p)) {
+            p++;
+        }
+        
+        if (*p == '\0') {
+            break;
+        }
+        
+        char *endptr;
+        long val = strtol(p, &endptr, 10);
+        
+        if (endptr == p) {
+            free(tuple.values);
+            tuple.values = NULL;
+            tuple.length = 0;
+            return tuple;
+        }
+        
+        if (tuple.length >= capacity) {
+            capacity *= 2;
+            int *new_values = (int *)realloc(tuple.values, capacity * sizeof(int));
+            if (new_values == NULL) {
+                free(tuple.values);
+                tuple.values = NULL;
+                tuple.length = 0;
+                return tuple;
+            }
+            tuple.values = new_values;
+        }
+        
+        tuple.values[tuple.length++] = (int)val;
+        p = endptr;
+        
+        while (*p && isspace((unsigned char)*p)) {
+            p++;
+        }
+        
+        if (*p == ',') {
+            p++;
+        } else if (*p != '\0') {
+            free(tuple.values);
+            tuple.values = NULL;
+            tuple.length = 0;
+            return tuple;
+        }
+    }
+    
+    return tuple;
+}
+
+void free_tuple(IntTuple *tuple) {
+    if (tuple != NULL && tuple->values != NULL) {
+        free(tuple->values);
+        tuple->values = NULL;
+        tuple->length = 0;
+    }
+}
+
+int main(void) {
+    const char *input = "1, 2, 3, 4, 5";
+    IntTuple result = string_to_tuple(input);
+    
+    if (result.values == NULL) {
+        fprintf(stderr, "Failed to parse string\n");
+        return 1;
+    }
+    
+    printf("Tuple: (");
+    for (size_t i = 0; i < result.length; i++) {
+        printf("%d", result.values[i]);
+        if (i < result.length - 1) {
+            printf(", ");
+        }
+    }
+    printf(")\n");
+    
+    free_tuple(&result);
+    return 0;
+}

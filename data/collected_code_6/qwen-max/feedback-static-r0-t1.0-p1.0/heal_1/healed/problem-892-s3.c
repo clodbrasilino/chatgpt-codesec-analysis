@@ -1,0 +1,21 @@
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+
+void remove_multiple_spaces(char *str) {
+    char *src = str, *dst = str;
+    while (*src) {
+        *dst++ = *src++;
+        if (isspace((unsigned char)*src) && isspace((unsigned char)dst[-1])) {
+            while (isspace((unsigned char)*src)) src++;
+        }
+    }
+    *dst = '\0';
+}
+
+int main() {
+    char input[] = "This  is   a    test";
+    remove_multiple_spaces(input);
+    printf("%s\n", input);
+    return 0;
+}

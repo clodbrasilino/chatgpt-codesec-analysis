@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p0.5/heal_2/healed/problem-175.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p0.5/heal_2/healed/problem-175.c:7:14: error: Array 's[3]' accessed at index 6, which is out of bounds. [arrayIndexOutOfBounds]
+        if (s[i] == '(') {
+             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p0.5/heal_2/healed/problem-175.c:25:73: note: Calling function 'is_valid_parentheses', 2nd argument 'sizeof(test1)-1' value is 7
+    printf("%s: %s\n", test1, is_valid_parentheses(test1, sizeof(test1) - 1) ? "Valid" : "Invalid");
+                                                                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p0.5/heal_2/healed/problem-175.c:6:26: note: Assuming that condition 'i<max_len' is not redundant
+    for (size_t i = 0; i < max_len; ++i) {
+                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p0.5/heal_2/healed/problem-175.c:7:14: note: Array index out of bounds
+        if (s[i] == '(') {
+             ^

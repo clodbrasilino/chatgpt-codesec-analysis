@@ -1,0 +1,52 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int first;
+    int second;
+} Pair;
+
+int compare_pairs(const void *a, const void *b) {
+    const Pair *pa = (const Pair *)a;
+    const Pair *pb = (const Pair *)b;
+    if (pa->second < pb->second) {
+        return -1;
+    }
+    if (pa->second > pb->second) {
+        return 1;
+    }
+    return 0;
+}
+
+int find_longest_chain(Pair *pairs, int n) {
+    if (pairs == NULL || n <= 0) {
+        return 0;
+    }
+    
+    qsort(pairs, (size_t)n, sizeof(Pair), compare_pairs);
+    
+    int max_length = 1;
+    int prev_end = pairs[0].second;
+    
+    for (int i = 1; i < n; i++) {
+        if (pairs[i].first > prev_end) {
+            max_length++;
+            prev_end = pairs[i].second;
+        }
+    }
+    
+    return max_length;
+}
+
+int main(void) {
+    Pair pairs[] = {{5, 24}, {15, 25}, {27, 40}, {50, 60}};
+    int n = (int)(sizeof(pairs) / sizeof(pairs[0]));
+    
+    int result = find_longest_chain(pairs, n);
+    
+    if (printf("Length of longest chain: %d\n", result) < 0) {
+        return EXIT_FAILURE;
+    }
+    
+    return EXIT_SUCCESS;
+}

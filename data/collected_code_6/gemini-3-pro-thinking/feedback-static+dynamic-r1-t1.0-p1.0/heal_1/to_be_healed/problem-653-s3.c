@@ -1,0 +1,191 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct KeyValuePair {
+    char *key;
+    int value;
+} KeyValuePair;
+
+typedef struct ValueNode {
+    int value;
+    struct ValueNode *next;
+} ValueNode;
+
+typedef struct MapNode {
+    char *key;
+    ValueNode *values_head;
+    ValueNode *values_tail;
+    struct MapNode *next;
+} MapNode;
+
+typedef struct Map {
+    MapNode **buckets;
+    size_t num_buckets;
+} Map;
+
+size_t hash_string(const char *str, size_t num_buckets);
+char* duplicate_string(const char *src);
+Map* create_map(size_t num_buckets);
+void free_map(Map *map);
+int insert_into_map(Map *map, const char *key, int value);
+Map* group_pairs(const KeyValuePair *pairs, size_t count);
+void print_map(const Map *map);
+
+size_t hash_string(const char *str, size_t num_buckets) {
+    size_t hash = 5381;
+    int c;
+    while ((c = (unsigned char)*str++)) {
+        hash = ((hash << 5) + hash) + c;
+    }
+    return hash % num_buckets;
+}
+
+char* duplicate_string(const char *src) {
+    if (!src) return NULL;
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    size_t len = strlen(src) + 1;
+    char *dest = malloc(len);
+    if (!dest) return NULL;
+    /* Possible weaknesses found:
+     * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+     */
+    memcpy(dest, src, len);
+    return dest;
+}
+
+Map* create_map(size_t num_buckets) {
+    if (num_buckets == 0) return NULL;
+    Map *map = malloc(sizeof(Map));
+    if (!map) return NULL;
+    map->buckets = calloc(num_buckets, sizeof(MapNode*));
+    if (!map->buckets) {
+        free(map);
+        return NULL;
+    }
+    map->num_buckets = num_buckets;
+    return map;
+}
+
+void free_map(Map *map) {
+    if (!map) return;
+    for (size_t i = 0; i < map->num_buckets; i++) {
+        MapNode *curr_map_node = map->buckets[i];
+        while (curr_map_node) {
+            MapNode *next_map_node = curr_map_node->next;
+            ValueNode *curr_val_node = curr_map_node->values_head;
+            while (curr_val_node) {
+                ValueNode *next_val_node = curr_val_node->next;
+                free(curr_val_node);
+                curr_val_node = next_val_node;
+            }
+            free(curr_map_node->key);
+            free(curr_map_node);
+            curr_map_node = next_map_node;
+        }
+    }
+    free(map->buckets);
+    free(map);
+}
+
+int insert_into_map(Map *map, const char *key, int value) {
+    if (!map || !key) return 0;
+    size_t idx = hash_string(key, map->num_buckets);
+    MapNode *curr = map->buckets[idx];
+    
+    while (curr) {
+        if (strcmp(curr->key, key) == 0) {
+            break;
+        }
+        curr = curr->next;
+    }
+
+    if (!curr) {
+        curr = malloc(sizeof(MapNode));
+        if (!curr) return 0;
+        curr->key = duplicate_string(key);
+        if (!curr->key) {
+            free(curr);
+            return 0;
+        }
+        curr->values_head = NULL;
+        curr->values_tail = NULL;
+        curr->next = map->buckets[idx];
+        map->buckets[idx] = curr;
+    }
+
+    ValueNode *val_node = malloc(sizeof(ValueNode));
+    if (!val_node) return 0;
+    val_node->value = value;
+    val_node->next = NULL;
+
+    if (curr->values_tail) {
+        curr->values_tail->next = val_node;
+        curr->values_tail = val_node;
+    } else {
+        curr->values_head = val_node;
+        curr->values_tail = val_node;
+    }
+
+    return 1;
+}
+
+Map* group_pairs(const KeyValuePair *pairs, size_t count) {
+    if (!pairs || count == 0) return NULL;
+    size_t bucket_count = count > 16 ? count : 16;
+    Map *map = create_map(bucket_count);
+    if (!map) return NULL;
+
+    for (size_t i = 0; i < count; i++) {
+        if (!insert_into_map(map, pairs[i].key, pairs[i].value)) {
+            free_map(map);
+            return NULL;
+        }
+    }
+    return map;
+}
+
+void print_map(const Map *map) {
+    if (!map) return;
+    for (size_t i = 0; i < map->num_buckets; i++) {
+        MapNode *curr_map_node = map->buckets[i];
+        while (curr_map_node) {
+            printf("%s: [", curr_map_node->key);
+            ValueNode *curr_val_node = curr_map_node->values_head;
+            while (curr_val_node) {
+                printf("%d", curr_val_node->value);
+                if (curr_val_node->next) {
+                    printf(", ");
+                }
+                curr_val_node = curr_val_node->next;
+            }
+            printf("]\n");
+            curr_map_node = curr_map_node->next;
+        }
+    }
+}
+
+int main(void) {
+    KeyValuePair pairs[] = {
+        {"apple", 1},
+        {"banana", 2},
+        {"apple", 3},
+        {"orange", 4},
+        {"banana", 5},
+        {"apple", 6}
+    };
+    size_t count = sizeof(pairs) / sizeof(pairs[0]);
+
+    Map *grouped_map = group_pairs(pairs, count);
+    if (!grouped_map) {
+        fprintf(stderr, "Failed to group pairs.\n");
+        return EXIT_FAILURE;
+    }
+
+    print_map(grouped_map);
+    free_map(grouped_map);
+
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,25 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+
+bool has_thirty_days(const char *month) {
+    if (strcmp(month, "April") == 0 || strcmp(month, "april") == 0 ||
+        strcmp(month, "June") == 0 || strcmp(month, "june") == 0 ||
+        strcmp(month, "September") == 0 || strcmp(month, "september") == 0 ||
+        strcmp(month, "November") == 0 || strcmp(month, "november") == 0) {
+        return true;
+    }
+    return false;
+}
+
+int main() {
+    const char *month = "April";
+    if (has_thirty_days(month)) {
+        printf("%s has 30 days.\n", month);
+    } else {
+        printf("%s does not have 30 days.\n", month);
+    }
+    return 0;
+}
+```

@@ -1,0 +1,17 @@
+#include <stdio.h>
+#include <stdint.h>
+
+int64_t nth_octagonal_number(int n) {
+    return 3 * (int64_t)n * n - 2 * (int64_t)n;
+}
+
+int main() {
+    int n;
+    printf("Enter the value of n: ");
+    if (scanf("%d", &n) != 1) {
+        return 1;
+    }
+    int64_t result = nth_octagonal_number(n);
+    printf("The %dth octagonal number is: %lld\n", n, result);
+    return 0;
+}

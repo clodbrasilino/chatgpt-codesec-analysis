@@ -1,0 +1,9 @@
+collected_code/problem-181-0.c:9:24: error: Cannot determine that 'strs[0]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+    char* prefix = strs[0];
+                       ^
+collected_code/problem-181-0.c:14:36: error: Cannot determine that 'strs[i][j]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        while (prefix[j] && strs[i][j] && prefix[j] == strs[i][j]) {
+                                   ^
+collected_code/problem-181-0.c:18:9: error: Cannot determine that 'prefix' is initialized [premium-bughuntingUninit]
+        prefix[j] = '\0';
+        ^

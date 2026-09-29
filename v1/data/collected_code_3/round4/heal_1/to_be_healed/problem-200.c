@@ -1,0 +1,38 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+void findMaxIndexes(int* arr, int size) {
+    int max = arr[0];
+    int* indexes = (int*)malloc(size * sizeof(int));
+    int count = 0;
+
+    for(int i = 0; i < size; i++) {
+        if(arr[i] > max) {
+            max = arr[i];
+            count = 0;
+            indexes[count++] = i;
+        } else if(arr[i] == max) {
+            /* Possible weaknesses found:
+             *  dereference of possibly-NULL 'indexes' [CWE-690] [-Wanalyzer-possible-null-dereference]
+             */
+            indexes[count++] = i;
+        }
+    }
+
+    printf("Max value is at indexes: ");
+    for(int i = 0; i < count; i++) {
+        printf("%d ", indexes[i]);
+    }
+    printf("\n");
+
+    free(indexes);
+}
+
+int main() {
+    int arr[] = {1, 3, 5, 7, 7, 7, 2, 4, 6};
+    int size = sizeof(arr) / sizeof(arr[0]);
+
+    findMaxIndexes(arr, size);
+
+    return 0;
+}

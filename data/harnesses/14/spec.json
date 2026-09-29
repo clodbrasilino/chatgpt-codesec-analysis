@@ -1,0 +1,50 @@
+{
+  "task_id": 14,
+  "text": "Write a C function to find the volume of a triangular prism.",
+  "fn_candidates": [
+    "find_Volume",
+    "FindVolume",
+    "findVolume",
+    "findVolume"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "find_Volume",
+      "args": [
+        10,
+        8,
+        6
+      ],
+      "expected": 240,
+      "assert_src": "assert find_Volume(10,8,6) == 240"
+    },
+    {
+      "fn_name": "find_Volume",
+      "args": [
+        3,
+        2,
+        2
+      ],
+      "expected": 6,
+      "assert_src": "assert find_Volume(3,2,2) == 6"
+    },
+    {
+      "fn_name": "find_Volume",
+      "args": [
+        1,
+        2,
+        1
+      ],
+      "expected": 1,
+      "assert_src": "assert find_Volume(1,2,1) == 1"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

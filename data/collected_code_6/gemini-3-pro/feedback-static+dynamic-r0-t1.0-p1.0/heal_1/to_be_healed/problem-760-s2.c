@@ -1,0 +1,51 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+bool has_one_distinct(const int *arr, size_t size) {
+    if (arr == NULL || size == 0) {
+        return false;
+    }
+
+    int first_element = arr[0];
+
+    for (size_t i = 1; i < size; ++i) {
+        if (arr[i] != first_element) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+int main(void) {
+    int arr1[] = {5, 5, 5, 5, 5};
+    size_t size1 = sizeof(arr1) / sizeof(arr1[0]);
+
+    if (has_one_distinct(arr1, size1)) {
+        printf("arr1 contains only one distinct element.\n");
+    } else {
+        printf("arr1 contains multiple distinct elements.\n");
+    }
+
+    int arr2[] = {5, 5, 4, 5, 5};
+    size_t size2 = sizeof(arr2) / sizeof(arr2[0]);
+
+    if (has_one_distinct(arr2, size2)) {
+        printf("arr2 contains only one distinct element.\n");
+    } else {
+        printf("arr2 contains multiple distinct elements.\n");
+    }
+
+    /* Possible weaknesses found:
+     *  Condition 'has_one_distinct(NULL,0)' is always false [knownConditionTrueFalse]
+     *  Calling function 'has_one_distinct' returns 0
+     *  Condition 'has_one_distinct(NULL,0)' is always false
+     */
+    if (has_one_distinct(NULL, 0)) {
+        printf("NULL array contains only one distinct element.\n");
+    } else {
+        printf("NULL array does not contain only one distinct element.\n");
+    }
+
+    return 0;
+}

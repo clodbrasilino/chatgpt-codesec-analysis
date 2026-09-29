@@ -1,0 +1,56 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+int find_largest_frequency(const int *arr, size_t size, int *frequency)
+{
+    int largest;
+    int count;
+    size_t i;
+
+    if (arr == NULL || frequency == NULL || size == 0)
+    {
+        return -1;
+    }
+
+    largest = arr[0];
+    count = 1;
+
+    for (i = 1; i < size; i++)
+    {
+        if (arr[i] > largest)
+        {
+            largest = arr[i];
+            count = 1;
+        }
+        else if (arr[i] == largest)
+        {
+            count++;
+        }
+    }
+
+    *frequency = count;
+    return 0;
+}
+
+int main(void)
+{
+    int arr[] = {4, 7, 2, 7, 9, 7, 9, 9};
+    size_t size = sizeof(arr) / sizeof(arr[0]);
+    int frequency = 0;
+    int result;
+
+    result = find_largest_frequency(arr, size, &frequency);
+
+    if (result == 0)
+    {
+        printf("Frequency of the largest value: %d\n", frequency);
+    }
+    else
+    {
+        fprintf(stderr, "Error: Invalid input parameters.\n");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

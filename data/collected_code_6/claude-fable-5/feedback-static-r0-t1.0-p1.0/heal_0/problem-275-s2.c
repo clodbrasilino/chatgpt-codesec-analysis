@@ -1,0 +1,60 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+static long ceil_div(long a, long b)
+{
+    return (a + b - 1L) / b;
+}
+
+static int last_removed_position(const long arr[], size_t n, long m)
+{
+    size_t i;
+    long max_steps;
+    int pos;
+
+    if (arr == NULL || n == 0U || m <= 0L) {
+        return -1;
+    }
+
+    max_steps = 0L;
+    pos = -1;
+
+    for (i = 0U; i < n; i++) {
+        long steps;
+
+        if (arr[i] <= 0L) {
+            return -1;
+        }
+
+        steps = ceil_div(arr[i], m);
+        if (steps >= max_steps) {
+            max_steps = steps;
+            pos = (int)(i + 1U);
+        }
+    }
+
+    return pos;
+}
+
+int main(void)
+{
+    long arr[] = { 31L, 12L, 21L, 5L, 18L, 9L };
+    size_t n = sizeof(arr) / sizeof(arr[0]);
+    long m = 4L;
+    int result;
+
+    result = last_removed_position(arr, n, m);
+
+    if (result < 0) {
+        if (fprintf(stderr, "Invalid input\n") < 0) {
+            return EXIT_FAILURE;
+        }
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Position of the last removed element: %d\n", result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

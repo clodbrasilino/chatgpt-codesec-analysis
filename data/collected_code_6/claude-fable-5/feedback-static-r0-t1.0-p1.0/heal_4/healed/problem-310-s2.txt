@@ -1,0 +1,187 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <errno.h>
+#include <limits.h>
+#include <stdint.h>
+#include <ctype.h>
+
+#define MAX_INPUT_LEN 4096
+
+typedef struct {
+    long *items;
+    size_t count;
+} Tuple;
+
+static Tuple *tuple_create(size_t capacity)
+{
+    if (capacity == 0 || capacity > SIZE_MAX / sizeof(long)) {
+        return NULL;
+    }
+
+    Tuple *t = malloc(sizeof(Tuple));
+    if (t == NULL) {
+        return NULL;
+    }
+
+    t->items = malloc(capacity * sizeof(long));
+    if (t->items == NULL) {
+        free(t);
+        return NULL;
+    }
+
+    t->count = 0;
+    return t;
+}
+
+static void tuple_destroy(Tuple *t)
+{
+    if (t != NULL) {
+        free(t->items);
+        free(t);
+    }
+}
+
+static Tuple *string_to_tuple(const char *str)
+{
+    if (str == NULL) {
+        return NULL;
+    }
+
+    size_t len = strnlen(str, MAX_INPUT_LEN);
+    if (len == 0 || len >= MAX_INPUT_LEN) {
+        return NULL;
+    }
+
+    size_t capacity = 1;
+    for (size_t i = 0; i < len; i++) {
+        if (str[i] == ',') {
+            capacity++;
+        }
+    }
+
+    Tuple *t = tuple_create(capacity);
+    if (t == NULL) {
+        return NULL;
+    }
+
+    if (len > SIZE_MAX - 1) {
+        tuple_destroy(t);
+        return NULL;
+    }
+
+    size_t copy_size = len + 1;
+    char *copy = malloc(copy_size);
+    if (copy == NULL) {
+        tuple_destroy(t);
+        return NULL;
+    }
+
+    if (copy_size <= len) {
+        free(copy);
+        tuple_destroy(t);
+        return NULL;
+    }
+
+    memcpy(copy, str, len);
+    copy[len] = '\0';
+
+    char *saveptr = NULL;
+    char *token = strtok_r(copy, ",", &saveptr);
+    while (token != NULL) {
+        while (isspace((unsigned char)*token)) {
+            token++;
+        }
+        if (*token == '\0') {
+            free(copy);
+            tuple_destroy(t);
+            return NULL;
+        }
+
+        errno = 0;
+        char *endptr = NULL;
+        long value = strtol(token, &endptr, 10);
+        if (errno == ERANGE || endptr == token) {
+            free(copy);
+            tuple_destroy(t);
+            return NULL;
+        }
+        while (isspace((unsigned char)*endptr)) {
+            endptr++;
+        }
+        if (*endptr != '\0') {
+            free(copy);
+            tuple_destroy(t);
+            return NULL;
+        }
+
+        if (t->count >= capacity) {
+            free(copy);
+            tuple_destroy(t);
+            return NULL;
+        }
+        t->items[t->count] = value;
+        t->count++;
+
+        token = strtok_r(NULL, ",", &saveptr);
+    }
+
+    free(copy);
+
+    if (t->count == 0) {
+        tuple_destroy(t);
+        return NULL;
+    }
+
+    return t;
+}
+
+static void tuple_print(const Tuple *t)
+{
+    if (t == NULL) {
+        printf("(invalid)\n");
+        return;
+    }
+    printf("(");
+    for (size_t i = 0; i < t->count; i++) {
+        printf("%ld", t->items[i]);
+        if (i + 1 < t->count) {
+            printf(", ");
+        }
+    }
+    printf(")\n");
+}
+
+int main(void)
+{
+    const char *input = "1, 5, 7, 10, 13";
+
+    Tuple *t = string_to_tuple(input);
+    if (t == NULL) {
+        fprintf(stderr, "Failed to convert string to tuple\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Input string: \"%s\"\n", input);
+    printf("Tuple: ");
+    tuple_print(t);
+
+    tuple_destroy(t);
+
+    return EXIT_SUCCESS;
+}
+```
+
+Analysis of the original code and the applied fix:
+
+**Regarding the flagged `memcpy` (CWE-120):** The original code was already safe in practice — the destination buffer `copy` is allocated with `len + 1` bytes, and exactly `len` bytes are copied followed by explicit null termination. To fully satisfy the static analyzer's concern, the rewrite adds an explicit guard (`copy_size <= len`) verifying the destination buffer size before the copy, making the bounds relationship provable at the call site.
+
+**Existing defensive measures preserved:**
+- `strnlen` with `MAX_INPUT_LEN` bounds input length, preventing unbounded reads.
+- `tuple_create` checks for integer overflow in the allocation size (`capacity > SIZE_MAX / sizeof(long)`).
+- `strtok_r` (reentrant) is used instead of `strtok`.
+- `strtol` errors are checked via `errno == ERANGE` and `endptr == token`, and trailing garbage after numbers is rejected.
+- All error paths correctly free both `copy` and the tuple, so there are no memory leaks.
+- The `t->count >= capacity` check prevents any out-of-bounds write into `items`.
+- `isspace` receives an `unsigned char` cast, avoiding undefined behavior with negative `char` values.

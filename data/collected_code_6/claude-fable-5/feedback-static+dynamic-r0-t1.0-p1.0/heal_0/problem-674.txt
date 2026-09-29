@@ -1,0 +1,126 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char *remove_duplicate_words(const char *input);
+static int word_seen(char **words, size_t count, const char *word);
+static void free_words(char **words, size_t count);
+
+static int word_seen(char **words, size_t count, const char *word)
+{
+    size_t i;
+    for (i = 0; i < count; i++) {
+        if (strcmp(words[i], word) == 0) {
+            return 1;
+        }
+    }
+    return 0;
+}
+
+static void free_words(char **words, size_t count)
+{
+    size_t i;
+    for (i = 0; i < count; i++) {
+        free(words[i]);
+    }
+    free(words);
+}
+
+char *remove_duplicate_words(const char *input)
+{
+    char *copy;
+    char *result;
+    char **words;
+    char *token;
+    char *saveptr;
+    size_t count;
+    size_t capacity;
+    size_t len;
+    size_t i;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    len = strlen(input);
+    copy = malloc(len + 1);
+    if (copy == NULL) {
+        return NULL;
+    }
+    memcpy(copy, input, len + 1);
+
+    capacity = 16;
+    count = 0;
+    words = malloc(capacity * sizeof(char *));
+    if (words == NULL) {
+        free(copy);
+        return NULL;
+    }
+
+    token = strtok_r(copy, " \t\n", &saveptr);
+    while (token != NULL) {
+        if (!word_seen(words, count, token)) {
+            if (count == capacity) {
+                size_t new_capacity = capacity * 2;
+                char **tmp = realloc(words, new_capacity * sizeof(char *));
+                if (tmp == NULL) {
+                    free_words(words, count);
+                    free(copy);
+                    return NULL;
+                }
+                words = tmp;
+                capacity = new_capacity;
+            }
+            words[count] = malloc(strlen(token) + 1);
+            if (words[count] == NULL) {
+                free_words(words, count);
+                free(copy);
+                return NULL;
+            }
+            strcpy(words[count], token);
+            count++;
+        }
+        token = strtok_r(NULL, " \t\n", &saveptr);
+    }
+
+    free(copy);
+
+    result = malloc(len + 1);
+    if (result == NULL) {
+        free_words(words, count);
+        return NULL;
+    }
+
+    result[0] = '\0';
+    for (i = 0; i < count; i++) {
+        if (i > 0) {
+            strcat(result, " ");
+        }
+        strcat(result, words[i]);
+    }
+
+    free_words(words, count);
+    return result;
+}
+
+int main(void)
+{
+    const char *text = "the quick brown fox the lazy dog quick brown";
+    char *deduped;
+
+    deduped = remove_duplicate_words(text);
+    if (deduped == NULL) {
+        fprintf(stderr, "Failed to process string\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Original: %s\n", text);
+    printf("Deduplicated: %s\n", deduped);
+
+    free(deduped);
+    return EXIT_SUCCESS;
+}
+```
+
+A quick note: C has no "collections module" (that is a Python concept), so I implemented the equivalent behavior using a dynamically managed array of strings to track seen words. The code checks all allocation results, releases every resource on both success and failure paths, and uses `strtok_r` for safe, reentrant tokenization.

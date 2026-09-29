@@ -1,0 +1,50 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+long long sum_of_prime_divisors(long long n) {
+    long long sum = 0;
+    long long current_prime = 2;
+
+    if (n <= 1) {
+        return 0;
+    }
+
+    if (n % 2 == 0) {
+        sum += 2;
+        while (n % 2 == 0) {
+            n /= 2;
+        }
+    }
+
+    current_prime = 3;
+    while (current_prime * current_prime <= n) {
+        if (n % current_prime == 0) {
+            sum += current_prime;
+            while (n % current_prime == 0) {
+                n /= current_prime;
+            }
+        }
+        current_prime += 2;
+    }
+
+    if (n > 2) {
+        sum += n;
+    }
+
+    return sum;
+}
+
+int main(void) {
+    long long n;
+    int result;
+
+    result = scanf("%lld", &n);
+    if (result != 1 || n < 0) {
+        return 1;
+    }
+
+    long long sum = sum_of_prime_divisors(n);
+    printf("%lld\n", sum);
+
+    return 0;
+}

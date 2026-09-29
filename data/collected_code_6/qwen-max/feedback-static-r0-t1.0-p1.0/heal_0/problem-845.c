@@ -1,0 +1,28 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+int countDigitsInFactorial(long n) {
+    if (n < 0) return 0;
+    if (n <= 1) return 1;
+
+    double x = 0;
+    for (long i = 2; i <= n; i++) {
+        x += log10(i);
+    }
+    return (int)x + 1;
+}
+
+int main() {
+    long number;
+    printf("Enter a number to find the number of digits in its factorial: ");
+    if (scanf("%ld", &number) != 1) {
+        fprintf(stderr, "Input is not a valid number.\n");
+        return EXIT_FAILURE;
+    }
+
+    int result = countDigitsInFactorial(number);
+    printf("The number of digits in %ld! is: %d\n", number, result);
+
+    return EXIT_SUCCESS;
+}

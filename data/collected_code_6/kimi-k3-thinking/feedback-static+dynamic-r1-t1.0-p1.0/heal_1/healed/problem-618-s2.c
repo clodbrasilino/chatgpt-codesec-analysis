@@ -1,0 +1,71 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stddef.h>
+
+int divide_lists(const double *dividend, const double *divisor, double *result, size_t length)
+{
+    size_t i;
+
+    if (dividend == NULL || divisor == NULL || result == NULL)
+    {
+        return -1;
+    }
+
+    if (length == 0)
+    {
+        return -2;
+    }
+
+    for (i = 0; i < length; i++)
+    {
+        if (divisor[i] == 0.0)
+        {
+            return -3;
+        }
+    }
+
+    for (i = 0; i < length; i++)
+    {
+        result[i] = dividend[i] / divisor[i];
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    const double list1[] = {10.0, 20.0, 30.0, 40.0, 50.0};
+    const double list2[] = {2.0, 4.0, 5.0, 8.0, 10.0};
+    size_t length = sizeof(list1) / sizeof(list1[0]);
+    size_t i;
+    double *result;
+    int status;
+
+    result = (double *)malloc(length * sizeof(double));
+    if (result == NULL)
+    {
+        fprintf(stderr, "Error: memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    status = divide_lists(list1, list2, result, length);
+    if (status != 0)
+    {
+        fprintf(stderr, "Error: division failed with code %d\n", status);
+        free(result);
+        result = NULL;
+        return EXIT_FAILURE;
+    }
+
+    printf("Result: ");
+    for (i = 0; i < length; i++)
+    {
+        printf("%.2f ", result[i]);
+    }
+    printf("\n");
+
+    free(result);
+    result = NULL;
+
+    return EXIT_SUCCESS;
+}

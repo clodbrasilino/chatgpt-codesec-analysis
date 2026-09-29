@@ -1,0 +1,58 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+double harmonic_sum(unsigned int n)
+{
+    double sum = 0.0;
+    unsigned int i;
+
+    if (n < 1U) {
+        return 0.0;
+    }
+
+    for (i = 1U; i <= n; i++) {
+        sum += 1.0 / (double)i;
+    }
+
+    return sum;
+}
+
+int main(void)
+{
+    unsigned int n = 0U;
+    double result;
+    int scan_status;
+
+    printf("Enter a positive integer n: ");
+    scan_status = scanf("%u", &n);
+
+    if (scan_status != 1) {
+        fprintf(stderr, "Error: invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (n < 1U) {
+        fprintf(stderr, "Error: n must be at least 1.\n");
+        return EXIT_FAILURE;
+    }
+
+    result = harmonic_sum(n);
+
+    if (printf("Harmonic sum of %u is %.15f\n", n, result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the weaknesses and applied fixes:**
+
+1. **Off-by-one error in the loop bound:** The original loop ran `for (i = 1U; i < n; i++)`, which computed the harmonic sum of `n - 1` terms instead of `n`. The test expectations confirm this: `2.45` is H(6) while the expected `2.5928571...` is H(7), and `1.8333...` is H(3) while `2.0833...` is H(4). The fix changes the loop condition to `i <= n`.
+
+2. **Float-level precision in results:** The "got" values (e.g., `2.4500000476837158`, `3.4951081275939941`) exhibit single-precision artifacts, indicating the accumulation or output path was truncated to `float` somewhere in the tested build. The rewritten code accumulates strictly in `double` and prints with `%.15f` so full double precision is preserved and visible.
+
+3. **Inconsistent output/semantics:** The original printed `n - 1U`, masking the off-by-one bug rather than fixing it. The rewrite prints `n` and computes H(n) correctly.
+
+4. **Overly strict input guard:** The rejection of `n < 2` was an artifact of the off-by-one design; H(1) = 1.0 is a valid result, so the guard is relaxed to `n >= 1`.

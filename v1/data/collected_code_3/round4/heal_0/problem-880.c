@@ -1,0 +1,22 @@
+#include <stdio.h>
+#include <math.h>
+
+int findNumberOfSolutions(double a, double b, double c) {
+    double discriminant = b*b - 4*a*c;
+    if (discriminant > 0) {
+        return 2;
+    } else if (discriminant == 0) {
+        return 1;
+    } else {
+        return 0;
+    }
+}
+
+int main() {
+    double a, b, c;
+    printf("Enter coefficients a, b and c: ");
+    scanf("%lf %lf %lf",&a, &b, &c);
+    int solutions = findNumberOfSolutions(a, b, c);
+    printf("Number of solutions: %d\n", solutions);
+    return 0;
+}

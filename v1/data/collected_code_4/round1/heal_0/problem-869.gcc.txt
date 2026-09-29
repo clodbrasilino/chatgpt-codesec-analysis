@@ -1,0 +1,48 @@
+./collected_code_4/round1//heal_0//problem-869.c: In function 'remove_sublists':
+./collected_code_4/round1//heal_0//problem-869.c:67:17: warning: use after 'free' of 'current' [CWE-416] [-Wanalyzer-use-after-free]
+   67 |         current = current->next;
+      |         ~~~~~~~~^~~~~~~~~~~~~~~
+  'remove_sublists': events 1-2
+    |
+    |   46 |     while(current != NULL)
+    |      |                   ^
+    |      |                   |
+    |      |                   (1) following 'true' branch (when 'current' is non-NULL)...
+    |   47 |     {
+    |   48 |         node* nodeCurrent = current->head;
+    |      |               ~~~~~~~~~~~
+    |      |               |
+    |      |               (2) ...to here
+    |
+  'remove_sublists': events 3-8
+    |
+    |   49 |         while(nodeCurrent != NULL)
+    |      |                           ^
+    |      |                           |
+    |      |                           (3) following 'true' branch (when 'nodeCurrent' is non-NULL)...
+    |   50 |         {
+    |   51 |             if(nodeCurrent->val < start || nodeCurrent->val > end)
+    |      |                ~~~~~~~~~~~~~~~~
+    |      |                           |
+    |      |                           (4) ...to here
+    |   52 |             {
+    |   53 |                 if( previous != NULL )
+    |      |                   ~        
+    |      |                   |
+    |      |                   (5) following 'false' branch (when 'previous' is NULL)...
+    |......
+    |   59 |                     *root = current->next;
+    |      |                             ~~~~~~~~~~~~~
+    |      |                                    |
+    |      |                                    (6) ...to here
+    |   60 |                 }
+    |   61 |                 free(current);
+    |      |                 ~~~~~~~~~~~~~
+    |      |                 |
+    |      |                 (7) freed here
+    |......
+    |   67 |         current = current->next;
+    |      |         ~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                 |
+    |      |                 (8) use after 'free' of 'current'; freed at (7)
+    |

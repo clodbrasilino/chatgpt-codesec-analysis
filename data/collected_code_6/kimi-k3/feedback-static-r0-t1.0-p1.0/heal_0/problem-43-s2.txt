@@ -1,0 +1,52 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+int find_sequences(const char *input) {
+    regex_t regex;
+    regmatch_t matches[1];
+    const char *pattern = "[a-z]+(_[a-z]+)+";
+    const char *cursor = input;
+    int ret;
+
+    if (input == NULL) {
+        return 1;
+    }
+
+    ret = regcomp(&regex, pattern, REG_EXTENDED);
+    if (ret != 0) {
+        return 1;
+    }
+
+    while (regexec(&regex, cursor, 1, matches, 0) == 0) {
+        int start = matches[0].rm_so;
+        int end = matches[0].rm_eo;
+        int length = end - start;
+
+        if (length > 0) {
+            printf("Found: %.*s\n", length, cursor + start);
+        } else {
+            cursor++;
+            continue;
+        }
+
+        cursor += end;
+    }
+
+    regfree(&regex);
+    return 0;
+}
+
+int main(void) {
+    const char *test_string = "hello_world this is_a_test string_with_multiple_parts UPPER_case and 123_numbers";
+    
+    if (find_sequences(test_string) != 0) {
+        fprintf(stderr, "Error processing input\n");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```

@@ -1,0 +1,43 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+#include <stddef.h>
+
+bool is_distinct(const int *tuple, size_t size) {
+    if (tuple == NULL && size > 0) {
+        return false;
+    }
+    
+    for (size_t i = 0; i < size; i++) {
+        for (size_t j = i + 1; j < size; j++) {
+            if (tuple[i] == tuple[j]) {
+                return false;
+            }
+        }
+    }
+    
+    return true;
+}
+
+int main(void) {
+    int tuple1[] = {1, 2, 3, 4, 5};
+    int tuple2[] = {1, 2, 3, 2, 5};
+    int tuple3[] = {42};
+    int tuple4[] = {1, 1, 1};
+    int tuple5[] = {};
+    
+    size_t size1 = sizeof(tuple1) / sizeof(tuple1[0]);
+    size_t size2 = sizeof(tuple2) / sizeof(tuple2[0]);
+    size_t size3 = sizeof(tuple3) / sizeof(tuple3[0]);
+    size_t size4 = sizeof(tuple4) / sizeof(tuple4[0]);
+    size_t size5 = sizeof(tuple5) / sizeof(tuple5[0]);
+    
+    printf("Tuple1 is %s\n", is_distinct(tuple1, size1) ? "distinct" : "not distinct");
+    printf("Tuple2 is %s\n", is_distinct(tuple2, size2) ? "distinct" : "not distinct");
+    printf("Tuple3 is %s\n", is_distinct(tuple3, size3) ? "distinct" : "not distinct");
+    printf("Tuple4 is %s\n", is_distinct(tuple4, size4) ? "distinct" : "not distinct");
+    printf("Tuple5 is %s\n", is_distinct(tuple5, size5) ? "distinct" : "not distinct");
+    
+    return 0;
+}
+```

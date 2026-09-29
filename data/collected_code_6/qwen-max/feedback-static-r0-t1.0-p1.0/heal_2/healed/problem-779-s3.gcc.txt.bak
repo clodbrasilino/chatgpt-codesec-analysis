@@ -1,0 +1,21 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-779-s3.c: In function 'main':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-779-s3.c:51:33: error: field name not in record or union initializer
+   51 |     List lists[MAX_LISTS] = { {{.item = "a"}, .count = 1},
+      |                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-779-s3.c:51:33: note: (near initialization for 'lists[0].items')
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-779-s3.c:52:33: error: field name not in record or union initializer
+   52 |                               {{.item = "a"}, .count = 1, {.item = "c"}, .count = 2},
+      |                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-779-s3.c:52:33: note: (near initialization for 'lists[1].items')
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-779-s3.c:52:59: error: extra brace group at end of initializer
+   52 |                               {{.item = "a"}, .count = 1, {.item = "c"}, .count = 2},
+      |                                                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-779-s3.c:52:59: note: (near initialization for 'lists[1]')
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-779-s3.c:53:33: error: field name not in record or union initializer
+   53 |                               {{.item = "b"}, .count = 2, {.item = "a"}, .count = 3}};
+      |                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-779-s3.c:53:33: note: (near initialization for 'lists[2].items')
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-779-s3.c:53:59: error: extra brace group at end of initializer
+   53 |                               {{.item = "b"}, .count = 2, {.item = "a"}, .count = 3}};
+      |                                                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-779-s3.c:53:59: note: (near initialization for 'lists[2]')

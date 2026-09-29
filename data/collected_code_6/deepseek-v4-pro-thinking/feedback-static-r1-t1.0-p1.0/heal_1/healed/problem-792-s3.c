@@ -1,0 +1,82 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node *next;
+} Node;
+
+typedef struct List {
+    Node *head;
+} List;
+
+int count_lists(List * const * const lists, int n) {
+    int count = 0;
+    if (lists == NULL) {
+        return 0;
+    }
+    for (int i = 0; i < n; ++i) {
+        if (lists[i] != NULL) {
+            ++count;
+        }
+    }
+    return count;
+}
+
+void free_nodes(Node *head) {
+    while (head != NULL) {
+        Node *tmp = head;
+        head = head->next;
+        free(tmp);
+    }
+}
+
+void free_list(List *list) {
+    if (list == NULL) {
+        return;
+    }
+    free_nodes(list->head);
+    free(list);
+}
+
+List *create_list(int data) {
+    List *list = malloc(sizeof(*list));
+    if (list == NULL) {
+        return NULL;
+    }
+    list->head = malloc(sizeof(*list->head));
+    if (list->head == NULL) {
+        free(list);
+        return NULL;
+    }
+    list->head->data = data;
+    list->head->next = NULL;
+    return list;
+}
+
+int main(void) {
+    const int n = 4;
+    List **lists = calloc((size_t)n, sizeof(*lists));
+    if (lists == NULL) {
+        return EXIT_FAILURE;
+    }
+
+    lists[0] = create_list(1);
+    lists[2] = create_list(3);
+
+    if (lists[0] == NULL || lists[2] == NULL) {
+        for (int i = 0; i < n; ++i) {
+            free_list(lists[i]);
+        }
+        free(lists);
+        return EXIT_FAILURE;
+    }
+
+    printf("%d\n", count_lists(lists, n));
+
+    for (int i = 0; i < n; ++i) {
+        free_list(lists[i]);
+    }
+    free(lists);
+    return EXIT_SUCCESS;
+}

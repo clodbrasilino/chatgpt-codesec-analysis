@@ -1,0 +1,35 @@
+collected_code_3/round4/heal_0/problem-833.c: In function 'get_keys':
+collected_code_3/round4/heal_0/problem-833.c:11:13: warning: dereference of possibly-NULL 'd' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   11 |     d->keys = malloc(size * sizeof(char *));
+      |     ~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  'get_keys': events 1-2
+    |
+    |   10 |     Dict *d = malloc(sizeof(Dict));
+    |      |               ^~~~~~~~~~~~~~~~~~~~
+    |      |               |
+    |      |               (1) this call could return NULL
+    |   11 |     d->keys = malloc(size * sizeof(char *));
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |             |
+    |      |             (2) 'd' could be NULL: unchecked value from (1)
+    |
+collected_code_3/round4/heal_0/problem-833.c:15:20: warning: dereference of possibly-NULL '*d.keys + (long unsigned int)i * 8' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   15 |         d->keys[i] = dict[i];
+      |         ~~~~~~~~~~~^~~~~~~~~
+  'get_keys': events 1-4
+    |
+    |   11 |     d->keys = malloc(size * sizeof(char *));
+    |      |               ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |               |
+    |      |               (1) this call could return NULL
+    |......
+    |   14 |     for(int i = 0; i < size; i++) {
+    |      |                    ~~~~~~~~
+    |      |                      |
+    |      |                      (2) following 'true' branch (when 'i < size')...
+    |   15 |         d->keys[i] = dict[i];
+    |      |         ~~~~~~~~~~~~~~~~~~~~
+    |      |                    |     |
+    |      |                    |     (3) ...to here
+    |      |                    (4) '*d.keys + (long unsigned int)i * 8' could be NULL: unchecked value from (1)
+    |

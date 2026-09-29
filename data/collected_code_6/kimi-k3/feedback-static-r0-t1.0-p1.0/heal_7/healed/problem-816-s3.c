@@ -1,0 +1,54 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    int id;
+    double value;
+    char name[64];
+} Tuple;
+
+void clear_tuple(Tuple *t) {
+    if (t == NULL) {
+        return;
+    }
+    t->id = 0;
+    t->value = 0.0;
+    memset(t->name, 0, sizeof(t->name));
+}
+
+int main(void) {
+    Tuple *tuple = malloc(sizeof(Tuple));
+    if (tuple == NULL) {
+        return EXIT_FAILURE;
+    }
+    
+    tuple->id = 42;
+    tuple->value = 3.14159;
+    
+    const char *source = "Sample Data";
+    if (source != NULL) {
+        size_t source_len = strlen(source);
+        if (source_len >= sizeof(tuple->name)) {
+            strncpy(tuple->name, source, sizeof(tuple->name) - 1);
+            tuple->name[sizeof(tuple->name) - 1] = '\0';
+        } else {
+            strcpy(tuple->name, source);
+        }
+    } else {
+        tuple->name[0] = '\0';
+    }
+    
+    printf("Before clearing: id=%d, value=%.5f, name=%s\n", 
+           tuple->id, tuple->value, tuple->name);
+    
+    clear_tuple(tuple);
+    
+    printf("After clearing: id=%d, value=%.5f, name=%s\n", 
+           tuple->id, tuple->value, tuple->name);
+    
+    free(tuple);
+    tuple = NULL;
+    
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,117 @@
+## Analysis
+
+The failing tests reveal the actual expected semantics of the function:
+
+- Test 0 expects `['practice', 'solution']` — both strings have length **8**
+- Test 1 expects `['Python']` — length **6**
+- Test 2 expects `['exercises']` — length **9**
+
+The only filtering rule consistent with all three test cases is **exact length match**. The bug is in the comparison:
+
+```c
+if (len <= min_length) {   /* keeps strings with len > min_length */
+    continue;
+}
+```
+
+With the original `<=` filter, passing 8 would yield only `"exercises"` (the only string longer than 8), passing 6 would yield four strings, etc. — none of the expected results can ever be produced. The filter must be `len != min_length` so that only strings whose length equals the given value are extracted.
+
+The rest of the function (allocation with `calloc(list_size + 1, ...)`, cleanup on allocation failure, NULL-termination of the result, and `free_strings`) is sound. The fixed code:
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char **extract_strings(const char *const *list, size_t list_size, size_t min_length)
+{
+    char **result;
+    size_t i;
+    size_t n = 0;
+
+    if (list == NULL) {
+        return NULL;
+    }
+
+    result = calloc(list_size + 1, sizeof(*result));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    for (i = 0; i < list_size; i++) {
+        size_t len;
+
+        if (list[i] == NULL) {
+            continue;
+        }
+
+        len = strlen(list[i]);
+        if (len != min_length) {
+            continue;
+        }
+
+        len++;
+        result[n] = malloc(len);
+        if (result[n] == NULL) {
+            size_t j;
+            for (j = 0; j < n; j++) {
+                free(result[j]);
+            }
+            free(result);
+            return NULL;
+        }
+        memcpy(result[n], list[i], len);
+        n++;
+    }
+
+    result[n] = NULL;
+
+    return result;
+}
+
+void free_strings(char **strings)
+{
+    size_t i;
+
+    if (strings == NULL) {
+        return;
+    }
+
+    for (i = 0; strings[i] != NULL; i++) {
+        free(strings[i]);
+    }
+    free(strings);
+}
+
+int main(void)
+{
+    const char *list[] = {"practice", "code", "solution", "C", "exercises", "Python"};
+    const size_t list_size = sizeof(list) / sizeof(list[0]);
+    const size_t min_length = 8;
+    char **extracted;
+    size_t i;
+
+    extracted = extract_strings(list, list_size, min_length);
+    if (extracted == NULL) {
+        fprintf(stderr, "Error: failed to extract strings\n");
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; extracted[i] != NULL; i++) {
+        printf("%s\n", extracted[i]);
+    }
+
+    free_strings(extracted);
+
+    return EXIT_SUCCESS;
+}
+```
+
+With `min_length = 8`, `main` prints:
+
+```
+practice
+solution
+```
+
+which matches the expectation of test case 0, and passing 6 or 9 yields `Python` and `exercises` respectively, satisfying test cases 1 and 2.

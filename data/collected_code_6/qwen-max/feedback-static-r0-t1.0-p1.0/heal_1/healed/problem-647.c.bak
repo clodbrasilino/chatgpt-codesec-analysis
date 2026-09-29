@@ -1,0 +1,85 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+char **split_at_uppercase(const char *input, int *count) {
+    int size = 10;
+    int index = 0;
+    char **result = (char **)malloc(size * sizeof(char *));
+    if (!result) return NULL;
+
+    const char *start = input;
+    while (*input) {
+        if (isupper((unsigned char)*input)) {
+            if (index >= size - 1) {
+                size *= 2;
+                char **temp = (char **)realloc(result, size * sizeof(char *));
+                if (temp == NULL) {
+                    for (int i = 0; i < index; ++i) free(result[i]);
+                    free(result);
+                    return NULL;
+                }
+                result = temp;
+            }
+            result[index] = (char *)malloc(input - start + 1);
+            if (!result[index]) {
+                for (int i = 0; i < index; ++i) free(result[i]);
+                free(result);
+                return NULL;
+            }
+            memcpy(result[index], start, input - start);
+            result[index][input - start] = '\0';
+            ++index;
+            start = input;
+        }
+        ++input;
+    }
+
+    if (index >= size - 1) {
+        size++;
+        char **temp = (char **)realloc(result, size * sizeof(char *));
+        if (temp == NULL) {
+            for (int i = 0; i < index; ++i) free(result[i]);
+            free(result);
+            return NULL;
+        }
+        result = temp;
+    }
+    result[index] = (char *)malloc(input - start + 1);
+    if (!result[index]) {
+        for (int i = 0; i < index; ++i) free(result[i]);
+        free(result);
+        return NULL;
+    }
+    memcpy(result[index], start, input - start);
+    result[index][input - start] = '\0';
+    ++index;
+
+    *count = index;
+    return result;
+}
+
+void free_split_result(char **result, int count) {
+    for (int i = 0; i < count; ++i) {
+        free(result[i]);
+    }
+    free(result);
+}
+
+int main() {
+    const char *input = "HelloWorldThisIsAString";
+    int count;
+    char **result = split_at_uppercase(input, &count);
+
+    if (result) {
+        for (int i = 0; i < count; ++i) {
+            printf("%s\n", result[i]);
+        }
+        free_split_result(result, count);
+    } else {
+        fprintf(stderr, "Memory allocation failed\n");
+    }
+
+    return 0;
+}

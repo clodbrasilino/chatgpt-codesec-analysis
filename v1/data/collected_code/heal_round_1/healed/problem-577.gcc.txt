@@ -1,0 +1,63 @@
+collected_code/healed/problem-577.c: In function 'lastDigitInFactorial':
+collected_code/healed/problem-577.c:15:12: warning: use of uninitialized value 'lastDigit' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   15 |     return lastDigit;
+      |            ^~~~~~~~~
+  'lastDigitInFactorial': events 1-5
+    |
+    |    5 |     int lastDigit;
+    |      |         ^~~~~~~~~
+    |      |         |
+    |      |         (1) region created on stack here
+    |      |         (2) capacity: 4 bytes
+    |    6 | 
+    |    7 |     for (int i = 2; i <= n; i++) {
+    |      |                     ~~~~~~
+    |      |                       |
+    |      |                       (3) following 'false' branch (when 'i > n')...
+    |......
+    |   15 |     return lastDigit;
+    |      |            ~~~~~~~~~
+    |      |            |
+    |      |            (4) ...to here
+    |      |            (5) use of uninitialized value 'lastDigit' here
+    |
+collected_code/healed/problem-577.c:15:12: warning: use of uninitialized value 'lastDigit' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   15 |     return lastDigit;
+      |            ^~~~~~~~~
+  'main': events 1-2
+    |
+    |   18 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   24 |     int lastDigit = lastDigitInFactorial(num);
+    |      |                     ~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                     |
+    |      |                     (2) calling 'lastDigitInFactorial' from 'main'
+    |
+    +--> 'lastDigitInFactorial': events 3-8
+           |
+           |    3 | int lastDigitInFactorial(int n) {
+           |      |     ^~~~~~~~~~~~~~~~~~~~
+           |      |     |
+           |      |     (3) entry to 'lastDigitInFactorial'
+           |    4 |     int factorial = 1;
+           |    5 |     int lastDigit;
+           |      |         ~~~~~~~~~
+           |      |         |
+           |      |         (4) region created on stack here
+           |      |         (5) capacity: 4 bytes
+           |    6 | 
+           |    7 |     for (int i = 2; i <= n; i++) {
+           |      |                     ~~~~~~
+           |      |                       |
+           |      |                       (6) following 'false' branch (when 'i > n')...
+           |......
+           |   15 |     return lastDigit;
+           |      |            ~~~~~~~~~
+           |      |            |
+           |      |            (7) ...to here
+           |      |            (8) use of uninitialized value 'lastDigit' here
+           |
+-macosx_version_min has been renamed to -macos_version_min

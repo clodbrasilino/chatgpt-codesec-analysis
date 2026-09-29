@@ -1,0 +1,525 @@
+./collected_code_4/round2//heal_0/problem-653.c: In function 'deleteMap':
+./collected_code_4/round2//heal_0/problem-653.c:70:9: warning: double-'free' of '*pair.key' [CWE-415] [-Wanalyzer-double-free]
+   70 |         free(pair->key);
+      |         ^~~~~~~~~~~~~~~
+  'main': events 1-2
+    |
+    |   83 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |   84 |     Map *map = createMap();
+    |      |                ~~~~~~~~~~~
+    |      |                |
+    |      |                (2) calling 'createMap' from 'main'
+    |
+    +--> 'createMap': events 3-7
+           |
+           |   22 | Map *createMap() {
+           |      |      ^~~~~~~~~
+           |      |      |
+           |      |      (3) entry to 'createMap'
+           |   23 |     Map *map = malloc(sizeof(Map));
+           |   24 |     if (!map) return NULL;
+           |      |        ~
+           |      |        |
+           |      |        (4) following 'false' branch (when 'map' is non-NULL)...
+           |   25 | 
+           |   26 |     map->pairs = malloc(sizeof(Pair) * 2);
+           |      |                  ~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                  |
+           |      |                  (5) ...to here
+           |   27 |     if (!map->pairs) {
+           |      |        ~
+           |      |        |
+           |      |        (6) following 'false' branch...
+           |......
+           |   32 |     map->size = 0;
+           |      |     ~~~~~~~~~~~~~
+           |      |               |
+           |      |               (7) ...to here
+           |
+    <------+
+    |
+  'main': events 8-11
+    |
+    |   84 |     Map *map = createMap();
+    |      |                ^~~~~~~~~~~
+    |      |                |
+    |      |                (8) returning to 'main' from 'createMap'
+    |   85 |     if (!map) return 1;
+    |      |        ~        
+    |      |        |
+    |      |        (9) following 'false' branch (when 'map' is non-NULL)...
+    |   86 | 
+    |   87 |     addPair(map, "key1", "value1");
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (10) ...to here
+    |      |     (11) calling 'addPair' from 'main'
+    |
+    +--> 'addPair': events 12-19
+           |
+           |   37 | bool addPair(Map *map, const char *key, const char* value) {
+           |      |      ^~~~~~~
+           |      |      |
+           |      |      (12) entry to 'addPair'
+           |   38 |     if (map->size == map->capacity) {
+           |      |        ~
+           |      |        |
+           |      |        (13) following 'false' branch...
+           |......
+           |   46 |     Pair *pair = &map->pairs[map->size++];
+           |      |                   ~~~~~~~~~~
+           |      |                      |
+           |      |                      (14) ...to here
+           |   47 |     pair->key = strdup(key);
+           |      |                 ~~~~~~~~~~~
+           |      |                 |
+           |      |                 (15) allocated here
+           |   48 |     if (!pair->key) return false;
+           |      |        ~
+           |      |        |
+           |      |        (16) assuming '<unknown>' is non-NULL
+           |      |        (17) following 'false' branch...
+           |   49 | 
+           |   50 |     Node *node = malloc(sizeof(Node));
+           |      |                  ~~~~~~~~~~~~~~~~~~~~
+           |      |                  |
+           |      |                  (18) ...to here
+           |   51 |     if (!node) {
+           |   52 |         free(pair->key);
+           |      |         ~~~~~~~~~~~~~~~
+           |      |         |
+           |      |         (19) first 'free' here
+           |
+    <------+
+    |
+  'main': events 20-21
+    |
+    |   87 |     addPair(map, "key1", "value1");
+    |      |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (20) returning to 'main' from 'addPair'
+    |   88 |     addPair(map, "key2", "value2");
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (21) calling 'addPair' from 'main'
+    |
+    +--> 'addPair': events 22-25
+           |
+           |   37 | bool addPair(Map *map, const char *key, const char* value) {
+           |      |      ^~~~~~~
+           |      |      |
+           |      |      (22) entry to 'addPair'
+           |   38 |     if (map->size == map->capacity) {
+           |      |        ~
+           |      |        |
+           |      |        (23) following 'false' branch...
+           |......
+           |   46 |     Pair *pair = &map->pairs[map->size++];
+           |      |                   ~~~~~~~~~~
+           |      |                      |
+           |      |                      (24) ...to here
+           |   47 |     pair->key = strdup(key);
+           |   48 |     if (!pair->key) return false;
+           |      |        ~
+           |      |        |
+           |      |        (25) following 'true' branch...
+           |
+         'addPair': event 26
+           |
+           |   48 |     if (!pair->key) return false;
+           |      |                            ^~~~~
+           |      |                            |
+           |      |                            (26) ...to here
+           |
+    <------+
+    |
+  'main': events 27-28
+    |
+    |   88 |     addPair(map, "key2", "value2");
+    |      |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (27) returning to 'main' from 'addPair'
+    |   89 | 
+    |   90 |     deleteMap(map);
+    |      |     ~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (28) calling 'deleteMap' from 'main'
+    |
+    +--> 'deleteMap': events 29-32
+           |
+           |   67 | void deleteMap(Map *map) {
+           |      |      ^~~~~~~~~
+           |      |      |
+           |      |      (29) entry to 'deleteMap'
+           |   68 |     for (size_t i = 0; i < map->size; i++) {
+           |      |                        ~~~~~~~~~~~~~
+           |      |                          |
+           |      |                          (30) following 'true' branch...
+           |   69 |         Pair *pair = &map->pairs[i];
+           |      |                       ~~~~~~~~~~
+           |      |                          |
+           |      |                          (31) ...to here
+           |   70 |         free(pair->key);
+           |      |         ~~~~~~~~~~~~~~~
+           |      |         |
+           |      |         (32) second 'free' here; first 'free' was at (19)
+           |
+./collected_code_4/round2//heal_0/problem-653.c:71:15: warning: use of uninitialized value '*pair.values' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   71 |         Node *node = pair->values;
+      |               ^~~~
+  'main': events 1-2
+    |
+    |   83 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |   84 |     Map *map = createMap();
+    |      |                ~~~~~~~~~~~
+    |      |                |
+    |      |                (2) calling 'createMap' from 'main'
+    |
+    +--> 'createMap': events 3-8
+           |
+           |   22 | Map *createMap() {
+           |      |      ^~~~~~~~~
+           |      |      |
+           |      |      (3) entry to 'createMap'
+           |   23 |     Map *map = malloc(sizeof(Map));
+           |   24 |     if (!map) return NULL;
+           |      |        ~
+           |      |        |
+           |      |        (4) following 'false' branch (when 'map' is non-NULL)...
+           |   25 | 
+           |   26 |     map->pairs = malloc(sizeof(Pair) * 2);
+           |      |                  ~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                  |
+           |      |                  (5) ...to here
+           |      |                  (6) region created on heap here
+           |   27 |     if (!map->pairs) {
+           |      |        ~
+           |      |        |
+           |      |        (7) following 'false' branch...
+           |......
+           |   32 |     map->size = 0;
+           |      |     ~~~~~~~~~~~~~
+           |      |               |
+           |      |               (8) ...to here
+           |
+    <------+
+    |
+  'main': events 9-12
+    |
+    |   84 |     Map *map = createMap();
+    |      |                ^~~~~~~~~~~
+    |      |                |
+    |      |                (9) returning to 'main' from 'createMap'
+    |   85 |     if (!map) return 1;
+    |      |        ~        
+    |      |        |
+    |      |        (10) following 'false' branch (when 'map' is non-NULL)...
+    |   86 | 
+    |   87 |     addPair(map, "key1", "value1");
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (11) ...to here
+    |      |     (12) calling 'addPair' from 'main'
+    |
+    +--> 'addPair': events 13-16
+           |
+           |   37 | bool addPair(Map *map, const char *key, const char* value) {
+           |      |      ^~~~~~~
+           |      |      |
+           |      |      (13) entry to 'addPair'
+           |   38 |     if (map->size == map->capacity) {
+           |      |        ~
+           |      |        |
+           |      |        (14) following 'false' branch...
+           |......
+           |   46 |     Pair *pair = &map->pairs[map->size++];
+           |      |                   ~~~~~~~~~~
+           |      |                      |
+           |      |                      (15) ...to here
+           |   47 |     pair->key = strdup(key);
+           |   48 |     if (!pair->key) return false;
+           |      |        ~
+           |      |        |
+           |      |        (16) following 'true' branch...
+           |
+         'addPair': event 17
+           |
+           |   48 |     if (!pair->key) return false;
+           |      |                            ^~~~~
+           |      |                            |
+           |      |                            (17) ...to here
+           |
+    <------+
+    |
+  'main': events 18-19
+    |
+    |   87 |     addPair(map, "key1", "value1");
+    |      |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (18) returning to 'main' from 'addPair'
+    |   88 |     addPair(map, "key2", "value2");
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (19) calling 'addPair' from 'main'
+    |
+    +--> 'addPair': events 20-23
+           |
+           |   37 | bool addPair(Map *map, const char *key, const char* value) {
+           |      |      ^~~~~~~
+           |      |      |
+           |      |      (20) entry to 'addPair'
+           |   38 |     if (map->size == map->capacity) {
+           |      |        ~
+           |      |        |
+           |      |        (21) following 'false' branch...
+           |......
+           |   46 |     Pair *pair = &map->pairs[map->size++];
+           |      |                   ~~~~~~~~~~
+           |      |                      |
+           |      |                      (22) ...to here
+           |   47 |     pair->key = strdup(key);
+           |   48 |     if (!pair->key) return false;
+           |      |        ~
+           |      |        |
+           |      |        (23) following 'true' branch...
+           |
+         'addPair': event 24
+           |
+           |   48 |     if (!pair->key) return false;
+           |      |                            ^~~~~
+           |      |                            |
+           |      |                            (24) ...to here
+           |
+    <------+
+    |
+  'main': events 25-26
+    |
+    |   88 |     addPair(map, "key2", "value2");
+    |      |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (25) returning to 'main' from 'addPair'
+    |   89 | 
+    |   90 |     deleteMap(map);
+    |      |     ~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (26) calling 'deleteMap' from 'main'
+    |
+    +--> 'deleteMap': events 27-30
+           |
+           |   67 | void deleteMap(Map *map) {
+           |      |      ^~~~~~~~~
+           |      |      |
+           |      |      (27) entry to 'deleteMap'
+           |   68 |     for (size_t i = 0; i < map->size; i++) {
+           |      |                        ~~~~~~~~~~~~~
+           |      |                          |
+           |      |                          (28) following 'true' branch...
+           |   69 |         Pair *pair = &map->pairs[i];
+           |      |                       ~~~~~~~~~~
+           |      |                          |
+           |      |                          (29) ...to here
+           |   70 |         free(pair->key);
+           |   71 |         Node *node = pair->values;
+           |      |               ~~~~
+           |      |               |
+           |      |               (30) use of uninitialized value '*pair.values' here
+           |
+./collected_code_4/round2//heal_0/problem-653.c:71:15: warning: use of uninitialized value '*pair.values' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   71 |         Node *node = pair->values;
+      |               ^~~~
+  'main': events 1-2
+    |
+    |   83 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |   84 |     Map *map = createMap();
+    |      |                ~~~~~~~~~~~
+    |      |                |
+    |      |                (2) calling 'createMap' from 'main'
+    |
+    +--> 'createMap': events 3-8
+           |
+           |   22 | Map *createMap() {
+           |      |      ^~~~~~~~~
+           |      |      |
+           |      |      (3) entry to 'createMap'
+           |   23 |     Map *map = malloc(sizeof(Map));
+           |   24 |     if (!map) return NULL;
+           |      |        ~
+           |      |        |
+           |      |        (4) following 'false' branch (when 'map' is non-NULL)...
+           |   25 | 
+           |   26 |     map->pairs = malloc(sizeof(Pair) * 2);
+           |      |                  ~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                  |
+           |      |                  (5) ...to here
+           |      |                  (6) region created on heap here
+           |   27 |     if (!map->pairs) {
+           |      |        ~
+           |      |        |
+           |      |        (7) following 'false' branch...
+           |......
+           |   32 |     map->size = 0;
+           |      |     ~~~~~~~~~~~~~
+           |      |               |
+           |      |               (8) ...to here
+           |
+    <------+
+    |
+  'main': events 9-12
+    |
+    |   84 |     Map *map = createMap();
+    |      |                ^~~~~~~~~~~
+    |      |                |
+    |      |                (9) returning to 'main' from 'createMap'
+    |   85 |     if (!map) return 1;
+    |      |        ~        
+    |      |        |
+    |      |        (10) following 'false' branch (when 'map' is non-NULL)...
+    |   86 | 
+    |   87 |     addPair(map, "key1", "value1");
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (11) ...to here
+    |      |     (12) calling 'addPair' from 'main'
+    |
+    +--> 'addPair': events 13-20
+           |
+           |   37 | bool addPair(Map *map, const char *key, const char* value) {
+           |      |      ^~~~~~~
+           |      |      |
+           |      |      (13) entry to 'addPair'
+           |   38 |     if (map->size == map->capacity) {
+           |      |        ~
+           |      |        |
+           |      |        (14) following 'false' branch...
+           |......
+           |   46 |     Pair *pair = &map->pairs[map->size++];
+           |      |                   ~~~~~~~~~~
+           |      |                      |
+           |      |                      (15) ...to here
+           |   47 |     pair->key = strdup(key);
+           |   48 |     if (!pair->key) return false;
+           |      |        ~
+           |      |        |
+           |      |        (16) following 'false' branch...
+           |   49 | 
+           |   50 |     Node *node = malloc(sizeof(Node));
+           |      |                  ~~~~~~~~~~~~~~~~~~~~
+           |      |                  |
+           |      |                  (17) ...to here
+           |   51 |     if (!node) {
+           |      |        ~
+           |      |        |
+           |      |        (18) following 'false' branch (when 'node' is non-NULL)...
+           |......
+           |   55 |     node->value = strdup(value);
+           |      |                   ~~~~~~~~~~~~~
+           |      |                   |
+           |      |                   (19) ...to here
+           |   56 |     if (!node->value) {
+           |      |        ~
+           |      |        |
+           |      |        (20) following 'false' branch...
+           |
+         'addPair': event 21
+           |
+           |   61 |     node->next = NULL;
+           |      |                ^
+           |      |                |
+           |      |                (21) ...to here
+           |
+    <------+
+    |
+  'main': events 22-23
+    |
+    |   87 |     addPair(map, "key1", "value1");
+    |      |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (22) returning to 'main' from 'addPair'
+    |   88 |     addPair(map, "key2", "value2");
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (23) calling 'addPair' from 'main'
+    |
+    +--> 'addPair': events 24-27
+           |
+           |   37 | bool addPair(Map *map, const char *key, const char* value) {
+           |      |      ^~~~~~~
+           |      |      |
+           |      |      (24) entry to 'addPair'
+           |   38 |     if (map->size == map->capacity) {
+           |      |        ~
+           |      |        |
+           |      |        (25) following 'false' branch...
+           |......
+           |   46 |     Pair *pair = &map->pairs[map->size++];
+           |      |                   ~~~~~~~~~~
+           |      |                      |
+           |      |                      (26) ...to here
+           |   47 |     pair->key = strdup(key);
+           |   48 |     if (!pair->key) return false;
+           |      |        ~
+           |      |        |
+           |      |        (27) following 'true' branch...
+           |
+         'addPair': event 28
+           |
+           |   48 |     if (!pair->key) return false;
+           |      |                            ^~~~~
+           |      |                            |
+           |      |                            (28) ...to here
+           |
+    <------+
+    |
+  'main': events 29-30
+    |
+    |   88 |     addPair(map, "key2", "value2");
+    |      |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (29) returning to 'main' from 'addPair'
+    |   89 | 
+    |   90 |     deleteMap(map);
+    |      |     ~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (30) calling 'deleteMap' from 'main'
+    |
+    +--> 'deleteMap': events 31-40
+           |
+           |   67 | void deleteMap(Map *map) {
+           |      |      ^~~~~~~~~
+           |      |      |
+           |      |      (31) entry to 'deleteMap'
+           |   68 |     for (size_t i = 0; i < map->size; i++) {
+           |      |                        ~~~~~~~~~~~~~  ~~~
+           |      |                          |             |
+           |      |                          |             (37) ...to here
+           |      |                          (32) following 'true' branch...
+           |      |                          (38) following 'true' branch...
+           |   69 |         Pair *pair = &map->pairs[i];
+           |      |                       ~~~~~~~~~~
+           |      |                          |
+           |      |                          (33) ...to here
+           |      |                          (39) ...to here
+           |   70 |         free(pair->key);
+           |   71 |         Node *node = pair->values;
+           |      |               ~~~~
+           |      |               |
+           |      |               (40) use of uninitialized value '*pair.values' here
+           |   72 |         while (node) {
+           |      |                ~~~~
+           |      |                |
+           |      |                (34) following 'true' branch (when 'node' is non-NULL)...
+           |      |                (36) following 'false' branch (when 'node' is NULL)...
+           |   73 |             Node *nextNode = node->next;
+           |      |                   ~~~~~~~~
+           |      |                   |
+           |      |                   (35) ...to here
+           |

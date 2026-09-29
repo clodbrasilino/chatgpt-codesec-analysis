@@ -1,0 +1,48 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+
+bool all_chars_same(const char *str, size_t max_len)
+{
+    size_t len;
+    size_t i;
+    char first;
+
+    if (str == NULL)
+    {
+        return false;
+    }
+
+    len = strnlen(str, max_len);
+    if (len == 0)
+    {
+        return false;
+    }
+
+    first = str[0];
+    for (i = 1; i < len; i++)
+    {
+        if (str[i] != first)
+        {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+int main(void)
+{
+    const char *test1 = "aaaa";
+    const char *test2 = "aaab";
+    const char *test3 = "";
+    const char *test4 = "x";
+    size_t max_len = 256;
+
+    printf("Test 1 (\"aaaa\"): %s\n", all_chars_same(test1, max_len) ? "true" : "false");
+    printf("Test 2 (\"aaab\"): %s\n", all_chars_same(test2, max_len) ? "true" : "false");
+    printf("Test 3 (\"\"): %s\n", all_chars_same(test3, max_len) ? "true" : "false");
+    printf("Test 4 (\"x\"): %s\n", all_chars_same(test4, max_len) ? "true" : "false");
+
+    return 0;
+}

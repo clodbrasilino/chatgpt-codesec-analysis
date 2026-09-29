@@ -1,0 +1,84 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char **items;
+    int length;
+} Tuple;
+
+char *concatenate_adjacent(char *a, char *b) {
+    size_t len_a = strlen(a);
+    size_t len_b = strlen(b);
+    char *result = malloc(len_a + len_b + 1);
+    if (result == NULL) {
+        return NULL;
+    }
+    memcpy(result, a, len_a);
+    memcpy(result + len_a, b, len_b);
+    result[len_a + len_b] = '\0';
+    return result;
+}
+
+Tuple *adjacent_concatenation(Tuple *input) {
+    if (input == NULL || input->length < 2) {
+        return NULL;
+    }
+
+    Tuple *output = malloc(sizeof(Tuple));
+    if (output == NULL) {
+        return NULL;
+    }
+
+    output->length = input->length - 1;
+    output->items = malloc(sizeof(char *) * output->length);
+    if (output->items == NULL) {
+        free(output);
+        return NULL;
+    }
+
+    for (int i = 0; i < output->length; i++) {
+        output->items[i] = concatenate_adjacent(input->items[i], input->items[i + 1]);
+        if (output->items[i] == NULL) {
+            for (int j = 0; j < i; j++) {
+                free(output->items[j]);
+            }
+            free(output->items);
+            free(output);
+            return NULL;
+        }
+    }
+
+    return output;
+}
+
+void free_tuple(Tuple *tuple) {
+    if (tuple == NULL) {
+        return;
+    }
+    for (int i = 0; i < tuple->length; i++) {
+        free(tuple->items[i]);
+    }
+    free(tuple->items);
+    free(tuple);
+}
+
+int main(void) {
+    char *items[] = {"ab", "cd", "ef", "gh"};
+    Tuple input;
+    input.items = items;
+    input.length = 4;
+
+    Tuple *result = adjacent_concatenation(&input);
+    if (result == NULL) {
+        fprintf(stderr, "Error during concatenation\n");
+        return 1;
+    }
+
+    for (int i = 0; i < result->length; i++) {
+        printf("%s\n", result->items[i]);
+    }
+
+    free_tuple(result);
+    return 0;
+}

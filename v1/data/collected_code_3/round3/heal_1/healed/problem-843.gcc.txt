@@ -1,0 +1,149 @@
+./collected_code_3/round3/heal_1/healed/problem-843.c: In function 'nthSuperUglyNumber':
+./collected_code_3/round3/heal_1/healed/problem-843.c:68:9: warning: use of uninitialized value '*ugly_82 + _62' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   68 |     int result = ugly[n - 1];
+      |         ^~~~~~
+  'main': events 1-2
+    |
+    |   77 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   81 |     int result = nthSuperUglyNumber(n, primes, primesSize);
+    |      |                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                  |
+    |      |                  (2) calling 'nthSuperUglyNumber' from 'main'
+    |
+    +--> 'nthSuperUglyNumber': events 3-31
+           |
+           |   33 | int nthSuperUglyNumber(int n, int* primes, int primesSize) {
+           |      |     ^~~~~~~~~~~~~~~~~~
+           |      |     |
+           |      |     (3) entry to 'nthSuperUglyNumber'
+           |   34 |     int* ugly = (int*)malloc(sizeof(int) * n);
+           |      |                       ~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                       |
+           |      |                       (4) region created on heap here
+           |   35 |     if (!ugly) {
+           |      |        ~
+           |      |        |
+           |      |        (5) following 'false' branch (when 'ugly' is non-NULL)...
+           |......
+           |   39 |     HeapNode** heap = (HeapNode**)malloc(sizeof(HeapNode*) * primesSize);
+           |      |                                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                                   |
+           |      |                                   (6) ...to here
+           |   40 |     if (!heap) {
+           |      |        ~
+           |      |        |
+           |      |        (7) following 'false' branch (when 'heap' is non-NULL)...
+           |......
+           |   45 |     for (int i = 0; i < primesSize; i++) {
+           |      |              ~      ~~~~~~~~~~~~~~
+           |      |              |        |
+           |      |              |        (9) following 'true' branch (when 'i < primesSize')...
+           |      |              |        (13) following 'true' branch (when 'i < primesSize')...
+           |      |              |        (17) following 'true' branch (when 'i < primesSize')...
+           |      |              |        (21) following 'true' branch (when 'i < primesSize')...
+           |      |              |        (25) following 'false' branch (when 'i >= primesSize')...
+           |      |              (8) ...to here
+           |   46 |         heap[i] = (HeapNode*)malloc(sizeof(HeapNode));
+           |      |             ~
+           |      |             |
+           |      |             (10) ...to here
+           |      |             (14) ...to here
+           |      |             (18) ...to here
+           |      |             (22) ...to here
+           |   47 |         if (!heap[i]) {
+           |      |            ~
+           |      |            |
+           |      |            (11) following 'false' branch...
+           |      |            (15) following 'false' branch...
+           |      |            (19) following 'false' branch...
+           |      |            (23) following 'false' branch...
+           |......
+           |   54 |         heap[i]->val = primes[i];
+           |      |                              ~
+           |      |                              |
+           |      |                              (12) ...to here
+           |      |                              (16) ...to here
+           |      |                              (20) ...to here
+           |      |                              (24) ...to here
+           |......
+           |   59 |     ugly[0] = 1;
+           |      |     ~~~~~~~~~~~
+           |      |             |
+           |      |             (26) ...to here
+           |   60 |     for (int i = 1; i < n; i++) {
+           |      |                     ~~~~~
+           |      |                       |
+           |      |                       (27) following 'true' branch (when 'i < n')...
+           |   61 |         ugly[i] = heap[0]->val;
+           |      |                   ~~~~~~~
+           |      |                       |
+           |      |                       (28) ...to here
+           |   62 |         while (heap[0]->val == ugly[i]) {
+           |      |                ~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                             |
+           |      |                             (29) following 'true' branch...
+           |   63 |             heap[0]->val = heap[0]->prime * ugly[heap[0]->index++];
+           |      |                            ~~~~~~~
+           |      |                                |
+           |      |                                (30) ...to here
+           |   64 |             heapify(heap, 0, primesSize);
+           |      |             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |             |
+           |      |             (31) calling 'heapify' from 'nthSuperUglyNumber'
+           |
+           +--> 'heapify': events 32-42
+                  |
+                  |   16 | void heapify(HeapNode** heap, int i, int heapSize) {
+                  |      |      ^~~~~~~
+                  |      |      |
+                  |      |      (32) entry to 'heapify'
+                  |......
+                  |   21 |     if (left < heapSize && heap[left]->val < heap[smallest]->val)
+                  |      |        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                  |      |        |                |      |
+                  |      |        |                |      (34) ...to here
+                  |      |        |                (35) following 'false' branch...
+                  |      |        (33) following 'true' branch (when 'left < heapSize')...
+                  |......
+                  |   24 |     if (right < heapSize && heap[right]->val < heap[smallest]->val)
+                  |      |        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                  |      |        |                 |      |
+                  |      |        |                 |      (38) ...to here
+                  |      |        (36) ...to here   (39) following 'false' branch...
+                  |      |        (37) following 'true' branch (when 'right < heapSize')...
+                  |......
+                  |   27 |     if (smallest != i) {
+                  |      |        ~
+                  |      |        |
+                  |      |        (40) ...to here
+                  |      |        (41) following 'false' branch (when 'smallest == i')...
+                  |......
+                  |   31 | }
+                  |      | ~     
+                  |      | |
+                  |      | (42) ...to here
+                  |
+           <------+
+           |
+         'nthSuperUglyNumber': events 43-46
+           |
+           |   60 |     for (int i = 1; i < n; i++) {
+           |      |                     ~~~~~
+           |      |                       |
+           |      |                       (44) following 'false' branch (when 'i >= n')...
+           |......
+           |   64 |             heapify(heap, 0, primesSize);
+           |      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |             |
+           |      |             (43) returning to 'nthSuperUglyNumber' from 'heapify'
+           |......
+           |   68 |     int result = ugly[n - 1];
+           |      |         ~~~~~~       ~
+           |      |         |            |
+           |      |         |            (45) ...to here
+           |      |         (46) use of uninitialized value '*ugly_82 + _62' here
+           |

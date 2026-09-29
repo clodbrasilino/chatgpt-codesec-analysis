@@ -1,0 +1,26 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int rightmostSetBitPosition(int n) {
+    int position = 1;
+
+    while (!(n & 1)) {
+        n >>= 1;
+        position++;
+    }
+
+    return position;
+}
+
+int main() {
+    int num = 18; // Example input
+    int result = rightmostSetBitPosition(num);
+
+    if (result == 1) {
+        printf("Rightmost set bit is at position %d (0-based index)\n", result - 1);
+    } else {
+        printf("Rightmost set bit is at position %d (0-based index)\n", result - 1);
+    }
+
+    return 0;
+}

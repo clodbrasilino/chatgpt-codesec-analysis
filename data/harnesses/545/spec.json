@@ -1,0 +1,44 @@
+{
+  "task_id": 545,
+  "text": "Write a C function to toggle only first and last bits of a given number.",
+  "fn_candidates": [
+    "toggle_F_and_L_bits",
+    "ToggleFAndLBits",
+    "toggleFAndLBits",
+    "toggleFandLbits"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "toggle_F_and_L_bits",
+      "args": [
+        10
+      ],
+      "expected": 3,
+      "assert_src": "assert toggle_F_and_L_bits(10) == 3"
+    },
+    {
+      "fn_name": "toggle_F_and_L_bits",
+      "args": [
+        15
+      ],
+      "expected": 6,
+      "assert_src": "assert toggle_F_and_L_bits(15) == 6"
+    },
+    {
+      "fn_name": "toggle_F_and_L_bits",
+      "args": [
+        20
+      ],
+      "expected": 5,
+      "assert_src": "assert toggle_F_and_L_bits(20) == 5"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

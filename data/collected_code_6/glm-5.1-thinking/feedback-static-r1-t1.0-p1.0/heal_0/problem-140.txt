@@ -1,0 +1,82 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int first;
+    int second;
+} Tuple;
+
+int tuple_equals(Tuple a, Tuple b) {
+    return a.first == b.first && a.second == b.second;
+}
+
+Tuple* extract_singly(const Tuple* list, size_t size, size_t* out_size) {
+    if (list == NULL || out_size == NULL || size == 0) {
+        if (out_size != NULL) {
+            *out_size = 0;
+        }
+        return NULL;
+    }
+
+    size_t* counts = (size_t*)calloc(size, sizeof(size_t));
+    if (counts == NULL) {
+        *out_size = 0;
+        return NULL;
+    }
+
+    for (size_t i = 0; i < size; ++i) {
+        counts[i] = 1;
+        for (size_t j = 0; j < i; ++j) {
+            if (tuple_equals(list[i], list[j])) {
+                counts[i] = 0;
+                counts[j] += 1;
+                break;
+            }
+        }
+    }
+
+    size_t result_size = 0;
+    for (size_t i = 0; i < size; ++i) {
+        if (counts[i] == 1) {
+            result_size++;
+        }
+    }
+
+    Tuple* result = (Tuple*)malloc(result_size * sizeof(Tuple));
+    if (result == NULL) {
+        free(counts);
+        *out_size = 0;
+        return NULL;
+    }
+
+    size_t index = 0;
+    for (size_t i = 0; i < size; ++i) {
+        if (counts[i] == 1) {
+            result[index] = list[i];
+            index++;
+        }
+    }
+
+    *out_size = result_size;
+    free(counts);
+    return result;
+}
+
+int main(void) {
+    Tuple data[] = {{1, 2}, {3, 4}, {1, 2}, {5, 6}, {7, 8}, {3, 4}, {9, 10}};
+    size_t data_size = sizeof(data) / sizeof(data[0]);
+    size_t out_size = 0;
+
+    Tuple* singles = extract_singly(data, data_size, &out_size);
+
+    if (singles != NULL) {
+        for (size_t i = 0; i < out_size; ++i) {
+            printf("(%d, %d)\n", singles[i].first, singles[i].second);
+        }
+        free(singles);
+    }
+
+    return 0;
+}
+```

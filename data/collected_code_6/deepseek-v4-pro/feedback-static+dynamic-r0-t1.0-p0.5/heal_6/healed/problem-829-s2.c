@@ -1,0 +1,144 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_STRINGS 1000
+#define MAX_LENGTH 100
+
+typedef struct {
+    char str[MAX_LENGTH];
+    int count;
+} StringCount;
+
+static int compare_strings(const void *a, const void *b) {
+    return strcmp((const char *)a, (const char *)b);
+}
+
+char* second_most_frequent(const char strings[][MAX_LENGTH], int n) {
+    if (n <= 0) return NULL;
+
+    char **sorted = (char **)malloc((size_t)n * sizeof(char *));
+    if (sorted == NULL) return NULL;
+
+    int valid_strings = 0;
+    for (int i = 0; i < n; i++) {
+        size_t len = strnlen(strings[i], MAX_LENGTH);
+        if (len >= MAX_LENGTH) {
+            for (int j = 0; j < valid_strings; j++) {
+                free(sorted[j]);
+            }
+            free(sorted);
+            return NULL;
+        }
+        sorted[valid_strings] = (char *)malloc(len + 1);
+        if (sorted[valid_strings] == NULL) {
+            for (int j = 0; j < valid_strings; j++) {
+                free(sorted[j]);
+            }
+            free(sorted);
+            return NULL;
+        }
+        memcpy(sorted[valid_strings], strings[i], len);
+        sorted[valid_strings][len] = '\0';
+        valid_strings++;
+    }
+
+    qsort(sorted, (size_t)valid_strings, sizeof(char *), 
+          (int (*)(const void *, const void *))strcmp_wrapper);
+
+    StringCount *counts = (StringCount *)calloc((size_t)valid_strings, sizeof(StringCount));
+    if (counts == NULL) {
+        for (int j = 0; j < valid_strings; j++) {
+            free(sorted[j]);
+        }
+        free(sorted);
+        return NULL;
+    }
+
+    int unique_count = 0;
+    for (int i = 0; i < valid_strings; i++) {
+        if (i == 0 || strcmp(sorted[i], sorted[i - 1]) != 0) {
+            if (unique_count >= valid_strings) break;
+            size_t len = strlen(sorted[i]);
+            if (len >= MAX_LENGTH) {
+                for (int j = 0; j < valid_strings; j++) {
+                    free(sorted[j]);
+                }
+                free(sorted);
+                free(counts);
+                return NULL;
+            }
+            memcpy(counts[unique_count].str, sorted[i], len + 1);
+            counts[unique_count].count = 1;
+            unique_count++;
+        } else {
+            counts[unique_count - 1].count++;
+        }
+    }
+
+    for (int j = 0; j < valid_strings; j++) {
+        free(sorted[j]);
+    }
+    free(sorted);
+
+    if (unique_count < 2) {
+        free(counts);
+        return NULL;
+    }
+
+    int max_count = 0;
+    int second_max_count = 0;
+    int max_index = -1;
+    int second_max_index = -1;
+
+    for (int i = 0; i < unique_count; i++) {
+        if (counts[i].count > max_count) {
+            second_max_count = max_count;
+            second_max_index = max_index;
+            max_count = counts[i].count;
+            max_index = i;
+        } else if (counts[i].count > second_max_count && counts[i].count < max_count) {
+            second_max_count = counts[i].count;
+            second_max_index = i;
+        }
+    }
+
+    if (second_max_index == -1) {
+        free(counts);
+        return NULL;
+    }
+
+    size_t len = strlen(counts[second_max_index].str);
+    char *result = (char *)malloc(len + 1);
+    if (result == NULL) {
+        free(counts);
+        return NULL;
+    }
+
+    memcpy(result, counts[second_max_index].str, len + 1);
+
+    free(counts);
+    return result;
+}
+
+static int strcmp_wrapper(const char **a, const char **b) {
+    return strcmp(*a, *b);
+}
+
+int main() {
+    const char strings[][MAX_LENGTH] = {
+        "apple", "banana", "apple", "orange", "banana", "banana", "grape"
+    };
+    int n = sizeof(strings) / sizeof(strings[0]);
+
+    char *result = second_most_frequent(strings, n);
+
+    if (result != NULL) {
+        printf("Second most frequent string: %s\n", result);
+        free(result);
+    } else {
+        printf("No second most frequent string found\n");
+    }
+
+    return 0;
+}

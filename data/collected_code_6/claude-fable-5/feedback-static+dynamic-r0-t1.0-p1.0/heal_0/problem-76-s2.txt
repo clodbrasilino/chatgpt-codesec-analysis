@@ -1,0 +1,56 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+unsigned long long count_squares(unsigned int m, unsigned int n);
+
+unsigned long long count_squares(unsigned int m, unsigned int n)
+{
+    unsigned long long total = 0ULL;
+    unsigned int limit = (m < n) ? m : n;
+    unsigned int k;
+
+    for (k = 1U; k <= limit; k++) {
+        total += (unsigned long long)(m - k + 1U) * (unsigned long long)(n - k + 1U);
+    }
+
+    return total;
+}
+
+int main(void)
+{
+    unsigned int m;
+    unsigned int n;
+    unsigned long long result;
+
+    printf("Enter rectangle dimensions (rows cols): ");
+
+    if (scanf("%u %u", &m, &n) != 2) {
+        fprintf(stderr, "Error: invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (m == 0U || n == 0U) {
+        fprintf(stderr, "Error: dimensions must be positive.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (m > 100000U || n > 100000U) {
+        fprintf(stderr, "Error: dimensions too large.\n");
+        return EXIT_FAILURE;
+    }
+
+    result = count_squares(m, n);
+
+    printf("Number of squares in a %ux%u rectangle: %llu\n", m, n, result);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**How it works:** A rectangle of dimensions *m* × *n* contains squares of side length *k* for every *k* from 1 to min(*m*, *n*). For each side length *k*, the number of positions a *k* × *k* square can occupy is (*m* − *k* + 1) × (*n* − *k* + 1). The function sums these products.
+
+**Safety considerations addressed:**
+- The return value of `scanf` is checked, and inputs are validated for zero values and an upper bound, preventing unhandled exceptional conditions (CWE-703).
+- Arithmetic is performed in `unsigned long long` with explicit casts, and the input bound guarantees no overflow, avoiding improper resource/value lifetime issues (CWE-664).
+- The code uses `EXIT_SUCCESS`/`EXIT_FAILURE`, full prototypes, `int main(void)`, and consistent unsigned types, adhering to standard coding practices (CWE-710).

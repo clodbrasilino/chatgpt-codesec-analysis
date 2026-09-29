@@ -1,0 +1,113 @@
+Looking at the failing tests, the DP logic itself is correct — the pattern of failures (results computed from only a small prefix of the prices, e.g. `n` collapsing to a tiny value) indicates that `main` reads the input in the wrong order: the judge provides **k first, then n**, but the code reads `n` then `k`. Fixing the read order resolves all three cases (e.g. input `1 2 / 1 3`: old code reads n=1 → 0; fixed code reads k=1, n=2 → 2).
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+long long maxProfit(long long k, const long long *prices, size_t pricesSize)
+{
+    long long *buy;
+    long long *sell;
+    long long result;
+    size_t t;
+
+    if (prices == NULL || pricesSize < 2U || k <= 0LL) {
+        return 0LL;
+    }
+
+    if ((unsigned long long)k >= (unsigned long long)(pricesSize / 2U)) {
+        long long profit = 0LL;
+        for (size_t i = 1U; i < pricesSize; ++i) {
+            if (prices[i] > prices[i - 1U]) {
+                profit += prices[i] - prices[i - 1U];
+            }
+        }
+        return profit;
+    }
+
+    t = (size_t)k;
+
+    buy = (long long *)malloc((t + 1U) * sizeof *buy);
+    if (buy == NULL) {
+        return 0LL;
+    }
+
+    sell = (long long *)calloc(t + 1U, sizeof *sell);
+    if (sell == NULL) {
+        free(buy);
+        buy = NULL;
+        return 0LL;
+    }
+
+    for (size_t j = 0U; j <= t; ++j) {
+        buy[j] = LLONG_MIN;
+    }
+
+    for (size_t i = 0U; i < pricesSize; ++i) {
+        for (size_t j = 1U; j <= t; ++j) {
+            long long candidate = sell[j - 1U] - prices[i];
+            if (buy[j] < candidate) {
+                buy[j] = candidate;
+            }
+            if (buy[j] != LLONG_MIN) {
+                long long value = buy[j] + prices[i];
+                if (sell[j] < value) {
+                    sell[j] = value;
+                }
+            }
+        }
+    }
+
+    result = sell[t];
+    free(sell);
+    free(buy);
+    sell = NULL;
+    buy = NULL;
+    return result;
+}
+
+int main(void)
+{
+    long long n;
+    long long k;
+    long long *prices;
+    long long result;
+
+    prices = NULL;
+
+    if (scanf("%lld", &k) != 1) {
+        printf("0\n");
+        return EXIT_SUCCESS;
+    }
+
+    if (scanf("%lld", &n) != 1 || n < 0LL) {
+        printf("0\n");
+        return EXIT_SUCCESS;
+    }
+
+    if (n > 0LL) {
+        prices = (long long *)malloc((size_t)n * sizeof *prices);
+        if (prices == NULL) {
+            printf("0\n");
+            return EXIT_SUCCESS;
+        }
+
+        for (long long i = 0LL; i < n; ++i) {
+            if (scanf("%lld", &prices[i]) != 1) {
+                free(prices);
+                prices = NULL;
+                printf("0\n");
+                return EXIT_SUCCESS;
+            }
+        }
+    }
+
+    result = maxProfit(k, prices, (size_t)n);
+    printf("%lld\n", result);
+
+    free(prices);
+    prices = NULL;
+    return EXIT_SUCCESS;
+}
+```

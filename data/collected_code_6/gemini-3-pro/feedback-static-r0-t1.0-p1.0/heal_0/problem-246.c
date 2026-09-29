@@ -1,0 +1,44 @@
+#include <stdio.h>
+#include <math.h>
+
+double babylonian_sqrt(double n);
+
+double babylonian_sqrt(double n)
+{
+    double x = n;
+    double y = 1.0;
+    double precision = 1e-10;
+
+    if (n < 0.0) {
+        return NAN;
+    }
+    
+    if (n == 0.0) {
+        return 0.0;
+    }
+
+    while (fabs(x - y) > precision) {
+        x = (x + y) / 2.0;
+        y = n / x;
+    }
+
+    return x;
+}
+
+int main(void)
+{
+    double test_values[] = { 25.0, 2.0, 0.0, -9.0, 144.0 };
+    size_t num_values = sizeof(test_values) / sizeof(test_values[0]);
+    size_t i;
+
+    for (i = 0; i < num_values; i++) {
+        double result = babylonian_sqrt(test_values[i]);
+        if (isnan(result)) {
+            printf("Square root of %.6f is undefined (domain error)\n", test_values[i]);
+        } else {
+            printf("Square root of %.6f is %.6f\n", test_values[i], result);
+        }
+    }
+
+    return 0;
+}

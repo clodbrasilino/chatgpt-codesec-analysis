@@ -1,0 +1,29 @@
+```C
+#include <stdio.h>
+#include <stdbool.h>
+
+bool is_sorted(int* arr, int n) {
+    for(int i = 0; i < n - 1; ++i) {
+        if(arr[i] > arr[i + 1]) {
+            return false;
+        }
+    }
+    return true;
+}
+
+int main() {
+    int arr[] = {1, 2, 3, 4, 5};
+    int len = sizeof(arr) / sizeof(arr[0]);
+
+    if(is_sorted(arr, len)) {
+        printf("The array is sorted.\n");
+    } else {
+        printf("The array is not sorted.\n");
+    }
+
+    return 0;
+}
+```
+This code first includes the standard input-output and boolean libraries. It then declares a function `is_sorted`, which takes as arguments an array of integers and the size of that array, and returns a boolean indicating whether or not the array is sorted. It works by iterating over the array and checking if each element is less than or equal to the next one. If it encounters an element that is greater than the next one, it immediately returns `false`, indicating that the array is not sorted. If it finishes iterating over the array without finding an inversion, it returns `true`, indicating that the array is sorted.
+
+The `main` function initializes a sorted array, calculates its length as the size of the array divided by the size of an integer, and then checks if it is sorted using the `is_sorted` function. If the array is sorted, it prints "The array is sorted.", and if not, it prints "The array is not sorted.". It then returns 0 to indicate that the program executed successfully.

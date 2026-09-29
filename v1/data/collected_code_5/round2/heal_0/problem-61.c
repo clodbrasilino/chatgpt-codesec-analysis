@@ -1,0 +1,43 @@
+#include <stdio.h>
+
+int countDigits(int num)
+{
+    int count = 0;
+    while(num != 0)
+    {
+        count++;
+        num /= 10;
+    }
+    return count;
+}
+
+
+int sumOfDigits(int num)
+    {
+    int sum = 0;
+    while(num != 0)
+    {
+        sum += num % 10;
+        num /= 10;
+    }
+    return sum;
+}
+
+int countSubstring(int arr[], int n)
+{
+    int count = 0;
+    for(int i=0; i<n; i++)
+    {
+        if(countDigits(arr[i]) == sumOfDigits(arr[i]))
+            count++;
+    }
+    return count;
+}
+
+int main()
+{
+    int arr[] = {123, 111, 12, 456 ,22};
+    int n = sizeof(arr)/sizeof(arr[0]);
+    printf("The number of substrings with the sum of digits equal to their length is %d\n", countSubstring(arr, n));
+    return 0;
+}

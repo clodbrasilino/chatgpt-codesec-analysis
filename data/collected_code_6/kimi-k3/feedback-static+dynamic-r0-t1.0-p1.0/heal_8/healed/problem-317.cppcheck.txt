@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-317.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-317.c:104:20: style: Condition 'value_size>0' is always true [knownConditionTrueFalse]
+    if (value_size > 0) {
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-317.c:70:20: note: Assuming that condition 'value_size==0' is not redundant
+    if (value_size == 0 || value_size > SIZE_MAX / 2) {
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-317.c:100:21: note: Assuming condition is false
+    if (pair->value == NULL) {
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-317.c:104:20: note: Condition 'value_size>0' is always true
+    if (value_size > 0) {
+                   ^

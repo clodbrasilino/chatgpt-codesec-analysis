@@ -1,0 +1,22 @@
+#include <stdio.h>
+
+int findFirstDigit(int num) {
+    while (num >= 10) {
+        num /= 10;
+    }
+    return num;
+}
+
+int main() {
+    int num;
+
+    printf("Enter a number: ");
+    if(scanf("%d", &num) != 1) {
+        printf("Invalid input!\n");
+        return 1;
+    }
+
+    printf("First digit: %d\n", findFirstDigit(num));
+
+    return 0;
+}

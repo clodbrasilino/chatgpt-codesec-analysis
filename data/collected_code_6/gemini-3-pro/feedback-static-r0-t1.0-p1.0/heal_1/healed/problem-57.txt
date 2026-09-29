@@ -1,0 +1,66 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+int compare(const void *a, const void *b) {
+    const char *str1 = *(const char **)a;
+    const char *str2 = *(const char **)b;
+    
+    if (str1 == NULL || str2 == NULL) {
+        return 0;
+    }
+
+    size_t len1 = strnlen(str1, 4096);
+    size_t len2 = strnlen(str2, 4096);
+    size_t total_len = len1 + len2 + 1;
+    
+    char *concat1 = (char *)malloc(total_len);
+    char *concat2 = (char *)malloc(total_len);
+    
+    if (!concat1 || !concat2) {
+        free(concat1);
+        free(concat2);
+        exit(EXIT_FAILURE);
+    }
+    
+    snprintf(concat1, total_len, "%s%s", str1, str2);
+    snprintf(concat2, total_len, "%s%s", str2, str1);
+    
+    int result = strcmp(concat2, concat1);
+    
+    free(concat1);
+    free(concat2);
+    
+    return result;
+}
+
+void printLargest(char *arr[], int n) {
+    if (arr == NULL || n <= 0) {
+        return;
+    }
+
+    qsort(arr, n, sizeof(char *), compare);
+    
+    if (arr[0] != NULL && strcmp(arr[0], "0") == 0) {
+        printf("0\n");
+        return;
+    }
+    
+    for (int i = 0; i < n; i++) {
+        if (arr[i] != NULL) {
+            printf("%s", arr[i]);
+        }
+    }
+    printf("\n");
+}
+
+int main(void) {
+    char *arr[] = {"3", "30", "34", "5", "9"};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    
+    printLargest(arr, n);
+    
+    return EXIT_SUCCESS;
+}
+```

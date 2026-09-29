@@ -1,0 +1,116 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#include <limits.h>
+
+static int is_valid_input(const char *input) {
+    if (input == NULL) {
+        return 0;
+    }
+    size_t len = 0;
+    const char *ptr = input;
+    while (*ptr != '\0') {
+        len++;
+        if (len >= SIZE_MAX / 2) {
+            return 0;
+        }
+        ptr++;
+    }
+    return 1;
+}
+
+static char *snake_to_camel(const char *input) {
+    if (!is_valid_input(input)) {
+        return NULL;
+    }
+
+    size_t len = 0;
+    const char *ptr = input;
+    while (*ptr != '\0' && len < SIZE_MAX) {
+        len++;
+        ptr++;
+    }
+    if (len == SIZE_MAX) {
+        return NULL;
+    }
+
+    if (len == 0) {
+        char *result = (char *)malloc(1);
+        if (result != NULL) {
+            result[0] = '\0';
+        }
+        return result;
+    }
+
+    size_t result_capacity = len + 1;
+    char *result = (char *)malloc(result_capacity);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    size_t dst_pos = 0;
+    const char *cursor = input;
+    /* Possible weaknesses found:
+     *  Value stored to 'remaining_len' during its initialization is never read [deadcode.DeadStores]
+     *  Variable 'remaining_len' is assigned a value that is never used. [unreadVariable]
+     */
+    size_t remaining_len = len;
+    int capitalize_next = 0;
+
+    for (size_t i = 0; i < len; i++) {
+        char current = cursor[i];
+
+        if (current == '_') {
+            capitalize_next = 1;
+            continue;
+        }
+
+        if (dst_pos >= result_capacity) {
+            free(result);
+            return NULL;
+        }
+
+        if (capitalize_next) {
+            result[dst_pos++] = (char)toupper((unsigned char)current);
+            capitalize_next = 0;
+        } else {
+            result[dst_pos++] = current;
+        }
+    }
+
+    if (dst_pos >= result_capacity) {
+        free(result);
+        return NULL;
+    }
+
+    result[dst_pos] = '\0';
+
+    return result;
+}
+
+int main(void) {
+    const char *test_cases[] = {
+        "hello_world",
+        "snake_case_string",
+        "convert_this_to_camel",
+        "alreadycamel",
+        "multiple__underscores",
+        "_leading_underscore",
+        "trailing_underscore_",
+        "with_1_number",
+        NULL
+    };
+
+    for (int i = 0; test_cases[i] != NULL; i++) {
+        char *converted = snake_to_camel(test_cases[i]);
+        if (converted != NULL) {
+            printf("%s -> %s\n", test_cases[i], converted);
+            free(converted);
+        } else {
+            printf("%s -> (conversion failed)\n", test_cases[i]);
+        }
+    }
+
+    return 0;
+}

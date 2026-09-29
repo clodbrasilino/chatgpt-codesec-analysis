@@ -1,0 +1,68 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+char *remove_lowercase_substrings(const char *input) {
+    regex_t regex;
+    regmatch_t match;
+    const char *pattern = "[a-z]+";
+    size_t input_len = strlen(input);
+    char *result = malloc(input_len + 1);
+    size_t result_pos = 0;
+    size_t search_pos = 0;
+    int regex_result;
+
+    if (result == NULL) {
+        return NULL;
+    }
+
+    regex_result = regcomp(&regex, pattern, REG_EXTENDED);
+    if (regex_result != 0) {
+        free(result);
+        return NULL;
+    }
+
+    while (search_pos < input_len) {
+        regex_result = regexec(&regex, input + search_pos, 1, &match, 0);
+        if (regex_result == REG_NOMATCH) {
+            strcpy(result + result_pos, input + search_pos);
+            result_pos += input_len - search_pos;
+            break;
+        } else if (regex_result == 0) {
+            size_t match_start = search_pos + match.rm_so;
+            size_t match_end = search_pos + match.rm_eo;
+            size_t copy_len = match_start - search_pos;
+            
+            memcpy(result + result_pos, input + search_pos, copy_len);
+            result_pos += copy_len;
+            search_pos = match_end;
+        } else {
+            free(result);
+            regfree(&regex);
+            return NULL;
+        }
+    }
+
+    result[result_pos] = '\0';
+    regfree(&regex);
+    return result;
+}
+
+int main(void) {
+    const char *test_string = "HelloWorld123abcXYZdef456";
+    char *cleaned_string = remove_lowercase_substrings(test_string);
+    
+    if (cleaned_string != NULL) {
+        printf("Original: %s\n", test_string);
+        printf("Cleaned:  %s\n", cleaned_string);
+        free(cleaned_string);
+    } else {
+        fprintf(stderr, "Error processing string\n");
+        return 1;
+    }
+    
+    return 0;
+}
+```

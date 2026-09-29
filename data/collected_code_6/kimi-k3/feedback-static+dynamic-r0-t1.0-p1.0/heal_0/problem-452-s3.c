@@ -1,0 +1,34 @@
+#include <stdio.h>
+
+double calculate_loss(double cost_price, double selling_price, int *has_loss) {
+    if (has_loss == NULL || cost_price < 0 || selling_price < 0) {
+        if (has_loss != NULL) {
+            *has_loss = 0;
+        }
+        return 0.0;
+    }
+    
+    if (selling_price < cost_price) {
+        *has_loss = 1;
+        return cost_price - selling_price;
+    }
+    
+    *has_loss = 0;
+    return 0.0;
+}
+
+int main(void) {
+    double cost_price = 100.0;
+    double selling_price = 75.0;
+    int has_loss = 0;
+    
+    double loss = calculate_loss(cost_price, selling_price, &has_loss);
+    
+    if (has_loss) {
+        printf("Loss amount: %.2f\n", loss);
+    } else {
+        printf("No loss\n");
+    }
+    
+    return 0;
+}

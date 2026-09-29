@@ -1,0 +1,12 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-386-s2.c: In function 'min_swaps':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-386-s2.c:13:35: error: implicit declaration of function 'malloc' [-Wimplicit-function-declaration]
+   13 |     size_t *positions = (size_t *)malloc(alloc_size);
+      |                                   ^~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-386-s2.c:3:1: note: include '<stdlib.h>' or provide a declaration of 'malloc'
+    2 | #include <stddef.h>
+  +++ |+#include <stdlib.h>
+    3 | 
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-386-s2.c:32:17: error: implicit declaration of function 'free' [-Wimplicit-function-declaration]
+   32 |                 free(positions);
+      |                 ^~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-386-s2.c:32:17: note: include '<stdlib.h>' or provide a declaration of 'free'

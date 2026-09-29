@@ -1,0 +1,176 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#define MAX_WORD_LEN 100
+#define MAX_UNIQUE_WORDS 1000
+
+typedef struct {
+    char *word;
+    int count;
+} WordCount;
+
+static int find_word(const WordCount *words, int num_words, const char *word) {
+    for (int i = 0; i < num_words; i++) {
+        if (strcmp(words[i].word, word) == 0) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+static void to_lowercase(char *str) {
+    for (int i = 0; str[i] != '\0'; i++) {
+        str[i] = (char)tolower((unsigned char)str[i]);
+    }
+}
+
+static char *safe_strndup(const char *str, size_t max_len) {
+    if (str == NULL) {
+        return NULL;
+    }
+    
+    size_t len = 0;
+    while (len < max_len && str[len] != '\0') {
+        len++;
+    }
+    
+    char *dup = malloc(len + 1);
+    if (dup != NULL) {
+        if (len > 0) {
+            /* Possible weaknesses found:
+             * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+             */
+            memcpy(dup, str, len);
+        }
+        dup[len] = '\0';
+    }
+    return dup;
+}
+
+void find_most_common_elements(const char *text) {
+    if (text == NULL) {
+        fprintf(stderr, "Error: NULL text input\n");
+        return;
+    }
+
+    WordCount *words = calloc(MAX_UNIQUE_WORDS, sizeof(WordCount));
+    if (words == NULL) {
+        fprintf(stderr, "Error: Memory allocation failed\n");
+        return;
+    }
+
+    int num_words = 0;
+    char *current_word = malloc(MAX_WORD_LEN);
+    if (current_word == NULL) {
+        fprintf(stderr, "Error: Memory allocation failed\n");
+        free(words);
+        return;
+    }
+    int word_len = 0;
+    
+    const char *ptr = text;
+    
+    while (*ptr != '\0' && num_words < MAX_UNIQUE_WORDS) {
+        unsigned char c = (unsigned char)*ptr;
+        
+        if (isalnum(c)) {
+            if (word_len < MAX_WORD_LEN - 1) {
+                current_word[word_len++] = (char)c;
+            }
+        } else {
+            if (word_len > 0) {
+                current_word[word_len] = '\0';
+                to_lowercase(current_word);
+                
+                int idx = find_word(words, num_words, current_word);
+                if (idx >= 0) {
+                    words[idx].count++;
+                } else {
+                    if (num_words < MAX_UNIQUE_WORDS) {
+                        words[num_words].word = safe_strndup(current_word, MAX_WORD_LEN - 1);
+                        if (words[num_words].word == NULL) {
+                            fprintf(stderr, "Error: Memory allocation failed for word\n");
+                            for (int i = 0; i < num_words; i++) {
+                                free(words[i].word);
+                            }
+                            free(words);
+                            free(current_word);
+                            return;
+                        }
+                        words[num_words].count = 1;
+                        num_words++;
+                    }
+                }
+                word_len = 0;
+            }
+        }
+        ptr++;
+    }
+    
+    if (word_len > 0 && num_words < MAX_UNIQUE_WORDS) {
+        current_word[word_len] = '\0';
+        to_lowercase(current_word);
+        
+        int idx = find_word(words, num_words, current_word);
+        if (idx >= 0) {
+            words[idx].count++;
+        } else {
+            if (num_words < MAX_UNIQUE_WORDS) {
+                words[num_words].word = safe_strndup(current_word, MAX_WORD_LEN - 1);
+                if (words[num_words].word == NULL) {
+                    fprintf(stderr, "Error: Memory allocation failed for word\n");
+                    for (int i = 0; i < num_words; i++) {
+                        free(words[i].word);
+                    }
+                    free(words);
+                    free(current_word);
+                    return;
+                }
+                words[num_words].count = 1;
+                num_words++;
+            }
+        }
+    }
+
+    free(current_word);
+
+    if (num_words == MAX_UNIQUE_WORDS && *ptr != '\0') {
+        fprintf(stderr, "Warning: Maximum unique words limit reached, some words were skipped\n");
+    }
+
+    if (num_words == 0) {
+        printf("No words found in text.\n");
+        free(words);
+        return;
+    }
+
+    int max_count = 0;
+    for (int i = 0; i < num_words; i++) {
+        if (words[i].count > max_count) {
+            max_count = words[i].count;
+        }
+    }
+
+    printf("Most common elements (count: %d):\n", max_count);
+    for (int i = 0; i < num_words; i++) {
+        if (words[i].count == max_count) {
+            printf("  %s: %d\n", words[i].word, words[i].count);
+        }
+    }
+
+    for (int i = 0; i < num_words; i++) {
+        free(words[i].word);
+    }
+    free(words);
+}
+
+int main(void) {
+    const char *text = "The quick brown fox jumps over the lazy dog. The dog barks, and the fox runs away. Fox and dog are friends.";
+    
+    printf("Analyzing text:\n%s\n\n", text);
+    find_most_common_elements(text);
+    
+    return 0;
+}

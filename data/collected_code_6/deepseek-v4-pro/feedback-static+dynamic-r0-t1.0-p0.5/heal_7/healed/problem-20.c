@@ -1,0 +1,45 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <limits.h>
+
+bool is_woodall(unsigned long long n) {
+    if (n == 0) return false;
+    
+    unsigned long long m = 1;
+    int k = 1;
+    
+    while (1) {
+        if (k > 0 && m > (ULLONG_MAX / (unsigned long long)k)) break;
+        
+        unsigned long long product = (unsigned long long)k * m;
+        if (product < 1ULL) break;
+        
+        unsigned long long woodall = product - 1ULL;
+        if (woodall == n) return true;
+        if (woodall > n) break;
+        
+        k++;
+        if (m > ULLONG_MAX / 2ULL) break;
+        m *= 2ULL;
+    }
+    
+    return false;
+}
+
+int main(void) {
+    unsigned long long num;
+    
+    printf("Enter a number: ");
+    if (scanf("%llu", &num) != 1) {
+        printf("Invalid input\n");
+        return 1;
+    }
+    
+    if (is_woodall(num)) {
+        printf("%llu is a Woodall number\n", num);
+    } else {
+        printf("%llu is not a Woodall number\n", num);
+    }
+    
+    return 0;
+}

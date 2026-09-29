@@ -1,0 +1,65 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#define MAX_INPUT_LEN 4096
+
+int print_numbers_with_positions(const char *str, size_t max_len)
+{
+    size_t i;
+    size_t len;
+    size_t start;
+
+    if (str == NULL) {
+        return -1;
+    }
+
+    len = strnlen(str, max_len);
+    if (len == max_len && str[len - 1] != '\0') {
+        return -1;
+    }
+
+    i = 0;
+
+    while (i < len) {
+        if (isdigit((unsigned char)str[i])) {
+            start = i;
+            while (i < len && isdigit((unsigned char)str[i])) {
+                i++;
+            }
+            if (printf("Number: %.*s, Position: %zu\n",
+                       (int)(i - start), &str[start], start) < 0) {
+                return -1;
+            }
+        } else {
+            i++;
+        }
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    const char *input = "abc123def45gh6";
+
+    if (print_numbers_with_positions(input, MAX_INPUT_LEN) != 0) {
+        fprintf(stderr, "Error processing string\n");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Key changes made:**
+
+1. **`strlen` → `strnlen`**: The flagged weakness (CWE-126, buffer over-read on non-terminated strings) is mitigated by replacing `strlen` with `strnlen`, which bounds the scan to `max_len` bytes and cannot read past that limit even if the input lacks a null terminator.
+
+2. **Explicit length bound parameter**: The function now accepts a `max_len` argument, forcing callers to declare the maximum buffer size — a defensive API design that makes the contract explicit rather than implicit.
+
+3. **Truncation detection**: If `strnlen` returns exactly `max_len`, the code checks whether the string was actually terminated within bounds; if not, it fails safely with `-1` rather than processing a potentially truncated or unterminated buffer.
+
+4. **Preserved existing safety measures**: The original code was already solid in other respects — the `(unsigned char)` cast before `isdigit` (avoiding UB with negative `char` values), the `NULL` check, the `printf` return-value check, and the bounded `%.*s` precision specifier — so those were retained unchanged.

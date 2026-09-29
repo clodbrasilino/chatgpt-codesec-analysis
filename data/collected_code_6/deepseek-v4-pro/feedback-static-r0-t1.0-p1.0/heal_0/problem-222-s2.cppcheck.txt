@@ -1,0 +1,16 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-222-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-222-s2.c:35:64: style: Condition 'elements[i].type==TYPE_UNKNOWN' is always false [knownConditionTrueFalse]
+        if (elements[i].type != first_type || elements[i].type == TYPE_UNKNOWN) {
+                                                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-222-s2.c:81:59: style: Condition 'all_same_type(NULL,5)' is always false [knownConditionTrueFalse]
+    printf("NULL tuple all same type: %s\n", all_same_type(NULL, 5) ? "true" : "false");
+                                                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-222-s2.c:81:59: note: Calling function 'all_same_type' returns 0
+    printf("NULL tuple all same type: %s\n", all_same_type(NULL, 5) ? "true" : "false");
+                                                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-222-s2.c:81:59: note: Condition 'all_same_type(NULL,5)' is always false
+    printf("NULL tuple all same type: %s\n", all_same_type(NULL, 5) ? "true" : "false");
+                                                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-222-s2.c:21:7: style: struct member 'TupleElement::value' is never used. [unusedStructMember]
+    } value;
+      ^

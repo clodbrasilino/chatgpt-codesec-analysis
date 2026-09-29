@@ -1,0 +1,44 @@
+{
+  "task_id": 526,
+  "text": "Write a C function to capitalize first and last letters of each word of a given string.",
+  "fn_candidates": [
+    "capitalize_first_last_letters",
+    "CapitalizeFirstLastLetters",
+    "capitalizeFirstLastLetters",
+    "capitalizefirstlastletters"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "capitalize_first_last_letters",
+      "args": [
+        "python"
+      ],
+      "expected": "PythoN",
+      "assert_src": "assert capitalize_first_last_letters(\"python\") == \"PythoN\""
+    },
+    {
+      "fn_name": "capitalize_first_last_letters",
+      "args": [
+        "bigdata"
+      ],
+      "expected": "BigdatA",
+      "assert_src": "assert capitalize_first_last_letters(\"bigdata\") == \"BigdatA\""
+    },
+    {
+      "fn_name": "capitalize_first_last_letters",
+      "args": [
+        "Hadoop"
+      ],
+      "expected": "HadooP",
+      "assert_src": "assert capitalize_first_last_letters(\"Hadoop\") == \"HadooP\""
+    }
+  ],
+  "arg_kinds": [
+    "str"
+  ],
+  "return_kind": "str",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

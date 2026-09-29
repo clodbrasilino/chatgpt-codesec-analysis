@@ -1,0 +1,27 @@
+./collected_code_3/round2/heal_1/healed/problem-653.c: In function 'createMap':
+./collected_code_3/round2/heal_1/healed/problem-653.c:23:9: warning: leak of '<unknown>' [CWE-401] [-Wanalyzer-malloc-leak]
+   23 |         free(map);
+      |         ^~~~~~~~~
+  'createMap': events 1-6
+    |
+    |   17 |     if(map == NULL){
+    |      |       ^
+    |      |       |
+    |      |       (1) following 'false' branch (when 'map' is non-NULL)...
+    |......
+    |   20 |     map->key = strdup(key);
+    |      |                ~~~~~~~~~~~
+    |      |                |
+    |      |                (2) ...to here
+    |      |                (3) allocated here
+    |   21 |     map->values = (Node *)malloc(sizeof(Node));
+    |   22 |     if(map->values == NULL){
+    |      |       ~
+    |      |       |
+    |      |       (4) following 'true' branch...
+    |   23 |         free(map);
+    |      |         ~~~~~~~~~
+    |      |         |
+    |      |         (5) ...to here
+    |      |         (6) '<unknown>' leaks here; was allocated at (3)
+    |

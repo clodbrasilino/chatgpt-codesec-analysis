@@ -1,0 +1,63 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+int extract_date_from_url(const char *url, char *year, size_t year_sz, char *month, size_t month_sz, char *day, size_t day_sz) {
+    if (url == NULL || year == NULL || month == NULL || day == NULL) {
+        return -1;
+    }
+
+    if (year_sz < 5 || month_sz < 3 || day_sz < 3) {
+        return -1;
+    }
+
+    regex_t regex;
+    const char *pattern = "([0-9]{4})[-/]([0-9]{2})[-/]([0-9]{2})";
+    
+    if (regcomp(&regex, pattern, REG_EXTENDED) != 0) {
+        return -1;
+    }
+
+    regmatch_t matches[4];
+    int status = regexec(&regex, url, 4, matches, 0);
+    
+    if (status == 0) {
+        int year_len = matches[1].rm_eo - matches[1].rm_so;
+        int month_len = matches[2].rm_eo - matches[2].rm_so;
+        int day_len = matches[3].rm_eo - matches[3].rm_so;
+
+        if (year_len >= (int)year_sz || month_len >= (int)month_sz || day_len >= (int)day_sz) {
+            regfree(&regex);
+            return -1;
+        }
+
+        snprintf(year, year_sz, "%.*s", year_len, url + matches[1].rm_so);
+        snprintf(month, month_sz, "%.*s", month_len, url + matches[2].rm_so);
+        snprintf(day, day_sz, "%.*s", day_len, url + matches[3].rm_so);
+    }
+
+    regfree(&regex);
+
+    return (status == 0) ? 0 : -1;
+}
+
+int main(void) {
+    const char *url = "https://example.com/blog/2023/10/25/new-release";
+    char year[5] = {0};
+    char month[3] = {0};
+    char day[3] = {0};
+
+    int result = extract_date_from_url(url, year, sizeof(year), month, sizeof(month), day, sizeof(day));
+
+    if (result == 0) {
+        printf("Year: %s\n", year);
+        printf("Month: %s\n", month);
+        printf("Day: %s\n", day);
+    } else {
+        printf("Failed to extract date from URL.\n");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-465-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-465-s2.c:74:17: style: Condition 'key_len<key_alloc' is always true [knownConditionTrueFalse]
+    if (key_len < key_alloc) {
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-465-s2.c:67:19: note: Assuming that condition 'key_alloc<=key_len' is not redundant
+    if (key_alloc <= key_len) {
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-465-s2.c:74:17: note: Condition 'key_len<key_alloc' is always true
+    if (key_len < key_alloc) {
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-465-s2.c:91:19: style: Condition 'value_len<value_alloc' is always true [knownConditionTrueFalse]
+    if (value_len < value_alloc) {
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-465-s2.c:84:21: note: Assuming that condition 'value_alloc<=value_len' is not redundant
+    if (value_alloc <= value_len) {
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-465-s2.c:91:19: note: Condition 'value_len<value_alloc' is always true
+    if (value_len < value_alloc) {
+                  ^

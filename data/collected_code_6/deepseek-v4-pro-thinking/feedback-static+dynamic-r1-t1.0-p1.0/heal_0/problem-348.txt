@@ -1,0 +1,101 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+long long count_sequences(int length, const int *values, size_t value_count)
+{
+    if (length < 0 || (value_count > 0 && values == NULL)) {
+        return -1;
+    }
+    if (length == 0) {
+        return 1;
+    }
+    if (value_count == 0) {
+        return 0;
+    }
+
+    int max_value = values[0];
+    for (size_t i = 1; i < value_count; ++i) {
+        if (values[i] > max_value) {
+            max_value = values[i];
+        }
+    }
+
+    long long max_sum = 0;
+    if (max_value > 0) {
+        if ((long long)length > LLONG_MAX / max_value) {
+            return -1;
+        }
+        max_sum = (long long)max_value * length;
+        if ((unsigned long long)max_sum + 1 > (size_t)-1 / sizeof(long long)) {
+            return -1;
+        }
+    }
+
+    size_t state_count = (size_t)max_sum + 1;
+    long long *current = calloc(state_count, sizeof(long long));
+    long long *next = calloc(state_count, sizeof(long long));
+    if (current == NULL || next == NULL) {
+        free(current);
+        free(next);
+        return -1;
+    }
+
+    current[0] = 1;
+
+    for (int step = 0; step < length; ++step) {
+        for (size_t sum = 0; sum < state_count; ++sum) {
+            if (current[sum] == 0) {
+                continue;
+            }
+            for (size_t i = 0; i < value_count; ++i) {
+                long long new_sum = (long long)sum + values[i];
+                if (new_sum >= 0 && new_sum <= max_sum) {
+                    size_t index = (size_t)new_sum;
+                    if (next[index] > LLONG_MAX - current[sum]) {
+                        free(current);
+                        free(next);
+                        return -1;
+                    }
+                    next[index] += current[sum];
+                }
+            }
+        }
+
+        long long *temp = current;
+        current = next;
+        next = temp;
+
+        for (size_t sum = 0; sum < state_count; ++sum) {
+            next[sum] = 0;
+        }
+    }
+
+    long long total = 0;
+    for (size_t sum = 0; sum < state_count; ++sum) {
+        if (total > LLONG_MAX - current[sum]) {
+            free(current);
+            free(next);
+            return -1;
+        }
+        total += current[sum];
+    }
+
+    free(current);
+    free(next);
+    return total;
+}
+
+int main(void)
+{
+    int values[] = { -1, 1 };
+    long long count = count_sequences(3, values, sizeof(values) / sizeof(values[0]));
+    if (count < 0) {
+        fprintf(stderr, "Error computing sequence count\n");
+        return 1;
+    }
+    printf("%lld\n", count);
+    return 0;
+}
+```

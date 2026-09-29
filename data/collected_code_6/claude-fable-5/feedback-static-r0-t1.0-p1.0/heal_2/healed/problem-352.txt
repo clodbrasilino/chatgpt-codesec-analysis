@@ -1,0 +1,65 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+#include <string.h>
+
+#define MAX_INPUT_LEN 256
+
+bool all_chars_unique(const char *str, size_t max_len)
+{
+    bool seen[256] = { false };
+    size_t i;
+
+    if (str == NULL) {
+        return false;
+    }
+
+    for (i = 0; i < max_len && str[i] != '\0'; i++) {
+        unsigned char c = (unsigned char)str[i];
+        if (seen[c]) {
+            return false;
+        }
+        seen[c] = true;
+    }
+
+    return true;
+}
+
+int main(void)
+{
+    char buffer[MAX_INPUT_LEN];
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+    buffer[strcspn(buffer, "\n")] = '\0';
+
+    if (all_chars_unique(buffer, sizeof(buffer))) {
+        printf("All characters are unique\n");
+    } else {
+        printf("Duplicate characters found\n");
+    }
+
+    return 0;
+}
+```
+
+Analysis of the original code and why this version is considered safe:
+
+1. **Buffer handling (CWE-119/CWE-120)**: The flawfinder warning on `char buffer[MAX_INPUT_LEN]` is a low-risk, informational hit. The code already mitigates overflow risks because:
+   - `fgets(buffer, sizeof(buffer), stdin)` limits input to the buffer size, never writing past the end.
+   - `sizeof(buffer)` is used instead of a repeated magic number, so the size stays consistent if `MAX_INPUT_LEN` changes.
+   - The explicit `buffer[sizeof(buffer) - 1] = '\0';` guarantees null termination (redundant with `fgets`, but defensive).
+
+2. **Newline stripping**: `buffer[strcspn(buffer, "\n")] = '\0';` safely removes the trailing newline without risk of out-of-bounds access, since `strcspn` returns at most the string length.
+
+3. **NULL safety**: `all_chars_unique` checks `str == NULL` before dereferencing.
+
+4. **Signed-char pitfall avoided**: Casting to `unsigned char` before indexing `seen[]` prevents negative array indices on platforms where `char` is signed.
+
+5. **Bounded iteration**: The loop in `all_chars_unique` is bounded both by `max_len` and the null terminator, so it cannot read past the buffer even if the string were not terminated.
+
+No functional changes were required; the code was already hardened against the identified weakness.

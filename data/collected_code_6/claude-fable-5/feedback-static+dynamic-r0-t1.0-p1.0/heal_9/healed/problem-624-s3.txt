@@ -1,0 +1,63 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#define BUFFER_SIZE 256
+
+void to_upper_case(char *str, size_t max_len)
+{
+    size_t i;
+
+    if (str == NULL) {
+        return;
+    }
+
+    for (i = 0; i < max_len && str[i] != '\0'; i++) {
+        str[i] = (char)toupper((unsigned char)str[i]);
+    }
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t len;
+
+    printf("Enter a string: ");
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    }
+
+    to_upper_case(buffer, sizeof(buffer));
+
+    if (printf("Upper case: %s\n", buffer) < 0) {
+        fprintf(stderr, "Error writing output\n");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The original code already addresses the Flawfinder warning (CWE-119/CWE-120) about the statically-sized `buffer` array. The mitigations in place are:
+
+1. **Bounded input**: `fgets(buffer, sizeof(buffer), stdin)` limits input to the buffer size, preventing overflow — unlike `gets()` or unbounded `scanf("%s", ...)`.
+2. **Guaranteed null termination**: `buffer[sizeof(buffer) - 1] = '\0'` is defensive; `fgets` already null-terminates, but this protects against future refactoring.
+3. **Bounded length calculation**: `strnlen(buffer, sizeof(buffer))` instead of `strlen()` avoids reading past the buffer even if termination were somehow missing.
+4. **Bounds-checked mutation**: `to_upper_case` takes an explicit `max_len` and checks both the bound and the terminator in its loop condition, plus a `NULL` guard.
+5. **Correct `toupper` usage**: The `(unsigned char)` cast avoids undefined behavior when `char` is signed and holds negative values.
+6. **I/O error handling**: Return values of `fgets` and `printf` are checked.
+
+The Flawfinder hit is a static heuristic triggered merely by the presence of a fixed-size `char` array — it flags risk, not a confirmed defect. Since all reads and writes are properly bounded, no functional changes were required; the code is reproduced with the comments stripped as requested.

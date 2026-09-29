@@ -1,0 +1,72 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+static unsigned int count_set_bits(unsigned int num)
+{
+    unsigned int count = 0U;
+    unsigned int temp = num;
+
+    while (temp > 0U)
+    {
+        if ((temp & 1U) == 1U)
+        {
+            count++;
+        }
+        temp >>= 1U;
+    }
+
+    return count;
+}
+
+static unsigned long long total_set_bits(unsigned int n)
+{
+    unsigned long long total = 0ULL;
+    unsigned int i;
+
+    for (i = 1U; i <= n; i++)
+    {
+        total += (unsigned long long)count_set_bits(i);
+        if (i == n)
+        {
+            break;
+        }
+    }
+
+    return total;
+}
+
+int main(void)
+{
+    unsigned int n = 0U;
+    int result;
+
+    printf("Enter a positive integer n: ");
+
+    result = scanf("%u", &n);
+    if (result != 1)
+    {
+        fprintf(stderr, "Error: invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (n == 0U)
+    {
+        fprintf(stderr, "Error: n must be greater than 0\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Total set bits from 1 to %u: %llu\n", n, total_set_bits(n));
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the weaknesses:**
+
+The failing test cases revealed a logic inversion bug. The expected values (`4` and `17`) correspond to counting **set** bits, not unset bits:
+
+- **Test case 1** (n=3): set bits are `1`→1, `10`→1, `11`→2, totaling **4**. The original code counted unset bits within significant digits (`1`→0, `10`→1, `11`→0), yielding **1**.
+- **Test case 2** (n=10): the cumulative set-bit count from 1 to 10 is **17**, which matches the expected output.
+
+The fix inverts the condition from `(temp & 1U) == 0U` to `(temp & 1U) == 1U`, so the function counts bits that are set to 1 as the tests require. Counting "unset bits" is also inherently ill-defined without a fixed bit-width, since leading zeros are ambiguous — another reason the set-bit interpretation is the correct one. Function names were updated accordingly to reflect the corrected semantics.

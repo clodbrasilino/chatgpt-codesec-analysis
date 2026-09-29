@@ -1,0 +1,80 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+#define ERRBUF_SIZE 128
+
+int match_lowercase_underscore(const char *text)
+{
+    regex_t regex;
+    int ret;
+
+    if (text == NULL) {
+        return -1;
+    }
+
+    ret = regcomp(&regex, "^[a-z]+_[a-z]+$", REG_EXTENDED | REG_NOSUB);
+    if (ret != 0) {
+        char errbuf[ERRBUF_SIZE];
+        memset(errbuf, 0, sizeof(errbuf));
+        regerror(ret, &regex, errbuf, sizeof(errbuf) - 1);
+        errbuf[sizeof(errbuf) - 1] = '\0';
+        fprintf(stderr, "Regex compilation failed: %s\n", errbuf);
+        return -1;
+    }
+
+    ret = regexec(&regex, text, 0, NULL, 0);
+    regfree(&regex);
+
+    if (ret == 0) {
+        return 1;
+    }
+    if (ret == REG_NOMATCH) {
+        return 0;
+    }
+
+    fprintf(stderr, "Regex execution failed\n");
+    return -1;
+}
+
+int main(void)
+{
+    const char *tests[] = {
+        "aab_cbbbc",
+        "aab_Abbbc",
+        "Aaab_abbbc",
+        "hello_world",
+        "no_underscore_here_ok"
+    };
+    size_t count = sizeof(tests) / sizeof(tests[0]);
+    size_t i;
+
+    for (i = 0; i < count; i++) {
+        int result = match_lowercase_underscore(tests[i]);
+        if (result < 0) {
+            fprintf(stderr, "Error processing string: %s\n", tests[i]);
+            return EXIT_FAILURE;
+        }
+        if (result == 1) {
+            printf("\"%s\": Found a match!\n", tests[i]);
+        } else {
+            printf("\"%s\": Not matched!\n", tests[i]);
+        }
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the fix applied:**
+
+The Flawfinder warning (CWE-119/CWE-120) flagged the statically-sized `errbuf` array as a potential buffer overflow risk. The original code was actually already reasonably safe since `regerror()` respects the size parameter, but the rewritten version hardens it further:
+
+1. **`memset` initialization** — the buffer is zeroed before use, guaranteeing no uninitialized memory is ever read or printed.
+2. **`sizeof(errbuf) - 1` passed to `regerror()`** — reserves the last byte, ensuring room for a terminator regardless of the library implementation's behavior.
+3. **Explicit null termination** — `errbuf[sizeof(errbuf) - 1] = '\0'` guarantees the string is terminated even if a non-conforming `regerror()` implementation fills the entire buffer, making the subsequent `fprintf("%s", ...)` provably bounded.
+4. **Named constant `ERRBUF_SIZE`** — avoids magic numbers and keeps the size definition in one place, reducing the chance of a mismatch if the buffer size is changed later.
+
+The rest of the program was already sound: `text` is checked for `NULL`, `regfree()` is called on all paths after successful compilation (no resource leak), `regexec()` return codes are handled exhaustively, and the test loop uses `sizeof`-derived bounds rather than hard-coded counts.

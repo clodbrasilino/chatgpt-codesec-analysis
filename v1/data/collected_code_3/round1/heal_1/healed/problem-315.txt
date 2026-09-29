@@ -1,0 +1,29 @@
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+
+int max(int a, int b) {
+    return (a > b) ? a : b;
+}
+
+int maxLengthEvenWord(char* str) {
+    int n = strlen(str);
+    int res = 0, cur_len = 0;
+    for (int i = 0; i < n; i++) {
+        if (str[i] != ' ') {
+            cur_len++;
+        } else {
+            if (cur_len % 2 == 0) {
+                res = max(res, cur_len);
+            }
+            cur_len = 0;
+        }
+    }
+    return max(res, cur_len);
+}
+
+int main() {
+    char str[] = "Hello world this is a test string";
+    printf("%d", maxLengthEvenWord(str));
+    return 0;
+}

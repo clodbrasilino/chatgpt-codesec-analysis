@@ -1,0 +1,47 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <limits.h>
+
+long long calculate_sum(int n)
+{
+    long long sum = 0;
+    int i;
+
+    if (n <= 0) {
+        return 0;
+    }
+
+    for (i = n; i > 0; i -= 2) {
+        sum += i;
+    }
+
+    return sum;
+}
+
+int main(void)
+{
+    int n;
+    long long result;
+    int scan_result;
+
+    printf("Enter a positive integer: ");
+    scan_result = scanf("%d", &n);
+
+    if (scan_result != 1) {
+        fprintf(stderr, "Error: Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (n < 0) {
+        fprintf(stderr, "Error: Please enter a non-negative integer\n");
+        return EXIT_FAILURE;
+    }
+
+    result = calculate_sum(n);
+    printf("Sum: %lld\n", result);
+
+    return EXIT_SUCCESS;
+}
+```

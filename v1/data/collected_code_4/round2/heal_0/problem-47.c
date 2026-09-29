@@ -1,0 +1,34 @@
+#include <stdio.h>
+
+int calculate_last_digit(int a, int b) {
+    if (a > b || a < 0 || b < 0) {
+        printf("Invalid Input.\n");
+        return -1;
+    } else {
+        int last_digit_arr[10] = {1, 1, 2, 6, 4, 4, 4, 8, 4, 6};
+        if (a == b) {
+            return 1;
+        } else if ((b - a) >= 5) { 
+            return 0;       
+        } else {          
+            int product = 1;
+            for(int i = a+1; i <= b; i++)
+                product *= last_digit_arr[i % 10];
+    
+            return product % 10;
+        }
+    }
+}
+
+int main() {
+    int a, b;
+
+    printf("Enter the values of a and b:\n");
+    scanf("%d %d", &a, &b);
+    
+    int result = calculate_last_digit(a, b);
+    if (result != -1)
+        printf("The last digit when factorial of a divides factorial of b is: %d\n", result);
+
+    return 0;
+}

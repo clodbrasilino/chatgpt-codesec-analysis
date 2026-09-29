@@ -1,0 +1,44 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+void print_duplicates(const int *array, size_t size) {
+    if (array == NULL || size == 0) {
+        return;
+    }
+
+    int *visited = (int *)calloc(size, sizeof(int));
+    if (visited == NULL) {
+        return;
+    }
+
+    for (size_t i = 0; i < size; i++) {
+        if (visited[i]) {
+            continue;
+        }
+
+        int is_duplicate = 0;
+        for (size_t j = i + 1; j < size; j++) {
+            if (array[i] == array[j]) {
+                is_duplicate = 1;
+                visited[j] = 1;
+            }
+        }
+
+        if (is_duplicate) {
+            printf("%d\n", array[i]);
+        }
+    }
+
+    free(visited);
+}
+
+int main(void) {
+    int array[] = {1, 2, 3, 2, 4, 5, 1, 6, 3, 7};
+    size_t size = sizeof(array) / sizeof(array[0]);
+
+    print_duplicates(array, size);
+
+    return 0;
+}
+```

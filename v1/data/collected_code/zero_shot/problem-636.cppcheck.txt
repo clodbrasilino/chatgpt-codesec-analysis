@@ -1,0 +1,18 @@
+collected_code/problem-636-0.c:31:24: error: Cannot determine that 'a' is initialized [premium-bughuntingUninit]
+    scanf("%f %f %f", &a, &b, &c);
+                       ^
+collected_code/problem-636-0.c:31:28: error: Cannot determine that 'b' is initialized [premium-bughuntingUninit]
+    scanf("%f %f %f", &a, &b, &c);
+                           ^
+collected_code/problem-636-0.c:31:32: error: Cannot determine that 'c' is initialized [premium-bughuntingUninit]
+    scanf("%f %f %f", &a, &b, &c);
+                               ^
+collected_code/problem-636-0.c:33:30: error: Cannot determine that 'a' is initialized [premium-bughuntingUninit]
+    if (checkReciprocalRoots(a, b, c)) {
+                             ^
+collected_code/problem-636-0.c:33:33: error: Cannot determine that 'b' is initialized [premium-bughuntingUninit]
+    if (checkReciprocalRoots(a, b, c)) {
+                                ^
+collected_code/problem-636-0.c:33:36: error: Cannot determine that 'c' is initialized [premium-bughuntingUninit]
+    if (checkReciprocalRoots(a, b, c)) {
+                                   ^

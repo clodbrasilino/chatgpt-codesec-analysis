@@ -1,0 +1,94 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+struct rle_item {
+    size_t count;
+    int value;
+};
+
+static struct rle_item *modified_rle(const int *input, size_t length, size_t *out_length)
+{
+    struct rle_item *result;
+    struct rle_item *shrunk;
+    size_t i;
+    size_t out_index;
+
+    if (input == NULL || out_length == NULL || length == 0U) {
+        if (out_length != NULL) {
+            *out_length = 0U;
+        }
+        return NULL;
+    }
+
+    result = malloc(length * sizeof(*result));
+    if (result == NULL) {
+        *out_length = 0U;
+        return NULL;
+    }
+
+    out_index = 0U;
+    result[0].value = input[0];
+    result[0].count = 1U;
+
+    for (i = 1U; i < length; i++) {
+        if (input[i] == result[out_index].value) {
+            result[out_index].count++;
+        } else {
+            out_index++;
+            result[out_index].value = input[i];
+            result[out_index].count = 1U;
+        }
+    }
+
+    *out_length = out_index + 1U;
+
+    shrunk = realloc(result, *out_length * sizeof(*shrunk));
+    if (shrunk != NULL) {
+        result = shrunk;
+    }
+
+    return result;
+}
+
+static void print_modified_rle(const struct rle_item *items, size_t length)
+{
+    size_t i;
+
+    if (items == NULL) {
+        return;
+    }
+
+    printf("[");
+    for (i = 0U; i < length; i++) {
+        if (items[i].count == 1U) {
+            printf("%d", items[i].value);
+        } else {
+            printf("(%zu, %d)", items[i].count, items[i].value);
+        }
+        if (i + 1U < length) {
+            printf(", ");
+        }
+    }
+    printf("]\n");
+}
+
+int main(void)
+{
+    int data[] = { 1, 1, 1, 2, 3, 3, 4, 5, 5, 5, 5, 6 };
+    size_t data_length = sizeof(data) / sizeof(data[0]);
+    size_t encoded_length = 0U;
+    struct rle_item *encoded;
+
+    encoded = modified_rle(data, data_length, &encoded_length);
+    if (encoded == NULL) {
+        fprintf(stderr, "Encoding failed\n");
+        return EXIT_FAILURE;
+    }
+
+    print_modified_rle(encoded, encoded_length);
+    free(encoded);
+
+    return EXIT_SUCCESS;
+}
+```

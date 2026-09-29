@@ -1,0 +1,87 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stddef.h>
+
+typedef struct {
+    int first;
+    int second;
+} Tuple;
+
+int find_combinations(const Tuple *tuples, size_t count, Tuple **result, size_t *result_count)
+{
+    size_t total;
+    size_t index;
+    size_t i;
+    size_t j;
+    Tuple *buffer;
+
+    if (tuples == NULL || result == NULL || result_count == NULL) {
+        return -1;
+    }
+
+    *result = NULL;
+    *result_count = 0;
+
+    if (count < 2) {
+        return 0;
+    }
+
+    if (count > (size_t)1 << 16) {
+        return -1;
+    }
+
+    total = (count * (count - 1)) / 2;
+
+    buffer = malloc(total * sizeof(Tuple));
+    if (buffer == NULL) {
+        return -1;
+    }
+
+    index = 0;
+    for (i = 0; i < count; i++) {
+        for (j = i + 1; j < count; j++) {
+            long sum_first = (long)tuples[i].first + (long)tuples[j].first;
+            long sum_second = (long)tuples[i].second + (long)tuples[j].second;
+            if (sum_first > 2147483647L || sum_first < -2147483648L ||
+                sum_second > 2147483647L || sum_second < -2147483648L) {
+                free(buffer);
+                return -1;
+            }
+            buffer[index].first = (int)sum_first;
+            buffer[index].second = (int)sum_second;
+            index++;
+        }
+    }
+
+    *result = buffer;
+    *result_count = total;
+    return 0;
+}
+
+int main(void)
+{
+    Tuple input[] = { {2, 4}, {6, 7}, {5, 1}, {6, 10} };
+    size_t input_count = sizeof(input) / sizeof(input[0]);
+    Tuple *output = NULL;
+    size_t output_count = 0;
+    size_t i;
+    int status;
+
+    status = find_combinations(input, input_count, &output, &output_count);
+    if (status != 0) {
+        fprintf(stderr, "Error computing combinations\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Combination sums:\n");
+    for (i = 0; i < output_count; i++) {
+        printf("(%d, %d)\n", output[i].first, output[i].second);
+    }
+
+    free(output);
+    output = NULL;
+
+    return EXIT_SUCCESS;
+}
+```

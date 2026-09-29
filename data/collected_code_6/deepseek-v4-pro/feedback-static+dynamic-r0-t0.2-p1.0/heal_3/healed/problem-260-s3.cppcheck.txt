@@ -1,0 +1,43 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_3/healed/problem-260-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_3/healed/problem-260-s3.c:22:15: style: Condition 'count<n' is always true [knownConditionTrueFalse]
+    if (count < n && is_prime(a0)) {
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_3/healed/problem-260-s3.c:20:17: note: Assignment 'count=0', assigned value is 0
+    int count = 0;
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_3/healed/problem-260-s3.c:16:11: note: Assuming that condition 'n<=0' is not redundant
+    if (n <= 0) return -1;
+          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_3/healed/problem-260-s3.c:22:15: note: Condition 'count<n' is always true
+    if (count < n && is_prime(a0)) {
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_3/healed/problem-260-s3.c:22:30: style: Condition 'is_prime(a0)' is always false [knownConditionTrueFalse]
+    if (count < n && is_prime(a0)) {
+                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_3/healed/problem-260-s3.c:22:30: note: Calling function 'is_prime' returns 0
+    if (count < n && is_prime(a0)) {
+                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_3/healed/problem-260-s3.c:22:30: note: Condition 'is_prime(a0)' is always false
+    if (count < n && is_prime(a0)) {
+                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_3/healed/problem-260-s3.c:27:15: style: Condition 'count<n' is always true [knownConditionTrueFalse]
+    if (count < n && is_prime(a1)) {
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_3/healed/problem-260-s3.c:20:17: note: Assignment 'count=0', assigned value is 0
+    int count = 0;
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_3/healed/problem-260-s3.c:16:11: note: Assuming that condition 'n<=0' is not redundant
+    if (n <= 0) return -1;
+          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_3/healed/problem-260-s3.c:27:15: note: Condition 'count<n' is always true
+    if (count < n && is_prime(a1)) {
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_3/healed/problem-260-s3.c:27:30: style: Condition 'is_prime(a1)' is always false [knownConditionTrueFalse]
+    if (count < n && is_prime(a1)) {
+                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_3/healed/problem-260-s3.c:27:30: note: Calling function 'is_prime' returns 0
+    if (count < n && is_prime(a1)) {
+                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_3/healed/problem-260-s3.c:27:30: note: Condition 'is_prime(a1)' is always false
+    if (count < n && is_prime(a1)) {
+                             ^

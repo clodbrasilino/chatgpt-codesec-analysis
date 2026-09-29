@@ -1,0 +1,66 @@
+{
+  "task_id": 166,
+  "text": "Write a C function to count the pairs with xor as an even number.",
+  "fn_candidates": [
+    "find_even_Pair",
+    "FindEvenPair",
+    "findEvenPair",
+    "findevenPair"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "find_even_Pair",
+      "args": [
+        [
+          5,
+          4,
+          7,
+          2,
+          1
+        ],
+        5
+      ],
+      "expected": 4,
+      "assert_src": "assert find_even_Pair([5,4,7,2,1],5) == 4"
+    },
+    {
+      "fn_name": "find_even_Pair",
+      "args": [
+        [
+          7,
+          2,
+          8,
+          1,
+          0,
+          5,
+          11
+        ],
+        7
+      ],
+      "expected": 9,
+      "assert_src": "assert find_even_Pair([7,2,8,1,0,5,11],7) == 9"
+    },
+    {
+      "fn_name": "find_even_Pair",
+      "args": [
+        [
+          1,
+          2,
+          3
+        ],
+        3
+      ],
+      "expected": 1,
+      "assert_src": "assert find_even_Pair([1,2,3],3) == 1"
+    }
+  ],
+  "arg_kinds": [
+    "int",
+    "int-list"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

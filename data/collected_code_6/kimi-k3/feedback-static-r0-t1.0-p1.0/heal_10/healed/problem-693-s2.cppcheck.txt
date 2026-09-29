@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-693-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-693-s2.c:60:41: style: Condition 'output_len+prefix_len>=output_size' is always false [knownConditionTrueFalse]
+            if (output_len + prefix_len >= output_size)
+                                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-693-s2.c:52:41: note: Assuming that condition 'output_len+prefix_len+2>output_size' is not redundant
+        if (output_len + prefix_len + 2 > output_size)
+                                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-693-s2.c:60:41: note: Condition 'output_len+prefix_len>=output_size' is always false
+            if (output_len + prefix_len >= output_size)
+                                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-693-s2.c:90:36: style: Condition 'output_len+remaining>=output_size' is always false [knownConditionTrueFalse]
+        if (output_len + remaining >= output_size)
+                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-693-s2.c:82:36: note: Assuming that condition 'output_len+remaining+1>output_size' is not redundant
+    if (output_len + remaining + 1 > output_size)
+                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-693-s2.c:90:36: note: Condition 'output_len+remaining>=output_size' is always false
+        if (output_len + remaining >= output_size)
+                                   ^

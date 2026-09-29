@@ -1,0 +1,80 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define NAME_LEN 64
+
+typedef struct {
+    char name[NAME_LEN];
+    int value;
+} Record;
+
+int index_minimum(const Record *records, size_t count, char *out, size_t out_size)
+{
+    size_t i;
+    size_t min_idx = 0;
+    size_t name_len;
+
+    if (records == NULL || out == NULL || count == 0U || out_size == 0U) {
+        return -1;
+    }
+
+    for (i = 1U; i < count; i++) {
+        if (records[i].value < records[min_idx].value) {
+            min_idx = i;
+        }
+    }
+
+    name_len = strnlen(records[min_idx].name, NAME_LEN);
+
+    if (name_len >= NAME_LEN || name_len >= out_size) {
+        return -1;
+    }
+
+    memcpy(out, records[min_idx].name, name_len);
+    out[name_len] = '\0';
+
+    return 0;
+}
+
+int main(void)
+{
+    Record records[] = {
+        {"Rash", 143},
+        {"Manjeet", 200},
+        {"Varsha", 100}
+    };
+    size_t count = sizeof(records) / sizeof(records[0]);
+    char result[NAME_LEN];
+
+    if (index_minimum(records, count, result, sizeof(result)) != 0) {
+        (void)fprintf(stderr, "Error: could not extract minimum record\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Record with minimum value: %s\n", result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the flagged weaknesses and why this code is safe:**
+
+1. **`char name[NAME_LEN]` and `char result[NAME_LEN]` (CWE-119/CWE-120):** Flawfinder flags all statically-sized character arrays by default. These are false positives here because:
+   - The `records` array in `main` is initialized only with string literals shorter than `NAME_LEN`, so no overflow occurs at initialization.
+   - `result` is never written to except through `index_minimum`, which enforces bounds via `out_size`.
+
+2. **`memcpy` (CWE-120):** This is also a false positive, mitigated by the guards preceding the copy:
+   - `strnlen(records[min_idx].name, NAME_LEN)` bounds the source length even if `name` were not NUL-terminated.
+   - The check `name_len >= NAME_LEN || name_len >= out_size` guarantees that `name_len + 1` bytes (data plus the terminating `'\0'`) always fit in the destination buffer.
+   - `main` passes `sizeof(result)` as `out_size`, keeping the size argument tied to the actual buffer.
+
+3. **Additional robustness already present:**
+   - NULL-pointer and zero-size parameter validation.
+   - Return values of `printf`/`fprintf` are checked.
+   - `count` is derived with `sizeof(records) / sizeof(records[0])` rather than hard-coded.
+
+The code as given is already defensively written; no functional changes were required, only removal of the comments as requested.

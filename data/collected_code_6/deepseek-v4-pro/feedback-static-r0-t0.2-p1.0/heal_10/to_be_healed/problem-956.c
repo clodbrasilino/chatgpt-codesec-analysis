@@ -1,0 +1,199 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+#include <stdint.h>
+
+#define MAX_INPUT_LENGTH 4096
+#define INITIAL_CAPACITY 8
+
+static char **cleanup_and_return_null(char **result, int count, regex_t *regex) {
+    if (result != NULL) {
+        for (int j = 0; j < count; j++) {
+            free(result[j]);
+        }
+        free(result);
+    }
+    if (regex != NULL) {
+        regfree(regex);
+    }
+    return NULL;
+}
+
+static int ensure_capacity(char ***result, size_t *capacity, int count) {
+    if ((size_t)count >= *capacity) {
+        if (*capacity > SIZE_MAX / 2) {
+            return 0;
+        }
+        size_t new_capacity = *capacity * 2;
+        if (new_capacity > SIZE_MAX / sizeof(char *)) {
+            return 0;
+        }
+        char **temp = realloc(*result, new_capacity * sizeof(char *));
+        if (temp == NULL) {
+            return 0;
+        }
+        *result = temp;
+        *capacity = new_capacity;
+    }
+    return 1;
+}
+
+static int add_segment(char ***result, const char *input, size_t start, size_t segment_len, int *count, size_t *capacity, regex_t *regex) {
+    if (segment_len > MAX_INPUT_LENGTH) {
+        return 0;
+    }
+
+    if (start > SIZE_MAX - segment_len) {
+        return 0;
+    }
+
+    if (!ensure_capacity(result, capacity, *count)) {
+        return 0;
+    }
+
+    size_t total_len = strnlen(input, MAX_INPUT_LENGTH);
+    if (start >= total_len || start + segment_len > total_len) {
+        return 0;
+    }
+
+    if (segment_len >= SIZE_MAX - 1) {
+        return 0;
+    }
+
+    /* Possible weaknesses found:
+     *  alloc_size is assigned 'segment_len+1' here.
+     */
+    size_t alloc_size = segment_len + 1;
+    /* Possible weaknesses found:
+     *  Condition 'alloc_size<segment_len' is always false
+     *  Condition 'alloc_size<segment_len' is always false [knownConditionTrueFalse]
+     */
+    if (alloc_size < segment_len) {
+        return 0;
+    }
+
+    char *segment = malloc(alloc_size);
+    if (segment == NULL) {
+        return 0;
+    }
+
+    if (segment_len > total_len - start) {
+        free(segment);
+        return 0;
+    }
+
+    /* Possible weaknesses found:
+     * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+     */
+    memcpy(segment, input + start, segment_len);
+    segment[segment_len] = '\0';
+    (*result)[*count] = segment;
+    (*count)++;
+    return 1;
+}
+
+char **split_at_uppercase(const char *input, int *count) {
+    regex_t regex;
+    regmatch_t matches[1];
+    const char *pattern = "[A-Z]";
+    char **result = NULL;
+    size_t capacity = 0;
+    size_t start = 0;
+    size_t i = 0;
+    
+    if (input == NULL || count == NULL) {
+        return NULL;
+    }
+    
+    size_t len = strnlen(input, MAX_INPUT_LENGTH);
+    if (len >= MAX_INPUT_LENGTH) {
+        return NULL;
+    }
+    
+    *count = 0;
+    
+    if (regcomp(&regex, pattern, REG_EXTENDED) != 0) {
+        return NULL;
+    }
+    
+    if (INITIAL_CAPACITY > SIZE_MAX / sizeof(char *)) {
+        regfree(&regex);
+        return NULL;
+    }
+    
+    capacity = INITIAL_CAPACITY;
+    result = malloc(capacity * sizeof(char *));
+    if (result == NULL) {
+        regfree(&regex);
+        return NULL;
+    }
+    
+    while (i < len) {
+        if (regexec(&regex, input + i, 1, matches, 0) == 0) {
+            if (matches[0].rm_so < 0) {
+                i++;
+                continue;
+            }
+            
+            size_t match_pos = i + (size_t)matches[0].rm_so;
+            
+            if (match_pos < start) {
+                return cleanup_and_return_null(result, *count, &regex);
+            }
+            
+            size_t segment_len = match_pos - start;
+            
+            if (segment_len > 0) {
+                if (segment_len > MAX_INPUT_LENGTH) {
+                    return cleanup_and_return_null(result, *count, &regex);
+                }
+                if (!add_segment(&result, input, start, segment_len, count, &capacity, &regex)) {
+                    return cleanup_and_return_null(result, *count, &regex);
+                }
+            }
+            
+            start = match_pos;
+            i = match_pos + 1;
+            
+            if (i > len) {
+                i = len;
+            }
+        } else {
+            i++;
+        }
+    }
+    
+    if (start < len) {
+        size_t segment_len = len - start;
+        
+        if (segment_len > MAX_INPUT_LENGTH) {
+            return cleanup_and_return_null(result, *count, &regex);
+        }
+        if (!add_segment(&result, input, start, segment_len, count, &capacity, &regex)) {
+            return cleanup_and_return_null(result, *count, &regex);
+        }
+    }
+    
+    regfree(&regex);
+    return result;
+}
+
+int main(void) {
+    const char *test_string = "HelloWorldThisIsATest";
+    int count = 0;
+    char **parts = split_at_uppercase(test_string, &count);
+    
+    if (parts == NULL) {
+        fprintf(stderr, "Failed to split string\n");
+        return 1;
+    }
+    
+    for (int i = 0; i < count; i++) {
+        printf("%s\n", parts[i]);
+        free(parts[i]);
+    }
+    free(parts);
+    
+    return 0;
+}

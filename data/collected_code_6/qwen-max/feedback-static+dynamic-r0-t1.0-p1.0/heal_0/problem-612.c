@@ -1,0 +1,92 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node *next;
+} Node;
+
+typedef struct List {
+    Node *head;
+    Node *tail;
+} List;
+
+List* createList() {
+    List *list = (List*)malloc(sizeof(List));
+    list->head = NULL;
+    list->tail = NULL;
+    return list;
+}
+
+void insertNode(List *list, int data) {
+    Node *node = (Node*)malloc(sizeof(Node));
+    node->data = data;
+    node->next = NULL;
+    if (list->head == NULL) {
+        list->head = node;
+        list->tail = node;
+    } else {
+        list->tail->next = node;
+        list->tail = node;
+    }
+}
+
+List* mergeFirstLast(List **lists, int n) {
+    List *result = createList();
+    for (int i = 0; i < n; i++) {
+        if (lists[i] != NULL && lists[i]->head != NULL) {
+            Node *first = lists[i]->head;
+            Node *last = lists[i]->tail;
+            insertNode(result, first->data);
+            if (first != last) {
+                insertNode(result, last->data);
+            }
+        }
+    }
+    return result;
+}
+
+void printList(List *list) {
+    Node *current = list->head;
+    while (current != NULL) {
+        printf("%d ", current->data);
+        current = current->next;
+    }
+    printf("\n");
+}
+
+void freeList(List *list) {
+    Node *current = list->head;
+    Node *next;
+    while (current != NULL) {
+        next = current->next;
+        free(current);
+        current = next;
+    }
+    free(list);
+}
+
+int main() {
+    List *lists[3];
+    lists[0] = createList();
+    insertNode(lists[0], 1);
+    insertNode(lists[0], 2);
+    insertNode(lists[0], 3);
+
+    lists[1] = createList();
+    insertNode(lists[1], 4);
+    insertNode(lists[1], 5);
+
+    lists[2] = createList();
+    insertNode(lists[2], 6);
+
+    List *result = mergeFirstLast(lists, 3);
+    printList(result);
+
+    for (int i = 0; i < 3; i++) {
+        freeList(lists[i]);
+    }
+    freeList(result);
+
+    return 0;
+}

@@ -1,0 +1,28 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_6/healed/problem-829.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_6/healed/problem-829.c:75:49: style: Condition 'result_size==0' is always false [knownConditionTrueFalse]
+    if (result_size > MAX_LENGTH || result_size == 0) {
+                                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_6/healed/problem-829.c:73:35: note: Assignment 'result_size=copy_len+1', assigned value is greater than 0
+    size_t result_size = copy_len + 1;
+                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_6/healed/problem-829.c:72:44: note: Assignment 'copy_len=len<100-1?len:100-1', assigned value is less than 1
+    size_t copy_len = len < MAX_LENGTH - 1 ? len : MAX_LENGTH - 1;
+                                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_6/healed/problem-829.c:75:49: note: Condition 'result_size==0' is always false
+    if (result_size > MAX_LENGTH || result_size == 0) {
+                                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_6/healed/problem-829.c:86:18: style: Condition 'copy_len>=result_size' is always false [knownConditionTrueFalse]
+    if (copy_len >= result_size) {
+                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_6/healed/problem-829.c:72:44: note: Assignment 'copy_len=len<100-1?len:100-1', assigned value is less than 1
+    size_t copy_len = len < MAX_LENGTH - 1 ? len : MAX_LENGTH - 1;
+                                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_6/healed/problem-829.c:81:16: note: Assuming condition is false
+    if (result == NULL) {
+               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_6/healed/problem-829.c:75:49: note: Assuming that condition 'result_size==0' is not redundant
+    if (result_size > MAX_LENGTH || result_size == 0) {
+                                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_6/healed/problem-829.c:86:18: note: Condition 'copy_len>=result_size' is always false
+    if (copy_len >= result_size) {
+                 ^

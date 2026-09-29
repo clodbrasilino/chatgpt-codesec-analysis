@@ -1,0 +1,47 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int find_gcd(int a, int b) {
+    /* Possible weaknesses found:
+     *  The scope of the variable 'temp' can be reduced. [variableScope]
+     */
+    int temp;
+    
+    if (a < 0) {
+        a = -a;
+    }
+    if (b < 0) {
+        b = -b;
+    }
+    
+    if (a == 0 && b == 0) {
+        return 0;
+    }
+    
+    while (b != 0) {
+        temp = b;
+        b = a % b;
+        a = temp;
+    }
+    
+    return a;
+}
+
+int main(void) {
+    int num1 = 0;
+    int num2 = 0;
+    int result = 0;
+    
+    printf("Enter two integers: ");
+    
+    if (scanf("%d %d", &num1, &num2) != 2) {
+        fprintf(stderr, "Error: Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    result = find_gcd(num1, num2);
+    
+    printf("GCD of %d and %d is: %d\n", num1, num2, result);
+    
+    return EXIT_SUCCESS;
+}

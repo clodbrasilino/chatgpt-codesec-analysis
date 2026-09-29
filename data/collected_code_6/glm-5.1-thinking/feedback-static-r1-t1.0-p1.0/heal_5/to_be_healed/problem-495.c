@@ -1,0 +1,117 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+char *remove_lowercase(const char *str, size_t len) {
+    regex_t regex;
+    regmatch_t match;
+    const char *ptr;
+    char *result;
+    char *res_ptr;
+    size_t res_len;
+    size_t copy_len;
+    int ret;
+
+    if (str == NULL) {
+        return NULL;
+    }
+
+    ret = regcomp(&regex, "[[:lower:]]+", REG_EXTENDED);
+    if (ret != 0) {
+        return NULL;
+    }
+
+    if (len == (size_t)-1) {
+        regfree(&regex);
+        return NULL;
+    }
+
+    char *safe_str = (char *)malloc(len + 1);
+    if (safe_str == NULL) {
+        regfree(&regex);
+        return NULL;
+    }
+    
+    /* Possible weaknesses found:
+     * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+     */
+    memcpy(safe_str, str, len);
+    safe_str[len] = '\0';
+
+    result = (char *)malloc(len + 1);
+    if (result == NULL) {
+        regfree(&regex);
+        free(safe_str);
+        return NULL;
+    }
+
+    ptr = safe_str;
+    res_ptr = result;
+    res_len = 0;
+
+    while (1) {
+        ret = regexec(&regex, ptr, 1, &match, 0);
+        if (ret == REG_NOMATCH) {
+            size_t remaining_len = len - (ptr - safe_str);
+            size_t space_left = len - res_len;
+            if (remaining_len > space_left) {
+                remaining_len = space_left;
+            }
+            /* Possible weaknesses found:
+             * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+             */
+            memcpy(res_ptr, ptr, remaining_len);
+            res_ptr += remaining_len;
+            break;
+        }
+        
+        if (ret != 0) {
+            break;
+        }
+
+        if (match.rm_so > 0) {
+            copy_len = match.rm_so;
+            size_t space_left = len - res_len;
+            if (copy_len > space_left) {
+                copy_len = space_left;
+            }
+            /* Possible weaknesses found:
+             * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+             */
+            memcpy(res_ptr, ptr, copy_len);
+            res_ptr += copy_len;
+            res_len += copy_len;
+        }
+
+        ptr += match.rm_eo;
+
+        if (match.rm_so == match.rm_eo) {
+            if (*ptr != '\0') {
+                if (res_len + 1 <= len) {
+                    *res_ptr++ = *ptr++;
+                    res_len++;
+                } else {
+                    ptr++;
+                }
+            } else {
+                break;
+            }
+        }
+    }
+
+    *res_ptr = '\0';
+    regfree(&regex);
+    free(safe_str);
+    return result;
+}
+
+int main(void) {
+    const char input[] = "HelloWorld123abcXYZ";
+    char *result = remove_lowercase(input, sizeof(input) - 1);
+    if (result != NULL) {
+        printf("%s\n", result);
+        free(result);
+    }
+    return 0;
+}

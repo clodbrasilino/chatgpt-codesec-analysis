@@ -1,0 +1,99 @@
+./collected_code_4/round1//heal_0//problem-902.c: In function 'insert':
+./collected_code_4/round1//heal_0//problem-902.c:34:15: warning: dereference of possibly-NULL 'item' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   34 |    item->data = data;
+      |    ~~~~~~~~~~~^~~~~~
+  'main': events 1-2
+    |
+    |   64 | int main(){
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   74 |     combine(keys1, values1, size1);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) calling 'combine' from 'main'
+    |
+    +--> 'combine': events 3-6
+           |
+           |   58 | void combine(int keys[], int values[], int size) {
+           |      |      ^~~~~~~
+           |      |      |
+           |      |      (3) entry to 'combine'
+           |   59 |     for(int i = 0; i < size; i++){
+           |      |                    ~~~~~~~~
+           |      |                      |
+           |      |                      (4) following 'true' branch (when 'i < size')...
+           |   60 |         update(keys[i], values[i]);
+           |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |         |                     |
+           |      |         |                     (5) ...to here
+           |      |         (6) calling 'update' from 'combine'
+           |
+           +--> 'update': events 7-8
+                  |
+                  |   47 | void update(int key, int data) {
+                  |      |      ^~~~~~
+                  |      |      |
+                  |      |      (7) entry to 'update'
+                  |   48 |     struct Node *temp = search(key);
+                  |      |                         ~~~~~~~~~~~
+                  |      |                         |
+                  |      |                         (8) calling 'search' from 'update'
+                  |
+                  +--> 'search': event 9
+                         |
+                         |   16 | struct Node *search(int key) {
+                         |      |              ^~~~~~
+                         |      |              |
+                         |      |              (9) entry to 'search'
+                         |
+                       'search': event 10
+                         |
+                         |   19 |    while(hashArray[hashIndex] != NULL) {
+                         |      |                               ^
+                         |      |                               |
+                         |      |                               (10) following 'false' branch...
+                         |
+                       'search': event 11
+                         |
+                         |   28 |    return NULL;
+                         |      |           ^~~~
+                         |      |           |
+                         |      |           (11) ...to here
+                         |
+                  <------+
+                  |
+                'update': events 12-15
+                  |
+                  |   48 |     struct Node *temp = search(key);
+                  |      |                         ^~~~~~~~~~~
+                  |      |                         |
+                  |      |                         (12) returning to 'update' from 'search'
+                  |   49 | 
+                  |   50 |     if(temp == NULL) {
+                  |      |       ~                  
+                  |      |       |
+                  |      |       (13) following 'true' branch (when 'temp' is NULL)...
+                  |   51 |         insert(key, data);
+                  |      |         ~~~~~~~~~~~~~~~~~
+                  |      |         |
+                  |      |         (14) ...to here
+                  |      |         (15) calling 'insert' from 'update'
+                  |
+                  +--> 'insert': events 16-18
+                         |
+                         |   31 | void insert(int key, int data) {
+                         |      |      ^~~~~~
+                         |      |      |
+                         |      |      (16) entry to 'insert'
+                         |   32 | 
+                         |   33 |    struct Node *item = (struct Node*) malloc(sizeof(struct Node));
+                         |      |                                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                         |      |                                       |
+                         |      |                                       (17) this call could return NULL
+                         |   34 |    item->data = data;
+                         |      |    ~~~~~~~~~~~~~~~~~
+                         |      |               |
+                         |      |               (18) 'item' could be NULL: unchecked value from (17)
+                         |

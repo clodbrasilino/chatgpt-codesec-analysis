@@ -1,0 +1,84 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *data;
+    size_t size;
+    size_t capacity;
+} Heap;
+
+void heap_init(Heap *heap, size_t capacity) {
+    heap->data = malloc(capacity * sizeof(int));
+    if (!heap->data) {
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(EXIT_FAILURE);
+    }
+    heap->size = 0;
+    heap->capacity = capacity;
+}
+
+void heap_destroy(Heap *heap) {
+    free(heap->data);
+    heap->data = NULL;
+    heap->size = 0;
+    heap->capacity = 0;
+}
+
+void heap_swap(int *a, int *b) {
+    int temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+void heap_sift_down(Heap *heap, size_t index) {
+    size_t largest = index;
+    size_t left = 2 * index + 1;
+    size_t right = 2 * index + 2;
+
+    if (left < heap->size && heap->data[left] > heap->data[largest]) {
+        largest = left;
+    }
+    if (right < heap->size && heap->data[right] > heap->data[largest]) {
+        largest = right;
+    }
+    if (largest != index) {
+        heap_swap(&heap->data[index], &heap->data[largest]);
+        heap_sift_down(heap, largest);
+    }
+}
+
+void heap_build(Heap *heap, int *array, size_t size) {
+    if (size > heap->capacity) {
+        fprintf(stderr, "Array size exceeds heap capacity\n");
+        exit(EXIT_FAILURE);
+    }
+    for (size_t i = 0; i < size; i++) {
+        heap->data[i] = array[i];
+    }
+    heap->size = size;
+    for (size_t i = heap->size / 2; i > 0; i--) {
+        heap_sift_down(heap, i - 1);
+    }
+}
+
+void heap_print(Heap *heap) {
+    for (size_t i = 0; i < heap->size; i++) {
+        printf("%d ", heap->data[i]);
+    }
+    printf("\n");
+}
+
+int main(void) {
+    int array[] = {4, 10, 3, 5, 1, 8, 7, 2, 9, 6};
+    size_t size = sizeof(array) / sizeof(array[0]);
+    Heap heap;
+    
+    heap_init(&heap, size);
+    heap_build(&heap, array, size);
+    heap_print(&heap);
+    heap_destroy(&heap);
+    
+    return 0;
+}
+```

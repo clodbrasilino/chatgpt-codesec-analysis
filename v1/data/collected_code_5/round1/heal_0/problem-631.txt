@@ -1,0 +1,26 @@
+C does not natively support regex. However, you can achieve the same result using a simple loop. Here's an example:
+
+```c
+#include <stdio.h>
+#include <string.h>
+
+void replaceSpaceUnderscore(char* str) {
+    int length = strlen(str);
+    for (int i = 0; i < length; i++) {
+        if (str[i] == ' ') {
+            str[i] = '_';
+        } else if (str[i] == '_') {
+            str[i] = ' ';
+        }
+    }
+}
+
+int main() {
+    char str[] = "Hello _World _";
+    printf("Before: %s\n", str);
+    replaceSpaceUnderscore(str);
+    printf("After: %s\n", str);
+    return 0;
+}
+```
+In this program, `replaceSpaceUnderscore` function iterates over each character of the passed string, and replaces each space (' ') with an underscore ('_') and vice versa. Remember that the string is modified in-place, so make sure that your string is writable, and that you have enough space to hold the new characters.

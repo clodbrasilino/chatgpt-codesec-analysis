@@ -1,0 +1,96 @@
+#define _POSIX_C_SOURCE 200809L
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+#define MAX_INPUT_LEN 8192
+
+char* insert_spaces(const char* input) {
+    if (input == NULL) {
+        return NULL;
+    }
+
+    size_t input_len = strnlen(input, MAX_INPUT_LEN);
+    
+    char* safe_input = (char*)malloc(input_len + 1);
+    if (safe_input == NULL) {
+        return NULL;
+    }
+    memcpy(safe_input, input, input_len);
+    safe_input[input_len] = '\0';
+
+    regex_t regex;
+    if (regcomp(&regex, "[A-Z]", REG_EXTENDED) != 0) {
+        free(safe_input);
+        return NULL;
+    }
+
+    size_t max_len = (input_len * 2) + 1;
+    char* result = (char*)malloc(max_len);
+
+    if (result == NULL) {
+        regfree(&regex);
+        free(safe_input);
+        return NULL;
+    }
+
+    result[0] = '\0';
+    char* out_ptr = result;
+    const char* cursor = safe_input;
+    regmatch_t match[1];
+
+    while (regexec(&regex, cursor, 1, match, 0) == 0) {
+        size_t prefix_len = match[0].rm_so;
+        size_t remaining = max_len - (size_t)(out_ptr - result);
+
+        if (prefix_len > 0) {
+            if (prefix_len >= remaining) {
+                prefix_len = remaining - 1;
+            }
+            memcpy(out_ptr, cursor, prefix_len);
+            out_ptr += prefix_len;
+        }
+
+        remaining = max_len - (size_t)(out_ptr - result);
+        const char* match_pos = cursor + match[0].rm_so;
+
+        if (match_pos > safe_input && *(match_pos - 1) != ' ') {
+            if (remaining > 1) {
+                *out_ptr = ' ';
+                out_ptr++;
+                remaining--;
+            }
+        }
+
+        if (remaining > 1) {
+            *out_ptr = *match_pos;
+            out_ptr++;
+        }
+
+        cursor += match[0].rm_eo;
+    }
+
+    size_t remaining = max_len - (size_t)(out_ptr - result);
+    snprintf(out_ptr, remaining, "%s", cursor);
+
+    regfree(&regex);
+    free(safe_input);
+
+    return result;
+}
+
+int main(void) {
+    const char* test_str = "thisIsATestStringForRegex";
+    char* formatted_str = insert_spaces(test_str);
+
+    if (formatted_str != NULL) {
+        printf("%s\n", formatted_str);
+        free(formatted_str);
+    } else {
+        fprintf(stderr, "Error processing string\n");
+        return 1;
+    }
+
+    return 0;
+}

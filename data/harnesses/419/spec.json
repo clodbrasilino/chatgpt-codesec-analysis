@@ -1,0 +1,50 @@
+{
+  "task_id": 419,
+  "text": "Write a C function to round every number of a given list of numbers and print the total sum multiplied by the length of the list.",
+  "fn_candidates": [
+    "round_and_sum",
+    "RoundAndSum",
+    "roundAndSum",
+    "roundandsum"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "round_and_sum",
+      "args": [
+        [
+          22.4,
+          4.0,
+          -16.22,
+          -9.1,
+          11.0,
+          -12.22,
+          14.2,
+          -5.2,
+          17.5
+        ]
+      ],
+      "expected": 243,
+      "assert_src": "assert round_and_sum([22.4, 4.0, -16.22, -9.10, 11.00, -12.22, 14.20, -5.20, 17.50])==243"
+    },
+    {
+      "fn_name": "round_and_sum",
+      "args": [
+        [
+          25.0,
+          56.7,
+          89.2
+        ]
+      ],
+      "expected": 513,
+      "assert_src": "assert round_and_sum([25.0,56.7,89.2])==513"
+    }
+  ],
+  "arg_kinds": [
+    "float-list"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

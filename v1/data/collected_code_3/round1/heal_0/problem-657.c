@@ -1,0 +1,25 @@
+#include <stdio.h>
+#include <math.h>
+
+int findFirstDigit(int n) {
+    if (n >= 0 && n <= 1)
+        return 1;
+
+    double x = ((n * log10(n / M_E) + log10(2 * M_PI * n) / 2.0));
+
+    while (x >= 1) {
+        x = x / 10;
+    }
+
+    int firstDigit = pow(10, x);
+
+    return firstDigit;
+}
+
+int main() {
+    int num;
+    printf("Enter a number: ");
+    scanf("%d", &num);
+    printf("The first digit in factorial of %d is %d", num, findFirstDigit(num));
+    return 0;
+}

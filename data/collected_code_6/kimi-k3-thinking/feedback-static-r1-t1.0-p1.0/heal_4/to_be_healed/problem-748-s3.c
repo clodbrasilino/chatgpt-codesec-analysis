@@ -1,0 +1,190 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+#include <regex.h>
+
+#define MAX_INPUT_LENGTH ((size_t)16 * 1024 * 1024)
+
+static void report_regex_error(int errcode, const regex_t *regex, const char *stage)
+{
+    size_t needed;
+    char *errbuf;
+
+    needed = regerror(errcode, regex, NULL, 0);
+    if (needed == 0) {
+        fprintf(stderr, "%s failed: unknown regex error %d\n", stage, errcode);
+        return;
+    }
+
+    errbuf = malloc(needed);
+    if (errbuf == NULL) {
+        fprintf(stderr, "%s failed: regex error %d (out of memory)\n", stage, errcode);
+        return;
+    }
+
+    regerror(errcode, regex, errbuf, needed);
+    errbuf[needed - 1] = '\0';
+    fprintf(stderr, "%s failed: %s\n", stage, errbuf);
+    free(errbuf);
+}
+
+static int checked_append(char *dest, size_t dest_capacity, size_t *dest_length,
+                          const char *src, size_t src_length)
+{
+    if (dest == NULL || dest_length == NULL || (src == NULL && src_length > 0)) {
+        return -1;
+    }
+    if (*dest_length > dest_capacity) {
+        return -1;
+    }
+    if (src_length > dest_capacity - *dest_length) {
+        return -1;
+    }
+    if (src_length > 0) {
+        /* Possible weaknesses found:
+         * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+         */
+        memcpy(dest + *dest_length, src, src_length);
+        *dest_length += src_length;
+    }
+    return 0;
+}
+
+char *add_spaces_before_capitals(const char *input)
+{
+    regex_t regex;
+    regmatch_t match[3];
+    const char *pattern = "\\([a-z]\\)\\([A-Z]\\)";
+    size_t input_len;
+    size_t capacity;
+    size_t length;
+    char *result;
+    const char *cursor;
+    int ret;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    input_len = strnlen(input, MAX_INPUT_LENGTH);
+    if (input_len == MAX_INPUT_LENGTH || input_len > (SIZE_MAX - 1) / 2) {
+        return NULL;
+    }
+
+    ret = regcomp(&regex, pattern, REG_EXTENDED);
+    if (ret != 0) {
+        report_regex_error(ret, &regex, "regcomp");
+        return NULL;
+    }
+
+    capacity = input_len * 2 + 1;
+    result = malloc(capacity);
+    if (result == NULL) {
+        fprintf(stderr, "malloc failed\n");
+        regfree(&regex);
+        return NULL;
+    }
+
+    length = 0;
+    cursor = input;
+
+    while (*cursor != '\0') {
+        size_t prefix_len;
+        size_t whole_len;
+
+        ret = regexec(&regex, cursor, 3, match, 0);
+        if (ret == REG_NOMATCH) {
+            break;
+        }
+        if (ret != 0) {
+            report_regex_error(ret, &regex, "regexec");
+            free(result);
+            regfree(&regex);
+            return NULL;
+        }
+
+        if (match[0].rm_so < 0 || match[0].rm_eo < 0 ||
+            match[0].rm_eo < match[0].rm_so ||
+            match[1].rm_so < 0 || match[1].rm_eo < 0 ||
+            match[1].rm_eo < match[1].rm_so ||
+            match[2].rm_so < 0 || match[2].rm_eo < 0 ||
+            match[2].rm_eo < match[2].rm_so) {
+            fprintf(stderr, "invalid match offsets\n");
+            free(result);
+            regfree(&regex);
+            return NULL;
+        }
+
+        prefix_len = (size_t)match[1].rm_eo;
+        whole_len = (size_t)match[0].rm_eo;
+        if (prefix_len == 0 || whole_len == 0 || prefix_len > whole_len) {
+            fprintf(stderr, "zero-length match progress\n");
+            free(result);
+            regfree(&regex);
+            return NULL;
+        }
+
+        if (checked_append(result, capacity, &length, cursor, prefix_len) != 0) {
+            fprintf(stderr, "insufficient buffer capacity\n");
+            free(result);
+            regfree(&regex);
+            return NULL;
+        }
+        if (checked_append(result, capacity, &length, " ", 1) != 0) {
+            fprintf(stderr, "insufficient buffer capacity\n");
+            free(result);
+            regfree(&regex);
+            return NULL;
+        }
+
+        cursor += prefix_len;
+    }
+
+    {
+        size_t offset = (size_t)(cursor - input);
+        size_t remaining;
+
+        if (offset > input_len) {
+            fprintf(stderr, "internal cursor overflow\n");
+            free(result);
+            regfree(&regex);
+            return NULL;
+        }
+        remaining = input_len - offset;
+
+        if (checked_append(result, capacity, &length, cursor, remaining) != 0) {
+            fprintf(stderr, "insufficient buffer capacity\n");
+            free(result);
+            regfree(&regex);
+            return NULL;
+        }
+        if (checked_append(result, capacity, &length, "", 1) != 0) {
+            fprintf(stderr, "insufficient buffer capacity\n");
+            free(result);
+            regfree(&regex);
+            return NULL;
+        }
+    }
+
+    regfree(&regex);
+    return result;
+}
+
+int main(void)
+{
+    const char *input = "HelloWorldThisIsARegexExample";
+    char *output;
+
+    output = add_spaces_before_capitals(input);
+    if (output == NULL) {
+        fprintf(stderr, "Failed to process input string\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Input:  %s\n", input);
+    printf("Output: %s\n", output);
+
+    free(output);
+    return EXIT_SUCCESS;
+}

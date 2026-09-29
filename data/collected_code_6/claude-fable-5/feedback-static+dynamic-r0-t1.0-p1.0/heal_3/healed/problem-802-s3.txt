@@ -1,0 +1,79 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int count_rotations(const int *arr, int n);
+
+int count_rotations(const int *arr, int n)
+{
+    int low;
+    int high;
+
+    if (arr == NULL || n <= 0) {
+        return -1;
+    }
+
+    low = 0;
+    high = n - 1;
+
+    while (low < high) {
+        int mid = low + (high - low) / 2;
+
+        if (arr[mid] > arr[high]) {
+            low = mid + 1;
+        } else {
+            high = mid;
+        }
+    }
+
+    return low;
+}
+
+int main(void)
+{
+    int arr1[] = {15, 18, 2, 3, 6, 12};
+    int arr2[] = {7, 9, 11, 12, 5};
+    int arr3[] = {1, 2, 3, 4, 5};
+    int n1 = (int)(sizeof(arr1) / sizeof(arr1[0]));
+    int n2 = (int)(sizeof(arr2) / sizeof(arr2[0]));
+    int n3 = (int)(sizeof(arr3) / sizeof(arr3[0]));
+    int result;
+
+    result = count_rotations(arr1, n1);
+    if (result < 0) {
+        fprintf(stderr, "Error computing rotations for arr1\n");
+        return EXIT_FAILURE;
+    }
+    printf("Rotations for arr1: %d\n", result);
+
+    result = count_rotations(arr2, n2);
+    if (result < 0) {
+        fprintf(stderr, "Error computing rotations for arr2\n");
+        return EXIT_FAILURE;
+    }
+    printf("Rotations for arr2: %d\n", result);
+
+    result = count_rotations(arr3, n3);
+    if (result < 0) {
+        fprintf(stderr, "Error computing rotations for arr3\n");
+        return EXIT_FAILURE;
+    }
+    printf("Rotations for arr3: %d\n", result);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the fix:**
+
+The original implementation used an over-complicated approach mixing three different checks per iteration (sorted-subarray shortcut, pivot detection via `next`/`prev` with modular arithmetic, and a directional decision based on `arr[mid] >= arr[low]`). That combination is fragile: the `arr[mid] >= arr[low]` heuristic can steer the search into the wrong half in certain rotation configurations, producing off-by-one results like the reported "expected 2, got 3" failure, and the `% n` wraparound on `prev`/`next` can falsely identify a pivot at the array boundaries.
+
+The rewritten version uses the canonical binary search for the minimum element of a rotated sorted array: compare `arr[mid]` against `arr[high]`. If `arr[mid] > arr[high]`, the pivot lies strictly to the right; otherwise it lies at `mid` or to the left. The loop invariant guarantees the minimum's index always remains within `[low, high]`, and convergence to `low == high` yields the rotation count directly. This is correct for all rotation offsets (including zero), runs in O(log n), avoids modular arithmetic entirely, and cannot return `-1` for valid input, so the error paths in `main` now only trigger on genuinely invalid arguments (`NULL` pointer or non-positive length).
+
+Expected output:
+
+```
+Rotations for arr1: 2
+Rotations for arr2: 4
+Rotations for arr3: 0
+```

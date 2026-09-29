@@ -1,0 +1,51 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    char** elements;
+    size_t size;
+} tuple;
+
+tuple* stringListToTuple(char** list, size_t length) {
+    if (length == 0) return NULL;
+
+    tuple* result = malloc(sizeof(tuple));
+    if (result == NULL) return NULL;
+
+    result->elements = malloc(length * sizeof(char*));
+    if (result->elements == NULL) {
+        free(result);
+        return NULL;
+    }
+
+    for (size_t i = 0; i < length; i++) {
+        result->elements[i] = list[i];
+    }
+
+    result->size = length;
+    return result;
+}
+
+void freeTuple(tuple* t) {
+    if (t != NULL) {
+        free(t->elements);
+        free(t);
+    }
+}
+
+int main() {
+    char* list[] = {"one", "two", "three"};
+    size_t length = sizeof(list) / sizeof(list[0]);
+    
+    tuple* t = stringListToTuple(list, length);
+    if (t != NULL) {
+        for (size_t i = 0; i < t->size; i++) {
+            printf("%s\n", t->elements[i]);
+        }
+        freeTuple(t);
+    }
+
+    return 0;
+}
+```

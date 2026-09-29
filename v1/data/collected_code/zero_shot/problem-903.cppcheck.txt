@@ -1,0 +1,12 @@
+collected_code/problem-903-0.c:7:27: error: Signed integer overflow for expression '1<<bit'. [integerOverflow]
+            if ((num & (1 << bit)) == 0) {
+                          ^
+collected_code/problem-903-0.c:6:31: note: Assuming that condition 'bit<sizeof(int)*8' is not redundant
+        for (int bit = 0; bit < sizeof(int) * 8; bit++) {
+                              ^
+collected_code/problem-903-0.c:7:27: note: Integer overflow
+            if ((num & (1 << bit)) == 0) {
+                          ^
+collected_code/problem-903-0.c:18:18: error: Cannot determine that 'n' is initialized [premium-bughuntingUninit]
+    scanf("%d", &n);
+                 ^

@@ -1,0 +1,84 @@
+```c
+#include <stdio.h>
+#include <ctype.h>
+#include <string.h>
+#include <stdlib.h>
+
+#define BUFFER_SIZE 256
+
+struct char_counts {
+    size_t alphabets;
+    size_t digits;
+    size_t specials;
+};
+
+static void count_characters(const char *str, size_t max_len, struct char_counts *counts)
+{
+    size_t i;
+
+    if (counts == NULL) {
+        return;
+    }
+
+    counts->alphabets = 0;
+    counts->digits = 0;
+    counts->specials = 0;
+
+    if (str == NULL) {
+        return;
+    }
+
+    for (i = 0; i < max_len && str[i] != '\0'; i++) {
+        unsigned char c = (unsigned char)str[i];
+
+        if (isalpha(c)) {
+            counts->alphabets++;
+        } else if (isdigit(c)) {
+            counts->digits++;
+        } else if (!isspace(c)) {
+            counts->specials++;
+        }
+    }
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    struct char_counts counts;
+    size_t len;
+
+    printf("Enter a string: ");
+    fflush(stdout);
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+        len--;
+    }
+
+    count_characters(buffer, len, &counts);
+
+    printf("Alphabets: %zu\n", counts.alphabets);
+    printf("Digits: %zu\n", counts.digits);
+    printf("Special characters: %zu\n", counts.specials);
+
+    return EXIT_SUCCESS;
+}
+```
+
+The original source already addressed the flagged weakness (CWE-119/CWE-120) correctly, so the rewritten version preserves those mitigations:
+
+- **Bounded input**: `fgets(buffer, sizeof(buffer), stdin)` limits reads to the buffer size, preventing overflow — the classic fix for the Flawfinder `char` array warning.
+- **Guaranteed termination**: `buffer[sizeof(buffer) - 1] = '\0'` is defensive (redundant with `fgets`, but harmless) and `strnlen` bounds the length computation.
+- **Safe character classification**: casting to `unsigned char` before calling `isalpha`/`isdigit`/`isspace` avoids undefined behavior for negative `char` values.
+- **NULL checks**: `count_characters` validates both pointers, and the loop is double-bounded by `max_len` and the NUL terminator.
+- **Error handling**: the `fgets` return value is checked, with a failure path returning `EXIT_FAILURE`.
+
+No functional changes were required — only the removal of comments as requested.

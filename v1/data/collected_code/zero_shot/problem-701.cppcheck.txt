@@ -1,0 +1,9 @@
+collected_code/problem-701-0.c:8:24: error: Cannot determine that 'arr[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        rightSum += arr[i];
+                       ^
+collected_code/problem-701-0.c:12:24: error: Cannot determine that 'arr[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        rightSum -= arr[i];
+                       ^
+collected_code/problem-701-0.c:18:23: error: Cannot determine that 'arr[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        leftSum += arr[i];
+                      ^

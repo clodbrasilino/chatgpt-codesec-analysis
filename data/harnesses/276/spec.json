@@ -1,0 +1,47 @@
+{
+  "task_id": 276,
+  "text": "Write a C function to find the volume of a cylinder.",
+  "fn_candidates": [
+    "volume_cylinder",
+    "VolumeCylinder",
+    "volumeCylinder",
+    "volumecylinder"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "volume_cylinder",
+      "args": [
+        10,
+        5
+      ],
+      "expected": 1570.7500000000002,
+      "assert_src": "assert volume_cylinder(10,5)==1570.7500000000002"
+    },
+    {
+      "fn_name": "volume_cylinder",
+      "args": [
+        4,
+        5
+      ],
+      "expected": 251.32000000000002,
+      "assert_src": "assert volume_cylinder(4,5)==251.32000000000002"
+    },
+    {
+      "fn_name": "volume_cylinder",
+      "args": [
+        4,
+        10
+      ],
+      "expected": 502.64000000000004,
+      "assert_src": "assert volume_cylinder(4,10)==502.64000000000004"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "float",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

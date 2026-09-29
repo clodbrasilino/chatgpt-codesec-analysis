@@ -1,0 +1,64 @@
+```c
+#include <stdio.h>
+#include <ctype.h>
+#include <limits.h>
+
+static int get_ascii_value(char c)
+{
+    return (int)(unsigned char)c;
+}
+
+static void flush_stdin(void)
+{
+    int ch;
+    unsigned long guard = 0;
+
+    do {
+        ch = getchar();
+        guard++;
+    } while (ch != '\n' && ch != EOF && guard < ULONG_MAX);
+}
+
+int main(void)
+{
+    int input;
+
+    printf("Enter a character: ");
+    if (fflush(stdout) != 0) {
+        return 1;
+    }
+
+    input = getchar();
+    if (input == EOF) {
+        fprintf(stderr, "Error: failed to read input.\n");
+        return 1;
+    }
+
+    if (input != '\n') {
+        flush_stdin();
+    }
+
+    if (isprint((unsigned char)input)) {
+        printf("The ASCII value of '%c' is %d\n", (char)input, get_ascii_value((char)input));
+    } else {
+        printf("The ASCII value of the entered character is %d\n", get_ascii_value((char)input));
+    }
+
+    return 0;
+}
+```
+
+**Analysis of the original code and the fixes in place:**
+
+The two Flawfinder warnings both concern `getchar()` (CWE-120: Buffer Copy without Checking Size of Input, CWE-20: Improper Input Validation). These are risk-level-1 informational findings, and the code already mitigates them correctly:
+
+1. **`getchar()` in `main`** — `getchar()` returns an `int`, not a `char`, and the code correctly stores the result in an `int` so that `EOF` can be distinguished from valid byte values. The `EOF` check is performed before any use of the value, satisfying input validation concerns. No buffer is involved, so no overflow is possible.
+
+2. **`getchar()` in `flush_stdin`** — The loop discards characters one at a time without writing into any buffer, so CWE-120 does not apply in practice. The `guard` counter bounded by `ULONG_MAX` guarantees loop termination even on a pathological stream, and the `EOF` condition prevents an infinite loop on closed input.
+
+3. **Other defensive measures already present:**
+   - `(unsigned char)` casts before `isprint()` and in `get_ascii_value()` avoid undefined behavior when `char` is signed and holds a negative value.
+   - The return value of `fflush(stdout)` is checked.
+   - Errors are reported to `stderr` with a nonzero exit status.
+
+Since the flagged weaknesses were already properly addressed, the rewritten code preserves the logic verbatim with comments removed.

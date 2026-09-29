@@ -1,0 +1,78 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    int *data;
+    size_t size;
+} Tuple;
+
+List *tupleToList(Tuple *t, const char *str) {
+    if (t == NULL || t->data == NULL || str == NULL) return NULL;
+
+    List *list = (List *)malloc(sizeof(List));
+    if (list == NULL) return NULL;
+
+    list->size = 0;
+    list->capacity = t->size * 2;
+
+    list->elements = (char **)malloc(list->capacity * sizeof(char *));
+    if (list->elements == NULL) {
+        free(list);
+        return NULL;
+    }
+
+    for (size_t i = 0; i < t->size; ++i) {
+        char *element = (char *)malloc((sizeof(int) + strlen(str) + 1) * sizeof(char));
+        if (element == NULL) {
+            for (size_t j = 0; j < list->size; ++j) {
+                free(list->elements[j]);
+            }
+            free(list->elements);
+            free(list);
+            return NULL;
+        }
+
+        sprintf(element, "%d%s", t->data[i], str);
+
+        list->elements[list->size++] = element;
+    }
+
+    return list;
+}
+
+int main() {
+    Tuple t;
+    t.size = 3;
+    t.data = (int *)malloc(t.size * sizeof(int));
+    t.data[0] = 1;
+    t.data[1] = 2;
+    t.data[2] = 3;
+
+    const char *separator = "X";
+    List *list = tupleToList(&t, separator);
+
+    if (list != NULL) {
+        for (size_t i = 0; i < list->size; ++i) {
+            printf("%s\n", list->elements[i]);
+            free(list->elements[i]);
+        }
+        free(list->elements);
+        free(list);
+    }
+
+    free(t.data);
+    return 0;
+}
+```
+
+Note: The `List` structure and its associated fields (`size`, `capacity`, and `elements`) are assumed to be defined elsewhere. If they are not, you need to define them as follows:
+
+```c
+typedef struct {
+    char **elements;
+    size_t size;
+    size_t capacity;
+} List;
+```

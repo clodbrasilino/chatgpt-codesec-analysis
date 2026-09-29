@@ -1,0 +1,8 @@
+collected_code_3/problem-325-3.c: In function 'minSquares':
+collected_code_3/problem-325-3.c:16:19: warning: implicit declaration of function 'min' [-Wimplicit-function-declaration]
+   16 |             res = min(res, 1 + minSquares(n - temp));
+      |                   ^~~
+ld: Undefined symbols:
+  _min, referenced from:
+      _minSquares in ccKnlKPv.o
+collect2: error: ld returned 1 exit status

@@ -1,0 +1,81 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+#define IP_PATTERN "^((25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])\\.){3}(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])$"
+
+int is_valid_ip(const char *ip)
+{
+    regex_t regex;
+    int ret;
+
+    if (ip == NULL) {
+        return 0;
+    }
+
+    ret = regcomp(&regex, IP_PATTERN, REG_EXTENDED | REG_NOSUB);
+    if (ret != 0) {
+        size_t errlen = regerror(ret, &regex, NULL, 0);
+        char *errbuf = malloc(errlen);
+        if (errbuf != NULL) {
+            regerror(ret, &regex, errbuf, errlen);
+            fprintf(stderr, "Regex compilation failed: %s\n", errbuf);
+            free(errbuf);
+        } else {
+            fprintf(stderr, "Regex compilation failed\n");
+        }
+        return -1;
+    }
+
+    ret = regexec(&regex, ip, 0, NULL, 0);
+    regfree(&regex);
+
+    if (ret == 0) {
+        return 1;
+    }
+    if (ret == REG_NOMATCH) {
+        return 0;
+    }
+
+    fprintf(stderr, "Regex execution failed\n");
+    return -1;
+}
+
+int main(void)
+{
+    const char *test_ips[] = {
+        "192.168.1.1",
+        "255.255.255.255",
+        "0.0.0.0",
+        "256.1.1.1",
+        "192.168.1",
+        "192.168.1.1.1",
+        "abc.def.ghi.jkl",
+        "10.0.0.01",
+        "1.2.3.4"
+    };
+    size_t count = sizeof(test_ips) / sizeof(test_ips[0]);
+    size_t i;
+
+    for (i = 0; i < count; i++) {
+        int result = is_valid_ip(test_ips[i]);
+        if (result < 0) {
+            fprintf(stderr, "Error validating %s\n", test_ips[i]);
+            return EXIT_FAILURE;
+        }
+        printf("%s is %s\n", test_ips[i], result ? "valid" : "invalid");
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Key changes made:**
+
+1. **CWE-119/CWE-120 (statically-sized `errbuf`)**: Replaced the fixed 256-byte stack buffer with a dynamically allocated buffer. The size is determined by calling `regerror()` with a `NULL` buffer first, which returns the exact required length including the null terminator. This eliminates any risk of truncation or improper size assumptions, and the allocation failure path is handled gracefully with a fallback message.
+
+2. **Variable scope reduction (`result`)**: Moved the declaration of `result` from function scope into the `for` loop body, limiting its lifetime to a single iteration as recommended by the cppcheck `variableScope` warning.
+
+Everything else (regex pattern, validation logic, return-code semantics of `1`/`0`/`-1`, and proper `regfree()` cleanup) is preserved unchanged, since it was already correct.

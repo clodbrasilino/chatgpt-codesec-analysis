@@ -1,0 +1,92 @@
+{
+  "task_id": 507,
+  "text": "Write a C function to remove specific words from a given list.",
+  "fn_candidates": [
+    "remove_words",
+    "RemoveWords",
+    "removeWords",
+    "removewords"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "remove_words",
+      "args": [
+        [
+          "red",
+          "green",
+          "blue",
+          "white",
+          "black",
+          "orange"
+        ],
+        [
+          "white",
+          "orange"
+        ]
+      ],
+      "expected": [
+        "red",
+        "green",
+        "blue",
+        "black"
+      ],
+      "assert_src": "assert remove_words(['red', 'green', 'blue', 'white', 'black', 'orange'],['white', 'orange'])==['red', 'green', 'blue', 'black']"
+    },
+    {
+      "fn_name": "remove_words",
+      "args": [
+        [
+          "red",
+          "green",
+          "blue",
+          "white",
+          "black",
+          "orange"
+        ],
+        [
+          "black",
+          "orange"
+        ]
+      ],
+      "expected": [
+        "red",
+        "green",
+        "blue",
+        "white"
+      ],
+      "assert_src": "assert remove_words(['red', 'green', 'blue', 'white', 'black', 'orange'],['black', 'orange'])==['red', 'green', 'blue', 'white']"
+    },
+    {
+      "fn_name": "remove_words",
+      "args": [
+        [
+          "red",
+          "green",
+          "blue",
+          "white",
+          "black",
+          "orange"
+        ],
+        [
+          "blue",
+          "white"
+        ]
+      ],
+      "expected": [
+        "red",
+        "green",
+        "black",
+        "orange"
+      ],
+      "assert_src": "assert remove_words(['red', 'green', 'blue', 'white', 'black', 'orange'],['blue', 'white'])==['red', 'green', 'black', 'orange']"
+    }
+  ],
+  "arg_kinds": [
+    "str-list"
+  ],
+  "return_kind": "str-list",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

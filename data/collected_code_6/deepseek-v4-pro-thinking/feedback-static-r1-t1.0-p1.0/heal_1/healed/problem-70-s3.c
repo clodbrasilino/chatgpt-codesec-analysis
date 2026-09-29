@@ -1,0 +1,44 @@
+#include <stdio.h>
+#include <stddef.h>
+#include <stdbool.h>
+
+typedef struct {
+    size_t length;
+} Tuple;
+
+bool tuples_have_equal_length(const Tuple *tuples, size_t count) {
+    if (count == 0) {
+        return true;
+    }
+    if (tuples == NULL) {
+        return false;
+    }
+    size_t first_length = tuples[0].length;
+    for (size_t i = 1; i < count; ++i) {
+        if (tuples[i].length != first_length) {
+            return false;
+        }
+    }
+    return true;
+}
+
+int main(void) {
+    Tuple tuples1[] = {
+        {3},
+        {3},
+        {3}
+    };
+
+    Tuple tuples2[] = {
+        {3},
+        {2}
+    };
+
+    bool result1 = tuples_have_equal_length(tuples1, sizeof(tuples1) / sizeof(tuples1[0]));
+    bool result2 = tuples_have_equal_length(tuples2, sizeof(tuples2) / sizeof(tuples2[0]));
+
+    printf("%s\n", result1 ? "true" : "false");
+    printf("%s\n", result2 ? "true" : "false");
+
+    return 0;
+}

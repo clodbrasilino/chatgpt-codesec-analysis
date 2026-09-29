@@ -1,0 +1,105 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+static void generate_next_palindrome(char *num, int len) {
+    int mid = len / 2;
+    int i = mid - 1;
+    int j = (len % 2 == 0) ? mid : mid + 1;
+    int left_smaller = 0;
+
+    while (i >= 0 && num[i] == num[j]) {
+        i--;
+        j++;
+    }
+
+    if (i < 0 || num[i] < num[j]) {
+        left_smaller = 1;
+    }
+
+    while (i >= 0) {
+        num[j] = num[i];
+        j++;
+        i--;
+    }
+
+    if (left_smaller) {
+        int carry = 1;
+        i = mid - 1;
+
+        if (len % 2 == 1) {
+            int digit = (num[mid] - '0' + carry);
+            carry = digit / 10;
+            num[mid] = (digit % 10) + '0';
+            j = mid + 1;
+        } else {
+            j = mid;
+        }
+
+        while (i >= 0) {
+            int digit = (num[i] - '0' + carry);
+            carry = digit / 10;
+            num[i] = (digit % 10) + '0';
+            num[j++] = num[i--];
+        }
+    }
+}
+
+static void handle_all_nines(char *num, int len) {
+    char *result = malloc(len + 2);
+    if (!result) {
+        return;
+    }
+    result[0] = '1';
+    for (int i = 1; i < len; i++) {
+        result[i] = '0';
+    }
+    result[len] = '1';
+    result[len + 1] = '\0';
+    strcpy(num, result);
+    free(result);
+}
+
+static int is_all_nines(const char *num, int len) {
+    for (int i = 0; i < len; i++) {
+        if (num[i] != '9') {
+            return 0;
+        }
+    }
+    return 1;
+}
+
+char* next_smallest_palindrome(char *num) {
+    int len = strlen(num);
+    if (len == 0) {
+        return num;
+    }
+
+    if (is_all_nines(num, len)) {
+        handle_all_nines(num, len);
+        return num;
+    }
+
+    generate_next_palindrome(num, len);
+    return num;
+}
+
+int main() {
+    char num1[] = "123";
+    char num2[] = "999";
+    char num3[] = "1234";
+    char num4[] = "9999";
+    char num5[] = "100";
+    char num6[] = "12921";
+    char num7[] = "125322";
+
+    printf("Next palindrome of %s is %s\n", "123", next_smallest_palindrome(num1));
+    printf("Next palindrome of %s is %s\n", "999", next_smallest_palindrome(num2));
+    printf("Next palindrome of %s is %s\n", "1234", next_smallest_palindrome(num3));
+    printf("Next palindrome of %s is %s\n", "9999", next_smallest_palindrome(num4));
+    printf("Next palindrome of %s is %s\n", "100", next_smallest_palindrome(num5));
+    printf("Next palindrome of %s is %s\n", "12921", next_smallest_palindrome(num6));
+    printf("Next palindrome of %s is %s\n", "125322", next_smallest_palindrome(num7));
+
+    return 0;
+}

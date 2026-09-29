@@ -1,0 +1,12 @@
+collected_code_3/problem-348-3.c: In function 'countSeqUtil':
+collected_code_3/problem-348-3.c:19:5: warning: implicit declaration of function 'memset' [-Wimplicit-function-declaration]
+   19 |     memset(dp, -1, sizeof dp);
+      |     ^~~~~~
+collected_code_3/problem-348-3.c:2:1: note: include '<string.h>' or provide a declaration of 'memset'
+    1 | #include <stdio.h>
+  +++ |+#include <string.h>
+    2 | #define MAX 100
+collected_code_3/problem-348-3.c:19:5: warning: incompatible implicit declaration of built-in function 'memset' [-Wbuiltin-declaration-mismatch]
+   19 |     memset(dp, -1, sizeof dp);
+      |     ^~~~~~
+collected_code_3/problem-348-3.c:19:5: note: include '<string.h>' or provide a declaration of 'memset'

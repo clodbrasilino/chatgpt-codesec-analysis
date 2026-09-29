@@ -25,7 +25,7 @@ DET = re.compile(r":(high|medium|low):")
 totals = {s: set() for s in SUB}
 totals_sig = set()
 for m in MODELS:
-    d = REPO / "collected_code_6" / m / SLUG
+    d = REPO / "data" / "collected_code_6" / m / SLUG
     per = {s: set() for s in SUB}
     sig = set()
     for s in SUB:

@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_2/healed/problem-482-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_2/healed/problem-482-s3.c:58:17: style: Condition 'len>=buf_size' is always false [knownConditionTrueFalse]
+        if (len >= buf_size)
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_2/healed/problem-482-s3.c:47:13: note: Assuming that condition 'len==65536' is not redundant
+    if (len == MAX_INPUT_LEN)
+            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_2/healed/problem-482-s3.c:52:26: note: Assuming condition is false
+        if (bounded_copy == NULL)
+                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_2/healed/problem-482-s3.c:58:17: note: Condition 'len>=buf_size' is always false
+        if (len >= buf_size)
+                ^

@@ -1,0 +1,49 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <limits.h>
+ /* Possible weaknesses found:
+  *  test case 0 failed: expected 190, got <no output>
+  *  test case 1 failed: expected 45, got <no output>
+  *  test case 2 failed: expected 91, got <no output>
+  */
+
+long hexagonal_number(int n)
+{
+    return (long)n * (2L * n - 1L);
+}
+
+int main(void)
+{
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char input[64];
+    char *end;
+    long value;
+    int n;
+
+    if (fgets(input, sizeof(input), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    errno = 0;
+    value = strtol(input, &end, 10);
+
+    if (errno != 0 || end == input || (*end != '\n' && *end != '\0')) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (value < 1 || value > 30349) {
+        fprintf(stderr, "Input out of range\n");
+        return EXIT_FAILURE;
+    }
+
+    n = (int)value;
+
+    printf("%ld\n", hexagonal_number(n));
+
+    return EXIT_SUCCESS;
+}

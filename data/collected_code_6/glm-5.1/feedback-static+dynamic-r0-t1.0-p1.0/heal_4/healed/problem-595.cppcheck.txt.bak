@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-595.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-595.c:33:31: style: Condition 'c1%2==0' is always true [knownConditionTrueFalse]
+    if (c0 % 2 == 0 && c1 % 2 == 0) {
+                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-595.c:33:16: note: Assuming that condition 'c0%2==0' is not redundant
+    if (c0 % 2 == 0 && c1 % 2 == 0) {
+               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-595.c:29:16: note: Assuming that condition 'c0%2!=c1%2' is not redundant
+    if (c0 % 2 != c1 % 2) {
+               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-595.c:33:31: note: Condition 'c1%2==0' is always true
+    if (c0 % 2 == 0 && c1 % 2 == 0) {
+                              ^

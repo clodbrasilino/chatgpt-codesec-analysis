@@ -1,0 +1,58 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+#include <float.h>
+
+typedef struct {
+    double x;
+    double y;
+} Point;
+
+typedef struct {
+    Point p1;
+    Point p2;
+} Line;
+
+int are_lines_parallel(Line l1, Line l2) {
+    if ((l1.p1.x == l1.p2.x && l1.p1.y == l1.p2.y) || 
+        (l2.p1.x == l2.p2.x && l2.p1.y == l2.p2.y)) {
+        return 0;
+    }
+
+    double dx1 = l1.p2.x - l1.p1.x;
+    double dy1 = l1.p2.y - l1.p1.y;
+    double dx2 = l2.p2.x - l2.p1.x;
+    double dy2 = l2.p2.y - l2.p1.y;
+
+    double cross_product = (dx1 * dy2) - (dy1 * dx2);
+
+    if (fabs(cross_product) < DBL_EPSILON) {
+        return 1;
+    }
+
+    return 0;
+}
+
+int main(void) {
+    Line line1 = { {1.0, 2.0}, {3.0, 4.0} };
+    Line line2 = { {2.0, 4.0}, {4.0, 6.0} };
+
+    if (are_lines_parallel(line1, line2)) {
+        printf("Lines are parallel.\n");
+    } else {
+        printf("Lines are not parallel.\n");
+    }
+
+    Line line3 = { {1.0, 2.0}, {3.0, 4.0} };
+    Line line4 = { {2.0, 4.0}, {3.0, 1.0} };
+
+    if (are_lines_parallel(line3, line4)) {
+        printf("Lines are parallel.\n");
+    } else {
+        printf("Lines are not parallel.\n");
+    }
+
+    return 0;
+}
+```

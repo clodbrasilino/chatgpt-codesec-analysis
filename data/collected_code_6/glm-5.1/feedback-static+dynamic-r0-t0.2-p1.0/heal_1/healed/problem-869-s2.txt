@@ -1,0 +1,127 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int *data;
+    int size;
+    struct Node *next;
+} Node;
+
+Node *create_node(const int *arr, int size) {
+    Node *node = (Node *)malloc(sizeof(Node));
+    if (node == NULL) {
+        return NULL;
+    }
+    node->data = (int *)malloc(size * sizeof(int));
+    if (node->data == NULL) {
+        free(node);
+        return NULL;
+    }
+    for (int i = 0; i < size; i++) {
+        node->data[i] = arr[i];
+    }
+    node->size = size;
+    node->next = NULL;
+    return node;
+}
+
+void free_node(Node *node) {
+    if (node != NULL) {
+        free(node->data);
+        free(node);
+    }
+}
+
+Node *remove_out_of_range(Node *head, int min_val, int max_val) {
+    Node dummy;
+    dummy.next = head;
+    Node *prev = &dummy;
+    Node *curr = head;
+
+    while (curr != NULL) {
+        int out_of_range = 0;
+        for (int i = 0; i < curr->size; i++) {
+            if (curr->data[i] < min_val || curr->data[i] > max_val) {
+                out_of_range = 1;
+                break;
+            }
+        }
+
+        if (out_of_range) {
+            prev->next = curr->next;
+            Node *temp = curr;
+            curr = curr->next;
+            free_node(temp);
+        } else {
+            prev = curr;
+            curr = curr->next;
+        }
+    }
+
+    return dummy.next;
+}
+
+void print_list(Node *head) {
+    Node *curr = head;
+    while (curr != NULL) {
+        printf("[");
+        for (int i = 0; i < curr->size; i++) {
+            printf("%d", curr->data[i]);
+            if (i < curr->size - 1) {
+                printf(", ");
+            }
+        }
+        printf("]\n");
+        curr = curr->next;
+    }
+}
+
+void free_list(Node *head) {
+    Node *curr = head;
+    while (curr != NULL) {
+        Node *temp = curr;
+        curr = curr->next;
+        free_node(temp);
+    }
+}
+
+int main() {
+    int a1[] = {1, 2, 3};
+    int a2[] = {4, 5, 6};
+    int a3[] = {7, 8, 9};
+    int a4[] = {10, 11, 12};
+
+    Node *head = create_node(a1, 3);
+    if (head == NULL) {
+        return 1;
+    }
+    head->next = create_node(a2, 3);
+    if (head->next == NULL) {
+        free_list(head);
+        return 1;
+    }
+    head->next->next = create_node(a3, 3);
+    if (head->next->next == NULL) {
+        free_list(head);
+        return 1;
+    }
+    head->next->next->next = create_node(a4, 3);
+    if (head->next->next->next == NULL) {
+        free_list(head);
+        return 1;
+    }
+
+    printf("Original list:\n");
+    print_list(head);
+
+    int min_val = 3;
+    int max_val = 8;
+    head = remove_out_of_range(head, min_val, max_val);
+
+    printf("\nList after removing sublists outside range [%d, %d]:\n", min_val, max_val);
+    print_list(head);
+
+    free_list(head);
+
+    return 0;
+}

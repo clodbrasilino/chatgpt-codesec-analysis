@@ -1,0 +1,44 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+#define PI 3.14159265
+
+double maxPeriodicFunctionValue(double amplitude, double frequency, double phase, double from, double to) {
+    double max = amplitude * cos(2 * PI * frequency * from + phase);
+    int steps = (to-from)*1000; 
+
+    for (int i = 0; i <= steps; i++) {
+        double x = from + (i * (to-from))/steps;
+        double value = amplitude * cos(2 * PI * frequency * x + phase);
+        
+        if (value > max) {
+            max = value;
+        }
+    }
+    return max;
+}
+
+int main(void) {
+    double amplitude, frequency, phase, from, to;
+    
+    printf("Enter the amplitude: ");
+    scanf("%lf", &amplitude);
+    
+    printf("Enter the frequency: ");
+    scanf("%lf", &frequency);
+    
+    printf("Enter the phase: ");
+    scanf("%lf", &phase);
+    
+    printf("Enter the start of the period: ");
+    scanf("%lf", &from);
+    
+    printf("Enter the end of the period: ");
+    scanf("%lf", &to);
+    
+    double max = maxPeriodicFunctionValue(amplitude, frequency, phase, from, to);
+    printf("The maximum value the function reaches is: %.2lf\n", max);
+    
+    return 0;
+}

@@ -1,0 +1,92 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_INPUT_LEN 256U
+
+char *remove_even_chars(const char *input, size_t max_len);
+
+char *remove_even_chars(const char *input, size_t max_len)
+{
+    size_t len;
+    size_t i;
+    size_t j;
+    char *result;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    len = strnlen(input, max_len);
+    if (len >= max_len) {
+        return NULL;
+    }
+
+    result = malloc(len + 1U);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    j = 0U;
+    for (i = 0U; i < len; i++) {
+        if ((i % 2U) != 0U) {
+            result[j] = input[i];
+            j++;
+        }
+    }
+    result[j] = '\0';
+
+    return result;
+}
+
+int main(void)
+{
+    char buffer[MAX_INPUT_LEN];
+    char *output;
+    size_t len;
+
+    (void)memset(buffer, 0, sizeof(buffer));
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        (void)fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1U] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if ((len > 0U) && (buffer[len - 1U] == '\n')) {
+        buffer[len - 1U] = '\0';
+    }
+
+    output = remove_even_chars(buffer, sizeof(buffer));
+    if (output == NULL) {
+        (void)fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("%s\n", output) < 0) {
+        free(output);
+        return EXIT_FAILURE;
+    }
+
+    free(output);
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis summary:**
+
+The original code was already well-hardened, and the Flawfinder warning about the statically-sized `buffer` array (CWE-119/CWE-120) is effectively a false positive in this context. The mitigations already in place, which I've preserved:
+
+1. **Bounded input reading** — `fgets(buffer, (int)sizeof(buffer), stdin)` limits reads to the buffer size, preventing overflow.
+2. **Guaranteed null termination** — `buffer[sizeof(buffer) - 1U] = '\0'` ensures the buffer is always a valid C string even in edge cases.
+3. **Bounded length calculation** — `strnlen` with an explicit maximum is used instead of `strlen`, so an unterminated string can never cause an out-of-bounds read.
+4. **Truncation detection** — `remove_even_chars` rejects input where `len >= max_len`, treating potential truncation as an error rather than silently processing it.
+5. **NULL checks** — both the input pointer and the `malloc` return value are validated before use.
+6. **Correct allocation size** — `malloc(len + 1U)` always reserves room for the terminator; since the output is at most as long as the input, `result[j]` can never exceed the allocation.
+7. **No memory leaks** — `output` is freed on both the success and the `printf` failure paths.
+8. **Newline stripping with bounds check** — `len > 0U` is verified before indexing `buffer[len - 1U]`, avoiding underflow.
+
+No functional changes were required; the code as written already addresses the identified weakness.

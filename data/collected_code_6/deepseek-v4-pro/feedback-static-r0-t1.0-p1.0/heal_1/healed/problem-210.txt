@@ -1,0 +1,37 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+int is_valid_string(const char *str) {
+    regex_t regex;
+    int ret;
+    const char *pattern = "^[a-zA-Z0-9]+$";
+    
+    ret = regcomp(&regex, pattern, REG_EXTENDED);
+    if (ret) {
+        return 0;
+    }
+    
+    ret = regexec(&regex, str, 0, NULL, 0);
+    regfree(&regex);
+    
+    return ret == 0;
+}
+
+int main(int argc, const char *argv[]) {
+    if (argc != 2) {
+        fprintf(stderr, "Usage: %s <string>\n", argv[0]);
+        return 1;
+    }
+    
+    if (is_valid_string(argv[1])) {
+        printf("Valid string\n");
+    } else {
+        printf("Invalid string\n");
+    }
+    
+    return 0;
+}
+```

@@ -1,0 +1,42 @@
+collected_code/problem-161-0.c: In function 'RemoveElements':
+collected_code/problem-161-0.c:27:22: warning: dereference of NULL 'prev' [CWE-476] [-Wanalyzer-null-dereference]
+   27 |             current1 = prev->next;
+      |             ~~~~~~~~~^~~~~~~~~~~~
+  'RemoveElements': events 1-2
+    |
+    |   11 |     struct Node* prev = NULL;
+    |      |                  ^~~~
+    |      |                  |
+    |      |                  (1) 'prev' is NULL
+    |      |                  (2) 'prev' is NULL
+    |
+  'RemoveElements': events 3-9
+    |
+    |   13 |     while (current1 != NULL) {
+    |      |                     ^
+    |      |                     |
+    |      |                     (3) following 'true' branch (when 'current1' is non-NULL)...
+    |   14 |         struct Node* current2 = list2;
+    |      |                      ~~~~~~~~
+    |      |                      |
+    |      |                      (4) ...to here
+    |......
+    |   20 |         if (current2 != NULL) {
+    |      |            ~         
+    |      |            |
+    |      |            (5) following 'true' branch (when 'current2' is non-NULL)...
+    |   21 |             if (prev == NULL) {
+    |      |                ~     
+    |      |                |
+    |      |                (6) ...to here
+    |      |                (7) following 'true' branch (when 'prev' is NULL)...
+    |   22 |                 *list1 = current1->next;
+    |      |                          ~~~~~~~~~~~~~~
+    |      |                                  |
+    |      |                                  (8) ...to here
+    |......
+    |   27 |             current1 = prev->next;
+    |      |             ~~~~~~~~~~~~~~~~~~~~~
+    |      |                      |
+    |      |                      (9) dereference of NULL 'prev'
+    |

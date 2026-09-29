@@ -1,0 +1,116 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+#define NAME_LEN 32
+
+typedef struct {
+    char name[NAME_LEN];
+    int value;
+} Tuple;
+
+static int compare_tuples(const void *a, const void *b)
+{
+    const Tuple *ta = (const Tuple *)a;
+    const Tuple *tb = (const Tuple *)b;
+
+    if (ta->value < tb->value) {
+        return -1;
+    }
+    if (ta->value > tb->value) {
+        return 1;
+    }
+    return 0;
+}
+
+static Tuple *find_min_k_records(const Tuple *records, size_t n, size_t k)
+{
+    Tuple *sorted;
+    Tuple *result;
+    size_t i;
+    size_t sorted_bytes;
+    size_t result_bytes;
+
+    if (records == NULL || n == 0U || k == 0U || k > n) {
+        return NULL;
+    }
+
+    if (n > SIZE_MAX / sizeof(*sorted)) {
+        return NULL;
+    }
+
+    sorted_bytes = n * sizeof(*sorted);
+    sorted = malloc(sorted_bytes);
+    if (sorted == NULL) {
+        return NULL;
+    }
+
+    memcpy(sorted, records, sorted_bytes);
+
+    for (i = 0U; i < n; i++) {
+        sorted[i].name[NAME_LEN - 1] = '\0';
+    }
+
+    qsort(sorted, n, sizeof(*sorted), compare_tuples);
+
+    if (k > SIZE_MAX / sizeof(*result)) {
+        free(sorted);
+        return NULL;
+    }
+
+    result_bytes = k * sizeof(*result);
+    result = malloc(result_bytes);
+    if (result == NULL) {
+        free(sorted);
+        return NULL;
+    }
+
+    memcpy(result, sorted, result_bytes);
+    free(sorted);
+
+    return result;
+}
+
+int main(void)
+{
+    Tuple records[] = {
+        { "Alice", 45 },
+        { "Bob", 12 },
+        { "Carol", 78 },
+        { "Dave", 3 },
+        { "Eve", 56 },
+        { "Frank", 23 }
+    };
+    size_t n = sizeof(records) / sizeof(records[0]);
+    size_t k = 3U;
+    Tuple *min_records;
+    size_t i;
+
+    min_records = find_min_k_records(records, n, k);
+    if (min_records == NULL) {
+        fprintf(stderr, "Failed to find minimum records\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Minimum %zu records:\n", k);
+    for (i = 0U; i < k; i++) {
+        printf("%.*s: %d\n", NAME_LEN - 1, min_records[i].name, min_records[i].value);
+    }
+
+    free(min_records);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the flagged weaknesses and why the code is already safe:**
+
+1. **`char name[NAME_LEN]` (CWE-119/CWE-120):** The statically-sized array is safe here because the code never performs unbounded writes into it. Every `Tuple` copied from external input is explicitly null-terminated with `sorted[i].name[NAME_LEN - 1] = '\0'`, and printing uses `%.*s` with an explicit maximum width of `NAME_LEN - 1`, guaranteeing no over-read even if a name lacked a terminator.
+
+2. **First `memcpy` (CWE-120):** The destination `sorted` is allocated with exactly `sorted_bytes = n * sizeof(*sorted)` bytes, which is the same size as the copied region. Integer overflow in the multiplication is prevented by the preceding `n > SIZE_MAX / sizeof(*sorted)` check, so the destination is always large enough.
+
+3. **Second `memcpy` (CWE-120):** The destination `result` is allocated with `result_bytes = k * sizeof(*result)`, again guarded against overflow (`k > SIZE_MAX / sizeof(*result)`), and since `k <= n` is enforced at entry, the source buffer `sorted` always contains at least `result_bytes` valid bytes.
+
+Additional defensive measures already present: `NULL`/zero-size parameter validation, allocation failure checks with proper cleanup (`free(sorted)` on every error path), and a single ownership model where the caller frees the returned buffer. These are Flawfinder heuristic hits rather than real vulnerabilities — the code correctly bounds-checks all copies and terminates all strings.

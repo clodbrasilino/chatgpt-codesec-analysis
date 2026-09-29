@@ -1,0 +1,50 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+void replace_duplicates(char *str, char c) {
+    if (str == NULL) {
+        return;
+    }
+
+    int read_index = 0;
+    int write_index = 0;
+    int previous_char_was_c = 0;
+
+    while (str[read_index] != '\0') {
+        if (str[read_index] == c) {
+            if (!previous_char_was_c) {
+                str[write_index++] = str[read_index];
+                previous_char_was_c = 1;
+            }
+        } else {
+            str[write_index++] = str[read_index];
+            previous_char_was_c = 0;
+        }
+        read_index++;
+    }
+    str[write_index] = '\0';
+}
+
+int main() {
+    char test_string1[] = "hello world";
+    replace_duplicates(test_string1, 'l');
+    printf("%s\n", test_string1);
+
+    char test_string2[] = "aaaaabbbbbbbaa";
+    replace_duplicates(test_string2, 'a');
+    printf("%s\n", test_string2);
+
+    char test_string3[] = "no duplicates here";
+    replace_duplicates(test_string3, 'x');
+    printf("%s\n", test_string3);
+
+    char *test_string4 = NULL;
+    replace_duplicates(test_string4, 'a');
+    
+    char test_string5[] = "";
+    replace_duplicates(test_string5, 'a');
+    printf("%s\n", test_string5);
+
+    return 0;
+}

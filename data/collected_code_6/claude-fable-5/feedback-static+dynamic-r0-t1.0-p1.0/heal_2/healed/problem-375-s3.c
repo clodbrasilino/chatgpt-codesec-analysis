@@ -1,0 +1,121 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+static unsigned long long_abs(long value)
+{
+    if (value < 0) {
+        return (unsigned long)(-(value + 1)) + 1UL;
+    }
+    return (unsigned long)value;
+}
+
+long round_to_nearest_multiple(long number, long multiple, int *error)
+{
+    if (multiple == 0) {
+        *error = 1;
+        return 0;
+    }
+
+    *error = 0;
+
+    unsigned long abs_multiple = long_abs(multiple);
+    unsigned long abs_number = long_abs(number);
+    unsigned long remainder = abs_number % abs_multiple;
+
+    if (remainder == 0) {
+        return number;
+    }
+
+    unsigned long toward_zero = abs_number - remainder;
+    unsigned long away_from_zero = toward_zero + abs_multiple;
+    unsigned long dist_toward = remainder;
+    unsigned long dist_away = abs_multiple - remainder;
+    unsigned long result_mag;
+
+    if (number < 0) {
+        if (dist_away < dist_toward) {
+            result_mag = away_from_zero;
+        } else {
+            result_mag = toward_zero;
+        }
+
+        if (result_mag > (unsigned long)LONG_MAX + 1UL) {
+            *error = 1;
+            return 0;
+        }
+
+        if (result_mag == (unsigned long)LONG_MAX + 1UL) {
+            return LONG_MIN;
+        }
+
+        return -(long)result_mag;
+    } else {
+        if (dist_away < dist_toward) {
+            if (away_from_zero < toward_zero) {
+                *error = 1;
+                return 0;
+            }
+            result_mag = away_from_zero;
+        } else {
+            result_mag = toward_zero;
+        }
+
+        if (result_mag > (unsigned long)LONG_MAX) {
+            *error = 1;
+            return 0;
+        }
+
+        return (long)result_mag;
+    }
+}
+
+int main(void)
+{
+    int error;
+    long result;
+
+    result = round_to_nearest_multiple(17, 5, &error);
+    if (error) {
+        printf("Error rounding 17 to multiple of 5\n");
+    } else {
+        printf("17 rounded to nearest multiple of 5: %ld\n", result);
+    }
+
+    result = round_to_nearest_multiple(-17, 5, &error);
+    if (error) {
+        printf("Error rounding -17 to multiple of 5\n");
+    } else {
+        printf("-17 rounded to nearest multiple of 5: %ld\n", result);
+    }
+
+    result = round_to_nearest_multiple(23, -4, &error);
+    if (error) {
+        printf("Error rounding 23 to multiple of -4\n");
+    } else {
+        printf("23 rounded to nearest multiple of -4: %ld\n", result);
+    }
+
+    result = round_to_nearest_multiple(10, 0, &error);
+    if (error) {
+        printf("Error: cannot round to multiple of 0\n");
+    } else {
+        printf("10 rounded to nearest multiple of 0: %ld\n", result);
+    }
+
+    result = round_to_nearest_multiple(LONG_MAX, 10, &error);
+    if (error) {
+        printf("Error: overflow when rounding LONG_MAX to multiple of 10\n");
+    } else {
+        printf("LONG_MAX rounded to nearest multiple of 10: %ld\n", result);
+    }
+
+    result = round_to_nearest_multiple(LONG_MIN, 7, &error);
+    if (error) {
+        printf("Error: overflow when rounding LONG_MIN to multiple of 7\n");
+    } else {
+        printf("LONG_MIN rounded to nearest multiple of 7: %ld\n", result);
+    }
+
+    return 0;
+}

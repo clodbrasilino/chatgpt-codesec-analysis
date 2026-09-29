@@ -1,0 +1,77 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define HEAP_SIZE 100
+
+typedef struct {
+    int data[HEAP_SIZE];
+    int count;
+} MinHeap;
+
+void swap(int *a, int *b)
+{
+    int temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+void heapify(MinHeap *heap, int idx)
+{
+    int smallest = idx;
+    int left = 2 * idx + 1;
+    int right = 2 * idx + 2;
+
+    if(left < heap->count && heap->data[left] < heap->data[smallest])
+        smallest = left;
+
+    if(right < heap->count && heap->data[right] < heap->data[smallest])
+        smallest = right;
+
+    if(smallest != idx)
+    {
+        swap(&heap->data[idx], &heap->data[smallest]);
+        heapify(heap, smallest);
+    }
+}
+
+void insertHeap(MinHeap *heap, int value)
+{
+    if(heap->count == HEAP_SIZE)
+        return;
+
+    heap->count++;
+    int i = heap->count - 1;
+    heap->data[i] = value;
+
+    while(i != 0 && heap->data[(i - 1) / 2] > heap->data[i])
+    {
+        swap(&heap->data[i], &heap->data[(i - 1) / 2]);
+        i = (i - 1) / 2;
+    }
+}
+
+int findMin(MinHeap *heap)
+{
+    if(heap->count == 0)
+        return -1;
+
+    return heap->data[0];
+}
+
+int main()
+{
+    MinHeap heap;
+    heap.count = 0;
+
+    int arr[] = {50, 30, 20, 15, 10, 8, 16};
+    int n = sizeof(arr) / sizeof(arr[0]);
+
+    for(int i = 0; i < n; i++)
+    {
+        insertHeap(&heap, arr[i]);
+    }
+
+    printf("Smallest Value: %d\n", findMin(&heap));
+
+    return 0;
+}

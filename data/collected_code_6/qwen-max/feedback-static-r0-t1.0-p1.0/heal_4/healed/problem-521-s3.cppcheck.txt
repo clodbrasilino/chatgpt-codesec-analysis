@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-521-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-521-s3.c:13:19: style: Condition 'is_scalene(side1,side2,side3)' is always true [knownConditionTrueFalse]
+    if (is_scalene(side1, side2, side3)) {
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-521-s3.c:13:19: note: Calling function 'is_scalene' returns 1
+    if (is_scalene(side1, side2, side3)) {
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-521-s3.c:13:19: note: Condition 'is_scalene(side1,side2,side3)' is always true
+    if (is_scalene(side1, side2, side3)) {
+                  ^

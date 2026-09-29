@@ -1,0 +1,95 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define TUPLE_STRING_SIZE 32U
+
+struct Tuple {
+    int first;
+    double second;
+    char third[TUPLE_STRING_SIZE];
+};
+
+static int tuple_set_third(struct Tuple *t, const char *value)
+{
+    size_t len;
+
+    if ((t == NULL) || (value == NULL)) {
+        return -1;
+    }
+
+    len = strlen(value);
+    if (len >= sizeof(t->third)) {
+        return -1;
+    }
+
+    (void)memcpy(t->third, value, len);
+    t->third[len] = '\0';
+
+    return 0;
+}
+
+char *tuple_to_string(const struct Tuple *t)
+{
+    char *result;
+    int needed;
+
+    if (t == NULL) {
+        return NULL;
+    }
+
+    needed = snprintf(NULL, 0, "(%d, %.2f, %s)", t->first, t->second, t->third);
+    if (needed < 0) {
+        return NULL;
+    }
+
+    result = malloc((size_t)needed + 1U);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    if (snprintf(result, (size_t)needed + 1U, "(%d, %.2f, %s)", t->first, t->second, t->third) < 0) {
+        free(result);
+        return NULL;
+    }
+
+    return result;
+}
+
+int main(void)
+{
+    struct Tuple t;
+    char *str;
+
+    t.first = 42;
+    t.second = 3.14;
+
+    if (tuple_set_third(&t, "hello") != 0) {
+        (void)fprintf(stderr, "Failed to set tuple string field\n");
+        return EXIT_FAILURE;
+    }
+
+    str = tuple_to_string(&t);
+    if (str == NULL) {
+        (void)fprintf(stderr, "Failed to convert tuple to string\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("%s\n", str) < 0) {
+        free(str);
+        return EXIT_FAILURE;
+    }
+
+    free(str);
+    return EXIT_SUCCESS;
+}
+```
+
+The key changes address the identified weaknesses:
+
+1. **CWE-119/CWE-120 (statically-sized array `third[32]`)**: All writes to `t.third` now go through `tuple_set_third()`, which performs explicit bounds checking by verifying the source length fits (including the null terminator) before copying. The buffer size is defined once as a named constant to avoid magic-number mismatches.
+
+2. **CWE-120 (`strncpy` misuse)**: The `strncpy` call is replaced entirely. `strncpy` doesn't guarantee null termination and silently truncates; the replacement uses `strlen` + `memcpy` with an explicit length check and guaranteed `'\0'` termination, failing cleanly rather than truncating.
+
+3. The existing safe patterns are preserved: `snprintf(NULL, 0, ...)` to size the allocation exactly, checked `malloc`, checked return values on `snprintf` and `printf`, and `free` on all exit paths that own the allocation.

@@ -1,0 +1,32 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+double find_division(int *list, int size) {
+    int first_even = -1, first_odd = -1;
+    for (int i = 0; i < size; ++i) {
+        if (first_even == -1 && list[i] % 2 == 0) {
+            first_even = list[i];
+        } else if (first_odd == -1 && list[i] % 2 != 0) {
+            first_odd = list[i];
+        }
+        if (first_even != -1 && first_odd != -1) {
+            break;
+        }
+    }
+    if (first_odd == 0 || first_even == -1 || first_odd == -1) {
+        return 0.0;
+    }
+    return (double)first_even / first_odd;
+}
+
+int main() {
+    int list[] = {3, 5, 2, 8, 7, 4};
+    int size = sizeof(list) / sizeof(list[0]);
+    double result = find_division(list, size);
+    if (result != 0.0) {
+        printf("Division of the first even and odd number: %.2f\n", result);
+    } else {
+        printf("Invalid input or operation.\n");
+    }
+    return 0;
+}

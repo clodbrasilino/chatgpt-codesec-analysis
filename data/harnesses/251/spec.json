@@ -1,0 +1,75 @@
+{
+  "task_id": 251,
+  "text": "Write a C function to insert an element before each element of a list.",
+  "fn_candidates": [
+    "insert_element",
+    "InsertElement",
+    "insertElement",
+    "insertelement"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "insert_element",
+      "args": [
+        [
+          "Red",
+          "Green",
+          "Black"
+        ],
+        "c"
+      ],
+      "expected": [
+        "c",
+        "Red",
+        "c",
+        "Green",
+        "c",
+        "Black"
+      ],
+      "assert_src": "assert insert_element(['Red', 'Green', 'Black'] ,'c')==['c', 'Red', 'c', 'Green', 'c', 'Black'] "
+    },
+    {
+      "fn_name": "insert_element",
+      "args": [
+        [
+          "python",
+          "java"
+        ],
+        "program"
+      ],
+      "expected": [
+        "program",
+        "python",
+        "program",
+        "java"
+      ],
+      "assert_src": "assert insert_element(['python', 'java'] ,'program')==['program', 'python', 'program', 'java'] "
+    },
+    {
+      "fn_name": "insert_element",
+      "args": [
+        [
+          "happy",
+          "sad"
+        ],
+        "laugh"
+      ],
+      "expected": [
+        "laugh",
+        "happy",
+        "laugh",
+        "sad"
+      ],
+      "assert_src": "assert insert_element(['happy', 'sad'] ,'laugh')==['laugh', 'happy', 'laugh', 'sad'] "
+    }
+  ],
+  "arg_kinds": [
+    "str",
+    "str-list"
+  ],
+  "return_kind": "str-list",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

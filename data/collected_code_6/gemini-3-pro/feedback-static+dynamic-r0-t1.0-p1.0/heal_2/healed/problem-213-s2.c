@@ -1,0 +1,85 @@
+#if defined(__linux__) || defined(__APPLE__)
+#define _POSIX_C_SOURCE 200809L
+#endif
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#ifndef STR_MAX_LEN
+#define STR_MAX_LEN 4096
+#endif
+
+typedef struct {
+    char *first;
+    char *second;
+} StringTuple;
+
+StringTuple* concatenate_tuples(const StringTuple *tuple1, const StringTuple *tuple2) {
+    size_t len1, len2;
+    StringTuple *result;
+
+    if (tuple1 == NULL || tuple2 == NULL) {
+        return NULL;
+    }
+
+    if (tuple1->first == NULL || tuple1->second == NULL || 
+        tuple2->first == NULL || tuple2->second == NULL) {
+        return NULL;
+    }
+
+    result = (StringTuple *)malloc(sizeof(StringTuple));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    len1 = strnlen(tuple1->first, STR_MAX_LEN) + strnlen(tuple2->first, STR_MAX_LEN) + 1;
+    len2 = strnlen(tuple1->second, STR_MAX_LEN) + strnlen(tuple2->second, STR_MAX_LEN) + 1;
+
+    result->first = (char *)malloc(len1);
+    if (result->first == NULL) {
+        free(result);
+        return NULL;
+    }
+
+    result->second = (char *)malloc(len2);
+    if (result->second == NULL) {
+        free(result->first);
+        free(result);
+        return NULL;
+    }
+
+    snprintf(result->first, len1, "%s%s", tuple1->first, tuple2->first);
+    snprintf(result->second, len2, "%s%s", tuple1->second, tuple2->second);
+
+    return result;
+}
+
+void free_tuple(StringTuple *tuple) {
+    if (tuple != NULL) {
+        if (tuple->first != NULL) {
+            free(tuple->first);
+        }
+        if (tuple->second != NULL) {
+            free(tuple->second);
+        }
+        free(tuple);
+    }
+}
+
+int main(void) {
+    StringTuple t1 = {"Hello", "Open"};
+    StringTuple t2 = {"World", "AI"};
+
+    StringTuple *result = concatenate_tuples(&t1, &t2);
+
+    if (result != NULL) {
+        printf("First: %s\n", result->first);
+        printf("Second: %s\n", result->second);
+        free_tuple(result);
+    } else {
+        printf("Failed to concatenate tuples.\n");
+    }
+
+    return 0;
+}

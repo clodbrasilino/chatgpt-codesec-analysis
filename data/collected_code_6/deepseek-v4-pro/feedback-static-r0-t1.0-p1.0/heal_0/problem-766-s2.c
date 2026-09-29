@@ -1,0 +1,95 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node *next;
+} Node;
+
+typedef struct List {
+    Node *head;
+    size_t length;
+} List;
+
+List *list_create(void) {
+    List *list = (List *)malloc(sizeof(List));
+    if (list == NULL) {
+        return NULL;
+    }
+    list->head = NULL;
+    list->length = 0;
+    return list;
+}
+
+int list_append(List *list, int data) {
+    if (list == NULL) {
+        return -1;
+    }
+    Node *new_node = (Node *)malloc(sizeof(Node));
+    if (new_node == NULL) {
+        return -1;
+    }
+    new_node->data = data;
+    new_node->next = NULL;
+    if (list->head == NULL) {
+        list->head = new_node;
+    } else {
+        Node *current = list->head;
+        while (current->next != NULL) {
+            current = current->next;
+        }
+        current->next = new_node;
+    }
+    list->length++;
+    return 0;
+}
+
+void list_destroy(List *list) {
+    if (list == NULL) {
+        return;
+    }
+    Node *current = list->head;
+    while (current != NULL) {
+        Node *next = current->next;
+        free(current);
+        current = next;
+    }
+    free(list);
+}
+
+void iterate_consecutive_pairs(List *list, void (*callback)(int, int)) {
+    if (list == NULL || callback == NULL || list->head == NULL) {
+        return;
+    }
+    Node *current = list->head;
+    while (current->next != NULL) {
+        callback(current->data, current->next->data);
+        current = current->next;
+    }
+}
+
+void print_pair(int first, int second) {
+    printf("(%d, %d)\n", first, second);
+}
+
+int main(void) {
+    List *list = list_create();
+    if (list == NULL) {
+        return 1;
+    }
+    
+    int values[] = {10, 20, 30, 40, 50};
+    size_t num_values = sizeof(values) / sizeof(values[0]);
+    
+    for (size_t i = 0; i < num_values; i++) {
+        if (list_append(list, values[i]) != 0) {
+            list_destroy(list);
+            return 1;
+        }
+    }
+    
+    iterate_consecutive_pairs(list, print_pair);
+    
+    list_destroy(list);
+    return 0;
+}

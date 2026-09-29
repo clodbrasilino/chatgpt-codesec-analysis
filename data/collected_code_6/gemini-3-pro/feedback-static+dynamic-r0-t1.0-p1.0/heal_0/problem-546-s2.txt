@@ -1,0 +1,49 @@
+```c
+#include <stdio.h>
+#include <string.h>
+
+char* find_last_occurrence(const char *str, int c) {
+    if (str == NULL) {
+        return NULL;
+    }
+    
+    const char *last_occurrence = NULL;
+    
+    while (*str != '\0') {
+        if (*str == (char)c) {
+            last_occurrence = str;
+        }
+        str++;
+    }
+    
+    if ((char)c == '\0') {
+        return (char *)str;
+    }
+    
+    return (char *)last_occurrence;
+}
+
+int main(void) {
+    const char *test_string = "hello world";
+    char target = 'o';
+    
+    char *result = find_last_occurrence(test_string, target);
+    
+    if (result != NULL) {
+        printf("Last occurrence of '%c' found at index %td\n", target, result - test_string);
+    } else {
+        printf("Character '%c' not found.\n", target);
+    }
+    
+    target = 'z';
+    result = find_last_occurrence(test_string, target);
+    
+    if (result != NULL) {
+        printf("Last occurrence of '%c' found at index %td\n", target, result - test_string);
+    } else {
+        printf("Character '%c' not found.\n", target);
+    }
+    
+    return 0;
+}
+```

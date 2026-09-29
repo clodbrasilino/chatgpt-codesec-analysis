@@ -1,0 +1,45 @@
+Here is a simple example of a C program that removes a nested record from a given tuple. In this case, the tuple is represented as a struct and the nested record is another struct within the main struct. The function `removeNestedRecord` sets the nested record to an empty state.
+
+```c
+#include <stdio.h>
+#include <string.h>
+
+typedef struct {
+    char name[50];
+    int age;
+} NestedRecord;
+
+typedef struct {
+    int id;
+    NestedRecord record;
+} Tuple;
+
+void removeNestedRecord(Tuple* tuple) {
+    strcpy(tuple->record.name, "");
+    tuple->record.age = 0;
+}
+
+int main() {
+    Tuple tuple;
+    tuple.id = 1;
+    strcpy(tuple.record.name, "John Doe");
+    tuple.record.age = 30;
+
+    printf("Before removing nested record: %s, %d\n", tuple.record.name, tuple.record.age);
+
+    removeNestedRecord(&tuple);
+
+    printf("After removing nested record: %s, %d\n", tuple.record.name, tuple.record.age);
+
+    return 0;
+}
+```
+
+This program will print:
+
+```
+Before removing nested record: John Doe, 30
+After removing nested record: , 0
+```
+
+This demonstrates that the nested record has been removed.

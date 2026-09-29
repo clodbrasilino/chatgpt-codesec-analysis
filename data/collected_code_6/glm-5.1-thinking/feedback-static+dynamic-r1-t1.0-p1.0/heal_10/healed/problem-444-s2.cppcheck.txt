@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_10/healed/problem-444-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_10/healed/problem-444-s2.c:35:32: style: The comparison 'alloc_size > dest_size' is always false because 'alloc_size' and 'dest_size' represent the same value. [knownConditionTrueFalse]
+                if (alloc_size > dest_size || alloc_size > src_size) {
+                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_10/healed/problem-444-s2.c:33:36: note: 'dest_size' is assigned value 'alloc_size' here.
+                size_t dest_size = alloc_size;
+                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_10/healed/problem-444-s2.c:35:32: note: The comparison 'alloc_size > dest_size' is always false because 'alloc_size' and 'dest_size' represent the same value.
+                if (alloc_size > dest_size || alloc_size > src_size) {
+                               ^

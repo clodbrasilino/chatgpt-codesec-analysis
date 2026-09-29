@@ -1,0 +1,38 @@
+./collected_code_4/round1//heal_1/healed//problem-722.c: In function 'filterStudents':
+./collected_code_4/round1//heal_1/healed//problem-722.c:35:10: warning: leak of 'filteredStudents' [CWE-401] [-Wanalyzer-malloc-leak]
+   35 |   return temp;
+      |          ^~~~
+  'filterStudents': events 1-8
+    |
+    |   10 |   Student* filteredStudents = malloc(size * sizeof(Student));
+    |      |                               ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                               |
+    |      |                               (1) allocated here
+    |   11 | 
+    |   12 |   if (!filteredStudents) {
+    |      |      ~                         
+    |      |      |
+    |      |      (2) assuming 'filteredStudents' is non-NULL
+    |      |      (3) following 'false' branch (when 'filteredStudents' is non-NULL)...
+    |......
+    |   17 |   int j = 0;
+    |      |       ~                        
+    |      |       |
+    |      |       (4) ...to here
+    |......
+    |   27 |   Student* temp = realloc(filteredStudents, j * sizeof(Student));
+    |      |                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                   |
+    |      |                   (5) when 'realloc' fails
+    |   28 | 
+    |   29 |   if (j > 0 && !temp) {
+    |      |      ~                         
+    |      |      |
+    |      |      (6) following 'false' branch (when 'j <= 0')...
+    |......
+    |   35 |   return temp;
+    |      |          ~~~~                  
+    |      |          |
+    |      |          (7) ...to here
+    |      |          (8) 'filteredStudents' leaks here; was allocated at (1)
+    |

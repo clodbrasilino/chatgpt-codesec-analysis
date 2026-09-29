@@ -1,0 +1,79 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+void sort_array(int *arr, int size) {
+    for (int i = 0; i < size - 1; i++) {
+        for (int j = 0; j < size - i - 1; j++) {
+            if (arr[j] > arr[j + 1]) {
+                int temp = arr[j];
+                arr[j] = arr[j + 1];
+                arr[j + 1] = temp;
+            }
+        }
+    }
+}
+
+int extract_max_min_k(const int *tuple, int size, int k, int *max_k, int *min_k) {
+    if (tuple == NULL || max_k == NULL || min_k == NULL) {
+        return -1;
+    }
+    if (size <= 0 || k <= 0 || k > size) {
+        return -1;
+    }
+
+    int *temp_tuple = (int *)malloc(size * sizeof(int));
+    if (temp_tuple == NULL) {
+        return -1;
+    }
+
+    for (int i = 0; i < size; i++) {
+        temp_tuple[i] = tuple[i];
+    }
+
+    sort_array(temp_tuple, size);
+
+    for (int i = 0; i < k; i++) {
+        min_k[i] = temp_tuple[i];
+    }
+
+    for (int i = 0; i < k; i++) {
+        max_k[i] = temp_tuple[size - 1 - i];
+    }
+
+    free(temp_tuple);
+    return 0;
+}
+
+int main() {
+    int tuple[] = {12, 3, 5, 7, 19, 1, 8, 20};
+    int size = sizeof(tuple) / sizeof(tuple[0]);
+    int k = 3;
+
+    int *max_k = (int *)malloc(k * sizeof(int));
+    int *min_k = (int *)malloc(k * sizeof(int));
+
+    if (max_k == NULL || min_k == NULL) {
+        if (max_k != NULL) free(max_k);
+        if (min_k != NULL) free(min_k);
+        return 1;
+    }
+
+    if (extract_max_min_k(tuple, size, k, max_k, min_k) == 0) {
+        for (int i = 0; i < k; i++) {
+            printf("%d ", min_k[i]);
+        }
+        printf("\n");
+
+        for (int i = 0; i < k; i++) {
+            printf("%d ", max_k[i]);
+        }
+        printf("\n");
+    }
+
+    free(max_k);
+    free(min_k);
+
+    return 0;
+}
+```

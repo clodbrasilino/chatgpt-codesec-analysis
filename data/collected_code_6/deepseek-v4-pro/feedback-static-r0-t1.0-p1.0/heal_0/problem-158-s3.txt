@@ -1,0 +1,77 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int findOperations(int *arr, int n, int k) {
+    if (arr == NULL || n <= 0 || k <= 0 || k > n) {
+        return -1;
+    }
+
+    int *temp = (int *)malloc(n * sizeof(int));
+    if (temp == NULL) {
+        return -1;
+    }
+
+    for (int i = 0; i < n; i++) {
+        temp[i] = arr[i];
+    }
+
+    int maxFreq = 0;
+    int *freq = (int *)calloc(n, sizeof(int));
+    if (freq == NULL) {
+        free(temp);
+        return -1;
+    }
+
+    for (int i = 0; i < n; i++) {
+        freq[i] = 1;
+        for (int j = i + 1; j < n; j++) {
+            if (temp[j] == temp[i]) {
+                freq[i]++;
+                temp[j] = temp[i] - 1;
+            }
+        }
+        if (freq[i] > maxFreq) {
+            maxFreq = freq[i];
+        }
+    }
+
+    free(temp);
+    free(freq);
+
+    if (maxFreq >= k) {
+        return 0;
+    }
+
+    return k - maxFreq;
+}
+
+int main(void) {
+    int arr[] = {1, 2, 2, 3};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    int k = 3;
+
+    int operations = findOperations(arr, n, k);
+    printf("%d\n", operations);
+
+    int arr2[] = {5, 5, 5, 5};
+    int n2 = sizeof(arr2) / sizeof(arr2[0]);
+    int k2 = 2;
+    int operations2 = findOperations(arr2, n2, k2);
+    printf("%d\n", operations2);
+
+    int arr3[] = {1, 2, 3, 4};
+    int n3 = sizeof(arr3) / sizeof(arr3[0]);
+    int k3 = 2;
+    int operations3 = findOperations(arr3, n3, k3);
+    printf("%d\n", operations3);
+
+    int *arr4 = NULL;
+    int n4 = 0;
+    int k4 = 1;
+    int operations4 = findOperations(arr4, n4, k4);
+    printf("%d\n", operations4);
+
+    return 0;
+}
+```

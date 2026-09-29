@@ -1,0 +1,47 @@
+{
+  "task_id": 885,
+  "text": "Write a C function to check whether the two given strings are isomorphic to each other or not.",
+  "fn_candidates": [
+    "is_Isomorphic",
+    "IsIsomorphic",
+    "isIsomorphic",
+    "isIsomorphic"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "is_Isomorphic",
+      "args": [
+        "paper",
+        "title"
+      ],
+      "expected": true,
+      "assert_src": "assert is_Isomorphic(\"paper\",\"title\") == True"
+    },
+    {
+      "fn_name": "is_Isomorphic",
+      "args": [
+        "ab",
+        "ba"
+      ],
+      "expected": true,
+      "assert_src": "assert is_Isomorphic(\"ab\",\"ba\") == True"
+    },
+    {
+      "fn_name": "is_Isomorphic",
+      "args": [
+        "ab",
+        "aa"
+      ],
+      "expected": false,
+      "assert_src": "assert is_Isomorphic(\"ab\",\"aa\") == False"
+    }
+  ],
+  "arg_kinds": [
+    "str"
+  ],
+  "return_kind": "bool",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

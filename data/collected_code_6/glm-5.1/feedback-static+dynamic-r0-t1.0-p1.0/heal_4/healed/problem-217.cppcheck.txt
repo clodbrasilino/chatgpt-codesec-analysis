@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-217.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-217.c:20:26: style: Condition 'i<limit' is always false [knownConditionTrueFalse]
+    for (size_t i = 0; i < limit; i++) {
+                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-217.c:18:30: note: Assignment 'limit=len<256?len:256', assigned value is less than 1
+    size_t limit = len < 256 ? len : 256;
+                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-217.c:20:26: note: Condition 'i<limit' is always false
+    for (size_t i = 0; i < limit; i++) {
+                         ^

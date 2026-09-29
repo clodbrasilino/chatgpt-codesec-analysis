@@ -1,0 +1,79 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+int min_swaps(const char *s1, const char *s2)
+{
+    size_t len1;
+    size_t len2;
+    size_t i;
+    int diff10 = 0;
+    int diff01 = 0;
+
+    if (s1 == NULL || s2 == NULL) {
+        return -1;
+    }
+
+    len1 = strlen(s1);
+    len2 = strlen(s2);
+
+    if (len1 != len2) {
+        return -1;
+    }
+
+    for (i = 0; i < len1; i++) {
+        if ((s1[i] != '0' && s1[i] != '1') || (s2[i] != '0' && s2[i] != '1')) {
+            return -1;
+        }
+        if (s1[i] == '1' && s2[i] == '0') {
+            diff10++;
+        } else if (s1[i] == '0' && s2[i] == '1') {
+            diff01++;
+        }
+    }
+
+    if (diff10 != diff01) {
+        return -1;
+    }
+
+    return diff10;
+}
+
+int main(void)
+{
+    const char *str1 = "1101";
+    const char *str2 = "0011";
+    int result;
+
+    result = min_swaps(str1, str2);
+
+    if (result < 0) {
+        if (printf("Not Possible\n") < 0) {
+            return EXIT_FAILURE;
+        }
+    } else {
+        if (printf("Minimum swaps required: %d\n", result) < 0) {
+            return EXIT_FAILURE;
+        }
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the weakness and fix:**
+
+The reported weakness — `test case 1 failed: expected 'Not Possible', got -1` — indicates the sentinel value `-1` was leaking to the output instead of being translated into the human-readable message. The root cause is not in the algorithm itself but in how the caller handles the return value.
+
+Key points verified in the rewritten version:
+
+1. **Sentinel translation:** `main` never prints the raw return value when it is negative. Any `result < 0` is mapped to the string `"Not Possible"`, which is what the test harness expects.
+
+2. **Correctness of the impossibility check:** For the given inputs `"1101"` and `"0011"`, the counts are `diff10 = 2` and `diff01 = 1`. Since swaps within a string preserve the multiset of characters, unequal mismatch counts (equivalently, unequal counts of `'1'`s between the two strings) make the transformation impossible. Returning `-1` here is correct — the bug was purely presentational.
+
+3. **Defensive checks retained:** `NULL` pointer guards, length equality, and strict validation that both strings contain only `'0'`/`'1'` all remain, each funneling into the same `-1` → `"Not Possible"` path.
+
+4. **I/O error handling:** The return value of `printf` is checked, and the program exits with `EXIT_FAILURE` on stream errors, which is good practice for robust CLI tools.
+
+The program now outputs `Not Possible` for the test case, matching the expected result.

@@ -1,0 +1,37 @@
+```c
+#include <stdio.h>
+
+int countDigits(int number) {
+    int digits = 0;
+    while (number != 0) {
+        number = number / 10;
+        digits++;
+    }
+    return digits;
+}
+
+int checkProduct(int number) {
+    int odd = 1, even = 1, counter = 0;
+    int digits = countDigits(number);
+    while (number != 0) {
+        counter++;
+        if(counter % 2 == 0)
+            even *= number % 10;
+        else
+            odd *= number % 10;
+        number = number / 10;
+    }
+    return odd == even ? 0 : 1;
+}
+
+int main() {
+    int number;
+    printf("Enter a number: ");
+    scanf("%d", &number);
+    if(checkProduct(number)==0)
+        printf("Product of digits at even and odd places are equal.\n");
+    else
+        printf("Product of digits at even and odd places are not equal.\n");
+    return 0;
+}
+```

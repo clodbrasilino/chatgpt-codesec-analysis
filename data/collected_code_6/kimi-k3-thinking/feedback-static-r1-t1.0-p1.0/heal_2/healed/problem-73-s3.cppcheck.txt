@@ -1,0 +1,37 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_2/healed/problem-73-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_2/healed/problem-73-s3.c:129:24: style: Condition 'alloc_size<token_len+1' is always false [knownConditionTrueFalse]
+        if (alloc_size < token_len + 1 || token_len > remaining)
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_2/healed/problem-73-s3.c:128:20: note: alloc_size is assigned 'token_len+1' here.
+        alloc_size = token_len + 1;
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_2/healed/problem-73-s3.c:129:24: note: Condition 'alloc_size<token_len+1' is always false
+        if (alloc_size < token_len + 1 || token_len > remaining)
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_2/healed/problem-73-s3.c:138:63: style: Condition 'alloc_size-token_len<1' is always false [knownConditionTrueFalse]
+        if (token_len >= alloc_size || alloc_size - token_len < 1)
+                                                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_2/healed/problem-73-s3.c:138:23: note: Assuming that condition 'token_len>=alloc_size' is not redundant
+        if (token_len >= alloc_size || alloc_size - token_len < 1)
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_2/healed/problem-73-s3.c:138:63: note: Condition 'alloc_size-token_len<1' is always false
+        if (token_len >= alloc_size || alloc_size - token_len < 1)
+                                                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_2/healed/problem-73-s3.c:184:24: style: Condition 'alloc_size<token_len+1' is always false [knownConditionTrueFalse]
+        if (alloc_size < token_len + 1 || token_len > remaining)
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_2/healed/problem-73-s3.c:183:20: note: alloc_size is assigned 'token_len+1' here.
+        alloc_size = token_len + 1;
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_2/healed/problem-73-s3.c:184:24: note: Condition 'alloc_size<token_len+1' is always false
+        if (alloc_size < token_len + 1 || token_len > remaining)
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_2/healed/problem-73-s3.c:193:63: style: Condition 'alloc_size-token_len<1' is always false [knownConditionTrueFalse]
+        if (token_len >= alloc_size || alloc_size - token_len < 1)
+                                                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_2/healed/problem-73-s3.c:193:23: note: Assuming that condition 'token_len>=alloc_size' is not redundant
+        if (token_len >= alloc_size || alloc_size - token_len < 1)
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_2/healed/problem-73-s3.c:193:63: note: Condition 'alloc_size-token_len<1' is always false
+        if (token_len >= alloc_size || alloc_size - token_len < 1)
+                                                              ^

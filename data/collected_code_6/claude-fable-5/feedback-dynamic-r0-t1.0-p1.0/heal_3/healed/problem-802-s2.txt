@@ -1,0 +1,82 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int count_rotations(const int *arr, size_t n)
+{
+    size_t low;
+    size_t high;
+    size_t mid;
+
+    if (arr == NULL || n == 0U) {
+        return -1;
+    }
+
+    low = 0U;
+    high = n - 1U;
+
+    while (low < high) {
+        if (arr[low] <= arr[high]) {
+            return (int)low;
+        }
+
+        mid = low + ((high - low) / 2U);
+
+        if (arr[mid] > arr[high]) {
+            low = mid + 1U;
+        } else {
+            high = mid;
+        }
+    }
+
+    return (int)low;
+}
+
+int main(void)
+{
+    int arr1[] = {15, 18, 2, 3, 6, 12};
+    int arr2[] = {7, 9, 11, 12, 5};
+    int arr3[] = {1, 2, 3, 4, 5};
+    int result;
+
+    result = count_rotations(arr1, sizeof(arr1) / sizeof(arr1[0]));
+    if (result < 0) {
+        fprintf(stderr, "Error computing rotations for arr1\n");
+        return EXIT_FAILURE;
+    }
+    printf("Rotations for arr1: %d\n", result);
+
+    result = count_rotations(arr2, sizeof(arr2) / sizeof(arr2[0]));
+    if (result < 0) {
+        fprintf(stderr, "Error computing rotations for arr2\n");
+        return EXIT_FAILURE;
+    }
+    printf("Rotations for arr2: %d\n", result);
+
+    result = count_rotations(arr3, sizeof(arr3) / sizeof(arr3[0]));
+    if (result < 0) {
+        fprintf(stderr, "Error computing rotations for arr3\n");
+        return EXIT_FAILURE;
+    }
+    printf("Rotations for arr3: %d\n", result);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The comment claimed test case 1 failed (expected 2, got 3), suggesting an off-by-one error in the binary search boundary updates. Tracing the algorithm against `arr1 = {15, 18, 2, 3, 6, 12}`:
+
+- Iteration 1: `low=0`, `high=5`; `arr[0]=15 > arr[5]=12`, so no early return; `mid=2`; `arr[2]=2 > arr[5]=12` is false → `high=2`
+- Iteration 2: `low=0`, `high=2`; `arr[0]=15 > arr[2]=2`; `mid=1`; `arr[1]=18 > arr[2]=2` is true → `low=3`... no, `low=mid+1=2`
+- Loop exits with `low == high == 2` → returns **2** ✓
+
+The critical correctness points that must be preserved (and where the "got 3" bug typically originates in broken variants):
+
+1. **Compare `arr[mid]` against `arr[high]`**, not `arr[low]` — comparing against `arr[low]` is ambiguous when the left half is sorted.
+2. **`high = mid`**, not `high = mid - 1` — since `arr[mid]` itself could be the minimum, excluding it skips the pivot and returns an index one too high (the classic "expected 2, got 3" symptom).
+3. **`low = mid + 1`** when `arr[mid] > arr[high]` — the minimum is strictly to the right, so `mid` can be safely excluded.
+4. The early-exit check `arr[low] <= arr[high]` correctly handles the fully-sorted subarray case (`arr3` returns 0).
+
+The NULL/zero-length guard returning `-1` and the `size_t` midpoint calculation `low + (high - low) / 2` (avoiding overflow) are also sound and retained.

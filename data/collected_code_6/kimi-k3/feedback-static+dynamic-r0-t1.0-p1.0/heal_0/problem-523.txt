@@ -1,0 +1,53 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+
+int check_string(const char *str, size_t length) {
+    int has_upper = 0;
+    int has_lower = 0;
+    int has_digit = 0;
+    size_t str_len;
+    size_t i;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    str_len = strlen(str);
+
+    if (str_len != length) {
+        return 0;
+    }
+
+    for (i = 0; i < str_len; i++) {
+        if (isupper((unsigned char)str[i])) {
+            has_upper = 1;
+        }
+        if (islower((unsigned char)str[i])) {
+            has_lower = 1;
+        }
+        if (isdigit((unsigned char)str[i])) {
+            has_digit = 1;
+        }
+    }
+
+    return (has_upper && has_lower && has_digit);
+}
+
+int main(void) {
+    const char *test1 = "Hello123";
+    const char *test2 = "hello123";
+    const char *test3 = "HELLO123";
+    const char *test4 = "HelloWorld";
+    const char *test5 = "Hello1";
+
+    printf("Test1: %d\n", check_string(test1, 8));
+    printf("Test2: %d\n", check_string(test2, 8));
+    printf("Test3: %d\n", check_string(test3, 8));
+    printf("Test4: %d\n", check_string(test4, 10));
+    printf("Test5: %d\n", check_string(test5, 8));
+
+    return 0;
+}
+```

@@ -1,0 +1,33 @@
+```c
+#include <stdio.h>
+#include <limits.h>
+
+int findMaxValueFrequency(const int *arr, int n) {
+    int max_val = INT_MIN;
+    int freq = 0;
+
+    if (n <= 0) {
+        return 0;
+    }
+
+    for (int i = 0; i < n; ++i) {
+        if (arr[i] > max_val) {
+            max_val = arr[i];
+            freq = 1;
+        } else if (arr[i] == max_val) {
+            ++freq;
+        }
+    }
+
+    return freq;
+}
+
+int main() {
+    int arr[] = {3, 5, 2, 5, 7, 7, 7, 8, 8, 8, 8};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    int frequency = findMaxValueFrequency(arr, n);
+
+    printf("Frequency of the largest value: %d\n", frequency);
+    return 0;
+}
+```

@@ -1,0 +1,118 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define KEY_SIZE 64
+
+typedef struct {
+    char key[KEY_SIZE];
+    int value;
+} Counter;
+
+static size_t bounded_length(const char *source, size_t max_len)
+{
+    size_t len = 0U;
+
+    while (len < max_len && source[len] != '\0') {
+        len++;
+    }
+    return len;
+}
+
+static int safe_set_key(Counter *counter, const char *source)
+{
+    size_t len;
+
+    if (counter == NULL || source == NULL) {
+        return -1;
+    }
+
+    len = bounded_length(source, sizeof(counter->key));
+    if (len >= sizeof(counter->key)) {
+        return -1;
+    }
+
+    memcpy(counter->key, source, len);
+    counter->key[len] = '\0';
+    return 0;
+}
+
+static int compare_by_value(const void *a, const void *b)
+{
+    const Counter *ca = (const Counter *)a;
+    const Counter *cb = (const Counter *)b;
+
+    if (ca->value < cb->value) {
+        return 1;
+    }
+    if (ca->value > cb->value) {
+        return -1;
+    }
+    return strcmp(ca->key, cb->key);
+}
+
+static int sort_counter_by_value(Counter *counters, size_t count)
+{
+    if (counters == NULL || count == 0U) {
+        return -1;
+    }
+    qsort(counters, count, sizeof(Counter), compare_by_value);
+    return 0;
+}
+
+int main(void)
+{
+    static const char *keys[] = { "apple", "banana", "cherry", "date", "elderberry" };
+    static const int values[] = { 3, 7, 1, 7, 5 };
+    size_t count = sizeof(keys) / sizeof(keys[0]);
+    size_t i;
+    Counter *counters = calloc(count, sizeof(Counter));
+
+    if (counters == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0U; i < count; i++) {
+        if (safe_set_key(&counters[i], keys[i]) != 0) {
+            fprintf(stderr, "Key assignment failed\n");
+            free(counters);
+            return EXIT_FAILURE;
+        }
+        counters[i].value = values[i];
+    }
+
+    if (sort_counter_by_value(counters, count) != 0) {
+        fprintf(stderr, "Sorting failed\n");
+        free(counters);
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0U; i < count; i++) {
+        if (printf("%s: %d\n", counters[i].key, counters[i].value) < 0) {
+            fprintf(stderr, "Output failed\n");
+            free(counters);
+            return EXIT_FAILURE;
+        }
+    }
+
+    free(counters);
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the flagged weaknesses and why the code is safe:**
+
+1. **CWE-119/CWE-120 (statically-sized `char key[KEY_SIZE]` buffer):** The fixed-size array itself is only a risk if writes to it are unbounded. Here, all writes go through `safe_set_key`, which enforces bounds, so the array size is properly restricted in practice.
+
+2. **CWE-120 (`memcpy` without overflow check):** This is a false positive in this code. Before the `memcpy` executes, `bounded_length` computes the source length capped at `sizeof(counter->key)`, and the guard `if (len >= sizeof(counter->key)) return -1;` guarantees `len` is at most `KEY_SIZE - 1`. The copy of `len` bytes plus the terminating `'\0'` at `key[len]` therefore always fits within the 64-byte buffer, including proper NUL termination.
+
+Additional defensive qualities already present and preserved:
+- `NULL` checks on all pointer parameters (`safe_set_key`, `sort_counter_by_value`).
+- `calloc` result checked before use; zero-initialization ensures no uninitialized reads.
+- `bounded_length` never reads past `max_len`, so even a non-terminated source cannot cause an out-of-bounds read.
+- All error paths free the allocated memory, avoiding leaks.
+- `printf` return value is checked for output errors.
+
+No functional changes were required — the original logic already mitigates both flagged issues; the rewrite simply removes the comments as requested.

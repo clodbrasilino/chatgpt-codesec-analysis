@@ -1,0 +1,56 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node *next;
+} Node;
+
+Node *create_node(int data) {
+    Node *node = (Node *)malloc(sizeof(Node));
+    if (node == NULL) {
+        exit(EXIT_FAILURE);
+    }
+    node->data = data;
+    node->next = NULL;
+    return node;
+}
+
+void free_list(Node *head) {
+    Node *current = head;
+    Node *next;
+    while (current != NULL) {
+        next = current->next;
+        free(current);
+        current = next;
+    }
+}
+
+long long multiply_list(Node *head) {
+    if (head == NULL) {
+        return 0;
+    }
+    long long result = 1;
+    Node *current = head;
+    while (current != NULL) {
+        if (current->data == 0) {
+            return 0;
+        }
+        result *= current->data;
+        current = current->next;
+    }
+    return result;
+}
+
+int main(void) {
+    Node *head = create_node(2);
+    head->next = create_node(-3);
+    head->next->next = create_node(4);
+
+    long long product = multiply_list(head);
+    printf("%lld\n", product);
+    fflush(stdout);
+
+    free_list(head);
+    return 0;
+}

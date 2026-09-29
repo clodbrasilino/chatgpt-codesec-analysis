@@ -1,0 +1,7 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-342.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-342.c:41:40: style: Parameter 'sizes' can be declared as pointer to const [constParameterPointer]
+void findSmallestRange(int **arr, int *sizes, int k) {
+                                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-342.c:43:13: style: Variable 'min' is assigned a value that is never used. [unreadVariable]
+    int min = INT_MAX, max = INT_MIN;
+            ^

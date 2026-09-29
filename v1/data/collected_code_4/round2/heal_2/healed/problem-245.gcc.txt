@@ -1,0 +1,38 @@
+./collected_code_4/round2//heal_2/healed/problem-245.c: In function 'bitonic':
+./collected_code_4/round2//heal_2/healed/problem-245.c:14:16: warning: leak of 'dec' [CWE-401] [-Wanalyzer-malloc-leak]
+   14 |         return -1;
+      |                ^
+  'main': events 1-2
+    |
+    |   46 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   49 |     printf("Length of max length Bi-tonic sub-sequence is %d\n", bitonic(arr, n));
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) calling 'bitonic' from 'main'
+    |
+    +--> 'bitonic': events 3-7
+           |
+           |    8 | int bitonic(int arr[], int n) {
+           |      |     ^~~~~~~
+           |      |     |
+           |      |     (3) entry to 'bitonic'
+           |    9 |     int* inc = (int *)malloc(sizeof(int)*n);
+           |   10 |     int* dec = (int *)malloc(sizeof(int)*n);
+           |      |                       ~~~~~~~~~~~~~~~~~~~~~
+           |      |                       |
+           |      |                       (4) allocated here
+           |......
+           |   13 |     if (inc == NULL){
+           |      |        ~
+           |      |        |
+           |      |        (5) following 'true' branch (when 'inc' is NULL)...
+           |   14 |         return -1;
+           |      |                ~
+           |      |                |
+           |      |                (6) ...to here
+           |      |                (7) 'dec' leaks here; was allocated at (4)
+           |

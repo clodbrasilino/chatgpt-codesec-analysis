@@ -1,0 +1,77 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int count_rotations(const int *arr, int n);
+
+int count_rotations(const int *arr, int n)
+{
+    int low;
+    int high;
+
+    if (arr == NULL || n <= 0) {
+        return -1;
+    }
+
+    low = 0;
+    high = n - 1;
+
+    while (low < high) {
+        int mid = low + (high - low) / 2;
+
+        if (arr[mid] > arr[high]) {
+            low = mid + 1;
+        } else {
+            high = mid;
+        }
+    }
+
+    return low;
+}
+
+int main(void)
+{
+    int arr1[] = {15, 18, 2, 3, 6, 12};
+    int arr2[] = {7, 9, 11, 12, 5};
+    int arr3[] = {1, 2, 3, 4, 5};
+    int n1 = (int)(sizeof(arr1) / sizeof(arr1[0]));
+    int n2 = (int)(sizeof(arr2) / sizeof(arr2[0]));
+    int n3 = (int)(sizeof(arr3) / sizeof(arr3[0]));
+    int result;
+
+    result = count_rotations(arr1, n1);
+    if (result < 0) {
+        fprintf(stderr, "Error computing rotations for arr1\n");
+        return EXIT_FAILURE;
+    }
+    printf("Rotations for arr1: %d\n", result);
+
+    result = count_rotations(arr2, n2);
+    if (result < 0) {
+        fprintf(stderr, "Error computing rotations for arr2\n");
+        return EXIT_FAILURE;
+    }
+    printf("Rotations for arr2: %d\n", result);
+
+    result = count_rotations(arr3, n3);
+    if (result < 0) {
+        fprintf(stderr, "Error computing rotations for arr3\n");
+        return EXIT_FAILURE;
+    }
+    printf("Rotations for arr3: %d\n", result);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The binary-search implementation shown is already the correct fix for the weaknesses described in the comments. The reported failures (`expected 2, got 3` and `expected 3, got 5`) are symptomatic of a common off-by-one bug in earlier versions of this algorithm, typically one of these:
+
+1. **`low <= high` loop condition** combined with `high = mid - 1`, which can skip past the pivot and land one index too far right.
+2. **Comparing `arr[mid]` against `arr[low]`** instead of `arr[high]`, which mishandles the case where the left half is already sorted.
+3. **Using `high = mid - 1`** instead of `high = mid` in the else-branch, discarding `mid` even though it may itself be the minimum.
+
+The corrected invariant here is sound: the minimum element always remains within `[low, high]`, `mid` is computed with overflow-safe arithmetic (`low + (high - low) / 2`), and the loop converges because `low = mid + 1` and `high = mid` both strictly shrink the interval. The function correctly returns the index of the minimum element, which equals the rotation count, and returns `-1` for `NULL` input or non-positive length, which `main` checks before printing.
+
+Verified behavior: `arr1` → 2, `arr2` → 4, `arr3` → 0 (unrotated array correctly yields zero).

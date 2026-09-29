@@ -1,0 +1,28 @@
+#include <stdio.h>
+
+int find_median(int a, int b, int c) {
+    if ((a >= b && a <= c) || (a <= b && a >= c)) {
+        return a;
+    } else if ((b >= a && b <= c) || (b <= a && b >= c)) {
+        return b;
+    } else {
+        return c;
+    }
+}
+
+int main(void) {
+    int num1, num2, num3;
+    int result;
+    
+    printf("Enter three integers: ");
+    result = scanf("%d %d %d", &num1, &num2, &num3);
+    
+    if (result != 3) {
+        fprintf(stderr, "Error: Invalid input\n");
+        return 1;
+    }
+    
+    printf("Median: %d\n", find_median(num1, num2, num3));
+    
+    return 0;
+}

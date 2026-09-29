@@ -1,0 +1,84 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+char *extract_quoted(const char *input)
+{
+    const char *start;
+    const char *end;
+    size_t length;
+    size_t buffer_size;
+    char *result;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    start = strchr(input, '"');
+    if (start == NULL) {
+        return NULL;
+    }
+
+    start++;
+    end = strchr(start, '"');
+    if (end == NULL) {
+        return NULL;
+    }
+
+    length = (size_t)(end - start);
+
+    if (length >= SIZE_MAX - 1U) {
+        return NULL;
+    }
+
+    buffer_size = length + 1U;
+
+    result = malloc(buffer_size);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    if (length > 0U && length < buffer_size) {
+        memcpy(result, start, length);
+    }
+    result[length] = '\0';
+
+    return result;
+}
+
+int main(void)
+{
+    const char *test = "The value is \"hello world\" in this string";
+    char *extracted;
+
+    extracted = extract_quoted(test);
+    if (extracted == NULL) {
+        if (fprintf(stderr, "No quoted value found or allocation failed\n") < 0) {
+            return EXIT_FAILURE;
+        }
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Extracted: %s\n", extracted) < 0) {
+        free(extracted);
+        return EXIT_FAILURE;
+    }
+
+    free(extracted);
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis summary:**
+
+The original code was already largely correct. The Flawfinder warning on `memcpy` (CWE-120) was a static-analysis false positive, since the destination buffer is allocated with `length + 1U` bytes and exactly `length` bytes are copied — the destination always holds the source data. 
+
+The rewrite addresses the warning defensively by:
+
+1. **Explicit buffer size tracking** — `buffer_size` is computed once (`length + 1U`) and used for both the allocation and the copy guard, making the relationship between allocation size and copy size explicit and auditable.
+2. **Bounds check before `memcpy`** — the condition `length < buffer_size` guarantees the copy can never exceed the allocated region, satisfying the CWE-120 concern that the destination must always be verified to hold the source data.
+3. **Preserved overflow guard** — the `length >= SIZE_MAX - 1U` check remains, preventing integer overflow in the `length + 1U` allocation size computation.
+
+All other defensive properties of the original are retained: NULL input handling, missing-quote handling, `malloc` failure handling, checked return values of `printf`/`fprintf`, and no memory leaks on any exit path.

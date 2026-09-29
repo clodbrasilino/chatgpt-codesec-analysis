@@ -1,0 +1,137 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node* next;
+} Node;
+
+typedef struct List {
+    Node* head;
+    struct List* next;
+} List;
+
+Node* createNode(int data) {
+    Node* newNode = (Node*)malloc(sizeof(Node));
+    if (!newNode) {
+        exit(EXIT_FAILURE);
+    }
+    newNode->data = data;
+    newNode->next = NULL;
+    return newNode;
+}
+
+List* createList(Node* head) {
+    List* newList = (List*)malloc(sizeof(List));
+    if (!newList) {
+        exit(EXIT_FAILURE);
+    }
+    newList->head = head;
+    newList->next = NULL;
+    return newList;
+}
+
+void freeNodeList(Node* head) {
+    while (head) {
+        Node* temp = head;
+        head = head->next;
+        free(temp);
+    }
+}
+
+void freeList(List* head) {
+    while (head) {
+        List* temp = head;
+        head = head->next;
+        freeNodeList(temp->head);
+        free(temp);
+    }
+}
+
+Node* copyNodeList(Node* head) {
+    if (!head) return NULL;
+    Node* newHead = createNode(head->data);
+    Node* current = newHead;
+    head = head->next;
+    while (head) {
+        current->next = createNode(head->data);
+        current = current->next;
+        head = head->next;
+    }
+    return newHead;
+}
+
+List* zipLists(List* list1, List* list2) {
+    List* resultHead = NULL;
+    List* resultTail = NULL;
+
+    while (list1 || list2) {
+        if (list1) {
+            List* newList = createList(copyNodeList(list1->head));
+            if (!resultHead) {
+                resultHead = newList;
+                resultTail = newList;
+            } else {
+                resultTail->next = newList;
+                resultTail = resultTail->next;
+            }
+            list1 = list1->next;
+        }
+        if (list2) {
+            List* newList = createList(copyNodeList(list2->head));
+            if (!resultHead) {
+                resultHead = newList;
+                resultTail = newList;
+            } else {
+                resultTail->next = newList;
+                resultTail = resultTail->next;
+            }
+            list2 = list2->next;
+        }
+    }
+    return resultHead;
+}
+
+void printList(List* head) {
+    while (head) {
+        Node* current = head->head;
+        printf("[");
+        while (current) {
+            printf("%d", current->data);
+            if (current->next) printf(", ");
+            current = current->next;
+        }
+        printf("]");
+        if (head->next) printf(" -> ");
+        head = head->next;
+    }
+    printf("\n");
+}
+
+int main(void) {
+    Node* n1 = createNode(1);
+    n1->next = createNode(2);
+    List* l1 = createList(n1);
+    
+    Node* n2 = createNode(3);
+    n2->next = createNode(4);
+    l1->next = createList(n2);
+
+    Node* n3 = createNode(5);
+    n3->next = createNode(6);
+    List* l2 = createList(n3);
+    
+    Node* n4 = createNode(7);
+    n4->next = createNode(8);
+    l2->next = createList(n4);
+
+    List* zipped = zipLists(l1, l2);
+
+    printList(zipped);
+
+    freeList(l1);
+    freeList(l2);
+    freeList(zipped);
+
+    return 0;
+}

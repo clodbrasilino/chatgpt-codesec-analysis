@@ -1,0 +1,223 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct IntNode {
+    int data;
+    struct IntNode *next;
+} IntNode;
+
+typedef struct ListNode {
+    IntNode *list;
+    struct ListNode *next;
+} ListNode;
+
+static IntNode *create_int_node(int data)
+{
+    IntNode *node = malloc(sizeof *node);
+
+    if (node == NULL) {
+        return NULL;
+    }
+    node->data = data;
+    node->next = NULL;
+    return node;
+}
+
+static ListNode *create_list_node(IntNode *list)
+{
+    ListNode *node = malloc(sizeof *node);
+
+    if (node == NULL) {
+        return NULL;
+    }
+    node->list = list;
+    node->next = NULL;
+    return node;
+}
+
+static int append_int(IntNode **head, int data)
+{
+    IntNode *node;
+    IntNode *current;
+
+    if (head == NULL) {
+        return -1;
+    }
+    node = create_int_node(data);
+    if (node == NULL) {
+        return -1;
+    }
+    if (*head == NULL) {
+        *head = node;
+        return 0;
+    }
+    current = *head;
+    while (current->next != NULL) {
+        current = current->next;
+    }
+    current->next = node;
+    return 0;
+}
+
+static int append_list(ListNode **head, IntNode *list)
+{
+    ListNode *node;
+    ListNode *current;
+
+    if (head == NULL) {
+        return -1;
+    }
+    node = create_list_node(list);
+    if (node == NULL) {
+        return -1;
+    }
+    if (*head == NULL) {
+        *head = node;
+        return 0;
+    }
+    current = *head;
+    while (current->next != NULL) {
+        current = current->next;
+    }
+    current->next = node;
+    return 0;
+}
+
+static void free_int_list(IntNode *head)
+{
+    IntNode *next;
+
+    while (head != NULL) {
+        next = head->next;
+        free(head);
+        head = next;
+    }
+}
+
+static int build_list(const int *values, size_t count, IntNode **out)
+{
+    IntNode *head = NULL;
+    size_t i;
+
+    if (out == NULL) {
+        return -1;
+    }
+    *out = NULL;
+    for (i = 0; i < count; i++) {
+        if (append_int(&head, values[i]) != 0) {
+            free_int_list(head);
+            return -1;
+        }
+    }
+    *out = head;
+    return 0;
+}
+
+static void free_list_of_lists(ListNode *head)
+{
+    ListNode *next;
+
+    while (head != NULL) {
+        next = head->next;
+        free_int_list(head->list);
+        free(head);
+        head = next;
+    }
+}
+
+static IntNode *reverse_list(IntNode *head)
+{
+    IntNode *previous = NULL;
+    IntNode *next = NULL;
+
+    while (head != NULL) {
+        next = head->next;
+        head->next = previous;
+        previous = head;
+        head = next;
+    }
+    return previous;
+}
+
+ListNode *reverse_each_list(ListNode *head)
+{
+    ListNode *current = head;
+
+    while (current != NULL) {
+        current->list = reverse_list(current->list);
+        current = current->next;
+    }
+    return head;
+}
+
+static void print_int_list(const IntNode *head)
+{
+    putchar('[');
+    while (head != NULL) {
+        printf("%d", head->data);
+        if (head->next != NULL) {
+            printf(" ");
+        }
+        head = head->next;
+    }
+    putchar(']');
+}
+
+static void print_list_of_lists(const ListNode *head)
+{
+    putchar('[');
+    while (head != NULL) {
+        print_int_list(head->list);
+        if (head->next != NULL) {
+            printf(" ");
+        }
+        head = head->next;
+    }
+    printf("]\n");
+}
+
+int main(void)
+{
+    static const int values1[] = {1, 2, 3};
+    static const int values2[] = {4, 5};
+    static const int values3[] = {6, 7, 8, 9};
+    ListNode *lists = NULL;
+    IntNode *inner = NULL;
+
+    if (build_list(values1, sizeof values1 / sizeof values1[0], &inner) != 0 ||
+        append_list(&lists, inner) != 0) {
+        free_int_list(inner);
+        free_list_of_lists(lists);
+        return EXIT_FAILURE;
+    }
+    inner = NULL;
+
+    if (build_list(values2, sizeof values2 / sizeof values2[0], &inner) != 0 ||
+        append_list(&lists, inner) != 0) {
+        free_int_list(inner);
+        free_list_of_lists(lists);
+        return EXIT_FAILURE;
+    }
+    inner = NULL;
+
+    if (build_list(values3, sizeof values3 / sizeof values3[0], &inner) != 0 ||
+        append_list(&lists, inner) != 0) {
+        free_int_list(inner);
+        free_list_of_lists(lists);
+        return EXIT_FAILURE;
+    }
+    inner = NULL;
+
+    printf("Original: ");
+    print_list_of_lists(lists);
+
+    lists = reverse_each_list(lists);
+
+    printf("Reversed: ");
+    print_list_of_lists(lists);
+
+    free_list_of_lists(lists);
+    return EXIT_SUCCESS;
+}
+```

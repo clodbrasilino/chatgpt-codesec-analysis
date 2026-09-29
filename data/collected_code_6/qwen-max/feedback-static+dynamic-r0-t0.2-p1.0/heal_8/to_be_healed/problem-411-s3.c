@@ -1,0 +1,63 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#include <regex.h>
+ /* Possible weaknesses found:
+  *  test case 2 failed: expected 'AppleWatch', got <no output>
+  *  test case 0 failed: expected 'AndroidTv', got <no output>
+  *  test case 1 failed: expected 'GooglePixel', got <no output>
+  */
+
+char *snake_to_camel(const char *snake_str) {
+    regex_t regex;
+    regmatch_t matches[2];
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    size_t len = strlen(snake_str);
+    char *camel_str = malloc(len + 1);
+    if (!camel_str) return NULL;
+    /* Possible weaknesses found:
+     * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+     */
+    memcpy(camel_str, snake_str, len + 1);
+
+    if (regcomp(&regex, "(_[a-z])", REG_EXTENDED | REG_NEWLINE) != 0) {
+        free(camel_str);
+        return NULL;
+    }
+
+    int offset = 0;
+
+    while (regexec(&regex, camel_str + offset, 2, matches, 0) == 0) {
+        int i = matches[1].rm_so + offset;
+        camel_str[i] = toupper((unsigned char) camel_str[i + 1]);
+        memmove(camel_str + i + 1, camel_str + i + 2, len - (i + 1));
+        --len;
+        offset = i + 1;
+    }
+
+    regfree(&regex);
+    return camel_str;
+}
+
+int main() {
+    const char *test_cases[] = {
+        "android_tv",
+        "google_pixel",
+        "apple_watch"
+    };
+
+    for (size_t i = 0; i < sizeof(test_cases) / sizeof(test_cases[0]); ++i) {
+        char *camel_str = snake_to_camel(test_cases[i]);
+        if (camel_str) {
+            printf("%s\n", camel_str);
+            free(camel_str);
+        } else {
+            printf("Error converting string: %s\n", test_cases[i]);
+        }
+    }
+
+    return 0;
+}

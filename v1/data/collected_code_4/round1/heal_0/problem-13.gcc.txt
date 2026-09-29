@@ -1,0 +1,54 @@
+./collected_code_4/round1//heal_0//problem-13.c: In function 'incrementWordCount':
+./collected_code_4/round1//heal_0//problem-13.c:27:20: warning: dereference of possibly-NULL 'newWord' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   27 |     newWord->count = 1;
+      |     ~~~~~~~~~~~~~~~^~~
+  'main': events 1-8
+    |
+    |   50 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   55 |     for(int i = 0; i < strlen(text); i++) {
+    |      |                    ~~~~~~~~~~~~~~~~
+    |      |                      |
+    |      |                      (2) following 'true' branch...
+    |      |                      (6) following 'true' branch...
+    |   56 |         if(text[i] != ' ' && text[i] != '.' && text[i] != ',') {
+    |      |           ~    ~
+    |      |           |    |
+    |      |           |    (3) ...to here
+    |      |           |    (7) ...to here
+    |      |           (4) following 'true' branch...
+    |   57 |             word[count++] = text[i];
+    |      |                                 ~
+    |      |                                 |
+    |      |                                 (5) ...to here
+    |......
+    |   60 |             incrementWordCount(word);
+    |      |             ~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |             |
+    |      |             (8) calling 'incrementWordCount' from 'main'
+    |
+    +--> 'incrementWordCount': events 9-13
+           |
+           |   17 | void incrementWordCount(char *word) {
+           |      |      ^~~~~~~~~~~~~~~~~~
+           |      |      |
+           |      |      (9) entry to 'incrementWordCount'
+           |   18 |     for(int i = 0; i < dictionarySize; i++) {
+           |      |                    ~~~~~~~~~~~~~~~~~~
+           |      |                      |
+           |      |                      (10) following 'false' branch...
+           |......
+           |   25 |     Word *newWord = (Word *) malloc(sizeof(Word));
+           |      |                              ~~~~~~~~~~~~~~~~~~~~
+           |      |                              |
+           |      |                              (11) ...to here
+           |      |                              (12) this call could return NULL
+           |   26 |     strcpy(newWord->word, word);
+           |   27 |     newWord->count = 1;
+           |      |     ~~~~~~~~~~~~~~~~~~
+           |      |                    |
+           |      |                    (13) 'newWord' could be NULL: unchecked value from (12)
+           |

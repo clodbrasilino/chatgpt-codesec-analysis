@@ -1,0 +1,74 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+ /* Possible weaknesses found:
+  *  test case 1 failed: expected 'python_language', got <no output>
+  *  test case 0 failed: expected 'python_program', got <no output>
+  *  test case 2 failed: expected 'programming_language', got <no output>
+  */
+
+char *camel_to_snake(const char *input) {
+    if (input == NULL) {
+        return NULL;
+    }
+    
+    size_t len = 0;
+    while (input[len] != '\0') {
+        len++;
+        if (len == SIZE_MAX) {
+            return NULL;
+        }
+    }
+    
+    size_t max_len = len * 2 + 1;
+    char *output = malloc(max_len);
+    if (output == NULL) {
+        return NULL;
+    }
+    
+    size_t j = 0;
+    for (size_t i = 0; i < len; i++) {
+        if (isupper((unsigned char)input[i])) {
+            if (i > 0) {
+                output[j++] = '_';
+            }
+            output[j++] = tolower((unsigned char)input[i]);
+        } else {
+            output[j++] = input[i];
+        }
+    }
+    output[j] = '\0';
+    
+    char *result = realloc(output, j + 1);
+    if (result == NULL) {
+        free(output);
+        return NULL;
+    }
+    
+    return result;
+}
+
+int main(void) {
+    const char *test_cases[] = {
+        "camelCaseString",
+        "helloWorld",
+        "a",
+        "ABC",
+        "alreadySnakeCase",
+        NULL
+    };
+    
+    for (int i = 0; test_cases[i] != NULL; i++) {
+        char *result = camel_to_snake(test_cases[i]);
+        if (result != NULL) {
+            printf("Input: %s\nOutput: %s\n\n", test_cases[i], result);
+            free(result);
+        } else {
+            fprintf(stderr, "Memory allocation failed\n");
+            return 1;
+        }
+    }
+    
+    return 0;
+}

@@ -1,0 +1,70 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct node {
+    int data;
+    struct node * next;
+} node_t;
+
+node_t * createNode(int data) {
+    node_t * newNode = malloc(sizeof(node_t));
+    
+    if(!newNode) {
+        exit(0);
+    }
+
+    newNode->data = data;
+    newNode->next = NULL;
+    
+    return newNode;
+}
+
+void removeDuplicates(node_t * head) {
+    node_t * ptr1, * ptr2, *dup;
+
+    ptr1 = head;
+    
+    while(ptr1 != NULL && ptr1->next != NULL) {
+        ptr2 = ptr1;
+
+        while(ptr2->next != NULL){
+            if(ptr1->data == ptr2->next->data){
+                dup = ptr2->next;
+                ptr2->next = ptr2->next->next;
+                free(dup);
+            }
+            else {
+                ptr2 = ptr2->next;
+            }
+        }
+        ptr1 = ptr1->next;
+    }
+}
+
+
+void display(node_t * head){
+    while(head != NULL){
+        printf("%d ", head->data);
+        head = head->next;
+    }
+    printf("\n");
+}
+
+int main(){
+    node_t * head = createNode(10);
+    head->next = createNode(12);
+    head->next->next = createNode(12);
+    head->next->next->next = createNode(13);
+    head->next->next->next->next = createNode(13);
+    head->next->next->next->next->next = createNode(13);
+
+    printf("Before removing duplicates: ");
+    display(head);
+
+    removeDuplicates(head);
+
+    printf("After removing duplicates: ");
+    display(head);
+
+    return 0;
+}

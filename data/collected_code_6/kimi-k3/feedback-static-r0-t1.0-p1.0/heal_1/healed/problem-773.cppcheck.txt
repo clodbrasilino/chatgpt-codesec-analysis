@@ -1,0 +1,7 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-773.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-773.c:11:15: style: Array index 'str_len' is used before limits check. [arrayIndexThenCheck]
+    while (str[str_len] != '\0' && str_len < 1024) {
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-773.c:19:18: style: Array index 'substr_len' is used before limits check. [arrayIndexThenCheck]
+    while (substr[substr_len] != '\0' && substr_len < 256) {
+                 ^

@@ -1,0 +1,39 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+void square_elements(int *arr, int n) {
+    for (int i = 0; i < n; i++) {
+        arr[i] = arr[i] * arr[i];
+    }
+}
+
+int main() {
+    int n;
+    printf("Enter the number of elements: ");
+    scanf("%d", &n);
+
+    if (n <= 0) {
+        return 1;
+    }
+
+    int *arr = (int *)malloc(n * sizeof(int));
+    if (arr == NULL) {
+        return 1;
+    }
+
+    printf("Enter %d integers:\n", n);
+    for (int i = 0; i < n; i++) {
+        scanf("%d", &arr[i]);
+    }
+
+    square_elements(arr, n);
+
+    printf("Squares of the elements: ");
+    for (int i = 0; i < n; i++) {
+        printf("%d ", arr[i]);
+    }
+    printf("\n");
+
+    free(arr);
+    return 0;
+}

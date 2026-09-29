@@ -1,0 +1,62 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_TUPLE_SIZE 100
+
+typedef struct {
+    char *value;
+} Tuple;
+
+Tuple* create_tuple(const char *value) {
+    Tuple *t = (Tuple *)malloc(sizeof(Tuple));
+    if (t == NULL) return NULL;
+
+    t->value = strdup(value);
+    if (t->value == NULL) {
+        free(t);
+        return NULL;
+    }
+
+    return t;
+}
+
+void destroy_tuple(Tuple *t) {
+    if (t != NULL) {
+        free(t->value);
+        free(t);
+    }
+}
+
+/* Possible weaknesses found:
+ *  Parameter 't' can be declared as pointer to const [constParameterPointer]
+ */
+const char* get_colon_of_tuple(Tuple *t, int index) {
+    const char *colon = strchr(t->value, ':');
+    if (colon == NULL) return NULL;
+
+    for (int i = 0; i < index && *colon != '\0'; ++i) {
+        colon = strchr(colon + 1, ':');
+        if (colon == NULL) return NULL;
+    }
+
+    return colon;
+}
+
+int main() {
+    Tuple *t = create_tuple("a:b:c:d");
+    if (t == NULL) {
+        fprintf(stderr, "Failed to create tuple\n");
+        return 1;
+    }
+
+    const char *colon = get_colon_of_tuple(t, 2);
+    if (colon != NULL) {
+        printf("%s\n", colon);
+    } else {
+        printf("Colon not found\n");
+    }
+
+    destroy_tuple(t);
+    return 0;
+}

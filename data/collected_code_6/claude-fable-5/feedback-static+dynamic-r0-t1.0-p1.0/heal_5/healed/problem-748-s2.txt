@@ -1,0 +1,157 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+#define MAX_INPUT_LEN 4096U
+
+char *space_capitals(const char *input)
+{
+    regex_t re;
+    regmatch_t match;
+    char *result;
+    size_t in_len;
+    size_t out_len;
+    size_t out_pos;
+    size_t offset;
+    size_t chunk;
+    int rc;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    in_len = strnlen(input, MAX_INPUT_LEN);
+    if (in_len >= MAX_INPUT_LEN) {
+        return NULL;
+    }
+
+    rc = regcomp(&re, "[A-Z]", REG_EXTENDED);
+    if (rc != 0) {
+        return NULL;
+    }
+
+    out_len = (in_len * 2U) + 1U;
+    result = malloc(out_len);
+    if (result == NULL) {
+        regfree(&re);
+        return NULL;
+    }
+
+    out_pos = 0U;
+    offset = 0U;
+
+    while (offset < in_len) {
+        rc = regexec(&re, input + offset, 1, &match, 0);
+        if (rc != 0) {
+            break;
+        }
+
+        if (match.rm_so < 0 || match.rm_eo <= match.rm_so) {
+            free(result);
+            regfree(&re);
+            return NULL;
+        }
+
+        chunk = (size_t)match.rm_so;
+
+        if ((offset + chunk) >= in_len) {
+            free(result);
+            regfree(&re);
+            return NULL;
+        }
+
+        if ((out_pos + chunk + 2U) > out_len) {
+            free(result);
+            regfree(&re);
+            return NULL;
+        }
+
+        if (chunk > 0U) {
+            if ((out_pos + chunk) > out_len ||
+                (offset + chunk) > in_len) {
+                free(result);
+                regfree(&re);
+                return NULL;
+            }
+            memcpy(result + out_pos, input + offset, chunk);
+            out_pos += chunk;
+        }
+
+        if ((offset + chunk) > 0U) {
+            result[out_pos] = ' ';
+            out_pos++;
+        }
+
+        result[out_pos] = input[offset + chunk];
+        out_pos++;
+        offset += (size_t)match.rm_eo;
+    }
+
+    if (offset > in_len) {
+        free(result);
+        regfree(&re);
+        return NULL;
+    }
+
+    chunk = in_len - offset;
+    if ((out_pos + chunk + 1U) > out_len) {
+        free(result);
+        regfree(&re);
+        return NULL;
+    }
+
+    if (chunk > 0U) {
+        if ((out_pos + chunk) > out_len ||
+            (offset + chunk) > in_len) {
+            free(result);
+            regfree(&re);
+            return NULL;
+        }
+        memcpy(result + out_pos, input + offset, chunk);
+        out_pos += chunk;
+    }
+
+    if (out_pos >= out_len) {
+        free(result);
+        regfree(&re);
+        return NULL;
+    }
+
+    result[out_pos] = '\0';
+
+    regfree(&re);
+    return result;
+}
+
+int main(void)
+{
+    const char *test = "HelloWorldThisIsATest";
+    char *spaced;
+
+    spaced = space_capitals(test);
+    if (spaced == NULL) {
+        fprintf(stderr, "Error processing string\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Input:  %s\n", test);
+    printf("Output: %s\n", spaced);
+
+    free(spaced);
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis summary:**
+
+The original code was already largely defensive, but the Flawfinder warnings on both `memcpy` calls (CWE-120) flagged the need for explicit, provable bounds verification immediately before each copy. The rewritten version addresses this as follows:
+
+1. **First `memcpy` (inside the loop):** Added an explicit guard verifying both that `out_pos + chunk` does not exceed the destination capacity `out_len`, and that `offset + chunk` does not read past the source length `in_len`. While the earlier `(out_pos + chunk + 2U) > out_len` check made an overflow unlikely, the direct pre-copy assertion makes the safety condition locally verifiable — which is exactly what static analyzers and reviewers want to see.
+
+2. **Second `memcpy` (tail copy):** Same treatment — destination and source bounds are re-validated immediately before the copy rather than relying solely on the earlier `(out_pos + chunk + 1U) > out_len` check.
+
+3. **NUL terminator write:** Added a final `out_pos >= out_len` check before writing `'\0'`, guaranteeing the terminator can never be an off-by-one out-of-bounds write.
+
+Other pre-existing strengths retained: `strnlen` with `MAX_INPUT_LEN` prevents unbounded input, worst-case output sizing (`in_len * 2 + 1`) covers a space per character, all error paths correctly release both the heap buffer and the compiled regex (no leaks), and integer overflow in the size arithmetic is impossible given the 4096-byte input cap.

@@ -1,0 +1,56 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+char* convert_date_format(const char* input_date) {
+    if (input_date == NULL) {
+        return NULL;
+    }
+
+    regex_t regex;
+    regmatch_t matches[4];
+    const char* pattern = "^([0-9]{4})-([0-9]{2})-([0-9]{2})$";
+
+    if (regcomp(&regex, pattern, REG_EXTENDED) != 0) {
+        return NULL;
+    }
+
+    if (regexec(&regex, input_date, 4, matches, 0) != 0) {
+        regfree(&regex);
+        return NULL;
+    }
+
+    int year_len = matches[1].rm_eo - matches[1].rm_so;
+    int month_len = matches[2].rm_eo - matches[2].rm_so;
+    int day_len = matches[3].rm_eo - matches[3].rm_so;
+
+    char* output_date = (char*)malloc((year_len + month_len + day_len + 3) * sizeof(char));
+    if (output_date == NULL) {
+        regfree(&regex);
+        return NULL;
+    }
+
+    snprintf(output_date, year_len + month_len + day_len + 3, "%.*s-%.*s-%.*s",
+             day_len, input_date + matches[3].rm_so,
+             month_len, input_date + matches[2].rm_so,
+             year_len, input_date + matches[1].rm_so);
+
+    regfree(&regex);
+    return output_date;
+}
+
+int main() {
+    const char* input_date = "2023-10-25";
+    char* converted_date = convert_date_format(input_date);
+
+    if (converted_date != NULL) {
+        printf("Original: %s\n", input_date);
+        printf("Converted: %s\n", converted_date);
+        free(converted_date);
+    } else {
+        printf("Invalid date format or memory allocation failure.\n");
+    }
+
+    return 0;
+}

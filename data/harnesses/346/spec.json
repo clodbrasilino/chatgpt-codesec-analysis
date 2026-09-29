@@ -1,0 +1,47 @@
+{
+  "task_id": 346,
+  "text": "Write a C function to find entringer number e(n, k).",
+  "fn_candidates": [
+    "zigzag",
+    "Zigzag",
+    "zigzag",
+    "zigzag"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "zigzag",
+      "args": [
+        4,
+        3
+      ],
+      "expected": 5,
+      "assert_src": "assert zigzag(4, 3) == 5"
+    },
+    {
+      "fn_name": "zigzag",
+      "args": [
+        4,
+        2
+      ],
+      "expected": 4,
+      "assert_src": "assert zigzag(4, 2) == 4"
+    },
+    {
+      "fn_name": "zigzag",
+      "args": [
+        3,
+        1
+      ],
+      "expected": 1,
+      "assert_src": "assert zigzag(3, 1) == 1"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

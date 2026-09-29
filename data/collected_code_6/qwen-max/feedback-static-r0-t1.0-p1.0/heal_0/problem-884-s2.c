@@ -1,0 +1,24 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+bool check_bits_within_range(unsigned int num, unsigned int start, unsigned int end) {
+    if (start > 31 || end > 31 || start > end) return false;
+    for (unsigned int i = 0; i < 32; ++i) {
+        if ((i < start || i > end) && (num & (1U << i))) {
+            return false;
+        }
+    }
+    return true;
+}
+
+int main() {
+    unsigned int num = 0x0000FFFF; // Example number
+    unsigned int start = 0;
+    unsigned int end = 15;
+    if (check_bits_within_range(num, start, end)) {
+        printf("All bits are within the specified range.\n");
+    } else {
+        printf("Some bits are outside the specified range.\n");
+    }
+    return 0;
+}

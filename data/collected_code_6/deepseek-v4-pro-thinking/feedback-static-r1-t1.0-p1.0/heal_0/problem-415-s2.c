@@ -1,0 +1,63 @@
+#include <stdio.h>
+#include <limits.h>
+#include <stddef.h>
+
+long long max_pair_product(const int *arr, size_t n, int *a, int *b)
+{
+    if (arr == NULL || n < 2) {
+        return LLONG_MIN;
+    }
+
+    int max1 = arr[0];
+    int max2 = INT_MIN;
+    int min1 = arr[0];
+    int min2 = INT_MAX;
+
+    for (size_t i = 1; i < n; ++i) {
+        int v = arr[i];
+
+        if (v > max1) {
+            max2 = max1;
+            max1 = v;
+        } else if (v > max2) {
+            max2 = v;
+        }
+
+        if (v < min1) {
+            min2 = min1;
+            min1 = v;
+        } else if (v < min2) {
+            min2 = v;
+        }
+    }
+
+    long long prod1 = (long long)max1 * max2;
+    long long prod2 = (long long)min1 * min2;
+
+    if (prod1 >= prod2) {
+        if (a != NULL) *a = max1;
+        if (b != NULL) *b = max2;
+        return prod1;
+    } else {
+        if (a != NULL) *a = min1;
+        if (b != NULL) *b = min2;
+        return prod2;
+    }
+}
+
+int main(void)
+{
+    int arr[] = {-10, -5, 3, 4, 7, -2};
+    size_t n = sizeof(arr) / sizeof(arr[0]);
+    int a, b;
+    long long result = max_pair_product(arr, n, &a, &b);
+
+    if (result == LLONG_MIN) {
+        printf("Array must contain at least two elements\n");
+    } else {
+        printf("Pair: %d, %d\n", a, b);
+        printf("Highest product: %lld\n", result);
+    }
+
+    return 0;
+}

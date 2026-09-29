@@ -1,0 +1,90 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *elements;
+    int size;
+} Tuple;
+
+int* extract_singly_occurring(Tuple *tuples, int tuple_count, int *result_size) {
+    int max_size = 0;
+    int i, j, k;
+    
+    for (i = 0; i < tuple_count; i++) {
+        max_size += tuples[i].size;
+    }
+    
+    int *all_elements = (int*)malloc(max_size * sizeof(int));
+    int *counts = (int*)calloc(max_size, sizeof(int));
+    int *result = (int*)malloc(max_size * sizeof(int));
+    int total_elements = 0;
+    int result_count = 0;
+    
+    if (!all_elements || !counts || !result) {
+        free(all_elements);
+        free(counts);
+        free(result);
+        *result_size = 0;
+        return NULL;
+    }
+    
+    for (i = 0; i < tuple_count; i++) {
+        for (j = 0; j < tuples[i].size; j++) {
+            int found = 0;
+            for (k = 0; k < total_elements; k++) {
+                if (all_elements[k] == tuples[i].elements[j]) {
+                    counts[k]++;
+                    found = 1;
+                    break;
+                }
+            }
+            if (!found) {
+                all_elements[total_elements] = tuples[i].elements[j];
+                counts[total_elements] = 1;
+                total_elements++;
+            }
+        }
+    }
+    
+    for (i = 0; i < total_elements; i++) {
+        if (counts[i] == 1) {
+            result[result_count++] = all_elements[i];
+        }
+    }
+    
+    free(all_elements);
+    free(counts);
+    
+    *result_size = result_count;
+    return result;
+}
+
+int main() {
+    int tuple1_elements[] = {1, 2, 3, 4};
+    int tuple2_elements[] = {3, 4, 5, 6};
+    int tuple3_elements[] = {7, 8, 9};
+    
+    Tuple tuples[3];
+    tuples[0].elements = tuple1_elements;
+    tuples[0].size = 4;
+    tuples[1].elements = tuple2_elements;
+    tuples[1].size = 4;
+    tuples[2].elements = tuple3_elements;
+    tuples[2].size = 3;
+    
+    int result_size;
+    int *result = extract_singly_occurring(tuples, 3, &result_size);
+    
+    if (result) {
+        printf("Singly occurring elements: ");
+        for (int i = 0; i < result_size; i++) {
+            printf("%d ", result[i]);
+        }
+        printf("\n");
+        free(result);
+    } else {
+        printf("No singly occurring elements found or memory allocation failed.\n");
+    }
+    
+    return 0;
+}

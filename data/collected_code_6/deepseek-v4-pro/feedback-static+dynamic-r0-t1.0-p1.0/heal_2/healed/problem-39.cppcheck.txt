@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-39.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-39.c:12:28: warning: Either the condition 'len<256' is redundant or the array 'str[1]' is accessed at index 255, which is out of bounds. [arrayIndexOutOfBoundsCond]
+    while (len < 256 && str[len] != '\0') {
+                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-39.c:12:16: note: Assuming that condition 'len<256' is not redundant
+    while (len < 256 && str[len] != '\0') {
+               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-39.c:12:28: note: Array index out of bounds
+    while (len < 256 && str[len] != '\0') {
+                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-39.c:15:12: warning: Either the condition 'len<256' is redundant or the array 'str[1]' is accessed at index 256, which is out of bounds. [arrayIndexOutOfBoundsCond]
+    if (str[len] != '\0') {
+           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-39.c:12:16: note: Assuming that condition 'len<256' is not redundant
+    while (len < 256 && str[len] != '\0') {
+               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-39.c:15:12: note: Array index out of bounds
+    if (str[len] != '\0') {
+           ^

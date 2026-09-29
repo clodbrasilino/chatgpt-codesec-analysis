@@ -1,0 +1,237 @@
+./collected_code_4/round1//heal_0//problem-585.c: In function 'topNprices':
+./collected_code_4/round1//heal_0//problem-585.c:54:17: warning: dereference of possibly-NULL 'topN' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   54 |         topN[i] = dataset[0];
+      |         ~~~~~~~~^~~~~~~~~~~~
+  'main': events 1-2
+    |
+    |   70 | int main()
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   78 |     Item *topN = topNprices(dataset, n, N);
+    |      |                  ~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                  |
+    |      |                  (2) calling 'topNprices' from 'main'
+    |
+    +--> 'topNprices': events 3-4
+           |
+           |   46 | Item *topNprices(Item dataset[], int n, int N)
+           |      |       ^~~~~~~~~~
+           |      |       |
+           |      |       (3) entry to 'topNprices'
+           |   47 | {
+           |   48 |     buildHeap(dataset, n);
+           |      |     ~~~~~~~~~~~~~~~~~~~~~
+           |      |     |
+           |      |     (4) calling 'buildHeap' from 'topNprices'
+           |
+           +--> 'buildHeap': events 5-8
+                  |
+                  |   36 | void buildHeap(Item arr[], int n)
+                  |      |      ^~~~~~~~~
+                  |      |      |
+                  |      |      (5) entry to 'buildHeap'
+                  |......
+                  |   40 |     for (int i = startIdx; i >= 0; i--)
+                  |      |                            ~~~~~~
+                  |      |                              |
+                  |      |                              (6) following 'true' branch (when 'i >= 0')...
+                  |   41 |     {
+                  |   42 |         heapify(arr, n, i);
+                  |      |         ~~~~~~~~~~~~~~~~~~
+                  |      |         |
+                  |      |         (7) ...to here
+                  |      |         (8) calling 'heapify' from 'buildHeap'
+                  |
+                  +--> 'heapify': events 9-16
+                         |
+                         |   17 | void heapify(Item arr[], int n, int i)
+                         |      |      ^~~~~~~
+                         |      |      |
+                         |      |      (9) entry to 'heapify'
+                         |......
+                         |   23 |     if (left<n && arr[left].price>arr[largest].price)
+                         |      |        ~
+                         |      |        |
+                         |      |        (10) following 'true' branch...
+                         |   24 |         largest = left;
+                         |      |         ~~~~~~~~~~~~~~
+                         |      |                 |
+                         |      |                 (11) ...to here
+                         |   25 | 
+                         |   26 |     if (right<n && arr[right].price>arr[largest].price)
+                         |      |        ~
+                         |      |        |
+                         |      |        (12) following 'true' branch...
+                         |   27 |         largest = right;
+                         |      |         ~~~~~~~~~~~~~~~
+                         |      |                 |
+                         |      |                 (13) ...to here
+                         |   28 | 
+                         |   29 |     if (largest != i)
+                         |      |        ~
+                         |      |        |
+                         |      |        (14) following 'true' branch (when 'largest != i')...
+                         |   30 |     {
+                         |   31 |         swap(&arr[i], &arr[largest]);
+                         |      |                           ~
+                         |      |                           |
+                         |      |                           (15) ...to here
+                         |   32 |         heapify(arr, n, largest);
+                         |      |         ~~~~~~~~~~~~~~~~~~~~~~~~
+                         |      |         |
+                         |      |         (16) calling 'heapify' from 'heapify'
+                         |
+                         +--> 'heapify': events 17-23
+                                |
+                                |   17 | void heapify(Item arr[], int n, int i)
+                                |      |      ^~~~~~~
+                                |      |      |
+                                |      |      (17) entry to 'heapify'
+                                |......
+                                |   23 |     if (left<n && arr[left].price>arr[largest].price)
+                                |      |        ~
+                                |      |        |
+                                |      |        (18) following 'false' branch (when 'left >= n')...
+                                |......
+                                |   26 |     if (right<n && arr[right].price>arr[largest].price)
+                                |      |        ~
+                                |      |        |
+                                |      |        (19) ...to here
+                                |      |        (20) following 'false' branch (when 'right >= n')...
+                                |......
+                                |   29 |     if (largest != i)
+                                |      |        ~
+                                |      |        |
+                                |      |        (21) ...to here
+                                |      |        (22) following 'false' branch (when 'largest == i')...
+                                |......
+                                |   34 | }
+                                |      | ~     
+                                |      | |
+                                |      | (23) ...to here
+                                |
+                         <------+
+                         |
+                       'heapify': event 24
+                         |
+                         |   32 |         heapify(arr, n, largest);
+                         |      |         ^~~~~~~~~~~~~~~~~~~~~~~~
+                         |      |         |
+                         |      |         (24) returning to 'heapify' from 'heapify'
+                         |
+                  <------+
+                  |
+                'buildHeap': events 25-28
+                  |
+                  |   40 |     for (int i = startIdx; i >= 0; i--)
+                  |      |                            ~~~~~~
+                  |      |                              |
+                  |      |                              (26) following 'true' branch (when 'i >= 0')...
+                  |   41 |     {
+                  |   42 |         heapify(arr, n, i);
+                  |      |         ^~~~~~~~~~~~~~~~~~
+                  |      |         |
+                  |      |         (25) returning to 'buildHeap' from 'heapify'
+                  |      |         (27) ...to here
+                  |      |         (28) calling 'heapify' from 'buildHeap'
+                  |
+                  +--> 'heapify': events 29-38
+                         |
+                         |   17 | void heapify(Item arr[], int n, int i)
+                         |      |      ^~~~~~~
+                         |      |      |
+                         |      |      (29) entry to 'heapify'
+                         |......
+                         |   23 |     if (left<n && arr[left].price>arr[largest].price)
+                         |      |        ~
+                         |      |        |
+                         |      |        (30) following 'true' branch...
+                         |   24 |         largest = left;
+                         |      |         ~~~~~~~~~~~~~~
+                         |      |                 |
+                         |      |                 (31) ...to here
+                         |   25 | 
+                         |   26 |     if (right<n && arr[right].price>arr[largest].price)
+                         |      |        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                         |      |        |        |     |
+                         |      |        |        |     (33) ...to here
+                         |      |        |        (34) following 'false' branch...
+                         |      |        (32) following 'true' branch (when 'right < n')...
+                         |......
+                         |   29 |     if (largest != i)
+                         |      |        ~
+                         |      |        |
+                         |      |        (35) ...to here
+                         |      |        (36) following 'true' branch (when 'largest != i')...
+                         |   30 |     {
+                         |   31 |         swap(&arr[i], &arr[largest]);
+                         |      |                           ~
+                         |      |                           |
+                         |      |                           (37) ...to here
+                         |   32 |         heapify(arr, n, largest);
+                         |      |         ~~~~~~~~~~~~~~~~~~~~~~~~
+                         |      |         |
+                         |      |         (38) calling 'heapify' from 'heapify'
+                         |
+                         +--> 'heapify': events 39-41
+                                |
+                                |   17 | void heapify(Item arr[], int n, int i)
+                                |      |      ^~~~~~~
+                                |      |      |
+                                |      |      (39) entry to 'heapify'
+                                |......
+                                |   29 |     if (largest != i)
+                                |      |        ~
+                                |      |        |
+                                |      |        (40) following 'false' branch (when 'largest == i')...
+                                |......
+                                |   34 | }
+                                |      | ~     
+                                |      | |
+                                |      | (41) ...to here
+                                |
+                         <------+
+                         |
+                       'heapify': event 42
+                         |
+                         |   32 |         heapify(arr, n, largest);
+                         |      |         ^~~~~~~~~~~~~~~~~~~~~~~~
+                         |      |         |
+                         |      |         (42) returning to 'heapify' from 'heapify'
+                         |
+                  <------+
+                  |
+                'buildHeap': event 43
+                  |
+                  |   42 |         heapify(arr, n, i);
+                  |      |         ^~~~~~~~~~~~~~~~~~
+                  |      |         |
+                  |      |         (43) returning to 'buildHeap' from 'heapify'
+                  |
+           <------+
+           |
+         'topNprices': events 44-48
+           |
+           |   48 |     buildHeap(dataset, n);
+           |      |     ^~~~~~~~~~~~~~~~~~~~~
+           |      |     |
+           |      |     (44) returning to 'topNprices' from 'buildHeap'
+           |   49 | 
+           |   50 |     Item *topN = malloc(sizeof(Item) * N);
+           |      |                  ~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                  |
+           |      |                  (45) this call could return NULL
+           |   51 | 
+           |   52 |     for(int i=0; i<N; i++)
+           |      |                  ~~~
+           |      |                   |
+           |      |                   (46) following 'true' branch (when 'i < N')...
+           |   53 |     {
+           |   54 |         topN[i] = dataset[0];
+           |      |         ~~~~~~~~~~~~~~~~~~~~
+           |      |             |   |
+           |      |             |   (48) 'topN + (long unsigned int)i * 8' could be NULL: unchecked value from (45)
+           |      |             (47) ...to here
+           |

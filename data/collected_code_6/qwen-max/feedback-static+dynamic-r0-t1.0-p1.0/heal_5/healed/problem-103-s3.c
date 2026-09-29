@@ -1,0 +1,27 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+long long eulerian(int n, int m) {
+    long long *a = calloc((n + 1) * (m + 1), sizeof(long long));
+    for (int i = 0; i <= n; i++) {
+        a[i * (m + 1)] = 1;
+    }
+    for (int i = 1; i <= n; i++) {
+        for (int j = 1; j <= m; j++) {
+            if (i < j) {
+                a[i * (m + 1) + j] = 0;
+            } else {
+                a[i * (m + 1) + j] = (i - j) * a[(i - 1) * (m + 1) + j - 1] + (j + 1) * a[(i - 1) * (m + 1) + j];
+            }
+        }
+    }
+    long long result = a[n * (m + 1) + m];
+    free(a);
+    return result;
+}
+
+int main() {
+    int n = 4, m = 2;
+    printf("Eulerian number A(%d, %d) is %lld\n", n, m, eulerian(n, m));
+    return 0;
+}

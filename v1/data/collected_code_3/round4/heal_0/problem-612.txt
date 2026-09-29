@@ -1,0 +1,67 @@
+```C
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node* next;
+} Node;
+
+Node* createNode(int data) {
+    Node* newNode = (Node*)malloc(sizeof(Node));
+    if(newNode == NULL) {
+        printf("Error creating a new node.\n");
+        exit(0);
+    }
+    newNode->data = data;
+    newNode->next = NULL;
+
+    return newNode;
+}
+
+Node* mergeFirstLast(Node* node) {
+    if(node == NULL || node->next == NULL)
+        return node;
+
+    Node* first = node;
+    Node* last = node;
+    Node* prev = NULL;
+
+    while(last->next != NULL) {
+        prev = last;
+        last = last->next;
+    }
+
+    prev->next = NULL;
+    last->next = first->next;
+    first->next = last;
+
+    return first;
+}
+
+void printList(Node* node) {
+    while(node != NULL) {
+        printf("%d ", node->data);
+        node = node->next;
+    }
+    printf("\n");
+}
+
+int main() {
+    Node* head = createNode(1);
+    head->next = createNode(2);
+    head->next->next = createNode(3);
+    head->next->next->next = createNode(4);
+    head->next->next->next->next = createNode(5);
+
+    printf("Original List: ");
+    printList(head);
+
+    head = mergeFirstLast(head);
+
+    printf("Modified List: ");
+    printList(head);
+
+    return 0;
+}
+```

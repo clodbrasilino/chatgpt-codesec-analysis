@@ -1,0 +1,7 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-649.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-649.c:4:20: style: Parameter 'list' can be declared as pointer to const [constParameterPointer]
+int sum_range(int *list, int start, int end) {
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-649.c:17:14: style: Variable 'size' is assigned a value that is never used. [unreadVariable]
+    int size = sizeof(arr) / sizeof(arr[0]);
+             ^

@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-917-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-917-s2.c:24:42: style: Condition 'len==max_len' is always true [knownConditionTrueFalse]
+        if (text[len - 1] != '\0' && len == max_len) {
+                                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-917-s2.c:23:13: note: Assuming condition 'len==max_len' is true
+    if (len == max_len && text[len - (len > 0 ? 1 : 0)] != '\0' && len > 0) {
+            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-917-s2.c:24:42: note: Condition 'len==max_len' is always true
+        if (text[len - 1] != '\0' && len == max_len) {
+                                         ^

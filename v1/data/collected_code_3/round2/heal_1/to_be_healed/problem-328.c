@@ -1,0 +1,75 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node *next;
+};
+
+void rotate(struct Node **head_ref, int k) {
+    if (k == 0)
+        return;
+
+    struct Node* current = *head_ref;
+
+    int count = 1;
+    while (count < k && current != NULL) {
+        current = current->next;
+        count++;
+    }
+
+    if (current == NULL)
+        return;
+
+    struct Node *kthNode = current;
+
+    while (current->next != NULL)
+        current = current->next;
+
+    current->next = *head_ref;
+
+    *head_ref = kthNode->next;
+
+    kthNode->next = NULL;
+}
+
+void push(struct Node** head_ref, int new_data) {
+    struct Node* new_node = (struct Node*) malloc(sizeof(struct Node));
+
+    /* Possible weaknesses found:
+     *  dereference of possibly-NULL 'new_node' [CWE-690] [-Wanalyzer-possible-null-dereference]
+     */
+    new_node->data = new_data;
+
+    new_node->next = (*head_ref);
+
+    (*head_ref) = new_node;
+}
+
+void printList(struct Node *node) {
+    while (node != NULL) {
+        printf("%d ", node->data);
+        node = node->next;
+    }
+}
+
+int main(void) {
+    struct Node* head = NULL;
+
+    push(&head, 7);
+    push(&head, 6);
+    push(&head, 5);
+    push(&head, 4);
+    push(&head, 3);
+    push(&head, 2);
+    push(&head, 1);
+
+    printf("Given linked list \n");
+    printList(head);
+    rotate(&head, 4);
+
+    printf("\nRotated Linked list \n");
+    printList(head);
+
+    return 0;
+}

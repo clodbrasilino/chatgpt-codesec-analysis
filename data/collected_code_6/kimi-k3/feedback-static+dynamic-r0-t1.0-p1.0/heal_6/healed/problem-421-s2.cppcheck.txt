@@ -1,0 +1,25 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-421-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-421-s2.c:73:27: style: Condition 'copy_size>remaining-1' is always false [knownConditionTrueFalse]
+            if (copy_size > remaining - 1)
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-421-s2.c:64:28: note: Assuming that condition 'element_length>remaining-1' is not redundant
+        if (element_length > remaining - 1)
+                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-421-s2.c:72:30: note: copy_size is assigned 'element_length' here.
+            size_t copy_size = element_length;
+                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-421-s2.c:73:27: note: Condition 'copy_size>remaining-1' is always false
+            if (copy_size > remaining - 1)
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-421-s2.c:92:31: style: Condition 'copy_size>remaining-1' is always false [knownConditionTrueFalse]
+                if (copy_size > remaining - 1)
+                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-421-s2.c:84:34: note: Assuming that condition 'delimiter_length>remaining-1' is not redundant
+            if (delimiter_length > remaining - 1)
+                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-421-s2.c:91:34: note: copy_size is assigned 'delimiter_length' here.
+                size_t copy_size = delimiter_length;
+                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-421-s2.c:92:31: note: Condition 'copy_size>remaining-1' is always false
+                if (copy_size > remaining - 1)
+                              ^

@@ -1,0 +1,44 @@
+{
+  "task_id": 148,
+  "text": "Write a C function to divide a number into two parts such that the sum of digits is maximum.",
+  "fn_candidates": [
+    "sum_digits_twoparts",
+    "SumDigitsTwoparts",
+    "sumDigitsTwoparts",
+    "sumdigitstwoparts"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "sum_digits_twoparts",
+      "args": [
+        35
+      ],
+      "expected": 17,
+      "assert_src": "assert sum_digits_twoparts(35)==17"
+    },
+    {
+      "fn_name": "sum_digits_twoparts",
+      "args": [
+        7
+      ],
+      "expected": 7,
+      "assert_src": "assert sum_digits_twoparts(7)==7"
+    },
+    {
+      "fn_name": "sum_digits_twoparts",
+      "args": [
+        100
+      ],
+      "expected": 19,
+      "assert_src": "assert sum_digits_twoparts(100)==19"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

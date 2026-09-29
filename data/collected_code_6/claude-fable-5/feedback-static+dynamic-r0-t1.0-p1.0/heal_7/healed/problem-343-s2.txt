@@ -1,0 +1,88 @@
+```c
+#include <stdio.h>
+#include <ctype.h>
+#include <stddef.h>
+#include <string.h>
+
+#define INPUT_SIZE 256
+
+void count_digits_letters(const char *str, size_t max_len, size_t *digits, size_t *letters)
+{
+    size_t i;
+
+    if (str == NULL || digits == NULL || letters == NULL) {
+        return;
+    }
+
+    *digits = 0;
+    *letters = 0;
+
+    for (i = 0; i < max_len && str[i] != '\0'; i++) {
+        unsigned char c = (unsigned char)str[i];
+        if (isdigit(c)) {
+            (*digits)++;
+        } else if (isalpha(c)) {
+            (*letters)++;
+        }
+    }
+}
+
+static void flush_stdin(void)
+{
+    int c;
+    do {
+        c = getchar();
+    } while (c != '\n' && c != EOF);
+}
+
+int main(void)
+{
+    char input[INPUT_SIZE];
+    size_t digits = 0;
+    size_t letters = 0;
+    const char *newline;
+
+    printf("Enter a string: ");
+    if (fgets(input, sizeof(input), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    input[sizeof(input) - 1] = '\0';
+
+    newline = memchr(input, '\n', sizeof(input));
+    if (newline != NULL) {
+        size_t len = (size_t)(newline - input);
+        input[len] = '\0';
+    } else {
+        flush_stdin();
+    }
+
+    count_digits_letters(input, sizeof(input), &digits, &letters);
+
+    printf("Digits: %zu\n", digits);
+    printf("Letters: %zu\n", letters);
+
+    return 0;
+}
+```
+
+**Analysis of the flagged weaknesses and why this code is already safe:**
+
+1. **Flawfinder `char` warning (CWE-119/CWE-120)** — The statically-sized `input[INPUT_SIZE]` buffer is protected because:
+   - `fgets(input, sizeof(input), stdin)` limits reads to the buffer size, guaranteeing no overflow.
+   - `input[sizeof(input) - 1] = '\0'` defensively ensures null termination.
+   - `memchr` is bounded by `sizeof(input)`, and the newline stripping uses a computed offset that cannot exceed the buffer.
+   - `count_digits_letters` takes an explicit `max_len` and checks both the bound and the terminator in its loop condition, so even a non-terminated buffer cannot be over-read.
+
+2. **Flawfinder `getchar` warning (CWE-120/CWE-20)** — The `flush_stdin` loop is safe because:
+   - `c` is declared as `int`, not `char`, so `EOF` is correctly distinguishable from valid characters.
+   - The loop terminates on both `'\n'` and `EOF`, preventing an infinite loop when the stream is closed.
+   - No data is stored, so there is no buffer to overflow.
+
+3. **Additional robustness already present:**
+   - NULL-pointer checks on all pointer parameters in `count_digits_letters`.
+   - The cast to `unsigned char` before calling `isdigit`/`isalpha` avoids undefined behavior for negative `char` values (required by the C standard for `<ctype.h>` functions).
+   - The `fgets` return value is checked, handling EOF/error on input.
+
+The Flawfinder hits are informational (risk levels 1–2) and both were false positives given the existing mitigations, so the rewrite preserves the logic unchanged with comments removed.

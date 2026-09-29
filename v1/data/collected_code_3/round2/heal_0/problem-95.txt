@@ -1,0 +1,39 @@
+```C
+#include <stdio.h>
+#include <limits.h>
+
+int minSubListLength(int arr[], int n, int x) {
+    int minLength = n + 1;
+    for (int start = 0; start < n; start++) {
+        int curr_sum = arr[start];
+        if (curr_sum > x)
+            return 1;
+        for (int end = start + 1; end < n; end++) {
+            curr_sum += arr[end];
+            if (curr_sum > x && (end - start + 1) < minLength)
+                minLength = (end - start + 1);
+        }
+    }
+    return minLength;
+}
+
+int main() {
+    int arr1[] = {1, 4, 45, 6, 10, 19};
+    int x = 51;
+    int n1 = sizeof(arr1) / sizeof(arr1[0]);
+    int res1 = minSubListLength(arr1, n1, x);
+    printf("Minimum length of sublist is %d\n", res1);
+
+    int arr2[] = {1, 10, 5, 2, 7};
+    int n2 = sizeof(arr2) / sizeof(arr2[0]);
+    int res2 = minSubListLength(arr2, n2, x);
+    printf("Minimum length of sublist is %d\n", res2);
+
+    int arr3[] = {1, 11, 100, 1, 0, 200, 3, 2, 1, 250};
+    int n3 = sizeof(arr3) / sizeof(arr3[0]);
+    int res3 = minSubListLength(arr3, n3, x);
+    printf("Minimum length of sublist is %d\n", res3);
+
+    return 0;
+}
+```

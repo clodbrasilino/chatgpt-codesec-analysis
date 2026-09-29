@@ -1,0 +1,134 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node *next;
+} Node;
+
+static size_t list_length(const Node *head)
+{
+    size_t length = 0;
+
+    while (head != NULL) {
+        length++;
+        head = head->next;
+    }
+
+    return length;
+}
+
+static int find_max_length_list(const Node *const *lists, size_t count, size_t *max_index)
+{
+    size_t i;
+    size_t best_index = 0;
+    size_t best_length = 0;
+    /* Possible weaknesses found:
+     *  The scope of the variable 'current_length' can be reduced. [variableScope]
+     */
+    size_t current_length;
+
+    if (lists == NULL || max_index == NULL || count == 0) {
+        return -1;
+    }
+
+    for (i = 0; i < count; i++) {
+        current_length = list_length(lists[i]);
+        if (i == 0 || current_length > best_length) {
+            best_length = current_length;
+            best_index = i;
+        }
+    }
+
+    *max_index = best_index;
+    return 0;
+}
+
+static Node *create_node(int data)
+{
+    Node *node = malloc(sizeof(*node));
+
+    if (node == NULL) {
+        return NULL;
+    }
+
+    node->data = data;
+    node->next = NULL;
+
+    return node;
+}
+
+static int append_node(Node **head, int data)
+{
+    Node *new_node;
+    Node *current;
+
+    if (head == NULL) {
+        return -1;
+    }
+
+    new_node = create_node(data);
+    if (new_node == NULL) {
+        return -1;
+    }
+
+    if (*head == NULL) {
+        *head = new_node;
+        return 0;
+    }
+
+    current = *head;
+    while (current->next != NULL) {
+        current = current->next;
+    }
+    current->next = new_node;
+
+    return 0;
+}
+
+static void free_list(Node *head)
+{
+    Node *next;
+
+    while (head != NULL) {
+        next = head->next;
+        free(head);
+        head = next;
+    }
+}
+
+int main(void)
+{
+    enum { LIST_COUNT = 3 };
+    Node *lists[LIST_COUNT] = {NULL};
+    size_t max_index = 0;
+    size_t i;
+    int status = EXIT_SUCCESS;
+
+    if (append_node(&lists[0], 1) != 0 ||
+        append_node(&lists[0], 2) != 0 ||
+        append_node(&lists[1], 10) != 0 ||
+        append_node(&lists[1], 20) != 0 ||
+        append_node(&lists[1], 30) != 0 ||
+        append_node(&lists[1], 40) != 0 ||
+        append_node(&lists[2], 100) != 0 ||
+        append_node(&lists[2], 200) != 0 ||
+        append_node(&lists[2], 300) != 0) {
+        fprintf(stderr, "Error: failed to build lists\n");
+        status = EXIT_FAILURE;
+    } else if (find_max_length_list((const Node *const *)lists,
+                                    (size_t)LIST_COUNT, &max_index) != 0) {
+        fprintf(stderr, "Error: failed to find maximum length list\n");
+        status = EXIT_FAILURE;
+    } else {
+        printf("List %zu has the maximum length: %zu\n",
+               max_index, list_length(lists[max_index]));
+    }
+
+    for (i = 0; i < (size_t)LIST_COUNT; i++) {
+        free_list(lists[i]);
+        lists[i] = NULL;
+    }
+
+    return status;
+}

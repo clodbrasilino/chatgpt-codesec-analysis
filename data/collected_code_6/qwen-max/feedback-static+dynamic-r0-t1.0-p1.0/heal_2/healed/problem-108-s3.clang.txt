@@ -1,0 +1,16 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-108-s3.c:27:9: error: expected expression
+   27 |         if (head != NULL) {
+      |         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-108-s3.c:139:145: error: field designator cannot initialize a non-struct, non-union type 'Node[]' (aka 'struct Node[]')
+  139 |     Node n1_2 = {.value = (void *)&((int []){3})[0], .next = (Node *)(&((Node[]){.value = (void *)&((int []){5})[0], .next = (Node *)&((Node[]){.value = (void *)&((int []){7})[0], .next = NULL})[0]})[0])};
+      |                                                                                                                                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-108-s3.c:139:181: error: field designator cannot initialize a non-struct, non-union type 'Node[]' (aka 'struct Node[]')
+  139 |     Node n1_2 = {.value = (void *)&((int []){3})[0], .next = (Node *)(&((Node[]){.value = (void *)&((int []){5})[0], .next = (Node *)&((Node[]){.value = (void *)&((int []){7})[0], .next = NULL})[0]})[0])};
+      |                                                                                                                                                                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-108-s3.c:143:145: error: field designator cannot initialize a non-struct, non-union type 'Node[]' (aka 'struct Node[]')
+  143 |     Node n2_2 = {.value = (void *)&((int []){4})[0], .next = (Node *)(&((Node[]){.value = (void *)&((int []){6})[0], .next = (Node *)&((Node[]){.value = (void *)&((int []){8})[0], .next = NULL})[0]})[0])};
+      |                                                                                                                                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-108-s3.c:143:181: error: field designator cannot initialize a non-struct, non-union type 'Node[]' (aka 'struct Node[]')
+  143 |     Node n2_2 = {.value = (void *)&((int []){4})[0], .next = (Node *)(&((Node[]){.value = (void *)&((int []){6})[0], .next = (Node *)&((Node[]){.value = (void *)&((int []){8})[0], .next = NULL})[0]})[0])};
+      |                                                                                                                                                                                     ^
+5 errors generated.

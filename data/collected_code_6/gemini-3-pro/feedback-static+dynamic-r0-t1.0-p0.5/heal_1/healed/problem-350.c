@@ -1,0 +1,72 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+void minimizeString(char *str, size_t max_len) {
+    if (str == NULL || max_len == 0) {
+        return;
+    }
+
+    size_t len = 0;
+    while (len < max_len && str[len] != '\0') {
+        len++;
+    }
+
+    if (len == 0) {
+        return;
+    }
+
+    int freq[256] = {0};
+    for (size_t i = 0; i < len; i++) {
+        freq[(unsigned char)str[i]]++;
+    }
+
+    int maxFreq = 0;
+    char charToRemove = '\0';
+    for (int i = 0; i < 256; i++) {
+        if (freq[i] > maxFreq) {
+            maxFreq = freq[i];
+            charToRemove = (char)i;
+        }
+    }
+
+    if (maxFreq == 0) {
+        return;
+    }
+
+    size_t j = 0;
+    for (size_t i = 0; i < len; i++) {
+        if (str[i] != charToRemove) {
+            str[j++] = str[i];
+        }
+    }
+    
+    if (j < max_len) {
+        str[j] = '\0';
+    }
+}
+
+int main(void) {
+    size_t buffer_size = 1024;
+    char *str = malloc(buffer_size * sizeof(char));
+    if (str == NULL) {
+        return 1;
+    }
+
+    if (fgets(str, buffer_size, stdin) != NULL) {
+        size_t len = 0;
+        while (len < buffer_size && str[len] != '\0') {
+            len++;
+        }
+
+        if (len > 0 && str[len - 1] == '\n') {
+            str[len - 1] = '\0';
+            len--;
+        }
+
+        minimizeString(str, buffer_size);
+        printf("%s\n", str);
+    }
+
+    free(str);
+    return 0;
+}

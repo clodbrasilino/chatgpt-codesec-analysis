@@ -1,0 +1,33 @@
+#include <stdio.h>
+
+int reverseDigits(int num)
+{
+    int rev_num = 0;
+    while(num > 0)
+    {
+        rev_num = rev_num*10 + num%10;
+        num = num/10;
+    }
+    return rev_num;
+}
+
+int check(int num)
+{
+    int rev = reverseDigits(num);
+    if (num == 2*rev -1)
+        return 1;
+    else
+        return 0;
+}
+
+int main()
+{
+    int num;
+    printf("Enter a number: ");
+    scanf("%d", &num);
+    if(check(num))
+        printf("The number is one less than twice its reverse.\n");
+    else
+        printf("The number is not one less than twice its reverse.\n");
+    return 0;
+}

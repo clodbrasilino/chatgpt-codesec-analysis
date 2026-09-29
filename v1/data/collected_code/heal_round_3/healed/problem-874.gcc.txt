@@ -1,0 +1,11 @@
+collected_code/heal_round_3/healed/problem-874.c: In function 'checkConcatenation':
+collected_code/heal_round_3/healed/problem-874.c:10:33: error: 'INT_MAX' undeclared (first use in this function)
+   10 |     size_t len1 = strnlen(str1, INT_MAX);
+      |                                 ^~~~~~~
+collected_code/heal_round_3/healed/problem-874.c:4:1: note: 'INT_MAX' is defined in header '<limits.h>'; did you forget to '#include <limits.h>'?
+    3 | #include <string.h>
+  +++ |+#include <limits.h>
+    4 | 
+collected_code/heal_round_3/healed/problem-874.c:10:33: note: each undeclared identifier is reported only once for each function it appears in
+   10 |     size_t len1 = strnlen(str1, INT_MAX);
+      |                                 ^~~~~~~

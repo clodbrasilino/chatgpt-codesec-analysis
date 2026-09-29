@@ -1,0 +1,54 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+unsigned long long sum_even_factors(unsigned int n)
+{
+    unsigned long long sum = 0;
+    unsigned int i;
+
+    if (n == 0U) {
+        return 0ULL;
+    }
+
+    if ((n % 2U) != 0U) {
+        return 0ULL;
+    }
+
+    for (i = 2U; i <= n / 2U; i += 2U) {
+        if ((n % i) == 0U) {
+            sum += (unsigned long long)i;
+        }
+    }
+
+    sum += (unsigned long long)n;
+
+    return sum;
+}
+
+int main(void)
+{
+    unsigned int number = 0U;
+    unsigned long long result;
+    int scan_result;
+
+    printf("Enter a positive integer: ");
+
+    scan_result = scanf("%u", &number);
+    if (scan_result != 1) {
+        fprintf(stderr, "Error: invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (number == 0U) {
+        fprintf(stderr, "Error: number must be greater than zero.\n");
+        return EXIT_FAILURE;
+    }
+
+    result = sum_even_factors(number);
+
+    printf("Sum of even factors of %u is %llu\n", number, result);
+
+    return EXIT_SUCCESS;
+}
+```

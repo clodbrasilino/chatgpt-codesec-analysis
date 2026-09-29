@@ -1,0 +1,156 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+typedef struct {
+    int *items;
+    size_t length;
+} List;
+
+static bool lists_equal(const List *a, const List *b)
+{
+    if (a == NULL || b == NULL) {
+        return false;
+    }
+    if (a->length != b->length) {
+        return false;
+    }
+    for (size_t i = 0; i < a->length; i++) {
+        if (a->items[i] != b->items[i]) {
+            return false;
+        }
+    }
+    return true;
+}
+
+static int count_unique_lists(const List *lists, size_t count, size_t *result)
+{
+    if (result == NULL) {
+        return -1;
+    }
+    if (lists == NULL && count > 0) {
+        return -1;
+    }
+
+    size_t unique = 0;
+    for (size_t i = 0; i < count; i++) {
+        bool seen = false;
+        for (size_t j = 0; j < i; j++) {
+            if (lists_equal(&lists[i], &lists[j])) {
+                seen = true;
+                break;
+            }
+        }
+        if (!seen) {
+            unique++;
+        }
+    }
+    *result = unique;
+    return 0;
+}
+
+static int make_list(List *list, const int *values, size_t length)
+{
+    if (list == NULL) {
+        return -1;
+    }
+    if (length > 0 && values == NULL) {
+        return -1;
+    }
+
+    list->items = NULL;
+    list->length = 0;
+
+    if (length > 0) {
+        list->items = malloc(length * sizeof(int));
+        if (list->items == NULL) {
+            return -1;
+        }
+        for (size_t i = 0; i < length; i++) {
+            list->items[i] = values[i];
+        }
+        list->length = length;
+    }
+    return 0;
+}
+
+static void free_list(List *list)
+{
+    if (list != NULL) {
+        free(list->items);
+        list->items = NULL;
+        list->length = 0;
+    }
+}
+
+int main(void)
+{
+    List lists[5];
+    size_t created;
+    size_t unique_count;
+    int status;
+
+    const int a[] = {1, 2, 3};
+    const int b[] = {4, 5};
+    const int c[] = {1, 2, 3};
+    const int d[] = {6};
+    const int e[] = {4, 5};
+
+    created = 0;
+    status = 0;
+
+    if (make_list(&lists[0], a, 3) != 0) {
+        status = -1;
+    } else {
+        created = 1;
+    }
+    if (status == 0) {
+        if (make_list(&lists[1], b, 2) != 0) {
+            status = -1;
+        } else {
+            created = 2;
+        }
+    }
+    if (status == 0) {
+        if (make_list(&lists[2], c, 3) != 0) {
+            status = -1;
+        } else {
+            created = 3;
+        }
+    }
+    if (status == 0) {
+        if (make_list(&lists[3], d, 1) != 0) {
+            status = -1;
+        } else {
+            created = 4;
+        }
+    }
+    if (status == 0) {
+        if (make_list(&lists[4], e, 2) != 0) {
+            status = -1;
+        } else {
+            created = 5;
+        }
+    }
+
+    if (status == 0) {
+        if (count_unique_lists(lists, created, &unique_count) != 0) {
+            status = -1;
+        } else {
+            if (printf("Number of unique lists: %zu\n", unique_count) < 0) {
+                status = -1;
+            }
+        }
+    }
+
+    for (size_t i = 0; i < created; i++) {
+        free_list(&lists[i]);
+    }
+
+    if (status != 0) {
+        return EXIT_FAILURE;
+    }
+    return EXIT_SUCCESS;
+}
+```

@@ -1,0 +1,49 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int size;
+    int* data;
+} IntegerTuple;
+
+IntegerTuple convertStringTupleToIntegerTuple(int tuple_size, char **string_values){
+    IntegerTuple result;
+    result.size = tuple_size;
+    result.data = malloc(tuple_size * sizeof(int));
+
+    if(result.data == NULL){
+        fprintf(stderr, "Memory allocation failed\n");
+        result.size = 0;
+        return result;
+    }
+
+    for(int i =0; i< tuple_size; i++){
+        char *endptr = NULL;
+        result.data[i] = (int) strtol(string_values[i], &endptr, 10);
+
+        if (endptr == string_values[i]) {
+            fprintf(stderr, "Error converting string to integer at index %d\n", i);
+            free(result.data);
+            result.size = 0;
+            result.data = NULL;
+            return result;
+        }
+    }
+
+    return result;
+}
+
+int main(){
+    char *string_values[5] = {"1", "2", "3", "4", "5"};
+    IntegerTuple int_tuple = convertStringTupleToIntegerTuple(5, string_values);
+
+    if(int_tuple.data == NULL){
+        return EXIT_FAILURE;
+    }
+
+    for(int i=0;i<int_tuple.size;i++){
+        printf("%d ",int_tuple.data[i]);
+    }
+    free(int_tuple.data);
+    return EXIT_SUCCESS;
+}

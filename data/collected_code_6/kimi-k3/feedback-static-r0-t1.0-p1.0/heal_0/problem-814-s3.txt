@@ -1,0 +1,38 @@
+```c
+#include <stdio.h>
+#include <math.h>
+
+double rhombus_area(double diagonal1, double diagonal2) {
+    if (diagonal1 <= 0.0 || diagonal2 <= 0.0) {
+        return -1.0;
+    }
+    return (diagonal1 * diagonal2) / 2.0;
+}
+
+int main(void) {
+    double d1, d2, area;
+    
+    printf("Enter the first diagonal: ");
+    if (scanf("%lf", &d1) != 1) {
+        fprintf(stderr, "Invalid input for first diagonal\n");
+        return 1;
+    }
+    
+    printf("Enter the second diagonal: ");
+    if (scanf("%lf", &d2) != 1) {
+        fprintf(stderr, "Invalid input for second diagonal\n");
+        return 1;
+    }
+    
+    area = rhombus_area(d1, d2);
+    
+    if (area < 0.0) {
+        fprintf(stderr, "Diagonals must be positive values\n");
+        return 1;
+    }
+    
+    printf("Area of rhombus: %.2f\n", area);
+    
+    return 0;
+}
+```

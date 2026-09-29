@@ -1,0 +1,46 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+int count_odd_rotations(const char *str) {
+    int len = strlen(str);
+    int count = 0;
+    
+    for (int i = 0; i < len; i++) {
+        if (str[i] == '1') {
+            count++;
+        }
+    }
+    
+    return count;
+}
+
+int main() {
+    char input[256];
+    
+    printf("Enter a binary string: ");
+    if (fgets(input, sizeof(input), stdin) == NULL) {
+        return 1;
+    }
+    
+    input[strcspn(input, "\n")] = '\0';
+    
+    if (input[0] == '\0') {
+        printf("Error: Empty input\n");
+        return 1;
+    }
+    
+    for (int i = 0; i < strlen(input); i++) {
+        if (input[i] != '0' && input[i] != '1') {
+            printf("Error: Invalid binary string\n");
+            return 1;
+        }
+    }
+    
+    int result = count_odd_rotations(input);
+    printf("Count of odd rotations: %d\n", result);
+    
+    return 0;
+}
+```

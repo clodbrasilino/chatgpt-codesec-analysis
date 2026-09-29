@@ -1,0 +1,21 @@
+```C
+#include <stdio.h>
+
+long long int sumOfFifthPower(int n) {
+    long long int sum = 0;
+    for (int i = 1; i <= n; i++) {
+        long long int oddNum = 2 * i - 1;
+        long long int fifthPower = oddNum * oddNum * oddNum * oddNum * oddNum;
+        sum += fifthPower;
+    }
+    return sum;
+}
+
+int main() {
+    int n;
+    printf("Enter a number: ");
+    scanf("%d", &n);
+    printf("Sum of fifth powers of first %d odd numbers is: %lld\n", n, sumOfFifthPower(n));
+    return 0;
+}
+```

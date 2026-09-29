@@ -1,0 +1,21 @@
+```c
+#include <stdio.h>
+
+unsigned int left_rotate(unsigned int num, unsigned int bits) {
+    unsigned int bit_count = sizeof(unsigned int) * 8;
+    bits %= bit_count;
+    if (bits == 0) {
+        return num;
+    }
+    return (num << bits) | (num >> (bit_count - bits));
+}
+
+int main(void) {
+    unsigned int num = 0x12345678;
+    unsigned int bits = 4;
+    unsigned int result = left_rotate(num, bits);
+    printf("Number: 0x%X\n", num);
+    printf("After left rotation by %u bits: 0x%X\n", bits, result);
+    return 0;
+}
+```

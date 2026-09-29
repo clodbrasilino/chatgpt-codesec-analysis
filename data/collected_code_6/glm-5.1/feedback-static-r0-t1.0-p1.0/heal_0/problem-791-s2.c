@@ -1,0 +1,157 @@
+#include <stdlib.h>
+#include <string.h>
+#include <stdio.h>
+
+typedef enum { TYPE_INT, TYPE_TUPLE } DataType;
+
+typedef struct Tuple {
+    int count;
+    void **elements;
+    DataType *types;
+} Tuple;
+
+Tuple *create_tuple(int count) {
+    Tuple *t = (Tuple *)malloc(sizeof(Tuple));
+    if (!t) return NULL;
+    t->count = count;
+    t->elements = (void **)malloc(count * sizeof(void *));
+    t->types = (DataType *)malloc(count * sizeof(DataType));
+    if (!t->elements || !t->types) {
+        free(t->elements);
+        free(t->types);
+        free(t);
+        return NULL;
+    }
+    return t;
+}
+
+void free_tuple(Tuple *t) {
+    if (!t) return;
+    for (int i = 0; i < t->count; i++) {
+        if (t->types[i] == TYPE_TUPLE) {
+            free_tuple((Tuple *)t->elements[i]);
+        } else {
+            free(t->elements[i]);
+        }
+    }
+    free(t->elements);
+    free(t->types);
+    free(t);
+}
+
+Tuple *remove_nested_record(Tuple *input) {
+    if (!input) return NULL;
+    Tuple *flattened = create_tuple(input->count);
+    if (!flattened) return NULL;
+    int new_count = 0;
+    for (int i = 0; i < input->count; i++) {
+        if (input->types[i] == TYPE_TUPLE) {
+            Tuple *nested = (Tuple *)input->elements[i];
+            if (!nested) continue;
+            int old_count = new_count;
+            new_count += nested->count;
+            void **new_elements = (void **)realloc(flattened->elements, new_count * sizeof(void *));
+            DataType *new_types = (DataType *)realloc(flattened->types, new_count * sizeof(DataType));
+            if (!new_elements || !new_types) {
+                if (new_elements) flattened->elements = new_elements;
+                if (new_types) flattened->types = new_types;
+                free_tuple(flattened);
+                return NULL;
+            }
+            flattened->elements = new_elements;
+            flattened->types = new_types;
+            for (int j = 0; j < nested->count; j++) {
+                flattened->elements[old_count + j] = nested->elements[j];
+                flattened->types[old_count + j] = nested->types[j];
+            }
+            free(nested->elements);
+            free(nested->types);
+            free(nested);
+            input->elements[i] = NULL;
+            input->types[i] = TYPE_INT;
+        } else {
+            void **new_elements = (void **)realloc(flattened->elements, (new_count + 1) * sizeof(void *));
+            DataType *new_types = (DataType *)realloc(flattened->types, (new_count + 1) * sizeof(DataType));
+            if (!new_elements || !new_types) {
+                if (new_elements) flattened->elements = new_elements;
+                if (new_types) flattened->types = new_types;
+                free_tuple(flattened);
+                return NULL;
+            }
+            flattened->elements = new_elements;
+            flattened->types = new_types;
+            flattened->elements[new_count] = input->elements[i];
+            flattened->types[new_count] = input->types[i];
+            input->elements[i] = NULL;
+            new_count++;
+        }
+    }
+    flattened->count = new_count;
+    free(input->elements);
+    free(input->types);
+    free(input);
+    return flattened;
+}
+
+void print_tuple(Tuple *t) {
+    if (!t) return;
+    printf("(");
+    for (int i = 0; i < t->count; i++) {
+        if (t->types[i] == TYPE_TUPLE) {
+            print_tuple((Tuple *)t->elements[i]);
+        } else {
+            printf("%d", *(int *)t->elements[i]);
+        }
+        if (i < t->count - 1) printf(", ");
+    }
+    printf(")");
+}
+
+int main(void) {
+    int *a = (int *)malloc(sizeof(int));
+    int *b = (int *)malloc(sizeof(int));
+    int *c = (int *)malloc(sizeof(int));
+    int *d = (int *)malloc(sizeof(int));
+    if (!a || !b || !c || !d) {
+        free(a); free(b); free(c); free(d);
+        return 1;
+    }
+    *a = 1; *b = 2; *c = 3; *d = 4;
+
+    Tuple *inner_tuple = create_tuple(2);
+    if (!inner_tuple) {
+        free(a); free(b); free(c); free(d);
+        return 1;
+    }
+    inner_tuple->elements[0] = b;
+    inner_tuple->types[0] = TYPE_INT;
+    inner_tuple->elements[1] = c;
+    inner_tuple->types[1] = TYPE_INT;
+
+    Tuple *outer_tuple = create_tuple(3);
+    if (!outer_tuple) {
+        free_tuple(inner_tuple);
+        free(a); free(d);
+        return 1;
+    }
+    outer_tuple->elements[0] = a;
+    outer_tuple->types[0] = TYPE_INT;
+    outer_tuple->elements[1] = inner_tuple;
+    outer_tuple->types[1] = TYPE_TUPLE;
+    outer_tuple->elements[2] = d;
+    outer_tuple->types[2] = TYPE_INT;
+
+    printf("Original: ");
+    print_tuple(outer_tuple);
+    printf("\n");
+
+    Tuple *result = remove_nested_record(outer_tuple);
+    
+    printf("Flattened: ");
+    print_tuple(result);
+    printf("\n");
+
+    free_tuple(result);
+
+    return 0;
+}

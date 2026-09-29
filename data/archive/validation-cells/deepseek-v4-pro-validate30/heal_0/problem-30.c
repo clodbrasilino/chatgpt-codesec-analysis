@@ -1,0 +1,46 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+long long count_substrings_same_start_end(const char *str) {
+    if (str == NULL) {
+        return 0;
+    }
+
+    long long count = 0;
+    int freq[256] = {0};
+    size_t len = strlen(str);
+
+    for (size_t i = 0; i < len; i++) {
+        freq[(unsigned char)str[i]]++;
+    }
+
+    for (int i = 0; i < 256; i++) {
+        if (freq[i] > 0) {
+            count += (long long)freq[i] * (freq[i] + 1) / 2;
+        }
+    }
+
+    return count;
+}
+
+int main(void) {
+    char *test_strings[] = {
+        "abcab",
+        "aba",
+        "aaaa",
+        "a",
+        "",
+        "aabca"
+    };
+
+    size_t num_tests = sizeof(test_strings) / sizeof(test_strings[0]);
+
+    for (size_t i = 0; i < num_tests; i++) {
+        printf("String: \"%s\"\n", test_strings[i]);
+        printf("Count: %lld\n", count_substrings_same_start_end(test_strings[i]));
+        printf("\n");
+    }
+
+    return 0;
+}

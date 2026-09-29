@@ -1,0 +1,42 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+int check_substring_in_list(char **list, size_t size, const char *substr) {
+    if (list == NULL || substr == NULL) {
+        return 0;
+    }
+
+    for (size_t i = 0; i < size; i++) {
+        if (list[i] != NULL) {
+            if (strstr(list[i], substr) != NULL) {
+                return 1;
+            }
+        }
+    }
+
+    return 0;
+}
+
+int main(void) {
+    char *strings[] = {
+        "hello world",
+        "programming in C",
+        "test string",
+        NULL
+    };
+
+    size_t count = sizeof(strings) / sizeof(strings[0]);
+
+    const char *find1 = "C";
+    const char *find2 = "missing";
+    const char *find3 = NULL;
+
+    printf("%d\n", check_substring_in_list(strings, count, find1));
+    printf("%d\n", check_substring_in_list(strings, count, find2));
+    printf("%d\n", check_substring_in_list(strings, count, find3));
+
+    return 0;
+}
+```

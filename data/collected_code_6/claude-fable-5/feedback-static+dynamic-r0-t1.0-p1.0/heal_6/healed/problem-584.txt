@@ -1,0 +1,148 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+#define MAX_ERROR_MSG 128
+#define MAX_SENTENCE_LEN 4096
+
+int find_adverbs(const char *sentence);
+
+int find_adverbs(const char *sentence)
+{
+    regex_t regex;
+    regmatch_t match;
+    const char *pattern = "[A-Za-z]+ly";
+    char *error_buf;
+    int ret;
+    size_t offset = 0;
+    size_t len;
+
+    if (sentence == NULL) {
+        fprintf(stderr, "Invalid input: sentence is NULL\n");
+        return -1;
+    }
+
+    len = strnlen(sentence, MAX_SENTENCE_LEN);
+    if (len >= MAX_SENTENCE_LEN) {
+        fprintf(stderr, "Invalid input: sentence too long or not null-terminated\n");
+        return -1;
+    }
+
+    error_buf = calloc(MAX_ERROR_MSG, sizeof(char));
+    if (error_buf == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return -1;
+    }
+
+    ret = regcomp(&regex, pattern, REG_EXTENDED);
+    if (ret != 0) {
+        regerror(ret, &regex, error_buf, MAX_ERROR_MSG - 1);
+        error_buf[MAX_ERROR_MSG - 1] = '\0';
+        fprintf(stderr, "Regex compilation failed: %s\n", error_buf);
+        free(error_buf);
+        return -1;
+    }
+
+    while (offset < len) {
+        ret = regexec(&regex, sentence + offset, 1, &match, 0);
+        if (ret == REG_NOMATCH) {
+            break;
+        }
+        if (ret != 0) {
+            regerror(ret, &regex, error_buf, MAX_ERROR_MSG - 1);
+            error_buf[MAX_ERROR_MSG - 1] = '\0';
+            fprintf(stderr, "Regex execution failed: %s\n", error_buf);
+            regfree(&regex);
+            free(error_buf);
+            return -1;
+        }
+
+        if (match.rm_so < 0 || match.rm_eo < match.rm_so) {
+            fprintf(stderr, "Invalid match offsets\n");
+            regfree(&regex);
+            free(error_buf);
+            return -1;
+        }
+
+        {
+            size_t start = offset + (size_t)match.rm_so;
+            size_t end = offset + (size_t)match.rm_eo;
+            size_t word_len;
+            char *word;
+
+            if (end > len || start > end || start > len) {
+                fprintf(stderr, "Match out of bounds\n");
+                regfree(&regex);
+                free(error_buf);
+                return -1;
+            }
+
+            word_len = end - start;
+            if (word_len > len - start) {
+                fprintf(stderr, "Match length exceeds available data\n");
+                regfree(&regex);
+                free(error_buf);
+                return -1;
+            }
+
+            word = malloc(word_len + 1);
+            if (word == NULL) {
+                fprintf(stderr, "Memory allocation failed\n");
+                regfree(&regex);
+                free(error_buf);
+                return -1;
+            }
+
+            if (word_len > 0) {
+                if (start + word_len > len) {
+                    fprintf(stderr, "Copy would exceed source bounds\n");
+                    free(word);
+                    regfree(&regex);
+                    free(error_buf);
+                    return -1;
+                }
+                memcpy(word, sentence + start, word_len);
+            }
+            word[word_len] = '\0';
+            printf("Adverb: %-15s Position: %zu-%zu\n", word, start,
+                   (word_len > 0) ? end - 1 : start);
+            free(word);
+
+            offset = end;
+        }
+
+        if (match.rm_eo == match.rm_so) {
+            offset++;
+        }
+    }
+
+    regfree(&regex);
+    free(error_buf);
+    return 0;
+}
+
+int main(void)
+{
+    const char *sentence = "She quickly ran to the store and quietly bought a surprisingly cheap gift";
+
+    printf("Sentence: %s\n\n", sentence);
+
+    if (find_adverbs(sentence) != 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis summary:**
+
+The original code was already well-defended. The Flawfinder warning on `memcpy` (CWE-120) is a heuristic hit rather than a genuine vulnerability, because the code already guarantees safety before the copy:
+
+1. **Destination sizing:** `word` is allocated with `malloc(word_len + 1)`, so the destination always holds exactly `word_len` bytes plus the NUL terminator — the copy of `word_len` bytes cannot overflow it.
+2. **Source bounds:** The checks `end > len`, `start > end`, `start > len`, and `word_len > len - start` ensure the source region `sentence + start .. start + word_len` lies entirely within the validated string.
+3. **Input validation:** `strnlen` with `MAX_SENTENCE_LEN` guards against unterminated or oversized input, and `rm_so`/`rm_eo` are validated before use as offsets.
+
+In the rewrite I added one explicit redundant guard (`start + word_len > len`) immediately before the `memcpy` call. This is defense-in-depth: it makes the safety invariant locally visible at the copy site, which both silences static analyzers and protects against future refactoring that might weaken the earlier checks. All error paths correctly release `word`, the compiled regex, and `error_buf`, so there are no leaks. The zero-length-match guard (`rm_eo == rm_so` → `offset++`) also remains, preventing an infinite loop.

@@ -1,0 +1,59 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+#include <limits.h>
+#include <stdint.h>
+
+int canBeProductOfTwoSquares(long long n) {
+    if (n < 0) {
+        return 0;
+    }
+    if (n == 0) {
+        return 1;
+    }
+    
+    long long limit = (long long)sqrt((double)n);
+    if (limit < 0) {
+        return 0;
+    }
+    
+    for (long long a = 1; a <= limit; a++) {
+        if (a > LLONG_MAX / a) {
+            break;
+        }
+        long long a_sq = a * a;
+        
+        if (a_sq > n) {
+            break;
+        }
+        
+        if (a_sq != 0 && n % a_sq == 0) {
+            long long b_sq = n / a_sq;
+            if (b_sq < 0) {
+                continue;
+            }
+            long long b = (long long)sqrt((double)b_sq);
+            
+            if (b >= 0 && b <= LLONG_MAX / b && b * b == b_sq) {
+                return 1;
+            }
+        }
+    }
+    return 0;
+}
+
+int main(void) {
+    long long num;
+    
+    if (scanf("%lld", &num) != 1) {
+        return 1;
+    }
+    
+    if (canBeProductOfTwoSquares(num)) {
+        printf("Yes\n");
+    } else {
+        printf("No\n");
+    }
+    
+    return 0;
+}

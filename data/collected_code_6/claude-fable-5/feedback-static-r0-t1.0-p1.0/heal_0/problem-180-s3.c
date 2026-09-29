@@ -1,0 +1,83 @@
+#include <stdio.h>
+#include <math.h>
+#include <stdlib.h>
+
+#define EARTH_RADIUS_KM 6371.0088
+#define DEG_TO_RAD (M_PI / 180.0)
+
+static int validate_coordinates(double lat, double lon)
+{
+    if (isnan(lat) || isnan(lon) || isinf(lat) || isinf(lon)) {
+        return 0;
+    }
+    if (lat < -90.0 || lat > 90.0) {
+        return 0;
+    }
+    if (lon < -180.0 || lon > 180.0) {
+        return 0;
+    }
+    return 1;
+}
+
+static double haversine_distance(double lat1, double lon1, double lat2, double lon2)
+{
+    double phi1 = lat1 * DEG_TO_RAD;
+    double phi2 = lat2 * DEG_TO_RAD;
+    double delta_phi = (lat2 - lat1) * DEG_TO_RAD;
+    double delta_lambda = (lon2 - lon1) * DEG_TO_RAD;
+
+    double sin_dphi = sin(delta_phi / 2.0);
+    double sin_dlambda = sin(delta_lambda / 2.0);
+
+    double a = sin_dphi * sin_dphi +
+               cos(phi1) * cos(phi2) * sin_dlambda * sin_dlambda;
+
+    if (a < 0.0) {
+        a = 0.0;
+    }
+    if (a > 1.0) {
+        a = 1.0;
+    }
+
+    double c = 2.0 * atan2(sqrt(a), sqrt(1.0 - a));
+
+    return EARTH_RADIUS_KM * c;
+}
+
+int main(void)
+{
+    double lat1;
+    double lon1;
+    double lat2;
+    double lon2;
+
+    printf("Enter latitude and longitude of point 1: ");
+    if (scanf("%lf %lf", &lat1, &lon1) != 2) {
+        fprintf(stderr, "Error: invalid input for point 1\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter latitude and longitude of point 2: ");
+    if (scanf("%lf %lf", &lat2, &lon2) != 2) {
+        fprintf(stderr, "Error: invalid input for point 2\n");
+        return EXIT_FAILURE;
+    }
+
+    if (!validate_coordinates(lat1, lon1)) {
+        fprintf(stderr, "Error: point 1 coordinates out of range\n");
+        return EXIT_FAILURE;
+    }
+
+    if (!validate_coordinates(lat2, lon2)) {
+        fprintf(stderr, "Error: point 2 coordinates out of range\n");
+        return EXIT_FAILURE;
+    }
+
+    double distance = haversine_distance(lat1, lon1, lat2, lon2);
+
+    if (printf("Distance: %.4f km\n", distance) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

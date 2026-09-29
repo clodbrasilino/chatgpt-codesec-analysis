@@ -1,0 +1,71 @@
+```c
+#include <stdio.h>
+#include <ctype.h>
+#include <stddef.h>
+
+void remove_whitespace(char *str, size_t max_len)
+{
+    size_t read;
+    size_t write;
+
+    if (str == NULL || max_len == 0) {
+        return;
+    }
+
+    read = 0;
+    write = 0;
+
+    while (read < max_len && str[read] != '\0') {
+        if (!isspace((unsigned char)str[read])) {
+            if (write < max_len - 1) {
+                str[write] = str[read];
+                write++;
+            } else {
+                break;
+            }
+        }
+        read++;
+    }
+
+    if (write < max_len) {
+        str[write] = '\0';
+    } else {
+        str[max_len - 1] = '\0';
+    }
+}
+
+int main(void)
+{
+    char text[] = "  Hello,   World! \t This is a\ntest.  ";
+
+    printf("Before: \"%s\"\n", text);
+    remove_whitespace(text, sizeof(text));
+    printf("After:  \"%s\"\n", text);
+
+    return 0;
+}
+```
+
+**Analysis of the flagged weaknesses:**
+
+The Flawfinder warnings (CWE-120 Buffer Overflow, CWE-20 Improper Input Validation) are all "risk 1" informational hits triggered by array indexing inside a loop. Reviewing each:
+
+1. **NULL / zero-length guard** — `str == NULL || max_len == 0` is checked before any access, preventing dereference of invalid pointers and underflow of `max_len - 1`.
+
+2. **Read bounds** — `read < max_len && str[read] != '\0'` ensures the loop never reads past the caller-supplied buffer size, even if the string is not null-terminated within `max_len`.
+
+3. **Write bounds** — `write < max_len - 1` reserves one byte for the terminator, so `str[write]` can never write out of bounds. Since `write <= read` always holds, the compaction is safe in-place.
+
+4. **`isspace` cast** — the cast to `unsigned char` is correct and important: passing a negative `char` value (e.g., from extended/UTF-8 bytes) to `isspace()` is undefined behavior per the C standard.
+
+5. **Guaranteed termination** — the final block always writes a `'\0'` within bounds, so the output is always a valid C string.
+
+6. **Caller usage** — `main` passes `sizeof(text)` on an actual array (not a decayed pointer), so the length is accurate.
+
+**Verdict:** the warnings are false positives; the code as written is already defensively correct, so the rewrite preserves the logic unchanged with comments removed. Expected output:
+
+```
+Before: "  Hello,   World! 	 This is a
+test.  "
+After:  "Hello,World!Thisisatest."
+```

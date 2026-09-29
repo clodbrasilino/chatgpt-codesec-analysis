@@ -1,0 +1,39 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+double average_of_odds(int limit);
+
+int main(void)
+{
+    int limit;
+    double result;
+    
+    if (scanf("%d", &limit) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return 1;
+    }
+    
+    if (limit < 1 || limit % 2 == 0) {
+        fprintf(stderr, "Input must be a positive odd number\n");
+        return 1;
+    }
+    
+    result = average_of_odds(limit);
+    printf("%.2f\n", result);
+    
+    return 0;
+}
+
+double average_of_odds(int limit)
+{
+    long long sum = 0;
+    int count = 0;
+    int i;
+    
+    for (i = 1; i <= limit; i += 2) {
+        sum += i;
+        count++;
+    }
+    
+    return (double)sum / count;
+}

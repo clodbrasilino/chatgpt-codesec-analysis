@@ -1,0 +1,66 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+int* convertToSet(const int* tuples, size_t inputSize, size_t* outputSize) {
+    if (!tuples || !outputSize) {
+        return NULL;
+    }
+
+    if (inputSize == 0) {
+        *outputSize = 0;
+        return NULL;
+    }
+
+    int* set = (int*)malloc(inputSize * sizeof(int));
+    if (!set) {
+        return NULL;
+    }
+
+    size_t uniqueCount = 0;
+
+    for (size_t i = 0; i < inputSize; ++i) {
+        bool isDuplicate = false;
+        for (size_t j = 0; j < uniqueCount; ++j) {
+            if (tuples[i] == set[j]) {
+                isDuplicate = true;
+                break;
+            }
+        }
+        if (!isDuplicate) {
+            set[uniqueCount++] = tuples[i];
+        }
+    }
+
+    *outputSize = uniqueCount;
+
+    if (uniqueCount > 0 && uniqueCount < inputSize) {
+        int* resizedSet = (int*)realloc(set, uniqueCount * sizeof(int));
+        if (resizedSet) {
+            set = resizedSet;
+        }
+    }
+
+    return set;
+}
+
+int main(void) {
+    int tuples[] = {1, 2, 2, 3, 4, 4, 5, 1, 6};
+    size_t inputSize = sizeof(tuples) / sizeof(tuples[0]);
+    size_t outputSize = 0;
+
+    int* set = convertToSet(tuples, inputSize, &outputSize);
+
+    if (set) {
+        for (size_t i = 0; i < outputSize; ++i) {
+            printf("%d ", set[i]);
+        }
+        printf("\n");
+        free(set);
+    } else {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

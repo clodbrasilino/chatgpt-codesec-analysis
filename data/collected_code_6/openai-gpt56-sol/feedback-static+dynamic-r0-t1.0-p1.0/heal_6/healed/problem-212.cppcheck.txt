@@ -1,0 +1,7 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-212.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-212.c:69:16: style: The scope of the variable 'new_capacity' can be reduced. [variableScope]
+        size_t new_capacity;
+               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-212.c:116:18: style: Variable 'capacity' is assigned a value that is never used. [unreadVariable]
+        capacity = length + 1;
+                 ^

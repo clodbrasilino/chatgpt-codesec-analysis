@@ -1,0 +1,21 @@
+collected_code_3/round4/heal_0/problem-538.c: In function 'stringListToTuple':
+collected_code_3/round4/heal_0/problem-538.c:15:24: warning: dereference of possibly-NULL 'tuple.items' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   15 |         tuple.items[i] = malloc(sizeof(char) * (strlen(list[i]) + 1));
+      |         ~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  'stringListToTuple': events 1-4
+    |
+    |   12 |     tuple.items = malloc(sizeof(char*) * size);
+    |      |                   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                   |
+    |      |                   (1) this call could return NULL
+    |   13 |     tuple.size = size;
+    |   14 |     for(int i = 0; i < size; i++) {
+    |      |                    ~~~~~~~~
+    |      |                      |
+    |      |                      (2) following 'true' branch (when 'i < size')...
+    |   15 |         tuple.items[i] = malloc(sizeof(char) * (strlen(list[i]) + 1));
+    |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                        |                                   |
+    |      |                        |                                   (3) ...to here
+    |      |                        (4) 'tuple.items + (long unsigned int)i * 8' could be NULL: unchecked value from (1)
+    |

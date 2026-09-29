@@ -1,0 +1,60 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+#include <stddef.h>
+
+bool all_elements_unique(const int *list, size_t length)
+{
+    size_t i;
+    size_t j;
+
+    if (list == NULL) {
+        return false;
+    }
+
+    if (length < 2U) {
+        return true;
+    }
+
+    for (i = 0U; i < (length - 1U); i++) {
+        for (j = i + 1U; j < length; j++) {
+            if (list[i] == list[j]) {
+                return false;
+            }
+        }
+    }
+
+    return true;
+}
+
+int main(void)
+{
+    int unique_list[] = { 1, 2, 3, 4, 5 };
+    int duplicate_list[] = { 1, 2, 3, 2, 5 };
+    size_t unique_len = sizeof(unique_list) / sizeof(unique_list[0]);
+    size_t duplicate_len = sizeof(duplicate_list) / sizeof(duplicate_list[0]);
+
+    if (all_elements_unique(unique_list, unique_len)) {
+        if (printf("List 1: all elements are unique\n") < 0) {
+            return EXIT_FAILURE;
+        }
+    } else {
+        if (printf("List 1: duplicates found\n") < 0) {
+            return EXIT_FAILURE;
+        }
+    }
+
+    if (all_elements_unique(duplicate_list, duplicate_len)) {
+        if (printf("List 2: all elements are unique\n") < 0) {
+            return EXIT_FAILURE;
+        }
+    } else {
+        if (printf("List 2: duplicates found\n") < 0) {
+            return EXIT_FAILURE;
+        }
+    }
+
+    return EXIT_SUCCESS;
+}
+```

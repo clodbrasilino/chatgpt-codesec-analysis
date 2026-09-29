@@ -1,0 +1,29 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+
+size_t count_true_booleans(const bool *bool_list, size_t size) {
+    if (bool_list == NULL) {
+        return 0;
+    }
+
+    size_t count = 0;
+    for (size_t i = 0; i < size; ++i) {
+        if (bool_list[i]) {
+            count++;
+        }
+    }
+    return count;
+}
+
+int main(void) {
+    bool my_bools[] = {true, false, true, true, false, true};
+    size_t size = sizeof(my_bools) / sizeof(my_bools[0]);
+
+    size_t true_count = count_true_booleans(my_bools, size);
+
+    printf("%zu\n", true_count);
+
+    return 0;
+}
+```

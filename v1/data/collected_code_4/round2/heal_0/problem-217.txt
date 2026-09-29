@@ -1,0 +1,34 @@
+```c
+#include <stdio.h>
+#include <limits.h>
+
+#define NO_OF_CHARS 256
+
+char firstRepeatingChar(char* str) {
+    int* count = (int*)calloc(sizeof(int), NO_OF_CHARS);
+    for (int i = 0; *(str + i); i++)
+        count[*(str + i)]++;
+
+    for (int i = 0; *(str + i); i++)
+        if (count[*(str + i)] > 1) {
+            free(count);
+            return *(str + i);
+        }
+
+    free(count);
+    
+    return '\0';
+}
+
+int main() {
+    char str[] = "programming";
+    char result = firstRepeatingChar(str);
+    if (result != '\0') {
+        printf("The first repeating character is %c", result);
+    } else {
+        printf("No repeating character found");
+    }
+    
+    return 0;
+}
+```

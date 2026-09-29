@@ -1,0 +1,24 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    int first;
+    int second;
+} Tuple;
+
+Tuple convertStringToTuple(char* str) {
+    Tuple result;
+    char* token = strtok(str, ",");
+    result.first = atoi(token);
+    token = strtok(NULL, ",");
+    result.second = atoi(token);
+    return result;
+}
+
+int main() {
+    char str[] = "5,10";
+    Tuple result = convertStringToTuple(str);
+    printf("First: %d, Second: %d\n", result.first, result.second);
+    return 0;
+}

@@ -1,0 +1,41 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+int countSubstrings(const char* str) {
+    if (str == NULL) {
+        return 0;
+    }
+
+    int result = 0;
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    int n = strlen(str);
+    int count[256] = {0};
+
+    for (int i = 0; i < n; i++) {
+        unsigned char ch = (unsigned char)str[i];
+        count[ch]++;
+    }
+
+    for (int i = 0; i < 256; i++) {
+        if (count[i] > 0) {
+            result += (count[i] * (count[i] + 1)) / 2;
+        }
+    }
+
+    return result;
+}
+
+int main(void) {
+    const char* str1 = "abcab";
+    int count1 = countSubstrings(str1);
+    printf("%d\n", count1);
+
+    const char* str2 = "aba";
+    int count2 = countSubstrings(str2);
+    printf("%d\n", count2);
+
+    return 0;
+}

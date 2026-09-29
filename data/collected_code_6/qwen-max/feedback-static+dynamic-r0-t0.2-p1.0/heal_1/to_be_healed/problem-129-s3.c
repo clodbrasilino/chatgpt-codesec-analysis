@@ -1,0 +1,49 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+void generate_magic_square(int n, int square[][10]) {
+    /* Possible weaknesses found:
+     *  Unused variable: j [unusedVariable]
+     */
+    int i, j, num = 1;
+    int row = 0, col = n / 2;
+
+    for (i = 0; i < n * n; ++i) {
+        square[row][col] = num++;
+        row--;
+        col++;
+
+        if (num % n == 0) {
+            row += 2;
+            --col;
+        } else {
+            if (row < 0)
+                row += n;
+            if (col == n)
+                col -= n;
+        }
+    }
+}
+
+int main() {
+    int n;
+    printf("Enter the size of the magic square (odd number): ");
+    scanf("%d", &n);
+
+    if (n <= 0 || n % 2 == 0) {
+        printf("Size must be a positive odd number.\n");
+        return 1;
+    }
+
+    int square[10][10];
+    generate_magic_square(n, square);
+
+    for (int i = 0; i < n; ++i) {
+        for (int j = 0; j < n; ++j) {
+            printf("%3d ", square[i][j]);
+        }
+        printf("\n");
+    }
+
+    return 0;
+}

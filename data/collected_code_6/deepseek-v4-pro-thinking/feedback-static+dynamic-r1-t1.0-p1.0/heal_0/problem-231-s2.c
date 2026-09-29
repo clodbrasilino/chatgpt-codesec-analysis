@@ -1,0 +1,52 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int maxTriangleSum(int *triangle, int rows) {
+    if (rows <= 0) {
+        return 0;
+    }
+
+    for (int row = rows - 2; row >= 0; --row) {
+        size_t base = (size_t)row * ((size_t)row + 1) / 2;
+        size_t next_base = base + (size_t)row + 1;
+
+        for (int col = 0; col <= row; ++col) {
+            int left = triangle[next_base + col];
+            int right = triangle[next_base + col + 1];
+            triangle[base + col] += (left > right) ? left : right;
+        }
+    }
+
+    return triangle[0];
+}
+
+int main(void) {
+    int rows;
+
+    if (scanf("%d", &rows) != 1 || rows <= 0) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    size_t total = (size_t)rows * ((size_t)rows + 1) / 2;
+    int *triangle = malloc(total * sizeof(*triangle));
+
+    if (triangle == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    for (size_t i = 0; i < total; ++i) {
+        if (scanf("%d", &triangle[i]) != 1) {
+            fprintf(stderr, "Invalid input\n");
+            free(triangle);
+            return EXIT_FAILURE;
+        }
+    }
+
+    int maxSum = maxTriangleSum(triangle, rows);
+    printf("%d\n", maxSum);
+
+    free(triangle);
+    return EXIT_SUCCESS;
+}

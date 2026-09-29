@@ -1,0 +1,208 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+#include <stdint.h>
+#include <limits.h>
+
+char **split_string(const char *str, size_t str_len, const char *pattern, int *count) {
+    regex_t regex;
+    regmatch_t match;
+    char **result = NULL;
+    char **temp = NULL;
+    size_t cursor = 0;
+    size_t capacity = 10;
+    size_t size = 0;
+    size_t start = 0;
+    size_t end;
+    size_t len;
+
+    if (str == NULL || pattern == NULL || count == NULL) {
+        return NULL;
+    }
+
+    *count = 0;
+
+    if (regcomp(&regex, pattern, REG_EXTENDED) != 0) {
+        return NULL;
+    }
+
+    result = malloc(capacity * sizeof(char *));
+    if (result == NULL) {
+        regfree(&regex);
+        return NULL;
+    }
+
+    while (cursor < str_len) {
+        if (regexec(&regex, str + cursor, 1, &match, 0) == 0) {
+            if (match.rm_so < 0 || match.rm_eo < 0 || match.rm_so > match.rm_eo) {
+                break;
+            }
+
+            if ((size_t)match.rm_so > str_len - cursor || (size_t)match.rm_eo > str_len - cursor) {
+                break;
+            }
+
+            end = start + (size_t)match.rm_so;
+
+            /* Possible weaknesses found:
+             *  Assuming that condition 'end>start' is not redundant
+             */
+            if (end > start && end <= str_len) {
+                if (size >= capacity) {
+                    if (capacity > SIZE_MAX / 2) {
+                        for (size_t i = 0; i < size; i++) {
+                            free(result[i]);
+                        }
+                        free(result);
+                        regfree(&regex);
+                        return NULL;
+                    }
+                    capacity *= 2;
+                    temp = realloc(result, capacity * sizeof(char *));
+                    if (temp == NULL) {
+                        for (size_t i = 0; i < size; i++) {
+                            free(result[i]);
+                        }
+                        free(result);
+                        regfree(&regex);
+                        return NULL;
+                    }
+                    result = temp;
+                }
+
+                /* Possible weaknesses found:
+                 *  Assignment 'len=end-start', assigned value is greater than 0
+                 */
+                len = end - start;
+                /* Possible weaknesses found:
+                 *  Condition 'len>0' is always true
+                 *  Condition 'len>0' is always true [knownConditionTrueFalse]
+                 */
+                if (len > 0 && len <= str_len - start && len < SIZE_MAX) {
+                    result[size] = malloc(len + 1);
+                    if (result[size] == NULL) {
+                        for (size_t i = 0; i < size; i++) {
+                            free(result[i]);
+                        }
+                        free(result);
+                        regfree(&regex);
+                        return NULL;
+                    }
+
+                    /* Possible weaknesses found:
+                     * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+                     */
+                    memcpy(result[size], str + start, len);
+                    result[size][len] = '\0';
+                    size++;
+                }
+            }
+
+            if ((size_t)match.rm_eo == 0) {
+                cursor++;
+                start = cursor;
+            } else {
+                start = start + (size_t)match.rm_eo;
+                cursor = start;
+            }
+        } else {
+            break;
+        }
+    }
+
+    /* Possible weaknesses found:
+     *  Assuming that condition 'cursor<str_len' is not redundant
+     */
+    if (cursor < str_len) {
+        /* Possible weaknesses found:
+         *  Assignment 'len=str_len-cursor', assigned value is greater than 0
+         */
+        len = str_len - cursor;
+
+        if (size >= capacity) {
+            if (capacity == SIZE_MAX) {
+                for (size_t i = 0; i < size; i++) {
+                    free(result[i]);
+                }
+                free(result);
+                regfree(&regex);
+                return NULL;
+            }
+            capacity++;
+            temp = realloc(result, capacity * sizeof(char *));
+            if (temp == NULL) {
+                for (size_t i = 0; i < size; i++) {
+                    free(result[i]);
+                }
+                free(result);
+                regfree(&regex);
+                return NULL;
+            }
+            result = temp;
+        }
+
+        /* Possible weaknesses found:
+         *  Condition 'len>0' is always true
+         *  Condition 'len>0' is always true [knownConditionTrueFalse]
+         */
+        if (len > 0 && len < SIZE_MAX) {
+            result[size] = malloc(len + 1);
+            if (result[size] == NULL) {
+                for (size_t i = 0; i < size; i++) {
+                    free(result[i]);
+                }
+                free(result);
+                regfree(&regex);
+                return NULL;
+            }
+
+            /* Possible weaknesses found:
+             * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+             */
+            memcpy(result[size], str + cursor, len);
+            result[size][len] = '\0';
+            size++;
+        }
+    }
+
+    regfree(&regex);
+
+    if (size > INT_MAX) {
+        for (size_t i = 0; i < size; i++) {
+            free(result[i]);
+        }
+        free(result);
+        return NULL;
+    }
+
+    *count = (int)size;
+    return result;
+}
+
+void free_split_result(char **result, int count) {
+    if (result != NULL) {
+        for (int i = 0; i < count; i++) {
+            free(result[i]);
+        }
+        free(result);
+    }
+}
+
+int main(void) {
+    const char input[] = "apple,banana;orange:grape|mango";
+    const char *pattern = "[,;:|]";
+    int count = 0;
+    size_t input_len = sizeof(input) - 1;
+
+    char **tokens = split_string(input, input_len, pattern, &count);
+
+    if (tokens != NULL) {
+        for (int i = 0; i < count; i++) {
+            printf("%s\n", tokens[i]);
+        }
+        free_split_result(tokens, count);
+    }
+
+    return 0;
+}

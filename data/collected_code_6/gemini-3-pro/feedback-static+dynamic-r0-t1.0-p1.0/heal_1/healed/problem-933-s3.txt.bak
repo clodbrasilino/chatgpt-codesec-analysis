@@ -1,0 +1,51 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+char* camel_to_snake(const char *input) {
+    if (!input) return NULL;
+
+    size_t out_size = strlen(input) * 2 + 1;
+    char *result = (char*)malloc(out_size);
+    if (!result) {
+        return NULL;
+    }
+
+    const char *p = input;
+    char *q = result;
+
+    while (*p) {
+        if (isupper((unsigned char)*p)) {
+            if (p != input) {
+                *q++ = '_';
+            }
+            *q++ = tolower((unsigned char)*p);
+        } else {
+            *q++ = *p;
+        }
+        p++;
+    }
+    *q = '\0';
+
+    char *final_result = (char*)realloc(result, strlen(result) + 1);
+    if (!final_result) {
+        return result; 
+    }
+    
+    return final_result;
+}
+
+int main(void) {
+    const char *test_str = "camelCaseStringExample";
+    char *snake_str = camel_to_snake(test_str);
+    
+    if (snake_str) {
+        printf("%s\n", snake_str);
+        free(snake_str);
+    }
+    
+    return 0;
+}
+```

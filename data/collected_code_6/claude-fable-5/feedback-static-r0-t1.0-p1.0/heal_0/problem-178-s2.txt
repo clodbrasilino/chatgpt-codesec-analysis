@@ -1,0 +1,76 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    const char *literal;
+    size_t position;
+    int found;
+} search_result_t;
+
+int search_literals(const char *haystack, const char *const *literals,
+                    size_t literal_count, search_result_t *results)
+{
+    size_t i;
+
+    if (haystack == NULL || literals == NULL || results == NULL) {
+        return -1;
+    }
+
+    for (i = 0; i < literal_count; i++) {
+        const char *match;
+
+        results[i].literal = literals[i];
+        results[i].position = 0;
+        results[i].found = 0;
+
+        if (literals[i] == NULL) {
+            return -1;
+        }
+
+        match = strstr(haystack, literals[i]);
+        if (match != NULL) {
+            results[i].position = (size_t)(match - haystack);
+            results[i].found = 1;
+        }
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    const char *text = "The quick brown fox jumps over the lazy dog";
+    const char *const literals[] = { "quick", "fox", "cat", "lazy" };
+    size_t literal_count = sizeof(literals) / sizeof(literals[0]);
+    search_result_t *results;
+    size_t i;
+    int status;
+
+    results = malloc(literal_count * sizeof(*results));
+    if (results == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    status = search_literals(text, literals, literal_count, results);
+    if (status != 0) {
+        fprintf(stderr, "Search failed due to invalid input\n");
+        free(results);
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i < literal_count; i++) {
+        if (results[i].found) {
+            printf("Found \"%s\" at position %zu\n",
+                   results[i].literal, results[i].position);
+        } else {
+            printf("Did not find \"%s\"\n", results[i].literal);
+        }
+    }
+
+    free(results);
+    return EXIT_SUCCESS;
+}
+```

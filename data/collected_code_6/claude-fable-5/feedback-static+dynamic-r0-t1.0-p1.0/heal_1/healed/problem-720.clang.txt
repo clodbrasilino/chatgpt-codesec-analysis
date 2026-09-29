@@ -1,0 +1,63 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-720.c:13:6: error: "Python.h not found: install python3-dev and compile with $(python3-config --cflags --ldflags)"
+   13 | #    error "Python.h not found: install python3-dev and compile with $(python3-config --cflags --ldflags)"
+      |      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-720.c:22:30: error: unknown type name 'PyObject'
+   22 | static int add_dict_to_tuple(PyObject *tuple, Py_ssize_t index, PyObject *dict)
+      |                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-720.c:22:47: error: unknown type name 'Py_ssize_t'; did you mean 'ssize_t'?
+   22 | static int add_dict_to_tuple(PyObject *tuple, Py_ssize_t index, PyObject *dict)
+      |                                               ^~~~~~~~~~
+      |                                               ssize_t
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/sys/_types/_ssize_t.h:31:33: note: 'ssize_t' declared here
+   31 | typedef __darwin_ssize_t        ssize_t;
+      |                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-720.c:22:65: error: unknown type name 'PyObject'
+   22 | static int add_dict_to_tuple(PyObject *tuple, Py_ssize_t index, PyObject *dict)
+      |                                                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-720.c:28:10: error: call to undeclared function 'PyTuple_Check'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   28 |     if (!PyTuple_Check(tuple)) {
+      |          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-720.c:32:31: error: call to undeclared function 'PyTuple_Size'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   32 |     if (index < 0 || index >= PyTuple_Size(tuple)) {
+      |                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-720.c:36:5: error: call to undeclared function 'Py_INCREF'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   36 |     Py_INCREF(dict);
+      |     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-720.c:38:9: error: call to undeclared function 'PyTuple_SetItem'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   38 |     if (PyTuple_SetItem(tuple, index, dict) != 0) {
+      |         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-720.c:39:9: error: call to undeclared function 'Py_DECREF'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   39 |         Py_DECREF(dict);
+      |         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-720.c:49:5: error: use of undeclared identifier 'PyObject'
+   49 |     PyObject *tuple = NULL;
+      |     ^~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-720.c:49:15: error: use of undeclared identifier 'tuple'
+   49 |     PyObject *tuple = NULL;
+      |               ^~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-720.c:50:5: error: use of undeclared identifier 'PyObject'
+   50 |     PyObject *dict = NULL;
+      |     ^~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-720.c:50:15: error: use of undeclared identifier 'dict'
+   50 |     PyObject *dict = NULL;
+      |               ^~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-720.c:51:5: error: use of undeclared identifier 'PyObject'
+   51 |     PyObject *key = NULL;
+      |     ^~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-720.c:51:15: error: use of undeclared identifier 'key'
+   51 |     PyObject *key = NULL;
+      |               ^~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-720.c:52:5: error: use of undeclared identifier 'PyObject'
+   52 |     PyObject *value = NULL;
+      |     ^~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-720.c:52:15: error: use of undeclared identifier 'value'
+   52 |     PyObject *value = NULL;
+      |               ^~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-720.c:54:5: error: call to undeclared function 'Py_Initialize'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   54 |     Py_Initialize();
+      |     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-720.c:56:5: error: use of undeclared identifier 'tuple'
+   56 |     tuple = PyTuple_New(1);
+      |     ^~~~~
+fatal error: too many errors emitted, stopping now [-ferror-limit=]
+20 errors generated.

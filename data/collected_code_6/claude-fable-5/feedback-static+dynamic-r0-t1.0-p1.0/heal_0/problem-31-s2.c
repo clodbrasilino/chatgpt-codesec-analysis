@@ -1,0 +1,237 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int value;
+    int count;
+} Entry;
+
+typedef struct {
+    Entry *data;
+    size_t size;
+    size_t capacity;
+} MinHeap;
+
+static int heap_init(MinHeap *heap, size_t capacity)
+{
+    if (heap == NULL || capacity == 0) {
+        return -1;
+    }
+    heap->data = malloc(capacity * sizeof(Entry));
+    if (heap->data == NULL) {
+        return -1;
+    }
+    heap->size = 0;
+    heap->capacity = capacity;
+    return 0;
+}
+
+static void heap_free(MinHeap *heap)
+{
+    if (heap != NULL) {
+        free(heap->data);
+        heap->data = NULL;
+        heap->size = 0;
+        heap->capacity = 0;
+    }
+}
+
+static void heap_swap(Entry *a, Entry *b)
+{
+    Entry tmp = *a;
+    *a = *b;
+    *b = tmp;
+}
+
+static void heap_sift_up(MinHeap *heap, size_t idx)
+{
+    while (idx > 0) {
+        size_t parent = (idx - 1) / 2;
+        if (heap->data[idx].count < heap->data[parent].count) {
+            heap_swap(&heap->data[idx], &heap->data[parent]);
+            idx = parent;
+        } else {
+            break;
+        }
+    }
+}
+
+static void heap_sift_down(MinHeap *heap, size_t idx)
+{
+    for (;;) {
+        size_t left = 2 * idx + 1;
+        size_t right = 2 * idx + 2;
+        size_t smallest = idx;
+        if (left < heap->size &&
+            heap->data[left].count < heap->data[smallest].count) {
+            smallest = left;
+        }
+        if (right < heap->size &&
+            heap->data[right].count < heap->data[smallest].count) {
+            smallest = right;
+        }
+        if (smallest == idx) {
+            break;
+        }
+        heap_swap(&heap->data[idx], &heap->data[smallest]);
+        idx = smallest;
+    }
+}
+
+static void heap_push(MinHeap *heap, Entry entry)
+{
+    if (heap->size < heap->capacity) {
+        heap->data[heap->size] = entry;
+        heap->size++;
+        heap_sift_up(heap, heap->size - 1);
+    } else if (heap->capacity > 0 &&
+               entry.count > heap->data[0].count) {
+        heap->data[0] = entry;
+        heap_sift_down(heap, 0);
+    }
+}
+
+static int compare_entries(const void *a, const void *b)
+{
+    const Entry *ea = (const Entry *)a;
+    const Entry *eb = (const Entry *)b;
+    if (ea->count < eb->count) {
+        return 1;
+    }
+    if (ea->count > eb->count) {
+        return -1;
+    }
+    return 0;
+}
+
+static int count_frequencies(const int **lists, const size_t *lengths,
+                             size_t num_lists, Entry **out_entries,
+                             size_t *out_count)
+{
+    size_t total = 0;
+    size_t i;
+    size_t j;
+    size_t unique = 0;
+    Entry *entries = NULL;
+
+    for (i = 0; i < num_lists; i++) {
+        if (lengths[i] > 0 && lists[i] == NULL) {
+            return -1;
+        }
+        total += lengths[i];
+    }
+    if (total == 0) {
+        *out_entries = NULL;
+        *out_count = 0;
+        return 0;
+    }
+    entries = malloc(total * sizeof(Entry));
+    if (entries == NULL) {
+        return -1;
+    }
+    for (i = 0; i < num_lists; i++) {
+        for (j = 0; j < lengths[i]; j++) {
+            int value = lists[i][j];
+            size_t idx;
+            int found = 0;
+            for (idx = 0; idx < unique; idx++) {
+                if (entries[idx].value == value) {
+                    entries[idx].count++;
+                    found = 1;
+                    break;
+                }
+            }
+            if (found == 0) {
+                entries[unique].value = value;
+                entries[unique].count = 1;
+                unique++;
+            }
+        }
+    }
+    *out_entries = entries;
+    *out_count = unique;
+    return 0;
+}
+
+int find_top_k_frequent(const int **lists, const size_t *lengths,
+                        size_t num_lists, size_t k, int *result,
+                        size_t *result_count)
+{
+    Entry *entries = NULL;
+    size_t unique = 0;
+    MinHeap heap;
+    size_t i;
+    Entry *sorted = NULL;
+
+    if (lists == NULL || lengths == NULL || result == NULL ||
+        result_count == NULL || k == 0) {
+        return -1;
+    }
+    if (count_frequencies(lists, lengths, num_lists, &entries,
+                          &unique) != 0) {
+        return -1;
+    }
+    if (unique == 0) {
+        *result_count = 0;
+        free(entries);
+        return 0;
+    }
+    if (heap_init(&heap, k) != 0) {
+        free(entries);
+        return -1;
+    }
+    for (i = 0; i < unique; i++) {
+        heap_push(&heap, entries[i]);
+    }
+    free(entries);
+
+    sorted = malloc(heap.size * sizeof(Entry));
+    if (sorted == NULL) {
+        heap_free(&heap);
+        return -1;
+    }
+    for (i = 0; i < heap.size; i++) {
+        sorted[i] = heap.data[i];
+    }
+    qsort(sorted, heap.size, sizeof(Entry), compare_entries);
+
+    *result_count = heap.size;
+    for (i = 0; i < heap.size; i++) {
+        result[i] = sorted[i].value;
+    }
+    free(sorted);
+    heap_free(&heap);
+    return 0;
+}
+
+int main(void)
+{
+    const int list1[] = {1, 2, 6};
+    const int list2[] = {1, 3, 4, 5, 7, 8};
+    const int list3[] = {1, 3, 5, 6, 8, 9};
+    const int *lists[] = {list1, list2, list3};
+    const size_t lengths[] = {3, 6, 6};
+    size_t k = 3;
+    int *result = NULL;
+    size_t result_count = 0;
+    size_t i;
+
+    result = malloc(k * sizeof(int));
+    if (result == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+    if (find_top_k_frequent(lists, lengths, 3, k, result,
+                            &result_count) != 0) {
+        fprintf(stderr, "Failed to compute top k frequent integers\n");
+        free(result);
+        return EXIT_FAILURE;
+    }
+    printf("Top %zu frequent integers:", result_count);
+    for (i = 0; i < result_count; i++) {
+        printf(" %d", result[i]);
+    }
+    printf("\n");
+    free(result);
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,73 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdbool.h>
+
+char* firstRepeatedWord(const char* str) {
+    const int maxWords = 100;
+    char* words[maxWords];
+    bool found[maxWords] = {false};
+    int wordCount = 0;
+
+    for (int i = 0; i < maxWords; ++i) {
+        words[i] = NULL;
+    }
+
+    char* copy = strdup(str);
+    char* token = strtok(copy, " ");
+    while (token != NULL && wordCount < maxWords) {
+        for (int i = 0; i < wordCount; ++i) {
+            if (strcmp(words[i], token) == 0) {
+                free(copy);
+                return strdup(token);
+            }
+        }
+        words[wordCount] = strdup(token);
+        found[wordCount++] = true;
+        token = strtok(NULL, " ");
+    }
+
+    for (int i = 0; i < wordCount; ++i) {
+        if (found[i]) {
+            free(words[i]);
+        }
+    }
+    free(copy);
+
+    return NULL;
+}
+
+int main() {
+    const char* input1 = "";
+    const char* input2 = "a b c a";
+    const char* input3 = "a b";
+
+    char* result1 = firstRepeatedWord(input1);
+    char* result2 = firstRepeatedWord(input2);
+    char* result3 = firstRepeatedWord(input3);
+
+    if (result1 != NULL) {
+        printf("First repeated word: %s\n", result1);
+        free(result1);
+    } else {
+        printf("No repeated word found.\n");
+    }
+
+    if (result2 != NULL) {
+        printf("First repeated word: %s\n", result2);
+        free(result2);
+    } else {
+        printf("No repeated word found.\n");
+    }
+
+    if (result3 != NULL) {
+        printf("First repeated word: %s\n", result3);
+        free(result3);
+    } else {
+        printf("No repeated word found.\n");
+    }
+
+    return 0;
+}
+```

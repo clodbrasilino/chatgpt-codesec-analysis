@@ -1,0 +1,23 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int find_last_digit(int num) {
+    if (num < 0) {
+        num = -num;
+    }
+    return num % 10;
+}
+
+int main(void) {
+    int number;
+    int last_digit;
+    
+    if (scanf("%d", &number) != 1) {
+        return EXIT_FAILURE;
+    }
+    
+    last_digit = find_last_digit(number);
+    printf("%d\n", last_digit);
+    
+    return EXIT_SUCCESS;
+}

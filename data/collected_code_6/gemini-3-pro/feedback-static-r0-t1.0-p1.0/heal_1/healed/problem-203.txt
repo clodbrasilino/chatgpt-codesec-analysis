@@ -1,0 +1,39 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int hamming_distance(unsigned int x, unsigned int y) {
+    unsigned int xor_val = x ^ y;
+    int distance = 0;
+
+    while (xor_val != 0) {
+        xor_val &= (xor_val - 1);
+        distance++;
+    }
+
+    return distance;
+}
+
+int main(int argc, const char *argv[]) {
+    if (argc != 3) {
+        fprintf(stderr, "Usage: %s <integer1> <integer2>\n", argv[0]);
+        return EXIT_FAILURE;
+    }
+
+    char *endptr1;
+    char *endptr2;
+    
+    long num1 = strtol(argv[1], &endptr1, 10);
+    long num2 = strtol(argv[2], &endptr2, 10);
+
+    if (*endptr1 != '\0' || *endptr2 != '\0') {
+        fprintf(stderr, "Invalid input: Please provide integer values.\n");
+        return EXIT_FAILURE;
+    }
+
+    int distance = hamming_distance((unsigned int)num1, (unsigned int)num2);
+    printf("Hamming distance: %d\n", distance);
+
+    return EXIT_SUCCESS;
+}
+```

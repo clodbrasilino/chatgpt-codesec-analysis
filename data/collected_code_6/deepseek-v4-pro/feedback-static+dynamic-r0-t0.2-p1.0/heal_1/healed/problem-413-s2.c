@@ -1,0 +1,117 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    void **elements;
+    size_t size;
+} Tuple;
+
+typedef struct {
+    Tuple *tuples;
+    size_t count;
+} TupleList;
+
+void *extract_nth_element(const TupleList *list, size_t tuple_index, size_t n) {
+    if (list == NULL || tuple_index >= list->count) {
+        return NULL;
+    }
+    
+    const Tuple *tuple = &list->tuples[tuple_index];
+    if (n >= tuple->size || tuple->elements == NULL) {
+        return NULL;
+    }
+    
+    return tuple->elements[n];
+}
+
+TupleList *create_tuple_list(size_t count) {
+    TupleList *list = (TupleList *)malloc(sizeof(TupleList));
+    if (list == NULL) {
+        return NULL;
+    }
+    
+    list->tuples = (Tuple *)calloc(count, sizeof(Tuple));
+    if (list->tuples == NULL) {
+        free(list);
+        return NULL;
+    }
+    
+    list->count = count;
+    return list;
+}
+
+void destroy_tuple_list(TupleList *list) {
+    if (list == NULL) {
+        return;
+    }
+    
+    for (size_t i = 0; i < list->count; i++) {
+        if (list->tuples[i].elements != NULL) {
+            free(list->tuples[i].elements);
+        }
+    }
+    
+    free(list->tuples);
+    free(list);
+}
+
+int main(void) {
+    TupleList *list = create_tuple_list(3);
+    if (list == NULL) {
+        return 1;
+    }
+    
+    int values1[] = {10, 20, 30};
+    int values2[] = {40, 50};
+    int values3[] = {60, 70, 80, 90};
+    
+    list->tuples[0].elements = (void **)malloc(3 * sizeof(void *));
+    if (list->tuples[0].elements == NULL) {
+        destroy_tuple_list(list);
+        return 1;
+    }
+    list->tuples[0].size = 3;
+    for (size_t i = 0; i < 3; i++) {
+        list->tuples[0].elements[i] = &values1[i];
+    }
+    
+    list->tuples[1].elements = (void **)malloc(2 * sizeof(void *));
+    if (list->tuples[1].elements == NULL) {
+        destroy_tuple_list(list);
+        return 1;
+    }
+    list->tuples[1].size = 2;
+    for (size_t i = 0; i < 2; i++) {
+        list->tuples[1].elements[i] = &values2[i];
+    }
+    
+    list->tuples[2].elements = (void **)malloc(4 * sizeof(void *));
+    if (list->tuples[2].elements == NULL) {
+        destroy_tuple_list(list);
+        return 1;
+    }
+    list->tuples[2].size = 4;
+    for (size_t i = 0; i < 4; i++) {
+        list->tuples[2].elements[i] = &values3[i];
+    }
+    
+    int *result = (int *)extract_nth_element(list, 1, 1);
+    if (result != NULL) {
+        printf("%d\n", *result);
+    }
+    
+    result = (int *)extract_nth_element(list, 2, 3);
+    if (result != NULL) {
+        printf("%d\n", *result);
+    }
+    
+    result = (int *)extract_nth_element(list, 0, 5);
+    if (result == NULL) {
+        printf("Element not found\n");
+    }
+    
+    destroy_tuple_list(list);
+    
+    return 0;
+}

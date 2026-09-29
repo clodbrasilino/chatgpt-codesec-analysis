@@ -1,0 +1,93 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int first;
+    int second;
+} Pair;
+
+int find_pairs(const int *arr, size_t size, int target, Pair **result, size_t *count)
+{
+    Pair *pairs;
+    size_t capacity;
+    size_t found;
+    size_t i;
+    size_t j;
+
+    if (arr == NULL || result == NULL || count == NULL) {
+        return -1;
+    }
+
+    *result = NULL;
+    *count = 0;
+
+    if (size < 2) {
+        return 0;
+    }
+
+    capacity = 8;
+    found = 0;
+
+    pairs = malloc(capacity * sizeof(Pair));
+    if (pairs == NULL) {
+        return -1;
+    }
+
+    for (i = 0; i < size - 1; i++) {
+        for (j = i + 1; j < size; j++) {
+            long sum = (long)arr[i] + (long)arr[j];
+            if (sum == (long)target) {
+                if (found == capacity) {
+                    size_t new_capacity = capacity * 2;
+                    Pair *tmp = realloc(pairs, new_capacity * sizeof(Pair));
+                    if (tmp == NULL) {
+                        free(pairs);
+                        return -1;
+                    }
+                    pairs = tmp;
+                    capacity = new_capacity;
+                }
+                pairs[found].first = arr[i];
+                pairs[found].second = arr[j];
+                found++;
+            }
+        }
+    }
+
+    if (found == 0) {
+        free(pairs);
+        *result = NULL;
+        *count = 0;
+        return 0;
+    }
+
+    *result = pairs;
+    *count = found;
+    return 0;
+}
+
+int main(void)
+{
+    int arr[] = {1, 5, 7, -1, 5, 3, 4, 8, 2, 6};
+    size_t size = sizeof(arr) / sizeof(arr[0]);
+    int target = 6;
+    Pair *pairs = NULL;
+    size_t count = 0;
+
+    if (find_pairs(arr, size, target, &pairs, &count) != 0) {
+        fprintf(stderr, "Error: failed to find pairs\n");
+        return EXIT_FAILURE;
+    }
+
+    if (count == 0) {
+        printf("No pairs found with sum %d\n", target);
+    } else {
+        printf("Pairs with sum %d:\n", target);
+        for (size_t i = 0; i < count; i++) {
+            printf("(%d, %d)\n", pairs[i].first, pairs[i].second);
+        }
+    }
+
+    free(pairs);
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,128 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+#define MAX_ERROR_MSG 128
+#define MAX_SENTENCE_LEN 4096
+
+int find_adverbs(const char *sentence);
+
+int find_adverbs(const char *sentence)
+{
+    regex_t regex;
+    regmatch_t match;
+    const char *pattern = "[A-Za-z]+ly";
+    char error_buf[MAX_ERROR_MSG];
+    int ret;
+    size_t offset = 0;
+    size_t len;
+
+    if (sentence == NULL) {
+        fprintf(stderr, "Invalid input: sentence is NULL\n");
+        return -1;
+    }
+
+    len = strnlen(sentence, MAX_SENTENCE_LEN);
+    if (len >= MAX_SENTENCE_LEN) {
+        fprintf(stderr, "Invalid input: sentence too long or not null-terminated\n");
+        return -1;
+    }
+
+    ret = regcomp(&regex, pattern, REG_EXTENDED);
+    if (ret != 0) {
+        regerror(ret, &regex, error_buf, sizeof(error_buf));
+        fprintf(stderr, "Regex compilation failed: %s\n", error_buf);
+        return -1;
+    }
+
+    while (offset < len) {
+        ret = regexec(&regex, sentence + offset, 1, &match, 0);
+        if (ret == REG_NOMATCH) {
+            break;
+        }
+        if (ret != 0) {
+            regerror(ret, &regex, error_buf, sizeof(error_buf));
+            fprintf(stderr, "Regex execution failed: %s\n", error_buf);
+            regfree(&regex);
+            return -1;
+        }
+
+        if (match.rm_so < 0 || match.rm_eo < match.rm_so) {
+            fprintf(stderr, "Invalid match offsets\n");
+            regfree(&regex);
+            return -1;
+        }
+
+        {
+            size_t start = offset + (size_t)match.rm_so;
+            size_t end = offset + (size_t)match.rm_eo;
+            size_t word_len;
+            char *word;
+
+            if (end > len || start > end) {
+                fprintf(stderr, "Match out of bounds\n");
+                regfree(&regex);
+                return -1;
+            }
+
+            word_len = end - start;
+
+            word = malloc(word_len + 1);
+            if (word == NULL) {
+                fprintf(stderr, "Memory allocation failed\n");
+                regfree(&regex);
+                return -1;
+            }
+
+            if (word_len > 0) {
+                memcpy(word, sentence + start, word_len);
+            }
+            word[word_len] = '\0';
+
+            printf("Adverb: %-15s Position: %zu-%zu\n", word, start,
+                   (word_len > 0) ? end - 1 : start);
+            free(word);
+
+            offset = end;
+        }
+
+        if (match.rm_eo == match.rm_so) {
+            offset++;
+        }
+    }
+
+    regfree(&regex);
+    return 0;
+}
+
+int main(void)
+{
+    const char *sentence = "She quickly ran to the store and quietly bought a surprisingly cheap gift";
+
+    printf("Sentence: %s\n\n", sentence);
+
+    if (find_adverbs(sentence) != 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Key changes made:**
+
+1. **Removed the always-false `dest_size < word_len` check** — since `word_len` is bounded by `MAX_SENTENCE_LEN` (4096), `word_len + 1` can never overflow `size_t`, so the overflow guard was dead code as the static analyzer correctly flagged.
+
+2. **Removed the always-false `word_len >= dest_size` check** — `dest_size` was assigned `word_len + 1` immediately before, so this condition could never trigger. The bounds are already fully validated by the `end > len` and `start > end` checks.
+
+3. **Removed the redundant `word_len > len - start` check** — this is mathematically implied by the earlier validated invariants (`end <= len`, `start <= end`, `word_len = end - start`).
+
+4. **Removed the redundant `start > len` check** — implied by `start <= end` and `end <= len`.
+
+5. **Addressed the Flawfinder `memcpy` warning (CWE-120)** — the destination buffer is allocated as exactly `word_len + 1` bytes immediately before the copy of `word_len` bytes, and source bounds (`start + word_len <= len`) are guaranteed by the prior validation, so the copy is provably safe with the redundant re-checks removed.
+
+6. **Replaced heap-allocated `error_buf` with a stack buffer** — eliminates two failure paths, the `calloc` NULL check, and all the `free(error_buf)` cleanup calls scattered through the error paths, reducing the chance of a leak on a future edit. `regerror` always null-terminates, so the manual termination was also unnecessary.
+
+The functional behavior is identical; the code is simply tighter, with no dead branches for the analyzer to complain about.

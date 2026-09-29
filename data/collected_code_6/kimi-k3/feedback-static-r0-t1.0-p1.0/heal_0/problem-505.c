@@ -1,0 +1,36 @@
+#include <stdio.h>
+#include <stddef.h>
+
+void move_zeroes(int arr[], size_t n) {
+    if (arr == NULL || n == 0) {
+        return;
+    }
+
+    size_t write_index = 0;
+
+    for (size_t read_index = 0; read_index < n; read_index++) {
+        if (arr[read_index] != 0) {
+            arr[write_index] = arr[read_index];
+            write_index++;
+        }
+    }
+
+    while (write_index < n) {
+        arr[write_index] = 0;
+        write_index++;
+    }
+}
+
+int main(void) {
+    int arr[] = {0, 1, 0, 3, 12, 0, 5};
+    size_t n = sizeof(arr) / sizeof(arr[0]);
+
+    move_zeroes(arr, n);
+
+    for (size_t i = 0; i < n; i++) {
+        printf("%d ", arr[i]);
+    }
+    printf("\n");
+
+    return 0;
+}

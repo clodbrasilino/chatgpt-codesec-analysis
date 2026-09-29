@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_4/healed/problem-946-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_4/healed/problem-946-s2.c:94:37: style: The comparison 'word_len < dest_capacity' is always false because 'word_len' and 'dest_capacity' represent the same value. [knownConditionTrueFalse]
+        size_t copy_len = (word_len < dest_capacity) ? word_len : dest_capacity;
+                                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_4/healed/problem-946-s2.c:93:32: note: 'dest_capacity' is assigned value 'word_len' here.
+        size_t dest_capacity = word_len;
+                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_4/healed/problem-946-s2.c:94:37: note: The comparison 'word_len < dest_capacity' is always false because 'word_len' and 'dest_capacity' represent the same value.
+        size_t copy_len = (word_len < dest_capacity) ? word_len : dest_capacity;
+                                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_4/healed/problem-946-s2.c:94:65: style: Same expression in both branches of ternary operator. [duplicateExpressionTernary]
+        size_t copy_len = (word_len < dest_capacity) ? word_len : dest_capacity;
+                                                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_4/healed/problem-946-s2.c:93:32: note: 'dest_capacity' is assigned value 'word_len' here.
+        size_t dest_capacity = word_len;
+                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_4/healed/problem-946-s2.c:94:65: note: Same expression in both branches of ternary operator.
+        size_t copy_len = (word_len < dest_capacity) ? word_len : dest_capacity;
+                                                                ^

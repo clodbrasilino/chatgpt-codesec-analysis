@@ -1,0 +1,76 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char *key;
+    int value;
+} DictionaryEntry;
+
+typedef struct {
+    DictionaryEntry *entries;
+    size_t size;
+} Dictionary;
+
+int dictionary_compare(const void *a, const void *b) {
+    const DictionaryEntry *entry_a = (const DictionaryEntry *)a;
+    const DictionaryEntry *entry_b = (const DictionaryEntry *)b;
+    return strcmp(entry_a->key, entry_b->key);
+}
+
+void dictionary_sort(Dictionary *dict) {
+    if (dict == NULL || dict->entries == NULL || dict->size < 2) {
+        return;
+    }
+    qsort(dict->entries, dict->size, sizeof(DictionaryEntry), dictionary_compare);
+}
+
+void dictionary_free(Dictionary *dict) {
+    if (dict == NULL) {
+        return;
+    }
+    for (size_t i = 0; i < dict->size; i++) {
+        free(dict->entries[i].key);
+        dict->entries[i].key = NULL;
+    }
+    free(dict->entries);
+    dict->entries = NULL;
+    dict->size = 0;
+}
+
+int main(void) {
+    Dictionary dict;
+    dict.size = 5;
+    dict.entries = (DictionaryEntry *)malloc(dict.size * sizeof(DictionaryEntry));
+    if (dict.entries == NULL) {
+        return EXIT_FAILURE;
+    }
+
+    dict.entries[0].key = strdup("zebra");
+    dict.entries[0].value = 5;
+    dict.entries[1].key = strdup("apple");
+    dict.entries[1].value = 1;
+    dict.entries[2].key = strdup("mango");
+    dict.entries[2].value = 3;
+    dict.entries[3].key = strdup("banana");
+    dict.entries[3].value = 2;
+    dict.entries[4].key = strdup("cherry");
+    dict.entries[4].value = 4;
+
+    for (size_t i = 0; i < dict.size; i++) {
+        if (dict.entries[i].key == NULL) {
+            dictionary_free(&dict);
+            return EXIT_FAILURE;
+        }
+    }
+
+    dictionary_sort(&dict);
+
+    for (size_t i = 0; i < dict.size; i++) {
+        printf("%s: %d\n", dict.entries[i].key, dict.entries[i].value);
+    }
+
+    dictionary_free(&dict);
+
+    return EXIT_SUCCESS;
+}

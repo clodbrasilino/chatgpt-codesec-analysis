@@ -1,0 +1,74 @@
+```c
+#include <stdio.h>
+#include <math.h>
+#include <stdlib.h>
+
+double sum_of_gp(double a, double r, int n)
+{
+    if (n <= 0) {
+        return 0.0;
+    }
+    if (fabs(r - 1.0) < 1e-12) {
+        return a * (double)n;
+    }
+    return a * (1.0 - pow(r, (double)n)) / (1.0 - r);
+}
+
+int main(void)
+{
+    double a;
+    double r;
+    int n;
+    double result;
+
+    printf("Enter the first term: ");
+    if (scanf("%lf", &a) != 1) {
+        fprintf(stderr, "Invalid input for first term.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter the common ratio: ");
+    if (scanf("%lf", &r) != 1) {
+        fprintf(stderr, "Invalid input for common ratio.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter the number of terms: ");
+    if (scanf("%d", &n) != 1) {
+        fprintf(stderr, "Invalid input for number of terms.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (n < 0) {
+        fprintf(stderr, "Number of terms must be non-negative.\n");
+        return EXIT_FAILURE;
+    }
+
+    result = sum_of_gp(a, r, n);
+
+    if (isinf(result) || isnan(result)) {
+        fprintf(stderr, "Result out of representable range.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Sum of the geometric progression: %f\n", result);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the weaknesses and the fix:**
+
+The failing test cases pointed to an **off-by-one error** in the geometric progression sum. The original code computed the sum of `n + 1` terms rather than `n` terms:
+
+- `pow(r, (double)(n + 1))` summed terms `a·r⁰` through `a·rⁿ` — that's `n + 1` terms.
+- Similarly, the `r == 1` branch returned `a * (n + 1)` instead of `a * n`.
+
+Verification against the expected values: with `a = 1, r = 4, n = 5`, the correct sum of 5 terms is `(4⁵ − 1)/3 = 341` (matching test case 1's expectation), and with `a = 2, r = 3, n = 6`, the correct sum of 6 terms is `2·(3⁶ − 1)/2 = 728` (matching test case 2's expectation). The original formula overshot by one extra term in each case.
+
+The corrected version:
+1. Uses `pow(r, (double)n)` so exactly `n` terms are summed.
+2. Returns `a * n` for the `r ≈ 1` case.
+3. Guards `n <= 0` to return `0.0`, since a sum of zero terms is zero.
+
+The rest of the program (input validation, non-negative term check, and `isinf`/`isnan` overflow detection) was already sound and is retained unchanged.

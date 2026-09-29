@@ -1,0 +1,5 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-28-s3.c: In function 'parse_uint64':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-28-s3.c:40:12: error: implicit declaration of function 'strtoull'; did you mean 'strtoumax'? [-Wimplicit-function-declaration]
+   40 |     temp = strtoull(str, &endptr, 10);
+      |            ^~~~~~~~
+      |            strtoumax

@@ -1,0 +1,16 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-969-s2.c:27:21: error: call to undeclared function 'free_tuple_list'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   27 |                     free_tuple_list(result);
+      |                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-969-s2.c:40:17: error: call to undeclared function 'free_tuple_list'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   40 |                 free_tuple_list(result);
+      |                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-969-s2.c:48:17: error: call to undeclared function 'free_tuple_list'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   48 |                 free_tuple_list(result);
+      |                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-969-s2.c:66:6: error: conflicting types for 'free_tuple_list'
+   66 | void free_tuple_list(Tuple *head) {
+      |      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-969-s2.c:27:21: note: previous implicit declaration is here
+   27 |                     free_tuple_list(result);
+      |                     ^
+4 errors generated.

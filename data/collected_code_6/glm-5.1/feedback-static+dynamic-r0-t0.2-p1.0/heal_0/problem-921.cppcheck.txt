@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-921.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-921.c:83:46: style: Condition 'tuple_count>0' is always true [knownConditionTrueFalse]
+    if (result.chunks == NULL && tuple_count > 0 && n > 0) {
+                                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-921.c:78:41: note: Assignment 'tuple_count=sizeof(tuples)/sizeof(tuples[0])', assigned value is 5
+    size_t tuple_count = sizeof(tuples) / sizeof(tuples[0]);
+                                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-921.c:83:46: note: Condition 'tuple_count>0' is always true
+    if (result.chunks == NULL && tuple_count > 0 && n > 0) {
+                                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-921.c:83:55: style: Condition 'n>0' is always true [knownConditionTrueFalse]
+    if (result.chunks == NULL && tuple_count > 0 && n > 0) {
+                                                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-921.c:79:16: note: Assignment 'n=2', assigned value is 2
+    size_t n = 2;
+               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-921.c:83:55: note: Condition 'n>0' is always true
+    if (result.chunks == NULL && tuple_count > 0 && n > 0) {
+                                                      ^

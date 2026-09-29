@@ -1,0 +1,54 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+int find_max_product_pair(const int *arr, size_t n, int *res1, int *res2) {
+    if (arr == NULL || res1 == NULL || res2 == NULL || n < 2) {
+        return -1;
+    }
+
+    long long max1 = LLONG_MIN, max2 = LLONG_MIN;
+    long long min1 = LLONG_MAX, min2 = LLONG_MAX;
+
+    for (size_t i = 0; i < n; i++) {
+        long long val = arr[i];
+        
+        if (val > max1) {
+            max2 = max1;
+            max1 = val;
+        } else if (val > max2) {
+            max2 = val;
+        }
+
+        if (val < min1) {
+            min2 = min1;
+            min1 = val;
+        } else if (val < min2) {
+            min2 = val;
+        }
+    }
+
+    if ((max1 * max2) > (min1 * min2)) {
+        *res1 = (int)max1;
+        *res2 = (int)max2;
+    } else {
+        *res1 = (int)min1;
+        *res2 = (int)min2;
+    }
+
+    return 0;
+}
+
+int main(void) {
+    int arr[] = {1, -4, 3, -6, 2, 7, -5};
+    size_t n = sizeof(arr) / sizeof(arr[0]);
+    int a, b;
+
+    if (find_max_product_pair(arr, n, &a, &b) == 0) {
+        printf("Pair with highest product: %d and %d\n", a, b);
+    } else {
+        printf("Invalid input or array size too small.\n");
+    }
+
+    return 0;
+}

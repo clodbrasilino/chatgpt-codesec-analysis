@@ -1,0 +1,63 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char **get_long_words(char **words, int size, int n, int *result_size) {
+    int i, j;
+    for (i = 0, j = 0; i < size; i++) {
+        if (strlen(words[i]) > n) {
+            j++;
+        }
+    }
+
+    *result_size = j;
+    char **result = (char **)malloc(j * sizeof(char *));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    for (i = 0, j = 0; i < size; i++) {
+        if (strlen(words[i]) > n) {
+            char *temp = (char *)malloc((strlen(words[i])+1) * sizeof(char));
+            if (temp == NULL) {
+                for (i = 0; i<j; i++) {
+                    free(result[i]);
+                }
+                free(result);
+                return NULL;
+            }
+            strcpy(temp, words[i]);
+            result[j++] = temp;
+        }
+    }
+
+    return result;
+}
+
+int main() {
+    int size = 4;
+    char **words = (char **)malloc(size * sizeof(char *));
+    words[0] = "Horse";
+    words[1] = "Elephant";
+    words[2] = "Cat";
+    words[3] = "Lion";
+    int n = 4;
+    int new_size;
+    char **result = get_long_words(words, size, n, &new_size);
+    if(result != NULL) {
+        for (int i = 0; i < new_size; i++) {
+            printf("%s\n", result[i]);
+        }
+        for (int i = 0; i < new_size; i++) {
+            free(result[i]);
+        }
+        free(result);
+    } else {
+        printf("Memory allocation failed\n");
+    }
+
+    free(words);
+    return 0;
+}
+```

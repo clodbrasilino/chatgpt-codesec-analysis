@@ -1,0 +1,51 @@
+In C, there is no built-in dictionary data structure like in Python or other high-level languages. However, we can use a structure or an array of structures to simulate a dictionary. 
+
+Here is a simple implementation using an array of structures. The structure contains a key-value pair where the value is a string. If the string is empty, it is considered as an empty item.
+
+```c
+#include <stdio.h>
+#include <string.h>
+
+#define MAX_DICT_SIZE 100
+#define MAX_STR_SIZE 100
+
+typedef struct {
+    char key[MAX_STR_SIZE];
+    char value[MAX_STR_SIZE];
+} DictItem;
+
+void dropEmptyItems(DictItem* dict, int* size) {
+    int i = 0;
+    while (i < *size) {
+        if (strcmp(dict[i].value, "") == 0) {
+            for (int j = i; j < *size - 1; j++) {
+                dict[j] = dict[j + 1];
+            }
+            (*size)--;
+        } else {
+            i++;
+        }
+    }
+}
+
+int main() {
+    DictItem dict[MAX_DICT_SIZE] = {
+        {"key1", "value1"},
+        {"key2", ""},
+        {"key3", "value3"},
+        {"key4", ""},
+        {"key5", "value5"}
+    };
+    int size = 5;
+
+    dropEmptyItems(dict, &size);
+
+    for (int i = 0; i < size; i++) {
+        printf("Key: %s, Value: %s\n", dict[i].key, dict[i].value);
+    }
+
+    return 0;
+}
+```
+
+In this code, the `dropEmptyItems` function goes through the dictionary and if it finds an item with an empty value, it shifts all the items after it one position to the left, effectively removing the item with the empty value. The size of the dictionary is decreased by 1 each time an item is removed. The `main` function creates a dictionary, calls `dropEmptyItems` to remove items with empty values, and then prints the remaining items.

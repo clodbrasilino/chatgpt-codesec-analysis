@@ -1,0 +1,76 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct ListNode {
+    char data;
+    struct ListNode *next;
+};
+
+struct ListNode *string_to_list(const char *str) {
+    struct ListNode *head = NULL;
+    struct ListNode *tail = NULL;
+
+    if (str == NULL) {
+        return NULL;
+    }
+
+    while (*str != '\0') {
+        struct ListNode *new_node = malloc(sizeof(*new_node));
+        if (new_node == NULL) {
+            while (head != NULL) {
+                struct ListNode *tmp = head;
+                head = head->next;
+                free(tmp);
+            }
+            return NULL;
+        }
+
+        new_node->data = *str;
+        new_node->next = NULL;
+
+        if (tail == NULL) {
+            head = new_node;
+        } else {
+            tail->next = new_node;
+        }
+        tail = new_node;
+        str++;
+    }
+
+    return head;
+}
+
+void free_list(struct ListNode *head) {
+    while (head != NULL) {
+        struct ListNode *tmp = head;
+        head = head->next;
+        free(tmp);
+    }
+}
+
+void print_list(const struct ListNode *head) {
+    const struct ListNode *current = head;
+    while (current != NULL) {
+        if (putchar(current->data) == EOF) {
+            return;
+        }
+        current = current->next;
+    }
+    if (putchar('\n') == EOF) {
+        return;
+    }
+}
+
+int main(void) {
+    const char *text = "hello";
+    struct ListNode *list = string_to_list(text);
+
+    if (list == NULL) {
+        return EXIT_FAILURE;
+    }
+
+    print_list(list);
+    free_list(list);
+
+    return EXIT_SUCCESS;
+}

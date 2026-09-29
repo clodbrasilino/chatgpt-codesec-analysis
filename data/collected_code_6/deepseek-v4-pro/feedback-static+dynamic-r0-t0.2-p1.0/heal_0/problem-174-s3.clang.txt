@@ -1,0 +1,14 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-174-s3.c:115:13: error: call to undeclared function 'free_dictionary'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+  115 |             free_dictionary(dict);
+      |             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-174-s3.c:115:13: note: did you mean 'create_dictionary'?
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-174-s3.c:26:13: note: 'create_dictionary' declared here
+   26 | Dictionary *create_dictionary(void) {
+      |             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-174-s3.c:123:6: error: conflicting types for 'free_dictionary'
+  123 | void free_dictionary(Dictionary *dict) {
+      |      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-174-s3.c:115:13: note: previous implicit declaration is here
+  115 |             free_dictionary(dict);
+      |             ^
+2 errors generated.

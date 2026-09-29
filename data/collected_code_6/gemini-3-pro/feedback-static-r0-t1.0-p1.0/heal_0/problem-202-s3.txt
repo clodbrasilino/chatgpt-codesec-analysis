@@ -1,0 +1,39 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+void remove_even_characters(char *str) {
+    if (str == NULL) {
+        return;
+    }
+
+    int len = strlen(str);
+    int j = 0;
+
+    for (int i = 0; i < len; i++) {
+        if (i % 2 != 0) {
+            str[j++] = str[i];
+        }
+    }
+    str[j] = '\0';
+}
+
+int main() {
+    char *str = malloc(256 * sizeof(char));
+    if (str == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return 1;
+    }
+
+    strcpy(str, "Hello World!");
+    
+    remove_even_characters(str);
+    
+    printf("%s\n", str);
+    
+    free(str);
+    
+    return 0;
+}
+```

@@ -1,0 +1,87 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+int left_rotate(char *str, size_t str_size, size_t d)
+{
+    size_t len;
+    size_t suffix_len;
+    char *temp;
+
+    if (str == NULL || str_size == 0) {
+        return -1;
+    }
+
+    len = strnlen(str, str_size);
+    if (len >= str_size) {
+        return -1;
+    }
+
+    if (len == 0) {
+        return 0;
+    }
+
+    d = d % len;
+    if (d == 0) {
+        return 0;
+    }
+
+    if (d >= len || (len + 1) > str_size) {
+        return -1;
+    }
+
+    suffix_len = len - d;
+
+    temp = malloc(len + 1);
+    if (temp == NULL) {
+        return -1;
+    }
+
+    if (suffix_len > len || d > (len + 1) - suffix_len) {
+        free(temp);
+        return -1;
+    }
+
+    memcpy(temp, str + d, suffix_len);
+    memcpy(temp + suffix_len, str, d);
+    temp[len] = '\0';
+
+    if ((len + 1) > str_size) {
+        free(temp);
+        return -1;
+    }
+
+    memcpy(str, temp, len + 1);
+    free(temp);
+
+    return 0;
+}
+
+int main(void)
+{
+    char str[] = "HelloWorld";
+    size_t d = 3;
+
+    printf("Original string: %s\n", str);
+
+    if (left_rotate(str, sizeof(str), d) != 0) {
+        fprintf(stderr, "Rotation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Rotated string:  %s\n", str);
+
+    return EXIT_SUCCESS;
+}
+```
+
+The rewritten code preserves all defensive checks that address the Flawfinder CWE-120 warnings on the `memcpy` calls:
+
+1. **First `memcpy(temp, str + d, suffix_len)`** — safe because `temp` is allocated with `len + 1` bytes and `suffix_len = len - d < len`, verified before the copy.
+
+2. **Second `memcpy(temp + suffix_len, str, d)`** — safe because the check `d > (len + 1) - suffix_len` guarantees the remaining space in `temp` can hold `d` bytes.
+
+3. **Third `memcpy(str, temp, len + 1)`** — safe because `(len + 1) > str_size` is explicitly re-verified immediately before copying back into the caller's buffer.
+
+Additional hardening retained: `strnlen` bounds the length scan to `str_size`, unterminated buffers are rejected (`len >= str_size`), `malloc` failure is handled, and `temp` is freed on every exit path, preventing leaks. The redundant condition `d > len` was simplified to `d >= len` since `d = d % len` already guarantees `d < len`, and the tautological `(len - d) > len` size_t underflow guard was consolidated into a single `suffix_len` computation performed only after `d < len` is established.

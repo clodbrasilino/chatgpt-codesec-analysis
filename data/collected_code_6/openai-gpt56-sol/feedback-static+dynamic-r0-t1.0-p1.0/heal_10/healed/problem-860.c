@@ -1,0 +1,120 @@
+#include <stdbool.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+static bool ends_with_alphanumeric(const char *string)
+{
+    const unsigned char *cursor;
+    unsigned char last = 0;
+
+    if (string == NULL) {
+        return false;
+    }
+
+    cursor = (const unsigned char *)string;
+
+    while (*cursor != '\0') {
+        last = *cursor;
+        ++cursor;
+    }
+
+    return (last >= (unsigned char)'0' && last <= (unsigned char)'9') ||
+           (last >= (unsigned char)'A' && last <= (unsigned char)'Z') ||
+           (last >= (unsigned char)'a' && last <= (unsigned char)'z');
+}
+
+static int ensure_capacity(char **buffer, size_t *capacity, size_t required)
+{
+    size_t new_capacity;
+    char *new_buffer;
+
+    if (buffer == NULL || capacity == NULL || *buffer == NULL) {
+        return -1;
+    }
+
+    if (required <= *capacity) {
+        return 0;
+    }
+
+    new_capacity = *capacity;
+
+    while (new_capacity < required) {
+        if (new_capacity > SIZE_MAX / 2) {
+            new_capacity = required;
+            break;
+        }
+        new_capacity *= 2;
+    }
+
+    if (new_capacity < required) {
+        return -1;
+    }
+
+    new_buffer = realloc(*buffer, new_capacity);
+    if (new_buffer == NULL) {
+        return -1;
+    }
+
+    *buffer = new_buffer;
+    *capacity = new_capacity;
+    return 0;
+}
+
+static char *read_line(FILE *stream)
+{
+    size_t length = 0;
+    size_t capacity = 128;
+    char *buffer;
+
+    if (stream == NULL) {
+        return NULL;
+    }
+
+    buffer = malloc(capacity);
+    if (buffer == NULL) {
+        return NULL;
+    }
+
+    for (;;) {
+        int ch = fgetc(stream);
+
+        if (ch == '\n') {
+            break;
+        }
+
+        if (ch == EOF) {
+            if (ferror(stream) || length == 0) {
+                free(buffer);
+                return NULL;
+            }
+            break;
+        }
+
+        if (length == SIZE_MAX - 1 ||
+            ensure_capacity(&buffer, &capacity, length + 2) != 0) {
+            free(buffer);
+            return NULL;
+        }
+
+        buffer[length++] = (char)(unsigned char)ch;
+    }
+
+    buffer[length] = '\0';
+    return buffer;
+}
+
+int main(void)
+{
+    char *input = read_line(stdin);
+
+    if (input == NULL) {
+        fputs("Failed to read input.\n", stderr);
+        return EXIT_FAILURE;
+    }
+
+    puts(ends_with_alphanumeric(input) ? "true" : "false");
+    free(input);
+
+    return EXIT_SUCCESS;
+}

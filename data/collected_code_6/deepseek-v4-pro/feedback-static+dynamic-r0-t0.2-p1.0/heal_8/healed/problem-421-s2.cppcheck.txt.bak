@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_8/healed/problem-421-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_8/healed/problem-421-s2.c:85:9: style: Condition 'result5' is always false [knownConditionTrueFalse]
+    if (result5) {
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_8/healed/problem-421-s2.c:62:21: note: Assignment 'result5=NULL', assigned value is 0
+    char *result5 = NULL;
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_8/healed/problem-421-s2.c:85:9: note: Condition 'result5' is always false
+    if (result5) {
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_8/healed/problem-421-s2.c:90:9: style: Condition 'result6' is always false [knownConditionTrueFalse]
+    if (result6) {
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_8/healed/problem-421-s2.c:63:21: note: Assignment 'result6=NULL', assigned value is 0
+    char *result6 = NULL;
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_8/healed/problem-421-s2.c:90:9: note: Condition 'result6' is always false
+    if (result6) {
+        ^

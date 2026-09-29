@@ -1,0 +1,50 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+#define IPV4_PATTERN "^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$"
+
+int is_valid_ip(const char *ip_address) {
+    regex_t regex;
+    int reti;
+    int result = 0;
+
+    if (ip_address == NULL || strlen(ip_address) == 0 || strlen(ip_address) > 15) {
+        return 0;
+    }
+
+    reti = regcomp(&regex, IPV4_PATTERN, REG_EXTENDED);
+    if (reti) {
+        return 0;
+    }
+
+    reti = regexec(&regex, ip_address, 0, NULL, 0);
+    if (reti == 0) {
+        result = 1;
+    }
+
+    regfree(&regex);
+    return result;
+}
+
+int main(void) {
+    char ip_address[16];
+    
+    printf("Enter an IP address: ");
+    if (fgets(ip_address, sizeof(ip_address), stdin) == NULL) {
+        return 1;
+    }
+    
+    ip_address[strcspn(ip_address, "\n")] = '\0';
+    
+    if (is_valid_ip(ip_address)) {
+        printf("Valid IP address\n");
+    } else {
+        printf("Invalid IP address\n");
+    }
+    
+    return 0;
+}
+```

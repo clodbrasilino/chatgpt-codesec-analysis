@@ -1,0 +1,60 @@
+#include <stdio.h>
+#include <string.h>
+
+int romanCharToInt(char c) {
+    switch (c) {
+        case 'I': return 1;
+        case 'V': return 5;
+        case 'X': return 10;
+        case 'L': return 50;
+        case 'C': return 100;
+        case 'D': return 500;
+        case 'M': return 1000;
+        default: return 0;
+    }
+}
+
+int romanToInt(const char *s) {
+    if (s == NULL) {
+        return 0;
+    }
+
+    int total = 0;
+    int prevValue = 0;
+    int length = strlen(s);
+
+    for (int i = length - 1; i >= 0; i--) {
+        int currentValue = romanCharToInt(s[i]);
+        
+        if (currentValue == 0) {
+            return -1;
+        }
+
+        if (currentValue < prevValue) {
+            total -= currentValue;
+        } else {
+            total += currentValue;
+        }
+        prevValue = currentValue;
+    }
+
+    return total;
+}
+
+int main() {
+    const char *roman1 = "III";
+    const char *roman2 = "IV";
+    const char *roman3 = "IX";
+    const char *roman4 = "LVIII";
+    const char *roman5 = "MCMXCIV";
+    const char *invalid_roman = "MCMAX";
+
+    printf("%s -> %d\n", roman1, romanToInt(roman1));
+    printf("%s -> %d\n", roman2, romanToInt(roman2));
+    printf("%s -> %d\n", roman3, romanToInt(roman3));
+    printf("%s -> %d\n", roman4, romanToInt(roman4));
+    printf("%s -> %d\n", roman5, romanToInt(roman5));
+    printf("%s -> %d\n", invalid_roman, romanToInt(invalid_roman));
+
+    return 0;
+}

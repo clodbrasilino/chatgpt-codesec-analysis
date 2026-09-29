@@ -1,0 +1,61 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+struct Tuple {
+    int first;
+    double second;
+    char third[32];
+};
+
+char *tuple_to_string(const struct Tuple *t)
+{
+    char *result;
+    int needed;
+
+    if (t == NULL) {
+        return NULL;
+    }
+
+    needed = snprintf(NULL, 0, "(%d, %.2f, %s)", t->first, t->second, t->third);
+    if (needed < 0) {
+        return NULL;
+    }
+
+    result = malloc((size_t)needed + 1U);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    if (snprintf(result, (size_t)needed + 1U, "(%d, %.2f, %s)", t->first, t->second, t->third) < 0) {
+        free(result);
+        return NULL;
+    }
+
+    return result;
+}
+
+int main(void)
+{
+    struct Tuple t;
+    char *str;
+
+    t.first = 42;
+    t.second = 3.14;
+    (void)strncpy(t.third, "hello", sizeof(t.third) - 1U);
+    t.third[sizeof(t.third) - 1U] = '\0';
+
+    str = tuple_to_string(&t);
+    if (str == NULL) {
+        (void)fprintf(stderr, "Failed to convert tuple to string\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("%s\n", str) < 0) {
+        free(str);
+        return EXIT_FAILURE;
+    }
+
+    free(str);
+    return EXIT_SUCCESS;
+}

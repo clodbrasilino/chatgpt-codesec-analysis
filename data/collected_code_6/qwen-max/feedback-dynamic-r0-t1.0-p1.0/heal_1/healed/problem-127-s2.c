@@ -1,0 +1,37 @@
+#include <stdio.h>
+#include <limits.h>
+
+int multiply(int x, int y) {
+    int result = 0;
+    int negativeResult = 0;
+    if (y < 0) {
+        y = -y;
+        negativeResult = 1;
+    }
+    while (y > 0) {
+        if (y & 1) {
+            if (result > INT_MAX - x || (result < 0 && x < 0 && result < INT_MIN - x)) {
+                return 0;
+            }
+            result += x;
+        }
+        if (x > 0 && (x > INT_MAX / 2 || (x < 0 && x < INT_MIN / 2))) {
+            return 0;
+        }
+        x <<= 1;
+        y >>= 1;
+    }
+    if (negativeResult) {
+        result = -result;
+    }
+    return result;
+}
+
+int main() {
+    int a, b;
+    printf("Enter two integers: ");
+    scanf("%d %d", &a, &b);
+    int product = multiply(a, b);
+    printf("Product: %d\n", product);
+    return 0;
+}

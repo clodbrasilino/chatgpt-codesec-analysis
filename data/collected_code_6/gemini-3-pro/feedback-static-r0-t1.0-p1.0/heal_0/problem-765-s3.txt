@@ -1,0 +1,40 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+unsigned long long find_nth_polite_number(unsigned int n) {
+    if (n == 0) {
+        return 0;
+    }
+    
+    unsigned long long count = 0;
+    unsigned long long current = 1;
+    
+    while (count < n) {
+        current++;
+        if ((current & (current - 1)) != 0) {
+            count++;
+        }
+    }
+    
+    return current;
+}
+
+int main(void) {
+    unsigned int n;
+    
+    if (scanf("%u", &n) != 1) {
+        return EXIT_FAILURE;
+    }
+    
+    if (n == 0) {
+        return EXIT_FAILURE;
+    }
+    
+    unsigned long long polite_number = find_nth_polite_number(n);
+    printf("%llu\n", polite_number);
+    
+    return EXIT_SUCCESS;
+}
+```

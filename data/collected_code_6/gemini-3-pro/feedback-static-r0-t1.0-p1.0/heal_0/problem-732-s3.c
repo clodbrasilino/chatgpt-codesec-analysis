@@ -1,0 +1,27 @@
+#include <stdio.h>
+#include <string.h>
+
+void replace_chars(char *str) {
+    if (str == NULL) {
+        return;
+    }
+
+    while (*str != '\0') {
+        if (*str == ' ' || *str == ',' || *str == '.') {
+            *str = ':';
+        }
+        str++;
+    }
+}
+
+int main(void) {
+    char test_str[] = "Hello, world. This is a test string.";
+    
+    printf("%s\n", test_str);
+    
+    replace_chars(test_str);
+    
+    printf("%s\n", test_str);
+    
+    return 0;
+}

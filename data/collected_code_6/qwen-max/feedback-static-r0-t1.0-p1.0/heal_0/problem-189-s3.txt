@@ -1,0 +1,30 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int findFirstMissingPositive(int *nums, int size) {
+    for (int i = 0; i < size; ++i) {
+        while (nums[i] > 0 && nums[i] <= size && nums[nums[i] - 1] != nums[i]) {
+            int temp = nums[nums[i] - 1];
+            nums[nums[i] - 1] = nums[i];
+            nums[i] = temp;
+        }
+    }
+
+    for (int i = 0; i < size; ++i) {
+        if (nums[i] != i + 1) {
+            return i + 1;
+        }
+    }
+
+    return size + 1;
+}
+
+int main() {
+    int nums[] = {3, 4, -1, 1};
+    int size = sizeof(nums) / sizeof(nums[0]);
+    int result = findFirstMissingPositive(nums, size);
+    printf("The first missing positive number is: %d\n", result);
+    return 0;
+}
+```

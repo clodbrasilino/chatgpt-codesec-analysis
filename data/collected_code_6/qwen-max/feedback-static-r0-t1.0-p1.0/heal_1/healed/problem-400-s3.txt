@@ -1,0 +1,70 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int a;
+    int b;
+} Tuple;
+
+typedef struct {
+    Tuple *tuples;
+    int count;
+} TupleList;
+
+int tuple_cmp(const void *a, const void *b) {
+    const Tuple *tupleA = (const Tuple *)a;
+    const Tuple *tupleB = (const Tuple *)b;
+    if (tupleA->a == tupleB->a) {
+        return tupleA->b - tupleB->b;
+    }
+    return tupleA->a - tupleB->a;
+}
+
+int find_unique_tuples(TupleList *list, int *unique_count) {
+    if (list->count <= 0) {
+        *unique_count = 0;
+        return 0;
+    }
+
+    qsort(list->tuples, list->count, sizeof(Tuple), tuple_cmp);
+
+    int prev_index = 0;
+    *unique_count = 1;
+    for (int i = 1; i < list->count; i++) {
+        if (list->tuples[i].a != list->tuples[prev_index].a || list->tuples[i].b != list->tuples[prev_index].b) {
+            list->tuples[*unique_count] = list->tuples[i];
+            prev_index = i;
+            (*unique_count)++;
+        }
+    }
+
+    return 0;
+}
+
+int main() {
+    TupleList list = { .tuples = NULL, .count = 0 };
+    int n;
+
+    scanf("%d", &n);
+    list.tuples = (Tuple *)malloc(n * sizeof(Tuple));
+    if (list.tuples == NULL) {
+        return 1;
+    }
+
+    for (int i = 0; i < n; i++) {
+        scanf("%d %d", &list.tuples[i].a, &list.tuples[i].b);
+    }
+    list.count = n;
+
+    int unique_count = 0;
+    find_unique_tuples(&list, &unique_count);
+
+    for (int i = 0; i < unique_count; i++) {
+        printf("(%d, %d)\n", list.tuples[i].a, list.tuples[i].b);
+    }
+
+    free(list.tuples);
+    return 0;
+}
+```

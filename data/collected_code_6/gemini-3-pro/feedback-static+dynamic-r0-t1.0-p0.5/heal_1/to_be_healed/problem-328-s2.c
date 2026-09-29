@@ -1,0 +1,97 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node* next;
+};
+
+struct Node* createNode(int data) {
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    if (newNode == NULL) {
+        exit(EXIT_FAILURE);
+    }
+    newNode->data = data;
+    newNode->next = NULL;
+    return newNode;
+}
+
+void appendNode(struct Node** headRef, int data) {
+    struct Node* newNode = createNode(data);
+    if (*headRef == NULL) {
+        *headRef = newNode;
+        return;
+    }
+    struct Node* last = *headRef;
+    while (last->next != NULL) {
+        last = last->next;
+    }
+    last->next = newNode;
+}
+
+void printList(struct Node* node) {
+    while (node != NULL) {
+        printf("%d ", node->data);
+        node = node->next;
+    }
+    printf("\n");
+}
+
+void freeList(struct Node* head) {
+    /* Possible weaknesses found:
+     *  The scope of the variable 'tmp' can be reduced. [variableScope]
+     */
+    struct Node* tmp;
+    while (head != NULL) {
+        tmp = head;
+        head = head->next;
+        free(tmp);
+    }
+}
+
+struct Node* rotateLeft(struct Node* head, int k) {
+    if (head == NULL || head->next == NULL || k == 0) {
+        return head;
+    }
+
+    struct Node* current = head;
+    int count = 1;
+    while (count < k && current != NULL) {
+        current = current->next;
+        count++;
+    }
+
+    if (current == NULL || current->next == NULL) {
+        return head;
+    }
+
+    struct Node* kthNode = current;
+    while (current->next != NULL) {
+        current = current->next;
+    }
+
+    current->next = head;
+    head = kthNode->next;
+    kthNode->next = NULL;
+
+    return head;
+}
+
+int main(void) {
+    struct Node* head = NULL;
+
+    appendNode(&head, 10);
+    appendNode(&head, 20);
+    appendNode(&head, 30);
+    appendNode(&head, 40);
+    appendNode(&head, 50);
+    appendNode(&head, 60);
+
+    head = rotateLeft(head, 4);
+
+    printList(head);
+
+    freeList(head);
+
+    return 0;
+}

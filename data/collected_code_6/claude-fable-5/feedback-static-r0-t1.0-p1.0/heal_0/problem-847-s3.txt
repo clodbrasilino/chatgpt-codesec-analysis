@@ -1,0 +1,100 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    int *items;
+    size_t length;
+} List;
+
+typedef struct {
+    List *element;
+} SingletonTuple;
+
+List *copy_list_from_tuple(const SingletonTuple *tuple)
+{
+    List *copy;
+
+    if (tuple == NULL || tuple->element == NULL) {
+        return NULL;
+    }
+
+    if (tuple->element->length > 0 && tuple->element->items == NULL) {
+        return NULL;
+    }
+
+    copy = malloc(sizeof(List));
+    if (copy == NULL) {
+        return NULL;
+    }
+
+    copy->length = tuple->element->length;
+
+    if (copy->length == 0) {
+        copy->items = NULL;
+        return copy;
+    }
+
+    if (copy->length > SIZE_MAX / sizeof(int)) {
+        free(copy);
+        return NULL;
+    }
+
+    copy->items = malloc(copy->length * sizeof(int));
+    if (copy->items == NULL) {
+        free(copy);
+        return NULL;
+    }
+
+    memcpy(copy->items, tuple->element->items, copy->length * sizeof(int));
+
+    return copy;
+}
+
+void free_list(List *list)
+{
+    if (list != NULL) {
+        free(list->items);
+        free(list);
+    }
+}
+
+int main(void)
+{
+    int values[] = {10, 20, 30, 40, 50};
+    List original;
+    SingletonTuple tuple;
+    List *copied;
+    size_t i;
+
+    original.items = values;
+    original.length = sizeof(values) / sizeof(values[0]);
+    tuple.element = &original;
+
+    copied = copy_list_from_tuple(&tuple);
+    if (copied == NULL) {
+        fprintf(stderr, "Failed to copy list from tuple\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Copied list: ");
+    for (i = 0; i < copied->length; i++) {
+        printf("%d ", copied->items[i]);
+    }
+    printf("\n");
+
+    free_list(copied);
+
+    return EXIT_SUCCESS;
+}
+```
+
+Note: `SIZE_MAX` requires `<stdint.h>` — here is the corrected includes section you should use:
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+```

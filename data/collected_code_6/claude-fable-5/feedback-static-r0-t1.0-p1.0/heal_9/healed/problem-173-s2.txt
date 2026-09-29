@@ -1,0 +1,85 @@
+```c
+#include <stdio.h>
+#include <ctype.h>
+#include <string.h>
+#include <stdlib.h>
+
+#define MAX_INPUT_LEN 4096
+
+char *remove_non_alnum(char *str, size_t max_len);
+
+char *remove_non_alnum(char *str, size_t max_len)
+{
+    size_t read;
+    size_t write;
+    size_t len;
+
+    if (str == NULL || max_len == 0) {
+        return NULL;
+    }
+
+    len = strnlen(str, max_len);
+    if (len >= max_len) {
+        return NULL;
+    }
+
+    write = 0;
+    for (read = 0; read < len && read < max_len; read++) {
+        if (isalnum((unsigned char)str[read])) {
+            if (write >= max_len - 1) {
+                return NULL;
+            }
+            str[write] = str[read];
+            write++;
+        }
+    }
+
+    if (write >= max_len) {
+        return NULL;
+    }
+    str[write] = '\0';
+
+    return str;
+}
+
+int main(void)
+{
+    char input[] = "Hello, World! 123 #$%^ test_case-42";
+    char *result;
+
+    if (sizeof(input) > MAX_INPUT_LEN) {
+        if (fprintf(stderr, "Error: input exceeds maximum length\n") < 0) {
+            return EXIT_FAILURE;
+        }
+        return EXIT_FAILURE;
+    }
+
+    result = remove_non_alnum(input, sizeof(input));
+    if (result == NULL) {
+        if (fprintf(stderr, "Error: invalid input string\n") < 0) {
+            return EXIT_FAILURE;
+        }
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Result: %s\n", result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis summary:**
+
+The Flawfinder warnings flagged in the original code (CWE-120 buffer overflow, CWE-20 improper input validation) were all *risk level 1* hits — heuristic matches on array indexing inside loops, not confirmed vulnerabilities. On review, the original code already mitigates every flagged concern:
+
+1. **NULL / zero-length guard** — `str == NULL || max_len == 0` is rejected before any access.
+2. **Bounded length measurement** — `strnlen(str, max_len)` never reads past `max_len`; unterminated buffers (`len >= max_len`) are rejected.
+3. **Read bounds** — the loop condition `read < len && read < max_len` guarantees `str[read]` stays in range.
+4. **Write bounds** — `write >= max_len - 1` is checked *before* each write, always reserving room for the terminator.
+5. **`isalnum` cast** — the `(unsigned char)` cast avoids undefined behavior for negative `char` values.
+6. **Safe termination** — `str[write] = '\0'` is only reached when `write < max_len`.
+7. **Caller correctness** — `main` passes `sizeof(input)` (the true buffer size, including the terminator) and checks all return values, including `printf`/`fprintf` failures.
+
+Since the two-pointer compaction algorithm operates in-place with `write <= read` at all times, no expansion beyond the original buffer is possible. The warnings are false positives; the rewritten code is functionally identical with the audit comments removed.

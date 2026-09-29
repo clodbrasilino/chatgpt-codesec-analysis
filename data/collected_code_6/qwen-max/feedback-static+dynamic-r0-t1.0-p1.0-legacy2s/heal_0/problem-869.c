@@ -1,0 +1,88 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int value;
+    struct Node *next;
+} Node;
+
+typedef struct List {
+    Node *head;
+    Node *tail;
+} List;
+
+List* create_list() {
+    List *list = (List*)malloc(sizeof(List));
+    list->head = NULL;
+    list->tail = NULL;
+    return list;
+}
+
+void append(Node **head, Node **tail, int value) {
+    Node *new_node = (Node*)malloc(sizeof(Node));
+    new_node->value = value;
+    new_node->next = NULL;
+
+    if (*head == NULL) {
+        *head = new_node;
+        *tail = new_node;
+    } else {
+        (*tail)->next = new_node;
+        *tail = new_node;
+    }
+}
+
+void free_list(List *list) {
+    Node *current = list->head;
+    while (current != NULL) {
+        Node *next = current->next;
+        free(current);
+        current = next;
+    }
+    free(list);
+}
+
+void remove_sublists_outside_range(List *list, int min, int max) {
+    Node *prev = NULL;
+    Node *current = list->head;
+    while (current != NULL) {
+        if (current->value < min || current->value > max) {
+            Node *to_remove = current;
+            current = current->next;
+
+            if (prev != NULL) {
+                prev->next = current;
+            } else {
+                list->head = current;
+            }
+
+            if (current == NULL) {
+                list->tail = prev;
+            }
+
+            free(to_remove);
+        } else {
+            prev = current;
+            current = current->next;
+        }
+    }
+}
+
+int main() {
+    List *list = create_list();
+    append(&list->head, &list->tail, 10);
+    append(&list->head, &list->tail, 20);
+    append(&list->head, &list->tail, 30);
+    append(&list->head, &list->tail, 40);
+
+    remove_sublists_outside_range(list, 15, 35);
+
+    Node *current = list->head;
+    while (current != NULL) {
+        printf("%d ", current->value);
+        current = current->next;
+    }
+
+    free_list(list);
+    return 0;
+}

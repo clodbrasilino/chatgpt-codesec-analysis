@@ -1,0 +1,79 @@
+```c
+#include <stdio.h>
+#include <string.h>
+
+#define MAX_INPUT_LEN 4096
+
+int min_swaps(const char *s1, const char *s2)
+{
+    size_t len1;
+    size_t len2;
+    size_t i;
+    int count01 = 0;
+    int count10 = 0;
+
+    if (s1 == NULL || s2 == NULL) {
+        return -1;
+    }
+
+    len1 = strnlen(s1, MAX_INPUT_LEN);
+    len2 = strnlen(s2, MAX_INPUT_LEN);
+
+    if (len1 >= MAX_INPUT_LEN || len2 >= MAX_INPUT_LEN) {
+        return -1;
+    }
+
+    if (len1 != len2) {
+        return -1;
+    }
+
+    for (i = 0; i < len1; i++) {
+        if ((s1[i] != '0' && s1[i] != '1') ||
+            (s2[i] != '0' && s2[i] != '1')) {
+            return -1;
+        }
+        if (s1[i] != s2[i]) {
+            if (s1[i] == '0') {
+                count01++;
+            } else {
+                count10++;
+            }
+        }
+    }
+
+    if (count01 != count10) {
+        return -1;
+    }
+
+    return count01;
+}
+
+int main(void)
+{
+    const char *a = "1101";
+    const char *b = "1011";
+    int result;
+
+    result = min_swaps(a, b);
+
+    if (result < 0) {
+        if (printf("Not Possible\n") < 0) {
+            return 1;
+        }
+    } else {
+        if (printf("Minimum swaps required: %d\n", result) < 0) {
+            return 1;
+        }
+    }
+
+    return 0;
+}
+```
+
+Key changes made to address the identified weaknesses:
+
+1. **CWE-126 (strlen over-read)**: Replaced both `strlen` calls with `strnlen` bounded by `MAX_INPUT_LEN`. If a string is not NUL-terminated within the bound, `strnlen` returns `MAX_INPUT_LEN` and the function safely rejects the input with `-1` instead of reading past the end of the buffer.
+
+2. **Failed test case (expected `'Not Possible'`, got `-1`)**: The error-path output string in `main` was changed from `"Conversion not possible"` to `"Not Possible"` so the observable program output matches the expected test result. The `-1` sentinel remains internal to the API and is translated into the correct user-facing message.
+
+3. Preserved the existing defensive checks (NULL pointers, length mismatch, non-binary characters, unbalanced mismatch counts) and the checked `printf` return values, which were already sound.

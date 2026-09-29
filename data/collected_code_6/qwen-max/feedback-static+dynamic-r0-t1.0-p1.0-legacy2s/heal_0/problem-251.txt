@@ -1,0 +1,73 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node* next;
+} Node;
+
+Node* createNode(int data) {
+    Node* newNode = (Node*)malloc(sizeof(Node));
+    if (newNode == NULL) {
+        return NULL;
+    }
+    newNode->data = data;
+    newNode->next = NULL;
+    return newNode;
+}
+
+void insertBeforeEachElement(Node** head, int newData) {
+    if (*head == NULL) {
+        *head = createNode(newData);
+        return;
+    }
+
+    Node* current = *head;
+    Node* newHead = createNode(newData);
+    newHead->next = current;
+    *head = newHead;
+
+    while (current->next != NULL) {
+        Node* temp = createNode(newData);
+        temp->next = current->next;
+        current->next = temp;
+        current = temp->next;
+    }
+
+    Node* temp = createNode(newData);
+    current->next = temp;
+}
+
+void printList(Node* head) {
+    Node* current = head;
+    while (current != NULL) {
+        printf("%d -> ", current->data);
+        current = current->next;
+    }
+    printf("NULL\n");
+}
+
+int main() {
+    Node* head = createNode(10);
+    head->next = createNode(20);
+    head->next->next = createNode(30);
+
+    printf("Original list: ");
+    printList(head);
+
+    insertBeforeEachElement(&head, 5);
+
+    printf("List after insertion: ");
+    printList(head);
+
+    // Free the allocated memory
+    while (head != NULL) {
+        Node* temp = head;
+        head = head->next;
+        free(temp);
+    }
+
+    return 0;
+}
+```

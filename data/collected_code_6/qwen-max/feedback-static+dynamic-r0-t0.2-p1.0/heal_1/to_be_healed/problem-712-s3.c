@@ -1,0 +1,94 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node *next;
+} Node;
+
+typedef struct List {
+    Node *head;
+} List;
+
+void addNode(List *list, int data) {
+    Node *newNode = (Node *)malloc(sizeof(Node));
+    newNode->data = data;
+    newNode->next = list->head;
+    list->head = newNode;
+}
+
+int contains(List *list, int data) {
+    Node *current = list->head;
+    while (current != NULL) {
+        if (current->data == data) {
+            return 1;
+        }
+        current = current->next;
+    }
+    return 0;
+}
+
+/* Possible weaknesses found:
+ *  expected 'List **' but argument is of type 'List *'
+ */
+List* removeDuplicates(List *lists[], int n) {
+    for (int i = 0; i < n; i++) {
+        Node *current = lists[i]->head;
+        Node *prev = NULL;
+        while (current != NULL) {
+            Node *runner = current->next;
+            while (runner != NULL) {
+                if (runner->data == current->data) {
+                    prev->next = runner->next;
+                    free(runner);
+                    runner = prev->next;
+                } else {
+                    prev = runner;
+                    runner = runner->next;
+                }
+            }
+            prev = current;
+            current = current->next;
+        }
+    }
+    return lists[0];
+}
+
+void printList(List *list) {
+    Node *current = list->head;
+    while (current != NULL) {
+        printf("%d -> ", current->data);
+        current = current->next;
+    }
+    printf("NULL\n");
+}
+
+int main() {
+    List lists[3] = {{NULL}, {NULL}, {NULL}};
+    
+    addNode(&lists[0], 1);
+    addNode(&lists[0], 2);
+    addNode(&lists[0], 2);
+    addNode(&lists[0], 3);
+    
+    addNode(&lists[1], 4);
+    addNode(&lists[1], 5);
+    addNode(&lists[1], 5);
+    addNode(&lists[1], 6);
+    
+    addNode(&lists[2], 7);
+    addNode(&lists[2], 8);
+    addNode(&lists[2], 8);
+    addNode(&lists[2], 9);
+
+    /* Possible weaknesses found:
+     *  passing argument 1 of 'removeDuplicates' from incompatible pointer type [-Wincompatible-pointer-types]
+     */
+    removeDuplicates(lists, 3);
+
+    printList(&lists[0]);
+    printList(&lists[1]);
+    printList(&lists[2]);
+
+    return 0;
+}

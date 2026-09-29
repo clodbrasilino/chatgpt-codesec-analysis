@@ -1,0 +1,13 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-779-s3.c: In function 'main':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-779-s3.c:52:21: error: initialization of 'int' from 'char *' makes integer from pointer without a cast [-Wint-conversion]
+   52 |         {{{"a"}}, {{"b"}}, .count = 2},
+      |                     ^~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-779-s3.c:52:21: note: (near initialization for 'lists[0].count')
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-779-s3.c:53:21: error: initialization of 'int' from 'char *' makes integer from pointer without a cast [-Wint-conversion]
+   53 |         {{{"a"}}, {{"c"}}, .count = 2},
+      |                     ^~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-779-s3.c:53:21: note: (near initialization for 'lists[1].count')
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-779-s3.c:54:21: error: initialization of 'int' from 'char *' makes integer from pointer without a cast [-Wint-conversion]
+   54 |         {{{"b"}}, {{"a"}}, .count = 2}
+      |                     ^~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-779-s3.c:54:21: note: (near initialization for 'lists[2].count')

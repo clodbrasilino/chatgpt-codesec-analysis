@@ -1,0 +1,153 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_SIZE 100
+
+typedef struct {
+    char *items;
+    size_t capacity;
+    size_t top;
+} Stack;
+
+int initStack(Stack *s, size_t capacity) {
+    if (s == NULL || capacity == 0) {
+        return 0;
+    }
+    s->items = (char *)malloc(capacity * sizeof(char));
+    if (s->items == NULL) {
+        return 0;
+    }
+    s->capacity = capacity;
+    s->top = 0;
+    return 1;
+}
+
+void destroyStack(Stack *s) {
+    if (s != NULL) {
+        free(s->items);
+        s->items = NULL;
+        s->capacity = 0;
+        s->top = 0;
+    }
+}
+
+int isEmpty(const Stack *s) {
+    if (s == NULL) {
+        return 1;
+    }
+    return s->top == 0;
+}
+
+int isFull(const Stack *s) {
+    if (s == NULL) {
+        return 1;
+    }
+    return s->top >= s->capacity;
+}
+
+int push(Stack *s, char c) {
+    if (s == NULL || isFull(s)) {
+        return 0;
+    }
+    s->items[s->top++] = c;
+    return 1;
+}
+
+char pop(Stack *s) {
+    if (s == NULL || isEmpty(s)) {
+        return '\0';
+    }
+    return s->items[--(s->top)];
+}
+
+char peek(const Stack *s) {
+    if (s == NULL || isEmpty(s)) {
+        return '\0';
+    }
+    return s->items[s->top - 1];
+}
+
+int isMatchingPair(char opening, char closing) {
+    return (opening == '(' && closing == ')') ||
+           (opening == '{' && closing == '}') ||
+           (opening == '[' && closing == ']');
+}
+
+int isBalanced(const char *expression) {
+    Stack stack;
+    size_t i;
+    size_t len;
+    int result;
+    
+    if (expression == NULL) {
+        return 0;
+    }
+    
+    len = strnlen(expression, MAX_SIZE);
+    
+    if (!initStack(&stack, len > 0 ? len : 1)) {
+        return 0;
+    }
+    
+    result = 1;
+    
+    for (i = 0; i < len; i++) {
+        char current = expression[i];
+        
+        if (current == '(' || current == '{' || current == '[') {
+            if (!push(&stack, current)) {
+                result = 0;
+                break;
+            }
+        } else if (current == ')' || current == '}' || current == ']') {
+            char top_char;
+            
+            if (isEmpty(&stack)) {
+                result = 0;
+                break;
+            }
+            
+            top_char = pop(&stack);
+            if (!isMatchingPair(top_char, current)) {
+                result = 0;
+                break;
+            }
+        }
+    }
+    
+    if (result && !isEmpty(&stack)) {
+        result = 0;
+    }
+    
+    destroyStack(&stack);
+    return result;
+}
+
+int main(void) {
+    char *expression = NULL;
+    size_t buffer_size = 0;
+    ssize_t read_len;
+    
+    printf("Enter an expression: ");
+    
+    read_len = getline(&expression, &buffer_size, stdin);
+    if (read_len == -1) {
+        fprintf(stderr, "Error reading input\n");
+        free(expression);
+        return EXIT_FAILURE;
+    }
+    
+    if (read_len > 0 && expression[read_len - 1] == '\n') {
+        expression[read_len - 1] = '\0';
+    }
+    
+    if (isBalanced(expression)) {
+        printf("The expression is balanced.\n");
+    } else {
+        printf("The expression is not balanced.\n");
+    }
+    
+    free(expression);
+    return EXIT_SUCCESS;
+}

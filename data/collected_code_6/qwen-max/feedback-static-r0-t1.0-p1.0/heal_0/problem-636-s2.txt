@@ -1,0 +1,27 @@
+```c
+#include <stdio.h>
+#include <math.h>
+
+int areReciprocalRoots(double a, double b, double c) {
+    double discriminant = b * b - 4 * a * c;
+    if (discriminant < 0) return 0;
+    double root1 = (-b + sqrt(discriminant)) / (2 * a);
+    double root2 = (-b - sqrt(discriminant)) / (2 * a);
+    return root1 != 0 && root2 != 0 && root1 * root2 == 1;
+}
+
+int main() {
+    double a, b, c;
+    printf("Enter coefficients a, b, c: ");
+    if (scanf("%lf %lf %lf", &a, &b, &c) != 3) {
+        printf("Invalid input\n");
+        return 1;
+    }
+    if (areReciprocalRoots(a, b, c)) {
+        printf("The roots are reciprocal of each other.\n");
+    } else {
+        printf("The roots are not reciprocal of each other.\n");
+    }
+    return 0;
+}
+```

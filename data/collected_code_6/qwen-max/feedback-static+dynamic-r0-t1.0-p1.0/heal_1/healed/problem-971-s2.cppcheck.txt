@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-971-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-971-s2.c:7:28: warning: Either the condition 'a<0' is redundant or there is division by zero at line 7. [zerodivcond]
+    for (int i = 0; i <= n / a; ++i) {
+                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-971-s2.c:28:49: note: Assuming that condition 'a<0' is not redundant
+    if (scanf("%d %d %d", &a, &b, &c) != 3 || a < 0 || b < 0 || c < 0) {
+                                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-971-s2.c:33:34: note: Calling function 'max_segments', 2nd argument 'a' value is 0
+    int result = max_segments(n, a, b, c);
+                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-971-s2.c:7:28: note: Division by zero
+    for (int i = 0; i <= n / a; ++i) {
+                           ^

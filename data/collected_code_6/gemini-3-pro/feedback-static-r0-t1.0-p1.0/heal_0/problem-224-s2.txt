@@ -1,0 +1,26 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+unsigned int count_set_bits(unsigned int n);
+
+int main(void) {
+    unsigned int test_values[] = {0, 1, 2, 7, 15, 32, 0xFFFFFFFF};
+    size_t num_values = sizeof(test_values) / sizeof(test_values[0]);
+
+    for (size_t i = 0; i < num_values; i++) {
+        printf("%u -> %u\n", test_values[i], count_set_bits(test_values[i]));
+    }
+
+    return EXIT_SUCCESS;
+}
+
+unsigned int count_set_bits(unsigned int n) {
+    unsigned int count = 0;
+    while (n > 0) {
+        n &= (n - 1);
+        count++;
+    }
+    return count;
+}
+```

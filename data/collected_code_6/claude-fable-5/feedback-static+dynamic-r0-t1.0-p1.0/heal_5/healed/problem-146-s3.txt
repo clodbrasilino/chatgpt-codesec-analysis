@@ -1,0 +1,73 @@
+```c
+#define _POSIX_C_SOURCE 200809L
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+long ascii_sum(const char *str, size_t max_len)
+{
+    long sum = 0;
+    size_t i;
+    size_t len;
+
+    if (str == NULL) {
+        return -1;
+    }
+
+    len = strnlen(str, max_len);
+    for (i = 0; i < len; i++) {
+        sum += (long)(unsigned char)str[i];
+    }
+
+    return sum;
+}
+
+int main(void)
+{
+    char *buffer = NULL;
+    size_t buffer_size = 0;
+    ssize_t read_len;
+    long result;
+    size_t len;
+
+    printf("Enter a string: ");
+
+    read_len = getline(&buffer, &buffer_size, stdin);
+    if (read_len < 0) {
+        fprintf(stderr, "Error reading input\n");
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+
+    len = (size_t)read_len;
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+        len--;
+    }
+
+    result = ascii_sum(buffer, len + 1);
+    if (result < 0) {
+        fprintf(stderr, "Invalid string\n");
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+
+    printf("Total ASCII value: %ld\n", result);
+
+    free(buffer);
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the changes:**
+
+The original code was already reasonably defensive, but the Flawfinder warning pointed at the statically-sized `char buffer[BUFFER_SIZE]`. While the original mitigated overflow risk correctly (using `fgets` with `sizeof(buffer)`, forced NUL-termination, and `strnlen` bounds), the rewrite eliminates the class of weakness entirely:
+
+1. **Removed the fixed-size stack buffer** — replaced with `getline()`, a POSIX function (enabled by the existing `_POSIX_C_SOURCE 200809L` feature test macro) that dynamically allocates and resizes the buffer as needed. This removes the CWE-119/CWE-120 concern at its root: there is no static bound to overflow, and arbitrarily long input lines are handled correctly rather than silently truncated.
+
+2. **Length is known exactly** — `getline` returns the number of bytes read, so there is no need to re-scan the buffer with `strnlen` in `main`, and the guaranteed NUL-termination from `getline` makes the manual `buffer[size - 1] = '\0'` unnecessary.
+
+3. **Memory hygiene** — `free(buffer)` is called on every exit path to avoid leaks, including error paths (note that `getline` may allocate even on failure, so freeing after a negative return is correct).
+
+4. **Retained defensive properties** — the `ascii_sum` function keeps its NULL check, bounded `strnlen`, and the `(unsigned char)` cast before widening to `long`, preventing sign-extension issues on platforms where `char` is signed.

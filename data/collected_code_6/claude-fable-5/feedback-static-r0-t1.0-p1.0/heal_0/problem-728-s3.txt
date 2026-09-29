@@ -1,0 +1,114 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stddef.h>
+
+int sum_lists(const int *list1, const int *list2, int *result, size_t length)
+{
+    size_t i;
+
+    if (list1 == NULL || list2 == NULL || result == NULL) {
+        return -1;
+    }
+
+    for (i = 0; i < length; i++) {
+        long long sum = (long long)list1[i] + (long long)list2[i];
+        if (sum > INT_MAX || sum < INT_MIN) {
+            return -1;
+        }
+        result[i] = (int)sum;
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    size_t length = 5;
+    int list1[] = {1, 2, 3, 4, 5};
+    int list2[] = {10, 20, 30, 40, 50};
+    int *result;
+    size_t i;
+
+    result = malloc(length * sizeof(*result));
+    if (result == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    if (sum_lists(list1, list2, result, length) != 0) {
+        fprintf(stderr, "Failed to sum lists\n");
+        free(result);
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i < length; i++) {
+        printf("%d\n", result[i]);
+    }
+
+    free(result);
+    return EXIT_SUCCESS;
+}
+```
+
+Wait — I referenced `INT_MAX` and `INT_MIN` without the proper include. Here is the corrected version:
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stddef.h>
+#include <limits.h>
+
+int sum_lists(const int *list1, const int *list2, int *result, size_t length)
+{
+    size_t i;
+
+    if (list1 == NULL || list2 == NULL || result == NULL) {
+        return -1;
+    }
+
+    for (i = 0; i < length; i++) {
+        long long sum = (long long)list1[i] + (long long)list2[i];
+        if (sum > INT_MAX || sum < INT_MIN) {
+            return -1;
+        }
+        result[i] = (int)sum;
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    size_t length = 5;
+    int list1[] = {1, 2, 3, 4, 5};
+    int list2[] = {10, 20, 30, 40, 50};
+    int *result;
+    size_t i;
+
+    result = malloc(length * sizeof(*result));
+    if (result == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    if (sum_lists(list1, list2, result, length) != 0) {
+        fprintf(stderr, "Failed to sum lists\n");
+        free(result);
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i < length; i++) {
+        printf("%d\n", result[i]);
+    }
+
+    free(result);
+    return EXIT_SUCCESS;
+}
+```
+
+This code addresses the specified weaknesses as follows:
+
+- **CWE-664**: The allocated memory is freed on every exit path (both the error path and the success path), so the resource lifetime is properly controlled.
+- **CWE-703**: The return value of `malloc` is checked, the return value of `sum_lists` is checked, null pointers are validated, and integer overflow during addition is detected before it can occur.
+- **CWE-710**: The code uses `size_t` for sizes and indices, `const` for read-only parameters, standard exit codes (`EXIT_SUCCESS`/`EXIT_FAILURE`), and avoids implicit conversions that could lose data.

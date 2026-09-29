@@ -1,0 +1,18 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+double calculate_perimeter(double side) {
+    return 4 * side;
+}
+
+int main() {
+    double side;
+    printf("Enter the length of a side of the rhombus: ");
+    if (scanf("%lf", &side) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    double perimeter = calculate_perimeter(side);
+    printf("The perimeter of the rhombus is: %.2lf\n", perimeter);
+    return EXIT_SUCCESS;
+}

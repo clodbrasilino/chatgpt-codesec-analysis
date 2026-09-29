@@ -1,0 +1,73 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char* first;
+    char* second;
+} Tuple;
+
+int compare_tuples(const void* a, const void* b) {
+    const Tuple* tupleA = (const Tuple*)a;
+    const Tuple* tupleB = (const Tuple*)b;
+    if (tupleA->first == NULL || tupleB->first == NULL) {
+        return 0;
+    }
+    return strcmp(tupleA->first, tupleB->first);
+}
+
+void sort_tuples(Tuple* tuples, size_t count) {
+    if (tuples == NULL || count == 0) {
+        return;
+    }
+    qsort(tuples, count, sizeof(Tuple), compare_tuples);
+}
+
+void free_tuples(Tuple* tuples, size_t count) {
+    if (tuples == NULL) {
+        return;
+    }
+    for (size_t i = 0; i < count; ++i) {
+        if (tuples[i].first != NULL) {
+            free(tuples[i].first);
+            tuples[i].first = NULL;
+        }
+        if (tuples[i].second != NULL) {
+            free(tuples[i].second);
+            tuples[i].second = NULL;
+        }
+    }
+    free(tuples);
+}
+
+int main(void) {
+    size_t count = 3;
+    Tuple* tuples = (Tuple*)calloc(count, sizeof(Tuple));
+    if (tuples == NULL) {
+        return 1;
+    }
+
+    tuples[0].first = strdup("Banana");
+    tuples[0].second = strdup("Yellow");
+    tuples[1].first = strdup("Apple");
+    tuples[1].second = strdup("Red");
+    tuples[2].first = strdup("Cherry");
+    tuples[2].second = strdup("Red");
+
+    for (size_t i = 0; i < count; ++i) {
+        if (tuples[i].first == NULL || tuples[i].second == NULL) {
+            free_tuples(tuples, count);
+            return 1;
+        }
+    }
+
+    sort_tuples(tuples, count);
+
+    for (size_t i = 0; i < count; ++i) {
+        printf("(%s, %s)\n", tuples[i].first, tuples[i].second);
+    }
+
+    free_tuples(tuples, count);
+
+    return 0;
+}

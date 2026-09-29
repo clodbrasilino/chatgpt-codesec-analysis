@@ -1,0 +1,23 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <limits.h>
+
+int smallest_power_of_two(int n) {
+    if (n <= 0) return 1;
+    if (n > INT_MAX / 2) return INT_MAX; // Prevent overflow
+    int power = 1;
+    while (power < n) {
+        if (power > INT_MAX / 2) break; // Prevent overflow
+        power <<= 1;
+    }
+    return power;
+}
+
+int main() {
+    int n;
+    printf("Enter a number: ");
+    scanf("%d", &n);
+    int result = smallest_power_of_two(n);
+    printf("The smallest power of 2 greater than or equal to %d is %d\n", n, result);
+    return 0;
+}

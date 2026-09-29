@@ -1,0 +1,81 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX_STR_LEN 4096
+
+int max(int a, int b) {
+    return (a > b) ? a : b;
+}
+
+size_t get_safe_length(const char *str, size_t max_len) {
+    size_t len = 0;
+    while (len < max_len && str[len] != '\0') {
+        len++;
+    }
+    return len;
+}
+
+int shortestCommonSupersequenceLength(const char *str1, const char *str2) {
+    if (str1 == NULL || str2 == NULL) {
+        return -1;
+    }
+
+    size_t m = get_safe_length(str1, MAX_STR_LEN);
+    size_t n = get_safe_length(str2, MAX_STR_LEN);
+
+    if (m == MAX_STR_LEN || n == MAX_STR_LEN) {
+        return -1; 
+    }
+
+    int **dp = (int **)malloc((m + 1) * sizeof(int *));
+    if (dp == NULL) {
+        return -1;
+    }
+
+    for (size_t i = 0; i <= m; i++) {
+        dp[i] = (int *)malloc((n + 1) * sizeof(int));
+        if (dp[i] == NULL) {
+            for (size_t j = 0; j < i; j++) {
+                free(dp[j]);
+            }
+            free(dp);
+            return -1;
+        }
+    }
+
+    for (size_t i = 0; i <= m; i++) {
+        for (size_t j = 0; j <= n; j++) {
+            if (i == 0 || j == 0) {
+                dp[i][j] = 0;
+            } else if (str1[i - 1] == str2[j - 1]) {
+                dp[i][j] = 1 + dp[i - 1][j - 1];
+            } else {
+                dp[i][j] = max(dp[i - 1][j], dp[i][j - 1]);
+            }
+        }
+    }
+
+    int lcs = dp[m][n];
+    int result = (int)(m + n) - lcs;
+
+    for (size_t i = 0; i <= m; i++) {
+        free(dp[i]);
+    }
+    free(dp);
+
+    return result;
+}
+
+int main(void) {
+    const char *str1 = "geek";
+    const char *str2 = "eke";
+
+    int length = shortestCommonSupersequenceLength(str1, str2);
+    if (length != -1) {
+        printf("%d\n", length);
+    } else {
+        printf("Error calculating length.\n");
+    }
+
+    return 0;
+}

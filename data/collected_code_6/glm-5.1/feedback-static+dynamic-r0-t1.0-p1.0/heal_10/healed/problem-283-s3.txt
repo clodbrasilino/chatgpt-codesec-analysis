@@ -1,0 +1,57 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+#include <errno.h>
+
+int check_digit_frequency(long long n) {
+    if (n < 0) {
+        return 0;
+    }
+    
+    int freq[10] = {0};
+    long long temp = n;
+    
+    if (temp == 0) {
+        freq[0] = 1;
+    } else {
+        while (temp > 0) {
+            int digit = (int)(temp % 10);
+            if (digit >= 0 && digit < 10) {
+                freq[digit]++;
+            }
+            temp /= 10;
+        }
+    }
+    
+    for (int i = 0; i < 10; i++) {
+        if (freq[i] > i) {
+            return 0;
+        }
+    }
+    
+    return 1;
+}
+
+int main(int argc, char const * const argv[]) {
+    if (argc != 2) {
+        fprintf(stderr, "Usage: %s <number>\n", argv[0]);
+        return EXIT_FAILURE;
+    }
+    
+    char *endptr;
+    errno = 0;
+    long long val = strtoll(argv[1], &endptr, 10);
+    
+    if (errno == ERANGE || endptr == argv[1] || *endptr != '\0') {
+        fprintf(stderr, "Invalid input: not a valid number\n");
+        return EXIT_FAILURE;
+    }
+    
+    if (check_digit_frequency(val)) {
+        printf("1\n");
+    } else {
+        printf("0\n");
+    }
+    
+    return EXIT_SUCCESS;
+}

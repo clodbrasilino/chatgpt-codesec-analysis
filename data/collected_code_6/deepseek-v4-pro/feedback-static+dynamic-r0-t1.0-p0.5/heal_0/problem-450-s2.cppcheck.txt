@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-450-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-450-s2.c:7:10: warning: Either the condition 'output_count==NULL' is redundant or there is possible null pointer dereference: output_count. [nullPointerRedundantCheck]
+        *output_count = 0;
+         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-450-s2.c:6:83: note: Assuming that condition 'output_count==NULL' is not redundant
+    if (input_list == NULL || list_size <= 0 || extract_size <= 0 || output_count == NULL) {
+                                                                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-450-s2.c:7:10: note: Null pointer dereference
+        *output_count = 0;
+         ^

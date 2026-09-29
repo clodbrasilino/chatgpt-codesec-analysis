@@ -1,0 +1,61 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+unsigned long long bell_number(int n) {
+    if (n < 0) {
+        fprintf(stderr, "Error: n must be non-negative\n");
+        exit(EXIT_FAILURE);
+    }
+    if (n == 0) {
+        return 1;
+    }
+    
+    unsigned long long **bell = malloc((n + 1) * sizeof(*bell));
+    if (bell == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(EXIT_FAILURE);
+    }
+    
+    for (int i = 0; i <= n; i++) {
+        bell[i] = malloc((n + 1) * sizeof(*bell[i]));
+        if (bell[i] == NULL) {
+            for (int j = 0; j < i; j++) {
+                free(bell[j]);
+            }
+            free(bell);
+            fprintf(stderr, "Memory allocation failed\n");
+            exit(EXIT_FAILURE);
+        }
+    }
+    
+    bell[0][0] = 1;
+    
+    for (int i = 1; i <= n; i++) {
+        bell[i][0] = bell[i - 1][i - 1];
+        for (int j = 1; j <= i; j++) {
+            bell[i][j] = bell[i - 1][j - 1] + bell[i][j - 1];
+        }
+    }
+    
+    unsigned long long result = bell[n][0];
+    
+    for (int i = 0; i <= n; i++) {
+        free(bell[i]);
+    }
+    free(bell);
+    
+    return result;
+}
+
+int main(void) {
+    int n;
+    printf("Enter n: ");
+    if (scanf("%d", &n) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("Bell number B%d = %llu\n", n, bell_number(n));
+    
+    return 0;
+}

@@ -1,0 +1,47 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <math.h>
+
+bool is_perfect_square(int n) {
+    int root = (int)sqrt((double)n);
+    return root * root == n;
+}
+
+bool sum_of_two_squares(int n) {
+    if (n < 0) {
+        return false;
+    }
+    if (n == 0) {
+        return true;
+    }
+    
+    int limit = (int)sqrt((double)n);
+    
+    for (int a = 0; a <= limit; a++) {
+        int diff = n - a * a;
+        if (diff < 0) {
+            break;
+        }
+        if (is_perfect_square(diff)) {
+            return true;
+        }
+    }
+    
+    return false;
+}
+
+int main(void) {
+    int test_numbers[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 13, 18, 25, 34, 41, 50, 65, 72, 85, 97, 100};
+    int num_tests = sizeof(test_numbers) / sizeof(test_numbers[0]);
+    
+    for (int i = 0; i < num_tests; i++) {
+        int num = test_numbers[i];
+        if (sum_of_two_squares(num)) {
+            printf("%d can be represented as sum of two squares\n", num);
+        } else {
+            printf("%d cannot be represented as sum of two squares\n", num);
+        }
+    }
+    
+    return 0;
+}

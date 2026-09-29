@@ -1,0 +1,94 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+ /* Possible weaknesses found:
+  *  test case 2 failed: expected 1, got 1.5
+  *  test case 0 failed: expected 3.5, got 2.5
+  */
+
+double min_jumps(double a, double b, double d) {
+    if (d == 0.0) {
+        return 0.0;
+    }
+    if (a == 0.0 && b == 0.0) {
+        return -1.0;
+    }
+    if (a == 0.0) {
+        if (fmod(d, b) == 0.0) {
+            return d / b;
+        } else {
+            return -1.0;
+        }
+    }
+    if (b == 0.0) {
+        if (fmod(d, a) == 0.0) {
+            double jumps = d / a;
+            if (jumps > 0.0) {
+                return jumps;
+            }
+        }
+        return -1.0;
+    }
+    double max_steps = ceil(d / a) + 2.0;
+    double min_res = -1.0;
+    for (double y = 0.0; y <= max_steps; y += 1.0) {
+        double rem = d - y * a;
+        if (rem < -1e-9) {
+            break;
+        }
+        if (rem < 0.0) {
+            rem = 0.0;
+        }
+        double fx = fmod(rem, b);
+        /* Possible weaknesses found:
+         *  The scope of the variable 'x' can be reduced. [variableScope]
+         */
+        double x = floor(rem / b + 1e-9);
+        if (fabs(fx) < 1e-9 || fabs(fx - b) < 1e-9) {
+            if (x >= -1e-9) {
+                if (x < 0.0) {
+                    x = 0.0;
+                }
+                double res;
+                if (x >= y) {
+                    res = x;
+                } else {
+                    res = 2.0 * x + (y - x);
+                }
+                res += 0.5 * y;
+                if (min_res == -1.0 || res < min_res) {
+                    min_res = res;
+                }
+            }
+        }
+    }
+    return ceil(min_res * 2.0) / 2.0;
+}
+
+int main(int argc, char const * const argv[]) {
+    if (argc != 4) {
+        fprintf(stderr, "Usage: %s <jumpA> <jumpB> <distance>\n", argv[0]);
+        return EXIT_FAILURE;
+    }
+    char *endptr_a, *endptr_b, *endptr_d;
+    double a = strtod(argv[1], &endptr_a);
+    double b = strtod(argv[2], &endptr_b);
+    double d = strtod(argv[3], &endptr_d);
+    if (*endptr_a != '\0' || *endptr_b != '\0' || *endptr_d != '\0') {
+        fprintf(stderr, "Invalid number input\n");
+        return EXIT_FAILURE;
+    }
+    if (a < 0.0 || b < 0.0 || d < 0.0) {
+        fprintf(stderr, "Inputs must be non-negative\n");
+        return EXIT_FAILURE;
+    }
+    double result = min_jumps(a, b, d);
+    if (result == -1.0) {
+        printf("-1\n");
+    } else if (result == floor(result)) {
+        printf("%d\n", (int)result);
+    } else {
+        printf("%.1f\n", result);
+    }
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,66 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+static void capitalize_first_last(char *str)
+{
+    size_t i;
+    size_t len;
+
+    if (str == NULL) {
+        return;
+    }
+
+    len = strlen(str);
+    i = 0;
+
+    while (i < len) {
+        size_t start;
+        size_t end;
+
+        while (i < len && isspace((unsigned char)str[i])) {
+            i++;
+        }
+        if (i >= len) {
+            break;
+        }
+        start = i;
+        while (i < len && !isspace((unsigned char)str[i])) {
+            i++;
+        }
+        end = i - 1;
+        str[start] = (char)toupper((unsigned char)str[start]);
+        str[end] = (char)toupper((unsigned char)str[end]);
+    }
+}
+
+int main(void)
+{
+    char buffer[256];
+    char *newline;
+
+    printf("Enter a string: ");
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    newline = strchr(buffer, '\n');
+    if (newline != NULL) {
+        *newline = '\0';
+    }
+
+    capitalize_first_last(buffer);
+
+    if (printf("Result: %s\n", buffer) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+The key change addresses the two `[variableScope]` findings: `start` and `end` are now declared inside the `while` loop body, reducing their scope to the block where they are actually used. This is a best-practice fix flagged by static analyzers like cppcheck — it improves readability and prevents accidental use of stale values from previous iterations. All other defensive measures in the original (NULL check, `unsigned char` casts for the `<ctype.h>` functions, bounded `fgets`, newline stripping, and checked `printf` return value) are preserved.

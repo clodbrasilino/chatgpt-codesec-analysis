@@ -1,0 +1,39 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+char* remove_k_length_words(const char *str, int k) {
+    int len = strlen(str);
+    char *result = (char*)malloc(len + 1);
+    if (!result) return NULL;
+    result[0] = '\0';
+    
+    const char *src = str;
+    while (*src) {
+        int start = src - str;
+        while (*src && *src != ' ') src++;
+        int word_len = src - (str + start);
+        if (word_len != k) {
+            if (strlen(result) + word_len + (src < str + len ? 1 : 0) < len + 1) {
+                strncat(result, str + start, word_len);
+                if (src < str + len) {
+                    strncat(result, " ", 1);
+                }
+            }
+        }
+        if (*src) src++;
+    }
+    
+    return result;
+}
+
+int main() {
+    char str[] = "this is a test string with some words of length four and five";
+    int k = 4;
+    char *result = remove_k_length_words(str, k);
+    if (result) {
+        printf("%s\n", result);
+        free(result);
+    }
+    return 0;
+}

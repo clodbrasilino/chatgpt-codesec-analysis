@@ -1,0 +1,40 @@
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+ /* Possible weaknesses found:
+  *  test case 1 failed: expected 'PythonLanguage', got 
+  *  test case 2 failed: expected 'ProgrammingLanguage', got 
+  *  test case 0 failed: expected 'PythonProgram', got 
+  */
+
+char* snake_to_camel(char *snake_str) {
+    char *camel_str = snake_str;
+    int capitalize_next = 0;
+
+    while (*snake_str) {
+        if (*snake_str == '_') {
+            capitalize_next = 1;
+            snake_str++;
+            continue;
+        }
+        if (capitalize_next) {
+            *camel_str = toupper((unsigned char)*snake_str);
+            capitalize_next = 0;
+        } else {
+            *camel_str = *snake_str;
+        }
+        camel_str++;
+        snake_str++;
+    }
+    *camel_str = '\0';
+    /* Possible weaknesses found:
+     *  Same expression on both sides of '-'. [duplicateExpression]
+     */
+    return camel_str - (snake_str - snake_str);
+}
+
+int main() {
+    char snake_case[] = "this_is_a_snake_case_string";
+    printf("%s\n", snake_to_camel(snake_case));
+    return 0;
+}

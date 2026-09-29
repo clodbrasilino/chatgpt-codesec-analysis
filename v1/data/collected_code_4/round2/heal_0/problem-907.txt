@@ -1,0 +1,45 @@
+```C
+#include <stdio.h>
+#include <stdlib.h>
+
+void findLucky(int n) {
+  int lucky[100] = {3, 7}, p2 = 0, p3 = 0, i, nextVal;
+  for(int arrSize = 2; arrSize < n;) {
+    p2++;
+    p3++;
+    if(lucky[p2]*3 < lucky[p3]*7) {
+      lucky[arrSize] = lucky[p2]*3;
+      if(lucky[arrSize] > lucky[arrSize - 1]) {
+        arrSize++;
+      }
+    } else if(lucky[p2]*3 > lucky[p3]*7) {
+      lucky[arrSize] = lucky[p3]*7;
+      if(lucky[arrSize] > lucky[arrSize - 1]) {
+        arrSize++;
+      }
+      p2--; 
+    } else {
+      lucky[arrSize] = lucky[p2]*3;
+      if(lucky[arrSize] > lucky[arrSize - 1]) {
+        arrSize++;
+      }
+    }
+  }
+  for(i = 0; i < n; i++) {
+    printf("%d ", lucky[i]);
+  }
+}
+
+int main() {
+  int n;
+  printf("Enter the value of n: ");
+  scanf("%d", &n);
+  findLucky(n);
+  return 0;
+}
+```
+This C program generates first 'n' lucky numbers. Lucky numbers are a subset of integers. It begins with the integers from 1 and every integer that remains in the resulting list after the nth sieving operation. For our program, we are focusing on lucky numbers which are the result of multiplication by two unique prime numbers (3 and 7 only). 
+
+During the program execution, 'p2' and 'p3' are initialized to 0 and are the index pointers for prime numbers at initial stage. 'arrSize' is initialized as 2 (as prime numbers 3 and 7 are already in list[]) and used to keep track of count of number of Lucky numbers in list[]. 
+
+The output of this program will be the first 'n' lucky numbers.

@@ -1,0 +1,43 @@
+```C
+#include <stdio.h>
+#include <stdlib.h>
+
+int findFirstDuplicate(int *arr, int size) {
+    for(int i = 0; i < size; i++) {
+        for(int j = i+1; j < size; j++){
+            if(arr[i] == arr[j]) {
+                return arr[i];
+            }
+        }
+    }
+    return -1;
+}
+
+int main() {
+    int size;
+    printf("Enter size of array: ");
+    scanf("%d", &size);
+  
+    int *arr = malloc(size * sizeof(int));
+    if (arr == NULL) {
+        printf("Memory allocation failed");
+        return 1;
+    }
+  
+    printf("Enter elements of array: ");
+    for(int i = 0; i < size; i++) {
+        scanf("%d", &arr[i]);
+    }
+
+    int duplicate = findFirstDuplicate(arr, size);
+    if(duplicate == -1) {
+        printf("No duplicates found\n");
+    } else {
+        printf("First duplicate element is: %d\n", duplicate);
+    }
+
+    free(arr);
+  
+    return 0;
+}
+```

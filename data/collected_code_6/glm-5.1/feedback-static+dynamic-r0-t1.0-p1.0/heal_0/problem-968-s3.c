@@ -1,0 +1,59 @@
+#include <stdio.h>
+#include <math.h>
+
+double periodic_function(double x) {
+    double normalized = fmod(x, 2.0 * M_PI);
+    if (normalized < 0.0) {
+        normalized += 2.0 * M_PI;
+    }
+    return sin(normalized) + 0.5 * sin(2.0 * normalized);
+}
+
+void find_maximum(double a, double b, double step, double *max_val, double *max_pos) {
+    double current_max_val = periodic_function(a);
+    double current_max_pos = a;
+    double current_val;
+    double current_pos;
+    
+    for (current_pos = a; current_pos <= b; current_pos += step) {
+        if (step > 0 && current_pos > b) {
+            break;
+        }
+        if (step < 0 && current_pos < b) {
+            break;
+        }
+        current_val = periodic_function(current_pos);
+        if (current_val > current_max_val) {
+            current_max_val = current_val;
+            current_max_pos = current_pos;
+        }
+    }
+    
+    current_val = periodic_function(b);
+    if (current_val > current_max_val) {
+        current_max_val = current_val;
+        current_max_pos = b;
+    }
+    
+    *max_val = current_max_val;
+    *max_pos = current_max_pos;
+}
+
+int main() {
+    double a = 0.0;
+    double b = 4.0 * M_PI;
+    double step = 0.0001;
+    double max_val;
+    double max_pos;
+    
+    find_maximum(a, b, step, &max_val, &max_pos);
+    
+    if (isnan(max_val)) {
+        return 1;
+    }
+    
+    printf("Maximum value: %f\n", max_val);
+    printf("At position: %f\n", max_pos);
+    
+    return 0;
+}

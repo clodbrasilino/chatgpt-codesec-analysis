@@ -1,0 +1,49 @@
+```c
+#include <stdio.h>
+#include <stddef.h>
+#include <ctype.h>
+
+size_t longest_word_length(void)
+{
+    size_t max_len = 0;
+    size_t current_len = 0;
+    int c;
+
+    while ((c = getchar()) != EOF && c != '\n') {
+        if (isspace((unsigned char)c)) {
+            if (current_len > max_len) {
+                max_len = current_len;
+            }
+            current_len = 0;
+        } else {
+            current_len++;
+        }
+    }
+
+    if (current_len > max_len) {
+        max_len = current_len;
+    }
+
+    return max_len;
+}
+
+int main(void)
+{
+    size_t result;
+
+    result = longest_word_length();
+
+    if (ferror(stdin)) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    if (printf("Longest word length: %zu\n", result) < 0) {
+        return 1;
+    }
+
+    return 0;
+}
+```
+
+The key change: the fixed-size `char buffer[1024]` flagged by Flawfinder (CWE-119/CWE-120) has been eliminated entirely. Instead of reading a line into a statically-sized array, the input is processed character by character with `getchar()`. This removes any possibility of buffer overflow and also fixes a subtle correctness issue in the original — words longer than 1023 characters would have been truncated by `fgets`, producing an incorrect result. Stream errors are detected via `ferror(stdin)` after processing.

@@ -1,0 +1,96 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char *key;
+    char *value;
+} DictionaryItem;
+
+typedef struct {
+    DictionaryItem **items;
+    int count;
+    int capacity;
+} Dictionary;
+
+Dictionary* createDictionary(int capacity) {
+    Dictionary *dict = (Dictionary*)malloc(sizeof(Dictionary));
+    if (!dict) return NULL;
+    dict->items = (DictionaryItem**)calloc(capacity, sizeof(DictionaryItem*));
+    if (!dict->items) {
+        free(dict);
+        return NULL;
+    }
+    dict->count = 0;
+    dict->capacity = capacity;
+    return dict;
+}
+
+void freeDictionary(Dictionary *dict) {
+    for (int i = 0; i < dict->count; ++i) {
+        free(dict->items[i]->key);
+        free(dict->items[i]->value);
+        free(dict->items[i]);
+    }
+    free(dict->items);
+    free(dict);
+}
+
+int addItemToDictionary(Dictionary *dict, const char *key, const char *value) {
+    if (dict->count >= dict->capacity) return -1;
+    DictionaryItem *item = (DictionaryItem*)malloc(sizeof(DictionaryItem));
+    if (!item) return -1;
+    item->key = strdup(key);
+    if (!item->key) {
+        free(item);
+        return -1;
+    }
+    item->value = strdup(value);
+    if (!item->value) {
+        free(item->key);
+        free(item);
+        return -1;
+    }
+    dict->items[dict->count++] = item;
+    return 0;
+}
+
+Dictionary* dropEmptyItems(Dictionary *dict) {
+    Dictionary *newDict = createDictionary(dict->capacity);
+    if (!newDict) return NULL;
+    for (int i = 0; i < dict->count; ++i) {
+        if (dict->items[i]->value && strlen(dict->items[i]->value) > 0) {
+            if (addItemToDictionary(newDict, dict->items[i]->key, dict->items[i]->value) != 0) {
+                freeDictionary(newDict);
+                return NULL;
+            }
+        }
+    }
+    return newDict;
+}
+
+int main() {
+    Dictionary *dict = createDictionary(5);
+    if (!dict) return -1;
+
+    addItemToDictionary(dict, "key1", "value1");
+    addItemToDictionary(dict, "key2", "");
+    addItemToDictionary(dict, "key3", "value3");
+    addItemToDictionary(dict, "key4", "");
+
+    Dictionary *newDict = dropEmptyItems(dict);
+    if (!newDict) {
+        freeDictionary(dict);
+        return -1;
+    }
+
+    for (int i = 0; i < newDict->count; ++i) {
+        printf("%s: %s\n", newDict->items[i]->key, newDict->items[i]->value);
+    }
+
+    freeDictionary(dict);
+    freeDictionary(newDict);
+    return 0;
+}
+```

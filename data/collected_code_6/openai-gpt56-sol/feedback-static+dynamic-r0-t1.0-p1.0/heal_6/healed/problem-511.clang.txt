@@ -1,0 +1,10 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-511.c:90:5: error: use of undeclared identifier 'errno'
+   90 |     errno = 0;
+      |     ^~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-511.c:93:25: error: use of undeclared identifier 'errno'
+   93 |     if (start == end || errno == ERANGE || parsed == 0 ||
+      |                         ^~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-511.c:93:34: error: use of undeclared identifier 'ERANGE'
+   93 |     if (start == end || errno == ERANGE || parsed == 0 ||
+      |                                  ^~~~~~
+3 errors generated.

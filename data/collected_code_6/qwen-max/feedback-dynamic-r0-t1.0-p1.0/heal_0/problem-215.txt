@@ -1,0 +1,42 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int value;
+    int count;
+} RLEPair;
+
+void decodeRLE(RLEPair *encoded, int length, int **decoded, int *decLength) {
+    *decLength = 0;
+    for (int i = 0; i < length; ++i) {
+        *decLength += encoded[i].count;
+    }
+    *decoded = (int *)malloc(*decLength * sizeof(int));
+    if (*decoded == NULL) {
+        return;
+    }
+    int index = 0;
+    for (int i = 0; i < length; ++i) {
+        for (int j = 0; j < encoded[i].count; ++j) {
+            (*decoded)[index++] = encoded[i].value;
+        }
+    }
+}
+
+int main() {
+    RLEPair rleData[] = {{1, 3}, {2, 2}, {3, 5}};
+    int length = 3;
+    int *decoded = NULL;
+    int decLength = 0;
+
+    decodeRLE(rleData, length, &decoded, &decLength);
+
+    for (int i = 0; i < decLength; ++i) {
+        printf("%d ", decoded[i]);
+    }
+
+    free(decoded);
+    return 0;
+}
+```

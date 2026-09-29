@@ -1,0 +1,44 @@
+{
+  "task_id": 557,
+  "text": "Write a C function to toggle characters case in a string.",
+  "fn_candidates": [
+    "toggle_string",
+    "ToggleString",
+    "toggleString",
+    "togglestring"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "toggle_string",
+      "args": [
+        "Python"
+      ],
+      "expected": "pYTHON",
+      "assert_src": "assert toggle_string(\"Python\")==(\"pYTHON\")"
+    },
+    {
+      "fn_name": "toggle_string",
+      "args": [
+        "Pangram"
+      ],
+      "expected": "pANGRAM",
+      "assert_src": "assert toggle_string(\"Pangram\")==(\"pANGRAM\")"
+    },
+    {
+      "fn_name": "toggle_string",
+      "args": [
+        "LIttLE"
+      ],
+      "expected": "liTTle",
+      "assert_src": "assert toggle_string(\"LIttLE\")==(\"liTTle\")"
+    }
+  ],
+  "arg_kinds": [
+    "str"
+  ],
+  "return_kind": "str",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

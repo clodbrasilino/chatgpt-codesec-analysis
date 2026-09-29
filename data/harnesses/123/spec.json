@@ -1,0 +1,44 @@
+{
+  "task_id": 123,
+  "text": "Write a C function to sum all amicable numbers from 1 to a specified number.",
+  "fn_candidates": [
+    "amicable_numbers_sum",
+    "AmicableNumbersSum",
+    "amicableNumbersSum",
+    "amicablenumberssum"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "amicable_numbers_sum",
+      "args": [
+        999
+      ],
+      "expected": 504,
+      "assert_src": "assert amicable_numbers_sum(999)==504"
+    },
+    {
+      "fn_name": "amicable_numbers_sum",
+      "args": [
+        9999
+      ],
+      "expected": 31626,
+      "assert_src": "assert amicable_numbers_sum(9999)==31626"
+    },
+    {
+      "fn_name": "amicable_numbers_sum",
+      "args": [
+        99
+      ],
+      "expected": 0,
+      "assert_src": "assert amicable_numbers_sum(99)==0"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

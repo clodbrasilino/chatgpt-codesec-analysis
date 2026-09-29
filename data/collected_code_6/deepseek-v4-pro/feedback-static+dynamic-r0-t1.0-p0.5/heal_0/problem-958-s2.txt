@@ -1,0 +1,71 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    int value;
+    const char *numeral;
+} RomanMapping;
+
+static const RomanMapping roman_mappings[] = {
+    {1000, "M"}, {900, "CM"}, {500, "D"}, {400, "CD"},
+    {100, "C"}, {90, "XC"}, {50, "L"}, {40, "XL"},
+    {10, "X"}, {9, "IX"}, {5, "V"}, {4, "IV"},
+    {1, "I"}
+};
+
+static const int roman_mappings_count = sizeof(roman_mappings) / sizeof(roman_mappings[0]);
+
+char *int_to_roman(int num) {
+    if (num <= 0 || num > 3999) {
+        return NULL;
+    }
+
+    size_t capacity = 16;
+    size_t length = 0;
+    char *result = (char *)malloc(capacity);
+    if (result == NULL) {
+        return NULL;
+    }
+    result[0] = '\0';
+
+    for (int i = 0; i < roman_mappings_count; i++) {
+        while (num >= roman_mappings[i].value) {
+            size_t numeral_len = strlen(roman_mappings[i].numeral);
+            if (length + numeral_len + 1 > capacity) {
+                capacity *= 2;
+                char *new_result = (char *)realloc(result, capacity);
+                if (new_result == NULL) {
+                    free(result);
+                    return NULL;
+                }
+                result = new_result;
+            }
+            memcpy(result + length, roman_mappings[i].numeral, numeral_len);
+            length += numeral_len;
+            result[length] = '\0';
+            num -= roman_mappings[i].value;
+        }
+    }
+
+    return result;
+}
+
+int main(void) {
+    int test_values[] = {1, 4, 9, 58, 1994, 3999, 0, -5, 4000};
+    int test_count = sizeof(test_values) / sizeof(test_values[0]);
+
+    for (int i = 0; i < test_count; i++) {
+        char *roman = int_to_roman(test_values[i]);
+        if (roman != NULL) {
+            printf("%d -> %s\n", test_values[i], roman);
+            free(roman);
+        } else {
+            printf("%d -> Invalid input\n", test_values[i]);
+        }
+    }
+
+    return 0;
+}
+```

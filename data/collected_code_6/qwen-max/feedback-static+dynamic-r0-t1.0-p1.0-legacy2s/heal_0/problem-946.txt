@@ -1,0 +1,59 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char character;
+    int count;
+} ElementCount;
+
+int compare(const void *a, const void *b) {
+    return ((ElementCount *)b)->count - ((ElementCount *)a)->count;
+}
+
+void findMostCommonElements(const char *text, ElementCount **result, int *count) {
+    int freq[256] = {0};
+    for (int i = 0; text[i]; i++) {
+        freq[(unsigned char)text[i]]++;
+    }
+
+    for (int i = 0; i < 256; i++) {
+        if (freq[i] > 0) {
+            (*count)++;
+        }
+    }
+
+    *result = (ElementCount *)malloc((*count) * sizeof(ElementCount));
+    if (!*result) {
+        (*count) = 0;
+        return;
+    }
+
+    *count = 0;
+    for (int i = 0; i < 256; i++) {
+        if (freq[i] > 0) {
+            (*result)[(*count)].character = (char)i;
+            (*result)[(*count)].count = freq[i];
+            (*count)++;
+        }
+    }
+
+    qsort(*result, *count, sizeof(ElementCount), compare);
+}
+
+int main() {
+    const char *text = "hello world hello";
+    ElementCount *result = NULL;
+    int count = 0;
+
+    findMostCommonElements(text, &result, &count);
+
+    for (int i = 0; i < count; i++) {
+        printf("Character: '%c', Count: %d\n", result[i].character, result[i].count);
+    }
+
+    free(result);
+    return 0;
+}
+```

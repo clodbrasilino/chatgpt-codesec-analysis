@@ -1,0 +1,56 @@
+#define _POSIX_C_SOURCE 200809L
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_STR_LEN 4096
+
+int get_shortest_supersequence_length(const char *str1, const char *str2, size_t *out_length) {
+    if (str1 == NULL || str2 == NULL || out_length == NULL) {
+        return -1;
+    }
+
+    size_t len1 = strnlen(str1, MAX_STR_LEN);
+    size_t len2 = strnlen(str2, MAX_STR_LEN);
+
+    if (len1 == MAX_STR_LEN || len2 == MAX_STR_LEN) {
+        return -1;
+    }
+
+    size_t *dp = calloc((len1 + 1) * (len2 + 1), sizeof(size_t));
+    if (dp == NULL) {
+        return -1;
+    }
+
+    for (size_t i = 1; i <= len1; i++) {
+        for (size_t j = 1; j <= len2; j++) {
+            if (str1[i - 1] == str2[j - 1]) {
+                dp[i * (len2 + 1) + j] = dp[(i - 1) * (len2 + 1) + (j - 1)] + 1;
+            } else {
+                size_t val1 = dp[(i - 1) * (len2 + 1) + j];
+                size_t val2 = dp[i * (len2 + 1) + (j - 1)];
+                dp[i * (len2 + 1) + j] = (val1 > val2) ? val1 : val2;
+            }
+        }
+    }
+
+    size_t lcs_length = dp[len1 * (len2 + 1) + len2];
+    free(dp);
+
+    *out_length = (len1 - lcs_length) + len2;
+    return 0;
+}
+
+int main(void) {
+    const char *str1 = "AGGTAB";
+    const char *str2 = "GXTXAYB";
+    size_t result = 0;
+
+    if (get_shortest_supersequence_length(str1, str2, &result) != 0) {
+        fprintf(stderr, "Error processing strings\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("%zu\n", result);
+    return EXIT_SUCCESS;
+}

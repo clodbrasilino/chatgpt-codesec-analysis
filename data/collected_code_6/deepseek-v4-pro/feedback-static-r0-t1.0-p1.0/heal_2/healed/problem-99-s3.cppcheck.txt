@@ -1,0 +1,25 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-99-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-99-s3.c:67:21: style: Condition 'src_len>trimmed_len' is always false [knownConditionTrueFalse]
+        if (src_len > trimmed_len) {
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-99-s3.c:66:24: note: src_len is assigned '(unsigned long)(index-first_one)' here.
+        size_t src_len = (size_t)(index - first_one);
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-99-s3.c:58:24: note: trimmed_len is assigned '(unsigned long)(index-first_one)' here.
+    size_t trimmed_len = (size_t)(index - first_one);
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-99-s3.c:60:17: note: Assuming condition is false
+    if (trimmed == NULL) {
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-99-s3.c:67:21: note: Condition 'src_len>trimmed_len' is always false
+        if (src_len > trimmed_len) {
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-99-s3.c:8:9: style: The scope of the variable 'is_negative' can be reduced. [variableScope]
+    int is_negative = 0;
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-99-s3.c:8:21: style: Variable 'is_negative' is assigned a value that is never used. [unreadVariable]
+    int is_negative = 0;
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-99-s3.c:35:21: style: Variable 'is_negative' is assigned a value that is never used. [unreadVariable]
+        is_negative = 1;
+                    ^

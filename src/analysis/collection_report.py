@@ -1,6 +1,6 @@
 """Full data-collection progress report (channel-level audit).
 
-Walks collected_code_6 + results manifests and produces an HTML report:
+Walks data/collected_code_6 + results manifests and produces an HTML report:
   1. heal_0 per model: generated coverage, clean, static/dynamic/test-failure
      detection (channel classification replicates comment_inject.py exactly).
   2. Healing-round funnels per cell: entered / cleaned / remaining / heal_failed
@@ -31,7 +31,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 from src.pipeline import comment_inject as ci  # noqa: E402
 
 REPO = Path(__file__).resolve().parents[2]
-CC = REPO / "collected_code_6"
+CC = REPO / "data" / "collected_code_6"
 RESULTS = REPO / "results"
 OUT = RESULTS / "collection_report.html"
 
@@ -380,7 +380,7 @@ def main() -> None:
 <title>Data Collection Report — chatgpt-codesec-analysis</title>
 <style>{CSS}</style></head><body><div class="wrap">
 <h1>Data Collection Progress Report</h1>
-<div class="meta">Snapshot: {now} · Source: <code>collected_code_6/</code> + <code>results/*.manifest.json</code> ·
+<div class="meta">Snapshot: {now} · Source: <code>data/collected_code_6/</code> + <code>results/*.manifest.json</code> ·
 Channel classification replicates <code>comment_inject.py</code> exactly (validated: qwen s+d heal_0 flagged set matches <code>heal_1/to_be_healed</code> 193/193)</div>
 <p class="note"><b>Expected sizes:</b> full sweep = 974 tasks × 3 samples = <b>2,922</b> (dataset has 974 BCT tasks);
 subset cells (top-200 vulnerable problems) = <b>600</b>. Asymmetries by design: qwen s+d baseline = 2 samples (400);

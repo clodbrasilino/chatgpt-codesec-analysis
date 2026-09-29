@@ -1,0 +1,112 @@
+collected_code_3/problem-102-1.c: In function 'snakeToCamel':
+collected_code_3/problem-102-1.c:8:29: warning: implicit declaration of function 'malloc' [-Wimplicit-function-declaration]
+    8 |     char* camelStr = (char*)malloc(sizeof(char) * len);
+      |                             ^~~~~~
+collected_code_3/problem-102-1.c:4:1: note: include '<stdlib.h>' or provide a declaration of 'malloc'
+    3 | #include <ctype.h>
+  +++ |+#include <stdlib.h>
+    4 | 
+collected_code_3/problem-102-1.c:8:29: warning: incompatible implicit declaration of built-in function 'malloc' [-Wbuiltin-declaration-mismatch]
+    8 |     char* camelStr = (char*)malloc(sizeof(char) * len);
+      |                             ^~~~~~
+collected_code_3/problem-102-1.c:8:29: note: include '<stdlib.h>' or provide a declaration of 'malloc'
+collected_code_3/problem-102-1.c: In function 'main':
+collected_code_3/problem-102-1.c:29:5: warning: implicit declaration of function 'free' [-Wimplicit-function-declaration]
+   29 |     free(camelStr);
+      |     ^~~~
+collected_code_3/problem-102-1.c:29:5: note: include '<stdlib.h>' or provide a declaration of 'free'
+collected_code_3/problem-102-1.c:29:5: warning: incompatible implicit declaration of built-in function 'free' [-Wbuiltin-declaration-mismatch]
+collected_code_3/problem-102-1.c:29:5: note: include '<stdlib.h>' or provide a declaration of 'free'
+collected_code_3/problem-102-1.c: In function 'snakeToCamel':
+collected_code_3/problem-102-1.c:13:25: warning: dereference of possibly-NULL 'camelStr' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   13 |             camelStr[j] = toupper(snakeStr[i]);
+      |             ~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~
+  'snakeToCamel': events 1-6
+    |
+    |    8 |     char* camelStr = (char*)malloc(sizeof(char) * len);
+    |      |                             ^~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                             |
+    |      |                             (1) this call could return NULL
+    |    9 | 
+    |   10 |     for(i = 0; i < len; i++) {
+    |      |                ~~~~~~~       
+    |      |                  |
+    |      |                  (2) following 'true' branch (when 'i < len')...
+    |   11 |         if(snakeStr[i] == '_') {
+    |      |           ~        ~         
+    |      |           |        |
+    |      |           |        (3) ...to here
+    |      |           (4) following 'true' branch...
+    |   12 |             i++;
+    |      |             ~~~              
+    |      |              |
+    |      |              (5) ...to here
+    |   13 |             camelStr[j] = toupper(snakeStr[i]);
+    |      |             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                         |
+    |      |                         (6) 'camelStr + (sizetype)j' could be NULL: unchecked value from (1)
+    |
+collected_code_3/problem-102-1.c:15:25: warning: dereference of possibly-NULL 'camelStr' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   15 |             camelStr[j] = snakeStr[i];
+      |             ~~~~~~~~~~~~^~~~~~~~~~~~~
+  'snakeToCamel': events 1-6
+    |
+    |    8 |     char* camelStr = (char*)malloc(sizeof(char) * len);
+    |      |                             ^~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                             |
+    |      |                             (1) this call could return NULL
+    |    9 | 
+    |   10 |     for(i = 0; i < len; i++) {
+    |      |                ~~~~~~~       
+    |      |                  |
+    |      |                  (2) following 'true' branch (when 'i < len')...
+    |   11 |         if(snakeStr[i] == '_') {
+    |      |           ~        ~         
+    |      |           |        |
+    |      |           |        (3) ...to here
+    |      |           (4) following 'false' branch...
+    |......
+    |   15 |             camelStr[j] = snakeStr[i];
+    |      |             ~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                         |         |
+    |      |                         |         (5) ...to here
+    |      |                         (6) 'camelStr + (sizetype)j' could be NULL: unchecked value from (1)
+    |
+collected_code_3/problem-102-1.c:19:17: warning: dereference of possibly-NULL 'camelStr' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   19 |     camelStr[j] = '\0';
+      |     ~~~~~~~~~~~~^~~~~~
+  'main': events 1-2
+    |
+    |   23 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   27 |     char* camelStr = snakeToCamel(snakeStr);
+    |      |                      ~~~~~~~~~~~~~~~~~~~~~~
+    |      |                      |
+    |      |                      (2) calling 'snakeToCamel' from 'main'
+    |
+    +--> 'snakeToCamel': events 3-7
+           |
+           |    5 | char* snakeToCamel(char* snakeStr) {
+           |      |       ^~~~~~~~~~~~
+           |      |       |
+           |      |       (3) entry to 'snakeToCamel'
+           |......
+           |    8 |     char* camelStr = (char*)malloc(sizeof(char) * len);
+           |      |                             ~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                             |
+           |      |                             (4) this call could return NULL
+           |    9 | 
+           |   10 |     for(i = 0; i < len; i++) {
+           |      |                ~~~~~~~
+           |      |                  |
+           |      |                  (5) following 'false' branch (when 'i >= len')...
+           |......
+           |   19 |     camelStr[j] = '\0';
+           |      |     ~~~~~~~~~~~~~~~~~~
+           |      |             |   |
+           |      |             |   (7) 'camelStr + (sizetype)j' could be NULL: unchecked value from (4)
+           |      |             (6) ...to here
+           |

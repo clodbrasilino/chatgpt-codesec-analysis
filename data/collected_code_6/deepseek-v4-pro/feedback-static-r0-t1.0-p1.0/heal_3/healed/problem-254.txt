@@ -1,0 +1,171 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdint.h>
+
+#define WORD_BUFFER_SIZE 256
+
+static char *duplicate_word(const char *word, size_t len) {
+    if (word == NULL || len == 0) {
+        return NULL;
+    }
+    char *copy = malloc(len + 1);
+    if (copy == NULL) {
+        return NULL;
+    }
+    if (len > SIZE_MAX - 1) {
+        free(copy);
+        return NULL;
+    }
+    memcpy(copy, word, len);
+    copy[len] = '\0';
+    return copy;
+}
+
+static int starts_with_vowel(const char *word) {
+    if (word == NULL || word[0] == '\0') {
+        return 0;
+    }
+    char c = (char)tolower((unsigned char)word[0]);
+    return c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u';
+}
+
+char **find_words(const char *str, int *count) {
+    if (str == NULL || count == NULL) {
+        return NULL;
+    }
+
+    int capacity = 10;
+    char **words = malloc((size_t)capacity * sizeof(char *));
+    if (words == NULL) {
+        return NULL;
+    }
+
+    *count = 0;
+    const char *p = str;
+    char word[WORD_BUFFER_SIZE];
+    size_t word_len = 0;
+    int overflow = 0;
+
+    while (*p) {
+        if (isalpha((unsigned char)*p)) {
+            if (word_len < WORD_BUFFER_SIZE - 1 && !overflow) {
+                word[word_len++] = *p;
+            } else {
+                overflow = 1;
+            }
+        } else {
+            if (word_len > 0 && !overflow && starts_with_vowel(word)) {
+                if (*count >= capacity) {
+                    int new_capacity = capacity * 2;
+                    if (new_capacity < capacity) {
+                        for (int i = 0; i < *count; i++) {
+                            free(words[i]);
+                        }
+                        free(words);
+                        return NULL;
+                    }
+                    char **temp = realloc(words, (size_t)new_capacity * sizeof(char *));
+                    if (temp == NULL) {
+                        for (int i = 0; i < *count; i++) {
+                            free(words[i]);
+                        }
+                        free(words);
+                        return NULL;
+                    }
+                    words = temp;
+                    capacity = new_capacity;
+                }
+                word[word_len] = '\0';
+                words[*count] = duplicate_word(word, word_len);
+                if (words[*count] == NULL) {
+                    for (int i = 0; i < *count; i++) {
+                        free(words[i]);
+                    }
+                    free(words);
+                    return NULL;
+                }
+                (*count)++;
+            }
+            word_len = 0;
+            overflow = 0;
+        }
+        p++;
+    }
+
+    if (word_len > 0 && !overflow && starts_with_vowel(word)) {
+        if (*count >= capacity) {
+            int new_capacity = capacity * 2;
+            if (new_capacity < capacity) {
+                for (int i = 0; i < *count; i++) {
+                    free(words[i]);
+                }
+                free(words);
+                return NULL;
+            }
+            char **temp = realloc(words, (size_t)new_capacity * sizeof(char *));
+            if (temp == NULL) {
+                for (int i = 0; i < *count; i++) {
+                    free(words[i]);
+                }
+                free(words);
+                return NULL;
+            }
+            words = temp;
+            capacity = new_capacity;
+        }
+        word[word_len] = '\0';
+        words[*count] = duplicate_word(word, word_len);
+        if (words[*count] == NULL) {
+            for (int i = 0; i < *count; i++) {
+                free(words[i]);
+            }
+            free(words);
+            return NULL;
+        }
+        (*count)++;
+    }
+
+    if (*count == 0) {
+        free(words);
+        return NULL;
+    }
+
+    return words;
+}
+
+void free_words(char **words, int count) {
+    if (words == NULL) {
+        return;
+    }
+    for (int i = 0; i < count; i++) {
+        free(words[i]);
+    }
+    free(words);
+}
+
+int main(void) {
+    const char *text = "An apple and an eagle are eating eggs";
+    int count = 0;
+    char **result = find_words(text, &count);
+
+    if (result == NULL && count == 0) {
+        printf("No words found or error occurred\n");
+        return 0;
+    }
+
+    if (result == NULL) {
+        printf("Memory allocation error\n");
+        return 1;
+    }
+
+    for (int i = 0; i < count; i++) {
+        printf("%s\n", result[i]);
+    }
+
+    free_words(result, count);
+    return 0;
+}
+```

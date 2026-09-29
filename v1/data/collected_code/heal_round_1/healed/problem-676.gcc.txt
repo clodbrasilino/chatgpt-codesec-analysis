@@ -1,0 +1,12 @@
+collected_code/healed/problem-676.c: In function 'main':
+collected_code/healed/problem-676.c:10:5: warning: implicit declaration of function 'removeNonAlphanumeric' [-Wimplicit-function-declaration]
+   10 |     removeNonAlphanumeric(string);
+      |     ^~~~~~~~~~~~~~~~~~~~~
+collected_code/healed/problem-676.c: At top level:
+collected_code/healed/problem-676.c:14:6: warning: conflicting types for 'removeNonAlphanumeric'; have 'void(char *)'
+   14 | void removeNonAlphanumeric(char *str) {
+      |      ^~~~~~~~~~~~~~~~~~~~~
+collected_code/healed/problem-676.c:10:5: note: previous implicit declaration of 'removeNonAlphanumeric' with type 'void(char *)'
+   10 |     removeNonAlphanumeric(string);
+      |     ^~~~~~~~~~~~~~~~~~~~~
+-macosx_version_min has been renamed to -macos_version_min

@@ -1,0 +1,10 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-823-s2.c:31:39: error: use of undeclared identifier 'SIZE_MAX'
+   31 |     pattern_length = strnlen(pattern, SIZE_MAX);
+      |                                       ^~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-823-s2.c:33:27: error: use of undeclared identifier 'SIZE_MAX'
+   33 |     if (pattern_length == SIZE_MAX || pattern_length > SIZE_MAX - 4U) {
+      |                           ^~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-823-s2.c:33:56: error: use of undeclared identifier 'SIZE_MAX'
+   33 |     if (pattern_length == SIZE_MAX || pattern_length > SIZE_MAX - 4U) {
+      |                                                        ^~~~~~~~
+3 errors generated.

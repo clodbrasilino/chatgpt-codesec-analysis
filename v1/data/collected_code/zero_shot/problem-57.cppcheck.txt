@@ -1,0 +1,15 @@
+collected_code/problem-57-0.c:4:16: error: Cannot determine that '*a' is initialized [premium-bughuntingUninit]
+    int temp = *a;
+               ^
+collected_code/problem-57-0.c:5:10: error: Cannot determine that '*b' is initialized [premium-bughuntingUninit]
+    *a = *b;
+         ^
+collected_code/problem-57-0.c:12:20: error: Cannot determine that 'arr[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+            if (arr[i] < arr[j]) {
+                   ^
+collected_code/problem-57-0.c:12:29: error: Cannot determine that 'arr[j]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+            if (arr[i] < arr[j]) {
+                            ^
+collected_code/problem-57-0.c:20:25: error: Cannot determine that 'arr[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        printf("%d", arr[i]);
+                        ^

@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-567-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-567-s3.c:32:38: style: Condition 'size3>1' is always false [knownConditionTrueFalse]
+    printf("Array 3 is %s\n", (size3 > 1 && is_sorted(arr3, size3)) ? "sorted" : "not sorted");
+                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-567-s3.c:27:33: note: Assignment 'size3=sizeof(arr3)/sizeof(arr3[0])', assigned value is 1
+    size_t size3 = sizeof(arr3) / sizeof(arr3[0]);
+                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-567-s3.c:32:38: note: Condition 'size3>1' is always false
+    printf("Array 3 is %s\n", (size3 > 1 && is_sorted(arr3, size3)) ? "sorted" : "not sorted");
+                                     ^

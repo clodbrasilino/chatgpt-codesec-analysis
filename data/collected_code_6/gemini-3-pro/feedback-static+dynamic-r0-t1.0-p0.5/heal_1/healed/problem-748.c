@@ -1,0 +1,68 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+char* add_spaces(const char* input) {
+    if (!input) return NULL;
+
+    regex_t regex;
+    int reti = regcomp(&regex, "([a-z])([A-Z])", REG_EXTENDED);
+    if (reti) {
+        return NULL;
+    }
+
+    size_t len = 0;
+    while (input[len] != '\0') {
+        len++;
+    }
+
+    size_t max_len = len * 2 + 1;
+    char* result = (char*)malloc(max_len);
+    if (!result) {
+        regfree(&regex);
+        return NULL;
+    }
+
+    regmatch_t pmatch[3];
+    const char* cursor = input;
+    char* out_cursor = result;
+
+    while (regexec(&regex, cursor, 3, pmatch, 0) == 0) {
+        size_t prefix_len = pmatch[1].rm_eo;
+        
+        memcpy(out_cursor, cursor, prefix_len);
+        out_cursor += prefix_len;
+        
+        *out_cursor = ' ';
+        out_cursor += 1;
+        
+        cursor += pmatch[2].rm_so;
+    }
+
+    size_t remaining_len = 0;
+    while (cursor[remaining_len] != '\0') {
+        remaining_len++;
+    }
+    memcpy(out_cursor, cursor, remaining_len + 1);
+    
+    regfree(&regex);
+
+    return result;
+}
+
+int main(void) {
+    const char* test_str = "HelloWorldThisIsACProgram";
+    char* spaced_str = add_spaces(test_str);
+    
+    if (spaced_str) {
+        printf("Original: %s\n", test_str);
+        printf("Spaced: %s\n", spaced_str);
+        free(spaced_str);
+    } else {
+        fprintf(stderr, "Error processing string.\n");
+        return 1;
+    }
+
+    return 0;
+}

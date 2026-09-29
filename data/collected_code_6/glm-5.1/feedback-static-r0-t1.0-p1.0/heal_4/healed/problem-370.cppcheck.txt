@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-370.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-370.c:27:18: style: Condition 'capacity>0' is always true [knownConditionTrueFalse]
+    if (capacity > 0 && input_size > 0 && capacity > SIZE_MAX / sizeof(Tuple)) {
+                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-370.c:22:23: note: Assignment 'capacity=4', assigned value is 4
+    size_t capacity = 4;
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-370.c:27:18: note: Condition 'capacity>0' is always true
+    if (capacity > 0 && input_size > 0 && capacity > SIZE_MAX / sizeof(Tuple)) {
+                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-370.c:27:36: style: Condition 'input_size>0' is always true [knownConditionTrueFalse]
+    if (capacity > 0 && input_size > 0 && capacity > SIZE_MAX / sizeof(Tuple)) {
+                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-370.c:25:39: note: Assignment 'input_size=sizeof(input)/sizeof(input[0])', assigned value is 5
+    size_t input_size = sizeof(input) / sizeof(input[0]);
+                                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-370.c:27:36: note: Condition 'input_size>0' is always true
+    if (capacity > 0 && input_size > 0 && capacity > SIZE_MAX / sizeof(Tuple)) {
+                                   ^

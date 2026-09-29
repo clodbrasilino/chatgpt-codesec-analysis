@@ -1,0 +1,120 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+#define MAX_INPUT_LEN 4096
+
+char *remove_non_alnum(const char *input)
+{
+    regex_t regex;
+    regmatch_t match;
+    char *result;
+    size_t len;
+    size_t pos;
+    size_t offset;
+    int ret;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    len = strnlen(input, MAX_INPUT_LEN);
+    if (len >= MAX_INPUT_LEN) {
+        return NULL;
+    }
+
+    ret = regcomp(&regex, "[^a-zA-Z0-9]+", REG_EXTENDED);
+    if (ret != 0) {
+        return NULL;
+    }
+
+    result = malloc(len + 1);
+    if (result == NULL) {
+        regfree(&regex);
+        return NULL;
+    }
+
+    pos = 0;
+    offset = 0;
+
+    while (offset < len) {
+        ret = regexec(&regex, input + offset, 1, &match, 0);
+        if (ret == REG_NOMATCH) {
+            size_t remaining = len - offset;
+            if (remaining > len || pos > len - remaining) {
+                free(result);
+                regfree(&regex);
+                return NULL;
+            }
+            memcpy(result + pos, input + offset, remaining);
+            pos += remaining;
+            break;
+        }
+        if (ret != 0) {
+            free(result);
+            regfree(&regex);
+            return NULL;
+        }
+        if (match.rm_so < 0 || match.rm_eo <= 0 ||
+            match.rm_so > match.rm_eo ||
+            (size_t)match.rm_eo > len - offset ||
+            (size_t)match.rm_so > len ||
+            pos > len - (size_t)match.rm_so) {
+            free(result);
+            regfree(&regex);
+            return NULL;
+        }
+        memcpy(result + pos, input + offset, (size_t)match.rm_so);
+        pos += (size_t)match.rm_so;
+        offset += (size_t)match.rm_eo;
+    }
+
+    if (pos > len) {
+        free(result);
+        regfree(&regex);
+        return NULL;
+    }
+
+    result[pos] = '\0';
+    regfree(&regex);
+    return result;
+}
+
+int main(void)
+{
+    const char *test = "Hello, World! 123 #$% Test_456";
+    char *cleaned;
+
+    cleaned = remove_non_alnum(test);
+    if (cleaned == NULL) {
+        fprintf(stderr, "Failed to process string\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Original: %s\n", test) < 0) {
+        free(cleaned);
+        return EXIT_FAILURE;
+    }
+    if (printf("Cleaned:  %s\n", cleaned) < 0) {
+        free(cleaned);
+        return EXIT_FAILURE;
+    }
+
+    free(cleaned);
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the fixes applied:**
+
+The two Flawfinder warnings (CWE-120, buffer overflow via `memcpy`) were flagged on both copy sites. The original code was already largely safe, but the rewrite hardens the bounds checks so the destination capacity invariant (`result` holds exactly `len + 1` bytes) is provably respected before every copy:
+
+1. **First `memcpy` (tail copy on `REG_NOMATCH`):** The check `pos + remaining > len` was rewritten as `pos > len - remaining` (after verifying `remaining <= len`), which eliminates any theoretical integer-overflow path in the addition of two `size_t` values before comparison.
+
+2. **Second `memcpy` (segment copy before each match):** The check `pos + (size_t)match.rm_so > len` was similarly rewritten in subtraction form (`pos > len - (size_t)match.rm_so`) with a prior guard that `(size_t)match.rm_so <= len`, plus an added sanity check `match.rm_so > match.rm_eo` to reject inconsistent match offsets from the regex engine.
+
+3. **Final write of the NUL terminator:** A defensive `pos > len` check guarantees `result[pos]` is always within the allocated `len + 1` bytes.
+
+Combined with the upfront `strnlen`/`MAX_INPUT_LEN` cap, `NULL` input rejection, allocation-failure handling, and consistent `regfree`/`free` cleanup on every error path, the destination buffer can always hold the source data, satisfying the CWE-120 remediation guidance with no memory or resource leaks.

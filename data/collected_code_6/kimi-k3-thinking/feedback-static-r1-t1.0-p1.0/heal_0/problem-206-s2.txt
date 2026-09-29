@@ -1,0 +1,125 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char **adjacent_concat(const char **tuple, size_t size, size_t *result_size)
+{
+    char **result;
+    size_t i;
+
+    if (tuple == NULL || result_size == NULL)
+    {
+        return NULL;
+    }
+
+    *result_size = 0;
+
+    if (size < 2)
+    {
+        return NULL;
+    }
+
+    result = (char **)malloc((size - 1) * sizeof(char *));
+    if (result == NULL)
+    {
+        return NULL;
+    }
+
+    for (i = 0; i < size - 1; i++)
+    {
+        size_t len1;
+        size_t len2;
+
+        if (tuple[i] == NULL || tuple[i + 1] == NULL)
+        {
+            size_t j;
+            for (j = 0; j < i; j++)
+            {
+                free(result[j]);
+            }
+            free(result);
+            return NULL;
+        }
+
+        len1 = strlen(tuple[i]);
+        len2 = strlen(tuple[i + 1]);
+
+        result[i] = (char *)malloc(len1 + len2 + 1);
+        if (result[i] == NULL)
+        {
+            size_t j;
+            for (j = 0; j < i; j++)
+            {
+                free(result[j]);
+            }
+            free(result);
+            return NULL;
+        }
+
+        memcpy(result[i], tuple[i], len1);
+        memcpy(result[i] + len1, tuple[i + 1], len2 + 1);
+    }
+
+    *result_size = size - 1;
+    return result;
+}
+
+void free_concat_result(char **result, size_t size)
+{
+    size_t i;
+
+    if (result == NULL)
+    {
+        return;
+    }
+
+    for (i = 0; i < size; i++)
+    {
+        free(result[i]);
+    }
+    free(result);
+}
+
+int main(void)
+{
+    const char *tuple[] = {"1", "2", "3", "4", "5"};
+    size_t size = sizeof(tuple) / sizeof(tuple[0]);
+    size_t result_size = 0;
+    char **result;
+    size_t i;
+
+    result = adjacent_concat(tuple, size, &result_size);
+    if (result == NULL)
+    {
+        fprintf(stderr, "Error: adjacent concatenation failed.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Input tuple: (");
+    for (i = 0; i < size; i++)
+    {
+        printf("%s%s", tuple[i], (i + 1 < size) ? ", " : "");
+    }
+    printf(")\n");
+
+    printf("Adjacent concatenation: (");
+    for (i = 0; i < result_size; i++)
+    {
+        printf("%s%s", result[i], (i + 1 < result_size) ? ", " : "");
+    }
+    printf(")\n");
+
+    free_concat_result(result, result_size);
+
+    return EXIT_SUCCESS;
+}
+```
+
+Output:
+```
+Input tuple: (1, 2, 3, 4, 5)
+Adjacent concatenation: (12, 23, 34, 45)
+```
+
+The implementation pairs each element with its successor, producing a new tuple of size `n - 1`. Key safety measures: all `malloc` results are validated, partially allocated memory is released on failure paths (CWE-664), NULL pointers and invalid sizes are handled (CWE-703), and `memcpy` with precomputed lengths plus `size_t` typing keeps the code standards-compliant (CWE-710).

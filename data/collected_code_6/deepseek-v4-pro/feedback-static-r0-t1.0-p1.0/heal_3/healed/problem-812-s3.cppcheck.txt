@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-812-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-812-s3.c:14:46: warning: Either the condition 'input_len>=4096' is redundant or the array 'input[5]' is accessed at index 4095, which is out of bounds. [arrayIndexOutOfBoundsCond]
+    while (input_len < MAX_INPUT_LEN && input[input_len] != '\0') {
+                                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-812-s3.c:17:19: note: Assuming that condition 'input_len>=4096' is not redundant
+    if (input_len >= MAX_INPUT_LEN) {
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-812-s3.c:14:46: note: Array index out of bounds
+    while (input_len < MAX_INPUT_LEN && input[input_len] != '\0') {
+                                             ^

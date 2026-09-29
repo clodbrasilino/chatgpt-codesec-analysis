@@ -1,0 +1,99 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+
+typedef struct {
+    size_t count;
+    char value;
+} RLEPair;
+
+typedef struct {
+    char *data;
+    size_t length;
+} DecodedList;
+
+typedef enum {
+    RLE_SUCCESS = 0,
+    RLE_ERROR_INVALID_INPUT,
+    RLE_ERROR_OVERFLOW,
+    RLE_ERROR_MEMORY
+} RLEStatus;
+
+RLEStatus decode_rle(const RLEPair *encoded, size_t num_pairs, DecodedList *out_list);
+
+RLEStatus decode_rle(const RLEPair *encoded, size_t num_pairs, DecodedList *out_list) {
+    if (out_list == NULL) {
+        return RLE_ERROR_INVALID_INPUT;
+    }
+
+    out_list->data = NULL;
+    out_list->length = 0;
+
+    if (encoded == NULL && num_pairs > 0) {
+        return RLE_ERROR_INVALID_INPUT;
+    }
+
+    if (num_pairs == 0) {
+        return RLE_SUCCESS;
+    }
+
+    size_t total_length = 0;
+    for (size_t i = 0; i < num_pairs; i++) {
+        if (SIZE_MAX - total_length < encoded[i].count) {
+            return RLE_ERROR_OVERFLOW;
+        }
+        total_length += encoded[i].count;
+    }
+
+    if (total_length == 0) {
+        return RLE_SUCCESS;
+    }
+
+    char *buffer = (char *)malloc(total_length);
+    if (buffer == NULL) {
+        return RLE_ERROR_MEMORY;
+    }
+
+    size_t current_pos = 0;
+    for (size_t i = 0; i < num_pairs; i++) {
+        for (size_t j = 0; j < encoded[i].count; j++) {
+            buffer[current_pos++] = encoded[i].value;
+        }
+    }
+
+    out_list->data = buffer;
+    out_list->length = total_length;
+
+    return RLE_SUCCESS;
+}
+
+int main(void) {
+    RLEPair encoded[] = {
+        {3, 'A'},
+        {2, 'B'},
+        {5, 'C'},
+        {1, 'D'}
+    };
+    size_t num_pairs = sizeof(encoded) / sizeof(encoded[0]);
+
+    DecodedList decoded;
+    RLEStatus status = decode_rle(encoded, num_pairs, &decoded);
+
+    if (status != RLE_SUCCESS) {
+        return EXIT_FAILURE;
+    }
+
+    if (decoded.data != NULL) {
+        for (size_t i = 0; i < decoded.length; i++) {
+            putchar(decoded.data[i]);
+        }
+        putchar('\n');
+        
+        free(decoded.data);
+        decoded.data = NULL;
+    }
+
+    return EXIT_SUCCESS;
+}
+```

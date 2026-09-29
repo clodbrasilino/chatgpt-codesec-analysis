@@ -1,0 +1,64 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef enum {
+    TYPE_INT,
+    TYPE_FLOAT,
+    TYPE_STRING
+} TupleItemType;
+
+typedef struct {
+    TupleItemType type;
+    union {
+        int i_val;
+        float f_val;
+        char* s_val;
+    } data;
+} TupleItem;
+
+typedef struct {
+    TupleItem* items;
+    size_t size;
+} Tuple;
+
+TupleItem* get_tuple_item(Tuple* tuple, size_t index) {
+    if (tuple == NULL || tuple->items == NULL || index >= tuple->size) {
+        return NULL;
+    }
+    return &(tuple->items[index]);
+}
+
+int main(void) {
+    Tuple tuple;
+    tuple.size = 3;
+    tuple.items = (TupleItem*)malloc(tuple.size * sizeof(TupleItem));
+    
+    if (tuple.items == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return 1;
+    }
+
+    tuple.items[0].type = TYPE_INT;
+    tuple.items[0].data.i_val = 42;
+
+    tuple.items[1].type = TYPE_FLOAT;
+    tuple.items[1].data.f_val = 3.14f;
+
+    tuple.items[2].type = TYPE_STRING;
+    tuple.items[2].data.s_val = "Hello, Tuple!";
+
+    TupleItem* item = get_tuple_item(&tuple, 1);
+    
+    if (item != NULL) {
+        if (item->type == TYPE_FLOAT) {
+            printf("Item 1: %f\n", item->data.f_val);
+        }
+    } else {
+        printf("Item not found\n");
+    }
+
+    free(tuple.items);
+    tuple.items = NULL;
+
+    return 0;
+}

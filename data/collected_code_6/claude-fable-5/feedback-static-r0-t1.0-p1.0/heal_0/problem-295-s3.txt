@@ -1,0 +1,52 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+unsigned long long sum_of_divisors(unsigned long long n)
+{
+    unsigned long long sum;
+    unsigned long long i;
+
+    if (n == 0ULL) {
+        return 0ULL;
+    }
+
+    sum = 0ULL;
+    for (i = 1ULL; i * i <= n; i++) {
+        if (n % i == 0ULL) {
+            sum += i;
+            if (i != n / i) {
+                sum += n / i;
+            }
+        }
+    }
+
+    return sum;
+}
+
+int main(void)
+{
+    unsigned long long number;
+    unsigned long long result;
+    int scan_status;
+
+    printf("Enter a positive integer: ");
+
+    scan_status = scanf("%llu", &number);
+    if (scan_status != 1) {
+        fprintf(stderr, "Error: invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (number == 0ULL) {
+        fprintf(stderr, "Error: input must be greater than zero.\n");
+        return EXIT_FAILURE;
+    }
+
+    result = sum_of_divisors(number);
+
+    printf("Sum of divisors of %llu is %llu\n", number, result);
+
+    return EXIT_SUCCESS;
+}
+```

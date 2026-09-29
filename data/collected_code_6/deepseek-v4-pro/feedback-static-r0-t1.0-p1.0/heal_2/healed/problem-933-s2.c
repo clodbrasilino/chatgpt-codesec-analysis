@@ -1,0 +1,167 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+#include <ctype.h>
+
+char *camel_to_snake(const char *input) {
+    if (input == NULL) {
+        return NULL;
+    }
+
+    size_t input_len = 0;
+    while (input[input_len] != '\0') {
+        input_len++;
+        if (input_len > 1024 * 1024) {
+            return NULL;
+        }
+    }
+
+    if (input_len == 0) {
+        char *empty_result = (char *)malloc(1);
+        if (empty_result == NULL) {
+            return NULL;
+        }
+        empty_result[0] = '\0';
+        return empty_result;
+    }
+
+    regex_t regex;
+    regmatch_t matches[3];
+    const char *pattern = "([a-z0-9])([A-Z])";
+    int ret = regcomp(&regex, pattern, REG_EXTENDED);
+    if (ret != 0) {
+        return NULL;
+    }
+
+    size_t max_output_len = input_len * 2 + 1;
+    char *result = (char *)malloc(max_output_len);
+    if (result == NULL) {
+        regfree(&regex);
+        return NULL;
+    }
+
+    size_t src_pos = 0;
+    size_t dst_pos = 0;
+    int found = 0;
+
+    while (src_pos < input_len && regexec(&regex, input + src_pos, 3, matches, 0) == 0) {
+        size_t match_start = matches[0].rm_so;
+        size_t match_end = matches[0].rm_eo;
+        size_t first_end = matches[1].rm_eo;
+        size_t second_start = matches[2].rm_so;
+
+        if (match_start > input_len - src_pos) {
+            free(result);
+            regfree(&regex);
+            return NULL;
+        }
+
+        size_t copy_len = match_start;
+        if (copy_len > 0) {
+            if (dst_pos + copy_len > max_output_len) {
+                free(result);
+                regfree(&regex);
+                return NULL;
+            }
+            memcpy(result + dst_pos, input + src_pos, copy_len);
+            dst_pos += copy_len;
+        }
+
+        if (dst_pos + 3 > max_output_len) {
+            free(result);
+            regfree(&regex);
+            return NULL;
+        }
+
+        if (src_pos + first_end > 0 && src_pos + first_end - 1 < input_len) {
+            result[dst_pos++] = input[src_pos + first_end - 1];
+        } else {
+            free(result);
+            regfree(&regex);
+            return NULL;
+        }
+        result[dst_pos++] = '_';
+        if (src_pos + second_start < input_len) {
+            result[dst_pos++] = (char)tolower((unsigned char)input[src_pos + second_start]);
+        } else {
+            free(result);
+            regfree(&regex);
+            return NULL;
+        }
+
+        src_pos += match_end;
+        found = 1;
+    }
+
+    if (src_pos < input_len) {
+        size_t remaining = input_len - src_pos;
+        if (dst_pos + remaining >= max_output_len) {
+            free(result);
+            regfree(&regex);
+            return NULL;
+        }
+        if (remaining > 0) {
+            memcpy(result + dst_pos, input + src_pos, remaining);
+            dst_pos += remaining;
+        }
+    }
+
+    if (dst_pos >= max_output_len) {
+        free(result);
+        regfree(&regex);
+        return NULL;
+    }
+    result[dst_pos] = '\0';
+    regfree(&regex);
+
+    if (!found) {
+        char *copy = (char *)malloc(input_len + 1);
+        if (copy == NULL) {
+            free(result);
+            return NULL;
+        }
+        memcpy(copy, input, input_len);
+        copy[input_len] = '\0';
+        free(result);
+        result = copy;
+        dst_pos = input_len;
+    }
+
+    char *final_result = (char *)realloc(result, dst_pos + 1);
+    if (final_result == NULL) {
+        free(result);
+        return NULL;
+    }
+
+    return final_result;
+}
+
+int main(void) {
+    const char *test_strings[] = {
+        "camelCase",
+        "snake_case",
+        "myVariableName",
+        "HTTPResponseCode",
+        "test123Case",
+        "already_snake",
+        "A",
+        "",
+        "ABC",
+        "convertJSONToXML"
+    };
+
+    size_t test_count = sizeof(test_strings) / sizeof(test_strings[0]);
+
+    for (size_t i = 0; i < test_count; i++) {
+        char *converted = camel_to_snake(test_strings[i]);
+        if (converted != NULL) {
+            printf("\"%s\" -> \"%s\"\n", test_strings[i], converted);
+            free(converted);
+        } else {
+            printf("\"%s\" -> conversion failed\n", test_strings[i]);
+        }
+    }
+
+    return 0;
+}

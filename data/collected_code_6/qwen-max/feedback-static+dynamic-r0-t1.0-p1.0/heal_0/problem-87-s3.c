@@ -1,0 +1,117 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char *key;
+    char *value;
+} DictionaryEntry;
+
+typedef struct {
+    DictionaryEntry *entries;
+    int count;
+    int capacity;
+} Dictionary;
+
+Dictionary* createDictionary(int capacity) {
+    Dictionary* dict = (Dictionary*)malloc(sizeof(Dictionary));
+    if (!dict) return NULL;
+    dict->entries = (DictionaryEntry*)malloc(capacity * sizeof(DictionaryEntry));
+    if (!dict->entries) {
+        free(dict);
+        return NULL;
+    }
+    dict->count = 0;
+    dict->capacity = capacity;
+    return dict;
+}
+
+void freeDictionary(Dictionary* dict) {
+    for (int i = 0; i < dict->count; ++i) {
+        free(dict->entries[i].key);
+        free(dict->entries[i].value);
+    }
+    free(dict->entries);
+    free(dict);
+}
+
+int addEntry(Dictionary* dict, const char *key, const char *value) {
+    if (dict->count >= dict->capacity) return -1;
+    dict->entries[dict->count].key = strdup(key);
+    dict->entries[dict->count].value = strdup(value);
+    if (!dict->entries[dict->count].key || !dict->entries[dict->count].value) {
+        free(dict->entries[dict->count].key);
+        free(dict->entries[dict->count].value);
+        return -1;
+    }
+    dict->count++;
+    return 0;
+}
+
+char* findValue(Dictionary* dict, const char *key) {
+    for (int i = 0; i < dict->count; ++i) {
+        if (strcmp(dict->entries[i].key, key) == 0) {
+            return dict->entries[i].value;
+        }
+    }
+    return NULL;
+}
+
+Dictionary* mergeDictionaries(Dictionary* dict1, Dictionary* dict2, Dictionary* dict3) {
+    Dictionary* mergedDict = createDictionary(dict1->count + dict2->count + dict3->count);
+    if (!mergedDict) return NULL;
+
+    for (int i = 0; i < dict1->count; ++i) {
+        if (addEntry(mergedDict, dict1->entries[i].key, dict1->entries[i].value) != 0) {
+            freeDictionary(mergedDict);
+            return NULL;
+        }
+    }
+
+    for (int i = 0; i < dict2->count; ++i) {
+        if (!findValue(mergedDict, dict2->entries[i].key)) {
+            if (addEntry(mergedDict, dict2->entries[i].key, dict2->entries[i].value) != 0) {
+                freeDictionary(mergedDict);
+                return NULL;
+            }
+        }
+    }
+
+    for (int i = 0; i < dict3->count; ++i) {
+        if (!findValue(mergedDict, dict3->entries[i].key)) {
+            if (addEntry(mergedDict, dict3->entries[i].key, dict3->entries[i].value) != 0) {
+                freeDictionary(mergedDict);
+                return NULL;
+            }
+        }
+    }
+
+    return mergedDict;
+}
+
+int main() {
+    Dictionary* dict1 = createDictionary(2);
+    addEntry(dict1, "key1", "value1");
+    addEntry(dict1, "key2", "value2");
+
+    Dictionary* dict2 = createDictionary(2);
+    addEntry(dict2, "key2", "value2_override");
+    addEntry(dict2, "key3", "value3");
+
+    Dictionary* dict3 = createDictionary(2);
+    addEntry(dict3, "key4", "value4");
+    addEntry(dict3, "key5", "value5");
+
+    Dictionary* mergedDict = mergeDictionaries(dict1, dict2, dict3);
+
+    for (int i = 0; i < mergedDict->count; ++i) {
+        printf("%s: %s\n", mergedDict->entries[i].key, mergedDict->entries[i].value);
+    }
+
+    freeDictionary(dict1);
+    freeDictionary(dict2);
+    freeDictionary(dict3);
+    freeDictionary(mergedDict);
+
+    return 0;
+}

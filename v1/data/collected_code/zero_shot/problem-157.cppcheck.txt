@@ -1,0 +1,9 @@
+collected_code/problem-157-0.c:9:32: error: Cannot determine that 'arr[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        while (i < n - 1 && arr[i] == arr[i + 1]) {
+                               ^
+collected_code/problem-157-0.c:9:42: error: Cannot determine that 'arr[i+1]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        while (i < n - 1 && arr[i] == arr[i + 1]) {
+                                         ^
+collected_code/problem-157-0.c:15:27: error: Cannot determine that 'arr[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        printf("%d%d", arr[i], count);
+                          ^

@@ -1,0 +1,214 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef enum {
+    ELEM_INT,
+    ELEM_TUPLE
+} ElemType;
+
+typedef struct Element Element;
+
+typedef struct Tuple {
+    size_t count;
+    Element *items;
+} Tuple;
+
+struct Element {
+    ElemType type;
+    union {
+        int value;
+        Tuple tuple;
+    } data;
+};
+
+typedef struct FreqEntry {
+    int value;
+    size_t count;
+} FreqEntry;
+
+typedef struct FreqTable {
+    FreqEntry *entries;
+    size_t size;
+    size_t capacity;
+} FreqTable;
+
+static int freq_table_init(FreqTable *table)
+{
+    table->size = 0;
+    table->capacity = 8;
+    table->entries = malloc(table->capacity * sizeof(FreqEntry));
+    if (table->entries == NULL) {
+        table->capacity = 0;
+        return -1;
+    }
+    return 0;
+}
+
+static void freq_table_destroy(FreqTable *table)
+{
+    if (table != NULL) {
+        free(table->entries);
+        table->entries = NULL;
+        table->size = 0;
+        table->capacity = 0;
+    }
+}
+
+static int freq_table_add(FreqTable *table, int value)
+{
+    size_t i;
+
+    for (i = 0; i < table->size; i++) {
+        if (table->entries[i].value == value) {
+            table->entries[i].count++;
+            return 0;
+        }
+    }
+
+    if (table->size == table->capacity) {
+        size_t new_capacity;
+        FreqEntry *new_entries;
+
+        if (table->capacity > ((size_t)-1) / (2 * sizeof(FreqEntry))) {
+            return -1;
+        }
+        new_capacity = table->capacity * 2;
+        new_entries = realloc(table->entries, new_capacity * sizeof(FreqEntry));
+        if (new_entries == NULL) {
+            return -1;
+        }
+        table->entries = new_entries;
+        table->capacity = new_capacity;
+    }
+
+    table->entries[table->size].value = value;
+    table->entries[table->size].count = 1;
+    table->size++;
+    return 0;
+}
+
+static int count_frequency(const Tuple *tuple, FreqTable *table)
+{
+    size_t i;
+
+    if (tuple == NULL || table == NULL) {
+        return -1;
+    }
+
+    for (i = 0; i < tuple->count; i++) {
+        const Element *elem = &tuple->items[i];
+
+        if (elem->type == ELEM_INT) {
+            if (freq_table_add(table, elem->data.value) != 0) {
+                return -1;
+            }
+        } else if (elem->type == ELEM_TUPLE) {
+            if (count_frequency(&elem->data.tuple, table) != 0) {
+                return -1;
+            }
+        } else {
+            return -1;
+        }
+    }
+    return 0;
+}
+
+static void tuple_destroy(Tuple *tuple)
+{
+    size_t i;
+
+    if (tuple == NULL || tuple->items == NULL) {
+        return;
+    }
+
+    for (i = 0; i < tuple->count; i++) {
+        if (tuple->items[i].type == ELEM_TUPLE) {
+            tuple_destroy(&tuple->items[i].data.tuple);
+        }
+    }
+    free(tuple->items);
+    tuple->items = NULL;
+    tuple->count = 0;
+}
+
+static int tuple_init(Tuple *tuple, size_t count)
+{
+    if (tuple == NULL) {
+        return -1;
+    }
+    tuple->count = count;
+    if (count == 0) {
+        tuple->items = NULL;
+        return 0;
+    }
+    if (count > ((size_t)-1) / sizeof(Element)) {
+        return -1;
+    }
+    tuple->items = calloc(count, sizeof(Element));
+    if (tuple->items == NULL) {
+        tuple->count = 0;
+        return -1;
+    }
+    return 0;
+}
+
+static void element_set_int(Element *elem, int value)
+{
+    elem->type = ELEM_INT;
+    elem->data.value = value;
+}
+
+int main(void)
+{
+    Tuple root;
+    FreqTable table;
+    size_t i;
+    int status = EXIT_FAILURE;
+
+    if (tuple_init(&root, 4) != 0) {
+        fprintf(stderr, "Allocation failure\n");
+        return EXIT_FAILURE;
+    }
+
+    element_set_int(&root.items[0], 5);
+    element_set_int(&root.items[1], 6);
+
+    root.items[2].type = ELEM_TUPLE;
+    if (tuple_init(&root.items[2].data.tuple, 3) != 0) {
+        fprintf(stderr, "Allocation failure\n");
+        tuple_destroy(&root);
+        return EXIT_FAILURE;
+    }
+    element_set_int(&root.items[2].data.tuple.items[0], 5);
+    element_set_int(&root.items[2].data.tuple.items[1], 4);
+
+    root.items[2].data.tuple.items[2].type = ELEM_TUPLE;
+    if (tuple_init(&root.items[2].data.tuple.items[2].data.tuple, 2) != 0) {
+        fprintf(stderr, "Allocation failure\n");
+        tuple_destroy(&root);
+        return EXIT_FAILURE;
+    }
+    element_set_int(&root.items[2].data.tuple.items[2].data.tuple.items[0], 6);
+    element_set_int(&root.items[2].data.tuple.items[2].data.tuple.items[1], 5);
+
+    element_set_int(&root.items[3], 4);
+
+    if (freq_table_init(&table) != 0) {
+        fprintf(stderr, "Allocation failure\n");
+        tuple_destroy(&root);
+        return EXIT_FAILURE;
+    }
+
+    if (count_frequency(&root, &table) == 0) {
+        for (i = 0; i < table.size; i++) {
+            printf("%d: %zu\n", table.entries[i].value, table.entries[i].count);
+        }
+        status = EXIT_SUCCESS;
+    } else {
+        fprintf(stderr, "Failed to count frequencies\n");
+    }
+
+    freq_table_destroy(&table);
+    tuple_destroy(&root);
+    return status;
+}

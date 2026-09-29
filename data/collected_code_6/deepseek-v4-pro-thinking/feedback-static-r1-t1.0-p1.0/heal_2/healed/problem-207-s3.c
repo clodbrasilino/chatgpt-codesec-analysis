@@ -1,0 +1,65 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <stdint.h>
+
+static int max_int(int a, int b)
+{
+    return (a > b) ? a : b;
+}
+
+int longest_repeating_subsequence(const char *str, size_t len)
+{
+    size_t i, j;
+    int *prev;
+    int *curr;
+    int *tmp;
+    int result;
+
+    if (str == NULL) {
+        return -1;
+    }
+
+    if (len == 0) {
+        return 0;
+    }
+
+    if (len > (SIZE_MAX / sizeof(int)) - 1) {
+        return -1;
+    }
+
+    prev = (int *)calloc(len + 1, sizeof(int));
+    curr = (int *)calloc(len + 1, sizeof(int));
+    if (prev == NULL || curr == NULL) {
+        free(prev);
+        free(curr);
+        return -1;
+    }
+
+    for (i = 1; i <= len; ++i) {
+        for (j = 1; j <= len; ++j) {
+            if (i != j && str[i - 1] == str[j - 1]) {
+                curr[j] = prev[j - 1] + 1;
+            } else {
+                curr[j] = max_int(prev[j], curr[j - 1]);
+            }
+        }
+        tmp = prev;
+        prev = curr;
+        curr = tmp;
+    }
+
+    result = prev[len];
+    free(prev);
+    free(curr);
+
+    return result;
+}
+
+int main(void)
+{
+    printf("%d\n", longest_repeating_subsequence("AABEBCDD", sizeof("AABEBCDD") - 1));
+    printf("%d\n", longest_repeating_subsequence("AAA", sizeof("AAA") - 1));
+    printf("%d\n", longest_repeating_subsequence("ABCD", sizeof("ABCD") - 1));
+    return 0;
+}

@@ -1,0 +1,30 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char key[50];
+    char value[50];
+} dict;
+
+int check_key(dict *dictionary, int size, char *key) {
+    for(int i = 0; i < size; i++) {
+        if(strcmp(dictionary[i].key, key) == 0) {
+            return 1;
+        }
+    }
+    return 0;
+}
+
+int main() {
+    dict dictionary[3] = {{"key1", "value1"}, {"key2", "value2"}, {"key3", "value3"}};
+    char key[50];
+    printf("Enter a key to search: ");
+    scanf("%s", key);
+    if(check_key(dictionary, 3, key)) {
+        printf("Key is present in the dictionary.\n");
+    } else {
+        printf("Key is not present in the dictionary.\n");
+    }
+    return 0;
+}

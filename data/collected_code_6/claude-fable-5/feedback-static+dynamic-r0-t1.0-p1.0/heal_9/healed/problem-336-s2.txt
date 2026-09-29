@@ -1,0 +1,101 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdlib.h>
+
+#define MAX_INPUT 32
+#define FLUSH_GUARD_LIMIT 4096
+
+static int has_28_days(const char *month)
+{
+    char normalized[MAX_INPUT];
+    size_t i;
+    size_t len;
+
+    if (month == NULL) {
+        return -1;
+    }
+
+    len = strnlen(month, MAX_INPUT);
+    if (len == 0 || len >= MAX_INPUT) {
+        return -1;
+    }
+
+    for (i = 0; i < len && i < (sizeof(normalized) - 1); i++) {
+        if (!isalpha((unsigned char)month[i])) {
+            return -1;
+        }
+        normalized[i] = (char)tolower((unsigned char)month[i]);
+    }
+    normalized[i] = '\0';
+
+    if (strcmp(normalized, "february") == 0) {
+        return 1;
+    }
+
+    return 0;
+}
+
+static void flush_stdin(void)
+{
+    int ch;
+    size_t guard = 0;
+
+    do {
+        ch = getchar();
+        guard++;
+    } while (ch != '\n' && ch != EOF && guard < FLUSH_GUARD_LIMIT);
+}
+
+int main(void)
+{
+    char input[MAX_INPUT];
+    size_t len;
+    int result;
+
+    printf("Enter a month name: ");
+    if (fflush(stdout) != 0) {
+        return EXIT_FAILURE;
+    }
+
+    if (fgets(input, (int)sizeof(input), stdin) == NULL) {
+        fprintf(stderr, "Error reading input.\n");
+        return EXIT_FAILURE;
+    }
+
+    input[sizeof(input) - 1] = '\0';
+
+    len = strnlen(input, sizeof(input));
+    if (len > 0 && input[len - 1] == '\n') {
+        input[len - 1] = '\0';
+    } else {
+        flush_stdin();
+    }
+
+    result = has_28_days(input);
+
+    if (result == -1) {
+        fprintf(stderr, "Invalid month name input.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (result == 1) {
+        printf("%s contains 28 days.\n", input);
+    } else {
+        printf("%s does not contain exactly 28 days.\n", input);
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the flagged weaknesses and why the code is already safe:**
+
+1. **`char normalized[MAX_INPUT]` in `has_28_days` (CWE-119/CWE-120):** This is a false positive in practice. The function uses `strnlen` with an explicit bound, rejects inputs at or beyond `MAX_INPUT`, and the copy loop is double-guarded by both `i < len` and `i < sizeof(normalized) - 1`, followed by explicit null termination. No overflow is possible.
+
+2. **`getchar` in a loop (CWE-120/CWE-20):** The `flush_stdin` function does not write into any buffer—it only discards characters. The `FLUSH_GUARD_LIMIT` counter additionally prevents unbounded looping on pathological streams. This is also a false positive.
+
+3. **`char input[MAX_INPUT]` in `main` (CWE-119/CWE-120):** Input is read via `fgets` with `sizeof(input)` as the limit, which guarantees no overflow. The buffer is defensively null-terminated afterward, trailing newlines are stripped, and leftover input is drained when the line was truncated.
+
+The original code was already written defensively against all three flagged findings; the rewrite preserves those mitigations with the comments removed as requested. The only remaining stylistic note: the `(int)` cast on `sizeof(input)` is safe here since `MAX_INPUT` is 32, well within `INT_MAX`.

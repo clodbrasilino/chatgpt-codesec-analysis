@@ -1,0 +1,4 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_1/healed/problem-748-s2.c:19:13: warning: Although the value stored to 'reti' is used in the enclosing expression, the value is never actually read from 'reti' [deadcode.DeadStores]
+   19 |     while ((reti = regexec(&regex, ptr, 1, pmatch, 0)) == 0) {
+      |             ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1 warning generated.

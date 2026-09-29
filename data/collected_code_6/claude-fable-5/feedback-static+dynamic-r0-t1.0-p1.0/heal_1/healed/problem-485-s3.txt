@@ -1,0 +1,91 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+#include <stddef.h>
+
+static bool is_palindrome(int num)
+{
+    char buf[32];
+    int len;
+    int i;
+    int j;
+
+    if (num < 0) {
+        return false;
+    }
+
+    len = snprintf(buf, sizeof(buf), "%d", num);
+    if (len < 0 || (size_t)len >= sizeof(buf)) {
+        return false;
+    }
+
+    i = 0;
+    j = len - 1;
+    while (i < j) {
+        if (buf[i] != buf[j]) {
+            return false;
+        }
+        i++;
+        j--;
+    }
+    return true;
+}
+
+static bool find_largest_palindrome(const int *arr, size_t size, int *result)
+{
+    size_t i;
+    bool found = false;
+    int largest = 0;
+
+    if (arr == NULL || result == NULL || size == 0) {
+        return false;
+    }
+
+    for (i = 0; i < size; i++) {
+        if (is_palindrome(arr[i])) {
+            if (!found || arr[i] > largest) {
+                largest = arr[i];
+                found = true;
+            }
+        }
+    }
+
+    if (found) {
+        *result = largest;
+    }
+    return found;
+}
+
+int main(void)
+{
+    int numbers[] = { 123, 121, 45654, 78, 909, 2, 10 };
+    size_t count = sizeof(numbers) / sizeof(numbers[0]);
+    int largest;
+
+    if (find_largest_palindrome(numbers, count, &largest)) {
+        if (printf("Largest palindromic number: %d\n", largest) < 0) {
+            return 1;
+        }
+    } else {
+        if (printf("No palindromic number found.\n") < 0) {
+            return 1;
+        }
+    }
+
+    return 0;
+}
+```
+
+Analysis of the original code and the flagged weakness:
+
+**The Flawfinder warning (CWE-119/CWE-120) is a false positive here.** The static analyzer flags any statically-sized `char` array by default, but the code already implements the recommended mitigations:
+
+1. **Bounded write**: `snprintf(buf, sizeof(buf), "%d", num)` limits output to the buffer size and guarantees null termination, unlike `sprintf`.
+
+2. **Return value validation**: The check `len < 0 || (size_t)len >= sizeof(buf)` correctly handles both encoding errors (negative return) and truncation (return value ≥ buffer size, since `snprintf` returns the length that *would* have been written).
+
+3. **Adequate sizing**: A 32-byte buffer comfortably holds any `int` representation (a 64-bit `int` would need at most 20 digits plus sign and null terminator).
+
+4. **Negative input guard**: `num < 0` is rejected early, avoiding the `-` sign complicating palindrome logic and any `INT_MIN` edge cases.
+
+Other defensive qualities worth noting: `find_largest_palindrome` validates `NULL` pointers and zero size, uses `size_t` for indexing, only writes to `*result` on success, and the `found` flag correctly handles the case where the largest palindrome could be any value (including 0). The `printf` return values are checked in `main`. The code is safe as written, so it is reproduced unchanged aside from removing the comments.

@@ -1,0 +1,34 @@
+```c
+#include <stdio.h>
+#include <ctype.h>
+#include <stddef.h>
+
+void print_numbers_and_positions(const char *str);
+
+void print_numbers_and_positions(const char *str) {
+    if (str == NULL) {
+        return;
+    }
+
+    size_t i = 0;
+    while (str[i] != '\0') {
+        if (isdigit((unsigned char)str[i])) {
+            size_t start_pos = i;
+            printf("Number: ");
+            while (str[i] != '\0' && isdigit((unsigned char)str[i])) {
+                putchar(str[i]);
+                i++;
+            }
+            printf(", Position: %zu\n", start_pos);
+        } else {
+            i++;
+        }
+    }
+}
+
+int main(void) {
+    const char *test_string = "Hello123World 45 and 6789!";
+    print_numbers_and_positions(test_string);
+    return 0;
+}
+```

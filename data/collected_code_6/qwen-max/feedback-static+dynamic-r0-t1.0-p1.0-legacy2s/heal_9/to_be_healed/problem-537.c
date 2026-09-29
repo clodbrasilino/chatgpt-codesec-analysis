@@ -1,0 +1,69 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+#include <ctype.h>
+#include <stdlib.h>
+
+#define MAX_WORDS 1024
+#define MAX_WORD_LENGTH 64
+ /* Possible weaknesses found:
+  *  test case 1 failed: expected 'None', got <no output>
+  *  test case 0 failed: expected 'ab', got <no output>
+  *  test case 2 failed: expected 'ca', got <no output>
+  */
+
+char* findFirstRepeatedWord(const char* str) {
+    if (str == NULL) return NULL;
+
+    char words[MAX_WORDS][MAX_WORD_LENGTH] = {0};
+    int wordCount = 0;
+
+    char* mutableStr = strdup(str);
+    char* token = strtok(mutableStr, " .,;:!?-");
+    while (token != NULL && wordCount < MAX_WORDS) {
+        for (int i = 0; i < wordCount; ++i) {
+            if (strcasecmp(words[i], token) == 0) {
+                free(mutableStr);
+                return strdup(token);
+            }
+        }
+        strncpy(words[wordCount], token, MAX_WORD_LENGTH - 1);
+        words[wordCount][strnlen(token, MAX_WORD_LENGTH - 1)] = '\0';
+        ++wordCount;
+        token = strtok(NULL, " .,;:!?-");
+    }
+
+    free(mutableStr);
+    return NULL;
+}
+
+int main() {
+    const char* test0 = "ab ab a";
+    char* result0 = findFirstRepeatedWord(test0);
+    if (result0) {
+        printf("First repeated word: %s\n", result0);
+        free(result0);
+    } else {
+        printf("No repeated word found.\n");
+    }
+
+    const char* test1 = "a b c a b";
+    char* result1 = findFirstRepeatedWord(test1);
+    if (result1) {
+        printf("First repeated word: %s\n", result1);
+        free(result1);
+    } else {
+        printf("No repeated word found.\n");
+    }
+
+    const char* test2 = "ca ca cb";
+    char* result2 = findFirstRepeatedWord(test2);
+    if (result2) {
+        printf("First repeated word: %s\n", result2);
+        free(result2);
+    } else {
+        printf("No repeated word found.\n");
+    }
+
+    return 0;
+}

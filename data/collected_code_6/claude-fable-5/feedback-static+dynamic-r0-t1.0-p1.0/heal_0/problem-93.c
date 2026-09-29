@@ -1,0 +1,63 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+int power(long long base, unsigned int exp, long long *result)
+{
+    long long acc = 1;
+    long long b = base;
+    unsigned int e = exp;
+
+    if (result == NULL) {
+        return -1;
+    }
+
+    while (e > 0U) {
+        if ((e & 1U) == 1U) {
+            if (b != 0 && (acc > LLONG_MAX / (b > 0 ? b : -b) ||
+                           acc < LLONG_MIN / (b > 0 ? b : -b))) {
+                return -1;
+            }
+            acc *= b;
+        }
+        e >>= 1U;
+        if (e > 0U) {
+            if (b != 0 && ((b > 0 ? b : -b) > LLONG_MAX / (b > 0 ? b : -b))) {
+                return -1;
+            }
+            b *= b;
+        }
+    }
+
+    *result = acc;
+    return 0;
+}
+
+int main(void)
+{
+    long long a;
+    unsigned int b;
+    long long result;
+    int ret;
+
+    printf("Enter base (integer): ");
+    if (scanf("%lld", &a) != 1) {
+        fprintf(stderr, "Invalid input for base\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter exponent (non-negative integer): ");
+    if (scanf("%u", &b) != 1) {
+        fprintf(stderr, "Invalid input for exponent\n");
+        return EXIT_FAILURE;
+    }
+
+    ret = power(a, b, &result);
+    if (ret != 0) {
+        fprintf(stderr, "Error: overflow or invalid arguments\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("%lld^%u = %lld\n", a, b, result);
+    return EXIT_SUCCESS;
+}

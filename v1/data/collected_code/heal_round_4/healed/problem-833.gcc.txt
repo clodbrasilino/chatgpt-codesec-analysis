@@ -1,0 +1,105 @@
+collected_code/heal_round_4/healed/problem-833.c: In function 'main':
+collected_code/heal_round_4/healed/problem-833.c:44:13: warning: leak of '<unknown>' [CWE-401] [-Wanalyzer-malloc-leak]
+   44 |             free(keys);
+      |             ^~~~~~~~~~
+  'main': events 1-4
+    |
+    |   24 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   27 |     if (dictionary) {
+    |      |        ~
+    |      |        |
+    |      |        (2) following 'true' branch (when 'dictionary' is non-NULL)...
+    |   28 |         dictionary[0].key = strdup("apple");
+    |      |                             ~~~~~~~~~~~~~~~
+    |      |                             |
+    |      |                             (3) ...to here
+    |......
+    |   36 |         char** keys = getDictionaryKeys(dictionary, size);
+    |      |                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                       |
+    |      |                       (4) calling 'getDictionaryKeys' from 'main'
+    |
+    +--> 'getDictionaryKeys': events 5-24
+           |
+           |   10 | char** getDictionaryKeys(Dictionary* dictionary, int size) {
+           |      |        ^~~~~~~~~~~~~~~~~
+           |      |        |
+           |      |        (5) entry to 'getDictionaryKeys'
+           |   11 |     if (dictionary == NULL)
+           |      |        ~
+           |      |        |
+           |      |        (6) following 'false' branch (when 'dictionary' is non-NULL)...
+           |   12 |         return NULL;
+           |   13 |     char** keys = (char**) calloc(size, sizeof(char*));
+           |      |                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                            |
+           |      |                            (7) ...to here
+           |   14 |     if (keys == NULL)
+           |      |        ~
+           |      |        |
+           |      |        (8) following 'false' branch (when 'keys' is non-NULL)...
+           |   15 |         return NULL;
+           |   16 |     for (int i = 0; i < size; i++) {
+           |      |              ~      ~~~~~~~~  ~~~
+           |      |              |        |        |
+           |      |              |        |        (13) ...to here
+           |      |              |        |        (17) ...to here
+           |      |              |        (10) following 'true' branch (when 'i < size')...
+           |      |              |        (14) following 'true' branch (when 'i < size')...
+           |      |              |        (18) following 'true' branch (when 'i < size')...
+           |      |              |        (23) following 'false' branch (when 'i >= size')...
+           |      |              (9) ...to here
+           |   17 |         if (dictionary[i].key != NULL) {
+           |      |            ~          ~
+           |      |            |          |
+           |      |            |          (11) ...to here
+           |      |            |          (15) ...to here
+           |      |            |          (19) ...to here
+           |      |            (12) following 'false' branch...
+           |      |            (16) following 'false' branch...
+           |      |            (20) following 'true' branch...
+           |   18 |             keys[i] = strdup(dictionary[i].key);
+           |      |                       ~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                       |                |
+           |      |                       |                (21) ...to here
+           |      |                       (22) allocated here
+           |......
+           |   21 |     return keys;
+           |      |            ~~~~
+           |      |            |
+           |      |            (24) ...to here
+           |
+    <------+
+    |
+  'main': events 25-32
+    |
+    |   36 |         char** keys = getDictionaryKeys(dictionary, size);
+    |      |                       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                       |
+    |      |                       (25) returning to 'main' from 'getDictionaryKeys'
+    |   37 |         if (keys != NULL) {
+    |      |            ~           
+    |      |            |
+    |      |            (26) following 'true' branch (when 'keys' is non-NULL)...
+    |   38 |             for (int i = 0; i < size; i++) {
+    |      |                      ~      ~~~~~~~~  ~~~
+    |      |                      |        |        |
+    |      |                      |        |        (31) ...to here
+    |      |                      |        (28) following 'true' branch (when 'i < size')...
+    |      |                      (27) ...to here
+    |   39 |                 if (keys[i] != NULL) {
+    |      |                    ~    ~
+    |      |                    |    |
+    |      |                    |    (29) ...to here
+    |      |                    (30) following 'false' branch...
+    |......
+    |   44 |             free(keys);
+    |      |             ~~~~~~~~~~ 
+    |      |             |
+    |      |             (32) '<unknown>' leaks here; was allocated at (22)
+    |
+-macosx_version_min has been renamed to -macos_version_min

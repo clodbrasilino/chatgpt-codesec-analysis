@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-703-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-703-s3.c:88:23: style: Condition 'bytes_to_copy>0' is always false [knownConditionTrueFalse]
+    if (bytes_to_copy > 0) {
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-703-s3.c:82:65: note: Assignment 'bytes_to_copy=key_len<sizeof(new_entry->key)-1?key_len:sizeof(new_entry->key)-1', assigned value is less than 1
+    size_t bytes_to_copy = key_len < sizeof(new_entry->key) - 1 ? key_len : sizeof(new_entry->key) - 1;
+                                                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-703-s3.c:88:23: note: Condition 'bytes_to_copy>0' is always false
+    if (bytes_to_copy > 0) {
+                      ^

@@ -1,0 +1,56 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_STR_LEN 1048576
+
+int shortest_common_supersequence_len(const char *str1, const char *str2) {
+    if (str1 == NULL || str2 == NULL) {
+        return -1;
+    }
+
+    size_t len1 = strnlen(str1, MAX_STR_LEN);
+    size_t len2 = strnlen(str2, MAX_STR_LEN);
+
+    if (len1 == MAX_STR_LEN || len2 == MAX_STR_LEN) {
+        return -1;
+    }
+
+    int *prev = calloc(len2 + 1, sizeof(int));
+    int *curr = calloc(len2 + 1, sizeof(int));
+
+    if (prev == NULL || curr == NULL) {
+        free(prev);
+        free(curr);
+        return -1;
+    }
+
+    for (size_t i = 1; i <= len1; i++) {
+        for (size_t j = 0; j <= len2; j++) {
+            if (j == 0) {
+                curr[j] = 0;
+            } else if (str1[i - 1] == str2[j - 1]) {
+                curr[j] = prev[j - 1] + 1;
+            } else {
+                curr[j] = prev[j] > curr[j - 1] ? prev[j] : curr[j - 1];
+            }
+        }
+        int *temp = prev;
+        prev = curr;
+        curr = temp;
+    }
+
+    int lcs_len = prev[len2];
+    free(prev);
+    free(curr);
+
+    return (int)(len1 + len2 - lcs_len);
+}
+
+int main(void) {
+    const char *str1 = "AGGTAB";
+    const char *str2 = "GXTXAYB";
+    int result = shortest_common_supersequence_len(str1, str2);
+    printf("%d\n", result);
+    return 0;
+}

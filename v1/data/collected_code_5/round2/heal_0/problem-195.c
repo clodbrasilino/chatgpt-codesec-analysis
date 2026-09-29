@@ -1,0 +1,35 @@
+#include <stdio.h>
+
+int first_position(int arr[], int n, int x) {
+    int start = 0;
+    int end = n - 1;
+
+    while (start <= end) {
+        int mid = start + (end - start) / 2;
+
+        if (arr[mid] < x)
+            start = mid + 1;
+        else if (arr[mid] > x) 
+            end = mid - 1;
+        else if (mid == 0 || arr[mid - 1] != arr[mid])
+            return mid;
+        else
+            end = mid - 1;
+    }
+    return -1;
+}
+
+int main(void) {
+    int arr[] = {1, 2, 3, 4, 4, 5, 6, 7, 8, 9, 10};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    int x = 4;
+
+    int result = first_position(arr, n, x);
+
+    if (result == -1)
+        printf("Element not found\n");
+    else
+        printf("Element found at position: %d\n", result + 1);
+
+    return 0;
+}

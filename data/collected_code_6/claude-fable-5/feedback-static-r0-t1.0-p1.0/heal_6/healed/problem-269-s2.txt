@@ -1,0 +1,64 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <ctype.h>
+#include <limits.h>
+
+int get_ascii_value(char c)
+{
+    return (int)(unsigned char)c;
+}
+
+static void flush_stdin(void)
+{
+    int extra;
+    unsigned long guard = 0;
+
+    do {
+        extra = getchar();
+        guard++;
+    } while (extra != '\n' && extra != EOF && guard < ULONG_MAX);
+}
+
+int main(void)
+{
+    int input;
+
+    printf("Enter a character: ");
+    fflush(stdout);
+
+    input = getchar();
+    if (input == EOF) {
+        fprintf(stderr, "Error: failed to read input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (input < 0 || input > UCHAR_MAX) {
+        fprintf(stderr, "Error: input out of valid character range\n");
+        return EXIT_FAILURE;
+    }
+
+    if (input != '\n') {
+        flush_stdin();
+    }
+
+    if (isprint((unsigned char)input)) {
+        printf("The ASCII value of '%c' is %d\n", (char)input, get_ascii_value((char)input));
+    } else {
+        printf("The ASCII value of the entered character is %d\n", get_ascii_value((char)input));
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The original code was already largely safe. The Flawfinder warnings on `getchar()` are risk-level 1 (informational) — they flag potential buffer issues only when the return value is stored into a fixed-size buffer within a loop. Here, `getchar()`'s return value is stored in an `int` (correctly, so `EOF` can be distinguished from valid characters), and no buffer writes occur, so there is no actual CWE-120 (buffer overflow) or CWE-20 (improper input validation) exposure.
+
+Changes made in the rewrite:
+
+1. **`flush_stdin()` loop guard** — added a counter bound so the drain loop provably terminates even under pathological stream conditions, directly addressing the "check buffer boundaries if used in a loop" concern.
+2. **`fflush(stdout)`** after the prompt — guarantees the prompt is visible before blocking on input when stdout is line- or fully-buffered (e.g., piped output).
+3. **`UCHAR_MAX` instead of the magic number `255`** — via `<limits.h>`, making the range check portable and self-documenting.
+4. Retained the correct patterns from the original: `int` for `getchar()` results, `EOF` checking, and casting to `unsigned char` before passing to `isprint()` (avoiding undefined behavior for negative `char` values).

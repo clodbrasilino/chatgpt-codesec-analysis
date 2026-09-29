@@ -1,0 +1,19 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-294-s3.c: In function 'find_max':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-294-s3.c:11:5: error: implicit declaration of function 'va_start' [-Wimplicit-function-declaration]
+   11 |     va_start(args, count);
+      |     ^~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-294-s3.c:16:20: error: implicit declaration of function 'va_arg' [-Wimplicit-function-declaration]
+   16 |         int type = va_arg(args, int);
+      |                    ^~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-294-s3.c:16:33: error: expected expression before 'int'
+   16 |         int type = va_arg(args, int);
+      |                                 ^~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-294-s3.c:19:36: error: expected expression before 'int'
+   19 |             int val = va_arg(args, int);
+      |                                    ^~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-294-s3.c:24:39: error: expected expression before 'double'
+   24 |             double val = va_arg(args, double);
+      |                                       ^~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-294-s3.c:29:13: error: implicit declaration of function 'va_end' [-Wimplicit-function-declaration]
+   29 |             va_end(args);
+      |             ^~~~~~

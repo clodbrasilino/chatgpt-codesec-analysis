@@ -1,0 +1,2 @@
+problem-402.c:15:29:medium:UBSan: signed integer overflow: 1098154668215492883 + 8995520821969944576 cannot be represented in type 'll' (aka 'long long') (AFL crash: id:000000,sig:06,src:000003,time:1293,execs:662,op:havoc,rep:1)
+problem-402.c:18:15:medium:UBSan: left shift of 4611686018427387904 by 1 places cannot be represented in type 'll' (aka 'long long') (AFL crash: id:000000,sig:06,src:000003,time:1293,execs:662,op:havoc,rep:1)

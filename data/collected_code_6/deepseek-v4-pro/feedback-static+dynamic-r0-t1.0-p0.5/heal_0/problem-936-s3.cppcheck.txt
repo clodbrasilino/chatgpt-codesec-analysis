@@ -1,0 +1,7 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-936-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-936-s3.c:18:10: style: Variable 'order' can be declared as pointer to const [constVariablePointer]
+    int *order = (int *)ctx;
+         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-936-s3.c:33:45: style: Parameter 'order' can be declared as pointer to const [constParameterPointer]
+void rearrange_tuples(TupleList *list, int *order, size_t order_size) {
+                                            ^

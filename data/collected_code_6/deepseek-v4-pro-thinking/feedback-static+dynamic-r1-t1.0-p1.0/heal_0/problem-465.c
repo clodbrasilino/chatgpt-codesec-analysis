@@ -1,0 +1,130 @@
+#include <stddef.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char *key;
+    char *value;
+} DictionaryEntry;
+
+typedef struct {
+    DictionaryEntry *entries;
+    size_t count;
+    size_t capacity;
+} Dictionary;
+
+static char *string_duplicate(const char *str) {
+    if (!str) return NULL;
+    size_t len = strlen(str) + 1;
+    char *copy = malloc(len);
+    if (!copy) return NULL;
+    memcpy(copy, str, len);
+    return copy;
+}
+
+void dictionary_init(Dictionary *dict) {
+    if (!dict) return;
+    dict->entries = NULL;
+    dict->count = 0;
+    dict->capacity = 0;
+}
+
+static int dictionary_reserve(Dictionary *dict, size_t needed) {
+    if (dict->capacity >= needed) return 0;
+    size_t new_capacity = dict->capacity ? dict->capacity * 2 : 8;
+    if (new_capacity < dict->capacity) return -1;
+    while (new_capacity < needed) {
+        if (new_capacity > (size_t)-1 / 2) {
+            new_capacity = needed;
+            break;
+        }
+        new_capacity *= 2;
+    }
+    if (new_capacity > (size_t)-1 / sizeof(*dict->entries)) return -1;
+    DictionaryEntry *new_entries = realloc(dict->entries, new_capacity * sizeof(*new_entries));
+    if (!new_entries) return -1;
+    dict->entries = new_entries;
+    dict->capacity = new_capacity;
+    return 0;
+}
+
+int dictionary_add(Dictionary *dict, const char *key, const char *value) {
+    if (!dict || !key || !value) return -1;
+    if (dict->count == (size_t)-1) return -1;
+    if (dictionary_reserve(dict, dict->count + 1) != 0) return -1;
+    char *key_copy = string_duplicate(key);
+    if (!key_copy) return -1;
+    char *value_copy = string_duplicate(value);
+    if (!value_copy) {
+        free(key_copy);
+        return -1;
+    }
+    dict->entries[dict->count].key = key_copy;
+    dict->entries[dict->count].value = value_copy;
+    dict->count++;
+    return 0;
+}
+
+void dictionary_free(Dictionary *dict) {
+    if (!dict) return;
+    for (size_t i = 0; i < dict->count; i++) {
+        free(dict->entries[i].key);
+        free(dict->entries[i].value);
+    }
+    free(dict->entries);
+    dict->entries = NULL;
+    dict->count = 0;
+    dict->capacity = 0;
+}
+
+void dictionary_drop_empty(Dictionary *dict) {
+    if (!dict || !dict->entries) return;
+    size_t write = 0;
+    for (size_t read = 0; read < dict->count; read++) {
+        char *key = dict->entries[read].key;
+        char *value = dict->entries[read].value;
+        if (value && value[0] != '\0') {
+            if (write != read) {
+                dict->entries[write].key = key;
+                dict->entries[write].value = value;
+                dict->entries[read].key = NULL;
+                dict->entries[read].value = NULL;
+            }
+            write++;
+        } else {
+            free(key);
+            free(value);
+            dict->entries[read].key = NULL;
+            dict->entries[read].value = NULL;
+        }
+    }
+    dict->count = write;
+}
+
+int main(void) {
+    Dictionary dict;
+    dictionary_init(&dict);
+    if (dictionary_add(&dict, "a", "apple") != 0) {
+        dictionary_free(&dict);
+        return 1;
+    }
+    if (dictionary_add(&dict, "b", "") != 0) {
+        dictionary_free(&dict);
+        return 1;
+    }
+    if (dictionary_add(&dict, "c", "cherry") != 0) {
+        dictionary_free(&dict);
+        return 1;
+    }
+    if (dictionary_add(&dict, "d", "") != 0) {
+        dictionary_free(&dict);
+        return 1;
+    }
+    dictionary_drop_empty(&dict);
+    for (size_t i = 0; i < dict.count; i++) {
+        printf("%s: %s\n", dict.entries[i].key, dict.entries[i].value);
+    }
+    dictionary_free(&dict);
+    return 0;
+}

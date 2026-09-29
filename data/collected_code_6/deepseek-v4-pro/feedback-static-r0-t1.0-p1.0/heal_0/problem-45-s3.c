@@ -1,0 +1,33 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int gcd(int a, int b) {
+    while (b != 0) {
+        int temp = b;
+        b = a % b;
+        a = temp;
+    }
+    return a;
+}
+
+int array_gcd(int arr[], int size) {
+    if (size <= 0) {
+        return 0;
+    }
+    int result = arr[0];
+    for (int i = 1; i < size; i++) {
+        result = gcd(result, arr[i]);
+        if (result == 1) {
+            return 1;
+        }
+    }
+    return result;
+}
+
+int main(void) {
+    int arr[] = {12, 18, 24, 36, 48};
+    int size = sizeof(arr) / sizeof(arr[0]);
+    int result = array_gcd(arr, size);
+    printf("%d\n", result);
+    return 0;
+}

@@ -1,0 +1,55 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+static int next_power_of_two(unsigned int n, unsigned int *result)
+{
+    unsigned int power = 1U;
+    unsigned int max_power = (UINT_MAX >> 1) + 1U;
+
+    if (result == NULL) {
+        return -1;
+    }
+
+    if (n == 0U) {
+        *result = 1U;
+        return 0;
+    }
+
+    if (n > max_power) {
+        return -1;
+    }
+
+    while (power < n) {
+        power <<= 1;
+    }
+
+    *result = power;
+    return 0;
+}
+
+int main(void)
+{
+    unsigned int inputs[] = { 0U, 1U, 5U, 17U, 64U, 100U, 1023U, 1024U };
+    size_t count = sizeof(inputs) / sizeof(inputs[0]);
+    size_t i;
+
+    for (i = 0U; i < count; i++) {
+        unsigned int result = 0U;
+
+        if (next_power_of_two(inputs[i], &result) != 0) {
+            if (fprintf(stderr, "Error: cannot compute power of 2 for %u\n",
+                        inputs[i]) < 0) {
+                return EXIT_FAILURE;
+            }
+            continue;
+        }
+
+        if (printf("Smallest power of 2 >= %u is %u\n",
+                   inputs[i], result) < 0) {
+            return EXIT_FAILURE;
+        }
+    }
+
+    return EXIT_SUCCESS;
+}

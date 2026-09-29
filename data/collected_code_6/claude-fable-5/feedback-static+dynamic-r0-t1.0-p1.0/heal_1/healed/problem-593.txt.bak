@@ -1,0 +1,97 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char *remove_leading_zeroes(const char *ip)
+{
+    char *result;
+    size_t len;
+    size_t i;
+    size_t j;
+
+    if (ip == NULL) {
+        return NULL;
+    }
+
+    len = strlen(ip);
+    result = malloc(len + 1U);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    i = 0;
+    j = 0;
+    while (i <= len) {
+        size_t start = i;
+        size_t end;
+        size_t k;
+
+        while ((i < len) && (ip[i] != '.')) {
+            i++;
+        }
+        end = i;
+
+        k = start;
+        while ((k < end - 1U) && (ip[k] == '0') && (end > start)) {
+            k++;
+        }
+        if (start == end) {
+            k = start;
+        }
+
+        while (k < end) {
+            result[j] = ip[k];
+            j++;
+            k++;
+        }
+
+        if (i < len) {
+            result[j] = '.';
+            j++;
+        }
+        i++;
+    }
+
+    result[j] = '\0';
+    return result;
+}
+
+int main(void)
+{
+    const char *tests[] = {
+        "192.168.001.010",
+        "010.000.000.001",
+        "255.255.255.255",
+        "001.002.003.004",
+        "0.0.0.0"
+    };
+    size_t count;
+    size_t idx;
+
+    count = sizeof(tests) / sizeof(tests[0]);
+
+    for (idx = 0; idx < count; idx++) {
+        char *cleaned = remove_leading_zeroes(tests[idx]);
+        if (cleaned == NULL) {
+            (void)fprintf(stderr, "Memory allocation failed\n");
+            return EXIT_FAILURE;
+        }
+        if (printf("%s -> %s\n", tests[idx], cleaned) < 0) {
+            free(cleaned);
+            return EXIT_FAILURE;
+        }
+        free(cleaned);
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+The changes made to address the identified weaknesses:
+
+1. **`start`, `end`, `k` in `remove_leading_zeroes`**: Moved from function scope into the `while (i <= len)` loop body, since they are only used within a single iteration. This limits their lifetime, makes the code easier to reason about, and prevents accidental reuse of stale values between iterations.
+
+2. **`cleaned` in `main`**: Moved into the `for` loop body, since each iteration allocates, uses, and frees it independently. Declaring it at the point of first use also allows immediate initialization, avoiding any window where it holds an indeterminate value.
+
+The program logic is otherwise unchanged: it strips leading zeroes from each dot-separated octet while preserving a single `'0'` for all-zero segments, and correctly handles allocation failures and `printf` errors in the caller.

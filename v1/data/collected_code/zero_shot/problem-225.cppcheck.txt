@@ -1,0 +1,30 @@
+collected_code/problem-225-0.c:6:12: error: Cannot determine that 'arr[low]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+    if (arr[low] <= arr[high]) {
+           ^
+collected_code/problem-225-0.c:6:24: error: Cannot determine that 'arr[high]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+    if (arr[low] <= arr[high]) {
+                       ^
+collected_code/problem-225-0.c:7:19: error: Cannot determine that 'arr[low]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        return arr[low];
+                  ^
+collected_code/problem-225-0.c:12:19: error: Cannot determine that 'arr[high]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        return arr[high];
+                  ^
+collected_code/problem-225-0.c:18:12: error: Cannot determine that 'arr[mid]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+    if (arr[mid] < arr[mid - 1] && arr[mid] < arr[mid + 1]) {
+           ^
+collected_code/problem-225-0.c:18:23: error: Cannot determine that 'arr[mid-1]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+    if (arr[mid] < arr[mid - 1] && arr[mid] < arr[mid + 1]) {
+                      ^
+collected_code/problem-225-0.c:18:50: error: Cannot determine that 'arr[mid+1]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+    if (arr[mid] < arr[mid - 1] && arr[mid] < arr[mid + 1]) {
+                                                 ^
+collected_code/problem-225-0.c:19:19: error: Cannot determine that 'arr[mid]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        return arr[mid];
+                  ^
+collected_code/problem-225-0.c:23:12: error: Cannot determine that 'arr[high]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+    if (arr[high] > arr[mid]) {
+           ^
+collected_code/problem-225-0.c:23:24: error: Cannot determine that 'arr[mid]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+    if (arr[high] > arr[mid]) {
+                       ^

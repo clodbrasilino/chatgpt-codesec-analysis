@@ -1,0 +1,73 @@
+{
+  "task_id": 149,
+  "text": "Write a C function to find the longest subsequence such that the difference between adjacents is one for the given array.",
+  "fn_candidates": [
+    "longest_subseq_with_diff_one",
+    "LongestSubseqWithDiffOne",
+    "longestSubseqWithDiffOne",
+    "longestsubseqwithdiffone"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "longest_subseq_with_diff_one",
+      "args": [
+        [
+          1,
+          2,
+          3,
+          4,
+          5,
+          3,
+          2
+        ],
+        7
+      ],
+      "expected": 6,
+      "assert_src": "assert longest_subseq_with_diff_one([1, 2, 3, 4, 5, 3, 2], 7) == 6"
+    },
+    {
+      "fn_name": "longest_subseq_with_diff_one",
+      "args": [
+        [
+          10,
+          9,
+          4,
+          5,
+          4,
+          8,
+          6
+        ],
+        7
+      ],
+      "expected": 3,
+      "assert_src": "assert longest_subseq_with_diff_one([10, 9, 4, 5, 4, 8, 6], 7) == 3"
+    },
+    {
+      "fn_name": "longest_subseq_with_diff_one",
+      "args": [
+        [
+          1,
+          2,
+          3,
+          2,
+          3,
+          7,
+          2,
+          1
+        ],
+        8
+      ],
+      "expected": 7,
+      "assert_src": "assert longest_subseq_with_diff_one([1, 2, 3, 2, 3, 7, 2, 1], 8) == 7"
+    }
+  ],
+  "arg_kinds": [
+    "int",
+    "int-list"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

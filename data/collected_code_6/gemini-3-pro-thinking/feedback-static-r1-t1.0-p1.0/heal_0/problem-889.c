@@ -1,0 +1,100 @@
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node* next;
+} Node;
+
+typedef struct ListList {
+    Node* head;
+    struct ListList* next;
+} ListList;
+
+Node* reverse_list(Node* head) {
+    Node* prev = NULL;
+    Node* current = head;
+    Node* next = NULL;
+
+    while (current != NULL) {
+        next = current->next;
+        current->next = prev;
+        prev = current;
+        current = next;
+    }
+
+    return prev;
+}
+
+void reverse_all_lists(ListList* list_of_lists) {
+    ListList* current = list_of_lists;
+
+    while (current != NULL) {
+        current->head = reverse_list(current->head);
+        current = current->next;
+    }
+}
+
+Node* create_node(int data) {
+    Node* new_node = (Node*)malloc(sizeof(Node));
+    if (new_node == NULL) {
+        exit(EXIT_FAILURE);
+    }
+
+    new_node->data = data;
+    new_node->next = NULL;
+
+    return new_node;
+}
+
+ListList* create_list_list(Node* head) {
+    ListList* new_list = (ListList*)malloc(sizeof(ListList));
+    if (new_list == NULL) {
+        exit(EXIT_FAILURE);
+    }
+
+    new_list->head = head;
+    new_list->next = NULL;
+
+    return new_list;
+}
+
+void free_list(Node* head) {
+    Node* current = head;
+    Node* next = NULL;
+
+    while (current != NULL) {
+        next = current->next;
+        free(current);
+        current = next;
+    }
+}
+
+void free_list_list(ListList* list_of_lists) {
+    ListList* current = list_of_lists;
+    ListList* next = NULL;
+
+    while (current != NULL) {
+        next = current->next;
+        free_list(current->head);
+        free(current);
+        current = next;
+    }
+}
+
+int main(void) {
+    Node* list1 = create_node(1);
+    list1->next = create_node(2);
+    list1->next->next = create_node(3);
+
+    Node* list2 = create_node(4);
+    list2->next = create_node(5);
+
+    ListList* lol = create_list_list(list1);
+    lol->next = create_list_list(list2);
+
+    reverse_all_lists(lol);
+
+    free_list_list(lol);
+
+    return EXIT_SUCCESS;
+}

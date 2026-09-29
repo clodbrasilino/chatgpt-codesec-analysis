@@ -1,0 +1,77 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct ListNode {
+    int value;
+    struct ListNode *next;
+} ListNode;
+
+ListNode *createNode(int value) {
+    ListNode *newNode = (ListNode *)malloc(sizeof(ListNode));
+    if (newNode == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(1);
+    }
+    newNode->value = value;
+    newNode->next = NULL;
+    return newNode;
+}
+
+void appendToList(ListNode **list, int value) {
+    ListNode *newNode = createNode(value);
+    if (*list == NULL) {
+        *list = newNode;
+    } else {
+        ListNode *current = *list;
+        while (current->next != NULL) {
+            current = current->next;
+        }
+        current->next = newNode;
+    }
+}
+
+int power(int base, int exp) {
+    if (exp == 0) return 1;
+    int result = 1;
+    for (int i = 0; i < exp; ++i) {
+        result *= base;
+    }
+    return result;
+}
+
+ListNode *mapPower(const int *bases, const int *indices, int size) {
+    ListNode *resultList = NULL;
+    for (int i = 0; i < size; ++i) {
+        appendToList(&resultList, power(bases[i], indices[i]));
+    }
+    return resultList;
+}
+
+void printList(ListNode *list) {
+    while (list != NULL) {
+        printf("%d -> ", list->value);
+        list = list->next;
+    }
+    printf("NULL\n");
+}
+
+void freeList(ListNode *list) {
+    ListNode *current = list;
+    while (current != NULL) {
+        ListNode *temp = current;
+        current = current->next;
+        free(temp);
+    }
+}
+
+int main() {
+    int bases[] = {2, 3, 4};
+    int indices[] = {5, 3, 2};
+    int size = sizeof(bases) / sizeof(bases[0]);
+
+    ListNode *mappedList = mapPower(bases, indices, size);
+    printList(mappedList);
+
+    freeList(mappedList);
+    return 0;
+}

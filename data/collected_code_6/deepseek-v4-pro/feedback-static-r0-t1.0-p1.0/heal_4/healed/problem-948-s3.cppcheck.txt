@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-948-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-948-s3.c:77:20: style: Condition 'null_tuple==NULL' is always true [knownConditionTrueFalse]
+    if (null_tuple == NULL) {
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-948-s3.c:66:39: note: Calling function 'tuple_get' returns 0
+    const void *null_tuple = tuple_get(NULL, 0);
+                                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-948-s3.c:66:39: note: Assignment 'null_tuple=tuple_get(NULL,0)', assigned value is 0
+    const void *null_tuple = tuple_get(NULL, 0);
+                                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-948-s3.c:77:20: note: Condition 'null_tuple==NULL' is always true
+    if (null_tuple == NULL) {
+                   ^

@@ -1,0 +1,38 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int compare(const void *a, const void *b) {
+    return (*(int*)a - *(int*)b);
+}
+
+void remove_duplicates(int *arr, int *size) {
+    if (*size < 2) {
+        return;
+    }
+    
+    qsort(arr, *size, sizeof(int), compare);
+    
+    int *new_end = arr + 1;
+    for (int i = 1; i < *size; ++i) {
+        if (arr[i] != arr[i - 1]) {
+            *new_end++ = arr[i];
+        }
+    }
+    
+    *size = new_end - arr;
+}
+
+int main() {
+    int arr[] = {5, 2, 3, 2, 2, 1, 1, 4, 5};
+    int size = sizeof(arr) / sizeof(arr[0]);
+    
+    remove_duplicates(arr, &size);
+    
+    for (int i = 0; i < size; ++i) {
+        printf("%d ", arr[i]);
+    }
+    
+    return 0;
+}
+```

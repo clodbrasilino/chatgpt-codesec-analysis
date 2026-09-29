@@ -1,0 +1,882 @@
+./collected_code_4/round2//heal_4/healed/problem-854.c: In function 'insert':
+./collected_code_4/round2//heal_4/healed/problem-854.c:26:31: warning: dereference of possibly-NULL 'array.arr' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   26 |     array->arr[array->used++] = element;
+      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~
+  'main': events 1-2
+    |
+    |   78 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |   79 |     Array array;
+    |   80 |     create(&array, 1);
+    |      |     ~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) calling 'create' from 'main'
+    |
+    +--> 'create': events 3-4
+           |
+           |   10 | void create(Array* array, size_t initialSize) {
+           |      |      ^~~~~~
+           |      |      |
+           |      |      (3) entry to 'create'
+           |   11 |     array->arr = (int*)malloc(initialSize * sizeof(int));
+           |      |                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                        |
+           |      |                        (4) this call could return NULL
+           |
+    <------+
+    |
+  'main': events 5-6
+    |
+    |   80 |     create(&array, 1);
+    |      |     ^~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (5) returning to 'main' from 'create'
+    |   81 | 
+    |   82 |     insert(&array, 10);
+    |      |     ~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (6) calling 'insert' from 'main'
+    |
+    +--> 'insert': events 7-10
+           |
+           |   16 | void insert(Array* array, int element) {
+           |      |      ^~~~~~
+           |      |      |
+           |      |      (7) entry to 'insert'
+           |   17 |     if (array->used == array->size) {
+           |      |        ~
+           |      |        |
+           |      |        (8) following 'false' branch...
+           |......
+           |   26 |     array->arr[array->used++] = element;
+           |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |          |                    |
+           |      |          (9) ...to here       (10) '*array.arr + *array.used * 4' could be NULL: unchecked value from (4)
+           |
+./collected_code_4/round2//heal_4/healed/problem-854.c:26:31: warning: heap-based buffer overflow [CWE-122] [-Wanalyzer-out-of-bounds]
+   26 |     array->arr[array->used++] = element;
+      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~
+  'main': events 1-2
+    |
+    |   78 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |   79 |     Array array;
+    |   80 |     create(&array, 1);
+    |      |     ~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) calling 'create' from 'main'
+    |
+    +--> 'create': events 3-4
+           |
+           |   10 | void create(Array* array, size_t initialSize) {
+           |      |      ^~~~~~
+           |      |      |
+           |      |      (3) entry to 'create'
+           |   11 |     array->arr = (int*)malloc(initialSize * sizeof(int));
+           |      |                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                        |
+           |      |                        (4) capacity: 4 bytes
+           |
+    <------+
+    |
+  'main': events 5-6
+    |
+    |   80 |     create(&array, 1);
+    |      |     ^~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (5) returning to 'main' from 'create'
+    |   81 | 
+    |   82 |     insert(&array, 10);
+    |      |     ~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (6) calling 'insert' from 'main'
+    |
+    +--> 'insert': events 7-9
+           |
+           |   16 | void insert(Array* array, int element) {
+           |      |      ^~~~~~
+           |      |      |
+           |      |      (7) entry to 'insert'
+           |   17 |     if (array->used == array->size) {
+           |      |        ~
+           |      |        |
+           |      |        (8) following 'false' branch...
+           |......
+           |   26 |     array->arr[array->used++] = element;
+           |      |     ~~~~~~~~~~
+           |      |          |
+           |      |          (9) ...to here
+           |
+    <------+
+    |
+  'main': events 10-11
+    |
+    |   82 |     insert(&array, 10);
+    |      |     ^~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (10) returning to 'main' from 'insert'
+    |   83 |     insert(&array, 15);
+    |      |     ~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (11) calling 'insert' from 'main'
+    |
+    +--> 'insert': events 12-17
+           |
+           |   16 | void insert(Array* array, int element) {
+           |      |      ^~~~~~
+           |      |      |
+           |      |      (12) entry to 'insert'
+           |   17 |     if (array->used == array->size) {
+           |      |        ~
+           |      |        |
+           |      |        (13) following 'true' branch...
+           |   18 |         array->size *= 2;
+           |      |         ~~~~~~~~~~~
+           |      |              |
+           |      |              (14) ...to here
+           |   19 |         int* temp_arr = realloc(array->arr, array->size * sizeof(int));
+           |      |                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                         |
+           |      |                         (15) when 'realloc' fails
+           |   20 |         if (temp_arr == NULL) {
+           |      |            ~
+           |      |            |
+           |      |            (16) following 'true' branch (when 'temp_arr' is NULL)...
+           |   21 |             array->used = 0;
+           |      |             ~~~~~~~~~~~~~~~
+           |      |                         |
+           |      |                         (17) ...to here
+           |
+    <------+
+    |
+  'main': events 18-19
+    |
+    |   83 |     insert(&array, 15);
+    |      |     ^~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (18) returning to 'main' from 'insert'
+    |   84 |     insert(&array, 30);
+    |      |     ~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (19) calling 'insert' from 'main'
+    |
+    +--> 'insert': events 20-22
+           |
+           |   16 | void insert(Array* array, int element) {
+           |      |      ^~~~~~
+           |      |      |
+           |      |      (20) entry to 'insert'
+           |   17 |     if (array->used == array->size) {
+           |      |        ~
+           |      |        |
+           |      |        (21) following 'false' branch...
+           |......
+           |   26 |     array->arr[array->used++] = element;
+           |      |     ~~~~~~~~~~
+           |      |          |
+           |      |          (22) ...to here
+           |
+    <------+
+    |
+  'main': events 23-24
+    |
+    |   84 |     insert(&array, 30);
+    |      |     ^~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (23) returning to 'main' from 'insert'
+    |   85 |     insert(&array, 40);
+    |      |     ~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (24) calling 'insert' from 'main'
+    |
+    +--> 'insert': events 25-28
+           |
+           |   16 | void insert(Array* array, int element) {
+           |      |      ^~~~~~
+           |      |      |
+           |      |      (25) entry to 'insert'
+           |   17 |     if (array->used == array->size) {
+           |      |        ~
+           |      |        |
+           |      |        (26) following 'false' branch...
+           |......
+           |   26 |     array->arr[array->used++] = element;
+           |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |          |                    |
+           |      |          (27) ...to here      (28) out-of-bounds write from byte 4 till byte 7 but region ends at byte 4
+           |
+./collected_code_4/round2//heal_4/healed/problem-854.c:26:31: note: write of 4 bytes to beyond the end of the region
+   26 |     array->arr[array->used++] = element;
+      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~
+./collected_code_4/round2//heal_4/healed/problem-854.c: In function 'swap':
+./collected_code_4/round2//heal_4/healed/problem-854.c:31:10: warning: heap-based buffer over-read [CWE-126] [-Wanalyzer-out-of-bounds]
+   31 |     *x = *y;
+      |          ^~
+  'main': events 1-2
+    |
+    |   78 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |   79 |     Array array;
+    |   80 |     create(&array, 1);
+    |      |     ~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) calling 'create' from 'main'
+    |
+    +--> 'create': events 3-4
+           |
+           |   10 | void create(Array* array, size_t initialSize) {
+           |      |      ^~~~~~
+           |      |      |
+           |      |      (3) entry to 'create'
+           |   11 |     array->arr = (int*)malloc(initialSize * sizeof(int));
+           |      |                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                        |
+           |      |                        (4) capacity: 4 bytes
+           |
+    <------+
+    |
+  'main': events 5-6
+    |
+    |   80 |     create(&array, 1);
+    |      |     ^~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (5) returning to 'main' from 'create'
+    |   81 | 
+    |   82 |     insert(&array, 10);
+    |      |     ~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (6) calling 'insert' from 'main'
+    |
+    +--> 'insert': events 7-9
+           |
+           |   16 | void insert(Array* array, int element) {
+           |      |      ^~~~~~
+           |      |      |
+           |      |      (7) entry to 'insert'
+           |   17 |     if (array->used == array->size) {
+           |      |        ~
+           |      |        |
+           |      |        (8) following 'false' branch...
+           |......
+           |   26 |     array->arr[array->used++] = element;
+           |      |     ~~~~~~~~~~
+           |      |          |
+           |      |          (9) ...to here
+           |
+    <------+
+    |
+  'main': events 10-11
+    |
+    |   82 |     insert(&array, 10);
+    |      |     ^~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (10) returning to 'main' from 'insert'
+    |   83 |     insert(&array, 15);
+    |      |     ~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (11) calling 'insert' from 'main'
+    |
+    +--> 'insert': events 12-17
+           |
+           |   16 | void insert(Array* array, int element) {
+           |      |      ^~~~~~
+           |      |      |
+           |      |      (12) entry to 'insert'
+           |   17 |     if (array->used == array->size) {
+           |      |        ~
+           |      |        |
+           |      |        (13) following 'true' branch...
+           |   18 |         array->size *= 2;
+           |      |         ~~~~~~~~~~~
+           |      |              |
+           |      |              (14) ...to here
+           |   19 |         int* temp_arr = realloc(array->arr, array->size * sizeof(int));
+           |      |                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                         |
+           |      |                         (15) when 'realloc' fails
+           |   20 |         if (temp_arr == NULL) {
+           |      |            ~
+           |      |            |
+           |      |            (16) following 'true' branch (when 'temp_arr' is NULL)...
+           |   21 |             array->used = 0;
+           |      |             ~~~~~~~~~~~~~~~
+           |      |                         |
+           |      |                         (17) ...to here
+           |
+    <------+
+    |
+  'main': events 18-19
+    |
+    |   83 |     insert(&array, 15);
+    |      |     ^~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (18) returning to 'main' from 'insert'
+    |   84 |     insert(&array, 30);
+    |      |     ~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (19) calling 'insert' from 'main'
+    |
+    +--> 'insert': events 20-22
+           |
+           |   16 | void insert(Array* array, int element) {
+           |      |      ^~~~~~
+           |      |      |
+           |      |      (20) entry to 'insert'
+           |   17 |     if (array->used == array->size) {
+           |      |        ~
+           |      |        |
+           |      |        (21) following 'false' branch...
+           |......
+           |   26 |     array->arr[array->used++] = element;
+           |      |     ~~~~~~~~~~
+           |      |          |
+           |      |          (22) ...to here
+           |
+    <------+
+    |
+  'main': events 23-24
+    |
+    |   84 |     insert(&array, 30);
+    |      |     ^~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (23) returning to 'main' from 'insert'
+    |   85 |     insert(&array, 40);
+    |      |     ~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (24) calling 'insert' from 'main'
+    |
+    +--> 'insert': events 25-27
+           |
+           |   16 | void insert(Array* array, int element) {
+           |      |      ^~~~~~
+           |      |      |
+           |      |      (25) entry to 'insert'
+           |   17 |     if (array->used == array->size) {
+           |      |        ~
+           |      |        |
+           |      |        (26) following 'false' branch...
+           |......
+           |   26 |     array->arr[array->used++] = element;
+           |      |     ~~~~~~~~~~
+           |      |          |
+           |      |          (27) ...to here
+           |
+    <------+
+    |
+  'main': events 28-29
+    |
+    |   85 |     insert(&array, 40);
+    |      |     ^~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (28) returning to 'main' from 'insert'
+    |   86 | 
+    |   87 |     heapSort(&array);
+    |      |     ~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (29) calling 'heapSort' from 'main'
+    |
+    +--> 'heapSort': events 30-33
+           |
+           |   52 | void heapSort(Array* array) {
+           |      |      ^~~~~~~~
+           |      |      |
+           |      |      (30) entry to 'heapSort'
+           |......
+           |   55 |     for (int i = n / 2 - 1; i >= 0; i--)
+           |      |                             ~~~~~~
+           |      |                               |
+           |      |                               (31) following 'true' branch (when 'i >= 0')...
+           |   56 |         heapify(array, n, i);
+           |      |         ~~~~~~~~~~~~~~~~~~~~
+           |      |         |
+           |      |         (32) ...to here
+           |      |         (33) calling 'heapify' from 'heapSort'
+           |
+           +--> 'heapify': events 34-41
+                  |
+                  |   35 | void heapify(Array* array, int n, int i) {
+                  |      |      ^~~~~~~
+                  |      |      |
+                  |      |      (34) entry to 'heapify'
+                  |......
+                  |   40 |     if (left < n && array->arr[left] > array->arr[largest])
+                  |      |        ~
+                  |      |        |
+                  |      |        (35) following 'true' branch...
+                  |   41 |         largest = left;
+                  |      |         ~~~~~~~~~~~~~~
+                  |      |                 |
+                  |      |                 (36) ...to here
+                  |   42 | 
+                  |   43 |     if (right < n && array->arr[right] > array->arr[largest])
+                  |      |        ~
+                  |      |        |
+                  |      |        (37) following 'false' branch (when 'right >= n')...
+                  |......
+                  |   46 |     if (largest != i) {
+                  |      |        ~
+                  |      |        |
+                  |      |        (38) ...to here
+                  |      |        (39) following 'true' branch (when 'largest != i')...
+                  |   47 |         swap(&array->arr[i], &array->arr[largest]);
+                  |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                  |      |         |                          |
+                  |      |         |                          (40) ...to here
+                  |      |         (41) calling 'swap' from 'heapify'
+                  |
+                  +--> 'swap': events 42-43
+                         |
+                         |   29 | void swap(int* x, int* y) {
+                         |      |      ^~~~
+                         |      |      |
+                         |      |      (42) entry to 'swap'
+                         |   30 |     int temp = *x;
+                         |   31 |     *x = *y;
+                         |      |          ~~
+                         |      |          |
+                         |      |          (43) out-of-bounds read from byte 4 till byte 7 but region ends at byte 4
+                         |
+./collected_code_4/round2//heal_4/healed/problem-854.c:31:10: note: read of 4 bytes from after the end of the region
+   31 |     *x = *y;
+      |          ^~
+./collected_code_4/round2//heal_4/healed/problem-854.c:32:8: warning: heap-based buffer overflow [CWE-122] [-Wanalyzer-out-of-bounds]
+   32 |     *y = temp;
+      |     ~~~^~~~~~
+  'main': events 1-2
+    |
+    |   78 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |   79 |     Array array;
+    |   80 |     create(&array, 1);
+    |      |     ~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) calling 'create' from 'main'
+    |
+    +--> 'create': events 3-4
+           |
+           |   10 | void create(Array* array, size_t initialSize) {
+           |      |      ^~~~~~
+           |      |      |
+           |      |      (3) entry to 'create'
+           |   11 |     array->arr = (int*)malloc(initialSize * sizeof(int));
+           |      |                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                        |
+           |      |                        (4) capacity: 4 bytes
+           |
+    <------+
+    |
+  'main': events 5-6
+    |
+    |   80 |     create(&array, 1);
+    |      |     ^~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (5) returning to 'main' from 'create'
+    |   81 | 
+    |   82 |     insert(&array, 10);
+    |      |     ~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (6) calling 'insert' from 'main'
+    |
+    +--> 'insert': events 7-9
+           |
+           |   16 | void insert(Array* array, int element) {
+           |      |      ^~~~~~
+           |      |      |
+           |      |      (7) entry to 'insert'
+           |   17 |     if (array->used == array->size) {
+           |      |        ~
+           |      |        |
+           |      |        (8) following 'false' branch...
+           |......
+           |   26 |     array->arr[array->used++] = element;
+           |      |     ~~~~~~~~~~
+           |      |          |
+           |      |          (9) ...to here
+           |
+    <------+
+    |
+  'main': events 10-11
+    |
+    |   82 |     insert(&array, 10);
+    |      |     ^~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (10) returning to 'main' from 'insert'
+    |   83 |     insert(&array, 15);
+    |      |     ~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (11) calling 'insert' from 'main'
+    |
+    +--> 'insert': events 12-17
+           |
+           |   16 | void insert(Array* array, int element) {
+           |      |      ^~~~~~
+           |      |      |
+           |      |      (12) entry to 'insert'
+           |   17 |     if (array->used == array->size) {
+           |      |        ~
+           |      |        |
+           |      |        (13) following 'true' branch...
+           |   18 |         array->size *= 2;
+           |      |         ~~~~~~~~~~~
+           |      |              |
+           |      |              (14) ...to here
+           |   19 |         int* temp_arr = realloc(array->arr, array->size * sizeof(int));
+           |      |                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                         |
+           |      |                         (15) when 'realloc' fails
+           |   20 |         if (temp_arr == NULL) {
+           |      |            ~
+           |      |            |
+           |      |            (16) following 'true' branch (when 'temp_arr' is NULL)...
+           |   21 |             array->used = 0;
+           |      |             ~~~~~~~~~~~~~~~
+           |      |                         |
+           |      |                         (17) ...to here
+           |
+    <------+
+    |
+  'main': events 18-19
+    |
+    |   83 |     insert(&array, 15);
+    |      |     ^~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (18) returning to 'main' from 'insert'
+    |   84 |     insert(&array, 30);
+    |      |     ~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (19) calling 'insert' from 'main'
+    |
+    +--> 'insert': events 20-22
+           |
+           |   16 | void insert(Array* array, int element) {
+           |      |      ^~~~~~
+           |      |      |
+           |      |      (20) entry to 'insert'
+           |   17 |     if (array->used == array->size) {
+           |      |        ~
+           |      |        |
+           |      |        (21) following 'false' branch...
+           |......
+           |   26 |     array->arr[array->used++] = element;
+           |      |     ~~~~~~~~~~
+           |      |          |
+           |      |          (22) ...to here
+           |
+    <------+
+    |
+  'main': events 23-24
+    |
+    |   84 |     insert(&array, 30);
+    |      |     ^~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (23) returning to 'main' from 'insert'
+    |   85 |     insert(&array, 40);
+    |      |     ~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (24) calling 'insert' from 'main'
+    |
+    +--> 'insert': events 25-27
+           |
+           |   16 | void insert(Array* array, int element) {
+           |      |      ^~~~~~
+           |      |      |
+           |      |      (25) entry to 'insert'
+           |   17 |     if (array->used == array->size) {
+           |      |        ~
+           |      |        |
+           |      |        (26) following 'false' branch...
+           |......
+           |   26 |     array->arr[array->used++] = element;
+           |      |     ~~~~~~~~~~
+           |      |          |
+           |      |          (27) ...to here
+           |
+    <------+
+    |
+  'main': events 28-29
+    |
+    |   85 |     insert(&array, 40);
+    |      |     ^~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (28) returning to 'main' from 'insert'
+    |   86 | 
+    |   87 |     heapSort(&array);
+    |      |     ~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (29) calling 'heapSort' from 'main'
+    |
+    +--> 'heapSort': events 30-33
+           |
+           |   52 | void heapSort(Array* array) {
+           |      |      ^~~~~~~~
+           |      |      |
+           |      |      (30) entry to 'heapSort'
+           |......
+           |   55 |     for (int i = n / 2 - 1; i >= 0; i--)
+           |      |                             ~~~~~~
+           |      |                               |
+           |      |                               (31) following 'true' branch (when 'i >= 0')...
+           |   56 |         heapify(array, n, i);
+           |      |         ~~~~~~~~~~~~~~~~~~~~
+           |      |         |
+           |      |         (32) ...to here
+           |      |         (33) calling 'heapify' from 'heapSort'
+           |
+           +--> 'heapify': events 34-41
+                  |
+                  |   35 | void heapify(Array* array, int n, int i) {
+                  |      |      ^~~~~~~
+                  |      |      |
+                  |      |      (34) entry to 'heapify'
+                  |......
+                  |   40 |     if (left < n && array->arr[left] > array->arr[largest])
+                  |      |        ~
+                  |      |        |
+                  |      |        (35) following 'true' branch...
+                  |   41 |         largest = left;
+                  |      |         ~~~~~~~~~~~~~~
+                  |      |                 |
+                  |      |                 (36) ...to here
+                  |   42 | 
+                  |   43 |     if (right < n && array->arr[right] > array->arr[largest])
+                  |      |        ~
+                  |      |        |
+                  |      |        (37) following 'false' branch (when 'right >= n')...
+                  |......
+                  |   46 |     if (largest != i) {
+                  |      |        ~
+                  |      |        |
+                  |      |        (38) ...to here
+                  |      |        (39) following 'true' branch (when 'largest != i')...
+                  |   47 |         swap(&array->arr[i], &array->arr[largest]);
+                  |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                  |      |         |                          |
+                  |      |         |                          (40) ...to here
+                  |      |         (41) calling 'swap' from 'heapify'
+                  |
+                  +--> 'swap': events 42-43
+                         |
+                         |   29 | void swap(int* x, int* y) {
+                         |      |      ^~~~
+                         |      |      |
+                         |      |      (42) entry to 'swap'
+                         |......
+                         |   32 |     *y = temp;
+                         |      |     ~~~~~~~~~
+                         |      |        |
+                         |      |        (43) out-of-bounds write from byte 4 till byte 7 but region ends at byte 4
+                         |
+./collected_code_4/round2//heal_4/healed/problem-854.c:32:8: note: write of 4 bytes to beyond the end of the region
+   32 |     *y = temp;
+      |     ~~~^~~~~~
+./collected_code_4/round2//heal_4/healed/problem-854.c: In function 'heapify':
+./collected_code_4/round2//heal_4/healed/problem-854.c:40:31: warning: heap-based buffer over-read [CWE-126] [-Wanalyzer-out-of-bounds]
+   40 |     if (left < n && array->arr[left] > array->arr[largest])
+      |                     ~~~~~~~~~~^~~~~~
+  'main': events 1-2
+    |
+    |   78 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |   79 |     Array array;
+    |   80 |     create(&array, 1);
+    |      |     ~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) calling 'create' from 'main'
+    |
+    +--> 'create': events 3-4
+           |
+           |   10 | void create(Array* array, size_t initialSize) {
+           |      |      ^~~~~~
+           |      |      |
+           |      |      (3) entry to 'create'
+           |   11 |     array->arr = (int*)malloc(initialSize * sizeof(int));
+           |      |                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                        |
+           |      |                        (4) capacity: 4 bytes
+           |
+    <------+
+    |
+  'main': events 5-6
+    |
+    |   80 |     create(&array, 1);
+    |      |     ^~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (5) returning to 'main' from 'create'
+    |   81 | 
+    |   82 |     insert(&array, 10);
+    |      |     ~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (6) calling 'insert' from 'main'
+    |
+    +--> 'insert': events 7-9
+           |
+           |   16 | void insert(Array* array, int element) {
+           |      |      ^~~~~~
+           |      |      |
+           |      |      (7) entry to 'insert'
+           |   17 |     if (array->used == array->size) {
+           |      |        ~
+           |      |        |
+           |      |        (8) following 'false' branch...
+           |......
+           |   26 |     array->arr[array->used++] = element;
+           |      |     ~~~~~~~~~~
+           |      |          |
+           |      |          (9) ...to here
+           |
+    <------+
+    |
+  'main': events 10-11
+    |
+    |   82 |     insert(&array, 10);
+    |      |     ^~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (10) returning to 'main' from 'insert'
+    |   83 |     insert(&array, 15);
+    |      |     ~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (11) calling 'insert' from 'main'
+    |
+    +--> 'insert': events 12-17
+           |
+           |   16 | void insert(Array* array, int element) {
+           |      |      ^~~~~~
+           |      |      |
+           |      |      (12) entry to 'insert'
+           |   17 |     if (array->used == array->size) {
+           |      |        ~
+           |      |        |
+           |      |        (13) following 'true' branch...
+           |   18 |         array->size *= 2;
+           |      |         ~~~~~~~~~~~
+           |      |              |
+           |      |              (14) ...to here
+           |   19 |         int* temp_arr = realloc(array->arr, array->size * sizeof(int));
+           |      |                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                         |
+           |      |                         (15) when 'realloc' fails
+           |   20 |         if (temp_arr == NULL) {
+           |      |            ~
+           |      |            |
+           |      |            (16) following 'true' branch (when 'temp_arr' is NULL)...
+           |   21 |             array->used = 0;
+           |      |             ~~~~~~~~~~~~~~~
+           |      |                         |
+           |      |                         (17) ...to here
+           |
+    <------+
+    |
+  'main': events 18-19
+    |
+    |   83 |     insert(&array, 15);
+    |      |     ^~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (18) returning to 'main' from 'insert'
+    |   84 |     insert(&array, 30);
+    |      |     ~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (19) calling 'insert' from 'main'
+    |
+    +--> 'insert': events 20-22
+           |
+           |   16 | void insert(Array* array, int element) {
+           |      |      ^~~~~~
+           |      |      |
+           |      |      (20) entry to 'insert'
+           |   17 |     if (array->used == array->size) {
+           |      |        ~
+           |      |        |
+           |      |        (21) following 'false' branch...
+           |......
+           |   26 |     array->arr[array->used++] = element;
+           |      |     ~~~~~~~~~~
+           |      |          |
+           |      |          (22) ...to here
+           |
+    <------+
+    |
+  'main': events 23-24
+    |
+    |   84 |     insert(&array, 30);
+    |      |     ^~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (23) returning to 'main' from 'insert'
+    |   85 |     insert(&array, 40);
+    |      |     ~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (24) calling 'insert' from 'main'
+    |
+    +--> 'insert': events 25-27
+           |
+           |   16 | void insert(Array* array, int element) {
+           |      |      ^~~~~~
+           |      |      |
+           |      |      (25) entry to 'insert'
+           |   17 |     if (array->used == array->size) {
+           |      |        ~
+           |      |        |
+           |      |        (26) following 'false' branch...
+           |......
+           |   26 |     array->arr[array->used++] = element;
+           |      |     ~~~~~~~~~~
+           |      |          |
+           |      |          (27) ...to here
+           |
+    <------+
+    |
+  'main': events 28-29
+    |
+    |   85 |     insert(&array, 40);
+    |      |     ^~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (28) returning to 'main' from 'insert'
+    |   86 | 
+    |   87 |     heapSort(&array);
+    |      |     ~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (29) calling 'heapSort' from 'main'
+    |
+    +--> 'heapSort': events 30-33
+           |
+           |   52 | void heapSort(Array* array) {
+           |      |      ^~~~~~~~
+           |      |      |
+           |      |      (30) entry to 'heapSort'
+           |......
+           |   55 |     for (int i = n / 2 - 1; i >= 0; i--)
+           |      |                             ~~~~~~
+           |      |                               |
+           |      |                               (31) following 'true' branch (when 'i >= 0')...
+           |   56 |         heapify(array, n, i);
+           |      |         ~~~~~~~~~~~~~~~~~~~~
+           |      |         |
+           |      |         (32) ...to here
+           |      |         (33) calling 'heapify' from 'heapSort'
+           |
+           +--> 'heapify': events 34-37
+                  |
+                  |   35 | void heapify(Array* array, int n, int i) {
+                  |      |      ^~~~~~~
+                  |      |      |
+                  |      |      (34) entry to 'heapify'
+                  |......
+                  |   40 |     if (left < n && array->arr[left] > array->arr[largest])
+                  |      |        ~            ~~~~~~~~~~~~~~~~
+                  |      |        |                 |    |
+                  |      |        |                 |    (37) out-of-bounds read from byte 4 till byte 7 but region ends at byte 4
+                  |      |        |                 (36) ...to here
+                  |      |        (35) following 'true' branch (when 'left < n')...
+                  |
+./collected_code_4/round2//heal_4/healed/problem-854.c:40:31: note: read of 4 bytes from after the end of the region
+   40 |     if (left < n && array->arr[left] > array->arr[largest])
+      |                     ~~~~~~~~~~^~~~~~

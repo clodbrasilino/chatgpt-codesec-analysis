@@ -1,0 +1,42 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stddef.h>
+
+int compute_average(const int *numbers, size_t length, double *result)
+{
+    size_t i;
+    double sum = 0.0;
+
+    if (numbers == NULL || result == NULL || length == 0U) {
+        return -1;
+    }
+
+    for (i = 0U; i < length; i++) {
+        sum += (double)numbers[i];
+    }
+
+    *result = sum / (double)length;
+    return 0;
+}
+
+int main(void)
+{
+    int numbers[] = {10, 20, 30, 40, 50};
+    size_t length = sizeof(numbers) / sizeof(numbers[0]);
+    double average = 0.0;
+    int status;
+
+    status = compute_average(numbers, length, &average);
+    if (status != 0) {
+        fprintf(stderr, "Error: invalid input to compute_average\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Average: %f\n", average) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```

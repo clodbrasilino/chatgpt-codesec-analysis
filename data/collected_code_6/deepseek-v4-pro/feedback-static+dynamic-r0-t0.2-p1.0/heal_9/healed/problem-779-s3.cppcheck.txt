@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_9/healed/problem-779-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_9/healed/problem-779-s3.c:74:38: style: Condition 'node->data!=NULL' is always true [knownConditionTrueFalse]
+    if (alloc_size > 0 && node->data != NULL && data != NULL) {
+                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_9/healed/problem-779-s3.c:69:20: note: Assuming condition 'node->data==NULL' is false
+    if (node->data == NULL) {
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_9/healed/problem-779-s3.c:74:38: note: Condition 'node->data!=NULL' is always true
+    if (alloc_size > 0 && node->data != NULL && data != NULL) {
+                                     ^

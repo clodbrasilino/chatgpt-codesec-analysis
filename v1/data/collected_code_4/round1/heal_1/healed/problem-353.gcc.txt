@@ -1,0 +1,94 @@
+./collected_code_4/round1//heal_1/healed//problem-353.c: In function 'remove_column':
+./collected_code_4/round1//heal_1/healed//problem-353.c:14:23: warning: leak of '<unknown>' [CWE-401] [-Wanalyzer-malloc-leak]
+   14 |             matrix[i] = realloc(matrix[i], (colNum - 1) * sizeof(int));
+      |             ~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  'main': events 1-24
+    |
+    |   19 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   25 |     if(matrix == NULL){
+    |      |       ~
+    |      |       |
+    |      |       (2) following 'false' branch (when 'matrix' is non-NULL)...
+    |......
+    |   29 |     for (int i = 0; i < rowNum; i++) {
+    |      |              ~      ~~~~~~~~~~  ~~~
+    |      |              |        |          |
+    |      |              |        |          (21) ...to here
+    |      |              |        (4) following 'true' branch (when 'i < rowNum')...
+    |      |              |        (12) following 'true' branch (when 'i < rowNum')...
+    |      |              |        (18) following 'true' branch (when 'i < rowNum')...
+    |      |              |        (22) following 'false' branch (when 'i >= rowNum')...
+    |      |              (3) ...to here
+    |   30 |         matrix[i] = malloc(colNum * sizeof(int));
+    |      |                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                     |
+    |      |                     (5) ...to here
+    |      |                     (6) allocated here
+    |      |                     (13) ...to here
+    |      |                     (19) ...to here
+    |   31 |         if(matrix[i] != NULL){
+    |      |           ~
+    |      |           |
+    |      |           (7) assuming '<unknown>' is non-NULL
+    |      |           (8) following 'true' branch...
+    |      |           (14) following 'true' branch...
+    |      |           (20) following 'false' branch...
+    |   32 |             for (int j = 0; j < colNum; j++) {
+    |      |                      ~      ~~~~~~~~~~
+    |      |                      |        |
+    |      |                      |        (10) following 'true' branch (when 'j < colNum')...
+    |      |                      |        (16) following 'true' branch (when 'j < colNum')...
+    |      |                      (9) ...to here
+    |      |                      (15) ...to here
+    |   33 |                 matrix[i][j] = i * colNum + j;
+    |      |                                ~~~~~~~~~~
+    |      |                                  |
+    |      |                                  (11) ...to here
+    |      |                                  (17) ...to here
+    |......
+    |   38 |     remove_column(matrix, rowNum, colNum, toRemove);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (23) ...to here
+    |      |     (24) calling 'remove_column' from 'main'
+    |
+    +--> 'remove_column': events 25-35
+           |
+           |    4 | void remove_column(int** matrix, int rowNum, int colNum, int toRemove) {
+           |      |      ^~~~~~~~~~~~~
+           |      |      |
+           |      |      (25) entry to 'remove_column'
+           |    5 |     if(matrix == NULL){
+           |      |       ~
+           |      |       |
+           |      |       (26) following 'false' branch (when 'matrix' is non-NULL)...
+           |......
+           |    9 |     for (int i = 0; i < rowNum; i++) {
+           |      |              ~      ~~~~~~~~~~
+           |      |              |        |
+           |      |              |        (28) following 'true' branch (when 'i < rowNum')...
+           |      |              (27) ...to here
+           |   10 |         if(matrix[i] != NULL){
+           |      |           ~      ~
+           |      |           |      |
+           |      |           |      (29) ...to here
+           |      |           (30) following 'true' branch...
+           |   11 |             for (int j = toRemove; j < colNum - 1; j++) {
+           |      |                      ~             ~~~~~~~~~~~~~~
+           |      |                      |               |
+           |      |                      (31) ...to here (32) following 'true' branch...
+           |   12 |                 matrix[i][j] = matrix[i][j + 1];
+           |      |                                      ~
+           |      |                                      |
+           |      |                                      (33) ...to here
+           |   13 |             }
+           |   14 |             matrix[i] = realloc(matrix[i], (colNum - 1) * sizeof(int));
+           |      |             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                       | |
+           |      |                       | (34) when 'realloc' fails
+           |      |                       (35) '<unknown>' leaks here; was allocated at (6)
+           |

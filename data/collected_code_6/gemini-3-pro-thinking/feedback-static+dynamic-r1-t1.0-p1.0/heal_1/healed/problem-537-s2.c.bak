@@ -1,0 +1,92 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+char *find_first_repeated_word(const char *str) {
+    if (!str) {
+        char *none = malloc(5);
+        if (none) strcpy(none, "None");
+        return none;
+    }
+
+    size_t len = strlen(str);
+    if (len == 0) {
+        char *none = malloc(5);
+        if (none) strcpy(none, "None");
+        return none;
+    }
+
+    char **seen_words = malloc(sizeof(char *) * (len + 1));
+    if (!seen_words) {
+        char *none = malloc(5);
+        if (none) strcpy(none, "None");
+        return none;
+    }
+
+    size_t seen_count = 0;
+    char *result = NULL;
+    const char *ptr = str;
+
+    while (*ptr) {
+        while (*ptr && isspace((unsigned char)*ptr)) {
+            ptr++;
+        }
+        if (!*ptr) {
+            break;
+        }
+
+        const char *start = ptr;
+        while (*ptr && !isspace((unsigned char)*ptr)) {
+            ptr++;
+        }
+        size_t word_len = (size_t)(ptr - start);
+
+        char *current_word = malloc(word_len + 1);
+        if (!current_word) {
+            break;
+        }
+
+        memcpy(current_word, start, word_len);
+        current_word[word_len] = '\0';
+
+        int found = 0;
+        for (size_t i = 0; i < seen_count; i++) {
+            if (strcmp(seen_words[i], current_word) == 0) {
+                found = 1;
+                break;
+            }
+        }
+
+        if (found) {
+            result = current_word;
+            break;
+        } else {
+            seen_words[seen_count++] = current_word;
+        }
+    }
+
+    for (size_t i = 0; i < seen_count; i++) {
+        free(seen_words[i]);
+    }
+    free(seen_words);
+
+    if (!result) {
+        result = malloc(5);
+        if (result) strcpy(result, "None");
+    }
+
+    return result;
+}
+
+int main(void) {
+    const char *test_str = "this is a test and this is only a test";
+    char *repeated = find_first_repeated_word(test_str);
+
+    if (repeated) {
+        printf("%s\n", repeated);
+        free(repeated);
+    }
+
+    return 0;
+}

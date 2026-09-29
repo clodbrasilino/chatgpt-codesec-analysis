@@ -1,0 +1,50 @@
+{
+  "task_id": 609,
+  "text": "Write a C function to find minimum possible value for the given periodic function.",
+  "fn_candidates": [
+    "floor_Min",
+    "FloorMin",
+    "floorMin",
+    "floorMin"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "floor_Min",
+      "args": [
+        10,
+        20,
+        30
+      ],
+      "expected": 15,
+      "assert_src": "assert floor_Min(10,20,30) == 15"
+    },
+    {
+      "fn_name": "floor_Min",
+      "args": [
+        1,
+        2,
+        1
+      ],
+      "expected": 0,
+      "assert_src": "assert floor_Min(1,2,1) == 0"
+    },
+    {
+      "fn_name": "floor_Min",
+      "args": [
+        11,
+        10,
+        9
+      ],
+      "expected": 9,
+      "assert_src": "assert floor_Min(11,10,9) == 9"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

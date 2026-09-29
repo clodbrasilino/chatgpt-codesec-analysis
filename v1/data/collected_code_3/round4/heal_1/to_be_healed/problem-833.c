@@ -1,0 +1,41 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    char **keys;
+    int size;
+} Dict;
+
+Dict* get_keys(char *dict[], int size) {
+    Dict *d = malloc(sizeof(Dict));
+    /* Possible weaknesses found:
+     *  dereference of possibly-NULL 'd' [CWE-690] [-Wanalyzer-possible-null-dereference]
+     */
+    d->keys = malloc(size * sizeof(char *));
+    d->size = size;
+
+    for(int i = 0; i < size; i++) {
+        /* Possible weaknesses found:
+         *  dereference of possibly-NULL '*d.keys + (long unsigned int)i * 8' [CWE-690] [-Wanalyzer-possible-null-dereference]
+         */
+        d->keys[i] = dict[i];
+    }
+
+    return d;
+}
+
+int main() {
+    char *dict[] = {"key1", "key2", "key3", "key4"};
+    int size = sizeof(dict) / sizeof(dict[0]);
+
+    Dict *d = get_keys(dict, size);
+
+    for(int i = 0; i < d->size; i++) {
+        printf("%s\n", d->keys[i]);
+    }
+
+    free(d->keys);
+    free(d);
+
+    return 0;
+}

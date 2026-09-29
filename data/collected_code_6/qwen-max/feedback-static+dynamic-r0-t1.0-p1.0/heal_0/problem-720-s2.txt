@@ -1,0 +1,119 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char *key;
+    char *value;
+} DictEntry;
+
+typedef struct {
+    DictEntry **entries;
+    int size, capacity;
+} Dictionary;
+
+Dictionary* createDictionary() {
+    Dictionary *dict = (Dictionary *)malloc(sizeof(Dictionary));
+    if (dict == NULL) return NULL;
+    dict->size = 0;
+    dict->capacity = 1;
+    dict->entries = (DictEntry **)malloc(dict->capacity * sizeof(DictEntry *));
+    if (dict->entries == NULL) {
+        free(dict);
+        return NULL;
+    }
+    return dict;
+}
+
+void destroyDictionary(Dictionary *dict) {
+    for (int i = 0; i < dict->size; i++) {
+        free(dict->entries[i]->key);
+        free(dict->entries[i]->value);
+        free(dict->entries[i]);
+    }
+    free(dict->entries);
+    free(dict);
+}
+
+int addEntry(Dictionary *dict, char *key, char *value) {
+    if (dict->size >= dict->capacity) {
+        dict->capacity *= 2;
+        dict->entries = (DictEntry **)realloc(dict->entries, dict->capacity * sizeof(DictEntry *));
+        if (dict->entries == NULL) return -1;
+    }
+    DictEntry *entry = (DictEntry *)malloc(sizeof(DictEntry));
+    if (entry == NULL) return -1;
+    entry->key = strdup(key);
+    if (entry->key == NULL) {
+        free(entry);
+        return -1;
+    }
+    entry->value = strdup(value);
+    if (entry->value == NULL) {
+        free(entry->key);
+        free(entry);
+        return -1;
+    }
+    dict->entries[dict->size++] = entry;
+    return 0;
+}
+
+typedef struct {
+    void **elements;
+    int size;
+} Tuple;
+
+Tuple* createTuple(int size) {
+    Tuple *tuple = (Tuple *)malloc(sizeof(Tuple));
+    if (tuple == NULL) return NULL;
+    tuple->size = size;
+    tuple->elements = (void **)malloc(size * sizeof(void *));
+    if (tuple->elements == NULL) {
+        free(tuple);
+        return NULL;
+    }
+    return tuple;
+}
+
+void destroyTuple(Tuple *tuple) {
+    for (int i = 0; i < tuple->size; i++) {
+        free(tuple->elements[i]);
+    }
+    free(tuple->elements);
+    free(tuple);
+}
+
+int addToTuple(Tuple *tuple, void *element) {
+    if (tuple->size <= 0) return -1;
+    for (int i = 0; i < tuple->size; i++) {
+        if (tuple->elements[i] == NULL) {
+            tuple->elements[i] = element;
+            return 0;
+        }
+    }
+    return -1;
+}
+
+int main() {
+    Dictionary *dict = createDictionary();
+    Tuple *tuple = createTuple(1);
+    
+    if (addEntry(dict, "key1", "value1") == 0) {
+        if (addToTuple(tuple, dict) == 0) {
+            // Success
+            destroyTuple(tuple);
+        } else {
+            destroyDictionary(dict);
+            destroyTuple(tuple);
+            return 1;
+        }
+    } else {
+        destroyDictionary(dict);
+        destroyTuple(tuple);
+        return 1;
+    }
+
+    return 0;
+}
+```

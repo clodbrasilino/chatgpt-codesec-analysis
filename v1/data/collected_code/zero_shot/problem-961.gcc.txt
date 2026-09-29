@@ -1,0 +1,16 @@
+collected_code/problem-961-0.c: In function 'romanToInt':
+collected_code/problem-961-0.c:4:18: warning: implicit declaration of function 'strlen' [-Wimplicit-function-declaration]
+    4 |     int length = strlen(s);
+      |                  ^~~~~~
+collected_code/problem-961-0.c:1:1: note: include '<string.h>' or provide a declaration of 'strlen'
+  +++ |+#include <string.h>
+    1 | int romanToInt(char *s) {
+collected_code/problem-961-0.c:4:18: warning: incompatible implicit declaration of built-in function 'strlen' [-Wbuiltin-declaration-mismatch]
+    4 |     int length = strlen(s);
+      |                  ^~~~~~
+collected_code/problem-961-0.c:4:18: note: include '<string.h>' or provide a declaration of 'strlen'
+Undefined symbols for architecture x86_64:
+  "_main", referenced from:
+     implicit entry/start for main executable
+ld: symbol(s) not found for architecture x86_64
+collect2: error: ld returned 1 exit status

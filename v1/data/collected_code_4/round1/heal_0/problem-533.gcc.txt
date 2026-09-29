@@ -1,0 +1,141 @@
+./collected_code_4/round1//heal_0//problem-533.c: In function 'initializeTuple':
+./collected_code_4/round1//heal_0//problem-533.c:16:26: warning: dereference of possibly-NULL '*tuple.intElement' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   16 |     *(tuple->intElement) = intValue;
+      |     ~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~
+  'initializeTuple': events 1-2
+    |
+    |   13 |     tuple->intElement = (int *)malloc(sizeof(int));
+    |      |                                ^~~~~~~~~~~~~~~~~~~
+    |      |                                |
+    |      |                                (1) this call could return NULL
+    |......
+    |   16 |     *(tuple->intElement) = intValue;
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                          |
+    |      |                          (2) '*tuple.intElement' could be NULL: unchecked value from (1)
+    |
+./collected_code_4/round1//heal_0//problem-533.c:16:26: warning: dereference of possibly-NULL 'myTuple.intElement' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   16 |     *(tuple->intElement) = intValue;
+      |     ~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~
+  'main': events 1-2
+    |
+    |   55 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |   56 |     Tuple myTuple;
+    |   57 |     initializeTuple(&myTuple, 5, 7.3, 'a');
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) calling 'initializeTuple' from 'main'
+    |
+    +--> 'initializeTuple': events 3-5
+           |
+           |   12 | void initializeTuple(Tuple *tuple, int intValue, float floatValue, char charValue) {
+           |      |      ^~~~~~~~~~~~~~~
+           |      |      |
+           |      |      (3) entry to 'initializeTuple'
+           |   13 |     tuple->intElement = (int *)malloc(sizeof(int));
+           |      |                                ~~~~~~~~~~~~~~~~~~~
+           |      |                                |
+           |      |                                (4) this call could return NULL
+           |......
+           |   16 |     *(tuple->intElement) = intValue;
+           |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                          |
+           |      |                          (5) '*tuple.intElement' could be NULL: unchecked value from (4)
+           |
+./collected_code_4/round1//heal_0//problem-533.c:17:28: warning: dereference of possibly-NULL '*tuple.floatElement' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   17 |     *(tuple->floatElement) = floatValue;
+      |     ~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~
+  'initializeTuple': events 1-2
+    |
+    |   14 |     tuple->floatElement = (float *)malloc(sizeof(float));
+    |      |                                    ^~~~~~~~~~~~~~~~~~~~~
+    |      |                                    |
+    |      |                                    (1) this call could return NULL
+    |......
+    |   17 |     *(tuple->floatElement) = floatValue;
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                            |
+    |      |                            (2) '*tuple.floatElement' could be NULL: unchecked value from (1)
+    |
+./collected_code_4/round1//heal_0//problem-533.c:17:28: warning: dereference of possibly-NULL 'myTuple.floatElement' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   17 |     *(tuple->floatElement) = floatValue;
+      |     ~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~
+  'main': events 1-2
+    |
+    |   55 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |   56 |     Tuple myTuple;
+    |   57 |     initializeTuple(&myTuple, 5, 7.3, 'a');
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) calling 'initializeTuple' from 'main'
+    |
+    +--> 'initializeTuple': events 3-5
+           |
+           |   12 | void initializeTuple(Tuple *tuple, int intValue, float floatValue, char charValue) {
+           |      |      ^~~~~~~~~~~~~~~
+           |      |      |
+           |      |      (3) entry to 'initializeTuple'
+           |   13 |     tuple->intElement = (int *)malloc(sizeof(int));
+           |   14 |     tuple->floatElement = (float *)malloc(sizeof(float));
+           |      |                                    ~~~~~~~~~~~~~~~~~~~~~
+           |      |                                    |
+           |      |                                    (4) this call could return NULL
+           |......
+           |   17 |     *(tuple->floatElement) = floatValue;
+           |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                            |
+           |      |                            (5) '*tuple.floatElement' could be NULL: unchecked value from (4)
+           |
+./collected_code_4/round1//heal_0//problem-533.c:18:27: warning: dereference of possibly-NULL '*tuple.charElement' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   18 |     *(tuple->charElement) = charValue;
+      |     ~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~
+  'initializeTuple': events 1-2
+    |
+    |   15 |     tuple->charElement = (char *)malloc(sizeof(char));
+    |      |                                  ^~~~~~~~~~~~~~~~~~~~
+    |      |                                  |
+    |      |                                  (1) this call could return NULL
+    |......
+    |   18 |     *(tuple->charElement) = charValue;
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                           |
+    |      |                           (2) '*tuple.charElement' could be NULL: unchecked value from (1)
+    |
+./collected_code_4/round1//heal_0//problem-533.c:18:27: warning: dereference of possibly-NULL 'myTuple.charElement' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   18 |     *(tuple->charElement) = charValue;
+      |     ~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~
+  'main': events 1-2
+    |
+    |   55 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |   56 |     Tuple myTuple;
+    |   57 |     initializeTuple(&myTuple, 5, 7.3, 'a');
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) calling 'initializeTuple' from 'main'
+    |
+    +--> 'initializeTuple': events 3-5
+           |
+           |   12 | void initializeTuple(Tuple *tuple, int intValue, float floatValue, char charValue) {
+           |      |      ^~~~~~~~~~~~~~~
+           |      |      |
+           |      |      (3) entry to 'initializeTuple'
+           |......
+           |   15 |     tuple->charElement = (char *)malloc(sizeof(char));
+           |      |                                  ~~~~~~~~~~~~~~~~~~~~
+           |      |                                  |
+           |      |                                  (4) this call could return NULL
+           |......
+           |   18 |     *(tuple->charElement) = charValue;
+           |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                           |
+           |      |                           (5) '*tuple.charElement' could be NULL: unchecked value from (4)
+           |

@@ -1,0 +1,9 @@
+collected_code/problem-357-0.c:4:27: error: Cannot determine that 'tupleRecords[0]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+    int max = tupleRecords[0];
+                          ^
+collected_code/problem-357-0.c:6:25: error: Cannot determine that 'tupleRecords[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        if (tupleRecords[i] > max) {
+                        ^
+collected_code/problem-357-0.c:7:31: error: Cannot determine that 'tupleRecords[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+            max = tupleRecords[i];
+                              ^

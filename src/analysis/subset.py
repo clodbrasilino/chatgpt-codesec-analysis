@@ -65,13 +65,13 @@ def compute_scores() -> dict[int, dict]:
     components: dict[int, dict] = {}
 
     # 1) GCC reports in collected_code_3, rounds 1-4, first generation (heal_0)
-    for round_dir in (REPO_ROOT / "collected_code_3").glob("round*"):
+    for round_dir in (REPO_ROOT / "v1" / "data" / "collected_code_3").glob("round*"):
         heal0 = round_dir / "heal_0"
         if heal0.is_dir():
             gen_counts += _count_findings_in_reports(list(heal0.glob("problem-*.gcc.txt")))
 
     # 2) clang reports in collected_code_5 (round1/heal_0)
-    for heal0 in (REPO_ROOT / "collected_code_5").glob("round*/heal_0"):
+    for heal0 in (REPO_ROOT / "v1" / "data" / "collected_code_5").glob("round*/heal_0"):
         gen_counts += _count_findings_in_reports(list(heal0.glob("problem-*.clang.txt")))
 
     # 3) k-mean-clustring aggregated CWE frequencies (distinct cwe,tool per problem)
@@ -85,7 +85,7 @@ def compute_scores() -> dict[int, dict]:
     # 4) repair difficulty: max heal depth across round series
     all_ids = set(gen_counts.keys()) | set(cwe_multiplicity.keys())
     max_depth: Counter[int] = Counter()
-    for round_dir in (REPO_ROOT / "collected_code_3").glob("round*"):
+    for round_dir in (REPO_ROOT / "v1" / "data" / "collected_code_3").glob("round*"):
         max_depth += _max_heal_depth(round_dir, all_ids)
 
     for pid in sorted(all_ids):

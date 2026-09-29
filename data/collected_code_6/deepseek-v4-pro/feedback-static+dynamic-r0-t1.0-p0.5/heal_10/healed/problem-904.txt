@@ -1,0 +1,45 @@
+```c
+#include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+#include <unistd.h>
+#include <fcntl.h>
+#include <errno.h>
+#include <sys/stat.h>
+
+bool is_even(int number) {
+    return number % 2 == 0;
+}
+
+int main(void) {
+    int test_number;
+    unsigned int seed;
+    int fd;
+    struct stat st;
+    
+    fd = open("/dev/urandom", O_RDONLY);
+    if (fd == -1) {
+        seed = (unsigned int)time(NULL) ^ (unsigned int)getpid();
+    } else {
+        if (fstat(fd, &st) == 0 && S_ISCHR(st.st_mode)) {
+            if (read(fd, &seed, sizeof(seed)) != sizeof(seed)) {
+                seed = (unsigned int)time(NULL) ^ (unsigned int)getpid();
+            }
+        } else {
+            seed = (unsigned int)time(NULL) ^ (unsigned int)getpid();
+        }
+        close(fd);
+    }
+    
+    test_number = (int)(seed % 2001) - 1000;
+    
+    if (is_even(test_number)) {
+        printf("%d is even\n", test_number);
+        return 0;
+    } else {
+        printf("%d is odd\n", test_number);
+        return 1;
+    }
+}
+```

@@ -1,0 +1,54 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int maxProduct(const int *nums, int numsSize) {
+    if (numsSize == 0) {
+        return 0;
+    }
+
+    int max_product = nums[0];
+    int min_product = nums[0];
+    int result = nums[0];
+
+    for (int i = 1; i < numsSize; i++) {
+        if (nums[i] < 0) {
+            int temp = max_product;
+            max_product = min_product;
+            min_product = temp;
+        }
+
+        int current = nums[i];
+        int new_max = max_product * current;
+        int new_min = min_product * current;
+
+        max_product = (new_max > current) ? new_max : current;
+        min_product = (new_min < current) ? new_min : current;
+
+        if (max_product > result) {
+            result = max_product;
+        }
+    }
+
+    return result;
+}
+
+int main(void) {
+    int test_cases[][5] = {
+        {2, 3, -2, 4},
+        {-2, 0, -1},
+        {-2, 3, -4},
+        {0, 2},
+        {2, -5, -2, -4, 3}
+    };
+    int test_sizes[] = {4, 3, 3, 2, 5};
+    int num_tests = sizeof(test_sizes) / sizeof(test_sizes[0]);
+
+    for (int i = 0; i < num_tests; i++) {
+        int result = maxProduct(test_cases[i], test_sizes[i]);
+        printf("%d\n", result);
+    }
+
+    return 0;
+}
+```

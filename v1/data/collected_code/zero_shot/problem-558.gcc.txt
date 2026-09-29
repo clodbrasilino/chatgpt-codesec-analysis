@@ -1,0 +1,8 @@
+collected_code/problem-558-0.c: In function 'digit_distance':
+collected_code/problem-558-0.c:10:21: warning: implicit declaration of function 'abs' [-Wimplicit-function-declaration]
+   10 |         distance += abs(digit1 - digit2);
+      |                     ^~~
+collected_code/problem-558-0.c:2:1: note: include '<stdlib.h>' or provide a declaration of 'abs'
+    1 | #include <stdio.h>
+  +++ |+#include <stdlib.h>
+    2 | 

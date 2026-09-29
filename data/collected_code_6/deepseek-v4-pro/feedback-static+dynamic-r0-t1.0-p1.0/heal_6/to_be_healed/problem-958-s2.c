@@ -1,0 +1,75 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+ /* Possible weaknesses found:
+  *  test case 2 failed: expected 'IV', got <no output>
+  *  test case 0 failed: expected 'I', got <no output>
+  *  test case 1 failed: expected 'L', got <no output>
+  */
+
+char *int_to_roman(int num) {
+    if (num <= 0 || num > 3999) {
+        return NULL;
+    }
+
+    const int values[] = {1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1};
+    const char *symbols[] = {"M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I"};
+    const int symbols_len[] = {1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1};
+
+    char *result = malloc(16 * sizeof(char));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    result[0] = '\0';
+    int remaining = num;
+    size_t pos = 0;
+    int i = 0;
+
+    while (remaining > 0) {
+        while (remaining >= values[i]) {
+            size_t sym_len = symbols_len[i];
+            /* Possible weaknesses found:
+             *  Assuming that condition 'pos+sym_len>=15' is not redundant
+             */
+            if (pos + sym_len >= 15) {
+                free(result);
+                return NULL;
+            }
+            /* Possible weaknesses found:
+             *  Condition 'pos+sym_len<16' is always true
+             *  Condition 'pos+sym_len<16' is always true [knownConditionTrueFalse]
+             */
+            if (pos + sym_len < 16) {
+                /* Possible weaknesses found:
+                 * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+                 */
+                memcpy(result + pos, symbols[i], sym_len);
+            }
+            pos += sym_len;
+            result[pos] = '\0';
+            remaining -= values[i];
+        }
+        i++;
+    }
+
+    return result;
+}
+
+int main(void) {
+    int test_values[] = {1, 3, 4, 9, 40, 90, 400, 900, 1994, 2023, 3999, 0, -5, 4000};
+    int num_tests = sizeof(test_values) / sizeof(test_values[0]);
+
+    for (int i = 0; i < num_tests; i++) {
+        printf("%d -> ", test_values[i]);
+        char *roman = int_to_roman(test_values[i]);
+        if (roman != NULL) {
+            printf("%s\n", roman);
+            free(roman);
+        } else {
+            printf("Invalid input (must be 1-3999)\n");
+        }
+    }
+
+    return 0;
+}

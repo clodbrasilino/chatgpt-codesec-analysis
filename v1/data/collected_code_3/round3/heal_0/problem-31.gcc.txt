@@ -1,0 +1,777 @@
+collected_code_3/problem-31-3.c: In function 'createHeap':
+collected_code_3/problem-31-3.c:17:16: warning: dereference of possibly-NULL 'heap' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   17 |     heap->data = (NumFreq*)malloc(capacity * sizeof(NumFreq));
+      |     ~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  'topKFrequent': events 1-4
+    |
+    |   69 | void topKFrequent(int* nums, int numsSize, int k) {
+    |      |      ^~~~~~~~~~~~
+    |      |      |
+    |      |      (1) entry to 'topKFrequent'
+    |   70 |     int* freq = (int*)calloc(numsSize, sizeof(int));
+    |   71 |     for (int i = 0; i < numsSize; ++i)
+    |      |                     ~~~~~~~~~~~~
+    |      |                       |
+    |      |                       (2) following 'false' branch (when 'i >= numsSize')...
+    |......
+    |   74 |     Heap* heap = createHeap(k);
+    |      |                  ~~~~~~~~~~~~~
+    |      |                  |
+    |      |                  (3) ...to here
+    |      |                  (4) calling 'createHeap' from 'topKFrequent'
+    |
+    +--> 'createHeap': events 5-7
+           |
+           |   15 | Heap* createHeap(int capacity) {
+           |      |       ^~~~~~~~~~
+           |      |       |
+           |      |       (5) entry to 'createHeap'
+           |   16 |     Heap* heap = (Heap*)malloc(sizeof(Heap));
+           |      |                         ~~~~~~~~~~~~~~~~~~~~
+           |      |                         |
+           |      |                         (6) this call could return NULL
+           |   17 |     heap->data = (NumFreq*)malloc(capacity * sizeof(NumFreq));
+           |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                |
+           |      |                (7) 'heap' could be NULL: unchecked value from (6)
+           |
+collected_code_3/problem-31-3.c: In function 'insertHeap':
+collected_code_3/problem-31-3.c:48:26: warning: use of uninitialized value '*heap_41(D)->data.freq' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   48 |         if (heap->data[0].freq < numFreq.freq) {
+      |             ~~~~~~~~~~~~~^~~~~
+  'topKFrequent': events 1-6
+    |
+    |   69 | void topKFrequent(int* nums, int numsSize, int k) {
+    |      |      ^~~~~~~~~~~~
+    |      |      |
+    |      |      (1) entry to 'topKFrequent'
+    |   70 |     int* freq = (int*)calloc(numsSize, sizeof(int));
+    |   71 |     for (int i = 0; i < numsSize; ++i)
+    |      |                     ~~~~~~~~~~~~
+    |      |                       |
+    |      |                       (2) following 'true' branch (when 'i < numsSize')...
+    |      |                       (4) following 'false' branch (when 'i >= numsSize')...
+    |   72 |         freq[nums[i]]++;
+    |      |                  ~
+    |      |                  |
+    |      |                  (3) ...to here
+    |   73 | 
+    |   74 |     Heap* heap = createHeap(k);
+    |      |                  ~~~~~~~~~~~~~
+    |      |                  |
+    |      |                  (5) ...to here
+    |      |                  (6) calling 'createHeap' from 'topKFrequent'
+    |
+    +--> 'createHeap': events 7-8
+           |
+           |   15 | Heap* createHeap(int capacity) {
+           |      |       ^~~~~~~~~~
+           |      |       |
+           |      |       (7) entry to 'createHeap'
+           |   16 |     Heap* heap = (Heap*)malloc(sizeof(Heap));
+           |   17 |     heap->data = (NumFreq*)malloc(capacity * sizeof(NumFreq));
+           |      |                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                            |
+           |      |                            (8) region created on heap here
+           |
+    <------+
+    |
+  'topKFrequent': events 9-14
+    |
+    |   74 |     Heap* heap = createHeap(k);
+    |      |                  ^~~~~~~~~~~~~
+    |      |                  |
+    |      |                  (9) returning to 'topKFrequent' from 'createHeap'
+    |   75 |     for (int i = 0; i < numsSize; ++i) {
+    |      |                     ~~~~~~~~~~~~
+    |      |                       |
+    |      |                       (10) following 'true' branch (when 'i < numsSize')...
+    |   76 |         if (freq[i] > 0) {
+    |      |            ~    ~ 
+    |      |            |    |
+    |      |            |    (11) ...to here
+    |      |            (12) following 'true' branch...
+    |   77 |             NumFreq numFreq = {i, freq[i]};
+    |      |                     ~~~~~~~
+    |      |                     |
+    |      |                     (13) ...to here
+    |   78 |             insertHeap(heap, numFreq);
+    |      |             ~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |             |
+    |      |             (14) calling 'insertHeap' from 'topKFrequent'
+    |
+    +--> 'insertHeap': events 15-18
+           |
+           |   46 | void insertHeap(Heap* heap, NumFreq numFreq) {
+           |      |      ^~~~~~~~~~
+           |      |      |
+           |      |      (15) entry to 'insertHeap'
+           |   47 |     if (heap->size == heap->capacity) {
+           |      |        ~
+           |      |        |
+           |      |        (16) following 'true' branch...
+           |   48 |         if (heap->data[0].freq < numFreq.freq) {
+           |      |             ~~~~~~~~~~~~~~~~~~
+           |      |                 |        |
+           |      |                 |        (18) use of uninitialized value '*heap_41(D)->data.freq' here
+           |      |                 (17) ...to here
+           |
+collected_code_3/problem-31-3.c:48:26: warning: dereference of possibly-NULL '*heap.data' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   48 |         if (heap->data[0].freq < numFreq.freq) {
+      |             ~~~~~~~~~~~~~^~~~~
+  'topKFrequent': events 1-6
+    |
+    |   69 | void topKFrequent(int* nums, int numsSize, int k) {
+    |      |      ^~~~~~~~~~~~
+    |      |      |
+    |      |      (1) entry to 'topKFrequent'
+    |   70 |     int* freq = (int*)calloc(numsSize, sizeof(int));
+    |   71 |     for (int i = 0; i < numsSize; ++i)
+    |      |                     ~~~~~~~~~~~~
+    |      |                       |
+    |      |                       (2) following 'true' branch (when 'i < numsSize')...
+    |      |                       (4) following 'false' branch (when 'i >= numsSize')...
+    |   72 |         freq[nums[i]]++;
+    |      |                  ~
+    |      |                  |
+    |      |                  (3) ...to here
+    |   73 | 
+    |   74 |     Heap* heap = createHeap(k);
+    |      |                  ~~~~~~~~~~~~~
+    |      |                  |
+    |      |                  (5) ...to here
+    |      |                  (6) calling 'createHeap' from 'topKFrequent'
+    |
+    +--> 'createHeap': events 7-8
+           |
+           |   15 | Heap* createHeap(int capacity) {
+           |      |       ^~~~~~~~~~
+           |      |       |
+           |      |       (7) entry to 'createHeap'
+           |   16 |     Heap* heap = (Heap*)malloc(sizeof(Heap));
+           |   17 |     heap->data = (NumFreq*)malloc(capacity * sizeof(NumFreq));
+           |      |                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                            |
+           |      |                            (8) this call could return NULL
+           |
+    <------+
+    |
+  'topKFrequent': events 9-14
+    |
+    |   74 |     Heap* heap = createHeap(k);
+    |      |                  ^~~~~~~~~~~~~
+    |      |                  |
+    |      |                  (9) returning to 'topKFrequent' from 'createHeap'
+    |   75 |     for (int i = 0; i < numsSize; ++i) {
+    |      |                     ~~~~~~~~~~~~
+    |      |                       |
+    |      |                       (10) following 'true' branch (when 'i < numsSize')...
+    |   76 |         if (freq[i] > 0) {
+    |      |            ~    ~ 
+    |      |            |    |
+    |      |            |    (11) ...to here
+    |      |            (12) following 'true' branch...
+    |   77 |             NumFreq numFreq = {i, freq[i]};
+    |      |                     ~~~~~~~
+    |      |                     |
+    |      |                     (13) ...to here
+    |   78 |             insertHeap(heap, numFreq);
+    |      |             ~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |             |
+    |      |             (14) calling 'insertHeap' from 'topKFrequent'
+    |
+    +--> 'insertHeap': events 15-18
+           |
+           |   46 | void insertHeap(Heap* heap, NumFreq numFreq) {
+           |      |      ^~~~~~~~~~
+           |      |      |
+           |      |      (15) entry to 'insertHeap'
+           |   47 |     if (heap->size == heap->capacity) {
+           |      |        ~
+           |      |        |
+           |      |        (16) following 'true' branch...
+           |   48 |         if (heap->data[0].freq < numFreq.freq) {
+           |      |             ~~~~~~~~~~~~~~~~~~
+           |      |                 |        |
+           |      |                 |        (18) '*heap.data' could be NULL: unchecked value from (8)
+           |      |                 (17) ...to here
+           |
+collected_code_3/problem-31-3.c:53:32: warning: dereference of possibly-NULL '*heap.data + (long unsigned int)*heap.size * 8' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   53 |         heap->data[heap->size] = numFreq;
+      |         ~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~
+  'topKFrequent': events 1-6
+    |
+    |   69 | void topKFrequent(int* nums, int numsSize, int k) {
+    |      |      ^~~~~~~~~~~~
+    |      |      |
+    |      |      (1) entry to 'topKFrequent'
+    |   70 |     int* freq = (int*)calloc(numsSize, sizeof(int));
+    |   71 |     for (int i = 0; i < numsSize; ++i)
+    |      |                     ~~~~~~~~~~~~
+    |      |                       |
+    |      |                       (2) following 'true' branch (when 'i < numsSize')...
+    |      |                       (4) following 'false' branch (when 'i >= numsSize')...
+    |   72 |         freq[nums[i]]++;
+    |      |                  ~
+    |      |                  |
+    |      |                  (3) ...to here
+    |   73 | 
+    |   74 |     Heap* heap = createHeap(k);
+    |      |                  ~~~~~~~~~~~~~
+    |      |                  |
+    |      |                  (5) ...to here
+    |      |                  (6) calling 'createHeap' from 'topKFrequent'
+    |
+    +--> 'createHeap': events 7-8
+           |
+           |   15 | Heap* createHeap(int capacity) {
+           |      |       ^~~~~~~~~~
+           |      |       |
+           |      |       (7) entry to 'createHeap'
+           |   16 |     Heap* heap = (Heap*)malloc(sizeof(Heap));
+           |   17 |     heap->data = (NumFreq*)malloc(capacity * sizeof(NumFreq));
+           |      |                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                            |
+           |      |                            (8) this call could return NULL
+           |
+    <------+
+    |
+  'topKFrequent': events 9-14
+    |
+    |   74 |     Heap* heap = createHeap(k);
+    |      |                  ^~~~~~~~~~~~~
+    |      |                  |
+    |      |                  (9) returning to 'topKFrequent' from 'createHeap'
+    |   75 |     for (int i = 0; i < numsSize; ++i) {
+    |      |                     ~~~~~~~~~~~~
+    |      |                       |
+    |      |                       (10) following 'true' branch (when 'i < numsSize')...
+    |   76 |         if (freq[i] > 0) {
+    |      |            ~    ~ 
+    |      |            |    |
+    |      |            |    (11) ...to here
+    |      |            (12) following 'true' branch...
+    |   77 |             NumFreq numFreq = {i, freq[i]};
+    |      |                     ~~~~~~~
+    |      |                     |
+    |      |                     (13) ...to here
+    |   78 |             insertHeap(heap, numFreq);
+    |      |             ~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |             |
+    |      |             (14) calling 'insertHeap' from 'topKFrequent'
+    |
+    +--> 'insertHeap': events 15-18
+           |
+           |   46 | void insertHeap(Heap* heap, NumFreq numFreq) {
+           |      |      ^~~~~~~~~~
+           |      |      |
+           |      |      (15) entry to 'insertHeap'
+           |   47 |     if (heap->size == heap->capacity) {
+           |      |        ~
+           |      |        |
+           |      |        (16) following 'false' branch...
+           |......
+           |   53 |         heap->data[heap->size] = numFreq;
+           |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |             |                  |
+           |      |             (17) ...to here    (18) '*heap.data + (long unsigned int)*heap.size * 8' could be NULL: unchecked value from (8)
+           |
+collected_code_3/problem-31-3.c: In function 'topKFrequent':
+collected_code_3/problem-31-3.c:76:17: warning: dereference of possibly-NULL 'freq' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   76 |         if (freq[i] > 0) {
+      |             ~~~~^~~
+  'topKFrequent': events 1-8
+    |
+    |   70 |     int* freq = (int*)calloc(numsSize, sizeof(int));
+    |      |                       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                       |
+    |      |                       (1) this call could return NULL
+    |   71 |     for (int i = 0; i < numsSize; ++i)
+    |      |                     ~~~~~~~~~~~~
+    |      |                       |
+    |      |                       (2) following 'true' branch (when 'i < numsSize')...
+    |      |                       (4) following 'false' branch (when 'i >= numsSize')...
+    |   72 |         freq[nums[i]]++;
+    |      |                  ~     
+    |      |                  |
+    |      |                  (3) ...to here
+    |   73 | 
+    |   74 |     Heap* heap = createHeap(k);
+    |      |                  ~~~~~~~~~~~~~
+    |      |                  |
+    |      |                  (5) ...to here
+    |   75 |     for (int i = 0; i < numsSize; ++i) {
+    |      |                     ~~~~~~~~~~~~
+    |      |                       |
+    |      |                       (6) following 'true' branch (when 'i < numsSize')...
+    |   76 |         if (freq[i] > 0) {
+    |      |             ~~~~~~~    
+    |      |                 |
+    |      |                 (7) ...to here
+    |      |                 (8) 'freq + (long unsigned int)i * 4' could be NULL: unchecked value from (1)
+    |
+collected_code_3/problem-31-3.c:83:1: warning: leak of '<unknown>' [CWE-401] [-Wanalyzer-malloc-leak]
+   83 | }
+      | ^
+  'main': events 1-2
+    |
+    |   85 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   89 |     topKFrequent(nums, numsSize, k);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) calling 'topKFrequent' from 'main'
+    |
+    +--> 'topKFrequent': events 3-10
+           |
+           |   69 | void topKFrequent(int* nums, int numsSize, int k) {
+           |      |      ^~~~~~~~~~~~
+           |      |      |
+           |      |      (3) entry to 'topKFrequent'
+           |   70 |     int* freq = (int*)calloc(numsSize, sizeof(int));
+           |   71 |     for (int i = 0; i < numsSize; ++i)
+           |      |                     ~~~~~~~~~~~~
+           |      |                       |
+           |      |                       (4) following 'true' branch (when 'i < numsSize')...
+           |      |                       (6) following 'true' branch (when 'i < numsSize')...
+           |      |                       (8) following 'true' branch (when 'i < numsSize')...
+           |   72 |         freq[nums[i]]++;
+           |      |                  ~
+           |      |                  |
+           |      |                  (5) ...to here
+           |      |                  (7) ...to here
+           |      |                  (9) ...to here
+           |   73 | 
+           |   74 |     Heap* heap = createHeap(k);
+           |      |                  ~~~~~~~~~~~~~
+           |      |                  |
+           |      |                  (10) calling 'createHeap' from 'topKFrequent'
+           |
+           +--> 'createHeap': events 11-12
+                  |
+                  |   15 | Heap* createHeap(int capacity) {
+                  |      |       ^~~~~~~~~~
+                  |      |       |
+                  |      |       (11) entry to 'createHeap'
+                  |   16 |     Heap* heap = (Heap*)malloc(sizeof(Heap));
+                  |   17 |     heap->data = (NumFreq*)malloc(capacity * sizeof(NumFreq));
+                  |      |                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                  |      |                            |
+                  |      |                            (12) allocated here
+                  |
+           <------+
+           |
+         'topKFrequent': events 13-22
+           |
+           |   74 |     Heap* heap = createHeap(k);
+           |      |                  ^~~~~~~~~~~~~
+           |      |                  |
+           |      |                  (13) returning to 'topKFrequent' from 'createHeap'
+           |   75 |     for (int i = 0; i < numsSize; ++i) {
+           |      |                     ~~~~~~~~~~~~  ~~~
+           |      |                       |           |
+           |      |                       |           (17) ...to here
+           |      |                       |           (21) ...to here
+           |      |                       (14) following 'true' branch (when 'i < numsSize')...
+           |      |                       (18) following 'true' branch (when 'i < numsSize')...
+           |   76 |         if (freq[i] > 0) {
+           |      |            ~    ~ 
+           |      |            |    |
+           |      |            |    (15) ...to here
+           |      |            |    (19) ...to here
+           |      |            (16) following 'false' branch...
+           |      |            (20) following 'false' branch...
+           |......
+           |   82 |     printHeap(heap);
+           |      |     ~~~~~~~~~~~~~~~
+           |      |     |
+           |      |     (22) calling 'printHeap' from 'topKFrequent'
+           |
+           +--> 'printHeap': events 23-25
+                  |
+                  |   63 | void printHeap(Heap* heap) {
+                  |      |      ^~~~~~~~~
+                  |      |      |
+                  |      |      (23) entry to 'printHeap'
+                  |   64 |     for (int i = 0; i < heap->size; ++i)
+                  |      |                     ~~~~~~~~~~~~~~
+                  |      |                       |
+                  |      |                       (24) following 'false' branch...
+                  |   65 |         printf("%d ", heap->data[i].num);
+                  |   66 |     printf("\n");
+                  |      |     ~~~~~~~~~~~~
+                  |      |     |
+                  |      |     (25) ...to here
+                  |
+           <------+
+           |
+         'topKFrequent': events 26-27
+           |
+           |   82 |     printHeap(heap);
+           |      |     ^~~~~~~~~~~~~~~
+           |      |     |
+           |      |     (26) returning to 'topKFrequent' from 'printHeap'
+           |   83 | }
+           |      | ~    
+           |      | |
+           |      | (27) '<unknown>' leaks here; was allocated at (12)
+           |
+collected_code_3/problem-31-3.c:83:1: warning: leak of 'heap' [CWE-401] [-Wanalyzer-malloc-leak]
+   83 | }
+      | ^
+  'main': events 1-2
+    |
+    |   85 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   89 |     topKFrequent(nums, numsSize, k);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) calling 'topKFrequent' from 'main'
+    |
+    +--> 'topKFrequent': events 3-10
+           |
+           |   69 | void topKFrequent(int* nums, int numsSize, int k) {
+           |      |      ^~~~~~~~~~~~
+           |      |      |
+           |      |      (3) entry to 'topKFrequent'
+           |   70 |     int* freq = (int*)calloc(numsSize, sizeof(int));
+           |   71 |     for (int i = 0; i < numsSize; ++i)
+           |      |                     ~~~~~~~~~~~~
+           |      |                       |
+           |      |                       (4) following 'true' branch (when 'i < numsSize')...
+           |      |                       (6) following 'true' branch (when 'i < numsSize')...
+           |      |                       (8) following 'true' branch (when 'i < numsSize')...
+           |   72 |         freq[nums[i]]++;
+           |      |                  ~
+           |      |                  |
+           |      |                  (5) ...to here
+           |      |                  (7) ...to here
+           |      |                  (9) ...to here
+           |   73 | 
+           |   74 |     Heap* heap = createHeap(k);
+           |      |                  ~~~~~~~~~~~~~
+           |      |                  |
+           |      |                  (10) calling 'createHeap' from 'topKFrequent'
+           |
+           +--> 'createHeap': events 11-13
+                  |
+                  |   15 | Heap* createHeap(int capacity) {
+                  |      |       ^~~~~~~~~~
+                  |      |       |
+                  |      |       (11) entry to 'createHeap'
+                  |   16 |     Heap* heap = (Heap*)malloc(sizeof(Heap));
+                  |      |                         ~~~~~~~~~~~~~~~~~~~~
+                  |      |                         |
+                  |      |                         (12) allocated here
+                  |   17 |     heap->data = (NumFreq*)malloc(capacity * sizeof(NumFreq));
+                  |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                  |      |                |
+                  |      |                (13) assuming 'heap' is non-NULL
+                  |
+           <------+
+           |
+         'topKFrequent': events 14-23
+           |
+           |   74 |     Heap* heap = createHeap(k);
+           |      |                  ^~~~~~~~~~~~~
+           |      |                  |
+           |      |                  (14) returning to 'topKFrequent' from 'createHeap'
+           |   75 |     for (int i = 0; i < numsSize; ++i) {
+           |      |                     ~~~~~~~~~~~~  ~~~
+           |      |                       |           |
+           |      |                       |           (18) ...to here
+           |      |                       |           (22) ...to here
+           |      |                       (15) following 'true' branch (when 'i < numsSize')...
+           |      |                       (19) following 'true' branch (when 'i < numsSize')...
+           |   76 |         if (freq[i] > 0) {
+           |      |            ~    ~ 
+           |      |            |    |
+           |      |            |    (16) ...to here
+           |      |            |    (20) ...to here
+           |      |            (17) following 'false' branch...
+           |      |            (21) following 'false' branch...
+           |......
+           |   82 |     printHeap(heap);
+           |      |     ~~~~~~~~~~~~~~~
+           |      |     |
+           |      |     (23) calling 'printHeap' from 'topKFrequent'
+           |
+           +--> 'printHeap': events 24-26
+                  |
+                  |   63 | void printHeap(Heap* heap) {
+                  |      |      ^~~~~~~~~
+                  |      |      |
+                  |      |      (24) entry to 'printHeap'
+                  |   64 |     for (int i = 0; i < heap->size; ++i)
+                  |      |                     ~~~~~~~~~~~~~~
+                  |      |                       |
+                  |      |                       (25) following 'false' branch...
+                  |   65 |         printf("%d ", heap->data[i].num);
+                  |   66 |     printf("\n");
+                  |      |     ~~~~~~~~~~~~
+                  |      |     |
+                  |      |     (26) ...to here
+                  |
+           <------+
+           |
+         'topKFrequent': events 27-28
+           |
+           |   82 |     printHeap(heap);
+           |      |     ^~~~~~~~~~~~~~~
+           |      |     |
+           |      |     (27) returning to 'topKFrequent' from 'printHeap'
+           |   83 | }
+           |      | ~    
+           |      | |
+           |      | (28) 'heap' leaks here; was allocated at (12)
+           |
+collected_code_3/problem-31-3.c:83:1: warning: leak of 'freq' [CWE-401] [-Wanalyzer-malloc-leak]
+   83 | }
+      | ^
+  'main': events 1-2
+    |
+    |   85 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   89 |     topKFrequent(nums, numsSize, k);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) calling 'topKFrequent' from 'main'
+    |
+    +--> 'topKFrequent': events 3-20
+           |
+           |   69 | void topKFrequent(int* nums, int numsSize, int k) {
+           |      |      ^~~~~~~~~~~~
+           |      |      |
+           |      |      (3) entry to 'topKFrequent'
+           |   70 |     int* freq = (int*)calloc(numsSize, sizeof(int));
+           |      |                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                       |
+           |      |                       (4) allocated here
+           |   71 |     for (int i = 0; i < numsSize; ++i)
+           |      |                     ~~~~~~~~~~~~
+           |      |                       |
+           |      |                       (5) following 'true' branch (when 'i < numsSize')...
+           |      |                       (7) following 'true' branch (when 'i < numsSize')...
+           |      |                       (9) following 'true' branch (when 'i < numsSize')...
+           |   72 |         freq[nums[i]]++;
+           |      |                  ~
+           |      |                  |
+           |      |                  (6) ...to here
+           |      |                  (8) ...to here
+           |      |                  (10) ...to here
+           |......
+           |   75 |     for (int i = 0; i < numsSize; ++i) {
+           |      |                     ~~~~~~~~~~~~  ~~~
+           |      |                       |           |
+           |      |                       |           (15) ...to here
+           |      |                       |           (19) ...to here
+           |      |                       (11) following 'true' branch (when 'i < numsSize')...
+           |      |                       (16) following 'true' branch (when 'i < numsSize')...
+           |   76 |         if (freq[i] > 0) {
+           |      |            ~~~~~~~~
+           |      |            |    |
+           |      |            |    (12) ...to here
+           |      |            |    (13) assuming 'freq' is non-NULL
+           |      |            |    (17) ...to here
+           |      |            (14) following 'false' branch...
+           |      |            (18) following 'false' branch...
+           |......
+           |   82 |     printHeap(heap);
+           |      |     ~~~~~~~~~~~~~~~
+           |      |     |
+           |      |     (20) calling 'printHeap' from 'topKFrequent'
+           |
+           +--> 'printHeap': events 21-23
+                  |
+                  |   63 | void printHeap(Heap* heap) {
+                  |      |      ^~~~~~~~~
+                  |      |      |
+                  |      |      (21) entry to 'printHeap'
+                  |   64 |     for (int i = 0; i < heap->size; ++i)
+                  |      |                     ~~~~~~~~~~~~~~
+                  |      |                       |
+                  |      |                       (22) following 'false' branch...
+                  |   65 |         printf("%d ", heap->data[i].num);
+                  |   66 |     printf("\n");
+                  |      |     ~~~~~~~~~~~~
+                  |      |     |
+                  |      |     (23) ...to here
+                  |
+           <------+
+           |
+         'topKFrequent': events 24-25
+           |
+           |   82 |     printHeap(heap);
+           |      |     ^~~~~~~~~~~~~~~
+           |      |     |
+           |      |     (24) returning to 'topKFrequent' from 'printHeap'
+           |   83 | }
+           |      | ~    
+           |      | |
+           |      | (25) 'freq' leaks here; was allocated at (4)
+           |
+collected_code_3/problem-31-3.c:83:1: warning: leak of '<unknown>' [CWE-401] [-Wanalyzer-malloc-leak]
+   83 | }
+      | ^
+  'main': events 1-2
+    |
+    |   85 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   89 |     topKFrequent(nums, numsSize, k);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) calling 'topKFrequent' from 'main'
+    |
+    +--> 'topKFrequent': events 3-10
+           |
+           |   69 | void topKFrequent(int* nums, int numsSize, int k) {
+           |      |      ^~~~~~~~~~~~
+           |      |      |
+           |      |      (3) entry to 'topKFrequent'
+           |   70 |     int* freq = (int*)calloc(numsSize, sizeof(int));
+           |   71 |     for (int i = 0; i < numsSize; ++i)
+           |      |                     ~~~~~~~~~~~~
+           |      |                       |
+           |      |                       (4) following 'true' branch (when 'i < numsSize')...
+           |      |                       (6) following 'true' branch (when 'i < numsSize')...
+           |      |                       (8) following 'false' branch (when 'i >= numsSize')...
+           |   72 |         freq[nums[i]]++;
+           |      |                  ~
+           |      |                  |
+           |      |                  (5) ...to here
+           |      |                  (7) ...to here
+           |   73 | 
+           |   74 |     Heap* heap = createHeap(k);
+           |      |                  ~~~~~~~~~~~~~
+           |      |                  |
+           |      |                  (9) ...to here
+           |      |                  (10) calling 'createHeap' from 'topKFrequent'
+           |
+           +--> 'createHeap': events 11-12
+                  |
+                  |   15 | Heap* createHeap(int capacity) {
+                  |      |       ^~~~~~~~~~
+                  |      |       |
+                  |      |       (11) entry to 'createHeap'
+                  |   16 |     Heap* heap = (Heap*)malloc(sizeof(Heap));
+                  |   17 |     heap->data = (NumFreq*)malloc(capacity * sizeof(NumFreq));
+                  |      |                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                  |      |                            |
+                  |      |                            (12) allocated here
+                  |
+           <------+
+           |
+         'topKFrequent': events 13-22
+           |
+           |   74 |     Heap* heap = createHeap(k);
+           |      |                  ^~~~~~~~~~~~~
+           |      |                  |
+           |      |                  (13) returning to 'topKFrequent' from 'createHeap'
+           |   75 |     for (int i = 0; i < numsSize; ++i) {
+           |      |                     ~~~~~~~~~~~~  ~~~
+           |      |                       |           |
+           |      |                       |           (17) ...to here
+           |      |                       (14) following 'true' branch (when 'i < numsSize')...
+           |      |                       (18) following 'true' branch (when 'i < numsSize')...
+           |   76 |         if (freq[i] > 0) {
+           |      |            ~    ~ 
+           |      |            |    |
+           |      |            |    (15) ...to here
+           |      |            |    (19) ...to here
+           |      |            (16) following 'false' branch...
+           |      |            (20) following 'true' branch...
+           |   77 |             NumFreq numFreq = {i, freq[i]};
+           |      |                     ~~~~~~~
+           |      |                     |
+           |      |                     (21) ...to here
+           |   78 |             insertHeap(heap, numFreq);
+           |      |             ~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |             |
+           |      |             (22) calling 'insertHeap' from 'topKFrequent'
+           |
+           +--> 'insertHeap': events 23-28
+                  |
+                  |   46 | void insertHeap(Heap* heap, NumFreq numFreq) {
+                  |      |      ^~~~~~~~~~
+                  |      |      |
+                  |      |      (23) entry to 'insertHeap'
+                  |   47 |     if (heap->size == heap->capacity) {
+                  |      |        ~
+                  |      |        |
+                  |      |        (24) following 'false' branch...
+                  |......
+                  |   53 |         heap->data[heap->size] = numFreq;
+                  |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                  |      |             |                  |
+                  |      |             (25) ...to here    (26) assuming '<unknown>' is non-NULL
+                  |   54 |         int i = heap->size;
+                  |   55 |         while (i != 0 && heap->data[(i - 1) / 2].freq > heap->data[i].freq) {
+                  |      |                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                  |      |                       |
+                  |      |                       (27) following 'false' branch (when 'i == 0')...
+                  |......
+                  |   59 |         heap->size++;
+                  |      |         ~~~~~~~~~~
+                  |      |             |
+                  |      |             (28) ...to here
+                  |
+           <------+
+           |
+         'topKFrequent': events 29-32
+           |
+           |   75 |     for (int i = 0; i < numsSize; ++i) {
+           |      |                     ~~~~~~~~~~~~
+           |      |                       |
+           |      |                       (30) following 'false' branch (when 'i >= numsSize')...
+           |......
+           |   78 |             insertHeap(heap, numFreq);
+           |      |             ^~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |             |
+           |      |             (29) returning to 'topKFrequent' from 'insertHeap'
+           |......
+           |   82 |     printHeap(heap);
+           |      |     ~~~~~~~~~~~~~~~
+           |      |     |
+           |      |     (31) ...to here
+           |      |     (32) calling 'printHeap' from 'topKFrequent'
+           |
+           +--> 'printHeap': events 33-35
+                  |
+                  |   63 | void printHeap(Heap* heap) {
+                  |      |      ^~~~~~~~~
+                  |      |      |
+                  |      |      (33) entry to 'printHeap'
+                  |   64 |     for (int i = 0; i < heap->size; ++i)
+                  |      |                     ~~~~~~~~~~~~~~
+                  |      |                       |
+                  |      |                       (34) following 'true' branch...
+                  |   65 |         printf("%d ", heap->data[i].num);
+                  |      |                       ~~~~~~~~~~
+                  |      |                           |
+                  |      |                           (35) ...to here
+                  |
+           <------+
+           |
+         'topKFrequent': events 36-37
+           |
+           |   82 |     printHeap(heap);
+           |      |     ^~~~~~~~~~~~~~~
+           |      |     |
+           |      |     (36) returning to 'topKFrequent' from 'printHeap'
+           |   83 | }
+           |      | ~    
+           |      | |
+           |      | (37) '<unknown>' leaks here; was allocated at (12)
+           |

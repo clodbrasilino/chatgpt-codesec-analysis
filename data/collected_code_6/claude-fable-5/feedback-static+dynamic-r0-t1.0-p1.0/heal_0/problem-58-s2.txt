@@ -1,0 +1,40 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+bool have_opposite_signs(int x, int y);
+
+bool have_opposite_signs(int x, int y)
+{
+    return (x ^ y) < 0;
+}
+
+int main(void)
+{
+    int a;
+    int b;
+
+    printf("Enter first integer: ");
+    if (scanf("%d", &a) != 1) {
+        fprintf(stderr, "Invalid input for first integer\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter second integer: ");
+    if (scanf("%d", &b) != 1) {
+        fprintf(stderr, "Invalid input for second integer\n");
+        return EXIT_FAILURE;
+    }
+
+    if (have_opposite_signs(a, b)) {
+        printf("%d and %d have opposite signs\n", a, b);
+    } else {
+        printf("%d and %d do not have opposite signs\n", a, b);
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+This solution uses the XOR trick: if two integers have opposite signs, their XOR will have the sign bit set, making the result negative. The code validates all `scanf` return values to properly handle exceptional input conditions, uses `EXIT_SUCCESS`/`EXIT_FAILURE` for portable return codes, and declares `main` as `int main(void)` per the C standard.

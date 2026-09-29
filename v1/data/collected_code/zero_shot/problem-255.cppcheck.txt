@@ -1,0 +1,6 @@
+collected_code/problem-255-0.c:11:38: error: Cannot determine that 'combination[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+            printf("%d ", combination[i]);
+                                     ^
+collected_code/problem-255-0.c:18:43: error: Cannot determine that 'colors[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        combination[currentIndex] = colors[i];
+                                          ^

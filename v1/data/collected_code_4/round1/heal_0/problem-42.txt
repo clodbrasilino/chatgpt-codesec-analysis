@@ -1,0 +1,32 @@
+```C
+#include <stdio.h>
+#include <stdlib.h>
+
+int FindSumOfRepeatedElements(int* array, int length) {
+    int sum = 0;
+    for (int i = 0; i < length; i++) {
+        for (int j = i + 1; j < length; j++) {
+            if (array[i] == array[j]) {
+                sum += array[i];
+                break;
+            }
+        }
+    }
+    return sum;
+}
+
+int main() {
+    int array[] = {3, 2, 2, 1, 4, 3, 5, 4};
+    int length = sizeof(array) / sizeof(array[0]);
+
+    int sum = FindSumOfRepeatedElements(array, length);
+    printf("Sum of repeated elements: %d\n", sum);
+
+    return 0;
+}
+```
+In this code, `FindSumOfRepeatedElements` function is used to find the sum of repeated elements, Byte `main` function is the entrance of the program. The sum of repeated elements in the array is printed out.
+
+Please be aware if there are multiple repetition of one value, the sum will add the same value multiple times. For example in an array [1, 1, 1], the sum of repeated elements will be 2, because 1 is added two times.
+
+No resources are used, no exceptional conditions could occur (since length should always be nonnegative) and the code is according to C coding standards. Thus, it should not suffer CVE-664, CVE-703 or CVE-710.

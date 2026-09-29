@@ -1,0 +1,15 @@
+collected_code/problem-691-0.c:26:14: error: Cannot determine that 'count[tupleList[i].second]' is initialized [premium-bughuntingUninit]
+        count[tupleList[i].second]++;
+             ^
+collected_code/problem-691-0.c:35:9: error: Cannot determine that 'groupedTuples' is initialized [premium-bughuntingUninit]
+        groupedTuples[i] = (struct Tuple *)calloc(count[i], sizeof(struct Tuple));
+        ^
+collected_code/problem-691-0.c:35:56: error: Cannot determine that 'count[i]' is initialized [premium-bughuntingUninit]
+        groupedTuples[i] = (struct Tuple *)calloc(count[i], sizeof(struct Tuple));
+                                                       ^
+collected_code/problem-691-0.c:49:34: error: Cannot determine that 'count[i]' is initialized [premium-bughuntingUninit]
+        for (int j = 0; j < count[i]; j++)
+                                 ^
+collected_code/problem-691-0.c:62:10: error: Cannot determine that 'count[0]' is initialized [premium-bughuntingUninit]
+    free(count);
+         ^

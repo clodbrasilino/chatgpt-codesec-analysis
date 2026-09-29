@@ -1,0 +1,112 @@
+collected_code_3/problem-829-1.c: In function 'secondMostRepeated':
+collected_code_3/problem-829-1.c:47:12: warning: function returns address of local variable [-Wreturn-local-addr]
+   47 |     return arr[secondMax].str;
+      |            ^~~
+collected_code_3/problem-829-1.c: In function 'main':
+collected_code_3/problem-829-1.c:55:5: warning: use of NULL 'res' where non-null expected [CWE-476] [-Wanalyzer-null-argument]
+   55 |     printf("%s\n", res);
+      |     ^~~~~~~~~~~~~~~~~~~
+  'main': events 1-2
+    |
+    |   50 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   54 |     char* res = secondMostRepeated(sequence, n);
+    |      |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                 |
+    |      |                 (2) calling 'secondMostRepeated' from 'main'
+    |
+    +--> 'secondMostRepeated': events 3-6
+           |
+           |   22 | char* secondMostRepeated(char* sequence[], int n) {
+           |      |       ^~~~~~~~~~~~~~~~~~
+           |      |       |
+           |      |       (3) entry to 'secondMostRepeated'
+           |......
+           |   26 |     for (int i = 0; i < n; i++) {
+           |      |                     ~~~~~
+           |      |                       |
+           |      |                       (4) following 'true' branch (when 'i < n')...
+           |   27 |         index = findIndex(arr, arrSize, sequence[i]);
+           |      |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                 |                               |
+           |      |                 |                               (5) ...to here
+           |      |                 (6) calling 'findIndex' from 'secondMostRepeated'
+           |
+           +--> 'findIndex': events 7-9
+                  |
+                  |   13 | int findIndex(struct StringCount arr[], int n, char* str) {
+                  |      |     ^~~~~~~~~
+                  |      |     |
+                  |      |     (7) entry to 'findIndex'
+                  |   14 |     for (int i = 0; i < n; i++) {
+                  |      |                     ~~~~~
+                  |      |                       |
+                  |      |                       (8) following 'false' branch (when 'i >= n')...
+                  |......
+                  |   19 |     return -1;
+                  |      |            ~
+                  |      |            |
+                  |      |            (9) ...to here
+                  |
+           <------+
+           |
+         'secondMostRepeated': events 10-11
+           |
+           |   27 |         index = findIndex(arr, arrSize, sequence[i]);
+           |      |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                 |
+           |      |                 (10) returning to 'secondMostRepeated' from 'findIndex'
+           |   28 |         if (index != -1) {
+           |      |            ~     
+           |      |            |
+           |      |            (11) following 'false' branch (when 'index == -1')...
+           |
+         'secondMostRepeated': event 12
+           |
+           |   31 |             strcpy(arr[arrSize].str, sequence[i]);
+           |      |                    ~~~~~~~~~~~~^~~~
+           |      |                                |
+           |      |                                (12) ...to here
+           |
+         'secondMostRepeated': events 13-17
+           |
+           |   26 |     for (int i = 0; i < n; i++) {
+           |      |                     ~~^~~
+           |      |                       |
+           |      |                       (13) following 'false' branch (when 'i >= n')...
+           |......
+           |   37 |     int firstMax = 0, secondMax = 0;
+           |      |         ~~~~~~~~       
+           |      |         |
+           |      |         (14) ...to here
+           |   38 |     for (int i = 0; i < arrSize; i++) {
+           |      |                     ~~~~~~~~~~~
+           |      |                       |
+           |      |                       (15) following 'true' branch (when 'i < arrSize')...
+           |   39 |         if (arr[i].count > arr[firstMax].count) {
+           |      |             ~~~~~~~~~~~~
+           |      |                   |
+           |      |                   (16) ...to here
+           |......
+           |   47 |     return arr[secondMax].str;
+           |      |            ~~~         
+           |      |            |
+           |      |            (17) '0' is NULL
+           |
+    <------+
+    |
+  'main': events 18-19
+    |
+    |   54 |     char* res = secondMostRepeated(sequence, n);
+    |      |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                 |
+    |      |                 (18) returning to 'main' from 'secondMostRepeated'
+    |   55 |     printf("%s\n", res);
+    |      |     ~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (19) argument 1 ('res') NULL where non-null expected
+    |
+<built-in>: note: argument 1 of '__builtin_puts' must be non-null

@@ -1,0 +1,19 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-347-s2.c: In function 'main':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-347-s2.c:24:35: error: passing argument 2 of 'strtol' from incompatible pointer type [-Wincompatible-pointer-types]
+   24 |     long m_long = strtol(argv[1], &endptr[0], 10);
+      |                                   ^~~~~~~~~~
+      |                                   |
+      |                                   char *
+In file included from /Library/Developer/CommandLineTools/SDKs/MacOSX15.sdk/usr/include/stdlib.h:58,
+                 from /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-347-s2.c:2:
+/Library/Developer/CommandLineTools/SDKs/MacOSX15.sdk/usr/include/_stdlib.h:186:54: note: expected 'char **' but argument is of type 'char *'
+  186 | long     strtol(const char *__str, char *_LIBC_CSTR *__endptr, int __base);
+      |                                    ~~~~~~~~~~~~~~~~~~^~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-347-s2.c:29:35: error: passing argument 2 of 'strtol' from incompatible pointer type [-Wincompatible-pointer-types]
+   29 |     long n_long = strtol(argv[2], &endptr[1], 10);
+      |                                   ^~~~~~~~~~
+      |                                   |
+      |                                   char *
+/Library/Developer/CommandLineTools/SDKs/MacOSX15.sdk/usr/include/_stdlib.h:186:54: note: expected 'char **' but argument is of type 'char *'
+  186 | long     strtol(const char *__str, char *_LIBC_CSTR *__endptr, int __base);
+      |                                    ~~~~~~~~~~~~~~~~~~^~~~~~~~

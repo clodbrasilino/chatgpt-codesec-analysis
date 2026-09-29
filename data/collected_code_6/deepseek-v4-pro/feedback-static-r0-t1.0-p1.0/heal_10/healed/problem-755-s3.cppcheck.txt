@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-755-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-755-s3.c:58:43: style: Condition 'second_smallest(NULL,5,&result)==0' is always false [knownConditionTrueFalse]
+    if (second_smallest(NULL, 5, &result) == 0) {
+                                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-755-s3.c:58:24: note: Calling function 'second_smallest' returns -1
+    if (second_smallest(NULL, 5, &result) == 0) {
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-755-s3.c:58:43: note: Condition 'second_smallest(NULL,5,&result)==0' is always false
+    if (second_smallest(NULL, 5, &result) == 0) {
+                                          ^

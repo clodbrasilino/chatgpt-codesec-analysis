@@ -1,0 +1,12 @@
+collected_code_5/round1/heal_0/problem-65.c:23:44: error: call to undeclared library function 'malloc' with type 'void *(unsigned long)'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   23 |     struct Node* new_node = (struct Node*) malloc(sizeof(struct Node));
+      |                                            ^
+collected_code_5/round1/heal_0/problem-65.c:23:44: note: include the header <stdlib.h> or explicitly provide a declaration for 'malloc'
+collected_code_5/round1/heal_0/problem-65.c:28:9: error: call to undeclared library function 'exit' with type 'void (int) __attribute__((noreturn))'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   28 |         exit(EXIT_FAILURE);
+      |         ^
+collected_code_5/round1/heal_0/problem-65.c:28:9: note: include the header <stdlib.h> or explicitly provide a declaration for 'exit'
+collected_code_5/round1/heal_0/problem-65.c:28:14: error: use of undeclared identifier 'EXIT_FAILURE'
+   28 |         exit(EXIT_FAILURE);
+      |              ^
+3 errors generated.

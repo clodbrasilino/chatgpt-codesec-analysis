@@ -1,0 +1,48 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <limits.h>
+
+static int divide_numbers(int dividend, int divisor, int *result)
+{
+    if (result == NULL) {
+        return -1;
+    }
+    if (divisor == 0) {
+        return -1;
+    }
+    if (dividend == INT_MIN && divisor == -1) {
+        return -1;
+    }
+    *result = dividend / divisor;
+    return 0;
+}
+
+int main(void)
+{
+    int dividend;
+    int divisor;
+    int quotient;
+
+    printf("Enter dividend: ");
+    if (scanf("%d", &dividend) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter divisor: ");
+    if (scanf("%d", &divisor) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (divide_numbers(dividend, divisor, &quotient) != 0) {
+        fprintf(stderr, "Division error\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Quotient: %d\n", quotient);
+    return EXIT_SUCCESS;
+}
+```

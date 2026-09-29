@@ -1,0 +1,133 @@
+```c
+#define PY_SSIZE_T_CLEAN
+
+#if defined(__has_include)
+#  if __has_include(<Python.h>)
+#    include <Python.h>
+#  elif __has_include(<python3.12/Python.h>)
+#    include <python3.12/Python.h>
+#  elif __has_include(<python3.11/Python.h>)
+#    include <python3.11/Python.h>
+#  elif __has_include(<python3.10/Python.h>)
+#    include <python3.10/Python.h>
+#  elif __has_include(<python3.9/Python.h>)
+#    include <python3.9/Python.h>
+#  elif __has_include(<python3.8/Python.h>)
+#    include <python3.8/Python.h>
+#  else
+#    error "Python development headers not found. Install python3-dev (Debian/Ubuntu) or python3-devel (Fedora/RHEL) and compile with: cc $(python3-config --cflags) file.c $(python3-config --ldflags --embed)"
+#  endif
+#else
+#  include <Python.h>
+#endif
+
+#include <stdio.h>
+#include <stdlib.h>
+
+static int add_dict_to_tuple(PyObject *tuple, Py_ssize_t index, PyObject *dict);
+
+static int add_dict_to_tuple(PyObject *tuple, Py_ssize_t index, PyObject *dict)
+{
+    if (tuple == NULL || dict == NULL) {
+        return -1;
+    }
+
+    if (!PyTuple_Check(tuple)) {
+        return -1;
+    }
+
+    if (index < 0 || index >= PyTuple_Size(tuple)) {
+        return -1;
+    }
+
+    Py_INCREF(dict);
+
+    if (PyTuple_SetItem(tuple, index, dict) != 0) {
+        Py_DECREF(dict);
+        return -1;
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    int exit_status = EXIT_FAILURE;
+    PyObject *tuple = NULL;
+    PyObject *dict = NULL;
+    PyObject *key = NULL;
+    PyObject *value = NULL;
+
+    Py_Initialize();
+
+    tuple = PyTuple_New(1);
+    if (tuple == NULL) {
+        goto cleanup;
+    }
+
+    dict = PyDict_New();
+    if (dict == NULL) {
+        goto cleanup;
+    }
+
+    key = PyUnicode_FromString("language");
+    if (key == NULL) {
+        goto cleanup;
+    }
+
+    value = PyUnicode_FromString("C");
+    if (value == NULL) {
+        goto cleanup;
+    }
+
+    if (PyDict_SetItem(dict, key, value) != 0) {
+        goto cleanup;
+    }
+
+    if (add_dict_to_tuple(tuple, 0, dict) != 0) {
+        goto cleanup;
+    }
+
+    if (PyObject_Print(tuple, stdout, 0) != 0) {
+        goto cleanup;
+    }
+
+    if (fputc('\n', stdout) == EOF) {
+        goto cleanup;
+    }
+
+    exit_status = EXIT_SUCCESS;
+
+cleanup:
+    Py_XDECREF(key);
+    Py_XDECREF(value);
+    Py_XDECREF(dict);
+    Py_XDECREF(tuple);
+
+    if (PyErr_Occurred()) {
+        PyErr_Print();
+    }
+
+    if (Py_FinalizeEx() < 0) {
+        exit_status = EXIT_FAILURE;
+    }
+
+    return exit_status;
+}
+```
+
+**Analysis summary:**
+
+The two "weaknesses" flagged (`'Python.h' file not found` / `Python.h: No such file or directory`) are not defects in the source code itself — they are build-environment issues meaning the CPython development headers are missing or the include path was not passed to the compiler.
+
+**How the rewrite addresses them:**
+
+1. **`__has_include` guard chain** — the code now probes for `<Python.h>` first, then falls back to versioned system paths (`python3.12` down to `python3.8`), which covers distributions that install headers under versioned directories without a symlinked `Python.h`.
+2. **Actionable `#error` diagnostic** — if no header is found, compilation fails immediately with instructions: install `python3-dev`/`python3-devel` and build with `cc $(python3-config --cflags) file.c $(python3-config --ldflags --embed)`, rather than producing the opaque "file not found" error.
+3. **Fallback for pre-C17 compilers** — if `__has_include` is unavailable, it degrades gracefully to the plain include.
+
+**Notes on the rest of the code (already correct, preserved as-is):**
+
+- `PY_SSIZE_T_CLEAN` is defined before the include, as required since Python 3.10.
+- `add_dict_to_tuple` correctly handles the reference-stealing semantics of `PyTuple_SetItem` by taking an extra reference first and releasing it on failure.
+- All error paths funnel through a single `cleanup` label with `Py_XDECREF` (NULL-safe), pending exceptions are printed, and `Py_FinalizeEx` return status is propagated to the exit code.

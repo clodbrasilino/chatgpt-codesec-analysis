@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_9/healed/problem-906.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_9/healed/problem-906.c:47:20: error: Uninitialized variable: str_year [legacyUninitvar]
+        y = strtol(str_year, NULL, 10);
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_9/healed/problem-906.c:48:20: error: Uninitialized variable: str_month [legacyUninitvar]
+        m = strtol(str_month, NULL, 10);
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_9/healed/problem-906.c:49:20: error: Uninitialized variable: str_day [legacyUninitvar]
+        d = strtol(str_day, NULL, 10);
+                   ^

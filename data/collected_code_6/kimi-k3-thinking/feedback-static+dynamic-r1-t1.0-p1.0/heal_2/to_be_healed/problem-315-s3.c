@@ -1,0 +1,122 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+char *find_first_max_even_word(const char *str, size_t *out_len)
+{
+    size_t i = 0;
+    size_t best_start = 0;
+    size_t best_len = 0;
+    size_t alloc_size = 0;
+    char *result = NULL;
+
+    if (str == NULL)
+    {
+        return NULL;
+    }
+
+    while (str[i] != '\0')
+    {
+        while (str[i] != '\0' && isspace((unsigned char)str[i]))
+        {
+            i++;
+        }
+
+        if (str[i] == '\0')
+        {
+            break;
+        }
+
+        {
+            size_t start = i;
+            size_t len = 0;
+
+            while (str[i] != '\0' && !isspace((unsigned char)str[i]))
+            {
+                i++;
+                len++;
+            }
+
+            if (len % 2 == 0 && len > best_len)
+            {
+                best_start = start;
+                best_len = len;
+            }
+        }
+    }
+
+    if (best_len == 0)
+    {
+        return NULL;
+    }
+
+    /* Possible weaknesses found:
+     *  alloc_size is assigned 'best_len+1' here.
+     */
+    alloc_size = best_len + 1;
+    result = (char *)malloc(alloc_size);
+    /* Possible weaknesses found:
+     *  Assuming condition is false
+     */
+    if (result == NULL)
+    {
+        return NULL;
+    }
+
+    /* Possible weaknesses found:
+     *  Condition 'best_len<alloc_size' is always true
+     *  Condition 'best_len<alloc_size' is always true [knownConditionTrueFalse]
+     */
+    if (best_len < alloc_size)
+    {
+        /* Possible weaknesses found:
+         * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+         */
+        memcpy(result, str + best_start, best_len);
+        result[best_len] = '\0';
+    }
+
+    if (out_len != NULL)
+    {
+        *out_len = best_len;
+    }
+
+    return result;
+}
+
+int main(void)
+{
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char buffer[1024];
+    char *word = NULL;
+    size_t word_len = 0;
+
+    printf("Enter a string: ");
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL)
+    {
+        fprintf(stderr, "Error: failed to read input.\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[strcspn(buffer, "\n")] = '\0';
+
+    word = find_first_max_even_word(buffer, &word_len);
+
+    if (word == NULL)
+    {
+        printf("No even-length word found.\n");
+        return EXIT_SUCCESS;
+    }
+
+    printf("First maximum length even word: %s\n", word);
+    printf("Length: %zu\n", word_len);
+
+    free(word);
+    word = NULL;
+
+    return EXIT_SUCCESS;
+}

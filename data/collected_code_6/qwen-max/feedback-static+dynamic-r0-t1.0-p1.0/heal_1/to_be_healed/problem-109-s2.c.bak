@@ -1,0 +1,31 @@
+#include <stdio.h>
+#include <string.h>
+
+/* Possible weaknesses found:
+ *  Parameter 'binary_string' can be declared as pointer to const [constParameterPointer]
+ */
+int count_odd_rotations(char *binary_string, int length) {
+    int count = 0;
+    for (int i = 0; i < length; ++i) {
+        int value = 0;
+        for (int j = 0; j < length; ++j) {
+            if (binary_string[(i + j) % length] == '1') {
+                value = (value * 2 + 1) % 2;
+            } else {
+                value = (value * 2) % 2;
+            }
+        }
+        if (value % 2 != 0) {
+            count++;
+        }
+    }
+    return count;
+}
+
+int main() {
+    char binary_string[] = "1010";
+    int length = strlen(binary_string);
+    int rotations_with_odd_value = count_odd_rotations(binary_string, length);
+    printf("Count of rotations with odd value: %d\n", rotations_with_odd_value);
+    return 0;
+}

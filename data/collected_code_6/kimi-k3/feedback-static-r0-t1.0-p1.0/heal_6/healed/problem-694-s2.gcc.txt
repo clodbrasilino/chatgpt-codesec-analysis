@@ -1,0 +1,11 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-694-s2.c: In function 'extract_unique_values':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-694-s2.c:70:24: error: 'INT_MAX' undeclared (first use in this function)
+   70 |     if (unique_count > INT_MAX) {
+      |                        ^~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-694-s2.c:7:1: note: 'INT_MAX' is defined in header '<limits.h>'; this is probably fixable by adding '#include <limits.h>'
+    6 | #include <inttypes.h>
+  +++ |+#include <limits.h>
+    7 | 
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-694-s2.c:70:24: note: each undeclared identifier is reported only once for each function it appears in
+   70 |     if (unique_count > INT_MAX) {
+      |                        ^~~~~~~

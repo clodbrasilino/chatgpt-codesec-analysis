@@ -1,0 +1,89 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int value;
+    struct Node *next;
+} Node;
+
+Node* createNode(int value) {
+    Node *newNode = (Node *)malloc(sizeof(Node));
+    if (newNode == NULL) {
+        return NULL;
+    }
+    newNode->value = value;
+    newNode->next = NULL;
+    return newNode;
+}
+
+void insertNode(Node **head, int value) {
+    Node *newNode = createNode(value);
+    if (*head == NULL || (*head)->value >= value) {
+        newNode->next = *head;
+        *head = newNode;
+    } else {
+        Node *current = *head;
+        while (current->next != NULL && current->next->value < value) {
+            current = current->next;
+        }
+        newNode->next = current->next;
+        current->next = newNode;
+    }
+}
+
+Node* mergeSortedLists(Node *list1, Node *list2) {
+    if (list1 == NULL) return list2;
+    if (list2 == NULL) return list1;
+
+    Node *mergedHead = NULL;
+
+    while (list1 != NULL && list2 != NULL) {
+        if (list1->value <= list2->value) {
+            insertNode(&mergedHead, list1->value);
+            list1 = list1->next;
+        } else {
+            insertNode(&mergedHead, list2->value);
+            list2 = list2->next;
+        }
+    }
+
+    while (list1 != NULL) {
+        insertNode(&mergedHead, list1->value);
+        list1 = list1->next;
+    }
+
+    while (list2 != NULL) {
+        insertNode(&mergedHead, list2->value);
+        list2 = list2->next;
+    }
+
+    return mergedHead;
+}
+
+void printList(Node *head) {
+    Node *current = head;
+    while (current != NULL) {
+        printf("%d -> ", current->value);
+        current = current->next;
+    }
+    printf("NULL\n");
+}
+
+int main() {
+    Node *list1 = NULL;
+    Node *list2 = NULL;
+
+    insertNode(&list1, 5);
+    insertNode(&list1, 3);
+    insertNode(&list1, 1);
+
+    insertNode(&list2, 6);
+    insertNode(&list2, 4);
+    insertNode(&list2, 2);
+
+    Node *mergedList = mergeSortedLists(list1, list2);
+
+    printList(mergedList);
+
+    return 0;
+}

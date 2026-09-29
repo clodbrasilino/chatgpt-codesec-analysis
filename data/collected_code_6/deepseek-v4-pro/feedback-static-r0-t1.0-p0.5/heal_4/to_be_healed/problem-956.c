@@ -1,0 +1,174 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+char **split_at_uppercase(const char *input, int *count) {
+    regex_t regex;
+    regmatch_t matches[2];
+    char **result = NULL;
+    int capacity = 0;
+    int index = 0;
+    const char *cursor = input;
+    int status;
+    size_t len;
+
+    if (input == NULL || count == NULL) {
+        return NULL;
+    }
+
+    *count = 0;
+
+    status = regcomp(&regex, "[A-Z]", REG_EXTENDED);
+    if (status != 0) {
+        return NULL;
+    }
+
+    result = (char **)malloc(sizeof(char *) * 16);
+    if (result == NULL) {
+        regfree(&regex);
+        return NULL;
+    }
+    capacity = 16;
+
+    while (*cursor != '\0') {
+        status = regexec(&regex, cursor, 2, matches, 0);
+        if (status == REG_NOMATCH) {
+            /* Possible weaknesses found:
+             * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+             */
+            len = strnlen(cursor, strlen(input) - (cursor - input));
+            /* Possible weaknesses found:
+             *  Assuming that condition 'len>0' is not redundant
+             */
+            if (len > 0) {
+                if (index >= capacity) {
+                    size_t new_capacity = (size_t)capacity * 2;
+                    char **temp = (char **)realloc(result, sizeof(char *) * new_capacity);
+                    if (temp == NULL) {
+                        for (int i = 0; i < index; i++) {
+                            free(result[i]);
+                        }
+                        free(result);
+                        regfree(&regex);
+                        return NULL;
+                    }
+                    result = temp;
+                    /* Possible weaknesses found:
+                     *  Variable 'capacity' is assigned a value that is never used. [unreadVariable]
+                     *  Value stored to 'capacity' is never read [deadcode.DeadStores]
+                     */
+                    capacity = (int)new_capacity;
+                }
+                result[index] = (char *)malloc(len + 1);
+                /* Possible weaknesses found:
+                 *  Assuming condition is false
+                 */
+                if (result[index] == NULL) {
+                    for (int i = 0; i < index; i++) {
+                        free(result[i]);
+                    }
+                    free(result);
+                    regfree(&regex);
+                    return NULL;
+                }
+                /* Possible weaknesses found:
+                 *  Condition 'len>0' is always true [knownConditionTrueFalse]
+                 *  Condition 'len>0' is always true
+                 */
+                if (len > 0) {
+                    /* Possible weaknesses found:
+                     * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+                     */
+                    memcpy(result[index], cursor, len);
+                }
+                result[index][len] = '\0';
+                index++;
+            }
+            break;
+        } else if (status == 0) {
+            size_t split_pos = (size_t)matches[0].rm_so;
+            if (split_pos > 0) {
+                if (index >= capacity) {
+                    size_t new_capacity = (size_t)capacity * 2;
+                    char **temp = (char **)realloc(result, sizeof(char *) * new_capacity);
+                    if (temp == NULL) {
+                        for (int i = 0; i < index; i++) {
+                            free(result[i]);
+                        }
+                        free(result);
+                        regfree(&regex);
+                        return NULL;
+                    }
+                    result = temp;
+                    capacity = (int)new_capacity;
+                }
+                result[index] = (char *)malloc(split_pos + 1);
+                if (result[index] == NULL) {
+                    for (int i = 0; i < index; i++) {
+                        free(result[i]);
+                    }
+                    free(result);
+                    regfree(&regex);
+                    return NULL;
+                }
+                /* Possible weaknesses found:
+                 * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+                 */
+                memcpy(result[index], cursor, split_pos);
+                result[index][split_pos] = '\0';
+                index++;
+                cursor += split_pos;
+            } else {
+                cursor += (size_t)matches[0].rm_eo;
+            }
+        } else {
+            for (int i = 0; i < index; i++) {
+                free(result[i]);
+            }
+            free(result);
+            regfree(&regex);
+            return NULL;
+        }
+    }
+
+    if (index == 0) {
+        free(result);
+        regfree(&regex);
+        return NULL;
+    }
+
+    result[index] = NULL;
+    *count = index;
+    regfree(&regex);
+    return result;
+}
+
+void free_split_result(char **result) {
+    if (result == NULL) {
+        return;
+    }
+    for (int i = 0; result[i] != NULL; i++) {
+        free(result[i]);
+    }
+    free(result);
+}
+
+int main(void) {
+    const char *test_string = "helloWorldExample";
+    int count = 0;
+    char **parts = split_at_uppercase(test_string, &count);
+
+    if (parts == NULL) {
+        printf("Failed to split string\n");
+        return 1;
+    }
+
+    printf("Split parts (%d):\n", count);
+    for (int i = 0; i < count; i++) {
+        printf("[%d]: %s\n", i, parts[i]);
+    }
+
+    free_split_result(parts);
+    return 0;
+}

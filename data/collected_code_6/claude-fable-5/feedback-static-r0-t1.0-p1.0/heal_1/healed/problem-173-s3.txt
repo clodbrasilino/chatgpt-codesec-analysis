@@ -1,0 +1,60 @@
+```c
+#include <stdio.h>
+#include <ctype.h>
+#include <stdlib.h>
+#include <string.h>
+
+void remove_non_alnum(char *str)
+{
+    size_t read_idx;
+    size_t write_idx;
+
+    if (str == NULL) {
+        return;
+    }
+
+    read_idx = 0;
+    write_idx = 0;
+
+    while (str[read_idx] != '\0') {
+        if (isalnum((unsigned char)str[read_idx])) {
+            str[write_idx] = str[read_idx];
+            write_idx++;
+        }
+        read_idx++;
+    }
+
+    str[write_idx] = '\0';
+}
+
+int main(void)
+{
+    char buffer[256];
+    const char *input = "Hello, World! 123 #$% foo_bar";
+    int written;
+
+    written = snprintf(buffer, sizeof(buffer), "%s", input);
+    if (written < 0 || (size_t)written >= sizeof(buffer)) {
+        fprintf(stderr, "Input too long or encoding error\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Before: %s\n", buffer);
+
+    remove_non_alnum(buffer);
+
+    printf("After:  %s\n", buffer);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the fixes applied:**
+
+1. **`strcpy` (CWE-120, risk 4)** — Replaced with `snprintf(buffer, sizeof(buffer), "%s", input)`. This guarantees the destination buffer can never be overflowed, since `snprintf` truncates output to the buffer size and always NUL-terminates.
+
+2. **`strlen` (CWE-126, risk 1)** — The separate `strlen` pre-check is no longer needed. `snprintf` returns the number of characters that *would* have been written; checking `written >= sizeof(buffer)` detects truncation safely without a raw length scan. A negative return value is also handled to catch encoding errors.
+
+3. **Statically-sized array `buffer` (CWE-119/CWE-120, risk 2)** — The array remains fixed-size, but all writes into it are now bounds-checked via `snprintf`, and the truncation check ensures the program fails cleanly rather than silently processing truncated data.
+
+4. **`remove_non_alnum`** — Already safe: it guards against `NULL`, casts to `unsigned char` before calling `isalnum` (avoiding undefined behavior with negative `char` values), and only shrinks the string in place, so no changes were required.

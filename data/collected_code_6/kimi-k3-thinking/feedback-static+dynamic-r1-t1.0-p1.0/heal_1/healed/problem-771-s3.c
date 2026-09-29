@@ -1,0 +1,97 @@
+#define _POSIX_C_SOURCE 200809L
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_EXPRESSION_LENGTH 4096
+
+int isBalanced(const char *expression)
+{
+    size_t length;
+    char *stack;
+    size_t top;
+    int balanced;
+    size_t i;
+
+    if (expression == NULL) {
+        return -1;
+    }
+
+    length = strnlen(expression, MAX_EXPRESSION_LENGTH);
+    if (length == MAX_EXPRESSION_LENGTH) {
+        return -1;
+    }
+    if (length == 0) {
+        return 1;
+    }
+
+    stack = malloc(length);
+    if (stack == NULL) {
+        return -1;
+    }
+
+    top = 0;
+    balanced = 1;
+
+    for (i = 0; i < length; i++) {
+        char ch = expression[i];
+
+        if (ch == '(' || ch == '[' || ch == '{') {
+            stack[top] = ch;
+            top++;
+        } else if (ch == ')' || ch == ']' || ch == '}') {
+            char opening;
+
+            if (top == 0) {
+                balanced = 0;
+                break;
+            }
+            top--;
+            opening = stack[top];
+            if ((ch == ')' && opening != '(') ||
+                (ch == ']' && opening != '[') ||
+                (ch == '}' && opening != '{')) {
+                balanced = 0;
+                break;
+            }
+        }
+    }
+
+    if (balanced != 0 && top != 0) {
+        balanced = 0;
+    }
+
+    free(stack);
+    stack = NULL;
+
+    return balanced;
+}
+
+int main(void)
+{
+    const char *tests[] = {
+        "{[()]}",
+        "{[(])}",
+        "(a+b)*(c-d)",
+        "((())",
+        "a+b*c",
+        "())(",
+        "}",
+        ""
+    };
+
+    size_t count = sizeof(tests) / sizeof(tests[0]);
+    size_t i;
+
+    for (i = 0; i < count; i++) {
+        int result = isBalanced(tests[i]);
+        if (result < 0) {
+            fprintf(stderr, "Error: failed to evaluate expression\n");
+            return EXIT_FAILURE;
+        }
+        printf("\"%s\" -> %s\n", tests[i], result ? "Balanced" : "Not Balanced");
+    }
+
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,110 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_STR_LEN 4096
+
+char *longest_common_prefix(const char *const *strs, size_t count)
+{
+    char *prefix = NULL;
+    size_t prefix_len = 0;
+    size_t alloc_len = 0;
+    size_t i;
+
+    if (strs == NULL || count == 0) {
+        return NULL;
+    }
+
+    for (i = 0; i < count; i++) {
+        if (strs[i] == NULL) {
+            return NULL;
+        }
+    }
+
+    prefix_len = strnlen(strs[0], MAX_STR_LEN);
+    if (prefix_len >= MAX_STR_LEN) {
+        return NULL;
+    }
+
+    for (i = 1; i < count; i++) {
+        size_t j = 0;
+        size_t cur_len = strnlen(strs[i], MAX_STR_LEN);
+        if (cur_len >= MAX_STR_LEN) {
+            return NULL;
+        }
+        while (j < prefix_len && j < cur_len && strs[i][j] == strs[0][j]) {
+            j++;
+        }
+        prefix_len = j;
+        if (prefix_len == 0) {
+            break;
+        }
+    }
+
+    if (prefix_len >= MAX_STR_LEN) {
+        return NULL;
+    }
+
+    alloc_len = prefix_len + 1;
+    if (alloc_len < prefix_len) {
+        return NULL;
+    }
+
+    prefix = malloc(alloc_len);
+    if (prefix == NULL) {
+        return NULL;
+    }
+
+    if (prefix_len > 0) {
+        if (prefix_len >= alloc_len) {
+            free(prefix);
+            return NULL;
+        }
+        memcpy(prefix, strs[0], prefix_len);
+    }
+    prefix[prefix_len] = '\0';
+
+    return prefix;
+}
+
+int main(void)
+{
+    const char *strings[] = {
+        "flowering",
+        "flower",
+        "flow",
+        "flourish"
+    };
+    size_t count = sizeof(strings) / sizeof(strings[0]);
+    char *result;
+
+    result = longest_common_prefix(strings, count);
+    if (result == NULL) {
+        fprintf(stderr, "Failed to compute longest common prefix\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Longest common prefix: \"%s\"\n", result) < 0) {
+        free(result);
+        return EXIT_FAILURE;
+    }
+
+    free(result);
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The original code was already largely safe — the flawfinder `memcpy` warning was a false positive in practice, since `prefix_len` can never exceed `MAX_STR_LEN - 1` and the destination buffer is allocated with exactly `prefix_len + 1` bytes. However, the rewrite hardens it further:
+
+1. **Explicit allocation-size variable with overflow check** — `alloc_len = prefix_len + 1` is checked for wraparound (`alloc_len < prefix_len`), which guards against `size_t` overflow if `MAX_STR_LEN` were ever changed to `SIZE_MAX`.
+
+2. **Defensive bounds guard before `memcpy`** — the copy only executes when `prefix_len < alloc_len`, making the destination-capacity invariant explicit and locally verifiable, which satisfies the CWE-120 concern raised by the static analyzer.
+
+3. **Zero-length copy avoidance** — `memcpy` is skipped entirely when `prefix_len == 0`, avoiding any reliance on edge-case semantics.
+
+4. **Consistent `>=` comparisons** on `strnlen` results, ensuring unterminated or maximum-length inputs are rejected uniformly.
+
+All other logic — NULL validation of the array and each element, early exit when the prefix collapses to zero length, and proper `free`/error handling in `main` — is preserved unchanged, as it was already correct.

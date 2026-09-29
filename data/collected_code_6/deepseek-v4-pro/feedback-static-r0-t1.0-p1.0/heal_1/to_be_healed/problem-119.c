@@ -1,0 +1,91 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int findSingleElement(int arr[], int size) {
+    if (size <= 0) {
+        return -1;
+    }
+    
+    if (size == 1) {
+        return arr[0];
+    }
+    
+    int left = 0;
+    int right = size - 1;
+    
+    while (left <= right) {
+        int mid = left + (right - left) / 2;
+        
+        /* Possible weaknesses found:
+         *  Assuming that condition 'left==right' is not redundant
+         */
+        if (left == right) {
+            /* Possible weaknesses found:
+             *  Either the condition 'mid-1>=0' is redundant or the array 'arr[0]' is accessed at index -1, which is out of bounds. [negativeIndex]
+             *  Negative array index
+             */
+            return arr[left];
+        }
+        
+        if (mid % 2 == 0) {
+            if (mid + 1 < size && arr[mid] == arr[mid + 1]) {
+                left = mid + 2;
+            } else {
+                right = mid;
+            }
+        } else {
+            /* Possible weaknesses found:
+             *  Assuming that condition 'mid-1>=0' is not redundant
+             */
+            if (mid - 1 >= 0 && arr[mid] == arr[mid - 1]) {
+                left = mid + 1;
+            } else {
+                /* Possible weaknesses found:
+                 *  Assignment 'right=mid-1', assigned value is -1
+                 */
+                right = mid - 1;
+            }
+        }
+    }
+    
+    return -1;
+}
+
+int main(void) {
+    int arr1[] = {1, 1, 2, 2, 3, 4, 4, 5, 5};
+    int size1 = sizeof(arr1) / sizeof(arr1[0]);
+    int result1 = findSingleElement(arr1, size1);
+    printf("Single element: %d\n", result1);
+    
+    int arr2[] = {1, 1, 2, 3, 3, 4, 4, 5, 5};
+    int size2 = sizeof(arr2) / sizeof(arr2[0]);
+    int result2 = findSingleElement(arr2, size2);
+    printf("Single element: %d\n", result2);
+    
+    int arr3[] = {1, 1, 2, 2, 3, 3, 4, 5, 5};
+    int size3 = sizeof(arr3) / sizeof(arr3[0]);
+    int result3 = findSingleElement(arr3, size3);
+    printf("Single element: %d\n", result3);
+    
+    int arr4[] = {1, 1, 2};
+    int size4 = sizeof(arr4) / sizeof(arr4[0]);
+    int result4 = findSingleElement(arr4, size4);
+    printf("Single element: %d\n", result4);
+    
+    int arr5[] = {1, 2, 2, 3, 3};
+    int size5 = sizeof(arr5) / sizeof(arr5[0]);
+    int result5 = findSingleElement(arr5, size5);
+    printf("Single element: %d\n", result5);
+    
+    int arr6[] = {1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6};
+    int size6 = sizeof(arr6) / sizeof(arr6[0]);
+    int result6 = findSingleElement(arr6, size6);
+    printf("Single element: %d\n", result6);
+    
+    int arr7[] = {1};
+    int size7 = sizeof(arr7) / sizeof(arr7[0]);
+    int result7 = findSingleElement(arr7, size7);
+    printf("Single element: %d\n", result7);
+    
+    return 0;
+}

@@ -1,0 +1,79 @@
+#include <stdio.h>
+#include <ctype.h>
+#include <string.h>
+#include <stdlib.h>
+#include <limits.h>
+
+#define INITIAL_SIZE 256
+#define GROWTH_FACTOR 2
+
+int count_uppercase(const char *str) {
+    int count = 0;
+    if (str == NULL) {
+        return 0;
+    }
+    while (*str != '\0') {
+        if (isupper((unsigned char)*str)) {
+            count++;
+        }
+        str++;
+    }
+    return count;
+}
+
+char *read_line(FILE *stream) {
+    size_t size = INITIAL_SIZE;
+    size_t len = 0;
+    char *buffer = malloc(size);
+    if (buffer == NULL) {
+        return NULL;
+    }
+
+    int c;
+    while ((c = fgetc(stream)) != EOF && c != '\n') {
+        if (len + 1 >= size) {
+            if (size > SIZE_MAX / GROWTH_FACTOR) {
+                free(buffer);
+                return NULL;
+            }
+            size_t new_size = size * GROWTH_FACTOR;
+            char *new_buffer = realloc(buffer, new_size);
+            if (new_buffer == NULL) {
+                free(buffer);
+                return NULL;
+            }
+            buffer = new_buffer;
+            size = new_size;
+        }
+        buffer[len++] = (char)c;
+    }
+
+    if (ferror(stream)) {
+        free(buffer);
+        return NULL;
+    }
+
+    if (len == 0 && c == EOF) {
+        free(buffer);
+        return NULL;
+    }
+
+    buffer[len] = '\0';
+    return buffer;
+}
+
+int main(void) {
+    printf("Enter a string: ");
+    
+    char *input = read_line(stdin);
+    if (input != NULL) {
+        int result = count_uppercase(input);
+        printf("Uppercase count: %d\n", result);
+        free(input);
+    } else {
+        fprintf(stderr, "Error reading input.\n");
+        return 1;
+    }
+    
+    return 0;
+}

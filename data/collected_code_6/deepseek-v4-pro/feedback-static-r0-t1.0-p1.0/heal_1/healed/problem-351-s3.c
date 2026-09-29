@@ -1,0 +1,80 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int firstElementKTimes(const int arr[], int n, int k) {
+    const int MAX_VAL = 100000;
+    int *count = (int *)calloc(MAX_VAL + 1, sizeof(int));
+    int *first_index = (int *)malloc((MAX_VAL + 1) * sizeof(int));
+    int i;
+    int result = -1;
+    int min_index = n;
+
+    if (count == NULL || first_index == NULL) {
+        free(count);
+        free(first_index);
+        return -1;
+    }
+
+    for (i = 0; i <= MAX_VAL; i++) {
+        first_index[i] = -1;
+    }
+
+    for (i = 0; i < n; i++) {
+        if (arr[i] < 0 || arr[i] > MAX_VAL) {
+            free(count);
+            free(first_index);
+            return -1;
+        }
+        count[arr[i]]++;
+        if (first_index[arr[i]] == -1) {
+            first_index[arr[i]] = i;
+        }
+    }
+
+    for (i = 0; i <= MAX_VAL; i++) {
+        if (count[i] >= k && first_index[i] != -1) {
+            if (first_index[i] < min_index) {
+                min_index = first_index[i];
+                result = i;
+            }
+        }
+    }
+
+    free(count);
+    free(first_index);
+    return result;
+}
+
+int main(void) {
+    int arr1[] = {1, 7, 4, 3, 4, 8, 7};
+    int n1 = sizeof(arr1) / sizeof(arr1[0]);
+    int k1 = 2;
+    int res1 = firstElementKTimes(arr1, n1, k1);
+    if (res1 != -1) {
+        printf("%d\n", res1);
+    } else {
+        printf("-1\n");
+    }
+
+    int arr2[] = {3, 1, 3, 4, 5, 1, 3};
+    int n2 = sizeof(arr2) / sizeof(arr2[0]);
+    int k2 = 3;
+    int res2 = firstElementKTimes(arr2, n2, k2);
+    if (res2 != -1) {
+        printf("%d\n", res2);
+    } else {
+        printf("-1\n");
+    }
+
+    int arr3[] = {10, 8, 2};
+    int n3 = sizeof(arr3) / sizeof(arr3[0]);
+    int k3 = 2;
+    int res3 = firstElementKTimes(arr3, n3, k3);
+    if (res3 != -1) {
+        printf("%d\n", res3);
+    } else {
+        printf("-1\n");
+    }
+
+    return 0;
+}

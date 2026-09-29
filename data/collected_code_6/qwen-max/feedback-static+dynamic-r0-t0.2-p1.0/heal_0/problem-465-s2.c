@@ -1,0 +1,80 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char *key;
+    char *value;
+} DictionaryItem;
+
+typedef struct {
+    DictionaryItem *items;
+    int size;
+    int capacity;
+} Dictionary;
+
+Dictionary* create_dictionary(int capacity) {
+    Dictionary *dict = (Dictionary*)malloc(sizeof(Dictionary));
+    if (dict == NULL) return NULL;
+    dict->items = (DictionaryItem*)malloc(capacity * sizeof(DictionaryItem));
+    if (dict->items == NULL) {
+        free(dict);
+        return NULL;
+    }
+    dict->size = 0;
+    dict->capacity = capacity;
+    return dict;
+}
+
+void add_item(Dictionary *dict, const char *key, const char *value) {
+    if (dict->size >= dict->capacity) {
+        dict->capacity *= 2;
+        dict->items = (DictionaryItem*)realloc(dict->items, dict->capacity * sizeof(DictionaryItem));
+        if (dict->items == NULL) return;
+    }
+    dict->items[dict->size].key = strdup(key);
+    dict->items[dict->size].value = strdup(value);
+    dict->size++;
+}
+
+Dictionary* drop_empty_items(Dictionary *dict) {
+    Dictionary *new_dict = create_dictionary(dict->size);
+    if (new_dict == NULL) return NULL;
+    for (int i = 0; i < dict->size; i++) {
+        if (dict->items[i].value != NULL && strlen(dict->items[i].value) > 0) {
+            add_item(new_dict, dict->items[i].key, dict->items[i].value);
+        }
+    }
+    return new_dict;
+}
+
+void free_dictionary(Dictionary *dict) {
+    for (int i = 0; i < dict->size; i++) {
+        free(dict->items[i].key);
+        free(dict->items[i].value);
+    }
+    free(dict->items);
+    free(dict);
+}
+
+int main() {
+    Dictionary *dict = create_dictionary(5);
+    if (dict == NULL) return 1;
+
+    add_item(dict, "key1", "value1");
+    add_item(dict, "key2", "");
+    add_item(dict, "key3", "value3");
+    add_item(dict, "key4", "");
+
+    Dictionary *new_dict = drop_empty_items(dict);
+    if (new_dict == NULL) return 1;
+
+    for (int i = 0; i < new_dict->size; i++) {
+        printf("%s: %s\n", new_dict->items[i].key, new_dict->items[i].value);
+    }
+
+    free_dictionary(dict);
+    free_dictionary(new_dict);
+
+    return 0;
+}

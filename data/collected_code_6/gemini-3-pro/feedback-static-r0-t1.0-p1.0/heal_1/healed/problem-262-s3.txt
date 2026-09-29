@@ -1,0 +1,102 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node* next;
+};
+
+struct Node* createNode(int data) {
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    if (newNode == NULL) {
+        exit(EXIT_FAILURE);
+    }
+    newNode->data = data;
+    newNode->next = NULL;
+    return newNode;
+}
+
+void append(struct Node** head_ref, int new_data) {
+    struct Node* new_node = createNode(new_data);
+    struct Node* last = *head_ref;
+    if (*head_ref == NULL) {
+        *head_ref = new_node;
+        return;
+    }
+    while (last->next != NULL) {
+        last = last->next;
+    }
+    last->next = new_node;
+}
+
+void printList(struct Node* node) {
+    while (node != NULL) {
+        printf("%d ", node->data);
+        node = node->next;
+    }
+    printf("\n");
+}
+
+void freeList(struct Node* head) {
+    while (head != NULL) {
+        struct Node* tmp = head;
+        head = head->next;
+        free(tmp);
+    }
+}
+
+void splitList(struct Node* head, int k, struct Node** first_ref, struct Node** second_ref) {
+    *first_ref = NULL;
+    *second_ref = NULL;
+    
+    if (head == NULL) {
+        return;
+    }
+    
+    if (k <= 0) {
+        *second_ref = head;
+        return;
+    }
+    
+    *first_ref = head;
+    struct Node* current = head;
+    int count = 1;
+    
+    while (count < k && current != NULL) {
+        current = current->next;
+        count++;
+    }
+    
+    if (current == NULL) {
+        return;
+    }
+    
+    *second_ref = current->next;
+    current->next = NULL;
+}
+
+int main() {
+    struct Node* head = NULL;
+    struct Node* first_part = NULL;
+    struct Node* second_part = NULL;
+    
+    append(&head, 1);
+    append(&head, 2);
+    append(&head, 3);
+    append(&head, 4);
+    append(&head, 5);
+    
+    int k = 3;
+    
+    splitList(head, k, &first_part, &second_part);
+    
+    printList(first_part);
+    printList(second_part);
+    
+    freeList(first_part);
+    freeList(second_part);
+    
+    return 0;
+}
+```

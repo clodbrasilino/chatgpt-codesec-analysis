@@ -1,0 +1,56 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+#include <errno.h>
+
+unsigned long long calculateCombination(int n, int k) {
+    if (k < 0 || k > n) {
+        return 0;
+    }
+    if (k == 0 || k == n) {
+        return 1;
+    }
+    
+    if (k > n - k) {
+        k = n - k;
+    }
+    
+    unsigned long long c = 1;
+    for (int i = 1; i <= k; i++) {
+        c = c * (n - i + 1) / i;
+    }
+    return c;
+}
+
+unsigned long long sumOfSquaresOfBinomialCoeffs(int n) {
+    if (n < 0) {
+        return 0;
+    }
+    return calculateCombination(2 * n, n);
+}
+
+int main(int argc, const char * const argv[]) {
+    int n = 5;
+    
+    if (argc > 1) {
+        char *endptr;
+        errno = 0;
+        long parsed_val = strtol(argv[1], &endptr, 10);
+        
+        if (errno == ERANGE || parsed_val > INT_MAX || parsed_val < INT_MIN || endptr == argv[1] || *endptr != '\0') {
+            fprintf(stderr, "Error: Invalid integer input.\n");
+            return EXIT_FAILURE;
+        }
+        n = (int)parsed_val;
+    }
+    
+    if (n < 0) {
+        fprintf(stderr, "Error: n must be non-negative.\n");
+        return EXIT_FAILURE;
+    }
+    
+    unsigned long long result = sumOfSquaresOfBinomialCoeffs(n);
+    printf("Sum of squares of binomial coefficients for n=%d is %llu\n", n, result);
+    
+    return EXIT_SUCCESS;
+}

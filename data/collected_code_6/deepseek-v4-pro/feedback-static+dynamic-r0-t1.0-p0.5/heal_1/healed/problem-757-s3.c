@@ -1,0 +1,71 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+int count_reverse_pairs(char **strs, int n) {
+    if (strs == NULL || n <= 0) {
+        return -1;
+    }
+
+    int count = 0;
+    char **reversed = (char **)malloc(n * sizeof(char *));
+    if (reversed == NULL) {
+        return -1;
+    }
+
+    for (int i = 0; i < n; i++) {
+        if (strs[i] == NULL) {
+            for (int j = 0; j < i; j++) {
+                free(reversed[j]);
+            }
+            free(reversed);
+            return -1;
+        }
+
+        size_t len = strnlen(strs[i], 4096);
+        if (len == 4096 && strs[i][4096] != '\0') {
+            for (int j = 0; j < i; j++) {
+                free(reversed[j]);
+            }
+            free(reversed);
+            return -1;
+        }
+
+        reversed[i] = (char *)malloc((len + 1) * sizeof(char));
+        if (reversed[i] == NULL) {
+            for (int j = 0; j < i; j++) {
+                free(reversed[j]);
+            }
+            free(reversed);
+            return -1;
+        }
+
+        for (size_t j = 0; j < len; j++) {
+            reversed[i][j] = strs[i][len - 1 - j];
+        }
+        reversed[i][len] = '\0';
+    }
+
+    for (int i = 0; i < n; i++) {
+        for (int j = i + 1; j < n; j++) {
+            if (strcmp(strs[i], reversed[j]) == 0) {
+                count++;
+            }
+        }
+    }
+
+    for (int i = 0; i < n; i++) {
+        free(reversed[i]);
+    }
+    free(reversed);
+
+    return count;
+}
+
+int main(void) {
+    char *strs[] = {"abc", "cba", "def", "fed", "ghi"};
+    int n = sizeof(strs) / sizeof(strs[0]);
+    int result = count_reverse_pairs(strs, n);
+    printf("%d\n", result);
+    return 0;
+}

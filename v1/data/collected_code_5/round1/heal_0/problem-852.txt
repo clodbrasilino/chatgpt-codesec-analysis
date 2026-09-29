@@ -1,0 +1,74 @@
+```C
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node* next;
+};
+
+void removeNegatives(struct Node** head_ref) {
+    struct Node* previous = NULL;
+    struct Node* current = *head_ref;
+
+    while (current != NULL) {
+        
+        if (current->data < 0) {
+            if (previous == NULL) {
+                *head_ref = current->next;
+            } else {
+                previous->next = current->next;
+            }
+
+            struct Node* temp = current;
+            current = current->next;
+            free(temp);
+        } else {
+            previous = current;
+            current = current->next;
+        }
+    }
+}
+
+void pushNode(struct Node** head_ref, int new_data) {
+    struct Node* new_node = (struct Node*) malloc(sizeof(struct Node));
+    
+    if (new_node == NULL) {
+        printf("Memory allocation failed. Exiting...");
+        exit(0);
+    }
+
+    new_node->data = new_data;
+    new_node->next = (*head_ref);
+    (*head_ref) = new_node;
+}
+
+void printList(struct Node* head) {
+    struct Node* temp = head;
+    while (temp != NULL) {
+        printf(" %d ", temp->data);
+        temp = temp->next;
+    }
+    printf("\n");
+}
+
+int main() {
+    struct Node* head = NULL;
+    pushNode(&head, -1);
+    pushNode(&head, 5);
+    pushNode(&head, -10);
+    pushNode(&head, 15);
+    pushNode(&head, -20);
+    pushNode(&head, 25);
+
+    printf("Original list: \n");
+    printList(head);
+
+    removeNegatives(&head);
+
+    printf("List after removing negative numbers: \n");
+    printList(head);
+
+    return 0;
+}
+```

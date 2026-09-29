@@ -1,0 +1,54 @@
+```c
+#include <stdio.h>
+#include <limits.h>
+
+unsigned int left_rotate(unsigned int value, unsigned int shift)
+{
+    const unsigned int bits = (unsigned int)(sizeof(unsigned int) * CHAR_BIT);
+
+    shift %= bits;
+
+    if (shift == 0U)
+    {
+        return value;
+    }
+
+    return (value << shift) | (value >> (bits - shift));
+}
+
+int main(void)
+{
+    unsigned int number = 0U;
+    unsigned int shift = 0U;
+
+    printf("Enter an unsigned integer: ");
+    if (scanf("%u", &number) != 1)
+    {
+        fprintf(stderr, "Invalid input for number.\n");
+        return 1;
+    }
+
+    printf("Enter number of positions to rotate left: ");
+    if (scanf("%u", &shift) != 1)
+    {
+        fprintf(stderr, "Invalid input for shift.\n");
+        return 1;
+    }
+
+    printf("Result: %u\n", left_rotate(number, shift));
+
+    return 0;
+}
+```
+
+Key safety points in this implementation:
+
+1. **Shift amount is reduced modulo the bit width** — shifting by an amount greater than or equal to the width of the type is undefined behavior in C, so `shift %= bits` prevents that (addresses CWE-703).
+
+2. **The `shift == 0` case is handled separately** — otherwise `value >> (bits - shift)` would become `value >> bits`, which is also undefined behavior.
+
+3. **`unsigned int` is used throughout** — left-shifting signed values can overflow into undefined behavior; unsigned arithmetic is well-defined (addresses CWE-710).
+
+4. **All `scanf` return values are checked** — unvalidated input would leave variables in an indeterminate state, and using them would be improper resource handling (addresses CWE-664 and CWE-703).
+
+5. **Bit width is computed portably** via `sizeof(unsigned int) * CHAR_BIT` rather than hardcoding `32`, keeping the code standard-conforming across platforms.

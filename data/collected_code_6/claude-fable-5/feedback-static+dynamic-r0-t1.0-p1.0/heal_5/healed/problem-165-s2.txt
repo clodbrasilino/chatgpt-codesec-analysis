@@ -1,0 +1,69 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+#define MAX_INPUT_LEN 256
+
+size_t count_position_matches(const char *str, size_t max_len)
+{
+    size_t count = 0;
+    size_t len;
+    size_t i;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    len = strnlen(str, max_len);
+
+    for (i = 0; i < len && i < 26; i++) {
+        if (str[i] == (char)('a' + i) || str[i] == (char)('A' + i)) {
+            count++;
+        }
+    }
+
+    return count;
+}
+
+int main(void)
+{
+    char buffer[MAX_INPUT_LEN];
+    size_t result;
+    size_t len;
+
+    printf("Enter a string: ");
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    }
+
+    result = count_position_matches(buffer, sizeof(buffer));
+
+    printf("Characters at same position as in alphabet: %zu\n", result);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The original code was already well-defended against the Flawfinder warning (CWE-119/CWE-120), which is a heuristic flag on any statically-sized `char` array rather than an actual detected flaw. The mitigations already in place, and preserved in the rewrite:
+
+1. **Bounded input:** `fgets(buffer, sizeof(buffer), stdin)` limits reads to the buffer size, unlike `gets()` or unbounded `scanf("%s", ...)`.
+2. **Guaranteed termination:** `buffer[sizeof(buffer) - 1] = '\0'` is defensive (technically redundant after a successful `fgets`, but harmless and protects against future refactoring).
+3. **Bounded length calculation:** `strnlen()` with an explicit cap instead of `strlen()`, so even an unterminated buffer cannot cause an out-of-bounds read.
+4. **NULL check** in `count_position_matches` before dereferencing.
+5. **Loop bounds:** `i < len && i < 26` prevents both buffer overrun and arithmetic past `'z'`/`'Z'`.
+6. **Return-value checking:** `fgets` failure is handled with an error path and `EXIT_FAILURE`.
+7. **Safe newline stripping:** the `len > 0` guard prevents `buffer[len - 1]` from underflowing on an empty string.
+
+No functional or security changes were required; the flagged "weakness" is a false positive given the existing bounds discipline.

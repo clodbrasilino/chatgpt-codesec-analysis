@@ -1,0 +1,281 @@
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    const char *data;
+    size_t length;
+} StringView;
+
+typedef struct {
+    StringView key;
+    StringView value;
+} DictionaryEntryView;
+
+typedef struct {
+    char *key;
+    char *value;
+} DictionaryEntry;
+
+typedef struct {
+    DictionaryEntry *entries;
+    size_t count;
+} Dictionary;
+
+typedef enum {
+    TUPLE_DICTIONARY
+} TupleItemType;
+
+typedef struct {
+    TupleItemType type;
+    Dictionary dictionary;
+} TupleItem;
+
+typedef struct {
+    TupleItem *items;
+    size_t count;
+    size_t capacity;
+} Tuple;
+
+static char *duplicate_string(const char *source, size_t length)
+{
+    if ((source == NULL && length != 0U) || length == SIZE_MAX) {
+        return NULL;
+    }
+
+    char *copy = malloc(length + 1U);
+    if (copy == NULL) {
+        return NULL;
+    }
+
+    if (length != 0U) {
+        /* Possible weaknesses found:
+         * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+         */
+        memcpy(copy, source, length);
+    }
+
+    copy[length] = '\0';
+    return copy;
+}
+
+static void dictionary_destroy(Dictionary *dictionary)
+{
+    if (dictionary == NULL) {
+        return;
+    }
+
+    for (size_t i = 0U; i < dictionary->count; ++i) {
+        free(dictionary->entries[i].key);
+        free(dictionary->entries[i].value);
+    }
+
+    free(dictionary->entries);
+    dictionary->entries = NULL;
+    dictionary->count = 0U;
+}
+
+static int dictionary_copy(Dictionary *destination,
+                           const DictionaryEntryView *source_entries,
+                           size_t source_count)
+{
+    if (destination == NULL ||
+        (source_count != 0U && source_entries == NULL)) {
+        return -1;
+    }
+
+    destination->entries = NULL;
+    destination->count = 0U;
+
+    if (source_count == 0U) {
+        return 0;
+    }
+
+    if (source_count > SIZE_MAX / sizeof(*destination->entries)) {
+        return -1;
+    }
+
+    DictionaryEntry *entries = calloc(source_count, sizeof(*entries));
+    if (entries == NULL) {
+        return -1;
+    }
+
+    destination->entries = entries;
+
+    for (size_t i = 0U; i < source_count; ++i) {
+        const DictionaryEntryView *source = &source_entries[i];
+
+        if ((source->key.data == NULL && source->key.length != 0U) ||
+            (source->value.data == NULL && source->value.length != 0U) ||
+            source->key.length == SIZE_MAX ||
+            source->value.length == SIZE_MAX) {
+            dictionary_destroy(destination);
+            return -1;
+        }
+
+        entries[i].key = duplicate_string(source->key.data,
+                                          source->key.length);
+        if (entries[i].key == NULL) {
+            dictionary_destroy(destination);
+            return -1;
+        }
+
+        destination->count = i + 1U;
+
+        entries[i].value = duplicate_string(source->value.data,
+                                            source->value.length);
+        if (entries[i].value == NULL) {
+            dictionary_destroy(destination);
+            return -1;
+        }
+    }
+
+    return 0;
+}
+
+static int tuple_add_dictionary(Tuple *tuple,
+                                const DictionaryEntryView *entries,
+                                size_t count)
+{
+    if (tuple == NULL ||
+        tuple->count > tuple->capacity ||
+        (tuple->capacity == 0U && tuple->items != NULL) ||
+        (tuple->capacity != 0U && tuple->items == NULL) ||
+        (count != 0U && entries == NULL)) {
+        return -1;
+    }
+
+    TupleItem item = {
+        .type = TUPLE_DICTIONARY,
+        .dictionary = { .entries = NULL, .count = 0U }
+    };
+
+    if (dictionary_copy(&item.dictionary, entries, count) != 0) {
+        return -1;
+    }
+
+    if (tuple->count == tuple->capacity) {
+        size_t new_capacity;
+
+        if (tuple->capacity == 0U) {
+            new_capacity = 4U;
+        } else {
+            if (tuple->capacity > SIZE_MAX / 2U) {
+                dictionary_destroy(&item.dictionary);
+                return -1;
+            }
+            new_capacity = tuple->capacity * 2U;
+        }
+
+        if (new_capacity > SIZE_MAX / sizeof(*tuple->items)) {
+            dictionary_destroy(&item.dictionary);
+            return -1;
+        }
+
+        TupleItem *resized = realloc(
+            tuple->items,
+            new_capacity * sizeof(*tuple->items));
+
+        if (resized == NULL) {
+            dictionary_destroy(&item.dictionary);
+            return -1;
+        }
+
+        tuple->items = resized;
+        tuple->capacity = new_capacity;
+    }
+
+    tuple->items[tuple->count] = item;
+    ++tuple->count;
+
+    return 0;
+}
+
+static void tuple_destroy(Tuple *tuple)
+{
+    if (tuple == NULL) {
+        return;
+    }
+
+    if (tuple->items != NULL) {
+        for (size_t i = 0U; i < tuple->count; ++i) {
+            if (tuple->items[i].type == TUPLE_DICTIONARY) {
+                dictionary_destroy(&tuple->items[i].dictionary);
+            }
+        }
+    }
+
+    free(tuple->items);
+    tuple->items = NULL;
+    tuple->count = 0U;
+    tuple->capacity = 0U;
+}
+
+int main(void)
+{
+    static const char name_key[] = "name";
+    static const char name_value[] = "Alice";
+    static const char language_key[] = "language";
+    static const char language_value[] = "C";
+    static const char role_key[] = "role";
+    static const char role_value[] = "developer";
+
+    const DictionaryEntryView entries[] = {
+        {
+            { name_key, sizeof(name_key) - 1U },
+            { name_value, sizeof(name_value) - 1U }
+        },
+        {
+            { language_key, sizeof(language_key) - 1U },
+            { language_value, sizeof(language_value) - 1U }
+        },
+        {
+            { role_key, sizeof(role_key) - 1U },
+            { role_value, sizeof(role_value) - 1U }
+        }
+    };
+
+    Tuple tuple = {
+        .items = NULL,
+        .count = 0U,
+        .capacity = 0U
+    };
+
+    if (tuple_add_dictionary(
+            &tuple,
+            entries,
+            sizeof(entries) / sizeof(entries[0])) != 0) {
+        fputs("Failed to add dictionary to tuple\n", stderr);
+        tuple_destroy(&tuple);
+        return EXIT_FAILURE;
+    }
+
+    if (tuple.count == 0U ||
+        tuple.items == NULL ||
+        tuple.items[0].type != TUPLE_DICTIONARY) {
+        tuple_destroy(&tuple);
+        return EXIT_FAILURE;
+    }
+
+    const Dictionary *dictionary = &tuple.items[0].dictionary;
+
+    if (dictionary->count != 0U && dictionary->entries == NULL) {
+        tuple_destroy(&tuple);
+        return EXIT_FAILURE;
+    }
+
+    for (size_t i = 0U; i < dictionary->count; ++i) {
+        const DictionaryEntry *entry = &dictionary->entries[i];
+
+        if (entry->key == NULL ||
+            entry->value == NULL ||
+            printf("%s: %s\n", entry->key, entry->value) < 0) {
+            tuple_destroy(&tuple);
+            return EXIT_FAILURE;
+        }
+    }
+
+    tuple_destroy(&tuple);
+    return EXIT_SUCCESS;
+}

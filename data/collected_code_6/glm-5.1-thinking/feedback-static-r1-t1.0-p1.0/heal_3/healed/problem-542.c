@@ -1,0 +1,67 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+char *replace_with_colon(const char *str, size_t len) {
+    if (str == NULL) {
+        return NULL;
+    }
+
+    regex_t regex;
+    int ret = regcomp(&regex, "[ ,.]", REG_EXTENDED);
+    if (ret != 0) {
+        return NULL;
+    }
+
+    char *result = malloc(len + 1);
+    if (result == NULL) {
+        regfree(&regex);
+        return NULL;
+    }
+
+    const char *src = str;
+    char *dst = result;
+    regmatch_t match;
+
+    while (1) {
+        ret = regexec(&regex, src, 1, &match, 0);
+        if (ret == REG_NOMATCH) {
+            size_t remaining_len = len - (src - str);
+            memcpy(dst, src, remaining_len);
+            dst += remaining_len;
+            break;
+        }
+        
+        if (ret != 0) {
+            free(result);
+            regfree(&regex);
+            return NULL;
+        }
+
+        memcpy(dst, src, match.rm_so);
+        dst += match.rm_so;
+
+        *dst = ':';
+        dst++;
+
+        src += match.rm_eo;
+    }
+
+    *dst = '\0';
+
+    regfree(&regex);
+    return result;
+}
+
+int main(void) {
+    const char input[] = "Hello world, this.is a test.";
+    char *output = replace_with_colon(input, sizeof(input) - 1);
+    
+    if (output != NULL) {
+        printf("%s\n", output);
+        free(output);
+    }
+    
+    return 0;
+}

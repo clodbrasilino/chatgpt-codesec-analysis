@@ -1,0 +1,84 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int value;
+    struct Node *next;
+};
+
+static struct Node *create_node(int value)
+{
+    struct Node *node = malloc(sizeof(struct Node));
+    if (node == NULL) {
+        return NULL;
+    }
+    node->value = value;
+    node->next = NULL;
+    return node;
+}
+
+static struct Node *build_list(const int *values, size_t count)
+{
+    struct Node *head = NULL;
+    struct Node *tail = NULL;
+    size_t i;
+
+    for (i = 0; i < count; i++) {
+        struct Node *node = create_node(values[i]);
+        if (node == NULL) {
+            while (head != NULL) {
+                struct Node *tmp = head;
+                head = head->next;
+                free(tmp);
+            }
+            return NULL;
+        }
+        if (head == NULL) {
+            head = node;
+        } else {
+            tail->next = node;
+        }
+        tail = node;
+    }
+    return head;
+}
+
+static long list_sum(const struct Node *node)
+{
+    if (node == NULL) {
+        return 0;
+    }
+    return (long)node->value + list_sum(node->next);
+}
+
+static void free_list(struct Node *head)
+{
+    while (head != NULL) {
+        struct Node *tmp = head;
+        head = head->next;
+        free(tmp);
+    }
+}
+
+int main(void)
+{
+    int values[] = {1, 2, 3, 4, 5};
+    size_t count = sizeof(values) / sizeof(values[0]);
+    struct Node *head;
+    long sum;
+
+    head = build_list(values, count);
+    if (head == NULL) {
+        fprintf(stderr, "Failed to allocate list\n");
+        return EXIT_FAILURE;
+    }
+
+    sum = list_sum(head);
+    if (printf("Sum: %ld\n", sum) < 0) {
+        free_list(head);
+        return EXIT_FAILURE;
+    }
+
+    free_list(head);
+    return EXIT_SUCCESS;
+}

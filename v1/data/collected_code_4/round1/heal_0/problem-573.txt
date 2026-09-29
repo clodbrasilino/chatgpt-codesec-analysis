@@ -1,0 +1,42 @@
+```C
+#include <stdio.h>
+
+int product(int size, int *a) {
+    int i, j;
+    int isUnique;
+    int result = 1;
+
+    if (a == NULL || size < 1) {
+        return 0;
+    }
+
+    for (i = 0; i < size; i++) {
+        isUnique = 1;
+
+        for (j = i + 1; j < size; j++) {
+            if (a[i] == a[j]) {
+                isUnique = 0;
+                break;
+            }
+        }
+
+        if (isUnique) {
+            result *= a[i];
+        }
+    }
+
+    return result;
+}
+
+int main() {
+    int ar[] = {1, 2, 3, 2, 5};
+    int n = sizeof(ar) / sizeof(ar[0]);
+    int prod;
+
+    prod = product(n, ar);
+
+    printf("%d\n", prod);
+
+    return 0;
+}
+```

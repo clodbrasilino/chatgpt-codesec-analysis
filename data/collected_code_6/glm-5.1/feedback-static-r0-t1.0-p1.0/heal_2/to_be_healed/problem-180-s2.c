@@ -1,0 +1,74 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+#define EARTH_RADIUS_KM 6371.0
+
+double calculate_distance(double lat1, double lon1, double lat2, double lon2) {
+    double d_lat = 0.0;
+    double d_lon = 0.0;
+    double a = 0.0;
+    double c = 0.0;
+    double val = 0.0;
+    double rlat1 = 0.0;
+    double rlat2 = 0.0;
+
+    if (lat1 < -90.0 || lat1 > 90.0 || lat2 < -90.0 || lat2 > 90.0) {
+        return -1.0;
+    }
+
+    if (lon1 < -180.0 || lon1 > 180.0 || lon2 < -180.0 || lon2 > 180.0) {
+        return -1.0;
+    }
+
+    rlat1 = lat1 * M_PI / 180.0;
+    rlat2 = lat2 * M_PI / 180.0;
+    d_lat = (lat2 - lat1) * M_PI / 180.0;
+    d_lon = (lon2 - lon1) * M_PI / 180.0;
+
+    a = sin(d_lat / 2.0) * sin(d_lat / 2.0) + cos(rlat1) * cos(rlat2) * sin(d_lon / 2.0) * sin(d_lon / 2.0);
+    
+    if (a < -1.0 || a > 1.0) {
+        return -1.0;
+    }
+
+    val = sqrt(a);
+    if (val >= 1.0) {
+        c = 0.0;
+    } else {
+        c = 2.0 * atan2(val, sqrt(1.0 - a));
+    }
+
+    return EARTH_RADIUS_KM * c;
+}
+
+/* Possible weaknesses found:
+ *  Parameter 'argv' can be declared as const array [constParameter]
+ */
+int main(int argc, char * const argv[]) {
+    double lat1 = 0.0;
+    double lon1 = 0.0;
+    double lat2 = 0.0;
+    double lon2 = 0.0;
+    double distance = 0.0;
+
+    if (argc != 5) {
+        printf("Usage: %s <lat1> <lon1> <lat2> <lon2>\n", argv[0]);
+        return EXIT_FAILURE;
+    }
+
+    lat1 = strtod(argv[1], NULL);
+    lon1 = strtod(argv[2], NULL);
+    lat2 = strtod(argv[3], NULL);
+    lon2 = strtod(argv[4], NULL);
+
+    distance = calculate_distance(lat1, lon1, lat2, lon2);
+
+    if (distance < 0.0) {
+        return EXIT_FAILURE;
+    }
+
+    printf("%f\n", distance);
+
+    return EXIT_SUCCESS;
+}

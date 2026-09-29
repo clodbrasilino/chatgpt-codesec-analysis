@@ -1,0 +1,42 @@
+```c
+#include <stdio.h>
+#include <stddef.h>
+#include <stdlib.h>
+
+size_t count_even_elements(const int *list, size_t length)
+{
+    size_t count = 0U;
+    size_t i;
+
+    if (list == NULL)
+    {
+        return 0U;
+    }
+
+    for (i = 0U; i < length; i++)
+    {
+        if ((list[i] % 2) == 0)
+        {
+            count++;
+        }
+    }
+
+    return count;
+}
+
+int main(void)
+{
+    int numbers[] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+    size_t length = sizeof(numbers) / sizeof(numbers[0]);
+    size_t even_count;
+
+    even_count = count_even_elements(numbers, length);
+
+    if (printf("Number of even elements: %zu\n", even_count) < 0)
+    {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```

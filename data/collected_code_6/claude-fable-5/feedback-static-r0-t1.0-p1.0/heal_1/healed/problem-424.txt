@@ -1,0 +1,83 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_STRING_LEN 4096U
+
+char *extract_rear(const char *const *strings, size_t count)
+{
+    char *result = NULL;
+    size_t i;
+
+    if (strings == NULL || count == 0U) {
+        return NULL;
+    }
+
+    if (count >= (size_t)-1) {
+        return NULL;
+    }
+
+    result = malloc(count + 1U);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    for (i = 0U; i < count; i++) {
+        size_t len;
+
+        if (strings[i] == NULL) {
+            free(result);
+            return NULL;
+        }
+
+        len = strnlen(strings[i], MAX_STRING_LEN);
+        if (len >= MAX_STRING_LEN) {
+            free(result);
+            return NULL;
+        }
+
+        if (len == 0U) {
+            result[i] = ' ';
+        } else {
+            result[i] = strings[i][len - 1U];
+        }
+    }
+
+    result[count] = '\0';
+    return result;
+}
+
+int main(void)
+{
+    const char *const words[] = { "Mers", "for", "Vers" };
+    size_t count = sizeof(words) / sizeof(words[0]);
+    char *rear = extract_rear(words, count);
+    size_t i;
+
+    if (rear == NULL) {
+        (void)fprintf(stderr, "Extraction failed\n");
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0U; i < count; i++) {
+        if (printf("%c\n", rear[i]) < 0) {
+            free(rear);
+            return EXIT_FAILURE;
+        }
+    }
+
+    free(rear);
+    return EXIT_SUCCESS;
+}
+```
+
+**Key changes made:**
+
+1. **Replaced `strlen` with `strnlen`** — This directly addresses the Flawfinder CWE-126 warning. `strnlen` bounds the scan to `MAX_STRING_LEN` bytes, so a non-NUL-terminated string can no longer cause an unbounded over-read.
+
+2. **Added a termination check** — If `strnlen` returns `MAX_STRING_LEN`, the string was not properly terminated within the allowed bound, so the function fails safely by freeing the buffer and returning `NULL` rather than processing potentially invalid data.
+
+3. **Added an overflow guard on `count + 1U`** — Ensures the `malloc` size computation cannot wrap around if `count` were `SIZE_MAX`, which would otherwise allocate a tiny buffer and cause a heap overflow in the loop.
+
+All original defensive properties are preserved: NULL argument checks, per-element NULL checks with cleanup, allocation failure handling, `printf` return-value checks, and no memory leaks on any exit path.

@@ -1,0 +1,56 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+#define ZODIAC_COUNT 12
+
+static const char *chinese_zodiac(int year)
+{
+    static const char *const signs[ZODIAC_COUNT] = {
+        "Monkey", "Rooster", "Dog", "Pig",
+        "Rat", "Ox", "Tiger", "Rabbit",
+        "Dragon", "Snake", "Horse", "Goat"
+    };
+    int index;
+
+    index = year % ZODIAC_COUNT;
+    if (index < 0) {
+        index += ZODIAC_COUNT;
+    }
+    if (index < 0 || index >= ZODIAC_COUNT) {
+        return "Unknown";
+    }
+    return signs[index];
+}
+
+int main(void)
+{
+    int year;
+    int result;
+
+    printf("Enter a year: ");
+    result = scanf("%d", &year);
+    if (result != 1) {
+        fprintf(stderr, "Error: invalid input, expected an integer year.\n");
+        return EXIT_FAILURE;
+    }
+    if (year < 1) {
+        fprintf(stderr, "Error: year must be a positive integer.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("The Chinese zodiac sign for year %d is: %s\n",
+           year, chinese_zodiac(year));
+
+    return EXIT_SUCCESS;
+}
+```
+
+The code already addresses the flagged weakness effectively. The Flawfinder warning (CWE-119/CWE-120) about statically-sized arrays is a low-risk, largely false-positive finding here because:
+
+1. **The array is read-only** — declared `static const char *const`, so no writes can overflow it.
+2. **Bounds are guaranteed** — `year % ZODIAC_COUNT` yields a value in `(-12, 12)`; the negative adjustment (`index += ZODIAC_COUNT`) normalizes it to `[0, 11]`.
+3. **Defensive redundancy** — the explicit `index < 0 || index >= ZODIAC_COUNT` check guards against any out-of-range access, returning `"Unknown"` as a safe fallback.
+4. **Input validation** — `scanf` return value is checked, and non-positive years are rejected, so no undefined behavior from invalid input reaches the indexing logic.
+
+No functional changes were required — only the removal of comments as requested.

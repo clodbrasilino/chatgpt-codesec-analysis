@@ -1,0 +1,55 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+static unsigned long long sum_of_divisors(unsigned long long n)
+{
+    unsigned long long sum = 0;
+    unsigned long long i;
+
+    if (n == 0) {
+        return 0;
+    }
+
+    for (i = 1; i * i <= n; i++) {
+        if (n % i == 0) {
+            sum += i;
+            if (i != n / i) {
+                sum += n / i;
+            }
+        }
+    }
+
+    return sum;
+}
+
+int main(void)
+{
+    unsigned long long n;
+    int result;
+
+    printf("Enter a positive integer: ");
+    result = scanf("%llu", &n);
+
+    if (result != 1) {
+        fprintf(stderr, "Error: invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (n == 0) {
+        fprintf(stderr, "Error: number must be greater than zero\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Sum of divisors of %llu is %llu\n", n, sum_of_divisors(n));
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Key design decisions:**
+
+- **CWE-703 avoidance:** The return value of `scanf` is checked before using `n`, and a zero input is rejected explicitly rather than allowed to produce undefined behavior in the loop logic.
+- **CWE-664 avoidance:** No dynamic resources (heap memory, file handles) are allocated, so there is nothing to leak or misuse; `stdin`/`stdout`/`stderr` lifetimes are managed by the runtime.
+- **CWE-710 avoidance:** The code uses `int main(void)`, returns `EXIT_SUCCESS`/`EXIT_FAILURE` from `<stdlib.h>`, declares the helper `static` with a full prototype, and uses `unsigned long long` with matching `%llu` format specifiers to prevent signed overflow and format-string mismatches.
+- The divisor loop runs only up to √n (`i * i <= n`), giving O(√n) performance, and the `i != n / i` check prevents double-counting the square root when `n` is a perfect square.

@@ -1,0 +1,51 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+double cylinder_perimeter(double radius, double height)
+{
+    return 2.0 * ((2.0 * radius) + height);
+}
+
+int main(void)
+{
+    double radius = 0.0;
+    double height = 0.0;
+
+    printf("Enter the radius of the cylinder: ");
+    if (scanf("%lf", &radius) != 1) {
+        fprintf(stderr, "Error: invalid input for radius.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (radius <= 0.0) {
+        fprintf(stderr, "Error: radius must be positive.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter the height of the cylinder: ");
+    if (scanf("%lf", &height) != 1) {
+        fprintf(stderr, "Error: invalid input for height.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (height <= 0.0) {
+        fprintf(stderr, "Error: height must be positive.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Perimeter of the cylinder: %.2f\n", cylinder_perimeter(radius, height));
+
+    return EXIT_SUCCESS;
+}
+```
+
+A few notes on how this code avoids the specified weaknesses:
+
+- **CWE-664 (Improper Control of a Resource Through its Lifetime):** No dynamic memory, file handles, or other resources are acquired, so there is nothing left unreleased or used after its lifetime ends. All variables are stack-allocated and initialized before use.
+
+- **CWE-703 (Improper Check or Handling of Exceptional Conditions):** Every `scanf` return value is checked to confirm exactly one item was successfully read, and both inputs are validated to be positive before use. Failures print a diagnostic to `stderr` and exit with `EXIT_FAILURE`.
+
+- **CWE-710 (Improper Adherence to Coding Standards):** The code uses `int main(void)`, explicit return values via `EXIT_SUCCESS`/`EXIT_FAILURE`, full function prototypes, braces on all control blocks, and no implicit conversions or undefined behavior.
+
+The formula used is the perimeter of the cylinder's cross-section (a rectangle): `2 * (diameter + height)`, which equals `2 * (2r + h)`.

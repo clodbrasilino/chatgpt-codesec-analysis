@@ -1,0 +1,22 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <string.h>
+
+bool areAllCharactersSame(char *s) {
+    int i = 0;
+    while (s[i] != '\0') {
+        if (s[0] != s[i])
+            return false;
+        i++;
+    }
+    return true;
+}
+
+int main() {
+    char s[] = "aaaaa";
+    if (areAllCharactersSame(s))
+        printf("All characters are same.\n");
+    else
+        printf("All characters are not same.\n");
+    return 0;
+}

@@ -1,0 +1,22 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-537.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-537.c:67:29: style: Local variable 'i' shadows outer variable [shadowVariable]
+                for (size_t i = 0; i < dup_len; i++) {
+                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-537.c:50:21: note: Shadowed declaration
+        for (size_t i = 0; i < word_count; i++) {
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-537.c:67:29: note: Shadow variable
+                for (size_t i = 0; i < dup_len; i++) {
+                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-537.c:72:29: style: Local variable 'i' shadows outer variable [shadowVariable]
+                for (size_t i = 0; i < word_count; i++) {
+                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-537.c:50:21: note: Shadowed declaration
+        for (size_t i = 0; i < word_count; i++) {
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-537.c:72:29: note: Shadow variable
+                for (size_t i = 0; i < word_count; i++) {
+                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-537.c:6:38: style: Parameter 'str' can be declared as pointer to const [constParameterPointer]
+char* find_first_repeated_word(char *str) {
+                                     ^

@@ -1,0 +1,36 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int calculate_directrix(double a, double b, double c, double *directrix);
+
+int calculate_directrix(double a, double b, double c, double *directrix) {
+    if (directrix == NULL) {
+        return -1;
+    }
+    if (a == 0.0) {
+        return -1;
+    }
+
+    double k = c - ((b * b) / (4.0 * a));
+    *directrix = k - (1.0 / (4.0 * a));
+
+    return 0;
+}
+
+int main(void) {
+    double a = 1.0;
+    double b = -4.0;
+    double c = 5.0;
+    double directrix = 0.0;
+
+    if (calculate_directrix(a, b, c, &directrix) == 0) {
+        printf("Directrix: y = %f\n", directrix);
+    } else {
+        fprintf(stderr, "Error: Invalid parabola parameters.\n");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```

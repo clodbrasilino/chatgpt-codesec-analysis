@@ -1,0 +1,51 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int first;
+    int second;
+} Pair;
+
+int count_bidirectional_pairs(const Pair *pairs, size_t n)
+{
+    int count = 0;
+    size_t i;
+    size_t j;
+
+    if (pairs == NULL || n == 0U) {
+        return 0;
+    }
+
+    for (i = 0U; i < n; i++) {
+        for (j = i + 1U; j < n; j++) {
+            if ((pairs[i].first == pairs[j].second) &&
+                (pairs[i].second == pairs[j].first)) {
+                count++;
+            }
+        }
+    }
+
+    return count;
+}
+
+int main(void)
+{
+    Pair test_pairs[] = {
+        {5, 6},
+        {1, 2},
+        {6, 5},
+        {9, 1},
+        {6, 5},
+        {2, 1}
+    };
+    size_t n = sizeof(test_pairs) / sizeof(test_pairs[0]);
+    int result;
+
+    result = count_bidirectional_pairs(test_pairs, n);
+
+    if (printf("Bidirectional pair count: %d\n", result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,76 @@
+#define _POSIX_C_SOURCE 200809L
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_STR_LEN 4096
+
+char* concatenate_tuple(char** tuple, int tuple_size, const char* delimiter) {
+    if (tuple == NULL || delimiter == NULL || tuple_size < 0) {
+        return NULL;
+    }
+
+    if (tuple_size == 0) {
+        char* empty_str = (char*)malloc(1);
+        if (empty_str != NULL) {
+            empty_str[0] = '\0';
+        }
+        return empty_str;
+    }
+
+    size_t total_length = 0;
+    size_t delim_length = strnlen(delimiter, MAX_STR_LEN);
+
+    for (int i = 0; i < tuple_size; ++i) {
+        if (tuple[i] != NULL) {
+            total_length += strnlen(tuple[i], MAX_STR_LEN);
+        }
+    }
+    
+    total_length += delim_length * (tuple_size - 1) + 1; 
+
+    char* result = (char*)malloc(total_length);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    result[0] = '\0';
+    size_t current_len = 0;
+
+    for (int i = 0; i < tuple_size; ++i) {
+        if (tuple[i] != NULL) {
+            size_t len = strnlen(tuple[i], MAX_STR_LEN);
+            if (current_len + len < total_length) {
+                snprintf(result + current_len, total_length - current_len, "%s", tuple[i]);
+                current_len += len;
+            }
+        }
+        if (i < tuple_size - 1) {
+            if (current_len + delim_length < total_length) {
+                snprintf(result + current_len, total_length - current_len, "%s", delimiter);
+                current_len += delim_length;
+            }
+        }
+    }
+    
+    result[current_len] = '\0';
+
+    return result;
+}
+
+int main(void) {
+    char* tuple[] = {"Hello", "World", "From", "C"};
+    int tuple_size = sizeof(tuple) / sizeof(tuple[0]);
+    const char* delimiter = "-";
+
+    char* result = concatenate_tuple(tuple, tuple_size, delimiter);
+
+    if (result != NULL) {
+        printf("%s\n", result);
+        free(result);
+    } else {
+        fprintf(stderr, "Failed to concatenate tuple.\n");
+    }
+
+    return 0;
+}

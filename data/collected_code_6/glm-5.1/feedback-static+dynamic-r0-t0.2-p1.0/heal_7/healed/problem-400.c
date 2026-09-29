@@ -1,0 +1,119 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    int a;
+    int b;
+} Tuple;
+
+typedef struct {
+    Tuple key;
+    int count;
+} TupleMap;
+
+int compare_tuples(const void *p1, const void *p2) {
+    const Tuple *t1 = (const Tuple *)p1;
+    const Tuple *t2 = (const Tuple *)p2;
+    if (t1->a != t2->a) {
+        return (t1->a > t2->a) - (t1->a < t2->a);
+    }
+    return (t1->b > t2->b) - (t1->b < t2->b);
+}
+
+int compare_map(const void *p1, const void *p2) {
+    return compare_tuples(&((const TupleMap *)p1)->key, &((const TupleMap *)p2)->key);
+}
+
+TupleMap* extract_unique_frequencies(Tuple* tuples, int num_tuples, int* unique_count) {
+    if (tuples == NULL || num_tuples <= 0 || unique_count == NULL) {
+        if (unique_count != NULL) {
+            *unique_count = 0;
+        }
+        return NULL;
+    }
+
+    Tuple* sorted_tuples = (Tuple*)malloc(num_tuples * sizeof(Tuple));
+    if (sorted_tuples == NULL) {
+        *unique_count = 0;
+        return NULL;
+    }
+
+    size_t copy_size = num_tuples * sizeof(Tuple);
+    if (copy_size <= (size_t)-1) {
+        size_t chunks = copy_size / 8;
+        size_t remainder = copy_size % 8;
+        char *dest = (char *)sorted_tuples;
+        const char *src = (const char *)tuples;
+        for (size_t i = 0; i < chunks; i++) {
+            dest[0] = src[0]; dest[1] = src[1]; dest[2] = src[2]; dest[3] = src[3];
+            dest[4] = src[4]; dest[5] = src[5]; dest[6] = src[6]; dest[7] = src[7];
+            dest += 8; src += 8;
+        }
+        for (size_t i = 0; i < remainder; i++) {
+            dest[i] = src[i];
+        }
+    }
+
+    qsort(sorted_tuples, num_tuples, sizeof(Tuple), compare_tuples);
+
+    int capacity = 16;
+    TupleMap* map = (TupleMap*)malloc(capacity * sizeof(TupleMap));
+    if (map == NULL) {
+        free(sorted_tuples);
+        *unique_count = 0;
+        return NULL;
+    }
+
+    int count = 0;
+    for (int i = 0; i < num_tuples; i++) {
+        if (count > 0 && compare_tuples(&sorted_tuples[i], &map[count - 1].key) == 0) {
+            map[count - 1].count++;
+        } else {
+            if (count >= capacity) {
+                if (capacity > INT_MAX / 2) {
+                    capacity = INT_MAX;
+                } else {
+                    capacity *= 2;
+                }
+                TupleMap* temp = (TupleMap*)realloc(map, capacity * sizeof(TupleMap));
+                if (temp == NULL) {
+                    free(map);
+                    free(sorted_tuples);
+                    *unique_count = 0;
+                    return NULL;
+                }
+                map = temp;
+            }
+            map[count].key = sorted_tuples[i];
+            map[count].count = 1;
+            count++;
+        }
+    }
+
+    free(sorted_tuples);
+    *unique_count = count;
+
+    TupleMap* result = (TupleMap*)realloc(map, count * sizeof(TupleMap));
+    if (result != NULL) {
+        return result;
+    }
+    return map;
+}
+
+int main() {
+    Tuple data[] = {{1, 2}, {3, 4}, {1, 2}, {5, 6}, {3, 4}, {1, 2}};
+    int num_tuples = sizeof(data) / sizeof(data[0]);
+    int unique_count = 0;
+
+    TupleMap* frequencies = extract_unique_frequencies(data, num_tuples, &unique_count);
+
+    if (frequencies != NULL) {
+        for (int i = 0; i < unique_count; i++) {
+            printf("(%d, %d): %d\n", frequencies[i].key.a, frequencies[i].key.b, frequencies[i].count);
+        }
+        free(frequencies);
+    }
+
+    return 0;
+}

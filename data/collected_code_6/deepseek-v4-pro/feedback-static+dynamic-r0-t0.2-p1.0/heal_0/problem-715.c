@@ -1,0 +1,91 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+typedef struct {
+    int *values;
+    size_t length;
+} IntTuple;
+
+IntTuple parse_integers(const char *str) {
+    IntTuple tuple = {NULL, 0};
+    
+    if (str == NULL) {
+        return tuple;
+    }
+    
+    size_t capacity = 16;
+    tuple.values = (int *)malloc(capacity * sizeof(int));
+    if (tuple.values == NULL) {
+        return tuple;
+    }
+    
+    const char *p = str;
+    while (*p) {
+        while (*p && !isdigit((unsigned char)*p) && *p != '-') {
+            p++;
+        }
+        
+        if (!*p) {
+            break;
+        }
+        
+        char *end;
+        long val = strtol(p, &end, 10);
+        
+        if (end == p) {
+            p++;
+            continue;
+        }
+        
+        if (tuple.length == capacity) {
+            capacity *= 2;
+            int *new_values = (int *)realloc(tuple.values, capacity * sizeof(int));
+            if (new_values == NULL) {
+                free(tuple.values);
+                tuple.values = NULL;
+                tuple.length = 0;
+                return tuple;
+            }
+            tuple.values = new_values;
+        }
+        
+        tuple.values[tuple.length++] = (int)val;
+        p = end;
+    }
+    
+    if (tuple.length == 0) {
+        free(tuple.values);
+        tuple.values = NULL;
+    }
+    
+    return tuple;
+}
+
+void free_tuple(IntTuple *tuple) {
+    if (tuple != NULL && tuple->values != NULL) {
+        free(tuple->values);
+        tuple->values = NULL;
+        tuple->length = 0;
+    }
+}
+
+int main(void) {
+    const char *input = "10 20 30 40 50";
+    IntTuple tuple = parse_integers(input);
+    
+    if (tuple.values == NULL) {
+        fprintf(stderr, "Failed to parse integers\n");
+        return 1;
+    }
+    
+    printf("Parsed %zu integers: ", tuple.length);
+    for (size_t i = 0; i < tuple.length; i++) {
+        printf("%d ", tuple.values[i]);
+    }
+    printf("\n");
+    
+    free_tuple(&tuple);
+    return 0;
+}

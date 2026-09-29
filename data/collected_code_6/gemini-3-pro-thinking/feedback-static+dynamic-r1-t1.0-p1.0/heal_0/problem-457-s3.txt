@@ -1,0 +1,77 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stddef.h>
+
+typedef struct {
+    int *data;
+    size_t length;
+} Sublist;
+
+const Sublist* find_min_length_sublist(const Sublist *sublists, size_t count);
+void free_sublists(Sublist *sublists, size_t count);
+
+const Sublist* find_min_length_sublist(const Sublist *sublists, size_t count) {
+    if (!sublists || count == 0) {
+        return NULL;
+    }
+
+    const Sublist *min_sublist = &sublists[0];
+
+    for (size_t i = 1; i < count; ++i) {
+        if (sublists[i].length < min_sublist->length) {
+            min_sublist = &sublists[i];
+        }
+    }
+
+    return min_sublist;
+}
+
+void free_sublists(Sublist *sublists, size_t count) {
+    if (!sublists) {
+        return;
+    }
+    for (size_t i = 0; i < count; ++i) {
+        if (sublists[i].data) {
+            free(sublists[i].data);
+            sublists[i].data = NULL;
+        }
+    }
+    free(sublists);
+}
+
+int main(void) {
+    size_t count = 3;
+    Sublist *sublists = calloc(count, sizeof(Sublist));
+
+    if (!sublists) {
+        return EXIT_FAILURE;
+    }
+
+    sublists[0].length = 5;
+    sublists[0].data = calloc(sublists[0].length, sizeof(int));
+
+    sublists[1].length = 2;
+    sublists[1].data = calloc(sublists[1].length, sizeof(int));
+
+    sublists[2].length = 4;
+    sublists[2].data = calloc(sublists[2].length, sizeof(int));
+
+    for (size_t i = 0; i < count; ++i) {
+        if (!sublists[i].data && sublists[i].length > 0) {
+            free_sublists(sublists, count);
+            return EXIT_FAILURE;
+        }
+    }
+
+    const Sublist *min_sublist = find_min_length_sublist(sublists, count);
+
+    if (min_sublist) {
+        printf("%zu\n", min_sublist->length);
+    }
+
+    free_sublists(sublists, count);
+
+    return EXIT_SUCCESS;
+}
+```

@@ -1,0 +1,4 @@
+problem-279-s3.c:9:23:medium:UBSan: signed integer overflow: 4 * -6666666666666666663 cannot be represented in type 'int64_t' (aka 'long long') (AFL crash: id:000001,sig:06,src:000005,time:6340,execs:2391,op:havoc,rep:1)
+problem-279-s3.c:9:27:medium:UBSan: signed integer overflow: 133333333333333332 * 33333333333333333 cannot be represented in type 'int64_t' (aka 'long long') (AFL crash: id:000000,sig:06,src:000001,time:316,execs:148,op:havoc,rep:3)
+problem-279-s3.c:9:27:medium:UBSan: signed integer overflow: -8219922592957115036 * -6666666666666666663 cannot be represented in type 'int64_t' (aka 'long long') (AFL crash: id:000001,sig:06,src:000005,time:6340,execs:2391,op:havoc,rep:1)
+problem-279-s3.c:13:23:medium:UBSan: signed integer overflow: 3 * -6666666666666666663 cannot be represented in type 'int64_t' (aka 'long long') (AFL crash: id:000001,sig:06,src:000005,time:6340,execs:2391,op:havoc,rep:1)

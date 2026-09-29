@@ -1,0 +1,70 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+struct Tuple {
+    int first;
+    int second;
+};
+
+int find_min_difference(const struct Tuple *tuples, size_t count, int *min_diff)
+{
+    size_t i;
+    long long best;
+
+    if (tuples == NULL || min_diff == NULL || count == 0U) {
+        return -1;
+    }
+
+    best = LLONG_MAX;
+
+    for (i = 0U; i < count; i++) {
+        long long diff = (long long)tuples[i].first - (long long)tuples[i].second;
+        if (diff < 0LL) {
+            diff = -diff;
+        }
+        if (diff < best) {
+            best = diff;
+        }
+    }
+
+    if (best > (long long)INT_MAX) {
+        return -1;
+    }
+
+    *min_diff = (int)best;
+    return 0;
+}
+
+int main(void)
+{
+    struct Tuple tuples[] = {
+        { 3, 8 },
+        { 10, 4 },
+        { 7, 9 },
+        { 15, 12 },
+        { 20, 25 }
+    };
+    size_t count = sizeof(tuples) / sizeof(tuples[0]);
+    int min_diff = 0;
+
+    if (find_min_difference(tuples, count, &min_diff) != 0) {
+        fprintf(stderr, "Failed to compute minimum difference.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Minimum difference: %d\n", min_diff);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Summary of the fix applied:**
+
+- **Variable scope reduction (`variableScope`):** The `diff` variable was previously declared at the top of `find_min_difference()`, even though it was only used inside the `for` loop. It is now declared and initialized directly within the loop body (`long long diff = ...`), which:
+  - Limits its visibility and lifetime to the loop iteration where it's actually needed.
+  - Eliminates the risk of accidentally reusing a stale value from a previous iteration.
+  - Improves readability and allows the compiler to better optimize register allocation.
+
+All other aspects of the code (NULL/size validation, `long long` arithmetic to avoid `int` subtraction overflow, absolute value computation, and the `INT_MAX` bounds check before casting) were already sound and have been preserved.

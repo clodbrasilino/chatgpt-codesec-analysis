@@ -1,0 +1,32 @@
+#include <stdio.h>
+
+int find_equilibrium_index(int arr[], int n){
+    int sum_total = 0;
+    int sum_left = 0;
+
+    for (int i = 0; i < n; ++i)
+        sum_total += arr[i];
+
+    for (int i=0; i < n; ++i){
+        sum_total -= arr[i];
+        
+        if (sum_left == sum_total)
+            return i;
+
+        sum_left += arr[i];
+    }
+    return -1;
+}
+
+int main(){
+    int arr[] = { -7, 1, 5, 2, -4, 3, 0 };
+    int arr_size = sizeof(arr) / sizeof(arr[0]);
+    int equilibrium_index = find_equilibrium_index(arr, arr_size);
+    
+    if (equilibrium_index == -1)
+       printf ("No equilibrium index found!\n");
+    else
+       printf("The first equilibrium index is %d\n", equilibrium_index);
+
+    return 0;
+}

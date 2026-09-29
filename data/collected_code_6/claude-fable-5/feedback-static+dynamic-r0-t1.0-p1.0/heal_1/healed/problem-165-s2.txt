@@ -1,0 +1,63 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+#define MAX_INPUT_LEN 256
+
+size_t count_position_matches(const char *str, size_t max_len)
+{
+    size_t count = 0;
+    size_t len;
+    size_t i;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    len = strnlen(str, max_len);
+
+    for (i = 0; i < len && i < 26; i++) {
+        if (str[i] == (char)('a' + i) || str[i] == (char)('A' + i)) {
+            count++;
+        }
+    }
+
+    return count;
+}
+
+int main(void)
+{
+    char buffer[MAX_INPUT_LEN];
+    size_t result;
+    size_t len;
+
+    printf("Enter a string: ");
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    }
+
+    result = count_position_matches(buffer, sizeof(buffer));
+
+    printf("Characters at same position as in alphabet: %zu\n", result);
+
+    return EXIT_SUCCESS;
+}
+```
+
+The key changes made to address the identified weaknesses:
+
+1. **CWE-126 (strlen over-read)**: Replaced both `strlen` calls with `strnlen`, which takes a maximum length parameter and will never read past that boundary even if the string is not null-terminated. The `count_position_matches` function signature was updated to accept a `max_len` parameter so the caller can communicate the buffer's actual size.
+
+2. **CWE-119/CWE-120 (statically-sized array)**: The buffer size is now defined via the `MAX_INPUT_LEN` macro for a single point of maintenance, `fgets` continues to use `sizeof(buffer)` to enforce bounds checking on input, and an explicit null terminator is written at `buffer[sizeof(buffer) - 1]` as a defensive guarantee that the buffer is always properly terminated before any string operations occur.
+
+3. **Defensive propagation of bounds**: The buffer size (`sizeof(buffer)`) is passed explicitly to `count_position_matches`, so the function never assumes termination and cannot over-read regardless of how the caller constructed the string.

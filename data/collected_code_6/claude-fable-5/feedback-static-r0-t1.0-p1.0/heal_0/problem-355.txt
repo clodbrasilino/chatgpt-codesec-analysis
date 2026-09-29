@@ -1,0 +1,71 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+static long long count_rectangles(long long r)
+{
+    long long limit;
+    long long count = 0;
+    long long a;
+    long long b;
+
+    if (r <= 0)
+    {
+        return 0;
+    }
+
+    limit = 4LL * r * r;
+
+    for (a = 1; a * a < limit; a++)
+    {
+        for (b = a; (a * a) + (b * b) <= limit; b++)
+        {
+            count++;
+        }
+    }
+
+    return count;
+}
+
+int main(void)
+{
+    long long r = 0;
+    long long result;
+    int scan_result;
+
+    printf("Enter the radius of the circle: ");
+
+    scan_result = scanf("%lld", &r);
+    if (scan_result != 1)
+    {
+        fprintf(stderr, "Error: invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (r <= 0)
+    {
+        fprintf(stderr, "Error: radius must be a positive integer.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (r > 1000000LL)
+    {
+        fprintf(stderr, "Error: radius too large.\n");
+        return EXIT_FAILURE;
+    }
+
+    result = count_rectangles(r);
+
+    printf("Number of rectangles with integer sides that fit in a circle of radius %lld: %lld\n", r, result);
+
+    return EXIT_SUCCESS;
+}
+```
+
+This solution counts rectangles with integer side lengths `a x b` (where `a <= b`, so squares are included and orientations are not double-counted) that can be inscribed in a circle of radius `r`. A rectangle fits if its diagonal does not exceed the diameter, i.e., `a² + b² <= (2r)²`.
+
+Key safety measures taken:
+
+- **CWE-703**: The return value of `scanf` is checked before using `r`, and both non-positive and excessively large radii are rejected with error messages on `stderr` and a failure exit code.
+- **CWE-664**: No dynamic resources (heap memory, file handles) are allocated, so there is nothing to leak or misuse across its lifetime; all variables are stack-scoped and initialized before use.
+- **CWE-710**: The code uses `long long` arithmetic with a bounded input (`r <= 1,000,000`) so `4*r*r` and `a² + b²` cannot overflow, uses `static` for the internal helper, `int main(void)` with standard exit codes, and consistent brace style throughout.

@@ -1,0 +1,62 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+size_t count_sublists_with_element(const int *const *lists, const size_t *sizes, size_t num_lists, int element)
+{
+    size_t count = 0;
+    size_t i;
+    size_t j;
+
+    if (lists == NULL || sizes == NULL) {
+        return 0;
+    }
+
+    for (i = 0; i < num_lists; i++) {
+        if (lists[i] == NULL) {
+            continue;
+        }
+        for (j = 0; j < sizes[i]; j++) {
+            if (lists[i][j] == element) {
+                count++;
+                break;
+            }
+        }
+    }
+
+    return count;
+}
+
+int main(void)
+{
+    int list1[] = {1, 2, 3};
+    int list2[] = {4, 5, 1};
+    int list3[] = {6, 7, 8};
+    int list4[] = {1, 1, 9};
+
+    const int *lists[] = {list1, list2, list3, list4};
+    size_t sizes[] = {3, 3, 3, 3};
+    size_t num_lists = sizeof(lists) / sizeof(lists[0]);
+
+    int target = 1;
+    size_t result = count_sublists_with_element(lists, sizes, num_lists, target);
+
+    if (printf("Number of sublists containing %d: %zu\n", target, result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    target = 6;
+    result = count_sublists_with_element(lists, sizes, num_lists, target);
+
+    if (printf("Number of sublists containing %d: %zu\n", target, result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    target = 100;
+    result = count_sublists_with_element(lists, sizes, num_lists, target);
+
+    if (printf("Number of sublists containing %d: %zu\n", target, result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

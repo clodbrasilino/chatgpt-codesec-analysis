@@ -1,0 +1,15 @@
+collected_code_3/problem-730-3.c: In function 'push':
+collected_code_3/problem-730-3.c:30:21: warning: dereference of possibly-NULL 'new_node' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   30 |     new_node->data  = new_data;
+      |     ~~~~~~~~~~~~~~~~^~~~~~~~~~
+  'push': events 1-2
+    |
+    |   29 |     struct Node* new_node = (struct Node*) malloc(sizeof(struct Node));
+    |      |                                            ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                                            |
+    |      |                                            (1) this call could return NULL
+    |   30 |     new_node->data  = new_data;
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~              
+    |      |                     |
+    |      |                     (2) 'new_node' could be NULL: unchecked value from (1)
+    |

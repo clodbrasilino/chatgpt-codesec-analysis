@@ -1,0 +1,45 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int id;
+    float value;
+    char name[20];
+} Tuple;
+
+int compareTuples(const void *a, const void *b) {
+    float float_a = ((Tuple *)a)->value;
+    float float_b = ((Tuple *)b)->value;
+
+    if (float_a < float_b) return -1;
+    if (float_a > float_b) return 1;
+    return 0;
+}
+
+void sortTuples(Tuple *tuples, size_t size) {
+    if (tuples == NULL || size == 0) {
+        return;
+    }
+    qsort(tuples, size, sizeof(Tuple), compareTuples);
+}
+
+int main(void) {
+    Tuple tuples[] = {
+        {1, 5.5, "Apple"},
+        {2, 1.2, "Banana"},
+        {3, 3.4, "Cherry"},
+        {4, 0.9, "Date"}
+    };
+
+    size_t size = sizeof(tuples) / sizeof(tuples[0]);
+
+    sortTuples(tuples, size);
+
+    for (size_t i = 0; i < size; i++) {
+        if (printf("ID: %d, Value: %.2f, Name: %s\n", tuples[i].id, tuples[i].value, tuples[i].name) < 0) {
+            return EXIT_FAILURE;
+        }
+    }
+
+    return EXIT_SUCCESS;
+}

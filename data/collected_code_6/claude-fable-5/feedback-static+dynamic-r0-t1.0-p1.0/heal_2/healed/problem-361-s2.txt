@@ -1,0 +1,175 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+typedef struct {
+    int *items;
+    size_t count;
+} List;
+
+typedef struct {
+    List *lists;
+    size_t count;
+} ListOfLists;
+
+static int list_init(List *list, const int *values, size_t count)
+{
+    if (list == NULL) {
+        return -1;
+    }
+    list->items = NULL;
+    list->count = 0;
+    if (count == 0 || values == NULL) {
+        return 0;
+    }
+    if (count > SIZE_MAX / sizeof(int)) {
+        return -1;
+    }
+    size_t bytes = count * sizeof(int);
+    list->items = malloc(bytes);
+    if (list->items == NULL) {
+        return -1;
+    }
+    memcpy(list->items, values, bytes);
+    list->count = count;
+    return 0;
+}
+
+static void list_free(List *list)
+{
+    if (list != NULL) {
+        free(list->items);
+        list->items = NULL;
+        list->count = 0;
+    }
+}
+
+static void list_of_lists_free(ListOfLists *lol)
+{
+    if (lol != NULL) {
+        for (size_t i = 0; i < lol->count; i++) {
+            list_free(&lol->lists[i]);
+        }
+        free(lol->lists);
+        lol->lists = NULL;
+        lol->count = 0;
+    }
+}
+
+static int remove_empty_lists(ListOfLists *lol)
+{
+    if (lol == NULL) {
+        return -1;
+    }
+    if (lol->lists == NULL || lol->count == 0) {
+        return 0;
+    }
+    size_t write_index = 0;
+    for (size_t read_index = 0; read_index < lol->count; read_index++) {
+        if (lol->lists[read_index].count > 0) {
+            if (write_index != read_index) {
+                lol->lists[write_index] = lol->lists[read_index];
+                lol->lists[read_index].items = NULL;
+                lol->lists[read_index].count = 0;
+            }
+            write_index++;
+        } else {
+            list_free(&lol->lists[read_index]);
+        }
+    }
+    lol->count = write_index;
+    if (write_index == 0) {
+        free(lol->lists);
+        lol->lists = NULL;
+    } else {
+        if (write_index > SIZE_MAX / sizeof(List)) {
+            return -1;
+        }
+        List *shrunk = realloc(lol->lists, write_index * sizeof(List));
+        if (shrunk != NULL) {
+            lol->lists = shrunk;
+        }
+    }
+    return 0;
+}
+
+static void print_list_of_lists(const ListOfLists *lol)
+{
+    if (lol == NULL) {
+        return;
+    }
+    printf("[");
+    for (size_t i = 0; i < lol->count; i++) {
+        printf("[");
+        for (size_t j = 0; j < lol->lists[i].count; j++) {
+            printf("%d", lol->lists[i].items[j]);
+            if (j + 1 < lol->lists[i].count) {
+                printf(", ");
+            }
+        }
+        printf("]");
+        if (i + 1 < lol->count) {
+            printf(", ");
+        }
+    }
+    printf("]\n");
+}
+
+int main(void)
+{
+    ListOfLists lol;
+    lol.count = 5;
+    if (lol.count > SIZE_MAX / sizeof(List)) {
+        fprintf(stderr, "Size overflow\n");
+        return EXIT_FAILURE;
+    }
+    lol.lists = malloc(lol.count * sizeof(List));
+    if (lol.lists == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+    for (size_t i = 0; i < lol.count; i++) {
+        lol.lists[i].items = NULL;
+        lol.lists[i].count = 0;
+    }
+
+    const int a[] = {1, 2, 3};
+    const int b[] = {4, 5};
+    const int c[] = {6};
+
+    if (list_init(&lol.lists[0], a, sizeof(a) / sizeof(a[0])) != 0 ||
+        list_init(&lol.lists[1], NULL, 0) != 0 ||
+        list_init(&lol.lists[2], b, sizeof(b) / sizeof(b[0])) != 0 ||
+        list_init(&lol.lists[3], NULL, 0) != 0 ||
+        list_init(&lol.lists[4], c, sizeof(c) / sizeof(c[0])) != 0) {
+        fprintf(stderr, "List initialization failed\n");
+        list_of_lists_free(&lol);
+        return EXIT_FAILURE;
+    }
+
+    printf("Before: ");
+    print_list_of_lists(&lol);
+
+    if (remove_empty_lists(&lol) != 0) {
+        fprintf(stderr, "Failed to remove empty lists\n");
+        list_of_lists_free(&lol);
+        return EXIT_FAILURE;
+    }
+
+    printf("After: ");
+    print_list_of_lists(&lol);
+
+    list_of_lists_free(&lol);
+    return EXIT_SUCCESS;
+}
+```
+
+Key points regarding the flagged weakness and other hardening applied:
+
+- **memcpy (CWE-120)**: The original code was already safe because the destination buffer is allocated with exactly `count * sizeof(int)` bytes immediately before the copy, and an overflow check (`count > SIZE_MAX / sizeof(int)`) guards the multiplication. The rewrite computes `bytes` once and uses it for both `malloc` and `memcpy`, making the size correspondence explicit and eliminating any chance of divergence between allocation and copy sizes.
+- **Array sizes in `main`**: Replaced hard-coded literal counts (`3`, `2`, `1`) with `sizeof(x)/sizeof(x[0])`, so the count passed to `list_init` can never exceed the actual source array length.
+- **Initialization before error paths**: All `List` entries are zero-initialized right after `malloc`, so `list_of_lists_free` never calls `free` on indeterminate pointers if an early `list_init` fails (the original short-circuit could leave later slots uninitialized before the cleanup ran).
+- **Overflow guard on realloc**: Added a `SIZE_MAX / sizeof(List)` check before the shrinking `realloc`, mirroring the guard in `list_init`.
+- The `realloc` failure case correctly keeps the original (larger but valid) buffer, avoiding a leak or use of a null pointer.

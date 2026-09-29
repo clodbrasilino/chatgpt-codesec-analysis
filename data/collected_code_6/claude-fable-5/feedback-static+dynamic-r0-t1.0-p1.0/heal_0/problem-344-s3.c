@@ -1,0 +1,63 @@
+#include <stdio.h>
+#include <math.h>
+
+int count_odd_factor_elements(long low, long high)
+{
+    long sqrt_high;
+    long sqrt_low;
+
+    if (low > high)
+    {
+        return -1;
+    }
+
+    if (low < 0L)
+    {
+        low = 0L;
+    }
+
+    sqrt_high = (long)floor(sqrt((double)high));
+    sqrt_low = (long)ceil(sqrt((double)low));
+
+    while ((sqrt_high * sqrt_high) > high)
+    {
+        sqrt_high--;
+    }
+
+    while ((sqrt_low * sqrt_low) < low)
+    {
+        sqrt_low++;
+    }
+
+    if (sqrt_low > sqrt_high)
+    {
+        return 0;
+    }
+
+    return (int)(sqrt_high - sqrt_low + 1L);
+}
+
+int main(void)
+{
+    long low;
+    long high;
+    int result;
+
+    low = 5L;
+    high = 100L;
+
+    result = count_odd_factor_elements(low, high);
+
+    if (result < 0)
+    {
+        (void)fprintf(stderr, "Invalid range provided.\n");
+        return 1;
+    }
+
+    if (printf("Count of elements with odd factors in [%ld, %ld]: %d\n", low, high, result) < 0)
+    {
+        return 1;
+    }
+
+    return 0;
+}

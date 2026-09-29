@@ -1,0 +1,91 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int* data;
+    size_t size;
+} Tuple;
+
+Tuple* create_tuple(size_t size) {
+    if (size == 0) {
+        return NULL;
+    }
+    Tuple* tuple = (Tuple*)malloc(sizeof(Tuple));
+    if (!tuple) {
+        return NULL;
+    }
+    tuple->data = (int*)malloc(size * sizeof(int));
+    if (!tuple->data) {
+        free(tuple);
+        return NULL;
+    }
+    tuple->size = size;
+    return tuple;
+}
+
+void destroy_tuple(Tuple* tuple) {
+    if (tuple) {
+        if (tuple->data) {
+            free(tuple->data);
+            tuple->data = NULL;
+        }
+        free(tuple);
+    }
+}
+
+Tuple* subtract_tuples(const Tuple* t1, const Tuple* t2) {
+    if (!t1 || !t2 || !t1->data || !t2->data || t1->size != t2->size) {
+        return NULL;
+    }
+
+    Tuple* result = create_tuple(t1->size);
+    if (!result) {
+        return NULL;
+    }
+
+    for (size_t i = 0; i < t1->size; ++i) {
+        result->data[i] = t1->data[i] - t2->data[i];
+    }
+
+    return result;
+}
+
+int main(void) {
+    size_t size = 3;
+    Tuple* tuple1 = create_tuple(size);
+    Tuple* tuple2 = create_tuple(size);
+
+    if (!tuple1 || !tuple2) {
+        destroy_tuple(tuple1);
+        destroy_tuple(tuple2);
+        return EXIT_FAILURE;
+    }
+
+    tuple1->data[0] = 5;
+    tuple1->data[1] = 10;
+    tuple1->data[2] = 15;
+
+    tuple2->data[0] = 2;
+    tuple2->data[1] = 4;
+    tuple2->data[2] = 6;
+
+    Tuple* result = subtract_tuples(tuple1, tuple2);
+    if (!result) {
+        destroy_tuple(tuple1);
+        destroy_tuple(tuple2);
+        return EXIT_FAILURE;
+    }
+
+    for (size_t i = 0; i < result->size; ++i) {
+        printf("%d ", result->data[i]);
+    }
+    printf("\n");
+
+    destroy_tuple(tuple1);
+    destroy_tuple(tuple2);
+    destroy_tuple(result);
+
+    return EXIT_SUCCESS;
+}
+```

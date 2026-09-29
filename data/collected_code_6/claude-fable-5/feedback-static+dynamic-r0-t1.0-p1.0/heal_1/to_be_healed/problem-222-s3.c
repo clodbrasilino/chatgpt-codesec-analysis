@@ -1,0 +1,82 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+typedef enum {
+    TYPE_INT,
+    TYPE_DOUBLE,
+    TYPE_CHAR,
+    TYPE_STRING
+} ElementType;
+
+typedef struct {
+    ElementType type;
+    union {
+        int i;
+        double d;
+        /* Possible weaknesses found:
+         *  union member 'Anonymous0::c' is never used. [unusedStructMember]
+         */
+        char c;
+        const char *s;
+    } value;
+} TupleElement;
+
+static bool all_same_type(const TupleElement *tuple, size_t count)
+{
+    size_t idx;
+
+    if (tuple == NULL || count == 0U) {
+        return false;
+    }
+
+    for (idx = 1U; idx < count; idx++) {
+        if (tuple[idx].type != tuple[0].type) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+int main(void)
+{
+    TupleElement tuple1[3];
+    TupleElement tuple2[3];
+
+    tuple1[0].type = TYPE_INT;
+    tuple1[0].value.i = 10;
+    tuple1[1].type = TYPE_INT;
+    tuple1[1].value.i = 20;
+    tuple1[2].type = TYPE_INT;
+    tuple1[2].value.i = 30;
+
+    tuple2[0].type = TYPE_INT;
+    tuple2[0].value.i = 1;
+    tuple2[1].type = TYPE_DOUBLE;
+    tuple2[1].value.d = 2.5;
+    tuple2[2].type = TYPE_STRING;
+    tuple2[2].value.s = "hello";
+
+    if (all_same_type(tuple1, 3U)) {
+        if (printf("Tuple 1: all elements have the same type\n") < 0) {
+            return EXIT_FAILURE;
+        }
+    } else {
+        if (printf("Tuple 1: elements have different types\n") < 0) {
+            return EXIT_FAILURE;
+        }
+    }
+
+    if (all_same_type(tuple2, 3U)) {
+        if (printf("Tuple 2: all elements have the same type\n") < 0) {
+            return EXIT_FAILURE;
+        }
+    } else {
+        if (printf("Tuple 2: elements have different types\n") < 0) {
+            return EXIT_FAILURE;
+        }
+    }
+
+    return EXIT_SUCCESS;
+}

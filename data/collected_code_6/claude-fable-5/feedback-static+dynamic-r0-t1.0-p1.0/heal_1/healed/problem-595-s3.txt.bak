@@ -1,0 +1,81 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+long min_swaps(const char *s1, const char *s2)
+{
+    size_t len1;
+    size_t len2;
+    size_t i;
+    long count01;
+    long count10;
+
+    if (s1 == NULL || s2 == NULL) {
+        return -1L;
+    }
+
+    len1 = strlen(s1);
+    len2 = strlen(s2);
+
+    if (len1 != len2) {
+        return -1L;
+    }
+
+    count01 = 0L;
+    count10 = 0L;
+
+    for (i = 0U; i < len1; i++) {
+        if ((s1[i] != '0' && s1[i] != '1') ||
+            (s2[i] != '0' && s2[i] != '1')) {
+            return -1L;
+        }
+        if (s1[i] == '0' && s2[i] == '1') {
+            count01++;
+        } else if (s1[i] == '1' && s2[i] == '0') {
+            count10++;
+        }
+    }
+
+    if (count01 != count10) {
+        return -1L;
+    }
+
+    return count01;
+}
+
+int main(void)
+{
+    const char *a = "1101";
+    const char *b = "1011";
+    long result;
+
+    result = min_swaps(a, b);
+
+    if (result < 0L) {
+        if (printf("Not Possible\n") < 0) {
+            return EXIT_FAILURE;
+        }
+    } else {
+        if (printf("Minimum swaps required: %ld\n", result) < 0) {
+            return EXIT_FAILURE;
+        }
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the fix:**
+
+The weakness identified in the comments was a presentation-layer defect, not a logic defect in `min_swaps` itself. The test harness expected the literal output string `'Not Possible'` when conversion between the two binary strings cannot be achieved, but the original `main` printed `"Conversion not possible"` — and the raw sentinel value `-1` was what the tests effectively saw as the observable result.
+
+Key points about the corrected version:
+
+1. **Output string corrected** — `"Conversion not possible\n"` was replaced with `"Not Possible\n"` so the program's observable behavior matches the expected test output for the failure cases (NULL inputs, length mismatch, non-binary characters, or unbalanced `0→1` / `1→0` mismatch counts).
+
+2. **Sentinel value retained internally** — Returning `-1L` from `min_swaps` remains a sound design; the sentinel is translated into the human/test-readable string at the I/O boundary in `main`, which is where such formatting belongs.
+
+3. **Core algorithm is correct and untouched** — Counting positions where `s1` has `'0'` and `s2` has `'1'` (`count01`) versus the reverse (`count10`) is the right approach: each swap fixes one mismatch of each kind, so the minimum swap count equals `count01` when the counts balance; otherwise conversion is impossible.
+
+4. **Robustness preserved** — NULL checks, length equality check, character validation, checked `printf` return values, and `EXIT_SUCCESS`/`EXIT_FAILURE` usage are all retained.

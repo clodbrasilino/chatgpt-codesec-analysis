@@ -1,0 +1,18 @@
+#include <stdio.h>
+#include <math.h>
+
+double sum_of_inverse_divisors(int n) {
+    double sum = 0.0;
+    for (int i = 1; i <= n; ++i) {
+        if (n % i == 0) {
+            sum += 1.0 / i;
+        }
+    }
+    return sum;
+}
+
+int main() {
+    int number = 12;
+    printf("Sum of the inverse of divisors for %d is: %f\n", number, sum_of_inverse_divisors(number));
+    return 0;
+}

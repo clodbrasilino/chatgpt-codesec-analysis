@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-187-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-187-s2.c:59:17: style: Local variable 'i' shadows outer variable [shadowVariable]
+    for (size_t i = 0; i <= m; i++) free(dp[i]);
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-187-s2.c:46:12: note: Shadowed declaration
+    size_t i = m, j = n;
+           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-187-s2.c:59:17: note: Shadow variable
+    for (size_t i = 0; i <= m; i++) free(dp[i]);
+                ^

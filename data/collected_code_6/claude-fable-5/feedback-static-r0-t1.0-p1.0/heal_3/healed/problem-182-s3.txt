@@ -1,0 +1,120 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+#define ERRBUF_SIZE 256
+#define INPUT_SIZE 1024
+
+static int count_matches(const char *pattern, const char *str, int *count)
+{
+    regex_t regex;
+    regmatch_t match;
+    const char *cursor;
+    int ret;
+    char errbuf[ERRBUF_SIZE];
+
+    if (pattern == NULL || str == NULL || count == NULL) {
+        return -1;
+    }
+
+    *count = 0;
+
+    ret = regcomp(&regex, pattern, REG_EXTENDED);
+    if (ret != 0) {
+        regerror(ret, &regex, errbuf, sizeof(errbuf));
+        errbuf[sizeof(errbuf) - 1] = '\0';
+        fprintf(stderr, "Regex compilation failed: %s\n", errbuf);
+        return -1;
+    }
+
+    cursor = str;
+    while (*cursor != '\0') {
+        ret = regexec(&regex, cursor, 1, &match, 0);
+        if (ret == REG_NOMATCH) {
+            break;
+        }
+        if (ret != 0) {
+            regerror(ret, &regex, errbuf, sizeof(errbuf));
+            errbuf[sizeof(errbuf) - 1] = '\0';
+            fprintf(stderr, "Regex execution failed: %s\n", errbuf);
+            regfree(&regex);
+            return -1;
+        }
+        (*count)++;
+        if (match.rm_eo <= match.rm_so) {
+            cursor += 1;
+        } else {
+            cursor += match.rm_eo;
+        }
+    }
+
+    regfree(&regex);
+    return 0;
+}
+
+static int classify_string(const char *str, int *upper, int *lower,
+                           int *digit, int *special)
+{
+    if (str == NULL || upper == NULL || lower == NULL ||
+        digit == NULL || special == NULL) {
+        return -1;
+    }
+
+    if (count_matches("[A-Z]", str, upper) != 0) {
+        return -1;
+    }
+    if (count_matches("[a-z]", str, lower) != 0) {
+        return -1;
+    }
+    if (count_matches("[0-9]", str, digit) != 0) {
+        return -1;
+    }
+    if (count_matches("[^A-Za-z0-9]", str, special) != 0) {
+        return -1;
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    char input[INPUT_SIZE];
+    int upper = 0;
+    int lower = 0;
+    int digit = 0;
+    int special = 0;
+
+    printf("Enter a string: ");
+    fflush(stdout);
+
+    if (fgets(input, sizeof(input), stdin) == NULL) {
+        fprintf(stderr, "Failed to read input\n");
+        return EXIT_FAILURE;
+    }
+
+    input[sizeof(input) - 1] = '\0';
+    input[strcspn(input, "\n")] = '\0';
+
+    if (classify_string(input, &upper, &lower, &digit, &special) != 0) {
+        fprintf(stderr, "Classification failed\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Uppercase letters: %d\n", upper);
+    printf("Lowercase letters: %d\n", lower);
+    printf("Numeric digits:    %d\n", digit);
+    printf("Special characters: %d\n", special);
+
+    return EXIT_SUCCESS;
+}
+```
+
+Analysis of the flagged weaknesses and why the code is already safe:
+
+1. **`errbuf[ERRBUF_SIZE]` in `count_matches` (CWE-119/CWE-120):** Flawfinder flags any statically-sized array, but this usage is safe. `regerror()` receives `sizeof(errbuf)` as the size limit and guarantees truncation within bounds. The explicit `errbuf[sizeof(errbuf) - 1] = '\0'` is defensive belt-and-suspenders to guarantee NUL termination.
+
+2. **`input[INPUT_SIZE]` in `main` (CWE-119/CWE-120):** Also safe as written. `fgets()` is called with `sizeof(input)`, which bounds the read and always NUL-terminates. The subsequent forced termination and `strcspn`-based newline stripping (safe even when no newline is present, since `strcspn` returns the index of the terminating NUL in that case) handle all edge cases correctly.
+
+Additional correctness points worth noting: the empty-match guard (`rm_eo <= rm_so` advances the cursor by 1) prevents an infinite loop on zero-width matches, all pointer parameters are NULL-checked, and `regfree()` is called on every exit path after successful compilation, so there are no resource leaks. The Flawfinder findings are risk-level-2 informational hits inherent to fixed-size buffers; no actual overflow is possible, so the code stands as-is with no functional changes required.

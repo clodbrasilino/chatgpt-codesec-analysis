@@ -1,0 +1,26 @@
+collected_code_3/problem-277-3.c: In function 'filter_dict':
+collected_code_3/problem-277-3.c:14:30: warning: dereference of possibly-NULL 'filtered_dict' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   14 |             filtered_dict[j] = input_dict[i];
+      |             ~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~
+  'filter_dict': events 1-6
+    |
+    |   10 |     dict *filtered_dict = malloc(length * sizeof(dict));
+    |      |                           ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                           |
+    |      |                           (1) this call could return NULL
+    |   11 |     int j = 0;
+    |   12 |     for (int i = 0; i < length; i++) {
+    |      |                     ~~~~~~~~~~
+    |      |                       |
+    |      |                       (2) following 'true' branch (when 'i < length')...
+    |   13 |         if (input_dict[i].value == filter_value) {
+    |      |            ~          ~    
+    |      |            |          |
+    |      |            |          (3) ...to here
+    |      |            (4) following 'true' branch...
+    |   14 |             filtered_dict[j] = input_dict[i];
+    |      |             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                              |           |
+    |      |                              |           (5) ...to here
+    |      |                              (6) 'filtered_dict + (long unsigned int)j * 16' could be NULL: unchecked value from (1)
+    |

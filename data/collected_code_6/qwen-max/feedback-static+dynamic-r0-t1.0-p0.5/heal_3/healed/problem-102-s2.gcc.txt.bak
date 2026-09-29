@@ -1,0 +1,27 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_3/healed/problem-102-s2.c: In function 'snake_to_camel':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_3/healed/problem-102-s2.c:7:31: error: implicit declaration of function 'malloc' [-Wimplicit-function-declaration]
+    7 |     char *camel_str = (char *)malloc((len + 1) * sizeof(char));
+      |                               ^~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_3/healed/problem-102-s2.c:4:1: note: include '<stdlib.h>' or provide a declaration of 'malloc'
+    3 | #include <ctype.h>
+  +++ |+#include <stdlib.h>
+    4 | 
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_3/healed/problem-102-s2.c:20:21: error: implicit declaration of function 'count_char'; did you mean 'putchar'? [-Wimplicit-function-declaration]
+   20 |     camel_str[len - count_char(snake_str, '_')] = '\0';
+      |                     ^~~~~~~~~~
+      |                     putchar
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_3/healed/problem-102-s2.c: At top level:
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_3/healed/problem-102-s2.c:24:5: error: conflicting types for 'count_char'; have 'int(const char *, char)'
+   24 | int count_char(const char *str, char c) {
+      |     ^~~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_3/healed/problem-102-s2.c:24:1: note: an argument type that has a default promotion cannot match an empty parameter name list declaration
+   24 | int count_char(const char *str, char c) {
+      | ^~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_3/healed/problem-102-s2.c:20:21: note: previous implicit declaration of 'count_char' with type 'int()'
+   20 |     camel_str[len - count_char(snake_str, '_')] = '\0';
+      |                     ^~~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_3/healed/problem-102-s2.c: In function 'main':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_3/healed/problem-102-s2.c:41:5: error: implicit declaration of function 'free' [-Wimplicit-function-declaration]
+   41 |     free(result0);
+      |     ^~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_3/healed/problem-102-s2.c:41:5: note: include '<stdlib.h>' or provide a declaration of 'free'

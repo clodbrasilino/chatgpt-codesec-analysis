@@ -1,0 +1,91 @@
+collected_code_3/problem-260-1.c: In function 'newman_shanks_williams':
+collected_code_3/problem-260-1.c:17:16: warning: use of uninitialized value 'current' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   17 |         return current;
+      |                ^~~~~~~
+  'newman_shanks_williams': events 1-9
+    |
+    |    4 |     if (n == 0) {
+    |      |        ~           
+    |      |        |
+    |      |        (3) following 'false' branch (when 'n != 0')...
+    |    5 |         return 1;
+    |    6 |     } else if (n == 1) {
+    |      |               ~    
+    |      |               |
+    |      |               (4) ...to here
+    |      |               (5) following 'false' branch (when 'n != 1')...
+    |......
+    |    9 |         long long prev_prev = 1;
+    |      |                   ~~~~~~~~~
+    |      |                   |
+    |      |                   (6) ...to here
+    |   10 |         long long prev = 1;
+    |   11 |         long long current;
+    |      |                   ^~~~~~~
+    |      |                   |
+    |      |                   (1) region created on stack here
+    |      |                   (2) capacity: 8 bytes
+    |   12 |         for (int i = 2; i <= n; i++) {
+    |      |                         ~~~~~~
+    |      |                           |
+    |      |                           (7) following 'false' branch (when 'i > n')...
+    |......
+    |   17 |         return current;
+    |      |                ~~~~~~~
+    |      |                |
+    |      |                (8) ...to here
+    |      |                (9) use of uninitialized value 'current' here
+    |
+collected_code_3/problem-260-1.c:17:16: warning: use of uninitialized value 'current' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   17 |         return current;
+      |                ^~~~~~~
+  'main': events 1-2
+    |
+    |   21 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   25 |     printf("The %dth Newman-Shanks-Williams prime number is %lld\n", n, newman_shanks_williams(n));
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) calling 'newman_shanks_williams' from 'main'
+    |
+    +--> 'newman_shanks_williams': events 3-12
+           |
+           |    3 | long long newman_shanks_williams(int n) {
+           |      |           ^~~~~~~~~~~~~~~~~~~~~~
+           |      |           |
+           |      |           (3) entry to 'newman_shanks_williams'
+           |    4 |     if (n == 0) {
+           |      |        ~   
+           |      |        |
+           |      |        (6) following 'false' branch (when 'n != 0')...
+           |    5 |         return 1;
+           |    6 |     } else if (n == 1) {
+           |      |               ~
+           |      |               |
+           |      |               (7) ...to here
+           |      |               (8) following 'false' branch (when 'n != 1')...
+           |......
+           |    9 |         long long prev_prev = 1;
+           |      |                   ~~~~~~~~~
+           |      |                   |
+           |      |                   (9) ...to here
+           |   10 |         long long prev = 1;
+           |   11 |         long long current;
+           |      |                   ~~~~~~~
+           |      |                   |
+           |      |                   (4) region created on stack here
+           |      |                   (5) capacity: 8 bytes
+           |   12 |         for (int i = 2; i <= n; i++) {
+           |      |                         ~~~~~~
+           |      |                           |
+           |      |                           (10) following 'false' branch (when 'i > n')...
+           |......
+           |   17 |         return current;
+           |      |                ~~~~~~~
+           |      |                |
+           |      |                (11) ...to here
+           |      |                (12) use of uninitialized value 'current' here
+           |

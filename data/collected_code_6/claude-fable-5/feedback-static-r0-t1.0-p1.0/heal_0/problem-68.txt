@@ -1,0 +1,49 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+#include <stddef.h>
+
+bool is_monotonic(const int *arr, size_t n)
+{
+    if (arr == NULL || n < 2U) {
+        return true;
+    }
+
+    bool increasing = true;
+    bool decreasing = true;
+
+    for (size_t i = 1U; i < n; i++) {
+        if (arr[i] > arr[i - 1U]) {
+            decreasing = false;
+        }
+        if (arr[i] < arr[i - 1U]) {
+            increasing = false;
+        }
+    }
+
+    return increasing || decreasing;
+}
+
+int main(void)
+{
+    int a[] = {1, 2, 2, 3, 7};
+    int b[] = {9, 5, 5, 2, 0};
+    int c[] = {1, 3, 2, 4, 5};
+
+    size_t na = sizeof(a) / sizeof(a[0]);
+    size_t nb = sizeof(b) / sizeof(b[0]);
+    size_t nc = sizeof(c) / sizeof(c[0]);
+
+    if (printf("Array a is %s\n", is_monotonic(a, na) ? "monotonic" : "not monotonic") < 0) {
+        return 1;
+    }
+    if (printf("Array b is %s\n", is_monotonic(b, nb) ? "monotonic" : "not monotonic") < 0) {
+        return 1;
+    }
+    if (printf("Array c is %s\n", is_monotonic(c, nc) ? "monotonic" : "not monotonic") < 0) {
+        return 1;
+    }
+
+    return 0;
+}
+```

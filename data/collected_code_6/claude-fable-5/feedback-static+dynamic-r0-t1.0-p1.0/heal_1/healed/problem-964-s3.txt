@@ -1,0 +1,62 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+#include <stdlib.h>
+
+#define BUFFER_SIZE 256U
+
+bool is_word_length_even(const char *word, size_t max_len)
+{
+    size_t len;
+
+    if (word == NULL) {
+        return false;
+    }
+
+    len = strnlen(word, max_len);
+    return (len % 2U) == 0U;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t len;
+
+    printf("Enter a word: ");
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1U] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len > 0U && buffer[len - 1U] == '\n') {
+        buffer[len - 1U] = '\0';
+        len--;
+    }
+
+    if (len == 0U) {
+        fprintf(stderr, "No word entered\n");
+        return EXIT_FAILURE;
+    }
+
+    if (is_word_length_even(buffer, sizeof(buffer))) {
+        printf("The word \"%s\" has an even length (%zu)\n", buffer, len);
+    } else {
+        printf("The word \"%s\" has an odd length (%zu)\n", buffer, len);
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Key changes made to address the identified weaknesses:**
+
+1. **CWE-126 (over-read via `strlen`)**: Replaced both `strlen` calls with `strnlen`, which takes an explicit maximum length and cannot read past the buffer boundary even if the string is not null-terminated. The helper function `is_word_length_even` now receives the buffer capacity as a parameter so it can bound its scan.
+
+2. **CWE-119/CWE-120 (statically-sized array)**: The buffer size is defined once as a named constant, and all reads are bounded by `sizeof(buffer)`. `fgets` already limits input to the buffer size, but a defensive explicit null terminator is written at `buffer[sizeof(buffer) - 1U]` immediately after reading, guaranteeing the string is always terminated before any string operation runs.
+
+3. **Defensive guarantees**: Since termination is now enforced before any length calculation, the combination of `fgets` bounds-limiting, forced termination, and `strnlen` means no code path can read or write outside `buffer`, fully mitigating both flagged risks.

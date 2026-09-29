@@ -1,0 +1,35 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int find_single_element(const int *arr, size_t size, int *result) {
+    size_t i;
+    
+    if (arr == NULL || result == NULL || size == 0 || size % 2 == 0) {
+        return 0;
+    }
+    
+    for (i = 0; i < size - 1; i += 2) {
+        if (arr[i] != arr[i + 1]) {
+            *result = arr[i];
+            return 1;
+        }
+    }
+    
+    *result = arr[size - 1];
+    return 1;
+}
+
+int main(void) {
+    int arr[] = {1, 1, 2, 3, 3, 4, 4, 5, 5};
+    size_t size = sizeof(arr) / sizeof(arr[0]);
+    int single;
+    
+    if (find_single_element(arr, size, &single)) {
+        printf("%d\n", single);
+    } else {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    return EXIT_SUCCESS;
+}

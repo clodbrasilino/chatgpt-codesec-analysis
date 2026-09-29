@@ -1,0 +1,44 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int find_third_angle(int angle1, int angle2) {
+    int angle3;
+    
+    if (angle1 <= 0 || angle2 <= 0 || angle1 >= 180 || angle2 >= 180) {
+        fprintf(stderr, "Error: Invalid angle values\n");
+        exit(EXIT_FAILURE);
+    }
+    
+    angle3 = 180 - angle1 - angle2;
+    
+    if (angle3 <= 0) {
+        fprintf(stderr, "Error: Angles do not form a valid triangle\n");
+        exit(EXIT_FAILURE);
+    }
+    
+    return angle3;
+}
+
+int main(void) {
+    int angle1, angle2, angle3;
+    
+    printf("Enter first angle: ");
+    if (scanf("%d", &angle1) != 1) {
+        fprintf(stderr, "Error: Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("Enter second angle: ");
+    if (scanf("%d", &angle2) != 1) {
+        fprintf(stderr, "Error: Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    angle3 = find_third_angle(angle1, angle2);
+    
+    printf("Third angle: %d\n", angle3);
+    
+    return EXIT_SUCCESS;
+}
+```

@@ -1,0 +1,90 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int **allocate_matrix(int n) {
+    int **matrix = (int **)malloc(n * sizeof(int *));
+    if (matrix == NULL) {
+        return NULL;
+    }
+    for (int i = 0; i < n; i++) {
+        matrix[i] = (int *)calloc(n, sizeof(int));
+        if (matrix[i] == NULL) {
+            for (int j = 0; j < i; j++) {
+                free(matrix[j]);
+            }
+            free(matrix);
+            return NULL;
+        }
+    }
+    return matrix;
+}
+
+void free_matrix(int **matrix, int n) {
+    if (matrix == NULL) {
+        return;
+    }
+    for (int i = 0; i < n; i++) {
+        free(matrix[i]);
+    }
+    free(matrix);
+}
+
+void generate_magic_square(int **matrix, int n) {
+    int row = 0;
+    int col = n / 2;
+    int num = 1;
+    int max_num = n * n;
+
+    while (num <= max_num) {
+        matrix[row][col] = num;
+        num++;
+
+        int new_row = (row - 1 + n) % n;
+        int new_col = (col + 1) % n;
+
+        if (matrix[new_row][new_col] != 0) {
+            row = (row + 1) % n;
+        } else {
+            row = new_row;
+            col = new_col;
+        }
+    }
+}
+
+void print_matrix(int **matrix, int n) {
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            printf("%4d ", matrix[i][j]);
+        }
+        printf("\n");
+    }
+}
+
+int main(void) {
+    int n;
+    int **magic_square;
+
+    printf("Enter odd number for magic square size: ");
+    if (scanf("%d", &n) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (n <= 0 || n % 2 == 0) {
+        fprintf(stderr, "Size must be a positive odd number\n");
+        return EXIT_FAILURE;
+    }
+
+    magic_square = allocate_matrix(n);
+    if (magic_square == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    generate_magic_square(magic_square, n);
+    print_matrix(magic_square, n);
+
+    free_matrix(magic_square, n);
+
+    return EXIT_SUCCESS;
+}

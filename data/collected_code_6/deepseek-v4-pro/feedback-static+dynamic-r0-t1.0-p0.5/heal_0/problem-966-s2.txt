@@ -1,0 +1,142 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Tuple {
+    int *data;
+    size_t size;
+} Tuple;
+
+typedef struct TupleList {
+    Tuple *tuples;
+    size_t count;
+    size_t capacity;
+} TupleList;
+
+int init_tuple_list(TupleList *list, size_t initial_capacity) {
+    if (list == NULL || initial_capacity == 0) {
+        return -1;
+    }
+    list->tuples = (Tuple *)malloc(initial_capacity * sizeof(Tuple));
+    if (list->tuples == NULL) {
+        return -1;
+    }
+    list->count = 0;
+    list->capacity = initial_capacity;
+    return 0;
+}
+
+void free_tuple_list(TupleList *list) {
+    if (list == NULL) {
+        return;
+    }
+    for (size_t i = 0; i < list->count; i++) {
+        free(list->tuples[i].data);
+    }
+    free(list->tuples);
+    list->tuples = NULL;
+    list->count = 0;
+    list->capacity = 0;
+}
+
+int add_tuple(TupleList *list, int *data, size_t size) {
+    if (list == NULL) {
+        return -1;
+    }
+    if (list->count >= list->capacity) {
+        size_t new_capacity = list->capacity * 2;
+        Tuple *new_tuples = (Tuple *)realloc(list->tuples, new_capacity * sizeof(Tuple));
+        if (new_tuples == NULL) {
+            return -1;
+        }
+        list->tuples = new_tuples;
+        list->capacity = new_capacity;
+    }
+    list->tuples[list->count].data = data;
+    list->tuples[list->count].size = size;
+    list->count++;
+    return 0;
+}
+
+int remove_empty_tuples(TupleList *list) {
+    if (list == NULL) {
+        return -1;
+    }
+    size_t write_index = 0;
+    for (size_t read_index = 0; read_index < list->count; read_index++) {
+        if (list->tuples[read_index].size == 0) {
+            free(list->tuples[read_index].data);
+            list->tuples[read_index].data = NULL;
+        } else {
+            if (write_index != read_index) {
+                list->tuples[write_index] = list->tuples[read_index];
+            }
+            write_index++;
+        }
+    }
+    list->count = write_index;
+    return 0;
+}
+
+void print_tuple_list(const TupleList *list) {
+    if (list == NULL) {
+        return;
+    }
+    for (size_t i = 0; i < list->count; i++) {
+        printf("(");
+        for (size_t j = 0; j < list->tuples[i].size; j++) {
+            printf("%d", list->tuples[i].data[j]);
+            if (j < list->tuples[i].size - 1) {
+                printf(", ");
+            }
+        }
+        printf(") ");
+    }
+    printf("\n");
+}
+
+int main(void) {
+    TupleList list;
+    if (init_tuple_list(&list, 4) != 0) {
+        fprintf(stderr, "Failed to initialize tuple list\n");
+        return 1;
+    }
+
+    int *data1 = (int *)malloc(3 * sizeof(int));
+    if (data1 == NULL) {
+        free_tuple_list(&list);
+        return 1;
+    }
+    data1[0] = 1;
+    data1[1] = 2;
+    data1[2] = 3;
+    add_tuple(&list, data1, 3);
+
+    int *data2 = (int *)malloc(0);
+    add_tuple(&list, data2, 0);
+
+    int *data3 = (int *)malloc(2 * sizeof(int));
+    if (data3 == NULL) {
+        free_tuple_list(&list);
+        return 1;
+    }
+    data3[0] = 4;
+    data3[1] = 5;
+    add_tuple(&list, data3, 2);
+
+    int *data4 = (int *)malloc(0);
+    add_tuple(&list, data4, 0);
+
+    printf("Original list: ");
+    print_tuple_list(&list);
+
+    remove_empty_tuples(&list);
+
+    printf("After removing empty tuples: ");
+    print_tuple_list(&list);
+
+    free_tuple_list(&list);
+
+    return 0;
+}
+```

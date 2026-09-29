@@ -1,0 +1,14 @@
+#include <stdio.h>
+#include <complex.h>
+#include <math.h>
+
+double get_angle_of_complex(complex double z) {
+    return carg(z);
+}
+
+int main() {
+    complex double cnum = 3.0 + 4.0*I;
+    double angle = get_angle_of_complex(cnum);
+    printf("The angle of the complex number is: %f\n", angle);
+    return 0;
+}

@@ -1,0 +1,44 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+bool is_linear_sequence(const long long *arr, size_t size) {
+    if (arr == NULL || size == 0) {
+        return false;
+    }
+
+    if (size == 1) {
+        return true;
+    }
+
+    long long diff = arr[1] - arr[0];
+
+    for (size_t i = 2; i < size; ++i) {
+        if (arr[i] - arr[i - 1] != diff) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+int main(void) {
+    long long seq1[] = {2, 4, 6, 8, 10};
+    size_t size1 = sizeof(seq1) / sizeof(seq1[0]);
+
+    if (is_linear_sequence(seq1, size1)) {
+        printf("seq1 is a linear sequence.\n");
+    } else {
+        printf("seq1 is not a linear sequence.\n");
+    }
+
+    long long seq2[] = {2, 4, 7, 8, 10};
+    size_t size2 = sizeof(seq2) / sizeof(seq2[0]);
+
+    if (is_linear_sequence(seq2, size2)) {
+        printf("seq2 is a linear sequence.\n");
+    } else {
+        printf("seq2 is not a linear sequence.\n");
+    }
+
+    return 0;
+}

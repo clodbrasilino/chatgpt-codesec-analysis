@@ -1,0 +1,6 @@
+collected_code/problem-810-0.c:5:31: error: Cannot determine that 'arr[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        for(int j = 0; j < arr[i]; j++) {
+                              ^
+collected_code/problem-810-0.c:6:30: error: Cannot determine that 'arr[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+            printf("%d ", arr[i]);
+                             ^

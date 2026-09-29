@@ -1,0 +1,90 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int value;
+    struct Node *next;
+} Node;
+
+typedef struct List {
+    Node *head;
+} List;
+
+void addNode(List *list, int value) {
+    Node *newNode = (Node *)malloc(sizeof(Node));
+    newNode->value = value;
+    newNode->next = list->head;
+    list->head = newNode;
+}
+
+int contains(List *list, int value) {
+    Node *current = list->head;
+    while (current != NULL) {
+        if (current->value == value) {
+            return 1;
+        }
+        current = current->next;
+    }
+    return 0;
+}
+
+List* removeDuplicates(List *list) {
+    List *result = (List *)malloc(sizeof(List));
+    result->head = NULL;
+    Node *current = list->head;
+    while (current != NULL) {
+        if (!contains(result, current->value)) {
+            addNode(result, current->value);
+        }
+        current = current->next;
+    }
+    return result;
+}
+
+void printList(List *list) {
+    Node *current = list->head;
+    while (current != NULL) {
+        printf("%d -> ", current->value);
+        current = current->next;
+    }
+    printf("NULL\n");
+}
+
+void freeList(List *list) {
+    Node *current = list->head;
+    /* Possible weaknesses found:
+     *  The scope of the variable 'temp' can be reduced. [variableScope]
+     */
+    Node *temp;
+    while (current != NULL) {
+        temp = current;
+        current = current->next;
+        free(temp);
+    }
+    free(list);
+}
+
+int main() {
+    List *list = (List *)malloc(sizeof(List));
+    list->head = NULL;
+
+    addNode(list, 1);
+    addNode(list, 2);
+    addNode(list, 3);
+    addNode(list, 2);
+    addNode(list, 4);
+    addNode(list, 1);
+
+    printf("Original list: ");
+    printList(list);
+
+    List *result = removeDuplicates(list);
+
+    printf("List after removing duplicates: ");
+    printList(result);
+
+    freeList(list);
+    freeList(result);
+
+    return 0;
+}

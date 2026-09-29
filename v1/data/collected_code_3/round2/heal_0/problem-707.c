@@ -1,0 +1,26 @@
+#include <stdio.h>
+
+int countSetBits(int n) {
+    int bitCount = 0;
+    while (n) {
+        bitCount += n & 1;
+        n >>= 1;
+    }
+    return bitCount;
+}
+
+int totalSetBits(int n) {
+    int total = 0;
+    for (int i = 1; i <= n; i++) {
+        total += countSetBits(i);
+    }
+    return total;
+}
+
+int main() {
+    int n;
+    printf("Enter a number: ");
+    scanf("%d", &n);
+    printf("Total set bits from 1 to %d is %d\n", n, totalSetBits(n));
+    return 0;
+}

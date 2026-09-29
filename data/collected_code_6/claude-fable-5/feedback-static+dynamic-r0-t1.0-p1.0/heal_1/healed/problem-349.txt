@@ -1,0 +1,64 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+
+#define BUFFER_SIZE 256
+
+bool is_binary_string(const char *str)
+{
+    size_t i;
+
+    if (str == NULL) {
+        return false;
+    }
+
+    if (str[0] == '\0') {
+        return false;
+    }
+
+    for (i = 0; str[i] != '\0'; i++) {
+        if (str[i] != '0' && str[i] != '1') {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t len;
+
+    printf("Enter a string: ");
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    }
+
+    if (is_binary_string(buffer)) {
+        printf("\"%s\" is a binary string\n", buffer);
+    } else {
+        printf("\"%s\" is not a binary string\n", buffer);
+    }
+
+    return 0;
+}
+```
+
+**Analysis of the fixes applied:**
+
+1. **CWE-119/CWE-120 (statically-sized buffer):** The original code was already largely safe here because `fgets(buffer, sizeof(buffer), stdin)` limits input to the buffer size. The rewrite keeps this pattern and adds a defensive explicit null-termination of the last byte (`buffer[sizeof(buffer) - 1] = '\0'`), guaranteeing the buffer is always a valid C string regardless of input behavior. The buffer size is also factored into a named constant to avoid magic numbers.
+
+2. **CWE-126 (`strlen` over-read on non-terminated strings):** Replaced `strlen` with `strnlen(buffer, sizeof(buffer))`, which bounds the scan to the buffer size and can never read past the end of the array, even if the string were somehow not null-terminated. Combined with the explicit terminator above, this eliminates any possibility of an over-read.
+
+3. **Robustness preserved:** The `NULL` and empty-string checks in `is_binary_string`, the `fgets` failure handling, and the safe newline-stripping logic (checking `len > 0` before indexing `len - 1`) were all retained, as they were already correct.

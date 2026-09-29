@@ -1,0 +1,44 @@
+{
+  "task_id": 892,
+  "text": "Write a C function to remove multiple spaces in a string.",
+  "fn_candidates": [
+    "remove_spaces",
+    "RemoveSpaces",
+    "removeSpaces",
+    "removespaces"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "remove_spaces",
+      "args": [
+        "python  program"
+      ],
+      "expected": "python program",
+      "assert_src": "assert remove_spaces('python  program')==('python program')"
+    },
+    {
+      "fn_name": "remove_spaces",
+      "args": [
+        "python   programming    language"
+      ],
+      "expected": "python programming language",
+      "assert_src": "assert remove_spaces('python   programming    language')==('python programming language')"
+    },
+    {
+      "fn_name": "remove_spaces",
+      "args": [
+        "python                     program"
+      ],
+      "expected": "python program",
+      "assert_src": "assert remove_spaces('python                     program')==('python program')"
+    }
+  ],
+  "arg_kinds": [
+    "str"
+  ],
+  "return_kind": "str",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

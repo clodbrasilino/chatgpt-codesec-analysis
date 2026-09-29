@@ -1,0 +1,155 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node *next;
+} Node;
+
+typedef struct List {
+    Node *head;
+    struct List *next;
+} List;
+
+List *remove_empty_lists(List *head) {
+    List *prev = NULL;
+    List *curr = head;
+
+    while (curr != NULL) {
+        if (curr->head == NULL) {
+            List *to_free = curr;
+            if (prev == NULL) {
+                head = curr->next;
+                curr = head;
+            } else {
+                prev->next = curr->next;
+                curr = curr->next;
+            }
+            free(to_free);
+        } else {
+            prev = curr;
+            curr = curr->next;
+        }
+    }
+
+    return head;
+}
+
+Node *create_node(int data) {
+    Node *node = malloc(sizeof(*node));
+    if (node == NULL) {
+        return NULL;
+    }
+    node->data = data;
+    node->next = NULL;
+    return node;
+}
+
+List *create_list(void) {
+    List *list = malloc(sizeof(*list));
+    if (list == NULL) {
+        return NULL;
+    }
+    list->head = NULL;
+    list->next = NULL;
+    return list;
+}
+
+int append_node(List *list, int data) {
+    Node *node = create_node(data);
+    if (node == NULL) {
+        return -1;
+    }
+
+    if (list->head == NULL) {
+        list->head = node;
+    } else {
+        Node *temp = list->head;
+        while (temp->next != NULL) {
+            temp = temp->next;
+        }
+        temp->next = node;
+    }
+
+    return 0;
+}
+
+void free_inner(Node *head) {
+    while (head != NULL) {
+        Node *temp = head;
+        head = head->next;
+        free(temp);
+    }
+}
+
+void free_outer(List *head) {
+    while (head != NULL) {
+        List *temp = head;
+        head = head->next;
+        free_inner(temp->head);
+        free(temp);
+    }
+}
+
+void print_list_of_lists(List *head) {
+    int index = 0;
+
+    while (head != NULL) {
+        Node *node = head->head;
+        printf("List %d: ", index);
+
+        if (node == NULL) {
+            printf("empty");
+        }
+
+        while (node != NULL) {
+            printf("%d", node->data);
+            if (node->next != NULL) {
+                printf(" -> ");
+            }
+            node = node->next;
+        }
+
+        printf("\n");
+        head = head->next;
+        index++;
+    }
+}
+
+int main(void) {
+    List *outer = NULL;
+    List *tail = NULL;
+    int i;
+
+    for (i = 0; i < 5; ++i) {
+        List *list = create_list();
+        if (list == NULL) {
+            free_outer(outer);
+            return 1;
+        }
+
+        if (i != 1 && i != 3) {
+            if (append_node(list, i * 10) != 0 ||
+                append_node(list, i * 10 + 1) != 0) {
+                free_outer(list);
+                free_outer(outer);
+                return 1;
+            }
+        }
+
+        if (outer == NULL) {
+            outer = list;
+            tail = list;
+        } else {
+            tail->next = list;
+            tail = list;
+        }
+    }
+
+    print_list_of_lists(outer);
+    outer = remove_empty_lists(outer);
+    print_list_of_lists(outer);
+
+    free_outer(outer);
+    return 0;
+}

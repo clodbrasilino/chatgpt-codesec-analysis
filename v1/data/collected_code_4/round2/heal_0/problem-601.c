@@ -1,0 +1,43 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX 100
+
+int dp[MAX]; 
+
+int maxChainLengthRec(int pairs[MAX][2], int i, int prev, int n) 
+{ 
+    if (i == n) 
+        return 0; 
+    int excl = maxChainLengthRec(pairs, i + 1, prev, n); 
+    int incl = 0; 
+    if (prev < pairs[i][0]) {
+        if(dp[i] != -1) {
+            return dp[i];
+        }
+        incl = 1 + maxChainLengthRec(pairs, i + 1, pairs[i][1], n);
+        dp[i] = incl;
+    }
+    return (excl > incl) ? excl : incl; 
+} 
+
+int maxChainLength(int pairs[MAX][2], int n) 
+{ 
+    for(int i=0; i<MAX; i++) dp[i] = -1;
+    for (int i = 1; i < n; i++) 
+        if (pairs[i][0] < pairs[0][0]) 
+            pairs[i][0] = pairs[0][0]; 
+    return maxChainLengthRec(pairs, 0, -1, n); 
+} 
+
+int main() 
+{ 
+    int pairs[MAX][2], n; 
+    printf("Enter number of pairs: ");
+    scanf("%d", &n);
+    printf("Enter pairs: ");
+    for(int i=0; i<n; i++) 
+        scanf("%d %d", &pairs[i][0], &pairs[i][1]); 
+    printf("Longest Chain Length: %d", maxChainLength(pairs, n)); 
+    return 0; 
+} 

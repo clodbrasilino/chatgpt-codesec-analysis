@@ -1,0 +1,93 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+#include <stdint.h>
+
+int *modulo_lists(const int *list1, const int *list2, size_t size1, size_t size2, size_t *result_size)
+{
+    size_t i;
+    int *result;
+
+    if (list1 == NULL || list2 == NULL || result_size == NULL)
+    {
+        return NULL;
+    }
+
+    if (size1 == 0 || size1 != size2)
+    {
+        return NULL;
+    }
+
+    if (size1 > SIZE_MAX / sizeof(int))
+    {
+        return NULL;
+    }
+
+    result = (int *)malloc(size1 * sizeof(int));
+    if (result == NULL)
+    {
+        return NULL;
+    }
+
+    for (i = 0; i < size1; i++)
+    {
+        if (list2[i] == 0)
+        {
+            free(result);
+            return NULL;
+        }
+        if (list1[i] == INT_MIN && list2[i] == -1)
+        {
+            free(result);
+            return NULL;
+        }
+        result[i] = list1[i] % list2[i];
+    }
+
+    *result_size = size1;
+    return result;
+}
+
+int main(void)
+{
+    int list1[] = {10, 23, 35, 47, 58};
+    int list2[] = {3, 5, 6, 7, 9};
+    size_t size1 = sizeof(list1) / sizeof(list1[0]);
+    size_t size2 = sizeof(list2) / sizeof(list2[0]);
+    size_t result_size = 0;
+    size_t i;
+    int *result;
+
+    result = modulo_lists(list1, list2, size1, size2, &result_size);
+    if (result == NULL)
+    {
+        fprintf(stderr, "Error: modulo operation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("List 1: ");
+    for (i = 0; i < size1; i++)
+    {
+        printf("%d ", list1[i]);
+    }
+    printf("\n");
+
+    printf("List 2: ");
+    for (i = 0; i < size2; i++)
+    {
+        printf("%d ", list2[i]);
+    }
+    printf("\n");
+
+    printf("Modulo: ");
+    for (i = 0; i < result_size; i++)
+    {
+        printf("%d ", result[i]);
+    }
+    printf("\n");
+
+    free(result);
+    result = NULL;
+
+    return EXIT_SUCCESS;
+}

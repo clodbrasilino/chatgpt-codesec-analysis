@@ -1,0 +1,47 @@
+{
+  "task_id": 18,
+  "text": "Write a C function to remove characters from the first string which are present in the second string.",
+  "fn_candidates": [
+    "remove_dirty_chars",
+    "RemoveDirtyChars",
+    "removeDirtyChars",
+    "removedirtychars"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "remove_dirty_chars",
+      "args": [
+        "probasscurve",
+        "pros"
+      ],
+      "expected": "bacuve",
+      "assert_src": "assert remove_dirty_chars(\"probasscurve\", \"pros\") == 'bacuve'"
+    },
+    {
+      "fn_name": "remove_dirty_chars",
+      "args": [
+        "digitalindia",
+        "talent"
+      ],
+      "expected": "digiidi",
+      "assert_src": "assert remove_dirty_chars(\"digitalindia\", \"talent\") == 'digiidi'"
+    },
+    {
+      "fn_name": "remove_dirty_chars",
+      "args": [
+        "exoticmiles",
+        "toxic"
+      ],
+      "expected": "emles",
+      "assert_src": "assert remove_dirty_chars(\"exoticmiles\", \"toxic\") == 'emles' "
+    }
+  ],
+  "arg_kinds": [
+    "str"
+  ],
+  "return_kind": "str",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

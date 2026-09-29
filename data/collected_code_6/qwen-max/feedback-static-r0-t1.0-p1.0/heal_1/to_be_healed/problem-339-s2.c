@@ -1,0 +1,53 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int gcd(int a, int b) {
+    while (b != 0) {
+        int temp = b;
+        b = a % b;
+        a = temp;
+    }
+    return a;
+}
+
+/* Possible weaknesses found:
+ *  'maxOccurringDivisor' declared here
+ */
+int maxOccurringDivisor(int low, int high) {
+    int *divisors = (int *)calloc(high - low + 1, sizeof(int));
+    if (divisors == NULL) {
+        return -1;
+    }
+
+    for (int i = low; i <= high; ++i) {
+        divisors[i - low] = 1;
+        for (int j = i + 1; j <= high; ++j) {
+            divisors[gcd(i, j) - low]++;
+        }
+    }
+
+    int max_divisor = 0;
+    int max_count = 0;
+    for (int i = low; i <= high; ++i) {
+        if (divisors[i - low] > max_count) {
+            max_count = divisors[i - low];
+            max_divisor = i;
+        }
+    }
+
+    free(divisors);
+    return max_divisor;
+}
+
+int main() {
+    int low = 1;
+    int high = 10;
+    /* Possible weaknesses found:
+     *  did you mean 'maxOccurringDivisor'?
+     *  call to undeclared function 'maxOccuringDivisor'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     *  implicit declaration of function 'maxOccuringDivisor'; did you mean 'maxOccurringDivisor'? [-Wimplicit-function-declaration]
+     */
+    int result = maxOccuringDivisor(low, high);
+    printf("Max occurring divisor in the interval %d to %d is: %d\n", low, high, result);
+    return 0;
+}

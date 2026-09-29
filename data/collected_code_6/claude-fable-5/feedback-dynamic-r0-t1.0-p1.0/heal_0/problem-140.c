@@ -1,0 +1,115 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Tuple {
+    const int *items;
+    size_t count;
+};
+
+static int extract_single_elements(const struct Tuple *tuples, size_t tuple_count,
+                                   int **result, size_t *result_count)
+{
+    size_t total = 0;
+    size_t i;
+    size_t j;
+    size_t k;
+    int *flat = NULL;
+    int *out = NULL;
+    size_t out_len = 0;
+
+    if (tuples == NULL || result == NULL || result_count == NULL) {
+        return -1;
+    }
+
+    *result = NULL;
+    *result_count = 0;
+
+    for (i = 0; i < tuple_count; i++) {
+        if (tuples[i].items == NULL && tuples[i].count > 0) {
+            return -1;
+        }
+        if (tuples[i].count > SIZE_MAX - total) {
+            return -1;
+        }
+        total += tuples[i].count;
+    }
+
+    if (total == 0) {
+        return 0;
+    }
+
+    flat = malloc(total * sizeof(*flat));
+    if (flat == NULL) {
+        return -1;
+    }
+
+    k = 0;
+    for (i = 0; i < tuple_count; i++) {
+        for (j = 0; j < tuples[i].count; j++) {
+            flat[k] = tuples[i].items[j];
+            k++;
+        }
+    }
+
+    out = malloc(total * sizeof(*out));
+    if (out == NULL) {
+        free(flat);
+        return -1;
+    }
+
+    for (i = 0; i < total; i++) {
+        size_t occurrences = 0;
+        for (j = 0; j < total; j++) {
+            if (flat[j] == flat[i]) {
+                occurrences++;
+            }
+        }
+        if (occurrences == 1) {
+            out[out_len] = flat[i];
+            out_len++;
+        }
+    }
+
+    free(flat);
+
+    if (out_len == 0) {
+        free(out);
+        return 0;
+    }
+
+    *result = out;
+    *result_count = out_len;
+    return 0;
+}
+
+int main(void)
+{
+    const int t1[] = {3, 4, 5};
+    const int t2[] = {4, 5, 7};
+    const int t3[] = {1, 4};
+    struct Tuple tuples[3];
+    int *singles = NULL;
+    size_t singles_count = 0;
+    size_t i;
+
+    tuples[0].items = t1;
+    tuples[0].count = sizeof(t1) / sizeof(t1[0]);
+    tuples[1].items = t2;
+    tuples[1].count = sizeof(t2) / sizeof(t2[0]);
+    tuples[2].items = t3;
+    tuples[2].count = sizeof(t3) / sizeof(t3[0]);
+
+    if (extract_single_elements(tuples, 3, &singles, &singles_count) != 0) {
+        fprintf(stderr, "Extraction failed\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Elements occurring singly: ");
+    for (i = 0; i < singles_count; i++) {
+        printf("%d ", singles[i]);
+    }
+    printf("\n");
+
+    free(singles);
+    return EXIT_SUCCESS;
+}

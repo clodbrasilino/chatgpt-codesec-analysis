@@ -1,0 +1,51 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define SIZE 10
+
+typedef struct tuple {
+    int a;
+    int b;
+} Tuple;
+
+Tuple* convertSetToOrderedTuples(int* set, int size) {
+    if (size % 2 != 0) {
+        return NULL;
+    }
+
+    int tupleSize = size / 2;
+    Tuple* tuples = (Tuple*) malloc(sizeof(Tuple) * tupleSize);
+    
+    if(tuples == NULL) {
+        return NULL;
+    }
+
+    for(int i=0; i < tupleSize; i++) {
+        tuples[i].a = set[2*i];
+        tuples[i].b = set[2*i + 1];
+        if(tuples[i].a > tuples[i].b) {
+            int temp = tuples[i].a;
+            tuples[i].a = tuples[i].b;
+            tuples[i].b = temp;
+        }
+    }
+    return tuples;
+}
+
+int main() {
+    int set[SIZE] = {1, 8, 3, 4, 5, 2, 7, 6, 9, 10};
+    Tuple *tuples = convertSetToOrderedTuples(set, SIZE);
+
+    if(tuples == NULL) {
+        printf("An error occurred\n");
+        return 1;
+    }
+
+    for(int i = 0; i < SIZE / 2; i++) {
+        printf("Tuple %d : (%d, %d)\n", i + 1, tuples[i].a, tuples[i].b);
+    }
+
+    free(tuples);
+    
+    return 0;
+}

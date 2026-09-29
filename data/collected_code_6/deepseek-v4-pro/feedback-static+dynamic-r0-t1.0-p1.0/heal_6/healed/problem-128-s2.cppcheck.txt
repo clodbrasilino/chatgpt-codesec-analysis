@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-128-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-128-s2.c:16:20: style: Condition 'word_count>0' is always true [knownConditionTrueFalse]
+    if (word_count > 0 && (size_t)word_count > SIZE_MAX / sizeof(char *)) {
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-128-s2.c:9:58: note: Assuming that condition 'word_count<=0' is not redundant
+    if (words == NULL || out_count == NULL || word_count <= 0) {
+                                                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-128-s2.c:16:20: note: Condition 'word_count>0' is always true
+    if (word_count > 0 && (size_t)word_count > SIZE_MAX / sizeof(char *)) {
+                   ^

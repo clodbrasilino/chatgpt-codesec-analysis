@@ -1,0 +1,87 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define BUFFER_SIZE 256
+
+static int compare_chars(const void *a, const void *b)
+{
+    unsigned char ca = *(const unsigned char *)a;
+    unsigned char cb = *(const unsigned char *)b;
+
+    if (ca < cb) {
+        return -1;
+    }
+    if (ca > cb) {
+        return 1;
+    }
+    return 0;
+}
+
+int sort_string(char *str, size_t max_len)
+{
+    size_t len;
+
+    if (str == NULL || max_len == 0) {
+        return -1;
+    }
+
+    len = strnlen(str, max_len);
+    if (len >= max_len) {
+        return -1;
+    }
+
+    if (len > 1) {
+        qsort(str, len, sizeof(char), compare_chars);
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t len;
+
+    printf("Enter a string: ");
+    fflush(stdout);
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    }
+
+    if (sort_string(buffer, sizeof(buffer)) != 0) {
+        fprintf(stderr, "Error sorting string\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Sorted string: %s\n", buffer);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The original code was already well-defended against the Flawfinder-reported weakness (CWE-119/CWE-120). The rewrite preserves all existing mitigations and adds two minor hardening improvements:
+
+1. **Bounded input** — `fgets(buffer, sizeof(buffer), stdin)` already limits reads to the buffer size, addressing the statically-sized array concern directly. `sizeof(buffer)` is used consistently rather than the macro, so the size can never desynchronize from the declaration.
+
+2. **Guaranteed termination** — `buffer[sizeof(buffer) - 1] = '\0'` is technically redundant after `fgets` (which always null-terminates on success), but it's cheap defense-in-depth and kept.
+
+3. **Bounded length calculation** — `strnlen` is used instead of `strlen` in both `main` and `sort_string`, so even a corrupted/unterminated buffer can't cause an out-of-bounds read.
+
+4. **Defensive API contract** — `sort_string` validates the pointer, and rejects the case `len >= max_len` (unterminated string). I added a `max_len == 0` check to prevent a theoretical edge case where `strnlen(str, 0)` returns `0` and the `len >= max_len` comparison (`0 >= 0`) would otherwise be the only guard — it already works, but the explicit check makes the contract clearer and robust against future modification.
+
+5. **`fflush(stdout)`** — added after the prompt `printf` since the prompt lacks a newline; without a flush, the prompt may not appear before the program blocks on `fgets` when stdout is fully buffered (e.g., piped output).
+
+No buffer overflow, off-by-one, or unbounded copy exists in this code; the Flawfinder hit on `char buffer[BUFFER_SIZE]` is a static-analysis heuristic flag, and all the recommended mitigations (bounds checking, length-limited functions) are in place.

@@ -1,0 +1,30 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+double calculate_rectangle_area(double length, double width) {
+    if (length < 0.0 || width < 0.0) {
+        return -1.0;
+    }
+    return length * width;
+}
+
+int main(void) {
+    double length = 0.0;
+    double width = 0.0;
+    double area = 0.0;
+    int result = 0;
+
+    result = scanf("%lf %lf", &length, &width);
+    if (result != 2) {
+        return EXIT_FAILURE;
+    }
+
+    area = calculate_rectangle_area(length, width);
+    if (area < 0.0) {
+        return EXIT_FAILURE;
+    }
+
+    printf("%f\n", area);
+
+    return EXIT_SUCCESS;
+}

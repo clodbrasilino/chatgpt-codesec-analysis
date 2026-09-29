@@ -1,0 +1,99 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_INPUT_LEN 4096
+
+static size_t safe_strlen(const char *s, size_t max)
+{
+    size_t n = 0;
+
+    if (s == NULL) {
+        return 0;
+    }
+
+    while (n < max && s[n] != '\0') {
+        n++;
+    }
+
+    return n;
+}
+
+char *remove_parentheses(const char *str)
+{
+    size_t len;
+    size_t i;
+    size_t j = 0;
+    int depth = 0;
+    char *result;
+
+    if (str == NULL) {
+        return NULL;
+    }
+
+    len = safe_strlen(str, MAX_INPUT_LEN);
+
+    result = (char *)malloc(len + 1);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    for (i = 0; i < len; i++) {
+        if (str[i] == '(') {
+            depth++;
+        } else if (str[i] == ')') {
+            if (depth > 0) {
+                depth--;
+            }
+        } else if (depth == 0) {
+            result[j] = str[i];
+            j++;
+        }
+    }
+
+    while (j > 0 && (result[j - 1] == ' '  ||
+                     result[j - 1] == '\t' ||
+                     result[j - 1] == '\n' ||
+                     result[j - 1] == '\r')) {
+        j--;
+    }
+
+    result[j] = '\0';
+
+    return result;
+}
+
+int main(void)
+{
+    const char *inputs[] = {
+        "python (chrome)",
+        "string (abcd)",
+        "alpha (beta)"
+    };
+    size_t count = sizeof(inputs) / sizeof(inputs[0]);
+    size_t k;
+
+    for (k = 0; k < count; k++) {
+        char *output = remove_parentheses(inputs[k]);
+
+        if (output == NULL) {
+            fprintf(stderr, "Error: failed to process string\n");
+            return EXIT_FAILURE;
+        }
+
+        printf("%s\n", output);
+
+        free(output);
+        output = NULL;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+Key fixes applied:
+
+1. **Trailing whitespace trimmed** — the original left a dangling space (e.g., `"python "` instead of `"python"`), which caused the test failures. The result is now trimmed before null-termination, producing exactly `python`, `string`, and `alpha`.
+2. **Bounded string length (CWE-126 fix)** — replaced the unbounded `strlen()` with a `safe_strlen()` helper that caps the scan at `MAX_INPUT_LEN`, preventing over-reads on non-`'\0'`-terminated buffers.
+3. **Preserved existing safety checks** — `NULL` input handling, `malloc()` failure check, balanced-parenthesis depth guard (`depth > 0` before decrementing), proper `'\0'` termination, and freeing the heap buffer in `main`.

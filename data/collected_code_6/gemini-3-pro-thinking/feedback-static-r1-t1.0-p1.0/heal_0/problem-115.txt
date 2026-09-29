@@ -1,0 +1,81 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+typedef struct {
+    size_t size;
+} Dictionary;
+
+bool are_all_dictionaries_empty(const Dictionary * const * dict_list, size_t count);
+Dictionary* create_dictionary(size_t initial_size);
+void free_dictionaries(Dictionary **dict_list, size_t count);
+
+bool are_all_dictionaries_empty(const Dictionary * const * dict_list, size_t count) {
+    if (dict_list == NULL) {
+        return false;
+    }
+    
+    for (size_t i = 0; i < count; ++i) {
+        if (dict_list[i] == NULL) {
+            return false;
+        }
+        if (dict_list[i]->size > 0) {
+            return false;
+        }
+    }
+    
+    return true;
+}
+
+Dictionary* create_dictionary(size_t initial_size) {
+    Dictionary *dict = malloc(sizeof(Dictionary));
+    if (dict == NULL) {
+        return NULL;
+    }
+    
+    dict->size = initial_size;
+    return dict;
+}
+
+void free_dictionaries(Dictionary **dict_list, size_t count) {
+    if (dict_list == NULL) {
+        return;
+    }
+    
+    for (size_t i = 0; i < count; ++i) {
+        free(dict_list[i]);
+    }
+    
+    free(dict_list);
+}
+
+int main(void) {
+    size_t count = 3;
+    Dictionary **dict_list = malloc(count * sizeof(Dictionary *));
+    
+    if (dict_list == NULL) {
+        return EXIT_FAILURE;
+    }
+
+    for (size_t i = 0; i < count; ++i) {
+        dict_list[i] = create_dictionary(0);
+        if (dict_list[i] == NULL) {
+            free_dictionaries(dict_list, i);
+            return EXIT_FAILURE;
+        }
+    }
+
+    bool all_empty = are_all_dictionaries_empty((const Dictionary * const *)dict_list, count);
+    printf("%d\n", all_empty);
+
+    dict_list[1]->size = 5;
+
+    all_empty = are_all_dictionaries_empty((const Dictionary * const *)dict_list, count);
+    printf("%d\n", all_empty);
+
+    free_dictionaries(dict_list, count);
+
+    return EXIT_SUCCESS;
+}
+```

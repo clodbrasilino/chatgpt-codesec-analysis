@@ -1,0 +1,149 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+#include <regex.h>
+
+#define MAX_INPUT_LEN 4096
+
+static void free_partial(char **tokens, size_t count)
+{
+    for (size_t i = 0; i < count; i++) {
+        free(tokens[i]);
+    }
+    free(tokens);
+}
+
+char **split_at_uppercase(const char *input, size_t *count)
+{
+    regex_t regex;
+    regmatch_t match;
+    char **result = NULL;
+    char **temp = NULL;
+    size_t capacity = 8;
+    size_t n = 0;
+    const char *cursor = NULL;
+    size_t remaining;
+    int rc;
+
+    if (input == NULL || count == NULL) {
+        return NULL;
+    }
+
+    *count = 0;
+
+    remaining = strnlen(input, MAX_INPUT_LEN);
+    if (remaining >= MAX_INPUT_LEN) {
+        return NULL;
+    }
+
+    cursor = input;
+
+    rc = regcomp(&regex, "[A-Z][^A-Z]*|^[^A-Z]+", REG_EXTENDED);
+    if (rc != 0) {
+        return NULL;
+    }
+
+    result = malloc(capacity * sizeof(char *));
+    if (result == NULL) {
+        regfree(&regex);
+        return NULL;
+    }
+
+    while (*cursor != '\0') {
+        rc = regexec(&regex, cursor, 1, &match, 0);
+        if (rc != 0) {
+            break;
+        }
+
+        if (match.rm_so != 0 || match.rm_eo <= 0) {
+            break;
+        }
+
+        size_t len = (size_t)match.rm_eo;
+
+        if (len > remaining || len >= MAX_INPUT_LEN) {
+            break;
+        }
+
+        char *token = malloc(len + 1);
+        if (token == NULL) {
+            free_partial(result, n);
+            regfree(&regex);
+            return NULL;
+        }
+
+        memcpy(token, cursor, len);
+        token[len] = '\0';
+
+        if (n >= capacity) {
+            if (capacity > SIZE_MAX / (2 * sizeof(char *))) {
+                free(token);
+                free_partial(result, n);
+                regfree(&regex);
+                return NULL;
+            }
+            capacity *= 2;
+            temp = realloc(result, capacity * sizeof(char *));
+            if (temp == NULL) {
+                free(token);
+                free_partial(result, n);
+                regfree(&regex);
+                return NULL;
+            }
+            result = temp;
+        }
+
+        result[n] = token;
+        n++;
+        cursor += len;
+        remaining -= len;
+    }
+
+    regfree(&regex);
+    *count = n;
+    return result;
+}
+
+void free_tokens(char **tokens, size_t count)
+{
+    if (tokens == NULL) {
+        return;
+    }
+    for (size_t i = 0; i < count; i++) {
+        free(tokens[i]);
+    }
+    free(tokens);
+}
+
+int main(void)
+{
+    const char *text = "helloWorldThisIsATestString";
+    size_t count = 0;
+    char **tokens = split_at_uppercase(text, &count);
+
+    if (tokens == NULL) {
+        fprintf(stderr, "Failed to split string\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Input: %s\n", text);
+    for (size_t i = 0; i < count; i++) {
+        printf("Token %zu: %s\n", i, tokens[i]);
+    }
+
+    free_tokens(tokens, count);
+    return EXIT_SUCCESS;
+}
+```
+
+**Summary of fixes applied:**
+
+1. **Redundant/always-true conditions** (`match.rm_eo <= match.rm_so`, `start > end`): The regex `[A-Z][^A-Z]*|^[^A-Z]+` always anchors matches at offset 0 of the cursor, so `rm_so` must be `0`. The rewritten code enforces this directly with `match.rm_so != 0 || match.rm_eo <= 0`, eliminating the `start`/`end` variables entirely. This removes the symbolic comparison the analyzer flagged as always true, and guarantees the match length is strictly positive (preventing an infinite loop on a zero-length match).
+
+2. **Symbolic assignment issue** (`end` less than `start`): By removing the separate `start`/`end` pair and computing `len` directly from `rm_eo`, there is no longer any pair of values whose ordering could be questioned.
+
+3. **Flawfinder memcpy warning (CWE-120):** The destination buffer is allocated as exactly `len + 1` bytes immediately before the copy, and `len` is bounds-checked against both `remaining` and `MAX_INPUT_LEN` before allocation, so the copy of `len` bytes plus the NUL terminator can never overflow the destination.
+
+4. All existing hardening was preserved: `strnlen` with a hard cap, overflow-checked capacity doubling before `realloc`, full cleanup of partial allocations on every error path, and `regfree` on all exits.

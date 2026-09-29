@@ -1,0 +1,53 @@
+Here is a C code snippet that uses the POSIX regex library to extract the year, month, and date from a URL. Please note that C is not the best language for handling strings and regular expressions as it doesn't have built-in support for regular expressions like some other languages (e.g., Python, JavaScript). 
+
+```c
+#include <stdio.h>
+#include <string.h>
+#include <regex.h>
+
+void extract_date(char *url, char *year, char *month, char *day) {
+    regex_t regex;
+    regmatch_t matches[4];
+    regcomp(&regex, "\\b(\\d{4})/(\\d{2})/(\\d{2})\\b", REG_EXTENDED);
+
+    if (regexec(&regex, url, 4, matches, 0) == 0) {
+        int year_length = matches[1].rm_eo - matches[1].rm_so;
+        int month_length = matches[2].rm_eo - matches[2].rm_so;
+        int day_length = matches[3].rm_eo - matches[3].rm_so;
+
+        strncpy(year, url + matches[1].rm_so, year_length);
+        year[year_length] = '\0';
+
+        strncpy(month, url + matches[2].rm_so, month_length);
+        month[month_length] = '\0';
+
+        strncpy(day, url + matches[3].rm_so, day_length);
+        day[day_length] = '\0';
+    }
+
+    regfree(&regex);
+}
+
+int main() {
+    char url[] = "https://example.com/2022/03/15/some-page";
+    char year[5], month[3], day[3];
+
+    extract_date(url, year, month, day);
+
+    printf("Year: %s\n", year);
+    printf("Month: %s\n", month);
+    printf("Day: %s\n", day);
+
+    return 0;
+}
+```
+
+This program will print:
+
+```
+Year: 2022
+Month: 03
+Day: 15
+```
+
+This code assumes that the date in the URL is in the format `YYYY/MM/DD`. If the date format is different, you will need to adjust the regular expression accordingly.

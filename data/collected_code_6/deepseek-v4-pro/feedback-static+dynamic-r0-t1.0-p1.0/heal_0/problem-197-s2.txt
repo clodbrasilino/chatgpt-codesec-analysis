@@ -1,0 +1,55 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+typedef struct {
+    double x;
+    double y;
+} Tuple;
+
+Tuple tuple_exp(Tuple base, Tuple exponent) {
+    Tuple result;
+    double magnitude;
+    double angle;
+
+    if (base.x == 0 && base.y == 0) {
+        if (exponent.x == 0 && exponent.y == 0) {
+            result.x = 1;
+            result.y = 0;
+            return result;
+        }
+        result.x = 0;
+        result.y = 0;
+        return result;
+    }
+
+    magnitude = pow(base.x * base.x + base.y * base.y, exponent.x / 2.0) *
+                exp(-exponent.y * atan2(base.y, base.x));
+    angle = exponent.x * atan2(base.y, base.x) +
+            0.5 * exponent.y * log(base.x * base.x + base.y * base.y);
+
+    result.x = magnitude * cos(angle);
+    result.y = magnitude * sin(angle);
+
+    return result;
+}
+
+int main(void) {
+    Tuple base;
+    Tuple exponent;
+    Tuple result;
+
+    base.x = 2.0;
+    base.y = 3.0;
+    exponent.x = 2.0;
+    exponent.y = 1.0;
+
+    result = tuple_exp(base, exponent);
+
+    printf("(%f + %fi)^(%f + %fi) = %f + %fi\n",
+           base.x, base.y, exponent.x, exponent.y, result.x, result.y);
+
+    return 0;
+}
+```

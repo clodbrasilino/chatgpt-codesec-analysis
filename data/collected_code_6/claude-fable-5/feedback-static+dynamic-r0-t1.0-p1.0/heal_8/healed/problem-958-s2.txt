@@ -1,0 +1,109 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define ROMAN_BUFFER_SIZE 32
+#define ROMAN_MIN 1
+#define ROMAN_MAX 3999
+
+int int_to_roman(int number, char *output, size_t output_size);
+
+int int_to_roman(int number, char *output, size_t output_size)
+{
+    static const int values[] = {
+        1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1
+    };
+    static const char symbols[][3] = {
+        "M", "CM", "D", "CD", "C", "XC", "L", "XL",
+        "X", "IX", "V", "IV", "I"
+    };
+    static const size_t symbol_lengths[] = {
+        1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1
+    };
+    size_t used = 0;
+    size_t i;
+
+    if (output == NULL || output_size == 0) {
+        return -1;
+    }
+
+    output[0] = '\0';
+
+    if (number < ROMAN_MIN || number > ROMAN_MAX) {
+        return -1;
+    }
+
+    for (i = 0; i < sizeof(values) / sizeof(values[0]); i++) {
+        while (number >= values[i]) {
+            size_t symbol_len = symbol_lengths[i];
+            size_t j;
+
+            if (used >= output_size || symbol_len >= output_size - used) {
+                output[0] = '\0';
+                return -1;
+            }
+
+            for (j = 0; j < symbol_len; j++) {
+                output[used + j] = symbols[i][j];
+            }
+            used += symbol_len;
+
+            if (used >= output_size) {
+                output[0] = '\0';
+                return -1;
+            }
+
+            output[used] = '\0';
+            number -= values[i];
+        }
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    char buffer[ROMAN_BUFFER_SIZE];
+    int test_values[] = { 1, 4, 9, 14, 40, 90, 400, 1994, 2024, 3999 };
+    size_t count = sizeof(test_values) / sizeof(test_values[0]);
+    size_t i;
+
+    memset(buffer, 0, sizeof(buffer));
+
+    for (i = 0; i < count; i++) {
+        if (int_to_roman(test_values[i], buffer, sizeof(buffer)) == 0) {
+            if (printf("%d -> %s\n", test_values[i], buffer) < 0) {
+                return EXIT_FAILURE;
+            }
+        } else {
+            if (fprintf(stderr, "Conversion failed for %d\n",
+                        test_values[i]) < 0) {
+                return EXIT_FAILURE;
+            }
+        }
+    }
+
+    if (int_to_roman(0, buffer, sizeof(buffer)) != 0) {
+        if (printf("Correctly rejected out-of-range value 0\n") < 0) {
+            return EXIT_FAILURE;
+        }
+    }
+
+    if (int_to_roman(4000, buffer, sizeof(buffer)) != 0) {
+        if (printf("Correctly rejected out-of-range value 4000\n") < 0) {
+            return EXIT_FAILURE;
+        }
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+The Flawfinder warning (CWE-119/CWE-120) about the statically-sized `buffer` array is already mitigated in this code, so no functional changes were required:
+
+- **Size is always passed explicitly**: every call to `int_to_roman` passes `sizeof(buffer)`, so the callee never assumes a size.
+- **Guarded writes**: before copying each Roman symbol, the function verifies `used >= output_size || symbol_len >= output_size - used`, which prevents any write past the end of the buffer and also avoids unsigned underflow in the subtraction.
+- **NUL-termination guaranteed**: after each append, the code checks `used >= output_size` before writing the terminator, so `output[used] = '\0'` can never write out of bounds, and the buffer is always a valid C string on both success and failure paths.
+- **Input range validation**: values outside `[1, 3999]` are rejected up front, and `ROMAN_BUFFER_SIZE` (32) comfortably exceeds the longest possible output ("MMMDCCCLXXXVIII", 15 chars + NUL for 3888).
+- **Defensive initialization**: `memset(buffer, 0, sizeof(buffer))` and the early `output[0] = '\0'` ensure the buffer is never read uninitialized, and `printf`/`fprintf` return values are checked for I/O failures.

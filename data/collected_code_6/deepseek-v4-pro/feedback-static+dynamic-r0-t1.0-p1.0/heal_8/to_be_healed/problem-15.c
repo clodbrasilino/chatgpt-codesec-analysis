@@ -1,0 +1,108 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+static char *safe_strndup(const char *str, size_t n) {
+    if (str == NULL || n == 0) {
+        return NULL;
+    }
+    size_t len = strnlen(str, n);
+    char *dup = malloc(len + 1);
+    if (dup == NULL) {
+        return NULL;
+    }
+    /* Possible weaknesses found:
+     * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+     */
+    memcpy(dup, str, len);
+    dup[len] = '\0';
+    return dup;
+}
+
+char **split_at_lowercase(const char *str, int *count) {
+    if (str == NULL || count == NULL) {
+        return NULL;
+    }
+
+    size_t len = strnlen(str, 4096);
+    size_t max_parts = len + 1;
+    char **parts = calloc(max_parts, sizeof(char *));
+    if (parts == NULL) {
+        return NULL;
+    }
+
+    int part_count = 0;
+    const char *start = str;
+    const char *p = str;
+    size_t safe_offset = 0;
+
+    while (*p != '\0' && safe_offset < 4096) {
+        if (islower((unsigned char)*p)) {
+            size_t part_len = (size_t)(p - start);
+            if (part_len > 0) {
+                if (part_count >= (int)(max_parts - 1)) {
+                    for (int i = 0; i < part_count; i++) {
+                        free(parts[i]);
+                    }
+                    free(parts);
+                    return NULL;
+                }
+                parts[part_count] = safe_strndup(start, part_len);
+                if (parts[part_count] == NULL) {
+                    for (int i = 0; i < part_count; i++) {
+                        free(parts[i]);
+                    }
+                    free(parts);
+                    return NULL;
+                }
+                part_count++;
+            }
+            start = p + 1;
+        }
+        p++;
+        safe_offset++;
+    }
+
+    size_t remaining_len = strnlen(start, 4096);
+    if (remaining_len > 0) {
+        if (part_count >= (int)(max_parts - 1)) {
+            for (int i = 0; i < part_count; i++) {
+                free(parts[i]);
+            }
+            free(parts);
+            return NULL;
+        }
+        parts[part_count] = safe_strndup(start, remaining_len);
+        if (parts[part_count] == NULL) {
+            for (int i = 0; i < part_count; i++) {
+                free(parts[i]);
+            }
+            free(parts);
+            return NULL;
+        }
+        part_count++;
+    }
+
+    *count = part_count;
+    return parts;
+}
+
+int main(void) {
+    const char *test_string = "HelloWorld thisIsATest";
+    int count = 0;
+    char **result = split_at_lowercase(test_string, &count);
+
+    if (result == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return 1;
+    }
+
+    for (int i = 0; i < count; i++) {
+        printf("[%s]\n", result[i]);
+        free(result[i]);
+    }
+    free(result);
+
+    return 0;
+}

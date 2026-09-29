@@ -1,0 +1,84 @@
+```c
+#include <stdio.h>
+#include <string.h>
+
+#define MAX_INPUT_SIZE 1024
+
+unsigned long count_substrings(const char *str, size_t max_len)
+{
+    unsigned long freq[256] = {0};
+    unsigned long total = 0;
+    size_t i;
+    size_t len;
+
+    if (str == NULL)
+    {
+        return 0;
+    }
+
+    len = strnlen(str, max_len);
+
+    for (i = 0; i < len; i++)
+    {
+        freq[(unsigned char)str[i]]++;
+    }
+
+    for (i = 0; i < 256; i++)
+    {
+        total += (freq[i] * (freq[i] + 1)) / 2;
+    }
+
+    return total;
+}
+
+int main(void)
+{
+    char buffer[MAX_INPUT_SIZE];
+    unsigned long result;
+    size_t len;
+    char *newline;
+
+    memset(buffer, 0, sizeof(buffer));
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL)
+    {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    newline = memchr(buffer, '\n', sizeof(buffer));
+    if (newline != NULL)
+    {
+        *newline = '\0';
+    }
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len >= sizeof(buffer))
+    {
+        fprintf(stderr, "Input too long\n");
+        return 1;
+    }
+
+    result = count_substrings(buffer, sizeof(buffer));
+
+    if (printf("%lu\n", result) < 0)
+    {
+        return 1;
+    }
+
+    return 0;
+}
+```
+
+The identified weakness (CWE-119/CWE-120, statically-sized `char buffer[MAX_INPUT_SIZE]`) is already properly mitigated in this code, so no structural changes were required. The mitigations in place are:
+
+1. **`fgets(buffer, sizeof(buffer), stdin)`** — reads at most `sizeof(buffer) - 1` bytes and always null-terminates, preventing buffer overflow on input (unlike `gets` or unbounded `scanf`).
+2. **Explicit terminator** — `buffer[sizeof(buffer) - 1] = '\0'` guarantees null termination defensively even if the buffer state were unexpected.
+3. **Bounded scanning** — `memchr` and `strnlen` are both limited to `sizeof(buffer)`, so no read ever exceeds the buffer bounds even if termination were somehow missing.
+4. **Length validation** — the `len >= sizeof(buffer)` check rejects any input that would fill the buffer without a terminator.
+5. **Bounded processing** — `count_substrings` takes an explicit `max_len` and uses `strnlen` plus an `(unsigned char)` cast when indexing `freq`, avoiding both over-reads and negative array indices on platforms where `char` is signed.
+6. **`memset` initialization** — the buffer starts zeroed, eliminating use of uninitialized memory.
+
+The Flawfinder hit is a heuristic warning triggered by the mere presence of a fixed-size array; the surrounding code already performs the recommended bounds checking and uses length-limited functions throughout, so the code stands as-is.

@@ -1,0 +1,22 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+
+uint32_t toggleFirstAndLastBit(uint32_t number) {
+    uint32_t firstAndLastBitMask = 0x80000001;
+    return number ^ firstAndLastBitMask;
+}
+
+int main(int argc, char* argv[]) {
+    if(argc != 2) {
+        printf("Usage: ./program <number>\n");
+        return EXIT_FAILURE;
+    }
+
+    uint32_t number = atoi(argv[1]); 
+    uint32_t result = toggleFirstAndLastBit(number);
+
+    printf("Result after toggling first and last bit: %u\n", result);
+
+    return EXIT_SUCCESS;
+}

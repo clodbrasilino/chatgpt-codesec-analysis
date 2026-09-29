@@ -1,0 +1,15 @@
+#include <stdio.h>
+
+int findRemainder(int dividend, int divisor) {
+    return dividend % divisor;
+}
+
+int main() {
+    int num1, num2;
+    printf("Enter dividend: ");
+    scanf("%d", &num1);
+    printf("Enter divisor: ");
+    scanf("%d", &num2);
+    printf("Remainder: %d", findRemainder(num1, num2));
+    return 0;
+}

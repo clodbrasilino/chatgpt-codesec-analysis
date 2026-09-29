@@ -1,0 +1,61 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+char* remove_words_with_length(char* str, int k) {
+    if (str == NULL || k <= 0) {
+        return str;
+    }
+
+    size_t len = strlen(str);
+    char* result = (char*)malloc(len + 1);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    size_t i = 0, j = 0;
+    int word_start = -1;
+    int word_length = 0;
+
+    while (i <= len) {
+        if (isalnum((unsigned char)str[i])) {
+            if (word_start == -1) {
+                word_start = i;
+            }
+            word_length++;
+        } else {
+            if (word_start != -1) {
+                if (word_length != k) {
+                    if (j > 0 && result[j-1] != ' ') {
+                        result[j++] = ' ';
+                    }
+                    memcpy(result + j, str + word_start, word_length);
+                    j += word_length;
+                }
+                word_start = -1;
+                word_length = 0;
+            }
+        }
+        i++;
+    }
+
+    result[j] = '\0';
+    return result;
+}
+
+int main(void) {
+    char input[] = "This is a test string with words of different lengths";
+    int k = 2;
+    
+    char* result = remove_words_with_length(input, k);
+    if (result != NULL) {
+        printf("Original: %s\n", input);
+        printf("After removing %d-letter words: %s\n", k, result);
+        free(result);
+    } else {
+        printf("Memory allocation failed\n");
+    }
+    
+    return 0;
+}

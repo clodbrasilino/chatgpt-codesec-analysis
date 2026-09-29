@@ -1,0 +1,54 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int calculate_jumps(long long d, long long a, unsigned long long *result) {
+    unsigned long long abs_d;
+    unsigned long long ua;
+
+    if (a <= 0 || result == NULL) {
+        return -1;
+    }
+
+    abs_d = (d < 0) ? (0ULL - (unsigned long long)d) : (unsigned long long)d;
+    ua = (unsigned long long)a;
+
+    if (abs_d == 0) {
+        *result = 0;
+        return 0;
+    }
+
+    if (abs_d == ua) {
+        *result = 1;
+        return 0;
+    }
+
+    if (abs_d < ua * 2ULL) {
+        *result = 2;
+        return 0;
+    }
+
+    *result = (abs_d + ua - 1ULL) / ua;
+    return 0;
+}
+
+int main(void) {
+    long long d;
+    long long a;
+    unsigned long long jumps = 0;
+
+    if (scanf("%lld %lld", &d, &a) != 2) {
+        return EXIT_FAILURE;
+    }
+
+    if (calculate_jumps(d, a, &jumps) != 0) {
+        return EXIT_FAILURE;
+    }
+
+    if (printf("%llu\n", jumps) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```

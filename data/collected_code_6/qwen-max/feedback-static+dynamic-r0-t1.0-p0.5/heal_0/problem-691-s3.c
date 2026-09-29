@@ -1,0 +1,81 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    int first;
+    int second;
+} Tuple;
+
+typedef struct Node {
+    int value;
+    struct Node *next;
+} Node;
+
+typedef struct {
+    int key;
+    Node *head;
+} Group;
+
+void add_to_group(Group *groups, int size, int first, int second) {
+    for (int i = 0; i < size; i++) {
+        if (groups[i].key == second) {
+            Node *new_node = (Node *)malloc(sizeof(Node));
+            new_node->value = first;
+            new_node->next = groups[i].head;
+            groups[i].head = new_node;
+            return;
+        }
+    }
+
+    Group new_group = {second, NULL};
+    Node *new_node = (Node *)malloc(sizeof(Node));
+    new_node->value = first;
+    new_node->next = NULL;
+    new_group.head = new_node;
+    groups[size] = new_group;
+}
+
+void print_groups(Group *groups, int size) {
+    for (int i = 0; i < size; i++) {
+        printf("Group %d: ", groups[i].key);
+        Node *current = groups[i].head;
+        while (current != NULL) {
+            printf("%d -> ", current->value);
+            current = current->next;
+        }
+        printf("NULL\n");
+    }
+}
+
+void free_groups(Group *groups, int size) {
+    for (int i = 0; i < size; i++) {
+        Node *current = groups[i].head;
+        while (current != NULL) {
+            Node *temp = current;
+            current = current->next;
+            free(temp);
+        }
+    }
+    free(groups);
+}
+
+int main() {
+    Tuple tuples[] = {{1, 2}, {3, 2}, {4, 5}, {6, 5}, {7, 8}};
+    int n = sizeof(tuples) / sizeof(tuples[0]);
+
+    Group *groups = (Group *)malloc(n * sizeof(Group));
+    int group_count = 0;
+
+    for (int i = 0; i < n; i++) {
+        add_to_group(groups, group_count, tuples[i].first, tuples[i].second);
+        if (group_count == 0 || groups[group_count - 1].key != tuples[i].second) {
+            group_count++;
+        }
+    }
+
+    print_groups(groups, group_count);
+
+    free_groups(groups, group_count);
+    return 0;
+}

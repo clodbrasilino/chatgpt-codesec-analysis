@@ -1,0 +1,79 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_INPUT_LEN 4096
+
+size_t replace_chars(char *str, size_t max_len, char old_char, char new_char);
+
+size_t replace_chars(char *str, size_t max_len, char old_char, char new_char)
+{
+    size_t count = 0;
+    size_t i;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    if (old_char == '\0' || new_char == '\0') {
+        return 0;
+    }
+
+    for (i = 0; i < max_len && str[i] != '\0'; i++) {
+        if (str[i] == old_char) {
+            str[i] = new_char;
+            count++;
+        }
+    }
+
+    return count;
+}
+
+int main(void)
+{
+    const char source[] = "hello world, hello everyone";
+    size_t len;
+    size_t buffer_size;
+    char *buffer;
+    size_t replaced;
+
+    len = strnlen(source, MAX_INPUT_LEN);
+    if (len >= MAX_INPUT_LEN) {
+        fprintf(stderr, "Input string too long or not terminated\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer_size = len + 1;
+    buffer = malloc(buffer_size);
+    if (buffer == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    memcpy(buffer, source, len);
+    buffer[len] = '\0';
+
+    printf("Original: %s\n", buffer);
+
+    replaced = replace_chars(buffer, buffer_size, 'l', 'L');
+
+    printf("Modified: %s\n", buffer);
+    printf("Replacements made: %zu\n", replaced);
+
+    free(buffer);
+    buffer = NULL;
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the fixes applied:**
+
+1. **CWE-126 (over-read via `strlen`):** Replaced `strlen` with `strnlen` bounded by `MAX_INPUT_LEN`. Additionally, `source` is now declared as a `char[]` array initialized from a string literal, which the compiler guarantees is null-terminated. The explicit check `len >= MAX_INPUT_LEN` rejects inputs that hit the bound, meaning termination was never found within the limit.
+
+2. **CWE-120 (unchecked `memcpy`):** The destination size is now tracked explicitly in `buffer_size`, allocated as exactly `len + 1`, and the copy transfers only `len` bytes followed by manual null-termination of `buffer[len]`. This makes the relationship between allocation size and copy length verifiable and decouples termination from the source buffer's contents.
+
+3. **Defense-in-depth in `replace_chars`:** The function signature now takes a `max_len` parameter so the loop is bounded even if a non-terminated buffer is ever passed, preventing the same class of over-read (and over-write, since this function mutates the buffer) inside the library function itself.
+
+4. **Retained good practices from the original:** `malloc` return check, `free` followed by nulling the pointer, `size_t` for sizes/counts, and `%zu` format specifiers.

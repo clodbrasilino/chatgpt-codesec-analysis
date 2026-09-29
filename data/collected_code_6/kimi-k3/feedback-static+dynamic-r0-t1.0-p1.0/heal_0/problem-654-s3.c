@@ -1,0 +1,43 @@
+#include <stdio.h>
+
+double calculate_rectangle_perimeter(double length, double width);
+
+int main(void)
+{
+    double length = 0.0;
+    double width = 0.0;
+    double perimeter = 0.0;
+    int scan_result = 0;
+
+    printf("Enter the length of the rectangle: ");
+    scan_result = scanf("%lf", &length);
+    if (scan_result != 1)
+    {
+        fprintf(stderr, "Error: Invalid input for length.\n");
+        return 1;
+    }
+
+    printf("Enter the width of the rectangle: ");
+    scan_result = scanf("%lf", &width);
+    if (scan_result != 1)
+    {
+        fprintf(stderr, "Error: Invalid input for width.\n");
+        return 1;
+    }
+
+    if (length < 0.0 || width < 0.0)
+    {
+        fprintf(stderr, "Error: Length and width must be non-negative values.\n");
+        return 1;
+    }
+
+    perimeter = calculate_rectangle_perimeter(length, width);
+    printf("The perimeter of the rectangle is: %.2f\n", perimeter);
+
+    return 0;
+}
+
+double calculate_rectangle_perimeter(double length, double width)
+{
+    return 2.0 * (length + width);
+}

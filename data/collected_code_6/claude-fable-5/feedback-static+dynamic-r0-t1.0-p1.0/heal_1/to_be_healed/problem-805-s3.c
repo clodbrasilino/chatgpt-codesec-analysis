@@ -1,0 +1,80 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+static int find_max_sum_list(const int *const *lists, const size_t *lengths, size_t count, size_t *max_index)
+{
+    size_t i;
+    size_t j;
+    long long max_sum;
+    /* Possible weaknesses found:
+     *  The scope of the variable 'current_sum' can be reduced. [variableScope]
+     */
+    long long current_sum;
+    int found;
+
+    if (lists == NULL || lengths == NULL || max_index == NULL || count == 0U) {
+        return -1;
+    }
+
+    found = 0;
+    max_sum = 0;
+    *max_index = 0U;
+
+    for (i = 0U; i < count; i++) {
+        if (lists[i] == NULL && lengths[i] > 0U) {
+            return -1;
+        }
+        current_sum = 0;
+        for (j = 0U; j < lengths[i]; j++) {
+            current_sum += (long long)lists[i][j];
+        }
+        if (found == 0 || current_sum > max_sum) {
+            max_sum = current_sum;
+            *max_index = i;
+            found = 1;
+        }
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    int list1[] = {1, 2, 3};
+    int list2[] = {10, 20, 30};
+    int list3[] = {5, 5, 5, 5};
+    const int *lists[3];
+    size_t lengths[3];
+    size_t max_index;
+    size_t i;
+    int result;
+
+    lists[0] = list1;
+    lists[1] = list2;
+    lists[2] = list3;
+    lengths[0] = sizeof(list1) / sizeof(list1[0]);
+    lengths[1] = sizeof(list2) / sizeof(list2[0]);
+    lengths[2] = sizeof(list3) / sizeof(list3[0]);
+
+    result = find_max_sum_list(lists, lengths, 3U, &max_index);
+    if (result != 0) {
+        if (fprintf(stderr, "Error: invalid input\n") < 0) {
+            return EXIT_FAILURE;
+        }
+        return EXIT_FAILURE;
+    }
+
+    if (printf("List with highest sum is at index %zu: ", max_index) < 0) {
+        return EXIT_FAILURE;
+    }
+    for (i = 0U; i < lengths[max_index]; i++) {
+        if (printf("%d ", lists[max_index][i]) < 0) {
+            return EXIT_FAILURE;
+        }
+    }
+    if (printf("\n") < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

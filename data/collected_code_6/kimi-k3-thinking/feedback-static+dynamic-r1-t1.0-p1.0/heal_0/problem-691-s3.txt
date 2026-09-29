@@ -1,0 +1,185 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+
+typedef struct {
+    int first;
+    int second;
+} Tuple;
+
+typedef struct {
+    int key;
+    int *items;
+    size_t count;
+    size_t capacity;
+} Group;
+
+typedef struct {
+    Group *groups;
+    size_t count;
+    size_t capacity;
+} GroupList;
+
+static int grow_items(Group *group)
+{
+    size_t new_capacity;
+    int *new_items;
+
+    if (group->capacity > SIZE_MAX / 2) {
+        return -1;
+    }
+    new_capacity = (group->capacity == 0) ? 4 : group->capacity * 2;
+    if (new_capacity > SIZE_MAX / sizeof(*new_items)) {
+        return -1;
+    }
+    new_items = realloc(group->items, new_capacity * sizeof(*new_items));
+    if (new_items == NULL) {
+        return -1;
+    }
+    group->items = new_items;
+    group->capacity = new_capacity;
+    return 0;
+}
+
+static int group_add_item(Group *group, int value)
+{
+    if (group->count == group->capacity) {
+        if (grow_items(group) != 0) {
+            return -1;
+        }
+    }
+    group->items[group->count] = value;
+    group->count++;
+    return 0;
+}
+
+static Group *find_group(GroupList *list, int key)
+{
+    size_t i;
+
+    for (i = 0; i < list->count; i++) {
+        if (list->groups[i].key == key) {
+            return &list->groups[i];
+        }
+    }
+    return NULL;
+}
+
+static int grow_groups(GroupList *list)
+{
+    size_t new_capacity;
+    Group *new_groups;
+
+    if (list->capacity > SIZE_MAX / 2) {
+        return -1;
+    }
+    new_capacity = (list->capacity == 0) ? 4 : list->capacity * 2;
+    if (new_capacity > SIZE_MAX / sizeof(*new_groups)) {
+        return -1;
+    }
+    new_groups = realloc(list->groups, new_capacity * sizeof(*new_groups));
+    if (new_groups == NULL) {
+        return -1;
+    }
+    list->groups = new_groups;
+    list->capacity = new_capacity;
+    return 0;
+}
+
+static int group_list_add(GroupList *list, int key, int value)
+{
+    Group *group;
+
+    group = find_group(list, key);
+    if (group != NULL) {
+        return group_add_item(group, value);
+    }
+    if (list->count == list->capacity) {
+        if (grow_groups(list) != 0) {
+            return -1;
+        }
+    }
+    group = &list->groups[list->count];
+    group->key = key;
+    group->items = NULL;
+    group->count = 0;
+    group->capacity = 0;
+    if (group_add_item(group, value) != 0) {
+        return -1;
+    }
+    list->count++;
+    return 0;
+}
+
+static void free_group_list(GroupList *list)
+{
+    size_t i;
+
+    if (list == NULL) {
+        return;
+    }
+    for (i = 0; i < list->count; i++) {
+        free(list->groups[i].items);
+        list->groups[i].items = NULL;
+    }
+    free(list->groups);
+    list->groups = NULL;
+    list->count = 0;
+    list->capacity = 0;
+}
+
+static int group_tuples(const Tuple *tuples, size_t tuple_count, GroupList *result)
+{
+    size_t i;
+
+    if (result == NULL || (tuples == NULL && tuple_count > 0)) {
+        return -1;
+    }
+    result->groups = NULL;
+    result->count = 0;
+    result->capacity = 0;
+    for (i = 0; i < tuple_count; i++) {
+        if (group_list_add(result, tuples[i].second, tuples[i].first) != 0) {
+            free_group_list(result);
+            return -1;
+        }
+    }
+    return 0;
+}
+
+static void print_group_list(const GroupList *list)
+{
+    size_t i;
+    size_t j;
+
+    if (list == NULL) {
+        return;
+    }
+    for (i = 0; i < list->count; i++) {
+        printf("%d: [", list->groups[i].key);
+        for (j = 0; j < list->groups[i].count; j++) {
+            printf("%d%s", list->groups[i].items[j],
+                   (j + 1 < list->groups[i].count) ? ", " : "");
+        }
+        printf("]\n");
+    }
+}
+
+int main(void)
+{
+    Tuple tuples[] = {
+        {10, 1}, {20, 2}, {30, 1}, {40, 3}, {50, 2}, {60, 1}
+    };
+    size_t tuple_count = sizeof(tuples) / sizeof(tuples[0]);
+    GroupList result;
+
+    if (group_tuples(tuples, tuple_count, &result) != 0) {
+        fprintf(stderr, "Error: failed to group tuples\n");
+        return EXIT_FAILURE;
+    }
+    print_group_list(&result);
+    free_group_list(&result);
+    return EXIT_SUCCESS;
+}
+```

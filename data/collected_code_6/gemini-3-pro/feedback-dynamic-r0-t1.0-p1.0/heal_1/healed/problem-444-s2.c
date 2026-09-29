@@ -1,0 +1,128 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+typedef struct {
+    int *elements;
+    size_t size;
+} Tuple;
+
+typedef struct {
+    Tuple *tuples;
+    size_t count;
+} TupleList;
+
+TupleList* trim_tuples(const TupleList *input_list, size_t k) {
+    if (!input_list || !input_list->tuples) {
+        return NULL;
+    }
+
+    TupleList *output_list = (TupleList *)malloc(sizeof(TupleList));
+    if (!output_list) {
+        return NULL;
+    }
+
+    output_list->tuples = (Tuple *)malloc(input_list->count * sizeof(Tuple));
+    if (!output_list->tuples) {
+        free(output_list);
+        return NULL;
+    }
+
+    output_list->count = 0;
+
+    for (size_t i = 0; i < input_list->count; ++i) {
+        if (input_list->tuples[i].size == k) {
+            continue;
+        }
+
+        size_t new_size = input_list->tuples[i].size;
+        output_list->tuples[output_list->count].size = new_size;
+        
+        if (new_size > 0) {
+            output_list->tuples[output_list->count].elements = (int *)malloc(new_size * sizeof(int));
+            if (!output_list->tuples[output_list->count].elements) {
+                for (size_t j = 0; j < output_list->count; ++j) {
+                    free(output_list->tuples[j].elements);
+                }
+                free(output_list->tuples);
+                free(output_list);
+                return NULL;
+            }
+            for (size_t j = 0; j < new_size; ++j) {
+                output_list->tuples[output_list->count].elements[j] = input_list->tuples[i].elements[j];
+            }
+        } else {
+            output_list->tuples[output_list->count].elements = NULL;
+        }
+        output_list->count++;
+    }
+
+    return output_list;
+}
+
+void free_tuple_list(TupleList *list) {
+    if (!list) {
+        return;
+    }
+    if (list->tuples) {
+        for (size_t i = 0; i < list->count; ++i) {
+            free(list->tuples[i].elements);
+        }
+        free(list->tuples);
+    }
+    free(list);
+}
+
+int main(void) {
+    char list_str[10000];
+    if (!fgets(list_str, sizeof(list_str), stdin)) return 0;
+    
+    char k_str[100];
+    if (!fgets(k_str, sizeof(k_str), stdin)) return 0;
+    int k = atoi(k_str);
+
+    char *start = strchr(list_str, '[');
+    if (!start) return 0;
+    start++;
+    
+    printf("[");
+    int first = 1;
+    char *p = start;
+    while (*p && *p != ']') {
+        if (*p == '(') {
+            char *q = p + 1;
+            int count = 0;
+            int found_digit = 0;
+            char *tmpp = p + 1;
+            
+            while (*q && *q != ')') {
+                q++;
+            }
+            
+            while (tmpp < q) {
+                if (isdigit((unsigned char)*tmpp) || *tmpp == '-') found_digit = 1;
+                if (*tmpp == ',') {
+                    if (found_digit) count++;
+                    found_digit = 0;
+                }
+                tmpp++;
+            }
+            if (found_digit) count++;
+            
+            if (count != k) {
+                if (!first) printf(", ");
+                first = 0;
+                for (char *c = p; c <= q; c++) {
+                    putchar(*c);
+                }
+            }
+            p = q + 1;
+        } else {
+            p++;
+        }
+    }
+    printf("]\n");
+
+    return 0;
+}

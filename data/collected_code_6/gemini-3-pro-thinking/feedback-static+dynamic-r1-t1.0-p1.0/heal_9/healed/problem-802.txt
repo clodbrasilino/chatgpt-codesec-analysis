@@ -1,0 +1,48 @@
+This happens because of `high--`.
+        Wait, is there a way to fix the `high--` issue?
+        Instead of `high--`, we could just do a linear scan if `arr[low] == arr[mid] == arr[high]`.
+        But wait, standard binary search for minimum in rotated array WITH duplicates:
+        ```c
+        while (low < high) {
+            size_t mid = low + (high - low) / 2;
+            if (arr[mid] > arr[high]) {
+                low = mid + 1;
+            } else if (arr[mid] < arr[high]) {
+                high = mid;
+            } else {
+                high--;
+            }
+        }
+        return low;
+        ```
+        This exact logic is in the source code!
+        ```c
+        if (arr[mid] > arr[high]) {
+            low = mid + 1;
+        } else if (arr[mid] < arr[high]) {
+            high = mid;
+        } else {
+            high--;
+        }
+        ```
+        The ONLY difference is the early exit:
+        ```c
+        if (arr[low] < arr[high]) {
+            break;
+        }
+        ```
+        If we remove this early exit, what happens for `[1, 1, 1, 2, 1]`?
+        `low=0, high=4`. `arr[mid]=1 == arr[high]=1`. `high=3`.
+        `low=0, high=3`. `arr[0]=1, arr[3]=2`.
+        In the original code, `1 < 2` triggers `break`, returning 0.
+        If we REMOVE the early exit:
+        `mid=1, arr[1]=1`. `1 < 2` True. `high = 1`.
+        `low=0, high=1`. `arr[mid]=1 == arr[high]=1`. `high=0`.
+        Returns 0.
+        Still returns 0!
+        Because the algorithm fundamentally cannot distinguish which side the minimum is on when `arr[low] == arr[mid] == arr[high]`.
+        Wait, for `[1, 1, 1, 2, 1]`, `low=0, high=3`. `arr[mid] = arr[1] = 1`, `arr[high] = arr[3] = 2`.
+        `arr[mid] < arr[high]` -> `1 < 2`. `high = mid = 1`.
+        So it correctly finds a minimum value, but NOT the correct rotation index!
+        Finding the rotation count in an array with duplicates is actually $O(N)$ in the worst case, and simply finding *a* minimum element does not give you the correct rotation count if duplicates are involved.
+        If the array is `

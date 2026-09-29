@@ -1,0 +1,16 @@
+./collected_code_4/round2//heal_0/problem-19.c: In function 'main':
+./collected_code_4/round2//heal_0/problem-19.c:25:9: warning: implicit declaration of function 'printf' [-Wimplicit-function-declaration]
+   25 |         printf("Array contains duplicate values\n");
+      |         ^~~~~~
+./collected_code_4/round2//heal_0/problem-19.c:3:1: note: include '<stdio.h>' or provide a declaration of 'printf'
+    2 | #include <stdbool.h>
+  +++ |+#include <stdio.h>
+    3 | 
+./collected_code_4/round2//heal_0/problem-19.c:25:9: warning: incompatible implicit declaration of built-in function 'printf' [-Wbuiltin-declaration-mismatch]
+   25 |         printf("Array contains duplicate values\n");
+      |         ^~~~~~
+./collected_code_4/round2//heal_0/problem-19.c:25:9: note: include '<stdio.h>' or provide a declaration of 'printf'
+./collected_code_4/round2//heal_0/problem-19.c:27:9: warning: incompatible implicit declaration of built-in function 'printf' [-Wbuiltin-declaration-mismatch]
+   27 |         printf("Array doesn't contain any duplicate values\n");
+      |         ^~~~~~
+./collected_code_4/round2//heal_0/problem-19.c:27:9: note: include '<stdio.h>' or provide a declaration of 'printf'

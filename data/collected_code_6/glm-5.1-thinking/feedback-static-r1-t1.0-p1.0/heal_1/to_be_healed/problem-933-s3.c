@@ -1,0 +1,90 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+#include <ctype.h>
+#include <stdint.h>
+
+char *camel_to_snake(const char *camel) {
+    if (camel == NULL) {
+        return NULL;
+    }
+
+    regex_t regex = {0};
+    int ret = regcomp(&regex, "([a-z])([A-Z])", REG_EXTENDED);
+    if (ret != 0) {
+        regfree(&regex);
+        return NULL;
+    }
+
+    const char *p = camel;
+    size_t match_count = 0;
+    regmatch_t matches[3];
+
+    while (regexec(&regex, p, 3, matches, 0) == 0) {
+        match_count++;
+        p += matches[0].rm_eo;
+    }
+
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    size_t camel_len = strlen(camel);
+    if (match_count > SIZE_MAX - camel_len) {
+        regfree(&regex);
+        return NULL;
+    }
+
+    size_t out_len = camel_len + match_count;
+    if (out_len == SIZE_MAX) {
+        regfree(&regex);
+        return NULL;
+    }
+
+    char *out = malloc(out_len + 1);
+    if (out == NULL) {
+        regfree(&regex);
+        return NULL;
+    }
+
+    p = camel;
+    char *o = out;
+
+    while (regexec(&regex, p, 3, matches, 0) == 0) {
+        /* Possible weaknesses found:
+         * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+         */
+        memcpy(o, p, matches[1].rm_so);
+        o += matches[1].rm_so;
+
+        *o++ = p[matches[1].rm_so];
+        *o++ = '_';
+        *o++ = p[matches[2].rm_so];
+
+        p += matches[0].rm_eo;
+    }
+
+    /* Possible weaknesses found:
+     * Flawfinder strcpy: Does not check for buffer overflows when copying to destination [MS-banned] (CWE-120). Consider using snprintf, strcpy_s, or strlcpy (warning: strncpy easily misused). (risk 4, buffer)
+     */
+    strcpy(o, p);
+
+    for (size_t i = 0; i < out_len; i++) {
+        out[i] = (char)tolower((unsigned char)out[i]);
+    }
+
+    regfree(&regex);
+    return out;
+}
+
+int main(void) {
+    const char *input = "helloWorldThisIsATest";
+    char *output = camel_to_snake(input);
+    
+    if (output != NULL) {
+        printf("%s\n", output);
+        free(output);
+    }
+    
+    return 0;
+}

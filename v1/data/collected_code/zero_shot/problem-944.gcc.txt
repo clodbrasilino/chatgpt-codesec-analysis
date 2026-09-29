@@ -1,0 +1,8 @@
+collected_code/problem-944-0.c: In function 'separateAndPrintNumbers':
+collected_code/problem-944-0.c:7:13: warning: implicit declaration of function 'isdigit' [-Wimplicit-function-declaration]
+    7 |         if (isdigit(string[i])) {
+      |             ^~~~~~~
+collected_code/problem-944-0.c:2:1: note: include '<ctype.h>' or provide a declaration of 'isdigit'
+    1 | #include <stdio.h>
+  +++ |+#include <ctype.h>
+    2 | 

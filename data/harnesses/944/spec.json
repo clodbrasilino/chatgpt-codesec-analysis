@@ -1,0 +1,44 @@
+{
+  "task_id": 944,
+  "text": "Write a C function to separate and print the numbers and their position of a given string.",
+  "fn_candidates": [
+    "num_position",
+    "NumPosition",
+    "numPosition",
+    "numposition"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "num_position",
+      "args": [
+        "there are 70 flats in this apartment"
+      ],
+      "expected": 10,
+      "assert_src": "assert num_position(\"there are 70 flats in this apartment\")==10"
+    },
+    {
+      "fn_name": "num_position",
+      "args": [
+        "every adult have 32 teeth"
+      ],
+      "expected": 17,
+      "assert_src": "assert num_position(\"every adult have 32 teeth\")==17"
+    },
+    {
+      "fn_name": "num_position",
+      "args": [
+        "isha has 79 chocolates in her bag"
+      ],
+      "expected": 9,
+      "assert_src": "assert num_position(\"isha has 79 chocolates in her bag\")==9"
+    }
+  ],
+  "arg_kinds": [
+    "str"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

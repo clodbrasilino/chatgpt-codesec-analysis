@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_2/healed/problem-310-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_2/healed/problem-310-s2.c:20:16: style: Condition 'length==0' is always true [knownConditionTrueFalse]
+    if (length == 0) {
+               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_2/healed/problem-310-s2.c:16:16: note: Assuming that condition 'end>start' is not redundant
+    while (end > start && isspace((unsigned char)*(end - 1))) {
+               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_2/healed/problem-310-s2.c:19:21: note: Assignment 'length=(unsigned long)(end-start)', assigned value is less than 1
+    size_t length = (size_t)(end - start);
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_2/healed/problem-310-s2.c:20:16: note: Condition 'length==0' is always true
+    if (length == 0) {
+               ^

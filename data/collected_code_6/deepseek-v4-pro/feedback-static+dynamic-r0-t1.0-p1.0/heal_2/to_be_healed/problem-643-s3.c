@@ -1,0 +1,77 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <ctype.h>
+#include <string.h>
+ /* Possible weaknesses found:
+  *  include '<stdlib.h>' or provide a declaration of 'free'
+  */
+
+bool match_word_with_internal_z(const char *text) {
+    if (text == NULL) {
+        return false;
+    }
+
+    const char *word_start = text;
+    const char *p = text;
+
+    while (*p != '\0') {
+        if (isspace((unsigned char)*p)) {
+            size_t len = (size_t)(p - word_start);
+            if (len > 2) {
+                const char *q = word_start + 1;
+                const char *q_end = p - 1;
+                for (; q < q_end; q++) {
+                    if (*q == 'z' || *q == 'Z') {
+                        return true;
+                    }
+                }
+            }
+            word_start = p + 1;
+        }
+        p++;
+    }
+
+    size_t len = (size_t)(p - word_start);
+    if (len > 2) {
+        const char *q = word_start + 1;
+        const char *q_end = p - 1;
+        for (; q < q_end; q++) {
+            if (*q == 'z' || *q == 'Z') {
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+
+int main(void) {
+    char *input = NULL;
+    size_t buffer_size = 0;
+    ssize_t line_length;
+
+    printf("Enter text: ");
+    line_length = getline(&input, &buffer_size, stdin);
+    if (line_length == -1) {
+        /* Possible weaknesses found:
+         *  include the header <stdlib.h> or explicitly provide a declaration for 'free'
+         *  call to undeclared library function 'free' with type 'void (void *)'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+         *  implicit declaration of function 'free' [-Wimplicit-function-declaration]
+         */
+        free(input);
+        return 1;
+    }
+
+    if (line_length > 0 && input[line_length - 1] == '\n') {
+        input[line_length - 1] = '\0';
+    }
+
+    if (match_word_with_internal_z(input)) {
+        printf("Match found.\n");
+    } else {
+        printf("No match found.\n");
+    }
+
+    free(input);
+    return 0;
+}

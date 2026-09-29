@@ -1,0 +1,46 @@
+{
+  "task_id": 398,
+  "text": "Write a C function to compute the sum of digits of each number of a given list.",
+  "fn_candidates": [
+    "sum_of_digits",
+    "SumOfDigits",
+    "sumOfDigits",
+    "sumofdigits"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "sum_of_digits",
+      "args": [
+        [
+          10,
+          2,
+          56
+        ]
+      ],
+      "expected": 14,
+      "assert_src": "assert sum_of_digits([10,2,56])==14"
+    },
+    {
+      "fn_name": "sum_of_digits",
+      "args": [
+        [
+          10,
+          20,
+          -4,
+          5,
+          -70
+        ]
+      ],
+      "expected": 19,
+      "assert_src": "assert sum_of_digits([10,20,-4,5,-70])==19"
+    }
+  ],
+  "arg_kinds": [
+    "int-list"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

@@ -1,0 +1,45 @@
+```C
+
+#include <stdio.h>
+#include<algorithm>
+#include <string.h>
+
+typedef struct {
+    char key[20];
+    char value[20];
+} KeyValuePair;
+
+void sortDict(KeyValuePair* dict, int len) {
+    KeyValuePair temp;
+
+    for(int i=0; i<len; i++) {
+        for(int j=i+1; j<len; j++) {
+            if(strcmp(dict[i].key, dict[j].key) > 0) {
+                temp = dict[i];
+                dict[i] = dict[j];
+                dict[j] = temp;
+            }
+        }
+    }
+}
+
+int main() {
+    KeyValuePair dict[] = {
+            {"john", "doe"},
+            {"jane", "doe"},
+            {"doe", "john"},
+            {"doe", "jane"}
+    };
+
+    int len = sizeof(dict) / sizeof(dict[0]);
+
+    sortDict(dict, len);
+
+    for(int i=0; i<len; i++) {
+        printf("Key: %s, Value: %s\n", dict[i].key, dict[i].value);
+    }
+
+    return 0;
+}
+
+```

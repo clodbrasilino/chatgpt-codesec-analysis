@@ -1,0 +1,22 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int count_and_square_lists(void **list, int size) {
+    int count = 0;
+    for (int i = 0; i < size; i++) {
+        if (list[i] != NULL) {
+            count++;
+        }
+    }
+    return count * count;
+}
+
+int main() {
+    int list_size = 5;
+    void *list[list_size] = { (void*)1, (void*)2, (void*)3, (void*)4, (void*)5 };
+
+    int result = count_and_square_lists(list, list_size);
+    printf("Result: %d\n", result);
+
+    return 0;
+}

@@ -1,0 +1,111 @@
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdlib.h>
+
+#define BUFFER_SIZE 64
+#define MAX_IP_STRING_LENGTH 15
+
+static size_t boundedStrlen(const char *s, size_t maxLen)
+{
+    size_t len = 0;
+
+    if (s == NULL) {
+        return 0;
+    }
+
+    while (len < maxLen && s[len] != '\0') {
+        len++;
+    }
+
+    return len;
+}
+
+char *removeLeadingZeros(const char *ip, char *result, size_t resultSize)
+{
+    size_t i;
+    size_t j = 0;
+    size_t ipLen;
+    int segmentStart = 1;
+
+    if (ip == NULL || result == NULL || resultSize == 0) {
+        return NULL;
+    }
+
+    if (resultSize <= (size_t)MAX_IP_STRING_LENGTH) {
+        return NULL;
+    }
+
+    ipLen = boundedStrlen(ip, resultSize);
+    if (ipLen == 0 || ipLen >= resultSize) {
+        return NULL;
+    }
+
+    for (i = 0; i < ipLen; i++) {
+        unsigned char c = (unsigned char)ip[i];
+        if (!isdigit(c) && c != '.') {
+            return NULL;
+        }
+    }
+
+    i = 0;
+    while (i < ipLen) {
+        if (j + 1 >= resultSize) {
+            result[0] = '\0';
+            return NULL;
+        }
+
+        if (ip[i] == '.') {
+            result[j++] = ip[i++];
+            segmentStart = 1;
+        } else if (segmentStart && ip[i] == '0' && i + 1 < ipLen && ip[i + 1] != '.') {
+            i++;
+        } else {
+            segmentStart = 0;
+            result[j++] = ip[i++];
+        }
+    }
+    result[j] = '\0';
+
+    return result;
+}
+
+int main(void)
+{
+    const char *testIps[] = {
+        "192.168.001.010",
+        "010.010.010.010",
+        "0.0.0.0",
+        "255.255.255.255",
+        "001.002.003.004",
+        "100.000.001.0"
+    };
+    size_t numTests = sizeof(testIps) / sizeof(testIps[0]);
+    size_t k;
+    char *result;
+
+    _Static_assert(BUFFER_SIZE > MAX_IP_STRING_LENGTH,
+                   "BUFFER_SIZE must be larger than the maximum IPv4 string length");
+
+    result = (char *)malloc(BUFFER_SIZE);
+    if (result == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return 1;
+    }
+
+    for (k = 0; k < numTests; k++) {
+        memset(result, 0, BUFFER_SIZE);
+
+        if (removeLeadingZeros(testIps[k], result, BUFFER_SIZE) != NULL) {
+            printf("Original: %-18.18s Cleaned: %.*s\n",
+                   testIps[k], (int)(BUFFER_SIZE - 1), result);
+        } else {
+            fprintf(stderr, "Error processing: %.18s\n", testIps[k]);
+        }
+    }
+
+    free(result);
+    result = NULL;
+
+    return 0;
+}

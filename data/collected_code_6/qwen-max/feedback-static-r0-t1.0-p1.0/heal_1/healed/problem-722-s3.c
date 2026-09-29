@@ -1,0 +1,116 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int height;
+    int width;
+} StudentDimensions;
+
+typedef struct dictionary_entry {
+    const char *key;
+    StudentDimensions *value;
+    struct dictionary_entry *next;
+} DictionaryEntry;
+
+typedef struct {
+    DictionaryEntry **table;
+    int size;
+} Dictionary;
+
+int hash(const char *key, int size) {
+    int hash = 0;
+    for (int i = 0; key[i] != '\0'; i++) {
+        hash += key[i];
+    }
+    return hash % size;
+}
+
+Dictionary *create_dictionary(int size) {
+    Dictionary *dict = (Dictionary *)malloc(sizeof(Dictionary));
+    if (dict == NULL) {
+        return NULL;
+    }
+    dict->size = size;
+    dict->table = (DictionaryEntry **)calloc(size, sizeof(DictionaryEntry *));
+    if (dict->table == NULL) {
+        free(dict);
+        return NULL;
+    }
+    return dict;
+}
+
+void add_to_dictionary(Dictionary *dict, const char *key, int height, int width) {
+    if (dict == NULL) {
+        return;
+    }
+    int index = hash(key, dict->size);
+    DictionaryEntry *entry = (DictionaryEntry *)malloc(sizeof(DictionaryEntry));
+    if (entry == NULL) {
+        return;
+    }
+    entry->key = strdup(key);
+    entry->value = (StudentDimensions *)malloc(sizeof(StudentDimensions));
+    if (entry->value == NULL) {
+        free(entry->key);
+        free(entry);
+        return;
+    }
+    entry->value->height = height;
+    entry->value->width = width;
+    entry->next = dict->table[index];
+    dict->table[index] = entry;
+}
+
+int filter_dimensions(Dictionary *dict, int min_height, int max_width) {
+    if (dict == NULL) {
+        return 0;
+    }
+    int count = 0;
+    for (int i = 0; i < dict->size; i++) {
+        DictionaryEntry *entry = dict->table[i];
+        while (entry != NULL) {
+            if (entry->value->height >= min_height && entry->value->width <= max_width) {
+                printf("Key: %s, Height: %d, Width: %d\n", entry->key, entry->value->height, entry->value->width);
+                count++;
+            }
+            entry = entry->next;
+        }
+    }
+    return count;
+}
+
+void destroy_dictionary(Dictionary *dict) {
+    if (dict == NULL) {
+        return;
+    }
+    for (int i = 0; i < dict->size; i++) {
+        DictionaryEntry *entry = dict->table[i];
+        while (entry != NULL) {
+            DictionaryEntry *temp = entry;
+            entry = entry->next;
+            free(temp->value);
+            free((char *)temp->key);
+            free(temp);
+        }
+    }
+    free(dict->table);
+    free(dict);
+}
+
+int main() {
+    Dictionary *dict = create_dictionary(10);
+    if (dict == NULL) {
+        return 1;
+    }
+
+    add_to_dictionary(dict, "Alice", 160, 50);
+    add_to_dictionary(dict, "Bob", 170, 60);
+    add_to_dictionary(dict, "Carol", 155, 55);
+    add_to_dictionary(dict, "Dave", 180, 65);
+
+    int filtered_count = filter_dimensions(dict, 160, 60);
+    printf("Filtered Count: %d\n", filtered_count);
+
+    destroy_dictionary(dict);
+    return 0;
+}

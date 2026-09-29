@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-640-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-640-s2.c:58:27: style: Condition 'copy_size>len' is always false [knownConditionTrueFalse]
+            if (copy_size > len) {
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-640-s2.c:54:30: note: copy_size is assigned 'len' here.
+            size_t copy_size = len;
+                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-640-s2.c:58:27: note: Condition 'copy_size>len' is always false
+            if (copy_size > len) {
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-640-s2.c:61:24: style: Condition 'buffer!=NULL' is always true [knownConditionTrueFalse]
+            if (buffer != NULL && test_strings[i] != NULL) {
+                       ^

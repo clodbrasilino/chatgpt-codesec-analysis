@@ -1,0 +1,65 @@
+#include <stdio.h>
+#include <ctype.h>
+#include <string.h>
+
+#define INPUT_BUFFER_SIZE 1024
+
+void print_numbers_with_positions(const char *str) {
+    int i = 0;
+    int in_number = 0;
+    int start_pos = 0;
+    
+    while (str[i] != '\0') {
+        if (isdigit((unsigned char)str[i])) {
+            if (!in_number) {
+                start_pos = i;
+                in_number = 1;
+            }
+        } else {
+            if (in_number) {
+                printf("Number: ");
+                for (int j = start_pos; j < i; j++) {
+                    putchar(str[j]);
+                }
+                printf(", Position: %d\n", start_pos);
+                in_number = 0;
+            }
+        }
+        i++;
+    }
+    
+    if (in_number) {
+        printf("Number: ");
+        for (int j = start_pos; j < i; j++) {
+            putchar(str[j]);
+        }
+        printf(", Position: %d\n", start_pos);
+    }
+}
+
+int main(void) {
+    char input[INPUT_BUFFER_SIZE];
+    
+    printf("Enter a string: ");
+    if (fgets(input, sizeof(input), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+    
+    size_t len = strlen(input);
+    
+    if (len > 0 && input[len - 1] == '\n') {
+        input[len - 1] = '\0';
+    } else {
+        int c;
+        while ((c = getchar()) != '\n' && c != EOF) {
+        }
+        if (len == sizeof(input) - 1) {
+            input[sizeof(input) - 1] = '\0';
+        }
+    }
+    
+    print_numbers_with_positions(input);
+    
+    return 0;
+}

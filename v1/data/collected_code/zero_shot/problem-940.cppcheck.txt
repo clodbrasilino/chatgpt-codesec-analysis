@@ -1,0 +1,15 @@
+collected_code/problem-940-0.c:9:21: error: Cannot determine that 'arr[l]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+    if (l < n && arr[l] > arr[largest])
+                    ^
+collected_code/problem-940-0.c:9:30: error: Cannot determine that 'arr[largest]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+    if (l < n && arr[l] > arr[largest])
+                             ^
+collected_code/problem-940-0.c:13:21: error: Cannot determine that 'arr[r]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+    if (r < n && arr[r] > arr[largest])
+                    ^
+collected_code/problem-940-0.c:13:30: error: Cannot determine that 'arr[largest]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+    if (r < n && arr[r] > arr[largest])
+                             ^
+collected_code/problem-940-0.c:37:15: error: Cannot determine that 'arr[0]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        swap(&arr[0], &arr[i]);
+              ^

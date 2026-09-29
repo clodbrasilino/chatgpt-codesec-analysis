@@ -1,0 +1,37 @@
+/* Possible weaknesses found:
+ *  stray '`' in program
+ */
+```
+#include <stdio.h>
+#include <math.h>
+
+double roundUp(double num, int digits) {
+    double factor = pow(10.0, digits);
+    return ceil(num * factor) / factor;
+}
+
+int main(void) {
+    double num;
+    int digits;
+    
+    printf("Enter a number to round up: ");
+    if(scanf("%lf", &num) != 1) {
+        printf("Invalid input!\n");
+        return 1;
+    }
+    
+    printf("Enter number of digits: ");
+    if(scanf("%d", &digits) != 1) {
+        printf("Invalid input!\n");
+        return 1;
+    }
+    
+    if(digits<0) {
+        printf("Digits should not be negative!\n");
+        return 1;
+    }
+
+    printf("Rounded up number: %.lf\n", roundUp(num, digits));
+
+    return 0;
+}

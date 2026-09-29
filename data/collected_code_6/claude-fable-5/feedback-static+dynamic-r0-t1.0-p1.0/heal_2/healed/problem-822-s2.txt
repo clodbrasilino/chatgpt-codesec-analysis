@@ -1,0 +1,147 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdlib.h>
+
+#define MIN_PASSWORD_LENGTH 8
+#define MAX_PASSWORD_LENGTH 64
+#define BUFFER_SIZE (MAX_PASSWORD_LENGTH + 2)
+
+bool is_valid_password(const char *password);
+static bool read_line(char *buffer, size_t size);
+static void clear_buffer(char *buffer, size_t size);
+
+bool is_valid_password(const char *password)
+{
+    size_t length;
+    size_t i;
+    bool has_upper = false;
+    bool has_lower = false;
+    bool has_digit = false;
+    bool has_special = false;
+
+    if (password == NULL) {
+        return false;
+    }
+
+    length = strnlen(password, MAX_PASSWORD_LENGTH + 1);
+
+    if ((length < MIN_PASSWORD_LENGTH) || (length > MAX_PASSWORD_LENGTH)) {
+        return false;
+    }
+
+    for (i = 0U; i < length; i++) {
+        unsigned char c = (unsigned char)password[i];
+
+        if (isupper(c) != 0) {
+            has_upper = true;
+        } else if (islower(c) != 0) {
+            has_lower = true;
+        } else if (isdigit(c) != 0) {
+            has_digit = true;
+        } else if (ispunct(c) != 0) {
+            has_special = true;
+        } else {
+            return false;
+        }
+    }
+
+    return (has_upper && has_lower && has_digit && has_special);
+}
+
+static bool read_line(char *buffer, size_t size)
+{
+    size_t i = 0U;
+    int ch = EOF;
+    bool truncated = false;
+
+    if ((buffer == NULL) || (size == 0U)) {
+        return false;
+    }
+
+    for (;;) {
+        ch = getchar();
+
+        if ((ch == EOF) || (ch == '\n')) {
+            break;
+        }
+
+        if (i < (size - 1U)) {
+            buffer[i] = (char)ch;
+            i++;
+        } else {
+            truncated = true;
+        }
+    }
+
+    buffer[i] = '\0';
+
+    if ((ch == EOF) && (i == 0U)) {
+        return false;
+    }
+
+    if (truncated) {
+        buffer[0] = '\0';
+    }
+
+    return true;
+}
+
+static void clear_buffer(char *buffer, size_t size)
+{
+    volatile char *p = (volatile char *)buffer;
+    size_t i;
+
+    if (buffer == NULL) {
+        return;
+    }
+
+    for (i = 0U; i < size; i++) {
+        p[i] = '\0';
+    }
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    int result = EXIT_SUCCESS;
+
+    if (printf("Enter password: ") < 0) {
+        return EXIT_FAILURE;
+    }
+
+    if (fflush(stdout) != 0) {
+        return EXIT_FAILURE;
+    }
+
+    if (!read_line(buffer, sizeof(buffer))) {
+        (void)fprintf(stderr, "Error reading input.\n");
+        clear_buffer(buffer, sizeof(buffer));
+        return EXIT_FAILURE;
+    }
+
+    if (is_valid_password(buffer)) {
+        if (printf("Password is valid.\n") < 0) {
+            result = EXIT_FAILURE;
+        }
+    } else {
+        if (printf("Password is invalid.\n") < 0) {
+            result = EXIT_FAILURE;
+        }
+    }
+
+    clear_buffer(buffer, sizeof(buffer));
+
+    return result;
+}
+```
+
+**Analysis of the flagged weaknesses and why the code is safe:**
+
+1. **`getchar` in a loop (CWE-120, CWE-20):** The original loop already performs strict bounds checking with `i < (size - 1U)`, guaranteeing space for the null terminator. Excess input is consumed and discarded rather than written, and the `truncated` flag causes over-long input to be rejected entirely (buffer zeroed to `'\0'`), which then fails validation. The only change made was initializing `ch = EOF` to remove any possibility of reading `ch` before assignment on a pathological control path — a defensive hardening rather than a functional fix.
+
+2. **Statically-sized `char` array (CWE-119/CWE-120):** The buffer size is derived from `MAX_PASSWORD_LENGTH` via the `BUFFER_SIZE` macro, and every write path (`read_line`, `clear_buffer`) receives the size through `sizeof(buffer)` and enforces it. `strnlen` with an explicit cap is used instead of `strlen`, so no unbounded reads occur either. This flawfinder hit is a level-2 informational warning inherent to any fixed array; the mitigations it recommends (bounds checking, length-limited functions) are already fully in place.
+
+Additional good practices already present and preserved: null-pointer guards, `volatile`-qualified scrubbing of the password buffer that the optimizer cannot elide, checked return values on `printf`/`fflush`, and casting to `unsigned char` before calling `ctype` functions to avoid undefined behavior on negative `char` values.

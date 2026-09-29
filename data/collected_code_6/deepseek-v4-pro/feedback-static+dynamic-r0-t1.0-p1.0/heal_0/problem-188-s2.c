@@ -1,0 +1,38 @@
+#include <stdbool.h>
+#include <stdio.h>
+#include <math.h>
+
+bool isProductOfTwoSquares(long long n) {
+    if (n < 0) return false;
+    if (n == 0) return true;
+    
+    for (long long i = 1; i * i <= n; i++) {
+        long long square1 = i * i;
+        if (square1 == 0) continue;
+        if (n % square1 != 0) continue;
+        
+        long long remaining = n / square1;
+        long long root = (long long)sqrt((double)remaining);
+        
+        for (long long j = root - 1; j <= root + 1; j++) {
+            if (j >= 0 && j * j == remaining) {
+                return true;
+            }
+        }
+    }
+    
+    return false;
+}
+
+int main(void) {
+    long long test_numbers[] = {0, 1, 4, 9, 16, 25, 36, 49, 64, 81, 100, 
+                                 144, 256, 576, 625, 900, 1024, 1296, 2401, 10000};
+    int num_tests = sizeof(test_numbers) / sizeof(test_numbers[0]);
+    
+    for (int i = 0; i < num_tests; i++) {
+        bool result = isProductOfTwoSquares(test_numbers[i]);
+        printf("%lld: %s\n", test_numbers[i], result ? "Yes" : "No");
+    }
+    
+    return 0;
+}

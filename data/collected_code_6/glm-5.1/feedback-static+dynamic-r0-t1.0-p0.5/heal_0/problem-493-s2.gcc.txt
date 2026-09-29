@@ -1,0 +1,16 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-493-s2.c: In function 'calculate_hexagon_grid':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-493-s2.c:35:49: error: implicit declaration of function 'sqrt' [-Wimplicit-function-declaration]
+   35 |             double center_y = origin_y + size * sqrt(3.0) * (r + 0.5 * (c & 1));
+      |                                                 ^~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-493-s2.c:3:1: note: include '<math.h>' or provide a declaration of 'sqrt'
+    2 | #include <stdlib.h>
+  +++ |+#include <math.h>
+    3 | 
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-493-s2.c:39:62: error: implicit declaration of function 'cos' [-Wimplicit-function-declaration]
+   39 |                 grid[r][c].vertices[i].x = center_x + size * cos(angle);
+      |                                                              ^~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-493-s2.c:39:62: note: include '<math.h>' or provide a declaration of 'cos'
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-493-s2.c:40:62: error: implicit declaration of function 'sin' [-Wimplicit-function-declaration]
+   40 |                 grid[r][c].vertices[i].y = center_y + size * sin(angle);
+      |                                                              ^~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-493-s2.c:40:62: note: include '<math.h>' or provide a declaration of 'sin'

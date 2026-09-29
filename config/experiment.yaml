@@ -1,6 +1,6 @@
 # Experiment defaults (overridable per run).
 experiment:
-  root: collected_code_6            # new data root
+  root: data/collected_code_6            # new data root
   # Healing-round budget. Single source of truth: every pipeline and analysis
   # entry point reads this via src/config.py — no round count is hard-coded.
   # History: 7 -> 10 (user decision 2026-09-01) -> 5 (budget cap, 2026-09-21).

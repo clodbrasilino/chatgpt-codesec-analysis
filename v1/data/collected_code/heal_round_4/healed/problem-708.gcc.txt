@@ -1,0 +1,11 @@
+collected_code/heal_round_4/healed/problem-708.c: In function 'convertStringToList':
+collected_code/heal_round_4/healed/problem-708.c:30:31: error: 'INT_MAX' undeclared (first use in this function)
+   30 |     size_t len = strnlen(str, INT_MAX);
+      |                               ^~~~~~~
+collected_code/heal_round_4/healed/problem-708.c:4:1: note: 'INT_MAX' is defined in header '<limits.h>'; did you forget to '#include <limits.h>'?
+    3 | #include <string.h>
+  +++ |+#include <limits.h>
+    4 | 
+collected_code/heal_round_4/healed/problem-708.c:30:31: note: each undeclared identifier is reported only once for each function it appears in
+   30 |     size_t len = strnlen(str, INT_MAX);
+      |                               ^~~~~~~

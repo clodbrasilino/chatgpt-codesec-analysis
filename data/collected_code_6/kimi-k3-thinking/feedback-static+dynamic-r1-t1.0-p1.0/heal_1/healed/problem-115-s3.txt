@@ -1,0 +1,171 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdbool.h>
+#include <stdint.h>
+
+typedef struct {
+    char *key;
+    char *value;
+} DictEntry;
+
+typedef struct {
+    DictEntry *entries;
+    size_t count;
+    size_t capacity;
+} Dictionary;
+
+static bool dict_init(Dictionary *dict, size_t capacity)
+{
+    if (dict == NULL) {
+        return false;
+    }
+    dict->entries = NULL;
+    dict->count = 0;
+    dict->capacity = 0;
+    if (capacity == 0) {
+        return true;
+    }
+    if (capacity > SIZE_MAX / sizeof(DictEntry)) {
+        return false;
+    }
+    dict->entries = calloc(capacity, sizeof(DictEntry));
+    if (dict->entries == NULL) {
+        return false;
+    }
+    dict->capacity = capacity;
+    return true;
+}
+
+static void dict_free(Dictionary *dict)
+{
+    if (dict == NULL) {
+        return;
+    }
+    if (dict->entries != NULL) {
+        for (size_t i = 0; i < dict->count; i++) {
+            free(dict->entries[i].key);
+            free(dict->entries[i].value);
+        }
+        free(dict->entries);
+    }
+    dict->entries = NULL;
+    dict->count = 0;
+    dict->capacity = 0;
+}
+
+static char *dup_string(const char *s)
+{
+    size_t len;
+    char *copy;
+
+    if (s == NULL) {
+        return NULL;
+    }
+    len = strlen(s);
+    copy = malloc(len + 1);
+    if (copy == NULL) {
+        return NULL;
+    }
+    memcpy(copy, s, len + 1);
+    return copy;
+}
+
+static bool dict_add(Dictionary *dict, const char *key, const char *value)
+{
+    char *key_copy;
+    char *value_copy;
+
+    if (dict == NULL || key == NULL || value == NULL) {
+        return false;
+    }
+    if (dict->entries == NULL || dict->count >= dict->capacity) {
+        return false;
+    }
+    key_copy = dup_string(key);
+    if (key_copy == NULL) {
+        return false;
+    }
+    value_copy = dup_string(value);
+    if (value_copy == NULL) {
+        free(key_copy);
+        return false;
+    }
+    dict->entries[dict->count].key = key_copy;
+    dict->entries[dict->count].value = value_copy;
+    dict->count++;
+    return true;
+}
+
+static bool dict_is_empty(const Dictionary *dict)
+{
+    if (dict == NULL) {
+        return true;
+    }
+    return dict->count == 0;
+}
+
+bool all_dicts_empty(const Dictionary *dicts, size_t num_dicts)
+{
+    if (dicts == NULL && num_dicts > 0) {
+        return false;
+    }
+    for (size_t i = 0; i < num_dicts; i++) {
+        if (!dict_is_empty(&dicts[i])) {
+            return false;
+        }
+    }
+    return true;
+}
+
+int main(void)
+{
+    Dictionary dicts[3];
+    const size_t num_dicts = 3;
+    int status = EXIT_SUCCESS;
+
+    for (size_t i = 0; i < num_dicts; i++) {
+        if (!dict_init(&dicts[i], 10)) {
+            fprintf(stderr, "Failed to initialize dictionary %zu\n", i);
+            for (size_t j = 0; j < i; j++) {
+                dict_free(&dicts[j]);
+            }
+            return EXIT_FAILURE;
+        }
+    }
+
+    if (all_dicts_empty(dicts, num_dicts)) {
+        printf("All dictionaries are empty\n");
+    } else {
+        printf("Not all dictionaries are empty\n");
+    }
+
+    if (!dict_add(&dicts[1], "name", "Alice")) {
+        fprintf(stderr, "Failed to add entry\n");
+        status = EXIT_FAILURE;
+        goto cleanup;
+    }
+
+    if (all_dicts_empty(dicts, num_dicts)) {
+        printf("All dictionaries are empty\n");
+    } else {
+        printf("Not all dictionaries are empty\n");
+    }
+
+cleanup:
+    for (size_t i = 0; i < num_dicts; i++) {
+        dict_free(&dicts[i]);
+    }
+
+    return status;
+}
+```
+
+Key changes made to address the flagged weaknesses:
+
+- **Removed the statically-sized `key`/`value` buffers** (the source of the CWE-119/CWE-120 warnings) and replaced them with dynamically allocated strings sized exactly to the input length plus the null terminator, so no fixed bound can ever be exceeded.
+- **Added a `dup_string` helper** that measures the input with `strlen`, allocates `len + 1` bytes, and copies with `memcpy` using a known-exact length — eliminating any truncation or overflow risk from bounded copy functions.
+- **Added an allocation overflow guard** in `dict_init` (`capacity > SIZE_MAX / sizeof(DictEntry)`) to prevent integer overflow in the `calloc` size computation.
+- **Updated `dict_free`** to release each dynamically allocated key and value before freeing the entries array, preventing memory leaks.
+- **Hardened `dict_add` failure paths** so a failed second allocation frees the first, leaving no leak or partially-initialized entry.

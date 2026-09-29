@@ -1,0 +1,264 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+#include <string.h>
+
+typedef struct {
+    const int *data;
+    size_t length;
+    size_t position;
+} SortedInput;
+
+typedef struct {
+    int value;
+    size_t source_index;
+} HeapNode;
+
+typedef struct {
+    HeapNode *nodes;
+    size_t size;
+    size_t capacity;
+} MinHeap;
+
+typedef struct {
+    SortedInput *inputs;
+    size_t input_count;
+    MinHeap heap;
+    bool initialized;
+} MergeIterator;
+
+static bool heap_init(MinHeap *heap, size_t capacity)
+{
+    if (heap == NULL || capacity == 0U) {
+        return false;
+    }
+    heap->nodes = malloc(capacity * sizeof(HeapNode));
+    if (heap->nodes == NULL) {
+        return false;
+    }
+    heap->size = 0U;
+    heap->capacity = capacity;
+    return true;
+}
+
+static void heap_destroy(MinHeap *heap)
+{
+    if (heap != NULL) {
+        free(heap->nodes);
+        heap->nodes = NULL;
+        heap->size = 0U;
+        heap->capacity = 0U;
+    }
+}
+
+static void heap_swap(HeapNode *a, HeapNode *b)
+{
+    HeapNode tmp = *a;
+    *a = *b;
+    *b = tmp;
+}
+
+static void heap_sift_up(MinHeap *heap, size_t index)
+{
+    while (index > 0U) {
+        size_t parent = (index - 1U) / 2U;
+        if (heap->nodes[index].value < heap->nodes[parent].value) {
+            heap_swap(&heap->nodes[index], &heap->nodes[parent]);
+            index = parent;
+        } else {
+            break;
+        }
+    }
+}
+
+static void heap_sift_down(MinHeap *heap, size_t index)
+{
+    for (;;) {
+        size_t left = (2U * index) + 1U;
+        size_t right = (2U * index) + 2U;
+        size_t smallest = index;
+
+        if (left < heap->size &&
+            heap->nodes[left].value < heap->nodes[smallest].value) {
+            smallest = left;
+        }
+        if (right < heap->size &&
+            heap->nodes[right].value < heap->nodes[smallest].value) {
+            smallest = right;
+        }
+        if (smallest == index) {
+            break;
+        }
+        heap_swap(&heap->nodes[index], &heap->nodes[smallest]);
+        index = smallest;
+    }
+}
+
+static bool heap_push(MinHeap *heap, HeapNode node)
+{
+    if (heap == NULL || heap->size >= heap->capacity) {
+        return false;
+    }
+    heap->nodes[heap->size] = node;
+    heap_sift_up(heap, heap->size);
+    heap->size += 1U;
+    return true;
+}
+
+static bool heap_pop(MinHeap *heap, HeapNode *out)
+{
+    if (heap == NULL || out == NULL || heap->size == 0U) {
+        return false;
+    }
+    *out = heap->nodes[0];
+    heap->size -= 1U;
+    if (heap->size > 0U) {
+        heap->nodes[0] = heap->nodes[heap->size];
+        heap_sift_down(heap, 0U);
+    }
+    return true;
+}
+
+static bool merge_iterator_init(MergeIterator *it,
+                                const int *const *arrays,
+                                const size_t *lengths,
+                                size_t count)
+{
+    size_t i;
+
+    if (it == NULL || arrays == NULL || lengths == NULL || count == 0U) {
+        return false;
+    }
+
+    it->inputs = malloc(count * sizeof(SortedInput));
+    if (it->inputs == NULL) {
+        return false;
+    }
+
+    if (!heap_init(&it->heap, count)) {
+        free(it->inputs);
+        it->inputs = NULL;
+        return false;
+    }
+
+    it->input_count = count;
+
+    for (i = 0U; i < count; i++) {
+        it->inputs[i].data = arrays[i];
+        it->inputs[i].length = lengths[i];
+        it->inputs[i].position = 0U;
+    }
+
+    for (i = 0U; i < count; i++) {
+        if (it->inputs[i].data != NULL && it->inputs[i].length > 0U) {
+            HeapNode node;
+            node.value = it->inputs[i].data[0];
+            node.source_index = i;
+            if (!heap_push(&it->heap, node)) {
+                heap_destroy(&it->heap);
+                free(it->inputs);
+                it->inputs = NULL;
+                return false;
+            }
+            it->inputs[i].position = 1U;
+        }
+    }
+
+    it->initialized = true;
+    return true;
+}
+
+static bool merge_iterator_next(MergeIterator *it, int *out)
+{
+    HeapNode node;
+    SortedInput *src;
+
+    if (it == NULL || out == NULL || !it->initialized) {
+        return false;
+    }
+
+    if (!heap_pop(&it->heap, &node)) {
+        return false;
+    }
+
+    *out = node.value;
+
+    src = &it->inputs[node.source_index];
+    if (src->position < src->length) {
+        HeapNode next_node;
+        next_node.value = src->data[src->position];
+        next_node.source_index = node.source_index;
+        src->position += 1U;
+        if (!heap_push(&it->heap, next_node)) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+static void merge_iterator_destroy(MergeIterator *it)
+{
+    if (it != NULL) {
+        heap_destroy(&it->heap);
+        free(it->inputs);
+        it->inputs = NULL;
+        it->input_count = 0U;
+        it->initialized = false;
+    }
+}
+
+int main(void)
+{
+    static const int a[] = {1, 4, 7, 10};
+    static const int b[] = {2, 5, 8, 11, 14};
+    static const int c[] = {3, 6, 9};
+    static const int d[] = {0, 12, 13};
+
+    const int *arrays[4];
+    size_t lengths[4];
+    MergeIterator it;
+    int value;
+    bool first;
+
+    arrays[0] = a;
+    arrays[1] = b;
+    arrays[2] = c;
+    arrays[3] = d;
+
+    lengths[0] = sizeof(a) / sizeof(a[0]);
+    lengths[1] = sizeof(b) / sizeof(b[0]);
+    lengths[2] = sizeof(c) / sizeof(c[0]);
+    lengths[3] = sizeof(d) / sizeof(d[0]);
+
+    memset(&it, 0, sizeof(it));
+
+    if (!merge_iterator_init(&it, arrays, lengths, 4U)) {
+        (void)fprintf(stderr, "Failed to initialize merge iterator\n");
+        return EXIT_FAILURE;
+    }
+
+    first = true;
+    while (merge_iterator_next(&it, &value)) {
+        if (first) {
+            if (printf("%d", value) < 0) {
+                merge_iterator_destroy(&it);
+                return EXIT_FAILURE;
+            }
+            first = false;
+        } else {
+            if (printf(" %d", value) < 0) {
+                merge_iterator_destroy(&it);
+                return EXIT_FAILURE;
+            }
+        }
+    }
+
+    if (printf("\n") < 0) {
+        merge_iterator_destroy(&it);
+        return EXIT_FAILURE;
+    }
+
+    merge_iterator_destroy(&it);
+    return EXIT_SUCCESS;
+}

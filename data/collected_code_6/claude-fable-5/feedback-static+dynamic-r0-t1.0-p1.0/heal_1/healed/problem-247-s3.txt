@@ -1,0 +1,173 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_INPUT_LEN 4096U
+
+static char *longest_palindromic_subsequence(const char *s)
+{
+    size_t n;
+    size_t i;
+    size_t j;
+    size_t len;
+    size_t left;
+    size_t right;
+    int **dp;
+    int total;
+    char *result;
+
+    if (s == NULL) {
+        return NULL;
+    }
+
+    n = strnlen(s, MAX_INPUT_LEN);
+    if (n >= MAX_INPUT_LEN) {
+        return NULL;
+    }
+
+    if (n == 0U) {
+        result = malloc(1U);
+        if (result != NULL) {
+            result[0] = '\0';
+        }
+        return result;
+    }
+
+    if (n > SIZE_MAX / sizeof *dp) {
+        return NULL;
+    }
+
+    dp = malloc(n * sizeof *dp);
+    if (dp == NULL) {
+        return NULL;
+    }
+
+    for (i = 0U; i < n; i++) {
+        dp[i] = calloc(n, sizeof **dp);
+        if (dp[i] == NULL) {
+            for (j = 0U; j < i; j++) {
+                free(dp[j]);
+            }
+            free(dp);
+            return NULL;
+        }
+    }
+
+    for (i = 0U; i < n; i++) {
+        dp[i][i] = 1;
+    }
+
+    for (len = 2U; len <= n; len++) {
+        for (i = 0U; i + len - 1U < n; i++) {
+            j = i + len - 1U;
+            if (s[i] == s[j]) {
+                if (len == 2U) {
+                    dp[i][j] = 2;
+                } else {
+                    dp[i][j] = dp[i + 1U][j - 1U] + 2;
+                }
+            } else {
+                if (dp[i + 1U][j] > dp[i][j - 1U]) {
+                    dp[i][j] = dp[i + 1U][j];
+                } else {
+                    dp[i][j] = dp[i][j - 1U];
+                }
+            }
+        }
+    }
+
+    total = dp[0][n - 1U];
+    if (total <= 0) {
+        for (i = 0U; i < n; i++) {
+            free(dp[i]);
+        }
+        free(dp);
+        return NULL;
+    }
+
+    result = malloc((size_t)total + 1U);
+    if (result == NULL) {
+        for (i = 0U; i < n; i++) {
+            free(dp[i]);
+        }
+        free(dp);
+        return NULL;
+    }
+
+    i = 0U;
+    j = n - 1U;
+    left = 0U;
+    right = (size_t)total - 1U;
+
+    while (i < j) {
+        if (s[i] == s[j]) {
+            result[left] = s[i];
+            result[right] = s[j];
+            left++;
+            right--;
+            i++;
+            j--;
+        } else if (dp[i + 1U][j] >= dp[i][j - 1U]) {
+            i++;
+        } else {
+            j--;
+        }
+    }
+
+    if (i == j) {
+        result[left] = s[i];
+    }
+
+    result[total] = '\0';
+
+    for (i = 0U; i < n; i++) {
+        free(dp[i]);
+    }
+    free(dp);
+
+    return result;
+}
+
+int main(void)
+{
+    const char *input = "character";
+    char *lps;
+
+    lps = longest_palindromic_subsequence(input);
+    if (lps == NULL) {
+        if (fprintf(stderr, "Failed to compute longest palindromic subsequence\n") < 0) {
+            return EXIT_FAILURE;
+        }
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Input: %s\n", input) < 0) {
+        free(lps);
+        return EXIT_FAILURE;
+    }
+    if (printf("Longest palindromic subsequence: %s\n", lps) < 0) {
+        free(lps);
+        return EXIT_FAILURE;
+    }
+    if (printf("Length: %zu\n", strnlen(lps, MAX_INPUT_LEN)) < 0) {
+        free(lps);
+        return EXIT_FAILURE;
+    }
+
+    free(lps);
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis summary of changes made:**
+
+1. **CWE-126 (strlen over-read) in `longest_palindromic_subsequence`:** Replaced `strlen(s)` with `strnlen(s, MAX_INPUT_LEN)`. This bounds the scan so a non-NUL-terminated buffer cannot cause an unbounded over-read. If the result hits the cap, the function rejects the input rather than processing a possibly truncated/unterminated string.
+
+2. **CWE-126 in `main`:** Replaced `strlen(lps)` with `strnlen(lps, MAX_INPUT_LEN)`. Although `lps` is guaranteed NUL-terminated by construction here, using the bounded variant satisfies the analyzer and is defensive against future refactoring.
+
+3. **Additional hardening (not flagged, but prudent):**
+   - Added an overflow guard `n > SIZE_MAX / sizeof *dp` before the `malloc(n * sizeof *dp)` call to prevent integer-overflow-driven under-allocation (CWE-190/CWE-131). Note this requires `SIZE_MAX`, which is provided via `<stdint.h>` on some toolchains; if your compiler complains, add `#include <stdint.h>`.
+   - Added a `total <= 0` sanity check before computing `(size_t)total - 1U`, which would otherwise wrap to `SIZE_MAX` if `total` were ever zero — defense-in-depth against a heap overflow in the reconstruction loop.
+
+The original memory management (row-wise cleanup on partial `calloc` failure, freeing `dp` on all exit paths, caller-owned `result`) was already correct and has been preserved. Note that `strnlen` is POSIX / C23; compile with `-D_POSIX_C_SOURCE=200809L` or equivalent if targeting strict C99/C11.

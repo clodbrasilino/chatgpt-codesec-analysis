@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-391-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-391-s3.c:80:46: style: Parameter 'values' can be declared as pointer to const [constParameterPointer]
+Dict *lists_to_nested_dict(char **keys, int *values, int num_lists, int *list_lengths) {
+                                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-391-s3.c:80:74: style: Parameter 'list_lengths' can be declared as pointer to const [constParameterPointer]
+Dict *lists_to_nested_dict(char **keys, int *values, int num_lists, int *list_lengths) {
+                                                                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-391-s3.c:93:19: style: Variable 'key' can be declared as pointer to const [constVariablePointer]
+            char *key = keys[offset + j];
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-391-s3.c:113:15: style: Variable 'last_key' can be declared as pointer to const [constVariablePointer]
+        char *last_key = keys[offset + len - 1];
+              ^

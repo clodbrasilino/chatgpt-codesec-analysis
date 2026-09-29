@@ -1,0 +1,50 @@
+{
+  "task_id": 636,
+  "text": "Write a C function to check if roots of a quadratic equation are reciprocal of each other or not.",
+  "fn_candidates": [
+    "Check_Solution",
+    "CheckSolution",
+    "CheckSolution",
+    "CheckSolution"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "Check_Solution",
+      "args": [
+        2,
+        0,
+        2
+      ],
+      "expected": "Yes",
+      "assert_src": "assert Check_Solution(2,0,2) == \"Yes\""
+    },
+    {
+      "fn_name": "Check_Solution",
+      "args": [
+        2,
+        -5,
+        2
+      ],
+      "expected": "Yes",
+      "assert_src": "assert Check_Solution(2,-5,2) == \"Yes\""
+    },
+    {
+      "fn_name": "Check_Solution",
+      "args": [
+        1,
+        2,
+        3
+      ],
+      "expected": "No",
+      "assert_src": "assert Check_Solution(1,2,3) == \"No\""
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "str",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

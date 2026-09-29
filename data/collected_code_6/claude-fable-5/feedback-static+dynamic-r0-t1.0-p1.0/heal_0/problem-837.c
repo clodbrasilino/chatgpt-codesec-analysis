@@ -1,0 +1,55 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+static int cube_sum_odd(unsigned int n, unsigned long long *result)
+{
+    unsigned long long sum = 0ULL;
+    unsigned int i;
+
+    if (result == NULL) {
+        return -1;
+    }
+
+    for (i = 0U; i < n; i++) {
+        unsigned long long odd = (2ULL * (unsigned long long)i) + 1ULL;
+        unsigned long long cube;
+
+        if (odd > 2642245ULL) {
+            return -1;
+        }
+
+        cube = odd * odd * odd;
+
+        if (sum > ULLONG_MAX - cube) {
+            return -1;
+        }
+
+        sum += cube;
+    }
+
+    *result = sum;
+    return 0;
+}
+
+int main(void)
+{
+    unsigned int n = 0U;
+    unsigned long long result = 0ULL;
+
+    printf("Enter n: ");
+
+    if (scanf("%u", &n) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (cube_sum_odd(n, &result) != 0) {
+        fprintf(stderr, "Computation failed (overflow or invalid argument)\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Cube sum of first %u odd natural numbers: %llu\n", n, result);
+
+    return EXIT_SUCCESS;
+}

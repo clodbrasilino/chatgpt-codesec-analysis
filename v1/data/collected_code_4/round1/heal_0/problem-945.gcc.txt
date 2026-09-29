@@ -1,0 +1,12 @@
+./collected_code_4/round1//heal_0//problem-945.c: In function 'main':
+./collected_code_4/round1//heal_0//problem-945.c:42:9: warning: implicit declaration of function 'printf' [-Wimplicit-function-declaration]
+   42 |         printf("%d ", set->elements[i]);
+      |         ^~~~~~
+./collected_code_4/round1//heal_0//problem-945.c:4:1: note: include '<stdio.h>' or provide a declaration of 'printf'
+    3 | #include <string.h>
+  +++ |+#include <stdio.h>
+    4 | 
+./collected_code_4/round1//heal_0//problem-945.c:42:9: warning: incompatible implicit declaration of built-in function 'printf' [-Wbuiltin-declaration-mismatch]
+   42 |         printf("%d ", set->elements[i]);
+      |         ^~~~~~
+./collected_code_4/round1//heal_0//problem-945.c:42:9: note: include '<stdio.h>' or provide a declaration of 'printf'

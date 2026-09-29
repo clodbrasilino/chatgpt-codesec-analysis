@@ -1,0 +1,70 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+int* convert_to_set(const int* tuples, size_t input_size, size_t* set_size) {
+    if (!tuples || !set_size) {
+        return NULL;
+    }
+
+    if (input_size == 0) {
+        *set_size = 0;
+        return NULL;
+    }
+
+    int* set = (int*)malloc(input_size * sizeof(int));
+    if (!set) {
+        return NULL;
+    }
+
+    size_t count = 0;
+    for (size_t i = 0; i < input_size; i++) {
+        bool exists = false;
+        for (size_t j = 0; j < count; j++) {
+            if (set[j] == tuples[i]) {
+                exists = true;
+                break;
+            }
+        }
+        if (!exists) {
+            set[count++] = tuples[i];
+        }
+    }
+
+    *set_size = count;
+
+    if (count == 0) {
+        free(set);
+        return NULL;
+    }
+
+    int* resized_set = (int*)realloc(set, count * sizeof(int));
+    if (!resized_set) {
+        return set;
+    }
+
+    return resized_set;
+}
+
+int main(void) {
+    int tuples[] = {1, 2, 2, 3, 4, 4, 5, 1, 6, 2, 7};
+    size_t input_size = sizeof(tuples) / sizeof(tuples[0]);
+    size_t set_size = 0;
+
+    int* set = convert_to_set(tuples, input_size, &set_size);
+    
+    if (!set && input_size > 0) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    for (size_t i = 0; i < set_size; i++) {
+        printf("%d ", set[i]);
+    }
+    printf("\n");
+
+    free(set);
+    set = NULL;
+
+    return EXIT_SUCCESS;
+}

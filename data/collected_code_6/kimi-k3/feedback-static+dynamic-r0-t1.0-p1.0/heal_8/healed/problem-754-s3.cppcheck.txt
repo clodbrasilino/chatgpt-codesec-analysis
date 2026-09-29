@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-754-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-754-s3.c:44:15: style: Condition 'size2<minSize' is always true [knownConditionTrueFalse]
+    if (size2 < minSize) {
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-754-s3.c:42:19: note: Assignment 'minSize=size1', assigned value is 5
+    int minSize = size1;
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-754-s3.c:44:15: note: Condition 'size2<minSize' is always true
+    if (size2 < minSize) {
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-754-s3.c:48:15: style: Condition 'size3<minSize' is always false [knownConditionTrueFalse]
+    if (size3 < minSize) {
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-754-s3.c:45:19: note: Assignment 'minSize=size2', assigned value is 4
+        minSize = size2;
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-754-s3.c:48:15: note: Condition 'size3<minSize' is always false
+    if (size3 < minSize) {
+              ^

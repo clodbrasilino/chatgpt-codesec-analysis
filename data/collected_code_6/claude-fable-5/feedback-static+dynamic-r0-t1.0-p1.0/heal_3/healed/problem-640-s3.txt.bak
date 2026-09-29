@@ -1,0 +1,101 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char *remove_parentheses(const char *input)
+{
+    size_t len;
+    size_t i;
+    size_t j;
+    int depth;
+    char *result;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    len = strlen(input);
+    result = calloc(len + 1, sizeof(char));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    depth = 0;
+    j = 0;
+    for (i = 0; i < len; i++) {
+        if (input[i] == '(') {
+            depth++;
+        } else if (input[i] == ')') {
+            if (depth > 0) {
+                depth--;
+            }
+        } else if (depth == 0) {
+            result[j] = input[i];
+            j++;
+        }
+    }
+    result[j] = '\0';
+
+    return result;
+}
+
+int main(void)
+{
+    const char *tests[] = {
+        "python(java)",
+        "string(remove)",
+        "alpha(beta(gamma)delta)",
+        "Hello (remove me) World",
+        "abc(def(ghi)jkl)mno",
+        "no parentheses here"
+    };
+    size_t num_tests;
+    size_t i;
+
+    num_tests = sizeof(tests) / sizeof(tests[0]);
+
+    for (i = 0; i < num_tests; i++) {
+        char *output = remove_parentheses(tests[i]);
+        if (output == NULL) {
+            fprintf(stderr, "Memory allocation failed\n");
+            return EXIT_FAILURE;
+        }
+        if (printf("%s\n", output) < 0) {
+            free(output);
+            return EXIT_FAILURE;
+        }
+        free(output);
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The weaknesses described in the comments (garbage output such as `@�` and `��` instead of the expected strings) are symptomatic of classic C memory bugs in earlier revisions of such code:
+
+1. **Missing null terminator** — if the result buffer were allocated with `malloc` and the `result[j] = '\0';` line were omitted, `printf("%s", ...)` would read past the copied characters into uninitialized heap memory, producing exactly the kind of garbage bytes shown in the test failures.
+
+2. **Use-after-free / dangling pointer** — returning a pointer to a stack-allocated buffer, or printing after `free()`, would also produce nondeterministic garbage.
+
+3. **Off-by-one allocation** — allocating only `len` bytes instead of `len + 1` leaves no room for the terminator, causing a heap overflow.
+
+The corrected version above addresses all three:
+
+- `calloc(len + 1, sizeof(char))` guarantees the buffer is zero-initialized and has room for the terminator, so even if termination logic were skipped, the string would still be safely terminated.
+- `result[j] = '\0';` explicitly terminates at the correct position.
+- The buffer is heap-allocated and freed only after use, with every error path (`printf` failure, allocation failure) properly releasing or avoiding leaked memory.
+- `NULL` input and allocation failure are handled defensively, and the depth counter guards against unbalanced closing parentheses so `depth` never goes negative.
+
+Expected output:
+
+```
+python
+string
+alphadelta
+Hello  World
+abcmno
+no parentheses here
+```

@@ -1,0 +1,24 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p0.5/heal_0/problem-551.c: In function 'extract_column':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p0.5/heal_0/problem-551.c:52:27: error: 'Node' has no member named 'sublist'
+   52 |         } else if (current->sublist != NULL) {
+      |                           ^~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p0.5/heal_0/problem-551.c:53:54: error: 'Node' has no member named 'sublist'
+   53 |             List *sub_result = extract_column(current->sublist, column_index - 1);
+      |                                                      ^~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p0.5/heal_0/problem-551.c: In function 'main':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p0.5/heal_0/problem-551.c:104:21: error: passing argument 1 of 'add_sublist' from incompatible pointer type [-Wincompatible-pointer-types]
+  104 |     add_sublist(root->head, sublist1);
+      |                 ~~~~^~~~~~
+      |                     |
+      |                     Node *
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p0.5/heal_0/problem-551.c:38:24: note: expected 'List *' but argument is of type 'Node *'
+   38 | void add_sublist(List *list, List *sublist) {
+      |                  ~~~~~~^~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p0.5/heal_0/problem-551.c:105:27: error: passing argument 1 of 'add_sublist' from incompatible pointer type [-Wincompatible-pointer-types]
+  105 |     add_sublist(root->head->next, sublist2);
+      |                 ~~~~~~~~~~^~~~~~
+      |                           |
+      |                           struct Node *
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p0.5/heal_0/problem-551.c:38:24: note: expected 'List *' but argument is of type 'struct Node *'
+   38 | void add_sublist(List *list, List *sublist) {
+      |                  ~~~~~~^~~~

@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-513-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-513-s3.c:39:23: warning: Identical condition 'src_size>dest_size', second condition is always false [identicalConditionAfterEarlyExit]
+        if (dest_size < src_size) {
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-513-s3.c:35:18: note: If condition 'src_size>dest_size' is true, the function will return/exit
+    if (src_size > dest_size) {
+                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-513-s3.c:39:23: note: Testing identical condition 'src_size>dest_size'
+        if (dest_size < src_size) {
+                      ^

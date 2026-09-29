@@ -1,0 +1,853 @@
+collected_code_3/round4/heal_0/problem-958.c: In function 'intToRoman':
+collected_code_3/round4/heal_0/problem-958.c:9:20: warning: dereference of possibly-NULL 'ptr' [CWE-690] [-Wanalyzer-possible-null-dereference]
+    9 |             *ptr++ = 'M';
+      |             ~~~~~~~^~~~~
+  'intToRoman': events 1-6
+    |
+    |    5 |     char* result = (char*)malloc(sizeof(char) * 16);
+    |      |                           ^~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                           |
+    |      |                           (1) this call could return NULL
+    |    6 |     char* ptr = result;
+    |    7 |     while(num != 0) {
+    |      |           ~~~~~~~~         
+    |      |               |
+    |      |               (2) following 'true' branch (when 'num != 0')...
+    |    8 |         if(num >= 1000) {
+    |      |           ~                
+    |      |           |
+    |      |           (3) ...to here
+    |      |           (4) following 'true' branch (when 'num > 999')...
+    |    9 |             *ptr++ = 'M';
+    |      |             ~~~~~~~~~~~~   
+    |      |                 |  |
+    |      |                 |  (6) 'ptr' could be NULL: unchecked value from (1)
+    |      |                 (5) ...to here
+    |
+collected_code_3/round4/heal_0/problem-958.c:12:20: warning: dereference of possibly-NULL 'ptr' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   12 |             *ptr++ = 'C';
+      |             ~~~~~~~^~~~~
+  'intToRoman': events 1-8
+    |
+    |    5 |     char* result = (char*)malloc(sizeof(char) * 16);
+    |      |                           ^~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                           |
+    |      |                           (1) this call could return NULL
+    |    6 |     char* ptr = result;
+    |    7 |     while(num != 0) {
+    |      |           ~~~~~~~~         
+    |      |               |
+    |      |               (2) following 'true' branch (when 'num != 0')...
+    |    8 |         if(num >= 1000) {
+    |      |           ~                
+    |      |           |
+    |      |           (3) ...to here
+    |      |           (4) following 'false' branch (when 'num <= 999')...
+    |......
+    |   11 |         } else if(num >= 900) {
+    |      |                  ~         
+    |      |                  |
+    |      |                  (5) ...to here
+    |      |                  (6) following 'true' branch (when 'num > 899')...
+    |   12 |             *ptr++ = 'C';
+    |      |             ~~~~~~~~~~~~   
+    |      |                 |  |
+    |      |                 |  (8) 'ptr' could be NULL: unchecked value from (1)
+    |      |                 (7) ...to here
+    |
+collected_code_3/round4/heal_0/problem-958.c:16:20: warning: dereference of possibly-NULL 'ptr' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   16 |             *ptr++ = 'D';
+      |             ~~~~~~~^~~~~
+  'intToRoman': events 1-10
+    |
+    |    5 |     char* result = (char*)malloc(sizeof(char) * 16);
+    |      |                           ^~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                           |
+    |      |                           (1) this call could return NULL
+    |    6 |     char* ptr = result;
+    |    7 |     while(num != 0) {
+    |      |           ~~~~~~~~         
+    |      |               |
+    |      |               (2) following 'true' branch (when 'num != 0')...
+    |    8 |         if(num >= 1000) {
+    |      |           ~                
+    |      |           |
+    |      |           (3) ...to here
+    |      |           (4) following 'false' branch (when 'num <= 999')...
+    |......
+    |   11 |         } else if(num >= 900) {
+    |      |                  ~         
+    |      |                  |
+    |      |                  (5) ...to here
+    |      |                  (6) following 'false' branch (when 'num <= 899')...
+    |......
+    |   15 |         } else if(num >= 500) {
+    |      |                  ~         
+    |      |                  |
+    |      |                  (7) ...to here
+    |      |                  (8) following 'true' branch (when 'num > 499')...
+    |   16 |             *ptr++ = 'D';
+    |      |             ~~~~~~~~~~~~   
+    |      |                 |  |
+    |      |                 |  (10) 'ptr' could be NULL: unchecked value from (1)
+    |      |                 (9) ...to here
+    |
+collected_code_3/round4/heal_0/problem-958.c:19:20: warning: dereference of possibly-NULL 'ptr' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   19 |             *ptr++ = 'C';
+      |             ~~~~~~~^~~~~
+  'intToRoman': events 1-12
+    |
+    |    5 |     char* result = (char*)malloc(sizeof(char) * 16);
+    |      |                           ^~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                           |
+    |      |                           (1) this call could return NULL
+    |    6 |     char* ptr = result;
+    |    7 |     while(num != 0) {
+    |      |           ~~~~~~~~         
+    |      |               |
+    |      |               (2) following 'true' branch (when 'num != 0')...
+    |    8 |         if(num >= 1000) {
+    |      |           ~                
+    |      |           |
+    |      |           (3) ...to here
+    |      |           (4) following 'false' branch (when 'num <= 999')...
+    |......
+    |   11 |         } else if(num >= 900) {
+    |      |                  ~         
+    |      |                  |
+    |      |                  (5) ...to here
+    |      |                  (6) following 'false' branch (when 'num <= 899')...
+    |......
+    |   15 |         } else if(num >= 500) {
+    |      |                  ~         
+    |      |                  |
+    |      |                  (7) ...to here
+    |      |                  (8) following 'false' branch (when 'num <= 499')...
+    |......
+    |   18 |         } else if(num >= 400) {
+    |      |                  ~         
+    |      |                  |
+    |      |                  (9) ...to here
+    |      |                  (10) following 'true' branch (when 'num > 399')...
+    |   19 |             *ptr++ = 'C';
+    |      |             ~~~~~~~~~~~~   
+    |      |                 |  |
+    |      |                 |  (12) 'ptr' could be NULL: unchecked value from (1)
+    |      |                 (11) ...to here
+    |
+collected_code_3/round4/heal_0/problem-958.c:23:20: warning: dereference of possibly-NULL 'ptr' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   23 |             *ptr++ = 'C';
+      |             ~~~~~~~^~~~~
+  'intToRoman': events 1-14
+    |
+    |    5 |     char* result = (char*)malloc(sizeof(char) * 16);
+    |      |                           ^~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                           |
+    |      |                           (1) this call could return NULL
+    |    6 |     char* ptr = result;
+    |    7 |     while(num != 0) {
+    |      |           ~~~~~~~~         
+    |      |               |
+    |      |               (2) following 'true' branch (when 'num != 0')...
+    |    8 |         if(num >= 1000) {
+    |      |           ~                
+    |      |           |
+    |      |           (3) ...to here
+    |      |           (4) following 'false' branch (when 'num <= 999')...
+    |......
+    |   11 |         } else if(num >= 900) {
+    |      |                  ~         
+    |      |                  |
+    |      |                  (5) ...to here
+    |      |                  (6) following 'false' branch (when 'num <= 899')...
+    |......
+    |   15 |         } else if(num >= 500) {
+    |      |                  ~         
+    |      |                  |
+    |      |                  (7) ...to here
+    |      |                  (8) following 'false' branch (when 'num <= 499')...
+    |......
+    |   18 |         } else if(num >= 400) {
+    |      |                  ~         
+    |      |                  |
+    |      |                  (9) ...to here
+    |      |                  (10) following 'false' branch (when 'num <= 399')...
+    |......
+    |   22 |         } else if(num >= 100) {
+    |      |                  ~         
+    |      |                  |
+    |      |                  (11) ...to here
+    |      |                  (12) following 'true' branch (when 'num > 99')...
+    |   23 |             *ptr++ = 'C';
+    |      |             ~~~~~~~~~~~~   
+    |      |                 |  |
+    |      |                 |  (14) 'ptr' could be NULL: unchecked value from (1)
+    |      |                 (13) ...to here
+    |
+collected_code_3/round4/heal_0/problem-958.c:26:20: warning: dereference of possibly-NULL 'ptr' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   26 |             *ptr++ = 'X';
+      |             ~~~~~~~^~~~~
+  'intToRoman': events 1-16
+    |
+    |    5 |     char* result = (char*)malloc(sizeof(char) * 16);
+    |      |                           ^~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                           |
+    |      |                           (1) this call could return NULL
+    |    6 |     char* ptr = result;
+    |    7 |     while(num != 0) {
+    |      |           ~~~~~~~~         
+    |      |               |
+    |      |               (2) following 'true' branch (when 'num != 0')...
+    |    8 |         if(num >= 1000) {
+    |      |           ~                
+    |      |           |
+    |      |           (3) ...to here
+    |      |           (4) following 'false' branch (when 'num <= 999')...
+    |......
+    |   11 |         } else if(num >= 900) {
+    |      |                  ~         
+    |      |                  |
+    |      |                  (5) ...to here
+    |      |                  (6) following 'false' branch (when 'num <= 899')...
+    |......
+    |   15 |         } else if(num >= 500) {
+    |      |                  ~         
+    |      |                  |
+    |      |                  (7) ...to here
+    |      |                  (8) following 'false' branch (when 'num <= 499')...
+    |......
+    |   18 |         } else if(num >= 400) {
+    |      |                  ~         
+    |      |                  |
+    |      |                  (9) ...to here
+    |      |                  (10) following 'false' branch (when 'num <= 399')...
+    |......
+    |   22 |         } else if(num >= 100) {
+    |      |                  ~         
+    |      |                  |
+    |      |                  (11) ...to here
+    |      |                  (12) following 'false' branch (when 'num <= 99')...
+    |......
+    |   25 |         } else if(num >= 90) {
+    |      |                  ~         
+    |      |                  |
+    |      |                  (13) ...to here
+    |      |                  (14) following 'true' branch (when 'num > 89')...
+    |   26 |             *ptr++ = 'X';
+    |      |             ~~~~~~~~~~~~   
+    |      |                 |  |
+    |      |                 |  (16) 'ptr' could be NULL: unchecked value from (1)
+    |      |                 (15) ...to here
+    |
+collected_code_3/round4/heal_0/problem-958.c:30:20: warning: dereference of possibly-NULL 'ptr' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   30 |             *ptr++ = 'L';
+      |             ~~~~~~~^~~~~
+  'intToRoman': events 1-18
+    |
+    |    5 |     char* result = (char*)malloc(sizeof(char) * 16);
+    |      |                           ^~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                           |
+    |      |                           (1) this call could return NULL
+    |    6 |     char* ptr = result;
+    |    7 |     while(num != 0) {
+    |      |           ~~~~~~~~         
+    |      |               |
+    |      |               (2) following 'true' branch (when 'num != 0')...
+    |    8 |         if(num >= 1000) {
+    |      |           ~                
+    |      |           |
+    |      |           (3) ...to here
+    |      |           (4) following 'false' branch (when 'num <= 999')...
+    |......
+    |   11 |         } else if(num >= 900) {
+    |      |                  ~         
+    |      |                  |
+    |      |                  (5) ...to here
+    |      |                  (6) following 'false' branch (when 'num <= 899')...
+    |......
+    |   15 |         } else if(num >= 500) {
+    |      |                  ~         
+    |      |                  |
+    |      |                  (7) ...to here
+    |      |                  (8) following 'false' branch (when 'num <= 499')...
+    |......
+    |   18 |         } else if(num >= 400) {
+    |      |                  ~         
+    |      |                  |
+    |      |                  (9) ...to here
+    |      |                  (10) following 'false' branch (when 'num <= 399')...
+    |......
+    |   22 |         } else if(num >= 100) {
+    |      |                  ~         
+    |      |                  |
+    |      |                  (11) ...to here
+    |      |                  (12) following 'false' branch (when 'num <= 99')...
+    |......
+    |   25 |         } else if(num >= 90) {
+    |      |                  ~         
+    |      |                  |
+    |      |                  (13) ...to here
+    |      |                  (14) following 'false' branch (when 'num <= 89')...
+    |......
+    |   29 |         } else if(num >= 50) {
+    |      |                  ~         
+    |      |                  |
+    |      |                  (15) ...to here
+    |      |                  (16) following 'true' branch (when 'num > 49')...
+    |   30 |             *ptr++ = 'L';
+    |      |             ~~~~~~~~~~~~   
+    |      |                 |  |
+    |      |                 |  (18) 'ptr' could be NULL: unchecked value from (1)
+    |      |                 (17) ...to here
+    |
+collected_code_3/round4/heal_0/problem-958.c:33:20: warning: dereference of possibly-NULL 'ptr' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   33 |             *ptr++ = 'X';
+      |             ~~~~~~~^~~~~
+  'intToRoman': events 1-20
+    |
+    |    5 |     char* result = (char*)malloc(sizeof(char) * 16);
+    |      |                           ^~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                           |
+    |      |                           (1) this call could return NULL
+    |    6 |     char* ptr = result;
+    |    7 |     while(num != 0) {
+    |      |           ~~~~~~~~         
+    |      |               |
+    |      |               (2) following 'true' branch (when 'num != 0')...
+    |    8 |         if(num >= 1000) {
+    |      |           ~                
+    |      |           |
+    |      |           (3) ...to here
+    |      |           (4) following 'false' branch (when 'num <= 999')...
+    |......
+    |   11 |         } else if(num >= 900) {
+    |      |                  ~         
+    |      |                  |
+    |      |                  (5) ...to here
+    |      |                  (6) following 'false' branch (when 'num <= 899')...
+    |......
+    |   15 |         } else if(num >= 500) {
+    |      |                  ~         
+    |      |                  |
+    |      |                  (7) ...to here
+    |      |                  (8) following 'false' branch (when 'num <= 499')...
+    |......
+    |   18 |         } else if(num >= 400) {
+    |      |                  ~         
+    |      |                  |
+    |      |                  (9) ...to here
+    |      |                  (10) following 'false' branch (when 'num <= 399')...
+    |......
+    |   22 |         } else if(num >= 100) {
+    |      |                  ~         
+    |      |                  |
+    |      |                  (11) ...to here
+    |      |                  (12) following 'false' branch (when 'num <= 99')...
+    |......
+    |   25 |         } else if(num >= 90) {
+    |      |                  ~         
+    |      |                  |
+    |      |                  (13) ...to here
+    |      |                  (14) following 'false' branch (when 'num <= 89')...
+    |......
+    |   29 |         } else if(num >= 50) {
+    |      |                  ~         
+    |      |                  |
+    |      |                  (15) ...to here
+    |      |                  (16) following 'false' branch (when 'num <= 49')...
+    |......
+    |   32 |         } else if(num >= 40) {
+    |      |                  ~         
+    |      |                  |
+    |      |                  (17) ...to here
+    |      |                  (18) following 'true' branch (when 'num > 39')...
+    |   33 |             *ptr++ = 'X';
+    |      |             ~~~~~~~~~~~~   
+    |      |                 |  |
+    |      |                 |  (20) 'ptr' could be NULL: unchecked value from (1)
+    |      |                 (19) ...to here
+    |
+collected_code_3/round4/heal_0/problem-958.c:37:20: warning: dereference of possibly-NULL 'ptr' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   37 |             *ptr++ = 'X';
+      |             ~~~~~~~^~~~~
+  'intToRoman': events 1-22
+    |
+    |    5 |     char* result = (char*)malloc(sizeof(char) * 16);
+    |      |                           ^~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                           |
+    |      |                           (1) this call could return NULL
+    |    6 |     char* ptr = result;
+    |    7 |     while(num != 0) {
+    |      |           ~~~~~~~~         
+    |      |               |
+    |      |               (2) following 'true' branch (when 'num != 0')...
+    |    8 |         if(num >= 1000) {
+    |      |           ~                
+    |      |           |
+    |      |           (3) ...to here
+    |      |           (4) following 'false' branch (when 'num <= 999')...
+    |......
+    |   11 |         } else if(num >= 900) {
+    |      |                  ~         
+    |      |                  |
+    |      |                  (5) ...to here
+    |      |                  (6) following 'false' branch (when 'num <= 899')...
+    |......
+    |   15 |         } else if(num >= 500) {
+    |      |                  ~         
+    |      |                  |
+    |      |                  (7) ...to here
+    |      |                  (8) following 'false' branch (when 'num <= 499')...
+    |......
+    |   18 |         } else if(num >= 400) {
+    |      |                  ~         
+    |      |                  |
+    |      |                  (9) ...to here
+    |      |                  (10) following 'false' branch (when 'num <= 399')...
+    |......
+    |   22 |         } else if(num >= 100) {
+    |      |                  ~         
+    |      |                  |
+    |      |                  (11) ...to here
+    |      |                  (12) following 'false' branch (when 'num <= 99')...
+    |......
+    |   25 |         } else if(num >= 90) {
+    |      |                  ~         
+    |      |                  |
+    |      |                  (13) ...to here
+    |      |                  (14) following 'false' branch (when 'num <= 89')...
+    |......
+    |   29 |         } else if(num >= 50) {
+    |      |                  ~         
+    |      |                  |
+    |      |                  (15) ...to here
+    |      |                  (16) following 'false' branch (when 'num <= 49')...
+    |......
+    |   32 |         } else if(num >= 40) {
+    |      |                  ~         
+    |      |                  |
+    |      |                  (17) ...to here
+    |      |                  (18) following 'false' branch (when 'num <= 39')...
+    |......
+    |   36 |         } else if(num >= 10) {
+    |      |                  ~         
+    |      |                  |
+    |      |                  (19) ...to here
+    |      |                  (20) following 'true' branch (when 'num > 9')...
+    |   37 |             *ptr++ = 'X';
+    |      |             ~~~~~~~~~~~~   
+    |      |                 |  |
+    |      |                 |  (22) 'ptr' could be NULL: unchecked value from (1)
+    |      |                 (21) ...to here
+    |
+collected_code_3/round4/heal_0/problem-958.c:40:20: warning: dereference of possibly-NULL 'ptr' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   40 |             *ptr++ = 'I';
+      |             ~~~~~~~^~~~~
+  'intToRoman': events 1-24
+    |
+    |    5 |     char* result = (char*)malloc(sizeof(char) * 16);
+    |      |                           ^~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                           |
+    |      |                           (1) this call could return NULL
+    |    6 |     char* ptr = result;
+    |    7 |     while(num != 0) {
+    |      |           ~~~~~~~~         
+    |      |               |
+    |      |               (2) following 'true' branch (when 'num != 0')...
+    |    8 |         if(num >= 1000) {
+    |      |           ~                
+    |      |           |
+    |      |           (3) ...to here
+    |      |           (4) following 'false' branch (when 'num <= 999')...
+    |......
+    |   11 |         } else if(num >= 900) {
+    |      |                  ~         
+    |      |                  |
+    |      |                  (5) ...to here
+    |      |                  (6) following 'false' branch (when 'num <= 899')...
+    |......
+    |   15 |         } else if(num >= 500) {
+    |      |                  ~         
+    |      |                  |
+    |      |                  (7) ...to here
+    |      |                  (8) following 'false' branch (when 'num <= 499')...
+    |......
+    |   18 |         } else if(num >= 400) {
+    |      |                  ~         
+    |      |                  |
+    |      |                  (9) ...to here
+    |      |                  (10) following 'false' branch (when 'num <= 399')...
+    |......
+    |   22 |         } else if(num >= 100) {
+    |      |                  ~         
+    |      |                  |
+    |      |                  (11) ...to here
+    |      |                  (12) following 'false' branch (when 'num <= 99')...
+    |......
+    |   25 |         } else if(num >= 90) {
+    |      |                  ~         
+    |      |                  |
+    |      |                  (13) ...to here
+    |      |                  (14) following 'false' branch (when 'num <= 89')...
+    |......
+    |   29 |         } else if(num >= 50) {
+    |      |                  ~         
+    |      |                  |
+    |      |                  (15) ...to here
+    |      |                  (16) following 'false' branch (when 'num <= 49')...
+    |......
+    |   32 |         } else if(num >= 40) {
+    |      |                  ~         
+    |      |                  |
+    |      |                  (17) ...to here
+    |      |                  (18) following 'false' branch (when 'num <= 39')...
+    |......
+    |   36 |         } else if(num >= 10) {
+    |      |                  ~         
+    |      |                  |
+    |      |                  (19) ...to here
+    |      |                  (20) following 'false' branch (when 'num <= 9')...
+    |......
+    |   39 |         } else if(num >= 9) {
+    |      |                  ~         
+    |      |                  |
+    |      |                  (21) ...to here
+    |      |                  (22) following 'true' branch (when 'num > 8')...
+    |   40 |             *ptr++ = 'I';
+    |      |             ~~~~~~~~~~~~   
+    |      |                 |  |
+    |      |                 |  (24) 'ptr' could be NULL: unchecked value from (1)
+    |      |                 (23) ...to here
+    |
+collected_code_3/round4/heal_0/problem-958.c:44:20: warning: dereference of possibly-NULL 'ptr' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   44 |             *ptr++ = 'V';
+      |             ~~~~~~~^~~~~
+  'intToRoman': events 1-26
+    |
+    |    5 |     char* result = (char*)malloc(sizeof(char) * 16);
+    |      |                           ^~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                           |
+    |      |                           (1) this call could return NULL
+    |    6 |     char* ptr = result;
+    |    7 |     while(num != 0) {
+    |      |           ~~~~~~~~         
+    |      |               |
+    |      |               (2) following 'true' branch (when 'num != 0')...
+    |    8 |         if(num >= 1000) {
+    |      |           ~                
+    |      |           |
+    |      |           (3) ...to here
+    |      |           (4) following 'false' branch (when 'num <= 999')...
+    |......
+    |   11 |         } else if(num >= 900) {
+    |      |                  ~         
+    |      |                  |
+    |      |                  (5) ...to here
+    |      |                  (6) following 'false' branch (when 'num <= 899')...
+    |......
+    |   15 |         } else if(num >= 500) {
+    |      |                  ~         
+    |      |                  |
+    |      |                  (7) ...to here
+    |      |                  (8) following 'false' branch (when 'num <= 499')...
+    |......
+    |   18 |         } else if(num >= 400) {
+    |      |                  ~         
+    |      |                  |
+    |      |                  (9) ...to here
+    |      |                  (10) following 'false' branch (when 'num <= 399')...
+    |......
+    |   22 |         } else if(num >= 100) {
+    |      |                  ~         
+    |      |                  |
+    |      |                  (11) ...to here
+    |      |                  (12) following 'false' branch (when 'num <= 99')...
+    |......
+    |   25 |         } else if(num >= 90) {
+    |      |                  ~         
+    |      |                  |
+    |      |                  (13) ...to here
+    |      |                  (14) following 'false' branch (when 'num <= 89')...
+    |......
+    |   29 |         } else if(num >= 50) {
+    |      |                  ~         
+    |      |                  |
+    |      |                  (15) ...to here
+    |      |                  (16) following 'false' branch (when 'num <= 49')...
+    |......
+    |   32 |         } else if(num >= 40) {
+    |      |                  ~         
+    |      |                  |
+    |      |                  (17) ...to here
+    |      |                  (18) following 'false' branch (when 'num <= 39')...
+    |......
+    |   36 |         } else if(num >= 10) {
+    |      |                  ~         
+    |      |                  |
+    |      |                  (19) ...to here
+    |      |                  (20) following 'false' branch (when 'num <= 9')...
+    |......
+    |   39 |         } else if(num >= 9) {
+    |      |                  ~         
+    |      |                  |
+    |      |                  (21) ...to here
+    |      |                  (22) following 'false' branch (when 'num <= 8')...
+    |......
+    |   43 |         } else if(num >= 5) {
+    |      |                  ~         
+    |      |                  |
+    |      |                  (23) ...to here
+    |      |                  (24) following 'true' branch (when 'num > 4')...
+    |   44 |             *ptr++ = 'V';
+    |      |             ~~~~~~~~~~~~   
+    |      |                 |  |
+    |      |                 |  (26) 'ptr' could be NULL: unchecked value from (1)
+    |      |                 (25) ...to here
+    |
+collected_code_3/round4/heal_0/problem-958.c:47:20: warning: dereference of possibly-NULL 'ptr' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   47 |             *ptr++ = 'I';
+      |             ~~~~~~~^~~~~
+  'main': events 1-2
+    |
+    |   59 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   63 |     char* roman = intToRoman(num);
+    |      |                   ~~~~~~~~~~~~~~~
+    |      |                   |
+    |      |                   (2) calling 'intToRoman' from 'main'
+    |
+    +--> 'intToRoman': events 3-29
+           |
+           |    4 | char* intToRoman(int num) {
+           |      |       ^~~~~~~~~~
+           |      |       |
+           |      |       (3) entry to 'intToRoman'
+           |    5 |     char* result = (char*)malloc(sizeof(char) * 16);
+           |      |                           ~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                           |
+           |      |                           (4) this call could return NULL
+           |    6 |     char* ptr = result;
+           |    7 |     while(num != 0) {
+           |      |           ~~~~~~~~
+           |      |               |
+           |      |               (5) following 'true' branch (when 'num != 0')...
+           |    8 |         if(num >= 1000) {
+           |      |           ~
+           |      |           |
+           |      |           (6) ...to here
+           |      |           (7) following 'false' branch (when 'num <= 999')...
+           |......
+           |   11 |         } else if(num >= 900) {
+           |      |                  ~
+           |      |                  |
+           |      |                  (8) ...to here
+           |      |                  (9) following 'false' branch (when 'num <= 899')...
+           |......
+           |   15 |         } else if(num >= 500) {
+           |      |                  ~
+           |      |                  |
+           |      |                  (10) ...to here
+           |      |                  (11) following 'false' branch (when 'num <= 499')...
+           |......
+           |   18 |         } else if(num >= 400) {
+           |      |                  ~
+           |      |                  |
+           |      |                  (12) ...to here
+           |      |                  (13) following 'false' branch (when 'num <= 399')...
+           |......
+           |   22 |         } else if(num >= 100) {
+           |      |                  ~
+           |      |                  |
+           |      |                  (14) ...to here
+           |      |                  (15) following 'false' branch (when 'num <= 99')...
+           |......
+           |   25 |         } else if(num >= 90) {
+           |      |                  ~
+           |      |                  |
+           |      |                  (16) ...to here
+           |      |                  (17) following 'false' branch (when 'num <= 89')...
+           |......
+           |   29 |         } else if(num >= 50) {
+           |      |                  ~
+           |      |                  |
+           |      |                  (18) ...to here
+           |      |                  (19) following 'false' branch (when 'num <= 49')...
+           |......
+           |   32 |         } else if(num >= 40) {
+           |      |                  ~
+           |      |                  |
+           |      |                  (20) ...to here
+           |      |                  (21) following 'false' branch (when 'num <= 39')...
+           |......
+           |   36 |         } else if(num >= 10) {
+           |      |                  ~
+           |      |                  |
+           |      |                  (22) ...to here
+           |      |                  (23) following 'false' branch (when 'num <= 9')...
+           |......
+           |   39 |         } else if(num >= 9) {
+           |      |                  ~
+           |      |                  |
+           |      |                  (24) ...to here
+           |      |                  (25) following 'false' branch (when 'num <= 8')...
+           |......
+           |   43 |         } else if(num >= 5) {
+           |      |                  ~
+           |      |                  |
+           |      |                  (26) ...to here
+           |      |                  (27) following 'false' branch (when 'num <= 4')...
+           |......
+           |   46 |         } else if(num >= 4) {
+           |      |                  ~
+           |      |                  |
+           |      |                  (28) ...to here
+           |   47 |             *ptr++ = 'I';
+           |      |             ~~~~~~~~~~~~
+           |      |                    |
+           |      |                    (29) 'ptr' could be NULL: unchecked value from (4)
+           |
+collected_code_3/round4/heal_0/problem-958.c:51:20: warning: dereference of possibly-NULL 'ptr' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   51 |             *ptr++ = 'I';
+      |             ~~~~~~~^~~~~
+  'main': events 1-2
+    |
+    |   59 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   63 |     char* roman = intToRoman(num);
+    |      |                   ~~~~~~~~~~~~~~~
+    |      |                   |
+    |      |                   (2) calling 'intToRoman' from 'main'
+    |
+    +--> 'intToRoman': events 3-31
+           |
+           |    4 | char* intToRoman(int num) {
+           |      |       ^~~~~~~~~~
+           |      |       |
+           |      |       (3) entry to 'intToRoman'
+           |    5 |     char* result = (char*)malloc(sizeof(char) * 16);
+           |      |                           ~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                           |
+           |      |                           (4) this call could return NULL
+           |    6 |     char* ptr = result;
+           |    7 |     while(num != 0) {
+           |      |           ~~~~~~~~
+           |      |               |
+           |      |               (5) following 'true' branch (when 'num != 0')...
+           |    8 |         if(num >= 1000) {
+           |      |           ~
+           |      |           |
+           |      |           (6) ...to here
+           |      |           (7) following 'false' branch (when 'num <= 999')...
+           |......
+           |   11 |         } else if(num >= 900) {
+           |      |                  ~
+           |      |                  |
+           |      |                  (8) ...to here
+           |      |                  (9) following 'false' branch (when 'num <= 899')...
+           |......
+           |   15 |         } else if(num >= 500) {
+           |      |                  ~
+           |      |                  |
+           |      |                  (10) ...to here
+           |      |                  (11) following 'false' branch (when 'num <= 499')...
+           |......
+           |   18 |         } else if(num >= 400) {
+           |      |                  ~
+           |      |                  |
+           |      |                  (12) ...to here
+           |      |                  (13) following 'false' branch (when 'num <= 399')...
+           |......
+           |   22 |         } else if(num >= 100) {
+           |      |                  ~
+           |      |                  |
+           |      |                  (14) ...to here
+           |      |                  (15) following 'false' branch (when 'num <= 99')...
+           |......
+           |   25 |         } else if(num >= 90) {
+           |      |                  ~
+           |      |                  |
+           |      |                  (16) ...to here
+           |      |                  (17) following 'false' branch (when 'num <= 89')...
+           |......
+           |   29 |         } else if(num >= 50) {
+           |      |                  ~
+           |      |                  |
+           |      |                  (18) ...to here
+           |      |                  (19) following 'false' branch (when 'num <= 49')...
+           |......
+           |   32 |         } else if(num >= 40) {
+           |      |                  ~
+           |      |                  |
+           |      |                  (20) ...to here
+           |      |                  (21) following 'false' branch (when 'num <= 39')...
+           |......
+           |   36 |         } else if(num >= 10) {
+           |      |                  ~
+           |      |                  |
+           |      |                  (22) ...to here
+           |      |                  (23) following 'false' branch (when 'num <= 9')...
+           |......
+           |   39 |         } else if(num >= 9) {
+           |      |                  ~
+           |      |                  |
+           |      |                  (24) ...to here
+           |      |                  (25) following 'false' branch (when 'num <= 8')...
+           |......
+           |   43 |         } else if(num >= 5) {
+           |      |                  ~
+           |      |                  |
+           |      |                  (26) ...to here
+           |      |                  (27) following 'false' branch (when 'num <= 4')...
+           |......
+           |   46 |         } else if(num >= 4) {
+           |      |                  ~
+           |      |                  |
+           |      |                  (28) ...to here
+           |      |                  (29) following 'false' branch (when 'num <= 3')...
+           |......
+           |   50 |         } else if(num >= 1) {
+           |      |                  ~
+           |      |                  |
+           |      |                  (30) ...to here
+           |   51 |             *ptr++ = 'I';
+           |      |             ~~~~~~~~~~~~
+           |      |                    |
+           |      |                    (31) 'ptr' could be NULL: unchecked value from (4)
+           |
+collected_code_3/round4/heal_0/problem-958.c:55:10: warning: dereference of possibly-NULL 'ptr' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   55 |     *ptr = '\0';
+      |     ~~~~~^~~~~~
+  'main': events 1-2
+    |
+    |   59 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   63 |     char* roman = intToRoman(num);
+    |      |                   ~~~~~~~~~~~~~~~
+    |      |                   |
+    |      |                   (2) calling 'intToRoman' from 'main'
+    |
+    +--> 'intToRoman': events 3-5
+           |
+           |    4 | char* intToRoman(int num) {
+           |      |       ^~~~~~~~~~
+           |      |       |
+           |      |       (3) entry to 'intToRoman'
+           |    5 |     char* result = (char*)malloc(sizeof(char) * 16);
+           |      |                           ~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                           |
+           |      |                           (4) this call could return NULL
+           |......
+           |   55 |     *ptr = '\0';
+           |      |     ~~~~~~~~~~~
+           |      |          |
+           |      |          (5) 'ptr' could be NULL: unchecked value from (4)
+           |

@@ -1,0 +1,199 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+typedef struct IntNode {
+    int value;
+    struct IntNode* next;
+} IntNode;
+
+typedef struct NestedNode {
+    IntNode* sublist;
+    struct NestedNode* next;
+} NestedNode;
+
+bool append_int_node(IntNode** head, int value) {
+    if (!head) {
+        return false;
+    }
+    
+    IntNode* new_node = (IntNode*)malloc(sizeof(IntNode));
+    if (!new_node) {
+        return false;
+    }
+    new_node->value = value;
+    new_node->next = NULL;
+
+    if (*head == NULL) {
+        *head = new_node;
+    } else {
+        IntNode* current = *head;
+        while (current->next != NULL) {
+            current = current->next;
+        }
+        current->next = new_node;
+    }
+    return true;
+}
+
+bool append_nested_node(NestedNode** head, IntNode* sublist) {
+    if (!head) {
+        return false;
+    }
+    
+    NestedNode* new_node = (NestedNode*)malloc(sizeof(NestedNode));
+    if (!new_node) {
+        return false;
+    }
+    new_node->sublist = sublist;
+    new_node->next = NULL;
+
+    if (*head == NULL) {
+        *head = new_node;
+    } else {
+        NestedNode* current = *head;
+        while (current->next != NULL) {
+            current = current->next;
+        }
+        current->next = new_node;
+    }
+    return true;
+}
+
+void free_int_list(IntNode* head) {
+    while (head != NULL) {
+        IntNode* temp = head;
+        head = head->next;
+        free(temp);
+    }
+}
+
+void free_nested_list(NestedNode* head) {
+    while (head != NULL) {
+        NestedNode* temp = head;
+        head = head->next;
+        if (temp->sublist != NULL) {
+            free_int_list(temp->sublist);
+        }
+        free(temp);
+    }
+}
+
+bool list_contains(IntNode* head, int value) {
+    IntNode* current = head;
+    while (current != NULL) {
+        if (current->value == value) {
+            return true;
+        }
+        current = current->next;
+    }
+    return false;
+}
+
+IntNode* find_common_elements(NestedNode* nested, IntNode* target) {
+    if (!nested || !target) {
+        return NULL;
+    }
+
+    IntNode* result_head = NULL;
+    IntNode* result_tail = NULL;
+    NestedNode* current_nest = nested;
+
+    while (current_nest != NULL) {
+        IntNode* current_sub = current_nest->sublist;
+        while (current_sub != NULL) {
+            if (list_contains(target, current_sub->value) && !list_contains(result_head, current_sub->value)) {
+                IntNode* new_node = (IntNode*)malloc(sizeof(IntNode));
+                if (!new_node) {
+                    free_int_list(result_head);
+                    return NULL;
+                }
+                new_node->value = current_sub->value;
+                new_node->next = NULL;
+
+                if (result_head == NULL) {
+                    result_head = new_node;
+                    result_tail = new_node;
+                } else {
+                    result_tail->next = new_node;
+                    result_tail = new_node;
+                }
+            }
+            current_sub = current_sub->next;
+        }
+        current_nest = current_nest->next;
+    }
+    
+    return result_head;
+}
+
+int main(void) {
+    IntNode* target = NULL;
+    if (!append_int_node(&target, 1) || !append_int_node(&target, 2) || !append_int_node(&target, 3)) {
+        free_int_list(target);
+        return EXIT_FAILURE;
+    }
+
+    NestedNode* nested = NULL;
+    IntNode* sub1 = NULL;
+    
+    if (!append_int_node(&sub1, 0) || !append_int_node(&sub1, 1)) {
+        free_int_list(sub1);
+        free_nested_list(nested);
+        free_int_list(target);
+        return EXIT_FAILURE;
+    }
+    
+    if (!append_nested_node(&nested, sub1)) {
+        free_int_list(sub1);
+        free_nested_list(nested);
+        free_int_list(target);
+        return EXIT_FAILURE;
+    }
+
+    IntNode* sub2 = NULL;
+    if (!append_int_node(&sub2, 3) || !append_int_node(&sub2, 4)) {
+        free_int_list(sub2);
+        free_nested_list(nested);
+        free_int_list(target);
+        return EXIT_FAILURE;
+    }
+    
+    if (!append_nested_node(&nested, sub2)) {
+        free_int_list(sub2);
+        free_nested_list(nested);
+        free_int_list(target);
+        return EXIT_FAILURE;
+    }
+
+    IntNode* sub3 = NULL;
+    if (!append_int_node(&sub3, 5)) {
+        free_int_list(sub3);
+        free_nested_list(nested);
+        free_int_list(target);
+        return EXIT_FAILURE;
+    }
+    
+    if (!append_nested_node(&nested, sub3)) {
+        free_int_list(sub3);
+        free_nested_list(nested);
+        free_int_list(target);
+        return EXIT_FAILURE;
+    }
+
+    IntNode* common = find_common_elements(nested, target);
+    
+    IntNode* current = common;
+    while (current != NULL) {
+        printf("%d\n", current->value);
+        current = current->next;
+    }
+
+    free_int_list(common);
+    free_nested_list(nested);
+    free_int_list(target);
+
+    return EXIT_SUCCESS;
+}
+```

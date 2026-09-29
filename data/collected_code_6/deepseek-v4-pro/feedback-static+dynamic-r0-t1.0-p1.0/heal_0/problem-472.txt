@@ -1,0 +1,58 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+bool hasConsecutiveNumbers(const int *list, int size) {
+    if (list == NULL || size <= 1) {
+        return false;
+    }
+
+    int *temp = (int *)malloc(size * sizeof(int));
+    if (temp == NULL) {
+        return false;
+    }
+
+    for (int i = 0; i < size; i++) {
+        temp[i] = list[i];
+    }
+
+    for (int i = 0; i < size - 1; i++) {
+        for (int j = 0; j < size - 1 - i; j++) {
+            if (temp[j] > temp[j + 1]) {
+                int t = temp[j];
+                temp[j] = temp[j + 1];
+                temp[j + 1] = t;
+            }
+        }
+    }
+
+    bool result = true;
+    for (int i = 0; i < size - 1; i++) {
+        if (temp[i + 1] != temp[i] + 1) {
+            result = false;
+            break;
+        }
+    }
+
+    free(temp);
+    return result;
+}
+
+int main(void) {
+    int list1[] = {5, 2, 3, 1, 4};
+    int size1 = sizeof(list1) / sizeof(list1[0]);
+
+    int list2[] = {5, 2, 3, 1, 6};
+    int size2 = sizeof(list2) / sizeof(list2[0]);
+
+    int list3[] = {3};
+    int size3 = sizeof(list3) / sizeof(list3[0]);
+
+    printf("List1 contains consecutive numbers: %s\n", hasConsecutiveNumbers(list1, size1) ? "Yes" : "No");
+    printf("List2 contains consecutive numbers: %s\n", hasConsecutiveNumbers(list2, size2) ? "Yes" : "No");
+    printf("List3 contains consecutive numbers: %s\n", hasConsecutiveNumbers(list3, size3) ? "Yes" : "No");
+
+    return 0;
+}
+```

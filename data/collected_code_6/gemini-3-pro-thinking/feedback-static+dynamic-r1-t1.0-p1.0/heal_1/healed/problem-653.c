@@ -1,0 +1,186 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_KEY_LEN 4096
+
+struct KeyValuePair {
+    const char *key;
+    int value;
+};
+
+struct ListNode {
+    int value;
+    struct ListNode *next;
+};
+
+struct MapEntry {
+    char *key;
+    struct ListNode *values;
+    struct MapEntry *next;
+};
+
+struct Map {
+    struct MapEntry **buckets;
+    size_t bucket_count;
+};
+
+static size_t hash_string(const char *str, size_t bucket_count) {
+    size_t hash = 5381;
+    int c;
+    size_t i = 0;
+    while ((c = (unsigned char)str[i++]) && i < MAX_KEY_LEN) {
+        hash = ((hash << 5) + hash) + c;
+    }
+    return hash % bucket_count;
+}
+
+static struct Map* create_map(size_t bucket_count) {
+    if (bucket_count == 0) {
+        return NULL;
+    }
+
+    struct Map *map = malloc(sizeof(struct Map));
+    if (!map) {
+        return NULL;
+    }
+
+    map->bucket_count = bucket_count;
+    map->buckets = calloc(bucket_count, sizeof(struct MapEntry *));
+    if (!map->buckets) {
+        free(map);
+        return NULL;
+    }
+
+    return map;
+}
+
+static int insert_value(struct Map *map, const char *key, int value) {
+    if (!map || !key) {
+        return -1;
+    }
+
+    struct ListNode *node = malloc(sizeof(struct ListNode));
+    if (!node) {
+        return -1;
+    }
+    node->value = value;
+    node->next = NULL;
+
+    size_t index = hash_string(key, map->bucket_count);
+    struct MapEntry *entry = map->buckets[index];
+
+    while (entry) {
+        if (strncmp(entry->key, key, MAX_KEY_LEN) == 0) {
+            node->next = entry->values;
+            entry->values = node;
+            return 0;
+        }
+        entry = entry->next;
+    }
+
+    entry = malloc(sizeof(struct MapEntry));
+    if (!entry) {
+        free(node);
+        return -1;
+    }
+
+    size_t len = 0;
+    while (key[len] != '\0' && len < MAX_KEY_LEN) {
+        len++;
+    }
+
+    entry->key = malloc(len + 1);
+    if (!entry->key) {
+        free(entry);
+        free(node);
+        return -1;
+    }
+    
+    snprintf(entry->key, len + 1, "%s", key);
+
+    entry->values = node;
+    entry->next = map->buckets[index];
+    map->buckets[index] = entry;
+
+    return 0;
+}
+
+void free_map(struct Map *map) {
+    if (!map) {
+        return;
+    }
+
+    for (size_t i = 0; i < map->bucket_count; ++i) {
+        struct MapEntry *entry = map->buckets[i];
+        while (entry) {
+            struct MapEntry *next_entry = entry->next;
+            struct ListNode *node = entry->values;
+            while (node) {
+                struct ListNode *next_node = node->next;
+                free(node);
+                node = next_node;
+            }
+            free(entry->key);
+            free(entry);
+            entry = next_entry;
+        }
+    }
+    free(map->buckets);
+    free(map);
+}
+
+struct Map* group_pairs(const struct KeyValuePair *pairs, size_t num_pairs) {
+    if (!pairs || num_pairs == 0) {
+        return NULL;
+    }
+
+    struct Map *map = create_map(num_pairs);
+    if (!map) {
+        return NULL;
+    }
+
+    for (size_t i = 0; i < num_pairs; ++i) {
+        if (insert_value(map, pairs[i].key, pairs[i].value) != 0) {
+            free_map(map);
+            return NULL;
+        }
+    }
+
+    return map;
+}
+
+int main(void) {
+    struct KeyValuePair pairs[] = {
+        {"apple", 1},
+        {"banana", 2},
+        {"apple", 3},
+        {"cherry", 4},
+        {"banana", 5},
+        {"date", 6}
+    };
+    
+    size_t num_pairs = sizeof(pairs) / sizeof(pairs[0]);
+
+    struct Map *map = group_pairs(pairs, num_pairs);
+    if (!map) {
+        return EXIT_FAILURE;
+    }
+
+    for (size_t i = 0; i < map->bucket_count; ++i) {
+        struct MapEntry *entry = map->buckets[i];
+        while (entry) {
+            printf("%s: ", entry->key);
+            struct ListNode *node = entry->values;
+            while (node) {
+                printf("%d ", node->value);
+                node = node->next;
+            }
+            printf("\n");
+            entry = entry->next;
+        }
+    }
+
+    free_map(map);
+    return EXIT_SUCCESS;
+}

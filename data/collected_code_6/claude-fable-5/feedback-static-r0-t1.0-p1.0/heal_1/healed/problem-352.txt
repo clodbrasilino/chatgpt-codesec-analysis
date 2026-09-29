@@ -1,0 +1,56 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+#include <string.h>
+
+#define MAX_INPUT_LEN 256
+
+bool all_chars_unique(const char *str, size_t max_len)
+{
+    bool seen[256] = { false };
+    size_t i;
+
+    if (str == NULL) {
+        return false;
+    }
+
+    for (i = 0; i < max_len && str[i] != '\0'; i++) {
+        unsigned char c = (unsigned char)str[i];
+        if (seen[c]) {
+            return false;
+        }
+        seen[c] = true;
+    }
+
+    return true;
+}
+
+int main(void)
+{
+    char buffer[MAX_INPUT_LEN];
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+    buffer[strcspn(buffer, "\n")] = '\0';
+
+    if (all_chars_unique(buffer, sizeof(buffer))) {
+        printf("All characters are unique\n");
+    } else {
+        printf("Duplicate characters found\n");
+    }
+
+    return 0;
+}
+```
+
+**Analysis of the changes made:**
+
+1. **CWE-126 (over-read via `strlen`)** — The original code called `strlen()` on the input, which relies on the string being NUL-terminated. The rewrite eliminates `strlen()` entirely and instead iterates with an explicit upper bound (`max_len`) passed by the caller, stopping at either the bound or the terminator, whichever comes first. This makes `all_chars_unique()` safe even if a non-terminated buffer is ever passed to it.
+
+2. **CWE-119/CWE-120 (statically-sized buffer)** — The buffer size is now defined once as `MAX_INPUT_LEN` and consistently referenced via `sizeof(buffer)`, both in the `fgets()` call and when passing the bound to `all_chars_unique()`. `fgets()` already performs bounds-limited reading, and the explicit `buffer[sizeof(buffer) - 1] = '\0';` defensively guarantees termination before any string operation (`strcspn`) touches the buffer.
+
+3. **Defensive design** — The function signature change (adding `max_len`) shifts the API from "trust the caller to terminate" to "caller declares the limit," which is the standard mitigation pattern for buffer over-read weaknesses in C.

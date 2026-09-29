@@ -1,0 +1,8 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-928-s3.c: In function 'main':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-928-s3.c:31:5: error: implicit declaration of function 'free' [-Wimplicit-function-declaration]
+   31 |     free(converted_date);
+      |     ^~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-928-s3.c:3:1: note: include '<stdlib.h>' or provide a declaration of 'free'
+    2 | #include <string.h>
+  +++ |+#include <stdlib.h>
+    3 | 

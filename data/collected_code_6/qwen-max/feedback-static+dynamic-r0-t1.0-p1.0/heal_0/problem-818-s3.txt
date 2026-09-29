@@ -1,0 +1,22 @@
+```c
+#include <stdio.h>
+#include <string.h>
+
+int count_lowercase(const char *str) {
+    int count = 0;
+    while (*str) {
+        if (*str >= 'a' && *str <= 'z') {
+            ++count;
+        }
+        ++str;
+    }
+    return count;
+}
+
+int main() {
+    const char *test_str = "Hello, World!";
+    int count = count_lowercase(test_str);
+    printf("Lowercase letters: %d\n", count);
+    return 0;
+}
+```

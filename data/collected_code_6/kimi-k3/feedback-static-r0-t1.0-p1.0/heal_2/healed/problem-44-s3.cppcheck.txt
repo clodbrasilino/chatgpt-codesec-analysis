@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-44-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-44-s3.c:50:47: style: Condition 'match_word_at_start(NULL,0,word,strlen(word))' is always false [knownConditionTrueFalse]
+    printf("Test 5: %s\n", match_word_at_start(NULL, 0, word, strlen(word)) ? "Match" : "No match");
+                                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-44-s3.c:50:47: note: Calling function 'match_word_at_start' returns 0
+    printf("Test 5: %s\n", match_word_at_start(NULL, 0, word, strlen(word)) ? "Match" : "No match");
+                                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-44-s3.c:50:47: note: Condition 'match_word_at_start(NULL,0,word,strlen(word))' is always false
+    printf("Test 5: %s\n", match_word_at_start(NULL, 0, word, strlen(word)) ? "Match" : "No match");
+                                              ^

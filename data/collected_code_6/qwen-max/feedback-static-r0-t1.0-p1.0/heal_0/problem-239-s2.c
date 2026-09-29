@@ -1,0 +1,30 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+long long count_sequences(int n, int m) {
+    if (n == 0) return 1;
+    if (m == 0) return 0;
+    long long dp[n + 1][m + 1];
+    for (int i = 0; i <= m; ++i) dp[1][i] = 1;
+    for (int i = 2; i <= n; ++i) {
+        for (int j = 0; j <= m; ++j) {
+            dp[i][j] = 0;
+            for (int k = 0; k * 2 <= j; ++k) {
+                dp[i][j] += dp[i - 1][k];
+            }
+        }
+    }
+    long long result = 0;
+    for (int i = 0; i <= m; ++i) {
+        result += dp[n][i];
+    }
+    return result;
+}
+
+int main() {
+    int n = 3;
+    int m = 5;
+    long long result = count_sequences(n, m);
+    printf("Number of sequences: %lld\n", result);
+    return 0;
+}

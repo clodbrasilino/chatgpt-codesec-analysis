@@ -1,0 +1,82 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <regex.h>
+
+static int match_pattern(const char *text)
+{
+    regex_t regex;
+    int ret;
+
+    if (text == NULL) {
+        return -1;
+    }
+
+    ret = regcomp(&regex, "a.*b$", REG_EXTENDED | REG_NOSUB);
+    if (ret != 0) {
+        size_t errlen = regerror(ret, &regex, NULL, 0);
+        char *errbuf = malloc(errlen);
+        if (errbuf != NULL) {
+            regerror(ret, &regex, errbuf, errlen);
+            errbuf[errlen - 1] = '\0';
+            fprintf(stderr, "Regex compilation failed: %s\n", errbuf);
+            free(errbuf);
+        } else {
+            fprintf(stderr, "Regex compilation failed and could not allocate error buffer\n");
+        }
+        return -1;
+    }
+
+    ret = regexec(&regex, text, 0, NULL, 0);
+    regfree(&regex);
+
+    if (ret == 0) {
+        return 1;
+    } else if (ret == REG_NOMATCH) {
+        return 0;
+    } else {
+        fprintf(stderr, "Regex execution failed\n");
+        return -1;
+    }
+}
+
+int main(void)
+{
+    const char *tests[] = {
+        "ab",
+        "acb",
+        "a123b",
+        "abc",
+        "xyz",
+        "aXXXXb"
+    };
+    size_t count = sizeof(tests) / sizeof(tests[0]);
+    size_t i;
+
+    for (i = 0; i < count; i++) {
+        int result = match_pattern(tests[i]);
+        if (result < 0) {
+            fprintf(stderr, "Error matching string: %s\n", tests[i]);
+            return EXIT_FAILURE;
+        }
+        if (result == 1) {
+            printf("\"%s\" matches\n", tests[i]);
+        } else {
+            printf("\"%s\" does not match\n", tests[i]);
+        }
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the change:**
+
+The Flawfinder warning (CWE-119/CWE-120) flagged the statically-sized `char errbuf[ERRBUF_SIZE]` array. While the original code was actually reasonably safe (it passed `sizeof(errbuf)` to `regerror()` and explicitly null-terminated), the rewritten version eliminates the concern entirely by:
+
+1. **Querying the required size first** — calling `regerror(ret, &regex, NULL, 0)` returns the exact buffer size needed for the full error message, including the null terminator.
+2. **Allocating dynamically** — `malloc(errlen)` guarantees the buffer is exactly the right size, so no truncation or overflow is possible regardless of message length.
+3. **Checking the allocation** — a `NULL` return from `malloc` is handled gracefully with a fallback error message rather than dereferencing a null pointer.
+4. **Freeing the buffer** — no memory leak on the error path.
+
+The rest of the logic (null-input guard, `regfree()` after `regexec()`, distinguishing `REG_NOMATCH` from genuine execution errors, and the exhaustive result handling in `main`) was already sound and is preserved unchanged.

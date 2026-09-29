@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-647-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-647-s3.c:85:24: style: The comparison 'substr_len > len-(unsigned long)start' is always false because 'substr_len' and 'len-(unsigned long)start' represent the same value. [knownConditionTrueFalse]
+        if (substr_len > len - (size_t)start)
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-647-s3.c:82:33: note: 'substr_len' is assigned value 'len-(unsigned long)start' here.
+        size_t substr_len = len - (size_t)start;
+                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-647-s3.c:85:24: note: The comparison 'substr_len > len-(unsigned long)start' is always false because 'substr_len' and 'len-(unsigned long)start' represent the same value.
+        if (substr_len > len - (size_t)start)
+                       ^

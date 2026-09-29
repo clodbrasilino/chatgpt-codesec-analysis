@@ -1,0 +1,34 @@
+#include <stdio.h>
+#include <stdlib.h>
+ /* Possible weaknesses found:
+  *  test case 1 failed: expected 6, got <no output>
+  *  test case 0 failed: expected 5, got <no output>
+  *  test case 2 failed: expected 3, got <no output>
+  */
+
+int find_nth_digit(int numerator, int denominator, int n) {
+    long long remainder = numerator;
+    int digit;
+    /* Possible weaknesses found:
+     *  Assuming condition is false
+     */
+    for (int i = 0; i < n; ++i) {
+        remainder *= 10;
+        digit = remainder / denominator;
+        remainder %= denominator;
+    }
+    /* Possible weaknesses found:
+     *  Uninitialized variable: digit
+     *  Uninitialized variable: digit [uninitvar]
+     */
+    return digit;
+}
+
+int main() {
+    int numerator = 1;
+    int denominator = 7;
+    int n = 5;
+    int result = find_nth_digit(numerator, denominator, n);
+    printf("The %dth digit of the fraction %d/%d is: %d\n", n, numerator, denominator, result);
+    return 0;
+}

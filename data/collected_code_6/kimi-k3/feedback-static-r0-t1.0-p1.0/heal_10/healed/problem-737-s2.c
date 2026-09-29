@@ -1,0 +1,50 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <regex.h>
+#include <string.h>
+
+int starts_with_vowel(const char *str) {
+    regex_t regex;
+    int ret;
+    int result = 0;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    ret = regcomp(&regex, "^[aeiouAEIOU]", REG_EXTENDED);
+    if (ret != 0) {
+        return 0;
+    }
+
+    ret = regexec(&regex, str, 0, NULL, 0);
+    if (ret == 0) {
+        result = 1;
+    }
+
+    regfree(&regex);
+    return result;
+}
+
+int main(void) {
+    char *buffer = NULL;
+    size_t buffer_size = 0;
+    ssize_t read_len;
+
+    read_len = getline(&buffer, &buffer_size, stdin);
+    
+    if (read_len != -1) {
+        size_t len = strcspn(buffer, "\n");
+        buffer[len] = '\0';
+
+        if (starts_with_vowel(buffer)) {
+            printf("The string starts with a vowel.\n");
+        } else {
+            printf("The string does not start with a vowel.\n");
+        }
+        
+        free(buffer);
+    }
+
+    return 0;
+}

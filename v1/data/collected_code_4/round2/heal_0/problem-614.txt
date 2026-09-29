@@ -1,0 +1,21 @@
+```c
+#include <stdio.h>
+
+// Function to calculate the cumulative sum.
+int cumulativeSum(int numbers[], int size) {
+    int sum = 0;
+    for(int i = 0; i < size; ++i) {
+        sum = sum + numbers[i];
+    }
+    return sum;
+}
+
+int main() {
+    int numbers[] = {1, 2, 3, 4, 5};
+    int size = sizeof(numbers)/sizeof(numbers[0]);
+    int sum = cumulativeSum(numbers, size);
+    printf("The cumulative sum is: %d\n", sum);
+    return 0;
+}
+```
+The provided C code is a function for cumulative sum of values in a list, with a main function to demonstrate it. It follows proper C programming standards and avoids the CWEs mentioned. The function "cumulativeSum" takes an array of integers and its size, calculates the cumulative sum of the elements, and it returns the sum. The "main" function provides the array values, calls the "cumulativeSum" function, and prints the result to the standard output. No resources are improperly controlled during their lifetime. Exceptional conditions are also handled in that the loop will not execute if the array is empty, avoiding any range errors. The code adheres to standard C syntax rules and practices, avoiding any CWE-710 violations.

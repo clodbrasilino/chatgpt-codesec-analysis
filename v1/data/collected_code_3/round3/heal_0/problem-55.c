@@ -1,0 +1,13 @@
+#include <stdio.h>
+#include <math.h>
+
+double nthTerm(int a, int r, int n) {
+    return a * pow(r, n - 1);
+}
+
+int main() {
+    int a = 2, r = 3, n = 4;
+    double result = nthTerm(a, r, n);
+    printf("The nth term of the geometric series is: %.2f\n", result);
+    return 0;
+}

@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-874-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-874-s3.c:6:41: style: Condition 'substr[len]' is always true [knownConditionTrueFalse]
+    while (substr[len] != '\0' && substr[len]) len++;
+                                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-874-s3.c:7:37: warning: Expression '-1' has a negative value. That is converted to an unsigned value and used in an unsigned calculation. [signConversion]
+    if (len == 0 || len > (size_t)(-1 / (sizeof(char)))) return 0;
+                                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-874-s3.c:9:23: style: Variable 'start' is assigned a value that is never used. [unreadVariable]
+    const char *start = str;
+                      ^

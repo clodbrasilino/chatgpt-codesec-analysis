@@ -1,0 +1,16 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-851-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-851-s2.c:37:20: style: Condition 'd2!=d1' is always true [knownConditionTrueFalse]
+            if (d2 != d1)
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-851-s2.c:31:19: note: Assuming that condition 'i<=n/i' is not redundant
+    for (i = 1; i <= n / i; ++i) {
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-851-s2.c:33:26: note: d1 is assigned 'i' here.
+            long long d1 = i;
+                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-851-s2.c:34:26: note: d2 is assigned 'n/i' here.
+            long long d2 = n / i;
+                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-851-s2.c:37:20: note: Condition 'd2!=d1' is always true
+            if (d2 != d1)
+                   ^

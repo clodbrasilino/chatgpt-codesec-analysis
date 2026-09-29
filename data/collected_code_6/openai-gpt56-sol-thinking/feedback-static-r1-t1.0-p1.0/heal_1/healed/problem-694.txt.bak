@@ -1,0 +1,186 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+#include <stdbool.h>
+
+typedef struct {
+    const char *value;
+} DictionaryEntry;
+
+typedef struct {
+    const DictionaryEntry *entries;
+    size_t count;
+} Dictionary;
+
+typedef enum {
+    UNIQUE_SUCCESS = 0,
+    UNIQUE_INVALID_ARGUMENT,
+    UNIQUE_OUT_OF_MEMORY,
+    UNIQUE_SIZE_OVERFLOW
+} UniqueStatus;
+
+static void free_unique_values(char **values, size_t count)
+{
+    if (values == NULL) {
+        return;
+    }
+
+    for (size_t i = 0; i < count; ++i) {
+        free(values[i]);
+    }
+
+    free(values);
+}
+
+static UniqueStatus duplicate_string(const char *source, char **destination)
+{
+    size_t length;
+    char *copy;
+
+    if (source == NULL || destination == NULL) {
+        return UNIQUE_INVALID_ARGUMENT;
+    }
+
+    *destination = NULL;
+    length = strlen(source);
+
+    if (length == SIZE_MAX) {
+        return UNIQUE_SIZE_OVERFLOW;
+    }
+
+    copy = malloc(length + 1);
+    if (copy == NULL) {
+        return UNIQUE_OUT_OF_MEMORY;
+    }
+
+    memcpy(copy, source, length + 1);
+    *destination = copy;
+
+    return UNIQUE_SUCCESS;
+}
+
+UniqueStatus extract_unique_values(
+    const Dictionary *dictionary,
+    char ***out_values,
+    size_t *out_count)
+{
+    char **unique_values;
+    size_t unique_count = 0;
+
+    if (out_values == NULL || out_count == NULL) {
+        return UNIQUE_INVALID_ARGUMENT;
+    }
+
+    *out_values = NULL;
+    *out_count = 0;
+
+    if (dictionary == NULL ||
+        (dictionary->count > 0 && dictionary->entries == NULL)) {
+        return UNIQUE_INVALID_ARGUMENT;
+    }
+
+    if (dictionary->count == 0) {
+        return UNIQUE_SUCCESS;
+    }
+
+    for (size_t i = 0; i < dictionary->count; ++i) {
+        if (dictionary->entries[i].value == NULL) {
+            return UNIQUE_INVALID_ARGUMENT;
+        }
+    }
+
+    if (dictionary->count > SIZE_MAX / sizeof(*unique_values)) {
+        return UNIQUE_SIZE_OVERFLOW;
+    }
+
+    unique_values = calloc(dictionary->count, sizeof(*unique_values));
+    if (unique_values == NULL) {
+        return UNIQUE_OUT_OF_MEMORY;
+    }
+
+    for (size_t i = 0; i < dictionary->count; ++i) {
+        bool found = false;
+
+        for (size_t j = 0; j < unique_count; ++j) {
+            if (strcmp(dictionary->entries[i].value, unique_values[j]) == 0) {
+                found = true;
+                break;
+            }
+        }
+
+        if (!found) {
+            UniqueStatus status = duplicate_string(
+                dictionary->entries[i].value,
+                &unique_values[unique_count]);
+
+            if (status != UNIQUE_SUCCESS) {
+                free_unique_values(unique_values, unique_count);
+                return status;
+            }
+
+            ++unique_count;
+        }
+    }
+
+    *out_values = unique_values;
+    *out_count = unique_count;
+
+    return UNIQUE_SUCCESS;
+}
+
+static const char *unique_status_message(UniqueStatus status)
+{
+    switch (status) {
+        case UNIQUE_SUCCESS:
+            return "success";
+        case UNIQUE_INVALID_ARGUMENT:
+            return "invalid argument";
+        case UNIQUE_OUT_OF_MEMORY:
+            return "out of memory";
+        case UNIQUE_SIZE_OVERFLOW:
+            return "size overflow";
+        default:
+            return "unknown error";
+    }
+}
+
+int main(void)
+{
+    const DictionaryEntry entries[] = {
+        {"apple"},
+        {"banana"},
+        {"apple"},
+        {"orange"},
+        {"banana"}
+    };
+
+    const Dictionary dictionary = {
+        entries,
+        sizeof(entries) / sizeof(entries[0])
+    };
+
+    char **unique_values = NULL;
+    size_t unique_count = 0;
+
+    UniqueStatus status = extract_unique_values(
+        &dictionary,
+        &unique_values,
+        &unique_count);
+
+    if (status != UNIQUE_SUCCESS) {
+        fprintf(stderr, "Extraction failed: %s\n",
+                unique_status_message(status));
+        return EXIT_FAILURE;
+    }
+
+    for (size_t i = 0; i < unique_count; ++i) {
+        if (printf("%s\n", unique_values[i]) < 0) {
+            free_unique_values(unique_values, unique_count);
+            return EXIT_FAILURE;
+        }
+    }
+
+    free_unique_values(unique_values, unique_count);
+    return EXIT_SUCCESS;
+}

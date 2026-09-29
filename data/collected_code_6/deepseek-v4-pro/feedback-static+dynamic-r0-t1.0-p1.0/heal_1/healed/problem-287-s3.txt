@@ -1,0 +1,48 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+#include <errno.h>
+
+long long sum_of_squares_even(int n) {
+    if (n < 0) {
+        fprintf(stderr, "Error: n must be non-negative\n");
+        exit(EXIT_FAILURE);
+    }
+    if (n == 0) {
+        return 0;
+    }
+    if (n > INT_MAX / 2) {
+        fprintf(stderr, "Error: n is too large, overflow would occur\n");
+        exit(EXIT_FAILURE);
+    }
+    long long max_val = LLONG_MAX / (4LL * n);
+    if (n > max_val / n) {
+        fprintf(stderr, "Error: n is too large, overflow would occur\n");
+        exit(EXIT_FAILURE);
+    }
+    long long sum = 0;
+    for (int i = 1; i <= n; i++) {
+        long long even = 2LL * i;
+        long long square = even * even;
+        if (sum > LLONG_MAX - square) {
+            fprintf(stderr, "Error: overflow detected during summation\n");
+            exit(EXIT_FAILURE);
+        }
+        sum += square;
+    }
+    return sum;
+}
+
+int main(void) {
+    int n;
+    printf("Enter n: ");
+    if (scanf("%d", &n) != 1) {
+        fprintf(stderr, "Error: Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    long long result = sum_of_squares_even(n);
+    printf("%lld\n", result);
+    return EXIT_SUCCESS;
+}
+```

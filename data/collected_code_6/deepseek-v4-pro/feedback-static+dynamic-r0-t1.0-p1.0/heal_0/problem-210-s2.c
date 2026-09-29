@@ -1,0 +1,40 @@
+#include <stdio.h>
+#include <regex.h>
+#include <string.h>
+
+int check_alphanumeric(const char *str) {
+    regex_t regex;
+    int ret;
+    int result = 1;
+
+    ret = regcomp(&regex, "^[a-zA-Z0-9]+$", REG_EXTENDED);
+    if (ret) {
+        return 0;
+    }
+
+    ret = regexec(&regex, str, 0, NULL, 0);
+    if (ret == REG_NOMATCH) {
+        result = 0;
+    } else if (ret != 0) {
+        result = 0;
+    }
+
+    regfree(&regex);
+    return result;
+}
+
+int main(void) {
+    const char *test1 = "abc123XYZ";
+    const char *test2 = "hello world";
+    const char *test3 = "test@123";
+    const char *test4 = "";
+    const char *test5 = "OnlyLetters";
+
+    printf("Test 1: %s -> %d\n", test1, check_alphanumeric(test1));
+    printf("Test 2: %s -> %d\n", test2, check_alphanumeric(test2));
+    printf("Test 3: %s -> %d\n", test3, check_alphanumeric(test3));
+    printf("Test 4: %s -> %d\n", test4, check_alphanumeric(test4));
+    printf("Test 5: %s -> %d\n", test5, check_alphanumeric(test5));
+
+    return 0;
+}

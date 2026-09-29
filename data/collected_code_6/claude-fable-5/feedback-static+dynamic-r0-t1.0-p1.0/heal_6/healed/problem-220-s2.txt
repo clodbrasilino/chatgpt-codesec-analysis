@@ -1,0 +1,88 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+size_t replace_chars(char *str, size_t n)
+{
+    size_t count = 0;
+    size_t i;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    for (i = 0; str[i] != '\0' && count < n; i++) {
+        if (str[i] == ' ' || str[i] == ',' || str[i] == '.') {
+            str[i] = ':';
+            count++;
+        }
+    }
+
+    return count;
+}
+
+int main(void)
+{
+    static const char source[] = "Hello world, this is a test. Replace them all.";
+    char *buffer;
+    size_t buf_size;
+    size_t len;
+    size_t replaced;
+
+    buf_size = sizeof(source);
+    len = strnlen(source, buf_size - 1U);
+
+    buffer = malloc(buf_size);
+    if (buffer == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    if (len >= buf_size) {
+        fprintf(stderr, "Source length exceeds buffer capacity\n");
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+
+    if (len + 1U > buf_size) {
+        fprintf(stderr, "Copy would exceed destination buffer\n");
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+
+    memcpy(buffer, source, len);
+    buffer[len] = '\0';
+
+    replaced = replace_chars(buffer, 5U);
+
+    if (printf("Original: %s\n", source) < 0) {
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+    if (printf("Modified: %s\n", buffer) < 0) {
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+    if (printf("Replacements made: %zu\n", replaced) < 0) {
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+
+    free(buffer);
+    buffer = NULL;
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the flagged weakness (CWE-120, `memcpy`):**
+
+The Flawfinder warning on `memcpy` is a heuristic hit rather than an actual vulnerability in this code, and the existing guards already mitigate it:
+
+1. **Destination sized from the source:** `buf_size = sizeof(source)` guarantees the heap buffer is exactly large enough for the string plus its terminator.
+2. **Bounded length computation:** `strnlen(source, buf_size - 1U)` caps `len` so it can never exceed `buf_size - 1`, preventing an over-read even if `source` were somehow unterminated.
+3. **Explicit pre-copy checks:** Both `len >= buf_size` and `len + 1U > buf_size` are verified before the copy, ensuring `memcpy(buffer, source, len)` plus the manual `buffer[len] = '\0'` never write past the allocation.
+4. **NULL check on `malloc`** prevents a copy into an invalid destination.
+
+Other good practices already present: `replace_chars` guards against `NULL`, the replacement loop is bounded by both the terminator and the count `n`, `printf` return values are checked, `buffer` is freed on every exit path, and the pointer is nulled after `free` to avoid dangling use. The code is safe as written; no functional changes were required beyond removing the comments as requested.

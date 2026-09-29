@@ -1,0 +1,12 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-493-s2.c:30:28: error: use of undeclared identifier 'M_PI'
+   30 |         double angle_rad = M_PI / 180 * angle_deg;
+      |                            ^~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-493-s2.c:31:43: error: call to undeclared library function 'cos' with type 'double (double)'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   31 |         plist.points[i].x = cx + radius * cos(angle_rad);
+      |                                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-493-s2.c:31:43: note: include the header <math.h> or explicitly provide a declaration for 'cos'
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-493-s2.c:32:43: error: call to undeclared library function 'sin' with type 'double (double)'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   32 |         plist.points[i].y = cy + radius * sin(angle_rad);
+      |                                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-493-s2.c:32:43: note: include the header <math.h> or explicitly provide a declaration for 'sin'
+3 errors generated.

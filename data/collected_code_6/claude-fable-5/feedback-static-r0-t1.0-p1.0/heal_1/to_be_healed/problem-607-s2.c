@@ -1,0 +1,104 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+static int escape_literal(const char *literal, char *buffer, size_t buffer_size)
+{
+    size_t j = 0;
+    size_t i;
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    size_t len = strlen(literal);
+
+    for (i = 0; i < len; i++) {
+        if (strchr(".^$*+?()[]{}|\\", literal[i]) != NULL) {
+            if (j + 2 >= buffer_size) {
+                return -1;
+            }
+            buffer[j++] = '\\';
+            buffer[j++] = literal[i];
+        } else {
+            if (j + 1 >= buffer_size) {
+                return -1;
+            }
+            buffer[j++] = literal[i];
+        }
+    }
+    buffer[j] = '\0';
+    return 0;
+}
+
+int search_pattern(const char *text, const char *literal, long *start, long *end)
+{
+    regex_t regex;
+    regmatch_t match;
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char escaped[1024];
+    int ret;
+
+    if (text == NULL || literal == NULL || start == NULL || end == NULL) {
+        return -1;
+    }
+
+    if (escape_literal(literal, escaped, sizeof(escaped)) != 0) {
+        return -1;
+    }
+
+    ret = regcomp(&regex, escaped, REG_EXTENDED);
+    if (ret != 0) {
+        /* Possible weaknesses found:
+         * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+         */
+        char errbuf[256];
+        regerror(ret, &regex, errbuf, sizeof(errbuf));
+        fprintf(stderr, "regcomp failed: %s\n", errbuf);
+        return -1;
+    }
+
+    ret = regexec(&regex, text, 1, &match, 0);
+    if (ret == 0) {
+        *start = (long)match.rm_so;
+        *end = (long)match.rm_eo;
+        regfree(&regex);
+        return 0;
+    } else if (ret == REG_NOMATCH) {
+        regfree(&regex);
+        return 1;
+    } else {
+        /* Possible weaknesses found:
+         * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+         */
+        char errbuf[256];
+        regerror(ret, &regex, errbuf, sizeof(errbuf));
+        fprintf(stderr, "regexec failed: %s\n", errbuf);
+        regfree(&regex);
+        return -1;
+    }
+}
+
+int main(void)
+{
+    const char *text = "The quick brown fox jumps over the lazy dog";
+    const char *literal = "brown fox";
+    long start = 0;
+    long end = 0;
+    int result;
+
+    result = search_pattern(text, literal, &start, &end);
+
+    if (result == 0) {
+        printf("Pattern \"%s\" found in text.\n", literal);
+        printf("Match starts at index %ld and ends at index %ld.\n", start, end - 1);
+    } else if (result == 1) {
+        printf("Pattern \"%s\" not found in text.\n", literal);
+    } else {
+        fprintf(stderr, "An error occurred during pattern search.\n");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

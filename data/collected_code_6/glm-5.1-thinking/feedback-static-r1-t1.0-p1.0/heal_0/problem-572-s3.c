@@ -1,0 +1,35 @@
+#include <stdio.h>
+
+int remove_duplicates(int *arr, int n) {
+    if (arr == NULL || n <= 0) {
+        return 0;
+    }
+    int k = 0;
+    for (int i = 0; i < n; i++) {
+        int is_duplicate = 0;
+        for (int j = 0; j < k; j++) {
+            if (arr[i] == arr[j]) {
+                is_duplicate = 1;
+                break;
+            }
+        }
+        if (!is_duplicate) {
+            arr[k++] = arr[i];
+        }
+    }
+    return k;
+}
+
+int main() {
+    int arr[] = {1, 2, 3, 2, 4, 1, 5, 6, 5};
+    int n = sizeof(arr) / sizeof(arr[0]);
+
+    int new_n = remove_duplicates(arr, n);
+
+    for (int i = 0; i < new_n; i++) {
+        printf("%d ", arr[i]);
+    }
+    printf("\n");
+
+    return 0;
+}

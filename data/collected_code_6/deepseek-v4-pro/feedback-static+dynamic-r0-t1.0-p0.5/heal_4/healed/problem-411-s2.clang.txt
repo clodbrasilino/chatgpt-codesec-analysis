@@ -1,0 +1,9 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_4/healed/problem-411-s2.c:31:80: error: too many arguments to function call, expected 5, have 6
+   31 |     while (src_pos < len && regexec(&regex, cursor, len - src_pos, matches, 2, 0) == 0) {
+      |                             ~~~~~~~                                            ^
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/_regex.h:226:5: note: 'regexec' declared here
+  226 | int     regexec(const regex_t * __restrict, const char * __restrict, size_t __nmatch,
+      |         ^       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  227 |                 regmatch_t __pmatch[ __restrict _LIBC_COUNT(__nmatch)], int);
+      |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1 error generated.

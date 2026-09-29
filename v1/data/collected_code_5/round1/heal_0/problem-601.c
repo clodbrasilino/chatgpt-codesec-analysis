@@ -1,0 +1,80 @@
+#include<stdio.h>
+#include<string.h>
+
+#define max 1000
+
+void merge(int array[][2], int left, int middle, int right) {
+    int firstLength = middle - left + 1;
+    int secondLength = right - middle;
+
+    int firstHalf[firstLength][2], secondHalf[secondLength][2];
+
+    memcpy(firstHalf, &array[left], firstLength * 2 * sizeof(int));
+    memcpy(secondHalf, &array[middle+1], secondLength * 2 * sizeof(int));
+
+    int i = 0;
+    int j = 0;
+    int k = left;
+
+    while (i < firstLength && j < secondLength) {
+        if (firstHalf[i][1] < secondHalf[j][1]) {
+            array[k][0] = firstHalf[i][0];
+            array[k][1] = firstHalf[i][1];
+            i++;
+        } else {
+            array[k][0] = secondHalf[j][0];
+            array[k][1] = secondHalf[j][1];
+            j++;
+        }
+        k++;
+    }
+
+    while (i < firstLength) {
+        array[k][0] = firstHalf[i][0];
+        array[k][1] = firstHalf[i][1];
+        i++;
+        k++;
+    }
+
+    while (j < secondLength) {
+        array[k][0] = secondHalf[j][0];
+        array[k][1] = secondHalf[j][1];
+        j++;
+        k++;
+    }
+}
+
+void mergeSort(int array[][2], int left, int right) {
+    if (left < right) {
+        int middle = (left + right) / 2;
+        mergeSort(array, left, middle);
+        mergeSort(array, middle + 1, right);
+
+        merge(array, left, middle, right);
+    }
+}
+
+int lengthOfLongestChain(int array[][2], int n) {
+    mergeSort(array, 0, n - 1);
+
+    int maxLength = 1, end = array[0][1];
+
+    for (int i = 1; i < n; i++) {
+        if (array[i][0] > end) {
+            end = array[i][1];
+            maxLength++;
+        }
+    }
+
+    return maxLength;
+}
+
+
+int main() {
+    int array[max][2] = {{5, 24}, {27, 40}, {15, 25}, {50, 60}};
+    int n = sizeof(array) / sizeof(array[0]);
+
+    printf("Length of the longest chain is %d.\n", lengthOfLongestChain(array, n));
+
+    return 0;
+}

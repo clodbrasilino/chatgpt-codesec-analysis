@@ -1,0 +1,92 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct Pair {
+    char *key;
+    int value;
+    struct Pair *next;
+} Pair;
+
+typedef struct {
+    char *key;
+    Pair *head;
+} DictionaryEntry;
+
+typedef struct {
+    DictionaryEntry **entries;
+    int size;
+} Dictionary;
+
+Dictionary* createDictionary(int size) {
+    Dictionary *dict = (Dictionary *)malloc(sizeof(Dictionary));
+    dict->size = size;
+    dict->entries = (DictionaryEntry **)calloc(size, sizeof(DictionaryEntry *));
+    for (int i = 0; i < size; ++i) {
+        dict->entries[i] = (DictionaryEntry *)malloc(sizeof(DictionaryEntry));
+        dict->entries[i]->key = NULL;
+        dict->entries[i]->head = NULL;
+    }
+    return dict;
+}
+
+unsigned long hash(char *str) {
+    unsigned long hash = 5381;
+    int c;
+    while ((c = *str++))
+        hash = ((hash << 5) + hash) + c; /* hash * 33 + c */
+    return hash % 1000;
+}
+
+void addPair(Dictionary *dict, char *key, int value) {
+    unsigned long index = hash(key) % dict->size;
+    Pair *newPair = (Pair *)malloc(sizeof(Pair));
+    newPair->key = strdup(key);
+    newPair->value = value;
+    newPair->next = dict->entries[index]->head;
+    dict->entries[index]->head = newPair;
+}
+
+void printDictionary(Dictionary *dict) {
+    for (int i = 0; i < dict->size; ++i) {
+        if (dict->entries[i]->head != NULL) {
+            printf("%s: [", dict->entries[i]->key ? dict->entries[i]->key : "NULL");
+            for (Pair *p = dict->entries[i]->head; p != NULL; p = p->next) {
+                printf("%d", p->value);
+                if (p->next != NULL)
+                    printf(", ");
+            }
+            printf("]\n");
+        }
+    }
+}
+
+void freeDictionary(Dictionary *dict) {
+    for (int i = 0; i < dict->size; ++i) {
+        Pair *pair = dict->entries[i]->head;
+        while (pair) {
+            Pair *temp = pair;
+            pair = pair->next;
+            free(temp->key);
+            free(temp);
+        }
+        free(dict->entries[i]);
+    }
+    free(dict->entries);
+    free(dict);
+}
+
+int main() {
+    Dictionary *myDict = createDictionary(10);
+    addPair(myDict, "fruits", 5);
+    addPair(myDict, "fruits", 10);
+    addPair(myDict, "fruits", 15);
+    addPair(myDict, "vegetables", 20);
+    addPair(myDict, "vegetables", 25);
+    addPair(myDict, "grains", 30);
+
+    printDictionary(myDict);
+
+    freeDictionary(myDict);
+    return 0;
+}

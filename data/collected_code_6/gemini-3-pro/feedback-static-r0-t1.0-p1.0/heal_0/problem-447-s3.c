@@ -1,0 +1,40 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+void calculate_cubes(const int *input_list, int *output_list, size_t length) {
+    if (input_list == NULL || output_list == NULL) {
+        return;
+    }
+    for (size_t i = 0; i < length; ++i) {
+        output_list[i] = input_list[i] * input_list[i] * input_list[i];
+    }
+}
+
+int main(void) {
+    size_t length = 5;
+    int *input_list = (int *)malloc(length * sizeof(int));
+    int *output_list = (int *)malloc(length * sizeof(int));
+
+    if (input_list == NULL || output_list == NULL) {
+        free(input_list);
+        free(output_list);
+        return 1;
+    }
+
+    input_list[0] = 1;
+    input_list[1] = 2;
+    input_list[2] = 3;
+    input_list[3] = 4;
+    input_list[4] = 5;
+
+    calculate_cubes(input_list, output_list, length);
+
+    for (size_t i = 0; i < length; ++i) {
+        printf("%d\n", output_list[i]);
+    }
+
+    free(input_list);
+    free(output_list);
+
+    return 0;
+}

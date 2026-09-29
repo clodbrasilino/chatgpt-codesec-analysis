@@ -1,0 +1,127 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#define MAX_ROMAN_LEN 64
+
+static int roman_char_value(char c)
+{
+    switch (toupper((unsigned char)c)) {
+    case 'I': return 1;
+    case 'V': return 5;
+    case 'X': return 10;
+    case 'L': return 50;
+    case 'C': return 100;
+    case 'D': return 500;
+    case 'M': return 1000;
+    default:  return -1;
+    }
+}
+
+static int roman_to_int(const char *s, size_t max_len, int *result)
+{
+    size_t len;
+    size_t i;
+    int total = 0;
+
+    if (s == NULL || result == NULL || max_len == 0) {
+        return -1;
+    }
+
+    len = strnlen(s, max_len);
+    if (len == 0 || len >= max_len) {
+        return -1;
+    }
+
+    for (i = 0; i < len; i++) {
+        int current = roman_char_value(s[i]);
+        if (current < 0) {
+            return -1;
+        }
+
+        if (i + 1 < len) {
+            int next = roman_char_value(s[i + 1]);
+            if (next < 0) {
+                return -1;
+            }
+            if (current < next) {
+                total += next - current;
+                i++;
+                continue;
+            }
+        }
+        total += current;
+    }
+
+    *result = total;
+    return 0;
+}
+
+static int read_line(char *buffer, size_t size)
+{
+    size_t len;
+
+    if (buffer == NULL || size == 0) {
+        return -1;
+    }
+
+    if (fgets(buffer, (int)size, stdin) == NULL) {
+        return -1;
+    }
+
+    buffer[size - 1] = '\0';
+    len = strnlen(buffer, size);
+
+    if (memchr(buffer, '\n', len) == NULL && len == size - 1) {
+        int ch;
+        while ((ch = getchar()) != '\n' && ch != EOF) {
+        }
+        return -2;
+    }
+
+    buffer[strcspn(buffer, "\r\n")] = '\0';
+    return 0;
+}
+
+int main(void)
+{
+    char buffer[MAX_ROMAN_LEN];
+    int value = 0;
+    int rc;
+
+    memset(buffer, 0, sizeof(buffer));
+
+    printf("Enter a Roman numeral: ");
+    fflush(stdout);
+
+    rc = read_line(buffer, sizeof(buffer));
+    if (rc == -2) {
+        fprintf(stderr, "Input too long\n");
+        return EXIT_FAILURE;
+    }
+    if (rc != 0) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (roman_to_int(buffer, sizeof(buffer), &value) != 0) {
+        fprintf(stderr, "Invalid Roman numeral: %s\n", buffer);
+        return EXIT_FAILURE;
+    }
+
+    printf("%s = %d\n", buffer, value);
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes on the flagged weaknesses and how the rewrite addresses them:**
+
+1. **CWE-119/CWE-120 (statically-sized `buffer`):** The array is fixed-size, but every access is bounded. `fgets` receives `sizeof(buffer)`, guaranteeing no overflow. Input is explicitly rejected if it fills the buffer without a newline, and a forced NUL terminator is written at `buffer[size - 1]`.
+
+2. **CWE-126 (`strlen` over-read):** Replaced `strlen` with `strnlen(buffer, size)`, which is bounded even if termination were ever missing. The newline check now uses `memchr` with an explicit length instead of `strchr`, so it also cannot over-read.
+
+3. **CWE-120/CWE-20 (`getchar` in a loop):** The drain loop writes nothing into any buffer; it only discards characters until `\n` or `EOF`, so no boundary issue exists. It remains, correctly bounded by its terminating conditions, and is now isolated in `read_line` with a distinct error code so the "input too long" case is handled explicitly.
+
+4. **Defensive additions:** `roman_to_int` already validated its inputs (NULL checks, `strnlen` bound, per-character validation); that logic is preserved unchanged since it was sound. The input-handling logic was factored into `read_line` so all buffer-boundary decisions live in one auditable place.

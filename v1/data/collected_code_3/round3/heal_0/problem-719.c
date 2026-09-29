@@ -1,0 +1,36 @@
+#include <stdio.h>
+#include <string.h>
+
+int match(char *str) {
+    int state = 0;
+    int i = 0;
+    while (str[i] != '\0') {
+        if (state == 0 && str[i] == 'a') {
+            state = 1;
+        } else if (state == 1 && str[i] == 'b') {
+            state = 2;
+        } else if (state == 2 && str[i] == 'b') {
+            state = 2;
+        } else {
+            state = 0;
+        }
+        i++;
+    }
+    if (state == 1 || state == 2) {
+        return 1;
+    } else {
+        return 0;
+    }
+}
+
+int main() {
+    char str[100];
+    printf("Enter a string: ");
+    scanf("%s", str);
+    if (match(str)) {
+        printf("Matched\n");
+    } else {
+        printf("Not Matched\n");
+    }
+    return 0;
+}

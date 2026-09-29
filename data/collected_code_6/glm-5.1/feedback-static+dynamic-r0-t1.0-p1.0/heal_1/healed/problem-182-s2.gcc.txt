@@ -1,0 +1,18 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-182-s2.c: In function 'match_regex':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-182-s2.c:7:5: error: unknown type name 'regex_t'
+    7 |     regex_t regex;
+      |     ^~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-182-s2.c:8:15: error: implicit declaration of function 'regcomp' [-Wimplicit-function-declaration]
+    8 |     int ret = regcomp(&regex, pattern, REG_EXTENDED);
+      |               ^~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-182-s2.c:8:40: error: 'REG_EXTENDED' undeclared (first use in this function)
+    8 |     int ret = regcomp(&regex, pattern, REG_EXTENDED);
+      |                                        ^~~~~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-182-s2.c:8:40: note: each undeclared identifier is reported only once for each function it appears in
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-182-s2.c:12:11: error: implicit declaration of function 'regexec' [-Wimplicit-function-declaration]
+   12 |     ret = regexec(&regex, string, 0, NULL, 0);
+      |           ^~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-182-s2.c:13:5: error: implicit declaration of function 'regfree'; did you mean 'free'? [-Wimplicit-function-declaration]
+   13 |     regfree(&regex);
+      |     ^~~~~~~
+      |     free

@@ -1,0 +1,79 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdbool.h>
+
+void isValidParentheses(const char *s) {
+    if (s == NULL) {
+        printf("False\n");
+        return;
+    }
+
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    size_t len = strlen(s);
+    char *stack = malloc(len + 1);
+    if (stack == NULL) {
+        printf("False\n");
+        return;
+    }
+
+    size_t top = 0;
+
+    for (size_t i = 0; i < len; i++) {
+        char c = s[i];
+
+        if (c == '(' || c == '[' || c == '{') {
+            stack[top++] = c;
+        } else if (c == ')' || c == ']' || c == '}') {
+            if (top == 0) {
+                free(stack);
+                printf("False\n");
+                return;
+            }
+
+            char op = stack[--top];
+
+            if ((c == ')' && op != '(') ||
+                (c == ']' && op != '[') ||
+                (c == '}' && op != '{')) {
+                free(stack);
+                printf("False\n");
+                return;
+            }
+        } else {
+            free(stack);
+            printf("False\n");
+            return;
+        }
+    }
+
+    if (top == 0) {
+        printf("True\n");
+    } else {
+        printf("False\n");
+    }
+
+    free(stack);
+}
+
+int main(void) {
+    const char *tests[] = {
+        "",
+        "()",
+        "()[]{}",
+        "(]",
+        "([)]",
+        "{[]}",
+        "(",
+        "}",
+        NULL
+    };
+
+    for (int i = 0; tests[i] != NULL; i++) {
+        isValidParentheses(tests[i]);
+    }
+
+    return 0;
+}

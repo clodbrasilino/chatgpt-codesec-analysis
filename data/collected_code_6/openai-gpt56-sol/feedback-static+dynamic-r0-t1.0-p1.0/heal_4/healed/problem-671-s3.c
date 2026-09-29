@@ -1,0 +1,46 @@
+#include <errno.h>
+#include <inttypes.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+static uint32_t set_rightmost_unset_bit(uint32_t value)
+{
+    uint32_t bit = UINT32_C(1);
+
+    while ((value & bit) != 0) {
+        bit <<= 1;
+    }
+
+    return value | bit;
+}
+
+int main(int argc, char *argv[])
+{
+    char *end = NULL;
+    uintmax_t input;
+
+    if (argc != 2) {
+        fprintf(stderr, "Usage: %s <unsigned-32-bit-integer>\n", argv[0]);
+        return EXIT_FAILURE;
+    }
+
+    if (argv[1][0] == '-') {
+        fprintf(stderr, "Invalid 32-bit unsigned integer: %s\n", argv[1]);
+        return EXIT_FAILURE;
+    }
+
+    errno = 0;
+    input = strtoumax(argv[1], &end, 10);
+
+    if (errno == ERANGE || end == argv[1] || *end != '\0' ||
+        input > UINT32_MAX) {
+        fprintf(stderr, "Invalid 32-bit unsigned integer: %s\n", argv[1]);
+        return EXIT_FAILURE;
+    }
+
+    printf("%" PRIu32 "\n",
+           set_rightmost_unset_bit((uint32_t)input));
+
+    return EXIT_SUCCESS;
+}

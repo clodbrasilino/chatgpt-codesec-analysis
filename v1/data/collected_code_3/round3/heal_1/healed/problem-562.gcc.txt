@@ -1,0 +1,1723 @@
+./collected_code_3/round3/heal_1/healed/problem-562.c: In function 'main':
+./collected_code_3/round3/heal_1/healed/problem-562.c:45:22: warning: dereference of NULL '0' [CWE-476] [-Wanalyzer-null-dereference]
+   45 |     head->next->next = newNode(2);
+      |     ~~~~~~~~~~~~~~~~~^~~~~~~~~~~~
+  'main': events 1-2
+    |
+    |   37 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |   38 |     struct Node* head = newNode(1);
+    |      |                         ~~~~~~~~~~
+    |      |                         |
+    |      |                         (2) calling 'newNode' from 'main'
+    |
+    +--> 'newNode': events 3-5
+           |
+           |   24 | struct Node* newNode(int data) {
+           |      |              ^~~~~~~
+           |      |              |
+           |      |              (3) entry to 'newNode'
+           |......
+           |   27 |     if (node == NULL) {
+           |      |        ~      
+           |      |        |
+           |      |        (4) following 'false' branch (when 'node' is non-NULL)...
+           |......
+           |   31 |     node->data = data;
+           |      |     ~~~~~~~~~~~~~~~~~
+           |      |                |
+           |      |                (5) ...to here
+           |
+         'newNode': event 6
+           |
+           |   32 |     node->next = NULL;
+           |      |                ^
+           |      |                |
+           |      |                (6) '0' is NULL
+           |
+    <------+
+    |
+  'main': events 7-10
+    |
+    |   38 |     struct Node* head = newNode(1);
+    |      |                         ^~~~~~~~~~
+    |      |                         |
+    |      |                         (7) returning to 'main' from 'newNode'
+    |   39 | 
+    |   40 |     if (head == NULL) {
+    |      |        ~                 
+    |      |        |
+    |      |        (8) following 'false' branch (when 'head' is non-NULL)...
+    |......
+    |   44 |     head->next = newNode(1);
+    |      |                  ~~~~~~~~~~
+    |      |                  |
+    |      |                  (9) ...to here
+    |      |                  (10) calling 'newNode' from 'main'
+    |
+    +--> 'newNode': events 11-12
+           |
+           |   24 | struct Node* newNode(int data) {
+           |      |              ^~~~~~~
+           |      |              |
+           |      |              (11) entry to 'newNode'
+           |......
+           |   27 |     if (node == NULL) {
+           |      |        ~      
+           |      |        |
+           |      |        (12) following 'true' branch (when 'node' is NULL)...
+           |
+         'newNode': event 13
+           |
+           |   28 |         return NULL;
+           |      |                ^~~~
+           |      |                |
+           |      |                (13) ...to here
+           |
+         'newNode': event 14
+           |
+           |   28 |         return NULL;
+           |      |                ^~~~
+           |      |                |
+           |      |                (14) '0' is NULL
+           |
+    <------+
+    |
+  'main': events 15-17
+    |
+    |   44 |     head->next = newNode(1);
+    |      |                  ^~~~~~~~~~
+    |      |                  |
+    |      |                  (15) returning to 'main' from 'newNode'
+    |   45 |     head->next->next = newNode(2);
+    |      |     ~~~~~~~~~~         ~~~~~~~~~~
+    |      |         |              |
+    |      |         |              (17) calling 'newNode' from 'main'
+    |      |         (16) '0' is NULL
+    |
+    +--> 'newNode': events 18-19
+           |
+           |   24 | struct Node* newNode(int data) {
+           |      |              ^~~~~~~
+           |      |              |
+           |      |              (18) entry to 'newNode'
+           |......
+           |   27 |     if (node == NULL) {
+           |      |        ~      
+           |      |        |
+           |      |        (19) following 'true' branch (when 'node' is NULL)...
+           |
+         'newNode': event 20
+           |
+           |   28 |         return NULL;
+           |      |                ^~~~
+           |      |                |
+           |      |                (20) ...to here
+           |
+         'newNode': event 21
+           |
+           |   28 |         return NULL;
+           |      |                ^~~~
+           |      |                |
+           |      |                (21) '0' is NULL
+           |
+    <------+
+    |
+  'main': events 22-24
+    |
+    |   45 |     head->next->next = newNode(2);
+    |      |     ~~~~~~~~~~~~~~~~~~~^~~~~~~~~~
+    |      |                      | |
+    |      |                      | (22) returning to 'main' from 'newNode'
+    |      |                      (23) '0' is NULL
+    |      |                      (24) dereference of NULL '*head.next'
+    |
+./collected_code_3/round3/heal_1/healed/problem-562.c:46:28: warning: dereference of NULL '0' [CWE-476] [-Wanalyzer-null-dereference]
+   46 |     head->next->next->next = newNode(2);
+      |     ~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~
+  'main': events 1-2
+    |
+    |   37 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |   38 |     struct Node* head = newNode(1);
+    |      |                         ~~~~~~~~~~
+    |      |                         |
+    |      |                         (2) calling 'newNode' from 'main'
+    |
+    +--> 'newNode': events 3-5
+           |
+           |   24 | struct Node* newNode(int data) {
+           |      |              ^~~~~~~
+           |      |              |
+           |      |              (3) entry to 'newNode'
+           |......
+           |   27 |     if (node == NULL) {
+           |      |        ~      
+           |      |        |
+           |      |        (4) following 'false' branch (when 'node' is non-NULL)...
+           |......
+           |   31 |     node->data = data;
+           |      |     ~~~~~~~~~~~~~~~~~
+           |      |                |
+           |      |                (5) ...to here
+           |
+         'newNode': event 6
+           |
+           |   32 |     node->next = NULL;
+           |      |                ^
+           |      |                |
+           |      |                (6) '0' is NULL
+           |
+    <------+
+    |
+  'main': events 7-10
+    |
+    |   38 |     struct Node* head = newNode(1);
+    |      |                         ^~~~~~~~~~
+    |      |                         |
+    |      |                         (7) returning to 'main' from 'newNode'
+    |   39 | 
+    |   40 |     if (head == NULL) {
+    |      |        ~                 
+    |      |        |
+    |      |        (8) following 'false' branch (when 'head' is non-NULL)...
+    |......
+    |   44 |     head->next = newNode(1);
+    |      |                  ~~~~~~~~~~
+    |      |                  |
+    |      |                  (9) ...to here
+    |      |                  (10) calling 'newNode' from 'main'
+    |
+    +--> 'newNode': events 11-13
+           |
+           |   24 | struct Node* newNode(int data) {
+           |      |              ^~~~~~~
+           |      |              |
+           |      |              (11) entry to 'newNode'
+           |......
+           |   27 |     if (node == NULL) {
+           |      |        ~      
+           |      |        |
+           |      |        (12) following 'false' branch (when 'node' is non-NULL)...
+           |......
+           |   31 |     node->data = data;
+           |      |     ~~~~~~~~~~~~~~~~~
+           |      |                |
+           |      |                (13) ...to here
+           |
+         'newNode': event 14
+           |
+           |   32 |     node->next = NULL;
+           |      |                ^
+           |      |                |
+           |      |                (14) '0' is NULL
+           |
+    <------+
+    |
+  'main': events 15-16
+    |
+    |   44 |     head->next = newNode(1);
+    |      |                  ^~~~~~~~~~
+    |      |                  |
+    |      |                  (15) returning to 'main' from 'newNode'
+    |   45 |     head->next->next = newNode(2);
+    |      |                        ~~~~~~~~~~
+    |      |                        |
+    |      |                        (16) calling 'newNode' from 'main'
+    |
+    +--> 'newNode': events 17-18
+           |
+           |   24 | struct Node* newNode(int data) {
+           |      |              ^~~~~~~
+           |      |              |
+           |      |              (17) entry to 'newNode'
+           |......
+           |   27 |     if (node == NULL) {
+           |      |        ~      
+           |      |        |
+           |      |        (18) following 'true' branch (when 'node' is NULL)...
+           |
+         'newNode': event 19
+           |
+           |   28 |         return NULL;
+           |      |                ^~~~
+           |      |                |
+           |      |                (19) ...to here
+           |
+         'newNode': event 20
+           |
+           |   28 |         return NULL;
+           |      |                ^~~~
+           |      |                |
+           |      |                (20) '0' is NULL
+           |
+    <------+
+    |
+  'main': events 21-23
+    |
+    |   45 |     head->next->next = newNode(2);
+    |      |                        ^~~~~~~~~~
+    |      |                        |
+    |      |                        (21) returning to 'main' from 'newNode'
+    |   46 |     head->next->next->next = newNode(2);
+    |      |     ~~~~~~~~~~~~~~~~         ~~~~~~~~~~
+    |      |               |              |
+    |      |               |              (23) calling 'newNode' from 'main'
+    |      |               (22) '0' is NULL
+    |
+    +--> 'newNode': events 24-25
+           |
+           |   24 | struct Node* newNode(int data) {
+           |      |              ^~~~~~~
+           |      |              |
+           |      |              (24) entry to 'newNode'
+           |......
+           |   27 |     if (node == NULL) {
+           |      |        ~      
+           |      |        |
+           |      |        (25) following 'true' branch (when 'node' is NULL)...
+           |
+         'newNode': event 26
+           |
+           |   28 |         return NULL;
+           |      |                ^~~~
+           |      |                |
+           |      |                (26) ...to here
+           |
+         'newNode': event 27
+           |
+           |   28 |         return NULL;
+           |      |                ^~~~
+           |      |                |
+           |      |                (27) '0' is NULL
+           |
+    <------+
+    |
+  'main': events 28-30
+    |
+    |   46 |     head->next->next->next = newNode(2);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~
+    |      |                            | |
+    |      |                            | (28) returning to 'main' from 'newNode'
+    |      |                            (29) '0' is NULL
+    |      |                            (30) dereference of NULL '*head_42->next.next'
+    |
+./collected_code_3/round3/heal_1/healed/problem-562.c:47:34: warning: dereference of NULL '0' [CWE-476] [-Wanalyzer-null-dereference]
+   47 |     head->next->next->next->next = newNode(2);
+      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~
+  'main': events 1-2
+    |
+    |   37 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |   38 |     struct Node* head = newNode(1);
+    |      |                         ~~~~~~~~~~
+    |      |                         |
+    |      |                         (2) calling 'newNode' from 'main'
+    |
+    +--> 'newNode': events 3-5
+           |
+           |   24 | struct Node* newNode(int data) {
+           |      |              ^~~~~~~
+           |      |              |
+           |      |              (3) entry to 'newNode'
+           |......
+           |   27 |     if (node == NULL) {
+           |      |        ~      
+           |      |        |
+           |      |        (4) following 'false' branch (when 'node' is non-NULL)...
+           |......
+           |   31 |     node->data = data;
+           |      |     ~~~~~~~~~~~~~~~~~
+           |      |                |
+           |      |                (5) ...to here
+           |
+         'newNode': event 6
+           |
+           |   32 |     node->next = NULL;
+           |      |                ^
+           |      |                |
+           |      |                (6) '0' is NULL
+           |
+    <------+
+    |
+  'main': events 7-10
+    |
+    |   38 |     struct Node* head = newNode(1);
+    |      |                         ^~~~~~~~~~
+    |      |                         |
+    |      |                         (7) returning to 'main' from 'newNode'
+    |   39 | 
+    |   40 |     if (head == NULL) {
+    |      |        ~                 
+    |      |        |
+    |      |        (8) following 'false' branch (when 'head' is non-NULL)...
+    |......
+    |   44 |     head->next = newNode(1);
+    |      |                  ~~~~~~~~~~
+    |      |                  |
+    |      |                  (9) ...to here
+    |      |                  (10) calling 'newNode' from 'main'
+    |
+    +--> 'newNode': events 11-13
+           |
+           |   24 | struct Node* newNode(int data) {
+           |      |              ^~~~~~~
+           |      |              |
+           |      |              (11) entry to 'newNode'
+           |......
+           |   27 |     if (node == NULL) {
+           |      |        ~      
+           |      |        |
+           |      |        (12) following 'false' branch (when 'node' is non-NULL)...
+           |......
+           |   31 |     node->data = data;
+           |      |     ~~~~~~~~~~~~~~~~~
+           |      |                |
+           |      |                (13) ...to here
+           |
+         'newNode': event 14
+           |
+           |   32 |     node->next = NULL;
+           |      |                ^
+           |      |                |
+           |      |                (14) '0' is NULL
+           |
+    <------+
+    |
+  'main': events 15-16
+    |
+    |   44 |     head->next = newNode(1);
+    |      |                  ^~~~~~~~~~
+    |      |                  |
+    |      |                  (15) returning to 'main' from 'newNode'
+    |   45 |     head->next->next = newNode(2);
+    |      |                        ~~~~~~~~~~
+    |      |                        |
+    |      |                        (16) calling 'newNode' from 'main'
+    |
+    +--> 'newNode': events 17-19
+           |
+           |   24 | struct Node* newNode(int data) {
+           |      |              ^~~~~~~
+           |      |              |
+           |      |              (17) entry to 'newNode'
+           |......
+           |   27 |     if (node == NULL) {
+           |      |        ~      
+           |      |        |
+           |      |        (18) following 'false' branch (when 'node' is non-NULL)...
+           |......
+           |   31 |     node->data = data;
+           |      |     ~~~~~~~~~~~~~~~~~
+           |      |                |
+           |      |                (19) ...to here
+           |
+         'newNode': event 20
+           |
+           |   32 |     node->next = NULL;
+           |      |                ^
+           |      |                |
+           |      |                (20) '0' is NULL
+           |
+    <------+
+    |
+  'main': events 21-22
+    |
+    |   45 |     head->next->next = newNode(2);
+    |      |                        ^~~~~~~~~~
+    |      |                        |
+    |      |                        (21) returning to 'main' from 'newNode'
+    |   46 |     head->next->next->next = newNode(2);
+    |      |                              ~~~~~~~~~~
+    |      |                              |
+    |      |                              (22) calling 'newNode' from 'main'
+    |
+    +--> 'newNode': events 23-24
+           |
+           |   24 | struct Node* newNode(int data) {
+           |      |              ^~~~~~~
+           |      |              |
+           |      |              (23) entry to 'newNode'
+           |......
+           |   27 |     if (node == NULL) {
+           |      |        ~      
+           |      |        |
+           |      |        (24) following 'true' branch (when 'node' is NULL)...
+           |
+         'newNode': event 25
+           |
+           |   28 |         return NULL;
+           |      |                ^~~~
+           |      |                |
+           |      |                (25) ...to here
+           |
+         'newNode': event 26
+           |
+           |   28 |         return NULL;
+           |      |                ^~~~
+           |      |                |
+           |      |                (26) '0' is NULL
+           |
+    <------+
+    |
+  'main': events 27-29
+    |
+    |   46 |     head->next->next->next = newNode(2);
+    |      |                              ^~~~~~~~~~
+    |      |                              |
+    |      |                              (27) returning to 'main' from 'newNode'
+    |   47 |     head->next->next->next->next = newNode(2);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~         ~~~~~~~~~~
+    |      |                     |              |
+    |      |                     |              (29) calling 'newNode' from 'main'
+    |      |                     (28) '0' is NULL
+    |
+    +--> 'newNode': events 30-31
+           |
+           |   24 | struct Node* newNode(int data) {
+           |      |              ^~~~~~~
+           |      |              |
+           |      |              (30) entry to 'newNode'
+           |......
+           |   27 |     if (node == NULL) {
+           |      |        ~      
+           |      |        |
+           |      |        (31) following 'true' branch (when 'node' is NULL)...
+           |
+         'newNode': event 32
+           |
+           |   28 |         return NULL;
+           |      |                ^~~~
+           |      |                |
+           |      |                (32) ...to here
+           |
+         'newNode': event 33
+           |
+           |   28 |         return NULL;
+           |      |                ^~~~
+           |      |                |
+           |      |                (33) '0' is NULL
+           |
+    <------+
+    |
+  'main': events 34-36
+    |
+    |   47 |     head->next->next->next->next = newNode(2);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~
+    |      |                                  | |
+    |      |                                  | (34) returning to 'main' from 'newNode'
+    |      |                                  (35) '0' is NULL
+    |      |                                  (36) dereference of NULL '*_7->next.next'
+    |
+./collected_code_3/round3/heal_1/healed/problem-562.c:48:40: warning: dereference of NULL '0' [CWE-476] [-Wanalyzer-null-dereference]
+   48 |     head->next->next->next->next->next = newNode(3);
+      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~
+  'main': events 1-2
+    |
+    |   37 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |   38 |     struct Node* head = newNode(1);
+    |      |                         ~~~~~~~~~~
+    |      |                         |
+    |      |                         (2) calling 'newNode' from 'main'
+    |
+    +--> 'newNode': events 3-5
+           |
+           |   24 | struct Node* newNode(int data) {
+           |      |              ^~~~~~~
+           |      |              |
+           |      |              (3) entry to 'newNode'
+           |......
+           |   27 |     if (node == NULL) {
+           |      |        ~      
+           |      |        |
+           |      |        (4) following 'false' branch (when 'node' is non-NULL)...
+           |......
+           |   31 |     node->data = data;
+           |      |     ~~~~~~~~~~~~~~~~~
+           |      |                |
+           |      |                (5) ...to here
+           |
+         'newNode': event 6
+           |
+           |   32 |     node->next = NULL;
+           |      |                ^
+           |      |                |
+           |      |                (6) '0' is NULL
+           |
+    <------+
+    |
+  'main': events 7-10
+    |
+    |   38 |     struct Node* head = newNode(1);
+    |      |                         ^~~~~~~~~~
+    |      |                         |
+    |      |                         (7) returning to 'main' from 'newNode'
+    |   39 | 
+    |   40 |     if (head == NULL) {
+    |      |        ~                 
+    |      |        |
+    |      |        (8) following 'false' branch (when 'head' is non-NULL)...
+    |......
+    |   44 |     head->next = newNode(1);
+    |      |                  ~~~~~~~~~~
+    |      |                  |
+    |      |                  (9) ...to here
+    |      |                  (10) calling 'newNode' from 'main'
+    |
+    +--> 'newNode': events 11-13
+           |
+           |   24 | struct Node* newNode(int data) {
+           |      |              ^~~~~~~
+           |      |              |
+           |      |              (11) entry to 'newNode'
+           |......
+           |   27 |     if (node == NULL) {
+           |      |        ~      
+           |      |        |
+           |      |        (12) following 'false' branch (when 'node' is non-NULL)...
+           |......
+           |   31 |     node->data = data;
+           |      |     ~~~~~~~~~~~~~~~~~
+           |      |                |
+           |      |                (13) ...to here
+           |
+         'newNode': event 14
+           |
+           |   32 |     node->next = NULL;
+           |      |                ^
+           |      |                |
+           |      |                (14) '0' is NULL
+           |
+    <------+
+    |
+  'main': events 15-16
+    |
+    |   44 |     head->next = newNode(1);
+    |      |                  ^~~~~~~~~~
+    |      |                  |
+    |      |                  (15) returning to 'main' from 'newNode'
+    |   45 |     head->next->next = newNode(2);
+    |      |                        ~~~~~~~~~~
+    |      |                        |
+    |      |                        (16) calling 'newNode' from 'main'
+    |
+    +--> 'newNode': events 17-19
+           |
+           |   24 | struct Node* newNode(int data) {
+           |      |              ^~~~~~~
+           |      |              |
+           |      |              (17) entry to 'newNode'
+           |......
+           |   27 |     if (node == NULL) {
+           |      |        ~      
+           |      |        |
+           |      |        (18) following 'false' branch (when 'node' is non-NULL)...
+           |......
+           |   31 |     node->data = data;
+           |      |     ~~~~~~~~~~~~~~~~~
+           |      |                |
+           |      |                (19) ...to here
+           |
+         'newNode': event 20
+           |
+           |   32 |     node->next = NULL;
+           |      |                ^
+           |      |                |
+           |      |                (20) '0' is NULL
+           |
+    <------+
+    |
+  'main': events 21-22
+    |
+    |   45 |     head->next->next = newNode(2);
+    |      |                        ^~~~~~~~~~
+    |      |                        |
+    |      |                        (21) returning to 'main' from 'newNode'
+    |   46 |     head->next->next->next = newNode(2);
+    |      |                              ~~~~~~~~~~
+    |      |                              |
+    |      |                              (22) calling 'newNode' from 'main'
+    |
+    +--> 'newNode': events 23-25
+           |
+           |   24 | struct Node* newNode(int data) {
+           |      |              ^~~~~~~
+           |      |              |
+           |      |              (23) entry to 'newNode'
+           |......
+           |   27 |     if (node == NULL) {
+           |      |        ~      
+           |      |        |
+           |      |        (24) following 'false' branch (when 'node' is non-NULL)...
+           |......
+           |   31 |     node->data = data;
+           |      |     ~~~~~~~~~~~~~~~~~
+           |      |                |
+           |      |                (25) ...to here
+           |
+         'newNode': event 26
+           |
+           |   32 |     node->next = NULL;
+           |      |                ^
+           |      |                |
+           |      |                (26) '0' is NULL
+           |
+    <------+
+    |
+  'main': events 27-28
+    |
+    |   46 |     head->next->next->next = newNode(2);
+    |      |                              ^~~~~~~~~~
+    |      |                              |
+    |      |                              (27) returning to 'main' from 'newNode'
+    |   47 |     head->next->next->next->next = newNode(2);
+    |      |                                    ~~~~~~~~~~
+    |      |                                    |
+    |      |                                    (28) calling 'newNode' from 'main'
+    |
+    +--> 'newNode': events 29-30
+           |
+           |   24 | struct Node* newNode(int data) {
+           |      |              ^~~~~~~
+           |      |              |
+           |      |              (29) entry to 'newNode'
+           |......
+           |   27 |     if (node == NULL) {
+           |      |        ~      
+           |      |        |
+           |      |        (30) following 'true' branch (when 'node' is NULL)...
+           |
+         'newNode': event 31
+           |
+           |   28 |         return NULL;
+           |      |                ^~~~
+           |      |                |
+           |      |                (31) ...to here
+           |
+         'newNode': event 32
+           |
+           |   28 |         return NULL;
+           |      |                ^~~~
+           |      |                |
+           |      |                (32) '0' is NULL
+           |
+    <------+
+    |
+  'main': events 33-35
+    |
+    |   47 |     head->next->next->next->next = newNode(2);
+    |      |                                    ^~~~~~~~~~
+    |      |                                    |
+    |      |                                    (33) returning to 'main' from 'newNode'
+    |   48 |     head->next->next->next->next->next = newNode(3);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~         ~~~~~~~~~~
+    |      |                           |              |
+    |      |                           |              (35) calling 'newNode' from 'main'
+    |      |                           (34) '0' is NULL
+    |
+    +--> 'newNode': events 36-37
+           |
+           |   24 | struct Node* newNode(int data) {
+           |      |              ^~~~~~~
+           |      |              |
+           |      |              (36) entry to 'newNode'
+           |......
+           |   27 |     if (node == NULL) {
+           |      |        ~      
+           |      |        |
+           |      |        (37) following 'true' branch (when 'node' is NULL)...
+           |
+         'newNode': event 38
+           |
+           |   28 |         return NULL;
+           |      |                ^~~~
+           |      |                |
+           |      |                (38) ...to here
+           |
+         'newNode': event 39
+           |
+           |   28 |         return NULL;
+           |      |                ^~~~
+           |      |                |
+           |      |                (39) '0' is NULL
+           |
+    <------+
+    |
+  'main': events 40-42
+    |
+    |   48 |     head->next->next->next->next->next = newNode(3);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~
+    |      |                                        | |
+    |      |                                        | (40) returning to 'main' from 'newNode'
+    |      |                                        (41) '0' is NULL
+    |      |                                        (42) dereference of NULL '*_12->next.next'
+    |
+./collected_code_3/round3/heal_1/healed/problem-562.c:49:46: warning: dereference of NULL '0' [CWE-476] [-Wanalyzer-null-dereference]
+   49 |     head->next->next->next->next->next->next = newNode(3);
+      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~
+  'main': events 1-2
+    |
+    |   37 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |   38 |     struct Node* head = newNode(1);
+    |      |                         ~~~~~~~~~~
+    |      |                         |
+    |      |                         (2) calling 'newNode' from 'main'
+    |
+    +--> 'newNode': events 3-5
+           |
+           |   24 | struct Node* newNode(int data) {
+           |      |              ^~~~~~~
+           |      |              |
+           |      |              (3) entry to 'newNode'
+           |......
+           |   27 |     if (node == NULL) {
+           |      |        ~      
+           |      |        |
+           |      |        (4) following 'false' branch (when 'node' is non-NULL)...
+           |......
+           |   31 |     node->data = data;
+           |      |     ~~~~~~~~~~~~~~~~~
+           |      |                |
+           |      |                (5) ...to here
+           |
+         'newNode': event 6
+           |
+           |   32 |     node->next = NULL;
+           |      |                ^
+           |      |                |
+           |      |                (6) '0' is NULL
+           |
+    <------+
+    |
+  'main': events 7-10
+    |
+    |   38 |     struct Node* head = newNode(1);
+    |      |                         ^~~~~~~~~~
+    |      |                         |
+    |      |                         (7) returning to 'main' from 'newNode'
+    |   39 | 
+    |   40 |     if (head == NULL) {
+    |      |        ~                 
+    |      |        |
+    |      |        (8) following 'false' branch (when 'head' is non-NULL)...
+    |......
+    |   44 |     head->next = newNode(1);
+    |      |                  ~~~~~~~~~~
+    |      |                  |
+    |      |                  (9) ...to here
+    |      |                  (10) calling 'newNode' from 'main'
+    |
+    +--> 'newNode': events 11-13
+           |
+           |   24 | struct Node* newNode(int data) {
+           |      |              ^~~~~~~
+           |      |              |
+           |      |              (11) entry to 'newNode'
+           |......
+           |   27 |     if (node == NULL) {
+           |      |        ~      
+           |      |        |
+           |      |        (12) following 'false' branch (when 'node' is non-NULL)...
+           |......
+           |   31 |     node->data = data;
+           |      |     ~~~~~~~~~~~~~~~~~
+           |      |                |
+           |      |                (13) ...to here
+           |
+         'newNode': event 14
+           |
+           |   32 |     node->next = NULL;
+           |      |                ^
+           |      |                |
+           |      |                (14) '0' is NULL
+           |
+    <------+
+    |
+  'main': events 15-16
+    |
+    |   44 |     head->next = newNode(1);
+    |      |                  ^~~~~~~~~~
+    |      |                  |
+    |      |                  (15) returning to 'main' from 'newNode'
+    |   45 |     head->next->next = newNode(2);
+    |      |                        ~~~~~~~~~~
+    |      |                        |
+    |      |                        (16) calling 'newNode' from 'main'
+    |
+    +--> 'newNode': events 17-19
+           |
+           |   24 | struct Node* newNode(int data) {
+           |      |              ^~~~~~~
+           |      |              |
+           |      |              (17) entry to 'newNode'
+           |......
+           |   27 |     if (node == NULL) {
+           |      |        ~      
+           |      |        |
+           |      |        (18) following 'false' branch (when 'node' is non-NULL)...
+           |......
+           |   31 |     node->data = data;
+           |      |     ~~~~~~~~~~~~~~~~~
+           |      |                |
+           |      |                (19) ...to here
+           |
+         'newNode': event 20
+           |
+           |   32 |     node->next = NULL;
+           |      |                ^
+           |      |                |
+           |      |                (20) '0' is NULL
+           |
+    <------+
+    |
+  'main': events 21-22
+    |
+    |   45 |     head->next->next = newNode(2);
+    |      |                        ^~~~~~~~~~
+    |      |                        |
+    |      |                        (21) returning to 'main' from 'newNode'
+    |   46 |     head->next->next->next = newNode(2);
+    |      |                              ~~~~~~~~~~
+    |      |                              |
+    |      |                              (22) calling 'newNode' from 'main'
+    |
+    +--> 'newNode': events 23-25
+           |
+           |   24 | struct Node* newNode(int data) {
+           |      |              ^~~~~~~
+           |      |              |
+           |      |              (23) entry to 'newNode'
+           |......
+           |   27 |     if (node == NULL) {
+           |      |        ~      
+           |      |        |
+           |      |        (24) following 'false' branch (when 'node' is non-NULL)...
+           |......
+           |   31 |     node->data = data;
+           |      |     ~~~~~~~~~~~~~~~~~
+           |      |                |
+           |      |                (25) ...to here
+           |
+         'newNode': event 26
+           |
+           |   32 |     node->next = NULL;
+           |      |                ^
+           |      |                |
+           |      |                (26) '0' is NULL
+           |
+    <------+
+    |
+  'main': events 27-28
+    |
+    |   46 |     head->next->next->next = newNode(2);
+    |      |                              ^~~~~~~~~~
+    |      |                              |
+    |      |                              (27) returning to 'main' from 'newNode'
+    |   47 |     head->next->next->next->next = newNode(2);
+    |      |                                    ~~~~~~~~~~
+    |      |                                    |
+    |      |                                    (28) calling 'newNode' from 'main'
+    |
+    +--> 'newNode': events 29-31
+           |
+           |   24 | struct Node* newNode(int data) {
+           |      |              ^~~~~~~
+           |      |              |
+           |      |              (29) entry to 'newNode'
+           |......
+           |   27 |     if (node == NULL) {
+           |      |        ~      
+           |      |        |
+           |      |        (30) following 'false' branch (when 'node' is non-NULL)...
+           |......
+           |   31 |     node->data = data;
+           |      |     ~~~~~~~~~~~~~~~~~
+           |      |                |
+           |      |                (31) ...to here
+           |
+         'newNode': event 32
+           |
+           |   32 |     node->next = NULL;
+           |      |                ^
+           |      |                |
+           |      |                (32) '0' is NULL
+           |
+    <------+
+    |
+  'main': events 33-34
+    |
+    |   47 |     head->next->next->next->next = newNode(2);
+    |      |                                    ^~~~~~~~~~
+    |      |                                    |
+    |      |                                    (33) returning to 'main' from 'newNode'
+    |   48 |     head->next->next->next->next->next = newNode(3);
+    |      |                                          ~~~~~~~~~~
+    |      |                                          |
+    |      |                                          (34) calling 'newNode' from 'main'
+    |
+    +--> 'newNode': events 35-36
+           |
+           |   24 | struct Node* newNode(int data) {
+           |      |              ^~~~~~~
+           |      |              |
+           |      |              (35) entry to 'newNode'
+           |......
+           |   27 |     if (node == NULL) {
+           |      |        ~      
+           |      |        |
+           |      |        (36) following 'true' branch (when 'node' is NULL)...
+           |
+         'newNode': event 37
+           |
+           |   28 |         return NULL;
+           |      |                ^~~~
+           |      |                |
+           |      |                (37) ...to here
+           |
+         'newNode': event 38
+           |
+           |   28 |         return NULL;
+           |      |                ^~~~
+           |      |                |
+           |      |                (38) '0' is NULL
+           |
+    <------+
+    |
+  'main': events 39-41
+    |
+    |   48 |     head->next->next->next->next->next = newNode(3);
+    |      |                                          ^~~~~~~~~~
+    |      |                                          |
+    |      |                                          (39) returning to 'main' from 'newNode'
+    |   49 |     head->next->next->next->next->next->next = newNode(3);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~         ~~~~~~~~~~
+    |      |                                 |              |
+    |      |                                 |              (41) calling 'newNode' from 'main'
+    |      |                                 (40) '0' is NULL
+    |
+    +--> 'newNode': events 42-43
+           |
+           |   24 | struct Node* newNode(int data) {
+           |      |              ^~~~~~~
+           |      |              |
+           |      |              (42) entry to 'newNode'
+           |......
+           |   27 |     if (node == NULL) {
+           |      |        ~      
+           |      |        |
+           |      |        (43) following 'true' branch (when 'node' is NULL)...
+           |
+         'newNode': event 44
+           |
+           |   28 |         return NULL;
+           |      |                ^~~~
+           |      |                |
+           |      |                (44) ...to here
+           |
+         'newNode': event 45
+           |
+           |   28 |         return NULL;
+           |      |                ^~~~
+           |      |                |
+           |      |                (45) '0' is NULL
+           |
+    <------+
+    |
+  'main': events 46-48
+    |
+    |   49 |     head->next->next->next->next->next->next = newNode(3);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~
+    |      |                                              | |
+    |      |                                              | (46) returning to 'main' from 'newNode'
+    |      |                                              (47) '0' is NULL
+    |      |                                              (48) dereference of NULL '*_18->next.next'
+    |
+./collected_code_3/round3/heal_1/healed/problem-562.c:50:52: warning: dereference of NULL '0' [CWE-476] [-Wanalyzer-null-dereference]
+   50 |     head->next->next->next->next->next->next->next = newNode(3);
+      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~
+  'main': events 1-2
+    |
+    |   37 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |   38 |     struct Node* head = newNode(1);
+    |      |                         ~~~~~~~~~~
+    |      |                         |
+    |      |                         (2) calling 'newNode' from 'main'
+    |
+    +--> 'newNode': events 3-5
+           |
+           |   24 | struct Node* newNode(int data) {
+           |      |              ^~~~~~~
+           |      |              |
+           |      |              (3) entry to 'newNode'
+           |......
+           |   27 |     if (node == NULL) {
+           |      |        ~      
+           |      |        |
+           |      |        (4) following 'false' branch (when 'node' is non-NULL)...
+           |......
+           |   31 |     node->data = data;
+           |      |     ~~~~~~~~~~~~~~~~~
+           |      |                |
+           |      |                (5) ...to here
+           |
+         'newNode': event 6
+           |
+           |   32 |     node->next = NULL;
+           |      |                ^
+           |      |                |
+           |      |                (6) '0' is NULL
+           |
+    <------+
+    |
+  'main': events 7-10
+    |
+    |   38 |     struct Node* head = newNode(1);
+    |      |                         ^~~~~~~~~~
+    |      |                         |
+    |      |                         (7) returning to 'main' from 'newNode'
+    |   39 | 
+    |   40 |     if (head == NULL) {
+    |      |        ~                 
+    |      |        |
+    |      |        (8) following 'false' branch (when 'head' is non-NULL)...
+    |......
+    |   44 |     head->next = newNode(1);
+    |      |                  ~~~~~~~~~~
+    |      |                  |
+    |      |                  (9) ...to here
+    |      |                  (10) calling 'newNode' from 'main'
+    |
+    +--> 'newNode': events 11-13
+           |
+           |   24 | struct Node* newNode(int data) {
+           |      |              ^~~~~~~
+           |      |              |
+           |      |              (11) entry to 'newNode'
+           |......
+           |   27 |     if (node == NULL) {
+           |      |        ~      
+           |      |        |
+           |      |        (12) following 'false' branch (when 'node' is non-NULL)...
+           |......
+           |   31 |     node->data = data;
+           |      |     ~~~~~~~~~~~~~~~~~
+           |      |                |
+           |      |                (13) ...to here
+           |
+         'newNode': event 14
+           |
+           |   32 |     node->next = NULL;
+           |      |                ^
+           |      |                |
+           |      |                (14) '0' is NULL
+           |
+    <------+
+    |
+  'main': events 15-16
+    |
+    |   44 |     head->next = newNode(1);
+    |      |                  ^~~~~~~~~~
+    |      |                  |
+    |      |                  (15) returning to 'main' from 'newNode'
+    |   45 |     head->next->next = newNode(2);
+    |      |                        ~~~~~~~~~~
+    |      |                        |
+    |      |                        (16) calling 'newNode' from 'main'
+    |
+    +--> 'newNode': events 17-19
+           |
+           |   24 | struct Node* newNode(int data) {
+           |      |              ^~~~~~~
+           |      |              |
+           |      |              (17) entry to 'newNode'
+           |......
+           |   27 |     if (node == NULL) {
+           |      |        ~      
+           |      |        |
+           |      |        (18) following 'false' branch (when 'node' is non-NULL)...
+           |......
+           |   31 |     node->data = data;
+           |      |     ~~~~~~~~~~~~~~~~~
+           |      |                |
+           |      |                (19) ...to here
+           |
+         'newNode': event 20
+           |
+           |   32 |     node->next = NULL;
+           |      |                ^
+           |      |                |
+           |      |                (20) '0' is NULL
+           |
+    <------+
+    |
+  'main': events 21-22
+    |
+    |   45 |     head->next->next = newNode(2);
+    |      |                        ^~~~~~~~~~
+    |      |                        |
+    |      |                        (21) returning to 'main' from 'newNode'
+    |   46 |     head->next->next->next = newNode(2);
+    |      |                              ~~~~~~~~~~
+    |      |                              |
+    |      |                              (22) calling 'newNode' from 'main'
+    |
+    +--> 'newNode': events 23-25
+           |
+           |   24 | struct Node* newNode(int data) {
+           |      |              ^~~~~~~
+           |      |              |
+           |      |              (23) entry to 'newNode'
+           |......
+           |   27 |     if (node == NULL) {
+           |      |        ~      
+           |      |        |
+           |      |        (24) following 'false' branch (when 'node' is non-NULL)...
+           |......
+           |   31 |     node->data = data;
+           |      |     ~~~~~~~~~~~~~~~~~
+           |      |                |
+           |      |                (25) ...to here
+           |
+         'newNode': event 26
+           |
+           |   32 |     node->next = NULL;
+           |      |                ^
+           |      |                |
+           |      |                (26) '0' is NULL
+           |
+    <------+
+    |
+  'main': events 27-28
+    |
+    |   46 |     head->next->next->next = newNode(2);
+    |      |                              ^~~~~~~~~~
+    |      |                              |
+    |      |                              (27) returning to 'main' from 'newNode'
+    |   47 |     head->next->next->next->next = newNode(2);
+    |      |                                    ~~~~~~~~~~
+    |      |                                    |
+    |      |                                    (28) calling 'newNode' from 'main'
+    |
+    +--> 'newNode': events 29-31
+           |
+           |   24 | struct Node* newNode(int data) {
+           |      |              ^~~~~~~
+           |      |              |
+           |      |              (29) entry to 'newNode'
+           |......
+           |   27 |     if (node == NULL) {
+           |      |        ~      
+           |      |        |
+           |      |        (30) following 'false' branch (when 'node' is non-NULL)...
+           |......
+           |   31 |     node->data = data;
+           |      |     ~~~~~~~~~~~~~~~~~
+           |      |                |
+           |      |                (31) ...to here
+           |
+         'newNode': event 32
+           |
+           |   32 |     node->next = NULL;
+           |      |                ^
+           |      |                |
+           |      |                (32) '0' is NULL
+           |
+    <------+
+    |
+  'main': events 33-34
+    |
+    |   47 |     head->next->next->next->next = newNode(2);
+    |      |                                    ^~~~~~~~~~
+    |      |                                    |
+    |      |                                    (33) returning to 'main' from 'newNode'
+    |   48 |     head->next->next->next->next->next = newNode(3);
+    |      |                                          ~~~~~~~~~~
+    |      |                                          |
+    |      |                                          (34) calling 'newNode' from 'main'
+    |
+    +--> 'newNode': events 35-37
+           |
+           |   24 | struct Node* newNode(int data) {
+           |      |              ^~~~~~~
+           |      |              |
+           |      |              (35) entry to 'newNode'
+           |......
+           |   27 |     if (node == NULL) {
+           |      |        ~      
+           |      |        |
+           |      |        (36) following 'false' branch (when 'node' is non-NULL)...
+           |......
+           |   31 |     node->data = data;
+           |      |     ~~~~~~~~~~~~~~~~~
+           |      |                |
+           |      |                (37) ...to here
+           |
+         'newNode': event 38
+           |
+           |   32 |     node->next = NULL;
+           |      |                ^
+           |      |                |
+           |      |                (38) '0' is NULL
+           |
+    <------+
+    |
+  'main': events 39-40
+    |
+    |   48 |     head->next->next->next->next->next = newNode(3);
+    |      |                                          ^~~~~~~~~~
+    |      |                                          |
+    |      |                                          (39) returning to 'main' from 'newNode'
+    |   49 |     head->next->next->next->next->next->next = newNode(3);
+    |      |                                                ~~~~~~~~~~
+    |      |                                                |
+    |      |                                                (40) calling 'newNode' from 'main'
+    |
+    +--> 'newNode': events 41-42
+           |
+           |   24 | struct Node* newNode(int data) {
+           |      |              ^~~~~~~
+           |      |              |
+           |      |              (41) entry to 'newNode'
+           |......
+           |   27 |     if (node == NULL) {
+           |      |        ~      
+           |      |        |
+           |      |        (42) following 'true' branch (when 'node' is NULL)...
+           |
+         'newNode': event 43
+           |
+           |   28 |         return NULL;
+           |      |                ^~~~
+           |      |                |
+           |      |                (43) ...to here
+           |
+         'newNode': event 44
+           |
+           |   28 |         return NULL;
+           |      |                ^~~~
+           |      |                |
+           |      |                (44) '0' is NULL
+           |
+    <------+
+    |
+  'main': events 45-47
+    |
+    |   49 |     head->next->next->next->next->next->next = newNode(3);
+    |      |                                                ^~~~~~~~~~
+    |      |                                                |
+    |      |                                                (45) returning to 'main' from 'newNode'
+    |   50 |     head->next->next->next->next->next->next->next = newNode(3);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~         ~~~~~~~~~~
+    |      |                                       |              |
+    |      |                                       |              (47) calling 'newNode' from 'main'
+    |      |                                       (46) '0' is NULL
+    |
+    +--> 'newNode': events 48-49
+           |
+           |   24 | struct Node* newNode(int data) {
+           |      |              ^~~~~~~
+           |      |              |
+           |      |              (48) entry to 'newNode'
+           |......
+           |   27 |     if (node == NULL) {
+           |      |        ~      
+           |      |        |
+           |      |        (49) following 'true' branch (when 'node' is NULL)...
+           |
+         'newNode': event 50
+           |
+           |   28 |         return NULL;
+           |      |                ^~~~
+           |      |                |
+           |      |                (50) ...to here
+           |
+         'newNode': event 51
+           |
+           |   28 |         return NULL;
+           |      |                ^~~~
+           |      |                |
+           |      |                (51) '0' is NULL
+           |
+    <------+
+    |
+  'main': events 52-54
+    |
+    |   50 |     head->next->next->next->next->next->next->next = newNode(3);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~
+    |      |                                                    | |
+    |      |                                                    | (52) returning to 'main' from 'newNode'
+    |      |                                                    (53) '0' is NULL
+    |      |                                                    (54) dereference of NULL '*_25->next.next'
+    |
+./collected_code_3/round3/heal_1/healed/problem-562.c:51:58: warning: dereference of NULL '0' [CWE-476] [-Wanalyzer-null-dereference]
+   51 |     head->next->next->next->next->next->next->next->next = newNode(3);
+      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~
+  'main': events 1-2
+    |
+    |   37 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |   38 |     struct Node* head = newNode(1);
+    |      |                         ~~~~~~~~~~
+    |      |                         |
+    |      |                         (2) calling 'newNode' from 'main'
+    |
+    +--> 'newNode': events 3-5
+           |
+           |   24 | struct Node* newNode(int data) {
+           |      |              ^~~~~~~
+           |      |              |
+           |      |              (3) entry to 'newNode'
+           |......
+           |   27 |     if (node == NULL) {
+           |      |        ~      
+           |      |        |
+           |      |        (4) following 'false' branch (when 'node' is non-NULL)...
+           |......
+           |   31 |     node->data = data;
+           |      |     ~~~~~~~~~~~~~~~~~
+           |      |                |
+           |      |                (5) ...to here
+           |
+         'newNode': event 6
+           |
+           |   32 |     node->next = NULL;
+           |      |                ^
+           |      |                |
+           |      |                (6) '0' is NULL
+           |
+    <------+
+    |
+  'main': events 7-10
+    |
+    |   38 |     struct Node* head = newNode(1);
+    |      |                         ^~~~~~~~~~
+    |      |                         |
+    |      |                         (7) returning to 'main' from 'newNode'
+    |   39 | 
+    |   40 |     if (head == NULL) {
+    |      |        ~                 
+    |      |        |
+    |      |        (8) following 'false' branch (when 'head' is non-NULL)...
+    |......
+    |   44 |     head->next = newNode(1);
+    |      |                  ~~~~~~~~~~
+    |      |                  |
+    |      |                  (9) ...to here
+    |      |                  (10) calling 'newNode' from 'main'
+    |
+    +--> 'newNode': events 11-13
+           |
+           |   24 | struct Node* newNode(int data) {
+           |      |              ^~~~~~~
+           |      |              |
+           |      |              (11) entry to 'newNode'
+           |......
+           |   27 |     if (node == NULL) {
+           |      |        ~      
+           |      |        |
+           |      |        (12) following 'false' branch (when 'node' is non-NULL)...
+           |......
+           |   31 |     node->data = data;
+           |      |     ~~~~~~~~~~~~~~~~~
+           |      |                |
+           |      |                (13) ...to here
+           |
+         'newNode': event 14
+           |
+           |   32 |     node->next = NULL;
+           |      |                ^
+           |      |                |
+           |      |                (14) '0' is NULL
+           |
+    <------+
+    |
+  'main': events 15-16
+    |
+    |   44 |     head->next = newNode(1);
+    |      |                  ^~~~~~~~~~
+    |      |                  |
+    |      |                  (15) returning to 'main' from 'newNode'
+    |   45 |     head->next->next = newNode(2);
+    |      |                        ~~~~~~~~~~
+    |      |                        |
+    |      |                        (16) calling 'newNode' from 'main'
+    |
+    +--> 'newNode': events 17-19
+           |
+           |   24 | struct Node* newNode(int data) {
+           |      |              ^~~~~~~
+           |      |              |
+           |      |              (17) entry to 'newNode'
+           |......
+           |   27 |     if (node == NULL) {
+           |      |        ~      
+           |      |        |
+           |      |        (18) following 'false' branch (when 'node' is non-NULL)...
+           |......
+           |   31 |     node->data = data;
+           |      |     ~~~~~~~~~~~~~~~~~
+           |      |                |
+           |      |                (19) ...to here
+           |
+         'newNode': event 20
+           |
+           |   32 |     node->next = NULL;
+           |      |                ^
+           |      |                |
+           |      |                (20) '0' is NULL
+           |
+    <------+
+    |
+  'main': events 21-22
+    |
+    |   45 |     head->next->next = newNode(2);
+    |      |                        ^~~~~~~~~~
+    |      |                        |
+    |      |                        (21) returning to 'main' from 'newNode'
+    |   46 |     head->next->next->next = newNode(2);
+    |      |                              ~~~~~~~~~~
+    |      |                              |
+    |      |                              (22) calling 'newNode' from 'main'
+    |
+    +--> 'newNode': events 23-25
+           |
+           |   24 | struct Node* newNode(int data) {
+           |      |              ^~~~~~~
+           |      |              |
+           |      |              (23) entry to 'newNode'
+           |......
+           |   27 |     if (node == NULL) {
+           |      |        ~      
+           |      |        |
+           |      |        (24) following 'false' branch (when 'node' is non-NULL)...
+           |......
+           |   31 |     node->data = data;
+           |      |     ~~~~~~~~~~~~~~~~~
+           |      |                |
+           |      |                (25) ...to here
+           |
+         'newNode': event 26
+           |
+           |   32 |     node->next = NULL;
+           |      |                ^
+           |      |                |
+           |      |                (26) '0' is NULL
+           |
+    <------+
+    |
+  'main': events 27-28
+    |
+    |   46 |     head->next->next->next = newNode(2);
+    |      |                              ^~~~~~~~~~
+    |      |                              |
+    |      |                              (27) returning to 'main' from 'newNode'
+    |   47 |     head->next->next->next->next = newNode(2);
+    |      |                                    ~~~~~~~~~~
+    |      |                                    |
+    |      |                                    (28) calling 'newNode' from 'main'
+    |
+    +--> 'newNode': events 29-31
+           |
+           |   24 | struct Node* newNode(int data) {
+           |      |              ^~~~~~~
+           |      |              |
+           |      |              (29) entry to 'newNode'
+           |......
+           |   27 |     if (node == NULL) {
+           |      |        ~      
+           |      |        |
+           |      |        (30) following 'false' branch (when 'node' is non-NULL)...
+           |......
+           |   31 |     node->data = data;
+           |      |     ~~~~~~~~~~~~~~~~~
+           |      |                |
+           |      |                (31) ...to here
+           |
+         'newNode': event 32
+           |
+           |   32 |     node->next = NULL;
+           |      |                ^
+           |      |                |
+           |      |                (32) '0' is NULL
+           |
+    <------+
+    |
+  'main': events 33-34
+    |
+    |   47 |     head->next->next->next->next = newNode(2);
+    |      |                                    ^~~~~~~~~~
+    |      |                                    |
+    |      |                                    (33) returning to 'main' from 'newNode'
+    |   48 |     head->next->next->next->next->next = newNode(3);
+    |      |                                          ~~~~~~~~~~
+    |      |                                          |
+    |      |                                          (34) calling 'newNode' from 'main'
+    |
+    +--> 'newNode': events 35-37
+           |
+           |   24 | struct Node* newNode(int data) {
+           |      |              ^~~~~~~
+           |      |              |
+           |      |              (35) entry to 'newNode'
+           |......
+           |   27 |     if (node == NULL) {
+           |      |        ~      
+           |      |        |
+           |      |        (36) following 'false' branch (when 'node' is non-NULL)...
+           |......
+           |   31 |     node->data = data;
+           |      |     ~~~~~~~~~~~~~~~~~
+           |      |                |
+           |      |                (37) ...to here
+           |
+         'newNode': event 38
+           |
+           |   32 |     node->next = NULL;
+           |      |                ^
+           |      |                |
+           |      |                (38) '0' is NULL
+           |
+    <------+
+    |
+  'main': events 39-40
+    |
+    |   48 |     head->next->next->next->next->next = newNode(3);
+    |      |                                          ^~~~~~~~~~
+    |      |                                          |
+    |      |                                          (39) returning to 'main' from 'newNode'
+    |   49 |     head->next->next->next->next->next->next = newNode(3);
+    |      |                                                ~~~~~~~~~~
+    |      |                                                |
+    |      |                                                (40) calling 'newNode' from 'main'
+    |
+    +--> 'newNode': events 41-43
+           |
+           |   24 | struct Node* newNode(int data) {
+           |      |              ^~~~~~~
+           |      |              |
+           |      |              (41) entry to 'newNode'
+           |......
+           |   27 |     if (node == NULL) {
+           |      |        ~      
+           |      |        |
+           |      |        (42) following 'false' branch (when 'node' is non-NULL)...
+           |......
+           |   31 |     node->data = data;
+           |      |     ~~~~~~~~~~~~~~~~~
+           |      |                |
+           |      |                (43) ...to here
+           |
+         'newNode': event 44
+           |
+           |   32 |     node->next = NULL;
+           |      |                ^
+           |      |                |
+           |      |                (44) '0' is NULL
+           |
+    <------+
+    |
+  'main': events 45-46
+    |
+    |   49 |     head->next->next->next->next->next->next = newNode(3);
+    |      |                                                ^~~~~~~~~~
+    |      |                                                |
+    |      |                                                (45) returning to 'main' from 'newNode'
+    |   50 |     head->next->next->next->next->next->next->next = newNode(3);
+    |      |                                                      ~~~~~~~~~~
+    |      |                                                      |
+    |      |                                                      (46) calling 'newNode' from 'main'
+    |
+    +--> 'newNode': events 47-48
+           |
+           |   24 | struct Node* newNode(int data) {
+           |      |              ^~~~~~~
+           |      |              |
+           |      |              (47) entry to 'newNode'
+           |......
+           |   27 |     if (node == NULL) {
+           |      |        ~      
+           |      |        |
+           |      |        (48) following 'true' branch (when 'node' is NULL)...
+           |
+         'newNode': event 49
+           |
+           |   28 |         return NULL;
+           |      |                ^~~~
+           |      |                |
+           |      |                (49) ...to here
+           |
+         'newNode': event 50
+           |
+           |   28 |         return NULL;
+           |      |                ^~~~
+           |      |                |
+           |      |                (50) '0' is NULL
+           |
+    <------+
+    |
+  'main': events 51-53
+    |
+    |   50 |     head->next->next->next->next->next->next->next = newNode(3);
+    |      |                                                      ^~~~~~~~~~
+    |      |                                                      |
+    |      |                                                      (51) returning to 'main' from 'newNode'
+    |   51 |     head->next->next->next->next->next->next->next->next = newNode(3);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~         ~~~~~~~~~~
+    |      |                                             |              |
+    |      |                                             |              (53) calling 'newNode' from 'main'
+    |      |                                             (52) '0' is NULL
+    |
+    +--> 'newNode': events 54-55
+           |
+           |   24 | struct Node* newNode(int data) {
+           |      |              ^~~~~~~
+           |      |              |
+           |      |              (54) entry to 'newNode'
+           |......
+           |   27 |     if (node == NULL) {
+           |      |        ~      
+           |      |        |
+           |      |        (55) following 'true' branch (when 'node' is NULL)...
+           |
+         'newNode': event 56
+           |
+           |   28 |         return NULL;
+           |      |                ^~~~
+           |      |                |
+           |      |                (56) ...to here
+           |
+         'newNode': event 57
+           |
+           |   28 |         return NULL;
+           |      |                ^~~~
+           |      |                |
+           |      |                (57) '0' is NULL
+           |
+    <------+
+    |
+  'main': events 58-60
+    |
+    |   51 |     head->next->next->next->next->next->next->next->next = newNode(3);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~
+    |      |                                                          | |
+    |      |                                                          | (58) returning to 'main' from 'newNode'
+    |      |                                                          (59) '0' is NULL
+    |      |                                                          (60) dereference of NULL '*_33->next.next'
+    |

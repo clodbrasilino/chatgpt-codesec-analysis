@@ -1,0 +1,61 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <regex.h>
+#include <string.h>
+
+void add_spaces_between_capital_words(char *str, size_t max_size) {
+    regex_t regex;
+    regmatch_t matches[2];
+    char pattern[] = "([A-Z][^A-Z]*)";
+    char replacement[] = " \\1";
+
+    char *result = malloc(max_size);
+    if (result == NULL) {
+        return;
+    }
+    result[0] = '\0';
+
+    int start = 0;
+
+    if (regcomp(&regex, pattern, REG_EXTENDED | REG_NEWLINE)) {
+        free(result);
+        return;
+    }
+
+    while (regexec(&regex, str + start, 2, matches, 0) == 0) {
+        int end = matches[0].rm_so + start;
+        size_t len = end - start;
+
+        if (strlen(result) + len + 1 < max_size) {
+            strncat(result, str + start, len);
+        }
+
+        size_t rep_len = strlen(replacement) - 1;
+
+        if (strlen(result) + rep_len + 1 < max_size) {
+            strncat(result, replacement, rep_len);
+        }
+
+        start = matches[0].rm_eo + start;
+    }
+
+    char *remaining = str + start;
+    size_t remaining_len = strlen(remaining);
+    size_t space_left = max_size - strlen(result) - 1;
+
+    if (space_left > 0 && remaining_len < space_left) {
+        strncat(result, remaining, remaining_len);
+    }
+
+    snprintf(str, max_size, "%s", result);
+
+    free(result);
+    regfree(&regex);
+}
+
+int main() {
+    char str[1024] = "HelloWorldThisIsATest";
+    add_spaces_between_capital_words(str, sizeof(str));
+    printf("%s\n", str);
+    return 0;
+}

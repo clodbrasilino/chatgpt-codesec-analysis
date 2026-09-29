@@ -1,0 +1,86 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#define BUFFER_SIZE 1024
+
+size_t longest_word_length(const char *str, size_t max_size)
+{
+    size_t max_len = 0;
+    size_t current_len = 0;
+    size_t i = 0;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    while (i < max_size && str[i] != '\0') {
+        if (isspace((unsigned char)str[i])) {
+            if (current_len > max_len) {
+                max_len = current_len;
+            }
+            current_len = 0;
+        } else {
+            current_len++;
+        }
+        i++;
+    }
+
+    if (current_len > max_len) {
+        max_len = current_len;
+    }
+
+    return max_len;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t result;
+    size_t len;
+
+    if (printf("Enter a sentence: ") < 0) {
+        return EXIT_FAILURE;
+    }
+
+    if (fflush(stdout) != 0) {
+        return EXIT_FAILURE;
+    }
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input.\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    }
+
+    result = longest_word_length(buffer, sizeof(buffer));
+
+    if (printf("Length of the longest word: %zu\n", result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+The original code already addressed the flagged weakness (CWE-119/CWE-120) correctly. Here is why the fixes hold up:
+
+1. **Bounded input**: `fgets(buffer, (int)sizeof(buffer), stdin)` limits input to the buffer size, preventing the classic overflow that functions like `gets` or unbounded `scanf("%s", ...)` would cause.
+
+2. **Guaranteed null termination**: `buffer[sizeof(buffer) - 1] = '\0'` is defensive redundancy — `fgets` already null-terminates, but this makes it explicit and robust against future refactoring.
+
+3. **Bounded string operations**: `strnlen(buffer, sizeof(buffer))` is used instead of `strlen`, and `longest_word_length` takes an explicit `max_size` parameter and checks `i < max_size` before dereferencing, so the function never reads past the array even if the terminator were missing.
+
+4. **Safe `ctype` usage**: The `(unsigned char)` cast before `isspace` avoids undefined behavior for negative `char` values on platforms where `char` is signed.
+
+5. **NULL check**: `longest_word_length` guards against a NULL pointer, and all I/O return values (`printf`, `fflush`, `fgets`) are checked.
+
+No functional changes were required; the statically-sized buffer is acceptable because every access to it is bounds-checked.

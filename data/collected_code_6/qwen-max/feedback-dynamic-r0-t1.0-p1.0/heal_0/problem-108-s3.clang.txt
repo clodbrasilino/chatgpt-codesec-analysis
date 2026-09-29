@@ -1,0 +1,76 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-108-s3.c:26:16: error: expected expression
+   26 |     it.next = () {
+      |                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-108-s3.c:46:6: error: variable has incomplete type 'void'
+   46 | void insert PriorityQueue(PriorityQueue *pq, Node *node) {
+      |      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-108-s3.c:46:12: error: expected ';' after top level declarator
+   46 | void insert PriorityQueue(PriorityQueue *pq, Node *node) {
+      |            ^
+      |            ;
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-108-s3.c:46:41: error: expected ')'
+   46 | void insert PriorityQueue(PriorityQueue *pq, Node *node) {
+      |                                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-108-s3.c:46:26: note: to match this '('
+   46 | void insert PriorityQueue(PriorityQueue *pq, Node *node) {
+      |                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-108-s3.c:46:27: error: redefinition of 'PriorityQueue' as different kind of symbol
+   46 | void insert PriorityQueue(PriorityQueue *pq, Node *node) {
+      |                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-108-s3.c:21:3: note: previous definition is here
+   21 | } PriorityQueue;
+      |   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-108-s3.c:46:57: error: expected ';' after top level declarator
+   46 | void insert PriorityQueue(PriorityQueue *pq, Node *node) {
+      |                                                         ^
+      |                                                         ;
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-108-s3.c:61:18: error: expected ';' after top level declarator
+   61 | Node *extract_min PriorityQueue(PriorityQueue *pq) {
+      |                  ^
+      |                  ;
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-108-s3.c:61:47: error: expected ')'
+   61 | Node *extract_min PriorityQueue(PriorityQueue *pq) {
+      |                                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-108-s3.c:61:32: note: to match this '('
+   61 | Node *extract_min PriorityQueue(PriorityQueue *pq) {
+      |                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-108-s3.c:61:33: error: redefinition of 'PriorityQueue' as different kind of symbol
+   61 | Node *extract_min PriorityQueue(PriorityQueue *pq) {
+      |                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-108-s3.c:21:3: note: previous definition is here
+   21 | } PriorityQueue;
+      |   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-108-s3.c:61:51: error: expected ';' after top level declarator
+   61 | Node *extract_min PriorityQueue(PriorityQueue *pq) {
+      |                                                   ^
+      |                                                   ;
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-108-s3.c:108:37: error: called object type 'Node *' (aka 'struct Node *') is not a function or function pointer
+  108 |         Node *min_node = extract_min(pq);
+      |                          ~~~~~~~~~~~^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-108-s3.c:135:77: error: incompatible integer to pointer conversion initializing 'struct Node *' with an expression of type 'int' [-Wint-conversion]
+  135 |     Node *list1 = (Node){.value = (int []){1, 3, 5, 7}, .next = (Node[]){0, 1, 1, 1, 0}};
+      |                                                                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-108-s3.c:135:80: error: incompatible integer to pointer conversion initializing 'void *' with an expression of type 'int' [-Wint-conversion]
+  135 |     Node *list1 = (Node){.value = (int []){1, 3, 5, 7}, .next = (Node[]){0, 1, 1, 1, 0}};
+      |                                                                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-108-s3.c:135:83: error: incompatible integer to pointer conversion initializing 'struct Node *' with an expression of type 'int' [-Wint-conversion]
+  135 |     Node *list1 = (Node){.value = (int []){1, 3, 5, 7}, .next = (Node[]){0, 1, 1, 1, 0}};
+      |                                                                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-108-s3.c:135:11: error: initializing 'Node *' (aka 'struct Node *') with an expression of incompatible type 'Node' (aka 'struct Node'); take the address with &
+  135 |     Node *list1 = (Node){.value = (int []){1, 3, 5, 7}, .next = (Node[]){0, 1, 1, 1, 0}};
+      |           ^       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      |                   &(                                                                    )
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-108-s3.c:136:77: error: incompatible integer to pointer conversion initializing 'struct Node *' with an expression of type 'int' [-Wint-conversion]
+  136 |     Node *list2 = (Node){.value = (int []){2, 4, 6, 8}, .next = (Node[]){0, 1, 1, 1, 0}};
+      |                                                                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-108-s3.c:136:80: error: incompatible integer to pointer conversion initializing 'void *' with an expression of type 'int' [-Wint-conversion]
+  136 |     Node *list2 = (Node){.value = (int []){2, 4, 6, 8}, .next = (Node[]){0, 1, 1, 1, 0}};
+      |                                                                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-108-s3.c:136:83: error: incompatible integer to pointer conversion initializing 'struct Node *' with an expression of type 'int' [-Wint-conversion]
+  136 |     Node *list2 = (Node){.value = (int []){2, 4, 6, 8}, .next = (Node[]){0, 1, 1, 1, 0}};
+      |                                                                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-108-s3.c:136:11: error: initializing 'Node *' (aka 'struct Node *') with an expression of incompatible type 'Node' (aka 'struct Node'); take the address with &
+  136 |     Node *list2 = (Node){.value = (int []){2, 4, 6, 8}, .next = (Node[]){0, 1, 1, 1, 0}};
+      |           ^       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      |                   &(                                                                    )
+19 errors generated.

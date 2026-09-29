@@ -1,0 +1,7 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-118-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-118-s2.c:47:36: error: Invalid strtok() argument nr 2. A nul-terminated string is required. [invalidFunctionArgStr]
+    char *token = strtok(str_copy, &delimiter);
+                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-118-s2.c:50:30: error: Invalid strtok() argument nr 2. A nul-terminated string is required. [invalidFunctionArgStr]
+        token = strtok(NULL, &delimiter);
+                             ^

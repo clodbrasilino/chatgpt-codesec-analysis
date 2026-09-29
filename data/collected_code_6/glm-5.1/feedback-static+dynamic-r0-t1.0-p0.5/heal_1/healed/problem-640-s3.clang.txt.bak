@@ -1,0 +1,5 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_1/healed/problem-640-s3.c:25:32: error: call to undeclared library function 'isspace' with type 'int (int)'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   25 |             if (depth == 0 && !isspace((unsigned char)str[i])) {
+      |                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_1/healed/problem-640-s3.c:25:32: note: include the header <ctype.h> or explicitly provide a declaration for 'isspace'
+1 error generated.

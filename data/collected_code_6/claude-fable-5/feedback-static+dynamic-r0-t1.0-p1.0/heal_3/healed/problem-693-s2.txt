@@ -1,0 +1,70 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_INPUT_LEN 4096U
+
+char *remove_multiple_spaces(const char *input);
+
+char *remove_multiple_spaces(const char *input)
+{
+    char *output;
+    size_t len;
+    size_t i;
+    size_t j;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    len = strnlen(input, MAX_INPUT_LEN);
+    if (len >= MAX_INPUT_LEN) {
+        return NULL;
+    }
+
+    output = malloc(len + 1U);
+    if (output == NULL) {
+        return NULL;
+    }
+
+    j = 0U;
+    for (i = 0U; i < len; i++) {
+        if (input[i] == ' ' && j > 0U && output[j - 1U] == ' ') {
+            continue;
+        }
+        output[j] = input[i];
+        j++;
+    }
+    output[j] = '\0';
+
+    return output;
+}
+
+int main(void)
+{
+    const char *test = "This   is  a    string   with     multiple spaces.";
+    char *result;
+
+    result = remove_multiple_spaces(test);
+    if (result == NULL) {
+        fprintf(stderr, "Failed to process the string.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Original: %s\n", test) < 0) {
+        free(result);
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Cleaned:  %s\n", result) < 0) {
+        free(result);
+        return EXIT_FAILURE;
+    }
+
+    free(result);
+    return EXIT_SUCCESS;
+}
+```
+
+The key change addresses the Flawfinder warning about `strlen` (CWE-126): the code now uses `strnlen` with a defined upper bound (`MAX_INPUT_LEN`), which guarantees the scan never reads beyond a fixed limit even if the input string is not null-terminated. If the string reaches or exceeds that bound, the function safely rejects it by returning `NULL` instead of risking a buffer over-read. This also removes the previous meaningless check `len == (size_t)-1`, which could never trigger since `strlen` cannot return that value in practice. All allocation results, `printf` return values, and null inputs remain properly checked, and `free` is called on every exit path that owns the buffer.

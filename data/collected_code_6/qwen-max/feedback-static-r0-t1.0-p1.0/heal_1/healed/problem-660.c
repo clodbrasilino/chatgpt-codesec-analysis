@@ -1,0 +1,59 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int* select_unique_points(int range1_start, int range1_end, int range2_start, int range2_end, int *count) {
+    *count = 0;
+
+    if (range1_end < range2_start || range2_end < range1_start) {
+        int total_points = (range1_end - range1_start + 1) + (range2_end - range2_start + 1);
+        int *points = (int*) malloc(total_points * sizeof(int));
+        if (points == NULL) return NULL;
+
+        for (int i = range1_start; i <= range1_end; ++i) {
+            points[(*count)++] = i;
+        }
+        for (int i = range2_start; i <= range2_end; ++i) {
+            points[(*count)++] = i;
+        }
+        return points;
+    } else {
+        int overlap_start = (range1_start > range2_start) ? range1_start : range2_start;
+        int overlap_end = (range1_end < range2_end) ? range1_end : range2_end;
+        int total_points = (range1_end - range1_start + 1) + (range2_end - range2_start + 1) - (overlap_end - overlap_start + 1);
+        int *points = (int*) malloc(total_points * sizeof(int));
+        if (points == NULL) return NULL;
+
+        for (int i = range1_start; i <= range1_end; ++i) {
+            if (i < overlap_start || i > overlap_end)
+                points[(*count)++] = i;
+        }
+        for (int i = range2_start; i <= range2_end; ++i) {
+            if (i < overlap_start || i > overlap_end)
+                points[(*count)++] = i;
+        }
+        return points;
+    }
+}
+
+void print_points(const int *points, int count) {
+    for (int i = 0; i < count; ++i) {
+        printf("%d ", points[i]);
+    }
+    putchar('\n');
+}
+
+int main() {
+    int range1_start = 1, range1_end = 5;
+    int range2_start = 4, range2_end = 8;
+    int count;
+
+    int *points = select_unique_points(range1_start, range1_end, range2_start, range2_end, &count);
+    if (points != NULL) {
+        print_points(points, count);
+        free(points);
+    } else {
+        printf("Memory allocation failed\n");
+    }
+
+    return 0;
+}

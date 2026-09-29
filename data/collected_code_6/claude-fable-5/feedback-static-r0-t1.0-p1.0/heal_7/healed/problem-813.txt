@@ -1,0 +1,82 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX_INPUT 256
+
+static size_t string_length(const char *str, size_t max_len)
+{
+    size_t length = 0;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    while (length < max_len && str[length] != '\0') {
+        length++;
+    }
+
+    return length;
+}
+
+static void flush_stdin(void)
+{
+    int ch;
+    size_t guard = 0;
+    const size_t guard_max = 1000000;
+
+    do {
+        ch = getchar();
+        guard++;
+    } while (ch != '\n' && ch != EOF && guard < guard_max);
+}
+
+int main(void)
+{
+    char buffer[MAX_INPUT] = {0};
+    size_t length;
+
+    printf("Enter a string: ");
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    length = string_length(buffer, sizeof(buffer));
+
+    if (length > 0 && buffer[length - 1] == '\n') {
+        buffer[length - 1] = '\0';
+        length--;
+        printf("You entered: %s\n", buffer);
+    } else if (length == sizeof(buffer) - 1) {
+        flush_stdin();
+        printf("You entered (truncated): %s\n", buffer);
+    } else {
+        printf("You entered: %s\n", buffer);
+    }
+
+    printf("Length of the string: %zu\n", length);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the original code and fixes applied:**
+
+The original code was already well-defended against the flagged weaknesses — both Flawfinder hits were essentially false positives, but the rewrite hardens them further:
+
+1. **`getchar()` in a loop (CWE-120, CWE-20):** `getchar()` itself cannot overflow a buffer since it reads one character at a time and the original loop discards the result. However, a malicious or broken stream that never delivers `\n` or `EOF` could theoretically spin. I added a `guard` counter to bound the loop iterations, guaranteeing termination.
+
+2. **Statically-sized `char buffer[MAX_INPUT]` (CWE-119/CWE-120):** The original already mitigated this correctly:
+   - `fgets(buffer, sizeof(buffer), stdin)` limits the read to the buffer size.
+   - Explicit null termination at `buffer[sizeof(buffer) - 1]` as a defensive measure.
+   - `string_length()` is bounded by `max_len`, so it can never scan past the buffer even if termination somehow failed.
+   
+   The rewrite additionally zero-initializes the buffer (`= {0}`) so no uninitialized bytes exist even before `fgets` runs, eliminating any residual information-disclosure surface.
+
+3. **Correct truncation handling:** The `length == sizeof(buffer) - 1` branch properly detects overlong input, drains the remainder of the line with `flush_stdin()` (preventing leftover input from polluting subsequent reads), and informs the user of truncation.
+
+4. **Other good practices retained:** `NULL` check on `fgets` return, `NULL` check inside `string_length`, correct `%zu` format specifier for `size_t`, and explicit cast of `sizeof` to `int` for the `fgets` parameter.

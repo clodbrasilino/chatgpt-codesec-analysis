@@ -1,0 +1,89 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+void swap(int *a, int *b) {
+    int temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+void min_heapify(int heap[], int n, int i) {
+    int smallest = i;
+    int left = 2 * i + 1;
+    int right = 2 * i + 2;
+
+    if (left < n && heap[left] < heap[smallest])
+        smallest = left;
+    if (right < n && heap[right] < heap[smallest])
+        smallest = right;
+    if (smallest != i) {
+        swap(&heap[i], &heap[smallest]);
+        min_heapify(heap, n, smallest);
+    }
+}
+
+void max_heapify(int heap[], int n, int i) {
+    int largest = i;
+    int left = 2 * i + 1;
+    int right = 2 * i + 2;
+
+    if (left < n && heap[left] > heap[largest])
+        largest = left;
+    if (right < n && heap[right] > heap[largest])
+        largest = right;
+    if (largest != i) {
+        swap(&heap[i], &heap[largest]);
+        max_heapify(heap, n, largest);
+    }
+}
+
+long long maximum_product(const int *nums, int numsSize) {
+    if (nums == NULL || numsSize < 3) {
+        return 0;
+    }
+
+    int top_max[3] = {INT_MIN, INT_MIN, INT_MIN};
+    int top_min[2] = {INT_MAX, INT_MAX};
+
+    for (int i = 0; i < numsSize; i++) {
+        if (i < 3) {
+            top_max[i] = nums[i];
+            if (i == 2) {
+                for (int j = 1; j >= 0; j--) {
+                    min_heapify(top_max, 3, j);
+                }
+            }
+        } else if (nums[i] > top_max[0]) {
+            top_max[0] = nums[i];
+            min_heapify(top_max, 3, 0);
+        }
+
+        if (i < 2) {
+            top_min[i] = nums[i];
+            if (i == 1) {
+                max_heapify(top_min, 2, 0);
+            }
+        } else if (nums[i] < top_min[0]) {
+            top_min[0] = nums[i];
+            max_heapify(top_min, 2, 0);
+        }
+    }
+
+    long long prod1 = (long long)top_max[0] * top_max[1] * top_max[2];
+    long long prod2 = (long long)top_min[0] * top_min[1] * (top_max[0] > top_max[1] ? (top_max[0] > top_max[2] ? top_max[0] : top_max[2]) : (top_max[1] > top_max[2] ? top_max[1] : top_max[2]));
+
+    return prod1 > prod2 ? prod1 : prod2;
+}
+
+int main(void) {
+    int nums[] = {-10, -10, 1, 3, 2};
+    int n = sizeof(nums) / sizeof(nums[0]);
+    
+    long long result = maximum_product(nums, n);
+    printf("%lld\n", result);
+    
+    return 0;
+}
+```

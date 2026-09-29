@@ -1,0 +1,22 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_7/healed/problem-350-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_7/healed/problem-350-s2.c:81:39: style: Condition 'test5' is always false [knownConditionTrueFalse]
+    printf("Input: %s, Output: %s\n", test5 ? test5 : "(null)", r5 ? r5 : "NULL");
+                                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_7/healed/problem-350-s2.c:69:25: note: Assignment 'test5=NULL', assigned value is 0
+    const char *test5 = NULL;
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_7/healed/problem-350-s2.c:81:39: note: Condition 'test5' is always false
+    printf("Input: %s, Output: %s\n", test5 ? test5 : "(null)", r5 ? r5 : "NULL");
+                                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_7/healed/problem-350-s2.c:81:65: style: Condition 'r5' is always false [knownConditionTrueFalse]
+    printf("Input: %s, Output: %s\n", test5 ? test5 : "(null)", r5 ? r5 : "NULL");
+                                                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_7/healed/problem-350-s2.c:75:31: note: Calling function 'minimize_string' returns 0
+    char *r5 = minimize_string(test5);
+                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_7/healed/problem-350-s2.c:75:31: note: Assignment 'r5=minimize_string(test5)', assigned value is 0
+    char *r5 = minimize_string(test5);
+                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_7/healed/problem-350-s2.c:81:65: note: Condition 'r5' is always false
+    printf("Input: %s, Output: %s\n", test5 ? test5 : "(null)", r5 ? r5 : "NULL");
+                                                                ^

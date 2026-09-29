@@ -1,0 +1,12 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-631.c: In function 'swap_whitespace_underscore':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-631.c:9:21: error: implicit declaration of function 'malloc' [-Wimplicit-function-declaration]
+    9 |     char *new_str = malloc(len + 1);
+      |                     ^~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-631.c:4:1: note: include '<stdlib.h>' or provide a declaration of 'malloc'
+    3 | #include <regex.h>
+  +++ |+#include <stdlib.h>
+    4 | 
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-631.c:18:5: error: implicit declaration of function 'free' [-Wimplicit-function-declaration]
+   18 |     free(new_str);
+      |     ^~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-631.c:18:5: note: include '<stdlib.h>' or provide a declaration of 'free'

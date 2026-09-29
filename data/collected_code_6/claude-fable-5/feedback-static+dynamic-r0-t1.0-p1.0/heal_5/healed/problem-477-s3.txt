@@ -1,0 +1,109 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdint.h>
+
+#define BUFFER_SIZE 256
+
+char *to_lower_case(char *str)
+{
+    size_t i;
+
+    if (str == NULL) {
+        return NULL;
+    }
+
+    for (i = 0; str[i] != '\0'; i++) {
+        str[i] = (char)tolower((unsigned char)str[i]);
+    }
+
+    return str;
+}
+
+int main(void)
+{
+    char *buffer;
+    char *result;
+    size_t capacity = BUFFER_SIZE;
+    size_t length = 0;
+    int ch;
+
+    buffer = malloc(capacity);
+    if (buffer == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    while ((ch = fgetc(stdin)) != EOF && ch != '\n') {
+        if (length + 1 >= capacity) {
+            size_t new_capacity;
+            char *tmp;
+
+            if (capacity > SIZE_MAX / 2) {
+                fprintf(stderr, "Input too large\n");
+                free(buffer);
+                return EXIT_FAILURE;
+            }
+            new_capacity = capacity * 2;
+            tmp = realloc(buffer, new_capacity);
+            if (tmp == NULL) {
+                fprintf(stderr, "Memory allocation failed\n");
+                free(buffer);
+                return EXIT_FAILURE;
+            }
+            buffer = tmp;
+            capacity = new_capacity;
+        }
+        buffer[length++] = (char)ch;
+    }
+
+    if (ch == EOF && ferror(stdin)) {
+        fprintf(stderr, "Error reading input\n");
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+
+    if (length == 0 && ch == EOF) {
+        fprintf(stderr, "Error reading input\n");
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+
+    buffer[length] = '\0';
+
+    result = to_lower_case(buffer);
+    if (result == NULL) {
+        fprintf(stderr, "Conversion failed\n");
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+
+    if (printf("%s\n", result) < 0) {
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+
+    free(buffer);
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis summary:**
+
+The Flawfinder warning about `fgetc` in a loop (CWE-120/CWE-20) is already properly mitigated in this code:
+
+1. **Buffer boundary check**: The condition `length + 1 >= capacity` is verified *before* every write, guaranteeing room for both the incoming character and the eventual null terminator. This eliminates the buffer overflow risk (CWE-120).
+
+2. **Overflow-safe growth**: The `capacity > SIZE_MAX / 2` guard prevents integer overflow when doubling the capacity — a subtle bug that many dynamic-buffer implementations miss.
+
+3. **Safe `realloc` pattern**: The result is stored in a temporary pointer (`tmp`) before assignment, so the original buffer isn't leaked if `realloc` fails.
+
+4. **Input validation (CWE-20)**: `ferror(stdin)` distinguishes genuine read errors from EOF, and the empty-input-at-EOF case is handled explicitly.
+
+5. **Correct `tolower` usage**: Casting to `unsigned char` before calling `tolower` avoids undefined behavior for negative `char` values on platforms where `char` is signed.
+
+6. **Resource hygiene**: `buffer` is freed on every exit path, and even the `printf` return value is checked.
+
+The code is already a correct, defensive implementation — the rewrite above is functionally identical with the comments stripped, as no actual fixes were required.

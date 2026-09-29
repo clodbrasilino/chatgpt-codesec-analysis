@@ -1,0 +1,62 @@
+#define _POSIX_C_SOURCE 200809L
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+int remove_non_alnum(char *str) {
+    regex_t regex;
+    regmatch_t match;
+    char errbuf[256];
+    char *src = str;
+    char *dst = str;
+    size_t len;
+    int ret;
+
+    if (str == NULL) {
+        return -1;
+    }
+
+    ret = regcomp(&regex, "[^[:alnum:]]", REG_EXTENDED);
+    if (ret != 0) {
+        fprintf(stderr, "regcomp failed\n");
+        return -1;
+    }
+
+    while (*src) {
+        ret = regexec(&regex, src, 1, &match, 0);
+        if (ret == 0) {
+            if (match.rm_so > 0) {
+                len = (size_t)match.rm_so;
+                memmove(dst, src, len);
+                dst += len;
+            }
+            src += match.rm_eo;
+        } else if (ret == REG_NOMATCH) {
+            len = strlen(src);
+            memmove(dst, src, len + 1);
+            dst += len;
+            break;
+        } else {
+            regerror(ret, &regex, errbuf, sizeof(errbuf));
+            fprintf(stderr, "regexec: %s\n", errbuf);
+            regfree(&regex);
+            return -1;
+        }
+    }
+
+    *dst = '\0';
+    regfree(&regex);
+    return 0;
+}
+
+int main(void) {
+    char text[] = "Hello, World! 123";
+
+    if (remove_non_alnum(text) != 0) {
+        return EXIT_FAILURE;
+    }
+
+    printf("%s\n", text);
+    return EXIT_SUCCESS;
+}

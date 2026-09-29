@@ -1,0 +1,52 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Tuple {
+    int first;
+    int second;
+};
+
+struct TupleList {
+    struct Tuple* tuples;
+    size_t size;
+};
+
+long long calculate_cumulative_sum(const struct TupleList* list) {
+    if (list == NULL || list->tuples == NULL) {
+        return 0;
+    }
+
+    long long sum = 0;
+    for (size_t i = 0; i < list->size; ++i) {
+        sum += (long long)list->tuples[i].first;
+        sum += (long long)list->tuples[i].second;
+    }
+
+    return sum;
+}
+
+int main(void) {
+    size_t num_tuples = 3;
+    
+    struct Tuple* tuples = (struct Tuple*)malloc(num_tuples * sizeof(struct Tuple));
+    if (tuples == NULL) {
+        return EXIT_FAILURE;
+    }
+
+    tuples[0].first = 1;
+    tuples[0].second = 2;
+    tuples[1].first = 3;
+    tuples[1].second = 4;
+    tuples[2].first = 5;
+    tuples[2].second = 6;
+
+    struct TupleList list = { tuples, num_tuples };
+
+    long long total_sum = calculate_cumulative_sum(&list);
+
+    printf("%lld\n", total_sum);
+
+    free(tuples);
+
+    return EXIT_SUCCESS;
+}

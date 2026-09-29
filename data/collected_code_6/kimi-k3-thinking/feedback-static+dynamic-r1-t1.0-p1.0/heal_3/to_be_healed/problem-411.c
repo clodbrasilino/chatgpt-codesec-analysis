@@ -1,0 +1,99 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#define MAX_INPUT_LEN 4096
+
+static size_t bounded_strlen(const char *s, size_t max_len)
+{
+    size_t len = 0;
+
+    while (len < max_len && s[len] != '\0') {
+        len++;
+    }
+
+    return len;
+}
+
+char *snake_to_camel(const char *input, size_t max_len)
+{
+    char *result;
+    size_t input_len;
+    size_t result_idx = 0;
+    size_t i;
+    int capitalize_next = 1;
+
+    if (input == NULL || max_len == 0) {
+        return NULL;
+    }
+
+    input_len = bounded_strlen(input, max_len);
+
+    result = (char *)malloc(input_len + 1);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    for (i = 0; i < input_len; i++) {
+        unsigned char c = (unsigned char)input[i];
+
+        if (c == '_') {
+            capitalize_next = 1;
+            continue;
+        }
+
+        if (capitalize_next) {
+            result[result_idx++] = (char)toupper(c);
+            capitalize_next = 0;
+        } else {
+            result[result_idx++] = (char)c;
+        }
+    }
+
+    result[result_idx] = '\0';
+    return result;
+}
+
+int main(int argc, char *argv[])
+{
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char buffer[MAX_INPUT_LEN];
+    const char *input;
+    char *output;
+    size_t len;
+
+    if (argc > 1) {
+        if (bounded_strlen(argv[1], MAX_INPUT_LEN) >= MAX_INPUT_LEN) {
+            fprintf(stderr, "Error: input too long\n");
+            return EXIT_FAILURE;
+        }
+        input = argv[1];
+    } else if (fgets(buffer, sizeof(buffer), stdin) != NULL) {
+        buffer[sizeof(buffer) - 1] = '\0';
+        len = bounded_strlen(buffer, sizeof(buffer));
+        if (len == sizeof(buffer) - 1 && buffer[len - 1] != '\n' && !feof(stdin)) {
+            fprintf(stderr, "Error: input too long\n");
+            return EXIT_FAILURE;
+        }
+        while (len > 0 && (buffer[len - 1] == '\n' || buffer[len - 1] == '\r')) {
+            buffer[--len] = '\0';
+        }
+        input = buffer;
+    } else {
+        input = "convert_snake_case_to_camel_case";
+    }
+
+    output = snake_to_camel(input, MAX_INPUT_LEN);
+    if (output == NULL) {
+        fprintf(stderr, "Error: conversion failed\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("%s\n", output);
+
+    free(output);
+    return EXIT_SUCCESS;
+}

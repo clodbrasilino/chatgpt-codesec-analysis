@@ -1,0 +1,91 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+long long count_domino_tilings(int n)
+{
+    if (n < 0) {
+        return 0;
+    }
+    if (n % 2 != 0) {
+        return 0;
+    }
+    if (n == 0) {
+        return 1;
+    }
+
+    long long *dp = (long long *)malloc((size_t)(n + 1) * sizeof(long long));
+    if (dp == NULL) {
+        return -1;
+    }
+
+    dp[0] = 1;
+    dp[1] = 0;
+
+    for (int i = 2; i <= n; i += 2) {
+        dp[i] = 0;
+        for (int j = 0; j <= i - 2; j += 2) {
+            long long multiplier = (j == i - 2) ? 3 : 2;
+
+            if (dp[j] > 0 && dp[j] > LLONG_MAX / multiplier) {
+                free(dp);
+                dp = NULL;
+                return -1;
+            }
+            if (dp[j] < 0 && dp[j] < LLONG_MIN / multiplier) {
+                free(dp);
+                dp = NULL;
+                return -1;
+            }
+
+            long long product = dp[j] * multiplier;
+
+            if (product > 0 && dp[i] > LLONG_MAX - product) {
+                free(dp);
+                dp = NULL;
+                return -1;
+            }
+            if (product < 0 && dp[i] < LLONG_MIN - product) {
+                free(dp);
+                dp = NULL;
+                return -1;
+            }
+
+            dp[i] += product;
+        }
+    }
+
+    long long result = dp[n];
+    free(dp);
+    dp = NULL;
+
+    return result;
+}
+
+int main(void)
+{
+    int n = 0;
+
+    printf("Enter n for 3 x n board: ");
+
+    if (scanf("%d", &n) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (n < 0) {
+        fprintf(stderr, "n must be non-negative\n");
+        return EXIT_FAILURE;
+    }
+
+    long long result = count_domino_tilings(n);
+
+    if (result == -1) {
+        fprintf(stderr, "Memory allocation failed or arithmetic overflow occurred\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Number of ways to tile 3 x %d board: %lld\n", n, result);
+
+    return EXIT_SUCCESS;
+}

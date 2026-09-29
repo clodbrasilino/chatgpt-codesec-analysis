@@ -1,0 +1,33 @@
+#include <stdio.h>
+#include <stdint.h>
+
+uint64_t power(uint64_t base, uint32_t exp) {
+    uint64_t result = 1;
+    while (exp > 0) {
+        if (exp % 2 == 1) {
+            result *= base;
+        }
+        base *= base;
+        exp /= 2;
+    }
+    return result;
+}
+
+uint64_t sum_of_powers(uint32_t n, uint32_t exp) {
+    uint64_t sum = 0;
+    for (uint32_t i = 1; i <= n; i++) {
+        sum += power(i, exp);
+    }
+    return sum;
+}
+
+int main() {
+    uint32_t n;
+    printf("Enter the number of natural numbers: ");
+    scanf("%u", &n);
+
+    uint64_t result = sum_of_powers(n, 5);
+    printf("Sum of the fifth powers of the first %u natural numbers is: %llu\n", n, (unsigned long long)result);
+
+    return 0;
+}

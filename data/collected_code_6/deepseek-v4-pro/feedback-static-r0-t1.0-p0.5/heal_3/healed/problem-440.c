@@ -1,0 +1,101 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#define MAX_ADVERBS 100
+#define MAX_WORD_LEN 100
+#define MAX_SENTENCE_LEN 10000
+
+typedef struct {
+    char word[MAX_WORD_LEN];
+    int position;
+} AdverbInfo;
+
+static int is_adverb(const char *word, size_t word_len) {
+    if (word_len < 3) return 0;
+    return word[word_len - 2] == 'l' && word[word_len - 1] == 'y';
+}
+
+static int find_adverbs(const char *sentence, AdverbInfo *adverbs, int max_adverbs) {
+    if (sentence == NULL || adverbs == NULL || max_adverbs <= 0) {
+        return -1;
+    }
+
+    size_t sentence_len = strnlen(sentence, MAX_SENTENCE_LEN + 1);
+    if (sentence_len > MAX_SENTENCE_LEN) {
+        return -1;
+    }
+
+    char *buffer = (char *)malloc(sentence_len + 1);
+    if (buffer == NULL) {
+        return -1;
+    }
+
+    memcpy(buffer, sentence, sentence_len);
+    buffer[sentence_len] = '\0';
+
+    const char *delimiters = " ,.!?;:\"()[]{}";
+    char *saveptr;
+    char *token = strtok_r(buffer, delimiters, &saveptr);
+    int position = 0;
+
+    while (token != NULL && count < max_adverbs) {
+        size_t token_len = strnlen(token, MAX_WORD_LEN);
+        if (token_len >= MAX_WORD_LEN) {
+            token = strtok_r(NULL, delimiters, &saveptr);
+            position++;
+            continue;
+        }
+
+        if (is_adverb(token, token_len)) {
+            size_t copy_len = token_len;
+            if (copy_len >= MAX_WORD_LEN) {
+                copy_len = MAX_WORD_LEN - 1;
+            }
+            memcpy(adverbs[count].word, token, copy_len);
+            adverbs[count].word[copy_len] = '\0';
+            adverbs[count].position = position;
+            count++;
+        }
+        position++;
+        token = strtok_r(NULL, delimiters, &saveptr);
+    }
+
+    free(buffer);
+    return count;
+}
+
+int main(void) {
+    char sentence[1000];
+    AdverbInfo adverbs[MAX_ADVERBS];
+
+    printf("Enter a sentence: ");
+    if (fgets(sentence, sizeof(sentence), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    size_t len = strnlen(sentence, sizeof(sentence));
+    if (len > 0 && sentence[len - 1] == '\n') {
+        sentence[len - 1] = '\0';
+    }
+
+    int num_adverbs = find_adverbs(sentence, adverbs, MAX_ADVERBS);
+
+    if (num_adverbs < 0) {
+        fprintf(stderr, "Error processing sentence\n");
+        return 1;
+    }
+
+    if (num_adverbs == 0) {
+        printf("No adverbs found.\n");
+    } else {
+        printf("Adverbs found:\n");
+        for (int i = 0; i < num_adverbs; i++) {
+            printf("Word: %s, Position: %d\n", adverbs[i].word, adverbs[i].position);
+        }
+    }
+
+    return 0;
+}

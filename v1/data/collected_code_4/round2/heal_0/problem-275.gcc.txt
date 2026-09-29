@@ -1,0 +1,80 @@
+./collected_code_4/round2//heal_0/problem-275.c: In function 'findLastRemoved':
+./collected_code_4/round2//heal_0/problem-275.c:7:19: warning: comparison between pointer and integer
+    7 |         if(arr[i] == NULL)
+      |                   ^~
+./collected_code_4/round2//heal_0/problem-275.c: In function 'main':
+./collected_code_4/round2//heal_0/problem-275.c:19:12: warning: assignment to 'int' from 'void *' makes integer from pointer without a cast [-Wint-conversion]
+   19 |     arr[7] = NULL;
+      |            ^
+./collected_code_4/round2//heal_0/problem-275.c: In function 'findLastRemoved':
+./collected_code_4/round2//heal_0/problem-275.c:7:15: warning: use of uninitialized value '*arr_10(D) + _2' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+    7 |         if(arr[i] == NULL)
+      |            ~~~^~~
+  'main': events 1-9
+    |
+    |   14 | int main(){
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |   15 |     int *arr = malloc(sizeof(int)*10);
+    |      |                ~~~~~~~~~~~~~~~~~~~~~~
+    |      |                |
+    |      |                (2) region created on heap here
+    |   16 |     for (int i = 0; i < 10; ++i){
+    |      |                     ~~~~~~
+    |      |                       |
+    |      |                       (3) following 'true' branch (when 'i <= 9')...
+    |      |                       (5) following 'true' branch (when 'i <= 9')...
+    |      |                       (7) following 'false' branch (when 'i > 9')...
+    |   17 |         arr[i] = i+1;
+    |      |            ~
+    |      |            |
+    |      |            (4) ...to here
+    |      |            (6) ...to here
+    |   18 |     }
+    |   19 |     arr[7] = NULL;
+    |      |        ~
+    |      |        |
+    |      |        (8) ...to here
+    |   20 |     int position = findLastRemoved(arr, 10);
+    |      |                    ~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                    |
+    |      |                    (9) calling 'findLastRemoved' from 'main'
+    |
+    +--> 'findLastRemoved': events 10-13
+           |
+           |    4 | int findLastRemoved(int *arr, int size){
+           |      |     ^~~~~~~~~~~~~~~
+           |      |     |
+           |      |     (10) entry to 'findLastRemoved'
+           |    5 |     int i = size - 1;
+           |    6 |     while(i >= 0) {
+           |      |           ~~~~~~
+           |      |             |
+           |      |             (11) following 'true' branch (when 'i >= 0')...
+           |    7 |         if(arr[i] == NULL)
+           |      |            ~~~~~~
+           |      |               |
+           |      |               (12) ...to here
+           |      |               (13) use of uninitialized value '*arr_10(D) + _2' here
+           |
+./collected_code_4/round2//heal_0/problem-275.c: In function 'main':
+./collected_code_4/round2//heal_0/problem-275.c:17:16: warning: dereference of possibly-NULL 'arr' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   17 |         arr[i] = i+1;
+      |         ~~~~~~~^~~~~
+  'main': events 1-4
+    |
+    |   15 |     int *arr = malloc(sizeof(int)*10);
+    |      |                ^~~~~~~~~~~~~~~~~~~~~~
+    |      |                |
+    |      |                (1) this call could return NULL
+    |   16 |     for (int i = 0; i < 10; ++i){
+    |      |                     ~~~~~~
+    |      |                       |
+    |      |                       (2) following 'true' branch (when 'i <= 9')...
+    |   17 |         arr[i] = i+1;
+    |      |         ~~~~~~~~~~~~
+    |      |            |   |
+    |      |            |   (4) 'arr + (long unsigned int)i * 4' could be NULL: unchecked value from (1)
+    |      |            (3) ...to here
+    |

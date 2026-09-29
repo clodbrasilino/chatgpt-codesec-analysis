@@ -1,0 +1,40 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int is_perfect(int n) {
+    int sum = 0;
+    for (int i = 1; i <= n / 2; ++i) {
+        if (n % i == 0) {
+            sum += i;
+        }
+    }
+    return sum == n;
+}
+
+int perfect_square_root(int n) {
+    int i;
+    for (i = 1; i * i <= n; ++i) {
+        if (i * i == n && is_perfect(n)) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+int main() {
+    int number;
+    printf("Enter a number: ");
+    if (scanf("%d", &number) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    int result = perfect_square_root(number);
+    if (result == -1) {
+        printf("The number is not a perfect number or its square root is not an integer.\n");
+    } else {
+        printf("The square root of the perfect number is: %d\n", result);
+    }
+
+    return EXIT_SUCCESS;
+}

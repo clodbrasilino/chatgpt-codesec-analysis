@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-76.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-76.c:17:19: style: Condition 'term1>0' is always true [knownConditionTrueFalse]
+        if (term1 > 0 && term2 > 0 && term1 > LLONG_MAX / term2) {
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-76.c:13:23: note: Assuming that condition 'k<min' is not redundant
+    for (int k = 0; k < min; k++) {
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-76.c:14:27: note: Assignment 'term1=(long long)(min-k)', assigned value is greater than 0
+        long long term1 = (long long)(min - k);
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-76.c:17:19: note: Condition 'term1>0' is always true
+        if (term1 > 0 && term2 > 0 && term1 > LLONG_MAX / term2) {
+                  ^

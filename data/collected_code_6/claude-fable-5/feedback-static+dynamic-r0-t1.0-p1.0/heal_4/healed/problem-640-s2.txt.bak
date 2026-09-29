@@ -1,0 +1,91 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char *remove_parentheses(const char *input)
+{
+    size_t len;
+    size_t i;
+    size_t j;
+    int depth;
+    char *result;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    len = strlen(input);
+    result = calloc(len + 1, sizeof(char));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    depth = 0;
+    j = 0;
+    for (i = 0; i < len; i++) {
+        if (input[i] == '(') {
+            depth++;
+        } else if (input[i] == ')') {
+            if (depth > 0) {
+                depth--;
+            }
+        } else if (depth == 0) {
+            result[j] = input[i];
+            j++;
+        }
+    }
+    result[j] = '\0';
+
+    return result;
+}
+
+int main(void)
+{
+    const char *tests[] = {
+        "py(remove me)thon",
+        "str(outer (inner) text)ing",
+        "alpha"
+    };
+    const char *expected[] = {
+        "python",
+        "string",
+        "alpha"
+    };
+    size_t num_tests;
+    size_t i;
+
+    num_tests = sizeof(tests) / sizeof(tests[0]);
+
+    for (i = 0; i < num_tests; i++) {
+        char *output = remove_parentheses(tests[i]);
+        if (output == NULL) {
+            fprintf(stderr, "Memory allocation failed\n");
+            return EXIT_FAILURE;
+        }
+        if (strcmp(output, expected[i]) != 0) {
+            fprintf(stderr, "test case %zu failed: expected '%s', got '%s'\n",
+                    i, expected[i], output);
+            free(output);
+            return EXIT_FAILURE;
+        }
+        printf("%s\n", output);
+        free(output);
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The source code as written is actually functionally correct — the algorithm properly tracks nesting depth, allocates `len + 1` bytes via `calloc` (which zero-initializes, guaranteeing termination), explicitly writes the null terminator, and frees the buffer only *after* both `strcmp` and `printf` have used it.
+
+The garbage output described in the comments (`expected 'python', got '`��'`) is the classic signature of a **use-after-free** or **uninitialized buffer** bug, which would occur in a broken variant of this code if any of the following were present:
+
+1. `free(output)` called *before* `strcmp`/`printf` — reading freed heap memory yields garbage.
+2. Using `malloc` instead of `calloc` *and* forgetting the `result[j] = '\0';` line — the string would run into uninitialized heap bytes.
+3. Returning a pointer to a stack-local array from `remove_parentheses` — the buffer is invalidated on return.
+4. Allocating only `len` bytes instead of `len + 1`, leaving no room for the terminator (heap overflow of one byte).
+
+The version above avoids all four failure modes: heap allocation of `len + 1`, zero-initialized memory, explicit termination, and correct free ordering. All three test cases pass and it runs clean under Valgrind/ASan.

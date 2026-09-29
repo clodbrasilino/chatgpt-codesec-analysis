@@ -1,0 +1,54 @@
+#include <stdio.h>
+#include <string.h>
+
+int romanCharToInt(char c) {
+    switch (c) {
+        case 'I': return 1;
+        case 'V': return 5;
+        case 'X': return 10;
+        case 'L': return 50;
+        case 'C': return 100;
+        case 'D': return 500;
+        case 'M': return 1000;
+        default: return 0;
+    }
+}
+
+int romanToInt(const char *s) {
+    int result = 0;
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    int length = strlen(s);
+    
+    for (int i = 0; i < length; i++) {
+        int current = romanCharToInt(s[i]);
+        int next = (i + 1 < length) ? romanCharToInt(s[i + 1]) : 0;
+        
+        if (current < next) {
+            result -= current;
+        } else {
+            result += current;
+        }
+    }
+    
+    return result;
+}
+
+int main(void) {
+    const char *testCases[] = {
+        "III",
+        "IV",
+        "IX",
+        "LVIII",
+        "MCMXCIV"
+    };
+    
+    int numTests = sizeof(testCases) / sizeof(testCases[0]);
+    
+    for (int i = 0; i < numTests; i++) {
+        printf("%s = %d\n", testCases[i], romanToInt(testCases[i]));
+    }
+    
+    return 0;
+}

@@ -1,0 +1,85 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+static long long merge_and_count(int *arr, int *temp, int left, int mid, int right) {
+    int i = left;
+    int j = mid + 1;
+    int k = left;
+    long long inv_count = 0;
+
+    while (i <= mid && j <= right) {
+        if (arr[i] <= arr[j]) {
+            temp[k++] = arr[i++];
+        } else {
+            temp[k++] = arr[j++];
+            inv_count += (mid - i + 1);
+        }
+    }
+
+    while (i <= mid) {
+        temp[k++] = arr[i++];
+    }
+
+    while (j <= right) {
+        temp[k++] = arr[j++];
+    }
+
+    for (i = left; i <= right; i++) {
+        arr[i] = temp[i];
+    }
+
+    return inv_count;
+}
+
+static long long merge_sort_and_count(int *arr, int *temp, int left, int right) {
+    long long inv_count = 0;
+    if (left < right) {
+        int mid = (left + right) / 2;
+        inv_count += merge_sort_and_count(arr, temp, left, mid);
+        inv_count += merge_sort_and_count(arr, temp, mid + 1, right);
+        inv_count += merge_and_count(arr, temp, left, mid, right);
+    }
+    return inv_count;
+}
+
+long long count_inversions(int *arr, int n) {
+    if (arr == NULL || n <= 0) {
+        return 0;
+    }
+
+    int *temp = (int *)malloc(n * sizeof(int));
+    if (temp == NULL) {
+        return 0;
+    }
+
+    memcpy(temp, arr, n * sizeof(int));
+    long long inv_count = merge_sort_and_count(arr, temp, 0, n - 1);
+    free(temp);
+
+    return inv_count;
+}
+
+int main(void) {
+    int arr1[] = {1, 20, 6, 4, 5};
+    int n1 = sizeof(arr1) / sizeof(arr1[0]);
+    printf("%lld\n", count_inversions(arr1, n1));
+
+    int arr2[] = {2, 4, 1, 3, 5};
+    int n2 = sizeof(arr2) / sizeof(arr2[0]);
+    printf("%lld\n", count_inversions(arr2, n2));
+
+    int arr3[] = {5, 4, 3, 2, 1};
+    int n3 = sizeof(arr3) / sizeof(arr3[0]);
+    printf("%lld\n", count_inversions(arr3, n3));
+
+    int arr4[] = {1, 2, 3, 4, 5};
+    int n4 = sizeof(arr4) / sizeof(arr4[0]);
+    printf("%lld\n", count_inversions(arr4, n4));
+
+    int arr5[] = {1};
+    int n5 = sizeof(arr5) / sizeof(arr5[0]);
+    printf("%lld\n", count_inversions(arr5, n5));
+
+    return 0;
+}

@@ -1,0 +1,37 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-26.c: In function 'main':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-26.c:19:31: error: non-static initialization of a flexible array member
+   19 |     Tuple tuple_list[] = {{3, 1, 2, 3}, {3, 3, 1, 2}, {3, 2, 3, 1}};
+      |                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-26.c:19:31: note: (near initialization for 'tuple_list[0]')
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-26.c:19:34: error: non-static initialization of a flexible array member
+   19 |     Tuple tuple_list[] = {{3, 1, 2, 3}, {3, 3, 1, 2}, {3, 2, 3, 1}};
+      |                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-26.c:19:34: note: (near initialization for 'tuple_list[0]')
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-26.c:19:37: error: non-static initialization of a flexible array member
+   19 |     Tuple tuple_list[] = {{3, 1, 2, 3}, {3, 3, 1, 2}, {3, 2, 3, 1}};
+      |                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-26.c:19:37: note: (near initialization for 'tuple_list[0]')
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-26.c:19:45: error: non-static initialization of a flexible array member
+   19 |     Tuple tuple_list[] = {{3, 1, 2, 3}, {3, 3, 1, 2}, {3, 2, 3, 1}};
+      |                                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-26.c:19:45: note: (near initialization for 'tuple_list[1]')
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-26.c:19:48: error: non-static initialization of a flexible array member
+   19 |     Tuple tuple_list[] = {{3, 1, 2, 3}, {3, 3, 1, 2}, {3, 2, 3, 1}};
+      |                                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-26.c:19:48: note: (near initialization for 'tuple_list[1]')
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-26.c:19:51: error: non-static initialization of a flexible array member
+   19 |     Tuple tuple_list[] = {{3, 1, 2, 3}, {3, 3, 1, 2}, {3, 2, 3, 1}};
+      |                                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-26.c:19:51: note: (near initialization for 'tuple_list[1]')
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-26.c:19:59: error: non-static initialization of a flexible array member
+   19 |     Tuple tuple_list[] = {{3, 1, 2, 3}, {3, 3, 1, 2}, {3, 2, 3, 1}};
+      |                                                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-26.c:19:59: note: (near initialization for 'tuple_list[2]')
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-26.c:19:62: error: non-static initialization of a flexible array member
+   19 |     Tuple tuple_list[] = {{3, 1, 2, 3}, {3, 3, 1, 2}, {3, 2, 3, 1}};
+      |                                                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-26.c:19:62: note: (near initialization for 'tuple_list[2]')
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-26.c:19:65: error: non-static initialization of a flexible array member
+   19 |     Tuple tuple_list[] = {{3, 1, 2, 3}, {3, 3, 1, 2}, {3, 2, 3, 1}};
+      |                                                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-26.c:19:65: note: (near initialization for 'tuple_list[2]')

@@ -1,0 +1,12 @@
+collected_code/problem-967-0.c:7:15: error: Cannot determine that 'str[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+    while (str[i] != '\0') {
+              ^
+collected_code/problem-967-0.c:8:16: error: Cannot determine that 'str[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        if (str[i] == 'a' || str[i] == 'e' || str[i] == 'i' || str[i] == 'o' || str[i] == 'u' ||
+               ^
+collected_code/problem-967-0.c:9:16: error: Cannot determine that 'str[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+            str[i] == 'A' || str[i] == 'E' || str[i] == 'I' || str[i] == 'O' || str[i] == 'U') {
+               ^
+collected_code/problem-967-0.c:26:17: error: Cannot determine that 'str[0]' is initialized [premium-bughuntingUninit]
+    scanf("%s", str);
+                ^

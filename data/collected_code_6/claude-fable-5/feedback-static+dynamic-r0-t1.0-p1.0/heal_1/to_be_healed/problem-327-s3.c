@@ -1,0 +1,57 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+static int is_valid_triangle(long a, long b, long c)
+{
+    if (a <= 0 || b <= 0 || c <= 0) {
+        return 0;
+    }
+    /* Possible weaknesses found:
+     * UBSan: signed integer overflow: 6 + 9223372036854775807 cannot be represented in type 'long' (AFL crash: id:000000,sig:06,src:000001,time:5217,execs:3453,op:havoc,rep:2)
+     */
+    if (a + b <= c || a + c <= b || b + c <= a) {
+        return 0;
+    }
+    return 1;
+}
+
+static int is_isosceles(long a, long b, long c)
+{
+    if (!is_valid_triangle(a, b, c)) {
+        return -1;
+    }
+    if (a == b || b == c || a == c) {
+        return 1;
+    }
+    return 0;
+}
+
+int main(void)
+{
+    long a;
+    long b;
+    long c;
+    int result;
+
+    printf("Enter three side lengths: ");
+
+    if (scanf("%ld %ld %ld", &a, &b, &c) != 3) {
+        fprintf(stderr, "Error: invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    result = is_isosceles(a, b, c);
+
+    if (result == -1) {
+        fprintf(stderr, "Error: the given sides do not form a valid triangle.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (result == 1) {
+        printf("The triangle is isosceles.\n");
+    } else {
+        printf("The triangle is not isosceles.\n");
+    }
+
+    return EXIT_SUCCESS;
+}

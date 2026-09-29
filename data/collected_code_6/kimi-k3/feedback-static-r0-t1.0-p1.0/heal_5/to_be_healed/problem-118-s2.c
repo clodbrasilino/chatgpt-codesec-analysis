@@ -1,0 +1,178 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct Node {
+    char *data;
+    struct Node *next;
+} Node;
+
+static size_t safe_strnlen(const char *s, size_t maxlen) {
+    size_t len = 0;
+    if (s == NULL) {
+        return 0;
+    }
+    while (len < maxlen && s[len] != '\0') {
+        len++;
+    }
+    return len;
+}
+
+Node* create_node(const char *data, size_t data_len) {
+    if (data == NULL) {
+        return NULL;
+    }
+    
+    size_t actual_len = safe_strnlen(data, data_len);
+    if (actual_len < data_len) {
+        return NULL;
+    }
+    
+    Node *new_node = (Node*)malloc(sizeof(Node));
+    if (new_node == NULL) {
+        return NULL;
+    }
+    
+    new_node->data = (char*)malloc(data_len + 1);
+    if (new_node->data == NULL) {
+        free(new_node);
+        return NULL;
+    }
+    
+    if (data_len > 0) {
+        /* Possible weaknesses found:
+         * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+         */
+        memcpy(new_node->data, data, data_len);
+    }
+    new_node->data[data_len] = '\0';
+    new_node->next = NULL;
+    return new_node;
+}
+
+Node* string_to_list(const char *str, size_t str_len, const char *delim, size_t delim_len) {
+    if (str == NULL || delim == NULL || delim_len == 0) {
+        return NULL;
+    }
+    
+    size_t actual_str_len = safe_strnlen(str, str_len);
+    size_t actual_delim_len = safe_strnlen(delim, delim_len);
+    
+    if (actual_str_len < str_len || actual_delim_len < delim_len) {
+        return NULL;
+    }
+    
+    char *str_copy = (char*)malloc(str_len + 1);
+    if (str_copy == NULL) {
+        return NULL;
+    }
+    
+    if (str_len > 0) {
+        /* Possible weaknesses found:
+         * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+         */
+        memcpy(str_copy, str, str_len);
+    }
+    str_copy[str_len] = '\0';
+    
+    Node *head = NULL;
+    Node *tail = NULL;
+    size_t pos = 0;
+    
+    while (pos <= str_len) {
+        size_t token_start = pos;
+        size_t token_len = 0;
+        
+        while (pos < str_len) {
+            int is_delim = 0;
+            for (size_t i = 0; i < delim_len; i++) {
+                if (str_copy[pos] == delim[i]) {
+                    is_delim = 1;
+                    break;
+                }
+            }
+            if (is_delim) {
+                break;
+            }
+            pos++;
+            token_len++;
+        }
+        
+        if (token_len > 0) {
+            Node *new_node = create_node(str_copy + token_start, token_len);
+            if (new_node == NULL) {
+                while (head != NULL) {
+                    Node *temp = head;
+                    head = head->next;
+                    free(temp->data);
+                    free(temp);
+                }
+                free(str_copy);
+                return NULL;
+            }
+            
+            if (head == NULL) {
+                head = new_node;
+                tail = new_node;
+            } else {
+                tail->next = new_node;
+                tail = new_node;
+            }
+        }
+        
+        if (pos < str_len) {
+            pos++;
+        } else {
+            break;
+        }
+    }
+    
+    free(str_copy);
+    return head;
+}
+
+void free_list(Node *head) {
+    while (head != NULL) {
+        Node *temp = head;
+        head = head->next;
+        free(temp->data);
+        free(temp);
+    }
+}
+
+void print_list(Node *head) {
+    Node *current = head;
+    while (current != NULL) {
+        printf("%s", current->data);
+        if (current->next != NULL) {
+            printf(" -> ");
+        }
+        current = current->next;
+    }
+    printf("\n");
+}
+
+int main(void) {
+    const char *input = "apple,banana,cherry,date";
+    const char *delimiter = ",";
+    
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    size_t input_len = strlen(input);
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    size_t delimiter_len = strlen(delimiter);
+    
+    Node *list = string_to_list(input, input_len, delimiter, delimiter_len);
+    if (list == NULL) {
+        fprintf(stderr, "Failed to convert string to list\n");
+        return EXIT_FAILURE;
+    }
+    
+    print_list(list);
+    free_list(list);
+    
+    return EXIT_SUCCESS;
+}

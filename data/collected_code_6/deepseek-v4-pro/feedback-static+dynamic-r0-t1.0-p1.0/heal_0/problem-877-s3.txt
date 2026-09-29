@@ -1,0 +1,40 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+int compare_chars(const void *a, const void *b) {
+    return (*(const char *)a - *(const char *)b);
+}
+
+void sort_string(char *str) {
+    if (str == NULL) {
+        return;
+    }
+    size_t len = strlen(str);
+    if (len > 1) {
+        qsort(str, len, sizeof(char), compare_chars);
+    }
+}
+
+int main(void) {
+    char str1[] = "dcba";
+    char str2[] = "hello world";
+    char str3[] = "";
+    char str4[] = "a";
+    char *str5 = NULL;
+
+    sort_string(str1);
+    sort_string(str2);
+    sort_string(str3);
+    sort_string(str4);
+    sort_string(str5);
+
+    printf("%s\n", str1);
+    printf("%s\n", str2);
+    printf("%s\n", str3);
+    printf("%s\n", str4);
+
+    return 0;
+}
+```

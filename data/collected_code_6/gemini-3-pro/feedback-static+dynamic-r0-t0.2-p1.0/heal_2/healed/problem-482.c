@@ -1,0 +1,47 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+void find_sequences(const char *str) {
+    if (str == NULL) {
+        return;
+    }
+
+    regex_t regex;
+    int reti;
+    regmatch_t pmatch[1];
+    const char *p = str;
+
+    reti = regcomp(&regex, "[A-Z][a-z]+", REG_EXTENDED);
+    if (reti) {
+        return;
+    }
+
+    while (regexec(&regex, p, 1, pmatch, 0) == 0) {
+        int start = pmatch[0].rm_so;
+        int end = pmatch[0].rm_eo;
+        int len = end - start;
+
+        char *match = (char *)malloc((len + 1) * sizeof(char));
+        if (match == NULL) {
+            regfree(&regex);
+            return;
+        }
+
+        snprintf(match, len + 1, "%.*s", len, p + start);
+
+        printf("%s\n", match);
+        free(match);
+
+        p += end;
+    }
+
+    regfree(&regex);
+}
+
+int main(void) {
+    const char *test_str = "Hello world, This Is a Test String with Some Sequences.";
+    find_sequences(test_str);
+    return 0;
+}

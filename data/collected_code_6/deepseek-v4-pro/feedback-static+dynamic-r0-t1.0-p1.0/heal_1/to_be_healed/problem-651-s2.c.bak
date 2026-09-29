@@ -1,0 +1,138 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    int *elements;
+    size_t size;
+} Tuple;
+
+Tuple create_tuple(const int *data, size_t size) {
+    Tuple t;
+    t.size = size;
+    t.elements = malloc(size * sizeof(int));
+    if (t.elements == NULL) {
+        t.size = 0;
+        return t;
+    }
+    memcpy(t.elements, data, size * sizeof(int));
+    return t;
+}
+
+void free_tuple(Tuple *t) {
+    if (t != NULL) {
+        free(t->elements);
+        t->elements = NULL;
+        t->size = 0;
+    }
+}
+
+int contains_element(const Tuple *t, int value) {
+    size_t i;
+    for (i = 0; i < t->size; i++) {
+        if (t->elements[i] == value) {
+            return 1;
+        }
+    }
+    return 0;
+}
+
+int is_subset(const Tuple *subset, const Tuple *superset) {
+    size_t i;
+    if (subset == NULL || superset == NULL) {
+        return 0;
+    }
+    if (subset->size > superset->size) {
+        return 0;
+    }
+    for (i = 0; i < subset->size; i++) {
+        if (!contains_element(superset, subset->elements[i])) {
+            return 0;
+        }
+    }
+    return 1;
+}
+
+void print_tuple(const Tuple *t) {
+    size_t i;
+    if (t == NULL) {
+        printf("()\n");
+        return;
+    }
+    printf("(");
+    for (i = 0; i < t->size; i++) {
+        if (i > 0) {
+            printf(", ");
+        }
+        printf("%d", t->elements[i]);
+    }
+    printf(")\n");
+}
+
+int main(void) {
+    /* Possible weaknesses found:
+     *  Variable 'data1' can be declared as const array [constVariable]
+     */
+    int data1[] = {1, 2, 3};
+    /* Possible weaknesses found:
+     *  Variable 'data2' can be declared as const array [constVariable]
+     */
+    int data2[] = {1, 2, 3, 4, 5};
+    /* Possible weaknesses found:
+     *  Variable 'data3' can be declared as const array [constVariable]
+     */
+    int data3[] = {1, 2, 6};
+    /* Possible weaknesses found:
+     *  Variable 'data4' can be declared as const array [constVariable]
+     */
+    int data4[] = {1, 2, 3, 4, 5, 6, 7};
+    /* Possible weaknesses found:
+     *  Variable 'data5' can be declared as const array [constVariable]
+     */
+    int data5[] = {4, 5};
+
+    Tuple t1 = create_tuple(data1, 3);
+    Tuple t2 = create_tuple(data2, 5);
+    Tuple t3 = create_tuple(data3, 3);
+    Tuple t4 = create_tuple(data4, 7);
+    Tuple t5 = create_tuple(data5, 2);
+
+    if (t1.elements == NULL || t2.elements == NULL || t3.elements == NULL ||
+        t4.elements == NULL || t5.elements == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        free_tuple(&t1);
+        free_tuple(&t2);
+        free_tuple(&t3);
+        free_tuple(&t4);
+        free_tuple(&t5);
+        return EXIT_FAILURE;
+    }
+
+    print_tuple(&t1);
+    print_tuple(&t2);
+    printf("t1 subset of t2: %s\n", is_subset(&t1, &t2) ? "yes" : "no");
+
+    print_tuple(&t3);
+    print_tuple(&t2);
+    printf("t3 subset of t2: %s\n", is_subset(&t3, &t2) ? "yes" : "no");
+
+    print_tuple(&t4);
+    print_tuple(&t2);
+    printf("t4 subset of t2: %s\n", is_subset(&t4, &t2) ? "yes" : "no");
+
+    print_tuple(&t5);
+    print_tuple(&t1);
+    printf("t5 subset of t1: %s\n", is_subset(&t5, &t1) ? "yes" : "no");
+
+    print_tuple(&t1);
+    print_tuple(&t1);
+    printf("t1 subset of t1: %s\n", is_subset(&t1, &t1) ? "yes" : "no");
+
+    free_tuple(&t1);
+    free_tuple(&t2);
+    free_tuple(&t3);
+    free_tuple(&t4);
+    free_tuple(&t5);
+
+    return EXIT_SUCCESS;
+}

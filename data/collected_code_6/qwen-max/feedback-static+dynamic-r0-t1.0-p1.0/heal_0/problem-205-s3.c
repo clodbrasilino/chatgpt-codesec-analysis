@@ -1,0 +1,35 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int first;
+    int second;
+} Tuple;
+
+int compare(const void *a, const void *b) {
+    return (*(Tuple*)a).first - (*(Tuple*)b).first;
+}
+
+int countInversions(Tuple *array, int n) {
+    int invCount = 0;
+    for (int i = 0; i < n; ++i) {
+        for (int j = i + 1; j < n; ++j) {
+            if (array[i].first < array[j].first && array[i].second > array[j].second) {
+                invCount++;
+            }
+        }
+    }
+    return invCount;
+}
+
+int main() {
+    Tuple array[] = {{8, 3}, {5, 4}, {9, 6}, {2, 1}};
+    int n = sizeof(array) / sizeof(array[0]);
+    
+    qsort(array, n, sizeof(Tuple), compare);
+    
+    int inversions = countInversions(array, n);
+    printf("Number of inversions: %d\n", inversions);
+    
+    return 0;
+}

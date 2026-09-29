@@ -1,0 +1,158 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stddef.h>
+
+typedef struct {
+    int *data;
+    size_t size;
+    size_t capacity;
+} MinHeap;
+
+static MinHeap *heap_create(size_t initial_capacity)
+{
+    MinHeap *h;
+
+    if (initial_capacity == 0) {
+        return NULL;
+    }
+
+    h = malloc(sizeof(MinHeap));
+    if (h == NULL) {
+        return NULL;
+    }
+
+    h->data = malloc(initial_capacity * sizeof(int));
+    if (h->data == NULL) {
+        free(h);
+        return NULL;
+    }
+
+    h->size = 0;
+    h->capacity = initial_capacity;
+    return h;
+}
+
+static void heap_destroy(MinHeap *h)
+{
+    if (h != NULL) {
+        free(h->data);
+        h->data = NULL;
+        h->size = 0;
+        h->capacity = 0;
+        free(h);
+    }
+}
+
+static void heap_swap(int *a, int *b)
+{
+    int tmp = *a;
+    *a = *b;
+    *b = tmp;
+}
+
+static int heap_push(MinHeap *h, int value)
+{
+    size_t i;
+
+    if (h == NULL || h->data == NULL) {
+        return -1;
+    }
+
+    if (h->size == h->capacity) {
+        size_t new_capacity;
+        int *new_data;
+
+        if (h->capacity > SIZE_MAX / 2 / sizeof(int)) {
+            return -1;
+        }
+        new_capacity = h->capacity * 2;
+        new_data = realloc(h->data, new_capacity * sizeof(int));
+        if (new_data == NULL) {
+            return -1;
+        }
+        h->data = new_data;
+        h->capacity = new_capacity;
+    }
+
+    i = h->size;
+    h->data[i] = value;
+    h->size++;
+
+    while (i > 0) {
+        size_t parent = (i - 1) / 2;
+        if (h->data[parent] <= h->data[i]) {
+            break;
+        }
+        heap_swap(&h->data[parent], &h->data[i]);
+        i = parent;
+    }
+
+    return 0;
+}
+
+static int heap_pop(MinHeap *h, int *out)
+{
+    size_t i;
+
+    if (h == NULL || h->data == NULL || out == NULL || h->size == 0) {
+        return -1;
+    }
+
+    *out = h->data[0];
+    h->size--;
+    h->data[0] = h->data[h->size];
+
+    i = 0;
+    for (;;) {
+        size_t left = 2 * i + 1;
+        size_t right = 2 * i + 2;
+        size_t smallest = i;
+
+        if (left < h->size && h->data[left] < h->data[smallest]) {
+            smallest = left;
+        }
+        if (right < h->size && h->data[right] < h->data[smallest]) {
+            smallest = right;
+        }
+        if (smallest == i) {
+            break;
+        }
+        heap_swap(&h->data[i], &h->data[smallest]);
+        i = smallest;
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    static const int values[] = { 42, 7, 19, 3, 88, 1, 56, 23, 11, 5 };
+    size_t count = sizeof(values) / sizeof(values[0]);
+    size_t i;
+    MinHeap *h;
+    int popped;
+
+    h = heap_create(8);
+    if (h == NULL) {
+        fprintf(stderr, "Failed to create heap\n");
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i < count; i++) {
+        if (heap_push(h, values[i]) != 0) {
+            fprintf(stderr, "Failed to push value %d\n", values[i]);
+            heap_destroy(h);
+            return EXIT_FAILURE;
+        }
+    }
+
+    while (heap_pop(h, &popped) == 0) {
+        if (printf("%d\n", popped) < 0) {
+            heap_destroy(h);
+            return EXIT_FAILURE;
+        }
+    }
+
+    heap_destroy(h);
+    return EXIT_SUCCESS;
+}

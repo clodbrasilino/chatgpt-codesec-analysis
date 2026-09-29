@@ -1,0 +1,98 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+static unsigned int gcd(unsigned int a, unsigned int b)
+{
+    while (b != 0U) {
+        unsigned int temp = b;
+        b = a % b;
+        a = temp;
+    }
+    return a;
+}
+
+int main(void)
+{
+    long first = 0L;
+    long second = 0L;
+    int result = 0;
+
+    printf("Enter two positive integers: ");
+
+    result = scanf("%ld %ld", &first, &second);
+    if (result != 2) {
+        fprintf(stderr, "Error: invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    if ((first <= 0L) || (second <= 0L)) {
+        fprintf(stderr, "Error: both numbers must be positive.\n");
+        return EXIT_FAILURE;
+    }
+
+    if ((first > (long)UINT_MAX) || (second > (long)UINT_MAX)) {
+        fprintf(stderr, "Error: input values are too large.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("The greatest common divisor of %ld and %ld is %u\n",
+           first, second, gcd((unsigned int)first, (unsigned int)second));
+
+    return EXIT_SUCCESS;
+}
+```
+
+Wait — I used `UINT_MAX` without including `<limits.h>`. Here is the corrected version:
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+static unsigned int gcd(unsigned int a, unsigned int b)
+{
+    while (b != 0U) {
+        unsigned int temp = b;
+        b = a % b;
+        a = temp;
+    }
+    return a;
+}
+
+int main(void)
+{
+    long first = 0L;
+    long second = 0L;
+    int result = 0;
+
+    printf("Enter two positive integers: ");
+
+    result = scanf("%ld %ld", &first, &second);
+    if (result != 2) {
+        fprintf(stderr, "Error: invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    if ((first <= 0L) || (second <= 0L)) {
+        fprintf(stderr, "Error: both numbers must be positive.\n");
+        return EXIT_FAILURE;
+    }
+
+    if ((first > (long)UINT_MAX) || (second > (long)UINT_MAX)) {
+        fprintf(stderr, "Error: input values are too large.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("The greatest common divisor of %ld and %ld is %u\n",
+           first, second, gcd((unsigned int)first, (unsigned int)second));
+
+    return EXIT_SUCCESS;
+}
+```
+
+This implementation addresses the specified weaknesses as follows:
+
+- **CWE-664**: No dynamic resources (heap memory, file handles) are allocated, so there is nothing left unreleased or misused across its lifetime. Only `stdin`/`stdout`/`stderr` are used, which are managed by the runtime.
+- **CWE-703**: The return value of `scanf` is checked, inputs are validated for positivity, and range checks prevent out-of-bounds conversion before casting to `unsigned int`. All failure paths return `EXIT_FAILURE` with a diagnostic on `stderr`.
+- **CWE-710**: The code uses `int main(void)`, explicit `static` linkage for the helper, initialized variables, explicit casts, standard exit macros, and avoids undefined behavior such as signed overflow or division/modulo by zero (the loop condition guarantees `b != 0` before `a % b`).

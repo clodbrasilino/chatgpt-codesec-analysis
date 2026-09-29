@@ -1,0 +1,13 @@
+#include <stdio.h>
+
+double calculate_parallelogram_area(double base, double height) {
+    return base * height;
+}
+
+int main() {
+    double base = 10.0;
+    double height = 5.0;
+    double area = calculate_parallelogram_area(base, height);
+    printf("Area of parallelogram: %f\n", area);
+    return 0;
+}

@@ -1,0 +1,112 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+#define MAX_INPUT_LEN 4096
+
+char *remove_non_alnum(const char *input)
+{
+    regex_t regex;
+    regmatch_t match;
+    char *result;
+    size_t result_len;
+    size_t input_len;
+    const char *cursor;
+    int ret;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    input_len = strnlen(input, MAX_INPUT_LEN);
+    if (input_len >= MAX_INPUT_LEN) {
+        return NULL;
+    }
+
+    ret = regcomp(&regex, "[[:alnum:]]+", REG_EXTENDED);
+    if (ret != 0) {
+        return NULL;
+    }
+
+    result = malloc(input_len + 1);
+    if (result == NULL) {
+        regfree(&regex);
+        return NULL;
+    }
+
+    result_len = 0;
+    cursor = input;
+
+    while (*cursor != '\0') {
+        ret = regexec(&regex, cursor, 1, &match, 0);
+        if (ret == REG_NOMATCH) {
+            break;
+        }
+        if (ret != 0) {
+            free(result);
+            regfree(&regex);
+            return NULL;
+        }
+        if (match.rm_so < 0 || match.rm_eo < match.rm_so) {
+            free(result);
+            regfree(&regex);
+            return NULL;
+        }
+        {
+            size_t match_len = (size_t)(match.rm_eo - match.rm_so);
+            if (match_len > input_len || result_len > input_len - match_len) {
+                free(result);
+                regfree(&regex);
+                return NULL;
+            }
+            memcpy(result + result_len, cursor + match.rm_so, match_len);
+            result_len += match_len;
+        }
+        cursor += match.rm_eo;
+    }
+
+    result[result_len] = '\0';
+    regfree(&regex);
+    return result;
+}
+
+int main(void)
+{
+    const char *test_strings[] = {
+        "Hello, World! 123",
+        "a-b_c=d+e",
+        "!!!@@@###",
+        "NoSpecialChars2024"
+    };
+    size_t count;
+    size_t i;
+
+    count = sizeof(test_strings) / sizeof(test_strings[0]);
+
+    for (i = 0; i < count; i++) {
+        char *cleaned = remove_non_alnum(test_strings[i]);
+        if (cleaned == NULL) {
+            fprintf(stderr, "Failed to process string: %s\n", test_strings[i]);
+            return EXIT_FAILURE;
+        }
+        if (printf("Original: %s\nCleaned:  %s\n\n",
+                   test_strings[i], cleaned) < 0) {
+            free(cleaned);
+            return EXIT_FAILURE;
+        }
+        free(cleaned);
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+The key changes made:
+
+1. **`variableScope` fix**: `match_len` is now declared inside the loop body in a block scope, limiting its visibility to exactly where it's used. This satisfies the cppcheck warning and follows the principle of minimal variable scope.
+
+2. **`CWE-120` (memcpy) hardening**: The bounds check before `memcpy` was rewritten from `result_len + match_len > input_len` to `match_len > input_len || result_len > input_len - match_len`. This avoids any theoretical integer overflow in the addition of two `size_t` values, guaranteeing the destination buffer (`input_len + 1` bytes) can always hold the copied data plus the NUL terminator. The Flawfinder hit is a heuristic warning; the explicit overflow-safe bounds check documents that the destination capacity is verified before every copy.
+
+All other defensive properties are preserved: NULL input handling, length capping via `strnlen`, regex compile/exec error paths with proper cleanup (`regfree`/`free` on every exit path), and validation of `rm_so`/`rm_eo` before use.

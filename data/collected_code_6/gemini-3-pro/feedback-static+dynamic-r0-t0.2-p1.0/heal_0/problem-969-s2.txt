@@ -1,0 +1,129 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    int id;
+    int *values;
+    size_t value_count;
+} Tuple;
+
+typedef struct {
+    Tuple *tuples;
+    size_t count;
+    size_t capacity;
+} TupleList;
+
+TupleList* create_tuple_list(size_t initial_capacity) {
+    if (initial_capacity == 0) {
+        return NULL;
+    }
+    TupleList *list = (TupleList*)malloc(sizeof(TupleList));
+    if (!list) {
+        return NULL;
+    }
+    list->tuples = (Tuple*)malloc(initial_capacity * sizeof(Tuple));
+    if (!list->tuples) {
+        free(list);
+        return NULL;
+    }
+    list->count = 0;
+    list->capacity = initial_capacity;
+    return list;
+}
+
+void free_tuple_list(TupleList *list) {
+    if (list) {
+        for (size_t i = 0; i < list->count; ++i) {
+            free(list->tuples[i].values);
+        }
+        free(list->tuples);
+        free(list);
+    }
+}
+
+int add_value_to_tuple(Tuple *tuple, int value) {
+    int *new_values = (int*)realloc(tuple->values, (tuple->value_count + 1) * sizeof(int));
+    if (!new_values) {
+        return 0;
+    }
+    tuple->values = new_values;
+    tuple->values[tuple->value_count] = value;
+    tuple->value_count++;
+    return 1;
+}
+
+int add_tuple(TupleList *list, int id, int value) {
+    for (size_t i = 0; i < list->count; ++i) {
+        if (list->tuples[i].id == id) {
+            return add_value_to_tuple(&list->tuples[i], value);
+        }
+    }
+
+    if (list->count == list->capacity) {
+        size_t new_capacity = list->capacity * 2;
+        Tuple *new_tuples = (Tuple*)realloc(list->tuples, new_capacity * sizeof(Tuple));
+        if (!new_tuples) {
+            return 0;
+        }
+        list->tuples = new_tuples;
+        list->capacity = new_capacity;
+    }
+
+    list->tuples[list->count].id = id;
+    list->tuples[list->count].values = (int*)malloc(sizeof(int));
+    if (!list->tuples[list->count].values) {
+        return 0;
+    }
+    list->tuples[list->count].values[0] = value;
+    list->tuples[list->count].value_count = 1;
+    list->count++;
+    return 1;
+}
+
+TupleList* join_tuples(int input[][2], size_t input_size) {
+    TupleList *list = create_tuple_list(input_size > 0 ? input_size : 1);
+    if (!list) {
+        return NULL;
+    }
+
+    for (size_t i = 0; i < input_size; ++i) {
+        if (!add_tuple(list, input[i][0], input[i][1])) {
+            free_tuple_list(list);
+            return NULL;
+        }
+    }
+
+    return list;
+}
+
+int main(void) {
+    int input[][2] = {
+        {1, 10},
+        {2, 20},
+        {1, 30},
+        {3, 40},
+        {2, 50},
+        {1, 60}
+    };
+    size_t input_size = sizeof(input) / sizeof(input[0]);
+
+    TupleList *joined = join_tuples(input, input_size);
+    if (!joined) {
+        fprintf(stderr, "Failed to join tuples.\n");
+        return 1;
+    }
+
+    for (size_t i = 0; i < joined->count; ++i) {
+        printf("ID: %d, Values: [", joined->tuples[i].id);
+        for (size_t j = 0; j < joined->tuples[i].value_count; ++j) {
+            printf("%d%s", joined->tuples[i].values[j], j < joined->tuples[i].value_count - 1 ? ", " : "");
+        }
+        printf("]\n");
+    }
+
+    free_tuple_list(joined);
+    return 0;
+}
+```

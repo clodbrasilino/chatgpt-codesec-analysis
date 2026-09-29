@@ -1,0 +1,91 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+#include <inttypes.h>
+
+typedef struct InnerNode {
+    struct InnerNode* next;
+} InnerNode;
+
+typedef struct OuterNode {
+    InnerNode* head;
+    struct OuterNode* next;
+} OuterNode;
+
+void free_inner_list(InnerNode* head) {
+    InnerNode* current = head;
+    while (current != NULL) {
+        InnerNode* temp = current;
+        current = current->next;
+        free(temp);
+    }
+}
+
+void free_outer_list(OuterNode* head) {
+    OuterNode* current = head;
+    while (current != NULL) {
+        OuterNode* temp = current;
+        current = current->next;
+        if (temp->head != NULL) {
+            free_inner_list(temp->head);
+        }
+        free(temp);
+    }
+}
+
+int count_and_square_lists(const OuterNode* head, uint64_t* out_result) {
+    if (out_result == NULL) {
+        return -1;
+    }
+
+    uint64_t count = 0;
+    const OuterNode* current = head;
+
+    while (current != NULL) {
+        if (count == UINT32_MAX) {
+            return -1;
+        }
+        count++;
+        current = current->next;
+    }
+
+    *out_result = count * count;
+    return 0;
+}
+
+OuterNode* create_outer_node(OuterNode* next_node) {
+    OuterNode* new_node = (OuterNode*)malloc(sizeof(OuterNode));
+    if (new_node == NULL) {
+        return NULL;
+    }
+    new_node->head = NULL;
+    new_node->next = next_node;
+    return new_node;
+}
+
+int main(void) {
+    OuterNode* list_of_lists = NULL;
+    OuterNode* temp = NULL;
+
+    for (int i = 0; i < 5; i++) {
+        temp = create_outer_node(list_of_lists);
+        if (temp == NULL) {
+            free_outer_list(list_of_lists);
+            return EXIT_FAILURE;
+        }
+        list_of_lists = temp;
+    }
+
+    uint64_t squared_count = 0;
+    if (count_and_square_lists(list_of_lists, &squared_count) == 0) {
+        printf("%" PRIu64 "\n", squared_count);
+    } else {
+        free_outer_list(list_of_lists);
+        return EXIT_FAILURE;
+    }
+
+    free_outer_list(list_of_lists);
+    return EXIT_SUCCESS;
+}
+```

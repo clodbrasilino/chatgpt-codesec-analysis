@@ -1,0 +1,59 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdbool.h>
+
+char* firstRepeatedWord(const char* str) {
+    const int maxWords = 100;
+    char* words[maxWords];
+    int wordCount = 0;
+    
+    for (int i = 0; i < maxWords; ++i) {
+        words[i] = NULL;
+    }
+
+    char* token = strtok((char*)str, " ");
+    while (token != NULL && wordCount < maxWords) {
+        /* Possible weaknesses found:
+         *  Variable 'found' is assigned a value that is never used. [unreadVariable]
+         */
+        bool found = false;
+        for (int i = 0; i < wordCount; ++i) {
+            if (strcmp(words[i], token) == 0) {
+                return strdup(token);
+            }
+        }
+        words[wordCount++] = strdup(token);
+        token = strtok(NULL, " ");
+    }
+
+    return NULL;
+}
+
+int main() {
+    const char* input = "the quick brown fox jumps over the lazy dog the";
+    char* result = firstRepeatedWord(input);
+    
+    if (result != NULL) {
+        printf("First repeated word: %s\n", result);
+        free(result);
+    } else {
+        printf("No repeated word found.\n");
+    }
+
+    for (int i = 0; i < 100; ++i) {
+        /* Possible weaknesses found:
+         *  use of undeclared identifier 'words'
+         *  each undeclared identifier is reported only once for each function it appears in
+         *  'words' undeclared (first use in this function)
+         */
+        if (words[i] != NULL) {
+            /* Possible weaknesses found:
+             *  use of undeclared identifier 'words'
+             */
+            free(words[i]);
+        }
+    }
+
+    return 0;
+}

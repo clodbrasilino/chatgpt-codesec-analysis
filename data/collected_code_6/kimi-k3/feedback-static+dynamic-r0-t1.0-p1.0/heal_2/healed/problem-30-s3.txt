@@ -1,0 +1,37 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stddef.h>
+
+int countSubstrings(const char *str, size_t len) {
+    if (str == NULL) {
+        return -1;
+    }
+
+    int count = 0;
+
+    for (size_t i = 0; i < len; i++) {
+        for (size_t j = i; j < len; j++) {
+            if (str[i] == str[j]) {
+                count++;
+            }
+        }
+    }
+
+    return count;
+}
+
+int main(void) {
+    const char *str = "abcab";
+    size_t len = strnlen(str, 256);
+    int result = countSubstrings(str, len);
+
+    if (result >= 0) {
+        printf("Count of substrings starting and ending with same characters: %d\n", result);
+    } else {
+        printf("Invalid input string.\n");
+    }
+
+    return 0;
+}
+```

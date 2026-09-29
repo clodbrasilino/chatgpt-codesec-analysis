@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_1/healed/problem-936.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_1/healed/problem-936.c:29:63: style: Parameter 'context' can be declared as pointer to const. However it seems that 'compare_tuples' is a callback function, if 'context' is declared with const you might also need to cast function pointer(s). [constParameterCallback]
+static int compare_tuples(const void *a, const void *b, void *context) {
+                                                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_1/healed/problem-936.c:62:55: note: You might need to cast the function pointer here
+    qsort_r(list->tuples, list->count, sizeof(Tuple), compare_tuples, context);
+                                                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_1/healed/problem-936.c:29:63: note: Parameter 'context' can be declared as pointer to const
+static int compare_tuples(const void *a, const void *b, void *context) {
+                                                              ^

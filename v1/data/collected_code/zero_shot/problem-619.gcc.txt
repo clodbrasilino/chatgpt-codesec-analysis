@@ -1,0 +1,12 @@
+collected_code/problem-619-0.c: In function 'moveNumbersToString':
+collected_code/problem-619-0.c:7:13: warning: implicit declaration of function 'isdigit' [-Wimplicit-function-declaration]
+    7 |         if (isdigit(string[index])) {
+      |             ^~~~~~~
+collected_code/problem-619-0.c:1:1: note: include '<ctype.h>' or provide a declaration of 'isdigit'
+  +++ |+#include <ctype.h>
+    1 | void moveNumbersToString(char *string) {
+Undefined symbols for architecture x86_64:
+  "_main", referenced from:
+     implicit entry/start for main executable
+ld: symbol(s) not found for architecture x86_64
+collect2: error: ld returned 1 exit status

@@ -1,0 +1,74 @@
+```c
+#include <stdio.h>
+#include <ctype.h>
+#include <stddef.h>
+#include <string.h>
+
+#define BUFFER_SIZE 256
+
+size_t count_lowercase(const char *str)
+{
+    size_t count = 0;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    while (*str != '\0') {
+        if (islower((unsigned char)*str)) {
+            count++;
+        }
+        str++;
+    }
+
+    return count;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t result;
+    size_t len;
+    char *newline;
+
+    printf("Enter a string: ");
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input.\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len >= sizeof(buffer)) {
+        fprintf(stderr, "Input string not properly terminated.\n");
+        return 1;
+    }
+
+    newline = memchr(buffer, '\n', len);
+    if (newline != NULL) {
+        *newline = '\0';
+    }
+
+    result = count_lowercase(buffer);
+    printf("Number of lowercase letters: %zu\n", result);
+
+    return 0;
+}
+```
+
+Analysis of the identified weakness and its mitigations:
+
+The Flawfinder warning flagged the statically-sized `char buffer[BUFFER_SIZE]` as a potential CWE-119/CWE-120 (buffer overflow) risk. This is a low-severity, informational finding — the array itself is not a bug, but rather a hint to verify that every operation on it is bounds-safe. The code already contains the correct fixes, which I preserved:
+
+1. **Bounded input**: `fgets(buffer, sizeof(buffer), stdin)` limits the read to the buffer size, unlike unsafe alternatives such as `gets()` or unbounded `scanf("%s", ...)`. The return value is checked to handle EOF/read errors.
+
+2. **Guaranteed null termination**: `buffer[sizeof(buffer) - 1] = '\0';` is defensive redundancy — `fgets` already null-terminates, but this makes the invariant explicit and robust against future refactoring.
+
+3. **Bounded length calculation**: `strnlen(buffer, sizeof(buffer))` instead of `strlen()` ensures the scan never runs past the buffer even if termination were somehow violated, with an explicit sanity check on the result.
+
+4. **Bounded search**: `memchr(buffer, '\n', len)` uses the known length rather than scanning for a terminator, safely stripping the trailing newline.
+
+5. **Safe character classification**: The cast `(unsigned char)*str` before `islower()` avoids undefined behavior when `char` is signed and contains negative values (e.g., extended/UTF-8 bytes).
+
+No functional changes were required — the code as written is a correct, defensive implementation, and the rewrite simply removes the comments as requested.

@@ -1,0 +1,10 @@
+collected_code_5/round1/heal_0/problem-652.c:17:65: warning: Potential leak of memory pointed to by 'result' [unix.Malloc]
+   17 |             if(matrix[i][j].size + result[j].size > 100) return NULL;
+      |                                                                 ^~~~
+/Library/Developer/CommandLineTools/SDKs/MacOSX14.sdk/usr/include/sys/_types/_null.h:30:15: note: expanded from macro 'NULL'
+   30 | #define NULL  __DARWIN_NULL
+      |               ^~~~~~~~~~~~~
+/Library/Developer/CommandLineTools/SDKs/MacOSX14.sdk/usr/include/sys/_types.h:52:32: note: expanded from macro '__DARWIN_NULL'
+   52 | #define __DARWIN_NULL ((void *)0)
+      |                                ^
+1 warning generated.

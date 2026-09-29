@@ -1,0 +1,38 @@
+```C
+#include <stdio.h>
+#include <string.h>
+
+#define NO_OF_CHARS 256
+
+char firstNonRepeating(char* str) 
+{
+    int count[NO_OF_CHARS] = {0};
+    int index;
+    
+    for(index = 0; *(str+index);  index++)
+       count[*(str+index)]++;
+    
+    for(index = 0; *(str+index);  index++)
+      if (count[*(str+index)] == 1)
+         return *(str+index);
+    
+    return '\0';
+}
+
+int main()
+{
+    char str[100];
+    printf("Enter a string to find its first non-repeating character: ");
+    fgets(str, 100, stdin);	// Reading input string from the user.
+     
+    char res = firstNonRepeating(str);
+    
+    if(res != '\0')
+      printf("The first non-repeating character is  %c", res);
+    else
+      printf("All characters are repeating or string is empty");
+    
+    return 0;
+}
+```
+In this code, we first initialize a count array as zero then count frequencies of all characters and store then in count[] array using ASCII values of characters as array keys. Then, we again search for first character in str[] having count 1 and return it. If no such character is found, we return '\0'.

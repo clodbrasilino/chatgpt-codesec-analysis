@@ -1,0 +1,87 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct List {
+    int *data;
+    size_t length;
+} List;
+
+typedef struct ListOfLists {
+    List **lists;
+    size_t count;
+} ListOfLists;
+
+List* create_list(const int *data, size_t length) {
+    List *list = (List *)malloc(sizeof(List));
+    list->data = (int *)malloc(length * sizeof(int));
+    for (size_t i = 0; i < length; ++i) {
+        list->data[i] = data[i];
+    }
+    list->length = length;
+    return list;
+}
+
+ListOfLists* create_list_of_lists(List **lists, size_t count) {
+    ListOfLists *lol = (ListOfLists *)malloc(sizeof(ListOfLists));
+    lol->lists = (List **)malloc(count * sizeof(List *));
+    for (size_t i = 0; i < count; ++i) {
+        lol->lists[i] = lists[i];
+    }
+    lol->count = count;
+    return lol;
+}
+
+List* find_min_length_list(ListOfLists *lol) {
+    if (lol->count == 0) {
+        return NULL;
+    }
+
+    List *min_list = lol->lists[0];
+    for (size_t i = 1; i < lol->count; ++i) {
+        if (lol->lists[i]->length < min_list->length) {
+            min_list = lol->lists[i];
+        }
+    }
+    return min_list;
+}
+
+void free_list(List *list) {
+    free(list->data);
+    free(list);
+}
+
+void free_list_of_lists(ListOfLists *lol) {
+    for (size_t i = 0; i < lol->count; ++i) {
+        free_list(lol->lists[i]);
+    }
+    free(lol->lists);
+    free(lol);
+}
+
+int main() {
+    const int data1[] = {1, 2, 3};
+    const int data2[] = {4, 5};
+    const int data3[] = {6};
+
+    List *list1 = create_list(data1, 3);
+    List *list2 = create_list(data2, 2);
+    List *list3 = create_list(data3, 1);
+
+    ListOfLists *lol = create_list_of_lists((List *[]){list1, list2, list3}, 3);
+
+    List *min_list = find_min_length_list(lol);
+    if (min_list) {
+        printf("Min length list: ");
+        for (size_t i = 0; i < min_list->length; ++i) {
+            printf("%d ", min_list->data[i]);
+        }
+        printf("\n");
+    } else {
+        printf("No list found.\n");
+    }
+
+    free_list_of_lists(lol);
+    return 0;
+}
+```

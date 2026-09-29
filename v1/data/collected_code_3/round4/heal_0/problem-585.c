@@ -1,0 +1,58 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int price;
+    int index;
+} Item;
+
+void swap(Item* a, Item* b) {
+    Item t = *a;
+    *a = *b;
+    *b = t;
+}
+
+void heapify(Item arr[], int n, int i) {
+    int largest = i;
+    int left = 2*i + 1;
+    int right = 2*i + 2;
+
+    if (left < n && arr[left].price > arr[largest].price)
+        largest = left;
+
+    if (right < n && arr[right].price > arr[largest].price)
+        largest = right;
+
+    if (largest != i) {
+        swap(&arr[i], &arr[largest]);
+        heapify(arr, n, largest);
+    }
+}
+
+void heapSort(Item arr[], int n) {
+    for (int i = n / 2 - 1; i >= 0; i--)
+        heapify(arr, n, i);
+
+    for (int i=n-1; i>=0; i--) {
+        swap(&arr[0], &arr[i]);
+        heapify(arr, i, 0);
+    }
+}
+
+void printExpensiveItems(Item arr[], int n, int k) {
+    heapSort(arr, n);
+
+    printf("Top %d expensive items are:\n", k);
+    for (int i=n-1; i>=n-k; i--)
+        printf("Item index: %d, Price: %d\n", arr[i].index, arr[i].price);
+}
+
+int main() {
+    Item arr[] = {{100, 0}, {200, 1}, {300, 2}, {400, 3}, {500, 4}, {600, 5}, {700, 6}};
+    int n = sizeof(arr)/sizeof(arr[0]);
+    int k = 3;
+
+    printExpensiveItems(arr, n, k);
+
+    return 0;
+}

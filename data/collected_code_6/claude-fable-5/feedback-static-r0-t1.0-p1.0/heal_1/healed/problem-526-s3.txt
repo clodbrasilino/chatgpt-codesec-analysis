@@ -1,0 +1,75 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+static void capitalize_first_last(char *str)
+{
+    size_t i;
+    size_t len;
+
+    if (str == NULL) {
+        return;
+    }
+
+    len = strnlen(str, 256);
+    i = 0;
+
+    while (i < len) {
+        while (i < len && isspace((unsigned char)str[i])) {
+            i++;
+        }
+        if (i >= len) {
+            break;
+        }
+        {
+            size_t start = i;
+            size_t end;
+
+            while (i < len && !isspace((unsigned char)str[i])) {
+                i++;
+            }
+            end = i - 1;
+            str[start] = (char)toupper((unsigned char)str[start]);
+            str[end] = (char)toupper((unsigned char)str[end]);
+        }
+    }
+}
+
+int main(void)
+{
+    char buffer[256];
+    char *newline;
+
+    printf("Enter a string: ");
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    newline = strchr(buffer, '\n');
+    if (newline != NULL) {
+        *newline = '\0';
+    }
+
+    capitalize_first_last(buffer);
+
+    if (printf("Result: %s\n", buffer) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+Key changes made to address the identified weaknesses:
+
+1. **Variable scope reduction (`start` and `end`)**: Both variables are now declared inside a block within the `while` loop, limiting their scope to where they are actually used.
+
+2. **`strlen` over-read risk (CWE-126)**: Replaced `strlen` with `strnlen` bounded to the maximum buffer size, so a non-null-terminated string cannot cause an unbounded over-read. Additionally, `main` now explicitly guarantees null-termination of `buffer` after `fgets`.
+
+3. **Statically-sized array risk (CWE-119/CWE-120)**: The buffer usage was already bounded via `fgets(buffer, sizeof(buffer), stdin)`, and the added explicit null-termination provides defense-in-depth against any downstream string function over-reading the fixed-size array.

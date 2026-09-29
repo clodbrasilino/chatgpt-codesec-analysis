@@ -1,0 +1,93 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stddef.h>
+
+typedef struct {
+    int *data;
+    size_t size;
+} SubList;
+
+typedef struct {
+    SubList *sublists;
+    size_t count;
+} ListOfLists;
+
+int filter_sublists_by_length_range(ListOfLists *list, size_t min_len, size_t max_len) {
+    if (!list) {
+        return -1;
+    }
+
+    size_t keep_count = 0;
+    for (size_t i = 0; i < list->count; ++i) {
+        if (list->sublists[i].size >= min_len && list->sublists[i].size <= max_len) {
+            list->sublists[keep_count] = list->sublists[i];
+            keep_count++;
+        } else {
+            free(list->sublists[i].data);
+            list->sublists[i].data = NULL;
+            list->sublists[i].size = 0;
+        }
+    }
+
+    if (keep_count == 0) {
+        free(list->sublists);
+        list->sublists = NULL;
+        list->count = 0;
+    } else if (keep_count < list->count) {
+        SubList *new_sublists = realloc(list->sublists, keep_count * sizeof(SubList));
+        if (new_sublists) {
+            list->sublists = new_sublists;
+        }
+        list->count = keep_count;
+    }
+
+    return 0;
+}
+
+int main(void) {
+    ListOfLists list;
+    list.count = 5;
+    list.sublists = malloc(list.count * sizeof(SubList));
+    if (!list.sublists) {
+        return 1;
+    }
+
+    for (size_t i = 0; i < list.count; ++i) {
+        list.sublists[i].size = i + 1;
+        list.sublists[i].data = malloc(list.sublists[i].size * sizeof(int));
+        if (!list.sublists[i].data) {
+            for (size_t j = 0; j < i; ++j) {
+                free(list.sublists[j].data);
+            }
+            free(list.sublists);
+            return 1;
+        }
+        for (size_t j = 0; j < list.sublists[i].size; ++j) {
+            list.sublists[i].data[j] = (int)j;
+        }
+    }
+
+    if (filter_sublists_by_length_range(&list, 2, 4) != 0) {
+        for (size_t i = 0; i < list.count; ++i) {
+            free(list.sublists[i].data);
+        }
+        free(list.sublists);
+        return 1;
+    }
+
+    for (size_t i = 0; i < list.count; ++i) {
+        for (size_t j = 0; j < list.sublists[i].size; ++j) {
+            printf("%d ", list.sublists[i].data[j]);
+        }
+        printf("\n");
+    }
+
+    for (size_t i = 0; i < list.count; ++i) {
+        free(list.sublists[i].data);
+    }
+    free(list.sublists);
+
+    return 0;
+}
+```

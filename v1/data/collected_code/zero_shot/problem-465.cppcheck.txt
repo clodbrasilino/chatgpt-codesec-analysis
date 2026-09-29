@@ -1,0 +1,9 @@
+collected_code/problem-465-0.c:6:20: error: Cannot determine that 'dict[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+    for(i = 0; dict[i] != NULL; i++) {
+                   ^
+collected_code/problem-465-0.c:7:23: error: Cannot determine that 'dict[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        if(strlen(dict[i]) == 0) {
+                      ^
+collected_code/problem-465-0.c:8:28: error: Cannot determine that 'dict[j]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+            for(j = i; dict[j] != NULL; j++) {
+                           ^

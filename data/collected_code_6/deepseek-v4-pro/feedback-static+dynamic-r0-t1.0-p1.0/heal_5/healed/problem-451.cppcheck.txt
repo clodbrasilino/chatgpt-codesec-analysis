@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-451.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-451.c:41:26: style: Condition 'copy_len>0' is always true [knownConditionTrueFalse]
+            if (copy_len > 0 && result_index + copy_len <= input_len) {
+                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-451.c:39:25: note: Assuming that condition 'match.rm_so>0' is not redundant
+        if (match.rm_so > 0) {
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-451.c:40:31: note: Assignment 'copy_len=(unsigned long)match.rm_so', assigned value is greater than 0
+            size_t copy_len = (size_t)match.rm_so;
+                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-451.c:41:26: note: Condition 'copy_len>0' is always true
+            if (copy_len > 0 && result_index + copy_len <= input_len) {
+                         ^

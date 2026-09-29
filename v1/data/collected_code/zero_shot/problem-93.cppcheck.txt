@@ -1,0 +1,9 @@
+collected_code/problem-93-0.c:26:18: error: Cannot determine that 'a' is initialized [premium-bughuntingUninit]
+    scanf("%f", &a);
+                 ^
+collected_code/problem-93-0.c:29:18: error: Cannot determine that 'b' is initialized [premium-bughuntingUninit]
+    scanf("%d", &b);
+                 ^
+collected_code/problem-93-0.c:31:62: error: Cannot determine that 'a' is initialized [premium-bughuntingUninit]
+    printf("The value of %.2f to the power of %d is %.2f\n", a, b, power(a, b));
+                                                             ^

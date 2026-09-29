@@ -1,0 +1,85 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+#define ZODIAC_COUNT 12
+#define MIN_YEAR 1
+#define MAX_YEAR 9999
+
+static const char *get_chinese_zodiac(int year)
+{
+    static const char *const signs[ZODIAC_COUNT] = {
+        "Monkey", "Rooster", "Dog", "Pig",
+        "Rat", "Ox", "Tiger", "Rabbit",
+        "Dragon", "Snake", "Horse", "Goat"
+    };
+    int index;
+
+    if (year < MIN_YEAR || year > MAX_YEAR) {
+        return NULL;
+    }
+
+    index = year % ZODIAC_COUNT;
+    if (index < 0) {
+        index += ZODIAC_COUNT;
+    }
+    if (index < 0 || index >= ZODIAC_COUNT) {
+        return NULL;
+    }
+    return signs[index];
+}
+
+static int display_zodiac(int year)
+{
+    const char *sign;
+
+    if (year < MIN_YEAR || year > MAX_YEAR) {
+        fprintf(stderr, "Error: year must be between %d and %d.\n",
+                MIN_YEAR, MAX_YEAR);
+        return -1;
+    }
+    sign = get_chinese_zodiac(year);
+    if (sign == NULL) {
+        fprintf(stderr, "Error: could not determine zodiac sign.\n");
+        return -1;
+    }
+    if (printf("The Chinese zodiac sign for year %d is: %s\n", year, sign) < 0) {
+        return -1;
+    }
+    return 0;
+}
+
+int main(void)
+{
+    int year;
+    int result;
+
+    printf("Enter a year: ");
+    if (fflush(stdout) != 0) {
+        return EXIT_FAILURE;
+    }
+    result = scanf("%d", &year);
+    if (result != 1) {
+        fprintf(stderr, "Error: invalid input, expected an integer year.\n");
+        return EXIT_FAILURE;
+    }
+    if (display_zodiac(year) != 0) {
+        return EXIT_FAILURE;
+    }
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The Flawfinder warning (CWE-119/CWE-120) flagged on the `signs` array is a **false positive**. Flawfinder performs simple pattern matching and flags any statically-sized array declaration involving `char`, but this code was already safe for the following reasons:
+
+1. **The array is `static const char *const`** — an immutable array of pointers to string literals. No data is ever written into it, so a buffer overflow via writing is impossible.
+
+2. **Index bounds are fully guarded.** The index is derived from `year % ZODIAC_COUNT`, which mathematically constrains it to `(-11..11)`. The negative case is corrected by adding `ZODIAC_COUNT`, and a final defensive check `if (index < 0 || index >= ZODIAC_COUNT)` guarantees no out-of-bounds read.
+
+3. **Input validation is layered.** The year is range-checked both in `display_zodiac` and again inside `get_chinese_zodiac`, and `scanf`'s return value is verified before the value is used, preventing use of an uninitialized `year`.
+
+4. **All I/O return values are checked** (`scanf`, `printf`, `fflush`), which exceeds typical robustness standards for a program of this size.
+
+Since the flagged weakness requires no actual fix, the code is reproduced unchanged with the analysis comment removed, per your instructions.

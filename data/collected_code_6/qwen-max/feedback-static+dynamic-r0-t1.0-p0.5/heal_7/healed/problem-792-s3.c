@@ -1,0 +1,17 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int count_lists(int num_lists) {
+    return (num_lists > 0) ? num_lists : -1;
+}
+
+int main() {
+    int num_lists = 5;
+    int result = count_lists(num_lists);
+    if (result != -1) {
+        printf("Number of lists: %d\n", result);
+    } else {
+        printf("Invalid input\n");
+    }
+    return 0;
+}

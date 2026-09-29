@@ -1,0 +1,63 @@
+```c
+#include <stdio.h>
+#include <ctype.h>
+#include <stddef.h>
+
+void remove_whitespace(char *str, size_t max_len)
+{
+    size_t read;
+    size_t write;
+
+    if (str == NULL || max_len == 0) {
+        return;
+    }
+
+    read = 0;
+    write = 0;
+
+    while (read < max_len && str[read] != '\0') {
+        if (!isspace((unsigned char)str[read])) {
+            if (write < max_len - 1) {
+                str[write] = str[read];
+                write++;
+            } else {
+                break;
+            }
+        }
+        read++;
+    }
+
+    if (write < max_len) {
+        str[write] = '\0';
+    } else {
+        str[max_len - 1] = '\0';
+    }
+}
+
+int main(void)
+{
+    char text[] = "  Hello,   World! \t This is a\ntest.  ";
+
+    printf("Before: \"%s\"\n", text);
+    remove_whitespace(text, sizeof(text));
+    printf("After:  \"%s\"\n", text);
+
+    return 0;
+}
+```
+
+**Analysis notes:**
+
+The original code was already largely defensive — the Flawfinder warnings it contains are *informational* (risk level 1), flagging raw buffer indexing inside loops as a pattern worth auditing rather than a confirmed vulnerability. Reviewing each concern:
+
+1. **Loop bound safety (CWE-120/CWE-20):** The `read < max_len` guard already prevents reading past the caller-declared buffer size, even if the string is not NUL-terminated within `max_len` bytes. This is the correct mitigation and is preserved.
+
+2. **Write index safety:** In the original, `write` can never exceed `read`, so `str[write]` was provably in bounds. However, to make the invariant explicit and robust against future modification, the rewrite adds a `write < max_len - 1` guard before every write, guaranteeing space for the terminating NUL regardless of loop logic changes.
+
+3. **NUL termination:** Both branches at the end ensure the result is always terminated within `max_len`, avoiding a non-terminated string being passed to `printf("%s", ...)`.
+
+4. **`isspace` cast:** The cast to `unsigned char` is retained — passing a plain `char` (potentially negative) to `isspace` is undefined behavior per the C standard.
+
+5. **NULL / zero-length checks:** Retained as the first line of defense against invalid input (CWE-20).
+
+The function remains O(n), in-place, and safe for any buffer whose true capacity is accurately passed as `max_len`.

@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-108-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-108-s2.c:114:5: warning: Either the condition 'it!=NULL' is redundant or there is possible null pointer dereference: it. [nullPointerRedundantCheck]
+    it->heap_size = 0;
+    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-108-s2.c:110:12: note: Assuming that condition 'it!=NULL' is not redundant
+    if (it != NULL && it->heap != NULL) {
+           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-108-s2.c:114:5: note: Null pointer dereference
+    it->heap_size = 0;
+    ^

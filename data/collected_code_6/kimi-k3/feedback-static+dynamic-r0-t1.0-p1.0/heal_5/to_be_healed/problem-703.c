@@ -1,0 +1,331 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+#include <stdlib.h>
+#include <stdint.h>
+
+#define MAX_KEY_LENGTH 100
+#define MAX_VALUE_LENGTH 100
+#define INITIAL_CAPACITY 16
+#define LOAD_FACTOR_THRESHOLD 0.75
+
+typedef struct {
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char key[MAX_KEY_LENGTH];
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char value[MAX_VALUE_LENGTH];
+    bool is_occupied;
+    bool is_deleted;
+} Entry;
+
+typedef struct {
+    Entry *entries;
+    size_t capacity;
+    size_t count;
+    size_t deleted_count;
+} Dictionary;
+
+static size_t safe_strnlen(const char *str, size_t max_len) {
+    if (str == NULL) {
+        return 0;
+    }
+    size_t len = 0;
+    while (len < max_len && str[len] != '\0') {
+        len++;
+    }
+    return len;
+}
+
+static void safe_strcpy(char *dest, size_t dest_size, const char *src) {
+    if (dest == NULL || src == NULL || dest_size == 0) {
+        return;
+    }
+    size_t i = 0;
+    while (i < dest_size - 1 && src[i] != '\0') {
+        dest[i] = src[i];
+        i++;
+    }
+    dest[i] = '\0';
+}
+
+static uint32_t hash_key(const char *key, size_t capacity) {
+    uint32_t hash = 5381;
+    int c;
+    while ((c = *key++) != '\0') {
+        hash = ((hash << 5) + hash) + (uint32_t)c;
+    }
+    return hash % (uint32_t)capacity;
+}
+
+static bool dictionary_resize(Dictionary *dict, size_t new_capacity) {
+    Entry *new_entries = calloc(new_capacity, sizeof(Entry));
+    if (new_entries == NULL) {
+        return false;
+    }
+    
+    for (size_t i = 0; i < dict->capacity; i++) {
+        if (dict->entries[i].is_occupied && !dict->entries[i].is_deleted) {
+            uint32_t index = hash_key(dict->entries[i].key, new_capacity);
+            size_t probe = 0;
+            size_t pos = (index + probe) % new_capacity;
+            
+            while (new_entries[pos].is_occupied && !new_entries[pos].is_deleted) {
+                probe++;
+                pos = (index + probe) % new_capacity;
+            }
+            
+            safe_strcpy(new_entries[pos].key, MAX_KEY_LENGTH, dict->entries[i].key);
+            safe_strcpy(new_entries[pos].value, MAX_VALUE_LENGTH, dict->entries[i].value);
+            new_entries[pos].is_occupied = true;
+            new_entries[pos].is_deleted = false;
+        }
+    }
+    
+    free(dict->entries);
+    dict->entries = new_entries;
+    dict->capacity = new_capacity;
+    dict->deleted_count = 0;
+    return true;
+}
+
+bool dictionary_init(Dictionary *dict, size_t capacity) {
+    if (dict == NULL) {
+        return false;
+    }
+    if (capacity == 0) {
+        capacity = INITIAL_CAPACITY;
+    }
+    
+    dict->entries = calloc(capacity, sizeof(Entry));
+    if (dict->entries == NULL) {
+        return false;
+    }
+    
+    dict->capacity = capacity;
+    dict->count = 0;
+    dict->deleted_count = 0;
+    return true;
+}
+
+void dictionary_free(Dictionary *dict) {
+    if (dict != NULL) {
+        free(dict->entries);
+        dict->entries = NULL;
+        dict->capacity = 0;
+        dict->count = 0;
+        dict->deleted_count = 0;
+    }
+}
+
+bool dictionary_contains_key(const Dictionary *dict, const char *key) {
+    if (dict == NULL || dict->entries == NULL || key == NULL) {
+        return false;
+    }
+    
+    size_t key_len = safe_strnlen(key, MAX_KEY_LENGTH);
+    if (key_len == 0 || key_len >= MAX_KEY_LENGTH) {
+        return false;
+    }
+    
+    uint32_t index = hash_key(key, dict->capacity);
+    size_t probe = 0;
+    
+    while (probe < dict->capacity) {
+        size_t pos = (index + probe) % dict->capacity;
+        
+        if (!dict->entries[pos].is_occupied) {
+            return false;
+        }
+        
+        if (!dict->entries[pos].is_deleted && strcmp(dict->entries[pos].key, key) == 0) {
+            return true;
+        }
+        
+        probe++;
+    }
+    
+    return false;
+}
+
+bool dictionary_insert(Dictionary *dict, const char *key, const char *value) {
+    if (dict == NULL || dict->entries == NULL || key == NULL || value == NULL) {
+        return false;
+    }
+    
+    size_t key_len = safe_strnlen(key, MAX_KEY_LENGTH);
+    size_t value_len = safe_strnlen(value, MAX_VALUE_LENGTH);
+    
+    if (key_len == 0 || key_len >= MAX_KEY_LENGTH || value_len >= MAX_VALUE_LENGTH) {
+        return false;
+    }
+    
+    double load_factor = (double)(dict->count + dict->deleted_count) / (double)dict->capacity;
+    if (load_factor >= LOAD_FACTOR_THRESHOLD) {
+        size_t new_capacity = dict->capacity * 2;
+        if (new_capacity < dict->capacity) {
+            return false;
+        }
+        if (!dictionary_resize(dict, new_capacity)) {
+            return false;
+        }
+    }
+    
+    uint32_t index = hash_key(key, dict->capacity);
+    size_t probe = 0;
+    size_t first_deleted = SIZE_MAX;
+    
+    while (probe < dict->capacity) {
+        size_t pos = (index + probe) % dict->capacity;
+        
+        if (!dict->entries[pos].is_occupied) {
+            if (first_deleted != SIZE_MAX) {
+                pos = first_deleted;
+                dict->deleted_count--;
+            }
+            safe_strcpy(dict->entries[pos].key, MAX_KEY_LENGTH, key);
+            safe_strcpy(dict->entries[pos].value, MAX_VALUE_LENGTH, value);
+            dict->entries[pos].is_occupied = true;
+            dict->entries[pos].is_deleted = false;
+            dict->count++;
+            return true;
+        }
+        
+        if (dict->entries[pos].is_deleted && first_deleted == SIZE_MAX) {
+            first_deleted = pos;
+        }
+        
+        if (!dict->entries[pos].is_deleted && strcmp(dict->entries[pos].key, key) == 0) {
+            safe_strcpy(dict->entries[pos].value, MAX_VALUE_LENGTH, value);
+            return true;
+        }
+        
+        probe++;
+    }
+    
+    if (first_deleted != SIZE_MAX) {
+        safe_strcpy(dict->entries[first_deleted].key, MAX_KEY_LENGTH, key);
+        safe_strcpy(dict->entries[first_deleted].value, MAX_VALUE_LENGTH, value);
+        dict->entries[first_deleted].is_occupied = true;
+        dict->entries[first_deleted].is_deleted = false;
+        dict->count++;
+        dict->deleted_count--;
+        return true;
+    }
+    
+    return false;
+}
+
+bool dictionary_delete(Dictionary *dict, const char *key) {
+    if (dict == NULL || dict->entries == NULL || key == NULL) {
+        return false;
+    }
+    
+    size_t key_len = safe_strnlen(key, MAX_KEY_LENGTH);
+    if (key_len == 0 || key_len >= MAX_KEY_LENGTH) {
+        return false;
+    }
+    
+    uint32_t index = hash_key(key, dict->capacity);
+    size_t probe = 0;
+    
+    while (probe < dict->capacity) {
+        size_t pos = (index + probe) % dict->capacity;
+        
+        if (!dict->entries[pos].is_occupied) {
+            return false;
+        }
+        
+        if (!dict->entries[pos].is_deleted && strcmp(dict->entries[pos].key, key) == 0) {
+            dict->entries[pos].is_deleted = true;
+            dict->count--;
+            dict->deleted_count++;
+            return true;
+        }
+        
+        probe++;
+    }
+    
+    return false;
+}
+
+const char* dictionary_get(const Dictionary *dict, const char *key) {
+    if (dict == NULL || dict->entries == NULL || key == NULL) {
+        return NULL;
+    }
+    
+    size_t key_len = safe_strnlen(key, MAX_KEY_LENGTH);
+    if (key_len == 0 || key_len >= MAX_KEY_LENGTH) {
+        return NULL;
+    }
+    
+    uint32_t index = hash_key(key, dict->capacity);
+    size_t probe = 0;
+    
+    while (probe < dict->capacity) {
+        size_t pos = (index + probe) % dict->capacity;
+        
+        if (!dict->entries[pos].is_occupied) {
+            return NULL;
+        }
+        
+        if (!dict->entries[pos].is_deleted && strcmp(dict->entries[pos].key, key) == 0) {
+            return dict->entries[pos].value;
+        }
+        
+        probe++;
+    }
+    
+    return NULL;
+}
+
+int main(void) {
+    Dictionary dict;
+    
+    if (!dictionary_init(&dict, 0)) {
+        fprintf(stderr, "Failed to initialize dictionary\n");
+        return EXIT_FAILURE;
+    }
+    
+    if (!dictionary_insert(&dict, "name", "Alice")) {
+        fprintf(stderr, "Failed to insert key\n");
+        dictionary_free(&dict);
+        return EXIT_FAILURE;
+    }
+    
+    if (!dictionary_insert(&dict, "age", "30")) {
+        fprintf(stderr, "Failed to insert key\n");
+        dictionary_free(&dict);
+        return EXIT_FAILURE;
+    }
+    
+    if (!dictionary_insert(&dict, "city", "New York")) {
+        fprintf(stderr, "Failed to insert key\n");
+        dictionary_free(&dict);
+        return EXIT_FAILURE;
+    }
+    
+    const char *test_key = "age";
+    if (dictionary_contains_key(&dict, test_key)) {
+        printf("Key '%s' is present in the dictionary\n", test_key);
+        const char *value = dictionary_get(&dict, test_key);
+        if (value != NULL) {
+            printf("Value: %s\n", value);
+        }
+    } else {
+        printf("Key '%s' is not present in the dictionary\n", test_key);
+    }
+    
+    test_key = "country";
+    if (dictionary_contains_key(&dict, test_key)) {
+        printf("Key '%s' is present in the dictionary\n", test_key);
+    } else {
+        printf("Key '%s' is not present in the dictionary\n", test_key);
+    }
+    
+    dictionary_free(&dict);
+    return EXIT_SUCCESS;
+}

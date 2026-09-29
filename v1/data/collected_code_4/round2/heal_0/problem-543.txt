@@ -1,0 +1,32 @@
+```c
+#include <stdio.h>
+
+int countDigits(int n) {
+    int count = 0;
+    while (n != 0) {
+        n = n / 10;
+        ++count;
+    }
+    return count;
+}
+
+void addAndPrint(int num1, int num2) {
+    int sum = num1 + num2;
+    printf("Sum: %d\n", sum);
+    printf("Number of digits in sum: %d\n", countDigits(sum));
+}
+
+int main() {
+    int number1, number2;
+
+    printf("Enter first number: ");
+    scanf("%d", &number1);
+
+    printf("Enter second number: ");
+    scanf("%d", &number2);
+
+    addAndPrint(number1, number2);
+    
+    return 0;
+}
+```

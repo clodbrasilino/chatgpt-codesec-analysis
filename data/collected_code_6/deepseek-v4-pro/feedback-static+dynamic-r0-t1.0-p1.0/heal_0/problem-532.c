@@ -1,0 +1,54 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+
+bool are_permutations(const char *str1, const char *str2) {
+    if (str1 == NULL || str2 == NULL) {
+        return false;
+    }
+    
+    size_t len1 = strlen(str1);
+    size_t len2 = strlen(str2);
+    
+    if (len1 != len2) {
+        return false;
+    }
+    
+    int count[256] = {0};
+    
+    for (size_t i = 0; i < len1; i++) {
+        count[(unsigned char)str1[i]]++;
+    }
+    
+    for (size_t i = 0; i < len2; i++) {
+        count[(unsigned char)str2[i]]--;
+    }
+    
+    for (int i = 0; i < 256; i++) {
+        if (count[i] != 0) {
+            return false;
+        }
+    }
+    
+    return true;
+}
+
+int main(void) {
+    const char *test1_str1 = "listen";
+    const char *test1_str2 = "silent";
+    printf("%s\n", are_permutations(test1_str1, test1_str2) ? "true" : "false");
+    
+    const char *test2_str1 = "hello";
+    const char *test2_str2 = "world";
+    printf("%s\n", are_permutations(test2_str1, test2_str2) ? "true" : "false");
+    
+    const char *test3_str1 = "abc";
+    const char *test3_str2 = "cba";
+    printf("%s\n", are_permutations(test3_str1, test3_str2) ? "true" : "false");
+    
+    const char *test4_str1 = "abc";
+    const char *test4_str2 = "abcd";
+    printf("%s\n", are_permutations(test4_str1, test4_str2) ? "true" : "false");
+    
+    return 0;
+}

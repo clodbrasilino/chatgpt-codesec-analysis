@@ -1,0 +1,38 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+void combine_rec(int a[], int size, int n, int r, int index, int data[], int i) {
+    if (index == r) {
+        for (int j = 0; j < r; j++) {
+            printf("%d ", data[j]);
+        }
+        printf("\n");
+        return;
+    }
+
+    if (i >= n) {
+        return;
+    }
+
+    data[index] = a[i];
+    combine_rec(a, size, n, r, index + 1, data, i + 1);
+    combine_rec(a, size, n, r, index, data, i + 1);
+}
+
+void combination(int a[], int size, int n, int r) {
+    int *data = (int *)malloc(r * sizeof(int));
+    if (data != NULL) {
+        combine_rec(a, size, n, r, 0, data, 0);
+        free(data);
+    }
+}
+
+int main() {
+    int a[] = {1, 2, 3};
+    int size = sizeof(a) / sizeof(a[0]);
+    int r = 2;
+
+    combination(a, size, size, r);
+
+    return 0;
+}

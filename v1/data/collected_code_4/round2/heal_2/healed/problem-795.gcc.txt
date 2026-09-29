@@ -1,0 +1,359 @@
+./collected_code_4/round2//heal_2/healed/problem-795.c: In function 'removeHeap':
+./collected_code_4/round2//heal_2/healed/problem-795.c:56:46: warning: use of uninitialized value '*_14 + _16' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   56 |         if (j + 1 < heap->count && heap->data[j] > heap->data[j + 1]) {
+      |                                    ~~~~~~~~~~^~~
+  'main': events 1-2
+    |
+    |   90 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   93 |     Heap *heap = createHeap(size);
+    |      |                  ~~~~~~~~~~~~~~~~
+    |      |                  |
+    |      |                  (2) calling 'createHeap' from 'main'
+    |
+    +--> 'createHeap': events 3-8
+           |
+           |   10 | Heap* createHeap(int capacity) {
+           |      |       ^~~~~~~~~~
+           |      |       |
+           |      |       (3) entry to 'createHeap'
+           |   11 |     Heap *heap = (Heap*) malloc(sizeof(Heap));
+           |   12 |     if(heap == NULL) {
+           |      |       ~
+           |      |       |
+           |      |       (4) following 'false' branch (when 'heap' is non-NULL)...
+           |......
+           |   15 |     heap->data = (int*) malloc(capacity * sizeof(int));
+           |      |                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                         |
+           |      |                         (5) ...to here
+           |      |                         (6) region created on heap here
+           |   16 |     if(heap->data == NULL) {
+           |      |       ~
+           |      |       |
+           |      |       (7) following 'false' branch...
+           |......
+           |   20 |     heap->count = 0;
+           |      |     ~~~~~~~~~~~~~~~
+           |      |                 |
+           |      |                 (8) ...to here
+           |
+    <------+
+    |
+  'main': events 9-14
+    |
+    |   93 |     Heap *heap = createHeap(size);
+    |      |                  ^~~~~~~~~~~~~~~~
+    |      |                  |
+    |      |                  (9) returning to 'main' from 'createHeap'
+    |   94 |     if(heap == NULL) {
+    |      |       ~           
+    |      |       |
+    |      |       (10) following 'false' branch (when 'heap' is non-NULL)...
+    |......
+    |   98 |     for (int i = 0; i < size - 1; ++i) {
+    |      |              ~      ~~~~~~~~~~~~
+    |      |              |        |
+    |      |              |        (12) following 'true' branch...
+    |      |              (11) ...to here
+    |   99 |         insertHeap(heap, prices[i]);
+    |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |         |
+    |      |         (13) ...to here
+    |      |         (14) calling 'insertHeap' from 'main'
+    |
+    +--> 'insertHeap': events 15-21
+           |
+           |   25 | void insertHeap(Heap *heap, int value) {
+           |      |      ^~~~~~~~~~
+           |      |      |
+           |      |      (15) entry to 'insertHeap'
+           |   26 |     if(heap == NULL) {
+           |      |       ~
+           |      |       |
+           |      |       (16) following 'false' branch (when 'heap' is non-NULL)...
+           |......
+           |   29 |     if (heap->count == heap->capacity) {
+           |      |        ~~~~~~~~~~~~
+           |      |        |    |
+           |      |        |    (17) ...to here
+           |      |        (18) following 'false' branch...
+           |......
+           |   38 |     int i = heap->count++;
+           |      |             ~~~~~~~~~~~
+           |      |                 |
+           |      |                 (19) ...to here
+           |   39 |     while (i && value < heap->data[(i - 1) / 2]) {
+           |      |            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |              |
+           |      |              (20) following 'false' branch (when 'i == 0')...
+           |......
+           |   43 |     heap->data[i] = value;
+           |      |     ~~~~~~~~~~
+           |      |         |
+           |      |         (21) ...to here
+           |
+    <------+
+    |
+  'main': events 22-25
+    |
+    |   98 |     for (int i = 0; i < size - 1; ++i) {
+    |      |                     ~~~~~~~~~~~~
+    |      |                       |
+    |      |                       (23) following 'false' branch...
+    |   99 |         insertHeap(heap, prices[i]);
+    |      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |         |
+    |      |         (22) returning to 'main' from 'insertHeap'
+    |......
+    |  102 |     int n = 3;
+    |      |         ~
+    |      |         |
+    |      |         (24) ...to here
+    |  103 |     int *items = cheapItems(heap, n);
+    |      |                  ~~~~~~~~~~~~~~~~~~~
+    |      |                  |
+    |      |                  (25) calling 'cheapItems' from 'main'
+    |
+    +--> 'cheapItems': events 26-33
+           |
+           |   75 | int* cheapItems(Heap *heap, int n) {
+           |      |      ^~~~~~~~~~
+           |      |      |
+           |      |      (26) entry to 'cheapItems'
+           |   76 |     if(heap == NULL) {
+           |      |       ~
+           |      |       |
+           |      |       (27) following 'false' branch (when 'heap' is non-NULL)...
+           |......
+           |   80 |     int *items = (int*) malloc(n * sizeof(int));
+           |      |                         ~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                         |
+           |      |                         (28) ...to here
+           |   81 |     if(items == NULL) {
+           |      |       ~
+           |      |       |
+           |      |       (29) following 'false' branch (when 'items' is non-NULL)...
+           |......
+           |   84 |     for (int i = 0; i < n; ++i) {
+           |      |              ~      ~~~~~
+           |      |              |        |
+           |      |              |        (31) following 'true' branch (when 'i < n')...
+           |      |              (30) ...to here
+           |   85 |         items[i] = removeHeap(heap);
+           |      |              ~     ~~~~~~~~~~~~~~~~
+           |      |              |     |
+           |      |              |     (33) calling 'removeHeap' from 'cheapItems'
+           |      |              (32) ...to here
+           |
+           +--> 'removeHeap': events 34-41
+                  |
+                  |   46 | int removeHeap(Heap *heap) {
+                  |      |     ^~~~~~~~~~
+                  |      |     |
+                  |      |     (34) entry to 'removeHeap'
+                  |   47 |     if(heap == NULL || heap->count == 0) {
+                  |      |       ~
+                  |      |       |
+                  |      |       (35) following 'false' branch...
+                  |......
+                  |   51 |     int value = heap->data[0];
+                  |      |                 ~~~~~~~~~~
+                  |      |                     |
+                  |      |                     (36) ...to here
+                  |......
+                  |   55 |     while (j < heap->count) {
+                  |      |            ~~~~~~~~~~~~~~~
+                  |      |              |
+                  |      |              (37) following 'true' branch...
+                  |   56 |         if (j + 1 < heap->count && heap->data[j] > heap->data[j + 1]) {
+                  |      |            ~~~~~~                  ~~~~~~~~~~~~~
+                  |      |            |  |                        |     |
+                  |      |            |  |                        |     (41) use of uninitialized value '*_14 + _16' here
+                  |      |            |  (38) ...to here          (40) ...to here
+                  |      |            (39) following 'true' branch...
+                  |
+./collected_code_4/round2//heal_2/healed/problem-795.c:60:40: warning: use of uninitialized value '*_30 + _32' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   60 |         if (heap->data[i] <= heap->data[j]) {
+      |                              ~~~~~~~~~~^~~
+  'main': events 1-2
+    |
+    |   90 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   93 |     Heap *heap = createHeap(size);
+    |      |                  ~~~~~~~~~~~~~~~~
+    |      |                  |
+    |      |                  (2) calling 'createHeap' from 'main'
+    |
+    +--> 'createHeap': events 3-8
+           |
+           |   10 | Heap* createHeap(int capacity) {
+           |      |       ^~~~~~~~~~
+           |      |       |
+           |      |       (3) entry to 'createHeap'
+           |   11 |     Heap *heap = (Heap*) malloc(sizeof(Heap));
+           |   12 |     if(heap == NULL) {
+           |      |       ~
+           |      |       |
+           |      |       (4) following 'false' branch (when 'heap' is non-NULL)...
+           |......
+           |   15 |     heap->data = (int*) malloc(capacity * sizeof(int));
+           |      |                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                         |
+           |      |                         (5) ...to here
+           |      |                         (6) region created on heap here
+           |   16 |     if(heap->data == NULL) {
+           |      |       ~
+           |      |       |
+           |      |       (7) following 'false' branch...
+           |......
+           |   20 |     heap->count = 0;
+           |      |     ~~~~~~~~~~~~~~~
+           |      |                 |
+           |      |                 (8) ...to here
+           |
+    <------+
+    |
+  'main': events 9-14
+    |
+    |   93 |     Heap *heap = createHeap(size);
+    |      |                  ^~~~~~~~~~~~~~~~
+    |      |                  |
+    |      |                  (9) returning to 'main' from 'createHeap'
+    |   94 |     if(heap == NULL) {
+    |      |       ~           
+    |      |       |
+    |      |       (10) following 'false' branch (when 'heap' is non-NULL)...
+    |......
+    |   98 |     for (int i = 0; i < size - 1; ++i) {
+    |      |              ~      ~~~~~~~~~~~~
+    |      |              |        |
+    |      |              |        (12) following 'true' branch...
+    |      |              (11) ...to here
+    |   99 |         insertHeap(heap, prices[i]);
+    |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |         |
+    |      |         (13) ...to here
+    |      |         (14) calling 'insertHeap' from 'main'
+    |
+    +--> 'insertHeap': events 15-21
+           |
+           |   25 | void insertHeap(Heap *heap, int value) {
+           |      |      ^~~~~~~~~~
+           |      |      |
+           |      |      (15) entry to 'insertHeap'
+           |   26 |     if(heap == NULL) {
+           |      |       ~
+           |      |       |
+           |      |       (16) following 'false' branch (when 'heap' is non-NULL)...
+           |......
+           |   29 |     if (heap->count == heap->capacity) {
+           |      |        ~~~~~~~~~~~~
+           |      |        |    |
+           |      |        |    (17) ...to here
+           |      |        (18) following 'false' branch...
+           |......
+           |   38 |     int i = heap->count++;
+           |      |             ~~~~~~~~~~~
+           |      |                 |
+           |      |                 (19) ...to here
+           |   39 |     while (i && value < heap->data[(i - 1) / 2]) {
+           |      |            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |              |
+           |      |              (20) following 'false' branch (when 'i == 0')...
+           |......
+           |   43 |     heap->data[i] = value;
+           |      |     ~~~~~~~~~~
+           |      |         |
+           |      |         (21) ...to here
+           |
+    <------+
+    |
+  'main': events 22-25
+    |
+    |   98 |     for (int i = 0; i < size - 1; ++i) {
+    |      |                     ~~~~~~~~~~~~
+    |      |                       |
+    |      |                       (23) following 'false' branch...
+    |   99 |         insertHeap(heap, prices[i]);
+    |      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |         |
+    |      |         (22) returning to 'main' from 'insertHeap'
+    |......
+    |  102 |     int n = 3;
+    |      |         ~
+    |      |         |
+    |      |         (24) ...to here
+    |  103 |     int *items = cheapItems(heap, n);
+    |      |                  ~~~~~~~~~~~~~~~~~~~
+    |      |                  |
+    |      |                  (25) calling 'cheapItems' from 'main'
+    |
+    +--> 'cheapItems': events 26-33
+           |
+           |   75 | int* cheapItems(Heap *heap, int n) {
+           |      |      ^~~~~~~~~~
+           |      |      |
+           |      |      (26) entry to 'cheapItems'
+           |   76 |     if(heap == NULL) {
+           |      |       ~
+           |      |       |
+           |      |       (27) following 'false' branch (when 'heap' is non-NULL)...
+           |......
+           |   80 |     int *items = (int*) malloc(n * sizeof(int));
+           |      |                         ~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                         |
+           |      |                         (28) ...to here
+           |   81 |     if(items == NULL) {
+           |      |       ~
+           |      |       |
+           |      |       (29) following 'false' branch (when 'items' is non-NULL)...
+           |......
+           |   84 |     for (int i = 0; i < n; ++i) {
+           |      |              ~      ~~~~~
+           |      |              |        |
+           |      |              |        (31) following 'true' branch (when 'i < n')...
+           |      |              (30) ...to here
+           |   85 |         items[i] = removeHeap(heap);
+           |      |              ~     ~~~~~~~~~~~~~~~~
+           |      |              |     |
+           |      |              |     (33) calling 'removeHeap' from 'cheapItems'
+           |      |              (32) ...to here
+           |
+           +--> 'removeHeap': events 34-41
+                  |
+                  |   46 | int removeHeap(Heap *heap) {
+                  |      |     ^~~~~~~~~~
+                  |      |     |
+                  |      |     (34) entry to 'removeHeap'
+                  |   47 |     if(heap == NULL || heap->count == 0) {
+                  |      |       ~
+                  |      |       |
+                  |      |       (35) following 'false' branch...
+                  |......
+                  |   51 |     int value = heap->data[0];
+                  |      |                 ~~~~~~~~~~
+                  |      |                     |
+                  |      |                     (36) ...to here
+                  |......
+                  |   55 |     while (j < heap->count) {
+                  |      |            ~~~~~~~~~~~~~~~
+                  |      |              |
+                  |      |              (37) following 'true' branch...
+                  |   56 |         if (j + 1 < heap->count && heap->data[j] > heap->data[j + 1]) {
+                  |      |            ~~~~~~
+                  |      |            |  |
+                  |      |            |  (38) ...to here
+                  |      |            (39) following 'false' branch...
+                  |......
+                  |   60 |         if (heap->data[i] <= heap->data[j]) {
+                  |      |             ~~~~~~~~~~       ~~~~~~~~~~~~~
+                  |      |                 |                      |
+                  |      |                 (40) ...to here        (41) use of uninitialized value '*_30 + _32' here
+                  |

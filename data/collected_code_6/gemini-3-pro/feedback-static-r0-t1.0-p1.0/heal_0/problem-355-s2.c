@@ -1,0 +1,36 @@
+#include <stdio.h>
+
+long long count_rectangles_in_circle(long long r);
+
+long long count_rectangles_in_circle(long long r) {
+    if (r <= 0) {
+        return 0;
+    }
+
+    long long count = 0;
+    long long r_squared = r * r;
+
+    for (long long x = 0; (x + 1) * (x + 1) <= r_squared; ++x) {
+        for (long long y = 0; (x + 1) * (x + 1) + (y + 1) * (y + 1) <= r_squared; ++y) {
+            count++;
+        }
+    }
+
+    return count * 4;
+}
+
+int main(void) {
+    long long r = 0;
+    
+    if (scanf("%lld", &r) != 1) {
+        return 1;
+    }
+
+    long long result = count_rectangles_in_circle(r);
+    
+    if (printf("%lld\n", result) < 0) {
+        return 1;
+    }
+
+    return 0;
+}

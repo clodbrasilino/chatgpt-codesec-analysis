@@ -1,0 +1,23 @@
+#include <stdio.h>
+#include <stdint.h>
+
+void xor_tuples(uint32_t *result, const uint32_t *a, const uint32_t *b, size_t len) {
+    for (size_t i = 0; i < len; ++i) {
+        result[i] = a[i] ^ b[i];
+    }
+}
+
+int main() {
+    const size_t len = 4;
+    uint32_t a[len] = {1, 2, 3, 4};
+    uint32_t b[len] = {4, 3, 2, 1};
+    uint32_t result[len];
+
+    xor_tuples(result, a, b, len);
+
+    for (size_t i = 0; i < len; ++i) {
+        printf("%u ", result[i]);
+    }
+
+    return 0;
+}

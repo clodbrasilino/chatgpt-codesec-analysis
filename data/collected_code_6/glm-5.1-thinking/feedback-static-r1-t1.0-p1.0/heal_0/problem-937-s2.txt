@@ -1,0 +1,48 @@
+```c
+#include <stdio.h>
+
+char find_most_common_char(const char *str, int *max_count) {
+    if (str == NULL || max_count == NULL) {
+        if (max_count != NULL) {
+            *max_count = 0;
+        }
+        return '\0';
+    }
+
+    int counts[256] = {0};
+    size_t i = 0;
+
+    while (str[i] != '\0') {
+        counts[(unsigned char)str[i]]++;
+        i++;
+    }
+
+    int current_max = 0;
+    char result_char = '\0';
+
+    for (int j = 0; j < 256; j++) {
+        if (counts[j] > current_max) {
+            current_max = counts[j];
+            result_char = (char)j;
+        }
+    }
+
+    *max_count = current_max;
+    return result_char;
+}
+
+int main(void) {
+    const char *text = "abracadabra";
+    int count = 0;
+    
+    char most_common = find_most_common_char(text, &count);
+    
+    if (most_common != '\0' || count > 0) {
+        printf("Most common character: %c\nCount: %d\n", most_common, count);
+    } else {
+        printf("String is empty or NULL.\n");
+    }
+    
+    return 0;
+}
+```

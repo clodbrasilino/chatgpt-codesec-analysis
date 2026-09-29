@@ -1,0 +1,104 @@
+#define _POSIX_C_SOURCE 200809L
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdbool.h>
+
+#define MAX_INPUT_LEN 1048576
+
+char* remove_duplicate_words(const char* input) {
+    if (!input) {
+        return NULL;
+    }
+
+    size_t len = strnlen(input, MAX_INPUT_LEN);
+    char* str = malloc(len + 1);
+    if (!str) {
+        return NULL;
+    }
+    
+    /* Possible weaknesses found:
+     * Flawfinder strncpy: Easily used incorrectly; doesn't always \0-terminate or check for invalid pointers [MS-banned] (CWE-120). (risk 1, buffer)
+     */
+    strncpy(str, input, len);
+    str[len] = '\0';
+
+    char** seen_collection = malloc((len / 2 + 1) * sizeof(char*));
+    if (!seen_collection) {
+        free(str);
+        return NULL;
+    }
+
+    char* result = malloc(len + 1);
+    if (!result) {
+        free(seen_collection);
+        free(str);
+        return NULL;
+    }
+    
+    size_t result_len = 0;
+    size_t seen_count = 0;
+    
+    char* saveptr = NULL;
+    char* token = strtok_r(str, " \t\n", &saveptr);
+
+    while (token) {
+        bool found = false;
+        for (size_t i = 0; i < seen_count; i++) {
+            if (strncmp(seen_collection[i], token, len) == 0) {
+                found = true;
+                break;
+            }
+        }
+
+        if (!found) {
+            seen_collection[seen_count++] = token;
+            size_t token_len = strnlen(token, len);
+            
+            if (result_len > 0 && result_len < len) {
+                result[result_len++] = ' ';
+            }
+            
+            if (result_len + token_len <= len) {
+                /* Possible weaknesses found:
+                 * Flawfinder strncpy: Easily used incorrectly; doesn't always \0-terminate or check for invalid pointers [MS-banned] (CWE-120). (risk 1, buffer)
+                 */
+                strncpy(result + result_len, token, token_len);
+                result_len += token_len;
+                result[result_len] = '\0';
+            }
+        }
+        token = strtok_r(NULL, " \t\n", &saveptr);
+    }
+
+    if (result_len == 0) {
+        result[0] = '\0';
+    }
+
+    free(seen_collection);
+    free(str);
+    return result;
+}
+
+int main(void) {
+    char* buffer = NULL;
+    size_t bufsize = 0;
+    ssize_t chars_read;
+
+    chars_read = getline(&buffer, &bufsize, stdin);
+    if (chars_read != -1) {
+        buffer[strcspn(buffer, "\r\n")] = '\0';
+        char* unique_str = remove_duplicate_words(buffer);
+        
+        if (unique_str) {
+            printf("%s\n", unique_str);
+            free(unique_str);
+        } else {
+            free(buffer);
+            return EXIT_FAILURE;
+        }
+    }
+    
+    free(buffer);
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,156 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Tuple {
+    int *elements;
+    int size;
+    struct Tuple *next;
+} Tuple;
+
+typedef struct {
+    Tuple *head;
+    int count;
+} TupleList;
+
+TupleList *create_tuple_list(void) {
+    TupleList *list = (TupleList *)malloc(sizeof(TupleList));
+    if (list == NULL) {
+        return NULL;
+    }
+    list->head = NULL;
+    list->count = 0;
+    return list;
+}
+
+int add_tuple(TupleList *list, const int *elements, int size) {
+    if (list == NULL || elements == NULL || size <= 0) {
+        return -1;
+    }
+    
+    Tuple *new_tuple = (Tuple *)malloc(sizeof(Tuple));
+    if (new_tuple == NULL) {
+        return -1;
+    }
+    
+    new_tuple->elements = (int *)malloc(sizeof(int) * size);
+    if (new_tuple->elements == NULL) {
+        free(new_tuple);
+        return -1;
+    }
+    
+    for (int i = 0; i < size; i++) {
+        new_tuple->elements[i] = elements[i];
+    }
+    
+    new_tuple->size = size;
+    new_tuple->next = NULL;
+    
+    if (list->head == NULL) {
+        list->head = new_tuple;
+    } else {
+        Tuple *current = list->head;
+        while (current->next != NULL) {
+            current = current->next;
+        }
+        current->next = new_tuple;
+    }
+    
+    list->count++;
+    return 0;
+}
+
+int extract_rear_element(TupleList *list, int *result) {
+    if (list == NULL || result == NULL || list->head == NULL) {
+        return -1;
+    }
+    
+    Tuple *current = list->head;
+    Tuple *previous = NULL;
+    
+    while (current->next != NULL) {
+        previous = current;
+        current = current->next;
+    }
+    
+    if (current->size <= 0) {
+        return -1;
+    }
+    
+    *result = current->elements[current->size - 1];
+    
+    if (previous == NULL) {
+        list->head = NULL;
+    } else {
+        previous->next = NULL;
+    }
+    
+    free(current->elements);
+    free(current);
+    list->count--;
+    
+    return 0;
+}
+
+void free_tuple_list(TupleList *list) {
+    if (list == NULL) {
+        return;
+    }
+    
+    Tuple *current = list->head;
+    while (current != NULL) {
+        Tuple *next = current->next;
+        free(current->elements);
+        free(current);
+        current = next;
+    }
+    
+    free(list);
+}
+
+int main(void) {
+    TupleList *list = create_tuple_list();
+    if (list == NULL) {
+        return 1;
+    }
+    
+    int tuple1[] = {1, 2, 3};
+    int tuple2[] = {4, 5, 6, 7};
+    int tuple3[] = {8, 9};
+    
+    if (add_tuple(list, tuple1, 3) != 0) {
+        free_tuple_list(list);
+        return 1;
+    }
+    
+    if (add_tuple(list, tuple2, 4) != 0) {
+        free_tuple_list(list);
+        return 1;
+    }
+    
+    if (add_tuple(list, tuple3, 2) != 0) {
+        free_tuple_list(list);
+        return 1;
+    }
+    
+    int rear_element;
+    
+    if (extract_rear_element(list, &rear_element) == 0) {
+        printf("Rear element: %d\n", rear_element);
+    }
+    
+    if (extract_rear_element(list, &rear_element) == 0) {
+        printf("Rear element: %d\n", rear_element);
+    }
+    
+    if (extract_rear_element(list, &rear_element) == 0) {
+        printf("Rear element: %d\n", rear_element);
+    }
+    
+    if (extract_rear_element(list, &rear_element) != 0) {
+        printf("List is empty\n");
+    }
+    
+    free_tuple_list(list);
+    
+    return 0;
+}

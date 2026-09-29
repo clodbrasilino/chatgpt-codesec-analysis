@@ -1,0 +1,66 @@
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdbool.h>
+#include <limits.h>
+ /* Possible weaknesses found:
+  *  'SIZE_MAX' is defined in header '<stdint.h>'; this is probably fixable by adding '#include <stdint.h>'
+  */
+
+bool is_valid_string(const char *str) {
+    while (*str) {
+        if ((unsigned char)*str < 32 || (unsigned char)*str > 126) {
+            return false;
+        }
+        ++str;
+    }
+    return true;
+}
+
+size_t safe_strlen(const char *str, size_t max_len) {
+    size_t len = 0;
+    while (len < max_len && str[len] != '\0') {
+        ++len;
+    }
+    return len;
+}
+
+int ends_with_word(const char *str, const char *word) {
+    if (str == NULL || word == NULL) return 0;
+    if (!is_valid_string(str) || !is_valid_string(word)) return 0;
+
+    /* Possible weaknesses found:
+     *  each undeclared identifier is reported only once for each function it appears in
+     *  'SIZE_MAX' undeclared (first use in this function)
+     *  use of undeclared identifier 'SIZE_MAX'
+     */
+    size_t len_str = safe_strlen(str, SIZE_MAX);
+    /* Possible weaknesses found:
+     *  use of undeclared identifier 'SIZE_MAX'
+     */
+    size_t len_word = safe_strlen(word, SIZE_MAX);
+
+    if (len_str < len_word) return 0;
+
+    int idx_str = len_str - len_word;
+    while (idx_str > 0 && (ispunct((unsigned char)str[idx_str]) || str[idx_str] == ' ')) --idx_str;
+
+    if (len_str - idx_str != len_word + 1 && str[idx_str] != word[0]) return 0;
+
+    return strncmp(&str[idx_str], word, len_word) == 0;
+}
+
+int main() {
+    const char *test_str1 = "Hello world.";
+    const char *test_str2 = "Hello world";
+    const char *test_str3 = "Hello, world!";
+    const char *test_str4 = "world is great";
+    const char *test_word = "world";
+
+    printf("Test 1: %s\n", ends_with_word(test_str1, test_word) ? "Match" : "No Match");
+    printf("Test 2: %s\n", ends_with_word(test_str2, test_word) ? "Match" : "No Match");
+    printf("Test 3: %s\n", ends_with_word(test_str3, test_word) ? "Match" : "No Match");
+    printf("Test 4: %s\n", ends_with_word(test_str4, test_word) ? "Match" : "No Match");
+
+    return 0;
+}

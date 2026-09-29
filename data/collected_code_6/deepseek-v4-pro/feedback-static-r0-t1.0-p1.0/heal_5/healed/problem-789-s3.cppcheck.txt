@@ -1,0 +1,55 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-789-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-789-s3.c:54:13: style: Condition 'len>0' is always true [knownConditionTrueFalse]
+    if (len > 0 && input_buffer[len - 1] == '\n') {
+            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-789-s3.c:43:13: note: Assuming that condition 'len==0' is not redundant
+    if (len == 0 || input_buffer[0] == '\n') {
+            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-789-s3.c:48:37: note: Assuming condition is false
+    if (len >= sizeof(input_buffer) || input_buffer[len - 1] != '\n') {
+                                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-789-s3.c:54:13: note: Condition 'len>0' is always true
+    if (len > 0 && input_buffer[len - 1] == '\n') {
+            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-789-s3.c:54:42: style: Condition 'input_buffer[len-1]=='\n'' is always true [knownConditionTrueFalse]
+    if (len > 0 && input_buffer[len - 1] == '\n') {
+                                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-789-s3.c:48:62: note: Assuming that condition 'input_buffer[len-1]!='\n'' is not redundant
+    if (len >= sizeof(input_buffer) || input_buffer[len - 1] != '\n') {
+                                                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-789-s3.c:54:42: note: Condition 'input_buffer[len-1]=='\n'' is always true
+    if (len > 0 && input_buffer[len - 1] == '\n') {
+                                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-789-s3.c:90:13: style: Condition 'len>0' is always true [knownConditionTrueFalse]
+    if (len > 0 && input_buffer[len - 1] == '\n') {
+            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-789-s3.c:79:13: note: Assuming that condition 'len==0' is not redundant
+    if (len == 0 || input_buffer[0] == '\n') {
+            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-789-s3.c:84:37: note: Assuming condition is false
+    if (len >= sizeof(input_buffer) || input_buffer[len - 1] != '\n') {
+                                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-789-s3.c:90:13: note: Condition 'len>0' is always true
+    if (len > 0 && input_buffer[len - 1] == '\n') {
+            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-789-s3.c:90:42: style: Condition 'input_buffer[len-1]=='\n'' is always true [knownConditionTrueFalse]
+    if (len > 0 && input_buffer[len - 1] == '\n') {
+                                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-789-s3.c:84:62: note: Assuming that condition 'input_buffer[len-1]!='\n'' is not redundant
+    if (len >= sizeof(input_buffer) || input_buffer[len - 1] != '\n') {
+                                                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-789-s3.c:90:42: note: Condition 'input_buffer[len-1]=='\n'' is always true
+    if (len > 0 && input_buffer[len - 1] == '\n') {
+                                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-789-s3.c:78:9: style: Variable 'len' is reassigned a value before the old one has been used. [redundantAssignment]
+    len = strlen(input_buffer);
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-789-s3.c:56:12: note: len is assigned
+        len--;
+           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-789-s3.c:78:9: note: len is overwritten
+    len = strlen(input_buffer);
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-789-s3.c:92:12: style: Variable 'len' is assigned a value that is never used. [unreadVariable]
+        len--;
+           ^

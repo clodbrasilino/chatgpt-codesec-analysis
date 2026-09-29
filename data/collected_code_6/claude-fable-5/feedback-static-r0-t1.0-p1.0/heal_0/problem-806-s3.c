@@ -1,0 +1,59 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <ctype.h>
+
+static size_t max_uppercase_run(const char *str)
+{
+    size_t max_run = 0;
+    size_t current_run = 0;
+    size_t i = 0;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    while (str[i] != '\0') {
+        if (isupper((unsigned char)str[i])) {
+            current_run++;
+            if (current_run > max_run) {
+                max_run = current_run;
+            }
+        } else {
+            current_run = 0;
+        }
+        i++;
+    }
+
+    return max_run;
+}
+
+int main(void)
+{
+    const char *test1 = "helloWORLDfooBAR";
+    const char *test2 = "ABCdefGHIJKLmno";
+    const char *test3 = "";
+    const char *test4 = "lowercase only";
+    size_t result;
+
+    result = max_uppercase_run(test1);
+    if (printf("Max run in \"%s\": %zu\n", test1, result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    result = max_uppercase_run(test2);
+    if (printf("Max run in \"%s\": %zu\n", test2, result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    result = max_uppercase_run(test3);
+    if (printf("Max run in \"%s\": %zu\n", test3, result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    result = max_uppercase_run(test4);
+    if (printf("Max run in \"%s\": %zu\n", test4, result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

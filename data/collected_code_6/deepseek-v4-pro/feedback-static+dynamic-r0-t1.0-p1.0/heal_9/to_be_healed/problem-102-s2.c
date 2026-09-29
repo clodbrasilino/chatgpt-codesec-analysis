@@ -1,0 +1,127 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+static size_t safe_strlen(const char *str, size_t max_len) {
+    size_t len = 0;
+    while (len < max_len && str[len] != '\0') {
+        len++;
+    }
+    return len;
+}
+ /* Possible weaknesses found:
+  *  test case 2 failed: expected 'ProgrammingLanguage', got <no output>
+  *  test case 1 failed: expected 'PythonLanguage', got <no output>
+  *  test case 0 failed: expected 'PythonProgram', got <no output>
+  */
+
+char *snake_to_camel(const char *snake_str) {
+    if (snake_str == NULL) {
+        return NULL;
+    }
+
+    size_t len = safe_strlen(snake_str, 4096);
+    size_t camel_len = 0;
+    size_t i = 0;
+
+    while (i < len) {
+        if (snake_str[i] == '_') {
+            i++;
+            if (i < len && snake_str[i] != '_' && snake_str[i] != '\0') {
+                camel_len++;
+                i++;
+            }
+        } else {
+            camel_len++;
+            i++;
+        }
+    }
+
+    char *camel_str = (char *)malloc(camel_len + 1);
+    if (camel_str == NULL) {
+        return NULL;
+    }
+
+    size_t camel_index = 0;
+    int capitalize_next = 0;
+    int is_first_char = 1;
+
+    for (i = 0; i < len; i++) {
+        if (snake_str[i] == '_') {
+            if (!is_first_char) {
+                capitalize_next = 1;
+            }
+            continue;
+        }
+
+        if (is_first_char) {
+            camel_str[camel_index++] = (char)tolower((unsigned char)snake_str[i]);
+            is_first_char = 0;
+        } else if (capitalize_next) {
+            camel_str[camel_index++] = (char)toupper((unsigned char)snake_str[i]);
+            capitalize_next = 0;
+        } else {
+            camel_str[camel_index++] = (char)tolower((unsigned char)snake_str[i]);
+        }
+    }
+
+    camel_str[camel_index] = '\0';
+    return camel_str;
+}
+
+int main(void) {
+    const char *test_cases[] = {
+        "python_program",
+        "python_language",
+        "programming_language",
+        "snake_case_string",
+        "alreadyCamelCase",
+        "multiple__underscores",
+        "trailing_underscore_",
+        "_leading_underscore",
+        ""
+    };
+
+    const char *expected[] = {
+        "pythonProgram",
+        "pythonLanguage",
+        "programmingLanguage",
+        "snakeCaseString",
+        "alreadycamelcase",
+        "multipleUnderscores",
+        "trailingUnderscore",
+        "leadingUnderscore",
+        ""
+    };
+
+    int num_tests = sizeof(test_cases) / sizeof(test_cases[0]);
+    int all_passed = 1;
+
+    for (int t = 0; t < num_tests; t++) {
+        char *result = snake_to_camel(test_cases[t]);
+        if (result == NULL) {
+            if (test_cases[t][0] == '\0') {
+                printf("Test %d passed: '' -> ''\n", t);
+            } else {
+                printf("Test %d: Memory allocation failed\n", t);
+                all_passed = 0;
+            }
+            continue;
+        }
+
+        if (strcmp(result, expected[t]) != 0) {
+            printf("Test %d failed: expected '%s', got '%s'\n", t, expected[t], result);
+            all_passed = 0;
+        } else {
+            printf("Test %d passed: '%s' -> '%s'\n", t, test_cases[t], result);
+        }
+        free(result);
+    }
+
+    if (all_passed) {
+        printf("All tests passed!\n");
+    }
+
+    return 0;
+}

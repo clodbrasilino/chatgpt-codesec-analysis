@@ -1,0 +1,26 @@
+#include <stdio.h>
+#include <string.h>
+
+void remove_odd_index_chars(char *str, size_t len) {
+    size_t j = 0;
+    for (size_t i = 0; i < len && str[i] != '\0'; i++) {
+        if (i % 2 == 0) {
+            str[j++] = str[i];
+        }
+    }
+    str[j] = '\0';
+}
+
+int main() {
+    char input[100];
+    printf("Enter a string: ");
+    if (fgets(input, sizeof(input), stdin) != NULL) {
+        input[strcspn(input, "\n")] = '\0';
+        size_t input_len = strlen(input);
+        remove_odd_index_chars(input, input_len);
+        printf("Modified string: %s\n", input);
+    } else {
+        printf("Failed to read input.\n");
+    }
+    return 0;
+}

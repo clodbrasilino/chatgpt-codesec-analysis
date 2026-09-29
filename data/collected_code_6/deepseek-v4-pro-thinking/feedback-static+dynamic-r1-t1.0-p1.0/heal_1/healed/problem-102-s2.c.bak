@@ -1,0 +1,104 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+char *snake_to_camel(const char *snake) {
+    if (snake == NULL) {
+        return NULL;
+    }
+
+    size_t len = strlen(snake);
+    char *camel = malloc(len + 1);
+
+    if (camel == NULL) {
+        return NULL;
+    }
+
+    size_t j = 0;
+    int capitalize_next = 0;
+    int first_char = 1;
+
+    for (size_t i = 0; i < len; i++) {
+        unsigned char c = (unsigned char)snake[i];
+
+        if (c == '_') {
+            if (j > 0) {
+                capitalize_next = 1;
+            }
+            continue;
+        }
+
+        if (capitalize_next) {
+            camel[j++] = toupper(c);
+            capitalize_next = 0;
+        } else if (first_char) {
+            camel[j++] = toupper(c);
+            first_char = 0;
+        } else {
+            camel[j++] = c;
+        }
+    }
+
+    camel[j] = '\0';
+    return camel;
+}
+
+char *read_line(void) {
+    size_t capacity = 128;
+    size_t length = 0;
+    char *buffer = malloc(capacity);
+
+    if (buffer == NULL) {
+        return NULL;
+    }
+
+    int ch;
+
+    while ((ch = getchar()) != EOF && ch != '\n') {
+        if (ch == '\r') {
+            continue;
+        }
+
+        if (length + 1 >= capacity) {
+            size_t new_capacity = capacity * 2;
+            char *new_buffer = realloc(buffer, new_capacity);
+
+            if (new_buffer == NULL) {
+                free(buffer);
+                return NULL;
+            }
+
+            buffer = new_buffer;
+            capacity = new_capacity;
+        }
+
+        buffer[length++] = (char)ch;
+    }
+
+    if (ch == EOF && length == 0) {
+        free(buffer);
+        return NULL;
+    }
+
+    buffer[length] = '\0';
+    return buffer;
+}
+
+int main(void) {
+    char *line;
+
+    while ((line = read_line()) != NULL) {
+        char *camel = snake_to_camel(line);
+        free(line);
+
+        if (camel == NULL) {
+            return 1;
+        }
+
+        printf("%s\n", camel);
+        free(camel);
+    }
+
+    return 0;
+}

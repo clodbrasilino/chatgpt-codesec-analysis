@@ -1,0 +1,69 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+ /* Possible weaknesses found:
+  *  test case 1 failed: expected '  Hi there How are you', got Hi there How are you
+  *  test case 2 failed: expected '  Part of the journey is end', got Part of the journey is end
+  *  test case 0 failed: expected '  hello there have a rocky day', got hello there have a rocky day
+  */
+
+char *concat_elements(const char *array[], size_t count) {
+    if (count == 0) return NULL;
+    
+    size_t total_length = 0;
+    for (size_t i = 0; i < count; ++i) {
+        total_length += strlen(array[i]) + 1; // Add 1 for the space or null terminator
+    }
+    --total_length; // Adjust for the extra space added at the end
+    
+    char *result = (char *)malloc(total_length + 1);
+    if (result == NULL) return NULL;
+    
+    result[0] = '\0';
+    for (size_t i = 0; i < count; ++i) {
+        if (i > 0) strcat(result, " ");
+        strcat(result, array[i]);
+    }
+    
+    return result;
+}
+
+int main() {
+    const char *elements[] = {"Hello", " ", "World", "!"};
+    size_t count = sizeof(elements) / sizeof(elements[0]);
+    
+    char *combined = concat_elements(elements, count);
+    if (combined != NULL) {
+        printf("%s\n", combined);
+        free(combined);
+    }
+    
+    const char *elements1[] = {"hello", "there", "have a rocky day"};
+    count = sizeof(elements1) / sizeof(elements1[0]);
+    
+    combined = concat_elements(elements1, count);
+    if (combined != NULL) {
+        printf("  %s\n", combined);
+        free(combined);
+    }
+    
+    const char *elements2[] = {"Hi", "there", "How are you"};
+    count = sizeof(elements2) / sizeof(elements2[0]);
+    
+    combined = concat_elements(elements2, count);
+    if (combined != NULL) {
+        printf("  %s\n", combined);
+        free(combined);
+    }
+    
+    const char *elements3[] = {"Part of the journey is end"};
+    count = sizeof(elements3) / sizeof(elements3[0]);
+    
+    combined = concat_elements(elements3, count);
+    if (combined != NULL) {
+        printf("  %s\n", combined);
+        free(combined);
+    }
+    
+    return 0;
+}

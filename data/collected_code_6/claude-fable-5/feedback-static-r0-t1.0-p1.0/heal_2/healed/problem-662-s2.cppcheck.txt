@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-662-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-662-s2.c:67:17: style: Condition 'key_len>=dest_size' is always false [knownConditionTrueFalse]
+    if (key_len >= dest_size) {
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-662-s2.c:61:15: note: dest_size is assigned 'key_len+1' here.
+    dest_size = key_len + 1;
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-662-s2.c:63:18: note: Assuming condition is false
+    if (key_copy == NULL) {
+                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-662-s2.c:67:17: note: Condition 'key_len>=dest_size' is always false
+    if (key_len >= dest_size) {
+                ^

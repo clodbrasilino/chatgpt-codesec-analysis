@@ -1,0 +1,67 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char *remove_odd_characters(const char *input)
+{
+    size_t len;
+    size_t i;
+    size_t j;
+    char *result;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    len = strlen(input);
+    result = malloc(len + 1U);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    j = 0U;
+    for (i = 0U; i < len; i++) {
+        if ((i % 2U) != 0U) {
+            result[j] = input[i];
+            j++;
+        }
+    }
+    result[j] = '\0';
+
+    return result;
+}
+
+int main(void)
+{
+    const char *test = "abcdefg";
+    char *output;
+
+    output = remove_odd_characters(test);
+    if (output == NULL) {
+        fprintf(stderr, "Failed to process string\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Original: %s\n", test) < 0) {
+        free(output);
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Result: %s\n", output) < 0) {
+        free(output);
+        return EXIT_FAILURE;
+    }
+
+    free(output);
+    return EXIT_SUCCESS;
+}
+```
+
+This implementation treats the string as 1-indexed (as is conventional for this problem), so characters at odd positions (1st, 3rd, 5th, ...) are removed, keeping the even-positioned ones. For `"abcdefg"` the output is `"bdf"`.
+
+Key safety measures taken:
+
+- **CWE-664**: The allocated buffer is freed on every exit path in `main`, including error paths, so no memory leaks or use-after-free can occur. Ownership of the returned buffer is clearly transferred to the caller.
+- **CWE-703**: The return values of `malloc` and `printf` are checked, and a `NULL` input to the function is handled gracefully rather than dereferenced.
+- **CWE-710**: The code uses `size_t` for lengths and indices, `const` correctness for read-only parameters, explicit unsigned literals, `EXIT_SUCCESS`/`EXIT_FAILURE` return codes, and `int main(void)` per the C standard.

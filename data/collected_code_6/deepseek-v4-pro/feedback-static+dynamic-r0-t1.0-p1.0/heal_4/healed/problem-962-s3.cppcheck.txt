@@ -1,0 +1,76 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-962-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-962-s3.c:43:35: style: Condition 'first>0' is always true [knownConditionTrueFalse]
+                    return (first > 0) ? INT64_MAX : INT64_MIN;
+                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-962-s3.c:33:15: note: Assuming that condition 'first>0' is not redundant
+    if (first > 0 && last > 0 && overflow_check_first_last < 0) {
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-962-s3.c:43:35: note: Condition 'first>0' is always true
+                    return (first > 0) ? INT64_MAX : INT64_MIN;
+                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-962-s3.c:49:31: style: Condition 'first>0' is always true [knownConditionTrueFalse]
+                return (first > 0) ? INT64_MAX : INT64_MIN;
+                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-962-s3.c:33:15: note: Assuming condition 'first>0' is true
+    if (first > 0 && last > 0 && overflow_check_first_last < 0) {
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-962-s3.c:39:24: note: Assuming condition is false
+            if (half_n > INT64_MAX / 2) {
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-962-s3.c:49:31: note: Condition 'first>0' is always true
+                return (first > 0) ? INT64_MAX : INT64_MIN;
+                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-962-s3.c:62:31: style: Condition 'first>0' is always true [knownConditionTrueFalse]
+                return (first > 0) ? INT64_MAX : INT64_MIN;
+                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-962-s3.c:33:15: note: Assuming condition 'first>0' is true
+    if (first > 0 && last > 0 && overflow_check_first_last < 0) {
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-962-s3.c:58:26: note: Assuming condition is false
+            if (half_sum == 0) {
+                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-962-s3.c:62:31: note: Condition 'first>0' is always true
+                return (first > 0) ? INT64_MAX : INT64_MIN;
+                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-962-s3.c:77:35: style: Condition 'first>0' is always false [knownConditionTrueFalse]
+                    return (first > 0) ? INT64_MAX : INT64_MIN;
+                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-962-s3.c:67:15: note: Assuming that condition 'first<0' is not redundant
+    if (first < 0 && last < 0 && overflow_check_first_last > 0) {
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-962-s3.c:77:35: note: Condition 'first>0' is always false
+                    return (first > 0) ? INT64_MAX : INT64_MIN;
+                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-962-s3.c:83:31: style: Condition 'first>0' is always false [knownConditionTrueFalse]
+                return (first > 0) ? INT64_MAX : INT64_MIN;
+                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-962-s3.c:67:15: note: Assuming that condition 'first<0' is not redundant
+    if (first < 0 && last < 0 && overflow_check_first_last > 0) {
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-962-s3.c:73:24: note: Assuming condition is false
+            if (half_n < INT64_MIN / 2) {
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-962-s3.c:83:31: note: Condition 'first>0' is always false
+                return (first > 0) ? INT64_MAX : INT64_MIN;
+                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-962-s3.c:96:31: style: Condition 'first>0' is always false [knownConditionTrueFalse]
+                return (first > 0) ? INT64_MAX : INT64_MIN;
+                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-962-s3.c:67:15: note: Assuming that condition 'first<0' is not redundant
+    if (first < 0 && last < 0 && overflow_check_first_last > 0) {
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-962-s3.c:92:26: note: Assuming condition is false
+            if (half_sum == 0) {
+                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-962-s3.c:96:31: note: Condition 'first>0' is always false
+                return (first > 0) ? INT64_MAX : INT64_MIN;
+                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-962-s3.c:30:13: style: Same expression used in consecutive assignments of 'sum_first_last' and 'overflow_check_first_last'. [duplicateAssignExpression]
+    int64_t sum_first_last = first + last;
+            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-962-s3.c:32:13: note: Same expression used in consecutive assignments of 'sum_first_last' and 'overflow_check_first_last'.
+    int64_t overflow_check_first_last = first + last;
+            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-962-s3.c:30:13: note: Same expression used in consecutive assignments of 'sum_first_last' and 'overflow_check_first_last'.
+    int64_t sum_first_last = first + last;
+            ^

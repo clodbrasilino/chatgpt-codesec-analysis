@@ -1,0 +1,49 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *elements;
+    size_t count;
+} List;
+
+List* findMaxSumList(List lists[], size_t n) {
+    if (n == 0) return NULL;
+
+    int max_sum = 0;
+    List *max_list = &lists[0];
+    for (size_t i = 0; i < n; ++i) {
+        int sum = 0;
+        for (size_t j = 0; j < lists[i].count; ++j) {
+            sum += lists[i].elements[j];
+        }
+        if (sum > max_sum) {
+            max_sum = sum;
+            max_list = &lists[i];
+        }
+    }
+    return max_list;
+}
+
+int main() {
+    List lists[] = {
+        { .elements = (int[]) {1, 2, 3}, .count = 3 },
+        { .elements = (int[]) {4, 5, 6, 7}, .count = 4 },
+        { .elements = (int[]) {8, 9, 10}, .count = 3 }
+    };
+    size_t n = sizeof(lists) / sizeof(lists[0]);
+
+    List *max_list = findMaxSumList(lists, n);
+
+    if (max_list != NULL) {
+        printf("The list with the maximum sum of elements is: [");
+        for (size_t i = 0; i < max_list->count; ++i) {
+            printf("%d", max_list->elements[i]);
+            if (i < max_list->count - 1) printf(", ");
+        }
+        printf("]\n");
+    } else {
+        printf("No lists provided.\n");
+    }
+
+    return 0;
+}

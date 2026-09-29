@@ -1,0 +1,82 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+#define BUFFER_SIZE 256
+
+long count_substrings(const char *str, size_t max_len)
+{
+    long count;
+    size_t len;
+    size_t i;
+    size_t j;
+
+    if (str == NULL) {
+        return -1L;
+    }
+
+    len = strnlen(str, max_len);
+    if (len >= max_len) {
+        return -1L;
+    }
+
+    count = 0L;
+
+    for (i = 0U; i < len; i++) {
+        for (j = i; j < len; j++) {
+            if (str[i] == str[j]) {
+                count++;
+            }
+        }
+    }
+
+    return count;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    long result;
+    size_t len;
+
+    memset(buffer, 0, sizeof(buffer));
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1U] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if ((len > 0U) && (buffer[len - 1U] == '\n')) {
+        buffer[len - 1U] = '\0';
+    }
+
+    result = count_substrings(buffer, sizeof(buffer));
+    if (result < 0L) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("%ld\n", result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The flawfinder warning (CWE-119/CWE-120) regarding the statically-sized `buffer` array is a low-risk, informational finding, and the original code already mitigates it correctly:
+
+1. **Bounded input:** `fgets(buffer, (int)sizeof(buffer), stdin)` limits the read to the buffer size, preventing overflow, and its return value is checked against `NULL`.
+2. **Guaranteed termination:** `buffer[sizeof(buffer) - 1U] = '\0'` ensures null-termination defensively, even though `fgets` already guarantees it on success.
+3. **Bounded length checks:** `strnlen` is used instead of `strlen` in both `main` and `count_substrings`, so length computation can never run past the buffer.
+4. **Safe newline stripping:** The `len > 0U` guard prevents an underflow when indexing `buffer[len - 1U]`.
+5. **Defensive API design:** `count_substrings` validates against `NULL` and rejects unterminated input (`len >= max_len`), returning `-1L` which the caller checks.
+6. **Checked I/O:** Even the `printf` return value is verified.
+
+No functional changes were required; the code as written already satisfies the bounds-checking recommendations from the static analysis finding.

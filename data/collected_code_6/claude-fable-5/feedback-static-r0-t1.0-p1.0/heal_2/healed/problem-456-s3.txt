@@ -1,0 +1,138 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_STRING_LENGTH 4096
+
+void reverse_string(char *str)
+{
+    size_t len;
+    size_t i;
+
+    if (str == NULL) {
+        return;
+    }
+
+    len = strnlen(str, MAX_STRING_LENGTH);
+    if (len < 2) {
+        return;
+    }
+
+    for (i = 0; i < len / 2; i++) {
+        char temp = str[i];
+        str[i] = str[len - 1 - i];
+        str[len - 1 - i] = temp;
+    }
+}
+
+int reverse_string_list(char **list, size_t count)
+{
+    size_t i;
+
+    if (list == NULL) {
+        return -1;
+    }
+
+    for (i = 0; i < count; i++) {
+        if (list[i] == NULL) {
+            return -1;
+        }
+        reverse_string(list[i]);
+    }
+
+    return 0;
+}
+
+static void free_list(char **list, size_t count)
+{
+    size_t i;
+
+    if (list == NULL) {
+        return;
+    }
+
+    for (i = 0; i < count; i++) {
+        free(list[i]);
+    }
+    free(list);
+}
+
+static char *duplicate_string(const char *src)
+{
+    size_t len;
+    char *dest;
+
+    if (src == NULL) {
+        return NULL;
+    }
+
+    len = strnlen(src, MAX_STRING_LENGTH);
+    if (len >= MAX_STRING_LENGTH) {
+        return NULL;
+    }
+
+    dest = malloc(len + 1);
+    if (dest == NULL) {
+        return NULL;
+    }
+
+    memcpy(dest, src, len);
+    dest[len] = '\0';
+
+    return dest;
+}
+
+int main(void)
+{
+    const char *source[] = { "hello", "world", "example", "C" };
+    size_t count = sizeof(source) / sizeof(source[0]);
+    char **list;
+    size_t i;
+
+    list = calloc(count, sizeof(char *));
+    if (list == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i < count; i++) {
+        list[i] = duplicate_string(source[i]);
+        if (list[i] == NULL) {
+            fprintf(stderr, "Memory allocation failed\n");
+            free_list(list, count);
+            return EXIT_FAILURE;
+        }
+    }
+
+    if (reverse_string_list(list, count) != 0) {
+        fprintf(stderr, "Failed to reverse string list\n");
+        free_list(list, count);
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i < count; i++) {
+        if (printf("%s\n", list[i]) < 0) {
+            fprintf(stderr, "Output error\n");
+            free_list(list, count);
+            return EXIT_FAILURE;
+        }
+    }
+
+    free_list(list, count);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the changes:**
+
+The original code was already largely safe, but the Flawfinder warning on `memcpy` (CWE-120) pointed to a pattern worth hardening. Here's what the rewrite addresses:
+
+1. **Encapsulated allocation and copy** — The `duplicate_string` helper ties the buffer allocation (`len + 1`) and the `memcpy` size (`len`) together in a single scope, making it structurally impossible for the destination size and copy length to drift apart during future maintenance. This is the real fix for the CWE-120 concern: the destination is provably large enough because both values derive from the same `strnlen` call.
+
+2. **Truncation guard** — The original silently truncated any source string of exactly `MAX_STRING_LENGTH` or longer (since `strnlen` caps at the bound, and no null terminator would exist in the source within that window). The rewrite rejects strings at or beyond the limit (`len >= MAX_STRING_LENGTH`), turning silent truncation into an explicit failure.
+
+3. **NULL source check** — `duplicate_string` validates its input, whereas the original `main` loop assumed `source[i]` was valid.
+
+4. **Preserved existing safety properties** — `calloc` zero-initializes the pointer array, so `free_list(list, count)` remains safe on partial initialization (freeing `NULL` is a no-op); the bounded `strnlen`, NULL checks in `reverse_string` / `reverse_string_list`, and error-checked `printf` are all retained.

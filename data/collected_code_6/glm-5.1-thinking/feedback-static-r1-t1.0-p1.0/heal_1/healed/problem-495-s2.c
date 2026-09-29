@@ -1,0 +1,40 @@
+#include <stdio.h>
+#include <string.h>
+
+void remove_lowercase(char *str, size_t size) {
+    if (str == NULL || size == 0) {
+        return;
+    }
+
+    size_t len = strnlen(str, size);
+    size_t shift = 0;
+
+    for (size_t i = 0; i < len; ++i) {
+        if (str[i] < 'a' || str[i] > 'z') {
+            str[shift++] = str[i];
+        }
+    }
+
+    if (shift < size) {
+        str[shift] = '\0';
+    }
+}
+
+int main(void) {
+    char s1[] = "HelloWorld";
+    char s2[] = "abcDEFghiJKL";
+    char s3[] = "XYZ";
+    char s4[] = "xyz";
+
+    remove_lowercase(s1, sizeof(s1));
+    remove_lowercase(s2, sizeof(s2));
+    remove_lowercase(s3, sizeof(s3));
+    remove_lowercase(s4, sizeof(s4));
+
+    printf("%s\n", s1);
+    printf("%s\n", s2);
+    printf("%s\n", s3);
+    printf("%s\n", s4);
+
+    return 0;
+}

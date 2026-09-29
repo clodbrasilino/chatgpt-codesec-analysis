@@ -1,0 +1,43 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int ncr_mod_p(int n, int r, int p) {
+    if (r > n) return 0;
+    if (r == 0 || r == n) return 1;
+    if (r > n - r) r = n - r;
+
+    int *c = (int *)calloc(r + 1, sizeof(int));
+    if (c == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(EXIT_FAILURE);
+    }
+
+    c[0] = 1;
+
+    for (int i = 1; i <= n; i++) {
+        for (int j = (i < r ? i : r); j > 0; j--) {
+            c[j] = (c[j] + c[j - 1]) % p;
+        }
+    }
+
+    int result = c[r];
+    free(c);
+    return result;
+}
+
+int main() {
+    int n, r, p;
+    printf("Enter n, r, p: ");
+    if (scanf("%d %d %d", &n, &r, &p) != 3) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (n < 0 || r < 0 || p <= 0) {
+        fprintf(stderr, "Invalid arguments\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("%d\n", ncr_mod_p(n, r, p));
+    return 0;
+}

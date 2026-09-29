@@ -1,0 +1,29 @@
+```C
+#include <stdio.h>
+
+int sumOddLengthSubarrays(int* arr, int arrSize){
+    int sum = 0;
+    for (int length = 1; length <= arrSize; length+=2) {
+        for (int start = 0; start + length - 1 < arrSize; start++) {
+            for (int i = start; i < start+length; i++) {
+                if (i < arrSize) {
+                    sum += arr[i];
+                }
+            }
+        }
+    }
+    return sum;
+}
+ 
+int main() {
+    int arr[] = {1, 2, 3, 4, 5};
+    int arrSize = sizeof(arr) / sizeof(arr[0]);
+
+    int result = sumOddLengthSubarrays(arr, arrSize);
+
+    printf("Sum of all odd length subarrays is %d", result);
+    
+    return 0;
+}
+```
+This C code includes a function, sumOddLengthSubarrays, that calculates the sum of all subarrays of an input integer array with odd lengths. It iterates over all possible subarray lengths from 1 to the size of array in steps of 2 (thereby considering only odd lengths), and for each subarray length, it generates all subarrays of that length and accumulates their sums. The main function initializes an integer array and its size, calls the sumOddLengthSubarrays function with these as arguments, and outputs the returned sum. Exception handling is not required here as the algorithm is straightforward and does not involve operations that could potentially throw exceptions. The lifetime of memory resources (specifically, the integer array) is properly managed, since it is statically allocated in the stack frame of the main function and automatically deallocated when the main function returns. Remember, the above code adheres to C coding standards such as consistent indentation, use of braces even for single-statement blocks, and proper variable naming.

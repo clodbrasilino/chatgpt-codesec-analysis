@@ -1,0 +1,44 @@
+{
+  "task_id": 737,
+  "text": "Write a C function to check whether the given string is starting with a vowel or not using regex.",
+  "fn_candidates": [
+    "check_str",
+    "CheckStr",
+    "checkStr",
+    "checkstr"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "check_str",
+      "args": [
+        "annie"
+      ],
+      "expected": "Valid",
+      "assert_src": "assert check_str(\"annie\") == 'Valid'"
+    },
+    {
+      "fn_name": "check_str",
+      "args": [
+        "dawood"
+      ],
+      "expected": "Invalid",
+      "assert_src": "assert check_str(\"dawood\") == 'Invalid'"
+    },
+    {
+      "fn_name": "check_str",
+      "args": [
+        "Else"
+      ],
+      "expected": "Valid",
+      "assert_src": "assert check_str(\"Else\") == 'Valid'"
+    }
+  ],
+  "arg_kinds": [
+    "str"
+  ],
+  "return_kind": "str",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

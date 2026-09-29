@@ -1,0 +1,43 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+void find_sequences(const char *str) {
+    if (str == NULL || *str == '\0') {
+        return;
+    }
+
+    const char *current = str;
+    while (*current != '\0') {
+        if (isupper((unsigned char)*current)) {
+            const char *start = current;
+            current++;
+            
+            if (islower((unsigned char)*current)) {
+                while (islower((unsigned char)*current)) {
+                    current++;
+                }
+                
+                size_t seq_len = current - start;
+                char *sequence = (char *)malloc(seq_len + 1);
+                if (sequence != NULL) {
+                    memcpy(sequence, start, seq_len);
+                    sequence[seq_len] = '\0';
+                    printf("%s\n", sequence);
+                    free(sequence);
+                }
+            }
+        } else {
+            current++;
+        }
+    }
+}
+
+int main(void) {
+    const char *test_str = "This Is A Test String With Some Sequences Like CamelCase and PascalCase.";
+    
+    find_sequences(test_str);
+    
+    return 0;
+}

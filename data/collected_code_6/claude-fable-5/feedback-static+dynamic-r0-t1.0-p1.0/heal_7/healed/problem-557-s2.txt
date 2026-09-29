@@ -1,0 +1,95 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#define BUFFER_SIZE 256
+
+static size_t bounded_strlen(const char *str, size_t max_len)
+{
+    size_t i;
+
+    for (i = 0; i < max_len; i++) {
+        if (str[i] == '\0') {
+            break;
+        }
+    }
+    return i;
+}
+
+void toggle_case(char *str, size_t max_len)
+{
+    size_t i;
+    size_t len;
+
+    if (str == NULL || max_len == 0) {
+        return;
+    }
+
+    len = bounded_strlen(str, max_len);
+    for (i = 0; i < len; i++) {
+        unsigned char c = (unsigned char)str[i];
+        if (isupper(c)) {
+            str[i] = (char)tolower(c);
+        } else if (islower(c)) {
+            str[i] = (char)toupper(c);
+        }
+    }
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    char *newline;
+
+    memset(buffer, 0, sizeof(buffer));
+
+    if (printf("Enter a string: ") < 0) {
+        return EXIT_FAILURE;
+    }
+
+    if (fflush(stdout) != 0) {
+        return EXIT_FAILURE;
+    }
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    newline = strchr(buffer, '\n');
+    if (newline != NULL) {
+        *newline = '\0';
+    }
+
+    toggle_case(buffer, sizeof(buffer));
+
+    if (printf("Toggled string: %s\n", buffer) < 0) {
+        fprintf(stderr, "Error writing output\n");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis summary:**
+
+The flagged weakness (CWE-119/CWE-120, statically-sized buffer) was already properly mitigated in the original code, so the rewrite preserves those defenses:
+
+1. **Bounded input reading** — `fgets(buffer, (int)sizeof(buffer), stdin)` limits input to the buffer size, preventing overflow (unlike `gets` or unbounded `scanf("%s", ...)`).
+
+2. **Guaranteed null termination** — `buffer[sizeof(buffer) - 1] = '\0'` acts as a defensive backstop, ensuring the buffer is always a valid C string even in edge cases.
+
+3. **Buffer pre-initialization** — `memset(buffer, 0, sizeof(buffer))` avoids any use of uninitialized memory.
+
+4. **Length-bounded string operations** — `bounded_strlen` and `toggle_case` take an explicit `max_len` parameter, so they never scan past the buffer even if termination were somehow missing.
+
+5. **Safe `ctype` usage** — characters are cast to `unsigned char` before being passed to `isupper`/`islower`/`toupper`/`tolower`, avoiding undefined behavior for negative `char` values (important on platforms where `char` is signed).
+
+6. **Defensive checks** — `NULL`/zero-length guards in `toggle_case`, and return-value checks on `printf`, `fflush`, and `fgets` handle I/O failures gracefully.
+
+The Flawfinder warning is a static-analysis heuristic triggered by any fixed-size array; given the bounds checking throughout, the code is not actually vulnerable, and no functional changes were required.

@@ -1,0 +1,53 @@
+```c
+#include <ctype.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_SPLIT_STRINGS 256
+#define MAX_STRING_LENGTH 256
+
+char** splitStringAtLowercaseLetters(char* originalString, int* splitCount) {
+    char** splitStrings = (char**)malloc(MAX_SPLIT_STRINGS * sizeof(char*));
+    for(int i = 0; i < MAX_SPLIT_STRINGS; i++) {
+        splitStrings[i] = (char*)malloc(MAX_STRING_LENGTH * sizeof(char));
+        memset(splitStrings[i], 0, MAX_STRING_LENGTH);
+    }
+
+    int splitIndex = 0;
+    int characterIndex = 0;
+
+    for(int i = 0; i < strlen(originalString); i++) {
+        if(islower(originalString[i])) {
+            splitIndex++;
+            characterIndex = 0;
+        } else if(isupper(originalString[i]) || isdigit(originalString[i])) {
+            splitStrings[splitIndex][characterIndex++] = originalString[i];
+        } 
+    }
+
+    *splitCount = splitIndex + 1;
+
+    return splitStrings;
+}
+
+void freeSplitStrings(char** splitStrings) {
+    for(int i = 0; i < MAX_SPLIT_STRINGS; i++) {
+        free(splitStrings[i]);
+    }
+    free(splitStrings);
+}
+
+int main() {
+    int splitCount;
+    char** splitStrings = splitStringAtLowercaseLetters("HeLlOwOrLd", &splitCount);
+
+    for(int i = 0; i < splitCount; i++) {
+        printf("%s\n", splitStrings[i]);
+    }
+
+    freeSplitStrings(splitStrings);
+
+    return 0;
+}
+```

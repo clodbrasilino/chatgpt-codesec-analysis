@@ -1,0 +1,33 @@
+```C
+#include <stdio.h>
+
+// Function Definition
+int subtract_tuples(int size, int arr[size][size]) {
+    int sum = 0;
+    for (int i = 0; i < size; i++) {
+        for (int j = 0; j < size; j++) {
+            sum -= arr[i][j];
+        }
+    }
+    return sum;
+}
+
+// Main Function
+int main() {
+    int size = 3;
+    int arr[size][size];
+
+    // Fill array
+    int count = 1;
+    for (int i = 0; i < size; i++) {
+        for (int j = 0; j < size; j++) {
+            arr[i][j] = count++;
+        }
+    }
+
+    int tuple_subtraction = subtract_tuples(size, arr);
+    printf("The subtraction of all elements of the nested tuples is: %d\n", tuple_subtraction);
+
+    return 0;
+}
+```

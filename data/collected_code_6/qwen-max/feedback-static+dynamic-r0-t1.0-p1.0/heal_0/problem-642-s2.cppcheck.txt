@@ -1,0 +1,25 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-642-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-642-s2.c:14:38: style: Condition 'rowB[i]==-1' is always true [knownConditionTrueFalse]
+        if (rowA[i] == -1 && rowB[i] == -1) {
+                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-642-s2.c:14:21: note: Assuming that condition 'rowA[i]==-1' is not redundant
+        if (rowA[i] == -1 && rowB[i] == -1) {
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-642-s2.c:11:21: note: Assuming that condition 'rowA[i]!=rowB[i]' is not redundant
+        if (rowA[i] != rowB[i]) {
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-642-s2.c:14:38: note: Condition 'rowB[i]==-1' is always true
+        if (rowA[i] == -1 && rowB[i] == -1) {
+                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-642-s2.c:40:17: error: Common realloc mistake: 'uniqueCounters' nulled but not freed upon failure [memleakOnRealloc]
+                uniqueCounters = (int *)realloc(uniqueCounters, capacity * sizeof(int));
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-642-s2.c:41:17: error: Common realloc mistake: 'uniqueIndices' nulled but not freed upon failure [memleakOnRealloc]
+                uniqueIndices = (int *)realloc(uniqueIndices, capacity * sizeof(int));
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-642-s2.c:8:10: style: Variable 'rowA' can be declared as pointer to const [constVariablePointer]
+    int *rowA = *(int **)a;
+         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-642-s2.c:9:10: style: Variable 'rowB' can be declared as pointer to const [constVariablePointer]
+    int *rowB = *(int **)b;
+         ^

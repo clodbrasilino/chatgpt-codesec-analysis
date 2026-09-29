@@ -1,0 +1,36 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+unsigned long long find_cube_sum_of_odd_numbers(int n) {
+    if (n <= 0) {
+        return 0;
+    }
+    unsigned long long sum = 0;
+    /* Possible weaknesses found:
+     *  The scope of the variable 'current_odd' can be reduced. [variableScope]
+     */
+    unsigned long long current_odd;
+    
+    for (int i = 1; i <= n; i++) {
+        current_odd = 2ULL * i - 1ULL;
+        sum += current_odd * current_odd * current_odd;
+    }
+    return sum;
+}
+
+int main(void) {
+    int n;
+    
+    if (scanf("%d", &n) != 1) {
+        return EXIT_FAILURE;
+    }
+    
+    if (n < 0) {
+        return EXIT_FAILURE;
+    }
+    
+    unsigned long long result = find_cube_sum_of_odd_numbers(n);
+    printf("%llu\n", result);
+    
+    return EXIT_SUCCESS;
+}

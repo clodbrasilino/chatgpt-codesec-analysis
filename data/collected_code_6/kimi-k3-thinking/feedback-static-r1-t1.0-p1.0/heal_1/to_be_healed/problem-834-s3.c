@@ -1,0 +1,145 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int **generate_spiral_matrix(int n)
+{
+    int **matrix;
+    int i;
+    int value = 1;
+    int top = 0;
+    int bottom = n - 1;
+    int left = 0;
+    int right = n - 1;
+
+    if (n <= 0)
+    {
+        return NULL;
+    }
+
+    matrix = malloc((size_t)n * sizeof(*matrix));
+    if (matrix == NULL)
+    {
+        return NULL;
+    }
+
+    for (i = 0; i < n; i++)
+    {
+        matrix[i] = malloc((size_t)n * sizeof(*matrix[i]));
+        if (matrix[i] == NULL)
+        {
+            int j;
+            for (j = 0; j < i; j++)
+            {
+                free(matrix[j]);
+            }
+            free(matrix);
+            return NULL;
+        }
+    }
+
+    while (top <= bottom && left <= right)
+    {
+        int col;
+        int row;
+
+        for (col = left; col <= right; col++)
+        {
+            matrix[top][col] = value++;
+        }
+        top++;
+
+        for (row = top; row <= bottom; row++)
+        {
+            matrix[row][right] = value++;
+        }
+        right--;
+
+        if (top <= bottom)
+        {
+            for (col = right; col >= left; col--)
+            {
+                matrix[bottom][col] = value++;
+            }
+            bottom--;
+        }
+
+        if (left <= right)
+        {
+            for (row = bottom; row >= top; row--)
+            {
+                matrix[row][left] = value++;
+            }
+            left++;
+        }
+    }
+
+    return matrix;
+}
+
+void free_matrix(int **matrix, int n)
+{
+    int i;
+
+    if (matrix == NULL)
+    {
+        return;
+    }
+
+    for (i = 0; i < n; i++)
+    {
+        free(matrix[i]);
+    }
+    free(matrix);
+}
+
+/* Possible weaknesses found:
+ *  expected 'const int * const*' but argument is of type 'int **'
+ */
+void print_matrix(const int *const *matrix, int n)
+{
+    int i;
+    int j;
+
+    for (i = 0; i < n; i++)
+    {
+        for (j = 0; j < n; j++)
+        {
+            printf("%4d", matrix[i][j]);
+        }
+        printf("\n");
+    }
+}
+
+int main(void)
+{
+    int n;
+    int **matrix;
+
+    printf("Enter the size of the matrix: ");
+    if (scanf("%d", &n) != 1)
+    {
+        fprintf(stderr, "Invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (n <= 0)
+    {
+        fprintf(stderr, "Size must be a positive integer.\n");
+        return EXIT_FAILURE;
+    }
+
+    matrix = generate_spiral_matrix(n);
+    if (matrix == NULL)
+    {
+        fprintf(stderr, "Failed to generate matrix.\n");
+        return EXIT_FAILURE;
+    }
+
+    /* Possible weaknesses found:
+     *  passing argument 1 of 'print_matrix' from incompatible pointer type [-Wincompatible-pointer-types]
+     */
+    print_matrix(matrix, n);
+    free_matrix(matrix, n);
+
+    return EXIT_SUCCESS;
+}

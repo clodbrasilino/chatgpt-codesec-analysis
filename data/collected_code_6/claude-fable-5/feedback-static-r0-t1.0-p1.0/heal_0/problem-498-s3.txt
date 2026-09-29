@@ -1,0 +1,46 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+unsigned int gcd(unsigned int a, unsigned int b);
+
+unsigned int gcd(unsigned int a, unsigned int b)
+{
+    while (b != 0U) {
+        unsigned int temp = b;
+        b = a % b;
+        a = temp;
+    }
+    return a;
+}
+
+int main(void)
+{
+    unsigned int x;
+    unsigned int y;
+    int result;
+
+    printf("Enter first positive integer: ");
+    result = scanf("%u", &x);
+    if (result != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter second positive integer: ");
+    result = scanf("%u", &y);
+    if (result != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    if ((x == 0U) || (y == 0U)) {
+        fprintf(stderr, "Both integers must be positive\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("GCD of %u and %u is %u\n", x, y, gcd(x, y));
+
+    return EXIT_SUCCESS;
+}
+```

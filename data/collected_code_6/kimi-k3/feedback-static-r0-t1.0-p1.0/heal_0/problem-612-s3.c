@@ -1,0 +1,162 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    int *data;
+    size_t size;
+} IntList;
+
+typedef struct {
+    IntList *lists;
+    size_t count;
+} ListOfLists;
+
+int merge_first_last(ListOfLists *lol, int **first_merged, size_t *first_size, 
+                     int **last_merged, size_t *last_size) {
+    size_t i;
+    size_t total_first = 0;
+    size_t total_last = 0;
+    int *first_buf = NULL;
+    int *last_buf = NULL;
+    size_t first_idx = 0;
+    size_t last_idx = 0;
+
+    if (lol == NULL || lol->lists == NULL || lol->count == 0) {
+        return -1;
+    }
+
+    for (i = 0; i < lol->count; i++) {
+        if (lol->lists[i].size > 0 && lol->lists[i].data != NULL) {
+            total_first++;
+            total_last++;
+        }
+    }
+
+    if (total_first == 0) {
+        return -1;
+    }
+
+    first_buf = malloc(total_first * sizeof(int));
+    if (first_buf == NULL) {
+        return -1;
+    }
+
+    last_buf = malloc(total_last * sizeof(int));
+    if (last_buf == NULL) {
+        free(first_buf);
+        return -1;
+    }
+
+    for (i = 0; i < lol->count; i++) {
+        if (lol->lists[i].size > 0 && lol->lists[i].data != NULL) {
+            first_buf[first_idx++] = lol->lists[i].data[0];
+            last_buf[last_idx++] = lol->lists[i].data[lol->lists[i].size - 1];
+        }
+    }
+
+    *first_merged = first_buf;
+    *first_size = total_first;
+    *last_merged = last_buf;
+    *last_size = total_last;
+
+    return 0;
+}
+
+void free_list_of_lists(ListOfLists *lol) {
+    size_t i;
+    if (lol != NULL) {
+        if (lol->lists != NULL) {
+            for (i = 0; i < lol->count; i++) {
+                free(lol->lists[i].data);
+            }
+            free(lol->lists);
+        }
+        lol->lists = NULL;
+        lol->count = 0;
+    }
+}
+
+int main(void) {
+    ListOfLists lol = {0};
+    int *first_merged = NULL;
+    int *last_merged = NULL;
+    size_t first_size = 0;
+    size_t last_size = 0;
+    size_t i;
+    int result;
+
+    int arr1[] = {1, 2, 3};
+    int arr2[] = {4, 5};
+    int arr3[] = {6, 7, 8, 9};
+    int arr4[] = {10};
+
+    lol.count = 4;
+    lol.lists = malloc(lol.count * sizeof(IntList));
+    if (lol.lists == NULL) {
+        return EXIT_FAILURE;
+    }
+
+    lol.lists[0].data = malloc(sizeof(arr1));
+    if (lol.lists[0].data == NULL) {
+        free(lol.lists);
+        return EXIT_FAILURE;
+    }
+    memcpy(lol.lists[0].data, arr1, sizeof(arr1));
+    lol.lists[0].size = sizeof(arr1) / sizeof(arr1[0]);
+
+    lol.lists[1].data = malloc(sizeof(arr2));
+    if (lol.lists[1].data == NULL) {
+        free(lol.lists[0].data);
+        free(lol.lists);
+        return EXIT_FAILURE;
+    }
+    memcpy(lol.lists[1].data, arr2, sizeof(arr2));
+    lol.lists[1].size = sizeof(arr2) / sizeof(arr2[0]);
+
+    lol.lists[2].data = malloc(sizeof(arr3));
+    if (lol.lists[2].data == NULL) {
+        free(lol.lists[0].data);
+        free(lol.lists[1].data);
+        free(lol.lists);
+        return EXIT_FAILURE;
+    }
+    memcpy(lol.lists[2].data, arr3, sizeof(arr3));
+    lol.lists[2].size = sizeof(arr3) / sizeof(arr3[0]);
+
+    lol.lists[3].data = malloc(sizeof(arr4));
+    if (lol.lists[3].data == NULL) {
+        free(lol.lists[0].data);
+        free(lol.lists[1].data);
+        free(lol.lists[2].data);
+        free(lol.lists);
+        return EXIT_FAILURE;
+    }
+    memcpy(lol.lists[3].data, arr4, sizeof(arr4));
+    lol.lists[3].size = sizeof(arr4) / sizeof(arr4[0]);
+
+    result = merge_first_last(&lol, &first_merged, &first_size, &last_merged, &last_size);
+    
+    if (result == 0) {
+        printf("First elements: ");
+        for (i = 0; i < first_size; i++) {
+            printf("%d ", first_merged[i]);
+        }
+        printf("\n");
+
+        printf("Last elements: ");
+        for (i = 0; i < last_size; i++) {
+            printf("%d ", last_merged[i]);
+        }
+        printf("\n");
+
+        free(first_merged);
+        free(last_merged);
+    } else {
+        printf("Error: Failed to merge elements\n");
+    }
+
+    free_list_of_lists(&lol);
+
+    return result == 0 ? EXIT_SUCCESS : EXIT_FAILURE;
+}

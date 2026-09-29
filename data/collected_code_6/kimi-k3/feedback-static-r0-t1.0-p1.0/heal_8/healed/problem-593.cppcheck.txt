@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-593.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-593.c:13:19: style: Array index 'len' is used before limits check. [arrayIndexThenCheck]
+    while (segment[len] != '\0' && len < 4) {
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-593.c:44:21: style: Array index 'ipLength' is used before limits check. [arrayIndexThenCheck]
+    while (ipAddress[ipLength] != '\0' && ipLength < ipAddressSize) {
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-593.c:86:20: style: Array index 'tokenLen' is used before limits check. [arrayIndexThenCheck]
+        while (temp[tokenLen] != '\0' && tokenLen < 4) {
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-593.c:153:21: style: Array index 'ipLen' is used before limits check. [arrayIndexThenCheck]
+    while (ipAddress[ipLen] != '\0' && ipLen < sizeof(ipAddress)) {
+                    ^

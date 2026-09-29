@@ -1,0 +1,24 @@
+#include <stdio.h>
+#include <string.h>
+
+int find_last_char(const char *str, char ch) {
+    int last_index = -1;
+    for (int i = 0; str[i] != '\0'; i++) {
+        if (str[i] == ch) {
+            last_index = i;
+        }
+    }
+    return last_index;
+}
+
+int main() {
+    const char *test_str = "example string to test";
+    char test_char = 't';
+    int result = find_last_char(test_str, test_char);
+    if (result != -1) {
+        printf("Last occurrence of '%c' in \"%s\" is at index: %d\n", test_char, test_str, result);
+    } else {
+        printf("Character '%c' not found in \"%s\"\n", test_char, test_str);
+    }
+    return 0;
+}

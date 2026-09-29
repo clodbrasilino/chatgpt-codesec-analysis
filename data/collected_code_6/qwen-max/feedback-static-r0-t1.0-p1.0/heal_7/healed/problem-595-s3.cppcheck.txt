@@ -1,0 +1,7 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-595-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-595-s3.c:9:19: style: Redundant condition: The condition 's1[n1]' is redundant since 's1[n1] == '0'' is sufficient. [redundantCondition]
+    while (s1[n1] && s1[n1] == '0' || s1[n1] == '1') n1++;
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-595-s3.c:11:19: style: Redundant condition: The condition 's2[n2]' is redundant since 's2[n2] == '0'' is sufficient. [redundantCondition]
+    while (s2[n2] && s2[n2] == '0' || s2[n2] == '1') n2++;
+                  ^

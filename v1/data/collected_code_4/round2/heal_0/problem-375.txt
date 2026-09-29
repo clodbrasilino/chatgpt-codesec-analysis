@@ -1,0 +1,30 @@
+```C
+#include<stdio.h>
+
+int roundToNearestNum(int num, int factor) {
+    int result = (num + factor / 2) / factor * factor;
+    
+    return result;
+}
+
+int main() {
+    int num, factor;
+    
+    printf("Enter number to round off: ");
+    scanf("%d", &num);
+
+	printf("Enter multiple to which the number has to be rounded: ");
+	scanf("%d", &factor);
+
+	if(factor == 0) {
+		printf("Factor cannot be 0. Exiting program.\n");
+		return 0;
+	}
+    
+    int rounded_num = roundToNearestNum(num, factor);
+    
+    printf("Rounded number: %d \n", rounded_num);
+    
+    return 0;
+}
+```

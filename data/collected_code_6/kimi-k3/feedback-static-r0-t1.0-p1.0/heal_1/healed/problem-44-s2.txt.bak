@@ -1,0 +1,74 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdbool.h>
+
+bool match_word_at_start(const char *str, const char *word) {
+    size_t word_len;
+    
+    if (str == NULL || word == NULL) {
+        return false;
+    }
+    
+    word_len = strlen(word);
+    
+    if (word_len == 0) {
+        return false;
+    }
+    
+    if (strncmp(str, word, word_len) != 0) {
+        return false;
+    }
+    
+    if (str[word_len] != '\0' && 
+        !isspace((unsigned char)str[word_len]) && 
+        str[word_len] != ',' && 
+        str[word_len] != '.' && 
+        str[word_len] != '!' && 
+        str[word_len] != '?' && 
+        str[word_len] != ';' && 
+        str[word_len] != ':' &&
+        str[word_len] != ')' &&
+        str[word_len] != '(' &&
+        str[word_len] != '"' &&
+        str[word_len] != '\'') {
+        return false;
+    }
+    
+    return true;
+}
+
+int main(void) {
+    const char *test_string1 = "hello world";
+    const char *test_string2 = "hello, world";
+    const char *test_string3 = "helloworld";
+    const char *test_word = "hello";
+    
+    if (match_word_at_start(test_string1, test_word)) {
+        printf("Match found in: \"%s\"\n", test_string1);
+    } else {
+        printf("No match in: \"%s\"\n", test_string1);
+    }
+    
+    if (match_word_at_start(test_string2, test_word)) {
+        printf("Match found in: \"%s\"\n", test_string2);
+    } else {
+        printf("No match in: \"%s\"\n", test_string2);
+    }
+    
+    if (match_word_at_start(test_string3, test_word)) {
+        printf("Match found in: \"%s\"\n", test_string3);
+    } else {
+        printf("No match in: \"%s\"\n", test_string3);
+    }
+    
+    if (match_word_at_start(NULL, test_word)) {
+        printf("Match found in NULL string\n");
+    } else {
+        printf("No match in NULL string\n");
+    }
+    
+    return 0;
+}
+```

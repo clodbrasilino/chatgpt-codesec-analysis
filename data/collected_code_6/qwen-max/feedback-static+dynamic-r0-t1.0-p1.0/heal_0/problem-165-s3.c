@@ -1,0 +1,19 @@
+#include <stdio.h>
+#include <ctype.h>
+
+int count_matching_positions(const char *str) {
+    int count = 0;
+    for (int i = 0; str[i] != '\0'; i++) {
+        if (tolower(str[i]) == 'a' + i % 26) {
+            count++;
+        }
+    }
+    return count;
+}
+
+int main() {
+    const char *test_str = "AbcDefGhiJklMnoPqrStuVwxYz";
+    int result = count_matching_positions(test_str);
+    printf("Matching positions: %d\n", result);
+    return 0;
+}

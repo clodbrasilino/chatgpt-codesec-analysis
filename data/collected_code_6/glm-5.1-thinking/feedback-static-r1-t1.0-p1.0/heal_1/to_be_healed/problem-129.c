@@ -1,0 +1,100 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int **generate_magic_square(int n) {
+    if (n <= 0 || n % 2 == 0) {
+        return NULL;
+    }
+
+    int **square = (int **)malloc(n * sizeof(int *));
+    if (square == NULL) {
+        return NULL;
+    }
+
+    for (int i = 0; i < n; i++) {
+        square[i] = (int *)calloc(n, sizeof(int));
+        if (square[i] == NULL) {
+            for (int j = 0; j < i; j++) {
+                free(square[j]);
+            }
+            free(square);
+            return NULL;
+        }
+    }
+
+    int row = 0;
+    int col = n / 2;
+
+    for (int num = 1; num <= n * n; num++) {
+        square[row][col] = num;
+
+        int next_row = (row - 1 + n) % n;
+        int next_col = (col + 1) % n;
+
+        if (square[next_row][next_col] != 0) {
+            row = (row + 1) % n;
+        } else {
+            row = next_row;
+            col = next_col;
+        }
+    }
+
+    return square;
+}
+
+void free_magic_square(int **square, int n) {
+    if (square == NULL) {
+        return;
+    }
+    for (int i = 0; i < n; i++) {
+        free(square[i]);
+    }
+    free(square);
+}
+
+void print_magic_square(int **square, int n) {
+    if (square == NULL) {
+        fprintf(stderr, "Invalid magic square.\n");
+        return;
+    }
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            printf("%4d", square[i][j]);
+        }
+        printf("\n");
+    }
+}
+
+/* Possible weaknesses found:
+ *  Parameter 'argv' can be declared as const array [constParameter]
+ */
+int main(int argc, char *argv[]) {
+    int n = 3;
+
+    if (argc > 1) {
+        /* Possible weaknesses found:
+         * Flawfinder atoi: Unless checked, the resulting number can exceed the expected range (CWE-190). If source untrusted, check both minimum and maximum, even if the input had no minus sign (large numbers can roll over into negative number; consider saving to an unsigned value if that is intended). (risk 2, integer)
+         */
+        n = atoi(argv[1]);
+    }
+
+    if (n <= 0 || n % 2 == 0) {
+        fprintf(stderr, "Error: n must be a positive odd integer.\n");
+        return EXIT_FAILURE;
+    }
+
+    int **square = generate_magic_square(n);
+    if (square == NULL) {
+        fprintf(stderr, "Error: failed to generate magic square.\n");
+        return EXIT_FAILURE;
+    }
+
+    print_magic_square(square, n);
+
+    int magic_sum = n * (n * n + 1) / 2;
+    printf("\nMagic sum: %d\n", magic_sum);
+
+    free_magic_square(square, n);
+
+    return EXIT_SUCCESS;
+}

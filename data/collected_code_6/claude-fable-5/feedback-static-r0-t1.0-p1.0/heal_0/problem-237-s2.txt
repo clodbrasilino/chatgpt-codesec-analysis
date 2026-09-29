@@ -1,0 +1,76 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int a;
+    int b;
+} Pair;
+
+typedef struct {
+    Pair key;
+    int count;
+} Record;
+
+static Pair normalize_pair(Pair p) {
+    if (p.a > p.b) {
+        int tmp = p.a;
+        p.a = p.b;
+        p.b = tmp;
+    }
+    return p;
+}
+
+int check_occurrences(const Pair *tuples, size_t n, Record **out, size_t *out_len) {
+    if (out == NULL || out_len == NULL) {
+        return -1;
+    }
+    *out = NULL;
+    *out_len = 0;
+    if (tuples == NULL || n == 0) {
+        return 0;
+    }
+    Record *res = malloc(n * sizeof(Record));
+    if (res == NULL) {
+        return -1;
+    }
+    size_t len = 0;
+    for (size_t i = 0; i < n; i++) {
+        Pair p = normalize_pair(tuples[i]);
+        size_t j;
+        for (j = 0; j < len; j++) {
+            if (res[j].key.a == p.a && res[j].key.b == p.b) {
+                res[j].count++;
+                break;
+            }
+        }
+        if (j == len) {
+            res[len].key = p;
+            res[len].count = 1;
+            len++;
+        }
+    }
+    *out = res;
+    *out_len = len;
+    return 0;
+}
+
+int main(void) {
+    Pair tuples[] = { {3, 1}, {1, 3}, {2, 5}, {5, 2}, {6, 3} };
+    size_t n = sizeof(tuples) / sizeof(tuples[0]);
+    Record *result = NULL;
+    size_t result_len = 0;
+
+    if (check_occurrences(tuples, n, &result, &result_len) != 0) {
+        fprintf(stderr, "Failed to process tuples\n");
+        return EXIT_FAILURE;
+    }
+
+    for (size_t i = 0; i < result_len; i++) {
+        printf("(%d, %d): %d\n", result[i].key.a, result[i].key.b, result[i].count);
+    }
+
+    free(result);
+    return EXIT_SUCCESS;
+}
+```

@@ -1,0 +1,19 @@
+```C
+#include <stdio.h>
+#include <string.h>
+
+void extractRearIndex(char *arr[], int n) {
+    int i;
+    for(i = 0; i < n; i++) {
+        int len = strlen(arr[i]);
+        printf("%c ", arr[i][len - 1]);
+    }
+}
+
+int main() {
+    char *arr[] = {"Hello", "World", "This", "Is", "C"};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    extractRearIndex(arr, n);
+    return 0;
+}
+```

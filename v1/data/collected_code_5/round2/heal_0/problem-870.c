@@ -1,0 +1,23 @@
+#include <stdio.h>
+
+int sum_positive_numbers(int* numbers, int count) {
+    int sum = 0;
+    
+    for (int i = 0; i < count; i++) {
+        if (numbers[i] > 0)
+            sum += numbers[i];
+    }
+    
+    return sum;
+}
+
+int main() {
+    int numbers[] = {-2, 6, -8, 10, -3, 14};
+    int count = sizeof(numbers) / sizeof(numbers[0]);
+
+    int sum = sum_positive_numbers(numbers, count);
+    
+    printf("The sum of positive numbers is %d\n", sum);  
+
+    return 0;
+}

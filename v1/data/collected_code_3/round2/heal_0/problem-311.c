@@ -1,0 +1,18 @@
+#include <stdio.h>
+
+unsigned int setLeftmostUnsetBit(unsigned int n) {
+    if (n == 0)
+        return 1;
+    int m = 1;
+    while (n >= m) {
+        n ^= m;
+        m <<= 1;
+    }
+    return n;
+}
+
+int main() {
+    unsigned int n = 21;
+    printf("%u", setLeftmostUnsetBit(n));
+    return 0;
+}

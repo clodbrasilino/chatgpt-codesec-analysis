@@ -1,0 +1,7 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-577-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-577-s3.c:34:9: error: Found an exit path from function with non-void return type that has missing return statement [missingReturn]
+        }
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-577-s3.c:11:22: style: Variable 'last_digit' is assigned a value that is never used. [unreadVariable]
+    int last_digit[] = {6, 2, 4, 8};
+                     ^

@@ -1,0 +1,62 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+double maxAveragePath(const int *matrix, size_t n)
+{
+    long long *dp;
+    size_t i;
+    size_t j;
+    double result;
+
+    if ((matrix == NULL) || (n == 0U)) {
+        return 0.0;
+    }
+
+    dp = malloc(n * n * sizeof *dp);
+    if (dp == NULL) {
+        (void)fprintf(stderr, "Memory allocation failed\n");
+        exit(EXIT_FAILURE);
+    }
+
+    dp[0] = (long long)matrix[0];
+
+    for (j = 1U; j < n; j++) {
+        dp[j] = dp[j - 1U] + (long long)matrix[j];
+    }
+
+    for (i = 1U; i < n; i++) {
+        dp[i * n] = dp[(i - 1U) * n] + (long long)matrix[i * n];
+        for (j = 1U; j < n; j++) {
+            long long fromTop = dp[(i - 1U) * n + j];
+            long long fromLeft = dp[i * n + (j - 1U)];
+            long long best = (fromTop > fromLeft) ? fromTop : fromLeft;
+            dp[i * n + j] = best + (long long)matrix[i * n + j];
+        }
+    }
+
+    result = (double)dp[(n * n) - 1U] / (double)((2U * n) - 1U);
+    free(dp);
+
+    return result;
+}
+
+int main(void)
+{
+    size_t n = 3U;
+    int matrix[9] = {
+        1, 2, 3,
+        6, 5, 4,
+        7, 3, 9
+    };
+    double avg;
+
+    avg = maxAveragePath(matrix, n);
+
+    if (printf("Maximum average path value: %f\n", avg) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```

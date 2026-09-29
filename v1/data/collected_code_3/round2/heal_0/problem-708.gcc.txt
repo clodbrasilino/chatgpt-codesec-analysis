@@ -1,0 +1,20 @@
+collected_code_3/problem-708-2.c: In function 'convertStringToList':
+collected_code_3/problem-708-2.c:16:23: warning: dereference of possibly-NULL 'newNode' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   16 |         newNode->data = *str;
+      |         ~~~~~~~~~~~~~~^~~~~~
+  'convertStringToList': events 1-4
+    |
+    |   14 |     while (*str) {
+    |      |            ^
+    |      |            |
+    |      |            (1) following 'true' branch...
+    |   15 |         Node* newNode = (Node*)malloc(sizeof(Node));
+    |      |                                ~~~~~~~~~~~~~~~~~~~~
+    |      |                                |
+    |      |                                (2) ...to here
+    |      |                                (3) this call could return NULL
+    |   16 |         newNode->data = *str;
+    |      |         ~~~~~~~~~~~~~~~~~~~~
+    |      |                       |
+    |      |                       (4) 'newNode' could be NULL: unchecked value from (3)
+    |

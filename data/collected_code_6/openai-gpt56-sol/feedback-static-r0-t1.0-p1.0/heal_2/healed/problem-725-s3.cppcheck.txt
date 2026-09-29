@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-725-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-725-s3.c:57:19: style: Condition 'start>end' is always true [knownConditionTrueFalse]
+        if (start > end || end > cursor_length ||
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-725-s3.c:39:42: note: Assuming that condition 'match_end<match_start' is not redundant
+        if (match_start < 0 || match_end < match_start ||
+                                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-725-s3.c:46:45: note: Assuming condition is false
+            (uintmax_t)match_end > SIZE_MAX ||
+                                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-725-s3.c:52:15: note: start is assigned '(unsigned long)match_start' here.
+        start = (size_t)match_start;
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-725-s3.c:53:15: note: Assignment 'end=(unsigned long)match_end', assigned value is less than symbolic=start-1
+        end = (size_t)match_end;
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-725-s3.c:57:19: note: Condition 'start>end' is always true
+        if (start > end || end > cursor_length ||
+                  ^

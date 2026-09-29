@@ -1,0 +1,48 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+double calculate_trapezium_area(double a, double b, double h) {
+    if (a < 0.0 || b < 0.0 || h < 0.0) {
+        return -1.0;
+    }
+    return 0.5 * (a + b) * h;
+}
+
+int main(void) {
+    double side_a = 0.0;
+    double side_b = 0.0;
+    double height = 0.0;
+    double area = 0.0;
+    int result = 0;
+
+    printf("Enter the first parallel side: ");
+    result = scanf("%lf", &side_a);
+    if (result != 1) {
+        fprintf(stderr, "Invalid input for the first side.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter the second parallel side: ");
+    result = scanf("%lf", &side_b);
+    if (result != 1) {
+        fprintf(stderr, "Invalid input for the second side.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter the height: ");
+    result = scanf("%lf", &height);
+    if (result != 1) {
+        fprintf(stderr, "Invalid input for the height.\n");
+        return EXIT_FAILURE;
+    }
+
+    area = calculate_trapezium_area(side_a, side_b, height);
+    if (area < 0.0) {
+        fprintf(stderr, "Error: Sides and height must be non-negative.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("The area of the trapezium is: %.2f\n", area);
+
+    return EXIT_SUCCESS;
+}

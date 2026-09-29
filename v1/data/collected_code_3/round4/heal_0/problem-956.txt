@@ -1,0 +1,33 @@
+```C
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdlib.h>
+
+void split_string(char *str) {
+    int i, len = strlen(str);
+    char *temp = malloc(len + 1);
+    int tempIndex = 0;
+
+    for(i = 0; i < len; i++) {
+        if(isupper(str[i])) {
+            temp[tempIndex] = '\0';
+            printf("%s\n", temp);
+            tempIndex = 0;
+        } else {
+            temp[tempIndex++] = str[i];
+        }
+    }
+
+    temp[tempIndex] = '\0';
+    printf("%s\n", temp);
+    free(temp);
+}
+
+int main() {
+    char str[] = "HelloWorldThisIsATest";
+    split_string(str);
+    return 0;
+}
+```
+Please note that C does not support regex natively. We have to use external libraries like PCRE (Perl Compatible Regular Expressions) to use regex in C. The provided code is a simple C function to split the string at uppercase letters without using regex. It checks each character if it's uppercase and splits the string accordingly.

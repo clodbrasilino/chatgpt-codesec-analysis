@@ -1,0 +1,65 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define BUFFER_SIZE 256
+
+size_t count_characters(const char *str, size_t max_len)
+{
+    size_t count = 0;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    while (count < max_len && str[count] != '\0') {
+        count++;
+    }
+
+    return count;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t length;
+
+    memset(buffer, 0, sizeof(buffer));
+
+    printf("Enter a string: ");
+    fflush(stdout);
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+    buffer[strcspn(buffer, "\n")] = '\0';
+
+    length = count_characters(buffer, sizeof(buffer));
+
+    printf("Total characters: %zu\n", length);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The original code was already well-hardened against the flagged weakness (CWE-119/CWE-120, buffer overflow via statically-sized arrays). The rewrite preserves all existing mitigations:
+
+1. **`fgets(buffer, sizeof(buffer), stdin)`** — bounded input read; `sizeof(buffer)` ensures the read can never exceed the array, unlike `gets()` or unbounded `scanf("%s", ...)`.
+
+2. **`memset(buffer, 0, sizeof(buffer))`** — guarantees the buffer starts zero-initialized, so no uninitialized reads occur even on partial input.
+
+3. **Explicit termination `buffer[sizeof(buffer) - 1] = '\0'`** — defensive redundancy; `fgets` already null-terminates, but this guards against future refactoring to non-terminating functions.
+
+4. **`strcspn(buffer, "\n")`** — safe newline stripping; returns an index within bounds even if no newline exists (it returns the string length, which points at the existing terminator).
+
+5. **`count_characters` with `max_len` bound and NULL check** — the loop condition `count < max_len` prevents reading past the buffer even if the terminator were somehow missing.
+
+6. **Return value checking on `fgets`** — handles EOF/read errors instead of processing indeterminate data.
+
+No functional changes were required; the Flawfinder hit is a low-risk informational warning inherent to any fixed-size array, and the surrounding code already performs the recommended bounds checking.

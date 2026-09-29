@@ -1,0 +1,61 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+unsigned long long permutation_coefficient(unsigned int n, unsigned int k, int *error)
+{
+    unsigned long long result = 1ULL;
+    unsigned int i;
+
+    if (error == NULL) {
+        return 0ULL;
+    }
+
+    *error = 0;
+
+    if (k > n) {
+        *error = 1;
+        return 0ULL;
+    }
+
+    for (i = 0U; i < k; i++) {
+        unsigned long long factor = (unsigned long long)(n - i);
+        if (factor != 0ULL && result > ULLONG_MAX / factor) {
+            *error = 2;
+            return 0ULL;
+        }
+        result *= factor;
+    }
+
+    return result;
+}
+
+int main(void)
+{
+    unsigned int n = 10U;
+    unsigned int k = 2U;
+    int error = 0;
+    unsigned long long result;
+
+    result = permutation_coefficient(n, k, &error);
+
+    if (error == 1) {
+        if (fprintf(stderr, "Invalid input: k must not exceed n\n") < 0) {
+            return EXIT_FAILURE;
+        }
+        return EXIT_FAILURE;
+    }
+
+    if (error == 2) {
+        if (fprintf(stderr, "Overflow detected while computing P(%u, %u)\n", n, k) < 0) {
+            return EXIT_FAILURE;
+        }
+        return EXIT_FAILURE;
+    }
+
+    if (printf("P(%u, %u) = %llu\n", n, k, result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

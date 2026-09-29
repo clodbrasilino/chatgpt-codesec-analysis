@@ -1,0 +1,30 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <stdint.h>
+#include <limits.h>
+
+bool are_all_bits_unset(uint32_t value, unsigned int start, unsigned int end)
+{
+    if (start > end || end >= (sizeof(value) * CHAR_BIT)) {
+        return false;
+    }
+    
+    uint32_t mask = (UINT32_MAX << start) & (UINT32_MAX >> (sizeof(value) * CHAR_BIT - 1 - end));
+    
+    return (value & mask) == 0;
+}
+
+int main(void)
+{
+    uint32_t value = 0x0F0F0F0F;
+    unsigned int start = 4;
+    unsigned int end = 7;
+    
+    if (are_all_bits_unset(value, start, end)) {
+        printf("All bits are unset in the range [%u, %u]\n", start, end);
+    } else {
+        printf("Not all bits are unset in the range [%u, %u]\n", start, end);
+    }
+    
+    return 0;
+}

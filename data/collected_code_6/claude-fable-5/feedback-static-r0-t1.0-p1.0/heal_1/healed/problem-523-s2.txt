@@ -1,0 +1,108 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdbool.h>
+
+#define MAX_STRING_LENGTH 256
+
+bool validate_string(const char *str, size_t required_length)
+{
+    size_t len;
+    size_t i;
+    bool has_upper = false;
+    bool has_lower = false;
+    bool has_digit = false;
+
+    if (str == NULL) {
+        return false;
+    }
+
+    if (required_length >= MAX_STRING_LENGTH) {
+        return false;
+    }
+
+    len = strnlen(str, MAX_STRING_LENGTH);
+    if (len >= MAX_STRING_LENGTH) {
+        return false;
+    }
+
+    if (len != required_length) {
+        return false;
+    }
+
+    for (i = 0; i < len; i++) {
+        unsigned char c = (unsigned char)str[i];
+        if (isupper(c)) {
+            has_upper = true;
+        } else if (islower(c)) {
+            has_lower = true;
+        } else if (isdigit(c)) {
+            has_digit = true;
+        }
+    }
+
+    return has_upper && has_lower && has_digit;
+}
+
+int main(void)
+{
+    const char *test1 = "Abcdef12";
+    const char *test2 = "abcdef12";
+    const char *test3 = "ABCDEF12";
+    const char *test4 = "Abcdefgh";
+    const char *test5 = "Ab1";
+    size_t required_length = 8;
+
+    if (validate_string(test1, required_length)) {
+        printf("\"%s\" is valid\n", test1);
+    } else {
+        printf("\"%s\" is invalid\n", test1);
+    }
+
+    if (validate_string(test2, required_length)) {
+        printf("\"%s\" is valid\n", test2);
+    } else {
+        printf("\"%s\" is invalid\n", test2);
+    }
+
+    if (validate_string(test3, required_length)) {
+        printf("\"%s\" is valid\n", test3);
+    } else {
+        printf("\"%s\" is invalid\n", test3);
+    }
+
+    if (validate_string(test4, required_length)) {
+        printf("\"%s\" is valid\n", test4);
+    } else {
+        printf("\"%s\" is invalid\n", test4);
+    }
+
+    if (validate_string(test5, required_length)) {
+        printf("\"%s\" is valid\n", test5);
+    } else {
+        printf("\"%s\" is invalid\n", test5);
+    }
+
+    if (validate_string(NULL, required_length)) {
+        printf("NULL is valid\n");
+    } else {
+        printf("NULL is invalid\n");
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Key changes made to address the identified weakness:**
+
+1. **Replaced `strlen` with `strnlen`** — The Flawfinder warning (CWE-126) concerned a potential over-read on non-NUL-terminated input. `strnlen` bounds the scan to `MAX_STRING_LENGTH` bytes, so even a malformed buffer cannot cause an unbounded read.
+
+2. **Added a `MAX_STRING_LENGTH` bound** — A sane upper limit (256) defines the maximum buffer region the function will ever inspect.
+
+3. **Rejected unterminated/oversized input** — If `strnlen` returns `MAX_STRING_LENGTH`, no terminator was found within the bound, so the function safely returns `false` instead of reading further.
+
+4. **Validated `required_length` against the bound** — Prevents callers from requesting lengths the function could never safely verify, keeping the contract consistent.
+
+The existing defensive measures were preserved: the `NULL` check before any dereference, and the cast to `unsigned char` before calling `isupper`/`islower`/`isdigit`, which avoids undefined behavior when `char` is signed and holds negative values.

@@ -1,0 +1,38 @@
+#include <stdio.h>
+#include <limits.h>
+
+int maxSubArraySum(const int arr[], int size) {
+    if (arr == NULL || size <= 0) {
+        return 0;
+    }
+    
+    int max_so_far = arr[0];
+    int max_ending_here = arr[0];
+    
+    for (int i = 1; i < size; i++) {
+        /* Possible weaknesses found:
+         *  Invalid test for overflow 'max_ending_here+arr[i]<arr[i]'; signed integer overflow is undefined behavior. Some mainstream compilers removes handling of overflows when optimising the code and change the code to 'max_ending_here<0'. [invalidTestForOverflow]
+         */
+        if (max_ending_here + arr[i] < arr[i]) {
+            max_ending_here = arr[i];
+        } else {
+            max_ending_here = max_ending_here + arr[i];
+        }
+        
+        if (max_ending_here > max_so_far) {
+            max_so_far = max_ending_here;
+        }
+    }
+    
+    return max_so_far;
+}
+
+int main(void) {
+    int arr[] = {-2, 1, -3, 4, -1, 2, 1, -5, 4};
+    int size = sizeof(arr) / sizeof(arr[0]);
+    
+    int result = maxSubArraySum(arr, size);
+    printf("Largest contiguous sum: %d\n", result);
+    
+    return 0;
+}

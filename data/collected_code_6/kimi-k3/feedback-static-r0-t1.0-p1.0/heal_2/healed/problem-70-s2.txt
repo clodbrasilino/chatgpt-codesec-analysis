@@ -1,0 +1,103 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *elements;
+    size_t length;
+} Tuple;
+
+int all_tuples_equal_length(const Tuple *tuples, size_t count) {
+    size_t i;
+    size_t expected_length;
+
+    if (tuples == NULL || count == 0) {
+        return 0;
+    }
+
+    expected_length = tuples[0].length;
+
+    for (i = 1; i < count; i++) {
+        if (tuples[i].length != expected_length) {
+            return 0;
+        }
+    }
+
+    return 1;
+}
+
+void print_tuple(const Tuple *tuple) {
+    size_t i;
+    
+    if (tuple == NULL || tuple->elements == NULL) {
+        printf("[]");
+        return;
+    }
+    
+    printf("[");
+    for (i = 0; i < tuple->length; i++) {
+        printf("%d", tuple->elements[i]);
+        if (i < tuple->length - 1) {
+            printf(", ");
+        }
+    }
+    printf("]");
+}
+
+void print_tuples(const Tuple *tuples, size_t count) {
+    size_t i;
+    
+    if (tuples == NULL || count == 0) {
+        printf("No tuples to display.\n");
+        return;
+    }
+    
+    for (i = 0; i < count; i++) {
+        printf("Tuple %zu: ", i);
+        print_tuple(&tuples[i]);
+        printf(" (length: %zu)\n", tuples[i].length);
+    }
+}
+
+int main(void) {
+    int data1[] = {1, 2, 3};
+    int data2[] = {4, 5, 6};
+    int data3[] = {7, 8, 9};
+    int data4[] = {10, 11};
+
+    Tuple equal_tuples[] = {
+        {data1, sizeof(data1) / sizeof(data1[0])},
+        {data2, sizeof(data2) / sizeof(data2[0])},
+        {data3, sizeof(data3) / sizeof(data3[0])}
+    };
+
+    Tuple unequal_tuples[] = {
+        {data1, sizeof(data1) / sizeof(data1[0])},
+        {data4, sizeof(data4) / sizeof(data4[0])},
+        {data3, sizeof(data3) / sizeof(data3[0])}
+    };
+
+    size_t equal_count = sizeof(equal_tuples) / sizeof(equal_tuples[0]);
+    size_t unequal_count = sizeof(unequal_tuples) / sizeof(unequal_tuples[0]);
+
+    printf("First set of tuples:\n");
+    print_tuples(equal_tuples, equal_count);
+
+    if (all_tuples_equal_length(equal_tuples, equal_count)) {
+        printf("All tuples in first set have equal length.\n");
+    } else {
+        printf("Tuples in first set have different lengths.\n");
+    }
+
+    printf("\nSecond set of tuples:\n");
+    print_tuples(unequal_tuples, unequal_count);
+
+    if (all_tuples_equal_length(unequal_tuples, unequal_count)) {
+        printf("All tuples in second set have equal length.\n");
+    } else {
+        printf("Tuples in second set have different lengths.\n");
+    }
+
+    return 0;
+}
+```

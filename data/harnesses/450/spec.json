@@ -1,0 +1,73 @@
+{
+  "task_id": 450,
+  "text": "Write a C function to extract specified size of strings from a give list of string values.",
+  "fn_candidates": [
+    "extract_string",
+    "ExtractString",
+    "extractString",
+    "extractstring"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "extract_string",
+      "args": [
+        [
+          "Python",
+          "list",
+          "exercises",
+          "practice",
+          "solution"
+        ],
+        8
+      ],
+      "expected": [
+        "practice",
+        "solution"
+      ],
+      "assert_src": "assert extract_string(['Python', 'list', 'exercises', 'practice', 'solution'] ,8)==['practice', 'solution']"
+    },
+    {
+      "fn_name": "extract_string",
+      "args": [
+        [
+          "Python",
+          "list",
+          "exercises",
+          "practice",
+          "solution"
+        ],
+        6
+      ],
+      "expected": [
+        "Python"
+      ],
+      "assert_src": "assert extract_string(['Python', 'list', 'exercises', 'practice', 'solution'] ,6)==['Python']"
+    },
+    {
+      "fn_name": "extract_string",
+      "args": [
+        [
+          "Python",
+          "list",
+          "exercises",
+          "practice",
+          "solution"
+        ],
+        9
+      ],
+      "expected": [
+        "exercises"
+      ],
+      "assert_src": "assert extract_string(['Python', 'list', 'exercises', 'practice', 'solution'] ,9)==['exercises']"
+    }
+  ],
+  "arg_kinds": [
+    "int",
+    "str-list"
+  ],
+  "return_kind": "str-list",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

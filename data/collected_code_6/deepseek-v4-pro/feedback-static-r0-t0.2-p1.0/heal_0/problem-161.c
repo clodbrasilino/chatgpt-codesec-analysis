@@ -1,0 +1,163 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+typedef struct Node {
+    int data;
+    struct Node* next;
+} Node;
+
+typedef struct List {
+    Node* head;
+    size_t size;
+} List;
+
+List* list_create(void) {
+    List* list = (List*)malloc(sizeof(List));
+    if (list == NULL) {
+        return NULL;
+    }
+    list->head = NULL;
+    list->size = 0;
+    return list;
+}
+
+void list_destroy(List* list) {
+    if (list == NULL) {
+        return;
+    }
+    Node* current = list->head;
+    while (current != NULL) {
+        Node* next = current->next;
+        free(current);
+        current = next;
+    }
+    free(list);
+}
+
+bool list_push_back(List* list, int value) {
+    if (list == NULL) {
+        return false;
+    }
+    Node* new_node = (Node*)malloc(sizeof(Node));
+    if (new_node == NULL) {
+        return false;
+    }
+    new_node->data = value;
+    new_node->next = NULL;
+    
+    if (list->head == NULL) {
+        list->head = new_node;
+    } else {
+        Node* current = list->head;
+        while (current->next != NULL) {
+            current = current->next;
+        }
+        current->next = new_node;
+    }
+    list->size++;
+    return true;
+}
+
+bool list_contains(const List* list, int value) {
+    if (list == NULL) {
+        return false;
+    }
+    Node* current = list->head;
+    while (current != NULL) {
+        if (current->data == value) {
+            return true;
+        }
+        current = current->next;
+    }
+    return false;
+}
+
+void list_remove_all_present_in_other(List* list, const List* other) {
+    if (list == NULL || other == NULL || list->head == NULL) {
+        return;
+    }
+    
+    Node* current = list->head;
+    Node* prev = NULL;
+    
+    while (current != NULL) {
+        if (list_contains(other, current->data)) {
+            Node* to_delete = current;
+            if (prev == NULL) {
+                list->head = current->next;
+                current = list->head;
+            } else {
+                prev->next = current->next;
+                current = current->next;
+            }
+            free(to_delete);
+            list->size--;
+        } else {
+            prev = current;
+            current = current->next;
+        }
+    }
+}
+
+void list_print(const List* list) {
+    if (list == NULL) {
+        printf("NULL list\n");
+        return;
+    }
+    Node* current = list->head;
+    printf("[");
+    while (current != NULL) {
+        printf("%d", current->data);
+        if (current->next != NULL) {
+            printf(", ");
+        }
+        current = current->next;
+    }
+    printf("]\n");
+}
+
+int main(void) {
+    List* list1 = list_create();
+    List* list2 = list_create();
+    
+    if (list1 == NULL || list2 == NULL) {
+        list_destroy(list1);
+        list_destroy(list2);
+        return EXIT_FAILURE;
+    }
+    
+    int values1[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    int values2[] = {2, 4, 6, 8, 10, 12, 14};
+    
+    for (size_t i = 0; i < sizeof(values1) / sizeof(values1[0]); i++) {
+        if (!list_push_back(list1, values1[i])) {
+            list_destroy(list1);
+            list_destroy(list2);
+            return EXIT_FAILURE;
+        }
+    }
+    
+    for (size_t i = 0; i < sizeof(values2) / sizeof(values2[0]); i++) {
+        if (!list_push_back(list2, values2[i])) {
+            list_destroy(list1);
+            list_destroy(list2);
+            return EXIT_FAILURE;
+        }
+    }
+    
+    printf("List 1 before removal: ");
+    list_print(list1);
+    printf("List 2: ");
+    list_print(list2);
+    
+    list_remove_all_present_in_other(list1, list2);
+    
+    printf("List 1 after removal: ");
+    list_print(list1);
+    
+    list_destroy(list1);
+    list_destroy(list2);
+    
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,128 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+#define MAX_STRING_LEN 4096U
+
+char *concatenate_list(const char *const *list, size_t count)
+{
+    size_t total = 0;
+    size_t i;
+    size_t *lengths = NULL;
+    size_t remaining;
+    char *result = NULL;
+    char *pos = NULL;
+
+    if (list == NULL) {
+        return NULL;
+    }
+
+    if (count == 0) {
+        result = malloc(1);
+        if (result != NULL) {
+            result[0] = '\0';
+        }
+        return result;
+    }
+
+    if (count > SIZE_MAX / sizeof(size_t)) {
+        return NULL;
+    }
+
+    lengths = malloc(count * sizeof(size_t));
+    if (lengths == NULL) {
+        return NULL;
+    }
+
+    for (i = 0; i < count; i++) {
+        size_t len;
+
+        if (list[i] == NULL) {
+            free(lengths);
+            return NULL;
+        }
+
+        len = strnlen(list[i], MAX_STRING_LEN);
+        if (len >= MAX_STRING_LEN) {
+            free(lengths);
+            return NULL;
+        }
+
+        if (len > SIZE_MAX - 1 - total) {
+            free(lengths);
+            return NULL;
+        }
+
+        lengths[i] = len;
+        total += len;
+    }
+
+    result = malloc(total + 1);
+    if (result == NULL) {
+        free(lengths);
+        return NULL;
+    }
+
+    pos = result;
+    remaining = total;
+    for (i = 0; i < count; i++) {
+        size_t verify_len;
+
+        if (lengths[i] > remaining) {
+            free(lengths);
+            free(result);
+            return NULL;
+        }
+
+        verify_len = strnlen(list[i], MAX_STRING_LEN);
+        if (verify_len != lengths[i]) {
+            free(lengths);
+            free(result);
+            return NULL;
+        }
+
+        if (lengths[i] > 0) {
+            memcpy(pos, list[i], lengths[i]);
+        }
+        pos += lengths[i];
+        remaining -= lengths[i];
+    }
+    *pos = '\0';
+
+    free(lengths);
+    return result;
+}
+
+int main(void)
+{
+    const char *const list[] = { "Hello", ", ", "world", "!" };
+    size_t count = sizeof(list) / sizeof(list[0]);
+    char *joined = concatenate_list(list, count);
+
+    if (joined == NULL) {
+        fprintf(stderr, "Concatenation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("%s\n", joined) < 0) {
+        free(joined);
+        return EXIT_FAILURE;
+    }
+
+    free(joined);
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the original code and the fix applied:**
+
+The original code was already quite defensive. The Flawfinder warning on `memcpy` (CWE-120) is a heuristic flag rather than a confirmed vulnerability, since the code already:
+
+1. **Bounds the destination allocation** — `result` is allocated with `total + 1` bytes, where `total` is the exact sum of measured lengths, with overflow checks (`len > SIZE_MAX - 1 - total`) during accumulation.
+2. **Tracks remaining capacity** — the `remaining` counter is checked against `lengths[i]` before every copy, guaranteeing `memcpy` can never write past the buffer as long as the cached lengths are accurate.
+3. **Guards the multiplication** — `count > SIZE_MAX / sizeof(size_t)` prevents integer overflow in the `lengths` array allocation.
+4. **Rejects unterminated/oversized strings** — `strnlen` with `MAX_STRING_LEN` caps each string and rejects any at or above the limit.
+
+The one residual weakness is a **TOCTOU (time-of-check to time-of-use) gap**: the string lengths are measured in the first loop but the copies happen in the second. If the underlying string data were mutated between passes (e.g., by another thread or if callers passed non-constant storage), the cached length could exceed the actual string, and `memcpy` would read stale assumptions. The rewrite closes this by **re-validating each string's length with `strnlen` immediately before the copy** and aborting on any mismatch, ensuring the `memcpy` size argument is verified against the live data at the point of use — directly satisfying the "make sure destination can always hold the source data" recommendation.

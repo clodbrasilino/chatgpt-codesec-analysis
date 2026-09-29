@@ -1,0 +1,26 @@
+Unfortunately, C does not support regex natively like some other languages such as Python, JavaScript, or Perl. However, you can achieve the same result by iterating over the string and copying non-whitespace characters to a new string. Here is a simple C program that does this:
+
+```c
+#include <stdio.h>
+#include <ctype.h>
+#include <string.h>
+
+void remove_spaces(char* input) {
+    int count = 0;
+    for (int i = 0; input[i]; i++) {
+        if (!isspace(input[i])) {
+            input[count++] = input[i];
+        }
+    }
+    input[count] = '\0';
+}
+
+int main() {
+    char str[] = "Hello, remove all spaces!";
+    remove_spaces(str);
+    printf("%s\n", str);
+    return 0;
+}
+```
+
+This program defines a function `remove_spaces` that removes all spaces from the input string. It then tests this function with a string "Hello, remove all spaces!" in the `main` function. The modified string is printed to the console. Note that the `remove_spaces` function modifies the input string in place.

@@ -1,0 +1,68 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+
+#define BUFFER_SIZE 256
+
+bool is_binary_string(const char *str, size_t max_len)
+{
+    size_t i;
+
+    if (str == NULL) {
+        return false;
+    }
+
+    if (str[0] == '\0') {
+        return false;
+    }
+
+    for (i = 0; i < max_len && str[i] != '\0'; i++) {
+        if (str[i] != '0' && str[i] != '1') {
+            return false;
+        }
+    }
+
+    if (i == max_len) {
+        return false;
+    }
+
+    return true;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t len;
+
+    printf("Enter a string: ");
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    }
+
+    if (is_binary_string(buffer, sizeof(buffer))) {
+        printf("\"%s\" is a binary string\n", buffer);
+    } else {
+        printf("\"%s\" is not a binary string\n", buffer);
+    }
+
+    return 0;
+}
+```
+
+**Summary of applied fixes:**
+
+1. **CWE-119/CWE-120 (statically-sized buffer):** The buffer size is defined via a single constant (`BUFFER_SIZE`), `fgets` is bounded by `sizeof(buffer)`, and the buffer is explicitly null-terminated after reading (`buffer[sizeof(buffer) - 1] = '\0'`) as a defensive guarantee against any non-terminated input path.
+
+2. **CWE-126 (potential over-read via `strlen`):** Replaced `strlen` with `strnlen`, which limits the scan to `sizeof(buffer)` bytes, so it can never read past the end of the array even if the string were somehow not null-terminated.
+
+3. **Hardened `is_binary_string`:** The function now takes an explicit `max_len` bound and refuses strings that reach the limit without a terminator, ensuring it never over-reads an unterminated buffer.

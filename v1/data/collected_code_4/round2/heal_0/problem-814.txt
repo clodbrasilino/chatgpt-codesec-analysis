@@ -1,0 +1,32 @@
+```c
+#include <stdio.h>
+
+double calculateRombusArea(double diagonal1, double diagonal2) {
+    return 0.5 * diagonal1 * diagonal2;
+}
+
+int main() {
+    double diagonal1, diagonal2;
+
+    printf("Enter diagonal 1: ");
+    if(scanf("%lf",&diagonal1) != 1) {
+        printf("Invalid input. Please enter a number.\n");
+        return -1;
+    }
+    
+    printf("Enter diagonal 2: ");
+    if(scanf("%lf",&diagonal2) != 1) {
+        printf("Invalid input. Please enter a number.\n");
+        return -1;
+    } 
+
+    if(diagonal1 < 0 || diagonal2 < 0) {
+        printf("Invalid input. Diagonals of a rombus can't be negative.\n");
+        return -1;
+    }
+
+    printf("Rombus area: %.2lf\n", calculateRombusArea(diagonal1, diagonal2));
+
+    return 0; 
+}
+```

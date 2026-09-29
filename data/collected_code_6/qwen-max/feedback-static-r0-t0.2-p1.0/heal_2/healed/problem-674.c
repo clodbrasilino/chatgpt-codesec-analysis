@@ -1,0 +1,62 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_WORDS 1000
+#define MAX_WORD_LENGTH 100
+
+int is_word_in_array(const char *word, const char *array[], int count) {
+    for (int i = 0; i < count; i++) {
+        if (strcmp(word, array[i]) == 0) {
+            return 1;
+        }
+    }
+    return 0;
+}
+
+char* remove_duplicates(const char *input) {
+    const char *words[MAX_WORDS] = {NULL};
+    int word_count = 0;
+
+    const char *token;
+    token = strtok((char *)input, " ");
+    while (token != NULL && word_count < MAX_WORDS) {
+        if (!is_word_in_array(token, (const char **)words, word_count)) {
+            size_t len = strlen(token);
+            if (len <= MAX_WORD_LENGTH) {
+                words[word_count] = strdup(token);
+                word_count++;
+            }
+        }
+        token = strtok(NULL, " ");
+    }
+
+    size_t output_length = 0;
+    for (int i = 0; i < word_count; i++) {
+        output_length += strlen(words[i]) + 1;
+    }
+
+    char *result = (char *)malloc(output_length);
+    if (result == NULL) {
+        return NULL;
+    }
+    result[0] = '\0';
+
+    for (int i = 0; i < word_count; i++) {
+        strncat(result, words[i], output_length - strlen(result) - 1);
+        if (i < word_count - 1) {
+            strncat(result, " ", output_length - strlen(result) - 1);
+        }
+        free((void *)words[i]);
+    }
+
+    return result;
+}
+
+int main() {
+    const char *input = "this this is a test test string with with duplicates";
+    char *output = remove_duplicates(input);
+    printf("%s\n", output);
+    free(output);
+    return 0;
+}

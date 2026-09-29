@@ -1,0 +1,27 @@
+```c
+#include <stdbool.h>
+#include <string.h>
+#include <stdio.h>
+
+bool isBinaryString(char* str) {
+    int i, len = strlen(str);
+    for(i = 0; i < len; i++) {
+        if (str[i] != '0' && str[i] != '1') {
+            return false;
+        }
+    }
+    return true;
+}
+
+int main() {
+    char binString1[] = "101010101";
+    char binString2[] = "124572103";
+    
+    printf("%s is a binary string: %d\n", binString1, isBinaryString(binString1));
+    printf("%s is a binary string: %d\n", binString2, isBinaryString(binString2));
+    
+    return 0;
+}
+```
+
+This is a simple C program that checks whether the given string is binary or not. It does this by traversing through all the characters in the given string. If it encounters any character other than '0' or '1' it returns false, otherwise it returns true. Note that `true` and `false` are represented as `1` and `0` respectively in C. The main function demonstrates its usage.

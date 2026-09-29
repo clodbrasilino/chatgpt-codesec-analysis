@@ -1,0 +1,22 @@
+#include <stdio.h>
+#include <math.h>
+
+double find_largest_triangle_sides(double radius) {
+    double side_length = sqrt(3.0) * radius;
+    return side_length;
+}
+
+int main() {
+    double radius, side_length;
+    printf("Enter the radius of the semicircle: ");
+    scanf("%lf", &radius);
+
+    if (radius <= 0) {
+        printf("Radius must be a positive number.\n");
+        return 1;
+    }
+
+    side_length = find_largest_triangle_sides(radius);
+    printf("The sides of the largest inscribed equilateral triangle are: %.2f\n", side_length);
+    return 0;
+}

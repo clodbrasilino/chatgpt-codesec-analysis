@@ -1,0 +1,4 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_1/healed/problem-421-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_1/healed/problem-421-s2.c:25:69: error: Expression 'result[total_len-1-len++]=tuple[i][len]' depends on order of evaluation of side effects [unknownEvaluationOrder]
+        while (tuple[i][len] != '\0') result[total_len - 1 - len++] = tuple[i][len];
+                                                                    ^

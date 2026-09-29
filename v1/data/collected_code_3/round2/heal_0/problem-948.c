@@ -1,0 +1,33 @@
+#include <stdio.h>
+
+typedef struct {
+    int first;
+    int second;
+    int third;
+} Tuple;
+
+int getTupleItem(Tuple t, int index) {
+    switch(index) {
+        case 0:
+            return t.first;
+        case 1:
+            return t.second;
+        case 2:
+            return t.third;
+        default:
+            return -1;
+    }
+}
+
+int main() {
+    Tuple t;
+    t.first = 1;
+    t.second = 2;
+    t.third = 3;
+
+    printf("%d\n", getTupleItem(t, 0));
+    printf("%d\n", getTupleItem(t, 1));
+    printf("%d\n", getTupleItem(t, 2));
+
+    return 0;
+}

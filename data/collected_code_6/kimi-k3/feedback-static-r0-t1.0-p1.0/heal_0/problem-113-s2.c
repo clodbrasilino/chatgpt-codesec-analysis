@@ -1,0 +1,90 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <ctype.h>
+#include <limits.h>
+
+bool is_integer(const char *str) {
+    if (str == NULL || *str == '\0') {
+        return false;
+    }
+    
+    int i = 0;
+    
+    if (str[0] == '-' || str[0] == '+') {
+        i = 1;
+    }
+    
+    if (str[i] == '\0') {
+        return false;
+    }
+    
+    bool has_digits = false;
+    
+    while (str[i] != '\0') {
+        if (!isdigit((unsigned char)str[i])) {
+            return false;
+        }
+        has_digits = true;
+        i++;
+    }
+    
+    if (!has_digits) {
+        return false;
+    }
+    
+    long long value = 0;
+    int start = (str[0] == '-' || str[0] == '+') ? 1 : 0;
+    int is_negative = (str[0] == '-') ? 1 : 0;
+    
+    for (int j = start; str[j] != '\0'; j++) {
+        int digit = str[j] - '0';
+        
+        if (value > (LLONG_MAX - digit) / 10) {
+            return false;
+        }
+        
+        value = value * 10 + digit;
+    }
+    
+    if (is_negative) {
+        if (value > (long long)INT_MAX + 1) {
+            return false;
+        }
+    } else {
+        if (value > INT_MAX) {
+            return false;
+        }
+    }
+    
+    return true;
+}
+
+int main(void) {
+    const char *test_strings[] = {
+        "123",
+        "-456",
+        "+789",
+        "0",
+        "12a34",
+        "abc",
+        "",
+        "-",
+        "+",
+        "2147483647",
+        "-2147483648",
+        "2147483648",
+        "-2147483649",
+        "999999999999999999999",
+        NULL
+    };
+    
+    int i = 0;
+    while (test_strings[i] != NULL) {
+        printf("\"%s\": %s\n", 
+               test_strings[i], 
+               is_integer(test_strings[i]) ? "true" : "false");
+        i++;
+    }
+    
+    return 0;
+}

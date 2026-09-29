@@ -1,0 +1,212 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct IntNode {
+    int value;
+    struct IntNode *next;
+} IntNode;
+
+typedef struct ListNode {
+    IntNode *list;
+    struct ListNode *next;
+} ListNode;
+
+static void *xmalloc(size_t size) {
+    void *ptr = malloc(size);
+    if (ptr == NULL) {
+        fprintf(stderr, "malloc failed\n");
+        exit(EXIT_FAILURE);
+    }
+    return ptr;
+}
+
+static IntNode *new_int_node(int value) {
+    IntNode *node = xmalloc(sizeof(*node));
+    node->value = value;
+    node->next = NULL;
+    return node;
+}
+
+static void append_int(IntNode **head, int value) {
+    if (head == NULL) {
+        return;
+    }
+    IntNode *node = new_int_node(value);
+    if (*head == NULL) {
+        *head = node;
+        return;
+    }
+    IntNode *current = *head;
+    while (current->next != NULL) {
+        current = current->next;
+    }
+    current->next = node;
+}
+
+static ListNode *new_list_node(IntNode *list) {
+    ListNode *node = xmalloc(sizeof(*node));
+    node->list = list;
+    node->next = NULL;
+    return node;
+}
+
+static void append_list(ListNode **head, IntNode *list) {
+    if (head == NULL) {
+        return;
+    }
+    ListNode *node = new_list_node(list);
+    if (*head == NULL) {
+        *head = node;
+        return;
+    }
+    ListNode *current = *head;
+    while (current->next != NULL) {
+        current = current->next;
+    }
+    current->next = node;
+}
+
+static void print_int_list(const IntNode *head) {
+    printf("[");
+    for (const IntNode *current = head; current != NULL; current = current->next) {
+        printf("%d", current->value);
+        if (current->next != NULL) {
+            printf(", ");
+        }
+    }
+    printf("]");
+}
+
+static void print_list_of_lists(const ListNode *head) {
+    for (const ListNode *current = head; current != NULL; current = current->next) {
+        print_int_list(current->list);
+        if (current->next != NULL) {
+            printf(" -> ");
+        }
+    }
+    printf("\n");
+}
+
+static int int_list_equal(const IntNode *a, const IntNode *b) {
+    while (a != NULL && b != NULL) {
+        if (a->value != b->value) {
+            return 0;
+        }
+        a = a->next;
+        b = b->next;
+    }
+    return a == NULL && b == NULL;
+}
+
+static int list_contains_pointer(const ListNode *head, const IntNode *list) {
+    for (const ListNode *current = head; current != NULL; current = current->next) {
+        if (current->list == list) {
+            return 1;
+        }
+    }
+    return 0;
+}
+
+static void free_int_list(IntNode *head) {
+    while (head != NULL) {
+        IntNode *next = head->next;
+        free(head);
+        head = next;
+    }
+}
+
+static void free_list_of_lists(ListNode *head) {
+    while (head != NULL) {
+        ListNode *next = head->next;
+        free_int_list(head->list);
+        free(head);
+        head = next;
+    }
+}
+
+void remove_duplicates(ListNode **head) {
+    if (head == NULL || *head == NULL) {
+        return;
+    }
+
+    ListNode *current = *head;
+    ListNode *previous = NULL;
+
+    while (current != NULL) {
+        int is_duplicate = 0;
+        ListNode *seen = *head;
+
+        while (seen != current) {
+            if (int_list_equal(seen->list, current->list)) {
+                is_duplicate = 1;
+                break;
+            }
+            seen = seen->next;
+        }
+
+        if (is_duplicate) {
+            ListNode *duplicate = current;
+            if (previous == NULL) {
+                *head = current->next;
+            } else {
+                previous->next = current->next;
+            }
+            current = current->next;
+
+            if (!list_contains_pointer(*head, duplicate->list)) {
+                free_int_list(duplicate->list);
+            }
+            free(duplicate);
+        } else {
+            previous = current;
+            current = current->next;
+        }
+    }
+}
+
+int main(void) {
+    IntNode *list1 = NULL;
+    append_int(&list1, 1);
+    append_int(&list1, 2);
+    append_int(&list1, 3);
+
+    IntNode *list2 = NULL;
+    append_int(&list2, 4);
+    append_int(&list2, 5);
+
+    IntNode *list3 = NULL;
+    append_int(&list3, 1);
+    append_int(&list3, 2);
+    append_int(&list3, 3);
+
+    IntNode *list4 = NULL;
+    append_int(&list4, 6);
+
+    IntNode *list5 = NULL;
+
+    IntNode *list6 = NULL;
+    append_int(&list6, 4);
+    append_int(&list6, 5);
+
+    ListNode *head = NULL;
+    append_list(&head, list1);
+    append_list(&head, list2);
+    append_list(&head, list3);
+    append_list(&head, list4);
+    append_list(&head, list5);
+    append_list(&head, list6);
+
+    printf("Before: ");
+    print_list_of_lists(head);
+
+    remove_duplicates(&head);
+
+    printf("After: ");
+    print_list_of_lists(head);
+
+    free_list_of_lists(head);
+
+    return 0;
+}
+```

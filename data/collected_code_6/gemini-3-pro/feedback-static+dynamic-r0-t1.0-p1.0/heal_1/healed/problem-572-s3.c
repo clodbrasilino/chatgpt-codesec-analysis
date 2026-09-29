@@ -1,0 +1,95 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node* next;
+};
+
+struct Node* createNode(int data) {
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    if (newNode == NULL) {
+        exit(EXIT_FAILURE);
+    }
+    newNode->data = data;
+    newNode->next = NULL;
+    return newNode;
+}
+
+void appendNode(struct Node** head, int data) {
+    struct Node* newNode = createNode(data);
+    if (*head == NULL) {
+        *head = newNode;
+        return;
+    }
+    struct Node* temp = *head;
+    while (temp->next != NULL) {
+        temp = temp->next;
+    }
+    temp->next = newNode;
+}
+
+void printList(struct Node* head) {
+    struct Node* temp = head;
+    while (temp != NULL) {
+        printf("%d ", temp->data);
+        temp = temp->next;
+    }
+    printf("\n");
+}
+
+void freeList(struct Node* head) {
+    while (head != NULL) {
+        struct Node* temp = head;
+        head = head->next;
+        free(temp);
+    }
+}
+
+void removeTwoDuplicates(struct Node** head, int target) {
+    if (head == NULL || *head == NULL) {
+        return;
+    }
+
+    struct Node* current = *head;
+    struct Node* prev = NULL;
+    int count = 0;
+
+    while (current != NULL && count < 2) {
+        if (current->data == target) {
+            count++;
+            if (prev == NULL) {
+                *head = current->next;
+                free(current);
+                current = *head;
+            } else {
+                prev->next = current->next;
+                free(current);
+                current = prev->next;
+            }
+        } else {
+            prev = current;
+            current = current->next;
+        }
+    }
+}
+
+int main(void) {
+    struct Node* head1 = NULL;
+    appendNode(&head1, 5);
+    appendNode(&head1, 2);
+    appendNode(&head1, 5);
+    appendNode(&head1, 8);
+    appendNode(&head1, 5);
+    appendNode(&head1, 9);
+
+    printList(head1);
+    
+    removeTwoDuplicates(&head1, 5);
+    
+    printList(head1);
+    
+    freeList(head1);
+
+    return EXIT_SUCCESS;
+}

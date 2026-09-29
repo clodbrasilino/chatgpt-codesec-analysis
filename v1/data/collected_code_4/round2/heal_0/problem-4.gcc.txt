@@ -1,0 +1,93 @@
+./collected_code_4/round2//heal_0/problem-4.c: In function 'createQueue':
+./collected_code_4/round2//heal_0/problem-4.c:12:16: warning: dereference of possibly-NULL 'queue' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   12 |     queue->arr = (int*)malloc(capacity * sizeof(int));
+      |     ~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  'main': events 1-2
+    |
+    |   85 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   89 |     PriorityQueue* queue = createQueue(n);
+    |      |                            ~~~~~~~~~~~~~~
+    |      |                            |
+    |      |                            (2) calling 'createQueue' from 'main'
+    |
+    +--> 'createQueue': events 3-5
+           |
+           |   10 | PriorityQueue* createQueue(int capacity) {
+           |      |                ^~~~~~~~~~~
+           |      |                |
+           |      |                (3) entry to 'createQueue'
+           |   11 |     PriorityQueue* queue = (PriorityQueue*)malloc(sizeof(PriorityQueue));
+           |      |                                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                                            |
+           |      |                                            (4) this call could return NULL
+           |   12 |     queue->arr = (int*)malloc(capacity * sizeof(int));
+           |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                |
+           |      |                (5) 'queue' could be NULL: unchecked value from (4)
+           |
+./collected_code_4/round2//heal_0/problem-4.c: In function 'insert':
+./collected_code_4/round2//heal_0/problem-4.c:30:29: warning: dereference of possibly-NULL '*queue.arr + (long unsigned int)*queue.size * 4' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   30 |     queue->arr[queue->size] = value;
+      |     ~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~
+  'main': events 1-2
+    |
+    |   85 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   89 |     PriorityQueue* queue = createQueue(n);
+    |      |                            ~~~~~~~~~~~~~~
+    |      |                            |
+    |      |                            (2) calling 'createQueue' from 'main'
+    |
+    +--> 'createQueue': events 3-4
+           |
+           |   10 | PriorityQueue* createQueue(int capacity) {
+           |      |                ^~~~~~~~~~~
+           |      |                |
+           |      |                (3) entry to 'createQueue'
+           |   11 |     PriorityQueue* queue = (PriorityQueue*)malloc(sizeof(PriorityQueue));
+           |   12 |     queue->arr = (int*)malloc(capacity * sizeof(int));
+           |      |                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                        |
+           |      |                        (4) this call could return NULL
+           |
+    <------+
+    |
+  'main': events 5-8
+    |
+    |   89 |     PriorityQueue* queue = createQueue(n);
+    |      |                            ^~~~~~~~~~~~~~
+    |      |                            |
+    |      |                            (5) returning to 'main' from 'createQueue'
+    |   90 |     for (int i = 0; i < n; i++) {
+    |      |                     ~~~~~   
+    |      |                       |
+    |      |                       (6) following 'true' branch (when 'i < n')...
+    |   91 |         insert(queue, values[i]);
+    |      |         ~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |         |
+    |      |         (7) ...to here
+    |      |         (8) calling 'insert' from 'main'
+    |
+    +--> 'insert': events 9-12
+           |
+           |   25 | void insert(PriorityQueue* queue, int value) {
+           |      |      ^~~~~~
+           |      |      |
+           |      |      (9) entry to 'insert'
+           |   26 |     if (queue->size == queue->capacity) {
+           |      |        ~
+           |      |        |
+           |      |        (10) following 'false' branch...
+           |......
+           |   30 |     queue->arr[queue->size] = value;
+           |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |          |                  |
+           |      |          (11) ...to here    (12) '*queue.arr + (long unsigned int)*queue.size * 4' could be NULL: unchecked value from (4)
+           |

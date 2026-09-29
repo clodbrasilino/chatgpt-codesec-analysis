@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-61-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-61-s3.c:52:17: style: Condition 'result3<0' is always true [knownConditionTrueFalse]
+    if (result3 < 0) {
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-61-s3.c:51:35: note: Calling function 'count_substrings' returns -1
+    int result3 = count_substrings(NULL);
+                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-61-s3.c:51:35: note: Assignment 'result3=count_substrings(NULL)', assigned value is -1
+    int result3 = count_substrings(NULL);
+                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-61-s3.c:52:17: note: Condition 'result3<0' is always true
+    if (result3 < 0) {
+                ^

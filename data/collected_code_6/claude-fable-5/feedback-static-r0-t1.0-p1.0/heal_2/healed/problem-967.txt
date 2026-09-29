@@ -1,0 +1,103 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdlib.h>
+
+#define MAX_LEN 256
+
+static size_t bounded_length(const char *str, size_t max_len)
+{
+    size_t i = 0;
+
+    while (i < max_len && str[i] != '\0') {
+        i++;
+    }
+
+    return i;
+}
+
+int contains_all_vowels(const char *str, size_t max_len)
+{
+    int found[5] = {0, 0, 0, 0, 0};
+    size_t i;
+    size_t len;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    len = bounded_length(str, max_len);
+
+    for (i = 0; i < len; i++) {
+        int c = tolower((unsigned char)str[i]);
+        switch (c) {
+        case 'a':
+            found[0] = 1;
+            break;
+        case 'e':
+            found[1] = 1;
+            break;
+        case 'i':
+            found[2] = 1;
+            break;
+        case 'o':
+            found[3] = 1;
+            break;
+        case 'u':
+            found[4] = 1;
+            break;
+        default:
+            break;
+        }
+    }
+
+    return found[0] && found[1] && found[2] && found[3] && found[4];
+}
+
+int main(void)
+{
+    char buffer[MAX_LEN];
+    size_t len;
+
+    printf("Enter a string: ");
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = bounded_length(buffer, sizeof(buffer));
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    }
+
+    if (contains_all_vowels(buffer, sizeof(buffer))) {
+        printf("Accepted: the string contains all vowels\n");
+    } else {
+        printf("Rejected: the string does not contain all vowels\n");
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+Analysis of the original code and the flagged weakness:
+
+**The flagged weakness (CWE-119/CWE-120):** Flawfinder statically flagged `char buffer[MAX_LEN]` because fixed-size buffers are a common source of overflows. However, this is a low-risk finding here because the code already implements every mitigation the warning suggests:
+
+1. **Bounded input:** `fgets(buffer, (int)sizeof(buffer), stdin)` limits the read to the buffer size, so no overflow can occur on input. Using `sizeof(buffer)` rather than a hardcoded constant keeps the size and the limit in sync if `MAX_LEN` changes.
+
+2. **Guaranteed null termination:** `buffer[sizeof(buffer) - 1] = '\0';` is defensive redundancy — `fgets` already null-terminates, but this protects against future refactoring to functions that don't.
+
+3. **Bounded string operations:** `bounded_length()` acts as a safe `strnlen()` replacement, never scanning past `max_len`, so even a non-terminated buffer couldn't cause an out-of-bounds read.
+
+4. **NULL check:** `contains_all_vowels()` guards against a NULL pointer before dereferencing.
+
+5. **Correct `tolower` usage:** casting to `(unsigned char)` before calling `tolower` avoids undefined behavior with negative `char` values on platforms where `char` is signed.
+
+6. **Error handling:** the `fgets` return value is checked, and failure exits via `EXIT_FAILURE`.
+
+Since the warning is a static heuristic rather than an actual exploitable flaw, the correct "fix" is to keep the existing mitigations intact — which the rewritten code does. No functional or security changes were needed beyond removing the comments as requested.

@@ -1,0 +1,46 @@
+#include <stdio.h>
+#include <stddef.h>
+
+int minSwaps(const char *s1, const char *s2) {
+    if (s1 == NULL || s2 == NULL) {
+        return -1;
+    }
+
+    int ones1 = 0;
+    int ones2 = 0;
+    int mismatches = 0;
+    const char *p = s1;
+    const char *q = s2;
+
+    while (*p != '\0' && *q != '\0') {
+        if (*p != '0' && *p != '1') return -1;
+        if (*q != '0' && *q != '1') return -1;
+
+        if (*p == '1') ++ones1;
+        if (*q == '1') ++ones2;
+        if (*p != *q) ++mismatches;
+
+        ++p;
+        ++q;
+    }
+
+    if (*p != '\0' || *q != '\0') {
+        return -1;
+    }
+
+    if (ones1 != ones2) {
+        return -1;
+    }
+
+    return mismatches / 2;
+}
+
+int main(int argc, char **argv) {
+    if (argc != 3) {
+        printf("Usage: program <binary_string1> <binary_string2>\n");
+        return 1;
+    }
+
+    printf("%d\n", minSwaps(argv[1], argv[2]));
+    return 0;
+}

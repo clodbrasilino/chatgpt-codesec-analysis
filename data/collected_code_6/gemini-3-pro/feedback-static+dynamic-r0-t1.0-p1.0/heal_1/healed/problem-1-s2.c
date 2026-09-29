@@ -1,0 +1,95 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int min(int x, int y, int z) {
+    if (x < y) {
+        return (x < z) ? x : z;
+    } else {
+        return (y < z) ? y : z;
+    }
+}
+
+int minCost(int **cost, int m, int n, int row_size, int col_size) {
+    int max_m = m + 1;
+    int max_n = n + 1;
+
+    int **tc = (int **)malloc(max_m * sizeof(int *));
+    if (tc == NULL) {
+        return -1;
+    }
+    
+    for (int i = 0; i < max_m; i++) {
+        tc[i] = (int *)malloc(max_n * sizeof(int));
+        if (tc[i] == NULL) {
+            for (int k = 0; k < i; k++) {
+                free(tc[k]);
+            }
+            free(tc);
+            return -1;
+        }
+    }
+
+    tc[0][0] = cost[0][0];
+
+    for (int i = 1; i <= m; i++) {
+        tc[i][0] = tc[i - 1][0] + cost[i][0];
+    }
+
+    for (int j = 1; j <= n; j++) {
+        tc[0][j] = tc[0][j - 1] + cost[0][j];
+    }
+
+    for (int i = 1; i <= m; i++) {
+        for (int j = 1; j <= n; j++) {
+            tc[i][j] = min(tc[i - 1][j - 1], tc[i - 1][j], tc[i][j - 1]) + cost[i][j];
+        }
+    }
+
+    int res = tc[m][n];
+
+    for (int i = 0; i < max_m; i++) {
+        free(tc[i]);
+    }
+    free(tc);
+
+    return res;
+}
+
+int main() {
+    int row_size = 3;
+    int col_size = 3;
+
+    int **cost = (int **)malloc(row_size * sizeof(int *));
+    if (cost == NULL) {
+        return 1;
+    }
+
+    for (int i = 0; i < row_size; i++) {
+        cost[i] = (int *)malloc(col_size * sizeof(int));
+        if (cost[i] == NULL) {
+            for (int k = 0; k < i; k++) {
+                free(cost[k]);
+            }
+            free(cost);
+            return 1;
+        }
+    }
+
+    cost[0][0] = 1; cost[0][1] = 2; cost[0][2] = 3;
+    cost[1][0] = 4; cost[1][1] = 8; cost[1][2] = 2;
+    cost[2][0] = 1; cost[2][1] = 5; cost[2][2] = 3;
+
+    int m = 2;
+    int n = 2;
+
+    int result = minCost(cost, m, n, row_size, col_size);
+
+    printf("%d\n", result);
+
+    for (int i = 0; i < row_size; i++) {
+        free(cost[i]);
+    }
+    free(cost);
+
+    return 0;
+}

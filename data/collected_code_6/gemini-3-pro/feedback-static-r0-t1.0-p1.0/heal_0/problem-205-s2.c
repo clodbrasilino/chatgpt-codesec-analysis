@@ -1,0 +1,113 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *elements;
+    size_t size;
+} Tuple;
+
+typedef struct {
+    Tuple *tuples;
+    size_t size;
+} TupleList;
+
+void invert_tuples(TupleList *list) {
+    if (list == NULL || list->tuples == NULL) {
+        return;
+    }
+
+    for (size_t i = 0; i < list->size; i++) {
+        Tuple *tuple = &list->tuples[i];
+        if (tuple->elements == NULL) {
+            continue;
+        }
+
+        size_t start = 0;
+        size_t end = tuple->size;
+        
+        if (end > 0) {
+            end -= 1;
+            while (start < end) {
+                int temp = tuple->elements[start];
+                tuple->elements[start] = tuple->elements[end];
+                tuple->elements[end] = temp;
+                start++;
+                end--;
+            }
+        }
+    }
+}
+
+void print_tuples(const TupleList *list) {
+    if (list == NULL || list->tuples == NULL) {
+        return;
+    }
+
+    for (size_t i = 0; i < list->size; i++) {
+        printf("(");
+        Tuple *tuple = &list->tuples[i];
+        if (tuple->elements != NULL) {
+            for (size_t j = 0; j < tuple->size; j++) {
+                printf("%d", tuple->elements[j]);
+                if (j < tuple->size - 1) {
+                    printf(", ");
+                }
+            }
+        }
+        printf(")\n");
+    }
+}
+
+void free_tuple_list(TupleList *list) {
+    if (list == NULL || list->tuples == NULL) {
+        return;
+    }
+
+    for (size_t i = 0; i < list->size; i++) {
+        if (list->tuples[i].elements != NULL) {
+            free(list->tuples[i].elements);
+            list->tuples[i].elements = NULL;
+        }
+    }
+    free(list->tuples);
+    list->tuples = NULL;
+}
+
+int main(void) {
+    TupleList list;
+    list.size = 2;
+    
+    list.tuples = (Tuple *)malloc(list.size * sizeof(Tuple));
+    if (list.tuples == NULL) {
+        return 1;
+    }
+
+    list.tuples[0].size = 3;
+    list.tuples[0].elements = (int *)malloc(list.tuples[0].size * sizeof(int));
+    if (list.tuples[0].elements == NULL) {
+        free_tuple_list(&list);
+        return 1;
+    }
+    list.tuples[0].elements[0] = 1;
+    list.tuples[0].elements[1] = 2;
+    list.tuples[0].elements[2] = 3;
+
+    list.tuples[1].size = 4;
+    list.tuples[1].elements = (int *)malloc(list.tuples[1].size * sizeof(int));
+    if (list.tuples[1].elements == NULL) {
+        free_tuple_list(&list);
+        return 1;
+    }
+    list.tuples[1].elements[0] = 4;
+    list.tuples[1].elements[1] = 5;
+    list.tuples[1].elements[2] = 6;
+    list.tuples[1].elements[3] = 7;
+
+    invert_tuples(&list);
+    
+    print_tuples(&list);
+
+    free_tuple_list(&list);
+
+    return 0;
+}

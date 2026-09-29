@@ -1,0 +1,18 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-115.c:124:26: error: use of undeclared identifier 'dict'
+  124 |         dictionary_free(&dict
+      |                          ^~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-115.c:124:30: error: expected ';' after expression
+  124 |         dictionary_free(&dict
+      |                              ^
+      |                              ;
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-115.c:124:30: error: expected '}'
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-115.c:120:38: note: to match this '{'
+  120 |         !dictionary_init(&dict3, 2)) {
+      |                                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-115.c:124:30: error: expected '}'
+  124 |         dictionary_free(&dict
+      |                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-115.c:113:16: note: to match this '{'
+  113 | int main(void) {
+      |                ^
+4 errors generated.

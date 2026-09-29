@@ -1,0 +1,4 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-946.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-946.c:100:38: style: Same expression on both sides of '<='. [duplicateExpression]
+            if (current_word_len + 1 <= current_word_len + 1 && memcpy(new_word, current_word, current_word_len + 1) != new_word) {
+                                     ^

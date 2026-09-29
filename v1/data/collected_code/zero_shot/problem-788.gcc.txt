@@ -1,0 +1,16 @@
+collected_code/problem-788-0.c: In function 'createNewTuple':
+collected_code/problem-788-0.c:19:20: warning: dereference of possibly-NULL 'new_tuple' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   19 |     new_tuple->str = (char*)malloc((str_size + 1) * sizeof(char));
+      |     ~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  'createNewTuple': events 1-2
+    |
+    |   15 |     Tuple* new_tuple = (Tuple*)malloc(sizeof(Tuple));
+    |      |                                ^~~~~~~~~~~~~~~~~~~~~
+    |      |                                |
+    |      |                                (1) this call could return NULL
+    |......
+    |   19 |     new_tuple->str = (char*)malloc((str_size + 1) * sizeof(char));
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                    |
+    |      |                    (2) 'new_tuple' could be NULL: unchecked value from (1)
+    |

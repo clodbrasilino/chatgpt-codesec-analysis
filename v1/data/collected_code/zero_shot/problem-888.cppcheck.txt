@@ -1,0 +1,6 @@
+collected_code/problem-888-0.c:8:37: error: Cannot determine that 'tuple1[i][j]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+            result[i][j] = tuple1[i][j] - tuple2[i][j];
+                                    ^
+collected_code/problem-888-0.c:8:52: error: Cannot determine that 'tuple2[i][j]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+            result[i][j] = tuple1[i][j] - tuple2[i][j];
+                                                   ^

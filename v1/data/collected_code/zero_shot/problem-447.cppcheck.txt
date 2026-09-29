@@ -1,0 +1,9 @@
+collected_code/problem-447-0.c:5:23: error: Cannot determine that 'list[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        list[i] = list[i] * list[i] * list[i];
+                      ^
+collected_code/problem-447-0.c:12:18: error: Cannot determine that 'size' is initialized [premium-bughuntingUninit]
+    scanf("%d", &size);
+                 ^
+collected_code/problem-447-0.c:24:28: error: Cannot determine that 'list[i]' is initialized [premium-bughuntingUninit]
+        printf("%d\n", list[i]);
+                           ^

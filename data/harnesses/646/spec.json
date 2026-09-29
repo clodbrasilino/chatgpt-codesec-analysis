@@ -1,0 +1,47 @@
+{
+  "task_id": 646,
+  "text": "Write a C function to count number of cubes of size k in a cube of size n.",
+  "fn_candidates": [
+    "No_of_cubes",
+    "NoOfCubes",
+    "NoOfCubes",
+    "Noofcubes"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "No_of_cubes",
+      "args": [
+        2,
+        1
+      ],
+      "expected": 8,
+      "assert_src": "assert No_of_cubes(2,1) == 8"
+    },
+    {
+      "fn_name": "No_of_cubes",
+      "args": [
+        5,
+        2
+      ],
+      "expected": 64,
+      "assert_src": "assert No_of_cubes(5,2) == 64"
+    },
+    {
+      "fn_name": "No_of_cubes",
+      "args": [
+        1,
+        1
+      ],
+      "expected": 1,
+      "assert_src": "assert No_of_cubes(1,1) == 1"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

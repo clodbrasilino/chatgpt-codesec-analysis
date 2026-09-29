@@ -1,0 +1,88 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+#include <stdlib.h>
+
+#define BUF_SIZE 256
+
+void remove_chars(char *str, const char *mask);
+static bool read_line(char *buffer, size_t size, const char *prompt);
+
+void remove_chars(char *str, const char *mask)
+{
+    bool present[256] = { false };
+    size_t i;
+    size_t j;
+
+    if (str == NULL || mask == NULL) {
+        return;
+    }
+
+    for (i = 0; mask[i] != '\0'; i++) {
+        present[(unsigned char)mask[i]] = true;
+    }
+
+    j = 0;
+    for (i = 0; str[i] != '\0'; i++) {
+        if (!present[(unsigned char)str[i]]) {
+            str[j] = str[i];
+            j++;
+        }
+    }
+    str[j] = '\0';
+}
+
+static bool read_line(char *buffer, size_t size, const char *prompt)
+{
+    size_t len;
+
+    if (buffer == NULL || size == 0 || prompt == NULL) {
+        return false;
+    }
+
+    printf("%s", prompt);
+    if (fgets(buffer, (int)size, stdin) == NULL) {
+        return false;
+    }
+
+    buffer[size - 1] = '\0';
+    len = strnlen(buffer, size);
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    }
+
+    return true;
+}
+
+int main(void)
+{
+    char first[BUF_SIZE];
+    char second[BUF_SIZE];
+
+    if (!read_line(first, sizeof(first), "Enter the first string: ")) {
+        fprintf(stderr, "Error reading first string\n");
+        return EXIT_FAILURE;
+    }
+
+    if (!read_line(second, sizeof(second), "Enter the second string: ")) {
+        fprintf(stderr, "Error reading second string\n");
+        return EXIT_FAILURE;
+    }
+
+    remove_chars(first, second);
+
+    printf("Result: %s\n", first);
+
+    return EXIT_SUCCESS;
+}
+```
+
+The flagged weaknesses (CWE-119/CWE-120 on the statically-sized buffers) are already mitigated in this implementation, so no functional changes were required beyond removing the comments:
+
+- **Bounded input**: `fgets(buffer, (int)size, stdin)` limits reads to the buffer size, and the size is passed via `sizeof(first)` / `sizeof(second)`, so it can never desynchronize from the actual array size.
+- **Guaranteed termination**: `buffer[size - 1] = '\0'` forces NUL-termination, and `strnlen` (rather than `strlen`) bounds the length scan to the buffer size.
+- **Defensive checks**: `read_line` validates `buffer`, `size`, and `prompt`; `remove_chars` validates both pointers before use.
+- **Safe indexing**: The `(unsigned char)` casts in `remove_chars` prevent negative array indices into `present[256]` on platforms where `char` is signed, and the in-place compaction writes `j <= i`, so it can never overflow the source buffer.
+
+The Flawfinder hits are risk-level-2 informational warnings triggered simply by the presence of fixed-size `char` arrays; the surrounding code already performs the recommended bounds checking.

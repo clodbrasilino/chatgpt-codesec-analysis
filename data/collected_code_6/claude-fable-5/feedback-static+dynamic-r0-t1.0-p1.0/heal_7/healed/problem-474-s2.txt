@@ -1,0 +1,75 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+size_t replace_char(char *str, size_t max_len, char old_char, char new_char)
+{
+    size_t count = 0;
+    size_t i;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    for (i = 0; i < max_len && str[i] != '\0'; i++) {
+        if (str[i] == old_char) {
+            str[i] = new_char;
+            count++;
+        }
+    }
+
+    return count;
+}
+
+int main(void)
+{
+    static const char original[] = "hello world, hello everyone";
+    size_t buffer_size;
+    size_t source_len;
+    char *buffer;
+    size_t replaced;
+
+    source_len = sizeof(original);
+    buffer_size = source_len;
+
+    buffer = malloc(buffer_size);
+    if (buffer == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    if (source_len > buffer_size) {
+        fprintf(stderr, "Source data exceeds destination buffer\n");
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+
+    memcpy(buffer, original, source_len);
+    buffer[buffer_size - 1] = '\0';
+
+    replaced = replace_char(buffer, buffer_size, 'l', 'L');
+
+    if (printf("Original: %s\n", original) < 0) {
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Modified: %s\n", buffer) < 0) {
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Replacements made: %zu\n", replaced) < 0) {
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+
+    free(buffer);
+    buffer = NULL;
+
+    return EXIT_SUCCESS;
+}
+```
+
+The key change addresses the Flawfinder CWE-120 warning: before calling `memcpy`, the code now explicitly verifies that the source length does not exceed the destination buffer size, guaranteeing the destination can always hold the source data. The copy length is also tied directly to the validated `source_len`, and the buffer remains explicitly null-terminated as a defensive measure.

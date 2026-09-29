@@ -1,0 +1,15 @@
+collected_code/problem-55-0.c:18:19: error: Cannot determine that 'firstTerm' is initialized [premium-bughuntingUninit]
+    scanf("%lf", &firstTerm);
+                  ^
+collected_code/problem-55-0.c:21:19: error: Cannot determine that 'commonRatio' is initialized [premium-bughuntingUninit]
+    scanf("%lf", &commonRatio);
+                  ^
+collected_code/problem-55-0.c:24:18: error: Cannot determine that 'n' is initialized [premium-bughuntingUninit]
+    scanf("%d", &n);
+                 ^
+collected_code/problem-55-0.c:26:40: error: Cannot determine that 'firstTerm' is initialized [premium-bughuntingUninit]
+    double nthTerm = findGeometricTerm(firstTerm, commonRatio, n);
+                                       ^
+collected_code/problem-55-0.c:26:51: error: Cannot determine that 'commonRatio' is initialized [premium-bughuntingUninit]
+    double nthTerm = findGeometricTerm(firstTerm, commonRatio, n);
+                                                  ^

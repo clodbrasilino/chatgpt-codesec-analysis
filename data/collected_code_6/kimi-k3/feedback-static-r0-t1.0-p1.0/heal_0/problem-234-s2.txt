@@ -1,0 +1,28 @@
+```c
+#include <stdio.h>
+
+double cube_volume(double side) {
+    if (side < 0.0) {
+        return -1.0;
+    }
+    return side * side * side;
+}
+
+int main(void) {
+    double side;
+    double volume;
+    
+    if (scanf("%lf", &side) != 1) {
+        return 1;
+    }
+    
+    volume = cube_volume(side);
+    if (volume < 0.0) {
+        return 1;
+    }
+    
+    printf("%.6f\n", volume);
+    
+    return 0;
+}
+```

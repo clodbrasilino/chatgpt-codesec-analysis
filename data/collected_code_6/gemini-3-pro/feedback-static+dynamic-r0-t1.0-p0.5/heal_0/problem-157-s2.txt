@@ -1,0 +1,64 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int value;
+    int count;
+} RLE_Element;
+
+int* decode_rle(const RLE_Element* rle_list, size_t rle_length, size_t* out_length) {
+    if (rle_list == NULL || out_length == NULL) {
+        return NULL;
+    }
+
+    size_t total_length = 0;
+    for (size_t i = 0; i < rle_length; ++i) {
+        if (rle_list[i].count < 0) {
+            return NULL;
+        }
+        total_length += (size_t)rle_list[i].count;
+    }
+
+    int* decoded_array = (int*)malloc(total_length * sizeof(int));
+    if (decoded_array == NULL) {
+        return NULL;
+    }
+
+    size_t current_index = 0;
+    for (size_t i = 0; i < rle_length; ++i) {
+        for (int j = 0; j < rle_list[i].count; ++j) {
+            decoded_array[current_index++] = rle_list[i].value;
+        }
+    }
+
+    *out_length = total_length;
+    return decoded_array;
+}
+
+int main(void) {
+    RLE_Element rle_data[] = {
+        {5, 3},
+        {2, 1},
+        {8, 4},
+        {1, 2}
+    };
+    size_t rle_length = sizeof(rle_data) / sizeof(rle_data[0]);
+    size_t decoded_length = 0;
+
+    int* decoded_array = decode_rle(rle_data, rle_length, &decoded_length);
+
+    if (decoded_array != NULL) {
+        for (size_t i = 0; i < decoded_length; ++i) {
+            printf("%d ", decoded_array[i]);
+        }
+        printf("\n");
+        free(decoded_array);
+    } else {
+        fprintf(stderr, "Failed to decode RLE data.\n");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```

@@ -1,0 +1,18 @@
+collected_code/problem-535-0.c:13:23: error: Cannot determine that 'radius' is initialized [premium-bughuntingUninit]
+    scanf("%lf %lf", &radius, &height);
+                      ^
+collected_code/problem-535-0.c:13:32: error: Cannot determine that 'height' is initialized [premium-bughuntingUninit]
+    scanf("%lf %lf", &radius, &height);
+                               ^
+collected_code/problem-535-0.c:15:42: error: Cannot determine that 'radius' is initialized [premium-bughuntingUninit]
+    double topArea = cylinderSurfaceArea(radius, height);
+                                         ^
+collected_code/problem-535-0.c:15:50: error: Cannot determine that 'height' is initialized [premium-bughuntingUninit]
+    double topArea = cylinderSurfaceArea(radius, height);
+                                                 ^
+collected_code/problem-535-0.c:16:45: error: Cannot determine that 'radius' is initialized [premium-bughuntingUninit]
+    double bottomArea = cylinderSurfaceArea(radius, height);
+                                            ^
+collected_code/problem-535-0.c:16:53: error: Cannot determine that 'height' is initialized [premium-bughuntingUninit]
+    double bottomArea = cylinderSurfaceArea(radius, height);
+                                                    ^

@@ -1,0 +1,139 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct ListNode {
+    int value;
+    struct ListNode *next;
+} ListNode;
+
+typedef struct DictEntry {
+    char *key;
+    ListNode *values;
+    struct DictEntry *next;
+} DictEntry;
+
+typedef struct Dictionary {
+    DictEntry **buckets;
+    size_t capacity;
+} Dictionary;
+
+unsigned long hash_key(const char *str, size_t capacity) {
+    unsigned long hash = 5381;
+    int c;
+    while ((c = *str++)) {
+        hash = ((hash << 5) + hash) + c;
+    }
+    return hash % capacity;
+}
+
+void free_list(ListNode *head) {
+    ListNode *current = head;
+    while (current) {
+        ListNode *next = current->next;
+        free(current);
+        current = next;
+    }
+}
+
+void free_dict(Dictionary *dict) {
+    if (!dict) return;
+    for (size_t i = 0; i < dict->capacity; i++) {
+        DictEntry *entry = dict->buckets[i];
+        while (entry) {
+            DictEntry *next_entry = entry->next;
+            free(entry->key);
+            free_list(entry->values);
+            free(entry);
+            entry = next_entry;
+        }
+    }
+    free(dict->buckets);
+    free(dict);
+}
+
+Dictionary *create_dict(size_t capacity) {
+    Dictionary *dict = malloc(sizeof(Dictionary));
+    if (!dict) return NULL;
+    dict->buckets = calloc(capacity, sizeof(DictEntry *));
+    if (!dict->buckets) {
+        free(dict);
+        return NULL;
+    }
+    dict->capacity = capacity;
+    return dict;
+}
+
+int add_to_dict(Dictionary *dict, const char *key, int value) {
+    if (!dict || !key) return 0;
+    unsigned long index = hash_key(key, dict->capacity);
+    DictEntry *entry = dict->buckets[index];
+    int is_new_entry = 0;
+    while (entry) {
+        if (strcmp(entry->key, key) == 0) break;
+        entry = entry->next;
+    }
+    if (!entry) {
+        is_new_entry = 1;
+        entry = malloc(sizeof(DictEntry));
+        if (!entry) return 0;
+        entry->key = strdup(key);
+        if (!entry->key) {
+            free(entry);
+            return 0;
+        }
+        entry->values = NULL;
+        entry->next = dict->buckets[index];
+        dict->buckets[index] = entry;
+    }
+    ListNode *node = malloc(sizeof(ListNode));
+    if (!node) {
+        if (is_new_entry) {
+            dict->buckets[index] = entry->next;
+            free(entry->key);
+            free(entry);
+        }
+        return 0;
+    }
+    node->value = value;
+    node->next = entry->values;
+    entry->values = node;
+    return 1;
+}
+
+void print_dict(const Dictionary *dict) {
+    if (!dict) return;
+    for (size_t i = 0; i < dict->capacity; i++) {
+        DictEntry *entry = dict->buckets[i];
+        while (entry) {
+            printf("%s: [", entry->key);
+            ListNode *node = entry->values;
+            while (node) {
+                printf("%d", node->value);
+                if (node->next) printf(", ");
+                node = node->next;
+            }
+            printf("]\n");
+            entry = entry->next;
+        }
+    }
+}
+
+int main(void) {
+    Dictionary *dict = create_dict(16);
+    if (!dict) return EXIT_FAILURE;
+
+    add_to_dict(dict, "fruits", 1);
+    add_to_dict(dict, "fruits", 2);
+    add_to_dict(dict, "vegetables", 3);
+    add_to_dict(dict, "fruits", 4);
+    add_to_dict(dict, "vegetables", 5);
+    add_to_dict(dict, "grains", 6);
+
+    print_dict(dict);
+    free_dict(dict);
+    
+    return EXIT_SUCCESS;
+}
+```

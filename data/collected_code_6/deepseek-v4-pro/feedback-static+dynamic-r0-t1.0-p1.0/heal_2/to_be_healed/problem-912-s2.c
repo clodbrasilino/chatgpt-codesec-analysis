@@ -1,0 +1,84 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+long long gcd(long long a, long long b) {
+    while (b != 0) {
+        long long temp = b;
+        b = a % b;
+        a = temp;
+    }
+    return a;
+}
+
+long long binomial_coefficient(int n, int k) {
+    if (k < 0 || k > n) return 0;
+    if (k > n - k) k = n - k;
+    
+    long long result = 1;
+    for (int i = 0; i < k; i++) {
+        long long numerator = (long long)(n - i);
+        long long denominator = (long long)(i + 1);
+        
+        long long g = gcd(result, denominator);
+        long long reduced_den = denominator / g;
+        long long temp = result / g;
+        
+        if (temp > LLONG_MAX / numerator) return 0;
+        temp *= numerator;
+        
+        result = temp / reduced_den;
+    }
+    return result;
+}
+
+long long lobb_number(int m, int n) {
+    if (m < 0 || n < 0) return 0;
+    if (m > n) return 0;
+    
+    /* Possible weaknesses found:
+     * UBSan: signed integer overflow: 2 * 1842981546 cannot be represented in type 'int' (AFL crash: id:000000,sig:06,src:000001,time:13518,execs:9267,op:havoc,rep:4)
+     */
+    long long binom = binomial_coefficient(2 * n, m + n);
+    if (binom == 0) return 0;
+    
+    long long factor = (long long)(2 * m + 1);
+    
+    long long numerator, denominator;
+    denominator = (long long)(m + n + 1);
+    
+    long long g1 = gcd(factor, denominator);
+    long long reduced_factor = factor / g1;
+    long long reduced_den = denominator / g1;
+    
+    if (reduced_factor > LLONG_MAX / binom) return 0;
+    numerator = reduced_factor * binom;
+    
+    long long g2 = gcd(numerator, reduced_den);
+    numerator /= g2;
+    reduced_den /= g2;
+    
+    if (reduced_den != 1) return 0;
+    
+    return numerator;
+}
+
+int main(void) {
+    int m, n;
+    
+    printf("Enter m and n: ");
+    if (scanf("%d %d", &m, &n) != 2) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    if (m < 0 || n < 0 || m > n) {
+        fprintf(stderr, "Invalid parameters: require 0 <= m <= n\n");
+        return EXIT_FAILURE;
+    }
+    
+    long long result = lobb_number(m, n);
+    printf("L(%d, %d) = %lld\n", m, n, result);
+    
+    return EXIT_SUCCESS;
+}

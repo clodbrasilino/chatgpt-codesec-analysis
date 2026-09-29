@@ -1,0 +1,45 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+double calculate_parallelogram_perimeter(double base, double side) {
+    if (base <= 0 || side <= 0) {
+        return -1;
+    }
+    return 2 * (base + side);
+}
+
+int main(void) {
+    double base = 0.0;
+    double side = 0.0;
+    double perimeter = 0.0;
+    int result = 0;
+    int extra = 0;
+
+    printf("Enter the base length of the parallelogram: ");
+    result = scanf("%lf", &base);
+    if (result != 1 || base <= 0) {
+        printf("Invalid input for base length.\n");
+        while ((extra = getchar()) != '\n' && extra != EOF);
+        return EXIT_FAILURE;
+    }
+    while ((extra = getchar()) != '\n' && extra != EOF);
+
+    printf("Enter the side length of the parallelogram: ");
+    result = scanf("%lf", &side);
+    if (result != 1 || side <= 0) {
+        printf("Invalid input for side length.\n");
+        while ((extra = getchar()) != '\n' && extra != EOF);
+        return EXIT_FAILURE;
+    }
+    while ((extra = getchar()) != '\n' && extra != EOF);
+
+    perimeter = calculate_parallelogram_perimeter(base, side);
+    if (perimeter < 0) {
+        printf("Lengths must be positive numbers.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("The perimeter of the parallelogram is: %.2f\n", perimeter);
+
+    return EXIT_SUCCESS;
+}

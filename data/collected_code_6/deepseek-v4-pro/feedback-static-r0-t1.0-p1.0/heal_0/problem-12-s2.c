@@ -1,0 +1,68 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define ROWS 3
+#define COLS 3
+
+int compare_rows(const void *a, const void *b) {
+    const int *row_a = *(const int * const *)a;
+    const int *row_b = *(const int * const *)b;
+    int sum_a = 0, sum_b = 0;
+    
+    for (int i = 0; i < COLS; i++) {
+        sum_a += row_a[i];
+        sum_b += row_b[i];
+    }
+    
+    return sum_a - sum_b;
+}
+
+void sort_matrix_by_row_sum(int matrix[ROWS][COLS]) {
+    int *row_ptrs[ROWS];
+    
+    for (int i = 0; i < ROWS; i++) {
+        row_ptrs[i] = matrix[i];
+    }
+    
+    qsort(row_ptrs, ROWS, sizeof(int *), compare_rows);
+    
+    int temp[ROWS][COLS];
+    for (int i = 0; i < ROWS; i++) {
+        for (int j = 0; j < COLS; j++) {
+            temp[i][j] = row_ptrs[i][j];
+        }
+    }
+    
+    for (int i = 0; i < ROWS; i++) {
+        for (int j = 0; j < COLS; j++) {
+            matrix[i][j] = temp[i][j];
+        }
+    }
+}
+
+void print_matrix(int matrix[ROWS][COLS]) {
+    for (int i = 0; i < ROWS; i++) {
+        for (int j = 0; j < COLS; j++) {
+            printf("%d ", matrix[i][j]);
+        }
+        printf("\n");
+    }
+}
+
+int main(void) {
+    int matrix[ROWS][COLS] = {
+        {3, 1, 2},
+        {1, 1, 1},
+        {5, 6, 7}
+    };
+    
+    printf("Original matrix:\n");
+    print_matrix(matrix);
+    
+    sort_matrix_by_row_sum(matrix);
+    
+    printf("\nSorted matrix:\n");
+    print_matrix(matrix);
+    
+    return 0;
+}

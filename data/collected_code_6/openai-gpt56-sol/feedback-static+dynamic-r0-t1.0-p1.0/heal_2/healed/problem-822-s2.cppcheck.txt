@@ -1,0 +1,22 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-822-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-822-s2.c:78:16: style: Condition 'length==MAX_PASSWORD_LENGTH+1U' is always false [knownConditionTrueFalse]
+    if (length == MAX_PASSWORD_LENGTH + 1U &&
+               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-822-s2.c:68:16: note: Assuming that condition 'length>MAX_PASSWORD_LENGTH' is not redundant
+    if (length > MAX_PASSWORD_LENGTH) {
+               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-822-s2.c:73:26: note: Assuming condition is false
+    if (password[length] != '\0') {
+                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-822-s2.c:78:16: note: Condition 'length==MAX_PASSWORD_LENGTH+1U' is always false
+    if (length == MAX_PASSWORD_LENGTH + 1U &&
+               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-822-s2.c:85:26: style: Condition 'password[length]=='\0'' is always true [knownConditionTrueFalse]
+        password[length] == '\0' &&
+                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-822-s2.c:73:26: note: Assuming that condition 'password[length]!='\0'' is not redundant
+    if (password[length] != '\0') {
+                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-822-s2.c:85:26: note: Condition 'password[length]=='\0'' is always true
+        password[length] == '\0' &&
+                         ^

@@ -1,0 +1,48 @@
+#include <stdio.h>
+#include <math.h>
+
+struct PolarCoord {
+    double radius;
+    double angle_degrees;
+};
+
+struct RectCoord {
+    double x;
+    double y;
+};
+
+struct RectCoord polar_to_rect(struct PolarCoord polar) {
+    struct RectCoord rect;
+    double angle_radians = polar.angle_degrees * M_PI / 180.0;
+    rect.x = polar.radius * cos(angle_radians);
+    rect.y = polar.radius * sin(angle_radians);
+    return rect;
+}
+
+int main(void) {
+    struct PolarCoord polar_input;
+    struct RectCoord rect_output;
+
+    printf("Enter radius: ");
+    if (scanf("%lf", &polar_input.radius) != 1) {
+        fprintf(stderr, "Error: Invalid input for radius\n");
+        return 1;
+    }
+
+    printf("Enter angle in degrees: ");
+    if (scanf("%lf", &polar_input.angle_degrees) != 1) {
+        fprintf(stderr, "Error: Invalid input for angle\n");
+        return 1;
+    }
+
+    if (polar_input.radius < 0) {
+        fprintf(stderr, "Error: Radius cannot be negative\n");
+        return 1;
+    }
+
+    rect_output = polar_to_rect(polar_input);
+
+    printf("Rectangular coordinates: x = %.6f, y = %.6f\n", rect_output.x, rect_output.y);
+
+    return 0;
+}

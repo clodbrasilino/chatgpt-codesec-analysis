@@ -1,0 +1,44 @@
+{
+  "task_id": 5,
+  "text": "Write a C function to find the number of ways to fill it with 2 x 1 dominoes for the given 3 x n board.",
+  "fn_candidates": [
+    "count_ways",
+    "CountWays",
+    "countWays",
+    "countways"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "count_ways",
+      "args": [
+        2
+      ],
+      "expected": 3,
+      "assert_src": "assert count_ways(2) == 3"
+    },
+    {
+      "fn_name": "count_ways",
+      "args": [
+        8
+      ],
+      "expected": 153,
+      "assert_src": "assert count_ways(8) == 153"
+    },
+    {
+      "fn_name": "count_ways",
+      "args": [
+        12
+      ],
+      "expected": 2131,
+      "assert_src": "assert count_ways(12) == 2131"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

@@ -1,0 +1,95 @@
+./collected_code_4/round2//heal_0/problem-184.c: In function 'find_greater_values':
+./collected_code_4/round2//heal_0/problem-184.c:7:17: warning: use of uninitialized value '*array_15(D) + _2' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+    7 |         if(array[i] > value) {
+      |            ~~~~~^~~
+  'main': events 1-5
+    |
+    |   13 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   18 |     ptr = (int*)malloc(num * sizeof(int));
+    |      |                 ~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                 |
+    |      |                 (2) region created on heap here
+    |   19 | 
+    |   20 |     for(i = 0; i < num; i++) {
+    |      |                ~~~~~~~
+    |      |                  |
+    |      |                  (3) following 'false' branch...
+    |......
+    |   25 |     printf("Enter the value: ");
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (4) ...to here
+    |......
+    |   29 |     find_greater_values(ptr, num, val);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (5) calling 'find_greater_values' from 'main'
+    |
+    +--> 'find_greater_values': events 6-9
+           |
+           |    4 | void find_greater_values(int *array, int len, int value) {
+           |      |      ^~~~~~~~~~~~~~~~~~~
+           |      |      |
+           |      |      (6) entry to 'find_greater_values'
+           |    5 |     int i;
+           |    6 |     for(i = 0; i < len; i++) {
+           |      |                ~~~~~~~
+           |      |                  |
+           |      |                  (7) following 'true' branch (when 'i < len')...
+           |    7 |         if(array[i] > value) {
+           |      |            ~~~~~~~~
+           |      |                 |
+           |      |                 (8) ...to here
+           |      |                 (9) use of uninitialized value '*array_15(D) + _2' here
+           |
+./collected_code_4/round2//heal_0/problem-184.c:7:17: warning: dereference of possibly-NULL 'array' [CWE-690] [-Wanalyzer-possible-null-dereference]
+    7 |         if(array[i] > value) {
+      |            ~~~~~^~~
+  'main': events 1-5
+    |
+    |   13 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   18 |     ptr = (int*)malloc(num * sizeof(int));
+    |      |                 ~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                 |
+    |      |                 (2) this call could return NULL
+    |   19 | 
+    |   20 |     for(i = 0; i < num; i++) {
+    |      |                ~~~~~~~
+    |      |                  |
+    |      |                  (3) following 'false' branch...
+    |......
+    |   25 |     printf("Enter the value: ");
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (4) ...to here
+    |......
+    |   29 |     find_greater_values(ptr, num, val);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (5) calling 'find_greater_values' from 'main'
+    |
+    +--> 'find_greater_values': events 6-9
+           |
+           |    4 | void find_greater_values(int *array, int len, int value) {
+           |      |      ^~~~~~~~~~~~~~~~~~~
+           |      |      |
+           |      |      (6) entry to 'find_greater_values'
+           |    5 |     int i;
+           |    6 |     for(i = 0; i < len; i++) {
+           |      |                ~~~~~~~
+           |      |                  |
+           |      |                  (7) following 'true' branch (when 'i < len')...
+           |    7 |         if(array[i] > value) {
+           |      |            ~~~~~~~~
+           |      |                 |
+           |      |                 (8) ...to here
+           |      |                 (9) 'array + (long unsigned int)i * 4' could be NULL: unchecked value from (2)
+           |

@@ -1,0 +1,63 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int count_sequences(int n, int m) {
+    if (n <= 0 || m <= 0) return 0;
+    
+    long long **dp = (long long **)malloc(n * sizeof(long long *));
+    if (!dp) return 0;
+    
+    for (int i = 0; i < n; i++) {
+        dp[i] = (long long *)calloc(m + 1, sizeof(long long));
+        if (!dp[i]) {
+            for (int j = 0; j < i; j++) free(dp[j]);
+            free(dp);
+            return 0;
+        }
+    }
+    
+    for (int j = 1; j <= m; j++) {
+        dp[0][j] = 1;
+    }
+    
+    for (int i = 1; i < n; i++) {
+        for (int j = 1; j <= m; j++) {
+            long long sum = 0;
+            for (int k = 1; k <= j / 2; k++) {
+                sum += dp[i-1][k];
+            }
+            dp[i][j] = sum;
+        }
+    }
+    
+    long long total = 0;
+    for (int j = 1; j <= m; j++) {
+        total += dp[n-1][j];
+    }
+    
+    for (int i = 0; i < n; i++) free(dp[i]);
+    free(dp);
+    
+    return (int)total;
+}
+
+int main(void) {
+    int n, m;
+    
+    if (scanf("%d %d", &n, &m) != 2) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+    
+    if (n <= 0 || m <= 0) {
+        fprintf(stderr, "n and m must be positive\n");
+        return 1;
+    }
+    
+    int result = count_sequences(n, m);
+    printf("%d\n", result);
+    
+    return 0;
+}
+```

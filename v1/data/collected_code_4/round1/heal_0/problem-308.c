@@ -1,0 +1,45 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+void swap(int* a, int* b) {
+    int t = *a;
+    *a = *b;
+    *b = t;
+}
+
+void bubbleSort(int arr[], int n) {
+    for (int i = 0; i < n-1; i++) {
+        for (int j = 0; j < n-i-1; j++) {
+            if (arr[j] > arr[j+1])
+                swap(&arr[j], &arr[j + 1]);
+        }
+    }
+}
+
+void largestProducts(int arr1[], int arr2[], int n1, int n2, int n){
+    bubbleSort(arr1, n1);
+    bubbleSort(arr2, n2);
+    
+    if (n > n1 || n > n2) {
+        printf("Invalid Input");
+        return;
+    }
+  
+    int index1 = n1 - 1, index2 = n2 - 1;
+  
+    while (n--) {
+        printf("%d ", arr1[index1++] * arr2[index2--]);
+    }
+}
+
+int main() {
+    int arr1[] = {1, 2, 3, 4, 5};
+    int arr2[] = {6, 7, 8, 9, 10};
+    int n1 = sizeof(arr1)/sizeof(arr1[0]);
+    int n2 = sizeof(arr2)/sizeof(arr2[0]);
+    int n = 3;
+    
+    largestProducts(arr1, arr2, n1, n2, n);
+    
+    return 0;
+}

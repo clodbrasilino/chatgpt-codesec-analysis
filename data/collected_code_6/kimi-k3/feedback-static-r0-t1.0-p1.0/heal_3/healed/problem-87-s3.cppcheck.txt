@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-87-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-87-s3.c:37:40: warning: Either the condition 'key_len<4096' is redundant or the array 'key[2]' is accessed at index 4095, which is out of bounds. [arrayIndexOutOfBoundsCond]
+    while (key_len < MAX_KEY_LEN && key[key_len] != '\0') {
+                                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-87-s3.c:37:20: note: Assuming that condition 'key_len<4096' is not redundant
+    while (key_len < MAX_KEY_LEN && key[key_len] != '\0') {
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-87-s3.c:37:40: note: Array index out of bounds
+    while (key_len < MAX_KEY_LEN && key[key_len] != '\0') {
+                                       ^

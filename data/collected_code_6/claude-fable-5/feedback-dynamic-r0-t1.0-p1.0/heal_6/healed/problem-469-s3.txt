@@ -1,0 +1,98 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int maxProfit(int k, const int *prices, int n)
+{
+    int *prev;
+    int *curr;
+    int *tmp;
+    int t;
+    int d;
+    int maxDiff;
+    int result;
+
+    if (prices == NULL || n <= 1 || k <= 0) {
+        return 0;
+    }
+
+    if (k >= n / 2) {
+        result = 0;
+        for (d = 1; d < n; d++) {
+            if (prices[d] > prices[d - 1]) {
+                result += prices[d] - prices[d - 1];
+            }
+        }
+        return result;
+    }
+
+    prev = calloc((size_t)n, sizeof(int));
+    if (prev == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(EXIT_FAILURE);
+    }
+
+    curr = calloc((size_t)n, sizeof(int));
+    if (curr == NULL) {
+        free(prev);
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(EXIT_FAILURE);
+    }
+
+    for (t = 1; t <= k; t++) {
+        maxDiff = prev[0] - prices[0];
+        curr[0] = 0;
+        for (d = 1; d < n; d++) {
+            curr[d] = curr[d - 1];
+            if (prices[d] + maxDiff > curr[d]) {
+                curr[d] = prices[d] + maxDiff;
+            }
+            if (prev[d] - prices[d] > maxDiff) {
+                maxDiff = prev[d] - prices[d];
+            }
+        }
+        tmp = prev;
+        prev = curr;
+        curr = tmp;
+    }
+
+    result = prev[n - 1];
+
+    free(prev);
+    free(curr);
+
+    return result;
+}
+
+int main(void)
+{
+    int prices1[] = {10, 22, 5, 75, 65, 80};
+    int prices2[] = {3, 2, 6, 5, 0, 3};
+    int prices3[] = {2, 4, 1};
+    int n1 = (int)(sizeof(prices1) / sizeof(prices1[0]));
+    int n2 = (int)(sizeof(prices2) / sizeof(prices2[0]));
+    int n3 = (int)(sizeof(prices3) / sizeof(prices3[0]));
+    int profit;
+
+    profit = maxProfit(2, prices1, n1);
+    printf("Maximum profit with at most %d transactions: %d\n", 2, profit);
+
+    profit = maxProfit(2, prices2, n2);
+    printf("Maximum profit with at most %d transactions: %d\n", 2, profit);
+
+    profit = maxProfit(2, prices3, n3);
+    printf("Maximum profit with at most %d transactions: %d\n", 2, profit);
+
+    return EXIT_SUCCESS;
+}
+```
+
+Analysis notes on the identified weaknesses:
+
+The DP recurrence correctly handles all three failing cases now. Tracing through the logic: `maxDiff` tracks the best value of `prev[j] - prices[j]` (profit after the previous transaction minus the current buy price), and `curr[d]` takes the maximum of skipping day `d` or selling on day `d`. Verified results:
+
+- `{10, 22, 5, 75, 65, 80}`, k=2 → **87** (buy 10/sell 22, buy 5/sell 80)
+- `{3, 2, 6, 5, 0, 3}`, k=2 → **7** (buy 2/sell 6, buy 0/sell 3)
+- `{2, 4, 1}`, k=2 → **2** (handled by the `k >= n/2` greedy fast path)
+
+The earlier failures (returning 5 and 0) were symptomatic of the classic bugs in this algorithm — reading the result from the wrong buffer after the pointer swap, or initializing `maxDiff` inside the inner loop instead of once per transaction. Both are addressed: `result` is read from `prev` (which holds the latest completed transaction row after the swap), and `maxDiff` is seeded with `prev[0] - prices[0]` exactly once per transaction pass. Memory is allocated with `calloc` so the t=0 baseline row is properly zeroed, and both buffers are freed on all paths including the allocation-failure branch.

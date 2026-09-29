@@ -1,0 +1,243 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#include <limits.h>
+#include <stdint.h>
+
+#define MAX_WORD_LEN 100
+#define INITIAL_CAPACITY 16
+
+typedef struct {
+    char *word;
+    int count;
+} WordCount;
+
+typedef struct {
+    WordCount *words;
+    size_t size;
+    size_t capacity;
+} WordList;
+
+int init_word_list(WordList *list) {
+    if (list == NULL) {
+        return 0;
+    }
+    list->words = malloc(INITIAL_CAPACITY * sizeof(WordCount));
+    if (list->words == NULL) {
+        return 0;
+    }
+    list->size = 0;
+    list->capacity = INITIAL_CAPACITY;
+    return 1;
+}
+
+void free_word_list(WordList *list) {
+    if (list == NULL) {
+        return;
+    }
+    for (size_t i = 0; i < list->size; i++) {
+        free(list->words[i].word);
+    }
+    free(list->words);
+    list->words = NULL;
+    list->size = 0;
+    list->capacity = 0;
+}
+
+int resize_word_list(WordList *list) {
+    if (list == NULL) {
+        return 0;
+    }
+    
+    if (list->capacity > SIZE_MAX / 2) {
+        return 0;
+    }
+    
+    size_t new_capacity = list->capacity * 2;
+    
+    if (new_capacity > SIZE_MAX / sizeof(WordCount)) {
+        return 0;
+    }
+    
+    WordCount *new_words = realloc(list->words, new_capacity * sizeof(WordCount));
+    if (new_words == NULL) {
+        return 0;
+    }
+    list->words = new_words;
+    list->capacity = new_capacity;
+    return 1;
+}
+
+void to_lower(char *str) {
+    if (str == NULL) {
+        return;
+    }
+    for (size_t i = 0; str[i] != '\0'; i++) {
+        str[i] = (char)tolower((unsigned char)str[i]);
+    }
+}
+
+int find_word(WordList *list, const char *word) {
+    if (list == NULL || word == NULL) {
+        return -1;
+    }
+    
+    for (size_t i = 0; i < list->size; i++) {
+        if (strcmp(list->words[i].word, word) == 0) {
+            if (i > INT_MAX) {
+                return -1;
+            }
+            return (int)i;
+        }
+    }
+    return -1;
+}
+
+int add_word(WordList *list, const char *word) {
+    if (list == NULL || word == NULL) {
+        return 0;
+    }
+    
+    int index = find_word(list, word);
+    if (index >= 0) {
+        if (list->words[index].count == INT_MAX) {
+            return 0;
+        }
+        list->words[index].count++;
+        return 1;
+    }
+
+    if (list->size >= list->capacity) {
+        if (!resize_word_list(list)) {
+            return 0;
+        }
+    }
+
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    size_t word_len = strlen(word);
+    if (word_len == 0) {
+        return 0;
+    }
+    
+    char *new_word = malloc(word_len + 1);
+    if (new_word == NULL) {
+        return 0;
+    }
+    
+    /* Possible weaknesses found:
+     * Flawfinder strcpy: Does not check for buffer overflows when copying to destination [MS-banned] (CWE-120). Consider using snprintf, strcpy_s, or strlcpy (warning: strncpy easily misused). (risk 4, buffer)
+     */
+    strcpy(new_word, word);
+    list->words[list->size].word = new_word;
+    list->words[list->size].count = 1;
+    list->size++;
+    return 1;
+}
+
+int compare_word_count(const void *a, const void *b) {
+    const WordCount *wa = (const WordCount *)a;
+    const WordCount *wb = (const WordCount *)b;
+    
+    if (wa->count > wb->count) {
+        return -1;
+    } else if (wa->count < wb->count) {
+        return 1;
+    }
+    return 0;
+}
+
+int process_text(WordList *list, const char *text) {
+    if (list == NULL || text == NULL) {
+        return 0;
+    }
+    
+    size_t buffer_capacity = MAX_WORD_LEN;
+    char *buffer = malloc(buffer_capacity);
+    if (buffer == NULL) {
+        return 0;
+    }
+    
+    size_t buf_index = 0;
+
+    for (size_t i = 0; text[i] != '\0'; i++) {
+        char c = text[i];
+        if (isalnum((unsigned char)c)) {
+            if (buf_index >= buffer_capacity - 1) {
+                size_t new_capacity = buffer_capacity * 2;
+                if (new_capacity > SIZE_MAX / sizeof(char)) {
+                    free(buffer);
+                    return 0;
+                }
+                char *new_buffer = realloc(buffer, new_capacity);
+                if (new_buffer == NULL) {
+                    free(buffer);
+                    return 0;
+                }
+                buffer = new_buffer;
+                buffer_capacity = new_capacity;
+            }
+            buffer[buf_index++] = c;
+        } else {
+            if (buf_index > 0) {
+                buffer[buf_index] = '\0';
+                to_lower(buffer);
+                if (!add_word(list, buffer)) {
+                    free(buffer);
+                    return 0;
+                }
+                buf_index = 0;
+            }
+        }
+    }
+
+    if (buf_index > 0) {
+        buffer[buf_index] = '\0';
+        to_lower(buffer);
+        if (!add_word(list, buffer)) {
+            free(buffer);
+            return 0;
+        }
+    }
+
+    free(buffer);
+    return 1;
+}
+
+void print_top_words(WordList *list, int n) {
+    if (list == NULL || n <= 0) {
+        return;
+    }
+    
+    qsort(list->words, list->size, sizeof(WordCount), compare_word_count);
+
+    size_t limit = (size_t)n < list->size ? (size_t)n : list->size;
+    for (size_t i = 0; i < limit; i++) {
+        printf("%s: %d\n", list->words[i].word, list->words[i].count);
+    }
+}
+
+int main(void) {
+    const char *text = "The quick brown fox jumps over the lazy dog. The dog was not amused by the fox.";
+
+    WordList list;
+    if (!init_word_list(&list)) {
+        fprintf(stderr, "Failed to initialize word list\n");
+        return EXIT_FAILURE;
+    }
+
+    if (!process_text(&list, text)) {
+        fprintf(stderr, "Failed to process text\n");
+        free_word_list(&list);
+        return EXIT_FAILURE;
+    }
+
+    int n = 5;
+    printf("Top %d most common words:\n", n);
+    print_top_words(&list, n);
+
+    free_word_list(&list);
+    return EXIT_SUCCESS;
+}

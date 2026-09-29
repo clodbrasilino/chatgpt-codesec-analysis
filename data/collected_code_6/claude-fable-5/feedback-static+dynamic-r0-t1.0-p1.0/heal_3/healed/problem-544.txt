@@ -1,0 +1,125 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    int first;
+    int second;
+} Tuple;
+
+char *flatten_tuple_list(const Tuple *tuples, size_t count)
+{
+    size_t capacity;
+    size_t length;
+    size_t i;
+    char *result;
+    char buffer[64];
+
+    if (tuples == NULL || count == 0U) {
+        result = malloc(1U);
+        if (result == NULL) {
+            return NULL;
+        }
+        result[0] = '\0';
+        return result;
+    }
+
+    capacity = 64U;
+    length = 0U;
+    result = malloc(capacity);
+    if (result == NULL) {
+        return NULL;
+    }
+    result[0] = '\0';
+
+    for (i = 0U; i < count; i++) {
+        int written;
+        size_t needed;
+
+        written = snprintf(buffer, sizeof(buffer), "%d %d",
+                           tuples[i].first, tuples[i].second);
+        if (written < 0 || (size_t)written >= sizeof(buffer)) {
+            free(result);
+            return NULL;
+        }
+
+        needed = (size_t)written;
+        if (length > (size_t)-1 - needed - 2U) {
+            free(result);
+            return NULL;
+        }
+
+        while (length + needed + 2U > capacity) {
+            size_t new_capacity;
+            char *tmp;
+
+            if (capacity > (size_t)-1 / 2U) {
+                free(result);
+                return NULL;
+            }
+            new_capacity = capacity * 2U;
+            tmp = realloc(result, new_capacity);
+            if (tmp == NULL) {
+                free(result);
+                return NULL;
+            }
+            result = tmp;
+            capacity = new_capacity;
+        }
+
+        if (length > 0U) {
+            result[length] = ' ';
+            length++;
+        }
+
+        if (length + needed + 1U > capacity) {
+            free(result);
+            return NULL;
+        }
+
+        memcpy(&result[length], buffer, needed);
+        length += needed;
+        result[length] = '\0';
+    }
+
+    return result;
+}
+
+int main(void)
+{
+    Tuple tuples[] = {
+        {1, 2},
+        {3, 4},
+        {5, 6},
+        {7, 8}
+    };
+    size_t count = sizeof(tuples) / sizeof(tuples[0]);
+    char *flattened;
+
+    flattened = flatten_tuple_list(tuples, count);
+    if (flattened == NULL) {
+        fprintf(stderr, "Failed to flatten tuple list\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("%s\n", flattened) < 0) {
+        free(flattened);
+        return EXIT_FAILURE;
+    }
+
+    free(flattened);
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the flagged weaknesses and why this version is safe:**
+
+1. **`char buffer[64]` (CWE-119/CWE-120):** The fixed-size stack buffer is only ever written to via `snprintf(buffer, sizeof(buffer), ...)`, which guarantees no overflow. The return value is validated for both encoding errors (`written < 0`) and truncation (`(size_t)written >= sizeof(buffer)`), so `needed` is always an accurate, in-bounds length. Two `int` values plus a space and null terminator can never exceed 64 bytes anyway (max ~23 bytes), making this a defense-in-depth check.
+
+2. **`memcpy` (CWE-120):** The destination capacity is guaranteed before the copy by three layers of protection:
+   - An overflow guard (`length > SIZE_MAX - needed - 2`) prevents integer wraparound in the size arithmetic.
+   - The growth loop ensures `capacity >= length + needed + 2` (room for separator, data, and terminator) before any writes, with its own overflow guard on doubling.
+   - A final invariant re-check (`length + needed + 1 > capacity`) immediately before `memcpy` acts as a belt-and-suspenders assertion after the separator is appended.
+
+3. Additional robustness already present and preserved: `NULL`/zero-count handling, `realloc` via a temporary pointer to avoid leaking on failure, all allocations checked, and `printf` return value checked in `main`.

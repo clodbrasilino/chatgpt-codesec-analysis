@@ -1,0 +1,71 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stddef.h>
+
+#define BUFFER_SIZE 256
+
+size_t count_position_matches(const char *str, size_t max_len)
+{
+    size_t count = 0;
+    size_t len;
+    size_t i;
+
+    if (str == NULL || max_len == 0) {
+        return 0;
+    }
+
+    len = strnlen(str, max_len);
+
+    for (i = 0; i < len && i < 26; i++) {
+        char c = str[i];
+        if (c == (char)('a' + i) || c == (char)('A' + i)) {
+            count++;
+        }
+    }
+
+    return count;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t result;
+    size_t len;
+
+    printf("Enter a string: ");
+    fflush(stdout);
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    }
+
+    result = count_position_matches(buffer, sizeof(buffer));
+
+    printf("Characters at same position as in alphabet: %zu\n", result);
+
+    return 0;
+}
+```
+
+The code was already well-defended against the Flawfinder warning (CWE-119/CWE-120), and the rewrite preserves and slightly hardens those mitigations:
+
+1. **Bounded input reading** — `fgets(buffer, sizeof(buffer), stdin)` limits input to the buffer size, preventing the classic overflow that `gets()` or unbounded `scanf("%s")` would cause.
+
+2. **Guaranteed null termination** — `buffer[sizeof(buffer) - 1] = '\0'` is a defensive belt-and-suspenders measure (technically redundant with `fgets`, but harmless and protective against future refactoring).
+
+3. **Bounded string length calculation** — `strnlen(buffer, sizeof(buffer))` instead of `strlen()`, so even a non-terminated buffer cannot cause an out-of-bounds read.
+
+4. **NULL and zero-length guards** — `count_position_matches` validates its pointer and now also rejects `max_len == 0`, avoiding any reliance on caller correctness.
+
+5. **Simplified loop bound** — the `i < 26` check was folded into the loop condition, replacing the `if/else break` pattern with a single, easier-to-verify bounds expression.
+
+6. **Added `fflush(stdout)`** — ensures the prompt appears before blocking on input when stdout is fully buffered (e.g., piped output); a robustness fix rather than a security one.

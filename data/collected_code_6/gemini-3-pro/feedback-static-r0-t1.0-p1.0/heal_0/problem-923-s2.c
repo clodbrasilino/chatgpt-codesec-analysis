@@ -1,0 +1,58 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+int findShortestSupersequenceLength(const char* str1, const char* str2) {
+    if (!str1 || !str2) return 0;
+    
+    int len1 = strlen(str1);
+    int len2 = strlen(str2);
+    
+    int** dp = (int**)malloc((len1 + 1) * sizeof(int*));
+    if (!dp) return 0;
+    
+    for (int i = 0; i <= len1; i++) {
+        dp[i] = (int*)malloc((len2 + 1) * sizeof(int));
+        if (!dp[i]) {
+            for (int k = 0; k < i; k++) {
+                free(dp[k]);
+            }
+            free(dp);
+            return 0;
+        }
+    }
+    
+    for (int i = 0; i <= len1; i++) {
+        for (int j = 0; j <= len2; j++) {
+            if (i == 0) {
+                dp[i][j] = j;
+            } else if (j == 0) {
+                dp[i][j] = i;
+            } else if (str1[i - 1] == str2[j - 1]) {
+                dp[i][j] = 1 + dp[i - 1][j - 1];
+            } else {
+                int min_val = dp[i - 1][j] < dp[i][j - 1] ? dp[i - 1][j] : dp[i][j - 1];
+                dp[i][j] = 1 + min_val;
+            }
+        }
+    }
+    
+    int result = dp[len1][len2];
+    
+    for (int i = 0; i <= len1; i++) {
+        free(dp[i]);
+    }
+    free(dp);
+    
+    return result;
+}
+
+int main() {
+    const char* str1 = "geek";
+    const char* str2 = "eke";
+    
+    int result = findShortestSupersequenceLength(str1, str2);
+    printf("%d\n", result);
+    
+    return 0;
+}

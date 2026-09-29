@@ -1,0 +1,8 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_1/healed/problem-440-s3.c:48:38: error: use of undeclared identifier 'word_end'; did you mean 'word_len'?
+   48 |         if (word_len > suffix_len && word_end - suffix_len >= start) {
+      |                                      ^~~~~~~~
+      |                                      word_len
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_1/healed/problem-440-s3.c:46:16: note: 'word_len' declared here
+   46 |         size_t word_len = ptr - start;
+      |                ^
+1 error generated.

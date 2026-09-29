@@ -1,0 +1,74 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+#include <limits.h>
+#include <errno.h>
+
+bool is_prime(long long n) {
+    if (n <= 1) return false;
+    if (n <= 3) return true;
+    if (n % 2 == 0 || n % 3 == 0) return false;
+    for (long long i = 5; i * i <= n; i += 6) {
+        if (n % i == 0 || n % (i + 2) == 0) {
+            return false;
+        }
+    }
+    return true;
+}
+
+long long get_nth_nsw_prime(int n) {
+    if (n <= 0) return -1;
+    
+    int count = 0;
+    long long p0 = 1;
+    long long p1 = 1;
+    long long p = 1;
+    
+    int index = 1;
+    
+    while (true) {
+        if (index > 1) {
+            if (p1 > (LLONG_MAX - p0) / 2) {
+                return -1;
+            }
+            p = 2 * p1 + p0;
+            p0 = p1;
+            p1 = p;
+        }
+        
+        if (is_prime(p)) {
+            count++;
+            if (count == n) {
+                return p;
+            }
+        }
+        index++;
+    }
+}
+
+int main(int argc, const char * const argv[]) {
+    if (argc != 2) {
+        fprintf(stderr, "Usage: %s <n>\n", argv[0]);
+        return EXIT_FAILURE;
+    }
+    
+    char *endptr;
+    errno = 0;
+    long val = strtol(argv[1], &endptr, 10);
+    
+    if (errno != 0 || endptr == argv[1] || *endptr != '\0' || val <= 0 || val > INT_MAX) {
+        fprintf(stderr, "Please provide a valid positive integer.\n");
+        return EXIT_FAILURE;
+    }
+    
+    int n = (int)val;
+    
+    long long result = get_nth_nsw_prime(n);
+    if (result == -1) {
+        fprintf(stderr, "Error calculating the NSW prime.\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("%lld\n", result);
+    return EXIT_SUCCESS;
+}

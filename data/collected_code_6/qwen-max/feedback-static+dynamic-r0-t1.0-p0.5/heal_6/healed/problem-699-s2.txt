@@ -1,0 +1,28 @@
+```c
+#include <stdio.h>
+#include <string.h>
+
+int minSwaps(const char *s1, const char *s2, int len) {
+    int count[2] = {0, 0};
+    for (int i = 0; i < len; i++) {
+        if (s1[i] != s2[i]) {
+            count[s1[i] - '0']++;
+        }
+    }
+    return (count[0] + count[1]) / 2;
+}
+
+int main() {
+    const char s1[] = "1100";
+    const char s2[] = "1001";
+    size_t len1 = sizeof(s1) - 1;
+    size_t len2 = sizeof(s2) - 1;
+    if (len1 == len2 && strcmp(s1, s2) != 0) {
+        int result = minSwaps(s1, s2, (int)len1);
+        printf("%d\n", result);
+    } else {
+        printf("Not Possible\n");
+    }
+    return 0;
+}
+```

@@ -1,0 +1,59 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *elements;
+    size_t size;
+} Tuple;
+
+Tuple tuple_index_multiply(const Tuple *t1, const Tuple *t2) {
+    Tuple result;
+    
+    if (t1 == NULL || t2 == NULL || t1->size != t2->size || t1->elements == NULL || t2->elements == NULL) {
+        result.elements = NULL;
+        result.size = 0;
+        return result;
+    }
+
+    result.elements = (int *)malloc(t1->size * sizeof(int));
+    if (result.elements == NULL) {
+        result.size = 0;
+        return result;
+    }
+
+    result.size = t1->size;
+    for (size_t i = 0; i < result.size; i++) {
+        result.elements[i] = t1->elements[i] * t2->elements[i];
+    }
+
+    return result;
+}
+
+void free_tuple(Tuple *t) {
+    if (t != NULL) {
+        free(t->elements);
+        t->elements = NULL;
+        t->size = 0;
+    }
+}
+
+int main(void) {
+    int arr1[] = {1, 2, 3, 4};
+    int arr2[] = {5, 6, 7, 8};
+    
+    Tuple t1 = {arr1, 4};
+    Tuple t2 = {arr2, 4};
+
+    Tuple res = tuple_index_multiply(&t1, &t2);
+
+    if (res.elements != NULL && res.size > 0) {
+        for (size_t i = 0; i < res.size; i++) {
+            printf("%d ", res.elements[i]);
+        }
+        printf("\n");
+    }
+
+    free_tuple(&res);
+
+    return 0;
+}

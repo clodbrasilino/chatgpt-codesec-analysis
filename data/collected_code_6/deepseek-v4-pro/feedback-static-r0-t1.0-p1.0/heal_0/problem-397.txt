@@ -1,0 +1,17 @@
+```c
+#include <stdio.h>
+
+float median_of_three(float a, float b, float c) {
+    if ((a >= b && a <= c) || (a >= c && a <= b)) return a;
+    if ((b >= a && b <= c) || (b >= c && b <= a)) return b;
+    return c;
+}
+
+int main(void) {
+    float a = 12.5f;
+    float b = 3.2f;
+    float c = 7.8f;
+    printf("Median: %.2f\n", median_of_three(a, b, c));
+    return 0;
+}
+```

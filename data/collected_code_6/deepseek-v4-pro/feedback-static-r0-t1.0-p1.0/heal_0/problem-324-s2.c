@@ -1,0 +1,95 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Tuple {
+    int value;
+    struct Tuple *next;
+} Tuple;
+
+static void free_tuple_chain(Tuple *head) {
+    while (head != NULL) {
+        Tuple *tmp = head;
+        head = head->next;
+        free(tmp);
+    }
+}
+
+static Tuple *create_tuple_chain(const int *values, size_t count) {
+    Tuple *head = NULL;
+    Tuple *tail = NULL;
+
+    for (size_t i = 0; i < count; ++i) {
+        Tuple *node = (Tuple *)malloc(sizeof(Tuple));
+        if (node == NULL) {
+            free_tuple_chain(head);
+            return NULL;
+        }
+        node->value = values[i];
+        node->next = NULL;
+
+        if (tail == NULL) {
+            head = node;
+            tail = node;
+        } else {
+            tail->next = node;
+            tail = node;
+        }
+    }
+
+    return head;
+}
+
+int sum_alternate_chains(Tuple *head, int *sum_even, int *sum_odd) {
+    if (sum_even == NULL || sum_odd == NULL) {
+        return -1;
+    }
+
+    *sum_even = 0;
+    *sum_odd = 0;
+
+    if (head == NULL) {
+        return 0;
+    }
+
+    int index = 0;
+    Tuple *current = head;
+
+    while (current != NULL) {
+        if (index % 2 == 0) {
+            *sum_even += current->value;
+        } else {
+            *sum_odd += current->value;
+        }
+        current = current->next;
+        ++index;
+    }
+
+    return 0;
+}
+
+int main(void) {
+    int values[] = {10, 20, 30, 40, 50, 60, 70};
+    size_t count = sizeof(values) / sizeof(values[0]);
+
+    Tuple *chain = create_tuple_chain(values, count);
+    if (chain == NULL) {
+        fprintf(stderr, "Failed to allocate tuple chain\n");
+        return EXIT_FAILURE;
+    }
+
+    int sum_even = 0;
+    int sum_odd = 0;
+
+    if (sum_alternate_chains(chain, &sum_even, &sum_odd) != 0) {
+        fprintf(stderr, "Invalid arguments for sum_alternate_chains\n");
+        free_tuple_chain(chain);
+        return EXIT_FAILURE;
+    }
+
+    printf("Sum of elements at even indices: %d\n", sum_even);
+    printf("Sum of elements at odd indices: %d\n", sum_odd);
+
+    free_tuple_chain(chain);
+
+    return EXIT_SUCCESS;
+}

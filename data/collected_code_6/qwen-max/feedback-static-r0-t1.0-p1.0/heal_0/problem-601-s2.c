@@ -1,0 +1,48 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int compare(const void *a, const void *b) {
+    int *pairA = *(int **)a;
+    int *pairB = *(int **)b;
+    return pairA[1] - pairB[1];
+}
+
+int max(int a, int b) {
+    return (a > b) ? a : b;
+}
+
+int longestChain(int** pairs, int pairsSize, int* pairsColSize) {
+    qsort(pairs, pairsSize, sizeof(int *), compare);
+    int *dp = (int *)malloc(pairsSize * sizeof(int));
+    for (int i = 0; i < pairsSize; ++i) {
+        dp[i] = 1;
+    }
+    for (int i = 1; i < pairsSize; ++i) {
+        for (int j = 0; j < i; ++j) {
+            if (pairs[i][0] > pairs[j][1]) {
+                dp[i] = max(dp[i], dp[j] + 1);
+            }
+        }
+    }
+    int maxLength = 0;
+    for (int i = 0; i < pairsSize; ++i) {
+        if (dp[i] > maxLength) {
+            maxLength = dp[i];
+        }
+    }
+    free(dp);
+    return maxLength;
+}
+
+int main() {
+    int pairsSize = 4;
+    int *pairs[] = {
+        (int[]){1, 2},
+        (int[]){2, 3},
+        (int[]){3, 4},
+        (int[]){1, 4}
+    };
+    int pairsColSize = 2;
+    printf("The length of the longest chain is: %d\n", longestChain(pairs, pairsSize, &pairsColSize));
+    return 0;
+}

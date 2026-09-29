@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-631.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-631.c:43:89: style: Condition 'output_len+remaining<=output_size' is always true [knownConditionTrueFalse]
+                if (remaining <= (input_len + 1) - output_len && output_len + remaining <= output_size) {
+                                                                                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-631.c:37:40: note: Assuming that condition 'output_len+remaining>=output_size' is not redundant
+            if (output_len + remaining >= output_size) {
+                                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-631.c:43:89: note: Condition 'output_len+remaining<=output_size' is always true
+                if (remaining <= (input_len + 1) - output_len && output_len + remaining <= output_size) {
+                                                                                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-631.c:94:24: style: Condition 'output_len+1<=output_size' is always true [knownConditionTrueFalse]
+    if (output_len + 1 <= output_size) {
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-631.c:86:24: note: Assuming that condition 'output_len+1>output_size' is not redundant
+    if (output_len + 1 > output_size) {
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-631.c:94:24: note: Condition 'output_len+1<=output_size' is always true
+    if (output_len + 1 <= output_size) {
+                       ^

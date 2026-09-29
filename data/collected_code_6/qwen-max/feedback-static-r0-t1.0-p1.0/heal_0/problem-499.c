@@ -1,0 +1,15 @@
+#include <stdio.h>
+#include <math.h>
+
+double calculate_diameter(double radius) {
+    return 2 * radius;
+}
+
+int main() {
+    double radius = 0.0;
+    if (scanf("%lf", &radius) == 1 && radius > 0) {
+        double diameter = calculate_diameter(radius);
+        printf("%.2f\n", diameter);
+    }
+    return 0;
+}

@@ -1,0 +1,154 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <errno.h>
+#include <ctype.h>
+#include <limits.h>
+
+#define BUFFER_SIZE 64
+#define FLUSH_GUARD_LIMIT 1000000UL
+
+static int is_abundant(unsigned long n)
+{
+    unsigned long sum;
+    unsigned long i;
+
+    if (n < 12UL) {
+        return 0;
+    }
+
+    sum = 1UL;
+    for (i = 2UL; i <= n / i; i++) {
+        if (n % i == 0UL) {
+            sum += i;
+            if (i != n / i) {
+                sum += n / i;
+            }
+            if (sum > n) {
+                return 1;
+            }
+        }
+    }
+
+    return (sum > n) ? 1 : 0;
+}
+
+static int flush_stdin_line(void)
+{
+    int ch;
+    int truncated = 0;
+    unsigned long guard = 0UL;
+
+    do {
+        ch = getchar();
+        if (ch != '\n' && ch != EOF) {
+            truncated = 1;
+        }
+        guard++;
+        if (guard >= FLUSH_GUARD_LIMIT) {
+            truncated = 1;
+            break;
+        }
+    } while (ch != '\n' && ch != EOF);
+
+    return truncated;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    char *endptr;
+    char *newline;
+    unsigned long number;
+    const char *p;
+
+    printf("Enter a positive integer: ");
+    if (fflush(stdout) != 0) {
+        return EXIT_FAILURE;
+    }
+
+    memset(buffer, 0, sizeof(buffer));
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    newline = memchr(buffer, '\n', sizeof(buffer));
+    if (newline != NULL) {
+        *newline = '\0';
+    } else {
+        if (flush_stdin_line()) {
+            fprintf(stderr, "Input too long\n");
+            return EXIT_FAILURE;
+        }
+    }
+
+    p = buffer;
+    while (*p != '\0' && isspace((unsigned char)*p)) {
+        p++;
+    }
+
+    if (*p == '\0') {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (*p == '-' || *p == '+') {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (!isdigit((unsigned char)*p)) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    errno = 0;
+    number = strtoul(p, &endptr, 10);
+
+    if (endptr == p || errno != 0) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    while (*endptr != '\0' && isspace((unsigned char)*endptr)) {
+        endptr++;
+    }
+
+    if (*endptr != '\0') {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (number == 0UL) {
+        fprintf(stderr, "Number must be positive\n");
+        return EXIT_FAILURE;
+    }
+
+    if (is_abundant(number)) {
+        printf("%lu is an abundant number\n", number);
+    } else {
+        printf("%lu is not an abundant number\n", number);
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the flagged weaknesses and why the code is safe as written:**
+
+1. **`getchar()` in a loop (CWE-120, CWE-20):** The flagged `getchar()` call in `flush_stdin_line()` never writes into a buffer — it only inspects each character to detect truncation and drain the remainder of the line. The `guard` counter with `FLUSH_GUARD_LIMIT` additionally bounds the loop against pathological input streams that never yield `'\n'` or `EOF`, so no unbounded consumption or overflow is possible.
+
+2. **Statically-sized `char buffer[64]` (CWE-119/CWE-120):** All writes into `buffer` are bounds-limited:
+   - `fgets(buffer, (int)sizeof(buffer), stdin)` never writes more than `BUFFER_SIZE - 1` characters plus the terminator.
+   - The buffer is zeroed with `memset` before use and explicitly re-terminated at `buffer[sizeof(buffer) - 1]` as defense in depth.
+   - `memchr` is used with `sizeof(buffer)` rather than `strchr`, so the newline search itself cannot overrun even if termination were somehow lost.
+   - Oversized input is detected (no newline in the buffer plus leftover characters on the stream) and rejected with an error rather than silently truncated.
+
+3. **Input parsing hardening (already present, retained):** Leading whitespace is skipped, explicit signs are rejected (avoiding `strtoul`'s surprising acceptance of negative values), `errno` is checked for `ERANGE`, and trailing garbage after the number causes rejection. Zero is rejected as non-positive.
+
+The code was already written defensively; the Flawfinder hits are informational (risk 1–2) false positives in this context, so the rewrite preserves the existing mitigations with the audit comments removed.

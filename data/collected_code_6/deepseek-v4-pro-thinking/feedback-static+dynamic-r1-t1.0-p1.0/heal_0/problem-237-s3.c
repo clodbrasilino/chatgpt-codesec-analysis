@@ -1,0 +1,110 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+
+typedef struct {
+    int record;
+    size_t occurrences;
+} RecordOccurrence;
+
+int compare_ints(const void *a, const void *b) {
+    int ia = *(const int *)a;
+    int ib = *(const int *)b;
+    return (ia > ib) - (ia < ib);
+}
+
+int check_similar_occurrences(const int *tuples, size_t tuple_count) {
+    if (tuple_count == 0) {
+        return 0;
+    }
+    if (tuples == NULL) {
+        return -1;
+    }
+    if (tuple_count > SIZE_MAX / sizeof(int)) {
+        return -1;
+    }
+
+    int *sorted = malloc(tuple_count * sizeof(*sorted));
+    if (sorted == NULL) {
+        return -1;
+    }
+
+    for (size_t i = 0; i < tuple_count; ++i) {
+        sorted[i] = tuples[i];
+    }
+
+    qsort(sorted, tuple_count, sizeof(*sorted), compare_ints);
+
+    if (tuple_count > SIZE_MAX / sizeof(RecordOccurrence)) {
+        free(sorted);
+        return -1;
+    }
+
+    RecordOccurrence *occurrences = malloc(tuple_count * sizeof(*occurrences));
+    if (occurrences == NULL) {
+        free(sorted);
+        return -1;
+    }
+
+    size_t unique_count = 0;
+    size_t index = 0;
+
+    while (index < tuple_count) {
+        int current = sorted[index];
+        size_t count = 0;
+        while (index < tuple_count && sorted[index] == current) {
+            ++count;
+            ++index;
+        }
+        occurrences[unique_count].record = current;
+        occurrences[unique_count].occurrences = count;
+        ++unique_count;
+    }
+
+    int *printed = calloc(unique_count, sizeof(*printed));
+    if (printed == NULL) {
+        free(occurrences);
+        free(sorted);
+        return -1;
+    }
+
+    for (size_t i = 0; i < unique_count; ++i) {
+        if (printed[i] != 0) {
+            continue;
+        }
+
+        int found_similar = 0;
+        for (size_t j = i + 1; j < unique_count; ++j) {
+            if (occurrences[j].occurrences == occurrences[i].occurrences) {
+                if (!found_similar) {
+                    printf("Record %d has %zu occurrences\n",
+                           occurrences[i].record,
+                           occurrences[i].occurrences);
+                    printed[i] = 1;
+                    found_similar = 1;
+                }
+                printf("Record %d has %zu occurrences\n",
+                       occurrences[j].record,
+                       occurrences[j].occurrences);
+                printed[j] = 1;
+            }
+        }
+    }
+
+    free(printed);
+    free(occurrences);
+    free(sorted);
+
+    return 0;
+}
+
+int main(void) {
+    int tuples[] = {1, 2, 3, 1, 2, 4, 5, 6, 7, 8};
+    size_t tuple_count = sizeof(tuples) / sizeof(tuples[0]);
+
+    if (check_similar_occurrences(tuples, tuple_count) != 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

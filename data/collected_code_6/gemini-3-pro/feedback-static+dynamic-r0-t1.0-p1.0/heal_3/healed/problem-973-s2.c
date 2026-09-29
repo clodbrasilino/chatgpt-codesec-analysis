@@ -1,0 +1,43 @@
+#include <stdio.h>
+#include <string.h>
+
+void reverseString(char *str, size_t start, size_t end) {
+    while (start < end) {
+        char temp = str[start];
+        str[start] = str[end];
+        str[end] = temp;
+        start++;
+        end--;
+    }
+}
+
+void leftRotateString(char *str, size_t d, size_t max_len) {
+    if (str == NULL) {
+        return;
+    }
+
+    size_t len = strnlen(str, max_len);
+
+    if (len == 0 || d == 0) {
+        return;
+    }
+
+    d = d % len;
+    if (d == 0) {
+        return;
+    }
+
+    reverseString(str, 0, d - 1);
+    reverseString(str, d, len - 1);
+    reverseString(str, 0, len - 1);
+}
+
+int main(void) {
+    char str[] = "HelloWorld";
+    size_t d = 3;
+
+    leftRotateString(str, d, sizeof(str));
+    printf("%s\n", str);
+
+    return 0;
+}

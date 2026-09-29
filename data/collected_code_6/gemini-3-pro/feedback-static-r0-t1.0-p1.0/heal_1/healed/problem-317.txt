@@ -1,0 +1,71 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int count;
+    char value;
+} RleNode;
+
+RleNode* modified_rle(const char* input, size_t input_len, size_t* out_len) {
+    if (!input || !out_len) {
+        return NULL;
+    }
+
+    if (input_len == 0) {
+        *out_len = 0;
+        return NULL;
+    }
+
+    RleNode* result = malloc(input_len * sizeof(RleNode));
+    if (!result) {
+        *out_len = 0;
+        return NULL;
+    }
+
+    size_t result_idx = 0;
+    size_t i = 0;
+
+    while (i < input_len) {
+        char current = input[i];
+        int count = 1;
+        
+        while (i + 1 < input_len && input[i + 1] == current) {
+            count++;
+            i++;
+        }
+        
+        result[result_idx].count = count;
+        result[result_idx].value = current;
+        result_idx++;
+        i++;
+    }
+
+    *out_len = result_idx;
+    
+    RleNode* shrunk = realloc(result, result_idx * sizeof(RleNode));
+    return shrunk ? shrunk : result;
+}
+
+int main(void) {
+    const char text[] = "aaaabccaadeeee";
+    size_t input_len = sizeof(text) - 1;
+    size_t rle_len = 0;
+
+    RleNode* encoded = modified_rle(text, input_len, &rle_len);
+
+    if (encoded) {
+        for (size_t i = 0; i < rle_len; i++) {
+            if (encoded[i].count == 1) {
+                printf("%c\n", encoded[i].value);
+            } else {
+                printf("(%d, %c)\n", encoded[i].count, encoded[i].value);
+            }
+        }
+        free(encoded);
+    } else if (rle_len == 0 && input_len > 0) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

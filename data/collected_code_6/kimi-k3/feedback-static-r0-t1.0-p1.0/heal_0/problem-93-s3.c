@@ -1,0 +1,65 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <math.h>
+
+double power(double a, int b)
+{
+    double result = 1.0;
+    int exp = b;
+    double base = a;
+    
+    if (b == 0) {
+        return 1.0;
+    }
+    
+    if (b < 0) {
+        if (a == 0.0) {
+            errno = EDOM;
+            return 0.0;
+        }
+        base = 1.0 / a;
+        exp = -b;
+    }
+    
+    while (exp > 0) {
+        if (exp % 2 == 1) {
+            result *= base;
+        }
+        base *= base;
+        exp /= 2;
+    }
+    
+    return result;
+}
+
+int main(void)
+{
+    double a;
+    int b;
+    double result;
+    
+    printf("Enter base (a): ");
+    if (scanf("%lf", &a) != 1) {
+        fprintf(stderr, "Invalid input for base\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("Enter exponent (b): ");
+    if (scanf("%d", &b) != 1) {
+        fprintf(stderr, "Invalid input for exponent\n");
+        return EXIT_FAILURE;
+    }
+    
+    errno = 0;
+    result = power(a, b);
+    
+    if (errno == EDOM) {
+        fprintf(stderr, "Error: Cannot raise 0 to a negative power\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("%.2f^%d = %.2f\n", a, b, result);
+    
+    return EXIT_SUCCESS;
+}

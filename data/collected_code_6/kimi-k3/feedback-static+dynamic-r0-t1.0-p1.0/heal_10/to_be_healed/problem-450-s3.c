@@ -1,0 +1,155 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+static size_t safe_strnlen(const char *s, size_t max_len)
+{
+    size_t len = 0;
+
+    if (s == NULL) {
+        return 0;
+    }
+
+    while (len < max_len && s[len] != '\0') {
+        len++;
+    }
+
+    return len;
+}
+ /* Possible weaknesses found:
+  *  test case 0 failed: expected ['practice', 'solution'], got <no output>
+  *  test case 1 failed: expected ['Python'], got <no output>
+  *  test case 2 failed: expected ['exercises'], got <no output>
+  */
+
+char **extract_strings(const char **source, size_t count, size_t extract_size, size_t *result_count)
+{
+    char **result;
+    size_t i;
+    size_t valid_count = 0;
+
+    if (source == NULL || result_count == NULL || extract_size == 0) {
+        if (result_count != NULL) {
+            *result_count = 0;
+        }
+        return NULL;
+    }
+
+    for (i = 0; i < count; i++) {
+        if (source[i] != NULL && safe_strnlen(source[i], extract_size + 1) == extract_size) {
+            valid_count++;
+        }
+    }
+
+    if (valid_count == 0) {
+        *result_count = 0;
+        return NULL;
+    }
+
+    if (valid_count > (size_t)-1 / sizeof(char *)) {
+        *result_count = 0;
+        return NULL;
+    }
+
+    result = malloc(valid_count * sizeof(char *));
+    if (result == NULL) {
+        *result_count = 0;
+        return NULL;
+    }
+
+    valid_count = 0;
+    for (i = 0; i < count; i++) {
+        if (source[i] != NULL && safe_strnlen(source[i], extract_size + 1) == extract_size) {
+            size_t src_len;
+
+            result[valid_count] = malloc(extract_size + 1);
+            if (result[valid_count] == NULL) {
+                size_t j;
+                for (j = 0; j < valid_count; j++) {
+                    free(result[j]);
+                }
+                free(result);
+                *result_count = 0;
+                return NULL;
+            }
+
+            src_len = safe_strnlen(source[i], extract_size);
+            /* Possible weaknesses found:
+             * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+             */
+            memcpy(result[valid_count], source[i], src_len);
+            result[valid_count][src_len] = '\0';
+            valid_count++;
+        }
+    }
+
+    *result_count = valid_count;
+    return result;
+}
+
+void free_extracted(char **strings, size_t count)
+{
+    size_t i;
+
+    if (strings == NULL) {
+        return;
+    }
+
+    for (i = 0; i < count; i++) {
+        free(strings[i]);
+    }
+
+    free(strings);
+}
+
+int main(void)
+{
+    const char *list1[] = {
+        "practice",
+        "test",
+        "solution",
+        "code",
+        "example"
+    };
+    const char *list2[] = {
+        "Python",
+        "Java",
+        "C",
+        "JavaScript"
+    };
+    const char *list3[] = {
+        "homework",
+        "exercises",
+        "study",
+        "learn"
+    };
+    size_t result_count = 0;
+    char **extracted;
+    size_t i;
+
+    extracted = extract_strings(list1, 5, 8, &result_count);
+    if (extracted != NULL) {
+        for (i = 0; i < result_count; i++) {
+            printf("%s\n", extracted[i]);
+        }
+        free_extracted(extracted, result_count);
+    }
+
+    extracted = extract_strings(list2, 4, 6, &result_count);
+    if (extracted != NULL) {
+        for (i = 0; i < result_count; i++) {
+            printf("%s\n", extracted[i]);
+        }
+        free_extracted(extracted, result_count);
+    }
+
+    extracted = extract_strings(list3, 4, 9, &result_count);
+    if (extracted != NULL) {
+        for (i = 0; i < result_count; i++) {
+            printf("%s\n", extracted[i]);
+        }
+        free_extracted(extracted, result_count);
+    }
+
+    return 0;
+}

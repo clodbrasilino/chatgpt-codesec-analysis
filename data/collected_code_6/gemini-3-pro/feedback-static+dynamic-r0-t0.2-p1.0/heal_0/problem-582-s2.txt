@@ -1,0 +1,86 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+typedef struct Node {
+    char *key;
+    char *value;
+    struct Node *next;
+} Node;
+
+typedef struct {
+    Node **buckets;
+    size_t size;
+} Dictionary;
+
+Dictionary* create_dictionary(size_t size) {
+    if (size == 0) {
+        return NULL;
+    }
+
+    Dictionary *dict = (Dictionary *)malloc(sizeof(Dictionary));
+    if (!dict) {
+        return NULL;
+    }
+
+    dict->buckets = (Node **)calloc(size, sizeof(Node *));
+    if (!dict->buckets) {
+        free(dict);
+        return NULL;
+    }
+
+    dict->size = size;
+    return dict;
+}
+
+void destroy_dictionary(Dictionary *dict) {
+    if (!dict) {
+        return;
+    }
+
+    for (size_t i = 0; i < dict->size; ++i) {
+        Node *current = dict->buckets[i];
+        while (current) {
+            Node *next = current->next;
+            free(current->key);
+            free(current->value);
+            free(current);
+            current = next;
+        }
+    }
+
+    free(dict->buckets);
+    free(dict);
+}
+
+bool is_dictionary_empty(const Dictionary *dict) {
+    if (!dict || !dict->buckets) {
+        return true;
+    }
+
+    for (size_t i = 0; i < dict->size; ++i) {
+        if (dict->buckets[i] != NULL) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+int main(void) {
+    Dictionary *dict = create_dictionary(10);
+    if (!dict) {
+        return EXIT_FAILURE;
+    }
+
+    if (is_dictionary_empty(dict)) {
+        printf("Dictionary is empty.\n");
+    } else {
+        printf("Dictionary is not empty.\n");
+    }
+
+    destroy_dictionary(dict);
+    return EXIT_SUCCESS;
+}
+```

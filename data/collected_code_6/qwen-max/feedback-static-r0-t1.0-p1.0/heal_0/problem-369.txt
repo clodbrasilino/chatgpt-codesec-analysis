@@ -1,0 +1,18 @@
+```c
+#include <stdio.h>
+
+double calculateLateralSurfaceArea(double length, double width, double height) {
+    return 2 * (length + width) * height;
+}
+
+int main() {
+    double length = 5.0;
+    double width = 3.0;
+    double height = 4.0;
+
+    double lateralSurfaceArea = calculateLateralSurfaceArea(length, width, height);
+    printf("Lateral Surface Area: %.2f\n", lateralSurfaceArea);
+
+    return 0;
+}
+```

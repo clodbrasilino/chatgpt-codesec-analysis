@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-962-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-962-s3.c:60:36: warning: Either the condition 'half_first<0' is redundant or there is division by zero at line 60. [zerodivcond]
+            if (half_n > INT64_MAX / half_first || half_n < INT64_MIN / half_first) {
+                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-962-s3.c:48:28: note: Assuming that condition 'half_first<0' is not redundant
+            if (half_first < 0 && half_last < 0) {
+                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-962-s3.c:60:36: note: Division by zero
+            if (half_n > INT64_MAX / half_first || half_n < INT64_MIN / half_first) {
+                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-962-s3.c:170:50: warning: Uninitialized variable: half_sum [uninitvar]
+            if (overflow || half_n > INT64_MAX / half_sum || half_n < INT64_MIN / half_sum) {
+                                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-962-s3.c:162:32: note: Assuming condition is true
+            if (half_first < 0 && half_last < INT64_MIN - half_first) {
+                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-962-s3.c:170:50: note: Uninitialized variable: half_sum
+            if (overflow || half_n > INT64_MAX / half_sum || half_n < INT64_MIN / half_sum) {
+                                                 ^

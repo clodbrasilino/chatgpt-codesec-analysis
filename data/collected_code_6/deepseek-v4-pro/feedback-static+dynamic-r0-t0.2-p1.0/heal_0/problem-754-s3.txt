@@ -1,0 +1,77 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int find_common_indices(int *list1, int size1, int *list2, int size2, int *list3, int size3, int **result) {
+    if (list1 == NULL || list2 == NULL || list3 == NULL || result == NULL) {
+        return -1;
+    }
+    
+    if (size1 <= 0 || size2 <= 0 || size3 <= 0) {
+        return -1;
+    }
+    
+    int min_size = size1;
+    if (size2 < min_size) min_size = size2;
+    if (size3 < min_size) min_size = size3;
+    
+    int *common = (int *)malloc(min_size * sizeof(int));
+    if (common == NULL) {
+        return -1;
+    }
+    
+    int count = 0;
+    for (int i = 0; i < min_size; i++) {
+        if (list1[i] == list2[i] && list2[i] == list3[i]) {
+            common[count] = i;
+            count++;
+        }
+    }
+    
+    if (count == 0) {
+        free(common);
+        *result = NULL;
+        return 0;
+    }
+    
+    int *resized = (int *)realloc(common, count * sizeof(int));
+    if (resized == NULL) {
+        free(common);
+        return -1;
+    }
+    
+    *result = resized;
+    return count;
+}
+
+int main(void) {
+    int list1[] = {10, 20, 30, 40, 50};
+    int list2[] = {10, 25, 30, 45, 50};
+    int list3[] = {10, 20, 30, 40, 50};
+    
+    int size1 = sizeof(list1) / sizeof(list1[0]);
+    int size2 = sizeof(list2) / sizeof(list2[0]);
+    int size3 = sizeof(list3) / sizeof(list3[0]);
+    
+    int *result = NULL;
+    int count = find_common_indices(list1, size1, list2, size2, list3, size3, &result);
+    
+    if (count < 0) {
+        printf("Error occurred\n");
+        return 1;
+    }
+    
+    if (count == 0) {
+        printf("No common indices found\n");
+    } else {
+        printf("Common indices: ");
+        for (int i = 0; i < count; i++) {
+            printf("%d ", result[i]);
+        }
+        printf("\n");
+    }
+    
+    free(result);
+    return 0;
+}
+```

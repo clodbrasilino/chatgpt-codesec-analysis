@@ -1,0 +1,40 @@
+#include<stdio.h>
+#include<stdlib.h>
+#include<stdbool.h>
+
+bool check_common(int *list1, int size1, int *list2, int size2)
+{
+    int i, j;
+    for(i = 0; i < size1; i++)
+    {
+        for(j = 0; j < size2; j++)
+        {
+            if(list1[i] == list2[j])
+                return true;
+        }
+    }
+    return false;
+}
+
+int main()
+{
+    int list1[] = {1, 2, 3, 4, 5};
+    int list2[] = {6, 7, 8, 9, 10};
+    int list3[] = {4, 5, 6, 7, 8};
+    
+    int size1 = sizeof(list1) / sizeof(list1[0]);
+    int size2 = sizeof(list2) / sizeof(list2[0]);
+    int size3 = sizeof(list3) / sizeof(list3[0]);
+
+    if(check_common(list1, size1, list2, size2))
+        printf("List1 and List2 have at least one common element.\n");
+    else
+        printf("List1 and List2 don't have any common elements.\n");
+
+    if(check_common(list1, size1, list3, size3))
+        printf("List1 and List3 have at least one common element.\n");
+    else
+        printf("List1 and List3 don't have any common elements.\n");
+
+    return 0;
+}

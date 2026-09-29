@@ -1,0 +1,30 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int first;
+    int second;
+} SubList;
+
+int compare(const void *a, const void *b) {
+    SubList *subListA = (SubList *)a;
+    SubList *subListB = (SubList *)b;
+    return subListA->second - subListB->second;
+}
+
+void sortSubList(SubList arr[], int n) {
+    qsort(arr, n, sizeof(SubList), compare);
+}
+
+int main() {
+    SubList arr[] = {{1, 5}, {2, 3}, {3, 2}, {4, 1}, {5, 4}};
+    int n = sizeof(arr) / sizeof(arr[0]);
+
+    sortSubList(arr, n);
+
+    for (int i = 0; i < n; i++) {
+        printf("{%d, %d}\n", arr[i].first, arr[i].second);
+    }
+
+    return 0;
+}

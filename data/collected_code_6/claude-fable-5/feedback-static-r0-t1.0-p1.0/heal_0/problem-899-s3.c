@@ -1,0 +1,83 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <stddef.h>
+
+static bool can_sort_by_corners(const int *arr, size_t n)
+{
+    size_t left;
+    size_t right;
+    int prev;
+    bool first;
+
+    if ((arr == NULL) || (n == 0U)) {
+        return false;
+    }
+
+    left = 0U;
+    right = n - 1U;
+    prev = 0;
+    first = true;
+
+    while (left <= right) {
+        int pick;
+
+        if (arr[left] <= arr[right]) {
+            pick = arr[left];
+            left++;
+        } else {
+            pick = arr[right];
+            right--;
+        }
+
+        if ((!first) && (pick < prev)) {
+            return false;
+        }
+
+        prev = pick;
+        first = false;
+
+        if (left == 0U && right == 0U) {
+            break;
+        }
+    }
+
+    return true;
+}
+
+static void run_test(const int *arr, size_t n)
+{
+    size_t i;
+
+    if ((arr == NULL) || (n == 0U)) {
+        (void)printf("Invalid input array\n");
+        return;
+    }
+
+    (void)printf("Array: ");
+    for (i = 0U; i < n; i++) {
+        (void)printf("%d ", arr[i]);
+    }
+
+    if (can_sort_by_corners(arr, n)) {
+        (void)printf("-> Yes, can be sorted by picking corner elements\n");
+    } else {
+        (void)printf("-> No, cannot be sorted by picking corner elements\n");
+    }
+}
+
+int main(void)
+{
+    int test1[] = {10, 5, 3, 4, 6, 8};
+    int test2[] = {1, 2, 3, 4, 5};
+    int test3[] = {5, 4, 3, 2, 1};
+    int test4[] = {3, 1, 4, 2};
+    int test5[] = {7};
+
+    run_test(test1, sizeof(test1) / sizeof(test1[0]));
+    run_test(test2, sizeof(test2) / sizeof(test2[0]));
+    run_test(test3, sizeof(test3) / sizeof(test3[0]));
+    run_test(test4, sizeof(test4) / sizeof(test4[0]));
+    run_test(test5, sizeof(test5) / sizeof(test5[0]));
+
+    return 0;
+}

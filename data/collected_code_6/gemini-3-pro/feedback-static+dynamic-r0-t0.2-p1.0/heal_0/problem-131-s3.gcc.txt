@@ -1,0 +1,8 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-131-s3.c: In function 'is_vowel':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-131-s3.c:7:15: error: implicit declaration of function 'tolower' [-Wimplicit-function-declaration]
+    7 |     c = (char)tolower((unsigned char)c);
+      |               ^~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-131-s3.c:5:1: note: include '<ctype.h>' or provide a declaration of 'tolower'
+    4 | #include <stdbool.h>
+  +++ |+#include <ctype.h>
+    5 | 

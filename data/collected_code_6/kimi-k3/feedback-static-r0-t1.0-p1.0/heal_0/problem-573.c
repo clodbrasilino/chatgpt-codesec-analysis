@@ -1,0 +1,45 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+long long calculate_unique_product(const int *arr, size_t size) {
+    if (arr == NULL || size == 0) {
+        return 0;
+    }
+    
+    long long product = 1;
+    int has_elements = 0;
+    
+    for (size_t i = 0; i < size; i++) {
+        int is_unique = 1;
+        for (size_t j = 0; j < i; j++) {
+            if (arr[i] == arr[j]) {
+                is_unique = 0;
+                break;
+            }
+        }
+        
+        if (is_unique) {
+            product *= (long long)arr[i];
+            has_elements = 1;
+        }
+    }
+    
+    if (!has_elements) {
+        return 0;
+    }
+    
+    return product;
+}
+
+int main(void) {
+    int test_array[] = {2, 3, 2, 5, 3, 7};
+    size_t array_size = sizeof(test_array) / sizeof(test_array[0]);
+    
+    long long result = calculate_unique_product(test_array, array_size);
+    
+    if (printf("Product of unique numbers: %lld\n", result) < 0) {
+        return EXIT_FAILURE;
+    }
+    
+    return EXIT_SUCCESS;
+}

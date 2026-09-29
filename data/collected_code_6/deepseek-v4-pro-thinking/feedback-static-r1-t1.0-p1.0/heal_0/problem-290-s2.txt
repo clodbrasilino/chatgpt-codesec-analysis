@@ -1,0 +1,56 @@
+```c
+#include <stdio.h>
+#include <stddef.h>
+
+typedef struct {
+    int *items;
+    size_t length;
+} List;
+
+List *find_max_length_list(List *lists, size_t count) {
+    if (lists == NULL || count == 0) {
+        return NULL;
+    }
+
+    if (lists[0].items == NULL && lists[0].length > 0) {
+        return NULL;
+    }
+
+    List *max_list = &lists[0];
+
+    for (size_t i = 1; i < count; i++) {
+        if (lists[i].items == NULL && lists[i].length > 0) {
+            return NULL;
+        }
+        if (lists[i].length > max_list->length) {
+            max_list = &lists[i];
+        }
+    }
+
+    return max_list;
+}
+
+int main(void) {
+    int first[] = {1, 2, 3};
+    int second[] = {4, 5, 6, 7, 8};
+    int third[] = {9, 10};
+
+    List lists[] = {
+        { first, 3 },
+        { second, 5 },
+        { third, 2 }
+    };
+
+    size_t count = sizeof(lists) / sizeof(lists[0]);
+    List *max_list = find_max_length_list(lists, count);
+
+    if (max_list != NULL) {
+        for (size_t i = 0; i < max_list->length; i++) {
+            printf("%d ", max_list->items[i]);
+        }
+        printf("\n");
+    }
+
+    return 0;
+}
+```

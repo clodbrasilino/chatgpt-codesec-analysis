@@ -1,0 +1,7 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-723.c:125:63: error: incompatible function pointer types passing 'int *(void *)' to parameter of type 'MapFunc' (aka 'void *(*)(void *)') [-Wincompatible-function-pointer-types]
+  125 |     int result = count_same_pairs(list1, size1, list2, size2, map_int);
+      |                                                               ^~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-723.c:79:86: note: passing argument to parameter 'map' here
+   79 | int count_same_pairs(void** list1, size_t size1, void** list2, size_t size2, MapFunc map) {
+      |                                                                                      ^
+1 error generated.

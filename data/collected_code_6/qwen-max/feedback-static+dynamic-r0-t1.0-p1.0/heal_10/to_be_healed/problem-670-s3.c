@@ -1,0 +1,41 @@
+#include <stdio.h>
+#include <stdbool.h>
+ /* Possible weaknesses found:
+  *  test case 1 failed: expected True, got <no output>
+  *  test case 2 failed: expected False, got <no output>
+  *  test case 0 failed: expected True, got <no output>
+  */
+
+bool is_decreasing_trend(const int *sequence, int length) {
+    for (int i = 1; i < length; ++i) {
+        if (sequence[i - 1] <= sequence[i]) {
+            return false;
+        }
+    }
+    return true;
+}
+
+int main() {
+    int sequence[] = {5, 4, 3, 2, 1};
+    int length = sizeof(sequence) / sizeof(sequence[0]);
+    /* Possible weaknesses found:
+     * Flawfinder printf: If format strings can be influenced by an attacker, they can be exploited (CWE-134). Use a constant for the format specification. (risk 4, format)
+     */
+    printf(is_decreasing_trend(sequence, length) ? "The sequence is in a decreasing trend.\n" : "The sequence is not in a decreasing trend.\n");
+
+    int sequence2[] = {5, 4, 3, 3, 1};
+    length = sizeof(sequence2) / sizeof(sequence2[0]);
+    /* Possible weaknesses found:
+     * Flawfinder printf: If format strings can be influenced by an attacker, they can be exploited (CWE-134). Use a constant for the format specification. (risk 4, format)
+     */
+    printf(is_decreasing_trend(sequence2, length) ? "The sequence is in a decreasing trend.\n" : "The sequence is not in a decreasing trend.\n");
+
+    int sequence3[] = {5, 6, 3, 2, 1};
+    length = sizeof(sequence3) / sizeof(sequence3[0]);
+    /* Possible weaknesses found:
+     * Flawfinder printf: If format strings can be influenced by an attacker, they can be exploited (CWE-134). Use a constant for the format specification. (risk 4, format)
+     */
+    printf(is_decreasing_trend(sequence3, length) ? "The sequence is in a decreasing trend.\n" : "The sequence is not in a decreasing trend.\n");
+
+    return 0;
+}

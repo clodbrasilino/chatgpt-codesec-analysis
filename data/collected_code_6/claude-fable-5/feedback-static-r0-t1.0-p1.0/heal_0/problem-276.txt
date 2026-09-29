@@ -1,0 +1,60 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+double cylinder_volume(double radius, double height);
+
+double cylinder_volume(double radius, double height)
+{
+    return M_PI * radius * radius * height;
+}
+
+int main(void)
+{
+    double radius = 0.0;
+    double height = 0.0;
+    double volume = 0.0;
+
+    printf("Enter the radius of the cylinder: ");
+    if (scanf("%lf", &radius) != 1) {
+        fprintf(stderr, "Error: invalid input for radius.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (radius < 0.0) {
+        fprintf(stderr, "Error: radius cannot be negative.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter the height of the cylinder: ");
+    if (scanf("%lf", &height) != 1) {
+        fprintf(stderr, "Error: invalid input for height.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (height < 0.0) {
+        fprintf(stderr, "Error: height cannot be negative.\n");
+        return EXIT_FAILURE;
+    }
+
+    volume = cylinder_volume(radius, height);
+
+    if (isinf(volume) || isnan(volume)) {
+        fprintf(stderr, "Error: computation overflow or invalid result.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("The volume of the cylinder is: %.6f\n", volume);
+
+    return EXIT_SUCCESS;
+}
+```
+
+A few notes on how this code avoids the specified weaknesses:
+
+- **CWE-664 (Improper Control of a Resource Through its Lifetime):** No dynamic memory or file handles are allocated, so there are no resources that could leak or be used after release. All variables are stack-based with well-defined lifetimes.
+
+- **CWE-703 (Improper Check or Handling of Exceptional Conditions):** Every `scanf` return value is checked, negative inputs are rejected, and the computed result is validated with `isinf`/`isnan` to catch floating-point overflow before printing. Errors go to `stderr` and the program exits with `EXIT_FAILURE`.
+
+- **CWE-710 (Improper Adherence to Coding Standards):** The function is declared before use, `main` uses the standard `int main(void)` signature, all variables are initialized, standard exit codes (`EXIT_SUCCESS`/`EXIT_FAILURE`) are used, and `M_PI` from `<math.h>` is used instead of a hardcoded approximation. If your compiler doesn't expose `M_PI` in strict ISO mode, compile with `-D_USE_MATH_DEFINES` or define `#define _GNU_SOURCE` before the includes.

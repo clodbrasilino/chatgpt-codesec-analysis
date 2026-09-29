@@ -1,0 +1,37 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_3/healed/problem-352-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_3/healed/problem-352-s2.c:13:27: warning: Either the condition 'i>=256' is redundant or the array 'str[1]' is accessed at index 256, which is out of bounds. [arrayIndexOutOfBoundsCond]
+    for (size_t i = 0; str[i] != '\0'; i++) {
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_3/healed/problem-352-s2.c:18:15: note: Assuming that condition 'i>=256' is not redundant
+        if (i >= 256) {
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_3/healed/problem-352-s2.c:13:27: note: Array index out of bounds
+    for (size_t i = 0; str[i] != '\0'; i++) {
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_3/healed/problem-352-s2.c:14:45: warning: Either the condition 'i>=256' is redundant or the array 'str[3]' is accessed at index 256, which is out of bounds. [arrayIndexOutOfBoundsCond]
+        unsigned char c = (unsigned char)str[i];
+                                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_3/healed/problem-352-s2.c:18:15: note: Assuming that condition 'i>=256' is not redundant
+        if (i >= 256) {
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_3/healed/problem-352-s2.c:14:45: note: Array index out of bounds
+        unsigned char c = (unsigned char)str[i];
+                                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_3/healed/problem-352-s2.c:38:24: style: Condition 'test5' is always false [knownConditionTrueFalse]
+    printf("%s: %s\n", test5 ? test5 : "NULL", all_unique_chars(test5) ? "unique" : "not unique");
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_3/healed/problem-352-s2.c:32:25: note: Assignment 'test5=NULL', assigned value is 0
+    const char *test5 = NULL;
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_3/healed/problem-352-s2.c:38:24: note: Condition 'test5' is always false
+    printf("%s: %s\n", test5 ? test5 : "NULL", all_unique_chars(test5) ? "unique" : "not unique");
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_3/healed/problem-352-s2.c:38:64: style: Condition 'all_unique_chars(test5)' is always true [knownConditionTrueFalse]
+    printf("%s: %s\n", test5 ? test5 : "NULL", all_unique_chars(test5) ? "unique" : "not unique");
+                                                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_3/healed/problem-352-s2.c:38:64: note: Calling function 'all_unique_chars' returns 1
+    printf("%s: %s\n", test5 ? test5 : "NULL", all_unique_chars(test5) ? "unique" : "not unique");
+                                                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_3/healed/problem-352-s2.c:38:64: note: Condition 'all_unique_chars(test5)' is always true
+    printf("%s: %s\n", test5 ? test5 : "NULL", all_unique_chars(test5) ? "unique" : "not unique");
+                                                               ^

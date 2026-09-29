@@ -1,0 +1,337 @@
+./collected_code_4/round1//heal_0//problem-834.c: In function 'generateSpiralMatrix':
+./collected_code_4/round1//heal_0//problem-834.c:13:19: warning: use of uninitialized value '*matrix_75(D) + _2' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   13 |             matrix[rowStart][i] = count;
+      |             ~~~~~~^~~~~~~~~~
+  'main': events 1-5
+    |
+    |   51 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   57 |     int **matrix = (int**)malloc(n * sizeof(int *));
+    |      |                           ~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                           |
+    |      |                           (2) region created on heap here
+    |   58 |     for(int i=0; i<n; i++)
+    |      |                  ~~~
+    |      |                   |
+    |      |                   (3) following 'false' branch...
+    |......
+    |   61 |     generateSpiralMatrix(matrix, n);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (4) ...to here
+    |      |     (5) calling 'generateSpiralMatrix' from 'main'
+    |
+    +--> 'generateSpiralMatrix': events 6-11
+           |
+           |    4 | void generateSpiralMatrix(int **matrix, int n){
+           |      |      ^~~~~~~~~~~~~~~~~~~~
+           |      |      |
+           |      |      (6) entry to 'generateSpiralMatrix'
+           |......
+           |   11 |     while (rowStart <= rowEnd && colStart <= colEnd){
+           |      |            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                               |
+           |      |                               (7) following 'true' branch...
+           |   12 |         for(int i = colStart; i <= colEnd; i++){
+           |      |                 ~             ~~~~~~~~~~~
+           |      |                 |               |
+           |      |                 (8) ...to here  (9) following 'true' branch (when 'i <= colEnd')...
+           |   13 |             matrix[rowStart][i] = count;
+           |      |             ~~~~~~~~~~~~~~~~
+           |      |                   |
+           |      |                   (10) ...to here
+           |      |                   (11) use of uninitialized value '*matrix_75(D) + _2' here
+           |
+./collected_code_4/round1//heal_0//problem-834.c:13:19: warning: dereference of possibly-NULL 'matrix' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   13 |             matrix[rowStart][i] = count;
+      |             ~~~~~~^~~~~~~~~~
+  'main': events 1-5
+    |
+    |   51 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   57 |     int **matrix = (int**)malloc(n * sizeof(int *));
+    |      |                           ~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                           |
+    |      |                           (2) this call could return NULL
+    |   58 |     for(int i=0; i<n; i++)
+    |      |                  ~~~
+    |      |                   |
+    |      |                   (3) following 'false' branch...
+    |......
+    |   61 |     generateSpiralMatrix(matrix, n);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (4) ...to here
+    |      |     (5) calling 'generateSpiralMatrix' from 'main'
+    |
+    +--> 'generateSpiralMatrix': events 6-11
+           |
+           |    4 | void generateSpiralMatrix(int **matrix, int n){
+           |      |      ^~~~~~~~~~~~~~~~~~~~
+           |      |      |
+           |      |      (6) entry to 'generateSpiralMatrix'
+           |......
+           |   11 |     while (rowStart <= rowEnd && colStart <= colEnd){
+           |      |            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                               |
+           |      |                               (7) following 'true' branch...
+           |   12 |         for(int i = colStart; i <= colEnd; i++){
+           |      |                 ~             ~~~~~~~~~~~
+           |      |                 |               |
+           |      |                 (8) ...to here  (9) following 'true' branch (when 'i <= colEnd')...
+           |   13 |             matrix[rowStart][i] = count;
+           |      |             ~~~~~~~~~~~~~~~~
+           |      |                   |
+           |      |                   (10) ...to here
+           |      |                   (11) 'matrix + (long unsigned int)rowStart * 8' could be NULL: unchecked value from (2)
+           |
+./collected_code_4/round1//heal_0//problem-834.c:13:33: warning: dereference of possibly-NULL '*matrix_75(D) + _2 + (long unsigned int)i * 4' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   13 |             matrix[rowStart][i] = count;
+      |             ~~~~~~~~~~~~~~~~~~~~^~~~~~~
+  'main': events 1-7
+    |
+    |   51 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   58 |     for(int i=0; i<n; i++)
+    |      |                  ~~~
+    |      |                   |
+    |      |                   (2) following 'true' branch...
+    |      |                   (5) following 'false' branch...
+    |   59 |         matrix[i] = (int*)malloc(n * sizeof(int));
+    |      |                           ~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                           |
+    |      |                           (3) ...to here
+    |      |                           (4) this call could return NULL
+    |   60 | 
+    |   61 |     generateSpiralMatrix(matrix, n);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (6) ...to here
+    |      |     (7) calling 'generateSpiralMatrix' from 'main'
+    |
+    +--> 'generateSpiralMatrix': events 8-13
+           |
+           |    4 | void generateSpiralMatrix(int **matrix, int n){
+           |      |      ^~~~~~~~~~~~~~~~~~~~
+           |      |      |
+           |      |      (8) entry to 'generateSpiralMatrix'
+           |......
+           |   11 |     while (rowStart <= rowEnd && colStart <= colEnd){
+           |      |            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                               |
+           |      |                               (9) following 'true' branch...
+           |   12 |         for(int i = colStart; i <= colEnd; i++){
+           |      |                 ~             ~~~~~~~~~~~
+           |      |                 |               |
+           |      |                 (10) ...to here (11) following 'true' branch (when 'i <= colEnd')...
+           |   13 |             matrix[rowStart][i] = count;
+           |      |             ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                   |             |
+           |      |                   |             (13) '*matrix_75(D) + _2 + (long unsigned int)i * 4' could be NULL: unchecked value from (4)
+           |      |                   (12) ...to here
+           |
+./collected_code_4/round1//heal_0//problem-834.c:20:19: warning: use of uninitialized value '*matrix_75(D) + _9' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   20 |             matrix[i][colEnd] = count;
+      |             ~~~~~~^~~
+  'main': events 1-7
+    |
+    |   51 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   57 |     int **matrix = (int**)malloc(n * sizeof(int *));
+    |      |                           ~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                           |
+    |      |                           (2) region created on heap here
+    |   58 |     for(int i=0; i<n; i++)
+    |      |                  ~~~
+    |      |                   |
+    |      |                   (3) following 'true' branch...
+    |      |                   (5) following 'false' branch...
+    |   59 |         matrix[i] = (int*)malloc(n * sizeof(int));
+    |      |                           ~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                           |
+    |      |                           (4) ...to here
+    |   60 | 
+    |   61 |     generateSpiralMatrix(matrix, n);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (6) ...to here
+    |      |     (7) calling 'generateSpiralMatrix' from 'main'
+    |
+    +--> 'generateSpiralMatrix': events 8-17
+           |
+           |    4 | void generateSpiralMatrix(int **matrix, int n){
+           |      |      ^~~~~~~~~~~~~~~~~~~~
+           |      |      |
+           |      |      (8) entry to 'generateSpiralMatrix'
+           |......
+           |   11 |     while (rowStart <= rowEnd && colStart <= colEnd){
+           |      |            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                               |
+           |      |                               (9) following 'true' branch...
+           |   12 |         for(int i = colStart; i <= colEnd; i++){
+           |      |                 ~             ~~~~~~~~~~~
+           |      |                 |               |
+           |      |                 |               (11) following 'true' branch (when 'i <= colEnd')...
+           |      |                 (10) ...to here (13) following 'false' branch (when 'i > colEnd')...
+           |   13 |             matrix[rowStart][i] = count;
+           |      |                   ~
+           |      |                   |
+           |      |                   (12) ...to here
+           |......
+           |   17 |         rowStart++;
+           |      |         ~~~~~~~~~~
+           |      |                 |
+           |      |                 (14) ...to here
+           |   18 | 
+           |   19 |         for(int i = rowStart; i <= rowEnd; i++){
+           |      |                               ~~~~~~~~~~~
+           |      |                                 |
+           |      |                                 (15) following 'true' branch (when 'i <= rowEnd')...
+           |   20 |             matrix[i][colEnd] = count;
+           |      |             ~~~~~~~~~
+           |      |                   |
+           |      |                   (16) ...to here
+           |      |                   (17) use of uninitialized value '*matrix_75(D) + _9' here
+           |
+./collected_code_4/round1//heal_0//problem-834.c:45:13: warning: use of uninitialized value '*_32 + _34' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   45 |             printf("%d ", matrix[i][j]);
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+  'main': events 1-7
+    |
+    |   51 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   58 |     for(int i=0; i<n; i++)
+    |      |                  ~~~
+    |      |                   |
+    |      |                   (2) following 'true' branch...
+    |      |                   (5) following 'false' branch...
+    |   59 |         matrix[i] = (int*)malloc(n * sizeof(int));
+    |      |                           ~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                           |
+    |      |                           (3) ...to here
+    |      |                           (4) region created on heap here
+    |   60 | 
+    |   61 |     generateSpiralMatrix(matrix, n);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (6) ...to here
+    |      |     (7) calling 'generateSpiralMatrix' from 'main'
+    |
+    +--> 'generateSpiralMatrix': events 8-15
+           |
+           |    4 | void generateSpiralMatrix(int **matrix, int n){
+           |      |      ^~~~~~~~~~~~~~~~~~~~
+           |      |      |
+           |      |      (8) entry to 'generateSpiralMatrix'
+           |......
+           |   11 |     while (rowStart <= rowEnd && colStart <= colEnd){
+           |      |            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                               |
+           |      |                               (9) following 'false' branch (when 'rowStart > rowEnd')...
+           |......
+           |   43 |     for(int i = 0; i<n; i++){
+           |      |             ~      ~~~
+           |      |             |       |
+           |      |             |       (11) following 'true' branch (when 'i < n')...
+           |      |             (10) ...to here
+           |   44 |         for(int j = 0; j<n; j++){
+           |      |                 ~      ~~~
+           |      |                 |       |
+           |      |                 |       (13) following 'true' branch (when 'j < n')...
+           |      |                 (12) ...to here
+           |   45 |             printf("%d ", matrix[i][j]);
+           |      |             ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |             |                   |
+           |      |             |                   (14) ...to here
+           |      |             (15) use of uninitialized value '*_32 + _34' here
+           |
+./collected_code_4/round1//heal_0//problem-834.c:45:13: warning: dereference of possibly-NULL '*matrix_75(D) + _30 + (long unsigned int)j * 4' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   45 |             printf("%d ", matrix[i][j]);
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+  'main': events 1-7
+    |
+    |   51 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   58 |     for(int i=0; i<n; i++)
+    |      |                  ~~~
+    |      |                   |
+    |      |                   (2) following 'true' branch...
+    |      |                   (5) following 'false' branch...
+    |   59 |         matrix[i] = (int*)malloc(n * sizeof(int));
+    |      |                           ~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                           |
+    |      |                           (3) ...to here
+    |      |                           (4) this call could return NULL
+    |   60 | 
+    |   61 |     generateSpiralMatrix(matrix, n);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (6) ...to here
+    |      |     (7) calling 'generateSpiralMatrix' from 'main'
+    |
+    +--> 'generateSpiralMatrix': events 8-15
+           |
+           |    4 | void generateSpiralMatrix(int **matrix, int n){
+           |      |      ^~~~~~~~~~~~~~~~~~~~
+           |      |      |
+           |      |      (8) entry to 'generateSpiralMatrix'
+           |......
+           |   11 |     while (rowStart <= rowEnd && colStart <= colEnd){
+           |      |            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                               |
+           |      |                               (9) following 'false' branch (when 'rowStart > rowEnd')...
+           |......
+           |   43 |     for(int i = 0; i<n; i++){
+           |      |             ~      ~~~
+           |      |             |       |
+           |      |             |       (11) following 'true' branch (when 'i < n')...
+           |      |             (10) ...to here
+           |   44 |         for(int j = 0; j<n; j++){
+           |      |                 ~      ~~~
+           |      |                 |       |
+           |      |                 |       (13) following 'true' branch (when 'j < n')...
+           |      |                 (12) ...to here
+           |   45 |             printf("%d ", matrix[i][j]);
+           |      |             ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |             |                   |
+           |      |             |                   (14) ...to here
+           |      |             (15) '*matrix_75(D) + _30 + (long unsigned int)j * 4' could be NULL: unchecked value from (4)
+           |
+./collected_code_4/round1//heal_0//problem-834.c: In function 'main':
+./collected_code_4/round1//heal_0//problem-834.c:59:19: warning: dereference of possibly-NULL 'matrix' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   59 |         matrix[i] = (int*)malloc(n * sizeof(int));
+      |         ~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  'main': events 1-4
+    |
+    |   57 |     int **matrix = (int**)malloc(n * sizeof(int *));
+    |      |                           ^~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                           |
+    |      |                           (1) this call could return NULL
+    |   58 |     for(int i=0; i<n; i++)
+    |      |                  ~~~       
+    |      |                   |
+    |      |                   (2) following 'true' branch...
+    |   59 |         matrix[i] = (int*)malloc(n * sizeof(int));
+    |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                   |       |
+    |      |                   |       (3) ...to here
+    |      |                   (4) 'matrix + (long unsigned int)i * 8' could be NULL: unchecked value from (1)
+    |

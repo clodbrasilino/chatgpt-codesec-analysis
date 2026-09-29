@@ -1,0 +1,52 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char** extract_strings(char** input_list, int list_size, size_t target_length, int* out_count) {
+    if (input_list == NULL || out_count == NULL || list_size <= 0) {
+        if (out_count != NULL) {
+            *out_count = 0;
+        }
+        return NULL;
+    }
+
+    int count = 0;
+    for (int i = 0; i < list_size; i++) {
+        if (input_list[i] != NULL && strlen(input_list[i]) == target_length) {
+            count++;
+        }
+    }
+
+    *out_count = count;
+    if (count == 0) {
+        return NULL;
+    }
+
+    char** result = (char**)malloc(count * sizeof(char*));
+    if (result == NULL) {
+        *out_count = 0;
+        return NULL;
+    }
+
+    int index = 0;
+    for (int i = 0; i < list_size; i++) {
+        if (input_list[i] != NULL && strlen(input_list[i]) == target_length) {
+            result[index] = strdup(input_list[i]);
+            if (result[index] == NULL) {
+                for (int j = 0; j < index; j++) {
+                    free(result[j]);
+                }
+                free(result);
+                *out_count = 0;
+                return NULL;
+            }
+            index++;
+        }
+    }
+
+    return result;
+}
+
+int main(void) {
+    return 0;
+}

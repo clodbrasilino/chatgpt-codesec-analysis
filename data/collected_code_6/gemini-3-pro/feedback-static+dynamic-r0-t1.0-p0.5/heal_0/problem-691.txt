@@ -1,0 +1,123 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    int first;
+    int second;
+} Tuple;
+
+typedef struct Node {
+    int value;
+    struct Node* next;
+} Node;
+
+typedef struct {
+    int key;
+    Node* values;
+} Group;
+
+typedef struct {
+    Group* groups;
+    size_t size;
+    size_t capacity;
+} GroupList;
+
+GroupList* create_group_list(size_t initial_capacity) {
+    GroupList* list = (GroupList*)malloc(sizeof(GroupList));
+    if (!list) return NULL;
+    
+    list->groups = (Group*)malloc(initial_capacity * sizeof(Group));
+    if (!list->groups) {
+        free(list);
+        return NULL;
+    }
+    
+    list->size = 0;
+    list->capacity = initial_capacity;
+    return list;
+}
+
+void add_to_group(GroupList* list, int first, int second) {
+    if (!list) return;
+
+    for (size_t i = 0; i < list->size; ++i) {
+        if (list->groups[i].key == second) {
+            Node* new_node = (Node*)malloc(sizeof(Node));
+            if (!new_node) return;
+            new_node->value = first;
+            new_node->next = list->groups[i].values;
+            list->groups[i].values = new_node;
+            return;
+        }
+    }
+
+    if (list->size == list->capacity) {
+        size_t new_capacity = list->capacity * 2;
+        Group* new_groups = (Group*)realloc(list->groups, new_capacity * sizeof(Group));
+        if (!new_groups) return;
+        list->groups = new_groups;
+        list->capacity = new_capacity;
+    }
+
+    Node* new_node = (Node*)malloc(sizeof(Node));
+    if (!new_node) return;
+    new_node->value = first;
+    new_node->next = NULL;
+
+    list->groups[list->size].key = second;
+    list->groups[list->size].values = new_node;
+    list->size++;
+}
+
+void free_group_list(GroupList* list) {
+    if (!list) return;
+    for (size_t i = 0; i < list->size; ++i) {
+        Node* current = list->groups[i].values;
+        while (current) {
+            Node* temp = current;
+            current = current->next;
+            free(temp);
+        }
+    }
+    free(list->groups);
+    free(list);
+}
+
+void print_group_list(const GroupList* list) {
+    if (!list) return;
+    for (size_t i = 0; i < list->size; ++i) {
+        printf("Key %d: [", list->groups[i].key);
+        Node* current = list->groups[i].values;
+        while (current) {
+            printf("%d", current->value);
+            if (current->next) printf(", ");
+            current = current->next;
+        }
+        printf("]\n");
+    }
+}
+
+int main(void) {
+    Tuple tuples[] = {
+        {1, 10}, {2, 20}, {3, 10}, {4, 30}, {5, 20}, {6, 10}
+    };
+    size_t num_tuples = sizeof(tuples) / sizeof(tuples[0]);
+
+    GroupList* list = create_group_list(4);
+    if (!list) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return 1;
+    }
+
+    for (size_t i = 0; i < num_tuples; ++i) {
+        add_to_group(list, tuples[i].first, tuples[i].second);
+    }
+
+    print_group_list(list);
+    free_group_list(list);
+
+    return 0;
+}
+```

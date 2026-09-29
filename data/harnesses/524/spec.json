@@ -1,0 +1,66 @@
+{
+  "task_id": 524,
+  "text": "Write a C function to find the sum of maximum increasing subsequence of the given array.",
+  "fn_candidates": [
+    "max_sum_increasing_subsequence",
+    "MaxSumIncreasingSubsequence",
+    "maxSumIncreasingSubsequence",
+    "maxsumincreasingsubsequence"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "max_sum_increasing_subsequence",
+      "args": [
+        [
+          1,
+          101,
+          2,
+          3,
+          100,
+          4,
+          5
+        ],
+        7
+      ],
+      "expected": 106,
+      "assert_src": "assert max_sum_increasing_subsequence([1, 101, 2, 3, 100, 4, 5], 7) == 106"
+    },
+    {
+      "fn_name": "max_sum_increasing_subsequence",
+      "args": [
+        [
+          3,
+          4,
+          5,
+          10
+        ],
+        4
+      ],
+      "expected": 22,
+      "assert_src": "assert max_sum_increasing_subsequence([3, 4, 5, 10], 4) == 22"
+    },
+    {
+      "fn_name": "max_sum_increasing_subsequence",
+      "args": [
+        [
+          10,
+          5,
+          4,
+          3
+        ],
+        4
+      ],
+      "expected": 10,
+      "assert_src": "assert max_sum_increasing_subsequence([10, 5, 4, 3], 4) == 10"
+    }
+  ],
+  "arg_kinds": [
+    "int",
+    "int-list"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

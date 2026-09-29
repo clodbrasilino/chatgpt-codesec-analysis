@@ -1,0 +1,55 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+long long carol_number(int n)
+{
+    if (n <= 0 || n > 62) {
+        return -1;
+    }
+    
+    long long power = 1LL << n;
+    long long power_minus_one = power - 1;
+    
+    /* Possible weaknesses found:
+     * UBSan: signed integer overflow: 9223372036854775807 + 2 cannot be represented in type 'long long' (AFL crash: id:000000,sig:06,src:000004,time:1132,execs:431,op:quick,pos:1)
+     */
+    if (power_minus_one > (LLONG_MAX + 2LL) / power_minus_one) {
+        return -1;
+    }
+    
+    long long result = power_minus_one * power_minus_one - 2;
+    
+    return result;
+}
+
+int main(void)
+{
+    int n;
+    
+    if (printf("Enter n: ") < 0) {
+        return EXIT_FAILURE;
+    }
+    
+    if (fflush(stdout) != 0) {
+        return EXIT_FAILURE;
+    }
+    
+    if (scanf("%d", &n) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    long long result = carol_number(n);
+    
+    if (result == -1) {
+        fprintf(stderr, "Invalid n or overflow would occur\n");
+        return EXIT_FAILURE;
+    }
+    
+    if (printf("Carol number %d: %lld\n", n, result) < 0) {
+        return EXIT_FAILURE;
+    }
+    
+    return EXIT_SUCCESS;
+}

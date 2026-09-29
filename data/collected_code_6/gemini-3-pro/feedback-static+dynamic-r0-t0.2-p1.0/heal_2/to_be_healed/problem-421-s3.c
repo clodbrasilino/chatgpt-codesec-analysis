@@ -1,0 +1,76 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char* concatenate_tuple(const char** tuple, size_t tuple_size, const char* delimiter) {
+    if (!tuple || !delimiter || tuple_size == 0) {
+        return NULL;
+    }
+
+    size_t delimiter_length = 0;
+    const char* d = delimiter;
+    while (*d++) delimiter_length++;
+
+    size_t total_length = 0;
+    size_t* lengths = (size_t*)malloc(tuple_size * sizeof(size_t));
+    if (!lengths) {
+        return NULL;
+    }
+
+    for (size_t i = 0; i < tuple_size; ++i) {
+        lengths[i] = 0;
+        if (tuple[i]) {
+            const char* t = tuple[i];
+            while (*t++) lengths[i]++;
+            total_length += lengths[i];
+        }
+    }
+
+    total_length += delimiter_length * (tuple_size - 1) + 1;
+
+    char* result = (char*)malloc(total_length);
+    if (!result) {
+        free(lengths);
+        return NULL;
+    }
+
+    char* ptr = result;
+    for (size_t i = 0; i < tuple_size; ++i) {
+        if (tuple[i] && lengths[i] > 0) {
+            /* Possible weaknesses found:
+             * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+             */
+            memcpy(ptr, tuple[i], lengths[i]);
+            ptr += lengths[i];
+        }
+        if (i < tuple_size - 1 && delimiter_length > 0) {
+            /* Possible weaknesses found:
+             * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+             */
+            memcpy(ptr, delimiter, delimiter_length);
+            ptr += delimiter_length;
+        }
+    }
+    *ptr = '\0';
+
+    free(lengths);
+    return result;
+}
+
+int main(void) {
+    const char* tuple[] = {"apple", "banana", "cherry", "date"};
+    size_t tuple_size = sizeof(tuple) / sizeof(tuple[0]);
+    const char* delimiter = ", ";
+
+    char* concatenated_string = concatenate_tuple(tuple, tuple_size, delimiter);
+
+    if (concatenated_string) {
+        printf("%s\n", concatenated_string);
+        free(concatenated_string);
+    } else {
+        fprintf(stderr, "Failed to concatenate tuple.\n");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

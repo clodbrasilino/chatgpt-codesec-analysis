@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-352.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-352.c:51:25: style: Condition 'are_chars_unique(test3)' is always false [knownConditionTrueFalse]
+    if (are_chars_unique(test3)) {
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-352.c:51:25: note: Calling function 'are_chars_unique' returns 0
+    if (are_chars_unique(test3)) {
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-352.c:51:25: note: Condition 'are_chars_unique(test3)' is always false
+    if (are_chars_unique(test3)) {
+                        ^

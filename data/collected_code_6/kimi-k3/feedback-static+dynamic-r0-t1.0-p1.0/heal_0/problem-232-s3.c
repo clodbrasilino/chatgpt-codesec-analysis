@@ -1,0 +1,77 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+int compare_ints(const void *a, const void *b)
+{
+    int arg1 = *(const int *)a;
+    int arg2 = *(const int *)b;
+
+    if (arg1 < arg2) return 1;
+    if (arg1 > arg2) return -1;
+    return 0;
+}
+
+int *get_n_largest(const int *dataset, size_t size, size_t n, size_t *out_size)
+{
+    int *result;
+    int *temp;
+    size_t i;
+
+    if (dataset == NULL || out_size == NULL || n == 0 || size == 0) {
+        if (out_size != NULL) *out_size = 0;
+        return NULL;
+    }
+
+    if (n > size) n = size;
+
+    temp = malloc(size * sizeof(int));
+    if (temp == NULL) {
+        *out_size = 0;
+        return NULL;
+    }
+
+    memcpy(temp, dataset, size * sizeof(int));
+    qsort(temp, size, sizeof(int), compare_ints);
+
+    result = malloc(n * sizeof(int));
+    if (result == NULL) {
+        free(temp);
+        *out_size = 0;
+        return NULL;
+    }
+
+    for (i = 0; i < n; i++) {
+        result[i] = temp[i];
+    }
+
+    free(temp);
+    *out_size = n;
+    return result;
+}
+
+int main(void)
+{
+    int dataset[] = {5, 12, 3, 8, 21, 7, 15, 2, 30, 1};
+    size_t size = sizeof(dataset) / sizeof(dataset[0]);
+    size_t n = 4;
+    size_t result_size = 0;
+    int *largest;
+    size_t i;
+
+    largest = get_n_largest(dataset, size, n, &result_size);
+
+    if (largest == NULL) {
+        fprintf(stderr, "Error: failed to get largest items\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("The %zu largest items are: ", result_size);
+    for (i = 0; i < result_size; i++) {
+        printf("%d ", largest[i]);
+    }
+    printf("\n");
+
+    free(largest);
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,54 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <inttypes.h>
+#include <limits.h>
+
+bool is_input_valid(int n) {
+    return n > 0;
+}
+
+uint64_t safe_multiply(uint64_t a, uint64_t b) {
+    if (a > UINT64_MAX / b) {
+        return 0; // Indicate overflow
+    }
+    return a * b;
+}
+
+int64_t cube_sum_of_evens(int n) {
+    int64_t sum = 0;
+    for (int i = 1; i <= n; i++) {
+        int64_t even = 2 * (int64_t)i;
+        uint64_t temp = safe_multiply((uint64_t)even, (uint64_t)even);
+        if (temp == 0 || safe_multiply(temp, (uint64_t)even) == 0) {
+            return -1; // Indicate overflow
+        }
+        /* Possible weaknesses found:
+         * UBSan: signed integer overflow: 9223013771341927200 + 796134035438568 cannot be represented in type 'int64_t' (aka 'long long') (AFL crash: id:000000,sig:06,src:000000,time:217,execs:111,op:havoc,rep:16)
+         */
+        sum += (int64_t)(safe_multiply(temp, (uint64_t)even));
+        if (sum < 0) {
+            return -1; // Indicate overflow
+        }
+    }
+    return sum;
+}
+
+int main() {
+    int n;
+    printf("Enter the value of n: ");
+    if (scanf("%d", &n) != 1) {
+        fprintf(stderr, "Invalid input. Please enter an integer.\n");
+        return 1;
+    }
+    if (!is_input_valid(n)) {
+        fprintf(stderr, "Please enter a positive integer.\n");
+        return 1;
+    }
+    int64_t result = cube_sum_of_evens(n);
+    if (result == -1) {
+        fprintf(stderr, "Calculation overflowed. Please use a smaller value for n.\n");
+        return 1;
+    }
+    printf("The cube sum of first %d even natural numbers is: %" PRId64 "\n", n, result);
+    return 0;
+}

@@ -1,0 +1,20 @@
+#include <stdio.h>
+#include <math.h>
+
+double calculateDiscriminant(double a, double b, double c) {
+    double discriminant = b * b - 4 * a * c;
+    return discriminant;
+}
+
+int main() {
+    double a, b, c, discriminant;
+
+    printf("Enter coefficients a, b and c: ");
+    scanf("%lf %lf %lf", &a, &b, &c);
+
+    discriminant = calculateDiscriminant(a, b, c);
+
+    printf("Discriminant: %.2lf", discriminant);
+
+    return 0;
+}

@@ -1,0 +1,74 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <limits.h>
+#include <string.h>
+
+long long jacobsthal_lucas(int n)
+{
+    if (n == 0) {
+        return 2;
+    }
+    if (n == 1) {
+        return 1;
+    }
+
+    long long prev2 = 2;
+    long long prev1 = 1;
+    long long current = 0;
+    int i;
+
+    for (i = 2; i <= n; i++) {
+        if (prev2 > (LLONG_MAX - prev1) / 2) {
+            errno = ERANGE;
+            return -1;
+        }
+        current = prev1 + 2 * prev2;
+        prev2 = prev1;
+        prev1 = current;
+    }
+
+    return current;
+}
+
+int main(void)
+{
+    char buffer[256];
+    char *endptr;
+    long val;
+    int n;
+    long long result;
+    size_t len;
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        return EXIT_FAILURE;
+    }
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len == sizeof(buffer) - 1 && buffer[len - 1] != '\n') {
+        return EXIT_FAILURE;
+    }
+
+    errno = 0;
+    val = strtol(buffer, &endptr, 10);
+
+    if (errno != 0 || endptr == buffer || val < 0 || val > INT_MAX) {
+        return EXIT_FAILURE;
+    }
+
+    if (*endptr != '\n' && *endptr != '\0') {
+        return EXIT_FAILURE;
+    }
+
+    n = (int)val;
+    errno = 0;
+    result = jacobsthal_lucas(n);
+    
+    if (errno != 0) {
+        return EXIT_FAILURE;
+    }
+    
+    printf("%lld\n", result);
+
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,87 @@
+```c
+#define _POSIX_C_SOURCE 200809L
+
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+#define MAX_INPUT_SIZE 1024
+
+long long countSubstrings(const char *str, size_t max_len)
+{
+    long long counts[256] = {0};
+    long long result = 0;
+    size_t i;
+    size_t len;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    len = strnlen(str, max_len);
+
+    for (i = 0; i < len; i++) {
+        counts[(unsigned char)str[i]]++;
+    }
+
+    for (i = 0; i < 256; i++) {
+        result += (counts[i] * (counts[i] + 1)) / 2;
+    }
+
+    return result;
+}
+
+int main(void)
+{
+    char *buffer = NULL;
+    size_t bufsize = 0;
+    ssize_t nread;
+    size_t len;
+    long long result;
+
+    printf("Enter a string: ");
+
+    nread = getline(&buffer, &bufsize, stdin);
+    if (nread < 0) {
+        fprintf(stderr, "Error reading input\n");
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+
+    len = strnlen(buffer, (size_t)nread);
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+        len--;
+    }
+
+    if (len >= MAX_INPUT_SIZE) {
+        buffer[MAX_INPUT_SIZE - 1] = '\0';
+        len = MAX_INPUT_SIZE - 1;
+    }
+
+    result = countSubstrings(buffer, len);
+
+    free(buffer);
+    buffer = NULL;
+
+    if (printf("Count of substrings: %lld\n", result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the changes:**
+
+The original code was already reasonably defensive, but the Flawfinder warning pointed at the statically-sized `char buffer[MAX_INPUT_SIZE]`. The rewrite addresses this by:
+
+1. **Replacing the fixed-size stack buffer with `getline()`** — a POSIX 2008 function (enabled by the existing `_POSIX_C_SOURCE 200809L` definition) that dynamically allocates exactly as much memory as needed, eliminating the fixed-buffer truncation/overflow class of issues entirely.
+
+2. **Using the actual byte count returned by `getline()`** (`nread`) as the bound for `strnlen`, so length calculations are always tied to real allocated data rather than an assumed capacity.
+
+3. **Explicitly enforcing the `MAX_INPUT_SIZE` policy limit** after reading, so overly long input is safely truncated rather than silently mishandled.
+
+4. **Freeing the heap allocation on every exit path** (including the error path) to avoid leaks, and nulling the pointer after `free` to prevent accidental use-after-free.
+
+5. **Preserving the original safe logic** in `countSubstrings`: the `NULL` check, `strnlen` bounding, and the `(unsigned char)` cast that prevents negative array indexing on platforms where `char` is signed.

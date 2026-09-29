@@ -1,0 +1,27 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <string.h>
+
+bool isPalindrome(int n) {
+    char numStr[20];
+    sprintf(numStr, "%d", n);
+    int len = strlen(numStr);
+    for (int i = 0; i < len / 2; ++i) {
+        if (numStr[i] != numStr[len - i - 1]) return false;
+    }
+    return true;
+}
+
+int nextPalindromicNumber(int n) {
+    n++;
+    while (!isPalindrome(n)) n++;
+    return n;
+}
+
+int main() {
+    int n;
+    scanf("%d", &n);
+    int result = nextPalindromicNumber(n);
+    printf("%d\n", result);
+    return 0;
+}

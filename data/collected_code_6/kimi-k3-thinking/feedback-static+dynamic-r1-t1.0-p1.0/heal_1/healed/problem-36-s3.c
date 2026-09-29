@@ -1,0 +1,56 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int findNthDigit(int numerator, int denominator, int n)
+{
+    long long rem;
+    long long den;
+    int i;
+    int digit = -1;
+
+    if (denominator == 0 || n <= 0) {
+        return -1;
+    }
+
+    den = denominator;
+    if (den < 0) {
+        den = -den;
+    }
+
+    rem = numerator;
+    if (rem < 0) {
+        rem = -rem;
+    }
+
+    rem %= den;
+
+    for (i = 1; i <= n; i++) {
+        rem *= 10;
+        digit = (int)(rem / den);
+        rem %= den;
+    }
+
+    return digit;
+}
+
+int main(void)
+{
+    int numerator;
+    int denominator;
+    int n;
+    int digit;
+
+    if (scanf("%d %d %d", &numerator, &denominator, &n) != 3) {
+        return EXIT_FAILURE;
+    }
+
+    digit = findNthDigit(numerator, denominator, n);
+
+    if (digit < 0) {
+        return EXIT_FAILURE;
+    }
+
+    printf("%d\n", digit);
+
+    return EXIT_SUCCESS;
+}

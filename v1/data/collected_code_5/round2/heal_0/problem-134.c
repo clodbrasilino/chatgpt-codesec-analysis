@@ -1,0 +1,45 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int check_last_element(int* arr, int size, int p) {
+    if (arr == NULL || size <= 0 || p < 0) {
+        printf("Invalid inputs\n");
+        return -1;
+    }
+    
+    int idx = size - 1;
+    while (p--) {
+        arr[idx] = arr[idx]++;
+    }
+    
+    return arr[idx] % 2 == 0;
+}
+
+int main() {
+    int size = 5, p = 2;
+    int* arr = malloc(sizeof(int) * size);
+    if (arr == NULL) {
+        printf("Memory allocation failed\n");
+        return -1;
+    }
+    
+    for (int i = 0; i < size; i++) {
+        arr[i] = i;
+    }
+    
+    int flag = check_last_element(arr, size, p);
+    if(flag == -1){
+        // Handling the error condition
+        return -1;
+    }
+    
+    if (flag) {
+        printf("Even\n");
+    } else {
+        printf("Odd\n");
+    }
+    
+    free(arr);
+    
+    return 0;
+}

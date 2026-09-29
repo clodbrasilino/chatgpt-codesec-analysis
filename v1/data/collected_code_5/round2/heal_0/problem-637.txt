@@ -1,0 +1,38 @@
+```C
+#include <stdio.h>
+#include <stdlib.h>
+
+int profitLossCheck(float buyingPrice, float sellingPrice) {
+    if(buyingPrice == sellingPrice) {
+        return 1;
+    }
+    else {
+        return 0;
+    }
+}
+
+int main() {
+    float buyingPrice, sellingPrice;
+
+    printf("Enter buying price: ");
+    if(scanf("%f", &buyingPrice) != 1) {
+        printf("Error: Please enter a valid number.\n");
+        return 1;
+    }
+
+    printf("Enter selling price: ");
+    if(scanf("%f", &sellingPrice) != 1) {
+        printf("Error: Please enter a valid number.\n");
+        return 1;
+    }
+
+    if(profitLossCheck(buyingPrice, sellingPrice)) {
+        printf("There is no profit no loss.\n");
+    }
+    else {
+        printf("There is a profit or a loss.\n");
+    }
+
+    return 0;
+}
+```

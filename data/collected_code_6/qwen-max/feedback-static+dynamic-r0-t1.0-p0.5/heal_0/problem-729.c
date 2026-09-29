@@ -1,0 +1,71 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node* next;
+} Node;
+
+Node* createNode(int data) {
+    Node* newNode = (Node*)malloc(sizeof(Node));
+    if (newNode == NULL) {
+        exit(EXIT_FAILURE);
+    }
+    newNode->data = data;
+    newNode->next = NULL;
+    return newNode;
+}
+
+void append(Node** head, int data) {
+    Node* newNode = createNode(data);
+    if (*head == NULL) {
+        *head = newNode;
+    } else {
+        Node* temp = *head;
+        while (temp->next != NULL) {
+            temp = temp->next;
+        }
+        temp->next = newNode;
+    }
+}
+
+Node* addLists(Node* first, Node* second) {
+    Node* result = NULL;
+    int carry = 0;
+    while (first || second || carry) {
+        int sum = (first ? first->data : 0) + (second ? second->data : 0) + carry;
+        carry = sum / 10;
+        sum %= 10;
+        append(&result, sum);
+        if (first) first = first->next;
+        if (second) second = second->next;
+    }
+    return result;
+}
+
+void printList(Node* head) {
+    while (head) {
+        printf("%d -> ", head->data);
+        head = head->next;
+    }
+    printf("NULL\n");
+}
+
+int main() {
+    Node* list1 = NULL;
+    Node* list2 = NULL;
+
+    append(&list1, 9);
+    append(&list1, 9);
+    append(&list1, 9);
+
+    append(&list2, 1);
+    append(&list2, 0);
+    append(&list2, 0);
+    append(&list2, 1);
+
+    Node* result = addLists(list1, list2);
+    printList(result);
+
+    return 0;
+}

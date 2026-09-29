@@ -1,0 +1,36 @@
+```C
+#include <stdio.h>
+
+int check_odd_parity(int num) {
+    int parity = 0;
+    
+    while (num) {
+        parity = !parity;
+        num = num & (num - 1);
+    }
+
+    return parity;
+}
+
+int main() {
+    int num;
+
+    printf("Enter a number: ");
+    scanf("%d", &num);
+
+    if (check_odd_parity(num)) {
+        printf("The number has odd parity\n");
+    } else {
+        printf("The number does not have odd parity\n");
+    }
+
+    return 0;
+}
+```
+In the `check_odd_parity` function, we are checking the number's bit representation for odd parity. The algorithm used for checking parity converts the problem of finding parity to finding the number of set bits in a number (bits are set to 1 in binary representation). If the number of set bits is odd then the parity is odd, if even then the parity is even.
+
+The `while` loop operates until `num` becomes zero. In each iteration we XOR the `parity` flag (initially zero), with 1. This alternates its value from 0 to 1 (and vice versa).
+
+The statement `num = num & (num - 1);` clears the least significant set bit in `num`. The loop will continue until all bits have been cleared. If we have done an odd number of operations, `parity` will be 1 (meaning the number has odd parity). Otherwise, `parity` will be zero.  
+
+The `main` function prompts the user for a number, then calls the `check_odd_parity` function with the user's input as an argument. If the function returns non-zero the number has odd parity, else it does not.

@@ -1,0 +1,77 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node* next;
+} Node;
+
+Node* createNode(int data) {
+    Node* newNode = (Node*)malloc(sizeof(Node));
+    if (newNode == NULL) {
+        return NULL;
+    }
+    newNode->data = data;
+    newNode->next = NULL;
+    return newNode;
+}
+
+void insertNode(Node** head, int data) {
+    Node* newNode = createNode(data);
+    if (*head == NULL) {
+        *head = newNode;
+    } else {
+        Node* temp = *head;
+        while (temp->next != NULL) {
+            temp = temp->next;
+        }
+        temp->next = newNode;
+    }
+}
+
+void printList(Node* head) {
+    Node* temp = head;
+    while (temp != NULL) {
+        printf("%d -> ", temp->data);
+        temp = temp->next;
+    }
+    printf("NULL\n");
+}
+
+Node* splitList(Node* head, int length) {
+    if (head == NULL || length <= 0) {
+        return NULL;
+    }
+    Node* current = head;
+    for (int i = 1; i < length && current != NULL; ++i) {
+        current = current->next;
+    }
+    if (current == NULL) {
+        return NULL;
+    }
+    Node* secondPart = current->next;
+    current->next = NULL;
+    return secondPart;
+}
+
+int main() {
+    Node* head = NULL;
+    insertNode(&head, 1);
+    insertNode(&head, 2);
+    insertNode(&head, 3);
+    insertNode(&head, 4);
+    insertNode(&head, 5);
+
+    printf("Original list: ");
+    printList(head);
+
+    Node* secondPart = splitList(head, 3);
+
+    printf("First part: ");
+    printList(head);
+
+    printf("Second part: ");
+    printList(secondPart);
+
+    return 0;
+}

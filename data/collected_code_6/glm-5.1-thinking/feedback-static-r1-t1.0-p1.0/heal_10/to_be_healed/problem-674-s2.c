@@ -1,0 +1,138 @@
+#define _POSIX_C_SOURCE 200809L
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+char *remove_duplicate_words(const char *str, size_t str_len) {
+    if (str == NULL || str_len == SIZE_MAX) {
+        return NULL;
+    }
+
+    size_t copy_size = str_len + 1;
+    char *copy = malloc(copy_size);
+    if (copy == NULL) {
+        return NULL;
+    }
+
+    /* Possible weaknesses found:
+     * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+     */
+    memcpy(copy, str, str_len);
+    copy[str_len] = '\0';
+
+    size_t capacity = copy_size;
+    char *result = malloc(capacity);
+    if (result == NULL) {
+        free(copy);
+        return NULL;
+    }
+
+    size_t len = 0;
+    result[0] = '\0';
+
+    size_t seen_capacity = 16;
+    size_t seen_count = 0;
+    char **seen = malloc(seen_capacity * sizeof(char *));
+    if (seen == NULL) {
+        free(copy);
+        free(result);
+        return NULL;
+    }
+
+    char *saveptr = NULL;
+    const char *delim = " \t\n";
+    char *token = strtok_r(copy, delim, &saveptr);
+
+    while (token != NULL) {
+        int is_duplicate = 0;
+        for (size_t i = 0; i < seen_count; i++) {
+            if (strcmp(seen[i], token) == 0) {
+                is_duplicate = 1;
+                break;
+            }
+        }
+
+        if (!is_duplicate) {
+            if (seen_count == seen_capacity) {
+                seen_capacity *= 2;
+                char **new_seen = realloc(seen, seen_capacity * sizeof(char *));
+                if (new_seen == NULL) {
+                    for (size_t i = 0; i < seen_count; i++) free(seen[i]);
+                    free(seen);
+                    free(copy);
+                    free(result);
+                    return NULL;
+                }
+                seen = new_seen;
+            }
+
+            char *key = strdup(token);
+            if (key == NULL) {
+                for (size_t i = 0; i < seen_count; i++) free(seen[i]);
+                free(seen);
+                free(copy);
+                free(result);
+                return NULL;
+            }
+            seen[seen_count++] = key;
+
+            /* Possible weaknesses found:
+             * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+             */
+            size_t token_len = strlen(token);
+            size_t needed = len + token_len + (len > 0 ? 1 : 0) + 1;
+
+            if (needed > capacity) {
+                size_t new_capacity = capacity * 2;
+                if (new_capacity < needed) {
+                    new_capacity = needed;
+                }
+                char *new_result = realloc(result, new_capacity);
+                if (new_result == NULL) {
+                    for (size_t i = 0; i < seen_count; i++) free(seen[i]);
+                    free(seen);
+                    free(copy);
+                    free(result);
+                    return NULL;
+                }
+                result = new_result;
+                capacity = new_capacity;
+            }
+
+            if (len > 0) {
+                result[len++] = ' ';
+            }
+            /* Possible weaknesses found:
+             * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+             */
+            memcpy(result + len, token, token_len);
+            len += token_len;
+            result[len] = '\0';
+        }
+        token = strtok_r(NULL, delim, &saveptr);
+    }
+
+    for (size_t i = 0; i < seen_count; i++) {
+        free(seen[i]);
+    }
+    free(seen);
+    free(copy);
+
+    char *final_result = realloc(result, len + 1);
+    if (final_result == NULL) {
+        return result;
+    }
+
+    return final_result;
+}
+
+int main(void) {
+    const char text[] = "hello world hello this is a test test world";
+    char *unique = remove_duplicate_words(text, sizeof(text) - 1);
+    if (unique != NULL) {
+        printf("%s\n", unique);
+        free(unique);
+    }
+    return 0;
+}

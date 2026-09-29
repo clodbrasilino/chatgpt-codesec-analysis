@@ -1,0 +1,83 @@
+#include <errno.h>
+#include <inttypes.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+static int sum_even_index_binomial_coefficients(uint32_t n, uint64_t *result)
+{
+    if (result == NULL || n > 64U) {
+        return -1;
+    }
+
+    *result = (n == 0U) ? UINT64_C(1)
+                        : (UINT64_C(1) << (n - 1U));
+    return 0;
+}
+
+static int read_value(uint32_t *value)
+{
+    char *line = NULL;
+    size_t capacity = 0;
+    ssize_t length;
+    char *end;
+    unsigned long parsed;
+
+    if (value == NULL) {
+        return -1;
+    }
+
+    length = getline(&line, &capacity, stdin);
+    if (length < 0) {
+        free(line);
+        return -1;
+    }
+
+    if (length > 0 && line[length - 1] == '\n') {
+        line[length - 1] = '\0';
+    }
+
+    errno = 0;
+    parsed = strtoul(line, &end, 10);
+
+    if (errno == ERANGE || end == line || parsed > 64UL) {
+        free(line);
+        return -1;
+    }
+
+    while (*end == ' ' || *end == '\t' || *end == '\r' ||
+           *end == '\f' || *end == '\v') {
+        ++end;
+    }
+
+    if (*end != '\0') {
+        free(line);
+        return -1;
+    }
+
+    *value = (uint32_t)parsed;
+    free(line);
+    return 0;
+}
+
+int main(void)
+{
+    uint32_t value;
+    uint64_t sum;
+
+    if (read_value(&value) != 0) {
+        fputs("Invalid input\n", stderr);
+        return EXIT_FAILURE;
+    }
+
+    if (sum_even_index_binomial_coefficients(value, &sum) != 0) {
+        fputs("Input is out of range\n", stderr);
+        return EXIT_FAILURE;
+    }
+
+    if (printf("%" PRIu64 "\n", sum) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

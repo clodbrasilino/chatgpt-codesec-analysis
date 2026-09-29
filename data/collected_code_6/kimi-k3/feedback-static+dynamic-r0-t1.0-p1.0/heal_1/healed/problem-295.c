@@ -1,0 +1,49 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+long long sum_divisors(long long n) {
+    if (n <= 0) {
+        return 0;
+    }
+    
+    long long sum = 0;
+    long long i;
+    
+    for (i = 1; i <= n / i; i++) {
+        if (n % i == 0) {
+            if (sum > LLONG_MAX - i) {
+                return -1;
+            }
+            sum += i;
+            if (i != n / i) {
+                long long complement = n / i;
+                if (sum > LLONG_MAX - complement) {
+                    return -1;
+                }
+                sum += complement;
+            }
+        }
+    }
+    
+    return sum;
+}
+
+int main(void) {
+    long long number;
+    
+    if (scanf("%lld", &number) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    long long result = sum_divisors(number);
+    if (result == -1) {
+        fprintf(stderr, "Overflow detected\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("%lld\n", result);
+    
+    return EXIT_SUCCESS;
+}

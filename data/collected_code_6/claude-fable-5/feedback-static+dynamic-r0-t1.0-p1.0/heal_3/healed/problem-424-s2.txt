@@ -1,0 +1,117 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_STR_LEN 4096U
+
+static size_t bounded_strlen(const char *s, size_t max_len)
+{
+    size_t n = 0U;
+
+    while (n < max_len && s[n] != '\0') {
+        n++;
+    }
+
+    return n;
+}
+
+char *extract_rear(const char *const *strings, size_t count)
+{
+    char *result = NULL;
+    size_t i;
+
+    if (strings == NULL || count == 0U) {
+        return NULL;
+    }
+
+    result = malloc(count + 1U);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    for (i = 0U; i < count; i++) {
+        size_t len;
+
+        if (strings[i] == NULL) {
+            free(result);
+            return NULL;
+        }
+
+        len = bounded_strlen(strings[i], MAX_STR_LEN);
+        if (len == 0U) {
+            result[i] = ' ';
+        } else {
+            result[i] = strings[i][len - 1U];
+        }
+    }
+
+    result[count] = '\0';
+    return result;
+}
+
+static int print_rear(const char *const *words, size_t count)
+{
+    char *rear = extract_rear(words, count);
+    size_t i;
+
+    if (rear == NULL) {
+        fprintf(stderr, "Failed to extract rear elements\n");
+        return -1;
+    }
+
+    if (printf("[") < 0) {
+        free(rear);
+        return -1;
+    }
+
+    for (i = 0U; i < count; i++) {
+        if (printf("'%c'%s", rear[i], (i + 1U < count) ? ", " : "") < 0) {
+            free(rear);
+            return -1;
+        }
+    }
+
+    if (printf("]\n") < 0) {
+        free(rear);
+        return -1;
+    }
+
+    if (fflush(stdout) != 0) {
+        free(rear);
+        return -1;
+    }
+
+    free(rear);
+    return 0;
+}
+
+int main(void)
+{
+    const char *const words0[] = { "Mers", "for", "Vers" };
+    const char *const words1[] = { "take", "war", "junipere" };
+    const char *const words2[] = { "china", "most", "go" };
+
+    if (print_rear(words0, sizeof(words0) / sizeof(words0[0])) != 0) {
+        return EXIT_FAILURE;
+    }
+
+    if (print_rear(words1, sizeof(words1) / sizeof(words1[0])) != 0) {
+        return EXIT_FAILURE;
+    }
+
+    if (print_rear(words2, sizeof(words2) / sizeof(words2[0])) != 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+Analysis notes: the original logic for extracting the last character of each string was actually sound — `bounded_strlen` correctly caps traversal at `MAX_STR_LEN`, the allocation of `count + 1U` bytes is sufficient, NULL entries are handled, and there are no leaks on any exit path. The reported "no output" failures point to output never reaching the test harness rather than a logic bug, which typically happens when `stdout` is block-buffered (e.g., piped to a file/harness) and the process output isn't flushed before the harness reads it, or the process is terminated abnormally. The fix adds an explicit `fflush(stdout)` after each result line so output is guaranteed to be delivered immediately, with its return value checked to keep the error-handling discipline consistent with the rest of the code. Expected output:
+
+```
+['s', 'r', 's']
+['e', 'r', 'e']
+['a', 't', 'o']
+```

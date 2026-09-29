@@ -1,0 +1,62 @@
+```c
+#include <stdio.h>
+#include <limits.h>
+
+#define CHAR_COUNT (UCHAR_MAX + 1)
+
+void most_common_elements(const char *text) {
+    unsigned long freq[CHAR_COUNT] = {0};
+    unsigned long max_count = 0;
+    const unsigned char *p = (const unsigned char *)text;
+
+    if (text == NULL) {
+        return;
+    }
+
+    while (*p != '\0') {
+        freq[*p]++;
+        if (freq[*p] > max_count) {
+            max_count = freq[*p];
+        }
+        p++;
+    }
+
+    if (max_count == 0) {
+        printf("No elements found.\n");
+        return;
+    }
+
+    printf("Most common element(s) with count %lu:\n", max_count);
+
+    for (int i = 0; i < CHAR_COUNT; i++) {
+        if (freq[i] == max_count) {
+            if (i == '\n') {
+                printf("'\\n'");
+            } else if (i == '\t') {
+                printf("'\\t'");
+            } else if (i == '\r') {
+                printf("'\\r'");
+            } else if (i >= 32 && i <= 126) {
+                printf("'%c'", (char)i);
+            } else {
+                printf("'\\x%02x'", i);
+            }
+            printf(": %lu\n", freq[i]);
+        }
+    }
+}
+
+int main(int argc, char *argv[]) {
+    const char *text;
+
+    if (argc > 1) {
+        text = argv[1];
+    } else {
+        text = "hello world";
+    }
+
+    most_common_elements(text);
+
+    return 0;
+}
+```

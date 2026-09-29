@@ -1,0 +1,56 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int first;
+    int second;
+} Tuple;
+
+static int sum_tuple_elements(const Tuple *tuples, size_t count, long *result)
+{
+    size_t i;
+    long total;
+
+    if (tuples == NULL || result == NULL) {
+        return -1;
+    }
+
+    total = 0;
+    for (i = 0; i < count; i++) {
+        total += (long)tuples[i].first;
+        total += (long)tuples[i].second;
+    }
+
+    *result = total;
+    return 0;
+}
+
+int main(void)
+{
+    Tuple tuple_list[] = {
+        {1, 3},
+        {5, 6},
+        {5, 6},
+        {5, 6}
+    };
+    size_t count;
+    long sum;
+    int status;
+
+    count = sizeof(tuple_list) / sizeof(tuple_list[0]);
+    sum = 0;
+
+    status = sum_tuple_elements(tuple_list, count, &sum);
+    if (status != 0) {
+        fprintf(stderr, "Error: invalid input to sum_tuple_elements\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Sum of tuple elements: %ld\n", sum) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```

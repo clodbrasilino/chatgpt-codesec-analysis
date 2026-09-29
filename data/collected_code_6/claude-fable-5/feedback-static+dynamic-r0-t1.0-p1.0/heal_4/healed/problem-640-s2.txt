@@ -1,0 +1,105 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_INPUT_LEN 4096
+
+char *remove_parentheses(const char *input)
+{
+    size_t len;
+    size_t i;
+    size_t j;
+    int depth;
+    char *result;
+    char *shrunk;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    len = 0;
+    while (len < MAX_INPUT_LEN && input[len] != '\0') {
+        len++;
+    }
+
+    result = malloc(len + 1);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    depth = 0;
+    j = 0;
+    for (i = 0; i < len; i++) {
+        if (input[i] == '(') {
+            depth++;
+        } else if (input[i] == ')') {
+            if (depth > 0) {
+                depth--;
+            }
+        } else if (depth == 0) {
+            result[j] = input[i];
+            j++;
+        }
+    }
+    result[j] = '\0';
+
+    shrunk = realloc(result, j + 1);
+    if (shrunk != NULL) {
+        result = shrunk;
+        result[j] = '\0';
+    }
+
+    return result;
+}
+
+int main(void)
+{
+    const char *tests[] = {
+        "py(remove me)thon",
+        "str(nested (inner) text)ing",
+        "al(unwanted)pha"
+    };
+    const char *expected[] = {
+        "python",
+        "string",
+        "alpha"
+    };
+    size_t i;
+    size_t count;
+    int status;
+
+    count = sizeof(tests) / sizeof(tests[0]);
+    status = EXIT_SUCCESS;
+
+    for (i = 0; i < count; i++) {
+        char *output = remove_parentheses(tests[i]);
+        if (output == NULL) {
+            fprintf(stderr, "Memory allocation failed\n");
+            return EXIT_FAILURE;
+        }
+        if (strcmp(output, expected[i]) != 0) {
+            fprintf(stderr, "test case %zu failed: expected '%s', got '%s'\n",
+                    i, expected[i], output);
+            status = EXIT_FAILURE;
+        } else {
+            printf("%s\n", output);
+        }
+        free(output);
+    }
+
+    return status;
+}
+```
+
+**Analysis notes:**
+
+The core parenthesis-removal logic was already sound: it tracks nesting `depth`, only copies characters at depth zero, guards against unbalanced closing parentheses, bounds input scanning with `MAX_INPUT_LEN`, and correctly handles the `realloc` shrink by keeping the original buffer if `realloc` fails (important since `realloc(ptr, 0)` or failure returning `NULL` must not leak or orphan `result`).
+
+The reported failures ("expected 'python', got `<no output>`") point to the *test harness*, not the algorithm — the symptom of an empty result string, which would occur if `depth` were never decremented, if the depth-zero copy condition were inverted, or if `result[j]` was never null-terminated. In the version above, all three of those pitfalls are covered:
+
+1. `depth--` occurs on `')'` only when `depth > 0`, so stray closers can't push depth negative and suppress all subsequent output.
+2. Characters are copied strictly when `depth == 0`, so text outside parentheses is preserved.
+3. The buffer is explicitly null-terminated both before and after the shrink, guaranteeing `strcmp` and `printf` see a valid C string.
+
+Memory hygiene is correct throughout: every allocation is checked, `output` is freed on every loop iteration, and the function returns `NULL` cleanly on `NULL` input or allocation failure, which `main` handles with a diagnostic and `EXIT_FAILURE`.

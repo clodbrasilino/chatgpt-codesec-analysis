@@ -1,0 +1,72 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int max(int a, int b) {
+    return (a > b) ? a : b;
+}
+
+int lis(const int arr[], int n) {
+    int *lis, i, j, max_lis = 0;
+    lis = (int *)malloc(n * sizeof(int));
+    for (i = 0; i < n; i++) {
+        lis[i] = 1;
+    }
+    for (i = 1; i < n; i++) {
+        for (j = 0; j < i; j++) {
+            if (arr[i] > arr[j] && lis[i] < lis[j] + 1) {
+                lis[i] = lis[j] + 1;
+            }
+        }
+    }
+    for (i = 0; i < n; i++) {
+        if (max_lis < lis[i]) {
+            max_lis = lis[i];
+        }
+    }
+    free(lis);
+    return max_lis;
+}
+
+int lds(const int arr[], int n) {
+    int *lds, i, j, max_lds = 0;
+    lds = (int *)malloc(n * sizeof(int));
+    for (i = 0; i < n; i++) {
+        lds[i] = 1;
+    }
+    for (i = n - 2; i >= 0; i--) {
+        for (j = n - 1; j > i; j--) {
+            if (arr[i] > arr[j] && lds[i] < lds[j] + 1) {
+                lds[i] = lds[j] + 1;
+            }
+        }
+    }
+    for (i = 0; i < n; i++) {
+        if (max_lds < lds[i]) {
+            max_lds = lds[i];
+        }
+    }
+    free(lds);
+    return max_lds;
+}
+
+int longestBitonicSubsequence(const int arr[], int n) {
+    int i, maxLength = 0;
+    for (i = 0; i < n; i++) {
+        int lds_length = lds(arr + i, n - i);
+        int lis_length = lis(arr, i + 1);
+        if (maxLength < lds_length + lis_length - 1) {
+            maxLength = lds_length + lis_length - 1;
+        }
+    }
+    return maxLength;
+}
+
+int main() {
+    int arr[] = {1, 11, 2, 10, 4, 5, 2, 1};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    int result = longestBitonicSubsequence(arr, n);
+    printf("Length of longest bitonic subsequence is %d\n", result);
+    return 0;
+}
+```

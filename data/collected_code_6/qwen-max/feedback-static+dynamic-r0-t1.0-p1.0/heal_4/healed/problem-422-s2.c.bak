@@ -1,0 +1,32 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+double average_of_cubes(int n) {
+    if (n <= 0) return 0.0;
+
+    long long sum = 0;
+    for (int i = 1; i <= n; ++i) {
+        long long cube = (long long)i * i * i;
+        if (sum > LLONG_MAX - cube) {
+            fprintf(stderr, "Overflow detected\n");
+            exit(EXIT_FAILURE);
+        }
+        sum += cube;
+    }
+    return (double)sum / n;
+}
+
+int main() {
+    int n;
+    printf("Enter the value of n: ");
+    if (scanf("%d", &n) != 1 || n <= 0) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    double result = average_of_cubes(n);
+    printf("The average of cubes of first %d natural numbers is: %.2f\n", n, result);
+
+    return EXIT_SUCCESS;
+}

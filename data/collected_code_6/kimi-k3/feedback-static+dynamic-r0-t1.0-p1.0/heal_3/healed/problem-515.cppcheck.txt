@@ -1,0 +1,28 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-515.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-515.c:35:37: style: Condition 'new_dp!=NULL' is always true [knownConditionTrueFalse]
+        if (copy_size > 0 && new_dp != NULL && dp != NULL) {
+                                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-515.c:23:20: note: Assuming condition 'new_dp==NULL' is false
+        if (new_dp == NULL) {
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-515.c:29:38: note: Assuming condition is false
+        if (copy_size / sizeof(bool) != (size_t)m) {
+                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-515.c:35:37: note: Condition 'new_dp!=NULL' is always true
+        if (copy_size > 0 && new_dp != NULL && dp != NULL) {
+                                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-515.c:37:27: style: Condition 'dest_size>=copy_size' is always true [knownConditionTrueFalse]
+            if (dest_size >= copy_size) {
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-515.c:36:30: note: dest_size is assigned '(unsigned long)m*sizeof(bool)' here.
+            size_t dest_size = (size_t)m * sizeof(bool);
+                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-515.c:28:26: note: copy_size is assigned '(unsigned long)m*sizeof(bool)' here.
+        size_t copy_size = (size_t)m * sizeof(bool);
+                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-515.c:29:38: note: Assuming condition is false
+        if (copy_size / sizeof(bool) != (size_t)m) {
+                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-515.c:37:27: note: Condition 'dest_size>=copy_size' is always true
+            if (dest_size >= copy_size) {
+                          ^

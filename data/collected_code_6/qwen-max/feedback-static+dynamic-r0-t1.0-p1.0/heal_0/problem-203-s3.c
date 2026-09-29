@@ -1,0 +1,20 @@
+#include <stdio.h>
+#include <stdint.h>
+
+uint32_t hamming_distance(uint32_t x, uint32_t y) {
+    uint32_t xor_result = x ^ y;
+    uint32_t distance = 0;
+    while (xor_result > 0) {
+        distance += xor_result & 1;
+        xor_result >>= 1;
+    }
+    return distance;
+}
+
+int main(void) {
+    uint32_t num1 = 0x5; // 0101 in binary
+    uint32_t num2 = 0x3; // 0011 in binary
+    uint32_t result = hamming_distance(num1, num2);
+    printf("Hamming Distance: %u\n", result);
+    return 0;
+}

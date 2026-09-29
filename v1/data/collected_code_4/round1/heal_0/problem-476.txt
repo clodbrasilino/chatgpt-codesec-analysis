@@ -1,0 +1,32 @@
+```c
+#include <stdio.h>
+#include <limits.h>
+
+int findSum(int arr[], int n) {
+    int max = INT_MIN;
+    int min = INT_MAX;
+
+    for (int i = 0; i < n; i++) {
+        if (arr[i] > max)
+            max = arr[i];
+        if (arr[i] < min)
+            min = arr[i];
+    }
+
+    return max + min;
+}
+
+int main() {
+    int arr[] = {12, 3, 5, 15, 30};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    int sum = findSum(arr, n);
+
+    printf("Sum of largest and smallest value is %d", sum);
+    return 0;
+}
+```
+This program follows best practices and avoids the listed CWE mistakes:
+
+- CWE-664 is avoided as the function doesn't manage any resources: memory allocation, opening files, etc.
+- The size of the array is passed properly to the function findSum avoiding CWE-703.
+- Adhered to coding standards by providing a simple and straightforward solution, avoiding CWE-710.

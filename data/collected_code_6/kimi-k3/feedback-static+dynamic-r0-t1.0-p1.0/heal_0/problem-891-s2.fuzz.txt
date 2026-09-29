@@ -1,0 +1,2 @@
+problem-891-s2.c:10:15:medium:UBSan: negation of -9223372036854775808 cannot be represented in type 'long long'; cast to an unsigned type to negate this value to itself (AFL crash: id:000000,sig:06,src:000002,time:24036,execs:9819,op:havoc,rep:10)
+problem-891-s2.c:22:0:error:Fuzzing found a crash (signal 6) on input id:000001,sig:06,src:000015,time:37353,execs:15587,op:havoc,rep:4; likely memory-safety defect

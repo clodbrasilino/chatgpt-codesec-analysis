@@ -1,0 +1,23 @@
+#include <stdio.h>
+#include <math.h>
+
+void findPerfectSquares(int start, int end) {
+    int i;
+    for(i = start; i <= end; i++) {
+        int root = sqrt(i);
+        if(root * root == i) {
+            printf("%d ", i);
+        }
+    }
+    printf("\n");
+}
+
+int main() {
+    int start, end;
+    printf("Enter start number: ");
+    scanf("%d", &start);
+    printf("Enter end number: ");
+    scanf("%d", &end);
+    findPerfectSquares(start, end);
+    return 0;
+}

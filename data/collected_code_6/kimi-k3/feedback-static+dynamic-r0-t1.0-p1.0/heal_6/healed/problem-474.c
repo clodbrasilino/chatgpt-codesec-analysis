@@ -1,0 +1,106 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+#define BUFFER_SIZE 256
+#define CHARS_SIZE 128
+
+void replace_chars(char *str, size_t str_size, const char *old_chars, size_t old_size, const char *new_chars, size_t new_size) {
+    if (str == NULL || old_chars == NULL || new_chars == NULL || str_size == 0) {
+        return;
+    }
+    
+    size_t old_len = strnlen(old_chars, old_size);
+    size_t new_len = strnlen(new_chars, new_size);
+    
+    if (old_len != new_len) {
+        return;
+    }
+    
+    size_t str_len = strnlen(str, str_size);
+    if (str_len == str_size) {
+        str[str_size - 1] = '\0';
+        str_len = str_size - 1;
+    }
+    
+    for (size_t i = 0; i < str_len; i++) {
+        for (size_t j = 0; j < old_len; j++) {
+            if (str[i] == old_chars[j]) {
+                str[i] = new_chars[j];
+                break;
+            }
+        }
+    }
+}
+
+void remove_newline(char *str, size_t max_size) {
+    if (str == NULL || max_size == 0) {
+        return;
+    }
+    
+    size_t len = strnlen(str, max_size);
+    if (len > 0 && str[len - 1] == '\n') {
+        str[len - 1] = '\0';
+    } else if (len == max_size) {
+        str[max_size - 1] = '\0';
+    }
+}
+
+bool read_input(char *buffer, size_t size, const char *prompt) {
+    if (buffer == NULL || size == 0 || prompt == NULL) {
+        return false;
+    }
+    
+    printf("%s", prompt);
+    if (fgets(buffer, size, stdin) == NULL) {
+        return false;
+    }
+    
+    remove_newline(buffer, size);
+    return true;
+}
+
+int main(void) {
+    char *buffer = calloc(BUFFER_SIZE, sizeof(char));
+    char *old_chars = calloc(CHARS_SIZE, sizeof(char));
+    char *new_chars = calloc(CHARS_SIZE, sizeof(char));
+    
+    if (buffer == NULL || old_chars == NULL || new_chars == NULL) {
+        free(buffer);
+        free(old_chars);
+        free(new_chars);
+        return EXIT_FAILURE;
+    }
+    
+    if (!read_input(buffer, BUFFER_SIZE, "Enter a string: ")) {
+        free(buffer);
+        free(old_chars);
+        free(new_chars);
+        return EXIT_FAILURE;
+    }
+    
+    if (!read_input(old_chars, CHARS_SIZE, "Enter characters to replace: ")) {
+        free(buffer);
+        free(old_chars);
+        free(new_chars);
+        return EXIT_FAILURE;
+    }
+    
+    if (!read_input(new_chars, CHARS_SIZE, "Enter replacement characters: ")) {
+        free(buffer);
+        free(old_chars);
+        free(new_chars);
+        return EXIT_FAILURE;
+    }
+    
+    replace_chars(buffer, BUFFER_SIZE, old_chars, CHARS_SIZE, new_chars, CHARS_SIZE);
+    
+    printf("Result: %s\n", buffer);
+    
+    free(buffer);
+    free(old_chars);
+    free(new_chars);
+    
+    return EXIT_SUCCESS;
+}

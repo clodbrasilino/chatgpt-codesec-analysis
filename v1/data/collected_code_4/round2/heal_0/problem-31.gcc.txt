@@ -1,0 +1,13 @@
+./collected_code_4/round2//heal_0/problem-31.c: In function 'printTopK':
+./collected_code_4/round2//heal_0/problem-31.c:84:13: error: wrong type argument to decrement
+   84 |             --hp.array[0];
+      |             ^~
+./collected_code_4/round2//heal_0/problem-31.c: In function 'main':
+./collected_code_4/round2//heal_0/problem-31.c:104:15: warning: passing argument 1 of 'printTopK' from incompatible pointer type [-Wincompatible-pointer-types]
+  104 |     printTopK(arr, n, k, numArrays);
+      |               ^~~
+      |               |
+      |               int (*)[5]
+./collected_code_4/round2//heal_0/problem-31.c:59:22: note: expected 'int **' but argument is of type 'int (*)[5]'
+   59 | void printTopK(int **arr, int *n, int k, int numArrays) {
+      |                ~~~~~~^~~

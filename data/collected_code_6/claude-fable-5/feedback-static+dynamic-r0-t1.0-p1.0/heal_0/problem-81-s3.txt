@@ -1,0 +1,71 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stddef.h>
+
+typedef struct {
+    int first;
+    int second;
+} Pair;
+
+Pair *zip_tuples(const int *tuple1, size_t len1, const int *tuple2, size_t len2, size_t *out_len)
+{
+    Pair *result;
+    size_t min_len;
+    size_t i;
+
+    if (tuple1 == NULL || tuple2 == NULL || out_len == NULL) {
+        return NULL;
+    }
+
+    min_len = (len1 < len2) ? len1 : len2;
+
+    if (min_len == 0U) {
+        *out_len = 0U;
+        return NULL;
+    }
+
+    result = malloc(min_len * sizeof(Pair));
+    if (result == NULL) {
+        *out_len = 0U;
+        return NULL;
+    }
+
+    for (i = 0U; i < min_len; i++) {
+        result[i].first = tuple1[i];
+        result[i].second = tuple2[i];
+    }
+
+    *out_len = min_len;
+    return result;
+}
+
+int main(void)
+{
+    int tuple1[] = {7, 8, 4, 5, 9, 10};
+    int tuple2[] = {1, 5, 4, 8, 10, 1};
+    size_t len1 = sizeof(tuple1) / sizeof(tuple1[0]);
+    size_t len2 = sizeof(tuple2) / sizeof(tuple2[0]);
+    size_t zipped_len = 0U;
+    size_t i;
+    Pair *zipped;
+
+    zipped = zip_tuples(tuple1, len1, tuple2, len2, &zipped_len);
+    if (zipped == NULL) {
+        fprintf(stderr, "Failed to zip tuples\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("[");
+    for (i = 0U; i < zipped_len; i++) {
+        printf("(%d, %d)", zipped[i].first, zipped[i].second);
+        if (i < zipped_len - 1U) {
+            printf(", ");
+        }
+    }
+    printf("]\n");
+
+    free(zipped);
+    return EXIT_SUCCESS;
+}
+```

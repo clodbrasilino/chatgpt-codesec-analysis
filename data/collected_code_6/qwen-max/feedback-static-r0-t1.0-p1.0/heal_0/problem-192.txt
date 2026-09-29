@@ -1,0 +1,59 @@
+```c
+#include <stdio.h>
+#include <ctype.h>
+#include <stdbool.h>
+#include <string.h>
+
+bool has_letter_and_number(const char *str) {
+    bool has_letter = false;
+    bool has_number = false;
+
+    while (*str) {
+        if (isalpha((unsigned char)*str)) {
+            has_letter = true;
+        } else if (isdigit((unsigned char)*str)) {
+            has_number = true;
+        }
+
+        if (has_letter && has_number) {
+            return true;
+        }
+        str++;
+    }
+
+    return false;
+}
+
+int main() {
+    const char *test1 = "Hello123";
+    const char *test2 = "Test";
+    const char *test3 = "12345";
+    const char *test4 = "";
+
+    if (has_letter_and_number(test1)) {
+        printf("%s contains at least one letter and one number.\n", test1);
+    } else {
+        printf("%s does not contain at least one letter and one number.\n", test1);
+    }
+
+    if (has_letter_and_number(test2)) {
+        printf("%s contains at least one letter and one number.\n", test2);
+    } else {
+        printf("%s does not contain at least one letter and one number.\n", test2);
+    }
+
+    if (has_letter_and_number(test3)) {
+        printf("%s contains at least one letter and one number.\n", test3);
+    } else {
+        printf("%s does not contain at least one letter and one number.\n", test3);
+    }
+
+    if (has_letter_and_number(test4)) {
+        printf("%s contains at least one letter and one number.\n", test4);
+    } else {
+        printf("%s does not contain at least one letter and one number.\n", test4);
+    }
+
+    return 0;
+}
+```

@@ -1,0 +1,49 @@
+#include <stdio.h>
+#include <stdbool.h>
+ /* Possible weaknesses found:
+  *  test case 2 failed: expected False, got <no output>
+  *  test case 0 failed: expected True, got <no output>
+  *  test case 1 failed: expected True, got <no output>
+  */
+
+bool is_product_even(const int *numbers, int count) {
+    if (numbers == NULL || count <= 0) {
+        return false;
+    }
+    
+    for (int i = 0; i < count; i++) {
+        if (numbers[i] % 2 == 0) {
+            return true;
+        }
+    }
+    return false;
+}
+
+int main(void) {
+    const int numbers1[] = {1, 3, 5, 7, 9};
+    const int numbers2[] = {1, 3, 5, 7, 8};
+    const int numbers3[] = {2, 4, 6};
+    const int numbers4[] = {1, 2, 3, 4, 5};
+    
+    printf("Product 1 is %s\n", is_product_even(numbers1, 5) ? "even" : "odd");
+    printf("Product 2 is %s\n", is_product_even(numbers2, 5) ? "even" : "odd");
+    printf("Product 3 is %s\n", is_product_even(numbers3, 3) ? "even" : "odd");
+    printf("Product 4 is %s\n", is_product_even(numbers4, 5) ? "even" : "odd");
+    
+    const int *null_ptr = NULL;
+    /* Possible weaknesses found:
+     *  Assignment 'null_result=is_product_even(null_ptr,5)', assigned value is 0
+     *  Calling function 'is_product_even' returns 0
+     */
+    bool null_result = is_product_even(null_ptr, 5);
+    /* Possible weaknesses found:
+     *  Condition 'null_result' is always false [knownConditionTrueFalse]
+     *  Condition 'null_result' is always false
+     */
+    printf("Null test: %s\n", null_result ? "True" : "False");
+    
+    bool zero_count_result = is_product_even(numbers1, 0);
+    printf("Zero count test: %s\n", zero_count_result ? "True" : "False");
+    
+    return 0;
+}

@@ -1,0 +1,85 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int longestIncreasingSubsequence(const int *arr, size_t n)
+{
+    if (arr == NULL || n == 0) {
+        return 0;
+    }
+
+    int *dp = (int *)malloc(n * sizeof(int));
+    if (dp == NULL) {
+        return -1;
+    }
+
+    size_t i;
+    size_t j;
+    int maxLength = 1;
+
+    for (i = 0; i < n; i++) {
+        dp[i] = 1;
+    }
+
+    for (i = 1; i < n; i++) {
+        for (j = 0; j < i; j++) {
+            if (arr[j] < arr[i] && dp[j] + 1 > dp[i]) {
+                dp[i] = dp[j] + 1;
+            }
+        }
+        if (dp[i] > maxLength) {
+            maxLength = dp[i];
+        }
+    }
+
+    free(dp);
+    dp = NULL;
+
+    return maxLength;
+}
+
+int main(void)
+{
+    size_t n;
+    size_t i;
+    int *arr;
+    int result;
+
+    if (scanf("%zu", &n) != 1) {
+        fprintf(stderr, "Error: invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (n == 0) {
+        printf("0\n");
+        return EXIT_SUCCESS;
+    }
+
+    arr = (int *)malloc(n * sizeof(int));
+    if (arr == NULL) {
+        fprintf(stderr, "Error: memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i < n; i++) {
+        if (scanf("%d", &arr[i]) != 1) {
+            fprintf(stderr, "Error: invalid input\n");
+            free(arr);
+            arr = NULL;
+            return EXIT_FAILURE;
+        }
+    }
+
+    result = longestIncreasingSubsequence(arr, n);
+
+    free(arr);
+    arr = NULL;
+
+    if (result < 0) {
+        fprintf(stderr, "Error: memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("%d\n", result);
+
+    return EXIT_SUCCESS;
+}

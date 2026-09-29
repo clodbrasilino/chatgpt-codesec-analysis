@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-10-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-10-s3.c:72:18: style: Condition 'data_len>0' is always true [knownConditionTrueFalse]
+    if (data_len > 0) {
+                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-10-s3.c:69:40: note: Assignment 'data_len=sizeof(raw_data)/sizeof(raw_data[0])', assigned value is 10
+    size_t data_len = sizeof(raw_data) / sizeof(raw_data[0]);
+                                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-10-s3.c:72:18: note: Condition 'data_len>0' is always true
+    if (data_len > 0) {
+                 ^

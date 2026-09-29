@@ -1,0 +1,89 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+#include <limits.h>
+
+int count_rectangles_in_circle(double radius) {
+    if (radius <= 0.0) {
+        return 0;
+    }
+    
+    if (radius > sqrt((double)INT_MAX)) {
+        return -1;
+    }
+    
+    int r_int = (int)floor(radius);
+    
+    if (r_int > INT_MAX / 4) {
+        return -1;
+    }
+    
+    if (r_int <= 0) {
+        return 0;
+    }
+    
+    int count = 0;
+    
+    for (int x = 1; x <= r_int; x++) {
+        double xd = (double)x;
+        double x_squared = xd * xd;
+        double radius_squared = radius * radius;
+        
+        if (x_squared > radius_squared) {
+            break;
+        }
+        
+        double diff = radius_squared - x_squared;
+        if (diff < 0.0) {
+            break;
+        }
+        
+        int max_y = (int)floor(sqrt(diff));
+        
+        if (max_y <= 0) {
+            continue;
+        }
+        
+        if (count > INT_MAX - max_y) {
+            return -1;
+        }
+        count += max_y;
+    }
+    
+    if (count > INT_MAX / 4) {
+        return -1;
+    }
+    
+    return count * 4;
+}
+
+int main(void) {
+    double radius;
+    char input[256];
+    
+    printf("Enter circle radius: ");
+    if (fgets(input, sizeof(input), stdin) == NULL) {
+        return EXIT_FAILURE;
+    }
+    
+    char *endptr;
+    radius = strtod(input, &endptr);
+    
+    if (endptr == input || (*endptr != '\n' && *endptr != '\0')) {
+        return EXIT_FAILURE;
+    }
+    
+    if (radius < 0.0) {
+        return EXIT_FAILURE;
+    }
+    
+    int rectangles = count_rectangles_in_circle(radius);
+    if (rectangles < 0) {
+        printf("Error: radius too large, calculation would overflow.\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("Number of rectangles: %d\n", rectangles);
+    
+    return EXIT_SUCCESS;
+}

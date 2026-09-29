@@ -1,0 +1,76 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+#define MAX_INPUT_LENGTH 1024
+
+void remove_multiple_spaces(char *str)
+{
+    size_t read_index = 0;
+    size_t write_index = 0;
+    int previous_was_space = 0;
+
+    if (str == NULL) {
+        return;
+    }
+
+    while (str[read_index] != '\0') {
+        if (str[read_index] == ' ') {
+            if (previous_was_space == 0) {
+                str[write_index] = str[read_index];
+                write_index++;
+            }
+            previous_was_space = 1;
+        } else {
+            str[write_index] = str[read_index];
+            write_index++;
+            previous_was_space = 0;
+        }
+        read_index++;
+    }
+
+    str[write_index] = '\0';
+}
+
+int main(void)
+{
+    static const char input[] = "This   is  a    string   with     multiple spaces";
+    char *buffer = NULL;
+    size_t input_length = 0;
+    size_t buffer_size = 0;
+
+    input_length = strnlen(input, MAX_INPUT_LENGTH);
+    if (input_length >= MAX_INPUT_LENGTH) {
+        fprintf(stderr, "Input string too long or not null-terminated\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer_size = input_length + 1;
+    buffer = malloc(buffer_size);
+    if (buffer == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    memcpy(buffer, input, input_length);
+    buffer[input_length] = '\0';
+
+    printf("Before: \"%s\"\n", buffer);
+    remove_multiple_spaces(buffer);
+    printf("After:  \"%s\"\n", buffer);
+
+    free(buffer);
+    buffer = NULL;
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Key changes addressing the identified weaknesses:**
+
+1. **CWE-126 (`strlen` over-read):** Replaced `strlen` with `strnlen` bounded by `MAX_INPUT_LENGTH`. If the string is not null-terminated within that bound, the read stops safely and the program exits with an error instead of reading past the buffer.
+
+2. **CWE-120 (`memcpy` overflow):** The destination size is now tracked explicitly in `buffer_size`, allocated from the validated `input_length`. The copy transfers exactly `input_length` bytes and the null terminator is written explicitly at a known-valid index, guaranteeing the destination can always hold the source data.
+
+3. **Defensive extras:** The source string is declared `static const` to prevent accidental modification, and the length check happens *before* allocation so no memory is leaked on the failure path.

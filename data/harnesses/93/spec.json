@@ -1,0 +1,47 @@
+{
+  "task_id": 93,
+  "text": "Write a C function to calculate the value of 'a' to the power 'b'.",
+  "fn_candidates": [
+    "power",
+    "Power",
+    "power",
+    "power"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "power",
+      "args": [
+        3,
+        4
+      ],
+      "expected": 81,
+      "assert_src": "assert power(3,4) == 81"
+    },
+    {
+      "fn_name": "power",
+      "args": [
+        2,
+        3
+      ],
+      "expected": 8,
+      "assert_src": "assert power(2,3) == 8"
+    },
+    {
+      "fn_name": "power",
+      "args": [
+        5,
+        5
+      ],
+      "expected": 3125,
+      "assert_src": "assert power(5,5) == 3125"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

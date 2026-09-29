@@ -1,0 +1,73 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <limits.h>
+
+#define MAX_INPUT_LEN 1024
+
+long long countSubstrings(const char *str, size_t max_len)
+{
+    long long counts[UCHAR_MAX + 1] = {0};
+    long long result = 0;
+    size_t i;
+    size_t len;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    len = strnlen(str, max_len);
+
+    for (i = 0; i < len; i++) {
+        counts[(unsigned char)str[i]]++;
+    }
+
+    for (i = 0; i <= UCHAR_MAX; i++) {
+        result += (counts[i] * (counts[i] + 1)) / 2;
+    }
+
+    return result;
+}
+
+int main(void)
+{
+    char buffer[MAX_INPUT_LEN];
+    long long result;
+
+    memset(buffer, 0, sizeof(buffer));
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+    buffer[strcspn(buffer, "\n")] = '\0';
+
+    result = countSubstrings(buffer, sizeof(buffer));
+
+    if (printf("%lld\n", result) < 0) {
+        return 1;
+    }
+
+    return 0;
+}
+```
+
+**Analysis of the original code and the flagged weakness:**
+
+The Flawfinder warning (CWE-119/CWE-120) flagged the statically-sized `char buffer[MAX_INPUT_LEN]` as a *potential* overflow risk. However, reviewing the code, the weakness is already properly mitigated:
+
+1. **Bounded input:** `fgets(buffer, (int)sizeof(buffer), stdin)` limits reads to the buffer size, preventing overflow — unlike unsafe alternatives such as `gets()` or unbounded `scanf("%s", ...)`.
+
+2. **Guaranteed null termination:** `buffer[sizeof(buffer) - 1] = '\0'` is a defensive belt-and-suspenders measure (technically redundant since `fgets` always null-terminates, but harmless and explicit).
+
+3. **Safe length computation:** `countSubstrings` uses `strnlen(str, max_len)` rather than `strlen`, so even a non-terminated buffer could not cause an out-of-bounds read.
+
+4. **Safe indexing:** The cast `(unsigned char)str[i]` prevents negative array indexing into `counts[]` on platforms where `char` is signed — a subtle but real bug in naive implementations.
+
+5. **Robust error handling:** Return values of `fgets` and `printf` are checked; `memset` pre-zeroes the buffer.
+
+6. **Overflow-safe arithmetic:** Using `long long` for `counts` and `result` means even the worst case (1023 identical characters → ~523,776) is nowhere near overflow limits.
+
+The Flawfinder hit is a false positive in this context; the rewritten code simply removes the comments as requested, since no functional fixes are required.

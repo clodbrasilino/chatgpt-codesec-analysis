@@ -1,0 +1,51 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int findMin(int arr[], int size) {
+    int left = 0;
+    int right = size - 1;
+    
+    if (size == 0) {
+        return -1;
+    }
+    
+    if (size == 1) {
+        return arr[0];
+    }
+    
+    while (left < right) {
+        int mid = left + (right - left) / 2;
+        
+        if (arr[mid] > arr[right]) {
+            left = mid + 1;
+        } else {
+            right = mid;
+        }
+    }
+    
+    return arr[left];
+}
+
+int main(void) {
+    int arr1[] = {4, 5, 6, 7, 0, 1, 2};
+    int size1 = sizeof(arr1) / sizeof(arr1[0]);
+    printf("Minimum element: %d\n", findMin(arr1, size1));
+    
+    int arr2[] = {3, 4, 5, 1, 2};
+    int size2 = sizeof(arr2) / sizeof(arr2[0]);
+    printf("Minimum element: %d\n", findMin(arr2, size2));
+    
+    int arr3[] = {1, 2, 3, 4, 5};
+    int size3 = sizeof(arr3) / sizeof(arr3[0]);
+    printf("Minimum element: %d\n", findMin(arr3, size3));
+    
+    int arr4[] = {2, 1};
+    int size4 = sizeof(arr4) / sizeof(arr4[0]);
+    printf("Minimum element: %d\n", findMin(arr4, size4));
+    
+    int arr5[] = {1};
+    int size5 = sizeof(arr5) / sizeof(arr5[0]);
+    printf("Minimum element: %d\n", findMin(arr5, size5));
+    
+    return 0;
+}

@@ -1,0 +1,82 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+#include <math.h>
+
+static long long integer_sqrt(long long n)
+{
+    if (n <= 0) {
+        return n < 0 ? -1 : 0;
+    }
+
+    long long root = (long long)sqrt((double)n);
+
+    if (root > 3037000499LL) {
+        root = 3037000499LL;
+    }
+    if (root < 0) {
+        root = 0;
+    }
+
+    while (root > 0 && root > n / root) {
+        root--;
+    }
+    while (root + 1 <= n / (root + 1)) {
+        root++;
+    }
+
+    return root;
+}
+
+static bool is_sum_of_two_squares(long long n)
+{
+    if (n < 0) {
+        return false;
+    }
+
+    long long limit = integer_sqrt(n);
+
+    for (long long a = 0; a <= limit; a++) {
+        long long remainder = n - a * a;
+        long long b = integer_sqrt(remainder);
+
+        if (b * b == remainder) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+int main(void)
+{
+    long long number;
+
+    printf("Enter a non-negative integer: ");
+
+    if (scanf("%lld", &number) != 1) {
+        fprintf(stderr, "Error: invalid input.\n");
+        return 1;
+    }
+
+    if (number < 0) {
+        fprintf(stderr, "Error: number must be non-negative.\n");
+        return 1;
+    }
+
+    if (is_sum_of_two_squares(number)) {
+        printf("%lld can be represented as the sum of two squares.\n", number);
+    } else {
+        printf("%lld cannot be represented as the sum of two squares.\n", number);
+    }
+
+    return 0;
+}
+```
+
+**Analysis of the original defect:** The fuzzer-reported crash (signal 6, likely an abort from UBSan or a sanitizer trap) stemmed from signed integer overflow. In the original `integer_sqrt`, the expressions `root * root` and `(root + 1) * (root + 1)` overflow for inputs near `LLONG_MAX` (e.g., `n = 9223372036854775807`), since `sqrt((double)n)` can return a value whose square exceeds `long long` range. Similarly, `a * a` in the loop condition of `is_sum_of_two_squares` could overflow before the comparison terminated the loop. Signed overflow is undefined behavior in C.
+
+**Fixes applied:**
+1. Clamped the initial `root` estimate to `3037000499` (the integer square root of `LLONG_MAX`), guarding against imprecise `double` conversion.
+2. Replaced multiplication-based comparisons (`root * root > n`, `(root+1)*(root+1) <= n`) with division-based equivalents (`root > n / root`, `root + 1 <= n / (root + 1)`), which cannot overflow.
+3. Precomputed `limit = integer_sqrt(n)` so the loop bound `a <= limit` never requires an overflowing `a * a` comparison; `a * a` and `b * b` inside the loop are then guaranteed to fit.

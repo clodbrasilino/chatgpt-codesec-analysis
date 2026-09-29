@@ -1,0 +1,68 @@
+{
+  "task_id": 899,
+  "text": "Write a C function to check whether an array can be sorted or not by picking only the corner elements.",
+  "fn_candidates": [
+    "check",
+    "Check",
+    "check",
+    "check"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "check",
+      "args": [
+        [
+          3,
+          2,
+          1,
+          2,
+          3,
+          4
+        ],
+        6
+      ],
+      "expected": true,
+      "assert_src": "assert check([3,2,1,2,3,4],6) == True"
+    },
+    {
+      "fn_name": "check",
+      "args": [
+        [
+          2,
+          1,
+          4,
+          5,
+          1
+        ],
+        5
+      ],
+      "expected": true,
+      "assert_src": "assert check([2,1,4,5,1],5) == True"
+    },
+    {
+      "fn_name": "check",
+      "args": [
+        [
+          1,
+          2,
+          2,
+          1,
+          2,
+          3
+        ],
+        6
+      ],
+      "expected": true,
+      "assert_src": "assert check([1,2,2,1,2,3],6) == True"
+    }
+  ],
+  "arg_kinds": [
+    "int",
+    "int-list"
+  ],
+  "return_kind": "bool",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

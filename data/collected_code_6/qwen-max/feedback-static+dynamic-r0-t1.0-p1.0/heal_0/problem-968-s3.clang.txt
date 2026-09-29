@@ -1,0 +1,15 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-968-s3.c:5:16: error: call to undeclared library function 'sin' with type 'double (double)'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+    5 |     return 3 * sin(x) + 4 * cos(2 * x);
+      |                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-968-s3.c:5:16: note: include the header <math.h> or explicitly provide a declaration for 'sin'
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-968-s3.c:5:29: error: call to undeclared library function 'cos' with type 'double (double)'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+    5 |     return 3 * sin(x) + 4 * cos(2 * x);
+      |                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-968-s3.c:5:29: note: include the header <math.h> or explicitly provide a declaration for 'cos'
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-968-s3.c:9:25: error: use of undeclared identifier 'DBL_MAX'
+    9 |     double max_value = -DBL_MAX;
+      |                         ^~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-968-s3.c:20:78: error: use of undeclared identifier 'M_PI'
+   20 |     double max_val = find_maximum_periodic_value(periodic_function, 0.0, 2 * M_PI, 0.01);
+      |                                                                              ^~~~
+4 errors generated.

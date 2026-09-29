@@ -1,0 +1,87 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_INPUT_LEN 4096U
+
+static char *remove_odd_index_chars(const char *input)
+{
+    size_t len;
+    size_t i;
+    size_t j;
+    char *result;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    len = strnlen(input, MAX_INPUT_LEN);
+    if (len >= MAX_INPUT_LEN) {
+        return NULL;
+    }
+
+    result = malloc((len / 2U) + 2U);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    j = 0U;
+    for (i = 0U; i < len; i++) {
+        if ((i % 2U) == 0U) {
+            result[j] = input[i];
+            j++;
+        }
+    }
+    result[j] = '\0';
+
+    return result;
+}
+
+int main(void)
+{
+    const char *test_strings[] = {
+        "abcdef",
+        "hello world",
+        "a",
+        ""
+    };
+    size_t count;
+    size_t i;
+    int status;
+
+    status = EXIT_SUCCESS;
+    count = sizeof(test_strings) / sizeof(test_strings[0]);
+
+    for (i = 0U; i < count; i++) {
+        char *output = remove_odd_index_chars(test_strings[i]);
+        if (output == NULL) {
+            if (fprintf(stderr, "Memory allocation failed\n") < 0) {
+                status = EXIT_FAILURE;
+                break;
+            }
+            status = EXIT_FAILURE;
+            break;
+        }
+        if (printf("Input: \"%s\" -> Output: \"%s\"\n", test_strings[i], output) < 0) {
+            free(output);
+            status = EXIT_FAILURE;
+            break;
+        }
+        free(output);
+        output = NULL;
+    }
+
+    return status;
+}
+```
+
+**Key changes:**
+
+1. **CWE-126 (over-read via `strlen`)**: Replaced `strlen` with `strnlen` bounded by `MAX_INPUT_LEN`. If the string is not `\0`-terminated within that bound, the function safely returns `NULL` instead of reading past the buffer.
+
+2. **`variableScope` (cppcheck)**: Moved the declaration of `output` inside the `for` loop body, reducing its scope to the smallest block where it is used.
+
+3. Made `remove_odd_index_chars` `static` since it has internal linkage only — a minor hardening/hygiene improvement.
+
+The allocation size `(len / 2U) + 2U` remains correct: it always covers the characters copied at even indices plus the terminating `'\0'`, with no risk of integer overflow given the length bound.

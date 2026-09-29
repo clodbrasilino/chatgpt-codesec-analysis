@@ -1,0 +1,102 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_NAME_LEN 64
+
+typedef struct {
+    char first[MAX_NAME_LEN];
+    int second;
+} Tuple;
+
+static int compare_tuples(const void *a, const void *b)
+{
+    const Tuple *ta = (const Tuple *)a;
+    const Tuple *tb = (const Tuple *)b;
+    return strncmp(ta->first, tb->first, sizeof(ta->first));
+}
+
+static int set_tuple(Tuple *t, const char *name, int value)
+{
+    size_t len;
+
+    if (t == NULL || name == NULL) {
+        return -1;
+    }
+
+    len = strnlen(name, sizeof(t->first));
+    if (len >= sizeof(t->first)) {
+        return -1;
+    }
+
+    memcpy(t->first, name, len);
+    t->first[len] = '\0';
+    t->second = value;
+    return 0;
+}
+
+static void sort_tuples(Tuple *tuples, size_t count)
+{
+    if (tuples == NULL || count == 0U) {
+        return;
+    }
+    qsort(tuples, count, sizeof(Tuple), compare_tuples);
+}
+
+static int print_tuples(const Tuple *tuples, size_t count)
+{
+    size_t i;
+
+    if (tuples == NULL) {
+        return -1;
+    }
+
+    for (i = 0U; i < count; i++) {
+        if (printf("(%.*s, %d)\n", (int)(sizeof(tuples[i].first) - 1U),
+                   tuples[i].first, tuples[i].second) < 0) {
+            return -1;
+        }
+    }
+    return 0;
+}
+
+int main(void)
+{
+    Tuple tuples[5];
+    size_t count = sizeof(tuples) / sizeof(tuples[0]);
+
+    if (set_tuple(&tuples[0], "banana", 3) != 0 ||
+        set_tuple(&tuples[1], "apple", 5) != 0 ||
+        set_tuple(&tuples[2], "cherry", 1) != 0 ||
+        set_tuple(&tuples[3], "date", 7) != 0 ||
+        set_tuple(&tuples[4], "apricot", 2) != 0) {
+        (void)fprintf(stderr, "Initialization error\n");
+        return EXIT_FAILURE;
+    }
+
+    sort_tuples(tuples, count);
+
+    if (print_tuples(tuples, count) != 0) {
+        (void)fprintf(stderr, "Output error\n");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the flagged weaknesses and why the code is safe as written:**
+
+1. **Flawfinder warning on `char first[MAX_NAME_LEN]` (CWE-119/CWE-120):** This is a heuristic warning triggered by any fixed-size buffer. The code mitigates this properly — every write into `first` is bounds-checked, and every read (`strncmp`, `printf` with `%.*s`) is length-limited to the buffer size. No fix required beyond what is already present.
+
+2. **Flawfinder warning on `memcpy` (CWE-120):** This is a false positive. The call is guarded by `strnlen(name, sizeof(t->first))` followed by a rejection of any string whose length is `>= sizeof(t->first)`, guaranteeing `len` is at most `MAX_NAME_LEN - 1`. The copy of `len` bytes plus the explicit NUL terminator at `t->first[len]` can therefore never exceed the destination buffer.
+
+**Additional defensive qualities worth noting:**
+
+- `strnlen` is used instead of `strlen`, so even a non-terminated input cannot cause an out-of-bounds read.
+- `compare_tuples` uses `strncmp` bounded by the array size rather than `strcmp`.
+- `print_tuples` bounds the format output with `%.*s`, so even a corrupted/non-terminated buffer cannot cause an over-read.
+- All pointer parameters are NULL-checked, `printf` return values are verified, and exit codes use `EXIT_SUCCESS`/`EXIT_FAILURE`.
+
+The static-analyzer findings are precautionary; the existing mitigations (length validation before copy, bounded comparison and printing) already address the underlying CWE concerns, so the rewritten code is functionally identical with the comments removed.

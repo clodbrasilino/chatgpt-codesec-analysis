@@ -1,0 +1,50 @@
+./collected_code_4/round1//heal_0//problem-612.c: In function 'main':
+./collected_code_4/round1//heal_0//problem-612.c:57:18: warning: dereference of possibly-NULL 'lists' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   57 |         lists[i] = (int *) malloc(sizes[i] * sizeof(int));
+      |         ~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  'main': event 1
+    |
+    |   53 |     lists = (int **) malloc(SIZE * sizeof(int *));
+    |      |                      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                      |
+    |      |                      (1) this call could return NULL
+    |
+  'main': events 2-4
+    |
+    |   55 |     for(i = 0; i < SIZE; i++)
+    |      |                  ^
+    |      |                  |
+    |      |                  (2) following 'true' branch (when 'i <= 4')...
+    |   56 |     {
+    |   57 |         lists[i] = (int *) malloc(sizes[i] * sizeof(int));
+    |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                  |                     |
+    |      |                  |                     (3) ...to here
+    |      |                  (4) 'lists + (long unsigned int)i * 8' could be NULL: unchecked value from (1)
+    |
+./collected_code_4/round1//heal_0//problem-612.c:60:25: warning: dereference of possibly-NULL '*lists_57 + _9 + (long unsigned int)j * 4' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   60 |             lists[i][j] = j+1;
+      |             ~~~~~~~~~~~~^~~~~
+  'main': events 1-6
+    |
+    |   55 |     for(i = 0; i < SIZE; i++)
+    |      |                  ^
+    |      |                  |
+    |      |                  (1) following 'true' branch (when 'i <= 4')...
+    |   56 |     {
+    |   57 |         lists[i] = (int *) malloc(sizes[i] * sizeof(int));
+    |      |                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                            |           |
+    |      |                            |           (2) ...to here
+    |      |                            (3) this call could return NULL
+    |   58 |         for(j = 0; j < sizes[i]; j++)
+    |      |                    ~~~~~~~~~~~~
+    |      |                      |
+    |      |                      (4) following 'true' branch...
+    |   59 |         {
+    |   60 |             lists[i][j] = j+1;
+    |      |             ~~~~~~~~~~~~~~~~~
+    |      |                  |      |
+    |      |                  |      (6) '*lists_57 + _9 + (long unsigned int)j * 4' could be NULL: unchecked value from (3)
+    |      |                  (5) ...to here
+    |

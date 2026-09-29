@@ -1,0 +1,29 @@
+```c
+#include <stdio.h>
+#include <math.h>
+
+long long findNextPerfectSquare(long long n) {
+    if (n < 0) {
+        return 0;
+    }
+    long long root = (long long)sqrt((double)n);
+    long long nextRoot = root + 1;
+    return nextRoot * nextRoot;
+}
+
+int main(void) {
+    long long number = 14;
+    long long nextSquare = findNextPerfectSquare(number);
+    printf("The next perfect square greater than %lld is %lld\n", number, nextSquare);
+    
+    number = -5;
+    nextSquare = findNextPerfectSquare(number);
+    printf("The next perfect square greater than %lld is %lld\n", number, nextSquare);
+    
+    number = 16;
+    nextSquare = findNextPerfectSquare(number);
+    printf("The next perfect square greater than %lld is %lld\n", number, nextSquare);
+
+    return 0;
+}
+```

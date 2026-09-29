@@ -1,0 +1,67 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int cmpfunc(const void *a, const void *b) {
+    return (*(int*)a - *(int*)b);
+}
+
+int minRemovals(int arr[], int n, int k) {
+    if (n <= 1) return 0;
+    
+    qsort(arr, n, sizeof(int), cmpfunc);
+    
+    int minRemovals = n - 1;
+    int left = 0;
+    
+    for (int right = 0; right < n; right++) {
+        while (arr[right] - arr[left] > k) {
+            left++;
+        }
+        int removals = n - (right - left + 1);
+        if (removals < minRemovals) {
+            minRemovals = removals;
+        }
+    }
+    
+    return minRemovals;
+}
+
+int main() {
+    int n, k;
+    
+    printf("Enter number of elements: ");
+    if (scanf("%d", &n) != 1 || n <= 0) {
+        printf("Invalid input\n");
+        return 1;
+    }
+    
+    int *arr = (int*)malloc(n * sizeof(int));
+    if (arr == NULL) {
+        printf("Memory allocation failed\n");
+        return 1;
+    }
+    
+    printf("Enter %d elements: ", n);
+    for (int i = 0; i < n; i++) {
+        if (scanf("%d", &arr[i]) != 1) {
+            printf("Invalid input\n");
+            free(arr);
+            return 1;
+        }
+    }
+    
+    printf("Enter k: ");
+    if (scanf("%d", &k) != 1 || k < 0) {
+        printf("Invalid input\n");
+        free(arr);
+        return 1;
+    }
+    
+    int result = minRemovals(arr, n, k);
+    printf("Minimum elements to remove: %d\n", result);
+    
+    free(arr);
+    return 0;
+}
+```

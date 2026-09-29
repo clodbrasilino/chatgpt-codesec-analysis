@@ -1,0 +1,47 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int key;
+    int value;
+} Tuple;
+
+Tuple* extractSingles(Tuple *tuples, int length, int *outLength) {
+    int *counts = (int*)calloc(1024, sizeof(int));
+    if (counts == NULL) exit(EXIT_FAILURE);
+
+    for (int i = 0; i < length; i++) {
+        counts[tuples[i].key]++;
+    }
+
+    for (int i = 0, index = 0; i < length; i++) {
+        if (counts[tuples[i].key] == 1) {
+            tuples[index].key = tuples[i].key;
+            tuples[index].value = tuples[i].value;
+            index++;
+        }
+    }
+
+    *outLength = 0;
+    for (int i = 0; i < 1024; i++) {
+        if (counts[i] == 1) (*outLength)++;
+    }
+
+    free(counts);
+    return tuples;
+}
+
+int main() {
+    Tuple tuples[] = {{1, 10}, {2, 20}, {3, 30}, {2, 20}, {1, 10}};
+    int length = 5;
+    int newLength;
+    Tuple *result = extractSingles(tuples, length, &newLength);
+
+    for (int i = 0; i < newLength; i++) {
+        printf("(%d, %d) ", result[i].key, result[i].value);
+    }
+
+    return 0;
+}
+```

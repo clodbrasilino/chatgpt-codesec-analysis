@@ -1,0 +1,77 @@
+./collected_code_3/round2/heal_1/healed/problem-245.c: In function 'maxSumBitonic':
+./collected_code_3/round2/heal_1/healed/problem-245.c:14:16: warning: leak of 'msds' [CWE-401] [-Wanalyzer-malloc-leak]
+   14 |         return -1;
+      |                ^
+  'main': events 1-2
+    |
+    |   41 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   44 |     printf("Maximum Sum Bi-tonic sub-sequence is %d\n", maxSumBitonic(arr, n));
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) calling 'maxSumBitonic' from 'main'
+    |
+    +--> 'maxSumBitonic': events 3-7
+           |
+           |    8 | int maxSumBitonic(int *arr, int n) {
+           |      |     ^~~~~~~~~~~~~
+           |      |     |
+           |      |     (3) entry to 'maxSumBitonic'
+           |    9 |     int *msis = (int *) malloc(sizeof(int) * n);
+           |   10 |     int *msds = (int *) malloc(sizeof(int) * n);
+           |      |                         ~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                         |
+           |      |                         (4) allocated here
+           |......
+           |   13 |     if (!msis || !msds) {
+           |      |        ~
+           |      |        |
+           |      |        (5) following 'true' branch (when 'msis' is NULL)...
+           |   14 |         return -1;
+           |      |                ~
+           |      |                |
+           |      |                (6) ...to here
+           |      |                (7) 'msds' leaks here; was allocated at (4)
+           |
+./collected_code_3/round2/heal_1/healed/problem-245.c:14:16: warning: leak of 'msis' [CWE-401] [-Wanalyzer-malloc-leak]
+   14 |         return -1;
+      |                ^
+  'main': events 1-2
+    |
+    |   41 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   44 |     printf("Maximum Sum Bi-tonic sub-sequence is %d\n", maxSumBitonic(arr, n));
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) calling 'maxSumBitonic' from 'main'
+    |
+    +--> 'maxSumBitonic': events 3-10
+           |
+           |    8 | int maxSumBitonic(int *arr, int n) {
+           |      |     ^~~~~~~~~~~~~
+           |      |     |
+           |      |     (3) entry to 'maxSumBitonic'
+           |    9 |     int *msis = (int *) malloc(sizeof(int) * n);
+           |      |                         ~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                         |
+           |      |                         (4) allocated here
+           |......
+           |   13 |     if (!msis || !msds) {
+           |      |        ~~~~~~~~~~~~~~~
+           |      |        |      |
+           |      |        |      (7) ...to here
+           |      |        |      (8) following 'true' branch (when 'msds' is NULL)...
+           |      |        (5) assuming 'msis' is non-NULL
+           |      |        (6) following 'false' branch (when 'msis' is non-NULL)...
+           |   14 |         return -1;
+           |      |                ~
+           |      |                |
+           |      |                (9) ...to here
+           |      |                (10) 'msis' leaks here; was allocated at (4)
+           |

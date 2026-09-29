@@ -1,0 +1,12 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-727-s3.c: In function 'clean_string':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-727-s3.c:17:9: error: implicit declaration of function 'memmove' [-Wimplicit-function-declaration]
+   17 |         memmove(p + offset, p + len, strlen(p + len) + 1);
+      |         ^~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-727-s3.c:4:1: note: include '<string.h>' or provide a declaration of 'memmove'
+    3 | #include <regex.h>
+  +++ |+#include <string.h>
+    4 | 
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-727-s3.c:17:38: error: implicit declaration of function 'strlen' [-Wimplicit-function-declaration]
+   17 |         memmove(p + offset, p + len, strlen(p + len) + 1);
+      |                                      ^~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-727-s3.c:17:38: note: include '<string.h>' or provide a declaration of 'strlen'

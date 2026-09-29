@@ -1,0 +1,82 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+#include <string.h>
+
+#define BUFFER_SIZE 256
+
+int first_repeated_char(const char *str)
+{
+    bool seen[256] = { false };
+    size_t i;
+
+    if (str == NULL) {
+        return -1;
+    }
+
+    for (i = 0; str[i] != '\0'; i++) {
+        unsigned char c = (unsigned char)str[i];
+        if (seen[c]) {
+            return (int)c;
+        }
+        seen[c] = true;
+    }
+
+    return -1;
+}
+
+static void flush_stdin(void)
+{
+    int ch;
+
+    do {
+        ch = getchar();
+    } while (ch != '\n' && ch != EOF);
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    int result;
+
+    printf("Enter a string: ");
+    fflush(stdout);
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    if (strchr(buffer, '\n') == NULL) {
+        flush_stdin();
+    }
+
+    buffer[strcspn(buffer, "\n")] = '\0';
+
+    result = first_repeated_char(buffer);
+
+    if (result == -1) {
+        printf("No repeated character found\n");
+    } else {
+        printf("First repeated character: %c\n", (char)result);
+    }
+
+    return 0;
+}
+```
+
+**Analysis of the fixes applied:**
+
+1. **Redundant `continue` (cppcheck warning):** The original `while` loop body contained only a `continue` statement, which is redundant as the last statement in a loop. Replaced with a `do-while` loop that expresses the same logic cleanly — read characters until a newline or `EOF` is encountered.
+
+2. **Flawfinder `getchar` warning (CWE-120, CWE-20):** This was a low-risk informational finding. The loop never stores the characters read, so there is no buffer to overflow. The `EOF` check prevents an infinite loop on closed/exhausted input streams. No functional change needed beyond the loop restructure.
+
+3. **Flawfinder `char buffer[BUFFER_SIZE]` warning (CWE-119/CWE-120):** This is mitigated correctly in the original code and preserved here:
+   - `fgets(buffer, sizeof(buffer), stdin)` limits the read to the buffer size, guaranteeing no overflow.
+   - The explicit `buffer[sizeof(buffer) - 1] = '\0'` is a defensive belt-and-suspenders NUL termination (technically redundant since `fgets` always NUL-terminates on success, but harmless).
+   - Oversized input lines are detected via `strchr(buffer, '\n') == NULL` and the remainder is drained with `flush_stdin()`, preventing leftover input from polluting subsequent reads.
+   - `strcspn` safely strips the trailing newline without risking out-of-bounds access.
+
+4. **General robustness retained:** the `NULL` check in `first_repeated_char`, the cast to `unsigned char` before array indexing (avoiding undefined behavior with negative `char` values on signed-char platforms), and the `fgets` return-value check are all correct and kept as-is.

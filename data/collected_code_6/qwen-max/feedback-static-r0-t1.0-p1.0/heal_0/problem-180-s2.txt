@@ -1,0 +1,29 @@
+```c
+#include <stdio.h>
+#include <math.h>
+
+double calculate_distance(double lat1, double lon1, double lat2, double lon2) {
+    const double R = 6371.0; // Earth radius in kilometers
+    double phi1 = lat1 * M_PI / 180.0;
+    double phi2 = lat2 * M_PI / 180.0;
+    double dphi = (lat2 - lat1) * M_PI / 180.0;
+    double dlambda = (lon2 - lon1) * M_PI / 180.0;
+
+    double a = sin(dphi / 2) * sin(dphi / 2) + cos(phi1) * cos(phi2) * sin(dlambda / 2) * sin(dlambda / 2);
+    double c = 2 * atan2(sqrt(a), sqrt(1 - a));
+
+    return R * c;
+}
+
+int main() {
+    double lat1 = 52.2296756;
+    double lon1 = 21.0122287;
+    double lat2 = 52.406374;
+    double lon2 = 16.9251681;
+
+    double distance = calculate_distance(lat1, lon1, lat2, lon2);
+    printf("Distance: %.2f km\n", distance);
+
+    return 0;
+}
+```

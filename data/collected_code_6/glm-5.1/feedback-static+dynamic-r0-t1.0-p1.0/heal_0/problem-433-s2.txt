@@ -1,0 +1,63 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+bool is_greater_than_all(int number, const int *array, size_t size) {
+    if (array == NULL) {
+        if (size == 0) {
+            return true;
+        }
+        return false;
+    }
+
+    for (size_t i = 0; i < size; i++) {
+        if (number <= array[i]) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+int main(void) {
+    size_t size;
+
+    if (scanf("%zu", &size) != 1) {
+        return EXIT_FAILURE;
+    }
+
+    if (size == 0) {
+        int number;
+        if (scanf("%d", &number) != 1) {
+            return EXIT_FAILURE;
+        }
+        printf("%s\n", is_greater_than_all(number, NULL, size) ? "true" : "false");
+        return EXIT_SUCCESS;
+    }
+
+    int *array = (int *)malloc(size * sizeof(int));
+    if (array == NULL) {
+        return EXIT_FAILURE;
+    }
+
+    for (size_t i = 0; i < size; i++) {
+        if (scanf("%d", &array[i]) != 1) {
+            free(array);
+            return EXIT_FAILURE;
+        }
+    }
+
+    int number;
+    if (scanf("%d", &number) != 1) {
+        free(array);
+        return EXIT_FAILURE;
+    }
+
+    printf("%s\n", is_greater_than_all(number, array, size) ? "true" : "false");
+
+    free(array);
+
+    return EXIT_SUCCESS;
+}
+```

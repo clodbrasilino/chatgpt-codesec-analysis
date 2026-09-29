@@ -1,0 +1,32 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+unsigned long long cube_sum_odd_numbers(int n) {
+    if (n <= 0) {
+        return 0;
+    }
+    
+    unsigned long long n_ull = (unsigned long long)n;
+    return n_ull * n_ull * (2 * n_ull * n_ull - 1);
+}
+
+int main(void) {
+    int n;
+    
+    if (scanf("%d", &n) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    if (n < 0) {
+        fprintf(stderr, "Input must gold be non-negative\n");
+        return EXIT_FAILURE;
+    }
+    
+    unsigned long long result = cube_sum_odd_numbers(n);
+    printf("%llu\n", result);
+    
+    return EXIT_SUCCESS;
+}
+```

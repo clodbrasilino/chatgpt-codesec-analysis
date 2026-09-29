@@ -1,0 +1,100 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_STR_LEN 4096
+
+int left_rotate(char *str, size_t buf_size, size_t d)
+{
+    size_t len;
+    size_t first_part;
+    size_t second_part;
+    char *temp;
+
+    if (str == NULL || buf_size == 0 || buf_size > MAX_STR_LEN) {
+        return -1;
+    }
+
+    len = strnlen(str, buf_size);
+    if (len == buf_size) {
+        return -1;
+    }
+
+    if (len == 0) {
+        return 0;
+    }
+
+    d = d % len;
+    if (d == 0) {
+        return 0;
+    }
+
+    first_part = len - d;
+    second_part = d;
+
+    if (first_part > len || second_part > len || first_part + second_part != len) {
+        return -1;
+    }
+
+    temp = malloc(len + 1);
+    if (temp == NULL) {
+        return -1;
+    }
+
+    if (first_part > 0 && d < len) {
+        memcpy(temp, str + d, first_part);
+    }
+
+    if (second_part > 0 && first_part + second_part <= len) {
+        memcpy(temp + first_part, str, second_part);
+    }
+
+    temp[len] = '\0';
+
+    if (len + 1 <= buf_size) {
+        memcpy(str, temp, len + 1);
+    } else {
+        free(temp);
+        return -1;
+    }
+
+    free(temp);
+
+    return 0;
+}
+
+int main(void)
+{
+    char str[] = "GeeksforGeeks";
+    size_t d = 2;
+
+    if (left_rotate(str, sizeof(str), d) != 0) {
+        fprintf(stderr, "Rotation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("%s\n", str) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The original code was already well-defended, and the Flawfinder `memcpy` warnings were essentially false positives. Here's why each is safe:
+
+1. **First `memcpy(temp, str + d, first_part)`**: `temp` is allocated with `len + 1` bytes, and `first_part = len - d < len`, so the destination always has room. The source `str + d` reads `len - d` bytes from a string verified to be at least `len` bytes long.
+
+2. **Second `memcpy(temp + first_part, str, second_part)`**: Writes `d` bytes starting at offset `len - d`, ending exactly at offset `len`, within the `len + 1` allocation.
+
+3. **Final `memcpy(str, temp, len + 1)`**: Since `strnlen(str, buf_size)` returned `len < buf_size` (the `len == buf_size` case is rejected), we know `len + 1 <= buf_size`, so the write-back fits.
+
+The rewritten version adds explicit guard conditions before each `memcpy` to make the bounds invariants locally verifiable — this satisfies static analyzers and documents the safety contract in code rather than relying on reasoning across the whole function. Key hardening points retained from the original:
+
+- `strnlen` instead of `strlen` prevents unbounded reads on non-terminated buffers.
+- Rejecting `len == buf_size` guarantees NUL termination exists within bounds.
+- `d % len` normalizes the rotation, preventing out-of-bounds offsets.
+- `malloc` return is checked; `temp` is freed on all exit paths after allocation.

@@ -1,0 +1,68 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+void heapify(int *heap, int n, int i) {
+    int smallest = i;
+    int left = 2 * i + 1;
+    int right = 2 * i + 2;
+
+    if (left < n && heap[left] < heap[smallest])
+        smallest = left;
+
+    if (right < n && heap[right] < heap[smallest])
+        smallest = right;
+
+    if (smallest != i) {
+        int temp = heap[i];
+        heap[i] = heap[smallest];
+        heap[smallest] = temp;
+        heapify(heap, n, smallest);
+    }
+}
+
+void build_min_heap(int *heap, int n) {
+    for (int i = n / 2 - 1; i >= 0; i--)
+        heapify(heap, n, i);
+}
+
+void find_largest_k(int *arr, int n, int k) {
+    if (k <= 0 || n <= 0 || k > n) {
+        return;
+    }
+
+    int *heap = (int *)malloc(k * sizeof(int));
+    if (heap == NULL) {
+        return;
+    }
+
+    for (int i = 0; i < k; i++)
+        heap[i] = arr[i];
+
+    build_min_heap(heap, k);
+
+    for (int i = k; i < n; i++) {
+        if (arr[i] > heap[0]) {
+            heap[0] = arr[i];
+            heapify(heap, k, 0);
+        }
+    }
+
+    printf("Largest %d integers: ", k);
+    for (int i = 0; i < k; i++)
+        printf("%d ", heap[i]);
+    printf("\n");
+
+    free(heap);
+}
+
+int main(void) {
+    int arr[] = {3, 7, 1, 9, 2, 8, 4, 6, 5, 10, 15, 12, 14, 11, 13};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    int k = 5;
+
+    find_largest_k(arr, n, k);
+
+    return 0;
+}
+```

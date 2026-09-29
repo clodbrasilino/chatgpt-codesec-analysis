@@ -1,0 +1,96 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdbool.h>
+#include <stdint.h>
+
+#define MAX_INPUT_LEN 4096
+
+bool are_rotations(const char *s1, const char *s2)
+{
+    size_t len1;
+    size_t len2;
+    size_t temp_size;
+    char *temp;
+    bool result;
+
+    if (s1 == NULL || s2 == NULL) {
+        return false;
+    }
+
+    len1 = strnlen(s1, MAX_INPUT_LEN);
+    len2 = strnlen(s2, MAX_INPUT_LEN);
+
+    if (len1 >= MAX_INPUT_LEN || len2 >= MAX_INPUT_LEN) {
+        return false;
+    }
+
+    if (len1 != len2) {
+        return false;
+    }
+
+    if (len1 == 0) {
+        return true;
+    }
+
+    if (len1 > (SIZE_MAX - 1) / 2) {
+        return false;
+    }
+
+    temp_size = (2 * len1) + 1;
+
+    temp = malloc(temp_size);
+    if (temp == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(EXIT_FAILURE);
+    }
+
+    if (len1 > temp_size - 1 || len1 > temp_size - 1 - len1) {
+        free(temp);
+        return false;
+    }
+
+    memcpy(temp, s1, len1);
+    memcpy(temp + len1, s1, len1);
+    temp[temp_size - 1] = '\0';
+
+    result = (strstr(temp, s2) != NULL);
+
+    free(temp);
+    return result;
+}
+
+int main(void)
+{
+    const char *str1 = "ABCD";
+    const char *str2 = "CDAB";
+    const char *str3 = "ACBD";
+
+    if (are_rotations(str1, str2)) {
+        printf("\"%s\" and \"%s\" are rotations of each other\n", str1, str2);
+    } else {
+        printf("\"%s\" and \"%s\" are not rotations of each other\n", str1, str2);
+    }
+
+    if (are_rotations(str1, str3)) {
+        printf("\"%s\" and \"%s\" are rotations of each other\n", str1, str3);
+    } else {
+        printf("\"%s\" and \"%s\" are not rotations of each other\n", str1, str3);
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The original code was already safe with respect to the flagged `memcpy` calls — the destination buffer `temp` is allocated with exactly `(2 * len1) + 1` bytes, and the two copies write `len1` bytes each at offsets `0` and `len1`, followed by a single NUL terminator at index `2 * len1`. The Flawfinder warnings are heuristic (it flags every `memcpy` regardless of context).
+
+The rewrite makes the safety property *explicit and machine-verifiable* rather than implicit:
+
+1. **`temp_size` is computed once** and used consistently for allocation, bounds validation, and NUL termination, eliminating any chance of the allocation size and copy sizes drifting apart under future maintenance.
+2. **Explicit bounds checks before each copy region** (`len1 > temp_size - 1` and `len1 > temp_size - 1 - len1`) guarantee the writes fit within the allocation, satisfying the CWE-120 concern directly. These checks are formulated to avoid integer overflow themselves (subtraction rather than addition).
+3. **Existing defenses were preserved**: `strnlen` bounds input scanning, the `SIZE_MAX` guard prevents overflow in `2 * len1 + 1`, NULL inputs are rejected, and the empty-string and length-mismatch fast paths remain.
+
+The program's observable behavior is unchanged: `"ABCD"`/`"CDAB"` reports as rotations, `"ABCD"`/`"ACBD"` does not.

@@ -1,0 +1,16 @@
+```C
+#include <stdio.h>
+
+double maxCuboidVolume(double sum) {
+    double side = sum / 3.0;
+    return side * side * side;
+}
+
+int main() {
+    double sum;
+    printf("Enter the sum of the sides of the cuboid: ");
+    scanf("%lf", &sum);
+    printf("The maximum volume of the cuboid is: %.2lf\n", maxCuboidVolume(sum));
+    return 0;
+}
+```

@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static-r1-t1.0-p1.0/heal_2/healed/problem-328-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static-r1-t1.0-p1.0/heal_2/healed/problem-328-s2.c:54:66: style: Condition 'rotate_left(NULL,5,2)==-1' is always true [knownConditionTrueFalse]
+    printf("Null pointer handled %s.\n", rotate_left(NULL, 5, 2) == -1 ? "correctly" : "incorrectly");
+                                                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static-r1-t1.0-p1.0/heal_2/healed/problem-328-s2.c:54:53: note: Calling function 'rotate_left' returns -1
+    printf("Null pointer handled %s.\n", rotate_left(NULL, 5, 2) == -1 ? "correctly" : "incorrectly");
+                                                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static-r1-t1.0-p1.0/heal_2/healed/problem-328-s2.c:54:66: note: Condition 'rotate_left(NULL,5,2)==-1' is always true
+    printf("Null pointer handled %s.\n", rotate_left(NULL, 5, 2) == -1 ? "correctly" : "incorrectly");
+                                                                 ^

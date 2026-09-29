@@ -1,0 +1,49 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <ctype.h>
+
+char *remove_non_alnum(const char *input) {
+    if (input == NULL) {
+        return NULL;
+    }
+
+    size_t count = 0;
+    const char *p = input;
+    while (*p != '\0') {
+        if (isalnum((unsigned char)*p)) {
+            count++;
+        }
+        p++;
+    }
+
+    char *result = malloc(count + 1);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    size_t idx = 0;
+    p = input;
+    while (*p != '\0') {
+        if (isalnum((unsigned char)*p)) {
+            result[idx++] = *p;
+        }
+        p++;
+    }
+
+    result[idx] = '\0';
+    return result;
+}
+
+int main(void) {
+    const char *test = "Hello, World! 123 @#$%";
+    char *cleaned = remove_non_alnum(test);
+    
+    if (cleaned != NULL) {
+        printf("%s\n", cleaned);
+        free(cleaned);
+    }
+    
+    return 0;
+}
+```

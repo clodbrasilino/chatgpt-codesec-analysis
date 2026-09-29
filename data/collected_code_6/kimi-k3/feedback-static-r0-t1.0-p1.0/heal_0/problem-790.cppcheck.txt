@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_0/problem-790.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_0/problem-790.c:30:63: style: Condition 'check_even_indices_even_numbers(NULL,5)' is always false [knownConditionTrueFalse]
+    printf("NULL array: %s\n", check_even_indices_even_numbers(NULL, 5) ? "true" : "false");
+                                                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_0/problem-790.c:30:63: note: Calling function 'check_even_indices_even_numbers' returns 0
+    printf("NULL array: %s\n", check_even_indices_even_numbers(NULL, 5) ? "true" : "false");
+                                                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_0/problem-790.c:30:63: note: Condition 'check_even_indices_even_numbers(NULL,5)' is always false
+    printf("NULL array: %s\n", check_even_indices_even_numbers(NULL, 5) ? "true" : "false");
+                                                              ^

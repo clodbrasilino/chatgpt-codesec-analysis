@@ -1,0 +1,85 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MOD 1000000007
+
+int **dp;
+
+int solveTiling(int n, int m) {
+    if (n < m) {
+        int temp = n;
+        n = m;
+        m = temp;
+    }
+    
+    dp = (int **)malloc((n + 1) * sizeof(int *));
+    if (dp == NULL) {
+        exit(1);
+    }
+    
+    for (int i = 0; i <= n; i++) {
+        dp[i] = (int *)malloc((1 << m) * sizeof(int));
+        if (dp[i] == NULL) {
+            for (int j = 0; j < i; j++) {
+                free(dp[j]);
+            }
+            free(dp);
+            exit(1);
+        }
+        for (int j = 0; j < (1 << m); j++) {
+            dp[i][j] = 0;
+        }
+    }
+    
+    dp[0][(1 << m) - 1] = 1;
+    
+    for (int i = 0; i < n; i++) {
+        for (int mask1 = 0; mask1 < (1 << m); mask1++) {
+            if (dp[i][mask1] == 0) continue;
+            
+            for (int mask2 = 0; mask2 < (1 << m); mask2++) {
+                int valid = 1;
+                int colMask = mask1 | mask2;
+                
+                if (colMask != (1 << m) - 1) continue;
+                
+                int j = 0;
+                while (j < m) {
+                    if ((mask2 >> j) & 1) {
+                        j++;
+                    } else {
+                        if (j + 1 < m && !((mask2 >> (j + 1)) & 1)) {
+                            j += 2;
+                        } else {
+                            valid = 0;
+                            break;
+                        }
+                    }
+                }
+                
+                if (valid) {
+                    dp[i + 1][mask2] = (dp[i + 1][mask2] + dp[i][mask1]) % MOD;
+                }
+            }
+        }
+    }
+    
+    int result = dp[n][(1 << m) - 1];
+    
+    for (int i = 0; i <= n; i++) {
+        free(dp[i]);
+    }
+    free(dp);
+    
+    return result;
+}
+
+int main(void) {
+    int n = 3;
+    int m = 2;
+    
+    int result = solveTiling(n, m);
+    printf("%d\n", result);
+    
+    return 0;
+}

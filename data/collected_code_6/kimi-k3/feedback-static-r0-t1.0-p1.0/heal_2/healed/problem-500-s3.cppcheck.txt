@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-500-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-500-s3.c:36:37: style: Condition 'offset+len<=total_length' is always true [knownConditionTrueFalse]
+        if (len > 0 && offset + len <= total_length) {
+                                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-500-s3.c:32:26: note: Assuming condition 'offset+len>total_length' is false
+        if (offset + len > total_length) {
+                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-500-s3.c:36:37: note: Condition 'offset+len<=total_length' is always true
+        if (len > 0 && offset + len <= total_length) {
+                                    ^

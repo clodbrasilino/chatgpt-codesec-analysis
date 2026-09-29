@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-795-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-795-s3.c:94:11: style: Variable 'item_a' can be declared as pointer to const [constVariablePointer]
+    Item *item_a = (Item*)a;
+          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-795-s3.c:95:11: style: Variable 'item_b' can be declared as pointer to const [constVariablePointer]
+    Item *item_b = (Item*)b;
+          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-795-s3.c:101:29: style: Parameter 'dataset' can be declared as pointer to const [constParameterPointer]
+Item* find_n_cheapest(Item *dataset, int dataset_size, int n, int *result_size) {
+                            ^

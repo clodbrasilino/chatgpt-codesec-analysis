@@ -1,0 +1,12 @@
+collected_code/problem-409-0.c:4:25: error: Cannot determine that 'array[0]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+    int min_prod = array[0] * array[1];
+                        ^
+collected_code/problem-409-0.c:4:36: error: Cannot determine that 'array[1]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+    int min_prod = array[0] * array[1];
+                                   ^
+collected_code/problem-409-0.c:8:32: error: Cannot determine that 'array[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+            int product = array[i] * array[j];
+                               ^
+collected_code/problem-409-0.c:8:43: error: Cannot determine that 'array[j]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+            int product = array[i] * array[j];
+                                          ^

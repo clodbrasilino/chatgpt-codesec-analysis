@@ -1,0 +1,57 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define BUFFER_SIZE 256
+
+size_t count_characters(const char *str, size_t max_len)
+{
+    size_t count = 0;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    while (count < max_len && str[count] != '\0') {
+        count++;
+    }
+
+    return count;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t length;
+
+    memset(buffer, 0, sizeof(buffer));
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+    buffer[strcspn(buffer, "\n")] = '\0';
+
+    length = count_characters(buffer, sizeof(buffer));
+
+    printf("%zu\n", length);
+    fflush(stdout);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the changes made:**
+
+1. **Bounded character counting (CWE-119/CWE-120 mitigation):** The original `count_characters` relied entirely on finding a `'\0'` terminator. If the string were ever unterminated, it would read out of bounds. The rewritten version takes an explicit `max_len` parameter and enforces `count < max_len` as a hard upper bound, guaranteeing the loop can never walk past the buffer regardless of termination state.
+
+2. **Defensive zero-initialization:** `memset(buffer, 0, sizeof(buffer))` guarantees the buffer is fully initialized before use, so even a partial read leaves no indeterminate bytes and the buffer is always NUL-terminated from the start.
+
+3. **Retained existing safe practices:** The original code was already largely correct — `fgets` with `sizeof(buffer)` limits input length, the explicit `buffer[sizeof(buffer) - 1] = '\0'` acts as a belt-and-braces terminator, and `strcspn` safely strips the trailing newline without risk of out-of-bounds access (it returns the full length if no newline exists, which indexes the existing terminator). These were preserved.
+
+4. **Explicit cast on `fgets` size argument:** `sizeof` yields `size_t` while `fgets` expects `int`; the cast makes the (safe, since 256 fits trivially) conversion explicit and silences pedantic conversion warnings.
+
+The statically-sized array flagged by Flawfinder is acceptable here because every access path is bounds-limited: `fgets` caps the write, and `count_characters` now caps the read.

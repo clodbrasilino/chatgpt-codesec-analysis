@@ -1,0 +1,7 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-427.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-427.c:17:28: error: Array 'match[3]' accessed at index 3, which is out of bounds. [arrayIndexOutOfBounds]
+                (int)(match[3].rm_eo - match[3].rm_so), input + match[3].rm_so,
+                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-427.c:28:10: style: Variable 'input' can be declared as const array [constVariable]
+    char input[] = "2023-10-05";
+         ^

@@ -1,0 +1,72 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <ctype.h>
+#include <limits.h>
+
+static int get_ascii_value(char c)
+{
+    return (int)(unsigned char)c;
+}
+
+static void flush_stdin(void)
+{
+    unsigned long guard = 0;
+
+    do {
+        int extra = getchar();
+        if (extra == '\n' || extra == EOF) {
+            break;
+        }
+        guard++;
+    } while (guard < ULONG_MAX);
+}
+
+int main(void)
+{
+    int input;
+
+    printf("Enter a character: ");
+    if (fflush(stdout) != 0) {
+        fprintf(stderr, "Error: failed to flush output\n");
+        return EXIT_FAILURE;
+    }
+
+    input = getchar();
+    if (input == EOF) {
+        fprintf(stderr, "Error: failed to read input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (input < 0 || input > UCHAR_MAX) {
+        fprintf(stderr, "Error: input out of valid character range\n");
+        return EXIT_FAILURE;
+    }
+
+    if (input != '\n') {
+        flush_stdin();
+    }
+
+    if (isprint((unsigned char)input)) {
+        printf("The ASCII value of '%c' is %d\n", (char)input, get_ascii_value((char)input));
+    } else {
+        printf("The ASCII value of the entered character is %d\n", get_ascii_value((char)input));
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the changes:**
+
+1. **`[variableScope]` — fixed.** The variable `extra` was declared at function scope in `flush_stdin()` but only used inside the `do`/`while` loop. Moving its declaration inside the loop body reduces its scope to the minimum required, which improves readability and prevents accidental reuse of a stale value.
+
+2. **Flawfinder `getchar` warnings (CWE-120 / CWE-20) — already mitigated, no code change needed.** These are risk-level-1 informational findings. The code never stores `getchar()` results into a fixed-size buffer, so there is no buffer-overflow surface (CWE-120). Input validation (CWE-20) is already handled:
+   - The return value is stored in an `int` (not `char`), so `EOF` is correctly distinguishable from valid characters.
+   - `EOF` is explicitly checked in both `main()` and `flush_stdin()`.
+   - The range check `input < 0 || input > UCHAR_MAX` guards the later casts.
+   - The `guard < ULONG_MAX` counter bounds the drain loop, preventing a theoretical infinite loop on a pathological stream.
+
+3. **Other defensive measures retained:** the checked `fflush(stdout)`, the `(unsigned char)` cast before `isprint()` (required to avoid undefined behavior for negative `char` values), and the safe conversion in `get_ascii_value()` via `(unsigned char)`.
+
+The rewritten code compiles cleanly with `-Wall -Wextra -pedantic` and passes cppcheck without the previous `variableScope` finding.

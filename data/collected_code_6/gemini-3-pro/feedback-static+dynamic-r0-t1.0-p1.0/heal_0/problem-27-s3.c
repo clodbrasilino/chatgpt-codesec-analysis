@@ -1,0 +1,64 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <ctype.h>
+#include <string.h>
+
+void remove_digits(char *str) {
+    if (str == NULL) {
+        return;
+    }
+    
+    char *src = str;
+    char *dst = str;
+    
+    while (*src != '\0') {
+        if (!isdigit((unsigned char)*src)) {
+            *dst = *src;
+            dst++;
+        }
+        src++;
+    }
+    *dst = '\0';
+}
+
+void remove_digits_from_list(char **list, size_t count) {
+    if (list == NULL) {
+        return;
+    }
+    
+    for (size_t i = 0; i < count; i++) {
+        remove_digits(list[i]);
+    }
+}
+
+int main(void) {
+    size_t count = 3;
+    char **list = malloc(count * sizeof(char *));
+    if (list == NULL) {
+        return EXIT_FAILURE;
+    }
+    
+    list[0] = strdup("Test123String");
+    list[1] = strdup("456Another789");
+    list[2] = strdup("NoDigitsHere");
+    
+    for (size_t i = 0; i < count; i++) {
+        if (list[i] == NULL) {
+            for (size_t j = 0; j < i; j++) {
+                free(list[j]);
+            }
+            free(list);
+            return EXIT_FAILURE;
+        }
+    }
+    
+    remove_digits_from_list(list, count);
+    
+    for (size_t i = 0; i < count; i++) {
+        printf("%s\n", list[i]);
+        free(list[i]);
+    }
+    
+    free(list);
+    return EXIT_SUCCESS;
+}

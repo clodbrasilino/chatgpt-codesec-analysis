@@ -1,0 +1,107 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define BUFFER_SIZE 1024U
+
+static int max_int(int a, int b)
+{
+    return (a > b) ? a : b;
+}
+
+static int longest_repeating_subsequence(const char *str, size_t n)
+{
+    size_t i;
+    size_t j;
+    int result;
+    int **dp;
+
+    if (str == NULL || n == 0U) {
+        return 0;
+    }
+
+    dp = (int **)malloc((n + 1U) * sizeof(int *));
+    if (dp == NULL) {
+        return -1;
+    }
+
+    for (i = 0U; i <= n; i++) {
+        dp[i] = (int *)calloc(n + 1U, sizeof(int));
+        if (dp[i] == NULL) {
+            for (j = 0U; j < i; j++) {
+                free(dp[j]);
+            }
+            free(dp);
+            return -1;
+        }
+    }
+
+    for (i = 1U; i <= n; i++) {
+        for (j = 1U; j <= n; j++) {
+            if ((str[i - 1U] == str[j - 1U]) && (i != j)) {
+                dp[i][j] = dp[i - 1U][j - 1U] + 1;
+            } else {
+                dp[i][j] = max_int(dp[i - 1U][j], dp[i][j - 1U]);
+            }
+        }
+    }
+
+    result = dp[n][n];
+
+    for (i = 0U; i <= n; i++) {
+        free(dp[i]);
+    }
+    free(dp);
+
+    return result;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE] = {0};
+    size_t len;
+    int result;
+
+    printf("Enter a string: ");
+    if (fflush(stdout) != 0) {
+        fprintf(stderr, "Error flushing output\n");
+        return EXIT_FAILURE;
+    }
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1U] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if ((len > 0U) && (buffer[len - 1U] == '\n')) {
+        buffer[len - 1U] = '\0';
+        len--;
+    }
+
+    result = longest_repeating_subsequence(buffer, len);
+    if (result < 0) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Length of the longest repeating subsequence: %d\n", result);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis summary:**
+
+The original code was already well-defended against the Flawfinder warning (CWE-119/CWE-120). The statically-sized `buffer` is a heuristic hit from Flawfinder on any fixed-size `char` array, not a confirmed vulnerability. The existing mitigations are sound:
+
+1. **Bounded input**: `fgets(buffer, (int)sizeof(buffer), stdin)` limits reads to the buffer size, preventing overflow (unlike `gets` or unbounded `scanf("%s", ...)`).
+2. **Guaranteed termination**: `buffer[sizeof(buffer) - 1U] = '\0'` is defensive belt-and-braces (technically redundant since `fgets` always null-terminates on success, but harmless).
+3. **Safe length calculation**: `strnlen` with an explicit bound instead of `strlen` avoids over-read if termination were ever violated.
+4. **Safe newline stripping**: The `len > 0U` check prevents an underflow index of `buffer[-1]`.
+5. **Robust allocation handling**: The DP matrix allocation checks every `calloc`, cleans up partial allocations on failure, and signals errors via `-1`, which `main` checks before use.
+
+The rewrite adds only minor hardening: zero-initialization of the buffer and checking the `fflush` return value. No functional or security changes were required — the identified weakness was a false positive properly mitigated in the original design.

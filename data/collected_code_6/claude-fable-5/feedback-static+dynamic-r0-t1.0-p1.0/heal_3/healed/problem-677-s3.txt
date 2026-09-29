@@ -1,0 +1,55 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+int is_valid_triangle(double a, double b, double c)
+{
+    if (!isfinite(a) || !isfinite(b) || !isfinite(c)) {
+        return 0;
+    }
+
+    if (a <= 0.0 || b <= 0.0 || c <= 0.0) {
+        return 0;
+    }
+
+    if ((a + b > c) && (b + c > a) && (c + a > b)) {
+        return 1;
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    double a;
+    double b;
+    double c;
+
+    printf("Enter the three sides of the triangle: ");
+    if (scanf("%lf %lf %lf", &a, &b, &c) != 3) {
+        fprintf(stderr, "Error: invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (is_valid_triangle(a, b, c)) {
+        printf("The triangle is valid.\n");
+    } else {
+        printf("The triangle is not valid.\n");
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the fix:**
+
+The original code used the subtraction form of the triangle inequality: `(a - b < c) && (b - c < a) && (c - a < b)`. While this is algebraically equivalent to the standard form, it behaves differently under IEEE 754 floating-point arithmetic:
+
+1. **Catastrophic cancellation / rounding drift**: When two sides are close in magnitude, `a - b` can lose precision or round in a direction that flips the comparison result. This explains both reported failures — a valid triangle rejected (test case 2) and a degenerate/invalid one accepted (test case 0).
+
+2. **The addition form `a + b > c`** is the canonical way to express the triangle inequality and evaluates each side's constraint directly against the sum of the other two, avoiding the sign-sensitive subtraction of nearly-equal operands.
+
+3. Note that the strict inequality `>` correctly rejects degenerate (collinear) triangles where `a + b == c`, which the subtraction form could erroneously accept or reject depending on rounding.
+
+The `isfinite` guards and positivity checks were already correct and are retained, as they properly handle NaN, ±infinity, zero, and negative inputs before the inequality test runs.

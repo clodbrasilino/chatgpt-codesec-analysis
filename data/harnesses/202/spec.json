@@ -1,0 +1,44 @@
+{
+  "task_id": 202,
+  "text": "Write a C function to remove even characters in a string.",
+  "fn_candidates": [
+    "remove_even",
+    "RemoveEven",
+    "removeEven",
+    "removeeven"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "remove_even",
+      "args": [
+        "python"
+      ],
+      "expected": "pto",
+      "assert_src": "assert remove_even(\"python\")==(\"pto\")"
+    },
+    {
+      "fn_name": "remove_even",
+      "args": [
+        "program"
+      ],
+      "expected": "porm",
+      "assert_src": "assert remove_even(\"program\")==(\"porm\")"
+    },
+    {
+      "fn_name": "remove_even",
+      "args": [
+        "language"
+      ],
+      "expected": "lnug",
+      "assert_src": "assert remove_even(\"language\")==(\"lnug\")"
+    }
+  ],
+  "arg_kinds": [
+    "str"
+  ],
+  "return_kind": "str",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

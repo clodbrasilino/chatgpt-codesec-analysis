@@ -1,0 +1,28 @@
+```C
+#include <stdio.h>
+#include <string.h>
+
+int checkSubstring(char *list[], int size, char *sub) {
+    int i;
+    for(i = 0; i < size; i++) {
+        if(strstr(list[i], sub) != NULL) {
+            return 1;
+        }
+    }
+    return 0;
+}
+
+int main() {
+    char *list[] = {"apple", "banana", "cherry", "date", "elderberry"};
+    char *sub = "an";
+    int size = sizeof(list) / sizeof(list[0]);
+
+    if(checkSubstring(list, size, sub)) {
+        printf("Substring found.\n");
+    } else {
+        printf("Substring not found.\n");
+    }
+
+    return 0;
+}
+```

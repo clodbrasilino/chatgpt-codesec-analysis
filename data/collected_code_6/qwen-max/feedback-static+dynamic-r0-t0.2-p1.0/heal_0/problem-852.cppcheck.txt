@@ -1,0 +1,7 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-852.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-852.c:10:13: error: Common realloc mistake: 'result' nulled but not freed upon failure [memleakOnRealloc]
+            result = realloc(result, (count + 1) * sizeof(int));
+            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-852.c:4:28: style: Parameter 'arr' can be declared as pointer to const [constParameterPointer]
+int* remove_negatives(int *arr, int n, int *new_size) {
+                           ^

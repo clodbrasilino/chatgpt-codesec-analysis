@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-744-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-744-s3.c:29:55: style: Condition 'tuple_has_none(NULL)' is always true [knownConditionTrueFalse]
+    printf("NULL tuple has none: %s\n", tuple_has_none(NULL) ? "true" : "false");
+                                                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-744-s3.c:29:55: note: Calling function 'tuple_has_none' returns 1
+    printf("NULL tuple has none: %s\n", tuple_has_none(NULL) ? "true" : "false");
+                                                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-744-s3.c:29:55: note: Condition 'tuple_has_none(NULL)' is always true
+    printf("NULL tuple has none: %s\n", tuple_has_none(NULL) ? "true" : "false");
+                                                      ^

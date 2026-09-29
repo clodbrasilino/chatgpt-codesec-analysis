@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-921-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-921-s2.c:70:37: style: Condition 'tuple_len!=0' is always true [knownConditionTrueFalse]
+    if (chunks == NULL && tuple_len != 0) {
+                                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-921-s2.c:64:38: note: Assignment 'tuple_len=sizeof(tuple)/sizeof(tuple[0])', assigned value is 10
+    size_t tuple_len = sizeof(tuple) / sizeof(tuple[0]);
+                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-921-s2.c:70:37: note: Condition 'tuple_len!=0' is always true
+    if (chunks == NULL && tuple_len != 0) {
+                                    ^

@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-916-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-916-s2.c:66:20: style: Condition 'result' is always false [knownConditionTrueFalse]
+    printf("%s\n", result ? "Triplet found" : "Triplet not found");
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-916-s2.c:64:30: note: Calling function 'find_triplet' returns 0
+    int result = find_triplet(arr3, n3, sum3);
+                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-916-s2.c:64:30: note: Assignment 'result=find_triplet(arr3,n3,sum3)', assigned value is 0
+    int result = find_triplet(arr3, n3, sum3);
+                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-916-s2.c:66:20: note: Condition 'result' is always false
+    printf("%s\n", result ? "Triplet found" : "Triplet not found");
+                   ^

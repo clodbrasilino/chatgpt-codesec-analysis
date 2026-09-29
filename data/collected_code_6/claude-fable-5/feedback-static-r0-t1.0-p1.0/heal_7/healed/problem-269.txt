@@ -1,0 +1,43 @@
+```c
+#include <stdio.h>
+#include <ctype.h>
+
+int get_ascii_value(char c)
+{
+    return (int)(unsigned char)c;
+}
+
+int main(void)
+{
+    int input;
+
+    printf("Enter a character: ");
+    fflush(stdout);
+
+    input = getchar();
+    if (input == EOF) {
+        fprintf(stderr, "Error: failed to read input.\n");
+        return 1;
+    }
+
+    if (isprint((unsigned char)input)) {
+        printf("The ASCII value of '%c' is %d\n", (char)input, get_ascii_value((char)input));
+    } else {
+        printf("The ASCII value of the entered character is %d\n", get_ascii_value((char)input));
+    }
+
+    return 0;
+}
+```
+
+**Analysis notes:**
+
+The Flawfinder warning on `getchar()` (CWE-120, CWE-20) is a **false positive** in this context. The concern applies when `getchar()` is used in a loop writing into a fixed-size buffer without bounds checking. Here, the code:
+
+1. **Reads exactly one character** — no buffer is involved, so a buffer overflow (CWE-120) is impossible.
+2. **Stores the result in an `int`, not a `char`** — this is the correct idiom, since `getchar()` returns an `int` so that `EOF` can be distinguished from valid character values.
+3. **Checks for `EOF`** before using the value, handling read failure and end-of-stream properly (addressing CWE-20, improper input validation).
+4. **Casts to `unsigned char` before calling `isprint()`** — passing a negative `char` value to `<ctype.h>` functions is undefined behavior; this cast prevents that.
+5. **Uses `(unsigned char)` in `get_ascii_value()`** — ensures a non-negative result even on platforms where `char` is signed and the input has the high bit set.
+
+No functional changes were required; the original code already mitigates the flagged weaknesses correctly.

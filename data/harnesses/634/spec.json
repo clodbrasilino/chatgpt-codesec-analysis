@@ -1,0 +1,44 @@
+{
+  "task_id": 634,
+  "text": "Write a C function to find the sum of fourth power of first n even natural numbers.",
+  "fn_candidates": [
+    "even_Power_Sum",
+    "EvenPowerSum",
+    "evenPowerSum",
+    "evenPowerSum"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "even_Power_Sum",
+      "args": [
+        2
+      ],
+      "expected": 272,
+      "assert_src": "assert even_Power_Sum(2) == 272"
+    },
+    {
+      "fn_name": "even_Power_Sum",
+      "args": [
+        3
+      ],
+      "expected": 1568,
+      "assert_src": "assert even_Power_Sum(3) == 1568"
+    },
+    {
+      "fn_name": "even_Power_Sum",
+      "args": [
+        4
+      ],
+      "expected": 5664,
+      "assert_src": "assert even_Power_Sum(4) == 5664"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

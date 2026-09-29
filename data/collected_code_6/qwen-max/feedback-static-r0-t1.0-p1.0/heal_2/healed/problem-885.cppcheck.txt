@@ -1,0 +1,7 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-885.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-885.c:9:47: style: Same expression on both sides of '-'. [duplicateExpression]
+        map_s1[(unsigned char)*s1] = (int)(s1 - s1 + 1);
+                                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-885.c:10:47: style: Same expression on both sides of '-'. [duplicateExpression]
+        map_s2[(unsigned char)*s2] = (int)(s2 - s2 + 1);
+                                              ^

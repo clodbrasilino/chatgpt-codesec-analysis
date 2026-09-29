@@ -1,0 +1,64 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+void remove_digits(char **strings, size_t count) {
+    if (strings == NULL) {
+        return;
+    }
+
+    for (size_t i = 0; i < count; ++i) {
+        if (strings[i] == NULL) {
+            continue;
+        }
+
+        char *read_ptr = strings[i];
+        char *write_ptr = strings[i];
+
+        while (*read_ptr != '\0') {
+            if (!isdigit((unsigned char)*read_ptr)) {
+                *write_ptr = *read_ptr;
+                write_ptr++;
+            }
+            read_ptr++;
+        }
+        *write_ptr = '\0';
+    }
+}
+
+int main(void) {
+    size_t count = 3;
+    char **strings = malloc(count * sizeof(char *));
+    
+    if (strings == NULL) {
+        return 1;
+    }
+
+    strings[0] = strdup("Hello123World");
+    strings[1] = strdup("456Test789");
+    strings[2] = strdup("NoDigitsHere");
+
+    for (size_t i = 0; i < count; ++i) {
+        if (strings[i] == NULL) {
+            for (size_t j = 0; j < i; ++j) {
+                free(strings[j]);
+            }
+            free(strings);
+            return 1;
+        }
+    }
+
+    remove_digits(strings, count);
+
+    for (size_t i = 0; i < count; ++i) {
+        printf("%s\n", strings[i]);
+    }
+
+    for (size_t i = 0; i < count; ++i) {
+        free(strings[i]);
+    }
+    free(strings);
+
+    return 0;
+}

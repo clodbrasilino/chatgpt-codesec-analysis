@@ -1,0 +1,116 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node *next;
+} Node;
+
+typedef struct {
+    Node *head;
+    size_t length;
+} List;
+
+List *create_list(void) {
+    List *list = (List *)malloc(sizeof(List));
+    if (!list) return NULL;
+    list->head = NULL;
+    list->length = 0;
+    return list;
+}
+
+void list_append(List *list, int value) {
+    Node *new_node = (Node *)malloc(sizeof(Node));
+    if (!new_node) return;
+    new_node->data = value;
+    new_node->next = NULL;
+    
+    if (!list->head) {
+        list->head = new_node;
+    } else {
+        Node *current = list->head;
+        while (current->next) {
+            current = current->next;
+        }
+        current->next = new_node;
+    }
+    list->length++;
+}
+
+void destroy_list(List *list) {
+    if (!list) return;
+    Node *current = list->head;
+    while (current) {
+        Node *temp = current;
+        current = current->next;
+        free(temp);
+    }
+    free(list);
+}
+
+void print_list(List *list) {
+    if (!list || !list->head) {
+        printf("[]");
+        return;
+    }
+    printf("[");
+    Node *current = list->head;
+    while (current) {
+        printf("%d", current->data);
+        if (current->next) printf(", ");
+        current = current->next;
+    }
+    printf("]");
+}
+
+void generate_sublists(List *input) {
+    if (!input || !input->head) return;
+    
+    List *indices = create_list();
+    if (!indices) return;
+    
+    size_t total_nodes = input->length;
+    size_t total_sublists = (size_t)1 << total_nodes;
+    
+    for (size_t mask = 0; mask < total_sublists; mask++) {
+        List *sublist = create_list();
+        if (!sublist) {
+            destroy_list(indices);
+            return;
+        }
+        
+        Node *current = input->head;
+        size_t index = 0;
+        
+        while (current) {
+            if (mask & ((size_t)1 << index)) {
+                list_append(sublist, current->data);
+            }
+            current = current->next;
+            index++;
+        }
+        
+        print_list(sublist);
+        printf("\n");
+        destroy_list(sublist);
+    }
+    
+    destroy_list(indices);
+}
+
+int main(void) {
+    List *list = create_list();
+    if (!list) return 1;
+    
+    list_append(list, 1);
+    list_append(list, 2);
+    list_append(list, 3);
+    
+    printf("All sublists:\n");
+    generate_sublists(list);
+    
+    destroy_list(list);
+    return 0;
+}
+```

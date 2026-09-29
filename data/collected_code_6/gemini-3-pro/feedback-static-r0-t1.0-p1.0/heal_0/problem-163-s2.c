@@ -1,0 +1,41 @@
+#include <stdio.h>
+#include <math.h>
+#include <stdlib.h>
+
+double calculate_polygon_area(int num_sides, double side_length) {
+    if (num_sides < 3) {
+        return -1.0;
+    }
+    if (side_length <= 0.0) {
+        return -1.0;
+    }
+
+    double perimeter = num_sides * side_length;
+    double apothem = side_length / (2.0 * tan(M_PI / num_sides));
+    double area = (perimeter * apothem) / 2.0;
+
+    return area;
+}
+
+int main(void) {
+    int num_sides;
+    double side_length;
+
+    if (scanf("%d", &num_sides) != 1) {
+        return EXIT_FAILURE;
+    }
+
+    if (scanf("%lf", &side_length) != 1) {
+        return EXIT_FAILURE;
+    }
+
+    double area = calculate_polygon_area(num_sides, side_length);
+
+    if (area < 0.0) {
+        return EXIT_FAILURE;
+    }
+
+    printf("%.6f\n", area);
+
+    return EXIT_SUCCESS;
+}

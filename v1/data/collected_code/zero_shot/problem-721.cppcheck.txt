@@ -1,0 +1,12 @@
+collected_code/problem-721-0.c:15:29: error: Cannot determine that 'matrix[i][j]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+            sum += matrix[i][j];
+                            ^
+collected_code/problem-721-0.c:23:42: error: Cannot determine that 'matrix[i][j]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+                maxAvgPath[j] = matrix[i][j];
+                                         ^
+collected_code/problem-721-0.c:31:33: error: Cannot determine that 'maxAvgPath[j]' is initialized [premium-bughuntingUninit]
+        printf("%d ", maxAvgPath[j]);
+                                ^
+collected_code/problem-721-0.c:41:18: error: Cannot determine that 'n' is initialized [premium-bughuntingUninit]
+    scanf("%d", &n);
+                 ^

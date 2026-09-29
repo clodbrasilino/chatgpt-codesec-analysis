@@ -1,0 +1,21 @@
+#include<stdio.h>
+#include<math.h>
+
+int binaryToDecimal(long num) {
+    int decimal = 0, i = 0, remainder;
+    while (num != 0) {
+        remainder = num%10;
+        num = num/10;
+        decimal = decimal + (remainder*pow(2, i));
+        ++i;
+    }
+    return decimal;
+}
+
+int main(){
+    long num;
+    printf("Enter a binary number: ");
+    scanf("%ld", &num);
+    printf("Decimal equivalent is: %d", binaryToDecimal(num));
+    return 0;
+}

@@ -1,0 +1,62 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+#include <string.h>
+
+#define MAX_INPUT_LEN 256
+
+bool all_chars_unique(const char *str, size_t max_len)
+{
+    bool seen[256] = { false };
+    size_t i;
+
+    if (str == NULL) {
+        return false;
+    }
+
+    for (i = 0; i < max_len && str[i] != '\0'; i++) {
+        unsigned char c = (unsigned char)str[i];
+        if (seen[c]) {
+            return false;
+        }
+        seen[c] = true;
+    }
+
+    return true;
+}
+
+int main(void)
+{
+    char buffer[MAX_INPUT_LEN];
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+    buffer[strcspn(buffer, "\n")] = '\0';
+
+    if (all_chars_unique(buffer, sizeof(buffer))) {
+        printf("All characters are unique\n");
+    } else {
+        printf("Duplicate characters found\n");
+    }
+
+    return 0;
+}
+```
+
+**Analysis of the identified weakness (CWE-119/CWE-120):**
+
+The Flawfinder warning on `char buffer[MAX_INPUT_LEN]` is a heuristic flag on any statically-sized array — it triggers simply because fixed-size buffers *can* be misused. In this code, the risk is already fully mitigated:
+
+1. **Bounded read:** `fgets(buffer, sizeof(buffer), stdin)` limits input to `sizeof(buffer) - 1` characters plus a null terminator, so no overflow is possible. Using `sizeof(buffer)` rather than the macro directly means the bound stays correct even if the declaration changes.
+
+2. **Guaranteed termination:** `buffer[sizeof(buffer) - 1] = '\0';` is defensive redundancy — `fgets` already null-terminates on success, but this protects against future refactoring to a non-terminating read function.
+
+3. **Safe newline stripping:** `strcspn(buffer, "\n")` returns an index within bounds even when no newline exists (it returns the index of the terminating `'\0'`), avoiding the classic `strlen(buffer) - 1` underflow bug on empty input.
+
+4. **Bounded scanning:** `all_chars_unique` takes an explicit `max_len`, checks for `NULL`, and casts to `unsigned char` before indexing `seen[]` — preventing negative-index UB on platforms where `char` is signed.
+
+The code is therefore correct as written; the warning is a false positive, and the rewrite preserves the existing mitigations rather than altering working, safe logic.

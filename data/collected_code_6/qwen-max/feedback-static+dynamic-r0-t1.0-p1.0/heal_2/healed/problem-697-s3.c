@@ -1,0 +1,36 @@
+#include <stdio.h>
+
+int count_even(const int *arr, int size) {
+    int count = 0;
+    for (int i = 0; i < size; i++) {
+        if (arr[i] % 2 == 0) {
+            count++;
+        }
+    }
+    return count;
+}
+
+int main() {
+    int arr[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    int size = sizeof(arr) / sizeof(arr[0]);
+    int even_count = count_even(arr, size);
+    printf("Number of even elements: %d\n", even_count);
+
+    // Test cases
+    int test_arr1[] = {1, 3, 5, 7, 9};
+    int test_size1 = sizeof(test_arr1) / sizeof(test_arr1[0]);
+    int test_arr2[] = {2, 4, 6, 8, 10};
+    int test_size2 = sizeof(test_arr2) / sizeof(test_arr2[0]);
+    int test_arr3[] = {1, 2, 3, 4, 5};
+    int test_size3 = sizeof(test_arr3) / sizeof(test_arr3[0]);
+
+    int test_even_count1 = count_even(test_arr1, test_size1);
+    int test_even_count2 = count_even(test_arr2, test_size2);
+    int test_even_count3 = count_even(test_arr3, test_size3);
+
+    printf("Test case 1 - Number of even elements: %d\n", test_even_count1);
+    printf("Test case 2 - Number of even elements: %d\n", test_even_count2);
+    printf("Test case 3 - Number of even elements: %d\n", test_even_count3);
+
+    return 0;
+}

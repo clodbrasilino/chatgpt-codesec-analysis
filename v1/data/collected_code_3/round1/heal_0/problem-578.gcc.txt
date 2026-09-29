@@ -1,0 +1,30 @@
+collected_code_3/problem-578-1.c: In function 'newNode':
+collected_code_3/problem-578-1.c:11:16: warning: dereference of possibly-NULL 'temp' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   11 |     temp->data = data;
+      |     ~~~~~~~~~~~^~~~~~
+  'main': events 1-2
+    |
+    |   44 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |   45 |     Node* list1 = newNode(1);
+    |      |                   ~~~~~~~~~~
+    |      |                   |
+    |      |                   (2) calling 'newNode' from 'main'
+    |
+    +--> 'newNode': events 3-5
+           |
+           |    9 | Node* newNode(int data) {
+           |      |       ^~~~~~~
+           |      |       |
+           |      |       (3) entry to 'newNode'
+           |   10 |     Node* temp = (Node*)malloc(sizeof(Node));
+           |      |                         ~~~~~~~~~~~~~~~~~~~~
+           |      |                         |
+           |      |                         (4) this call could return NULL
+           |   11 |     temp->data = data;
+           |      |     ~~~~~~~~~~~~~~~~~
+           |      |                |
+           |      |                (5) 'temp' could be NULL: unchecked value from (4)
+           |

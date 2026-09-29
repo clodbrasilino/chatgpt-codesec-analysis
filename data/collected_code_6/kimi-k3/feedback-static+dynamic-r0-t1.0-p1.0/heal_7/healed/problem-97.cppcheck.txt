@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-97.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-97.c:70:33: style: Condition 'sorted!=NULL' is always true [knownConditionTrueFalse]
+    if (copy_size > 0 && sorted != NULL && lists != NULL) {
+                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-97.c:81:11: warning: Either the condition 'sorted!=NULL' is redundant or there is possible null pointer dereference: sorted. [nullPointerRedundantCheck]
+    qsort(sorted, num_lists, sizeof(IntList), compare_lists);
+          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-97.c:70:33: note: Assuming that condition 'sorted!=NULL' is not redundant
+    if (copy_size > 0 && sorted != NULL && lists != NULL) {
+                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-97.c:81:11: note: Null pointer dereference
+    qsort(sorted, num_lists, sizeof(IntList), compare_lists);
+          ^

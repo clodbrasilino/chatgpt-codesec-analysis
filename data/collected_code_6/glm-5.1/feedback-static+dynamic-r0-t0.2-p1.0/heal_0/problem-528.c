@@ -1,0 +1,134 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    void *data;
+    struct Node *next;
+} Node;
+
+typedef struct List {
+    Node *head;
+    size_t length;
+} List;
+
+typedef struct ListOfLists {
+    List **lists;
+    size_t count;
+} ListOfLists;
+
+ListOfLists *find_min_length_lists(ListOfLists *input) {
+    if (input == NULL || input->count == 0) {
+        return NULL;
+    }
+
+    size_t min_len = (size_t)-1;
+    for (size_t i = 0; i < input->count; i++) {
+        if (input->lists[i] != NULL && input->lists[i]->length < min_len) {
+            min_len = input->lists[i]->length;
+        }
+    }
+
+    if (min_len == (size_t)-1) {
+        return NULL;
+    }
+
+    size_t result_count = 0;
+    for (size_t i = 0; i < input->count; i++) {
+        if (input->lists[i] != NULL && input->lists[i]->length == min_len) {
+            result_count++;
+        }
+    }
+
+    ListOfLists *result = (ListOfLists *)malloc(sizeof(ListOfLists));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    result->lists = (List **)malloc(result_count * sizeof(List *));
+    if (result->lists == NULL) {
+        free(result);
+        return NULL;
+    }
+
+    result->count = result_count;
+    size_t index = 0;
+    for (size_t i = 0; i < input->count; i++) {
+        if (input->lists[i] != NULL && input->lists[i]->length == min_len) {
+            result->lists[index++] = input->lists[i];
+        }
+    }
+
+    return result;
+}
+
+void free_list_of_lists(ListOfLists *lol) {
+    if (lol == NULL) {
+        return;
+    }
+    if (lol->lists != NULL) {
+        for (size_t i = 0; i < lol->count; i++) {
+            if (lol->lists[i] != NULL) {
+                Node *current = lol->lists[i]->head;
+                while (current != NULL) {
+                    Node *next = current->next;
+                    free(current->data);
+                    free(current);
+                    current = next;
+                }
+                free(lol->lists[i]);
+            }
+        }
+        free(lol->lists);
+    }
+    free(lol);
+}
+
+int main(void) {
+    List *l1 = (List *)malloc(sizeof(List));
+    if (l1 == NULL) return 1;
+    l1->length = 3;
+    l1->head = NULL;
+
+    List *l2 = (List *)malloc(sizeof(List));
+    if (l2 == NULL) { free(l1); return 1; }
+    l2->length = 1;
+    l2->head = NULL;
+
+    List *l3 = (List *)malloc(sizeof(List));
+    if (l3 == NULL) { free(l1); free(l2); return 1; }
+    l3->length = 1;
+    l3->head = NULL;
+
+    List *l4 = (List *)malloc(sizeof(List));
+    if (l4 == NULL) { free(l1); free(l2); free(l3); return 1; }
+    l4->length = 5;
+    l4->head = NULL;
+
+    ListOfLists *input = (ListOfLists *)malloc(sizeof(ListOfLists));
+    if (input == NULL) { free(l1); free(l2); free(l3); free(l4); return 1; }
+    
+    input->count = 4;
+    input->lists = (List **)malloc(input->count * sizeof(List *));
+    if (input->lists == NULL) { free(input); free(l1); free(l2); free(l3); free(l4); return 1; }
+    
+    input->lists[0] = l1;
+    input->lists[1] = l2;
+    input->lists[2] = l3;
+    input->lists[3] = l4;
+
+    ListOfLists *result = find_min_length_lists(input);
+    if (result != NULL) {
+        printf("Found %zu lists with minimum length:\n", result->count);
+        for (size_t i = 0; i < result->count; i++) {
+            printf("List %p with length %zu\n", (void *)result->lists[i], result->lists[i]->length);
+        }
+        free(result->lists);
+        free(result);
+    } else {
+        printf("No lists found or invalid input.\n");
+    }
+
+    free_list_of_lists(input);
+
+    return 0;
+}

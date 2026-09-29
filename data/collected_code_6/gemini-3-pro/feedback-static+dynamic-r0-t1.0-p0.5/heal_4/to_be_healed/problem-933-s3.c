@@ -1,0 +1,59 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#define MAX_STR_LEN 4096
+
+char* camel_to_snake(const char* camel_case) {
+    if (!camel_case) return NULL;
+
+    size_t len = 0;
+    /* Possible weaknesses found:
+     *  Either the condition 'len<4096' is redundant or the array 'camel_case[23]' is accessed at index 4095, which is out of bounds. [arrayIndexOutOfBoundsCond]
+     *  Assuming that condition 'len<4096' is not redundant
+     *  Array index out of bounds
+     */
+    while (len < MAX_STR_LEN && camel_case[len] != '\0') {
+        len++;
+    }
+
+    if (len == MAX_STR_LEN) {
+        return NULL;
+    }
+
+    char* snake_case = (char*)malloc(len * 2 + 1);
+    if (!snake_case) {
+        return NULL;
+    }
+
+    size_t j = 0;
+    for (size_t i = 0; i < len; i++) {
+        if (isupper((unsigned char)camel_case[i])) {
+            if (i > 0 && islower((unsigned char)camel_case[i - 1])) {
+                snake_case[j++] = '_';
+            }
+            snake_case[j++] = tolower((unsigned char)camel_case[i]);
+        } else {
+            snake_case[j++] = tolower((unsigned char)camel_case[i]);
+        }
+    }
+    snake_case[j] = '\0';
+
+    return snake_case;
+}
+
+int main(void) {
+    const char* camel = "thisIsACamelCaseString";
+    char* snake = camel_to_snake(camel);
+    
+    if (snake) {
+        printf("%s\n", snake);
+        free(snake);
+    } else {
+        fprintf(stderr, "Conversion failed or memory allocation error.\n");
+        return 1;
+    }
+
+    return 0;
+}

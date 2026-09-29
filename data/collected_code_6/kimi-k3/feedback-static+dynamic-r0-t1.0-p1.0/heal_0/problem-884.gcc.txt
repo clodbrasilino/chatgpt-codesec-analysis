@@ -1,0 +1,6 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_0/problem-884.c: In function 'bits_in_range':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_0/problem-884.c:8:31: error: 'UINT32_WIDTH' undeclared (first use in this function); did you mean 'UINT_WIDTH'?
+    8 |     if (low > high || high >= UINT32_WIDTH) {
+      |                               ^~~~~~~~~~~~
+      |                               UINT_WIDTH
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_0/problem-884.c:8:31: note: each undeclared identifier is reported only once for each function it appears in

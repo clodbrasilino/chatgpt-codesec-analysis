@@ -1,0 +1,39 @@
+#include <stdio.h>
+
+void assignPairElements(int arr1[], int arr2[], int n) {
+    for(int i = 0; i < n; i++) {
+        arr1[i] = arr2[i];
+    }
+}
+
+int main() {
+    int n;
+    printf("Enter the number of elements: ");
+    scanf("%d", &n);
+    
+    if (n > 0) {
+        int arr1[n];
+        int arr2[n];
+        
+        printf("Enter elements for the first array:\n");
+        for(int i=0; i < n; i++) {
+            scanf("%d", &arr1[i]);
+        }
+    
+        printf("Enter elements for the second array:\n");
+        for(int i=0; i < n; i++) {
+            scanf("%d", &arr2[i]);
+        }
+    
+        assignPairElements(arr1, arr2, n);
+    
+        printf("After assigning the elements:\n");
+        for(int i = 0; i < n; i++) {
+            printf("%d ", arr1[i]);
+        }
+    } else {
+        printf("Invalid number of elements. It should be greater than 0.\n");
+    }
+    
+    return 0;
+}

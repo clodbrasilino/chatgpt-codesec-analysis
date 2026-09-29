@@ -1,0 +1,15 @@
+./collected_code_4/round2//heal_0/problem-297.c: In function 'createList':
+./collected_code_4/round2//heal_0/problem-297.c:13:14: warning: dereference of possibly-NULL 'list' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   13 |   list->size = size;
+      |   ~~~~~~~~~~~^~~~~~
+  'createList': events 1-2
+    |
+    |   12 |   List* list = (List*)malloc(sizeof(List));
+    |      |                       ^~~~~~~~~~~~~~~~~~~~
+    |      |                       |
+    |      |                       (1) this call could return NULL
+    |   13 |   list->size = size;
+    |      |   ~~~~~~~~~~~~~~~~~    
+    |      |              |
+    |      |              (2) 'list' could be NULL: unchecked value from (1)
+    |

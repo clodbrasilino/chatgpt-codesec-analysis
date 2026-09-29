@@ -1,0 +1,106 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int value;
+    struct Node *next;
+} Node;
+
+typedef struct List {
+    Node *head;
+} List;
+
+List* create_list() {
+    List *list = (List *)malloc(sizeof(List));
+    list->head = NULL;
+    return list;
+}
+
+void append(List *list, int value) {
+    Node *new_node = (Node *)malloc(sizeof(Node));
+    new_node->value = value;
+    new_node->next = NULL;
+
+    if (list->head == NULL) {
+        list->head = new_node;
+    } else {
+        Node *current = list->head;
+        while (current->next != NULL) {
+            current = current->next;
+        }
+        current->next = new_node;
+    }
+}
+
+Node* merge_first_last(List *list, List **result_list) {
+    if (list->head == NULL || list->head->next == NULL) {
+        return NULL;
+    }
+    
+    Node *first = list->head;
+    Node *current = list->head;
+    Node *prev = NULL;
+    
+    while (current->next != NULL) {
+        prev = current;
+        current = current->next;
+    }
+
+    if (prev != NULL) {
+        prev->next = NULL;
+    }
+
+    first->next = current;
+    current->next = NULL;
+
+    if (*result_list == NULL) {
+        *result_list = create_list();
+    }
+
+    append(*result_list, first->value);
+    append(*result_list, current->value);
+
+    free(first);
+    free(current);
+
+    return *result_list->head;
+}
+
+int main() {
+    List *list1 = create_list();
+    append(list1, 1);
+    append(list1, 2);
+    append(list1, 3);
+    append(list1, 4);
+
+    List *merged_list = create_list();
+
+    merge_first_last(list1, &merged_list);
+
+    Node *node = merged_list->head;
+    while (node != NULL) {
+        printf("%d ", node->value);
+        node = node->next;
+    }
+
+    // Free the remaining nodes in list1
+    while (list1->head != NULL) {
+        Node *tmp = list1->head;
+        list1->head = list1->head->next;
+        free(tmp);
+    }
+
+    // Free the nodes in merged_list
+    while (merged_list->head != NULL) {
+        Node *tmp = merged_list->head;
+        merged_list->head = merged_list->head->next;
+        free(tmp);
+    }
+
+    free(list1);
+    free(merged_list);
+
+    return 0;
+}
+```

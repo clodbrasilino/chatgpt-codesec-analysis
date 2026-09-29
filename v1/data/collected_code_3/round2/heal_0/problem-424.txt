@@ -1,0 +1,23 @@
+```C
+#include <stdio.h>
+#include <string.h>
+
+char* extractRearElements(char* arr[], int n) {
+    static char result[100];
+    int i;
+    for(i = 0; i < n; i++) {
+        int len = strlen(arr[i]);
+        result[i] = arr[i][len - 1];
+    }
+    result[i] = '\0';
+    return result;
+}
+
+int main() {
+    char* arr[] = {"Hello", "World", "C", "Programming"};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    char* result = extractRearElements(arr, n);
+    printf("%s\n", result);
+    return 0;
+}
+```

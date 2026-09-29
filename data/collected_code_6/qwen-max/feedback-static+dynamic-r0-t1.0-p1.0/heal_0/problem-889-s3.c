@@ -1,0 +1,88 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct ListNode {
+    int value;
+    struct ListNode *next;
+} ListNode;
+
+typedef struct List {
+    ListNode *head;
+} List;
+
+ListNode* createNode(int value) {
+    ListNode *node = (ListNode*)malloc(sizeof(ListNode));
+    if (node == NULL) exit(EXIT_FAILURE);
+    node->value = value;
+    node->next = NULL;
+    return node;
+}
+
+void appendToList(List *list, int value) {
+    ListNode *newNode = createNode(value);
+    if (list->head == NULL) {
+        list->head = newNode;
+    } else {
+        ListNode *current = list->head;
+        while (current->next != NULL) {
+            current = current->next;
+        }
+        current->next = newNode;
+    }
+}
+
+List* reverseList(List *list) {
+    ListNode *prev = NULL;
+    ListNode *current = list->head;
+    ListNode *next = NULL;
+
+    while (current != NULL) {
+        next = current->next;
+        current->next = prev;
+        prev = current;
+        current = next;
+    }
+    list->head = prev;
+    return list;
+}
+
+void printList(List *list) {
+    ListNode *current = list->head;
+    while (current != NULL) {
+        printf("%d -> ", current->value);
+        current = current->next;
+    }
+    printf("NULL\n");
+}
+
+int main() {
+    List lists[3] = {{NULL}, {NULL}, {NULL}};
+    
+    appendToList(&lists[0], 1);
+    appendToList(&lists[0], 2);
+    appendToList(&lists[0], 3);
+
+    appendToList(&lists[1], 4);
+    appendToList(&lists[1], 5);
+
+    appendToList(&lists[2], 6);
+    appendToList(&lists[2], 7);
+    appendToList(&lists[2], 8);
+    appendToList(&lists[2], 9);
+
+    for (int i = 0; i < 3; i++) {
+        lists[i] = *reverseList(&lists[i]);
+        printList(&lists[i]);
+    }
+
+    for (int i = 0; i < 3; i++) {
+        ListNode *current = lists[i].head;
+        while (current != NULL) {
+            ListNode *temp = current;
+            current = current->next;
+            free(temp);
+        }
+    }
+
+    return 0;
+}

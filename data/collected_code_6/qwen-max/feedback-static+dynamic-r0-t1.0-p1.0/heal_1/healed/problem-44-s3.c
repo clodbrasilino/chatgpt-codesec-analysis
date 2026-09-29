@@ -1,0 +1,33 @@
+#include <stdio.h>
+#include <string.h>
+
+int match_word_at_beginning(const char *str, const char *word) {
+    size_t str_len = 0;
+    while (str[str_len] != '\0' && str[str_len] != ' ') {
+        ++str_len;
+    }
+    size_t word_len = 0;
+    while (word[word_len] != '\0') {
+        ++word_len;
+    }
+    if (str_len < word_len || (str[str_len] != '\0' && str[str_len] != ' ')) {
+        return 0;
+    }
+    for (size_t i = 0; i < word_len; ++i) {
+        if (str[i] != word[i]) {
+            return 0;
+        }
+    }
+    return 1;
+}
+
+int main() {
+    const char *test_str = "hello world";
+    const char *test_word = "hello";
+    if (match_word_at_beginning(test_str, test_word)) {
+        printf("Match found at the beginning of the string.\n");
+    } else {
+        printf("No match found at the beginning of the string.\n");
+    }
+    return 0;
+}

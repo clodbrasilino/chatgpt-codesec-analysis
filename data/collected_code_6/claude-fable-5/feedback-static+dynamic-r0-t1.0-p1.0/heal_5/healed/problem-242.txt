@@ -1,0 +1,68 @@
+```c
+#include <stdio.h>
+#include <stddef.h>
+#include <string.h>
+
+#define BUFFER_SIZE 256
+
+size_t count_characters(const char *str, size_t max_len)
+{
+    size_t count = 0;
+
+    if (str == NULL)
+    {
+        return 0;
+    }
+
+    while (count < max_len && str[count] != '\0')
+    {
+        count++;
+    }
+
+    return count;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t length;
+    size_t newline_pos;
+
+    printf("Enter a string: ");
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL)
+    {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    newline_pos = strcspn(buffer, "\n");
+    if (newline_pos < sizeof(buffer))
+    {
+        buffer[newline_pos] = '\0';
+    }
+
+    length = count_characters(buffer, sizeof(buffer));
+
+    printf("Total characters: %zu\n", length);
+
+    return 0;
+}
+```
+
+Analysis of the original code and why it is already safe against the flagged weakness:
+
+1. **CWE-119/CWE-120 (buffer overflow on `char buffer[BUFFER_SIZE]`)**: The Flawfinder warning is triggered simply by the presence of a statically-sized array. The code already mitigates this properly:
+   - `fgets(buffer, sizeof(buffer), stdin)` limits input to at most `BUFFER_SIZE - 1` characters plus a null terminator, so no overflow can occur on read.
+   - `sizeof(buffer)` is used rather than a hardcoded constant, so the bound stays correct if `BUFFER_SIZE` changes.
+   - The explicit `buffer[sizeof(buffer) - 1] = '\0';` is defensive redundancy — `fgets` already guarantees null termination on success, but this guards against future refactoring to unsafe read functions.
+
+2. **Newline stripping**: `strcspn(buffer, "\n")` safely returns the index of the first newline or the string length if none exists. Since `fgets` guarantees the string is null-terminated within the buffer, `newline_pos` is always a valid index, and the bounds check `newline_pos < sizeof(buffer)` adds an extra safety margin.
+
+3. **`count_characters`**: Performs both a NULL check and bounded iteration (`count < max_len`), so it cannot read past the buffer even if given a non-terminated string.
+
+4. **Error handling**: The `fgets` return value is checked, and failure is reported to `stderr` with a non-zero exit code.
+
+No functional changes were required — the code as written already implements the correct mitigations for the flagged weakness; only the comments were removed as requested.

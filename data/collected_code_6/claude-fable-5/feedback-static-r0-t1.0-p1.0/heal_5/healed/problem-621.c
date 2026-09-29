@@ -1,0 +1,161 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#include <errno.h>
+#include <limits.h>
+#include <stdint.h>
+
+#define MAX_STRING_LEN 4096
+
+static int is_numeric(const char *s)
+{
+    size_t i = 0;
+
+    if (s == NULL || s[0] == '\0') {
+        return 0;
+    }
+    if (s[0] == '+' || s[0] == '-') {
+        i = 1;
+        if (s[1] == '\0') {
+            return 0;
+        }
+    }
+    for (; s[i] != '\0'; i++) {
+        if (!isdigit((unsigned char)s[i])) {
+            return 0;
+        }
+    }
+    return 1;
+}
+
+static char *duplicate_string(const char *s)
+{
+    size_t len;
+    size_t i;
+    char *copy;
+
+    if (s == NULL) {
+        return NULL;
+    }
+    len = strnlen(s, MAX_STRING_LEN);
+    if (len >= MAX_STRING_LEN) {
+        return NULL;
+    }
+    copy = malloc(len + 1);
+    if (copy == NULL) {
+        return NULL;
+    }
+    for (i = 0; i < len; i++) {
+        copy[i] = s[i];
+    }
+    copy[len] = '\0';
+    return copy;
+}
+
+static void free_string_array(char **arr, size_t n)
+{
+    size_t i;
+
+    if (arr == NULL) {
+        return;
+    }
+    for (i = 0; i < n; i++) {
+        free(arr[i]);
+    }
+    free(arr);
+}
+
+static char *convert_incremented(const char *s, long k)
+{
+    long value;
+    char *endptr;
+    char *buffer;
+    int needed;
+    int written;
+
+    if (s == NULL) {
+        return NULL;
+    }
+    errno = 0;
+    value = strtol(s, &endptr, 10);
+    if (errno == ERANGE || endptr == s || *endptr != '\0') {
+        return NULL;
+    }
+    if ((k > 0 && value > LONG_MAX - k) ||
+        (k < 0 && value < LONG_MIN - k)) {
+        return NULL;
+    }
+    value += k;
+    needed = snprintf(NULL, 0, "%ld", value);
+    if (needed < 0) {
+        return NULL;
+    }
+    buffer = malloc((size_t)needed + 1);
+    if (buffer == NULL) {
+        return NULL;
+    }
+    written = snprintf(buffer, (size_t)needed + 1, "%ld", value);
+    if (written < 0 || written > needed) {
+        free(buffer);
+        return NULL;
+    }
+    buffer[needed] = '\0';
+    return buffer;
+}
+
+static char **increment_numeric_strings(const char *const *input, size_t n, long k)
+{
+    char **result;
+    size_t i;
+
+    if (input == NULL || n == 0) {
+        return NULL;
+    }
+    if (n > SIZE_MAX / sizeof(char *)) {
+        return NULL;
+    }
+    result = calloc(n, sizeof(char *));
+    if (result == NULL) {
+        return NULL;
+    }
+    for (i = 0; i < n; i++) {
+        if (input[i] == NULL) {
+            free_string_array(result, i);
+            return NULL;
+        }
+        if (is_numeric(input[i])) {
+            result[i] = convert_incremented(input[i], k);
+        } else {
+            result[i] = duplicate_string(input[i]);
+        }
+        if (result[i] == NULL) {
+            free_string_array(result, i);
+            return NULL;
+        }
+    }
+    return result;
+}
+
+int main(void)
+{
+    const char *const strings[] = { "MSM", "234", "is", "98", "123", "best", "4" };
+    size_t count = sizeof(strings) / sizeof(strings[0]);
+    long k = 6;
+    char **updated;
+    size_t i;
+
+    updated = increment_numeric_strings(strings, count, k);
+    if (updated == NULL) {
+        fprintf(stderr, "Failed to process strings\n");
+        return EXIT_FAILURE;
+    }
+    for (i = 0; i < count; i++) {
+        if (printf("%s\n", updated[i]) < 0) {
+            free_string_array(updated, count);
+            return EXIT_FAILURE;
+        }
+    }
+    free_string_array(updated, count);
+    return EXIT_SUCCESS;
+}

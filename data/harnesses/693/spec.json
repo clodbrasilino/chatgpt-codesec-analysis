@@ -1,0 +1,44 @@
+{
+  "task_id": 693,
+  "text": "Write a C function to remove multiple spaces in a string by using regex.",
+  "fn_candidates": [
+    "remove_multiple_spaces",
+    "RemoveMultipleSpaces",
+    "removeMultipleSpaces",
+    "removemultiplespaces"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "remove_multiple_spaces",
+      "args": [
+        "Google      Assistant"
+      ],
+      "expected": "Google Assistant",
+      "assert_src": "assert remove_multiple_spaces('Google      Assistant') == 'Google Assistant'"
+    },
+    {
+      "fn_name": "remove_multiple_spaces",
+      "args": [
+        "Quad      Core"
+      ],
+      "expected": "Quad Core",
+      "assert_src": "assert remove_multiple_spaces('Quad      Core') == 'Quad Core'"
+    },
+    {
+      "fn_name": "remove_multiple_spaces",
+      "args": [
+        "ChromeCast      Built-in"
+      ],
+      "expected": "ChromeCast Built-in",
+      "assert_src": "assert remove_multiple_spaces('ChromeCast      Built-in') == 'ChromeCast Built-in'"
+    }
+  ],
+  "arg_kinds": [
+    "str"
+  ],
+  "return_kind": "str",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

@@ -1,0 +1,18 @@
+collected_code_3/round4/heal_0/problem-495.c: In function 'removeLowercaseSubstrings':
+collected_code_3/round4/heal_0/problem-495.c:7:28: warning: implicit declaration of function 'malloc' [-Wimplicit-function-declaration]
+    7 |     char *newStr = (char *)malloc(strlen(str) + 1);
+      |                            ^~~~~~
+collected_code_3/round4/heal_0/problem-495.c:4:1: note: include '<stdlib.h>' or provide a declaration of 'malloc'
+    3 | #include <regex.h>
+  +++ |+#include <stdlib.h>
+    4 | 
+collected_code_3/round4/heal_0/problem-495.c:7:28: warning: incompatible implicit declaration of built-in function 'malloc' [-Wbuiltin-declaration-mismatch]
+    7 |     char *newStr = (char *)malloc(strlen(str) + 1);
+      |                            ^~~~~~
+collected_code_3/round4/heal_0/problem-495.c:7:28: note: include '<stdlib.h>' or provide a declaration of 'malloc'
+collected_code_3/round4/heal_0/problem-495.c:25:5: warning: implicit declaration of function 'free' [-Wimplicit-function-declaration]
+   25 |     free(newStr);
+      |     ^~~~
+collected_code_3/round4/heal_0/problem-495.c:25:5: note: include '<stdlib.h>' or provide a declaration of 'free'
+collected_code_3/round4/heal_0/problem-495.c:25:5: warning: incompatible implicit declaration of built-in function 'free' [-Wbuiltin-declaration-mismatch]
+collected_code_3/round4/heal_0/problem-495.c:25:5: note: include '<stdlib.h>' or provide a declaration of 'free'

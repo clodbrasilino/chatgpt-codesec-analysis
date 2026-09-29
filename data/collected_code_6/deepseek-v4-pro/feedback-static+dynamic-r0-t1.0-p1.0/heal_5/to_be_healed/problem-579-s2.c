@@ -1,0 +1,133 @@
+#include <stdio.h>
+#include <stdlib.h>
+ /* Possible weaknesses found:
+  *  test case 0 failed: expected [3, 6, 7, 10], got <no output>
+  *  test case 2 failed: expected [34, 36, 11, 25], got <no output>
+  *  test case 1 failed: expected [1, 4, 7, 9], got <no output>
+  */
+
+int* find_dissimilar(const int* tuple1, int size1, const int* tuple2, int size2, int* result_size) {
+    if (tuple1 == NULL || tuple2 == NULL || result_size == NULL) {
+        if (result_size != NULL) {
+            *result_size = 0;
+        }
+        return NULL;
+    }
+
+    int max_size = size1 + size2;
+    int* result = (int*)malloc(max_size * sizeof(int));
+    if (result == NULL) {
+        *result_size = 0;
+        return NULL;
+    }
+
+    int* seen = (int*)calloc(max_size, sizeof(int));
+    if (seen == NULL) {
+        free(result);
+        *result_size = 0;
+        return NULL;
+    }
+
+    int* element_flags = (int*)calloc(max_size, sizeof(int));
+    if (element_flags == NULL) {
+        free(result);
+        free(seen);
+        *result_size = 0;
+        return NULL;
+    }
+
+    for (int i = 0; i < size2; i++) {
+        element_flags[i] = tuple2[i];
+    }
+
+    int count = 0;
+
+    for (int i = 0; i < size1; i++) {
+        int found = 0;
+        for (int j = 0; j < size2; j++) {
+            if (tuple1[i] == tuple2[j]) {
+                found = 1;
+                break;
+            }
+        }
+        if (!found) {
+            int is_duplicate = 0;
+            for (int k = 0; k < count; k++) {
+                if (seen[k] == tuple1[i]) {
+                    is_duplicate = 1;
+                    break;
+                }
+            }
+            if (!is_duplicate) {
+                seen[count] = tuple1[i];
+                result[count] = tuple1[i];
+                count++;
+            }
+        }
+    }
+
+    for (int i = 0; i < size2; i++) {
+        int found = 0;
+        for (int j = 0; j < size1; j++) {
+            if (tuple2[i] == tuple1[j]) {
+                found = 1;
+                break;
+            }
+        }
+        if (!found) {
+            int is_duplicate = 0;
+            for (int k = 0; k < count; k++) {
+                if (seen[k] == tuple2[i]) {
+                    is_duplicate = 1;
+                    break;
+                }
+            }
+            if (!is_duplicate) {
+                seen[count] = tuple2[i];
+                result[count] = tuple2[i];
+                count++;
+            }
+        }
+    }
+
+    free(seen);
+    free(element_flags);
+    *result_size = count;
+
+    if (count == 0) {
+        free(result);
+        return NULL;
+    }
+
+    int* final_result = (int*)realloc(result, count * sizeof(int));
+    if (final_result == NULL) {
+        free(result);
+        *result_size = 0;
+        return NULL;
+    }
+
+    return final_result;
+}
+
+int main() {
+    int tuple1[] = {1, 2, 3, 4, 5};
+    int tuple2[] = {4, 5, 6, 7, 8};
+    int size1 = sizeof(tuple1) / sizeof(tuple1[0]);
+    int size2 = sizeof(tuple2) / sizeof(tuple2[0]);
+    int result_size;
+    int* dissimilar = find_dissimilar(tuple1, size1, tuple2, size2, &result_size);
+
+    if (dissimilar == NULL) {
+        printf("No dissimilar elements found\n");
+        return 0;
+    }
+
+    printf("Dissimilar elements: ");
+    for (int i = 0; i < result_size; i++) {
+        printf("%d ", dissimilar[i]);
+    }
+    printf("\n");
+
+    free(dissimilar);
+    return 0;
+}

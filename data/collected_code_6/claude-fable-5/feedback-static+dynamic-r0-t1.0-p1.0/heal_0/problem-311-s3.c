@@ -1,0 +1,53 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+unsigned int set_leftmost_unset_bit(unsigned int n)
+{
+    unsigned int mask;
+    int pos;
+
+    if (n == UINT_MAX) {
+        return n;
+    }
+
+    if (n == 0U) {
+        return 1U;
+    }
+
+    pos = -1;
+    mask = 1U;
+    for (int i = 0; i < (int)(sizeof(unsigned int) * CHAR_BIT); i++) {
+        if ((n & mask) == 0U) {
+            if (mask > n) {
+                break;
+            }
+            pos = i;
+        }
+        if (mask > (UINT_MAX >> 1)) {
+            break;
+        }
+        mask <<= 1;
+    }
+
+    if (pos < 0) {
+        return n;
+    }
+
+    return n | (1U << pos);
+}
+
+int main(void)
+{
+    unsigned int values[] = { 10U, 21U, 0U, 15U, UINT_MAX };
+    size_t count = sizeof(values) / sizeof(values[0]);
+
+    for (size_t i = 0; i < count; i++) {
+        unsigned int result = set_leftmost_unset_bit(values[i]);
+        if (printf("Input: %u -> Output: %u\n", values[i], result) < 0) {
+            return EXIT_FAILURE;
+        }
+    }
+
+    return EXIT_SUCCESS;
+}

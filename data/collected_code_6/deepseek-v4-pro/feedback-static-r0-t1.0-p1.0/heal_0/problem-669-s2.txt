@@ -1,0 +1,50 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+int validate_ip(const char *ip) {
+    regex_t regex;
+    int ret;
+    const char *pattern = "^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$";
+    
+    ret = regcomp(&regex, pattern, REG_EXTENDED);
+    if (ret != 0) {
+        return 0;
+    }
+    
+    ret = regexec(&regex, ip, 0, NULL, 0);
+    regfree(&regex);
+    
+    if (ret == 0) {
+        return 1;
+    } else if (ret == REG_NOMATCH) {
+        return 0;
+    } else {
+        return 0;
+    }
+}
+
+int main(void) {
+    const char *test_ips[] = {
+        "192.168.1.1",
+        "255.255.255.255",
+        "0.0.0.0",
+        "256.256.256.256",
+        "192.168.1",
+        "192.168.1.1.1",
+        "abc.def.ghi.jkl",
+        "192.168.01.1",
+        "192.168.1.-1",
+        NULL
+    };
+    
+    int i;
+    for (i = 0; test_ips[i] != NULL; i++) {
+        printf("%s -> %s\n", test_ips[i], validate_ip(test_ips[i]) ? "Valid" : "Invalid");
+    }
+    
+    return 0;
+}
+```

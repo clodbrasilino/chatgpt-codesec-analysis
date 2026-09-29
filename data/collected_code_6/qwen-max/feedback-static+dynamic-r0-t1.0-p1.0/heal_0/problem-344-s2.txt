@@ -1,0 +1,34 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+
+int countOddFactorsInRange(int start, int end) {
+    int count = 0;
+    for (int i = start; i <= end; i++) {
+        int factors = 0;
+        for (int j = 1; j * j <= i; j++) {
+            if (i % j == 0) {
+                factors++;
+                if (j * j != i) {
+                    factors++;
+                }
+            }
+        }
+        if (factors % 2 != 0) {
+            count++;
+        }
+    }
+    return count;
+}
+
+int main() {
+    int start, end;
+    printf("Enter the start of the range: ");
+    scanf("%d", &start);
+    printf("Enter the end of the range: ");
+    scanf("%d", &end);
+    int result = countOddFactorsInRange(start, end);
+    printf("Number of elements with odd factors in the range: %d\n", result);
+    return 0;
+}
+```

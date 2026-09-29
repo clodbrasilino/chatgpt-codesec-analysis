@@ -1,0 +1,96 @@
+{
+  "task_id": 75,
+  "text": "Write a C function to find tuples which have all elements divisible by k from the given list of tuples.",
+  "fn_candidates": [
+    "find_tuples",
+    "FindTuples",
+    "findTuples",
+    "findtuples"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "find_tuples",
+      "args": [
+        [
+          [
+            6,
+            24,
+            12
+          ],
+          [
+            7,
+            9,
+            6
+          ],
+          [
+            12,
+            18,
+            21
+          ]
+        ],
+        6
+      ],
+      "expected": "[(6, 24, 12)]",
+      "assert_src": "assert find_tuples([(6, 24, 12), (7, 9, 6), (12, 18, 21)], 6) == '[(6, 24, 12)]'"
+    },
+    {
+      "fn_name": "find_tuples",
+      "args": [
+        [
+          [
+            5,
+            25,
+            30
+          ],
+          [
+            4,
+            2,
+            3
+          ],
+          [
+            7,
+            8,
+            9
+          ]
+        ],
+        5
+      ],
+      "expected": "[(5, 25, 30)]",
+      "assert_src": "assert find_tuples([(5, 25, 30), (4, 2, 3), (7, 8, 9)], 5) == '[(5, 25, 30)]'"
+    },
+    {
+      "fn_name": "find_tuples",
+      "args": [
+        [
+          [
+            7,
+            9,
+            16
+          ],
+          [
+            8,
+            16,
+            4
+          ],
+          [
+            19,
+            17,
+            18
+          ]
+        ],
+        4
+      ],
+      "expected": "[(8, 16, 4)]",
+      "assert_src": "assert find_tuples([(7, 9, 16), (8, 16, 4), (19, 17, 18)], 4) == '[(8, 16, 4)]'"
+    }
+  ],
+  "arg_kinds": [
+    "2d-int-list",
+    "int"
+  ],
+  "return_kind": "str",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

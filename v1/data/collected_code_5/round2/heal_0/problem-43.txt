@@ -1,0 +1,35 @@
+```c
+#include <stdio.h>
+#include <regex.h>
+
+int matches_regex(const char* string, const char* pattern) {
+    regex_t re;
+    int res = regcomp(&re, pattern, REG_EXTENDED);
+    if (res) {
+        printf("Could not compile regex\n");
+        return 0;
+    }
+    res = regexec(&re, string, 0, NULL, 0);
+    regfree(&re);
+    if (!res) {
+        return 1;
+    } else if (res == REG_NOMATCH) {
+        return 0;
+    } else {
+        printf("There was an error running the regex\n");
+        return 0;
+    }
+}
+
+int main() {
+    const char* string = "my_string";
+    const char* pattern = "\\b[a-z]+(_[a-z]+)*\\b";
+    int res = matches_regex(string, pattern);
+    printf("%s matches pattern? %s\n", string, (res ? "Yes" : "No"));
+    return 0;
+}
+```
+
+This program implements a function called `matches_regex` which takes a string and a pattern as inputs. It checks if the string matches the pattern by compiling the pattern into a `regex_t` structure and running it against the string. If a match is found, it returns 1. If not, it returns 0. If there was an error compiling the pattern or running it against the string, it prints an error message and also returns 0. The `main` function tests `matches_regex` with a string "my_string" and a pattern which matches sequences of lowercase letters joined by an underscore.
+
+This example avoids CWE-664 by correctly freeing the `regex_t` structure using `regfree`. It handles errors from `regcomp` and `regexec` appropriately (CWE-703) and adheres to C's coding standards (CWE-710).

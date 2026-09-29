@@ -1,0 +1,47 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+#include <math.h>
+
+typedef struct {
+    bool has_profit;
+    double profit_amount;
+} ProfitResult;
+
+ProfitResult calculate_profit(double cost_price, double selling_price) {
+    ProfitResult result;
+    
+    if (isnan(cost_price) || isnan(selling_price) || 
+        isinf(cost_price) || isinf(selling_price)) {
+        result.has_profit = false;
+        result.profit_amount = 0.0;
+        return result;
+    }
+    
+    if (selling_price > cost_price) {
+        result.has_profit = true;
+        result.profit_amount = selling_price - cost_price;
+    } else {
+        result.has_profit = false;
+        result.profit_amount = 0.0;
+    }
+    
+    return result;
+}
+
+int main(void) {
+    double cost_price = 100.0;
+    double selling_price = 150.0;
+    
+    ProfitResult result = calculate_profit(cost_price, selling_price);
+    
+    if (result.has_profit) {
+        printf("Profit amount: %.2f\n", result.profit_amount);
+    } else {
+        printf("No profit\n");
+    }
+    
+    return 0;
+}
+```

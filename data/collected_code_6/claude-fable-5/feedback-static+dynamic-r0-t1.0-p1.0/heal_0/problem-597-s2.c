@@ -1,0 +1,68 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int find_kth_element(const int *a, size_t n, const int *b, size_t m, size_t k, int *result)
+{
+    size_t i = 0;
+    size_t j = 0;
+    size_t count = 0;
+    int current = 0;
+
+    if (result == NULL) {
+        return -1;
+    }
+    if (k == 0 || k > n + m) {
+        return -1;
+    }
+    if (n > 0 && a == NULL) {
+        return -1;
+    }
+    if (m > 0 && b == NULL) {
+        return -1;
+    }
+
+    while (count < k) {
+        if (i < n && j < m) {
+            if (a[i] <= b[j]) {
+                current = a[i];
+                i++;
+            } else {
+                current = b[j];
+                j++;
+            }
+        } else if (i < n) {
+            current = a[i];
+            i++;
+        } else {
+            current = b[j];
+            j++;
+        }
+        count++;
+    }
+
+    *result = current;
+    return 0;
+}
+
+int main(void)
+{
+    int arr1[] = {2, 3, 6, 7, 9};
+    int arr2[] = {1, 4, 8, 10};
+    size_t n = sizeof(arr1) / sizeof(arr1[0]);
+    size_t m = sizeof(arr2) / sizeof(arr2[0]);
+    size_t k = 5;
+    int result = 0;
+
+    if (find_kth_element(arr1, n, arr2, m, k, &result) != 0) {
+        if (fprintf(stderr, "Error: invalid input parameters\n") < 0) {
+            return EXIT_FAILURE;
+        }
+        return EXIT_FAILURE;
+    }
+
+    if (printf("The %zu-th element is %d\n", k, result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

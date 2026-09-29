@@ -1,0 +1,16 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-512-s3.c:21:5: error: unknown type name 'NodeTuple'
+   21 |     NodeTuple *subtuples;
+      |     ^~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-512-s3.c: In function 'count_element_frequency':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-512-s3.c:55:27: error: initialization of 'NodeTuple *' {aka 'struct node_tuple *'} from incompatible pointer type 'int *' [-Wincompatible-pointer-types]
+   55 |     for (NodeTuple *cur = t->subtuples; cur != NULL; cur = cur->next) {
+      |                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-512-s3.c: In function 'main':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-512-s3.c:79:18: error: passing argument 1 of 'add_subtuple' from incompatible pointer type [-Wincompatible-pointer-types]
+   79 |     add_subtuple(&root.subtuples, &sub);
+      |                  ^~~~~~~~~~~~~~~
+      |                  |
+      |                  int **
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-512-s3.c:36:31: note: expected 'NodeTuple **' {aka 'struct node_tuple **'} but argument is of type 'int **'
+   36 | void add_subtuple(NodeTuple **nt, Tuple *t) {
+      |                   ~~~~~~~~~~~~^~

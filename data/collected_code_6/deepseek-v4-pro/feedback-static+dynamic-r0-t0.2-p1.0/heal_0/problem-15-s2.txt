@@ -1,0 +1,71 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+char **split_at_lowercase(const char *str, int *count) {
+    if (str == NULL || count == NULL) {
+        return NULL;
+    }
+
+    int len = strlen(str);
+    int max_parts = len + 1;
+    char **result = (char **)malloc(max_parts * sizeof(char *));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    int part_count = 0;
+    int start = 0;
+    int i;
+
+    for (i = 0; i <= len; i++) {
+        if (i == len || islower((unsigned char)str[i])) {
+            int part_len = i - start;
+            if (part_len > 0) {
+                char *part = (char *)malloc((part_len + 1) * sizeof(char));
+                if (part == NULL) {
+                    for (int j = 0; j < part_count; j++) {
+                        free(result[j]);
+                    }
+                    free(result);
+                    return NULL;
+                }
+                strncpy(part, str + start, part_len);
+                part[part_len] = '\0';
+                result[part_count++] = part;
+            }
+            start = i + 1;
+        }
+    }
+
+    if (part_count == 0) {
+        free(result);
+        return NULL;
+    }
+
+    *count = part_count;
+    return result;
+}
+
+int main(void) {
+    const char *test_str = "HelloWorldThisIsATest";
+    int count = 0;
+    char **parts = split_at_lowercase(test_str, &count);
+
+    if (parts == NULL) {
+        printf("No parts found or error occurred\n");
+        return 1;
+    }
+
+    printf("Split into %d parts:\n", count);
+    for (int i = 0; i < count; i++) {
+        printf("Part %d: %s\n", i + 1, parts[i]);
+        free(parts[i]);
+    }
+    free(parts);
+
+    return 0;
+}
+```

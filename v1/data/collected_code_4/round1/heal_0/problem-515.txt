@@ -1,0 +1,48 @@
+```C
+#include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+bool isSubsetSumDivisible(int arr[], int n, int m)
+{
+    if(m == 0)
+        return true;
+        
+    if(n == 0 && m != 0)
+        return false;
+ 
+    if(arr[n-1] > m)
+        return isSubsetSumDivisible(arr, n-1, m);
+        
+    return isSubsetSumDivisible( arr, n-1, m ) 
+           || isSubsetSumDivisible( arr, n-1, m-arr[n-1] );
+}
+ 
+int main()
+{
+    int arr[] = {3, 1, 7, 5};
+    int m = 6;
+    int n = sizeof(arr)/sizeof(arr[0]);
+    
+    if(isSubsetSumDivisible(arr, n, m) == true)
+        printf("There exists a subset with sum divisible by %d", m);
+    else
+        printf("No subset with sum divisible by %d", m);
+  
+   return 0;
+}
+```
+In the above code,
+1. The function isSubsetSumDivisible(arr, n, m) will check if there is a subset of arr[] with sum divisible by m. Using recursive calls, this function will check all the possible subsets of arr[].
+
+2. The condition m == 0 is a base case for the recursion. If m is 0, there is a subset (empty subset) whose sum is divisible by m hence it will return true.
+
+3. The second condition n == 0 && m != 0 is another base case for recursion. If n is 0, the array doesn’t have any elements. Hence there is no subset whose sum is divisible by m, therefore it will return false.
+
+4. If an element is greater than m, then it can’t be part of subset whose sum is m. Using the call isSubsetSumDivisible(arr, n-1, m), we will check for other values of array.
+
+5. Else, the function will return true if it gets true for any of the two conditions:
+  - When the current element is excluded m remains the same, i.e., isSubsetSumDivisible(arr, n-1, m)
+  - When the current element is included, m is changed to m - arr[n-1], i.e., isSubsetSumDivisible(arr, n-1, m-arr[n-1]).
+
+6. The main function simply calls the isSubsetSumDivisible function with the required parameters and displays if there exists a subset with sum divisible by m or not.

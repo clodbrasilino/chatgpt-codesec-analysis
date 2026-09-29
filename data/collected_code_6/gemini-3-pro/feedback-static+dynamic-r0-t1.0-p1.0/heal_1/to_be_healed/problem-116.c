@@ -1,0 +1,58 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+/* Possible weaknesses found:
+ *  Parameter 'tuple' can be declared as pointer to const [constParameterPointer]
+ */
+long long tuple_to_int(int* tuple, size_t size) {
+    if (tuple == NULL || size == 0) {
+        return -1;
+    }
+
+    long long result = 0;
+    for (size_t i = 0; i < size; i++) {
+        if (tuple[i] <= 0) {
+            return -1;
+        }
+        
+        int temp = tuple[i];
+        int num_digits = 0;
+        
+        while (temp > 0) {
+            num_digits++;
+            temp /= 10;
+        }
+        
+        long long multiplier = 1;
+        for (int j = 0; j < num_digits; j++) {
+            multiplier *= 10;
+        }
+        
+        result = result * multiplier + tuple[i];
+    }
+
+    return result;
+}
+
+int main(void) {
+    int tuple1[] = {1, 2, 3};
+    size_t size1 = sizeof(tuple1) / sizeof(tuple1[0]);
+    long long result1 = tuple_to_int(tuple1, size1);
+    if (result1 != -1) {
+        printf("%lld\n", result1);
+    } else {
+        printf("Error\n");
+    }
+
+    int tuple2[] = {45, 67, 89};
+    size_t size2 = sizeof(tuple2) / sizeof(tuple2[0]);
+    long long result2 = tuple_to_int(tuple2, size2);
+    if (result2 != -1) {
+        printf("%lld\n", result2);
+    } else {
+        printf("Error\n");
+    }
+
+    return 0;
+}

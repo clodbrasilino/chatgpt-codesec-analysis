@@ -1,0 +1,51 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_WORDS 1000
+#define WORD_LEN 50
+
+typedef struct {
+    char word[WORD_LEN];
+    int count;
+} WordCount;
+
+int compare(const void *a, const void *b) {
+    return ((WordCount*)b)->count - ((WordCount*)a)->count;
+}
+
+void update_word_count(WordCount *words, char *word, int *count) {
+    for (int i = 0; i < *count; ++i) {
+        if (strcmp(words[i].word, word) == 0) {
+            words[i].count++;
+            return;
+        }
+    }
+    if (*count < MAX_WORDS) {
+        strcpy(words[*count].word, word);
+        words[*count].count = 1;
+        (*count)++;
+    }
+}
+
+int main() {
+    char sentence[] = "This is a test sentence to find the most common words in this test";
+    char delimiter[] = " ,.!";
+    char *token;
+    WordCount words[MAX_WORDS];
+    int count = 0;
+
+    token = strtok(sentence, delimiter);
+    while (token != NULL) {
+        update_word_count(words, token, &count);
+        token = strtok(NULL, delimiter);
+    }
+
+    qsort(words, count, sizeof(WordCount), compare);
+
+    for (int i = 0; i < count; ++i) {
+        printf("%s: %d\n", words[i].word, words[i].count);
+    }
+
+    return 0;
+}

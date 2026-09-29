@@ -1,0 +1,134 @@
+#include <stdint.h>
+#include <regex.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+static int find_five_character_words(const char *text)
+{
+    static const char pattern[] =
+        "(^|[^[:alnum:]_])([[:alpha:]]{5})($|[^[:alnum:]_])";
+    regex_t regex;
+    regmatch_t matches[4];
+    const char *cursor;
+    int status;
+
+    if (text == NULL) {
+        return 1;
+    }
+
+    status = regcomp(&regex, pattern, REG_EXTENDED);
+    if (status != 0) {
+        size_t length = regerror(status, &regex, NULL, 0);
+        char *message = malloc(length);
+
+        if (message != NULL) {
+            regerror(status, &regex, message, length);
+            fprintf(stderr, "regcomp failed: %s\n", message);
+            free(message);
+        } else {
+            fputs("regcomp failed\n", stderr);
+        }
+
+        return 1;
+    }
+
+    cursor = text;
+
+    while (*cursor != '\0') {
+        status = regexec(&regex, cursor, 4, matches, 0);
+
+        if (status == REG_NOMATCH) {
+            break;
+        }
+
+        if (status != 0) {
+            size_t length = regerror(status, &regex, NULL, 0);
+            char *message = malloc(length);
+
+            if (message != NULL) {
+                regerror(status, &regex, message, length);
+                fprintf(stderr, "regexec failed: %s\n", message);
+                free(message);
+            } else {
+                fputs("regexec failed\n", stderr);
+            }
+
+            regfree(&regex);
+            return 1;
+        }
+
+        if (matches[2].rm_so < 0 ||
+            matches[2].rm_eo < matches[2].rm_so ||
+            matches[0].rm_eo <= 0) {
+            regfree(&regex);
+            return 1;
+        }
+
+        if (fwrite(cursor + matches[2].rm_so,
+                   1,
+                   (size_t)(matches[2].rm_eo - matches[2].rm_so),
+                   stdout) != (size_t)(matches[2].rm_eo - matches[2].rm_so) ||
+            fputc('\n', stdout) == EOF) {
+            regfree(&regex);
+            return 1;
+        }
+
+        cursor += matches[0].rm_eo;
+    }
+
+    regfree(&regex);
+    return 0;
+}
+
+int main(int argc, char *argv[])
+{
+    size_t total_length = 1;
+    size_t position = 0;
+    char *text;
+    int result;
+
+    if (argc < 2) {
+        fprintf(stderr, "Usage: %s <text>\n", argv[0]);
+        return EXIT_FAILURE;
+    }
+
+    for (int i = 1; i < argc; ++i) {
+        size_t length = strlen(argv[i]);
+        size_t separator = i + 1 < argc ? 1U : 0U;
+
+        if (length > SIZE_MAX - total_length ||
+            separator > SIZE_MAX - total_length - length) {
+            fputs("Input is too large\n", stderr);
+            return EXIT_FAILURE;
+        }
+
+        total_length += length + separator;
+    }
+
+    text = malloc(total_length);
+    if (text == NULL) {
+        fputs("Memory allocation failed\n", stderr);
+        return EXIT_FAILURE;
+    }
+
+    for (int i = 1; i < argc; ++i) {
+        size_t length = strlen(argv[i]);
+
+        if (length != 0) {
+            memcpy(text + position, argv[i], length);
+            position += length;
+        }
+
+        if (i + 1 < argc) {
+            text[position++] = ' ';
+        }
+    }
+
+    text[position] = '\0';
+
+    result = find_five_character_words(text);
+    free(text);
+
+    return result == 0 ? EXIT_SUCCESS : EXIT_FAILURE;
+}

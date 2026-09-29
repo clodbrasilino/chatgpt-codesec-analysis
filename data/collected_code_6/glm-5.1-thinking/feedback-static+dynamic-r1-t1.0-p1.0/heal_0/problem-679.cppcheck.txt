@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-679.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-679.c:140:16: style: Condition 'result!=0' is always true [knownConditionTrueFalse]
+    if (result != 0) {
+               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-679.c:139:31: note: Calling function 'dict_get_by_index' returns -1
+    result = dict_get_by_index(NULL, 0, &key, &value);
+                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-679.c:139:31: note: Assignment 'result=dict_get_by_index(NULL,0,&key,&value)', assigned value is -1
+    result = dict_get_by_index(NULL, 0, &key, &value);
+                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-679.c:140:16: note: Condition 'result!=0' is always true
+    if (result != 0) {
+               ^

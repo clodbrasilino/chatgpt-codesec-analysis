@@ -1,0 +1,81 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *elements;
+    size_t size;
+} Tuple;
+
+typedef struct {
+    Tuple *tuples;
+    size_t count;
+} TupleList;
+
+void trim_tuples(TupleList *list, size_t k) {
+    if (!list || !list->tuples) {
+        return;
+    }
+
+    for (size_t i = 0; i < list->count; ++i) {
+        Tuple *tuple = &list->tuples[i];
+        if (tuple->size > k) {
+            size_t new_size = tuple->size - k;
+            int *new_elements = realloc(tuple->elements, new_size * sizeof(int));
+            if (new_elements) {
+                tuple->elements = new_elements;
+                tuple->size = new_size;
+            }
+        } else {
+            free(tuple->elements);
+            tuple->elements = NULL;
+            tuple->size = 0;
+        }
+    }
+}
+
+void free_tuple_list(TupleList *list) {
+    if (!list || !list->tuples) {
+        return;
+    }
+    for (size_t i = 0; i < list->count; ++i) {
+        free(list->tuples[i].elements);
+    }
+    free(list->tuples);
+    list->tuples = NULL;
+    list->count = 0;
+}
+
+int main(void) {
+    TupleList list;
+    list.count = 2;
+    list.tuples = malloc(list.count * sizeof(Tuple));
+    if (!list.tuples) {
+        return 1;
+    }
+
+    list.tuples[0].size = 5;
+    list.tuples[0].elements = malloc(5 * sizeof(int));
+    if (list.tuples[0].elements) {
+        for (int i = 0; i < 5; ++i) list.tuples[0].elements[i] = i;
+    }
+
+    list.tuples[1].size = 3;
+    list.tuples[1].elements = malloc(3 * sizeof(int));
+    if (list.tuples[1].elements) {
+        for (int i = 0; i < 3; ++i) list.tuples[1].elements[i] = i;
+    }
+
+    trim_tuples(&list, 2);
+
+    for (size_t i = 0; i < list.count; ++i) {
+        printf("Tuple %zu: ", i);
+        for (size_t j = 0; j < list.tuples[i].size; ++j) {
+            printf("%d ", list.tuples[i].elements[j]);
+        }
+        printf("\n");
+    }
+
+    free_tuple_list(&list);
+
+    return 0;
+}

@@ -1,0 +1,61 @@
+```c
+#include <errno.h>
+#include <limits.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+int isWoodall(unsigned long long number) {
+    unsigned int n;
+    unsigned int bits = (unsigned int)(sizeof(number) * CHAR_BIT);
+
+    for (n = 1; n < bits; ++n) {
+        unsigned long long power = 1ULL << n;
+
+        if (power > ULLONG_MAX / n) {
+            break;
+        }
+
+        unsigned long long woodall = n * power - 1;
+
+        if (woodall == number) {
+            return 1;
+        }
+
+        if (woodall > number) {
+            break;
+        }
+    }
+
+    return 0;
+}
+
+int main(void) {
+    unsigned long long number;
+    char *buffer;
+    char *endptr;
+    size_t buffer_size = 32;
+
+    buffer = malloc(buffer_size);
+    if (buffer == NULL) {
+        return 1;
+    }
+
+    if (fgets(buffer, (int)buffer_size, stdin) == NULL) {
+        free(buffer);
+        return 1;
+    }
+
+    errno = 0;
+    number = strtoull(buffer, &endptr, 10);
+
+    if (errno == ERANGE || endptr == buffer || (*endptr != '\n' && *endptr != '\0')) {
+        free(buffer);
+        return 1;
+    }
+
+    printf("%s\n", isWoodall(number) ? "Yes" : "No");
+
+    free(buffer);
+    return 0;
+}
+```

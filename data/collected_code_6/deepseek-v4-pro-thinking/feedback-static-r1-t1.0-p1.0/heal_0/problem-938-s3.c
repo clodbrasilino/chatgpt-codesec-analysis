@@ -1,0 +1,64 @@
+#include <stdio.h>
+#include <stddef.h>
+#include <limits.h>
+
+int findClosestTriplet(const int a[], size_t n1, const int b[], size_t n2, const int c[], size_t n3) {
+    if (a == NULL || b == NULL || c == NULL || n1 == 0 || n2 == 0 || n3 == 0) {
+        return 0;
+    }
+
+    size_t i = 0, j = 0, k = 0;
+    size_t best_i = 0, best_j = 0, best_k = 0;
+    long long min_diff = LLONG_MAX;
+
+    while (i < n1 && j < n2 && k < n3) {
+        int min_val = a[i];
+        if (b[j] < min_val) {
+            min_val = b[j];
+        }
+        if (c[k] < min_val) {
+            min_val = c[k];
+        }
+
+        int max_val = a[i];
+        if (b[j] > max_val) {
+            max_val = b[j];
+        }
+        if (c[k] > max_val) {
+            max_val = c[k];
+        }
+
+        long long diff = (long long)max_val - min_val;
+        if (diff < min_diff) {
+            min_diff = diff;
+            best_i = i;
+            best_j = j;
+            best_k = k;
+        }
+
+        if (a[i] == min_val) {
+            i++;
+        } else if (b[j] == min_val) {
+            j++;
+        } else {
+            k++;
+        }
+    }
+
+    printf("%d %d %d\n", a[best_i], b[best_j], c[best_k]);
+    return 1;
+}
+
+int main(void) {
+    int a[] = {1, 4, 10};
+    int b[] = {2, 15, 20};
+    int c[] = {10, 12};
+
+    if (!findClosestTriplet(a, sizeof(a) / sizeof(a[0]),
+                            b, sizeof(b) / sizeof(b[0]),
+                            c, sizeof(c) / sizeof(c[0]))) {
+        return 1;
+    }
+
+    return 0;
+}

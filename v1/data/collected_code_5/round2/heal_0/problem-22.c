@@ -1,0 +1,27 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int findFirstDuplicate(int arr[], int size) {
+  int i, j;
+  for(i = 0; i < size; ++i) {
+    for(j = i + 1; j < size; ++j) {
+      if(arr[i] == arr[j])
+        return arr[i];
+    }
+  }
+  return -1;
+}
+
+int main() {
+  int arr[] = {5, 10, 15, 10, 20};
+  int size = sizeof(arr) / sizeof(int);
+
+  int duplicate = findFirstDuplicate(arr, size);
+
+  if(duplicate == -1)
+    printf("No duplicate elements found.\n");
+  else
+    printf("The first duplicate element is %d.\n", duplicate);
+
+  return 0;
+}

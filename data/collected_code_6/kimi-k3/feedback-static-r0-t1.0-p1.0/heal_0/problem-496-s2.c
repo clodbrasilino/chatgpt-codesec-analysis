@@ -1,0 +1,183 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    int *data;
+    size_t size;
+    size_t capacity;
+} MaxHeap;
+
+static void swap(int *a, int *b)
+{
+    int temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+static int heap_init(MaxHeap *heap, size_t capacity)
+{
+    if (heap == NULL || capacity == 0) {
+        return -1;
+    }
+    heap->data = malloc(capacity * sizeof(int));
+    if (heap->data == NULL) {
+        return -1;
+    }
+    heap->size = 0;
+    heap->capacity = capacity;
+    return 0;
+}
+
+static void heap_destroy(MaxHeap *heap)
+{
+    if (heap != NULL) {
+        free(heap->data);
+        heap->data = NULL;
+        heap->size = 0;
+        heap->capacity = 0;
+    }
+}
+
+static void heapify_down(MaxHeap *heap, size_t idx)
+{
+    size_t largest = idx;
+    size_t left = 2 * idx + 1;
+    size_t right = 2 * idx + 2;
+
+    if (left < heap->size && heap->data[left] > heap->data[largest]) {
+        largest = left;
+    }
+    if (right < heap->size && heap->data[right] > heap->data[largest]) {
+        largest = right;
+    }
+    if (largest != idx) {
+        swap(&heap->data[idx], &heap->data[largest]);
+        heapify_down(heap, largest);
+    }
+}
+
+static void heapify_up(MaxHeap *heap, size_t idx)
+{
+    while (idx > 0) {
+        size_t parent = (idx - 1) / 2;
+        if (heap->data[parent] >= heap->data[idx]) {
+            break;
+        }
+        swap(&heap->data[parent], &heap->data[idx]);
+        idx = parent;
+    }
+}
+
+static int heap_push(MaxHeap *heap, int value)
+{
+    if (heap == NULL || heap->size >= heap->capacity) {
+        return -1;
+    }
+    heap->data[heap->size] = value;
+    heapify_up(heap, heap->size);
+    heap->size++;
+    return 0;
+}
+
+static int heap_pop(MaxHeap *heap, int *value)
+{
+    if (heap == NULL || heap->size == 0 || value == NULL) {
+        return -1;
+    }
+    *value = heap->data[0];
+    heap->size--;
+    if (heap->size > 0) {
+        heap->data[0] = heap->data[heap->size];
+        heapify_down(heap, 0);
+    }
+    return 0;
+}
+
+static int heap_peek(const MaxHeap *heap, int *value)
+{
+    if (heap == NULL || heap->size == 0 || value == NULL) {
+        return -1;
+    }
+    *value = heap->data[0];
+    return 0;
+}
+
+int find_smallest(const int *arr, size_t n, size_t k, int *result)
+{
+    MaxHeap heap;
+    size_t i;
+    int top;
+
+    if (arr == NULL || result == NULL || k == 0 || k > n) {
+        return -1;
+    }
+
+    if (heap_init(&heap, k) != 0) {
+        return -1;
+    }
+
+    for (i = 0; i < n; i++) {
+        if (heap.size < k) {
+            if (heap_push(&heap, arr[i]) != 0) {
+                heap_destroy(&heap);
+                return -1;
+            }
+        } else {
+            if (heap_peek(&heap, &top) != 0) {
+                heap_destroy(&heap);
+                return -1;
+            }
+            if (arr[i] < top) {
+                if (heap_pop(&heap, &top) != 0) {
+                    heap_destroy(&heap);
+                    return -1;
+                }
+                if (heap_push(&heap, arr[i]) != 0) {
+                    heap_destroy(&heap);
+                    return -1;
+                }
+            }
+        }
+    }
+
+    for (i = 0; i < k; i++) {
+        if (heap_pop(&heap, &result[k - 1 - i]) != 0) {
+            heap_destroy(&heap);
+            return -1;
+        }
+    }
+
+    heap_destroy(&heap);
+    return 0;
+}
+
+int main(void)
+{
+    int arr[] = {7, 10, 4, 3, 20, 15, 8, 1};
+    size_t n = sizeof(arr) / sizeof(arr[0]);
+    size_t k = 3;
+    int *result;
+    size_t i;
+
+    result = malloc(k * sizeof(int));
+    if (result == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    if (find_smallest(arr, n, k, result) != 0) {
+        fprintf(stderr, "Error finding smallest elements\n");
+        free(result);
+        return EXIT_FAILURE;
+    }
+
+    printf("The %zu smallest integers are: ", k);
+    for (i = 0; i < k; i++) {
+        printf("%d ", result[i]);
+    }
+    printf("\n");
+
+    free(result);
+    return EXIT_SUCCESS;
+}

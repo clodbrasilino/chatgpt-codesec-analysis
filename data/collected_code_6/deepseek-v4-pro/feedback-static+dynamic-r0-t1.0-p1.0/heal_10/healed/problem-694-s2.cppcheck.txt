@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-694-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-694-s2.c:135:32: style: Condition 'alloc_size>copy_size' is always false [knownConditionTrueFalse]
+                if (alloc_size > copy_size) {
+                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-694-s2.c:133:34: note: copy_size is assigned 'alloc_size<old_size?alloc_size:old_size' here.
+                size_t copy_size = alloc_size < old_size ? alloc_size : old_size;
+                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-694-s2.c:135:32: note: Condition 'alloc_size>copy_size' is always false
+                if (alloc_size > copy_size) {
+                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-694-s2.c:156:24: style: Condition 'key_alloc_size<key_len' is always false [knownConditionTrueFalse]
+    if (key_alloc_size < key_len) {
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-694-s2.c:155:27: note: key_alloc_size is assigned 'key_len+1' here.
+    size_t key_alloc_size = key_len + 1;
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-694-s2.c:156:24: note: Condition 'key_alloc_size<key_len' is always false
+    if (key_alloc_size < key_len) {
+                       ^

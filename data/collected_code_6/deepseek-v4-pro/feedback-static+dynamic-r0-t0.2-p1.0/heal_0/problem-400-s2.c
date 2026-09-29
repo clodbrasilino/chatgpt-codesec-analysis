@@ -1,0 +1,143 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    int *elements;
+    int size;
+    int frequency;
+} Tuple;
+
+typedef struct {
+    Tuple *tuples;
+    int count;
+    int capacity;
+} TupleList;
+
+static int compare_ints(const void *a, const void *b) {
+    int arg1 = *(const int *)a;
+    int arg2 = *(const int *)b;
+    if (arg1 < arg2) return -1;
+    if (arg1 > arg2) return 1;
+    return 0;
+}
+
+static int compare_tuples(const void *a, const void *b) {
+    const Tuple *tuple_a = (const Tuple *)a;
+    const Tuple *tuple_b = (const Tuple *)b;
+    if (tuple_a->size != tuple_b->size) {
+        return tuple_a->size - tuple_b->size;
+    }
+    for (int i = 0; i < tuple_a->size; i++) {
+        if (tuple_a->elements[i] != tuple_b->elements[i]) {
+            return tuple_a->elements[i] - tuple_b->elements[i];
+        }
+    }
+    return 0;
+}
+
+static int tuples_equal(const Tuple *a, const Tuple *b) {
+    if (a->size != b->size) return 0;
+    for (int i = 0; i < a->size; i++) {
+        if (a->elements[i] != b->elements[i]) return 0;
+    }
+    return 1;
+}
+
+static void init_tuple_list(TupleList *list) {
+    list->tuples = NULL;
+    list->count = 0;
+    list->capacity = 0;
+}
+
+static int add_tuple(TupleList *list, int *elements, int size) {
+    if (list->count >= list->capacity) {
+        int new_capacity = list->capacity == 0 ? 16 : list->capacity * 2;
+        Tuple *new_tuples = (Tuple *)realloc(list->tuples, new_capacity * sizeof(Tuple));
+        if (new_tuples == NULL) return 0;
+        list->tuples = new_tuples;
+        list->capacity = new_capacity;
+    }
+    
+    int *new_elements = (int *)malloc(size * sizeof(int));
+    if (new_elements == NULL) return 0;
+    
+    memcpy(new_elements, elements, size * sizeof(int));
+    qsort(new_elements, size, sizeof(int), compare_ints);
+    
+    for (int i = 0; i < list->count; i++) {
+        if (list->tuples[i].size == size) {
+            int match = 1;
+            for (int j = 0; j < size; j++) {
+                if (list->tuples[i].elements[j] != new_elements[j]) {
+                    match = 0;
+                    break;
+                }
+            }
+            if (match) {
+                list->tuples[i].frequency++;
+                free(new_elements);
+                return 1;
+            }
+        }
+    }
+    
+    list->tuples[list->count].elements = new_elements;
+    list->tuples[list->count].size = size;
+    list->tuples[list->count].frequency = 1;
+    list->count++;
+    return 1;
+}
+
+static void free_tuple_list(TupleList *list) {
+    for (int i = 0; i < list->count; i++) {
+        free(list->tuples[i].elements);
+    }
+    free(list->tuples);
+    list->tuples = NULL;
+    list->count = 0;
+    list->capacity = 0;
+}
+
+void extract_tuple_frequencies(int **tuples, int *tuple_sizes, int num_tuples, TupleList *result) {
+    init_tuple_list(result);
+    
+    for (int i = 0; i < num_tuples; i++) {
+        if (tuple_sizes[i] <= 0) continue;
+        if (tuples[i] == NULL) continue;
+        if (!add_tuple(result, tuples[i], tuple_sizes[i])) {
+            free_tuple_list(result);
+            init_tuple_list(result);
+            return;
+        }
+    }
+    
+    qsort(result->tuples, result->count, sizeof(Tuple), compare_tuples);
+}
+
+int main(void) {
+    int tuple1[] = {3, 1, 2};
+    int tuple2[] = {2, 1, 3};
+    int tuple3[] = {4, 5};
+    int tuple4[] = {5, 4};
+    int tuple5[] = {1, 2, 3};
+    
+    int *tuples[] = {tuple1, tuple2, tuple3, tuple4, tuple5};
+    int sizes[] = {3, 3, 2, 2, 3};
+    int num_tuples = 5;
+    
+    TupleList result;
+    extract_tuple_frequencies(tuples, sizes, num_tuples, &result);
+    
+    for (int i = 0; i < result.count; i++) {
+        printf("Tuple (");
+        for (int j = 0; j < result.tuples[i].size; j++) {
+            printf("%d", result.tuples[i].elements[j]);
+            if (j < result.tuples[i].size - 1) printf(", ");
+        }
+        printf("): %d\n", result.tuples[i].frequency);
+    }
+    
+    free_tuple_list(&result);
+    return 0;
+}

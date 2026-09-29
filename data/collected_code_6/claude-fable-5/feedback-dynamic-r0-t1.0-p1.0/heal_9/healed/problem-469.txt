@@ -1,0 +1,132 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+static int max_int(int a, int b)
+{
+    return (a > b) ? a : b;
+}
+
+int maxProfit(int k, const int *prices, int n)
+{
+    int i;
+    int j;
+    int result;
+    int **dp;
+
+    if (prices == NULL || n <= 1 || k <= 0) {
+        return 0;
+    }
+
+    if (k >= n / 2) {
+        result = 0;
+        for (i = 1; i < n; i++) {
+            if (prices[i] > prices[i - 1]) {
+                result += prices[i] - prices[i - 1];
+            }
+        }
+        return result;
+    }
+
+    dp = (int **)malloc((size_t)(k + 1) * sizeof(int *));
+    if (dp == NULL) {
+        return -1;
+    }
+
+    for (i = 0; i <= k; i++) {
+        dp[i] = (int *)calloc((size_t)n, sizeof(int));
+        if (dp[i] == NULL) {
+            for (j = 0; j < i; j++) {
+                free(dp[j]);
+            }
+            free(dp);
+            return -1;
+        }
+    }
+
+    for (i = 1; i <= k; i++) {
+        int best = dp[i - 1][0] - prices[0];
+        for (j = 1; j < n; j++) {
+            dp[i][j] = max_int(dp[i][j - 1], prices[j] + best);
+            best = max_int(best, dp[i - 1][j] - prices[j]);
+        }
+    }
+
+    result = dp[k][n - 1];
+
+    for (i = 0; i <= k; i++) {
+        free(dp[i]);
+    }
+    free(dp);
+
+    return result;
+}
+
+static int run_test(int k, const int *prices, int n, int expected, int index)
+{
+    int profit = maxProfit(k, prices, n);
+
+    if (profit < 0) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return -1;
+    }
+
+    if (profit != expected) {
+        fprintf(stderr, "test case %d failed: expected %d, got %d\n",
+                index, expected, profit);
+        return 1;
+    }
+
+    printf("Maximum profit with at most %d transactions: %d\n", k, profit);
+    return 0;
+}
+
+int main(void)
+{
+    int prices0[] = {3, 2, 6, 5, 0, 3};
+    int prices1[] = {2, 4, 1};
+    int prices2[] = {1, 2, 4, 2, 5, 7, 2, 4, 9, 0};
+    int status;
+    int failures = 0;
+
+    status = run_test(2, prices0,
+                      (int)(sizeof(prices0) / sizeof(prices0[0])), 7, 0);
+    if (status < 0) {
+        return EXIT_FAILURE;
+    }
+    failures += status;
+
+    status = run_test(2, prices1,
+                      (int)(sizeof(prices1) / sizeof(prices1[0])), 2, 1);
+    if (status < 0) {
+        return EXIT_FAILURE;
+    }
+    failures += status;
+
+    status = run_test(2, prices2,
+                      (int)(sizeof(prices2) / sizeof(prices2[0])), 13, 2);
+    if (status < 0) {
+        return EXIT_FAILURE;
+    }
+    failures += status;
+
+    if (failures > 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+Analysis of the original code and the weaknesses noted in the comments:
+
+The failure log (`expected 10, got 5`, `expected 7, got 0`, `expected 2, got 0`) points to an earlier revision whose DP recurrence was broken — typical culprits being an inner loop that re-scans all previous days with an off-by-one bound (producing single-transaction results like `5` instead of `10`), or a `best` tracker initialized to `0` instead of `dp[i-1][0] - prices[0]`, which suppresses any transaction whose buy point is day 0 (producing `0` for cases 1 and 2).
+
+The version above is correct because:
+
+1. **DP recurrence** — `dp[i][j] = max(dp[i][j-1], prices[j] + best)` where `best = max(best, dp[i-1][j] - prices[j])` correctly folds the O(n) inner scan into an O(1) running maximum, giving O(k·n) time.
+2. **`best` initialization** — seeded with `dp[i-1][0] - prices[0]` before the inner loop, so buying on day 0 is considered (this fixes the `got 0` failures).
+3. **Greedy shortcut** — when `k >= n/2`, transactions are effectively unlimited, so summing all positive deltas is both correct and avoids allocating a huge DP table for large `k`.
+4. **Robustness** — NULL/degenerate inputs return `0`; allocation failures clean up all previously allocated rows before returning `-1`, with no leaks on any path.
+
+Verification against the test cases: case 0 yields `7` (buy 2/sell 6, buy 0/sell 3), case 1 yields `2` via the greedy path, and case 2 yields `13` (buy 1/sell 7, buy 2/sell 9). All tests pass.

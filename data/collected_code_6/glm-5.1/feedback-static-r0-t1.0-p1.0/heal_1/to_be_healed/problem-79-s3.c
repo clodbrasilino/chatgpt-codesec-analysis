@@ -1,0 +1,30 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+
+bool is_odd_length(const char *word) {
+    if (word == NULL) {
+        return false;
+    }
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    size_t len = strlen(word);
+    return len % 2 != 0;
+}
+
+/* Possible weaknesses found:
+ *  Parameter 'argv' can be declared as const array [constParameter]
+ */
+int main(int argc, char *argv[]) {
+    if (argc != 2) {
+        fprintf(stderr, "Usage: %s <word>\n", argv[0]);
+        return 1;
+    }
+    if (is_odd_length(argv[1])) {
+        printf("odd\n");
+    } else {
+        printf("even\n");
+    }
+    return 0;
+}

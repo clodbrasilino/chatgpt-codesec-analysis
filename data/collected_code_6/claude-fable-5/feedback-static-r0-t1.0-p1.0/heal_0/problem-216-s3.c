@@ -1,0 +1,171 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+typedef enum { NODE_INT, NODE_LIST } NodeType;
+
+typedef struct Node {
+    NodeType type;
+    int value;
+    struct Node *child;
+    struct Node *next;
+} Node;
+
+static void *xmalloc(size_t size)
+{
+    void *p = malloc(size);
+    if (p == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(EXIT_FAILURE);
+    }
+    return p;
+}
+
+static Node *make_int(int value)
+{
+    Node *n = (Node *)xmalloc(sizeof(Node));
+    n->type = NODE_INT;
+    n->value = value;
+    n->child = NULL;
+    n->next = NULL;
+    return n;
+}
+
+static Node *make_list(Node *child)
+{
+    Node *n = (Node *)xmalloc(sizeof(Node));
+    n->type = NODE_LIST;
+    n->value = 0;
+    n->child = child;
+    n->next = NULL;
+    return n;
+}
+
+static void list_free(Node *head)
+{
+    while (head != NULL) {
+        Node *next = head->next;
+        if (head->type == NODE_LIST) {
+            list_free(head->child);
+        }
+        free(head);
+        head = next;
+    }
+}
+
+static bool lists_equal(const Node *a, const Node *b);
+
+static bool nodes_equal(const Node *a, const Node *b)
+{
+    if (a == NULL || b == NULL) {
+        return a == b;
+    }
+    if (a->type != b->type) {
+        return false;
+    }
+    if (a->type == NODE_INT) {
+        return a->value == b->value;
+    }
+    return lists_equal(a->child, b->child);
+}
+
+static bool lists_equal(const Node *a, const Node *b)
+{
+    while (a != NULL && b != NULL) {
+        if (!nodes_equal(a, b)) {
+            return false;
+        }
+        a = a->next;
+        b = b->next;
+    }
+    return a == NULL && b == NULL;
+}
+
+static bool list_contains(const Node *haystack, const Node *needle)
+{
+    const Node *cur = haystack;
+    while (cur != NULL) {
+        if (nodes_equal(cur, needle)) {
+            return true;
+        }
+        cur = cur->next;
+    }
+    return false;
+}
+
+static bool is_subset(const Node *sub, const Node *super)
+{
+    const Node *cur = sub;
+    while (cur != NULL) {
+        if (!list_contains(super, cur)) {
+            return false;
+        }
+        cur = cur->next;
+    }
+    return true;
+}
+
+static void list_print(const Node *head)
+{
+    printf("[");
+    const Node *cur = head;
+    while (cur != NULL) {
+        if (cur->type == NODE_INT) {
+            printf("%d", cur->value);
+        } else {
+            list_print(cur->child);
+        }
+        if (cur->next != NULL) {
+            printf(", ");
+        }
+        cur = cur->next;
+    }
+    printf("]");
+}
+
+int main(void)
+{
+    Node *inner_a = make_int(2);
+    inner_a->next = make_int(3);
+
+    Node *sub = make_int(1);
+    sub->next = make_list(inner_a);
+    sub->next->next = make_int(4);
+
+    Node *inner_b = make_int(2);
+    inner_b->next = make_int(3);
+
+    Node *super = make_int(4);
+    super->next = make_int(1);
+    super->next->next = make_list(inner_b);
+    super->next->next->next = make_int(5);
+
+    printf("Sub list:   ");
+    list_print(sub);
+    printf("\nSuper list: ");
+    list_print(super);
+    printf("\n");
+
+    if (is_subset(sub, super)) {
+        printf("The first list is a subset of the second list.\n");
+    } else {
+        printf("The first list is NOT a subset of the second list.\n");
+    }
+
+    Node *not_sub = make_int(7);
+    printf("Other list: ");
+    list_print(not_sub);
+    printf("\n");
+
+    if (is_subset(not_sub, super)) {
+        printf("The other list is a subset of the second list.\n");
+    } else {
+        printf("The other list is NOT a subset of the second list.\n");
+    }
+
+    list_free(sub);
+    list_free(super);
+    list_free(not_sub);
+
+    return EXIT_SUCCESS;
+}

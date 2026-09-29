@@ -1,0 +1,61 @@
+#include <stdio.h>
+#include <string.h>
+#include <regex.h>
+ /* Possible weaknesses found:
+  *  include '<ctype.h>' or provide a declaration of 'tolower'
+  */
+
+int camel_to_snake(const char *input, char *output) {
+    regex_t re;
+    regmatch_t pmatch[1];
+    int reti, offset = 0;
+
+    if (regcomp(&re, "([a-z0-9])([A-Z])", REG_EXTENDED | REG_NEWLINE) != 0) {
+        return -1;
+    }
+
+    while ((reti = regexec(&re, input + offset, 1, pmatch, 0)) == 0) {
+        for (int i = 0; i < pmatch[0].rm_eo; i++) {
+            output[offset + i] = input[offset + i];
+        }
+        output[offset + pmatch[0].rm_so] = '_';
+        /* Possible weaknesses found:
+         *  include the header <ctype.h> or explicitly provide a declaration for 'tolower'
+         *  call to undeclared library function 'tolower' with type 'int (int)'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+         *  implicit declaration of function 'tolower' [-Wimplicit-function-declaration]
+         */
+        output[offset + pmatch[0].rm_eo + 1] = tolower(input[offset + pmatch[0].rm_eo]);
+        offset += pmatch[0].rm_eo + 1;
+    }
+
+    if (reti != REG_NOMATCH) {
+        regfree(&re);
+        return -1;
+    }
+
+    strcpy(output + offset, input + offset);
+    for (int i = 0; i < strlen(output); i++) {
+        if (output[i] >= 'A' && output[i] <= 'Z') {
+            output[i] = tolower(output[i]);
+        }
+    }
+
+    regfree(&re);
+    return 0;
+}
+
+int main() {
+    /* Possible weaknesses found:
+     *  Variable 'input' can be declared as const array [constVariable]
+     */
+    char input[] = "ThisIsACamelCaseString";
+    char output[100];
+
+    if (camel_to_snake(input, output) == 0) {
+        printf("%s\n", output);
+    } else {
+        printf("Conversion failed.\n");
+    }
+
+    return 0;
+}

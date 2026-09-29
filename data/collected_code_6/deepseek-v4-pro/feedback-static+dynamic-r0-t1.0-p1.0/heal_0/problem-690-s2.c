@@ -1,0 +1,43 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+long long multiply_consecutive(const int *arr, size_t size) {
+    if (arr == NULL || size == 0) {
+        return 0;
+    }
+    
+    long long product = 1;
+    int has_valid_pair = 0;
+    
+    for (size_t i = 0; i < size - 1; i++) {
+        long long current_product = (long long)arr[i] * arr[i + 1];
+        if (has_valid_pair == 0) {
+            product = current_product;
+            has_valid_pair = 1;
+        } else {
+            product = current_product;
+        }
+    }
+    
+    if (has_valid_pair == 0) {
+        return 0;
+    }
+    
+    return product;
+}
+
+int main(void) {
+    int numbers[] = {2, 3, 4, 5, 6};
+    size_t size = sizeof(numbers) / sizeof(numbers[0]);
+    
+    long long result = multiply_consecutive(numbers, size);
+    printf("Product of last consecutive pair: %lld\n", result);
+    
+    int single[] = {42};
+    size_t single_size = sizeof(single) / sizeof(single[0]);
+    printf("Product for single element: %lld\n", multiply_consecutive(single, single_size));
+    
+    printf("Product for empty array: %lld\n", multiply_consecutive(NULL, 0));
+    
+    return 0;
+}

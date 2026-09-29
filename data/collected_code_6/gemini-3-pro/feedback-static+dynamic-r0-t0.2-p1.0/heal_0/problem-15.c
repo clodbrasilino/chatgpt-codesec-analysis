@@ -1,0 +1,60 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+char** split_at_lowercase(const char* str, int* count) {
+    if (!str || !count) {
+        return NULL;
+    }
+
+    int len = strlen(str);
+    int max_splits = len + 1;
+    char** result = (char**)malloc(max_splits * sizeof(char*));
+    if (!result) {
+        return NULL;
+    }
+
+    int current_split = 0;
+    int start_idx = 0;
+
+    for (int i = 0; i <= len; i++) {
+        if (islower((unsigned char)str[i]) || str[i] == '\0') {
+            int sub_len = i - start_idx;
+            if (sub_len > 0) {
+                result[current_split] = (char*)malloc((sub_len + 1) * sizeof(char));
+                if (!result[current_split]) {
+                    for (int j = 0; j < current_split; j++) {
+                        free(result[j]);
+                    }
+                    free(result);
+                    return NULL;
+                }
+                strncpy(result[current_split], str + start_idx, sub_len);
+                result[current_split][sub_len] = '\0';
+                current_split++;
+            }
+            start_idx = i + 1;
+        }
+    }
+
+    *count = current_split;
+    return result;
+}
+
+int main(void) {
+    const char* test_str = "HELLOwORLDtHISiSaTEST";
+    int count = 0;
+    
+    char** splits = split_at_lowercase(test_str, &count);
+    
+    if (splits) {
+        for (int i = 0; i < count; i++) {
+            printf("%s\n", splits[i]);
+            free(splits[i]);
+        }
+        free(splits);
+    }
+    
+    return 0;
+}

@@ -1,0 +1,90 @@
+{
+  "task_id": 170,
+  "text": "Write a C function to find sum of the numbers in a list between the indices of a specified range.",
+  "fn_candidates": [
+    "sum_range_list",
+    "SumRangeList",
+    "sumRangeList",
+    "sumrangelist"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "sum_range_list",
+      "args": [
+        [
+          2,
+          1,
+          5,
+          6,
+          8,
+          3,
+          4,
+          9,
+          10,
+          11,
+          8,
+          12
+        ],
+        8,
+        10
+      ],
+      "expected": 29,
+      "assert_src": "assert sum_range_list( [2,1,5,6,8,3,4,9,10,11,8,12],8,10)==29"
+    },
+    {
+      "fn_name": "sum_range_list",
+      "args": [
+        [
+          2,
+          1,
+          5,
+          6,
+          8,
+          3,
+          4,
+          9,
+          10,
+          11,
+          8,
+          12
+        ],
+        5,
+        7
+      ],
+      "expected": 16,
+      "assert_src": "assert sum_range_list( [2,1,5,6,8,3,4,9,10,11,8,12],5,7)==16"
+    },
+    {
+      "fn_name": "sum_range_list",
+      "args": [
+        [
+          2,
+          1,
+          5,
+          6,
+          8,
+          3,
+          4,
+          9,
+          10,
+          11,
+          8,
+          12
+        ],
+        7,
+        10
+      ],
+      "expected": 38,
+      "assert_src": "assert sum_range_list( [2,1,5,6,8,3,4,9,10,11,8,12],7,10)==38"
+    }
+  ],
+  "arg_kinds": [
+    "int",
+    "int-list"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

@@ -1,0 +1,73 @@
+```c
+#include <stdio.h>
+#include <stddef.h>
+
+#define BUFFER_SIZE 256
+
+size_t string_length(const char *str)
+{
+    size_t length = 0;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    while (str[length] != '\0') {
+        length++;
+    }
+
+    return length;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t length;
+    size_t i;
+
+    printf("Enter a string: ");
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    i = 0;
+    while (i < sizeof(buffer) && buffer[i] != '\0') {
+        if (buffer[i] == '\n') {
+            buffer[i] = '\0';
+            break;
+        }
+        i++;
+    }
+
+    if (i == sizeof(buffer) - 1 && buffer[i] == '\0') {
+        int ch;
+        while ((ch = getchar()) != '\n' && ch != EOF) {
+        }
+    }
+
+    length = string_length(buffer);
+
+    printf("Length of the string: %zu\n", length);
+
+    return 0;
+}
+```
+
+**Analysis of the changes:**
+
+1. **Reduced scope of `ch` (cppcheck `variableScope` warning):** The variable `ch` is now declared inside the block where it is actually used — the input-flushing branch. This limits its lifetime, improves readability, and resolves the static-analysis finding.
+
+2. **Statically-sized buffer (CWE-119/CWE-120, Flawfinder risk 2):** This was already mitigated correctly in the original code, and those mitigations are preserved:
+   - `fgets(buffer, sizeof(buffer), stdin)` limits input to the buffer size, preventing overflow.
+   - Explicit null termination via `buffer[sizeof(buffer) - 1] = '\0'` guarantees a terminated string even in edge cases.
+   - The newline-stripping loop is bounded by `i < sizeof(buffer)`, so it never reads past the array.
+
+3. **`getchar()` in a loop (CWE-120/CWE-20, Flawfinder risk 1):** This is a false positive in this context — the loop only *discards* excess characters from stdin and never writes them to any buffer, so no overflow is possible. The check `ch != EOF` also correctly guards against an infinite loop on end-of-input, which is why `ch` must remain an `int` rather than `char`.
+
+4. **`string_length` remains safe:** It defensively handles `NULL` and only reads up to the terminator, which is guaranteed to exist by the earlier termination logic.
+
+The resulting code is functionally identical but cleaner with respect to the static-analysis findings; the only genuine defect flagged (variable scope) is fixed, while the buffer-related warnings were already properly mitigated by bounded I/O and explicit termination.

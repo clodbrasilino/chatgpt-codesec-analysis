@@ -1,0 +1,25 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int find_nth_digit(int numerator, int denominator, int n) {
+    if (n <= 0 || denominator == 0) return -1;
+    long long remainder = numerator % denominator;
+    for (int i = 0; i < n; ++i) {
+        remainder *= 10;
+        remainder %= denominator;
+    }
+    return (remainder * 10) / denominator;
+}
+
+int main() {
+    int numerator = 1;
+    int denominator = 7;
+    int n = 5;
+    int result = find_nth_digit(numerator, denominator, n);
+    if (result != -1) {
+        printf("The %dth digit is: %d\n", n, result);
+    } else {
+        printf("Invalid input or position.\n");
+    }
+    return 0;
+}

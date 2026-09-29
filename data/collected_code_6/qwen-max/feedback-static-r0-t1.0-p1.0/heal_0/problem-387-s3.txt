@@ -1,0 +1,27 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+
+bool is_hex_even(const char *hex) {
+    for (int i = 0; hex[i] != '\0'; ++i) {
+        if (hex[i] == '0' || hex[i] == '2' || hex[i] == '4' || hex[i] == '6' || hex[i] == '8' || hex[i] == 'a' || hex[i] == 'c' || hex[i] == 'e') {
+            continue;
+        } else if (hex[i] >= '0' && hex[i] <= '9' || hex[i] >= 'A' && hex[i] <= 'F' || hex[i] >= 'a' && hex[i] <= 'f') {
+            return false;
+        } else {
+            return false;
+        }
+    }
+    return true;
+}
+
+int main() {
+    const char *hex = "1A3E";
+    if (is_hex_even(hex)) {
+        printf("The hexadecimal number is even.\n");
+    } else {
+        printf("The hexadecimal number is odd.\n");
+    }
+    return 0;
+}
+```

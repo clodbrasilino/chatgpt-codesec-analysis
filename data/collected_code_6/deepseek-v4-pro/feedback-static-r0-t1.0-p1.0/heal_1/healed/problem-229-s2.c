@@ -1,0 +1,67 @@
+#include <stdio.h>
+
+void rearrange_negatives_first(int arr[], int size) {
+    int left = 0, right = size - 1;
+    
+    while (left < right) {
+        while (left < right && arr[left] < 0) {
+            left++;
+        }
+        
+        while (left < right && arr[right] >= 0) {
+            right--;
+        }
+        
+        if (left < right) {
+            int temp = arr[left];
+            arr[left] = arr[right];
+            arr[right] = temp;
+            left++;
+            right--;
+        }
+    }
+}
+
+void print_array(const int arr[], int size) {
+    for (int i = 0; i < size; i++) {
+        printf("%d ", arr[i]);
+    }
+    printf("\n");
+}
+
+int main(void) {
+    int arr1[] = {12, -11, 13, -5, 6, -7, 5, -3, -6};
+    int size1 = sizeof(arr1) / sizeof(arr1[0]);
+    
+    printf("Original array: ");
+    print_array(arr1, size1);
+    
+    rearrange_negatives_first(arr1, size1);
+    
+    printf("Rearranged array: ");
+    print_array(arr1, size1);
+    
+    int arr2[] = {-1, -2, -3, -4};
+    int size2 = sizeof(arr2) / sizeof(arr2[0]);
+    
+    printf("\nOriginal array: ");
+    print_array(arr2, size2);
+    
+    rearrange_negatives_first(arr2, size2);
+    
+    printf("Rearranged array: ");
+    print_array(arr2, size2);
+    
+    int arr3[] = {1, 2, 3, 4};
+    int size3 = sizeof(arr3) / sizeof(arr3[0]);
+    
+    printf("\nOriginal array: ");
+    print_array(arr3, size3);
+    
+    rearrange_negatives_first(arr3, size3);
+    
+    printf("Rearranged array: ");
+    print_array(arr3, size3);
+    
+    return 0;
+}

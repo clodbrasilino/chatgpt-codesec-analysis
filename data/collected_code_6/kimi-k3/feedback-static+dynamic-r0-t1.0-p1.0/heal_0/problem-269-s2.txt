@@ -1,0 +1,38 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+int get_ascii_value(char character, int *result)
+{
+    if (result == NULL) {
+        return -1;
+    }
+    *result = (int)(unsigned char)character;
+    return 0;
+}
+
+int main(void)
+{
+    char input_char;
+    int ascii_value;
+    int scan_result;
+    
+    printf("Enter a character: ");
+    
+    scan_result = scanf("%c", &input_char);
+    if (scan_result != 1) {
+        fprintf(stderr, "Error: Failed to read input\n");
+        return EXIT_FAILURE;
+    }
+    
+    if (get_ascii_value(input_char, &ascii_value) != 0) {
+        fprintf(stderr, "Error: Failed to get ASCII value\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("ASCII value of '%c' is %d\n", input_char, ascii_value);
+    
+    return EXIT_SUCCESS;
+}
+```

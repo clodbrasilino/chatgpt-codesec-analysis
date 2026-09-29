@@ -1,0 +1,12 @@
+collected_code/problem-217-0.c: In function 'findFirstRepeatedChar':
+collected_code/problem-217-0.c:5:18: warning: implicit declaration of function 'strlen' [-Wimplicit-function-declaration]
+    5 |     int length = strlen(str);
+      |                  ^~~~~~
+collected_code/problem-217-0.c:2:1: note: include '<string.h>' or provide a declaration of 'strlen'
+    1 | #include <stdio.h>
+  +++ |+#include <string.h>
+    2 | 
+collected_code/problem-217-0.c:5:18: warning: incompatible implicit declaration of built-in function 'strlen' [-Wbuiltin-declaration-mismatch]
+    5 |     int length = strlen(str);
+      |                  ^~~~~~
+collected_code/problem-217-0.c:5:18: note: include '<string.h>' or provide a declaration of 'strlen'

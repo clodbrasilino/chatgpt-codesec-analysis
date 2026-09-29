@@ -1,0 +1,16 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-100-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-100-s3.c:23:12: style: Redundant initialization for 'i'. The initialized value is overwritten before it is read. [redundantInitialization]
+    for (i = (len % 2 != 0 ? mid - 1 : mid - 1); i >= 0 && carry; i--) {
+           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-100-s3.c:8:11: note: i is initialized
+    int i = mid - 1;
+          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-100-s3.c:23:12: note: i is overwritten
+    for (i = (len % 2 != 0 ? mid - 1 : mid - 1); i >= 0 && carry; i--) {
+           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-100-s3.c:23:38: style: Same expression in both branches of ternary operator. [duplicateExpressionTernary]
+    for (i = (len % 2 != 0 ? mid - 1 : mid - 1); i >= 0 && carry; i--) {
+                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-100-s3.c:40:23: style: Parameter 'num' can be declared as pointer to const [constParameterPointer]
+bool is_greater(char *num, int len) {
+                      ^

@@ -1,0 +1,76 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+ /* Possible weaknesses found:
+  *  test case 2 failed: expected 'ProgrammingLanguage', got programmingLanguage
+  *  test case 0 failed: expected 'PythonProgram', got pythonProgram
+  *  test case 1 failed: expected 'PythonLanguage', got pythonLanguage
+  */
+
+char *snake_to_camel(const char *snake) {
+    if (snake == NULL) {
+        return NULL;
+    }
+
+    size_t len = strlen(snake);
+    char *camel = (char *)malloc(len + 1);
+    if (camel == NULL) {
+        return NULL;
+    }
+
+    size_t j = 0;
+    int capitalize_next = 0;
+
+    for (size_t i = 0; i < len; i++) {
+        if (snake[i] == '_') {
+            capitalize_next = 1;
+        } else {
+            if (capitalize_next) {
+                camel[j++] = (char)toupper((unsigned char)snake[i]);
+                capitalize_next = 0;
+            } else {
+                camel[j++] = snake[i];
+            }
+        }
+    }
+
+    camel[j] = '\0';
+    return camel;
+}
+
+int main(void) {
+    const char *test1 = "hello_world";
+    const char *test2 = "snake_case_string";
+    const char *test3 = "alreadyCamel";
+    const char *test4 = "multiple__underscores";
+    const char *test5 = "_leading_underscore";
+    const char *test6 = "trailing_underscore_";
+    const char *test7 = "";
+
+    char *result1 = snake_to_camel(test1);
+    char *result2 = snake_to_camel(test2);
+    char *result3 = snake_to_camel(test3);
+    char *result4 = snake_to_camel(test4);
+    char *result5 = snake_to_camel(test5);
+    char *result6 = snake_to_camel(test6);
+    char *result7 = snake_to_camel(test7);
+
+    printf("%s -> %s\n", test1, result1 ? result1 : "NULL");
+    printf("%s -> %s\n", test2, result2 ? result2 : "NULL");
+    printf("%s -> %s\n", test3, result3 ? result3 : "NULL");
+    printf("%s -> %s\n", test4, result4 ? result4 : "NULL");
+    printf("%s -> %s\n", test5, result5 ? result5 : "NULL");
+    printf("%s -> %s\n", test6, result6 ? result6 : "NULL");
+    printf("\"%s\" -> %s\n", test7, result7 ? result7 : "NULL");
+
+    free(result1);
+    free(result2);
+    free(result3);
+    free(result4);
+    free(result5);
+    free(result6);
+    free(result7);
+
+    return 0;
+}

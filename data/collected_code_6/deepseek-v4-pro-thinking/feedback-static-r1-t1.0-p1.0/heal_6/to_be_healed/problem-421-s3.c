@@ -1,0 +1,106 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+char *concat_tuple(const char *tuple[], size_t count, const char *delimiter) {
+    if (delimiter == NULL) {
+        return NULL;
+    }
+    if (count == 0) {
+        char *empty = malloc(1);
+        if (empty != NULL) {
+            empty[0] = '\0';
+        }
+        return empty;
+    }
+    if (tuple == NULL) {
+        return NULL;
+    }
+
+    size_t delim_len = strnlen(delimiter, SIZE_MAX);
+    size_t total_len = 0;
+    size_t *lens = malloc(count * sizeof(size_t));
+    if (lens == NULL) {
+        return NULL;
+    }
+
+    for (size_t i = 0; i < count; i++) {
+        if (tuple[i] == NULL) {
+            free(lens);
+            return NULL;
+        }
+        size_t len = strnlen(tuple[i], SIZE_MAX);
+        lens[i] = len;
+        if (total_len > SIZE_MAX - len) {
+            free(lens);
+            return NULL;
+        }
+        total_len += len;
+    }
+
+    if (count > 1 && delim_len > 0) {
+        if (delim_len > SIZE_MAX / (count - 1)) {
+            free(lens);
+            return NULL;
+        }
+        size_t delim_total = delim_len * (count - 1);
+        if (total_len > SIZE_MAX - delim_total) {
+            free(lens);
+            return NULL;
+        }
+        total_len += delim_total;
+    }
+
+    if (total_len == SIZE_MAX) {
+        free(lens);
+        return NULL;
+    }
+
+    char *result = malloc(total_len + 1);
+    if (result == NULL) {
+        free(lens);
+        return NULL;
+    }
+
+    char *p = result;
+    for (size_t i = 0; i < count; i++) {
+        if (i > 0) {
+            if ((size_t)(p - result) + delim_len > total_len) {
+                free(result);
+                free(lens);
+                return NULL;
+            }
+            /* Possible weaknesses found:
+             * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+             */
+            memcpy(p, delimiter, delim_len);
+            p += delim_len;
+        }
+        if ((size_t)(p - result) + lens[i] > total_len) {
+            free(result);
+            free(lens);
+            return NULL;
+        }
+        /* Possible weaknesses found:
+         * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+         */
+        memcpy(p, tuple[i], lens[i]);
+        p += lens[i];
+    }
+    *p = '\0';
+
+    free(lens);
+    return result;
+}
+
+int main(void) {
+    const char *tuple[] = {"apple", "banana", "cherry"};
+    char *result = concat_tuple(tuple, sizeof(tuple) / sizeof(tuple[0]), ", ");
+    if (result == NULL) {
+        return 1;
+    }
+    printf("%s\n", result);
+    free(result);
+    return 0;
+}

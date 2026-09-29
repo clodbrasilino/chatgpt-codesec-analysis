@@ -1,0 +1,6 @@
+collected_code/problem-69-0.c:8:21: error: Cannot determine that 'list[i+j]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+            if (list[i+j] != sublist[j]) {
+                    ^
+collected_code/problem-69-0.c:8:37: error: Cannot determine that 'sublist[j]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+            if (list[i+j] != sublist[j]) {
+                                    ^

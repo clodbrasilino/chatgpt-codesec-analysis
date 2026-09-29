@@ -1,0 +1,44 @@
+{
+  "task_id": 350,
+  "text": "Write a C function to minimize the length of the string by removing occurrence of only one character.",
+  "fn_candidates": [
+    "minimum_Length",
+    "MinimumLength",
+    "minimumLength",
+    "minimumLength"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "minimum_Length",
+      "args": [
+        "mnm"
+      ],
+      "expected": 1,
+      "assert_src": "assert minimum_Length(\"mnm\") == 1"
+    },
+    {
+      "fn_name": "minimum_Length",
+      "args": [
+        "abcda"
+      ],
+      "expected": 3,
+      "assert_src": "assert minimum_Length(\"abcda\") == 3"
+    },
+    {
+      "fn_name": "minimum_Length",
+      "args": [
+        "abcb"
+      ],
+      "expected": 2,
+      "assert_src": "assert minimum_Length(\"abcb\") == 2"
+    }
+  ],
+  "arg_kinds": [
+    "str"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

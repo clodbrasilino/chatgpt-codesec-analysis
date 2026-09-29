@@ -1,0 +1,48 @@
+./collected_code_4/round2//heal_12/healed/problem-513.c: In function 'convert_tuple_to_list':
+./collected_code_4/round2//heal_12/healed/problem-513.c:18:13: warning: leak of '<unknown>' [CWE-401] [-Wanalyzer-malloc-leak]
+   18 |             free(list);
+      |             ^~~~~~~~~~
+  'convert_tuple_to_list': events 1-15
+    |
+    |    7 |     if (list == NULL)
+    |      |        ^
+    |      |        |
+    |      |        (1) following 'false' branch (when 'list' is non-NULL)...
+    |......
+    |   10 |     for (int i = 0; i < size; i++) {
+    |      |              ~      ~~~~~~~~
+    |      |              |        |
+    |      |              |        (3) following 'true' branch (when 'i < size')...
+    |      |              (2) ...to here
+    |   11 |         list[i*2] = strdup(tuple[i]);
+    |      |                                 ~
+    |      |                                 |
+    |      |                                 (4) ...to here
+    |   12 |         list[i*2 + 1] = strdup(str);
+    |      |                         ~~~~~~~~~~~
+    |      |                         |
+    |      |                         (5) allocated here
+    |   13 | 
+    |   14 |         if (list[i*2] == NULL || list[i*2 + 1] == NULL) {
+    |      |            ~
+    |      |            |
+    |      |            (6) following 'true' branch...
+    |   15 |             for (int j = 0; j < i*2 + (list[i*2 + 1] == NULL ? 1 : 2); j++) {
+    |      |                      ~      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                      |        |                                  |
+    |      |                      |        |                                  (8) assuming '<unknown>' is non-NULL
+    |      |                      |        |                                  (9) following 'false' branch...
+    |      |                      |        |                                  (10) ...to here
+    |      |                      |        |                                  (13) following 'false' branch...
+    |      |                      |        (11) following 'true' branch...    (14) ...to here
+    |      |                      (7) ...to here
+    |   16 |                 free(list[j]);
+    |      |                          ~
+    |      |                          |
+    |      |                          (12) ...to here
+    |   17 |             }
+    |   18 |             free(list);
+    |      |             ~~~~~~~~~~
+    |      |             |
+    |      |             (15) '<unknown>' leaks here; was allocated at (5)
+    |

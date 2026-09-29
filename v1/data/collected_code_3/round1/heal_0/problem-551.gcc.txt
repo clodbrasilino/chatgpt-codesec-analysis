@@ -1,0 +1,53 @@
+collected_code_3/problem-551-1.c: In function 'main':
+collected_code_3/problem-551-1.c:22:19: warning: dereference of possibly-NULL 'matrix' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   22 |         matrix[i] = (int *)malloc(COLS * sizeof(int));
+      |         ~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  'main': event 1
+    |
+    |   20 |     int **matrix = (int **)malloc(ROWS * sizeof(int *));
+    |      |                            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                            |
+    |      |                            (1) this call could return NULL
+    |
+  'main': events 2-4
+    |
+    |   21 |     for (int i = 0; i < ROWS; i++) {
+    |      |                       ^
+    |      |                       |
+    |      |                       (2) following 'true' branch (when 'i <= 3')...
+    |   22 |         matrix[i] = (int *)malloc(COLS * sizeof(int));
+    |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |               |   |
+    |      |               |   (4) 'matrix + (long unsigned int)i * 8' could be NULL: unchecked value from (1)
+    |      |               (3) ...to here
+    |
+collected_code_3/problem-551-1.c:24:26: warning: dereference of possibly-NULL '*matrix_26 + _7 + (long unsigned int)j * 4' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   24 |             matrix[i][j] = i * COLS + j;
+      |             ~~~~~~~~~~~~~^~~~~~~~~~~~~~
+  'main': events 1-3
+    |
+    |   21 |     for (int i = 0; i < ROWS; i++) {
+    |      |                       ^
+    |      |                       |
+    |      |                       (1) following 'true' branch (when 'i <= 3')...
+    |   22 |         matrix[i] = (int *)malloc(COLS * sizeof(int));
+    |      |               ~            ~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |               |            |
+    |      |               |            (3) this call could return NULL
+    |      |               (2) ...to here
+    |
+  'main': event 4
+    |
+    |   23 |         for (int j = 0; j < COLS; j++) {
+    |      |                           ^
+    |      |                           |
+    |      |                           (4) following 'true' branch (when 'j <= 4')...
+    |
+  'main': events 5-6
+    |
+    |   24 |             matrix[i][j] = i * COLS + j;
+    |      |             ~~~~~~~~~~~~~~~~~^~~~~~~~~~
+    |      |                          |   |
+    |      |                          |   (5) ...to here
+    |      |                          (6) '*matrix_26 + _7 + (long unsigned int)j * 4' could be NULL: unchecked value from (3)
+    |

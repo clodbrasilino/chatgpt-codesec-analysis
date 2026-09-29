@@ -1,0 +1,53 @@
+Here is your task implemented in C.
+
+```c
+#include <stdio.h>
+
+int nswn_prime(int n)
+{
+    int result;
+    if(n == 0)
+    {
+        return 1;
+    }
+    else if(n == 1)
+    {
+        return 1;
+    }
+    else
+    {
+        int a = 1, b = 1;
+        for(int i = 2; i <= n; i++)
+        {
+            result = 2*b + a;
+            a = b;
+            b = result;
+        }
+        return result;
+    }
+    
+    return -1;
+}
+
+int main()
+{
+    int number;
+    printf("Enter the nth number to find the corresponding Newman–Shanks–Williams prime number:");
+    scanf("%d", &number);
+    if(number >= 0)
+    {
+        printf("%dth Newman–Shanks–Williams prime number is %d\n", number, nswn_prime(number));
+    }
+    else
+    {
+        printf("Invalid number!\n");
+    }
+
+    return 0;
+}
+```
+
+The function nswn_prime calculates the nth Newman–Shanks–Williams prime number.
+We define two initial values, a = 1 and b = 1, which correspond to the 0th and 1st NSWS numbers. Then for each index from 2 to n (inclusive), we calculate the next NSK number as the sum of twice the last NSK number and the number before that. This is equivalent to 2*b + a.
+
+On the other hand, the main function asks the user to enter the nth number as an input and then it will print the corresponding nth Newman–Shanks–Williams prime number by calling the function nswn_prime.

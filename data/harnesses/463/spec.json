@@ -1,0 +1,64 @@
+{
+  "task_id": 463,
+  "text": "Write a C function to find the maximum product subarray of the given array.",
+  "fn_candidates": [
+    "max_subarray_product",
+    "MaxSubarrayProduct",
+    "maxSubarrayProduct",
+    "maxsubarrayproduct"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "max_subarray_product",
+      "args": [
+        [
+          1,
+          -2,
+          -3,
+          0,
+          7,
+          -8,
+          -2
+        ]
+      ],
+      "expected": 112,
+      "assert_src": "assert max_subarray_product([1, -2, -3, 0, 7, -8, -2]) == 112"
+    },
+    {
+      "fn_name": "max_subarray_product",
+      "args": [
+        [
+          6,
+          -3,
+          -10,
+          0,
+          2
+        ]
+      ],
+      "expected": 180,
+      "assert_src": "assert max_subarray_product([6, -3, -10, 0, 2]) == 180 "
+    },
+    {
+      "fn_name": "max_subarray_product",
+      "args": [
+        [
+          -2,
+          -40,
+          0,
+          -2,
+          -3
+        ]
+      ],
+      "expected": 80,
+      "assert_src": "assert max_subarray_product([-2, -40, 0, -2, -3]) == 80"
+    }
+  ],
+  "arg_kinds": [
+    "int-list"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

@@ -1,0 +1,24 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+bool isInfiniteSequence(int num) {
+    if(num < 0) {
+        return false;
+    }
+    while(num % 2 == 0 && num > 0) {
+        num = num / 2;
+    }
+    return num == 1;
+}
+
+int main() {
+    int num;
+    printf("Enter a number: ");
+    scanf("%d", &num);
+    if(isInfiniteSequence(num)) {
+        printf("The number is present in the infinite sequence.\n");
+    } else {
+        printf("The number is not present in the infinite sequence.\n");
+    }
+    return 0;
+}

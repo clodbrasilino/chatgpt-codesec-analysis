@@ -1,0 +1,70 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+#define MAX_INPUT_SIZE 256
+
+void remove_multiple_spaces(char *str)
+{
+    size_t read_index = 0;
+    size_t write_index = 0;
+    int previous_was_space = 0;
+
+    if (str == NULL) {
+        return;
+    }
+
+    while (str[read_index] != '\0') {
+        if (str[read_index] == ' ') {
+            if (previous_was_space == 0) {
+                str[write_index] = str[read_index];
+                write_index++;
+            }
+            previous_was_space = 1;
+        } else {
+            str[write_index] = str[read_index];
+            write_index++;
+            previous_was_space = 0;
+        }
+        read_index++;
+    }
+
+    str[write_index] = '\0';
+}
+
+int main(void)
+{
+    char input[] = "This   is  a    string   with     multiple spaces";
+    char *buffer = NULL;
+    size_t length = 0;
+
+    length = strnlen(input, MAX_INPUT_SIZE - 1) + 1;
+
+    buffer = malloc(length);
+    if (buffer == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    memcpy(buffer, input, length - 1);
+    buffer[length - 1] = '\0';
+
+    printf("Before: \"%s\"\n", buffer);
+    remove_multiple_spaces(buffer);
+    printf("After:  \"%s\"\n", buffer);
+
+    free(buffer);
+    buffer = NULL;
+
+    return EXIT_SUCCESS;
+}
+```
+
+Key changes made to address the identified weaknesses:
+
+1. **CWE-126 (strlen over-read):** Replaced `strlen` with `strnlen`, which takes a maximum bound (`MAX_INPUT_SIZE - 1`). This guarantees the length calculation cannot read past a fixed limit even if the string were somehow not null-terminated.
+
+2. **CWE-120 (memcpy buffer overflow):** The copy is now bounded to `length - 1` bytes (exactly what was allocated for the string content), and the null terminator is written explicitly to `buffer[length - 1]`. Since `length` is derived from the bounded `strnlen` and the buffer is allocated with exactly `length` bytes, the destination is guaranteed to hold the source data plus the terminator.
+
+The rest of the logic (`remove_multiple_spaces`, allocation checks, cleanup with `free` and pointer nulling) was already sound and remains unchanged.

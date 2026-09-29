@@ -1,0 +1,143 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct DictItem {
+    char *key;
+    char *value;
+    struct DictItem *next;
+} DictItem;
+
+typedef struct {
+    DictItem *head;
+    size_t size;
+} Dictionary;
+
+Dictionary *dict_create(void) {
+    Dictionary *dict = (Dictionary *)malloc(sizeof(Dictionary));
+    if (dict == NULL) {
+        return NULL;
+    }
+    dict->head = NULL;
+    dict->size = 0;
+    return dict;
+}
+
+int dict_add(Dictionary *dict, const char *key, const char *value) {
+    if (dict == NULL || key == NULL || value == NULL) {
+        return -1;
+    }
+    
+    DictItem *item = (DictItem *)malloc(sizeof(DictItem));
+    if (item == NULL) {
+        return -1;
+    }
+    
+    item->key = (char *)malloc(strlen(key) + 1);
+    if (item->key == NULL) {
+        free(item);
+        return -1;
+    }
+    
+    item->value = (char *)malloc(strlen(value) + 1);
+    if (item->value == NULL) {
+        free(item->key);
+        free(item);
+        return -1;
+    }
+    
+    strcpy(item->key, key);
+    strcpy(item->value, value);
+    item->next = dict->head;
+    dict->head = item;
+    dict->size++;
+    
+    return 0;
+}
+
+void dict_drop_empty(Dictionary *dict) {
+    if (dict == NULL || dict->head == NULL) {
+        return;
+    }
+    
+    DictItem *current = dict->head;
+    DictItem *prev = NULL;
+    
+    while (current != NULL) {
+        if (current->value == NULL || strlen(current->value) == 0) {
+            DictItem *to_delete = current;
+            
+            if (prev == NULL) {
+                dict->head = current->next;
+                current = dict->head;
+            } else {
+                prev->next = current->next;
+                current = current->next;
+            }
+            
+            free(to_delete->key);
+            free(to_delete->value);
+            free(to_delete);
+            dict->size--;
+        } else {
+            prev = current;
+            current = current->next;
+        }
+    }
+}
+
+void dict_print(const Dictionary *dict) {
+    if (dict == NULL) {
+        return;
+    }
+    
+    DictItem *current = dict->head;
+    while (current != NULL) {
+        printf("%s: %s\n", current->key, current->value);
+        current = current->next;
+    }
+}
+
+void dict_destroy(Dictionary *dict) {
+    if (dict == NULL) {
+        return;
+    }
+    
+    DictItem *current = dict->head;
+    while (current != NULL) {
+        DictItem *next = current->next;
+        free(current->key);
+        free(current->value);
+        free(current);
+        current = next;
+    }
+    
+    free(dict);
+}
+
+int main(void) {
+    Dictionary *dict = dict_create();
+    if (dict == NULL) {
+        return 1;
+    }
+    
+    dict_add(dict, "name", "John");
+    dict_add(dict, "email", "");
+    dict_add(dict, "phone", "1234567890");
+    dict_add(dict, "address", "");
+    dict_add(dict, "city", "New York");
+    
+    printf("Before dropping empty items:\n");
+    dict_print(dict);
+    printf("Size: %zu\n\n", dict->size);
+    
+    dict_drop_empty(dict);
+    
+    printf("After dropping empty items:\n");
+    dict_print(dict);
+    printf("Size: %zu\n", dict->size);
+    
+    dict_destroy(dict);
+    
+    return 0;
+}

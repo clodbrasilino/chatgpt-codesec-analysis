@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-780-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-780-s3.c:26:22: warning: Either the condition 'combinations==NULL' is redundant or there is possible null pointer dereference: combinations. [nullPointerRedundantCheck]
+                free(combinations[i]);
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-780-s3.c:23:26: note: Assuming that condition 'combinations==NULL' is not redundant
+        if (combinations == NULL) {
+                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-780-s3.c:26:22: note: Null pointer dereference
+                free(combinations[i]);
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-780-s3.c:19:27: style: Parameter 'tuple' can be declared as pointer to const [constParameterPointer]
+void add_combination(int *tuple, int size) {
+                          ^

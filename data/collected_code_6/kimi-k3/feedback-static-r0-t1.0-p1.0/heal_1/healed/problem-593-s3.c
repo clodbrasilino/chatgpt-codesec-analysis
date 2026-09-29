@@ -1,0 +1,66 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+void removeLeadingZeros(char *ip) {
+    if (ip == NULL || *ip == '\0') {
+        return;
+    }
+
+    char result[16];
+    size_t result_len = 0;
+    char *token;
+    char *rest = ip;
+    int first = 1;
+
+    while ((token = strtok_r(rest, ".", &rest)) != NULL) {
+        while (*token == '0' && *(token + 1) != '\0') {
+            token++;
+        }
+
+        size_t token_len = strlen(token);
+        size_t needed = token_len + (first ? 0 : 1);
+
+        if (result_len + needed >= sizeof(result)) {
+            return;
+        }
+
+        if (!first) {
+            result[result_len++] = '.';
+        }
+
+        memcpy(result + result_len, token, token_len);
+        result_len += token_len;
+        first = 0;
+    }
+
+    if (result_len > 0) {
+        result[result_len] = '\0';
+        memcpy(ip, result, result_len + 1);
+    }
+}
+
+int main(void) {
+    char ip1[] = "192.168.001.001";
+    char ip2[] = "010.000.000.001";
+    char ip3[] = "000.000.000.000";
+    char ip4[] = "255.255.255.255";
+
+    printf("Original: %s\n", ip1);
+    removeLeadingZeros(ip1);
+    printf("Modified: %s\n\n", ip1);
+
+    printf("Original: %s\n", ip2);
+    removeLeadingZeros(ip2);
+    printf("Modified: %s\n\n", ip2);
+
+    printf("Original: %s\n", ip3);
+    removeLeadingZeros(ip3);
+    printf("Modified: %s\n\n", ip3);
+
+    printf("Original: %s\n", ip4);
+    removeLeadingZeros(ip4);
+    printf("Modified: %s\n", ip4);
+
+    return 0;
+}

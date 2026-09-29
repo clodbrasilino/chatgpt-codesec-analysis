@@ -1,0 +1,480 @@
+collected_code_3/problem-175-1.c: In function 'createStack':
+collected_code_3/problem-175-1.c:15:21: warning: dereference of possibly-NULL 'stack' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   15 |     stack->capacity = capacity;
+      |     ~~~~~~~~~~~~~~~~^~~~~~~~~~
+  'areParenthesisBalanced': events 1-2
+    |
+    |   48 | int areParenthesisBalanced(char exp[]) {
+    |      |     ^~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (1) entry to 'areParenthesisBalanced'
+    |   49 |     int i = 0;
+    |   50 |     Stack* stack = createStack(strlen(exp));
+    |      |                    ~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                    |
+    |      |                    (2) calling 'createStack' from 'areParenthesisBalanced'
+    |
+    +--> 'createStack': events 3-5
+           |
+           |   13 | Stack* createStack(unsigned capacity) {
+           |      |        ^~~~~~~~~~~
+           |      |        |
+           |      |        (3) entry to 'createStack'
+           |   14 |     Stack* stack = (Stack*) malloc(sizeof(Stack));
+           |      |                             ~~~~~~~~~~~~~~~~~~~~~
+           |      |                             |
+           |      |                             (4) this call could return NULL
+           |   15 |     stack->capacity = capacity;
+           |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                     |
+           |      |                     (5) 'stack' could be NULL: unchecked value from (4)
+           |
+collected_code_3/problem-175-1.c: In function 'push':
+collected_code_3/problem-175-1.c:32:32: warning: dereference of possibly-NULL '*stack.array + (sizetype)*stack.top' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   32 |     stack->array[++stack->top] = item;
+      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~
+  'areParenthesisBalanced': events 1-2
+    |
+    |   48 | int areParenthesisBalanced(char exp[]) {
+    |      |     ^~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (1) entry to 'areParenthesisBalanced'
+    |   49 |     int i = 0;
+    |   50 |     Stack* stack = createStack(strlen(exp));
+    |      |                    ~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                    |
+    |      |                    (2) calling 'createStack' from 'areParenthesisBalanced'
+    |
+    +--> 'createStack': events 3-4
+           |
+           |   13 | Stack* createStack(unsigned capacity) {
+           |      |        ^~~~~~~~~~~
+           |      |        |
+           |      |        (3) entry to 'createStack'
+           |......
+           |   17 |     stack->array = (char*) malloc(stack->capacity * sizeof(char));
+           |      |                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                            |
+           |      |                            (4) this call could return NULL
+           |
+    <------+
+    |
+  'areParenthesisBalanced': events 5-10
+    |
+    |   50 |     Stack* stack = createStack(strlen(exp));
+    |      |                    ^~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                    |
+    |      |                    (5) returning to 'areParenthesisBalanced' from 'createStack'
+    |   51 |     while (exp[i]) {
+    |      |            ~~~      
+    |      |            |
+    |      |            (6) following 'true' branch...
+    |   52 |         if (exp[i] == '(')
+    |      |            ~   ~    
+    |      |            |   |
+    |      |            |   (7) ...to here
+    |      |            (8) following 'true' branch...
+    |   53 |             push(stack, exp[i]);
+    |      |             ~~~~~~~~~~~~~~~~~~~
+    |      |             |              |
+    |      |             |              (9) ...to here
+    |      |             (10) calling 'push' from 'areParenthesisBalanced'
+    |
+    +--> 'push': events 11-14
+           |
+           |   29 | void push(Stack* stack, char item) {
+           |      |      ^~~~
+           |      |      |
+           |      |      (11) entry to 'push'
+           |   30 |     if (isFull(stack))
+           |      |        ~
+           |      |        |
+           |      |        (12) following 'false' branch...
+           |   31 |         return;
+           |   32 |     stack->array[++stack->top] = item;
+           |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |          |                     |
+           |      |          (13) ...to here       (14) '*stack.array + (sizetype)*stack.top' could be NULL: unchecked value from (4)
+           |
+collected_code_3/problem-175-1.c: In function 'areParenthesisBalanced':
+collected_code_3/problem-175-1.c:56:24: warning: leak of '<unknown>' [CWE-401] [-Wanalyzer-malloc-leak]
+   56 |                 return 0;
+      |                        ^
+  'main': events 1-2
+    |
+    |   69 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   73 |     if (areParenthesisBalanced(exp))
+    |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |         |
+    |      |         (2) calling 'areParenthesisBalanced' from 'main'
+    |
+    +--> 'areParenthesisBalanced': events 3-4
+           |
+           |   48 | int areParenthesisBalanced(char exp[]) {
+           |      |     ^~~~~~~~~~~~~~~~~~~~~~
+           |      |     |
+           |      |     (3) entry to 'areParenthesisBalanced'
+           |   49 |     int i = 0;
+           |   50 |     Stack* stack = createStack(strlen(exp));
+           |      |                    ~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                    |
+           |      |                    (4) calling 'createStack' from 'areParenthesisBalanced'
+           |
+           +--> 'createStack': events 5-6
+                  |
+                  |   13 | Stack* createStack(unsigned capacity) {
+                  |      |        ^~~~~~~~~~~
+                  |      |        |
+                  |      |        (5) entry to 'createStack'
+                  |......
+                  |   17 |     stack->array = (char*) malloc(stack->capacity * sizeof(char));
+                  |      |                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                  |      |                            |
+                  |      |                            (6) allocated here
+                  |
+           <------+
+           |
+         'areParenthesisBalanced': events 7-12
+           |
+           |   50 |     Stack* stack = createStack(strlen(exp));
+           |      |                    ^~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                    |
+           |      |                    (7) returning to 'areParenthesisBalanced' from 'createStack'
+           |   51 |     while (exp[i]) {
+           |      |            ~~~      
+           |      |            |
+           |      |            (8) following 'true' branch...
+           |   52 |         if (exp[i] == '(')
+           |      |                ~    
+           |      |                |
+           |      |                (9) ...to here
+           |......
+           |   55 |             if (isEmpty(stack) || !isMatchingPair(pop(stack), exp[i]))
+           |      |                ~    
+           |      |                |
+           |      |                (10) following 'true' branch...
+           |   56 |                 return 0;
+           |      |                        ~
+           |      |                        |
+           |      |                        (11) ...to here
+           |      |                        (12) '<unknown>' leaks here; was allocated at (6)
+           |
+collected_code_3/problem-175-1.c:56:24: warning: leak of '<unknown>' [CWE-401] [-Wanalyzer-malloc-leak]
+   56 |                 return 0;
+      |                        ^
+  'main': events 1-2
+    |
+    |   69 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   73 |     if (areParenthesisBalanced(exp))
+    |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |         |
+    |      |         (2) calling 'areParenthesisBalanced' from 'main'
+    |
+    +--> 'areParenthesisBalanced': events 3-4
+           |
+           |   48 | int areParenthesisBalanced(char exp[]) {
+           |      |     ^~~~~~~~~~~~~~~~~~~~~~
+           |      |     |
+           |      |     (3) entry to 'areParenthesisBalanced'
+           |   49 |     int i = 0;
+           |   50 |     Stack* stack = createStack(strlen(exp));
+           |      |                    ~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                    |
+           |      |                    (4) calling 'createStack' from 'areParenthesisBalanced'
+           |
+           +--> 'createStack': events 5-6
+                  |
+                  |   13 | Stack* createStack(unsigned capacity) {
+                  |      |        ^~~~~~~~~~~
+                  |      |        |
+                  |      |        (5) entry to 'createStack'
+                  |......
+                  |   17 |     stack->array = (char*) malloc(stack->capacity * sizeof(char));
+                  |      |                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                  |      |                            |
+                  |      |                            (6) allocated here
+                  |
+           <------+
+           |
+         'areParenthesisBalanced': events 7-10
+           |
+           |   50 |     Stack* stack = createStack(strlen(exp));
+           |      |                    ^~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                    |
+           |      |                    (7) returning to 'areParenthesisBalanced' from 'createStack'
+           |   51 |     while (exp[i]) {
+           |      |            ~~~      
+           |      |            |
+           |      |            (8) following 'true' branch...
+           |   52 |         if (exp[i] == '(')
+           |      |                ~    
+           |      |                |
+           |      |                (9) ...to here
+           |   53 |             push(stack, exp[i]);
+           |      |             ~~~~~~~~~~~~~~~~~~~
+           |      |             |
+           |      |             (10) calling 'push' from 'areParenthesisBalanced'
+           |
+           +--> 'push': events 11-12
+                  |
+                  |   29 | void push(Stack* stack, char item) {
+                  |      |      ^~~~
+                  |      |      |
+                  |      |      (11) entry to 'push'
+                  |......
+                  |   32 |     stack->array[++stack->top] = item;
+                  |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                  |      |                                |
+                  |      |                                (12) assuming '*stack.array + (sizetype)*stack.top' is non-NULL
+                  |
+           <------+
+           |
+         'areParenthesisBalanced': events 13-18
+           |
+           |   51 |     while (exp[i]) {
+           |      |            ~~~
+           |      |            |
+           |      |            (14) following 'true' branch...
+           |      |            (16) following 'true' branch...
+           |   52 |         if (exp[i] == '(')
+           |      |                ~
+           |      |                |
+           |      |                (15) ...to here
+           |      |                (17) ...to here
+           |   53 |             push(stack, exp[i]);
+           |      |             ^~~~~~~~~~~~~~~~~~~
+           |      |             |
+           |      |             (13) returning to 'areParenthesisBalanced' from 'push'
+           |......
+           |   56 |                 return 0;
+           |      |                        ~
+           |      |                        |
+           |      |                        (18) '<unknown>' leaks here; was allocated at (6)
+           |
+collected_code_3/problem-175-1.c:56:24: warning: leak of 'stack' [CWE-401] [-Wanalyzer-malloc-leak]
+   56 |                 return 0;
+      |                        ^
+  'main': events 1-2
+    |
+    |   69 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   73 |     if (areParenthesisBalanced(exp))
+    |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |         |
+    |      |         (2) calling 'areParenthesisBalanced' from 'main'
+    |
+    +--> 'areParenthesisBalanced': events 3-4
+           |
+           |   48 | int areParenthesisBalanced(char exp[]) {
+           |      |     ^~~~~~~~~~~~~~~~~~~~~~
+           |      |     |
+           |      |     (3) entry to 'areParenthesisBalanced'
+           |   49 |     int i = 0;
+           |   50 |     Stack* stack = createStack(strlen(exp));
+           |      |                    ~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                    |
+           |      |                    (4) calling 'createStack' from 'areParenthesisBalanced'
+           |
+           +--> 'createStack': events 5-7
+                  |
+                  |   13 | Stack* createStack(unsigned capacity) {
+                  |      |        ^~~~~~~~~~~
+                  |      |        |
+                  |      |        (5) entry to 'createStack'
+                  |   14 |     Stack* stack = (Stack*) malloc(sizeof(Stack));
+                  |      |                             ~~~~~~~~~~~~~~~~~~~~~
+                  |      |                             |
+                  |      |                             (6) allocated here
+                  |   15 |     stack->capacity = capacity;
+                  |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~
+                  |      |                     |
+                  |      |                     (7) assuming 'stack' is non-NULL
+                  |
+           <------+
+           |
+         'areParenthesisBalanced': events 8-13
+           |
+           |   50 |     Stack* stack = createStack(strlen(exp));
+           |      |                    ^~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                    |
+           |      |                    (8) returning to 'areParenthesisBalanced' from 'createStack'
+           |   51 |     while (exp[i]) {
+           |      |            ~~~      
+           |      |            |
+           |      |            (9) following 'true' branch...
+           |   52 |         if (exp[i] == '(')
+           |      |                ~    
+           |      |                |
+           |      |                (10) ...to here
+           |......
+           |   55 |             if (isEmpty(stack) || !isMatchingPair(pop(stack), exp[i]))
+           |      |                ~    
+           |      |                |
+           |      |                (11) following 'true' branch...
+           |   56 |                 return 0;
+           |      |                        ~
+           |      |                        |
+           |      |                        (12) ...to here
+           |      |                        (13) 'stack' leaks here; was allocated at (6)
+           |
+collected_code_3/problem-175-1.c:61:9: warning: leak of '<unknown>' [CWE-401] [-Wanalyzer-malloc-leak]
+   61 |         free(stack);
+      |         ^~~~~~~~~~~
+  'main': events 1-2
+    |
+    |   69 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   73 |     if (areParenthesisBalanced(exp))
+    |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |         |
+    |      |         (2) calling 'areParenthesisBalanced' from 'main'
+    |
+    +--> 'areParenthesisBalanced': events 3-4
+           |
+           |   48 | int areParenthesisBalanced(char exp[]) {
+           |      |     ^~~~~~~~~~~~~~~~~~~~~~
+           |      |     |
+           |      |     (3) entry to 'areParenthesisBalanced'
+           |   49 |     int i = 0;
+           |   50 |     Stack* stack = createStack(strlen(exp));
+           |      |                    ~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                    |
+           |      |                    (4) calling 'createStack' from 'areParenthesisBalanced'
+           |
+           +--> 'createStack': events 5-6
+                  |
+                  |   13 | Stack* createStack(unsigned capacity) {
+                  |      |        ^~~~~~~~~~~
+                  |      |        |
+                  |      |        (5) entry to 'createStack'
+                  |......
+                  |   17 |     stack->array = (char*) malloc(stack->capacity * sizeof(char));
+                  |      |                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                  |      |                            |
+                  |      |                            (6) allocated here
+                  |
+           <------+
+           |
+         'areParenthesisBalanced': events 7-10
+           |
+           |   50 |     Stack* stack = createStack(strlen(exp));
+           |      |                    ^~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                    |
+           |      |                    (7) returning to 'areParenthesisBalanced' from 'createStack'
+           |......
+           |   60 |     if (isEmpty(stack)) {
+           |      |        ~            
+           |      |        |
+           |      |        (8) following 'true' branch...
+           |   61 |         free(stack);
+           |      |         ~~~~~~~~~~~ 
+           |      |         |
+           |      |         (9) ...to here
+           |      |         (10) '<unknown>' leaks here; was allocated at (6)
+           |
+collected_code_3/problem-175-1.c:64:9: warning: leak of '<unknown>' [CWE-401] [-Wanalyzer-malloc-leak]
+   64 |         free(stack);
+      |         ^~~~~~~~~~~
+  'main': events 1-2
+    |
+    |   69 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   73 |     if (areParenthesisBalanced(exp))
+    |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |         |
+    |      |         (2) calling 'areParenthesisBalanced' from 'main'
+    |
+    +--> 'areParenthesisBalanced': events 3-4
+           |
+           |   48 | int areParenthesisBalanced(char exp[]) {
+           |      |     ^~~~~~~~~~~~~~~~~~~~~~
+           |      |     |
+           |      |     (3) entry to 'areParenthesisBalanced'
+           |   49 |     int i = 0;
+           |   50 |     Stack* stack = createStack(strlen(exp));
+           |      |                    ~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                    |
+           |      |                    (4) calling 'createStack' from 'areParenthesisBalanced'
+           |
+           +--> 'createStack': events 5-6
+                  |
+                  |   13 | Stack* createStack(unsigned capacity) {
+                  |      |        ^~~~~~~~~~~
+                  |      |        |
+                  |      |        (5) entry to 'createStack'
+                  |......
+                  |   17 |     stack->array = (char*) malloc(stack->capacity * sizeof(char));
+                  |      |                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                  |      |                            |
+                  |      |                            (6) allocated here
+                  |
+           <------+
+           |
+         'areParenthesisBalanced': events 7-10
+           |
+           |   50 |     Stack* stack = createStack(strlen(exp));
+           |      |                    ^~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                    |
+           |      |                    (7) returning to 'areParenthesisBalanced' from 'createStack'
+           |   51 |     while (exp[i]) {
+           |      |            ~~~      
+           |      |            |
+           |      |            (8) following 'true' branch...
+           |   52 |         if (exp[i] == '(')
+           |      |                ~    
+           |      |                |
+           |      |                (9) ...to here
+           |   53 |             push(stack, exp[i]);
+           |      |             ~~~~~~~~~~~~~~~~~~~
+           |      |             |
+           |      |             (10) calling 'push' from 'areParenthesisBalanced'
+           |
+           +--> 'push': events 11-12
+                  |
+                  |   29 | void push(Stack* stack, char item) {
+                  |      |      ^~~~
+                  |      |      |
+                  |      |      (11) entry to 'push'
+                  |......
+                  |   32 |     stack->array[++stack->top] = item;
+                  |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                  |      |                                |
+                  |      |                                (12) assuming '*stack.array + (sizetype)*stack.top' is non-NULL
+                  |
+           <------+
+           |
+         'areParenthesisBalanced': events 13-16
+           |
+           |   53 |             push(stack, exp[i]);
+           |      |             ^~~~~~~~~~~~~~~~~~~
+           |      |             |
+           |      |             (13) returning to 'areParenthesisBalanced' from 'push'
+           |......
+           |   60 |     if (isEmpty(stack)) {
+           |      |        ~     
+           |      |        |
+           |      |        (14) following 'false' branch...
+           |......
+           |   64 |         free(stack);
+           |      |         ~~~~~~~~~~~
+           |      |         |
+           |      |         (15) ...to here
+           |      |         (16) '<unknown>' leaks here; was allocated at (6)
+           |

@@ -1,0 +1,55 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+char* camel_to_snake(const char *camel) {
+    regex_t regex;
+    regmatch_t matches[2];
+    char *snake, *p, *result;
+
+    if (regcomp(&regex, "([a-z0-9])([A-Z])", REG_EXTENDED | REG_NEWLINE) != 0) {
+        return NULL;
+    }
+
+    size_t len = strlen(camel);
+    snake = malloc(len * 2 + 1);
+    if (snake == NULL) {
+        regfree(&regex);
+        return NULL;
+    }
+    snprintf(snake, len * 2 + 1, "%s", camel);
+
+    p = snake;
+    while (regexec(&regex, p, 2, matches, 0) == 0) {
+        size_t match_len = matches[1].rm_eo - matches[1].rm_so;
+        memmove(p + matches[0].rm_so + 2, p + matches[0].rm_so + 1, match_len + 1);
+        p[matches[0].rm_so + 1] = '_';
+        p += matches[0].rm_so + 2;
+    }
+
+    size_t new_len = strlen(snake);
+    result = realloc(snake, new_len + 1);
+    if (result == NULL) {
+        free(snake);
+        regfree(&regex);
+        return NULL;
+    }
+
+    regfree(&regex);
+    return result;
+}
+
+int main() {
+    const char *test_cases[] = {"ThisIsCamelCase", "chromeCast", "quadCore", "googleAssistant"};
+    for (size_t i = 0; i < sizeof(test_cases) / sizeof(test_cases[0]); ++i) {
+        char *snake = camel_to_snake(test_cases[i]);
+        if (snake != NULL) {
+            printf("%s\n", snake);
+            free(snake);
+        } else {
+            printf("Error converting to snake case.\n");
+        }
+    }
+    return 0;
+}

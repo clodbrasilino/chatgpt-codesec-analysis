@@ -1,0 +1,33 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int a;
+    int b;
+} Tuple;
+
+Tuple* zipTuples(Tuple t1, Tuple t2, size_t *len) {
+    *len = 2; // Always 2 for two tuples
+    Tuple *result = (Tuple *)malloc(*len * sizeof(Tuple));
+    if (result == NULL) {
+        exit(EXIT_FAILURE);
+    }
+    result[0] = t1;
+    result[1] = t2;
+    return result;
+}
+
+int main() {
+    Tuple t1 = {10, 20};
+    Tuple t2 = {30, 40};
+
+    size_t len;
+    Tuple *zipped = zipTuples(t1, t2, &len);
+
+    for (size_t i = 0; i < len; ++i) {
+        printf("Tuple %zu: (%d, %d)\n", i + 1, zipped[i].a, zipped[i].b);
+    }
+
+    free(zipped);
+    return 0;
+}

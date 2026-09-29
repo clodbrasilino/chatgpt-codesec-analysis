@@ -1,0 +1,53 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char **extract_strings(const char *const *input, size_t input_count, size_t size, size_t *output_count) {
+    *output_count = 0;
+    for (size_t i = 0; i < input_count; ++i) {
+        if (strlen(input[i]) >= size) (*output_count)++;
+    }
+
+    char **output = (char **)malloc(*output_count * sizeof(char *));
+    if (output == NULL) return NULL;
+
+    *output_count = 0;
+
+    for (size_t i = 0; i < input_count; ++i) {
+        if (strlen(input[i]) >= size) {
+            output[*output_count] = (char *)malloc(size + 1);
+            if (output[*output_count] == NULL) {
+                while (*output_count > 0) {
+                    free(output[(*output_count) - 1]);
+                    (*output_count)--;
+                }
+                free(output);
+                return NULL;
+            }
+            strncpy(output[*output_count], input[i], size);
+            output[*output_count][size] = '\0';
+            (*output_count)++;
+        }
+    }
+
+    return output;
+}
+
+int main() {
+    const char *input[] = {"hello", "world", "C", "programming", "language"};
+    size_t input_count = sizeof(input) / sizeof(input[0]);
+    size_t size = 5;
+    size_t output_count = 0;
+
+    char **output = extract_strings(input, input_count, size, &output_count);
+
+    if (output != NULL) {
+        for (size_t i = 0; i < output_count; ++i) {
+            printf("%s\n", output[i]);
+            free(output[i]);
+        }
+        free(output);
+    }
+
+    return 0;
+}

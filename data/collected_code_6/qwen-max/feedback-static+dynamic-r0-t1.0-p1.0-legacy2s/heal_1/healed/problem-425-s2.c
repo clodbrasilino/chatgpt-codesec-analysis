@@ -1,0 +1,75 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node *next;
+} Node;
+
+typedef struct {
+    Node *head;
+} List;
+
+List* createList() {
+    List *list = malloc(sizeof(List));
+    if (list) {
+        list->head = NULL;
+    }
+    return list;
+}
+
+void addNode(List *list, int data) {
+    Node *new_node = malloc(sizeof(Node));
+    if (new_node) {
+        new_node->data = data;
+        new_node->next = NULL;
+
+        if (list->head == NULL) {
+            list->head = new_node;
+        } else {
+            Node *temp = list->head;
+            while (temp->next != NULL) {
+                temp = temp->next;
+            }
+            temp->next = new_node;
+        }
+    }
+}
+
+int sublistCount(List *list, int target) {
+    int count = 0;
+    for (Node *curr = list->head; curr != NULL; curr = curr->next) {
+        if (curr->data == target) {
+            count++;
+        }
+    }
+    return count;
+}
+
+int main() {
+    List *list = createList();
+    if (list == NULL) {
+        return -1;
+    }
+
+    addNode(list, 1);
+    addNode(list, 2);
+    addNode(list, 3);
+    addNode(list, 2);
+    addNode(list, 4);
+    addNode(list, 2);
+
+    int target = 2;
+    int count = sublistCount(list, target);
+    printf("Number of sublists containing %d: %d\n", target, count);
+
+    Node *curr = list->head;
+    while (curr != NULL) {
+        Node *next = curr->next;
+        free(curr);
+        curr = next;
+    }
+    free(list);
+
+    return 0;
+}

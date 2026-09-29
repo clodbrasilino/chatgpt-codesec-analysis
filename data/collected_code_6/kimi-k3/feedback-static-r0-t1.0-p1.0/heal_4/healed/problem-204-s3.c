@@ -1,0 +1,48 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <ctype.h>
+
+#define MAX_INPUT_LENGTH 256
+
+size_t count_char(const char *str, char ch) {
+    size_t count = 0;
+    if (str == NULL) {
+        return 0;
+    }
+    while (*str != '\0') {
+        if (*str == ch) {
+            count++;
+        }
+        str++;
+    }
+    return count;
+}
+
+int main(void) {
+    char buffer[MAX_INPUT_LENGTH + 1];
+    char ch;
+    size_t result;
+
+    printf("Enter a string: ");
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input.\n");
+        return 1;
+    }
+
+    size_t len = strcspn(buffer, "\n");
+    buffer[len] = '\0';
+
+    printf("Enter a character to count: ");
+    int c = getchar();
+    if (c == EOF) {
+        fprintf(stderr, "Error reading character.\n");
+        return 1;
+    }
+    ch = (char)c;
+
+    result = count_char(buffer, ch);
+    printf("The character '%c' appears %zu time(s) in the string.\n", ch, result);
+
+    return 0;
+}

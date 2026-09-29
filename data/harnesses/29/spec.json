@@ -1,0 +1,78 @@
+{
+  "task_id": 29,
+  "text": "Write a C function to find the element occurring odd number of times.",
+  "fn_candidates": [
+    "get_Odd_Occurrence",
+    "GetOddOccurrence",
+    "getOddOccurrence",
+    "getOddOccurrence"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "get_Odd_Occurrence",
+      "args": [
+        [
+          1,
+          2,
+          3,
+          1,
+          2,
+          3,
+          1
+        ],
+        7
+      ],
+      "expected": 1,
+      "assert_src": "assert get_Odd_Occurrence([1,2,3,1,2,3,1],7) == 1"
+    },
+    {
+      "fn_name": "get_Odd_Occurrence",
+      "args": [
+        [
+          1,
+          2,
+          3,
+          2,
+          3,
+          1,
+          3
+        ],
+        7
+      ],
+      "expected": 3,
+      "assert_src": "assert get_Odd_Occurrence([1,2,3,2,3,1,3],7) == 3"
+    },
+    {
+      "fn_name": "get_Odd_Occurrence",
+      "args": [
+        [
+          2,
+          3,
+          5,
+          4,
+          5,
+          2,
+          4,
+          3,
+          5,
+          2,
+          4,
+          4,
+          2
+        ],
+        13
+      ],
+      "expected": 5,
+      "assert_src": "assert get_Odd_Occurrence([2,3,5,4,5,2,4,3,5,2,4,4,2],13) == 5"
+    }
+  ],
+  "arg_kinds": [
+    "int",
+    "int-list"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

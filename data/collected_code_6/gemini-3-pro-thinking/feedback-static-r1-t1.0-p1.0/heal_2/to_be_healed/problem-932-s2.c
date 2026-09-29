@@ -1,0 +1,117 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+static char *safe_strdup(const char *str) {
+    if (!str) {
+        return NULL;
+    }
+    size_t len = 0;
+    /* Possible weaknesses found:
+     *  Array index 'len' is used before limits check. [arrayIndexThenCheck]
+     */
+    while (str[len] != '\0' && len < 4096) {
+        len++;
+    }
+    char *dup = malloc(len + 1);
+    if (!dup) {
+        return NULL;
+    }
+    for (size_t i = 0; i < len; i++) {
+        dup[i] = str[i];
+    }
+    dup[len] = '\0';
+    return dup;
+}
+
+char **remove_duplicate_words(const char **words, size_t input_count, size_t *output_count) {
+    if (!words || !output_count) {
+        return NULL;
+    }
+
+    if (input_count == 0) {
+        *output_count = 0;
+        return NULL;
+    }
+
+    char **unique_words = malloc(input_count * sizeof(char *));
+    if (!unique_words) {
+        return NULL;
+    }
+
+    size_t count = 0;
+
+    for (size_t i = 0; i < input_count; ++i) {
+        if (!words[i]) {
+            continue;
+        }
+
+        int is_duplicate = 0;
+        for (size_t j = 0; j < count; ++j) {
+            if (strncmp(unique_words[j], words[i], 4096) == 0) {
+                is_duplicate = 1;
+                break;
+            }
+        }
+
+        if (!is_duplicate) {
+            unique_words[count] = safe_strdup(words[i]);
+            if (!unique_words[count]) {
+                for (size_t k = 0; k < count; ++k) {
+                    free(unique_words[k]);
+                }
+                free(unique_words);
+                return NULL;
+            }
+            count++;
+        }
+    }
+
+    if (count == 0) {
+        free(unique_words);
+        *output_count = 0;
+        return NULL;
+    }
+
+    char **resized_words = realloc(unique_words, count * sizeof(char *));
+    if (!resized_words) {
+        resized_words = unique_words;
+    }
+
+    *output_count = count;
+    return resized_words;
+}
+
+void free_words(char **words, size_t count) {
+    if (!words) {
+        return;
+    }
+    for (size_t i = 0; i < count; ++i) {
+        free(words[i]);
+    }
+    free(words);
+}
+
+int main(void) {
+    const char *input_list[] = {
+        "apple", "banana", "apple", "orange", 
+        "banana", "grape", "grape", "apple"
+    };
+    
+    size_t input_count = sizeof(input_list) / sizeof(input_list[0]);
+    size_t output_count = 0;
+
+    char **unique_list = remove_duplicate_words(input_list, input_count, &output_count);
+
+    if (unique_list) {
+        for (size_t i = 0; i < output_count; ++i) {
+            printf("%s\n", unique_list[i]);
+        }
+        free_words(unique_list, output_count);
+    } else {
+        fprintf(stderr, "Memory allocation failed or invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

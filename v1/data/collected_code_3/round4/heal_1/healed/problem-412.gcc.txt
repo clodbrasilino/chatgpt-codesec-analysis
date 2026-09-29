@@ -1,0 +1,30 @@
+./collected_code_3/round4/heal_1/healed/problem-412.c: In function 'removeOdd':
+./collected_code_3/round4/heal_1/healed/problem-412.c:17:12: warning: leak of 'result' [CWE-401] [-Wanalyzer-malloc-leak]
+   17 |     return result;
+      |            ^~~~~~
+  'removeOdd': events 1-6
+    |
+    |    5 |     int* result = (int*)malloc(numsSize * sizeof(int));
+    |      |                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                         |
+    |      |                         (1) allocated here
+    |    6 |     if (result == NULL) return NULL;
+    |      |        ~                 
+    |      |        |
+    |      |        (2) assuming 'result' is non-NULL
+    |      |        (3) following 'false' branch (when 'result' is non-NULL)...
+    |    7 | 
+    |    8 |     int j = 0;
+    |      |         ~                
+    |      |         |
+    |      |         (4) ...to here
+    |......
+    |   16 |     result = realloc(result, j * sizeof(int));
+    |      |              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |              |
+    |      |              (5) when 'realloc' fails
+    |   17 |     return result;
+    |      |            ~~~~~~        
+    |      |            |
+    |      |            (6) 'result' leaks here; was allocated at (1)
+    |

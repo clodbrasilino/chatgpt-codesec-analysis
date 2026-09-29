@@ -1,0 +1,22 @@
+#include <stdio.h>
+
+double power(double a, int b) {
+    double result = 1.0;
+    if (b >= 0) {
+        for (int i = 0; i < b; ++i) {
+            result *= a;
+        }
+    } else {
+        for (int i = 0; i > b; --i) {
+            result /= a;
+        }
+    }
+    return result;
+}
+
+int main() {
+    double base = 2.0;
+    int exponent = 3;
+    printf("%f\n", power(base, exponent));
+    return 0;
+}

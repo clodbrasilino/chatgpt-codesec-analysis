@@ -1,0 +1,10 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_0/problem-84-s2.c:65:13: error: call to undeclared function 'strtoumax'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   65 |     input = strtoumax(argv[1], &end, 10);
+      |             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_0/problem-84-s2.c:78:20: error: expected ')'
+   78 |     if (printf("%" PRIu64 "\n", result) < 0) {
+      |                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_0/problem-84-s2.c:78:15: note: to match this '('
+   78 |     if (printf("%" PRIu64 "\n", result) < 0) {
+      |               ^
+2 errors generated.

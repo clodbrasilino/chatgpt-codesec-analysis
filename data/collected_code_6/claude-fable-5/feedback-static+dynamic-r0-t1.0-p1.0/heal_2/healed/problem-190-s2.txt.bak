@@ -1,0 +1,70 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+long long countIntegralPoints(long long x1, long long y1, long long x2, long long y2)
+{
+    long long side_x;
+    long long side_y;
+
+    side_x = x2 - x1;
+    if (side_x < 0)
+    {
+        side_x = -side_x;
+    }
+
+    side_y = y2 - y1;
+    if (side_y < 0)
+    {
+        side_y = -side_y;
+    }
+
+    if (side_x != side_y)
+    {
+        return -1;
+    }
+
+    if (side_x == 0)
+    {
+        return 1;
+    }
+
+    return (side_x - 1) * (side_x - 1);
+}
+
+int main(void)
+{
+    long long x1;
+    long long y1;
+    long long x2;
+    long long y2;
+    long long result;
+
+    printf("Enter bottom-left corner (x1 y1): ");
+    if (scanf("%lld %lld", &x1, &y1) != 2)
+    {
+        fprintf(stderr, "Invalid input for first corner\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter top-right corner (x2 y2): ");
+    if (scanf("%lld %lld", &x2, &y2) != 2)
+    {
+        fprintf(stderr, "Invalid input for second corner\n");
+        return EXIT_FAILURE;
+    }
+
+    result = countIntegralPoints(x1, y1, x2, y2);
+    if (result < 0)
+    {
+        fprintf(stderr, "The given coordinates do not form a square\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Number of integral coordinates inside the square: %lld\n", result);
+
+    return EXIT_SUCCESS;
+}
+```
+
+The key fix: the original code returned `0` for any square with `side_x <= 1`. This incorrectly handled the degenerate case where both corners coincide (side length 0), which should count the single point itself and return `1` — matching the failing test case ("expected 1, got 0"). The special case is now `side_x == 0` returning `1`, while a side of length 1 still correctly yields `0` via the `(side_x - 1) * (side_x - 1)` formula.

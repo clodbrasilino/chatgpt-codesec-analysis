@@ -1,0 +1,51 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+#include <stdlib.h>
+
+#define BUFFER_SIZE 256
+
+bool all_characters_same(const char *str) {
+    if (str == NULL || str[0] == '\0') {
+        return false;
+    }
+    
+    char first = str[0];
+    size_t i = 1;
+    
+    while (str[i] != '\0') {
+        if (str[i] != first) {
+            return false;
+        }
+        i++;
+    }
+    
+    return true;
+}
+
+int main(void) {
+    char *buffer = malloc(BUFFER_SIZE);
+    if (buffer == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return 1;
+    }
+    
+    printf("Enter a string: ");
+    if (fgets(buffer, BUFFER_SIZE, stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        free(buffer);
+        return 1;
+    }
+    
+    size_t len = strcspn(buffer, "\n");
+    buffer[len] = '\0';
+    
+    if (all_characters_same(buffer)) {
+        printf("All characters are the same\n");
+    } else {
+        printf("Characters are not all the same\n");
+    }
+    
+    free(buffer);
+    return 0;
+}

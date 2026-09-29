@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_7/healed/problem-544.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_7/healed/problem-544.c:61:47: style: Condition 'length+temp_len<capacity' is always true [knownConditionTrueFalse]
+        if (temp_len > 0 && length + temp_len < capacity) {
+                                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_7/healed/problem-544.c:46:38: note: Assuming that condition 'length+temp_len+1>=capacity' is not redundant
+        while (length + temp_len + 1 >= capacity) {
+                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_7/healed/problem-544.c:61:47: note: Condition 'length+temp_len<capacity' is always true
+        if (temp_len > 0 && length + temp_len < capacity) {
+                                              ^

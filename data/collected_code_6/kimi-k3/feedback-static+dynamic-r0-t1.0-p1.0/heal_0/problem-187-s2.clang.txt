@@ -1,0 +1,7 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_0/problem-187-s2.c:59:16: warning: Value stored to 'idx' during its initialization is never read [deadcode.DeadStores]
+   59 |         size_t idx = i * (len2 + 1) + j;
+      |                ^~~   ~~~~~~~~~~~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_0/problem-187-s2.c:60:16: warning: Value stored to 'idx_diag' during its initialization is never read [deadcode.DeadStores]
+   60 |         size_t idx_diag = (i - 1) * (len2 + 1) + (j - 1);
+      |                ^~~~~~~~   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+2 warnings generated.

@@ -1,0 +1,4 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-722.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-722.c:68:16: style: Array index 'name_len' is used before limits check. [arrayIndexThenCheck]
+    while (name[name_len] != '\0' && name_len < MAX_NAME_LEN) {
+               ^

@@ -1,0 +1,44 @@
+```c
+#include <stdio.h>
+#include <limits.h>
+#include <stdbool.h>
+
+bool is_one_less_than_twice_reverse(int number) {
+    if (number < 0) {
+        return false;
+    }
+    
+    int original = number;
+    int reversed = 0;
+    
+    while (number > 0) {
+        int digit = number % 10;
+        if (reversed > (INT_MAX - digit) / 10) {
+            return false;
+        }
+        reversed = reversed * 10 + digit;
+        number /= 10;
+    }
+    
+    if (reversed > (INT_MAX - 1) / 2) {
+        return false;
+    }
+    
+    return original == 2 * reversed - 1;
+}
+
+int main(void) {
+    int test_cases[] = {37, 73, 1, 0, 123, 21};
+    size_t num_tests = sizeof(test_cases) / sizeof(test_cases[0]);
+    
+    for (size_t i = 0; i < num_tests; i++) {
+        if (is_one_less_than_twice_reverse(test_cases[i])) {
+            printf("%d: true\n", test_cases[i]);
+        } else {
+            printf("%d: false\n", test_cases[i]);
+        }
+    }
+    
+    return 0;
+}
+```

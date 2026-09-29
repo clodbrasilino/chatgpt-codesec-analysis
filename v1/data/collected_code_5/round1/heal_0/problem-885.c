@@ -1,0 +1,54 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <string.h>
+
+#define MAX_CHAR 256
+
+bool areIsomorphic(char* str1, char* str2)
+{
+    int m = strlen(str1);
+    int n = strlen(str2);
+
+    if (m != n)
+      return false;
+
+    int map[MAX_CHAR];
+    memset(map, -1, sizeof(map));
+
+    bool marked[MAX_CHAR] = {false};
+
+    for (int i = 0; i < n; i++)
+    {
+        if (map[str1[i]] == -1)
+        {
+            if (marked[str2[i]] == true)
+                return false;
+
+            marked[str2[i]] = true;
+            map[str1[i]] = str2[i];
+        }
+
+        else if (map[str1[i]] != str2[i])
+            return false;
+    }
+    return true;
+}
+
+int main()
+{
+    char str1[MAX_CHAR], str2[MAX_CHAR];
+    printf("Enter the first string: ");
+    fgets(str1, MAX_CHAR, stdin);
+    printf("Enter the second string: ");
+    fgets(str2, MAX_CHAR, stdin);
+    
+    str1[strcspn(str1, "\n")] = 0;
+    str2[strcspn(str2, "\n")] = 0;
+    
+    if (areIsomorphic(str1,str2) == true)
+       printf("The strings are isomorphic\n");
+    else
+       printf("The strings are not isomorphic\n");
+  
+    return 0;
+}

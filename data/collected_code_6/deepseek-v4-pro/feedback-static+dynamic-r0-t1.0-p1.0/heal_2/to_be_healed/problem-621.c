@@ -1,0 +1,111 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#include <limits.h>
+#include <errno.h>
+ /* Possible weaknesses found:
+  *  test case 0 failed: expected ['MSM', '240', 'is', '104', '129', 'best', '10'], got <no output>
+  *  test case 2 failed: expected ['Flutter', '484', 'is', '77', '129', 'Magnificent', '45'], got <no output>
+  *  test case 1 failed: expected ['Dart', '368', 'is', '100', '181', 'Super', '18'], got <no output>
+  */
+
+char* increment_numeric_values(const char* input, int k) {
+    if (input == NULL) {
+        return NULL;
+    }
+
+    size_t len = strnlen(input, 1000000);
+    size_t result_size = len * 2 + 1;
+    if (result_size < len) {
+        return NULL;
+    }
+    
+    char* result = malloc(result_size);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    size_t res_pos = 0;
+    size_t i = 0;
+
+    while (i < len) {
+        if (isdigit((unsigned char)input[i])) {
+            size_t start = i;
+            while (i < len && isdigit((unsigned char)input[i])) {
+                i++;
+            }
+            size_t num_len = i - start;
+            
+            if (num_len > 32) {
+                free(result);
+                return NULL;
+            }
+            
+            char* num_str = malloc(num_len + 1);
+            if (num_str == NULL) {
+                free(result);
+                return NULL;
+            }
+            
+            /* Possible weaknesses found:
+             * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+             */
+            memcpy(num_str, input + start, num_len);
+            num_str[num_len] = '\0';
+
+            errno = 0;
+            long long num = strtoll(num_str, NULL, 10);
+            if (errno == ERANGE) {
+                free(num_str);
+                free(result);
+                return NULL;
+            }
+            
+            long long new_num = num + k;
+            int written = snprintf(result + res_pos, result_size - res_pos, "%lld", new_num);
+            if (written < 0 || (size_t)written >= result_size - res_pos) {
+                free(num_str);
+                free(result);
+                return NULL;
+            }
+            res_pos += written;
+            free(num_str);
+        } else {
+            if (res_pos >= result_size - 1) {
+                free(result);
+                return NULL;
+            }
+            result[res_pos++] = input[i];
+            i++;
+        }
+    }
+
+    result[res_pos] = '\0';
+    return result;
+}
+
+int main(int argc, const char* argv[]) {
+    if (argc != 3) {
+        fprintf(stderr, "Usage: %s <string> <k>\n", argv[0]);
+        return 1;
+    }
+
+    char* endptr;
+    errno = 0;
+    long k_val = strtol(argv[2], &endptr, 10);
+    if (endptr == argv[2] || *endptr != '\0' || errno == ERANGE) {
+        fprintf(stderr, "Invalid integer for k\n");
+        return 1;
+    }
+
+    char* result = increment_numeric_values(argv[1], (int)k_val);
+    if (result == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return 1;
+    }
+
+    printf("%s\n", result);
+    free(result);
+    return 0;
+}

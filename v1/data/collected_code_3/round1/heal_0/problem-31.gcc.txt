@@ -1,0 +1,128 @@
+collected_code_3/problem-31-1.c: In function 'createMinHeap':
+collected_code_3/problem-31-1.c:17:19: warning: dereference of possibly-NULL 'minHeap' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   17 |     minHeap->size = 0;
+      |     ~~~~~~~~~~~~~~^~~
+  'main': events 1-2
+    |
+    |   81 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   85 |     topKFrequent(nums, numsSize, k);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) calling 'topKFrequent' from 'main'
+    |
+    +--> 'topKFrequent': events 3-4
+           |
+           |   69 | void topKFrequent(int* nums, int numsSize, int k) {
+           |      |      ^~~~~~~~~~~~
+           |      |      |
+           |      |      (3) entry to 'topKFrequent'
+           |   70 |     int i, j;
+           |   71 |     MinHeap* minHeap = createMinHeap(k);
+           |      |                        ~~~~~~~~~~~~~~~~
+           |      |                        |
+           |      |                        (4) calling 'createMinHeap' from 'topKFrequent'
+           |
+           +--> 'createMinHeap': events 5-7
+                  |
+                  |   15 | MinHeap* createMinHeap(int capacity) {
+                  |      |          ^~~~~~~~~~~~~
+                  |      |          |
+                  |      |          (5) entry to 'createMinHeap'
+                  |   16 |     MinHeap* minHeap = (MinHeap*) malloc(sizeof(MinHeap));
+                  |      |                                   ~~~~~~~~~~~~~~~~~~~~~~~
+                  |      |                                   |
+                  |      |                                   (6) this call could return NULL
+                  |   17 |     minHeap->size = 0;
+                  |      |     ~~~~~~~~~~~~~~~~~
+                  |      |                   |
+                  |      |                   (7) 'minHeap' could be NULL: unchecked value from (6)
+                  |
+collected_code_3/problem-31-1.c: In function 'insert':
+collected_code_3/problem-31-1.c:55:41: warning: dereference of possibly-NULL '*minHeap.arr + (long unsigned int)*minHeap.size * 8' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   55 |         minHeap->arr[minHeap->size].key = key;
+      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~
+  'main': events 1-2
+    |
+    |   81 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   85 |     topKFrequent(nums, numsSize, k);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) calling 'topKFrequent' from 'main'
+    |
+    +--> 'topKFrequent': events 3-4
+           |
+           |   69 | void topKFrequent(int* nums, int numsSize, int k) {
+           |      |      ^~~~~~~~~~~~
+           |      |      |
+           |      |      (3) entry to 'topKFrequent'
+           |   70 |     int i, j;
+           |   71 |     MinHeap* minHeap = createMinHeap(k);
+           |      |                        ~~~~~~~~~~~~~~~~
+           |      |                        |
+           |      |                        (4) calling 'createMinHeap' from 'topKFrequent'
+           |
+           +--> 'createMinHeap': events 5-6
+                  |
+                  |   15 | MinHeap* createMinHeap(int capacity) {
+                  |      |          ^~~~~~~~~~~~~
+                  |      |          |
+                  |      |          (5) entry to 'createMinHeap'
+                  |......
+                  |   19 |     minHeap->arr = (heapNode*) malloc(minHeap->capacity * sizeof(heapNode));
+                  |      |                                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                  |      |                                |
+                  |      |                                (6) this call could return NULL
+                  |
+           <------+
+           |
+         'topKFrequent': events 7-14
+           |
+           |   71 |     MinHeap* minHeap = createMinHeap(k);
+           |      |                        ^~~~~~~~~~~~~~~~
+           |      |                        |
+           |      |                        (7) returning to 'topKFrequent' from 'createMinHeap'
+           |   72 |     for (i = 0; i < numsSize; i = j) {
+           |      |                 ~~~~~~~~~~~~
+           |      |                   |
+           |      |                   (8) following 'true' branch (when 'i < numsSize')...
+           |   73 |         for (j = i; j < numsSize; ++j)
+           |      |              ~~~~~  ~~~~~~~~~~~~  ~~~
+           |      |                |      |           |
+           |      |                |      |           (13) ...to here
+           |      |                |      (10) following 'true' branch (when 'j < numsSize')...
+           |      |                (9) ...to here
+           |   74 |             if (nums[j] != nums[i])
+           |      |                ~    ~   
+           |      |                |    |
+           |      |                |    (11) ...to here
+           |      |                (12) following 'false' branch...
+           |   75 |                 break;
+           |   76 |         insert(minHeap, nums[i], j - i);
+           |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |         |
+           |      |         (14) calling 'insert' from 'topKFrequent'
+           |
+           +--> 'insert': events 15-18
+                  |
+                  |   47 | void insert(MinHeap* minHeap, int key, int freq) {
+                  |      |      ^~~~~~
+                  |      |      |
+                  |      |      (15) entry to 'insert'
+                  |   48 |     if (minHeap->size == minHeap->capacity) {
+                  |      |        ~
+                  |      |        |
+                  |      |        (16) following 'false' branch...
+                  |......
+                  |   55 |         minHeap->arr[minHeap->size].key = key;
+                  |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                  |      |                |                        |
+                  |      |                (17) ...to here          (18) '*minHeap.arr + (long unsigned int)*minHeap.size * 8' could be NULL: unchecked value from (6)
+                  |

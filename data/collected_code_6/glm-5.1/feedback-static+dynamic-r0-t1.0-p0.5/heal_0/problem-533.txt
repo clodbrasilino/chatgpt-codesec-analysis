@@ -1,0 +1,138 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef enum {
+    TYPE_INT,
+    TYPE_FLOAT,
+    TYPE_CHAR
+} DataType;
+
+typedef struct {
+    DataType type;
+    union {
+        int int_val;
+        float float_val;
+        char char_val;
+    } data;
+} TupleElement;
+
+typedef struct {
+    TupleElement *elements;
+    size_t size;
+    size_t capacity;
+} Tuple;
+
+Tuple tuple_create(size_t capacity) {
+    Tuple t;
+    t.capacity = capacity > 0 ? capacity : 1;
+    t.size = 0;
+    t.elements = (TupleElement *)malloc(t.capacity * sizeof(TupleElement));
+    if (t.elements == NULL) {
+        exit(EXIT_FAILURE);
+    }
+    return t;
+}
+
+void tuple_append(Tuple *t, DataType type, void *value) {
+    if (t->size == t->capacity) {
+        size_t new_capacity = t->capacity * 2;
+        TupleElement *new_elements = (TupleElement *)realloc(t->elements, new_capacity * sizeof(TupleElement));
+        if (new_elements == NULL) {
+            free(t->elements);
+            exit(EXIT_FAILURE);
+        }
+        t->elements = new_elements;
+        t->capacity = new_capacity;
+    }
+    t->elements[t->size].type = type;
+    switch (type) {
+        case TYPE_INT:
+            t->elements[t->size].data.int_val = *(int *)value;
+            break;
+        case TYPE_FLOAT:
+            t->elements[t->size].data.float_val = *(float *)value;
+            break;
+        case TYPE_CHAR:
+            t->elements[t->size].data.char_val = *(char *)value;
+            break;
+    }
+    t->size++;
+}
+
+Tuple tuple_remove_type(Tuple *t, DataType type_to_remove) {
+    Tuple new_tuple = tuple_create(t->size > 0 ? t->size : 1);
+    for (size_t i = 0; i < t->size; i++) {
+        if (t->elements[i].type != type_to_remove) {
+            switch (t->elements[i].type) {
+                case TYPE_INT:
+                    tuple_append(&new_tuple, TYPE_INT, &t->elements[i].data.int_val);
+                    break;
+                case TYPE_FLOAT:
+                    tuple_append(&new_tuple, TYPE_FLOAT, &t->elements[i].data.float_val);
+                    break;
+                case TYPE_CHAR:
+                    tuple_append(&new_tuple, TYPE_CHAR, &t->elements[i].data.char_val);
+                    break;
+            }
+        }
+    }
+    return new_tuple;
+}
+
+void tuple_free(Tuple *t) {
+    free(t->elements);
+    t->elements = NULL;
+    t->size = 0;
+    t->capacity = 0;
+}
+
+void tuple_print(Tuple *t) {
+    printf("(");
+    for (size_t i = 0; i < t->size; i++) {
+        switch (t->elements[i].type) {
+            case TYPE_INT:
+                printf("%d", t->elements[i].data.int_val);
+                break;
+            case TYPE_FLOAT:
+                printf("%f", t->elements[i].data.float_val);
+                break;
+            case TYPE_CHAR:
+                printf("'%c'", t->elements[i].data.char_val);
+                break;
+        }
+        if (i < t->size - 1) {
+            printf(", ");
+        }
+    }
+    printf(")\n");
+}
+
+int main(void) {
+    Tuple t = tuple_create(4);
+    int v1 = 10;
+    float v2 = 3.14f;
+    char v3 = 'A';
+    int v4 = 20;
+    float v5 = 6.28f;
+
+    tuple_append(&t, TYPE_INT, &v1);
+    tuple_append(&t, TYPE_FLOAT, &v2);
+    tuple_append(&t, TYPE_CHAR, &v3);
+    tuple_append(&t, TYPE_INT, &v4);
+    tuple_append(&t, TYPE_FLOAT, &v5);
+
+    printf("Original: ");
+    tuple_print(&t);
+
+    Tuple filtered = tuple_remove_type(&t, TYPE_INT);
+    printf("Removed TYPE_INT: ");
+    tuple_print(&filtered);
+
+    tuple_free(&t);
+    tuple_free(&filtered);
+
+    return 0;
+}
+```

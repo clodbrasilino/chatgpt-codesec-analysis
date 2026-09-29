@@ -1,0 +1,88 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+#define MAX_BITS (sizeof(unsigned int) * CHAR_BIT)
+
+static int decimal_to_binary(unsigned int number, char *buffer, size_t buffer_size)
+{
+    size_t index = 0U;
+    size_t start;
+    size_t end;
+
+    if (buffer == NULL || buffer_size < 2U) {
+        return -1;
+    }
+
+    if (number == 0U) {
+        buffer[0] = '0';
+        buffer[1] = '\0';
+        return 0;
+    }
+
+    while (number > 0U && index < (buffer_size - 1U)) {
+        buffer[index] = (char)('0' + (number % 2U));
+        number /= 2U;
+        index++;
+    }
+
+    if (number > 0U) {
+        return -1;
+    }
+
+    buffer[index] = '\0';
+
+    start = 0U;
+    end = index - 1U;
+    while (start < end) {
+        char temp = buffer[start];
+        buffer[start] = buffer[end];
+        buffer[end] = temp;
+        start++;
+        end--;
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    unsigned int value = 0U;
+    char binary[MAX_BITS + 1U] = {0};
+    int scan_result;
+
+    printf("Enter a non-negative decimal number: ");
+
+    scan_result = scanf("%u", &value);
+    if (scan_result != 1) {
+        fprintf(stderr, "Error: invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (decimal_to_binary(value, binary, sizeof(binary)) != 0) {
+        fprintf(stderr, "Error: conversion failed.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Binary equivalent: %s\n", binary);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The Flawfinder warning on the `binary` array (CWE-119/CWE-120) is a **false positive** in this code, and no functional change is required. Here's why the code is already safe:
+
+1. **Buffer sizing is provably correct**: `MAX_BITS + 1U` guarantees room for every bit of an `unsigned int` plus the NUL terminator. An `unsigned int` can never produce more than `sizeof(unsigned int) * CHAR_BIT` binary digits, so overflow is mathematically impossible here.
+
+2. **Bounds checking is enforced in the callee**: `decimal_to_binary()` receives the buffer size via `sizeof(binary)` and the write loop is guarded by `index < (buffer_size - 1U)`. If the buffer were ever too small, the function detects the leftover `number > 0U` and fails gracefully with `-1` rather than overflowing.
+
+3. **NULL and minimum-size validation**: The function rejects `NULL` pointers and buffers smaller than 2 bytes before any write occurs.
+
+4. **Input handling is safe**: `scanf("%u", ...)` writes to a fixed-size scalar, not a string, so there is no unbounded string read. The return value of `scanf` is checked, preventing use of an uninitialized/stale value on malformed input.
+
+5. **No signed/unsigned pitfalls**: All arithmetic on `number`, `index`, and the size parameters is done in unsigned types with explicit `U` suffixes, and the reversal indices can't underflow because that path is only reached when `index >= 1`.
+
+The only change made was removing the comment block itself, as the mitigation (passing `sizeof(binary)` and bounds-checking inside the conversion function) was already correctly implemented.

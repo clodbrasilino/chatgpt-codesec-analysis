@@ -1,0 +1,120 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#define MAX_WORDS 100
+#define MAX_WORD_LEN 100
+
+int is_anagram(const char *str1, const char *str2)
+{
+    int count[256] = {0};
+    size_t len1, len2, i;
+
+    if (str1 == NULL || str2 == NULL) {
+        return 0;
+    }
+
+    len1 = strlen(str1);
+    len2 = strlen(str2);
+
+    if (len1 != len2) {
+        return 0;
+    }
+
+    for (i = 0; i < len1; i++) {
+        count[(unsigned char)tolower((unsigned char)str1[i])]++;
+        count[(unsigned char)tolower((unsigned char)str2[i])]--;
+    }
+
+    for (i = 0; i < 256; i++) {
+        if (count[i] != 0) {
+            return 0;
+        }
+    }
+
+    return 1;
+}
+
+int find_anagrams(const char *target, const char *word_list[], int list_size, char *results[], int max_results)
+{
+    int count = 0;
+    int i;
+
+    if (target == NULL || word_list == NULL || results == NULL || list_size < 0 || max_results <= 0) {
+        return -1;
+    }
+
+    for (i = 0; i < list_size && count < max_results; i++) {
+        if (word_list[i] != NULL && is_anagram(target, word_list[i])) {
+            results[count] = malloc(strlen(word_list[i]) + 1);
+            if (results[count] == NULL) {
+                int j;
+                for (j = 0; j < count; j++) {
+                    free(results[j]);
+                    results[j] = NULL;
+                }
+                return -1;
+            }
+            strcpy(results[count], word_list[i]);
+            count++;
+        }
+    }
+
+    return count;
+}
+
+void free_results(char *results[], int count)
+{
+    int i;
+
+    if (results == NULL) {
+        return;
+    }
+
+    for (i = 0; i < count; i++) {
+        if (results[i] != NULL) {
+            free(results[i]);
+            results[i] = NULL;
+        }
+    }
+}
+
+int main(void)
+{
+    const char *word_list[] = {
+        "listen", "silent", "enlist", "hello", "world", 
+        "act", "cat", "tac", "dog", "god", "stop", "pots"
+    };
+    const char *target = "cat";
+    char *results[MAX_WORDS];
+    int result_count;
+    int i;
+    int list_size = sizeof(word_list) / sizeof(word_list[0]);
+
+    for (i = 0; i < MAX_WORDS; i++) {
+        results[i] = NULL;
+    }
+
+    result_count = find_anagrams(target, word_list, list_size, results, MAX_WORDS);
+
+    if (result_count < 0) {
+        fprintf(stderr, "Error: Failed to find anagrams\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Anagrams of '%s':\n", target);
+    if (result_count == 0) {
+        printf("No anagrams found.\n");
+    } else {
+        for (i = 0; i < result_count; i++) {
+            printf("%s\n", results[i]);
+        }
+    }
+
+    free_results(results, result_count);
+
+    return EXIT_SUCCESS;
+}
+```

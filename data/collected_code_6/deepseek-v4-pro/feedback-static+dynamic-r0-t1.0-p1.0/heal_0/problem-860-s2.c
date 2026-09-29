@@ -1,0 +1,44 @@
+#include <stdio.h>
+#include <regex.h>
+#include <string.h>
+
+int ends_with_alphanumeric(const char *str) {
+    regex_t regex;
+    int ret;
+    regmatch_t match;
+    const char *pattern = "[[:alnum:]]$";
+    
+    if (str == NULL || strlen(str) == 0) {
+        return 0;
+    }
+    
+    ret = regcomp(&regex, pattern, REG_EXTENDED);
+    if (ret != 0) {
+        return -1;
+    }
+    
+    ret = regexec(&regex, str, 1, &match, 0);
+    regfree(&regex);
+    
+    if (ret == 0) {
+        return 1;
+    } else if (ret == REG_NOMATCH) {
+        return 0;
+    } else {
+        return -1;
+    }
+}
+
+int main(void) {
+    const char *test1 = "Hello123";
+    const char *test2 = "Hello123!";
+    const char *test3 = "Test";
+    const char *test4 = "Test.";
+    
+    printf("'%s' ends with alphanumeric: %d\n", test1, ends_with_alphanumeric(test1));
+    printf("'%s' ends with alphanumeric: %d\n", test2, ends_with_alphanumeric(test2));
+    printf("'%s' ends with alphanumeric: %d\n", test3, ends_with_alphanumeric(test3));
+    printf("'%s' ends with alphanumeric: %d\n", test4, ends_with_alphanumeric(test4));
+    
+    return 0;
+}

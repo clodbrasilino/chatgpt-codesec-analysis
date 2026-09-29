@@ -1,0 +1,104 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+#define URL_PATTERN "^(https?|ftp)://[A-Za-z0-9.-]+(\\.[A-Za-z]{2,})(:[0-9]{1,5})?(/[A-Za-z0-9._~:/?#@!$&'()*+,;=%-]*)?$"
+#define MAX_URL_LEN 2048
+#define ERRBUF_LEN 256
+
+static int compile_url_regex(regex_t *regex)
+{
+    int ret;
+
+    ret = regcomp(regex, URL_PATTERN, REG_EXTENDED | REG_NOSUB);
+    if (ret != 0) {
+        char errbuf[ERRBUF_LEN];
+        size_t needed;
+
+        memset(errbuf, 0, sizeof(errbuf));
+        needed = regerror(ret, regex, errbuf, sizeof(errbuf) - 1);
+        if (needed >= sizeof(errbuf)) {
+            errbuf[sizeof(errbuf) - 1] = '\0';
+        }
+        fprintf(stderr, "Regex compilation failed: %s\n", errbuf);
+        return -1;
+    }
+    return 0;
+}
+
+static int is_valid_url(const regex_t *regex, const char *url)
+{
+    int ret;
+    size_t len;
+
+    if (regex == NULL || url == NULL) {
+        return 0;
+    }
+
+    len = strnlen(url, MAX_URL_LEN + 1);
+    if (len == 0 || len > MAX_URL_LEN) {
+        return 0;
+    }
+
+    ret = regexec(regex, url, 0, NULL, 0);
+    if (ret == 0) {
+        return 1;
+    }
+    if (ret == REG_NOMATCH) {
+        return 0;
+    }
+
+    fprintf(stderr, "Regex execution failed\n");
+    return -1;
+}
+
+int main(void)
+{
+    regex_t regex;
+    const char *test_urls[] = {
+        "https://www.example.com",
+        "http://example.com/path/to/page?query=value",
+        "ftp://files.example.org:2121/downloads",
+        "https://sub.domain.co.uk/index.html",
+        "not_a_url",
+        "http://",
+        "www.example.com",
+        "https://example",
+        ""
+    };
+    size_t count = sizeof(test_urls) / sizeof(test_urls[0]);
+    size_t i;
+
+    if (compile_url_regex(&regex) != 0) {
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i < count; i++) {
+        int result = is_valid_url(&regex, test_urls[i]);
+        if (result < 0) {
+            fprintf(stderr, "Error while validating URL: %s\n", test_urls[i]);
+            regfree(&regex);
+            return EXIT_FAILURE;
+        }
+        printf("%-60s : %s\n", test_urls[i], result == 1 ? "VALID" : "INVALID");
+        fflush(stdout);
+    }
+
+    regfree(&regex);
+    return EXIT_SUCCESS;
+}
+```
+
+**Key changes made:**
+
+1. **Regex compiled once** — The original compiled and freed the regex on every call, which is wasteful and a potential source of intermittent failures. It is now compiled once in `main` and passed by reference, then freed exactly once before exit.
+
+2. **Buffer safety (CWE-119/CWE-120)** — The `errbuf` is now zero-initialized with `memset`, `regerror` is limited to `sizeof(errbuf) - 1`, and its return value is checked so truncation cannot leave the buffer unterminated.
+
+3. **Missing output (failed test cases 0, 1, 2)** — The "got `<no output>`" symptom typically indicates unflushed stdout when the process terminates or output is piped. An explicit `fflush(stdout)` after each result guarantees the output is emitted.
+
+4. **Resource leak on error path** — In the original, if a later regex operation failed mid-loop, control flow could exit without releasing resources; `regfree` is now called on every exit path after successful compilation.
+
+5. **Length checking preserved** — `strnlen` bounded by `MAX_URL_LEN + 1` remains, rejecting empty and oversized inputs before any regex execution, preventing unbounded reads on non-terminated input.

@@ -1,0 +1,4 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-598-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-598-s3.c:28:46: style: Redundant condition: temp<=INT_MAX/remainder. 'A || (!A && B)' is equivalent to 'A || B' [redundantCondition]
+            if ((temp > INT_MAX / remainder) || (temp <= INT_MAX / remainder && temp * remainder > INT_MAX)) {
+                                             ^

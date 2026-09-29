@@ -5,7 +5,7 @@ One JSONL record per API call, appended to
 be audited per cell, per round, and per call kind (generate vs heal).
 
 The ledger path is derived from the heal output dir the call writes into:
-``collected_code_6/{model}/{slug}/heal_N[/healed]`` -> walk up past ``heal_*``
+``data/collected_code_6/{model}/{slug}/heal_N[/healed]`` -> walk up past ``heal_*``
 to the cell dir; the ledger is a sibling of the cell's manifest under
 ``results/``. Thread-safe: called from the generate/heal thread pools.
 """

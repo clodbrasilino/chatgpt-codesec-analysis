@@ -1,0 +1,48 @@
+#include <stdio.h>
+#include <string.h>
+#include <regex.h>
+
+int find_sequence(char *str) {
+    regex_t regex;
+    int reti;
+
+    reti = regcomp(&regex, "^[a-z]+(_[a-z]+)*$", 0);
+    if (reti) {
+        fprintf(stderr, "Could not compile regex\n");
+        return 1;
+    }
+
+    reti = regexec(&regex, str, 0, NULL, 0);
+    if (!reti) {
+        return 0;
+    } else if (reti == REG_NOMATCH) {
+        return 1;
+    } else {
+        char msgbuf[100];
+        regerror(reti, &regex, msgbuf, sizeof(msgbuf));
+        fprintf(stderr, "Regex match failed: %s\n", msgbuf);
+        return 1;
+    }
+
+    regfree(&regex);
+    return 0;
+}
+
+int main() {
+    char str1[] = "this_is_a_test";
+    char str2[] = "thisIsNotATest";
+
+    if (!find_sequence(str1)) {
+        printf("'%s' is a valid sequence.\n", str1);
+    } else {
+        printf("'%s' is not a valid sequence.\n", str1);
+    }
+
+    if (!find_sequence(str2)) {
+        printf("'%s' is a valid sequence.\n", str2);
+    } else {
+        printf("'%s' is not a valid sequence.\n", str2);
+    }
+
+    return 0;
+}

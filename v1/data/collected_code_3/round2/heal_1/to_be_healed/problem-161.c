@@ -1,0 +1,82 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node* next;
+} Node;
+
+Node* createNode(int data) {
+    Node* newNode = (Node*)malloc(sizeof(Node));
+    /* Possible weaknesses found:
+     *  dereference of possibly-NULL 'newNode' [CWE-690] [-Wanalyzer-possible-null-dereference]
+     */
+    newNode->data = data;
+    newNode->next = NULL;
+    return newNode;
+}
+
+void push(Node** head, int data) {
+    Node* newNode = createNode(data);
+    newNode->next = (*head);
+    (*head) = newNode;
+}
+
+void printList(Node* head) {
+    while (head != NULL) {
+        printf("%d ", head->data);
+        head = head->next;
+    }
+    printf("\n");
+}
+
+void removeElements(Node** firstList, Node* secondList) {
+    Node* temp = secondList;
+    while (temp != NULL) {
+        Node* prev = NULL;
+        Node* current = *firstList;
+        while (current != NULL) {
+            if (current->data == temp->data) {
+                if (prev == NULL) {
+                    *firstList = current->next;
+                } else {
+                    prev->next = current->next;
+                }
+                free(current);
+            } else {
+                prev = current;
+            }
+            /* Possible weaknesses found:
+             *  dereference of NULL 'prev' [CWE-476] [-Wanalyzer-null-dereference]
+             */
+            current = prev->next;
+        }
+        temp = temp->next;
+    }
+}
+
+int main() {
+    Node* firstList = NULL;
+    Node* secondList = NULL;
+
+    push(&firstList, 10);
+    push(&firstList, 20);
+    push(&firstList, 30);
+    push(&firstList, 40);
+    push(&firstList, 50);
+
+    push(&secondList, 20);
+    push(&secondList, 40);
+
+    printf("First List: ");
+    printList(firstList);
+    printf("Second List: ");
+    printList(secondList);
+
+    removeElements(&firstList, secondList);
+
+    printf("Modified First List: ");
+    printList(firstList);
+
+    return 0;
+}

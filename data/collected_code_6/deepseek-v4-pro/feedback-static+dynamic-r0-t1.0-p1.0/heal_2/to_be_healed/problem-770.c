@@ -1,0 +1,83 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <limits.h>
+#include <string.h>
+#include <ctype.h>
+
+static unsigned long long sum_of_fourth_power_odd(unsigned int n) {
+    unsigned long long sum = 0;
+    unsigned long long odd = 1;
+    unsigned int i;
+
+    for (i = 0; i < n; ++i) {
+        unsigned long long square = odd * odd;
+        unsigned long long fourth = square * square;
+        if (ULLONG_MAX - fourth < sum) {
+            return ULLONG_MAX;
+        }
+        sum += fourth;
+        if (odd > ULLONG_MAX - 2) {
+            break;
+        }
+        odd += 2;
+    }
+
+    return sum;
+}
+
+int main(void) {
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char input[64];
+    char *endptr;
+    unsigned long val;
+    unsigned int n;
+
+    printf("Enter the number of odd natural numbers: ");
+    if (fgets(input, sizeof(input), stdin) == NULL) {
+        fprintf(stderr, "Error reading input.\n");
+        return EXIT_FAILURE;
+    }
+
+    input[strcspn(input, "\n")] = '\0';
+
+    if (input[0] == '\0') {
+        fprintf(stderr, "Invalid input. Please enter a non-negative integer.\n");
+        return EXIT_FAILURE;
+    }
+
+    char *check = input;
+    while (*check) {
+        if (!isdigit((unsigned char)*check)) {
+            fprintf(stderr, "Invalid input. Please enter a non-negative integer.\n");
+            return EXIT_FAILURE;
+        }
+        check++;
+    }
+
+    errno = 0;
+    val = strtoul(input, &endptr, 10);
+    if (errno == ERANGE || val > UINT_MAX) {
+        fprintf(stderr, "Input out of range. Please enter a smaller non-negative integer.\n");
+        return EXIT_FAILURE;
+    }
+    if (endptr == input || *endptr != '\0') {
+        fprintf(stderr, "Invalid input. Please enter a non-negative integer.\n");
+        return EXIT_FAILURE;
+    }
+
+    n = (unsigned int)val;
+
+    unsigned long long result = sum_of_fourth_power_odd(n);
+    if (result == ULLONG_MAX && n > 0) {
+        printf("Result overflowed for the given input.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Sum of fourth powers of first %u odd natural numbers: %llu\n",
+           n, result);
+
+    return EXIT_SUCCESS;
+}

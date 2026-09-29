@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-540-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-540-s3.c:5:43: style: The scope of the variable 'count' can be reduced. [variableScope]
+    int maxCount = 0, minCount = INT_MAX, count;
+                                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-540-s3.c:6:9: style: The scope of the variable 'maxVal' can be reduced. [variableScope]
+    int maxVal, minVal;
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-540-s3.c:6:17: style: The scope of the variable 'minVal' can be reduced. [variableScope]
+    int maxVal, minVal;
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-540-s3.c:4:29: style: Parameter 'arr' can be declared as pointer to const [constParameterPointer]
+int findFreqDifference(int *arr, int n) {
+                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-540-s3.c:17:20: style: Variable 'maxVal' is assigned a value that is never used. [unreadVariable]
+            maxVal = arr[i];
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-540-s3.c:21:20: style: Variable 'minVal' is assigned a value that is never used. [unreadVariable]
+            minVal = arr[i];
+                   ^

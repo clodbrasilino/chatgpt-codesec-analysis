@@ -1,0 +1,99 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+
+int *extract_every_nth(const int *matrix, size_t rows, size_t cols,
+                       size_t step, size_t *out_rows, size_t *out_cols)
+{
+    size_t new_cols;
+    size_t total;
+    size_t i;
+    size_t k;
+    int *result;
+
+    if (matrix == NULL || out_rows == NULL || out_cols == NULL ||
+        step == 0 || rows == 0 || cols == 0)
+    {
+        return NULL;
+    }
+
+    if (rows > SIZE_MAX / cols)
+    {
+        return NULL;
+    }
+
+    new_cols = cols / step;
+    if (cols % step != 0)
+    {
+        new_cols++;
+    }
+
+    if (new_cols != 0 && rows > SIZE_MAX / new_cols)
+    {
+        return NULL;
+    }
+
+    total = rows * new_cols;
+
+    if (total > SIZE_MAX / sizeof(int))
+    {
+        return NULL;
+    }
+
+    result = (int *)malloc(total * sizeof(int));
+    if (result == NULL)
+    {
+        return NULL;
+    }
+
+    for (i = 0; i < rows; i++)
+    {
+        for (k = 0; k < new_cols; k++)
+        {
+            result[i * new_cols + k] = matrix[i * cols + k * step];
+        }
+    }
+
+    *out_rows = rows;
+    *out_cols = new_cols;
+
+    return result;
+}
+
+int main(void)
+{
+    int matrix[3][4] = {
+        {1, 2, 3, 4},
+        {5, 6, 7, 8},
+        {9, 10, 11, 12}
+    };
+    size_t out_rows = 0;
+    size_t out_cols = 0;
+    size_t i;
+    size_t j;
+    int *extracted;
+
+    extracted = extract_every_nth(&matrix[0][0], 3, 4, 2, &out_rows, &out_cols);
+    if (extracted == NULL)
+    {
+        fprintf(stderr, "Error: element extraction failed\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Extracted elements:\n");
+    for (i = 0; i < out_rows; i++)
+    {
+        for (j = 0; j < out_cols; j++)
+        {
+            printf("%d ", extracted[i * out_cols + j]);
+        }
+        printf("\n");
+    }
+
+    free(extracted);
+    extracted = NULL;
+
+    return EXIT_SUCCESS;
+}
+```

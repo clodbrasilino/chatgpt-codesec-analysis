@@ -1,0 +1,91 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+#define MAX_SIZE 100
+
+char* getSecondMostRepeatedString(char** sequence, int size) {
+  if (size < 2) {
+    return NULL;
+  }
+
+  int maxFrequency = 0;
+  int secondMaxFrequency = 0;
+
+  for (int i = 0; i < size; i++) {
+    if (!sequence[i]) continue;
+    int frequency = 1;
+
+    for (int j = i + 1; j < size; j++) {
+      if (sequence[j] && strcmp(sequence[i], sequence[j]) == 0) {
+        frequency++;
+        sequence[j] = NULL;
+      }
+    }
+
+    if (frequency > maxFrequency) {
+      secondMaxFrequency = maxFrequency;
+      maxFrequency = frequency;
+    } else if (frequency > secondMaxFrequency && frequency < maxFrequency) {
+      secondMaxFrequency = frequency;
+    }
+  }
+
+  for (int i = 0; i < size; i++) {
+    if (sequence[i] && strcmp(sequence[i], "") != 0) {
+      int frequency = 1;
+
+      for (int j = i + 1; j < size; j++) {
+        if (sequence[j] && strcmp(sequence[i], sequence[j]) == 0) {
+          frequency++;
+        }
+      }
+
+      if (frequency == secondMaxFrequency) {
+        return sequence[i];
+      }
+    }
+  }
+
+  return NULL;
+}
+
+int main() {
+  int n;
+  printf("Enter the number of strings: ");
+  scanf("%d", &n);
+
+  if (n > MAX_SIZE)
+      n = MAX_SIZE;
+
+  char* sequence[MAX_SIZE];
+  printf("Enter the strings:\n");
+
+  /* Possible weaknesses found:
+   *  Assuming condition is false
+   */
+  for (int i = 0; i < n; i++) {
+    sequence[i] = (char*)malloc(MAX_SIZE * sizeof(char));
+    /* Possible weaknesses found:
+     *   It's unclear if the %s limit in the format string is small enough  (CWE-120). Check that the limit is sufficiently small, or use a different  input function.
+     */
+    scanf("%99s", sequence[i]);
+  }
+
+  /* Possible weaknesses found:
+   *  Calling function 'getSecondMostRepeatedString', 1st argument 'sequence' value is <Uninit>
+   */
+  char* secondMostRepeatedString = getSecondMostRepeatedString(sequence, n);
+
+  if (secondMostRepeatedString) {
+    printf("The second most repeated string is: %s\n", secondMostRepeatedString);
+  } else {
+    printf("No second most repeated string found.\n");
+  }
+
+  for (int i = 0; i < n; i++) {
+    free(sequence[i]);
+  }
+
+  return 0;
+}

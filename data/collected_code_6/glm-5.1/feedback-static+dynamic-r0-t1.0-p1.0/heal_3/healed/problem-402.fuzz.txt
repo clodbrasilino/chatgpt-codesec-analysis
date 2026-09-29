@@ -1,0 +1,6 @@
+problem-402.c:9:30:medium:UBSan: signed integer overflow: 5843312253591 * 3119374093003 cannot be represented in type 'long long' (AFL crash: id:000002,sig:06,src:000001,time:4360,execs:1973,op:havoc,rep:4)
+problem-402.c:12:22:medium:UBSan: signed integer overflow: 4294967296 * 4294967296 cannot be represented in type 'long long' (AFL crash: id:000002,sig:06,src:000001,time:4360,execs:1973,op:havoc,rep:4)
+problem-402.c:28:0:high:ASan: FPE (AFL crash: id:000001,sig:06,src:000001,time:1072,execs:587,op:havoc,rep:4)
+problem-402.c:28:29:medium:UBSan: division by zero (AFL crash: id:000001,sig:06,src:000001,time:1072,execs:587,op:havoc,rep:4)
+problem-402.c:33:20:medium:UBSan: signed integer overflow: 16916855216925 * 16916855216926 cannot be represented in type 'long long' (AFL crash: id:000002,sig:06,src:000001,time:4360,execs:1973,op:havoc,rep:4)
+problem-402.c:38:0:error:Fuzzing found a crash (signal 6) on input id:000000,sig:06,src:000001,time:876,execs:489,op:havoc,rep:3; likely memory-safety defect

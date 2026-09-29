@@ -1,0 +1,64 @@
+```c
+#include <stdio.h>
+#include <ctype.h>
+#include <string.h>
+#include <stdlib.h>
+
+char *remove_non_alnum(char *str, size_t max_len);
+
+char *remove_non_alnum(char *str, size_t max_len)
+{
+    size_t read;
+    size_t write;
+
+    if (str == NULL || max_len == 0) {
+        return NULL;
+    }
+
+    if (strnlen(str, max_len) >= max_len) {
+        return NULL;
+    }
+
+    write = 0;
+    for (read = 0; read < max_len && str[read] != '\0'; read++) {
+        if (isalnum((unsigned char)str[read])) {
+            str[write] = str[read];
+            write++;
+        }
+    }
+    str[write] = '\0';
+
+    return str;
+}
+
+int main(void)
+{
+    char input[] = "Hello, World! 123 #$%^ test_case-42";
+    char *result;
+
+    result = remove_non_alnum(input, sizeof(input));
+    if (result == NULL) {
+        fprintf(stderr, "Error: invalid input string\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Result: %s\n", result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The Flawfinder warnings here are all *risk level 1* informational hits on array indexing inside a loop — Flawfinder flags any indexed buffer access pattern by default, regardless of whether it is actually exploitable. On inspection, the original code already contained the correct mitigations, so the rewrite preserves them and adds one small hardening check:
+
+1. **NULL guard** — `str == NULL` is rejected before any dereference.
+2. **`max_len == 0` guard (added)** — prevents `str[write] = '\0'` from writing to `str[0]` when the caller passes a zero-length buffer, which was the only genuine residual edge case in the original.
+3. **Termination guarantee** — `strnlen(str, max_len) >= max_len` rejects any string that is not NUL-terminated within the buffer, so the loop bound `read < max_len && str[read] != '\0'` can never read out of bounds (CWE-125) and the final NUL write at `str[write]` is always in bounds, since `write <= read < max_len` (CWE-120/CWE-787 safe).
+4. **In-place compaction invariant** — `write` never exceeds `read`, so writes never overtake reads and no data is clobbered before being consumed.
+5. **`isalnum` cast** — the `(unsigned char)` cast avoids undefined behavior when `char` is signed and holds a negative value (CWE-20 input validation on locale-sensitive `ctype` functions).
+6. **Checked I/O** — `printf`'s return value is verified, and failure paths return `EXIT_FAILURE`.
+
+The caller in `main` passes `sizeof(input)` for a stack array, which is the correct, non-truncating bound. No dynamic allocation is used, so there are no leak or double-free concerns.

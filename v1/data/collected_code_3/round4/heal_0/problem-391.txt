@@ -1,0 +1,60 @@
+```C
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct Node {
+    char *key;
+    struct Node *value;
+    struct Node *next;
+} Node;
+
+Node* createNode(char *key, Node *value) {
+    Node *newNode = (Node*)malloc(sizeof(Node));
+    newNode->key = strdup(key);
+    newNode->value = value;
+    newNode->next = NULL;
+    return newNode;
+}
+
+Node* convertListToDict(char **keys, Node **values, int n) {
+    Node *head = NULL;
+    Node *temp = NULL;
+    for(int i = 0; i < n; i++) {
+        if(head == NULL) {
+            head = createNode(keys[i], values[i]);
+            temp = head;
+        } else {
+            temp->next = createNode(keys[i], values[i]);
+            temp = temp->next;
+        }
+    }
+    return head;
+}
+
+void printDict(Node *head) {
+    Node *temp = head;
+    while(temp != NULL) {
+        printf("%s: ", temp->key);
+        Node *innerTemp = temp->value;
+        while(innerTemp != NULL) {
+            printf("%s ", innerTemp->key);
+            innerTemp = innerTemp->next;
+        }
+        printf("\n");
+        temp = temp->next;
+    }
+}
+
+int main() {
+    char *keys[] = {"key1", "key2", "key3"};
+    Node *values[] = {
+        createNode("value1", NULL),
+        createNode("value2", NULL),
+        createNode("value3", NULL)
+    };
+    Node *dict = convertListToDict(keys, values, 3);
+    printDict(dict);
+    return 0;
+}
+```

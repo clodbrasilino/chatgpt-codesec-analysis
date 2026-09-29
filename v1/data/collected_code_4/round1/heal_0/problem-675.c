@@ -1,0 +1,18 @@
+#include <stdio.h>
+
+int addIntegers(int a, int b, int lowerRange, int upperRange) {
+    int sum = a + b;
+    if (sum > lowerRange && sum < upperRange) {
+        return 20;
+    }
+    return sum;
+}
+
+int main() {
+    int a = 10;
+    int b = 15;
+    int lowerRange = 20;
+    int upperRange = 30;
+    printf("The result is %d\n", addIntegers(a, b, lowerRange, upperRange));
+    return 0;
+}

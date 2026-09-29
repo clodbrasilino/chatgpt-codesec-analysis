@@ -1,0 +1,41 @@
+#include <stdio.h>
+#include <limits.h>
+
+unsigned int toggle_bits(unsigned int num)
+{
+    if (num == 0 || num == 1) {
+        return num;
+    }
+
+    unsigned int temp = num;
+    int bit_count = 0;
+
+    while (temp > 1) {
+        temp >>= 1;
+        bit_count++;
+    }
+
+    for (int i = 1; i < bit_count; i++) {
+        unsigned int mask = 1U << i;
+        num ^= mask;
+    }
+
+    return num;
+}
+
+int main(void)
+{
+    unsigned int num;
+    unsigned int result;
+
+    printf("Enter a number: ");
+    if (scanf("%u", &num) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return 1;
+    }
+
+    result = toggle_bits(num);
+    printf("Result: %u\n", result);
+
+    return 0;
+}

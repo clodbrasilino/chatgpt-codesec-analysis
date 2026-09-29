@@ -1,0 +1,193 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stddef.h>
+
+#define INITIAL_BUCKET_COUNT 64
+#define MAX_KEY_LENGTH      256
+
+typedef struct Pair {
+    const char *key;
+    int value;
+} Pair;
+
+typedef struct ValueNode {
+    int value;
+    struct ValueNode *next;
+} ValueNode;
+
+typedef struct KeyNode {
+    char *key;
+    ValueNode *values_head;
+    ValueNode *values_tail;
+    struct KeyNode *next;
+} KeyNode;
+
+typedef struct Dict {
+    KeyNode **buckets;
+    int bucket_count;
+} Dict;
+
+static size_t safe_strlen(const char *s, size_t max_len) {
+    size_t count = 0;
+    while (count < max_len && s[count] != '\0') {
+        count++;
+    }
+    if (count == max_len) {
+        return (size_t)-1;
+    }
+    return count;
+}
+
+static char *duplicate_string(const char *s, size_t len) {
+    char *copy = malloc(len + 1);
+    if (copy == NULL) {
+        return NULL;
+    }
+    /* Possible weaknesses found:
+     * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+     */
+    memcpy(copy, s, len);
+    copy[len] = '\0';
+    return copy;
+}
+
+static unsigned int hash_key(const char *key, size_t key_len, int bucket_count) {
+    unsigned int hash = 5381;
+    for (size_t i = 0; i < key_len; i++) {
+        hash = ((hash << 5) + hash) + (unsigned char)key[i];
+    }
+    return hash % (unsigned int)bucket_count;
+}
+
+static void free_dict(Dict *dict) {
+    if (dict == NULL) {
+        return;
+    }
+    if (dict->buckets != NULL) {
+        for (int i = 0; i < dict->bucket_count; i++) {
+            KeyNode *key_node = dict->buckets[i];
+            while (key_node != NULL) {
+                KeyNode *next_key = key_node->next;
+                ValueNode *value_node = key_node->values_head;
+                while (value_node != NULL) {
+                    ValueNode *next_value = value_node->next;
+                    free(value_node);
+                    value_node = next_value;
+                }
+                free(key_node->key);
+                free(key_node);
+                key_node = next_key;
+            }
+        }
+        free(dict->buckets);
+    }
+    free(dict);
+}
+
+Dict *group_pairs(const Pair *pairs, size_t count) {
+    if (pairs == NULL || count == 0) {
+        return NULL;
+    }
+
+    Dict *dict = malloc(sizeof(Dict));
+    if (dict == NULL) {
+        return NULL;
+    }
+
+    dict->bucket_count = INITIAL_BUCKET_COUNT;
+    dict->buckets = calloc((size_t)dict->bucket_count, sizeof(KeyNode *));
+    if (dict->buckets == NULL) {
+        free(dict);
+        return NULL;
+    }
+
+    for (size_t i = 0; i < count; i++) {
+        if (pairs[i].key == NULL) {
+            free_dict(dict);
+            return NULL;
+        }
+
+        size_t key_len = safe_strlen(pairs[i].key, MAX_KEY_LENGTH);
+        if (key_len == (size_t)-1) {
+            free_dict(dict);
+            return NULL;
+        }
+
+        unsigned int bucket = hash_key(pairs[i].key, key_len, dict->bucket_count);
+        KeyNode *key_node = dict->buckets[bucket];
+        while (key_node != NULL && strcmp(key_node->key, pairs[i].key) != 0) {
+            key_node = key_node->next;
+        }
+
+        if (key_node == NULL) {
+            key_node = malloc(sizeof(KeyNode));
+            if (key_node == NULL) {
+                free_dict(dict);
+                return NULL;
+            }
+            key_node->key = duplicate_string(pairs[i].key, key_len);
+            if (key_node->key == NULL) {
+                free(key_node);
+                free_dict(dict);
+                return NULL;
+            }
+            key_node->values_head = NULL;
+            key_node->values_tail = NULL;
+            key_node->next = dict->buckets[bucket];
+            dict->buckets[bucket] = key_node;
+        }
+
+        ValueNode *value_node = malloc(sizeof(ValueNode));
+        if (value_node == NULL) {
+            free_dict(dict);
+            return NULL;
+        }
+        value_node->value = pairs[i].value;
+        value_node->next = NULL;
+
+        if (key_node->values_tail == NULL) {
+            key_node->values_head = value_node;
+        } else {
+            key_node->values_tail->next = value_node;
+        }
+        key_node->values_tail = value_node;
+    }
+
+    return dict;
+}
+
+int main(void) {
+    Pair pairs[] = {
+        {"apple", 1},
+        {"banana", 2},
+        {"apple", 3},
+        {"cherry", 4},
+        {"banana", 5},
+        {"apple", 6}
+    };
+    size_t count = sizeof(pairs) / sizeof(pairs[0]);
+
+    Dict *dict = group_pairs(pairs, count);
+    if (dict == NULL) {
+        fprintf(stderr, "Failed to group pairs\n");
+        return 1;
+    }
+
+    for (int i = 0; i < dict->bucket_count; i++) {
+        KeyNode *key_node = dict->buckets[i];
+        while (key_node != NULL) {
+            printf("%s:", key_node->key);
+            ValueNode *value_node = key_node->values_head;
+            while (value_node != NULL) {
+                printf(" %d", value_node->value);
+                value_node = value_node->next;
+            }
+            printf("\n");
+            key_node = key_node->next;
+        }
+    }
+
+    free_dict(dict);
+    return 0;
+}

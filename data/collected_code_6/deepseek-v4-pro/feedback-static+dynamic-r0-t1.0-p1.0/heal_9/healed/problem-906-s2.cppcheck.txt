@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-906-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-906-s2.c:51:13: style: Condition 'len==0' is always false [knownConditionTrueFalse]
+    if (len == 0 || len > max_len) {
+            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-906-s2.c:46:22: note: Assuming that condition 'match->rm_eo<=match->rm_so' is not redundant
+    if (match->rm_eo <= match->rm_so) {
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-906-s2.c:50:11: note: Assignment 'len=(unsigned long)(match->rm_eo-match->rm_so)', assigned value is greater than 0
+    len = (size_t)(match->rm_eo - match->rm_so);
+          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-906-s2.c:51:13: note: Condition 'len==0' is always false
+    if (len == 0 || len > max_len) {
+            ^

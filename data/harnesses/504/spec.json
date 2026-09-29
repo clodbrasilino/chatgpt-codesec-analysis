@@ -1,0 +1,44 @@
+{
+  "task_id": 504,
+  "text": "Write a C function to find the cube sum of first n natural numbers.",
+  "fn_candidates": [
+    "sum_Of_Series",
+    "SumOfSeries",
+    "sumOfSeries",
+    "sumOfSeries"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "sum_Of_Series",
+      "args": [
+        5
+      ],
+      "expected": 225,
+      "assert_src": "assert sum_Of_Series(5) == 225"
+    },
+    {
+      "fn_name": "sum_Of_Series",
+      "args": [
+        2
+      ],
+      "expected": 9,
+      "assert_src": "assert sum_Of_Series(2) == 9"
+    },
+    {
+      "fn_name": "sum_Of_Series",
+      "args": [
+        3
+      ],
+      "expected": 36,
+      "assert_src": "assert sum_Of_Series(3) == 36"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

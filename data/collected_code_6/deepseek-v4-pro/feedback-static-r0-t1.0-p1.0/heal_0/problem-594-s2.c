@@ -1,0 +1,68 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int difference_first_even_odd(const int *arr, int size, int *result) {
+    if (arr == NULL || size <= 0 || result == NULL) {
+        return -1;
+    }
+
+    int first_even = 0;
+    int first_odd = 0;
+    int even_found = 0;
+    int odd_found = 0;
+
+    for (int i = 0; i < size; i++) {
+        if (!even_found && arr[i] % 2 == 0) {
+            first_even = arr[i];
+            even_found = 1;
+        }
+        if (!odd_found && arr[i] % 2 != 0) {
+            first_odd = arr[i];
+            odd_found = 1;
+        }
+        if (even_found && odd_found) {
+            break;
+        }
+    }
+
+    if (!even_found || !odd_found) {
+        return -2;
+    }
+
+    *result = first_even - first_odd;
+    return 0;
+}
+
+int main(void) {
+    int arr1[] = {3, 5, 2, 8, 7};
+    int size1 = sizeof(arr1) / sizeof(arr1[0]);
+    int result1;
+
+    if (difference_first_even_odd(arr1, size1, &result1) == 0) {
+        printf("%d\n", result1);
+    } else {
+        printf("Error: insufficient even or odd numbers\n");
+    }
+
+    int arr2[] = {1, 3, 5};
+    int size2 = sizeof(arr2) / sizeof(arr2[0]);
+    int result2;
+
+    if (difference_first_even_odd(arr2, size2, &result2) == 0) {
+        printf("%d\n", result2);
+    } else {
+        printf("Error: insufficient even or odd numbers\n");
+    }
+
+    int arr3[] = {2, 4, 6};
+    int size3 = sizeof(arr3) / sizeof(arr3[0]);
+    int result3;
+
+    if (difference_first_even_odd(arr3, size3, &result3) == 0) {
+        printf("%d\n", result3);
+    } else {
+        printf("Error: insufficient even or odd numbers\n");
+    }
+
+    return 0;
+}

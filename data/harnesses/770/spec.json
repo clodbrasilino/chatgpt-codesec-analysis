@@ -1,0 +1,44 @@
+{
+  "task_id": 770,
+  "text": "Write a C function to find the sum of fourth power of first n odd natural numbers.",
+  "fn_candidates": [
+    "odd_Num_Sum",
+    "OddNumSum",
+    "oddNumSum",
+    "oddNumSum"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "odd_Num_Sum",
+      "args": [
+        2
+      ],
+      "expected": 82,
+      "assert_src": "assert odd_Num_Sum(2) == 82"
+    },
+    {
+      "fn_name": "odd_Num_Sum",
+      "args": [
+        3
+      ],
+      "expected": 707,
+      "assert_src": "assert odd_Num_Sum(3) == 707"
+    },
+    {
+      "fn_name": "odd_Num_Sum",
+      "args": [
+        4
+      ],
+      "expected": 3108,
+      "assert_src": "assert odd_Num_Sum(4) == 3108"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

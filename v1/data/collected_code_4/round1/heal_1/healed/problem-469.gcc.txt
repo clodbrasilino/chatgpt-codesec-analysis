@@ -1,0 +1,500 @@
+./collected_code_4/round1//heal_1/healed//problem-469.c: In function 'maxProfit':
+./collected_code_4/round1//heal_1/healed//problem-469.c:25:17: warning: leak of '<unknown>' [CWE-401] [-Wanalyzer-malloc-leak]
+   25 |                 free(local);
+      |                 ^~~~~~~~~~~
+  'maxProfit': events 1-17
+    |
+    |    5 |     if(pricesSize < 1) {
+    |      |       ^
+    |      |       |
+    |      |       (1) following 'false' branch (when 'pricesSize > 0')...
+    |......
+    |    8 |     if(k >= pricesSize / 2) {
+    |      |       ~     ~~~~~~~~~~~~~~
+    |      |       |                |
+    |      |       |                (2) ...to here
+    |      |       (3) following 'false' branch...
+    |......
+    |   17 |         int** local = (int**)malloc((k + 1) * sizeof(int*));
+    |      |                                     ~~~~~~~
+    |      |                                        |
+    |      |                                        (4) ...to here
+    |   18 |         if(local == NULL) {
+    |      |           ~
+    |      |           |
+    |      |           (5) following 'false' branch (when 'local' is non-NULL)...
+    |......
+    |   22 |         for(int i = 0; i < k + 1; i++) {
+    |      |                 ~      ~~~~~~~~~  ~~~
+    |      |                 |        |         |
+    |      |                 |        |         (12) ...to here
+    |      |                 |        (7) following 'true' branch (when 'k >= i')...
+    |      |                 |        (13) following 'true' branch (when 'k >= i')...
+    |      |                 (6) ...to here
+    |   23 |             local[i] = (int*)calloc(pricesSize, sizeof(int));
+    |      |                              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                              |
+    |      |                              (8) ...to here
+    |      |                              (9) allocated here
+    |      |                              (14) ...to here
+    |   24 |             if (local[i] == NULL) {
+    |      |                ~
+    |      |                |
+    |      |                (10) assuming '<unknown>' is non-NULL
+    |      |                (11) following 'false' branch...
+    |      |                (15) following 'true' branch...
+    |   25 |                 free(local);
+    |      |                 ~~~~~~~~~~~
+    |      |                 |
+    |      |                 (16) ...to here
+    |      |                 (17) '<unknown>' leaks here; was allocated at (9)
+    |
+./collected_code_4/round1//heal_1/healed//problem-469.c:33:20: warning: leak of '<unknown>' [CWE-401] [-Wanalyzer-malloc-leak]
+   33 |             return -1;
+      |                    ^
+  'main': events 1-2
+    |
+    |   65 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   69 |     int maxprofit = maxProfit(k, prices, pricesSize);
+    |      |                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                     |
+    |      |                     (2) calling 'maxProfit' from 'main'
+    |
+    +--> 'maxProfit': events 3-26
+           |
+           |    4 | int maxProfit(int k, int* prices, int pricesSize) {
+           |      |     ^~~~~~~~~
+           |      |     |
+           |      |     (3) entry to 'maxProfit'
+           |    5 |     if(pricesSize < 1) {
+           |      |       ~
+           |      |       |
+           |      |       (4) following 'false' branch (when 'pricesSize > 0')...
+           |......
+           |    8 |     if(k >= pricesSize / 2) {
+           |      |       ~     ~~~~~~~~~~~~~~
+           |      |       |                |
+           |      |       |                (5) ...to here
+           |      |       (6) following 'false' branch...
+           |......
+           |   17 |         int** local = (int**)malloc((k + 1) * sizeof(int*));
+           |      |                                     ~~~~~~~
+           |      |                                        |
+           |      |                                        (7) ...to here
+           |   18 |         if(local == NULL) {
+           |      |           ~
+           |      |           |
+           |      |           (8) following 'false' branch (when 'local' is non-NULL)...
+           |......
+           |   22 |         for(int i = 0; i < k + 1; i++) {
+           |      |                 ~      ~~~~~~~~~  ~~~
+           |      |                 |        |         |
+           |      |                 |        |         (15) ...to here
+           |      |                 |        |         (19) ...to here
+           |      |                 |        |         (23) ...to here
+           |      |                 |        (10) following 'true' branch (when 'k >= i')...
+           |      |                 |        (16) following 'true' branch (when 'k >= i')...
+           |      |                 |        (20) following 'true' branch (when 'k >= i')...
+           |      |                 |        (24) following 'false' branch (when 'k < i')...
+           |      |                 (9) ...to here
+           |   23 |             local[i] = (int*)calloc(pricesSize, sizeof(int));
+           |      |                              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                              |
+           |      |                              (11) ...to here
+           |      |                              (12) allocated here
+           |      |                              (17) ...to here
+           |      |                              (21) ...to here
+           |   24 |             if (local[i] == NULL) {
+           |      |                ~
+           |      |                |
+           |      |                (13) assuming '<unknown>' is non-NULL
+           |      |                (14) following 'false' branch...
+           |      |                (18) following 'false' branch...
+           |      |                (22) following 'false' branch...
+           |......
+           |   30 |         int** global = (int**)malloc((k + 1) * sizeof(int*));
+           |      |                                      ~~~~~~~
+           |      |                                         |
+           |      |                                         (25) ...to here
+           |......
+           |   33 |             return -1;
+           |      |                    ~
+           |      |                    |
+           |      |                    (26) '<unknown>' leaks here; was allocated at (12)
+           |
+./collected_code_4/round1//heal_1/healed//problem-469.c:33:20: warning: leak of 'local' [CWE-401] [-Wanalyzer-malloc-leak]
+   33 |             return -1;
+      |                    ^
+  'main': events 1-2
+    |
+    |   65 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   69 |     int maxprofit = maxProfit(k, prices, pricesSize);
+    |      |                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                     |
+    |      |                     (2) calling 'maxProfit' from 'main'
+    |
+    +--> 'maxProfit': events 3-26
+           |
+           |    4 | int maxProfit(int k, int* prices, int pricesSize) {
+           |      |     ^~~~~~~~~
+           |      |     |
+           |      |     (3) entry to 'maxProfit'
+           |    5 |     if(pricesSize < 1) {
+           |      |       ~
+           |      |       |
+           |      |       (4) following 'false' branch (when 'pricesSize > 0')...
+           |......
+           |    8 |     if(k >= pricesSize / 2) {
+           |      |       ~     ~~~~~~~~~~~~~~
+           |      |       |                |
+           |      |       |                (5) ...to here
+           |      |       (6) following 'false' branch...
+           |......
+           |   17 |         int** local = (int**)malloc((k + 1) * sizeof(int*));
+           |      |                              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                              |         |
+           |      |                              |         (7) ...to here
+           |      |                              (8) allocated here
+           |   18 |         if(local == NULL) {
+           |      |           ~
+           |      |           |
+           |      |           (9) assuming 'local' is non-NULL
+           |      |           (10) following 'false' branch (when 'local' is non-NULL)...
+           |......
+           |   22 |         for(int i = 0; i < k + 1; i++) {
+           |      |                 ~      ~~~~~~~~~  ~~~
+           |      |                 |        |         |
+           |      |                 |        |         (15) ...to here
+           |      |                 |        |         (19) ...to here
+           |      |                 |        |         (23) ...to here
+           |      |                 |        (12) following 'true' branch (when 'k >= i')...
+           |      |                 |        (16) following 'true' branch (when 'k >= i')...
+           |      |                 |        (20) following 'true' branch (when 'k >= i')...
+           |      |                 |        (24) following 'false' branch (when 'k < i')...
+           |      |                 (11) ...to here
+           |   23 |             local[i] = (int*)calloc(pricesSize, sizeof(int));
+           |      |                              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                              |
+           |      |                              (13) ...to here
+           |      |                              (17) ...to here
+           |      |                              (21) ...to here
+           |   24 |             if (local[i] == NULL) {
+           |      |                ~
+           |      |                |
+           |      |                (14) following 'false' branch...
+           |      |                (18) following 'false' branch...
+           |      |                (22) following 'false' branch...
+           |......
+           |   30 |         int** global = (int**)malloc((k + 1) * sizeof(int*));
+           |      |                                      ~~~~~~~
+           |      |                                         |
+           |      |                                         (25) ...to here
+           |......
+           |   33 |             return -1;
+           |      |                    ~
+           |      |                    |
+           |      |                    (26) 'local' leaks here; was allocated at (8)
+           |
+./collected_code_4/round1//heal_1/healed//problem-469.c:38:17: warning: leak of '<unknown>' [CWE-401] [-Wanalyzer-malloc-leak]
+   38 |                 free(global);
+      |                 ^~~~~~~~~~~~
+  'main': events 1-2
+    |
+    |   65 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   69 |     int maxprofit = maxProfit(k, prices, pricesSize);
+    |      |                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                     |
+    |      |                     (2) calling 'maxProfit' from 'main'
+    |
+    +--> 'maxProfit': events 3-36
+           |
+           |    4 | int maxProfit(int k, int* prices, int pricesSize) {
+           |      |     ^~~~~~~~~
+           |      |     |
+           |      |     (3) entry to 'maxProfit'
+           |    5 |     if(pricesSize < 1) {
+           |      |       ~
+           |      |       |
+           |      |       (4) following 'false' branch (when 'pricesSize > 0')...
+           |......
+           |    8 |     if(k >= pricesSize / 2) {
+           |      |       ~     ~~~~~~~~~~~~~~
+           |      |       |                |
+           |      |       |                (5) ...to here
+           |      |       (6) following 'false' branch...
+           |......
+           |   17 |         int** local = (int**)malloc((k + 1) * sizeof(int*));
+           |      |                                     ~~~~~~~
+           |      |                                        |
+           |      |                                        (7) ...to here
+           |   18 |         if(local == NULL) {
+           |      |           ~
+           |      |           |
+           |      |           (8) following 'false' branch (when 'local' is non-NULL)...
+           |......
+           |   22 |         for(int i = 0; i < k + 1; i++) {
+           |      |                 ~      ~~~~~~~~~  ~~~
+           |      |                 |        |         |
+           |      |                 |        |         (13) ...to here
+           |      |                 |        |         (17) ...to here
+           |      |                 |        |         (21) ...to here
+           |      |                 |        (10) following 'true' branch (when 'k >= i')...
+           |      |                 |        (14) following 'true' branch (when 'k >= i')...
+           |      |                 |        (18) following 'true' branch (when 'k >= i')...
+           |      |                 |        (22) following 'false' branch (when 'k < i')...
+           |      |                 (9) ...to here
+           |   23 |             local[i] = (int*)calloc(pricesSize, sizeof(int));
+           |      |                              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                              |
+           |      |                              (11) ...to here
+           |      |                              (15) ...to here
+           |      |                              (19) ...to here
+           |   24 |             if (local[i] == NULL) {
+           |      |                ~
+           |      |                |
+           |      |                (12) following 'false' branch...
+           |      |                (16) following 'false' branch...
+           |      |                (20) following 'false' branch...
+           |......
+           |   30 |         int** global = (int**)malloc((k + 1) * sizeof(int*));
+           |      |                                      ~~~~~~~
+           |      |                                         |
+           |      |                                         (23) ...to here
+           |   31 |         if(global == NULL) {
+           |      |           ~
+           |      |           |
+           |      |           (24) following 'false' branch (when 'global' is non-NULL)...
+           |......
+           |   35 |         for(int i = 0; i < k + 1; i++) {
+           |      |                 ~      ~~~~~~~~~  ~~~
+           |      |                 |        |         |
+           |      |                 |        |         (31) ...to here
+           |      |                 |        (26) following 'true' branch (when 'k >= i')...
+           |      |                 |        (32) following 'true' branch (when 'k >= i')...
+           |      |                 (25) ...to here
+           |   36 |             global[i] = (int*)calloc(pricesSize, sizeof(int));
+           |      |                               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                               |
+           |      |                               (27) ...to here
+           |      |                               (28) allocated here
+           |      |                               (33) ...to here
+           |   37 |             if(global[i] == NULL){
+           |      |               ~
+           |      |               |
+           |      |               (29) assuming '<unknown>' is non-NULL
+           |      |               (30) following 'false' branch...
+           |      |               (34) following 'true' branch...
+           |   38 |                 free(global);
+           |      |                 ~~~~~~~~~~~~
+           |      |                 |
+           |      |                 (35) ...to here
+           |      |                 (36) '<unknown>' leaks here; was allocated at (28)
+           |
+./collected_code_4/round1//heal_1/healed//problem-469.c:40:24: warning: leak of '<unknown>' [CWE-401] [-Wanalyzer-malloc-leak]
+   40 |                 return -1;
+      |                        ^
+  'main': events 1-2
+    |
+    |   65 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   69 |     int maxprofit = maxProfit(k, prices, pricesSize);
+    |      |                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                     |
+    |      |                     (2) calling 'maxProfit' from 'main'
+    |
+    +--> 'maxProfit': events 3-34
+           |
+           |    4 | int maxProfit(int k, int* prices, int pricesSize) {
+           |      |     ^~~~~~~~~
+           |      |     |
+           |      |     (3) entry to 'maxProfit'
+           |    5 |     if(pricesSize < 1) {
+           |      |       ~
+           |      |       |
+           |      |       (4) following 'false' branch (when 'pricesSize > 0')...
+           |......
+           |    8 |     if(k >= pricesSize / 2) {
+           |      |       ~     ~~~~~~~~~~~~~~
+           |      |       |                |
+           |      |       |                (5) ...to here
+           |      |       (6) following 'false' branch...
+           |......
+           |   17 |         int** local = (int**)malloc((k + 1) * sizeof(int*));
+           |      |                                     ~~~~~~~
+           |      |                                        |
+           |      |                                        (7) ...to here
+           |   18 |         if(local == NULL) {
+           |      |           ~
+           |      |           |
+           |      |           (8) following 'false' branch (when 'local' is non-NULL)...
+           |......
+           |   22 |         for(int i = 0; i < k + 1; i++) {
+           |      |                 ~      ~~~~~~~~~  ~~~
+           |      |                 |        |         |
+           |      |                 |        |         (15) ...to here
+           |      |                 |        |         (19) ...to here
+           |      |                 |        |         (23) ...to here
+           |      |                 |        (10) following 'true' branch (when 'k >= i')...
+           |      |                 |        (16) following 'true' branch (when 'k >= i')...
+           |      |                 |        (20) following 'true' branch (when 'k >= i')...
+           |      |                 |        (24) following 'false' branch (when 'k < i')...
+           |      |                 (9) ...to here
+           |   23 |             local[i] = (int*)calloc(pricesSize, sizeof(int));
+           |      |                              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                              |
+           |      |                              (11) ...to here
+           |      |                              (12) allocated here
+           |      |                              (17) ...to here
+           |      |                              (21) ...to here
+           |   24 |             if (local[i] == NULL) {
+           |      |                ~
+           |      |                |
+           |      |                (13) assuming '<unknown>' is non-NULL
+           |      |                (14) following 'false' branch...
+           |      |                (18) following 'false' branch...
+           |      |                (22) following 'false' branch...
+           |......
+           |   30 |         int** global = (int**)malloc((k + 1) * sizeof(int*));
+           |      |                                      ~~~~~~~
+           |      |                                         |
+           |      |                                         (25) ...to here
+           |   31 |         if(global == NULL) {
+           |      |           ~
+           |      |           |
+           |      |           (26) following 'false' branch (when 'global' is non-NULL)...
+           |......
+           |   35 |         for(int i = 0; i < k + 1; i++) {
+           |      |                 ~      ~~~~~~~~~  ~~~
+           |      |                 |        |         |
+           |      |                 |        |         (31) ...to here
+           |      |                 |        (28) following 'true' branch (when 'k >= i')...
+           |      |                 |        (32) following 'true' branch (when 'k >= i')...
+           |      |                 (27) ...to here
+           |   36 |             global[i] = (int*)calloc(pricesSize, sizeof(int));
+           |      |                               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                               |
+           |      |                               (29) ...to here
+           |      |                               (33) ...to here
+           |   37 |             if(global[i] == NULL){
+           |      |               ~
+           |      |               |
+           |      |               (30) following 'false' branch...
+           |......
+           |   40 |                 return -1;
+           |      |                        ~
+           |      |                        |
+           |      |                        (34) '<unknown>' leaks here; was allocated at (12)
+           |
+./collected_code_4/round1//heal_1/healed//problem-469.c:40:24: warning: leak of 'local' [CWE-401] [-Wanalyzer-malloc-leak]
+   40 |                 return -1;
+      |                        ^
+  'main': events 1-2
+    |
+    |   65 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   69 |     int maxprofit = maxProfit(k, prices, pricesSize);
+    |      |                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                     |
+    |      |                     (2) calling 'maxProfit' from 'main'
+    |
+    +--> 'maxProfit': events 3-34
+           |
+           |    4 | int maxProfit(int k, int* prices, int pricesSize) {
+           |      |     ^~~~~~~~~
+           |      |     |
+           |      |     (3) entry to 'maxProfit'
+           |    5 |     if(pricesSize < 1) {
+           |      |       ~
+           |      |       |
+           |      |       (4) following 'false' branch (when 'pricesSize > 0')...
+           |......
+           |    8 |     if(k >= pricesSize / 2) {
+           |      |       ~     ~~~~~~~~~~~~~~
+           |      |       |                |
+           |      |       |                (5) ...to here
+           |      |       (6) following 'false' branch...
+           |......
+           |   17 |         int** local = (int**)malloc((k + 1) * sizeof(int*));
+           |      |                              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                              |         |
+           |      |                              |         (7) ...to here
+           |      |                              (8) allocated here
+           |   18 |         if(local == NULL) {
+           |      |           ~
+           |      |           |
+           |      |           (9) assuming 'local' is non-NULL
+           |      |           (10) following 'false' branch (when 'local' is non-NULL)...
+           |......
+           |   22 |         for(int i = 0; i < k + 1; i++) {
+           |      |                 ~      ~~~~~~~~~  ~~~
+           |      |                 |        |         |
+           |      |                 |        |         (15) ...to here
+           |      |                 |        |         (19) ...to here
+           |      |                 |        |         (23) ...to here
+           |      |                 |        (12) following 'true' branch (when 'k >= i')...
+           |      |                 |        (16) following 'true' branch (when 'k >= i')...
+           |      |                 |        (20) following 'true' branch (when 'k >= i')...
+           |      |                 |        (24) following 'false' branch (when 'k < i')...
+           |      |                 (11) ...to here
+           |   23 |             local[i] = (int*)calloc(pricesSize, sizeof(int));
+           |      |                              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                              |
+           |      |                              (13) ...to here
+           |      |                              (17) ...to here
+           |      |                              (21) ...to here
+           |   24 |             if (local[i] == NULL) {
+           |      |                ~
+           |      |                |
+           |      |                (14) following 'false' branch...
+           |      |                (18) following 'false' branch...
+           |      |                (22) following 'false' branch...
+           |......
+           |   30 |         int** global = (int**)malloc((k + 1) * sizeof(int*));
+           |      |                                      ~~~~~~~
+           |      |                                         |
+           |      |                                         (25) ...to here
+           |   31 |         if(global == NULL) {
+           |      |           ~
+           |      |           |
+           |      |           (26) following 'false' branch (when 'global' is non-NULL)...
+           |......
+           |   35 |         for(int i = 0; i < k + 1; i++) {
+           |      |                 ~      ~~~~~~~~~  ~~~
+           |      |                 |        |         |
+           |      |                 |        |         (31) ...to here
+           |      |                 |        (28) following 'true' branch (when 'k >= i')...
+           |      |                 |        (32) following 'true' branch (when 'k >= i')...
+           |      |                 (27) ...to here
+           |   36 |             global[i] = (int*)calloc(pricesSize, sizeof(int));
+           |      |                               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                               |
+           |      |                               (29) ...to here
+           |      |                               (33) ...to here
+           |   37 |             if(global[i] == NULL){
+           |      |               ~
+           |      |               |
+           |      |               (30) following 'false' branch...
+           |......
+           |   40 |                 return -1;
+           |      |                        ~
+           |      |                        |
+           |      |                        (34) 'local' leaks here; was allocated at (8)
+           |

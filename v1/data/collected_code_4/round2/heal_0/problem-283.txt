@@ -1,0 +1,35 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+
+#define MAX_DGT 10
+
+bool checkFrequency(int num) {
+    int frequency[MAX_DGT] = {0};
+
+    while (num > 0) {
+        int digit = num % 10;
+        frequency[digit]++;
+        if (frequency[digit] > digit) {
+            return false;
+        }
+        num /= 10;
+    }
+
+    return true;
+}
+
+int main() {
+    int num;
+    printf("Enter a number: ");
+    scanf("%d", &num);
+
+    if (checkFrequency(num)) {
+        printf("Frequency of each digit is less than or equal to the digit itself\n");
+    } else {
+        printf("Frequency of each digit is not less than or equal to the digit itself\n");
+    }
+
+    return 0;
+}
+```

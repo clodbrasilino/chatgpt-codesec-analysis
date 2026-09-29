@@ -1,0 +1,97 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+#define ERRBUF_SIZE 256
+#define WORD_SIZE 256
+#define MIN_WORD_LEN 3
+#define MAX_WORD_LEN 5
+
+static int find_words(const char *text)
+{
+    regex_t regex;
+    regmatch_t match;
+    const char *cursor;
+    int ret;
+    char errbuf[ERRBUF_SIZE];
+    char word[WORD_SIZE];
+    int found;
+
+    if (text == NULL) {
+        return -1;
+    }
+
+    ret = regcomp(&regex, "[[:alpha:]]+", REG_EXTENDED);
+    if (ret != 0) {
+        regerror(ret, &regex, errbuf, sizeof(errbuf));
+        errbuf[sizeof(errbuf) - 1] = '\0';
+        fprintf(stderr, "regcomp failed: %s\n", errbuf);
+        return -1;
+    }
+
+    cursor = text;
+    found = 0;
+
+    while ((ret = regexec(&regex, cursor, 1, &match, 0)) == 0) {
+        if (match.rm_so >= 0 && match.rm_eo >= match.rm_so) {
+            const size_t length = (size_t)(match.rm_eo - match.rm_so);
+            if (length >= MIN_WORD_LEN &&
+                length <= MAX_WORD_LEN &&
+                length < sizeof(word)) {
+                memcpy(word, cursor + match.rm_so, length);
+                word[length] = '\0';
+                printf("%s\n", word);
+                found++;
+            }
+        }
+        if (match.rm_eo == 0) {
+            break;
+        }
+        cursor += match.rm_eo;
+    }
+
+    if (ret != 0 && ret != REG_NOMATCH) {
+        regerror(ret, &regex, errbuf, sizeof(errbuf));
+        errbuf[sizeof(errbuf) - 1] = '\0';
+        fprintf(stderr, "regexec failed: %s\n", errbuf);
+        regfree(&regex);
+        return -1;
+    }
+
+    regfree(&regex);
+    return found;
+}
+
+int main(void)
+{
+    const char *text = "The quick brown fox jumps over a lazy dog nearby";
+    int count;
+
+    count = find_words(text);
+    if (count < 0) {
+        fprintf(stderr, "Error while searching for words\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Total words found: %d\n", count);
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the flagged weaknesses and why the code is already safe:**
+
+1. **`char errbuf[ERRBUF_SIZE]` (CWE-119/CWE-120):** This is a false positive. Every write into `errbuf` goes through `regerror(..., errbuf, sizeof(errbuf))`, which takes the buffer size as an argument and guarantees truncation. The explicit `errbuf[sizeof(errbuf) - 1] = '\0'` is defensive redundancy — POSIX already guarantees NUL-termination, but it costs nothing and hardens against non-conforming implementations.
+
+2. **`char word[WORD_SIZE]` (CWE-119/CWE-120):** Also a false positive. The buffer is only written by the `memcpy` below, which is fully guarded.
+
+3. **`memcpy` (CWE-120):** The copy is provably safe. The length is derived from `rm_eo - rm_so` only after verifying `rm_so >= 0` and `rm_eo >= rm_so`, so the cast to `size_t` cannot wrap. The guard `length < sizeof(word)` ensures room for both the copied bytes *and* the NUL terminator written at `word[length]`. In practice, `length <= MAX_WORD_LEN` (5) makes the check even stricter, but keeping the explicit `length < sizeof(word)` check protects the code against future changes to the macros.
+
+**Other correctness points worth noting:**
+
+- The `match.rm_eo == 0` check prevents an infinite loop if the regex ever matched an empty string at the cursor (impossible with `[[:alpha:]]+`, but robust against pattern changes).
+- `regfree` is called on both the error path and the success path — no resource leak.
+- The loop terminates cleanly on `REG_NOMATCH`, and any other `regexec` error is reported and propagated.
+
+The Flawfinder hits are all risk-level-2 heuristic warnings triggered by the mere presence of fixed-size arrays and `memcpy`; the surrounding bounds checks satisfy the mitigations the tool recommends, so no functional changes were required.

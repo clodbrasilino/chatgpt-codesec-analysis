@@ -1,0 +1,8 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-638-s2.c: In function 'calculate_wind_chill':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-638-s2.c:7:51: error: implicit declaration of function 'pow' [-Wimplicit-function-declaration]
+    7 |     return 13.12 + 0.6215 * temperature - 11.37 * pow(wind_speed, 0.16) + 0.3965 * temperature * pow(wind_speed, 0.16);
+      |                                                   ^~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-638-s2.c:2:1: note: include '<math.h>' or provide a declaration of 'pow'
+    1 | #include <stdio.h>
+  +++ |+#include <math.h>
+    2 | 

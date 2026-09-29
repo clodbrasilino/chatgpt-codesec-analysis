@@ -1,0 +1,43 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+double tuple_to_float(int whole, int fractional) {
+    if (fractional < 0) {
+        return NAN;
+    }
+
+    if (fractional == 0) {
+        return (double)whole;
+    }
+
+    int temp = fractional;
+    int digits = 0;
+    while (temp > 0) {
+        digits++;
+        temp /= 10;
+    }
+
+    double frac_part = (double)fractional / pow(10, digits);
+
+    if (whole < 0) {
+        return (double)whole - frac_part;
+    } else {
+        return (double)whole + frac_part;
+    }
+}
+
+int main(void) {
+    int whole = 45;
+    int fractional = 678;
+
+    double result = tuple_to_float(whole, fractional);
+
+    if (!isnan(result)) {
+        printf("%f\n", result);
+    } else {
+        printf("Error converting tuple to float.\n");
+    }
+
+    return 0;
+}

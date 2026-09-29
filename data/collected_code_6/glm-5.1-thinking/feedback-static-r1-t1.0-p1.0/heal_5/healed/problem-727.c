@@ -1,0 +1,54 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#define MAX_STR_LEN 1048576
+
+char *remove_non_alnum(const char *str) {
+    size_t len;
+    char *result;
+    size_t result_idx = 0;
+
+    if (str == NULL) {
+        return NULL;
+    }
+
+    len = strnlen(str, MAX_STR_LEN);
+    if (len == MAX_STR_LEN) {
+        return NULL;
+    }
+
+    size_t result_size = len + 1;
+    result = malloc(result_size);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    for (size_t i = 0; i < len; i++) {
+        if (isalnum((unsigned char)str[i])) {
+            result[result_idx++] = str[i];
+        }
+    }
+
+    result[result_idx] = '\0';
+
+    char *trimmed = realloc(result, result_idx + 1);
+    if (trimmed != NULL) {
+        return trimmed;
+    }
+
+    return result;
+}
+
+int main(void) {
+    const char *input = "Hello, World! 123 @#";
+    char *output = remove_non_alnum(input);
+
+    if (output != NULL) {
+        printf("%s\n", output);
+        free(output);
+    }
+
+    return 0;
+}

@@ -1,0 +1,312 @@
+./collected_code_3/round4/heal_1/healed/problem-795.c: In function 'pushHeap':
+./collected_code_3/round4/heal_1/healed/problem-795.c:33:46: warning: use of uninitialized value '*_8 + _10' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   33 |             if (child + 1 < h->len && h->data[child] < h->data[child + 1]) {
+      |                                       ~~~~~~~^~~~~~~
+  'getLeastNumbers': events 1-4
+    |
+    |   62 | int* getLeastNumbers(int* arr, int arrSize, int k, int* returnSize) {
+    |      |      ^~~~~~~~~~~~~~~
+    |      |      |
+    |      |      (1) entry to 'getLeastNumbers'
+    |   63 |     *returnSize = k;
+    |   64 |     if (k == 0) {
+    |      |        ~
+    |      |        |
+    |      |        (2) following 'false' branch (when 'k != 0')...
+    |......
+    |   67 |     Heap *h = createHeap(k);
+    |      |               ~~~~~~~~~~~~~
+    |      |               |
+    |      |               (3) ...to here
+    |      |               (4) calling 'createHeap' from 'getLeastNumbers'
+    |
+    +--> 'createHeap': events 5-10
+           |
+           |   10 | Heap* createHeap(int capacity) {
+           |      |       ^~~~~~~~~~
+           |      |       |
+           |      |       (5) entry to 'createHeap'
+           |   11 |     Heap *h = (Heap*)malloc(sizeof(Heap));
+           |   12 |     if (h == NULL) {
+           |      |        ~
+           |      |        |
+           |      |        (6) following 'false' branch (when 'h' is non-NULL)...
+           |......
+           |   15 |     h->data = (int*)malloc(sizeof(int) * capacity);
+           |      |                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                     |
+           |      |                     (7) ...to here
+           |      |                     (8) region created on heap here
+           |   16 |     if (h->data == NULL){
+           |      |        ~
+           |      |        |
+           |      |        (9) following 'false' branch...
+           |......
+           |   20 |     h->len = 0;
+           |      |     ~~~~~~~~~~
+           |      |            |
+           |      |            (10) ...to here
+           |
+    <------+
+    |
+  'getLeastNumbers': events 11-16
+    |
+    |   67 |     Heap *h = createHeap(k);
+    |      |               ^~~~~~~~~~~~~
+    |      |               |
+    |      |               (11) returning to 'getLeastNumbers' from 'createHeap'
+    |   68 |     if (h == NULL) {
+    |      |        ~       
+    |      |        |
+    |      |        (12) following 'false' branch (when 'h' is non-NULL)...
+    |......
+    |   71 |     for (int i = 0; i < arrSize; ++i) {
+    |      |              ~      ~~~~~~~~~~~
+    |      |              |        |
+    |      |              |        (14) following 'true' branch (when 'i < arrSize')...
+    |      |              (13) ...to here
+    |   72 |         pushHeap(h, arr[i]);
+    |      |         ~~~~~~~~~~~~~~~~~~~
+    |      |         |              |
+    |      |         |              (15) ...to here
+    |      |         (16) calling 'pushHeap' from 'getLeastNumbers'
+    |
+    +--> 'pushHeap': events 17-23
+           |
+           |   25 | void pushHeap(Heap *h, int value) {
+           |      |      ^~~~~~~~
+           |      |      |
+           |      |      (17) entry to 'pushHeap'
+           |   26 |     if (h == NULL || h->data == NULL) {
+           |      |        ~
+           |      |        |
+           |      |        (18) following 'false' branch...
+           |......
+           |   29 |     if (h->len == h->capacity) {
+           |      |        ~~~~~~~
+           |      |        | |
+           |      |        | (19) ...to here
+           |      |        (20) following 'false' branch...
+           |......
+           |   45 |         h->data[h->len] = value;
+           |      |         ~~~~~~~
+           |      |          |
+           |      |          (21) ...to here
+           |   46 |         int i = h->len;
+           |   47 |         while (i > 0) {
+           |      |                ~~~~~
+           |      |                  |
+           |      |                  (22) following 'false' branch (when 'i <= 0')...
+           |......
+           |   58 |         ++h->len;
+           |      |           ~~~~~~
+           |      |            |
+           |      |            (23) ...to here
+           |
+    <------+
+    |
+  'getLeastNumbers': events 24-27
+    |
+    |   71 |     for (int i = 0; i < arrSize; ++i) {
+    |      |                     ~~~~~~~~~~~
+    |      |                       |
+    |      |                       (25) following 'true' branch (when 'i < arrSize')...
+    |   72 |         pushHeap(h, arr[i]);
+    |      |         ^~~~~~~~~~~~~~~~~~~
+    |      |         |              |
+    |      |         |              (26) ...to here
+    |      |         (24) returning to 'getLeastNumbers' from 'pushHeap'
+    |      |         (27) calling 'pushHeap' from 'getLeastNumbers'
+    |
+    +--> 'pushHeap': events 28-37
+           |
+           |   25 | void pushHeap(Heap *h, int value) {
+           |      |      ^~~~~~~~
+           |      |      |
+           |      |      (28) entry to 'pushHeap'
+           |   26 |     if (h == NULL || h->data == NULL) {
+           |      |        ~
+           |      |        |
+           |      |        (29) following 'false' branch...
+           |......
+           |   29 |     if (h->len == h->capacity) {
+           |      |        ~~~~~~~
+           |      |        | |
+           |      |        | (30) ...to here
+           |      |        (31) following 'true' branch...
+           |   30 |         h->data[0] = value;
+           |      |         ~~~~~~~
+           |      |          |
+           |      |          (32) ...to here
+           |   31 |         for (int i = 0; i < h->len; ++i) {
+           |      |                         ~~~~~~~~~~
+           |      |                           |
+           |      |                           (33) following 'true' branch...
+           |   32 |             int child = 2 * i + 1;
+           |      |                         ~~~~~
+           |      |                           |
+           |      |                           (34) ...to here
+           |   33 |             if (child + 1 < h->len && h->data[child] < h->data[child + 1]) {
+           |      |                ~                      ~~~~~~~~~~~~~~
+           |      |                |                       |     |
+           |      |                |                       |     (37) use of uninitialized value '*_8 + _10' here
+           |      |                |                       (36) ...to here
+           |      |                (35) following 'true' branch...
+           |
+./collected_code_3/round4/heal_1/healed/problem-795.c:36:37: warning: use of uninitialized value '*_24 + _26' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   36 |             if (h->data[i] < h->data[child]) {
+      |                              ~~~~~~~^~~~~~~
+  'getLeastNumbers': events 1-4
+    |
+    |   62 | int* getLeastNumbers(int* arr, int arrSize, int k, int* returnSize) {
+    |      |      ^~~~~~~~~~~~~~~
+    |      |      |
+    |      |      (1) entry to 'getLeastNumbers'
+    |   63 |     *returnSize = k;
+    |   64 |     if (k == 0) {
+    |      |        ~
+    |      |        |
+    |      |        (2) following 'false' branch (when 'k != 0')...
+    |......
+    |   67 |     Heap *h = createHeap(k);
+    |      |               ~~~~~~~~~~~~~
+    |      |               |
+    |      |               (3) ...to here
+    |      |               (4) calling 'createHeap' from 'getLeastNumbers'
+    |
+    +--> 'createHeap': events 5-10
+           |
+           |   10 | Heap* createHeap(int capacity) {
+           |      |       ^~~~~~~~~~
+           |      |       |
+           |      |       (5) entry to 'createHeap'
+           |   11 |     Heap *h = (Heap*)malloc(sizeof(Heap));
+           |   12 |     if (h == NULL) {
+           |      |        ~
+           |      |        |
+           |      |        (6) following 'false' branch (when 'h' is non-NULL)...
+           |......
+           |   15 |     h->data = (int*)malloc(sizeof(int) * capacity);
+           |      |                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                     |
+           |      |                     (7) ...to here
+           |      |                     (8) region created on heap here
+           |   16 |     if (h->data == NULL){
+           |      |        ~
+           |      |        |
+           |      |        (9) following 'false' branch...
+           |......
+           |   20 |     h->len = 0;
+           |      |     ~~~~~~~~~~
+           |      |            |
+           |      |            (10) ...to here
+           |
+    <------+
+    |
+  'getLeastNumbers': events 11-16
+    |
+    |   67 |     Heap *h = createHeap(k);
+    |      |               ^~~~~~~~~~~~~
+    |      |               |
+    |      |               (11) returning to 'getLeastNumbers' from 'createHeap'
+    |   68 |     if (h == NULL) {
+    |      |        ~       
+    |      |        |
+    |      |        (12) following 'false' branch (when 'h' is non-NULL)...
+    |......
+    |   71 |     for (int i = 0; i < arrSize; ++i) {
+    |      |              ~      ~~~~~~~~~~~
+    |      |              |        |
+    |      |              |        (14) following 'true' branch (when 'i < arrSize')...
+    |      |              (13) ...to here
+    |   72 |         pushHeap(h, arr[i]);
+    |      |         ~~~~~~~~~~~~~~~~~~~
+    |      |         |              |
+    |      |         |              (15) ...to here
+    |      |         (16) calling 'pushHeap' from 'getLeastNumbers'
+    |
+    +--> 'pushHeap': events 17-23
+           |
+           |   25 | void pushHeap(Heap *h, int value) {
+           |      |      ^~~~~~~~
+           |      |      |
+           |      |      (17) entry to 'pushHeap'
+           |   26 |     if (h == NULL || h->data == NULL) {
+           |      |        ~
+           |      |        |
+           |      |        (18) following 'false' branch...
+           |......
+           |   29 |     if (h->len == h->capacity) {
+           |      |        ~~~~~~~
+           |      |        | |
+           |      |        | (19) ...to here
+           |      |        (20) following 'false' branch...
+           |......
+           |   45 |         h->data[h->len] = value;
+           |      |         ~~~~~~~
+           |      |          |
+           |      |          (21) ...to here
+           |   46 |         int i = h->len;
+           |   47 |         while (i > 0) {
+           |      |                ~~~~~
+           |      |                  |
+           |      |                  (22) following 'false' branch (when 'i <= 0')...
+           |......
+           |   58 |         ++h->len;
+           |      |           ~~~~~~
+           |      |            |
+           |      |            (23) ...to here
+           |
+    <------+
+    |
+  'getLeastNumbers': events 24-27
+    |
+    |   71 |     for (int i = 0; i < arrSize; ++i) {
+    |      |                     ~~~~~~~~~~~
+    |      |                       |
+    |      |                       (25) following 'true' branch (when 'i < arrSize')...
+    |   72 |         pushHeap(h, arr[i]);
+    |      |         ^~~~~~~~~~~~~~~~~~~
+    |      |         |              |
+    |      |         |              (26) ...to here
+    |      |         (24) returning to 'getLeastNumbers' from 'pushHeap'
+    |      |         (27) calling 'pushHeap' from 'getLeastNumbers'
+    |
+    +--> 'pushHeap': events 28-37
+           |
+           |   25 | void pushHeap(Heap *h, int value) {
+           |      |      ^~~~~~~~
+           |      |      |
+           |      |      (28) entry to 'pushHeap'
+           |   26 |     if (h == NULL || h->data == NULL) {
+           |      |        ~
+           |      |        |
+           |      |        (29) following 'false' branch...
+           |......
+           |   29 |     if (h->len == h->capacity) {
+           |      |        ~~~~~~~
+           |      |        | |
+           |      |        | (30) ...to here
+           |      |        (31) following 'true' branch...
+           |   30 |         h->data[0] = value;
+           |      |         ~~~~~~~
+           |      |          |
+           |      |          (32) ...to here
+           |   31 |         for (int i = 0; i < h->len; ++i) {
+           |      |                         ~~~~~~~~~~
+           |      |                           |
+           |      |                           (33) following 'true' branch...
+           |   32 |             int child = 2 * i + 1;
+           |      |                         ~~~~~
+           |      |                           |
+           |      |                           (34) ...to here
+           |   33 |             if (child + 1 < h->len && h->data[child] < h->data[child + 1]) {
+           |      |                ~
+           |      |                |
+           |      |                (35) following 'false' branch...
+           |......
+           |   36 |             if (h->data[i] < h->data[child]) {
+           |      |                 ~~~~~~~      ~~~~~~~~~~~~~~
+           |      |                  |                  |
+           |      |                  (36) ...to here    (37) use of uninitialized value '*_24 + _26' here
+           |

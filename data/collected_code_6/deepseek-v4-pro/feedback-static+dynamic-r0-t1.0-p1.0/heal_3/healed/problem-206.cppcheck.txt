@@ -1,0 +1,22 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-206.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-206.c:32:48: style: Condition 'len1+len2>8192' is always false [knownConditionTrueFalse]
+    if (len1 + len2 < total_len || len1 + len2 > 8192) {
+                                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-206.c:23:39: note: Assuming condition 'total_len>8192' is false
+    if (total_len < len1 || total_len > 8192) {
+                                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-206.c:28:16: note: Assuming condition is false
+    if (result == NULL) {
+               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-206.c:32:48: note: Condition 'len1+len2>8192' is always false
+    if (len1 + len2 < total_len || len1 + len2 > 8192) {
+                                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-206.c:32:21: style: The comparison 'len1+len2 < total_len' is always false because 'len1+len2' and 'total_len' represent the same value. [knownConditionTrueFalse]
+    if (len1 + len2 < total_len || len1 + len2 > 8192) {
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-206.c:22:29: note: 'total_len' is assigned value 'len1+len2' here.
+    size_t total_len = len1 + len2;
+                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-206.c:32:21: note: The comparison 'len1+len2 < total_len' is always false because 'len1+len2' and 'total_len' represent the same value.
+    if (len1 + len2 < total_len || len1 + len2 > 8192) {
+                    ^

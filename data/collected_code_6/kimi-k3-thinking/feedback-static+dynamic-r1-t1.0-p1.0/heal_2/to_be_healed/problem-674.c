@@ -1,0 +1,150 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_INPUT_LENGTH 1048576u
+
+static size_t bounded_length(const char *s, size_t max)
+{
+    size_t n = 0u;
+    if (s == NULL) {
+        return 0u;
+    }
+    while (n < max && s[n] != '\0') {
+        n++;
+    }
+    return n;
+}
+
+char *remove_duplicate_words(const char *str)
+{
+    if (str == NULL) {
+        return NULL;
+    }
+
+    size_t len = bounded_length(str, MAX_INPUT_LENGTH + 1u);
+    if (len > MAX_INPUT_LENGTH) {
+        return NULL;
+    }
+
+    char *copy = malloc(len + 1u);
+    if (copy == NULL) {
+        return NULL;
+    }
+    /* Possible weaknesses found:
+     * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+     */
+    memcpy(copy, str, len);
+    copy[len] = '\0';
+
+    char *result = malloc(len + 1u);
+    if (result == NULL) {
+        free(copy);
+        return NULL;
+    }
+    result[0] = '\0';
+
+    size_t capacity = 16u;
+    size_t count = 0u;
+    char **words = malloc(capacity * sizeof(*words));
+    if (words == NULL) {
+        free(copy);
+        free(result);
+        return NULL;
+    }
+
+    size_t pos = 0u;
+    char *token = strtok(copy, " \t\n\r");
+    while (token != NULL) {
+        int found = 0;
+        for (size_t i = 0u; i < count; i++) {
+            if (strcmp(words[i], token) == 0) {
+                found = 1;
+                break;
+            }
+        }
+
+        if (!found) {
+            if (count == capacity) {
+                if (capacity > ((size_t)-1) / 2u / sizeof(*words)) {
+                    free(words);
+                    free(copy);
+                    free(result);
+                    return NULL;
+                }
+                size_t new_capacity = capacity * 2u;
+                char **tmp = realloc(words, new_capacity * sizeof(*words));
+                if (tmp == NULL) {
+                    free(words);
+                    free(copy);
+                    free(result);
+                    return NULL;
+                }
+                words = tmp;
+                capacity = new_capacity;
+            }
+
+            words[count++] = token;
+
+            size_t word_len = bounded_length(token, len + 1u);
+            size_t separator = (pos > 0u) ? 1u : 0u;
+            if (separator > len - pos || word_len > len - pos - separator) {
+                free(words);
+                free(copy);
+                free(result);
+                return NULL;
+            }
+
+            if (pos > 0u) {
+                result[pos++] = ' ';
+            }
+            /* Possible weaknesses found:
+             * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+             */
+            memcpy(result + pos, token, word_len);
+            pos += word_len;
+            result[pos] = '\0';
+        }
+
+        token = strtok(NULL, " \t\n\r");
+    }
+
+    free(words);
+    free(copy);
+
+    char *shrunk = realloc(result, pos + 1u);
+    if (shrunk != NULL) {
+        result = shrunk;
+    }
+
+    return result;
+}
+
+int main(int argc, char **argv)
+{
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char buffer[4096];
+    const char *input;
+
+    if (argc > 1) {
+        input = argv[1];
+    } else if (fgets(buffer, sizeof(buffer), stdin) != NULL) {
+        buffer[strcspn(buffer, "\r\n")] = '\0';
+        input = buffer;
+    } else {
+        input = "Python Exercises Practice Solution Exercises Practice";
+    }
+
+    char *output = remove_duplicate_words(input);
+    if (output == NULL) {
+        fprintf(stderr, "Error: failed to process the input string\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("%s\n", output);
+
+    free(output);
+    return EXIT_SUCCESS;
+}

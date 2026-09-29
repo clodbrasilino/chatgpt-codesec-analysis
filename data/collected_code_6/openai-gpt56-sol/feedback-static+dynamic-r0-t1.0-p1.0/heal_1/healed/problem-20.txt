@@ -1,0 +1,67 @@
+#include <ctype.h>
+#include <errno.h>
+#include <inttypes.h>
+#include <stdbool.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+static bool is_woodall(uint64_t number)
+{
+    uint64_t power_of_two = 2;
+
+    for (uint64_t n = 1; n <= number; ++n) {
+        if (n > UINT64_MAX / power_of_two) {
+            return false;
+        }
+
+        uint64_t product = n * power_of_two;
+
+        if (product - 1 == number) {
+            return true;
+        }
+
+        if (product - 1 > number || power_of_two > UINT64_MAX / 2) {
+            return false;
+        }
+
+        power_of_two *= 2;
+    }
+
+    return false;
+}
+
+int main(void)
+{
+    char *input = NULL;
+    size_t capacity = 0;
+
+    if (getline(&input, &capacity, stdin) < 0) {
+        free(input);
+        return EXIT_FAILURE;
+    }
+
+    errno = 0;
+    char *end = NULL;
+    uintmax_t value = strtoumax(input, &end, 10);
+
+    if (errno == ERANGE || end == input || value > UINT64_MAX) {
+        free(input);
+        return EXIT_FAILURE;
+    }
+
+    while (isspace((unsigned char)*end)) {
+        ++end;
+    }
+
+    if (*end != '\0') {
+        free(input);
+        return EXIT_FAILURE;
+    }
+
+    printf("%" PRIuMAX " is %sa Woodall number.\n",
+           value, is_woodall((uint64_t)value) ? "" : "not ");
+
+    free(input);
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,96 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <ctype.h>
+#include <limits.h>
+#include <errno.h>
+
+typedef struct {
+    int *elements;
+    size_t count;
+} IntTuple;
+
+IntTuple create_empty_tuple(void) {
+    IntTuple tuple = {NULL, 0};
+    return tuple;
+}
+
+void free_tuple(IntTuple *tuple) {
+    if (tuple != NULL && tuple->elements != NULL) {
+        free(tuple->elements);
+        tuple->elements = NULL;
+    }
+    if (tuple != NULL) {
+        tuple->count = 0;
+    }
+}
+
+IntTuple string_to_tuple(const char *str) {
+    if (str == NULL) {
+        return create_empty_tuple();
+    }
+
+    size_t capacity = 4;
+    size_t count = 0;
+    int *elements = malloc(capacity * sizeof(int));
+
+    if (elements == NULL) {
+        return create_empty_tuple();
+    }
+
+    const char *ptr = str;
+    char *endptr = NULL;
+
+    while (*ptr != '\0') {
+        while (isspace((unsigned char)*ptr) || *ptr == ',') {
+            ptr++;
+        }
+        if (*ptr == '\0') {
+            break;
+        }
+
+        errno = 0;
+        long val = strtol(ptr, &endptr, 10);
+
+        if (ptr == endptr || errno == ERANGE || val > INT_MAX || val < INT_MIN) {
+            free(elements);
+            return create_empty_tuple();
+        }
+
+        if (count >= capacity) {
+            size_t new_capacity = capacity * 2;
+            int *new_elements = realloc(elements, new_capacity * sizeof(int));
+            if (new_elements == NULL) {
+                free(elements);
+                return create_empty_tuple();
+            }
+            elements = new_elements;
+            capacity = new_capacity;
+        }
+
+        elements[count++] = (int)val;
+        ptr = endptr;
+    }
+
+    IntTuple tuple;
+    tuple.elements = elements;
+    tuple.count = count;
+    return tuple;
+}
+
+int main(void) {
+    const char *input = "10, -20, 30, 40, 50";
+    IntTuple tuple = string_to_tuple(input);
+
+    if (tuple.elements != NULL || tuple.count == 0) {
+        for (size_t i = 0; i < tuple.count; i++) {
+            printf("%d ", tuple.elements[i]);
+        }
+        printf("\n");
+        free_tuple(&tuple);
+    } else {
+        fprintf(stderr, "Error\n");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

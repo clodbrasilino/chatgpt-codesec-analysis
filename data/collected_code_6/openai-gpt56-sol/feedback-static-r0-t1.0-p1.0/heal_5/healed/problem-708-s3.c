@@ -1,0 +1,171 @@
+#include <errno.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct StringNode {
+    char *value;
+    struct StringNode *next;
+} StringNode;
+
+static void free_list(StringNode *head)
+{
+    while (head != NULL) {
+        StringNode *next = head->next;
+        free(head->value);
+        free(head);
+        head = next;
+    }
+}
+
+static char *duplicate_range(const char *start, size_t length)
+{
+    char *copy;
+
+    if (start == NULL) {
+        errno = EINVAL;
+        return NULL;
+    }
+
+    if (length == SIZE_MAX) {
+        errno = ENOMEM;
+        return NULL;
+    }
+
+    copy = malloc(length + 1);
+    if (copy == NULL) {
+        return NULL;
+    }
+
+    if (length > 0) {
+        memcpy(copy, start, length);
+    }
+
+    copy[length] = '\0';
+    return copy;
+}
+
+static int append_node(StringNode **head, StringNode **tail,
+                       const char *start, size_t length)
+{
+    StringNode *node;
+
+    if (head == NULL || tail == NULL || start == NULL) {
+        errno = EINVAL;
+        return -1;
+    }
+
+    node = malloc(sizeof *node);
+    if (node == NULL) {
+        return -1;
+    }
+
+    node->value = duplicate_range(start, length);
+    if (node->value == NULL) {
+        free(node);
+        return -1;
+    }
+
+    node->next = NULL;
+
+    if (*tail == NULL) {
+        *head = node;
+    } else {
+        (*tail)->next = node;
+    }
+
+    *tail = node;
+    return 0;
+}
+
+static int string_to_list_n(const char *input, size_t input_length,
+                            char delimiter, StringNode **result)
+{
+    StringNode *head = NULL;
+    StringNode *tail = NULL;
+    size_t token_start = 0;
+    size_t cursor;
+
+    if (input == NULL || result == NULL || delimiter == '\0') {
+        errno = EINVAL;
+        return -1;
+    }
+
+    *result = NULL;
+
+    for (cursor = 0; cursor <= input_length; ++cursor) {
+        if (cursor == input_length || input[cursor] == delimiter) {
+            size_t token_length = cursor - token_start;
+
+            if (append_node(&head, &tail, input + token_start,
+                            token_length) != 0) {
+                free_list(head);
+                return -1;
+            }
+
+            token_start = cursor + 1;
+        }
+    }
+
+    *result = head;
+    return 0;
+}
+
+static int print_list(const StringNode *head)
+{
+    const StringNode *node;
+
+    for (node = head; node != NULL; node = node->next) {
+        if (fputs(node->value, stdout) == EOF ||
+            fputc('\n', stdout) == EOF) {
+            return -1;
+        }
+    }
+
+    return 0;
+}
+
+int main(int argc, char *argv[])
+{
+    StringNode *list = NULL;
+    char delimiter = ',';
+    size_t input_length;
+
+    if (argc < 2 || argc > 3) {
+        fprintf(stderr, "Usage: %s <string> [delimiter]\n", argv[0]);
+        return EXIT_FAILURE;
+    }
+
+    if (argc == 3) {
+        if (argv[2][0] == '\0' || argv[2][1] != '\0') {
+            fputs("Delimiter must be exactly one non-null character.\n",
+                  stderr);
+            return EXIT_FAILURE;
+        }
+
+        delimiter = argv[2][0];
+    }
+
+    input_length = strlen(argv[1]);
+
+    if (string_to_list_n(argv[1], input_length, delimiter, &list) != 0) {
+        perror("string_to_list_n");
+        return EXIT_FAILURE;
+    }
+
+    if (print_list(list) != 0) {
+        perror("print_list");
+        free_list(list);
+        return EXIT_FAILURE;
+    }
+
+    free_list(list);
+
+    if (fflush(stdout) == EOF) {
+        perror("stdout");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,81 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char **remove_duplicates(char **words, size_t *count) {
+    if (words == NULL || count == NULL) {
+        return NULL;
+    }
+
+    size_t original_count = *count;
+    if (original_count == 0) {
+        return NULL;
+    }
+
+    char **unique_words = malloc(original_count * sizeof(char *));
+    if (unique_words == NULL) {
+        return NULL;
+    }
+
+    size_t unique_count = 0;
+
+    for (size_t i = 0; i < original_count; i++) {
+        if (words[i] == NULL) {
+            continue;
+        }
+
+        int is_duplicate = 0;
+        for (size_t j = 0; j < unique_count; j++) {
+            if (strcmp(unique_words[j], words[i]) == 0) {
+                is_duplicate = 1;
+                break;
+            }
+        }
+
+        if (!is_duplicate) {
+            char *dup = strdup(words[i]);
+            if (dup == NULL) {
+                for (size_t k = 0; k < unique_count; k++) {
+                    free(unique_words[k]);
+                }
+                free(unique_words);
+                *count = 0;
+                return NULL;
+            }
+            unique_words[unique_count++] = dup;
+        }
+    }
+
+    char **result = realloc(unique_words, unique_count * sizeof(char *));
+    if (result == NULL) {
+        if (unique_count == 0) {
+            free(unique_words);
+            *count = 0;
+            return NULL;
+        }
+        result = unique_words;
+    }
+
+    *count = unique_count;
+    return result;
+}
+
+int main(void) {
+    char *words[] = {"apple", "banana", "apple", "cherry", "banana", "date"};
+    size_t count = sizeof(words) / sizeof(words[0]);
+
+    size_t unique_count = count;
+    char **unique_words = remove_duplicates(words, &unique_count);
+
+    if (unique_words != NULL) {
+        for (size_t i = 0; i < unique_count; i++) {
+            printf("%s\n", unique_words[i]);
+            free(unique_words[i]);
+        }
+        free(unique_words);
+    }
+
+    return 0;
+}
+```

@@ -1,0 +1,32 @@
+```c
+#include <stdio.h>
+#include <string.h>
+
+#define BUFFER_SIZE 4096
+
+void replace_chars(char *str, size_t size) {
+    size_t i;
+    for (i = 0; i < size && str[i] != '\0'; i++) {
+        if (str[i] == ' ' || str[i] == ',' || str[i] == '.') {
+            str[i] = ':';
+        }
+    }
+}
+
+int main(void) {
+    char buffer[BUFFER_SIZE];
+    
+    if (fgets(buffer, sizeof(buffer), stdin) != NULL) {
+        size_t len = strcspn(buffer, "\n");
+        if (len < sizeof(buffer)) {
+            buffer[len] = '\0';
+        } else {
+            buffer[sizeof(buffer) - 1] = '\0';
+        }
+        replace_chars(buffer, strnlen(buffer, sizeof(buffer)));
+        printf("%s\n", buffer);
+    }
+    
+    return 0;
+}
+```

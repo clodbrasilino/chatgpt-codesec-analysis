@@ -1,0 +1,18 @@
+collected_code/problem-397-0.c:19:23: error: Cannot determine that 'num1' is initialized [premium-bughuntingUninit]
+   scanf("%f %f %f", &num1, &num2, &num3);
+                      ^
+collected_code/problem-397-0.c:19:30: error: Cannot determine that 'num2' is initialized [premium-bughuntingUninit]
+   scanf("%f %f %f", &num1, &num2, &num3);
+                             ^
+collected_code/problem-397-0.c:19:37: error: Cannot determine that 'num3' is initialized [premium-bughuntingUninit]
+   scanf("%f %f %f", &num1, &num2, &num3);
+                                    ^
+collected_code/problem-397-0.c:21:24: error: Cannot determine that 'num1' is initialized [premium-bughuntingUninit]
+   median = findMedian(num1, num2, num3);
+                       ^
+collected_code/problem-397-0.c:21:30: error: Cannot determine that 'num2' is initialized [premium-bughuntingUninit]
+   median = findMedian(num1, num2, num3);
+                             ^
+collected_code/problem-397-0.c:21:36: error: Cannot determine that 'num3' is initialized [premium-bughuntingUninit]
+   median = findMedian(num1, num2, num3);
+                                   ^

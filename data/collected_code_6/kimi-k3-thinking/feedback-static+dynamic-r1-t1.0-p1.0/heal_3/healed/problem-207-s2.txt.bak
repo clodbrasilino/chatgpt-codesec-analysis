@@ -1,0 +1,143 @@
+The program computed the right values for short inputs, but it allocated an `(n+1)²` `int` matrix — for long inputs (the stdin buffer allows up to ~64 KB, i.e. a ~16 GiB allocation) `calloc` fails or the process is killed, so it exits with no output. The rewrite uses an O(n)-space DP, removes the fragile overflow check, casts allocations, and reads stdin lines of any length so a result is always printed for valid input.
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+static int max_int(int a, int b)
+{
+    return (a > b) ? a : b;
+}
+
+int longestRepeatingSubsequence(const char *str)
+{
+    size_t n;
+    size_t i;
+    size_t j;
+    int *dp;
+    int result;
+
+    if (str == NULL)
+    {
+        return -1;
+    }
+
+    n = strlen(str);
+
+    if (n == 0)
+    {
+        return 0;
+    }
+
+    if (n + 1 > SIZE_MAX / sizeof(*dp))
+    {
+        return -1;
+    }
+
+    dp = (int *)calloc(n + 1, sizeof(*dp));
+    if (dp == NULL)
+    {
+        return -1;
+    }
+
+    for (i = 1; i <= n; i++)
+    {
+        int prev = 0;
+
+        for (j = 1; j <= n; j++)
+        {
+            int temp = dp[j];
+
+            if (str[i - 1] == str[j - 1] && i != j)
+            {
+                dp[j] = prev + 1;
+            }
+            else
+            {
+                dp[j] = max_int(dp[j], dp[j - 1]);
+            }
+
+            prev = temp;
+        }
+    }
+
+    result = dp[n];
+
+    free(dp);
+    dp = NULL;
+
+    return result;
+}
+
+int main(int argc, char *argv[])
+{
+    const char *str;
+    char *input;
+    int result;
+
+    str = NULL;
+    input = NULL;
+
+    if (argc > 1)
+    {
+        str = argv[1];
+    }
+    else
+    {
+        size_t len = 0;
+        size_t cap = 256;
+        int c;
+
+        input = (char *)malloc(cap);
+        if (input == NULL)
+        {
+            return EXIT_FAILURE;
+        }
+
+        while ((c = getchar()) != EOF && c != '\n' && c != '\r')
+        {
+            if (len + 1 >= cap)
+            {
+                char *tmp;
+
+                if (cap > SIZE_MAX / 2)
+                {
+                    free(input);
+                    return EXIT_FAILURE;
+                }
+
+                cap *= 2;
+                tmp = (char *)realloc(input, cap);
+                if (tmp == NULL)
+                {
+                    free(input);
+                    return EXIT_FAILURE;
+                }
+
+                input = tmp;
+            }
+
+            input[len++] = (char)c;
+        }
+
+        input[len] = '\0';
+        str = input;
+    }
+
+    result = longestRepeatingSubsequence(str);
+
+    free(input);
+    input = NULL;
+
+    if (result < 0)
+    {
+        return EXIT_FAILURE;
+    }
+
+    printf("%d\n", result);
+
+    return EXIT_SUCCESS;
+}
+```

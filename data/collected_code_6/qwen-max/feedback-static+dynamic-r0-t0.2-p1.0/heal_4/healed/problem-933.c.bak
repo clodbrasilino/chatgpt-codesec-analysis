@@ -1,0 +1,63 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+char *camel_to_snake(const char *input) {
+    regex_t regex;
+    regmatch_t matches[2];
+    char *output = NULL;
+
+    if (regcomp(&regex, "([a-z0-9])([A-Z])", REG_EXTENDED) == 0) {
+        output = malloc(strlen(input) * 2 + 1);
+        if (output != NULL) {
+            int output_index = 0;
+
+            for (int i = 0; i < strlen(input); ++i) {
+                if (regexec(&regex, input + i, 2, matches, 0) == 0) {
+                    output[output_index++] = tolower(input[i]);
+                    output[output_index++] = '_';
+                    i += matches[1].rm_so - i - 1;
+                } else {
+                    output[output_index++] = tolower(input[i]);
+                }
+            }
+
+            output[output_index] = '\0';
+        }
+        regfree(&regex);
+    }
+
+    if (output == NULL) {
+        fprintf(stderr, "Error converting string.\n");
+        return NULL;
+    }
+
+    return output;
+}
+
+int main() {
+    const char *test_cases[] = {"googleAssistant", "quadCore", "chromeCast"};
+    const char *expected_outputs[] = {"google_assistant", "quad_core", "chrome_cast"};
+
+    for (int i = 0; i < 3; ++i) {
+        char *output = camel_to_snake(test_cases[i]);
+        if (output != NULL) {
+            printf("Test Case %d: %s\n", i, output);
+            if (strcmp(output, expected_outputs[i]) != 0) {
+                fprintf(stderr, "Test case %d failed: expected '%s', got '%s'\n", i, expected_outputs[i], output);
+            }
+            free(output);
+        }
+    }
+
+    const char *input = "ThisIsCamelCase";
+    char *output = camel_to_snake(input);
+
+    if (output != NULL) {
+        printf("%s\n", output);
+        free(output);
+    }
+
+    return 0;
+}

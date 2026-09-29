@@ -1,0 +1,52 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int isLastElementEvenAfterOperations(const int arr[], int size, int p) {
+    if (arr == NULL || size <= 0) {
+        return -1;
+    }
+    
+    int last = arr[size - 1];
+    for (int i = 0; i < p; i++) {
+        last = last * 2;
+    }
+    
+    return (last % 2 == 0) ? 1 : 0;
+}
+
+int main(void) {
+    int n, p;
+    
+    if (scanf("%d", &n) != 1 || n <= 0) {
+        return EXIT_FAILURE;
+    }
+    
+    int *arr = (int *)malloc((size_t)n * sizeof(int));
+    if (arr == NULL) {
+        return EXIT_FAILURE;
+    }
+    
+    for (int i = 0; i < n; i++) {
+        if (scanf("%d", &arr[i]) != 1) {
+            free(arr);
+            return EXIT_FAILURE;
+        }
+    }
+    
+    if (scanf("%d", &p) != 1 || p < 0) {
+        free(arr);
+        return EXIT_FAILURE;
+    }
+    
+    int result = isLastElementEvenAfterOperations(arr, n, p);
+    if (result == 1) {
+        printf("Even\n");
+    } else if (result == 0) {
+        printf("Odd\n");
+    } else {
+        printf("Invalid input\n");
+    }
+    
+    free(arr);
+    return EXIT_SUCCESS;
+}

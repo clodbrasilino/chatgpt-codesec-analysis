@@ -1,0 +1,121 @@
+```c
+#define PY_SSIZE_T_CLEAN
+
+#if defined(__has_include)
+#  if __has_include(<Python.h>)
+#    include <Python.h>
+#  elif __has_include(<python3.12/Python.h>)
+#    include <python3.12/Python.h>
+#  elif __has_include(<python3.11/Python.h>)
+#    include <python3.11/Python.h>
+#  elif __has_include(<python3.10/Python.h>)
+#    include <python3.10/Python.h>
+#  else
+#    error "Python.h not found: install python3-dev and compile with $(python3-config --cflags --ldflags)"
+#  endif
+#else
+#  include <Python.h>
+#endif
+
+#include <stdio.h>
+#include <stdlib.h>
+
+static int add_dict_to_tuple(PyObject *tuple, Py_ssize_t index, PyObject *dict)
+{
+    if (tuple == NULL || dict == NULL) {
+        return -1;
+    }
+
+    if (!PyTuple_Check(tuple)) {
+        return -1;
+    }
+
+    if (index < 0 || index >= PyTuple_Size(tuple)) {
+        return -1;
+    }
+
+    Py_INCREF(dict);
+
+    if (PyTuple_SetItem(tuple, index, dict) != 0) {
+        Py_DECREF(dict);
+        return -1;
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    int exit_status = EXIT_FAILURE;
+    PyObject *tuple = NULL;
+    PyObject *dict = NULL;
+    PyObject *key = NULL;
+    PyObject *value = NULL;
+
+    Py_Initialize();
+
+    tuple = PyTuple_New(1);
+    if (tuple == NULL) {
+        goto cleanup;
+    }
+
+    dict = PyDict_New();
+    if (dict == NULL) {
+        goto cleanup;
+    }
+
+    key = PyUnicode_FromString("language");
+    if (key == NULL) {
+        goto cleanup;
+    }
+
+    value = PyUnicode_FromString("C");
+    if (value == NULL) {
+        goto cleanup;
+    }
+
+    if (PyDict_SetItem(dict, key, value) != 0) {
+        goto cleanup;
+    }
+
+    if (add_dict_to_tuple(tuple, 0, dict) != 0) {
+        goto cleanup;
+    }
+
+    if (PyObject_Print(tuple, stdout, 0) != 0) {
+        goto cleanup;
+    }
+
+    if (fputc('\n', stdout) == EOF) {
+        goto cleanup;
+    }
+
+    exit_status = EXIT_SUCCESS;
+
+cleanup:
+    Py_XDECREF(key);
+    Py_XDECREF(value);
+    Py_XDECREF(dict);
+    Py_XDECREF(tuple);
+
+    if (PyErr_Occurred()) {
+        PyErr_Print();
+    }
+
+    if (Py_FinalizeEx() < 0) {
+        exit_status = EXIT_FAILURE;
+    }
+
+    return exit_status;
+}
+```
+
+**Analysis summary:**
+
+The two "weaknesses" flagged (`'Python.h' file not found` and `Python.h: No such file or directory`) are not source-code defects but build-environment issues: the Python development headers are missing or the compiler's include path isn't configured. The rewrite addresses this defensively with `__has_include` fallbacks and a clear `#error` diagnostic directing the developer to install `python3-dev` (or `python3-devel`) and to compile using `python3-config`:
+
+```
+gcc example.c $(python3-config --cflags --embed --ldflags) -o example
+```
+
+The original code itself is sound: `PY_SSIZE_T_CLEAN` is defined before the include, `PyTuple_SetItem` reference stealing is correctly balanced with `Py_INCREF`/`Py_DECREF` on failure, all allocations are NULL-checked, cleanup uses `Py_XDECREF` via a single `goto` path, pending exceptions are surfaced with `PyErr_Print`, and `Py_FinalizeEx` failure is reflected in the exit status. No changes to program logic were required.

@@ -1,0 +1,27 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+int starts_with_number(const char *str) {
+    if (str == NULL || *str == '\0') {
+        return 0;
+    }
+    return isdigit((unsigned char)*str);
+}
+
+int main(void) {
+    const char *test1 = "123abc";
+    const char *test2 = "abc123";
+    const char *test3 = "";
+    const char *test4 = NULL;
+    
+    printf("%s: %d\n", test1, starts_with_number(test1));
+    printf("%s: %d\n", test2, starts_with_number(test2));
+    printf("empty: %d\n", starts_with_number(test3));
+    printf("null: %d\n", starts_with_number(test4));
+    
+    return 0;
+}
+```

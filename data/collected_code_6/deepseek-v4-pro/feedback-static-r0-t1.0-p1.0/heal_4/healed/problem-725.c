@@ -1,0 +1,127 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+char **extract_quoted_values(const char *str, size_t *count) {
+    regex_t regex;
+    regmatch_t matches[2];
+    const char *pattern = "\"([^\"]*)\"";
+    char **results = NULL;
+    size_t capacity = 0;
+    size_t found = 0;
+
+    if (str == NULL) {
+        *count = 0;
+        return NULL;
+    }
+
+    if (regcomp(&regex, pattern, REG_EXTENDED) != 0) {
+        *count = 0;
+        return NULL;
+    }
+
+    const char *cursor = str;
+    size_t total_len = strlen(str);
+    size_t remaining = total_len;
+
+    while (remaining > 0 && regexec(&regex, cursor, 2, matches, 0) == 0) {
+        if (found >= capacity) {
+            size_t new_capacity = capacity == 0 ? 4 : capacity * 2;
+            char **new_results = realloc(results, new_capacity * sizeof(char *));
+            if (!new_results) {
+                for (size_t i = 0; i < found; i++) {
+                    free(results[i]);
+                }
+                free(results);
+                regfree(&regex);
+                *count = 0;
+                return NULL;
+            }
+            results = new_results;
+            capacity = new_capacity;
+        }
+
+        size_t start = matches[1].rm_so;
+        size_t end = matches[1].rm_eo;
+        size_t match_end = matches[0].rm_eo;
+
+        if (start >= remaining || end > remaining || end < start || match_end > remaining) {
+            for (size_t i = 0; i < found; i++) {
+                free(results[i]);
+            }
+            free(results);
+            regfree(&regex);
+            *count = 0;
+            return NULL;
+        }
+
+        size_t len = end - start;
+
+        if (start + len > total_len - (cursor - str) || len > remaining) {
+            for (size_t i = 0; i < found; i++) {
+                free(results[i]);
+            }
+            free(results);
+            regfree(&regex);
+            *count = 0;
+            return NULL;
+        }
+
+        results[found] = malloc(len + 1);
+        if (!results[found]) {
+            for (size_t i = 0; i < found; i++) {
+                free(results[i]);
+            }
+            free(results);
+            regfree(&regex);
+            *count = 0;
+            return NULL;
+        }
+
+        if (len > 0) {
+            memcpy(results[found], cursor + start, len);
+        }
+        results[found][len] = '\0';
+        found++;
+
+        if (match_end == 0) {
+            match_end = 1;
+        }
+        cursor += match_end;
+        remaining -= match_end;
+    }
+
+    regfree(&regex);
+    *count = found;
+    return results;
+}
+
+int main(void) {
+    const char *test_string = "Hello \"world\" and \"universe\" with \"multiple words\"";
+    size_t count = 0;
+    char **values = extract_quoted_values(test_string, &count);
+
+    if (values) {
+        printf("Found %zu quoted values:\n", count);
+        for (size_t i = 0; i < count; i++) {
+            printf("[%zu] %s\n", i, values[i]);
+            free(values[i]);
+        }
+        free(values);
+    } else {
+        printf("No quoted values found or error occurred\n");
+    }
+
+    const char *empty_string = "no quotes here";
+    count = 0;
+    values = extract_quoted_values(empty_string, &count);
+    if (values) {
+        for (size_t i = 0; i < count; i++) {
+            free(values[i]);
+        }
+        free(values);
+    }
+
+    return 0;
+}

@@ -1,0 +1,23 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-495-s3.c: In function 'remove_lowercase_substrings':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-495-s3.c:46:48: error: 'ptrdiff_t' undeclared (first use in this function)
+   46 |             if (cursor + prefix_len - input > (ptrdiff_t)input_len) {
+      |                                                ^~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-495-s3.c:5:1: note: 'ptrdiff_t' is defined in header '<stddef.h>'; this is probably fixable by adding '#include <stddef.h>'
+    4 | #include <regex.h>
+  +++ |+#include <stddef.h>
+    5 | #include <stdint.h>
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-495-s3.c:46:48: note: each undeclared identifier is reported only once for each function it appears in
+   46 |             if (cursor + prefix_len - input > (ptrdiff_t)input_len) {
+      |                                                ^~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-495-s3.c:46:58: error: expected ')' before 'input_len'
+   46 |             if (cursor + prefix_len - input > (ptrdiff_t)input_len) {
+      |                ~                                         ^~~~~~~~~
+      |                                                          )
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-495-s3.c:59:37: error: expected ')' before 'input_len'
+   59 |     if (cursor - input < (ptrdiff_t)input_len) {
+      |        ~                            ^~~~~~~~~
+      |                                     )
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-495-s3.c:65:58: error: expected ')' before 'input_len'
+   65 |             if (cursor + remaining - input <= (ptrdiff_t)input_len) {
+      |                ~                                         ^~~~~~~~~
+      |                                                          )

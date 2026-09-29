@@ -1,0 +1,44 @@
+{
+  "task_id": 165,
+  "text": "Write a C function to count characters at same position in a given string (lower and uppercase characters) as in english alphabet.",
+  "fn_candidates": [
+    "count_char_position",
+    "CountCharPosition",
+    "countCharPosition",
+    "countcharposition"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "count_char_position",
+      "args": [
+        "xbcefg"
+      ],
+      "expected": 2,
+      "assert_src": "assert count_char_position(\"xbcefg\") == 2"
+    },
+    {
+      "fn_name": "count_char_position",
+      "args": [
+        "ABcED"
+      ],
+      "expected": 3,
+      "assert_src": "assert count_char_position(\"ABcED\") == 3"
+    },
+    {
+      "fn_name": "count_char_position",
+      "args": [
+        "AbgdeF"
+      ],
+      "expected": 5,
+      "assert_src": "assert count_char_position(\"AbgdeF\") == 5"
+    }
+  ],
+  "arg_kinds": [
+    "str"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

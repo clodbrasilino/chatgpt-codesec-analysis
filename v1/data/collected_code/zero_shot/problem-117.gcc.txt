@@ -1,0 +1,9 @@
+collected_code/problem-117-0.c: In function 'main':
+collected_code/problem-117-0.c:15:20: warning: passing argument 1 of 'convertToFloat' from incompatible pointer type [-Wincompatible-pointer-types]
+   15 |     convertToFloat(arr, len);
+      |                    ^~~
+      |                    |
+      |                    int *
+collected_code/problem-117-0.c:4:28: note: expected 'float *' but argument is of type 'int *'
+    4 | void convertToFloat(float* arr, int len) {
+      |                     ~~~~~~~^~~

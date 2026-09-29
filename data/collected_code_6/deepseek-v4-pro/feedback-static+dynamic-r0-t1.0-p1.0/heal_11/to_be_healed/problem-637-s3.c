@@ -1,0 +1,139 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <float.h>
+#include <string.h>
+#include <math.h>
+
+int check_no_profit_no_loss(double cost_price, double selling_price) {
+    if (cost_price < 0 || selling_price < 0) {
+        return -1;
+    }
+    if (fabs(cost_price - selling_price) < DBL_EPSILON * fmax(fabs(cost_price), fabs(selling_price)) * 8.0) {
+        return 1;
+    }
+    return 0;
+}
+
+int main(void) {
+    double cost_price, selling_price;
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char input[256] = {0};
+    char *endptr;
+    size_t input_len;
+    int result;
+    int c;
+
+    printf("Enter cost price: ");
+    if (fgets(input, (int)sizeof(input), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+    
+    input_len = strnlen(input, sizeof(input));
+    if (input_len > 0 && input_len < sizeof(input) - 1 && input[input_len - 1] == '\n') {
+        input[input_len - 1] = '\0';
+        input_len--;
+    } else if (input_len >= sizeof(input) - 1) {
+        /* Possible weaknesses found:
+         * Flawfinder getchar: Check buffer boundaries if used in a loop including recursive loops (CWE-120, CWE-20). (risk 1, buffer)
+         */
+        while ((c = getchar()) != '\n' && c != EOF) {
+            if (c == EOF) {
+                break;
+            }
+        }
+        
+        if (input[sizeof(input) - 1] == '\n') {
+            input[sizeof(input) - 1] = '\0';
+            input_len = strnlen(input, sizeof(input));
+        } else if (input[sizeof(input) - 2] == '\n') {
+            input[sizeof(input) - 2] = '\0';
+            input_len = strnlen(input, sizeof(input));
+        } else if (input_len == sizeof(input) - 1) {
+            fprintf(stderr, "Input too long\n");
+            return EXIT_FAILURE;
+        }
+    }
+    
+    if (input_len == 0) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    errno = 0;
+    cost_price = strtod(input, &endptr);
+    if (endptr == input || *endptr != '\0') {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    if (errno == ERANGE) {
+        fprintf(stderr, "Input out of range\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter selling price: ");
+    if (fgets(input, (int)sizeof(input), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+    
+    input_len = strnlen(input, sizeof(input));
+    if (input_len > 0 && input_len < sizeof(input) - 1 && input[input_len - 1] == '\n') {
+        input[input_len - 1] = '\0';
+        input_len--;
+    } else if (input_len >= sizeof(input) - 1) {
+        /* Possible weaknesses found:
+         * Flawfinder getchar: Check buffer boundaries if used in a loop including recursive loops (CWE-120, CWE-20). (risk 1, buffer)
+         */
+        while ((c = getchar()) != '\n' && c != EOF) {
+            if (c == EOF) {
+                break;
+            }
+        }
+        
+        if (input[sizeof(input) - 1] == '\n') {
+            input[sizeof(input) - 1] = '\0';
+            input_len = strnlen(input, sizeof(input));
+        } else if (input[sizeof(input) - 2] == '\n') {
+            input[sizeof(input) - 2] = '\0';
+            input_len = strnlen(input, sizeof(input));
+        } else if (input_len == sizeof(input) - 1) {
+            fprintf(stderr, "Input too long\n");
+            return EXIT_FAILURE;
+        }
+    }
+    
+    if (input_len == 0) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    errno = 0;
+    selling_price = strtod(input, &endptr);
+    if (endptr == input || *endptr != '\0') {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    if (errno == ERANGE) {
+        fprintf(stderr, "Input out of range\n");
+        return EXIT_FAILURE;
+    }
+
+    result = check_no_profit_no_loss(cost_price, selling_price);
+    if (result == -1) {
+        fprintf(stderr, "Prices cannot be negative\n");
+        return EXIT_FAILURE;
+    }
+    if (result == 1) {
+        printf("True\n");
+    } else {
+        printf("False\n");
+    }
+
+    return EXIT_SUCCESS;
+}

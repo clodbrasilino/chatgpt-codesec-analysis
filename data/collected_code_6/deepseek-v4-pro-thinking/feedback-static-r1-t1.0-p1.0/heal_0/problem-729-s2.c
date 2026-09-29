@@ -1,0 +1,100 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int value;
+    struct Node *next;
+};
+
+static int appendNode(struct Node **head, struct Node **tail, int value) {
+    struct Node *node = malloc(sizeof(*node));
+    if (node == NULL) {
+        return 0;
+    }
+    node->value = value;
+    node->next = NULL;
+    if (*head == NULL) {
+        *head = node;
+    } else {
+        (*tail)->next = node;
+    }
+    *tail = node;
+    return 1;
+}
+
+static void freeList(struct Node *head) {
+    while (head != NULL) {
+        struct Node *next = head->next;
+        free(head);
+        head = next;
+    }
+}
+
+struct Node *addLists(const struct Node *a, const struct Node *b) {
+    struct Node *result = NULL;
+    struct Node *tail = NULL;
+    const struct Node *pa = a;
+    const struct Node *pb = b;
+
+    while (pa != NULL || pb != NULL) {
+        int sum = 0;
+        if (pa != NULL) {
+            sum += pa->value;
+            pa = pa->next;
+        }
+        if (pb != NULL) {
+            sum += pb->value;
+            pb = pb->next;
+        }
+        if (!appendNode(&result, &tail, sum)) {
+            freeList(result);
+            return NULL;
+        }
+    }
+
+    return result;
+}
+
+int main(void) {
+    struct Node *a = NULL;
+    struct Node *aTail = NULL;
+    struct Node *b = NULL;
+    struct Node *bTail = NULL;
+    struct Node *sum = NULL;
+    struct Node *current = NULL;
+
+    if (!appendNode(&a, &aTail, 1) ||
+        !appendNode(&a, &aTail, 2) ||
+        !appendNode(&a, &aTail, 3)) {
+        freeList(a);
+        freeList(b);
+        return EXIT_FAILURE;
+    }
+
+    if (!appendNode(&b, &bTail, 10) ||
+        !appendNode(&b, &bTail, 20) ||
+        !appendNode(&b, &bTail, 30) ||
+        !appendNode(&b, &bTail, 40)) {
+        freeList(a);
+        freeList(b);
+        return EXIT_FAILURE;
+    }
+
+    sum = addLists(a, b);
+    if (sum == NULL) {
+        freeList(a);
+        freeList(b);
+        return EXIT_FAILURE;
+    }
+
+    current = sum;
+    while (current != NULL) {
+        printf("%d\n", current->value);
+        current = current->next;
+    }
+
+    freeList(sum);
+    freeList(a);
+    freeList(b);
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,90 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char** elements;
+    int size;
+} Tuple;
+
+Tuple* string_to_tuple(const char* input) {
+    Tuple* tuple = (Tuple*)malloc(sizeof(Tuple));
+    if (tuple == NULL) {
+        return NULL;
+    }
+
+    const char* delimiter = ",";
+    char* input_copy = strdup(input);
+    if (input_copy == NULL) {
+        free(tuple);
+        return NULL;
+    }
+
+    char* token = strtok(input_copy, delimiter);
+    int count = 0;
+    while (token != NULL) {
+        count++;
+        token = strtok(NULL, delimiter);
+    }
+
+    if (count == 0) {
+        free(input_copy);
+        free(tuple);
+        return NULL;
+    }
+
+    tuple->size = count;
+    tuple->elements = (char**)malloc(tuple->size * sizeof(char*));
+    if (tuple->elements == NULL) {
+        free(input_copy);
+        free(tuple);
+        return NULL;
+    }
+
+    token = strtok(input_copy, delimiter);
+    for (int i = 0; i < tuple->size; i++) {
+        tuple->elements[i] = strdup(token);
+        if (tuple->elements[i] == NULL) {
+            for (int j = 0; j < i; j++) {
+                free(tuple->elements[j]);
+            }
+            free(tuple->elements);
+            free(input_copy);
+            free(tuple);
+            return NULL;
+        }
+        token = strtok(NULL, delimiter);
+    }
+
+    free(input_copy);
+    return tuple;
+}
+
+void free_tuple(Tuple* tuple) {
+    if (tuple) {
+        for (int i = 0; i < tuple->size; i++) {
+            free(tuple->elements[i]);
+        }
+        free(tuple->elements);
+        free(tuple);
+    }
+}
+
+int main() {
+    const char* input1[] = {"python3.0", "item1", "15.10"};
+    const char* expected1[][9] = {{"python3.0"}, {"item1"}, {"15.10"}};
+
+    for (int test = 0; test < 3; test++) {
+        Tuple* result = string_to_tuple(input1[test]);
+        if (result) {
+            for (int i = 0; i < result->size; i++) {
+                printf("%s\n", result->elements[i]);
+            }
+            free_tuple(result);
+        } else {
+            printf("Failed to create tuple for input%d.\n", test + 1);
+        }
+    }
+
+    return 0;
+}

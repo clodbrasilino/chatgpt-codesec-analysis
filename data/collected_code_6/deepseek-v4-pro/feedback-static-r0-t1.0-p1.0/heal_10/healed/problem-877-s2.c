@@ -1,0 +1,41 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+int compare_chars(const void *a, const void *b) {
+    return (*(const char *)a - *(const char *)b);
+}
+
+int sort_string(char *str, size_t max_len) {
+    size_t len = strnlen(str, max_len);
+    if (len > 0 && len <= max_len) {
+        qsort(str, len, sizeof(char), compare_chars);
+        return 0;
+    }
+    return -1;
+}
+
+int main(void) {
+    char *line = NULL;
+    size_t bufsize = 0;
+    ssize_t len = getline(&line, &bufsize, stdin);
+    
+    if (len == -1) {
+        free(line);
+        return 1;
+    }
+    
+    if (len > 0 && line[len - 1] == '\n') {
+        line[len - 1] = '\0';
+        len--;
+    }
+    
+    if (len > 0) {
+        sort_string(line, (size_t)len);
+    }
+    
+    printf("%s\n", line);
+    
+    free(line);
+    return 0;
+}

@@ -1,0 +1,66 @@
+```c
+#include <stdio.h>
+#include <math.h>
+#include <stdlib.h>
+
+double sum_of_gp(double a, double r, int n)
+{
+    if (n <= 0) {
+        return 0.0;
+    }
+    if (fabs(r - 1.0) < 1e-12) {
+        return a * (double)n;
+    }
+    return a * (1.0 - pow(r, (double)n)) / (1.0 - r);
+}
+
+int main(void)
+{
+    double a;
+    double r;
+    int n;
+    double result;
+
+    printf("Enter the first term: ");
+    if (scanf("%lf", &a) != 1) {
+        fprintf(stderr, "Invalid input for first term.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter the common ratio: ");
+    if (scanf("%lf", &r) != 1) {
+        fprintf(stderr, "Invalid input for common ratio.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter the number of terms: ");
+    if (scanf("%d", &n) != 1) {
+        fprintf(stderr, "Invalid input for number of terms.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (n < 0) {
+        fprintf(stderr, "Number of terms must be non-negative.\n");
+        return EXIT_FAILURE;
+    }
+
+    result = sum_of_gp(a, r, n);
+
+    if (isinf(result) || isnan(result)) {
+        fprintf(stderr, "Result out of representable range.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Sum of the geometric progression: %f\n", result);
+
+    return EXIT_SUCCESS;
+}
+```
+
+Analysis of the weakness: the failing test cases revealed an input-ordering bug, not a math error. The original code prompted for the first term, then the **number of terms**, then the **common ratio**, while the test harness supplied values in the order *first term, common ratio, number of terms*. This caused `r` and `n` to be swapped:
+
+- Test 0: intended `a=1, r=2, n=5` → 31, but the program computed with `n=2, r=5` → 6.
+- Test 1: intended `a=1, r=4, n=5` → 341, but computed with `n=4, r=5` → 156.
+- Test 2: intended `a=2, r=3, n=6` → 728, but computed with `n=3, r=6` → 86.
+
+Reordering the `scanf` calls so the common ratio is read before the number of terms resolves all three failures. The `sum_of_gp` formula itself, the `r == 1` special case, and the overflow/NaN guards were already correct.

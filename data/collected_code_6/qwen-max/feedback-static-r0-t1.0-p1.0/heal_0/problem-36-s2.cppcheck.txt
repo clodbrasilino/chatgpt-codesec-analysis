@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-36-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-36-s2.c:9:32: warning: Either the condition 'denominator>0' is redundant or there is division by zero at line 9. [zerodivcond]
+        result = (result * 10) % denominator;
+                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-36-s2.c:7:25: note: Assuming that condition 'denominator>0' is not redundant
+        if (denominator > 0 && result * 10 % denominator == 0)
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-36-s2.c:9:32: note: Division by zero
+        result = (result * 10) % denominator;
+                               ^

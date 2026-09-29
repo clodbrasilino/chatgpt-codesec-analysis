@@ -1,0 +1,36 @@
+collected_code/problem-387-0.c:7:12: error: Cannot determine that 'hex[0]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+    if (hex[0] == '0' && (hex[1] == 'x' || hex[1] == 'X'))
+           ^
+collected_code/problem-387-0.c:7:30: error: Cannot determine that 'hex[1]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+    if (hex[0] == '0' && (hex[1] == 'x' || hex[1] == 'X'))
+                             ^
+collected_code/problem-387-0.c:11:15: error: Cannot determine that 'hex[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+    while (hex[i] != '\0') {
+              ^
+collected_code/problem-387-0.c:13:19: error: Cannot determine that 'hex[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        if (!((hex[i] >= '0' && hex[i] <= '9') || (hex[i] >= 'A' && hex[i] <= 'F') || (hex[i] >= 'a' && hex[i] <= 'f')))
+                  ^
+collected_code/problem-387-0.c:22:15: error: Cannot determine that 'hex[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+    while (hex[i] != '\0') {
+              ^
+collected_code/problem-387-0.c:23:16: error: Cannot determine that 'hex[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        if (hex[i] >= '0' && hex[i] <= '9')
+               ^
+collected_code/problem-387-0.c:24:42: error: Cannot determine that 'hex[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+            decimal = decimal * 16 + (hex[i] - '0');
+                                         ^
+collected_code/problem-387-0.c:25:21: error: Cannot determine that 'hex[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        else if (hex[i] >= 'A' && hex[i] <= 'F')
+                    ^
+collected_code/problem-387-0.c:26:42: error: Cannot determine that 'hex[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+            decimal = decimal * 16 + (hex[i] - 'A' + 10);
+                                         ^
+collected_code/problem-387-0.c:27:21: error: Cannot determine that 'hex[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        else if (hex[i] >= 'a' && hex[i] <= 'f')
+                    ^
+collected_code/problem-387-0.c:28:42: error: Cannot determine that 'hex[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+            decimal = decimal * 16 + (hex[i] - 'a' + 10);
+                                         ^
+collected_code/problem-387-0.c:43:17: error: Cannot determine that 'hex[0]' is initialized [premium-bughuntingUninit]
+    scanf("%s", hex);
+                ^

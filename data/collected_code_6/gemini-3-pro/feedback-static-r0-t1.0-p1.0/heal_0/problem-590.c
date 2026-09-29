@@ -1,0 +1,39 @@
+#include <stdio.h>
+#include <math.h>
+#include <stdlib.h>
+
+typedef struct {
+    double x;
+    double y;
+} Rectangular;
+
+typedef struct {
+    double radius;
+    double theta; 
+} Polar;
+
+Rectangular convert_polar_to_rectangular(Polar polar_obj) {
+    Rectangular rect_obj;
+    if (polar_obj.radius < 0.0) {
+        fprintf(stderr, "Error: Radius cannot be negative.\n");
+        exit(EXIT_FAILURE);
+    }
+    rect_obj.x = polar_obj.radius * cos(polar_obj.theta);
+    rect_obj.y = polar_obj.radius * sin(polar_obj.theta);
+    return rect_obj;
+}
+
+int main(void) {
+    Polar p;
+    Rectangular r;
+
+    p.radius = 5.0;
+    p.theta = M_PI / 4.0; 
+
+    r = convert_polar_to_rectangular(p);
+
+    printf("Polar: (r=%.2f, theta=%.2f radians)\n", p.radius, p.theta);
+    printf("Rectangular: (x=%.2f, y=%.2f)\n", r.x, r.y);
+
+    return EXIT_SUCCESS;
+}

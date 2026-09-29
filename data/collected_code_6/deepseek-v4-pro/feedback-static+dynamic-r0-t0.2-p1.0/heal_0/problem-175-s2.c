@@ -1,0 +1,118 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <string.h>
+#include <stdlib.h>
+
+typedef struct {
+    char *data;
+    size_t top;
+    size_t capacity;
+} Stack;
+
+static bool stack_init(Stack *stack, size_t capacity) {
+    stack->data = (char *)malloc(capacity * sizeof(char));
+    if (stack->data == NULL) {
+        return false;
+    }
+    stack->top = 0;
+    stack->capacity = capacity;
+    return true;
+}
+
+static void stack_destroy(Stack *stack) {
+    free(stack->data);
+    stack->data = NULL;
+    stack->top = 0;
+    stack->capacity = 0;
+}
+
+static bool stack_push(Stack *stack, char value) {
+    if (stack->top >= stack->capacity) {
+        size_t new_capacity = stack->capacity * 2;
+        char *new_data = (char *)realloc(stack->data, new_capacity * sizeof(char));
+        if (new_data == NULL) {
+            return false;
+        }
+        stack->data = new_data;
+        stack->capacity = new_capacity;
+    }
+    stack->data[stack->top++] = value;
+    return true;
+}
+
+static bool stack_pop(Stack *stack, char *value) {
+    if (stack->top == 0) {
+        return false;
+    }
+    *value = stack->data[--stack->top];
+    return true;
+}
+
+static bool stack_is_empty(const Stack *stack) {
+    return stack->top == 0;
+}
+
+static bool is_matching_pair(char open, char close) {
+    return (open == '(' && close == ')') ||
+           (open == '[' && close == ']') ||
+           (open == '{' && close == '}');
+}
+
+bool is_valid_parentheses(const char *str) {
+    if (str == NULL) {
+        return false;
+    }
+
+    size_t len = strlen(str);
+    Stack stack;
+    if (!stack_init(&stack, len > 0 ? len : 1)) {
+        return false;
+    }
+
+    for (size_t i = 0; i < len; i++) {
+        char ch = str[i];
+        if (ch == '(' || ch == '[' || ch == '{') {
+            if (!stack_push(&stack, ch)) {
+                stack_destroy(&stack);
+                return false;
+            }
+        } else if (ch == ')' || ch == ']' || ch == '}') {
+            char open_char;
+            if (!stack_pop(&stack, &open_char)) {
+                stack_destroy(&stack);
+                return false;
+            }
+            if (!is_matching_pair(open_char, ch)) {
+                stack_destroy(&stack);
+                return false;
+            }
+        }
+    }
+
+    bool result = stack_is_empty(&stack);
+    stack_destroy(&stack);
+    return result;
+}
+
+int main(void) {
+    const char *test_cases[] = {
+        "()",
+        "()[]{}",
+        "(]",
+        "([)]",
+        "{[]}",
+        "",
+        "(",
+        ")",
+        "((()))",
+        "((())",
+        NULL
+    };
+
+    for (int i = 0; test_cases[i] != NULL; i++) {
+        printf("\"%s\": %s\n", test_cases[i],
+               is_valid_parentheses(test_cases[i]) ? "valid" : "invalid");
+    }
+
+    return 0;
+}

@@ -1,0 +1,72 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node* next;
+} Node;
+
+Node* createNode(int data) {
+    Node* newNode = (Node*)malloc(sizeof(Node));
+    newNode->data = data;
+    newNode->next = NULL;
+    return newNode;
+}
+
+void append(Node** head_ref, int new_data) {
+    Node* new_node = createNode(new_data);
+    Node* last = *head_ref;
+
+    if (*head_ref == NULL) {
+        *head_ref = new_node;
+        return;
+    }
+
+    while (last->next != NULL)
+        last = last->next;
+
+    last->next = new_node;
+}
+
+void replaceLastWithList(Node** list1, Node* list2) {
+    Node* temp = *list1;
+
+    if (*list1 == NULL) {
+        *list1 = list2;
+        return;
+    }
+
+    while (temp->next->next != NULL)
+        temp = temp->next;
+
+    free(temp->next);
+    temp->next = list2;
+}
+
+void printList(Node* node) {
+    while (node != NULL) {
+        printf(" %d ", node->data);
+        node = node->next;
+    }
+}
+
+int main() {
+    Node* list1 = NULL;
+    Node* list2 = NULL;
+
+    append(&list1, 1);
+    append(&list1, 2);
+    append(&list1, 3);
+
+    append(&list2, 4);
+    append(&list2, 5);
+    append(&list2, 6);
+
+    replaceLastWithList(&list1, list2);
+
+    printList(list1);
+
+    return 0;
+}
+```

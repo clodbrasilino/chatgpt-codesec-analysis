@@ -1,0 +1,76 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+static int compare_strings(const void *a, const void *b) {
+    const char *str1 = *(const char * const *)a;
+    const char *str2 = *(const char * const *)b;
+    return strcmp(str1, str2);
+}
+
+const char *second_most_repeated(const char *arr[], size_t n) {
+    const char **sorted;
+    const char *first = NULL;
+    const char *second = NULL;
+    const char *candidate;
+    size_t first_count = 0;
+    size_t second_count = 0;
+    size_t i, j, count;
+
+    if (arr == NULL || n < 2) {
+        return NULL;
+    }
+
+    sorted = malloc(n * sizeof(*sorted));
+    if (sorted == NULL) {
+        return NULL;
+    }
+
+    memcpy(sorted, arr, n * sizeof(*sorted));
+    qsort(sorted, n, sizeof(*sorted), compare_strings);
+
+    i = 0;
+    while (i < n) {
+        j = i + 1;
+        while (j < n && strcmp(sorted[i], sorted[j]) == 0) {
+            j++;
+        }
+
+        count = j - i;
+        candidate = sorted[i];
+
+        if (count > first_count) {
+            second = first;
+            second_count = first_count;
+            first = candidate;
+            first_count = count;
+        } else if (count > second_count && count < first_count) {
+            second = candidate;
+            second_count = count;
+        }
+
+        i = j;
+    }
+
+    free(sorted);
+    return second;
+}
+
+int main(void) {
+    const char *arr1[] = {"aaa", "bbb", "ccc", "bbb", "aaa", "aaa"};
+    size_t n1 = sizeof(arr1) / sizeof(arr1[0]);
+    const char *result1 = second_most_repeated(arr1, n1);
+    printf("%s\n", result1 != NULL ? result1 : "NULL");
+
+    const char *arr2[] = {"geek", "for", "geek", "for", "geek", "aaa"};
+    size_t n2 = sizeof(arr2) / sizeof(arr2[0]);
+    const char *result2 = second_most_repeated(arr2, n2);
+    printf("%s\n", result2 != NULL ? result2 : "NULL");
+
+    const char *arr3[] = {"x"};
+    size_t n3 = sizeof(arr3) / sizeof(arr3[0]);
+    const char *result3 = second_most_repeated(arr3, n3);
+    printf("%s\n", result3 != NULL ? result3 : "NULL");
+
+    return 0;
+}

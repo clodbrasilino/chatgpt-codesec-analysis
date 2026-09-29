@@ -1,0 +1,99 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdbool.h>
+
+#define BUFFER_SIZE 256
+
+bool has_letter_and_number(const char *str)
+{
+    bool has_letter = false;
+    bool has_digit = false;
+    size_t i;
+
+    if (str == NULL) {
+        return false;
+    }
+
+    for (i = 0U; str[i] != '\0'; i++) {
+        unsigned char ch = (unsigned char)str[i];
+        if (isalpha(ch)) {
+            has_letter = true;
+        } else if (isdigit(ch)) {
+            has_digit = true;
+        }
+        if (has_letter && has_digit) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+static void discard_remaining_input(void)
+{
+    int ch;
+    size_t count = 0U;
+
+    while (count < (size_t)-1) {
+        ch = getchar();
+        if (ch == '\n' || ch == EOF) {
+            break;
+        }
+        count++;
+    }
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t len;
+
+    memset(buffer, 0, sizeof(buffer));
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1U] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len > 0U && buffer[len - 1U] == '\n') {
+        buffer[len - 1U] = '\0';
+    } else {
+        discard_remaining_input();
+    }
+
+    if (has_letter_and_number(buffer)) {
+        printf("The string contains at least one letter and one number.\n");
+    } else {
+        printf("The string does not contain both a letter and a number.\n");
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the original code and the fixes applied:**
+
+The original source was already quite defensive, and the Flawfinder hits were largely false positives — but here is how each identified weakness is handled in the rewrite:
+
+1. **CWE-119/CWE-120 (statically-sized buffer `char buffer[BUFFER_SIZE]`):**
+   - `fgets` is called with `(int)sizeof(buffer)`, which guarantees no more than `BUFFER_SIZE - 1` characters plus a null terminator are written — bounds are enforced by the API itself.
+   - `buffer[sizeof(buffer) - 1U] = '\0'` provides a defensive guarantee of null termination.
+   - `strnlen` (bounded) is used instead of `strlen`, so even a hypothetically unterminated buffer cannot cause an out-of-bounds read.
+   - `memset` pre-initializes the buffer, avoiding any use of indeterminate memory.
+
+2. **CWE-120/CWE-20 (`getchar` in a loop):**
+   - The drain loop never writes to any buffer, so it cannot overflow. In the rewrite it was moved into a dedicated `discard_remaining_input()` function with an explicit iteration bound (`count`) as an extra safeguard against pathological infinite streams, satisfying the "check boundaries in loops" advisory.
+   - The loop terminates correctly on both `'\n'` and `EOF`, preventing an infinite loop on closed/exhausted input streams.
+
+3. **Additional hardening already present and preserved:**
+   - `isalpha`/`isdigit` receive values cast to `unsigned char`, avoiding undefined behavior for negative `char` values (a classic subtle bug).
+   - The `NULL` check in `has_letter_and_number` guards against invalid pointer dereference.
+   - The `fgets` return value is checked, and failure is reported to `stderr` with `EXIT_FAILURE`.
+
+The code is portable C99 (with `strnlen` from POSIX / C11 Annex K environments) and contains no exploitable buffer overflow paths.

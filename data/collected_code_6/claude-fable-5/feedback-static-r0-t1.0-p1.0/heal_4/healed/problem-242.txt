@@ -1,0 +1,105 @@
+```c
+#include <stdio.h>
+#include <stddef.h>
+#include <string.h>
+
+#define BUFFER_SIZE 256
+
+size_t count_characters(const char *str)
+{
+    size_t count = 0;
+
+    if (str == NULL)
+    {
+        return 0;
+    }
+
+    while (count < BUFFER_SIZE && str[count] != '\0')
+    {
+        count++;
+    }
+
+    return count;
+}
+
+void strip_newline(char *str)
+{
+    size_t i = 0;
+
+    if (str == NULL)
+    {
+        return;
+    }
+
+    while (i < BUFFER_SIZE && str[i] != '\0')
+    {
+        if (str[i] == '\n')
+        {
+            str[i] = '\0';
+            return;
+        }
+        i++;
+    }
+}
+
+static void flush_stdin(void)
+{
+    size_t guard = 0;
+
+    while (guard < (size_t)-1)
+    {
+        int ch = getchar();
+        if (ch == '\n' || ch == EOF)
+        {
+            break;
+        }
+        guard++;
+    }
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t length;
+
+    memset(buffer, 0, sizeof(buffer));
+
+    printf("Enter a string: ");
+    fflush(stdout);
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL)
+    {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    if (memchr(buffer, '\n', sizeof(buffer)) == NULL)
+    {
+        flush_stdin();
+    }
+
+    strip_newline(buffer);
+
+    length = count_characters(buffer);
+
+    printf("Total characters: %zu\n", length);
+
+    return 0;
+}
+```
+
+**Analysis notes:**
+
+1. **`variableScope` (cppcheck)** — The declaration of `ch` in `flush_stdin()` was moved inside the `while` loop body, reducing its scope to where it is actually used. This is the only genuine actionable finding.
+
+2. **Flawfinder `getchar` (CWE-120, CWE-20)** — This is a low-risk informational hit. The loop already contains a `guard` counter bounding iterations and correctly checks for both `'\n'` and `EOF`, so no buffer is written to and no change is needed.
+
+3. **Flawfinder `char buffer[BUFFER_SIZE]` (CWE-119/CWE-120)** — This is a generic warning on any statically-sized array. The code already mitigates it correctly:
+   - `fgets(buffer, (int)sizeof(buffer), stdin)` limits the read length.
+   - Explicit null termination at `buffer[sizeof(buffer) - 1]` acts as a belt-and-suspenders guard.
+   - `count_characters()` and `strip_newline()` are both bounded by `BUFFER_SIZE`, preventing out-of-bounds reads even on a non-terminated string.
+   - Residual stdin data is drained via `flush_stdin()` when no newline was consumed.
+
+The code was already defensively written; the only substantive fix required was the variable scope reduction.

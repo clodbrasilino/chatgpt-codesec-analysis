@@ -1,0 +1,88 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_INPUT_LEN 4096
+
+char *remove_parentheses(const char *input)
+{
+    size_t len;
+    size_t i;
+    size_t j;
+    int depth;
+    char *result;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    len = 0;
+    while (len < MAX_INPUT_LEN && input[len] != '\0') {
+        len++;
+    }
+
+    result = malloc(len + 1);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    depth = 0;
+    j = 0;
+    for (i = 0; i < len; i++) {
+        if (input[i] == '(') {
+            depth++;
+        } else if (input[i] == ')') {
+            if (depth > 0) {
+                depth--;
+            }
+        } else if (depth == 0) {
+            result[j] = input[i];
+            j++;
+        }
+    }
+    result[j] = '\0';
+
+    return result;
+}
+
+int main(void)
+{
+    const char *tests[] = {
+        "py(remove me)thon",
+        "str(nested (inner) text)ing",
+        "al(unwanted)pha"
+    };
+    const char *expected[] = {
+        "python",
+        "string",
+        "alpha"
+    };
+    size_t i;
+    size_t count;
+    int status;
+
+    count = sizeof(tests) / sizeof(tests[0]);
+    status = EXIT_SUCCESS;
+
+    for (i = 0; i < count; i++) {
+        char *output = remove_parentheses(tests[i]);
+        if (output == NULL) {
+            fprintf(stderr, "Memory allocation failed\n");
+            return EXIT_FAILURE;
+        }
+        if (strcmp(output, expected[i]) != 0) {
+            fprintf(stderr, "test case %zu failed: expected '%s', got '%s'\n",
+                    i, expected[i], output);
+            status = EXIT_FAILURE;
+        } else {
+            printf("%s\n", output);
+        }
+        free(output);
+    }
+
+    return status;
+}
+```
+
+The key fix: the garbage output in the failing test cases (`got �ӫ`, `got @ӫ`) indicated the returned buffer contained uninitialized or invalid memory. The likely culprit was the `realloc` shrink step — if the pointer returned by `realloc` was mishandled (or the original allocation was moved/invalidated), callers could read stale or freed memory. I removed the unnecessary `realloc` entirely: the buffer is already correctly sized within bounds (`len + 1` bytes maximum, bounded by `MAX_INPUT_LEN`), it is always null-terminated before return, and eliminating the shrink removes any chance of dangling-pointer or truncation issues while keeping the same O(n) behavior.

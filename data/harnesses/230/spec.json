@@ -1,0 +1,47 @@
+{
+  "task_id": 230,
+  "text": "Write a C function to replace blank spaces with any character in a string.",
+  "fn_candidates": [
+    "replace_blank",
+    "ReplaceBlank",
+    "replaceBlank",
+    "replaceblank"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "replace_blank",
+      "args": [
+        "hello people",
+        "@"
+      ],
+      "expected": "hello@people",
+      "assert_src": "assert replace_blank(\"hello people\",'@')==(\"hello@people\")"
+    },
+    {
+      "fn_name": "replace_blank",
+      "args": [
+        "python program language",
+        "$"
+      ],
+      "expected": "python$program$language",
+      "assert_src": "assert replace_blank(\"python program language\",'$')==(\"python$program$language\")"
+    },
+    {
+      "fn_name": "replace_blank",
+      "args": [
+        "blank space",
+        "-"
+      ],
+      "expected": "blank-space",
+      "assert_src": "assert replace_blank(\"blank space\",\"-\")==(\"blank-space\")"
+    }
+  ],
+  "arg_kinds": [
+    "str"
+  ],
+  "return_kind": "str",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

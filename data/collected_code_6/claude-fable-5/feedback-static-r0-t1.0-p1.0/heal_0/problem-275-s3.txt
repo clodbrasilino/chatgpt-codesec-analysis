@@ -1,0 +1,63 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+static int find_last_removed_position(const int *arr, size_t n, int m)
+{
+    size_t i;
+    size_t pos = 0;
+    long max_steps = -1;
+
+    if (arr == NULL || n == 0 || m <= 0) {
+        return -1;
+    }
+
+    for (i = 0; i < n; i++) {
+        long steps;
+
+        if (arr[i] <= 0) {
+            continue;
+        }
+
+        steps = ((long)arr[i] + (long)m - 1L) / (long)m;
+
+        if (steps >= max_steps) {
+            max_steps = steps;
+            pos = i;
+        }
+    }
+
+    if (max_steps < 0) {
+        return -1;
+    }
+
+    return (int)(pos + 1U);
+}
+
+int main(void)
+{
+    int arr[] = { 2, 5, 4 };
+    int m = 2;
+    size_t n = sizeof(arr) / sizeof(arr[0]);
+    int result;
+
+    result = find_last_removed_position(arr, n, m);
+
+    if (result < 0) {
+        if (fprintf(stderr, "Error: invalid input to find_last_removed_position\n") < 0) {
+            return EXIT_FAILURE;
+        }
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Position of last removed element: %d\n", result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**How it works:** Each element `arr[i]` requires `ceil(arr[i] / m)` reduction rounds before it becomes non-positive and gets removed. The element requiring the most rounds is removed last; on ties, the rightmost element wins since removals in the same round proceed left to right. For the sample array `{2, 5, 4}` with `m = 2`, the elements need 1, 3, and 2 rounds respectively, so the element at position 2 (1-based) is removed last.
+
+The code guards against `NULL` pointers, empty arrays, non-positive divisors, and intermediate overflow (via `long` arithmetic), and it checks the return values of the I/O functions before returning a status code.

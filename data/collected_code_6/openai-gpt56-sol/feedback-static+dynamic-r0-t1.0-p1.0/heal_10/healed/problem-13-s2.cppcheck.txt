@@ -1,0 +1,12 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-13-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-13-s2.c:455:45: style: Condition 'open_regular_file(argv[1],&stream)!=0' is always true [knownConditionTrueFalse]
+    if (open_regular_file(argv[1], &stream) != 0) {
+                                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-13-s2.c:455:26: note: Calling function 'open_regular_file' returns -1
+    if (open_regular_file(argv[1], &stream) != 0) {
+                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-13-s2.c:455:45: note: Condition 'open_regular_file(argv[1],&stream)!=0' is always true
+    if (open_regular_file(argv[1], &stream) != 0) {
+                                            ^
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-13-s2.c: O_CLOEXEC;O_NOFOLLOW...
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-13-s2.c: O_NOFOLLOW...

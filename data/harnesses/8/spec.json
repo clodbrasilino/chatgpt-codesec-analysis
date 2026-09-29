@@ -1,0 +1,80 @@
+{
+  "task_id": 8,
+  "text": "Write a C function to find squares of individual elements in a list.",
+  "fn_candidates": [
+    "square_nums",
+    "SquareNums",
+    "squareNums",
+    "squarenums"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "square_nums",
+      "args": [
+        [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10
+        ]
+      ],
+      "expected": [
+        1,
+        4,
+        9,
+        16,
+        25,
+        36,
+        49,
+        64,
+        81,
+        100
+      ],
+      "assert_src": "assert square_nums([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])==[1, 4, 9, 16, 25, 36, 49, 64, 81, 100]"
+    },
+    {
+      "fn_name": "square_nums",
+      "args": [
+        [
+          10,
+          20,
+          30
+        ]
+      ],
+      "expected": [
+        100,
+        400,
+        900
+      ],
+      "assert_src": "assert square_nums([10,20,30])==([100,400,900])"
+    },
+    {
+      "fn_name": "square_nums",
+      "args": [
+        [
+          12,
+          15
+        ]
+      ],
+      "expected": [
+        144,
+        225
+      ],
+      "assert_src": "assert square_nums([12,15])==([144,225])"
+    }
+  ],
+  "arg_kinds": [
+    "int-list"
+  ],
+  "return_kind": "int-list",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

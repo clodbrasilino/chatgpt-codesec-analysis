@@ -1,0 +1,40 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+double calculate_discriminant(double a, double b, double c) {
+    if (a == 0.0) {
+        fprintf(stderr, "Error: 'a' cannot be zero for a quadratic equation.\n");
+        exit(EXIT_FAILURE);
+    }
+    return (b * b) - (4 * a * c);
+}
+
+int main(void) {
+    double a, b, c, discriminant;
+
+    printf("Enter coefficient a: ");
+    if (scanf("%lf", &a) != 1) {
+        fprintf(stderr, "Error: Invalid input for 'a'.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter coefficient b: ");
+    if (scanf("%lf", &b) != 1) {
+        fprintf(stderr, "Error: Invalid input for 'b'.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter coefficient c: ");
+    if (scanf("%lf", &c) != 1) {
+        fprintf(stderr, "Error: Invalid input for 'c'.\n");
+        return EXIT_FAILURE;
+    }
+
+    discriminant = calculate_discriminant(a, b, c);
+
+    printf("The discriminant is: %lf\n", discriminant);
+
+    return EXIT_SUCCESS;
+}
+```

@@ -1,0 +1,105 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+#define ERRBUF_SIZE 256
+
+static void print_regex_error(int errcode, const regex_t *regex, const char *prefix)
+{
+    char errbuf[ERRBUF_SIZE];
+
+    memset(errbuf, 0, sizeof(errbuf));
+    regerror(errcode, regex, errbuf, sizeof(errbuf) - 1);
+    errbuf[sizeof(errbuf) - 1] = '\0';
+    fprintf(stderr, "%s: %s\n", prefix, errbuf);
+}
+
+int find_long_words(const char *text)
+{
+    regex_t regex;
+    regmatch_t match;
+    const char *cursor;
+    int ret;
+
+    if (text == NULL) {
+        return -1;
+    }
+
+    ret = regcomp(&regex, "[A-Za-z]{4,}", REG_EXTENDED);
+    if (ret != 0) {
+        print_regex_error(ret, &regex, "regcomp failed");
+        return -1;
+    }
+
+    cursor = text;
+    while ((ret = regexec(&regex, cursor, 1, &match, 0)) == 0) {
+        if (match.rm_so < 0 || match.rm_eo <= match.rm_so) {
+            break;
+        }
+
+        {
+            size_t remaining = strlen(cursor);
+            size_t start = (size_t)match.rm_so;
+            size_t end = (size_t)match.rm_eo;
+            size_t length;
+            char *word;
+
+            if (end > remaining || start > end) {
+                break;
+            }
+
+            length = end - start;
+            word = malloc(length + 1);
+            if (word == NULL) {
+                fprintf(stderr, "malloc failed\n");
+                regfree(&regex);
+                return -1;
+            }
+
+            memcpy(word, cursor + start, length);
+            word[length] = '\0';
+            printf("%s\n", word);
+            free(word);
+        }
+
+        cursor += match.rm_eo;
+        if (*cursor == '\0') {
+            break;
+        }
+    }
+
+    if (ret != 0 && ret != REG_NOMATCH) {
+        print_regex_error(ret, &regex, "regexec failed");
+        regfree(&regex);
+        return -1;
+    }
+
+    regfree(&regex);
+    return 0;
+}
+
+int main(void)
+{
+    const char *text = "The quick brown fox jumps over a lazy dog";
+
+    if (find_long_words(text) != 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The original code was already largely safe — the Flawfinder hits were mostly precautionary flags rather than genuine vulnerabilities. Here's what the rewrite addresses:
+
+1. **`char errbuf[256]` warnings (CWE-119/CWE-120):** These were false positives since `regerror()` respects the size argument. The rewrite hardens it further by zero-initializing the buffer with `memset`, passing `sizeof(errbuf) - 1` to guarantee room for the null terminator, and consolidating the duplicated logic into a single `print_regex_error()` helper — reducing the attack surface and eliminating code duplication.
+
+2. **`memcpy` warning (CWE-120):** The original allocation of `length + 1` was correct, but the rewrite adds explicit bounds validation: it verifies `match.rm_eo` doesn't exceed the remaining string length (`end > remaining`) and that offsets are internally consistent (`start > end`) before computing `length` and copying. This makes the destination-can-hold-source guarantee provable rather than assumed.
+
+3. **Additional hardening:** `match.rm_so < 0` is checked with a signed comparison before casting to `size_t`, avoiding any possibility of an underflow producing a huge unsigned value.
+
+The overall structure — compile, iterate matches, advance cursor past each match, handle `REG_NOMATCH` as normal termination, and `regfree()` on all exit paths — was already correct and is preserved.

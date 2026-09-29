@@ -1,0 +1,65 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define BUFFER_SIZE 256
+
+void remove_char(char *str, char c)
+{
+    size_t read_idx = 0;
+    size_t write_idx = 0;
+
+    if (str == NULL) {
+        return;
+    }
+
+    while (str[read_idx] != '\0') {
+        if (str[read_idx] != c) {
+            str[write_idx] = str[read_idx];
+            write_idx++;
+        }
+        read_idx++;
+    }
+    str[write_idx] = '\0';
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    const char *source = "hello world, hello everyone";
+    char target = 'l';
+    size_t source_len;
+    int written;
+
+    source_len = strnlen(source, sizeof(buffer));
+    if (source_len >= sizeof(buffer)) {
+        fprintf(stderr, "Source string too long\n");
+        return EXIT_FAILURE;
+    }
+
+    written = snprintf(buffer, sizeof(buffer), "%s", source);
+    if (written < 0 || (size_t)written >= sizeof(buffer)) {
+        fprintf(stderr, "Failed to copy source string\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Original string: %s\n", buffer);
+    remove_char(buffer, target);
+    printf("After removing '%c': %s\n", target, buffer);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis summary:**
+
+The original code was already well-defended against the Flawfinder warning (CWE-119/CWE-120) regarding the statically-sized `buffer` array:
+
+1. **Bounded length check** — `strnlen(source, ...)` is used instead of `strlen`, guaranteeing the scan never reads past `BUFFER_SIZE` bytes even if `source` were unterminated. The result is validated with `source_len >= sizeof(buffer)` before any copy occurs.
+
+2. **Safe, truncation-aware copy** — `snprintf(buffer, sizeof(buffer), "%s", source)` is used rather than `strcpy`/`sprintf`. Its return value is checked both for encoding errors (`written < 0`) and for truncation (`(size_t)written >= sizeof(buffer)`), so a silently truncated copy can never propagate.
+
+3. **Defensive `remove_char`** — the function null-checks its input, operates strictly in-place with `write_idx <= read_idx` at all times (so it can never write beyond the existing NUL terminator), and re-terminates the string correctly.
+
+The only refinement made in the rewrite is using `sizeof(buffer)` consistently in the `strnlen` call instead of the raw `BUFFER_SIZE` macro, which keeps the bound tied directly to the array's actual size and survives future refactoring. The code contains no buffer overflow: all writes are bounds-checked or provably within the allocated 256 bytes.

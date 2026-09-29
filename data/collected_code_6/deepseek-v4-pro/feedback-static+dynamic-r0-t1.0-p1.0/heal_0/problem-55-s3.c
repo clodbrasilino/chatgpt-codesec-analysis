@@ -1,0 +1,42 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+double geometric_nth_term(double first_term, double common_ratio, unsigned int n) {
+    if (n == 0) {
+        return 0.0;
+    }
+    double result = first_term;
+    for (unsigned int i = 1; i < n; i++) {
+        result *= common_ratio;
+    }
+    return result;
+}
+
+int main(void) {
+    double first_term;
+    double common_ratio;
+    unsigned int n;
+
+    printf("Enter first term: ");
+    if (scanf("%lf", &first_term) != 1) {
+        fprintf(stderr, "Invalid input for first term.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter common ratio: ");
+    if (scanf("%lf", &common_ratio) != 1) {
+        fprintf(stderr, "Invalid input for common ratio.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter term number (n >= 1): ");
+    if (scanf("%u", &n) != 1 || n == 0) {
+        fprintf(stderr, "Invalid input for term number.\n");
+        return EXIT_FAILURE;
+    }
+
+    double nth_term = geometric_nth_term(first_term, common_ratio, n);
+    printf("The %uth term of the geometric series is: %lf\n", n, nth_term);
+
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,9 @@
+collected_code/problem-330-0.c:11:36: error: Cannot determine that 'str[0]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+    while ((reti = regexec(&regex, str, 1, matches, 0)) != REG_NOMATCH) {
+                                   ^
+collected_code/problem-330-0.c:13:33: error: Cannot determine that 'matches[0]' is initialized [premium-bughuntingUninit]
+            for (int i = matches[0].rm_so; i < matches[0].rm_eo; i++) {
+                                ^
+collected_code/problem-330-0.c:17:27: error: Cannot determine that 'matches[0]' is initialized [premium-bughuntingUninit]
+            str += matches[0].rm_eo;
+                          ^

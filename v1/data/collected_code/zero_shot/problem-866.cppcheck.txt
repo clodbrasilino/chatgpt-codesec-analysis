@@ -1,0 +1,6 @@
+collected_code/problem-866-0.c:4:15: error: Cannot determine that 'month[0]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+    if(strcmp(month, "January") == 0 || strcmp(month, "March") == 0 || strcmp(month, "May") == 0 || strcmp(month, "July") == 0 || strcmp(month, "August") == 0 || strcmp(month, "October") == 0 || strcmp(month, "December") == 0) {
+              ^
+collected_code/problem-866-0.c:15:17: error: Cannot determine that 'month[0]' is initialized [premium-bughuntingUninit]
+    scanf("%s", month);
+                ^

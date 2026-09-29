@@ -1,0 +1,151 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+typedef struct {
+    long long *data;
+    size_t capacity;
+    size_t size;
+} MinHeap;
+
+MinHeap *createMinHeap(size_t capacity) {
+    MinHeap *heap = (MinHeap *)malloc(sizeof(MinHeap));
+    if (!heap) return NULL;
+    heap->data = (long long *)malloc(capacity * sizeof(long long));
+    if (!heap->data) {
+        free(heap);
+        return NULL;
+    }
+    heap->capacity = capacity;
+    heap->size = 0;
+    return heap;
+}
+
+void freeMinHeap(MinHeap *heap) {
+    if (heap) {
+        free(heap->data);
+        free(heap);
+    }
+}
+
+void swapLL(long long *a, long long *b) {
+    long long temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+int pushMinHeap(MinHeap *heap, long long val) {
+    if (!heap || heap->size >= heap->capacity) {
+        return -1;
+    }
+    heap->data[heap->size] = val;
+    size_t current = heap->size;
+    heap->size++;
+    while (current > 0) {
+        size_t parent = (current - 1) / 2;
+        if (heap->data[current] < heap->data[parent]) {
+            swapLL(&heap->data[current], &heap->data[parent]);
+            current = parent;
+        } else {
+            break;
+        }
+    }
+    return 0;
+}
+
+long long popMinHeap(MinHeap *heap) {
+    if (!heap || heap->size == 0) {
+        return -1;
+    }
+    long long min_val = heap->data[0];
+    heap->size--;
+    if (heap->size > 0) {
+        heap->data[0] = heap->data[heap->size];
+        size_t current = 0;
+        while (1) {
+            size_t left = 2 * current + 1;
+            size_t right = 2 * current + 2;
+            size_t smallest = current;
+            if (left < heap->size && heap->data[left] < heap->data[smallest]) {
+                smallest = left;
+            }
+            if (right < heap->size && heap->data[right] < heap->data[smallest]) {
+                smallest = right;
+            }
+            if (smallest != current) {
+                swapLL(&heap->data[current], &heap->data[smallest]);
+                current = smallest;
+            } else {
+                break;
+            }
+        }
+    }
+    return min_val;
+}
+
+long long nthSuperUglyNumber(int n, const int *primes, int primesSize) {
+    if (n <= 0 || !primes || primesSize <= 0) {
+        return -1;
+    }
+    size_t capacity = (size_t)n * primesSize + 2;
+    MinHeap *heap = createMinHeap(capacity);
+    if (!heap) {
+        return -1;
+    }
+    if (pushMinHeap(heap, 1) != 0) {
+        freeMinHeap(heap);
+        return -1;
+    }
+    long long prev = -1;
+    int count = 0;
+    long long result = -1;
+    while (count < n) {
+        long long val = popMinHeap(heap);
+        if (val == -1) {
+            freeMinHeap(heap);
+            return -1;
+        }
+        if (val == prev) {
+            continue;
+        }
+        prev = val;
+        count++;
+        result = val;
+        if (count == n) {
+            break;
+        }
+        for (int i = 0; i < primesSize; i++) {
+            if (primes[i] != 0 && val > LLONG_MAX / primes[i]) {
+                continue;
+            }
+            long long next_val = val * primes[i];
+            if (pushMinHeap(heap, next_val) != 0) {
+                freeMinHeap(heap);
+                return -1;
+            }
+        }
+    }
+    freeMinHeap(heap);
+    return result;
+}
+
+int main(void) {
+    int primes1[] = {2, 7, 13, 19};
+    int n1 = 12;
+    long long res1 = nthSuperUglyNumber(n1, primes1, 4);
+    printf("%lld\n", res1);
+
+    int primes2[] = {2, 3, 5};
+    int n2 = 1;
+    long long res2 = nthSuperUglyNumber(n2, primes2, 3);
+    printf("%lld\n", res2);
+
+    int primes3[] = {2, 3, 5};
+    int n3 = 15;
+    long long res3 = nthSuperUglyNumber(n3, primes3, 3);
+    printf("%lld\n", res3);
+
+    return 0;
+}
+```

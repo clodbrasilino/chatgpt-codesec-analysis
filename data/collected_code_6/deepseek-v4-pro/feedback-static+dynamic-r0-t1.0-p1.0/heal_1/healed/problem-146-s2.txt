@@ -1,0 +1,29 @@
+```c
+#include <stdio.h>
+#include <string.h>
+
+int total_ascii_value(const char *str) {
+    int total = 0;
+    
+    if (str == NULL) {
+        return 0;
+    }
+    
+    size_t length = strnlen(str, 4096);
+    
+    for (size_t i = 0; i < length; i++) {
+        total += (unsigned char)str[i];
+    }
+    
+    return total;
+}
+
+int main(void) {
+    const char *test_string = "Hello, World!";
+    int result = total_ascii_value(test_string);
+    
+    printf("Total ASCII value of \"%s\": %d\n", test_string, result);
+    
+    return 0;
+}
+```

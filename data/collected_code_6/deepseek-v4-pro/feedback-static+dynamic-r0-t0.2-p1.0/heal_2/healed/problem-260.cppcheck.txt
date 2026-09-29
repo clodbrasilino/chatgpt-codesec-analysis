@@ -1,0 +1,31 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_2/healed/problem-260.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_2/healed/problem-260.c:25:17: style: Condition 'is_prime(a)' is always false [knownConditionTrueFalse]
+    if (is_prime(a)) {
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_2/healed/problem-260.c:25:17: note: Calling function 'is_prime' returns 0
+    if (is_prime(a)) {
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_2/healed/problem-260.c:25:17: note: Condition 'is_prime(a)' is always false
+    if (is_prime(a)) {
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_2/healed/problem-260.c:30:15: style: Condition 'count<n' is always true [knownConditionTrueFalse]
+    if (count < n && is_prime(b)) {
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_2/healed/problem-260.c:22:17: note: Assignment 'count=0', assigned value is 0
+    int count = 0;
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_2/healed/problem-260.c:18:11: note: Assuming that condition 'n<=0' is not redundant
+    if (n <= 0) return -1;
+          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_2/healed/problem-260.c:30:15: note: Condition 'count<n' is always true
+    if (count < n && is_prime(b)) {
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_2/healed/problem-260.c:30:30: style: Condition 'is_prime(b)' is always false [knownConditionTrueFalse]
+    if (count < n && is_prime(b)) {
+                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_2/healed/problem-260.c:30:30: note: Calling function 'is_prime' returns 0
+    if (count < n && is_prime(b)) {
+                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_2/healed/problem-260.c:30:30: note: Condition 'is_prime(b)' is always false
+    if (count < n && is_prime(b)) {
+                             ^

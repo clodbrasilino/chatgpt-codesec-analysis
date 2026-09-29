@@ -1,0 +1,125 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int start;
+    int end;
+} Range;
+
+static int compare_ranges(const void *a, const void *b)
+{
+    const Range *range_a = (const Range *)a;
+    const Range *range_b = (const Range *)b;
+
+    if (range_a->start < range_b->start) {
+        return -1;
+    }
+    if (range_a->start > range_b->start) {
+        return 1;
+    }
+    return 0;
+}
+
+Range *extract_missing_ranges(const Range *ranges, size_t range_count,
+                              int start, int end, size_t *missing_count)
+{
+    Range *missing = NULL;
+    Range *sorted = NULL;
+    size_t count = 0;
+    size_t i;
+    int current;
+    int finished = 0;
+
+    if (missing_count == NULL || start > end ||
+        (range_count > 0 && ranges == NULL)) {
+        return NULL;
+    }
+    *missing_count = 0;
+
+    missing = malloc((range_count + 1) * sizeof(Range));
+    if (missing == NULL) {
+        return NULL;
+    }
+
+    if (range_count > 0) {
+        sorted = malloc(range_count * sizeof(Range));
+        if (sorted == NULL) {
+            free(missing);
+            return NULL;
+        }
+        for (i = 0; i < range_count; i++) {
+            sorted[i] = ranges[i];
+        }
+        qsort(sorted, range_count, sizeof(Range), compare_ranges);
+    }
+
+    current = start;
+
+    for (i = 0; i < range_count; i++) {
+        int range_start = sorted[i].start;
+        int range_end = sorted[i].end;
+
+        if (range_end < range_start) {
+            continue;
+        }
+        if (range_end < current) {
+            continue;
+        }
+        if (range_start > end) {
+            break;
+        }
+
+        if (range_start > current) {
+            missing[count].start = current;
+            missing[count].end = range_start - 1;
+            count++;
+        }
+
+        if (range_end >= end) {
+            finished = 1;
+            break;
+        }
+        current = range_end + 1;
+    }
+
+    if (!finished) {
+        missing[count].start = current;
+        missing[count].end = end;
+        count++;
+    }
+
+    free(sorted);
+
+    *missing_count = count;
+    return missing;
+}
+
+int main(void)
+{
+    Range ranges[] = {
+        {13, 15},
+        {2, 4},
+        {7, 9}
+    };
+    size_t range_count = sizeof(ranges) / sizeof(ranges[0]);
+    int start = 0;
+    int end = 20;
+    Range *missing = NULL;
+    size_t missing_count = 0;
+    size_t i;
+
+    missing = extract_missing_ranges(ranges, range_count, start, end,
+                                     &missing_count);
+    if (missing == NULL) {
+        fprintf(stderr, "Failed to extract missing ranges\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Missing ranges within [%d, %d]:\n", start, end);
+    for (i = 0; i < missing_count; i++) {
+        printf("[%d, %d]\n", missing[i].start, missing[i].end);
+    }
+
+    free(missing);
+    return EXIT_SUCCESS;
+}

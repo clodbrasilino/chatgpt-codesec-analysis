@@ -1,0 +1,45 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int compare(const void *a, const void *b) {
+    return (*(int *)a - *(int *)b);
+}
+
+void findTriplet(int *arr, int n, int targetSum) {
+    if (arr == NULL || n < 3) {
+        printf("Invalid input.\n");
+        return;
+    }
+
+    qsort(arr, n, sizeof(int), compare);
+
+    for (int i = 0; i < n - 2; i++) {
+        int left = i + 1;
+        int right = n - 1;
+
+        while (left < right) {
+            int currentSum = arr[i] + arr[left] + arr[right];
+
+            if (currentSum == targetSum) {
+                printf("Triplet found: %d, %d, %d\n", arr[i], arr[left], arr[right]);
+                return;
+            } else if (currentSum < targetSum) {
+                left++;
+            } else {
+                right--;
+            }
+        }
+    }
+
+    printf("No triplet found with the given sum.\n");
+}
+
+int main(void) {
+    int arr[] = {1, 4, 45, 6, 10, 8};
+    int targetSum = 22;
+    int n = sizeof(arr) / sizeof(arr[0]);
+
+    findTriplet(arr, n, targetSum);
+
+    return 0;
+}

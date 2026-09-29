@@ -1,0 +1,84 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+#define ZODIAC_COUNT 12
+#define MIN_YEAR 1
+#define MAX_YEAR 9999
+
+static const char *get_chinese_zodiac(int year)
+{
+    static const char *const signs[ZODIAC_COUNT] = {
+        "Monkey", "Rooster", "Dog", "Pig",
+        "Rat", "Ox", "Tiger", "Rabbit",
+        "Dragon", "Snake", "Horse", "Goat"
+    };
+    size_t index;
+
+    if (year < MIN_YEAR || year > MAX_YEAR) {
+        return NULL;
+    }
+
+    index = (size_t)(year % ZODIAC_COUNT);
+    if (index >= (size_t)ZODIAC_COUNT) {
+        return NULL;
+    }
+    return signs[index];
+}
+
+static int display_zodiac(int year)
+{
+    const char *sign;
+
+    if (year < MIN_YEAR || year > MAX_YEAR) {
+        fprintf(stderr, "Error: year must be between %d and %d.\n",
+                MIN_YEAR, MAX_YEAR);
+        return -1;
+    }
+    sign = get_chinese_zodiac(year);
+    if (sign == NULL) {
+        fprintf(stderr, "Error: could not determine zodiac sign.\n");
+        return -1;
+    }
+    if (printf("The Chinese zodiac sign for year %d is: %s\n", year, sign) < 0) {
+        return -1;
+    }
+    return 0;
+}
+
+int main(void)
+{
+    int year;
+    int result;
+
+    printf("Enter a year: ");
+    if (fflush(stdout) != 0) {
+        return EXIT_FAILURE;
+    }
+    result = scanf("%d", &year);
+    if (result != 1) {
+        fprintf(stderr, "Error: invalid input, expected an integer year.\n");
+        return EXIT_FAILURE;
+    }
+    if (display_zodiac(year) != 0) {
+        return EXIT_FAILURE;
+    }
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The original code was already well-defended against the Flawfinder warning, which is a heuristic false positive triggered simply by the presence of a statically-sized array (`signs[ZODIAC_COUNT]`). The array is read-only, fully initialized, and never written to, so no buffer overflow via writing is possible.
+
+Key points in the revised version:
+
+1. **Index type changed to `size_t`** — since the year is validated to be `>= MIN_YEAR` (1), `year % ZODIAC_COUNT` can never be negative, so the negative-adjustment branch was dead code. Casting to `size_t` after validation makes the non-negativity explicit and lets a single unsigned comparison (`index >= ZODIAC_COUNT`) enforce the upper bound.
+
+2. **Bounds checking preserved** — the explicit range check before indexing satisfies the CWE-119/CWE-120 mitigation guidance ("perform bounds checking"), even though mathematically `x % 12` on a positive `x` is always in `[0, 11]`. Defense-in-depth is retained.
+
+3. **Input validation intact** — `scanf` return value is checked, year range is validated in both `main`'s call path and inside `get_chinese_zodiac` (belt-and-suspenders), and all I/O return codes (`printf`, `fflush`) are checked.
+
+4. **No unsafe string functions** — the code uses no `strcpy`/`gets`/`sprintf`, only pointer references to string literals, so there is no writable buffer to overflow at all.
+
+The code is functionally identical to the original and remains safe against the flagged weakness class.

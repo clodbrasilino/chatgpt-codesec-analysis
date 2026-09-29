@@ -1,0 +1,44 @@
+{
+  "task_id": 901,
+  "text": "Write a C function to find the smallest multiple of the first n numbers.",
+  "fn_candidates": [
+    "smallest_multiple",
+    "SmallestMultiple",
+    "smallestMultiple",
+    "smallestmultiple"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "smallest_multiple",
+      "args": [
+        13
+      ],
+      "expected": 360360,
+      "assert_src": "assert smallest_multiple(13)==360360"
+    },
+    {
+      "fn_name": "smallest_multiple",
+      "args": [
+        2
+      ],
+      "expected": 2,
+      "assert_src": "assert smallest_multiple(2)==2"
+    },
+    {
+      "fn_name": "smallest_multiple",
+      "args": [
+        1
+      ],
+      "expected": 1,
+      "assert_src": "assert smallest_multiple(1)==1"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

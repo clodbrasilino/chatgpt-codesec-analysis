@@ -1,0 +1,15 @@
+collected_code_3/problem-582-2.c: In function 'main':
+collected_code_3/problem-582-2.c:16:17: warning: dereference of possibly-NULL 'dict' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   16 |     dict->count = 0;
+      |     ~~~~~~~~~~~~^~~
+  'main': events 1-2
+    |
+    |   15 |     Dictionary *dict = malloc(sizeof(Dictionary));
+    |      |                        ^~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                        |
+    |      |                        (1) this call could return NULL
+    |   16 |     dict->count = 0;
+    |      |     ~~~~~~~~~~~~~~~     
+    |      |                 |
+    |      |                 (2) 'dict' could be NULL: unchecked value from (1)
+    |

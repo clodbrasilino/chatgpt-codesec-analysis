@@ -1,0 +1,70 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+#include <stddef.h>
+
+bool contains_sublist(const int *list, size_t list_len, const int *sublist, size_t sublist_len)
+{
+    size_t i;
+    size_t j;
+
+    if (list == NULL || sublist == NULL) {
+        return false;
+    }
+
+    if (sublist_len == 0U) {
+        return true;
+    }
+
+    if (sublist_len > list_len) {
+        return false;
+    }
+
+    for (i = 0U; i <= (list_len - sublist_len); i++) {
+        bool match = true;
+        for (j = 0U; j < sublist_len; j++) {
+            if (list[i + j] != sublist[j]) {
+                match = false;
+                break;
+            }
+        }
+        if (match) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+int main(void)
+{
+    int list[] = {1, 2, 3, 4, 5, 6, 7, 8};
+    int sublist1[] = {3, 4, 5};
+    int sublist2[] = {5, 4, 3};
+    size_t list_len = sizeof(list) / sizeof(list[0]);
+    size_t sub1_len = sizeof(sublist1) / sizeof(sublist1[0]);
+    size_t sub2_len = sizeof(sublist2) / sizeof(sublist2[0]);
+
+    if (contains_sublist(list, list_len, sublist1, sub1_len)) {
+        if (printf("Sublist 1 found\n") < 0) {
+            return 1;
+        }
+    } else {
+        if (printf("Sublist 1 not found\n") < 0) {
+            return 1;
+        }
+    }
+
+    if (contains_sublist(list, list_len, sublist2, sub2_len)) {
+        if (printf("Sublist 2 found\n") < 0) {
+            return 1;
+        }
+    } else {
+        if (printf("Sublist 2 not found\n") < 0) {
+            return 1;
+        }
+    }
+
+    return 0;
+}
+```

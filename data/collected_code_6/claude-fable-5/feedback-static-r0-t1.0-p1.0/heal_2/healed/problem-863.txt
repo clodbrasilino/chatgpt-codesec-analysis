@@ -1,0 +1,97 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+#include <limits.h>
+
+static int compare_ints(const void *a, const void *b)
+{
+    int x = *(const int *)a;
+    int y = *(const int *)b;
+
+    if (x < y) {
+        return -1;
+    }
+    if (x > y) {
+        return 1;
+    }
+    return 0;
+}
+
+int longest_consecutive_subsequence(const int *arr, size_t n)
+{
+    int *sorted;
+    size_t i;
+    size_t bytes;
+    int longest;
+    int current;
+
+    if (arr == NULL || n == 0) {
+        return 0;
+    }
+
+    if (n > SIZE_MAX / sizeof(*sorted)) {
+        return -1;
+    }
+
+    bytes = n * sizeof(*sorted);
+
+    sorted = malloc(bytes);
+    if (sorted == NULL) {
+        return -1;
+    }
+
+    memcpy(sorted, arr, bytes);
+    qsort(sorted, n, sizeof(*sorted), compare_ints);
+
+    longest = 1;
+    current = 1;
+
+    for (i = 1; i < n; i++) {
+        if (sorted[i] == sorted[i - 1]) {
+            continue;
+        }
+        if (sorted[i - 1] < INT_MAX && sorted[i] == sorted[i - 1] + 1) {
+            current++;
+            if (current > longest) {
+                longest = current;
+            }
+        } else {
+            current = 1;
+        }
+    }
+
+    free(sorted);
+    return longest;
+}
+
+int main(void)
+{
+    int arr[] = {1, 9, 3, 10, 4, 20, 2};
+    size_t n = sizeof(arr) / sizeof(arr[0]);
+    int result;
+
+    result = longest_consecutive_subsequence(arr, n);
+    if (result < 0) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Length of the longest consecutive subsequence: %d\n", result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the fixes applied:**
+
+1. **Flawfinder `memcpy` warning (CWE-120):** The original code was already safe — the destination buffer `sorted` is allocated with exactly `n * sizeof(*sorted)` bytes and the copy size matches. To make this invariant explicit and auditable, the size is now computed once into a `bytes` variable and used consistently for both `malloc` and `memcpy`, guaranteeing the destination always holds the source data.
+
+2. **Size overflow guard preserved:** The `n > SIZE_MAX / sizeof(*sorted)` check remains, preventing integer overflow in the allocation size computation before it happens.
+
+3. **Signed integer overflow (additional hardening):** The expression `sorted[i - 1] + 1` would invoke undefined behavior if `sorted[i - 1] == INT_MAX`. A guard `sorted[i - 1] < INT_MAX` was added before the addition, requiring the `<limits.h>` include.
+
+4. **Existing good practices retained:** NULL/zero-length input handling, `malloc` failure check, `free` of allocated memory, checked `printf` return value, and proper `EXIT_SUCCESS`/`EXIT_FAILURE` codes.

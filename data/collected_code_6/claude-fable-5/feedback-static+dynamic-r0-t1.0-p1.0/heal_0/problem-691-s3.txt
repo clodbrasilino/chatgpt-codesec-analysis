@@ -1,0 +1,171 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int first;
+    int second;
+} Pair;
+
+typedef struct {
+    int key;
+    int *values;
+    size_t count;
+    size_t capacity;
+} Group;
+
+typedef struct {
+    Group *groups;
+    size_t count;
+    size_t capacity;
+} GroupList;
+
+static int group_add_value(Group *group, int value)
+{
+    if (group == NULL) {
+        return -1;
+    }
+    if (group->count == group->capacity) {
+        size_t new_capacity;
+        int *tmp;
+        if (group->capacity > (SIZE_MAX / 2U) / sizeof(int)) {
+            return -1;
+        }
+        new_capacity = (group->capacity == 0U) ? 4U : group->capacity * 2U;
+        tmp = realloc(group->values, new_capacity * sizeof(int));
+        if (tmp == NULL) {
+            return -1;
+        }
+        group->values = tmp;
+        group->capacity = new_capacity;
+    }
+    group->values[group->count] = value;
+    group->count += 1U;
+    return 0;
+}
+
+static Group *grouplist_find_or_create(GroupList *list, int key)
+{
+    size_t i;
+    if (list == NULL) {
+        return NULL;
+    }
+    for (i = 0; i < list->count; i++) {
+        if (list->groups[i].key == key) {
+            return &list->groups[i];
+        }
+    }
+    if (list->count == list->capacity) {
+        size_t new_capacity;
+        Group *tmp;
+        if (list->capacity > (SIZE_MAX / 2U) / sizeof(Group)) {
+            return NULL;
+        }
+        new_capacity = (list->capacity == 0U) ? 4U : list->capacity * 2U;
+        tmp = realloc(list->groups, new_capacity * sizeof(Group));
+        if (tmp == NULL) {
+            return NULL;
+        }
+        list->groups = tmp;
+        list->capacity = new_capacity;
+    }
+    list->groups[list->count].key = key;
+    list->groups[list->count].values = NULL;
+    list->groups[list->count].count = 0U;
+    list->groups[list->count].capacity = 0U;
+    list->count += 1U;
+    return &list->groups[list->count - 1U];
+}
+
+static void grouplist_free(GroupList *list)
+{
+    size_t i;
+    if (list == NULL) {
+        return;
+    }
+    for (i = 0; i < list->count; i++) {
+        free(list->groups[i].values);
+        list->groups[i].values = NULL;
+    }
+    free(list->groups);
+    list->groups = NULL;
+    list->count = 0U;
+    list->capacity = 0U;
+}
+
+static int group_by_second(const Pair *pairs, size_t n, GroupList *result)
+{
+    size_t i;
+    if (pairs == NULL || result == NULL) {
+        return -1;
+    }
+    result->groups = NULL;
+    result->count = 0U;
+    result->capacity = 0U;
+    for (i = 0; i < n; i++) {
+        Group *g = grouplist_find_or_create(result, pairs[i].second);
+        if (g == NULL) {
+            grouplist_free(result);
+            return -1;
+        }
+        if (group_add_value(g, pairs[i].first) != 0) {
+            grouplist_free(result);
+            return -1;
+        }
+    }
+    return 0;
+}
+
+static void print_groups(const GroupList *list)
+{
+    size_t i;
+    size_t j;
+    if (list == NULL) {
+        return;
+    }
+    for (i = 0; i < list->count; i++) {
+        if (printf("%d: [", list->groups[i].key) < 0) {
+            return;
+        }
+        for (j = 0; j < list->groups[i].count; j++) {
+            if (printf("%d", list->groups[i].values[j]) < 0) {
+                return;
+            }
+            if (j + 1U < list->groups[i].count) {
+                if (printf(", ") < 0) {
+                    return;
+                }
+            }
+        }
+        if (printf("]\n") < 0) {
+            return;
+        }
+    }
+}
+
+int main(void)
+{
+    Pair pairs[] = {
+        {1, 5},
+        {2, 7},
+        {3, 5},
+        {4, 7},
+        {5, 9},
+        {6, 5}
+    };
+    size_t n = sizeof(pairs) / sizeof(pairs[0]);
+    GroupList result;
+
+    if (group_by_second(pairs, n, &result) != 0) {
+        if (fprintf(stderr, "Error: grouping failed\n") < 0) {
+            return EXIT_FAILURE;
+        }
+        return EXIT_FAILURE;
+    }
+
+    print_groups(&result);
+    grouplist_free(&result);
+
+    return EXIT_SUCCESS;
+}
+```

@@ -1,0 +1,75 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define BUFFER_SIZE 256
+
+void remove_char(char *str, char c)
+{
+    size_t read_idx = 0;
+    size_t write_idx = 0;
+
+    if (str == NULL) {
+        return;
+    }
+
+    while (str[read_idx] != '\0') {
+        if (str[read_idx] != c) {
+            str[write_idx] = str[read_idx];
+            write_idx++;
+        }
+        read_idx++;
+    }
+    str[write_idx] = '\0';
+}
+
+int main(void)
+{
+    const char *source = "hello world, hello everyone";
+    char target = 'l';
+    char *buffer = NULL;
+    size_t source_len;
+    size_t buffer_size;
+    int written;
+
+    source_len = strnlen(source, BUFFER_SIZE);
+    if (source_len >= BUFFER_SIZE) {
+        fprintf(stderr, "Source string too long\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer_size = source_len + 1;
+    buffer = malloc(buffer_size);
+    if (buffer == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    written = snprintf(buffer, buffer_size, "%s", source);
+    if (written < 0 || (size_t)written >= buffer_size) {
+        fprintf(stderr, "Failed to copy source string safely\n");
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+
+    printf("Original string: %s\n", buffer);
+    remove_char(buffer, target);
+    printf("After removing '%c': %s\n", target, buffer);
+
+    free(buffer);
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the original code and changes made:**
+
+The original code was already quite defensive, but the Flawfinder warning (CWE-119/CWE-120) flagged the statically-sized `char buffer[BUFFER_SIZE]` array. Key observations:
+
+1. **Original mitigations were sound**: The code used `strnlen()` with a bounded maximum, validated the length before copying, used `snprintf()` instead of `strcpy()`, and checked the return value for truncation. The `remove_char()` function also guarded against `NULL` and can only shrink the string, never grow it.
+
+2. **Rewrite improvement**: The fixed-size stack array was replaced with a heap allocation sized exactly to the validated source length (`source_len + 1`). This eliminates the statically-sized buffer that triggered the warning, removes any possibility of size mismatch between the check and the copy, and avoids over-allocating stack space.
+
+3. **Resource safety**: Every exit path after `malloc()` now calls `free()` to prevent memory leaks, including the error path after a failed `snprintf()`.
+
+4. **Preserved correctness**: The truncation check on `snprintf()`'s return value and the `NULL` guard in `remove_char()` are retained, keeping the program robust against future modifications where `source` might come from untrusted input.

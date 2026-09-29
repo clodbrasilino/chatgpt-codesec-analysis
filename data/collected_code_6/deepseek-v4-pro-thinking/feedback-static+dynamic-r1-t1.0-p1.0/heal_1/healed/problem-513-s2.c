@@ -1,0 +1,111 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_STRING_LENGTH 4096
+
+typedef struct Node {
+    char *data;
+    struct Node *next;
+} Node;
+
+static size_t safe_string_length(const char *str, size_t maxlen)
+{
+    size_t len = 0;
+    while (len < maxlen && str[len] != '\0') {
+        ++len;
+    }
+    return len;
+}
+
+static void free_list(Node *head)
+{
+    while (head != NULL) {
+        Node *next = head->next;
+        free(head->data);
+        free(head);
+        head = next;
+    }
+}
+
+static Node *append_node(Node **head, Node **tail, const char *value)
+{
+    size_t len = safe_string_length(value, MAX_STRING_LENGTH);
+    if (len == MAX_STRING_LENGTH) {
+        return NULL;
+    }
+
+    Node *node = malloc(sizeof(*node));
+    if (node == NULL) {
+        return NULL;
+    }
+
+    node->data = malloc(len + 1);
+    if (node->data == NULL) {
+        free(node);
+        return NULL;
+    }
+
+    snprintf(node->data, len + 1, "%s", value);
+    node->next = NULL;
+
+    if (*tail == NULL) {
+        *head = node;
+    } else {
+        (*tail)->next = node;
+    }
+    *tail = node;
+
+    return node;
+}
+
+Node *convert_tuple_to_list(const char **tuple, int length, const char *separator)
+{
+    if (tuple == NULL || length <= 0 || separator == NULL) {
+        return NULL;
+    }
+
+    Node *head = NULL;
+    Node *tail = NULL;
+
+    for (int i = 0; i < length; ++i) {
+        const char *element = (tuple[i] != NULL) ? tuple[i] : "";
+
+        if (append_node(&head, &tail, element) == NULL) {
+            free_list(head);
+            return NULL;
+        }
+
+        if (append_node(&head, &tail, separator) == NULL) {
+            free_list(head);
+            return NULL;
+        }
+    }
+
+    return head;
+}
+
+static void print_list(const Node *head)
+{
+    for (const Node *current = head; current != NULL; current = current->next) {
+        printf("%s ", current->data);
+    }
+    printf("\n");
+}
+
+int main(void)
+{
+    const char *tuple[] = { "apple", "banana", "cherry" };
+    const char *separator = "-";
+
+    Node *list = convert_tuple_to_list(tuple, 3, separator);
+    if (list == NULL) {
+        fprintf(stderr, "Conversion failed\n");
+        return EXIT_FAILURE;
+    }
+
+    print_list(list);
+    free_list(list);
+
+    return EXIT_SUCCESS;
+}

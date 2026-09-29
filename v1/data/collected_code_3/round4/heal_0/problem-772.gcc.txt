@@ -1,0 +1,112 @@
+collected_code_3/round4/heal_0/problem-772.c: In function 'removeWords':
+collected_code_3/round4/heal_0/problem-772.c:12:24: warning: dereference of possibly-NULL 'word' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   12 |             word[wc++] = str[i];
+      |             ~~~~~~~~~~~^~~~~~~~
+  'removeWords': events 1-6
+    |
+    |    7 |     char* word = (char*)malloc(strlen(str) + 1);
+    |      |                         ^~~~~~~~~~~~~~~~~~~~~~~
+    |      |                         |
+    |      |                         (1) this call could return NULL
+    |......
+    |   10 |     while (str[i] != '\0') {
+    |      |            ~~~~~~~~~~~~~~
+    |      |                   |
+    |      |                   (2) following 'true' branch...
+    |   11 |         if (str[i] != ' ') {
+    |      |            ~   ~         
+    |      |            |   |
+    |      |            |   (3) ...to here
+    |      |            (4) following 'true' branch...
+    |   12 |             word[wc++] = str[i];
+    |      |             ~~~~~~~~~~~~~~~~~~~
+    |      |                        |    |
+    |      |                        |    (5) ...to here
+    |      |                        (6) 'word + (sizetype)wc' could be NULL: unchecked value from (1)
+    |
+collected_code_3/round4/heal_0/problem-772.c:15:26: warning: dereference of possibly-NULL 'word' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   15 |                 word[wc] = '\0';
+      |                 ~~~~~~~~~^~~~~~
+  'removeWords': events 1-8
+    |
+    |    7 |     char* word = (char*)malloc(strlen(str) + 1);
+    |      |                         ^~~~~~~~~~~~~~~~~~~~~~~
+    |      |                         |
+    |      |                         (1) this call could return NULL
+    |......
+    |   10 |     while (str[i] != '\0') {
+    |      |            ~~~~~~~~~~~~~~
+    |      |                   |
+    |      |                   (2) following 'true' branch...
+    |   11 |         if (str[i] != ' ') {
+    |      |            ~   ~         
+    |      |            |   |
+    |      |            |   (3) ...to here
+    |      |            (4) following 'false' branch...
+    |......
+    |   14 |             if (wc != k) {
+    |      |                ~         
+    |      |                |
+    |      |                (5) ...to here
+    |      |                (6) following 'true' branch (when 'wc != k')...
+    |   15 |                 word[wc] = '\0';
+    |      |                 ~~~~~~~~~~~~~~~
+    |      |                     |    |
+    |      |                     |    (8) 'word + (sizetype)wc' could be NULL: unchecked value from (1)
+    |      |                     (7) ...to here
+    |
+collected_code_3/round4/heal_0/problem-772.c:29:20: warning: dereference of possibly-NULL 'result' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   29 |         result[rc] = '\0';
+      |         ~~~~~~~~~~~^~~~~~
+  'main': events 1-2
+    |
+    |   36 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   39 |     char* result = removeWords(str, k);
+    |      |                    ~~~~~~~~~~~~~~~~~~~
+    |      |                    |
+    |      |                    (2) calling 'removeWords' from 'main'
+    |
+    +--> 'removeWords': events 3-15
+           |
+           |    5 | char* removeWords(char* str, int k) {
+           |      |       ^~~~~~~~~~~
+           |      |       |
+           |      |       (3) entry to 'removeWords'
+           |    6 |     char* result = (char*)malloc(strlen(str) + 1);
+           |      |                           ~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                           |
+           |      |                           (4) this call could return NULL
+           |......
+           |   10 |     while (str[i] != '\0') {
+           |      |            ~~~~~~~~~~~~~~
+           |      |                   |
+           |      |                   (5) following 'true' branch...
+           |      |                   (9) following 'true' branch...
+           |   11 |         if (str[i] != ' ') {
+           |      |            ~   ~
+           |      |            |   |
+           |      |            |   (6) ...to here
+           |      |            |   (10) ...to here
+           |      |            (7) following 'true' branch...
+           |      |            (11) following 'true' branch...
+           |   12 |             word[wc++] = str[i];
+           |      |                             ~
+           |      |                             |
+           |      |                             (8) ...to here
+           |      |                             (12) ...to here
+           |......
+           |   25 |     if (wc != k) {
+           |      |        ~
+           |      |        |
+           |      |        (13) following 'false' branch (when 'wc == k')...
+           |......
+           |   29 |         result[rc] = '\0';
+           |      |         ~~~~~~~~~~~~~~~~~
+           |      |               |    |
+           |      |               |    (15) 'result + (sizetype)rc' could be NULL: unchecked value from (4)
+           |      |               (14) ...to here
+           |

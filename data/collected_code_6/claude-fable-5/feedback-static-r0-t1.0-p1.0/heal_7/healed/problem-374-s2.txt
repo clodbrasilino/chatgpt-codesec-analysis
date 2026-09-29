@@ -1,0 +1,96 @@
+```c
+#define _POSIX_C_SOURCE 200809L
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_INPUT_LEN 1024U
+
+static void swap_chars(char *a, char *b)
+{
+    char tmp = *a;
+    *a = *b;
+    *b = tmp;
+}
+
+static int permute(char *str, size_t left, size_t right)
+{
+    size_t i;
+
+    if (left == right) {
+        if (puts(str) == EOF) {
+            return -1;
+        }
+        return 0;
+    }
+
+    for (i = left; i <= right; i++) {
+        swap_chars(&str[left], &str[i]);
+        if (permute(str, left + 1U, right) != 0) {
+            swap_chars(&str[left], &str[i]);
+            return -1;
+        }
+        swap_chars(&str[left], &str[i]);
+    }
+
+    return 0;
+}
+
+static int print_permutations(const char *input)
+{
+    char *buffer;
+    size_t len;
+    size_t buf_size;
+    int result;
+
+    if (input == NULL) {
+        return -1;
+    }
+
+    len = strnlen(input, MAX_INPUT_LEN);
+    if (len == 0U || len >= MAX_INPUT_LEN) {
+        return -1;
+    }
+
+    buf_size = len + 1U;
+
+    buffer = malloc(buf_size);
+    if (buffer == NULL) {
+        return -1;
+    }
+
+    memcpy(buffer, input, len);
+    buffer[len] = '\0';
+
+    result = permute(buffer, 0U, len - 1U);
+
+    free(buffer);
+
+    return result;
+}
+
+int main(void)
+{
+    const char *test = "ABC";
+
+    if (print_permutations(test) != 0) {
+        (void)fprintf(stderr, "Failed to print permutations\n");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+Key changes made during the rewrite:
+
+1. **Removed `if (buf_size <= len)` check** — static analysis correctly flagged this as always false. Since `len` is guaranteed to be strictly less than `MAX_INPUT_LEN` (1024), `len + 1U` can never wrap around a `size_t`, so the overflow guard was dead code.
+
+2. **Removed `if (len >= buf_size)` check** — likewise always false by construction (`buf_size == len + 1U`), so it was unreachable defensive code that only added noise and a redundant `free()` path.
+
+3. **Kept the `memcpy`** — the Flawfinder warning (CWE-120) is a low-risk heuristic hit. The copy is provably safe: the destination was allocated with exactly `len + 1U` bytes, `len` bytes are copied, and the terminator is written at index `len`, which is in bounds. Bounds validation happens before allocation via `strnlen` with an explicit cap, so no change was required.
+
+4. **All other defensive measures retained** — `NULL` input check, `strnlen` with `MAX_INPUT_LEN` cap (preventing unbounded reads on non-terminated input), `malloc` failure check, `puts` return-value check propagated up through `permute`, and `free()` on all exit paths after allocation, so there are no leaks or double-frees.
+
+The code remains fully portable C with POSIX `strnlen`, and the recursion depth is bounded by the input length (max 1023), which is safe for typical stack sizes.

@@ -1,0 +1,135 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+struct Node {
+    char *data;
+    struct Node *next;
+};
+
+void insert_string_at_beginning(struct Node *head, const char *prefix) {
+    if (head == NULL || prefix == NULL) {
+        return;
+    }
+
+    struct Node *current = head;
+    size_t prefix_len = strnlen(prefix, SIZE_MAX);
+
+    while (current != NULL) {
+        if (current->data == NULL) {
+            current = current->next;
+            continue;
+        }
+
+        size_t current_len = strnlen(current->data, SIZE_MAX);
+        size_t new_len = prefix_len + current_len;
+        
+        if (new_len < prefix_len) {
+            current = current->next;
+            continue;
+        }
+
+        char *new_data = (char *)malloc(new_len + 1);
+        if (new_data == NULL) {
+            fprintf(stderr, "Memory allocation failed\n");
+            current = current->next;
+            continue;
+        }
+
+        /* Possible weaknesses found:
+         *  implicit declaration of function 'memcpy_s'; did you mean 'memcpy'? [-Wimplicit-function-declaration]
+         *  call to undeclared function 'memcpy_s'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+         *  did you mean 'memcpy'?
+         */
+        memcpy_s(new_data, new_len + 1, prefix, prefix_len);
+        memcpy_s(new_data + prefix_len, new_len + 1 - prefix_len, current->data, current_len + 1);
+
+        free(current->data);
+        current->data = new_data;
+
+        current = current->next;
+    }
+}
+
+struct Node *create_node(const char *str) {
+    if (str == NULL) {
+        return NULL;
+    }
+
+    struct Node *new_node = (struct Node *)malloc(sizeof(struct Node));
+    if (new_node == NULL) {
+        return NULL;
+    }
+
+    size_t len = strnlen(str, SIZE_MAX);
+    new_node->data = (char *)malloc(len + 1);
+    if (new_node->data == NULL) {
+        free(new_node);
+        return NULL;
+    }
+    
+    /* Possible weaknesses found:
+     *  call to undeclared function 'memcpy_s'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     */
+    memcpy_s(new_node->data, len + 1, str, len + 1);
+    new_node->next = NULL;
+    return new_node;
+}
+
+void append_node(struct Node **head_ref, const char *str) {
+    struct Node *new_node = create_node(str);
+    if (new_node == NULL) {
+        return;
+    }
+
+    if (*head_ref == NULL) {
+        /* Possible weaknesses found:
+         *  'memcpy' declared here
+         */
+        *head_ref = new_node;
+        return;
+    }
+
+    struct Node *last = *head_ref;
+    while (last->next != NULL) {
+        last = last->next;
+    }
+    last->next = new_node;
+}
+
+void free_list(struct Node *head) {
+    while (head != NULL) {
+        struct Node *tmp = head;
+        head = head->next;
+        free(tmp->data);
+        free(tmp);
+    }
+}
+
+void print_list(struct Node *head) {
+    struct Node *current = head;
+    while (current != NULL) {
+        printf("%s\n", current->data);
+        current = current->next;
+    }
+}
+
+int main() {
+    struct Node *head = NULL;
+
+    append_node(&head, "apple");
+    append_node(&head, "banana");
+    append_node(&head, "cherry");
+
+    printf("Original list:\n");
+    print_list(head);
+
+    insert_string_at_beginning(head, "fruit_");
+
+    printf("\nModified list:\n");
+    print_list(head);
+
+    free_list(head);
+
+    return 0;
+}

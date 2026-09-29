@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-222.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-222.c:21:14: portability: Casting from float * to signed int * is not portable due to different binary data representations on different platforms. [invalidPointerCast]
+    int *p = (int *)&f;
+             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-222.c:15:11: style: Variable 'str' can be declared as pointer to const [constVariablePointer]
+    char *str = (char *)ptr;
+          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-222.c:21:10: style: Variable 'p' can be declared as pointer to const [constVariablePointer]
+    int *p = (int *)&f;
+         ^

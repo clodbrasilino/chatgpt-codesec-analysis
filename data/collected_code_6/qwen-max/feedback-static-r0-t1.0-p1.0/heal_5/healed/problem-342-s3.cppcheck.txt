@@ -1,0 +1,16 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-342-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-342-s3.c:27:5: error: Found an exit path from function with non-void return type that has missing return statement [missingReturn]
+    }
+    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-342-s3.c:51:26: warning: Uninitialized variable: minHeap [uninitvar]
+        int currentMin = minHeap[0];
+                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-342-s3.c:35:23: note: Assuming condition is false
+    for (int i = 0; i < k; i++)
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-342-s3.c:51:26: note: Uninitialized variable: minHeap
+        int currentMin = minHeap[0];
+                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-342-s3.c:60:18: style: Variable 'root' is assigned a value that is never used. [unreadVariable]
+        int root = 0;
+                 ^

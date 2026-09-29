@@ -1,0 +1,129 @@
+#include <stdio.h>
+#include <stdint.h>
+#include <inttypes.h>
+#include <stdlib.h>
+
+static uint64_t mul_mod(uint64_t a, uint64_t b, uint64_t m)
+{
+    uint64_t result = 0;
+    a %= m;
+    while (b > 0) {
+        if (b & 1u) {
+            result = (result + a) % m;
+        }
+        a = (a + a) % m;
+        b >>= 1;
+    }
+    return result;
+}
+
+static uint64_t pow_mod(uint64_t base, uint64_t exp, uint64_t m)
+{
+    uint64_t result = 1 % m;
+    base %= m;
+    while (exp > 0) {
+        if (exp & 1u) {
+            result = mul_mod(result, base, m);
+        }
+        base = mul_mod(base, base, m);
+        exp >>= 1;
+    }
+    return result;
+}
+
+static int is_prime(uint64_t n)
+{
+    static const uint64_t bases[] = {2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37};
+    size_t i;
+    uint64_t d;
+    unsigned int r;
+
+    if (n < 2) {
+        return 0;
+    }
+    for (i = 0; i < sizeof(bases) / sizeof(bases[0]); i++) {
+        if (n % bases[i] == 0) {
+            return n == bases[i];
+        }
+    }
+    d = n - 1;
+    r = 0;
+    while ((d & 1u) == 0) {
+        d >>= 1;
+        r++;
+    }
+    for (i = 0; i < sizeof(bases) / sizeof(bases[0]); i++) {
+        uint64_t a = bases[i] % n;
+        uint64_t x;
+        unsigned int j;
+        int composite = 1;
+        if (a == 0) {
+            continue;
+        }
+        x = pow_mod(a, d, n);
+        if (x == 1 || x == n - 1) {
+            continue;
+        }
+        for (j = 1; j < r; j++) {
+            x = mul_mod(x, x, n);
+            if (x == n - 1) {
+                composite = 0;
+                break;
+            }
+        }
+        if (composite) {
+            return 0;
+        }
+    }
+    return 1;
+}
+
+uint64_t nth_nsw_prime(unsigned int n)
+{
+    const uint64_t limit = UINT64_MAX / 2;
+    uint64_t s_prev2 = 1;
+    uint64_t s_prev1 = 1;
+    uint64_t index = 1;
+    unsigned int count = 0;
+
+    if (n == 0) {
+        return 0;
+    }
+    for (;;) {
+        uint64_t s;
+        if (s_prev2 > limit || s_prev1 > (limit - s_prev2) / 2) {
+            break;
+        }
+        s = 2 * s_prev1 + s_prev2;
+        index++;
+        s_prev2 = s_prev1;
+        s_prev1 = s;
+        if ((index & 1u) == 1u && is_prime(s)) {
+            count++;
+            if (count == n) {
+                return s;
+            }
+        }
+    }
+    return 0;
+}
+
+int main(void)
+{
+    unsigned int n;
+    uint64_t result;
+
+    printf("Enter n: ");
+    fflush(stdout);
+    if (scanf("%u", &n) != 1) {
+        fprintf(stderr, "Error: invalid input.\n");
+        return EXIT_FAILURE;
+    }
+    result = nth_nsw_prime(n);
+    if (result == 0) {
+        fprintf(stderr, "Error: n is invalid or the result exceeds 64-bit range.\n");
+        return EXIT_FAILURE;
+    }
+    printf("The %u-th Newman-Shanks-Williams prime is: %" PRIu64 "\n", n, result);
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,94 @@
+collected_code_3/problem-27-2.c: In function 'removeDigits':
+collected_code_3/problem-27-2.c:10:20: warning: dereference of possibly-NULL 'newList' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   10 |         newList[i] = malloc(len * sizeof(char));
+      |         ~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  'removeDigits': events 1-4
+    |
+    |    7 |     char **newList = malloc(size * sizeof(char *));
+    |      |                      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                      |
+    |      |                      (1) this call could return NULL
+    |    8 |     for(int i = 0; i < size; i++) {
+    |      |                    ~~~~~~~~
+    |      |                      |
+    |      |                      (2) following 'true' branch (when 'i < size')...
+    |    9 |         int len = strlen(strList[i]);
+    |      |                                 ~
+    |      |                                 |
+    |      |                                 (3) ...to here
+    |   10 |         newList[i] = malloc(len * sizeof(char));
+    |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                    |
+    |      |                    (4) 'newList + (long unsigned int)i * 8' could be NULL: unchecked value from (1)
+    |
+collected_code_3/problem-27-2.c:14:37: warning: dereference of possibly-NULL '*newList_52 + _29 + (sizetype)index' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   14 |                 newList[i][index++] = strList[i][j];
+      |                 ~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~
+  'removeDigits': events 1-8
+    |
+    |    8 |     for(int i = 0; i < size; i++) {
+    |      |                    ~~^~~~~~
+    |      |                      |
+    |      |                      (1) following 'true' branch (when 'i < size')...
+    |    9 |         int len = strlen(strList[i]);
+    |      |                                 ~
+    |      |                                 |
+    |      |                                 (2) ...to here
+    |   10 |         newList[i] = malloc(len * sizeof(char));
+    |      |                      ~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                      |
+    |      |                      (3) this call could return NULL
+    |   11 |         int index = 0;
+    |   12 |         for(int j = 0; j < len; j++) {
+    |      |                        ~~~~~~~
+    |      |                          |
+    |      |                          (4) following 'true' branch (when 'j < len')...
+    |   13 |             if(!isdigit(strList[i][j])) {
+    |      |               ~                ~
+    |      |               |                |
+    |      |               |                (5) ...to here
+    |      |               (6) following 'true' branch...
+    |   14 |                 newList[i][index++] = strList[i][j];
+    |      |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                                     |        |
+    |      |                                     |        (7) ...to here
+    |      |                                     (8) '*newList_52 + _29 + (sizetype)index' could be NULL: unchecked value from (3)
+    |
+collected_code_3/problem-27-2.c:17:27: warning: dereference of possibly-NULL '*newList_52 + _37 + (sizetype)index' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   17 |         newList[i][index] = '\0';
+      |         ~~~~~~~~~~~~~~~~~~^~~~~~
+  'removeDigits': events 1-4
+    |
+    |    8 |     for(int i = 0; i < size; i++) {
+    |      |                    ~~^~~~~~
+    |      |                      |
+    |      |                      (1) following 'true' branch (when 'i < size')...
+    |    9 |         int len = strlen(strList[i]);
+    |      |                                 ~
+    |      |                                 |
+    |      |                                 (2) ...to here
+    |   10 |         newList[i] = malloc(len * sizeof(char));
+    |      |                      ~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                      |
+    |      |                      (3) this call could return NULL
+    |......
+    |   17 |         newList[i][index] = '\0';
+    |      |         ~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                           |
+    |      |                           (4) '*newList_52 + _37 + (sizetype)index' could be NULL: unchecked value from (3)
+    |
+collected_code_3/problem-27-2.c: In function 'main':
+collected_code_3/problem-27-2.c:25:16: warning: dereference of possibly-NULL 'strList' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   25 |     strList[0] = "abc123";
+      |     ~~~~~~~~~~~^~~~~~~~~~
+  'main': events 1-2
+    |
+    |   24 |     char **strList = malloc(size * sizeof(char *));
+    |      |                      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                      |
+    |      |                      (1) this call could return NULL
+    |   25 |     strList[0] = "abc123";
+    |      |     ~~~~~~~~~~~~~~~~~~~~~
+    |      |                |
+    |      |                (2) 'strList' could be NULL: unchecked value from (1)
+    |

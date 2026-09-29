@@ -1,0 +1,67 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+#define MIN_WIND_SPEED 3.0
+#define MAX_TEMPERATURE 50.0
+#define WIND_EXPONENT 0.16
+
+static int calculate_wind_chill(double temperature, double wind_speed, double *result);
+
+static int calculate_wind_chill(double temperature, double wind_speed, double *result)
+{
+    double wind_factor;
+
+    if (result == NULL) {
+        return -1;
+    }
+
+    if (temperature > MAX_TEMPERATURE) {
+        return -1;
+    }
+
+    if (wind_speed < MIN_WIND_SPEED) {
+        return -1;
+    }
+
+    wind_factor = pow(wind_speed, WIND_EXPONENT);
+
+    *result = 35.74 + (0.6215 * temperature)
+              - (35.75 * wind_factor)
+              + (0.4275 * temperature * wind_factor);
+
+    return 0;
+}
+
+int main(void)
+{
+    double temperature = 0.0;
+    double wind_speed = 0.0;
+    double wind_chill = 0.0;
+    int scan_result;
+
+    printf("Enter temperature (degrees Fahrenheit, must be <= %.1f): ", MAX_TEMPERATURE);
+    scan_result = scanf("%lf", &temperature);
+    if (scan_result != 1) {
+        fprintf(stderr, "Error: invalid temperature input.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter wind speed (mph, must be >= %.1f): ", MIN_WIND_SPEED);
+    scan_result = scanf("%lf", &wind_speed);
+    if (scan_result != 1) {
+        fprintf(stderr, "Error: invalid wind speed input.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (calculate_wind_chill(temperature, wind_speed, &wind_chill) != 0) {
+        fprintf(stderr, "Error: inputs out of valid range for wind chill calculation.\n");
+        fprintf(stderr, "Temperature must be <= %.1f F and wind speed must be >= %.1f mph.\n",
+                MAX_TEMPERATURE, MIN_WIND_SPEED);
+        return EXIT_FAILURE;
+    }
+
+    printf("Wind chill index: %.2f degrees Fahrenheit\n", wind_chill);
+
+    return EXIT_SUCCESS;
+}

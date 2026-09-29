@@ -1,0 +1,51 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+bool is_increasing(const int *sequence, size_t length) {
+    if (sequence == NULL || length < 2) {
+        return false;
+    }
+
+    for (size_t i = 1; i < length; ++i) {
+        if (sequence[i] <= sequence[i - 1]) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+int main(void) {
+    size_t length;
+
+    printf("Enter the number of elements: ");
+    if (scanf("%zu", &length) != 1 || length < 2) {
+        fprintf(stderr, "Invalid input for length.\n");
+        return EXIT_FAILURE;
+    }
+
+    int *sequence = malloc(length * sizeof(int));
+    if (sequence == NULL) {
+        fprintf(stderr, "Memory allocation failed.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter %zu integers:\n", length);
+    for (size_t i = 0; i < length; ++i) {
+        if (scanf("%d", &sequence[i]) != 1) {
+            fprintf(stderr, "Invalid input for sequence element.\n");
+            free(sequence);
+            return EXIT_FAILURE;
+        }
+    }
+
+    if (is_increasing(sequence, length)) {
+        printf("The sequence is strictly increasing.\n");
+    } else {
+        printf("The sequence is not strictly increasing.\n");
+    }
+
+    free(sequence);
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-846-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-846-s2.c:46:23: style: Condition 'arrival_count!=departure_count' is always false [knownConditionTrueFalse]
+    if (arrival_count != departure_count) {
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-846-s2.c:43:44: note: Assignment 'arrival_count=sizeof(arrival)/sizeof(arrival[0])', assigned value is 6
+    size_t arrival_count = sizeof(arrival) / sizeof(arrival[0]);
+                                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-846-s2.c:46:23: note: Condition 'arrival_count!=departure_count' is always false
+    if (arrival_count != departure_count) {
+                      ^

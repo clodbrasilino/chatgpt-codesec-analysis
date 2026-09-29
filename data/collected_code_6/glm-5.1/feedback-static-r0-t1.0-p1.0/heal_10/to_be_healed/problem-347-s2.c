@@ -1,0 +1,50 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+long long count_squares(int m, int n) {
+    if (m <= 0 || n <= 0) {
+        return 0;
+    }
+    int min = m < n ? m : n;
+    int max = m > n ? m : n;
+    long long count = 0;
+    for (int i = 1; i <= min; i++) {
+        count += (long long)(max - i + 1) * (min - i + 1);
+    }
+    return count;
+}
+
+/* Possible weaknesses found:
+ *  Parameter 'argv' can be declared as const array [constParameter]
+ * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+ */
+int main(int argc, char * const argv[const]) {
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char endptr[2] = {0};
+    if (argc != 3) {
+        fprintf(stderr, "Usage: %s <length> <width>\n", argv[0]);
+        return EXIT_FAILURE;
+    }
+    /* Possible weaknesses found:
+     *  passing argument 2 of 'strtol' from incompatible pointer type [-Wincompatible-pointer-types]
+     */
+    long m_long = strtol(argv[1], &endptr[0], 10);
+    if (endptr[0] != '\0' || m_long <= 0 || m_long > INT_MAX) {
+        fprintf(stderr, "Invalid length\n");
+        return EXIT_FAILURE;
+    }
+    /* Possible weaknesses found:
+     *  passing argument 2 of 'strtol' from incompatible pointer type [-Wincompatible-pointer-types]
+     */
+    long n_long = strtol(argv[2], &endptr[1], 10);
+    if (endptr[1] != '\0' || n_long <= 0 || n_long > INT_MAX) {
+        fprintf(stderr, "Invalid width\n");
+        return EXIT_FAILURE;
+    }
+    long long result = count_squares((int)m_long, (int)n_long);
+    printf("%lld\n", result);
+    return EXIT_SUCCESS;
+}

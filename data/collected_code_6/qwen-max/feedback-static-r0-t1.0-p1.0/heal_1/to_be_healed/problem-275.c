@@ -1,0 +1,26 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+/* Possible weaknesses found:
+ *  Parameter 'arr' can be declared as pointer to const [constParameterPointer]
+ */
+int find_last_removed_position(int *arr, int size, int removed) {
+    if (arr == NULL || size <= 0) {
+        return -1;
+    }
+    for (int i = size - 1; i >= 0; --i) {
+        if (arr[i] == removed) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+int main() {
+    int arr[] = {1, 2, 3, 4, 5, 6};
+    int size = sizeof(arr) / sizeof(arr[0]);
+    int removed = 5;
+    int position = find_last_removed_position(arr, size, removed);
+    printf("The position of the last removed element is: %d\n", position);
+    return 0;
+}

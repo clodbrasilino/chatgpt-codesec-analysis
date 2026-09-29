@@ -1,0 +1,58 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int first;
+    int second;
+} Pair;
+
+int subtract_nested_tuples(const Pair *tup1, const Pair *tup2, Pair *result, size_t count)
+{
+    size_t i;
+
+    if (tup1 == NULL || tup2 == NULL || result == NULL) {
+        return -1;
+    }
+
+    for (i = 0; i < count; i++) {
+        result[i].first = tup1[i].first - tup2[i].first;
+        result[i].second = tup1[i].second - tup2[i].second;
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    const Pair tup1[] = { {1, 3}, {4, 5}, {2, 9}, {1, 10} };
+    const Pair tup2[] = { {6, 7}, {3, 9}, {1, 1}, {7, 3} };
+    size_t count = sizeof(tup1) / sizeof(tup1[0]);
+    Pair *result;
+    size_t i;
+    int status;
+
+    result = (Pair *)malloc(count * sizeof(Pair));
+    if (result == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    status = subtract_nested_tuples(tup1, tup2, result, count);
+    if (status != 0) {
+        fprintf(stderr, "Subtraction failed\n");
+        free(result);
+        return EXIT_FAILURE;
+    }
+
+    printf("(");
+    for (i = 0; i < count; i++) {
+        printf("(%d, %d)", result[i].first, result[i].second);
+        if (i < count - 1) {
+            printf(", ");
+        }
+    }
+    printf(")\n");
+
+    free(result);
+    return EXIT_SUCCESS;
+}

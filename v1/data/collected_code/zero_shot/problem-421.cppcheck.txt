@@ -1,0 +1,6 @@
+collected_code/problem-421-0.c:10:29: error: Cannot determine that 'tuple[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        strcat(result, tuple[i]);
+                            ^
+collected_code/problem-421-0.c:12:28: error: Cannot determine that 'delimiter[0]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+            strcat(result, delimiter);
+                           ^

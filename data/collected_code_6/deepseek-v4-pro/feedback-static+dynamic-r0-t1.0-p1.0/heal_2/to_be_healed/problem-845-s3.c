@@ -1,0 +1,68 @@
+#include <stdio.h>
+#include <math.h>
+#include <float.h>
+#include <errno.h>
+#include <fenv.h>
+ /* Possible weaknesses found:
+  *  'INT_MAX' is defined in header '<limits.h>'; this is probably fixable by adding '#include <limits.h>'
+  */
+
+int count_digits_in_factorial(int n) {
+    if (n < 0) {
+        return -1;
+    }
+    if (n <= 1) {
+        return 1;
+    }
+    
+    double log_sum = 0.0;
+    
+    for (int i = 2; i <= n; i++) {
+        double term = log10((double)i);
+        if (isinf(term) || isnan(term)) {
+            return -2;
+        }
+        log_sum += term;
+    }
+    
+    if (isinf(log_sum) || isnan(log_sum)) {
+        return -2;
+    }
+    
+    double result = floor(log_sum);
+    /* Possible weaknesses found:
+     *  use of undeclared identifier 'INT_MAX'
+     *  'INT_MAX' undeclared (first use in this function)
+     *  each undeclared identifier is reported only once for each function it appears in
+     */
+    if (result > (double)INT_MAX - 1.0) {
+        return -2;
+    }
+    
+    return (int)result + 1;
+}
+
+int main(void) {
+    int n;
+    printf("Enter a number: ");
+    
+    if (scanf("%d", &n) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return 1;
+    }
+    
+    if (n < 0) {
+        fprintf(stderr, "Factorial is not defined for negative numbers\n");
+        return 1;
+    }
+    
+    int digits = count_digits_in_factorial(n);
+    
+    if (digits == -2) {
+        fprintf(stderr, "Result too large to compute\n");
+        return 1;
+    }
+    
+    printf("Number of digits in %d! is %d\n", n, digits);
+    return 0;
+}

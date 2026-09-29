@@ -1,0 +1,6 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-950-s3.c:46:13: error: conflicting types for 'get_zodiac_sign'; have 'const char *(size_t)' {aka 'const char *(long unsigned int)'}
+   46 | const char* get_zodiac_sign(size_t index) {
+      |             ^~~~~~~~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-950-s3.c:7:13: note: previous definition of 'get_zodiac_sign' with type 'const char *(int)'
+    7 | const char* get_zodiac_sign(int year) {
+      |             ^~~~~~~~~~~~~~~

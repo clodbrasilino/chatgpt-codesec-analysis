@@ -1,0 +1,74 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#define MAX_SIZE 1024
+#define CHAR_SET_SIZE 256
+
+typedef struct {
+    char character;
+    int count;
+} CharCount;
+
+int compare(const void *a, const void *b) {
+    return ((CharCount *)b)->count - ((CharCount *)a)->count;
+}
+
+void findCommonChars(const char *text, int *n) {
+    int count[CHAR_SET_SIZE] = {0};
+    int i, j;
+
+    for (i = 0; text[i]; ++i) {
+        if (isalpha(text[i])) {
+            count[tolower(text[i])]++;
+        }
+    }
+
+    *n = 0;
+    for (i = 0; i < CHAR_SET_SIZE; i++) {
+        if (count[i] > 0) {
+            (*n)++;
+        }
+    }
+
+    CharCount *charCounts = (CharCount *)malloc(*n * sizeof(CharCount));
+    if (!charCounts) {
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(EXIT_FAILURE);
+    }
+
+    for (i = 0, j = 0; i < CHAR_SET_SIZE; i++) {
+        if (count[i] > 0) {
+            charCounts[j].character = (char)i;
+            charCounts[j].count = count[i];
+            j++;
+        }
+    }
+
+    qsort(charCounts, *n, sizeof(CharCount), compare);
+
+    for (i = 0; i < *n; i++) {
+        printf("Character: %c, Count: %d\n", charCounts[i].character, charCounts[i].count);
+    }
+
+    free(charCounts);
+}
+
+int main() {
+    char text[MAX_SIZE];
+    int n;
+
+    if (fgets(text, MAX_SIZE, stdin)) {
+        size_t len = strcspn(text, "\n");
+        if (len == MAX_SIZE - 1 && text[len - 1] != '\n') {
+            while (getchar() != '\n'); // consume remaining line
+        } else {
+            text[len] = '\0';
+        }
+    }
+    findCommonChars(text, &n);
+    return 0;
+}
+```

@@ -1,0 +1,42 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+long long int sum_array(const int *arr, size_t size) {
+    if (arr == NULL || size == 0) {
+        return 0;
+    }
+
+    long long int total_sum = 0;
+    for (size_t i = 0; i < size; ++i) {
+        total_sum += arr[i];
+    }
+
+    return total_sum;
+}
+
+int main(void) {
+    size_t size = 5;
+    int *array = (int *)malloc(size * sizeof(int));
+    
+    if (array == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    array[0] = 10;
+    array[1] = 20;
+    array[2] = 30;
+    array[3] = 40;
+    array[4] = 50;
+
+    long long int result = sum_array(array, size);
+    
+    printf("Sum: %lld\n", result);
+
+    free(array);
+    array = NULL;
+
+    return EXIT_SUCCESS;
+}
+```

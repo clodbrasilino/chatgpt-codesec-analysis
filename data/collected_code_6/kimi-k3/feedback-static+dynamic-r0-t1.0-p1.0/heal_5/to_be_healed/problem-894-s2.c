@@ -1,0 +1,184 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <errno.h>
+#include <ctype.h>
+#include <math.h>
+#include <stdint.h>
+
+typedef struct {
+    float *data;
+    size_t size;
+    size_t capacity;
+} FloatTuple;
+
+static int float_tuple_init(FloatTuple *tuple, size_t initial_capacity) {
+    if (tuple == NULL || initial_capacity == 0 || initial_capacity > SIZE_MAX / sizeof(float)) {
+        return -1;
+    }
+    
+    tuple->data = malloc(initial_capacity * sizeof(float));
+    if (tuple->data == NULL) {
+        return -1;
+    }
+    
+    tuple->size = 0;
+    tuple->capacity = initial_capacity;
+    return 0;
+}
+
+static void float_tuple_destroy(FloatTuple *tuple) {
+    if (tuple != NULL) {
+        free(tuple->data);
+        tuple->data = NULL;
+        tuple->size = 0;
+        tuple->capacity = 0;
+    }
+}
+
+static int float_tuple_append(FloatTuple *tuple, float value) {
+    if (tuple == NULL) {
+        return -1;
+    }
+    
+    if (tuple->size >= tuple->capacity) {
+        if (tuple->capacity > SIZE_MAX / 2) {
+            return -1;
+        }
+        size_t new_capacity = tuple->capacity * 2;
+        if (new_capacity > SIZE_MAX / sizeof(float)) {
+            return -1;
+        }
+        
+        float *new_data = realloc(tuple->data, new_capacity * sizeof(float));
+        if (new_data == NULL) {
+            return -1;
+        }
+        
+        tuple->data = new_data;
+        tuple->capacity = new_capacity;
+    }
+    
+    tuple->data[tuple->size] = value;
+    tuple->size++;
+    return 0;
+}
+
+static int parse_float_token(const char *token, size_t len, float *result) {
+    /* Possible weaknesses found:
+     *  Assuming that condition 'len==0' is not redundant
+     */
+    if (token == NULL || result == NULL || len == 0 || len >= 64) {
+        return -1;
+    }
+    
+    for (size_t i = 0; i < len; i++) {
+        if (!isdigit((unsigned char)token[i]) && token[i] != '.' && 
+            token[i] != '-' && token[i] != '+' && 
+            /* Possible weaknesses found:
+             *  Assuming condition is false
+             */
+            token[i] != 'e' && token[i] != 'E') {
+            return -1;
+        }
+    }
+    
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char buffer[64];
+    if (len >= sizeof(buffer)) {
+        return -1;
+    }
+    
+    /* Possible weaknesses found:
+     *  Condition 'len>0' is always true [knownConditionTrueFalse]
+     *  Condition 'len>0' is always true
+     */
+    if (len > 0 && len < sizeof(buffer)) {
+        /* Possible weaknesses found:
+         * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+         */
+        memcpy(buffer, token, len);
+        buffer[len] = '\0';
+    } else {
+        return -1;
+    }
+    
+    char *endptr;
+    errno = 0;
+    float value = strtof(buffer, &endptr);
+    
+    if (errno != 0 || endptr == buffer || *endptr != '\0' || 
+        !isfinite(value)) {
+        return -1;
+    }
+    
+    *result = value;
+    return 0;
+}
+
+int string_to_float_tuple(const char *str, FloatTuple *tuple) {
+    if (str == NULL || tuple == NULL) {
+        return -1;
+    }
+    
+    if (float_tuple_init(tuple, 8) != 0) {
+        return -1;
+    }
+    
+    const char *start = str;
+    const char *ptr = str;
+    int parse_error = 0;
+    
+    while (*ptr != '\0' && !parse_error) {
+        if (*ptr == ',' || *ptr == ' ' || *ptr == '\t') {
+            if (ptr > start) {
+                float value;
+                if (parse_float_token(start, (size_t)(ptr - start), &value) != 0) {
+                    parse_error = 1;
+                } else if (float_tuple_append(tuple, value) != 0) {
+                    parse_error = 1;
+                }
+            }
+            ptr++;
+            start = ptr;
+        } else {
+            ptr++;
+        }
+    }
+    
+    if (!parse_error && ptr > start) {
+        float value;
+        if (parse_float_token(start, (size_t)(ptr - start), &value) != 0) {
+            parse_error = 1;
+        } else if (float_tuple_append(tuple, value) != 0) {
+            parse_error = 1;
+        }
+    }
+    
+    if (parse_error) {
+        float_tuple_destroy(tuple);
+        return -1;
+    }
+    
+    return 0;
+}
+
+int main(void) {
+    const char *input = "1.5, 2.7, 3.14159, -4.2, 0.0";
+    FloatTuple tuple;
+    
+    if (string_to_float_tuple(input, &tuple) != 0) {
+        fprintf(stderr, "Error: Failed to parse input string\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("Parsed %zu values:\n", tuple.size);
+    for (size_t i = 0; i < tuple.size; i++) {
+        printf("tuple[%zu] = %f\n", i, (double)tuple.data[i]);
+    }
+    
+    float_tuple_destroy(&tuple);
+    return EXIT_SUCCESS;
+}

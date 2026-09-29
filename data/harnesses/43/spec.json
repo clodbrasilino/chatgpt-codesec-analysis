@@ -1,0 +1,44 @@
+{
+  "task_id": 43,
+  "text": "Write a C function to find sequences of lowercase letters joined with an underscore using regex.",
+  "fn_candidates": [
+    "text_match",
+    "TextMatch",
+    "textMatch",
+    "textmatch"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "text_match",
+      "args": [
+        "aab_cbbbc"
+      ],
+      "expected": "Found a match!",
+      "assert_src": "assert text_match(\"aab_cbbbc\") == 'Found a match!'"
+    },
+    {
+      "fn_name": "text_match",
+      "args": [
+        "aab_Abbbc"
+      ],
+      "expected": "Not matched!",
+      "assert_src": "assert text_match(\"aab_Abbbc\") == 'Not matched!'"
+    },
+    {
+      "fn_name": "text_match",
+      "args": [
+        "Aaab_abbbc"
+      ],
+      "expected": "Not matched!",
+      "assert_src": "assert text_match(\"Aaab_abbbc\") == 'Not matched!'"
+    }
+  ],
+  "arg_kinds": [
+    "str"
+  ],
+  "return_kind": "str",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

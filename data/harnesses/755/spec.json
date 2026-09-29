@@ -1,0 +1,35 @@
+{
+  "task_id": 755,
+  "text": "Write a C function to find the second smallest number in a list.",
+  "fn_candidates": [
+    "second_smallest",
+    "SecondSmallest",
+    "secondSmallest",
+    "secondsmallest"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "second_smallest",
+      "args": [
+        [
+          1,
+          2,
+          -8,
+          -2,
+          0,
+          -2
+        ]
+      ],
+      "expected": -2,
+      "assert_src": "assert second_smallest([1, 2, -8, -2, 0, -2])==-2"
+    }
+  ],
+  "arg_kinds": [
+    "int-list"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

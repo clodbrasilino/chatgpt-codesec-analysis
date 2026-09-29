@@ -1,0 +1,56 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <regex.h>
+
+int match_a_followed_by_bs(const char *text)
+{
+    regex_t regex;
+    int ret;
+
+    ret = regcomp(&regex, "^a(b*)$", REG_EXTENDED | REG_NOSUB);
+    if (ret != 0) {
+        char errbuf[256];
+        regerror(ret, &regex, errbuf, sizeof(errbuf));
+        fprintf(stderr, "Regex compilation failed: %s\n", errbuf);
+        return -1;
+    }
+
+    ret = regexec(&regex, text, 0, NULL, 0);
+    regfree(&regex);
+
+    if (ret == 0) {
+        return 1;
+    } else if (ret == REG_NOMATCH) {
+        return 0;
+    } else {
+        fprintf(stderr, "Regex execution failed\n");
+        return -1;
+    }
+}
+
+int main(void)
+{
+    const char *tests[] = { "a", "ab", "abb", "abbbbb", "b", "ac", "aab", "" };
+    size_t count = sizeof(tests) / sizeof(tests[0]);
+    size_t i;
+
+    for (i = 0; i < count; i++) {
+        int result = match_a_followed_by_bs(tests[i]);
+        if (result < 0) {
+            return EXIT_FAILURE;
+        }
+        printf("\"%s\": %s\n", tests[i], result == 1 ? "Match" : "No match");
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the fixes applied:**
+
+1. **Variable scope (`variableScope`)**: The `errbuf` array is now declared inside the `if (ret != 0)` block, since it is only used for error reporting after a failed `regcomp`. This reduces its scope to the minimum necessary, avoids allocating stack space on the common success path, and resolves the cppcheck warning.
+
+2. **Statically-sized buffer (CWE-119/CWE-120)**: The Flawfinder warning about `errbuf` is a low-risk heuristic hit. The usage is already safe because `regerror()` takes the buffer size (`sizeof(errbuf)`) as an explicit argument and guarantees null-termination, truncating the message if necessary. No overflow is possible here, so bounds checking is inherently enforced by the API — keeping `sizeof(errbuf)` rather than a hardcoded constant ensures the size stays correct even if the buffer is resized later.
+
+The rest of the code was already sound: `regfree()` is called on all paths after a successful `regcomp`, return codes are properly distinguished (`match`, `REG_NOMATCH`, error), and the array iteration in `main` uses the idiomatic `sizeof` division to compute element count safely.

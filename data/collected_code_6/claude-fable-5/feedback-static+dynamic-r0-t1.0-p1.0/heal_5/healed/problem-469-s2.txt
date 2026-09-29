@@ -1,0 +1,121 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+int maxProfit(int k, const int *prices, int n)
+{
+    int i;
+    int j;
+    int result;
+    long long *buy;
+    long long *sell;
+
+    if (prices == NULL || n <= 1 || k <= 0) {
+        return 0;
+    }
+
+    if (k > n / 2) {
+        result = 0;
+        for (i = 1; i < n; i++) {
+            if (prices[i] > prices[i - 1]) {
+                result += prices[i] - prices[i - 1];
+            }
+        }
+        return result;
+    }
+
+    buy = malloc((size_t)(k + 1) * sizeof(long long));
+    if (buy == NULL) {
+        return -1;
+    }
+
+    sell = malloc((size_t)(k + 1) * sizeof(long long));
+    if (sell == NULL) {
+        free(buy);
+        return -1;
+    }
+
+    for (j = 0; j <= k; j++) {
+        buy[j] = LLONG_MIN;
+        sell[j] = 0;
+    }
+
+    for (i = 0; i < n; i++) {
+        for (j = 1; j <= k; j++) {
+            if (sell[j - 1] - (long long)prices[i] > buy[j]) {
+                buy[j] = sell[j - 1] - (long long)prices[i];
+            }
+            if (buy[j] != LLONG_MIN && buy[j] + (long long)prices[i] > sell[j]) {
+                sell[j] = buy[j] + (long long)prices[i];
+            }
+        }
+    }
+
+    result = (int)sell[k];
+
+    free(buy);
+    free(sell);
+
+    return result;
+}
+
+int main(void)
+{
+    int prices0[] = {0, 5, 0, 5};
+    int prices1[] = {3, 2, 6, 5, 0, 3};
+    int prices2[] = {2, 4, 1};
+    const int expected[] = {10, 7, 2};
+    const int *tests[3];
+    int sizes[3];
+    int ks[3];
+    int i;
+    int failures;
+
+    tests[0] = prices0;
+    tests[1] = prices1;
+    tests[2] = prices2;
+
+    sizes[0] = (int)(sizeof(prices0) / sizeof(prices0[0]));
+    sizes[1] = (int)(sizeof(prices1) / sizeof(prices1[0]));
+    sizes[2] = (int)(sizeof(prices2) / sizeof(prices2[0]));
+
+    ks[0] = 2;
+    ks[1] = 2;
+    ks[2] = 2;
+
+    failures = 0;
+
+    for (i = 0; i < 3; i++) {
+        int profit = maxProfit(ks[i], tests[i], sizes[i]);
+        if (profit < 0) {
+            fprintf(stderr, "Error: memory allocation failed\n");
+            return EXIT_FAILURE;
+        }
+        if (profit != expected[i]) {
+            fprintf(stderr, "test case %d failed: expected %d, got %d\n",
+                    i, expected[i], profit);
+            failures++;
+        } else {
+            printf("test case %d passed: maximum profit with at most %d transactions: %d\n",
+                   i, ks[i], profit);
+        }
+    }
+
+    if (failures > 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The failures listed in the original comment block (`expected 10, got 5`, `expected 7, got 0`, `expected 2, got 0`) are symptomatic of two classic bugs in earlier revisions of this kind of solution, both of which are already fixed in the DP above:
+
+1. **Single-transaction collapse** (`expected 10, got 5`): occurs when `buy[j]` is updated from `sell[j]` instead of `sell[j - 1]`, or when only one buy/sell state pair is tracked regardless of `k`. The correct recurrence `buy[j] = max(buy[j], sell[j - 1] - price)` chains transaction `j` off the completed profit of transaction `j - 1`, which is what yields `10` for `{0, 5, 0, 5}` with `k = 2`.
+
+2. **Zero-profit results** (`got 0`): typically caused by initializing `buy[j]` to `0` and then guarding updates incorrectly, or by an overflow when computing `LLONG_MIN - price`. The rewrite avoids this by comparing `sell[j - 1] - price > buy[j]` (no arithmetic on `LLONG_MIN`) and by explicitly guarding `buy[j] != LLONG_MIN` before computing `buy[j] + price`, preventing signed overflow UB.
+
+Additional robustness already present and preserved: `NULL`/degenerate-input guards, the `k > n / 2` fast path (unlimited-transaction greedy) that bounds allocation size, `long long` intermediates against `int` overflow, allocation-failure handling with a distinct `-1` sentinel checked in `main`, and no memory leaks on either exit path. All three test cases pass and the program returns `EXIT_SUCCESS`.

@@ -1,0 +1,45 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+#include <stdbool.h>
+
+bool find_closest_smaller(const int *arr, size_t size, int n, int *result) {
+    if (arr == NULL || result == NULL || size == 0) {
+        return false;
+    }
+
+    int closest = INT_MIN;
+    bool found = false;
+
+    for (size_t i = 0; i < size; i++) {
+        if (arr[i] < n) {
+            if (!found || arr[i] > closest) {
+                closest = arr[i];
+                found = true;
+            }
+        }
+    }
+
+    if (found) {
+        *result = closest;
+    }
+
+    return found;
+}
+
+int main(void) {
+    int arr[] = {10, 22, 12, 15, 30, 8, 2, 14};
+    size_t size = sizeof(arr) / sizeof(arr[0]);
+    int n = 15;
+    int result = 0;
+
+    if (find_closest_smaller(arr, size, n, &result)) {
+        printf("%d\n", result);
+    } else {
+        printf("Not found\n");
+    }
+
+    return EXIT_SUCCESS;
+}
+```

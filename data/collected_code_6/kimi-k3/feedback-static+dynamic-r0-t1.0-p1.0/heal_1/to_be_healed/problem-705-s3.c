@@ -1,0 +1,151 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *data;
+    size_t length;
+} IntList;
+
+int compare_lists(const void *a, const void *b) {
+    const IntList *list_a = (const IntList *)a;
+    const IntList *list_b = (const IntList *)b;
+    
+    if (list_a->length < list_b->length) {
+        return -1;
+    }
+    if (list_a->length > list_b->length) {
+        return 1;
+    }
+    
+    size_t min_len = list_a->length;
+    for (size_t i = 0; i < min_len; i++) {
+        if (list_a->data[i] < list_b->data[i]) {
+            return -1;
+        }
+        if (list_a->data[i] > list_b->data[i]) {
+            return 1;
+        }
+    }
+    
+    return 0;
+}
+
+void sort_list_of_lists(IntList *lists, size_t count) {
+    if (lists == NULL || count == 0) {
+        return;
+    }
+    qsort(lists, count, sizeof(IntList), compare_lists);
+}
+
+IntList *create_list(const int *values, size_t length) {
+    IntList *list = malloc(sizeof(IntList));
+    if (list == NULL) {
+        return NULL;
+    }
+    
+    list->data = malloc(length * sizeof(int));
+    if (list->data == NULL) {
+        free(list);
+        return NULL;
+    }
+    
+    for (size_t i = 0; i < length; i++) {
+        list->data[i] = values[i];
+    }
+    list->length = length;
+    
+    return list;
+}
+
+void free_list(IntList *list) {
+    if (list != NULL) {
+        free(list->data);
+        free(list);
+    }
+}
+
+void free_lists(IntList **lists, size_t count) {
+    if (lists == NULL) {
+        return;
+    }
+    for (size_t i = 0; i < count; i++) {
+        free_list(lists[i]);
+    }
+    free(lists);
+}
+
+int main(void) {
+    /* Possible weaknesses found:
+     *  Variable 'arr1' can be declared as const array [constVariable]
+     */
+    int arr1[] = {3, 1, 2};
+    /* Possible weaknesses found:
+     *  Variable 'arr2' can be declared as const array [constVariable]
+     */
+    int arr2[] = {1, 2};
+    /* Possible weaknesses found:
+     *  Variable 'arr3' can be declared as const array [constVariable]
+     */
+    int arr3[] = {5};
+    /* Possible weaknesses found:
+     *  Variable 'arr4' can be declared as const array [constVariable]
+     */
+    int arr4[] = {1, 2, 3};
+    /* Possible weaknesses found:
+     *  Variable 'arr5' can be declared as const array [constVariable]
+     */
+    int arr5[] = {2, 1};
+    
+    IntList **lists = malloc(5 * sizeof(IntList *));
+    if (lists == NULL) {
+        return EXIT_FAILURE;
+    }
+    
+    lists[0] = create_list(arr1, 3);
+    lists[1] = create_list(arr2, 2);
+    lists[2] = create_list(arr3, 1);
+    lists[3] = create_list(arr4, 3);
+    lists[4] = create_list(arr5, 2);
+    
+    for (size_t i = 0; i < 5; i++) {
+        if (lists[i] == NULL) {
+            for (size_t j = 0; j < i; j++) {
+                free_list(lists[j]);
+            }
+            free(lists);
+            return EXIT_FAILURE;
+        }
+    }
+    
+    IntList *array_of_lists = malloc(5 * sizeof(IntList));
+    if (array_of_lists == NULL) {
+        free_lists(lists, 5);
+        return EXIT_FAILURE;
+    }
+    
+    for (size_t i = 0; i < 5; i++) {
+        array_of_lists[i] = *lists[i];
+        free(lists[i]);
+    }
+    free(lists);
+    
+    sort_list_of_lists(array_of_lists, 5);
+    
+    for (size_t i = 0; i < 5; i++) {
+        printf("[");
+        for (size_t j = 0; j < array_of_lists[i].length; j++) {
+            printf("%d", array_of_lists[i].data[j]);
+            if (j < array_of_lists[i].length - 1) {
+                printf(", ");
+            }
+        }
+        printf("]\n");
+    }
+    
+    for (size_t i = 0; i < 5; i++) {
+        free(array_of_lists[i].data);
+    }
+    free(array_of_lists);
+    
+    return EXIT_SUCCESS;
+}

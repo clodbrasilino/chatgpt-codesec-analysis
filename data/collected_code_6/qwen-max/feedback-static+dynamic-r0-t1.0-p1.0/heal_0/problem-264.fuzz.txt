@@ -1,0 +1,2 @@
+problem-264.c:6:21:medium:UBSan: -5.85941e+09 is outside the range of representable values of type 'int' (AFL crash: id:000001,sig:06,src:000004,time:14595,execs:4823,op:havoc,rep:4)
+problem-264.c:8:44:medium:UBSan: signed integer overflow: 1212704310 * 4 cannot be represented in type 'int' (AFL crash: id:000000,sig:06,src:000000,time:2779,execs:948,op:havoc,rep:4)

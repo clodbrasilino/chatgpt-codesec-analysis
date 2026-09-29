@@ -1,0 +1,61 @@
+{
+  "task_id": 181,
+  "text": "Write a C function to find the longest common prefix in the given set of strings.",
+  "fn_candidates": [
+    "common_prefix",
+    "CommonPrefix",
+    "commonPrefix",
+    "commonprefix"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "common_prefix",
+      "args": [
+        [
+          "tablets",
+          "tables",
+          "taxi",
+          "tamarind"
+        ],
+        4
+      ],
+      "expected": "ta",
+      "assert_src": "assert common_prefix([\"tablets\", \"tables\", \"taxi\", \"tamarind\"], 4) == 'ta'"
+    },
+    {
+      "fn_name": "common_prefix",
+      "args": [
+        [
+          "apples",
+          "ape",
+          "april"
+        ],
+        3
+      ],
+      "expected": "ap",
+      "assert_src": "assert common_prefix([\"apples\", \"ape\", \"april\"], 3) == 'ap'"
+    },
+    {
+      "fn_name": "common_prefix",
+      "args": [
+        [
+          "teens",
+          "teenager",
+          "teenmar"
+        ],
+        3
+      ],
+      "expected": "teen",
+      "assert_src": "assert common_prefix([\"teens\", \"teenager\", \"teenmar\"], 3) == 'teen'"
+    }
+  ],
+  "arg_kinds": [
+    "int",
+    "str-list"
+  ],
+  "return_kind": "str",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

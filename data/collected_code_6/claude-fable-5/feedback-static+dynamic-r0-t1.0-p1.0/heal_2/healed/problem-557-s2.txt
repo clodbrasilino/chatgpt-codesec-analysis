@@ -1,0 +1,88 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#define BUFFER_SIZE 256
+
+static size_t bounded_strlen(const char *str, size_t max_len)
+{
+    size_t i;
+
+    for (i = 0; i < max_len; i++) {
+        if (str[i] == '\0') {
+            break;
+        }
+    }
+    return i;
+}
+
+void toggle_case(char *str, size_t max_len)
+{
+    size_t i;
+    size_t len;
+
+    if (str == NULL || max_len == 0) {
+        return;
+    }
+
+    len = bounded_strlen(str, max_len);
+    for (i = 0; i < len; i++) {
+        unsigned char c = (unsigned char)str[i];
+        if (isupper(c)) {
+            str[i] = (char)tolower(c);
+        } else if (islower(c)) {
+            str[i] = (char)toupper(c);
+        }
+    }
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    char *newline;
+
+    if (printf("Enter a string: ") < 0) {
+        return EXIT_FAILURE;
+    }
+
+    if (fflush(stdout) != 0) {
+        return EXIT_FAILURE;
+    }
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    newline = strchr(buffer, '\n');
+    if (newline != NULL) {
+        *newline = '\0';
+    }
+
+    toggle_case(buffer, sizeof(buffer));
+
+    if (printf("Toggled string: %s\n", buffer) < 0) {
+        fprintf(stderr, "Error writing output\n");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis summary:**
+
+The original code was already in good shape regarding the flagged weakness (CWE-119/CWE-120, statically-sized buffer). The key mitigations, preserved and reinforced in the rewrite:
+
+1. **Bounded input read** — `fgets(buffer, sizeof(buffer), stdin)` never writes beyond `BUFFER_SIZE`, directly addressing the Flawfinder buffer warning.
+2. **Guaranteed null termination** — `buffer[sizeof(buffer) - 1] = '\0'` is defensive redundancy (fgets already terminates), ensuring no unterminated-string reads downstream.
+3. **Length-limited string operations** — `toggle_case` receives the buffer capacity and never scans past it. I replaced `strnlen` with a portable `bounded_strlen`, since `strnlen` is POSIX/C11 Annex K rather than strictly C99, avoiding portability issues without losing the bounds check.
+4. **Safe ctype usage** — casting to `unsigned char` before `isupper`/`islower`/`toupper`/`tolower` avoids undefined behavior with negative `char` values.
+5. **Prompt flushing** — added `fflush(stdout)` after the prompt so it appears before blocking on input when stdout is fully buffered (e.g., piped output).
+6. **Full error checking** — all I/O return values (`printf`, `fgets`, `fflush`) are checked, with failure paths returning `EXIT_FAILURE`.
+
+No overflow path remains: every write into `buffer` is bounded by `sizeof(buffer)`.

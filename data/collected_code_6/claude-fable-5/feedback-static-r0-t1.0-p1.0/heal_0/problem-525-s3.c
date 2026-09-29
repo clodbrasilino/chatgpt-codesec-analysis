@@ -1,0 +1,65 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+#define EPSILON 1e-9
+
+int are_lines_parallel(double a1, double b1, double a2, double b2)
+{
+    double determinant;
+
+    determinant = (a1 * b2) - (a2 * b1);
+
+    if (fabs(determinant) < EPSILON) {
+        return 1;
+    }
+
+    return 0;
+}
+
+int read_line_coefficients(const char *prompt, double *a, double *b, double *c)
+{
+    int result;
+
+    printf("%s", prompt);
+
+    result = scanf("%lf %lf %lf", a, b, c);
+
+    if (result != 3) {
+        return 0;
+    }
+
+    if (fabs(*a) < EPSILON && fabs(*b) < EPSILON) {
+        return 0;
+    }
+
+    return 1;
+}
+
+int main(void)
+{
+    double a1;
+    double b1;
+    double c1;
+    double a2;
+    double b2;
+    double c2;
+
+    if (!read_line_coefficients("Enter coefficients a1 b1 c1 for line 1 (a1*x + b1*y + c1 = 0): ", &a1, &b1, &c1)) {
+        fprintf(stderr, "Invalid input for line 1.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (!read_line_coefficients("Enter coefficients a2 b2 c2 for line 2 (a2*x + b2*y + c2 = 0): ", &a2, &b2, &c2)) {
+        fprintf(stderr, "Invalid input for line 2.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (are_lines_parallel(a1, b1, a2, b2)) {
+        printf("The lines are parallel.\n");
+    } else {
+        printf("The lines are not parallel.\n");
+    }
+
+    return EXIT_SUCCESS;
+}

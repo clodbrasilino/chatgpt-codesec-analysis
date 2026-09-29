@@ -1,0 +1,289 @@
+./collected_code_4/round2//heal_11/healed/problem-298.c: In function 'isPresent':
+./collected_code_4/round2//heal_11/healed/problem-298.c:29:14: warning: use of uninitialized value '*head.next' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   29 |         head = head->next;
+      |         ~~~~~^~~~~~~~~~~~
+  'main': events 1-13
+    |
+    |   57 | int main(void)
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   61 |     struct Node *head2 = (struct Node*) malloc(sizeof(struct Node));
+    |      |                                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                                         |
+    |      |                                         (2) region created on heap here
+    |......
+    |   64 |     if(head1)
+    |      |       ~
+    |      |       |
+    |      |       (3) following 'true' branch (when 'head1' is non-NULL)...
+    |   65 |     {
+    |   66 |         head1->data  = 1;
+    |      |         ~~~~~~~~~~~~~~~~
+    |      |                      |
+    |      |                      (4) ...to here
+    |......
+    |   69 |         if(newNode)
+    |      |           ~
+    |      |           |
+    |      |           (5) following 'true' branch (when 'newNode' is non-NULL)...
+    |   70 |         {
+    |   71 |             newNode->data = 2;
+    |      |             ~~~~~~~~~~~~~~~~~
+    |      |                           |
+    |      |                           (6) ...to here
+    |......
+    |   77 |             if(newNode)
+    |      |               ~
+    |      |               |
+    |      |               (7) following 'false' branch (when 'newNode' is NULL)...
+    |......
+    |   95 |     if(head2)
+    |      |       ~
+    |      |       |
+    |      |       (8) ...to here
+    |      |       (9) following 'true' branch (when 'head2' is non-NULL)...
+    |   96 |     {
+    |   97 |         head2->data  = 1;
+    |      |         ~~~~~~~~~~~~~~~~
+    |      |                      |
+    |      |                      (10) ...to here
+    |......
+    |  100 |         if(newNode)
+    |      |           ~
+    |      |           |
+    |      |           (11) following 'false' branch (when 'newNode' is NULL)...
+    |......
+    |  117 |     intersection = getIntersection(head1, head2);
+    |      |                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                    |
+    |      |                    (12) ...to here
+    |      |                    (13) calling 'getIntersection' from 'main'
+    |
+    +--> 'getIntersection': event 14
+           |
+           |   34 | struct Node *getIntersection(struct Node *head1, struct Node *head2)
+           |      |              ^~~~~~~~~~~~~~~
+           |      |              |
+           |      |              (14) entry to 'getIntersection'
+           |
+         'getIntersection': events 15-17
+           |
+           |   38 |     while(head1 != NULL)
+           |      |                 ^
+           |      |                 |
+           |      |                 (15) following 'true' branch (when 'head1' is non-NULL)...
+           |   39 |     {
+           |   40 |         if(isPresent(head2, head1->data))
+           |      |            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |            |
+           |      |            (16) ...to here
+           |      |            (17) calling 'isPresent' from 'getIntersection'
+           |
+           +--> 'isPresent': event 18
+                  |
+                  |   22 | bool isPresent(struct Node *head, int data)
+                  |      |      ^~~~~~~~~
+                  |      |      |
+                  |      |      (18) entry to 'isPresent'
+                  |
+                'isPresent': events 19-21
+                  |
+                  |   24 |     while (head != NULL)
+                  |      |                 ^
+                  |      |                 |
+                  |      |                 (19) following 'true' branch (when 'head' is non-NULL)...
+                  |   25 |     {
+                  |   26 |         if (head->data == data)
+                  |      |            ~~~~~~~~~~~
+                  |      |            |    |
+                  |      |            |    (20) ...to here
+                  |      |            (21) following 'true' branch...
+                  |
+                'isPresent': event 22
+                  |
+                  |   27 |             return true;
+                  |      |                    ^~~~
+                  |      |                    |
+                  |      |                    (22) ...to here
+                  |
+           <------+
+           |
+         'getIntersection': events 23-26
+           |
+           |   40 |         if(isPresent(head2, head1->data))
+           |      |           ~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |           ||
+           |      |           |(23) returning to 'getIntersection' from 'isPresent'
+           |      |           (24) following 'true' branch...
+           |   41 |             push(&result, head1->data);
+           |      |             ~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |             |
+           |      |             (25) ...to here
+           |      |             (26) calling 'push' from 'getIntersection'
+           |
+           +--> 'push': events 27-29
+                  |
+                  |   11 | void push(struct Node **head_ref, int new_data)
+                  |      |      ^~~~
+                  |      |      |
+                  |      |      (27) entry to 'push'
+                  |......
+                  |   14 |     if (new_node == NULL)
+                  |      |        ~
+                  |      |        |
+                  |      |        (28) following 'true' branch (when 'new_node' is NULL)...
+                  |   15 |         return;
+                  |      |         ~~~~~~
+                  |      |         |
+                  |      |         (29) ...to here
+                  |
+           <------+
+           |
+         'getIntersection': event 30
+           |
+           |   41 |             push(&result, head1->data);
+           |      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |             |
+           |      |             (30) returning to 'getIntersection' from 'push'
+           |
+         'getIntersection': events 31-33
+           |
+           |   38 |     while(head1 != NULL)
+           |      |                 ^
+           |      |                 |
+           |      |                 (31) following 'true' branch (when 'head1' is non-NULL)...
+           |   39 |     {
+           |   40 |         if(isPresent(head2, head1->data))
+           |      |            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |            |
+           |      |            (32) ...to here
+           |      |            (33) calling 'isPresent' from 'getIntersection'
+           |
+           +--> 'isPresent': event 34
+                  |
+                  |   22 | bool isPresent(struct Node *head, int data)
+                  |      |      ^~~~~~~~~
+                  |      |      |
+                  |      |      (34) entry to 'isPresent'
+                  |
+                'isPresent': events 35-39
+                  |
+                  |   24 |     while (head != NULL)
+                  |      |                 ^
+                  |      |                 |
+                  |      |                 (35) following 'true' branch (when 'head' is non-NULL)...
+                  |   25 |     {
+                  |   26 |         if (head->data == data)
+                  |      |            ~~~~~~~~~~~
+                  |      |            |    |
+                  |      |            |    (36) ...to here
+                  |      |            (37) following 'false' branch...
+                  |......
+                  |   29 |         head = head->next;
+                  |      |         ~~~~~~~~~~~~~~~~~
+                  |      |              |
+                  |      |              (38) ...to here
+                  |      |              (39) use of uninitialized value '*head.next' here
+                  |
+./collected_code_4/round2//heal_11/healed/problem-298.c: In function 'getIntersection':
+./collected_code_4/round2//heal_11/healed/problem-298.c:43:15: warning: use of uninitialized value '*head1.next' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   43 |         head1 = head1->next;
+      |         ~~~~~~^~~~~~~~~~~~~
+  'main': events 1-9
+    |
+    |   57 | int main(void)
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   60 |     struct Node *head1 = (struct Node*) malloc(sizeof(struct Node));
+    |      |                                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                                         |
+    |      |                                         (2) region created on heap here
+    |......
+    |   64 |     if(head1)
+    |      |       ~
+    |      |       |
+    |      |       (3) following 'true' branch (when 'head1' is non-NULL)...
+    |   65 |     {
+    |   66 |         head1->data  = 1;
+    |      |         ~~~~~~~~~~~~~~~~
+    |      |                      |
+    |      |                      (4) ...to here
+    |......
+    |   69 |         if(newNode)
+    |      |           ~
+    |      |           |
+    |      |           (5) following 'false' branch (when 'newNode' is NULL)...
+    |......
+    |   95 |     if(head2)
+    |      |       ~
+    |      |       |
+    |      |       (6) ...to here
+    |      |       (7) following 'false' branch (when 'head2' is NULL)...
+    |......
+    |  117 |     intersection = getIntersection(head1, head2);
+    |      |                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                    |
+    |      |                    (8) ...to here
+    |      |                    (9) calling 'getIntersection' from 'main'
+    |
+    +--> 'getIntersection': event 10
+           |
+           |   34 | struct Node *getIntersection(struct Node *head1, struct Node *head2)
+           |      |              ^~~~~~~~~~~~~~~
+           |      |              |
+           |      |              (10) entry to 'getIntersection'
+           |
+         'getIntersection': events 11-13
+           |
+           |   38 |     while(head1 != NULL)
+           |      |                 ^
+           |      |                 |
+           |      |                 (11) following 'true' branch (when 'head1' is non-NULL)...
+           |   39 |     {
+           |   40 |         if(isPresent(head2, head1->data))
+           |      |            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |            |
+           |      |            (12) ...to here
+           |      |            (13) calling 'isPresent' from 'getIntersection'
+           |
+           +--> 'isPresent': event 14
+                  |
+                  |   22 | bool isPresent(struct Node *head, int data)
+                  |      |      ^~~~~~~~~
+                  |      |      |
+                  |      |      (14) entry to 'isPresent'
+                  |
+                'isPresent': event 15
+                  |
+                  |   24 |     while (head != NULL)
+                  |      |                 ^
+                  |      |                 |
+                  |      |                 (15) following 'false' branch (when 'head' is NULL)...
+                  |
+                'isPresent': event 16
+                  |
+                  |   31 |     return false;
+                  |      |            ^~~~~
+                  |      |            |
+                  |      |            (16) ...to here
+                  |
+           <------+
+           |
+         'getIntersection': events 17-20
+           |
+           |   40 |         if(isPresent(head2, head1->data))
+           |      |           ~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |           ||
+           |      |           |(17) returning to 'getIntersection' from 'isPresent'
+           |      |           (18) following 'false' branch...
+           |......
+           |   43 |         head1 = head1->next;
+           |      |         ~~~~~~~~~~~~~~~~~~~
+           |      |               |
+           |      |               (19) ...to here
+           |      |               (20) use of uninitialized value '*head1.next' here
+           |

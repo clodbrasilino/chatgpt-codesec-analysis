@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-495-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-495-s2.c:98:16: style: Condition 'source==NULL' is always false [knownConditionTrueFalse]
+    if (source == NULL) {
+               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-495-s2.c:94:26: note: Assignment 'source="HelloWorldABCDefgHIJKlmnOPQ"', assigned value is "HelloWorldABCDefgHIJKlmnOPQ"
+    const char *source = "HelloWorldABCDefgHIJKlmnOPQ";
+                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-495-s2.c:98:16: note: Condition 'source==NULL' is always false
+    if (source == NULL) {
+               ^

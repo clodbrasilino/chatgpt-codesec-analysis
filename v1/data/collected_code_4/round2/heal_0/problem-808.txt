@@ -1,0 +1,50 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int a;
+    int b;
+} Tuple;
+
+int is_k_in_tuples(Tuple* tuples, int tuple_count, int k) {
+    if (tuples == NULL || tuple_count <= 0) {
+        return -1;
+    }
+
+    for (int i = 0; i < tuple_count; i++) {
+        if (tuples[i].a == k || tuples[i].b == k) {
+            return 1;
+        }
+    }
+
+    return 0;
+}
+
+int main() {
+    Tuple tuples[] = {
+        {1, 2},
+        {3, 4},
+        {5, 6}
+    };
+    int tuple_count = sizeof(tuples) / sizeof(Tuple);
+
+    int k = 4;
+    int result = is_k_in_tuples(tuples, tuple_count, k);
+    if (result == -1) {
+        printf("Invalid input.\n");
+        exit(EXIT_FAILURE);
+    } else if (result == 1) {
+        printf("The number %d is found in the tuples.\n", k);
+    } else {
+        printf("The number %d is not found in the tuples.\n", k);
+    }
+
+    return 0;
+}
+```
+In this code, the function `is_k_in_tuples` checks if the number `k` exists in any of the given tuples. Before doing so, it validates the input parameters. If the pointer `tuples` is `NULL` or if `tuple_count` is less than or equal to zero, an error code `-1` is returned. This way, it avoids accessing a null pointer or accessing an area of memory not allocated for holding tuples, thus following CWE-664.
+
+By checking the return value of `is_k_in_tuples` in the `main` function and reacting accordingly, the code also properly handles the returned exceptional condition, complying with CWE-703.
+
+Throughout the code, braces are used for all blocks, even single-statement ones, and the code follows the standard conventions (like placing the opening brace `{` on the same line as the corresponding keyword or identifier), adhering to CWE-710.

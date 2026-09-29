@@ -1,0 +1,90 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int maxGold(const int *gold, int rows, int cols, int *result) {
+    if (gold == NULL || rows <= 0 || cols <= 0 || result == NULL) {
+        return -1;
+    }
+
+    int *prev = malloc((size_t)rows * sizeof(int));
+    int *curr = malloc((size_t)rows * sizeof(int));
+    if (prev == NULL || curr == NULL) {
+        free(prev);
+        free(curr);
+        return -1;
+    }
+
+    for (int i = 0; i < rows; ++i) {
+        prev[i] = gold[(size_t)i * (size_t)cols];
+    }
+
+    for (int j = 1; j < cols; ++j) {
+        for (int i = 0; i < rows; ++i) {
+            int best = prev[i];
+            if (i > 0 && prev[i - 1] > best) {
+                best = prev[i - 1];
+            }
+            if (i < rows - 1 && prev[i + 1] > best) {
+                best = prev[i + 1];
+            }
+            curr[i] = gold[(size_t)i * (size_t)cols + (size_t)j] + best;
+        }
+        int *tmp = prev;
+        prev = curr;
+        curr = tmp;
+    }
+
+    int max = prev[0];
+    for (int i = 1; i < rows; ++i) {
+        if (prev[i] > max) {
+            max = prev[i];
+        }
+    }
+
+    *result = max;
+    free(prev);
+    free(curr);
+    return 0;
+}
+
+int main(void) {
+    int rows;
+    int cols;
+
+    if (scanf("%d %d", &rows, &cols) != 2 || rows <= 0 || cols <= 0) {
+        fprintf(stderr, "Invalid dimensions\n");
+        return EXIT_FAILURE;
+    }
+
+    if ((size_t)rows > (size_t)-1 / (size_t)cols / sizeof(int)) {
+        fprintf(stderr, "Dimensions too large\n");
+        return EXIT_FAILURE;
+    }
+
+    int *gold = malloc((size_t)rows * (size_t)cols * sizeof(int));
+    if (gold == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    for (int i = 0; i < rows; ++i) {
+        for (int j = 0; j < cols; ++j) {
+            if (scanf("%d", &gold[(size_t)i * (size_t)cols + (size_t)j]) != 1) {
+                fprintf(stderr, "Invalid input\n");
+                free(gold);
+                return EXIT_FAILURE;
+            }
+        }
+    }
+
+    int max = 0;
+    if (maxGold(gold, rows, cols, &max) != 0) {
+        fprintf(stderr, "Computation failed\n");
+        free(gold);
+        return EXIT_FAILURE;
+    }
+
+    printf("%d\n", max);
+    free(gold);
+    return EXIT_SUCCESS;
+}

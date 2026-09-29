@@ -1,0 +1,26 @@
+```C
+#include <stdio.h>
+
+#define SIZE 5
+
+void assignPairs(int arr1[], int arr2[], int arr3[], int n) {
+    for(int i = 0; i < n; i++) {
+        arr3[i*2] = arr1[i];
+        arr3[i*2 + 1] = arr2[i];
+    }
+}
+
+int main() {
+    int arr1[SIZE] = {1, 2, 3, 4, 5};
+    int arr2[SIZE] = {6, 7, 8, 9, 10};
+    int arr3[SIZE*2];
+
+    assignPairs(arr1, arr2, arr3, SIZE);
+
+    for(int i = 0; i < SIZE*2; i++) {
+        printf("%d ", arr3[i]);
+    }
+
+    return 0;
+}
+```

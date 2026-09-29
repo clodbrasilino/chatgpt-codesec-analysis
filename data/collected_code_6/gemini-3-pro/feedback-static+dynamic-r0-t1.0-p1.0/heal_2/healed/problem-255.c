@@ -1,0 +1,56 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+#include <errno.h>
+
+void generate_combinations(int *current_combination, int start, int index, int k, const int *colors, int num_colors) {
+    if (index == k) {
+        for (int i = 0; i < k; i++) {
+            printf("%d ", current_combination[i]);
+        }
+        printf("\n");
+        return;
+    }
+
+    for (int i = start; i < num_colors; i++) {
+        current_combination[index] = colors[i];
+        generate_combinations(current_combination, i, index + 1, k, colors, num_colors);
+    }
+}
+
+int main(int argc, const char * const argv[]) {
+    int colors[] = {1, 2, 3};
+    int num_colors = sizeof(colors) / sizeof(colors[0]);
+    int k;
+    int *current_combination = NULL;
+    long val;
+    char *endptr;
+
+    if (argc < 2) {
+        fprintf(stderr, "Usage: %s <k>\n", argv[0]);
+        return EXIT_FAILURE;
+    }
+
+    errno = 0;
+    val = strtol(argv[1], &endptr, 10);
+
+    if (errno != 0 || *endptr != '\0' || endptr == argv[1] || val <= 0 || val > INT_MAX) {
+        fprintf(stderr, "Invalid number of colors to choose.\n");
+        return EXIT_FAILURE;
+    }
+
+    k = (int)val;
+
+    current_combination = (int *)malloc(k * sizeof(int));
+    if (current_combination == NULL) {
+        fprintf(stderr, "Memory allocation failed.\n");
+        return EXIT_FAILURE;
+    }
+
+    generate_combinations(current_combination, 0, 0, k, colors, num_colors);
+
+    free(current_combination);
+    current_combination = NULL;
+
+    return EXIT_SUCCESS;
+}

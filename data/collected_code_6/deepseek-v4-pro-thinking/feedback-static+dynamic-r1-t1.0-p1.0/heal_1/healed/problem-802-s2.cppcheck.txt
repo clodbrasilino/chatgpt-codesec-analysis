@@ -1,0 +1,28 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_1/healed/problem-802-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_1/healed/problem-802-s2.c:17:16: warning: Either the condition 'high>0' is redundant or the array 'arr[0]' is accessed at index -2, which is out of bounds. [negativeIndex]
+        if (arr[mid] > arr[high]) {
+               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_1/healed/problem-802-s2.c:22:22: note: Assuming that condition 'high>0' is not redundant
+            if (high > 0 && arr[high] < arr[high - 1]) {
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_1/healed/problem-802-s2.c:25:13: note: high is decremented', new value is -1
+            high--;
+            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_1/healed/problem-802-s2.c:15:17: note: mid is assigned 'low+(high-low)/2' here.
+        int mid = low + (high - low) / 2;
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_1/healed/problem-802-s2.c:17:16: note: Negative array index
+        if (arr[mid] > arr[high]) {
+               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_1/healed/problem-802-s2.c:17:27: warning: Either the condition 'high>0' is redundant or the array 'arr[0]' is accessed at index -1, which is out of bounds. [negativeIndex]
+        if (arr[mid] > arr[high]) {
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_1/healed/problem-802-s2.c:22:22: note: Assuming that condition 'high>0' is not redundant
+            if (high > 0 && arr[high] < arr[high - 1]) {
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_1/healed/problem-802-s2.c:25:13: note: high is decremented', new value is -1
+            high--;
+            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_1/healed/problem-802-s2.c:17:27: note: Negative array index
+        if (arr[mid] > arr[high]) {
+                          ^

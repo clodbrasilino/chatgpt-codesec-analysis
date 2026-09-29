@@ -1,0 +1,79 @@
+```c
+#include <stdio.h>
+#include <stddef.h>
+
+#define BUFFER_SIZE 256
+
+size_t count_characters(const char *str)
+{
+    size_t count = 0;
+
+    if (str == NULL)
+    {
+        return 0;
+    }
+
+    while (str[count] != '\0')
+    {
+        count++;
+    }
+
+    return count;
+}
+
+void strip_newline(char *str, size_t max_len)
+{
+    size_t i = 0;
+
+    if (str == NULL)
+    {
+        return;
+    }
+
+    while (i < max_len && str[i] != '\0')
+    {
+        if (str[i] == '\n')
+        {
+            str[i] = '\0';
+            break;
+        }
+        i++;
+    }
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t length;
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL)
+    {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    strip_newline(buffer, sizeof(buffer));
+
+    length = count_characters(buffer);
+
+    printf("%zu\n", length);
+
+    return 0;
+}
+```
+
+**Analysis of the fixes applied:**
+
+1. **Root cause of the failing test cases:** All three test cases reported `<no output>` where a plain numeric result (`18`, `8`, `5`) was expected. This indicates the test harness was comparing raw stdout against the number alone. The original program polluted stdout with the interactive prompt `"Enter a string: "` and wrapped the result in `"Total characters: %zu\n"`. Removing the prompt and printing only `%zu\n` makes the output match the expected values exactly.
+
+2. **Buffer safety (CWE-119/CWE-120, Flawfinder risk 2):** The statically-sized buffer is used safely:
+   - `fgets(buffer, sizeof(buffer), stdin)` limits the read to the buffer size, preventing overflow.
+   - The explicit `buffer[sizeof(buffer) - 1] = '\0';` guarantees termination (defensive, since `fgets` already terminates).
+   - `strip_newline` is bounded by `max_len`, so it never scans past the buffer even if termination were somehow lost.
+   - `count_characters` only reads up to the guaranteed `'\0'`.
+
+3. **Defensive checks retained:** `NULL` guards in both helper functions, and error handling on `fgets` failure with a diagnostic to `stderr` (which does not contaminate stdout for the test harness) and a non-zero exit code.
+
+The code remains fully portable C (C99+ for `%zu`), with no undefined behavior and bounded operations on all buffers.

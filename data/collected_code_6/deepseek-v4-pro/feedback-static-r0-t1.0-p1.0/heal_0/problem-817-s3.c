@@ -1,0 +1,55 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int* find_divisible(int* list, int size, int m, int n, int* result_size) {
+    int* result = (int*)malloc(size * sizeof(int));
+    if (result == NULL) {
+        *result_size = 0;
+        return NULL;
+    }
+    
+    int count = 0;
+    for (int i = 0; i < size; i++) {
+        if (list[i] % m == 0 || list[i] % n == 0) {
+            result[count++] = list[i];
+        }
+    }
+    
+    int* final_result = (int*)realloc(result, count * sizeof(int));
+    if (final_result == NULL && count > 0) {
+        free(result);
+        *result_size = 0;
+        return NULL;
+    }
+    
+    *result_size = count;
+    return count > 0 ? final_result : NULL;
+}
+
+int main() {
+    int numbers[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 15, 20, 25, 30};
+    int size = sizeof(numbers) / sizeof(numbers[0]);
+    int m = 3;
+    int n = 5;
+    int result_size = 0;
+    
+    int* result = find_divisible(numbers, size, m, n, &result_size);
+    
+    if (result == NULL && result_size > 0) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return 1;
+    }
+    
+    printf("Numbers divisible by %d or %d: ", m, n);
+    if (result == NULL) {
+        printf("none\n");
+    } else {
+        for (int i = 0; i < result_size; i++) {
+            printf("%d ", result[i]);
+        }
+        printf("\n");
+        free(result);
+    }
+    
+    return 0;
+}

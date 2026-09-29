@@ -1,0 +1,44 @@
+{
+  "task_id": 641,
+  "text": "Write a C function to find the nth nonagonal number.",
+  "fn_candidates": [
+    "is_nonagonal",
+    "IsNonagonal",
+    "isNonagonal",
+    "isnonagonal"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "is_nonagonal",
+      "args": [
+        10
+      ],
+      "expected": 325,
+      "assert_src": "assert is_nonagonal(10) == 325"
+    },
+    {
+      "fn_name": "is_nonagonal",
+      "args": [
+        15
+      ],
+      "expected": 750,
+      "assert_src": "assert is_nonagonal(15) == 750"
+    },
+    {
+      "fn_name": "is_nonagonal",
+      "args": [
+        18
+      ],
+      "expected": 1089,
+      "assert_src": "assert is_nonagonal(18) == 1089"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

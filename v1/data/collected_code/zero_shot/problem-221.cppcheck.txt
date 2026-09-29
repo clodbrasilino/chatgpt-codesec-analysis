@@ -1,0 +1,6 @@
+collected_code/problem-221-0.c:5:20: error: Cannot determine that 'numbers[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        if (numbers[i] % 2 == 0) {
+                   ^
+collected_code/problem-221-0.c:6:27: error: Cannot determine that 'numbers[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+            return numbers[i];
+                          ^

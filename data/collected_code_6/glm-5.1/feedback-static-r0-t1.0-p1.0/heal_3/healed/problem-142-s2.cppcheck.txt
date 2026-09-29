@@ -1,0 +1,64 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-142-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-142-s2.c:25:16: style: Condition 'size_a==0' is always false [knownConditionTrueFalse]
+    if (size_a == 0 || size_b == 0 || size_c == 0) {
+               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-142-s2.c:21:21: note: Assignment 'size_a=3', assigned value is 3
+    size_t size_a = 3;
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-142-s2.c:25:16: note: Condition 'size_a==0' is always false
+    if (size_a == 0 || size_b == 0 || size_c == 0) {
+               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-142-s2.c:25:31: style: Condition 'size_b==0' is always false [knownConditionTrueFalse]
+    if (size_a == 0 || size_b == 0 || size_c == 0) {
+                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-142-s2.c:22:21: note: Assignment 'size_b=3', assigned value is 3
+    size_t size_b = 3;
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-142-s2.c:25:31: note: Condition 'size_b==0' is always false
+    if (size_a == 0 || size_b == 0 || size_c == 0) {
+                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-142-s2.c:25:46: style: Condition 'size_c==0' is always false [knownConditionTrueFalse]
+    if (size_a == 0 || size_b == 0 || size_c == 0) {
+                                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-142-s2.c:23:21: note: Assignment 'size_c=3', assigned value is 3
+    size_t size_c = 3;
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-142-s2.c:25:46: note: Condition 'size_c==0' is always false
+    if (size_a == 0 || size_b == 0 || size_c == 0) {
+                                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-142-s2.c:25:21: style: Same expression on both sides of '||' because 'size_a==0' and 'size_b==0' represent the same value. [knownConditionTrueFalse]
+    if (size_a == 0 || size_b == 0 || size_c == 0) {
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-142-s2.c:21:21: note: 'size_a' is assigned value '3' here.
+    size_t size_a = 3;
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-142-s2.c:22:21: note: 'size_b' is assigned value '3' here.
+    size_t size_b = 3;
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-142-s2.c:25:21: note: Same expression on both sides of '||' because 'size_a==0' and 'size_b==0' represent the same value.
+    if (size_a == 0 || size_b == 0 || size_c == 0) {
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-142-s2.c:25:36: style: Same expression on both sides of '||' because 'size_c==0' and 'size_b==0' represent the same value. [knownConditionTrueFalse]
+    if (size_a == 0 || size_b == 0 || size_c == 0) {
+                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-142-s2.c:21:21: note: 'size_a' is assigned value '3' here.
+    size_t size_a = 3;
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-142-s2.c:23:21: note: 'size_c' is assigned value '3' here.
+    size_t size_c = 3;
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-142-s2.c:22:21: note: 'size_b' is assigned value '3' here.
+    size_t size_b = 3;
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-142-s2.c:25:36: note: Same expression on both sides of '||' because 'size_c==0' and 'size_b==0' represent the same value.
+    if (size_a == 0 || size_b == 0 || size_c == 0) {
+                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-142-s2.c:29:9: style: Variable 'a' can be declared as const array [constVariable]
+    int a[] = {1, 2, 3};
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-142-s2.c:30:9: style: Variable 'b' can be declared as const array [constVariable]
+    int b[] = {1, 2, 4};
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-142-s2.c:31:9: style: Variable 'c' can be declared as const array [constVariable]
+    int c[] = {1, 5, 2};
+        ^

@@ -1,0 +1,55 @@
+#include <stdio.h>
+#include <stdint.h>
+#include <limits.h>
+
+int multiply(int a, int b) {
+    int result = 0;
+    int negative = 0;
+    
+    if (a == 0 || b == 0) {
+        return 0;
+    }
+    
+    if ((a < 0 && b > 0) || (a > 0 && b < 0)) {
+        negative = 1;
+    }
+    
+    unsigned int ua = (a < 0) ? (unsigned int)(-(a + 1)) + 1 : (unsigned int)a;
+    unsigned int ub = (b < 0) ? (unsigned int)(-(b + 1)) + 1 : (unsigned int)b;
+    
+    while (ub > 0) {
+        if (ub & 1) {
+            result += ua;
+        }
+        ua <<= 1;
+        ub >>= 1;
+    }
+    
+    return negative ? -result : result;
+}
+
+int main(void) {
+    int test_cases[][2] = {
+        {5, 3},
+        {-5, 3},
+        {5, -3},
+        {-5, -3},
+        {0, 10},
+        {10, 0},
+        {INT_MAX, 1},
+        {INT_MIN, 1},
+        {12345, 6789},
+        {-12345, -6789}
+    };
+    
+    size_t num_tests = sizeof(test_cases) / sizeof(test_cases[0]);
+    
+    for (size_t i = 0; i < num_tests; i++) {
+        int a = test_cases[i][0];
+        int b = test_cases[i][1];
+        int result = multiply(a, b);
+        printf("%d * %d = %d\n", a, b, result);
+    }
+    
+    return 0;
+}

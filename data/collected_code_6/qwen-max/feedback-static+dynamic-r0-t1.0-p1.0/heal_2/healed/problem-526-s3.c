@@ -1,0 +1,29 @@
+#include <stdio.h>
+#include <ctype.h>
+#include <string.h>
+
+void capitalize_first_last(char *str) {
+    if (str == NULL || *str == '\0') return;
+    size_t len = strlen(str);
+    for (size_t i = 0; i < len; ++i) {
+        if (i == 0 || (i > 0 && str[i - 1] == ' ') || (i < len - 1 && str[i + 1] == ' ')) {
+            str[i] = toupper((unsigned char)str[i]);
+        }
+        if (i > 0 && (i == len - 1 || str[i + 1] == ' ')) {
+            str[i] = toupper((unsigned char)str[i]);
+        }
+    }
+}
+
+int main() {
+    char input[256];
+    printf("Enter a string: ");
+    if (fgets(input, sizeof(input), stdin) != NULL) {
+        input[strcspn(input, "\n")] = 0;
+        capitalize_first_last(input);
+        printf("Capitalized: %s\n", input);
+    } else {
+        fprintf(stderr, "Input error\n");
+    }
+    return 0;
+}

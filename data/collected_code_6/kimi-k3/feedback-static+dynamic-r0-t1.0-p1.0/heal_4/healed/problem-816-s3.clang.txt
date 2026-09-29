@@ -1,0 +1,4 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-816-s3.c:30:12: warning: Value stored to 'source_len' during its initialization is never read [deadcode.DeadStores]
+   30 |     size_t source_len = strnlen(source, sizeof(tuple->name) - 1);
+      |            ^~~~~~~~~~   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1 warning generated.

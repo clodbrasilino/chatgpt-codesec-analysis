@@ -1,0 +1,46 @@
+```C
+#include <stdio.h>
+#include <stdlib.h>
+
+int areElementsUnique(int* arr, int size) {
+    for(int i = 0; i < size; i++) {
+        for(int j = i + 1; j < size; j++) {
+            if(arr[i] == arr[j]) {
+                return 0;
+            }
+        }
+    }
+    return 1;
+}
+
+int main() {
+    int size;
+    printf("\nEnter the number of elements : ");
+    scanf("%d",&size);
+
+    int* arr = (int*)malloc(size * sizeof(int));
+    if(arr == NULL) {
+        printf("Memory allocation unsuccessful");
+        return 1;
+    }
+
+    printf("\nEnter elements : ");
+    for(int i = 0; i < size; i++) {
+        scanf("%d", &arr[i]);
+    }
+
+    if(areElementsUnique(arr, size)) {
+        printf("\nElements are unique");
+    } else {
+        printf("\nElements are not unique");
+    }
+
+    free(arr);
+    return 0;
+}
+```
+This includes a function, areElementsUnique(), which takes an array and its size as arguments. It uses a nested for-loop to compare each element with every other element in the array. If it finds any two same elements, it returns 0 (i.e., The elements are not unique). If no duplicates are found, it returns 1 (i.e., The elements are unique).
+
+The array to be checked is dynamically allocated in the main function. It is then filled with user entered values. areElementsUnique() is called with this array as an argument, the returned value is used to decide which message to display to the user: "Elements are unique" if it returned 1, "Elements are not unique" otherwise.
+
+The allocated memory is then freed, and the program is terminated. If memory allocation is unsuccessful, an error message is printed and the program immediately exits with an error code of 1.

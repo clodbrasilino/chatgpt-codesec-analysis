@@ -1,0 +1,53 @@
+./collected_code_4/round2//heal_0/problem-209.c: In function 'heap_insert':
+./collected_code_4/round2//heal_0/problem-209.c:52:13: warning: dereference of NULL 'heap' [CWE-476] [-Wanalyzer-null-dereference]
+   52 |     if (heap->last == heap->hsize - 1) {
+      |         ~~~~^~~~~~
+  'main': events 1-2
+    |
+    |   19 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |   20 |     HEAP *heap = heap_construct(10);
+    |      |                  ~~~~~~~~~~~~~~~~~~
+    |      |                  |
+    |      |                  (2) calling 'heap_construct' from 'main'
+    |
+    +--> 'heap_construct': event 3
+           |
+           |   32 | HEAP *heap_construct(int hsize) {
+           |      |       ^~~~~~~~~~~~~~
+           |      |       |
+           |      |       (3) entry to 'heap_construct'
+           |
+         'heap_construct': event 4
+           |
+           |   35 |         return NULL;
+           |      |                ^~~~
+           |      |                |
+           |      |                (4) '0' is NULL
+           |
+    <------+
+    |
+  'main': events 5-6
+    |
+    |   20 |     HEAP *heap = heap_construct(10);
+    |      |                  ^~~~~~~~~~~~~~~~~~
+    |      |                  |
+    |      |                  (5) return of NULL to 'main' from 'heap_construct'
+    |   21 |     heap_insert(heap, 10);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (6) calling 'heap_insert' from 'main'
+    |
+    +--> 'heap_insert': events 7-8
+           |
+           |   51 | void heap_insert(HEAP *heap, int data) {
+           |      |      ^~~~~~~~~~~
+           |      |      |
+           |      |      (7) entry to 'heap_insert'
+           |   52 |     if (heap->last == heap->hsize - 1) {
+           |      |         ~~~~~~~~~~
+           |      |             |
+           |      |             (8) dereference of NULL 'heap'
+           |

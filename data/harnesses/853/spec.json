@@ -1,0 +1,44 @@
+{
+  "task_id": 853,
+  "text": "Write a C function to find sum of odd factors of a number.",
+  "fn_candidates": [
+    "sum_of_odd_Factors",
+    "SumOfOddFactors",
+    "sumOfOddFactors",
+    "sumofoddFactors"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "sum_of_odd_Factors",
+      "args": [
+        30
+      ],
+      "expected": 24,
+      "assert_src": "assert sum_of_odd_Factors(30) == 24"
+    },
+    {
+      "fn_name": "sum_of_odd_Factors",
+      "args": [
+        18
+      ],
+      "expected": 13,
+      "assert_src": "assert sum_of_odd_Factors(18) == 13"
+    },
+    {
+      "fn_name": "sum_of_odd_Factors",
+      "args": [
+        2
+      ],
+      "expected": 1,
+      "assert_src": "assert sum_of_odd_Factors(2) == 1"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

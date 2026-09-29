@@ -1,0 +1,44 @@
+{
+  "task_id": 787,
+  "text": "Write a C function that matches a string that has an a followed by three 'b'.",
+  "fn_candidates": [
+    "text_match_three",
+    "TextMatchThree",
+    "textMatchThree",
+    "textmatchthree"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "text_match_three",
+      "args": [
+        "ac"
+      ],
+      "expected": "Not matched!",
+      "assert_src": "assert text_match_three(\"ac\")==('Not matched!')"
+    },
+    {
+      "fn_name": "text_match_three",
+      "args": [
+        "dc"
+      ],
+      "expected": "Not matched!",
+      "assert_src": "assert text_match_three(\"dc\")==('Not matched!')"
+    },
+    {
+      "fn_name": "text_match_three",
+      "args": [
+        "abbbba"
+      ],
+      "expected": "Found a match!",
+      "assert_src": "assert text_match_three(\"abbbba\")==('Found a match!')"
+    }
+  ],
+  "arg_kinds": [
+    "str"
+  ],
+  "return_kind": "str",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

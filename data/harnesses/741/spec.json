@@ -1,0 +1,44 @@
+{
+  "task_id": 741,
+  "text": "Write a C function to check whether all the characters are same or not.",
+  "fn_candidates": [
+    "all_Characters_Same",
+    "AllCharactersSame",
+    "allCharactersSame",
+    "allCharactersSame"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "all_Characters_Same",
+      "args": [
+        "python"
+      ],
+      "expected": false,
+      "assert_src": "assert all_Characters_Same(\"python\") == False"
+    },
+    {
+      "fn_name": "all_Characters_Same",
+      "args": [
+        "aaa"
+      ],
+      "expected": true,
+      "assert_src": "assert all_Characters_Same(\"aaa\") == True"
+    },
+    {
+      "fn_name": "all_Characters_Same",
+      "args": [
+        "data"
+      ],
+      "expected": false,
+      "assert_src": "assert all_Characters_Same(\"data\") == False"
+    }
+  ],
+  "arg_kinds": [
+    "str"
+  ],
+  "return_kind": "bool",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

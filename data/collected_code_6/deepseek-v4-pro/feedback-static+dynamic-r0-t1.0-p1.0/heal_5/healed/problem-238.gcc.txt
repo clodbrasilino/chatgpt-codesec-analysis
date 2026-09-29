@@ -1,0 +1,11 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-238.c: In function 'count_non_empty_substrings':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-238.c:18:46: error: 'ULLONG_MAX' undeclared (first use in this function)
+   18 |     if (len > 0 && (unsigned long long)len > ULLONG_MAX / (len + 1)) {
+      |                                              ^~~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-238.c:6:1: note: 'ULLONG_MAX' is defined in header '<limits.h>'; this is probably fixable by adding '#include <limits.h>'
+    5 | #include <errno.h>
+  +++ |+#include <limits.h>
+    6 | 
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-238.c:18:46: note: each undeclared identifier is reported only once for each function it appears in
+   18 |     if (len > 0 && (unsigned long long)len > ULLONG_MAX / (len + 1)) {
+      |                                              ^~~~~~~~~~

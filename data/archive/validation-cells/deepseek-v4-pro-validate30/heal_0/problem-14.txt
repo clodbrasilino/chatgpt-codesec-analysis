@@ -1,0 +1,48 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+double triangular_prism_volume(double base, double height, double length) {
+    if (base <= 0 || height <= 0 || length <= 0) {
+        return -1.0;
+    }
+    return 0.5 * base * height * length;
+}
+
+int main(void) {
+    double base, height, length, volume;
+    char input[100];
+
+    printf("Enter base of triangular face: ");
+    if (fgets(input, sizeof(input), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+    base = strtod(input, NULL);
+
+    printf("Enter height of triangular face: ");
+    if (fgets(input, sizeof(input), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+    height = strtod(input, NULL);
+
+    printf("Enter length of prism: ");
+    if (fgets(input, sizeof(input), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+    length = strtod(input, NULL);
+
+    volume = triangular_prism_volume(base, height, length);
+
+    if (volume < 0) {
+        fprintf(stderr, "Invalid dimensions\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Volume of triangular prism: %.2f\n", volume);
+
+    return EXIT_SUCCESS;
+}
+```

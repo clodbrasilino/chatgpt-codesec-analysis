@@ -1,0 +1,70 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int left;
+    int right;
+} Range;
+
+int find_element(const int *arr, int n, const Range *rotations,
+                 int num_rotations, int index, int *result)
+{
+    int i;
+
+    if (arr == NULL || result == NULL || n <= 0 || index < 0 || index >= n) {
+        return -1;
+    }
+
+    if (num_rotations > 0 && rotations == NULL) {
+        return -1;
+    }
+
+    for (i = num_rotations - 1; i >= 0; i--) {
+        int left = rotations[i].left;
+        int right = rotations[i].right;
+
+        if (left < 0 || right >= n || left > right) {
+            return -1;
+        }
+
+        if (index >= left && index <= right) {
+            if (index == left) {
+                index = right;
+            } else {
+                index = index - 1;
+            }
+        }
+    }
+
+    *result = arr[index];
+    return 0;
+}
+
+int main(void)
+{
+    int arr[] = {1, 2, 3, 4, 5};
+    int n = (int)(sizeof(arr) / sizeof(arr[0]));
+    Range rotations[] = {{0, 2}, {0, 3}};
+    int num_rotations = (int)(sizeof(rotations) / sizeof(rotations[0]));
+    int index = 1;
+    int result = 0;
+
+    if (find_element(arr, n, rotations, num_rotations, index, &result) != 0) {
+        fprintf(stderr, "Error: invalid input parameters\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Element at index %d after rotations: %d\n", index, result);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**How it works:**
+
+- `find_element` processes the rotations in reverse order. For each rotation range, if the queried index falls within the range, it maps the index back to its original position before that rotation was applied.
+- All inputs are validated: null pointers, array bounds, index bounds, and rotation range validity are checked before any array access, and the function returns a status code rather than an unchecked value.
+- The result is delivered through an output parameter so the return value can unambiguously signal success or failure, and `main` checks that status before using the result.
+
+For the example above, the array `{1, 2, 3, 4, 5}` rotated left over `[0, 2]` becomes `{2, 3, 1, 4, 5}`, then rotated over `[0, 3]` becomes `{3, 1, 4, 2, 5}`, so the element at index `1` is `1`. The function computes this in O(number of rotations) time without modifying the array.

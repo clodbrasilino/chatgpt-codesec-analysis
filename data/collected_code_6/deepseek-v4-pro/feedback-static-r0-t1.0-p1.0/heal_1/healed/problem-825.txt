@@ -1,0 +1,93 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int* access_multiple_elements(const int *list, int list_size, const int *indices, int indices_count, int *result_count) {
+    if (list == NULL || indices == NULL || result_count == NULL) {
+        return NULL;
+    }
+    
+    if (list_size <= 0 || indices_count <= 0) {
+        *result_count = 0;
+        return NULL;
+    }
+    
+    for (int i = 0; i < indices_count; i++) {
+        if (indices[i] < 0 || indices[i] >= list_size) {
+            *result_count = 0;
+            return NULL;
+        }
+    }
+    
+    int *result = (int *)malloc(sizeof(int) * indices_count);
+    if (result == NULL) {
+        *result_count = 0;
+        return NULL;
+    }
+    
+    for (int i = 0; i < indices_count; i++) {
+        result[i] = list[indices[i]];
+    }
+    
+    *result_count = indices_count;
+    return result;
+}
+
+int main(void) {
+    int list[] = {10, 20, 30, 40, 50, 60, 70, 80, 90, 100};
+    int list_size = sizeof(list) / sizeof(list[0]);
+    
+    int indices[] = {0, 2, 5, 7, 9};
+    int indices_count = sizeof(indices) / sizeof(indices[0]);
+    
+    int result_count = 0;
+    int *result = access_multiple_elements(list, list_size, indices, indices_count, &result_count);
+    
+    if (result != NULL) {
+        printf("Accessed elements: ");
+        for (int i = 0; i < result_count; i++) {
+            printf("%d", result[i]);
+            if (i < result_count - 1) {
+                printf(", ");
+            }
+        }
+        printf("\n");
+        free(result);
+    } else {
+        printf("Failed to access elements\n");
+    }
+    
+    int invalid_indices[] = {0, 12, 5};
+    int invalid_count = sizeof(invalid_indices) / sizeof(invalid_indices[0]);
+    
+    result_count = 0;
+    result = access_multiple_elements(list, list_size, invalid_indices, invalid_count, &result_count);
+    
+    if (result != NULL) {
+        printf("Accessed elements: ");
+        for (int i = 0; i < result_count; i++) {
+            printf("%d", result[i]);
+            if (i < result_count - 1) {
+                printf(", ");
+            }
+        }
+        printf("\n");
+        free(result);
+    } else {
+        printf("Invalid index detected\n");
+    }
+    
+    int empty_indices[] = {};
+    result_count = 0;
+    result = access_multiple_elements(list, list_size, empty_indices, 0, &result_count);
+    
+    if (result != NULL) {
+        free(result);
+        printf("Empty indices handled\n");
+    } else {
+        printf("Empty indices not processed\n");
+    }
+    
+    return 0;
+}
+```

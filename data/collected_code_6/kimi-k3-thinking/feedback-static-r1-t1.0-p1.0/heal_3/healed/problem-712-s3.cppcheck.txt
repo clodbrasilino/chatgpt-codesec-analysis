@@ -1,0 +1,25 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_3/healed/problem-712-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_3/healed/problem-712-s3.c:60:15: style: Condition 'bytes<=capacity_bytes' is always true [knownConditionTrueFalse]
+    if (bytes <= capacity_bytes && bytes <= (size_t)(list->capacity * sizeof(*list->data))) {
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_3/healed/problem-712-s3.c:50:24: note: Assuming that condition 'capacity_bytes<bytes' is not redundant
+    if (capacity_bytes < bytes ||
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_3/healed/problem-712-s3.c:60:15: note: Condition 'bytes<=capacity_bytes' is always true
+    if (bytes <= capacity_bytes && bytes <= (size_t)(list->capacity * sizeof(*list->data))) {
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_3/healed/problem-712-s3.c:60:42: style: Condition 'bytes<=(unsigned long)(list->capacity*sizeof(*list->data))' is always true [knownConditionTrueFalse]
+    if (bytes <= capacity_bytes && bytes <= (size_t)(list->capacity * sizeof(*list->data))) {
+                                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_3/healed/problem-712-s3.c:50:24: note: Assuming that condition 'capacity_bytes<bytes' is not redundant
+    if (capacity_bytes < bytes ||
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_3/healed/problem-712-s3.c:49:20: note: capacity_bytes is assigned 'list->capacity*sizeof(*list->data)' here.
+    capacity_bytes = list->capacity * sizeof(*list->data);
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_3/healed/problem-712-s3.c:52:28: note: Assuming condition is false
+        list->data == NULL ||
+                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_3/healed/problem-712-s3.c:60:42: note: Condition 'bytes<=(unsigned long)(list->capacity*sizeof(*list->data))' is always true
+    if (bytes <= capacity_bytes && bytes <= (size_t)(list->capacity * sizeof(*list->data))) {
+                                         ^

@@ -1,0 +1,31 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+bool is_divisors_count_even(int n) {
+    int count = 0;
+    for (int i = 1; i * i <= n; i++) {
+        if (n % i == 0) {
+            if (i * i != n) {
+                count += 2;
+            } else {
+                count += 1;
+            }
+        }
+    }
+    return (count % 2) == 0;
+}
+
+int main() {
+    int number;
+    printf("Enter a positive integer: ");
+    if (scanf("%d", &number) == 1 && number > 0) {
+        if (is_divisors_count_even(number)) {
+            printf("The count of divisors is even.\n");
+        } else {
+            printf("The count of divisors is odd.\n");
+        }
+    } else {
+        printf("Invalid input. Please enter a positive integer.\n");
+    }
+    return 0;
+}

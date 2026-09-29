@@ -1,0 +1,148 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    int first;
+    int second;
+    long sum;
+} Pair;
+
+typedef struct {
+    Pair *data;
+    size_t size;
+    size_t capacity;
+} Heap;
+
+static void swap(Pair *a, Pair *b) {
+    Pair temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+static void heapify_down(Heap *heap, size_t idx) {
+    size_t smallest = idx;
+    size_t left = 2 * idx + 1;
+    size_t right = 2 * idx + 2;
+
+    if (left < heap->size && heap->data[left].sum < heap->data[smallest].sum)
+        smallest = left;
+    if (right < heap->size && heap->data[right].sum < heap->data[smallest].sum)
+        smallest = right;
+
+    if (smallest != idx) {
+        swap(&heap->data[idx], &heap->data[smallest]);
+        heapify_down(heap, smallest);
+    }
+}
+
+static void heapify_up(Heap *heap, size_t idx) {
+    if (idx == 0)
+        return;
+    size_t parent = (idx - 1) / 2;
+    if (heap->data[parent].sum > heap->data[idx].sum) {
+        swap(&heap->data[parent], &heap->data[idx]);
+        heapify_up(heap, parent);
+    }
+}
+
+static int heap_push(Heap *heap, int first, int second) {
+    if (heap->size == heap->capacity) {
+        size_t new_capacity = (heap->capacity == 0) ? 16 : heap->capacity * 2;
+        Pair *new_data = realloc(heap->data, new_capacity * sizeof(Pair));
+        if (new_data == NULL)
+            return -1;
+        heap->data = new_data;
+        heap->capacity = new_capacity;
+    }
+    heap->data[heap->size].first = first;
+    heap->data[heap->size].second = second;
+    heap->data[heap->size].sum = (long)first + (long)second;
+    heapify_up(heap, heap->size);
+    heap->size++;
+    return 0;
+}
+
+static Pair heap_pop(Heap *heap) {
+    Pair top = heap->data[0];
+    heap->data[0] = heap->data[heap->size - 1];
+    heap->size--;
+    if (heap->size > 0)
+        heapify_down(heap, 0);
+    return top;
+}
+
+int find_k_pairs(const int *arr1, size_t n1, const int *arr2, size_t n2, 
+                 size_t k, Pair *result, size_t *result_count) {
+    if (arr1 == NULL || arr2 == NULL || result == NULL || result_count == NULL)
+        return -1;
+    if (n1 == 0 || n2 == 0 || k == 0) {
+        *result_count = 0;
+        return 0;
+    }
+
+    Heap heap = {NULL, 0, 0};
+    size_t count = 0;
+    size_t limit = (k < n1) ? k : n1;
+
+    for (size_t i = 0; i < limit; i++) {
+        if (heap_push(&heap, arr1[i], arr2[0]) != 0) {
+            free(heap.data);
+            return -1;
+        }
+    }
+
+    while (count < k && heap.size > 0) {
+        Pair current = heap_pop(&heap);
+        result[count] = current;
+        count++;
+
+        size_t idx2 = 0;
+        for (size_t j = 0; j < n2; j++) {
+            if (arr2[j] == current.second) {
+                idx2 = j;
+                break;
+            }
+        }
+
+        if (idx2 + 1 < n2) {
+            if (heap_push(&heap, current.first, arr2[idx2 + 1]) != 0) {
+                free(heap.data);
+                return -1;
+            }
+        }
+    }
+
+    free(heap.data);
+    *result_count = count;
+    return 0;
+}
+
+int main(void) {
+    int arr1[] = {1, 7, 11};
+    int arr2[] = {2, 4, 6};
+    size_t k = 3;
+    size_t n1 = sizeof(arr1) / sizeof(arr1[0]);
+    size_t n2 = sizeof(arr2) / sizeof(arr2[0]);
+    
+    Pair *result = malloc(k * sizeof(Pair));
+    if (result == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    size_t result_count = 0;
+    if (find_k_pairs(arr1, n1, arr2, n2, k, result, &result_count) != 0) {
+        fprintf(stderr, "Error finding pairs\n");
+        free(result);
+        return EXIT_FAILURE;
+    }
+
+    printf("Pairs:\n");
+    for (size_t i = 0; i < result_count; i++) {
+        printf("[%d, %d]\n", result[i].first, result[i].second);
+    }
+
+    free(result);
+    return EXIT_SUCCESS;
+}

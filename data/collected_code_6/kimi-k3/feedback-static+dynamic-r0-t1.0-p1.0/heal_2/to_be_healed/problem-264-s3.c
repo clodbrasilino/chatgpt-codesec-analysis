@@ -1,0 +1,111 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <limits.h>
+ /* Possible weaknesses found:
+  *  include '<string.h>' or provide a declaration of 'strchr'
+  */
+
+int calculate_dog_age(int human_years, int *dog_years)
+{
+    if (dog_years == NULL)
+    {
+        return -1;
+    }
+
+    if (human_years < 0)
+    {
+        return -1;
+    }
+
+    if (human_years <= 2)
+    {
+        if (human_years > INT_MAX / 15)
+        {
+            return -1;
+        }
+        *dog_years = human_years * 15;
+    }
+    else
+    {
+        if (human_years > (INT_MAX - 24) / 4 + 2)
+        {
+            return -1;
+        }
+        *dog_years = 24 + (human_years - 2) * 4;
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char input_buffer[128];
+    char *end_ptr;
+    long human_years_long;
+    int human_years;
+    int dog_years;
+    int result;
+
+    printf("Enter dog's age in human years: ");
+
+    if (fgets(input_buffer, sizeof(input_buffer), stdin) == NULL)
+    {
+        fprintf(stderr, "Error reading input.\n");
+        return EXIT_FAILURE;
+    }
+
+    /* Possible weaknesses found:
+     *  implicit declaration of function 'strchr' [-Wimplicit-function-declaration]
+     *  include the header <string.h> or explicitly provide a declaration for 'strchr'
+     *  call to undeclared library function 'strchr' with type 'char *(const char *, int)'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     */
+    if (strchr(input_buffer, '\n') == NULL && !feof(stdin))
+    {
+        int ch;
+        /* Possible weaknesses found:
+         * Flawfinder getchar: Check buffer boundaries if used in a loop including recursive loops (CWE-120, CWE-20). (risk 1, buffer)
+         */
+        while ((ch = getchar()) != '\n' && ch != EOF);
+        fprintf(stderr, "Input too long.\n");
+        return EXIT_FAILURE;
+    }
+
+    errno = 0;
+    human_years_long = strtol(input_buffer, &end_ptr, 10);
+
+    if (errno == ERANGE || human_years_long > INT_MAX || human_years_long < INT_MIN)
+    {
+        fprintf(stderr, "Input out of range.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (end_ptr == input_buffer)
+    {
+        fprintf(stderr, "Invalid input: not a number.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (*end_ptr != '\n' && *end_ptr != '\0')
+    {
+        fprintf(stderr, "Invalid input: trailing characters.\n");
+        return EXIT_FAILURE;
+    }
+
+    human_years = (int)human_years_long;
+
+    result = calculate_dog_age(human_years, &dog_years);
+
+    if (result != 0)
+    {
+        fprintf(stderr, "Error calculating dog age.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Dog's age in dog years: %d\n", dog_years);
+
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-785-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-785-s2.c:24:21: style: Condition 'buffer_size<=len' is always false [knownConditionTrueFalse]
+    if (buffer_size <= len) {
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-785-s2.c:23:24: note: buffer_size is assigned 'len+1' here.
+    size_t buffer_size = len + 1;
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-785-s2.c:24:21: note: Condition 'buffer_size<=len' is always false
+    if (buffer_size <= len) {
+                    ^

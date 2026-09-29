@@ -1,0 +1,8 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_1/healed/problem-31-s3.c: In function 'top_k_frequent':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_1/healed/problem-31-s3.c:153:25: error: 'next_found' undeclared (first use in this function)
+  153 |         current_value = next_found ? next_min_val : current_value;
+      |                         ^~~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_1/healed/problem-31-s3.c:153:25: note: each undeclared identifier is reported only once for each function it appears in
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_1/healed/problem-31-s3.c:153:38: error: 'next_min_val' undeclared (first use in this function)
+  153 |         current_value = next_found ? next_min_val : current_value;
+      |                                      ^~~~~~~~~~~~

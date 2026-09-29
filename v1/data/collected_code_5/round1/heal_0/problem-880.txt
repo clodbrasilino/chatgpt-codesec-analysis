@@ -1,0 +1,32 @@
+```C
+#include <stdio.h>
+#include <math.h>
+
+struct quadratic {
+    double a;
+    double b;
+    double c;
+};
+
+int find_solutions(struct quadratic equation) {
+    double d = (equation.b * equation.b) - (4 * equation.a * equation.c);
+    
+    if(d < 0)
+        return 0;
+    else if(d == 0)
+        return 1;
+    else
+        return 2;
+}
+
+int main() {
+    struct quadratic equation;
+    equation.a = 1;
+    equation.b = -3;
+    equation.c = 2;
+    int solutions = find_solutions(equation);
+    printf("Number of solutions: %d\n", solutions);
+    return 0;
+}
+```
+In the given code, a struct is used to ensure an organized association between the coefficients of the quadratic equation. A function, find_solutions, is created which first computes the discriminant `(b*b - 4*a*c)` which is used to determine the number of solutions available for the equation. If the discriminant is negative, the function returns 0 implying no solutions. If the discriminant equals to zero, function returns 1 implying one solution. In any other case, function returns 2 implying two solutions. Lastly, the main function is used to drive the program; initializing values, calling functions, and outputting the result. Overall, the function, object lifetimes, and exception conditions are handled correctly in compliance with the coding standards.

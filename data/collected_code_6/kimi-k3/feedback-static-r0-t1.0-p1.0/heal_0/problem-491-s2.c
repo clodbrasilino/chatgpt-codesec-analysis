@@ -1,0 +1,65 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <math.h>
+
+double geometric_sum(double first_term, double common_ratio, int num_terms)
+{
+    if (num_terms <= 0) {
+        return 0.0;
+    }
+    
+    if (common_ratio == 1.0) {
+        return first_term * num_terms;
+    }
+    
+    double numerator = 1.0 - pow(common_ratio, num_terms);
+    double denominator = 1.0 - common_ratio;
+    
+    if (denominator == 0.0) {
+        return 0.0;
+    }
+    
+    return first_term * (numerator / denominator);
+}
+
+int main(void)
+{
+    double first_term;
+    double common_ratio;
+    int num_terms;
+    
+    printf("Enter the first term: ");
+    if (scanf("%lf", &first_term) != 1) {
+        fprintf(stderr, "Error: Invalid input for first term\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("Enter the common ratio: ");
+    if (scanf("%lf", &common_ratio) != 1) {
+        fprintf(stderr, "Error: Invalid input for common ratio\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("Enter the number of terms: ");
+    if (scanf("%d", &num_terms) != 1) {
+        fprintf(stderr, "Error: Invalid input for number of terms\n");
+        return EXIT_FAILURE;
+    }
+    
+    if (num_terms <= 0) {
+        fprintf(stderr, "Error: Number of terms must be positive\n");
+        return EXIT_FAILURE;
+    }
+    
+    double result = geometric_sum(first_term, common_ratio, num_terms);
+    
+    if (isnan(result) || isinf(result)) {
+        fprintf(stderr, "Error: Result is not a finite number\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("Sum of geometric progression: %.6f\n", result);
+    
+    return EXIT_SUCCESS;
+}

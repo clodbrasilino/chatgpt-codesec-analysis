@@ -1,0 +1,50 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Tuple {
+    int first;
+    double second;
+    char third;
+};
+
+size_t tuple_size(const struct Tuple *t)
+{
+    if (t == NULL) {
+        return 0U;
+    }
+    return sizeof(*t);
+}
+
+int print_tuple(const struct Tuple *t)
+{
+    if (t == NULL) {
+        return -1;
+    }
+    return printf("Tuple contents: first=%d, second=%f, third=%c\n",
+                  t->first, t->second, t->third);
+}
+
+int main(void)
+{
+    struct Tuple t = { 10, 20.5, 'a' };
+    size_t size = tuple_size(&t);
+
+    if (size == 0U) {
+        fprintf(stderr, "Invalid tuple\n");
+        return EXIT_FAILURE;
+    }
+
+    if (print_tuple(&t) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Size of the tuple: %zu bytes\n", size) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+The key fix addresses the `unusedStructMember` warnings: the original code only measured the struct's size via `sizeof`, never reading `first`, `second`, or `third`. Adding `print_tuple()` accesses all three members, eliminating the static-analysis findings while preserving NULL checks and the checked return values of `printf`.

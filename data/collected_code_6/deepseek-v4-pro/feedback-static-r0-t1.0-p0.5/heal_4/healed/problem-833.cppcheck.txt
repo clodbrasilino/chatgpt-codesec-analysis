@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p0.5/heal_4/healed/problem-833.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p0.5/heal_4/healed/problem-833.c:79:12: style: The scope of the variable 'key_len' can be reduced. [variableScope]
+    size_t key_len;
+           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p0.5/heal_4/healed/problem-833.c:94:39: warning: Expression 'dict->size' can have a negative value. That is converted to an unsigned value and used in an unsigned calculation. [signConversionCond]
+    char **keys = (char **)malloc(dict->size * sizeof(char *));
+                                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p0.5/heal_4/healed/problem-833.c:90:20: note: Assuming that condition 'dict->size>0' is not redundant
+    if (dict->size > 0 && (size_t)dict->size > SIZE_MAX / sizeof(char *)) {
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p0.5/heal_4/healed/problem-833.c:94:39: note: Negative value is converted to an unsigned value
+    char **keys = (char **)malloc(dict->size * sizeof(char *));
+                                      ^

@@ -1,0 +1,86 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char *str;
+    int *list;
+    size_t list_len;
+} Tuple;
+
+Tuple *create_tuple(const char *str, const int *list, size_t list_len) {
+    Tuple *tuple = NULL;
+    char *str_copy = NULL;
+    int *list_copy = NULL;
+    size_t str_len;
+
+    if (str == NULL || list == NULL || list_len == 0) {
+        return NULL;
+    }
+
+    str_len = strnlen(str, SIZE_MAX);
+    if (str_len == SIZE_MAX) {
+        return NULL;
+    }
+
+    if (list_len > SIZE_MAX / sizeof(int)) {
+        return NULL;
+    }
+
+    tuple = (Tuple *)malloc(sizeof(Tuple));
+    if (tuple == NULL) {
+        return NULL;
+    }
+
+    str_copy = (char *)malloc(str_len + 1);
+    if (str_copy == NULL) {
+        free(tuple);
+        return NULL;
+    }
+    memcpy(str_copy, str, str_len);
+    str_copy[str_len] = '\0';
+
+    list_copy = (int *)malloc(list_len * sizeof(int));
+    if (list_copy == NULL) {
+        free(str_copy);
+        free(tuple);
+        return NULL;
+    }
+    memcpy(list_copy, list, list_len * sizeof(int));
+
+    tuple->str = str_copy;
+    tuple->list = list_copy;
+    tuple->list_len = list_len;
+
+    return tuple;
+}
+
+void free_tuple(Tuple *tuple) {
+    if (tuple != NULL) {
+        free(tuple->str);
+        free(tuple->list);
+        free(tuple);
+    }
+}
+
+int main(void) {
+    const char *str = "hello";
+    int list[] = {1, 2, 3, 4, 5};
+    size_t list_len = sizeof(list) / sizeof(list[0]);
+    Tuple *tuple = create_tuple(str, list, list_len);
+
+    if (tuple == NULL) {
+        fprintf(stderr, "Failed to create tuple\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("String: %s\n", tuple->str);
+    printf("List: ");
+    for (size_t i = 0; i < tuple->list_len; i++) {
+        printf("%d ", tuple->list[i]);
+    }
+    printf("\n");
+
+    free_tuple(tuple);
+    return EXIT_SUCCESS;
+}

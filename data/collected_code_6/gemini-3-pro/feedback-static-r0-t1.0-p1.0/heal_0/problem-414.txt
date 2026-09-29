@@ -1,0 +1,44 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+bool value_exists(const int *sequence, size_t length, int value) {
+    if (sequence == NULL) {
+        return false;
+    }
+
+    for (size_t i = 0; i < length; i++) {
+        if (sequence[i] == value) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+int main(void) {
+    int sequence[] = {1, 5, 8, 12, 45, 76, 99};
+    size_t length = sizeof(sequence) / sizeof(sequence[0]);
+    int value_to_find = 45;
+
+    bool exists = value_exists(sequence, length, value_to_find);
+    
+    if (exists) {
+        printf("Value %d exists in the sequence.\n", value_to_find);
+    } else {
+        printf("Value %d does not exist in the sequence.\n", value_to_find);
+    }
+
+    value_to_find = 42;
+    exists = value_exists(sequence, length, value_to_find);
+
+    if (exists) {
+        printf("Value %d exists in the sequence.\n", value_to_find);
+    } else {
+        printf("Value %d does not exist in the sequence.\n", value_to_find);
+    }
+
+    return 0;
+}
+```

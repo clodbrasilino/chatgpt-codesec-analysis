@@ -1,0 +1,33 @@
+```c
+#include <stdio.h>
+
+int countBidirectionalPairs(int array[], int size) {
+    int count = 0;
+    for (int i = 0; i < size; i++) {
+        for (int j = i + 1; j < size; j++) {
+            if (array[i] == array[j]) {
+                count++;
+            }
+        }
+    }
+    return count;
+}
+
+int main() {
+    int testArray[] = {1, 2, 3, 2, 1, 3, 4, 4};
+    int size = sizeof(testArray)/sizeof(testArray[0]);
+    
+    int bidirectionalPairs = countBidirectionalPairs(testArray, size);
+    
+    printf("Number of bidirectional pairs: %d\n", bidirectionalPairs);
+    
+    return 0;
+}
+```
+This C code defines a function countBidirectionalPairs that counts the number of bidirectional tuples/pairs in an integer array, which is passed as an argument along with its size. The pairs are detected by using two nested loops to compare each element with every other element in the array.
+
+The main function creates a test array, calculates its size, and calls the function countBidirectionalPairs with the test array and its size as arguments. The result is captured into the variable bidirectionalPairs and is then printed out.
+
+Note that the function countBidirectionalPairs properly handles the situation when the size is zero, which means that the array is empty. It returns 0 in that case, which is the correct result since there are no tuples/pairs in an empty array.
+
+Also note that the code adheres to the C programming standard by defining each function before it is used, and by using standard library calls correctly. Care has also been taken to ensure that the array is accessed within its bounds, thus preventing any potential resource lifetime issues.

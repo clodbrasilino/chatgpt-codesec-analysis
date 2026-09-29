@@ -1,0 +1,94 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdbool.h>
+
+#define BUFFER_SIZE 256
+
+bool has_letter_and_digit(const char *str)
+{
+    bool has_letter = false;
+    bool has_digit = false;
+
+    if (str == NULL) {
+        return false;
+    }
+
+    while (*str != '\0') {
+        unsigned char c = (unsigned char)*str;
+        if (isalpha(c)) {
+            has_letter = true;
+        } else if (isdigit(c)) {
+            has_digit = true;
+        }
+        if (has_letter && has_digit) {
+            return true;
+        }
+        str++;
+    }
+
+    return false;
+}
+
+static void flush_stdin(void)
+{
+    int c;
+    do {
+        c = getchar();
+    } while (c != '\n' && c != EOF);
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+
+    memset(buffer, 0, sizeof(buffer));
+
+    printf("Enter a string: ");
+    if (fflush(stdout) != 0) {
+        fprintf(stderr, "Error flushing output\n");
+        return EXIT_FAILURE;
+    }
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    size_t len = strnlen(buffer, sizeof(buffer));
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    } else if (len == sizeof(buffer) - 1) {
+        flush_stdin();
+    }
+
+    if (has_letter_and_digit(buffer)) {
+        printf("The string contains at least one letter and one number.\n");
+    } else {
+        printf("The string does not contain both a letter and a number.\n");
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the identified weaknesses and their mitigations:**
+
+1. **`char buffer[BUFFER_SIZE]` (CWE-119/CWE-120, risk 2):** The statically-sized array warning from Flawfinder is a heuristic — the risk only materializes if unbounded writes occur. This code mitigates it properly:
+   - `fgets(buffer, sizeof(buffer), stdin)` bounds the read to the buffer size, never writing beyond `BUFFER_SIZE - 1` characters plus the terminator.
+   - The explicit `buffer[sizeof(buffer) - 1] = '\0';` guarantees null-termination defensively.
+   - `strnlen` is used instead of `strlen`, so even a hypothetically unterminated buffer cannot cause an out-of-bounds read.
+   - `memset` initialization ensures no uninitialized memory is ever inspected.
+
+2. **`getchar()` in a loop (CWE-120/CWE-20, risk 1):** This is a false positive in context. `getchar()` here never writes into a buffer — it simply discards excess input until newline or `EOF`. The `EOF` check is critical and present, preventing an infinite loop if stdin is closed (e.g., piped input without a trailing newline).
+
+3. **Additional correctness points already handled:**
+   - The truncation case (`len == sizeof(buffer) - 1` with no newline) correctly drains leftover stdin so it cannot leak into subsequent reads.
+   - `isalpha`/`isdigit` receive an `unsigned char` cast, avoiding undefined behavior for negative `char` values (required by the C standard for `<ctype.h>` functions).
+   - Return values of `fflush` and `fgets` are checked.
+
+The code is functionally sound; both Flawfinder findings are informational-level hits whose underlying risks are already fully mitigated by the bounded I/O functions and defensive termination logic.

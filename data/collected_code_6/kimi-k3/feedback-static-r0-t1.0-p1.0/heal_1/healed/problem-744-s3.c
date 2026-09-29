@@ -1,0 +1,31 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+typedef struct {
+    const char *name;
+    const char *description;
+} Tuple;
+
+bool tuple_has_none(const Tuple *t) {
+    if (t == NULL) {
+        return true;
+    }
+    if (t->name == NULL || t->description == NULL) {
+        return true;
+    }
+    return false;
+}
+
+int main(void) {
+    Tuple t1 = {"Alice", "Valid entry"};
+    Tuple t2 = {NULL, "Missing name"};
+    Tuple t3 = {"Bob", NULL};
+    Tuple t4 = {"Charlie", "Another valid entry"};
+
+    printf("t1 has none: %s\n", tuple_has_none(&t1) ? "true" : "false");
+    printf("t2 has none: %s\n", tuple_has_none(&t2) ? "true" : "false");
+    printf("t3 has none: %s\n", tuple_has_none(&t3) ? "true" : "false");
+    printf("t4 has none: %s\n", tuple_has_none(&t4) ? "true" : "false");
+
+    return 0;
+}

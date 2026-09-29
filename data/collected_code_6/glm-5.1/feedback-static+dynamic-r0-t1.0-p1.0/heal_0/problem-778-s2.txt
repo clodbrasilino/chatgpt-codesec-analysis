@@ -1,0 +1,131 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    void *data;
+    struct Node *next;
+} Node;
+
+typedef struct List {
+    Node *head;
+} List;
+
+List *create_list() {
+    List *list = malloc(sizeof(List));
+    if (list == NULL) {
+        exit(EXIT_FAILURE);
+    }
+    list->head = NULL;
+    return list;
+}
+
+void append(List *list, void *data) {
+    Node *new_node = malloc(sizeof(Node));
+    if (new_node == NULL) {
+        exit(EXIT_FAILURE);
+    }
+    new_node->data = data;
+    new_node->next = NULL;
+
+    if (list->head == NULL) {
+        list->head = new_node;
+    } else {
+        Node *current = list->head;
+        while (current->next != NULL) {
+            current = current->next;
+        }
+        current->next = new_node;
+    }
+}
+
+List *pack(List *list) {
+    List *packed = create_list();
+    if (list->head == NULL) {
+        return packed;
+    }
+
+    Node *current = list->head;
+    while (current != NULL) {
+        void *val = current->data;
+        List *sublist = create_list();
+        append(sublist, val);
+
+        while (current->next != NULL && current->next->data == val) {
+            append(sublist, current->next->data);
+            current = current->next;
+        }
+
+        append(packed, sublist);
+        current = current->next;
+    }
+
+    return packed;
+}
+
+void free_list(List *list) {
+    if (list == NULL) {
+        return;
+    }
+    Node *current = list->head;
+    while (current != NULL) {
+        Node *next = current->next;
+        free(current);
+        current = next;
+    }
+    free(list);
+}
+
+void free_packed_list(List *packed) {
+    if (packed == NULL) {
+        return;
+    }
+    Node *current = packed->head;
+    while (current != NULL) {
+        Node *next = current->next;
+        free_list(current->data);
+        free(current);
+        current = next;
+    }
+    free(packed);
+}
+
+int main() {
+    List *list = create_list();
+    int vals[] = {1, 1, 2, 3, 3, 3, 4, 5, 5};
+    size_t len = sizeof(vals) / sizeof(vals[0]);
+
+    for (size_t i = 0; i < len; i++) {
+        append(list, &vals[i]);
+    }
+
+    List *packed = pack(list);
+
+    Node *packed_node = packed->head;
+    while (packed_node != NULL) {
+        List *sublist = packed_node->data;
+        Node *sub_node = sublist->head;
+
+        printf("[");
+        while (sub_node != NULL) {
+            printf("%d", *(int *)sub_node->data);
+            if (sub_node->next != NULL) {
+                printf(", ");
+            }
+            sub_node = sub_node->next;
+        }
+        printf("]");
+
+        if (packed_node->next != NULL) {
+            printf(", ");
+        }
+        packed_node = packed_node->next;
+    }
+    printf("\n");
+
+    free_list(list);
+    free_packed_list(packed);
+
+    return 0;
+}
+```

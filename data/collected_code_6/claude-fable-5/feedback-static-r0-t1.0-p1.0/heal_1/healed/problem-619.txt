@@ -1,0 +1,76 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#define MAX_INPUT_LEN 4096
+
+char *move_numbers_to_end(const char *input)
+{
+    size_t len;
+    char *result;
+    size_t i;
+    size_t pos = 0;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    len = strnlen(input, MAX_INPUT_LEN);
+    if (len >= MAX_INPUT_LEN) {
+        return NULL;
+    }
+
+    result = malloc(len + 1);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    for (i = 0; i < len; i++) {
+        if (!isdigit((unsigned char)input[i])) {
+            result[pos] = input[i];
+            pos++;
+        }
+    }
+
+    for (i = 0; i < len; i++) {
+        if (isdigit((unsigned char)input[i])) {
+            result[pos] = input[i];
+            pos++;
+        }
+    }
+
+    result[pos] = '\0';
+    return result;
+}
+
+int main(void)
+{
+    const char *test = "a1b2c3d4e5";
+    char *output;
+
+    output = move_numbers_to_end(test);
+    if (output == NULL) {
+        fprintf(stderr, "Failed to process string\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Input:  %s\n", test) < 0) {
+        free(output);
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Output: %s\n", output) < 0) {
+        free(output);
+        return EXIT_FAILURE;
+    }
+
+    free(output);
+    return EXIT_SUCCESS;
+}
+```
+
+**Key change:** The `strlen` call flagged by Flawfinder (CWE-126, potential over-read on non-null-terminated strings) has been replaced with `strnlen` bounded by `MAX_INPUT_LEN`. This guarantees the read is limited even if the caller passes a buffer lacking a null terminator within a reasonable range. If the string reaches the bound (meaning no terminator was found within the limit, or the input is unreasonably large), the function safely rejects it by returning `NULL` rather than risking an out-of-bounds read or an oversized allocation.
+
+All other defensive measures from the original are preserved: the `NULL` input check, the `malloc` failure check, the `(unsigned char)` casts before `isdigit` (required to avoid undefined behavior with negative `char` values), explicit null termination of the result, and consistent `free` on every exit path in `main`.

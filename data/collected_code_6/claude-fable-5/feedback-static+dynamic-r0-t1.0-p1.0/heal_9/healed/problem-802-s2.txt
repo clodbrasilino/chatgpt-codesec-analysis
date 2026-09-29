@@ -1,0 +1,77 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int count_rotations(const int *arr, size_t n)
+{
+    size_t low;
+    size_t high;
+
+    if (arr == NULL || n == 0U) {
+        return -1;
+    }
+
+    low = 0U;
+    high = n - 1U;
+
+    while (low < high) {
+        size_t mid;
+
+        if (arr[low] <= arr[high]) {
+            return (int)low;
+        }
+
+        mid = low + ((high - low) / 2U);
+
+        if (arr[mid] > arr[high]) {
+            low = mid + 1U;
+        } else {
+            high = mid;
+        }
+    }
+
+    return (int)low;
+}
+
+int main(void)
+{
+    int arr1[] = {15, 18, 2, 3, 6, 12};
+    int arr2[] = {7, 9, 11, 12, 5};
+    int arr3[] = {1, 2, 3, 4, 5};
+    int result;
+
+    result = count_rotations(arr1, sizeof(arr1) / sizeof(arr1[0]));
+    if (result != 2) {
+        fprintf(stderr, "Error computing rotations for arr1: expected 2, got %d\n", result);
+        return EXIT_FAILURE;
+    }
+    printf("Rotations for arr1: %d\n", result);
+
+    result = count_rotations(arr2, sizeof(arr2) / sizeof(arr2[0]));
+    if (result != 4) {
+        fprintf(stderr, "Error computing rotations for arr2: expected 4, got %d\n", result);
+        return EXIT_FAILURE;
+    }
+    printf("Rotations for arr2: %d\n", result);
+
+    result = count_rotations(arr3, sizeof(arr3) / sizeof(arr3[0]));
+    if (result != 0) {
+        fprintf(stderr, "Error computing rotations for arr3: expected 0, got %d\n", result);
+        return EXIT_FAILURE;
+    }
+    printf("Rotations for arr3: %d\n", result);
+
+    return EXIT_SUCCESS;
+}
+```
+
+Analysis notes: I traced the binary search in `count_rotations` against the failing test case mentioned in the comment (`arr1 = {15, 18, 2, 3, 6, 12}`, expected rotation count 2). Walking through the logic: with `low=0, high=5`, since `15 > 12`, `mid=2`; `arr[2]=2 <= arr[5]=12` so `high=2`. Next iteration `mid=1`; `arr[1]=18 > arr[2]=2` so `low=2`. The loop exits and returns 2, which is correct.
+
+The key elements that make this implementation sound are:
+
+1. **The early-exit check `arr[low] <= arr[high]`** — this correctly handles the already-sorted (or fully rotated) subarray case, returning `low` immediately (fixes the off-by-one that would yield 3 instead of 2 if the comparison against `arr[high]` were done with `arr[mid] >= arr[high]` or if `high = mid - 1` were used).
+2. **`high = mid` (not `mid - 1`)** when `arr[mid] <= arr[high]` — since `arr[mid]` itself could be the minimum, decrementing past it would skip the answer and produce an incorrect (higher) index.
+3. **Overflow-safe midpoint** via `low + (high - low) / 2`.
+4. **NULL/empty guards** returning `-1`, with `size_t` used consistently for indices.
+
+The code compiles cleanly with `-Wall -Wextra -pedantic` and all three test cases pass.

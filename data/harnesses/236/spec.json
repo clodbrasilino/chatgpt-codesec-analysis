@@ -1,0 +1,47 @@
+{
+  "task_id": 236,
+  "text": "Write a C function to count the maximum number of equilateral triangles that can be formed within a given equilateral triangle.",
+  "fn_candidates": [
+    "No_of_Triangle",
+    "NoOfTriangle",
+    "NoOfTriangle",
+    "NoofTriangle"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "No_of_Triangle",
+      "args": [
+        4,
+        2
+      ],
+      "expected": 7,
+      "assert_src": "assert No_of_Triangle(4,2) == 7"
+    },
+    {
+      "fn_name": "No_of_Triangle",
+      "args": [
+        4,
+        3
+      ],
+      "expected": 3,
+      "assert_src": "assert No_of_Triangle(4,3) == 3"
+    },
+    {
+      "fn_name": "No_of_Triangle",
+      "args": [
+        1,
+        3
+      ],
+      "expected": -1,
+      "assert_src": "assert No_of_Triangle(1,3) == -1"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

@@ -1,0 +1,133 @@
+#define _POSIX_C_SOURCE 200809L
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_WORD_LENGTH 4096
+
+static int is_duplicate(char **words, size_t count, const char *word)
+{
+    size_t i;
+
+    for (i = 0; i < count; i++) {
+        if (words[i] != NULL && strcmp(words[i], word) == 0) {
+            return 1;
+        }
+    }
+    return 0;
+}
+
+size_t remove_duplicate_words(char **words, size_t count)
+{
+    size_t i;
+    size_t unique_count;
+
+    if (words == NULL) {
+        return 0;
+    }
+
+    unique_count = 0;
+    for (i = 0; i < count; i++) {
+        if (words[i] == NULL) {
+            continue;
+        }
+        if (is_duplicate(words, unique_count, words[i])) {
+            free(words[i]);
+            words[i] = NULL;
+        } else {
+            if (unique_count != i) {
+                words[unique_count] = words[i];
+                words[i] = NULL;
+            }
+            unique_count++;
+        }
+    }
+    return unique_count;
+}
+
+static char *copy_string(const char *src)
+{
+    size_t len;
+    size_t buf_size;
+    char *copy;
+
+    if (src == NULL) {
+        return NULL;
+    }
+
+    len = strnlen(src, MAX_WORD_LENGTH);
+    if (len >= MAX_WORD_LENGTH) {
+        return NULL;
+    }
+
+    /* Possible weaknesses found:
+     *  buf_size is assigned 'len+1' here.
+     */
+    buf_size = len + 1;
+    copy = (char *)malloc(buf_size);
+    /* Possible weaknesses found:
+     *  Assuming condition is false
+     */
+    if (copy == NULL) {
+        return NULL;
+    }
+
+    /* Possible weaknesses found:
+     *  Condition 'len+1>buf_size' is always false
+     *  Condition 'len+1>buf_size' is always false [knownConditionTrueFalse]
+     */
+    if (len + 1 > buf_size) {
+        free(copy);
+        return NULL;
+    }
+
+    /* Possible weaknesses found:
+     * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+     */
+    memcpy(copy, src, len + 1);
+    copy[buf_size - 1] = '\0';
+    return copy;
+}
+
+int main(void)
+{
+    const char *input[] = {"apple", "banana", "apple", "cherry", "banana", "date"};
+    size_t input_count = sizeof(input) / sizeof(input[0]);
+    char **words;
+    size_t i;
+    size_t j;
+    size_t unique_count;
+
+    words = (char **)malloc(input_count * sizeof(*words));
+    if (words == NULL) {
+        fprintf(stderr, "Failed to allocate memory for word list\n");
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i < input_count; i++) {
+        words[i] = copy_string(input[i]);
+        if (words[i] == NULL) {
+            for (j = 0; j < i; j++) {
+                free(words[j]);
+            }
+            free(words);
+            fprintf(stderr, "Failed to allocate memory for word\n");
+            return EXIT_FAILURE;
+        }
+    }
+
+    unique_count = remove_duplicate_words(words, input_count);
+
+    printf("Unique words (%zu):\n", unique_count);
+    for (i = 0; i < unique_count; i++) {
+        printf("%s\n", words[i]);
+    }
+
+    for (i = 0; i < input_count; i++) {
+        free(words[i]);
+    }
+    free(words);
+
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,16 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_10/healed/problem-727-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_10/healed/problem-727-s2.c:42:48: style: Condition 'result_idx+remaining_len<=result_size' is always true [knownConditionTrueFalse]
+                if (result_idx + remaining_len <= result_size) {
+                                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_10/healed/problem-727-s2.c:33:38: note: required_size is assigned 'result_idx+remaining_len+1' here.
+                size_t required_size = result_idx + remaining_len + 1;
+                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_10/healed/problem-727-s2.c:35:32: note: Assuming condition is false
+                if (new_result == NULL) {
+                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_10/healed/problem-727-s2.c:41:29: note: result_size is assigned 'required_size' here.
+                result_size = required_size;
+                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_10/healed/problem-727-s2.c:42:48: note: Condition 'result_idx+remaining_len<=result_size' is always true
+                if (result_idx + remaining_len <= result_size) {
+                                               ^

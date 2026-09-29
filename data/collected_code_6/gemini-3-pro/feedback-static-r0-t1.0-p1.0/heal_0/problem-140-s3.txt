@@ -1,0 +1,82 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    int id;
+    int value;
+} Tuple;
+
+void extract_single_elements(Tuple* list, int size, Tuple** result, int* result_size) {
+    if (list == NULL || result == NULL || result_size == NULL) {
+        return;
+    }
+
+    int* counts = (int*)calloc(size, sizeof(int));
+    if (counts == NULL) {
+        return;
+    }
+
+    for (int i = 0; i < size; i++) {
+        int duplicate = 0;
+        for (int j = 0; j < size; j++) {
+            if (i != j && list[i].value == list[j].value) {
+                duplicate = 1;
+                break;
+            }
+        }
+        if (!duplicate) {
+            counts[i] = 1;
+        }
+    }
+
+    *result_size = 0;
+    for (int i = 0; i < size; i++) {
+        if (counts[i] == 1) {
+            (*result_size)++;
+        }
+    }
+
+    *result = (Tuple*)malloc(*result_size * sizeof(Tuple));
+    if (*result == NULL) {
+        free(counts);
+        *result_size = 0;
+        return;
+    }
+
+    int index = 0;
+    for (int i = 0; i < size; i++) {
+        if (counts[i] == 1) {
+            (*result)[index++] = list[i];
+        }
+    }
+
+    free(counts);
+}
+
+int main() {
+    Tuple list[] = {
+        {1, 10},
+        {2, 20},
+        {3, 10},
+        {4, 30},
+        {5, 20},
+        {6, 40}
+    };
+    int size = sizeof(list) / sizeof(list[0]);
+    Tuple* result = NULL;
+    int result_size = 0;
+
+    extract_single_elements(list, size, &result, &result_size);
+
+    if (result != NULL) {
+        for (int i = 0; i < result_size; i++) {
+            printf("ID: %d, Value: %d\n", result[i].id, result[i].value);
+        }
+        free(result);
+    }
+
+    return 0;
+}
+```

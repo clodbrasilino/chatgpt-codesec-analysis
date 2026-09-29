@@ -1,0 +1,92 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define BUFFER_SIZE 256
+
+void remove_char(char *str, char ch)
+{
+    size_t i;
+    size_t j;
+
+    if (str == NULL) {
+        return;
+    }
+
+    j = 0;
+    for (i = 0; str[i] != '\0'; i++) {
+        if (str[i] != ch) {
+            str[j] = str[i];
+            j++;
+        }
+    }
+    str[j] = '\0';
+}
+
+static void flush_stdin(void)
+{
+    int discard;
+
+    do {
+        discard = getchar();
+    } while (discard != '\n' && discard != EOF);
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    char target;
+    int input;
+
+    printf("Enter a string: ");
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading string input\n");
+        return EXIT_FAILURE;
+    }
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    if (strchr(buffer, '\n') == NULL) {
+        flush_stdin();
+    }
+
+    buffer[strcspn(buffer, "\n")] = '\0';
+
+    printf("Enter the character to remove: ");
+    input = getchar();
+    if (input == EOF) {
+        fprintf(stderr, "Error reading character input\n");
+        return EXIT_FAILURE;
+    }
+    target = (char)input;
+
+    if (input != '\n') {
+        flush_stdin();
+    }
+
+    remove_char(buffer, target);
+
+    printf("Result: %s\n", buffer);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the flagged weaknesses and why the code is already safe:**
+
+1. **`char buffer[BUFFER_SIZE]` (CWE-119/CWE-120, risk 2):** This is a heuristic warning that fires on any statically-sized array. The code properly mitigates it by:
+   - Using `fgets(buffer, sizeof(buffer), stdin)` which enforces the buffer bound and always null-terminates within the limit.
+   - Adding a defensive `buffer[sizeof(buffer) - 1] = '\0'` as belt-and-suspenders termination.
+   - Checking the `fgets` return value for `NULL` before using the buffer.
+
+2. **`getchar` in a loop in `flush_stdin` (CWE-120/CWE-20, risk 1):** No buffer is being written here — characters are read into a single `int` and discarded. The loop correctly terminates on both `'\n'` and `EOF`, so there's no risk of an infinite loop on closed/redirected stdin, and no overflow possibility.
+
+3. **`getchar` for the target character (CWE-120/CWE-20, risk 1):** The return value is stored in an `int` (correct, since `getchar` returns `int` to accommodate `EOF`), checked against `EOF` before use, and only then cast to `char`. Input validation is done properly.
+
+Additional correctness details worth noting:
+
+- **Stdin desynchronization is handled:** if the first input line exceeds 255 characters, `strchr(buffer, '\n') == NULL` detects the truncation and `flush_stdin()` drains the remainder, preventing leftover bytes from being consumed as the "character to remove."
+- **`strcspn` newline stripping** is the idiomatic, bounds-safe way to remove the trailing newline.
+- **`remove_char` guards against `NULL`** and performs in-place compaction with `size_t` indices, writing the terminator at the correct position — no out-of-bounds access is possible since `j <= i` always holds.
+
+All Flawfinder hits are false positives; the code follows the recommended mitigations, so the rewrite is unchanged apart from removing the comments as requested.

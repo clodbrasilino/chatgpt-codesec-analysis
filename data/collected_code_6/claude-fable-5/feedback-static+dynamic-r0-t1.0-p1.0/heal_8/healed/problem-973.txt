@@ -1,0 +1,108 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_STR_LEN 4096
+
+int left_rotate(char *str, size_t buf_size, size_t d)
+{
+    size_t len;
+    size_t temp_size;
+    size_t first_part;
+    size_t second_part;
+    char *temp;
+
+    if (str == NULL || buf_size == 0 || buf_size > MAX_STR_LEN) {
+        return -1;
+    }
+
+    len = strnlen(str, buf_size);
+    if (len == buf_size) {
+        return -1;
+    }
+
+    if (len == 0) {
+        return 0;
+    }
+
+    d = d % len;
+    if (d == 0) {
+        return 0;
+    }
+
+    if (len + 1 > buf_size) {
+        return -1;
+    }
+
+    temp_size = len + 1;
+    temp = malloc(temp_size);
+    if (temp == NULL) {
+        return -1;
+    }
+
+    first_part = len - d;
+    second_part = d;
+
+    if (first_part > temp_size - 1) {
+        free(temp);
+        return -1;
+    }
+
+    if (second_part > (temp_size - 1) - first_part) {
+        free(temp);
+        return -1;
+    }
+
+    memcpy(temp, str + d, first_part);
+    memcpy(temp + first_part, str, second_part);
+    temp[len] = '\0';
+
+    if (temp_size > buf_size) {
+        free(temp);
+        return -1;
+    }
+
+    memcpy(str, temp, temp_size);
+    free(temp);
+
+    return 0;
+}
+
+int main(void)
+{
+    char str[] = "HelloWorld";
+    size_t d = 3;
+
+    printf("Original string: %s\n", str);
+
+    if (left_rotate(str, sizeof(str), d) != 0) {
+        fprintf(stderr, "Rotation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Rotated string:  %s\n", str);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis summary:**
+
+The original code was already well-hardened, and the Flawfinder warnings on the three `memcpy` calls are effectively false positives, because every copy is preceded by explicit bounds validation:
+
+1. **First `memcpy` (`temp, str + d, len - d`)** — Safe. `len` is derived from `strnlen` bounded by `buf_size`, `d < len` after the modulo, and the guard `len - d > temp_size - 1` ensures the copy fits in `temp`.
+
+2. **Second `memcpy` (`temp + (len - d), str, d`)** — Safe. The guard `d > (temp_size - 1) - (len - d)` (written to avoid integer overflow) guarantees the remaining space in `temp` can hold `d` bytes.
+
+3. **Third `memcpy` (`str, temp, temp_size`)** — Safe. The `temp_size > buf_size` check ensures the destination buffer can hold the copy, and `len + 1 > buf_size` was already verified earlier.
+
+Other defensive measures already present and preserved in the rewrite:
+
+- **NULL and size validation** on entry, including an upper bound (`MAX_STR_LEN`) preventing pathological allocations.
+- **`strnlen` instead of `strlen`**, guarding against unterminated buffers; `len == buf_size` correctly rejects strings lacking a terminator.
+- **Modulo reduction of `d`** prevents out-of-bounds reads for large rotation values.
+- **`malloc` failure handling** and `free` on all error paths — no memory leaks.
+- **Explicit NUL termination** of the temporary buffer.
+
+The rewrite introduces named intermediates (`first_part`, `second_part`) and splits the compound bounds check into two separate guards for clarity, but the logic and safety properties are identical. The code is safe against buffer overflow (CWE-120), integer overflow in the size arithmetic, and use of unterminated input strings.

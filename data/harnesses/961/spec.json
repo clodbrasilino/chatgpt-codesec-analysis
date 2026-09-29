@@ -1,0 +1,44 @@
+{
+  "task_id": 961,
+  "text": "Write a C function to convert a roman numeral to an integer.",
+  "fn_candidates": [
+    "roman_to_int",
+    "RomanToInt",
+    "romanToInt",
+    "romantoint"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "roman_to_int",
+      "args": [
+        "MMMCMLXXXVI"
+      ],
+      "expected": 3986,
+      "assert_src": "assert roman_to_int('MMMCMLXXXVI')==3986"
+    },
+    {
+      "fn_name": "roman_to_int",
+      "args": [
+        "MMMM"
+      ],
+      "expected": 4000,
+      "assert_src": "assert roman_to_int('MMMM')==4000"
+    },
+    {
+      "fn_name": "roman_to_int",
+      "args": [
+        "C"
+      ],
+      "expected": 100,
+      "assert_src": "assert roman_to_int('C')==100"
+    }
+  ],
+  "arg_kinds": [
+    "str"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

@@ -1,0 +1,58 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char* decimal_to_binary(int n) {
+    if (n < 0) {
+        return NULL;
+    }
+
+    char* binary_str = (char*)malloc(33);
+    if (binary_str == NULL) {
+        return NULL;
+    }
+
+    if (n == 0) {
+        strcpy(binary_str, "0");
+        return binary_str;
+    }
+
+    int index = 0;
+    int temp = n;
+
+    while (temp > 0) {
+        binary_str[index++] = (temp % 2) + '0';
+        temp /= 2;
+    }
+
+    binary_str[index] = '\0';
+
+    int left = 0;
+    int right = index - 1;
+    while (left < right) {
+        char t = binary_str[left];
+        binary_str[left] = binary_str[right];
+        binary_str[right] = t;
+        left++;
+        right--;
+    }
+
+    return binary_str;
+}
+
+int main() {
+    int number = 42;
+    char* result = decimal_to_binary(number);
+
+    if (result == NULL) {
+        fprintf(stderr, "Error: Invalid input or memory allocation failed\n");
+        return 1;
+    }
+
+    printf("%d in binary is %s\n", number, result);
+
+    free(result);
+    result = NULL;
+
+    return 0;
+}

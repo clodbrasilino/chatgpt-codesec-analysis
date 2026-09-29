@@ -1,0 +1,63 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#define BUFFER_SIZE 256
+
+void to_upper_case(char *str, size_t max_len)
+{
+    size_t i;
+
+    if (str == NULL) {
+        return;
+    }
+
+    for (i = 0; i < max_len && str[i] != '\0'; i++) {
+        str[i] = (char)toupper((unsigned char)str[i]);
+    }
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t len;
+
+    printf("Enter a string: ");
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    }
+
+    to_upper_case(buffer, sizeof(buffer));
+
+    if (printf("Upper case: %s\n", buffer) < 0) {
+        fprintf(stderr, "Error writing output\n");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The original code already addresses the Flawfinder warning (CWE-119/CWE-120) correctly. The statically-sized `buffer` is a low-risk finding, and the existing mitigations are sound:
+
+1. **Bounded input** — `fgets(buffer, sizeof(buffer), stdin)` limits reads to the buffer size, preventing overflow (unlike `gets` or unbounded `scanf("%s", ...)`).
+2. **Guaranteed null termination** — `buffer[sizeof(buffer) - 1] = '\0'` is defensive; `fgets` already null-terminates, but this costs nothing and protects against future refactoring.
+3. **Bounded length calculation** — `strnlen` instead of `strlen` avoids reading past the buffer even if termination were somehow lost.
+4. **Safe character conversion** — casting to `unsigned char` before `toupper()` avoids undefined behavior for negative `char` values (e.g., extended/UTF-8 bytes on platforms where `char` is signed).
+5. **Bounds-checked helper** — `to_upper_case` takes an explicit `max_len` and checks for `NULL`, so it never walks off the end of the array.
+6. **I/O error handling** — return values of `fgets` and `printf` are checked, with failures reported to `stderr` and a proper exit status.
+
+No functional changes were required; the code as written is a correct fix for the identified weakness. The only change made is the removal of comments as requested.

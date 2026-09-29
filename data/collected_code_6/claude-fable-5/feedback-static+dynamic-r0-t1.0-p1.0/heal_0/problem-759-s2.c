@@ -1,0 +1,67 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdbool.h>
+
+bool is_decimal_with_precision_two(const char *str);
+
+bool is_decimal_with_precision_two(const char *str)
+{
+    size_t i = 0;
+    size_t digits_before = 0;
+    size_t digits_after = 0;
+
+    if (str == NULL || str[0] == '\0') {
+        return false;
+    }
+
+    if (str[i] == '+' || str[i] == '-') {
+        i++;
+    }
+
+    while (str[i] != '\0' && isdigit((unsigned char)str[i])) {
+        digits_before++;
+        i++;
+    }
+
+    if (digits_before == 0) {
+        return false;
+    }
+
+    if (str[i] != '.') {
+        return false;
+    }
+    i++;
+
+    while (str[i] != '\0' && isdigit((unsigned char)str[i])) {
+        digits_after++;
+        i++;
+    }
+
+    if (str[i] != '\0') {
+        return false;
+    }
+
+    return digits_after == 2;
+}
+
+int main(void)
+{
+    char buffer[128];
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[strcspn(buffer, "\r\n")] = '\0';
+
+    if (is_decimal_with_precision_two(buffer)) {
+        printf("Valid decimal with precision 2\n");
+    } else {
+        printf("Invalid decimal with precision 2\n");
+    }
+
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,7 @@
+In file included from /usr/local/Cellar/gcc/15.2.0/lib/gcc/current/gcc/x86_64-apple-darwin24/15/include-fixed/_stdio.h:522,
+                 from /usr/local/Cellar/gcc/15.2.0/lib/gcc/current/gcc/x86_64-apple-darwin24/15/include-fixed/stdio.h:75,
+                 from /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-86-s2.c:1:
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-86-s2.c: In function 'main':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-86-s2.c:25:52: error: implicit declaration of function 'centered_hexangular'; did you mean 'centered_hexagonal'? [-Wimplicit-function-declaration]
+   25 |     int len = snprintf(buf, sizeof(buf), "%llu\n", centered_hexangular(n));
+      |                                                    ^~~~~~~~~~~~~~~~~~~

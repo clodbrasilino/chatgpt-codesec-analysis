@@ -1,0 +1,836 @@
+./collected_code_4/round2//heal_3/healed/problem-578.c: In function 'main':
+./collected_code_4/round2//heal_3/healed/problem-578.c:67:9: warning: implicit declaration of function 'printf' [-Wimplicit-function-declaration]
+   67 |         printf("Error allocating memory\n");
+      |         ^~~~~~
+./collected_code_4/round2//heal_3/healed/problem-578.c:2:1: note: include '<stdio.h>' or provide a declaration of 'printf'
+    1 | #include<stdlib.h>
+  +++ |+#include <stdio.h>
+    2 | 
+./collected_code_4/round2//heal_3/healed/problem-578.c:67:9: warning: incompatible implicit declaration of built-in function 'printf' [-Wbuiltin-declaration-mismatch]
+   67 |         printf("Error allocating memory\n");
+      |         ^~~~~~
+./collected_code_4/round2//heal_3/healed/problem-578.c:67:9: note: include '<stdio.h>' or provide a declaration of 'printf'
+./collected_code_4/round2//heal_3/healed/problem-578.c:72:9: warning: incompatible implicit declaration of built-in function 'printf' [-Wbuiltin-declaration-mismatch]
+   72 |         printf("%d ", result->data);
+      |         ^~~~~~
+./collected_code_4/round2//heal_3/healed/problem-578.c:72:9: note: include '<stdio.h>' or provide a declaration of 'printf'
+./collected_code_4/round2//heal_3/healed/problem-578.c:75:5: warning: incompatible implicit declaration of built-in function 'printf' [-Wbuiltin-declaration-mismatch]
+   75 |     printf("\n");
+      |     ^~~~~~
+./collected_code_4/round2//heal_3/healed/problem-578.c:75:5: note: include '<stdio.h>' or provide a declaration of 'printf'
+./collected_code_4/round2//heal_3/healed/problem-578.c: In function 'interleaveLists':
+./collected_code_4/round2//heal_3/healed/problem-578.c:38:1: warning: leak of 'result' [CWE-401] [-Wanalyzer-malloc-leak]
+   38 | }
+      | ^
+  'main': events 1-2
+    |
+    |   50 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |   51 |     Node* a = newNode(1);
+    |      |               ~~~~~~~~~~
+    |      |               |
+    |      |               (2) calling 'newNode' from 'main'
+    |
+    +--> 'newNode': events 3-5
+           |
+           |    8 | Node* newNode(int data) {
+           |      |       ^~~~~~~
+           |      |       |
+           |      |       (3) entry to 'newNode'
+           |    9 |     Node* node = (Node*)malloc(sizeof(Node));
+           |   10 |     if(node == NULL) {
+           |      |       ~
+           |      |       |
+           |      |       (4) following 'false' branch (when 'node' is non-NULL)...
+           |......
+           |   13 |     node->data = data;
+           |      |     ~~~~~~~~~~~~~~~~~
+           |      |                |
+           |      |                (5) ...to here
+           |
+    <------+
+    |
+  'main': events 6-9
+    |
+    |   51 |     Node* a = newNode(1);
+    |      |               ^~~~~~~~~~
+    |      |               |
+    |      |               (6) returning to 'main' from 'newNode'
+    |   52 |     if(a == NULL) return 1;
+    |      |       ~        
+    |      |       |
+    |      |       (7) following 'false' branch (when 'a' is non-NULL)...
+    |   53 |     a->next = newNode(2);
+    |      |               ~~~~~~~~~~
+    |      |               |
+    |      |               (8) ...to here
+    |      |               (9) calling 'newNode' from 'main'
+    |
+    +--> 'newNode': events 10-12
+           |
+           |    8 | Node* newNode(int data) {
+           |      |       ^~~~~~~
+           |      |       |
+           |      |       (10) entry to 'newNode'
+           |    9 |     Node* node = (Node*)malloc(sizeof(Node));
+           |   10 |     if(node == NULL) {
+           |      |       ~
+           |      |       |
+           |      |       (11) following 'false' branch (when 'node' is non-NULL)...
+           |......
+           |   13 |     node->data = data;
+           |      |     ~~~~~~~~~~~~~~~~~
+           |      |                |
+           |      |                (12) ...to here
+           |
+    <------+
+    |
+  'main': events 13-16
+    |
+    |   53 |     a->next = newNode(2);
+    |      |               ^~~~~~~~~~
+    |      |               |
+    |      |               (13) returning to 'main' from 'newNode'
+    |   54 |     if(a->next == NULL) return 1;
+    |      |       ~        
+    |      |       |
+    |      |       (14) following 'false' branch...
+    |   55 |     a->next->next = newNode(3);
+    |      |     ~~~~~~~         ~~~~~~~~~~
+    |      |      |              |
+    |      |      |              (16) calling 'newNode' from 'main'
+    |      |      (15) ...to here
+    |
+    +--> 'newNode': events 17-19
+           |
+           |    8 | Node* newNode(int data) {
+           |      |       ^~~~~~~
+           |      |       |
+           |      |       (17) entry to 'newNode'
+           |    9 |     Node* node = (Node*)malloc(sizeof(Node));
+           |   10 |     if(node == NULL) {
+           |      |       ~
+           |      |       |
+           |      |       (18) following 'false' branch (when 'node' is non-NULL)...
+           |......
+           |   13 |     node->data = data;
+           |      |     ~~~~~~~~~~~~~~~~~
+           |      |                |
+           |      |                (19) ...to here
+           |
+    <------+
+    |
+  'main': events 20-23
+    |
+    |   55 |     a->next->next = newNode(3);
+    |      |                     ^~~~~~~~~~
+    |      |                     |
+    |      |                     (20) returning to 'main' from 'newNode'
+    |   56 |     if(a->next->next == NULL) return 1;
+    |      |       ~              
+    |      |       |
+    |      |       (21) following 'false' branch...
+    |   57 | 
+    |   58 |     Node* b = newNode(4);
+    |      |               ~~~~~~~~~~
+    |      |               |
+    |      |               (22) ...to here
+    |      |               (23) calling 'newNode' from 'main'
+    |
+    +--> 'newNode': events 24-26
+           |
+           |    8 | Node* newNode(int data) {
+           |      |       ^~~~~~~
+           |      |       |
+           |      |       (24) entry to 'newNode'
+           |    9 |     Node* node = (Node*)malloc(sizeof(Node));
+           |   10 |     if(node == NULL) {
+           |      |       ~
+           |      |       |
+           |      |       (25) following 'false' branch (when 'node' is non-NULL)...
+           |......
+           |   13 |     node->data = data;
+           |      |     ~~~~~~~~~~~~~~~~~
+           |      |                |
+           |      |                (26) ...to here
+           |
+    <------+
+    |
+  'main': events 27-30
+    |
+    |   58 |     Node* b = newNode(4);
+    |      |               ^~~~~~~~~~
+    |      |               |
+    |      |               (27) returning to 'main' from 'newNode'
+    |   59 |     if(b == NULL) return 1;
+    |      |       ~        
+    |      |       |
+    |      |       (28) following 'false' branch (when 'b' is non-NULL)...
+    |   60 |     b->next = newNode(5);
+    |      |               ~~~~~~~~~~
+    |      |               |
+    |      |               (29) ...to here
+    |      |               (30) calling 'newNode' from 'main'
+    |
+    +--> 'newNode': events 31-33
+           |
+           |    8 | Node* newNode(int data) {
+           |      |       ^~~~~~~
+           |      |       |
+           |      |       (31) entry to 'newNode'
+           |    9 |     Node* node = (Node*)malloc(sizeof(Node));
+           |   10 |     if(node == NULL) {
+           |      |       ~
+           |      |       |
+           |      |       (32) following 'false' branch (when 'node' is non-NULL)...
+           |......
+           |   13 |     node->data = data;
+           |      |     ~~~~~~~~~~~~~~~~~
+           |      |                |
+           |      |                (33) ...to here
+           |
+    <------+
+    |
+  'main': events 34-37
+    |
+    |   60 |     b->next = newNode(5);
+    |      |               ^~~~~~~~~~
+    |      |               |
+    |      |               (34) returning to 'main' from 'newNode'
+    |   61 |     if(b->next == NULL) return 1;
+    |      |       ~        
+    |      |       |
+    |      |       (35) following 'false' branch...
+    |   62 |     b->next->next = newNode(6);
+    |      |     ~~~~~~~         ~~~~~~~~~~
+    |      |      |              |
+    |      |      |              (37) calling 'newNode' from 'main'
+    |      |      (36) ...to here
+    |
+    +--> 'newNode': events 38-40
+           |
+           |    8 | Node* newNode(int data) {
+           |      |       ^~~~~~~
+           |      |       |
+           |      |       (38) entry to 'newNode'
+           |    9 |     Node* node = (Node*)malloc(sizeof(Node));
+           |   10 |     if(node == NULL) {
+           |      |       ~
+           |      |       |
+           |      |       (39) following 'false' branch (when 'node' is non-NULL)...
+           |......
+           |   13 |     node->data = data;
+           |      |     ~~~~~~~~~~~~~~~~~
+           |      |                |
+           |      |                (40) ...to here
+           |
+    <------+
+    |
+  'main': events 41-44
+    |
+    |   62 |     b->next->next = newNode(6);
+    |      |                     ^~~~~~~~~~
+    |      |                     |
+    |      |                     (41) returning to 'main' from 'newNode'
+    |   63 |     if(b->next->next == NULL) return 1;
+    |      |       ~              
+    |      |       |
+    |      |       (42) following 'false' branch...
+    |   64 | 
+    |   65 |     Node* result = interleaveLists(a, b);
+    |      |                    ~~~~~~~~~~~~~~~~~~~~~
+    |      |                    |
+    |      |                    (43) ...to here
+    |      |                    (44) calling 'interleaveLists' from 'main'
+    |
+    +--> 'interleaveLists': events 45-47
+           |
+           |   18 | Node* interleaveLists(Node *a, Node *b) {
+           |      |       ^~~~~~~~~~~~~~~
+           |      |       |
+           |      |       (45) entry to 'interleaveLists'
+           |   19 |     if(a == NULL && b == NULL) {
+           |      |       ~
+           |      |       |
+           |      |       (46) following 'false' branch (when 'a' is non-NULL)...
+           |......
+           |   22 |     Node* result = NULL;
+           |      |           ~~~~~~
+           |      |           |
+           |      |           (47) ...to here
+           |
+         'interleaveLists': events 48-50
+           |
+           |   24 |     while(a != NULL && b != NULL) {
+           |      |                     ^
+           |      |                     |
+           |      |                     (48) following 'true' branch...
+           |   25 |         Node *n = newNode(a->data);
+           |      |                   ~~~~~~~~~~~~~~~~
+           |      |                   |
+           |      |                   (49) ...to here
+           |      |                   (50) calling 'newNode' from 'interleaveLists'
+           |
+           +--> 'newNode': events 51-55
+                  |
+                  |    8 | Node* newNode(int data) {
+                  |      |       ^~~~~~~
+                  |      |       |
+                  |      |       (51) entry to 'newNode'
+                  |    9 |     Node* node = (Node*)malloc(sizeof(Node));
+                  |      |                         ~~~~~~~~~~~~~~~~~~~~
+                  |      |                         |
+                  |      |                         (52) allocated here
+                  |   10 |     if(node == NULL) {
+                  |      |       ~
+                  |      |       |
+                  |      |       (53) assuming 'node' is non-NULL
+                  |      |       (54) following 'false' branch (when 'node' is non-NULL)...
+                  |......
+                  |   13 |     node->data = data;
+                  |      |     ~~~~~~~~~~~~~~~~~
+                  |      |                |
+                  |      |                (55) ...to here
+                  |
+           <------+
+           |
+         'interleaveLists': events 56-59
+           |
+           |   25 |         Node *n = newNode(a->data);
+           |      |                   ^~~~~~~~~~~~~~~~
+           |      |                   |
+           |      |                   (56) returning to 'interleaveLists' from 'newNode'
+           |   26 |         if(n == NULL) return NULL;
+           |      |           ~        
+           |      |           |
+           |      |           (57) following 'false' branch (when 'n' is non-NULL)...
+           |   27 |         *tailPointer = n;
+           |      |         ~~~~~~~~~~~~~~~~
+           |      |                      |
+           |      |                      (58) ...to here
+           |   28 |         tailPointer = &(n->next);
+           |   29 |         n = newNode(b->data);
+           |      |             ~~~~~~~~~~~~~~~~
+           |      |             |
+           |      |             (59) calling 'newNode' from 'interleaveLists'
+           |
+           +--> 'newNode': events 60-62
+                  |
+                  |    8 | Node* newNode(int data) {
+                  |      |       ^~~~~~~
+                  |      |       |
+                  |      |       (60) entry to 'newNode'
+                  |    9 |     Node* node = (Node*)malloc(sizeof(Node));
+                  |   10 |     if(node == NULL) {
+                  |      |       ~
+                  |      |       |
+                  |      |       (61) following 'false' branch (when 'node' is non-NULL)...
+                  |......
+                  |   13 |     node->data = data;
+                  |      |     ~~~~~~~~~~~~~~~~~
+                  |      |                |
+                  |      |                (62) ...to here
+                  |
+           <------+
+           |
+         'interleaveLists': events 63-65
+           |
+           |   29 |         n = newNode(b->data);
+           |      |             ^~~~~~~~~~~~~~~~
+           |      |             |
+           |      |             (63) returning to 'interleaveLists' from 'newNode'
+           |   30 |         if(n == NULL) return NULL;
+           |      |           ~  
+           |      |           |
+           |      |           (64) following 'false' branch (when 'n' is non-NULL)...
+           |   31 |         *tailPointer = n;
+           |      |         ~~~~~~~~~~~~~~~~
+           |      |                      |
+           |      |                      (65) ...to here
+           |
+         'interleaveLists': events 66-68
+           |
+           |   24 |     while(a != NULL && b != NULL) {
+           |      |                     ^
+           |      |                     |
+           |      |                     (66) following 'true' branch...
+           |   25 |         Node *n = newNode(a->data);
+           |      |                   ~~~~~~~~~~~~~~~~
+           |      |                   |
+           |      |                   (67) ...to here
+           |      |                   (68) calling 'newNode' from 'interleaveLists'
+           |
+           +--> 'newNode': events 69-70
+                  |
+                  |    8 | Node* newNode(int data) {
+                  |      |       ^~~~~~~
+                  |      |       |
+                  |      |       (69) entry to 'newNode'
+                  |    9 |     Node* node = (Node*)malloc(sizeof(Node));
+                  |   10 |     if(node == NULL) {
+                  |      |       ~
+                  |      |       |
+                  |      |       (70) following 'true' branch (when 'node' is NULL)...
+                  |
+                'newNode': event 71
+                  |
+                  |   11 |         return NULL;
+                  |      |                ^~~~
+                  |      |                |
+                  |      |                (71) ...to here
+                  |
+           <------+
+           |
+         'interleaveLists': events 72-73
+           |
+           |   25 |         Node *n = newNode(a->data);
+           |      |                   ^~~~~~~~~~~~~~~~
+           |      |                   |
+           |      |                   (72) returning to 'interleaveLists' from 'newNode'
+           |   26 |         if(n == NULL) return NULL;
+           |      |           ~        
+           |      |           |
+           |      |           (73) following 'true' branch (when 'n' is NULL)...
+           |
+         'interleaveLists': event 74
+           |
+           |   26 |         if(n == NULL) return NULL;
+           |      |                              ^~~~
+           |      |                              |
+           |      |                              (74) ...to here
+           |
+         'interleaveLists': event 75
+           |
+           |   38 | }
+           |      | ^
+           |      | |
+           |      | (75) 'result' leaks here; was allocated at (52)
+           |
+./collected_code_4/round2//heal_3/healed/problem-578.c:38:1: warning: leak of '<unknown>' [CWE-401] [-Wanalyzer-malloc-leak]
+  'main': events 1-2
+    |
+    |   50 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |   51 |     Node* a = newNode(1);
+    |      |               ~~~~~~~~~~
+    |      |               |
+    |      |               (2) calling 'newNode' from 'main'
+    |
+    +--> 'newNode': events 3-5
+           |
+           |    8 | Node* newNode(int data) {
+           |      |       ^~~~~~~
+           |      |       |
+           |      |       (3) entry to 'newNode'
+           |    9 |     Node* node = (Node*)malloc(sizeof(Node));
+           |   10 |     if(node == NULL) {
+           |      |       ~
+           |      |       |
+           |      |       (4) following 'false' branch (when 'node' is non-NULL)...
+           |......
+           |   13 |     node->data = data;
+           |      |     ~~~~~~~~~~~~~~~~~
+           |      |                |
+           |      |                (5) ...to here
+           |
+    <------+
+    |
+  'main': events 6-9
+    |
+    |   51 |     Node* a = newNode(1);
+    |      |               ^~~~~~~~~~
+    |      |               |
+    |      |               (6) returning to 'main' from 'newNode'
+    |   52 |     if(a == NULL) return 1;
+    |      |       ~        
+    |      |       |
+    |      |       (7) following 'false' branch (when 'a' is non-NULL)...
+    |   53 |     a->next = newNode(2);
+    |      |               ~~~~~~~~~~
+    |      |               |
+    |      |               (8) ...to here
+    |      |               (9) calling 'newNode' from 'main'
+    |
+    +--> 'newNode': events 10-12
+           |
+           |    8 | Node* newNode(int data) {
+           |      |       ^~~~~~~
+           |      |       |
+           |      |       (10) entry to 'newNode'
+           |    9 |     Node* node = (Node*)malloc(sizeof(Node));
+           |   10 |     if(node == NULL) {
+           |      |       ~
+           |      |       |
+           |      |       (11) following 'false' branch (when 'node' is non-NULL)...
+           |......
+           |   13 |     node->data = data;
+           |      |     ~~~~~~~~~~~~~~~~~
+           |      |                |
+           |      |                (12) ...to here
+           |
+    <------+
+    |
+  'main': events 13-16
+    |
+    |   53 |     a->next = newNode(2);
+    |      |               ^~~~~~~~~~
+    |      |               |
+    |      |               (13) returning to 'main' from 'newNode'
+    |   54 |     if(a->next == NULL) return 1;
+    |      |       ~        
+    |      |       |
+    |      |       (14) following 'false' branch...
+    |   55 |     a->next->next = newNode(3);
+    |      |     ~~~~~~~         ~~~~~~~~~~
+    |      |      |              |
+    |      |      |              (16) calling 'newNode' from 'main'
+    |      |      (15) ...to here
+    |
+    +--> 'newNode': events 17-19
+           |
+           |    8 | Node* newNode(int data) {
+           |      |       ^~~~~~~
+           |      |       |
+           |      |       (17) entry to 'newNode'
+           |    9 |     Node* node = (Node*)malloc(sizeof(Node));
+           |   10 |     if(node == NULL) {
+           |      |       ~
+           |      |       |
+           |      |       (18) following 'false' branch (when 'node' is non-NULL)...
+           |......
+           |   13 |     node->data = data;
+           |      |     ~~~~~~~~~~~~~~~~~
+           |      |                |
+           |      |                (19) ...to here
+           |
+    <------+
+    |
+  'main': events 20-23
+    |
+    |   55 |     a->next->next = newNode(3);
+    |      |                     ^~~~~~~~~~
+    |      |                     |
+    |      |                     (20) returning to 'main' from 'newNode'
+    |   56 |     if(a->next->next == NULL) return 1;
+    |      |       ~              
+    |      |       |
+    |      |       (21) following 'false' branch...
+    |   57 | 
+    |   58 |     Node* b = newNode(4);
+    |      |               ~~~~~~~~~~
+    |      |               |
+    |      |               (22) ...to here
+    |      |               (23) calling 'newNode' from 'main'
+    |
+    +--> 'newNode': events 24-26
+           |
+           |    8 | Node* newNode(int data) {
+           |      |       ^~~~~~~
+           |      |       |
+           |      |       (24) entry to 'newNode'
+           |    9 |     Node* node = (Node*)malloc(sizeof(Node));
+           |   10 |     if(node == NULL) {
+           |      |       ~
+           |      |       |
+           |      |       (25) following 'false' branch (when 'node' is non-NULL)...
+           |......
+           |   13 |     node->data = data;
+           |      |     ~~~~~~~~~~~~~~~~~
+           |      |                |
+           |      |                (26) ...to here
+           |
+    <------+
+    |
+  'main': events 27-30
+    |
+    |   58 |     Node* b = newNode(4);
+    |      |               ^~~~~~~~~~
+    |      |               |
+    |      |               (27) returning to 'main' from 'newNode'
+    |   59 |     if(b == NULL) return 1;
+    |      |       ~        
+    |      |       |
+    |      |       (28) following 'false' branch (when 'b' is non-NULL)...
+    |   60 |     b->next = newNode(5);
+    |      |               ~~~~~~~~~~
+    |      |               |
+    |      |               (29) ...to here
+    |      |               (30) calling 'newNode' from 'main'
+    |
+    +--> 'newNode': events 31-33
+           |
+           |    8 | Node* newNode(int data) {
+           |      |       ^~~~~~~
+           |      |       |
+           |      |       (31) entry to 'newNode'
+           |    9 |     Node* node = (Node*)malloc(sizeof(Node));
+           |   10 |     if(node == NULL) {
+           |      |       ~
+           |      |       |
+           |      |       (32) following 'false' branch (when 'node' is non-NULL)...
+           |......
+           |   13 |     node->data = data;
+           |      |     ~~~~~~~~~~~~~~~~~
+           |      |                |
+           |      |                (33) ...to here
+           |
+    <------+
+    |
+  'main': events 34-37
+    |
+    |   60 |     b->next = newNode(5);
+    |      |               ^~~~~~~~~~
+    |      |               |
+    |      |               (34) returning to 'main' from 'newNode'
+    |   61 |     if(b->next == NULL) return 1;
+    |      |       ~        
+    |      |       |
+    |      |       (35) following 'false' branch...
+    |   62 |     b->next->next = newNode(6);
+    |      |     ~~~~~~~         ~~~~~~~~~~
+    |      |      |              |
+    |      |      |              (37) calling 'newNode' from 'main'
+    |      |      (36) ...to here
+    |
+    +--> 'newNode': events 38-40
+           |
+           |    8 | Node* newNode(int data) {
+           |      |       ^~~~~~~
+           |      |       |
+           |      |       (38) entry to 'newNode'
+           |    9 |     Node* node = (Node*)malloc(sizeof(Node));
+           |   10 |     if(node == NULL) {
+           |      |       ~
+           |      |       |
+           |      |       (39) following 'false' branch (when 'node' is non-NULL)...
+           |......
+           |   13 |     node->data = data;
+           |      |     ~~~~~~~~~~~~~~~~~
+           |      |                |
+           |      |                (40) ...to here
+           |
+    <------+
+    |
+  'main': events 41-44
+    |
+    |   62 |     b->next->next = newNode(6);
+    |      |                     ^~~~~~~~~~
+    |      |                     |
+    |      |                     (41) returning to 'main' from 'newNode'
+    |   63 |     if(b->next->next == NULL) return 1;
+    |      |       ~              
+    |      |       |
+    |      |       (42) following 'false' branch...
+    |   64 | 
+    |   65 |     Node* result = interleaveLists(a, b);
+    |      |                    ~~~~~~~~~~~~~~~~~~~~~
+    |      |                    |
+    |      |                    (43) ...to here
+    |      |                    (44) calling 'interleaveLists' from 'main'
+    |
+    +--> 'interleaveLists': events 45-47
+           |
+           |   18 | Node* interleaveLists(Node *a, Node *b) {
+           |      |       ^~~~~~~~~~~~~~~
+           |      |       |
+           |      |       (45) entry to 'interleaveLists'
+           |   19 |     if(a == NULL && b == NULL) {
+           |      |       ~
+           |      |       |
+           |      |       (46) following 'false' branch (when 'a' is non-NULL)...
+           |......
+           |   22 |     Node* result = NULL;
+           |      |           ~~~~~~
+           |      |           |
+           |      |           (47) ...to here
+           |
+         'interleaveLists': events 48-50
+           |
+           |   24 |     while(a != NULL && b != NULL) {
+           |      |                     ^
+           |      |                     |
+           |      |                     (48) following 'true' branch...
+           |   25 |         Node *n = newNode(a->data);
+           |      |                   ~~~~~~~~~~~~~~~~
+           |      |                   |
+           |      |                   (49) ...to here
+           |      |                   (50) calling 'newNode' from 'interleaveLists'
+           |
+           +--> 'newNode': events 51-53
+                  |
+                  |    8 | Node* newNode(int data) {
+                  |      |       ^~~~~~~
+                  |      |       |
+                  |      |       (51) entry to 'newNode'
+                  |    9 |     Node* node = (Node*)malloc(sizeof(Node));
+                  |   10 |     if(node == NULL) {
+                  |      |       ~
+                  |      |       |
+                  |      |       (52) following 'false' branch (when 'node' is non-NULL)...
+                  |......
+                  |   13 |     node->data = data;
+                  |      |     ~~~~~~~~~~~~~~~~~
+                  |      |                |
+                  |      |                (53) ...to here
+                  |
+           <------+
+           |
+         'interleaveLists': events 54-57
+           |
+           |   25 |         Node *n = newNode(a->data);
+           |      |                   ^~~~~~~~~~~~~~~~
+           |      |                   |
+           |      |                   (54) returning to 'interleaveLists' from 'newNode'
+           |   26 |         if(n == NULL) return NULL;
+           |      |           ~        
+           |      |           |
+           |      |           (55) following 'false' branch (when 'n' is non-NULL)...
+           |   27 |         *tailPointer = n;
+           |      |         ~~~~~~~~~~~~~~~~
+           |      |                      |
+           |      |                      (56) ...to here
+           |   28 |         tailPointer = &(n->next);
+           |   29 |         n = newNode(b->data);
+           |      |             ~~~~~~~~~~~~~~~~
+           |      |             |
+           |      |             (57) calling 'newNode' from 'interleaveLists'
+           |
+           +--> 'newNode': events 58-62
+                  |
+                  |    8 | Node* newNode(int data) {
+                  |      |       ^~~~~~~
+                  |      |       |
+                  |      |       (58) entry to 'newNode'
+                  |    9 |     Node* node = (Node*)malloc(sizeof(Node));
+                  |      |                         ~~~~~~~~~~~~~~~~~~~~
+                  |      |                         |
+                  |      |                         (59) allocated here
+                  |   10 |     if(node == NULL) {
+                  |      |       ~
+                  |      |       |
+                  |      |       (60) assuming 'node' is non-NULL
+                  |      |       (61) following 'false' branch (when 'node' is non-NULL)...
+                  |......
+                  |   13 |     node->data = data;
+                  |      |     ~~~~~~~~~~~~~~~~~
+                  |      |                |
+                  |      |                (62) ...to here
+                  |
+           <------+
+           |
+         'interleaveLists': events 63-65
+           |
+           |   29 |         n = newNode(b->data);
+           |      |             ^~~~~~~~~~~~~~~~
+           |      |             |
+           |      |             (63) returning to 'interleaveLists' from 'newNode'
+           |   30 |         if(n == NULL) return NULL;
+           |      |           ~  
+           |      |           |
+           |      |           (64) following 'false' branch (when 'n' is non-NULL)...
+           |   31 |         *tailPointer = n;
+           |      |         ~~~~~~~~~~~~~~~~
+           |      |                      |
+           |      |                      (65) ...to here
+           |
+         'interleaveLists': events 66-68
+           |
+           |   24 |     while(a != NULL && b != NULL) {
+           |      |                     ^
+           |      |                     |
+           |      |                     (66) following 'true' branch...
+           |   25 |         Node *n = newNode(a->data);
+           |      |                   ~~~~~~~~~~~~~~~~
+           |      |                   |
+           |      |                   (67) ...to here
+           |      |                   (68) calling 'newNode' from 'interleaveLists'
+           |
+           +--> 'newNode': events 69-71
+                  |
+                  |    8 | Node* newNode(int data) {
+                  |      |       ^~~~~~~
+                  |      |       |
+                  |      |       (69) entry to 'newNode'
+                  |    9 |     Node* node = (Node*)malloc(sizeof(Node));
+                  |   10 |     if(node == NULL) {
+                  |      |       ~
+                  |      |       |
+                  |      |       (70) following 'false' branch (when 'node' is non-NULL)...
+                  |......
+                  |   13 |     node->data = data;
+                  |      |     ~~~~~~~~~~~~~~~~~
+                  |      |                |
+                  |      |                (71) ...to here
+                  |
+           <------+
+           |
+         'interleaveLists': events 72-75
+           |
+           |   25 |         Node *n = newNode(a->data);
+           |      |                   ^~~~~~~~~~~~~~~~
+           |      |                   |
+           |      |                   (72) returning to 'interleaveLists' from 'newNode'
+           |   26 |         if(n == NULL) return NULL;
+           |      |           ~        
+           |      |           |
+           |      |           (73) following 'false' branch (when 'n' is non-NULL)...
+           |   27 |         *tailPointer = n;
+           |      |         ~~~~~~~~~~~~~~~~
+           |      |                      |
+           |      |                      (74) ...to here
+           |   28 |         tailPointer = &(n->next);
+           |   29 |         n = newNode(b->data);
+           |      |             ~~~~~~~~~~~~~~~~
+           |      |             |
+           |      |             (75) calling 'newNode' from 'interleaveLists'
+           |
+           +--> 'newNode': events 76-77
+                  |
+                  |    8 | Node* newNode(int data) {
+                  |      |       ^~~~~~~
+                  |      |       |
+                  |      |       (76) entry to 'newNode'
+                  |    9 |     Node* node = (Node*)malloc(sizeof(Node));
+                  |   10 |     if(node == NULL) {
+                  |      |       ~
+                  |      |       |
+                  |      |       (77) following 'true' branch (when 'node' is NULL)...
+                  |
+                'newNode': event 78
+                  |
+                  |   11 |         return NULL;
+                  |      |                ^~~~
+                  |      |                |
+                  |      |                (78) ...to here
+                  |
+           <------+
+           |
+         'interleaveLists': events 79-80
+           |
+           |   29 |         n = newNode(b->data);
+           |      |             ^~~~~~~~~~~~~~~~
+           |      |             |
+           |      |             (79) returning to 'interleaveLists' from 'newNode'
+           |   30 |         if(n == NULL) return NULL;
+           |      |           ~  
+           |      |           |
+           |      |           (80) following 'true' branch (when 'n' is NULL)...
+           |
+         'interleaveLists': event 81
+           |
+           |   30 |         if(n == NULL) return NULL;
+           |      |                              ^~~~
+           |      |                              |
+           |      |                              (81) ...to here
+           |
+         'interleaveLists': event 82
+           |
+           |   38 | }
+           |      | ^
+           |      | |
+           |      | (82) '<unknown>' leaks here; was allocated at (59)
+           |

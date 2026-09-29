@@ -1,0 +1,143 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#include <errno.h>
+#include <limits.h>
+
+typedef struct {
+    int *data;
+    size_t size;
+} IntTuple;
+
+void free_tuple(IntTuple *tuple) {
+    if (tuple != NULL) {
+        free(tuple->data);
+        tuple->data = NULL;
+        tuple->size = 0;
+    }
+}
+
+int parse_tuple(const char *str, IntTuple *result) {
+    char *buffer;
+    char *token;
+    char *endptr;
+    char *saveptr;
+    int *temp_array;
+    size_t capacity = 10;
+    size_t count = 0;
+    long val;
+
+    if (str == NULL || result == NULL) {
+        return -1;
+    }
+
+    result->data = NULL;
+    result->size = 0;
+
+    while (isspace((unsigned char)*str)) {
+        str++;
+    }
+
+    if (*str != '(') {
+        return -1;
+    }
+    str++;
+
+    buffer = strdup(str);
+    if (buffer == NULL) {
+        return -1;
+    }
+
+    temp_array = malloc(capacity * sizeof(int));
+    if (temp_array == NULL) {
+        free(buffer);
+        return -1;
+    }
+
+    token = strtok_r(buffer, ",)", &saveptr);
+    while (token != NULL) {
+        while (isspace((unsigned char)*token)) {
+            token++;
+        }
+
+        if (*token == '\0') {
+            free(temp_array);
+            free(buffer);
+            return -1;
+        }
+
+        errno = 0;
+        val = strtol(token, &endptr, 10);
+
+        if (errno == ERANGE || val > INT_MAX || val < INT_MIN) {
+            free(temp_array);
+            free(buffer);
+            return -1;
+        }
+
+        if (endptr == token) {
+            free(temp_array);
+            free(buffer);
+            return -1;
+        }
+
+        while (isspace((unsigned char)*endptr)) {
+            endptr++;
+        }
+
+        if (*endptr != '\0') {
+            free(temp_array);
+            free(buffer);
+            return -1;
+        }
+
+        if (count >= capacity) {
+            int *new_array;
+            capacity *= 2;
+            new_array = realloc(temp_array, capacity * sizeof(int));
+            if (new_array == NULL) {
+                free(temp_array);
+                free(buffer);
+                return -1;
+            }
+            temp_array = new_array;
+        }
+
+        temp_array[count++] = (int)val;
+        token = strtok_r(NULL, ",)", &saveptr);
+    }
+
+    free(buffer);
+
+    if (count == 0) {
+        free(temp_array);
+        result->data = NULL;
+        result->size = 0;
+    } else {
+        result->data = temp_array;
+        result->size = count;
+    }
+
+    return 0;
+}
+
+int main(void) {
+    const char *input = "(10, 20, 30, 40)";
+    IntTuple tuple;
+    size_t i;
+
+    if (parse_tuple(input, &tuple) == 0) {
+        printf("Parsed %zu elements: ", tuple.size);
+        for (i = 0; i < tuple.size; i++) {
+            printf("%d ", tuple.data[i]);
+        }
+        printf("\n");
+        free_tuple(&tuple);
+    } else {
+        fprintf(stderr, "Failed to parse tuple\n");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

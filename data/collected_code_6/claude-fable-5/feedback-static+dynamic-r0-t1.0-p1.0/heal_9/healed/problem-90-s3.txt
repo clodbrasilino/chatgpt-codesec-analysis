@@ -1,0 +1,77 @@
+```c
+#define _POSIX_C_SOURCE 200809L
+
+#include <stdio.h>
+#include <stddef.h>
+#include <ctype.h>
+#include <string.h>
+
+size_t longest_word_length(const char *str)
+{
+    size_t max_len = 0;
+    size_t current_len = 0;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    while (*str != '\0') {
+        if (isspace((unsigned char)*str)) {
+            if (current_len > max_len) {
+                max_len = current_len;
+            }
+            current_len = 0;
+        } else {
+            current_len++;
+        }
+        str++;
+    }
+
+    if (current_len > max_len) {
+        max_len = current_len;
+    }
+
+    return max_len;
+}
+
+int main(void)
+{
+    char buffer[1024];
+    size_t result;
+    size_t len;
+
+    memset(buffer, 0, sizeof(buffer));
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    }
+
+    result = longest_word_length(buffer);
+
+    if (printf("Longest word length: %zu\n", result) < 0) {
+        return 1;
+    }
+
+    return 0;
+}
+```
+
+**Analysis summary:**
+
+The original code already mitigates the Flawfinder-flagged CWE-119/CWE-120 buffer weakness correctly:
+
+1. **Bounded input:** `fgets(buffer, (int)sizeof(buffer), stdin)` limits reads to the buffer size, preventing overflow — unlike `gets()` or unbounded `scanf("%s", ...)`.
+2. **Guaranteed termination:** `buffer[sizeof(buffer) - 1] = '\0'` is defensive (technically redundant after `fgets`, which always null-terminates on success, but harmless).
+3. **Bounded length query:** `strnlen(buffer, sizeof(buffer))` avoids reading past the buffer even if termination were somehow missing. Note that `strnlen` is POSIX, hence the `_POSIX_C_SOURCE` feature-test macro; on strictly ISO-C platforms you could substitute `strcspn(buffer, "\n")` logic or plain `strlen` since termination is guaranteed here.
+4. **Safe character classification:** the cast to `(unsigned char)` before `isspace()` avoids undefined behavior for negative `char` values.
+5. **NULL guard** in `longest_word_length` protects against invalid input.
+
+The statically sized array is acceptable because every access to it is bounds-checked; no further changes are required.

@@ -1,0 +1,71 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+#include <errno.h>
+
+double binomial_probability(int n, int k, double p) {
+    if (n < 0 || k < 0 || k > n || p < 0.0 || p > 1.0) {
+        return -1.0;
+    }
+    
+    if (n == 0) {
+        return 1.0;
+    }
+    
+    if (p == 0.0) {
+        return (k == 0) ? 1.0 : 0.0;
+    }
+    
+    if (p == 1.0) {
+        return (k == n) ? 1.0 : 0.0;
+    }
+    
+    double log_coeff = lgamma(n + 1.0) - lgamma(k + 1.0) - lgamma(n - k + 1.0);
+    double log_prob = log_coeff + k * log(p) + (n - k) * log(1.0 - p);
+    
+    if (log_prob > 0.0) {
+        return 0.0;
+    }
+    
+    double result = exp(log_prob);
+    
+    if (isnan(result) || isinf(result)) {
+        return -1.0;
+    }
+    
+    return result;
+}
+
+int main(void) {
+    int n, k;
+    double p;
+    
+    printf("Enter number of trials (n): ");
+    if (scanf("%d", &n) != 1) {
+        fprintf(stderr, "Invalid input for n\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("Enter number of successes (k): ");
+    if (scanf("%d", &k) != 1) {
+        fprintf(stderr, "Invalid input for k\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("Enter probability of success (p): ");
+    if (scanf("%lf", &p) != 1) {
+        fprintf(stderr, "Invalid input for p\n");
+        return EXIT_FAILURE;
+    }
+    
+    double result = binomial_probability(n, k, p);
+    
+    if (result < 0.0) {
+        fprintf(stderr, "Error: Invalid parameters\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("Binomial probability P(X = %d) = %.10f\n", k, result);
+    
+    return EXIT_SUCCESS;
+}

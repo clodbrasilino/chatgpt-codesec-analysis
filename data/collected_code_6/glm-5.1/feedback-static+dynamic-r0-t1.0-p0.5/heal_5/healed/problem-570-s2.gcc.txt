@@ -1,0 +1,8 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_5/healed/problem-570-s2.c: In function 'should_remove':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_5/healed/problem-570-s2.c:14:46: error: implicit declaration of function 'tolower' [-Wimplicit-function-declaration]
+   14 |     for (char *p = lower_word; *p; p++) *p = tolower((unsigned char)*p);
+      |                                              ^~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_5/healed/problem-570-s2.c:4:1: note: include '<ctype.h>' or provide a declaration of 'tolower'
+    3 | #include <string.h>
+  +++ |+#include <ctype.h>
+    4 | 

@@ -1,0 +1,47 @@
+{
+  "task_id": 291,
+  "text": "Write a C function to find out the number of ways of painting the fence such that at most 2 adjacent posts have the same color for the given fence with n posts and k colors.",
+  "fn_candidates": [
+    "count_no_of_ways",
+    "CountNoOfWays",
+    "countNoOfWays",
+    "countnoofways"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "count_no_of_ways",
+      "args": [
+        2,
+        4
+      ],
+      "expected": 16,
+      "assert_src": "assert count_no_of_ways(2, 4) == 16"
+    },
+    {
+      "fn_name": "count_no_of_ways",
+      "args": [
+        3,
+        2
+      ],
+      "expected": 6,
+      "assert_src": "assert count_no_of_ways(3, 2) == 6"
+    },
+    {
+      "fn_name": "count_no_of_ways",
+      "args": [
+        4,
+        4
+      ],
+      "expected": 228,
+      "assert_src": "assert count_no_of_ways(4, 4) == 228"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

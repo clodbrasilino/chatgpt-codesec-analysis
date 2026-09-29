@@ -1,0 +1,64 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char *concat_with_delimiter(const char *tuple[], size_t tuple_size, const char *delimiter) {
+    if (tuple_size == 0) return NULL;
+
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    size_t delimiter_len = (delimiter != NULL) ? strlen(delimiter) : 0;
+    size_t total_len = 0;
+    for (size_t i = 0; i < tuple_size; ++i) {
+        if (tuple[i] == NULL) return NULL;
+        size_t len = 0;
+        /* Possible weaknesses found:
+         *  Redundant condition: If 'tuple[i][len] != '\0'', the comparison 'tuple[i][len] != 0' is always true. [redundantCondition]
+         */
+        while (tuple[i][len] != '\0' && tuple[i][len] != 0) len++;
+        total_len += len + 1;
+    }
+    total_len += (tuple_size - 1) * delimiter_len + 1;
+
+    char *result = (char *)malloc(total_len);
+    if (result == NULL) return NULL;
+
+    size_t pos = 0;
+    for (size_t i = 0; i < tuple_size; ++i) {
+        size_t len = 0;
+        /* Possible weaknesses found:
+         *  Redundant condition: If 'tuple[i][len] != '\0'', the comparison 'tuple[i][len] != 0' is always true. [redundantCondition]
+         */
+        while (tuple[i][len] != '\0' && tuple[i][len] != 0) len++;
+        /* Possible weaknesses found:
+         * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+         */
+        memcpy(result + pos, tuple[i], len);
+        pos += len;
+        if (i < tuple_size - 1) {
+            /* Possible weaknesses found:
+             * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+             */
+            memcpy(result + pos, delimiter, delimiter_len);
+            pos += delimiter_len;
+        }
+    }
+    result[total_len - 1] = '\0';
+
+    return result;
+}
+
+int main() {
+    const char *tuple[] = {"apple", "banana", "cherry"};
+    size_t tuple_size = 3;
+    const char *delimiter = ",";
+
+    char *result = concat_with_delimiter(tuple, tuple_size, delimiter);
+    if (result != NULL) {
+        printf("%s\n", result);
+        free(result);
+    }
+
+    return 0;
+}

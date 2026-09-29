@@ -1,0 +1,12 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_1/healed/problem-352.c: In function 'all_unique_chars':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_1/healed/problem-352.c:12:44: error: implicit declaration of function 'calloc' [-Wimplicit-function-declaration]
+   12 |     unsigned char *seen = (unsigned char *)calloc(UCHAR_MAX + 1, sizeof(unsigned char));
+      |                                            ^~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_1/healed/problem-352.c:5:1: note: include '<stdlib.h>' or provide a declaration of 'calloc'
+    4 | #include <limits.h>
+  +++ |+#include <stdlib.h>
+    5 | 
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_1/healed/problem-352.c:20:13: error: implicit declaration of function 'free' [-Wimplicit-function-declaration]
+   20 |             free(seen);
+      |             ^~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_1/healed/problem-352.c:20:13: note: include '<stdlib.h>' or provide a declaration of 'free'

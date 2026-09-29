@@ -1,0 +1,26 @@
+#include <stdio.h>
+
+long binomialCoefficient(int n, int k) {
+    long res = 1;
+    if (k > n - k) k = n - k;
+    for (int i = 0; i < k; ++i) {
+        res *= (n - i);
+        res /= (i + 1);
+    }
+    return res;
+}
+
+long sumOfProductOfBinomialCoefficients(int n) {
+    long sum = 0;
+    for (int k = 0; k <= n; ++k) {
+        sum += (binomialCoefficient(n, k) * binomialCoefficient(n, n - k));
+    }
+    return sum;
+}
+
+int main() {
+    int n = 5;
+    long result = sumOfProductOfBinomialCoefficients(n);
+    printf("%ld\n", result);
+    return 0;
+}

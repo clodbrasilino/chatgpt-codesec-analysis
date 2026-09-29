@@ -1,0 +1,102 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node* next;
+} Node;
+
+Node* createNode(int data) {
+    Node* newNode = (Node*)malloc(sizeof(Node));
+    if (newNode == NULL) {
+        return NULL;
+    }
+    newNode->data = data;
+    newNode->next = NULL;
+    return newNode;
+}
+
+void deleteList(Node** head_ref) {
+    Node* current = *head_ref;
+    Node* next;
+
+    while (current != NULL) {
+        next = current->next;
+        free(current);
+        current = next;
+    }
+    *head_ref = NULL;
+}
+
+Node* createAlternateList(Node* head) {
+    if (head == NULL || head->next == NULL) {
+        return NULL;
+    }
+
+    Node* newList = createNode(head->data);
+    if (newList == NULL) {
+        return NULL;
+    }
+
+    Node* current = head->next->next;
+    Node* newListCurrent = newList;
+
+    while (current != NULL) {
+        newListCurrent->next = createNode(current->data);
+        if (newListCurrent->next == NULL) {
+            deleteList(&newList);
+            return NULL;
+        }
+
+        newListCurrent = newListCurrent->next;
+        if (current->next != NULL) {
+            current = current->next->next;
+        } else {
+            break;
+        }
+    }
+
+    return newList;
+}
+
+void printList(Node* n) {
+    while (n != NULL) {
+        printf("%d ", n->data);
+        n = n->next;
+    }
+    printf("\n");
+}
+
+int main() {
+    Node* list = createNode(1);
+    /* Possible weaknesses found:
+     *  dereference of NULL '0' [CWE-476] [-Wanalyzer-null-dereference]
+     */
+    list->next = createNode(2);
+    /* Possible weaknesses found:
+     *  dereference of NULL '0' [CWE-476] [-Wanalyzer-null-dereference]
+     */
+    list->next->next = createNode(3);
+    /* Possible weaknesses found:
+     *  dereference of NULL '0' [CWE-476] [-Wanalyzer-null-dereference]
+     */
+    list->next->next->next = createNode(4);
+    /* Possible weaknesses found:
+     *  dereference of NULL '0' [CWE-476] [-Wanalyzer-null-dereference]
+     */
+    list->next->next->next->next = createNode(5);
+    /* Possible weaknesses found:
+     *  dereference of NULL '0' [CWE-476] [-Wanalyzer-null-dereference]
+     */
+    list->next->next->next->next->next = createNode(6);
+
+    Node* newList = createAlternateList(list);
+
+    printList(list);
+    printList(newList);
+
+    deleteList(&list);
+    deleteList(&newList);
+
+    return 0;
+}

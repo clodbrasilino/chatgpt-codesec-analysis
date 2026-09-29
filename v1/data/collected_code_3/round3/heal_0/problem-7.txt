@@ -1,0 +1,32 @@
+```C
+#include <stdio.h>
+#include <string.h>
+#include <regex.h>
+
+void find_words(char *str) {
+    regex_t regex;
+    regmatch_t matches[2];
+    char *pattern = "\\b\\w{4,}\\b";
+
+    regcomp(&regex, pattern, REG_EXTENDED);
+
+    while (regexec(&regex, str, 2, matches, 0) == 0) {
+        int start = matches[0].rm_so;
+        int end = matches[0].rm_eo;
+        char word[end - start + 1];
+        strncpy(word, &str[start], end - start);
+        word[end - start] = '\0';
+        printf("%s\n", word);
+        str += end;
+    }
+
+    regfree(&regex);
+}
+
+int main() {
+    char str[] = "This is a test string with some long words.";
+    find_words(str);
+    return 0;
+}
+```
+This code will find and print all words in the string that are at least 4 characters long. Note that this code uses POSIX regular expressions, which may not be available on all platforms. The regular expression `\b\w{4,}\b` matches any word boundary followed by 4 or more word characters (letters, numbers, or underscores) followed by another word boundary. The `regcomp` function compiles the regular expression, and the `regexec` function executes it on the string. The `regmatch_t` structure holds the start and end positions of the match, which are used to extract and print the word. The string pointer is then advanced past the end of the match, and the process repeats until no more matches are found. The `regfree` function is used to free the memory allocated for the regular expression.

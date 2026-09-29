@@ -1,0 +1,28 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int calculate_parity(unsigned int num) {
+    int parity = 0;
+    while (num) {
+        parity = !parity;
+        num = num & (num - 1);
+    }
+    return parity;
+}
+
+int main(void) {
+    unsigned int number;
+    int result;
+
+    if (scanf("%u", &number) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    result = calculate_parity(number);
+    printf("%d\n", result);
+
+    return EXIT_SUCCESS;
+}
+```

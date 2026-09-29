@@ -1,0 +1,85 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <regex.h>
+
+int find_five_letter_words(const char *text);
+static void print_regex_error(int errcode, const regex_t *regex);
+
+static void print_regex_error(int errcode, const regex_t *regex)
+{
+    size_t needed;
+    char *errbuf;
+
+    needed = regerror(errcode, regex, NULL, 0);
+    errbuf = malloc(needed);
+    if (errbuf == NULL) {
+        fprintf(stderr, "Regex error (unable to allocate error buffer)\n");
+        return;
+    }
+    regerror(errcode, regex, errbuf, needed);
+    fprintf(stderr, "Regex error: %s\n", errbuf);
+    free(errbuf);
+}
+
+int find_five_letter_words(const char *text)
+{
+    regex_t regex;
+    regmatch_t pmatch[3];
+    const char *pattern = "(^|[^[:alpha:]])([[:alpha:]]{5})([^[:alpha:]]|$)";
+    const char *cursor;
+    int ret;
+    int count = 0;
+
+    if (text == NULL) {
+        fprintf(stderr, "Input text is NULL\n");
+        return -1;
+    }
+
+    ret = regcomp(&regex, pattern, REG_EXTENDED);
+    if (ret != 0) {
+        print_regex_error(ret, &regex);
+        return -1;
+    }
+
+    cursor = text;
+    for (;;) {
+        ret = regexec(&regex, cursor, 3, pmatch, 0);
+        if (ret == REG_NOMATCH) {
+            break;
+        }
+        if (ret != 0) {
+            print_regex_error(ret, &regex);
+            regfree(&regex);
+            return -1;
+        }
+        if (pmatch[2].rm_so < 0 || pmatch[2].rm_eo <= pmatch[2].rm_so) {
+            break;
+        }
+        printf("%.*s\n", (int)(pmatch[2].rm_eo - pmatch[2].rm_so),
+               cursor + pmatch[2].rm_so);
+        count++;
+        cursor += pmatch[2].rm_eo;
+        if (*cursor == '\0') {
+            break;
+        }
+    }
+
+    regfree(&regex);
+    printf("Total five-letter words found: %d\n", count);
+    return 0;
+}
+
+int main(void)
+{
+    const char *input = "The quick brown foxes jumps over three lazy dogs today";
+
+    printf("Input: %s\n", input);
+    printf("Five-letter words:\n");
+
+    if (find_five_letter_words(input) != 0) {
+        fprintf(stderr, "Failed to process the input string\n");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

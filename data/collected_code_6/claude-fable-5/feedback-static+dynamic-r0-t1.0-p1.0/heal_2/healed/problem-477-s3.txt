@@ -1,0 +1,103 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#define BUFFER_SIZE 256
+
+char *to_lower_case(char *str)
+{
+    size_t i;
+
+    if (str == NULL) {
+        return NULL;
+    }
+
+    for (i = 0; str[i] != '\0'; i++) {
+        str[i] = (char)tolower((unsigned char)str[i]);
+    }
+
+    return str;
+}
+
+int main(void)
+{
+    char *buffer;
+    char *result;
+    size_t capacity = BUFFER_SIZE;
+    size_t length = 0;
+    int ch;
+
+    buffer = malloc(capacity);
+    if (buffer == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    while ((ch = fgetc(stdin)) != EOF && ch != '\n') {
+        if (length + 1 >= capacity) {
+            size_t new_capacity;
+            char *tmp;
+
+            if (capacity > SIZE_MAX / 2) {
+                fprintf(stderr, "Input too large\n");
+                free(buffer);
+                return EXIT_FAILURE;
+            }
+            new_capacity = capacity * 2;
+            tmp = realloc(buffer, new_capacity);
+            if (tmp == NULL) {
+                fprintf(stderr, "Memory allocation failed\n");
+                free(buffer);
+                return EXIT_FAILURE;
+            }
+            buffer = tmp;
+            capacity = new_capacity;
+        }
+        buffer[length++] = (char)ch;
+    }
+
+    if (length == 0 && ch == EOF) {
+        fprintf(stderr, "Error reading input\n");
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+
+    buffer[length] = '\0';
+
+    result = to_lower_case(buffer);
+    if (result == NULL) {
+        fprintf(stderr, "Conversion failed\n");
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+
+    if (printf("%s\n", result) < 0) {
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+
+    free(buffer);
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the original code and the changes made:**
+
+The original code was already largely defensive — it used `fgets()` with `sizeof(buffer)` to bound the read, stripped the trailing newline with `strcspn()`, checked all return values (`fgets`, `printf`), and correctly cast to `unsigned char` before calling `tolower()`, which avoids undefined behavior for negative `char` values. That cast is a detail many developers miss.
+
+The Flawfinder warning (CWE-119/CWE-120) flagged the statically-sized array `char buffer[BUFFER_SIZE]`. While the original usage was technically safe (bounds were respected), the fixed-size buffer had two residual issues:
+
+1. **Silent truncation** — input longer than 255 characters would be cut off and the remainder left in the stdin stream, producing incorrect output without any error indication.
+2. **Static sizing** — the tool's recommendation is to either enforce strict bounds checking or size the buffer dynamically to the actual input.
+
+The rewrite addresses this by reading character-by-character into a dynamically grown buffer (`malloc`/`realloc` with a doubling strategy), which:
+
+- Eliminates the fixed-size stack array entirely.
+- Handles arbitrarily long input lines without truncation.
+- Guards against `size_t` overflow when doubling capacity.
+- Uses a temporary pointer for `realloc` to avoid leaking the original buffer on allocation failure.
+- Frees memory on every exit path.
+
+The `to_lower_case()` function was kept as-is since it was already correct: NULL-checked, in-place, and safe with respect to `tolower()`'s domain requirements.

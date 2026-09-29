@@ -1,0 +1,134 @@
+## Analysis
+
+The code is already defensively written. The Flawfinder findings are largely false positives:
+
+1. **`char buffer[BUFFER_SIZE]` (CWE-119/120)** — Mitigated: `fgets` is called with `sizeof(buffer)`, a forced null terminator is written at `buffer[sizeof(buffer) - 1U]`, and `remove_first_last` receives the buffer capacity and uses `strnlen` with bounds enforcement.
+2. **`getchar` in loop (CWE-120/20)** — Mitigated: `discard_remaining_input` never stores the characters, so there is no buffer to overflow; it correctly terminates on both `'\n'` and `EOF`.
+3. **Single `getchar` for the character prompt** — Mitigated: `EOF` is checked before casting to `char`, and residual input is flushed.
+
+Minor improvements worth making in the rewrite:
+
+- Pass `sizeof(buffer)` directly (it's `size_t`) rather than casting to `int` for `fgets` — the cast is unnecessary noise and technically `fgets` takes an `int`, but keeping the constant small avoids any truncation concern; the explicit cast is fine but I'll keep it safe and idiomatic.
+- Check `printf`/`fprintf` results is overkill for this scope; not needed.
+- The double-`memmove` logic is correct (it removes the last occurrence first so `first_idx` remains valid, and the count includes the null terminator). Preserved as-is.
+
+## Rewritten Code
+
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+#define BUFFER_SIZE 256U
+
+static void remove_first_last(char *str, size_t max_len, char ch)
+{
+    size_t len;
+    size_t i;
+    size_t first_idx;
+    size_t last_idx;
+    int found_first;
+    int found_last;
+
+    if (str == NULL || max_len == 0U) {
+        return;
+    }
+
+    len = strnlen(str, max_len);
+    if (len >= max_len) {
+        str[max_len - 1U] = '\0';
+        len = max_len - 1U;
+    }
+    if (len == 0U) {
+        return;
+    }
+
+    found_first = 0;
+    found_last = 0;
+    first_idx = 0U;
+    last_idx = 0U;
+
+    for (i = 0U; i < len; i++) {
+        if (str[i] == ch) {
+            if (found_first == 0) {
+                first_idx = i;
+                found_first = 1;
+            }
+            last_idx = i;
+            found_last = 1;
+        }
+    }
+
+    if (found_first == 0) {
+        return;
+    }
+
+    if (found_last == 1 && last_idx != first_idx) {
+        memmove(&str[last_idx], &str[last_idx + 1U], len - last_idx);
+        len--;
+    }
+
+    memmove(&str[first_idx], &str[first_idx + 1U], len - first_idx);
+}
+
+static int discard_remaining_input(void)
+{
+    int c;
+
+    do {
+        c = getchar();
+    } while (c != '\n' && c != EOF);
+
+    return c;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    char ch;
+    int c;
+
+    printf("Enter a string: ");
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input string\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1U] = '\0';
+
+    if (strchr(buffer, '\n') == NULL) {
+        (void)discard_remaining_input();
+    }
+
+    buffer[strcspn(buffer, "\n")] = '\0';
+
+    printf("Enter a character to remove: ");
+    c = getchar();
+    if (c == EOF) {
+        fprintf(stderr, "Error reading character\n");
+        return EXIT_FAILURE;
+    }
+    ch = (char)c;
+
+    if (c != '\n') {
+        (void)discard_remaining_input();
+    }
+
+    remove_first_last(buffer, sizeof(buffer), ch);
+
+    printf("Result: %s\n", buffer);
+
+    return EXIT_SUCCESS;
+}
+```
+
+## Why the flagged weaknesses are resolved
+
+| Finding | Resolution |
+|---|---|
+| `char buffer[256]` overflow risk | `fgets` bounded by `sizeof(buffer)`; explicit null termination; callee re-validates length via `strnlen(str, max_len)` |
+| `getchar` in loop | No data stored — pure drain loop with `EOF` handling, so CWE-120 cannot apply |
+| Unbounded input line | Detected via missing `'\n'` and flushed with `discard_remaining_input`, preventing stale stdin data from corrupting the second prompt |
+| `EOF` truncation to `char` | `c` kept as `int`, checked against `EOF` before the narrowing cast |
+
+The program is safe against buffer overflows, handles `EOF` and oversized input gracefully, and the two-`memmove` removal preserves the null terminator correctly in both the single-occurrence and multi-occurrence cases.

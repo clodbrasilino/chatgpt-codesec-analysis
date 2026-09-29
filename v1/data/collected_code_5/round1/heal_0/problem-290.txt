@@ -1,0 +1,44 @@
+```C
+#include <stdio.h>
+#include <stdlib.h>
+
+struct ListOfLists {
+    int** list;
+    int* sizeList;
+    int size;
+};
+
+int** findMaxLenList(struct ListOfLists lol, int* sizeMax) {
+    int max = 0;
+    for (int i = 0; i < lol.size; i++) {
+        if (lol.sizeList[i] > max)
+            max = lol.sizeList[i];
+    }
+    *sizeMax = 0;
+    for (int i = 0; i < lol.size; i++) {
+        if (lol.sizeList[i] == max)
+            (*sizeMax)++;
+    }
+    int** result = (int**)malloc(*sizeMax * sizeof(int*));
+    if(!result) exit(1);
+    int count = 0;
+    for (int i = 0; i < lol.size; i++) {
+        if (lol.sizeList[i] == max) {
+            result[count] = lol.list[i];
+            count++;
+        }
+    }
+    return result;
+}
+
+int main() {
+    struct ListOfLists lol;
+    // Remember to initialize the structure here.
+    int sizeMax;
+    int** maxLists = findMaxLenList(lol, &sizeMax);
+    // Remember to deallocate memory here.
+    return 0;
+}
+```
+
+This code may have a lack of proper memory allocation and de-allocation, and includes some "placeholder comments" to indicate where those should be, as the proper allocation and de-allocation significantly depends on the exact context, where and how this code is used and initial data structure organization. Please ensure these points are covered to avoid memory leaks and possible undefined behaviours.

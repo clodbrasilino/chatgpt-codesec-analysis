@@ -1,0 +1,65 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+int reorganizeString(const char *str) {
+    if (str == NULL) {
+        return 0;
+    }
+
+    int n = strlen(str);
+    if (n == 0) {
+        return 1;
+    }
+
+    int count[26] = {0};
+    int maxCount = 0;
+
+    for (int i = 0; i < n; i++) {
+        if (str[i] >= 'a' && str[i] <= 'z') {
+            count[str[i] - 'a']++;
+            if (count[str[i] - 'a'] > maxCount) {
+                maxCount = count[str[i] - 'a'];
+            }
+        } else if (str[i] >= 'A' && str[i] <= 'Z') {
+            count[str[i] - 'A']++;
+            if (count[str[i] - 'A'] > maxCount) {
+                maxCount = count[str[i] - 'A'];
+            }
+        } else {
+            return 0;
+        }
+    }
+
+    if (maxCount > (n + 1) / 2) {
+        return 0;
+    }
+
+    return 1;
+}
+
+int main(void) {
+    const char *testCases[] = {
+        "aab",
+        "aaab",
+        "aba",
+        "aabbcc",
+        "abcde",
+        "",
+        NULL
+    };
+    int numTests = sizeof(testCases) / sizeof(testCases[0]);
+
+    for (int i = 0; i < numTests; i++) {
+        int result = reorganizeString(testCases[i]);
+        if (testCases[i] != NULL) {
+            printf("String: %s -> Can be rearranged: %s\n", testCases[i], result ? "Yes" : "No");
+        } else {
+            printf("String: NULL -> Can be rearranged: %s\n", result ? "Yes" : "No");
+        }
+    }
+
+    return 0;
+}
+```

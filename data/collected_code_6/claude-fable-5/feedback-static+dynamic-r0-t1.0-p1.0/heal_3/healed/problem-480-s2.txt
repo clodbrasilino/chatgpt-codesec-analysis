@@ -1,0 +1,73 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <limits.h>
+
+int max_occurring_char(const char *str, char *result)
+{
+    size_t counts[UCHAR_MAX + 1] = {0};
+    size_t max_count = 0;
+    size_t i;
+    unsigned char best = 0;
+    int found = 0;
+
+    if (str == NULL || result == NULL) {
+        return -1;
+    }
+
+    for (i = 0; str[i] != '\0'; i++) {
+        unsigned char c = (unsigned char)str[i];
+        counts[c]++;
+        if (counts[c] > max_count) {
+            max_count = counts[c];
+            best = c;
+            found = 1;
+        }
+    }
+
+    if (!found) {
+        return -1;
+    }
+
+    *result = (char)best;
+    return 0;
+}
+
+int main(void)
+{
+    char buffer[256];
+    char result;
+
+    printf("Enter a string: ");
+    fflush(stdout);
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[strcspn(buffer, "\n")] = '\0';
+
+    if (max_occurring_char(buffer, &result) != 0) {
+        fprintf(stderr, "No characters found in input\n");
+        return 1;
+    }
+
+    printf("Maximum occurring character: %c\n", result);
+    return 0;
+}
+```
+
+**Analysis notes:**
+
+The Flawfinder warning on `char buffer[256]` is a false positive in this context. The code is already safe against the flagged weakness (CWE-119/CWE-120) for the following reasons:
+
+1. **Bounded input**: `fgets(buffer, sizeof(buffer), stdin)` limits reads to at most 255 characters plus the null terminator, using `sizeof(buffer)` rather than a hardcoded magic number, so the size expression stays correct even if the buffer size changes.
+
+2. **Null-termination guaranteed**: `fgets` always null-terminates on success, and the `strcspn` idiom safely strips the trailing newline without risking out-of-bounds access (if no newline exists, `strcspn` returns the index of the existing null terminator, which is simply overwritten with another null byte).
+
+3. **Defensive function design**: `max_occurring_char` validates its pointer arguments, casts to `unsigned char` before indexing the `counts` array (avoiding undefined behavior with negative `char` values on platforms where `char` is signed), and sizes the array as `UCHAR_MAX + 1` so every possible byte value is a valid index.
+
+4. **Error handling**: Both the `fgets` failure path and the empty-string case are handled with distinct error messages and a nonzero exit status.
+
+No functional changes were required; the original code already implements the mitigations the static-analysis comment asks to verify.

@@ -1,0 +1,89 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int id;
+    int value;
+} Tuple;
+
+void swap(Tuple* a, Tuple* b) {
+    Tuple temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+void maxHeapify(Tuple arr[], int n, int i) {
+    int largest = i;
+    int left = 2 * i + 1;
+    int right = 2 * i + 2;
+
+    if (left < n && arr[left].value > arr[largest].value) {
+        largest = left;
+    }
+
+    if (right < n && arr[right].value > arr[largest].value) {
+        largest = right;
+    }
+
+    if (largest != i) {
+        swap(&arr[i], &arr[largest]);
+        maxHeapify(arr, n, largest);
+    }
+}
+
+void buildMaxHeap(Tuple arr[], int n) {
+    for (int i = n / 2 - 1; i >= 0; i--) {
+        maxHeapify(arr, n, i);
+    }
+}
+
+Tuple* findMinimumKRecords(Tuple* arr, int n, int k) {
+    if (arr == NULL || n <= 0 || k <= 0) {
+        return NULL;
+    }
+
+    if (k > n) {
+        k = n;
+    }
+
+    Tuple* result = (Tuple*)malloc(k * sizeof(Tuple));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    for (int i = 0; i < k; i++) {
+        result[i] = arr[i];
+    }
+
+    buildMaxHeap(result, k);
+
+    for (int i = k; i < n; i++) {
+        if (arr[i].value < result[0].value) {
+            result[0] = arr[i];
+            maxHeapify(result, k, 0);
+        }
+    }
+
+    return result;
+}
+
+int main() {
+    Tuple arr[] = {
+        {1, 50}, {2, 30}, {3, 20}, {4, 60}, {5, 10}, {6, 40}
+    };
+    int n = sizeof(arr) / sizeof(arr[0]);
+    int k = 3;
+
+    Tuple* minK = findMinimumKRecords(arr, n, k);
+
+    if (minK != NULL) {
+        for (int i = 0; i < k; i++) {
+            printf("ID: %d, Value: %d\n", minK[i].id, minK[i].value);
+        }
+        free(minK);
+    } else {
+        printf("Error allocating memory or invalid input.\n");
+    }
+
+    return 0;
+}

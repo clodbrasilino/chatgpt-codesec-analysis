@@ -1,0 +1,57 @@
+#include <stdio.h>
+#include <regex.h>
+#include <string.h>
+
+void analyze_string(const char *str) {
+    regex_t regex;
+    int ret;
+
+    /* Uppercase */
+    ret = regcomp(&regex, "^[A-Z]+$", REG_EXTENDED);
+    if (ret == 0) {
+        ret = regexec(&regex, str, 0, NULL, 0);
+    }
+    if (ret == 0) {
+        printf("Uppercase\n");
+    } else {
+        regfree(&regex);
+    }
+
+    /* Lowercase */
+    ret = regcomp(&regex, "^[a-z]+$", REG_EXTENDED);
+    if (ret == 0) {
+        ret = regexec(&regex, str, 0, NULL, 0);
+    }
+    if (ret == 0) {
+        printf("Lowercase\n");
+    } else {
+        regfree(&regex);
+    }
+
+    /* Special characters */
+    ret = regcomp(&regex, "^[^a-zA-Z0-9]+$", REG_EXTENDED);
+    if (ret == 0) {
+        ret = regexec(&regex, str, 0, NULL, 0);
+    }
+    if (ret == 0) {
+        printf("Special Characters\n");
+    } else {
+        regfree(&regex);
+    }
+
+    /* Numeric values */
+    ret = regcomp(&regex, "^[0-9]+$", REG_EXTENDED);
+    if (ret == 0) {
+        ret = regexec(&regex, str, 0, NULL, 0);
+    }
+    if (ret == 0) {
+        printf("Numeric Values\n");
+    }
+    regfree(&regex);
+}
+
+int main() {
+    const char *input = "Test123!";
+    analyze_string(input);
+    return 0;
+}

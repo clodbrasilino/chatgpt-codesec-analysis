@@ -1,0 +1,66 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+#include <stdbool.h>
+
+bool find_second_smallest(const int *arr, size_t n, int *result)
+{
+    if (arr == NULL || result == NULL || n < 2) {
+        return false;
+    }
+
+    int smallest = INT_MAX;
+    int second = INT_MAX;
+    bool found_second = false;
+
+    for (size_t i = 0; i < n; i++) {
+        if (arr[i] < smallest) {
+            if (smallest != INT_MAX || i > 0) {
+                second = smallest;
+                found_second = true;
+            }
+            smallest = arr[i];
+        } else if (arr[i] > smallest && arr[i] < second) {
+            second = arr[i];
+            found_second = true;
+        }
+    }
+
+    if (!found_second || second == INT_MAX) {
+        bool has_distinct = false;
+        for (size_t i = 0; i < n; i++) {
+            if (arr[i] != smallest) {
+                has_distinct = true;
+                break;
+            }
+        }
+        if (!has_distinct) {
+            return false;
+        }
+    }
+
+    *result = second;
+    return true;
+}
+
+int main(void)
+{
+    int numbers[] = { 34, 15, 88, 2, 7, 15, 2, 91 };
+    size_t count = sizeof(numbers) / sizeof(numbers[0]);
+    int second_smallest = 0;
+
+    if (find_second_smallest(numbers, count, &second_smallest)) {
+        if (printf("Second smallest: %d\n", second_smallest) < 0) {
+            return EXIT_FAILURE;
+        }
+    } else {
+        if (fprintf(stderr, "No second smallest value exists\n") < 0) {
+            return EXIT_FAILURE;
+        }
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```

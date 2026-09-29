@@ -1,0 +1,38 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int checkOdds(int *array, int size){
+    for(int i = 1; i < size; i += 2){
+        if(array[i] % 2 == 0) {
+            return 0;
+        }
+    }
+    return 1;
+}
+
+int main() {
+    int size;
+    printf("Enter size of array: ");
+    scanf("%d", &size);
+    int *array = malloc(size * sizeof(int));
+
+    if(array == NULL) {
+        printf("Unable to allocate memory.");
+        return 1;
+    }
+
+    printf("Enter elements of array: ");
+    for(int i = 0; i < size; i++){
+        scanf("%d", &array[i]);
+    }
+
+    int result = checkOdds(array, size);
+    if(result == 1) {
+        printf("Every odd index contains an odd number.");
+    } else {
+        printf("Every odd index does not contain an odd number.");
+    } 
+
+    free(array);
+    return 0;
+}

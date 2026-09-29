@@ -1,0 +1,27 @@
+#include <stdio.h>
+#include <math.h>
+
+double findMaxValue(double (*f)(double), double start, double end, double step) {
+    double max_value = f(start);
+    double x;
+    for (x = start; x <= end; x += step) {
+        double value = f(x);
+        if (value > max_value) {
+            max_value = value;
+        }
+    }
+    return max_value;
+}
+
+double myFunction(double x) {
+    return sin(x);
+}
+
+int main() {
+    double start = 0.0;
+    double end = 2 * M_PI;
+    double step = 0.01;
+    double max_value = findMaxValue(myFunction, start, end, step);
+    printf("Max value: %f\n", max_value);
+    return 0;
+}

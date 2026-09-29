@@ -1,0 +1,50 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int maxSubsequenceLength(int arr[], int n, int diff) {
+    if (arr == NULL || n <= 0 || diff < 0) {
+        return 0;
+    }
+
+    int *dp = (int *)malloc(n * sizeof(int));
+    if (dp == NULL) {
+        return 0;
+    }
+
+    for (int i = 0; i < n; i++) {
+        dp[i] = 1;
+    }
+
+    int maxLen = 1;
+
+    for (int i = 1; i < n; i++) {
+        for (int j = 0; j < i; j++) {
+            int absDiff = arr[i] - arr[j];
+            if (absDiff < 0) {
+                absDiff = -absDiff;
+            }
+            if (absDiff == diff && dp[i] < dp[j] + 1) {
+                dp[i] = dp[j] + 1;
+            }
+        }
+        if (dp[i] > maxLen) {
+            maxLen = dp[i];
+        }
+    }
+
+    free(dp);
+    return maxLen;
+}
+
+int main(void) {
+    int arr[] = {1, 5, 3, 4, 2};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    int diff = 2;
+
+    int result = maxSubsequenceLength(arr, n, diff);
+    printf("%d\n", result);
+
+    return 0;
+}
+```

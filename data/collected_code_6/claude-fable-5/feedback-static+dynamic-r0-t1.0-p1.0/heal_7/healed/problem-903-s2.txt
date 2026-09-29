@@ -1,0 +1,78 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+static unsigned int count_set_bits(unsigned int num)
+{
+    unsigned int count = 0U;
+
+    while (num > 0U)
+    {
+        count += (num & 1U);
+        num >>= 1U;
+    }
+
+    return count;
+}
+
+static unsigned long long total_set_bits(unsigned int n)
+{
+    unsigned long long total = 0ULL;
+    unsigned int i;
+
+    for (i = 1U; i <= n; i++)
+    {
+        total += (unsigned long long)count_set_bits(i);
+
+        if (i == n)
+        {
+            break;
+        }
+    }
+
+    return total;
+}
+
+int main(void)
+{
+    unsigned int n = 0U;
+    int result;
+
+    printf("Enter a positive integer n: ");
+
+    result = scanf("%u", &n);
+    if (result != 1)
+    {
+        fprintf(stderr, "Error: invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (n == 0U)
+    {
+        fprintf(stderr, "Error: n must be greater than 0\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Total set bits from 1 to %u: %llu\n", n, total_set_bits(n));
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The failing test cases in the comments (`expected 4, got 2` and `expected 17, got 3`) point to a classic bug pattern: an earlier version was likely returning `count_set_bits(n)` for just the final number instead of the *cumulative* sum from 1 to n:
+
+- Test 1: `n = 3` → cumulative total is `1 + 1 + 2 = 4`, but `count_set_bits(3)` alone is `2`.
+- Test 2: `n = 10` → cumulative total is `17`, but a single-value count would yield a small number like `3`.
+
+The presented `total_set_bits` function correctly accumulates `count_set_bits(i)` for every `i` in `[1, n]`, so both test cases now pass:
+
+- `total_set_bits(3)` → **4** ✓
+- `total_set_bits(10)` → **17** ✓
+
+Other defensive measures already in place and preserved:
+
+1. **Overflow safety** — the accumulator is `unsigned long long`, and each per-number count is explicitly cast before addition, since the total for large `n` (near `UINT_MAX`) far exceeds `unsigned int` range.
+2. **Infinite-loop guard** — the `if (i == n) break;` inside the loop prevents wraparound when `n == UINT_MAX`, where `i <= n` would otherwise always be true after `i` overflows back to 0.
+3. **Input validation** — the `scanf` return value is checked, and `n == 0` is rejected, avoiding undefined behavior on malformed input.

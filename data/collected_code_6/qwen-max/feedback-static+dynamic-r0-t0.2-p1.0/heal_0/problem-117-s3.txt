@@ -1,0 +1,58 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+typedef struct {
+    char *str;
+} Element;
+
+typedef struct {
+    Element *elements;
+    int size;
+} List;
+
+float str_to_float(const char *str) {
+    char *endptr;
+    float value = strtod(str, &endptr);
+    if (endptr == str || *endptr != '\0') {
+        return -1.0f; // Indicate conversion failure
+    }
+    return value;
+}
+
+void convert_list_to_float(List *list) {
+    for (int i = 0; i < list->size; ++i) {
+        float value = str_to_float(list->elements[i].str);
+        if (value != -1.0f) {
+            printf("Converted: %s -> %f\n", list->elements[i].str, value);
+        } else {
+            printf("Failed to convert: %s\n", list->elements[i].str);
+        }
+    }
+}
+
+int main() {
+    List list = { .size = 4 };
+    list.elements = (Element *)malloc(list.size * sizeof(Element));
+    if (list.elements == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return 1;
+    }
+
+    list.elements[0].str = "123.45";
+    list.elements[1].str = "67.89";
+    list.elements[2].str = "abc";
+    list.elements[3].str = "100.0";
+
+    convert_list_to_float(&list);
+
+    for (int i = 0; i < list.size; ++i) {
+        free(list.elements[i].str);
+    }
+    free(list.elements);
+
+    return 0;
+}
+```

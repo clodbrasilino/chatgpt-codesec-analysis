@@ -1,0 +1,58 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    int a;
+    int b;
+} Tuple;
+
+typedef struct {
+    Tuple tuple;
+    int frequency;
+} TupleFrequency;
+
+int compareTuples(const void *a, const void *b) {
+    return (memcmp(a, b, sizeof(Tuple)));
+}
+
+void assignFrequencies(Tuple *tuples, int n, TupleFrequency **result, int *resultSize) {
+    if (n == 0) return;
+    
+    qsort(tuples, n, sizeof(Tuple), compareTuples);
+    
+    *result = (TupleFrequency *)malloc(n * sizeof(TupleFrequency));
+    if (*result == NULL) exit(EXIT_FAILURE);
+    
+    int count = 1;
+    (*result)[0].tuple = tuples[0];
+    for (int i = 1; i < n; ++i) {
+        if (compareTuples(&tuples[i - 1], &tuples[i]) != 0) {
+            (*result)[*resultSize].tuple = tuples[i];
+            (*result)[*resultSize].frequency = count;
+            (*resultSize)++;
+            count = 1;
+        } else {
+            count++;
+        }
+    }
+    (*result)[*resultSize].tuple = tuples[n - 1];
+    (*result)[*resultSize].frequency = count;
+    (*resultSize)++;
+}
+
+int main() {
+    Tuple tuples[] = {{1, 2}, {3, 4}, {1, 2}, {5, 6}, {3, 4}, {3, 4}};
+    int n = sizeof(tuples) / sizeof(tuples[0]);
+    TupleFrequency *result = NULL;
+    int resultSize = 0;
+    
+    assignFrequencies(tuples, n, &result, &resultSize);
+    
+    for (int i = 0; i < resultSize; ++i) {
+        printf("Tuple: (%d, %d) Frequency: %d\n", result[i].tuple.a, result[i].tuple.b, result[i].frequency);
+    }
+    
+    free(result);
+    return 0;
+}

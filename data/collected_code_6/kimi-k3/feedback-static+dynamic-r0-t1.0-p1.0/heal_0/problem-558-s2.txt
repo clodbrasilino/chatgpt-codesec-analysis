@@ -1,0 +1,39 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int digit_distance(int a, int b) {
+    int distance = 0;
+    long long abs_a = llabs((long long)a);
+    long long abs_b = llabs((long long)b);
+    
+    if (abs_a == 0 && abs_b == 0) {
+        return 0;
+    }
+    
+    while (abs_a > 0 || abs_b > 0) {
+        int digit_a = (int)(abs_a % 10);
+        int digit_b = (int)(abs_b % 10);
+        distance += abs(digit_a - digit_b);
+        abs_a /= 10;
+        abs_b /= 10;
+    }
+    
+    return distance;
+}
+
+int main(void) {
+    int num1, num2;
+    
+    printf("Enter two integers: ");
+    if (scanf("%d %d", &num1, &num2) != 2) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    int result = digit_distance(num1, num2);
+    printf("Digit distance: %d\n", result);
+    
+    return EXIT_SUCCESS;
+}
+```

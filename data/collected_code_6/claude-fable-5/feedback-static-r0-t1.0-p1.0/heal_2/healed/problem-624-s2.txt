@@ -1,0 +1,70 @@
+```c
+#include <stdio.h>
+#include <ctype.h>
+#include <string.h>
+#include <stdlib.h>
+
+#define BUFFER_SIZE 256
+
+char *string_to_upper(char *str, size_t max_len)
+{
+    size_t i;
+    size_t len;
+
+    if (str == NULL || max_len == 0) {
+        return NULL;
+    }
+
+    len = strnlen(str, max_len);
+    if (len == max_len) {
+        return NULL;
+    }
+
+    for (i = 0; i < len; i++) {
+        str[i] = (char)toupper((unsigned char)str[i]);
+    }
+
+    return str;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    char *result;
+
+    printf("Enter a string: ");
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+    buffer[strcspn(buffer, "\n")] = '\0';
+
+    result = string_to_upper(buffer, sizeof(buffer));
+    if (result == NULL) {
+        fprintf(stderr, "Conversion failed\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Uppercase: %s\n", result);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The Flawfinder warning (CWE-119/CWE-120) flagged the statically-sized `buffer` array, but the original code already mitigates every path where that could become a real overflow:
+
+1. **Bounded input:** `fgets(buffer, sizeof(buffer), stdin)` limits the read to `BUFFER_SIZE - 1` characters plus the null terminator, so no overflow can occur during input.
+
+2. **Guaranteed termination:** `buffer[sizeof(buffer) - 1] = '\0';` is defensive redundancy — `fgets` already null-terminates on success — but it costs nothing and protects against future refactoring where the read function might change.
+
+3. **Safe newline strip:** `strcspn(buffer, "\n")` never returns an index outside the string, so the newline removal cannot write out of bounds (unlike the common but risky `buffer[strlen(buffer) - 1] = '\0'` idiom, which underflows on an empty string).
+
+4. **Bounded processing:** `string_to_upper` uses `strnlen` with an explicit `max_len` and rejects unterminated buffers (`len == max_len`), so it never iterates past the caller-supplied bound.
+
+5. **Correct `toupper` usage:** casting to `unsigned char` before calling `toupper` avoids undefined behavior for negative `char` values on platforms where `char` is signed.
+
+The warning is therefore a false positive in this context; the code is already the fix. No changes were required beyond leaving the sound bounds-checking structure intact.

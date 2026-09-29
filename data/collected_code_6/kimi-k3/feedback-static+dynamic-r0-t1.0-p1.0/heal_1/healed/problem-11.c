@@ -1,0 +1,53 @@
+#include <stdio.h>
+#include <string.h>
+
+void removeFirstLastOccurrence(char *str, char ch) {
+    if (str == NULL) {
+        return;
+    }
+
+    size_t len = strlen(str);
+    if (len == 0) {
+        return;
+    }
+
+    size_t first = len;
+    size_t last = len;
+
+    for (size_t i = 0; i < len; i++) {
+        if (str[i] == ch) {
+            first = i;
+            break;
+        }
+    }
+
+    for (size_t i = len; i > 0; i--) {
+        if (str[i - 1] == ch) {
+            last = i - 1;
+            break;
+        }
+    }
+
+    if (first == len) {
+        return;
+    }
+
+    size_t writeIndex = 0;
+    for (size_t i = 0; i < len; i++) {
+        if (i != first && i != last) {
+            str[writeIndex++] = str[i];
+        }
+    }
+    str[writeIndex] = '\0';
+}
+
+int main(void) {
+    char str[] = "hello world";
+    char ch = 'l';
+
+    printf("Original string: %s\n", str);
+    removeFirstLastOccurrence(str, ch);
+    printf("Modified string: %s\n", str);
+
+    return 0;
+}

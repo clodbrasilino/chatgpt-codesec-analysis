@@ -1,0 +1,89 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char* first;
+    char* second;
+} Tuple;
+
+Tuple* string_to_tuple(const char* input) {
+    char* str = strdup(input);
+    if (str == NULL) return NULL;
+
+    char* token = strtok(str, " ");
+    if (token == NULL) {
+        free(str);
+        return NULL;
+    }
+
+    Tuple* tuple = (Tuple*)malloc(sizeof(Tuple));
+    if (tuple == NULL) {
+        free(str);
+        return NULL;
+    }
+
+    tuple->first = strdup(token);
+    if (tuple->first == NULL) {
+        free(tuple);
+        free(str);
+        return NULL;
+    }
+
+    token = strtok(NULL, " ");
+    if (token == NULL) {
+        free(str);
+        free_tuple(tuple);
+        return NULL;
+    }
+
+    tuple->second = strdup(token);
+    if (tuple->second == NULL) {
+        free_tuple(tuple);
+        free(str);
+        return NULL;
+    }
+
+    free(str);
+    return tuple;
+}
+
+void free_tuple(Tuple* tuple) {
+    if (tuple != NULL) {
+        free(tuple->first);
+        free(tuple->second);
+        free(tuple);
+    }
+}
+
+int main() {
+    const char* input1 = "python 3.0";
+    const char* input2 = "1.5 10";
+    const char* input3 = "item1";
+
+    Tuple* tuple1 = string_to_tuple(input1);
+    if (tuple1 != NULL) {
+        printf("First: %s, Second: %s\n", tuple1->first, tuple1->second);
+        free_tuple(tuple1);
+    } else {
+        printf("Failed to create tuple for input1.\n");
+    }
+
+    Tuple* tuple2 = string_to_tuple(input2);
+    if (tuple2 != NULL) {
+        printf("First: %s, Second: %s\n", tuple2->first, tuple2->second);
+        free_tuple(tuple2);
+    } else {
+        printf("Failed to create tuple for input2.\n");
+    }
+
+    Tuple* tuple3 = string_to_tuple(input3);
+    if (tuple3 != NULL) {
+        printf("First: %s, Second: %s\n", tuple3->first, tuple3->second);
+        free_tuple(tuple3);
+    } else {
+        printf("Failed to create tuple for input3.\n");
+    }
+
+    return 0;
+}

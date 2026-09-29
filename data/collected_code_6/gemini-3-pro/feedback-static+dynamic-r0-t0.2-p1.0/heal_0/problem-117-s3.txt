@@ -1,0 +1,99 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+typedef struct {
+    float *array;
+    size_t size;
+    size_t capacity;
+} FloatList;
+
+void initFloatList(FloatList *list, size_t initialCapacity) {
+    if (!list || initialCapacity == 0) return;
+    list->array = (float *)malloc(initialCapacity * sizeof(float));
+    if (!list->array) {
+        list->size = 0;
+        list->capacity = 0;
+        return;
+    }
+    list->size = 0;
+    list->capacity = initialCapacity;
+}
+
+void addFloat(FloatList *list, float value) {
+    if (!list || !list->array) return;
+    if (list->size >= list->capacity) {
+        size_t newCapacity = list->capacity * 2;
+        float *newArray = (float *)realloc(list->array, newCapacity * sizeof(float));
+        if (!newArray) return;
+        list->array = newArray;
+        list->capacity = newCapacity;
+    }
+    list->array[list->size++] = value;
+}
+
+void freeFloatList(FloatList *list) {
+    if (list && list->array) {
+        free(list->array);
+        list->array = NULL;
+        list->size = 0;
+        list->capacity = 0;
+    }
+}
+
+int isConvertibleToFloat(const char *str) {
+    if (!str || *str == '\0') return 0;
+    
+    char *endptr;
+    strtof(str, &endptr);
+    
+    while (isspace((unsigned char)*endptr)) {
+        endptr++;
+    }
+    
+    return *endptr == '\0';
+}
+
+FloatList convertToFloatList(const char **stringList, size_t listSize) {
+    FloatList result;
+    initFloatList(&result, listSize > 0 ? listSize : 1);
+    
+    if (!stringList || !result.array) return result;
+
+    for (size_t i = 0; i < listSize; ++i) {
+        if (stringList[i] && isConvertibleToFloat(stringList[i])) {
+            float val = strtof(stringList[i], NULL);
+            addFloat(&result, val);
+        }
+    }
+    
+    return result;
+}
+
+int main(void) {
+    const char *inputStrings[] = {
+        "3.14",
+        "not_a_float",
+        "-42.5",
+        "  100.001  ",
+        "",
+        "0",
+        "123abc"
+    };
+    size_t numStrings = sizeof(inputStrings) / sizeof(inputStrings[0]);
+
+    FloatList floats = convertToFloatList(inputStrings, numStrings);
+
+    if (floats.array) {
+        for (size_t i = 0; i < floats.size; ++i) {
+            printf("%f\n", floats.array[i]);
+        }
+    }
+
+    freeFloatList(&floats);
+
+    return 0;
+}
+```

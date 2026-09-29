@@ -1,0 +1,24 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+#include <stdlib.h>
+
+bool is_odd(int number) {
+    return (number & 1) != 0;
+}
+
+int main(void) {
+    int number;
+
+    if (scanf("%d", &number) == 1) {
+        if (is_odd(number)) {
+            printf("True\n");
+        } else {
+            printf("False\n");
+        }
+        return EXIT_SUCCESS;
+    }
+
+    return EXIT_FAILURE;
+}
+```

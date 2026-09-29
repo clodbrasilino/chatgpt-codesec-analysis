@@ -1,0 +1,77 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+#include <stdlib.h>
+
+#define MAX_WORD_LEN 256
+
+bool is_word_length_even(const char *word, size_t max_len)
+{
+    size_t len;
+
+    if (word == NULL || max_len == 0U) {
+        return false;
+    }
+
+    len = strnlen(word, max_len);
+    return (len % 2U) == 0U;
+}
+
+static void flush_stdin(void)
+{
+    int ch;
+
+    do {
+        ch = getchar();
+    } while (ch != '\n' && ch != EOF);
+}
+
+int main(void)
+{
+    char buffer[MAX_WORD_LEN];
+    char *newline = NULL;
+
+    printf("Enter a word: ");
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input.\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1U] = '\0';
+
+    newline = memchr(buffer, '\n', sizeof(buffer));
+    if (newline != NULL) {
+        *newline = '\0';
+    } else {
+        flush_stdin();
+    }
+
+    if (buffer[0] == '\0') {
+        fprintf(stderr, "No word entered.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (is_word_length_even(buffer, sizeof(buffer))) {
+        printf("The word \"%s\" has an even length.\n", buffer);
+    } else {
+        printf("The word \"%s\" has an odd length.\n", buffer);
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the fixes applied:**
+
+1. **CWE-119/CWE-120 (statically-sized buffer, `char buffer[MAX_WORD_LEN]`):** The original code was already largely safe, and the rewrite preserves and reinforces the mitigations:
+   - `fgets(buffer, sizeof(buffer), stdin)` limits the read to the buffer size, preventing overflow.
+   - Explicit forced null-termination via `buffer[sizeof(buffer) - 1U] = '\0'` guarantees the buffer is always a valid C string even in pathological cases.
+   - `strnlen(word, max_len)` is used instead of `strlen`, bounding the scan to the buffer size.
+   - `memchr` with an explicit length bound replaces `strchr`, so the newline search can never run past the buffer even if termination were somehow violated.
+   - An extra guard for `max_len == 0U` was added to `is_word_length_even` for defensive robustness.
+
+2. **CWE-120/CWE-20 (`getchar` in a loop):** The drain loop reads into no buffer at all — it discards characters — so there is no boundary to violate. It was factored into a `flush_stdin()` helper with a bounded exit condition (`'\n'` or `EOF`), which correctly handles closed/erroring streams and cannot loop infinitely.
+
+The program's logic is unchanged: it reads a word safely, strips or drains the trailing newline, rejects empty input, and reports whether the word length is even or odd. All library return values (`fgets`) are checked, and failure paths return `EXIT_FAILURE` with diagnostics on `stderr`.

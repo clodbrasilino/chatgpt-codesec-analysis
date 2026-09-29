@@ -1,0 +1,124 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef enum {
+    TYPE_INT,
+    TYPE_TUPLE
+} ElementType;
+
+struct TupleElement;
+
+typedef struct {
+    struct TupleElement* elements;
+    size_t size;
+} Tuple;
+
+typedef struct TupleElement {
+    ElementType type;
+    union {
+        int int_val;
+        Tuple tuple_val;
+    } data;
+} TupleElement;
+
+typedef struct {
+    int value;
+    int count;
+} Frequency;
+
+typedef struct {
+    Frequency* freqs;
+    size_t size;
+    size_t capacity;
+} FrequencyMap;
+
+FrequencyMap* create_frequency_map() {
+    FrequencyMap* map = (FrequencyMap*)malloc(sizeof(FrequencyMap));
+    if (!map) return NULL;
+    map->size = 0;
+    map->capacity = 10;
+    map->freqs = (Frequency*)malloc(map->capacity * sizeof(Frequency));
+    if (!map->freqs) {
+        free(map);
+        return NULL;
+    }
+    return map;
+}
+
+void free_frequency_map(FrequencyMap* map) {
+    if (map) {
+        free(map->freqs);
+        free(map);
+    }
+}
+
+int add_frequency(FrequencyMap* map, int value) {
+    for (size_t i = 0; i < map->size; ++i) {
+        if (map->freqs[i].value == value) {
+            map->freqs[i].count++;
+            return 0;
+        }
+    }
+    
+    if (map->size >= map->capacity) {
+        size_t new_capacity = map->capacity * 2;
+        Frequency* new_freqs = (Frequency*)realloc(map->freqs, new_capacity * sizeof(Frequency));
+        if (!new_freqs) return -1;
+        map->freqs = new_freqs;
+        map->capacity = new_capacity;
+    }
+    
+    map->freqs[map->size].value = value;
+    map->freqs[map->size].count = 1;
+    map->size++;
+    return 0;
+}
+
+void count_frequencies_recursive(const Tuple* tuple, FrequencyMap* map) {
+    if (!tuple || !map) return;
+    
+    for (size_t i = 0; i < tuple->size; ++i) {
+        if (tuple->elements[i].type == TYPE_INT) {
+            add_frequency(map, tuple->elements[i].data.int_val);
+        } else if (tuple->elements[i].type == TYPE_TUPLE) {
+            count_frequencies_recursive(&tuple->elements[i].data.tuple_val, map);
+        }
+    }
+}
+
+int main() {
+    TupleElement nested_elements[2];
+    nested_elements[0].type = TYPE_INT;
+    nested_elements[0].data.int_val = 2;
+    nested_elements[1].type = TYPE_INT;
+    nested_elements[1].data.int_val = 3;
+
+    Tuple nested_tuple = {nested_elements, 2};
+
+    TupleElement elements[4];
+    elements[0].type = TYPE_INT;
+    elements[0].data.int_val = 1;
+    elements[1].type = TYPE_TUPLE;
+    elements[1].data.tuple_val = nested_tuple;
+    elements[2].type = TYPE_INT;
+    elements[2].data.int_val = 2;
+    elements[3].type = TYPE_INT;
+    elements[3].data.int_val = 1;
+
+    Tuple tuple = {elements, 4};
+
+    FrequencyMap* map = create_frequency_map();
+    if (!map) {
+        return EXIT_FAILURE;
+    }
+
+    count_frequencies_recursive(&tuple, map);
+
+    for (size_t i = 0; i < map->size; ++i) {
+        printf("Element: %d, Frequency: %d\n", map->freqs[i].value, map->freqs[i].count);
+    }
+
+    free_frequency_map(map);
+    return EXIT_SUCCESS;
+}

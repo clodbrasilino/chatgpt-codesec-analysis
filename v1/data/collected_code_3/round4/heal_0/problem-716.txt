@@ -1,0 +1,15 @@
+```C
+#include <stdio.h>
+
+float rombusPerimeter(float side) {
+    return 4 * side;
+}
+
+int main() {
+    float side;
+    printf("Enter the side of the rombus: ");
+    scanf("%f", &side);
+    printf("The perimeter of the rombus is: %.2f\n", rombusPerimeter(side));
+    return 0;
+}
+```

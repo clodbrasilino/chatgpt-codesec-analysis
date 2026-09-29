@@ -1,0 +1,24 @@
+```c
+#include <stdio.h>
+#include <math.h>
+
+void polarToRectangular(double r, double theta, double *x, double *y) {
+    *x = r * cos(theta);
+    *y = r * sin(theta);
+}
+
+int main() {
+    double r, theta;
+    printf("Enter the value of r: ");
+    if (scanf("%lf", &r) != 1) return 1;
+    printf("Enter the value of theta (in radians): ");
+    if (scanf("%lf", &theta) != 1) return 1;
+
+    double x, y;
+    polarToRectangular(r, theta, &x, &y);
+
+    printf("Rectangular coordinates: x = %.2f, y = %.2f\n", x, y);
+
+    return 0;
+}
+```

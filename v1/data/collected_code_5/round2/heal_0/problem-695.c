@@ -1,0 +1,30 @@
+#include <stdbool.h>
+#include <stdio.h>
+
+bool is_greater(int tuple1[], int tuple2[], int size){
+    int i;
+    for(i = 0; i < size; i++) {
+        if(tuple2[i] <= tuple1[i])
+            return false;
+    }
+    return true;
+}
+
+int main() {
+    int tuple1[] = {1, 2, 3, 4, 5};
+    int tuple2[] = {2, 3, 4, 5, 6};
+
+    int size1 = sizeof(tuple1)/sizeof(tuple1[0]);
+    int size2 = sizeof(tuple2)/sizeof(tuple2[0]);
+
+    if(size1 != size2) {
+        printf("Invalid tuples! The tuples must be of the same size.\n");
+    } else {
+        if(is_greater(tuple1, tuple2, size1))
+            printf("All the elements in the second tuple are greater than corresponding elements in the first!\n");
+        else 
+            printf("Not all elements in the second tuple are greater than corresponding elements in the first.\n");
+    }
+
+    return 0;
+}

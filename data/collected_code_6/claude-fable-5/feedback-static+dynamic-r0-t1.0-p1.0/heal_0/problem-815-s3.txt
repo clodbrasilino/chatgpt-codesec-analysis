@@ -1,0 +1,59 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stddef.h>
+
+int sort012(int *arr, size_t n)
+{
+    size_t counts[3] = {0, 0, 0};
+    size_t i;
+    size_t idx;
+    int v;
+
+    if (arr == NULL) {
+        return -1;
+    }
+
+    for (i = 0; i < n; i++) {
+        v = arr[i];
+        if (v < 0 || v > 2) {
+            return -1;
+        }
+        counts[v]++;
+    }
+
+    idx = 0;
+    for (v = 0; v <= 2; v++) {
+        for (i = 0; i < counts[v]; i++) {
+            arr[idx] = v;
+            idx++;
+        }
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    int arr[] = {2, 0, 1, 2, 1, 0, 0, 2, 1, 1};
+    size_t n = sizeof(arr) / sizeof(arr[0]);
+    size_t i;
+
+    if (sort012(arr, n) != 0) {
+        fprintf(stderr, "Error: invalid input array\n");
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i < n; i++) {
+        if (printf("%d ", arr[i]) < 0) {
+            return EXIT_FAILURE;
+        }
+    }
+
+    if (printf("\n") < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```

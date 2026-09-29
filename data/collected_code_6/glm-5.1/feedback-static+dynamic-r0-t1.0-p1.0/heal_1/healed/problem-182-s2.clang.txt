@@ -1,0 +1,25 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-182-s2.c:7:5: error: use of undeclared identifier 'regex_t'
+    7 |     regex_t regex;
+      |     ^~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-182-s2.c:8:15: error: call to undeclared function 'regcomp'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+    8 |     int ret = regcomp(&regex, pattern, REG_EXTENDED);
+      |               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-182-s2.c:8:24: error: use of undeclared identifier 'regex'
+    8 |     int ret = regcomp(&regex, pattern, REG_EXTENDED);
+      |                        ^~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-182-s2.c:8:40: error: use of undeclared identifier 'REG_EXTENDED'
+    8 |     int ret = regcomp(&regex, pattern, REG_EXTENDED);
+      |                                        ^~~~~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-182-s2.c:12:11: error: call to undeclared function 'regexec'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   12 |     ret = regexec(&regex, string, 0, NULL, 0);
+      |           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-182-s2.c:12:20: error: use of undeclared identifier 'regex'
+   12 |     ret = regexec(&regex, string, 0, NULL, 0);
+      |                    ^~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-182-s2.c:13:5: error: call to undeclared function 'regfree'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   13 |     regfree(&regex);
+      |     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-182-s2.c:13:14: error: use of undeclared identifier 'regex'
+   13 |     regfree(&regex);
+      |              ^~~~~
+8 errors generated.

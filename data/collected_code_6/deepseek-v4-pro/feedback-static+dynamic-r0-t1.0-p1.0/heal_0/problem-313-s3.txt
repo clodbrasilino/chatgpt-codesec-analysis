@@ -1,0 +1,25 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+void print_positive_numbers(const int *numbers, size_t count) {
+    if (numbers == NULL) {
+        return;
+    }
+    
+    for (size_t i = 0; i < count; i++) {
+        if (numbers[i] > 0) {
+            printf("%d\n", numbers[i]);
+        }
+    }
+}
+
+int main(void) {
+    int test_numbers[] = {-5, 3, 0, 8, -2, 10, -1};
+    size_t count = sizeof(test_numbers) / sizeof(test_numbers[0]);
+    
+    print_positive_numbers(test_numbers, count);
+    
+    return 0;
+}
+```

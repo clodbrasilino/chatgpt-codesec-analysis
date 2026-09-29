@@ -1,0 +1,49 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Tuple {
+    int first;
+    double second;
+    char third;
+};
+
+size_t tuple_size(const struct Tuple *t)
+{
+    if (t == NULL) {
+        return 0U;
+    }
+    return sizeof(*t);
+}
+
+int print_tuple(const struct Tuple *t)
+{
+    if (t == NULL) {
+        return -1;
+    }
+    if (printf("Tuple contents: first=%d, second=%f, third=%c\n",
+               t->first, t->second, t->third) < 0) {
+        return -1;
+    }
+    return 0;
+}
+
+int main(void)
+{
+    struct Tuple t = { 10, 3.14, 'a' };
+    size_t size = tuple_size(&t);
+
+    if (size == 0U) {
+        fprintf(stderr, "Invalid tuple\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Size of the tuple: %zu bytes\n", size) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    if (print_tuple(&t) != 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

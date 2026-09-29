@@ -1,0 +1,10 @@
+In file included from /Library/Developer/CommandLineTools/SDKs/MacOSX15.sdk/usr/include/_string.h:228,
+                 from /Library/Developer/CommandLineTools/SDKs/MacOSX15.sdk/usr/include/string.h:58,
+                 from /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_6/healed/problem-473.c:3:
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_6/healed/problem-473.c: In function 'find_tuple_intersection':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_6/healed/problem-473.c:146:48: error: passing argument 2 of '__builtin___memcpy_chk' makes pointer from integer without a cast [-Wint-conversion]
+  146 |                     memcpy(new_tuple.elements, (size_t)t1.elements, (size_t)new_tuple.count * sizeof(int));
+      |                                                ^~~~~~~~~~~~~~~~~~~
+      |                                                |
+      |                                                long unsigned int
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_6/healed/problem-473.c:146:48: note: expected 'const void *' but argument is of type 'long unsigned int'

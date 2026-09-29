@@ -1,0 +1,115 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-602-s3.c:80:12: error: expected '=', ',', ';', 'asm' or '__attribute__' before 'summary'
+   80 | **Analysis summary:**
+      |            ^~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-602-s3.c:84:30: error: stray '\342' in program
+   84 | 1. **Bounded input reading** <U+2014> `fgets(buffer, sizeof(buffer), stdin)` limits input to the buffer size, preventing overflow (the classic `gets()` vulnerability is avoided).
+      |                              ^~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-602-s3.c:84:32: error: stray '`' in program
+   84 | 1. **Bounded input reading** — `fgets(buffer, sizeof(buffer), stdin)` limits input to the buffer size, preventing overflow (the classic `gets()` vulnerability is avoided).
+      |                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-602-s3.c:84:69: error: stray '`' in program
+   84 | 1. **Bounded input reading** — `fgets(buffer, sizeof(buffer), stdin)` limits input to the buffer size, preventing overflow (the classic `gets()` vulnerability is avoided).
+      |                                                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-602-s3.c:84:137: error: stray '`' in program
+   84 | 1. **Bounded input reading** — `fgets(buffer, sizeof(buffer), stdin)` limits input to the buffer size, preventing overflow (the classic `gets()` vulnerability is avoided).
+      |                                                                                                                                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-602-s3.c:84:144: error: stray '`' in program
+   84 | 1. **Bounded input reading** — `fgets(buffer, sizeof(buffer), stdin)` limits input to the buffer size, preventing overflow (the classic `gets()` vulnerability is avoided).
+      |                                                                                                                                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-602-s3.c:85:36: error: stray '\342' in program
+   85 | 2. **Guaranteed null termination** <U+2014> `buffer[sizeof(buffer) - 1] = '\0'` ensures termination even in edge cases.
+      |                                    ^~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-602-s3.c:85:38: error: stray '`' in program
+   85 | 2. **Guaranteed null termination** — `buffer[sizeof(buffer) - 1] = '\0'` ensures termination even in edge cases.
+      |                                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-602-s3.c:85:72: error: stray '`' in program
+   85 | 2. **Guaranteed null termination** — `buffer[sizeof(buffer) - 1] = '\0'` ensures termination even in edge cases.
+      |                                                                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-602-s3.c:86:33: error: stray '\342' in program
+   86 | 3. **Bounded string traversal** <U+2014> `bounded_strlen()` never reads past `maxlen`, so even a non-terminated buffer cannot cause an out-of-bounds read.
+      |                                 ^~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-602-s3.c:86:35: error: stray '`' in program
+   86 | 3. **Bounded string traversal** — `bounded_strlen()` never reads past `maxlen`, so even a non-terminated buffer cannot cause an out-of-bounds read.
+      |                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-602-s3.c:86:52: error: stray '`' in program
+   86 | 3. **Bounded string traversal** — `bounded_strlen()` never reads past `maxlen`, so even a non-terminated buffer cannot cause an out-of-bounds read.
+      |                                                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-602-s3.c:86:71: error: stray '`' in program
+   86 | 3. **Bounded string traversal** — `bounded_strlen()` never reads past `maxlen`, so even a non-terminated buffer cannot cause an out-of-bounds read.
+      |                                                                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-602-s3.c:86:78: error: stray '`' in program
+   86 | 3. **Bounded string traversal** — `bounded_strlen()` never reads past `maxlen`, so even a non-terminated buffer cannot cause an out-of-bounds read.
+      |                                                                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-602-s3.c:87:28: error: stray '\342' in program
+   87 | 4. **Safe array indexing** <U+2014> casting to `unsigned char` before indexing `seen[]` prevents negative-index undefined behavior on platforms where `char` is signed.
+      |                            ^~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-602-s3.c:87:41: error: stray '`' in program
+   87 | 4. **Safe array indexing** — casting to `unsigned char` before indexing `seen[]` prevents negative-index undefined behavior on platforms where `char` is signed.
+      |                                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-602-s3.c:87:55: error: stray '`' in program
+   87 | 4. **Safe array indexing** — casting to `unsigned char` before indexing `seen[]` prevents negative-index undefined behavior on platforms where `char` is signed.
+      |                                                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-602-s3.c:87:73: error: stray '`' in program
+   87 | 4. **Safe array indexing** — casting to `unsigned char` before indexing `seen[]` prevents negative-index undefined behavior on platforms where `char` is signed.
+      |                                                                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-602-s3.c:87:80: error: stray '`' in program
+   87 | 4. **Safe array indexing** — casting to `unsigned char` before indexing `seen[]` prevents negative-index undefined behavior on platforms where `char` is signed.
+      |                                                                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-602-s3.c:87:144: error: stray '`' in program
+   87 | 4. **Safe array indexing** — casting to `unsigned char` before indexing `seen[]` prevents negative-index undefined behavior on platforms where `char` is signed.
+      |                                                                                                                                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-602-s3.c:87:149: error: stray '`' in program
+   87 | 4. **Safe array indexing** — casting to `unsigned char` before indexing `seen[]` prevents negative-index undefined behavior on platforms where `char` is signed.
+      |                                                                                                                                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-602-s3.c:88:32: error: stray '\342' in program
+   88 | 5. **NULL pointer validation** <U+2014> arguments checked before dereferencing.
+      |                                ^~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-602-s3.c:92:3: error: stray '`' in program
+   92 | - `memset(buffer, 0, sizeof(buffer))` zero-initializes the buffer, avoiding any use of uninitialized memory.
+      |   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-602-s3.c:92:37: error: stray '`' in program
+   92 | - `memset(buffer, 0, sizeof(buffer))` zero-initializes the buffer, avoiding any use of uninitialized memory.
+      |                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-602-s3.c:93:11: error: stray '`' in program
+   93 | - Added a `maxlen == 0` guard in `find_first_repeated_char()` for defensive completeness.
+      |           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-602-s3.c:93:23: error: stray '`' in program
+   93 | - Added a `maxlen == 0` guard in `find_first_repeated_char()` for defensive completeness.
+      |                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-602-s3.c:93:34: error: stray '`' in program
+   93 | - Added a `maxlen == 0` guard in `find_first_repeated_char()` for defensive completeness.
+      |                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-602-s3.c:93:61: error: stray '`' in program
+   93 | - Added a `maxlen == 0` guard in `find_first_repeated_char()` for defensive completeness.
+      |                                                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-602-s3.c:94:20: error: stray '`' in program
+   94 | - Explicit cast of `sizeof(buffer)` to `int` for the `fgets` size parameter to be pedantically type-correct.
+      |                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-602-s3.c:94:35: error: stray '`' in program
+   94 | - Explicit cast of `sizeof(buffer)` to `int` for the `fgets` size parameter to be pedantically type-correct.
+      |                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-602-s3.c:94:40: error: stray '`' in program
+   94 | - Explicit cast of `sizeof(buffer)` to `int` for the `fgets` size parameter to be pedantically type-correct.
+      |                                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-602-s3.c:94:44: error: stray '`' in program
+   94 | - Explicit cast of `sizeof(buffer)` to `int` for the `fgets` size parameter to be pedantically type-correct.
+      |                                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-602-s3.c:94:54: error: stray '`' in program
+   94 | - Explicit cast of `sizeof(buffer)` to `int` for the `fgets` size parameter to be pedantically type-correct.
+      |                                                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-602-s3.c:94:60: error: stray '`' in program
+   94 | - Explicit cast of `sizeof(buffer)` to `int` for the `fgets` size parameter to be pedantically type-correct.
+      |                                                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-602-s3.c:96:44: error: stray '`' in program
+   96 | The Flawfinder hit on the statically-sized `char buffer[MAX_INPUT_LEN]` is a low-risk informational finding; all accesses are provably bounded, so the code is safe as written.
+      |                                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-602-s3.c:96:71: error: stray '`' in program
+   96 | The Flawfinder hit on the statically-sized `char buffer[MAX_INPUT_LEN]` is a low-risk informational finding; all accesses are provably bounded, so the code is safe as written.
+      |                                                                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-602-s3.c:96:110: error: unknown type name 'all'
+   96 | The Flawfinder hit on the statically-sized `char buffer[MAX_INPUT_LEN]` is a low-risk informational finding; all accesses are provably bounded, so the code is safe as written.
+      |                                                                                                              ^~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-602-s3.c:96:123: error: expected '=', ',', ';', 'asm' or '__attribute__' before 'are'
+   96 | The Flawfinder hit on the statically-sized `char buffer[MAX_INPUT_LEN]` is a low-risk informational finding; all accesses are provably bounded, so the code is safe as written.
+      |                                                                                                                           ^~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-602-s3.c:96:123: error: unknown type name 'are'

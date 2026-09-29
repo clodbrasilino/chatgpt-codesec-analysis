@@ -1,0 +1,42 @@
+```C
+#include <stdio.h>
+#include <stdlib.h>
+
+#define SIZE 6
+
+int getInversionCount(int arr[], int n) {
+    int inv_count = 0;
+    for (int i = 0; i < n - 1; i++)
+        for (int j = i + 1; j < n; j++)
+            if (arr[i] > arr[j])
+                inv_count++;
+    return inv_count;
+}
+
+int checkInversionCount(int arr1[], int arr2[], int n) {
+    int count1 = getInversionCount(arr1, n);
+    int count2 = getInversionCount(arr2, n);
+
+    if (count1 == count2) {
+        return 1;
+    }
+    return 0;
+}
+
+int main() {
+    int arr1[SIZE] = {3, 1, 2, 4, 6, 5};
+    int arr2[SIZE] = {2, 1, 5, 3, 6, 4};
+
+    if (checkInversionCount(arr1, arr2, SIZE)) {
+        printf("The inversion counts are same.\n");
+    } else {
+        printf("The inversion counts are not the same.\n");
+    }
+
+    return 0;
+}
+```
+
+This C program checks whether the count of inversions in two arrays is the same or not. The inversions in an array are all pairs (i, j) such that i < j and arr[i] > arr[j]. The main function initializes two arrays and calls the checkInversionCount() function. If the counts are equal, the program prints "The inversion counts are same". 
+
+The getInversionCount function uses a nested loop to count all the inversions in the array and returns the count, while the checkInversionCount function compares the inversion counts of the two arrays and returns 1 if they are equal, 0 otherwise.

@@ -1,0 +1,203 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *data;
+    size_t size;
+    size_t capacity;
+} Tuple;
+
+static int tuple_init(Tuple *t, size_t initial_capacity)
+{
+    if (t == NULL || initial_capacity == 0U) {
+        return -1;
+    }
+    t->data = malloc(initial_capacity * sizeof(int));
+    if (t->data == NULL) {
+        return -1;
+    }
+    t->size = 0U;
+    t->capacity = initial_capacity;
+    return 0;
+}
+
+static int tuple_append(Tuple *t, int value)
+{
+    if (t == NULL || t->data == NULL) {
+        return -1;
+    }
+    if (t->size == t->capacity) {
+        size_t new_capacity;
+        int *tmp;
+        if (t->capacity > (SIZE_MAX / (2U * sizeof(int)))) {
+            return -1;
+        }
+        new_capacity = t->capacity * 2U;
+        tmp = realloc(t->data, new_capacity * sizeof(int));
+        if (tmp == NULL) {
+            return -1;
+        }
+        t->data = tmp;
+        t->capacity = new_capacity;
+    }
+    t->data[t->size] = value;
+    t->size++;
+    return 0;
+}
+
+static void tuple_free(Tuple *t)
+{
+    if (t != NULL) {
+        free(t->data);
+        t->data = NULL;
+        t->size = 0U;
+        t->capacity = 0U;
+    }
+}
+
+static void free_tuple_array(Tuple *arr, size_t count)
+{
+    size_t i;
+    if (arr == NULL) {
+        return;
+    }
+    for (i = 0U; i < count; i++) {
+        tuple_free(&arr[i]);
+    }
+    free(arr);
+}
+
+static Tuple *join_tuples(const Tuple *input, size_t n, size_t *out_count)
+{
+    Tuple *result;
+    size_t result_count = 0U;
+    size_t i;
+    size_t j;
+
+    if (input == NULL || out_count == NULL || n == 0U) {
+        if (out_count != NULL) {
+            *out_count = 0U;
+        }
+        return NULL;
+    }
+
+    result = malloc(n * sizeof(Tuple));
+    if (result == NULL) {
+        *out_count = 0U;
+        return NULL;
+    }
+
+    for (i = 0U; i < n; i++) {
+        if (input[i].size == 0U || input[i].data == NULL) {
+            free_tuple_array(result, result_count);
+            *out_count = 0U;
+            return NULL;
+        }
+        if (result_count > 0U &&
+            result[result_count - 1U].data[0] == input[i].data[0]) {
+            for (j = 1U; j < input[i].size; j++) {
+                if (tuple_append(&result[result_count - 1U],
+                                 input[i].data[j]) != 0) {
+                    free_tuple_array(result, result_count);
+                    *out_count = 0U;
+                    return NULL;
+                }
+            }
+        } else {
+            if (tuple_init(&result[result_count], input[i].size) != 0) {
+                free_tuple_array(result, result_count);
+                *out_count = 0U;
+                return NULL;
+            }
+            result_count++;
+            for (j = 0U; j < input[i].size; j++) {
+                if (tuple_append(&result[result_count - 1U],
+                                 input[i].data[j]) != 0) {
+                    free_tuple_array(result, result_count);
+                    *out_count = 0U;
+                    return NULL;
+                }
+            }
+        }
+    }
+
+    *out_count = result_count;
+    return result;
+}
+
+static int build_pair(Tuple *t, int a, int b)
+{
+    if (tuple_init(t, 2U) != 0) {
+        return -1;
+    }
+    if (tuple_append(t, a) != 0 || tuple_append(t, b) != 0) {
+        tuple_free(t);
+        return -1;
+    }
+    return 0;
+}
+
+static void print_tuples(const Tuple *arr, size_t count)
+{
+    size_t i;
+    size_t j;
+    printf("[");
+    for (i = 0U; i < count; i++) {
+        printf("(");
+        for (j = 0U; j < arr[i].size; j++) {
+            printf("%d", arr[i].data[j]);
+            if (j + 1U < arr[i].size) {
+                printf(", ");
+            }
+        }
+        printf(")");
+        if (i + 1U < count) {
+            printf(", ");
+        }
+    }
+    printf("]\n");
+}
+
+int main(void)
+{
+    Tuple input[5];
+    Tuple *joined;
+    size_t joined_count = 0U;
+    size_t built = 0U;
+    size_t i;
+    const int pairs[5][2] = {
+        {5, 6}, {5, 7}, {6, 8}, {6, 10}, {7, 13}
+    };
+
+    for (i = 0U; i < 5U; i++) {
+        if (build_pair(&input[i], pairs[i][0], pairs[i][1]) != 0) {
+            for (built = 0U; built < i; built++) {
+                tuple_free(&input[built]);
+            }
+            fprintf(stderr, "Allocation failure\n");
+            return EXIT_FAILURE;
+        }
+    }
+
+    printf("Original: ");
+    print_tuples(input, 5U);
+
+    joined = join_tuples(input, 5U, &joined_count);
+    if (joined == NULL) {
+        for (i = 0U; i < 5U; i++) {
+            tuple_free(&input[i]);
+        }
+        fprintf(stderr, "Join operation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Joined:   ");
+    print_tuples(joined, joined_count);
+
+    free_tuple_array(joined, joined_count);
+    for (i = 0U; i < 5U; i++) {
+        tuple_free(&input[i]);
+    }
+
+    return EXIT_SUCCESS;
+}

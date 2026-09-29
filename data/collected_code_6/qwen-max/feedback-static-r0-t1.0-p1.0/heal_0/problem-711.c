@@ -1,0 +1,32 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+bool are_even_odd_positions_products_equal(long num) {
+    int productOdd = 1, productEven = 1;
+    bool isOdd = true;
+    
+    while (num > 0) {
+        int digit = num % 10;
+        if (isOdd)
+            productOdd *= digit;
+        else
+            productEven *= digit;
+        isOdd = !isOdd;
+        num /= 10;
+    }
+
+    return productOdd == productEven;
+}
+
+int main() {
+    long number = 0;
+    printf("Enter a number: ");
+    scanf("%ld", &number);
+
+    if (are_even_odd_positions_products_equal(number)) {
+        printf("The products of digits at even and odd positions are equal.\n");
+    } else {
+        printf("The products of digits at even and odd positions are not equal.\n");
+    }
+    return 0;
+}

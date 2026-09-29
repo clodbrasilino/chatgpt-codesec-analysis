@@ -1,0 +1,48 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int find_difference(const int *arr, size_t size, int *result)
+{
+    size_t i;
+    int min;
+    int max;
+
+    if (arr == NULL || result == NULL || size == 0) {
+        return -1;
+    }
+
+    min = arr[0];
+    max = arr[0];
+
+    for (i = 1; i < size; i++) {
+        if (arr[i] < min) {
+            min = arr[i];
+        }
+        if (arr[i] > max) {
+            max = arr[i];
+        }
+    }
+
+    *result = max - min;
+    return 0;
+}
+
+int main(void)
+{
+    int numbers[] = {34, 7, 89, 12, 56, 3, 71};
+    size_t size = sizeof(numbers) / sizeof(numbers[0]);
+    int difference = 0;
+
+    if (find_difference(numbers, size, &difference) != 0) {
+        fprintf(stderr, "Error: invalid input array\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Difference between largest and smallest: %d\n", difference) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```

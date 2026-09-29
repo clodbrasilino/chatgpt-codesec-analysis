@@ -1,0 +1,19 @@
+```C
+#include <stdio.h>
+#include <string.h>
+
+char* abbreviateRoad(char* str) {
+    char* pos;
+    while ((pos = strstr(str, "road")) != NULL) {
+        strncpy(pos, "rd.", 3);
+        memmove(pos + 3, pos + 4, strlen(pos + 4) + 1);
+    }
+    return str;
+}
+
+int main() {
+    char str[] = "The road to success is always under construction.";
+    printf("%s\n", abbreviateRoad(str));
+    return 0;
+}
+```

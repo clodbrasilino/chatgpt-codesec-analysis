@@ -1,0 +1,118 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node* next;
+} Node;
+
+Node* createNode(int data) {
+    Node* newNode = (Node*)malloc(sizeof(Node));
+    if (newNode == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(EXIT_FAILURE);
+    }
+    newNode->data = data;
+    newNode->next = NULL;
+    return newNode;
+}
+
+void appendNode(Node** head, int data) {
+    Node* newNode = createNode(data);
+    if (*head == NULL) {
+        *head = newNode;
+        return;
+    }
+    Node* current = *head;
+    while (current->next != NULL) {
+        current = current->next;
+    }
+    current->next = newNode;
+}
+
+int removeKthElement(Node** head, int k) {
+    if (head == NULL || *head == NULL || k < 1) {
+        return 0;
+    }
+    
+    Node* temp = NULL;
+    
+    if (k == 1) {
+        temp = *head;
+        *head = (*head)->next;
+        free(temp);
+        return 1;
+    }
+    
+    Node* current = *head;
+    for (int i = 1; i < k - 1 && current != NULL; i++) {
+        current = current->next;
+    }
+    
+    if (current == NULL || current->next == NULL) {
+        return 0;
+    }
+    
+    temp = current->next;
+    current->next = temp->next;
+    free(temp);
+    return 1;
+}
+
+void freeList(Node* head) {
+    Node* current = head;
+    while (current != NULL) {
+        Node* next = current->next;
+        free(current);
+        current = next;
+    }
+}
+
+void printList(Node* head) {
+    Node* current = head;
+    while (current != NULL) {
+        printf("%d ", current->data);
+        current = current->next;
+    }
+    printf("\n");
+}
+
+int main(void) {
+    Node* list = NULL;
+    
+    appendNode(&list, 10);
+    appendNode(&list, 20);
+    appendNode(&list, 30);
+    appendNode(&list, 40);
+    appendNode(&list, 50);
+    
+    printf("Original list: ");
+    printList(list);
+    
+    int k = 3;
+    if (removeKthElement(&list, k)) {
+        printf("After removing %drd element: ", k);
+        printList(list);
+    } else {
+        printf("Failed to remove element at position %d\n", k);
+    }
+    
+    k = 1;
+    if (removeKthElement(&list, k)) {
+        printf("After removing %dst element: ", k);
+        printList(list);
+    } else {
+        printf("Failed to remove element at position %d\n", k);
+    }
+    
+    k = 10;
+    if (removeKthElement(&list, k)) {
+        printf("After removing %dth element: ", k);
+        printList(list);
+    } else {
+        printf("Failed to remove element at position %d\n", k);
+    }
+    
+    freeList(list);
+    return 0;
+}

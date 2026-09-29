@@ -1,0 +1,80 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#define MAX_ADVERBS 100
+#define MAX_WORD_LEN 100
+
+typedef struct {
+    char word[MAX_WORD_LEN];
+    int position;
+} AdverbInfo;
+
+int is_adverb(const char *word) {
+    size_t len = strlen(word);
+    if (len < 3) return 0;
+    return strcmp(word + len - 2, "ly") == 0;
+}
+
+int find_adverbs(const char *sentence, AdverbInfo *adverbs, int max_adverbs) {
+    if (sentence == NULL || adverbs == NULL || max_adverbs <= 0) {
+        return -1;
+    }
+
+    int count = 0;
+    size_t sentence_len = strlen(sentence);
+    char *buffer = (char *)malloc(sentence_len + 1);
+    if (buffer == NULL) {
+        return -1;
+    }
+    strcpy(buffer, sentence);
+
+    char *token = strtok(buffer, " ,.!?;:\"()[]{}");
+    int position = 0;
+
+    while (token != NULL && count < max_adverbs) {
+        if (is_adverb(token)) {
+            strncpy(adverbs[count].word, token, MAX_WORD_LEN - 1);
+            adverbs[count].word[MAX_WORD_LEN - 1] = '\0';
+            adverbs[count].position = position;
+            count++;
+        }
+        position++;
+        token = strtok(NULL, " ,.!?;:\"()[]{}");
+    }
+
+    free(buffer);
+    return count;
+}
+
+int main(void) {
+    char sentence[1000];
+    AdverbInfo adverbs[MAX_ADVERBS];
+
+    printf("Enter a sentence: ");
+    if (fgets(sentence, sizeof(sentence), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    sentence[strcspn(sentence, "\n")] = '\0';
+
+    int num_adverbs = find_adverbs(sentence, adverbs, MAX_ADVERBS);
+
+    if (num_adverbs < 0) {
+        fprintf(stderr, "Error processing sentence\n");
+        return 1;
+    }
+
+    if (num_adverbs == 0) {
+        printf("No adverbs found.\n");
+    } else {
+        printf("Adverbs found:\n");
+        for (int i = 0; i < num_adverbs; i++) {
+            printf("Word: %s, Position: %d\n", adverbs[i].word, adverbs[i].position);
+        }
+    }
+
+    return 0;
+}

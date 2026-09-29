@@ -1,0 +1,27 @@
+```c
+#include <stdio.h>
+
+size_t count_characters(const char *str) {
+    if (str == NULL) {
+        return 0;
+    }
+
+    size_t count = 0;
+    while (*str != '\0') {
+        count++;
+        str++;
+    }
+
+    return count;
+}
+
+int main(void) {
+    const char *test_string = "Hello, World!";
+    
+    size_t total_chars = count_characters(test_string);
+    
+    printf("Total characters: %zu\n", total_chars);
+    
+    return 0;
+}
+```

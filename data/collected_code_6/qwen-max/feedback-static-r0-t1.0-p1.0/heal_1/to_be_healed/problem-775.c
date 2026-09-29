@@ -1,0 +1,27 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+/* Possible weaknesses found:
+ *  Parameter 'array' can be declared as pointer to const [constParameterPointer]
+ */
+bool is_odd_at_odd_indices(int *array, int length) {
+    for (int i = 1; i < length; i += 2) {
+        if (array[i] % 2 == 0) {
+            return false;
+        }
+    }
+    return true;
+}
+
+int main() {
+    int array[] = {1, 3, 2, 5, 4, 7};
+    int length = sizeof(array) / sizeof(array[0]);
+    
+    if (is_odd_at_odd_indices(array, length)) {
+        printf("Every odd index contains an odd number.\n");
+    } else {
+        printf("Not every odd index contains an odd number.\n");
+    }
+
+    return 0;
+}

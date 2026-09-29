@@ -1,0 +1,80 @@
+#include <stdio.h>
+#include <ctype.h>
+#include <string.h>
+#include <stdlib.h>
+
+char *remove_lowercase_substrings(const char *str) {
+    if (str == NULL) {
+        return NULL;
+    }
+    
+    size_t len = strlen(str);
+    char *result = malloc(len + 1);
+    if (result == NULL) {
+        return NULL;
+    }
+    
+    size_t i = 0, j = 0;
+    int in_lowercase = 0;
+    size_t lowercase_start = 0;
+    
+    while (i < len) {
+        if (islower((unsigned char)str[i])) {
+            if (!in_lowercase) {
+                in_lowercase = 1;
+                lowercase_start = i;
+            }
+            i++;
+        } else {
+            if (in_lowercase) {
+                in_lowercase = 0;
+                size_t k;
+                for (k = lowercase_start; k < i; k++) {
+                    result[j++] = str[k];
+                }
+            }
+            result[j++] = str[i];
+            i++;
+        }
+    }
+    
+    if (in_lowercase) {
+        size_t k;
+        for (k = lowercase_start; k < len; k++) {
+            result[j++] = str[k];
+        }
+    }
+    
+    result[j] = '\0';
+    return result;
+}
+
+int main(void) {
+    const char *test1 = "HelloWORLDtestexample123ABCxyz";
+    const char *test2 = "lowercaseUPPERCASEmixedCase";
+    const char *test3 = "ALLUPPERCASE";
+    const char *test4 = "alllowercase";
+    const char *test5 = "";
+    
+    char *result1 = remove_lowercase_substrings(test1);
+    char *result2 = remove_lowercase_substrings(test2);
+    char *result3 = remove_lowercase_substrings(test3);
+    char *result4 = remove_lowercase_substrings(test4);
+    char *result5 = remove_lowercase_substrings(test5);
+    char *result6 = remove_lowercase_substrings(NULL);
+    
+    printf("Original: %s\nResult: %s\n\n", test1, result1 ? result1 : "(null)");
+    printf("Original: %s\nResult: %s\n\n", test2, result2 ? result2 : "(null)");
+    printf("Original: %s\nResult: %s\n\n", test3, result3 ? result3 : "(null)");
+    printf("Original: %s\nResult: %s\n\n", test4, result4 ? result4 : "(null)");
+    printf("Original: %s\nResult: %s\n\n", test5, result5 ? result5 : "(null)");
+    printf("Original: (null)\nResult: %s\n", result6 ? result6 : "(null)");
+    
+    free(result1);
+    free(result2);
+    free(result3);
+    free(result4);
+    free(result5);
+    
+    return 0;
+}

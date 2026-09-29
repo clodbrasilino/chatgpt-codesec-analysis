@@ -1,0 +1,79 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <limits.h>
+#include <stdlib.h>
+
+#define BUFFER_SIZE 256
+
+int max_occurring_char(const char *str, char *result)
+{
+    size_t counts[UCHAR_MAX + 1] = {0};
+    size_t max_count = 0;
+    size_t i;
+    unsigned char best = 0;
+
+    if (str == NULL || result == NULL) {
+        return -1;
+    }
+
+    if (str[0] == '\0') {
+        return -1;
+    }
+
+    for (i = 0; str[i] != '\0'; i++) {
+        unsigned char c = (unsigned char)str[i];
+        counts[c]++;
+        if (counts[c] > max_count) {
+            max_count = counts[c];
+            best = c;
+        }
+    }
+
+    *result = (char)best;
+    return 0;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    char max_char = '\0';
+    size_t len;
+
+    memset(buffer, 0, sizeof(buffer));
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    }
+
+    if (max_occurring_char(buffer, &max_char) != 0) {
+        fprintf(stderr, "Invalid or empty input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Maximum occurring character: %c\n", max_char) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+The original source already mitigates the CWE-119/CWE-120 concern flagged by Flawfinder, so the rewritten version preserves those defenses rather than changing the logic:
+
+1. **Bounded input reading** — `fgets(buffer, (int)sizeof(buffer), stdin)` limits input to the buffer size, preventing the classic `gets()`-style overflow the warning targets.
+2. **Guaranteed null termination** — `buffer[sizeof(buffer) - 1] = '\0'` ensures the string is terminated even in edge cases, and `memset` zero-initializes the buffer beforehand.
+3. **Safe length computation** — `strnlen(buffer, sizeof(buffer))` bounds the scan to the buffer size, unlike plain `strlen` which could over-read a non-terminated buffer.
+4. **Defensive API design** — `max_occurring_char` validates both pointers for `NULL` and rejects empty strings, returning an error code checked by the caller.
+5. **Correct char handling** — casting to `unsigned char` before indexing `counts[]` avoids negative-index undefined behavior on platforms where `char` is signed, and the table is sized `UCHAR_MAX + 1` to cover all byte values.
+6. **Checked I/O** — return values of `fgets` and `printf` are verified, with failures reported via `stderr` and non-zero exit codes.
+
+The static buffer is acceptable here because every access is bounds-checked; the Flawfinder hit is a low-risk (risk 2) informational finding rather than an actual defect.

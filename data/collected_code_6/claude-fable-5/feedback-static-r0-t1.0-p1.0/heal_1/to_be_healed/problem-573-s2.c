@@ -1,0 +1,68 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int product_of_unique(const int *arr, size_t n, long long *result)
+{
+    size_t i;
+    size_t j;
+    /* Possible weaknesses found:
+     *  The scope of the variable 'seen' can be reduced. [variableScope]
+     */
+    int seen;
+    long long product;
+
+    if (arr == NULL || result == NULL || n == 0U) {
+        return -1;
+    }
+
+    product = 1LL;
+
+    for (i = 0U; i < n; i++) {
+        seen = 0;
+        for (j = 0U; j < i; j++) {
+            if (arr[j] == arr[i]) {
+                seen = 1;
+                break;
+            }
+        }
+        if (seen == 0) {
+            if (arr[i] != 0) {
+                if (llabs(product) > (long long)(9223372036854775807LL / llabs((long long)arr[i]))) {
+                    return -2;
+                }
+            }
+            product *= (long long)arr[i];
+        }
+    }
+
+    *result = product;
+    return 0;
+}
+
+int main(void)
+{
+    int numbers[] = { 2, 3, 2, 5, 3, 7 };
+    size_t count = sizeof(numbers) / sizeof(numbers[0]);
+    long long result = 0LL;
+    int status;
+
+    status = product_of_unique(numbers, count, &result);
+
+    if (status == 0) {
+        if (printf("Product of unique numbers: %lld\n", result) < 0) {
+            return EXIT_FAILURE;
+        }
+    } else if (status == -2) {
+        if (fprintf(stderr, "Error: arithmetic overflow detected\n") < 0) {
+            return EXIT_FAILURE;
+        }
+        return EXIT_FAILURE;
+    } else {
+        if (fprintf(stderr, "Error: invalid input\n") < 0) {
+            return EXIT_FAILURE;
+        }
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

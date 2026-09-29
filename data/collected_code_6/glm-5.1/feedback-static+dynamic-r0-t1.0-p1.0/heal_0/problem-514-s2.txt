@@ -1,0 +1,36 @@
+```c
+#include <stdlib.h>
+#include <stdio.h>
+
+typedef struct {
+    int a;
+    int b;
+} Tuple;
+
+int sum_tuple_list(Tuple *list, size_t size) {
+    if (list == NULL) {
+        return 0;
+    }
+
+    int sum = 0;
+    for (size_t i = 0; i < size; i++) {
+        if (__builtin_add_overflow(sum, list[i].a, &sum)) {
+            fprintf(stderr, "Overflow\n");
+            exit(EXIT_FAILURE);
+        }
+        if (__builtin_add_overflow(sum, list[i].b, &sum)) {
+            fprintf(stderr, "Overflow\n");
+            exit(EXIT_FAILURE);
+        }
+    }
+    return sum;
+}
+
+int main(void) {
+    Tuple list[] = {{1, 2}, {3, 4}, {5, 6}};
+    size_t size = sizeof(list) / sizeof(list[0]);
+    int result = sum_tuple_list(list, size);
+    printf("%d\n", result);
+    return 0;
+}
+```

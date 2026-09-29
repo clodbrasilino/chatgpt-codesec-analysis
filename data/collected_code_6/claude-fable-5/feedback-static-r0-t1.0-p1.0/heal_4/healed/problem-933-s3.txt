@@ -1,0 +1,167 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#include <regex.h>
+
+#define MAX_INPUT_LEN 4096U
+
+char *camel_to_snake(const char *input);
+
+char *camel_to_snake(const char *input)
+{
+    regex_t regex;
+    regmatch_t match;
+    char *output = NULL;
+    size_t input_len;
+    size_t out_capacity;
+    size_t out_len = 0;
+    size_t offset = 0;
+    int ret;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    input_len = strnlen(input, MAX_INPUT_LEN);
+    if (input_len >= MAX_INPUT_LEN) {
+        return NULL;
+    }
+
+    out_capacity = (input_len * 2U) + 1U;
+
+    output = malloc(out_capacity);
+    if (output == NULL) {
+        return NULL;
+    }
+
+    ret = regcomp(&regex, "[A-Z]", REG_EXTENDED);
+    if (ret != 0) {
+        free(output);
+        return NULL;
+    }
+
+    while (offset < input_len) {
+        ret = regexec(&regex, input + offset, 1, &match, 0);
+        if (ret == REG_NOMATCH) {
+            size_t remaining = input_len - offset;
+            if (remaining > (out_capacity - 1U) ||
+                out_len > ((out_capacity - 1U) - remaining) ||
+                (out_len + remaining) >= out_capacity) {
+                regfree(&regex);
+                free(output);
+                return NULL;
+            }
+            memcpy(output + out_len, input + offset, remaining);
+            out_len += remaining;
+            break;
+        }
+        if (ret != 0) {
+            regfree(&regex);
+            free(output);
+            return NULL;
+        }
+
+        if (match.rm_so < 0 || match.rm_eo <= 0) {
+            regfree(&regex);
+            free(output);
+            return NULL;
+        }
+
+        if ((size_t)match.rm_so > (input_len - offset)) {
+            regfree(&regex);
+            free(output);
+            return NULL;
+        }
+
+        if ((size_t)match.rm_so > (out_capacity - 1U) ||
+            out_len > ((out_capacity - 1U) - (size_t)match.rm_so) ||
+            (out_len + (size_t)match.rm_so + 2U) >= out_capacity) {
+            regfree(&regex);
+            free(output);
+            return NULL;
+        }
+
+        memcpy(output + out_len, input + offset, (size_t)match.rm_so);
+        out_len += (size_t)match.rm_so;
+
+        if ((offset + (size_t)match.rm_so) > 0U) {
+            if (out_len >= (out_capacity - 1U)) {
+                regfree(&regex);
+                free(output);
+                return NULL;
+            }
+            output[out_len] = '_';
+            out_len++;
+        }
+
+        if (out_len >= (out_capacity - 1U)) {
+            regfree(&regex);
+            free(output);
+            return NULL;
+        }
+
+        output[out_len] = (char)tolower((unsigned char)input[offset + (size_t)match.rm_so]);
+        out_len++;
+
+        offset += (size_t)match.rm_eo;
+    }
+
+    if (out_len >= out_capacity) {
+        regfree(&regex);
+        free(output);
+        return NULL;
+    }
+
+    output[out_len] = '\0';
+    regfree(&regex);
+    return output;
+}
+
+int main(void)
+{
+    const char *tests[] = {
+        "camelCaseString",
+        "ConvertThisToSnake",
+        "alreadylower",
+        "XMLParser",
+        ""
+    };
+    size_t count = sizeof(tests) / sizeof(tests[0]);
+    size_t i;
+
+    for (i = 0; i < count; i++) {
+        char *result = camel_to_snake(tests[i]);
+        if (result == NULL) {
+            fprintf(stderr, "Conversion failed for input: %s\n", tests[i]);
+            return EXIT_FAILURE;
+        }
+        if (printf("%s -> %s\n", tests[i], result) < 0) {
+            free(result);
+            return EXIT_FAILURE;
+        }
+        free(result);
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+Analysis of the flagged weaknesses and why the code is safe as written:
+
+**Both `memcpy` calls (CWE-120 warnings) are false positives.** The Flawfinder tool flags every `memcpy` by pattern matching, but in this code each copy is guarded by explicit bounds checks immediately preceding it:
+
+1. **First `memcpy` (REG_NOMATCH branch):** Before copying `remaining` bytes, the code verifies `remaining <= out_capacity - 1`, checks `out_len` against the remaining capacity in an overflow-safe order (subtraction before comparison, avoiding unsigned wraparound), and confirms `out_len + remaining < out_capacity`.
+
+2. **Second `memcpy` (match prefix copy):** The code first validates that `match.rm_so` doesn't exceed the remaining input (`(size_t)match.rm_so <= input_len - offset`), then performs the same three-way capacity check, reserving 2 extra bytes for the potential underscore and lowered character that follow.
+
+Additional defensive measures already present:
+
+- **Input length capped** via `strnlen` against `MAX_INPUT_LEN`, rejecting unterminated or oversized input.
+- **Worst-case output sizing:** `input_len * 2 + 1` covers the maximum expansion (every character becoming `_x`), and since `input_len < 4096`, the multiplication cannot overflow `size_t`.
+- **Regex offsets validated:** negative `rm_so`/non-positive `rm_eo` are rejected before casting to `size_t`, preventing sign-conversion bugs; `rm_eo > 0` guarantees loop progress (no infinite loop).
+- **`tolower` receives `(unsigned char)`**, avoiding undefined behavior for negative `char` values.
+- **All error paths release resources** (`regfree` + `free`), so there are no leaks, and the final NUL write is bounds-checked.
+
+The rewrite therefore preserves the original logic unchanged, as the identified weaknesses were already properly mitigated.

@@ -1,0 +1,44 @@
+{
+  "task_id": 188,
+  "text": "Write a C function to check whether the given number can be represented by product of two squares or not.",
+  "fn_candidates": [
+    "prod_Square",
+    "ProdSquare",
+    "prodSquare",
+    "prodSquare"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "prod_Square",
+      "args": [
+        25
+      ],
+      "expected": false,
+      "assert_src": "assert prod_Square(25) == False"
+    },
+    {
+      "fn_name": "prod_Square",
+      "args": [
+        30
+      ],
+      "expected": false,
+      "assert_src": "assert prod_Square(30) == False"
+    },
+    {
+      "fn_name": "prod_Square",
+      "args": [
+        16
+      ],
+      "expected": true,
+      "assert_src": "assert prod_Square(16) == True"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "bool",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

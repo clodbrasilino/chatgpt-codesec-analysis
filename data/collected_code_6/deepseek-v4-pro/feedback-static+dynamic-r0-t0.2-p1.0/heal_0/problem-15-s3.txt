@@ -1,0 +1,76 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+char **split_at_lowercase(const char *str, int *count) {
+    if (str == NULL || count == NULL) {
+        return NULL;
+    }
+
+    int len = strlen(str);
+    int capacity = 10;
+    char **result = malloc(capacity * sizeof(char *));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    int start = 0;
+    int num_tokens = 0;
+
+    for (int i = 0; i <= len; i++) {
+        if (i == len || islower((unsigned char)str[i])) {
+            int token_len = i - start;
+            if (token_len > 0) {
+                if (num_tokens >= capacity) {
+                    capacity *= 2;
+                    char **temp = realloc(result, capacity * sizeof(char *));
+                    if (temp == NULL) {
+                        for (int j = 0; j < num_tokens; j++) {
+                            free(result[j]);
+                        }
+                        free(result);
+                        return NULL;
+                    }
+                    result = temp;
+                }
+                result[num_tokens] = malloc((token_len + 1) * sizeof(char));
+                if (result[num_tokens] == NULL) {
+                    for (int j = 0; j < num_tokens; j++) {
+                        free(result[j]);
+                    }
+                    free(result);
+                    return NULL;
+                }
+                strncpy(result[num_tokens], str + start, token_len);
+                result[num_tokens][token_len] = '\0';
+                num_tokens++;
+            }
+            start = i + 1;
+        }
+    }
+
+    *count = num_tokens;
+    return result;
+}
+
+int main(void) {
+    const char *test = "HelloWorldThisIsATest";
+    int count = 0;
+    char **tokens = split_at_lowercase(test, &count);
+
+    if (tokens == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return 1;
+    }
+
+    for (int i = 0; i < count; i++) {
+        printf("%s\n", tokens[i]);
+        free(tokens[i]);
+    }
+    free(tokens);
+
+    return 0;
+}
+```

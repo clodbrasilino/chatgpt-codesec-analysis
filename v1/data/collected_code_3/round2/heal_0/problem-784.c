@@ -1,0 +1,33 @@
+#include <stdio.h>
+
+int findProduct(int arr[], int n) {
+    int firstEven = -1, firstOdd = -1;
+    for (int i = 0; i < n; i++) {
+        if (firstEven == -1 && arr[i] % 2 == 0) {
+            firstEven = arr[i];
+        }
+        if (firstOdd == -1 && arr[i] % 2 != 0) {
+            firstOdd = arr[i];
+        }
+        if (firstEven != -1 && firstOdd != -1) {
+            break;
+        }
+    }
+    if (firstEven != -1 && firstOdd != -1) {
+        return firstEven * firstOdd;
+    } else {
+        return -1;
+    }
+}
+
+int main() {
+    int arr[] = {3, 4, 5, 6, 7};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    int product = findProduct(arr, n);
+    if (product != -1) {
+        printf("Product of first even and odd number is %d\n", product);
+    } else {
+        printf("No even and odd number found\n");
+    }
+    return 0;
+}

@@ -1,0 +1,88 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+char *snake_to_camel(const char *input)
+{
+    size_t len;
+    size_t i;
+    size_t out_pos;
+    char *result;
+    int capitalize_next;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    len = strlen(input);
+
+    result = malloc(len + 1U);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    out_pos = 0U;
+    capitalize_next = 1;
+
+    for (i = 0U; i < len; i++) {
+        char c = input[i];
+
+        if (c == '_') {
+            capitalize_next = 1;
+            continue;
+        }
+
+        if (capitalize_next != 0) {
+            result[out_pos] = (char)toupper((unsigned char)c);
+            capitalize_next = 0;
+        } else {
+            result[out_pos] = c;
+        }
+        out_pos++;
+    }
+
+    result[out_pos] = '\0';
+
+    return result;
+}
+
+int main(void)
+{
+    const char *tests[] = {
+        "android_tv",
+        "google_pixel",
+        "apple_watch",
+        "hello_world",
+        "convert_snake_case_to_camel_case",
+        "already",
+        "multiple__underscores",
+        "trailing_"
+    };
+    size_t i;
+    size_t count = sizeof(tests) / sizeof(tests[0]);
+
+    for (i = 0U; i < count; i++) {
+        char *converted = snake_to_camel(tests[i]);
+        if (converted == NULL) {
+            fprintf(stderr, "Conversion failed for: %s\n", tests[i]);
+            return EXIT_FAILURE;
+        }
+        printf("%s\n", converted);
+        free(converted);
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the original code and fixes applied:**
+
+1. **Root cause of the failing test cases:** The conversion logic itself was correct — `"android_tv"` was properly converted to `"AndroidTv"`. The failures (`expected 'AndroidTv', got <no output>`) were caused by the output format. The original `main` printed `"android_tv -> AndroidTv"`, while the test harness expected only the converted string on each line. The fix is to print just `converted` via `printf("%s\n", converted)`.
+
+2. **Removed the dead/incorrect bounds check:** The `if (out_pos >= len) { free(result); return NULL; }` guard was unreachable in practice (the output can never exceed the input length, since underscores are dropped), but worse, had it ever triggered it would silently turn a valid input into a reported failure. Removing it simplifies the logic without losing safety — `out_pos <= len` is an invariant, so `result[out_pos] = '\0'` stays within the `len + 1` allocation.
+
+3. **Flawfinder `strlen` warning (CWE-126):** This is a low-risk informational finding. All inputs in this program are string literals, which are guaranteed NUL-terminated. The `input == NULL` guard already covers the realistic failure mode, so no further change is warranted.
+
+4. **Retained good practices from the original:** the `(unsigned char)` cast before `toupper` (avoids UB on negative `char` values), the `malloc` NULL check, and `free`-ing each result to avoid leaks.

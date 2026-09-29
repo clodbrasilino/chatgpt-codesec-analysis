@@ -1,0 +1,77 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+bool is_matching_pair(char left_char, char right_char) {
+    return (left_char == '(' && right_char == ')') ||
+           (left_char == '{' && right_char == '}') ||
+           (left_char == '[' && right_char == ']');
+}
+
+bool is_valid_parentheses(const char *s) {
+    if (s == NULL) {
+        return false;
+    }
+
+    size_t capacity = 32;
+    char *stack = (char *)malloc(capacity * sizeof(char));
+    if (stack == NULL) {
+        return false;
+    }
+
+    size_t top = 0;
+    const char *p = s;
+
+    while (*p != '\0') {
+        char c = *p;
+        if (c == '(' || c == '{' || c == '[') {
+            if (top >= capacity) {
+                size_t new_capacity = capacity * 2;
+                char *new_stack = (char *)realloc(stack, new_capacity * sizeof(char));
+                if (new_stack == NULL) {
+                    free(stack);
+                    return false;
+                }
+                stack = new_stack;
+                capacity = new_capacity;
+            }
+            stack[top++] = c;
+        } else if (c == ')' || c == '}' || c == ']') {
+            if (top == 0) {
+                free(stack);
+                return false;
+            }
+            char top_char = stack[--top];
+            if (!is_matching_pair(top_char, c)) {
+                free(stack);
+                return false;
+            }
+        }
+        p++;
+    }
+
+    bool is_valid = (top == 0);
+    free(stack);
+    
+    return is_valid;
+}
+
+int main(void) {
+    const char *test_cases[] = {
+        "()",
+        "()[]{}",
+        "(]",
+        "([)]",
+        "{[]}",
+        NULL
+    };
+
+    size_t num_tests = sizeof(test_cases) / sizeof(test_cases[0]);
+
+    for (size_t i = 0; i < num_tests; i++) {
+        bool result = is_valid_parentheses(test_cases[i]);
+        printf("%s: %s\n", test_cases[i] ? test_cases[i] : "NULL", result ? "Valid" : "Invalid");
+    }
+
+    return 0;
+}

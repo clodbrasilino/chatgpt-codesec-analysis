@@ -1,0 +1,39 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char findMostCommonChar(const char *str) {
+    if (str == NULL || *str == '\0') {
+        return '\0';
+    }
+
+    int counts[256] = {0};
+    int maxCount = 0;
+    char maxChar = '\0';
+
+    for (int i = 0; str[i] != '\0'; i++) {
+        unsigned char c = (unsigned char)str[i];
+        counts[c]++;
+        if (counts[c] > maxCount) {
+            maxCount = counts[c];
+            maxChar = (char)c;
+        }
+    }
+
+    return maxChar;
+}
+
+int main(void) {
+    const char *testString = "success";
+    char commonChar = findMostCommonChar(testString);
+    
+    if (commonChar != '\0') {
+        printf("Most common character: '%c'\n", commonChar);
+    } else {
+        printf("Invalid or empty string provided.\n");
+    }
+
+    return 0;
+}
+```

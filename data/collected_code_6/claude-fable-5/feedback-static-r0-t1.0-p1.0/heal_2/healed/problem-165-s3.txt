@@ -1,0 +1,70 @@
+```c
+#include <stdio.h>
+#include <string.h>
+
+#define MAX_INPUT_SIZE 256
+
+int count_matching_positions(const char *str, size_t max_len)
+{
+    int count = 0;
+    size_t len;
+    size_t i;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    len = strnlen(str, max_len);
+
+    for (i = 0; i < len; i++) {
+        char c = str[i];
+        if (c >= 'a' && c <= 'z') {
+            if ((size_t)(c - 'a') == i) {
+                count++;
+            }
+        } else if (c >= 'A' && c <= 'Z') {
+            if ((size_t)(c - 'A') == i) {
+                count++;
+            }
+        }
+    }
+
+    return count;
+}
+
+int main(void)
+{
+    char buffer[MAX_INPUT_SIZE];
+    int result;
+
+    memset(buffer, 0, sizeof(buffer));
+
+    printf("Enter a string: ");
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+    buffer[strcspn(buffer, "\n")] = '\0';
+
+    result = count_matching_positions(buffer, sizeof(buffer));
+
+    printf("Number of characters at same position as in alphabet: %d\n", result);
+
+    return 0;
+}
+```
+
+**Analysis of the original code and the flagged weakness:**
+
+The Flawfinder warning (CWE-119/CWE-120) about the statically-sized `char buffer[MAX_INPUT_SIZE]` is a low-risk, informational hit. The original code already mitigates it properly, so no structural changes were required:
+
+1. **Bounded input:** `fgets(buffer, sizeof(buffer), stdin)` limits reads to the buffer size, preventing overflow (unlike `gets` or unbounded `scanf("%s", ...)`).
+2. **Guaranteed termination:** `buffer[sizeof(buffer) - 1] = '\0'` is defensive; `fgets` already null-terminates, but this costs nothing and protects against future refactoring.
+3. **Newline stripping:** `buffer[strcspn(buffer, "\n")] = '\0'` safely removes the trailing newline without risk of out-of-bounds access, since `strcspn` returns at most the string length.
+4. **Bounded string measurement:** `strnlen(str, max_len)` in `count_matching_positions` avoids reading past the buffer even if a non-terminated string were passed, and the `NULL` check guards against invalid pointers.
+5. **Correct size propagation:** `sizeof(buffer)` is used consistently rather than a repeated magic number, keeping the bound and the array size in sync.
+
+One portability note: `strnlen` is POSIX / C23. On strictly C99/C11 toolchains without POSIX extensions you may need `#define _POSIX_C_SOURCE 200809L` before the includes, or provide a small fallback implementation.

@@ -1,0 +1,49 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <stdlib.h>
+
+bool check_even_indices_even_values(const int *arr, size_t size) {
+    if (arr == NULL) {
+        return false;
+    }
+    
+    for (size_t i = 0; i < size; i += 2) {
+        if (arr[i] % 2 != 0) {
+            return false;
+        }
+    }
+    
+    return true;
+}
+
+int main(void) {
+    int arr1[] = {2, 1, 4, 3, 6, 5, 8};
+    int arr2[] = {2, 1, 4, 3, 5};
+    int arr3[] = {1, 2, 3};
+    size_t size1 = sizeof(arr1) / sizeof(arr1[0]);
+    size_t size2 = sizeof(arr2) / sizeof(arr2[0]);
+    size_t size3 = sizeof(arr3) / sizeof(arr3[0]);
+    
+    bool result1 = check_even_indices_even_values(arr1, size1);
+    bool result2 = check_even_indices_even_values(arr2, size2);
+    bool result3 = check_even_indices_even_values(arr3, size3);
+    
+    printf("Array 1: %s\n", result1 ? "true" : "false");
+    printf("Array 2: %s\n", result2 ? "true" : "false");
+    printf("Array 3: %s\n", result3 ? "true" : "false");
+    
+    const int *null_arr = NULL;
+    /* Possible weaknesses found:
+     *  Calling function 'check_even_indices_even_values' returns 0
+     *  Assignment 'result_null=check_even_indices_even_values(null_arr,5)', assigned value is 0
+     */
+    bool result_null = check_even_indices_even_values(null_arr, 5);
+    
+    /* Possible weaknesses found:
+     *  Condition 'result_null' is always false [knownConditionTrueFalse]
+     *  Condition 'result_null' is always false
+     */
+    printf("NULL array: %s\n", result_null ? "true" : "false");
+    
+    return 0;
+}

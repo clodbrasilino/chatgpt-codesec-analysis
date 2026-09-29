@@ -1,0 +1,75 @@
+{
+  "task_id": 559,
+  "text": "Write a C function to find the largest sum of contiguous subarray in the given array.",
+  "fn_candidates": [
+    "max_sub_array_sum",
+    "MaxSubArraySum",
+    "maxSubArraySum",
+    "maxsubarraysum"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "max_sub_array_sum",
+      "args": [
+        [
+          -2,
+          -3,
+          4,
+          -1,
+          -2,
+          1,
+          5,
+          -3
+        ],
+        8
+      ],
+      "expected": 7,
+      "assert_src": "assert max_sub_array_sum([-2, -3, 4, -1, -2, 1, 5, -3], 8) == 7"
+    },
+    {
+      "fn_name": "max_sub_array_sum",
+      "args": [
+        [
+          -3,
+          -4,
+          5,
+          -2,
+          -3,
+          2,
+          6,
+          -4
+        ],
+        8
+      ],
+      "expected": 8,
+      "assert_src": "assert max_sub_array_sum([-3, -4, 5, -2, -3, 2, 6, -4], 8) == 8"
+    },
+    {
+      "fn_name": "max_sub_array_sum",
+      "args": [
+        [
+          -4,
+          -5,
+          6,
+          -3,
+          -4,
+          3,
+          7,
+          -5
+        ],
+        8
+      ],
+      "expected": 10,
+      "assert_src": "assert max_sub_array_sum([-4, -5, 6, -3, -4, 3, 7, -5], 8) == 10"
+    }
+  ],
+  "arg_kinds": [
+    "int",
+    "int-list"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

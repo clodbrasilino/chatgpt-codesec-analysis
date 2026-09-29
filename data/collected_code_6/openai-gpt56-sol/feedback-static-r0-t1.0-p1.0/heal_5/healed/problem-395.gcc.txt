@@ -1,0 +1,11 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-395.c: In function 'find_first_non_repeated':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-395.c:16:37: error: 'SIZE_MAX' undeclared (first use in this function)
+   16 |         if (frequencies[data[i]] == SIZE_MAX) {
+      |                                     ^~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-395.c:4:1: note: 'SIZE_MAX' is defined in header '<stdint.h>'; this is probably fixable by adding '#include <stdint.h>'
+    3 | #include <stdio.h>
+  +++ |+#include <stdint.h>
+    4 | 
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-395.c:16:37: note: each undeclared identifier is reported only once for each function it appears in
+   16 |         if (frequencies[data[i]] == SIZE_MAX) {
+      |                                     ^~~~~~~~

@@ -1,0 +1,8 @@
+collected_code_3/round4/heal_0/problem-721.c: In function 'maxAverage':
+collected_code_3/round4/heal_0/problem-721.c:18:24: warning: implicit declaration of function 'max' [-Wimplicit-function-declaration]
+   18 |             dp[i][j] = max(dp[i - 1][j], dp[i][j - 1]) + matrix[i][j];
+      |                        ^~~
+ld: Undefined symbols:
+  _max, referenced from:
+      _maxAverage in ccadBe56.o
+collect2: error: ld returned 1 exit status

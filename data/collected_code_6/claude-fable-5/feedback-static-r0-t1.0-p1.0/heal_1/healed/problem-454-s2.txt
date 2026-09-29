@@ -1,0 +1,117 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+int word_contains_z(const char *word)
+{
+    size_t i;
+
+    if (word == NULL) {
+        return 0;
+    }
+
+    for (i = 0; word[i] != '\0'; i++) {
+        if (word[i] == 'z' || word[i] == 'Z') {
+            return 1;
+        }
+    }
+
+    return 0;
+}
+
+char *find_word_with_z(const char *text)
+{
+    size_t i;
+    size_t len;
+
+    if (text == NULL) {
+        return NULL;
+    }
+
+    len = strlen(text);
+    i = 0;
+
+    while (i < len) {
+        size_t start;
+        size_t end;
+
+        while (i < len && !isalpha((unsigned char)text[i])) {
+            i++;
+        }
+
+        start = i;
+
+        while (i < len && isalpha((unsigned char)text[i])) {
+            i++;
+        }
+
+        end = i;
+
+        if (end > start) {
+            size_t word_len = end - start;
+            size_t j;
+            int has_z = 0;
+
+            for (j = start; j < end; j++) {
+                if (text[j] == 'z' || text[j] == 'Z') {
+                    has_z = 1;
+                    break;
+                }
+            }
+
+            if (has_z) {
+                char *result = malloc(word_len + 1);
+                if (result == NULL) {
+                    return NULL;
+                }
+                memcpy(result, &text[start], word_len);
+                result[word_len] = '\0';
+                return result;
+            }
+        }
+    }
+
+    return NULL;
+}
+
+int main(void)
+{
+    const char *sentence = "The lazy dog jumped over the fuzzy fence";
+    char *match;
+
+    match = find_word_with_z(sentence);
+
+    if (match != NULL) {
+        if (printf("Matched word: %s\n", match) < 0) {
+            free(match);
+            return EXIT_FAILURE;
+        }
+        free(match);
+        match = NULL;
+    } else {
+        if (printf("No word containing 'z' found\n") < 0) {
+            return EXIT_FAILURE;
+        }
+    }
+
+    if (word_contains_z("puzzle")) {
+        if (printf("The word 'puzzle' contains 'z'\n") < 0) {
+            return EXIT_FAILURE;
+        }
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the changes made:**
+
+1. **`[variableScope]` on `start` and `end`** — Both variables were declared at function scope but only used inside the `while (i < len)` loop body. They are now declared inside the loop, minimizing their scope. This eliminates any risk of stale values leaking between iterations and improves readability.
+
+2. **Flawfinder `strlen` (CWE-126, over-read risk)** — This is a low-risk (risk 1) informational finding. The function's contract requires a NUL-terminated string, the `NULL` check is performed before the call, and the only caller passes string literals which are guaranteed NUL-terminated. No code change is required; the invariant is upheld by the API contract.
+
+3. **Flawfinder `memcpy` (CWE-120, buffer overflow)** — This is a false positive in practice: the destination buffer is allocated as `malloc(word_len + 1)` immediately before the copy of exactly `word_len` bytes, with the allocation checked for failure and the terminator written within bounds. The variable scope of `result` was additionally reduced to the block where it is used, making the allocate-copy-terminate sequence locally verifiable.
+
+The remaining code was already defensive: `isalpha` is called with an `unsigned char` cast (avoiding UB for negative `char` values), all allocations are checked, `printf` return values are validated, and the freed pointer in `main` is nulled to prevent accidental reuse.

@@ -1,0 +1,46 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int find_msb_position(unsigned int value)
+{
+    int position;
+
+    if (value == 0U) {
+        return -1;
+    }
+
+    position = 0;
+    while (value > 1U) {
+        value >>= 1U;
+        position++;
+    }
+
+    return position;
+}
+
+int main(void)
+{
+    unsigned int number;
+    int result;
+    int scan_status;
+
+    printf("Enter an unsigned integer: ");
+    scan_status = scanf("%u", &number);
+
+    if (scan_status != 1) {
+        fprintf(stderr, "Error: invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    result = find_msb_position(number);
+
+    if (result < 0) {
+        printf("No set bit found (input is zero)\n");
+    } else {
+        printf("Most significant set bit position: %d\n", result);
+    }
+
+    return EXIT_SUCCESS;
+}
+```

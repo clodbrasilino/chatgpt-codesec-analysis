@@ -1,0 +1,53 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+static int reverse(int *arr, size_t start, size_t end) {
+    if (arr == NULL) {
+        return -1;
+    }
+    while (start < end) {
+        int temp = arr[start];
+        arr[start] = arr[end];
+        arr[end] = temp;
+        start++;
+        end--;
+    }
+    return 0;
+}
+
+int rotate_left(int *arr, size_t size, size_t n) {
+    if (arr == NULL || size == 0) {
+        return -1;
+    }
+    n = n % size;
+    if (n == 0) {
+        return 0;
+    }
+    if (reverse(arr, 0, n - 1) != 0) {
+        return -1;
+    }
+    if (reverse(arr, n, size - 1) != 0) {
+        return -1;
+    }
+    if (reverse(arr, 0, size - 1) != 0) {
+        return -1;
+    }
+    return 0;
+}
+
+int main(void) {
+    int arr[] = {1, 2, 3, 4, 5, 6, 7};
+    size_t size = sizeof(arr) / sizeof(arr[0]);
+    size_t n = 2;
+
+    if (rotate_left(arr, size, n) != 0) {
+        return EXIT_FAILURE;
+    }
+
+    for (size_t i = 0; i < size; i++) {
+        printf("%d ", arr[i]);
+    }
+    printf("\n");
+
+    return EXIT_SUCCESS;
+}

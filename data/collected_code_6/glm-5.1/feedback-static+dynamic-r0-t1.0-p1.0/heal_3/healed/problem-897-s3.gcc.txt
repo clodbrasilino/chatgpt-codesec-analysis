@@ -1,0 +1,11 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-897-s3.c: In function 'is_word_present':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-897-s3.c:11:45: error: 'SIZE_MAX' undeclared (first use in this function)
+   11 |     size_t sentence_len = strnlen(sentence, SIZE_MAX);
+      |                                             ^~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-897-s3.c:5:1: note: 'SIZE_MAX' is defined in header '<stdint.h>'; this is probably fixable by adding '#include <stdint.h>'
+    4 | #include <ctype.h>
+  +++ |+#include <stdint.h>
+    5 | 
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-897-s3.c:11:45: note: each undeclared identifier is reported only once for each function it appears in
+   11 |     size_t sentence_len = strnlen(sentence, SIZE_MAX);
+      |                                             ^~~~~~~~

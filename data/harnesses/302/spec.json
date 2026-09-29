@@ -1,0 +1,44 @@
+{
+  "task_id": 302,
+  "text": "Write a C function to find the most significant bit number which is also a set bit.",
+  "fn_candidates": [
+    "set_Bit_Number",
+    "SetBitNumber",
+    "setBitNumber",
+    "setBitNumber"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "set_Bit_Number",
+      "args": [
+        6
+      ],
+      "expected": 4,
+      "assert_src": "assert set_Bit_Number(6) == 4"
+    },
+    {
+      "fn_name": "set_Bit_Number",
+      "args": [
+        10
+      ],
+      "expected": 8,
+      "assert_src": "assert set_Bit_Number(10) == 8"
+    },
+    {
+      "fn_name": "set_Bit_Number",
+      "args": [
+        18
+      ],
+      "expected": 16,
+      "assert_src": "assert set_Bit_Number(18) == 16"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

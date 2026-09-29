@@ -1,0 +1,107 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <limits.h>
+
+typedef enum {
+    TRIANGLE_INVALID,
+    TRIANGLE_EQUILATERAL,
+    TRIANGLE_ISOSCELES,
+    TRIANGLE_SCALENE
+} TriangleType;
+
+static TriangleType get_triangle_type(unsigned long long a,
+                                      unsigned long long b,
+                                      unsigned long long c)
+{
+    if (a == 0 || b == 0 || c == 0 ||
+        a > ULLONG_MAX - b || a + b <= c ||
+        a > ULLONG_MAX - c || a + c <= b ||
+        b > ULLONG_MAX - c || b + c <= a) {
+        return TRIANGLE_INVALID;
+    }
+
+    if (a == b && b == c) {
+        return TRIANGLE_EQUILATERAL;
+    }
+
+    if (a == b || a == c || b == c) {
+        return TRIANGLE_ISOSCELES;
+    }
+
+    return TRIANGLE_SCALENE;
+}
+
+static int read_side(const char *prompt, unsigned long long *side)
+{
+    char buffer[128];
+    char *end;
+    unsigned long long value;
+
+    if (prompt == NULL || side == NULL) {
+        return 0;
+    }
+
+    if (fputs(prompt, stdout) == EOF || fflush(stdout) == EOF) {
+        return 0;
+    }
+
+    if (fgets(buffer, sizeof buffer, stdin) == NULL) {
+        return 0;
+    }
+
+    errno = 0;
+    end = NULL;
+    value = strtoull(buffer, &end, 10);
+
+    if (errno == ERANGE || end == buffer || value == 0) {
+        return 0;
+    }
+
+    while (*end == ' ' || *end == '\t' || *end == '\n' ||
+           *end == '\r' || *end == '\f' || *end == '\v') {
+        ++end;
+    }
+
+    if (*end != '\0') {
+        return 0;
+    }
+
+    *side = value;
+    return 1;
+}
+
+int main(void)
+{
+    unsigned long long a;
+    unsigned long long b;
+    unsigned long long c;
+    TriangleType type;
+
+    if (!read_side("Enter side 1: ", &a) ||
+        !read_side("Enter side 2: ", &b) ||
+        !read_side("Enter side 3: ", &c)) {
+        fputs("Invalid input\n", stderr);
+        return EXIT_FAILURE;
+    }
+
+    type = get_triangle_type(a, b, c);
+
+    switch (type) {
+        case TRIANGLE_EQUILATERAL:
+            puts("Equilateral triangle");
+            break;
+        case TRIANGLE_ISOSCELES:
+            puts("Isosceles triangle");
+            break;
+        case TRIANGLE_SCALENE:
+            puts("Scalene triangle");
+            break;
+        case TRIANGLE_INVALID:
+        default:
+            puts("Not a valid triangle");
+            break;
+    }
+
+    return EXIT_SUCCESS;
+}

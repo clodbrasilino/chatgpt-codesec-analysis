@@ -1,0 +1,122 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+static int is_delim(char c, const char *delim) {
+    if (delim == NULL) {
+        return isspace((unsigned char)c);
+    }
+    for (size_t i = 0; delim[i] != '\0'; i++) {
+        if (c == delim[i]) {
+            return 1;
+        }
+    }
+    return 0;
+}
+ /* Possible weaknesses found:
+  *  test case 0 failed: expected ['python', 'programming'], got <no output>
+  *  test case 1 failed: expected ['lists', 'tuples', 'strings'], got <no output>
+  *  test case 2 failed: expected ['write', 'a', 'program'], got <no output>
+  */
+
+char **string_to_list(const char *str, const char *delim) {
+    if (str == NULL) {
+        return NULL;
+    }
+
+    char **list = NULL;
+    size_t capacity = 0;
+    size_t count = 0;
+
+    size_t i = 0;
+    while (str[i] != '\0') {
+        if (is_delim(str[i], delim)) {
+            i++;
+            continue;
+        }
+
+        size_t start = i;
+        while (str[i] != '\0' && !is_delim(str[i], delim)) {
+            i++;
+        }
+
+        size_t token_len = i - start;
+        if (count >= capacity) {
+            size_t new_capacity = capacity == 0 ? 8 : capacity * 2;
+            if (new_capacity <= capacity) {
+                for (size_t j = 0; j < count; j++) {
+                    free(list[j]);
+                }
+                free(list);
+                return NULL;
+            }
+            char **new_list = realloc(list, (new_capacity + 1) * sizeof(char *));
+            if (new_list == NULL) {
+                for (size_t j = 0; j < count; j++) {
+                    free(list[j]);
+                }
+                free(list);
+                return NULL;
+            }
+            list = new_list;
+            capacity = new_capacity;
+        }
+
+        list[count] = malloc(token_len + 1);
+        if (list[count] == NULL) {
+            for (size_t j = 0; j < count; j++) {
+                free(list[j]);
+            }
+            free(list);
+            return NULL;
+        }
+        memcpy(list[count], str + start, token_len);
+        list[count][token_len] = '\0';
+
+        count++;
+    }
+
+    if (count == 0) {
+        list = malloc(sizeof(char *));
+        if (list == NULL) {
+            return NULL;
+        }
+        list[0] = NULL;
+        return list;
+    }
+
+    char **new_list = realloc(list, (count + 1) * sizeof(char *));
+    if (new_list != NULL) {
+        list = new_list;
+    }
+
+    list[count] = NULL;
+
+    return list;
+}
+
+void free_list(char **list) {
+    if (list == NULL) {
+        return;
+    }
+    for (size_t i = 0; list[i] != NULL; i++) {
+        free(list[i]);
+    }
+    free(list);
+}
+
+int main(void) {
+    const char *input = "hello world this is a test";
+    const char *delim = " ";
+    char **list = string_to_list(input, delim);
+    
+    if (list != NULL) {
+        for (size_t i = 0; list[i] != NULL; i++) {
+            printf("%s\n", list[i]);
+        }
+        free_list(list);
+    }
+    
+    return 0;
+}

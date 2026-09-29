@@ -1,0 +1,50 @@
+{
+  "task_id": 228,
+  "text": "Write a C function to check whether all the bits are unset in the given range or not.",
+  "fn_candidates": [
+    "all_Bits_Set_In_The_Given_Range",
+    "AllBitsSetInTheGivenRange",
+    "allBitsSetInTheGivenRange",
+    "allBitsSetInTheGivenRange"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "all_Bits_Set_In_The_Given_Range",
+      "args": [
+        4,
+        1,
+        2
+      ],
+      "expected": true,
+      "assert_src": "assert all_Bits_Set_In_The_Given_Range(4,1,2) == True"
+    },
+    {
+      "fn_name": "all_Bits_Set_In_The_Given_Range",
+      "args": [
+        17,
+        2,
+        4
+      ],
+      "expected": true,
+      "assert_src": "assert all_Bits_Set_In_The_Given_Range(17,2,4) == True"
+    },
+    {
+      "fn_name": "all_Bits_Set_In_The_Given_Range",
+      "args": [
+        39,
+        4,
+        6
+      ],
+      "expected": false,
+      "assert_src": "assert all_Bits_Set_In_The_Given_Range(39,4,6) == False"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "bool",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

@@ -1,0 +1,77 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+typedef struct Node {
+    int key;
+    int value;
+    struct Node *next;
+} Node;
+
+typedef struct Dictionary {
+    Node **buckets;
+    int size;
+} Dictionary;
+
+Node* createNode(int key, int value) {
+    Node *newNode = (Node *)malloc(sizeof(Node));
+    newNode->key = key;
+    newNode->value = value;
+    newNode->next = NULL;
+    return newNode;
+}
+
+Dictionary* createDictionary(int size) {
+    Dictionary *dict = (Dictionary *)malloc(sizeof(Dictionary));
+    dict->size = size;
+    dict->buckets = (Node **)calloc(size, sizeof(Node *));
+    return dict;
+}
+
+void insert(Dictionary *dict, int key, int value) {
+    int index = key % dict->size;
+    Node *newNode = createNode(key, value);
+    newNode->next = dict->buckets[index];
+    dict->buckets[index] = newNode;
+}
+
+bool checkAllValuesSame(Dictionary *dict, int valueToCheck) {
+    for (int i = 0; i < dict->size; i++) {
+        Node *node = dict->buckets[i];
+        while (node != NULL) {
+            if (node->value != valueToCheck) {
+                return false;
+            }
+            node = node->next;
+        }
+    }
+    return true;
+}
+
+void freeDictionary(Dictionary *dict) {
+    for (int i = 0; i < dict->size; i++) {
+        Node *node = dict->buckets[i];
+        while (node != NULL) {
+            Node *temp = node;
+            node = node->next;
+            free(temp);
+        }
+    }
+    free(dict->buckets);
+    free(dict);
+}
+
+int main() {
+    Dictionary *dict = createDictionary(10);
+
+    insert(dict, 1, 10);
+    insert(dict, 2, 10);
+    insert(dict, 3, 10);
+
+    bool allSame = checkAllValuesSame(dict, 10);
+
+    printf("All values same: %s\n", allSame ? "true" : "false");
+
+    freeDictionary(dict);
+    return 0;
+}

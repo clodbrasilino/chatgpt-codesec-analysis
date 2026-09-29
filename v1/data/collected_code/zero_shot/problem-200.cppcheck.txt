@@ -1,0 +1,18 @@
+collected_code/problem-200-0.c:5:21: error: Cannot determine that 'arr[0]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+    int maxVal = arr[0];
+                    ^
+collected_code/problem-200-0.c:10:16: error: Cannot determine that 'arr[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        if (arr[i] > maxVal)
+               ^
+collected_code/problem-200-0.c:12:25: error: Cannot determine that 'arr[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+            maxVal = arr[i];
+                        ^
+collected_code/problem-200-0.c:15:21: error: Cannot determine that 'arr[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        else if (arr[i] == maxVal)
+                    ^
+collected_code/problem-200-0.c:34:36: error: Cannot determine that 'maxIndexes[0]' is initialized [premium-bughuntingUninit]
+    for (int i = 1; i <= maxIndexes[0]; i++)
+                                   ^
+collected_code/problem-200-0.c:36:33: error: Cannot determine that 'maxIndexes[i]' is initialized [premium-bughuntingUninit]
+        printf("%d ", maxIndexes[i]);
+                                ^

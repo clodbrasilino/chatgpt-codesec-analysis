@@ -1,0 +1,16 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-191.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-191.c:14:18: error: Array 'month[1]' accessed at index 14, which is out of bounds. [arrayIndexOutOfBounds]
+        if (month[i] == '\0') {
+                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-191.c:11:36: note: Assignment 'max_len=sizeof(lower)-1', assigned value is 15
+    size_t max_len = sizeof(lower) - 1;
+                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-191.c:14:22: note: Assuming condition is false
+        if (month[i] == '\0') {
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-191.c:13:26: note: Assuming that condition 'i<max_len' is not redundant
+    for (size_t i = 0; i < max_len; i++) {
+                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-191.c:14:18: note: Array index out of bounds
+        if (month[i] == '\0') {
+                 ^

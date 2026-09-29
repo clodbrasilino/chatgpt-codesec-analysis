@@ -1,0 +1,202 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int value;
+    int frequency;
+    struct Node* next;
+} Node;
+
+typedef struct {
+    Node** buckets;
+    int size;
+} HashMap;
+
+HashMap* createHashMap(int size) {
+    HashMap* map = (HashMap*)malloc(sizeof(HashMap));
+    if (map == NULL) {
+        return NULL;
+    }
+    map->buckets = (Node**)calloc(size, sizeof(Node*));
+    if (map->buckets == NULL) {
+        free(map);
+        return NULL;
+    }
+    map->size = size;
+    return map;
+}
+
+void freeHashMap(HashMap* map) {
+    if (map == NULL) {
+        return;
+    }
+    for (int i = 0; i < map->size; i++) {
+        Node* current = map->buckets[i];
+        while (current != NULL) {
+            Node* temp = current;
+            current = current->next;
+            free(temp);
+        }
+    }
+    free(map->buckets);
+    free(map);
+}
+
+int hashFunction(int value, int size) {
+    return (value % size + size) % size;
+}
+
+void incrementFrequency(HashMap* map, int value) {
+    int index = hashFunction(value, map->size);
+    Node* current = map->buckets[index];
+
+    while (current != NULL) {
+        if (current->value == value) {
+            current->frequency++;
+            return;
+        }
+        current = current->next;
+    }
+
+    Node* newNode = (Node*)malloc(sizeof(Node));
+    if (newNode == NULL) {
+        return;
+    }
+    newNode->value = value;
+    newNode->frequency = 1;
+    newNode->next = map->buckets[index];
+    map->buckets[index] = newNode;
+}
+
+typedef struct {
+    int* values;
+    int* frequencies;
+    int size;
+    int capacity;
+} FrequencyArray;
+
+FrequencyArray* createFrequencyArray(int initialCapacity) {
+    FrequencyArray* arr = (FrequencyArray*)malloc(sizeof(FrequencyArray));
+    if (arr == NULL) {
+        return NULL;
+    }
+    arr->values = (int*)malloc(sizeof(int) * initialCapacity);
+    if (arr->values == NULL) {
+        free(arr);
+        return NULL;
+    }
+    arr->frequencies = (int*)malloc(sizeof(int) * initialCapacity);
+    if (arr->frequencies == NULL) {
+        free(arr->values);
+        free(arr);
+        return NULL;
+    }
+    arr->size = 0;
+    arr->capacity = initialCapacity;
+    return arr;
+}
+
+void freeFrequencyArray(FrequencyArray* arr) {
+    if (arr == NULL) {
+        return;
+    }
+    free(arr->values);
+    free(arr->frequencies);
+    free(arr);
+}
+
+int addToFrequencyArray(FrequencyArray* arr, int value, int frequency) {
+    if (arr->size >= arr->capacity) {
+        int newCapacity = arr->capacity * 2;
+        int* newValues = (int*)realloc(arr->values, sizeof(int) * newCapacity);
+        if (newValues == NULL) {
+            return -1;
+        }
+        int* newFrequencies = (int*)realloc(arr->frequencies, sizeof(int) * newCapacity);
+        if (newFrequencies == NULL) {
+            arr->values = newValues;
+            return -1;
+        }
+        arr->values = newValues;
+        arr->frequencies = newFrequencies;
+        arr->capacity = newCapacity;
+    }
+    arr->values[arr->size] = value;
+    arr->frequencies[arr->size] = frequency;
+    arr->size++;
+    return 0;
+}
+
+HashMap* computeFrequencies(int** lists, const int* listSizes, int numLists, int totalElements) {
+    HashMap* map = createHashMap(totalElements * 2 + 1);
+    if (map == NULL) {
+        return NULL;
+    }
+
+    for (int i = 0; i < numLists; i++) {
+        for (int j = 0; j < listSizes[i]; j++) {
+            incrementFrequency(map, lists[i][j]);
+        }
+    }
+
+    return map;
+}
+
+FrequencyArray* getFrequenciesFromMap(HashMap* map, int totalElements) {
+    FrequencyArray* result = createFrequencyArray(totalElements > 0 ? totalElements : 1);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    for (int i = 0; i < map->size; i++) {
+        Node* current = map->buckets[i];
+        while (current != NULL) {
+            if (addToFrequencyArray(result, current->value, current->frequency) != 0) {
+                freeFrequencyArray(result);
+                return NULL;
+            }
+            current = current->next;
+        }
+    }
+
+    return result;
+}
+
+FrequencyArray* findFrequency(int** lists, const int* listSizes, int numLists, int totalElements) {
+    HashMap* map = computeFrequencies(lists, listSizes, numLists, totalElements);
+    if (map == NULL) {
+        return NULL;
+    }
+
+    FrequencyArray* result = getFrequenciesFromMap(map, totalElements);
+    freeHashMap(map);
+
+    return result;
+}
+
+int main() {
+    int list1[] = {1, 2, 3, 4, 5};
+    int list2[] = {2, 3, 4};
+    int list3[] = {3, 4, 5, 6, 7, 8};
+
+    int* lists[] = {list1, list2, list3};
+    int listSizes[] = {5, 3, 6};
+    int numLists = 3;
+    int totalElements = 14;
+
+    FrequencyArray* result = findFrequency(lists, listSizes, numLists, totalElements);
+    if (result == NULL) {
+        printf("Memory allocation failed\n");
+        return 1;
+    }
+
+    printf("Element frequencies:\n");
+    for (int i = 0; i < result->size; i++) {
+        printf("%d: %d\n", result->values[i], result->frequencies[i]);
+    }
+
+    freeFrequencyArray(result);
+    return 0;
+}
+```

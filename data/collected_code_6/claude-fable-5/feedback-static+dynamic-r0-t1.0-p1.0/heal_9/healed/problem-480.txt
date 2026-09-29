@@ -1,0 +1,82 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+#include <stddef.h>
+#include <string.h>
+
+#define INPUT_SIZE 256
+
+int find_max_occurring_char(const char *str, char *result)
+{
+    size_t counts[UCHAR_MAX + 1] = {0};
+    size_t max_count = 0;
+    size_t i;
+    unsigned char max_char = 0;
+    int found = 0;
+
+    if (str == NULL || result == NULL) {
+        return -1;
+    }
+
+    for (i = 0; str[i] != '\0'; i++) {
+        unsigned char c = (unsigned char)str[i];
+        counts[c]++;
+        if (counts[c] > max_count) {
+            max_count = counts[c];
+            max_char = c;
+            found = 1;
+        }
+    }
+
+    if (found == 0) {
+        return -1;
+    }
+
+    *result = (char)max_char;
+    return 0;
+}
+
+int main(void)
+{
+    char input[INPUT_SIZE];
+    char max_char;
+    size_t len;
+
+    if (fgets(input, (int)sizeof(input), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    input[sizeof(input) - 1] = '\0';
+
+    len = strnlen(input, sizeof(input));
+    if (len > 0 && input[len - 1] == '\n') {
+        input[len - 1] = '\0';
+    }
+
+    if (find_max_occurring_char(input, &max_char) != 0) {
+        fprintf(stderr, "Empty string or invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Maximum occurring character: %c\n", max_char) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis summary:**
+
+The original code already mitigates the Flawfinder warning (CWE-119/CWE-120) regarding the statically-sized `char input[INPUT_SIZE]` buffer:
+
+1. **Bounded input reading** — `fgets(input, (int)sizeof(input), stdin)` limits the read to the buffer size, preventing overflow.
+2. **Guaranteed null termination** — `input[sizeof(input) - 1] = '\0'` is a defensive measure (technically redundant since `fgets` always null-terminates, but harmless).
+3. **Bounded string length** — `strnlen` with an explicit maximum avoids reading past the buffer even if termination were somehow missing.
+4. **Safe character indexing** — casting to `unsigned char` before indexing `counts[]` prevents negative array indices on platforms where `char` is signed (avoids CWE-129).
+5. **NULL pointer checks** — `find_max_occurring_char` validates both parameters before use.
+6. **Return value checks** — `fgets` and `printf` return values are verified.
+
+No functional changes were required; the code as written is safe, so the rewrite simply strips the comments while preserving all mitigations.

@@ -1,0 +1,16 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-17-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-17-s3.c:14:19: style: Condition 'perimeter==-1' is always false [knownConditionTrueFalse]
+    if (perimeter == -1) {
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-17-s3.c:11:16: note: Assignment 'side=5', assigned value is 5
+    int side = 5;
+               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-17-s3.c:12:35: note: Calling function 'find_perimeter' returns 20
+    int perimeter = find_perimeter(side);
+                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-17-s3.c:12:35: note: Assignment 'perimeter=find_perimeter(side)', assigned value is 20
+    int perimeter = find_perimeter(side);
+                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-17-s3.c:14:19: note: Condition 'perimeter==-1' is always false
+    if (perimeter == -1) {
+                  ^

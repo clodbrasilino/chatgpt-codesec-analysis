@@ -1,0 +1,7 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-885.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-885.c:13:22: style: Condition 's1[len1]=='\0'' is always false [knownConditionTrueFalse]
+        if (s1[len1] == '\0' || s2[len2] == '\0') break;
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-885.c:13:42: style: Condition 's2[len2]=='\0'' is always false [knownConditionTrueFalse]
+        if (s1[len1] == '\0' || s2[len2] == '\0') break;
+                                         ^

@@ -1,0 +1,27 @@
+#include <stdio.h>
+
+double sector_area(double radius, double angle_rad) {
+    return 0.5 * radius * radius * angle_rad;
+}
+
+int main(void) {
+    double radius, angle_deg, angle_rad, area;
+
+    printf("Enter radius: ");
+    if (scanf("%lf", &radius) != 1 || radius <= 0) {
+        printf("Invalid radius\n");
+        return 1;
+    }
+
+    printf("Enter angle in degrees: ");
+    if (scanf("%lf", &angle_deg) != 1 || angle_deg <= 0 || angle_deg > 360) {
+        printf("Invalid angle\n");
+        return 1;
+    }
+
+    angle_rad = angle_deg * 3.14159265358979323846 / 180.0;
+    area = sector_area(radius, angle_rad);
+    printf("Sector area: %.12f\n", area);
+
+    return 0;
+}

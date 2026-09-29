@@ -1,0 +1,150 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdint.h>
+
+#define MAX_INPUT_LEN 4096
+
+char **split_at_uppercase(const char *input, size_t *count)
+{
+    size_t len;
+    size_t capacity = 8;
+    size_t num = 0;
+    size_t start = 0;
+    size_t i;
+    char **result;
+
+    if (input == NULL || count == NULL) {
+        return NULL;
+    }
+
+    len = strnlen(input, MAX_INPUT_LEN);
+    if (len >= MAX_INPUT_LEN) {
+        return NULL;
+    }
+
+    result = malloc(capacity * sizeof(char *));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    for (i = 0; i <= len; i++) {
+        if (i == len || (i > 0 && isupper((unsigned char)input[i]))) {
+            size_t seglen = i - start;
+            char *segment;
+
+            if (seglen == 0) {
+                start = i;
+                continue;
+            }
+
+            if (start > len || seglen > len - start) {
+                for (size_t j = 0; j < num; j++) {
+                    free(result[j]);
+                }
+                free(result);
+                return NULL;
+            }
+
+            segment = malloc(seglen + 1);
+            if (segment == NULL) {
+                for (size_t j = 0; j < num; j++) {
+                    free(result[j]);
+                }
+                free(result);
+                return NULL;
+            }
+
+            memcpy(segment, input + start, seglen);
+            segment[seglen] = '\0';
+
+            if (num >= capacity) {
+                size_t new_capacity;
+                char **tmp;
+
+                if (capacity > SIZE_MAX / 2 ||
+                    (capacity * 2) > SIZE_MAX / sizeof(char *)) {
+                    free(segment);
+                    for (size_t j = 0; j < num; j++) {
+                        free(result[j]);
+                    }
+                    free(result);
+                    return NULL;
+                }
+
+                new_capacity = capacity * 2;
+                tmp = realloc(result, new_capacity * sizeof(char *));
+                if (tmp == NULL) {
+                    free(segment);
+                    for (size_t j = 0; j < num; j++) {
+                        free(result[j]);
+                    }
+                    free(result);
+                    return NULL;
+                }
+                result = tmp;
+                capacity = new_capacity;
+            }
+
+            result[num] = segment;
+            num++;
+            start = i;
+        }
+    }
+
+    *count = num;
+    return result;
+}
+
+void free_split(char **parts, size_t count)
+{
+    size_t i;
+
+    if (parts == NULL) {
+        return;
+    }
+
+    for (i = 0; i < count; i++) {
+        free(parts[i]);
+    }
+    free(parts);
+}
+
+int main(void)
+{
+    const char *text = "helloWorldThisIsATest";
+    size_t count = 0;
+    size_t i;
+    char **parts;
+
+    parts = split_at_uppercase(text, &count);
+    if (parts == NULL) {
+        fprintf(stderr, "Failed to split string\n");
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i < count; i++) {
+        if (printf("%s\n", parts[i]) < 0) {
+            free_split(parts, count);
+            return EXIT_FAILURE;
+        }
+    }
+
+    free_split(parts, count);
+    return EXIT_SUCCESS;
+}
+```
+
+Key changes from the original:
+
+1. **Added `<stdint.h>`** — the original used `SIZE_MAX` without including the header that defines it, which would fail to compile on strict toolchains.
+
+2. **Fixed the loop-variable shadowing bug** — in the original overflow-check cleanup path, the outer loop counter `i` was reused (`for (i = 0; i < num; i++)`), which clobbered iteration state. All cleanup loops now use a scoped `j`.
+
+3. **Hardened the `memcpy` (CWE-120)** — the destination buffer is allocated as `seglen + 1` and exactly `seglen` bytes are copied, so the copy was already bounded; I added an explicit defensive check that `start` and `seglen` stay within the validated input length before copying, so the destination can provably always hold the source data.
+
+4. **Strengthened the capacity overflow check** — `capacity * 2` could theoretically wrap before the division check ran; the check now guards the multiplication itself (`capacity > SIZE_MAX / 2`) before computing `new_capacity`.
+
+The rest of the logic (bounded input via `strnlen` against `MAX_INPUT_LEN`, NULL-parameter checks, full cleanup on every error path, `unsigned char` cast for `isupper`) was already sound and is preserved.

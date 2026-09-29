@@ -1,0 +1,26 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+double find_directrix(double a) {
+    return -1.0 / (4 * a);
+}
+
+int main() {
+    double a;
+    printf("Enter the coefficient 'a' of the parabola y = ax^2: ");
+    if (scanf("%lf", &a) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    if (a == 0) {
+        fprintf(stderr, "Coefficient 'a' cannot be zero\n");
+        return EXIT_FAILURE;
+    }
+
+    double directrix = find_directrix(a);
+    printf("The directrix of the parabola is y = %f\n", directrix);
+
+    return EXIT_SUCCESS;
+}
+```

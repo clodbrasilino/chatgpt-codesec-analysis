@@ -1,0 +1,74 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+int min_rotations_for_same_string(const char *str) {
+    if (str == NULL) {
+        return -1;
+    }
+
+    size_t len = strlen(str);
+    if (len == 0) {
+        return 0;
+    }
+
+    char *doubled = (char *)malloc(2 * len + 1);
+    if (doubled == NULL) {
+        return -1;
+    }
+
+    strcpy(doubled, str);
+    strcat(doubled, str);
+
+    int *lps = (int *)malloc((2 * len) * sizeof(int));
+    if (lps == NULL) {
+        free(doubled);
+        return -1;
+    }
+
+    lps[0] = 0;
+    int i = 1;
+    int length = 0;
+    int min_rotation = len;
+
+    while (i < 2 * len) {
+        if (doubled[i] == str[length]) {
+            length++;
+            lps[i] = length;
+            i++;
+            if (length == (int)len) {
+                min_rotation = i - len;
+                break;
+            }
+        } else {
+            if (length != 0) {
+                length = lps[length - 1];
+            } else {
+                lps[i] = 0;
+                i++;
+            }
+        }
+    }
+
+    free(doubled);
+    free(lps);
+    return min_rotation;
+}
+
+int main(void) {
+    const char *test1 = "abcabc";
+    const char *test2 = "aaaa";
+    const char *test3 = "abcd";
+    const char *test4 = "aab";
+    const char *test5 = "";
+
+    printf("%d\n", min_rotations_for_same_string(test1));
+    printf("%d\n", min_rotations_for_same_string(test2));
+    printf("%d\n", min_rotations_for_same_string(test3));
+    printf("%d\n", min_rotations_for_same_string(test4));
+    printf("%d\n", min_rotations_for_same_string(test5));
+
+    return 0;
+}
+```

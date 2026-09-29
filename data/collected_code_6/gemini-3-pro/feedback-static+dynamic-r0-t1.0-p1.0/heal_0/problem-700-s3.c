@@ -1,0 +1,77 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node* next;
+};
+
+int countElementsInRange(const struct Node* head, int minRange, int maxRange) {
+    if (head == NULL) {
+        return 0;
+    }
+    
+    if (minRange > maxRange) {
+        return 0;
+    }
+
+    int count = 0;
+    const struct Node* current = head;
+
+    while (current != NULL) {
+        if (current->data >= minRange && current->data <= maxRange) {
+            count++;
+        }
+        current = current->next;
+    }
+
+    return count;
+}
+
+void freeList(struct Node* head) {
+    struct Node* current = head;
+    struct Node* nextNode;
+
+    while (current != NULL) {
+        nextNode = current->next;
+        free(current);
+        current = nextNode;
+    }
+}
+
+int main(void) {
+    struct Node* head = malloc(sizeof(struct Node));
+    if (head == NULL) {
+        return 1;
+    }
+    head->data = 10;
+
+    struct Node* second = malloc(sizeof(struct Node));
+    if (second == NULL) {
+        free(head);
+        return 1;
+    }
+    second->data = 20;
+    head->next = second;
+
+    struct Node* third = malloc(sizeof(struct Node));
+    if (third == NULL) {
+        free(head);
+        free(second);
+        return 1;
+    }
+    third->data = 30;
+    second->next = third;
+    third->next = NULL;
+
+    int minRange = 15;
+    int maxRange = 35;
+
+    int count = countElementsInRange(head, minRange, maxRange);
+
+    printf("%d\n", count);
+
+    freeList(head);
+
+    return 0;
+}

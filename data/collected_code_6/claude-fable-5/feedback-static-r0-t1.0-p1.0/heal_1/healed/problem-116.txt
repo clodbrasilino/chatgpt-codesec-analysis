@@ -1,0 +1,76 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+int tuple_to_integer(const unsigned int *tuple, size_t count, unsigned long long *result)
+{
+    size_t i;
+    unsigned long long value;
+
+    if (tuple == NULL || result == NULL || count == 0U) {
+        return -1;
+    }
+
+    value = 0ULL;
+
+    for (i = 0U; i < count; i++) {
+        const unsigned int element = tuple[i];
+        unsigned long long multiplier;
+        unsigned int temp;
+
+        if (element == 0U) {
+            return -1;
+        }
+
+        multiplier = 1ULL;
+        temp = element;
+
+        while (temp > 0U) {
+            if (multiplier > ULLONG_MAX / 10ULL) {
+                return -1;
+            }
+            multiplier *= 10ULL;
+            temp /= 10U;
+        }
+
+        if (value > ULLONG_MAX / multiplier) {
+            return -1;
+        }
+        value *= multiplier;
+
+        if (value > ULLONG_MAX - (unsigned long long)element) {
+            return -1;
+        }
+        value += (unsigned long long)element;
+    }
+
+    *result = value;
+    return 0;
+}
+
+int main(void)
+{
+    unsigned int tuple[] = { 1U, 23U, 456U };
+    size_t count = sizeof(tuple) / sizeof(tuple[0]);
+    unsigned long long result = 0ULL;
+    int status;
+
+    status = tuple_to_integer(tuple, count, &result);
+
+    if (status != 0) {
+        if (fprintf(stderr, "Conversion failed\n") < 0) {
+            return EXIT_FAILURE;
+        }
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Converted integer: %llu\n", result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+The key changes address the `[variableScope]` warnings: `multiplier`, `element`, and `temp` are now declared inside the `for` loop body where they are actually used, rather than at function scope. This limits their lifetime to each iteration, improves readability, and eliminates any risk of stale values leaking between iterations. Additionally, `element` is declared `const` since it is never modified after assignment. All overflow checks, null-pointer validations, and the overall logic remain unchanged, and the code stays fully C89/C99-compatible depending on compiler settings (declarations at the top of the block).

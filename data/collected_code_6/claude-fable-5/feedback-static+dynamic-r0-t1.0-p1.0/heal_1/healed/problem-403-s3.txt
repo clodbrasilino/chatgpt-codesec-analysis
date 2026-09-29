@@ -1,0 +1,87 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+#define URL_PATTERN "^(https?|ftp)://[A-Za-z0-9.-]+(\\.[A-Za-z]{2,})(:[0-9]{1,5})?(/[A-Za-z0-9._~:/?#@!$&'()*+,;=%-]*)?$"
+#define MAX_URL_LEN 2048
+#define ERRBUF_LEN 256
+
+int is_valid_url(const char *url)
+{
+    regex_t regex;
+    int ret;
+    size_t len;
+
+    if (url == NULL) {
+        return 0;
+    }
+
+    len = strnlen(url, MAX_URL_LEN + 1);
+    if (len == 0 || len > MAX_URL_LEN) {
+        return 0;
+    }
+
+    ret = regcomp(&regex, URL_PATTERN, REG_EXTENDED | REG_NOSUB);
+    if (ret != 0) {
+        char errbuf[ERRBUF_LEN];
+        regerror(ret, &regex, errbuf, sizeof(errbuf));
+        errbuf[sizeof(errbuf) - 1] = '\0';
+        fprintf(stderr, "Regex compilation failed: %s\n", errbuf);
+        return -1;
+    }
+
+    ret = regexec(&regex, url, 0, NULL, 0);
+    regfree(&regex);
+
+    if (ret == 0) {
+        return 1;
+    }
+
+    if (ret == REG_NOMATCH) {
+        return 0;
+    }
+
+    fprintf(stderr, "Regex execution failed\n");
+    return -1;
+}
+
+int main(void)
+{
+    const char *test_urls[] = {
+        "https://www.example.com",
+        "http://example.com/path/to/page?query=value",
+        "ftp://files.example.org:2121/downloads",
+        "https://sub.domain.co.uk/index.html",
+        "not_a_url",
+        "http://",
+        "www.example.com",
+        "https://example",
+        ""
+    };
+    size_t count = sizeof(test_urls) / sizeof(test_urls[0]);
+    size_t i;
+
+    for (i = 0; i < count; i++) {
+        int result = is_valid_url(test_urls[i]);
+        if (result < 0) {
+            fprintf(stderr, "Error while validating URL: %s\n", test_urls[i]);
+            return EXIT_FAILURE;
+        }
+        printf("%-60s : %s\n", test_urls[i], result == 1 ? "VALID" : "INVALID");
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Summary of fixes applied:**
+
+1. **CWE-126 (`strlen` over-read):** Replaced `strlen` with `strnlen` bounded by `MAX_URL_LEN + 1`. This guarantees the read never exceeds a known limit even if the input is not NUL-terminated, and it also rejects unreasonably long URLs (which additionally mitigates potential regex performance issues on huge inputs).
+
+2. **CWE-119/CWE-120 (statically-sized `errbuf`):** The buffer size is now defined via `ERRBUF_LEN`, `regerror` is called with `sizeof(errbuf)` (which it respects and NUL-terminates), and an explicit defensive `errbuf[sizeof(errbuf) - 1] = '\0'` was added as belt-and-suspenders guarding against any non-conforming implementation.
+
+3. **cppcheck `variableScope`:** The `result` variable was moved from function scope into the `for` loop body, minimizing its scope as recommended.
+
+The overall behavior of the program is unchanged; all test URLs produce the same VALID/INVALID output as before.

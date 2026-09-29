@@ -1,0 +1,14 @@
+#include <math.h>
+#include <stdio.h>
+
+double complex_angle(double real, double imag) {
+    return atan2(imag, real);
+}
+
+int main(void) {
+    double real = 1.0;
+    double imag = 1.0;
+    double angle = complex_angle(real, imag);
+    printf("Angle: %f\n", angle);
+    return 0;
+}

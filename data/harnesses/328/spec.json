@@ -1,0 +1,115 @@
+{
+  "task_id": 328,
+  "text": "Write a C function to rotate a given list by specified number of items to the left direction.",
+  "fn_candidates": [
+    "rotate_left",
+    "RotateLeft",
+    "rotateLeft",
+    "rotateleft"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "rotate_left",
+      "args": [
+        [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10
+        ],
+        3,
+        4
+      ],
+      "expected": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        1,
+        2,
+        3,
+        4
+      ],
+      "assert_src": "assert rotate_left([1, 2, 3, 4, 5, 6, 7, 8, 9, 10],3,4)==[4, 5, 6, 7, 8, 9, 10, 1, 2, 3, 4]"
+    },
+    {
+      "fn_name": "rotate_left",
+      "args": [
+        [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10
+        ],
+        2,
+        2
+      ],
+      "expected": [
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        1,
+        2
+      ],
+      "assert_src": "assert rotate_left([1, 2, 3, 4, 5, 6, 7, 8, 9, 10],2,2)==[3, 4, 5, 6, 7, 8, 9, 10, 1, 2]"
+    },
+    {
+      "fn_name": "rotate_left",
+      "args": [
+        [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10
+        ],
+        5,
+        2
+      ],
+      "expected": [
+        6,
+        7,
+        8,
+        9,
+        10,
+        1,
+        2
+      ],
+      "assert_src": "assert rotate_left([1, 2, 3, 4, 5, 6, 7, 8, 9, 10],5,2)==[6, 7, 8, 9, 10, 1, 2]"
+    }
+  ],
+  "arg_kinds": [
+    "int",
+    "int-list"
+  ],
+  "return_kind": "int-list",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

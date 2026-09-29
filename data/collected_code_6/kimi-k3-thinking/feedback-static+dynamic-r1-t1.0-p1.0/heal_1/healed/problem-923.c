@@ -1,0 +1,118 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <limits.h>
+#include <stdint.h>
+
+#define MAX_INPUT_LENGTH ((size_t)1048576)
+
+static size_t bounded_strlen(const char *s, size_t max_len)
+{
+    size_t len = 0;
+
+    while (len < max_len && s[len] != '\0')
+    {
+        len++;
+    }
+
+    return len;
+}
+
+int shortest_supersequence_length(const char *str1, const char *str2)
+{
+    size_t len1;
+    size_t len2;
+    size_t i;
+    size_t j;
+    size_t *dp;
+    size_t lcs_length;
+    size_t result;
+
+    if (str1 == NULL || str2 == NULL)
+    {
+        return -1;
+    }
+
+    len1 = bounded_strlen(str1, MAX_INPUT_LENGTH + 1);
+    if (len1 > MAX_INPUT_LENGTH)
+    {
+        return -1;
+    }
+
+    len2 = bounded_strlen(str2, MAX_INPUT_LENGTH + 1);
+    if (len2 > MAX_INPUT_LENGTH)
+    {
+        return -1;
+    }
+
+    if (len2 + 1 > SIZE_MAX / sizeof(*dp))
+    {
+        return -1;
+    }
+
+    dp = malloc((len2 + 1) * sizeof(*dp));
+    if (dp == NULL)
+    {
+        return -1;
+    }
+
+    for (j = 0; j <= len2; j++)
+    {
+        dp[j] = 0;
+    }
+
+    for (i = 1; i <= len1; i++)
+    {
+        size_t prev_diagonal = 0;
+        for (j = 1; j <= len2; j++)
+        {
+            size_t temp = dp[j];
+            if (str1[i - 1] == str2[j - 1])
+            {
+                dp[j] = prev_diagonal + 1;
+            }
+            else
+            {
+                dp[j] = (dp[j - 1] > dp[j]) ? dp[j - 1] : dp[j];
+            }
+            prev_diagonal = temp;
+        }
+    }
+
+    lcs_length = dp[len2];
+    free(dp);
+    dp = NULL;
+
+    if (len1 > (size_t)INT_MAX || len2 > (size_t)INT_MAX)
+    {
+        return -1;
+    }
+
+    result = len1 + len2 - lcs_length;
+    if (result > (size_t)INT_MAX)
+    {
+        return -1;
+    }
+
+    return (int)result;
+}
+
+int main(void)
+{
+    const char *str1 = "AGGTAB";
+    const char *str2 = "GXTXAYB";
+    int result;
+
+    result = shortest_supersequence_length(str1, str2);
+    if (result < 0)
+    {
+        fprintf(stderr, "Error: invalid input or memory allocation failure\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("str1: %s\n", str1);
+    printf("str2: %s\n", str2);
+    printf("Length of shortest common supersequence: %d\n", result);
+
+    return EXIT_SUCCESS;
+}

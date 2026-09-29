@@ -1,0 +1,29 @@
+#include <limits.h>
+#include <stdio.h>
+
+int findLargestNegative(int a[], int n) {
+    int max = INT_MIN;
+    
+    for(int i = 0; i < n; i++) {
+        if(a[i] < 0 && a[i] > max)
+            max = a[i];
+    }
+    
+    if(max == INT_MIN) 
+        return -1; 
+    else
+        return max;
+}
+
+int main() {
+    int a[] = {-1, -3, -4, -2, -7, -19};
+    int n = sizeof(a) / sizeof(int);
+    int result = findLargestNegative(a, n);
+    
+    if(result == -1)
+        printf("No negative numbers in the list.\n");
+    else
+        printf("Largest negative number: %d\n", result);
+        
+    return 0;
+}

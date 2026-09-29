@@ -1,0 +1,5 @@
+problem-515-s3.c:21:0:high:ASan: dynamic-stack-buffer-overflow (AFL crash: id:000003,sig:06,src:000002,time:231,execs:74,op:havoc,rep:2)
+problem-515-s3.c:21:31:medium:UBSan: index -1 out of bounds for type 'bool[m]' (AFL crash: id:000003,sig:06,src:000002,time:231,execs:74,op:havoc,rep:2)
+problem-515-s3.c:21:31:medium:UBSan: index -7 out of bounds for type 'bool[m]' (AFL crash: id:000006,sig:06,src:000002,time:1122,execs:316,op:havoc,rep:3)
+problem-515-s3.c:21:31:medium:UBSan: index -5 out of bounds for type 'bool[m]' (AFL crash: id:000007,sig:06,src:000002,time:15734,execs:3887,op:havoc,rep:2)
+problem-515-s3.c:27:0:error:Fuzzing found a crash (signal 6) on input id:000000,sig:06,src:000002,time:12,execs:10,op:(null),pos:0; likely memory-safety defect

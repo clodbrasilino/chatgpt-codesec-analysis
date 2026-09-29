@@ -1,0 +1,51 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char *concat_tuple(char **tuple, size_t size, const char *delimiter) {
+    if (tuple == NULL || delimiter == NULL) {
+        return NULL;
+    }
+
+    size_t total_length = 0;
+    size_t delim_length = strlen(delimiter);
+
+    for (size_t i = 0; i < size; i++) {
+        if (tuple[i] == NULL) {
+            return NULL;
+        }
+        total_length += strlen(tuple[i]);
+        if (i < size - 1) {
+            total_length += delim_length;
+        }
+    }
+
+    char *result = (char *)malloc(total_length + 1);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    result[0] = '\0';
+
+    for (size_t i = 0; i < size; i++) {
+        strcat(result, tuple[i]);
+        if (i < size - 1) {
+            strcat(result, delimiter);
+        }
+    }
+
+    return result;
+}
+
+int main(void) {
+    char *tuple[] = {"Hello", "world", "from", "C"};
+    size_t size = sizeof(tuple) / sizeof(tuple[0]);
+    char *result = concat_tuple(tuple, size, " ");
+
+    if (result != NULL) {
+        printf("%s\n", result);
+        free(result);
+    }
+
+    return 0;
+}

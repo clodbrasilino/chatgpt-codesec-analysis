@@ -1,0 +1,65 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+#include <string.h>
+#include <limits.h>
+
+#define MAX_INPUT_LEN 256
+
+bool all_chars_unique(const char *str, size_t max_len)
+{
+    bool seen[UCHAR_MAX + 1] = { false };
+    size_t i;
+
+    if (str == NULL) {
+        return false;
+    }
+
+    for (i = 0; i < max_len && str[i] != '\0'; i++) {
+        unsigned char c = (unsigned char)str[i];
+        if (seen[c]) {
+            return false;
+        }
+        seen[c] = true;
+    }
+
+    return true;
+}
+
+int main(void)
+{
+    char buffer[MAX_INPUT_LEN];
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+    buffer[strcspn(buffer, "\n")] = '\0';
+
+    if (all_chars_unique(buffer, sizeof(buffer))) {
+        printf("All characters are unique\n");
+    } else {
+        printf("Duplicate characters found\n");
+    }
+
+    return 0;
+}
+```
+
+**Analysis notes:**
+
+The flagged weakness (CWE-119/CWE-120, statically-sized buffer) is already mitigated in the original code, and the rewrite preserves those mitigations:
+
+1. **Bounded input:** `fgets(buffer, sizeof(buffer), stdin)` limits the read to `MAX_INPUT_LEN - 1` characters plus the null terminator, so the buffer cannot overflow. The `sizeof(buffer)` expression is used rather than a hardcoded constant, so the bound stays correct if the array size changes.
+
+2. **Guaranteed termination:** `buffer[sizeof(buffer) - 1] = '\0';` is defensive redundancy — `fgets` already null-terminates on success, but this guarantees termination even if the code is later modified to use a different input function.
+
+3. **Newline stripping:** `strcspn(buffer, "\n")` safely removes the trailing newline without risking an out-of-bounds write (it returns the string length if no newline exists, which is always a valid index within the buffer).
+
+4. **Bounded scanning:** `all_chars_unique` takes an explicit `max_len` parameter and checks both the length bound and the null terminator (`i < max_len && str[i] != '\0'`), so it never reads past the buffer even if given an unterminated string. It also guards against `NULL` input.
+
+5. **No signed-char pitfalls:** casting each character to `unsigned char` before indexing `seen[]` avoids negative array indices on platforms where `char` is signed, and the table size `UCHAR_MAX + 1` covers the full byte range.
+
+The Flawfinder hit is a low-risk (risk 2) informational warning about the mere presence of a fixed-size array; since every access is bounds-checked, no functional change was required.

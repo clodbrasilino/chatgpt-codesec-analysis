@@ -1,0 +1,50 @@
+#include <stdio.h>
+#include <string.h>
+#include <limits.h>
+#include <stdlib.h>
+
+int countFlips(const char *str, size_t len) {
+    int flips1 = 0, flips2 = 0;
+
+    for (size_t i = 0; i < len; i++) {
+        if (str[i] != (i % 2 == 0 ? '0' : '1')) {
+            flips1++;
+        } else {
+            flips2++;
+        }
+    }
+
+    return (flips1 < flips2) ? flips1 : flips2;
+}
+
+int main() {
+    char *str = NULL;
+    size_t capacity = 0;
+    ssize_t len;
+
+    printf("Enter a binary string: ");
+    len = getline(&str, &capacity, stdin);
+    
+    if (len == -1) {
+        printf("Invalid input\n");
+        free(str);
+        return 1;
+    }
+
+    if (len > 0 && str[len - 1] == '\n') {
+        str[len - 1] = '\0';
+        len--;
+    }
+
+    if (len == 0) {
+        printf("Invalid input\n");
+        free(str);
+        return 1;
+    }
+
+    int result = countFlips(str, (size_t)len);
+    printf("Number of flips required: %d\n", result);
+
+    free(str);
+    return 0;
+}

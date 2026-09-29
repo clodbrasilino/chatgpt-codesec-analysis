@@ -1,0 +1,126 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int* data;
+    size_t size;
+} List;
+
+typedef struct {
+    List* key;
+    size_t count;
+} FrequencyMap;
+
+int compare_lists(const List* a, const List* b) {
+    if (a->size != b->size) return 0;
+    for (size_t i = 0; i < a->size; ++i) {
+        if (a->data[i] != b->data[i]) return 0;
+    }
+    return 1;
+}
+
+List* copy_list(const List* src) {
+    if (!src) return NULL;
+    List* dest = (List*)malloc(sizeof(List));
+    if (!dest) return NULL;
+    dest->size = src->size;
+    dest->data = (int*)malloc(src->size * sizeof(int));
+    if (!dest->data) {
+        free(dest);
+        return NULL;
+    }
+    for (size_t i = 0; i < src->size; ++i) {
+        dest->data[i] = src->data[i];
+    }
+    return dest;
+}
+
+void free_list(List* list) {
+    if (list) {
+        free(list->data);
+        free(list);
+    }
+}
+
+void find_frequencies(List** lists, size_t num_lists, FrequencyMap** map_out, size_t* map_size_out) {
+    if (!lists || !map_out || !map_size_out) return;
+
+    FrequencyMap* map = NULL;
+    size_t map_size = 0;
+
+    for (size_t i = 0; i < num_lists; ++i) {
+        int found = 0;
+        for (size_t j = 0; j < map_size; ++j) {
+            if (compare_lists(lists[i], map[j].key)) {
+                map[j].count++;
+                found = 1;
+                break;
+            }
+        }
+        if (!found) {
+            FrequencyMap* new_map = (FrequencyMap*)realloc(map, (map_size + 1) * sizeof(FrequencyMap));
+            if (!new_map) {
+                for (size_t k = 0; k < map_size; ++k) {
+                    free_list(map[k].key);
+                }
+                free(map);
+                *map_out = NULL;
+                *map_size_out = 0;
+                return;
+            }
+            map = new_map;
+            map[map_size].key = copy_list(lists[i]);
+            if (!map[map_size].key) {
+                for (size_t k = 0; k < map_size; ++k) {
+                    free_list(map[k].key);
+                }
+                free(map);
+                *map_out = NULL;
+                *map_size_out = 0;
+                return;
+            }
+            map[map_size].count = 1;
+            map_size++;
+        }
+    }
+
+    *map_out = map;
+    *map_size_out = map_size;
+}
+
+int main(void) {
+    int arr1[] = {1, 2, 3};
+    int arr2[] = {4, 5};
+    int arr3[] = {1, 2, 3};
+
+    List list1 = {arr1, 3};
+    List list2 = {arr2, 2};
+    List list3 = {arr3, 3};
+
+    List* lists[] = {&list1, &list2, &list3};
+    size_t num_lists = 3;
+
+    FrequencyMap* map = NULL;
+    size_t map_size = 0;
+
+    find_frequencies(lists, num_lists, &map, &map_size);
+
+    if (map) {
+        for (size_t i = 0; i < map_size; ++i) {
+            printf("List [");
+            for (size_t j = 0; j < map[i].key->size; ++j) {
+                printf("%d%s", map[i].key->data[j], j < map[i].key->size - 1 ? ", " : "");
+            }
+            printf("]: %zu\n", map[i].count);
+        }
+
+        for (size_t i = 0; i < map_size; ++i) {
+            free_list(map[i].key);
+        }
+        free(map);
+    }
+
+    return 0;
+}
+```

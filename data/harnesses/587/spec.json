@@ -1,0 +1,86 @@
+{
+  "task_id": 587,
+  "text": "Write a C function to convert a list to a tuple.",
+  "fn_candidates": [
+    "list_tuple",
+    "ListTuple",
+    "listTuple",
+    "listtuple"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "list_tuple",
+      "args": [
+        [
+          5,
+          10,
+          7,
+          4,
+          15,
+          3
+        ]
+      ],
+      "expected": [
+        5,
+        10,
+        7,
+        4,
+        15,
+        3
+      ],
+      "assert_src": "assert list_tuple([5, 10, 7, 4, 15, 3])==(5, 10, 7, 4, 15, 3)"
+    },
+    {
+      "fn_name": "list_tuple",
+      "args": [
+        [
+          2,
+          4,
+          5,
+          6,
+          2,
+          3,
+          4,
+          4,
+          7
+        ]
+      ],
+      "expected": [
+        2,
+        4,
+        5,
+        6,
+        2,
+        3,
+        4,
+        4,
+        7
+      ],
+      "assert_src": "assert list_tuple([2, 4, 5, 6, 2, 3, 4, 4, 7])==(2, 4, 5, 6, 2, 3, 4, 4, 7)"
+    },
+    {
+      "fn_name": "list_tuple",
+      "args": [
+        [
+          58,
+          44,
+          56
+        ]
+      ],
+      "expected": [
+        58,
+        44,
+        56
+      ],
+      "assert_src": "assert list_tuple([58,44,56])==(58,44,56)"
+    }
+  ],
+  "arg_kinds": [
+    "int-list"
+  ],
+  "return_kind": "int-list",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

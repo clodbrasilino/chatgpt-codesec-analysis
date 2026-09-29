@@ -1,0 +1,120 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct List {
+    int *data;
+    size_t size;
+} List;
+
+typedef struct ListOfLists {
+    List **lists;
+    size_t count;
+} ListOfLists;
+
+void free_list(List *list) {
+    if (list->data) {
+        free(list->data);
+    }
+    free(list);
+}
+
+void free_list_of_lists(ListOfLists *lol) {
+    if (lol->lists) {
+        for (size_t i = 0; i < lol->count; ++i) {
+            if (lol->lists[i]) {
+                free_list(lol->lists[i]);
+            }
+        }
+        free(lol->lists);
+    }
+    free(lol);
+}
+
+ListOfLists* create_list(int *data, size_t size) {
+    ListOfLists *lol = (ListOfLists*)malloc(sizeof(ListOfLists));
+    if (!lol) return NULL;
+
+    lol->lists = (List**)malloc(size * sizeof(List*));
+    if (!lol->lists) {
+        free(lol);
+        return NULL;
+    }
+
+    lol->count = size;
+    for (size_t i = 0; i < size; ++i) {
+        List *list = (List*)malloc(sizeof(List));
+        if (!list) {
+            free_list_of_lists(lol);
+            return NULL;
+        }
+        list->data = (int*)malloc(1 * sizeof(int));
+        if (!list->data) {
+            free(list);
+            free_list_of_lists(lol);
+            return NULL;
+        }
+        list->data[0] = data[i];
+        list->size = 1;
+        lol->lists[i] = list;
+    }
+
+    return lol;
+}
+
+ListOfLists* remove_outside_range(ListOfLists *lol, int min, int max) {
+    ListOfLists *result = (ListOfLists*)malloc(sizeof(ListOfLists));
+    if (!result) return NULL;
+
+    result->lists = (List**)malloc(lol->count * sizeof(List*));
+    if (!result->lists) {
+        free(result);
+        return NULL;
+    }
+
+    result->count = 0;
+    for (size_t i = 0; i < lol->count; ++i) {
+        List *list = lol->lists[i];
+        if (list->data[0] >= min && list->data[0] <= max) {
+            result->lists[result->count++] = list;
+        } else {
+            free_list(list);
+        }
+    }
+
+    if (result->count == 0) {
+        free(result->lists);
+        free(result);
+        return NULL;
+    }
+
+    return result;
+}
+
+int main() {
+    int data[] = {5, 10, 15, 20, 25};
+    size_t size = sizeof(data) / sizeof(data[0]);
+
+    ListOfLists *lol = create_list(data, size);
+    if (!lol) {
+        fprintf(stderr, "Failed to create list of lists\n");
+        return 1;
+    }
+
+    ListOfLists *filtered_lol = remove_outside_range(lol, 10, 20);
+    if (!filtered_lol) {
+        fprintf(stderr, "Failed to filter list of lists\n");
+        free_list_of_lists(lol);
+        return 1;
+    }
+
+    for (size_t i = 0; i < filtered_lol->count; ++i) {
+        printf("%d\n", filtered_lol->lists[i]->data[0]);
+    }
+
+    free_list_of_lists(filtered_lol);
+    free_list_of_lists(lol);
+
+    return 0;
+}
+```

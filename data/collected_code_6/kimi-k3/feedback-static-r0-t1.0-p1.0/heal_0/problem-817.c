@@ -1,0 +1,80 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int* find_divisible(const int* numbers, size_t count, int m, int n, size_t* result_count) {
+    if (numbers == NULL || result_count == NULL || count == 0) {
+        if (result_count != NULL) {
+            *result_count = 0;
+        }
+        return NULL;
+    }
+    
+    if (m == 0 || n == 0) {
+        *result_count = 0;
+        return NULL;
+    }
+    
+    size_t capacity = 10;
+    size_t size = 0;
+    int* result = malloc(capacity * sizeof(int));
+    
+    if (result == NULL) {
+        *result_count = 0;
+        return NULL;
+    }
+    
+    for (size_t i = 0; i < count; i++) {
+        if (numbers[i] % m == 0 || numbers[i] % n == 0) {
+            if (size >= capacity) {
+                size_t new_capacity = capacity * 2;
+                if (new_capacity < capacity) {
+                    free(result);
+                    *result_count = 0;
+                    return NULL;
+                }
+                int* temp = realloc(result, new_capacity * sizeof(int));
+                if (temp == NULL) {
+                    free(result);
+                    *result_count = 0;
+                    return NULL;
+                }
+                result = temp;
+                capacity = new_capacity;
+            }
+            result[size] = numbers[i];
+            size++;
+        }
+    }
+    
+    if (size == 0) {
+        free(result);
+        *result_count = 0;
+        return NULL;
+    }
+    
+    *result_count = size;
+    return result;
+}
+
+int main(void) {
+    int numbers[] = {10, 15, 20, 25, 30, 35, 40, 45, 50};
+    size_t count = sizeof(numbers) / sizeof(numbers[0]);
+    int m = 3;
+    int n = 5;
+    size_t result_count = 0;
+    
+    int* result = find_divisible(numbers, count, m, n, &result_count);
+    
+    if (result != NULL) {
+        printf("Numbers divisible by %d or %d: ", m, n);
+        for (size_t i = 0; i < result_count; i++) {
+            printf("%d ", result[i]);
+        }
+        printf("\n");
+        free(result);
+    } else {
+        printf("No numbers found divisible by %d or %d\n", m, n);
+    }
+    
+    return 0;
+}

@@ -1,0 +1,111 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    long start;
+    long end;
+} Range;
+
+static Range *extract_missing_ranges(const long *nums, size_t count,
+                                     long lower, long upper,
+                                     size_t *out_count)
+{
+    Range *result = NULL;
+    size_t capacity = 0;
+    size_t size = 0;
+    long next = lower;
+    size_t i;
+
+    if (out_count == NULL) {
+        return NULL;
+    }
+    *out_count = 0;
+
+    if (lower > upper) {
+        return NULL;
+    }
+
+    for (i = 0; i <= count; i++) {
+        long current;
+        int is_end = (i == count);
+
+        if (is_end) {
+            if (next > upper) {
+                break;
+            }
+            current = upper;
+        } else {
+            if (nums == NULL) {
+                free(result);
+                return NULL;
+            }
+            current = nums[i];
+            if (current < lower || current > upper) {
+                continue;
+            }
+        }
+
+        if (is_end || current > next) {
+            long gap_start = next;
+            long gap_end = is_end ? upper : current - 1;
+
+            if (gap_start <= gap_end) {
+                if (size == capacity) {
+                    size_t new_capacity = (capacity == 0) ? 4 : capacity * 2;
+                    Range *tmp = realloc(result, new_capacity * sizeof(Range));
+                    if (tmp == NULL) {
+                        free(result);
+                        return NULL;
+                    }
+                    result = tmp;
+                    capacity = new_capacity;
+                }
+                result[size].start = gap_start;
+                result[size].end = gap_end;
+                size++;
+            }
+        }
+
+        if (!is_end) {
+            if (current == upper) {
+                break;
+            }
+            if (current + 1 > next) {
+                next = current + 1;
+            }
+        }
+    }
+
+    *out_count = size;
+    return result;
+}
+
+int main(void)
+{
+    long nums[] = {3L, 5L, 8L, 12L};
+    size_t count = sizeof(nums) / sizeof(nums[0]);
+    long lower = 1L;
+    long upper = 15L;
+    size_t missing_count = 0;
+    Range *missing;
+    size_t i;
+
+    missing = extract_missing_ranges(nums, count, lower, upper, &missing_count);
+
+    if (missing == NULL && missing_count == 0) {
+        printf("No missing ranges found or allocation failed.\n");
+        return EXIT_SUCCESS;
+    }
+
+    printf("Missing ranges between %ld and %ld:\n", lower, upper);
+    for (i = 0; i < missing_count; i++) {
+        if (missing[i].start == missing[i].end) {
+            printf("%ld\n", missing[i].start);
+        } else {
+            printf("%ld -> %ld\n", missing[i].start, missing[i].end);
+        }
+    }
+
+    free(missing);
+    return EXIT_SUCCESS;
+}

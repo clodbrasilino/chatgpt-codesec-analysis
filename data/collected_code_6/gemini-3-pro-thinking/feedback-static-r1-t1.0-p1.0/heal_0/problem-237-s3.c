@@ -1,0 +1,137 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int record;
+    int count;
+} RecordCount;
+
+typedef struct {
+    int frequency;
+    int *records;
+    size_t count;
+} FrequencyGroup;
+
+int compare_ints(const void *a, const void *b) {
+    int int_a = *((const int *)a);
+    int int_b = *((const int *)b);
+    if (int_a < int_b) return -1;
+    if (int_a > int_b) return 1;
+    return 0;
+}
+
+int compare_record_counts(const void *a, const void *b) {
+    const RecordCount *rc_a = (const RecordCount *)a;
+    const RecordCount *rc_b = (const RecordCount *)b;
+    if (rc_a->count < rc_b->count) return -1;
+    if (rc_a->count > rc_b->count) return 1;
+    return 0;
+}
+
+void check_similar_occurrences(const int *tuples, size_t size) {
+    if (size == 0 || tuples == NULL) {
+        return;
+    }
+
+    int *sorted_tuples = (int *)malloc(size * sizeof(int));
+    if (!sorted_tuples) {
+        return;
+    }
+
+    for (size_t i = 0; i < size; i++) {
+        sorted_tuples[i] = tuples[i];
+    }
+
+    qsort(sorted_tuples, size, sizeof(int), compare_ints);
+
+    RecordCount *counts = (RecordCount *)malloc(size * sizeof(RecordCount));
+    if (!counts) {
+        free(sorted_tuples);
+        return;
+    }
+
+    size_t unique_count = 0;
+    counts[0].record = sorted_tuples[0];
+    counts[0].count = 1;
+    unique_count++;
+
+    for (size_t i = 1; i < size; i++) {
+        if (sorted_tuples[i] == sorted_tuples[i - 1]) {
+            counts[unique_count - 1].count++;
+        } else {
+            counts[unique_count].record = sorted_tuples[i];
+            counts[unique_count].count = 1;
+            unique_count++;
+        }
+    }
+
+    free(sorted_tuples);
+
+    qsort(counts, unique_count, sizeof(RecordCount), compare_record_counts);
+
+    FrequencyGroup *groups = (FrequencyGroup *)malloc(unique_count * sizeof(FrequencyGroup));
+    if (!groups) {
+        free(counts);
+        return;
+    }
+
+    size_t group_count = 0;
+    groups[0].frequency = counts[0].count;
+    groups[0].records = (int *)malloc(unique_count * sizeof(int));
+    if (!groups[0].records) {
+        free(counts);
+        free(groups);
+        return;
+    }
+    
+    groups[0].records[0] = counts[0].record;
+    groups[0].count = 1;
+    group_count++;
+
+    for (size_t i = 1; i < unique_count; i++) {
+        if (counts[i].count == counts[i - 1].count) {
+            size_t idx = groups[group_count - 1].count;
+            groups[group_count - 1].records[idx] = counts[i].record;
+            groups[group_count - 1].count++;
+        } else {
+            groups[group_count].frequency = counts[i].count;
+            groups[group_count].records = (int *)malloc(unique_count * sizeof(int));
+            if (!groups[group_count].records) {
+                for (size_t j = 0; j < group_count; j++) {
+                    free(groups[j].records);
+                }
+                free(groups);
+                free(counts);
+                return;
+            }
+            groups[group_count].records[0] = counts[i].record;
+            groups[group_count].count = 1;
+            group_count++;
+        }
+    }
+
+    for (size_t i = 0; i < group_count; i++) {
+        if (groups[i].count > 1) {
+            printf("Records occurring %d times: ", groups[i].frequency);
+            for (size_t j = 0; j < groups[i].count; j++) {
+                printf("%d ", groups[i].records[j]);
+            }
+            printf("\n");
+        }
+    }
+
+    for (size_t i = 0; i < group_count; i++) {
+        free(groups[i].records);
+    }
+    free(groups);
+    free(counts);
+}
+
+int main(void) {
+    int tuples[] = {1, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5, 5, 7, 7, 8, 8};
+    size_t size = sizeof(tuples) / sizeof(tuples[0]);
+
+    check_similar_occurrences(tuples, size);
+
+    return 0;
+}

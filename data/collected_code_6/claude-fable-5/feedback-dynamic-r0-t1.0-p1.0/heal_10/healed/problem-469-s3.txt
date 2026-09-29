@@ -1,0 +1,104 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int maxProfit(int k, const int *prices, int n)
+{
+    int *prev;
+    int *curr;
+    int *tmp;
+    int t;
+    int d;
+    int maxDiff;
+    int result;
+
+    if (prices == NULL || n <= 1 || k <= 0) {
+        return 0;
+    }
+
+    if (k >= n / 2) {
+        result = 0;
+        for (d = 1; d < n; d++) {
+            if (prices[d] > prices[d - 1]) {
+                result += prices[d] - prices[d - 1];
+            }
+        }
+        return result;
+    }
+
+    prev = calloc((size_t)n, sizeof(int));
+    if (prev == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(EXIT_FAILURE);
+    }
+
+    curr = calloc((size_t)n, sizeof(int));
+    if (curr == NULL) {
+        free(prev);
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(EXIT_FAILURE);
+    }
+
+    for (t = 1; t <= k; t++) {
+        maxDiff = prev[0] - prices[0];
+        curr[0] = 0;
+        for (d = 1; d < n; d++) {
+            curr[d] = curr[d - 1];
+            if (prices[d] + maxDiff > curr[d]) {
+                curr[d] = prices[d] + maxDiff;
+            }
+            if (prev[d] - prices[d] > maxDiff) {
+                maxDiff = prev[d] - prices[d];
+            }
+        }
+        tmp = prev;
+        prev = curr;
+        curr = tmp;
+    }
+
+    result = prev[n - 1];
+
+    free(prev);
+    free(curr);
+
+    return result;
+}
+
+int main(void)
+{
+    int prices1[] = {10, 22, 5, 75, 65, 80};
+    int prices2[] = {3, 2, 6, 5, 0, 3};
+    int prices3[] = {2, 4, 1};
+    int n1 = (int)(sizeof(prices1) / sizeof(prices1[0]));
+    int n2 = (int)(sizeof(prices2) / sizeof(prices2[0]));
+    int n3 = (int)(sizeof(prices3) / sizeof(prices3[0]));
+    int profit;
+
+    profit = maxProfit(2, prices1, n1);
+    printf("Maximum profit with at most %d transactions: %d\n", 2, profit);
+
+    profit = maxProfit(2, prices2, n2);
+    printf("Maximum profit with at most %d transactions: %d\n", 2, profit);
+
+    profit = maxProfit(2, prices3, n3);
+    printf("Maximum profit with at most %d transactions: %d\n", 2, profit);
+
+    return EXIT_SUCCESS;
+}
+```
+
+Analysis notes on the identified weaknesses:
+
+The reported failures (`expected 10, got 5`, `expected 7, got 0`, `expected 2, got 0`) point to the classic bugs in this DP pattern, which I verified are addressed in the rewritten version:
+
+1. **Result read from the wrong buffer** — because `prev` and `curr` are swapped at the end of each transaction iteration, the final answer must be read from `prev[n - 1]`, not `curr[n - 1]`. Reading `curr` after the last swap yields stale results from transaction `k - 1` (or zeros), producing the `got 0` symptoms.
+
+2. **`maxDiff` initialization** — it must be reset to `prev[0] - prices[0]` at the start of *every* transaction pass. Initializing it to `0` or `-prices[0]` only once (outside the loop) undercounts profit, producing partial results like `got 5` instead of the full amount.
+
+3. **Guard clauses** — `NULL` prices, `n <= 1`, and `k <= 0` all correctly short-circuit to `0`, avoiding out-of-bounds reads on `prices[0]`.
+
+4. **The `k >= n / 2` fast path** — with that many transactions allowed, the problem degenerates to summing all positive consecutive differences; this also keeps the DP allocation bounded and correct for small arrays like `{2, 4, 1}` (expected `2`).
+
+5. **Memory hygiene** — both buffers are freed exactly once regardless of parity of `k` (the swap only exchanges pointers, so `free(prev); free(curr);` covers both allocations), and allocation failure cleans up the earlier buffer before exiting.
+
+Tracing the rewritten code confirms correct outputs: `87` for `prices1`, `7` for `prices2`, and `2` for `prices3`.

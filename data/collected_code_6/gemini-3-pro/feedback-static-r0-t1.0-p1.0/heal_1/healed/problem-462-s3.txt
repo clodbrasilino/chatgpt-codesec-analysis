@@ -1,0 +1,50 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+void print_combination(const int* combo, int size) {
+    if (size == 0) {
+        printf("[]\n");
+        return;
+    }
+    printf("[");
+    for (int i = 0; i < size; i++) {
+        printf("%d%s", combo[i], (i == size - 1) ? "" : ", ");
+    }
+    printf("]\n");
+}
+
+void find_combinations_recursive(const int* arr, int n, int start, int* combo, int combo_index) {
+    print_combination(combo, combo_index);
+
+    for (int i = start; i < n; i++) {
+        combo[combo_index] = arr[i];
+        find_combinations_recursive(arr, n, i + 1, combo, combo_index + 1);
+    }
+}
+
+void find_combinations(const int* arr, int n) {
+    if (arr == NULL || n <= 0) {
+        return;
+    }
+
+    int* combo = (int*)malloc(n * sizeof(int));
+    if (combo == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(EXIT_FAILURE);
+    }
+
+    find_combinations_recursive(arr, n, 0, combo, 0);
+
+    free(combo);
+}
+
+int main(void) {
+    int arr[] = {1, 2, 3};
+    int n = sizeof(arr) / sizeof(arr[0]);
+
+    find_combinations(arr, n);
+
+    return 0;
+}
+```

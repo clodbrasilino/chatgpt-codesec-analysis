@@ -1,0 +1,65 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX_LUCAS_INDEX 90
+
+static int lucas(unsigned int n, unsigned long long *result)
+{
+    unsigned long long prev;
+    unsigned long long curr;
+    unsigned int i;
+
+    if (result == NULL) {
+        return -1;
+    }
+
+    if (n > MAX_LUCAS_INDEX) {
+        return -1;
+    }
+
+    if (n == 0U) {
+        *result = 2ULL;
+        return 0;
+    }
+
+    if (n == 1U) {
+        *result = 1ULL;
+        return 0;
+    }
+
+    prev = 2ULL;
+    curr = 1ULL;
+
+    for (i = 2U; i <= n; i++) {
+        const unsigned long long next = prev + curr;
+        prev = curr;
+        curr = next;
+    }
+
+    *result = curr;
+    return 0;
+}
+
+int main(void)
+{
+    unsigned int n;
+    unsigned long long value;
+    int scan_status;
+
+    printf("Enter n: ");
+
+    scan_status = scanf("%u", &n);
+    if (scan_status != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (lucas(n, &value) != 0) {
+        fprintf(stderr, "Input out of supported range (0 to %d)\n", MAX_LUCAS_INDEX);
+        return EXIT_FAILURE;
+    }
+
+    printf("Lucas number %u is %llu\n", n, value);
+
+    return EXIT_SUCCESS;
+}

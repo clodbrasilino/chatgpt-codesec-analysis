@@ -1,0 +1,26 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-127.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-127.c:35:21: style: Condition 'left<0' is always true [knownConditionTrueFalse]
+    } else if (left < 0) {
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-127.c:17:14: note: Assuming that condition 'left==0' is not redundant
+    if (left == 0 || right == 0) {
+             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-127.c:22:44: note: Assuming condition is false
+    if ((left == INT64_MIN && right == -1) ||
+                                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-127.c:35:21: note: Condition 'left<0' is always true
+    } else if (left < 0) {
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-127.c:40:26: style: Condition 'right<0' is always true [knownConditionTrueFalse]
+        } else if (right < 0 && left < INT64_MAX / right) {
+                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-127.c:17:28: note: Assuming that condition 'right==0' is not redundant
+    if (left == 0 || right == 0) {
+                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-127.c:22:44: note: Assuming condition is false
+    if ((left == INT64_MIN && right == -1) ||
+                                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-127.c:40:26: note: Condition 'right<0' is always true
+        } else if (right < 0 && left < INT64_MAX / right) {
+                         ^
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-127.c: __GNUC__;__clang__...

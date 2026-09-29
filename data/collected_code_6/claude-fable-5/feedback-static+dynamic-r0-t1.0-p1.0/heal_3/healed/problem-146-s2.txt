@@ -1,0 +1,79 @@
+```c
+#define _POSIX_C_SOURCE 200809L
+
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+#define MAX_INPUT_SIZE 256
+
+long ascii_sum(const char *str, size_t max_len)
+{
+    long sum = 0;
+    size_t i;
+    size_t len;
+
+    if (str == NULL) {
+        return -1;
+    }
+
+    len = strnlen(str, max_len);
+    for (i = 0; i < len; i++) {
+        sum += (long)(unsigned char)str[i];
+    }
+
+    return sum;
+}
+
+int main(void)
+{
+    char *buffer = NULL;
+    size_t buffer_size = 0;
+    ssize_t read_len;
+    long result;
+
+    printf("Enter a string: ");
+
+    read_len = getline(&buffer, &buffer_size, stdin);
+    if (read_len < 0) {
+        free(buffer);
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (read_len > 0 && buffer[read_len - 1] == '\n') {
+        buffer[read_len - 1] = '\0';
+        read_len--;
+    }
+
+    if ((size_t)read_len >= MAX_INPUT_SIZE) {
+        buffer[MAX_INPUT_SIZE - 1] = '\0';
+    }
+
+    result = ascii_sum(buffer, MAX_INPUT_SIZE);
+    if (result < 0) {
+        free(buffer);
+        fprintf(stderr, "Invalid string\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Sum of ASCII values: %ld\n", result);
+
+    free(buffer);
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the changes:**
+
+The original code was already reasonably defensive, but the Flawfinder warning pointed at the statically-sized `char buffer[MAX_INPUT_SIZE]` array (CWE-119/CWE-120). The rewrite addresses this by:
+
+1. **Eliminating the fixed-size stack buffer entirely** — `getline()` (available under `_POSIX_C_SOURCE 200809L`, which the original already declared) allocates the buffer dynamically and grows it as needed, so no input length can overflow it.
+
+2. **Preserving the length-bounded semantics** — `ascii_sum()` is still called with `MAX_INPUT_SIZE` as the cap, and the input is explicitly truncated to that limit, keeping the original program's contract intact.
+
+3. **Correct newline stripping** — using the return value of `getline()` directly instead of a separate `strnlen()` call avoids re-scanning the string.
+
+4. **Consistent resource cleanup** — `free(buffer)` is called on every exit path, preventing memory leaks now that heap allocation is involved.
+
+5. **Retained safe practices from the original** — the `(unsigned char)` cast before summing (avoiding sign-extension issues with negative `char` values), the `NULL` check in `ascii_sum()`, and use of `strnlen()` rather than unbounded `strlen()` are all kept.

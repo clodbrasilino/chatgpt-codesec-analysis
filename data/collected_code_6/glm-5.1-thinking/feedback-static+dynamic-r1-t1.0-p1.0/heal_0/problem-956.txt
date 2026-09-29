@@ -1,0 +1,129 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+char **split_at_uppercase(const char *str, size_t *count) {
+    if (str == NULL || count == NULL) {
+        return NULL;
+    }
+
+    *count = 0;
+    regex_t regex;
+    if (regcomp(&regex, "([A-Z][^A-Z]*)", REG_EXTENDED) != 0) {
+        return NULL;
+    }
+
+    size_t capacity = 8;
+    char **result = malloc(capacity * sizeof(char *));
+    if (result == NULL) {
+        regfree(&regex);
+        return NULL;
+    }
+
+    const char *ptr = str;
+    regmatch_t match;
+
+    while (regexec(&regex, ptr, 1, &match, 0) == 0) {
+        if (match.rm_so > 0) {
+            size_t prefix_len = match.rm_so;
+            char *prefix = malloc(prefix_len + 1);
+            if (prefix == NULL) {
+                goto cleanup;
+            }
+            memcpy(prefix, ptr, prefix_len);
+            prefix[prefix_len] = '\0';
+
+            if (*count >= capacity) {
+                capacity *= 2;
+                char **new_result = realloc(result, capacity * sizeof(char *));
+                if (new_result == NULL) {
+                    free(prefix);
+                    goto cleanup;
+                }
+                result = new_result;
+            }
+            result[(*count)++] = prefix;
+        }
+
+        size_t match_len = match.rm_eo - match.rm_so;
+        char *token = malloc(match_len + 1);
+        if (token == NULL) {
+            goto cleanup;
+        }
+        memcpy(token, ptr + match.rm_so, match_len);
+        token[match_len] = '\0';
+
+        if (*count >= capacity) {
+            capacity *= 2;
+            char **new_result = realloc(result, capacity * sizeof(char *));
+            if (new_result == NULL) {
+                free(token);
+                goto cleanup;
+            }
+            result = new_result;
+        }
+        result[(*count)++] = token;
+
+        ptr += match.rm_eo;
+    }
+
+    if (*ptr != '\0') {
+        size_t suffix_len = strlen(ptr);
+        char *suffix = malloc(suffix_len + 1);
+        if (suffix == NULL) {
+            goto cleanup;
+        }
+        memcpy(suffix, ptr, suffix_len);
+        suffix[suffix_len] = '\0';
+
+        if (*count >= capacity) {
+            capacity *= 2;
+            char **new_result = realloc(result, capacity * sizeof(char *));
+            if (new_result == NULL) {
+                free(suffix);
+                goto cleanup;
+            }
+            result = new_result;
+        }
+        result[(*count)++] = suffix;
+    }
+
+    regfree(&regex);
+    return result;
+
+cleanup:
+    for (size_t i = 0; i < *count; i++) {
+        free(result[i]);
+    }
+    free(result);
+    regfree(&regex);
+    return NULL;
+}
+
+void free_split_result(char **result, size_t count) {
+    if (result == NULL) {
+        return;
+    }
+    for (size_t i = 0; i < count; i++) {
+        free(result[i]);
+    }
+    free(result);
+}
+
+int main(void) {
+    const char *input = "SplitThisStringAtUppercase";
+    size_t count = 0;
+    char **result = split_at_uppercase(input, &count);
+
+    if (result != NULL) {
+        for (size_t i = 0; i < count; i++) {
+            printf("%s\n", result[i]);
+        }
+        free_split_result(result, count);
+    }
+
+    return 0;
+}
+```

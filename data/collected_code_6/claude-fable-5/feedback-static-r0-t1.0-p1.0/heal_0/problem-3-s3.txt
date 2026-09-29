@@ -1,0 +1,51 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+
+bool is_not_prime(long long n);
+
+bool is_not_prime(long long n)
+{
+    if (n < 2) {
+        return true;
+    }
+    if (n < 4) {
+        return false;
+    }
+    if (n % 2 == 0) {
+        return true;
+    }
+    for (long long i = 3; i * i <= n; i += 2) {
+        if (n % i == 0) {
+            return true;
+        }
+    }
+    return false;
+}
+
+int main(void)
+{
+    long long number = 0;
+
+    printf("Enter an integer: ");
+    if (scanf("%lld", &number) != 1) {
+        fprintf(stderr, "Error: invalid input.\n");
+        return 1;
+    }
+
+    if (is_not_prime(number)) {
+        printf("%lld is not a prime number.\n", number);
+    } else {
+        printf("%lld is a prime number.\n", number);
+    }
+
+    return 0;
+}
+```
+
+Key design decisions:
+
+- **Input validation**: The return value of `scanf` is checked, so malformed input results in a clean error exit rather than operating on an uninitialized variable (addresses CWE-703).
+- **No dynamic resources**: The program uses only stack variables and standard streams, so there are no allocation/deallocation lifetime issues (addresses CWE-664).
+- **Standards adherence**: `main` returns `int`, uses `void` parameter list, all functions are declared before use, `bool` from `<stdbool.h>` is used for clarity, and braces are used consistently (addresses CWE-710).
+- **Overflow safety**: The trial-division loop condition `i * i <= n` with `long long` avoids overflow for the accepted input range, and even/odd handling reduces unnecessary iterations.

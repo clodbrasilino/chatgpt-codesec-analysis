@@ -1,0 +1,8 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-840-s2.c: In function 'areRootsOpposite':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-840-s2.c:9:26: error: implicit declaration of function 'sqrt' [-Wimplicit-function-declaration]
+    9 |     double root1 = (-b + sqrt(discriminant)) / (2 * a);
+      |                          ^~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-840-s2.c:3:1: note: include '<math.h>' or provide a declaration of 'sqrt'
+    2 | #include <stdbool.h>
+  +++ |+#include <math.h>
+    3 | 

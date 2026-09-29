@@ -1,0 +1,73 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+
+#define BUFFER_SIZE 256
+
+bool first_last_equal(const char *str, size_t max_len)
+{
+    size_t len;
+
+    if (str == NULL || max_len == 0) {
+        return false;
+    }
+
+    len = strnlen(str, max_len);
+    if (len == 0 || len == max_len) {
+        return false;
+    }
+
+    return str[0] == str[len - 1];
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t len;
+
+    printf("Enter a string: ");
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+        len--;
+    }
+
+    if (len == 0 || buffer[0] == '\0') {
+        printf("Empty string provided\n");
+        return 1;
+    }
+
+    if (first_last_equal(buffer, sizeof(buffer))) {
+        printf("The first and last characters are equal\n");
+    } else {
+        printf("The first and last characters are not equal\n");
+    }
+
+    return 0;
+}
+```
+
+**Analysis summary:**
+
+The original code was already well-defended against the Flawfinder-flagged weakness (CWE-119/CWE-120, statically-sized buffer overflow). The key mitigations present and preserved in the rewrite:
+
+1. **Bounded input reading** — `fgets(buffer, sizeof(buffer), stdin)` limits input to the buffer size, preventing overflow (unlike `gets` or unbounded `scanf("%s", ...)`).
+
+2. **Guaranteed null termination** — `buffer[sizeof(buffer) - 1] = '\0'` is a defensive belt-and-suspenders measure; `fgets` already null-terminates, but this protects against any future refactoring to a function that might not.
+
+3. **Bounded length calculation** — `strnlen` instead of `strlen` ensures the scan never runs past the buffer even if termination were somehow lost.
+
+4. **NULL and empty-string checks** — `first_last_equal` validates its pointer argument, rejects empty strings, and treats `len == max_len` (unterminated data) as an error rather than indexing blindly.
+
+5. **No off-by-one risks** — `str[len - 1]` is only evaluated after confirming `len > 0`.
+
+Minor hardening added in the rewrite: an explicit `max_len == 0` guard in `first_last_equal` (prevents `strnlen` misuse edge case), tracking `len` after newline stripping, and an explicit cast of `sizeof` to `int` for the `fgets` size parameter to document the narrowing conversion.

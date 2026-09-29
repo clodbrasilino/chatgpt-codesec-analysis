@@ -1,0 +1,9 @@
+collected_code/problem-735-0.c:8:28: error: Signed integer overflow for expression '1<<(numOfBits-1)'. [integerOverflow]
+    unsigned int mask = (1 << (numOfBits - 1)) | ((1 << (numOfBits - 1)) - 1);
+                           ^
+collected_code/problem-735-0.c:5:33: note: Assignment 'numOfBits=sizeof(num)*8', assigned value is 32
+    int numOfBits = sizeof(num) * 8;
+                                ^
+collected_code/problem-735-0.c:8:28: note: Integer overflow
+    unsigned int mask = (1 << (numOfBits - 1)) | ((1 << (numOfBits - 1)) - 1);
+                           ^

@@ -1,0 +1,28 @@
+#include <stdio.h>
+
+int matchString(const char *string) {
+    int i = 0;
+    
+    while (string[i] != '\0') {
+        if (string[i] == 'a') {
+            if (string[i + 1] == 'b' || string[i + 1] == '\0') {
+                return 1;
+            }
+        }
+        i++;
+    }
+    return 0;
+}
+
+int main() {
+    const char *input = "abc";
+    int result = matchString(input);
+    
+    if (result) {
+        printf("Match found");
+    } else {
+        printf("Match not found");
+    }
+    
+    return 0;
+}

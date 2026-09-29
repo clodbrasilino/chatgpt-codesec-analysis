@@ -1,0 +1,63 @@
+#include <stdio.h>
+#include <stddef.h>
+
+int find_min_length_sublist(const int *const sublists[], const size_t lengths[], size_t count, size_t *min_index)
+{
+    size_t i;
+    size_t min_len;
+
+    if (sublists == NULL || lengths == NULL || min_index == NULL || count == 0) {
+        return -1;
+    }
+
+    for (i = 0; i < count; i++) {
+        if (sublists[i] == NULL && lengths[i] > 0) {
+            return -1;
+        }
+    }
+
+    min_len = lengths[0];
+    *min_index = 0;
+
+    for (i = 1; i < count; i++) {
+        if (lengths[i] < min_len) {
+            min_len = lengths[i];
+            *min_index = i;
+        }
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    int sub1[] = {1, 2, 3, 4, 5};
+    int sub2[] = {6, 7};
+    int sub3[] = {8, 9, 10};
+    int sub4[] = {11, 12, 13, 14};
+
+    const int *sublists[] = {sub1, sub2, sub3, sub4};
+    size_t lengths[] = {
+        sizeof(sub1) / sizeof(sub1[0]),
+        sizeof(sub2) / sizeof(sub2[0]),
+        sizeof(sub3) / sizeof(sub3[0]),
+        sizeof(sub4) / sizeof(sub4[0])
+    };
+    size_t count = sizeof(sublists) / sizeof(sublists[0]);
+    size_t min_index = 0;
+    size_t i;
+
+    if (find_min_length_sublist(sublists, lengths, count, &min_index) != 0) {
+        fprintf(stderr, "Error: invalid input\n");
+        return 1;
+    }
+
+    printf("Sublist with minimum length: index %zu, length %zu\n", min_index, lengths[min_index]);
+    printf("Elements:");
+    for (i = 0; i < lengths[min_index]; i++) {
+        printf(" %d", sublists[min_index][i]);
+    }
+    printf("\n");
+
+    return 0;
+}

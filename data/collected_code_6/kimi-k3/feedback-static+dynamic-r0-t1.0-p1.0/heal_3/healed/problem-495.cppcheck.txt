@@ -1,0 +1,25 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-495.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-495.c:48:27: style: Condition 'remaining>0' is always true [knownConditionTrueFalse]
+            if (remaining > 0) {
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-495.c:38:19: note: Assuming that condition 'cursor<end' is not redundant
+    while (cursor < end && *cursor != '\0') {
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-495.c:42:25: note: Assignment 'remaining=(unsigned long)(end-cursor)', assigned value is greater than 0
+            remaining = (size_t)(end - cursor);
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-495.c:43:40: note: Assuming condition is false
+            if (result_len + remaining > input_len) {
+                                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-495.c:48:27: note: Condition 'remaining>0' is always true
+            if (remaining > 0) {
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-495.c:89:15: style: Condition 'input!=NULL' is always true [knownConditionTrueFalse]
+    if (input != NULL) {
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-495.c:85:25: note: Assignment 'input="HelloWorldABCdefGHIjklMNOP"', assigned value is "HelloWorldABCdefGHIjklMNOP"
+    const char *input = "HelloWorldABCdefGHIjklMNOP";
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-495.c:89:15: note: Condition 'input!=NULL' is always true
+    if (input != NULL) {
+              ^

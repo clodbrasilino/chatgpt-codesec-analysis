@@ -1,0 +1,107 @@
+```c
+#include <stdio.h>
+#include <math.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <float.h>
+#include <string.h>
+#include <limits.h>
+#include <stdint.h>
+
+#define INPUT_BUFFER_SIZE 512
+
+double calculate_polygon_perimeter(int sides, double side_length) {
+    if (sides < 3) {
+        errno = EINVAL;
+        return -1.0;
+    }
+    if (side_length < 0.0 || !isfinite(side_length)) {
+        errno = EINVAL;
+        return -1.0;
+    }
+    if (side_length > DBL_MAX / (double)sides) {
+        errno = ERANGE;
+        return -1.0;
+    }
+    return (double)sides * side_length;
+}
+
+static void clear_input_stream(void) {
+    int c;
+    while ((c = getchar()) != '\n' && c != EOF) {
+    }
+}
+
+static int read_line(char *buffer, size_t buffer_size) {
+    size_t len;
+    
+    if (fgets(buffer, (int)buffer_size, stdin) == NULL) {
+        return -1;
+    }
+    
+    len = strnlen(buffer, buffer_size);
+    if (len == 0) {
+        return -1;
+    }
+    
+    if (buffer[len - 1] != '\n') {
+        if (len >= buffer_size - 1) {
+            clear_input_stream();
+        }
+        return -1;
+    }
+    
+    buffer[len - 1] = '\0';
+    return 0;
+}
+
+int main(void) {
+    char input_buffer[INPUT_BUFFER_SIZE];
+    int num_sides = 0;
+    double side_len = 0.0;
+    double perimeter = 0.0;
+    char *end_ptr = NULL;
+    long parsed_sides = 0;
+
+    printf("Enter number of sides: ");
+    if (read_line(input_buffer, INPUT_BUFFER_SIZE) != 0) {
+        fprintf(stderr, "Invalid input for number of sides.\n");
+        return EXIT_FAILURE;
+    }
+
+    errno = 0;
+    parsed_sides = strtol(input_buffer, &end_ptr, 10);
+    if (errno == ERANGE || end_ptr == input_buffer || *end_ptr != '\0') {
+        fprintf(stderr, "Invalid input for number of sides.\n");
+        return EXIT_FAILURE;
+    }
+    if (parsed_sides < INT_MIN || parsed_sides > INT_MAX) {
+        fprintf(stderr, "Invalid input for number of sides.\n");
+        return EXIT_FAILURE;
+    }
+    num_sides = (int)parsed_sides;
+
+    printf("Enter side length: ");
+    if (read_line(input_buffer, INPUT_BUFFER_SIZE) != 0) {
+        fprintf(stderr, "Invalid input for side length.\n");
+        return EXIT_FAILURE;
+    }
+
+    errno = 0;
+    side_len = strtod(input_buffer, &end_ptr);
+    if (errno == ERANGE || end_ptr == input_buffer || *end_ptr != '\0') {
+        fprintf(stderr, "Invalid input for side length.\n");
+        return EXIT_FAILURE;
+    }
+
+    errno = 0;
+    perimeter = calculate_polygon_perimeter(num_sides, side_len);
+    if (errno != 0 || perimeter < 0.0) {
+        fprintf(stderr, "Invalid polygon parameters.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Perimeter: %.15g\n", perimeter);
+    return EXIT_SUCCESS;
+}
+```

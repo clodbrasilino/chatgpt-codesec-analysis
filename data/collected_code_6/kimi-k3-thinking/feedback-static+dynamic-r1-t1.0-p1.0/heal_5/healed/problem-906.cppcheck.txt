@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_5/healed/problem-906.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_5/healed/problem-906.c:30:25: style: Condition '(unsigned long)written>=dest_size' is always false [knownConditionTrueFalse]
+        (size_t)written >= dest_size) {
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_5/healed/problem-906.c:23:21: note: Assuming that condition 'src_len+1>dest_size' is not redundant
+    if (src_len + 1 > dest_size) {
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_5/healed/problem-906.c:29:40: note: Assuming that condition '(unsigned long)written!=src_len' is not redundant
+    if (written < 0 || (size_t)written != src_len ||
+                                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_5/healed/problem-906.c:30:25: note: Condition '(unsigned long)written>=dest_size' is always false
+        (size_t)written >= dest_size) {
+                        ^

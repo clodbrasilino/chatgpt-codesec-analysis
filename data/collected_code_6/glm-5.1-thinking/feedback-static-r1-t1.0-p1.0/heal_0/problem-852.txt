@@ -1,0 +1,58 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+
+int *remove_negatives(const int *src, size_t src_len, size_t *out_len) {
+    size_t count = 0;
+    
+    for (size_t i = 0; i < src_len; i++) {
+        if (src[i] >= 0) {
+            count++;
+        }
+    }
+
+    *out_len = count;
+
+    if (count == 0) {
+        return NULL;
+    }
+
+    if (count > SIZE_MAX / sizeof(int)) {
+        *out_len = 0;
+        return NULL;
+    }
+
+    int *result = malloc(count * sizeof(int));
+    if (result == NULL) {
+        *out_len = 0;
+        return NULL;
+    }
+
+    size_t j = 0;
+    for (size_t i = 0; i < src_len; i++) {
+        if (src[i] >= 0) {
+            result[j++] = src[i];
+        }
+    }
+
+    return result;
+}
+
+int main(void) {
+    int list[] = {3, -1, 4, -1, 5, -9, 2, -6, 5, 0};
+    size_t len = sizeof(list) / sizeof(list[0]);
+    size_t new_len = 0;
+
+    int *filtered = remove_negatives(list, len, &new_len);
+
+    for (size_t i = 0; i < new_len; i++) {
+        printf("%d ", filtered[i]);
+    }
+    printf("\n");
+
+    free(filtered);
+
+    return 0;
+}
+```

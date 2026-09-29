@@ -1,0 +1,128 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *elements;
+    size_t size;
+} Tuple;
+
+typedef struct {
+    Tuple *tuples;
+    size_t count;
+} TupleList;
+
+int trim_tuples(TupleList *list, size_t k);
+void free_tuple_list(TupleList *list);
+int init_tuple(Tuple *t, const int *data, size_t size);
+
+int trim_tuples(TupleList *list, size_t k) {
+    if (list == NULL || list->tuples == NULL) {
+        return -1;
+    }
+
+    for (size_t i = 0; i < list->count; i++) {
+        Tuple *t = &list->tuples[i];
+        
+        if (t->elements == NULL || t->size == 0) {
+            t->size = 0;
+            continue;
+        }
+
+        if (t->size <= 2 * k) {
+            free(t->elements);
+            t->elements = NULL;
+            t->size = 0;
+        } else {
+            size_t new_size = t->size - 2 * k;
+            for (size_t j = 0; j < new_size; j++) {
+                t->elements[j] = t->elements[k + j];
+            }
+            int *temp = realloc(t->elements, new_size * sizeof(int));
+            if (temp != NULL) {
+                t->elements = temp;
+            }
+            t->size = new_size;
+        }
+    }
+    return 0;
+}
+
+void free_tuple_list(TupleList *list) {
+    if (list == NULL || list->tuples == NULL) {
+        return;
+    }
+    for (size_t i = 0; i < list->count; i++) {
+        if (list->tuples[i].elements != NULL) {
+            free(list->tuples[i].elements);
+            list->tuples[i].elements = NULL;
+        }
+    }
+    free(list->tuples);
+    list->tuples = NULL;
+    list->count = 0;
+}
+
+int init_tuple(Tuple *t, const int *data, size_t size) {
+    if (t == NULL) {
+        return -1;
+    }
+    if (size == 0 || data == NULL) {
+        t->elements = NULL;
+        t->size = 0;
+        return 0;
+    }
+    t->elements = malloc(size * sizeof(int));
+    if (t->elements == NULL) {
+        t->size = 0;
+        return -1;
+    }
+    for (size_t i = 0; i < size; i++) {
+        t->elements[i] = data[i];
+    }
+    t->size = size;
+    return 0;
+}
+
+int main(void) {
+    TupleList list = {NULL, 0};
+    list.count = 2;
+    list.tuples = malloc(list.count * sizeof(Tuple));
+    if (list.tuples == NULL) {
+        return 1;
+    }
+
+    for (size_t i = 0; i < list.count; i++) {
+        list.tuples[i].elements = NULL;
+        list.tuples[i].size = 0;
+    }
+
+    int data1[] = {1, 2, 3, 4, 5};
+    int data2[] = {6, 7, 8, 9, 10, 11};
+
+    if (init_tuple(&list.tuples[0], data1, 5) != 0) {
+        free_tuple_list(&list);
+        return 1;
+    }
+
+    if (init_tuple(&list.tuples[1], data2, 6) != 0) {
+        free_tuple_list(&list);
+        return 1;
+    }
+
+    size_t k = 1;
+
+    if (trim_tuples(&list, k) != 0) {
+        free_tuple_list(&list);
+        return 1;
+    }
+
+    for (size_t i = 0; i < list.count; i++) {
+        for (size_t j = 0; j < list.tuples[i].size; j++) {
+            printf("%d ", list.tuples[i].elements[j]);
+        }
+        printf("\n");
+    }
+
+    free_tuple_list(&list);
+    return 0;
+}

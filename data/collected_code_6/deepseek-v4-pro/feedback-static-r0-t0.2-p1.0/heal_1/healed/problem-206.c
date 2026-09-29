@@ -1,0 +1,78 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char **items;
+    int size;
+} Tuple;
+
+char *concatenate_adjacent(Tuple *tuple) {
+    if (tuple == NULL || tuple->items == NULL || tuple->size <= 0) {
+        return NULL;
+    }
+
+    size_t total_length = 0;
+    int i;
+    for (i = 0; i < tuple->size; i++) {
+        if (tuple->items[i] != NULL) {
+            size_t len = strnlen(tuple->items[i], SIZE_MAX);
+            if (len == SIZE_MAX) {
+                return NULL;
+            }
+            total_length += len;
+        }
+    }
+
+    char *result = (char *)malloc(total_length + 1);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    result[0] = '\0';
+    size_t current_pos = 0;
+    for (i = 0; i < tuple->size; i++) {
+        if (tuple->items[i] != NULL) {
+            size_t len = strnlen(tuple->items[i], SIZE_MAX);
+            if (current_pos + len <= total_length) {
+                memcpy(result + current_pos, tuple->items[i], len);
+                current_pos += len;
+            }
+        }
+    }
+    result[current_pos] = '\0';
+
+    return result;
+}
+
+int main(void) {
+    char *items1[] = {"Hello", " ", "World", "!"};
+    Tuple tuple1 = {items1, 4};
+
+    char *items2[] = {"C", "Programming", "Language"};
+    Tuple tuple2 = {items2, 3};
+
+    char *items3[] = {"No", NULL, "Concatenation"};
+    Tuple tuple3 = {items3, 3};
+
+    char *result1 = concatenate_adjacent(&tuple1);
+    char *result2 = concatenate_adjacent(&tuple2);
+    char *result3 = concatenate_adjacent(&tuple3);
+
+    if (result1 != NULL) {
+        printf("%s\n", result1);
+        free(result1);
+    }
+
+    if (result2 != NULL) {
+        printf("%s\n", result2);
+        free(result2);
+    }
+
+    if (result3 != NULL) {
+        printf("%s\n", result3);
+        free(result3);
+    }
+
+    return 0;
+}

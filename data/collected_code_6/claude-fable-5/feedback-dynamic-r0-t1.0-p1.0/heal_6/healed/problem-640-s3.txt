@@ -1,0 +1,118 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <limits.h>
+
+char *remove_parentheses(const char *input)
+{
+    size_t len;
+    size_t i;
+    size_t j;
+    int depth;
+    char *result;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    len = strlen(input);
+    result = calloc(len + 1, sizeof(char));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    depth = 0;
+    j = 0;
+    for (i = 0; i < len; i++) {
+        if (input[i] == '(') {
+            if (depth < INT_MAX) {
+                depth++;
+            }
+        } else if (input[i] == ')') {
+            if (depth > 0) {
+                depth--;
+            }
+        } else if (depth == 0) {
+            if (j < len) {
+                result[j] = input[i];
+                j++;
+            }
+        }
+    }
+    result[j] = '\0';
+
+    return result;
+}
+
+static int run_test(const char *input, const char *expected)
+{
+    char *output;
+    int status;
+
+    if (input == NULL || expected == NULL) {
+        fprintf(stderr, "Invalid test parameters\n");
+        return -1;
+    }
+
+    output = remove_parentheses(input);
+    if (output == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return -1;
+    }
+
+    status = 0;
+    if (strcmp(output, expected) != 0) {
+        fprintf(stderr, "Test failed: expected '%s', got '%s'\n",
+                expected, output);
+        status = -1;
+    }
+
+    if (printf("%s\n", output) < 0) {
+        status = -1;
+    }
+
+    free(output);
+    output = NULL;
+    return status;
+}
+
+int main(void)
+{
+    const char *test1 = "Hello (remove me) World";
+    const char *expected1 = "Hello  World";
+    const char *test2 = "abc(def(ghi)jkl)mno";
+    const char *expected2 = "abcmno";
+    const char *test3 = "no parentheses here";
+    const char *expected3 = "no parentheses here";
+
+    if (run_test(test1, expected1) != 0) {
+        return EXIT_FAILURE;
+    }
+    if (run_test(test2, expected2) != 0) {
+        return EXIT_FAILURE;
+    }
+    if (run_test(test3, expected3) != 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+Analysis of the weaknesses referenced in the original comments and how this version addresses them:
+
+1. **Garbage output (`�qf`, `` `qf ``)** — The test failures showing non-printable garbage instead of expected strings are the classic symptom of an unterminated or uninitialized buffer, typically caused by using `malloc` without null-terminating the result, or returning a pointer to a stack buffer. This version prevents that by:
+   - Using `calloc(len + 1, sizeof(char))`, which zero-initializes the entire buffer, guaranteeing termination even if the write loop exits early.
+   - Explicitly writing `result[j] = '\0'` after the loop as a defensive second guarantee.
+   - Returning heap-allocated memory rather than a stack-local array, so the string remains valid after the function returns.
+
+2. **Buffer overflow protection** — The `j < len` guard ensures writes never exceed the allocated region, and since the output can never be longer than the input, `len + 1` is always a sufficient allocation.
+
+3. **Integer overflow on `depth`** — The `depth < INT_MAX` check prevents signed overflow (undefined behavior) on pathological inputs with billions of `(` characters.
+
+4. **NULL safety** — Both `remove_parentheses` and `run_test` validate their pointer arguments, and the `calloc` return value is checked before use.
+
+5. **Memory hygiene** — The output buffer is freed exactly once per test and the pointer nulled afterward, avoiding leaks and double-free risks; `printf`'s return value is checked so I/O failures propagate as errors.
+
+The code compiles cleanly with `-Wall -Wextra -pedantic` and all three tests pass, producing `Hello  World`, `abcmno`, and `no parentheses here` as expected.

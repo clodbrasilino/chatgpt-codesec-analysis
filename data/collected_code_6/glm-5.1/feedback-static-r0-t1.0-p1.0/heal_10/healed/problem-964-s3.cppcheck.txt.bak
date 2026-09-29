@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-964-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-964-s3.c:42:21: style: Condition 'null_result==LENGTH_RESULT_INVALID' is always true [knownConditionTrueFalse]
+    if (null_result == LENGTH_RESULT_INVALID) {
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-964-s3.c:40:46: note: Calling function 'is_length_even' returns 2
+    LengthResult null_result = is_length_even(NULL);
+                                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-964-s3.c:40:46: note: Assignment 'null_result=is_length_even(NULL)', assigned value is 2
+    LengthResult null_result = is_length_even(NULL);
+                                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-964-s3.c:42:21: note: Condition 'null_result==LENGTH_RESULT_INVALID' is always true
+    if (null_result == LENGTH_RESULT_INVALID) {
+                    ^

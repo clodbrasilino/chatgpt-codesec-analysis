@@ -1,0 +1,4 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_1/healed/problem-500.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_1/healed/problem-500.c:17:19: style: Array index 'len' is used before limits check. [arrayIndexThenCheck]
+        while (ptr[len] != '\0' && len < SIZE_MAX) {
+                  ^

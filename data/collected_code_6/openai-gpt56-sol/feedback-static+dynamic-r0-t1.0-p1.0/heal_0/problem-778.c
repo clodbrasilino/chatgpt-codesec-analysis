@@ -1,0 +1,131 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *elements;
+    size_t count;
+} Sublist;
+
+static void free_sublists(Sublist *sublists, size_t count)
+{
+    if (sublists == NULL) {
+        return;
+    }
+
+    for (size_t i = 0; i < count; ++i) {
+        free(sublists[i].elements);
+    }
+
+    free(sublists);
+}
+
+static int pack_consecutive(const int *values, size_t count,
+                            Sublist **result, size_t *result_count)
+{
+    Sublist *sublists = NULL;
+    size_t group_count = 0;
+    size_t group_index = 0;
+    size_t start = 0;
+
+    if (result == NULL || result_count == NULL ||
+        (values == NULL && count != 0)) {
+        return -1;
+    }
+
+    *result = NULL;
+    *result_count = 0;
+
+    if (count == 0) {
+        return 0;
+    }
+
+    group_count = 1;
+    for (size_t i = 1; i < count; ++i) {
+        if (values[i] != values[i - 1]) {
+            ++group_count;
+        }
+    }
+
+    if (group_count > SIZE_MAX / sizeof(*sublists)) {
+        return -1;
+    }
+
+    sublists = calloc(group_count, sizeof(*sublists));
+    if (sublists == NULL) {
+        return -1;
+    }
+
+    for (size_t i = 1; i <= count; ++i) {
+        if (i == count || values[i] != values[i - 1]) {
+            size_t length = i - start;
+
+            if (length > SIZE_MAX / sizeof(*sublists[group_index].elements)) {
+                free_sublists(sublists, group_index);
+                return -1;
+            }
+
+            sublists[group_index].elements =
+                malloc(length * sizeof(*sublists[group_index].elements));
+            if (sublists[group_index].elements == NULL) {
+                free_sublists(sublists, group_index);
+                return -1;
+            }
+
+            for (size_t j = 0; j < length; ++j) {
+                sublists[group_index].elements[j] = values[start + j];
+            }
+
+            sublists[group_index].count = length;
+            ++group_index;
+            start = i;
+        }
+    }
+
+    *result = sublists;
+    *result_count = group_count;
+    return 0;
+}
+
+static void print_sublists(const Sublist *sublists, size_t count)
+{
+    putchar('[');
+
+    for (size_t i = 0; i < count; ++i) {
+        if (i != 0) {
+            printf(", ");
+        }
+
+        putchar('[');
+
+        for (size_t j = 0; j < sublists[i].count; ++j) {
+            if (j != 0) {
+                printf(", ");
+            }
+
+            printf("%d", sublists[i].elements[j]);
+        }
+
+        putchar(']');
+    }
+
+    puts("]");
+}
+
+int main(void)
+{
+    const int values[] = {1, 1, 2, 3, 3, 3, 4, 4, 5};
+    const size_t value_count = sizeof(values) / sizeof(values[0]);
+    Sublist *sublists = NULL;
+    size_t sublist_count = 0;
+
+    if (pack_consecutive(values, value_count,
+                         &sublists, &sublist_count) != 0) {
+        fputs("Failed to pack the list.\n", stderr);
+        return EXIT_FAILURE;
+    }
+
+    print_sublists(sublists, sublist_count);
+    free_sublists(sublists, sublist_count);
+
+    return EXIT_SUCCESS;
+}

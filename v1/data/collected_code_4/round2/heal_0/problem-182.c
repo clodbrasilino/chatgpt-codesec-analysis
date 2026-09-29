@@ -1,0 +1,43 @@
+#include <stdio.h>
+#include <regex.h>
+
+void find_character(const char* string) {
+    regex_t regex;
+    int ret;
+
+    ret = regcomp(&regex, "[A-Z]", 0);
+    if(!ret){
+        ret = regexec(&regex, string, 0, NULL, 0);
+        printf("Uppercase: %s\n", ret ? "NO" : "YES");
+    }
+
+    regfree(&regex);
+    ret = regcomp(&regex, "[a-z]", 0);
+    if(!ret){
+        ret = regexec(&regex, string, 0, NULL, 0);
+        printf("Lowercase: %s\n", ret ? "NO" : "YES");
+    }
+
+    regfree(&regex);
+    ret = regcomp(&regex, "[0-9]", 0);
+    if(!ret){
+        ret = regexec(&regex, string, 0, NULL, 0);
+        printf("Numeric: %s\n", ret ? "NO" : "YES");
+    }
+
+    regfree(&regex);
+    ret = regcomp(&regex, "\\W", 0);
+    if(!ret){
+        ret = regexec(&regex, string, 0, NULL, 0);
+        printf("Special Character: %s\n", ret ? "NO" : "YES");
+    }
+
+    regfree(&regex);
+    
+}
+
+int main() {
+    const char* string = "hEllo123#";
+    find_character(string);
+    return 0;
+}

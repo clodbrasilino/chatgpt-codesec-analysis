@@ -1,0 +1,32 @@
+In C, there is no built-in map function like in some other languages such as Python or JavaScript. However, you can achieve similar functionality using loops. Here is a C program that counts the same pairs in two given lists:
+
+```c
+#include <stdio.h>
+
+int count_same_pairs(int *list1, int *list2, int size) {
+    int count = 0;
+    for(int i = 0; i < size; i++) {
+        for(int j = 0; j < size; j++) {
+            if(list1[i] == list2[j]) {
+                count++;
+            }
+        }
+    }
+    return count;
+}
+
+int main() {
+    int list1[] = {1, 2, 3, 4, 5};
+    int list2[] = {2, 3, 4, 5, 6};
+    int size = sizeof(list1) / sizeof(list1[0]);
+
+    int count = count_same_pairs(list1, list2, size);
+    printf("Number of same pairs: %d\n", count);
+
+    return 0;
+}
+```
+
+This program first defines a function `count_same_pairs` that takes two integer arrays and their size as arguments. It then iterates over both arrays, comparing each element of the first array with each element of the second array. If a pair of elements are the same, it increments a counter. Finally, it returns the counter.
+
+The `main` function initializes two arrays and their size, calls `count_same_pairs` with these arrays, and prints the result.

@@ -1,0 +1,153 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct DictEntry {
+    char *key;
+    int value;
+    struct DictEntry *next;
+} DictEntry;
+
+typedef struct {
+    DictEntry **buckets;
+    size_t size;
+} Dictionary;
+
+static unsigned long hash_function(const char *str) {
+    unsigned long hash = 5381;
+    int c;
+    while ((c = *str++)) {
+        hash = ((hash << 5) + hash) + c;
+    }
+    return hash;
+}
+
+Dictionary *create_dictionary(size_t size) {
+    Dictionary *dict = malloc(sizeof(Dictionary));
+    if (!dict) return NULL;
+    dict->size = size;
+    dict->buckets = calloc(size, sizeof(DictEntry *));
+    if (!dict->buckets) {
+        free(dict);
+        return NULL;
+    }
+    return dict;
+}
+
+void dict_insert(Dictionary *dict, const char *key, int value) {
+    if (!dict || !key) return;
+    unsigned long index = hash_function(key) % dict->size;
+    DictEntry *entry = dict->buckets[index];
+    while (entry) {
+        if (strcmp(entry->key, key) == 0) {
+            entry->value = value;
+            return;
+        }
+        entry = entry->next;
+    }
+    DictEntry *new_entry = malloc(sizeof(DictEntry));
+    if (!new_entry) return;
+    new_entry->key = malloc(strlen(key) + 1);
+    if (!new_entry->key) {
+        free(new_entry);
+        return;
+    }
+    strcpy(new_entry->key, key);
+    new_entry->value = value;
+    new_entry->next = dict->buckets[index];
+    dict->buckets[index] = new_entry;
+}
+
+int dict_get(Dictionary *dict, const char *key, int *found) {
+    if (!dict || !key) {
+        if (found) *found = 0;
+        return 0;
+    }
+    unsigned long index = hash_function(key) % dict->size;
+    DictEntry *entry = dict->buckets[index];
+    while (entry) {
+        if (strcmp(entry->key, key) == 0) {
+            if (found) *found = 1;
+            return entry->value;
+        }
+        entry = entry->next;
+    }
+    if (found) *found = 0;
+    return 0;
+}
+
+Dictionary *merge_dictionaries(Dictionary *dict1, Dictionary *dict2) {
+    if (!dict1 || !dict2) return NULL;
+    size_t new_size = dict1->size + dict2->size;
+    Dictionary *merged = create_dictionary(new_size);
+    if (!merged) return NULL;
+
+    for (size_t i = 0; i < dict1->size; i++) {
+        DictEntry *entry = dict1->buckets[i];
+        while (entry) {
+            dict_insert(merged, entry->key, entry->value);
+            entry = entry->next;
+        }
+    }
+
+    for (size_t i = 0; i < dict2->size; i++) {
+        DictEntry *entry = dict2->buckets[i];
+        while (entry) {
+            dict_insert(merged, entry->key, entry->value);
+            entry = entry->next;
+        }
+    }
+
+    return merged;
+}
+
+void free_dictionary(Dictionary *dict) {
+    if (!dict) return;
+    for (size_t i = 0; i < dict->size; i++) {
+        DictEntry *entry = dict->buckets[i];
+        while (entry) {
+            DictEntry *next = entry->next;
+            free(entry->key);
+            free(entry);
+            entry = next;
+        }
+    }
+    free(dict->buckets);
+    free(dict);
+}
+
+int main(void) {
+    Dictionary *dict1 = create_dictionary(10);
+    Dictionary *dict2 = create_dictionary(10);
+    if (!dict1 || !dict2) {
+        free_dictionary(dict1);
+        free_dictionary(dict2);
+        return 1;
+    }
+
+    dict_insert(dict1, "apple", 1);
+    dict_insert(dict1, "banana", 2);
+    dict_insert(dict2, "banana", 3);
+    dict_insert(dict2, "cherry", 4);
+
+    Dictionary *merged = merge_dictionaries(dict1, dict2);
+    if (!merged) {
+        free_dictionary(dict1);
+        free_dictionary(dict2);
+        return 1;
+    }
+
+    int found;
+    int val = dict_get(merged, "apple", &found);
+    if (found) printf("apple: %d\n", val);
+    val = dict_get(merged, "banana", &found);
+    if (found) printf("banana: %d\n", val);
+    val = dict_get(merged, "cherry", &found);
+    if (found) printf("cherry: %d\n", val);
+
+    free_dictionary(dict1);
+    free_dictionary(dict2);
+    free_dictionary(merged);
+
+    return 0;
+}

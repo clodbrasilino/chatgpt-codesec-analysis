@@ -1,0 +1,120 @@
+./collected_code_4/round2//heal_0/problem-110.c: In function 'find_missing_ranges':
+./collected_code_4/round2//heal_0/problem-110.c:14:33: warning: dereference of possibly-NULL 'missing_ranges' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   14 |         missing_ranges[0].start = start;
+      |         ~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~
+  'find_missing_ranges': events 1-4
+    |
+    |   10 |     Range *missing_ranges = malloc(sizeof(Range) * nums_len);
+    |      |                             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                             |
+    |      |                             (1) this call could return NULL
+    |......
+    |   13 |     if (nums_len == 0) {
+    |      |        ~                     
+    |      |        |
+    |      |        (2) following 'true' branch (when 'nums_len == 0')...
+    |   14 |         missing_ranges[0].start = start;
+    |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                                 |
+    |      |                                 (3) ...to here
+    |      |                                 (4) 'missing_ranges' could be NULL: unchecked value from (1)
+    |
+./collected_code_4/round2//heal_0/problem-110.c:21:33: warning: dereference of possibly-NULL 'missing_ranges' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   21 |         missing_ranges[0].start = start;
+      |         ~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~
+  'find_missing_ranges': events 1-6
+    |
+    |   10 |     Range *missing_ranges = malloc(sizeof(Range) * nums_len);
+    |      |                             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                             |
+    |      |                             (1) this call could return NULL
+    |......
+    |   13 |     if (nums_len == 0) {
+    |      |        ~                     
+    |      |        |
+    |      |        (2) following 'false' branch (when 'nums_len != 0')...
+    |......
+    |   20 |     if (nums[0] > start) {
+    |      |        ~~~~~~~~              
+    |      |        |    |
+    |      |        |    (3) ...to here
+    |      |        (4) following 'true' branch...
+    |   21 |         missing_ranges[0].start = start;
+    |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                                 |
+    |      |                                 (5) ...to here
+    |      |                                 (6) 'missing_ranges' could be NULL: unchecked value from (1)
+    |
+./collected_code_4/round2//heal_0/problem-110.c:28:48: warning: dereference of possibly-NULL 'missing_ranges' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   28 |             missing_ranges[*return_size].start = nums[i] + 1;
+      |             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~
+  'find_missing_ranges': events 1-10
+    |
+    |   10 |     Range *missing_ranges = malloc(sizeof(Range) * nums_len);
+    |      |                             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                             |
+    |      |                             (1) this call could return NULL
+    |......
+    |   13 |     if (nums_len == 0) {
+    |      |        ~                     
+    |      |        |
+    |      |        (2) following 'false' branch (when 'nums_len != 0')...
+    |......
+    |   20 |     if (nums[0] > start) {
+    |      |        ~~~~~~~~              
+    |      |        |    |
+    |      |        |    (3) ...to here
+    |      |        (4) following 'false' branch...
+    |......
+    |   26 |     for (int i = 0; i < nums_len - 1; ++i) {
+    |      |              ~      ~~~~~~~~~~~~~~~~
+    |      |              |        |
+    |      |              |        (6) following 'true' branch...
+    |      |              (5) ...to here
+    |   27 |         if (nums[i + 1] - nums[i] > 1) {
+    |      |            ~    ~            
+    |      |            |    |
+    |      |            |    (7) ...to here
+    |      |            (8) following 'true' branch...
+    |   28 |             missing_ranges[*return_size].start = nums[i] + 1;
+    |      |             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                                                |     |
+    |      |                                                |     (9) ...to here
+    |      |                                                (10) 'missing_ranges + (long unsigned int)*return_size * 8' could be NULL: unchecked value from (1)
+    |
+./collected_code_4/round2//heal_0/problem-110.c:35:44: warning: dereference of possibly-NULL 'missing_ranges' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   35 |         missing_ranges[*return_size].start = nums[nums_len - 1] + 1;
+      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~
+  'find_missing_ranges': events 1-8
+    |
+    |   10 |     Range *missing_ranges = malloc(sizeof(Range) * nums_len);
+    |      |                             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                             |
+    |      |                             (1) this call could return NULL
+    |......
+    |   13 |     if (nums_len == 0) {
+    |      |        ~                     
+    |      |        |
+    |      |        (2) following 'false' branch (when 'nums_len != 0')...
+    |......
+    |   20 |     if (nums[0] > start) {
+    |      |        ~~~~~~~~              
+    |      |        |    |
+    |      |        |    (3) ...to here
+    |      |        (4) following 'false' branch...
+    |......
+    |   26 |     for (int i = 0; i < nums_len - 1; ++i) {
+    |      |              ~               
+    |      |              |
+    |      |              (5) ...to here
+    |......
+    |   34 |     if (nums[nums_len - 1] < end) {
+    |      |        ~                     
+    |      |        |
+    |      |        (6) following 'true' branch...
+    |   35 |         missing_ranges[*return_size].start = nums[nums_len - 1] + 1;
+    |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                                            |     |
+    |      |                                            |     (7) ...to here
+    |      |                                            (8) 'missing_ranges + (long unsigned int)*return_size * 8' could be NULL: unchecked value from (1)
+    |

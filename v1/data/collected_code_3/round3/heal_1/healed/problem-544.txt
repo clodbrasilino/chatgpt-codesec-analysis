@@ -1,0 +1,59 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    int size;
+    char **elements;
+} Tuple;
+
+char* flattenTupleList(Tuple* tupleList, int size) {
+    int i, j;
+    int totalLength = 0;
+    for(i = 0; i < size; i++) {
+        for(j = 0; j < tupleList[i].size; j++) {
+            totalLength += strlen(tupleList[i].elements[j]);
+        }
+    }
+    char *result = (char*)malloc(sizeof(char) * (totalLength + 1));
+    if(result == NULL) {
+        return NULL;
+    }
+    result[0] = '\0';
+    for(i = 0; i < size; i++) {
+        for(j = 0; j < tupleList[i].size; j++) {
+            strcat(result, tupleList[i].elements[j]);
+        }
+    }
+    return result;
+}
+
+int main() {
+    Tuple tupleList[2] = {0};
+    tupleList[0].size = 2;
+    tupleList[0].elements = (char**)malloc(sizeof(char*) * 2);
+    if(tupleList[0].elements == NULL) {
+        return 1;
+    }
+    tupleList[0].elements[0] = "Hello";
+    tupleList[0].elements[1] = "World";
+    tupleList[1].size = 2;
+    tupleList[1].elements = (char**)malloc(sizeof(char*) * 2);
+    if(tupleList[1].elements == NULL) {
+        free(tupleList[0].elements);
+        return 1;
+    }
+    tupleList[1].elements[0] = "I";
+    tupleList[1].elements[1] = "am";
+    char *result = flattenTupleList(tupleList, 2);
+    if(result == NULL) {
+       free(tupleList[0].elements);
+       free(tupleList[1].elements);
+       return 1;
+    }
+    printf("%s\n", result);
+    free(result);
+    free(tupleList[0].elements);
+    free(tupleList[1].elements);
+    return 0;
+}

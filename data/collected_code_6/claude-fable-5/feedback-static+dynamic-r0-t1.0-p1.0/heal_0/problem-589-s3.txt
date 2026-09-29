@@ -1,0 +1,65 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+void find_perfect_squares(long low, long high)
+{
+    long start;
+    long root;
+    long square;
+
+    if (low > high) {
+        long temp = low;
+        low = high;
+        high = temp;
+    }
+
+    if (high < 0) {
+        printf("No perfect squares in this range.\n");
+        return;
+    }
+
+    start = (low < 0) ? 0 : low;
+    root = (long)sqrt((double)start);
+
+    while (root * root < start) {
+        root++;
+    }
+
+    square = root * root;
+
+    if (square > high) {
+        printf("No perfect squares in this range.\n");
+        return;
+    }
+
+    while (square <= high) {
+        printf("%ld\n", square);
+        root++;
+        square = root * root;
+    }
+}
+
+int main(void)
+{
+    long a;
+    long b;
+
+    printf("Enter the first number: ");
+    if (scanf("%ld", &a) != 1) {
+        fprintf(stderr, "Invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter the second number: ");
+    if (scanf("%ld", &b) != 1) {
+        fprintf(stderr, "Invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    find_perfect_squares(a, b);
+
+    return EXIT_SUCCESS;
+}
+```

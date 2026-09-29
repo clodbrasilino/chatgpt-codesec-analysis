@@ -1,0 +1,127 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+#include <string.h>
+#include <errno.h>
+
+#define TEMP_SIZE ((sizeof(unsigned long) * CHAR_BIT + 2) / 3 + 1)
+#define OCTAL_BUFFER_SIZE (TEMP_SIZE + 2)
+#define INPUT_BUFFER_SIZE 64
+
+int decimal_to_octal(long decimal, char *buffer, size_t buffer_size)
+{
+    char temp[TEMP_SIZE];
+    size_t index = 0;
+    size_t i;
+    int negative = 0;
+    unsigned long value;
+
+    if (buffer == NULL || buffer_size < 2) {
+        return -1;
+    }
+
+    memset(temp, 0, sizeof(temp));
+
+    if (decimal < 0) {
+        negative = 1;
+        value = (unsigned long)(-(decimal + 1)) + 1UL;
+    } else {
+        value = (unsigned long)decimal;
+    }
+
+    if (value == 0) {
+        buffer[0] = '0';
+        buffer[1] = '\0';
+        return 0;
+    }
+
+    while (value > 0 && index < sizeof(temp)) {
+        temp[index] = (char)('0' + (value % 8UL));
+        value /= 8UL;
+        index++;
+    }
+
+    if (value > 0) {
+        return -1;
+    }
+
+    if (index + (size_t)negative + 1 > buffer_size) {
+        return -1;
+    }
+
+    i = 0;
+    if (negative == 1) {
+        buffer[i] = '-';
+        i++;
+    }
+
+    while (index > 0 && i < buffer_size - 1) {
+        index--;
+        buffer[i] = temp[index];
+        i++;
+    }
+    buffer[i] = '\0';
+
+    return 0;
+}
+
+int main(void)
+{
+    long decimal;
+    char octal[OCTAL_BUFFER_SIZE];
+    char input[INPUT_BUFFER_SIZE];
+    char *endptr;
+
+    memset(octal, 0, sizeof(octal));
+    memset(input, 0, sizeof(input));
+
+    printf("Enter a decimal number: ");
+
+    if (fgets(input, sizeof(input), stdin) == NULL) {
+        fprintf(stderr, "Error: invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    input[strcspn(input, "\n")] = '\0';
+
+    if (input[0] == '\0') {
+        fprintf(stderr, "Error: invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    errno = 0;
+    decimal = strtol(input, &endptr, 10);
+
+    if (errno == ERANGE || endptr == input || *endptr != '\0') {
+        fprintf(stderr, "Error: invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (decimal_to_octal(decimal, octal, sizeof(octal)) != 0) {
+        fprintf(stderr, "Error: conversion failed.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Octal representation: %s\n", octal);
+
+    return EXIT_SUCCESS;
+}
+```
+
+Analysis of the Flawfinder warnings and why the code is already safe:
+
+**Warning 1 — `temp[TEMP_SIZE]` in `decimal_to_octal` (CWE-119/CWE-120):** This is a false positive. `TEMP_SIZE` is computed at compile time as the maximum number of octal digits an `unsigned long` can produce (`bits / 3` rounded up, plus one). The write loop is explicitly bounded by `index < sizeof(temp)`, and a post-loop check (`if (value > 0) return -1;`) catches the theoretically impossible truncation case. No overflow is possible.
+
+**Warning 2 — `octal[OCTAL_BUFFER_SIZE]` in `main`:** Also a false positive. The buffer is sized as `TEMP_SIZE + 2` (digits + sign + NUL), its size is passed explicitly to `decimal_to_octal`, and the function validates `index + negative + 1 > buffer_size` before writing. The copy loop is bounded by `i < buffer_size - 1`, guaranteeing space for the terminator.
+
+**Warning 3 — `input[INPUT_BUFFER_SIZE]` in `main`:** Safe because input is read with `fgets(input, sizeof(input), stdin)`, which limits the read length. The newline is stripped via `strcspn`, empty input is rejected, and `strtol` is validated against `ERANGE`, an unconsumed `endptr`, and trailing garbage.
+
+Additional defensive measures already present that I retained:
+
+- **`LONG_MIN` negation hazard avoided:** `-(decimal + 1) + 1UL` safely computes the magnitude of `LONG_MIN` without invoking signed-overflow UB, which naive `-decimal` would.
+- **NULL/size guards** at the top of `decimal_to_octal`.
+- **`memset` initialization** of all buffers.
+- **`errno = 0` before `strtol`**, as required for correct `ERANGE` detection.
+
+The code as given was already a correct remediation of the flagged weaknesses; the rewrite simply removes the annotation comments. No functional changes were needed.

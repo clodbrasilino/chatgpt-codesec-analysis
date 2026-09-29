@@ -1,0 +1,16 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-552-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-552-s3.c:48:42: style: Condition 'res5' is always false [knownConditionTrueFalse]
+    printf("Sequence 5 is linear: %s\n", res5 ? "true" : "false");
+                                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-552-s3.c:27:32: note: Assignment 'len1=sizeof(arr1)/sizeof(arr1[0])', assigned value is 5
+    size_t len1 = sizeof(arr1) / sizeof(arr1[0]);
+                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-552-s3.c:42:26: note: Calling function 'is_linear' returns 0
+    bool res5 = is_linear(NULL, len1);
+                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-552-s3.c:42:26: note: Assignment 'res5=is_linear(NULL,len1)', assigned value is 0
+    bool res5 = is_linear(NULL, len1);
+                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-552-s3.c:48:42: note: Condition 'res5' is always false
+    printf("Sequence 5 is linear: %s\n", res5 ? "true" : "false");
+                                         ^

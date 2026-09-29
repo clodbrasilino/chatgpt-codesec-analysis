@@ -1,0 +1,192 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char *key;
+    char *value;
+} DictEntry;
+
+typedef struct {
+    DictEntry *entries;
+    size_t size;
+    size_t capacity;
+} Dict;
+
+static Dict *dict_create(void)
+{
+    Dict *d = malloc(sizeof(Dict));
+    if (d == NULL) {
+        return NULL;
+    }
+    d->capacity = 8;
+    d->size = 0;
+    d->entries = malloc(d->capacity * sizeof(DictEntry));
+    if (d->entries == NULL) {
+        free(d);
+        return NULL;
+    }
+    return d;
+}
+
+static char *duplicate_string(const char *s)
+{
+    size_t len;
+    char *copy;
+
+    if (s == NULL) {
+        return NULL;
+    }
+    len = strlen(s);
+    copy = malloc(len + 1);
+    if (copy == NULL) {
+        return NULL;
+    }
+    memcpy(copy, s, len + 1);
+    return copy;
+}
+
+static int dict_set(Dict *d, const char *key, const char *value)
+{
+    size_t i;
+    char *new_value;
+    char *new_key;
+
+    if (d == NULL || key == NULL || value == NULL) {
+        return -1;
+    }
+
+    for (i = 0; i < d->size; i++) {
+        if (strcmp(d->entries[i].key, key) == 0) {
+            new_value = duplicate_string(value);
+            if (new_value == NULL) {
+                return -1;
+            }
+            free(d->entries[i].value);
+            d->entries[i].value = new_value;
+            return 0;
+        }
+    }
+
+    if (d->size == d->capacity) {
+        size_t new_capacity = d->capacity * 2;
+        DictEntry *tmp = realloc(d->entries, new_capacity * sizeof(DictEntry));
+        if (tmp == NULL) {
+            return -1;
+        }
+        d->entries = tmp;
+        d->capacity = new_capacity;
+    }
+
+    new_key = duplicate_string(key);
+    if (new_key == NULL) {
+        return -1;
+    }
+    new_value = duplicate_string(value);
+    if (new_value == NULL) {
+        free(new_key);
+        return -1;
+    }
+
+    d->entries[d->size].key = new_key;
+    d->entries[d->size].value = new_value;
+    d->size++;
+    return 0;
+}
+
+static char **dict_get_keys(const Dict *d, size_t *count)
+{
+    char **keys;
+    size_t i;
+
+    if (d == NULL || count == NULL) {
+        return NULL;
+    }
+
+    *count = 0;
+    keys = malloc((d->size > 0 ? d->size : 1) * sizeof(char *));
+    if (keys == NULL) {
+        return NULL;
+    }
+
+    for (i = 0; i < d->size; i++) {
+        keys[i] = duplicate_string(d->entries[i].key);
+        if (keys[i] == NULL) {
+            size_t j;
+            for (j = 0; j < i; j++) {
+                free(keys[j]);
+            }
+            free(keys);
+            return NULL;
+        }
+    }
+
+    *count = d->size;
+    return keys;
+}
+
+static void free_keys(char **keys, size_t count)
+{
+    size_t i;
+
+    if (keys == NULL) {
+        return;
+    }
+    for (i = 0; i < count; i++) {
+        free(keys[i]);
+    }
+    free(keys);
+}
+
+static void dict_destroy(Dict *d)
+{
+    size_t i;
+
+    if (d == NULL) {
+        return;
+    }
+    for (i = 0; i < d->size; i++) {
+        free(d->entries[i].key);
+        free(d->entries[i].value);
+    }
+    free(d->entries);
+    free(d);
+}
+
+int main(void)
+{
+    Dict *d;
+    char **keys;
+    size_t count;
+    size_t i;
+
+    d = dict_create();
+    if (d == NULL) {
+        fprintf(stderr, "Failed to create dictionary\n");
+        return EXIT_FAILURE;
+    }
+
+    if (dict_set(d, "name", "Alice") != 0 ||
+        dict_set(d, "city", "Paris") != 0 ||
+        dict_set(d, "language", "C") != 0) {
+        fprintf(stderr, "Failed to insert entries\n");
+        dict_destroy(d);
+        return EXIT_FAILURE;
+    }
+
+    keys = dict_get_keys(d, &count);
+    if (keys == NULL) {
+        fprintf(stderr, "Failed to get keys\n");
+        dict_destroy(d);
+        return EXIT_FAILURE;
+    }
+
+    printf("Dictionary keys (%zu):\n", count);
+    for (i = 0; i < count; i++) {
+        printf("  %s\n", keys[i]);
+    }
+
+    free_keys(keys, count);
+    dict_destroy(d);
+    return EXIT_SUCCESS;
+}

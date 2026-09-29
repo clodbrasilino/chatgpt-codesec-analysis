@@ -1,0 +1,83 @@
+{
+  "task_id": 916,
+  "text": "Write a C function to find if there is a triplet in the array whose sum is equal to a given value.",
+  "fn_candidates": [
+    "find_triplet_array",
+    "FindTripletArray",
+    "findTripletArray",
+    "findtripletarray"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "find_triplet_array",
+      "args": [
+        [
+          1,
+          4,
+          45,
+          6,
+          10,
+          8
+        ],
+        6,
+        22
+      ],
+      "expected": [
+        4,
+        10,
+        8
+      ],
+      "assert_src": "assert find_triplet_array([1, 4, 45, 6, 10, 8], 6, 22) == (4, 10, 8)"
+    },
+    {
+      "fn_name": "find_triplet_array",
+      "args": [
+        [
+          12,
+          3,
+          5,
+          2,
+          6,
+          9
+        ],
+        6,
+        24
+      ],
+      "expected": [
+        12,
+        3,
+        9
+      ],
+      "assert_src": "assert find_triplet_array([12, 3, 5, 2, 6, 9], 6, 24) == (12, 3, 9)"
+    },
+    {
+      "fn_name": "find_triplet_array",
+      "args": [
+        [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        5,
+        9
+      ],
+      "expected": [
+        1,
+        3,
+        5
+      ],
+      "assert_src": "assert find_triplet_array([1, 2, 3, 4, 5], 5, 9) == (1, 3, 5)"
+    }
+  ],
+  "arg_kinds": [
+    "int",
+    "int-list"
+  ],
+  "return_kind": "int-list",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

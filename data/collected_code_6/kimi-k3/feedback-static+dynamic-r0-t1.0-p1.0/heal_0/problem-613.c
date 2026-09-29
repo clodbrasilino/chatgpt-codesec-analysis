@@ -1,0 +1,51 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+typedef struct {
+    int id;
+    int value;
+} Record;
+
+int find_max_value(const Record *records, size_t count, int *result)
+{
+    size_t i;
+    int max_val;
+
+    if (records == NULL || result == NULL || count == 0) {
+        return -1;
+    }
+
+    max_val = records[0].value;
+    for (i = 1; i < count; i++) {
+        if (records[i].value > max_val) {
+            max_val = records[i].value;
+        }
+    }
+
+    *result = max_val;
+    return 0;
+}
+
+int main(void)
+{
+    Record records[] = {
+        {1, 45},
+        {2, 78},
+        {3, 23},
+        {4, 91},
+        {5, 56}
+    };
+    size_t count = sizeof(records) / sizeof(records[0]);
+    int max_value;
+    int status;
+
+    status = find_max_value(records, count, &max_value);
+    if (status != 0) {
+        fprintf(stderr, "Error: Invalid input parameters\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Maximum value: %d\n", max_value);
+    return EXIT_SUCCESS;
+}

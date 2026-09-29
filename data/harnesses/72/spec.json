@@ -1,0 +1,44 @@
+{
+  "task_id": 72,
+  "text": "Write a C function to check whether the given number can be represented as difference of two squares or not.",
+  "fn_candidates": [
+    "dif_Square",
+    "DifSquare",
+    "difSquare",
+    "difSquare"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "dif_Square",
+      "args": [
+        5
+      ],
+      "expected": true,
+      "assert_src": "assert dif_Square(5) == True"
+    },
+    {
+      "fn_name": "dif_Square",
+      "args": [
+        10
+      ],
+      "expected": false,
+      "assert_src": "assert dif_Square(10) == False"
+    },
+    {
+      "fn_name": "dif_Square",
+      "args": [
+        15
+      ],
+      "expected": true,
+      "assert_src": "assert dif_Square(15) == True"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "bool",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

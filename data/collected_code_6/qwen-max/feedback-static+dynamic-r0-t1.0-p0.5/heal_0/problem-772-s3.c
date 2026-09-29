@@ -1,0 +1,34 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char* remove_k_length_words(char *str, int k) {
+    char *result = NULL;
+    char *token = strtok(str, " ");
+    while (token != NULL) {
+        if (strlen(token) != k) {
+            if (result == NULL) {
+                result = malloc(strlen(token) + 1);
+                strcpy(result, token);
+            } else {
+                size_t len = strlen(result);
+                result = realloc(result, len + strlen(token) + 2);
+                if (result) {
+                    strcat(result, " ");
+                    strcat(result, token);
+                }
+            }
+        }
+        token = strtok(NULL, " ");
+    }
+    return result ? result : strdup("");
+}
+
+int main() {
+    char str[] = "This is a test string with some words of different lengths";
+    int k = 4;
+    char *new_str = remove_k_length_words(str, k);
+    printf("%s\n", new_str);
+    free(new_str);
+    return 0;
+}

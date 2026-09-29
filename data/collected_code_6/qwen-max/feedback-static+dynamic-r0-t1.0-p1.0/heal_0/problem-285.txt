@@ -1,0 +1,29 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+
+bool match_pattern(const char *str) {
+    if (str == NULL || *str != 'a') return false;
+    str++;
+    int b_count = 0;
+    while (*str == 'b') {
+        b_count++;
+        str++;
+        if (b_count > 3) return false;
+    }
+    return (b_count >= 2 && *str == '\0');
+}
+
+int main() {
+    const char *test_strings[] = {"ab", "abb", "abbb", "abbbb", "abc", "a"};
+    for (size_t i = 0; i < sizeof(test_strings)/sizeof(test_strings[0]); i++) {
+        if (match_pattern(test_strings[i])) {
+            printf("'%s' matches the pattern\n", test_strings[i]);
+        } else {
+            printf("'%s' does not match the pattern\n", test_strings[i]);
+        }
+    }
+    return 0;
+}
+```

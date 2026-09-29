@@ -122,7 +122,7 @@ def gap_class(missing: list[str]) -> str | None:
 
 
 def audit_model(model: str) -> dict:
-    cell = REPO / "collected_code_6" / model / SLUG
+    cell = REPO / "data" / "collected_code_6" / model / SLUG
     rounds = sorted(
         int(d.name.split("_")[1])
         for d in cell.glob("heal_*")

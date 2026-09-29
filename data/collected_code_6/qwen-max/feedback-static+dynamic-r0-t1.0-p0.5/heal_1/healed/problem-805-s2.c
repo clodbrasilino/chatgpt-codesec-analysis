@@ -1,0 +1,57 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+typedef struct {
+    int *elements;
+    size_t length;
+} List;
+
+int sum_of_elements(const int *arr, size_t len) {
+    int sum = 0;
+    for (size_t i = 0; i < len; ++i) {
+        sum += arr[i];
+    }
+    return sum;
+}
+
+List* find_max_sum_list(List *lists, size_t num_lists) {
+    if (num_lists == 0) return NULL;
+
+    int max_sum = INT_MIN;
+    List *max_list = NULL;
+
+    for (size_t i = 0; i < num_lists; ++i) {
+        int current_sum = sum_of_elements(lists[i].elements, lists[i].length);
+        if (current_sum > max_sum) {
+            max_sum = current_sum;
+            max_list = &lists[i];
+        }
+    }
+
+    return max_list;
+}
+
+int main() {
+    List lists[] = {
+        { .elements = (int[]){1, 2, 3}, .length = 3 },
+        { .elements = (int[]){4, 5, 6}, .length = 3 },
+        { .elements = (int[]){-1, -2, -3}, .length = 3 },
+        { .elements = (int[]){7, 8, 9}, .length = 3 }
+    };
+    size_t num_lists = sizeof(lists) / sizeof(lists[0]);
+
+    List *max_list = find_max_sum_list(lists, num_lists);
+
+    if (max_list != NULL) {
+        printf("Max sum list: ");
+        for (size_t i = 0; i < max_list->length; ++i) {
+            printf("%d ", max_list->elements[i]);
+        }
+        printf("\n");
+    } else {
+        printf("No lists provided.\n");
+    }
+
+    return 0;
+}

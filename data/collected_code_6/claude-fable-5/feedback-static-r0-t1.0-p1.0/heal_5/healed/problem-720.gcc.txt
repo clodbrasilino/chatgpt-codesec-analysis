@@ -1,0 +1,81 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-720.c:17:6: error: #error "Python development headers not found. Install python3-dev (Debian/Ubuntu) or python3-devel (Fedora/RHEL) and compile with: cc $(python3-config --cflags) file.c $(python3-config --ldflags --embed)"
+   17 | #    error "Python development headers not found. Install python3-dev (Debian/Ubuntu) or python3-devel (Fedora/RHEL) and compile with: cc $(python3-config --cflags) file.c $(python3-config --ldflags --embed)"
+      |      ^~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-720.c:26:30: error: unknown type name 'PyObject'
+   26 | static int add_dict_to_tuple(PyObject *tuple, Py_ssize_t index, PyObject *dict);
+      |                              ^~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-720.c:26:47: error: unknown type name 'Py_ssize_t'; did you mean 'ssize_t'?
+   26 | static int add_dict_to_tuple(PyObject *tuple, Py_ssize_t index, PyObject *dict);
+      |                                               ^~~~~~~~~~
+      |                                               ssize_t
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-720.c:26:65: error: unknown type name 'PyObject'
+   26 | static int add_dict_to_tuple(PyObject *tuple, Py_ssize_t index, PyObject *dict);
+      |                                                                 ^~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-720.c:28:30: error: unknown type name 'PyObject'
+   28 | static int add_dict_to_tuple(PyObject *tuple, Py_ssize_t index, PyObject *dict)
+      |                              ^~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-720.c:28:47: error: unknown type name 'Py_ssize_t'; did you mean 'ssize_t'?
+   28 | static int add_dict_to_tuple(PyObject *tuple, Py_ssize_t index, PyObject *dict)
+      |                                               ^~~~~~~~~~
+      |                                               ssize_t
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-720.c:28:65: error: unknown type name 'PyObject'
+   28 | static int add_dict_to_tuple(PyObject *tuple, Py_ssize_t index, PyObject *dict)
+      |                                                                 ^~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-720.c: In function 'main':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-720.c:54:5: error: unknown type name 'PyObject'
+   54 |     PyObject *tuple = NULL;
+      |     ^~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-720.c:55:5: error: unknown type name 'PyObject'
+   55 |     PyObject *dict = NULL;
+      |     ^~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-720.c:56:5: error: unknown type name 'PyObject'
+   56 |     PyObject *key = NULL;
+      |     ^~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-720.c:57:5: error: unknown type name 'PyObject'
+   57 |     PyObject *value = NULL;
+      |     ^~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-720.c:59:5: error: implicit declaration of function 'Py_Initialize' [-Wimplicit-function-declaration]
+   59 |     Py_Initialize();
+      |     ^~~~~~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-720.c:61:13: error: implicit declaration of function 'PyTuple_New' [-Wimplicit-function-declaration]
+   61 |     tuple = PyTuple_New(1);
+      |             ^~~~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-720.c:61:11: error: assignment to 'int *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
+   61 |     tuple = PyTuple_New(1);
+      |           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-720.c:66:12: error: implicit declaration of function 'PyDict_New' [-Wimplicit-function-declaration]
+   66 |     dict = PyDict_New();
+      |            ^~~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-720.c:66:10: error: assignment to 'int *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
+   66 |     dict = PyDict_New();
+      |          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-720.c:71:11: error: implicit declaration of function 'PyUnicode_FromString' [-Wimplicit-function-declaration]
+   71 |     key = PyUnicode_FromString("language");
+      |           ^~~~~~~~~~~~~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-720.c:71:9: error: assignment to 'int *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
+   71 |     key = PyUnicode_FromString("language");
+      |         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-720.c:76:11: error: assignment to 'int *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
+   76 |     value = PyUnicode_FromString("C");
+      |           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-720.c:81:9: error: implicit declaration of function 'PyDict_SetItem' [-Wimplicit-function-declaration]
+   81 |     if (PyDict_SetItem(dict, key, value) != 0) {
+      |         ^~~~~~~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-720.c:85:9: error: implicit declaration of function 'add_dict_to_tuple' [-Wimplicit-function-declaration]
+   85 |     if (add_dict_to_tuple(tuple, 0, dict) != 0) {
+      |         ^~~~~~~~~~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-720.c:89:9: error: implicit declaration of function 'PyObject_Print' [-Wimplicit-function-declaration]
+   89 |     if (PyObject_Print(tuple, stdout, 0) != 0) {
+      |         ^~~~~~~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-720.c:100:5: error: implicit declaration of function 'Py_XDECREF' [-Wimplicit-function-declaration]
+  100 |     Py_XDECREF(key);
+      |     ^~~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-720.c:105:9: error: implicit declaration of function 'PyErr_Occurred' [-Wimplicit-function-declaration]
+  105 |     if (PyErr_Occurred()) {
+      |         ^~~~~~~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-720.c:106:9: error: implicit declaration of function 'PyErr_Print' [-Wimplicit-function-declaration]
+  106 |         PyErr_Print();
+      |         ^~~~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-720.c:109:9: error: implicit declaration of function 'Py_FinalizeEx' [-Wimplicit-function-declaration]
+  109 |     if (Py_FinalizeEx() < 0) {
+      |         ^~~~~~~~~~~~~

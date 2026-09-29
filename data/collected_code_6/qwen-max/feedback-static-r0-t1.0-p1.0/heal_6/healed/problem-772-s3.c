@@ -1,0 +1,50 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+char* remove_k_length_words(const char *str, int k) {
+    size_t len = 0;
+    while (str[len] != '\0') ++len;
+
+    char *result = malloc(len + 1);
+    if (!result) return NULL;
+    result[0] = '\0';
+
+    const char *p = str;
+    size_t pos = 0;
+
+    while (*p) {
+        const char *start = p;
+        while (*p && *p != ' ') p++;
+        size_t word_len = p - start;
+
+        if (word_len != (size_t)k) {
+            size_t to_add = word_len + ((*p == ' ' && p < str + len) ? 1 : 0);
+            if (pos + to_add > len) {
+                free(result);
+                return NULL;
+            }
+            for (size_t i = 0; i < word_len; ++i) {
+                result[pos++] = start[i];
+            }
+            if (*p == ' ' && p < str + len) {
+                result[pos++] = ' ';
+            }
+        }
+        if (*p == ' ' && p < str + len) {
+            p++;
+        }
+    }
+    result[pos] = '\0';
+    return result;
+}
+
+int main() {
+    const char str[] = "this is a test string with some words of length four and five";
+    int k = 4;
+    char *result = remove_k_length_words(str, k);
+    if (result) {
+        printf("%s\n", result);
+        free(result);
+    }
+    return 0;
+}

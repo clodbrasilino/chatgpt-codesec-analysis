@@ -1,0 +1,39 @@
+```C
+#include <stdio.h>
+
+#define MAX_SUB_LISTS 10
+#define MAX_ITEMS 10
+
+int getFirstElements(int *result, int arr[MAX_SUB_LISTS][MAX_ITEMS], int num_sub_lists) {
+    if(!result || !arr || num_sub_lists <= 0 || num_sub_lists > MAX_SUB_LISTS) {
+        return -1;
+    }
+
+    for(int i = 0; i < num_sub_lists; ++i) {
+        result[i] = arr[i][0];
+    }
+
+    return 0;
+}
+
+int main() {
+    int arr[MAX_SUB_LISTS][MAX_ITEMS] = {
+        {1, 2, 3, 4, 5},
+        {6, 7, 8, 9, 10},
+        {11, 12, 13, 14, 15},
+    };
+    
+    int results[MAX_SUB_LISTS] = {0};
+
+    if(getFirstElements(results, arr, 3) == -1) {
+        printf("Error occurred.\n");
+        return -1;
+    }
+
+    for(int i = 0; i < 3; ++i) {
+        printf("First element of sublist %d: %d\n", i, results[i]);
+    }
+
+    return 0;
+}
+```

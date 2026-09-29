@@ -1,0 +1,50 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int compare_integers(const void *a, const void *b) {
+    int arg1 = *(const int *)a;
+    int arg2 = *(const int *)b;
+    if (arg1 < arg2) return -1;
+    if (arg1 > arg2) return 1;
+    return 0;
+}
+
+int longest_consecutive_subsequence(int *arr, size_t n) {
+    if (arr == NULL || n == 0) {
+        return 0;
+    }
+    
+    qsort(arr, n, sizeof(int), compare_integers);
+    
+    int max_length = 1;
+    int current_length = 1;
+    
+    for (size_t i = 1; i < n; i++) {
+        if (arr[i] == arr[i - 1]) {
+            continue;
+        } else if (arr[i] == arr[i - 1] + 1) {
+            current_length++;
+        } else {
+            if (current_length > max_length) {
+                max_length = current_length;
+            }
+            current_length = 1;
+        }
+    }
+    
+    if (current_length > max_length) {
+        max_length = current_length;
+    }
+    
+    return max_length;
+}
+
+int main(void) {
+    int arr[] = {1, 9, 3, 10, 4, 20, 2};
+    size_t n = sizeof(arr) / sizeof(arr[0]);
+    
+    int result = longest_consecutive_subsequence(arr, n);
+    printf("Length of longest consecutive subsequence: %d\n", result);
+    
+    return 0;
+}

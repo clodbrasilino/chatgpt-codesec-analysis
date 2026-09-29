@@ -1,0 +1,62 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+void reverse_string(char *str, size_t size) {
+    if (str == NULL || size == 0) {
+        return;
+    }
+    char *end = memchr(str, '\0', size);
+    if (end == NULL) {
+        end = str + size - 1;
+    } else if (end == str) {
+        return;
+    } else {
+        end--;
+    }
+    while (str < end) {
+        char temp = *str;
+        *str++ = *end;
+        *end-- = temp;
+    }
+}
+
+void reverse_string_list(char **list, const size_t *sizes, size_t count) {
+    if (list == NULL || sizes == NULL || count == 0) {
+        return;
+    }
+    for (size_t i = 0; i < count; i++) {
+        reverse_string(list[i], sizes[i]);
+    }
+}
+
+int main(void) {
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char strings[4][12] = {
+        "hello",
+        "world",
+        "C",
+        "programming"
+    };
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char *list[4];
+    size_t sizes[4];
+    size_t count = 4;
+
+    for (size_t i = 0; i < count; i++) {
+        sizes[i] = strnlen(strings[i], sizeof(strings[i]));
+        list[i] = strings[i];
+    }
+
+    reverse_string_list(list, sizes, count);
+
+    for (size_t i = 0; i < count; i++) {
+        printf("%s\n", list[i]);
+    }
+
+    return 0;
+}

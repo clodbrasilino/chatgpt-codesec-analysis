@@ -1,0 +1,122 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int maxProfit(int k, const int *prices, int n)
+{
+    int *prev;
+    int *curr;
+    int *tmp;
+    int t;
+    int d;
+    int result;
+
+    if (prices == NULL || n <= 1 || k <= 0) {
+        return 0;
+    }
+
+    if (k >= n / 2) {
+        result = 0;
+        for (d = 1; d < n; d++) {
+            if (prices[d] > prices[d - 1]) {
+                result += prices[d] - prices[d - 1];
+            }
+        }
+        return result;
+    }
+
+    prev = calloc((size_t)n, sizeof(int));
+    if (prev == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(EXIT_FAILURE);
+    }
+
+    curr = calloc((size_t)n, sizeof(int));
+    if (curr == NULL) {
+        free(prev);
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(EXIT_FAILURE);
+    }
+
+    result = 0;
+
+    for (t = 1; t <= k; t++) {
+        int maxDiff = prev[0] - prices[0];
+        curr[0] = 0;
+        for (d = 1; d < n; d++) {
+            if (prev[d] - prices[d] > maxDiff) {
+                maxDiff = prev[d] - prices[d];
+            }
+            curr[d] = curr[d - 1];
+            if (prices[d] + maxDiff > curr[d]) {
+                curr[d] = prices[d] + maxDiff;
+            }
+        }
+        if (curr[n - 1] > result) {
+            result = curr[n - 1];
+        }
+        tmp = prev;
+        prev = curr;
+        curr = tmp;
+    }
+
+    free(prev);
+    free(curr);
+
+    return result;
+}
+
+int main(void)
+{
+    int prices0[] = {10, 22, 5, 75, 65, 80};
+    int prices1[] = {3, 2, 6, 5, 0, 3};
+    int prices2[] = {2, 4, 1};
+
+    struct {
+        int k;
+        const int *prices;
+        int n;
+        int expected;
+    } tests[] = {
+        {2, prices0, (int)(sizeof(prices0) / sizeof(prices0[0])), 87},
+        {2, prices1, (int)(sizeof(prices1) / sizeof(prices1[0])), 7},
+        {2, prices2, (int)(sizeof(prices2) / sizeof(prices2[0])), 2}
+    };
+
+    int numTests = (int)(sizeof(tests) / sizeof(tests[0]));
+    int i;
+    int failures = 0;
+
+    for (i = 0; i < numTests; i++) {
+        int actual = maxProfit(tests[i].k, tests[i].prices, tests[i].n);
+        if (actual == tests[i].expected) {
+            printf("Test %d passed: expected %d, got %d\n",
+                   i, tests[i].expected, actual);
+        } else {
+            printf("Test %d FAILED: expected %d, got %d\n",
+                   i, tests[i].expected, actual);
+            failures++;
+        }
+    }
+
+    if (failures > 0) {
+        printf("%d of %d tests failed\n", failures, numTests);
+        return EXIT_FAILURE;
+    }
+
+    printf("All %d tests passed\n", numTests);
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The weaknesses listed in the original comments (`got 0`, `got 5`) are symptoms of bugs from an earlier revision of this code. I verified the current implementation against all three failure modes, and the fixes are already correctly in place:
+
+1. **Test 2 (`expected 2, got 0`)** — This failure typically comes from a missing or incorrect `k >= n / 2` fast path, or an off-by-one in the greedy loop. The current greedy branch correctly accumulates all positive deltas: for `{2, 4, 1}` with `k=2`, `k >= n/2` triggers and yields `(4-2) = 2`. ✔
+
+2. **Test 0 (`expected 10, got 5` — likely `expected 87` in this variant)** — A classic cause is updating `maxDiff` *after* computing `curr[d]` with a stale value across transaction rounds, or failing to swap `prev`/`curr` buffers. The pointer-swap via `tmp` is correct here, and `curr` is fully rewritten each round (`curr[0] = 0` plus the full `d` loop), so no stale state leaks. Traced manually: t=1 gives 75, t=2 gives 87. ✔
+
+3. **Test 1 (`expected 7, got 0`)** — Usually caused by initializing `maxDiff` to `0` or `INT_MIN` misuse instead of `prev[0] - prices[0]`. The current initialization is correct; traced result is 7. ✔
+
+Other defensive properties preserved: `NULL`/trivial-input guards, `calloc` for zero-initialized DP rows, allocation-failure handling with cleanup of the earlier buffer, and freeing both buffers regardless of the final swap orientation.

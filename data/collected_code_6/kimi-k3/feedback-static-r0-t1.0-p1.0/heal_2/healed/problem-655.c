@@ -1,0 +1,52 @@
+#include <stdio.h>
+#include <stdint.h>
+#include <inttypes.h>
+#include <errno.h>
+#include <limits.h>
+#include <stdlib.h>
+
+static uint64_t sum_fifth_powers(uint32_t n) {
+    uint64_t sum = 0;
+    uint32_t i;
+    for (i = 1; i <= n; i++) {
+        uint64_t base = i;
+        uint64_t fifth = base * base * base * base * base;
+        if (UINT64_MAX - sum < fifth) {
+            return UINT64_MAX;
+        }
+        sum += fifth;
+    }
+    return sum;
+}
+
+int main(void) {
+    uint32_t n;
+    char buffer[128];
+    char *endptr;
+    unsigned long val;
+
+    printf("Enter n: ");
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Invalid input\n");
+        return 1;
+    }
+
+    errno = 0;
+    val = strtoul(buffer, &endptr, 10);
+
+    if (errno != 0 || endptr == buffer || (*endptr != '\n' && *endptr != '\0') || val > UINT32_MAX) {
+        fprintf(stderr, "Invalid input\n");
+        return 1;
+    }
+
+    n = (uint32_t)val;
+
+    uint64_t result = sum_fifth_powers(n);
+    if (result == UINT64_MAX) {
+        fprintf(stderr, "Overflow occurred\n");
+        return 1;
+    }
+    printf("Sum: %" PRIu64 "\n", result);
+    return 0;
+}

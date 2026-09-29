@@ -1,0 +1,56 @@
+```c
+#include <stdio.h>
+#include <stddef.h>
+
+long long sum_of_subarray_products(const int *arr, size_t n)
+{
+    long long total = 0;
+    long long cur = 0;
+    size_t i;
+
+    if (arr == NULL || n == 0) {
+        return 0;
+    }
+
+    for (i = n; i > 0; i--) {
+        cur = (long long)arr[i - 1] * (1LL + cur);
+        total += cur;
+    }
+
+    return total;
+}
+
+int main(void)
+{
+    int arr[] = {1, 2, 3};
+    size_t n = sizeof(arr) / sizeof(arr[0]);
+    long long result;
+
+    result = sum_of_subarray_products(arr, n);
+
+    if (printf("Sum of products of all subarrays: %lld\n", result) < 0) {
+        return 1;
+    }
+
+    return 0;
+}
+```
+
+**How it works:**
+
+For the array `{1, 2, 3}`, the subarrays and their products are:
+- `{1}` → 1
+- `{2}` → 2
+- `{3}` → 3
+- `{1,2}` → 2
+- `{2,3}` → 6
+- `{1,2,3}` → 6
+
+Total = **20**
+
+The function uses an O(n) approach: iterating from the end, `cur` holds the sum of products of all subarrays starting at the current index, using the recurrence `cur = arr[i] * (1 + cur)`, and `total` accumulates these values.
+
+**Safety considerations addressed:**
+- The input pointer is validated against `NULL` and the length against zero before any dereference (CWE-703).
+- No dynamic memory is allocated, so there are no lifetime or ownership issues (CWE-664).
+- The code uses `size_t` for sizes, `const`-qualifies read-only parameters, casts to `long long` before multiplication to avoid intermediate `int` overflow, uses `int main(void)` with explicit return values, and checks the return value of `printf` (CWE-710).

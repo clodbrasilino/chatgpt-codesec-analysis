@@ -1,0 +1,126 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+static int checked_mul(long long a, long long b, long long *out)
+{
+#if defined(__GNUC__) || defined(__clang__)
+    return __builtin_mul_overflow(a, b, out) ? -1 : 0;
+#else
+    if (a != 0 && b > LLONG_MAX / a)
+    {
+        return -1;
+    }
+    *out = a * b;
+    return 0;
+#endif
+}
+
+static int checked_add(long long a, long long b, long long *out)
+{
+#if defined(__GNUC__) || defined(__clang__)
+    return __builtin_add_overflow(a, b, out) ? -1 : 0;
+#else
+    if (b > 0 && a > LLONG_MAX - b)
+    {
+        return -1;
+    }
+    *out = a + b;
+    return 0;
+#endif
+}
+
+static int sum_odd_factors(long long n, long long *sum_out)
+{
+    long long result;
+    long long i;
+
+    if (n <= 0)
+    {
+        *sum_out = 0;
+        return 0;
+    }
+
+    while (n % 2 == 0)
+    {
+        n /= 2;
+    }
+
+    result = 1;
+
+    for (i = 3; i * i <= n; i += 2)
+    {
+        if (n % i == 0)
+        {
+            long long term_sum = 1;
+            long long term = 1;
+
+            while (n % i == 0)
+            {
+                n /= i;
+                if (checked_mul(term, i, &term) != 0)
+                {
+                    return -1;
+                }
+                if (checked_add(term_sum, term, &term_sum) != 0)
+                {
+                    return -1;
+                }
+            }
+            if (checked_mul(result, term_sum, &result) != 0)
+            {
+                return -1;
+            }
+        }
+    }
+
+    if (n > 1)
+    {
+        long long factor;
+        if (checked_add(n, 1, &factor) != 0)
+        {
+            return -1;
+        }
+        if (checked_mul(result, factor, &result) != 0)
+        {
+            return -1;
+        }
+    }
+
+    *sum_out = result;
+    return 0;
+}
+
+int main(void)
+{
+    long long n;
+    long long sum;
+
+    printf("Enter a positive integer: ");
+
+    if (scanf("%lld", &n) != 1)
+    {
+        fprintf(stderr, "Error: invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (n <= 0)
+    {
+        fprintf(stderr, "Error: number must be positive\n");
+        return EXIT_FAILURE;
+    }
+
+    if (sum_odd_factors(n, &sum) != 0)
+    {
+        fprintf(stderr, "Error: arithmetic overflow while computing result\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Sum of odd factors of %lld is %lld\n", n, sum) < 0)
+    {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```

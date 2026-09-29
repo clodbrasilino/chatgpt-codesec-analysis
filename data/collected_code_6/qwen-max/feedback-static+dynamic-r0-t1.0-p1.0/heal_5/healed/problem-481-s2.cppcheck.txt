@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-481-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-481-s2.c:51:25: style: Condition 'n2>0' is always true [knownConditionTrueFalse]
+    if (sum2 == 0 && n2 > 0)
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-481-s2.c:39:26: note: Assignment 'n2=sizeof(set2)/sizeof(set2[0])', assigned value is 6
+    int n2 = sizeof(set2)/sizeof(set2[0]);
+                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-481-s2.c:51:25: note: Condition 'n2>0' is always true
+    if (sum2 == 0 && n2 > 0)
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-481-s2.c:51:14: style: The comparison 'sum2 == 0' is always true. [knownConditionTrueFalse]
+    if (sum2 == 0 && n2 > 0)
+             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-481-s2.c:35:16: note: 'sum2' is assigned value '0' here.
+    int sum2 = 0;
+               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-481-s2.c:51:14: note: The comparison 'sum2 == 0' is always true.
+    if (sum2 == 0 && n2 > 0)
+             ^

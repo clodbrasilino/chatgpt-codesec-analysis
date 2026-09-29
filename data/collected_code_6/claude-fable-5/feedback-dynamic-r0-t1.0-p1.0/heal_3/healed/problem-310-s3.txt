@@ -1,0 +1,104 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char *items;
+    size_t count;
+} Tuple;
+
+Tuple *string_to_tuple(const char *str)
+{
+    Tuple *tuple = NULL;
+    size_t length;
+    size_t i;
+
+    if ((str == NULL) || (str[0] == '\0')) {
+        return NULL;
+    }
+
+    length = strlen(str);
+
+    tuple = (Tuple *)malloc(sizeof(Tuple));
+    if (tuple == NULL) {
+        return NULL;
+    }
+
+    tuple->items = (char *)malloc((length + 1U) * sizeof(char));
+    if (tuple->items == NULL) {
+        free(tuple);
+        return NULL;
+    }
+
+    for (i = 0U; i < length; i++) {
+        tuple->items[i] = str[i];
+    }
+    tuple->items[length] = '\0';
+    tuple->count = length;
+
+    return tuple;
+}
+
+void free_tuple(Tuple *tuple)
+{
+    if (tuple != NULL) {
+        free(tuple->items);
+        tuple->items = NULL;
+        free(tuple);
+    }
+}
+
+void print_tuple(const Tuple *tuple)
+{
+    size_t i;
+
+    if ((tuple == NULL) || (tuple->items == NULL) || (tuple->count == 0U)) {
+        return;
+    }
+
+    (void)printf("[");
+    for (i = 0U; i < tuple->count; i++) {
+        (void)printf("'%c'", tuple->items[i]);
+        if (i < (tuple->count - 1U)) {
+            (void)printf(", ");
+        }
+    }
+    (void)printf("]\n");
+    (void)fflush(stdout);
+}
+
+int main(void)
+{
+    const char *inputs[] = { "python3.0", "item1", "15.10" };
+    size_t num_inputs = sizeof(inputs) / sizeof(inputs[0]);
+    size_t i;
+
+    for (i = 0U; i < num_inputs; i++) {
+        Tuple *tuple = string_to_tuple(inputs[i]);
+
+        if (tuple == NULL) {
+            (void)fprintf(stderr, "Failed to convert string to tuple\n");
+            return EXIT_FAILURE;
+        }
+
+        print_tuple(tuple);
+
+        free_tuple(tuple);
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the original code and the fixes applied:**
+
+1. **Missing null terminator (primary weakness):** The original `malloc(length * sizeof(char))` allocated exactly `length` bytes with no room for a `'\0'` terminator. While the code never called string functions on `tuple->items`, this is a latent buffer-overrun hazard flagged by static analyzers, and any future use of `strlen`/`printf("%s")` on `items` would read out of bounds. The fix allocates `length + 1` bytes and explicitly terminates the buffer.
+
+2. **`<no output>` in test results:** The most likely cause of the harness seeing no output is unflushed stdout buffering (e.g., when output is piped rather than attached to a terminal and the process is inspected before exit). Adding `fflush(stdout)` after each printed tuple guarantees the output is delivered immediately.
+
+3. **Defensive hardening in `print_tuple`:** Added checks for a NULL `items` pointer and a zero `count`. The original code computed `tuple->count - 1U` which, with an empty tuple and unsigned arithmetic, would wrap to `SIZE_MAX` — the guard eliminates that edge case.
+
+4. **Dangling pointer hygiene:** `tuple->items` is set to `NULL` before freeing the container in `free_tuple`, which is cheap insurance against double-free / use-after-free in larger codebases.
+
+The logic, memory management (matched `malloc`/`free` pairs, cleanup on allocation failure), and output format (`['p', 'y', 't', ...]`) were otherwise correct and have been preserved.

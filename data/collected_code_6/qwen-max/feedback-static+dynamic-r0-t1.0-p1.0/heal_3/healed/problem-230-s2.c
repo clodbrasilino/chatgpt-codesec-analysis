@@ -1,0 +1,19 @@
+#include <stdio.h>
+#include <string.h>
+
+void replace_spaces_with_char(char *str, char replacement, size_t max_len) {
+    if (str == NULL) return;
+    for (size_t i = 0; i < max_len && str[i] != '\0'; i++) {
+        if (str[i] == ' ') {
+            str[i] = replacement;
+        }
+    }
+}
+
+int main() {
+    char input[] = "This is a test string";
+    char replacement = '*';
+    replace_spaces_with_char(input, replacement, sizeof(input) - 1);
+    printf("%s\n", input);
+    return 0;
+}

@@ -1,0 +1,22 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-653.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-653.c:40:20: style: Condition 'alloc_size<=len' is always false [knownConditionTrueFalse]
+    if (alloc_size <= len) {
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-653.c:39:16: note: alloc_size is assigned 'len+1U' here.
+    alloc_size = len + 1U;
+               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-653.c:40:20: note: Condition 'alloc_size<=len' is always false
+    if (alloc_size <= len) {
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-653.c:47:25: style: Condition 'len<alloc_size' is always true [knownConditionTrueFalse]
+    if (len > 0U && len < alloc_size) {
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-653.c:40:20: note: Assuming condition 'alloc_size<=len' is false
+    if (alloc_size <= len) {
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-653.c:44:14: note: Assuming condition is false
+    if (copy == NULL) {
+             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-653.c:47:25: note: Condition 'len<alloc_size' is always true
+    if (len > 0U && len < alloc_size) {
+                        ^

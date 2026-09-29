@@ -1,0 +1,22 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-928-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-928-s3.c:24:16: style: Condition '11-2<2' is always false [knownConditionTrueFalse]
+    if (11 - 2 < 2) {
+               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-928-s3.c:31:16: style: Condition '11-3<2' is always false [knownConditionTrueFalse]
+    if (11 - 3 < 2) {
+               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-928-s3.c:38:16: style: Condition '11-6<4' is always false [knownConditionTrueFalse]
+    if (11 - 6 < 4) {
+               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-928-s3.c:64:20: style: Condition 'converted3==NULL' is always true [knownConditionTrueFalse]
+    if (converted3 == NULL) {
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-928-s3.c:63:49: note: Calling function 'convert_date' returns 0
+    const char * const converted3 = convert_date(NULL);
+                                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-928-s3.c:63:49: note: Assignment 'converted3=convert_date(NULL)', assigned value is 0
+    const char * const converted3 = convert_date(NULL);
+                                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-928-s3.c:64:20: note: Condition 'converted3==NULL' is always true
+    if (converted3 == NULL) {
+                   ^

@@ -1,0 +1,82 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+#include <stdlib.h>
+
+#define MAX_WORD_LEN 256
+
+static bool is_word_length_odd(const char *word)
+{
+    size_t len;
+
+    if (word == NULL) {
+        return false;
+    }
+
+    len = strnlen(word, MAX_WORD_LEN);
+    return (len % 2U) != 0U;
+}
+
+static void discard_remaining_input(void)
+{
+    int ch;
+
+    do {
+        ch = getchar();
+    } while (ch != '\n' && ch != EOF);
+}
+
+int main(void)
+{
+    char buffer[MAX_WORD_LEN];
+    size_t len;
+
+    printf("Enter a word: ");
+    if (fflush(stdout) != 0) {
+        return EXIT_FAILURE;
+    }
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1U] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len > 0U && buffer[len - 1U] == '\n') {
+        buffer[len - 1U] = '\0';
+        len--;
+    } else if (len == sizeof(buffer) - 1U) {
+        discard_remaining_input();
+    }
+
+    if (len == 0U) {
+        fprintf(stderr, "No word entered\n");
+        return EXIT_FAILURE;
+    }
+
+    if (is_word_length_odd(buffer)) {
+        printf("The word length is odd\n");
+    } else {
+        printf("The word length is even\n");
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the flagged weaknesses:**
+
+Both Flawfinder warnings in the original source are false positives — the code already implements the correct mitigations, so the rewrite preserves the same defensive structure:
+
+1. **`getchar` in a loop (CWE-120, CWE-20):** The `discard_remaining_input()` function reads characters purely to drain the input stream. Nothing is stored into a buffer, so no overflow is possible. The loop correctly terminates on both `'\n'` and `EOF`, preventing an infinite loop when the stream is closed.
+
+2. **Statically-sized `char` array (CWE-119/CWE-120):** The `buffer[MAX_WORD_LEN]` array is safely handled:
+   - Input is read with `fgets(buffer, (int)sizeof(buffer), stdin)`, which enforces the bound.
+   - A defensive `buffer[sizeof(buffer) - 1U] = '\0'` guarantees null termination.
+   - Length is computed with the bounded `strnlen` rather than `strlen`.
+   - Oversized input (no newline found and the buffer is full) is detected and the remainder is drained, keeping `stdin` consistent.
+
+Additional robustness already present and retained: `NULL` check in `is_word_length_odd`, the `fflush` return-value check, empty-input handling, and use of `EXIT_SUCCESS`/`EXIT_FAILURE`. No changes were required beyond confirming the mitigations are in place.

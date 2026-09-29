@@ -1,0 +1,163 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stddef.h>
+
+typedef struct {
+    int first;
+    int second;
+} Pair;
+
+Pair *zip_tuples(const int *a, size_t len_a, const int *b, size_t len_b, size_t *out_len) {
+    if (a == NULL || b == NULL || out_len == NULL) {
+        return NULL;
+    }
+
+    size_t n = (len_a < len_b) ? len_a : len_b;
+    if (n == 0) {
+        *out_len = 0;
+        return NULL;
+    }
+
+    Pair *result = malloc(n * sizeof(Pair));
+    if (result == NULL) {
+        *out_len = 0;
+        return NULL;
+    }
+
+    for (size_t i = 0; i < n; i++) {
+        result[i].first = a[i];
+        result[i].second = b[i];
+    }
+
+    *out_len = n;
+    return result;
+}
+
+int main(void) {
+    int tuple1[] = {1, 2, 3, 4};
+    int tuple2[] = {10, 20, 30, 40};
+    size_t len1 = sizeof(tuple1) / sizeof(tuple1[0]);
+    size_t len2 = sizeof(tuple2) / sizeof(tuple2[0]);
+    size_t zipped_len = 0;
+
+    Pair *zipped = zip_tuples(tuple1, len1, tuple2, len2, &zipped_len);
+    if (zipped == NULL) {
+        if (zipped_len == 0 && (len1 == 0 || len2 == 0)) {
+            printf("Empty result\n");
+            return EXIT_SUCCESS;
+        }
+        fprintf(stderr, "Failed to zip tuples\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("[");
+    for (size_t i = 0; i < zipped_len; i++) {
+        printf("(%d, %d)", zipped[i].first, zipped[i].second);
+        if (i + 1 < zipped_len) {
+            printf(", ");
+        }
+    }
+    printf("]\n");
+
+    free(zipped);
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the flagged weaknesses:**
+
+Before presenting a revised version, it's worth understanding what the static analyzer (cppcheck, based on the `knownConditionTrueFalse` tag) actually found:
+
+1. **`len1` and `len2` are compile-time constants equal to 4.** The `sizeof` idiom is correct and safe — this is informational, not a bug.
+
+2. **The conditions `len1 == 0` and `len2 == 0` are always false.** Since both arrays have four elements, the "empty result" branch is dead code *in this particular program*. The check itself is defensively reasonable in general-purpose code, but here it can never execute.
+
+The real design smell is that `zip_tuples` returns `NULL` for **three distinct situations**: bad arguments, empty input, and allocation failure — forcing the caller to guess which occurred. A cleaner fix removes the ambiguity entirely:
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stddef.h>
+
+typedef struct {
+    int first;
+    int second;
+} Pair;
+
+typedef enum {
+    ZIP_OK,
+    ZIP_EMPTY,
+    ZIP_BAD_ARGS,
+    ZIP_NO_MEMORY
+} ZipStatus;
+
+ZipStatus zip_tuples(const int *a, size_t len_a, const int *b, size_t len_b,
+                     Pair **out, size_t *out_len) {
+    if (a == NULL || b == NULL || out == NULL || out_len == NULL) {
+        return ZIP_BAD_ARGS;
+    }
+
+    *out = NULL;
+    *out_len = 0;
+
+    size_t n = (len_a < len_b) ? len_a : len_b;
+    if (n == 0) {
+        return ZIP_EMPTY;
+    }
+
+    Pair *result = malloc(n * sizeof(Pair));
+    if (result == NULL) {
+        return ZIP_NO_MEMORY;
+    }
+
+    for (size_t i = 0; i < n; i++) {
+        result[i].first = a[i];
+        result[i].second = b[i];
+    }
+
+    *out = result;
+    *out_len = n;
+    return ZIP_OK;
+}
+
+int main(void) {
+    int tuple1[] = {1, 2, 3, 4};
+    int tuple2[] = {10, 20, 30, 40};
+    size_t len1 = sizeof(tuple1) / sizeof(tuple1[0]);
+    size_t len2 = sizeof(tuple2) / sizeof(tuple2[0]);
+
+    Pair *zipped = NULL;
+    size_t zipped_len = 0;
+
+    ZipStatus status = zip_tuples(tuple1, len1, tuple2, len2, &zipped, &zipped_len);
+
+    if (status == ZIP_EMPTY) {
+        printf("Empty result\n");
+        return EXIT_SUCCESS;
+    }
+    if (status != ZIP_OK) {
+        fprintf(stderr, "Failed to zip tuples\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("[");
+    for (size_t i = 0; i < zipped_len; i++) {
+        printf("(%d, %d)", zipped[i].first, zipped[i].second);
+        if (i + 1 < zipped_len) {
+            printf(", ");
+        }
+    }
+    printf("]\n");
+
+    free(zipped);
+    return EXIT_SUCCESS;
+}
+```
+
+**Why this version is better:**
+
+- **Eliminates the dead conditions** — the caller no longer needs `len1 == 0 || len2 == 0` heuristics to disambiguate a `NULL` return, which silences the `knownConditionTrueFalse` warnings for the right reason (structural fix, not suppression).
+- **Unambiguous error reporting** via `ZipStatus` — empty input, invalid arguments, and OOM are now distinguishable.
+- **Output parameters are initialized early** (`*out = NULL; *out_len = 0;`), so the caller never reads indeterminate values on failure paths.
+- The `sizeof(arr)/sizeof(arr[0])` idiom is retained — it's the correct, portable way to compute array length and needs no fix.

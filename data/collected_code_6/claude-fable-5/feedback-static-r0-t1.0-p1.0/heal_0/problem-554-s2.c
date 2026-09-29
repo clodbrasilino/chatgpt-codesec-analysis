@@ -1,0 +1,73 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int *find_odd_numbers(const int *arr, size_t size, size_t *odd_count)
+{
+    int *result = NULL;
+    size_t count = 0;
+    size_t i;
+
+    if (arr == NULL || odd_count == NULL || size == 0) {
+        if (odd_count != NULL) {
+            *odd_count = 0;
+        }
+        return NULL;
+    }
+
+    for (i = 0; i < size; i++) {
+        if (arr[i] % 2 != 0) {
+            count++;
+        }
+    }
+
+    if (count == 0) {
+        *odd_count = 0;
+        return NULL;
+    }
+
+    result = malloc(count * sizeof(int));
+    if (result == NULL) {
+        *odd_count = 0;
+        return NULL;
+    }
+
+    count = 0;
+    for (i = 0; i < size; i++) {
+        if (arr[i] % 2 != 0) {
+            result[count] = arr[i];
+            count++;
+        }
+    }
+
+    *odd_count = count;
+    return result;
+}
+
+int main(void)
+{
+    int numbers[] = {12, 7, 4, 9, 25, 18, 33, 6, -5, 0};
+    size_t size = sizeof(numbers) / sizeof(numbers[0]);
+    size_t odd_count = 0;
+    size_t i;
+    int *odds;
+
+    odds = find_odd_numbers(numbers, size, &odd_count);
+
+    if (odds == NULL) {
+        if (odd_count == 0) {
+            printf("No odd numbers found or an error occurred.\n");
+        }
+        return EXIT_FAILURE;
+    }
+
+    printf("Odd numbers found: ");
+    for (i = 0; i < odd_count; i++) {
+        printf("%d ", odds[i]);
+    }
+    printf("\n");
+
+    free(odds);
+    odds = NULL;
+
+    return EXIT_SUCCESS;
+}

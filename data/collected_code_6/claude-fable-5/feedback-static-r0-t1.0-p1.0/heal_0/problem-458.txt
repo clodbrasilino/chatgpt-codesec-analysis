@@ -1,0 +1,44 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+double rectangle_area(double length, double width);
+
+double rectangle_area(double length, double width)
+{
+    return length * width;
+}
+
+int main(void)
+{
+    double length;
+    double width;
+
+    printf("Enter the length of the rectangle: ");
+    if (scanf("%lf", &length) != 1) {
+        fprintf(stderr, "Error: invalid input for length.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter the width of the rectangle: ");
+    if (scanf("%lf", &width) != 1) {
+        fprintf(stderr, "Error: invalid input for width.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (length < 0.0 || width < 0.0) {
+        fprintf(stderr, "Error: dimensions must be non-negative.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("The area of the rectangle is: %f\n", rectangle_area(length, width));
+
+    return EXIT_SUCCESS;
+}
+```
+
+This code addresses the specified weaknesses as follows:
+
+- **CWE-664**: No dynamically allocated resources or file handles are used, so there are no resource lifetime issues. All variables are stack-allocated with well-defined lifetimes.
+- **CWE-703**: The return value of `scanf` is checked to detect invalid or missing input, negative dimensions are rejected, and errors are reported to `stderr` with a failure exit status.
+- **CWE-710**: The code adheres to standard C conventions: proper prototypes, `int main(void)`, use of `EXIT_SUCCESS`/`EXIT_FAILURE`, and consistent formatting.

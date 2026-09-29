@@ -1,0 +1,73 @@
+collected_code_3/round4/heal_0/problem-956.c: In function 'split_string':
+collected_code_3/round4/heal_0/problem-956.c:13:29: warning: dereference of possibly-NULL 'temp' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   13 |             temp[tempIndex] = '\0';
+      |             ~~~~~~~~~~~~~~~~^~~~~~
+  'split_string': events 1-6
+    |
+    |    8 |     char *temp = malloc(len + 1);
+    |      |                  ^~~~~~~~~~~~~~~
+    |      |                  |
+    |      |                  (1) this call could return NULL
+    |......
+    |   11 |     for(i = 0; i < len; i++) {
+    |      |                ~~~~~~~
+    |      |                  |
+    |      |                  (2) following 'true' branch (when 'i < len')...
+    |   12 |         if(isupper(str[i])) {
+    |      |           ~           ~
+    |      |           |           |
+    |      |           |           (3) ...to here
+    |      |           (4) following 'true' branch...
+    |   13 |             temp[tempIndex] = '\0';
+    |      |             ~~~~~~~~~~~~~~~~~~~~~~
+    |      |                 |           |
+    |      |                 |           (6) 'temp + (sizetype)tempIndex' could be NULL: unchecked value from (1)
+    |      |                 (5) ...to here
+    |
+collected_code_3/round4/heal_0/problem-956.c:17:31: warning: dereference of possibly-NULL 'temp' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   17 |             temp[tempIndex++] = str[i];
+      |             ~~~~~~~~~~~~~~~~~~^~~~~~~~
+  'split_string': events 1-6
+    |
+    |    8 |     char *temp = malloc(len + 1);
+    |      |                  ^~~~~~~~~~~~~~~
+    |      |                  |
+    |      |                  (1) this call could return NULL
+    |......
+    |   11 |     for(i = 0; i < len; i++) {
+    |      |                ~~~~~~~
+    |      |                  |
+    |      |                  (2) following 'true' branch (when 'i < len')...
+    |   12 |         if(isupper(str[i])) {
+    |      |           ~           ~
+    |      |           |           |
+    |      |           |           (3) ...to here
+    |      |           (4) following 'false' branch...
+    |......
+    |   17 |             temp[tempIndex++] = str[i];
+    |      |             ~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                               |    |
+    |      |                               |    (5) ...to here
+    |      |                               (6) 'temp + (sizetype)tempIndex' could be NULL: unchecked value from (1)
+    |
+collected_code_3/round4/heal_0/problem-956.c:21:21: warning: dereference of possibly-NULL 'temp' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   21 |     temp[tempIndex] = '\0';
+      |     ~~~~~~~~~~~~~~~~^~~~~~
+  'split_string': events 1-4
+    |
+    |    8 |     char *temp = malloc(len + 1);
+    |      |                  ^~~~~~~~~~~~~~~
+    |      |                  |
+    |      |                  (1) this call could return NULL
+    |......
+    |   11 |     for(i = 0; i < len; i++) {
+    |      |                ~~~~~~~
+    |      |                  |
+    |      |                  (2) following 'false' branch (when 'i >= len')...
+    |......
+    |   21 |     temp[tempIndex] = '\0';
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~
+    |      |         |           |
+    |      |         |           (4) 'temp + (sizetype)tempIndex' could be NULL: unchecked value from (1)
+    |      |         (3) ...to here
+    |

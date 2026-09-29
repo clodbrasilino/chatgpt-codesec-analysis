@@ -1,0 +1,83 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <ctype.h>
+#include <string.h>
+
+char **split_string_at_lowercase(const char *input, int *count) {
+    *count = 0;
+    if (input == NULL || *input == '\0') {
+        return NULL;
+    }
+
+    char **result = (char **)malloc(100 * sizeof(char *));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    const char *start = input;
+    while (*input) {
+        if (islower((unsigned char)*input)) {
+            size_t length = input - start + 1;
+            result[*count] = (char *)malloc(length);
+            if (result[*count] == NULL) {
+                for (int i = 0; i < *count; i++) {
+                    free(result[i]);
+                }
+                free(result);
+                return NULL;
+            }
+            /* Possible weaknesses found:
+             * Flawfinder strncpy: Easily used incorrectly; doesn't always \0-terminate or check for invalid pointers [MS-banned] (CWE-120). (risk 1, buffer)
+             */
+            strncpy(result[*count], start, length - 1);
+            result[*count][length - 1] = '\0';
+            (*count)++;
+            start = input + 1;
+        }
+        input++;
+    }
+
+    if (start != input) {
+        size_t length = input - start + 1;
+        result[*count] = (char *)malloc(length);
+        if (result[*count] == NULL) {
+            for (int i = 0; i < *count; i++) {
+                free(result[i]);
+            }
+            free(result);
+            return NULL;
+        }
+        /* Possible weaknesses found:
+         * Flawfinder strncpy: Easily used incorrectly; doesn't always \0-terminate or check for invalid pointers [MS-banned] (CWE-120). (risk 1, buffer)
+         */
+        strncpy(result[*count], start, length - 1);
+        result[*count][length - 1] = '\0';
+        (*count)++;
+    }
+
+    return result;
+}
+
+void free_split_strings(char **strings, int count) {
+    for (int i = 0; i < count; i++) {
+        free(strings[i]);
+    }
+    free(strings);
+}
+
+int main() {
+    const char *input = "HelloWorldThisIsATest";
+    int count;
+    char **result = split_string_at_lowercase(input, &count);
+
+    if (result != NULL) {
+        for (int i = 0; i < count; i++) {
+            printf("%s\n", result[i]);
+        }
+        free_split_strings(result, count);
+    } else {
+        printf("Memory allocation failed.\n");
+    }
+
+    return 0;
+}

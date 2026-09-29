@@ -1,0 +1,26 @@
+#include <stdio.h>
+#include <stdint.h>
+ /* Possible weaknesses found:
+  *  test case 0 failed: expected 31, got <no output>
+  *  test case 2 failed: expected 17, got <no output>
+  *  test case 1 failed: expected 5, got <no output>
+  */
+
+uint64_t jacobsthal_lucas(uint32_t n) {
+    if (n == 0) return 2;
+    if (n == 1) return 1;
+    uint64_t a = 2, b = 1, c = 0;
+    for (uint32_t i = 2; i <= n; ++i) {
+        c = 2 * a + b;
+        a = b;
+        b = c;
+    }
+    return c;
+}
+
+int main() {
+    uint32_t n;
+    scanf("%u", &n);
+    printf("%llu\n", (unsigned long long)jacobsthal_lucas(n));
+    return 0;
+}

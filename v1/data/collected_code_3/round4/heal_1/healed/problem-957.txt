@@ -1,0 +1,12 @@
+#include <stdio.h>
+#include <math.h>
+
+int getRightmostSetBit(int n) {
+    return log2(n & -n) + 1;
+}
+
+int main() {
+    int n = 18;
+    printf("%d", getRightmostSetBit(n));
+    return 0;
+}

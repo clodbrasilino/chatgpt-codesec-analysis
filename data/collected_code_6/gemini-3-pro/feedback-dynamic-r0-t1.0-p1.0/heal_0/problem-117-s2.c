@@ -1,0 +1,79 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+int is_convertible(const char *str) {
+    if (str == NULL || *str == '\0') return 0;
+    
+    char *endptr;
+    strtof(str, &endptr);
+    
+    while (isspace((unsigned char)*endptr)) {
+        endptr++;
+    }
+    
+    return *endptr == '\0';
+}
+
+float* convert_to_floats(const char **list, size_t list_size, size_t *out_size) {
+    if (list == NULL || list_size == 0 || out_size == NULL) {
+        if (out_size) *out_size = 0;
+        return NULL;
+    }
+
+    float *floats = malloc(list_size * sizeof(float));
+    if (floats == NULL) {
+        *out_size = 0;
+        return NULL;
+    }
+
+    size_t count = 0;
+    for (size_t i = 0; i < list_size; i++) {
+        if (list[i] != NULL && is_convertible(list[i])) {
+            floats[count++] = strtof(list[i], NULL);
+        }
+    }
+
+    *out_size = count;
+
+    if (count == 0) {
+        free(floats);
+        return NULL;
+    }
+
+    if (count < list_size) {
+        float *temp = realloc(floats, count * sizeof(float));
+        if (temp != NULL) {
+            floats = temp;
+        }
+    }
+
+    return floats;
+}
+
+int main(void) {
+    const char *items[] = {
+        "3.14",
+        "  -42.5 ",
+        "not_a_number",
+        "100",
+        NULL,
+        "2.71828",
+        ""
+    };
+    
+    size_t num_items = sizeof(items) / sizeof(items[0]);
+    size_t num_floats = 0;
+
+    float *converted = convert_to_floats(items, num_items, &num_floats);
+
+    if (converted != NULL) {
+        for (size_t i = 0; i < num_floats; i++) {
+            printf("%f\n", converted[i]);
+        }
+        free(converted);
+    }
+
+    return 0;
+}

@@ -1,0 +1,109 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *data;
+    size_t length;
+} IntList;
+
+int find_max_length_lists(const IntList *lists, size_t count,
+                          size_t **indices_out, size_t *indices_count_out,
+                          size_t *max_length_out)
+{
+    size_t i;
+    size_t idx;
+    size_t max_len;
+    size_t matches;
+    size_t *indices;
+
+    if (lists == NULL || indices_out == NULL ||
+        indices_count_out == NULL || max_length_out == NULL) {
+        return -1;
+    }
+    if (count == 0) {
+        return -1;
+    }
+
+    max_len = 0;
+    for (i = 0; i < count; i++) {
+        if (lists[i].length > max_len) {
+            max_len = lists[i].length;
+        }
+    }
+
+    matches = 0;
+    for (i = 0; i < count; i++) {
+        if (lists[i].length == max_len) {
+            matches++;
+        }
+    }
+
+    indices = (size_t *)malloc(matches * sizeof(size_t));
+    if (indices == NULL) {
+        return -1;
+    }
+
+    idx = 0;
+    for (i = 0; i < count; i++) {
+        if (lists[i].length == max_len) {
+            indices[idx] = i;
+            idx++;
+        }
+    }
+
+    *indices_out = indices;
+    *indices_count_out = matches;
+    *max_length_out = max_len;
+
+    return 0;
+}
+
+int main(void)
+{
+    int data0[] = {1, 2, 3};
+    int data1[] = {4, 5};
+    int data2[] = {6, 7, 8, 9};
+    int data3[] = {10, 11, 12, 13};
+    int data4[] = {14};
+
+    IntList lists[] = {
+        {data0, 3},
+        {data1, 2},
+        {data2, 4},
+        {data3, 4},
+        {data4, 1}
+    };
+
+    size_t count = sizeof(lists) / sizeof(lists[0]);
+    size_t *indices = NULL;
+    size_t indices_count = 0;
+    size_t max_length = 0;
+    size_t i;
+    size_t j;
+
+    if (find_max_length_lists(lists, count, &indices,
+                              &indices_count, &max_length) != 0) {
+        fprintf(stderr, "Error: unable to process lists\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Maximum length: %zu\n", max_length);
+    printf("Lists with maximum length:\n");
+    for (i = 0; i < indices_count; i++) {
+        printf("List %zu: [", indices[i]);
+        for (j = 0; j < lists[indices[i]].length; j++) {
+            printf("%d", lists[indices[i]].data[j]);
+            if (j + 1 < lists[indices[i]].length) {
+                printf(", ");
+            }
+        }
+        printf("]\n");
+    }
+
+    free(indices);
+    indices = NULL;
+
+    return EXIT_SUCCESS;
+}
+```

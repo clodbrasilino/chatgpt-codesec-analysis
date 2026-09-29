@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_2/healed/problem-400-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_2/healed/problem-400-s3.c:42:20: style: Condition 'num_tuples>0' is always true [knownConditionTrueFalse]
+    if (num_tuples > 0 && num_tuples <= (SIZE_MAX / sizeof(Tuple))) {
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_2/healed/problem-400-s3.c:29:38: note: Assuming that condition 'num_tuples<=0' is not redundant
+    if (tuples == NULL || num_tuples <= 0 || unique_count == NULL) {
+                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_2/healed/problem-400-s3.c:37:23: note: Assuming condition is false
+    if (sorted_tuples == NULL) {
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_2/healed/problem-400-s3.c:42:20: note: Condition 'num_tuples>0' is always true
+    if (num_tuples > 0 && num_tuples <= (SIZE_MAX / sizeof(Tuple))) {
+                   ^

@@ -1,0 +1,87 @@
+collected_code_3/round4/heal_0/problem-174.c: In function 'createNode':
+collected_code_3/round4/heal_0/problem-174.c:20:20: warning: dereference of possibly-NULL 'newNode' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   20 |     newNode->value = value;
+      |     ~~~~~~~~~~~~~~~^~~~~~~
+  'main': events 1-2
+    |
+    |   54 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |   55 |     addKeyValuePair("key1", "value1");
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) calling 'addKeyValuePair' from 'main'
+    |
+    +--> 'addKeyValuePair': events 3-6
+           |
+           |   25 | void addKeyValuePair(char* key, char* value) {
+           |      |      ^~~~~~~~~~~~~~~
+           |      |      |
+           |      |      (3) entry to 'addKeyValuePair'
+           |   26 |     for(int i = 0; i < dictSize; i++) {
+           |      |                    ~~~~~~~~~~~~
+           |      |                      |
+           |      |                      (4) following 'false' branch...
+           |......
+           |   36 |     KeyValuePair* newPair = (KeyValuePair*)malloc(sizeof(KeyValuePair));
+           |      |                                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                                            |
+           |      |                                            (5) ...to here
+           |   37 |     newPair->key = key;
+           |   38 |     newPair->values = createNode(value);
+           |      |                       ~~~~~~~~~~~~~~~~~
+           |      |                       |
+           |      |                       (6) calling 'createNode' from 'addKeyValuePair'
+           |
+           +--> 'createNode': events 7-9
+                  |
+                  |   18 | Node* createNode(char* value) {
+                  |      |       ^~~~~~~~~~
+                  |      |       |
+                  |      |       (7) entry to 'createNode'
+                  |   19 |     Node* newNode = (Node*)malloc(sizeof(Node));
+                  |      |                            ~~~~~~~~~~~~~~~~~~~~
+                  |      |                            |
+                  |      |                            (8) this call could return NULL
+                  |   20 |     newNode->value = value;
+                  |      |     ~~~~~~~~~~~~~~~~~~~~~~
+                  |      |                    |
+                  |      |                    (9) 'newNode' could be NULL: unchecked value from (8)
+                  |
+collected_code_3/round4/heal_0/problem-174.c: In function 'addKeyValuePair':
+collected_code_3/round4/heal_0/problem-174.c:37:18: warning: dereference of possibly-NULL 'newPair' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   37 |     newPair->key = key;
+      |     ~~~~~~~~~~~~~^~~~~
+  'main': events 1-2
+    |
+    |   54 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |   55 |     addKeyValuePair("key1", "value1");
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) calling 'addKeyValuePair' from 'main'
+    |
+    +--> 'addKeyValuePair': events 3-7
+           |
+           |   25 | void addKeyValuePair(char* key, char* value) {
+           |      |      ^~~~~~~~~~~~~~~
+           |      |      |
+           |      |      (3) entry to 'addKeyValuePair'
+           |   26 |     for(int i = 0; i < dictSize; i++) {
+           |      |                    ~~~~~~~~~~~~
+           |      |                      |
+           |      |                      (4) following 'false' branch...
+           |......
+           |   36 |     KeyValuePair* newPair = (KeyValuePair*)malloc(sizeof(KeyValuePair));
+           |      |                                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                                            |
+           |      |                                            (5) ...to here
+           |      |                                            (6) this call could return NULL
+           |   37 |     newPair->key = key;
+           |      |     ~~~~~~~~~~~~~~~~~~
+           |      |                  |
+           |      |                  (7) 'newPair' could be NULL: unchecked value from (6)
+           |

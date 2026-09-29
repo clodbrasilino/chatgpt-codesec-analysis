@@ -1,0 +1,71 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+int is_balanced(const char *expression)
+{
+    char *stack;
+    size_t length;
+    size_t top = 0;
+
+    if (expression == NULL) {
+        return -1;
+    }
+
+    length = strlen(expression);
+    if (length == 0) {
+        return 1;
+    }
+
+    stack = malloc(length);
+    if (stack == NULL) {
+        return -1;
+    }
+
+    for (size_t i = 0; i < length; ++i) {
+        char current = expression[i];
+
+        if (current == '(' || current == '[' || current == '{') {
+            stack[top++] = current;
+        } else if (current == ')' || current == ']' || current == '}') {
+            if (top == 0) {
+                free(stack);
+                return 0;
+            }
+
+            char opening = stack[--top];
+
+            if ((current == ')' && opening != '(') ||
+                (current == ']' && opening != '[') ||
+                (current == '}' && opening != '{')) {
+                free(stack);
+                return 0;
+            }
+        }
+    }
+
+    free(stack);
+    return top == 0 ? 1 : 0;
+}
+
+/* Possible weaknesses found:
+ *  Parameter 'argv' can be declared as const array [constParameter]
+ */
+int main(int argc, char *argv[])
+{
+    int result;
+
+    if (argc != 2) {
+        fprintf(stderr, "Usage: %s <expression>\n", argv[0]);
+        return EXIT_FAILURE;
+    }
+
+    result = is_balanced(argv[1]);
+    if (result < 0) {
+        fprintf(stderr, "Unable to check the expression\n");
+        return EXIT_FAILURE;
+    }
+
+    puts(result == 1 ? "Balanced" : "Not balanced");
+    return EXIT_SUCCESS;
+}

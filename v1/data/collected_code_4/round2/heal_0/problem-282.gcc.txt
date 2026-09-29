@@ -1,0 +1,64 @@
+./collected_code_4/round2//heal_0/problem-282.c: In function 'newNode':
+./collected_code_4/round2//heal_0/problem-282.c:11:20: warning: dereference of possibly-NULL 'new_node' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   11 |     new_node->data = data;
+      |     ~~~~~~~~~~~~~~~^~~~~~
+  'main': events 1-2
+    |
+    |   66 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |   67 |     Node* first = newNode(1);
+    |      |                   ~~~~~~~~~~
+    |      |                   |
+    |      |                   (2) calling 'newNode' from 'main'
+    |
+    +--> 'newNode': events 3-5
+           |
+           |    9 | Node* newNode(int data) {
+           |      |       ^~~~~~~
+           |      |       |
+           |      |       (3) entry to 'newNode'
+           |   10 |     Node* new_node = (Node*) malloc(sizeof(Node));
+           |      |                              ~~~~~~~~~~~~~~~~~~~~
+           |      |                              |
+           |      |                              (4) this call could return NULL
+           |   11 |     new_node->data = data;
+           |      |     ~~~~~~~~~~~~~~~~~~~~~
+           |      |                    |
+           |      |                    (5) 'new_node' could be NULL: unchecked value from (4)
+           |
+./collected_code_4/round2//heal_0/problem-282.c: In function 'subtractLists':
+./collected_code_4/round2//heal_0/problem-282.c:40:12: warning: check of 'second' for NULL after already dereferencing it [-Wanalyzer-deref-before-check]
+   40 |         if (second) second = second->next;
+      |            ^
+  'subtractLists': events 1-8
+    |
+    |   21 |     while (first != NULL) {
+    |      |                  ^
+    |      |                  |
+    |      |                  (1) following 'true' branch (when 'first' is non-NULL)...
+    |   22 |         diff = carry + (first->data) - (second->data);
+    |      |                        ~~~~~~~~~~~~~   ~~~~~~~~~~~~~~
+    |      |                              |                |
+    |      |                              (2) ...to here   (3) pointer 'second' is dereferenced here
+    |......
+    |   32 |         if (res == NULL)
+    |      |            ~      
+    |      |            |
+    |      |            (4) following 'true' branch (when 'res' is NULL)...
+    |   33 |             res = temp;
+    |      |             ~~~~~~~~~~
+    |      |                 |
+    |      |                 (5) ...to here
+    |......
+    |   39 |         if (first) first = first->next;
+    |      |            ~       ~~~~~~~~~~~~~~~~~~~
+    |      |            |             |
+    |      |            |             (7) ...to here
+    |      |            (6) following 'true' branch (when 'first' is non-NULL)...
+    |   40 |         if (second) second = second->next;
+    |      |            ~      
+    |      |            |
+    |      |            (8) pointer 'second' is checked for NULL here but it was already dereferenced at (3)
+    |

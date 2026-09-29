@@ -1,0 +1,43 @@
+#include <stdio.h>
+
+void remove_parenthesis_area(char *str) {
+    if (str == NULL) {
+        return;
+    }
+
+    size_t i = 0;
+    size_t j = 0;
+    int paren_count = 0;
+
+    while (str[i] != '\0') {
+        if (str[i] == '(') {
+            paren_count++;
+        } else if (str[i] == ')') {
+            if (paren_count > 0) {
+                paren_count--;
+            }
+        } else if (paren_count == 0) {
+            str[j] = str[i];
+            j++;
+        }
+        i++;
+    }
+
+    str[j] = '\0';
+}
+
+int main(void) {
+    char test_str1[] = "Hello (world) this is a (test) string.";
+    char test_str2[] = "No parentheses here!";
+    char test_str3[] = "(Remove) everything in (parentheses)!";
+    
+    remove_parenthesis_area(test_str1);
+    remove_parenthesis_area(test_str2);
+    remove_parenthesis_area(test_str3);
+
+    printf("%s\n", test_str1);
+    printf("%s\n", test_str2);
+    printf("%s\n", test_str3);
+
+    return 0;
+}

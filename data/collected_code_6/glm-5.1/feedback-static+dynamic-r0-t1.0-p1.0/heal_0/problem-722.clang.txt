@@ -1,0 +1,14 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-722.c:66:17: error: call to undeclared function 'dictionary_free'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   66 |                 dictionary_free(filtered);
+      |                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-722.c:66:17: note: did you mean 'dictionary_create'?
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-722.c:17:20: note: 'dictionary_create' declared here
+   17 | StudentDictionary *dictionary_create(size_t initial_capacity) {
+      |                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-722.c:74:6: error: conflicting types for 'dictionary_free'
+   74 | void dictionary_free(StudentDictionary *dict) {
+      |      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-722.c:66:17: note: previous implicit declaration is here
+   66 |                 dictionary_free(filtered);
+      |                 ^
+2 errors generated.

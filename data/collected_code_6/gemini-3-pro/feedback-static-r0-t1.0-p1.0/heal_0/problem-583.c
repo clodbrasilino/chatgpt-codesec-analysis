@@ -1,0 +1,43 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+unsigned long long int catalan(unsigned int n) {
+    if (n <= 1) {
+        return 1;
+    }
+
+    unsigned long long int* res = (unsigned long long int*)malloc((n + 1) * sizeof(unsigned long long int));
+    if (res == NULL) {
+        return 0; 
+    }
+
+    res[0] = 1;
+    res[1] = 1;
+
+    for (unsigned int i = 2; i <= n; i++) {
+        res[i] = 0;
+        for (unsigned int j = 0; j < i; j++) {
+            res[i] += res[j] * res[i - j - 1];
+        }
+    }
+
+    unsigned long long int result = res[n];
+    free(res);
+    return result;
+}
+
+int main(void) {
+    unsigned int n;
+    
+    if (scanf("%u", &n) != 1) {
+        return EXIT_FAILURE;
+    }
+    
+    unsigned long long int result = catalan(n);
+    if (result == 0 && n > 1) {
+        return EXIT_FAILURE;
+    }
+
+    printf("%llu\n", result);
+    return EXIT_SUCCESS;
+}

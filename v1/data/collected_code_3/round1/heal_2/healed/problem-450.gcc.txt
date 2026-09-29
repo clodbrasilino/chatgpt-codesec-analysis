@@ -1,0 +1,402 @@
+collected_code_3/round1/heal_2/healed/problem-450.c: In function 'extractStrings':
+collected_code_3/round1/heal_2/healed/problem-450.c:13:27: warning: heap-based buffer overflow [CWE-122] [-Wanalyzer-out-of-bounds]
+   13 |             result[count] = calloc((stringSize + 1), sizeof(char));
+      |             ~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  'main': events 1-2
+    |
+    |   36 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   40 |     char **result = extractStrings(list, listSize, stringSize);
+    |      |                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                     |
+    |      |                     (2) calling 'extractStrings' from 'main'
+    |
+    +--> 'extractStrings': events 3-11
+           |
+           |    5 | char **extractStrings(char **list, int listSize, int stringSize) {
+           |      |        ^~~~~~~~~~~~~~
+           |      |        |
+           |      |        (3) entry to 'extractStrings'
+           |    6 |     char **result = calloc(listSize + 1, sizeof(char *));
+           |      |                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                     |
+           |      |                     (4) capacity: 48 bytes
+           |    7 |     if (!result) {
+           |      |        ~
+           |      |        |
+           |      |        (5) following 'false' branch (when 'result' is non-NULL)...
+           |......
+           |   10 |     int count = 0;
+           |      |         ~~~~~
+           |      |         |
+           |      |         (6) ...to here
+           |   11 |     for(int i = 0; i < listSize; i++) {
+           |      |                    ~~~~~~~~~~~~
+           |      |                      |
+           |      |                      (7) following 'true' branch (when 'i < listSize')...
+           |   12 |         if(strlen(list[i]) == stringSize) {
+           |      |           ~           ~
+           |      |           |           |
+           |      |           |           (8) ...to here
+           |      |           (9) following 'true' branch...
+           |   13 |             result[count] = calloc((stringSize + 1), sizeof(char));
+           |      |                                    ~~~~~~~~~~~~~~~~
+           |      |                                                |
+           |      |                                                (10) ...to here
+           |   14 |             if (!result[count]) {
+           |      |                ~
+           |      |                |
+           |      |                (11) following 'false' branch...
+           |
+         'extractStrings': event 12
+           |
+           |   21 |             strcpy(result[count++], list[i]);
+           |      |                                         ^
+           |      |                                         |
+           |      |                                         (12) ...to here
+           |
+         'extractStrings': events 13-17
+           |
+           |   11 |     for(int i = 0; i < listSize; i++) {
+           |      |                    ~~^~~~~~~~~~
+           |      |                      |
+           |      |                      (13) following 'true' branch (when 'i < listSize')...
+           |   12 |         if(strlen(list[i]) == stringSize) {
+           |      |           ~           ~
+           |      |           |           |
+           |      |           |           (14) ...to here
+           |      |           (15) following 'true' branch...
+           |   13 |             result[count] = calloc((stringSize + 1), sizeof(char));
+           |      |                                    ~~~~~~~~~~~~~~~~
+           |      |                                                |
+           |      |                                                (16) ...to here
+           |   14 |             if (!result[count]) {
+           |      |                ~      
+           |      |                |
+           |      |                (17) following 'false' branch...
+           |
+         'extractStrings': event 18
+           |
+           |   21 |             strcpy(result[count++], list[i]);
+           |      |                                         ^
+           |      |                                         |
+           |      |                                         (18) ...to here
+           |
+         'extractStrings': events 19-25
+           |
+           |   11 |     for(int i = 0; i < listSize; i++) {
+           |      |                    ~~^~~~~~~~~~  ~~~
+           |      |                      |            |
+           |      |                      |            (22) ...to here
+           |      |                      (19) following 'true' branch (when 'i < listSize')...
+           |      |                      (23) following 'true' branch (when 'i < listSize')...
+           |   12 |         if(strlen(list[i]) == stringSize) {
+           |      |           ~           ~
+           |      |           |           |
+           |      |           |           (20) ...to here
+           |      |           |           (24) ...to here
+           |      |           (21) following 'false' branch...
+           |   13 |             result[count] = calloc((stringSize + 1), sizeof(char));
+           |   14 |             if (!result[count]) {
+           |      |                ~      
+           |      |                |
+           |      |                (25) following 'false' branch...
+           |
+         'extractStrings': event 26
+           |
+           |   21 |             strcpy(result[count++], list[i]);
+           |      |                                         ^
+           |      |                                         |
+           |      |                                         (26) ...to here
+           |
+         'extractStrings': events 27-29
+           |
+           |   11 |     for(int i = 0; i < listSize; i++) {
+           |      |                    ~~^~~~~~~~~~
+           |      |                      |
+           |      |                      (27) following 'true' branch (when 'i < listSize')...
+           |   12 |         if(strlen(list[i]) == stringSize) {
+           |      |                       ~
+           |      |                       |
+           |      |                       (28) ...to here
+           |   13 |             result[count] = calloc((stringSize + 1), sizeof(char));
+           |   14 |             if (!result[count]) {
+           |      |                ~      
+           |      |                |
+           |      |                (29) following 'false' branch...
+           |
+         'extractStrings': event 30
+           |
+           |   21 |             strcpy(result[count++], list[i]);
+           |      |                                         ^
+           |      |                                         |
+           |      |                                         (30) ...to here
+           |
+         'extractStrings': events 31-33
+           |
+           |   11 |     for(int i = 0; i < listSize; i++) {
+           |      |                    ~~^~~~~~~~~~
+           |      |                      |
+           |      |                      (31) following 'true' branch (when 'i < listSize')...
+           |   12 |         if(strlen(list[i]) == stringSize) {
+           |      |                       ~
+           |      |                       |
+           |      |                       (32) ...to here
+           |   13 |             result[count] = calloc((stringSize + 1), sizeof(char));
+           |   14 |             if (!result[count]) {
+           |      |                ~      
+           |      |                |
+           |      |                (33) following 'false' branch...
+           |
+         'extractStrings': event 34
+           |
+           |   21 |             strcpy(result[count++], list[i]);
+           |      |                                         ^
+           |      |                                         |
+           |      |                                         (34) ...to here
+           |
+         'extractStrings': events 35-37
+           |
+           |   11 |     for(int i = 0; i < listSize; i++) {
+           |      |                    ~~^~~~~~~~~~
+           |      |                      |
+           |      |                      (35) following 'true' branch (when 'i < listSize')...
+           |   12 |         if(strlen(list[i]) == stringSize) {
+           |      |                       ~
+           |      |                       |
+           |      |                       (36) ...to here
+           |   13 |             result[count] = calloc((stringSize + 1), sizeof(char));
+           |   14 |             if (!result[count]) {
+           |      |                ~      
+           |      |                |
+           |      |                (37) following 'false' branch...
+           |
+         'extractStrings': event 38
+           |
+           |   21 |             strcpy(result[count++], list[i]);
+           |      |                                         ^
+           |      |                                         |
+           |      |                                         (38) ...to here
+           |
+         'extractStrings': events 39-41
+           |
+           |   11 |     for(int i = 0; i < listSize; i++) {
+           |      |                    ~~^~~~~~~~~~
+           |      |                      |
+           |      |                      (39) following 'true' branch (when 'i < listSize')...
+           |   12 |         if(strlen(list[i]) == stringSize) {
+           |      |                       ~
+           |      |                       |
+           |      |                       (40) ...to here
+           |   13 |             result[count] = calloc((stringSize + 1), sizeof(char));
+           |      |             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                           |
+           |      |                           (41) out-of-bounds write from byte 48 till byte 55 but region ends at byte 48
+           |
+collected_code_3/round1/heal_2/healed/problem-450.c:13:27: note: write of 8 bytes to beyond the end of the region
+   13 |             result[count] = calloc((stringSize + 1), sizeof(char));
+      |             ~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+collected_code_3/round1/heal_2/healed/problem-450.c:14:24: warning: heap-based buffer over-read [CWE-126] [-Wanalyzer-out-of-bounds]
+   14 |             if (!result[count]) {
+      |                  ~~~~~~^~~~~~~
+  'main': events 1-2
+    |
+    |   36 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   40 |     char **result = extractStrings(list, listSize, stringSize);
+    |      |                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                     |
+    |      |                     (2) calling 'extractStrings' from 'main'
+    |
+    +--> 'extractStrings': events 3-11
+           |
+           |    5 | char **extractStrings(char **list, int listSize, int stringSize) {
+           |      |        ^~~~~~~~~~~~~~
+           |      |        |
+           |      |        (3) entry to 'extractStrings'
+           |    6 |     char **result = calloc(listSize + 1, sizeof(char *));
+           |      |                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                     |
+           |      |                     (4) capacity: 48 bytes
+           |    7 |     if (!result) {
+           |      |        ~
+           |      |        |
+           |      |        (5) following 'false' branch (when 'result' is non-NULL)...
+           |......
+           |   10 |     int count = 0;
+           |      |         ~~~~~
+           |      |         |
+           |      |         (6) ...to here
+           |   11 |     for(int i = 0; i < listSize; i++) {
+           |      |                    ~~~~~~~~~~~~
+           |      |                      |
+           |      |                      (7) following 'true' branch (when 'i < listSize')...
+           |   12 |         if(strlen(list[i]) == stringSize) {
+           |      |           ~           ~
+           |      |           |           |
+           |      |           |           (8) ...to here
+           |      |           (9) following 'true' branch...
+           |   13 |             result[count] = calloc((stringSize + 1), sizeof(char));
+           |      |                                    ~~~~~~~~~~~~~~~~
+           |      |                                                |
+           |      |                                                (10) ...to here
+           |   14 |             if (!result[count]) {
+           |      |                ~
+           |      |                |
+           |      |                (11) following 'false' branch...
+           |
+         'extractStrings': event 12
+           |
+           |   21 |             strcpy(result[count++], list[i]);
+           |      |                                         ^
+           |      |                                         |
+           |      |                                         (12) ...to here
+           |
+         'extractStrings': events 13-17
+           |
+           |   11 |     for(int i = 0; i < listSize; i++) {
+           |      |                    ~~^~~~~~~~~~
+           |      |                      |
+           |      |                      (13) following 'true' branch (when 'i < listSize')...
+           |   12 |         if(strlen(list[i]) == stringSize) {
+           |      |           ~           ~
+           |      |           |           |
+           |      |           |           (14) ...to here
+           |      |           (15) following 'true' branch...
+           |   13 |             result[count] = calloc((stringSize + 1), sizeof(char));
+           |      |                                    ~~~~~~~~~~~~~~~~
+           |      |                                                |
+           |      |                                                (16) ...to here
+           |   14 |             if (!result[count]) {
+           |      |                ~      
+           |      |                |
+           |      |                (17) following 'false' branch...
+           |
+         'extractStrings': event 18
+           |
+           |   21 |             strcpy(result[count++], list[i]);
+           |      |                                         ^
+           |      |                                         |
+           |      |                                         (18) ...to here
+           |
+         'extractStrings': events 19-25
+           |
+           |   11 |     for(int i = 0; i < listSize; i++) {
+           |      |                    ~~^~~~~~~~~~  ~~~
+           |      |                      |            |
+           |      |                      |            (22) ...to here
+           |      |                      (19) following 'true' branch (when 'i < listSize')...
+           |      |                      (23) following 'true' branch (when 'i < listSize')...
+           |   12 |         if(strlen(list[i]) == stringSize) {
+           |      |           ~           ~
+           |      |           |           |
+           |      |           |           (20) ...to here
+           |      |           |           (24) ...to here
+           |      |           (21) following 'false' branch...
+           |   13 |             result[count] = calloc((stringSize + 1), sizeof(char));
+           |   14 |             if (!result[count]) {
+           |      |                ~      
+           |      |                |
+           |      |                (25) following 'false' branch...
+           |
+         'extractStrings': event 26
+           |
+           |   21 |             strcpy(result[count++], list[i]);
+           |      |                                         ^
+           |      |                                         |
+           |      |                                         (26) ...to here
+           |
+         'extractStrings': events 27-29
+           |
+           |   11 |     for(int i = 0; i < listSize; i++) {
+           |      |                    ~~^~~~~~~~~~
+           |      |                      |
+           |      |                      (27) following 'true' branch (when 'i < listSize')...
+           |   12 |         if(strlen(list[i]) == stringSize) {
+           |      |                       ~
+           |      |                       |
+           |      |                       (28) ...to here
+           |   13 |             result[count] = calloc((stringSize + 1), sizeof(char));
+           |   14 |             if (!result[count]) {
+           |      |                ~      
+           |      |                |
+           |      |                (29) following 'false' branch...
+           |
+         'extractStrings': event 30
+           |
+           |   21 |             strcpy(result[count++], list[i]);
+           |      |                                         ^
+           |      |                                         |
+           |      |                                         (30) ...to here
+           |
+         'extractStrings': events 31-33
+           |
+           |   11 |     for(int i = 0; i < listSize; i++) {
+           |      |                    ~~^~~~~~~~~~
+           |      |                      |
+           |      |                      (31) following 'true' branch (when 'i < listSize')...
+           |   12 |         if(strlen(list[i]) == stringSize) {
+           |      |                       ~
+           |      |                       |
+           |      |                       (32) ...to here
+           |   13 |             result[count] = calloc((stringSize + 1), sizeof(char));
+           |   14 |             if (!result[count]) {
+           |      |                ~      
+           |      |                |
+           |      |                (33) following 'false' branch...
+           |
+         'extractStrings': event 34
+           |
+           |   21 |             strcpy(result[count++], list[i]);
+           |      |                                         ^
+           |      |                                         |
+           |      |                                         (34) ...to here
+           |
+         'extractStrings': events 35-37
+           |
+           |   11 |     for(int i = 0; i < listSize; i++) {
+           |      |                    ~~^~~~~~~~~~
+           |      |                      |
+           |      |                      (35) following 'true' branch (when 'i < listSize')...
+           |   12 |         if(strlen(list[i]) == stringSize) {
+           |      |                       ~
+           |      |                       |
+           |      |                       (36) ...to here
+           |   13 |             result[count] = calloc((stringSize + 1), sizeof(char));
+           |   14 |             if (!result[count]) {
+           |      |                ~      
+           |      |                |
+           |      |                (37) following 'false' branch...
+           |
+         'extractStrings': event 38
+           |
+           |   21 |             strcpy(result[count++], list[i]);
+           |      |                                         ^
+           |      |                                         |
+           |      |                                         (38) ...to here
+           |
+         'extractStrings': events 39-41
+           |
+           |   11 |     for(int i = 0; i < listSize; i++) {
+           |      |                    ~~^~~~~~~~~~
+           |      |                      |
+           |      |                      (39) following 'true' branch (when 'i < listSize')...
+           |   12 |         if(strlen(list[i]) == stringSize) {
+           |      |                       ~
+           |      |                       |
+           |      |                       (40) ...to here
+           |   13 |             result[count] = calloc((stringSize + 1), sizeof(char));
+           |   14 |             if (!result[count]) {
+           |      |                  ~~~~~~~~~~~~~
+           |      |                        |
+           |      |                        (41) out-of-bounds read from byte 48 till byte 55 but region ends at byte 48
+           |
+collected_code_3/round1/heal_2/healed/problem-450.c:14:24: note: read of 8 bytes from after the end of the region
+   14 |             if (!result[count]) {
+      |                  ~~~~~~^~~~~~~

@@ -1,0 +1,142 @@
+#include <ctype.h>
+#include <stdbool.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+static bool is_word_character(unsigned char character)
+{
+    return isalnum(character) != 0 || character == '_';
+}
+
+static bool contains_word(const char *sentence, size_t sentence_length,
+                          const char *word, size_t word_length)
+{
+    if (sentence == NULL || word == NULL || word_length == 0 ||
+        word_length > sentence_length) {
+        return false;
+    }
+
+    size_t last_start = sentence_length - word_length;
+
+    for (size_t index = 0; index <= last_start; ++index) {
+        if (memcmp(sentence + index, word, word_length) != 0) {
+            continue;
+        }
+
+        bool valid_start =
+            index == 0 ||
+            !is_word_character((unsigned char)sentence[index - 1]);
+
+        bool valid_end =
+            index == last_start ||
+            !is_word_character((unsigned char)sentence[index + word_length]);
+
+        if (valid_start && valid_end) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+static char *read_line(FILE *stream, size_t *line_length)
+{
+    if (stream == NULL || line_length == NULL) {
+        return NULL;
+    }
+
+    *line_length = 0;
+
+    size_t capacity = 128;
+    size_t length = 0;
+    char *buffer = malloc(capacity);
+
+    if (buffer == NULL) {
+        return NULL;
+    }
+
+    while (true) {
+        int character = fgetc(stream);
+
+        if (character == EOF) {
+            if (ferror(stream)) {
+                free(buffer);
+                return NULL;
+            }
+            break;
+        }
+
+        if (character == '\n') {
+            break;
+        }
+
+        if (length == SIZE_MAX - 1) {
+            free(buffer);
+            return NULL;
+        }
+
+        if (length + 1 == capacity) {
+            size_t required = length + 2;
+            size_t new_capacity;
+
+            if (capacity > SIZE_MAX / 2) {
+                new_capacity = SIZE_MAX;
+            } else {
+                new_capacity = capacity * 2;
+            }
+
+            if (new_capacity < required) {
+                new_capacity = required;
+            }
+
+            if (new_capacity <= capacity) {
+                free(buffer);
+                return NULL;
+            }
+
+            char *resized_buffer = realloc(buffer, new_capacity);
+            if (resized_buffer == NULL) {
+                free(buffer);
+                return NULL;
+            }
+
+            buffer = resized_buffer;
+            capacity = new_capacity;
+        }
+
+        buffer[length++] = (char)(unsigned char)character;
+    }
+
+    buffer[length] = '\0';
+    *line_length = length;
+    return buffer;
+}
+
+int main(void)
+{
+    size_t sentence_length = 0;
+    size_t word_length = 0;
+
+    char *sentence = read_line(stdin, &sentence_length);
+    if (sentence == NULL) {
+        fputs("Failed to read the sentence.\n", stderr);
+        return EXIT_FAILURE;
+    }
+
+    char *word = read_line(stdin, &word_length);
+    if (word == NULL) {
+        fputs("Failed to read the word.\n", stderr);
+        free(sentence);
+        return EXIT_FAILURE;
+    }
+
+    bool found = contains_word(sentence, sentence_length, word, word_length);
+    puts(found ? "Present" : "Not present");
+
+    free(word);
+    free(sentence);
+
+    return EXIT_SUCCESS;
+}

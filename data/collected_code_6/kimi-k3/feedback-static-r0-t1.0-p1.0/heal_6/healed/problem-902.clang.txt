@@ -1,0 +1,4 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-902.c:41:12: warning: Value stored to 'key_len' during its initialization is never read [deadcode.DeadStores]
+   41 |     size_t key_len = strnlen(key, MAX_KEY_LENGTH - 1);
+      |            ^~~~~~~   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1 warning generated.

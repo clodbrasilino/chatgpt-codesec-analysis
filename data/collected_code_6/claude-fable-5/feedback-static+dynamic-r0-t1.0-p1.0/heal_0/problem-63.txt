@@ -1,0 +1,65 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int first;
+    int second;
+} Pair;
+
+static int max_difference(const Pair *pairs, size_t count, int *result)
+{
+    size_t i;
+    int diff;
+    int max_diff;
+
+    if (pairs == NULL || result == NULL || count == 0U) {
+        return -1;
+    }
+
+    if (pairs[0].first > pairs[0].second) {
+        max_diff = pairs[0].first - pairs[0].second;
+    } else {
+        max_diff = pairs[0].second - pairs[0].first;
+    }
+
+    for (i = 1U; i < count; i++) {
+        if (pairs[i].first > pairs[i].second) {
+            diff = pairs[i].first - pairs[i].second;
+        } else {
+            diff = pairs[i].second - pairs[i].first;
+        }
+        if (diff > max_diff) {
+            max_diff = diff;
+        }
+    }
+
+    *result = max_diff;
+    return 0;
+}
+
+int main(void)
+{
+    Pair data[] = {
+        {3, 5},
+        {1, 7},
+        {10, 3},
+        {1, 2}
+    };
+    size_t count = sizeof(data) / sizeof(data[0]);
+    int result = 0;
+
+    if (max_difference(data, count, &result) != 0) {
+        if (fprintf(stderr, "Error: invalid input\n") < 0) {
+            return EXIT_FAILURE;
+        }
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Maximum difference: %d\n", result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```

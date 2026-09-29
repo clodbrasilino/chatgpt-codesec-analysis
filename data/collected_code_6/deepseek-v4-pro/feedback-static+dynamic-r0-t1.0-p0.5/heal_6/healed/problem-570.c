@@ -1,0 +1,129 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char **remove_words(char **words, int word_count, const char *filter, int *new_count) {
+    if (words == NULL || filter == NULL || new_count == NULL || word_count <= 0) {
+        if (new_count != NULL) {
+            *new_count = 0;
+        }
+        return NULL;
+    }
+
+    if (filter[0] == '\0') {
+        *new_count = 0;
+        return NULL;
+    }
+
+    size_t filter_len = 0;
+    while (filter[filter_len] != '\0') {
+        filter_len++;
+    }
+
+    char **result = (char **)malloc((size_t)word_count * sizeof(char *));
+    if (result == NULL) {
+        *new_count = 0;
+        return NULL;
+    }
+
+    int count = 0;
+    for (int i = 0; i < word_count; i++) {
+        if (words[i] == NULL) {
+            continue;
+        }
+
+        size_t word_len = 0;
+        while (words[i][word_len] != '\0') {
+            word_len++;
+        }
+
+        int found = 0;
+
+        if (word_len >= filter_len) {
+            for (size_t j = 0; j <= word_len - filter_len; j++) {
+                size_t k;
+                for (k = 0; k < filter_len; k++) {
+                    if (words[i][j + k] != filter[k]) {
+                        break;
+                    }
+                }
+                if (k == filter_len) {
+                    found = 1;
+                    break;
+                }
+            }
+        }
+
+        if (!found) {
+            result[count] = (char *)malloc((word_len + 1) * sizeof(char));
+            if (result[count] == NULL) {
+                for (int j = 0; j < count; j++) {
+                    free(result[j]);
+                }
+                free(result);
+                *new_count = 0;
+                return NULL;
+            }
+
+            for (size_t m = 0; m <= word_len; m++) {
+                result[count][m] = words[i][m];
+            }
+            count++;
+        }
+    }
+
+    if (count == 0) {
+        free(result);
+        *new_count = 0;
+        return NULL;
+    }
+
+    char **final_result = (char **)realloc(result, (size_t)count * sizeof(char *));
+    if (final_result == NULL) {
+        for (int j = 0; j < count; j++) {
+            free(result[j]);
+        }
+        free(result);
+        *new_count = 0;
+        return NULL;
+    }
+
+    *new_count = count;
+    return final_result;
+}
+
+void free_words(char **words, int count) {
+    if (words == NULL) {
+        return;
+    }
+    for (int i = 0; i < count; i++) {
+        free(words[i]);
+    }
+    free(words);
+}
+
+int main(void) {
+    char *words[] = {
+        "Red",
+        "",
+        "Green",
+        "Orange",
+        "White"
+    };
+    int word_count = (int)(sizeof(words) / sizeof(words[0]));
+    int new_count = 0;
+
+    char **filtered = remove_words(words, word_count, "a", &new_count);
+
+    if (filtered != NULL) {
+        printf("Filtered words (%d):\n", new_count);
+        for (int i = 0; i < new_count; i++) {
+            printf("%s\n", filtered[i]);
+        }
+        free_words(filtered, new_count);
+    } else {
+        printf("No words remained after filtering.\n");
+    }
+
+    return 0;
+}

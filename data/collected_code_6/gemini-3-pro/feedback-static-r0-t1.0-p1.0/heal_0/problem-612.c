@@ -1,0 +1,139 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node* next;
+} Node;
+
+typedef struct List {
+    Node* head;
+    struct List* next;
+} List;
+
+Node* createNode(int data) {
+    Node* newNode = (Node*)malloc(sizeof(Node));
+    if (!newNode) exit(EXIT_FAILURE);
+    newNode->data = data;
+    newNode->next = NULL;
+    return newNode;
+}
+
+List* createList(Node* head) {
+    List* newList = (List*)malloc(sizeof(List));
+    if (!newList) exit(EXIT_FAILURE);
+    newList->head = head;
+    newList->next = NULL;
+    return newList;
+}
+
+void appendNode(Node** head, int data) {
+    if (!head) return;
+    Node* newNode = createNode(data);
+    if (!*head) {
+        *head = newNode;
+        return;
+    }
+    Node* current = *head;
+    while (current->next) {
+        current = current->next;
+    }
+    current->next = newNode;
+}
+
+void appendList(List** head, Node* listHead) {
+    if (!head || !listHead) return;
+    List* newList = createList(listHead);
+    if (!*head) {
+        *head = newList;
+        return;
+    }
+    List* current = *head;
+    while (current->next) {
+        current = current->next;
+    }
+    current->next = newList;
+}
+
+void mergeFirstAndLast(List* listOfLists, Node** mergedFirst, Node** mergedLast) {
+    if (!listOfLists || !mergedFirst || !mergedLast) return;
+
+    *mergedFirst = NULL;
+    *mergedLast = NULL;
+
+    List* currentList = listOfLists;
+
+    while (currentList) {
+        Node* head = currentList->head;
+        if (head) {
+            appendNode(mergedFirst, head->data);
+            Node* tail = head;
+            while (tail->next) {
+                tail = tail->next;
+            }
+            appendNode(mergedLast, tail->data);
+        }
+        currentList = currentList->next;
+    }
+}
+
+void freeNodeList(Node* head) {
+    while (head) {
+        Node* temp = head;
+        head = head->next;
+        free(temp);
+    }
+}
+
+void freeListOfLists(List* head) {
+    while (head) {
+        List* temp = head;
+        head = head->next;
+        freeNodeList(temp->head);
+        free(temp);
+    }
+}
+
+void printNodeList(Node* head) {
+    while (head) {
+        printf("%d ", head->data);
+        head = head->next;
+    }
+    printf("\n");
+}
+
+int main(void) {
+    List* listOfLists = NULL;
+
+    Node* list1 = NULL;
+    appendNode(&list1, 1);
+    appendNode(&list1, 2);
+    appendNode(&list1, 3);
+
+    Node* list2 = NULL;
+    appendNode(&list2, 4);
+    appendNode(&list2, 5);
+    appendNode(&list2, 6);
+
+    Node* list3 = NULL;
+    appendNode(&list3, 7);
+    appendNode(&list3, 8);
+
+    appendList(&listOfLists, list1);
+    appendList(&listOfLists, list2);
+    appendList(&listOfLists, list3);
+
+    Node* mergedFirst = NULL;
+    Node* mergedLast = NULL;
+
+    mergeFirstAndLast(listOfLists, &mergedFirst, &mergedLast);
+
+    printNodeList(mergedFirst);
+    printNodeList(mergedLast);
+
+    freeListOfLists(listOfLists);
+    freeNodeList(mergedFirst);
+    freeNodeList(mergedLast);
+
+    return 0;
+}

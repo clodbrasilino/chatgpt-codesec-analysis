@@ -1,0 +1,36 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int get_element_after_rotations(const int *arr, size_t n, size_t rotations, size_t target_index, int *result);
+
+int get_element_after_rotations(const int *arr, size_t n, size_t rotations, size_t target_index, int *result) {
+    if (arr == NULL || result == NULL || n == 0 || target_index >= n) {
+        return -1;
+    }
+
+    size_t effective_rotations = rotations % n;
+    size_t original_index = (n + target_index - effective_rotations) % n;
+    
+    *result = arr[original_index];
+    
+    return 0;
+}
+
+int main(void) {
+    int arr[] = {1, 2, 3, 4, 5};
+    size_t n = sizeof(arr) / sizeof(arr[0]);
+    size_t rotations = 2;
+    size_t target_index = 1;
+    int result = 0;
+
+    if (get_element_after_rotations(arr, n, rotations, target_index, &result) == 0) {
+        printf("%d\n", result);
+    } else {
+        fprintf(stderr, "Invalid input parameters or out of bounds.\n");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```

@@ -1,0 +1,112 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <float.h>
+
+void findMaxAveragePath(int **matrix, int n, int *path, int *pathLength, double *maxAverage) {
+    int totalCells = n * n;
+    int *dp = (int *)malloc(totalCells * sizeof(int));
+    int *parent = (int *)malloc(totalCells * sizeof(int));
+    double *avg = (double *)malloc(totalCells * sizeof(double));
+    int *tempPath = (int *)malloc(totalCells * sizeof(int));
+    
+    if (!dp || !parent || !avg || !tempPath) {
+        free(dp);
+        free(parent);
+        free(avg);
+        free(tempPath);
+        *pathLength = 0;
+        *maxAverage = 0.0;
+        return;
+    }
+    
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            int idx = i * n + j;
+            dp[idx] = matrix[i][j];
+            parent[idx] = -1;
+            avg[idx] = (double)matrix[i][j];
+            
+            if (i > 0) {
+                int upIdx = (i - 1) * n + j;
+                double newAvg = (avg[upIdx] * (i) + matrix[i][j]) / (i + 1);
+                if (newAvg > avg[idx]) {
+                    avg[idx] = newAvg;
+                    dp[idx] = dp[upIdx] + matrix[i][j];
+                    parent[idx] = upIdx;
+                }
+            }
+            
+            if (j > 0) {
+                int leftIdx = i * n + (j - 1);
+                double newAvg = (avg[leftIdx] * (j) + matrix[i][j]) / (j + 1);
+                if (newAvg > avg[idx]) {
+                    avg[idx] = newAvg;
+                    dp[idx] = dp[leftIdx] + matrix[i][j];
+                    parent[idx] = leftIdx;
+                }
+            }
+        }
+    }
+    
+    int endIdx = totalCells - 1;
+    *maxAverage = avg[endIdx];
+    
+    int count = 0;
+    int current = endIdx;
+    while (current != -1) {
+        tempPath[count++] = current;
+        current = parent[current];
+    }
+    
+    *pathLength = count;
+    for (int i = 0; i < count; i++) {
+        path[i] = tempPath[count - 1 - i];
+    }
+    
+    free(dp);
+    free(parent);
+    free(avg);
+    free(tempPath);
+}
+
+int main() {
+    int n = 3;
+    int **matrix = (int **)malloc(n * sizeof(int *));
+    for (int i = 0; i < n; i++) {
+        matrix[i] = (int *)malloc(n * sizeof(int));
+    }
+    
+    int data[3][3] = {
+        {1, 2, 3},
+        {4, 5, 6},
+        {7, 8, 9}
+    };
+    
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            matrix[i][j] = data[i][j];
+        }
+    }
+    
+    int *path = (int *)malloc(n * n * sizeof(int));
+    int pathLength = 0;
+    double maxAverage = 0.0;
+    
+    findMaxAveragePath(matrix, n, path, &pathLength, &maxAverage);
+    
+    printf("Maximum average: %.2f\n", maxAverage);
+    printf("Path length: %d\n", pathLength);
+    printf("Path: ");
+    for (int i = 0; i < pathLength; i++) {
+        printf("%d ", path[i]);
+    }
+    printf("\n");
+    
+    free(path);
+    for (int i = 0; i < n; i++) {
+        free(matrix[i]);
+    }
+    free(matrix);
+    
+    return 0;
+}

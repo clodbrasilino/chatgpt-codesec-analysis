@@ -1,0 +1,102 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    int id;
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char name[50];
+    double value;
+} Tuple;
+
+int compare_tuples(const void *a, const void *b) {
+    double val_a = ((const Tuple *)a)->value;
+    double val_b = ((const Tuple *)b)->value;
+    if (val_a < val_b) return -1;
+    if (val_a > val_b) return 1;
+    return 0;
+}
+
+Tuple *find_min_k_tuples(Tuple *tuples, size_t tuple_count, size_t k, size_t *out_count) {
+    if (out_count == NULL) {
+        return NULL;
+    }
+    
+    /* Possible weaknesses found:
+     *  Assuming that condition 'tuple_count==0' is not redundant
+     */
+    if (tuples == NULL || tuple_count == 0) {
+        *out_count = 0;
+        return NULL;
+    }
+    
+    size_t actual_k = k < tuple_count ? k : tuple_count;
+    
+    Tuple *sorted = (Tuple *)malloc(tuple_count * sizeof(Tuple));
+    /* Possible weaknesses found:
+     *  Assuming condition is false
+     */
+    if (sorted == NULL) {
+        *out_count = 0;
+        return NULL;
+    }
+    
+    /* Possible weaknesses found:
+     *  Condition 'tuple_count>0' is always true [knownConditionTrueFalse]
+     *  Condition 'tuple_count>0' is always true
+     */
+    if (tuple_count > 0) {
+        /* Possible weaknesses found:
+         * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+         */
+        memcpy(sorted, tuples, tuple_count * sizeof(Tuple));
+    }
+    
+    qsort(sorted, tuple_count, sizeof(Tuple), compare_tuples);
+    
+    Tuple *result = (Tuple *)malloc(actual_k * sizeof(Tuple));
+    if (result == NULL) {
+        free(sorted);
+        *out_count = 0;
+        return NULL;
+    }
+    
+    if (actual_k > 0) {
+        /* Possible weaknesses found:
+         * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+         */
+        memcpy(result, sorted, actual_k * sizeof(Tuple));
+    }
+    
+    free(sorted);
+    
+    *out_count = actual_k;
+    return result;
+}
+
+int main() {
+    Tuple tuples[] = {
+        {1, "alpha", 9.8},
+        {2, "beta", 3.14},
+        {3, "gamma", 8.1},
+        {4, "delta", 1.61},
+        {5, "epsilon", 5.5}
+    };
+    
+    size_t tuple_count = sizeof(tuples) / sizeof(tuples[0]);
+    size_t k = 3;
+    size_t out_count = 0;
+    
+    Tuple *min_k = find_min_k_tuples(tuples, tuple_count, k, &out_count);
+    
+    if (min_k != NULL) {
+        for (size_t i = 0; i < out_count; ++i) {
+            printf("ID: %d, Name: %s, Value: %.2f\n", min_k[i].id, min_k[i].name, min_k[i].value);
+        }
+        free(min_k);
+    }
+    
+    return 0;
+}

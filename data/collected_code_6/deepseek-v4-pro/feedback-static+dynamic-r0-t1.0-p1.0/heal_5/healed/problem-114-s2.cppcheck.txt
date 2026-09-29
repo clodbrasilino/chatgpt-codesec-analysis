@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-114-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-114-s2.c:48:28: style: The comparison 'alloc_size <= dst_capacity' is always true because 'alloc_size' and 'dst_capacity' represent the same value. [knownConditionTrueFalse]
+            if (alloc_size <= dst_capacity) {
+                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-114-s2.c:47:35: note: 'dst_capacity' is assigned value 'alloc_size' here.
+            size_t dst_capacity = alloc_size;
+                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-114-s2.c:48:28: note: The comparison 'alloc_size <= dst_capacity' is always true because 'alloc_size' and 'dst_capacity' represent the same value.
+            if (alloc_size <= dst_capacity) {
+                           ^

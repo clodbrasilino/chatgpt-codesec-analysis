@@ -1,0 +1,22 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+bool checkTriangle(int angle1, int angle2, int angle3) {
+    return (angle1 + angle2 + angle3 == 180) && 
+           angle1 > 0 && angle2 > 0 && angle3 > 0;
+}
+
+int main() {
+    int angle1, angle2, angle3;
+
+    printf("Enter the three angles of the triangle :\n");
+    scanf("%d %d %d", &angle1, &angle2, &angle3);
+
+    if (checkTriangle(angle1, angle2, angle3)) {
+        printf("A triangle with positive area is possible\n");
+    } else {
+        printf("A triangle with positive area is not possible\n");
+    }
+
+    return 0;
+}

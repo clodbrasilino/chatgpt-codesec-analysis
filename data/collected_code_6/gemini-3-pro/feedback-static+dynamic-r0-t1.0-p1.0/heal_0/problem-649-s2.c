@@ -1,0 +1,44 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+long long calculate_sum_in_range(const int *array, size_t size, size_t start_index, size_t end_index, int *error) {
+    if (array == NULL || error == NULL) {
+        if (error != NULL) {
+            *error = 1;
+        }
+        return 0;
+    }
+
+    if (start_index >= size || end_index >= size || start_index > end_index) {
+        *error = 1;
+        return 0;
+    }
+
+    *error = 0;
+    long long sum = 0;
+    
+    for (size_t i = start_index; i <= end_index; ++i) {
+        sum += array[i];
+    }
+    
+    return sum;
+}
+
+int main(void) {
+    int numbers[] = {10, 20, 30, 40, 50, 60, 70, 80, 90, 100};
+    size_t size = sizeof(numbers) / sizeof(numbers[0]);
+    
+    size_t start_index = 2;
+    size_t end_index = 5;
+    int error = 0;
+    
+    long long sum = calculate_sum_in_range(numbers, size, start_index, end_index, &error);
+    
+    if (error == 0) {
+        printf("Sum: %lld\n", sum);
+    } else {
+        printf("Error calculating sum. Invalid range or null pointer.\n");
+    }
+    
+    return 0;
+}

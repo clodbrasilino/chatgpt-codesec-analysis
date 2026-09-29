@@ -1,0 +1,16 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-897.c: In function 'grow_buffer':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-897.c:54:58: error: 'INT_MAX' undeclared (first use in this function)
+   54 |     if (new_capacity <= length || new_capacity > (size_t)INT_MAX) {
+      |                                                          ^~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-897.c:7:1: note: 'INT_MAX' is defined in header '<limits.h>'; this is probably fixable by adding '#include <limits.h>'
+    6 | #include <string.h>
+  +++ |+#include <limits.h>
+    7 | 
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-897.c:54:58: note: each undeclared identifier is reported only once for each function it appears in
+   54 |     if (new_capacity <= length || new_capacity > (size_t)INT_MAX) {
+      |                                                          ^~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-897.c: In function 'read_line':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-897.c:103:33: error: 'INT_MAX' undeclared (first use in this function)
+  103 |         if (available > (size_t)INT_MAX) {
+      |                                 ^~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-897.c:103:33: note: 'INT_MAX' is defined in header '<limits.h>'; this is probably fixable by adding '#include <limits.h>'

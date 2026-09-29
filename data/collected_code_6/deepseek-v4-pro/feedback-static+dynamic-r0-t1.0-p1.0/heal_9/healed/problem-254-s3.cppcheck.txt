@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-254-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-254-s3.c:43:42: style: Condition 'copy_len>0' is always true [knownConditionTrueFalse]
+                            if (copy_len > 0) {
+                                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-254-s3.c:35:30: note: Assuming that condition 'word_len>0' is not redundant
+                if (word_len > 0 && word_len < MAX_WORD_LEN) {
+                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-254-s3.c:38:43: note: Assignment 'copy_len=word_len', assigned value is greater than 0
+                        size_t copy_len = word_len;
+                                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-254-s3.c:43:42: note: Condition 'copy_len>0' is always true
+                            if (copy_len > 0) {
+                                         ^

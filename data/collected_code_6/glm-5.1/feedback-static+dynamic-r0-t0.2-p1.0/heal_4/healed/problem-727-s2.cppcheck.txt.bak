@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_4/healed/problem-727-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_4/healed/problem-727-s2.c:116:21: style: Condition 'result4!=NULL' is always false [knownConditionTrueFalse]
+        if (result4 != NULL) {
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_4/healed/problem-727-s2.c:115:41: note: Calling function 'remove_non_alnum' returns 0
+        char *result4 = remove_non_alnum(NULL);
+                                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_4/healed/problem-727-s2.c:115:41: note: Assignment 'result4=remove_non_alnum(NULL)', assigned value is 0
+        char *result4 = remove_non_alnum(NULL);
+                                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_4/healed/problem-727-s2.c:116:21: note: Condition 'result4!=NULL' is always false
+        if (result4 != NULL) {
+                    ^

@@ -1,1 +1,0 @@
-if (strings == NULL || count == 0U || count >= (SIZE_MAX - 1U))

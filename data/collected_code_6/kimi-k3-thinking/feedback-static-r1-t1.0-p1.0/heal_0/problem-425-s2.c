@@ -1,0 +1,93 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *data;
+    size_t size;
+} Sublist;
+
+typedef struct {
+    Sublist *sublists;
+    size_t count;
+} ListOfLists;
+
+size_t count_sublists_containing(const ListOfLists *list, int target)
+{
+    size_t count;
+    size_t i;
+    size_t j;
+
+    count = 0;
+
+    if (list == NULL || list->sublists == NULL) {
+        return 0;
+    }
+
+    for (i = 0; i < list->count; i++) {
+        if (list->sublists[i].data == NULL) {
+            continue;
+        }
+        for (j = 0; j < list->sublists[i].size; j++) {
+            if (list->sublists[i].data[j] == target) {
+                count++;
+                break;
+            }
+        }
+    }
+
+    return count;
+}
+
+int main(void)
+{
+    ListOfLists list;
+    size_t num_sublists;
+    size_t sublist_size;
+    size_t i;
+    size_t j;
+    size_t k;
+    int target;
+    size_t result;
+    int values[3][3] = {{1, 2, 3}, {4, 5, 6}, {7, 5, 9}};
+
+    num_sublists = 3;
+    sublist_size = 3;
+    target = 5;
+
+    list.sublists = malloc(num_sublists * sizeof(*list.sublists));
+    if (list.sublists == NULL) {
+        fprintf(stderr, "Error: failed to allocate memory for sublists\n");
+        return EXIT_FAILURE;
+    }
+    list.count = num_sublists;
+
+    for (i = 0; i < num_sublists; i++) {
+        list.sublists[i].data = malloc(sublist_size * sizeof(*list.sublists[i].data));
+        if (list.sublists[i].data == NULL) {
+            fprintf(stderr, "Error: failed to allocate memory for sublist %zu\n", i);
+            for (k = 0; k < i; k++) {
+                free(list.sublists[k].data);
+                list.sublists[k].data = NULL;
+            }
+            free(list.sublists);
+            list.sublists = NULL;
+            return EXIT_FAILURE;
+        }
+        list.sublists[i].size = sublist_size;
+        for (j = 0; j < sublist_size; j++) {
+            list.sublists[i].data[j] = values[i][j];
+        }
+    }
+
+    result = count_sublists_containing(&list, target);
+    printf("Number of sublists containing %d: %zu\n", target, result);
+
+    for (i = 0; i < list.count; i++) {
+        free(list.sublists[i].data);
+        list.sublists[i].data = NULL;
+    }
+    free(list.sublists);
+    list.sublists = NULL;
+
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,22 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_9/healed/problem-679-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_9/healed/problem-679-s2.c:92:20: style: Condition 'alloc_size<=key_len' is always false [knownConditionTrueFalse]
+    if (alloc_size <= key_len) {
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_9/healed/problem-679-s2.c:91:23: note: alloc_size is assigned 'key_len+1' here.
+    size_t alloc_size = key_len + 1;
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_9/healed/problem-679-s2.c:92:20: note: Condition 'alloc_size<=key_len' is always false
+    if (alloc_size <= key_len) {
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_9/healed/problem-679-s2.c:103:17: style: Condition 'key_len>=alloc_size' is always false [knownConditionTrueFalse]
+    if (key_len >= alloc_size) {
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_9/healed/problem-679-s2.c:91:23: note: alloc_size is assigned 'key_len+1' here.
+    size_t alloc_size = key_len + 1;
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_9/healed/problem-679-s2.c:98:23: note: Assuming condition is false
+    if (new_pair->key == NULL) {
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_9/healed/problem-679-s2.c:103:17: note: Condition 'key_len>=alloc_size' is always false
+    if (key_len >= alloc_size) {
+                ^

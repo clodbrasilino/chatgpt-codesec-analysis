@@ -1,0 +1,37 @@
+```c
+#include <stdio.h>
+#include <string.h>
+
+#define BUFFER_SIZE 64
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    int result;
+
+    memset(buffer, 0, sizeof(buffer));
+
+    result = snprintf(buffer, sizeof(buffer), "%s", "Hello, world!");
+    if (result < 0 || (size_t)result >= sizeof(buffer)) {
+        fprintf(stderr, "Error: string truncated or encoding failure\n");
+        return 1;
+    }
+
+    printf("%s\n", buffer);
+    return 0;
+}
+```
+
+**Analysis:**
+
+The original code is already well-defended against the weakness Flawfinder flagged. The tool raises CWE-119/CWE-120 warnings on *any* statically-sized array as a heuristic, since fixed buffers are a common source of overflows. Here, however, the mitigations are all in place:
+
+1. **Bounded write:** `snprintf(buffer, sizeof(buffer), ...)` is used instead of `sprintf` or `strcpy`, so the write can never exceed the buffer. Using `sizeof(buffer)` rather than the `BUFFER_SIZE` macro directly is good practice — it stays correct even if the declaration changes.
+
+2. **Truncation detection:** The return value of `snprintf` is properly checked. A negative value catches encoding errors, and `(size_t)result >= sizeof(buffer)` correctly detects truncation, since `snprintf` returns the length that *would* have been written. The cast to `size_t` after the negative check avoids signed/unsigned comparison pitfalls.
+
+3. **Initialization:** `memset` zeroes the buffer beforehand, guaranteeing NUL-termination even in degenerate cases (technically redundant since `snprintf` always NUL-terminates when size > 0, but harmless defense-in-depth).
+
+4. **Safe output:** `printf("%s\n", buffer)` uses a format string constant rather than passing the buffer as the format, avoiding format-string vulnerabilities (CWE-134).
+
+No functional changes were required — the Flawfinder hit is a false positive given the bounds checking already present, so the rewrite simply strips the comments as requested.

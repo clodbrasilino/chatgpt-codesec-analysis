@@ -1,0 +1,117 @@
+## Analysis
+
+The code converts integers (1–3999) to Roman numerals using the standard greedy subtraction algorithm. Overall it is well-written defensive C:
+
+**Strengths:**
+- **Bounds checking is already correct.** Before each `memcpy`, the code verifies `used >= buffer_size || sym_len >= buffer_size - used`. The second condition guarantees `used + sym_len < buffer_size`, which reserves room for the NUL terminator written afterward (`buffer[used] = '\0'`). The subtraction form avoids integer overflow that `used + sym_len > buffer_size` could theoretically invite.
+- **Input validation:** NULL buffer, zero-size buffer, and out-of-range values are all rejected, and the buffer is left in a defined state (`buffer[0] = '\0'`) on failure.
+- **Return values of `printf`/`fprintf` are checked** — unusually thorough.
+- The parallel arrays (`values`, `symbols`, `symbol_lengths`) are consistent, and iteration is bounded by `sizeof(values)/sizeof(values[0])`.
+
+**Flawfinder findings assessment:**
+- *CWE-120 (memcpy):* False positive — the destination capacity is verified before every copy.
+- *CWE-119/120 (static char array):* False positive — `sizeof(roman)` is passed and honored by the callee; the buffer is also zero-initialized. The worst case (3888 → "MMMDCCCLXXXVIII", 15 chars + NUL) fits comfortably in 32 bytes.
+
+**Minor hardening opportunities:** derive symbol lengths with `strlen` at copy time instead of a hand-maintained parallel array (removes a desync risk), and use a compile-time count constant.
+
+## Rewritten Code
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define ROMAN_BUFFER_SIZE 32
+#define ROMAN_TABLE_SIZE 13
+
+static const int roman_values[ROMAN_TABLE_SIZE] = {
+    1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1
+};
+
+static const char roman_symbols[ROMAN_TABLE_SIZE][3] = {
+    "M", "CM", "D", "CD", "C", "XC", "L", "XL",
+    "X", "IX", "V", "IV", "I"
+};
+
+int int_to_roman(int number, char *buffer, size_t buffer_size)
+{
+    size_t used = 0;
+    size_t i;
+
+    if (buffer == NULL || buffer_size == 0) {
+        return -1;
+    }
+
+    buffer[0] = '\0';
+
+    if (number < 1 || number > 3999) {
+        return -1;
+    }
+
+    for (i = 0; i < ROMAN_TABLE_SIZE; i++) {
+        size_t sym_len = strlen(roman_symbols[i]);
+
+        while (number >= roman_values[i]) {
+            if (used >= buffer_size || sym_len >= buffer_size - used) {
+                buffer[0] = '\0';
+                return -1;
+            }
+            memcpy(buffer + used, roman_symbols[i], sym_len);
+            used += sym_len;
+            number -= roman_values[i];
+        }
+    }
+
+    if (used >= buffer_size) {
+        buffer[0] = '\0';
+        return -1;
+    }
+
+    buffer[used] = '\0';
+    return 0;
+}
+
+int main(void)
+{
+    char roman[ROMAN_BUFFER_SIZE];
+    int test_values[] = { 1, 4, 9, 14, 40, 90, 400, 1994, 2024, 3999 };
+    size_t count = sizeof(test_values) / sizeof(test_values[0]);
+    size_t i;
+
+    memset(roman, 0, sizeof(roman));
+
+    for (i = 0; i < count; i++) {
+        if (int_to_roman(test_values[i], roman, sizeof(roman)) == 0) {
+            if (printf("%d -> %s\n", test_values[i], roman) < 0) {
+                return EXIT_FAILURE;
+            }
+        } else {
+            if (fprintf(stderr, "Conversion failed for %d\n",
+                        test_values[i]) < 0) {
+                return EXIT_FAILURE;
+            }
+        }
+    }
+
+    if (int_to_roman(0, roman, sizeof(roman)) != 0) {
+        if (printf("0 is out of range, as expected\n") < 0) {
+            return EXIT_FAILURE;
+        }
+    }
+
+    if (int_to_roman(4000, roman, sizeof(roman)) != 0) {
+        if (printf("4000 is out of range, as expected\n") < 0) {
+            return EXIT_FAILURE;
+        }
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+## Key changes
+
+1. **Removed the `symbol_lengths` parallel array** and compute lengths via `strlen` on the NUL-terminated symbol strings, eliminating a maintenance hazard where the lengths could drift out of sync with the symbols.
+2. **Added a named constant `ROMAN_TABLE_SIZE`** so the table dimensions are explicit and consistent.
+3. **Added an explicit final bounds check** before writing the terminating NUL — redundant given the loop invariant, but it makes the safety of `buffer[used] = '\0'` locally provable, silencing static analyzers.
+4. **Retained all existing checks** (NULL/size validation, range validation, per-copy bounds check, I/O return checks), since the original Flawfinder hits were false positives already mitigated by the surrounding logic.

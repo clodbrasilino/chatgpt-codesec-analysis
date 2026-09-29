@@ -1,0 +1,153 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+typedef struct Node {
+    int data;
+    struct Node* next;
+} Node;
+
+typedef struct {
+    Node* head;
+} List;
+
+bool contains(List* list, int value) {
+    Node* current = list->head;
+    while (current != NULL) {
+        if (current->data == value) {
+            return true;
+        }
+        current = current->next;
+    }
+    return false;
+}
+
+void add_unique(List* list, int value) {
+    if (!contains(list, value)) {
+        Node* new_node = (Node*)malloc(sizeof(Node));
+        if (new_node == NULL) {
+            exit(EXIT_FAILURE);
+        }
+        new_node->data = value;
+        new_node->next = list->head;
+        list->head = new_node;
+    }
+}
+
+List* find_common_elements(List** lists, int num_lists) {
+    List* result = (List*)malloc(sizeof(List));
+    if (result == NULL) {
+        exit(EXIT_FAILURE);
+    }
+    result->head = NULL;
+
+    if (num_lists <= 0 || lists == NULL) {
+        return result;
+    }
+
+    Node* current = lists[0]->head;
+    while (current != NULL) {
+        bool common = true;
+        for (int i = 1; i < num_lists; i++) {
+            if (!contains(lists[i], current->data)) {
+                common = false;
+                break;
+            }
+        }
+        if (common) {
+            add_unique(result, current->data);
+        }
+        current = current->next;
+    }
+
+    return result;
+}
+
+void list_push_back(List* list, int value) {
+    Node* new_node = (Node*)malloc(sizeof(Node));
+    if (new_node == NULL) {
+        exit(EXIT_FAILURE);
+    }
+    new_node->data = value;
+    new_node->next = NULL;
+
+    if (list->head == NULL) {
+        list->head = new_node;
+    } else {
+        Node* current = list->head;
+        while (current->next != NULL) {
+            current = current->next;
+        }
+        current->next = new_node;
+    }
+}
+
+List* create_list() {
+    List* list = (List*)malloc(sizeof(List));
+    if (list == NULL) {
+        exit(EXIT_FAILURE);
+    }
+    list->head = NULL;
+    return list;
+}
+
+void free_list(List* list) {
+    Node* current = list->head;
+    while (current != NULL) {
+        Node* temp = current;
+        current = current->next;
+        free(temp);
+    }
+    free(list);
+}
+
+void print_list(List* list) {
+    Node* current = list->head;
+    printf("[");
+    while (current != NULL) {
+        printf("%d", current->data);
+        if (current->next != NULL) {
+            printf(", ");
+        }
+        current = current->next;
+    }
+    printf("]\n");
+}
+
+int main() {
+    List* list1 = create_list();
+    list_push_back(list1, 1);
+    list_push_back(list1, 2);
+    list_push_back(list1, 3);
+    list_push_back(list1, 4);
+    list_push_back(list1, 5);
+
+    List* list2 = create_list();
+    list_push_back(list2, 3);
+    list_push_back(list2, 4);
+    list_push_back(list2, 5);
+    list_push_back(list2, 6);
+    list_push_back(list2, 7);
+
+    List* list3 = create_list();
+    list_push_back(list3, 5);
+    list_push_back(list3, 6);
+    list_push_back(list3, 7);
+    list_push_back(list3, 8);
+    list_push_back(list3, 9);
+
+    List* lists[] = {list1, list2, list3};
+    List* common = find_common_elements(lists, 3);
+    
+    printf("Common elements: ");
+    print_list(common);
+
+    free_list(common);
+    free_list(list3);
+    free_list(list2);
+    free_list(list1);
+
+    return 0;
+}
+```

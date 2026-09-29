@@ -1,0 +1,99 @@
+collected_code/heal_round_3/healed/problem-833.c: In function 'main':
+collected_code/heal_round_3/healed/problem-833.c:47:25: warning: use of uninitialized value '*keys_53 + _11' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   47 |                 if (keys[i] != NULL) {
+      |                     ~~~~^~~
+  'main': events 1-4
+    |
+    |   26 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   30 |     if (dictionary != NULL)
+    |      |        ~
+    |      |        |
+    |      |        (2) following 'true' branch (when 'dictionary' is non-NULL)...
+    |   31 |     {
+    |   32 |         dictionary[0].key = strdup("apple");
+    |      |                             ~~~~~~~~~~~~~~~
+    |      |                             |
+    |      |                             (3) ...to here
+    |......
+    |   42 |         char** keys = getDictionaryKeys(dictionary, size);
+    |      |                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                       |
+    |      |                       (4) calling 'getDictionaryKeys' from 'main'
+    |
+    +--> 'getDictionaryKeys': events 5-24
+           |
+           |   10 | char** getDictionaryKeys(Dictionary* dictionary, int size) {
+           |      |        ^~~~~~~~~~~~~~~~~
+           |      |        |
+           |      |        (5) entry to 'getDictionaryKeys'
+           |   11 |     if (dictionary == NULL)
+           |      |        ~
+           |      |        |
+           |      |        (6) following 'false' branch (when 'dictionary' is non-NULL)...
+           |......
+           |   14 |     char** keys = (char**) malloc(size * sizeof(char*));
+           |      |                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                            |
+           |      |                            (7) ...to here
+           |      |                            (8) region created on heap here
+           |   15 |     if (keys == NULL)
+           |      |        ~
+           |      |        |
+           |      |        (9) following 'false' branch (when 'keys' is non-NULL)...
+           |......
+           |   18 |     for (int i = 0; i < size; i++) {
+           |      |              ~      ~~~~~~~~  ~~~
+           |      |              |        |        |
+           |      |              |        |        (14) ...to here
+           |      |              |        |        (18) ...to here
+           |      |              |        |        (22) ...to here
+           |      |              |        (11) following 'true' branch (when 'i < size')...
+           |      |              |        (15) following 'true' branch (when 'i < size')...
+           |      |              |        (19) following 'true' branch (when 'i < size')...
+           |      |              |        (23) following 'false' branch (when 'i >= size')...
+           |      |              (10) ...to here
+           |   19 |         if (dictionary[i].key != NULL) {
+           |      |            ~          ~
+           |      |            |          |
+           |      |            |          (12) ...to here
+           |      |            |          (16) ...to here
+           |      |            |          (20) ...to here
+           |      |            (13) following 'false' branch...
+           |      |            (17) following 'false' branch...
+           |      |            (21) following 'false' branch...
+           |......
+           |   23 |     return keys;
+           |      |            ~~~~
+           |      |            |
+           |      |            (24) ...to here
+           |
+    <------+
+    |
+  'main': events 25-30
+    |
+    |   42 |         char** keys = getDictionaryKeys(dictionary, size);
+    |      |                       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                       |
+    |      |                       (25) returning to 'main' from 'getDictionaryKeys'
+    |   43 | 
+    |   44 |         if (keys != NULL)
+    |      |            ~           
+    |      |            |
+    |      |            (26) following 'true' branch (when 'keys' is non-NULL)...
+    |   45 |         {
+    |   46 |             for (int i = 0; i < size; i++) {
+    |      |                      ~      ~~~~~~~~
+    |      |                      |        |
+    |      |                      |        (28) following 'true' branch (when 'i < size')...
+    |      |                      (27) ...to here
+    |   47 |                 if (keys[i] != NULL) {
+    |      |                     ~~~~~~~
+    |      |                         |
+    |      |                         (29) ...to here
+    |      |                         (30) use of uninitialized value '*keys_53 + _11' here
+    |
+-macosx_version_min has been renamed to -macos_version_min

@@ -1,0 +1,68 @@
+{
+  "task_id": 808,
+  "text": "Write a C function to check if the given tuples contain the k or not.",
+  "fn_candidates": [
+    "check_K",
+    "CheckK",
+    "checkK",
+    "checkK"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "check_K",
+      "args": [
+        [
+          10,
+          4,
+          5,
+          6,
+          8
+        ],
+        6
+      ],
+      "expected": true,
+      "assert_src": "assert check_K((10, 4, 5, 6, 8), 6) == True"
+    },
+    {
+      "fn_name": "check_K",
+      "args": [
+        [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ],
+        7
+      ],
+      "expected": false,
+      "assert_src": "assert check_K((1, 2, 3, 4, 5, 6), 7) == False"
+    },
+    {
+      "fn_name": "check_K",
+      "args": [
+        [
+          7,
+          8,
+          9,
+          44,
+          11,
+          12
+        ],
+        11
+      ],
+      "expected": true,
+      "assert_src": "assert check_K((7, 8, 9, 44, 11, 12), 11) == True"
+    }
+  ],
+  "arg_kinds": [
+    "int",
+    "int-list"
+  ],
+  "return_kind": "bool",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

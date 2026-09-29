@@ -1,0 +1,77 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+#define MAX_LEN 4096
+
+int min_swaps(const char *s1, const char *s2)
+{
+    size_t len1;
+    size_t len2;
+    size_t i;
+    int diff10 = 0;
+    int diff01 = 0;
+
+    if (s1 == NULL || s2 == NULL) {
+        return -1;
+    }
+
+    len1 = strnlen(s1, MAX_LEN);
+    len2 = strnlen(s2, MAX_LEN);
+
+    if (len1 >= MAX_LEN || len2 >= MAX_LEN) {
+        return -1;
+    }
+
+    if (len1 != len2) {
+        return -1;
+    }
+
+    for (i = 0; i < len1; i++) {
+        if ((s1[i] != '0' && s1[i] != '1') || (s2[i] != '0' && s2[i] != '1')) {
+            return -1;
+        }
+        if (s1[i] == '1' && s2[i] == '0') {
+            diff10++;
+        } else if (s1[i] == '0' && s2[i] == '1') {
+            diff01++;
+        }
+    }
+
+    if (diff10 != diff01) {
+        return -1;
+    }
+
+    return diff10;
+}
+
+int main(void)
+{
+    const char *str1 = "1101";
+    const char *str2 = "0011";
+    int result;
+
+    result = min_swaps(str1, str2);
+
+    if (result < 0) {
+        if (printf("Not Possible\n") < 0) {
+            return EXIT_FAILURE;
+        }
+    } else {
+        if (printf("Minimum swaps required: %d\n", result) < 0) {
+            return EXIT_FAILURE;
+        }
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+Key changes made to address the identified weaknesses:
+
+1. **Test case 1 failure (`expected 'Not Possible', got -1`)**: The failure message printed by `main` was `"Conversion is not possible"`, which did not match the expected output. It now prints `"Not Possible"` when `min_swaps` returns a negative value.
+
+2. **CWE-126 (over-read via `strlen`)**: Replaced both `strlen` calls with `strnlen` bounded by `MAX_LEN`. If a string is not NUL-terminated within the bound, `strnlen` returns `MAX_LEN`, which is detected and rejected with `-1` instead of reading past the buffer.
+
+3. Retained the existing defensive checks (NULL pointers, length mismatch, non-binary characters, unbalanced diff counts), all of which correctly funnel into the `-1` error path now reported as "Not Possible".

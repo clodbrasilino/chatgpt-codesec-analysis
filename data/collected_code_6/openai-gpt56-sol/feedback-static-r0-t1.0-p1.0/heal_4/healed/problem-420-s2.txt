@@ -1,0 +1,188 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <inttypes.h>
+#include <stdint.h>
+#include <ctype.h>
+
+static int cube_sum_even(uint64_t n, uint64_t *result)
+{
+    uint64_t a;
+    uint64_t b;
+
+    if (result == NULL || n == UINT64_MAX) {
+        return -1;
+    }
+
+    a = n;
+    b = n + UINT64_C(1);
+
+    if ((a & UINT64_C(1)) == 0) {
+        a /= UINT64_C(2);
+    } else {
+        b /= UINT64_C(2);
+    }
+
+    if (a != 0 && b > UINT64_MAX / a) {
+        return -1;
+    }
+
+    a *= b;
+
+    if (a != 0 && a > UINT64_MAX / a) {
+        return -1;
+    }
+
+    a *= a;
+
+    if (a > UINT64_MAX / UINT64_C(2)) {
+        return -1;
+    }
+
+    *result = a * UINT64_C(2);
+    return 0;
+}
+
+static int discard_line(void)
+{
+    int ch;
+
+    do {
+        ch = fgetc(stdin);
+    } while (ch != '\n' && ch != EOF);
+
+    return ch;
+}
+
+static int read_uint64(uint64_t *value)
+{
+    char *input = NULL;
+    size_t capacity = 0;
+    size_t length = 0;
+    char *end;
+    uintmax_t parsed;
+    int ch;
+
+    if (value == NULL) {
+        return -1;
+    }
+
+    for (;;) {
+        ch = fgetc(stdin);
+
+        if (ch == '\n' || ch == EOF) {
+            break;
+        }
+
+        if (length == capacity) {
+            size_t new_capacity;
+            char *new_input;
+
+            if (capacity == 0) {
+                new_capacity = 64;
+            } else {
+                if (capacity > (SIZE_MAX - 1) / 2) {
+                    free(input);
+                    discard_line();
+                    return -1;
+                }
+                new_capacity = capacity * 2;
+            }
+
+            new_input = realloc(input, new_capacity);
+            if (new_input == NULL) {
+                free(input);
+                discard_line();
+                return -1;
+            }
+
+            input = new_input;
+            capacity = new_capacity;
+        }
+
+        input[length++] = (char)ch;
+    }
+
+    if (ch == EOF && ferror(stdin)) {
+        free(input);
+        return -1;
+    }
+
+    if (length == 0 && ch == EOF) {
+        free(input);
+        return -1;
+    }
+
+    if (length == capacity) {
+        char *new_input;
+
+        if (capacity == SIZE_MAX) {
+            free(input);
+            return -1;
+        }
+
+        new_input = realloc(input, capacity + 1);
+        if (new_input == NULL) {
+            free(input);
+            return -1;
+        }
+
+        input = new_input;
+        capacity++;
+    }
+
+    input[length] = '\0';
+
+    end = input;
+    while (isspace((unsigned char)*end)) {
+        ++end;
+    }
+
+    if (*end == '\0' || *end == '-' || *end == '+') {
+        free(input);
+        return -1;
+    }
+
+    errno = 0;
+    parsed = strtoumax(end, &end, 10);
+
+    if (errno == ERANGE || parsed > UINT64_MAX) {
+        free(input);
+        return -1;
+    }
+
+    while (isspace((unsigned char)*end)) {
+        ++end;
+    }
+
+    if (*end != '\0') {
+        free(input);
+        return -1;
+    }
+
+    *value = (uint64_t)parsed;
+    free(input);
+    return 0;
+}
+
+int main(void)
+{
+    uint64_t n;
+    uint64_t result;
+
+    if (read_uint64(&n) != 0) {
+        fputs("Invalid input.\n", stderr);
+        return EXIT_FAILURE;
+    }
+
+    if (cube_sum_even(n, &result) != 0) {
+        fputs("Result exceeds the supported range.\n", stderr);
+        return EXIT_FAILURE;
+    }
+
+    if (printf("%" PRIu64 "\n", result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,27 @@
+#include <stdio.h>
+#include <stdint.h>
+
+int64_t gcd(int64_t a, int64_t b) {
+    while (b != 0) {
+        int64_t t = b;
+        b = a % b;
+        a = t;
+    }
+    return a;
+}
+
+int64_t lcm(int64_t a, int64_t b) {
+    return (a / gcd(a, b)) * b;
+}
+
+int main() {
+    int64_t x, y;
+    printf("Enter two positive integers: ");
+    scanf("%lld %lld", &x, &y);
+    if (x > 0 && y > 0) {
+        printf("LCM of %lld and %lld is %lld\n", x, y, lcm(x, y));
+    } else {
+        printf("Please enter positive integers.\n");
+    }
+    return 0;
+}

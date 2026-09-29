@@ -1,0 +1,60 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+int compare_ints(const void *a, const void *b)
+{
+    int ia = *(const int *)a;
+    int ib = *(const int *)b;
+    if (ia < ib) {
+        return -1;
+    }
+    if (ia > ib) {
+        return 1;
+    }
+    return 0;
+}
+
+int min_difference(const int *arr, size_t n, int *result)
+{
+    size_t i;
+    long long min_diff;
+
+    if (arr == NULL || result == NULL || n < 2) {
+        return -1;
+    }
+
+    qsort((void *)arr, n, sizeof(int), compare_ints);
+
+    min_diff = LLONG_MAX;
+    for (i = 1; i < n; ++i) {
+        long long diff = (long long)arr[i] - (long long)arr[i - 1];
+        if (diff < min_diff) {
+            min_diff = diff;
+        }
+    }
+
+    if (min_diff > INT_MAX) {
+        return -1;
+    }
+
+    *result = (int)min_diff;
+    return 0;
+}
+
+int main(void)
+{
+    int arr[] = { 1, 19, -4, 31, 38, 25, 100 };
+    size_t n = sizeof(arr) / sizeof(arr[0]);
+    int result;
+
+    if (min_difference(arr, n, &result) == 0) {
+        printf("Minimum difference is %d\n", result);
+    } else {
+        printf("Invalid input\n");
+    }
+
+    return 0;
+}
+```

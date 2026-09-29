@@ -1,0 +1,12 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-748-s3.c: In function 'add_spaces_between_capital_words':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-748-s3.c:16:9: error: implicit declaration of function 'memmove' [-Wimplicit-function-declaration]
+   16 |         memmove(str + pmatch[0].rm_eo, str + pmatch[0].rm_so, strlen(str + pmatch[0].rm_so) + 1);
+      |         ^~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-748-s3.c:4:1: note: include '<string.h>' or provide a declaration of 'memmove'
+    3 | #include <regex.h>
+  +++ |+#include <string.h>
+    4 | 
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-748-s3.c:16:63: error: implicit declaration of function 'strlen' [-Wimplicit-function-declaration]
+   16 |         memmove(str + pmatch[0].rm_eo, str + pmatch[0].rm_so, strlen(str + pmatch[0].rm_so) + 1);
+      |                                                               ^~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-748-s3.c:16:63: note: include '<string.h>' or provide a declaration of 'strlen'

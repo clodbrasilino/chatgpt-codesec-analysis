@@ -1,0 +1,213 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+static int is_null_terminated(const char *str, size_t max_len) {
+    for (size_t i = 0; i < max_len; i++) {
+        if (str[i] == '\0') {
+            return 1;
+        }
+    }
+    return 0;
+}
+
+char **split_at_uppercase(const char *input, int *count) {
+    regex_t regex;
+    regmatch_t matches[1];
+    const char *pattern = "[A-Z]";
+    char **result = NULL;
+    int capacity = 0;
+    int start = 0;
+    int i = 0;
+    size_t len;
+    size_t safe_max = 4096;
+    
+    if (input == NULL || count == NULL) {
+        return NULL;
+    }
+    
+    if (!is_null_terminated(input, safe_max)) {
+        return NULL;
+    }
+    
+    len = strnlen(input, safe_max);
+    if (len == safe_max) {
+        return NULL;
+    }
+    
+    *count = 0;
+    
+    if (regcomp(&regex, pattern, REG_EXTENDED) != 0) {
+        return NULL;
+    }
+    
+    result = malloc(sizeof(char *));
+    if (result == NULL) {
+        regfree(&regex);
+        return NULL;
+    }
+    capacity = 1;
+    
+    while (i < (int)len) {
+        if (regexec(&regex, input + i, 1, matches, 0) == 0) {
+            int match_pos = i + matches[0].rm_so;
+            int segment_len = match_pos - start;
+            
+            /* Possible weaknesses found:
+             *  Assuming that condition 'segment_len>0' is not redundant
+             */
+            if (segment_len > 0) {
+                if (*count >= capacity) {
+                    size_t new_capacity = (size_t)capacity * 2;
+                    if (new_capacity > SIZE_MAX / sizeof(char *)) {
+                        for (int j = 0; j < *count; j++) {
+                            free(result[j]);
+                        }
+                        free(result);
+                        regfree(&regex);
+                        return NULL;
+                    }
+                    char **temp = realloc(result, new_capacity * sizeof(char *));
+                    if (temp == NULL) {
+                        for (int j = 0; j < *count; j++) {
+                            free(result[j]);
+                        }
+                        free(result);
+                        regfree(&regex);
+                        return NULL;
+                    }
+                    result = temp;
+                    capacity = (int)new_capacity;
+                }
+                
+                /* Possible weaknesses found:
+                 *  Condition 'segment_len>0' is always true
+                 *  Condition 'segment_len>0' is always true [knownConditionTrueFalse]
+                 */
+                if (segment_len > 0 && (size_t)segment_len < SIZE_MAX) {
+                    result[*count] = malloc((size_t)segment_len + 1);
+                    if (result[*count] == NULL) {
+                        for (int j = 0; j < *count; j++) {
+                            free(result[j]);
+                        }
+                        free(result);
+                        regfree(&regex);
+                        return NULL;
+                    }
+                    if ((size_t)segment_len <= len - (size_t)start) {
+                        /* Possible weaknesses found:
+                         * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+                         */
+                        memcpy(result[*count], input + start, (size_t)segment_len);
+                        result[*count][segment_len] = '\0';
+                        (*count)++;
+                    } else {
+                        free(result[*count]);
+                        for (int j = 0; j < *count; j++) {
+                            free(result[j]);
+                        }
+                        free(result);
+                        regfree(&regex);
+                        return NULL;
+                    }
+                }
+            }
+            
+            start = match_pos;
+            i = match_pos + 1;
+        } else {
+            i++;
+        }
+    }
+    
+    /* Possible weaknesses found:
+     *  Assuming that condition 'start<(int)len' is not redundant
+     */
+    if (start < (int)len) {
+        /* Possible weaknesses found:
+         *  Assignment 'segment_len=(int)len-start', assigned value is greater than 0
+         */
+        int segment_len = (int)len - start;
+        if (*count >= capacity) {
+            size_t new_capacity = (size_t)capacity * 2;
+            if (new_capacity > SIZE_MAX / sizeof(char *)) {
+                for (int j = 0; j < *count; j++) {
+                    free(result[j]);
+                }
+                free(result);
+                regfree(&regex);
+                return NULL;
+            }
+            char **temp = realloc(result, new_capacity * sizeof(char *));
+            if (temp == NULL) {
+                for (int j = 0; j < *count; j++) {
+                    free(result[j]);
+                }
+                free(result);
+                regfree(&regex);
+                return NULL;
+            }
+            result = temp;
+            /* Possible weaknesses found:
+             *  Value stored to 'capacity' is never read [deadcode.DeadStores]
+             *  Variable 'capacity' is assigned a value that is never used. [unreadVariable]
+             */
+            capacity = (int)new_capacity;
+        }
+        
+        /* Possible weaknesses found:
+         *  Condition 'segment_len>0' is always true
+         *  Condition 'segment_len>0' is always true [knownConditionTrueFalse]
+         */
+        if (segment_len > 0 && (size_t)segment_len < SIZE_MAX) {
+            result[*count] = malloc((size_t)segment_len + 1);
+            if (result[*count] == NULL) {
+                for (int j = 0; j < *count; j++) {
+                    free(result[j]);
+                }
+                free(result);
+                regfree(&regex);
+                return NULL;
+            }
+            if ((size_t)segment_len <= len - (size_t)start) {
+                /* Possible weaknesses found:
+                 * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+                 */
+                memcpy(result[*count], input + start, (size_t)segment_len);
+                result[*count][segment_len] = '\0';
+                (*count)++;
+            } else {
+                free(result[*count]);
+                for (int j = 0; j < *count; j++) {
+                    free(result[j]);
+                }
+                free(result);
+                regfree(&regex);
+                return NULL;
+            }
+        }
+    }
+    
+    regfree(&regex);
+    return result;
+}
+
+int main(void) {
+    const char *test_string = "HelloWorldThisIsATest";
+    int count = 0;
+    char **parts = split_at_uppercase(test_string, &count);
+    
+    if (parts == NULL) {
+        fprintf(stderr, "Failed to split string\n");
+        return 1;
+    }
+    
+    for (int i = 0; i < count; i++) {
+        printf("%s\n", parts[i]);
+        free(parts[i]);
+    }
+    free(parts);
+    
+    return 0;
+}

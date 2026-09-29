@@ -1,0 +1,65 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+#define MAX_WORD_LEN 64
+
+int find_p_words(const char *words[], size_t count, size_t *first, size_t *second)
+{
+    size_t found = 0;
+    size_t i;
+
+    if (words == NULL || first == NULL || second == NULL) {
+        return -1;
+    }
+
+    for (i = 0; i < count; i++) {
+        if (words[i] == NULL) {
+            continue;
+        }
+        if (words[i][0] == 'p' || words[i][0] == 'P') {
+            if (found == 0) {
+                *first = i;
+                found = 1;
+            } else {
+                *second = i;
+                return 0;
+            }
+        }
+    }
+
+    return -1;
+}
+
+int main(void)
+{
+    const char *word_list[] = {
+        "apple",
+        "python",
+        "banana",
+        "pear",
+        "orange",
+        "plum"
+    };
+    size_t count = sizeof(word_list) / sizeof(word_list[0]);
+    size_t first_index = 0;
+    size_t second_index = 0;
+    int result;
+
+    result = find_p_words(word_list, count, &first_index, &second_index);
+
+    if (result == 0) {
+        if (printf("Matched words: %s and %s\n",
+                   word_list[first_index],
+                   word_list[second_index]) < 0) {
+            return EXIT_FAILURE;
+        }
+    } else {
+        if (fprintf(stderr, "Could not find two words starting with 'p'\n") < 0) {
+            return EXIT_FAILURE;
+        }
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

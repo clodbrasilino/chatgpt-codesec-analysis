@@ -1,0 +1,61 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+static long long find_max_sum(long long n);
+
+static long long find_max_sum(long long n)
+{
+    long long *dp;
+    long long i;
+    long long candidate;
+    long long result;
+
+    if (n <= 1) {
+        return n;
+    }
+
+    dp = malloc(((size_t)n + 1U) * sizeof *dp);
+    if (dp == NULL) {
+        return -1;
+    }
+
+    dp[0] = 0;
+    dp[1] = 1;
+
+    for (i = 2; i <= n; i++) {
+        candidate = dp[i / 2] + dp[i / 3] + dp[i / 4] + dp[i / 5];
+        dp[i] = (candidate > i) ? candidate : i;
+    }
+
+    result = dp[n];
+    free(dp);
+    return result;
+}
+
+int main(void)
+{
+    long long n;
+    long long result;
+
+    printf("Enter a non-negative integer: ");
+    if (scanf("%lld", &n) != 1) {
+        fprintf(stderr, "Error: invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    if ((n < 0) || (n > 100000000LL)) {
+        fprintf(stderr, "Error: input out of supported range [0, 100000000]\n");
+        return EXIT_FAILURE;
+    }
+
+    result = find_max_sum(n);
+    if (result < 0) {
+        fprintf(stderr, "Error: memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Maximum sum: %lld\n", result);
+    return EXIT_SUCCESS;
+}
+```

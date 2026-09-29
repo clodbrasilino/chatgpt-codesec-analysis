@@ -1,0 +1,37 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    int* data;
+    size_t length;
+} Tuple;
+
+void trimTuple(Tuple* t, int k) {
+    if (k >= t->length) {
+        free(t->data);
+        t->data = NULL;
+        t->length = 0;
+    } else {
+        memmove(t->data, t->data + k, (t->length - k) * sizeof(int));
+        t->length -= k;
+    }
+}
+
+int main() {
+    Tuple tuple;
+    int array[] = {1, 2, 3, 4, 5};
+    tuple.data = array;
+    tuple.length = 5;
+
+    int k = 2;
+    trimTuple(&tuple, k);
+
+    for (size_t i = 0; i < tuple.length; i++) {
+        printf("%d ", tuple.data[i]);
+    }
+
+    return 0;
+}
+```

@@ -1,0 +1,47 @@
+{
+  "task_id": 126,
+  "text": "Write a C function to find the sum of common divisors of two given numbers.",
+  "fn_candidates": [
+    "sum",
+    "Sum",
+    "sum",
+    "sum"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "sum",
+      "args": [
+        10,
+        15
+      ],
+      "expected": 6,
+      "assert_src": "assert sum(10,15) == 6"
+    },
+    {
+      "fn_name": "sum",
+      "args": [
+        100,
+        150
+      ],
+      "expected": 93,
+      "assert_src": "assert sum(100,150) == 93"
+    },
+    {
+      "fn_name": "sum",
+      "args": [
+        4,
+        6
+      ],
+      "expected": 3,
+      "assert_src": "assert sum(4,6) == 3"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

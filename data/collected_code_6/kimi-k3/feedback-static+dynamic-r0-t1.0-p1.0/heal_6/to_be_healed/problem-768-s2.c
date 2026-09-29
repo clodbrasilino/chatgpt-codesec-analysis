@@ -1,0 +1,143 @@
+#include <stdio.h>
+#include <stdint.h>
+#include <stdbool.h>
+#include <limits.h>
+#include <errno.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define INPUT_BUFFER_SIZE 256
+
+bool has_odd_parity(uint32_t value)
+{
+    bool parity = false;
+    
+    while (value != 0U) {
+        parity = !parity;
+        value &= (value - 1U);
+    }
+    
+    return parity;
+}
+
+int main(void)
+{
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char input_buffer[INPUT_BUFFER_SIZE];
+    char *endptr = NULL;
+    unsigned long parsed_value;
+    uint32_t number;
+    
+    if (printf("Enter a non-negative integer (0 to %u): ", UINT32_MAX) < 0) {
+        fprintf(stderr, "Error: Failed to write prompt to stdout\n");
+        return EXIT_FAILURE;
+    }
+    
+    if (fflush(stdout) == EOF) {
+        fprintf(stderr, "Error: Failed to flush stdout\n");
+        return EXIT_FAILURE;
+    }
+    
+    if (fgets(input_buffer, sizeof(input_buffer), stdin) == NULL) {
+        if (feof(stdin)) {
+            fprintf(stderr, "Error: Unexpected end of input\n");
+        } else {
+            fprintf(stderr, "Error: Failed to read input from stdin\n");
+        }
+        return EXIT_FAILURE;
+    }
+    
+    input_buffer[sizeof(input_buffer) - 1] = '\0';
+    
+    size_t input_length = strnlen(input_buffer, sizeof(input_buffer));
+    
+    if (input_length == 0) {
+        fprintf(stderr, "Error: Empty input\n");
+        return EXIT_FAILURE;
+    }
+    
+    if (input_length == sizeof(input_buffer) - 1 && input_buffer[input_length - 1] != '\n') {
+        fprintf(stderr, "Error: Input too long\n");
+        return EXIT_FAILURE;
+    }
+    
+    if (input_buffer[input_length - 1] == '\n') {
+        input_buffer[input_length - 1] = '\0';
+        input_length--;
+    }
+    
+    if (input_length == 0) {
+        fprintf(stderr, "Error: Empty input\n");
+        return EXIT_FAILURE;
+    }
+    
+    errno = 0;
+    parsed_value = strtoul(input_buffer, &endptr, 10);
+    
+    if (errno == ERANGE) {
+        fprintf(stderr, "Error: Number out of range for unsigned long\n");
+        return EXIT_FAILURE;
+    }
+    
+    if (endptr == input_buffer) {
+        fprintf(stderr, "Error: No valid digits found in input\n");
+        return EXIT_FAILURE;
+    }
+    
+    if (*endptr != '\0') {
+        fprintf(stderr, "Error: Invalid characters after number\n");
+        return EXIT_FAILURE;
+    }
+    
+    if (parsed_value > UINT32_MAX) {
+        fprintf(stderr, "Error: Number exceeds maximum value (%u)\n", UINT32_MAX);
+        return EXIT_FAILURE;
+    }
+    
+    number = (uint32_t)parsed_value;
+    
+    if (printf("Number: %u\n", number) < 0) {
+        fprintf(stderr, "Error: Failed to write number to stdout\n");
+        return EXIT_FAILURE;
+    }
+    
+    if (printf("Binary representation: ") < 0) {
+        fprintf(stderr, "Error: Failed to write to stdout\n");
+        return EXIT_FAILURE;
+    }
+    
+    for (int bit_position = 31; bit_position >= 0; bit_position--) {
+        if (printf("%d", (int)((number >> bit_position) & 1U)) < 0) {
+            fprintf(stderr, "Error: Failed to write binary digit to stdout\n");
+            return EXIT_FAILURE;
+        }
+        
+        if (bit_position > 0 && bit_position % 4 == 0) {
+            if (printf(" ") < 0) {
+                fprintf(stderr, "Error: Failed to write separator to stdout\n");
+                return EXIT_FAILURE;
+            }
+        }
+    }
+    
+    if (printf("\n") < 0) {
+        fprintf(stderr, "Error: Failed to write newline to stdout\n");
+        return EXIT_FAILURE;
+    }
+    
+    if (has_odd_parity(number)) {
+        if (printf("The number has odd parity.\n") < 0) {
+            fprintf(stderr, "Error: Failed to write result to stdout\n");
+            return EXIT_FAILURE;
+        }
+    } else {
+        if (printf("The number has even parity.\n") < 0) {
+            fprintf(stderr, "Error: Failed to write result to stdout\n");
+            return EXIT_FAILURE;
+        }
+    }
+    
+    return EXIT_SUCCESS;
+}

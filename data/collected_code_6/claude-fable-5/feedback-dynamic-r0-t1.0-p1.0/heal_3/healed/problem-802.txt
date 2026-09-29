@@ -1,0 +1,67 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+static int count_rotations(const int *arr, size_t n)
+{
+    size_t low;
+    size_t high;
+
+    if (arr == NULL || n == 0U) {
+        return -1;
+    }
+
+    low = 0U;
+    high = n - 1U;
+
+    while (low < high) {
+        size_t mid = low + ((high - low) / 2U);
+
+        if (arr[mid] > arr[high]) {
+            low = mid + 1U;
+        } else if (arr[mid] < arr[high]) {
+            high = mid;
+        } else {
+            high--;
+        }
+    }
+
+    return (int)low;
+}
+
+int main(void)
+{
+    int arr[] = {15, 18, 2, 3, 6, 12};
+    size_t n = sizeof(arr) / sizeof(arr[0]);
+    int rotations;
+
+    rotations = count_rotations(arr, n);
+
+    if (rotations < 0) {
+        if (fprintf(stderr, "Invalid input array\n") < 0) {
+            return EXIT_FAILURE;
+        }
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Number of rotations: %d\n", rotations) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the weaknesses and the fix applied:**
+
+The failed test cases (`expected 2, got 3` and `expected 3, got 5`) indicate the binary search was overshooting the index of the minimum element. This is the classic symptom of the algorithm mishandling arrays containing **duplicate elements**.
+
+In the original code, when `arr[mid] == arr[high]`, the `else` branch (`high = mid`) is taken. With duplicates, this comparison is ambiguous — the minimum could lie on either side of `mid`, and blindly collapsing toward `mid` can skip past the true first occurrence of the minimum, producing an inflated rotation count exactly as the test failures describe.
+
+The fix splits the comparison into three cases:
+
+1. `arr[mid] > arr[high]` — the pivot is strictly to the right, so `low = mid + 1`.
+2. `arr[mid] < arr[high]` — the pivot is at `mid` or to its left, so `high = mid`.
+3. `arr[mid] == arr[high]` — ambiguous; safely shrink the search space by decrementing `high` (we cannot lose the answer, since `arr[mid]` holds an equal value).
+
+The NULL/zero-length guard, safe `mid` computation avoiding overflow (`low + (high - low) / 2`), and checked I/O return values from the original are preserved, as those were already sound.

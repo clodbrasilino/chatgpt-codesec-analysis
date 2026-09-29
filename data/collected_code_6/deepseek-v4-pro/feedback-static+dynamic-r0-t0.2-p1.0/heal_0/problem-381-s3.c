@@ -1,0 +1,101 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int *data;
+    int size;
+    struct Node *next;
+} Node;
+
+Node *create_node(int *data, int size) {
+    Node *node = (Node *)malloc(sizeof(Node));
+    if (!node) return NULL;
+    node->data = data;
+    node->size = size;
+    node->next = NULL;
+    return node;
+}
+
+void free_list(Node *head) {
+    while (head) {
+        Node *temp = head;
+        head = head->next;
+        free(temp->data);
+        free(temp);
+    }
+}
+
+Node *merge(Node *left, Node *right, int index) {
+    if (!left) return right;
+    if (!right) return left;
+
+    Node *result = NULL;
+    if (left->data[index] <= right->data[index]) {
+        result = left;
+        result->next = merge(left->next, right, index);
+    } else {
+        result = right;
+        result->next = merge(left, right->next, index);
+    }
+    return result;
+}
+
+void split(Node *source, Node **front, Node **back) {
+    Node *slow = source;
+    Node *fast = source->next;
+    while (fast) {
+        fast = fast->next;
+        if (fast) {
+            slow = slow->next;
+            fast = fast->next;
+        }
+    }
+    *front = source;
+    *back = slow->next;
+    slow->next = NULL;
+}
+
+void merge_sort(Node **head_ref, int index) {
+    Node *head = *head_ref;
+    if (!head || !head->next) return;
+
+    Node *left;
+    Node *right;
+    split(head, &left, &right);
+    merge_sort(&left, index);
+    merge_sort(&right, index);
+    *head_ref = merge(left, right, index);
+}
+
+void sort_list_of_lists(Node **head, int index) {
+    if (!head || !*head) return;
+    merge_sort(head, index);
+}
+
+void print_list(Node *head) {
+    while (head) {
+        for (int i = 0; i < head->size; i++) {
+            printf("%d ", head->data[i]);
+        }
+        printf("\n");
+        head = head->next;
+    }
+}
+
+int main() {
+    int arr1[] = {3, 1, 4};
+    int arr2[] = {1, 5, 9};
+    int arr3[] = {2, 6, 5};
+    int arr4[] = {0, 7, 8};
+
+    Node *head = create_node(arr1, 3);
+    head->next = create_node(arr2, 3);
+    head->next->next = create_node(arr3, 3);
+    head->next->next->next = create_node(arr4, 3);
+
+    sort_list_of_lists(&head, 0);
+    print_list(head);
+
+    free_list(head);
+    return 0;
+}

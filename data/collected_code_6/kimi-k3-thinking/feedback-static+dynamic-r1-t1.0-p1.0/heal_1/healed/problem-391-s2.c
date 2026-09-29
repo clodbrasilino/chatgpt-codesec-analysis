@@ -1,0 +1,284 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define DUP_STRING_MAX_LEN ((size_t)4096)
+
+typedef struct DictNode {
+    char *key;
+    char *value;
+    struct DictNode **children;
+    size_t child_count;
+    size_t child_capacity;
+} DictNode;
+
+static char *dup_string(const char *src);
+static DictNode *dict_node_create(const char *key, const char *value);
+static DictNode *dict_find_child(const DictNode *node, const char *key);
+static int dict_add_child(DictNode *parent, DictNode *child);
+static void dict_print_indent(const DictNode *node, int indent);
+
+DictNode *lists_to_nested_dict(char ***lists, size_t num_lists, size_t item_count);
+const char *dict_get(const DictNode *root, const char **keys, size_t num_keys);
+void dict_print(const DictNode *root);
+void dict_node_free(DictNode *node);
+
+static size_t bounded_strnlen(const char *src, size_t max_len)
+{
+    size_t len = 0;
+
+    while (len < max_len && src[len] != '\0') {
+        len++;
+    }
+    return len;
+}
+
+static char *dup_string(const char *src)
+{
+    size_t len;
+    char *copy;
+
+    if (src == NULL) {
+        return NULL;
+    }
+    len = bounded_strnlen(src, DUP_STRING_MAX_LEN);
+    if (len == DUP_STRING_MAX_LEN) {
+        return NULL;
+    }
+    copy = malloc(len + 1);
+    if (copy == NULL) {
+        return NULL;
+    }
+    memcpy(copy, src, len);
+    copy[len] = '\0';
+    return copy;
+}
+
+static DictNode *dict_node_create(const char *key, const char *value)
+{
+    DictNode *node = malloc(sizeof(*node));
+
+    if (node == NULL) {
+        return NULL;
+    }
+    node->key = NULL;
+    node->value = NULL;
+    node->children = NULL;
+    node->child_count = 0;
+    node->child_capacity = 0;
+
+    if (key != NULL) {
+        node->key = dup_string(key);
+        if (node->key == NULL) {
+            free(node);
+            return NULL;
+        }
+    }
+    if (value != NULL) {
+        node->value = dup_string(value);
+        if (node->value == NULL) {
+            free(node->key);
+            free(node);
+            return NULL;
+        }
+    }
+    return node;
+}
+
+void dict_node_free(DictNode *node)
+{
+    size_t i;
+
+    if (node == NULL) {
+        return;
+    }
+    for (i = 0; i < node->child_count; i++) {
+        dict_node_free(node->children[i]);
+    }
+    free(node->children);
+    free(node->key);
+    free(node->value);
+    free(node);
+}
+
+static DictNode *dict_find_child(const DictNode *node, const char *key)
+{
+    size_t i;
+
+    if (node == NULL || key == NULL) {
+        return NULL;
+    }
+    for (i = 0; i < node->child_count; i++) {
+        if (node->children[i]->key != NULL &&
+            strcmp(node->children[i]->key, key) == 0) {
+            return node->children[i];
+        }
+    }
+    return NULL;
+}
+
+static int dict_add_child(DictNode *parent, DictNode *child)
+{
+    if (parent == NULL || child == NULL) {
+        return -1;
+    }
+    if (parent->child_count == parent->child_capacity) {
+        size_t new_capacity = (parent->child_capacity == 0)
+                              ? 4 : parent->child_capacity * 2;
+        DictNode **grown;
+
+        if (new_capacity < parent->child_capacity ||
+            new_capacity > ((size_t)-1) / sizeof(*grown)) {
+            return -1;
+        }
+        grown = realloc(parent->children, new_capacity * sizeof(*grown));
+        if (grown == NULL) {
+            return -1;
+        }
+        parent->children = grown;
+        parent->child_capacity = new_capacity;
+    }
+    parent->children[parent->child_count] = child;
+    parent->child_count++;
+    return 0;
+}
+
+DictNode *lists_to_nested_dict(char ***lists, size_t num_lists, size_t item_count)
+{
+    DictNode *root;
+    size_t i;
+    size_t level;
+
+    if (lists == NULL || num_lists < 2) {
+        return NULL;
+    }
+    for (level = 0; level < num_lists; level++) {
+        if (lists[level] == NULL) {
+            return NULL;
+        }
+    }
+
+    root = dict_node_create("root", NULL);
+    if (root == NULL) {
+        return NULL;
+    }
+
+    for (i = 0; i < item_count; i++) {
+        DictNode *current = root;
+        const char *value;
+
+        for (level = 0; level + 1 < num_lists; level++) {
+            const char *key = lists[level][i];
+            DictNode *child;
+
+            if (key == NULL) {
+                dict_node_free(root);
+                return NULL;
+            }
+            child = dict_find_child(current, key);
+            if (child == NULL) {
+                child = dict_node_create(key, NULL);
+                if (child == NULL || dict_add_child(current, child) != 0) {
+                    dict_node_free(child);
+                    dict_node_free(root);
+                    return NULL;
+                }
+            }
+            current = child;
+        }
+
+        value = lists[num_lists - 1][i];
+        if (value == NULL) {
+            dict_node_free(root);
+            return NULL;
+        }
+        free(current->value);
+        current->value = dup_string(value);
+        if (current->value == NULL) {
+            dict_node_free(root);
+            return NULL;
+        }
+    }
+    return root;
+}
+
+const char *dict_get(const DictNode *root, const char **keys, size_t num_keys)
+{
+    const DictNode *current = root;
+    size_t i;
+
+    if (root == NULL || keys == NULL || num_keys == 0) {
+        return NULL;
+    }
+    for (i = 0; i < num_keys; i++) {
+        if (keys[i] == NULL) {
+            return NULL;
+        }
+        current = dict_find_child(current, keys[i]);
+        if (current == NULL) {
+            return NULL;
+        }
+    }
+    return current->value;
+}
+
+static void dict_print_indent(const DictNode *node, int indent)
+{
+    size_t i;
+    int j;
+
+    if (node == NULL) {
+        return;
+    }
+    for (i = 0; i < node->child_count; i++) {
+        const DictNode *child = node->children[i];
+        for (j = 0; j < indent; j++) {
+            putchar(' ');
+        }
+        printf("%s", child->key != NULL ? child->key : "(null)");
+        if (child->value != NULL) {
+            printf(": %s", child->value);
+        }
+        putchar('\n');
+        dict_print_indent(child, indent + 4);
+    }
+}
+
+void dict_print(const DictNode *root)
+{
+    if (root == NULL) {
+        return;
+    }
+    printf("{\n");
+    dict_print_indent(root, 2);
+    printf("}\n");
+}
+
+int main(void)
+{
+    char *categories[] = {"fruit", "vegetable", "fruit", "vegetable", "grain"};
+    char *items[] = {"apple", "carrot", "banana", "spinach", "rice"};
+    char *quantities[] = {"50", "30", "20", "15", "100"};
+    char **lists[] = {categories, items, quantities};
+    const char *path[] = {"fruit", "banana"};
+    const char *result;
+    DictNode *dict;
+
+    dict = lists_to_nested_dict(lists, 3, 5);
+    if (dict == NULL) {
+        fprintf(stderr, "error: failed to convert lists to nested dictionary\n");
+        return EXIT_FAILURE;
+    }
+
+    dict_print(dict);
+
+    result = dict_get(dict, path, 2);
+    if (result != NULL) {
+        printf("fruit -> banana = %s\n", result);
+    } else {
+        printf("key path not found\n");
+    }
+
+    dict_node_free(dict);
+    return EXIT_SUCCESS;
+}

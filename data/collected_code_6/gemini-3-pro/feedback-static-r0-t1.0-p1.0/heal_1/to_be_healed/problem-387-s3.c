@@ -1,0 +1,67 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+int is_hex_even(const char *hex_str) {
+    if (hex_str == NULL) {
+        return -1;
+    }
+
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    size_t len = strlen(hex_str);
+    if (len == 0) {
+        return -1;
+    }
+
+    size_t start = 0;
+    if (len > 2 && hex_str[0] == '0' && (hex_str[1] == 'x' || hex_str[1] == 'X')) {
+        start = 2;
+    }
+
+    for (size_t i = start; i < len; ++i) {
+        if (!isxdigit((unsigned char)hex_str[i])) {
+            return -1; 
+        }
+    }
+
+    char last_char = hex_str[len - 1];
+    int last_val = 0;
+
+    if (isdigit((unsigned char)last_char)) {
+        last_val = last_char - '0';
+    } else {
+        last_val = tolower((unsigned char)last_char) - 'a' + 10;
+    }
+
+    if (last_val % 2 == 0) {
+        return 1;
+    } else {
+        return 0;
+    }
+}
+
+int main(void) {
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char input[256];
+
+    if (fgets(input, sizeof(input), stdin) != NULL) {
+        input[strcspn(input, "\r\n")] = '\0';
+        
+        int result = is_hex_even(input);
+        
+        if (result == 1) {
+            printf("Even\n");
+        } else if (result == 0) {
+            printf("Odd\n");
+        } else {
+            printf("Invalid input\n");
+        }
+    }
+
+    return 0;
+}

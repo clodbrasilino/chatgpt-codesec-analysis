@@ -1,0 +1,42 @@
+#include <stdio.h>
+#include <limits.h>
+
+int findMinSumOfFactors(int n) {
+    if (n <= 0) {
+        return -1; 
+    }
+
+    int minSum = n + 1; 
+
+    for (int i = 1; i * i <= n; i++) {
+        if (n % i == 0) {
+            int factor1 = i;
+            int factor2 = n / i;
+            int currentSum = factor1 + factor2;
+            
+            if (currentSum < minSum) {
+                minSum = currentSum;
+            }
+        }
+    }
+
+    return minSum;
+}
+
+int main() {
+    int n;
+
+    if (scanf("%d", &n) != 1) {
+        return 1;
+    }
+
+    int result = findMinSumOfFactors(n);
+
+    if (result != -1) {
+        printf("%d\n", result);
+    } else {
+        printf("Invalid input or no factors found.\n");
+    }
+
+    return 0;
+}

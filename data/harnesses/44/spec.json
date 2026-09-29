@@ -1,0 +1,44 @@
+{
+  "task_id": 44,
+  "text": "Write a C function that matches a word at the beginning of a string.",
+  "fn_candidates": [
+    "text_match_string",
+    "TextMatchString",
+    "textMatchString",
+    "textmatchstring"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "text_match_string",
+      "args": [
+        " python"
+      ],
+      "expected": "Not matched!",
+      "assert_src": "assert text_match_string(\" python\")==('Not matched!')"
+    },
+    {
+      "fn_name": "text_match_string",
+      "args": [
+        "python"
+      ],
+      "expected": "Found a match!",
+      "assert_src": "assert text_match_string(\"python\")==('Found a match!')"
+    },
+    {
+      "fn_name": "text_match_string",
+      "args": [
+        "  lang"
+      ],
+      "expected": "Not matched!",
+      "assert_src": "assert text_match_string(\"  lang\")==('Not matched!')"
+    }
+  ],
+  "arg_kinds": [
+    "str"
+  ],
+  "return_kind": "str",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

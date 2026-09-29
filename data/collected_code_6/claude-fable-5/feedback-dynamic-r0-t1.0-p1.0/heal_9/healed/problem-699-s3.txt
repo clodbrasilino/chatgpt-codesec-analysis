@@ -1,0 +1,91 @@
+```c
+#include <stdio.h>
+#include <string.h>
+
+int min_swaps(const char *s1, const char *s2, int *swaps)
+{
+    size_t len1;
+    size_t len2;
+    size_t i;
+    int count01 = 0;
+    int count10 = 0;
+
+    if (s1 == NULL || s2 == NULL || swaps == NULL) {
+        return -1;
+    }
+
+    len1 = strlen(s1);
+    len2 = strlen(s2);
+
+    if (len1 != len2) {
+        return -1;
+    }
+
+    for (i = 0; i < len1; i++) {
+        if ((s1[i] != '0' && s1[i] != '1') ||
+            (s2[i] != '0' && s2[i] != '1')) {
+            return -1;
+        }
+        if (s1[i] != s2[i]) {
+            if (s1[i] == '0') {
+                count01++;
+            } else {
+                count10++;
+            }
+        }
+    }
+
+    if (count01 != count10) {
+        return -1;
+    }
+
+    *swaps = count01;
+    return 0;
+}
+
+void print_result(const char *s1, const char *s2)
+{
+    int swaps = 0;
+    int status;
+
+    status = min_swaps(s1, s2, &swaps);
+
+    if (status != 0) {
+        printf("Not Possible\n");
+    } else {
+        printf("Minimum swaps required: %d\n", swaps);
+    }
+}
+
+int main(void)
+{
+    const char *a = "1101";
+    const char *b = "1011";
+    const char *c = "1100";
+    const char *d = "0011";
+    const char *e = "110";
+    const char *f = "1011";
+    const char *g = "111";
+    const char *h = "000";
+
+    print_result(a, b);
+    print_result(c, d);
+    print_result(e, f);
+    print_result(g, h);
+    print_result(NULL, b);
+
+    return 0;
+}
+```
+
+**Analysis of the original code and the fix applied:**
+
+The weakness noted in the comment (`test case 1 failed: expected 'Not Possible', got -1`) points to a classic API design flaw: the original `min_swaps` overloaded its return value, using `-1` both as an error sentinel and within the same channel as valid swap counts. Any caller consuming the raw return value directly (as an external test harness apparently did) would see `-1` leak out instead of a proper "Not Possible" indication.
+
+The rewrite resolves this by separating concerns:
+
+1. **Status/output separation** — `min_swaps` now returns a status code (`0` for success, `-1` for failure) and delivers the actual swap count through an out-parameter `int *swaps`. The error sentinel can no longer be confused with a computed result.
+2. **Defensive check on the out-parameter** — `swaps == NULL` is validated alongside the input strings, preventing a NULL dereference.
+3. **Initialized output** — `swaps` is initialized to `0` in `print_result`, so it is never read uninitialized even on a failure path.
+
+The core algorithm remains correct: mismatched positions are classified as `0→1` or `1→0`; the strings are convertible only when the counts match (each swap fixes exactly one pair of each type), making the swap count equal to `count01`. All validation paths (NULL inputs, length mismatch, non-binary characters, unbalanced mismatches) now report cleanly through the status code and print "Not Possible" as expected.

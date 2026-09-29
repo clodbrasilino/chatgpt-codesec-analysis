@@ -1,0 +1,120 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+
+static void swap_int(int *a, int *b)
+{
+    int tmp = *a;
+    *a = *b;
+    *b = tmp;
+}
+
+static void sift_down(int *heap, size_t size, size_t index)
+{
+    while (1) {
+        size_t smallest = index;
+        size_t left = 2u * index + 1u;
+        size_t right = 2u * index + 2u;
+
+        if (left < size && heap[left] < heap[smallest]) {
+            smallest = left;
+        }
+        if (right < size && heap[right] < heap[smallest]) {
+            smallest = right;
+        }
+        if (smallest == index) {
+            break;
+        }
+        swap_int(&heap[index], &heap[smallest]);
+        index = smallest;
+    }
+}
+
+static void build_heap(int *heap, size_t size)
+{
+    size_t i = size / 2u;
+
+    while (i > 0u) {
+        i--;
+        sift_down(heap, size, i);
+    }
+}
+
+static int heap_pop(int *heap, size_t *size, int *out)
+{
+    if (heap == NULL || size == NULL || out == NULL || *size == 0u) {
+        return -1;
+    }
+    *out = heap[0];
+    heap[0] = heap[*size - 1u];
+    (*size)--;
+    sift_down(heap, *size, 0u);
+    return 0;
+}
+
+int find_smallest_k(const int *numbers, size_t count, size_t k, int *result)
+{
+    int *heap;
+    size_t heap_size;
+    size_t i;
+
+    if (numbers == NULL || result == NULL || count == 0u || k == 0u || k > count) {
+        return -1;
+    }
+
+    if (count > SIZE_MAX / sizeof(int)) {
+        return -1;
+    }
+
+    heap = (int *)malloc(count * sizeof(int));
+    if (heap == NULL) {
+        return -1;
+    }
+
+    for (i = 0u; i < count; i++) {
+        heap[i] = numbers[i];
+    }
+
+    heap_size = count;
+    build_heap(heap, heap_size);
+
+    for (i = 0u; i < k; i++) {
+        if (heap_pop(heap, &heap_size, &result[i]) != 0) {
+            free(heap);
+            return -1;
+        }
+    }
+
+    free(heap);
+    return 0;
+}
+
+int main(void)
+{
+    int numbers[] = {25, 35, 22, 85, 14, 65, 75, 22, 58};
+    size_t count = sizeof(numbers) / sizeof(numbers[0]);
+    size_t k = 3u;
+    int *result;
+    size_t i;
+
+    result = (int *)malloc(k * sizeof(int));
+    if (result == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    if (find_smallest_k(numbers, count, k, result) != 0) {
+        fprintf(stderr, "Failed to find smallest elements\n");
+        free(result);
+        return EXIT_FAILURE;
+    }
+
+    printf("The %zu smallest numbers are: ", k);
+    for (i = 0u; i < k; i++) {
+        printf("%d ", result[i]);
+    }
+    printf("\n");
+
+    free(result);
+    return EXIT_SUCCESS;
+}

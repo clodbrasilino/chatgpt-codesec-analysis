@@ -1,0 +1,54 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+void add_k_to_tuple(int *tuple, size_t length, int k) {
+    for (size_t i = 0; i < length; i++) {
+        tuple[i] += k;
+    }
+}
+
+int main(void) {
+    size_t length;
+    int k;
+    
+    printf("Enter number of elements: ");
+    if (scanf("%zu", &length) != 1 || length == 0) {
+        fprintf(stderr, "Invalid length\n");
+        return EXIT_FAILURE;
+    }
+    
+    int *tuple = malloc(length * sizeof(int));
+    if (tuple == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("Enter %zu elements:\n", length);
+    for (size_t i = 0; i < length; i++) {
+        if (scanf("%d", &tuple[i]) != 1) {
+            fprintf(stderr, "Invalid input\n");
+            free(tuple);
+            return EXIT_FAILURE;
+        }
+    }
+    
+    printf("Enter k: ");
+    if (scanf("%d", &k) != 1) {
+        fprintf(stderr, "Invalid k\n");
+        free(tuple);
+        return EXIT_FAILURE;
+    }
+    
+    add_k_to_tuple(tuple, length, k);
+    
+    printf("Result: ");
+    for (size_t i = 0; i < length; i++) {
+        printf("%d ", tuple[i]);
+    }
+    printf("\n");
+    
+    free(tuple);
+    return EXIT_SUCCESS;
+}
+```

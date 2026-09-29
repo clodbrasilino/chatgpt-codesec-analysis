@@ -1,0 +1,75 @@
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdbool.h>
+#include <stdlib.h>
+
+#define MAX_MONTH_LENGTH 32
+
+static void to_lowercase(char *dest, const char *src, size_t dest_size)
+{
+    size_t i;
+    
+    if (dest == NULL || src == NULL || dest_size == 0) {
+        return;
+    }
+    
+    for (i = 0; i < dest_size - 1 && src[i] != '\0'; i++) {
+        dest[i] = (char)tolower((unsigned char)src[i]);
+    }
+    dest[i] = '\0';
+}
+
+static bool has_28_days(const char *month_name)
+{
+    char *normalized = NULL;
+    size_t len;
+    bool result = false;
+    
+    if (month_name == NULL) {
+        return false;
+    }
+    
+    len = strnlen(month_name, MAX_MONTH_LENGTH);
+    if (len >= MAX_MONTH_LENGTH) {
+        return false;
+    }
+    
+    normalized = malloc(len + 1);
+    if (normalized == NULL) {
+        return false;
+    }
+    
+    to_lowercase(normalized, month_name, len + 1);
+    result = (strcmp(normalized, "february") == 0);
+    
+    free(normalized);
+    return result;
+}
+
+int main(void)
+{
+    char *input = NULL;
+    size_t input_size = 0;
+    ssize_t bytes_read;
+    int result;
+    
+    printf("Enter month name: ");
+    
+    bytes_read = getline(&input, &input_size, stdin);
+    if (bytes_read == -1) {
+        fprintf(stderr, "Error reading input\n");
+        free(input);
+        return 1;
+    }
+    
+    if (bytes_read > 0 && input[bytes_read - 1] == '\n') {
+        input[bytes_read - 1] = '\0';
+    }
+    
+    result = has_28_days(input) ? 1 : 0;
+    printf("%d\n", result);
+    
+    free(input);
+    return 0;
+}

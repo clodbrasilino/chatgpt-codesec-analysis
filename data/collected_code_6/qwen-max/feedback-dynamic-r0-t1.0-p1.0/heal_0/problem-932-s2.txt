@@ -1,0 +1,71 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct ListNode {
+    char *word;
+    struct ListNode *next;
+} ListNode;
+
+ListNode *createNode(char *word) {
+    ListNode *node = (ListNode *)malloc(sizeof(ListNode));
+    node->word = strdup(word);
+    node->next = NULL;
+    return node;
+}
+
+void freeList(ListNode *head) {
+    while (head != NULL) {
+        ListNode *temp = head;
+        head = head->next;
+        free(temp->word);
+        free(temp);
+    }
+}
+
+ListNode *removeDuplicates(ListNode *head) {
+    if (head == NULL || head->next == NULL) {
+        return head;
+    }
+
+    ListNode *current = head;
+    while (current != NULL && current->next != NULL) {
+        if (strcmp(current->word, current->next->word) == 0) {
+            ListNode *temp = current->next;
+            current->next = current->next->next;
+            free(temp->word);
+            free(temp);
+        } else {
+            current = current->next;
+        }
+    }
+
+    return head;
+}
+
+int main() {
+    ListNode *head = createNode("the");
+    head->next = createNode("quick");
+    head->next->next = createNode("brown");
+    head->next->next->next = createNode("fox");
+    head->next->next->next->next = createNode("quick");
+    head->next->next->next->next->next = createNode("jumps");
+    head->next->next->next->next->next->next = createNode("over");
+    head->next->next->next->next->next->next->next = createNode("the");
+    head->next->next->next->next->next->next->next->next = createNode("lazy");
+    head->next->next->next->next->next->next->next->next->next = createNode("dog");
+
+    head = removeDuplicates(head);
+
+    ListNode *current = head;
+    while (current != NULL) {
+        printf("%s ", current->word);
+        current = current->next;
+    }
+    printf("\n");
+
+    freeList(head);
+    return 0;
+}
+```

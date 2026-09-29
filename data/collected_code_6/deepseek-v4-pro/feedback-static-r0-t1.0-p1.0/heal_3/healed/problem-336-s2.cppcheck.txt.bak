@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-336-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-336-s2.c:37:37: style: Condition 'has_28_days(NULL)' is always false [knownConditionTrueFalse]
+    printf("NULL: %s\n", has_28_days(NULL) ? "28 days" : "not 28 days");
+                                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-336-s2.c:37:37: note: Calling function 'has_28_days' returns 0
+    printf("NULL: %s\n", has_28_days(NULL) ? "28 days" : "not 28 days");
+                                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-336-s2.c:37:37: note: Condition 'has_28_days(NULL)' is always false
+    printf("NULL: %s\n", has_28_days(NULL) ? "28 days" : "not 28 days");
+                                    ^

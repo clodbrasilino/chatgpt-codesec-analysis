@@ -1,0 +1,39 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+double sum_positive(const double *numbers, size_t count) {
+    if (numbers == NULL) {
+        return 0.0;
+    }
+    double sum = 0.0;
+    for (size_t i = 0; i < count; ++i) {
+        if (numbers[i] > 0.0) {
+            sum += numbers[i];
+        }
+    }
+    return sum;
+}
+
+int main(void) {
+    double numbers1[] = {-1.5, 3.0, 2.5, 0.0, -4.0, 5.5};
+    size_t count1 = sizeof(numbers1) / sizeof(numbers1[0]);
+    double result1 = sum_positive(numbers1, count1);
+    printf("%.0f\n", result1);
+    
+    double numbers2[] = {48.0};
+    size_t count2 = sizeof(numbers2) / sizeof(numbers2[0]);
+    double result2 = sum_positive(numbers2, count2);
+    printf("%.0f\n", result2);
+    
+    double numbers3[] = {50.0};
+    size_t count3 = sizeof(numbers3) / sizeof(numbers3[0]);
+    double result3 = sum_positive(numbers3, count3);
+    printf("%.0f\n", result3);
+    
+    double numbers4[] = {500.0, 22.0};
+    size_t count4 = sizeof(numbers4) / sizeof(numbers4[0]);
+    double result4 = sum_positive(numbers4, count4);
+    printf("%.0f\n", result4);
+    
+    return 0;
+}

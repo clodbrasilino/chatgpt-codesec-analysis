@@ -1,0 +1,41 @@
+```C
+#include <stdio.h>
+
+long long int factorial(int num) {
+    long long int fact = 1;
+    for(int i = 2; i <= num; ++i) {
+        fact *= i;
+    }
+    return fact;
+}
+
+double binomialProbability(int n, int k, double p) {
+    double result;
+    long long int n_fact = factorial(n);
+    long long int k_fact = factorial(k);
+    long long int nk_fact = factorial(n-k);
+
+    double term1 = (double)n_fact/(k_fact * nk_fact);
+    double term2 = 1;
+    for(int i = 0; i < k; i++){
+        term2 *= p;
+    }
+    double term3 = 1;
+    for(int i = 0; i < n-k; i++){
+        term3 *= (1-p);
+    }
+    result = term1 * term2 * term3;
+    return result;
+}
+
+int main() {
+    int n = 5;
+    int k = 3;
+    double p = 0.5;
+
+    double result = binomialProbability(n, k, p);
+    printf("The binomial probability is: %.3f\n", result);
+    return 0;
+}
+```
+This code represents a simple calculation of binomial probability in C language. The binomial probability is calculated using the formula for binomial distribution: (n choose k) * p^k * (1-p)^(n-k), where n is the total number of attempts, k is the number of successful attempts and p is the individual probability of success. The code assumes correct input values (with p between 0 and 1, n and k as non-negative integers), and does not contain error checking code to keep the implementation clearer and focused on the topic (binomial probability computation).

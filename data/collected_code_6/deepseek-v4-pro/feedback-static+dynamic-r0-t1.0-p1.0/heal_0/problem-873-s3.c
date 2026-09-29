@@ -1,0 +1,41 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+long long fibonacci(int n) {
+    if (n < 0) {
+        return -1;
+    }
+    if (n == 0) {
+        return 0;
+    }
+    if (n == 1) {
+        return 1;
+    }
+    return fibonacci(n - 1) + fibonacci(n - 2);
+}
+
+int main(int argc, char *argv[]) {
+    if (argc != 2) {
+        fprintf(stderr, "Usage: %s <n>\n", argv[0]);
+        return EXIT_FAILURE;
+    }
+    
+    char *endptr;
+    long val = strtol(argv[1], &endptr, 10);
+    
+    if (*endptr != '\0' || endptr == argv[1] || val < 0 || val > 40) {
+        fprintf(stderr, "Error: Invalid input. Provide an integer between 0 and 40.\n");
+        return EXIT_FAILURE;
+    }
+    
+    int n = (int)val;
+    long long result = fibonacci(n);
+    
+    if (result == -1) {
+        fprintf(stderr, "Error: Computation failed.\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("%lld\n", result);
+    return EXIT_SUCCESS;
+}

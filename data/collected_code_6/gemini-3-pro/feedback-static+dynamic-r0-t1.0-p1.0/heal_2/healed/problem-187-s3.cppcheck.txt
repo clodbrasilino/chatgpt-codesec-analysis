@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-187-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-187-s3.c:12:38: warning: Either the condition 'len1<100000' is redundant or the array 'str1[7]' is accessed at index 99999, which is out of bounds. [arrayIndexOutOfBoundsCond]
+    while (len1 < MAX_STR_LEN && str1[len1] != '\0') {
+                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-187-s3.c:12:17: note: Assuming that condition 'len1<100000' is not redundant
+    while (len1 < MAX_STR_LEN && str1[len1] != '\0') {
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-187-s3.c:12:38: note: Array index out of bounds
+    while (len1 < MAX_STR_LEN && str1[len1] != '\0') {
+                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-187-s3.c:17:38: warning: Either the condition 'len2<100000' is redundant or the array 'str2[8]' is accessed at index 99999, which is out of bounds. [arrayIndexOutOfBoundsCond]
+    while (len2 < MAX_STR_LEN && str2[len2] != '\0') {
+                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-187-s3.c:17:17: note: Assuming that condition 'len2<100000' is not redundant
+    while (len2 < MAX_STR_LEN && str2[len2] != '\0') {
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-187-s3.c:17:38: note: Array index out of bounds
+    while (len2 < MAX_STR_LEN && str2[len2] != '\0') {
+                                     ^

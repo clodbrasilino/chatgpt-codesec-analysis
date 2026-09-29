@@ -1,0 +1,69 @@
+{
+  "task_id": 144,
+  "text": "Write a C function to find the sum of absolute differences in all pairs of the given array.",
+  "fn_candidates": [
+    "sum_Pairs",
+    "SumPairs",
+    "sumPairs",
+    "sumPairs"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "sum_Pairs",
+      "args": [
+        [
+          1,
+          8,
+          9,
+          15,
+          16
+        ],
+        5
+      ],
+      "expected": 74,
+      "assert_src": "assert sum_Pairs([1,8,9,15,16],5) == 74"
+    },
+    {
+      "fn_name": "sum_Pairs",
+      "args": [
+        [
+          1,
+          2,
+          3,
+          4
+        ],
+        4
+      ],
+      "expected": 10,
+      "assert_src": "assert sum_Pairs([1,2,3,4],4) == 10"
+    },
+    {
+      "fn_name": "sum_Pairs",
+      "args": [
+        [
+          1,
+          2,
+          3,
+          4,
+          5,
+          7,
+          9,
+          11,
+          14
+        ],
+        9
+      ],
+      "expected": 188,
+      "assert_src": "assert sum_Pairs([1,2,3,4,5,7,9,11,14],9) == 188"
+    }
+  ],
+  "arg_kinds": [
+    "int",
+    "int-list"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

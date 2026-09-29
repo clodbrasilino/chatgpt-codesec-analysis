@@ -1,0 +1,44 @@
+{
+  "task_id": 403,
+  "text": "Write a C function to check if a url is valid or not using regex.",
+  "fn_candidates": [
+    "is_valid_URL",
+    "IsValidUrl",
+    "isValidUrl",
+    "isvalidURL"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "is_valid_URL",
+      "args": [
+        "https://www.google.com"
+      ],
+      "expected": true,
+      "assert_src": "assert is_valid_URL(\"https://www.google.com\") == True"
+    },
+    {
+      "fn_name": "is_valid_URL",
+      "args": [
+        "https:/www.gmail.com"
+      ],
+      "expected": false,
+      "assert_src": "assert is_valid_URL(\"https:/www.gmail.com\") == False"
+    },
+    {
+      "fn_name": "is_valid_URL",
+      "args": [
+        "https:// www.redit.com"
+      ],
+      "expected": false,
+      "assert_src": "assert is_valid_URL(\"https:// www.redit.com\") == False"
+    }
+  ],
+  "arg_kinds": [
+    "str"
+  ],
+  "return_kind": "bool",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

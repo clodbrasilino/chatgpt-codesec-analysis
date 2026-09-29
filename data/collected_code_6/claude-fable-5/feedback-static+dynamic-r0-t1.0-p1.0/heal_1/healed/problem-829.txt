@@ -1,0 +1,150 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_WORD_LEN 4096
+
+struct WordCount {
+    char *word;
+    size_t count;
+};
+
+static char *duplicateBounded(const char *src)
+{
+    size_t len;
+    char *copy;
+
+    if (src == NULL) {
+        return NULL;
+    }
+
+    len = strnlen(src, MAX_WORD_LEN);
+    if (len >= MAX_WORD_LEN) {
+        return NULL;
+    }
+
+    copy = malloc(len + 1);
+    if (copy == NULL) {
+        return NULL;
+    }
+
+    memcpy(copy, src, len);
+    copy[len] = '\0';
+    return copy;
+}
+
+static char *findSecondMostFrequent(const char **words, size_t n)
+{
+    struct WordCount *table = NULL;
+    size_t tableSize = 0;
+    size_t i;
+    size_t j;
+    char *result = NULL;
+
+    if (words == NULL || n < 2) {
+        return NULL;
+    }
+
+    table = calloc(n, sizeof(struct WordCount));
+    if (table == NULL) {
+        return NULL;
+    }
+
+    for (i = 0; i < n; i++) {
+        int found = 0;
+
+        if (words[i] == NULL) {
+            continue;
+        }
+
+        if (strnlen(words[i], MAX_WORD_LEN) >= MAX_WORD_LEN) {
+            continue;
+        }
+
+        for (j = 0; j < tableSize; j++) {
+            if (strncmp(table[j].word, words[i], MAX_WORD_LEN) == 0) {
+                table[j].count++;
+                found = 1;
+                break;
+            }
+        }
+
+        if (found == 0) {
+            char *copy = duplicateBounded(words[i]);
+
+            if (copy == NULL) {
+                for (j = 0; j < tableSize; j++) {
+                    free(table[j].word);
+                }
+                free(table);
+                return NULL;
+            }
+
+            table[tableSize].word = copy;
+            table[tableSize].count = 1;
+            tableSize++;
+        }
+    }
+
+    if (tableSize >= 2) {
+        size_t firstIdx = 0;
+        size_t secondIdx = tableSize;
+
+        for (j = 1; j < tableSize; j++) {
+            if (table[j].count > table[firstIdx].count) {
+                secondIdx = firstIdx;
+                firstIdx = j;
+            } else if (secondIdx == tableSize ||
+                       table[j].count > table[secondIdx].count) {
+                secondIdx = j;
+            }
+        }
+
+        if (secondIdx < tableSize) {
+            result = duplicateBounded(table[secondIdx].word);
+        }
+    }
+
+    for (j = 0; j < tableSize; j++) {
+        free(table[j].word);
+    }
+    free(table);
+
+    return result;
+}
+
+int main(void)
+{
+    const char *sequence[] = {
+        "apple", "banana", "apple", "orange",
+        "banana", "apple", "orange", "banana", "banana"
+    };
+    size_t count = sizeof(sequence) / sizeof(sequence[0]);
+    char *second = NULL;
+
+    second = findSecondMostFrequent(sequence, count);
+    if (second == NULL) {
+        fprintf(stderr, "Could not determine the second most frequent string\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Second most frequent string: %s\n", second) < 0) {
+        free(second);
+        return EXIT_FAILURE;
+    }
+
+    free(second);
+    return EXIT_SUCCESS;
+}
+```
+
+**Key changes addressing the identified weaknesses:**
+
+1. **CWE-126 (over-read via `strlen`)**: Replaced all `strlen` calls with `strnlen` bounded by `MAX_WORD_LEN`. Any string that isn't properly NUL-terminated within that bound is rejected rather than read past its end. Both duplication sites now go through a single `duplicateBounded()` helper, which validates the length before allocating.
+
+2. **CWE-120 (unchecked `memcpy`)**: The `memcpy` destination is now always allocated as `len + 1` where `len` was verified by `strnlen` to be strictly less than `MAX_WORD_LEN`, and exactly `len` bytes are copied with the terminator written explicitly. The destination therefore provably holds the source data.
+
+3. **Defense in depth**: `strcmp` was replaced with `strncmp` bounded by the same limit, and strings exceeding the bound are skipped in the counting loop, so no unbounded string operation remains anywhere in the code.
+
+4. The original memory-management discipline (freeing the table and all duplicated words on both success and failure paths) is preserved, so no leaks were introduced by the refactoring.

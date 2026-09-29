@@ -1,0 +1,42 @@
+#include <stdio.h>
+#include <ctype.h>
+#include <string.h>
+
+void remove_non_alphanumeric(char *str) {
+    if (str == NULL) {
+        return;
+    }
+    
+    char *src = str;
+    char *dst = str;
+    
+    while (*src != '\0') {
+        if (isalnum((unsigned char)*src)) {
+            *dst = *src;
+            dst++;
+        }
+        src++;
+    }
+    
+    *dst = '\0';
+}
+
+int main(void) {
+    char str1[] = "Hello, World! 123";
+    remove_non_alphanumeric(str1);
+    printf("%s\n", str1);
+    
+    char str2[] = "!@#$%^&*()";
+    remove_non_alphanumeric(str2);
+    printf("%s\n", str2);
+    
+    char str3[] = "abc123XYZ";
+    remove_non_alphanumeric(str3);
+    printf("%s\n", str3);
+    
+    char str4[] = "";
+    remove_non_alphanumeric(str4);
+    printf("%s\n", str4);
+    
+    return 0;
+}

@@ -1,0 +1,69 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int value;
+    struct Node *next;
+} Node;
+
+Node* create_node(int value) {
+    Node *new_node = (Node*)malloc(sizeof(Node));
+    if (new_node == NULL) {
+        return NULL;
+    }
+    new_node->value = value;
+    new_node->next = NULL;
+    return new_node;
+}
+
+void free_list(Node *head) {
+    Node *current = head;
+    while (current != NULL) {
+        Node *temp = current;
+        current = current->next;
+        free(temp);
+    }
+}
+
+Node* subtract_lists(Node *list1, Node *list2) {
+    Node *result = NULL;
+    Node **last = &result;
+
+    for (Node *current1 = list1; current1 != NULL; current1 = current1->next) {
+        int found = 0;
+        for (Node *current2 = list2; current2 != NULL && !found; current2 = current2->next) {
+            if (current2->value == current1->value) {
+                found = 1;
+            }
+        }
+        if (!found) {
+            *last = create_node(current1->value);
+            if (*last == NULL) {
+                return NULL;
+            }
+            last = &(*last)->next;
+        }
+    }
+    return result;
+}
+
+int main() {
+    Node *list1 = create_node(1);
+    list1->next = create_node(2);
+    list1->next->next = create_node(3);
+
+    Node *list2 = create_node(2);
+    list2->next = create_node(4);
+
+    Node *result = subtract_lists(list1, list2);
+
+    for (Node *current = result; current != NULL; current = current->next) {
+        printf("%d ", current->value);
+    }
+
+    free_list(list1);
+    free_list(list2);
+    free_list(result);
+
+    return 0;
+}

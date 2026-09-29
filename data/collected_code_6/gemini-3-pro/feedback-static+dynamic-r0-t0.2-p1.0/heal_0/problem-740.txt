@@ -1,0 +1,91 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char *key;
+    char *value;
+} KeyValuePair;
+
+typedef struct {
+    KeyValuePair *pairs;
+    size_t count;
+} Dictionary;
+
+Dictionary* tuple_to_dict(const char **tuple, size_t tuple_len) {
+    if (tuple == NULL || tuple_len % 2 != 0) {
+        return NULL;
+    }
+
+    Dictionary *dict = (Dictionary *)malloc(sizeof(Dictionary));
+    if (dict == NULL) {
+        return NULL;
+    }
+
+    dict->count = tuple_len / 2;
+    dict->pairs = (KeyValuePair *)malloc(dict->count * sizeof(KeyValuePair));
+    if (dict->pairs == NULL) {
+        free(dict);
+        return NULL;
+    }
+
+    for (size_t i = 0; i < dict->count; i++) {
+        dict->pairs[i].key = strdup(tuple[2 * i]);
+        if (dict->pairs[i].key == NULL) {
+            for (size_t j = 0; j < i; j++) {
+                free(dict->pairs[j].key);
+                free(dict->pairs[j].value);
+            }
+            free(dict->pairs);
+            free(dict);
+            return NULL;
+        }
+
+        dict->pairs[i].value = strdup(tuple[2 * i + 1]);
+        if (dict->pairs[i].value == NULL) {
+            free(dict->pairs[i].key);
+            for (size_t j = 0; j < i; j++) {
+                free(dict->pairs[j].key);
+                free(dict->pairs[j].value);
+            }
+            free(dict->pairs);
+            free(dict);
+            return NULL;
+        }
+    }
+
+    return dict;
+}
+
+void free_dict(Dictionary *dict) {
+    if (dict != NULL) {
+        if (dict->pairs != NULL) {
+            for (size_t i = 0; i < dict->count; i++) {
+                free(dict->pairs[i].key);
+                free(dict->pairs[i].value);
+            }
+            free(dict->pairs);
+        }
+        free(dict);
+    }
+}
+
+int main(void) {
+    const char *tuple[] = {"key1", "value1", "key2", "value2", "key3", "value3"};
+    size_t tuple_len = sizeof(tuple) / sizeof(tuple[0]);
+
+    Dictionary *dict = tuple_to_dict(tuple, tuple_len);
+    if (dict != NULL) {
+        for (size_t i = 0; i < dict->count; i++) {
+            printf("%s: %s\n", dict->pairs[i].key, dict->pairs[i].value);
+        }
+        free_dict(dict);
+    } else {
+        fprintf(stderr, "Failed to create dictionary.\n");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```

@@ -1,0 +1,17 @@
+#include <stdio.h>
+
+double calculate_pentagon_perimeter(double side_length) {
+    return 5 * side_length;
+}
+
+int main() {
+    double side_length;
+    printf("Enter the side length of the pentagon: ");
+    if (scanf("%lf", &side_length) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return 1;
+    }
+    double perimeter = calculate_pentagon_perimeter(side_length);
+    printf("The perimeter of the pentagon is: %.2f\n", perimeter);
+    return 0;
+}

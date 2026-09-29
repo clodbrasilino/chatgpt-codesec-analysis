@@ -1,0 +1,44 @@
+C language does not support tuples as they are in Python or other high-level languages. However, we can create a similar structure using struct in C. Here is an example of how you can do it:
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char **items;
+    int size;
+} Tuple;
+
+Tuple* stringListToTuple(char **list, int size) {
+    Tuple *tuple = malloc(sizeof(Tuple));
+    tuple->items = malloc(sizeof(char*) * size);
+    tuple->size = size;
+    for(int i = 0; i < size; i++) {
+        tuple->items[i] = malloc(sizeof(char) * (strlen(list[i]) + 1));
+        strcpy(tuple->items[i], list[i]);
+    }
+    return tuple;
+}
+
+void freeTuple(Tuple *tuple) {
+    for(int i = 0; i < tuple->size; i++) {
+        free(tuple->items[i]);
+    }
+    free(tuple->items);
+    free(tuple);
+}
+
+int main() {
+    char *list[] = {"item1", "item2", "item3"};
+    int size = sizeof(list) / sizeof(list[0]);
+    Tuple *tuple = stringListToTuple(list, size);
+    for(int i = 0; i < tuple->size; i++) {
+        printf("%s\n", tuple->items[i]);
+    }
+    freeTuple(tuple);
+    return 0;
+}
+```
+
+In this code, we define a struct Tuple that contains a dynamic array of strings and its size. The stringListToTuple function converts a given string list to a Tuple. The freeTuple function is used to free the memory allocated for the Tuple. In the main function, we create a string list, convert it to a Tuple, print the items of the Tuple, and finally free the memory allocated for the Tuple.

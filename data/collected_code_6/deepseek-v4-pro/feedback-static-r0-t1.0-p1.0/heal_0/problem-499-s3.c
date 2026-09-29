@@ -1,0 +1,28 @@
+#include <stdio.h>
+#define PI 3.14159265358979323846
+
+double circle_diameter(double radius) {
+    if (radius < 0) {
+        return -1;
+    }
+    return 2 * radius;
+}
+
+int main(void) {
+    double radius;
+    
+    printf("Enter radius: ");
+    if (scanf("%lf", &radius) != 1) {
+        printf("Invalid input\n");
+        return 1;
+    }
+    
+    double diameter = circle_diameter(radius);
+    if (diameter < 0) {
+        printf("Radius cannot be negative\n");
+        return 1;
+    }
+    
+    printf("Diameter: %.2f\n", diameter);
+    return 0;
+}

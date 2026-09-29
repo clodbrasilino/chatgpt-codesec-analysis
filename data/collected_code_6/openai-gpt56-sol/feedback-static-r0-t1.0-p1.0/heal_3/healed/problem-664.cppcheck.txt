@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-664.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-664.c:44:14: warning: Either the condition 'length<sizeof(input)' is redundant or the array 'input[128]' is accessed at index 128, which is out of bounds. [arrayIndexOutOfBoundsCond]
+    if (input[length] == '\n') {
+             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-664.c:34:19: note: Assuming that condition 'length<sizeof(input)' is not redundant
+    while (length < sizeof input && input[length] != '\0' &&
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-664.c:44:14: note: Array index out of bounds
+    if (input[length] == '\n') {
+             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-664.c:25:9: style: The scope of the variable 'ch' can be reduced. [variableScope]
+    int ch;
+        ^

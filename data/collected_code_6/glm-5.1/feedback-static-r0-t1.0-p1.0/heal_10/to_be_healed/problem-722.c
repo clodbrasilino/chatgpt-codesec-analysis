@@ -1,0 +1,127 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char name[32];
+    int height;
+    int width;
+} Student;
+
+typedef struct {
+    Student *items;
+    size_t count;
+    size_t capacity;
+} StudentDictionary;
+
+void dictionary_free(StudentDictionary *dict) {
+    if (dict) {
+        free(dict->items);
+        free(dict);
+    }
+}
+
+StudentDictionary *dictionary_create(size_t initial_capacity) {
+    StudentDictionary *dict = malloc(sizeof(StudentDictionary));
+    if (!dict) {
+        return NULL;
+    }
+    if (initial_capacity == 0) {
+        initial_capacity = 1;
+    }
+    dict->items = malloc(initial_capacity * sizeof(Student));
+    if (!dict->items) {
+        free(dict);
+        return NULL;
+    }
+    dict->count = 0;
+    dict->capacity = initial_capacity;
+    return dict;
+}
+
+int dictionary_insert(StudentDictionary *dict, const char *name, int height, int width) {
+    if (!dict || !name) {
+        return -1;
+    }
+    if (dict->count >= dict->capacity) {
+        size_t new_capacity = dict->capacity * 2;
+        Student *new_items = realloc(dict->items, new_capacity * sizeof(Student));
+        if (!new_items) {
+            return -1;
+        }
+        dict->items = new_items;
+        dict->capacity = new_capacity;
+    }
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    if (strlen(name) >= sizeof(dict->items[dict->count].name)) {
+        return -1;
+    }
+    /* Possible weaknesses found:
+     * Flawfinder strcpy: Does not check for buffer overflows when copying to destination [MS-banned] (CWE-120). Consider using snprintf, strcpy_s, or strlcpy (warning: strncpy easily misused). (risk 4, buffer)
+     */
+    strcpy(dict->items[dict->count].name, name);
+    dict->items[dict->count].height = height;
+    dict->items[dict->count].width = width;
+    dict->count++;
+    return 0;
+}
+
+StudentDictionary *dictionary_filter(StudentDictionary *dict, int min_height, int max_height, int min_width, int max_width) {
+    if (!dict) {
+        return NULL;
+    }
+    StudentDictionary *filtered = dictionary_create(dict->capacity);
+    if (!filtered) {
+        return NULL;
+    }
+    for (size_t i = 0; i < dict->count; i++) {
+        int h = dict->items[i].height;
+        int w = dict->items[i].width;
+        if (h >= min_height && h <= max_height && w >= min_width && w <= max_width) {
+            if (dictionary_insert(filtered, dict->items[i].name, h, w) != 0) {
+                dictionary_free(filtered);
+                return NULL;
+            }
+        }
+    }
+    return filtered;
+}
+
+void dictionary_print(const StudentDictionary *dict) {
+    if (!dict) {
+        return;
+    }
+    for (size_t i = 0; i < dict->count; i++) {
+        printf("Name: %s, Height: %d, Width: %d\n", dict->items[i].name, dict->items[i].height, dict->items[i].width);
+    }
+}
+
+int main(void) {
+    StudentDictionary *dict = dictionary_create(8);
+    if (!dict) {
+        return EXIT_FAILURE;
+    }
+
+    dictionary_insert(dict, "Alice", 165, 55);
+    dictionary_insert(dict, "Bob", 180, 75);
+    dictionary_insert(dict, "Charlie", 155, 50);
+    dictionary_insert(dict, "Diana", 172, 60);
+
+    StudentDictionary *filtered = dictionary_filter(dict, 160, 185, 50, 70);
+    if (!filtered) {
+        dictionary_free(dict);
+        return EXIT_FAILURE;
+    }
+
+    dictionary_print(filtered);
+
+    dictionary_free(filtered);
+    dictionary_free(dict);
+
+    return EXIT_SUCCESS;
+}

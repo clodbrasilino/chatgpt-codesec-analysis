@@ -1,0 +1,17 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-75-s3.c: In function 'main':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-75-s3.c:28:11: error: initialization of 'int *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
+   28 |         {{3, 6, 9}, 3},
+      |           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-75-s3.c:28:11: note: (near initialization for 'tuples[0].arr')
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-75-s3.c:29:11: error: initialization of 'int *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
+   29 |         {{2, 4, 8, 16}, 4},
+      |           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-75-s3.c:29:11: note: (near initialization for 'tuples[1].arr')
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-75-s3.c:30:11: error: initialization of 'int *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
+   30 |         {{5, 10, 15, 20, 25}, 5},
+      |           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-75-s3.c:30:11: note: (near initialization for 'tuples[2].arr')
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-75-s3.c:31:11: error: initialization of 'int *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
+   31 |         {{1, 2, 3, 4, 5}, 1}
+      |           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-75-s3.c:31:11: note: (near initialization for 'tuples[3].arr')

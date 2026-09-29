@@ -1,0 +1,25 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int getSum(int n) {
+    int sum = 0;
+    while (n > 0) {
+        sum += n % 10;
+        n /= 10;
+    }
+    return sum;
+}
+
+int main() {
+    int number;
+    printf("Enter a non-negative integer: ");
+    if (scanf("%d", &number) != 1 || number < 0) {
+        fprintf(stderr, "Invalid input. Please enter a non-negative integer.\n");
+        return EXIT_FAILURE;
+    }
+
+    int result = getSum(number);
+    printf("The sum of the digits is: %d\n", result);
+
+    return EXIT_SUCCESS;
+}

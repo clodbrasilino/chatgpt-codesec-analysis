@@ -1,0 +1,23 @@
+```C
+#include <stdio.h>
+
+typedef struct {
+    int x;
+    int y;
+} Tuple;
+
+Tuple maximize(Tuple a, Tuple b) {
+    Tuple max;
+    max.x = (a.x > b.x) ? a.x : b.x;
+    max.y = (a.y > b.y) ? a.y : b.y;
+    return max;
+}
+
+int main() {
+    Tuple a = {10, 20};
+    Tuple b = {30, 15};
+    Tuple max = maximize(a, b);
+    printf("Maximized tuple is (%d, %d)\n", max.x, max.y);
+    return 0;
+}
+```

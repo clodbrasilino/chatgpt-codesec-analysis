@@ -1,0 +1,90 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char *key;
+    int value;
+} DictionaryEntry;
+
+typedef struct {
+    DictionaryEntry *entries;
+    int count;
+    int capacity;
+} Dictionary;
+
+Dictionary* createDictionary(int initialCapacity) {
+    Dictionary *dict = (Dictionary*)malloc(sizeof(Dictionary));
+    dict->entries = (DictionaryEntry*)malloc(initialCapacity * sizeof(DictionaryEntry));
+    dict->count = 0;
+    dict->capacity = initialCapacity;
+    return dict;
+}
+
+void freeDictionary(Dictionary *dict) {
+    for (int i = 0; i < dict->count; i++) {
+        free(dict->entries[i].key);
+    }
+    free(dict->entries);
+    free(dict);
+}
+
+int findKeyIndex(Dictionary *dict, const char *key) {
+    for (int i = 0; i < dict->count; i++) {
+        if (strcmp(dict->entries[i].key, key) == 0) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+void addOrUpdateEntry(Dictionary *dict, const char *key, int value) {
+    int index = findKeyIndex(dict, key);
+    if (index != -1) {
+        dict->entries[index].value += value;
+    } else {
+        if (dict->count >= dict->capacity) {
+            dict->capacity *= 2;
+            dict->entries = (DictionaryEntry*)realloc(dict->entries, dict->capacity * sizeof(DictionaryEntry));
+        }
+        dict->entries[dict->count].key = strdup(key);
+        dict->entries[dict->count].value = value;
+        dict->count++;
+    }
+}
+
+Dictionary* combineDictionaries(Dictionary *dict1, Dictionary *dict2) {
+    Dictionary *result = createDictionary(dict1->count + dict2->count);
+    for (int i = 0; i < dict1->count; i++) {
+        addOrUpdateEntry(result, dict1->entries[i].key, dict1->entries[i].value);
+    }
+    for (int i = 0; i < dict2->count; i++) {
+        addOrUpdateEntry(result, dict2->entries[i].key, dict2->entries[i].value);
+    }
+    return result;
+}
+
+void printDictionary(Dictionary *dict) {
+    for (int i = 0; i < dict->count; i++) {
+        printf("%s: %d\n", dict->entries[i].key, dict->entries[i].value);
+    }
+}
+
+int main() {
+    Dictionary *dict1 = createDictionary(2);
+    addOrUpdateEntry(dict1, "apple", 5);
+    addOrUpdateEntry(dict1, "banana", 3);
+
+    Dictionary *dict2 = createDictionary(2);
+    addOrUpdateEntry(dict2, "apple", 2);
+    addOrUpdateEntry(dict2, "orange", 4);
+
+    Dictionary *combined = combineDictionaries(dict1, dict2);
+    printDictionary(combined);
+
+    freeDictionary(dict1);
+    freeDictionary(dict2);
+    freeDictionary(combined);
+
+    return 0;
+}

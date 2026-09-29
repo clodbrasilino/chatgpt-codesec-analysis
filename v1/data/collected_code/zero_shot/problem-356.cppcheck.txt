@@ -1,0 +1,12 @@
+collected_code/problem-356-0.c:12:18: error: Cannot determine that 'angle1' is initialized [premium-bughuntingUninit]
+    scanf("%f", &angle1);
+                 ^
+collected_code/problem-356-0.c:15:18: error: Cannot determine that 'angle2' is initialized [premium-bughuntingUninit]
+    scanf("%f", &angle2);
+                 ^
+collected_code/problem-356-0.c:17:29: error: Cannot determine that 'angle1' is initialized [premium-bughuntingUninit]
+    angle3 = findThirdAngle(angle1, angle2);
+                            ^
+collected_code/problem-356-0.c:17:37: error: Cannot determine that 'angle2' is initialized [premium-bughuntingUninit]
+    angle3 = findThirdAngle(angle1, angle2);
+                                    ^

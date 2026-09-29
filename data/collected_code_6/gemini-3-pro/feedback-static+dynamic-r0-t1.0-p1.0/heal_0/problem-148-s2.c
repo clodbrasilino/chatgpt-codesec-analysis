@@ -1,0 +1,57 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int sumOfDigits(int n) {
+    int sum = 0;
+    while (n > 0) {
+        sum += n % 10;
+        n /= 10;
+    }
+    return sum;
+}
+
+void findMaximumSumOfDigits(int n, int *part1, int *part2) {
+    if (n < 0 || part1 == NULL || part2 == NULL) {
+        return;
+    }
+
+    int b = 0;
+    int multiplier = 1;
+    int temp = n;
+
+    while (temp > 9) {
+        b += 9 * multiplier;
+        temp /= 10;
+        multiplier *= 10;
+    }
+
+    int a = n - b;
+    
+    if (a < 0) {
+        a = 0;
+        b = n;
+    }
+
+    *part1 = a;
+    *part2 = b;
+}
+
+int main(void) {
+    int n;
+    if (scanf("%d", &n) != 1) {
+        return EXIT_FAILURE;
+    }
+
+    if (n < 0) {
+        return EXIT_FAILURE;
+    }
+
+    int part1 = 0;
+    int part2 = 0;
+
+    findMaximumSumOfDigits(n, &part1, &part2);
+
+    printf("%d %d\n", part1, part2);
+
+    return EXIT_SUCCESS;
+}

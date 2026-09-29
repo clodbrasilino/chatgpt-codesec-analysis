@@ -1,0 +1,39 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+double tuple_to_float(int integer_part, int fractional_part) {
+    if (fractional_part < 0) {
+        return 0.0;
+    }
+
+    double fraction = (double)fractional_part;
+    if (fractional_part > 0) {
+        int num_digits = (int)log10(fractional_part) + 1;
+        fraction /= pow(10, num_digits);
+    }
+
+    double result = (double)integer_part;
+    if (integer_part < 0) {
+        result -= fraction;
+    } else {
+        result += fraction;
+    }
+
+    return result;
+}
+
+int main(void) {
+    int int_part = 42;
+    int frac_part = 567;
+
+    double result = tuple_to_float(int_part, frac_part);
+    printf("%f\n", result);
+
+    int_part = -3;
+    frac_part = 14;
+    result = tuple_to_float(int_part, frac_part);
+    printf("%f\n", result);
+
+    return 0;
+}

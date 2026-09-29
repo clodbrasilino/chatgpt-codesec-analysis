@@ -1,0 +1,86 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+#include <string.h>
+
+static int compare_ints(const void *a, const void *b)
+{
+    int arg1 = *(const int *)a;
+    int arg2 = *(const int *)b;
+    
+    if (arg1 < arg2) return -1;
+    if (arg1 > arg2) return 1;
+    return 0;
+}
+
+static bool binary_search(const int *arr, size_t size, int target)
+{
+    size_t left = 0;
+    size_t right = size;
+    
+    while (left < right) {
+        size_t mid = left + (right - left) / 2;
+        if (arr[mid] == target) {
+            return true;
+        }
+        if (arr[mid] < target) {
+            left = mid + 1;
+        } else {
+            right = mid;
+        }
+    }
+    return false;
+}
+
+bool is_subset(const int *subset, size_t subset_size, 
+               const int *superset, size_t superset_size)
+{
+    if (subset == NULL || superset == NULL) {
+        return false;
+    }
+    
+    if (subset_size == 0) {
+        return true;
+    }
+    
+    if (superset_size == 0 || subset_size > superset_size) {
+        return false;
+    }
+    
+    int *sorted_superset = malloc(superset_size * sizeof(int));
+    if (sorted_superset == NULL) {
+        return false;
+    }
+    
+    memcpy(sorted_superset, superset, superset_size * sizeof(int));
+    qsort(sorted_superset, superset_size, sizeof(int), compare_ints);
+    
+    bool result = true;
+    for (size_t i = 0; i < subset_size; i++) {
+        if (!binary_search(sorted_superset, superset_size, subset[i])) {
+            result = false;
+            break;
+        }
+    }
+    
+    free(sorted_superset);
+    return result;
+}
+
+int main(void)
+{
+    int arr1[] = {1, 2, 3, 4, 5};
+    int arr2[] = {2, 4};
+    int arr3[] = {2, 6};
+    
+    size_t size1 = sizeof(arr1) / sizeof(arr1[0]);
+    size_t size2 = sizeof(arr2) / sizeof(arr2[0]);
+    size_t size3 = sizeof(arr3) / sizeof(arr3[0]);
+    
+    printf("arr2 is %s subset of arr1\n", 
+           is_subset(arr2, size2, arr1, size1) ? "a" : "not a");
+    printf("arr3 is %s subset of arr1\n", 
+           is_subset(arr3, size3, arr1, size1) ? "a" : "not a");
+    
+    return 0;
+}

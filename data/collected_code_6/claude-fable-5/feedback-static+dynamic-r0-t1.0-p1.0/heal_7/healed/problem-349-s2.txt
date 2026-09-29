@@ -1,0 +1,104 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+#include <stdlib.h>
+
+#define BUFFER_SIZE 256U
+#define FLUSH_LIMIT 1000000U
+
+static bool is_binary_string(const char *str, size_t max_len)
+{
+    size_t i;
+
+    if (str == NULL) {
+        return false;
+    }
+
+    if (str[0] == '\0') {
+        return false;
+    }
+
+    for (i = 0U; (i < max_len) && (str[i] != '\0'); i++) {
+        if ((str[i] != '0') && (str[i] != '1')) {
+            return false;
+        }
+    }
+
+    if (i >= max_len) {
+        return false;
+    }
+
+    return true;
+}
+
+static void flush_stdin(void)
+{
+    int c;
+    size_t count = 0U;
+
+    do {
+        c = getchar();
+        count++;
+    } while ((c != '\n') && (c != EOF) && (count < FLUSH_LIMIT));
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t len;
+    char *newline;
+
+    (void)memset(buffer, 0, sizeof(buffer));
+
+    printf("Enter a string: ");
+    (void)fflush(stdout);
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1U] = '\0';
+
+    newline = memchr(buffer, '\n', sizeof(buffer));
+    if (newline != NULL) {
+        *newline = '\0';
+    } else {
+        len = strnlen(buffer, sizeof(buffer));
+        if (len == (sizeof(buffer) - 1U)) {
+            flush_stdin();
+            fprintf(stderr, "Input too long\n");
+            return EXIT_FAILURE;
+        }
+    }
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len >= sizeof(buffer)) {
+        fprintf(stderr, "Input too long\n");
+        return EXIT_FAILURE;
+    }
+
+    if (is_binary_string(buffer, sizeof(buffer))) {
+        printf("The string is a binary string\n");
+    } else {
+        printf("The string is not a binary string\n");
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the flagged weaknesses and how the code handles them:**
+
+1. **`getchar()` in a loop (CWE-120, CWE-20):** The Flawfinder warning is a false positive in practice here, since `getchar()` never writes into a buffer. Nevertheless, the loop is bounded by `FLUSH_LIMIT` and terminates on both `'\n'` and `EOF`, preventing an infinite loop on a closed or redirected `stdin`. No fix required beyond what is present.
+
+2. **Statically-sized `char` array (CWE-119/CWE-120):** The buffer is used safely:
+   - `fgets(buffer, (int)sizeof(buffer), stdin)` limits the read to the buffer size, including the terminating NUL.
+   - The buffer is explicitly zero-initialized and re-terminated at `buffer[sizeof(buffer) - 1U]` as defense-in-depth.
+   - `memchr` and `strnlen` are both bounded by `sizeof(buffer)`, so no unbounded string functions (`strlen`, `strcpy`, `gets`) are used.
+   - Overlong input is detected (no newline found and length equals `BUFFER_SIZE - 1`), the remaining input is drained with `flush_stdin()`, and the program exits with an error rather than silently truncating.
+
+3. **Input validation (CWE-20):** `is_binary_string` rejects `NULL`, empty strings, unterminated buffers (`i >= max_len`), and any character other than `'0'`/`'1'`, so the validation logic itself is bounds-safe.
+
+The original code was already essentially correct; the rewrite preserves all mitigations (bounded reads, explicit termination, bounded scanning, stdin draining, and loop limits) while removing the comments as requested.

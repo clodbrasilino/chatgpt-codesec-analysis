@@ -1,0 +1,192 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef enum {
+    TYPE_INT,
+    TYPE_FLOAT,
+    TYPE_STRING
+} ElementType;
+
+typedef union {
+    int i_val;
+    float f_val;
+    char *s_val;
+} ElementValue;
+
+typedef struct {
+    ElementType type;
+    ElementValue value;
+} TupleElement;
+
+typedef struct {
+    TupleElement *elements;
+    size_t length;
+    size_t capacity;
+} Tuple;
+
+Tuple* create_tuple(size_t capacity);
+void free_tuple(Tuple *t);
+int append_int(Tuple *t, int val);
+int append_float(Tuple *t, float val);
+int append_string(Tuple *t, const char *val);
+int remove_type_from_tuple(Tuple *t, ElementType target_type);
+
+Tuple* create_tuple(size_t capacity) {
+    if (capacity == 0) {
+        return NULL;
+    }
+    
+    Tuple *t = malloc(sizeof(Tuple));
+    if (t == NULL) {
+        return NULL;
+    }
+    
+    t->elements = malloc(capacity * sizeof(TupleElement));
+    if (t->elements == NULL) {
+        free(t);
+        return NULL;
+    }
+    
+    t->length = 0;
+    t->capacity = capacity;
+    
+    return t;
+}
+
+void free_tuple(Tuple *t) {
+    if (t != NULL) {
+        if (t->elements != NULL) {
+            for (size_t i = 0; i < t->length; ++i) {
+                if (t->elements[i].type == TYPE_STRING && t->elements[i].value.s_val != NULL) {
+                    free(t->elements[i].value.s_val);
+                }
+            }
+            free(t->elements);
+        }
+        free(t);
+    }
+}
+
+int append_int(Tuple *t, int val) {
+    if (t == NULL || t->elements == NULL || t->length >= t->capacity) {
+        return -1;
+    }
+    
+    t->elements[t->length].type = TYPE_INT;
+    t->elements[t->length].value.i_val = val;
+    t->length++;
+    
+    return 0;
+}
+
+int append_float(Tuple *t, float val) {
+    if (t == NULL || t->elements == NULL || t->length >= t->capacity) {
+        return -1;
+    }
+    
+    t->elements[t->length].type = TYPE_FLOAT;
+    t->elements[t->length].value.f_val = val;
+    t->length++;
+    
+    return 0;
+}
+
+int append_string(Tuple *t, const char *val) {
+    if (t == NULL || t->elements == NULL || val == NULL || t->length >= t->capacity) {
+        return -1;
+    }
+    
+    size_t max_len = 4096;
+    size_t len = 0;
+    while (len < max_len && val[len] != '\0') {
+        len++;
+    }
+    
+    char *copy = malloc(len + 1);
+    if (copy == NULL) {
+        return -1;
+    }
+    
+    for (size_t i = 0; i < len; i++) {
+        copy[i] = val[i];
+    }
+    copy[len] = '\0';
+    
+    t->elements[t->length].type = TYPE_STRING;
+    t->elements[t->length].value.s_val = copy;
+    t->length++;
+    
+    return 0;
+}
+
+int remove_type_from_tuple(Tuple *t, ElementType target_type) {
+    if (t == NULL || t->elements == NULL) {
+        return -1;
+    }
+
+    size_t write_index = 0;
+    
+    for (size_t i = 0; i < t->length; ++i) {
+        if (t->elements[i].type == target_type) {
+            if (t->elements[i].type == TYPE_STRING && t->elements[i].value.s_val != NULL) {
+                free(t->elements[i].value.s_val);
+                t->elements[i].value.s_val = NULL;
+            }
+        } else {
+            if (write_index != i) {
+                t->elements[write_index] = t->elements[i];
+            }
+            write_index++;
+        }
+    }
+
+    t->length = write_index;
+
+    if (t->length == 0) {
+        free(t->elements);
+        t->elements = NULL;
+        t->capacity = 0;
+    } else {
+        TupleElement *new_elements = realloc(t->elements, t->length * sizeof(TupleElement));
+        if (new_elements != NULL) {
+            t->elements = new_elements;
+            t->capacity = t->length;
+        }
+    }
+
+    return 0;
+}
+
+int main(void) {
+    Tuple *t = create_tuple(5);
+    if (t == NULL) {
+        return EXIT_FAILURE;
+    }
+
+    if (append_int(t, 10) != 0 ||
+        append_float(t, 3.14f) != 0 ||
+        append_string(t, "Hello") != 0 ||
+        append_int(t, 20) != 0 ||
+        append_string(t, "World") != 0) {
+        free_tuple(t);
+        return EXIT_FAILURE;
+    }
+
+    if (remove_type_from_tuple(t, TYPE_STRING) != 0) {
+        free_tuple(t);
+        return EXIT_FAILURE;
+    }
+
+    for (size_t i = 0; i < t->length; ++i) {
+        if (t->elements[i].type == TYPE_INT) {
+            printf("%d\n", t->elements[i].value.i_val);
+        } else if (t->elements[i].type == TYPE_FLOAT) {
+            printf("%f\n", t->elements[i].value.f_val);
+        } else if (t->elements[i].type == TYPE_STRING) {
+            printf("%s\n", t->elements[i].value.s_val);
+        }
+    }
+
+    free_tuple(t);
+    return EXIT_SUCCESS;
+}

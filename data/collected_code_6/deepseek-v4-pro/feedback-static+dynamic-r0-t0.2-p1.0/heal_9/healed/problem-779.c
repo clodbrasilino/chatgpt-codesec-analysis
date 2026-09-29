@@ -1,0 +1,184 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+typedef struct Node {
+    int *data;
+    int size;
+    struct Node *next;
+} Node;
+
+typedef struct {
+    Node *head;
+    int count;
+} ListOfLists;
+
+Node *create_node(const int *data, int size) {
+    Node *node;
+    size_t alloc_size;
+    
+    if (size <= 0) {
+        return NULL;
+    }
+    
+    if ((size_t)size > SIZE_MAX / sizeof(int)) {
+        return NULL;
+    }
+    
+    node = (Node *)malloc(sizeof(Node));
+    if (node == NULL) {
+        return NULL;
+    }
+    
+    alloc_size = (size_t)size * sizeof(int);
+    
+    node->data = (int *)malloc(alloc_size);
+    if (node->data == NULL) {
+        free(node);
+        return NULL;
+    }
+    
+    if (data != NULL) {
+        if (alloc_size > 0) {
+            memcpy(node->data, data, alloc_size);
+        }
+    } else {
+        memset(node->data, 0, alloc_size);
+    }
+    
+    node->size = size;
+    node->next = NULL;
+    return node;
+}
+
+void free_list_of_lists(ListOfLists *list) {
+    Node *current;
+    Node *next;
+    
+    if (list == NULL) {
+        return;
+    }
+    
+    current = list->head;
+    while (current != NULL) {
+        next = current->next;
+        free(current->data);
+        free(current);
+        current = next;
+    }
+    list->head = NULL;
+    list->count = 0;
+}
+
+int lists_equal(const Node *a, const Node *b) {
+    int i;
+    
+    if (a == NULL || b == NULL) {
+        return 0;
+    }
+    if (a->size != b->size) {
+        return 0;
+    }
+    for (i = 0; i < a->size; i++) {
+        if (a->data[i] != b->data[i]) {
+            return 0;
+        }
+    }
+    return 1;
+}
+
+int count_unique_lists(ListOfLists *list) {
+    int unique_count;
+    Node *current;
+    Node *check;
+    
+    if (list == NULL || list->head == NULL) {
+        return 0;
+    }
+    
+    unique_count = 0;
+    current = list->head;
+    
+    while (current != NULL) {
+        int is_unique = 1;
+        check = list->head;
+        
+        while (check != current) {
+            if (lists_equal(check, current)) {
+                is_unique = 0;
+                break;
+            }
+            check = check->next;
+        }
+        
+        if (is_unique) {
+            unique_count++;
+        }
+        current = current->next;
+    }
+    
+    return unique_count;
+}
+
+int main(void) {
+    ListOfLists list;
+    const int arr1[] = {1, 2, 3};
+    const int arr2[] = {4, 5, 6};
+    const int arr3[] = {1, 2, 3};
+    const int arr4[] = {7, 8};
+    const int arr5[] = {4, 5, 6};
+    Node *node1;
+    Node *node2;
+    Node *node3;
+    Node *node4;
+    Node *node5;
+    int result;
+    
+    list.head = NULL;
+    list.count = 0;
+    
+    node1 = create_node(arr1, 3);
+    node2 = create_node(arr2, 3);
+    node3 = create_node(arr3, 3);
+    node4 = create_node(arr4, 2);
+    node5 = create_node(arr5, 3);
+    
+    if (node1 == NULL || node2 == NULL || node3 == NULL || node4 == NULL || node5 == NULL) {
+        if (node1 != NULL) {
+            free(node1->data);
+            free(node1);
+        }
+        if (node2 != NULL) {
+            free(node2->data);
+            free(node2);
+        }
+        if (node3 != NULL) {
+            free(node3->data);
+            free(node3);
+        }
+        if (node4 != NULL) {
+            free(node4->data);
+            free(node4);
+        }
+        if (node5 != NULL) {
+            free(node5->data);
+            free(node5);
+        }
+        return 1;
+    }
+    
+    list.head = node1;
+    node1->next = node2;
+    node2->next = node3;
+    node3->next = node4;
+    node4->next = node5;
+    list.count = 5;
+    
+    result = count_unique_lists(&list);
+    printf("%d\n", result);
+    
+    free_list_of_lists(&list);
+    
+    return 0;
+}

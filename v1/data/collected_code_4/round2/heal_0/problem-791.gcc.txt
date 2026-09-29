@@ -1,0 +1,7 @@
+./collected_code_4/round2//heal_0/problem-791.c: In function 'main':
+./collected_code_4/round2//heal_0/problem-791.c:56:26: warning: passing argument 2 of 'removeTuple' discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+   56 |     removeTuple(&record, remove_item);
+      |                          ^~~~~~~~~~~
+./collected_code_4/round2//heal_0/problem-791.c:15:40: note: expected 'char *' but argument is of type 'const char *'
+   15 | void removeTuple(Record *record, char *remItem) {
+      |                                  ~~~~~~^~~~~~~

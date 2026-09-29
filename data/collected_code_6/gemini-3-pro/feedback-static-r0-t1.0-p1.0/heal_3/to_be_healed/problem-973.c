@@ -1,0 +1,43 @@
+#include <stdio.h>
+#include <string.h>
+
+void reverseString(char* str, size_t start, size_t end) {
+    while (start < end) {
+        char temp = str[start];
+        str[start] = str[end];
+        str[end] = temp;
+        start++;
+        end--;
+    }
+}
+
+void leftRotateString(char* str, size_t n) {
+    if (str == NULL) {
+        return;
+    }
+
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    size_t len = strlen(str);
+
+    if (len == 0 || n == 0 || n % len == 0) {
+        return;
+    }
+
+    n = n % len;
+    
+    reverseString(str, 0, n - 1);
+    reverseString(str, n, len - 1);
+    reverseString(str, 0, len - 1);
+}
+
+int main(void) {
+    char str[] = "HelloWorld";
+    size_t rotations = 3;
+
+    leftRotateString(str, rotations);
+    printf("%s\n", str);
+
+    return 0;
+}

@@ -1,0 +1,73 @@
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdbool.h>
+#include <stdlib.h>
+
+#define MAX_STR_LEN 4096
+
+bool match_word_at_end(const char *str, const char *word) {
+    if (str == NULL || word == NULL) {
+        return false;
+    }
+
+    size_t str_len = 0;
+    /* Possible weaknesses found:
+     *  Either the condition 'str_len<4096' is redundant or the array 'str[18]' is accessed at index 4095, which is out of bounds. [arrayIndexOutOfBoundsCond]
+     *  Assuming that condition 'str_len<4096' is not redundant
+     *  Array index out of bounds
+     */
+    while (str_len < MAX_STR_LEN && str[str_len] != '\0') {
+        str_len++;
+    }
+
+    size_t word_len = 0;
+    /* Possible weaknesses found:
+     *  Assuming that condition 'word_len<4096' is not redundant
+     *  Array index out of bounds
+     *  Either the condition 'word_len<4096' is redundant or the array 'word[5]' is accessed at index 4095, which is out of bounds. [arrayIndexOutOfBoundsCond]
+     */
+    while (word_len < MAX_STR_LEN && word[word_len] != '\0') {
+        word_len++;
+    }
+
+    if (word_len == 0) {
+        return false;
+    }
+
+    size_t end_idx = str_len;
+    while (end_idx > 0 && ispunct((unsigned char)str[end_idx - 1])) {
+        end_idx--;
+    }
+
+    if (end_idx < word_len) {
+        return false;
+    }
+
+    size_t start_idx = end_idx - word_len;
+
+    if (strncmp(&str[start_idx], word, word_len) == 0) {
+        if (start_idx == 0 || isspace((unsigned char)str[start_idx - 1]) || ispunct((unsigned char)str[start_idx - 1])) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+int main(void) {
+    const char *test_str1 = "Hello, this is a test.";
+    const char *test_word1 = "test";
+    
+    const char *test_str2 = "Another example string!";
+    const char *test_word2 = "string";
+
+    const char *test_str3 = "Not matching fail";
+    const char *test_word3 = "match";
+
+    printf("%d\n", match_word_at_end(test_str1, test_word1));
+    printf("%d\n", match_word_at_end(test_str2, test_word2));
+    printf("%d\n", match_word_at_end(test_str3, test_word3));
+
+    return 0;
+}

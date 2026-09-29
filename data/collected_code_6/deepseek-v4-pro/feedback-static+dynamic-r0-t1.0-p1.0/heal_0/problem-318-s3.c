@@ -1,0 +1,25 @@
+#include <stdio.h>
+#include <math.h>
+
+double maximumVolume(double sum) {
+    if (sum <= 0) {
+        return 0.0;
+    }
+    double side = sum / 3.0;
+    return pow(side, 3);
+}
+
+int main(void) {
+    double sum;
+    
+    printf("Enter sum of sides: ");
+    if (scanf("%lf", &sum) != 1) {
+        printf("Invalid input.\n");
+        return 1;
+    }
+    
+    double volume = maximumVolume(sum);
+    printf("Maximum volume: %.6f\n", volume);
+    
+    return 0;
+}

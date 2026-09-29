@@ -1,0 +1,30 @@
+#include <stdio.h>
+#include <string.h>
+
+int shortestSupersequenceLength(const char *str1, const char *str2) {
+    size_t m = 0, n = 0;
+    while (str1[m] != '\0') m++;
+    while (str2[n] != '\0') n++;
+    int dp[m + 1][n + 1];
+
+    for (int i = 0; i <= m; i++) {
+        for (int j = 0; j <= n; j++) {
+            if (i == 0 || j == 0) {
+                dp[i][j] = i + j;
+            } else if (str1[i - 1] == str2[j - 1]) {
+                dp[i][j] = 1 + dp[i - 1][j - 1];
+            } else {
+                dp[i][j] = 1 + (dp[i - 1][j] < dp[i][j - 1] ? dp[i - 1][j] : dp[i][j - 1]);
+            }
+        }
+    }
+    return dp[m][n];
+}
+
+int main() {
+    const char str1[] = "AGGTAB";
+    const char str2[] = "GXTXAYB";
+    int length = shortestSupersequenceLength(str1, str2);
+    printf("Length of the shortest supersequence: %d\n", length);
+    return 0;
+}

@@ -1,0 +1,15 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-598.c: In function 'isArmstrong':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-598.c:23:31: error: 'INT_MAX' undeclared (first use in this function)
+   23 |     if (tempResult >= (double)INT_MAX || tempResult <= (double)INT_MIN) {
+      |                               ^~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-598.c:3:1: note: 'INT_MAX' is defined in header '<limits.h>'; this is probably fixable by adding '#include <limits.h>'
+    2 | #include <math.h>
+  +++ |+#include <limits.h>
+    3 | 
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-598.c:23:31: note: each undeclared identifier is reported only once for each function it appears in
+   23 |     if (tempResult >= (double)INT_MAX || tempResult <= (double)INT_MIN) {
+      |                               ^~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-598.c:23:64: error: 'INT_MIN' undeclared (first use in this function)
+   23 |     if (tempResult >= (double)INT_MAX || tempResult <= (double)INT_MIN) {
+      |                                                                ^~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-598.c:23:64: note: 'INT_MIN' is defined in header '<limits.h>'; this is probably fixable by adding '#include <limits.h>'

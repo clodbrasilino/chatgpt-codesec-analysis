@@ -1,0 +1,102 @@
+#include <stdio.h>
+#include <regex.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdbool.h>
+#include <limits.h>
+
+#define BUFFER_SIZE 256
+
+int validate_string(const char *input) {
+    regex_t regex;
+    int ret;
+    int result = 0;
+
+    if (input == NULL || input[0] == '\0') {
+        return 0;
+    }
+
+    ret = regcomp(&regex, "^[a-zA-Z0-9]+$", REG_EXTENDED | REG_NOSUB);
+    if (ret != 0) {
+        return 0;
+    }
+
+    ret = regexec(&regex, input, 0, NULL, 0);
+    if (ret == 0) {
+        result = 1;
+    }
+
+    regfree(&regex);
+    return result;
+}
+
+static bool read_input(char *buffer, size_t buffer_size) {
+    size_t len;
+    /* Possible weaknesses found:
+     *  The scope of the variable 'c' can be reduced. [variableScope]
+     */
+    int c;
+    /* Possible weaknesses found:
+     *  The scope of the variable 'overflow' can be reduced. [variableScope]
+     */
+    bool overflow = false;
+
+    if (buffer == NULL || buffer_size == 0 || buffer_size > INT_MAX) {
+        return false;
+    }
+
+    if (fgets(buffer, (int)buffer_size, stdin) == NULL) {
+        return false;
+    }
+
+    len = strnlen(buffer, buffer_size);
+
+    if (len == 0) {
+        return false;
+    }
+
+    if (buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+        return true;
+    }
+
+    if (len == buffer_size - 1) {
+        /* Possible weaknesses found:
+         * Flawfinder getchar: Check buffer boundaries if used in a loop including recursive loops (CWE-120, CWE-20). (risk 1, buffer)
+         */
+        while ((c = getchar()) != '\n' && c != EOF) {
+            overflow = true;
+        }
+        if (overflow) {
+            buffer[0] = '\0';
+            return false;
+        }
+    }
+
+    return true;
+}
+
+int main(void) {
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char buffer[BUFFER_SIZE];
+    int validation_result;
+
+    printf("Enter a string to validate: ");
+
+    if (!read_input(buffer, sizeof(buffer))) {
+        fprintf(stderr, "Error reading input or input too long\n");
+        return EXIT_FAILURE;
+    }
+
+    validation_result = validate_string(buffer);
+
+    if (validation_result) {
+        printf("Valid: String contains only alphanumeric characters\n");
+        return EXIT_SUCCESS;
+    } else {
+        printf("Invalid: String contains invalid characters or is empty\n");
+        return EXIT_FAILURE;
+    }
+}

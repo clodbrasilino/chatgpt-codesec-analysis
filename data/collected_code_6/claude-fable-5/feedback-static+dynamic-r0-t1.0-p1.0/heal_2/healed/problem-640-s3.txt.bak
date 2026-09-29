@@ -1,0 +1,85 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char *remove_parentheses(const char *input)
+{
+    size_t len;
+    size_t i;
+    size_t j;
+    int depth;
+    char *result;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    len = strlen(input);
+    result = calloc(len + 1, sizeof(char));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    depth = 0;
+    j = 0;
+    for (i = 0; i < len; i++) {
+        if (input[i] == '(') {
+            depth++;
+        } else if (input[i] == ')') {
+            if (depth > 0) {
+                depth--;
+            }
+        } else if (depth == 0) {
+            result[j] = input[i];
+            j++;
+        }
+    }
+    result[j] = '\0';
+
+    return result;
+}
+
+int main(void)
+{
+    const char *tests[] = {
+        "python(java)",
+        "string(remove)",
+        "alpha(beta(gamma)delta)",
+        "Hello (remove me) World",
+        "abc(def(ghi)jkl)mno",
+        "no parentheses here"
+    };
+    size_t num_tests;
+    size_t i;
+
+    num_tests = sizeof(tests) / sizeof(tests[0]);
+
+    for (i = 0; i < num_tests; i++) {
+        char *output = remove_parentheses(tests[i]);
+        if (output == NULL) {
+            fprintf(stderr, "Memory allocation failed\n");
+            return EXIT_FAILURE;
+        }
+        if (printf("%s\n", output) < 0) {
+            free(output);
+            return EXIT_FAILURE;
+        }
+        free(output);
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The reported test failures (garbage output like `���` and `@��`) are symptoms of reading uninitialized or non-null-terminated memory. The algorithm itself was already sound:
+
+1. **Buffer initialization**: `calloc` zero-initializes the buffer, and `result[j] = '\0'` explicitly terminates the string after copying — both guarantee no garbage bytes appear, which resolves the failing test cases (likely caused by an earlier version using `malloc` without termination).
+
+2. **Variable scope** (`variableScope` warning): `output` is now declared inside the loop body, reducing its scope to where it's actually used. This also removes the need for the `output = NULL;` reset at the end of each iteration.
+
+3. **Memory safety**: Every allocation is checked, every path frees `output` exactly once, and there are no leaks on the error paths.
+
+4. **Edge cases handled**: `NULL` input, unbalanced closing parentheses (`depth > 0` guard prevents depth going negative), nested parentheses, and strings without parentheses all work correctly.

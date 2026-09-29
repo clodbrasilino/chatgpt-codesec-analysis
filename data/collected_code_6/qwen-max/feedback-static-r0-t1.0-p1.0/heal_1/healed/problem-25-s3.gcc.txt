@@ -1,0 +1,4 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-25-s3.c: In function 'product_of_unique_elements':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-25-s3.c:20:36: error: assignment of read-only location '*(unique + (sizetype)((long unsigned int)unique_count++ * 4))'
+   20 |             unique[unique_count++] = arr[i];
+      |                                    ^

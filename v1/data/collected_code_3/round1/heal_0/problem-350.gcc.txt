@@ -1,0 +1,99 @@
+collected_code_3/problem-350-1.c: In function 'minimizeString':
+collected_code_3/problem-350-1.c:9:24: warning: implicit declaration of function 'malloc' [-Wimplicit-function-declaration]
+    9 |     char* res = (char*)malloc(sizeof(char) * (len + 1));
+      |                        ^~~~~~
+collected_code_3/problem-350-1.c:3:1: note: include '<stdlib.h>' or provide a declaration of 'malloc'
+    2 | #include <string.h>
+  +++ |+#include <stdlib.h>
+    3 | 
+collected_code_3/problem-350-1.c:9:24: warning: incompatible implicit declaration of built-in function 'malloc' [-Wbuiltin-declaration-mismatch]
+    9 |     char* res = (char*)malloc(sizeof(char) * (len + 1));
+      |                        ^~~~~~
+collected_code_3/problem-350-1.c:9:24: note: include '<stdlib.h>' or provide a declaration of 'malloc'
+collected_code_3/problem-350-1.c: In function 'main':
+collected_code_3/problem-350-1.c:34:5: warning: implicit declaration of function 'free' [-Wimplicit-function-declaration]
+   34 |     free(res);
+      |     ^~~~
+collected_code_3/problem-350-1.c:34:5: note: include '<stdlib.h>' or provide a declaration of 'free'
+collected_code_3/problem-350-1.c:34:5: warning: incompatible implicit declaration of built-in function 'free' [-Wbuiltin-declaration-mismatch]
+collected_code_3/problem-350-1.c:34:5: note: include '<stdlib.h>' or provide a declaration of 'free'
+collected_code_3/problem-350-1.c: In function 'minimizeString':
+collected_code_3/problem-350-1.c:23:22: warning: dereference of possibly-NULL 'res' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   23 |             res[j++] = str[i];
+      |             ~~~~~~~~~^~~~~~~~
+  'minimizeString': event 1
+    |
+    |    9 |     char* res = (char*)malloc(sizeof(char) * (len + 1));
+    |      |                        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                        |
+    |      |                        (1) this call could return NULL
+    |
+  'minimizeString': events 2-8
+    |
+    |   14 |     for (int i = 0; i < MAX_CHAR; i++)
+    |      |                       ^
+    |      |                       |
+    |      |                       (2) following 'true' branch (when 'i <= 255')...
+    |   15 |         if (count[i] < min && count[i] != 0) {
+    |      |             ~~~~~~~~   
+    |      |                  |
+    |      |                  (3) ...to here
+    |......
+    |   21 |     for (int i = 0; i < len; i++)
+    |      |                     ~~~~~~~
+    |      |                       |
+    |      |                       (4) following 'true' branch (when 'i < len')...
+    |   22 |         if (str[i] != min_index)
+    |      |            ~   ~       
+    |      |            |   |
+    |      |            |   (5) ...to here
+    |      |            (6) following 'true' branch...
+    |   23 |             res[j++] = str[i];
+    |      |             ~~~~~~~~~~~~~~~~~
+    |      |                      |    |
+    |      |                      |    (7) ...to here
+    |      |                      (8) 'res + (sizetype)j' could be NULL: unchecked value from (1)
+    |
+collected_code_3/problem-350-1.c:25:12: warning: dereference of possibly-NULL 'res' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   25 |     res[j] = '\0';
+      |     ~~~~~~~^~~~~~
+  'main': events 1-2
+    |
+    |   30 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |   31 |     char str[] = "example string";
+    |   32 |     char* res = minimizeString(str);
+    |      |                 ~~~~~~~~~~~~~~~~~~~
+    |      |                 |
+    |      |                 (2) calling 'minimizeString' from 'main'
+    |
+    +--> 'minimizeString': events 3-4
+           |
+           |    6 | char* minimizeString(char* str) {
+           |      |       ^~~~~~~~~~~~~~
+           |      |       |
+           |      |       (3) entry to 'minimizeString'
+           |......
+           |    9 |     char* res = (char*)malloc(sizeof(char) * (len + 1));
+           |      |                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                        |
+           |      |                        (4) this call could return NULL
+           |
+         'minimizeString': events 5-7
+           |
+           |   14 |     for (int i = 0; i < MAX_CHAR; i++)
+           |      |                       ^
+           |      |                       |
+           |      |                       (5) following 'true' branch (when 'i <= 255')...
+           |   15 |         if (count[i] < min && count[i] != 0) {
+           |      |             ~~~~~~~~   
+           |      |                  |
+           |      |                  (6) ...to here
+           |......
+           |   25 |     res[j] = '\0';
+           |      |     ~~~~~~~~~~~~~      
+           |      |            |
+           |      |            (7) 'res + (sizetype)j' could be NULL: unchecked value from (4)
+           |

@@ -1,0 +1,66 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef enum {
+    TYPE_INT,
+    TYPE_LIST
+} DataType;
+
+typedef struct {
+    DataType type;
+    union {
+        int int_val;
+        struct {
+            void **items;
+            size_t size;
+        } list_val;
+    } data;
+} TupleItem;
+
+typedef struct {
+    TupleItem *items;
+    size_t size;
+} Tuple;
+
+size_t count_lists_in_tuple(const Tuple *t) {
+    if (t == NULL) {
+        return 0;
+    }
+    size_t count = 0;
+    for (size_t i = 0; i < t->size; i++) {
+        if (t->items[i].type == TYPE_LIST) {
+            count++;
+        }
+    }
+    return count;
+}
+
+int main(void) {
+    Tuple t;
+    t.size = 4;
+    t.items = (TupleItem *)malloc(t.size * sizeof(TupleItem));
+    if (t.items == NULL) {
+        return 1;
+    }
+
+    t.items[0].type = TYPE_INT;
+    t.items[0].data.int_val = 42;
+
+    t.items[1].type = TYPE_LIST;
+    t.items[1].data.list_val.size = 0;
+    t.items[1].data.list_val.items = NULL;
+
+    t.items[2].type = TYPE_INT;
+    t.items[2].data.int_val = 99;
+
+    t.items[3].type = TYPE_LIST;
+    t.items[3].data.list_val.size = 0;
+    t.items[3].data.list_val.items = NULL;
+
+    size_t list_count = count_lists_in_tuple(&t);
+    printf("%zu\n", list_count);
+
+    free(t.items);
+
+    return 0;
+}

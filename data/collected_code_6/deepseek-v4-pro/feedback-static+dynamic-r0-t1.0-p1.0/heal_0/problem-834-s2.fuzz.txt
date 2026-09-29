@@ -1,0 +1,9 @@
+problem-834-s2.c:33:30:medium:UBSan: 2.2689e+09 is outside the range of representable values of type 'int' (AFL crash: id:000002,sig:06,src:000000,time:20989,execs:1239,op:havoc,rep:15)
+problem-834-s2.c:33:30:medium:UBSan: 2.17091e+09 is outside the range of representable values of type 'int' (AFL crash: id:000003,sig:06,src:000000,time:21010,execs:1249,op:havoc,rep:3)
+problem-834-s2.c:39:32:medium:UBSan: 2.14749e+09 is outside the range of representable values of type 'int' (AFL crash: id:000002,sig:06,src:000000,time:20989,execs:1239,op:havoc,rep:15)
+problem-834-s2.c:39:32:medium:UBSan: 2.20721e+09 is outside the range of representable values of type 'int' (AFL crash: id:000003,sig:06,src:000000,time:21010,execs:1249,op:havoc,rep:3)
+problem-834-s2.c:45:33:medium:UBSan: 2.18725e+09 is outside the range of representable values of type 'int' (AFL crash: id:000002,sig:06,src:000000,time:20989,execs:1239,op:havoc,rep:15)
+problem-834-s2.c:45:33:medium:UBSan: 2.24373e+09 is outside the range of representable values of type 'int' (AFL crash: id:000003,sig:06,src:000000,time:21010,execs:1249,op:havoc,rep:3)
+problem-834-s2.c:51:31:medium:UBSan: 2.22793e+09 is outside the range of representable values of type 'int' (AFL crash: id:000002,sig:06,src:000000,time:20989,execs:1239,op:havoc,rep:15)
+problem-834-s2.c:51:31:medium:UBSan: 2.14749e+09 is outside the range of representable values of type 'int' (AFL crash: id:000003,sig:06,src:000000,time:21010,execs:1249,op:havoc,rep:3)
+problem-834-s2.c:84:0:error:Fuzzing found a crash (signal 6) on input id:000000,sig:06,src:000000,time:1426,execs:526,op:havoc,rep:9; likely memory-safety defect

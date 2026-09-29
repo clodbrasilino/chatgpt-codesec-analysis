@@ -1,0 +1,99 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+bool is_leap_year(int year);
+int days_in_month(int month, int year);
+bool is_valid_date(int day, int month, int year);
+
+bool is_leap_year(int year)
+{
+    if ((year % 4 == 0 && year % 100 != 0) || (year % 400 == 0)) {
+        return true;
+    }
+    return false;
+}
+
+int days_in_month(int month, int year)
+{
+    int days;
+
+    switch (month) {
+    case 1:
+    case 3:
+    case 5:
+    case 7:
+    case 8:
+    case 10:
+    case 12:
+        days = 31;
+        break;
+    case 4:
+    case 6:
+    case 9:
+    case 11:
+        days = 30;
+        break;
+    case 2:
+        if (is_leap_year(year)) {
+            days = 29;
+        } else {
+            days = 28;
+        }
+        break;
+    default:
+        days = 0;
+        break;
+    }
+
+    return days;
+}
+
+bool is_valid_date(int day, int month, int year)
+{
+    if (year < 1582 || year > 9999) {
+        return false;
+    }
+
+    if (month < 1 || month > 12) {
+        return false;
+    }
+
+    if (day < 1 || day > days_in_month(month, year)) {
+        return false;
+    }
+
+    if (year == 1582) {
+        if (month < 10) {
+            return false;
+        }
+        if (month == 10 && day < 15) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+int main(void)
+{
+    int day;
+    int month;
+    int year;
+    int result;
+
+    printf("Enter date (day month year): ");
+
+    result = scanf("%d %d %d", &day, &month, &year);
+    if (result != 3) {
+        fprintf(stderr, "Error: invalid input format\n");
+        return 1;
+    }
+
+    if (is_valid_date(day, month, year)) {
+        printf("%02d/%02d/%04d is a valid Gregorian date\n", day, month, year);
+    } else {
+        printf("%d/%d/%d is not a valid Gregorian date\n", day, month, year);
+    }
+
+    return 0;
+}

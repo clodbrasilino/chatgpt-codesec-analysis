@@ -1,0 +1,71 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+bool checkCommonElementsOrder(const int* list1, size_t size1, const int* list2, size_t size2) {
+    if (!list1 || !list2) {
+        return false;
+    }
+
+    size_t i = 0;
+    size_t j = 0;
+
+    while (i < size1 && j < size2) {
+        bool in_list2 = false;
+        for (size_t k = 0; k < size2; ++k) {
+            if (list1[i] == list2[k]) {
+                in_list2 = true;
+                break;
+            }
+        }
+
+        if (in_list2) {
+            bool found = false;
+            while (j < size2) {
+                if (list1[i] == list2[j]) {
+                    found = true;
+                    j++;
+                    break;
+                }
+                bool in_list1 = false;
+                for (size_t k = 0; k < size1; ++k) {
+                    if (list2[j] == list1[k]) {
+                        in_list1 = true;
+                        break;
+                    }
+                }
+                if (in_list1) {
+                    return false;
+                }
+                j++;
+            }
+            if (!found) {
+                return false;
+            }
+        }
+        i++;
+    }
+
+    return true;
+}
+
+int main(void) {
+    int list1[] = {1, 2, 3, 4, 5};
+    size_t size1 = sizeof(list1) / sizeof(list1[0]);
+    
+    int list3[] = {7, 2, 9, 4};
+    size_t size3 = sizeof(list3) / sizeof(list3[0]);
+
+    int list4[] = {4, 2, 10};
+    size_t size4 = sizeof(list4) / sizeof(list4[0]);
+
+    bool result1 = checkCommonElementsOrder(list1, size1, list3, size3);
+    printf("Result 1: %s\n", result1 ? "true" : "false");
+
+    bool result2 = checkCommonElementsOrder(list1, size1, list4, size4);
+    printf("Result 2: %s\n", result2 ? "true" : "false");
+
+    return 0;
+}
+```

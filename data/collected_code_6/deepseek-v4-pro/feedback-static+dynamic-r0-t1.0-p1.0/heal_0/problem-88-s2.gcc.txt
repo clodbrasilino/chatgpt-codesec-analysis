@@ -1,0 +1,5 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-88-s2.c: In function 'get_frequency':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-88-s2.c:31:75: error: 'compare_int' undeclared (first use in this function)
+   31 |     qsort(temp, length, sizeof(int), (int (*)(const void *, const void *))compare_int);
+      |                                                                           ^~~~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-88-s2.c:31:75: note: each undeclared identifier is reported only once for each function it appears in

@@ -1,0 +1,36 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+int count_std_occurrences(const char *str) {
+    int count = 0;
+    const char *pos = str;
+    
+    if (str == NULL) {
+        return -1;
+    }
+    
+    while ((pos = strstr(pos, "std")) != NULL) {
+        count++;
+        pos += 3;
+    }
+    
+    return count;
+}
+
+int main(void) {
+    const char *test1 = "This is a std test string with std in it";
+    const char *test2 = "No matches here";
+    const char *test3 = "std std std";
+    const char *test4 = "";
+    const char *test5 = "std";
+    
+    printf("Test 1: %d occurrence(s)\n", count_std_occurrences(test1));
+    printf("Test 2: %d occurrence(s)\n", count_std_occurrences(test2));
+    printf("Test 3: %d occurrence(s)\n", count_std_occurrences(test3));
+    printf("Test 4: %d occurrence(s)\n", count_std_occurrences(test4));
+    printf("Test 5: %d occurrence(s)\n", count_std_occurrences(test5));
+    printf("Test NULL: %d occurrence(s)\n", count_std_occurrences(NULL));
+    
+    return 0;
+}

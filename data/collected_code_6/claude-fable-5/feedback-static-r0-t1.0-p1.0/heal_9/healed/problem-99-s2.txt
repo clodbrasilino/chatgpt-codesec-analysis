@@ -1,0 +1,91 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <limits.h>
+
+#define MAX_BITS 64
+
+int decimal_to_binary(unsigned long long decimal, char *buffer, size_t buffer_size)
+{
+    size_t index = 0;
+    size_t i = 0;
+    char temp[MAX_BITS + 1];
+
+    if (buffer == NULL || buffer_size == 0) {
+        return -1;
+    }
+
+    memset(temp, 0, sizeof(temp));
+
+    if (decimal == 0) {
+        if (buffer_size < 2) {
+            return -1;
+        }
+        buffer[0] = '0';
+        buffer[1] = '\0';
+        return 0;
+    }
+
+    while (decimal > 0 && index < MAX_BITS) {
+        temp[index] = (char)('0' + (decimal % 2ULL));
+        decimal /= 2ULL;
+        index++;
+    }
+
+    if (decimal > 0) {
+        return -1;
+    }
+
+    if (index >= buffer_size) {
+        return -1;
+    }
+
+    for (i = 0; i < index; i++) {
+        buffer[i] = temp[index - 1 - i];
+    }
+    buffer[index] = '\0';
+
+    return 0;
+}
+
+int main(void)
+{
+    unsigned long long number = 0;
+    char binary[MAX_BITS + 1];
+    int scan_result = 0;
+
+    memset(binary, 0, sizeof(binary));
+
+    printf("Enter a non-negative decimal number: ");
+
+    scan_result = scanf("%llu", &number);
+    if (scan_result != 1) {
+        fprintf(stderr, "Error: invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (decimal_to_binary(number, binary, sizeof(binary)) != 0) {
+        fprintf(stderr, "Error: conversion failed.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Binary equivalent: %s\n", binary);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis summary:**
+
+The Flawfinder warnings on both `temp` and `binary` are low-risk (risk 2) advisories triggered simply by the presence of statically-sized `char` arrays, not by actual defects. Reviewing the code confirms the warnings are already fully mitigated:
+
+1. **`temp[MAX_BITS + 1]` in `decimal_to_binary`**: The write loop is bounded by `index < MAX_BITS`, so writes never exceed index 63, and the array is zero-initialized with `memset` sized via `sizeof(temp)`. No overflow is possible.
+
+2. **`buffer` writes**: Guarded by `NULL`/zero-size checks, a `buffer_size < 2` check for the zero case, and an `index >= buffer_size` check before copying, which correctly reserves space for the null terminator.
+
+3. **`binary[MAX_BITS + 1]` in `main`**: Zero-initialized and passed with its true size via `sizeof(binary)`, so the callee's bounds checks are accurate.
+
+4. **Input handling**: `scanf("%llu", ...)` into an `unsigned long long` cannot overflow the buffer (no `%s` involved), and the return value is validated.
+
+Since all bounds checks are present and correct, the rewritten code is functionally identical with the advisory comments removed, as no actual code changes were required to fix the flagged weaknesses.

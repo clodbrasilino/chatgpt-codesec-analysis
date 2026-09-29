@@ -1,0 +1,48 @@
+collected_code_3/problem-174-2.c: In function 'createDictionary':
+collected_code_3/problem-174-2.c:17:21: warning: dereference of possibly-NULL 'dictionary' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   17 |     dictionary->key = NULL;
+      |                     ^
+  'main': events 1-2
+    |
+    |   50 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |   51 |     Dictionary *dictionary = createDictionary();
+    |      |                              ~~~~~~~~~~~~~~~~~~
+    |      |                              |
+    |      |                              (2) calling 'createDictionary' from 'main'
+    |
+    +--> 'createDictionary': events 3-4
+           |
+           |   15 | Dictionary *createDictionary() {
+           |      |             ^~~~~~~~~~~~~~~~
+           |      |             |
+           |      |             (3) entry to 'createDictionary'
+           |   16 |     Dictionary *dictionary = (Dictionary *) malloc(sizeof(Dictionary));
+           |      |                                             ~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                                             |
+           |      |                                             (4) this call could return NULL
+           |
+         'createDictionary': event 5
+           |
+           |   17 |     dictionary->key = NULL;
+           |      |                     ^
+           |      |                     |
+           |      |                     (5) 'dictionary' could be NULL: unchecked value from (4)
+           |
+collected_code_3/problem-174-2.c: In function 'createNode':
+collected_code_3/problem-174-2.c:24:20: warning: dereference of possibly-NULL 'newNode' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   24 |     newNode->value = value;
+      |     ~~~~~~~~~~~~~~~^~~~~~~
+  'createNode': events 1-2
+    |
+    |   23 |     Node *newNode = (Node *) malloc(sizeof(Node));
+    |      |                              ^~~~~~~~~~~~~~~~~~~~
+    |      |                              |
+    |      |                              (1) this call could return NULL
+    |   24 |     newNode->value = value;
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~    
+    |      |                    |
+    |      |                    (2) 'newNode' could be NULL: unchecked value from (1)
+    |

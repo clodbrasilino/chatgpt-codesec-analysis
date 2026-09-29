@@ -1,0 +1,16 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-657-s2.c:13:20: error: call to undeclared library function 'log10l' with type 'long double (long double)'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   13 |         log_sum += log10l(i);
+      |                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-657-s2.c:13:20: note: include the header <math.h> or explicitly provide a declaration for 'log10l'
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-657-s2.c:15:40: error: call to undeclared library function 'floorl' with type 'long double (long double)'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   15 |     long double fractional = log_sum - floorl(log_sum);
+      |                                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-657-s2.c:15:40: note: include the header <math.h> or explicitly provide a declaration for 'floorl'
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-657-s2.c:16:25: error: call to undeclared library function 'powl' with type 'long double (long double, long double)'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   16 |     long double first = powl(10.0L, fractional);
+      |                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-657-s2.c:16:25: note: include the header <math.h> or explicitly provide a declaration for 'powl'
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-657-s2.c:25:26: error: use of undeclared identifier 'INT_MAX'
+   25 |     if (val < 0 || val > INT_MAX) {
+      |                          ^~~~~~~
+4 errors generated.

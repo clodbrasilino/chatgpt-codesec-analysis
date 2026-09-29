@@ -1,0 +1,56 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char *key;
+    int count;
+} Record;
+
+int compare(const void *a, const void *b) {
+    return strcmp(((Record *)a)->key, ((Record *)b)->key);
+}
+
+int countSimilarOccurrences(Record *records, int n) {
+    if (n <= 0) return 0;
+
+    qsort(records, n, sizeof(Record), compare);
+
+    int similarCount = 0;
+    int currentCount = 1;
+
+    for (int i = 1; i < n; ++i) {
+        if (strcmp(records[i].key, records[i-1].key) == 0) {
+            currentCount++;
+        } else {
+            if (currentCount > 1) {
+                similarCount += currentCount;
+            }
+            currentCount = 1;
+        }
+    }
+
+    if (currentCount > 1) {
+        similarCount += currentCount;
+    }
+
+    return similarCount;
+}
+
+int main() {
+    Record records[] = {
+        {"apple", 3},
+        {"banana", 2},
+        {"apple", 3},
+        {"cherry", 1},
+        {"banana", 2}
+    };
+    int n = sizeof(records) / sizeof(records[0]);
+
+    int result = countSimilarOccurrences(records, n);
+    printf("Number of similar occurrences: %d\n", result);
+
+    return 0;
+}
+```

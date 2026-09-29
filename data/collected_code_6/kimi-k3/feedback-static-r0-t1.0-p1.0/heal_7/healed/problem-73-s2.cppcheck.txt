@@ -1,0 +1,16 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-73-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-73-s2.c:62:31: style: Condition 'token_len>0' is always true [knownConditionTrueFalse]
+                if (token_len > 0 && start + token_len <= str_len) {
+                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-73-s2.c:36:29: note: Assuming that condition 'match.rm_so>0' is not redundant
+            if (match.rm_so > 0) {
+                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-73-s2.c:51:36: note: Assignment 'token_len=(unsigned long)match.rm_so', assigned value is greater than 0
+                size_t token_len = (size_t)match.rm_so;
+                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-73-s2.c:53:34: note: Assuming condition is false
+                if (result[size] == NULL) {
+                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-73-s2.c:62:31: note: Condition 'token_len>0' is always true
+                if (token_len > 0 && start + token_len <= str_len) {
+                              ^

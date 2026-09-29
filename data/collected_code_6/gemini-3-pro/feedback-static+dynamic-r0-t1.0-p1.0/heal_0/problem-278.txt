@@ -1,0 +1,43 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stddef.h>
+
+struct Tuple {
+    int *elements;
+    size_t size;
+};
+
+ssize_t find_element_count_before_record(const struct Tuple *tuple, int record) {
+    if (tuple == NULL || tuple->elements == NULL) {
+        return -1;
+    }
+
+    for (size_t i = 0; i < tuple->size; i++) {
+        if (tuple->elements[i] == record) {
+            return (ssize_t)i;
+        }
+    }
+
+    return -1; 
+}
+
+int main(void) {
+    int array[] = {10, 20, 30, 40, 50};
+    struct Tuple my_tuple = {
+        .elements = array,
+        .size = sizeof(array) / sizeof(array[0])
+    };
+
+    int record_to_find = 30;
+    ssize_t count = find_element_count_before_record(&my_tuple, record_to_find);
+
+    if (count != -1) {
+        printf("Element count before %d: %zd\n", record_to_find, count);
+    } else {
+        printf("Record %d not found in the tuple.\n", record_to_find);
+    }
+
+    return EXIT_SUCCESS;
+}
+```

@@ -1,0 +1,39 @@
+Here is a simple C program that counts the occurrence of every element in an array. Just to note, C doesn't have built-in support for tuples and lists like Python, so we usually use an array or struct for such purposes. 
+
+```c
+#include <stdio.h>
+
+#define MAX_ARR_LENGTH 256
+
+void count_occurrences(int arr[], int len) {
+    int counter[MAX_ARR_LENGTH] = {0};
+
+    for(int i = 0; i < len; i++) {
+        if(arr[i] < MAX_ARR_LENGTH && arr[i] >= 0) {
+            counter[arr[i]]++;
+        } else {
+            printf("Array contains value(s) out of allowable range 0-%d.", MAX_ARR_LENGTH - 1);
+            return;
+        }
+    }
+
+    for(int i = 0; i < MAX_ARR_LENGTH; i++) {
+        if(counter[i] > 0) {
+            printf("Value %d occurred %d times.\n", i, counter[i]);
+        }
+    }
+}
+
+int main() {
+    int arr[] = {1, 2, 3, 1, 2, 3, 2, 2, 4, 5, 6, 4, 5, 6, 6};
+    int len = sizeof(arr) / sizeof(arr[0]);
+
+    count_occurrences(arr, len);
+
+    return 0;
+}
+```
+
+This program first initializes a `counter` array which length is `MAX_ARR_LENGTH` with zero values. The `count_occurrences` function iterates the input array `arr[]` and increments the corresponding element in the `counter` array. Parallely, it checks if each element of input array is in the acceptable range [0, `MAX_ARR_LENGTH`), if not, error message is printed and function returns. Final loop iterates through the `counter` array and prints out the value and its occurrence in the input array if its occurrence is more than zero. 
+
+The main() function just defines one array and initiates `count_occurrences` with it. The length of the array is calculated by dividing the total size of the array with the size of one element.

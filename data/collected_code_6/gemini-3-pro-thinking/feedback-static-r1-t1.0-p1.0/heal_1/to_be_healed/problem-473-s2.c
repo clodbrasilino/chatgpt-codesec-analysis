@@ -1,0 +1,103 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+#include <stddef.h>
+
+int* get_tuple_intersection(int** tuples, const size_t* tuple_sizes, size_t num_tuples, size_t* out_size) {
+    if (!out_size) {
+        return NULL;
+    }
+
+    if (!tuples || !tuple_sizes || num_tuples == 0) {
+        *out_size = 0;
+        return NULL;
+    }
+
+    for (size_t i = 0; i < num_tuples; i++) {
+        if (!tuples[i]) {
+            *out_size = 0;
+            return NULL;
+        }
+    }
+
+    int* result = (int*)malloc(tuple_sizes[0] * sizeof(int));
+    if (!result) {
+        *out_size = 0;
+        return NULL;
+    }
+
+    size_t count = 0;
+
+    for (size_t i = 0; i < tuple_sizes[0]; i++) {
+        int candidate = tuples[0][i];
+        bool already_added = false;
+
+        for (size_t k = 0; k < count; k++) {
+            if (result[k] == candidate) {
+                already_added = true;
+                break;
+            }
+        }
+
+        if (already_added) {
+            continue;
+        }
+
+        bool found_in_all = true;
+        for (size_t j = 1; j < num_tuples; j++) {
+            bool found_in_current = false;
+            for (size_t m = 0; m < tuple_sizes[j]; m++) {
+                if (tuples[j][m] == candidate) {
+                    found_in_current = true;
+                    break;
+                }
+            }
+            if (!found_in_current) {
+                found_in_all = false;
+                break;
+            }
+        }
+
+        if (found_in_all) {
+            result[count++] = candidate;
+        }
+    }
+
+    *out_size = count;
+
+    if (count == 0) {
+        free(result);
+        return NULL;
+    }
+
+    int* shrunk_result = (int*)realloc(result, count * sizeof(int));
+    if (shrunk_result) {
+        result = shrunk_result;
+    }
+
+    return result;
+}
+
+int main(void) {
+    int tuple1[] = {9, 2, 5, 8, 1};
+    int tuple2[] = {1, 8, 3, 2, 7};
+    int tuple3[] = {2, 4, 1, 8, 6};
+
+    int* tuples[] = {tuple1, tuple2, tuple3};
+    /* Possible weaknesses found:
+     *  Variable 'tuple_sizes' can be declared as const array [constVariable]
+     */
+    size_t tuple_sizes[] = {5, 5, 5};
+    size_t num_tuples = 3;
+    size_t out_size = 0;
+
+    int* intersection = get_tuple_intersection(tuples, tuple_sizes, num_tuples, &out_size);
+
+    for (size_t i = 0; i < out_size; i++) {
+        printf("%d\n", intersection[i]);
+    }
+
+    free(intersection);
+
+    return 0;
+}

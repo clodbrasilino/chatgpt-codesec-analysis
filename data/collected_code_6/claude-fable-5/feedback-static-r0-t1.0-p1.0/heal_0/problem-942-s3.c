@@ -1,0 +1,55 @@
+#include <stdio.h>
+#include <stddef.h>
+#include <stdbool.h>
+
+bool contains_any(const int *list1, size_t len1, const int *list2, size_t len2)
+{
+    size_t i;
+    size_t j;
+
+    if (list1 == NULL || list2 == NULL) {
+        return false;
+    }
+
+    for (i = 0; i < len1; i++) {
+        for (j = 0; j < len2; j++) {
+            if (list1[i] == list2[j]) {
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+
+int main(void)
+{
+    int list1[] = {1, 2, 3, 4, 5};
+    int list2[] = {10, 20, 3, 40};
+    int list3[] = {100, 200, 300};
+    size_t len1 = sizeof(list1) / sizeof(list1[0]);
+    size_t len2 = sizeof(list2) / sizeof(list2[0]);
+    size_t len3 = sizeof(list3) / sizeof(list3[0]);
+
+    if (contains_any(list1, len1, list2, len2)) {
+        if (printf("At least one element of list2 is present in list1\n") < 0) {
+            return 1;
+        }
+    } else {
+        if (printf("No element of list2 is present in list1\n") < 0) {
+            return 1;
+        }
+    }
+
+    if (contains_any(list1, len1, list3, len3)) {
+        if (printf("At least one element of list3 is present in list1\n") < 0) {
+            return 1;
+        }
+    } else {
+        if (printf("No element of list3 is present in list1\n") < 0) {
+            return 1;
+        }
+    }
+
+    return 0;
+}

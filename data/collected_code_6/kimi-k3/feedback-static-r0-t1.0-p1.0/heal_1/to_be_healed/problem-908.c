@@ -1,0 +1,56 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int find_fixed_point(const int *arr, size_t size) {
+    size_t left;
+    size_t right;
+    /* Possible weaknesses found:
+     *  The scope of the variable 'mid' can be reduced. [variableScope]
+     */
+    size_t mid;
+    int result = -1;
+
+    if (arr == NULL || size == 0) {
+        return -1;
+    }
+
+    left = 0;
+    right = size - 1;
+
+    while (left <= right) {
+        mid = left + (right - left) / 2;
+
+        if ((size_t)arr[mid] == mid) {
+            result = arr[mid];
+            if (mid == 0) {
+                break;
+            }
+            right = mid - 1;
+        } else if ((size_t)arr[mid] < mid) {
+            left = mid + 1;
+        } else {
+            if (mid == 0) {
+                break;
+            }
+            right = mid - 1;
+        }
+    }
+
+    return result;
+}
+
+int main(void) {
+    int arr[] = {-10, -5, 0, 3, 7};
+    size_t size = sizeof(arr) / sizeof(arr[0]);
+    int fixed_point;
+
+    fixed_point = find_fixed_point(arr, size);
+
+    if (fixed_point != -1) {
+        printf("Fixed point: %d\n", fixed_point);
+    } else {
+        printf("No fixed point found\n");
+    }
+
+    return EXIT_SUCCESS;
+}

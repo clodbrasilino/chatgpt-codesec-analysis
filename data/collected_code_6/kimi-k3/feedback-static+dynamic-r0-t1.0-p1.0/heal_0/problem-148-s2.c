@@ -1,0 +1,59 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+#include <errno.h>
+
+int digit_sum(long long n) {
+    int sum = 0;
+    if (n < 0) {
+        n = -n;
+    }
+    while (n > 0) {
+        sum += (int)(n % 10);
+        n /= 10;
+    }
+    return sum;
+}
+
+void max_digit_sum_split(long long num, long long *part1, long long *part2) {
+    int max_sum = -1;
+    long long best_a = 0;
+    long long best_b = num;
+    
+    if (num < 0) {
+        num = -num;
+    }
+    
+    for (long long a = 0; a <= num / 2; a++) {
+        long long b = num - a;
+        int sum = digit_sum(a) + digit_sum(b);
+        if (sum > max_sum) {
+            max_sum = sum;
+            best_a = a;
+            best_b = b;
+        }
+    }
+    
+    *part1 = best_a;
+    *part2 = best_b;
+}
+
+int main(void) {
+    long long num;
+    long long part1;
+    long long part2;
+    
+    printf("Enter a number: ");
+    if (scanf("%lld", &num) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    max_digit_sum_split(num, &part1, &part2);
+    
+    printf("Part 1: %lld (digit sum: %d)\n", part1, digit_sum(part1));
+    printf("Part 2: %lld (digit sum: %d)\n", part2, digit_sum(part2));
+    printf("Total digit sum: %d\n", digit_sum(part1) + digit_sum(part2));
+    
+    return EXIT_SUCCESS;
+}

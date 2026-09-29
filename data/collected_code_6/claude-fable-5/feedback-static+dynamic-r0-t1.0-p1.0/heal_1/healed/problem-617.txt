@@ -1,0 +1,54 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+static long minJumps(long jumpLength, long d)
+{
+    if (jumpLength <= 0 || d < 0)
+    {
+        return -1;
+    }
+    if (d == 0)
+    {
+        return 0;
+    }
+    if (d < jumpLength)
+    {
+        return 2;
+    }
+    return (d / jumpLength) + ((d % jumpLength != 0) ? 1 : 0);
+}
+
+int main(void)
+{
+    long jumpLength = 0;
+    long d = 0;
+    long result = 0;
+
+    printf("Enter jump length: ");
+    if (scanf("%ld", &jumpLength) != 1)
+    {
+        fprintf(stderr, "Invalid input for jump length\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter target distance d: ");
+    if (scanf("%ld", &d) != 1)
+    {
+        fprintf(stderr, "Invalid input for distance\n");
+        return EXIT_FAILURE;
+    }
+
+    result = minJumps(jumpLength, d);
+    if (result < 0)
+    {
+        fprintf(stderr, "Invalid values: jump length must be positive and distance non-negative\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Minimum number of jumps required: %ld\n", result);
+    return EXIT_SUCCESS;
+}
+```
+
+The key change: the original ceiling-division idiom `(d + jumpLength - 1) / jumpLength` overflows when `d` is close to `LONG_MAX`, which is undefined behavior for signed integers (as flagged by UBSan/AFL). Rewriting it as `d / jumpLength` plus a conditional increment based on the remainder computes the same ceiling without any intermediate value ever exceeding `d`, eliminating the overflow entirely.

@@ -1,0 +1,76 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+char *abbreviate_road(const char *str) {
+    if (str == NULL) {
+        return NULL;
+    }
+
+    size_t len = strlen(str);
+    char *result = malloc(len + 1);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    size_t i = 0;
+    size_t j = 0;
+
+    while (i < len) {
+        if (i + 4 <= len && (i == 0 || str[i - 1] == ' ') &&
+            toupper((unsigned char)str[i]) == 'R' &&
+            toupper((unsigned char)str[i + 1]) == 'O' &&
+            toupper((unsigned char)str[i + 2]) == 'A' &&
+            toupper((unsigned char)str[i + 3]) == 'D' &&
+            (str[i + 4] == ' ' || str[i + 4] == '\0')) {
+            
+            result[j++] = (toupper((unsigned char)str[i]) == 'R') ? 'R' : 'r';
+            result[j++] = (toupper((unsigned char)str[i + 2]) == 'A') ? 'A' : 'a';
+            result[j++] = '.';
+            i += 4;
+        } else {
+            result[j++] = str[i++];
+        }
+    }
+
+    result[j] = '\0';
+    return result;
+}
+
+int main(void) {
+    char *res1 = abbreviate_road("Maple Road");
+    if (res1 != NULL) {
+        printf("%s\n", res1);
+        free(res1);
+    }
+
+    char *res2 = abbreviate_road("Road to ruin");
+    if (res2 != NULL) {
+        printf("%s\n", res2);
+        free(res2);
+    }
+
+    char *res3 = abbreviate_road("Broad Street");
+    if (res3 != NULL) {
+        printf("%s\n", res3);
+        free(res3);
+    }
+
+    /* Possible weaknesses found:
+     *  Assignment 'res4=abbreviate_road(NULL)', assigned value is 0
+     *  Calling function 'abbreviate_road' returns 0
+     */
+    char *res4 = abbreviate_road(NULL);
+    /* Possible weaknesses found:
+     *  Condition 'res4==NULL' is always true
+     *  Condition 'res4==NULL' is always true [knownConditionTrueFalse]
+     */
+    if (res4 == NULL) {
+        printf("NULL input handled\n");
+    } else {
+        free(res4);
+    }
+
+    return 0;
+}

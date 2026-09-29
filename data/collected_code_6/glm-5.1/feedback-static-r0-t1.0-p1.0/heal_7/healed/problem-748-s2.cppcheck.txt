@@ -1,0 +1,22 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-748-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-748-s2.c:42:60: style: Condition 'copy_len<=remaining_len' is always false [knownConditionTrueFalse]
+            if (copy_len > 0 && res_idx <= cap && copy_len <= remaining_len) {
+                                                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-748-s2.c:41:29: note: copy_len is assigned 'remaining_len<available?remaining_len:available' here.
+            size_t copy_len = remaining_len < available ? remaining_len : available;
+                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-748-s2.c:42:60: note: Condition 'copy_len<=remaining_len' is always false
+            if (copy_len > 0 && res_idx <= cap && copy_len <= remaining_len) {
+                                                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-748-s2.c:43:35: style: Condition 'cap-res_idx>=copy_len' is always true [knownConditionTrueFalse]
+                if (cap - res_idx >= copy_len) {
+                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-748-s2.c:40:30: note: available is assigned 'cap-res_idx' here.
+            size_t available = cap - res_idx;
+                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-748-s2.c:41:57: note: Assignment 'copy_len=remaining_len<available?remaining_len:available', assigned value is less than symbolic=cap-res_idx+1
+            size_t copy_len = remaining_len < available ? remaining_len : available;
+                                                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-748-s2.c:43:35: note: Condition 'cap-res_idx>=copy_len' is always true
+                if (cap - res_idx >= copy_len) {
+                                  ^

@@ -1,0 +1,77 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+#define BUFFER_SIZE 256
+
+size_t count_position_matches(const char *str, size_t max_len)
+{
+    size_t count = 0;
+    size_t len;
+    size_t i;
+
+    if (str == NULL || max_len == 0) {
+        return 0;
+    }
+
+    len = strnlen(str, max_len);
+
+    for (i = 0; i < len && i < 26; i++) {
+        if (str[i] == (char)('a' + i) || str[i] == (char)('A' + i)) {
+            count++;
+        }
+    }
+
+    return count;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t result;
+    size_t len;
+
+    memset(buffer, 0, sizeof(buffer));
+
+    printf("Enter a string: ");
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    }
+
+    result = count_position_matches(buffer, sizeof(buffer));
+
+    printf("Characters at same position as in alphabet: %zu\n", result);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis summary:**
+
+The original code is already well-hardened against the Flawfinder warning (CWE-119/CWE-120) regarding the statically-sized `buffer` array. The mitigations in place are:
+
+1. **Bounded input reading** — `fgets(buffer, (int)sizeof(buffer), stdin)` limits input to the buffer size, preventing overflow (unlike `gets` or unbounded `scanf("%s", ...)`).
+
+2. **Guaranteed null termination** — `buffer[sizeof(buffer) - 1] = '\0';` is defensive; `fgets` already null-terminates, but this makes the invariant explicit.
+
+3. **Bounded length calculation** — `strnlen(buffer, sizeof(buffer))` is used instead of `strlen`, so the scan can never run past the buffer even if termination were somehow lost.
+
+4. **Safe newline stripping** — the `len > 0` check prevents an out-of-bounds write at `buffer[-1]` on an empty string.
+
+5. **Bounds-checked processing function** — `count_position_matches` validates for `NULL`, checks `max_len == 0`, uses `strnlen`, and caps iteration at both `len` and 26.
+
+6. **Pre-initialization** — `memset(buffer, 0, sizeof(buffer))` ensures no uninitialized reads.
+
+7. **Correct format specifier** — `%zu` matches `size_t`, avoiding format-string/type-mismatch issues.
+
+Since the Flawfinder finding was a low-risk (risk 2) advisory about statically-sized arrays in general and all recommended mitigations (bounds checking, length-limiting functions) are already applied, no functional changes were required — the code as written is the fix.

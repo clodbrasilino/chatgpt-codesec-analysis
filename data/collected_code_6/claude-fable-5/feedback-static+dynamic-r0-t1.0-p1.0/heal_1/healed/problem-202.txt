@@ -1,0 +1,76 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_INPUT_LEN 4096U
+
+char *remove_even_chars(const char *input)
+{
+    size_t len;
+    size_t i;
+    size_t j;
+    char *result;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    len = strnlen(input, MAX_INPUT_LEN);
+    if (len >= MAX_INPUT_LEN) {
+        return NULL;
+    }
+
+    result = malloc(len + 1U);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    j = 0U;
+    for (i = 0U; i < len; i++) {
+        if ((i % 2U) == 0U) {
+            result[j] = input[i];
+            j++;
+        }
+    }
+    result[j] = '\0';
+
+    return result;
+}
+
+int main(void)
+{
+    const char *text = "abcdefgh";
+    char *filtered;
+
+    filtered = remove_even_chars(text);
+    if (filtered == NULL) {
+        fprintf(stderr, "Failed to process string\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Original: %s\n", text) < 0) {
+        free(filtered);
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Result: %s\n", filtered) < 0) {
+        free(filtered);
+        return EXIT_FAILURE;
+    }
+
+    free(filtered);
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis summary:**
+
+The original code was already quite solid — it checked for `NULL` input, validated the `malloc` return, checked `printf` return values, and freed memory on every exit path. The single flagged weakness was the Flawfinder warning on `strlen` (CWE-126): if the caller ever passes a buffer that is not NUL-terminated, `strlen` will over-read past the end of the allocation.
+
+**Fix applied:**
+
+- Replaced `strlen` with `strnlen` bounded by a defined maximum (`MAX_INPUT_LEN`). This guarantees the scan never reads more than a fixed number of bytes, converting a potential unbounded over-read into a bounded, safe operation.
+- If `strnlen` returns the cap value, the string is either too long or unterminated within the bound, so the function rejects it by returning `NULL` rather than processing potentially truncated/invalid data.
+
+Note that `strnlen` is POSIX (and C23's `strnlen_s` equivalent exists in Annex K); on strictly C89/C99 hosted environments without POSIX you would need a small portable replacement loop. All other defensive properties of the original code (unsigned arithmetic with `size_t`, correct `len + 1U` allocation including the terminator, no leaks on error paths) were preserved.

@@ -1,0 +1,55 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+
+void find_multiples(int n, int m) {
+    int i;
+    for (i = 1; i <= m; i++) {
+        printf("%d ", n * i);
+    }
+    printf("\n");
+}
+
+int main(void) {
+    int n, m;
+    char *endptr;
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char buffer[256];
+
+    printf("Enter the number (n): ");
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    errno = 0;
+    n = strtol(buffer, &endptr, 10);
+    if (errno != 0 || endptr == buffer || *endptr != '\n') {
+        fprintf(stderr, "Invalid input for n\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter the number of multiples (m): ");
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    errno = 0;
+    m = strtol(buffer, &endptr, 10);
+    if (errno != 0 || endptr == buffer || *endptr != '\n') {
+        fprintf(stderr, "Invalid input for m\n");
+        return EXIT_FAILURE;
+    }
+
+    if (m <= 0) {
+        fprintf(stderr, "m must be positive\n");
+        return EXIT_FAILURE;
+    }
+
+    find_multiples(n, m);
+
+    return EXIT_SUCCESS;
+}

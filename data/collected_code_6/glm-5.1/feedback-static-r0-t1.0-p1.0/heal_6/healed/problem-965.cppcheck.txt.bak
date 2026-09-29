@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-965.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-965.c:66:13: style: Condition 'ptr==NULL' is always true [knownConditionTrueFalse]
+    if (ptr == NULL) {
+            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-965.c:65:37: note: Calling function 'camel_to_snake' returns 0
+    const void *ptr = camel_to_snake(NULL);
+                                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-965.c:65:37: note: Assignment 'ptr=camel_to_snake(NULL)', assigned value is 0
+    const void *ptr = camel_to_snake(NULL);
+                                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-965.c:66:13: note: Condition 'ptr==NULL' is always true
+    if (ptr == NULL) {
+            ^

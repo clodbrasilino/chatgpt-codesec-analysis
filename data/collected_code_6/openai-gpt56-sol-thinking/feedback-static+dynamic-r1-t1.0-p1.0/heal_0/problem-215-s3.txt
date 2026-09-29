@@ -1,0 +1,120 @@
+```c
+#include <stdbool.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    size_t count;
+    int value;
+} RLEPair;
+
+bool decode_rle(const RLEPair *runs, size_t run_count,
+                int **decoded, size_t *decoded_count)
+{
+    size_t total = 0;
+    size_t position = 0;
+    int *result = NULL;
+
+    if (decoded == NULL || decoded_count == NULL ||
+        (runs == NULL && run_count != 0)) {
+        return false;
+    }
+
+    *decoded = NULL;
+    *decoded_count = 0;
+
+    for (size_t i = 0; i < run_count; ++i) {
+        if (runs[i].count > SIZE_MAX - total) {
+            return false;
+        }
+        total += runs[i].count;
+    }
+
+    if (total == 0) {
+        return true;
+    }
+
+    if (total > SIZE_MAX / sizeof(*result)) {
+        return false;
+    }
+
+    result = malloc(total * sizeof(*result));
+    if (result == NULL) {
+        return false;
+    }
+
+    for (size_t i = 0; i < run_count; ++i) {
+        for (size_t j = 0; j < runs[i].count; ++j) {
+            result[position++] = runs[i].value;
+        }
+    }
+
+    *decoded = result;
+    *decoded_count = total;
+    return true;
+}
+
+int main(void)
+{
+    size_t run_count;
+    RLEPair *runs = NULL;
+    int *decoded = NULL;
+    size_t decoded_count = 0;
+    int exit_status = EXIT_FAILURE;
+
+    if (scanf("%zu", &run_count) != 1) {
+        fputs("Invalid run count\n", stderr);
+        return EXIT_FAILURE;
+    }
+
+    if (run_count > SIZE_MAX / sizeof(*runs)) {
+        fputs("Input is too large\n", stderr);
+        return EXIT_FAILURE;
+    }
+
+    if (run_count != 0) {
+        runs = malloc(run_count * sizeof(*runs));
+        if (runs == NULL) {
+            fputs("Memory allocation failed\n", stderr);
+            return EXIT_FAILURE;
+        }
+    }
+
+    for (size_t i = 0; i < run_count; ++i) {
+        if (scanf("%zu %d", &runs[i].count, &runs[i].value) != 2) {
+            fputs("Invalid encoded input\n", stderr);
+            goto cleanup;
+        }
+    }
+
+    if (!decode_rle(runs, run_count, &decoded, &decoded_count)) {
+        fputs("Unable to decode input\n", stderr);
+        goto cleanup;
+    }
+
+    for (size_t i = 0; i < decoded_count; ++i) {
+        if (i != 0 && putchar(' ') == EOF) {
+            fputs("Output error\n", stderr);
+            goto cleanup;
+        }
+
+        if (printf("%d", decoded[i]) < 0) {
+            fputs("Output error\n", stderr);
+            goto cleanup;
+        }
+    }
+
+    if (putchar('\n') == EOF || fflush(stdout) == EOF) {
+        fputs("Output error\n", stderr);
+        goto cleanup;
+    }
+
+    exit_status = EXIT_SUCCESS;
+
+cleanup:
+    free(decoded);
+    free(runs);
+    return exit_status;
+}
+```

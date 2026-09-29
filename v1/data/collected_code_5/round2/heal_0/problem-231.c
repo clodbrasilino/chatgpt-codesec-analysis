@@ -1,0 +1,25 @@
+#include <stdio.h>
+
+#define MAX 100
+
+int maxSum(int triangle[][MAX], int n) { 
+    
+    for (int i=n-2; i>=0; --i) 
+        for (int j=0; j<=i; ++j) 
+            if (triangle[i+1][j] > triangle[i+1][j+1]) 
+                triangle[i][j] += triangle[i+1][j]; 
+            else
+                triangle[i][j] += triangle[i+1][j+1]; 
+              
+    return triangle[0][0]; 
+}
+
+int main() 
+{ 
+    int triangle[MAX][MAX] = { {1, 0, 0},
+                                {4, 8, 0},
+                                {1, 5, 3} };
+    int n = 3;
+    printf("The maximum sum is : %d\n", maxSum(triangle, n)); 
+    return 0; 
+}

@@ -1,0 +1,9 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_2/healed/problem-310-s3.c: In function 'main':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_2/healed/problem-310-s3.c:71:28: error: expected '=', ',', ';', 'asm' or '__attribute__' before ':' token
+   71 |     for (const char* input : {input1, input2, input3}) {
+      |                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_2/healed/problem-310-s3.c:72:41: error: 'input' undeclared (first use in this function); did you mean 'input3'?
+   72 |         Tuple* result = string_to_tuple(input);
+      |                                         ^~~~~
+      |                                         input3
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_2/healed/problem-310-s3.c:72:41: note: each undeclared identifier is reported only once for each function it appears in

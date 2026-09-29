@@ -1,0 +1,48 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Tuple {
+    int size;
+    int value[];
+} Tuple;
+
+Tuple* trimTuple(Tuple* t, int k){
+    if(t == NULL || k <= 0 || k > t->size){
+        return NULL;
+    }
+
+    Tuple *new_tuple = malloc(sizeof(Tuple) + sizeof(int) * (t->size - k));
+    if(new_tuple == NULL){
+        return NULL;
+    }
+
+    new_tuple->size = t->size - k;
+
+    for(int i=0; i<new_tuple->size; i++){
+        new_tuple->value[i] = t->value[i];
+    }
+
+    free(t);
+
+    return new_tuple;
+}
+
+int main() {
+    Tuple* t = malloc(sizeof(Tuple) + sizeof(int) * 5);
+    t->size = 5;
+
+    for(int i=0; i<t->size; i++){
+        t->value[i] = i;
+    }
+
+    Tuple* trimmed_t = trimTuple(t, 3);
+
+    if(trimmed_t != NULL){
+        for(int i=0; i<trimmed_t->size; i++){
+            printf("%d ", trimmed_t->value[i]);
+        }
+        free(trimmed_t);
+    }
+
+    return 0;
+}

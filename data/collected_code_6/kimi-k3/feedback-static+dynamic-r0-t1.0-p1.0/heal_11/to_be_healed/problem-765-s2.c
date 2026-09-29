@@ -1,0 +1,65 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <limits.h>
+ /* Possible weaknesses found:
+  *  test case 0 failed: expected 11, got 1
+  *  test case 2 failed: expected 13, got 1
+  *  test case 1 failed: expected 7, got 0
+  */
+
+int is_polite(unsigned long long num) {
+    unsigned long long temp = num;
+    while ((temp & 1) == 0) {
+        temp >>= 1;
+    }
+    return temp > 1;
+}
+
+unsigned long long find_nth_polite(unsigned long long n) {
+    if (n == 0) {
+        return 0;
+    }
+    
+    unsigned long long count = 0;
+    unsigned long long num = 0;
+    
+    while (count < n) {
+        if (num == ULLONG_MAX) {
+            return 0;
+        }
+        num++;
+        
+        if (is_polite(num)) {
+            count++;
+        }
+    }
+    
+    return num;
+}
+
+int main(void) {
+    unsigned long long n;
+    
+    if (scanf("%llu", &n) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    if (n == 0) {
+        fprintf(stderr, "n must be positive\n");
+        return EXIT_FAILURE;
+    }
+    
+    unsigned long long result = find_nth_polite(n);
+    
+    if (result == 0) {
+        fprintf(stderr, "Result overflow or not found\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("%llu\n", result);
+    fflush(stdout);
+    
+    return EXIT_SUCCESS;
+}

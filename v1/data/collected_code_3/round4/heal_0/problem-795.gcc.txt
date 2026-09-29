@@ -1,0 +1,352 @@
+collected_code_3/round4/heal_0/problem-795.c: In function 'createHeap':
+collected_code_3/round4/heal_0/problem-795.c:12:13: warning: dereference of possibly-NULL 'h' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   12 |     h->data = (int*)malloc(sizeof(int) * capacity);
+      |     ~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  'getLeastNumbers': events 1-4
+    |
+    |   52 | int* getLeastNumbers(int* arr, int arrSize, int k, int* returnSize) {
+    |      |      ^~~~~~~~~~~~~~~
+    |      |      |
+    |      |      (1) entry to 'getLeastNumbers'
+    |   53 |     *returnSize = k;
+    |   54 |     if (k == 0) {
+    |      |        ~
+    |      |        |
+    |      |        (2) following 'false' branch (when 'k != 0')...
+    |......
+    |   57 |     Heap *h = createHeap(k);
+    |      |               ~~~~~~~~~~~~~
+    |      |               |
+    |      |               (3) ...to here
+    |      |               (4) calling 'createHeap' from 'getLeastNumbers'
+    |
+    +--> 'createHeap': events 5-7
+           |
+           |   10 | Heap* createHeap(int capacity) {
+           |      |       ^~~~~~~~~~
+           |      |       |
+           |      |       (5) entry to 'createHeap'
+           |   11 |     Heap *h = (Heap*)malloc(sizeof(Heap));
+           |      |                      ~~~~~~~~~~~~~~~~~~~~
+           |      |                      |
+           |      |                      (6) this call could return NULL
+           |   12 |     h->data = (int*)malloc(sizeof(int) * capacity);
+           |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |             |
+           |      |             (7) 'h' could be NULL: unchecked value from (6)
+           |
+collected_code_3/round4/heal_0/problem-795.c: In function 'pushHeap':
+collected_code_3/round4/heal_0/problem-795.c:26:37: warning: use of uninitialized value '*_23 + _25' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   26 |             if (h->data[i] < h->data[child]) {
+      |                              ~~~~~~~^~~~~~~
+  'getLeastNumbers': events 1-4
+    |
+    |   52 | int* getLeastNumbers(int* arr, int arrSize, int k, int* returnSize) {
+    |      |      ^~~~~~~~~~~~~~~
+    |      |      |
+    |      |      (1) entry to 'getLeastNumbers'
+    |   53 |     *returnSize = k;
+    |   54 |     if (k == 0) {
+    |      |        ~
+    |      |        |
+    |      |        (2) following 'false' branch (when 'k != 0')...
+    |......
+    |   57 |     Heap *h = createHeap(k);
+    |      |               ~~~~~~~~~~~~~
+    |      |               |
+    |      |               (3) ...to here
+    |      |               (4) calling 'createHeap' from 'getLeastNumbers'
+    |
+    +--> 'createHeap': events 5-6
+           |
+           |   10 | Heap* createHeap(int capacity) {
+           |      |       ^~~~~~~~~~
+           |      |       |
+           |      |       (5) entry to 'createHeap'
+           |   11 |     Heap *h = (Heap*)malloc(sizeof(Heap));
+           |   12 |     h->data = (int*)malloc(sizeof(int) * capacity);
+           |      |                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                     |
+           |      |                     (6) region created on heap here
+           |
+    <------+
+    |
+  'getLeastNumbers': events 7-10
+    |
+    |   57 |     Heap *h = createHeap(k);
+    |      |               ^~~~~~~~~~~~~
+    |      |               |
+    |      |               (7) returning to 'getLeastNumbers' from 'createHeap'
+    |   58 |     for (int i = 0; i < arrSize; ++i) {
+    |      |                     ~~~~~~~~~~~
+    |      |                       |
+    |      |                       (8) following 'true' branch (when 'i < arrSize')...
+    |   59 |         pushHeap(h, arr[i]);
+    |      |         ~~~~~~~~~~~~~~~~~~~
+    |      |         |              |
+    |      |         |              (9) ...to here
+    |      |         (10) calling 'pushHeap' from 'getLeastNumbers'
+    |
+    +--> 'pushHeap': events 11-15
+           |
+           |   18 | void pushHeap(Heap *h, int value) {
+           |      |      ^~~~~~~~
+           |      |      |
+           |      |      (11) entry to 'pushHeap'
+           |   19 |     if (h->len == h->capacity) {
+           |      |        ~
+           |      |        |
+           |      |        (12) following 'false' branch...
+           |......
+           |   35 |         h->data[h->len] = value;
+           |      |         ~~~~~~~
+           |      |          |
+           |      |          (13) ...to here
+           |   36 |         int i = h->len;
+           |   37 |         while (i > 0) {
+           |      |                ~~~~~
+           |      |                  |
+           |      |                  (14) following 'false' branch (when 'i <= 0')...
+           |......
+           |   48 |         ++h->len;
+           |      |           ~~~~~~
+           |      |            |
+           |      |            (15) ...to here
+           |
+    <------+
+    |
+  'getLeastNumbers': events 16-19
+    |
+    |   58 |     for (int i = 0; i < arrSize; ++i) {
+    |      |                     ~~~~~~~~~~~
+    |      |                       |
+    |      |                       (17) following 'true' branch (when 'i < arrSize')...
+    |   59 |         pushHeap(h, arr[i]);
+    |      |         ^~~~~~~~~~~~~~~~~~~
+    |      |         |              |
+    |      |         |              (18) ...to here
+    |      |         (16) returning to 'getLeastNumbers' from 'pushHeap'
+    |      |         (19) calling 'pushHeap' from 'getLeastNumbers'
+    |
+    +--> 'pushHeap': events 20-27
+           |
+           |   18 | void pushHeap(Heap *h, int value) {
+           |      |      ^~~~~~~~
+           |      |      |
+           |      |      (20) entry to 'pushHeap'
+           |   19 |     if (h->len == h->capacity) {
+           |      |        ~
+           |      |        |
+           |      |        (21) following 'true' branch...
+           |   20 |         h->data[0] = value;
+           |      |         ~~~~~~~
+           |      |          |
+           |      |          (22) ...to here
+           |   21 |         for (int i = 0; i < h->len; ++i) {
+           |      |                         ~~~~~~~~~~
+           |      |                           |
+           |      |                           (23) following 'true' branch...
+           |   22 |             int child = 2 * i + 1;
+           |      |                         ~~~~~
+           |      |                           |
+           |      |                           (24) ...to here
+           |   23 |             if (child + 1 < h->len && h->data[child] < h->data[child + 1]) {
+           |      |                ~
+           |      |                |
+           |      |                (25) following 'false' branch...
+           |......
+           |   26 |             if (h->data[i] < h->data[child]) {
+           |      |                 ~~~~~~~      ~~~~~~~~~~~~~~
+           |      |                  |                  |
+           |      |                  (26) ...to here    (27) use of uninitialized value '*_23 + _25' here
+           |
+collected_code_3/round4/heal_0/problem-795.c:35:25: warning: dereference of possibly-NULL '*h.data + (long unsigned int)*h.len * 4' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   35 |         h->data[h->len] = value;
+      |         ~~~~~~~~~~~~~~~~^~~~~~~
+  'getLeastNumbers': events 1-4
+    |
+    |   52 | int* getLeastNumbers(int* arr, int arrSize, int k, int* returnSize) {
+    |      |      ^~~~~~~~~~~~~~~
+    |      |      |
+    |      |      (1) entry to 'getLeastNumbers'
+    |   53 |     *returnSize = k;
+    |   54 |     if (k == 0) {
+    |      |        ~
+    |      |        |
+    |      |        (2) following 'false' branch (when 'k != 0')...
+    |......
+    |   57 |     Heap *h = createHeap(k);
+    |      |               ~~~~~~~~~~~~~
+    |      |               |
+    |      |               (3) ...to here
+    |      |               (4) calling 'createHeap' from 'getLeastNumbers'
+    |
+    +--> 'createHeap': events 5-6
+           |
+           |   10 | Heap* createHeap(int capacity) {
+           |      |       ^~~~~~~~~~
+           |      |       |
+           |      |       (5) entry to 'createHeap'
+           |   11 |     Heap *h = (Heap*)malloc(sizeof(Heap));
+           |   12 |     h->data = (int*)malloc(sizeof(int) * capacity);
+           |      |                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                     |
+           |      |                     (6) this call could return NULL
+           |
+    <------+
+    |
+  'getLeastNumbers': events 7-10
+    |
+    |   57 |     Heap *h = createHeap(k);
+    |      |               ^~~~~~~~~~~~~
+    |      |               |
+    |      |               (7) returning to 'getLeastNumbers' from 'createHeap'
+    |   58 |     for (int i = 0; i < arrSize; ++i) {
+    |      |                     ~~~~~~~~~~~
+    |      |                       |
+    |      |                       (8) following 'true' branch (when 'i < arrSize')...
+    |   59 |         pushHeap(h, arr[i]);
+    |      |         ~~~~~~~~~~~~~~~~~~~
+    |      |         |              |
+    |      |         |              (9) ...to here
+    |      |         (10) calling 'pushHeap' from 'getLeastNumbers'
+    |
+    +--> 'pushHeap': events 11-14
+           |
+           |   18 | void pushHeap(Heap *h, int value) {
+           |      |      ^~~~~~~~
+           |      |      |
+           |      |      (11) entry to 'pushHeap'
+           |   19 |     if (h->len == h->capacity) {
+           |      |        ~
+           |      |        |
+           |      |        (12) following 'false' branch...
+           |......
+           |   35 |         h->data[h->len] = value;
+           |      |         ~~~~~~~~~~~~~~~~~~~~~~~
+           |      |          |              |
+           |      |          |              (14) '*h.data + (long unsigned int)*h.len * 4' could be NULL: unchecked value from (6)
+           |      |          (13) ...to here
+           |
+collected_code_3/round4/heal_0/problem-795.c: In function 'getLeastNumbers':
+collected_code_3/round4/heal_0/problem-795.c:63:19: warning: dereference of possibly-NULL 'result' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   63 |         result[i] = h->data[i];
+      |         ~~~~~~~~~~^~~~~~~~~~~~
+  'main': events 1-2
+    |
+    |   70 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   73 |     int *result = getLeastNumbers(arr, sizeof(arr) / sizeof(int), 4, &returnSize);
+    |      |                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                   |
+    |      |                   (2) calling 'getLeastNumbers' from 'main'
+    |
+    +--> 'getLeastNumbers': events 3-8
+           |
+           |   52 | int* getLeastNumbers(int* arr, int arrSize, int k, int* returnSize) {
+           |      |      ^~~~~~~~~~~~~~~
+           |      |      |
+           |      |      (3) entry to 'getLeastNumbers'
+           |   53 |     *returnSize = k;
+           |   54 |     if (k == 0) {
+           |      |        ~
+           |      |        |
+           |      |        (4) following 'false' branch (when 'k != 0')...
+           |......
+           |   57 |     Heap *h = createHeap(k);
+           |      |               ~~~~~~~~~~~~~
+           |      |               |
+           |      |               (5) ...to here
+           |   58 |     for (int i = 0; i < arrSize; ++i) {
+           |      |                     ~~~~~~~~~~~
+           |      |                       |
+           |      |                       (6) following 'true' branch (when 'i < arrSize')...
+           |   59 |         pushHeap(h, arr[i]);
+           |      |         ~~~~~~~~~~~~~~~~~~~
+           |      |         |              |
+           |      |         |              (7) ...to here
+           |      |         (8) calling 'pushHeap' from 'getLeastNumbers'
+           |
+           +--> 'pushHeap': events 9-13
+                  |
+                  |   18 | void pushHeap(Heap *h, int value) {
+                  |      |      ^~~~~~~~
+                  |      |      |
+                  |      |      (9) entry to 'pushHeap'
+                  |   19 |     if (h->len == h->capacity) {
+                  |      |        ~
+                  |      |        |
+                  |      |        (10) following 'false' branch...
+                  |......
+                  |   35 |         h->data[h->len] = value;
+                  |      |         ~~~~~~~
+                  |      |          |
+                  |      |          (11) ...to here
+                  |   36 |         int i = h->len;
+                  |   37 |         while (i > 0) {
+                  |      |                ~~~~~
+                  |      |                  |
+                  |      |                  (12) following 'false' branch (when 'i <= 0')...
+                  |......
+                  |   48 |         ++h->len;
+                  |      |           ~~~~~~
+                  |      |            |
+                  |      |            (13) ...to here
+                  |
+           <------+
+           |
+         'getLeastNumbers': events 14-17
+           |
+           |   58 |     for (int i = 0; i < arrSize; ++i) {
+           |      |                     ~~~~~~~~~~~
+           |      |                       |
+           |      |                       (15) following 'true' branch (when 'i < arrSize')...
+           |   59 |         pushHeap(h, arr[i]);
+           |      |         ^~~~~~~~~~~~~~~~~~~
+           |      |         |              |
+           |      |         |              (16) ...to here
+           |      |         (14) returning to 'getLeastNumbers' from 'pushHeap'
+           |      |         (17) calling 'pushHeap' from 'getLeastNumbers'
+           |
+           +--> 'pushHeap': events 18-20
+                  |
+                  |   18 | void pushHeap(Heap *h, int value) {
+                  |      |      ^~~~~~~~
+                  |      |      |
+                  |      |      (18) entry to 'pushHeap'
+                  |   19 |     if (h->len == h->capacity) {
+                  |      |        ~
+                  |      |        |
+                  |      |        (19) following 'false' branch...
+                  |......
+                  |   35 |         h->data[h->len] = value;
+                  |      |         ~~~~~~~
+                  |      |          |
+                  |      |          (20) ...to here
+                  |
+           <------+
+           |
+         'getLeastNumbers': events 21-25
+           |
+           |   59 |         pushHeap(h, arr[i]);
+           |      |         ^~~~~~~~~~~~~~~~~~~
+           |      |         |
+           |      |         (21) returning to 'getLeastNumbers' from 'pushHeap'
+           |   60 |     }
+           |   61 |     int *result = (int*)malloc(sizeof(int) * k);
+           |      |                         ~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                         |
+           |      |                         (22) this call could return NULL
+           |   62 |     for (int i = 0; i < k; ++i) {
+           |      |                     ~~~~~
+           |      |                       |
+           |      |                       (23) following 'true' branch (when 'i < k')...
+           |   63 |         result[i] = h->data[i];
+           |      |         ~~~~~~~~~~~~~~~~~~~~~~
+           |      |                   |  |
+           |      |                   |  (24) ...to here
+           |      |                   (25) 'result + (long unsigned int)i * 4' could be NULL: unchecked value from (22)
+           |

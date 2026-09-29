@@ -1,0 +1,66 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stddef.h>
+
+typedef struct Node {
+    int value;
+    struct Node* next;
+} Node;
+
+size_t count_active_lists(Node** lists, size_t total_capacity) {
+    size_t count = 0;
+    
+    if (lists == NULL || total_capacity == 0) {
+        return 0;
+    }
+
+    for (size_t i = 0; i < total_capacity; ++i) {
+        if (lists[i] != NULL) {
+            count++;
+        }
+    }
+
+    return count;
+}
+
+void free_linked_list(Node* head) {
+    Node* current = head;
+    while (current != NULL) {
+        Node* next_node = current->next;
+        free(current);
+        current = next_node;
+    }
+}
+
+int main(void) {
+    size_t capacity = 5;
+    Node** array_of_lists = (Node**)calloc(capacity, sizeof(Node*));
+    
+    if (array_of_lists == NULL) {
+        return EXIT_FAILURE;
+    }
+
+    array_of_lists[1] = (Node*)malloc(sizeof(Node));
+    if (array_of_lists[1] != NULL) {
+        array_of_lists[1]->value = 10;
+        array_of_lists[1]->next = NULL;
+    }
+
+    array_of_lists[3] = (Node*)malloc(sizeof(Node));
+    if (array_of_lists[3] != NULL) {
+        array_of_lists[3]->value = 20;
+        array_of_lists[3]->next = NULL;
+    }
+
+    size_t active_count = count_active_lists(array_of_lists, capacity);
+    
+    printf("%zu\n", active_count);
+
+    for (size_t i = 0; i < capacity; ++i) {
+        free_linked_list(array_of_lists[i]);
+    }
+    
+    free(array_of_lists);
+
+    return EXIT_SUCCESS;
+}

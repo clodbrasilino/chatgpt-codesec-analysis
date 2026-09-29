@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-732-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-732-s3.c:25:22: error: Buffer is accessed out of bounds: source [bufferAccessOutOfBounds]
+        memcpy(text, source, dest_size - 1);
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-732-s3.c:24:20: style: Condition 'source_len>=dest_size' is always false [knownConditionTrueFalse]
+    if (source_len >= dest_size) {
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-732-s3.c:21:31: note: Assignment 'source_len=strlen(source)', assigned value is 28
+    size_t source_len = strlen(source);
+                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-732-s3.c:24:20: note: Condition 'source_len>=dest_size' is always false
+    if (source_len >= dest_size) {
+                   ^

@@ -1,0 +1,99 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <errno.h>
+#include <limits.h>
+
+static int count_primes(unsigned int n, unsigned int *result)
+{
+    unsigned char *sieve = NULL;
+    unsigned int count = 0;
+    unsigned int i;
+    unsigned int j;
+
+    if (result == NULL) {
+        return -1;
+    }
+
+    if (n < 3U) {
+        *result = 0U;
+        return 0;
+    }
+
+    sieve = calloc((size_t)n, sizeof(unsigned char));
+    if (sieve == NULL) {
+        return -1;
+    }
+
+    for (i = 2U; i < n; i++) {
+        if (sieve[i] == 0U) {
+            count++;
+            if (i <= (n - 1U) / i) {
+                for (j = i * i; j < n; j += i) {
+                    sieve[j] = 1U;
+                }
+            }
+        }
+    }
+
+    free(sieve);
+    sieve = NULL;
+
+    *result = count;
+    return 0;
+}
+
+int main(int argc, const char *argv[])
+{
+    unsigned long input;
+    unsigned int n;
+    unsigned int result = 0U;
+    char *endptr = NULL;
+
+    if (argc != 2) {
+        (void)fprintf(stderr, "Usage: %s <non-negative number>\n", argv[0]);
+        return EXIT_FAILURE;
+    }
+
+    errno = 0;
+    input = strtoul(argv[1], &endptr, 10);
+    if (errno != 0 || endptr == argv[1] || *endptr != '\0') {
+        (void)fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (input > (unsigned long)UINT_MAX) {
+        (void)fprintf(stderr, "Input too large\n");
+        return EXIT_FAILURE;
+    }
+
+    n = (unsigned int)input;
+
+    if (count_primes(n, &result) != 0) {
+        (void)fprintf(stderr, "Failed to count primes\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Number of primes less than %u: %u\n", n, result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis summary:**
+
+The original code was already well-written and defensive. Key observations:
+
+1. **The identified weakness (`constParameter`)**: The static analyzer flagged that `argv` is never modified, so it can be declared as `const char *argv[]`. This is fixed in the rewrite. Note that `strtoul` still works correctly since its first parameter is `const char *`, and the pointer comparison `endptr == argv[1]` between `char *` and `const char *` remains valid.
+
+2. **Strengths already present in the original:**
+   - Proper `errno`/`endptr` validation of `strtoul` output, catching empty strings and trailing garbage.
+   - Overflow guard `input > (unsigned long)UINT_MAX` before narrowing the conversion (relevant on LP64 platforms where `unsigned long` is 64-bit).
+   - The clever check `i <= (n - 1U) / i` prevents unsigned overflow in `i * i` before starting the inner sieve loop.
+   - `calloc` return value checked; memory freed and pointer nulled; `NULL` check on the output parameter.
+   - Return values of `printf`/`fprintf` handled, satisfying strict coding standards (e.g., MISRA/CERT).
+
+3. **Minor residual caveat (not flagged, standards-compliant as-is):** `strtoul` silently accepts negative inputs like `"-5"` by wrapping them modulo `ULONG_MAX+1`; a stricter implementation could reject a leading `'-'` explicitly, but this is behaviorally defined and outside the reported weakness.

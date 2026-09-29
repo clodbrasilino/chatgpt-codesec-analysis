@@ -1,0 +1,75 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_STRING_LEN 4096
+
+static size_t safe_strlen(const char *str, size_t max_len) {
+    size_t len = 0;
+    while (len < max_len && str[len] != '\0') {
+        len++;
+    }
+    return len;
+}
+
+char **concatenate_adjacent(const char *const *tuples, size_t length, size_t *out_length) {
+    if (!tuples || !out_length) {
+        return NULL;
+    }
+
+    if (length < 2) {
+        *out_length = 0;
+        return NULL;
+    }
+
+    size_t res_len = length - 1;
+    char **result = (char **)malloc(res_len * sizeof(char *));
+    if (!result) {
+        return NULL;
+    }
+
+    for (size_t i = 0; i < res_len; i++) {
+        if (!tuples[i] || !tuples[i + 1]) {
+            for (size_t j = 0; j < i; j++) {
+                free(result[j]);
+            }
+            free(result);
+            return NULL;
+        }
+
+        size_t len1 = safe_strlen(tuples[i], MAX_STRING_LEN);
+        size_t len2 = safe_strlen(tuples[i + 1], MAX_STRING_LEN);
+
+        result[i] = (char *)malloc(len1 + len2 + 1);
+        if (!result[i]) {
+            for (size_t j = 0; j < i; j++) {
+                free(result[j]);
+            }
+            free(result);
+            return NULL;
+        }
+
+        snprintf(result[i], len1 + len2 + 1, "%.*s%.*s", (int)len1, tuples[i], (int)len2, tuples[i + 1]);
+    }
+
+    *out_length = res_len;
+    return result;
+}
+
+int main(void) {
+    const char *tuples[] = {"apple", "banana", "cherry", "date"};
+    size_t length = sizeof(tuples) / sizeof(tuples[0]);
+    size_t out_length = 0;
+
+    char **concatenated = concatenate_adjacent((const char *const *)tuples, length, &out_length);
+
+    if (concatenated) {
+        for (size_t i = 0; i < out_length; i++) {
+            printf("%s\n", concatenated[i]);
+            free(concatenated[i]);
+        }
+        free(concatenated);
+    }
+
+    return 0;
+}

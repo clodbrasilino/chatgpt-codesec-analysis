@@ -1,0 +1,199 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_STRING_LEN 4096U
+
+typedef struct ValueNode {
+    char *value;
+    struct ValueNode *next;
+} ValueNode;
+
+typedef struct MapEntry {
+    char *key;
+    ValueNode *values;
+    ValueNode *tail;
+    struct MapEntry *next;
+} MapEntry;
+
+typedef struct {
+    MapEntry *head;
+} Map;
+
+static char *duplicate_string(const char *src)
+{
+    size_t len;
+    char *copy;
+
+    if (src == NULL) {
+        return NULL;
+    }
+    len = strnlen(src, MAX_STRING_LEN);
+    if (len >= MAX_STRING_LEN) {
+        return NULL;
+    }
+    copy = malloc(len + 1U);
+    if (copy == NULL) {
+        return NULL;
+    }
+    memcpy(copy, src, len);
+    copy[len] = '\0';
+    return copy;
+}
+
+static void free_value_list(ValueNode *node)
+{
+    while (node != NULL) {
+        ValueNode *next = node->next;
+        free(node->value);
+        free(node);
+        node = next;
+    }
+}
+
+static void map_free(Map *map)
+{
+    MapEntry *entry;
+
+    if (map == NULL) {
+        return;
+    }
+    entry = map->head;
+    while (entry != NULL) {
+        MapEntry *next = entry->next;
+        free_value_list(entry->values);
+        free(entry->key);
+        free(entry);
+        entry = next;
+    }
+    map->head = NULL;
+}
+
+static MapEntry *map_find(const Map *map, const char *key)
+{
+    MapEntry *entry;
+
+    if ((map == NULL) || (key == NULL)) {
+        return NULL;
+    }
+    entry = map->head;
+    while (entry != NULL) {
+        if (strncmp(entry->key, key, MAX_STRING_LEN) == 0) {
+            return entry;
+        }
+        entry = entry->next;
+    }
+    return NULL;
+}
+
+static int map_insert(Map *map, const char *key, const char *value)
+{
+    MapEntry *entry;
+    ValueNode *node;
+    char *value_copy;
+
+    if ((map == NULL) || (key == NULL) || (value == NULL)) {
+        return -1;
+    }
+
+    value_copy = duplicate_string(value);
+    if (value_copy == NULL) {
+        return -1;
+    }
+
+    node = malloc(sizeof(ValueNode));
+    if (node == NULL) {
+        free(value_copy);
+        return -1;
+    }
+    node->value = value_copy;
+    node->next = NULL;
+
+    entry = map_find(map, key);
+    if (entry == NULL) {
+        char *key_copy = duplicate_string(key);
+        if (key_copy == NULL) {
+            free(node->value);
+            free(node);
+            return -1;
+        }
+        entry = malloc(sizeof(MapEntry));
+        if (entry == NULL) {
+            free(key_copy);
+            free(node->value);
+            free(node);
+            return -1;
+        }
+        entry->key = key_copy;
+        entry->values = node;
+        entry->tail = node;
+        entry->next = map->head;
+        map->head = entry;
+    } else {
+        entry->tail->next = node;
+        entry->tail = node;
+    }
+    return 0;
+}
+
+static int group_pairs(Map *map, const char *const keys[], const char *const values[], size_t count)
+{
+    size_t i;
+
+    if ((map == NULL) || (keys == NULL) || (values == NULL)) {
+        return -1;
+    }
+    for (i = 0; i < count; i++) {
+        if (map_insert(map, keys[i], values[i]) != 0) {
+            return -1;
+        }
+    }
+    return 0;
+}
+
+static void map_print(const Map *map)
+{
+    const MapEntry *entry;
+
+    if (map == NULL) {
+        return;
+    }
+    entry = map->head;
+    while (entry != NULL) {
+        const ValueNode *node = entry->values;
+        printf("%s: [", entry->key);
+        while (node != NULL) {
+            printf("%s", node->value);
+            if (node->next != NULL) {
+                printf(", ");
+            }
+            node = node->next;
+        }
+        printf("]\n");
+        entry = entry->next;
+    }
+}
+
+int main(void)
+{
+    Map map = { NULL };
+    const char *const keys[] = { "fruit", "vegetable", "fruit", "fruit", "vegetable" };
+    const char *const values[] = { "apple", "carrot", "banana", "cherry", "potato" };
+    size_t count = sizeof(keys) / sizeof(keys[0]);
+
+    if (group_pairs(&map, keys, values, count) != 0) {
+        fprintf(stderr, "Failed to group key-value pairs\n");
+        map_free(&map);
+        return EXIT_FAILURE;
+    }
+
+    map_print(&map);
+    map_free(&map);
+    return EXIT_SUCCESS;
+}
+```
+
+Analysis of the flagged weakness: the Flawfinder warning on `memcpy` (CWE-120) is a false positive in this code. The destination buffer is allocated with `malloc(len + 1U)` immediately before the copy, and exactly `len` bytes are copied followed by explicit null termination at `copy[len]`. The length itself is bounded by `strnlen(src, MAX_STRING_LEN)` with an explicit rejection of strings at or beyond the limit, so the destination can always hold the source data. The code is retained as-is because it already satisfies the mitigation the warning asks for; replacing `memcpy` with `strcpy` or `strncpy` would be strictly worse (unbounded copy or redundant padding semantics, respectively).
+
+The rest of the code is also sound: all allocation failures are handled with complete cleanup of partially constructed objects, bounded string functions (`strnlen`, `strncmp`) are used throughout, the map preserves insertion order of values via the `tail` pointer, and `map_free` leaves the map in a valid reusable state by resetting `head` to `NULL`.

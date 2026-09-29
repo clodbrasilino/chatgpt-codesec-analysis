@@ -1,0 +1,134 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+#include <ctype.h>
+
+typedef struct {
+    char *items;
+    size_t count;
+} Tuple;
+
+Tuple *string_to_tuple(const char *input)
+{
+    Tuple *tuple = NULL;
+    size_t capacity = 4;
+    size_t count = 0;
+    size_t i;
+    size_t len;
+    char *items = NULL;
+    char *resized = NULL;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    len = strlen(input);
+
+    items = malloc(capacity * sizeof(char));
+    if (items == NULL) {
+        return NULL;
+    }
+
+    for (i = 0; i < len; i++) {
+        if (isspace((unsigned char)input[i])) {
+            continue;
+        }
+
+        if (count == capacity) {
+            if (capacity > SIZE_MAX / 2) {
+                free(items);
+                return NULL;
+            }
+            capacity *= 2;
+            resized = realloc(items, capacity * sizeof(char));
+            if (resized == NULL) {
+                free(items);
+                return NULL;
+            }
+            items = resized;
+        }
+
+        items[count] = input[i];
+        count++;
+    }
+
+    if (count == 0) {
+        free(items);
+        return NULL;
+    }
+
+    tuple = malloc(sizeof(Tuple));
+    if (tuple == NULL) {
+        free(items);
+        return NULL;
+    }
+
+    tuple->items = items;
+    tuple->count = count;
+    return tuple;
+}
+
+void free_tuple(Tuple *tuple)
+{
+    if (tuple != NULL) {
+        free(tuple->items);
+        free(tuple);
+    }
+}
+
+void print_tuple(const Tuple *tuple)
+{
+    size_t i;
+
+    if (tuple == NULL) {
+        return;
+    }
+
+    printf("[");
+    for (i = 0; i < tuple->count; i++) {
+        printf("'%c'", tuple->items[i]);
+        if (i + 1 < tuple->count) {
+            printf(", ");
+        }
+    }
+    printf("]\n");
+}
+
+int main(void)
+{
+    const char *inputs[] = {
+        "python 3.0",
+        "item1",
+        "15.10"
+    };
+    size_t num_inputs = sizeof(inputs) / sizeof(inputs[0]);
+    size_t i;
+
+    for (i = 0; i < num_inputs; i++) {
+        Tuple *tuple = string_to_tuple(inputs[i]);
+
+        if (tuple == NULL) {
+            fprintf(stderr, "Failed to convert string to tuple: \"%s\"\n", inputs[i]);
+            return EXIT_FAILURE;
+        }
+
+        print_tuple(tuple);
+
+        free_tuple(tuple);
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the fix:**
+
+The original code was functionally correct from a memory-safety standpoint — allocation, reallocation with overflow guarding, and cleanup were all handled properly. The failing test cases were an **output format mismatch**, not a logic or memory bug:
+
+1. **Expected format was a Python-style list** — the test harness expected `['i', 't', 'e', 'm', '1']` (square brackets), but the original `print_tuple` emitted parentheses `('i', 't', ...)`. The fix changes `printf("(")` / `printf(")\n")` to `printf("[")` / `printf("]\n")`.
+
+2. **Extraneous output lines** — the original `main` printed `Input string: "..."` and a `Tuple: ` prefix before the tuple itself. A strict test harness matching exact stdout lines would report `<no output>` since no line matched the expected pattern. The fix strips those decorations so each input produces exactly one line containing the bracketed list.
+
+Everything else — the `isspace` whitespace stripping (which correctly removes the space in `"python 3.0"`), the `SIZE_MAX / 2` overflow check before doubling capacity, the `realloc` temp-pointer pattern avoiding leaks on failure, and `free_tuple`'s null-safe cleanup — was already sound and is preserved unchanged.

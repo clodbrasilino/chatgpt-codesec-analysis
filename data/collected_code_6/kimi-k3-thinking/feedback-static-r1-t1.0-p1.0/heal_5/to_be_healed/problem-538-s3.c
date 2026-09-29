@@ -1,0 +1,172 @@
+#define _POSIX_C_SOURCE 200809L
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+#define MAX_STRING_LENGTH 4096
+
+char *string_list_to_tuple(const char *list[], size_t count)
+{
+    size_t total_length = 3;
+    size_t i;
+    size_t *lengths;
+    char *tuple;
+    char *cursor;
+    char *end;
+    size_t remaining;
+
+    if (list == NULL) {
+        return NULL;
+    }
+
+    if (count > SIZE_MAX / sizeof(*lengths)) {
+        return NULL;
+    }
+
+    lengths = (size_t *)malloc((count > 0 ? count : 1) * sizeof(*lengths));
+    if (lengths == NULL) {
+        return NULL;
+    }
+
+    for (i = 0; i < count; i++) {
+        size_t len;
+        size_t needed;
+
+        if (list[i] == NULL) {
+            free(lengths);
+            return NULL;
+        }
+
+        len = strnlen(list[i], MAX_STRING_LENGTH);
+        if (len == MAX_STRING_LENGTH) {
+            free(lengths);
+            return NULL;
+        }
+
+        if (len > SIZE_MAX - 4) {
+            free(lengths);
+            return NULL;
+        }
+
+        needed = len + 2;
+        if (i > 0) {
+            needed += 2;
+        }
+
+        if (needed > SIZE_MAX - total_length) {
+            free(lengths);
+            return NULL;
+        }
+
+        lengths[i] = len;
+        total_length += needed;
+    }
+
+    tuple = (char *)malloc(total_length);
+    if (tuple == NULL) {
+        free(lengths);
+        return NULL;
+    }
+
+    cursor = tuple;
+    end = tuple + total_length;
+    remaining = total_length;
+
+    if (remaining < 1) {
+        free(tuple);
+        free(lengths);
+        return NULL;
+    }
+    *cursor++ = '(';
+    remaining--;
+
+    for (i = 0; i < count; i++) {
+        size_t len = lengths[i];
+
+        if (i > 0) {
+            if (remaining < 2 || (size_t)(end - cursor) < 2) {
+                free(tuple);
+                free(lengths);
+                return NULL;
+            }
+            *cursor++ = ',';
+            *cursor++ = ' ';
+            remaining -= 2;
+        }
+
+        if (len > SIZE_MAX - 2) {
+            free(tuple);
+            free(lengths);
+            return NULL;
+        }
+
+        if (remaining < len + 2 || remaining - (len + 2) < 2) {
+            free(tuple);
+            free(lengths);
+            return NULL;
+        }
+
+        if ((size_t)(end - cursor) < len + 2) {
+            free(tuple);
+            free(lengths);
+            return NULL;
+        }
+
+        *cursor++ = '\'';
+        remaining--;
+
+        if (len > 0) {
+            if (len > remaining || len > (size_t)(end - cursor)) {
+                free(tuple);
+                free(lengths);
+                return NULL;
+            }
+            /* Possible weaknesses found:
+             * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+             */
+            memcpy(cursor, list[i], len);
+            cursor += len;
+            remaining -= len;
+        }
+
+        if (remaining < 1 || (size_t)(end - cursor) < 1) {
+            free(tuple);
+            free(lengths);
+            return NULL;
+        }
+        *cursor++ = '\'';
+        remaining--;
+    }
+
+    if (remaining < 2 || (size_t)(end - cursor) < 2) {
+        free(tuple);
+        free(lengths);
+        return NULL;
+    }
+    *cursor++ = ')';
+    *cursor = '\0';
+
+    free(lengths);
+    return tuple;
+}
+
+int main(void)
+{
+    const char *fruits[] = {"apple", "banana", "cherry", "date"};
+    size_t count = sizeof(fruits) / sizeof(fruits[0]);
+    char *result = string_list_to_tuple(fruits, count);
+
+    if (result == NULL) {
+        fprintf(stderr, "Error: failed to convert string list to tuple\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("%s\n", result);
+
+    free(result);
+    result = NULL;
+
+    return EXIT_SUCCESS;
+}

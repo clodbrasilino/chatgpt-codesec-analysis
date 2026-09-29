@@ -1,0 +1,16 @@
+collected_code/problem-467-0.c: In function 'decimalToOctal':
+collected_code/problem-467-0.c:12:9: warning: implicit declaration of function 'printf' [-Wimplicit-function-declaration]
+   12 |         printf("%d", octal[j]);
+      |         ^~~~~~
+collected_code/problem-467-0.c:1:1: note: include '<stdio.h>' or provide a declaration of 'printf'
+  +++ |+#include <stdio.h>
+    1 | void decimalToOctal(int decimal){
+collected_code/problem-467-0.c:12:9: warning: incompatible implicit declaration of built-in function 'printf' [-Wbuiltin-declaration-mismatch]
+   12 |         printf("%d", octal[j]);
+      |         ^~~~~~
+collected_code/problem-467-0.c:12:9: note: include '<stdio.h>' or provide a declaration of 'printf'
+Undefined symbols for architecture x86_64:
+  "_main", referenced from:
+     implicit entry/start for main executable
+ld: symbol(s) not found for architecture x86_64
+collect2: error: ld returned 1 exit status

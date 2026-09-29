@@ -1,0 +1,64 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int value;
+    size_t count;
+} RLEPair;
+
+RLEPair* run_length_encode(const int* arr, size_t len, size_t* out_len) {
+    if (arr == NULL || out_len == NULL || len == 0) {
+        if (out_len != NULL) {
+            *out_len = 0;
+        }
+        return NULL;
+    }
+
+    RLEPair* result = (RLEPair*)malloc(len * sizeof(RLEPair));
+    if (result == NULL) {
+        *out_len = 0;
+        return NULL;
+    }
+
+    size_t rle_idx = 0;
+    result[rle_idx].value = arr[0];
+    result[rle_idx].count = 1;
+
+    for (size_t i = 1; i < len; ++i) {
+        if (arr[i] == result[rle_idx].value) {
+            result[rle_idx].count++;
+        } else {
+            rle_idx++;
+            result[rle_idx].value = arr[i];
+            result[rle_idx].count = 1;
+        }
+    }
+
+    *out_len = rle_idx + 1;
+
+    RLEPair* resized = (RLEPair*)realloc(result, (*out_len) * sizeof(RLEPair));
+    if (resized != NULL) {
+        result = resized;
+    }
+
+    return result;
+}
+
+int main(void) {
+    int data[] = {1, 1, 1, 2, 3, 3, 4, 4, 4, 4, 5};
+    size_t data_len = sizeof(data) / sizeof(data[0]);
+    size_t rle_len = 0;
+
+    RLEPair* encoded = run_length_encode(data, data_len, &rle_len);
+
+    if (encoded != NULL) {
+        for (size_t i = 0; i < rle_len; ++i) {
+            printf("%d: %zu\n", encoded[i].value, encoded[i].count);
+        }
+        free(encoded);
+    }
+
+    return 0;
+}
+```

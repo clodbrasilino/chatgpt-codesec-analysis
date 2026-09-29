@@ -1,0 +1,128 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct Node {
+    char *data;
+    struct Node *next;
+} Node;
+
+Node *create_node(const char *word, size_t len)
+{
+    Node *node = malloc(sizeof(Node));
+    if (node == NULL) {
+        return NULL;
+    }
+    node->data = malloc(len + 1);
+    if (node->data == NULL) {
+        free(node);
+        return NULL;
+    }
+    memcpy(node->data, word, len);
+    node->data[len] = '\0';
+    node->next = NULL;
+    return node;
+}
+
+void free_list(Node *head)
+{
+    while (head != NULL) {
+        Node *tmp = head;
+        head = head->next;
+        free(tmp->data);
+        free(tmp);
+    }
+}
+
+Node *string_to_word_list(const char *str)
+{
+    Node *head = NULL;
+    Node *tail = NULL;
+    size_t i = 0;
+
+    if (str == NULL) {
+        return NULL;
+    }
+
+    while (str[i] != '\0') {
+        while (str[i] == ' ' || str[i] == '\t' || str[i] == '\n') {
+            i++;
+        }
+        if (str[i] == '\0') {
+            break;
+        }
+        {
+            size_t start = i;
+            while (str[i] != '\0' && str[i] != ' ' &&
+                   str[i] != '\t' && str[i] != '\n') {
+                i++;
+            }
+            {
+                Node *node = create_node(&str[start], i - start);
+                if (node == NULL) {
+                    free_list(head);
+                    return NULL;
+                }
+                if (head == NULL) {
+                    head = node;
+                    tail = node;
+                } else {
+                    tail->next = node;
+                    tail = node;
+                }
+            }
+        }
+    }
+
+    return head;
+}
+
+void print_list(const Node *head)
+{
+    const Node *current = head;
+    putchar('[');
+    while (current != NULL) {
+        printf("'%s'", current->data);
+        if (current->next != NULL) {
+            printf(", ");
+        }
+        current = current->next;
+    }
+    printf("]\n");
+}
+
+int main(void)
+{
+    char buffer[1024];
+    Node *list;
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Failed to read input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[strcspn(buffer, "\n")] = '\0';
+
+    list = string_to_word_list(buffer);
+    if (list == NULL && buffer[0] != '\0') {
+        fprintf(stderr, "Failed to convert string to list\n");
+        return EXIT_FAILURE;
+    }
+
+    print_list(list);
+    free_list(list);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the fixes applied:**
+
+1. **Test-case failures (`expected ['python', 'programming'], got <no output>`):** The original program tokenized a string into individual *characters* and printed them as `h -> e -> l -> l -> o -> NULL`, while the expected behavior was to split the input into *words* and print them as a Python-style list (e.g., `['python', 'programming']`). The rewritten `string_to_word_list` splits on whitespace, and `print_list` produces the expected `['word1', 'word2']` format.
+
+2. **Hardcoded assignment (`input="hello"`):** The static analyzer flagged the hardcoded input, which also explains why the test harness got no matching output — the program ignored stdin entirely. The rewrite reads input dynamically via `fgets`, stripping the trailing newline with `strcspn`.
+
+3. **`knownConditionTrueFalse` warning:** Because `input` was the compile-time constant `"hello"`, the check `input[0] != '\0'` was provably always true. With runtime input, `buffer[0] != '\0'` is now a genuine check distinguishing "empty input" (valid, prints `[]`) from an actual allocation failure.
+
+4. **Memory safety preserved:** `create_node` cleans up partially allocated nodes on failure, `string_to_word_list` frees the partial list on allocation failure, and `free_list` releases both the duplicated strings and the nodes — no leaks under any path.

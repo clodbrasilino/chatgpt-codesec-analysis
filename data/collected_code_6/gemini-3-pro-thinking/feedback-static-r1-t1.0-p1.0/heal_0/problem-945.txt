@@ -1,0 +1,100 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+typedef struct {
+    int *data;
+    size_t size;
+} Tuple;
+
+typedef struct {
+    int *data;
+    size_t size;
+} Set;
+
+bool is_in_set(const int *array, size_t size, int value) {
+    if (!array) {
+        return false;
+    }
+    for (size_t i = 0; i < size; ++i) {
+        if (array[i] == value) {
+            return true;
+        }
+    }
+    return false;
+}
+
+Set* tuple_to_set(const Tuple *tuple) {
+    if (!tuple) {
+        return NULL;
+    }
+
+    Set *set = (Set*)malloc(sizeof(Set));
+    if (!set) {
+        return NULL;
+    }
+
+    if (tuple->size == 0 || !tuple->data) {
+        set->data = NULL;
+        set->size = 0;
+        return set;
+    }
+
+    set->data = (int*)malloc(tuple->size * sizeof(int));
+    if (!set->data) {
+        free(set);
+        return NULL;
+    }
+
+    set->size = 0;
+
+    for (size_t i = 0; i < tuple->size; ++i) {
+        if (!is_in_set(set->data, set->size, tuple->data[i])) {
+            set->data[set->size] = tuple->data[i];
+            set->size++;
+        }
+    }
+
+    if (set->size < tuple->size) {
+        int *resized_data = (int*)realloc(set->data, set->size * sizeof(int));
+        if (resized_data) {
+            set->data = resized_data;
+        }
+    }
+
+    return set;
+}
+
+void free_set(Set *set) {
+    if (set) {
+        if (set->data) {
+            free(set->data);
+        }
+        free(set);
+    }
+}
+
+int main(void) {
+    int raw_data[] = {1, 2, 2, 3, 4, 4, 5, 1};
+    Tuple tuple = {
+        .data = raw_data,
+        .size = sizeof(raw_data) / sizeof(raw_data[0])
+    };
+
+    Set *my_set = tuple_to_set(&tuple);
+    if (!my_set) {
+        fprintf(stderr, "Failed to create set.\n");
+        return EXIT_FAILURE;
+    }
+
+    for (size_t i = 0; i < my_set->size; ++i) {
+        printf("%d ", my_set->data[i]);
+    }
+    printf("\n");
+
+    free_set(my_set);
+
+    return EXIT_SUCCESS;
+}
+```

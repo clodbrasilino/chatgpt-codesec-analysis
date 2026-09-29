@@ -1,0 +1,88 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node *next;
+} Node;
+
+Node* createNode(int data) {
+    Node *newNode = (Node*)malloc(sizeof(Node));
+    newNode->data = data;
+    newNode->next = NULL;
+    return newNode;
+}
+
+Node* prependNode(Node *head, int data) {
+    Node *newNode = createNode(data);
+    if (head == NULL) {
+        return newNode;
+    }
+    newNode->next = head;
+    return newNode;
+}
+
+void freeList(Node *head) {
+    /* Possible weaknesses found:
+     *  The scope of the variable 'temp' can be reduced. [variableScope]
+     */
+    Node *temp;
+    while (head != NULL) {
+        temp = head;
+        head = head->next;
+        free(temp);
+    }
+}
+
+int power(int base, int exp) {
+    int result = 1;
+    for (int i = 0; i < exp; ++i) {
+        result *= base;
+    }
+    return result;
+}
+
+Node* mapPower(Node *baseList, Node *expList) {
+    if (baseList == NULL || expList == NULL) {
+        return NULL;
+    }
+
+    Node *resultList = NULL;
+    Node *currentBase = baseList;
+    Node *currentExp = expList;
+
+    while (currentBase != NULL && currentExp != NULL) {
+        resultList = prependNode(resultList, power(currentBase->data, currentExp->data));
+        currentBase = currentBase->next;
+        currentExp = currentExp->next;
+    }
+
+    return resultList;
+}
+
+int main() {
+    Node *baseList = NULL;
+    Node *expList = NULL;
+    baseList = prependNode(baseList, 2);
+    baseList = prependNode(baseList, 3);
+    baseList = prependNode(baseList, 5);
+
+    expList = prependNode(expList, 3);
+    expList = prependNode(expList, 4);
+    expList = prependNode(expList, 2);
+
+    Node *resultList = mapPower(baseList, expList);
+
+    Node *current = resultList;
+    while (current != NULL) {
+        printf("%d ", current->data);
+        current = current->next;
+    }
+    printf("\n");
+
+    freeList(baseList);
+    freeList(expList);
+    freeList(resultList);
+
+    return 0;
+}

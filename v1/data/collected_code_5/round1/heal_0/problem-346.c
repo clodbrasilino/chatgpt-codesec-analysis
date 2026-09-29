@@ -1,0 +1,27 @@
+#include <stdio.h>
+
+int entringer(int n, int k)
+{
+    if (k == 0) {
+        return n == 0;
+    } else {
+        return entringer(n, k-1) - entringer(n-1, k);
+    }
+}
+
+int main()
+{
+    int n, k;
+    printf("Enter two non-negative integers:\n");
+    scanf("%d", &n);
+    scanf("%d", &k);
+    
+    if (n < 0 || k < 0){
+        printf("Invalid Input. Enter non-negative integers only.\n");
+        return 1;
+    }
+
+    printf("Entringer number: %d\n", entringer(n, k));
+    
+    return 0;
+}

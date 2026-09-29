@@ -1,0 +1,17 @@
+collected_code/heal_round_2/healed/problem-812.c: In function 'abbreviateRoad':
+collected_code/heal_round_2/healed/problem-812.c:10:8: warning: check of 'str' for NULL after already dereferencing it [-Wanalyzer-deref-before-check]
+   10 |     if (str == NULL) {
+      |        ^
+  'abbreviateRoad': events 1-2
+    |
+    |    8 |     int len = strlen(str);
+    |      |               ^~~~~~~~~~~
+    |      |               |
+    |      |               (1) pointer 'str' is dereferenced here
+    |    9 | 
+    |   10 |     if (str == NULL) {
+    |      |        ~       
+    |      |        |
+    |      |        (2) pointer 'str' is checked for NULL here but it was already dereferenced at (1)
+    |
+-macosx_version_min has been renamed to -macos_version_min

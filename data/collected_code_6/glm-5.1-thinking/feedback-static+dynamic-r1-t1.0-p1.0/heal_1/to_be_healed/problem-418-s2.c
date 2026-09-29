@@ -1,0 +1,83 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *data;
+    int length;
+} Sublist;
+
+typedef struct {
+    Sublist *items;
+    int count;
+} List;
+
+Sublist *find_max_length_sublist(List *list) {
+    if (list == NULL || list->items == NULL || list->count <= 0) {
+        return NULL;
+    }
+
+    int max_index = 0;
+    for (int i = 1; i < list->count; i++) {
+        if (list->items[i].length > list->items[max_index].length) {
+            max_index = i;
+        }
+    }
+
+    return &list->items[max_index];
+}
+
+void free_list(List *list) {
+    if (list == NULL) {
+        return;
+    }
+    if (list->items != NULL) {
+        for (int i = 0; i < list->count; i++) {
+            free(list->items[i].data);
+        }
+        free(list->items);
+        list->items = NULL;
+    }
+    list->count = 0;
+}
+
+int main(void) {
+    List list = {NULL, 0};
+    list.count = 3;
+    
+    /* Possible weaknesses found:
+     *  Variable 'lengths' can be declared as const array [constVariable]
+     */
+    int lengths[] = {5, 10, 3};
+    int allocation_success = 1;
+
+    list.items = (Sublist *)calloc(list.count, sizeof(Sublist));
+    if (list.items == NULL) {
+        allocation_success = 0;
+    } else {
+        for (int i = 0; i < list.count; i++) {
+            list.items[i].length = lengths[i];
+            list.items[i].data = (int *)malloc(lengths[i] * sizeof(int));
+            if (list.items[i].data == NULL) {
+                allocation_success = 0;
+                break;
+            }
+            for (int j = 0; j < lengths[i]; j++) {
+                list.items[i].data[j] = j;
+            }
+        }
+    }
+
+    if (allocation_success) {
+        /* Possible weaknesses found:
+         *  Variable 'max_sublist' can be declared as pointer to const [constVariablePointer]
+         */
+        Sublist *max_sublist = find_max_length_sublist(&list);
+        if (max_sublist != NULL) {
+            printf("Max length: %d\n", max_sublist->length);
+        }
+    }
+
+    free_list(&list);
+
+    return allocation_success ? EXIT_SUCCESS : EXIT_FAILURE;
+}

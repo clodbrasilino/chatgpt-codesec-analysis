@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-956-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-956-s3.c:172:21: style: Condition 'len<prev_split' is always false [knownConditionTrueFalse]
+            if (len < prev_split || segment_len > len - prev_split) {
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-956-s3.c:170:24: note: Assuming that condition 'prev_split<len' is not redundant
+        if (prev_split < len) {
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-956-s3.c:172:21: note: Condition 'len<prev_split' is always false
+            if (len < prev_split || segment_len > len - prev_split) {
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-956-s3.c:172:49: style: The comparison 'segment_len > len-prev_split' is always false because 'segment_len' and 'len-prev_split' represent the same value. [knownConditionTrueFalse]
+            if (len < prev_split || segment_len > len - prev_split) {
+                                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-956-s3.c:171:38: note: 'segment_len' is assigned value 'len-prev_split' here.
+            size_t segment_len = len - prev_split;
+                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-956-s3.c:172:49: note: The comparison 'segment_len > len-prev_split' is always false because 'segment_len' and 'len-prev_split' represent the same value.
+            if (len < prev_split || segment_len > len - prev_split) {
+                                                ^

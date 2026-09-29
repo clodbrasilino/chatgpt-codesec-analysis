@@ -1,0 +1,160 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char *key;
+    int value;
+} DictEntry;
+
+typedef struct {
+    DictEntry *entries;
+    size_t size;
+    size_t capacity;
+} Dict;
+
+static Dict *dict_create(size_t capacity)
+{
+    Dict *d = malloc(sizeof(Dict));
+    if (d == NULL) {
+        return NULL;
+    }
+    d->entries = malloc(capacity * sizeof(DictEntry));
+    if (d->entries == NULL) {
+        free(d);
+        return NULL;
+    }
+    d->size = 0;
+    d->capacity = capacity;
+    return d;
+}
+
+static int dict_add(Dict *d, const char *key, int value)
+{
+    char *key_copy;
+    DictEntry *tmp;
+    /* Possible weaknesses found:
+     *  The scope of the variable 'new_capacity' can be reduced. [variableScope]
+     */
+    size_t new_capacity;
+
+    if (d == NULL || key == NULL) {
+        return -1;
+    }
+    if (d->size >= d->capacity) {
+        new_capacity = d->capacity * 2;
+        tmp = realloc(d->entries, new_capacity * sizeof(DictEntry));
+        if (tmp == NULL) {
+            return -1;
+        }
+        d->entries = tmp;
+        d->capacity = new_capacity;
+    }
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    key_copy = malloc(strlen(key) + 1);
+    if (key_copy == NULL) {
+        return -1;
+    }
+    /* Possible weaknesses found:
+     * Flawfinder strcpy: Does not check for buffer overflows when copying to destination [MS-banned] (CWE-120). Consider using snprintf, strcpy_s, or strlcpy (warning: strncpy easily misused). (risk 4, buffer)
+     */
+    strcpy(key_copy, key);
+    d->entries[d->size].key = key_copy;
+    d->entries[d->size].value = value;
+    d->size++;
+    return 0;
+}
+
+static void dict_destroy(Dict *d)
+{
+    size_t i;
+
+    if (d == NULL) {
+        return;
+    }
+    for (i = 0; i < d->size; i++) {
+        free(d->entries[i].key);
+    }
+    free(d->entries);
+    free(d);
+}
+
+static Dict *dict_filter(const Dict *d, int (*predicate)(int))
+{
+    Dict *result;
+    size_t i;
+
+    if (d == NULL || predicate == NULL) {
+        return NULL;
+    }
+    result = dict_create(d->capacity);
+    if (result == NULL) {
+        return NULL;
+    }
+    for (i = 0; i < d->size; i++) {
+        if (predicate(d->entries[i].value)) {
+            if (dict_add(result, d->entries[i].key, d->entries[i].value) != 0) {
+                dict_destroy(result);
+                return NULL;
+            }
+        }
+    }
+    return result;
+}
+
+static int value_greater_than_ten(int value)
+{
+    return value > 10;
+}
+
+static void dict_print(const Dict *d)
+{
+    size_t i;
+
+    if (d == NULL) {
+        return;
+    }
+    for (i = 0; i < d->size; i++) {
+        printf("%s: %d\n", d->entries[i].key, d->entries[i].value);
+    }
+}
+
+int main(void)
+{
+    Dict *d;
+    Dict *filtered;
+
+    d = dict_create(4);
+    if (d == NULL) {
+        fprintf(stderr, "Failed to create dictionary\n");
+        return EXIT_FAILURE;
+    }
+    if (dict_add(d, "apple", 5) != 0 ||
+        dict_add(d, "banana", 15) != 0 ||
+        dict_add(d, "cherry", 25) != 0 ||
+        dict_add(d, "date", 8) != 0 ||
+        dict_add(d, "elderberry", 30) != 0) {
+        fprintf(stderr, "Failed to add entries\n");
+        dict_destroy(d);
+        return EXIT_FAILURE;
+    }
+
+    printf("Original dictionary:\n");
+    dict_print(d);
+
+    filtered = dict_filter(d, value_greater_than_ten);
+    if (filtered == NULL) {
+        fprintf(stderr, "Failed to filter dictionary\n");
+        dict_destroy(d);
+        return EXIT_FAILURE;
+    }
+
+    printf("\nFiltered dictionary (values > 10):\n");
+    dict_print(filtered);
+
+    dict_destroy(filtered);
+    dict_destroy(d);
+    return EXIT_SUCCESS;
+}

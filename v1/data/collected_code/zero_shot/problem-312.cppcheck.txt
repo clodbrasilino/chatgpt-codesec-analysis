@@ -1,0 +1,12 @@
+collected_code/problem-312-0.c:11:21: error: Cannot determine that 'radius' is initialized [premium-bughuntingUninit]
+    scanf("%f %f", &radius, &height);
+                    ^
+collected_code/problem-312-0.c:11:30: error: Cannot determine that 'height' is initialized [premium-bughuntingUninit]
+    scanf("%f %f", &radius, &height);
+                             ^
+collected_code/problem-312-0.c:13:35: error: Cannot determine that 'radius' is initialized [premium-bughuntingUninit]
+    float volume = volume_of_cone(radius, height);
+                                  ^
+collected_code/problem-312-0.c:13:43: error: Cannot determine that 'height' is initialized [premium-bughuntingUninit]
+    float volume = volume_of_cone(radius, height);
+                                          ^

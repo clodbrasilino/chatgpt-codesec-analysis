@@ -1,0 +1,2 @@
+problem-78-s3.c:11:25:medium:UBSan: signed integer overflow: -2147483648 - 1 cannot be represented in type 'int' (AFL crash: id:000000,sig:06,src:000006,time:3320,execs:2290,op:havoc,rep:2)
+problem-78-s3.c:19:0:error:Fuzzing found a crash (signal 6) on input id:000001,sig:06,src:000006,time:6992,execs:4826,op:havoc,rep:4; likely memory-safety defect

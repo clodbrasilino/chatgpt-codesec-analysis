@@ -1,0 +1,32 @@
+```C
+#include <stdio.h>
+#include <string.h>
+#define MAX 1000
+  
+int dp[MAX][MAX];
+  
+int max(int a, int b) {
+    return (a > b) ? a : b;
+}
+  
+int longestRepeatingSubsequence(char *str) {
+    int n = strlen(str);
+    for (int i=1; i<=n; i++) {
+        for (int j=1; j<=n; j++) {
+            if (str[i-1] == str[j-1] && i != j)
+                dp[i][j] =  1 + dp[i-1][j-1];         
+            else
+                dp[i][j] = max(dp[i][j-1], dp[i-1][j]);
+        }
+    }
+    return dp[n][n];
+}
+  
+int main() {
+    char str[] = "aab";
+    printf("The length of longest repeating subsequence is %d",
+            longestRepeatingSubsequence(str));
+    return 0;
+}
+```
+This C program finds the longest repeating subsequence in a string. A subsequence is a sequence that can be derived from another sequence by deleting some elements without changing the order of the remaining elements. The two subsequences should not have the same characters at the same positions. The main function takes a string as input and uses the function 'longestRepeatingSubsequence' to find the length of the longest repeating subsequence. This function fills a 2D DP table such, that the value at [i][j] represents the length of the longest repeating subsequence of str[0..i-1] and str[0..j-1], where str is the input string. It uses a nested loop to fill the DP table. For each character in the first string, it compares with each character in the second string. If the characters match and they are not at the same position, it increments the value at the current position in the DP table by adding 1 to the value at the previous row and column. If the characters do not match, it takes the maximum of the values at the previous row and column to the current position. At the end, it returns the value at the bottom right of the DP table, which represents the length of the longest repeating subsequence.

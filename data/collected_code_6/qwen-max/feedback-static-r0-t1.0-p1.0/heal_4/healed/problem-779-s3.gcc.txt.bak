@@ -1,0 +1,33 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-779-s3.c: In function 'main':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-779-s3.c:52:11: error: field name not in record or union initializer
+   52 |         {{.item = "a"}, 1},
+      |           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-779-s3.c:52:11: note: (near initialization for 'lists[0].items')
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-779-s3.c:53:11: error: field name not in record or union initializer
+   53 |         {{.item = "a"}, { .item = "c"}, 2},
+      |           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-779-s3.c:53:11: note: (near initialization for 'lists[1].items')
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-779-s3.c:53:27: error: field name not in record or union initializer
+   53 |         {{.item = "a"}, { .item = "c"}, 2},
+      |                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-779-s3.c:53:27: note: (near initialization for 'lists[1].count')
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-779-s3.c:53:35: error: initialization of 'int' from 'char *' makes integer from pointer without a cast [-Wint-conversion]
+   53 |         {{.item = "a"}, { .item = "c"}, 2},
+      |                                   ^~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-779-s3.c:53:35: note: (near initialization for 'lists[1].count')
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-779-s3.c:54:11: error: field name not in record or union initializer
+   54 |         {{.item = "b"}, { .item = "a"}, { .item = "c"}, 3}
+      |           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-779-s3.c:54:11: note: (near initialization for 'lists[2].items')
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-779-s3.c:54:27: error: field name not in record or union initializer
+   54 |         {{.item = "b"}, { .item = "a"}, { .item = "c"}, 3}
+      |                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-779-s3.c:54:27: note: (near initialization for 'lists[2].count')
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-779-s3.c:54:35: error: initialization of 'int' from 'char *' makes integer from pointer without a cast [-Wint-conversion]
+   54 |         {{.item = "b"}, { .item = "a"}, { .item = "c"}, 3}
+      |                                   ^~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-779-s3.c:54:35: note: (near initialization for 'lists[2].count')
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-779-s3.c:54:41: error: extra brace group at end of initializer
+   54 |         {{.item = "b"}, { .item = "a"}, { .item = "c"}, 3}
+      |                                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-779-s3.c:54:41: note: (near initialization for 'lists[2]')

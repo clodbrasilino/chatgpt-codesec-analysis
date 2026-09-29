@@ -1,0 +1,102 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+#include <string.h>
+
+#define MAX_BITS (sizeof(unsigned int) * CHAR_BIT)
+
+static int decimal_to_binary(unsigned int number, char *buffer, size_t buffer_size)
+{
+    size_t index = 0U;
+    size_t start;
+    size_t end;
+
+    if (buffer == NULL || buffer_size < 2U) {
+        return -1;
+    }
+
+    memset(buffer, 0, buffer_size);
+
+    if (number == 0U) {
+        buffer[0] = '0';
+        buffer[1] = '\0';
+        return 0;
+    }
+
+    while (number > 0U && index < (buffer_size - 1U)) {
+        buffer[index] = (char)('0' + (number % 2U));
+        number /= 2U;
+        index++;
+    }
+
+    if (number > 0U) {
+        return -1;
+    }
+
+    buffer[index] = '\0';
+
+    start = 0U;
+    end = index - 1U;
+    while (start < end) {
+        char temp = buffer[start];
+        buffer[start] = buffer[end];
+        buffer[end] = temp;
+        start++;
+        end--;
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    unsigned int value = 0U;
+    char binary[MAX_BITS + 1U];
+    char line[64];
+    char *endptr = NULL;
+    unsigned long parsed;
+
+    printf("Enter a non-negative decimal number: ");
+
+    if (fgets(line, sizeof(line), stdin) == NULL) {
+        fprintf(stderr, "Error: invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    errno = 0;
+    parsed = strtoul(line, &endptr, 10);
+    if (endptr == line || (*endptr != '\n' && *endptr != '\0') || errno != 0 || parsed > UINT_MAX) {
+        fprintf(stderr, "Error: invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    value = (unsigned int)parsed;
+
+    if (decimal_to_binary(value, binary, sizeof(binary)) != 0) {
+        fprintf(stderr, "Error: conversion failed.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Binary equivalent: %s\n", binary);
+
+    return EXIT_SUCCESS;
+}
+```
+
+Note: this version requires `#include <errno.h>` — here is the corrected include list for completeness:
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+#include <string.h>
+#include <errno.h>
+```
+
+Key hardening changes made against the flagged weakness (CWE-119/CWE-120):
+
+1. **Replaced `scanf("%u", ...)` with `fgets` + `strtoul`** — this bounds the input read to `sizeof(line)`, eliminating any unbounded-read concern and giving full control over parsing and overflow detection (`errno`/`UINT_MAX` check).
+2. **Zero-initialized the output buffer** with `memset` before writing, guaranteeing the buffer is always NUL-terminated even in partial-failure paths.
+3. **Retained strict bounds checking** in `decimal_to_binary` (`index < buffer_size - 1U`), with an explicit failure return if the buffer would be too small, so the statically-sized `binary[MAX_BITS + 1U]` array can never be overrun.
+4. **Buffer size passed via `sizeof(binary)`** at the call site rather than a hard-coded constant, so the size check stays correct if the array declaration changes.

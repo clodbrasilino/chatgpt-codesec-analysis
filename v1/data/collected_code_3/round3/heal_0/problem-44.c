@@ -1,0 +1,24 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+
+bool matchWordAtBeginning(char* str, char* word) {
+    int wordLength = strlen(word);
+    for(int i = 0; i < wordLength; i++) {
+        if(str[i] != word[i]) {
+            return false;
+        }
+    }
+    return true;
+}
+
+int main() {
+    char str[] = "Hello World!";
+    char word[] = "Hello";
+    if(matchWordAtBeginning(str, word)) {
+        printf("Match found!\n");
+    } else {
+        printf("No match found!\n");
+    }
+    return 0;
+}

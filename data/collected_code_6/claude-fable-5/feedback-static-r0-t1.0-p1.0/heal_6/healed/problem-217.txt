@@ -1,0 +1,96 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <limits.h>
+#include <stddef.h>
+
+#define BUFFER_SIZE 256
+
+int find_first_repeated_char(const char *str, size_t max_len, char *result)
+{
+    unsigned char seen[UCHAR_MAX + 1] = {0};
+    size_t i;
+
+    if (str == NULL || result == NULL || max_len == 0) {
+        return -1;
+    }
+
+    for (i = 0; i < max_len && str[i] != '\0'; i++) {
+        unsigned char c = (unsigned char)str[i];
+        if (seen[c] != 0) {
+            *result = str[i];
+            return 0;
+        }
+        seen[c] = 1;
+    }
+
+    return 1;
+}
+
+static void discard_remaining_input(void)
+{
+    size_t guard = 0;
+    const size_t guard_limit = (size_t)-1;
+
+    while (guard < guard_limit) {
+        int ch = getchar();
+        if (ch == '\n' || ch == EOF) {
+            break;
+        }
+        guard++;
+    }
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    char repeated = '\0';
+    int status;
+    size_t len;
+
+    memset(buffer, 0, sizeof(buffer));
+
+    printf("Enter a string: ");
+    fflush(stdout);
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = strcspn(buffer, "\n");
+    if (len >= sizeof(buffer)) {
+        len = sizeof(buffer) - 1;
+    }
+    buffer[len] = '\0';
+
+    if (len == sizeof(buffer) - 1) {
+        discard_remaining_input();
+    }
+
+    status = find_first_repeated_char(buffer, sizeof(buffer), &repeated);
+
+    if (status == 0) {
+        printf("First repeated character: %c\n", repeated);
+    } else if (status == 1) {
+        printf("No repeated character found\n");
+    } else {
+        fprintf(stderr, "Invalid input to function\n");
+        return 1;
+    }
+
+    return 0;
+}
+```
+
+**Analysis of the flagged weaknesses and why the code is already safe:**
+
+1. **`seen[UCHAR_MAX + 1]` array (CWE-119/CWE-120):** This is a false positive. The array is indexed exclusively by an `unsigned char` value, which by definition is bounded to `[0, UCHAR_MAX]`. The array size of `UCHAR_MAX + 1` covers every possible index, so no out-of-bounds access is possible.
+
+2. **`getchar()` in a loop (CWE-120/CWE-20):** Also a false positive. `getchar()` writes to no buffer; the loop merely discards characters. The `guard` counter additionally prevents any theoretical infinite loop on a pathological stream.
+
+3. **`buffer[BUFFER_SIZE]` (CWE-119/CWE-120):** Mitigated correctly. Input is read with `fgets(buffer, (int)sizeof(buffer), stdin)`, which limits writes to the buffer size, and the buffer is explicitly null-terminated afterward. The `strcspn` result is clamped before being used as an index, and overflow input beyond the buffer is drained from `stdin` so it cannot leak into subsequent reads.
+
+The original code was already written defensively — null checks, explicit length bounds in `find_first_repeated_char`, `memset` initialization, and truncation handling — so the rewrite preserves that structure with the diagnostic comments removed, as all flagged items are either false positives or already properly mitigated.

@@ -1,0 +1,29 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <regex.h>
+
+void remove_lowercase_substrings(char *str) {
+    regex_t regex;
+    char *pattern = "[a-z]+";
+    if (regcomp(&regex, pattern, REG_EXTENDED) != 0) {
+        return;
+    }
+
+    regmatch_t matches[1];
+    while (regexec(&regex, str, 1, matches, 0) == 0) {
+        int match_start = matches[0].rm_so;
+        int match_end = matches[0].rm_eo;
+        memmove(str + match_start, str + match_end, strlen(str + match_end) + 1);
+    }
+
+    regfree(&regex);
+}
+
+int main() {
+    char input[] = "HeLlO WoRlD";
+    remove_lowercase_substrings(input);
+    printf("%s\n", input);
+    return 0;
+}
+```

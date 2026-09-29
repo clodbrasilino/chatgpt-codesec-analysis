@@ -1,0 +1,89 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int first;
+    int second;
+} Tuple;
+
+int tuple_equals(const Tuple* a, const Tuple* b) {
+    return (a->first == b->first && a->second == b->second);
+}
+
+Tuple* remove_matching_tuples(const Tuple* tuple1, int size1, const Tuple* tuple2, int size2, int* result_size) {
+    if (tuple1 == NULL || tuple2 == NULL || result_size == NULL) {
+        return NULL;
+    }
+    
+    if (size1 <= 0 || size2 <= 0) {
+        *result_size = 0;
+        return NULL;
+    }
+    
+    int* to_remove = (int*)calloc(size1, sizeof(int));
+    if (to_remove == NULL) {
+        return NULL;
+    }
+    
+    int remove_count = 0;
+    
+    for (int i = 0; i < size1; i++) {
+        for (int j = 0; j < size2; j++) {
+            if (tuple_equals(&tuple1[i], &tuple2[j])) {
+                to_remove[i] = 1;
+                remove_count++;
+                break;
+            }
+        }
+    }
+    
+    int new_size = size1 - remove_count;
+    *result_size = new_size;
+    
+    if (new_size == 0) {
+        free(to_remove);
+        return NULL;
+    }
+    
+    Tuple* result = (Tuple*)malloc(new_size * sizeof(Tuple));
+    if (result == NULL) {
+        free(to_remove);
+        return NULL;
+    }
+    
+    int result_index = 0;
+    for (int i = 0; i < size1; i++) {
+        if (!to_remove[i]) {
+            result[result_index] = tuple1[i];
+            result_index++;
+        }
+    }
+    
+    free(to_remove);
+    return result;
+}
+
+int main() {
+    Tuple tuple1[] = {{1, 2}, {3, 4}, {5, 6}, {7, 8}};
+    Tuple tuple2[] = {{3, 4}, {7, 8}, {9, 10}};
+    
+    int size1 = sizeof(tuple1) / sizeof(tuple1[0]);
+    int size2 = sizeof(tuple2) / sizeof(tuple2[0]);
+    int result_size = 0;
+    
+    Tuple* result = remove_matching_tuples(tuple1, size1, tuple2, size2, &result_size);
+    
+    if (result != NULL) {
+        printf("Result size: %d\n", result_size);
+        for (int i = 0; i < result_size; i++) {
+            printf("(%d, %d)\n", result[i].first, result[i].second);
+        }
+        free(result);
+    } else {
+        printf("No tuples remaining or error occurred\n");
+    }
+    
+    return 0;
+}
+```

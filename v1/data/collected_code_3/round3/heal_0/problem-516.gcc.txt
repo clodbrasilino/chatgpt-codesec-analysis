@@ -1,0 +1,7 @@
+collected_code_3/problem-516-3.c:35:6: error: conflicting types for 'radixsort'; have 'void(int *, int)'
+   35 | void radixsort(int array[], int size) {
+      |      ^~~~~~~~~
+In file included from collected_code_3/problem-516-3.c:2:
+/Library/Developer/CommandLineTools/SDKs/MacOSX14.sdk/usr/include/stdlib.h:348:10: note: previous declaration of 'radixsort' with type 'int(const unsigned char **, int,  const unsigned char *, unsigned int)'
+  348 | int      radixsort(const unsigned char **__base, int __nel, const unsigned char *__table,
+      |          ^~~~~~~~~

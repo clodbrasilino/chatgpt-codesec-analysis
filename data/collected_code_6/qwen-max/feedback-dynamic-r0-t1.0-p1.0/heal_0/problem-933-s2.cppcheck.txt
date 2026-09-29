@@ -1,0 +1,7 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-933-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-933-s2.c:24:27: error: Array 'matches[2]' accessed at index 2, which is out of bounds. [arrayIndexOutOfBounds]
+            buffer[matches[2].rm_so + 1] = buffer[matches[2].rm_so];
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-933-s2.c:25:27: error: Array 'matches[2]' accessed at index 2, which is out of bounds. [arrayIndexOutOfBounds]
+            buffer[matches[2].rm_so] = buffer[matches[2].rm_so + 1];
+                          ^

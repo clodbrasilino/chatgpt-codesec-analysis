@@ -1,0 +1,25 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-790-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-790-s2.c:43:42: style: Condition 'result4' is always true [knownConditionTrueFalse]
+    printf("Test 4 (empty array): %s\n", result4 ? "PASS" : "FAIL");
+                                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-790-s2.c:37:50: note: Calling function 'check_even_indices_even_values' returns 1
+    bool result4 = check_even_indices_even_values(test4, 0);
+                                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-790-s2.c:37:50: note: Assignment 'result4=check_even_indices_even_values(test4,0)', assigned value is 1
+    bool result4 = check_even_indices_even_values(test4, 0);
+                                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-790-s2.c:43:42: note: Condition 'result4' is always true
+    printf("Test 4 (empty array): %s\n", result4 ? "PASS" : "FAIL");
+                                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-790-s2.c:44:43: style: Condition 'result5' is always false [knownConditionTrueFalse]
+    printf("Test 5 (NULL pointer): %s\n", result5 ? "PASS" : "FAIL");
+                                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-790-s2.c:38:50: note: Calling function 'check_even_indices_even_values' returns 0
+    bool result5 = check_even_indices_even_values(test5, 5);
+                                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-790-s2.c:38:50: note: Assignment 'result5=check_even_indices_even_values(test5,5)', assigned value is 0
+    bool result5 = check_even_indices_even_values(test5, 5);
+                                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-790-s2.c:44:43: note: Condition 'result5' is always false
+    printf("Test 5 (NULL pointer): %s\n", result5 ? "PASS" : "FAIL");
+                                          ^

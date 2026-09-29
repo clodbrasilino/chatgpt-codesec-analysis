@@ -1,0 +1,27 @@
+#include <stdio.h>
+#include <string.h>
+
+int romanToInt(const char *s, size_t len) {
+    const int values[] = {1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1};
+    const char *roman[] = {"M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I"};
+    int num = 0;
+    size_t i, j;
+
+    for (i = 0; i < 13; ++i) {
+        size_t roman_len = strlen(roman[i]);
+        while (len >= roman_len && strncmp(s, roman[i], roman_len) == 0) {
+            num += values[i];
+            s += roman_len;
+            len -= roman_len;
+        }
+    }
+    return num;
+}
+
+int main() {
+    const char *romanNumeral = "MCMXCIV";
+    size_t len = strlen(romanNumeral);
+    int result = romanToInt(romanNumeral, len);
+    printf("%d\n", result);
+    return 0;
+}

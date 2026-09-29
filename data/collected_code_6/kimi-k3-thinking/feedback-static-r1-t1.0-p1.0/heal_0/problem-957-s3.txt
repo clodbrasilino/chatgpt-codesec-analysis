@@ -1,0 +1,56 @@
+```c
+#include <stdio.h>
+
+int getRightmostSetBitPosition(unsigned int n);
+
+int getRightmostSetBitPosition(unsigned int n)
+{
+    int position = 1;
+
+    if (n == 0U)
+    {
+        return 0;
+    }
+
+    while ((n & 1U) == 0U)
+    {
+        n >>= 1U;
+        position++;
+    }
+
+    return position;
+}
+
+int main(void)
+{
+    unsigned int number = 0U;
+    int position;
+
+    printf("Enter an unsigned integer: ");
+    if (scanf("%u", &number) != 1)
+    {
+        printf("Invalid input.\n");
+        return 1;
+    }
+
+    position = getRightmostSetBitPosition(number);
+
+    if (position == 0)
+    {
+        printf("The number %u has no set bits.\n", number);
+    }
+    else
+    {
+        printf("The position of the rightmost set bit in %u is %d.\n", number, position);
+    }
+
+    return 0;
+}
+```
+
+Key points of this implementation:
+
+- **CWE-703**: The zero-input case (no set bits) is explicitly handled by returning `0`, and the `scanf` return value is validated before using `number`.
+- **CWE-710**: A proper function prototype is declared, `main` uses the standard `int main(void)` signature, and all variables are initialized.
+- **CWE-664**: No dynamic resources are used, so there is no lifetime mismanagement; all variables are properly initialized before use.
+- Positions are **1-based** (bit 1 = least significant bit), consistent with the standard `ffs()` convention. A return value of `0` indicates no set bit exists.

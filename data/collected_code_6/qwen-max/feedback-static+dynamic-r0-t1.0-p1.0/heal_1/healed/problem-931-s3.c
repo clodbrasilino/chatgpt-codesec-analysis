@@ -1,0 +1,37 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <stdint.h>
+
+bool is_safe_to_add(long long a, long long b) {
+    if (a > 0 && b > 0 && a > LLONG_MAX - b) return false;
+    if (a < 0 && b < 0 && a < LLONG_MIN - b) return false;
+    return true;
+}
+
+long long sum_of_cubes(int n) {
+    long long sum = 0;
+    for (int i = 1; i <= n; ++i) {
+        long long cube = (long long)i * i * i;
+        if (!is_safe_to_add(sum, cube)) {
+            printf("Overflow detected. Result is not representable.\n");
+            return -1;
+        }
+        sum += cube;
+    }
+    return sum;
+}
+
+int main() {
+    int n;
+    printf("Enter a positive integer: ");
+    if (scanf("%d", &n) != 1 || n < 1) {
+        printf("Invalid input. Please enter a positive integer.\n");
+        return 1;
+    }
+    long long result = sum_of_cubes(n);
+    if (result == -1) {
+        return 1;
+    }
+    printf("The sum of cubes up to %d is: %lld\n", n, result);
+    return 0;
+}

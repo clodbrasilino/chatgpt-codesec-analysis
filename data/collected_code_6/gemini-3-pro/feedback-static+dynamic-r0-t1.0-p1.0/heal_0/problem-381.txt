@@ -1,0 +1,95 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *array;
+    size_t size;
+} InnerList;
+
+typedef struct {
+    InnerList *lists;
+    size_t count;
+} ListOfLists;
+
+typedef struct {
+    size_t index;
+} SortContext;
+
+static SortContext sort_context;
+
+int compare_inner_lists(const void *a, const void *b) {
+    const InnerList *list_a = (const InnerList *)a;
+    const InnerList *list_b = (const InnerList *)b;
+
+    if (sort_context.index >= list_a->size || sort_context.index >= list_b->size) {
+        return 0;
+    }
+
+    int val_a = list_a->array[sort_context.index];
+    int val_b = list_b->array[sort_context.index];
+
+    if (val_a < val_b) return -1;
+    if (val_a > val_b) return 1;
+    return 0;
+}
+
+int sort_list_of_lists(ListOfLists *lol, size_t index) {
+    if (!lol || !lol->lists) {
+        return -1;
+    }
+
+    sort_context.index = index;
+    qsort(lol->lists, lol->count, sizeof(InnerList), compare_inner_lists);
+
+    return 0;
+}
+
+void free_list_of_lists(ListOfLists *lol) {
+    if (lol && lol->lists) {
+        for (size_t i = 0; i < lol->count; i++) {
+            free(lol->lists[i].array);
+        }
+        free(lol->lists);
+        lol->lists = NULL;
+        lol->count = 0;
+    }
+}
+
+int main(void) {
+    ListOfLists lol;
+    lol.count = 3;
+    lol.lists = malloc(lol.count * sizeof(InnerList));
+    if (!lol.lists) {
+        return EXIT_FAILURE;
+    }
+
+    for (size_t i = 0; i < lol.count; i++) {
+        lol.lists[i].size = 3;
+        lol.lists[i].array = malloc(lol.lists[i].size * sizeof(int));
+        if (!lol.lists[i].array) {
+            lol.count = i; 
+            free_list_of_lists(&lol);
+            return EXIT_FAILURE;
+        }
+    }
+
+    lol.lists[0].array[0] = 5; lol.lists[0].array[1] = 9; lol.lists[0].array[2] = 2;
+    lol.lists[1].array[0] = 3; lol.lists[1].array[1] = 1; lol.lists[1].array[2] = 4;
+    lol.lists[2].array[0] = 8; lol.lists[2].array[1] = 6; lol.lists[2].array[2] = 7;
+
+    size_t sort_index = 1;
+    if (sort_list_of_lists(&lol, sort_index) == 0) {
+        for (size_t i = 0; i < lol.count; i++) {
+            for (size_t j = 0; j < lol.lists[i].size; j++) {
+                printf("%d ", lol.lists[i].array[j]);
+            }
+            printf("\n");
+        }
+    }
+
+    free_list_of_lists(&lol);
+
+    return EXIT_SUCCESS;
+}
+```

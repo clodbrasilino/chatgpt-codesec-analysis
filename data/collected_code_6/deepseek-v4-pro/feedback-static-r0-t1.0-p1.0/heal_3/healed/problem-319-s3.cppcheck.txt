@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-319-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-319-s3.c:66:78: style: Condition 'len<0' is always false [knownConditionTrueFalse]
+        if ((size_t)len < (size_t)(pmatch[0].rm_eo - pmatch[0].rm_so) || len < 0) {
+                                                                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-319-s3.c:47:17: note: Assuming that condition 'len<=0' is not redundant
+        if (len <= 0) {
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-319-s3.c:57:13: note: Assuming condition is false
+        if (!result[count]) {
+            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-319-s3.c:66:78: note: Condition 'len<0' is always false
+        if ((size_t)len < (size_t)(pmatch[0].rm_eo - pmatch[0].rm_so) || len < 0) {
+                                                                             ^

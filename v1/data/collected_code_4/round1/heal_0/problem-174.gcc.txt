@@ -1,0 +1,133 @@
+./collected_code_4/round1//heal_0//problem-174.c: In function 'main':
+./collected_code_4/round1//heal_0//problem-174.c:58:106: warning: dereference of NULL '0' [CWE-476] [-Wanalyzer-null-dereference]
+   58 |             printf("Added the key-value pair: %s-%s into dictionary.\n", d->kv_pairs[0]->key, d->kv_pairs[0]->value);
+      |                                                                                               ~~~~~~~~~~~^~~
+  'main': events 1-2
+    |
+    |   50 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |   51 |     dict *d = initialize_dict();
+    |      |               ~~~~~~~~~~~~~~~~~
+    |      |               |
+    |      |               (2) calling 'initialize_dict' from 'main'
+    |
+    +--> 'initialize_dict': events 3-4
+           |
+           |   28 | dict* initialize_dict() {
+           |      |       ^~~~~~~~~~~~~~~
+           |      |       |
+           |      |       (3) entry to 'initialize_dict'
+           |   29 |     dict *d = (dict *)malloc(sizeof(dict));
+           |   30 |     if(d == NULL) {
+           |      |       ~
+           |      |       |
+           |      |       (4) following 'false' branch (when 'd' is non-NULL)...
+           |
+         'initialize_dict': event 5
+           |
+           |   34 |     d->kv_pairs = NULL;
+           |      |                 ^
+           |      |                 |
+           |      |                 (5) ...to here
+           |
+         'initialize_dict': event 6
+           |
+           |   34 |     d->kv_pairs = NULL;
+           |      |                 ^
+           |      |                 |
+           |      |                 (6) '0' is NULL
+           |
+    <------+
+    |
+  'main': events 7-10
+    |
+    |   51 |     dict *d = initialize_dict();
+    |      |               ^~~~~~~~~~~~~~~~~
+    |      |               |
+    |      |               (7) returning to 'main' from 'initialize_dict'
+    |   52 |     if(d!=NULL){
+    |      |       ~        
+    |      |       |
+    |      |       (8) following 'true' branch (when 'd' is non-NULL)...
+    |   53 |         char *key = "Key";
+    |      |               ~~~
+    |      |               |
+    |      |               (9) ...to here
+    |   54 |         char *value = "Value";
+    |   55 |         kv_pair *pair = create_kv_pair(key, value);
+    |      |                         ~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                         |
+    |      |                         (10) calling 'create_kv_pair' from 'main'
+    |
+    +--> 'create_kv_pair': events 11-13
+           |
+           |   39 | kv_pair* create_kv_pair(char *key, char *value) {
+           |      |          ^~~~~~~~~~~~~~
+           |      |          |
+           |      |          (11) entry to 'create_kv_pair'
+           |   40 |     kv_pair *pair = (kv_pair *)malloc(sizeof(kv_pair));
+           |   41 |     if(pair == NULL) {
+           |      |       ~   
+           |      |       |
+           |      |       (12) following 'false' branch (when 'pair' is non-NULL)...
+           |......
+           |   45 |     pair->key = key;
+           |      |     ~~~~~~~~~~~~~~~
+           |      |               |
+           |      |               (13) ...to here
+           |
+    <------+
+    |
+  'main': events 14-17
+    |
+    |   55 |         kv_pair *pair = create_kv_pair(key, value);
+    |      |                         ^~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                         |
+    |      |                         (14) returning to 'main' from 'create_kv_pair'
+    |   56 |         if(pair!=NULL){
+    |      |           ~              
+    |      |           |
+    |      |           (15) following 'true' branch (when 'pair' is non-NULL)...
+    |   57 |             add_kv_pair(d, pair);
+    |      |             ~~~~~~~~~~~~~~~~~~~~
+    |      |             |
+    |      |             (16) ...to here
+    |      |             (17) calling 'add_kv_pair' from 'main'
+    |
+    +--> 'add_kv_pair': events 18-22
+           |
+           |   15 | void add_kv_pair(dict *d, kv_pair *pair){
+           |      |      ^~~~~~~~~~~
+           |      |      |
+           |      |      (18) entry to 'add_kv_pair'
+           |   16 |     kv_pair **new_kv_pairs = (kv_pair **)realloc(d->kv_pairs, (d->size + 1) * sizeof(kv_pair *));
+           |      |                                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                                          |        |
+           |      |                                          |        (19) '0' is NULL
+           |      |                                          (20) when 'realloc' fails
+           |   17 | 
+           |   18 |     if(new_kv_pairs == NULL) {
+           |      |       ~
+           |      |       |
+           |      |       (21) following 'true' branch (when 'new_kv_pairs' is NULL)...
+           |   19 |         printf("Unable to allocate memory.\n");
+           |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |         |
+           |      |         (22) ...to here
+           |
+    <------+
+    |
+  'main': events 23-26
+    |
+    |   57 |             add_kv_pair(d, pair);
+    |      |             ^~~~~~~~~~~~~~~~~~~~
+    |      |             |
+    |      |             (23) returning to 'main' from 'add_kv_pair'
+    |   58 |             printf("Added the key-value pair: %s-%s into dictionary.\n", d->kv_pairs[0]->key, d->kv_pairs[0]->value);
+    |      |                                                                          ~~~~~~~~~~~          ~~~~~~~~~~~~~~
+    |      |                                                                           |                    |         |
+    |      |                                                                           |                    |         (26) dereference of NULL '*d.kv_pairs'
+    |      |                                                                           (25) '0' is NULL     (24) '0' is NULL
+    |

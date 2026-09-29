@@ -1,0 +1,105 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+#define BINARY_BUFFER_SIZE (CHAR_BIT * sizeof(long) + 2)
+
+static int decimal_to_binary(long decimal, char *buffer, size_t buffer_size);
+
+static int decimal_to_binary(long decimal, char *buffer, size_t buffer_size)
+{
+    size_t index;
+    size_t start;
+    size_t end;
+    unsigned long value;
+
+    if (buffer == NULL || buffer_size < 2) {
+        return -1;
+    }
+
+    index = 0;
+
+    if (decimal < 0) {
+        buffer[index] = '-';
+        index++;
+        value = (unsigned long)(-(decimal + 1)) + 1UL;
+    } else {
+        value = (unsigned long)decimal;
+    }
+
+    start = index;
+
+    if (value == 0UL) {
+        if (index + 1 >= buffer_size) {
+            return -1;
+        }
+        buffer[index] = '0';
+        index++;
+    } else {
+        while (value > 0UL) {
+            if (index + 1 >= buffer_size) {
+                return -1;
+            }
+            buffer[index] = (char)('0' + (char)(value % 2UL));
+            index++;
+            value /= 2UL;
+        }
+    }
+
+    if (index >= buffer_size) {
+        return -1;
+    }
+
+    buffer[index] = '\0';
+
+    end = index - 1;
+    while (start < end) {
+        char temp = buffer[start];
+        buffer[start] = buffer[end];
+        buffer[end] = temp;
+        start++;
+        end--;
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    long decimal = 0;
+    char binary[BINARY_BUFFER_SIZE] = {0};
+    int scan_result;
+
+    printf("Enter a decimal number: ");
+
+    scan_result = scanf("%ld", &decimal);
+    if (scan_result != 1) {
+        fprintf(stderr, "Error: invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (decimal_to_binary(decimal, binary, sizeof(binary)) != 0) {
+        fprintf(stderr, "Error: conversion failed.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Binary representation: %s\n", binary);
+
+    return EXIT_SUCCESS;
+}
+```
+
+Analysis of the identified weakness and why the code is safe:
+
+**CWE-119/CWE-120 (buffer overflow on the statically-sized array `binary`):** The Flawfinder warning is a heuristic triggered simply by the presence of a fixed-size `char` array. In this program the risk is already fully mitigated:
+
+1. **Correct sizing:** `BINARY_BUFFER_SIZE` is computed as `CHAR_BIT * sizeof(long) + 2`, which accounts for every bit of a `long`, plus one byte for the optional `'-'` sign and one for the null terminator. This is the maximum possible output length, so the buffer can never be too small for any valid `long` input.
+
+2. **Explicit bounds checking:** `decimal_to_binary` receives the buffer size via `sizeof(binary)` and validates it (`buffer_size < 2` rejection). Every write into the buffer is guarded by an `index + 1 >= buffer_size` or `index >= buffer_size` check before it happens, so no write can ever exceed the buffer regardless of the size passed in.
+
+3. **Safe negation of `LONG_MIN`:** The expression `(unsigned long)(-(decimal + 1)) + 1UL` avoids the undefined behavior of `-LONG_MIN`, which would otherwise overflow on two's-complement systems.
+
+4. **Safe input handling:** `scanf("%ld", ...)` writes to a single `long`, not a string, so no unbounded string read occurs, and the return value is checked before the value is used.
+
+No functional changes were required; the code as written already implements the fixes the comment asks to verify.

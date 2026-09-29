@@ -1,0 +1,106 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int id;
+    double price;
+} Item;
+
+static void swap_items(Item *a, Item *b)
+{
+    Item temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+static void max_heapify(Item *heap, size_t heap_size, size_t index)
+{
+    for (;;) {
+        size_t largest = index;
+        size_t left = 2 * index + 1;
+        size_t right = 2 * index + 2;
+
+        if (left < heap_size && heap[left].price > heap[largest].price)
+            largest = left;
+        if (right < heap_size && heap[right].price > heap[largest].price)
+            largest = right;
+        if (largest == index)
+            break;
+
+        swap_items(&heap[index], &heap[largest]);
+        index = largest;
+    }
+}
+
+static void sort_ascending(Item *heap, size_t heap_size)
+{
+    for (size_t end = heap_size; end > 1; end--) {
+        swap_items(&heap[0], &heap[end - 1]);
+        max_heapify(heap, end - 1, 0);
+    }
+}
+
+Item *find_n_cheapest(const Item *items, size_t item_count, size_t n,
+                      size_t *result_count)
+{
+    if (result_count == NULL)
+        return NULL;
+    *result_count = 0;
+
+    if (items == NULL || item_count == 0 || n == 0)
+        return NULL;
+
+    if (n > item_count)
+        n = item_count;
+
+    Item *heap = malloc(n * sizeof(*heap));
+    if (heap == NULL)
+        return NULL;
+
+    for (size_t i = 0; i < n; i++)
+        heap[i] = items[i];
+
+    for (size_t i = n / 2; i > 0; i--)
+        max_heapify(heap, n, i - 1);
+
+    for (size_t i = n; i < item_count; i++) {
+        if (items[i].price < heap[0].price) {
+            heap[0] = items[i];
+            max_heapify(heap, n, 0);
+        }
+    }
+
+    sort_ascending(heap, n);
+
+    *result_count = n;
+    return heap;
+}
+
+int main(void)
+{
+    const Item items[] = {
+        {  1, 24.99 }, {  2,  3.49 }, {  3, 15.00 }, {  4,  7.25 },
+        {  5, 42.10 }, {  6,  1.99 }, {  7, 12.75 }, {  8,  9.60 },
+        {  9,  5.30 }, { 10, 18.40 }, { 11,  2.75 }, { 12, 33.20 }
+    };
+    const size_t item_count = sizeof(items) / sizeof(items[0]);
+    const size_t n = 5;
+    size_t result_count = 0;
+
+    Item *cheapest = find_n_cheapest(items, item_count, n, &result_count);
+    if (cheapest == NULL) {
+        fprintf(stderr, "Failed to compute the %zu cheapest items.\n", n);
+        return EXIT_FAILURE;
+    }
+
+    printf("The %zu cheapest items:\n", result_count);
+    for (size_t i = 0; i < result_count; i++)
+        printf("Item %2d: $%.2f\n", cheapest[i].id, cheapest[i].price);
+
+    free(cheapest);
+    cheapest = NULL;
+
+    return EXIT_SUCCESS;
+}
+```

@@ -1,0 +1,179 @@
+#include <ctype.h>
+#include <stdbool.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+enum ReadStatus {
+    READ_OK,
+    READ_END,
+    READ_ERROR,
+    READ_NO_MEMORY
+};
+
+static enum ReadStatus grow_buffer(char **buffer, size_t *capacity)
+{
+    size_t new_capacity;
+    char *new_buffer;
+
+    if (buffer == NULL || *buffer == NULL || capacity == NULL) {
+        return READ_ERROR;
+    }
+
+    if (*capacity > SIZE_MAX / 2) {
+        return READ_NO_MEMORY;
+    }
+
+    new_capacity = *capacity * 2;
+    new_buffer = realloc(*buffer, new_capacity);
+    if (new_buffer == NULL) {
+        return READ_NO_MEMORY;
+    }
+
+    *buffer = new_buffer;
+    *capacity = new_capacity;
+    return READ_OK;
+}
+
+static enum ReadStatus read_string(FILE *stream, char **result)
+{
+    size_t capacity = 64;
+    size_t length = 0;
+    char *buffer;
+
+    if (stream == NULL || result == NULL) {
+        return READ_ERROR;
+    }
+
+    *result = NULL;
+
+    buffer = malloc(capacity);
+    if (buffer == NULL) {
+        return READ_NO_MEMORY;
+    }
+
+    for (;;) {
+        int ch = fgetc(stream);
+
+        if (ch == EOF) {
+            if (ferror(stream)) {
+                free(buffer);
+                return READ_ERROR;
+            }
+
+            if (length == 0) {
+                free(buffer);
+                return READ_END;
+            }
+
+            break;
+        }
+
+        if (isspace((unsigned char)ch)) {
+            if (length == 0) {
+                continue;
+            }
+
+            break;
+        }
+
+        if (length == SIZE_MAX - 1) {
+            free(buffer);
+            return READ_NO_MEMORY;
+        }
+
+        if (length + 1 >= capacity) {
+            enum ReadStatus status = grow_buffer(&buffer, &capacity);
+
+            if (status != READ_OK) {
+                free(buffer);
+                return status;
+            }
+        }
+
+        buffer[length] = (char)ch;
+        ++length;
+    }
+
+    buffer[length] = '\0';
+    *result = buffer;
+    return READ_OK;
+}
+
+static bool minimum_swaps(const char *source,
+                          const char *target,
+                          size_t *swaps)
+{
+    size_t zero_to_one = 0;
+    size_t one_to_zero = 0;
+    size_t i = 0;
+
+    if (source == NULL || target == NULL || swaps == NULL) {
+        return false;
+    }
+
+    while (source[i] != '\0' && target[i] != '\0') {
+        if ((source[i] != '0' && source[i] != '1') ||
+            (target[i] != '0' && target[i] != '1')) {
+            return false;
+        }
+
+        if (source[i] == '0' && target[i] == '1') {
+            ++zero_to_one;
+        } else if (source[i] == '1' && target[i] == '0') {
+            ++one_to_zero;
+        }
+
+        ++i;
+    }
+
+    if (source[i] != '\0' ||
+        target[i] != '\0' ||
+        zero_to_one != one_to_zero) {
+        return false;
+    }
+
+    *swaps = zero_to_one;
+    return true;
+}
+
+int main(void)
+{
+    char *source = NULL;
+    char *target = NULL;
+    size_t swaps = 0;
+    enum ReadStatus status;
+
+    status = read_string(stdin, &source);
+    if (status != READ_OK) {
+        fputs("Failed to read the source string.\n", stderr);
+        return EXIT_FAILURE;
+    }
+
+    status = read_string(stdin, &target);
+    if (status != READ_OK) {
+        free(source);
+        fputs("Failed to read the target string.\n", stderr);
+        return EXIT_FAILURE;
+    }
+
+    if (!minimum_swaps(source, target, &swaps)) {
+        free(source);
+        free(target);
+
+        if (puts("-1") == EOF) {
+            return EXIT_FAILURE;
+        }
+
+        return EXIT_SUCCESS;
+    }
+
+    free(source);
+    free(target);
+
+    if (printf("%zu\n", swaps) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

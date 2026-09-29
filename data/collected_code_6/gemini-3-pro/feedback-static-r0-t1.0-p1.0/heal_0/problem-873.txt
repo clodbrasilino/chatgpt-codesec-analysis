@@ -1,0 +1,32 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+unsigned long long fibonacci(int n);
+
+unsigned long long fibonacci(int n) {
+    if (n == 0) {
+        return 0;
+    }
+    if (n == 1) {
+        return 1;
+    }
+    return fibonacci(n - 1) + fibonacci(n - 2);
+}
+
+int main(void) {
+    int n;
+
+    if (scanf("%d", &n) != 1) {
+        return EXIT_FAILURE;
+    }
+
+    if (n < 0 || n > 93) {
+        return EXIT_FAILURE;
+    }
+
+    printf("%llu\n", fibonacci(n));
+
+    return EXIT_SUCCESS;
+}
+```

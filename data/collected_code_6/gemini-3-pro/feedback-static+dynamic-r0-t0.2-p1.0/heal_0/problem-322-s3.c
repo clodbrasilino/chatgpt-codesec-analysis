@@ -1,0 +1,57 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int* find_min_indices(const int* list, size_t size, size_t* out_count) {
+    if (list == NULL || out_count == NULL || size == 0) {
+        if (out_count != NULL) {
+            *out_count = 0;
+        }
+        return NULL;
+    }
+
+    int min_val = list[0];
+    size_t count = 1;
+
+    for (size_t i = 1; i < size; ++i) {
+        if (list[i] < min_val) {
+            min_val = list[i];
+            count = 1;
+        } else if (list[i] == min_val) {
+            count++;
+        }
+    }
+
+    int* indices = (int*)malloc(count * sizeof(int));
+    if (indices == NULL) {
+        *out_count = 0;
+        return NULL;
+    }
+
+    size_t idx = 0;
+    for (size_t i = 0; i < size; ++i) {
+        if (list[i] == min_val) {
+            indices[idx++] = (int)i;
+        }
+    }
+
+    *out_count = count;
+    return indices;
+}
+
+int main(void) {
+    int list[] = {5, 3, 9, 3, 7, 3, 8};
+    size_t size = sizeof(list) / sizeof(list[0]);
+    size_t count = 0;
+
+    int* min_indices = find_min_indices(list, size, &count);
+
+    if (min_indices != NULL) {
+        for (size_t i = 0; i < count; ++i) {
+            printf("%d ", min_indices[i]);
+        }
+        printf("\n");
+        free(min_indices);
+    }
+
+    return 0;
+}

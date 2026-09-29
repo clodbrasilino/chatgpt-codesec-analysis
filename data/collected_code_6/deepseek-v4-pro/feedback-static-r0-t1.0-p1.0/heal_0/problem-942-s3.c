@@ -1,0 +1,82 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+typedef struct Node {
+    int data;
+    struct Node *next;
+} Node;
+
+bool is_element_present(Node *head, int value) {
+    Node *current = head;  
+    while (current != NULL) {
+        if (current->data == value) {
+            return true;
+        }
+        current = current->next;
+    }
+    return false;
+}
+
+Node *create_node(int value) {
+    Node *new_node = (Node *)malloc(sizeof(Node));
+    if (new_node == NULL) {
+        return NULL;
+    }
+    new_node->data = value;
+    new_node->next = NULL;
+    return new_node;
+}
+
+void append_node(Node **head, int value) {
+    Node *new_node = create_node(value);
+    if (new_node == NULL) {
+        return;
+    }
+    
+    if (*head == NULL) {
+        *head = new_node;
+        return;
+    }
+    
+    Node *current = *head;
+    while (current->next != NULL) {
+        current = current->next;
+    }
+    current->next = new_node;
+}
+
+void free_list(Node *head) {
+    Node *current = head;
+    while (current != NULL) {
+        Node *temp = current;
+        current = current->next;
+        free(temp);
+    }
+}
+
+int main(void) {
+    Node *head = NULL;
+    
+    append_node(&head, 10);
+    append_node(&head, 20);
+    append_node(&head, 30);
+    append_node(&head, 40);
+    append_node(&head, 50);
+    
+    int search_values[] = {30, 60, 10, 100};
+    int num_searches = sizeof(search_values) / sizeof(search_values[0]);
+    
+    for (int i = 0; i < num_searches; i++) {
+        int value = search_values[i];
+        if (is_element_present(head, value)) {
+            printf("Element %d is present in the list\n", value);
+        } else {
+            printf("Element %d is not present in the list\n", value);
+        }
+    }
+    
+    free_list(head);
+    
+    return 0;
+}

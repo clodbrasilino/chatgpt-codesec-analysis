@@ -1,0 +1,51 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int* find_divisible(const int* nums, int numsSize, int m, int n, int* returnSize) {
+    int count = 0;
+    for (int i = 0; i < numsSize; ++i) {
+        if (nums[i] % m == 0 && nums[i] % n == 0) {
+            ++count;
+        }
+    }
+
+    *returnSize = count;
+    if (count == 0) {
+        return NULL;
+    }
+
+    int* result = (int*)malloc(count * sizeof(int));
+    if (result == NULL) {
+        *returnSize = 0;
+        return NULL;
+    }
+
+    int index = 0;
+    for (int i = 0; i < numsSize; ++i) {
+        if (nums[i] % m == 0 && nums[i] % n == 0) {
+            result[index++] = nums[i];
+        }
+    }
+
+    return result;
+}
+
+int main() {
+    int nums[] = {10, 20, 30, 40, 50, 60, 70, 80, 90};
+    int numsSize = sizeof(nums) / sizeof(nums[0]);
+    int m = 5, n = 10;
+
+    int returnSize = 0;
+    int* result = find_divisible(nums, numsSize, m, n, &returnSize);
+
+    if (result != NULL) {
+        for (int i = 0; i < returnSize; ++i) {
+            printf("%d ", result[i]);
+        }
+        free(result);
+    } else {
+        printf("No numbers found divisible by both %d and %d\n", m, n);
+    }
+
+    return 0;
+}

@@ -1,0 +1,61 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Frequency {
+    int number;
+    int count;
+};
+
+int compare(const void *a, const void *b) {
+    return (*(int*)a - *(int*)b);
+}
+
+struct Frequency* countConsecutiveDuplicates(int *arr, int n, int *freqCount) {
+    if (n <= 0) {
+        *freqCount = 0;
+        return NULL;
+    }
+    qsort(arr, n, sizeof(int), compare);
+    struct Frequency *frequencies = (struct Frequency *)malloc(n * sizeof(struct Frequency));
+    if (frequencies == NULL) {
+        *freqCount = 0;
+        return NULL;
+    }
+    int index = 0;
+    frequencies[index].number = arr[0];
+    frequencies[index].count = 1;
+
+    for (int i = 1; i < n; i++) {
+        if (arr[i] == arr[i - 1]) {
+            frequencies[index].count++;
+        } else {
+            index++;
+            frequencies[index].number = arr[i];
+            frequencies[index].count = 1;
+        }
+    }
+    *freqCount = index + 1;
+    return frequencies;
+}
+
+void printFrequencies(struct Frequency *frequencies, int freqCount) {
+    for (int i = 0; i < freqCount; i++) {
+        if (frequencies[i].count > 1) {
+            printf("%d occurs %d times\n", frequencies[i].number, frequencies[i].count);
+        }
+    }
+}
+
+void freeFrequencies(struct Frequency *frequencies) {
+    free(frequencies);
+}
+
+int main() {
+    int arr[] = {1, 2, 2, 3, 3, 3, 4, 4, 4, 4, 5};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    int freqCount;
+    struct Frequency *frequencies = countConsecutiveDuplicates(arr, n, &freqCount);
+    printFrequencies(frequencies, freqCount);
+    freeFrequencies(frequencies);
+    return 0;
+}

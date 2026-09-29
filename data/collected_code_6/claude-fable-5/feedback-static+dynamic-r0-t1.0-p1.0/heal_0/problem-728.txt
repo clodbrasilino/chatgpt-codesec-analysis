@@ -1,0 +1,60 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+int sum_two_lists(const int *list1, size_t len1, const int *list2, size_t len2, long long *result)
+{
+    size_t i;
+    long long total = 0;
+
+    if (result == NULL) {
+        return -1;
+    }
+    if (list1 == NULL && len1 > 0) {
+        return -1;
+    }
+    if (list2 == NULL && len2 > 0) {
+        return -1;
+    }
+
+    for (i = 0; i < len1; i++) {
+        if ((list1[i] > 0 && total > LLONG_MAX - list1[i]) ||
+            (list1[i] < 0 && total < LLONG_MIN - list1[i])) {
+            return -1;
+        }
+        total += list1[i];
+    }
+
+    for (i = 0; i < len2; i++) {
+        if ((list2[i] > 0 && total > LLONG_MAX - list2[i]) ||
+            (list2[i] < 0 && total < LLONG_MIN - list2[i])) {
+            return -1;
+        }
+        total += list2[i];
+    }
+
+    *result = total;
+    return 0;
+}
+
+int main(void)
+{
+    int list1[] = {1, 2, 3, 4, 5};
+    int list2[] = {10, 20, 30};
+    size_t len1 = sizeof(list1) / sizeof(list1[0]);
+    size_t len2 = sizeof(list2) / sizeof(list2[0]);
+    long long sum = 0;
+
+    if (sum_two_lists(list1, len1, list2, len2, &sum) != 0) {
+        fprintf(stderr, "Error: failed to compute sum\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Sum of both lists: %lld\n", sum) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```

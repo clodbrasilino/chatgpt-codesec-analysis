@@ -1,0 +1,76 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+#include <errno.h>
+#include <string.h>
+
+static int smallest_power_of_two(unsigned long n, unsigned long *result)
+{
+    unsigned long power = 1UL;
+
+    if (result == NULL) {
+        return -1;
+    }
+
+    if (n > (ULONG_MAX >> 1) + 1UL) {
+        return -1;
+    }
+
+    while (power < n) {
+        power <<= 1;
+    }
+
+    *result = power;
+    return 0;
+}
+
+int main(int argc, char *const argv[])
+{
+    unsigned long n;
+    unsigned long result;
+    char *endptr;
+
+    if (argc != 2) {
+        fprintf(stderr, "Usage: %s <non-negative integer>\n", argv[0]);
+        return EXIT_FAILURE;
+    }
+
+    errno = 0;
+    n = strtoul(argv[1], &endptr, 10);
+
+    if (errno != 0 || endptr == argv[1] || *endptr != '\0') {
+        fprintf(stderr, "Invalid input: %s\n", argv[1]);
+        return EXIT_FAILURE;
+    }
+
+    if (strchr(argv[1], '-') != NULL) {
+        fprintf(stderr, "Negative input not allowed: %s\n", argv[1]);
+        return EXIT_FAILURE;
+    }
+
+    if (smallest_power_of_two(n, &result) != 0) {
+        fprintf(stderr, "Result would overflow for input: %lu\n", n);
+        return EXIT_FAILURE;
+    }
+
+    printf("%lu\n", result);
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis summary:**
+
+The original code was already quite robust. Here's what it does well and what was addressed:
+
+**Strengths of the original code:**
+- Correctly handles the overflow case in `smallest_power_of_two` by checking `n > (ULONG_MAX >> 1) + 1UL` before shifting, preventing an infinite loop or undefined behavior when `n` exceeds the largest representable power of two.
+- Defensive `NULL` check on the output parameter `result`.
+- Proper `strtoul` error handling: resets `errno` before the call, checks `errno` after, verifies `endptr != argv[1]` (no digits consumed), and `*endptr == '\0'` (no trailing garbage).
+- Smart handling of a `strtoul` quirk: `strtoul` silently accepts negative numbers by wrapping them (e.g., `"-1"` becomes `ULONG_MAX`), so the explicit `strchr(argv[1], '-')` check catches this.
+- Correct `argc` validation before accessing `argv[1]`.
+
+**Fix applied:**
+- The static analyzer's `constParameter` warning was resolved by declaring `argv` as `char *const argv[]`, since the pointer array elements are never reassigned within `main`. This documents intent and lets the compiler enforce it.
+
+The code remains portable, standards-compliant C with no memory management concerns.

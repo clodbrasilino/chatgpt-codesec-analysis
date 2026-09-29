@@ -1,0 +1,105 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+
+typedef enum {
+    SINGLE,
+    RUN
+} NodeType;
+
+typedef struct {
+    NodeType type;
+    int value;
+    size_t count;
+} Element;
+
+int *reflect_modified_rle(const Element *list, size_t length, size_t *out_length)
+{
+    size_t total;
+    size_t i;
+    size_t j;
+    size_t pos;
+    int *result;
+
+    if (out_length == NULL) {
+        return NULL;
+    }
+    *out_length = 0;
+
+    if (list == NULL || length == 0) {
+        return NULL;
+    }
+
+    total = 0;
+    for (i = 0; i < length; i++) {
+        size_t run;
+
+        if (list[i].type == SINGLE) {
+            run = 1;
+        } else if (list[i].type == RUN) {
+            if (list[i].count == 0) {
+                return NULL;
+            }
+            run = list[i].count;
+        } else {
+            return NULL;
+        }
+
+        if (run > SIZE_MAX - total) {
+            return NULL;
+        }
+        total += run;
+    }
+
+    if (total > SIZE_MAX / sizeof(*result)) {
+        return NULL;
+    }
+
+    result = malloc(total * sizeof(*result));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    pos = 0;
+    for (i = 0; i < length; i++) {
+        size_t run = (list[i].type == SINGLE) ? 1 : list[i].count;
+        for (j = 0; j < run; j++) {
+            result[pos] = list[i].value;
+            pos++;
+        }
+    }
+
+    *out_length = total;
+    return result;
+}
+
+int main(void)
+{
+    Element encoded[] = {
+        { .type = RUN,    .value = 4, .count = 4 },
+        { .type = SINGLE, .value = 2, .count = 0 },
+        { .type = RUN,    .value = 7, .count = 2 },
+        { .type = SINGLE, .value = 9, .count = 0 },
+        { .type = RUN,    .value = 5, .count = 3 }
+    };
+    size_t encoded_length = sizeof(encoded) / sizeof(encoded[0]);
+    size_t decoded_length = 0;
+    size_t i;
+    int *decoded = reflect_modified_rle(encoded, encoded_length, &decoded_length);
+
+    if (decoded == NULL) {
+        fprintf(stderr, "Error: failed to decode list\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Decoded list: ");
+    for (i = 0; i < decoded_length; i++) {
+        printf("%d ", decoded[i]);
+    }
+    printf("\n");
+
+    free(decoded);
+    decoded = NULL;
+
+    return EXIT_SUCCESS;
+}

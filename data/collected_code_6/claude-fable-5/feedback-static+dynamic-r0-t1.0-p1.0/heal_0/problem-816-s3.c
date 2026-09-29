@@ -1,0 +1,65 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stddef.h>
+
+typedef struct {
+    int first;
+    int second;
+} Tuple;
+
+int clear_tuples(Tuple *tuples, size_t count)
+{
+    size_t i;
+
+    if (tuples == NULL) {
+        return -1;
+    }
+
+    for (i = 0; i < count; i++) {
+        tuples[i].first = 0;
+        tuples[i].second = 0;
+    }
+
+    return 0;
+}
+
+static void print_tuples(const Tuple *tuples, size_t count)
+{
+    size_t i;
+
+    if (tuples == NULL) {
+        return;
+    }
+
+    for (i = 0; i < count; i++) {
+        printf("(%d, %d)", tuples[i].first, tuples[i].second);
+        if (i + 1 < count) {
+            printf(", ");
+        }
+    }
+    printf("\n");
+}
+
+int main(void)
+{
+    Tuple data[] = {
+        {1, 5},
+        {7, 2},
+        {9, 8},
+        {4, 6}
+    };
+    size_t count = sizeof(data) / sizeof(data[0]);
+
+    printf("Before clearing: ");
+    print_tuples(data, count);
+
+    if (clear_tuples(data, count) != 0) {
+        fprintf(stderr, "Error: failed to clear tuples\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("After clearing: ");
+    print_tuples(data, count);
+
+    return EXIT_SUCCESS;
+}

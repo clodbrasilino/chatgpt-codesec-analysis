@@ -1,0 +1,34 @@
+#include <stdio.h>
+
+int sumOfDivisors(int num) {
+    int sum = 1;
+    for (int i = 2; i * i <= num; i++) {
+        if (num % i == 0) {
+            if (i * i != num)
+                sum = sum + i + num / i;
+            else
+                sum = sum + i;
+        }
+    }
+    return sum;
+}
+
+int sumAmicableNumbers(int num) {
+    int sum = 0;
+    for (int i = 1; i <= num; i++) {
+        int sum1 = sumOfDivisors(i);
+        if (sum1 > i) {
+            if (sumOfDivisors(sum1) == i)
+                sum += i + sum1;
+        }
+    }
+    return sum;
+}
+
+int main() {
+    int num;
+    printf("Enter a number: ");
+    scanf("%d", &num);
+    printf("Sum of all amicable numbers from 1 to %d is %d\n", num, sumAmicableNumbers(num));
+    return 0;
+}

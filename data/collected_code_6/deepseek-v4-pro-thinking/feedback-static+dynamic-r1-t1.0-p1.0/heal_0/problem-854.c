@@ -1,0 +1,50 @@
+#include <stdio.h>
+#include <stddef.h>
+
+static void sift_down(int *heap, size_t size, size_t index) {
+    while (1) {
+        size_t smallest = index;
+        size_t left = 2 * index + 1;
+        size_t right = 2 * index + 2;
+
+        if (left < size && heap[left] < heap[smallest]) {
+            smallest = left;
+        }
+        if (right < size && heap[right] < heap[smallest]) {
+            smallest = right;
+        }
+        if (smallest == index) {
+            return;
+        }
+
+        int temp = heap[index];
+        heap[index] = heap[smallest];
+        heap[smallest] = temp;
+
+        index = smallest;
+    }
+}
+
+void heapify(int *list, size_t size) {
+    if (list == NULL || size <= 1) {
+        return;
+    }
+
+    for (size_t i = size / 2; i > 0; --i) {
+        sift_down(list, size, i - 1);
+    }
+}
+
+int main(void) {
+    int values[] = {9, 4, 7, 1, 3, 8, 5};
+    size_t count = sizeof(values) / sizeof(values[0]);
+
+    heapify(values, count);
+
+    for (size_t i = 0; i < count; ++i) {
+        printf("%d ", values[i]);
+    }
+    printf("\n");
+
+    return 0;
+}

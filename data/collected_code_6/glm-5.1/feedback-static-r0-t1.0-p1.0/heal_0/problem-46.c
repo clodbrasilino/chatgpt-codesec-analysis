@@ -1,0 +1,64 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+bool are_all_different(int *array, size_t size) {
+    if (array == NULL) {
+        return true;
+    }
+
+    if (size < 2) {
+        return true;
+    }
+
+    int *sorted = malloc(size * sizeof(int));
+    if (sorted == NULL) {
+        return false;
+    }
+
+    for (size_t i = 0; i < size; i++) {
+        sorted[i] = array[i];
+    }
+
+    for (size_t i = 0; i < size - 1; i++) {
+        for (size_t j = 0; j < size - i - 1; j++) {
+            if (sorted[j] > sorted[j + 1]) {
+                int temp = sorted[j];
+                sorted[j] = sorted[j + 1];
+                sorted[j + 1] = temp;
+            }
+        }
+    }
+
+    bool all_different = true;
+    for (size_t i = 0; i < size - 1; i++) {
+        if (sorted[i] == sorted[i + 1]) {
+            all_different = false;
+            break;
+        }
+    }
+
+    free(sorted);
+    return all_different;
+}
+
+int main(void) {
+    int arr1[] = {1, 2, 3, 4, 5};
+    size_t len1 = sizeof(arr1) / sizeof(arr1[0]);
+
+    int arr2[] = {1, 2, 2, 4, 5};
+    size_t len2 = sizeof(arr2) / sizeof(arr2[0]);
+
+    int *arr3 = NULL;
+    size_t len3 = 0;
+
+    bool res1 = are_all_different(arr1, len1);
+    bool res2 = are_all_different(arr2, len2);
+    bool res3 = are_all_different(arr3, len3);
+
+    printf("%d\n", res1);
+    printf("%d\n", res2);
+    printf("%d\n", res3);
+
+    return 0;
+}

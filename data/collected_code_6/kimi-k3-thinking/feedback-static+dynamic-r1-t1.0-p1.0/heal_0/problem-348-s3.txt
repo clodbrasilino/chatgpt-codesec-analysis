@@ -1,0 +1,96 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+unsigned long long count_sequences(int length, const int *values, int num_values)
+{
+    if (length <= 0 || values == NULL || num_values <= 0)
+        return 0;
+
+    int max_value = values[0];
+    for (int i = 1; i < num_values; i++) {
+        if (values[i] > max_value)
+            max_value = values[i];
+    }
+
+    if (max_value < 0)
+        return 0;
+
+    size_t max_sum = (size_t)length * (size_t)max_value;
+
+    unsigned long long *current = calloc(max_sum + 1, sizeof(*current));
+    unsigned long long *next = calloc(max_sum + 1, sizeof(*next));
+    if (current == NULL || next == NULL) {
+        free(current);
+        free(next);
+        return 0;
+    }
+
+    current[0] = 1;
+
+    for (int step = 0; step < length; step++) {
+        for (size_t s = 0; s <= max_sum; s++)
+            next[s] = 0;
+
+        for (size_t s = 0; s <= max_sum; s++) {
+            if (current[s] == 0)
+                continue;
+            for (int v = 0; v < num_values; v++) {
+                long long ns = (long long)s + (long long)values[v];
+                if (ns < 0 || (size_t)ns > max_sum)
+                    continue;
+                next[(size_t)ns] += current[s];
+            }
+        }
+
+        unsigned long long *tmp = current;
+        current = next;
+        next = tmp;
+    }
+
+    unsigned long long total = 0;
+    for (size_t s = 0; s <= max_sum; s++)
+        total += current[s];
+
+    free(current);
+    free(next);
+
+    return total;
+}
+
+int main(void)
+{
+    int length;
+    int num_values;
+
+    if (scanf("%d", &length) != 1 || length < 0) {
+        fprintf(stderr, "invalid length\n");
+        return EXIT_FAILURE;
+    }
+
+    if (scanf("%d", &num_values) != 1 || num_values <= 0) {
+        fprintf(stderr, "invalid number of values\n");
+        return EXIT_FAILURE;
+    }
+
+    int *values = malloc((size_t)num_values * sizeof(*values));
+    if (values == NULL) {
+        fprintf(stderr, "memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    for (int i = 0; i < num_values; i++) {
+        if (scanf("%d", &values[i]) != 1) {
+            fprintf(stderr, "invalid value\n");
+            free(values);
+            return EXIT_FAILURE;
+        }
+    }
+
+    unsigned long long result = count_sequences(length, values, num_values);
+    printf("%llu\n", result);
+
+    free(values);
+    return EXIT_SUCCESS;
+}
+```

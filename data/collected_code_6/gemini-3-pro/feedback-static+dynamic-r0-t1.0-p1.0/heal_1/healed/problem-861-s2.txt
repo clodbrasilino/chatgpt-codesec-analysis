@@ -1,0 +1,87 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+bool is_anagram(const char *str1, const char *str2) {
+    if (!str1 || !str2) {
+        return false;
+    }
+
+    int counts[256] = {0};
+    size_t i = 0;
+
+    while (str1[i] != '\0' && str2[i] != '\0') {
+        counts[(unsigned char)str1[i]]++;
+        counts[(unsigned char)str2[i]]--;
+        i++;
+    }
+
+    if (str1[i] != '\0' || str2[i] != '\0') {
+        return false;
+    }
+
+    for (int j = 0; j < 256; j++) {
+        if (counts[j] != 0) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+char **find_anagrams(const char *target, char **list, size_t list_size, size_t *out_count) {
+    if (!target || !list || !out_count) {
+        if (out_count) {
+            *out_count = 0;
+        }
+        return NULL;
+    }
+
+    char **result = malloc(list_size * sizeof(char *));
+    if (!result) {
+        *out_count = 0;
+        return NULL;
+    }
+
+    size_t count = 0;
+    for (size_t i = 0; i < list_size; i++) {
+        if (list[i] && is_anagram(target, list[i])) {
+            result[count] = list[i];
+            count++;
+        }
+    }
+
+    *out_count = count;
+
+    if (count == 0) {
+        free(result);
+        return NULL;
+    }
+
+    char **resized_result = realloc(result, count * sizeof(char *));
+    if (resized_result) {
+        result = resized_result;
+    }
+
+    return result;
+}
+
+int main(void) {
+    const char *target = "listen";
+    char *word_list[] = {"enlist", "google", "inlets", "banana", "silent", "list"};
+    size_t list_size = sizeof(word_list) / sizeof(word_list[0]);
+    size_t found_count = 0;
+
+    char **anagrams = find_anagrams(target, word_list, list_size, &found_count);
+
+    if (anagrams) {
+        for (size_t i = 0; i < found_count; i++) {
+            printf("%s\n", anagrams[i]);
+        }
+        free(anagrams);
+    }
+
+    return 0;
+}
+```

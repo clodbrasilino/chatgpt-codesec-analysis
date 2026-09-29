@@ -1,0 +1,13 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-178-s2.c:51:13: error: use of undeclared identifier 'ptrdiff_t'
+   51 |             ptrdiff_t diff = pos - text;
+      |             ^~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-178-s2.c:52:17: error: use of undeclared identifier 'diff'
+   52 |             if (diff < 0 || (size_t)diff > text_len - literal_len) {
+      |                 ^~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-178-s2.c:52:37: error: use of undeclared identifier 'diff'
+   52 |             if (diff < 0 || (size_t)diff > text_len - literal_len) {
+      |                                     ^~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-178-s2.c:57:47: error: use of undeclared identifier 'diff'
+   57 |                 results[i].position = (size_t)diff;
+      |                                               ^~~~
+4 errors generated.

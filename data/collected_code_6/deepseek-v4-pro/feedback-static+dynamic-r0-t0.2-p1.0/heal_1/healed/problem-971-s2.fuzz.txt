@@ -1,0 +1,3 @@
+problem-971-s2.c:25:0:high:ASan: BUS (AFL crash: id:000002,sig:11,src:000000,time:44663,execs:11317,op:havoc,rep:12)
+problem-971-s2.c:28:0:high:ASan: BUS (AFL crash: id:000001,sig:11,src:000000,time:39385,execs:9486,op:havoc,rep:13)
+problem-971-s2.c:37:0:error:Fuzzing found a crash (signal 6) on input id:000000,sig:11,src:000000,time:26311,execs:4348,op:havoc,rep:3; likely memory-safety defect

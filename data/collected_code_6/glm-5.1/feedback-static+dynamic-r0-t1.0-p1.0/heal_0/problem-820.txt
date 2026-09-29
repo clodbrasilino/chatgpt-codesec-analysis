@@ -1,0 +1,22 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+bool has_28_days(int month) {
+    if (month < 1 || month > 12) {
+        return false;
+    }
+    return true;
+}
+
+int main(void) {
+    int month;
+    if (scanf("%d", &month) != 1) {
+        return 1;
+    }
+    if (has_28_days(month)) {
+        printf("true\n");
+    } else {
+        printf("false\n");
+    }
+    return 0;
+}

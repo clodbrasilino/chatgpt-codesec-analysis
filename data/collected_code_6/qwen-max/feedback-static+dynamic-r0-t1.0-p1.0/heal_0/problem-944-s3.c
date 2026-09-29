@@ -1,0 +1,21 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <ctype.h>
+
+bool is_digit(char c) {
+    return c >= '0' && c <= '9';
+}
+
+void separate_and_print_numbers(const char *str) {
+    for (size_t i = 0; str[i] != '\0'; ++i) {
+        if (is_digit(str[i])) {
+            printf("Number: %c, Position: %zu\n", str[i], i);
+        }
+    }
+}
+
+int main() {
+    const char *input = "a1b2c3d4e5f";
+    separate_and_print_numbers(input);
+    return 0;
+}

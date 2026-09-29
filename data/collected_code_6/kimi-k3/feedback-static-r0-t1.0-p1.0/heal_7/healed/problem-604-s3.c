@@ -1,0 +1,105 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdbool.h>
+
+static void reverse_segment(char *start, char *end)
+{
+    if (start == NULL || end == NULL || start >= end) {
+        return;
+    }
+    while (start < end) {
+        char temp = *start;
+        *start = *end;
+        *end = temp;
+        start++;
+        end--;
+    }
+}
+
+static int reverse_words(char *str, size_t max_len)
+{
+    if (str == NULL || max_len == 0) {
+        return -1;
+    }
+
+    size_t len = strnlen(str, max_len);
+    if (len == 0) {
+        return 0;
+    }
+
+    if (len >= max_len) {
+        return -1;
+    }
+
+    reverse_segment(str, str + len - 1);
+
+    char *word_start = str;
+    char *current = str;
+    const char *str_end = str + len;
+
+    while (current < str_end && *current != '\0') {
+        if (*current == ' ') {
+            if (current > word_start) {
+                reverse_segment(word_start, current - 1);
+            }
+            word_start = current + 1;
+        }
+        current++;
+    }
+    
+    if (current > word_start) {
+        reverse_segment(word_start, current - 1);
+    }
+
+    return 0;
+}
+
+static bool read_input(char *buffer, size_t buffer_size)
+{
+    if (buffer == NULL || buffer_size == 0) {
+        return false;
+    }
+
+    if (fgets(buffer, buffer_size, stdin) == NULL) {
+        return false;
+    }
+
+    size_t len = strnlen(buffer, buffer_size);
+    
+    if (len == 0) {
+        return false;
+    }
+
+    if (buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    } else if (len == buffer_size - 1) {
+        int c;
+        while ((c = getchar()) != '\n' && c != EOF) {
+        }
+        return false;
+    }
+
+    return true;
+}
+
+int main(void)
+{
+    char buffer[256];
+
+    printf("Enter a string: ");
+    
+    if (!read_input(buffer, sizeof(buffer))) {
+        fprintf(stderr, "Error reading input or input too long\n");
+        return EXIT_FAILURE;
+    }
+
+    if (reverse_words(buffer, sizeof(buffer)) != 0) {
+        fprintf(stderr, "Error processing string\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Reversed words: %s\n", buffer);
+
+    return EXIT_SUCCESS;
+}

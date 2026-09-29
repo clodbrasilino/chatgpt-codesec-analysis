@@ -1,0 +1,36 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-945-s3.c:6:5: error: unknown type name 'UT_hash_handle'
+    6 |     UT_hash_handle hh;
+      |     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-945-s3.c:11:5: error: call to undeclared function 'HASH_FIND_INT'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   11 |     HASH_FIND_INT(*set, &item, s);
+      |     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-945-s3.c:16:13: error: call to undeclared function 'HASH_ADD_INT'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   16 |             HASH_ADD_INT(*set, key, s);
+      |             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-945-s3.c:16:32: error: use of undeclared identifier 'key'
+   16 |             HASH_ADD_INT(*set, key, s);
+      |                                ^~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-945-s3.c:31:5: error: call to undeclared function 'HASH_ITER'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   31 |     HASH_ITER(hh, set, current, tmp) {
+      |     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-945-s3.c:31:15: error: use of undeclared identifier 'hh'
+   31 |     HASH_ITER(hh, set, current, tmp) {
+      |               ^~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-945-s3.c:31:37: error: expected ';' after expression
+   31 |     HASH_ITER(hh, set, current, tmp) {
+      |                                     ^
+      |                                     ;
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-945-s3.c:39:5: error: call to undeclared function 'HASH_ITER'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   39 |     HASH_ITER(hh, set, current, tmp) {
+      |     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-945-s3.c:39:15: error: use of undeclared identifier 'hh'
+   39 |     HASH_ITER(hh, set, current, tmp) {
+      |               ^~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-945-s3.c:39:37: error: expected ';' after expression
+   39 |     HASH_ITER(hh, set, current, tmp) {
+      |                                     ^
+      |                                     ;
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-945-s3.c:40:9: error: call to undeclared function 'HASH_DEL'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   40 |         HASH_DEL(set, current);
+      |         ^
+11 errors generated.

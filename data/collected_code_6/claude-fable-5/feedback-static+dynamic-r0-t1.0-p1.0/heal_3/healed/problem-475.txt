@@ -1,0 +1,108 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define KEY_SIZE 64
+
+typedef struct {
+    char key[KEY_SIZE];
+    int value;
+} CounterEntry;
+
+static int set_entry(CounterEntry *entry, const char *key, int value)
+{
+    int written;
+    size_t key_len;
+
+    if (entry == NULL || key == NULL) {
+        return -1;
+    }
+
+    key_len = strnlen(key, sizeof(entry->key));
+    if (key_len >= sizeof(entry->key)) {
+        return -1;
+    }
+
+    written = snprintf(entry->key, sizeof(entry->key), "%s", key);
+    if (written < 0 || (size_t)written >= sizeof(entry->key)) {
+        return -1;
+    }
+
+    entry->value = value;
+    return 0;
+}
+
+static int compare_by_value_desc(const void *a, const void *b)
+{
+    const CounterEntry *ea = (const CounterEntry *)a;
+    const CounterEntry *eb = (const CounterEntry *)b;
+
+    if (ea->value < eb->value) {
+        return 1;
+    }
+    if (ea->value > eb->value) {
+        return -1;
+    }
+    return strncmp(ea->key, eb->key, KEY_SIZE);
+}
+
+static int sort_counter_by_value(CounterEntry *entries, size_t count)
+{
+    if (entries == NULL) {
+        return -1;
+    }
+    if (count == 0) {
+        return 0;
+    }
+    qsort(entries, count, sizeof(CounterEntry), compare_by_value_desc);
+    return 0;
+}
+
+int main(void)
+{
+    size_t count = 5;
+    size_t i;
+    CounterEntry *entries;
+
+    entries = calloc(count, sizeof(CounterEntry));
+    if (entries == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    if (set_entry(&entries[0], "apple", 3) != 0 ||
+        set_entry(&entries[1], "banana", 7) != 0 ||
+        set_entry(&entries[2], "cherry", 1) != 0 ||
+        set_entry(&entries[3], "date", 7) != 0 ||
+        set_entry(&entries[4], "elderberry", 5) != 0) {
+        fprintf(stderr, "Failed to initialize entries\n");
+        free(entries);
+        return EXIT_FAILURE;
+    }
+
+    if (sort_counter_by_value(entries, count) != 0) {
+        fprintf(stderr, "Sorting failed\n");
+        free(entries);
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i < count; i++) {
+        if (printf("%s: %d\n", entries[i].key, entries[i].value) < 0) {
+            free(entries);
+            return EXIT_FAILURE;
+        }
+    }
+
+    free(entries);
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the fixes applied:**
+
+1. **CWE-126 (strlen over-read):** The unbounded `strlen(key)` was replaced with `strnlen(key, sizeof(entry->key))`, which limits the read to at most `KEY_SIZE` bytes. Even if a non-null-terminated buffer is passed, the read cannot run past the bound, and the subsequent `>= sizeof(entry->key)` check still correctly rejects oversized keys (since `strnlen` returns the limit when no terminator is found within it).
+
+2. **CWE-119/CWE-120 (statically-sized array):** The fixed-size `key` buffer remains, but all writes into it are already safely bounded — `calloc` zero-initializes the entries, `snprintf` with `sizeof(entry->key)` guarantees truncation-safe, null-terminated writes, and the return value is checked for both encoding errors and truncation. Additionally, `strcmp` in the comparator was replaced with `strncmp(..., KEY_SIZE)` as defense-in-depth, so even a hypothetically unterminated key cannot cause an over-read during sorting.
+
+3. **Existing good practices preserved:** null-pointer checks, `qsort` guard for zero/NULL input, allocation failure handling, `printf` return-value checking, and `free` on all exit paths remain intact.

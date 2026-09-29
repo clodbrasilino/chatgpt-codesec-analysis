@@ -1,0 +1,56 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    double a;
+    double b;
+} Tuple;
+
+int divide_tuples(const Tuple* tuples, size_t count, double* results) {
+    if (tuples == NULL || results == NULL || count == 0) {
+        return -1;
+    }
+
+    for (size_t i = 0; i < count; i++) {
+        if (tuples[i].b == 0.0) {
+            return -2;
+        }
+        results[i] = tuples[i].a / tuples[i].b;
+    }
+
+    return 0;
+}
+
+int main(void) {
+    Tuple tuples[] = {
+        {10.0, 2.0},
+        {15.0, 3.0},
+        {7.5, 2.5}
+    };
+    
+    size_t count = sizeof(tuples) / sizeof(tuples[0]);
+    
+    double* results = (double*)malloc(count * sizeof(double));
+    if (results == NULL) {
+        return EXIT_FAILURE;
+    }
+
+    int status = divide_tuples(tuples, count, results);
+    
+    if (status == 0) {
+        for (size_t i = 0; i < count; i++) {
+            printf("%f / %f = %f\n", tuples[i].a, tuples[i].b, results[i]);
+        }
+    } else if (status == -2) {
+        printf("Division by zero encountered.\n");
+    } else {
+        printf("Invalid arguments.\n");
+    }
+
+    free(results);
+    results = NULL;
+
+    return EXIT_SUCCESS;
+}
+```

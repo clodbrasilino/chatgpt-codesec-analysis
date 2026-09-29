@@ -1,0 +1,38 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Vertex {
+    double x;
+    double y;
+};
+
+struct Vertex findVertex(double a, double b, double c) {
+    struct Vertex vertex;
+    vertex.x = -b / (2 * a);
+
+    //Here it helps to imagine the parabola formula y = ax^2 + bx + c
+    //We know that the vertex is located at x value -b/2a
+    //If we substitute x value in the parabola formula, then we can find the y value
+
+    vertex.y = (4*a*c - b*b) / (4*a);
+    return vertex;
+}
+
+int main(void) {
+    double a, b, c;
+    printf("Enter a, b and c for y = ax^2 + bx + c:\n");
+    int count = scanf("%lf %lf %lf", &a, &b, &c);
+
+    if (count != 3) {
+        fprintf(stderr, "Could not read inputs. Exiting.\n");
+        return EXIT_FAILURE;
+    }
+    if (a == 0.0) {
+        fprintf(stderr, "a can't be zero. Exiting.\n");
+        return EXIT_FAILURE;
+    }
+
+    struct Vertex vertex = findVertex(a, b, c);
+    printf("The vertex of the parabola is at (%lf, %lf)\n", vertex.x, vertex.y);
+    return EXIT_SUCCESS;
+}

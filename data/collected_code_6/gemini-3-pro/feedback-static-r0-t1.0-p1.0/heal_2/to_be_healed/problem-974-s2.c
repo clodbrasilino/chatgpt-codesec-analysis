@@ -1,0 +1,74 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int min_path_sum(int** triangle, int num_rows, const int* col_sizes) {
+    if (!triangle || num_rows <= 0 || !col_sizes) {
+        return 0;
+    }
+
+    int* dp = (int*)malloc(col_sizes[num_rows - 1] * sizeof(int));
+    if (!dp) {
+        return 0;
+    }
+
+    for (int i = 0; i < col_sizes[num_rows - 1]; ++i) {
+        dp[i] = triangle[num_rows - 1][i];
+    }
+
+    for (int i = num_rows - 2; i >= 0; --i) {
+        for (int j = 0; j < col_sizes[i]; ++j) {
+            int left = dp[j];
+            int right = dp[j + 1];
+            dp[j] = triangle[i][j] + (left < right ? left : right);
+        }
+    }
+
+    int result = dp[0];
+    free(dp);
+    return result;
+}
+
+int main(void) {
+    int num_rows = 4;
+    /* Possible weaknesses found:
+     *  Variable 'col_sizes' can be declared as const array [constVariable]
+     */
+    int col_sizes[] = {1, 2, 3, 4};
+    
+    int** triangle = (int**)malloc(num_rows * sizeof(int*));
+    if (!triangle) {
+        return 1;
+    }
+
+    for (int i = 0; i < num_rows; ++i) {
+        triangle[i] = (int*)malloc(col_sizes[i] * sizeof(int));
+        if (!triangle[i]) {
+            for (int k = 0; k < i; ++k) {
+                free(triangle[k]);
+            }
+            free(triangle);
+            return 1;
+        }
+    }
+
+    triangle[0][0] = 2;
+    triangle[1][0] = 3; 
+    triangle[1][1] = 4;
+    triangle[2][0] = 6; 
+    triangle[2][1] = 5; 
+    triangle[2][2] = 7;
+    triangle[3][0] = 4; 
+    triangle[3][1] = 1; 
+    triangle[3][2] = 8; 
+    triangle[3][3] = 3;
+
+    int min_sum = min_path_sum(triangle, num_rows, col_sizes);
+    printf("%d\n", min_sum);
+
+    for (int i = 0; i < num_rows; ++i) {
+        free(triangle[i]);
+    }
+    free(triangle);
+
+    return 0;
+}

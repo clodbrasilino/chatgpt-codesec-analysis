@@ -1,0 +1,254 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+typedef struct Node {
+    int value;
+    struct Node **children;
+    int child_count;
+    struct Node *next;
+} Node;
+
+typedef struct NestedList {
+    Node *head;
+} NestedList;
+
+NestedList *create_nested_list(void) {
+    NestedList *list = malloc(sizeof(NestedList));
+    if (!list) return NULL;
+    list->head = NULL;
+    return list;
+}
+
+Node *create_node(int value) {
+    Node *node = malloc(sizeof(Node));
+    if (!node) return NULL;
+    node->value = value;
+    node->children = NULL;
+    node->child_count = 0;
+    node->next = NULL;
+    return node;
+}
+
+void add_node(NestedList *list, Node *node) {
+    if (!list->head) {
+        list->head = node;
+    } else {
+        Node *current = list->head;
+        while (current->next) {
+            current = current->next;
+        }
+        current->next = node;
+    }
+}
+
+void add_child(Node *parent, Node *child) {
+    Node **new_children = realloc(parent->children, 
+                                  sizeof(Node*) * (parent->child_count + 1));
+    if (!new_children) return;
+    parent->children = new_children;
+    parent->children[parent->child_count] = child;
+    parent->child_count++;
+}
+
+bool node_equals(Node *a, Node *b) {
+    if (a->value != b->value) return false;
+    if (a->child_count != b->child_count) return false;
+    
+    for (int i = 0; i < a->child_count; i++) {
+        if (!node_equals(a->children[i], b->children[i])) {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool node_contains(Node *container, Node *target) {
+    Node *current = container;
+    while (current) {
+        if (node_equals(current, target)) return true;
+        current = current->next;
+    }
+    return false;
+}
+
+bool node_list_contains(Node *container_list, Node *target_list) {
+    Node *target_current = target_list;
+    while (target_current) {
+        if (!node_contains(container_list, target_current)) {
+            return false;
+        }
+        target_current = target_current->next;
+    }
+    return true;
+}
+
+bool is_subset(NestedList *list_a, NestedList *list_b) {
+    if (!list_a || !list_b) return false;
+    return node_list_contains(list_a->head, list_b->head);
+}
+
+void free_node(Node *node) {
+    if (!node) return;
+    for (int i = 0; i < node->child_count; i++) {
+        free_node(node->children[i]);
+    }
+    free(node->children);
+    free(node);
+}
+
+void free_nested_list(NestedList *list) {
+    if (!list) return;
+    Node *current = list->head;
+    while (current) {
+        Node *next = current->next;
+        free_node(current);
+        current = next;
+    }
+    free(list);
+}
+
+Node *parse_number(const char *str, int *pos) {
+    int value = 0;
+    while (str[*pos] >= '0' && str[*pos] <= '9') {
+        value = value * 10 + (str[*pos] - '0');
+        (*pos)++;
+    }
+    return create_node(value);
+}
+
+Node *parse_list(const char *str, int *pos) {
+    (*pos)++;
+    Node *head = NULL;
+    Node *tail = NULL;
+    
+    while (str[*pos] != ']' && str[*pos] != '\0') {
+        Node *node;
+        if (str[*pos] == '[') {
+            node = parse_list(str, pos);
+        } else if (str[*pos] >= '0' && str[*pos] <= '9') {
+            node = parse_number(str, pos);
+        } else {
+            (*pos)++;
+            continue;
+        }
+        
+        if (!head) {
+            head = node;
+            tail = node;
+        } else {
+            tail->next = node;
+            tail = node;
+        }
+        
+        if (str[*pos] == ',') {
+            (*pos)++;
+        }
+    }
+    (*pos)++;
+    return head;
+}
+
+NestedList *parse_nested_list(const char *str) {
+    NestedList *list = create_nested_list();
+    if (!list) return NULL;
+    
+    int pos = 0;
+    list->head = parse_list(str, &pos);
+    return list;
+}
+
+void print_node(Node *node, int depth) {
+    for (int i = 0; i < depth; i++) printf("  ");
+    printf("%d\n", node->value);
+    for (int i = 0; i < node->child_count; i++) {
+        print_node(node->children[i], depth + 1);
+    }
+}
+
+void print_nested_list(NestedList *list) {
+    if (!list) return;
+    Node *current = list->head;
+    while (current) {
+        print_node(current, 0);
+        current = current->next;
+    }
+}
+
+bool node_has_child(Node *parent, Node *target) {
+    if (!parent || !target) return false;
+    for (int i = 0; i < parent->child_count; i++) {
+        if (node_equals(parent->children[i], target)) {
+            return true;
+        }
+    }
+    return false;
+}
+
+int main(void) {
+    NestedList *list1 = create_nested_list();
+    NestedList *list2 = create_nested_list();
+    
+    Node *node1 = create_node(1);
+    Node *node2 = create_node(2);
+    Node *node3 = create_node(3);
+    Node *node4 = create_node(4);
+    Node *node5 = create_node(5);
+    
+    add_child(node1, create_node(10));
+    add_child(node1, create_node(20));
+    
+    add_node(list1, node1);
+    add_node(list1, node2);
+    add_node(list1, node3);
+    
+    add_node(list2, node4);
+    add_node(list2, node5);
+    
+    NestedList *sublist = create_nested_list();
+    Node *subnode1 = create_node(2);
+    Node *subnode2 = create_node(3);
+    add_node(sublist, subnode1);
+    add_node(sublist, subnode2);
+    
+    if (is_subset(list1, sublist)) {
+        printf("sublist is a subset of list1\n");
+    } else {
+        printf("sublist is not a subset of list1\n");
+    }
+    
+    bool found = false;
+    Node *current = list1->head;
+    while (current) {
+        if (node_has_child(current, node1->children[0])) {
+            found = true;
+            break;
+        }
+        current = current->next;
+    }
+    
+    if (!found) {
+        Node *search_node = create_node(10);
+        current = list1->head;
+        while (current) {
+            if (node_has_child(current, search_node)) {
+                found = true;
+                break;
+            }
+            current = current->next;
+        }
+        free_node(search_node);
+    }
+    
+    if (found) {
+        printf("nested child found\n");
+    }
+    
+    free_nested_list(list1);
+    free_nested_list(list2);
+    free_nested_list(sublist);
+    
+    return 0;
+}
+```

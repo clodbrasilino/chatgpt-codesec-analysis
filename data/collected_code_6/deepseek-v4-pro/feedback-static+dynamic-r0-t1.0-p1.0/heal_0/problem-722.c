@@ -1,0 +1,107 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_STUDENTS 100
+#define MAX_NAME_LEN 50
+
+typedef struct {
+    char name[MAX_NAME_LEN];
+    float height;
+    float width;
+} Student;
+
+typedef struct {
+    Student students[MAX_STUDENTS];
+    int count;
+} StudentDict;
+
+void init_dict(StudentDict *dict) {
+    if (dict == NULL) {
+        return;
+    }
+    dict->count = 0;
+}
+
+int add_student(StudentDict *dict, const char *name, float height, float width) {
+    if (dict == NULL || name == NULL || dict->count >= MAX_STUDENTS) {
+        return -1;
+    }
+    
+    strncpy(dict->students[dict->count].name, name, MAX_NAME_LEN - 1);
+    dict->students[dict->count].name[MAX_NAME_LEN - 1] = '\0';
+    dict->students[dict->count].height = height;
+    dict->students[dict->count].width = width;
+    dict->count++;
+    
+    return 0;
+}
+
+int filter_students(const StudentDict *input, StudentDict *output, float min_height, float max_height, float min_width, float max_width) {
+    if (input == NULL || output == NULL) {
+        return -1;
+    }
+    
+    init_dict(output);
+    
+    if (min_height > max_height || min_width > max_width) {
+        return -1;
+    }
+    
+    for (int i = 0; i < input->count; i++) {
+        if (input->students[i].height >= min_height && 
+            input->students[i].height <= max_height &&
+            input->students[i].width >= min_width && 
+            input->students[i].width <= max_width) {
+            
+            if (add_student(output, input->students[i].name, 
+                           input->students[i].height, 
+                           input->students[i].width) != 0) {
+                return -1;
+            }
+        }
+    }
+    
+    return output->count;
+}
+
+void print_students(const StudentDict *dict) {
+    if (dict == NULL) {
+        return;
+    }
+    
+    for (int i = 0; i < dict->count; i++) {
+        printf("Name: %s, Height: %.2f, Width: %.2f\n", 
+               dict->students[i].name, 
+               dict->students[i].height, 
+               dict->students[i].width);
+    }
+}
+
+int main(void) {
+    StudentDict all_students;
+    StudentDict filtered_students;
+    
+    init_dict(&all_students);
+    
+    add_student(&all_students, "Alice", 165.5, 45.2);
+    add_student(&all_students, "Bob", 175.0, 55.8);
+    add_student(&all_students, "Charlie", 180.3, 60.1);
+    add_student(&all_students, "Diana", 155.2, 40.5);
+    add_student(&all_students, "Eve", 170.7, 52.3);
+    
+    printf("All students:\n");
+    print_students(&all_students);
+    
+    int result = filter_students(&all_students, &filtered_students, 160.0, 178.0, 42.0, 58.0);
+    
+    if (result < 0) {
+        fprintf(stderr, "Filter operation failed\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("\nFiltered students (height 160-178, width 42-58):\n");
+    print_students(&filtered_students);
+    
+    return EXIT_SUCCESS;
+}

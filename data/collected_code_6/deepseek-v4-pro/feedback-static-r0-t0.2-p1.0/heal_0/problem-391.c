@@ -1,0 +1,144 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct Node {
+    char *key;
+    void *value;
+    int is_dict;
+    struct Node *next;
+} Node;
+
+typedef struct Dict {
+    Node *head;
+} Dict;
+
+Dict *create_dict() {
+    Dict *d = (Dict *)malloc(sizeof(Dict));
+    if (!d) return NULL;
+    d->head = NULL;
+    return d;
+}
+
+void dict_set(Dict *d, const char *key, void *value, int is_dict) {
+    if (!d || !key) return;
+    Node *n = d->head;
+    while (n) {
+        if (strcmp(n->key, key) == 0) {
+            n->value = value;
+            n->is_dict = is_dict;
+            return;
+        }
+        n = n->next;
+    }
+    n = (Node *)malloc(sizeof(Node));
+    if (!n) return;
+    n->key = (char *)malloc(strlen(key) + 1);
+    if (!n->key) {
+        free(n);
+        return;
+    }
+    strcpy(n->key, key);
+    n->value = value;
+    n->is_dict = is_dict;
+    n->next = d->head;
+    d->head = n;
+}
+
+void *dict_get(Dict *d, const char *key) {
+    if (!d || !key) return NULL;
+    Node *n = d->head;
+    while (n) {
+        if (strcmp(n->key, key) == 0) return n->value;
+        n = n->next;
+    }
+    return NULL;
+}
+
+int dict_has_key(Dict *d, const char *key) {
+    if (!d || !key) return 0;
+    Node *n = d->head;
+    while (n) {
+        if (strcmp(n->key, key) == 0) return 1;
+        n = n->next;
+    }
+    return 0;
+}
+
+void free_dict(Dict *d) {
+    if (!d) return;
+    Node *n = d->head;
+    while (n) {
+        Node *tmp = n;
+        n = n->next;
+        free(tmp->key);
+        if (tmp->is_dict && tmp->value) {
+            free_dict((Dict *)tmp->value);
+        } else if (!tmp->is_dict && tmp->value) {
+            free(tmp->value);
+        }
+        free(tmp);
+    }
+    free(d);
+}
+
+Dict *lists_to_nested_dict(char ***keys, int num_lists, char **values, int num_values) {
+    if (!keys || !values || num_lists <= 0 || num_values <= 0) return NULL;
+    Dict *root = create_dict();
+    if (!root) return NULL;
+
+    for (int i = 0; i < num_values; i++) {
+        Dict *current = root;
+        for (int j = 0; j < num_lists; j++) {
+            if (!keys[j] || !keys[j][i]) break;
+            if (j == num_lists - 1) {
+                char *val_copy = (char *)malloc(strlen(values[i]) + 1);
+                if (!val_copy) continue;
+                strcpy(val_copy, values[i]);
+                dict_set(current, keys[j][i], val_copy, 0);
+            } else {
+                if (!dict_has_key(current, keys[j][i])) {
+                    Dict *new_dict = create_dict();
+                    if (!new_dict) continue;
+                    dict_set(current, keys[j][i], new_dict, 1);
+                }
+                current = (Dict *)dict_get(current, keys[j][i]);
+                if (!current) break;
+            }
+        }
+    }
+    return root;
+}
+
+void print_dict(Dict *d, int indent) {
+    if (!d) return;
+    Node *n = d->head;
+    while (n) {
+        for (int i = 0; i < indent; i++) printf("  ");
+        printf("%s: ", n->key);
+        if (n->is_dict) {
+            printf("{\n");
+            print_dict((Dict *)n->value, indent + 1);
+            for (int i = 0; i < indent; i++) printf("  ");
+            printf("}\n");
+        } else {
+            printf("%s\n", (char *)n->value);
+        }
+        n = n->next;
+    }
+}
+
+int main() {
+    char *keys1[] = {"a", "b", "c"};
+    char *keys2[] = {"x", "y", "z"};
+    char **keys[] = {keys1, keys2};
+    char *values[] = {"1", "2", "3"};
+
+    Dict *result = lists_to_nested_dict(keys, 2, values, 3);
+    if (result) {
+        print_dict(result, 0);
+        free_dict(result);
+    }
+
+    return 0;
+}

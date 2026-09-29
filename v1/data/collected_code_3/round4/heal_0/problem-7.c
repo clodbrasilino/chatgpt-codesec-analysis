@@ -1,0 +1,22 @@
+#include <stdio.h>
+#include <string.h>
+#include <regex.h>
+
+void find_words(char *str) {
+    regex_t regex;
+    regmatch_t matches[2];
+    regcomp(&regex, "\\b\\w{4,}\\b", REG_EXTENDED);
+    while (regexec(&regex, str, 2, matches, 0) == 0) {
+        int start = matches[0].rm_so;
+        int end = matches[0].rm_eo;
+        printf("%.*s\n", (end - start), str + start);
+        str += end;
+    }
+    regfree(&regex);
+}
+
+int main() {
+    char str[] = "This is a test string with several words of varying lengths.";
+    find_words(str);
+    return 0;
+}

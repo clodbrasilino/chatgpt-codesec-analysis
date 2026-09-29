@@ -1,0 +1,151 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node *next;
+} Node;
+
+typedef struct {
+    Node *head;
+    int size;
+} List;
+
+List *create_list(void) {
+    List *list = (List *)malloc(sizeof(List));
+    if (list == NULL) {
+        return NULL;
+    }
+    list->head = NULL;
+    list->size = 0;
+    return list;
+}
+
+void destroy_list(List *list) {
+    if (list == NULL) {
+        return;
+    }
+    Node *current = list->head;
+    while (current != NULL) {
+        Node *temp = current;
+        current = current->next;
+        free(temp);
+    }
+    free(list);
+}
+
+int append_node(List *list, int value) {
+    if (list == NULL) {
+        return -1;
+    }
+    Node *new_node = (Node *)malloc(sizeof(Node));
+    if (new_node == NULL) {
+        return -1;
+    }
+    new_node->data = value;
+    new_node->next = NULL;
+    
+    if (list->head == NULL) {
+        list->head = new_node;
+    } else {
+        Node *current = list->head;
+        while (current->next != NULL) {
+            current = current->next;
+        }
+        current->next = new_node;
+    }
+    list->size++;
+    return 0;
+}
+
+void remove_duplicates(List *list) {
+    if (list == NULL || list->head == NULL) {
+        return;
+    }
+    
+    Node *current = list->head;
+    while (current != NULL) {
+        Node *runner = current;
+        while (runner->next != NULL) {
+            if (runner->next->data == current->data) {
+                Node *duplicate = runner->next;
+                runner->next = runner->next->next;
+                free(duplicate);
+                list->size--;
+            } else {
+                runner = runner->next;
+            }
+        }
+        current = current->next;
+    }
+}
+
+void remove_two_duplicates(List *list) {
+    if (list == NULL || list->head == NULL) {
+        return;
+    }
+    
+    Node *current = list->head;
+    while (current != NULL) {
+        Node *runner = current;
+        int count = 1;
+        while (runner->next != NULL) {
+            if (runner->next->data == current->data) {
+                count++;
+                if (count > 2) {
+                    Node *duplicate = runner->next;
+                    runner->next = runner->next->next;
+                    free(duplicate);
+                    list->size--;
+                } else {
+                    runner = runner->next;
+                }
+            } else {
+                runner = runner->next;
+            }
+        }
+        current = current->next;
+    }
+}
+
+void print_list(List *list) {
+    if (list == NULL) {
+        return;
+    }
+    Node *current = list->head;
+    while (current != NULL) {
+        printf("%d ", current->data);
+        current = current->next;
+    }
+    printf("\n");
+}
+
+int main(void) {
+    List *list = create_list();
+    if (list == NULL) {
+        return 1;
+    }
+    
+    int values[] = {1, 2, 2, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5, 5};
+    int num_values = sizeof(values) / sizeof(values[0]);
+    
+    for (int i = 0; i < num_values; i++) {
+        if (append_node(list, values[i]) != 0) {
+            destroy_list(list);
+            return 1;
+        }
+    }
+    
+    printf("Original list: ");
+    print_list(list);
+    
+    remove_two_duplicates(list);
+    
+    printf("After removing duplicates (keeping max 2): ");
+    print_list(list);
+    
+    destroy_list(list);
+    return 0;
+}
+```

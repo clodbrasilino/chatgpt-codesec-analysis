@@ -1,0 +1,89 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+struct node {
+    int value;
+    struct node *next;
+};
+
+static struct node *create_node(int value)
+{
+    struct node *n = malloc(sizeof(*n));
+    if (n == NULL) {
+        return NULL;
+    }
+    n->value = value;
+    n->next = NULL;
+    return n;
+}
+
+static void free_list(struct node *head)
+{
+    while (head != NULL) {
+        struct node *next = head->next;
+        free(head);
+        head = next;
+    }
+}
+
+static struct node *build_list(const int *values, size_t count)
+{
+    struct node *head = NULL;
+    struct node *tail = NULL;
+    size_t i;
+
+    for (i = 0; i < count; i++) {
+        struct node *n = create_node(values[i]);
+        if (n == NULL) {
+            free_list(head);
+            return NULL;
+        }
+        if (head == NULL) {
+            head = n;
+        } else {
+            tail->next = n;
+        }
+        tail = n;
+    }
+    return head;
+}
+
+static void iterate_pairs(const struct node *head,
+                          void (*handler)(int first, int second))
+{
+    const struct node *current;
+
+    if (head == NULL || handler == NULL) {
+        return;
+    }
+
+    for (current = head; current->next != NULL; current = current->next) {
+        handler(current->value, current->next->value);
+    }
+}
+
+static void print_pair(int first, int second)
+{
+    if (printf("(%d, %d)\n", first, second) < 0) {
+        exit(EXIT_FAILURE);
+    }
+}
+
+int main(void)
+{
+    const int values[] = { 1, 2, 3, 4, 5 };
+    struct node *list;
+
+    list = build_list(values, sizeof(values) / sizeof(values[0]));
+    if (list == NULL) {
+        fprintf(stderr, "Failed to allocate list\n");
+        return EXIT_FAILURE;
+    }
+
+    iterate_pairs(list, print_pair);
+
+    free_list(list);
+    return EXIT_SUCCESS;
+}
+```

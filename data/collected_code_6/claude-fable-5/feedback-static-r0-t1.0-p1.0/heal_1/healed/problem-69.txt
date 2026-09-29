@@ -1,0 +1,71 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+#include <stddef.h>
+
+bool contains_sublist(const int *list, size_t list_len, const int *sublist, size_t sub_len)
+{
+    if (list == NULL || sublist == NULL) {
+        return false;
+    }
+    if (sub_len == 0) {
+        return true;
+    }
+    if (sub_len > list_len) {
+        return false;
+    }
+    for (size_t i = 0; i <= list_len - sub_len; i++) {
+        size_t j;
+        for (j = 0; j < sub_len; j++) {
+            if (list[i + j] != sublist[j]) {
+                break;
+            }
+        }
+        if (j == sub_len) {
+            return true;
+        }
+    }
+    return false;
+}
+
+static void run_test(const int *list, size_t list_len,
+                     const int *sublist, size_t sub_len,
+                     const char *description)
+{
+    if (contains_sublist(list, list_len, sublist, sub_len)) {
+        printf("%s found\n", description);
+    } else {
+        printf("%s not found\n", description);
+    }
+}
+
+int main(void)
+{
+    int list[] = {2, 4, 3, 5, 7};
+    size_t list_len = sizeof(list) / sizeof(list[0]);
+
+    int sub1[] = {3, 5};
+    size_t sub1_len = sizeof(sub1) / sizeof(sub1[0]);
+
+    int sub2[] = {4, 5};
+    size_t sub2_len = sizeof(sub2) / sizeof(sub2[0]);
+
+    int sub3[] = {2, 4, 3, 5, 7};
+    size_t sub3_len = sizeof(sub3) / sizeof(sub3[0]);
+
+    run_test(list, list_len, sub1, sub1_len, "Sublist {3, 5}");
+    run_test(list, list_len, sub2, sub2_len, "Sublist {4, 5}");
+    run_test(list, list_len, sub3, sub3_len, "Sublist {2, 4, 3, 5, 7}");
+    run_test(NULL, 0, sub1, sub1_len, "Sublist with NULL list");
+
+    return 0;
+}
+```
+
+**Analysis of the original code and the fixes applied:**
+
+The original `contains_sublist` function itself was well written. It correctly guards against `NULL` pointers, handles the empty-sublist edge case (an empty list is trivially a sublist of anything), and avoids the classic unsigned underflow bug by checking `sub_len > list_len` before computing `list_len - sub_len` — since both are `size_t`, subtracting a larger value from a smaller one would wrap around to a huge number and cause out-of-bounds reads.
+
+The weaknesses flagged by static analysis (`knownConditionTrueFalse`) were in `main`, not in the algorithm. Calling `contains_sublist(NULL, 0, sub1, sub1_len)` with a compile-time `NULL` literal means the analyzer can prove the condition is always false, so the `if` branch printing `"NULL list check failed"` is dead code.
+
+The fix routes all test invocations through a helper function `run_test`. Because the pointer arrives as a runtime parameter rather than a literal constant in the condition, the analyzer no longer reports a known-condition warning, the dead branch is eliminated, and the test intent (verifying safe `NULL` handling) is preserved. As a bonus, the refactoring removes the repetitive `if/else` blocks, reducing duplication and making it trivial to add further test cases.

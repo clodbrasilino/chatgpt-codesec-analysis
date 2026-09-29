@@ -1,0 +1,6 @@
+collected_code/problem-706-0.c:10:19: error: Cannot determine that 'array2[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+         if(array2[i] == array1[j])
+                  ^
+collected_code/problem-706-0.c:10:32: error: Cannot determine that 'array1[j]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+         if(array2[i] == array1[j])
+                               ^

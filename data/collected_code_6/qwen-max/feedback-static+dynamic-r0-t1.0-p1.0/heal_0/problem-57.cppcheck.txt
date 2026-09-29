@@ -1,0 +1,7 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-57.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-57.c:5:26: style: Parameter 'digits' can be declared as pointer to const [constParameterPointer]
+char* largestNumber(int *digits, int size) {
+                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-57.c:15:38: error: Uninitialized variable: temp [uninitvar]
+            if (strcmp(strcat(strcat(temp, str_digits[j]), str_digits[j + 1])) <= strcmp(strcat(strcat(temp, str_digits[j + 1]), str_digits[j]))) {
+                                     ^

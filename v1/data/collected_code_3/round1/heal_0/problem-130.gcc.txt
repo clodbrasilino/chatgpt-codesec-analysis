@@ -1,0 +1,90 @@
+collected_code_3/problem-130-1.c: In function 'findMaxFrequency':
+collected_code_3/problem-130-1.c:12:24: warning: dereference of possibly-NULL 'items' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   12 |         items[i].value = arr[i];
+      |         ~~~~~~~~~~~~~~~^~~~~~~~
+  'findMaxFrequency': events 1-4
+    |
+    |   10 |     struct Item* items = (struct Item*)malloc(n * sizeof(struct Item));
+    |      |                                        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                                        |
+    |      |                                        (1) this call could return NULL
+    |   11 |     for(int i = 0; i < n; i++) {
+    |      |                    ~~~~~                
+    |      |                      |
+    |      |                      (2) following 'true' branch (when 'i < n')...
+    |   12 |         items[i].value = arr[i];
+    |      |         ~~~~~~~~~~~~~~~~~~~~~~~         
+    |      |                        |    |
+    |      |                        |    (3) ...to here
+    |      |                        (4) 'items + (long unsigned int)i * 8' could be NULL: unchecked value from (1)
+    |
+collected_code_3/problem-130-1.c:35:12: warning: use of uninitialized value 'maxValue' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   35 |     return maxValue;
+      |            ^~~~~~~~
+  'main': events 1-2
+    |
+    |   38 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   41 |     int maxFrequencyItem = findMaxFrequency(arr, n);
+    |      |                            ~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                            |
+    |      |                            (2) calling 'findMaxFrequency' from 'main'
+    |
+    +--> 'findMaxFrequency': events 3-20
+           |
+           |    9 | int findMaxFrequency(int* arr, int n) {
+           |      |     ^~~~~~~~~~~~~~~~
+           |      |     |
+           |      |     (3) entry to 'findMaxFrequency'
+           |   10 |     struct Item* items = (struct Item*)malloc(n * sizeof(struct Item));
+           |   11 |     for(int i = 0; i < n; i++) {
+           |      |                    ~~~~~
+           |      |                      |
+           |      |                      (6) following 'true' branch (when 'i < n')...
+           |      |                      (8) following 'true' branch (when 'i < n')...
+           |      |                      (10) following 'false' branch (when 'i >= n')...
+           |   12 |         items[i].value = arr[i];
+           |      |                             ~
+           |      |                             |
+           |      |                             (7) ...to here
+           |      |                             (9) ...to here
+           |......
+           |   16 |     for(int i = 0; i < n; i++) {
+           |      |             ~      ~~~~~
+           |      |             |        |
+           |      |             |        (12) following 'true' branch (when 'i < n')...
+           |      |             (11) ...to here
+           |   17 |         for(int j = i + 1; j < n; j++) {
+           |      |                 ~          ~~~~~
+           |      |                 |            |
+           |      |                 |            (14) following 'true' branch (when 'j < n')...
+           |      |                 (13) ...to here
+           |   18 |             if(items[i].value == items[j].value) {
+           |      |                     ~
+           |      |                     |
+           |      |                     (15) ...to here
+           |......
+           |   26 |     int maxValue;
+           |      |         ~~~~~~~~
+           |      |         |
+           |      |         (4) region created on stack here
+           |      |         (5) capacity: 4 bytes
+           |   27 |     for(int i = 0; i < n; i++) {
+           |      |                    ~~~~~  ~~~
+           |      |                      |     |
+           |      |                      |     (19) ...to here
+           |      |                      (16) following 'true' branch (when 'i < n')...
+           |   28 |         if(items[i].count > maxCount) {
+           |      |           ~     ~
+           |      |           |     |
+           |      |           |     (17) ...to here
+           |      |           (18) following 'false' branch...
+           |......
+           |   35 |     return maxValue;
+           |      |            ~~~~~~~~
+           |      |            |
+           |      |            (20) use of uninitialized value 'maxValue' here
+           |

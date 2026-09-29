@@ -1,0 +1,28 @@
+C language does not natively support regular expressions. However, you can achieve the task of removing all whitespaces from a string without using regex. Here is a simple C program that does this:
+
+```c
+#include <stdio.h>
+#include <ctype.h>
+
+void remove_spaces(char* str) {
+    int count = 0;
+    for (int i = 0; str[i]; i++) {
+        if (!isspace(str[i])) {
+            str[count++] = str[i];
+        }
+    }
+    str[count] = '\0';
+}
+
+int main() {
+    char str[] = "Hello, this is a test string.";
+    printf("Before: %s\n", str);
+    remove_spaces(str);
+    printf("After: %s\n", str);
+    return 0;
+}
+```
+
+This program defines a function `remove_spaces` that takes a string and removes all whitespace characters from it. It does this by iterating over the string and copying all non-whitespace characters to the beginning of the string. After all characters have been processed, it null-terminates the string at the new end.
+
+The `main` function demonstrates the use of `remove_spaces` with a test string. It prints the string before and after removing spaces.

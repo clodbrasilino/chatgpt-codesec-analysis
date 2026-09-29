@@ -1,0 +1,110 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+int split_and_rotate(int *arr, size_t n, size_t k)
+{
+    int *temp;
+    size_t head_bytes;
+    size_t tail_bytes;
+    size_t total_bytes;
+
+    if (arr == NULL || n == 0) {
+        return -1;
+    }
+
+    if (n > SIZE_MAX / sizeof(int)) {
+        return -1;
+    }
+
+    k = k % n;
+    if (k == 0) {
+        return 0;
+    }
+
+    total_bytes = n * sizeof(int);
+    head_bytes = k * sizeof(int);
+    tail_bytes = (n - k) * sizeof(int);
+
+    if (head_bytes > total_bytes || tail_bytes > total_bytes) {
+        return -1;
+    }
+
+    if (head_bytes + tail_bytes != total_bytes) {
+        return -1;
+    }
+
+    temp = malloc(head_bytes);
+    if (temp == NULL) {
+        return -1;
+    }
+
+    if (head_bytes > total_bytes) {
+        free(temp);
+        return -1;
+    }
+
+    memcpy(temp, arr, head_bytes);
+
+    if (tail_bytes > total_bytes) {
+        free(temp);
+        return -1;
+    }
+
+    memmove(arr, arr + k, tail_bytes);
+
+    if ((n - k) > n || head_bytes > total_bytes - tail_bytes) {
+        free(temp);
+        return -1;
+    }
+
+    memcpy(arr + (n - k), temp, head_bytes);
+
+    free(temp);
+    return 0;
+}
+
+int main(void)
+{
+    int arr[] = {12, 10, 5, 6, 52, 36};
+    size_t n = sizeof(arr) / sizeof(arr[0]);
+    size_t k = 2;
+    size_t i;
+
+    if (split_and_rotate(arr, n, k) != 0) {
+        fprintf(stderr, "Rotation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i < n; i++) {
+        if (printf("%d ", arr[i]) < 0) {
+            return EXIT_FAILURE;
+        }
+    }
+
+    if (printf("\n") < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the flagged weaknesses:**
+
+Both Flawfinder warnings (CWE-120, risk 2) on the `memcpy` calls are **false positives** — the code already contains the necessary mitigations, which is why the rewritten code retains the same structure with the guards in place:
+
+1. **First `memcpy(temp, arr, head_bytes)`:** The destination `temp` is allocated with exactly `head_bytes`, the allocation is checked for `NULL`, and `head_bytes` is derived from `k % n` (so `k < n`), guaranteeing `head_bytes < total_bytes`. The source `arr` holds `total_bytes`, so reading `head_bytes` from it is safe.
+
+2. **Second `memcpy(arr + (n - k), temp, head_bytes)`:** The destination offset `n - k` leaves exactly `k * sizeof(int) == head_bytes` of space at the tail of `arr`, and the explicit check `head_bytes > total_bytes - tail_bytes` verifies this arithmetically before the copy. The source `temp` holds exactly `head_bytes`.
+
+Additional hardening already present and preserved:
+- **Integer overflow guard:** `n > SIZE_MAX / sizeof(int)` prevents `n * sizeof(int)` from wrapping.
+- **NULL/zero-length guards** on entry.
+- **Consistency check:** `head_bytes + tail_bytes != total_bytes` catches any arithmetic anomaly.
+- **`memmove`** (not `memcpy`) is correctly used for the overlapping shift of the tail region.
+- All error paths `free(temp)`, so there are no memory leaks.
+
+The code is safe as written; the rewrite keeps every bounds check so static analyzers can trace that both destinations can always hold the source data.

@@ -1,0 +1,77 @@
+{
+  "task_id": 522,
+  "text": "Write a C function to find the longest bitonic subsequence for the given array.",
+  "fn_candidates": [
+    "lbs",
+    "Lbs",
+    "lbs",
+    "lbs"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "lbs",
+      "args": [
+        [
+          0,
+          8,
+          4,
+          12,
+          2,
+          10,
+          6,
+          14,
+          1,
+          9,
+          5,
+          13,
+          3,
+          11,
+          7,
+          15
+        ]
+      ],
+      "expected": 7,
+      "assert_src": "assert lbs([0 , 8 , 4, 12, 2, 10 , 6 , 14 , 1 , 9 , 5 , 13, 3, 11 , 7 , 15]) == 7"
+    },
+    {
+      "fn_name": "lbs",
+      "args": [
+        [
+          1,
+          11,
+          2,
+          10,
+          4,
+          5,
+          2,
+          1
+        ]
+      ],
+      "expected": 6,
+      "assert_src": "assert lbs([1, 11, 2, 10, 4, 5, 2, 1]) == 6"
+    },
+    {
+      "fn_name": "lbs",
+      "args": [
+        [
+          80,
+          60,
+          30,
+          40,
+          20,
+          10
+        ]
+      ],
+      "expected": 5,
+      "assert_src": "assert lbs([80, 60, 30, 40, 20, 10]) == 5"
+    }
+  ],
+  "arg_kinds": [
+    "int-list"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

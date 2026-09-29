@@ -1,0 +1,88 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct Node {
+    char *word;
+    struct Node *next;
+} Node;
+
+Node* create_node(char *str) {
+    Node *new_node = (Node *)malloc(sizeof(Node));
+    new_node->word = strdup(str);
+    new_node->next = NULL;
+    return new_node;
+}
+
+void append_node(Node **head, char *str) {
+    if (*head == NULL) {
+        *head = create_node(str);
+        return;
+    }
+    
+    Node *current = *head;
+    while (current->next != NULL) {
+        current = current->next;
+    }
+    current->next = create_node(str);
+}
+
+void delete_word(Node **head, const char *target) {
+    Node *current = *head;
+    Node *previous = NULL;
+    
+    while (current != NULL) {
+        if (strcmp(current->word, target) == 0) {
+            if (previous == NULL) {
+                *head = current->next;
+            } else {
+                previous->next = current->next;
+            }
+            free(current->word);
+            free(current);
+            current = previous ? previous->next : *head;
+        } else {
+            previous = current;
+            current = current->next;
+        }
+    }
+}
+
+void print_list(Node *head) {
+    Node *current = head;
+    while (current != NULL) {
+        printf("%s -> ", current->word);
+        current = current->next;
+    }
+    printf("NULL\n");
+}
+
+void free_list(Node *head) {
+    Node *current = head;
+    while (current != NULL) {
+        Node *next = current->next;
+        free(current->word);
+        free(current);
+        current = next;
+    }
+}
+
+int main() {
+    Node *words = NULL;
+    
+    append_node(&words, "hello");
+    append_node(&words, "world");
+    append_node(&words, "hello");
+    append_node(&words, "test");
+    append_node(&words, "remove");
+    
+    print_list(words);
+    
+    delete_word(&words, "hello");
+    delete_word(&words, "remove");
+    
+    print_list(words);
+    
+    free_list(words);
+    return 0;
+}

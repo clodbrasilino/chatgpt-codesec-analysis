@@ -1,0 +1,6 @@
+collected_code/problem-337-0.c:6:25: error: Cannot determine that 'str[0]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+    int lenStr = strlen(str);
+                        ^
+collected_code/problem-337-0.c:7:26: error: Cannot determine that 'word[0]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+    int lenWord = strlen(word);
+                         ^

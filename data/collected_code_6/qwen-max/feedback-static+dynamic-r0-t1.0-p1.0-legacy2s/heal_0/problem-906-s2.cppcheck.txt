@@ -1,0 +1,31 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_0/problem-906-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_0/problem-906-s2.c:24:33: error: Array 'matches[3]' accessed at index 3, which is out of bounds. [arrayIndexOutOfBounds]
+            ptr = malloc(matches[i].rm_eo - matches[i].rm_so + 1);
+                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_0/problem-906-s2.c:21:27: note: Assuming that condition 'i<=3' is not redundant
+        for (int i = 1; i <= 3; ++i) {
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_0/problem-906-s2.c:24:33: note: Array index out of bounds
+            ptr = malloc(matches[i].rm_eo - matches[i].rm_so + 1);
+                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_0/problem-906-s2.c:29:39: warning: Either the switch case 'case 3' is redundant or the array 'matches[3]' is accessed at index 3, which is out of bounds. [arrayIndexOutOfBoundsCond]
+            strncpy(ptr, url + matches[i].rm_so, matches[i].rm_eo - matches[i].rm_so);
+                                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_0/problem-906-s2.c:36:17: note: case 3: i is 3 here.
+                case 3: date->day = val; break;
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_0/problem-906-s2.c:29:39: note: Array index out of bounds
+            strncpy(ptr, url + matches[i].rm_so, matches[i].rm_eo - matches[i].rm_so);
+                                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_0/problem-906-s2.c:30:24: warning: Either the switch case 'case 3' is redundant or the array 'matches[3]' is accessed at index 3, which is out of bounds. [arrayIndexOutOfBoundsCond]
+            ptr[matches[i].rm_eo - matches[i].rm_so] = '\0';
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_0/problem-906-s2.c:36:17: note: case 3: i is 3 here.
+                case 3: date->day = val; break;
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_0/problem-906-s2.c:30:24: note: Array index out of bounds
+            ptr[matches[i].rm_eo - matches[i].rm_so] = '\0';
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_0/problem-906-s2.c:13:9: style: Unused variable: reti [unusedVariable]
+    int reti;
+        ^

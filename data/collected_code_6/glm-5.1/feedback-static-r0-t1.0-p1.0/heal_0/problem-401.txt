@@ -1,0 +1,68 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *elements;
+    int size;
+} Tuple;
+
+typedef struct {
+    Tuple *tuples;
+    int count;
+} NestedTuple;
+
+NestedTuple add_nested_tuples(NestedTuple a, NestedTuple b) {
+    NestedTuple result;
+    result.count = a.count;
+    result.tuples = (Tuple *)malloc(result.count * sizeof(Tuple));
+    
+    for (int i = 0; i < result.count; ++i) {
+        int current_size = a.tuples[i].size < b.tuples[i].size ? a.tuples[i].size : b.tuples[i].size;
+        result.tuples[i].size = current_size;
+        result.tuples[i].elements = (int *)malloc(current_size * sizeof(int));
+        
+        for (int j = 0; j < current_size; ++j) {
+            result.tuples[i].elements[j] = a.tuples[i].elements[j] + b.tuples[i].elements[j];
+        }
+    }
+    
+    return result;
+}
+
+void free_nested_tuple(NestedTuple *nt) {
+    for (int i = 0; i < nt->count; ++i) {
+        free(nt->tuples[i].elements);
+    }
+    free(nt->tuples);
+    nt->tuples = NULL;
+    nt->count = 0;
+}
+
+int main(void) {
+    Tuple tuples_a[] = {
+        {(int[]){1, 2, 3}, 3},
+        {(int[]){4, 5}, 2}
+    };
+    NestedTuple a = {tuples_a, 2};
+
+    Tuple tuples_b[] = {
+        {(int[]){6, 7, 8}, 3},
+        {(int[]){9, 10}, 2}
+    };
+    NestedTuple b = {tuples_b, 2};
+
+    NestedTuple result = add_nested_tuples(a, b);
+
+    for (int i = 0; i < result.count; ++i) {
+        for (int j = 0; j < result.tuples[i].size; ++j) {
+            printf("%d ", result.tuples[i].elements[j]);
+        }
+        printf("\n");
+    }
+
+    free_nested_tuple(&result);
+
+    return 0;
+}
+```

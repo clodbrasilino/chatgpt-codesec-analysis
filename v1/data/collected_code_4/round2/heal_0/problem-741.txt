@@ -1,0 +1,31 @@
+```C
+#include<stdlib.h>
+#include<stdio.h>
+#include<string.h>
+#include<stdbool.h>
+
+bool checkSimilarity(char* str)
+{
+    int length = strlen(str);
+    for (int i = 1; i < length; i++)
+    {
+        if (str[i] != str[0])
+            return false;
+    }
+    return true;
+}
+
+int main()
+{
+    char str[100];
+    printf("Enter string: ");
+    scanf("%s", str);
+
+    if(checkSimilarity(str))
+      printf("All characters are same in the given string\n");
+    else
+      printf("All characters are not same in the given string\n");
+
+    return 0;
+}
+```

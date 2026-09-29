@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_3/healed/problem-969.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_3/healed/problem-969.c:34:11: style: Condition 'n>capacity' is always false [knownConditionTrueFalse]
+    if (n > capacity) {
+          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_3/healed/problem-969.c:29:39: note: Assuming that condition 'n>16' is not redundant
+    if (values == NULL || n == 0 || n > MAX_TUPLE_SIZE) {
+                                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_3/healed/problem-969.c:33:36: note: Assignment 'capacity=sizeof(t->elements)/sizeof(t->elements[0])', assigned value is 16
+    capacity = sizeof(t->elements) / sizeof(t->elements[0]);
+                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_3/healed/problem-969.c:34:11: note: Condition 'n>capacity' is always false
+    if (n > capacity) {
+          ^

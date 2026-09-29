@@ -1,0 +1,66 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stddef.h>
+#include <stdint.h>
+
+typedef struct {
+    int count;
+    int value;
+} RlePair;
+
+typedef struct {
+    int *data;
+    size_t length;
+} DecodedList;
+
+DecodedList decode_rle(const RlePair *encoded, size_t encoded_len) {
+    DecodedList fail_result = {NULL, 0};
+    if (encoded == NULL && encoded_len > 0) {
+        return fail_result;
+    }
+    size_t total_size = 0;
+    for (size_t i = 0; i < encoded_len; i++) {
+        if (encoded[i].count <= 0) {
+            return fail_result;
+        }
+        if (total_size > SIZE_MAX - (size_t)encoded[i].count) {
+            return fail_result;
+        }
+        total_size += (size_t)encoded[i].count;
+    }
+    if (total_size > 0 && total_size > SIZE_MAX / sizeof(int)) {
+        return fail_result;
+    }
+    if (total_size == 0) {
+        DecodedList empty_result = {NULL, 0};
+        return empty_result;
+    }
+    int *decoded = (int *)malloc(total_size * sizeof(int));
+    if (decoded == NULL) {
+        return fail_result;
+    }
+    size_t decode_index = 0;
+    for (size_t i = 0; i < encoded_len; i++) {
+        for (int j = 0; j < encoded[i].count; j++) {
+            decoded[decode_index++] = encoded[i].value;
+        }
+    }
+    DecodedList result = {decoded, total_size};
+    return result;
+}
+
+int main(void) {
+    RlePair encoded[] = {{3, 1}, {2, 2}, {1, 3}};
+    size_t len = sizeof(encoded) / sizeof(encoded[0]);
+    DecodedList res = decode_rle(encoded, len);
+    if (res.data != NULL) {
+        for (size_t i = 0; i < res.length; i++) {
+            printf("%d ", res.data[i]);
+        }
+        printf("\n");
+        free(res.data);
+    } else {
+        printf("Decoding failed or empty input.\n");
+    }
+    return 0;
+}

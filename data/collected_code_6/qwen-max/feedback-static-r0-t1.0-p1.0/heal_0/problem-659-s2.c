@@ -1,0 +1,25 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+void print_duplicates(int *arr, int n) {
+    int *counts = (int *)calloc(n, sizeof(int));
+    if (counts == NULL) {
+        return;
+    }
+    for (int i = 0; i < n; i++) {
+        counts[arr[i]]++;
+    }
+    for (int i = 0; i < n; i++) {
+        if (counts[i] > 1) {
+            printf("%d ", i);
+        }
+    }
+    free(counts);
+}
+
+int main() {
+    int arr[] = {1, 2, 3, 2, 4, 5, 5, 6, 7, 8, 1};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    print_duplicates(arr, n);
+    return 0;
+}

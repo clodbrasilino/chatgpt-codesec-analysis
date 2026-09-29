@@ -1,0 +1,71 @@
+```c
+#include <stdio.h>
+#include <math.h>
+
+int find_solutions(double a, double b, double c)
+{
+    double discriminant;
+
+    if (a == 0.0)
+    {
+        return -1;
+    }
+
+    discriminant = (b * b) - (4.0 * a * c);
+
+    if (discriminant > 0.0)
+    {
+        return 2;
+    }
+    else if (discriminant == 0.0)
+    {
+        return 1;
+    }
+    else
+    {
+        return 0;
+    }
+}
+
+int main(void)
+{
+    double a;
+    double b;
+    double c;
+    int result;
+
+    printf("Enter coefficient a: ");
+    if (scanf("%lf", &a) != 1)
+    {
+        fprintf(stderr, "Invalid input for coefficient a.\n");
+        return 1;
+    }
+
+    printf("Enter coefficient b: ");
+    if (scanf("%lf", &b) != 1)
+    {
+        fprintf(stderr, "Invalid input for coefficient b.\n");
+        return 1;
+    }
+
+    printf("Enter coefficient c: ");
+    if (scanf("%lf", &c) != 1)
+    {
+        fprintf(stderr, "Invalid input for coefficient c.\n");
+        return 1;
+    }
+
+    result = find_solutions(a, b, c);
+
+    if (result == -1)
+    {
+        printf("Not a quadratic equation (a cannot be zero).\n");
+    }
+    else
+    {
+        printf("Number of real solutions: %d\n", result);
+    }
+
+    return 0;
+}
+```

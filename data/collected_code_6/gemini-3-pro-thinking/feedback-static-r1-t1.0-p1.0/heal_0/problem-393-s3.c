@@ -1,0 +1,67 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct List {
+    int *data;
+    size_t length;
+};
+
+const struct List* find_max_length_list(const struct List *lists, size_t num_lists);
+void cleanup_lists(struct List *lists, size_t count);
+
+const struct List* find_max_length_list(const struct List *lists, size_t num_lists) {
+    if (!lists || num_lists == 0) {
+        return NULL;
+    }
+
+    const struct List *max_list = &lists[0];
+
+    for (size_t i = 1; i < num_lists; i++) {
+        if (lists[i].length > max_list->length) {
+            max_list = &lists[i];
+        }
+    }
+
+    return max_list;
+}
+
+void cleanup_lists(struct List *lists, size_t count) {
+    if (!lists) {
+        return;
+    }
+    for (size_t i = 0; i < count; i++) {
+        free(lists[i].data);
+    }
+    free(lists);
+}
+
+int main(void) {
+    size_t num_lists = 3;
+    struct List *lists = malloc(num_lists * sizeof(struct List));
+    if (!lists) {
+        return EXIT_FAILURE;
+    }
+
+    size_t lengths[] = {5, 12, 3};
+    size_t allocated = 0;
+
+    for (size_t i = 0; i < num_lists; i++) {
+        lists[i].length = lengths[i];
+        lists[i].data = malloc(lists[i].length * sizeof(int));
+        if (!lists[i].data) {
+            cleanup_lists(lists, allocated);
+            return EXIT_FAILURE;
+        }
+        allocated++;
+    }
+
+    const struct List *max_list = find_max_length_list(lists, num_lists);
+
+    if (max_list) {
+        printf("%zu\n", max_list->length);
+    }
+
+    cleanup_lists(lists, allocated);
+
+    return EXIT_SUCCESS;
+}

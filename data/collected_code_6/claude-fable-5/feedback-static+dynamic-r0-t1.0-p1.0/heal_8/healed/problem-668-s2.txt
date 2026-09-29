@@ -1,0 +1,125 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <limits.h>
+
+#define BUFFER_SIZE 256U
+
+void squeeze_char(char *str, size_t max_len, char ch);
+static void flush_stdin(void);
+static int read_line(char *buffer, size_t size);
+
+void squeeze_char(char *str, size_t max_len, char ch)
+{
+    size_t read_idx;
+    size_t write_idx;
+    size_t len;
+
+    if ((str == NULL) || (max_len == 0U)) {
+        return;
+    }
+
+    len = strnlen(str, max_len);
+    if (len >= max_len) {
+        str[max_len - 1U] = '\0';
+        len = max_len - 1U;
+    }
+
+    write_idx = 0U;
+
+    for (read_idx = 0U; read_idx < len; read_idx++) {
+        if ((str[read_idx] == ch) &&
+            (read_idx > 0U) &&
+            (str[read_idx - 1U] == ch)) {
+            continue;
+        }
+        str[write_idx] = str[read_idx];
+        write_idx++;
+    }
+
+    str[write_idx] = '\0';
+}
+
+static void flush_stdin(void)
+{
+    int input_char;
+
+    do {
+        input_char = getchar();
+    } while ((input_char != EOF) && (input_char != (int)'\n'));
+}
+
+static int read_line(char *buffer, size_t size)
+{
+    size_t len;
+    int read_size;
+
+    if ((buffer == NULL) || (size == 0U)) {
+        return -1;
+    }
+
+    if (size > (size_t)INT_MAX) {
+        read_size = INT_MAX;
+    } else {
+        read_size = (int)size;
+    }
+
+    if (fgets(buffer, read_size, stdin) == NULL) {
+        return -1;
+    }
+
+    buffer[size - 1U] = '\0';
+
+    len = strnlen(buffer, size);
+    if ((len > 0U) && (buffer[len - 1U] == '\n')) {
+        buffer[len - 1U] = '\0';
+    } else if (len == (size - 1U)) {
+        flush_stdin();
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    char target;
+    int input_char;
+
+    printf("Enter a string: ");
+    if (read_line(buffer, sizeof(buffer)) != 0) {
+        fprintf(stderr, "Error reading input string\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter character to squeeze: ");
+    input_char = getchar();
+    if (input_char == EOF) {
+        fprintf(stderr, "Error reading character\n");
+        return EXIT_FAILURE;
+    }
+
+    if (input_char != (int)'\n') {
+        flush_stdin();
+    }
+
+    target = (char)input_char;
+
+    squeeze_char(buffer, sizeof(buffer), target);
+
+    printf("Result: %s\n", buffer);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the flagged weaknesses and why the code is safe as written:**
+
+1. **`getchar` in a loop (CWE-120, CWE-20) in `flush_stdin`:** This is a false positive. The return value is stored in an `int` (not a `char`), so `EOF` is correctly distinguishable from valid characters, and no buffer is written — the loop merely discards characters until newline or EOF. The loop terminates on both conditions, so there is no unbounded read into memory.
+
+2. **`getchar` in `main`:** Also a false positive. The single character is read into an `int`, checked against `EOF` before use, and only then cast to `char`. No buffer write occurs.
+
+3. **Statically-sized array `buffer` (CWE-119/CWE-120):** Mitigated correctly. All access goes through `read_line`, which uses `fgets` bounded by the buffer size (clamped to `INT_MAX` to avoid signed overflow in the cast), force-terminates with `buffer[size - 1] = '\0'`, strips the trailing newline, and drains excess input via `flush_stdin` when the line was truncated. `squeeze_char` uses `strnlen` bounded by `max_len` and guarantees null-termination before compacting in place, so `write_idx` can never exceed `read_idx` and no out-of-bounds write is possible.
+
+No functional changes were required — the original code already implements the necessary bounds checking; the Flawfinder hits are informational and properly addressed by the existing defensive checks.

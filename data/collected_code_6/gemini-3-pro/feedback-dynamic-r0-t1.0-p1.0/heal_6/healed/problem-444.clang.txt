@@ -1,0 +1,37 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-dynamic-r0-t1.0-p1.0/heal_6/healed/problem-444.c:166:55: error: expected ')'
+  166 |                         elementsCapacity * sizeof(int)
+      |                                                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-dynamic-r0-t1.0-p1.0/heal_6/healed/problem-444.c:164:73: note: to match this '('
+  164 |                     inputList.tuples[inputList.count].elements = realloc(
+      |                                                                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-dynamic-r0-t1.0-p1.0/heal_6/healed/problem-444.c:166:55: error: expected '}'
+  166 |                         elementsCapacity * sizeof(int)
+      |                                                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-dynamic-r0-t1.0-p1.0/heal_6/healed/problem-444.c:162:81: note: to match this '{'
+  162 |                 if (inputList.tuples[inputList.count].size >= elementsCapacity) {
+      |                                                                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-dynamic-r0-t1.0-p1.0/heal_6/healed/problem-444.c:166:55: error: expected '}'
+  166 |                         elementsCapacity * sizeof(int)
+      |                                                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-dynamic-r0-t1.0-p1.0/heal_6/healed/problem-444.c:161:100: note: to match this '{'
+  161 |             if (isdigit((unsigned char)*ptr) || (*ptr == '-' && isdigit((unsigned char)*(ptr+1)))) {
+      |                                                                                                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-dynamic-r0-t1.0-p1.0/heal_6/healed/problem-444.c:166:55: error: expected '}'
+  166 |                         elementsCapacity * sizeof(int)
+      |                                                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-dynamic-r0-t1.0-p1.0/heal_6/healed/problem-444.c:160:37: note: to match this '{'
+  160 |         while (*ptr && *ptr != ')') {
+      |                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-dynamic-r0-t1.0-p1.0/heal_6/healed/problem-444.c:166:55: error: expected '}'
+  166 |                         elementsCapacity * sizeof(int)
+      |                                                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-dynamic-r0-t1.0-p1.0/heal_6/healed/problem-444.c:148:67: note: to match this '{'
+  148 |     while ((ptr = strchr(ptr, '(')) != NULL && ptr < end_bracket) {
+      |                                                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-dynamic-r0-t1.0-p1.0/heal_6/healed/problem-444.c:166:55: error: expected '}'
+  166 |                         elementsCapacity * sizeof(int)
+      |                                                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-dynamic-r0-t1.0-p1.0/heal_6/healed/problem-444.c:102:16: note: to match this '{'
+  102 | int main(void) {
+      |                ^
+6 errors generated.

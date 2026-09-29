@@ -1,0 +1,37 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+int get_first_digit(int number) {
+    if (number == INT_MIN) {
+        return 2;
+    }
+    
+    if (number < 0) {
+        number = -number;
+    }
+
+    if (number == 0) {
+        return 0;
+    }
+
+    while (number >= 10) {
+        number /= 10;
+    }
+
+    return number;
+}
+
+int main(void) {
+    int test_cases[] = {1234, -5678, 0, 9, INT_MIN, INT_MAX};
+    size_t num_cases = sizeof(test_cases) / sizeof(test_cases[0]);
+
+    for (size_t i = 0; i < num_cases; i++) {
+        int first_digit = get_first_digit(test_cases[i]);
+        printf("%d\n", first_digit);
+    }
+
+    return 0;
+}
+```

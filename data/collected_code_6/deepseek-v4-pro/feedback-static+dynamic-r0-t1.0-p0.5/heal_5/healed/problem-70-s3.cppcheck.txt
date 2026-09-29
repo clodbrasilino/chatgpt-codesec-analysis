@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_5/healed/problem-70-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_5/healed/problem-70-s3.c:39:28: style: Condition 'test4_result' is always false [knownConditionTrueFalse]
+    printf("Test 4: %s\n", test4_result ? "true" : "false");
+                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_5/healed/problem-70-s3.c:38:48: note: Calling function 'all_tuples_equal_length' returns 0
+    bool test4_result = all_tuples_equal_length(NULL, 3, lengths1);
+                                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_5/healed/problem-70-s3.c:38:48: note: Assignment 'test4_result=all_tuples_equal_length(NULL,3,lengths1)', assigned value is 0
+    bool test4_result = all_tuples_equal_length(NULL, 3, lengths1);
+                                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_5/healed/problem-70-s3.c:39:28: note: Condition 'test4_result' is always false
+    printf("Test 4: %s\n", test4_result ? "true" : "false");
+                           ^

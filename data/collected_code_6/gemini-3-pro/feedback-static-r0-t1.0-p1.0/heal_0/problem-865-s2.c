@@ -1,0 +1,62 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node* next;
+};
+
+void map(struct Node* head, void (*func)(int)) {
+    struct Node* current = head;
+    while (current != NULL) {
+        func(current->data);
+        current = current->next;
+    }
+}
+
+void print_node(int data) {
+    printf("%d ", data);
+}
+
+void print_list_n_times(struct Node* head, int n) {
+    if (n <= 0 || head == NULL) {
+        return;
+    }
+    for (int i = 0; i < n; i++) {
+        map(head, print_node);
+        printf("\n");
+    }
+}
+
+struct Node* create_node(int data) {
+    struct Node* new_node = (struct Node*)malloc(sizeof(struct Node));
+    if (new_node == NULL) {
+        exit(EXIT_FAILURE);
+    }
+    new_node->data = data;
+    new_node->next = NULL;
+    return new_node;
+}
+
+void free_list(struct Node* head) {
+    struct Node* current = head;
+    struct Node* next_node;
+    while (current != NULL) {
+        next_node = current->next;
+        free(current);
+        current = next_node;
+    }
+}
+
+int main(void) {
+    struct Node* head = create_node(1);
+    head->next = create_node(2);
+    head->next->next = create_node(3);
+
+    int n = 3;
+    print_list_n_times(head, n);
+
+    free_list(head);
+
+    return EXIT_SUCCESS;
+}

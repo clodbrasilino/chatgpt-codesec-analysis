@@ -1,0 +1,64 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef enum {
+    TYPE_INT,
+    TYPE_STRING
+} ElementType;
+
+typedef struct {
+    ElementType type;
+    union {
+        int int_val;
+        char *str_val;
+    } data;
+} MixedElement;
+
+int compare_mixed(const void *a, const void *b) {
+    const MixedElement *elemA = (const MixedElement *)a;
+    const MixedElement *elemB = (const MixedElement *)b;
+
+    if (elemA->type != elemB->type) {
+        return elemA->type - elemB->type;
+    }
+
+    if (elemA->type == TYPE_INT) {
+        if (elemA->data.int_val < elemB->data.int_val) return -1;
+        if (elemA->data.int_val > elemB->data.int_val) return 1;
+        return 0;
+    }
+
+    return strcmp(elemA->data.str_val, elemB->data.str_val);
+}
+
+void sort_mixed_list(MixedElement *list, size_t size) {
+    if (list != NULL && size > 1) {
+        qsort(list, size, sizeof(MixedElement), compare_mixed);
+    }
+}
+
+int main(void) {
+    MixedElement list[] = {
+        {TYPE_STRING, .data.str_val = "zebra"},
+        {TYPE_INT, .data.int_val = 42},
+        {TYPE_STRING, .data.str_val = "apple"},
+        {TYPE_INT, .data.int_val = 7},
+        {TYPE_STRING, .data.str_val = "mango"},
+        {TYPE_INT, .data.int_val = -5}
+    };
+    
+    size_t size = sizeof(list) / sizeof(list[0]);
+
+    sort_mixed_list(list, size);
+
+    for (size_t i = 0; i < size; ++i) {
+        if (list[i].type == TYPE_INT) {
+            printf("%d\n", list[i].data.int_val);
+        } else if (list[i].type == TYPE_STRING) {
+            printf("%s\n", list[i].data.str_val);
+        }
+    }
+
+    return EXIT_SUCCESS;
+}

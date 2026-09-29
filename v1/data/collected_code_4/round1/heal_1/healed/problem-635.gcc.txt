@@ -1,0 +1,86 @@
+./collected_code_4/round1//heal_1/healed//problem-635.c: In function 'createMinHeap':
+./collected_code_4/round1//heal_1/healed//problem-635.c:13:15: warning: dereference of possibly-NULL 'heap' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   13 |     heap->arr = (int*) malloc(sizeof(int)*capacity);
+      |     ~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  'main': events 1-2
+    |
+    |   70 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |   71 |     MinHeap* heap = createMinHeap(11);
+    |      |                     ~~~~~~~~~~~~~~~~~
+    |      |                     |
+    |      |                     (2) calling 'createMinHeap' from 'main'
+    |
+    +--> 'createMinHeap': events 3-5
+           |
+           |   11 | MinHeap* createMinHeap(int capacity) {
+           |      |          ^~~~~~~~~~~~~
+           |      |          |
+           |      |          (3) entry to 'createMinHeap'
+           |   12 |     MinHeap* heap = (MinHeap*) malloc(sizeof(MinHeap));
+           |      |                                ~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                                |
+           |      |                                (4) this call could return NULL
+           |   13 |     heap->arr = (int*) malloc(sizeof(int)*capacity);
+           |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |               |
+           |      |               (5) 'heap' could be NULL: unchecked value from (4)
+           |
+./collected_code_4/round1//heal_1/healed//problem-635.c: In function 'insert':
+./collected_code_4/round1//heal_1/healed//problem-635.c:48:28: warning: dereference of possibly-NULL '*heap.arr + (long unsigned int)*heap.count * 4' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   48 |     heap->arr[heap->count] = data;
+      |     ~~~~~~~~~~~~~~~~~~~~~~~^~~~~~
+  'main': events 1-2
+    |
+    |   70 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |   71 |     MinHeap* heap = createMinHeap(11);
+    |      |                     ~~~~~~~~~~~~~~~~~
+    |      |                     |
+    |      |                     (2) calling 'createMinHeap' from 'main'
+    |
+    +--> 'createMinHeap': events 3-4
+           |
+           |   11 | MinHeap* createMinHeap(int capacity) {
+           |      |          ^~~~~~~~~~~~~
+           |      |          |
+           |      |          (3) entry to 'createMinHeap'
+           |   12 |     MinHeap* heap = (MinHeap*) malloc(sizeof(MinHeap));
+           |   13 |     heap->arr = (int*) malloc(sizeof(int)*capacity);
+           |      |                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                        |
+           |      |                        (4) this call could return NULL
+           |
+    <------+
+    |
+  'main': events 5-6
+    |
+    |   71 |     MinHeap* heap = createMinHeap(11);
+    |      |                     ^~~~~~~~~~~~~~~~~
+    |      |                     |
+    |      |                     (5) returning to 'main' from 'createMinHeap'
+    |   72 |     insert(heap, 3);
+    |      |     ~~~~~~~~~~~~~~~  
+    |      |     |
+    |      |     (6) calling 'insert' from 'main'
+    |
+    +--> 'insert': events 7-10
+           |
+           |   42 | void insert(MinHeap* heap, int data) {
+           |      |      ^~~~~~
+           |      |      |
+           |      |      (7) entry to 'insert'
+           |   43 |     if (heap->count >= heap->capacity) {
+           |      |        ~
+           |      |        |
+           |      |        (8) following 'false' branch...
+           |......
+           |   48 |     heap->arr[heap->count] = data;
+           |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |         |                  |
+           |      |         (9) ...to here     (10) '*heap.arr + (long unsigned int)*heap.count * 4' could be NULL: unchecked value from (4)
+           |

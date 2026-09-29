@@ -1,0 +1,26 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+bool is_even(int number) {
+    return (number % 2) == 0;
+}
+
+/* Possible weaknesses found:
+ *  Parameter 'argv' can be declared as const array [constParameter]
+ */
+int main(int argc, char *argv[]) {
+    if (argc < 2) {
+        return 1;
+    }
+
+    int test_number = atoi(argv[1]);
+    
+    if (is_even(test_number)) {
+        printf("%d is even.\n", test_number);
+    } else {
+        printf("%d is odd.\n", test_number);
+    }
+    
+    return 0;
+}

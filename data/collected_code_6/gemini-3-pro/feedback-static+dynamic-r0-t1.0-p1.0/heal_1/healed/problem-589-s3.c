@@ -1,0 +1,38 @@
+#include <stdio.h>
+#include <math.h>
+
+void findPerfectSquares(int start, int end) {
+    if (start > end) {
+        int temp = start;
+        start = end;
+        end = temp;
+    }
+
+    if (end < 0) {
+        return;
+    }
+
+    if (start < 0) {
+        start = 0;
+    }
+
+    int startRoot = (int)ceil(sqrt(start));
+    int endRoot = (int)floor(sqrt(end));
+
+    for (int i = startRoot; i <= endRoot; i++) {
+        printf("%d\n", i * i);
+    }
+}
+
+int main(void) {
+    int start = 0;
+    int end = 0;
+
+    if (scanf("%d %d", &start, &end) != 2) {
+        return 1;
+    }
+
+    findPerfectSquares(start, end);
+
+    return 0;
+}

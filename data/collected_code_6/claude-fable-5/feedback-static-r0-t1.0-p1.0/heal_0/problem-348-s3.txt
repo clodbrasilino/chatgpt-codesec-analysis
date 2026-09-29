@@ -1,0 +1,61 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+static long long countSequencesHelper(const int *values, size_t numValues,
+                                      int length, long long prefixSum)
+{
+    long long total;
+    size_t i;
+
+    if (length == 0) {
+        return 1LL;
+    }
+
+    total = 0LL;
+    for (i = 0; i < numValues; i++) {
+        long long newSum = prefixSum + (long long)values[i];
+        if (newSum >= 0LL) {
+            total += countSequencesHelper(values, numValues, length - 1, newSum);
+        }
+    }
+
+    return total;
+}
+
+long long countSequences(const int *values, size_t numValues, int length)
+{
+    if (values == NULL || numValues == 0 || length < 0) {
+        return 0LL;
+    }
+
+    return countSequencesHelper(values, numValues, length, 0LL);
+}
+
+int main(void)
+{
+    int values[] = {1, -1};
+    size_t numValues = sizeof(values) / sizeof(values[0]);
+    int length = 4;
+    long long result;
+
+    result = countSequences(values, numValues, length);
+
+    if (printf("Number of valid sequences of length %d: %lld\n",
+               length, result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+This solution uses recursion to explore all possible sequences built from the given values. At each step, it only continues down branches where the running prefix sum remains non-negative, pruning invalid sequences early.
+
+Key design decisions addressing the specified weaknesses:
+
+- **CWE-664**: No dynamic memory allocation is used, so there are no resource lifetime issues. All data lives on the stack with well-defined scope.
+- **CWE-703**: Input parameters are validated (`NULL` pointer, zero-size array, negative length), and the return value of `printf` is checked. Prefix sums are computed in `long long` to reduce overflow risk from `int` arithmetic.
+- **CWE-710**: The code follows standard C conventions: `const`-correct parameters, `size_t` for array sizes, `main(void)` signature, explicit `EXIT_SUCCESS`/`EXIT_FAILURE` return codes, and `static` linkage for the internal helper.
+
+For the example input `{1, -1}` with length 4, the output is `6`, corresponding to the sequences where every prefix sum stays non-negative.

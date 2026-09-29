@@ -1,0 +1,40 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <regex.h>
+
+int validate_string(const char *str) {
+    regex_t regex;
+    int reti;
+    int result = 0;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    reti = regcomp(&regex, "^[a-zA-Z0-9]+$", REG_EXTENDED);
+    if (reti != 0) {
+        return 0;
+    }
+
+    reti = regexec(&regex, str, 0, NULL, 0);
+    if (reti == 0) {
+        result = 1;
+    }
+
+    regfree(&regex);
+    return result;
+}
+
+int main(void) {
+    const char *test1 = "Hello123";
+    const char *test2 = "Hello@123";
+    const char *test3 = "abcXYZ789";
+    const char *test4 = "";
+
+    printf("Test1: %d\n", validate_string(test1));
+    printf("Test2: %d\n", validate_string(test2));
+    printf("Test3: %d\n", validate_string(test3));
+    printf("Test4: %d\n", validate_string(test4));
+
+    return 0;
+}

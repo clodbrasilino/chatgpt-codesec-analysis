@@ -1,0 +1,151 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <limits.h>
+#include <stdint.h>
+
+static int max_int(int a, int b)
+{
+    return (a > b) ? a : b;
+}
+
+int longestCommonSubsequence(const char *str1, const char *str2)
+{
+    size_t len1;
+    size_t len2;
+    size_t i;
+    size_t j;
+    int *row_prev;
+    int *row_curr;
+    int *row_tmp;
+    int result;
+
+    if (str1 == NULL || str2 == NULL)
+    {
+        return -1;
+    }
+
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    len1 = strlen(str1);
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    len2 = strlen(str2);
+
+    if (len1 == 0 || len2 == 0)
+    {
+        return 0;
+    }
+
+    if (len2 >= SIZE_MAX / sizeof(int))
+    {
+        return -1;
+    }
+
+    row_prev = (int *)calloc(len2 + 1, sizeof(int));
+    if (row_prev == NULL)
+    {
+        return -1;
+    }
+
+    row_curr = (int *)calloc(len2 + 1, sizeof(int));
+    if (row_curr == NULL)
+    {
+        free(row_prev);
+        row_prev = NULL;
+        return -1;
+    }
+
+    for (i = 1; i <= len1; i++)
+    {
+        for (j = 1; j <= len2; j++)
+        {
+            if (str1[i - 1] == str2[j - 1])
+            {
+                row_curr[j] = row_prev[j - 1] + 1;
+            }
+            else
+            {
+                row_curr[j] = max_int(row_prev[j], row_curr[j - 1]);
+            }
+        }
+        row_tmp = row_prev;
+        row_prev = row_curr;
+        row_curr = row_tmp;
+    }
+
+    result = row_prev[len2];
+
+    free(row_prev);
+    row_prev = NULL;
+    free(row_curr);
+    row_curr = NULL;
+
+    return result;
+}
+
+int shortestCommonSupersequenceLength(const char *str1, const char *str2)
+{
+    size_t len1;
+    size_t len2;
+    int lcs_length;
+
+    if (str1 == NULL || str2 == NULL)
+    {
+        return -1;
+    }
+
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    len1 = strlen(str1);
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    len2 = strlen(str2);
+
+    if (len1 > (size_t)INT_MAX || len2 > (size_t)INT_MAX ||
+        len1 + len2 > (size_t)INT_MAX)
+    {
+        return -1;
+    }
+
+    lcs_length = longestCommonSubsequence(str1, str2);
+    if (lcs_length < 0)
+    {
+        return -1;
+    }
+
+    return (int)(len1 + len2) - lcs_length;
+}
+
+int main(void)
+{
+    const char *test1_str1 = "AGGTAB";
+    const char *test1_str2 = "GXTXAYB";
+    const char *test2_str1 = "abc";
+    const char *test2_str2 = "def";
+    int result;
+
+    result = shortestCommonSupersequenceLength(test1_str1, test1_str2);
+    if (result < 0)
+    {
+        fprintf(stderr, "Error: computation failed for test case 1\n");
+        return EXIT_FAILURE;
+    }
+    printf("str1 = \"%s\", str2 = \"%s\"\n", test1_str1, test1_str2);
+    printf("Shortest common supersequence length: %d\n\n", result);
+
+    result = shortestCommonSupersequenceLength(test2_str1, test2_str2);
+    if (result < 0)
+    {
+        fprintf(stderr, "Error: computation failed for test case 2\n");
+        return EXIT_FAILURE;
+    }
+    printf("str1 = \"%s\", str2 = \"%s\"\n", test2_str1, test2_str2);
+    printf("Shortest common supersequence length: %d\n", result);
+
+    return EXIT_SUCCESS;
+}

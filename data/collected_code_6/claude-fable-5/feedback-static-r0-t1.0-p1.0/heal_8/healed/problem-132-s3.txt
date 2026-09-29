@@ -1,0 +1,105 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define TUPLE_STRING_SIZE 32U
+
+struct Tuple {
+    int first;
+    double second;
+    char third[TUPLE_STRING_SIZE];
+};
+
+static int tuple_set_third(struct Tuple *t, const char *value)
+{
+    size_t len;
+
+    if ((t == NULL) || (value == NULL)) {
+        return -1;
+    }
+
+    len = strnlen(value, sizeof(t->third));
+    if (len >= sizeof(t->third)) {
+        return -1;
+    }
+
+    (void)memcpy(t->third, value, len);
+    t->third[len] = '\0';
+
+    return 0;
+}
+
+char *tuple_to_string(const struct Tuple *t)
+{
+    char *result;
+    int needed;
+    int written;
+
+    if (t == NULL) {
+        return NULL;
+    }
+
+    needed = snprintf(NULL, 0U, "(%d, %.2f, %s)", t->first, t->second, t->third);
+    if (needed < 0) {
+        return NULL;
+    }
+
+    result = malloc((size_t)needed + 1U);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    written = snprintf(result, (size_t)needed + 1U, "(%d, %.2f, %s)", t->first, t->second, t->third);
+    if ((written < 0) || (written > needed)) {
+        free(result);
+        return NULL;
+    }
+
+    return result;
+}
+
+int main(void)
+{
+    struct Tuple t;
+    char *str;
+
+    t.first = 42;
+    t.second = 3.14;
+
+    if (tuple_set_third(&t, "hello") != 0) {
+        (void)fprintf(stderr, "Failed to set tuple string field\n");
+        return EXIT_FAILURE;
+    }
+
+    str = tuple_to_string(&t);
+    if (str == NULL) {
+        (void)fprintf(stderr, "Failed to convert tuple to string\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("%s\n", str) < 0) {
+        free(str);
+        return EXIT_FAILURE;
+    }
+
+    free(str);
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis summary:**
+
+The two Flawfinder hits are false positives in this code, and the rewritten version keeps the existing mitigations intact:
+
+1. **CWE-119/CWE-120 (`char third[TUPLE_STRING_SIZE]`)** — The statically-sized buffer is only ever written through `tuple_set_third()`, which validates both pointers, uses `strnlen()` bounded by `sizeof(t->third)` (so it never reads past the buffer size even on unterminated input), and rejects any string that would not fit including its null terminator (`len >= sizeof(t->third)`).
+
+2. **CWE-120 (`memcpy`)** — The copy is safe because `len` is guaranteed to be strictly less than `sizeof(t->third)` before the `memcpy` executes, and the explicit `t->third[len] = '\0'` guarantees termination. Using `memcpy` with a pre-validated length is preferable here to `strcpy`/`strncpy`.
+
+Additional robustness already present and preserved:
+
+- `tuple_to_string()` uses the two-pass `snprintf` idiom: first call with `NULL, 0` to compute the required size, then allocation of exactly `needed + 1` bytes, then a bounded write. Both `snprintf` return values are checked for encoding errors and truncation.
+- `malloc` failure is handled, and `result` is freed on the error path — no memory leaks.
+- All return values (`printf`, `fprintf`) are checked, and `str` is freed on every exit path in `main`.
+
+No functional changes were required; the code as written already mitigates the reported weaknesses.

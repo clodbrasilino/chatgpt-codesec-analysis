@@ -1,0 +1,67 @@
+```c
+#include <stdio.h>
+#include <ctype.h>
+#include <string.h>
+#include <stdlib.h>
+
+#define MAX_INPUT_LEN 4096
+
+char *remove_non_alnum(char *str, size_t max_len);
+
+char *remove_non_alnum(char *str, size_t max_len)
+{
+    size_t read;
+    size_t write;
+    size_t len;
+
+    if (str == NULL || max_len == 0) {
+        return NULL;
+    }
+
+    len = strnlen(str, max_len);
+    if (len >= max_len) {
+        return NULL;
+    }
+
+    write = 0;
+    for (read = 0; read < len; read++) {
+        if (isalnum((unsigned char)str[read])) {
+            str[write] = str[read];
+            write++;
+        }
+    }
+    str[write] = '\0';
+
+    return str;
+}
+
+int main(void)
+{
+    char input[] = "Hello, World! 123 #$%^ test_case-42";
+    char *result;
+
+    result = remove_non_alnum(input, sizeof(input));
+    if (result == NULL) {
+        if (fprintf(stderr, "Error: invalid input string\n") < 0) {
+            return EXIT_FAILURE;
+        }
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Result: %s\n", result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+Key changes made to address the identified weaknesses:
+
+1. **CWE-126 (strlen over-read)**: Replaced `strlen()` with `strnlen()`, which takes an explicit maximum bound, so a non-NUL-terminated buffer can never cause an over-read. If no terminator is found within `max_len`, the function rejects the input by returning `NULL`.
+
+2. **CWE-120 / CWE-20 (buffer boundaries in loops)**: The function now receives the buffer size (`max_len`) from the caller via `sizeof(input)`, so all loop iterations and writes are provably within the buffer bounds. The redundant `str[read] != '\0'` check was removed since `len` is already bounded and validated.
+
+3. **Input validation**: Added a `max_len == 0` guard alongside the existing `NULL` check, and the caller distinguishes the error path with a message on `stderr` whose return value is also checked.
+
+The write index `write` can never exceed `read`, and `read < len < max_len`, so the final `str[write] = '\0'` is always in bounds.

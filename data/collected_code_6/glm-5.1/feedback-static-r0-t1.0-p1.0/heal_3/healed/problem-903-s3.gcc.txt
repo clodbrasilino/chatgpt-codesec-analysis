@@ -1,0 +1,11 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-903-s3.c: In function 'count_unset_bits_up_to_n':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-903-s3.c:12:17: error: 'ULLONG_MAX' undeclared (first use in this function)
+   12 |         if (p > ULLONG_MAX / 2) {
+      |                 ^~~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-903-s3.c:4:1: note: 'ULLONG_MAX' is defined in header '<limits.h>'; this is probably fixable by adding '#include <limits.h>'
+    3 | #include <errno.h>
+  +++ |+#include <limits.h>
+    4 | 
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-903-s3.c:12:17: note: each undeclared identifier is reported only once for each function it appears in
+   12 |         if (p > ULLONG_MAX / 2) {
+      |                 ^~~~~~~~~~

@@ -1,0 +1,76 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+void sift_down(int *array, size_t size, size_t index);
+void heapify(int *array, size_t size);
+
+void sift_down(int *array, size_t size, size_t index) {
+    if (!array) {
+        return;
+    }
+
+    size_t current = index;
+
+    while (1) {
+        size_t smallest = current;
+        size_t left = 2 * current + 1;
+        size_t right = 2 * current + 2;
+
+        if (left < size && array[left] < array[smallest]) {
+            smallest = left;
+        }
+
+        if (right < size && array[right] < array[smallest]) {
+            smallest = right;
+        }
+
+        if (smallest == current) {
+            break;
+        }
+
+        int temp = array[current];
+        array[current] = array[smallest];
+        array[smallest] = temp;
+
+        current = smallest;
+    }
+}
+
+void heapify(int *array, size_t size) {
+    if (!array || size == 0) {
+        return;
+    }
+
+    for (size_t i = (size / 2); i > 0; --i) {
+        sift_down(array, size, i - 1);
+    }
+}
+
+int main(void) {
+    size_t size = 10;
+    int *list = (int *)malloc(size * sizeof(int));
+
+    if (!list) {
+        return EXIT_FAILURE;
+    }
+
+    const int initial_values[] = {4, 10, 3, 5, 1, 8, 7, 2, 9, 6};
+    
+    for (size_t i = 0; i < size; ++i) {
+        list[i] = initial_values[i];
+    }
+
+    heapify(list, size);
+
+    for (size_t i = 0; i < size; ++i) {
+        printf("%d ", list[i]);
+    }
+    printf("\n");
+
+    free(list);
+    list = NULL;
+
+    return EXIT_SUCCESS;
+}
+```

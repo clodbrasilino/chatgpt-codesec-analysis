@@ -1,0 +1,105 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_WORD_LEN 4096
+
+char **remove_words(const char **words, size_t count, const char *pattern, size_t *out_count);
+void free_word_list(char **list, size_t count);
+
+char **remove_words(const char **words, size_t count, const char *pattern, size_t *out_count)
+{
+    char **result = NULL;
+    size_t kept = 0;
+    size_t i;
+
+    if (words == NULL || pattern == NULL || out_count == NULL) {
+        return NULL;
+    }
+
+    *out_count = 0;
+
+    if (count == 0) {
+        return NULL;
+    }
+
+    result = calloc(count, sizeof(char *));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    for (i = 0; i < count; i++) {
+        if (words[i] == NULL) {
+            continue;
+        }
+        if (strstr(words[i], pattern) == NULL) {
+            size_t len = strnlen(words[i], MAX_WORD_LEN);
+            char *copy = malloc(len + 1);
+            if (copy == NULL) {
+                free_word_list(result, kept);
+                return NULL;
+            }
+            memcpy(copy, words[i], len);
+            copy[len] = '\0';
+            result[kept] = copy;
+            kept++;
+        }
+    }
+
+    *out_count = kept;
+    return result;
+}
+
+void free_word_list(char **list, size_t count)
+{
+    size_t i;
+
+    if (list == NULL) {
+        return;
+    }
+    for (i = 0; i < count; i++) {
+        free(list[i]);
+    }
+    free(list);
+}
+
+int main(void)
+{
+    const char *words[] = { "apple", "banana", "cherry", "grape", "apricot" };
+    size_t count = sizeof(words) / sizeof(words[0]);
+    const char *pattern = "ap";
+    size_t result_count = 0;
+    char **filtered;
+    size_t i;
+
+    filtered = remove_words(words, count, pattern, &result_count);
+    if (filtered == NULL && result_count == 0) {
+        fprintf(stderr, "Failed to filter word list\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Words not containing \"%s\":\n", pattern);
+    for (i = 0; i < result_count; i++) {
+        printf("%s\n", filtered[i]);
+    }
+
+    free_word_list(filtered, result_count);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Summary of changes made:**
+
+1. **CWE-126 (`strlen` over-read):** Replaced `strlen` with `strnlen` bounded by `MAX_WORD_LEN`, guaranteeing the read cannot run past a sane maximum even if a string is not properly NUL-terminated.
+
+2. **CWE-120 (`memcpy` overflow):** The destination buffer is allocated as `len + 1` where `len` is the bounded length, and `memcpy` copies exactly `len` bytes followed by an explicit NUL terminator. The destination is therefore always guaranteed to hold the source data.
+
+3. **`knownConditionTrueFalse` (cppcheck):** Removed the redundant `count > 0` check in `main`, since `count` is a compile-time constant equal to 5 and the condition was always true. The error check now relies solely on the function's return value and output count.
+
+4. **Additional hardening:**
+   - `*out_count` is initialized to `0` early in `remove_words`, so callers never read an uninitialized value on failure paths.
+   - The `count == 0` case is handled explicitly, avoiding a zero-byte `malloc` whose return value is implementation-defined.
+   - Switched to `calloc` so the pointer array starts zeroed, making cleanup safe.
+   - The manual cleanup loop on allocation failure was replaced with a call to the existing `free_word_list`, removing duplicated logic.

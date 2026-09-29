@@ -1,0 +1,78 @@
+#define _POSIX_C_SOURCE 200809L
+
+#include <limits.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/types.h>
+
+int find_first_non_repeated(const char *string, unsigned char *result)
+{
+    size_t frequencies[UCHAR_MAX + 1] = {0};
+    const unsigned char *cursor;
+
+    if (string == NULL || result == NULL) {
+        return -1;
+    }
+
+    cursor = (const unsigned char *)string;
+
+    while (*cursor != '\0') {
+        ++frequencies[*cursor];
+        ++cursor;
+    }
+
+    cursor = (const unsigned char *)string;
+
+    while (*cursor != '\0') {
+        if (frequencies[*cursor] == 1) {
+            *result = *cursor;
+            return 1;
+        }
+        ++cursor;
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    char *input = NULL;
+    size_t capacity = 0;
+    ssize_t length;
+    unsigned char result;
+    int status;
+
+    length = getline(&input, &capacity, stdin);
+    if (length < 0) {
+        free(input);
+        return EXIT_FAILURE;
+    }
+
+    if (length > 0 && input[length - 1] == '\n') {
+        input[--length] = '\0';
+    }
+
+    if (length > 0 && input[length - 1] == '\r') {
+        input[length - 1] = '\0';
+    }
+
+    status = find_first_non_repeated(input, &result);
+
+    if (status < 0) {
+        free(input);
+        return EXIT_FAILURE;
+    }
+
+    if (status == 1) {
+        if (printf("%c\n", (int)result) < 0) {
+            free(input);
+            return EXIT_FAILURE;
+        }
+    } else if (puts("No non-repeated character found.") == EOF) {
+        free(input);
+        return EXIT_FAILURE;
+    }
+
+    free(input);
+    return EXIT_SUCCESS;
+}

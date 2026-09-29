@@ -1,0 +1,22 @@
+#include <stdio.h>
+
+double calculateSurfaceArea(double side) {
+    return 6 * side * side;
+}
+
+int main() {
+    double s;
+    printf("Enter the side length of the cube: ");
+    if (scanf("%lf", &s) != 1) {
+        fprintf(stderr, "Invalid input. Please enter a number.\n");
+        return 1;
+    }
+    if (s <= 0) {
+        fprintf(stderr, "Side length should be positive.\n");
+        return 1;
+    }
+
+    double surfaceArea = calculateSurfaceArea(s);
+    printf("The surface area of the cube is: %.2f\n", surfaceArea);
+    return 0;
+}

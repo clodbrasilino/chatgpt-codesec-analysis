@@ -1,0 +1,53 @@
+collected_code/problem-570-0.c: In function 'removeWords':
+collected_code/problem-570-0.c:23:24: warning: write to string literal [-Wanalyzer-write-to-string-literal]
+   23 |          strings[i][k] = '\0';
+      |          ~~~~~~~~~~~~~~^~~~~~
+  'main': events 1-2
+    |
+    |   28 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   33 |    removeWords(strings, size, characterOrString);
+    |      |    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |    |
+    |      |    (2) calling 'removeWords' from 'main'
+    |
+    +--> 'removeWords': events 3-12
+           |
+           |    4 | void removeWords(char** strings, int size, char* characterOrString) {
+           |      |      ^~~~~~~~~~~
+           |      |      |
+           |      |      (3) entry to 'removeWords'
+           |......
+           |    7 |    for (i = 0; i < size; i++) {
+           |      |                ~~~~~~~~
+           |      |                  |
+           |      |                  (4) following 'true' branch (when 'i < size')...
+           |    8 |       for (j = k = 0; strings[i][j] != '\0'; j++) {
+           |      |                ~~~~~  ~~~~~~~~~~~~~~~~~~~~~
+           |      |                  |                  |
+           |      |                  (5) ...to here     (6) following 'true' branch...
+           |    9 |          int match = 0;
+           |      |              ~~~~~
+           |      |              |
+           |      |              (7) ...to here
+           |......
+           |   12 |          while (strings[i][j] == characterOrString[match] && match < limit && strings[i][j] != '\0') {
+           |      |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                                                                            |
+           |      |                                                                            (8) following 'false' branch...
+           |......
+           |   17 |          if (match == limit) {
+           |      |             ~
+           |      |             |
+           |      |             (9) ...to here
+           |      |             (10) following 'false' branch (when 'match != limit')...
+           |......
+           |   23 |          strings[i][k] = '\0';
+           |      |          ~~~~~~~~~~~~~~~~~~~~
+           |      |                 |      |
+           |      |                 |      (12) write to string literal here
+           |      |                 (11) ...to here
+           |

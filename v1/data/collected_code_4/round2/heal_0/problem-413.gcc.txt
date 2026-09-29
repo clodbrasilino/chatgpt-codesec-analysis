@@ -1,0 +1,21 @@
+./collected_code_4/round2//heal_0/problem-413.c: In function 'extract_nth':
+./collected_code_4/round2//heal_0/problem-413.c:14:10: warning: dereference of possibly-NULL 'tmp' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   14 |     *tmp = tuples[n];
+      |     ~~~~~^~~~~~~~~~~
+  'extract_nth': events 1-4
+    |
+    |   10 |     if(n < 0 || n >= size) {
+    |      |       ^
+    |      |       |
+    |      |       (1) following 'false' branch...
+    |......
+    |   13 |     Tuple* tmp = (Tuple*)malloc(sizeof(Tuple));
+    |      |                          ~~~~~~~~~~~~~~~~~~~~~
+    |      |                          |
+    |      |                          (2) ...to here
+    |      |                          (3) this call could return NULL
+    |   14 |     *tmp = tuples[n];
+    |      |     ~~~~~~~~~~~~~~~~
+    |      |          |
+    |      |          (4) 'tmp' could be NULL: unchecked value from (3)
+    |

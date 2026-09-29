@@ -1,0 +1,40 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-966-s3.c: In function 'free_tuple_list':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-966-s3.c:47:32: error: incompatible type for argument 1 of 'free_tuple'
+   47 |         free_tuple(list->tuples[i]);
+      |                    ~~~~~~~~~~~~^~~
+      |                                |
+      |                                Tuple
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-966-s3.c:14:24: note: expected 'Tuple *' but argument is of type 'Tuple'
+   14 | void free_tuple(Tuple *tuple) {
+      |                 ~~~~~~~^~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-966-s3.c: In function 'remove_empty_tuples':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-966-s3.c:57:28: error: invalid type argument of '->' (have 'Tuple')
+   57 |         if (list->tuples[i]->length > 0) {
+      |                            ^~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-966-s3.c:60:36: error: incompatible type for argument 1 of 'free_tuple'
+   60 |             free_tuple(list->tuples[i]);
+      |                        ~~~~~~~~~~~~^~~
+      |                                    |
+      |                                    Tuple
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-966-s3.c:14:24: note: expected 'Tuple *' but argument is of type 'Tuple'
+   14 | void free_tuple(Tuple *tuple) {
+      |                 ~~~~~~~^~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-966-s3.c: In function 'main':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-966-s3.c:71:23: error: incompatible types when assigning to type 'Tuple' from type 'Tuple *'
+   71 |     list->tuples[0] = create_tuple(2);
+      |                       ^~~~~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-966-s3.c:72:23: error: incompatible types when assigning to type 'Tuple' from type 'Tuple *'
+   72 |     list->tuples[1] = create_tuple(0);
+      |                       ^~~~~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-966-s3.c:73:23: error: incompatible types when assigning to type 'Tuple' from type 'Tuple *'
+   73 |     list->tuples[2] = create_tuple(3);
+      |                       ^~~~~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-966-s3.c:74:23: error: incompatible types when assigning to type 'Tuple' from type 'Tuple *'
+   74 |     list->tuples[3] = create_tuple(0);
+      |                       ^~~~~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-966-s3.c:75:23: error: incompatible types when assigning to type 'Tuple' from type 'Tuple *'
+   75 |     list->tuples[4] = create_tuple(1);
+      |                       ^~~~~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-966-s3.c:83:63: error: invalid type argument of '->' (have 'Tuple')
+   83 |         printf("Tuple %zu: Length = %zu\n", i, list->tuples[i]->length);
+      |                                                               ^~

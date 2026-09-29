@@ -1,0 +1,7 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-12.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-12.c:4:18: style: Parameter 'row' can be declared as pointer to const [constParameterPointer]
+int row_sum(int *row, int cols) {
+                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-12.c:31:24: style: Parameter 'matrix' can be declared as pointer to const [constParameterPointer]
+void print_matrix(int *matrix, int rows, int cols) {
+                       ^

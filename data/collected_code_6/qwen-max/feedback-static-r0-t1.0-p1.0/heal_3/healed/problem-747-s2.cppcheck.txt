@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-747-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-747-s2.c:27:26: warning: Possible null pointer dereference: L [nullPointer]
+    } else if (lcsLen == L[i-1][j][k])
+                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-747-s2.c:47:68: note: Calling function 'printLCS', 13th argument 'NULL' value is 0
+    printLCS(&lcsBuf, lcsLen-1, X, m, Y, n, Z, o, lcsLen, m, n, o, NULL);
+                                                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-747-s2.c:27:26: note: Null pointer dereference
+    } else if (lcsLen == L[i-1][j][k])
+                         ^

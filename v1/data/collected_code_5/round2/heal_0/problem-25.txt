@@ -1,0 +1,33 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+
+size_t count_element(int arr[], size_t n, int ele) {
+    size_t count = 0;
+    for (size_t i = 0; i < n; i++) {
+        if (arr[i] == ele) {
+            count++;
+        }
+    }
+    return count;
+}
+
+int product_of_non_repeated(int arr[], size_t n) {
+    int product = 1;
+    for (size_t i = 0; i < n; i++) {
+        if (count_element(arr, n, arr[i]) == 1) {
+            product *= arr[i];
+        }
+    }
+    return product;
+}
+
+int main() {
+    int arr[] = {1, 2, 3, 4, 2, 5, 6, 6};
+    size_t n = sizeof(arr) / sizeof(arr[0]);
+
+    printf("Product of non-repeated elements is %d\n", product_of_non_repeated(arr, n));
+
+    return 0;
+}
+```

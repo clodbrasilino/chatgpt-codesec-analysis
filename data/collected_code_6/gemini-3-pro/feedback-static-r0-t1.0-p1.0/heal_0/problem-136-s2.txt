@@ -1,0 +1,51 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+double calculate_electricity_bill(double units) {
+    double total_bill = 0.0;
+
+    if (units < 0) {
+        return -1.0;
+    }
+
+    if (units <= 50) {
+        total_bill = units * 0.50;
+    } else if (units <= 150) {
+        total_bill = (50 * 0.50) + ((units - 50) * 0.75);
+    } else if (units <= 250) {
+        total_bill = (50 * 0.50) + (100 * 0.75) + ((units - 150) * 1.20);
+    } else {
+        total_bill = (50 * 0.50) + (100 * 0.75) + (100 * 1.20) + ((units - 250) * 1.50);
+    }
+
+    total_bill = total_bill + (total_bill * 0.20);
+
+    return total_bill;
+}
+
+int main(void) {
+    double units = 0.0;
+    double bill = 0.0;
+    int result = 0;
+
+    printf("Enter total units consumed: ");
+    result = scanf("%lf", &units);
+
+    if (result != 1) {
+        printf("Invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    bill = calculate_electricity_bill(units);
+
+    if (bill < 0) {
+        printf("Units cannot be negative.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Electricity Bill: $%.2f\n", bill);
+
+    return EXIT_SUCCESS;
+}
+```

@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-751.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-751.c:46:20: style: Condition 'is_min_heap(NULL,empty_n)' is always false [knownConditionTrueFalse]
+    if (is_min_heap(NULL, empty_n)) {
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-751.c:46:20: note: Calling function 'is_min_heap' returns 0
+    if (is_min_heap(NULL, empty_n)) {
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-751.c:46:20: note: Condition 'is_min_heap(NULL,empty_n)' is always false
+    if (is_min_heap(NULL, empty_n)) {
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-751.c:52:20: style: Condition 'is_min_heap(NULL,1)' is always false [knownConditionTrueFalse]
+    if (is_min_heap(NULL, 1)) {
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-751.c:52:20: note: Calling function 'is_min_heap' returns 0
+    if (is_min_heap(NULL, 1)) {
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-751.c:52:20: note: Condition 'is_min_heap(NULL,1)' is always false
+    if (is_min_heap(NULL, 1)) {
+                   ^

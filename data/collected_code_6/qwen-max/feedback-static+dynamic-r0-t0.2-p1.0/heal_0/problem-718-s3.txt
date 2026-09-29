@@ -1,0 +1,72 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node* next;
+} Node;
+
+Node* createNode(int data) {
+    Node* newNode = (Node*)malloc(sizeof(Node));
+    if (newNode == NULL) {
+        exit(EXIT_FAILURE);
+    }
+    newNode->data = data;
+    newNode->next = NULL;
+    return newNode;
+}
+
+void insertAtEnd(Node** head, int data) {
+    Node* newNode = createNode(data);
+    if (*head == NULL) {
+        *head = newNode;
+    } else {
+        Node* temp = *head;
+        while (temp->next != NULL) {
+            temp = temp->next;
+        }
+        temp->next = newNode;
+    }
+}
+
+Node* alternateElements(Node* head) {
+    Node* newHead = NULL;
+    Node* current = head;
+    int index = 0;
+
+    while (current != NULL) {
+        if (index % 2 == 0) {
+            insertAtEnd(&newHead, current->data);
+        }
+        current = current->next;
+        index++;
+    }
+
+    return newHead;
+}
+
+void printList(Node* head) {
+    while (head != NULL) {
+        printf("%d -> ", head->data);
+        head = head->next;
+    }
+    printf("NULL\n");
+}
+
+int main() {
+    Node* head = NULL;
+    for (int i = 1; i <= 10; i++) {
+        insertAtEnd(&head, i);
+    }
+
+    printf("Original list: ");
+    printList(head);
+
+    Node* alternateList = alternateElements(head);
+    printf("Alternate elements list: ");
+    printList(alternateList);
+
+    return 0;
+}
+```

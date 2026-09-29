@@ -1,0 +1,82 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int count;
+    char character;
+} RLE_Pair;
+
+typedef struct {
+    char* data;
+    size_t length;
+    size_t capacity;
+} StringData;
+
+StringData* decode_rle(const RLE_Pair* rle_list, size_t list_size) {
+    if (rle_list == NULL || list_size == 0) {
+        return NULL;
+    }
+
+    StringData* result = (StringData*)malloc(sizeof(StringData));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    size_t total_length = 0;
+    for (size_t i = 0; i < list_size; ++i) {
+        if (rle_list[i].count < 0) {
+            free(result);
+            return NULL;
+        }
+        total_length += (size_t)rle_list[i].count;
+    }
+
+    result->data = (char*)malloc(total_length + 1);
+    if (result->data == NULL) {
+        free(result);
+        return NULL;
+    }
+
+    result->length = total_length;
+    result->capacity = total_length + 1;
+
+    size_t current_index = 0;
+    for (size_t i = 0; i < list_size; ++i) {
+        for (int j = 0; j < rle_list[i].count; ++j) {
+            result->data[current_index++] = rle_list[i].character;
+        }
+    }
+    result->data[total_length] = '\0';
+
+    return result;
+}
+
+void free_string_data(StringData* sd) {
+    if (sd != NULL) {
+        if (sd->data != NULL) {
+            free(sd->data);
+        }
+        free(sd);
+    }
+}
+
+int main(void) {
+    RLE_Pair rle_list[] = {
+        {3, 'A'},
+        {2, 'B'},
+        {5, 'C'},
+        {1, 'D'}
+    };
+    size_t list_size = sizeof(rle_list) / sizeof(rle_list[0]);
+
+    StringData* decoded = decode_rle(rle_list, list_size);
+    
+    if (decoded != NULL) {
+        printf("%s\n", decoded->data);
+        free_string_data(decoded);
+    } else {
+        printf("Failed to decode RLE list.\n");
+    }
+
+    return 0;
+}

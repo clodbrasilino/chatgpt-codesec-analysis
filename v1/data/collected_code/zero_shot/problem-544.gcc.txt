@@ -1,0 +1,15 @@
+collected_code/problem-544-0.c: In function 'flattenTuple':
+collected_code/problem-544-0.c:7:10: warning: dereference of possibly-NULL 'str' [CWE-690] [-Wanalyzer-possible-null-dereference]
+    7 |     *str = '\0';
+      |     ~~~~~^~~~~~
+  'flattenTuple': events 1-2
+    |
+    |    6 |     char* str = malloc(size * sizeof(char));
+    |      |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                 |
+    |      |                 (1) this call could return NULL
+    |    7 |     *str = '\0';
+    |      |     ~~~~~~~~~~~  
+    |      |          |
+    |      |          (2) 'str' could be NULL: unchecked value from (1)
+    |

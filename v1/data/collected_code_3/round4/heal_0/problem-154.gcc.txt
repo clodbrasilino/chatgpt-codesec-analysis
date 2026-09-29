@@ -1,0 +1,75 @@
+collected_code_3/round4/heal_0/problem-154.c: In function 'extractElements':
+collected_code_3/round4/heal_0/problem-154.c:10:35: warning: dereference of possibly-NULL 'result' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   10 |                 result[(*size)++] = arr[i][j];
+      |                 ~~~~~~~~~~~~~~~~~~^~~~~~~~~~~
+  'extractElements': events 1-8
+    |
+    |    5 |     int* result = (int*)malloc(rows * cols * sizeof(int));
+    |      |                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                         |
+    |      |                         (1) this call could return NULL
+    |    6 |     *size = 0;
+    |    7 |     for(int i = 0; i < rows; i++) {
+    |      |                    ~~~~~~~~
+    |      |                      |
+    |      |                      (2) following 'true' branch (when 'i < rows')...
+    |    8 |         for(int j = 0; j < cols; j++) {
+    |      |                 ~      ~~~~~~~~
+    |      |                 |        |
+    |      |                 |        (4) following 'true' branch (when 'j < cols')...
+    |      |                 (3) ...to here
+    |    9 |             if((i * cols + j + 1) % k == 0) {
+    |      |               ~ ~~~~~~~~ 
+    |      |               |   |
+    |      |               |   (5) ...to here
+    |      |               (6) following 'true' branch...
+    |   10 |                 result[(*size)++] = arr[i][j];
+    |      |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                                   |    |
+    |      |                                   |    (7) ...to here
+    |      |                                   (8) 'result + (long unsigned int)*size * 4' could be NULL: unchecked value from (1)
+    |
+collected_code_3/round4/heal_0/problem-154.c: In function 'main':
+collected_code_3/round4/heal_0/problem-154.c:21:16: warning: dereference of possibly-NULL 'arr' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   21 |         arr[i] = (int*)malloc(cols * sizeof(int));
+      |         ~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  'main': events 1-4
+    |
+    |   19 |     int** arr = (int**)malloc(rows * sizeof(int*));
+    |      |                        ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                        |
+    |      |                        (1) this call could return NULL
+    |   20 |     for(int i = 0; i < rows; i++) {
+    |      |                    ~~~~~~~~
+    |      |                      |
+    |      |                      (2) following 'true' branch (when 'i < rows')...
+    |   21 |         arr[i] = (int*)malloc(cols * sizeof(int));
+    |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                |       |
+    |      |                |       (3) ...to here
+    |      |                (4) 'arr + (long unsigned int)i * 8' could be NULL: unchecked value from (1)
+    |
+collected_code_3/round4/heal_0/problem-154.c:23:23: warning: dereference of possibly-NULL '*arr_41 + _12 + (long unsigned int)j * 4' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   23 |             arr[i][j] = i * cols + j + 1;
+      |             ~~~~~~~~~~^~~~~~~~~~~~~~~~~~
+  'main': events 1-6
+    |
+    |   20 |     for(int i = 0; i < rows; i++) {
+    |      |                    ~~^~~~~~
+    |      |                      |
+    |      |                      (1) following 'true' branch (when 'i < rows')...
+    |   21 |         arr[i] = (int*)malloc(cols * sizeof(int));
+    |      |                        ~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                        |
+    |      |                        (2) ...to here
+    |      |                        (3) this call could return NULL
+    |   22 |         for(int j = 0; j < cols; j++) {
+    |      |                        ~~~~~~~~
+    |      |                          |
+    |      |                          (4) following 'true' branch (when 'j < cols')...
+    |   23 |             arr[i][j] = i * cols + j + 1;
+    |      |             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                       |   |
+    |      |                       |   (5) ...to here
+    |      |                       (6) '*arr_41 + _12 + (long unsigned int)j * 4' could be NULL: unchecked value from (3)
+    |

@@ -1,0 +1,50 @@
+{
+  "task_id": 176,
+  "text": "Write a C function to find the perimeter of a triangle.",
+  "fn_candidates": [
+    "perimeter_triangle",
+    "PerimeterTriangle",
+    "perimeterTriangle",
+    "perimetertriangle"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "perimeter_triangle",
+      "args": [
+        10,
+        20,
+        30
+      ],
+      "expected": 60,
+      "assert_src": "assert perimeter_triangle(10,20,30)==60"
+    },
+    {
+      "fn_name": "perimeter_triangle",
+      "args": [
+        3,
+        4,
+        5
+      ],
+      "expected": 12,
+      "assert_src": "assert perimeter_triangle(3,4,5)==12"
+    },
+    {
+      "fn_name": "perimeter_triangle",
+      "args": [
+        25,
+        35,
+        45
+      ],
+      "expected": 105,
+      "assert_src": "assert perimeter_triangle(25,35,45)==105"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

@@ -1,0 +1,28 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-222-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-222-s2.c:91:47: style: Condition 'result' is always false [knownConditionTrueFalse]
+    printf("empty tuple all same type: %s\n", result ? "true" : "false");
+                                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-222-s2.c:90:27: note: Calling function 'all_same_type' returns 0
+    result = all_same_type(NULL, 0);
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-222-s2.c:90:27: note: Assignment 'result=all_same_type(NULL,0)', assigned value is 0
+    result = all_same_type(NULL, 0);
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-222-s2.c:91:47: note: Condition 'result' is always false
+    printf("empty tuple all same type: %s\n", result ? "true" : "false");
+                                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-222-s2.c:94:46: style: Condition 'result' is always false [knownConditionTrueFalse]
+    printf("NULL tuple all same type: %s\n", result ? "true" : "false");
+                                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-222-s2.c:93:27: note: Calling function 'all_same_type' returns 0
+    result = all_same_type(NULL, 5);
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-222-s2.c:93:27: note: Assignment 'result=all_same_type(NULL,5)', assigned value is 0
+    result = all_same_type(NULL, 5);
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-222-s2.c:94:46: note: Condition 'result' is always false
+    printf("NULL tuple all same type: %s\n", result ? "true" : "false");
+                                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-222-s2.c:21:7: style: struct member 'TupleElement::value' is never used. [unusedStructMember]
+    } value;
+      ^

@@ -1,0 +1,42 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+long long binomial_coefficient(int n, int k) {
+    if (k < 0 || k > n) {
+        return 0;
+    }
+    if (k == 0 || k == n) {
+        return 1;
+    }
+    if (k > n / 2) {
+        k = n - k;
+    }
+    long long res = 1;
+    for (int i = 1; i <= k; i++) {
+        res = res * (n - i + 1);
+        res = res / i;
+    }
+    return res;
+}
+
+long long lobb_number(int n, int m) {
+    if (n < m || m < 0) {
+        return 0;
+    }
+    long long coeff1 = binomial_coefficient(2 * n, n + m);
+    long long result = ((2 * m + 1) * coeff1) / (n + m + 1);
+    return result;
+}
+
+int main(void) {
+    int n = 5;
+    int m = 3;
+    
+    long long result = lobb_number(n, m);
+    
+    printf("Lm,n (%d, %d) = %lld\n", n, m, result);
+    
+    return 0;
+}
+```

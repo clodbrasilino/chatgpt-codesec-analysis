@@ -1,0 +1,143 @@
+```c
+#include <stddef.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int x;
+    int y;
+} Tuple;
+
+typedef struct {
+    Tuple tuple;
+    int count;
+} TupleFrequency;
+
+static int compare_tuples(const void *a, const void *b) {
+    const Tuple *ta = (const Tuple *)a;
+    const Tuple *tb = (const Tuple *)b;
+
+    if (ta->x < tb->x) {
+        return -1;
+    }
+    if (ta->x > tb->x) {
+        return 1;
+    }
+    if (ta->y < tb->y) {
+        return -1;
+    }
+    if (ta->y > tb->y) {
+        return 1;
+    }
+    return 0;
+}
+
+int extract_tuple_frequencies(const Tuple *input, size_t n, TupleFrequency **output, size_t *output_count) {
+    if (input == NULL || output == NULL || output_count == NULL) {
+        return 0;
+    }
+
+    *output = NULL;
+    *output_count = 0;
+
+    if (n == 0) {
+        return 1;
+    }
+
+    Tuple *canonical = malloc(n * sizeof(*canonical));
+    if (canonical == NULL) {
+        return 0;
+    }
+
+    for (size_t i = 0; i < n; ++i) {
+        int a = input[i].x;
+        int b = input[i].y;
+
+        if (a > b) {
+            int temp = a;
+            a = b;
+            b = temp;
+        }
+
+        canonical[i].x = a;
+        canonical[i].y = b;
+    }
+
+    qsort(canonical, n, sizeof(*canonical), compare_tuples);
+
+    Tuple *unique_tuples = NULL;
+    int *counts = NULL;
+
+    unique_tuples = malloc(n * sizeof(*unique_tuples));
+    counts = malloc(n * sizeof(*counts));
+
+    if (unique_tuples == NULL || counts == NULL) {
+        free(canonical);
+        free(unique_tuples);
+        free(counts);
+        return 0;
+    }
+
+    size_t unique_count = 0;
+
+    for (size_t i = 0; i < n; ) {
+        Tuple current = canonical[i];
+        int count = 0;
+
+        while (i < n && canonical[i].x == current.x && canonical[i].y == current.y) {
+            ++count;
+            ++i;
+        }
+
+        unique_tuples[unique_count] = current;
+        counts[unique_count] = count;
+        ++unique_count;
+    }
+
+    TupleFrequency *result = malloc(unique_count * sizeof(*result));
+    if (result == NULL) {
+        free(canonical);
+        free(unique_tuples);
+        free(counts);
+        return 0;
+    }
+
+    for (size_t i = 0; i < unique_count; ++i) {
+        result[i].tuple = unique_tuples[i];
+        result[i].count = counts[i];
+    }
+
+    free(canonical);
+    free(unique_tuples);
+    free(counts);
+
+    *output = result;
+    *output_count = unique_count;
+    return 1;
+}
+
+int main(void) {
+    Tuple input[] = {
+        {3, 1},
+        {2, 4},
+        {1, 3},
+        {4, 2},
+        {5, 6}
+    };
+
+    size_t n = sizeof(input) / sizeof(input[0]);
+    TupleFrequency *freq = NULL;
+    size_t freq_count = 0;
+
+    if (!extract_tuple_frequencies(input, n, &freq, &freq_count)) {
+        return EXIT_FAILURE;
+    }
+
+    for (size_t i = 0; i < freq_count; ++i) {
+        printf("(%d, %d): %d\n", freq[i].tuple.x, freq[i].tuple.y, freq[i].count);
+    }
+
+    free(freq);
+    return EXIT_SUCCESS;
+}
+```

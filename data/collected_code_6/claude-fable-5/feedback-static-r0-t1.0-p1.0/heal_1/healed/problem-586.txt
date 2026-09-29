@@ -1,0 +1,78 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <limits.h>
+
+int split_and_rotate(int *arr, size_t n, size_t k)
+{
+    int *temp;
+    size_t head_bytes;
+    size_t tail_bytes;
+
+    if (arr == NULL || n == 0) {
+        return -1;
+    }
+
+    if (n > SIZE_MAX / sizeof(int)) {
+        return -1;
+    }
+
+    k = k % n;
+    if (k == 0) {
+        return 0;
+    }
+
+    head_bytes = k * sizeof(int);
+    tail_bytes = (n - k) * sizeof(int);
+
+    temp = malloc(head_bytes);
+    if (temp == NULL) {
+        return -1;
+    }
+
+    memcpy(temp, arr, head_bytes);
+    memmove(arr, arr + k, tail_bytes);
+    memcpy(arr + (n - k), temp, head_bytes);
+
+    free(temp);
+    return 0;
+}
+
+int main(void)
+{
+    int arr[] = {12, 10, 5, 6, 52, 36};
+    size_t n = sizeof(arr) / sizeof(arr[0]);
+    size_t k = 2;
+    size_t i;
+
+    if (split_and_rotate(arr, n, k) != 0) {
+        fprintf(stderr, "Error: rotation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i < n; i++) {
+        if (printf("%d ", arr[i]) < 0) {
+            return EXIT_FAILURE;
+        }
+    }
+
+    if (printf("\n") < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+Analysis of the changes made:
+
+**Addressing the flagged weaknesses (CWE-120):**
+
+1. **First `memcpy(temp, arr, k * sizeof(int))`** — The flawfinder warning is largely a false positive here, since `temp` is allocated with exactly `k * sizeof(int)` bytes. However, the latent risk was integer overflow in the size calculation: if `n` (and thus `k` after the modulo) were large enough, `k * sizeof(int)` could wrap around, causing `malloc` to allocate a smaller buffer than the copy requires. The fix adds an explicit guard (`n > SIZE_MAX / sizeof(int)`) before any arithmetic, guaranteeing that `k * sizeof(int)` and `(n - k) * sizeof(int)` cannot overflow. This requires `<limits.h>`/`SIZE_MAX` (available via `<stdint.h>` on some toolchains; adjust the include if needed).
+
+2. **Second `memcpy(arr + (n - k), temp, k * sizeof(int))`** — The destination has room for exactly `k` elements because `k < n` is guaranteed by `k = k % n` combined with the `k == 0` early return. With the overflow guard in place, the byte counts are now provably correct, so the copy cannot overrun the caller's buffer as long as the caller honors the contract that `arr` holds `n` elements.
+
+3. **Size computations hoisted into named variables** (`head_bytes`, `tail_bytes`) so the allocation size and copy sizes come from the same computed value, eliminating any chance of them diverging during future maintenance.
+
+The remaining responsibility — that `arr` genuinely points to `n` valid `int`s — is an API contract that cannot be verified inside the function in C; the `NULL` and `n == 0` checks cover what is checkable.

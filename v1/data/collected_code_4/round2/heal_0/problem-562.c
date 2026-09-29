@@ -1,0 +1,32 @@
+#include <stdio.h>
+
+int maxLengthSublist(int *arr, int length) {
+    if(arr == NULL || length < 1) {
+        return 0;
+    }
+    
+    int maxSublistLength = 1, currentLength = 1;
+
+    for(int i = 1; i < length; i++) {
+        if (arr[i] > arr[i-1])
+            currentLength++;
+        else {
+            if(currentLength > maxSublistLength) {
+                maxSublistLength = currentLength;
+            }
+            currentLength = 1;
+        }
+    }
+
+    if(currentLength > maxSublistLength)
+        maxSublistLength = currentLength;
+
+    return maxSublistLength;
+}
+
+int main() {
+    int arr[] = {10, 20, 30, 40, 50};
+    int length = sizeof(arr)/sizeof(arr[0]);
+    printf("The length of longest sublist in increasing order is %d", maxLengthSublist(arr, length));
+    return 0;
+}

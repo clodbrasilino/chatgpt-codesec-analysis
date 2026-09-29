@@ -1,0 +1,108 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+typedef struct Node {
+    int data;
+    struct Node* next;
+} Node;
+
+Node* createNode(int data) {
+    Node* newNode = (Node*)malloc(sizeof(Node));
+    if (newNode == NULL) {
+        exit(EXIT_FAILURE);
+    }
+    newNode->data = data;
+    newNode->next = NULL;
+    return newNode;
+}
+
+void appendNode(Node** head, int data) {
+    if (head == NULL) {
+        return;
+    }
+    Node* newNode = createNode(data);
+    if (*head == NULL) {
+        *head = newNode;
+        return;
+    }
+    Node* temp = *head;
+    while (temp->next != NULL) {
+        temp = temp->next;
+    }
+    temp->next = newNode;
+}
+
+void freeList(Node* head) {
+    /* Possible weaknesses found:
+     *  The scope of the variable 'temp' can be reduced. [variableScope]
+     */
+    Node* temp;
+    while (head != NULL) {
+        temp = head;
+        head = head->next;
+        free(temp);
+    }
+}
+
+bool containsSublist(Node* list, Node* sublist) {
+    if (sublist == NULL) {
+        return true;
+    }
+    if (list == NULL) {
+        return false;
+    }
+
+    /* Possible weaknesses found:
+     *  Variable 'ptr1' is assigned a value that is never used. [unreadVariable]
+     */
+    Node* ptr1 = list;
+    /* Possible weaknesses found:
+     *  Variable 'ptr2' is assigned a value that is never used. [unreadVariable]
+     */
+    Node* ptr2 = sublist;
+    Node* list_start = list;
+
+    while (list_start != NULL) {
+        ptr1 = list_start;
+        ptr2 = sublist;
+
+        while (ptr1 != NULL && ptr2 != NULL && ptr1->data == ptr2->data) {
+            ptr1 = ptr1->next;
+            ptr2 = ptr2->next;
+        }
+
+        if (ptr2 == NULL) {
+            return true;
+        }
+
+        list_start = list_start->next;
+    }
+
+    return false;
+}
+
+int main(void) {
+    Node* list = NULL;
+    Node* sublist = NULL;
+
+    appendNode(&list, 1);
+    appendNode(&list, 2);
+    appendNode(&list, 3);
+    appendNode(&list, 4);
+    appendNode(&list, 5);
+
+    appendNode(&sublist, 3);
+    appendNode(&sublist, 4);
+
+    if (containsSublist(list, sublist)) {
+        printf("Yes\n");
+    } else {
+        printf("No\n");
+    }
+
+    freeList(list);
+    freeList(sublist);
+
+    return 0;
+}

@@ -1,0 +1,6 @@
+collected_code/problem-49-0.c:9:23: error: Cannot determine that 'arr[i][j]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+            if (arr[i][j] == extract_value) {
+                      ^
+collected_code/problem-49-0.c:10:37: error: Cannot determine that 'arr[i][0]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+                printf("%d ", arr[i][0]);
+                                    ^

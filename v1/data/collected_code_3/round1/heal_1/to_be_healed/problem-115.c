@@ -1,0 +1,52 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Dictionary {
+    int *keys;
+    int *values;
+    int size;
+};
+
+int isEmpty(struct Dictionary *dict) {
+    return dict->size == 0;
+}
+
+int areAllDictionariesEmpty(struct Dictionary **dictList, int listSize) {
+    for(int i = 0; i < listSize; i++) {
+        if(!isEmpty(dictList[i])) {
+            return 0;
+        }
+    }
+    return 1;
+}
+
+int main() {
+    struct Dictionary *dict1 = malloc(sizeof(struct Dictionary));
+    /* Possible weaknesses found:
+     *  dereference of possibly-NULL 'dict1' [CWE-690] [-Wanalyzer-possible-null-dereference]
+     */
+    dict1->keys = NULL;
+    dict1->values = NULL;
+    dict1->size = 0;
+
+    struct Dictionary *dict2 = malloc(sizeof(struct Dictionary));
+    /* Possible weaknesses found:
+     *  dereference of possibly-NULL 'dict2' [CWE-690] [-Wanalyzer-possible-null-dereference]
+     */
+    dict2->keys = NULL;
+    dict2->values = NULL;
+    dict2->size = 0;
+
+    struct Dictionary *dictList[2] = {dict1, dict2};
+
+    if(areAllDictionariesEmpty(dictList, 2)) {
+        printf("All dictionaries are empty\n");
+    } else {
+        printf("Not all dictionaries are empty\n");
+    }
+
+    free(dict1);
+    free(dict2);
+
+    return 0;
+}

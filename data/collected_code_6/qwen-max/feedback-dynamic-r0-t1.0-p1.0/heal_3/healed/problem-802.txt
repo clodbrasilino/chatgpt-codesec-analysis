@@ -1,0 +1,25 @@
+```c
+#include <stdio.h>
+#include <limits.h>
+
+int countRotations(int arr[], int n) {
+    int min_index = 0;
+    for (int i = 1; i < n; i++) {
+        if (arr[i] < arr[min_index]) {
+            min_index = i;
+        }
+    }
+    if (min_index > 0 && arr[min_index - 1] > arr[min_index]) {
+        return min_index;
+    }
+    return 0;
+}
+
+int main() {
+    int arr[] = {15, 18, 2, 3, 6, 12};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    int rotations = countRotations(arr, n);
+    printf("Number of rotations: %d\n", rotations);
+    return 0;
+}
+```

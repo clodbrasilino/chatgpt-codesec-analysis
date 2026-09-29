@@ -1,0 +1,50 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+void extractElements(int **arr, int rows, int cols, int n) {
+    if(arr == NULL || rows <= 0 || cols <= 0 || n < 0 ){
+        printf("Invalid input\n");
+        return;
+    }
+    for(int i = 0; i < rows; i++) {
+        for(int j = 0; j < cols; j++) {
+            if(i % n == 0 && j % n == 0) {
+                printf("%d ", arr[i][j]);
+            }
+        }
+    }
+    printf("\n");
+}
+
+int main() {
+    int rows = 3, cols = 3, n = 2;
+    int **arr = (int **)malloc(rows * sizeof(int *));
+    if(arr == NULL) {
+        printf("Memory allocation failed\n");
+        return -1;
+    }
+    for(int i = 0; i < rows; i++) {
+        arr[i] = (int *)malloc(cols * sizeof(int));
+        if(arr[i] == NULL) {
+            printf("Memory allocation failed\n");
+            return -1;
+        }
+    }
+  
+    int count = 1;
+    for(int i = 0; i < rows; i++) {
+        for(int j = 0; j < cols; j++) {
+            arr[i][j] = count++;
+        }
+    }
+  
+    extractElements(arr, rows, cols, n);
+    
+    for(int i = 0; i < rows; i++) {
+        free(arr[i]);
+    }
+    free(arr);
+    return 0;
+}
+```

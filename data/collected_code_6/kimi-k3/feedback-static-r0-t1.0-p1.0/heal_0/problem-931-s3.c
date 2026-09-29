@@ -1,0 +1,50 @@
+#include <stdio.h>
+#include <limits.h>
+#include <errno.h>
+
+long long sum_of_cubes(int n) {
+    if (n < 1) {
+        return 0;
+    }
+    long long sum = 0;
+    for (int i = 1; i <= n; i++) {
+        long long cube = (long long)i * i * i;
+        if (LLONG_MAX - sum < cube) {
+            return -1;
+        }
+        sum += cube;
+    }
+    return sum;
+}
+
+int main(void) {
+    int n;
+    long long result;
+    
+    if (printf("Enter a positive integer: ") < 0) {
+        return 1;
+    }
+    
+    if (scanf("%d", &n) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return 1;
+    }
+    
+    if (n < 1) {
+        fprintf(stderr, "Number must be positive\n");
+        return 1;
+    }
+    
+    result = sum_of_cubes(n);
+    
+    if (result == -1) {
+        fprintf(stderr, "Overflow occurred\n");
+        return 1;
+    }
+    
+    if (printf("Sum of cubes from 1 to %d is: %lld\n", n, result) < 0) {
+        return 1;
+    }
+    
+    return 0;
+}

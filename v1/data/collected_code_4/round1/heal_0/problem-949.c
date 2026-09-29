@@ -1,0 +1,48 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int a;
+    int b;
+} tuple;
+
+int get_digit_count(int num) {
+    int count = 0;
+    while (num != 0) {
+        num /= 10;
+        ++count;
+    }
+    return count;
+}
+
+int compare_tuples(const void *a, const void *b) {
+    tuple *tuple_a = (tuple *)a;
+    tuple *tuple_b = (tuple *)b;
+    int digit_count_a = get_digit_count(tuple_a->a) + get_digit_count(tuple_a->b);
+    int digit_count_b = get_digit_count(tuple_b->a) + get_digit_count(tuple_b->b);
+    return digit_count_a - digit_count_b;
+}
+
+void sort_tuples(tuple *arr, size_t arr_size) {
+    if (arr != NULL && arr_size > 0) {
+        qsort(arr, arr_size, sizeof(tuple), compare_tuples);
+    }
+}
+
+int main() {
+    tuple arr[] = {
+        {111, 222},
+        {1, 0},
+        {333, 88},
+        {44, 77}
+    };
+    size_t arr_size = sizeof(arr) / sizeof(tuple);
+
+    sort_tuples(arr, arr_size);
+
+    for (size_t i = 0; i < arr_size; ++i) {
+        printf("(%d, %d)\n", arr[i].a, arr[i].b);
+    }
+
+    return 0;
+}

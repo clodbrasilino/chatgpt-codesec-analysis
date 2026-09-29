@@ -1,0 +1,43 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <stdlib.h>
+
+bool check_tuple_elements(const int *first, const int *second, size_t size)
+{
+    size_t i;
+    
+    if (first == NULL || second == NULL) {
+        return false;
+    }
+    
+    for (i = 0; i < size; i++) {
+        if (second[i] >= first[i]) {
+            return false;
+        }
+    }
+    
+    return true;
+}
+
+int main(void)
+{
+    int first[] = {5, 10, 15, 20, 25};
+    int second[] = {3, 8, 12, 18, 22};
+    size_t size = sizeof(first) / sizeof(first[0]);
+    bool result;
+    
+    if (sizeof(second) / sizeof(second[0]) != size) {
+        fprintf(stderr, "Array size mismatch\n");
+        return EXIT_FAILURE;
+    }
+    
+    result = check_tuple_elements(first, second, size);
+    
+    if (result) {
+        printf("All elements in second tuple are smaller than corresponding elements in first tuple\n");
+    } else {
+        printf("Not all elements in second tuple are smaller\n");
+    }
+    
+    return EXIT_SUCCESS;
+}

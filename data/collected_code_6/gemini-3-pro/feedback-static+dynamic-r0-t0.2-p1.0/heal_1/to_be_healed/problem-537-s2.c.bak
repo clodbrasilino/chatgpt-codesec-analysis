@@ -1,0 +1,86 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#define MAX_WORDS 1000
+#define MAX_WORD_LEN 100
+ /* Possible weaknesses found:
+  *  test case 1 failed: expected 'None', got (null)
+  */
+
+char* find_first_repeated_word(const char* str) {
+    if (str == NULL) {
+        return NULL;
+    }
+
+    char** words = (char**)malloc(MAX_WORDS * sizeof(char*));
+    if (words == NULL) {
+        return NULL;
+    }
+
+    int word_count = 0;
+    const char* p = str;
+    char buffer[MAX_WORD_LEN];
+    int buf_idx = 0;
+    char* result = NULL;
+
+    while (*p != '\0') {
+        if (isalpha((unsigned char)*p)) {
+            if (buf_idx < MAX_WORD_LEN - 1) {
+                buffer[buf_idx++] = tolower((unsigned char)*p);
+            }
+        } else if (buf_idx > 0) {
+            buffer[buf_idx] = '\0';
+            
+            for (int i = 0; i < word_count; i++) {
+                if (strcmp(words[i], buffer) == 0) {
+                    result = strdup(buffer);
+                    goto cleanup;
+                }
+            }
+
+            if (word_count < MAX_WORDS) {
+                words[word_count] = strdup(buffer);
+                if (words[word_count] == NULL) {
+                    goto cleanup;
+                }
+                word_count++;
+            }
+            buf_idx = 0;
+        }
+        p++;
+    }
+
+    if (buf_idx > 0) {
+        buffer[buf_idx] = '\0';
+        for (int i = 0; i < word_count; i++) {
+            if (strcmp(words[i], buffer) == 0) {
+                result = strdup(buffer);
+                goto cleanup;
+            }
+        }
+    }
+
+cleanup:
+    for (int i = 0; i < word_count; i++) {
+        free(words[i]);
+    }
+    free(words);
+
+    return result;
+}
+
+int main(void) {
+    const char* test_str = "This is a test string and this is another test.";
+    char* repeated_word = find_first_repeated_word(test_str);
+
+    if (repeated_word != NULL) {
+        printf("First repeated word: %s\n", repeated_word);
+        free(repeated_word);
+    } else {
+        printf("No repeated word found.\n");
+    }
+
+    return 0;
+}

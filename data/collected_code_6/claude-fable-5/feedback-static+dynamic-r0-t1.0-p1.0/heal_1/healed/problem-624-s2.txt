@@ -1,0 +1,64 @@
+```c
+#include <stdio.h>
+#include <ctype.h>
+#include <string.h>
+#include <stdlib.h>
+
+#define MAX_INPUT_LEN 256
+
+char *string_to_upper(char *str, size_t max_len)
+{
+    size_t i;
+    size_t len;
+
+    if (str == NULL) {
+        return NULL;
+    }
+
+    len = strnlen(str, max_len);
+    if (len == max_len) {
+        return NULL;
+    }
+
+    for (i = 0; i < len; i++) {
+        str[i] = (char)toupper((unsigned char)str[i]);
+    }
+
+    return str;
+}
+
+int main(void)
+{
+    char buffer[MAX_INPUT_LEN];
+    char *result;
+
+    printf("Enter a string: ");
+    fflush(stdout);
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+    buffer[strcspn(buffer, "\n")] = '\0';
+
+    result = string_to_upper(buffer, sizeof(buffer));
+    if (result == NULL) {
+        fprintf(stderr, "Conversion failed\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Uppercase: %s\n", result);
+
+    return EXIT_SUCCESS;
+}
+```
+
+Key changes made to address the identified weaknesses:
+
+1. **CWE-126 (strlen over-read)**: Replaced `strlen` with `strnlen`, which takes a maximum length bound. The function now receives the buffer size as a parameter, so it can never read past the end of the buffer even if the string is not null-terminated. If no terminator is found within the bound, the function fails safely by returning `NULL`.
+
+2. **CWE-119/CWE-120 (statically-sized array)**: The buffer size is defined once via `MAX_INPUT_LEN` and consistently referenced with `sizeof(buffer)`, ensuring `fgets` and `string_to_upper` are always bounded by the actual allocation. An explicit null terminator is written at the last position as a defensive guarantee before any string operations.
+
+3. **Defensive additions**: `fflush(stdout)` ensures the prompt appears before blocking on input, since the prompt lacks a newline and stdout may be line-buffered.

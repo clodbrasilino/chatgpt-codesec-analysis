@@ -1,0 +1,106 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    int key;
+    int *values;
+    size_t value_count;
+} Tuple;
+
+void join_tuples(Tuple *input, size_t input_size, Tuple **output, size_t *output_size) {
+    if (input == NULL || output == NULL || output_size == NULL || input_size == 0) {
+        if (output_size != NULL) *output_size = 0;
+        *output = NULL;
+        return;
+    }
+
+    Tuple *result = malloc(input_size * sizeof(Tuple));
+    if (result == NULL) {
+        *output = NULL;
+        *output_size = 0;
+        return;
+    }
+
+    size_t res_size = 0;
+
+    for (size_t i = 0; i < input_size; i++) {
+        int found = 0;
+        for (size_t j = 0; j < res_size; j++) {
+            if (result[j].key == input[i].key) {
+                size_t new_count = result[j].value_count + input[i].value_count;
+                int *new_values = realloc(result[j].values, new_count * sizeof(int));
+                if (new_values == NULL) {
+                    for (size_t k = 0; k < res_size; k++) {
+                        free(result[k].values);
+                    }
+                    free(result);
+                    *output = NULL;
+                    *output_size = 0;
+                    return;
+                }
+                memcpy(new_values + result[j].value_count, input[i].values, input[i].value_count * sizeof(int));
+                result[j].values = new_values;
+                result[j].value_count = new_count;
+                found = 1;
+                break;
+            }
+        }
+        if (!found) {
+            result[res_size].key = input[i].key;
+            result[res_size].value_count = input[i].value_count;
+            result[res_size].values = malloc(input[i].value_count * sizeof(int));
+            if (result[res_size].values == NULL) {
+                for (size_t k = 0; k < res_size; k++) {
+                    free(result[k].values);
+                }
+                free(result);
+                *output = NULL;
+                *output_size = 0;
+                return;
+            }
+            memcpy(result[res_size].values, input[i].values, input[i].value_count * sizeof(int));
+            res_size++;
+        }
+    }
+
+    *output = result;
+    *output_size = res_size;
+}
+
+void print_and_free_tuples(Tuple *tuples, size_t size) {
+    if (tuples == NULL) return;
+    for (size_t i = 0; i < size; i++) {
+        printf("Key: %d, Values: [", tuples[i].key);
+        for (size_t j = 0; j < tuples[i].value_count; j++) {
+            printf("%d%s", tuples[i].values[j], (j < tuples[i].value_count - 1) ? ", " : "");
+        }
+        printf("]\n");
+        free(tuples[i].values);
+    }
+    free(tuples);
+}
+
+int main(void) {
+    int v1[] = {1, 2};
+    int v2[] = {3};
+    int v3[] = {4, 5, 6};
+    
+    Tuple input[] = {
+        {1, v1, 2},
+        {2, v2, 1},
+        {1, v3, 3}
+    };
+    
+    size_t input_size = sizeof(input) / sizeof(input[0]);
+    Tuple *output = NULL;
+    size_t output_size = 0;
+
+    join_tuples(input, input_size, &output, &output_size);
+
+    if (output != NULL) {
+        print_and_free_tuples(output, output_size);
+    }
+
+    return 0;
+}

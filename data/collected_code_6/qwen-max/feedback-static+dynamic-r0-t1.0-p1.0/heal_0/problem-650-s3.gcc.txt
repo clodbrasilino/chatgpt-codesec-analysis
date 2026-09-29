@@ -1,0 +1,15 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-650-s3.c:4:71: error: unknown type name 'size_t'
+    4 | bool are_arrays_equal(const uint32_t *array1, const uint32_t *array2, size_t length) {
+      |                                                                       ^~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-650-s3.c:3:1: note: 'size_t' is defined in header '<stddef.h>'; this is probably fixable by adding '#include <stddef.h>'
+    2 | #include <stdint.h>
+  +++ |+#include <stddef.h>
+    3 | 
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-650-s3.c: In function 'main':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-650-s3.c:16:5: error: unknown type name 'size_t'
+   16 |     size_t length = sizeof(array1) / sizeof(array1[0]);
+      |     ^~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-650-s3.c:16:5: note: 'size_t' is defined in header '<stddef.h>'; this is probably fixable by adding '#include <stddef.h>'
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-650-s3.c:18:19: error: implicit declaration of function 'are_arrays_equal' [-Wimplicit-function-declaration]
+   18 |     bool result = are_arrays_equal(array1, array2, length);
+      |                   ^~~~~~~~~~~~~~~~

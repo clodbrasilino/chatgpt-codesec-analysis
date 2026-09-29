@@ -1,0 +1,34 @@
+#include <stdio.h>
+
+/* Possible weaknesses found:
+ *  Parameter 'arr' can be declared as const array [constParameter]
+ */
+int findEquilibriumIndex(int arr[], int n) {
+    int total_sum = 0;
+    for (int i = 0; i < n; i++) {
+        total_sum += arr[i];
+    }
+
+    int left_sum = 0;
+    for (int i = 0; i < n; i++) {
+        total_sum -= arr[i];
+        if (left_sum == total_sum) {
+            return i;
+        }
+        left_sum += arr[i];
+    }
+
+    return -1;
+}
+
+int main() {
+    int arr[] = { -7, 1, 5, 2, -4, 3, 0 };
+    int n = sizeof(arr) / sizeof(arr[0]);
+    int index = findEquilibriumIndex(arr, n);
+    if (index != -1) {
+        printf("Equilibrium index is %d\n", index);
+    } else {
+        printf("No equilibrium index found\n");
+    }
+    return 0;
+}

@@ -1,0 +1,83 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int** remove_column(int** matrix, int rows, int* cols, int col_to_remove) {
+    if (matrix == NULL || cols == NULL || rows <= 0 || *cols <= 0) {
+        return NULL;
+    }
+    if (col_to_remove < 0 || col_to_remove >= *cols) {
+        return matrix;
+    }
+    int new_col_count = *cols - 1;
+    if (new_col_count == 0) {
+        for (int i = 0; i < rows; i++) {
+            free(matrix[i]);
+            matrix[i] = NULL;
+        }
+    } else {
+        for (int i = 0; i < rows; i++) {
+            if (matrix[i] == NULL) {
+                continue;
+            }
+            for (int j = col_to_remove; j < new_col_count; j++) {
+                matrix[i][j] = matrix[i][j + 1];
+            }
+            int* temp = realloc(matrix[i], new_col_count * sizeof(int));
+            if (temp != NULL) {
+                matrix[i] = temp;
+            }
+        }
+    }
+    *cols = new_col_count;
+    return matrix;
+}
+
+void free_matrix(int** matrix, int rows) {
+    if (matrix == NULL) {
+        return;
+    }
+    for (int i = 0; i < rows; i++) {
+        if (matrix[i] != NULL) {
+            free(matrix[i]);
+        }
+    }
+    free(matrix);
+}
+
+int main(void) {
+    int rows = 3;
+    int cols = 4;
+    int** matrix = malloc(rows * sizeof(int*));
+    if (matrix == NULL) {
+        return 1;
+    }
+    for (int i = 0; i < rows; i++) {
+        matrix[i] = malloc(cols * sizeof(int));
+        if (matrix[i] == NULL) {
+            for (int j = 0; j < i; j++) {
+                free(matrix[j]);
+            }
+            free(matrix);
+            return 1;
+        }
+        for (int j = 0; j < cols; j++) {
+            matrix[i][j] = i * cols + j;
+        }
+    }
+
+    matrix = remove_column(matrix, rows, &cols, 2);
+
+    if (matrix != NULL) {
+        for (int i = 0; i < rows; i++) {
+            if (matrix[i] != NULL) {
+                for (int j = 0; j < cols; j++) {
+                    printf("%d ", matrix[i][j]);
+                }
+            }
+            printf("\n");
+        }
+    }
+
+    free_matrix(matrix, rows);
+    return 0;
+}

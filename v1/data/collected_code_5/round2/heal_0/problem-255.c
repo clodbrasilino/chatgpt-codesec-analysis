@@ -1,0 +1,35 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+void getColorCombinations(int colors[], int index, int n, int r);
+
+char* colors[] = {"Red", "Green", "Blue"};
+
+int main() {
+    int n = 3;
+    int r = 2;
+    int* colors = (int*)calloc(r, sizeof(int));
+    if(!colors){
+        printf("Memory allocation failed\n");
+        return 0;
+    }
+
+    getColorCombinations(colors, 0, n, r);
+    free(colors);
+    return 0;
+}
+
+void getColorCombinations(int colors[], int index, int n, int r) {
+    if (index == r) {
+        for (int i = 0; i < r; i++) {
+            printf("%s ", ::colors[colors[i]]);
+        }
+        printf("\n");
+        return;
+    }
+
+    for (int i = 0; i < n; i++) {
+        colors[index] = i;
+        getColorCombinations(colors, index + 1, n, r);
+    }
+}

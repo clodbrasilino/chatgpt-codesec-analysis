@@ -1,0 +1,152 @@
+./collected_code_4/round2//heal_1/healed/problem-920.c: In function 'removeNoneValuesTuples':
+./collected_code_4/round2//heal_1/healed/problem-920.c:55:5: warning: leak of '<unknown>' [CWE-401] [-Wanalyzer-malloc-leak]
+   55 |     free(list->tuples);
+      |     ^~~~~~~~~~~~~~~~~~
+  'main': events 1-36
+    |
+    |   60 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |   61 |     TupleList* list = malloc(sizeof(TupleList));
+    |   62 |     if (!list) return 1;
+    |      |        ~
+    |      |        |
+    |      |        (2) following 'false' branch (when 'list' is non-NULL)...
+    |   63 |     list->size = 3;
+    |      |     ~~~~~~~~~~~~~~
+    |      |                |
+    |      |                (3) ...to here
+    |......
+    |   66 |     if (!list->tuples) {
+    |      |        ~
+    |      |        |
+    |      |        (4) following 'false' branch...
+    |......
+    |   71 |     for(int i = 0; i < list->size; i++) {
+    |      |             ~      ~~~~~~~~~~~~~~  ~~~
+    |      |             |        |              |
+    |      |             |        |              (33) ...to here
+    |      |             |        (6) following 'true' branch...
+    |      |             |        (14) following 'true' branch...
+    |      |             |        (24) following 'true' branch...
+    |      |             |        (34) following 'false' branch...
+    |      |             (5) ...to here
+    |   72 |        list->tuples[i].values = malloc(sizeof(int) * 3);
+    |      |        ~~~~~~~~~~~~             ~~~~~~~~~~~~~~~~~~~~~~~
+    |      |            |                    |
+    |      |            (7) ...to here       (16) allocated here
+    |      |            (15) ...to here
+    |      |            (25) ...to here
+    |   73 |        if (!list->tuples[i].values) {
+    |      |           ~
+    |      |           |
+    |      |           (8) following 'false' branch...
+    |      |           (17) assuming '<unknown>' is non-NULL
+    |      |           (18) following 'false' branch...
+    |      |           (26) following 'false' branch...
+    |......
+    |   80 |        list->tuples[i].size = 3;
+    |      |        ~~~~~~~~~~~~
+    |      |            |
+    |      |            (9) ...to here
+    |      |            (19) ...to here
+    |      |            (27) ...to here
+    |   81 |        for(int j = 0; j < 3; j++) {
+    |      |                       ~~~~~
+    |      |                         |
+    |      |                         (10) following 'true' branch (when 'j <= 2')...
+    |      |                         (20) following 'true' branch (when 'j <= 2')...
+    |      |                         (28) following 'true' branch (when 'j <= 2')...
+    |      |                         (32) following 'false' branch (when 'j > 2')...
+    |   82 |            list->tuples[i].values[j] = (i == j) ? 0 : i+j;
+    |      |                                        ~~~~~~~~~~~~~~~~~~
+    |      |                                                     |
+    |      |                                                     (11) ...to here
+    |      |                                                     (12) following 'false' branch (when 'i == j')...
+    |      |                                                     (13) ...to here
+    |      |                                                     (21) ...to here
+    |      |                                                     (22) following 'true' branch (when 'i != j')...
+    |      |                                                     (23) ...to here
+    |      |                                                     (29) ...to here
+    |      |                                                     (30) following 'true' branch (when 'i != j')...
+    |      |                                                     (31) ...to here
+    |......
+    |   86 |     TupleList* newList = removeNoneValuesTuples(list);
+    |      |                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                          |
+    |      |                          (35) ...to here
+    |      |                          (36) calling 'removeNoneValuesTuples' from 'main'
+    |
+    +--> 'removeNoneValuesTuples': events 37-52
+           |
+           |   14 | TupleList* removeNoneValuesTuples(TupleList* list) {
+           |      |            ^~~~~~~~~~~~~~~~~~~~~~
+           |      |            |
+           |      |            (37) entry to 'removeNoneValuesTuples'
+           |   15 |     if (!list) return NULL;
+           |      |        ~    
+           |      |        |
+           |      |        (38) following 'false' branch (when 'list' is non-NULL)...
+           |   16 |     TupleList* newList = malloc(sizeof(TupleList));
+           |      |                          ~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                          |
+           |      |                          (39) ...to here
+           |   17 |     if (!newList) return NULL;
+           |      |        ~    
+           |      |        |
+           |      |        (40) following 'false' branch (when 'newList' is non-NULL)...
+           |   18 | 
+           |   19 |     int nonNullTuples = 0;
+           |      |         ~~~~~~~~~~~~~
+           |      |         |
+           |      |         (41) ...to here
+           |   20 |     for(int i=0; i < list->size; i++) {
+           |      |                  ~~~~~~~~~~~~~~
+           |      |                    |
+           |      |                    (42) following 'true' branch...
+           |   21 |         int isAllNull = 1;
+           |      |             ~~~~~~~~~
+           |      |             |
+           |      |             (43) ...to here
+           |   22 |         for(int j=0; j < list->tuples[i].size; j++) {
+           |      |                      ~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                        |
+           |      |                        (44) following 'true' branch...
+           |   23 |             if(list->tuples[i].values[j] != 0) {
+           |      |                ~~~~~~~~~~~~
+           |      |                    |
+           |      |                    (45) ...to here
+           |......
+           |   34 |     if (!newList->tuples) {
+           |      |        ~    
+           |      |        |
+           |      |        (46) following 'false' branch...
+           |......
+           |   38 |     newList->size = nonNullTuples;
+           |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                   |
+           |      |                   (47) ...to here
+           |......
+           |   41 |     for(int i=0; i < list->size; i++) {
+           |      |                  ~~~~~~~~~~~~~~
+           |      |                    |
+           |      |                    (48) following 'true' branch...
+           |   42 |         int isAllNull = 1;
+           |      |             ~~~~~~~~~
+           |      |             |
+           |      |             (49) ...to here
+           |   43 |         for(int j=0; j < list->tuples[i].size; j++) {
+           |      |                      ~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                        |
+           |      |                        (50) following 'true' branch...
+           |   44 |             if(list->tuples[i].values[j] != 0) {
+           |      |                ~~~~~~~~~~~~
+           |      |                    |
+           |      |                    (51) ...to here
+           |......
+           |   55 |     free(list->tuples);
+           |      |     ~~~~~~~~~~~~~~~~~~
+           |      |     |
+           |      |     (52) '<unknown>' leaks here; was allocated at (16)
+           |

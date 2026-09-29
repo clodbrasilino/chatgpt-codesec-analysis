@@ -1,0 +1,50 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdbool.h>
+
+bool is_valid_parentheses(const char *str) {
+    if (str == NULL) {
+        return false;
+    }
+
+    size_t len = strlen(str);
+    char *stack = malloc(len * sizeof(char));
+    if (stack == NULL) {
+        return false;
+    }
+
+    size_t top = 0;
+    for (size_t i = 0; i < len; i++) {
+        char c = str[i];
+        if (c == '(' || c == '{' || c == '[') {
+            stack[top++] = c;
+        } else if (c == ')' || c == '}' || c == ']') {
+            if (top == 0) {
+                free(stack);
+                return false;
+            }
+            char popped = stack[--top];
+            if ((c == ')' && popped != '(') ||
+                (c == '}' && popped != '{') ||
+                (c == ']' && popped != '[')) {
+                free(stack);
+                return false;
+            }
+        }
+    }
+
+    bool is_valid = (top == 0);
+    free(stack);
+    return is_valid;
+}
+
+int main(void) {
+    printf("%d\n", is_valid_parentheses("()[]{}"));
+    printf("%d\n", is_valid_parentheses("([{}])"));
+    printf("%d\n", is_valid_parentheses("(]"));
+    printf("%d\n", is_valid_parentheses("([)]"));
+    printf("%d\n", is_valid_parentheses(""));
+    printf("%d\n", is_valid_parentheses(NULL));
+    return 0;
+}

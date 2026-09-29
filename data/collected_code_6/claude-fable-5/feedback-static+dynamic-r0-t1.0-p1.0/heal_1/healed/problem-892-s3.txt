@@ -1,0 +1,76 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define BUFFER_SIZE 256
+
+void remove_multiple_spaces(char *str)
+{
+    size_t read_idx;
+    size_t write_idx;
+    int prev_space;
+
+    if (str == NULL) {
+        return;
+    }
+
+    read_idx = 0;
+    write_idx = 0;
+    prev_space = 0;
+
+    while (str[read_idx] != '\0') {
+        if (str[read_idx] == ' ') {
+            if (!prev_space) {
+                str[write_idx] = str[read_idx];
+                write_idx++;
+                prev_space = 1;
+            }
+        } else {
+            str[write_idx] = str[read_idx];
+            write_idx++;
+            prev_space = 0;
+        }
+        read_idx++;
+    }
+
+    str[write_idx] = '\0';
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    static const char test[] = "This   is  a    string   with  multiple    spaces";
+    size_t test_len;
+    int written;
+
+    test_len = strnlen(test, sizeof(test));
+
+    if (test_len >= sizeof(buffer)) {
+        fprintf(stderr, "Input string too long\n");
+        return EXIT_FAILURE;
+    }
+
+    written = snprintf(buffer, sizeof(buffer), "%s", test);
+    if (written < 0 || (size_t)written >= sizeof(buffer)) {
+        fprintf(stderr, "Failed to copy input string\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Before: \"%s\"\n", buffer);
+
+    remove_multiple_spaces(buffer);
+
+    printf("After:  \"%s\"\n", buffer);
+
+    return EXIT_SUCCESS;
+}
+```
+
+The key changes from the original:
+
+1. **`strlen` → `strnlen`** (CWE-126): Bounded string length check that cannot over-read even on a non-terminated string. Since `test` is now a `static const char[]` array, `sizeof(test)` gives a hard upper bound for the scan.
+
+2. **`strncpy` → `snprintf`** (CWE-120): `snprintf` always NUL-terminates the destination (when the size is non-zero), eliminating the classic `strncpy` non-termination pitfall. The return value is also checked to detect truncation or encoding errors, so silent data loss is impossible.
+
+3. **Statically-sized buffer** (CWE-119/CWE-120): The buffer size is defined once via `BUFFER_SIZE`, all operations reference `sizeof(buffer)` rather than magic numbers, and both a pre-copy length check and a post-copy truncation check guarantee the bounds are respected before `remove_multiple_spaces` (which only ever shrinks the string in place) is called.

@@ -1,0 +1,12 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-339.c:94:13: error: call to undeclared library function 'strchr' with type 'char *(const char *, int)'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   94 |         if (strchr(discard, '\n') != NULL) {
+      |             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-339.c:94:13: note: include the header <string.h> or explicitly provide a declaration for 'strchr'
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-339.c:104:55: error: use of undeclared identifier 'INT_MAX'
+  104 |     if (buffer == NULL || size < 2U || size > (size_t)INT_MAX) {
+      |                                                       ^~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-339.c:112:14: error: call to undeclared library function 'strlen' with type 'unsigned long (const char *)'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+  112 |     length = strlen(buffer);
+      |              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-339.c:112:14: note: include the header <string.h> or explicitly provide a declaration for 'strlen'
+3 errors generated.

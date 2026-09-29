@@ -1,0 +1,46 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+#include <inttypes.h>
+ /* Possible weaknesses found:
+  *  test case 2 failed: expected 6775685320645824322581483068371419745979053216268760300, got -8539980777762638612
+  */
+
+uint64_t bell_number(int n) {
+    if (n < 0) {
+        return 0;
+    }
+
+    uint64_t *bell = (uint64_t *)calloc(n + 1, sizeof(uint64_t));
+    if (!bell) {
+        return 0;
+    }
+
+    bell[0] = 1;
+
+    for (int i = 1; i <= n; i++) {
+        uint64_t prev = bell[0];
+        bell[0] = bell[i - 1];
+        for (int j = 1; j <= i; j++) {
+            uint64_t temp = bell[j];
+            bell[j] = prev + bell[j - 1];
+            prev = temp;
+        }
+    }
+
+    uint64_t result = bell[0];
+    free(bell);
+    return result;
+}
+
+int main(void) {
+    int test_cases[] = {0, 1, 2, 3, 4, 5, 10, 15, 20};
+    int num_tests = sizeof(test_cases) / sizeof(test_cases[0]);
+
+    for (int i = 0; i < num_tests; i++) {
+        uint64_t result = bell_number(test_cases[i]);
+        printf("Bell number B(%d) = %" PRIu64 "\n", test_cases[i], result);
+    }
+
+    return 0;
+}

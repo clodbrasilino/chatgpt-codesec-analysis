@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-459.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-459.c:49:27: style: Condition 'remaining!=0' is always true [knownConditionTrueFalse]
+            if (remaining != 0) {
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-459.c:35:26: note: Assuming that condition 'source_offset<input_length' is not redundant
+    while (source_offset < input_length) {
+                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-459.c:36:41: note: Assignment 'remaining=input_length-source_offset', assigned value is greater than 0
+        size_t remaining = input_length - source_offset;
+                                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-459.c:43:27: note: Assuming condition is false
+            if (remaining > input_length - destination_offset) {
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-459.c:49:27: note: Condition 'remaining!=0' is always true
+            if (remaining != 0) {
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-459.c:56:27: style: Variable 'source_offset' is assigned a value that is never used. [unreadVariable]
+            source_offset = input_length;
+                          ^

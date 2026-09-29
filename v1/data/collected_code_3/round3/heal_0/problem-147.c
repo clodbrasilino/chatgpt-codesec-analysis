@@ -1,0 +1,19 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX(a, b) ((a) > (b) ? (a) : (b))
+
+int maxPathSum(int triangle[][3], int m, int n) {
+    for (int i = m - 2; i >= 0; --i) {
+        for (int j = 0; j <= i; ++j) {
+            triangle[i][j] += MAX(triangle[i + 1][j], triangle[i + 1][j + 1]);
+        }
+    }
+    return triangle[0][0];
+}
+
+int main() {
+    int triangle[3][3] = { {2, 0, 0}, {3, 4, 0}, {6, 5, 7} };
+    printf("%d\n", maxPathSum(triangle, 3, 3));
+    return 0;
+}

@@ -1,0 +1,270 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+#define MAX_STRING_LENGTH 4096
+
+typedef struct Entry {
+    char *key;
+    char *value;
+    struct Entry *next;
+} Entry;
+
+typedef struct {
+    Entry **buckets;
+    size_t bucket_count;
+    size_t size;
+} Dict;
+
+static size_t bounded_strlen(const char *str, size_t max_len)
+{
+    size_t len = 0;
+
+    while (len < max_len && str[len] != '\0') {
+        len++;
+    }
+    return len;
+}
+
+static unsigned long hash_string(const char *str)
+{
+    unsigned long hash = 5381;
+
+    for (size_t i = 0; i < MAX_STRING_LENGTH && str[i] != '\0'; i++) {
+        hash = ((hash << 5) + hash) + (unsigned long)(unsigned char)str[i];
+    }
+    return hash;
+}
+
+static char *dup_string(const char *str)
+{
+    size_t len = bounded_strlen(str, MAX_STRING_LENGTH);
+    char *copy;
+
+    if (len >= MAX_STRING_LENGTH) {
+        return NULL;
+    }
+    copy = malloc(len + 1);
+    if (copy != NULL) {
+        for (size_t i = 0; i < len; i++) {
+            copy[i] = str[i];
+        }
+        copy[len] = '\0';
+    }
+    return copy;
+}
+
+Dict *dict_create(size_t bucket_count)
+{
+    Dict *dict = malloc(sizeof(*dict));
+
+    if (dict == NULL) {
+        return NULL;
+    }
+    if (bucket_count == 0) {
+        bucket_count = 16;
+    }
+    dict->buckets = calloc(bucket_count, sizeof(*dict->buckets));
+    if (dict->buckets == NULL) {
+        free(dict);
+        return NULL;
+    }
+    dict->bucket_count = bucket_count;
+    dict->size = 0;
+    return dict;
+}
+
+void dict_free(Dict *dict)
+{
+    if (dict == NULL) {
+        return;
+    }
+    for (size_t i = 0; i < dict->bucket_count; i++) {
+        Entry *entry = dict->buckets[i];
+        while (entry != NULL) {
+            Entry *next = entry->next;
+            free(entry->key);
+            free(entry->value);
+            free(entry);
+            entry = next;
+        }
+    }
+    free(dict->buckets);
+    free(dict);
+}
+
+int dict_set(Dict *dict, const char *key, const char *value)
+{
+    if (dict == NULL || key == NULL || value == NULL) {
+        return -1;
+    }
+    if (dict->bucket_count == 0) {
+        return -1;
+    }
+    if (bounded_strlen(key, MAX_STRING_LENGTH) >= MAX_STRING_LENGTH ||
+        bounded_strlen(value, MAX_STRING_LENGTH) >= MAX_STRING_LENGTH) {
+        return -1;
+    }
+    size_t h = hash_string(key) % dict->bucket_count;
+
+    for (Entry *e = dict->buckets[h]; e != NULL; e = e->next) {
+        if (strcmp(e->key, key) == 0) {
+            char *new_value = dup_string(value);
+            if (new_value == NULL) {
+                return -1;
+            }
+            free(e->value);
+            e->value = new_value;
+            return 0;
+        }
+    }
+
+    Entry *entry = malloc(sizeof(*entry));
+    if (entry == NULL) {
+        return -1;
+    }
+    entry->key = dup_string(key);
+    if (entry->key == NULL) {
+        free(entry);
+        return -1;
+    }
+    entry->value = dup_string(value);
+    if (entry->value == NULL) {
+        free(entry->key);
+        free(entry);
+        return -1;
+    }
+    entry->next = dict->buckets[h];
+    dict->buckets[h] = entry;
+    dict->size++;
+    return 0;
+}
+
+const char *dict_get(const Dict *dict, const char *key)
+{
+    if (dict == NULL || key == NULL) {
+        return NULL;
+    }
+    if (dict->bucket_count == 0) {
+        return NULL;
+    }
+    if (bounded_strlen(key, MAX_STRING_LENGTH) >= MAX_STRING_LENGTH) {
+        return NULL;
+    }
+    size_t h = hash_string(key) % dict->bucket_count;
+
+    for (Entry *e = dict->buckets[h]; e != NULL; e = e->next) {
+        if (strcmp(e->key, key) == 0) {
+            return e->value;
+        }
+    }
+    return NULL;
+}
+
+Dict *dict_merge(const Dict *a, const Dict *b)
+{
+    if (a == NULL || b == NULL) {
+        return NULL;
+    }
+    if (a->bucket_count > SIZE_MAX - b->bucket_count) {
+        return NULL;
+    }
+
+    Dict *merged = dict_create(a->bucket_count + b->bucket_count);
+    if (merged == NULL) {
+        return NULL;
+    }
+
+    for (size_t i = 0; i < a->bucket_count; i++) {
+        for (Entry *e = a->buckets[i]; e != NULL; e = e->next) {
+            if (dict_set(merged, e->key, e->value) != 0) {
+                dict_free(merged);
+                return NULL;
+            }
+        }
+    }
+    for (size_t i = 0; i < b->bucket_count; i++) {
+        for (Entry *e = b->buckets[i]; e != NULL; e = e->next) {
+            if (dict_set(merged, e->key, e->value) != 0) {
+                dict_free(merged);
+                return NULL;
+            }
+        }
+    }
+    return merged;
+}
+
+void dict_print(const Dict *dict)
+{
+    if (dict == NULL) {
+        return;
+    }
+    printf("{\n");
+    for (size_t i = 0; i < dict->bucket_count; i++) {
+        for (Entry *e = dict->buckets[i]; e != NULL; e = e->next) {
+            printf("    \"%s\": \"%s\",\n", e->key, e->value);
+        }
+    }
+    printf("}\n");
+}
+
+int main(void)
+{
+    Dict *a = dict_create(16);
+    if (a == NULL) {
+        fprintf(stderr, "Failed to create dictionary a\n");
+        return EXIT_FAILURE;
+    }
+
+    Dict *b = dict_create(16);
+    if (b == NULL) {
+        fprintf(stderr, "Failed to create dictionary b\n");
+        dict_free(a);
+        return EXIT_FAILURE;
+    }
+
+    if (dict_set(a, "name", "alice") != 0 ||
+        dict_set(a, "city", "paris") != 0 ||
+        dict_set(a, "lang", "c") != 0) {
+        fprintf(stderr, "Failed to populate dictionary a\n");
+        dict_free(a);
+        dict_free(b);
+        return EXIT_FAILURE;
+    }
+
+    if (dict_set(b, "city", "lyon") != 0 ||
+        dict_set(b, "country", "france") != 0) {
+        fprintf(stderr, "Failed to populate dictionary b\n");
+        dict_free(a);
+        dict_free(b);
+        return EXIT_FAILURE;
+    }
+
+    printf("Dictionary a:\n");
+    dict_print(a);
+    printf("Dictionary b:\n");
+    dict_print(b);
+
+    Dict *merged = dict_merge(a, b);
+    if (merged == NULL) {
+        fprintf(stderr, "Failed to merge dictionaries\n");
+        dict_free(a);
+        dict_free(b);
+        return EXIT_FAILURE;
+    }
+
+    printf("Merged dictionary:\n");
+    dict_print(merged);
+
+    const char *city = dict_get(merged, "city");
+    if (city != NULL) {
+        printf("Lookup \"city\": %s\n", city);
+    }
+
+    dict_free(a);
+    dict_free(b);
+    dict_free(merged);
+
+    return EXIT_SUCCESS;
+}

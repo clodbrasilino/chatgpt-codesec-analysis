@@ -1,0 +1,128 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+#include <limits.h>
+
+#define MAX_BINARY_DIGITS 63
+#define INPUT_BUFFER_SIZE (MAX_BINARY_DIGITS + 2)
+
+static bool is_valid_binary(const char *binary_str, size_t max_len)
+{
+    size_t i;
+    size_t len = 0;
+
+    if (binary_str == NULL || max_len == 0) {
+        return false;
+    }
+
+    while (len < max_len && binary_str[len] != '\0') {
+        len++;
+    }
+
+    if (len == 0 || len > MAX_BINARY_DIGITS) {
+        return false;
+    }
+
+    for (i = 0; i < len; i++) {
+        if (binary_str[i] != '0' && binary_str[i] != '1') {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+static bool binary_to_decimal(const char *binary_str, size_t max_len, unsigned long long *result)
+{
+    unsigned long long value = 0;
+    size_t i;
+    size_t len = 0;
+
+    if (result == NULL || !is_valid_binary(binary_str, max_len)) {
+        return false;
+    }
+
+    while (len < max_len && binary_str[len] != '\0') {
+        len++;
+    }
+
+    for (i = 0; i < len; i++) {
+        if (value > (ULLONG_MAX >> 1)) {
+            return false;
+        }
+        value <<= 1;
+        if (binary_str[i] == '1') {
+            value |= 1;
+        }
+    }
+
+    *result = value;
+    return true;
+}
+
+static int flush_stdin(void)
+{
+    int c;
+    int last = EOF;
+    size_t count = 0;
+
+    /* Possible weaknesses found:
+     * Flawfinder getchar: Check buffer boundaries if used in a loop including recursive loops (CWE-120, CWE-20). (risk 1, buffer)
+     */
+    while ((c = getchar()) != '\n' && c != EOF) {
+        last = c;
+        count++;
+        if (count > INPUT_BUFFER_SIZE) {
+            break;
+        }
+    }
+
+    return last;
+}
+
+int main(void)
+{
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char binary_input[INPUT_BUFFER_SIZE];
+    unsigned long long decimal_result;
+    size_t len;
+    bool newline_found = false;
+
+    printf("Enter a binary number (up to %d bits): ", MAX_BINARY_DIGITS);
+
+    if (fgets(binary_input, sizeof(binary_input), stdin) == NULL) {
+        fprintf(stderr, "Error: Failed to read input.\n");
+        return 1;
+    }
+
+    for (len = 0; len < sizeof(binary_input); len++) {
+        if (binary_input[len] == '\n') {
+            binary_input[len] = '\0';
+            newline_found = true;
+            break;
+        }
+        if (binary_input[len] == '\0') {
+            break;
+        }
+    }
+
+    if (!newline_found && len == sizeof(binary_input) - 1 && binary_input[len] != '\0') {
+        if (flush_stdin() == EOF) {
+            fprintf(stderr, "Error: Failed to read input.\n");
+            return 1;
+        }
+        fprintf(stderr, "Error: Input too long.\n");
+        return 1;
+    }
+
+    if (binary_to_decimal(binary_input, sizeof(binary_input), &decimal_result)) {
+        printf("Decimal equivalent: %llu\n", decimal_result);
+    } else {
+        fprintf(stderr, "Error: Invalid binary number or overflow.\n");
+        return 1;
+    }
+
+    return 0;
+}

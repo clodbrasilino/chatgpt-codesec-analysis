@@ -1,0 +1,51 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int nth_non_multiple(int n, int given_number) {
+    if (given_number <= 0) {
+        return -1;
+    }
+    
+    int count = 0;
+    int current = 0;
+    
+    while (count < n) {
+        current++;
+        if (current % given_number != 0) {
+            count++;
+        }
+    }
+    
+    return current;
+}
+
+int main(void) {
+    int n, given_number;
+    
+    printf("Enter n: ");
+    if (scanf("%d", &n) != 1) {
+        fprintf(stderr, "Invalid input for n\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("Enter the number to avoid multiples of: ");
+    if (scanf("%d", &given_number) != 1) {
+        fprintf(stderr, "Invalid input for given_number\n");
+        return EXIT_FAILURE;
+    }
+    
+    if (n <= 0) {
+        fprintf(stderr, "n must be positive\n");
+        return EXIT_FAILURE;
+    }
+    
+    int result = nth_non_multiple(n, given_number);
+    if (result == -1) {
+        fprintf(stderr, "given_number must be positive\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("The %dth number not a multiple of %d is: %d\n", n, given_number, result);
+    
+    return EXIT_SUCCESS;
+}

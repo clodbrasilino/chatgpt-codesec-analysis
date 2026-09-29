@@ -1,0 +1,108 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char *duplicate_string(const char *src) {
+    if (!src) {
+        return NULL;
+    }
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    size_t len = strlen(src) + 1;
+    char *dest = malloc(len);
+    if (dest) {
+        /* Possible weaknesses found:
+         * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+         */
+        memcpy(dest, src, len);
+    }
+    return dest;
+}
+
+int remove_strings_with_substring(char ***list, size_t *count, const char *target) {
+    if (!list || !*list || !count || !target) {
+        return -1;
+    }
+
+    size_t write_index = 0;
+    size_t original_count = *count;
+
+    for (size_t i = 0; i < original_count; ++i) {
+        if ((*list)[i] != NULL) {
+            if (strstr((*list)[i], target) != NULL) {
+                free((*list)[i]);
+                (*list)[i] = NULL;
+            } else {
+                (*list)[write_index++] = (*list)[i];
+            }
+        }
+    }
+
+    *count = write_index;
+
+    if (write_index == 0) {
+        free(*list);
+        *list = NULL;
+        return 0;
+    }
+
+    if (write_index < original_count) {
+        char **temp = realloc(*list, write_index * sizeof(char *));
+        if (temp != NULL) {
+            *list = temp;
+        }
+    }
+
+    return 0;
+}
+
+int main(void) {
+    size_t count = 5;
+    char **my_list = malloc(count * sizeof(char *));
+    if (!my_list) {
+        return 1;
+    }
+
+    const char *initial_strings[] = {
+        "apple",
+        "banana",
+        "cherry",
+        "date",
+        "elderberry"
+    };
+
+    for (size_t i = 0; i < count; ++i) {
+        my_list[i] = duplicate_string(initial_strings[i]);
+        if (!my_list[i]) {
+            for (size_t j = 0; j < i; ++j) {
+                free(my_list[j]);
+            }
+            free(my_list);
+            return 1;
+        }
+    }
+
+    if (remove_strings_with_substring(&my_list, &count, "er") != 0) {
+        for (size_t i = 0; i < count; ++i) {
+            free(my_list[i]);
+        }
+        free(my_list);
+        return 1;
+    }
+
+    if (my_list != NULL) {
+        for (size_t i = 0; i < count; ++i) {
+            if (my_list[i] != NULL) {
+                printf("%s\n", my_list[i]);
+            }
+        }
+
+        for (size_t i = 0; i < count; ++i) {
+            free(my_list[i]);
+        }
+        free(my_list);
+    }
+
+    return 0;
+}

@@ -1,0 +1,26 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+bool findTriplet(int arr[], int n, int sum) {
+    int l, r;
+    for (int i = 0; i < n - 2; i++) {
+        for (int j = i + 1; j < n - 1; j++) {
+            for (int k = j + 1; k < n; k++) {
+                if (arr[i] + arr[j] + arr[k] == sum) {
+                    printf("Triplet is %d, %d, %d", arr[i], arr[j], arr[k]);
+                    return true;
+                }
+            }
+        }
+    }
+    return false;
+}
+
+int main() {
+    int arr[] = {1, 2, 3, 4, 5};
+    int sum = 9;
+    int arr_size = sizeof(arr) / sizeof(arr[0]);
+
+    findTriplet(arr, arr_size, sum);
+    return 0;
+}

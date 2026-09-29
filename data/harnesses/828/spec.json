@@ -1,0 +1,56 @@
+{
+  "task_id": 828,
+  "text": "Write a C function to count alphabets,digits and special charactes in a given string.",
+  "fn_candidates": [
+    "count_alpha_dig_spl",
+    "CountAlphaDigSpl",
+    "countAlphaDigSpl",
+    "countalphadigspl"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "count_alpha_dig_spl",
+      "args": [
+        "abc!@#123"
+      ],
+      "expected": [
+        3,
+        3,
+        3
+      ],
+      "assert_src": "assert count_alpha_dig_spl(\"abc!@#123\")==(3,3,3)"
+    },
+    {
+      "fn_name": "count_alpha_dig_spl",
+      "args": [
+        "dgsuy@#$%&1255"
+      ],
+      "expected": [
+        5,
+        4,
+        5
+      ],
+      "assert_src": "assert count_alpha_dig_spl(\"dgsuy@#$%&1255\")==(5,4,5)"
+    },
+    {
+      "fn_name": "count_alpha_dig_spl",
+      "args": [
+        "fjdsif627348#%$^&"
+      ],
+      "expected": [
+        6,
+        6,
+        5
+      ],
+      "assert_src": "assert count_alpha_dig_spl(\"fjdsif627348#%$^&\")==(6,6,5)"
+    }
+  ],
+  "arg_kinds": [
+    "str"
+  ],
+  "return_kind": "int-list",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

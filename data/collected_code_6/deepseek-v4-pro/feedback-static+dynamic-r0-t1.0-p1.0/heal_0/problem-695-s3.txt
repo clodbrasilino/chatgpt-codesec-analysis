@@ -1,0 +1,41 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+bool check_greater_than_index(int *tuple1, int *tuple2, size_t size) {
+    if (tuple1 == NULL || tuple2 == NULL) {
+        return false;
+    }
+
+    for (size_t i = 0; i < size; i++) {
+        if (tuple2[i] <= tuple1[i]) {
+            return false;
+        }
+    }
+    return true;
+}
+
+int main(void) {
+    int tuple1[] = {1, 2, 3};
+    int tuple2[] = {4, 5, 6};
+    size_t size = sizeof(tuple1) / sizeof(tuple1[0]);
+
+    if (check_greater_than_index(tuple1, tuple2, size)) {
+        printf("All elements of second tuple are greater than corresponding elements of first tuple\n");
+    } else {
+        printf("Not all elements of second tuple are greater than corresponding elements of first tuple\n");
+    }
+
+    int tuple3[] = {1, 2, 3};
+    int tuple4[] = {1, 5, 6};
+
+    if (check_greater_than_index(tuple3, tuple4, size)) {
+        printf("All elements of second tuple are greater than corresponding elements of first tuple\n");
+    } else {
+        printf("Not all elements of second tuple are greater than corresponding elements of first tuple\n");
+    }
+
+    return 0;
+}
+```

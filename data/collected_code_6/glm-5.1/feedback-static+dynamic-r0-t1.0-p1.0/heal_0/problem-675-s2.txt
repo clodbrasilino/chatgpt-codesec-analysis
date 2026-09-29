@@ -1,0 +1,38 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+
+int add_and_check(int a, int b, int low, int high, bool *error) {
+    if (error == NULL) {
+        return -1;
+    }
+    
+    *error = false;
+    
+    if ((b > 0 && a > INT_MAX - b) || (b < 0 && a < INT_MIN - b)) {
+        *error = true;
+        return 0;
+    }
+    
+    int sum = a + b;
+
+    if (sum >= low && sum <= high) {
+        return 20;
+    }
+
+    return sum;
+}
+
+int main(void) {
+    bool error = false;
+    int result = add_and_check(5, 10, 10, 20, &error);
+
+    if (error) {
+        printf("Error: Integer overflow detected.\n");
+    } else {
+        printf("Result: %d\n", result);
+    }
+
+    return 0;
+}
+```

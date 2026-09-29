@@ -1,0 +1,4 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-1-s3.c:65:26: warning: Result of 'malloc' is converted to a pointer of type 'int', which is incompatible with sizeof operand type 'int *' [unix.MallocSizeof]
+   65 |         cost[i] = (int *)malloc(cols * sizeof(int *));
+      |                    ~~~~~ ^~~~~~        ~~~~~~~~~~~~~
+1 warning generated.

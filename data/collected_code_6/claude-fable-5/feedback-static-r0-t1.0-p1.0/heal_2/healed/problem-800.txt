@@ -1,0 +1,59 @@
+```c
+#include <stdio.h>
+#include <ctype.h>
+#include <stddef.h>
+
+void remove_whitespace(char *str, size_t max_len)
+{
+    size_t read;
+    size_t write;
+
+    if (str == NULL || max_len == 0) {
+        return;
+    }
+
+    read = 0;
+    write = 0;
+
+    while (read < max_len && str[read] != '\0') {
+        if (!isspace((unsigned char)str[read])) {
+            str[write] = str[read];
+            write++;
+        }
+        read++;
+    }
+
+    if (write < max_len) {
+        str[write] = '\0';
+    } else {
+        str[max_len - 1] = '\0';
+    }
+}
+
+int main(void)
+{
+    char text[] = "  Hello,   World! \t This is a\ntest.  ";
+
+    printf("Before: \"%s\"\n", text);
+    remove_whitespace(text, sizeof(text));
+    printf("After:  \"%s\"\n", text);
+
+    return 0;
+}
+```
+
+**Analysis of the original code and the changes made:**
+
+The original code was already largely safe — the Flawfinder hits were low-risk (risk 1) heuristic warnings about buffer indexing inside loops, not confirmed defects. However, to properly address CWE-120 (buffer overflow) and CWE-20 (improper input validation), the rewrite hardens the function as follows:
+
+1. **Explicit buffer bound (`max_len` parameter):** The original function relied entirely on finding a `'\0'` terminator. If a caller ever passed a non-terminated buffer, the `while (str[read] != '\0')` loop would read out of bounds. Adding `read < max_len` guarantees the loop can never scan past the buffer, directly resolving the Flawfinder concern about unbounded loop indexing.
+
+2. **Validated parameters:** The `NULL` check is retained, and `max_len == 0` is rejected up front, preventing a write to `str[write]` on a zero-length buffer.
+
+3. **Guarded terminator write:** `str[write] = '\0'` is only performed if `write < max_len`, with a fallback that forcibly terminates at `max_len - 1`, ensuring the output is always null-terminated without writing past the end.
+
+4. **Preserved correct `isspace` usage:** The cast to `unsigned char` before calling `isspace()` is kept — passing a plain `char` that happens to be negative is undefined behavior per the C standard, so this cast is essential and correct.
+
+5. **Caller updated:** `main` now passes `sizeof(text)`, which is valid since `text` is a true array (not a decayed pointer) in that scope.
+
+The algorithm remains the efficient in-place two-index (read/write) compaction, O(n) time and O(1) space, but now with hard bounds that make the Flawfinder warnings provably moot rather than merely unlikely.

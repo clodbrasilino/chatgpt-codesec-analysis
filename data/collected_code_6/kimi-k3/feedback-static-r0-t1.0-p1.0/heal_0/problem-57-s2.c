@@ -1,0 +1,43 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+int compare(const void *a, const void *b)
+{
+    char ab[3];
+    char ba[3];
+    ab[0] = *(const char *)a;
+    ab[1] = *(const char *)b;
+    ab[2] = '\0';
+    ba[0] = *(const char *)b;
+    ba[1] = *(const char *)a;
+    ba[2] = '\0';
+    return strcmp(ba, ab);
+}
+
+void findLargestNumber(char digits[], int n)
+{
+    if (n <= 0)
+    {
+        return;
+    }
+    qsort(digits, n, sizeof(char), compare);
+}
+
+int main(void)
+{
+    char digits[] = {'5', '4', '6', '8', '0'};
+    int n = (int)(sizeof(digits) / sizeof(digits[0]));
+    int i;
+
+    findLargestNumber(digits, n);
+
+    printf("Largest number: ");
+    for (i = 0; i < n; i++)
+    {
+        putchar(digits[i]);
+    }
+    putchar('\n');
+
+    return 0;
+}

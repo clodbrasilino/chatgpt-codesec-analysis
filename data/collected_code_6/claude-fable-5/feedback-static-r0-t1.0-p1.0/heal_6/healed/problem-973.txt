@@ -1,0 +1,102 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+int left_rotate(char *str, size_t str_size, size_t d)
+{
+    size_t len;
+    size_t suffix_len;
+    char *temp;
+    size_t temp_size;
+
+    if (str == NULL || str_size == 0) {
+        return -1;
+    }
+
+    len = strnlen(str, str_size);
+    if (len >= str_size) {
+        return -1;
+    }
+
+    if (len == 0) {
+        return 0;
+    }
+
+    d = d % len;
+    if (d == 0) {
+        return 0;
+    }
+
+    if (d >= len || (len + 1) > str_size) {
+        return -1;
+    }
+
+    suffix_len = len - d;
+
+    if (suffix_len > len || d > len - suffix_len) {
+        return -1;
+    }
+
+    temp_size = len + 1;
+    if (temp_size < len) {
+        return -1;
+    }
+
+    temp = malloc(temp_size);
+    if (temp == NULL) {
+        return -1;
+    }
+
+    if (suffix_len > temp_size ||
+        d > temp_size - suffix_len ||
+        (d + suffix_len) != len ||
+        len >= temp_size) {
+        free(temp);
+        return -1;
+    }
+
+    memcpy(temp, str + d, suffix_len);
+    memcpy(temp + suffix_len, str, d);
+    temp[len] = '\0';
+
+    if (temp_size > str_size) {
+        free(temp);
+        return -1;
+    }
+
+    memcpy(str, temp, temp_size);
+    free(temp);
+
+    return 0;
+}
+
+int main(void)
+{
+    char str[] = "HelloWorld";
+    size_t d = 3;
+
+    printf("Original string: %s\n", str);
+
+    if (left_rotate(str, sizeof(str), d) != 0) {
+        fprintf(stderr, "Rotation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Rotated string:  %s\n", str);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the changes:**
+
+The original code was already quite defensive, but the Flawfinder CWE-120 warnings on the three `memcpy` calls pointed at the fact that none of the copies had an explicit, provable bounds check immediately guarding the destination. The rewrite addresses each flagged copy:
+
+1. **First and second `memcpy` (into `temp`):** An explicit `temp_size` variable is introduced, with an overflow check on `len + 1`. Before copying, the code verifies that `suffix_len` fits in `temp_size`, that `d` fits in the remaining space (`temp_size - suffix_len`), that `d + suffix_len` exactly equals `len`, and that there is room for the NUL terminator (`len < temp_size`). This makes both writes into `temp` demonstrably in-bounds.
+
+2. **Third `memcpy` (back into `str`):** The copy of `len + 1` bytes into `str` is now guarded by an explicit `temp_size <= str_size` check against the caller-supplied buffer size, so the destination capacity is verified rather than merely implied by the earlier `strnlen` result.
+
+3. **Integer-overflow hardening:** The `temp_size < len` check guards against `len + 1` wrapping on `SIZE_MAX`-length inputs, which would otherwise cause an undersized allocation followed by a heap overflow in the copies.
+
+The behavior for valid inputs is unchanged: `HelloWorld` rotated left by 3 yields `loWorldHel`.

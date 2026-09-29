@@ -1,0 +1,63 @@
+```c
+#include <stdio.h>
+#include <ctype.h>
+
+static int get_ascii_value(char c)
+{
+    return (int)(unsigned char)c;
+}
+
+static void flush_stdin(void)
+{
+    int ch;
+
+    do {
+        ch = getchar();
+    } while (ch != '\n' && ch != EOF);
+}
+
+int main(void)
+{
+    int input;
+
+    printf("Enter a character: ");
+    if (fflush(stdout) != 0) {
+        return 1;
+    }
+
+    input = getchar();
+    if (input == EOF) {
+        fprintf(stderr, "Error: failed to read input.\n");
+        return 1;
+    }
+
+    if (input != '\n') {
+        flush_stdin();
+    }
+
+    if (isprint((unsigned char)input)) {
+        printf("The ASCII value of '%c' is %d\n", (char)input, get_ascii_value((char)input));
+    } else {
+        printf("The ASCII value of the entered character is %d\n", get_ascii_value((char)input));
+    }
+
+    return 0;
+}
+```
+
+Analysis of the flagged weaknesses and why this code is safe:
+
+**Flawfinder `getchar` warnings (CWE-120, CWE-20):** These are risk-level 1 informational hits. Flawfinder flags `getchar()` because it is often misused when reading into fixed-size buffers inside loops. In this program, neither usage stores data into a buffer:
+
+1. **In `flush_stdin()`:** The return value is stored in an `int` and immediately discarded. There is no buffer, so CWE-120 (buffer overflow) cannot apply. The loop correctly terminates on both `'\n'` and `EOF`, avoiding the classic infinite-loop bug when stdin is closed.
+
+2. **In `main()`:** The single character is stored in an `int` (correct — not a `char` — so `EOF` can be reliably distinguished from valid characters). The `EOF` check satisfies CWE-20 (input validation).
+
+Other defensive measures already present and preserved:
+
+- `fflush(stdout)` return value is checked, ensuring the prompt is actually delivered before blocking on input.
+- Casts to `unsigned char` before passing to `isprint()` prevent undefined behavior on platforms where `char` is signed (passing negative values other than `EOF` to `<ctype.h>` functions is UB).
+- `get_ascii_value()` casts through `unsigned char` so characters ≥ 0x80 yield values 128–255 rather than negative numbers.
+- Trailing input up to the newline is drained only when needed (`input != '\n'`), leaving stdin in a clean state.
+
+No code changes were required; the warnings are false positives, and the source already contains the appropriate mitigations.

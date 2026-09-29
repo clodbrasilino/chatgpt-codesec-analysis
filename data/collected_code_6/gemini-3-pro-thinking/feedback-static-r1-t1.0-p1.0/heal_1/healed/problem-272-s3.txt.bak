@@ -1,0 +1,86 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    int id;
+    char *value;
+} TupleRecord;
+
+static char *duplicate_string(const char *source) {
+    size_t length;
+    char *destination;
+
+    if (!source) {
+        return NULL;
+    }
+
+    length = strlen(source) + 1;
+    destination = (char *)malloc(length);
+    if (!destination) {
+        return NULL;
+    }
+
+    memcpy(destination, source, length);
+    return destination;
+}
+
+char **extract_rear_elements(const TupleRecord *records, size_t count) {
+    char **rear_elements;
+    size_t i;
+    size_t j;
+
+    if (!records || count == 0) {
+        return NULL;
+    }
+
+    rear_elements = (char **)malloc(count * sizeof(char *));
+    if (!rear_elements) {
+        return NULL;
+    }
+
+    for (i = 0; i < count; i++) {
+        if (records[i].value) {
+            rear_elements[i] = duplicate_string(records[i].value);
+            if (!rear_elements[i]) {
+                for (j = 0; j < i; j++) {
+                    free(rear_elements[j]);
+                }
+                free(rear_elements);
+                return NULL;
+            }
+        } else {
+            rear_elements[i] = NULL;
+        }
+    }
+
+    return rear_elements;
+}
+
+int main(void) {
+    TupleRecord records[] = {
+        {101, "alpha"},
+        {102, "bravo"},
+        {103, "charlie"}
+    };
+    size_t count = sizeof(records) / sizeof(records[0]);
+    char **extracted;
+    size_t i;
+
+    extracted = extract_rear_elements(records, count);
+    if (!extracted) {
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i < count; i++) {
+        if (extracted[i]) {
+            printf("%d: %s\n", records[i].id, extracted[i]);
+            free(extracted[i]);
+        }
+    }
+    free(extracted);
+
+    return EXIT_SUCCESS;
+}
+```

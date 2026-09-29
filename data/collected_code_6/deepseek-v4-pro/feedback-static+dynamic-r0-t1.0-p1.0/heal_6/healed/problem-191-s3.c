@@ -1,0 +1,53 @@
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdlib.h>
+
+int has_30_days(const char *month) {
+    if (month == NULL) {
+        return 0;
+    }
+    
+    const char *months_30[] = {
+        "april", "june", "september", "november"
+    };
+    
+    size_t num_months = sizeof(months_30) / sizeof(months_30[0]);
+    size_t month_len = strnlen(month, 64);
+    
+    for (size_t i = 0; i < num_months; i++) {
+        size_t target_len = strnlen(months_30[i], 64);
+        if (month_len != target_len) {
+            continue;
+        }
+        
+        int match = 1;
+        for (size_t j = 0; j < month_len; j++) {
+            if (tolower((unsigned char)month[j]) != (unsigned char)months_30[i][j]) {
+                match = 0;
+                break;
+            }
+        }
+        
+        if (match) {
+            return 1;
+        }
+    }
+    
+    return 0;
+}
+
+int main(void) {
+    const char *test_months[] = {
+        "January", "February", "March", "April", "May", "June",
+        "July", "August", "September", "October", "November", "December",
+        "april", "JUNE", "September", "NOVEMBER", "", NULL
+    };
+    
+    for (size_t i = 0; test_months[i] != NULL; i++) {
+        printf("%s: %s\n", test_months[i], 
+               has_30_days(test_months[i]) ? "has 30 days" : "does not have 30 days");
+    }
+    
+    return 0;
+}

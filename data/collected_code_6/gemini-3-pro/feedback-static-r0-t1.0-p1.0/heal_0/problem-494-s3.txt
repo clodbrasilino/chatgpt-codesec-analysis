@@ -1,0 +1,35 @@
+```c
+#include <stdio.h>
+#include <stddef.h>
+
+int binaryTupleToInteger(const int *tuple, size_t size) {
+    if (tuple == NULL || size == 0) {
+        return -1; 
+    }
+
+    int result = 0;
+    for (size_t i = 0; i < size; ++i) {
+        if (tuple[i] != 0 && tuple[i] != 1) {
+            return -1; 
+        }
+        result = (result << 1) | tuple[i];
+    }
+
+    return result;
+}
+
+int main(void) {
+    int tuple[] = {1, 0, 1, 1, 0};
+    size_t size = sizeof(tuple) / sizeof(tuple[0]);
+
+    int result = binaryTupleToInteger(tuple, size);
+
+    if (result != -1) {
+        printf("Integer value: %d\n", result);
+    } else {
+        printf("Invalid input.\n");
+    }
+
+    return 0;
+}
+```

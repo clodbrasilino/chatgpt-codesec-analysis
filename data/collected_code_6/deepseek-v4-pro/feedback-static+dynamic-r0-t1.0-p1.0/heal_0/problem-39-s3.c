@@ -1,0 +1,44 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+#define ALPHABET_SIZE 26
+
+bool canRearrange(char *str) {
+    int len = strlen(str);
+    int count[ALPHABET_SIZE] = {0};
+    int max_count = 0;
+    
+    for (int i = 0; i < len; i++) {
+        if (str[i] >= 'a' && str[i] <= 'z') {
+            count[str[i] - 'a']++;
+            if (count[str[i] - 'a'] > max_count) {
+                max_count = count[str[i] - 'a'];
+            }
+        } else if (str[i] >= 'A' && str[i] <= 'Z') {
+            count[str[i] - 'A']++;
+            if (count[str[i] - 'A'] > max_count) {
+                max_count = count[str[i] - 'A'];
+            }
+        }
+    }
+    
+    return max_count <= (len + 1) / 2;
+}
+
+int main(void) {
+    char str1[] = "aab";
+    char str2[] = "aaab";
+    char str3[] = "aabbcc";
+    char str4[] = "aaaabc";
+    char str5[] = "";
+    
+    printf("%s: %s\n", str1, canRearrange(str1) ? "Yes" : "No");
+    printf("%s: %s\n", str2, canRearrange(str2) ? "Yes" : "No");
+    printf("%s: %s\n", str3, canRearrange(str3) ? "Yes" : "No");
+    printf("%s: %s\n", str4, canRearrange(str4) ? "Yes" : "No");
+    printf("%s: %s\n", str5, canRearrange(str5) ? "Yes" : "No");
+    
+    return 0;
+}

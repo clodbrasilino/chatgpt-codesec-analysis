@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-335.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-335.c:11:23: style: Condition 'num_terms>0' is always true [knownConditionTrueFalse]
+        if (num_terms > 0 && (first_term > LLONG_MAX / num_terms || first_term < LLONG_MIN / num_terms)) {
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-335.c:6:19: note: Assuming that condition 'num_terms<=0' is not redundant
+    if (num_terms <= 0) {
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-335.c:11:23: note: Condition 'num_terms>0' is always true
+        if (num_terms > 0 && (first_term > LLONG_MAX / num_terms || first_term < LLONG_MIN / num_terms)) {
+                      ^

@@ -1,0 +1,56 @@
+{
+  "task_id": 326,
+  "text": "Write a C function to get the word with most number of occurrences in the given strings list.",
+  "fn_candidates": [
+    "most_occurrences",
+    "MostOccurrences",
+    "mostOccurrences",
+    "mostoccurrences"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "most_occurrences",
+      "args": [
+        [
+          "UTS is best for RTF",
+          "RTF love UTS",
+          "UTS is best"
+        ]
+      ],
+      "expected": "UTS",
+      "assert_src": "assert most_occurrences([\"UTS is best for RTF\", \"RTF love UTS\", \"UTS is best\"] ) == 'UTS'"
+    },
+    {
+      "fn_name": "most_occurrences",
+      "args": [
+        [
+          "Its been a great year",
+          "this year is so worse",
+          "this year is okay"
+        ]
+      ],
+      "expected": "year",
+      "assert_src": "assert most_occurrences([\"Its been a great year\", \"this year is so worse\", \"this year is okay\"] ) == 'year'"
+    },
+    {
+      "fn_name": "most_occurrences",
+      "args": [
+        [
+          "Families can be reunited",
+          "people can be reunited",
+          "Tasks can be achieved "
+        ]
+      ],
+      "expected": "can",
+      "assert_src": "assert most_occurrences([\"Families can be reunited\", \"people can be reunited\", \"Tasks can be achieved \"] ) == 'can'"
+    }
+  ],
+  "arg_kinds": [
+    "str-list"
+  ],
+  "return_kind": "str",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

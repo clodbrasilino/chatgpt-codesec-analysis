@@ -1,0 +1,81 @@
+```c
+#include <stdio.h>
+#include <ctype.h>
+#include <string.h>
+#include <stdlib.h>
+
+char *remove_non_alnum(char *str, size_t max_len);
+
+char *remove_non_alnum(char *str, size_t max_len)
+{
+    size_t read;
+    size_t write;
+    size_t len;
+
+    if (str == NULL || max_len == 0) {
+        return NULL;
+    }
+
+    len = strnlen(str, max_len);
+    if (len >= max_len) {
+        return NULL;
+    }
+
+    write = 0;
+    for (read = 0; read < len && read < max_len; read++) {
+        if (isalnum((unsigned char)str[read])) {
+            if (write < max_len - 1) {
+                str[write] = str[read];
+                write++;
+            } else {
+                break;
+            }
+        }
+    }
+
+    if (write >= max_len) {
+        return NULL;
+    }
+    str[write] = '\0';
+
+    return str;
+}
+
+int main(void)
+{
+    char input[] = "Hello, World! 123 #$%^ test_case-42";
+    char *result;
+
+    result = remove_non_alnum(input, sizeof(input));
+    if (result == NULL) {
+        fprintf(stderr, "Error: invalid input string\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Result: %s\n", result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the original code and the fixes applied:**
+
+The Flawfinder warnings flagged in the original source were all *risk level 1* (informational) buffer-related warnings (CWE-120: Buffer Copy without Checking Size of Input, CWE-20: Improper Input Validation). These are heuristic hits on array indexing inside loops — Flawfinder cannot prove bounds are respected, so it flags them for manual review.
+
+Reviewing each one:
+
+1. **`str[read]` reads in the loop** — Already safe in the original: `read < len` where `len = strnlen(str, max_len)` guarantees `len < max_len`. I added an explicit `read < max_len` guard in the loop condition as a defense-in-depth measure to make the bound provable locally, which also silences the static-analysis concern.
+
+2. **`str[write] = str[read]` write** — Safe: guarded by `write < max_len - 1`, and `max_len == 0` is rejected up front, so `max_len - 1` cannot underflow.
+
+3. **`str[write] = '\0'` terminator** — Safe: `write` can be at most `max_len - 1` due to the write guard, and the redundant `write >= max_len` check acts as a belt-and-suspenders validation.
+
+4. **NULL and zero-length validation** — Already correctly performed before any dereference.
+
+5. **`isalnum` cast** — The `(unsigned char)` cast is correctly preserved; passing a plain `char` (potentially negative) to `isalnum` is undefined behavior.
+
+6. **`strnlen` vs `strlen`** — Correctly bounded; unterminated buffers are rejected via `len >= max_len`.
+
+The original code was essentially sound — the warnings were false positives typical of Flawfinder's pattern-matching approach. The rewrite retains all guards and tightens the loop invariant so the bounds are explicit at every access point.

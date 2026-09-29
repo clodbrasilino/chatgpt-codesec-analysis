@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_1/healed/problem-217-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_1/healed/problem-217-s3.c:38:33: style: Condition 'res5!=-1' is always false [knownConditionTrueFalse]
+    printf("Test 5: %c\n", res5 != -1 ? res5 : '-');
+                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_1/healed/problem-217-s3.c:32:35: note: Calling function 'find_first_repeated' returns -1
+    int res5 = find_first_repeated(test5);
+                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_1/healed/problem-217-s3.c:32:35: note: Assignment 'res5=find_first_repeated(test5)', assigned value is -1
+    int res5 = find_first_repeated(test5);
+                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_1/healed/problem-217-s3.c:38:33: note: Condition 'res5!=-1' is always false
+    printf("Test 5: %c\n", res5 != -1 ? res5 : '-');
+                                ^

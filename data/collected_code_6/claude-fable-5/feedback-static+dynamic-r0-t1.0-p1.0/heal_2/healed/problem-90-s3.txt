@@ -1,0 +1,73 @@
+```c
+#include <stdio.h>
+#include <stddef.h>
+#include <ctype.h>
+
+size_t longest_word_length(const char *str)
+{
+    size_t max_len = 0;
+    size_t current_len = 0;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    while (*str != '\0') {
+        if (isspace((unsigned char)*str)) {
+            if (current_len > max_len) {
+                max_len = current_len;
+            }
+            current_len = 0;
+        } else {
+            current_len++;
+        }
+        str++;
+    }
+
+    if (current_len > max_len) {
+        max_len = current_len;
+    }
+
+    return max_len;
+}
+
+int main(void)
+{
+    char buffer[1024];
+    size_t result;
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    result = longest_word_length(buffer);
+
+    if (printf("Longest word length: %zu\n", result) < 0) {
+        return 1;
+    }
+
+    return 0;
+}
+```
+
+Analysis of the original code and the fixes in place:
+
+**The flagged weakness (CWE-119/CWE-120, statically-sized buffer):** The Flawfinder warning about `char buffer[1024]` is a heuristic flag on any fixed-size array. The code already mitigates this correctly:
+
+1. **Bounded input via `fgets(buffer, sizeof(buffer), stdin)`** — unlike `gets()` or unbounded `scanf("%s", ...)`, `fgets` never writes more than `sizeof(buffer) - 1` characters plus the null terminator. Using `sizeof(buffer)` rather than a hardcoded `1024` keeps the bound tied to the actual array size, so the code stays correct if the buffer is ever resized.
+
+2. **Defensive null termination** with `buffer[sizeof(buffer) - 1] = '\0'` — technically redundant since `fgets` always null-terminates on success, but it is a cheap belt-and-suspenders guarantee before passing the buffer to string-processing code.
+
+3. **Return value checking** — both `fgets` (NULL on EOF/error) and `printf` (negative on failure) are checked, avoiding processing of uninitialized buffer contents.
+
+**Other good practices already present:**
+
+- `isspace((unsigned char)*str)` — the cast prevents undefined behavior when `char` is signed and holds a negative value (e.g., extended characters), which is a common subtle bug.
+- NULL check in `longest_word_length` guards against a NULL pointer dereference.
+- The final `if (current_len > max_len)` after the loop correctly handles a string that does not end with whitespace.
+- `%zu` is the correct format specifier for `size_t`.
+
+The code is safe as written; no functional changes were required beyond removing comments.

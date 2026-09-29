@@ -1,0 +1,9 @@
+collected_code/problem-658-0.c:11:21: error: Cannot determine that 'list[j]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+            if (list[j] == list[i]) {
+                    ^
+collected_code/problem-658-0.c:11:32: error: Cannot determine that 'list[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+            if (list[j] == list[i]) {
+                               ^
+collected_code/problem-658-0.c:18:27: error: Cannot determine that 'list[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+            maxItem = list[i];
+                          ^

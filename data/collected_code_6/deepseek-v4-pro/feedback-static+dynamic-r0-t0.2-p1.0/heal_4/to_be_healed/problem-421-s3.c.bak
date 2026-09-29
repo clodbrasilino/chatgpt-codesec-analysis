@@ -1,0 +1,81 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char *concatenate_with_delimiter(char **tuple, int tuple_size, const char *delimiter) {
+    if (tuple == NULL || delimiter == NULL || tuple_size <= 0) {
+        return NULL;
+    }
+
+    size_t total_length = 0;
+    size_t delimiter_length = strlen(delimiter);
+    int i;
+
+    for (i = 0; i < tuple_size; i++) {
+        if (tuple[i] == NULL) {
+            return NULL;
+        }
+        total_length += strlen(tuple[i]);
+        if (i < tuple_size - 1) {
+            total_length += delimiter_length;
+        }
+    }
+
+    char *result = (char *)malloc(total_length + 1);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    result[0] = '\0';
+
+    for (i = 0; i < tuple_size; i++) {
+        strcat(result, tuple[i]);
+        if (i < tuple_size - 1) {
+            strcat(result, delimiter);
+        }
+    }
+
+    return result;
+}
+
+int main(void) {
+    char *tuple1[] = {"Hello", "World", "C"};
+    char *tuple2[] = {"apple", "banana", "cherry", "date"};
+    char *tuple3[] = {"single"};
+    char *tuple4[] = {"", "empty", ""};
+    char *tuple5[] = {"a", NULL, "b"};
+
+    char *result1 = concatenate_with_delimiter(tuple1, 3, "-");
+    char *result2 = concatenate_with_delimiter(tuple2, 4, ", ");
+    char *result3 = concatenate_with_delimiter(tuple3, 1, "|");
+    char *result4 = concatenate_with_delimiter(tuple4, 3, "::");
+    char *result5 = concatenate_with_delimiter(tuple5, 3, "+");
+    /* Possible weaknesses found:
+     *  Assignment 'result6=concatenate_with_delimiter(NULL,3,"-")', assigned value is 0
+     *  Calling function 'concatenate_with_delimiter' returns 0
+     */
+    char *result6 = concatenate_with_delimiter(NULL, 3, "-");
+    char *result7 = concatenate_with_delimiter(tuple1, 0, "-");
+    char *result8 = concatenate_with_delimiter(tuple1, 3, NULL);
+
+    printf("Result 1: %s\n", result1 != NULL ? result1 : "(null)");
+    printf("Result 2: %s\n", result2 != NULL ? result2 : "(null)");
+    printf("Result 3: %s\n", result3 != NULL ? result3 : "(null)");
+    printf("Result 4: %s\n", result4 != NULL ? result4 : "(null)");
+    printf("Result 5: %s\n", result5 != NULL ? result5 : "(null)");
+    /* Possible weaknesses found:
+     *  Condition 'result6!=NULL' is always false
+     *  Condition 'result6!=NULL' is always false [knownConditionTrueFalse]
+     */
+    printf("Result 6: %s\n", result6 != NULL ? result6 : "(null)");
+    printf("Result 7: %s\n", result7 != NULL ? result7 : "(null)");
+    printf("Result 8: %s\n", result8 != NULL ? result8 : "(null)");
+
+    free(result1);
+    free(result2);
+    free(result3);
+    free(result4);
+    free(result5);
+
+    return 0;
+}

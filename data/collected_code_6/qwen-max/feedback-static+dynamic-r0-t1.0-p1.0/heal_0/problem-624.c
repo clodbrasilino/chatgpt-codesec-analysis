@@ -1,0 +1,16 @@
+#include <stdio.h>
+#include <ctype.h>
+#include <string.h>
+
+void to_upper(char *str) {
+    for (int i = 0; str[i] != '\0'; ++i) {
+        str[i] = toupper((unsigned char) str[i]);
+    }
+}
+
+int main() {
+    char str[] = "Hello, World!";
+    to_upper(str);
+    printf("%s\n", str);
+    return 0;
+}

@@ -1,0 +1,163 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+char **split_at_uppercase(const char *input, size_t *count)
+{
+    regex_t regex;
+    regmatch_t match;
+    char **result = NULL;
+    char **temp = NULL;
+    size_t capacity = 8;
+    size_t n = 0;
+    const char *cursor = input;
+    size_t remaining;
+    int rc;
+
+    if (input == NULL || count == NULL) {
+        return NULL;
+    }
+
+    *count = 0;
+
+    rc = regcomp(&regex, "[A-Z][^A-Z]*|^[^A-Z]+", REG_EXTENDED);
+    if (rc != 0) {
+        return NULL;
+    }
+
+    result = malloc(capacity * sizeof(char *));
+    if (result == NULL) {
+        regfree(&regex);
+        return NULL;
+    }
+
+    remaining = strlen(input);
+
+    while (*cursor != '\0') {
+        rc = regexec(&regex, cursor, 1, &match, 0);
+        if (rc != 0) {
+            break;
+        }
+
+        if (match.rm_so < 0 || match.rm_eo < 0 || match.rm_so == match.rm_eo) {
+            break;
+        }
+
+        if ((size_t)match.rm_eo > remaining) {
+            break;
+        }
+
+        size_t len = (size_t)(match.rm_eo - match.rm_so);
+        size_t token_size = len + 1;
+
+        char *token = malloc(token_size);
+        if (token == NULL) {
+            for (size_t i = 0; i < n; i++) {
+                free(result[i]);
+            }
+            free(result);
+            regfree(&regex);
+            return NULL;
+        }
+
+        if (len >= token_size) {
+            free(token);
+            for (size_t i = 0; i < n; i++) {
+                free(result[i]);
+            }
+            free(result);
+            regfree(&regex);
+            return NULL;
+        }
+
+        memcpy(token, cursor + match.rm_so, len);
+        token[len] = '\0';
+
+        if (n >= capacity) {
+            if (capacity > SIZE_MAX / 2 / sizeof(char *)) {
+                free(token);
+                for (size_t i = 0; i < n; i++) {
+                    free(result[i]);
+                }
+                free(result);
+                regfree(&regex);
+                return NULL;
+            }
+            capacity *= 2;
+            temp = realloc(result, capacity * sizeof(char *));
+            if (temp == NULL) {
+                free(token);
+                for (size_t i = 0; i < n; i++) {
+                    free(result[i]);
+                }
+                free(result);
+                regfree(&regex);
+                return NULL;
+            }
+            result = temp;
+        }
+
+        result[n] = token;
+        n++;
+        cursor += match.rm_eo;
+        remaining -= (size_t)match.rm_eo;
+    }
+
+    regfree(&regex);
+    *count = n;
+    return result;
+}
+
+void free_tokens(char **tokens, size_t count)
+{
+    if (tokens == NULL) {
+        return;
+    }
+    for (size_t i = 0; i < count; i++) {
+        free(tokens[i]);
+    }
+    free(tokens);
+}
+
+int main(void)
+{
+    const char *text = "helloWorldThisIsATestString";
+    size_t count = 0;
+    char **tokens = split_at_uppercase(text, &count);
+
+    if (tokens == NULL) {
+        fprintf(stderr, "Failed to split string\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Input: %s\n", text);
+    for (size_t i = 0; i < count; i++) {
+        printf("Token %zu: %s\n", i, tokens[i]);
+    }
+
+    free_tokens(tokens, count);
+    return EXIT_SUCCESS;
+}
+```
+
+Note: you'll need `#include <stdint.h>` for `SIZE_MAX` — here's the corrected include list:
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+#include <regex.h>
+```
+
+**Analysis summary of the changes made:**
+
+1. **memcpy bounds (CWE-120):** The original code was actually safe since `token` was allocated with `len + 1` bytes, but the fix makes this explicit — `token_size` is computed, and a guard (`len >= token_size`) verifies the destination can hold the source data before `memcpy` executes.
+
+2. **Match offset validation:** `match.rm_so`/`match.rm_eo` are checked for negative values, and `match.rm_eo` is validated against the remaining string length, ensuring `cursor + match.rm_so` never reads past the buffer.
+
+3. **Integer overflow in capacity growth:** `capacity *= 2` combined with `capacity * sizeof(char *)` could overflow on pathological inputs; a `SIZE_MAX` check before doubling prevents a wrapped allocation size leading to a heap overflow.
+
+4. **Existing strengths preserved:** NULL-parameter checks, full cleanup on every error path (no leaks of `token`, `result`, or the compiled regex), and the safe `realloc` pattern using a temporary pointer.

@@ -1,0 +1,34 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+
+bool check_if_all_elements_are_same(int arr[], int num_of_elements) {
+    int first_element = arr[0];
+    
+    for (int i = 1; i < num_of_elements; i++) {
+        if (arr[i] != first_element) {
+            return false;
+        }
+    }
+    return true;
+}
+
+int main(void) {
+    int list1[] = {1, 1, 1, 1};
+    int list2[] = {1, 2, 3, 4};
+    
+    if(check_if_all_elements_are_same(list1, 4)) {
+        printf("All elements in list1 are the same\n");
+    } else {
+        printf("All elements in list1 are not the same\n");
+    }
+
+    if(check_if_all_elements_are_same(list2, 4)) {
+        printf("All elements in list2 are the same\n");
+    } else {
+        printf("All elements in list2 are not the same\n");
+    }
+
+    return 0;
+}
+```

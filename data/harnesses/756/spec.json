@@ -1,0 +1,44 @@
+{
+  "task_id": 756,
+  "text": "Write a C function that matches a string that has an a followed by zero or one 'b'.",
+  "fn_candidates": [
+    "text_match_zero_one",
+    "TextMatchZeroOne",
+    "textMatchZeroOne",
+    "textmatchzeroone"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "text_match_zero_one",
+      "args": [
+        "ac"
+      ],
+      "expected": "Found a match!",
+      "assert_src": "assert text_match_zero_one(\"ac\")==('Found a match!')"
+    },
+    {
+      "fn_name": "text_match_zero_one",
+      "args": [
+        "dc"
+      ],
+      "expected": "Not matched!",
+      "assert_src": "assert text_match_zero_one(\"dc\")==('Not matched!')"
+    },
+    {
+      "fn_name": "text_match_zero_one",
+      "args": [
+        "abbbba"
+      ],
+      "expected": "Found a match!",
+      "assert_src": "assert text_match_zero_one(\"abbbba\")==('Found a match!')"
+    }
+  ],
+  "arg_kinds": [
+    "str"
+  ],
+  "return_kind": "str",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

@@ -1,0 +1,9 @@
+./collected_code_3/round2/heal_1/healed/problem-456.c: In function 'main':
+./collected_code_3/round2/heal_1/healed/problem-456.c:34:23: warning: passing argument 1 of 'reverseStringList' from incompatible pointer type [-Wincompatible-pointer-types]
+   34 |     reverseStringList(strList, size);
+      |                       ^~~~~~~
+      |                       |
+      |                       char (*)[20]
+./collected_code_3/round2/heal_1/healed/problem-456.c:24:30: note: expected 'char **' but argument is of type 'char (*)[20]'
+   24 | void reverseStringList(char* str[], int size) {
+      |                        ~~~~~~^~~~~

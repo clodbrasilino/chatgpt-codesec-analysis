@@ -1,0 +1,24 @@
+Unfortunately, the C programming language does not natively support regular expressions (regex). However, you can achieve the same result by using a simple loop to iterate over the string and replace the characters. Here is a simple C program that does this:
+
+```c
+#include <stdio.h>
+#include <string.h>
+
+void replace_chars(char *str) {
+    for(int i = 0; i < strlen(str); i++) {
+        if(str[i] == ' ')
+            str[i] = '_';
+        else if(str[i] == '_')
+            str[i] = ' ';
+    }
+}
+
+int main() {
+    char str[] = "Hello_World";
+    replace_chars(str);
+    printf("%s\n", str);
+    return 0;
+}
+```
+
+This program defines a function `replace_chars` that takes a string and replaces all spaces with underscores and all underscores with spaces. The `main` function tests this function with the string "Hello_World". After the call to `replace_chars`, the string is printed to the console.

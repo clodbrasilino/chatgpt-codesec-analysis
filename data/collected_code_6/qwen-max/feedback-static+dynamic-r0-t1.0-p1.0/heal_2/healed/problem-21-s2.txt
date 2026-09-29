@@ -1,0 +1,33 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+#include <inttypes.h>
+
+void findMultiples(int n, int m) {
+    if (m > 0 && n > INT_MIN / m) {
+        for (int i = 1; i <= m; i++) {
+            int64_t result = (int64_t)i * n;
+            if (result <= INT_MAX && result >= INT_MIN) {
+                printf("%" PRId64 " ", result);
+            } else {
+                fprintf(stderr, "Overflow detected\n");
+                return;
+            }
+        }
+        printf("\n");
+    } else {
+        fprintf(stderr, "Input values are too large\n");
+    }
+}
+
+int main() {
+    int n, m;
+    if (scanf("%d %d", &n, &m) != 2) {
+        fprintf(stderr, "Invalid input\n");
+        return 1;
+    }
+    findMultiples(n, m);
+    return 0;
+}
+```

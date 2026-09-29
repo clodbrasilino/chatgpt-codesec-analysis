@@ -1,0 +1,83 @@
+#include <stdio.h>
+#include <stdint.h>
+#include <inttypes.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <string.h>
+
+uint64_t sum_odd_natural_numbers(uint64_t l, uint64_t r) {
+    if (l > r) {
+        return 0;
+    }
+    
+    uint64_t first_odd = (l % 2 == 0) ? l + 1 : l;
+    
+    if (first_odd > r) {
+        return 0;
+    }
+    
+    uint64_t last_odd = (r % 2 == 0) ? r - 1 : r;
+    uint64_t count = (last_odd - first_odd) / 2 + 1;
+    
+    return count * (first_odd + last_odd) / 2;
+}
+
+int main(void) {
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char buffer[1024];
+    char *endptr;
+    
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        return 1;
+    }
+    
+    size_t len = strnlen(buffer, sizeof(buffer));
+    if (len == sizeof(buffer) - 1 && buffer[len - 1] != '\n') {
+        return 1;
+    }
+    
+    errno = 0;
+    /* Possible weaknesses found:
+     *  'l' undeclared (first use in this function)
+     *  use of undeclared identifier 'l'
+     *  each undeclared identifier is reported only once for each function it appears in
+     */
+    l = strtoull(buffer, &endptr, 10);
+    if (errno != 0 || endptr == buffer) {
+        return 1;
+    }
+    
+    while (*endptr == ' ' || *endptr == '\t') {
+        endptr++;
+    }
+    
+    char *second_start = endptr;
+    
+    errno = 0;
+    /* Possible weaknesses found:
+     *  'r' undeclared (first use in this function)
+     *  use of undeclared identifier 'r'
+     */
+    r = strtoull(endptr, &endptr, 10);
+    if (errno != 0 || endptr == second_start) {
+        return 1;
+    }
+    
+    while (*endptr == ' ' || *endptr == '\t' || *endptr == '\n') {
+        endptr++;
+    }
+    
+    if (*endptr != '\0') {
+        return 1;
+    }
+    
+    /* Possible weaknesses found:
+     *  use of undeclared identifier 'l'
+     *  use of undeclared identifier 'r'
+     */
+    printf("%" PRIu64 "\n", sum_odd_natural_numbers(l, r));
+    
+    return 0;
+}

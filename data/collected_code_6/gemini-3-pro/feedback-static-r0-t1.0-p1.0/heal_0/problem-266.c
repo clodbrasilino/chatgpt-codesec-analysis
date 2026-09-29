@@ -1,0 +1,23 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+double lateral_surface_area_cube(double side) {
+    if (side < 0.0) {
+        return -1.0;
+    }
+    return 4.0 * side * side;
+}
+
+int main(void) {
+    double side = 5.0;
+    double area = lateral_surface_area_cube(side);
+    
+    if (area < 0.0) {
+        fprintf(stderr, "Invalid side length.\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("Lateral surface area of cube with side %.2f is %.2f\n", side, area);
+    
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,38 @@
+#include <stdio.h>
+#include <math.h>
+#include <stdbool.h>
+
+bool isPerfectSquare(int number)
+{
+    int root = sqrt(number);
+    return number == root * root;
+}
+
+double squareRoot(int number)
+{
+    if (isPerfectSquare(number))
+    {
+        return sqrt(number);
+    }
+    else
+    {
+        return -1;
+    }
+}
+
+int main()
+{
+    int number = 16;
+    double result = squareRoot(number);
+    
+    if (result != -1)
+    {
+        printf("Square root of %d is %f", number, result);
+    }
+    else
+    {
+        printf("%d is not a perfect square", number);
+    }
+
+    return 0;
+}

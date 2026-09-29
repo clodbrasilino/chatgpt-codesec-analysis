@@ -1,0 +1,22 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-933-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-933-s3.c:62:54: style: Condition 'current_len+1>max_len' is always false [knownConditionTrueFalse]
+                memcpy(temp1, temp2, current_len + 1 > max_len ? max_len : current_len + 1);
+                                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-933-s3.c:61:33: note: Assuming that condition 'current_len+1<=max_len' is not redundant
+            if (current_len + 1 <= max_len) {
+                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-933-s3.c:62:54: note: Condition 'current_len+1>max_len' is always false
+                memcpy(temp1, temp2, current_len + 1 > max_len ? max_len : current_len + 1);
+                                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-933-s3.c:77:44: style: Condition 'final_len>max_len' is always false [knownConditionTrueFalse]
+        memcpy(final_str, temp1, final_len > max_len ? max_len : final_len);
+                                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-933-s3.c:76:19: note: Assuming that condition 'final_len<=max_len' is not redundant
+    if (final_len <= max_len) {
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-933-s3.c:77:44: note: Condition 'final_len>max_len' is always false
+        memcpy(final_str, temp1, final_len > max_len ? max_len : final_len);
+                                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-933-s3.c:88:33: style: Parameter 'argv' can be declared as const array [constParameter]
+int main(int argc, char * const argv[]) {
+                                ^

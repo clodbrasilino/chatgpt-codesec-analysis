@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-710.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-710.c:41:18: style: Condition 'max_copy>0' is always false [knownConditionTrueFalse]
+    if (max_copy > 0) {
+                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-710.c:40:40: note: Assignment 'max_copy=(name_len<=50)?name_len:50', assigned value is less than 1
+    max_copy = (name_len <= NAME_SIZE) ? name_len : NAME_SIZE;
+                                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-710.c:41:18: note: Condition 'max_copy>0' is always false
+    if (max_copy > 0) {
+                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-710.c:50:18: style: Condition 'max_copy>0' is always false [knownConditionTrueFalse]
+    if (max_copy > 0) {
+                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-710.c:49:40: note: Assignment 'max_copy=(name_len<=50)?name_len:50', assigned value is less than 1
+    max_copy = (name_len <= NAME_SIZE) ? name_len : NAME_SIZE;
+                                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-710.c:50:18: note: Condition 'max_copy>0' is always false
+    if (max_copy > 0) {
+                 ^

@@ -1,0 +1,91 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+static long long findOperations(const int *arr, size_t n, int k)
+{
+    size_t i;
+    int maxVal;
+    long long ops;
+    /* Possible weaknesses found:
+     *  The scope of the variable 'diff' can be reduced. [variableScope]
+     */
+    long long diff;
+
+    if (arr == NULL || n == 0U || k <= 0) {
+        return -1LL;
+    }
+
+    maxVal = arr[0];
+    for (i = 1U; i < n; i++) {
+        if (arr[i] > maxVal) {
+            maxVal = arr[i];
+        }
+    }
+
+    ops = 0LL;
+    for (i = 0U; i < n; i++) {
+        diff = (long long)maxVal - (long long)arr[i];
+        if ((diff % (long long)k) != 0LL) {
+            return -1LL;
+        }
+        ops += diff / (long long)k;
+    }
+
+    return ops;
+}
+
+int main(void)
+{
+    int n;
+    int k;
+    int *arr;
+    int i;
+    long long result;
+
+    printf("Enter number of elements: ");
+    if (scanf("%d", &n) != 1) {
+        fprintf(stderr, "Invalid input for n\n");
+        return EXIT_FAILURE;
+    }
+    if (n <= 0 || n > 1000000) {
+        fprintf(stderr, "n out of valid range\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter k: ");
+    if (scanf("%d", &k) != 1) {
+        fprintf(stderr, "Invalid input for k\n");
+        return EXIT_FAILURE;
+    }
+    if (k <= 0) {
+        fprintf(stderr, "k must be positive\n");
+        return EXIT_FAILURE;
+    }
+
+    arr = (int *)malloc((size_t)n * sizeof(int));
+    if (arr == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter %d elements: ", n);
+    for (i = 0; i < n; i++) {
+        if (scanf("%d", &arr[i]) != 1) {
+            fprintf(stderr, "Invalid input for element %d\n", i);
+            free(arr);
+            return EXIT_FAILURE;
+        }
+    }
+
+    result = findOperations(arr, (size_t)n, k);
+    free(arr);
+
+    if (result < 0LL) {
+        printf("It is not possible to make all elements equal\n");
+    } else {
+        printf("Number of operations required: %lld\n", result);
+    }
+
+    return EXIT_SUCCESS;
+}

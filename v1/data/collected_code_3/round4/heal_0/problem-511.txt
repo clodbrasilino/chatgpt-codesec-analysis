@@ -1,0 +1,31 @@
+```C
+#include <stdio.h>
+#include <limits.h>
+
+int minSumOfFactors(int n) {
+    if (n == 1)
+        return 1;
+    int sum = INT_MAX;
+    for (int i = 2; i * i <= n; i++) {
+        if (n % i == 0) {
+            int currentSum = 0;
+            while (n % i == 0) {
+                n = n / i;
+                currentSum += i;
+            }
+            sum = (sum < currentSum) ? sum : currentSum;
+        }
+    }
+    if (n > 1)
+        sum = (sum < n) ? sum : n;
+    return sum;
+}
+
+int main() {
+    int num;
+    printf("Enter a number: ");
+    scanf("%d", &num);
+    printf("Minimum sum of factors: %d\n", minSumOfFactors(num));
+    return 0;
+}
+```

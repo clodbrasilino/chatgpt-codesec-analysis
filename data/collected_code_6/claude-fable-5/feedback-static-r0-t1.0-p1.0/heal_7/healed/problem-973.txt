@@ -1,0 +1,166 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+int left_rotate(char *str, size_t str_size, size_t d)
+{
+    size_t len;
+    size_t suffix_len;
+    size_t temp_size;
+    char *temp;
+
+    if (str == NULL || str_size == 0) {
+        return -1;
+    }
+
+    len = strnlen(str, str_size);
+    if (len >= str_size) {
+        return -1;
+    }
+
+    if (len == 0) {
+        return 0;
+    }
+
+    d = d % len;
+    if (d == 0) {
+        return 0;
+    }
+
+    suffix_len = len - d;
+
+    if (len > SIZE_MAX - 1) {
+        return -1;
+    }
+
+    temp_size = len + 1;
+    if (temp_size > str_size) {
+        return -1;
+    }
+
+    temp = malloc(temp_size);
+    if (temp == NULL) {
+        return -1;
+    }
+
+    if (suffix_len > temp_size - 1 ||
+        d > temp_size - 1 - suffix_len ||
+        (d + suffix_len) != len) {
+        free(temp);
+        return -1;
+    }
+
+    memcpy(temp, str + d, suffix_len);
+    memcpy(temp + suffix_len, str, d);
+    temp[len] = '\0';
+
+    memcpy(str, temp, temp_size);
+    free(temp);
+
+    return 0;
+}
+
+int main(void)
+{
+    char str[] = "HelloWorld";
+    size_t d = 3;
+
+    printf("Original string: %s\n", str);
+
+    if (left_rotate(str, sizeof(str), d) != 0) {
+        fprintf(stderr, "Rotation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Rotated string:  %s\n", str);
+
+    return EXIT_SUCCESS;
+}
+```
+
+Note: this rewrite requires `#include <stdint.h>` for `SIZE_MAX` — here is the corrected final version:
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+int left_rotate(char *str, size_t str_size, size_t d)
+{
+    size_t len;
+    size_t suffix_len;
+    size_t temp_size;
+    char *temp;
+
+    if (str == NULL || str_size == 0) {
+        return -1;
+    }
+
+    len = strnlen(str, str_size);
+    if (len >= str_size) {
+        return -1;
+    }
+
+    if (len == 0) {
+        return 0;
+    }
+
+    d = d % len;
+    if (d == 0) {
+        return 0;
+    }
+
+    suffix_len = len - d;
+
+    if (len > SIZE_MAX - 1) {
+        return -1;
+    }
+
+    temp_size = len + 1;
+    if (temp_size > str_size) {
+        return -1;
+    }
+
+    temp = malloc(temp_size);
+    if (temp == NULL) {
+        return -1;
+    }
+
+    if (suffix_len > temp_size - 1 ||
+        d > temp_size - 1 - suffix_len ||
+        (d + suffix_len) != len) {
+        free(temp);
+        return -1;
+    }
+
+    memcpy(temp, str + d, suffix_len);
+    memcpy(temp + suffix_len, str, d);
+    temp[len] = '\0';
+
+    memcpy(str, temp, temp_size);
+    free(temp);
+
+    return 0;
+}
+
+int main(void)
+{
+    char str[] = "HelloWorld";
+    size_t d = 3;
+
+    printf("Original string: %s\n", str);
+
+    if (left_rotate(str, sizeof(str), d) != 0) {
+        fprintf(stderr, "Rotation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Rotated string:  %s\n", str);
+
+    return EXIT_SUCCESS;
+}
+```
+
+The changes made relative to the original: removed the always-false conditions flagged by the static analyzer (`temp_size < len`, `len >= temp_size`, the redundant `d >= len` after modulo, and the redundant `suffix_len > len` check), added an explicit overflow guard before computing `len + 1`, and moved the `temp_size > str_size` validation before allocation so every `memcpy` destination is provably large enough for the data copied into it, satisfying the CWE-120 concerns.

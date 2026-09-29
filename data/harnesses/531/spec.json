@@ -1,0 +1,67 @@
+{
+  "task_id": 531,
+  "text": "Write a C function to find minimum number of coins that make a given value.",
+  "fn_candidates": [
+    "min_coins",
+    "MinCoins",
+    "minCoins",
+    "mincoins"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "min_coins",
+      "args": [
+        [
+          9,
+          6,
+          5,
+          1
+        ],
+        4,
+        11
+      ],
+      "expected": 2,
+      "assert_src": "assert min_coins([9, 6, 5, 1] ,4,11)==2"
+    },
+    {
+      "fn_name": "min_coins",
+      "args": [
+        [
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        6,
+        9
+      ],
+      "expected": 1,
+      "assert_src": "assert min_coins([4,5,6,7,8,9],6,9)==1"
+    },
+    {
+      "fn_name": "min_coins",
+      "args": [
+        [
+          1,
+          2,
+          3
+        ],
+        3,
+        4
+      ],
+      "expected": 2,
+      "assert_src": "assert min_coins([1, 2, 3],3,4)==2"
+    }
+  ],
+  "arg_kinds": [
+    "int",
+    "int-list"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

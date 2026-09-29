@@ -1,0 +1,71 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *elements;
+    size_t size;
+} Tuple;
+
+int extract_rear_elements(const Tuple *tuples, size_t count, int **out_rear)
+{
+    size_t i;
+    int *rear;
+
+    if (tuples == NULL || out_rear == NULL || count == 0) {
+        return -1;
+    }
+
+    for (i = 0; i < count; i++) {
+        if (tuples[i].elements == NULL || tuples[i].size == 0) {
+            return -1;
+        }
+    }
+
+    rear = (int *)malloc(count * sizeof(int));
+    if (rear == NULL) {
+        return -1;
+    }
+
+    for (i = 0; i < count; i++) {
+        rear[i] = tuples[i].elements[tuples[i].size - 1];
+    }
+
+    *out_rear = rear;
+    return 0;
+}
+
+int main(void)
+{
+    int data1[] = {1, 2, 3};
+    int data2[] = {4, 5};
+    int data3[] = {6, 7, 8, 9};
+    Tuple tuples[3];
+    int *rear = NULL;
+    size_t count = 3;
+    size_t i;
+    int status;
+
+    tuples[0].elements = data1;
+    tuples[0].size = sizeof(data1) / sizeof(data1[0]);
+    tuples[1].elements = data2;
+    tuples[1].size = sizeof(data2) / sizeof(data2[0]);
+    tuples[2].elements = data3;
+    tuples[2].size = sizeof(data3) / sizeof(data3[0]);
+
+    status = extract_rear_elements(tuples, count, &rear);
+    if (status != 0) {
+        fprintf(stderr, "Error: failed to extract rear elements\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Rear elements: ");
+    for (i = 0; i < count; i++) {
+        printf("%d ", rear[i]);
+    }
+    printf("\n");
+
+    free(rear);
+    rear = NULL;
+
+    return EXIT_SUCCESS;
+}

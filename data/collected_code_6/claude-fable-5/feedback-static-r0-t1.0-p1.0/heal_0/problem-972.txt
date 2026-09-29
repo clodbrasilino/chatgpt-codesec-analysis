@@ -1,0 +1,112 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *elements;
+    size_t size;
+} Tuple;
+
+static Tuple *create_tuple(const int *values, size_t size)
+{
+    Tuple *t = malloc(sizeof(Tuple));
+    if (t == NULL) {
+        return NULL;
+    }
+    t->elements = malloc(size * sizeof(int));
+    if (t->elements == NULL) {
+        free(t);
+        return NULL;
+    }
+    for (size_t i = 0; i < size; i++) {
+        t->elements[i] = values[i];
+    }
+    t->size = size;
+    return t;
+}
+
+static void free_tuple(Tuple *t)
+{
+    if (t != NULL) {
+        free(t->elements);
+        free(t);
+    }
+}
+
+static Tuple *concatenate_tuples(const Tuple *a, const Tuple *b)
+{
+    if (a == NULL || b == NULL) {
+        return NULL;
+    }
+    size_t total = a->size + b->size;
+    Tuple *result = malloc(sizeof(Tuple));
+    if (result == NULL) {
+        return NULL;
+    }
+    result->elements = malloc(total * sizeof(int));
+    if (result->elements == NULL) {
+        free(result);
+        return NULL;
+    }
+    for (size_t i = 0; i < a->size; i++) {
+        result->elements[i] = a->elements[i];
+    }
+    for (size_t i = 0; i < b->size; i++) {
+        result->elements[a->size + i] = b->elements[i];
+    }
+    result->size = total;
+    return result;
+}
+
+static void print_tuple(const Tuple *t)
+{
+    if (t == NULL) {
+        return;
+    }
+    printf("(");
+    for (size_t i = 0; i < t->size; i++) {
+        printf("%d", t->elements[i]);
+        if (i + 1 < t->size) {
+            printf(", ");
+        }
+    }
+    printf(")\n");
+}
+
+int main(void)
+{
+    int values1[] = {3, 4};
+    int values2[] = {5, 6};
+
+    Tuple *t1 = create_tuple(values1, 2);
+    if (t1 == NULL) {
+        fprintf(stderr, "Allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    Tuple *t2 = create_tuple(values2, 2);
+    if (t2 == NULL) {
+        fprintf(stderr, "Allocation failed\n");
+        free_tuple(t1);
+        return EXIT_FAILURE;
+    }
+
+    Tuple *result = concatenate_tuples(t1, t2);
+    if (result == NULL) {
+        fprintf(stderr, "Concatenation failed\n");
+        free_tuple(t1);
+        free_tuple(t2);
+        return EXIT_FAILURE;
+    }
+
+    print_tuple(t1);
+    print_tuple(t2);
+    print_tuple(result);
+
+    free_tuple(t1);
+    free_tuple(t2);
+    free_tuple(result);
+
+    return EXIT_SUCCESS;
+}
+```

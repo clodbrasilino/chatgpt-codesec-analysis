@@ -1,0 +1,16 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-288-s2.c: In function 'main':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-288-s2.c:59:18: error: expected ')' before 'SCNd64'
+   59 |     if (scanf("%" SCNd64, &p) != 1 || p <= 1) {
+      |              ~   ^~~~~~~
+      |                  )
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-288-s2.c:5:1: note: 'SCNd64' is defined in header '<inttypes.h>'; this is probably fixable by adding '#include <inttypes.h>'
+    4 | #include <errno.h>
+  +++ |+#include <inttypes.h>
+    5 | 
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-288-s2.c:69:22: error: expected ')' before 'SCNd64'
+   69 |         if (scanf("%" SCNd64, &arr[i]) != 1) {
+      |                  ~   ^~~~~~~
+      |                      )
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-288-s2.c:69:23: note: 'SCNd64' is defined in header '<inttypes.h>'; this is probably fixable by adding '#include <inttypes.h>'
+   69 |         if (scanf("%" SCNd64, &arr[i]) != 1) {
+      |                       ^~~~~~

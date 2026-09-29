@@ -1,0 +1,71 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+#include <stdbool.h>
+
+static bool sum_column(const int *const *matrix, size_t rows, size_t cols, size_t column, long *result)
+{
+    if (matrix == NULL || result == NULL || column >= cols) {
+        return false;
+    }
+
+    long total = 0;
+
+    for (size_t i = 0; i < rows; i++) {
+        if (matrix[i] == NULL) {
+            return false;
+        }
+        int value = matrix[i][column];
+        if ((value > 0 && total > LONG_MAX - value) ||
+            (value < 0 && total < LONG_MIN - value)) {
+            return false;
+        }
+        total += value;
+    }
+
+    *result = total;
+    return true;
+}
+
+int main(void)
+{
+    size_t rows = 3;
+    size_t cols = 4;
+
+    int **matrix = malloc(rows * sizeof(*matrix));
+    if (matrix == NULL) {
+        fprintf(stderr, "Allocation failure\n");
+        return EXIT_FAILURE;
+    }
+
+    for (size_t i = 0; i < rows; i++) {
+        matrix[i] = malloc(cols * sizeof(*matrix[i]));
+        if (matrix[i] == NULL) {
+            for (size_t j = 0; j < i; j++) {
+                free(matrix[j]);
+            }
+            free(matrix);
+            fprintf(stderr, "Allocation failure\n");
+            return EXIT_FAILURE;
+        }
+        for (size_t j = 0; j < cols; j++) {
+            matrix[i][j] = (int)(i * cols + j + 1);
+        }
+    }
+
+    size_t column = 2;
+    long result = 0;
+
+    if (sum_column((const int *const *)matrix, rows, cols, column, &result)) {
+        printf("Sum of column %zu: %ld\n", column, result);
+    } else {
+        fprintf(stderr, "Failed to compute column sum\n");
+    }
+
+    for (size_t i = 0; i < rows; i++) {
+        free(matrix[i]);
+    }
+    free(matrix);
+
+    return EXIT_SUCCESS;
+}

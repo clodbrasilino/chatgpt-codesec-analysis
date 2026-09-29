@@ -1,0 +1,18 @@
+collected_code/problem-369-0.c:11:24: error: Cannot determine that 'length' is initialized [premium-bughuntingUninit]
+    scanf("%f %f %f", &length, &breadth, &height);
+                       ^
+collected_code/problem-369-0.c:11:33: error: Cannot determine that 'breadth' is initialized [premium-bughuntingUninit]
+    scanf("%f %f %f", &length, &breadth, &height);
+                                ^
+collected_code/problem-369-0.c:11:43: error: Cannot determine that 'height' is initialized [premium-bughuntingUninit]
+    scanf("%f %f %f", &length, &breadth, &height);
+                                          ^
+collected_code/problem-369-0.c:12:39: error: Cannot determine that 'length' is initialized [premium-bughuntingUninit]
+    float area = lateral_surface_area(length, breadth, height);
+                                      ^
+collected_code/problem-369-0.c:12:47: error: Cannot determine that 'breadth' is initialized [premium-bughuntingUninit]
+    float area = lateral_surface_area(length, breadth, height);
+                                              ^
+collected_code/problem-369-0.c:12:56: error: Cannot determine that 'height' is initialized [premium-bughuntingUninit]
+    float area = lateral_surface_area(length, breadth, height);
+                                                       ^

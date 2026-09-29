@@ -1,0 +1,116 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+static int contains_interior_z(const char *word, size_t len)
+{
+    if (word == NULL || len < 3) {
+        return 0;
+    }
+
+    for (size_t i = 1; i < len - 1; i++) {
+        if (word[i] == 'z' || word[i] == 'Z') {
+            return 1;
+        }
+    }
+
+    return 0;
+}
+
+static int find_word_with_interior_z(const char *text, char *result, size_t result_size)
+{
+    size_t i = 0;
+
+    if (text == NULL || result == NULL || result_size == 0) {
+        return -1;
+    }
+
+    result[0] = '\0';
+
+    while (text[i] != '\0') {
+        while (text[i] != '\0' && !isalpha((unsigned char)text[i])) {
+            i++;
+        }
+
+        const size_t start = i;
+
+        while (text[i] != '\0' && isalpha((unsigned char)text[i])) {
+            i++;
+        }
+
+        const size_t len = i - start;
+
+        if (len > 0 && contains_interior_z(text + start, len)) {
+            if (len >= result_size) {
+                return -1;
+            }
+            memcpy(result, text + start, len);
+            result[len] = '\0';
+            return 0;
+        }
+    }
+
+    return 1;
+}
+
+int main(void)
+{
+    const char *tests[] = {
+        "the lazy dog jumped",
+        "zebra runs fast",
+        "jazz music is nice",
+        "no matching words here",
+        "amazing puzzle pieces"
+    };
+    const size_t num_tests = sizeof(tests) / sizeof(tests[0]);
+
+    size_t max_len = 0;
+    for (size_t i = 0; i < num_tests; i++) {
+        const size_t len = strlen(tests[i]);
+        if (len > max_len) {
+            max_len = len;
+        }
+    }
+
+    const size_t buffer_size = max_len + 1;
+    char *buffer = calloc(buffer_size, sizeof(char));
+    if (buffer == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    for (size_t i = 0; i < num_tests; i++) {
+        const int status = find_word_with_interior_z(tests[i], buffer, buffer_size);
+        if (status == 0) {
+            printf("Input: \"%s\" -> Match: \"%s\"\n", tests[i], buffer);
+        } else if (status == 1) {
+            printf("Input: \"%s\" -> No match found\n", tests[i]);
+        } else {
+            fprintf(stderr, "Error processing input: \"%s\"\n", tests[i]);
+            free(buffer);
+            return EXIT_FAILURE;
+        }
+    }
+
+    free(buffer);
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis summary:**
+
+The original code was already largely defensive, but the rewrite hardens it against the flagged weakness (CWE-119/CWE-120, statically-sized buffer):
+
+1. **Dynamic buffer sizing** — Instead of a fixed `char buffer[256]`, the buffer is allocated based on the actual maximum input length (`max_len + 1`). No input can exceed the destination capacity by construction, and the allocation is zero-initialized via `calloc`, replacing the manual `memset`.
+
+2. **Bounds checking preserved** — `find_word_with_interior_z` still validates `len >= result_size` before writing, so the copy can never overflow even if the function is reused with a smaller buffer elsewhere.
+
+3. **`memcpy` with a verified length** replaces the manual byte-copy loop; the length is checked against `result_size` beforehand, so this is a bounded copy, not an unbounded `strcpy`-style operation.
+
+4. **Allocation failure handling and cleanup** — `calloc` failure is checked, and `free` is called on every exit path to avoid leaks.
+
+5. **`static` linkage** on helper functions limits their scope to the translation unit, which is good hygiene for internal helpers.
+
+The core logic (skipping non-alpha runs, scanning alpha runs, checking for an interior `z`/`Z` in words of length ≥ 3) is unchanged, as it was correct and safe: `isalpha` is properly called with an `unsigned char` cast, and all pointer/size preconditions are validated on entry.

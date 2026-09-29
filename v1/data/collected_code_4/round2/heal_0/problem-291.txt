@@ -1,0 +1,29 @@
+```c
+#include <stdio.h>
+
+long long waysOfPainting(int n, int k) {
+    if (n < 2)
+        return k*n;
+    else {
+        long long same = k;
+        long long diff = k*(k-1);
+        for (int i=2; i<n; i++) {
+            long long temp = diff;
+            diff = (same+diff)*(k-1);
+            same = temp;
+        }
+        return same + diff;
+    }
+}
+
+int main(void) {
+    int n, k;
+    printf("Enter the number of posts: ");
+    scanf("%d", &n);
+    printf("Enter the number of colors: ");
+    scanf("%d", &k);
+    printf("The number of ways of painting the fence: %lld\n", waysOfPainting(n, k));
+    return 0;
+}
+```
+By using two variables `same` and `diff` to indicate the number of ways to paint the fence such that the last two posts have the same color or different colors, respectively. For the `(i+1)`th post, if it has a different color with the `i`th post (`diff`), then we don't need to bother whether `i`th and `(i-1)`th posts have the same color, and there are `(same+diff)*(k-1)` ways to color the `(i+1)`th post differently. If the `(i+1)`th and `i`th posts have the same color, we must make sure `i`th and `(i-1)`th posts have different colors (this is why we use the `temp` variable to keep the `diff` before it gets updated). Also, there are `diff` ways to make `(i+1)`th and `i`th posts have the same color. The function `waysOfPainting` calculate both cases and returns the sum of them.

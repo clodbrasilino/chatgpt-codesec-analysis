@@ -1,0 +1,22 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_4/healed/problem-73.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_4/healed/problem-73.c:101:20: style: Condition 'alloc_size<=len' is always false [knownConditionTrueFalse]
+    if (alloc_size <= len) {
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_4/healed/problem-73.c:100:16: note: alloc_size is assigned 'len+1' here.
+    alloc_size = len + 1;
+               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_4/healed/problem-73.c:101:20: note: Condition 'alloc_size<=len' is always false
+    if (alloc_size <= len) {
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_4/healed/problem-73.c:110:13: style: Condition 'len<alloc_size' is always true [knownConditionTrueFalse]
+    if (len < alloc_size) {
+            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_4/healed/problem-73.c:100:16: note: alloc_size is assigned 'len+1' here.
+    alloc_size = len + 1;
+               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_4/healed/problem-73.c:106:15: note: Assuming condition is false
+    if (token == NULL) {
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_4/healed/problem-73.c:110:13: note: Condition 'len<alloc_size' is always true
+    if (len < alloc_size) {
+            ^

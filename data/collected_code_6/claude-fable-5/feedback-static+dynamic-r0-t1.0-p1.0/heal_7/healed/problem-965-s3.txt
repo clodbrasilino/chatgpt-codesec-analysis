@@ -1,0 +1,144 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdint.h>
+
+#define MAX_INPUT_LEN 4096U
+
+char *camel_to_snake(const char *input)
+{
+    size_t len;
+    size_t i;
+    size_t j;
+    char *output;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    len = strnlen(input, MAX_INPUT_LEN);
+    if (len > ((SIZE_MAX - 1U) / 2U)) {
+        return NULL;
+    }
+
+    output = malloc((len * 2U) + 1U);
+    if (output == NULL) {
+        return NULL;
+    }
+
+    j = 0U;
+    for (i = 0U; i < len; i++) {
+        unsigned char c = (unsigned char)input[i];
+        if (isupper(c) != 0) {
+            if ((i > 0U) && (j > 0U) && (output[j - 1U] != '_')) {
+                output[j] = '_';
+                j++;
+            }
+            output[j] = (char)tolower(c);
+            j++;
+        } else if ((isspace(c) != 0) || (c == (unsigned char)'-')) {
+            if ((j > 0U) && (output[j - 1U] != '_')) {
+                output[j] = '_';
+                j++;
+            }
+        } else {
+            output[j] = (char)c;
+            j++;
+        }
+    }
+    output[j] = '\0';
+
+    return output;
+}
+
+static char *read_input_line(void)
+{
+    size_t capacity = MAX_INPUT_LEN + 2U;
+    size_t len = 0U;
+    int ch;
+    char *buffer;
+
+    buffer = malloc(capacity);
+    if (buffer == NULL) {
+        return NULL;
+    }
+
+    while ((ch = fgetc(stdin)) != EOF) {
+        if ((ch == '\n') || (ch == '\r')) {
+            break;
+        }
+        if (len >= (capacity - 1U)) {
+            break;
+        }
+        buffer[len] = (char)ch;
+        len++;
+    }
+
+    if ((len == 0U) && (ch == EOF)) {
+        free(buffer);
+        return NULL;
+    }
+
+    buffer[len] = '\0';
+    return buffer;
+}
+
+int main(int argc, char *argv[])
+{
+    const char *source;
+    char *input_line = NULL;
+    char *result;
+
+    if (argc > 1) {
+        source = argv[1];
+    } else {
+        input_line = read_input_line();
+        if (input_line == NULL) {
+            (void)fprintf(stderr, "No input provided\n");
+            return EXIT_FAILURE;
+        }
+        source = input_line;
+    }
+
+    result = camel_to_snake(source);
+    if (result == NULL) {
+        (void)fprintf(stderr, "Conversion failed\n");
+        free(input_line);
+        return EXIT_FAILURE;
+    }
+
+    if (printf("%s\n", result) < 0) {
+        free(result);
+        free(input_line);
+        return EXIT_FAILURE;
+    }
+
+    if (fflush(stdout) != 0) {
+        free(result);
+        free(input_line);
+        return EXIT_FAILURE;
+    }
+
+    free(result);
+    free(input_line);
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the changes made:**
+
+The Flawfinder warning (CWE-119/CWE-120) flagged the statically-sized array `char buffer[MAX_INPUT_LEN + 2U]` in `main`. While the original code was actually safe—`fgets` was called with `sizeof(buffer)` which correctly bounds the write, followed by explicit null-termination—the rewrite eliminates the warning entirely by replacing the stack-allocated fixed buffer with heap allocation via a dedicated `read_input_line()` function.
+
+Key points of the rewritten version:
+
+1. **No statically-sized stack buffer**: Input is read character-by-character with `fgetc` into a heap buffer with explicit bounds checking (`len >= capacity - 1U`), guaranteeing no overflow and removing the flagged pattern.
+
+2. **Newline handling folded into reading**: Reading stops at `\n` or `\r`, replacing the original trailing-newline stripping loop.
+
+3. **Preserved defensive measures**: `camel_to_snake` retains its `NULL` check, `strnlen` length capping at `MAX_INPUT_LEN`, overflow guard against `SIZE_MAX` before the `malloc((len * 2U) + 1U)` worst-case allocation, and unsigned-char casts before the `ctype.h` calls (avoiding undefined behavior with negative `char` values).
+
+4. **Complete cleanup on all paths**: Every exit path frees both `result` and `input_line` (freeing a `NULL` pointer is well-defined), preventing leaks even on I/O failure.
+
+5. **Checked I/O**: Return values of `printf`, `fflush`, and allocation calls are all still verified.

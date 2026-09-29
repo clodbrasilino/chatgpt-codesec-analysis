@@ -1,0 +1,71 @@
+{
+  "task_id": 60,
+  "text": "Write a C function to find the maximum length of the subsequence with difference between adjacent elements for the given array.",
+  "fn_candidates": [
+    "max_len_sub",
+    "MaxLenSub",
+    "maxLenSub",
+    "maxlensub"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "max_len_sub",
+      "args": [
+        [
+          2,
+          5,
+          6,
+          3,
+          7,
+          6,
+          5,
+          8
+        ],
+        8
+      ],
+      "expected": 5,
+      "assert_src": "assert max_len_sub([2, 5, 6, 3, 7, 6, 5, 8], 8) == 5"
+    },
+    {
+      "fn_name": "max_len_sub",
+      "args": [
+        [
+          -2,
+          -1,
+          5,
+          -1,
+          4,
+          0,
+          3
+        ],
+        7
+      ],
+      "expected": 4,
+      "assert_src": "assert max_len_sub([-2, -1, 5, -1, 4, 0, 3], 7) == 4"
+    },
+    {
+      "fn_name": "max_len_sub",
+      "args": [
+        [
+          9,
+          11,
+          13,
+          15,
+          18
+        ],
+        5
+      ],
+      "expected": 1,
+      "assert_src": "assert max_len_sub([9, 11, 13, 15, 18], 5) == 1"
+    }
+  ],
+  "arg_kinds": [
+    "int",
+    "int-list"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

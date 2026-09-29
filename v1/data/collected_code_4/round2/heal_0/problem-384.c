@@ -1,0 +1,28 @@
+#include <stdio.h>
+#include <limits.h>
+
+int find_smallest_frequency(int arr[], int length) {
+    int i;
+    int smallest = INT_MAX;
+    int frequency = 0;
+
+    for (i = 0; i < length; i++) {
+        if (arr[i] < smallest) {
+            smallest = arr[i];
+            frequency = 1;
+        } else if (arr[i] == smallest) {
+            frequency++;
+        }
+    }
+
+    return frequency;
+}
+
+int main() {
+    int arr[] = {1, 2, 3, 1, 1, 4, 5, 1};
+    int length = sizeof(arr) / sizeof(arr[0]);
+
+    printf("Frequency of smallest value is: %d", find_smallest_frequency(arr, length));
+    
+    return 0;
+}

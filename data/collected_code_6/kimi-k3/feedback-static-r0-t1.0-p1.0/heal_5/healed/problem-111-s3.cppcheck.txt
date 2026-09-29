@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-111-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-111-s3.c:78:35: style: Condition 'nested->lists[i].size>current_size' is always false [knownConditionTrueFalse]
+        if (nested->lists[i].size > current_size) {
+                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-111-s3.c:71:29: note: current_size is assigned 'nested->lists[i].size' here.
+        size_t current_size = nested->lists[i].size;
+                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-111-s3.c:73:21: note: Assuming condition is false
+        if (current == NULL) {
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-111-s3.c:78:35: note: Condition 'nested->lists[i].size>current_size' is always false
+        if (nested->lists[i].size > current_size) {
+                                  ^

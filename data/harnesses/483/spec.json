@@ -1,0 +1,44 @@
+{
+  "task_id": 483,
+  "text": "Write a C function to find the first natural number whose factorial is divisible by x.",
+  "fn_candidates": [
+    "first_Factorial_Divisible_Number",
+    "FirstFactorialDivisibleNumber",
+    "firstFactorialDivisibleNumber",
+    "firstFactorialDivisibleNumber"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "first_Factorial_Divisible_Number",
+      "args": [
+        10
+      ],
+      "expected": 5,
+      "assert_src": "assert first_Factorial_Divisible_Number(10) == 5"
+    },
+    {
+      "fn_name": "first_Factorial_Divisible_Number",
+      "args": [
+        15
+      ],
+      "expected": 5,
+      "assert_src": "assert first_Factorial_Divisible_Number(15) == 5"
+    },
+    {
+      "fn_name": "first_Factorial_Divisible_Number",
+      "args": [
+        5
+      ],
+      "expected": 4,
+      "assert_src": "assert first_Factorial_Divisible_Number(5) == 4"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

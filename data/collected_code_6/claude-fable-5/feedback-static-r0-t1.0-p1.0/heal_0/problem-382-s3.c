@@ -1,0 +1,73 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int find_rotation_count(const int *arr, size_t n)
+{
+    if (arr == NULL || n == 0) {
+        return -1;
+    }
+
+    size_t low = 0;
+    size_t high = n - 1;
+
+    while (low < high) {
+        if (arr[low] <= arr[high]) {
+            break;
+        }
+
+        size_t mid = low + (high - low) / 2;
+
+        if (arr[mid] > arr[high]) {
+            low = mid + 1;
+        } else {
+            high = mid;
+        }
+    }
+
+    return (int)low;
+}
+
+int main(void)
+{
+    int arr1[] = {15, 18, 2, 3, 6, 12};
+    int arr2[] = {7, 9, 11, 12, 5};
+    int arr3[] = {1, 2, 3, 4, 5};
+    int arr4[] = {4};
+
+    size_t n1 = sizeof(arr1) / sizeof(arr1[0]);
+    size_t n2 = sizeof(arr2) / sizeof(arr2[0]);
+    size_t n3 = sizeof(arr3) / sizeof(arr3[0]);
+    size_t n4 = sizeof(arr4) / sizeof(arr4[0]);
+
+    int result;
+
+    result = find_rotation_count(arr1, n1);
+    if (result < 0) {
+        fprintf(stderr, "Error: invalid input array\n");
+        return EXIT_FAILURE;
+    }
+    printf("Rotations in arr1: %d\n", result);
+
+    result = find_rotation_count(arr2, n2);
+    if (result < 0) {
+        fprintf(stderr, "Error: invalid input array\n");
+        return EXIT_FAILURE;
+    }
+    printf("Rotations in arr2: %d\n", result);
+
+    result = find_rotation_count(arr3, n3);
+    if (result < 0) {
+        fprintf(stderr, "Error: invalid input array\n");
+        return EXIT_FAILURE;
+    }
+    printf("Rotations in arr3: %d\n", result);
+
+    result = find_rotation_count(arr4, n4);
+    if (result < 0) {
+        fprintf(stderr, "Error: invalid input array\n");
+        return EXIT_FAILURE;
+    }
+    printf("Rotations in arr4: %d\n", result);
+
+    return EXIT_SUCCESS;
+}

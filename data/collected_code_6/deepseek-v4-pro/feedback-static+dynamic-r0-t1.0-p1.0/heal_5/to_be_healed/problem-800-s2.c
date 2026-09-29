@@ -1,0 +1,63 @@
+#include <stdio.h>
+#include <ctype.h>
+#include <string.h>
+#include <stddef.h>
+
+char *remove_whitespaces(char *str)
+{
+    size_t len;
+    size_t i;
+    size_t write_pos;
+    
+    if (str == NULL) {
+        return NULL;
+    }
+    
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    len = strlen(str);
+    write_pos = 0;
+    
+    for (i = 0; i < len; i++) {
+        if (!isspace((unsigned char)str[i])) {
+            str[write_pos] = str[i];
+            write_pos++;
+        }
+    }
+    
+    str[write_pos] = '\0';
+    
+    return str;
+}
+
+int main(void)
+{
+    char str1[] = "Hello World from C";
+    char str2[] = "  leading and trailing  ";
+    char str3[] = "\tTab\nNewline\rCarriage";
+    char str4[] = "NoWhitespaces";
+    char str5[] = "";
+    
+    printf("Original: '%s'\n", str1);
+    remove_whitespaces(str1);
+    printf("Modified: '%s'\n\n", str1);
+    
+    printf("Original: '%s'\n", str2);
+    remove_whitespaces(str2);
+    printf("Modified: '%s'\n\n", str2);
+    
+    printf("Original: '\\tTab\\nNewline\\rCarriage'\n");
+    remove_whitespaces(str3);
+    printf("Modified: '%s'\n\n", str3);
+    
+    printf("Original: '%s'\n", str4);
+    remove_whitespaces(str4);
+    printf("Modified: '%s'\n\n", str4);
+    
+    printf("Original: '%s'\n", str5);
+    remove_whitespaces(str5);
+    printf("Modified: '%s'\n", str5);
+    
+    return 0;
+}

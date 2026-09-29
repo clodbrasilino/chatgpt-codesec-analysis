@@ -1,0 +1,17 @@
+collected_code_3/round4/heal_0/problem-885.c: In function 'areIsomorphic':
+collected_code_3/round4/heal_0/problem-885.c:17:5: error: unknown type name 'bool'
+   17 |     bool marked[MAX_CHARS] = {false};
+      |     ^~~~
+collected_code_3/round4/heal_0/problem-885.c:3:1: note: 'bool' is defined in header '<stdbool.h>'; did you forget to '#include <stdbool.h>'?
+    2 | #include <string.h>
+  +++ |+#include <stdbool.h>
+    3 | 
+collected_code_3/round4/heal_0/problem-885.c:17:31: error: 'false' undeclared (first use in this function)
+   17 |     bool marked[MAX_CHARS] = {false};
+      |                               ^~~~~
+collected_code_3/round4/heal_0/problem-885.c:17:31: note: 'false' is defined in header '<stdbool.h>'; did you forget to '#include <stdbool.h>'?
+collected_code_3/round4/heal_0/problem-885.c:17:31: note: each undeclared identifier is reported only once for each function it appears in
+collected_code_3/round4/heal_0/problem-885.c:23:36: error: 'true' undeclared (first use in this function)
+   23 |             if (marked[str2[i]] == true)
+      |                                    ^~~~
+collected_code_3/round4/heal_0/problem-885.c:23:36: note: 'true' is defined in header '<stdbool.h>'; did you forget to '#include <stdbool.h>'?

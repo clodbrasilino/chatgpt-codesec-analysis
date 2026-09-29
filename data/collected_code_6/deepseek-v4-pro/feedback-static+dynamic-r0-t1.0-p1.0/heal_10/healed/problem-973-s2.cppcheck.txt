@@ -1,0 +1,16 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-973-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-973-s2.c:36:22: style: Condition 'rotate_count<=buffer_size' is always true [knownConditionTrueFalse]
+    if (rotate_count <= buffer_size && rotate_count <= buffer_size) {
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-973-s2.c:27:22: note: Assuming condition 'rotate_count>buffer_size' is false
+    if (rotate_count > buffer_size) {
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-973-s2.c:32:14: note: Assuming condition is false
+    if (temp == NULL) {
+             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-973-s2.c:36:22: note: Condition 'rotate_count<=buffer_size' is always true
+    if (rotate_count <= buffer_size && rotate_count <= buffer_size) {
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-973-s2.c:36:37: style: Same expression on both sides of '&&'. [duplicateExpression]
+    if (rotate_count <= buffer_size && rotate_count <= buffer_size) {
+                                    ^

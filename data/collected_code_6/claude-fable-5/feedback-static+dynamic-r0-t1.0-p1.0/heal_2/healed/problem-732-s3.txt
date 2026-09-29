@@ -1,0 +1,82 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_STR_LEN 4096
+
+void replace_with_colon(char *str, size_t max_len)
+{
+    size_t i;
+    size_t len;
+
+    if (str == NULL) {
+        return;
+    }
+
+    len = strnlen(str, max_len);
+    for (i = 0; i < len; i++) {
+        if (str[i] == ' ' || str[i] == ',' || str[i] == '.') {
+            str[i] = ':';
+        }
+    }
+}
+
+int main(void)
+{
+    const char original[] = "Hello, world. This is a test.";
+    char *buffer;
+    size_t len;
+    size_t size;
+    int written;
+
+    len = strnlen(original, MAX_STR_LEN);
+    if (len >= MAX_STR_LEN) {
+        fprintf(stderr, "Input string too long\n");
+        return EXIT_FAILURE;
+    }
+
+    size = len + 1;
+    buffer = malloc(size);
+    if (buffer == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    written = snprintf(buffer, size, "%s", original);
+    if (written < 0 || (size_t)written >= size) {
+        fprintf(stderr, "String copy failed\n");
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+
+    replace_with_colon(buffer, size);
+
+    if (printf("Original: %s\n", original) < 0) {
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Modified: %s\n", buffer) < 0) {
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+
+    free(buffer);
+    buffer = NULL;
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the changes:**
+
+The flagged weakness was the `memcpy` call (CWE-120, classic buffer overflow risk). While the original code was technically safe — `buffer` was allocated with `len + 1` bytes and exactly `len` bytes were copied before manually null-terminating — the pattern is fragile because the size relationship between allocation and copy is maintained by convention rather than enforced.
+
+The fix replaces `memcpy` + manual null termination with `snprintf(buffer, size, "%s", original)`:
+
+1. **Bounded by design**: `snprintf` never writes more than `size` bytes, including the null terminator, so the destination can never overflow regardless of the source length.
+2. **Automatic null termination**: eliminates the separate `buffer[len] = '\0'` step, removing an off-by-one hazard if the code is ever modified.
+3. **Truncation detection**: checking `written >= size` catches any silent truncation, and `written < 0` catches encoding errors, both handled with cleanup and a failure exit.
+
+The rest of the program was already robust: `strnlen` bounds the length check, `malloc` failure is handled, `printf` return values are checked with proper `free` on error paths, and the pointer is nulled after freeing to prevent accidental use-after-free.

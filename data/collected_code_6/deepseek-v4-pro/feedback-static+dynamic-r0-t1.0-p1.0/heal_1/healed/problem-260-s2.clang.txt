@@ -1,0 +1,13 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-260-s2.c:30:9: warning: Value stored to 'b' is never read [deadcode.DeadStores]
+   30 |         b = 1;
+      |         ^   ~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-260-s2.c:31:9: warning: Value stored to 'a' is never read [deadcode.DeadStores]
+   31 |         a = 1;
+      |         ^   ~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-260-s2.c:33:9: warning: Value stored to 'candidate' is never read [deadcode.DeadStores]
+   33 |         candidate = 1;
+      |         ^           ~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-260-s2.c:35:36: warning: Value stored to 'count' is never read [deadcode.DeadStores]
+   35 |     if (count == 0 && is_prime(1)) count = 1;
+      |                                    ^       ~
+4 warnings generated.

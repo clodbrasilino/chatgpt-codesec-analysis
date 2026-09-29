@@ -1,0 +1,92 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    char **keys;
+    void **values;
+    size_t size;
+    size_t capacity;
+} Dictionary;
+
+typedef struct {
+    Dictionary **dicts;
+    size_t size;
+    size_t capacity;
+} DictionaryList;
+
+Dictionary* create_dictionary(void) {
+    Dictionary *dict = (Dictionary*)malloc(sizeof(Dictionary));
+    if (!dict) {
+        return NULL;
+    }
+    dict->keys = NULL;
+    dict->values = NULL;
+    dict->size = 0;
+    dict->capacity = 0;
+    return dict;
+}
+
+void free_dictionary(Dictionary *dict) {
+    if (dict) {
+        free(dict->keys);
+        free(dict->values);
+        free(dict);
+    }
+}
+
+DictionaryList* create_dictionary_list(size_t num_dicts) {
+    DictionaryList *list = (DictionaryList*)malloc(sizeof(DictionaryList));
+    if (!list) {
+        return NULL;
+    }
+
+    list->dicts = (Dictionary**)malloc(num_dicts * sizeof(Dictionary*));
+    if (!list->dicts) {
+        free(list);
+        return NULL;
+    }
+
+    list->size = num_dicts;
+    list->capacity = num_dicts;
+
+    for (size_t i = 0; i < num_dicts; i++) {
+        list->dicts[i] = create_dictionary();
+        if (!list->dicts[i]) {
+            for (size_t j = 0; j < i; j++) {
+                free_dictionary(list->dicts[j]);
+            }
+            free(list->dicts);
+            free(list);
+            return NULL;
+        }
+    }
+
+    return list;
+}
+
+void free_dictionary_list(DictionaryList *list) {
+    if (list) {
+        if (list->dicts) {
+            for (size_t i = 0; i < list->size; i++) {
+                free_dictionary(list->dicts[i]);
+            }
+            free(list->dicts);
+        }
+        free(list);
+    }
+}
+
+int main(void) {
+    size_t num_dicts = 5;
+    DictionaryList *list = create_dictionary_list(num_dicts);
+    
+    if (!list) {
+        fprintf(stderr, "Failed to create dictionary list\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Successfully created a list of %zu empty dictionaries.\n", list->size);
+
+    free_dictionary_list(list);
+    return EXIT_SUCCESS;
+}

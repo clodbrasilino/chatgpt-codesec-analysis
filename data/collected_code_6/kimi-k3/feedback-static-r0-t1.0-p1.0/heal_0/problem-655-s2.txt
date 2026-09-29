@@ -1,0 +1,49 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <limits.h>
+
+long long sum_of_fifth_powers(int n)
+{
+    long long sum = 0;
+    int i;
+
+    for (i = 1; i <= n; i++) {
+        long long term = (long long)i * i * i * i * i;
+        sum += term;
+    }
+
+    return sum;
+}
+
+int main(void)
+{
+    int n;
+    int result;
+    long long sum;
+
+    printf("Enter a natural number: ");
+    result = scanf("%d", &n);
+
+    if (result != 1) {
+        fprintf(stderr, "Error: Invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (n < 1) {
+        fprintf(stderr, "Error: Please enter a positive natural number.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (n > 1000) {
+        fprintf(stderr, "Error: Input too large to prevent overflow.\n");
+        return EXIT_FAILURE;
+    }
+
+    sum = sum_of_fifth_powers(n);
+    printf("Sum of fifth powers of first %d natural numbers: %lld\n", n, sum);
+
+    return EXIT_SUCCESS;
+}
+```

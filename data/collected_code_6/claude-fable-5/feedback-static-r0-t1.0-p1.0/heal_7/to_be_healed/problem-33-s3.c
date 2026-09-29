@@ -1,0 +1,139 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+#include <string.h>
+#include <errno.h>
+#include <ctype.h>
+
+#define MAX_BITS (sizeof(unsigned int) * CHAR_BIT)
+#define INPUT_SIZE 64
+
+int decimal_to_binary(unsigned int decimal, char *buffer, size_t buffer_size)
+{
+    size_t index = 0;
+    size_t i;
+
+    if (buffer == NULL || buffer_size < 2) {
+        return -1;
+    }
+
+    if (decimal == 0) {
+        buffer[0] = '0';
+        buffer[1] = '\0';
+        return 0;
+    }
+
+    while (decimal > 0 && index < buffer_size - 1) {
+        buffer[index] = (char)('0' + (decimal % 2U));
+        decimal /= 2U;
+        index++;
+    }
+
+    if (decimal > 0) {
+        buffer[0] = '\0';
+        return -1;
+    }
+
+    buffer[index] = '\0';
+
+    for (i = 0; i < index / 2; i++) {
+        char temp = buffer[i];
+        buffer[i] = buffer[index - 1 - i];
+        buffer[index - 1 - i] = temp;
+    }
+
+    return 0;
+}
+
+static int read_unsigned(unsigned int *out)
+{
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char input[INPUT_SIZE];
+    char *endptr = NULL;
+    unsigned long value;
+    size_t len;
+
+    if (out == NULL) {
+        return -1;
+    }
+
+    if (fgets(input, sizeof(input), stdin) == NULL) {
+        return -1;
+    }
+
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    len = strlen(input);
+    if (len > 0 && input[len - 1] == '\n') {
+        input[len - 1] = '\0';
+    } else if (len == sizeof(input) - 1) {
+        int c;
+        /* Possible weaknesses found:
+         * Flawfinder getchar: Check buffer boundaries if used in a loop including recursive loops (CWE-120, CWE-20). (risk 1, buffer)
+         */
+        while ((c = getchar()) != '\n' && c != EOF) {
+        }
+        return -1;
+    }
+
+    if (input[0] == '\0') {
+        return -1;
+    }
+
+    if (input[0] == '-') {
+        return -1;
+    }
+
+    errno = 0;
+    value = strtoul(input, &endptr, 10);
+
+    if (errno == ERANGE || value > UINT_MAX) {
+        return -1;
+    }
+
+    if (endptr == input) {
+        return -1;
+    }
+
+    while (*endptr != '\0') {
+        if (!isspace((unsigned char)*endptr)) {
+            return -1;
+        }
+        endptr++;
+    }
+
+    *out = (unsigned int)value;
+    return 0;
+}
+
+int main(void)
+{
+    unsigned int number = 0;
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char binary[MAX_BITS + 1];
+
+    memset(binary, 0, sizeof(binary));
+
+    printf("Enter a non-negative decimal number: ");
+    fflush(stdout);
+
+    if (read_unsigned(&number) != 0) {
+        fprintf(stderr, "Error: invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (decimal_to_binary(number, binary, sizeof(binary)) != 0) {
+        fprintf(stderr, "Error: conversion failed.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Decimal: %u\n", number);
+    printf("Binary: %s\n", binary);
+
+    return EXIT_SUCCESS;
+}

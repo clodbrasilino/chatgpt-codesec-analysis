@@ -1,0 +1,82 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct Node {
+    char *key;
+    struct Node *value;
+    struct Node *next;
+} Node;
+
+typedef struct Dictionary {
+    Node *head;
+} Dictionary;
+
+Dictionary* createDictionary() {
+    Dictionary *dict = (Dictionary*)malloc(sizeof(Dictionary));
+    dict->head = NULL;
+    return dict;
+}
+
+void insertIntoDictionary(Dictionary *dict, const char *key, const char *value) {
+    Node *newNode = (Node*)malloc(sizeof(Node));
+    newNode->key = strdup(key);
+    newNode->value = (Node*)malloc(sizeof(Node));
+    newNode->value->key = strdup(value);
+    newNode->value->value = NULL;
+    newNode->value->next = NULL;
+    newNode->next = dict->head;
+    dict->head = newNode;
+}
+
+Dictionary* convertListsToNestedDict(const char *list1[], int size1, const char *list2[], int size2) {
+    if (size1 != size2) return NULL;
+
+    Dictionary *nestedDict = createDictionary();
+    for (int i = 0; i < size1; ++i) {
+        insertIntoDictionary(nestedDict, list1[i], list2[i]);
+    }
+    return nestedDict;
+}
+
+void printDictionary(Dictionary *dict, int level) {
+    Node *current = dict->head;
+    while (current != NULL) {
+        for (int i = 0; i < level; ++i) printf("  ");
+        printf("%s: %s\n", current->key, current->value->key);
+        current = current->next;
+    }
+}
+
+void freeDictionary(Dictionary *dict) {
+    Node *current = dict->head;
+    while (current != NULL) {
+        Node *temp = current;
+        current = current->next;
+        free(temp->key);
+        free(temp->value->key);
+        free(temp->value);
+        free(temp);
+    }
+    free(dict);
+}
+
+int main() {
+    const char *list1[] = {"key1", "key2", "key3"};
+    const char *list2[] = {"value1", "value2", "value3"};
+    int size1 = sizeof(list1) / sizeof(list1[0]);
+    int size2 = sizeof(list2) / sizeof(list2[0]);
+
+    Dictionary *nestedDict = convertListsToNestedDict(list1, size1, list2, size2);
+    if (nestedDict == NULL) {
+        printf("Error: Lists are of different sizes.\n");
+        return 1;
+    }
+
+    printDictionary(nestedDict, 0);
+
+    freeDictionary(nestedDict);
+    return 0;
+}
+```

@@ -1,0 +1,53 @@
+#include <stdio.h>
+#include <stddef.h>
+ /* Possible weaknesses found:
+  *  test case 0 failed: expected 1, got 2
+  *  test case 2 failed: expected 3, got 1
+  */
+
+size_t count_rotations(const int *arr, size_t n) {
+    if (n == 0) {
+        return 0;
+    }
+
+    size_t low = 0;
+    size_t high = n - 1;
+
+    while (low < high) {
+        if (arr[low] < arr[high]) {
+            break;
+        }
+
+        size_t mid = low + (high - low) / 2;
+
+        if (arr[mid] > arr[high]) {
+            low = mid + 1;
+        } else if (arr[mid] < arr[high]) {
+            high = mid;
+        } else {
+            high--;
+        }
+    }
+
+    return (n - low) % n;
+}
+
+int main(void) {
+    int arr1[] = {3, 4, 5, 1, 2};
+    size_t n1 = sizeof(arr1) / sizeof(arr1[0]);
+    printf("%zu\n", count_rotations(arr1, n1));
+
+    int arr2[] = {2, 2, 2, 1, 2};
+    size_t n2 = sizeof(arr2) / sizeof(arr2[0]);
+    printf("%zu\n", count_rotations(arr2, n2));
+
+    int arr3[] = {1, 2, 2, 2, 2};
+    size_t n3 = sizeof(arr3) / sizeof(arr3[0]);
+    printf("%zu\n", count_rotations(arr3, n3));
+
+    int arr4[] = {2, 3, 4, 1, 5};
+    size_t n4 = sizeof(arr4) / sizeof(arr4[0]);
+    printf("%zu\n", count_rotations(arr4, n4));
+
+    return 0;
+}

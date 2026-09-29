@@ -1,0 +1,81 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <limits.h>
+#include <stddef.h>
+
+int shortest_common_supersequence_length(const char *str1, const char *str2) {
+    unsigned long len1, len2;
+    int **dp;
+    int result;
+    int i, j;
+
+    if (str1 == NULL || str2 == NULL) {
+        return -1;
+    }
+
+    len1 = strnlen(str1, (size_t)INT_MAX + 1);
+    len2 = strnlen(str2, (size_t)INT_MAX + 1);
+
+    if (len1 > (unsigned long)INT_MAX || len2 > (unsigned long)INT_MAX) {
+        return -1;
+    }
+
+    if (len1 == 0 && len2 == 0) {
+        return 0;
+    }
+
+    dp = (int **)malloc((len1 + 1) * sizeof(int *));
+    if (dp == NULL) {
+        return -1;
+    }
+
+    for (i = 0; i <= (int)len1; i++) {
+        dp[i] = (int *)malloc((len2 + 1) * sizeof(int));
+        if (dp[i] == NULL) {
+            for (j = 0; j < i; j++) {
+                free(dp[j]);
+            }
+            free(dp);
+            return -1;
+        }
+    }
+
+    for (i = 0; i <= (int)len1; i++) {
+        for (j = 0; j <= (int)len2; j++) {
+            if (i == 0) {
+                dp[i][j] = j;
+            } else if (j == 0) {
+                dp[i][j] = i;
+            } else if (str1[i - 1] == str2[j - 1]) {
+                dp[i][j] = dp[i - 1][j - 1] + 1;
+            } else {
+                dp[i][j] = (dp[i - 1][j] < dp[i][j - 1] ? dp[i - 1][j] : dp[i][j - 1]) + 1;
+            }
+        }
+    }
+
+    result = dp[len1][len2];
+
+    for (i = 0; i <= (int)len1; i++) {
+        free(dp[i]);
+    }
+    free(dp);
+
+    return result;
+}
+
+int main(void) {
+    const char *str1 = "AGGTAB";
+    const char *str2 = "GXTXAYB";
+
+    int length = shortest_common_supersequence_length(str1, str2);
+
+    if (length != -1) {
+        printf("Length of shortest common supersequence: %d\n", length);
+    } else {
+        printf("Memory allocation failed\n");
+    }
+
+    return 0;
+}

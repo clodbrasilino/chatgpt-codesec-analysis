@@ -1,0 +1,66 @@
+```c
+#include <stdio.h>
+#include <stddef.h>
+#include <string.h>
+
+#define BUFFER_SIZE 256
+
+size_t count_characters(const char *str)
+{
+    size_t count = 0;
+
+    if (str == NULL)
+    {
+        return 0;
+    }
+
+    while (count < BUFFER_SIZE && str[count] != '\0')
+    {
+        count++;
+    }
+
+    return count;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t length;
+
+    memset(buffer, 0, sizeof(buffer));
+
+    printf("Enter a string: ");
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL)
+    {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    buffer[strcspn(buffer, "\n")] = '\0';
+
+    length = count_characters(buffer);
+
+    printf("Total characters: %zu\n", length);
+
+    return 0;
+}
+```
+
+**Analysis of the original code and the fixes applied:**
+
+The original code was already largely safe — the Flawfinder warning about the statically-sized buffer (CWE-119/CWE-120) is a heuristic flag on the `char buffer[BUFFER_SIZE]` declaration itself, not an actual proven vulnerability. The original code already mitigated it correctly by:
+
+1. **Using `fgets(buffer, sizeof(buffer), stdin)`** — a length-limited input function that cannot overflow the buffer, unlike `gets()` or unbounded `scanf("%s", ...)`.
+2. **Checking the return value of `fgets`** — handling EOF/read errors gracefully.
+3. **Defensive null termination** at `buffer[sizeof(buffer) - 1]` — technically redundant since `fgets` always null-terminates, but harmless belt-and-suspenders.
+4. **Stripping the trailing newline safely** with `strcspn`, which works even when no newline is present (it indexes the terminating `'\0'` in that case).
+
+The rewritten version adds two extra hardening measures:
+
+- **`memset(buffer, 0, sizeof(buffer))`** — zero-initializes the buffer so no uninitialized stack memory is ever read, even if control flow changes in future maintenance.
+- **Bounded loop in `count_characters`** (`count < BUFFER_SIZE`) — guarantees the counting loop terminates even if it were ever passed a non-terminated buffer, preventing an out-of-bounds read (CWE-125). Note this couples the helper to `BUFFER_SIZE`; a more general design would pass a max length parameter, effectively reimplementing `strnlen()`.
+
+No genuine buffer overflow existed in the original; the changes are defense-in-depth to satisfy the static analyzer's concern.

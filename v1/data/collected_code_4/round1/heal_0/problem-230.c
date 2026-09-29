@@ -1,0 +1,27 @@
+#include <stdio.h>
+#include <string.h>
+
+void replace_spaces(char *str, char character) {
+    for (size_t i = 0; i < strlen(str); i++) {
+        if (str[i] == ' ') {
+            str[i] = character;
+        }
+    }
+}
+
+int main(void) {
+    char str[100];
+    char character;
+
+    printf("Please enter a string:\n");
+    fgets(str, sizeof(str), stdin);
+
+    printf("Please enter a character:\n");
+    character = getchar();
+
+    replace_spaces(str, character); 
+
+    printf("Modified string is %s\n", str);
+
+    return 0;
+}

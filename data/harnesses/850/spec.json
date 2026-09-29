@@ -1,0 +1,50 @@
+{
+  "task_id": 850,
+  "text": "Write a C function to check if a triangle of positive area is possible with the given angles.",
+  "fn_candidates": [
+    "is_triangleexists",
+    "IsTriangleexists",
+    "isTriangleexists",
+    "istriangleexists"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "is_triangleexists",
+      "args": [
+        50,
+        60,
+        70
+      ],
+      "expected": true,
+      "assert_src": "assert is_triangleexists(50,60,70)==True"
+    },
+    {
+      "fn_name": "is_triangleexists",
+      "args": [
+        90,
+        45,
+        45
+      ],
+      "expected": true,
+      "assert_src": "assert is_triangleexists(90,45,45)==True"
+    },
+    {
+      "fn_name": "is_triangleexists",
+      "args": [
+        150,
+        30,
+        70
+      ],
+      "expected": false,
+      "assert_src": "assert is_triangleexists(150,30,70)==False"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "bool",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

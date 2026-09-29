@@ -1,0 +1,108 @@
+./collected_code_4/round1//heal_0//problem-400.c: In function 'insertOrUpdateTuple':
+./collected_code_4/round1//heal_0//problem-400.c:29:16: warning: use of possibly-NULL '*current.tuple' where non-null expected [CWE-690] [-Wanalyzer-possible-null-argument]
+   29 |             if(strcmp(current -> tuple, tuple) == 0){
+      |                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  'main': events 1-4
+    |
+    |   48 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   52 |     for (int i = 0; i < len; i++)
+    |      |                     ~~~~~~~
+    |      |                       |
+    |      |                       (2) following 'true' branch (when 'i < len')...
+    |   53 |         insertOrUpdateTuple(&head, data[i]);
+    |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |         |
+    |      |         (3) ...to here
+    |      |         (4) calling 'insertOrUpdateTuple' from 'main'
+    |
+    +--> 'insertOrUpdateTuple': events 5-8
+           |
+           |   23 | void insertOrUpdateTuple(TupleFrequency **head, char *tuple){
+           |      |      ^~~~~~~~~~~~~~~~~~~
+           |      |      |
+           |      |      (5) entry to 'insertOrUpdateTuple'
+           |   24 |     if (*head == NULL)
+           |      |        ~
+           |      |        |
+           |      |        (6) following 'true' branch...
+           |   25 |         *head = createTuple(tuple);
+           |      |                 ~~~~~~~~~~~~~~~~~~
+           |      |                 |
+           |      |                 (7) ...to here
+           |      |                 (8) calling 'createTuple' from 'insertOrUpdateTuple'
+           |
+           +--> 'createTuple': events 9-12
+                  |
+                  |   11 | TupleFrequency *createTuple(char *tuple){
+                  |      |                 ^~~~~~~~~~~
+                  |      |                 |
+                  |      |                 (9) entry to 'createTuple'
+                  |   12 |     TupleFrequency *newTuple = (TupleFrequency*)malloc(sizeof(TupleFrequency));
+                  |   13 |     if (newTuple == NULL){
+                  |      |        ~         
+                  |      |        |
+                  |      |        (10) following 'false' branch (when 'newTuple' is non-NULL)...
+                  |......
+                  |   17 |     newTuple -> tuple = strdup(tuple);
+                  |      |                         ~~~~~~~~~~~~~
+                  |      |                         |
+                  |      |                         (11) ...to here
+                  |      |                         (12) this call could return NULL
+                  |
+           <------+
+           |
+         'insertOrUpdateTuple': event 13
+           |
+           |   25 |         *head = createTuple(tuple);
+           |      |                 ^~~~~~~~~~~~~~~~~~
+           |      |                 |
+           |      |                 (13) returning to 'insertOrUpdateTuple' from 'createTuple'
+           |
+    <------+
+    |
+  'main': events 14-17
+    |
+    |   52 |     for (int i = 0; i < len; i++)
+    |      |                     ~~~~~~~
+    |      |                       |
+    |      |                       (15) following 'true' branch (when 'i < len')...
+    |   53 |         insertOrUpdateTuple(&head, data[i]);
+    |      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |         |
+    |      |         (14) possible return of NULL to 'main' from 'insertOrUpdateTuple'
+    |      |         (16) ...to here
+    |      |         (17) calling 'insertOrUpdateTuple' from 'main'
+    |
+    +--> 'insertOrUpdateTuple': events 18-23
+           |
+           |   23 | void insertOrUpdateTuple(TupleFrequency **head, char *tuple){
+           |      |      ^~~~~~~~~~~~~~~~~~~
+           |      |      |
+           |      |      (18) entry to 'insertOrUpdateTuple'
+           |   24 |     if (*head == NULL)
+           |      |        ~
+           |      |        |
+           |      |        (19) following 'false' branch...
+           |......
+           |   27 |         TupleFrequency *current = *head;
+           |      |                         ~~~~~~~
+           |      |                         |
+           |      |                         (20) ...to here
+           |   28 |         while(current){
+           |      |               ~~~~~~~
+           |      |               |
+           |      |               (21) following 'true' branch (when 'current' is non-NULL)...
+           |   29 |             if(strcmp(current -> tuple, tuple) == 0){
+           |      |                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                |              |
+           |      |                |              (22) ...to here
+           |      |                (23) argument 1 ('*current.tuple') from (12) could be NULL where non-null expected
+           |
+In file included from ./collected_code_4/round1//heal_0//problem-400.c:3:
+/Library/Developer/CommandLineTools/SDKs/MacOSX14.sdk/usr/include/string.h:77:10: note: argument 1 of 'strcmp' must be non-null
+   77 | int      strcmp(const char *__s1, const char *__s2);
+      |          ^~~~~~

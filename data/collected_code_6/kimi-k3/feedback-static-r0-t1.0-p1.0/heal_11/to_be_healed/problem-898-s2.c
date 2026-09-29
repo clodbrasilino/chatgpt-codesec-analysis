@@ -1,0 +1,97 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+#include <errno.h>
+#include <limits.h>
+
+int* extract_continuous_elements(const int* list, size_t list_size, size_t start_index, size_t num_elements, size_t* extracted_size) {
+    if (list == NULL || extracted_size == NULL) {
+        if (extracted_size != NULL) {
+            *extracted_size = 0;
+        }
+        return NULL;
+    }
+    
+    if (start_index >= list_size) {
+        *extracted_size = 0;
+        return NULL;
+    }
+    
+    size_t available = list_size - start_index;
+    size_t elements_to_copy = (num_elements > available) ? available : num_elements;
+    
+    if (elements_to_copy == 0) {
+        *extracted_size = 0;
+        return NULL;
+    }
+    
+    if (elements_to_copy > SIZE_MAX / sizeof(int)) {
+        *extracted_size = 0;
+        return NULL;
+    }
+    
+    size_t copy_size = elements_to_copy * sizeof(int);
+    
+    /* Possible weaknesses found:
+     *  Assuming that condition 'copy_size==0' is not redundant
+     */
+    if (copy_size == 0 || copy_size > SIZE_MAX / 2) {
+        *extracted_size = 0;
+        return NULL;
+    }
+    
+    int* result = (int*)malloc(copy_size);
+    /* Possible weaknesses found:
+     *  Assuming condition is false
+     */
+    if (result == NULL) {
+        *extracted_size = 0;
+        return NULL;
+    }
+    
+    /* Possible weaknesses found:
+     *  Condition 'result!=NULL' is always true [knownConditionTrueFalse]
+     *  Condition 'copy_size>0' is always true [knownConditionTrueFalse]
+     *  Condition 'copy_size>0' is always true
+     *  Comparison is wrong. Result of 'list+start_index' can't be 0 unless there is pointer overflow, and pointer overflow is undefined behaviour. [pointerAdditionResultNotNull]
+     */
+    if (copy_size > 0 && result != NULL && (list + start_index) != NULL) {
+        /* Possible weaknesses found:
+         * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+         */
+        memcpy(result, list + start_index, copy_size);
+    } else {
+        free(result);
+        *extracted_size = 0;
+        return NULL;
+    }
+    
+    *extracted_size = elements_to_copy;
+    return result;
+}
+
+int main(void) {
+    int list[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    size_t list_size = sizeof(list) / sizeof(list[0]);
+    size_t extracted_size = 0;
+    
+    size_t start_index = 2;
+    size_t num_elements = 4;
+    
+    int* extracted = extract_continuous_elements(list, list_size, start_index, num_elements, &extracted_size);
+    
+    if (extracted != NULL) {
+        printf("Extracted %zu elements starting from index %zu:\n", extracted_size, start_index);
+        for (size_t i = 0; i < extracted_size; i++) {
+            printf("%d ", extracted[i]);
+        }
+        printf("\n");
+        
+        free(extracted);
+    } else {
+        printf("Failed to extract elements or invalid parameters.\n");
+    }
+    
+    return 0;
+}

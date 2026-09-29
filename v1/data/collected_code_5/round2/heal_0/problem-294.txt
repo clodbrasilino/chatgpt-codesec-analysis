@@ -1,0 +1,60 @@
+```C
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    enum { INT, FLT } type;
+    union {
+        int num_integer;
+        float num_float;
+    };
+} Number;
+
+float get_max(Number* numbers, int count) {
+    float max = -1.0/0.0; // Negative infinity
+    for (int i = 0; i < count; i++) {
+        float current_number;
+        if(numbers[i].type == INT) {
+            current_number = (float) numbers[i].num_integer;
+        } else if(numbers[i].type == FLT) {
+            current_number = numbers[i].num_float;
+        } else {
+            continue; 
+        }
+        if (current_number > max) {
+            max = current_number;
+        }
+    }
+    return max;
+}
+
+int main() {
+    int size = 4;
+    Number* numbers = malloc(sizeof(Number) * size);
+
+    if(numbers == NULL) {
+        printf("Unable to allocate memory\n");
+        return 1;
+    }
+
+    numbers[0].type = INT;
+    numbers[0].num_integer = 4;
+
+    numbers[1].type = FLT;
+    numbers[1].num_float = 4.5f;
+
+    numbers[2].type = INT;
+    numbers[2].num_integer = 5;
+
+    numbers[3].type = FLT;
+    numbers[3].num_float = 3.6f;
+
+    float res = get_max(numbers, size);
+
+    printf("Max value: %.2f\n", res);
+
+    free(numbers);
+
+    return 0;
+}
+```

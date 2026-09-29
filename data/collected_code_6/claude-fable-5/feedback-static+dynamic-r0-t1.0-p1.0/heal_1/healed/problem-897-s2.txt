@@ -1,0 +1,95 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdlib.h>
+
+#define SENTENCE_MAX 256
+#define WORD_MAX 64
+
+int is_word_present(const char *sentence, const char *word);
+
+int is_word_present(const char *sentence, const char *word)
+{
+    size_t word_len;
+    size_t i;
+
+    if (sentence == NULL || word == NULL) {
+        return 0;
+    }
+
+    word_len = strnlen(word, WORD_MAX);
+    if (word_len == 0U || word_len >= WORD_MAX) {
+        return 0;
+    }
+
+    i = 0U;
+    while (i < SENTENCE_MAX && sentence[i] != '\0') {
+        while (i < SENTENCE_MAX && sentence[i] != '\0' &&
+               !isalnum((unsigned char)sentence[i])) {
+            i++;
+        }
+        if (i >= SENTENCE_MAX || sentence[i] == '\0') {
+            break;
+        }
+
+        size_t start = i;
+        while (i < SENTENCE_MAX && sentence[i] != '\0' &&
+               isalnum((unsigned char)sentence[i])) {
+            i++;
+        }
+        size_t token_len = i - start;
+
+        if (token_len == word_len &&
+            strncmp(&sentence[start], word, word_len) == 0) {
+            return 1;
+        }
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    char sentence[SENTENCE_MAX];
+    char word[WORD_MAX];
+
+    memset(sentence, 0, sizeof(sentence));
+    memset(word, 0, sizeof(word));
+
+    printf("Enter a sentence: ");
+    if (fgets(sentence, sizeof(sentence), stdin) == NULL) {
+        fprintf(stderr, "Error reading sentence.\n");
+        return EXIT_FAILURE;
+    }
+    sentence[sizeof(sentence) - 1U] = '\0';
+    sentence[strcspn(sentence, "\n")] = '\0';
+
+    printf("Enter a word to search: ");
+    if (fgets(word, sizeof(word), stdin) == NULL) {
+        fprintf(stderr, "Error reading word.\n");
+        return EXIT_FAILURE;
+    }
+    word[sizeof(word) - 1U] = '\0';
+    word[strcspn(word, "\n")] = '\0';
+
+    if (is_word_present(sentence, word) == 1) {
+        printf("The word \"%s\" is present in the sentence.\n", word);
+    } else {
+        printf("The word \"%s\" is not present in the sentence.\n", word);
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the fixes applied:**
+
+1. **CWE-126 (`strlen` over-read):** Replaced `strlen` with `strnlen(word, WORD_MAX)`, which bounds the scan to the known buffer size. Even if a non-terminated string were somehow passed, the read cannot exceed `WORD_MAX` bytes. A sanity check rejects the degenerate case where no terminator was found within bounds.
+
+2. **CWE-119/CWE-120 (statically-sized arrays):** The buffers themselves were already safely populated via `fgets(buf, sizeof(buf), stdin)`, which is the correct bounded-input idiom. The rewrite hardens this further by:
+   - Defining sizes as named constants (`SENTENCE_MAX`, `WORD_MAX`) shared between `main` and the parsing logic, so the bounds checking in `is_word_present` matches the actual allocation.
+   - Zero-initializing both buffers with `memset` and forcing a terminating `'\0'` at the last index after `fgets`, guaranteeing termination regardless of input.
+   - Adding explicit index bounds checks (`i < SENTENCE_MAX`) in every loop of `is_word_present`, so the scan can never walk past the buffer even if the terminator were missing.
+
+The original logic (tokenizing on alphanumeric runs and comparing with `strncmp`) was already sound; the rewrite preserves that behavior while eliminating any reliance on the caller guaranteeing null termination.

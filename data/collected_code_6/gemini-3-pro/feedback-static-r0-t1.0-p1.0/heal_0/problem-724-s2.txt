@@ -1,0 +1,66 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+void multiply_and_update(int **digits, int *size, int base) {
+    if (!digits || !*digits) return;
+
+    int carry = 0;
+    for (int i = 0; i < *size; i++) {
+        int prod = (*digits)[i] * base + carry;
+        (*digits)[i] = prod % 10;
+        carry = prod / 10;
+    }
+
+    while (carry) {
+        int *temp = realloc(*digits, (*size + 1) * sizeof(int));
+        if (!temp) {
+            free(*digits);
+            *digits = NULL;
+            return;
+        }
+        *digits = temp;
+        (*digits)[*size] = carry % 10;
+        carry /= 10;
+        (*size)++;
+    }
+}
+
+int sum_of_power_digits(int base, int power) {
+    if (base < 0 || power < 0) return -1;
+    if (power == 0) return 1;
+    if (base == 0) return 0;
+
+    int size = 1;
+    int *digits = malloc(size * sizeof(int));
+    if (!digits) return -1;
+
+    digits[0] = 1;
+
+    for (int i = 0; i < power; i++) {
+        multiply_and_update(&digits, &size, base);
+        if (!digits) return -1;
+    }
+
+    int sum = 0;
+    for (int i = 0; i < size; i++) {
+        sum += digits[i];
+    }
+
+    free(digits);
+    return sum;
+}
+
+int main(void) {
+    int base = 2;
+    int power = 15;
+    
+    int result = sum_of_power_digits(base, power);
+    if (result != -1) {
+        printf("%d\n", result);
+    }
+    
+    return 0;
+}
+```

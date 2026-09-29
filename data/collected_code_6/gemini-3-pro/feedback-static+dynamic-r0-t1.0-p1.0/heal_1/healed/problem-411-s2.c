@@ -1,0 +1,57 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+char* snake_to_camel(const char* snake_str) {
+    if (snake_str == NULL) {
+        return NULL;
+    }
+
+    size_t len = 0;
+    while (snake_str[len] != '\0') {
+        len++;
+    }
+
+    char* camel_str = (char*)malloc(len + 1);
+    if (camel_str == NULL) {
+        return NULL;
+    }
+
+    const char* src = snake_str;
+    char* dest = camel_str;
+    int capitalize_next = 1; 
+
+    while (*src != '\0') {
+        if (*src == '_') {
+            capitalize_next = 1;
+        } else {
+            if (capitalize_next) {
+                *dest = toupper((unsigned char)*src);
+                capitalize_next = 0;
+            } else {
+                *dest = *src;
+            }
+            dest++;
+        }
+        src++;
+    }
+    *dest = '\0';
+
+    return camel_str;
+}
+
+int main(void) {
+    const char* snake = "this_is_a_snake_case_string";
+    char* camel = snake_to_camel(snake);
+
+    if (camel != NULL) {
+        printf("Snake: %s\n", snake);
+        printf("Camel: %s\n", camel);
+        free(camel);
+    } else {
+        printf("Conversion failed or memory allocation error.\n");
+    }
+
+    return 0;
+}

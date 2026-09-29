@@ -1,0 +1,7 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_0/problem-118-s2.c:54:20: warning: Although the value stored to 'tail' is used in the enclosing expression, the value is never actually read from 'tail' [deadcode.DeadStores]
+   54 |             head = tail = newNode;
+      |                    ^      ~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_0/problem-118-s2.c:57:13: warning: Value stored to 'tail' is never read [deadcode.DeadStores]
+   57 |             tail = newNode;
+      |             ^      ~~~~~~~
+2 warnings generated.

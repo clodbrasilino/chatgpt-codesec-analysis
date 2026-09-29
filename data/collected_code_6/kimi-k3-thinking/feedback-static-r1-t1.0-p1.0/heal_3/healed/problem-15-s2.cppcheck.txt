@@ -1,0 +1,25 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_3/healed/problem-15-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_3/healed/problem-15-s2.c:99:23: style: Condition 'start>n' is always true [knownConditionTrueFalse]
+            if (start > n || len > n - start)
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_3/healed/problem-15-s2.c:81:14: note: Assuming that condition 'i<n' is not redundant
+    while (i < n && idx < tokens)
+             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_3/healed/problem-15-s2.c:89:26: note: start is assigned 'i' here.
+            size_t start = i;
+                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_3/healed/problem-15-s2.c:99:23: note: Condition 'start>n' is always true
+            if (start > n || len > n - start)
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_3/healed/problem-15-s2.c:119:21: style: Condition 'len>=dest_size' is always false [knownConditionTrueFalse]
+            if (len >= dest_size)
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_3/healed/problem-15-s2.c:110:23: note: dest_size is assigned 'len+1' here.
+            dest_size = len + 1;
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_3/healed/problem-15-s2.c:113:29: note: Assuming condition is false
+            if (result[idx] == NULL)
+                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_3/healed/problem-15-s2.c:119:21: note: Condition 'len>=dest_size' is always false
+            if (len >= dest_size)
+                    ^

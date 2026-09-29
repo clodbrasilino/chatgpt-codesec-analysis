@@ -1,0 +1,6 @@
+collected_code/problem-242-0.c:6:11: error: Cannot determine that '*str' is initialized [premium-bughuntingUninit]
+   while (*str != '\0') {
+          ^
+collected_code/problem-242-0.c:18:10: error: Cannot determine that 'str[0]' is initialized [premium-bughuntingUninit]
+   fgets(str, sizeof(str), stdin);
+         ^

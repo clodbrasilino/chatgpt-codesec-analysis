@@ -1,0 +1,58 @@
+```c
+#include <ctype.h>
+#include <stdio.h>
+#include <string.h>
+#include <regex.h>
+
+#define MAX_MATCHES 100
+
+void find_sequences(const char* str)
+{
+    regex_t regexCompiled;
+    regmatch_t groupArray[MAX_MATCHES];
+    char * regexString = "([A-Z][a-z]+)";
+    unsigned int m;
+
+    if (regcomp(&regexCompiled, regexString, REG_EXTENDED))
+    {
+        printf("Could not compile regular expression.\n");
+        return;
+    }
+
+    m = 0;
+    while (m < MAX_MATCHES)
+    {
+        if (regexec(&regexCompiled, str, MAX_MATCHES - m, groupArray + m, 0))
+            break;  // No more matches
+
+        m += groupArray[m].rm_eo - groupArray[m].rm_so;
+    }
+
+    for (unsigned int g = 0; g < MAX_MATCHES; g++)
+    {
+        if (groupArray[g].rm_so == (size_t)-1)
+            break;  // No more groups
+
+        if (g == 0)
+            printf("\nFull match: ");
+        else
+            printf("\nGroup %u: ", g);
+
+        char cursorCopy[strlen(str) + 1];
+        strcpy(cursorCopy, str);
+        cursorCopy[groupArray[g].rm_eo] = 0;
+        printf("%s", cursorCopy + groupArray[g].rm_so);
+    }
+
+    regfree(&regexCompiled);
+
+    return;
+}
+
+int main()
+{
+    char str[] = "Hello theWorld GoodDay";
+    find_sequences(str);
+    return 0;
+}
+```

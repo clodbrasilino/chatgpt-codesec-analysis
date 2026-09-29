@@ -1,0 +1,129 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct DictNode {
+    char *key;
+    int value;
+    struct DictNode *next;
+} DictNode;
+
+DictNode *create_node(const char *key, int value) {
+    DictNode *node = (DictNode *)malloc(sizeof(DictNode));
+    if (!node) {
+        return NULL;
+    }
+    node->key = (char *)malloc(strlen(key) + 1);
+    if (!node->key) {
+        free(node);
+        return NULL;
+    }
+    strcpy(node->key, key);
+    node->value = value;
+    node->next = NULL;
+    return node;
+}
+
+void free_list(DictNode *head) {
+    DictNode *current = head;
+    while (current) {
+        DictNode *next = current->next;
+        free(current->key);
+        free(current);
+        current = next;
+    }
+}
+
+void split_list(DictNode *head, DictNode **front, DictNode **back) {
+    DictNode *slow = head;
+    DictNode *fast = head->next;
+    while (fast) {
+        fast = fast->next;
+        if (fast) {
+            slow = slow->next;
+            fast = fast->next;
+        }
+    }
+    *front = head;
+    *back = slow->next;
+    slow->next = NULL;
+}
+
+DictNode *merge_lists(DictNode *a, DictNode *b) {
+    if (!a) return b;
+    if (!b) return a;
+    
+    DictNode *result = NULL;
+    if (strcmp(a->key, b->key) <= 0) {
+        result = a;
+        result->next = merge_lists(a->next, b);
+    } else {
+        result = b;
+        result->next = merge_lists(a, b->next);
+    }
+    return result;
+}
+
+void merge_sort(DictNode **head_ref) {
+    DictNode *head = *head_ref;
+    if (!head || !head->next) {
+        return;
+    }
+    
+    DictNode *a;
+    DictNode *b;
+    split_list(head, &a, &b);
+    
+    merge_sort(&a);
+    merge_sort(&b);
+    
+    *head_ref = merge_lists(a, b);
+}
+
+DictNode *sort_dict_list(DictNode *head) {
+    if (!head) {
+        return NULL;
+    }
+    merge_sort(&head);
+    return head;
+}
+
+DictNode *insert_node(DictNode *head, const char *key, int value) {
+    DictNode *node = create_node(key, value);
+    if (!node) {
+        return head;
+    }
+    node->next = head;
+    return node;
+}
+
+void print_list(DictNode *head) {
+    DictNode *current = head;
+    while (current) {
+        printf("%s: %d\n", current->key, current->value);
+        current = current->next;
+    }
+}
+
+int main(void) {
+    DictNode *head = NULL;
+    
+    head = insert_node(head, "banana", 3);
+    head = insert_node(head, "apple", 1);
+    head = insert_node(head, "cherry", 2);
+    head = insert_node(head, "date", 4);
+    head = insert_node(head, "elderberry", 5);
+    
+    printf("Original list:\n");
+    print_list(head);
+    
+    head = sort_dict_list(head);
+    
+    printf("\nSorted list:\n");
+    print_list(head);
+    
+    free_list(head);
+    return 0;
+}
+```

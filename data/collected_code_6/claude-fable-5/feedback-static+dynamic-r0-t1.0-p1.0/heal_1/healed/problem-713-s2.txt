@@ -1,0 +1,69 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+#include <stddef.h>
+
+bool check_valid(const bool *tup, size_t size)
+{
+    if (tup == NULL || size == 0U)
+    {
+        return false;
+    }
+
+    for (size_t i = 0U; i < size; i++)
+    {
+        if (tup[i] == false)
+        {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+int main(void)
+{
+    bool tup1[] = { true, true, true, true };
+    bool tup2[] = { true, false, true, true };
+    bool tup3[] = { true, true, true };
+
+    size_t size1 = sizeof(tup1) / sizeof(tup1[0]);
+    size_t size2 = sizeof(tup2) / sizeof(tup2[0]);
+    size_t size3 = sizeof(tup3) / sizeof(tup3[0]);
+
+    if (check_valid(tup1, size1) == true)
+    {
+        (void)printf("Tuple 1: True\n");
+    }
+    else
+    {
+        (void)printf("Tuple 1: False\n");
+    }
+
+    if (check_valid(tup2, size2) == true)
+    {
+        (void)printf("Tuple 2: True\n");
+    }
+    else
+    {
+        (void)printf("Tuple 2: False\n");
+    }
+
+    if (check_valid(tup3, size3) == true)
+    {
+        (void)printf("Tuple 3: True\n");
+    }
+    else
+    {
+        (void)printf("Tuple 3: False\n");
+    }
+
+    return 0;
+}
+```
+
+Analysis notes: The original `check_valid` logic was already sound — it correctly rejects `NULL` pointers and zero-length arrays, iterates over each element, and returns `false` on the first non-true value. Test cases 0 and 2 (`tup1` and `tup3`, all-true arrays) should return `true` with this implementation, so the reported failures likely stemmed from an earlier version of the function (e.g., an off-by-one loop bound, an inverted condition, or returning early inside the loop). The rewritten version makes the boolean comparisons explicit to eliminate any ambiguity and guarantees:
+
+- Tuple 1: True
+- Tuple 2: False
+- Tuple 3: True

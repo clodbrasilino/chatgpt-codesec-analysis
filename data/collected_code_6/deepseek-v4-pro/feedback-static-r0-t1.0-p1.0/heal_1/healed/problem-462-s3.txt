@@ -1,0 +1,79 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+void find_combinations(int *arr, int n, int r, int index, int *data, int i, int **result, int *result_size) {
+    if (index == r) {
+        result[*result_size] = (int *)malloc((r + 1) * sizeof(int));
+        if (result[*result_size] == NULL) {
+            fprintf(stderr, "Memory allocation failed\n");
+            exit(EXIT_FAILURE);
+        }
+        for (int j = 0; j < r; j++) {
+            result[*result_size][j] = data[j];
+        }
+        result[*result_size][r] = -1;
+        (*result_size)++;
+        return;
+    }
+    if (i >= n) {
+        return;
+    }
+    data[index] = arr[i];
+    find_combinations(arr, n, r, index + 1, data, i + 1, result, result_size);
+    find_combinations(arr, n, r, index, data, i + 1, result, result_size);
+}
+
+int **get_all_combinations(int *arr, int n, int *total_combinations) {
+    int max_combinations = 1 << n;
+    int **result = (int **)malloc(max_combinations * sizeof(int *));
+    if (result == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(EXIT_FAILURE);
+    }
+    int result_size = 0;
+    int *data = (int *)malloc(n * sizeof(int));
+    if (data == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        free(result);
+        exit(EXIT_FAILURE);
+    }
+    for (int r = 0; r <= n; r++) {
+        find_combinations(arr, n, r, 0, data, 0, result, &result_size);
+    }
+    free(data);
+    *total_combinations = result_size;
+    return result;
+}
+
+void free_combinations(int **combinations, int total_combinations) {
+    for (int i = 0; i < total_combinations; i++) {
+        free(combinations[i]);
+    }
+    free(combinations);
+}
+
+int main(void) {
+    int arr[] = {1, 2, 3, 4};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    int total_combinations = 0;
+
+    int **combinations = get_all_combinations(arr, n, &total_combinations);
+
+    printf("Total combinations: %d\n", total_combinations);
+
+    for (int i = 0; i < total_combinations; i++) {
+        printf("{ ");
+        int r = 0;
+        while (r < n && combinations[i][r] != -1) {
+            printf("%d ", combinations[i][r]);
+            r++;
+        }
+        printf("}\n");
+    }
+
+    free_combinations(combinations, total_combinations);
+
+    return 0;
+}
+```

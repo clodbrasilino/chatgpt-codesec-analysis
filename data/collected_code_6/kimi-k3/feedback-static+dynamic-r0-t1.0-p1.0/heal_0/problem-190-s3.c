@@ -1,0 +1,29 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+long long countIntegralCoordinates(long long sideLength) {
+    if (sideLength <= 0) {
+        return 0;
+    }
+    if (sideLength > 3037000499LL) {
+        return -1;
+    }
+    return (sideLength - 1) * (sideLength - 1);
+}
+
+int main(void) {
+    long long sideLength;
+    long long result;
+
+    if (scanf("%lld", &sideLength) != 1) {
+        return EXIT_FAILURE;
+    }
+
+    result = countIntegralCoordinates(sideLength);
+    if (result == -1) {
+        return EXIT_FAILURE;
+    }
+
+    printf("%lld\n", result);
+    return EXIT_SUCCESS;
+}

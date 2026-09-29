@@ -1,0 +1,27 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int count_digits(int number) {
+    int count = 0;
+    if (number == 0) return 1;
+    if (number < 0) number = -number;
+    while (number > 0) {
+        number /= 10;
+        count++;
+    }
+    return count;
+}
+
+int main() {
+    int num;
+    printf("Enter a number: ");
+    if (scanf("%d", &num) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    int digit_count = count_digits(num);
+    printf("Number of digits: %d\n", digit_count);
+    return EXIT_SUCCESS;
+}
+```

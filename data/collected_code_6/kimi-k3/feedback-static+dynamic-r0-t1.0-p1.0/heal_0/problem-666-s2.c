@@ -1,0 +1,29 @@
+#include <stdio.h>
+#include <stddef.h>
+
+size_t count_char(const char *str, char ch)
+{
+    size_t count = 0;
+    if (str == NULL)
+    {
+        return 0;
+    }
+    while (*str != '\0')
+    {
+        if (*str == ch)
+        {
+            count++;
+        }
+        str++;
+    }
+    return count;
+}
+
+int main(void)
+{
+    const char *str = "hello world";
+    char ch = 'o';
+    size_t result = count_char(str, ch);
+    printf("The character '%c' occurs %zu times in \"%s\".\n", ch, result, str);
+    return 0;
+}

@@ -1,0 +1,16 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-10.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-10.c:37:23: style: Condition 'copy_size<=alloc_size' is always true [knownConditionTrueFalse]
+        if (copy_size <= alloc_size) {
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-10.c:36:26: note: copy_size is assigned 'count*sizeof(int)' here.
+        size_t copy_size = count * sizeof(int);
+                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-10.c:28:23: note: alloc_size is assigned 'count*sizeof(int)' here.
+    size_t alloc_size = count * sizeof(int);
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-10.c:30:16: note: Assuming condition is false
+    if (result == NULL) {
+               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-10.c:37:23: note: Condition 'copy_size<=alloc_size' is always true
+        if (copy_size <= alloc_size) {
+                      ^

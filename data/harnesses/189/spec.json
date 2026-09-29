@@ -1,0 +1,67 @@
+{
+  "task_id": 189,
+  "text": "Write a C function to find the first missing positive number.",
+  "fn_candidates": [
+    "first_Missing_Positive",
+    "FirstMissingPositive",
+    "firstMissingPositive",
+    "firstMissingPositive"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "first_Missing_Positive",
+      "args": [
+        [
+          1,
+          2,
+          3,
+          -1,
+          5
+        ],
+        5
+      ],
+      "expected": 4,
+      "assert_src": "assert first_Missing_Positive([1,2,3,-1,5],5) == 4"
+    },
+    {
+      "fn_name": "first_Missing_Positive",
+      "args": [
+        [
+          0,
+          -1,
+          -2,
+          1,
+          5,
+          8
+        ],
+        6
+      ],
+      "expected": 2,
+      "assert_src": "assert first_Missing_Positive([0,-1,-2,1,5,8],6) == 2"
+    },
+    {
+      "fn_name": "first_Missing_Positive",
+      "args": [
+        [
+          0,
+          1,
+          2,
+          5,
+          -8
+        ],
+        5
+      ],
+      "expected": 3,
+      "assert_src": "assert first_Missing_Positive([0,1,2,5,-8],5) == 3"
+    }
+  ],
+  "arg_kinds": [
+    "int",
+    "int-list"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

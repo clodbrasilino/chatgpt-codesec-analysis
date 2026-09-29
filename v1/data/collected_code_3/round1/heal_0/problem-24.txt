@@ -1,0 +1,25 @@
+```c
+#include <stdio.h>
+#include <math.h>
+
+int binaryToDecimal(int binaryNumber) {
+    int decimalNumber = 0;
+    int base = 1;
+    int temp = binaryNumber;
+    while (temp) {
+        int lastDigit = temp % 10;
+        temp = temp / 10;
+        decimalNumber += lastDigit * base;
+        base = base * 2;
+    }
+    return decimalNumber;
+}
+
+int main() {
+    int binaryNumber;
+    printf("Enter a binary number: ");
+    scanf("%d", &binaryNumber);
+    printf("Decimal equivalent of binary number %d: %d", binaryNumber, binaryToDecimal(binaryNumber));
+    return 0;
+}
+```

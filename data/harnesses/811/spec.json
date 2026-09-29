@@ -1,0 +1,101 @@
+{
+  "task_id": 811,
+  "text": "Write a C function to check if two lists of tuples are identical or not.",
+  "fn_candidates": [
+    "check_identical",
+    "CheckIdentical",
+    "checkIdentical",
+    "checkidentical"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "check_identical",
+      "args": [
+        [
+          [
+            10,
+            4
+          ],
+          [
+            2,
+            5
+          ]
+        ],
+        [
+          [
+            10,
+            4
+          ],
+          [
+            2,
+            5
+          ]
+        ]
+      ],
+      "expected": true,
+      "assert_src": "assert check_identical([(10, 4), (2, 5)], [(10, 4), (2, 5)]) == True"
+    },
+    {
+      "fn_name": "check_identical",
+      "args": [
+        [
+          [
+            1,
+            2
+          ],
+          [
+            3,
+            7
+          ]
+        ],
+        [
+          [
+            12,
+            14
+          ],
+          [
+            12,
+            45
+          ]
+        ]
+      ],
+      "expected": false,
+      "assert_src": "assert check_identical([(1, 2), (3, 7)], [(12, 14), (12, 45)]) == False"
+    },
+    {
+      "fn_name": "check_identical",
+      "args": [
+        [
+          [
+            2,
+            14
+          ],
+          [
+            12,
+            25
+          ]
+        ],
+        [
+          [
+            2,
+            14
+          ],
+          [
+            12,
+            25
+          ]
+        ]
+      ],
+      "expected": true,
+      "assert_src": "assert check_identical([(2, 14), (12, 25)], [(2, 14), (12, 25)]) == True"
+    }
+  ],
+  "arg_kinds": [
+    "2d-int-list"
+  ],
+  "return_kind": "bool",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

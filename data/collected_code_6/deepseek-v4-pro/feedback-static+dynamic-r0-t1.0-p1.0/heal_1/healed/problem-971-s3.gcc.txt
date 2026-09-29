@@ -1,0 +1,12 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-971-s3.c: In function 'main':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-971-s3.c:57:24: error: implicit declaration of function 'malloc' [-Wimplicit-function-declaration]
+   57 |     int *memo = (int *)malloc((n + 1) * sizeof(int));
+      |                        ^~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-971-s3.c:3:1: note: include '<stdlib.h>' or provide a declaration of 'malloc'
+    2 | #include <limits.h>
+  +++ |+#include <stdlib.h>
+    3 | 
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-971-s3.c:68:5: error: implicit declaration of function 'free' [-Wimplicit-function-declaration]
+   68 |     free(memo);
+      |     ^~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-971-s3.c:68:5: note: include '<stdlib.h>' or provide a declaration of 'free'

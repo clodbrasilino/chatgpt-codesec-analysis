@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_9/healed/problem-70.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_9/healed/problem-70.c:37:60: style: Condition 'all_tuples_equal_length(NULL,NULL,0)' is always true [knownConditionTrueFalse]
+    printf("Empty tuple set: %s\n", all_tuples_equal_length(NULL, NULL, 0) ? "true" : "false");
+                                                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_9/healed/problem-70.c:37:60: note: Calling function 'all_tuples_equal_length' returns 1
+    printf("Empty tuple set: %s\n", all_tuples_equal_length(NULL, NULL, 0) ? "true" : "false");
+                                                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_9/healed/problem-70.c:37:60: note: Condition 'all_tuples_equal_length(NULL,NULL,0)' is always true
+    printf("Empty tuple set: %s\n", all_tuples_equal_length(NULL, NULL, 0) ? "true" : "false");
+                                                           ^

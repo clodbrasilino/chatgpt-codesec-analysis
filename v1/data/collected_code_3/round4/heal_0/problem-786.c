@@ -1,0 +1,32 @@
+#include <stdio.h>
+
+int findInsertionPoint(int arr[], int n, int key) {
+    int start = 0;
+    int end = n - 1;
+    int mid;
+
+    while (start <= end) {
+        mid = start + (end - start) / 2;
+
+        if (arr[mid] == key)
+            return mid;
+        else if (arr[mid] < key)
+            start = mid + 1;
+        else
+            end = mid - 1;
+    }
+
+    return start;
+}
+
+int main() {
+    int arr[] = {1, 3, 5, 7, 9};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    int key = 6;
+
+    int point = findInsertionPoint(arr, n, key);
+
+    printf("The right insertion point for %d is at index %d\n", key, point);
+
+    return 0;
+}

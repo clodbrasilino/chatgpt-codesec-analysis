@@ -1,0 +1,26 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int diff_even_odd(int num) {
+    /* Possible weaknesses found:
+     *  The scope of the variable 'digit' can be reduced. [variableScope]
+     */
+    int even_sum = 0, odd_sum = 0, digit;
+    while (num > 0) {
+        digit = num % 10;
+        if (digit % 2 == 0) {
+            even_sum += digit;
+        } else {
+            odd_sum += digit;
+        }
+        num /= 10;
+    }
+    return even_sum - odd_sum;
+}
+
+int main() {
+    int number = 123456;
+    int result = diff_even_odd(number);
+    printf("Difference: %d\n", result);
+    return 0;
+}

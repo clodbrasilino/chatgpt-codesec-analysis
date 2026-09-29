@@ -1,0 +1,40 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    int *data;
+    size_t length;
+} Tuple;
+
+void trim_tuple(Tuple *t, int k) {
+    if (k >= 0 && t->length > k) {
+        t->length -= k;
+        t->data = realloc(t->data, t->length * sizeof(int));
+    }
+}
+
+int main() {
+    Tuple tuple1 = { .data = (int[]){1, 2, 3, 4, 5}, .length = 5 };
+    Tuple tuple2 = { .data = (int[]){6, 7, 8, 9, 10, 11, 12}, .length = 7 };
+
+    int k = 3;
+
+    trim_tuple(&tuple1, k);
+    trim_tuple(&tuple2, k);
+
+    for (size_t i = 0; i < tuple1.length; ++i) {
+        printf("%d ", tuple1.data[i]);
+    }
+    printf("\n");
+
+    for (size_t i = 0; i < tuple2.length; ++i) {
+        printf("%d ", tuple2.data[i]);
+    }
+    printf("\n");
+
+    free(tuple1.data);
+    free(tuple2.data);
+
+    return 0;
+}

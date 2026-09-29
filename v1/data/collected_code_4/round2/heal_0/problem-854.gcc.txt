@@ -1,0 +1,146 @@
+./collected_code_4/round2//heal_0/problem-854.c: In function 'insert':
+./collected_code_4/round2//heal_0/problem-854.c:19:20: warning: leak of 'array.arr' [CWE-401] [-Wanalyzer-malloc-leak]
+   19 |         array->arr = (int*)realloc(array->arr, array->size * sizeof(int));
+      |         ~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  'main': events 1-2
+    |
+    |   69 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |   70 |     Array array;
+    |   71 |     create(&array, 1);
+    |      |     ~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) calling 'create' from 'main'
+    |
+    +--> 'create': events 3-4
+           |
+           |   10 | void create(Array* array, size_t initialSize) {
+           |      |      ^~~~~~
+           |      |      |
+           |      |      (3) entry to 'create'
+           |   11 |     array->arr = (int*)malloc(initialSize * sizeof(int));
+           |      |                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                        |
+           |      |                        (4) allocated here
+           |
+    <------+
+    |
+  'main': events 5-6
+    |
+    |   71 |     create(&array, 1);
+    |      |     ^~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (5) returning to 'main' from 'create'
+    |   72 | 
+    |   73 |     insert(&array, 10);
+    |      |     ~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (6) calling 'insert' from 'main'
+    |
+    +--> 'insert': events 7-10
+           |
+           |   16 | void insert(Array* array, int element) {
+           |      |      ^~~~~~
+           |      |      |
+           |      |      (7) entry to 'insert'
+           |   17 |     if (array->used == array->size) {
+           |      |        ~
+           |      |        |
+           |      |        (8) following 'false' branch...
+           |......
+           |   21 |     array->arr[array->used++] = element;
+           |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |          |                    |
+           |      |          (9) ...to here       (10) assuming 'array.arr' is non-NULL
+           |
+    <------+
+    |
+  'main': events 11-12
+    |
+    |   73 |     insert(&array, 10);
+    |      |     ^~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (11) returning to 'main' from 'insert'
+    |   74 |     insert(&array, 15);
+    |      |     ~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (12) calling 'insert' from 'main'
+    |
+    +--> 'insert': events 13-17
+           |
+           |   16 | void insert(Array* array, int element) {
+           |      |      ^~~~~~
+           |      |      |
+           |      |      (13) entry to 'insert'
+           |   17 |     if (array->used == array->size) {
+           |      |        ~
+           |      |        |
+           |      |        (14) following 'true' branch...
+           |   18 |         array->size *= 2;
+           |      |         ~~~~~~~~~~~
+           |      |              |
+           |      |              (15) ...to here
+           |   19 |         array->arr = (int*)realloc(array->arr, array->size * sizeof(int));
+           |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                    |       |
+           |      |                    |       (16) when 'realloc' fails
+           |      |                    (17) 'array.arr' leaks here; was allocated at (4)
+           |
+./collected_code_4/round2//heal_0/problem-854.c:21:31: warning: dereference of possibly-NULL 'array.arr' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   21 |     array->arr[array->used++] = element;
+      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~
+  'main': events 1-2
+    |
+    |   69 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |   70 |     Array array;
+    |   71 |     create(&array, 1);
+    |      |     ~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) calling 'create' from 'main'
+    |
+    +--> 'create': events 3-4
+           |
+           |   10 | void create(Array* array, size_t initialSize) {
+           |      |      ^~~~~~
+           |      |      |
+           |      |      (3) entry to 'create'
+           |   11 |     array->arr = (int*)malloc(initialSize * sizeof(int));
+           |      |                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                        |
+           |      |                        (4) this call could return NULL
+           |
+    <------+
+    |
+  'main': events 5-6
+    |
+    |   71 |     create(&array, 1);
+    |      |     ^~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (5) returning to 'main' from 'create'
+    |   72 | 
+    |   73 |     insert(&array, 10);
+    |      |     ~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (6) calling 'insert' from 'main'
+    |
+    +--> 'insert': events 7-10
+           |
+           |   16 | void insert(Array* array, int element) {
+           |      |      ^~~~~~
+           |      |      |
+           |      |      (7) entry to 'insert'
+           |   17 |     if (array->used == array->size) {
+           |      |        ~
+           |      |        |
+           |      |        (8) following 'false' branch...
+           |......
+           |   21 |     array->arr[array->used++] = element;
+           |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |          |                    |
+           |      |          (9) ...to here       (10) '*array.arr + *array.used * 4' could be NULL: unchecked value from (4)
+           |

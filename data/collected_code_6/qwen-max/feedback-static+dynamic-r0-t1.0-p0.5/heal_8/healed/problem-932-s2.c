@@ -1,0 +1,107 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct Node {
+    char *word;
+    struct Node *next;
+} Node;
+
+Node* create_node(char *word) {
+    Node *new_node = (Node *)malloc(sizeof(Node));
+    if (new_node == NULL) return NULL;
+    new_node->word = strdup(word);
+    if (new_node->word == NULL) {
+        free(new_node);
+        return NULL;
+    }
+    new_node->next = NULL;
+    return new_node;
+}
+
+int is_word_in_list(Node *head, char *word) {
+    for (Node *current = head; current != NULL; current = current->next) {
+        if (strcmp(current->word, word) == 0) {
+            return 1;
+        }
+    }
+    return 0;
+}
+
+void add_to_list(Node **head, char *word) {
+    if (!is_word_in_list(*head, word)) {
+        Node *new_node = create_node(word);
+        if (new_node != NULL) {
+            new_node->next = *head;
+            *head = new_node;
+        }
+    }
+}
+
+void free_list(Node *head) {
+    Node *current = head;
+    while (current != NULL) {
+        Node *temp = current;
+        current = current->next;
+        free(temp->word);
+        free(temp);
+    }
+}
+
+char** remove_duplicates(char **words, int count, int *new_count) {
+    Node *unique_words = NULL;
+    for (int i = 0; i < count; ++i) {
+        add_to_list(&unique_words, words[i]);
+    }
+
+    *new_count = 0;
+    char **result = NULL;
+    int alloc_size = 0;
+    for (Node *current = unique_words; current != NULL; current = current->next) {
+        if (*new_count + 1 > alloc_size) {
+            char **temp = (char **)realloc(result, ((*new_count + 1) * sizeof(char *)));
+            if (temp == NULL) {
+                free_list(unique_words);
+                for (int i = 0; i < *new_count; i++) {
+                    free(result[i]);
+                }
+                free(result);
+                return NULL;
+            }
+            result = temp;
+            alloc_size = *new_count + 1;
+        }
+        result[*new_count] = strdup(current->word);
+        if (result[*new_count] == NULL) {
+            free_list(unique_words);
+            for (int i = 0; i < *new_count; i++) {
+                free(result[i]);
+            }
+            free(result);
+            return NULL;
+        }
+        (*new_count)++;
+    }
+
+    free_list(unique_words);
+    return result;
+}
+
+int main() {
+    char *words[] = {"apple", "banana", "apple", "orange", "banana", "grape"};
+    int count = 6;
+    int new_count;
+
+    char **result = remove_duplicates(words, count, &new_count);
+
+    for (int i = 0; i < new_count; ++i) {
+        printf("%s\n", result[i]);
+    }
+
+    for (int i = 0; i < new_count; ++i) {
+        free(result[i]);
+    }
+    free(result);
+
+    return 0;
+}

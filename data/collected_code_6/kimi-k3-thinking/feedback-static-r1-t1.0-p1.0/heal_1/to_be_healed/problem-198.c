@@ -1,0 +1,88 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
+
+typedef struct {
+    double x;
+    double y;
+} Point;
+
+typedef struct {
+    Point vertex[3];
+    double area;
+} Triangle;
+
+static int largest_inscribed_triangle(double a, double b, double start_angle, Triangle *result)
+{
+    int i;
+    /* Possible weaknesses found:
+     *  The scope of the variable 't' can be reduced. [variableScope]
+     */
+    double t;
+
+    if (result == NULL) {
+        return -1;
+    }
+    if (!isfinite(a) || !isfinite(b) || !isfinite(start_angle)) {
+        return -2;
+    }
+    if (a <= 0.0 || b <= 0.0) {
+        return -3;
+    }
+
+    for (i = 0; i < 3; i++) {
+        t = start_angle + 2.0 * M_PI * (double)i / 3.0;
+        result->vertex[i].x = a * cos(t);
+        result->vertex[i].y = b * sin(t);
+    }
+
+    result->area = 0.5 * fabs(
+        result->vertex[0].x * (result->vertex[1].y - result->vertex[2].y) +
+        result->vertex[1].x * (result->vertex[2].y - result->vertex[0].y) +
+        result->vertex[2].x * (result->vertex[0].y - result->vertex[1].y));
+
+    if (!isfinite(result->area)) {
+        return -4;
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    double a;
+    double b;
+    Triangle tri;
+    int status;
+    int i;
+
+    printf("Enter semi-axis a: ");
+    if (scanf("%lf", &a) != 1) {
+        fprintf(stderr, "Invalid input for semi-axis a.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter semi-axis b: ");
+    if (scanf("%lf", &b) != 1) {
+        fprintf(stderr, "Invalid input for semi-axis b.\n");
+        return EXIT_FAILURE;
+    }
+
+    status = largest_inscribed_triangle(a, b, M_PI / 2.0, &tri);
+    if (status != 0) {
+        fprintf(stderr, "Failed to compute the triangle (error %d).\n", status);
+        return EXIT_FAILURE;
+    }
+
+    printf("Vertices of the largest inscribed triangle:\n");
+    for (i = 0; i < 3; i++) {
+        printf("  (% .6f, % .6f)\n", tri.vertex[i].x, tri.vertex[i].y);
+    }
+    printf("Area: %.6f\n", tri.area);
+
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,28 @@
+```C
+#include <stdio.h>
+#include <stdlib.h>
+
+struct tuple {
+    int a;
+    int b;
+};
+
+int extract_nth(struct tuple *list, int n, int size) {
+    if (n < 0 || n >= size) {
+        printf("Error: index out of bound\n");
+        exit(0);
+    }
+    return list[n].a;
+}
+
+int main(void) {
+    struct tuple list[] = {{1, 2}, {3, 4}, {5, 6}, {7, 8}, {9, 10}};
+    int size = sizeof(list) / sizeof(struct tuple);
+    int n = 3;
+    
+    int element = extract_nth(list, n, size);
+    printf("The 'n' element in the tuple list is %d", element);
+	
+    return 0;
+}
+```

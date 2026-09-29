@@ -1,0 +1,67 @@
+```c
+#include <stdio.h>
+#include <ctype.h>
+#include <stdlib.h>
+#include <string.h>
+
+void remove_non_alnum(char *str)
+{
+    size_t read_idx;
+    size_t write_idx;
+
+    if (str == NULL) {
+        return;
+    }
+
+    read_idx = 0;
+    write_idx = 0;
+
+    while (str[read_idx] != '\0') {
+        if (isalnum((unsigned char)str[read_idx])) {
+            str[write_idx] = str[read_idx];
+            write_idx++;
+        }
+        read_idx++;
+    }
+
+    str[write_idx] = '\0';
+}
+
+int main(void)
+{
+    char buffer[256];
+    const char *input = "Hello, World! 123 #$% foo_bar";
+
+    if (strlen(input) >= sizeof(buffer)) {
+        fprintf(stderr, "Input too long\n");
+        return EXIT_FAILURE;
+    }
+
+    strcpy(buffer, input);
+
+    printf("Before: %s\n", buffer);
+
+    remove_non_alnum(buffer);
+
+    printf("After:  %s\n", buffer);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Key design decisions:**
+
+1. **In-place removal** — The function uses a two-index (read/write) approach, so no dynamic allocation is needed, eliminating any risk of memory leaks or improper resource lifetime management (CWE-664).
+
+2. **NULL check** — `remove_non_alnum` validates its argument before dereferencing, and `main` verifies the input fits in the buffer before copying, handling exceptional conditions properly (CWE-703).
+
+3. **`(unsigned char)` cast for `isalnum`** — Passing a plain `char` that might be negative to `isalnum` is undefined behavior per the C standard, so the cast ensures standards compliance (CWE-710).
+
+4. **Standard-compliant style** — `int main(void)`, `size_t` for indices, `EXIT_SUCCESS`/`EXIT_FAILURE` return codes, and errors reported to `stderr`.
+
+Example output:
+
+```
+Before: Hello, World! 123 #$% foo_bar
+After:  HelloWorld123foobar
+```

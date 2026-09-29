@@ -1,0 +1,94 @@
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdlib.h>
+
+#define MAX_WORD_LEN 64
+
+typedef struct {
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char word[MAX_WORD_LEN];
+    size_t position;
+} AdverbInfo;
+
+size_t find_adverbs(const char *sentence, AdverbInfo *results, size_t max_results)
+{
+    size_t count = 0;
+    size_t i = 0;
+    size_t len;
+
+    if (sentence == NULL || results == NULL || max_results == 0) {
+        return 0;
+    }
+
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    len = strlen(sentence);
+
+    while (i < len && count < max_results) {
+        while (i < len && !isalpha((unsigned char)sentence[i])) {
+            i++;
+        }
+
+        if (i < len) {
+            size_t start = i;
+            size_t word_len;
+
+            while (i < len && isalpha((unsigned char)sentence[i])) {
+                i++;
+            }
+
+            word_len = i - start;
+
+            if (word_len >= 3 && word_len < MAX_WORD_LEN) {
+                if (tolower((unsigned char)sentence[i - 2]) == 'l' &&
+                    tolower((unsigned char)sentence[i - 1]) == 'y') {
+                    /* Possible weaknesses found:
+                     * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+                     */
+                    memcpy(results[count].word, &sentence[start], word_len);
+                    results[count].word[word_len] = '\0';
+                    results[count].position = start;
+                    count++;
+                }
+            }
+        }
+    }
+
+    return count;
+}
+
+int main(void)
+{
+    const char *sentence = "She quickly and quietly walked home, then suddenly stopped.";
+    AdverbInfo *results;
+    size_t count;
+    /* Possible weaknesses found:
+     *  The scope of the variable 'i' can be reduced. [variableScope]
+     */
+    size_t i;
+    const size_t max_results = 32;
+
+    results = malloc(max_results * sizeof(AdverbInfo));
+    if (results == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    count = find_adverbs(sentence, results, max_results);
+
+    if (count == 0) {
+        printf("No adverbs found.\n");
+    } else {
+        printf("Found %zu adverb(s):\n", count);
+        for (i = 0; i < count; i++) {
+            printf("  \"%s\" at position %zu\n", results[i].word, results[i].position);
+        }
+    }
+
+    free(results);
+    return EXIT_SUCCESS;
+}

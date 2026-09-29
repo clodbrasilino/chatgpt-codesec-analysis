@@ -1,0 +1,29 @@
+```c
+#include <stdio.h>
+
+double rectangle_perimeter(double length, double width) {
+    if (length <= 0.0 || width <= 0.0) {
+        return -1.0;
+    }
+    return 2.0 * (length + width);
+}
+
+int main(void) {
+    double length, width, perimeter;
+    
+    printf("Enter length and width: ");
+    if (scanf("%lf %lf", &length, &width) != 2) {
+        fprintf(stderr, "Invalid input\n");
+        return 1;
+    }
+    
+    perimeter = rectangle_perimeter(length, width);
+    if (perimeter < 0.0) {
+        fprintf(stderr, "Dimensions must be positive\n");
+        return 1;
+    }
+    
+    printf("Perimeter: %.2f\n", perimeter);
+    return 0;
+}
+```

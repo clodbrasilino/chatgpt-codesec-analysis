@@ -1,0 +1,53 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_0/problem-653.c: In function 'create_map':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_0/problem-653.c:62:16: error: assignment to 'List *' from incompatible pointer type 'List **' [-Wincompatible-pointer-types]
+   62 |     map->lists = (List **)calloc(size, sizeof(List *));
+      |                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_0/problem-653.c:70:25: error: incompatible types when assigning to type 'List' from type 'List *'
+   70 |         map->lists[i] = create_list();
+      |                         ^~~~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_0/problem-653.c: In function 'free_map':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_0/problem-653.c:78:29: error: incompatible type for argument 1 of 'free_list'
+   78 |         free_list(map->lists[i]);
+      |                   ~~~~~~~~~~^~~
+      |                             |
+      |                             List
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_0/problem-653.c:33:22: note: expected 'List *' but argument is of type 'List'
+   33 | void free_list(List *list) {
+      |                ~~~~~~^~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_0/problem-653.c:79:24: error: incompatible type for argument 1 of 'free'
+   79 |         free(map->lists[i]);
+      |              ~~~~~~~~~~^~~
+      |                        |
+      |                        List
+In file included from /Library/Developer/CommandLineTools/SDKs/MacOSX15.sdk/usr/include/_stdlib.h:139,
+                 from /Library/Developer/CommandLineTools/SDKs/MacOSX15.sdk/usr/include/stdlib.h:58,
+                 from /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_0/problem-653.c:2:
+/Library/Developer/CommandLineTools/SDKs/MacOSX15.sdk/usr/include/malloc/_malloc.h:56:12: note: expected 'void *' but argument is of type 'List'
+   56 | void  free(void * __unsafe_indexable);
+      |            ^~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_0/problem-653.c: In function 'group_kv_pairs':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_0/problem-653.c:98:35: error: incompatible type for argument 1 of 'add_to_list'
+   98 |             add_to_list(map->lists[index], pairs[i].value);
+      |                         ~~~~~~~~~~^~~~~~~
+      |                                   |
+      |                                   List
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_0/problem-653.c:49:24: note: expected 'List *' but argument is of type 'List'
+   49 | void add_to_list(List *list, char *value) {
+      |                  ~~~~~~^~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_0/problem-653.c:101:35: error: incompatible type for argument 1 of 'add_to_list'
+  101 |             add_to_list(map->lists[map->size], pairs[i].value);
+      |                         ~~~~~~~~~~^~~~~~~~~~~
+      |                                   |
+      |                                   List
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_0/problem-653.c:49:24: note: expected 'List *' but argument is of type 'List'
+   49 | void add_to_list(List *list, char *value) {
+      |                  ~~~~~~^~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_0/problem-653.c: In function 'print_map':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_0/problem-653.c:117:30: error: incompatible type for argument 1 of 'print_list'
+  117 |         print_list(map->lists[i]);
+      |                    ~~~~~~~~~~^~~
+      |                              |
+      |                              List
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_0/problem-653.c:107:23: note: expected 'List *' but argument is of type 'List'
+  107 | void print_list(List *list) {
+      |                 ~~~~~~^~~~

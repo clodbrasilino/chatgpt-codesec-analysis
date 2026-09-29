@@ -1,0 +1,100 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node* next;
+} Node;
+
+Node* create_node(int data);
+Node* append_node(Node* head, int data);
+Node* rotate_right(Node* head, unsigned int k);
+void print_list(Node* head);
+void free_list(Node* head);
+
+Node* create_node(int data) {
+    Node* new_node = (Node*)malloc(sizeof(Node));
+    if (new_node == NULL) {
+        exit(EXIT_FAILURE);
+    }
+    new_node->data = data;
+    new_node->next = NULL;
+    return new_node;
+}
+
+Node* append_node(Node* head, int data) {
+    Node* new_node = create_node(data);
+    if (head == NULL) {
+        return new_node;
+    }
+    Node* current = head;
+    while (current->next != NULL) {
+        current = current->next;
+    }
+    current->next = new_node;
+    return head;
+}
+
+Node* rotate_right(Node* head, unsigned int k) {
+    if (head == NULL || head->next == NULL || k == 0) {
+        return head;
+    }
+
+    unsigned int length = 1;
+    Node* tail = head;
+    while (tail->next != NULL) {
+        length++;
+        tail = tail->next;
+    }
+
+    k = k % length;
+    if (k == 0) {
+        return head;
+    }
+
+    Node* new_tail = head;
+    for (unsigned int i = 0; i < length - k - 1; i++) {
+        new_tail = new_tail->next;
+    }
+
+    Node* new_head = new_tail->next;
+    new_tail->next = NULL;
+    tail->next = head;
+
+    return new_head;
+}
+
+void print_list(Node* head) {
+    Node* current = head;
+    while (current != NULL) {
+        printf("%d ", current->data);
+        current = current->next;
+    }
+    printf("\n");
+}
+
+void free_list(Node* head) {
+    Node* current = head;
+    while (current != NULL) {
+        Node* next = current->next;
+        free(current);
+        current = next;
+    }
+}
+
+int main(void) {
+    Node* head = NULL;
+
+    for (int i = 1; i <= 5; i++) {
+        head = append_node(head, i);
+    }
+
+    print_list(head);
+    head = rotate_right(head, 2);
+    print_list(head);
+
+    free_list(head);
+    head = NULL;
+
+    return EXIT_SUCCESS;
+}

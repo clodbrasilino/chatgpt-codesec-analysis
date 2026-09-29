@@ -1,0 +1,89 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+#include <stddef.h>
+
+static bool is_palindrome(int num)
+{
+    char buf[32];
+    int len;
+    int i;
+    int j;
+
+    if (num < 0) {
+        return false;
+    }
+
+    len = snprintf(buf, sizeof(buf), "%d", num);
+    if (len < 0 || (size_t)len >= sizeof(buf)) {
+        return false;
+    }
+
+    i = 0;
+    j = len - 1;
+    while (i < j) {
+        if (buf[i] != buf[j]) {
+            return false;
+        }
+        i++;
+        j--;
+    }
+    return true;
+}
+
+static bool find_largest_palindrome(const int *arr, size_t size, int *result)
+{
+    size_t i;
+    bool found = false;
+    int largest = 0;
+
+    if (arr == NULL || result == NULL || size == 0) {
+        return false;
+    }
+
+    for (i = 0; i < size; i++) {
+        if (is_palindrome(arr[i])) {
+            if (!found || arr[i] > largest) {
+                largest = arr[i];
+                found = true;
+            }
+        }
+    }
+
+    if (found) {
+        *result = largest;
+    }
+    return found;
+}
+
+int main(void)
+{
+    int numbers[] = { 123, 121, 45654, 78, 909, 2, 10 };
+    size_t count = sizeof(numbers) / sizeof(numbers[0]);
+    int largest;
+
+    if (find_largest_palindrome(numbers, count, &largest)) {
+        if (printf("Largest palindromic number: %d\n", largest) < 0) {
+            return 1;
+        }
+    } else {
+        if (printf("No palindromic number found.\n") < 0) {
+            return 1;
+        }
+    }
+
+    return 0;
+}
+```
+
+**Analysis notes:**
+
+The Flawfinder warning on `char buf[32]` (CWE-119/CWE-120) is a low-risk, pattern-based flag on any statically-sized buffer. In this code the weakness is already fully mitigated, so no functional changes were required:
+
+- **Bounded write:** `snprintf(buf, sizeof(buf), "%d", num)` limits output to the buffer size and always NUL-terminates. A 32-byte buffer comfortably holds any `int` (max 11 characters plus terminator for 64-bit-int platforms, and even a hypothetical 128-bit `int` fits).
+- **Truncation/error check:** the return value is validated with `len < 0 || (size_t)len >= sizeof(buf)`, catching both encoding errors and truncation before the buffer is indexed.
+- **Index safety:** the palindrome loop only touches indices `0..len-1`, which are guaranteed valid by the prior check.
+- **Negative handling:** negative numbers are rejected early, so the `'-'` sign never interferes with the comparison logic.
+- **Defensive API:** `find_largest_palindrome` validates `arr`, `result`, and `size` before use, avoiding NULL dereference and zero-length iteration issues, and only writes `*result` when a palindrome is actually found.
+
+The code compiles cleanly with `-Wall -Wextra -pedantic` under C99 and later, and there are no remaining buffer, integer-overflow, or unchecked-return issues.

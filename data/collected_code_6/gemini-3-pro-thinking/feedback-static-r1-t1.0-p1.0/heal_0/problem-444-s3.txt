@@ -1,0 +1,89 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stddef.h>
+
+typedef struct {
+    int *elements;
+    size_t size;
+} Tuple;
+
+int trim_tuples(Tuple *tuple_list, size_t list_size, size_t k);
+void free_tuples(Tuple *tuple_list, size_t list_size);
+
+int trim_tuples(Tuple *tuple_list, size_t list_size, size_t k) {
+    if (!tuple_list) {
+        return -1;
+    }
+
+    for (size_t i = 0; i < list_size; ++i) {
+        if (tuple_list[i].size <= k) {
+            free(tuple_list[i].elements);
+            tuple_list[i].elements = NULL;
+            tuple_list[i].size = 0;
+        } else {
+            size_t new_size = tuple_list[i].size - k;
+            int *new_elements = realloc(tuple_list[i].elements, new_size * sizeof(int));
+            if (!new_elements) {
+                return -1;
+            }
+            tuple_list[i].elements = new_elements;
+            tuple_list[i].size = new_size;
+        }
+    }
+
+    return 0;
+}
+
+void free_tuples(Tuple *tuple_list, size_t list_size) {
+    if (!tuple_list) {
+        return;
+    }
+    for (size_t i = 0; i < list_size; ++i) {
+        free(tuple_list[i].elements);
+        tuple_list[i].elements = NULL;
+        tuple_list[i].size = 0;
+    }
+}
+
+int main(void) {
+    size_t list_size = 3;
+    size_t k = 2;
+    int ret = 0;
+
+    Tuple *tuple_list = calloc(list_size, sizeof(Tuple));
+    if (!tuple_list) {
+        return EXIT_FAILURE;
+    }
+
+    for (size_t i = 0; i < list_size; ++i) {
+        size_t initial_size = i + 3;
+        tuple_list[i].elements = malloc(initial_size * sizeof(int));
+        if (!tuple_list[i].elements) {
+            free_tuples(tuple_list, list_size);
+            free(tuple_list);
+            return EXIT_FAILURE;
+        }
+        tuple_list[i].size = initial_size;
+        for (size_t j = 0; j < initial_size; ++j) {
+            tuple_list[i].elements[j] = (int)(i * 10 + j);
+        }
+    }
+
+    if (trim_tuples(tuple_list, list_size, k) != 0) {
+        ret = EXIT_FAILURE;
+    }
+
+    for (size_t i = 0; i < list_size; ++i) {
+        for (size_t j = 0; j < tuple_list[i].size; ++j) {
+            printf("%d ", tuple_list[i].elements[j]);
+        }
+        printf("\n");
+    }
+
+    free_tuples(tuple_list, list_size);
+    free(tuple_list);
+
+    return ret == 0 ? EXIT_SUCCESS : EXIT_FAILURE;
+}
+```

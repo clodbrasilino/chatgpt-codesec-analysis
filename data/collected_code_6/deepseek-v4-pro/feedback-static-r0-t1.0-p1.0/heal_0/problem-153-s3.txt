@@ -1,0 +1,51 @@
+```c
+#include <stdio.h>
+#include <math.h>
+
+typedef struct {
+    double x;
+    double y;
+} Point;
+
+typedef struct {
+    double a;
+    double b;
+    double c;
+} Parabola;
+
+Point findVertex(const Parabola *p) {
+    Point vertex;
+    
+    if (fabs(p->a) < 1e-10) {
+        vertex.x = 0.0;
+        vertex.y = 0.0;
+        return vertex;
+    }
+    
+    vertex.x = -p->b / (2.0 * p->a);
+    vertex.y = p->a * vertex.x * vertex.x + p->b * vertex.x + p->c;
+    
+    return vertex;
+}
+
+int main(void) {
+    Parabola p1 = {1.0, -4.0, 3.0};
+    Parabola p2 = {2.0, 8.0, -5.0};
+    Parabola p3 = {0.0, 5.0, 2.0};
+    
+    Point v1 = findVertex(&p1);
+    Point v2 = findVertex(&p2);
+    Point v3 = findVertex(&p3);
+    
+    printf("Parabola 1: y = %.1fx^2 + %.1fx + %.1f\n", p1.a, p1.b, p1.c);
+    printf("Vertex: (%.2f, %.2f)\n\n", v1.x, v1.y);
+    
+    printf("Parabola 2: y = %.1fx^2 + %.1fx + %.1f\n", p2.a, p2.b, p2.c);
+    printf("Vertex: (%.2f, %.2f)\n\n", v2.x, v2.y);
+    
+    printf("Parabola 3: y = %.1fx^2 + %.1fx + %.1f\n", p3.a, p3.b, p3.c);
+    printf("Vertex: (%.2f, %.2f)\n", v3.x, v3.y);
+    
+    return 0;
+}
+```

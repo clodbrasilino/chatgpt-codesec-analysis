@@ -1,0 +1,32 @@
+#include <stdio.h>
+#define MAX_SIZE 100 // Maximum size of the list
+
+void iteratePairs(int list[], int size){
+    if (size > 1){
+        for (int i = 0; i < size - 1; i++){
+            printf("Pair: %d - %d\n", list[i], list[i+1]);
+        }
+    }
+}
+
+int main(){
+    int list[MAX_SIZE];
+    int size;
+
+    printf("Enter the number of elements: ");
+    scanf("%d", &size);
+
+    if(size > MAX_SIZE){
+        printf("Size is bigger than allowed.");
+        return(-1);
+    }
+
+    printf("Enter elements: ");
+    for(int i = 0; i < size; i++){
+        scanf("%d", &list[i]);
+    }
+
+    iteratePairs(list, size);
+
+    return 0;
+}

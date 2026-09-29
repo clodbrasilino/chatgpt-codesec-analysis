@@ -1,0 +1,27 @@
+```c
+#include <math.h>
+#include <stdio.h>
+
+int checkRoots(float a, float b, float c) {
+    float determinant = b * b - 4 * a * c;
+    float root1, root2;
+
+    if (determinant < 0) {
+        return 0;
+    }
+
+    root1 = (-b + sqrt(determinant)) / (2*a);
+    root2 = (-b - sqrt(determinant)) / (2*a);
+
+    return root1 == -root2;
+}
+
+int main() {
+    if (checkRoots(1, 10, 25)) {
+        printf("Roots are numerically equal but opposite in sign\n");
+    } else {
+        printf("Roots are not numerically equal or not opposite in sign\n");
+    }
+    return 0;
+}
+```

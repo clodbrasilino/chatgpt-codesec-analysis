@@ -1,0 +1,11 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_3/healed/problem-20-s3.c: In function 'is_woodall':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_3/healed/problem-20-s3.c:10:17: error: 'UINT64_MAX' undeclared (first use in this function)
+   10 |         if (k > UINT64_MAX / k) {
+      |                 ^~~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_3/healed/problem-20-s3.c:3:1: note: 'UINT64_MAX' is defined in header '<stdint.h>'; this is probably fixable by adding '#include <stdint.h>'
+    2 | #include <stdbool.h>
+  +++ |+#include <stdint.h>
+    3 | 
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_3/healed/problem-20-s3.c:10:17: note: each undeclared identifier is reported only once for each function it appears in
+   10 |         if (k > UINT64_MAX / k) {
+      |                 ^~~~~~~~~~

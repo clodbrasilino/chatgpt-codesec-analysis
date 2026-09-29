@@ -1,0 +1,228 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+typedef struct {
+    int value;
+    int listIndex;
+    int elemIndex;
+} HeapNode;
+
+typedef struct {
+    HeapNode *nodes;
+    int size;
+    int capacity;
+} MinHeap;
+
+static MinHeap *heap_create(int capacity)
+{
+    MinHeap *heap;
+
+    if (capacity <= 0) {
+        return NULL;
+    }
+    heap = malloc(sizeof(MinHeap));
+    if (heap == NULL) {
+        return NULL;
+    }
+    heap->nodes = malloc((size_t)capacity * sizeof(HeapNode));
+    if (heap->nodes == NULL) {
+        free(heap);
+        return NULL;
+    }
+    heap->size = 0;
+    heap->capacity = capacity;
+    return heap;
+}
+
+static void heap_destroy(MinHeap *heap)
+{
+    if (heap != NULL) {
+        free(heap->nodes);
+        free(heap);
+    }
+}
+
+static void heap_swap(HeapNode *a, HeapNode *b)
+{
+    HeapNode tmp = *a;
+    *a = *b;
+    *b = tmp;
+}
+
+static void heap_sift_up(MinHeap *heap, int idx)
+{
+    while (idx > 0) {
+        int parent = (idx - 1) / 2;
+        if (heap->nodes[idx].value < heap->nodes[parent].value) {
+            heap_swap(&heap->nodes[idx], &heap->nodes[parent]);
+            idx = parent;
+        } else {
+            break;
+        }
+    }
+}
+
+static void heap_sift_down(MinHeap *heap, int idx)
+{
+    for (;;) {
+        int left = 2 * idx + 1;
+        int right = 2 * idx + 2;
+        int smallest = idx;
+
+        if (left < heap->size &&
+            heap->nodes[left].value < heap->nodes[smallest].value) {
+            smallest = left;
+        }
+        if (right < heap->size &&
+            heap->nodes[right].value < heap->nodes[smallest].value) {
+            smallest = right;
+        }
+        if (smallest == idx) {
+            break;
+        }
+        heap_swap(&heap->nodes[idx], &heap->nodes[smallest]);
+        idx = smallest;
+    }
+}
+
+static int heap_push(MinHeap *heap, HeapNode node)
+{
+    if (heap->size >= heap->capacity) {
+        return -1;
+    }
+    heap->nodes[heap->size] = node;
+    heap_sift_up(heap, heap->size);
+    heap->size++;
+    return 0;
+}
+
+static int heap_pop(MinHeap *heap, HeapNode *out)
+{
+    if (heap->size <= 0) {
+        return -1;
+    }
+    *out = heap->nodes[0];
+    heap->size--;
+    heap->nodes[0] = heap->nodes[heap->size];
+    heap_sift_down(heap, 0);
+    return 0;
+}
+
+int findSmallestRange(const int *const *lists, const int *sizes, int k,
+                      int *rangeStart, int *rangeEnd)
+{
+    MinHeap *heap;
+    int currentMax;
+    int bestStart;
+    int bestEnd;
+    int i;
+    int result;
+
+    if (lists == NULL || sizes == NULL || k <= 0 ||
+        rangeStart == NULL || rangeEnd == NULL) {
+        return -1;
+    }
+
+    for (i = 0; i < k; i++) {
+        if (lists[i] == NULL || sizes[i] <= 0) {
+            return -1;
+        }
+    }
+
+    heap = heap_create(k);
+    if (heap == NULL) {
+        return -1;
+    }
+
+    currentMax = INT_MIN;
+    for (i = 0; i < k; i++) {
+        HeapNode node;
+        node.value = lists[i][0];
+        node.listIndex = i;
+        node.elemIndex = 0;
+        if (heap_push(heap, node) != 0) {
+            heap_destroy(heap);
+            return -1;
+        }
+        if (lists[i][0] > currentMax) {
+            currentMax = lists[i][0];
+        }
+    }
+
+    bestStart = INT_MIN;
+    bestEnd = INT_MAX;
+    result = -1;
+
+    for (;;) {
+        HeapNode minNode;
+        long currentRange;
+        long bestRange;
+
+        if (heap_pop(heap, &minNode) != 0) {
+            break;
+        }
+
+        currentRange = (long)currentMax - (long)minNode.value;
+        bestRange = (long)bestEnd - (long)bestStart;
+
+        if (currentRange < bestRange) {
+            bestStart = minNode.value;
+            bestEnd = currentMax;
+            result = 0;
+        }
+
+        if (minNode.elemIndex + 1 >= sizes[minNode.listIndex]) {
+            break;
+        }
+
+        minNode.elemIndex++;
+        minNode.value = lists[minNode.listIndex][minNode.elemIndex];
+        if (minNode.value > currentMax) {
+            currentMax = minNode.value;
+        }
+        if (heap_push(heap, minNode) != 0) {
+            heap_destroy(heap);
+            return -1;
+        }
+    }
+
+    heap_destroy(heap);
+
+    if (result == 0) {
+        *rangeStart = bestStart;
+        *rangeEnd = bestEnd;
+    }
+    return result;
+}
+
+int main(void)
+{
+    int list1[] = {4, 10, 15, 24, 26};
+    int list2[] = {0, 9, 12, 20};
+    int list3[] = {5, 18, 22, 30};
+    const int *lists[3];
+    int sizes[3];
+    int start;
+    int end;
+
+    lists[0] = list1;
+    lists[1] = list2;
+    lists[2] = list3;
+    sizes[0] = (int)(sizeof(list1) / sizeof(list1[0]));
+    sizes[1] = (int)(sizeof(list2) / sizeof(list2[0]));
+    sizes[2] = (int)(sizeof(list3) / sizeof(list3[0]));
+
+    if (findSmallestRange(lists, sizes, 3, &start, &end) == 0) {
+        if (printf("Smallest range: [%d, %d]\n", start, end) < 0) {
+            return EXIT_FAILURE;
+        }
+    } else {
+        if (fprintf(stderr, "Failed to find smallest range\n") < 0) {
+            return EXIT_FAILURE;
+        }
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

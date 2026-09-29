@@ -1,0 +1,57 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int *find_even_numbers(const int *arr, size_t size, size_t *even_count) {
+    if (arr == NULL || even_count == NULL) {
+        return NULL;
+    }
+    
+    size_t count = 0;
+    for (size_t i = 0; i < size; i++) {
+        if (arr[i] % 2 == 0) {
+            count++;
+        }
+    }
+    
+    *even_count = count;
+    
+    if (count == 0) {
+        return NULL;
+    }
+    
+    int *even_numbers = malloc(count * sizeof(int));
+    if (even_numbers == NULL) {
+        *even_count = 0;
+        return NULL;
+    }
+    
+    size_t index = 0;
+    for (size_t i = 0; i < size; i++) {
+        if (arr[i] % 2 == 0) {
+            even_numbers[index++] = arr[i];
+        }
+    }
+    
+    return even_numbers;
+}
+
+int main(void) {
+    int numbers[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    size_t size = sizeof(numbers) / sizeof(numbers[0]);
+    size_t even_count = 0;
+    
+    int *evens = find_even_numbers(numbers, size, &even_count);
+    
+    if (evens != NULL) {
+        printf("Even numbers: ");
+        for (size_t i = 0; i < even_count; i++) {
+            printf("%d ", evens[i]);
+        }
+        printf("\n");
+        free(evens);
+    } else {
+        printf("No even numbers found or memory allocation failed.\n");
+    }
+    
+    return 0;
+}

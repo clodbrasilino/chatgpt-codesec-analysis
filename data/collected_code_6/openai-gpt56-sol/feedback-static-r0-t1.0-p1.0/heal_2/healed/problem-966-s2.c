@@ -1,0 +1,206 @@
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    int *items;
+    size_t size;
+} Tuple;
+
+typedef struct {
+    Tuple *tuples;
+    size_t size;
+} TupleList;
+
+static int remove_empty_tuples(TupleList *list)
+{
+    size_t write_index = 0;
+
+    if (list == NULL || (list->size > 0 && list->tuples == NULL)) {
+        return -1;
+    }
+
+    for (size_t read_index = 0; read_index < list->size; ++read_index) {
+        Tuple *tuple = &list->tuples[read_index];
+
+        if (tuple->size == 0) {
+            free(tuple->items);
+            tuple->items = NULL;
+            continue;
+        }
+
+        if (tuple->items == NULL) {
+            return -1;
+        }
+
+        if (write_index != read_index) {
+            list->tuples[write_index] = *tuple;
+            tuple->items = NULL;
+            tuple->size = 0;
+        }
+
+        ++write_index;
+    }
+
+    if (write_index == 0) {
+        free(list->tuples);
+        list->tuples = NULL;
+    } else if (write_index < list->size) {
+        Tuple *resized;
+
+        if (write_index > SIZE_MAX / sizeof(*list->tuples)) {
+            return -1;
+        }
+
+        resized = realloc(list->tuples,
+                          write_index * sizeof(*list->tuples));
+        if (resized != NULL) {
+            list->tuples = resized;
+        }
+    }
+
+    list->size = write_index;
+    return 0;
+}
+
+static void free_tuple_list(TupleList *list)
+{
+    if (list == NULL) {
+        return;
+    }
+
+    if (list->tuples != NULL) {
+        for (size_t i = 0; i < list->size; ++i) {
+            free(list->tuples[i].items);
+            list->tuples[i].items = NULL;
+            list->tuples[i].size = 0;
+        }
+
+        free(list->tuples);
+    }
+
+    list->tuples = NULL;
+    list->size = 0;
+}
+
+static int initialize_tuple(Tuple *tuple, const int *values, size_t size)
+{
+    int *items;
+    size_t byte_count;
+
+    if (tuple == NULL || (size > 0 && values == NULL)) {
+        return -1;
+    }
+
+    tuple->items = NULL;
+    tuple->size = 0;
+
+    if (size == 0) {
+        return 0;
+    }
+
+    if (size > SIZE_MAX / sizeof(*items)) {
+        return -1;
+    }
+
+    byte_count = size * sizeof(*items);
+    items = malloc(byte_count);
+    if (items == NULL) {
+        return -1;
+    }
+
+    for (size_t i = 0; i < size; ++i) {
+        items[i] = values[i];
+    }
+
+    tuple->items = items;
+    tuple->size = size;
+    return 0;
+}
+
+static int print_tuple_list(const TupleList *list)
+{
+    if (list == NULL || (list->size > 0 && list->tuples == NULL)) {
+        return -1;
+    }
+
+    for (size_t i = 0; i < list->size; ++i) {
+        const Tuple *tuple = &list->tuples[i];
+
+        if (tuple->size > 0 && tuple->items == NULL) {
+            return -1;
+        }
+
+        if (putchar('(') == EOF) {
+            return -1;
+        }
+
+        for (size_t j = 0; j < tuple->size; ++j) {
+            if (j > 0 && fputs(", ", stdout) == EOF) {
+                return -1;
+            }
+
+            if (printf("%d", tuple->items[j]) < 0) {
+                return -1;
+            }
+        }
+
+        if (puts(")") == EOF) {
+            return -1;
+        }
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    static const int first[] = {1, 2};
+    static const int third[] = {3};
+    TupleList list = {NULL, 0};
+    int status = EXIT_FAILURE;
+
+    list.size = 4;
+
+    if (list.size > SIZE_MAX / sizeof(*list.tuples)) {
+        goto cleanup;
+    }
+
+    list.tuples = calloc(list.size, sizeof(*list.tuples));
+    if (list.tuples == NULL) {
+        goto cleanup;
+    }
+
+    if (initialize_tuple(&list.tuples[0], first,
+                         sizeof(first) / sizeof(first[0])) != 0) {
+        goto cleanup;
+    }
+
+    if (initialize_tuple(&list.tuples[1], NULL, 0) != 0) {
+        goto cleanup;
+    }
+
+    if (initialize_tuple(&list.tuples[2], third,
+                         sizeof(third) / sizeof(third[0])) != 0) {
+        goto cleanup;
+    }
+
+    if (initialize_tuple(&list.tuples[3], NULL, 0) != 0) {
+        goto cleanup;
+    }
+
+    if (remove_empty_tuples(&list) != 0) {
+        goto cleanup;
+    }
+
+    if (print_tuple_list(&list) != 0) {
+        goto cleanup;
+    }
+
+    status = EXIT_SUCCESS;
+
+cleanup:
+    free_tuple_list(&list);
+    return status;
+}

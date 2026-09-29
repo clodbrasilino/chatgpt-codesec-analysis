@@ -1,0 +1,113 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+#include <errno.h>
+
+int list_to_single_integer(const int *list, size_t count, long long *result) {
+    if (list == NULL || result == NULL || count == 0) {
+        errno = EINVAL;
+        return -1;
+    }
+
+    long long value = 0;
+    int negative = 0;
+
+    if (list[0] < 0) {
+        negative = 1;
+        if (list[0] == INT_MIN) {
+            value = (long long)INT_MAX + 1;
+        } else {
+            value = -(long long)list[0];
+        }
+    } else {
+        value = list[0];
+    }
+
+    for (size_t i = 1; i < count; i++) {
+        int digit = list[i];
+        long long add_value;
+
+        if (digit < 0) {
+            digit = -digit;
+        }
+
+        if (digit > 9) {
+            errno = EINVAL;
+            return -1;
+        }
+
+        if (negative) {
+            if (value > (LLONG_MAX - digit) / 10) {
+                errno = ERANGE;
+                return -1;
+            }
+            add_value = digit;
+        } else {
+            if (value > (LLONG_MAX - digit) / 10) {
+                errno = ERANGE;
+                return -1;
+            }
+            add_value = digit;
+        }
+
+        value = value * 10 + add_value;
+    }
+
+    if (negative) {
+        if (value > (long long)LLONG_MAX) {
+            errno = ERANGE;
+            return -1;
+        }
+        value = -value;
+    }
+
+    *result = value;
+    return 0;
+}
+
+int main(void) {
+    const int numbers1[] = {1, 2, 3, 4, 5};
+    long long result1;
+
+    if (list_to_single_integer(numbers1, 5, &result1) == 0) {
+        printf("%lld\n", result1);
+    } else {
+        printf("Error\n");
+    }
+
+    const int numbers2[] = {-1, 2, 3};
+    long long result2;
+
+    if (list_to_single_integer(numbers2, 3, &result2) == 0) {
+        printf("%lld\n", result2);
+    } else {
+        printf("Error\n");
+    }
+
+    const int numbers3[] = {9, 2, 2, 3, 3, 7, 2, 0, 3, 6, 8, 5, 4, 7, 7, 5, 8, 0, 7};
+    long long result3;
+
+    if (list_to_single_integer(numbers3, 19, &result3) == 0) {
+        printf("%lld\n", result3);
+    } else {
+        printf("Error\n");
+    }
+
+    long long result4;
+
+    if (list_to_single_integer(NULL, 5, &result4) == 0) {
+        printf("%lld\n", result4);
+    } else {
+        printf("Error\n");
+    }
+
+    long long result5;
+
+    if (list_to_single_integer(numbers1, 0, &result5) == 0) {
+        printf("%lld\n", result5);
+    } else {
+        printf("Error\n");
+    }
+
+    return 0;
+}

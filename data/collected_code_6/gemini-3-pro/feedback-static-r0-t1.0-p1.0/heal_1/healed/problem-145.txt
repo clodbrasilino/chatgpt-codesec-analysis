@@ -1,0 +1,44 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int find_max_difference(const int *array, size_t size, int *max_diff) {
+    if (array == NULL || max_diff == NULL) {
+        return -1;
+    }
+
+    if (size < 2) {
+        return -1;
+    }
+
+    int min_element = array[0];
+    *max_diff = array[1] - array[0];
+
+    for (size_t i = 1; i < size; i++) {
+        if (array[i] - min_element > *max_diff) {
+            *max_diff = array[i] - min_element;
+        }
+        if (array[i] < min_element) {
+            min_element = array[i];
+        }
+    }
+
+    return 0;
+}
+
+int main(void) {
+    int array[] = {1, 2, 90, 10, 110};
+    size_t size = sizeof(array) / sizeof(array[0]);
+    int max_diff = 0;
+
+    int result = find_max_difference(array, size, &max_diff);
+
+    if (result == 0) {
+        printf("Maximum difference is %d\n", max_diff);
+    } else {
+        printf("Error: Invalid input or array too small.\n");
+    }
+
+    return EXIT_SUCCESS;
+}
+```

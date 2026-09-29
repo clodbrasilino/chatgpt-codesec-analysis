@@ -1,0 +1,8 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-738.c: In function 'geometric_sum':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-738.c:10:20: error: implicit declaration of function 'pow' [-Wimplicit-function-declaration]
+   10 |         return 1 / pow(2, n) + geometric_sum(n - 1);
+      |                    ^~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-738.c:2:1: note: include '<math.h>' or provide a declaration of 'pow'
+    1 | #include <stdio.h>
+  +++ |+#include <math.h>
+    2 | 

@@ -1,0 +1,79 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+static int sum_even_in_range(long long l, long long r, long long *result)
+{
+    long long first;
+    long long last;
+    long long count;
+    long long avg;
+
+    *result = 0;
+
+    if (l > r) {
+        return 0;
+    }
+
+    if (l < 2) {
+        l = 2;
+    }
+
+    if (r < 2) {
+        return 0;
+    }
+
+    /* Possible weaknesses found:
+     * UBSan: signed integer overflow: 9223372036854775807 + 1 cannot be represented in type 'long long' (AFL crash: id:000000,sig:06,src:000006,time:40799,execs:23563,op:havoc,rep:4)
+     */
+    first = (l % 2 == 0) ? l : l + 1;
+    last = (r % 2 == 0) ? r : r - 1;
+
+    if (first > last) {
+        return 0;
+    }
+
+    /* Possible weaknesses found:
+     * UBSan: signed integer overflow: 9223372036854775806 - -9223372036854775808 cannot be represented in type 'long long' (AFL crash: id:000000,sig:06,src:000006,time:40799,execs:23563,op:havoc,rep:4)
+     */
+    count = ((last - first) / 2) + 1;
+    avg = (first / 2) + (last / 2);
+
+    if (__builtin_mul_overflow(count, avg, result)) {
+        return -1;
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    long long l;
+    long long r;
+    long long result;
+
+    printf("Enter the lower bound: ");
+    if (scanf("%lld", &l) != 1) {
+        fprintf(stderr, "Error: invalid input for lower bound.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter the upper bound: ");
+    if (scanf("%lld", &r) != 1) {
+        fprintf(stderr, "Error: invalid input for upper bound.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (l > r) {
+        fprintf(stderr, "Error: lower bound must not exceed upper bound.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (sum_even_in_range(l, r, &result) != 0) {
+        fprintf(stderr, "Error: result overflows the representable range.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Sum of even natural numbers in [%lld, %lld] = %lld\n", l, r, result);
+
+    return EXIT_SUCCESS;
+}

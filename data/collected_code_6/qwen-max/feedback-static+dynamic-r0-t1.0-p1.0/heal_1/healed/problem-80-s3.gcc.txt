@@ -1,0 +1,8 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-80-s3.c: In function 'nth_tetrahedral_number':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-80-s3.c:8:21: error: implicit declaration of function 'sqrt' [-Wimplicit-function-declaration]
+    8 |     if (n > (long)((sqrt(8 * max_div_6 + 1) - 1) / 2)) {
+      |                     ^~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-80-s3.c:4:1: note: include '<math.h>' or provide a declaration of 'sqrt'
+    3 | #include <limits.h>
+  +++ |+#include <math.h>
+    4 | 

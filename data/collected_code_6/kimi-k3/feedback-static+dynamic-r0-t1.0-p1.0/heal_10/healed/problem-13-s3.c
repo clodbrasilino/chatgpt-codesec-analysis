@@ -1,0 +1,177 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <errno.h>
+#include <limits.h>
+#include <stdint.h>
+
+#define MAX_WORD_LEN 100
+#define MAX_WORDS 10000
+#define SCAN_BUFFER_SIZE 1024
+
+typedef struct {
+    char word[MAX_WORD_LEN];
+    int count;
+} WordCount;
+
+static int findWordIndex(WordCount words[], int numWords, const char *word) {
+    int i;
+    for (i = 0; i < numWords; i++) {
+        if (strncmp(words[i].word, word, MAX_WORD_LEN) == 0) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+static void toLowerCase(char *str, size_t len) {
+    size_t i;
+    if (str == NULL) {
+        return;
+    }
+    for (i = 0; i < len; i++) {
+        str[i] = (char)tolower((unsigned char)str[i]);
+    }
+}
+
+static int compareWordCounts(const void *a, const void *b) {
+    const WordCount *wa = (const WordCount *)a;
+    const WordCount *wb = (const WordCount *)b;
+    if (wb->count > wa->count) return 1;
+    if (wb->count < wa->count) return -1;
+    return 0;
+}
+
+static void processWord(WordCount words[], int *numWords, int maxWords, const char *wordBuffer, size_t wordLen) {
+    int index;
+    size_t copyLen;
+
+    if (wordLen == 0 || wordLen >= MAX_WORD_LEN) {
+        return;
+    }
+
+    index = findWordIndex(words, *numWords, wordBuffer);
+    if (index >= 0) {
+        if (words[index].count < INT_MAX) {
+            words[index].count++;
+        }
+    } else if (*numWords < maxWords) {
+        copyLen = wordLen < (MAX_WORD_LEN - 1) ? wordLen : (MAX_WORD_LEN - 1);
+        if (copyLen >= MAX_WORD_LEN) {
+            copyLen = MAX_WORD_LEN - 1;
+        }
+        memcpy(words[*numWords].word, wordBuffer, copyLen);
+        words[*numWords].word[copyLen] = '\0';
+        words[*numWords].count = 1;
+        (*numWords)++;
+    }
+}
+
+int countMostCommonWords(const char *filename, WordCount words[], int maxWords, int topN) {
+    FILE *file = NULL;
+    char buffer[SCAN_BUFFER_SIZE + 1];
+    char wordBuffer[MAX_WORD_LEN];
+    int numWords = 0;
+    size_t i;
+    struct stat st;
+    int fd;
+    size_t bytesRead;
+    size_t wordLen = 0;
+
+    if (filename == NULL || words == NULL || maxWords <= 0 || topN <= 0) {
+        return -1;
+    }
+
+    fd = open(filename, O_RDONLY | O_NOFOLLOW | O_CLOEXEC);
+    if (fd < 0) {
+        return -1;
+    }
+
+    if (fstat(fd, &st) != 0) {
+        close(fd);
+        return -1;
+    }
+
+    if (!S_ISREG(st.st_mode)) {
+        close(fd);
+        return -1;
+    }
+
+    if (st.st_size < 0 || st.st_size > (off_t)(SIZE_MAX / 2)) {
+        close(fd);
+        return -1;
+    }
+
+    file = fdopen(fd, "r");
+    if (file == NULL) {
+        close(fd);
+        return -1;
+    }
+
+    while ((bytesRead = fread(buffer, 1, SCAN_BUFFER_SIZE, file)) > 0) {
+        if (bytesRead > SCAN_BUFFER_SIZE) {
+            fclose(file);
+            return -1;
+        }
+        buffer[bytesRead] = '\0';
+        toLowerCase(buffer, bytesRead);
+
+        for (i = 0; i < bytesRead; i++) {
+            if (isalpha((unsigned char)buffer[i])) {
+                if (wordLen < (MAX_WORD_LEN - 1)) {
+                    wordBuffer[wordLen++] = buffer[i];
+                }
+            } else if (wordLen > 0) {
+                wordBuffer[wordLen] = '\0';
+                processWord(words, &numWords, maxWords, wordBuffer, wordLen);
+                wordLen = 0;
+            }
+        }
+    }
+
+    if (wordLen > 0) {
+        wordBuffer[wordLen] = '\0';
+        processWord(words, &numWords, maxWords, wordBuffer, wordLen);
+    }
+
+    if (ferror(file)) {
+        fclose(file);
+        return -1;
+    }
+
+    if (fclose(file) != 0) {
+        return -1;
+    }
+
+    if (numWords > 0) {
+        qsort(words, (size_t)numWords, sizeof(WordCount), compareWordCounts);
+    }
+
+    return numWords < topN ? numWords : topN;
+}
+
+int main(void) {
+    WordCount words[MAX_WORDS];
+    const char *filename = "dictionary.txt";
+    int topN = 10;
+    int result;
+    int i;
+
+    result = countMostCommonWords(filename, words, MAX_WORDS, topN);
+
+    if (result < 0) {
+        fprintf(stderr, "Error: Could not process file %s\n", filename);
+        return EXIT_FAILURE;
+    }
+
+    printf("Top %d most common words:\n", result);
+    for (i = 0; i < result; i++) {
+        printf("%d. %s: %d\n", i + 1, words[i].word, words[i].count);
+    }
+
+    return EXIT_SUCCESS;
+}

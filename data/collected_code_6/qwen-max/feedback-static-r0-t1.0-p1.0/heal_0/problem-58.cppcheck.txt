@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-58.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-58.c:10:28: style: Condition 'have_opposite_signs(a,b)' is always true [knownConditionTrueFalse]
+    if (have_opposite_signs(a, b)) {
+                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-58.c:8:14: note: Assignment 'a=-10', assigned value is -10
+    int a = -10;
+             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-58.c:10:28: note: Calling function 'have_opposite_signs' returns 1
+    if (have_opposite_signs(a, b)) {
+                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-58.c:10:28: note: Condition 'have_opposite_signs(a,b)' is always true
+    if (have_opposite_signs(a, b)) {
+                           ^

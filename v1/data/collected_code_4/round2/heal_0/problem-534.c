@@ -1,0 +1,36 @@
+#include <stdio.h>
+#include <string.h>
+
+int find_location(char* str, char* substr) {
+    char *pos = strstr(str, substr);
+    if(pos) {
+        return pos - str;
+    } else {
+        return -1;
+    }
+}
+
+char* find_string(char* str, char* substr) {
+    return strstr(str, substr);
+}
+
+int main(){
+   char str[100];
+   char substr[100];
+   printf("Enter the main string: ");
+   fgets(str, sizeof(str), stdin);
+   printf("Enter the string to be searched: ");
+   fgets(substr, sizeof(substr), stdin);
+
+   // Remove trailing newline character from fgets
+   str[strcspn(str, "\n")] = 0;
+   substr[strcspn(substr, "\n")] = 0;
+
+   char* result = find_string(str, substr);
+   if(result) {
+       printf("The string '%s' is found in '%s' at position %d\n", substr, str, find_location(str, substr));
+   } else {
+       printf("The string '%s' was not found in '%s'\n", substr, str);
+   }
+   return 0;
+}

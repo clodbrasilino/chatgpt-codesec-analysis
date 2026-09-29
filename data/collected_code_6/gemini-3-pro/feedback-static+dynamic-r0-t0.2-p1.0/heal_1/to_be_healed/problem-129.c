@@ -1,0 +1,83 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+void generateMagicSquare(int n) {
+    if (n % 2 == 0 || n <= 0) {
+        printf("Magic square generation is only supported for positive odd integers.\n");
+        return;
+    }
+
+    int **magicSquare = (int **)malloc(n * sizeof(int *));
+    if (magicSquare == NULL) {
+        fprintf(stderr, "Memory allocation failed.\n");
+        exit(EXIT_FAILURE);
+    }
+
+    for (int i = 0; i < n; i++) {
+        magicSquare[i] = (int *)calloc(n, sizeof(int));
+        if (magicSquare[i] == NULL) {
+            fprintf(stderr, "Memory allocation failed.\n");
+            for (int j = 0; j < i; j++) {
+                free(magicSquare[j]);
+            }
+            free(magicSquare);
+            exit(EXIT_FAILURE);
+        }
+    }
+
+    int i = n / 2;
+    int j = n - 1;
+
+    for (int num = 1; num <= n * n;) {
+        if (i == -1 && j == n) {
+            j = n - 2;
+            i = 0;
+        } else {
+            if (j == n) {
+                j = 0;
+            }
+            if (i < 0) {
+                i = n - 1;
+            }
+        }
+
+        if (magicSquare[i][j] != 0) {
+            j -= 2;
+            i++;
+            continue;
+        } else {
+            magicSquare[i][j] = num++;
+        }
+
+        j++;
+        i--;
+    }
+
+    for (int row = 0; row < n; row++) {
+        for (int col = 0; col < n; col++) {
+            printf("%3d ", magicSquare[row][col]);
+        }
+        printf("\n");
+    }
+
+    for (int k = 0; k < n; k++) {
+        free(magicSquare[k]);
+    }
+    free(magicSquare);
+}
+ /* Possible weaknesses found:
+  * Fuzzing found a crash (signal 6) on input id:000000,sig:06,src:000000,time:34397,execs:2525,op:havoc,rep:2; likely memory-safety defect
+  */
+
+int main(void) {
+    int n;
+    
+    if (scanf("%d", &n) != 1) {
+        fprintf(stderr, "Invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    generateMagicSquare(n);
+
+    return EXIT_SUCCESS;
+}

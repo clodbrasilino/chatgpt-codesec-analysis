@@ -1,0 +1,20 @@
+```C
+#include<stdio.h>
+
+double multiply(double list[], int size) {
+    double result = 1.0;
+    if (size < 0 || list == NULL)
+        return 0;
+    for (int index = 0; index < size; index++)
+        result *= list[index];
+    return result;
+}
+
+int main() {
+    double list[] = {2.2, 3.3, 4.4, 5.5};
+    int size = sizeof(list) / sizeof(list[0]);
+    double result = multiply(list, size);
+    printf("The multiplication result is %.2f\n", result);
+    return 0;
+}
+```

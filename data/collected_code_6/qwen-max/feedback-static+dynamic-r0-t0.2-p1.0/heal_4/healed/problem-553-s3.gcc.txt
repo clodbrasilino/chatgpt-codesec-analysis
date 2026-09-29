@@ -1,0 +1,8 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_4/healed/problem-553-s3.c: In function 'tuple_to_float':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_4/healed/problem-553-s3.c:8:63: error: implicit declaration of function 'pow' [-Wimplicit-function-declaration]
+    8 |         result += tuple[i] * (10.0 * (len - 1 - i) == 0 ? 1 : pow(10, len - 1 - i));
+      |                                                               ^~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_4/healed/problem-553-s3.c:3:1: note: include '<math.h>' or provide a declaration of 'pow'
+    2 | #include <stdlib.h>
+  +++ |+#include <math.h>
+    3 | 

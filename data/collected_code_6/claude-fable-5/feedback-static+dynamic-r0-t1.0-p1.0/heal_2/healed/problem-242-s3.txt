@@ -1,0 +1,51 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define BUFFER_SIZE 256
+
+size_t count_characters(const char *str)
+{
+    size_t count = 0;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    while (str[count] != '\0') {
+        count++;
+    }
+
+    return count;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t length;
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+    buffer[strcspn(buffer, "\n")] = '\0';
+
+    length = count_characters(buffer);
+
+    printf("%zu\n", length);
+    fflush(stdout);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the changes made:**
+
+1. **Test case failures (`<no output>`):** The original program printed `"Enter a string: "` and `"Total characters: %zu\n"`. Automated test harnesses expecting bare numeric output (`18`, `8`, `5`) would fail to match. The rewrite removes the interactive prompt and prints only the count. Additionally, the original prompt lacked a trailing newline and was never explicitly flushed — when stdout is fully buffered (e.g., piped in a test harness), output may never appear if the process is terminated abnormally. An explicit `fflush(stdout)` guards against that.
+
+2. **Flawfinder CWE-119/CWE-120 (buffer bounds):** This was largely a false positive in the original — `fgets(buffer, sizeof(buffer), stdin)` already limits input length, and the defensive `buffer[sizeof(buffer) - 1] = '\0'` is technically redundant (fgets always NUL-terminates) but harmless and retained as belt-and-braces hardening.
+
+3. **Retained correct defensive practices:** the `NULL` check in `count_characters`, checking the `fgets` return value, and stripping the trailing newline via `strcspn` (which safely handles the no-newline case by indexing the existing terminator).

@@ -1,0 +1,134 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+static char *duplicate_string(const char *src)
+{
+    size_t len;
+    char *copy;
+
+    if (src == NULL) {
+        return NULL;
+    }
+
+    len = strlen(src) + 1U;
+    copy = malloc(len);
+    if (copy == NULL) {
+        return NULL;
+    }
+
+    memcpy(copy, src, len);
+    return copy;
+}
+
+static void free_word_list(char **list, size_t count)
+{
+    size_t i;
+
+    if (list == NULL) {
+        return;
+    }
+
+    for (i = 0; i < count; i++) {
+        free(list[i]);
+    }
+    free(list);
+}
+
+static char **remove_words(const char *const *words, size_t count,
+                           const char *pattern, size_t *out_count)
+{
+    char **result;
+    size_t kept;
+    size_t i;
+
+    if (out_count == NULL) {
+        return NULL;
+    }
+
+    *out_count = 0;
+
+    if (words == NULL || pattern == NULL || count == 0U) {
+        return NULL;
+    }
+
+    result = malloc(count * sizeof(*result));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    kept = 0;
+    for (i = 0; i < count; i++) {
+        if (words[i] == NULL) {
+            continue;
+        }
+        if (strcmp(words[i], pattern) != 0) {
+            result[kept] = duplicate_string(words[i]);
+            if (result[kept] == NULL) {
+                free_word_list(result, kept);
+                return NULL;
+            }
+            kept++;
+        }
+    }
+
+    if (kept == 0U) {
+        free(result);
+        return NULL;
+    }
+
+    if (kept < count) {
+        char **shrunk = realloc(result, kept * sizeof(*shrunk));
+        if (shrunk != NULL) {
+            result = shrunk;
+        }
+    }
+
+    *out_count = kept;
+    return result;
+}
+
+int main(void)
+{
+    const char *const words[] = {
+        "Red", "", "Green", "Black", "Orange", "White", "Black"
+    };
+    size_t count = sizeof(words) / sizeof(words[0]);
+    const char *pattern = "Black";
+    char **filtered;
+    size_t filtered_count;
+    size_t i;
+
+    filtered = remove_words(words, count, pattern, &filtered_count);
+    if (filtered == NULL) {
+        fprintf(stderr, "No words remain or an error occurred.\n");
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i < filtered_count; i++) {
+        if (printf("%s\n", filtered[i]) < 0) {
+            free_word_list(filtered, filtered_count);
+            return EXIT_FAILURE;
+        }
+    }
+
+    if (fflush(stdout) == EOF) {
+        free_word_list(filtered, filtered_count);
+        return EXIT_FAILURE;
+    }
+
+    free_word_list(filtered, filtered_count);
+    return EXIT_SUCCESS;
+}
+```
+
+Analysis of the original code and the fixes applied:
+
+1. **Missing output flush (`<no output>` failures):** The most likely cause of all three test cases reporting `<no output>` is that `stdout` was never explicitly flushed before process exit. In buffered environments (e.g., piped output in a test harness), if the runtime aborts or the exit path is interrupted, buffered data can be lost. An explicit `fflush(stdout)` after the print loop guarantees the filtered words reach the output stream before termination.
+
+2. **Fatal-path `fprintf` check:** The original code checked the return value of `fprintf(stderr, ...)` and returned `EXIT_FAILURE` in both branches, which was dead logic that added confusion. The error message is now emitted unconditionally on the failure path.
+
+3. **Preserved correct behavior:** The empty string `""` is intentionally kept in the results (it is not equal to `"Black"`), matching the expected output `['Red', '', 'Green', 'Orange', 'White']`. The `remove_words` logic correctly handles `NULL` entries, allocation failures with full cleanup, and shrinking the result array via `realloc` (tolerating a failed shrink, which is safe since the original block remains valid).
+
+4. **Memory safety:** All allocation paths are checked, `free_word_list` is `NULL`-safe, and there are no leaks on either success or failure paths.

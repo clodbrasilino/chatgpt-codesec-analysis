@@ -1,0 +1,125 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+#define DATE_BUF_SIZE 11
+#define YEAR_BUF_SIZE 5
+#define MONTH_BUF_SIZE 3
+#define DAY_BUF_SIZE 3
+
+int convert_date(const char *input, char *output, size_t output_size);
+
+static int copy_match(const char *input, size_t input_len,
+                      const regmatch_t *match, char *dest, size_t dest_size,
+                      size_t expected_len)
+{
+    size_t match_len;
+
+    if (match->rm_so < 0 || match->rm_eo < match->rm_so) {
+        return -1;
+    }
+
+    if ((size_t)match->rm_eo > input_len) {
+        return -1;
+    }
+
+    match_len = (size_t)(match->rm_eo - match->rm_so);
+
+    if (match_len != expected_len || match_len >= dest_size) {
+        return -1;
+    }
+
+    memcpy(dest, input + match->rm_so, match_len);
+    dest[match_len] = '\0';
+
+    return 0;
+}
+
+int convert_date(const char *input, char *output, size_t output_size)
+{
+    regex_t regex;
+    regmatch_t matches[4];
+    int ret;
+    const char *pattern = "^([0-9]{4})-([0-9]{2})-([0-9]{2})$";
+    char year[YEAR_BUF_SIZE];
+    char month[MONTH_BUF_SIZE];
+    char day[DAY_BUF_SIZE];
+    size_t input_len;
+
+    if (input == NULL || output == NULL || output_size < DATE_BUF_SIZE) {
+        return -1;
+    }
+
+    input_len = strnlen(input, DATE_BUF_SIZE);
+    if (input_len != DATE_BUF_SIZE - 1) {
+        return -1;
+    }
+
+    ret = regcomp(&regex, pattern, REG_EXTENDED);
+    if (ret != 0) {
+        return -1;
+    }
+
+    ret = regexec(&regex, input, 4, matches, 0);
+    if (ret != 0) {
+        regfree(&regex);
+        return -1;
+    }
+
+    if (copy_match(input, input_len, &matches[1], year, sizeof(year),
+                   YEAR_BUF_SIZE - 1) != 0 ||
+        copy_match(input, input_len, &matches[2], month, sizeof(month),
+                   MONTH_BUF_SIZE - 1) != 0 ||
+        copy_match(input, input_len, &matches[3], day, sizeof(day),
+                   DAY_BUF_SIZE - 1) != 0) {
+        regfree(&regex);
+        return -1;
+    }
+
+    ret = snprintf(output, output_size, "%s-%s-%s", day, month, year);
+    regfree(&regex);
+
+    if (ret < 0 || (size_t)ret >= output_size) {
+        return -1;
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    const char *input = "2024-05-17";
+    char output[DATE_BUF_SIZE];
+
+    memset(output, 0, sizeof(output));
+
+    if (convert_date(input, output, sizeof(output)) != 0) {
+        fprintf(stderr, "Failed to convert date: %s\n", input);
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Input:  %s\nOutput: %s\n", input, output) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The original code was already defensively written, and every Flawfinder hit was a false positive in practice:
+
+1. **Statically-sized arrays (CWE-119/CWE-120)** — `year`, `month`, `day`, and `output` are fixed-size, but all writes into them are bounds-checked before they occur. The rewrite keeps the buffers but centralizes the validation.
+
+2. **`memcpy` calls (CWE-120)** — Each copy was preceded by explicit checks that the match length fits the destination (`match_len >= dest_size` rejection) and equals the expected length. I consolidated the three duplicated check-and-copy sequences into a single `copy_match()` helper, which guarantees the bounds check can never be separated from the copy — this eliminates the risk of a future edit removing a check while leaving the `memcpy`.
+
+3. **Input length** — `strnlen(input, DATE_BUF_SIZE)` bounds the scan and enforces an exact length of 10, so `input + rm_so` arithmetic is always within the validated region; the redundant `rm_eo > input_len` guard is retained inside the helper for defense in depth.
+
+4. **Output** — `snprintf` truncation is detected via the return value, and `output_size < DATE_BUF_SIZE` is rejected up front.
+
+5. **Resource handling** — `regfree` is called on every exit path after a successful `regcomp`, so there are no regex memory leaks.
+
+The behavior is identical: it converts `YYYY-MM-DD` to `DD-MM-YYYY`, returning `0` on success and `-1` on any validation or runtime failure.

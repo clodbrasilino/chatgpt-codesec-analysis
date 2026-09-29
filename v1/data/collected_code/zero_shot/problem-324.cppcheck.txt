@@ -1,0 +1,6 @@
+collected_code/problem-324-0.c:6:17: error: Cannot determine that 'a[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        sum += a[i] + a[i + 2];
+                ^
+collected_code/problem-324-0.c:6:24: error: Cannot determine that 'a[i+2]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        sum += a[i] + a[i + 2];
+                       ^

@@ -1,0 +1,23 @@
+collected_code/problem-715-0.c: In function 'convertStringToTuple':
+collected_code/problem-715-0.c:17:24: warning: dereference of possibly-NULL 'values' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   17 |         values[size++] = atoi(token);
+      |         ~~~~~~~~~~~~~~~^~~~~~~~~~~~~
+  'convertStringToTuple': event 1
+    |
+    |   12 |     int* values = malloc(length * sizeof(int));
+    |      |                   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                   |
+    |      |                   (1) this call could return NULL
+    |
+  'convertStringToTuple': events 2-4
+    |
+    |   16 |     while (token != NULL) {
+    |      |                  ^
+    |      |                  |
+    |      |                  (2) following 'true' branch (when 'token' is non-NULL)...
+    |   17 |         values[size++] = atoi(token);
+    |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                    |   |
+    |      |                    |   (4) 'values + (long unsigned int)size * 4' could be NULL: unchecked value from (1)
+    |      |                    (3) ...to here
+    |

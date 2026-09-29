@@ -1,0 +1,29 @@
+#include <stdio.h>
+#include <math.h>
+
+int countRectanglesInCircle(double r) {
+    int count = 0;
+    for (int y = 0; y <= (int)r; ++y) {
+        for (int x = 0; x <= (int)r; ++x) {
+            if (x * x + y * y <= r * r) {
+                count++;
+            }
+        }
+    }
+    return count * 4;
+}
+
+int main() {
+    double radius;
+    printf("Enter the radius of the circle: ");
+    scanf("%lf", &radius);
+    
+    if (radius < 0) {
+        printf("Radius must be non-negative.\n");
+        return 1;
+    }
+
+    int rectangleCount = countRectanglesInCircle(radius);
+    printf("The number of rectangles in the circle is: %d\n", rectangleCount);
+    return 0;
+}

@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_1/healed/problem-352-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_1/healed/problem-352-s2.c:36:51: style: Condition 'all_unique_chars(test5)' is always false [knownConditionTrueFalse]
+    printf("Test 5 (NULL): %s\n", all_unique_chars(test5) ? "unique" : "not unique");
+                                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_1/healed/problem-352-s2.c:36:51: note: Calling function 'all_unique_chars' returns 0
+    printf("Test 5 (NULL): %s\n", all_unique_chars(test5) ? "unique" : "not unique");
+                                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_1/healed/problem-352-s2.c:36:51: note: Condition 'all_unique_chars(test5)' is always false
+    printf("Test 5 (NULL): %s\n", all_unique_chars(test5) ? "unique" : "not unique");
+                                                  ^

@@ -1,0 +1,8 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-47.c:20:22: error: call to undeclared library function 'pow' with type 'double (double, double)'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   20 |     return (fact_b * pow(result, 10 - 2)) % 10;
+      |                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-47.c:20:22: note: include the header <math.h> or explicitly provide a declaration for 'pow'
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-47.c:20:43: error: invalid operands to binary expression ('double' and 'int')
+   20 |     return (fact_b * pow(result, 10 - 2)) % 10;
+      |            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ ^ ~~
+2 errors generated.

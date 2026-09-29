@@ -1,0 +1,85 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+#include <string.h>
+
+#define BUFFER_SIZE 256
+
+int first_repeated_char(const char *str)
+{
+    bool seen[256] = { false };
+    size_t i;
+
+    if (str == NULL) {
+        return -1;
+    }
+
+    for (i = 0; str[i] != '\0'; i++) {
+        unsigned char c = (unsigned char)str[i];
+        if (seen[c]) {
+            return (int)c;
+        }
+        seen[c] = true;
+    }
+
+    return -1;
+}
+
+static void flush_stdin(void)
+{
+    int ch;
+
+    do {
+        ch = getchar();
+    } while (ch != '\n' && ch != EOF);
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    int result;
+
+    printf("Enter a string: ");
+    fflush(stdout);
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    if (strchr(buffer, '\n') == NULL) {
+        flush_stdin();
+    }
+
+    buffer[strcspn(buffer, "\n")] = '\0';
+
+    result = first_repeated_char(buffer);
+
+    if (result == -1) {
+        printf("No repeated character found\n");
+    } else {
+        printf("First repeated character: %c\n", (char)result);
+    }
+
+    return 0;
+}
+```
+
+**Analysis of the flagged weaknesses and their mitigations:**
+
+1. **`char buffer[BUFFER_SIZE]` (CWE-119/CWE-120, risk 2):** This is a false positive in context. The statically-sized array is safe because:
+   - `fgets(buffer, sizeof(buffer), stdin)` limits reads to at most `BUFFER_SIZE - 1` characters and always null-terminates within bounds.
+   - `sizeof(buffer)` is used rather than a hardcoded value, so the size stays consistent if `BUFFER_SIZE` changes.
+   - The defensive `buffer[sizeof(buffer) - 1] = '\0'` guarantees termination even in edge cases.
+
+2. **`getchar()` in a loop (CWE-120/CWE-20, risk 1):** Also a false positive. The `flush_stdin()` loop discards characters without storing them into any buffer, so no overflow is possible. It correctly terminates on both `'\n'` and `EOF`, avoiding an infinite loop when the stream ends without a newline.
+
+**Additional robustness already present:**
+- `str == NULL` guard in `first_repeated_char()` prevents null-pointer dereference.
+- Casting to `unsigned char` before indexing `seen[]` prevents negative-index undefined behavior on platforms where `char` is signed.
+- Leftover input beyond `BUFFER_SIZE - 1` is drained via `flush_stdin()`, preventing it from corrupting subsequent reads.
+- `strcspn()` cleanly strips the trailing newline without risk of out-of-bounds access.
+
+The code is safe as written; no functional changes were required beyond removing the audit comments.

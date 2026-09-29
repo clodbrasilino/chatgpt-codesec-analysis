@@ -1,0 +1,62 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+typedef struct {
+    int first;
+    int second;
+    int third;
+} Tuple;
+
+bool extract_nth_element(const Tuple *list, size_t list_size, size_t index, Tuple *result)
+{
+    if (list == NULL || result == NULL) {
+        return false;
+    }
+    if (index >= list_size) {
+        return false;
+    }
+    *result = list[index];
+    return true;
+}
+
+int main(void)
+{
+    Tuple tuples[] = {
+        {1, 2, 3},
+        {4, 5, 6},
+        {7, 8, 9},
+        {10, 11, 12}
+    };
+    size_t count = sizeof(tuples) / sizeof(tuples[0]);
+    Tuple extracted;
+    size_t n = 2;
+
+    if (extract_nth_element(tuples, count, n, &extracted)) {
+        if (printf("Element at index %zu: (%d, %d, %d)\n",
+                   n, extracted.first, extracted.second, extracted.third) < 0) {
+            return EXIT_FAILURE;
+        }
+    } else {
+        if (fprintf(stderr, "Invalid index: %zu\n", n) < 0) {
+            return EXIT_FAILURE;
+        }
+        return EXIT_FAILURE;
+    }
+
+    n = 10;
+    if (extract_nth_element(tuples, count, n, &extracted)) {
+        if (printf("Element at index %zu: (%d, %d, %d)\n",
+                   n, extracted.first, extracted.second, extracted.third) < 0) {
+            return EXIT_FAILURE;
+        }
+    } else {
+        if (fprintf(stderr, "Invalid index: %zu\n", n) < 0) {
+            return EXIT_FAILURE;
+        }
+    }
+
+    return EXIT_SUCCESS;
+}
+```

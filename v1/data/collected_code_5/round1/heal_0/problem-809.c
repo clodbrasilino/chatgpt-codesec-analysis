@@ -1,0 +1,26 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+#define SIZE 5
+
+bool check_tuples(int* tuple1, int* tuple2, size_t size) {
+    for (size_t i = 0; i < size; i++) {
+        if (tuple2[i] >= tuple1[i]) {
+            return false;
+        }
+    }
+    return true;
+}
+
+int main() {
+    int tuple1[SIZE] = {1, 2, 3, 4, 5};
+    int tuple2[SIZE] = {0, 1, 2, 3, 4};
+
+    if (check_tuples(tuple1, tuple2, SIZE)) {
+        printf("True: Each element of second tuple is smaller than its corresponding index in first tuple.\n");
+    } else {
+        printf("False: Each element of second tuple is not smaller than its corresponding index in first tuple.\n");
+    }
+
+    return 0;
+}

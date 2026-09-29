@@ -1,0 +1,49 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+void combSort(int arr[], size_t n) {
+    if (n == 0 || arr == NULL) {
+        return;
+    }
+
+    size_t gap = n;
+    bool swapped = true;
+    size_t i;
+    int temp;
+
+    while (gap != 1 || swapped) {
+        gap = (gap * 10) / 13;
+        if (gap < 1) {
+            gap = 1;
+        }
+
+        swapped = false;
+
+        for (i = 0; i < n - gap; i++) {
+            if (arr[i] > arr[i + gap]) {
+                temp = arr[i];
+                arr[i] = arr[i + gap];
+                arr[i + gap] = temp;
+                swapped = true;
+            }
+        }
+    }
+}
+
+int main(void) {
+    int arr[] = {8, 4, 1, 56, 3, -44, 23, -6, 28, 0};
+    size_t n = sizeof(arr) / sizeof(arr[0]);
+    size_t i;
+
+    combSort(arr, n);
+
+    for (i = 0; i < n; i++) {
+        printf("%d ", arr[i]);
+    }
+    printf("\n");
+
+    return 0;
+}
+```

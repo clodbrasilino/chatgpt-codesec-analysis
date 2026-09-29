@@ -1,0 +1,25 @@
+#include <stdio.h>
+#include <string.h>
+
+int matches_z(const char *str) {
+    if (str == NULL) return 0;
+    for (int i = 0; str[i] != '\0'; i++) {
+        if (str[i] == 'z') return 1;
+    }
+    return 0;
+}
+
+int main() {
+    const char *words[] = {"hello", "world", "zebra", "lazy", "test"};
+    int num_words = sizeof(words) / sizeof(words[0]);
+
+    for (int i = 0; i < num_words; i++) {
+        if (matches_z(words[i])) {
+            printf("%s contains 'z'\n", words[i]);
+        } else {
+            printf("%s does not contain 'z'\n", words[i]);
+        }
+    }
+
+    return 0;
+}

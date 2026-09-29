@@ -1,0 +1,68 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+double maxAveragePath(int **matrix, int n) {
+    if (matrix == NULL || n <= 0) {
+        return 0.0;
+    }
+    
+    size_t un = (size_t)n;
+    int *dp = malloc(un * un * sizeof(int));
+    if (dp == NULL) {
+        return 0.0;
+    }
+    
+    dp[0] = matrix[0][0];
+    for (size_t i = 1; i < un; i++) {
+        dp[i * un] = dp[(i - 1) * un] + matrix[i][0];
+        dp[i] = dp[i - 1] + matrix[0][i];
+    }
+    
+    for (size_t i = 1; i < un; i++) {
+        for (size_t j = 1; j < un; j++) {
+            int top = dp[(i - 1) * un + j];
+            int left = dp[i * un + j - 1];
+            dp[i * un + j] = (top > left ? top : left) + matrix[i][j];
+        }
+    }
+    
+    int maxSum = dp[(un - 1) * un + un - 1];
+    free(dp);
+    
+    return (double)maxSum / (2.0 * un - 1.0);
+}
+
+int main() {
+    int n = 3;
+    size_t un = (size_t)n;
+    
+    int **matrix = malloc(un * sizeof(int *));
+    if (matrix == NULL) {
+        return 1;
+    }
+    
+    for (size_t i = 0; i < un; i++) {
+        matrix[i] = malloc(un * sizeof(int));
+        if (matrix[i] == NULL) {
+            for (size_t j = 0; j < i; j++) {
+                free(matrix[j]);
+            }
+            free(matrix);
+            return 1;
+        }
+    }
+    
+    matrix[0][0] = 1; matrix[0][1] = 2; matrix[0][2] = 3;
+    matrix[1][0] = 4; matrix[1][1] = 5; matrix[1][2] = 6;
+    matrix[2][0] = 7; matrix[2][1] = 8; matrix[2][2] = 9;
+    
+    double result = maxAveragePath(matrix, n);
+    printf("%f\n", result);
+    
+    for (size_t i = 0; i < un; i++) {
+        free(matrix[i]);
+    }
+    free(matrix);
+    
+    return 0;
+}

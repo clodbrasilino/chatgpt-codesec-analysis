@@ -1,0 +1,57 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+char** splitString(char* str) {
+    int i, j = 0, k = 0;
+    char** splitArr = (char**)malloc(sizeof(char*) * strlen(str));
+    if (splitArr == NULL){
+      return NULL;
+    }
+    for(i = 0; i < strlen(str); i++) {
+        splitArr[i] = (char*)calloc(strlen(str), sizeof(char));
+        if(splitArr[i] == NULL) {
+          for(; i >= 0; i--)
+            free(splitArr[i]);
+          free(splitArr);
+          return NULL;
+        }
+    }
+    for(i = 0; i <= strlen(str); i++) {
+        if(islower(str[i]) || str[i] == '\0') {
+            splitArr[j][k] = '\0';
+            j++;
+            k = 0;
+        } else {
+            splitArr[j][k++] = str[i];
+        }
+    }
+    return splitArr;
+}
+
+int main() {
+    char str[] = "HelloWorld";
+    char** splitArr = splitString(str);
+    if(splitArr == NULL){
+      return 1;
+    }
+    int i;
+    for(i = 0; i < strlen(str) && splitArr[i]; i++) {
+        if(splitArr[i][0] == '\0') {
+            break;
+        }
+        printf("%s\n", splitArr[i]);
+        free(splitArr[i]);
+    }
+    free(splitArr);
+    return 0;
+}
+```
+Improvements in the code:
+   * Checking the result of `malloc` and `calloc` calls - `malloc` and `calloc` could actually fail if there isn't enough memory available. Hence, it's good practice to check their results before using the memory they return.
+   * Using `calloc` instead of `malloc` - `calloc` not only allocates memory but also initializes it to zero. This prevents the uninitialized values being read.
+   * Freeing correctly - In the case the `calloc` fails in between, all the previously allocated memory is correctly freed before returning. This prevents memory leaks.
+   * Checking each element of `splitArr` - Before using each row of `splitArr` in the main function, it verifies whether it is NULL or not. This prevents dereference of possibly-NULL.
+   * Verification before invoking `splitString` - It always checks whether the return from `splitString` is NULL or not. In case of failure, it does not proceed and exit with error status.

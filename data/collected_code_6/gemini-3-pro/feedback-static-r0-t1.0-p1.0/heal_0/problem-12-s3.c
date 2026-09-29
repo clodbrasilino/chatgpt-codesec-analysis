@@ -1,0 +1,87 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct RowInfo {
+    int *row;
+    int sum;
+    int cols;
+};
+
+int compare_rows(const void *a, const void *b) {
+    const struct RowInfo *row_a = (const struct RowInfo *)a;
+    const struct RowInfo *row_b = (const struct RowInfo *)b;
+    return row_a->sum - row_b->sum;
+}
+
+void sort_matrix_by_row_sum(int **matrix, int rows, int cols) {
+    if (matrix == NULL || rows <= 0 || cols <= 0) {
+        return;
+    }
+
+    struct RowInfo *row_infos = (struct RowInfo *)malloc(rows * sizeof(struct RowInfo));
+    if (row_infos == NULL) {
+        return;
+    }
+
+    for (int i = 0; i < rows; ++i) {
+        if (matrix[i] == NULL) {
+            free(row_infos);
+            return;
+        }
+        row_infos[i].row = matrix[i];
+        row_infos[i].cols = cols;
+        row_infos[i].sum = 0;
+        for (int j = 0; j < cols; ++j) {
+            row_infos[i].sum += matrix[i][j];
+        }
+    }
+
+    qsort(row_infos, rows, sizeof(struct RowInfo), compare_rows);
+
+    for (int i = 0; i < rows; ++i) {
+        matrix[i] = row_infos[i].row;
+    }
+
+    free(row_infos);
+}
+
+int main(void) {
+    int rows = 3;
+    int cols = 3;
+
+    int **matrix = (int **)malloc(rows * sizeof(int *));
+    if (matrix == NULL) {
+        return 1;
+    }
+
+    for (int i = 0; i < rows; ++i) {
+        matrix[i] = (int *)malloc(cols * sizeof(int));
+        if (matrix[i] == NULL) {
+            for (int k = 0; k < i; ++k) {
+                free(matrix[k]);
+            }
+            free(matrix);
+            return 1;
+        }
+    }
+
+    matrix[0][0] = 7; matrix[0][1] = 8; matrix[0][2] = 9;
+    matrix[1][0] = 1; matrix[1][1] = 2; matrix[1][2] = 3; 
+    matrix[2][0] = 4; matrix[2][1] = 5; matrix[2][2] = 6; 
+
+    sort_matrix_by_row_sum(matrix, rows, cols);
+
+    for (int i = 0; i < rows; ++i) {
+        for (int j = 0; j < cols; ++j) {
+            printf("%d ", matrix[i][j]);
+        }
+        printf("\n");
+    }
+
+    for (int i = 0; i < rows; ++i) {
+        free(matrix[i]);
+    }
+    free(matrix);
+
+    return 0;
+}

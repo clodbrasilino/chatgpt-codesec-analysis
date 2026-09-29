@@ -1,0 +1,33 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char* concatenate_adjacent(const char *a, const char *b) {
+    size_t len1 = a ? strlen(a) : 0;
+    size_t len2 = b ? strlen(b) : 0;
+    char *result = (char *)malloc(len1 + len2 + 1);
+    if (result == NULL) {
+        return NULL;
+    }
+    memcpy(result, a, len1);
+    memcpy(result + len1, b, len2);
+    result[len1 + len2] = '\0';
+    return result;
+}
+
+void process_tuples(const char *tuples[], int count) {
+    for (int i = 0; i < count - 1; ++i) {
+        char *concatenated = concatenate_adjacent(tuples[i], tuples[i + 1]);
+        if (concatenated != NULL) {
+            printf("%s\n", concatenated);
+            free(concatenated);
+        }
+    }
+}
+
+int main() {
+    const char *tuples[] = {"hello", "world", "foo", "bar"};
+    int count = sizeof(tuples) / sizeof(tuples[0]);
+    process_tuples(tuples, count);
+    return 0;
+}

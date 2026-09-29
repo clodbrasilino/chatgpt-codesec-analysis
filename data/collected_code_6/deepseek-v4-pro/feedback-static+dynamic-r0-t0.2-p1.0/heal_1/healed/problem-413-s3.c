@@ -1,0 +1,85 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    void **elements;
+    int tuple_size;
+} Tuple;
+
+typedef struct {
+    Tuple *tuples;
+    int count;
+} TupleList;
+
+void *extract_nth_element(TupleList *list, int tuple_index, int n) {
+    if (list == NULL || tuple_index < 0 || tuple_index >= list->count) {
+        return NULL;
+    }
+    
+    Tuple *tuple = &list->tuples[tuple_index];
+    
+    if (n < 0 || n >= tuple->tuple_size) {
+        return NULL;
+    }
+    
+    return tuple->elements[n];
+}
+
+int main(void) {
+    TupleList list;
+    list.count = 3;
+    list.tuples = (Tuple *)malloc(list.count * sizeof(Tuple));
+    
+    if (list.tuples == NULL) {
+        return 1;
+    }
+    
+    for (int i = 0; i < list.count; i++) {
+        list.tuples[i].tuple_size = 3;
+        list.tuples[i].elements = (void **)malloc(3 * sizeof(void *));
+        
+        if (list.tuples[i].elements == NULL) {
+            for (int j = 0; j < i; j++) {
+                free(list.tuples[j].elements);
+            }
+            free(list.tuples);
+            return 1;
+        }
+        
+        for (int j = 0; j < 3; j++) {
+            int *value = (int *)malloc(sizeof(int));
+            if (value == NULL) {
+                for (int k = 0; k < j; k++) {
+                    free(list.tuples[i].elements[k]);
+                }
+                free(list.tuples[i].elements);
+                for (int k = 0; k < i; k++) {
+                    for (int l = 0; l < 3; l++) {
+                        free(list.tuples[k].elements[l]);
+                    }
+                    free(list.tuples[k].elements);
+                }
+                free(list.tuples);
+                return 1;
+            }
+            *value = i * 10 + j;
+            list.tuples[i].elements[j] = value;
+        }
+    }
+    
+    const int *result = (const int *)extract_nth_element(&list, 1, 2);
+    if (result != NULL) {
+        printf("%d\n", *result);
+    }
+    
+    for (int i = 0; i < list.count; i++) {
+        for (int j = 0; j < list.tuples[i].tuple_size; j++) {
+            free(list.tuples[i].elements[j]);
+        }
+        free(list.tuples[i].elements);
+    }
+    free(list.tuples);
+    
+    return 0;
+}

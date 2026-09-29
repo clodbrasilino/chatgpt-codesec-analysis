@@ -1,0 +1,94 @@
+#include <ctype.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+static size_t max_uppercase_run(const char *str)
+{
+    size_t max_run = 0;
+    size_t current_run = 0;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    while (*str != '\0') {
+        if (isupper((unsigned char)*str) != 0) {
+            ++current_run;
+            if (current_run > max_run) {
+                max_run = current_run;
+            }
+        } else {
+            current_run = 0;
+        }
+        ++str;
+    }
+
+    return max_run;
+}
+
+int main(void)
+{
+    char *input;
+    size_t length = 0;
+    size_t capacity = 128;
+    int ch;
+
+    input = malloc(capacity);
+    if (input == NULL) {
+        return EXIT_FAILURE;
+    }
+
+    while ((ch = fgetc(stdin)) != EOF) {
+        char *resized;
+        size_t new_capacity;
+
+        if (ch == '\n') {
+            break;
+        }
+
+        if (length == SIZE_MAX - 1) {
+            free(input);
+            return EXIT_FAILURE;
+        }
+
+        if (length + 1 >= capacity) {
+            if (capacity > SIZE_MAX / 2) {
+                new_capacity = length + 2;
+            } else {
+                new_capacity = capacity * 2;
+            }
+
+            if (new_capacity <= length + 1) {
+                free(input);
+                return EXIT_FAILURE;
+            }
+
+            resized = realloc(input, new_capacity);
+            if (resized == NULL) {
+                free(input);
+                return EXIT_FAILURE;
+            }
+
+            input = resized;
+            capacity = new_capacity;
+        }
+
+        input[length++] = (char)(unsigned char)ch;
+    }
+
+    if (ferror(stdin) != 0) {
+        free(input);
+        return EXIT_FAILURE;
+    }
+
+    input[length] = '\0';
+
+    if (printf("%zu\n", max_uppercase_run(input)) < 0) {
+        free(input);
+        return EXIT_FAILURE;
+    }
+
+    free(input);
+    return EXIT_SUCCESS;
+}

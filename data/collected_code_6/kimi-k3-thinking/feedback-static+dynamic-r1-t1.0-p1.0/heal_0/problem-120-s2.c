@@ -1,0 +1,68 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int first;
+    int second;
+} Tuple;
+
+int find_max_tuple_product(const Tuple *tuples, size_t count, long long *max_product)
+{
+    size_t i;
+    long long best;
+    long long current;
+
+    if (tuples == NULL || max_product == NULL || count == 0U) {
+        return -1;
+    }
+
+    best = (long long)tuples[0].first * (long long)tuples[0].second;
+
+    for (i = 1U; i < count; ++i) {
+        current = (long long)tuples[i].first * (long long)tuples[i].second;
+        if (current > best) {
+            best = current;
+        }
+    }
+
+    *max_product = best;
+    return 0;
+}
+
+int main(void)
+{
+    Tuple *tuples;
+    const size_t count = 5U;
+    long long max_product = 0LL;
+
+    tuples = malloc(count * sizeof(*tuples));
+    if (tuples == NULL) {
+        fprintf(stderr, "Error: memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    tuples[0].first = 2;
+    tuples[0].second = 3;
+    tuples[1].first = 4;
+    tuples[1].second = 5;
+    tuples[2].first = 1;
+    tuples[2].second = 10;
+    tuples[3].first = -6;
+    tuples[3].second = 7;
+    tuples[4].first = 8;
+    tuples[4].second = 2;
+
+    if (find_max_tuple_product(tuples, count, &max_product) != 0) {
+        fprintf(stderr, "Error: invalid input provided\n");
+        free(tuples);
+        tuples = NULL;
+        return EXIT_FAILURE;
+    }
+
+    printf("Maximum tuple product: %lld\n", max_product);
+
+    free(tuples);
+    tuples = NULL;
+
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,127 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_INPUT_LEN 256
+
+static void reverse_range(char *str, size_t start, size_t end)
+{
+    while (start < end) {
+        char tmp = str[start];
+        str[start] = str[end];
+        str[end] = tmp;
+        start++;
+        end--;
+    }
+}
+
+static int reverse_words(char *str, size_t max_len)
+{
+    size_t len;
+    size_t i;
+
+    if (str == NULL || max_len == 0) {
+        return -1;
+    }
+
+    len = strnlen(str, max_len);
+    if (len >= max_len) {
+        return -1;
+    }
+    if (len == 0) {
+        return 0;
+    }
+
+    reverse_range(str, 0, len - 1);
+
+    i = 0;
+    while (i < len) {
+        size_t word_start;
+
+        while (i < len && str[i] == ' ') {
+            i++;
+        }
+        if (i >= len) {
+            break;
+        }
+        word_start = i;
+        while (i < len && str[i] != ' ') {
+            i++;
+        }
+        reverse_range(str, word_start, i - 1);
+    }
+
+    return 0;
+}
+
+static int discard_remaining_input(void)
+{
+    int ch;
+    size_t guard = 0;
+    const size_t guard_limit = 1u << 20;
+
+    do {
+        ch = getchar();
+        if (ch == EOF) {
+            return -1;
+        }
+        guard++;
+        if (guard > guard_limit) {
+            return -1;
+        }
+    } while (ch != '\n');
+
+    return 0;
+}
+
+int main(void)
+{
+    char buffer[MAX_INPUT_LEN];
+    char *newline;
+
+    printf("Enter a string: ");
+    if (fflush(stdout) != 0) {
+        fprintf(stderr, "Failed to flush output\n");
+        return EXIT_FAILURE;
+    }
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Failed to read input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    newline = strchr(buffer, '\n');
+    if (newline != NULL) {
+        *newline = '\0';
+    } else {
+        if (discard_remaining_input() != 0 && ferror(stdin)) {
+            fprintf(stderr, "Failed to read input\n");
+            return EXIT_FAILURE;
+        }
+    }
+
+    if (reverse_words(buffer, sizeof(buffer)) != 0) {
+        fprintf(stderr, "Failed to reverse words\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Reversed: %s\n", buffer);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the flagged weaknesses and why the code is already safe:**
+
+1. **Flawfinder `getchar` warning (CWE-120, CWE-20)** in `discard_remaining_input`: This is a false positive in practice. The loop never writes `ch` into a buffer, so no overflow is possible. Additionally, the code defends against unbounded looping (e.g., a stream that never yields `\n` or EOF) with the `guard`/`guard_limit` counter, and it correctly compares `ch` as an `int` against `EOF` before use.
+
+2. **Flawfinder `char buffer[MAX_INPUT_LEN]` warning (CWE-119/CWE-120)**: The statically-sized buffer is handled safely:
+   - Input is read with `fgets(buffer, sizeof(buffer), stdin)`, which bounds the write to the buffer size and always null-terminates on success.
+   - A defensive `buffer[sizeof(buffer) - 1] = '\0'` guarantees termination regardless.
+   - Overlong lines are detected (no `\n` found) and the remainder is drained from `stdin` so it can't leak into subsequent reads.
+   - `reverse_words` uses `strnlen` with an explicit `max_len` bound and rejects unterminated input, so `reverse_range` never indexes out of bounds. Note `reverse_range(str, word_start, i - 1)` is safe because `word_start < i` is guaranteed at that point, so `i - 1` cannot underflow.
+
+No functional changes were required — the original code already mitigates both findings correctly; only the comments were removed as requested.

@@ -1,0 +1,85 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+#include <errno.h>
+#include <string.h>
+
+unsigned long long sum_of_divisors(unsigned long long n) {
+    unsigned long long sum = 0;
+    unsigned long long i;
+    
+    if (n == 0) {
+        return 0;
+    }
+    
+    for (i = 1; i <= n / i; i++) {
+        if (n % i == 0) {
+            unsigned long long complement = n / i;
+            if (i > ULLONG_MAX - sum) {
+                return ULLONG_MAX;
+            }
+            sum += i;
+            if (complement != i) {
+                if (complement > ULLONG_MAX - sum) {
+                    return ULLONG_MAX;
+                }
+                sum += complement;
+            }
+        }
+    }
+    
+    return sum;
+}
+
+int main(void) {
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char input[256];
+    char *endptr;
+    unsigned long long number;
+    unsigned long long result;
+    size_t len;
+    int c;
+    
+    if (fgets(input, sizeof(input), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+    
+    input[sizeof(input) - 1] = '\0';
+    
+    len = strnlen(input, sizeof(input));
+    
+    if (len > 0 && input[len - 1] == '\n') {
+        input[len - 1] = '\0';
+    } else if (len == sizeof(input) - 1 && !feof(stdin)) {
+        /* Possible weaknesses found:
+         * Flawfinder getchar: Check buffer boundaries if used in a loop including recursive loops (CWE-120, CWE-20). (risk 1, buffer)
+         */
+        while ((c = getchar()) != '\n' && c != EOF) {
+            if (c == EOF) {
+                break;
+            }
+        }
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    errno = 0;
+    number = strtoull(input, &endptr, 10);
+    
+    if (errno == ERANGE || endptr == input || *endptr != '\0') {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    result = sum_of_divisors(number);
+    
+    if (printf("%llu\n", result) < 0) {
+        fprintf(stderr, "Error writing output\n");
+        return EXIT_FAILURE;
+    }
+    
+    return EXIT_SUCCESS;
+}

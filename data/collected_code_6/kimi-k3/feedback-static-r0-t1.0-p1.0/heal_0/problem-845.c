@@ -1,0 +1,66 @@
+#include <stdio.h>
+#include <math.h>
+#include <errno.h>
+#include <limits.h>
+
+int count_factorial_digits(int n, long long *result)
+{
+    double sum = 0.0;
+    int i;
+
+    if (result == NULL || n < 0)
+    {
+        return -1;
+    }
+
+    if (n == 0 || n == 1)
+    {
+        *result = 1;
+        return 0;
+    }
+
+    for (i = 2; i <= n; i++)
+    {
+        sum += log10((double)i);
+    }
+
+    if (sum + 1.0 > (double)LLONG_MAX)
+    {
+        return -1;
+    }
+
+    *result = (long long)floor(sum) + 1;
+    return 0;
+}
+
+int main(void)
+{
+    int n;
+    long long digits;
+    int scan_result;
+
+    printf("Enter a non-negative integer: ");
+    scan_result = scanf("%d", &n);
+
+    if (scan_result != 1)
+    {
+        fprintf(stderr, "Error: Invalid input\n");
+        return 1;
+    }
+
+    if (n < 0)
+    {
+        fprintf(stderr, "Error: Number must be non-negative\n");
+        return 1;
+    }
+
+    if (count_factorial_digits(n, &digits) != 0)
+    {
+        fprintf(stderr, "Error: Unable to calculate digit count\n");
+        return 1;
+    }
+
+    printf("Number of digits in %d! is: %lld\n", n, digits);
+
+    return 0;
+}

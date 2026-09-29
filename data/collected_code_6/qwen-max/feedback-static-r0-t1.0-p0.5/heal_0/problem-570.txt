@@ -1,0 +1,66 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char **filter_strings(char *list[], int n, const char *to_remove, int *new_size) {
+    int count = 0;
+    for (int i = 0; i < n; ++i) {
+        if (strstr(list[i], to_remove) == NULL) {
+            ++count;
+        }
+    }
+
+    char **result = (char **)malloc(count * sizeof(char *));
+    if (result == NULL) {
+        *new_size = 0;
+        return NULL;
+    }
+
+    int index = 0;
+    for (int i = 0; i < n; ++i) {
+        if (strstr(list[i], to_remove) == NULL) {
+            result[index] = strdup(list[i]);
+            if (result[index] == NULL) {
+                while (index > 0) {
+                    free(result[--index]);
+                }
+                free(result);
+                *new_size = 0;
+                return NULL;
+            }
+            ++index;
+        }
+    }
+
+    *new_size = count;
+    return result;
+}
+
+void free_strings(char **list, int size) {
+    for (int i = 0; i < size; ++i) {
+        free(list[i]);
+    }
+    free(list);
+}
+
+int main() {
+    char *strings[] = {"hello", "world", "test", "example", "hello world"};
+    int n = 5;
+    const char *to_remove = "world";
+    int new_size;
+
+    char **filtered = filter_strings(strings, n, to_remove, &new_size);
+
+    if (filtered != NULL) {
+        for (int i = 0; i < new_size; ++i) {
+            printf("%s\n", filtered[i]);
+        }
+        free_strings(filtered, new_size);
+    } else {
+        printf("Failed to filter strings.\n");
+    }
+
+    return 0;
+}
+```

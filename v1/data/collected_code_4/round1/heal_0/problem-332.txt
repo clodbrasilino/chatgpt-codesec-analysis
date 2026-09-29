@@ -1,0 +1,36 @@
+```c
+#include <stdio.h>
+#include <string.h>
+
+#define SIZE 256
+
+void characterFrequency(char *str) {
+    int freq[SIZE] = {0};
+    int i = 0;
+
+    while (str[i] != '\0') {
+        freq[(int)str[i]]++;
+        i++;
+    }
+
+    for (i = 0; i < SIZE; i++) {
+        if (freq[i] != 0){
+            printf("%c: %d\n", (char)i, freq[i]);
+        }
+    }
+}
+
+int main() {
+    char str[100];
+
+    printf("Enter a string: ");
+    fgets(str, sizeof(str), stdin); 
+
+    str[strcspn(str, "\n")] = 0;
+
+    characterFrequency(str);
+
+    return 0;
+}
+```
+This C program counts the frequency of each character in a given string. It uses an array of size 256 (to cover all ASCII characters) and initializes all elements to 0. Then it iterates through the input string and increments the corresponding array index for each character. In the end, it prints the non-zero frequencies of all characters. The function `fgets` is used for input to prevent buffer overflow exceptions.

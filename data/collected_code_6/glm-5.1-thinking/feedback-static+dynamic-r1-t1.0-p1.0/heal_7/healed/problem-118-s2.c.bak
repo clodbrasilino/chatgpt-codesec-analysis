@@ -1,0 +1,173 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+static int is_delim(char c, const char *delim) {
+    if (delim == NULL) {
+        return isspace((unsigned char)c);
+    }
+    for (size_t i = 0; delim[i] != '\0'; i++) {
+        if (c == delim[i]) {
+            return 1;
+        }
+    }
+    return 0;
+}
+
+char **string_to_list(const char *str, const char *delim) {
+    if (str == NULL) {
+        return NULL;
+    }
+
+    char **list = NULL;
+    size_t capacity = 0;
+    size_t count = 0;
+
+    size_t i = 0;
+    while (str[i] != '\0') {
+        if (is_delim(str[i], delim)) {
+            i++;
+            continue;
+        }
+
+        size_t start = i;
+        while (str[i] != '\0' && !is_delim(str[i], delim)) {
+            i++;
+        }
+
+        size_t token_len = i - start;
+        if (count >= capacity) {
+            size_t new_capacity = capacity == 0 ? 8 : capacity * 2;
+            if (new_capacity <= capacity) {
+                for (size_t j = 0; j < count; j++) {
+                    free(list[j]);
+                }
+                free(list);
+                return NULL;
+            }
+            char **new_list = realloc(list, (new_capacity + 1) * sizeof(char *));
+            if (new_list == NULL) {
+                for (size_t j = 0; j < count; j++) {
+                    free(list[j]);
+                }
+                free(list);
+                return NULL;
+            }
+            list = new_list;
+            capacity = new_capacity;
+        }
+
+        list[count] = malloc(token_len + 1);
+        if (list[count] == NULL) {
+            for (size_t j = 0; j < count; j++) {
+                free(list[j]);
+            }
+            free(list);
+            return NULL;
+        }
+        memcpy(list[count], str + start, token_len);
+        list[count][token_len] = '\0';
+
+        count++;
+    }
+
+    if (count == 0) {
+        list = malloc(sizeof(char *));
+        if (list == NULL) {
+            return NULL;
+        }
+        list[0] = NULL;
+        return list;
+    }
+
+    char **new_list = realloc(list, (count + 1) * sizeof(char *));
+    if (new_list != NULL) {
+        list = new_list;
+    }
+
+    list[count] = NULL;
+
+    return list;
+}
+
+void free_list(char **list) {
+    if (list == NULL) {
+        return;
+    }
+    for (size_t i = 0; list[i] != NULL; i++) {
+        free(list[i]);
+    }
+    free(list);
+}
+
+int main(int argc, const char * const argv[]) {
+    if (argc > 1) {
+        size_t total_len = 0;
+        for (int i = 1; i < argc; i++) {
+            total_len += strlen(argv[i]);
+            if (i < argc - 1) {
+                total_len++;
+            }
+        }
+        
+        char *str = malloc(total_len + 1);
+        if (str != NULL) {
+            char *ptr = str;
+            for (int i = 1; i < argc; i++) {
+                size_t arg_len = strlen(argv[i]);
+                memcpy(ptr, argv[i], arg_len);
+                ptr += arg_len;
+                if (i < argc - 1) {
+                    *ptr++ = ' ';
+                }
+            }
+            *ptr = '\0';
+            
+            char **list = string_to_list(str, NULL);
+            if (list != NULL) {
+                printf("[");
+                for (size_t j = 0; list[j] != NULL; j++) {
+                    printf("'%s'", list[j]);
+                    if (list[j + 1] != NULL) {
+                        printf(", ");
+                    }
+                }
+                printf("]\n");
+                free_list(list);
+            } else {
+                printf("[]\n");
+            }
+            fflush(stdout);
+            free(str);
+        } else {
+            printf("[]\n");
+            fflush(stdout);
+        }
+    } else {
+        char buf[4096];
+        while (fgets(buf, sizeof(buf), stdin)) {
+            size_t len = strlen(buf);
+            while (len > 0 && (buf[len - 1] == '\n' || buf[len - 1] == '\r')) {
+                buf[len - 1] = '\0';
+                len--;
+            }
+            char **list = string_to_list(buf, NULL);
+            if (list != NULL) {
+                printf("[");
+                for (size_t j = 0; list[j] != NULL; j++) {
+                    printf("'%s'", list[j]);
+                    if (list[j + 1] != NULL) {
+                        printf(", ");
+                    }
+                }
+                printf("]\n");
+                free_list(list);
+            } else {
+                printf("[]\n");
+            }
+            fflush(stdout);
+        }
+    }
+    return 0;
+}

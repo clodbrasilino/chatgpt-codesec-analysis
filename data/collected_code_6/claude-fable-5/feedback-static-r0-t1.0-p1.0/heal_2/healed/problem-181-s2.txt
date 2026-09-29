@@ -1,0 +1,95 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_STRING_LEN 4096U
+
+char *longest_common_prefix(const char *const *strs, size_t count)
+{
+    if (strs == NULL || count == 0U) {
+        return NULL;
+    }
+
+    for (size_t i = 0U; i < count; i++) {
+        if (strs[i] == NULL) {
+            return NULL;
+        }
+    }
+
+    size_t prefix_len = strnlen(strs[0], MAX_STRING_LEN);
+    if (prefix_len == MAX_STRING_LEN) {
+        return NULL;
+    }
+
+    for (size_t i = 1U; i < count; i++) {
+        size_t j = 0U;
+        while (j < prefix_len && strs[i][j] != '\0' && strs[i][j] == strs[0][j]) {
+            j++;
+        }
+        prefix_len = j;
+        if (prefix_len == 0U) {
+            break;
+        }
+    }
+
+    if (prefix_len >= MAX_STRING_LEN) {
+        return NULL;
+    }
+
+    size_t alloc_size = prefix_len + 1U;
+    char *result = malloc(alloc_size);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    if (prefix_len > 0U) {
+        if (prefix_len >= alloc_size) {
+            free(result);
+            return NULL;
+        }
+        memcpy(result, strs[0], prefix_len);
+    }
+    result[prefix_len] = '\0';
+
+    return result;
+}
+
+int main(void)
+{
+    const char *const strings[] = {
+        "flower",
+        "flow",
+        "flight"
+    };
+    size_t count = sizeof(strings) / sizeof(strings[0]);
+
+    char *prefix = longest_common_prefix(strings, count);
+    if (prefix == NULL) {
+        if (fprintf(stderr, "Failed to compute longest common prefix\n") < 0) {
+            return EXIT_FAILURE;
+        }
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Longest common prefix: \"%s\"\n", prefix) < 0) {
+        free(prefix);
+        return EXIT_FAILURE;
+    }
+
+    free(prefix);
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The original code was already largely safe — the flagged `memcpy` (CWE-120) could not overflow, since `result` is allocated with exactly `prefix_len + 1U` bytes and only `prefix_len` bytes are copied, followed by an in-bounds NUL write. The Flawfinder hit is a heuristic warning, not a genuine defect.
+
+The rewrite hardens the code defensively to make the safety of the copy explicit and auditable:
+
+1. **Explicit destination-size tracking** — `alloc_size` records the allocated buffer size, and the copy length is verified against it (`prefix_len >= alloc_size` check) before `memcpy` executes, directly answering the "make sure destination can always hold the source data" advisory.
+2. **Overflow guard on `prefix_len + 1U`** — the `prefix_len >= MAX_STRING_LEN` check guarantees the `+ 1U` in the allocation cannot wrap, even though `strnlen` already bounds it.
+3. **Zero-length copy avoidance** — `memcpy` is skipped when `prefix_len == 0U`, which also sidesteps any pedantic concerns about degenerate copies.
+
+All other properties of the original are preserved: NULL validation of the array and each element, `strnlen` bounding against unterminated input, allocation-failure handling, checked I/O return values, and correct `free` on every exit path in `main`.

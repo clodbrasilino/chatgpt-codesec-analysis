@@ -1,0 +1,39 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int find_operations(const int* arr, int n) {
+    if (arr == NULL || n <= 0) {
+        return -1;
+    }
+
+    int max_val = arr[0];
+    for (int i = 1; i < n; i++) {
+        if (arr[i] > max_val) {
+            max_val = arr[i];
+        }
+    }
+
+    int operations = 0;
+    for (int i = 0; i < n; i++) {
+        operations += (max_val - arr[i]);
+    }
+
+    return operations;
+}
+
+int main(void) {
+    int arr[] = {1, 2, 3, 4, 5};
+    int n = sizeof(arr) / sizeof(arr[0]);
+
+    int result = find_operations(arr, n);
+
+    if (result != -1) {
+        printf("%d\n", result);
+    } else {
+        printf("Invalid input\n");
+    }
+
+    return 0;
+}
+```

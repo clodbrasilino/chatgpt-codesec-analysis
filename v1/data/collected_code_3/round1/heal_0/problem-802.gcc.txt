@@ -1,0 +1,59 @@
+collected_code_3/problem-802-1.c: In function 'countRotations':
+collected_code_3/problem-802-1.c:11:12: warning: use of uninitialized value 'min_index' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   11 |     return min_index;
+      |            ^~~~~~~~~
+  'countRotations': events 1-3
+    |
+    |    4 |     int min = arr[0], min_index;
+    |      |                       ^~~~~~~~~
+    |      |                       |
+    |      |                       (1) region created on stack here
+    |      |                       (2) capacity: 4 bytes
+    |......
+    |   11 |     return min_index;
+    |      |            ~~~~~~~~~   
+    |      |            |
+    |      |            (3) use of uninitialized value 'min_index' here
+    |
+collected_code_3/problem-802-1.c:11:12: warning: use of uninitialized value 'min_index' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   11 |     return min_index;
+      |            ^~~~~~~~~
+  'main': events 1-2
+    |
+    |   14 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   17 |     printf("%d", countRotations(arr, n));
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) calling 'countRotations' from 'main'
+    |
+    +--> 'countRotations': events 3-10
+           |
+           |    3 | int countRotations(int arr[], int n) {
+           |      |     ^~~~~~~~~~~~~~
+           |      |     |
+           |      |     (3) entry to 'countRotations'
+           |    4 |     int min = arr[0], min_index;
+           |      |                       ~~~~~~~~~
+           |      |                       |
+           |      |                       (4) region created on stack here
+           |      |                       (5) capacity: 4 bytes
+           |    5 |     for (int i = 0; i < n; i++) {
+           |      |                     ~~~~~  ~~~
+           |      |                       |     |
+           |      |                       |     (9) ...to here
+           |      |                       (6) following 'true' branch (when 'i < n')...
+           |    6 |         if (min > arr[i]) {
+           |      |            ~         ~
+           |      |            |         |
+           |      |            |         (7) ...to here
+           |      |            (8) following 'false' branch...
+           |......
+           |   11 |     return min_index;
+           |      |            ~~~~~~~~~
+           |      |            |
+           |      |            (10) use of uninitialized value 'min_index' here
+           |

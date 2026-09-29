@@ -1,0 +1,67 @@
+```c
+#include <stdio.h>
+#include <stddef.h>
+#include <string.h>
+
+#define BUFFER_SIZE 256
+
+size_t count_characters(const char *str, size_t max_len)
+{
+    size_t count = 0;
+
+    if (str == NULL)
+    {
+        return 0;
+    }
+
+    while (count < max_len && str[count] != '\0')
+    {
+        count++;
+    }
+
+    return count;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t length;
+    size_t newline_pos;
+
+    printf("Enter a string: ");
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL)
+    {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    newline_pos = strcspn(buffer, "\n");
+    if (newline_pos < sizeof(buffer))
+    {
+        buffer[newline_pos] = '\0';
+    }
+
+    length = count_characters(buffer, sizeof(buffer));
+
+    printf("Total characters: %zu\n", length);
+
+    return 0;
+}
+```
+
+**Analysis of the original code and why it is safe:**
+
+The Flawfinder warning about the statically-sized `buffer` array (CWE-119/CWE-120) is a low-risk, informational hit. The code already mitigates the risk properly:
+
+1. **Bounded input:** `fgets(buffer, sizeof(buffer), stdin)` limits the read to at most `BUFFER_SIZE - 1` characters plus a null terminator, so no overflow can occur on input. The return value is also checked for `NULL` to handle EOF/read errors.
+
+2. **Guaranteed termination:** `buffer[sizeof(buffer) - 1] = '\0';` is a defensive measure ensuring the buffer is always null-terminated, even though `fgets` already guarantees this on success.
+
+3. **Safe newline stripping:** Using `strcspn(buffer, "\n")` is the idiomatic, safe way to strip the trailing newline. The bounds check `newline_pos < sizeof(buffer)` prevents any out-of-bounds write (in practice `strcspn` can never return a value ≥ the string length on a terminated buffer, so this check is belt-and-suspenders).
+
+4. **Bounded counting:** `count_characters` takes an explicit `max_len` parameter and checks for `NULL`, so it never reads past the buffer even if the string were somehow unterminated.
+
+No functional changes were required — the code was already hardened; only the comments were removed as requested.

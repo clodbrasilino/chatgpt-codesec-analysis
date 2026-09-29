@@ -1,0 +1,71 @@
+{
+  "task_id": 571,
+  "text": "Write a C function to find maximum possible sum of disjoint pairs for the given array of integers and a number k.",
+  "fn_candidates": [
+    "max_sum_pair_diff_lessthan_K",
+    "MaxSumPairDiffLessthanK",
+    "maxSumPairDiffLessthanK",
+    "maxsumpairdifflessthanK"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "max_sum_pair_diff_lessthan_K",
+      "args": [
+        [
+          3,
+          5,
+          10,
+          15,
+          17,
+          12,
+          9
+        ],
+        7,
+        4
+      ],
+      "expected": 62,
+      "assert_src": "assert max_sum_pair_diff_lessthan_K([3, 5, 10, 15, 17, 12, 9], 7, 4) == 62"
+    },
+    {
+      "fn_name": "max_sum_pair_diff_lessthan_K",
+      "args": [
+        [
+          5,
+          15,
+          10,
+          300
+        ],
+        4,
+        12
+      ],
+      "expected": 25,
+      "assert_src": "assert max_sum_pair_diff_lessthan_K([5, 15, 10, 300], 4, 12) == 25"
+    },
+    {
+      "fn_name": "max_sum_pair_diff_lessthan_K",
+      "args": [
+        [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ],
+        6,
+        6
+      ],
+      "expected": 21,
+      "assert_src": "assert max_sum_pair_diff_lessthan_K([1, 2, 3, 4, 5, 6], 6, 6) == 21"
+    }
+  ],
+  "arg_kinds": [
+    "int",
+    "int-list"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

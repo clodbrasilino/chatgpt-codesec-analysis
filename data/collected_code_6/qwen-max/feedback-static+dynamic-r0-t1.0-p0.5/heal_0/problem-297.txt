@@ -1,0 +1,87 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int value;
+    struct Node *next;
+} Node;
+
+typedef struct NestedList {
+    int value;
+    struct NestedList *next;
+    struct NestedList *child;
+} NestedList;
+
+Node* flatten(NestedList* head) {
+    if (!head) return NULL;
+    
+    Node* result = NULL;
+    Node** current = &result;
+    
+    while (head) {
+        *current = (Node*)malloc(sizeof(Node));
+        (*current)->value = head->value;
+        (*current)->next = NULL;
+        current = &(*current)->next;
+        
+        if (head->child) {
+            NestedList* temp = head->next;
+            *current = flatten(head->child);
+            while (*current) {
+                current = &(*current)->next;
+            }
+            head = temp;
+        } else {
+            head = head->next;
+        }
+    }
+    
+    return result;
+}
+
+int main() {
+    // Example usage
+    NestedList* head = (NestedList*)malloc(sizeof(NestedList));
+    head->value = 1;
+    head->next = (NestedList*)malloc(sizeof(NestedList));
+    head->next->value = 2;
+    head->next->next = (NestedList*)malloc(sizeof(NestedList));
+    head->next->next->value = 3;
+    head->next->next->next = NULL;
+    head->next->child = (NestedList*)malloc(sizeof(NestedList));
+    head->next->child->value = 4;
+    head->next->child->next = (NestedList*)malloc(sizeof(NestedList));
+    head->next->child->next->value = 5;
+    head->next->child->next->next = (NestedList*)malloc(sizeof(NestedList));
+    head->next->child->next->next->value = 6;
+    head->next->child->next->next->next = NULL;
+    head->next->child->child = NULL;
+    head->child = NULL;
+
+    Node* flatList = flatten(head);
+
+    while (flatList) {
+        printf("%d ", flatList->value);
+        Node* temp = flatList;
+        flatList = flatList->next;
+        free(temp);
+    }
+
+    // Free the original nested list
+    while (head) {
+        NestedList* temp = head;
+        if (head->child) {
+            while (head->child) {
+                NestedList* childTemp = head->child;
+                head->child = head->child->next;
+                free(childTemp);
+            }
+        }
+        head = head->next;
+        free(temp);
+    }
+
+    return 0;
+}
+```

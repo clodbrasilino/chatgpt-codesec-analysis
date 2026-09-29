@@ -1,0 +1,100 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+void max_heapify(int arr[], int n, int i) {
+    int largest = i;
+    int left = 2 * i + 1;
+    int right = 2 * i + 2;
+
+    if (left < n && arr[left] > arr[largest])
+        largest = left;
+
+    if (right < n && arr[right] > arr[largest])
+        largest = right;
+
+    if (largest != i) {
+        int temp = arr[i];
+        arr[i] = arr[largest];
+        arr[largest] = temp;
+        max_heapify(arr, n, largest);
+    }
+}
+
+void build_max_heap(int arr[], int n) {
+    for (int i = n / 2 - 1; i >= 0; i--)
+        max_heapify(arr, n, i);
+}
+
+int extract_max(int arr[], int *n) {
+    if (*n <= 0) {
+        fprintf(stderr, "Heap underflow\n");
+        exit(EXIT_FAILURE);
+    }
+
+    int max = arr[0];
+    arr[0] = arr[*n - 1];
+    (*n)--;
+    max_heapify(arr, *n, 0);
+    return max;
+}
+
+int *find_largest_integers(int arr[], int n, int k, int *result_size) {
+    if (arr == NULL || n <= 0 || k <= 0) {
+        *result_size = 0;
+        return NULL;
+    }
+
+    if (k > n)
+        k = n;
+
+    int *heap = (int *)malloc((size_t)n * sizeof(int));
+    if (heap == NULL) {
+        *result_size = 0;
+        return NULL;
+    }
+
+    for (int i = 0; i < n; i++)
+        heap[i] = arr[i];
+
+    build_max_heap(heap, n);
+
+    int *result = (int *)malloc((size_t)k * sizeof(int));
+    if (result == NULL) {
+        free(heap);
+        *result_size = 0;
+        return NULL;
+    }
+
+    int heap_size = n;
+    for (int i = 0; i < k; i++)
+        result[i] = extract_max(heap, &heap_size);
+
+    free(heap);
+    *result_size = k;
+    return result;
+}
+
+int main(void) {
+    int numbers[] = {3, 7, 1, 9, 5, 2, 8, 4, 6};
+    int n = sizeof(numbers) / sizeof(numbers[0]);
+    int k = 3;
+    int result_size = 0;
+
+    int *largest = find_largest_integers(numbers, n, k, &result_size);
+
+    if (largest == NULL) {
+        fprintf(stderr, "Failed to allocate memory\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("The %d largest integers are: ", result_size);
+    for (int i = 0; i < result_size; i++) {
+        printf("%d", largest[i]);
+        if (i < result_size - 1)
+            printf(", ");
+    }
+    printf("\n");
+
+    free(largest);
+    return 0;
+}

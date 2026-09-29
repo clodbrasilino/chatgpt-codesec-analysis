@@ -1,0 +1,7 @@
+In file included from /usr/local/Cellar/gcc/15.2.0/lib/gcc/current/gcc/x86_64-apple-darwin24/15/include-fixed/_stdio.h:522,
+                 from /usr/local/Cellar/gcc/15.2.0/lib/gcc/current/gcc/x86_64-apple-darwin24/15/include-fixed/stdio.h:75,
+                 from /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-631-s2.c:1:
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-631-s2.c: In function 'swap_spaces_underscores':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-631-s2.c:14:42: error: implicit declaration of function 'regsub' [-Wimplicit-function-declaration]
+   14 |         snprintf(tmp, sizeof(tmp), "%s", regsub(&space_regex, str, "_"));
+      |                                          ^~~~~~

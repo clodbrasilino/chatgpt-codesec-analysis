@@ -1,0 +1,11 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-529.c: In function 'jacobsthal_lucas':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-529.c:11:17: error: 'LLONG_MAX' undeclared (first use in this function)
+   11 |         if (b > LLONG_MAX / 2 || (LLONG_MAX - b) / 2 < a) {
+      |                 ^~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-529.c:4:1: note: 'LLONG_MAX' is defined in header '<limits.h>'; this is probably fixable by adding '#include <limits.h>'
+    3 | #include <inttypes.h>
+  +++ |+#include <limits.h>
+    4 | 
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-529.c:11:17: note: each undeclared identifier is reported only once for each function it appears in
+   11 |         if (b > LLONG_MAX / 2 || (LLONG_MAX - b) / 2 < a) {
+      |                 ^~~~~~~~~

@@ -1,0 +1,73 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+static int compare_desc(const void *a, const void *b)
+{
+    int x = *(const int *)a;
+    int y = *(const int *)b;
+
+    if (x < y) {
+        return 1;
+    }
+    if (x > y) {
+        return -1;
+    }
+    return 0;
+}
+
+int get_n_largest(const int *data, size_t data_len, size_t n, int *result)
+{
+    int *copy;
+
+    if (data == NULL || result == NULL) {
+        return -1;
+    }
+    if (n == 0 || data_len == 0 || n > data_len) {
+        return -1;
+    }
+    if (data_len > SIZE_MAX / sizeof(int)) {
+        return -1;
+    }
+
+    copy = malloc(data_len * sizeof(int));
+    if (copy == NULL) {
+        return -1;
+    }
+
+    memcpy(copy, data, data_len * sizeof(int));
+    qsort(copy, data_len, sizeof(int), compare_desc);
+    memcpy(result, copy, n * sizeof(int));
+
+    free(copy);
+    return 0;
+}
+
+int main(void)
+{
+    int data[] = { 42, 7, 19, 88, 3, 56, 91, 23, 65, 10 };
+    size_t data_len = sizeof(data) / sizeof(data[0]);
+    size_t n = 3;
+    int *result;
+    size_t i;
+
+    result = malloc(n * sizeof(int));
+    if (result == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    if (get_n_largest(data, data_len, n, result) != 0) {
+        fprintf(stderr, "Failed to get largest items\n");
+        free(result);
+        return EXIT_FAILURE;
+    }
+
+    printf("The %zu largest items are:\n", n);
+    for (i = 0; i < n; i++) {
+        printf("%d\n", result[i]);
+    }
+
+    free(result);
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,38 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <limits.h>
+
+bool is_within_limit(long n) {
+    /* Possible weaknesses found:
+     * UBSan: signed integer overflow: 2 * 9223372036854775807 cannot be represented in type 'long' (AFL crash: id:000001,sig:06,src:000002,time:1200,execs:564,op:havoc,rep:1)
+     */
+    return n > 0 && 2 * n - 1 <= LONG_MAX / 2;
+}
+
+long nth_hexagonal_number(long n) {
+    if (is_within_limit(n)) {
+        /* Possible weaknesses found:
+         * UBSan: signed integer overflow: 2 * 9223372036854775807 cannot be represented in type 'long' (AFL crash: id:000001,sig:06,src:000002,time:1200,execs:564,op:havoc,rep:1)
+         * UBSan: signed integer overflow: 1999999999998 * 1999999999997 cannot be represented in type 'long' (AFL crash: id:000000,sig:06,src:000000,time:76,execs:49,op:havoc,rep:9)
+         */
+        return 2 * n * (2 * n - 1);
+    } else {
+        return -1;
+    }
+}
+
+int main() {
+    long n;
+    printf("Enter the value of n: ");
+    if (scanf("%ld", &n) == 1) {
+        long hex_num = nth_hexagonal_number(n);
+        if (hex_num != -1) {
+            printf("The %ldth hexagonal number is %ld\n", n, hex_num);
+        } else {
+            printf("Input too large for calculation.\n");
+        }
+    } else {
+        printf("Invalid input.\n");
+    }
+    return 0;
+}

@@ -1,0 +1,32 @@
+#include <stdio.h>
+#include <string.h>
+
+char* removeParenthesis(char* str) {
+    int i = 0, j = 0;
+    int inParenthesis = 0;
+    char *result = malloc(strlen(str) + 1);
+
+    while(str[i]) {
+        if(str[i] == '(') {
+            inParenthesis = 1;
+        } else if(str[i] == ')') {
+            inParenthesis = 0;
+            i++;
+            continue;
+        }
+        if(!inParenthesis) {
+            result[j++] = str[i];
+        }
+        i++;
+    }
+    result[j] = '\0';
+    return result;
+}
+
+int main() {
+    char str[] = "Hello (world)!";
+    char *result = removeParenthesis(str);
+    printf("%s\n", result);
+    free(result);
+    return 0;
+}

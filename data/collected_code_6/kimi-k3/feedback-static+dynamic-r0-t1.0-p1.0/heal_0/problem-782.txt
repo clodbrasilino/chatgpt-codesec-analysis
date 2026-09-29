@@ -1,0 +1,40 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+int sumOddLengthSubarrays(const int *arr, size_t n, int *result) {
+    if (arr == NULL || result == NULL || n == 0) {
+        return -1;
+    }
+    
+    long long sum = 0;
+    for (size_t i = 0; i < n; i++) {
+        long long total = (long long)(i + 1) * (n - i);
+        long long odd_count = (total + 1) / 2;
+        sum += (long long)arr[i] * odd_count;
+    }
+    
+    if (sum > INT_MAX || sum < INT_MIN) {
+        return -2;
+    }
+    
+    *result = (int)sum;
+    return 0;
+}
+
+int main(void) {
+    int arr[] = {1, 4, 2, 5, 3};
+    size_t n = sizeof(arr) / sizeof(arr[0]);
+    int result;
+    
+    int status = sumOddLengthSubarrays(arr, n, &result);
+    if (status != 0) {
+        fprintf(stderr, "Error: Invalid input or overflow\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("%d\n", result);
+    return EXIT_SUCCESS;
+}
+```

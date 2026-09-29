@@ -1,0 +1,29 @@
+```C
+#include <stdio.h>
+
+long long sumOfCubes(int n) {
+    long long sum = 0;
+    for (int i = 1; i <= n; i++) {
+        int oddNumber = 2*i - 1;
+        sum += oddNumber * oddNumber * oddNumber;
+    }
+    return sum;
+}
+
+int main(void) {
+    int n;
+    printf("Enter a number: ");
+    scanf("%d", &n);
+
+    if (n < 1) {
+        printf("Please, enter a positive number\n");
+        return 1;
+    }
+
+    printf("Cubic sum: %lld\n", sumOfCubes(n));
+    return 0;
+}
+```
+The above program will give cubic sum of first n odd numbers. The function sumOfCubes takes the number and calculates the cubic sum of the first n odd numbers. Cube of a number is calculated as number * number * number.
+
+In the main function, we take the number as input from user. It then checks if number entered is less than 1, in which case it exits with an error message. If a valid number is inputted, it computes the cubic sum using the sumOfCubes function and prints the result.

@@ -1,0 +1,88 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char** extract_quotes(const char* input, int* count) {
+    if (!input || !count) {
+        if (count) *count = 0;
+        return NULL;
+    }
+
+    int capacity = 10;
+    int current_count = 0;
+    char** results = malloc(capacity * sizeof(char*));
+    if (!results) {
+        *count = 0;
+        return NULL;
+    }
+
+    const char* p = input;
+    while (*p) {
+        if (*p == '\"') {
+            p++;
+            const char* start = p;
+            while (*p && *p != '\"') {
+                p++;
+            }
+            
+            if (*p == '\"') {
+                size_t len = p - start;
+                char* match = malloc(len + 1);
+                if (!match) {
+                    for (int i = 0; i < current_count; i++) {
+                        free(results[i]);
+                    }
+                    free(results);
+                    *count = 0;
+                    return NULL;
+                }
+                
+                /* Possible weaknesses found:
+                 * Flawfinder strncpy: Easily used incorrectly; doesn't always \0-terminate or check for invalid pointers [MS-banned] (CWE-120). (risk 1, buffer)
+                 */
+                strncpy(match, start, len);
+                match[len] = '\0';
+                
+                if (current_count >= capacity) {
+                    capacity *= 2;
+                    char** temp = realloc(results, capacity * sizeof(char*));
+                    if (!temp) {
+                        free(match);
+                        for (int i = 0; i < current_count; i++) {
+                            free(results[i]);
+                        }
+                        free(results);
+                        *count = 0;
+                        return NULL;
+                    }
+                    results = temp;
+                }
+                
+                results[current_count++] = match;
+            } else {
+                break;
+            }
+        }
+        p++;
+    }
+
+    *count = current_count;
+    return results;
+}
+
+int main(void) {
+    const char* text = "This is a \"test\" string with \"multiple\" quotes and an \"unclosed string";
+    int count = 0;
+    
+    char** extracted = extract_quotes(text, &count);
+    
+    if (extracted) {
+        for (int i = 0; i < count; i++) {
+            printf("Found: %s\n", extracted[i]);
+            free(extracted[i]);
+        }
+        free(extracted);
+    }
+    
+    return 0;
+}

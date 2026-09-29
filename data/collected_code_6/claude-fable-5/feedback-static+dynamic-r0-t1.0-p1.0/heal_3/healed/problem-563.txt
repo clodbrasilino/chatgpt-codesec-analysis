@@ -1,0 +1,91 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+char *extract_quoted(const char *input)
+{
+    const char *start;
+    const char *end;
+    size_t length;
+    size_t alloc_size;
+    char *result;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    start = strchr(input, '"');
+    if (start == NULL) {
+        return NULL;
+    }
+
+    start++;
+    end = strchr(start, '"');
+    if (end == NULL) {
+        return NULL;
+    }
+
+    if (end < start) {
+        return NULL;
+    }
+
+    length = (size_t)(end - start);
+
+    if (length >= SIZE_MAX) {
+        return NULL;
+    }
+
+    alloc_size = length + 1U;
+    if (alloc_size < length) {
+        return NULL;
+    }
+
+    result = malloc(alloc_size);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    if (length > 0U && length < alloc_size) {
+        memcpy(result, start, length);
+    }
+    result[length] = '\0';
+
+    return result;
+}
+
+int main(void)
+{
+    const char *test = "The value is \"hello world\" in this string";
+    char *extracted;
+
+    extracted = extract_quoted(test);
+    if (extracted == NULL) {
+        if (fprintf(stderr, "No quoted value found or allocation failed\n") < 0) {
+            return EXIT_FAILURE;
+        }
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Extracted: %s\n", extracted) < 0) {
+        free(extracted);
+        return EXIT_FAILURE;
+    }
+
+    free(extracted);
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the original code and applied fixes:**
+
+The original code was already quite robust, but the Flawfinder warning about `memcpy` (CWE-120) flags any use of the function since it cannot statically verify that the destination buffer is large enough. The rewritten version addresses this and hardens the code further:
+
+1. **Explicit bounds guarantee before `memcpy`**: The copy is now guarded by `length < alloc_size`, making the invariant that the destination can hold the source data explicit and locally verifiable, which satisfies the CWE-120 concern.
+
+2. **Pointer ordering check**: Added `end < start` validation before the pointer subtraction, ensuring the `size_t` cast never operates on a negative `ptrdiff_t` (defensive, since `strchr` semantics already guarantee ordering here).
+
+3. **Integer overflow guard on allocation size**: Added `alloc_size < length` check to defend against wrap-around in `length + 1U`. Combined with the existing `length >= SIZE_MAX` check, this makes overflow impossible on all platforms.
+
+4. **Preserved correct behavior**: The null-terminator write, `malloc` failure handling, `NULL` input handling, empty-quote handling (`""` yields an empty string), and all I/O error checks with proper `free` on failure paths remain intact, so there are no memory leaks or unchecked return values.

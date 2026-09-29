@@ -1,0 +1,60 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int first;
+    int second;
+} Pair;
+
+Pair* findKPairs(const int* arr1, int size1, const int* arr2, int size2, int k, int* resultSize) {
+    if (arr1 == NULL || arr2 == NULL || size1 <= 0 || size2 <= 0 || k <= 0 || resultSize == NULL) {
+        if (resultSize != NULL) {
+            *resultSize = 0;
+        }
+        return NULL;
+    }
+    
+    int totalPossible = size1 * size2;
+    int pairCount = (k < totalPossible) ? k : totalPossible;
+    
+    Pair* pairs = (Pair*)malloc(pairCount * sizeof(Pair));
+    if (pairs == NULL) {
+        *resultSize = 0;
+        return NULL;
+    }
+    
+    int pairIndex = 0;
+    for (int i = 0; i < size1 && pairIndex < pairCount; i++) {
+        for (int j = 0; j < size2 && pairIndex < pairCount; j++) {
+            pairs[pairIndex].first = arr1[i];
+            pairs[pairIndex].second = arr2[j];
+            pairIndex++;
+        }
+    }
+    
+    *resultSize = pairIndex;
+    return pairs;
+}
+
+int main(void) {
+    int arr1[] = {1, 2, 3};
+    int arr2[] = {4, 5, 6, 7};
+    int size1 = sizeof(arr1) / sizeof(arr1[0]);
+    int size2 = sizeof(arr2) / sizeof(arr2[0]);
+    int k = 5;
+    int resultSize = 0;
+    
+    Pair* pairs = findKPairs(arr1, size1, arr2, size2, k, &resultSize);
+    
+    if (pairs != NULL && resultSize > 0) {
+        printf("Found %d pairs:\n", resultSize);
+        for (int i = 0; i < resultSize; i++) {
+            printf("Pair %d: (%d, %d)\n", i + 1, pairs[i].first, pairs[i].second);
+        }
+        free(pairs);
+    } else {
+        printf("No pairs found or invalid input.\n");
+    }
+    
+    return 0;
+}

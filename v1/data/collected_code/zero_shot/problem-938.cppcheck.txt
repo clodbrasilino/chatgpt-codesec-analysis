@@ -1,0 +1,69 @@
+collected_code/problem-938-0.c:30:44: warning: Uninitialized variable: res1 [uninitvar]
+    printf("Closest elements: %d %d %d\n", res1, res2, res3);
+                                           ^
+collected_code/problem-938-0.c:10:29: note: Assuming condition is false
+    while (i < n1 && j < n2 && k < n3) {
+                            ^
+collected_code/problem-938-0.c:30:44: note: Uninitialized variable: res1
+    printf("Closest elements: %d %d %d\n", res1, res2, res3);
+                                           ^
+collected_code/problem-938-0.c:30:50: warning: Uninitialized variable: res2 [uninitvar]
+    printf("Closest elements: %d %d %d\n", res1, res2, res3);
+                                                 ^
+collected_code/problem-938-0.c:10:29: note: Assuming condition is false
+    while (i < n1 && j < n2 && k < n3) {
+                            ^
+collected_code/problem-938-0.c:30:50: note: Uninitialized variable: res2
+    printf("Closest elements: %d %d %d\n", res1, res2, res3);
+                                                 ^
+collected_code/problem-938-0.c:30:56: warning: Uninitialized variable: res3 [uninitvar]
+    printf("Closest elements: %d %d %d\n", res1, res2, res3);
+                                                       ^
+collected_code/problem-938-0.c:10:29: note: Assuming condition is false
+    while (i < n1 && j < n2 && k < n3) {
+                            ^
+collected_code/problem-938-0.c:30:56: note: Uninitialized variable: res3
+    printf("Closest elements: %d %d %d\n", res1, res2, res3);
+                                                       ^
+collected_code/problem-938-0.c:11:31: error: Cannot determine that 'arr1[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        int minimum = min(arr1[i], min(arr2[j], arr3[k]));
+                              ^
+collected_code/problem-938-0.c:11:44: error: Cannot determine that 'arr2[j]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        int minimum = min(arr1[i], min(arr2[j], arr3[k]));
+                                           ^
+collected_code/problem-938-0.c:11:53: error: Cannot determine that 'arr3[k]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        int minimum = min(arr1[i], min(arr2[j], arr3[k]));
+                                                    ^
+collected_code/problem-938-0.c:12:31: error: Cannot determine that 'arr1[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        int maximum = max(arr1[i], max(arr2[j], arr3[k]));
+                              ^
+collected_code/problem-938-0.c:12:44: error: Cannot determine that 'arr2[j]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        int maximum = max(arr1[i], max(arr2[j], arr3[k]));
+                                           ^
+collected_code/problem-938-0.c:12:53: error: Cannot determine that 'arr3[k]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        int maximum = max(arr1[i], max(arr2[j], arr3[k]));
+                                                    ^
+collected_code/problem-938-0.c:16:24: error: Cannot determine that 'arr1[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+            res1 = arr1[i];
+                       ^
+collected_code/problem-938-0.c:17:24: error: Cannot determine that 'arr2[j]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+            res2 = arr2[j];
+                       ^
+collected_code/problem-938-0.c:18:24: error: Cannot determine that 'arr3[k]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+            res3 = arr3[k];
+                       ^
+collected_code/problem-938-0.c:21:28: error: Cannot determine that 'arr1[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        if (minimum == arr1[i]) {
+                           ^
+collected_code/problem-938-0.c:23:35: error: Cannot determine that 'arr2[j]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        } else if (minimum == arr2[j]) {
+                                  ^
+collected_code/problem-938-0.c:30:44: error: Cannot determine that 'res1' is initialized [premium-bughuntingUninit]
+    printf("Closest elements: %d %d %d\n", res1, res2, res3);
+                                           ^
+collected_code/problem-938-0.c:30:50: error: Cannot determine that 'res2' is initialized [premium-bughuntingUninit]
+    printf("Closest elements: %d %d %d\n", res1, res2, res3);
+                                                 ^
+collected_code/problem-938-0.c:30:56: error: Cannot determine that 'res3' is initialized [premium-bughuntingUninit]
+    printf("Closest elements: %d %d %d\n", res1, res2, res3);
+                                                       ^

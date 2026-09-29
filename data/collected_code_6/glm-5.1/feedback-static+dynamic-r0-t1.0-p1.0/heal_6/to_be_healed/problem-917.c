@@ -1,0 +1,107 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+char **find_upper_lower_sequences(const char *str, size_t *out_count) {
+    size_t len = 0;
+    if (str != NULL) {
+        const char *ptr = str;
+        while (*ptr != '\0') {
+            ptr++;
+        }
+        len = (size_t)(ptr - str);
+    }
+
+    size_t capacity = 16;
+    size_t count = 0;
+    char **results = malloc(capacity * sizeof(char *));
+    if (results == NULL) {
+        return NULL;
+    }
+
+    size_t i = 0;
+    while (i < len) {
+        if (isupper((unsigned char)str[i])) {
+            size_t start = i;
+            i++;
+            while (i < len && islower((unsigned char)str[i])) {
+                i++;
+            }
+            /* Possible weaknesses found:
+             *  Assuming that condition 'i>start+1' is not redundant
+             */
+            if (i > start + 1) {
+                if (count >= capacity) {
+                    size_t new_capacity = capacity * 2;
+                    if (new_capacity < capacity) {
+                        for (size_t j = 0; j < count; j++) {
+                            free(results[j]);
+                        }
+                        free(results);
+                        return NULL;
+                    }
+                    char **new_results = realloc(results, new_capacity * sizeof(char *));
+                    if (new_results == NULL) {
+                        for (size_t j = 0; j < count; j++) {
+                            free(results[j]);
+                        }
+                        free(results);
+                        return NULL;
+                    }
+                    results = new_results;
+                    capacity = new_capacity;
+                }
+                /* Possible weaknesses found:
+                 *  Assignment 'seq_len=i-start', assigned value is greater than 1
+                 */
+                size_t seq_len = i - start;
+                char *seq = malloc(seq_len + 1);
+                /* Possible weaknesses found:
+                 *  Assuming condition is false
+                 */
+                if (seq == NULL) {
+                    for (size_t j = 0; j < count; j++) {
+                        free(results[j]);
+                    }
+                    free(results);
+                    return NULL;
+                }
+                /* Possible weaknesses found:
+                 *  Condition 'seq_len>0' is always true [knownConditionTrueFalse]
+                 *  Condition 'seq_len>0' is always true
+                 */
+                if (seq_len > 0) {
+                    /* Possible weaknesses found:
+                     * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+                     */
+                    memcpy(seq, str + start, seq_len);
+                }
+                seq[seq_len] = '\0';
+                results[count] = seq;
+                count++;
+            }
+        } else {
+            i++;
+        }
+    }
+
+    *out_count = count;
+    return results;
+}
+
+int main(void) {
+    const char *text = "The QuickBrown Fox Jumped Over The Lazy Dog and A bb Cs D";
+    size_t count = 0;
+    char **sequences = find_upper_lower_sequences(text, &count);
+
+    if (sequences != NULL) {
+        for (size_t i = 0; i < count; i++) {
+            printf("%s\n", sequences[i]);
+            free(sequences[i]);
+        }
+        free(sequences);
+    }
+
+    return 0;
+}

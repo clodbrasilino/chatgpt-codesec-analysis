@@ -1,0 +1,12 @@
+collected_code/problem-638-0.c:15:18: error: Cannot determine that 'temperature' is initialized [premium-bughuntingUninit]
+    scanf("%f", &temperature);
+                 ^
+collected_code/problem-638-0.c:18:18: error: Cannot determine that 'wind_speed' is initialized [premium-bughuntingUninit]
+    scanf("%f", &wind_speed);
+                 ^
+collected_code/problem-638-0.c:20:57: error: Cannot determine that 'temperature' is initialized [premium-bughuntingUninit]
+    float wind_chill_index = calculate_wind_chill_index(temperature, wind_speed);
+                                                        ^
+collected_code/problem-638-0.c:20:70: error: Cannot determine that 'wind_speed' is initialized [premium-bughuntingUninit]
+    float wind_chill_index = calculate_wind_chill_index(temperature, wind_speed);
+                                                                     ^

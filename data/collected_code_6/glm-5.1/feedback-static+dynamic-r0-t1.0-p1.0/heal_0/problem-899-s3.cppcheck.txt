@@ -1,0 +1,46 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-899-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-899-s3.c:45:24: style: Condition 'right_empty' is always false [knownConditionTrueFalse]
+            } else if (right_empty) {
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-899-s3.c:41:24: note: Assuming condition 'left_empty' is false
+            } else if (left_empty) {
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-899-s3.c:45:24: note: Condition 'right_empty' is always false
+            } else if (right_empty) {
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-899-s3.c:87:24: style: Condition 'right_empty' is always false [knownConditionTrueFalse]
+            } else if (right_empty) {
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-899-s3.c:83:24: note: Assuming condition 'left_empty' is false
+            } else if (left_empty) {
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-899-s3.c:87:24: note: Condition 'right_empty' is always false
+            } else if (right_empty) {
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-899-s3.c:33:28: style: Same expression on both sides of '&&' because 'left_empty' and 'right_empty' represent the same value. [knownConditionTrueFalse]
+            if (left_empty && right_empty) {
+                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-899-s3.c:20:23: note: 'left_empty' is assigned value 'true' here.
+    bool left_empty = true;
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-899-s3.c:21:24: note: 'right_empty' is assigned value 'true' here.
+    bool right_empty = true;
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-899-s3.c:33:28: note: Same expression on both sides of '&&' because 'left_empty' and 'right_empty' represent the same value.
+            if (left_empty && right_empty) {
+                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-899-s3.c:75:28: style: Same expression on both sides of '&&' because 'left_empty' and 'right_empty' represent the same value. [knownConditionTrueFalse]
+            if (left_empty && right_empty) {
+                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-899-s3.c:20:23: note: 'left_empty' is assigned value 'true' here.
+    bool left_empty = true;
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-899-s3.c:21:24: note: 'right_empty' is assigned value 'true' here.
+    bool right_empty = true;
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-899-s3.c:75:28: note: Same expression on both sides of '&&' because 'left_empty' and 'right_empty' represent the same value.
+            if (left_empty && right_empty) {
+                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-899-s3.c:5:39: style: Parameter 'arr' can be declared as pointer to const [constParameterPointer]
+bool canBeSortedByCornerElements(int *arr, int n) {
+                                      ^

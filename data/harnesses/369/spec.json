@@ -1,0 +1,50 @@
+{
+  "task_id": 369,
+  "text": "Write a C function to find the lateral surface area of cuboid",
+  "fn_candidates": [
+    "lateralsurface_cuboid",
+    "LateralsurfaceCuboid",
+    "lateralsurfaceCuboid",
+    "lateralsurfacecuboid"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "lateralsurface_cuboid",
+      "args": [
+        8,
+        5,
+        6
+      ],
+      "expected": 156,
+      "assert_src": "assert lateralsurface_cuboid(8,5,6)==156"
+    },
+    {
+      "fn_name": "lateralsurface_cuboid",
+      "args": [
+        7,
+        9,
+        10
+      ],
+      "expected": 320,
+      "assert_src": "assert lateralsurface_cuboid(7,9,10)==320"
+    },
+    {
+      "fn_name": "lateralsurface_cuboid",
+      "args": [
+        10,
+        20,
+        30
+      ],
+      "expected": 1800,
+      "assert_src": "assert lateralsurface_cuboid(10,20,30)==1800"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

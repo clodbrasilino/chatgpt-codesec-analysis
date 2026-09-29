@@ -1,0 +1,44 @@
+{
+  "task_id": 860,
+  "text": "Write a C function to check whether the given string is ending with only alphanumeric characters or not using regex.",
+  "fn_candidates": [
+    "check_alphanumeric",
+    "CheckAlphanumeric",
+    "checkAlphanumeric",
+    "checkalphanumeric"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "check_alphanumeric",
+      "args": [
+        "dawood@"
+      ],
+      "expected": "Discard",
+      "assert_src": "assert check_alphanumeric(\"dawood@\") == 'Discard'"
+    },
+    {
+      "fn_name": "check_alphanumeric",
+      "args": [
+        "skdmsam326"
+      ],
+      "expected": "Accept",
+      "assert_src": "assert check_alphanumeric(\"skdmsam326\") == 'Accept'"
+    },
+    {
+      "fn_name": "check_alphanumeric",
+      "args": [
+        "cooltricks@"
+      ],
+      "expected": "Discard",
+      "assert_src": "assert check_alphanumeric(\"cooltricks@\") == 'Discard'"
+    }
+  ],
+  "arg_kinds": [
+    "str"
+  ],
+  "return_kind": "str",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

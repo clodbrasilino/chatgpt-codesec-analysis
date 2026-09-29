@@ -1,0 +1,22 @@
+```C
+#include <stdio.h>
+#include <math.h>
+
+double degreesToRadians(double degrees) {
+    double radians = degrees * (M_PI / 180.0);
+    return radians;
+}
+
+int main() {
+    double degrees;
+    printf("Enter the angle in degrees: ");
+    if(scanf("%lf", &degrees)!=1) {
+        printf("Invalid input! Please enter a number.\n");
+        return 1;
+    }
+
+    double radians = degreesToRadians(degrees);
+    printf("%.2lf degrees is %.2lf radians\n", degrees, radians);
+    return 0;
+}
+```

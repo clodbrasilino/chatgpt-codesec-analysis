@@ -1,0 +1,92 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdint.h>
+
+#define MAX_INPUT_LEN 4096
+
+char *camel_to_snake(const char *input)
+{
+    char *output;
+    char *shrunk;
+    size_t input_len;
+    size_t capacity;
+    size_t out_pos = 0;
+    size_t i;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    input_len = strnlen(input, MAX_INPUT_LEN);
+    if (input_len == MAX_INPUT_LEN) {
+        return NULL;
+    }
+
+    if (input_len > (SIZE_MAX - 1) / 2) {
+        return NULL;
+    }
+
+    capacity = (input_len * 2) + 1;
+
+    output = malloc(capacity);
+    if (output == NULL) {
+        return NULL;
+    }
+
+    for (i = 0; i < input_len; i++) {
+        unsigned char c = (unsigned char)input[i];
+        size_t needed = (isupper(c) && i > 0) ? 2 : 1;
+
+        if (needed + 1 > capacity - out_pos) {
+            free(output);
+            return NULL;
+        }
+
+        if (isupper(c)) {
+            if (i > 0) {
+                output[out_pos++] = '_';
+            }
+            output[out_pos++] = (char)tolower(c);
+        } else {
+            output[out_pos++] = (char)c;
+        }
+    }
+
+    output[out_pos] = '\0';
+
+    shrunk = realloc(output, out_pos + 1);
+    if (shrunk != NULL) {
+        output = shrunk;
+    }
+
+    return output;
+}
+
+int main(void)
+{
+    const char *tests[] = {
+        "camelCaseString",
+        "thisIsATest",
+        "helloWorld",
+        "convertCamelCaseToSnakeCase",
+        "simple",
+        "already_snake",
+        ""
+    };
+    size_t num_tests = sizeof(tests) / sizeof(tests[0]);
+    size_t i;
+
+    for (i = 0; i < num_tests; i++) {
+        char *snake = camel_to_snake(tests[i]);
+        if (snake == NULL) {
+            fprintf(stderr, "Conversion failed for input: \"%s\"\n", tests[i]);
+            return EXIT_FAILURE;
+        }
+        printf("Input:  %s\nOutput: %s\n\n", tests[i], snake);
+        free(snake);
+    }
+
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,98 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+struct Tuple {
+    int *elements;
+    size_t size;
+};
+
+struct UnionResult {
+    int *elements;
+    size_t size;
+};
+
+static bool is_present(const int *array, size_t size, int value) {
+    if (array == NULL) {
+        return false;
+    }
+    for (size_t i = 0; i < size; ++i) {
+        if (array[i] == value) {
+            return true;
+        }
+    }
+    return false;
+}
+
+struct UnionResult find_union(const struct Tuple *tuples, size_t num_tuples) {
+    struct UnionResult result = {NULL, 0};
+    if (tuples == NULL || num_tuples == 0) {
+        return result;
+    }
+
+    size_t max_possible_size = 0;
+    for (size_t i = 0; i < num_tuples; ++i) {
+        max_possible_size += tuples[i].size;
+    }
+
+    if (max_possible_size == 0) {
+        return result;
+    }
+
+    result.elements = (int *)malloc(max_possible_size * sizeof(int));
+    if (result.elements == NULL) {
+        return result;
+    }
+
+    for (size_t i = 0; i < num_tuples; ++i) {
+        if (tuples[i].elements == NULL) {
+            continue;
+        }
+        for (size_t j = 0; j < tuples[i].size; ++j) {
+            int current_val = tuples[i].elements[j];
+            if (!is_present(result.elements, result.size, current_val)) {
+                result.elements[result.size++] = current_val;
+            }
+        }
+    }
+
+    if (result.size == 0) {
+        free(result.elements);
+        result.elements = NULL;
+    } else if (result.size < max_possible_size) {
+        int *temp = (int *)realloc(result.elements, result.size * sizeof(int));
+        if (temp != NULL) {
+            result.elements = temp;
+        }
+    }
+
+    return result;
+}
+
+int main(void) {
+    int t1_data[] = {1, 2, 3, 4};
+    struct Tuple t1 = {t1_data, 4};
+
+    int t2_data[] = {3, 4, 5, 6};
+    struct Tuple t2 = {t2_data, 4};
+
+    int t3_data[] = {6, 7, 8};
+    struct Tuple t3 = {t3_data, 3};
+
+    struct Tuple tuples[] = {t1, t2, t3};
+    size_t num_tuples = sizeof(tuples) / sizeof(tuples[0]);
+
+    struct UnionResult result = find_union(tuples, num_tuples);
+
+    if (result.elements != NULL) {
+        for (size_t i = 0; i < result.size; ++i) {
+            printf("%d ", result.elements[i]);
+        }
+        printf("\n");
+        free(result.elements);
+    }
+
+    return 0;
+}
+```

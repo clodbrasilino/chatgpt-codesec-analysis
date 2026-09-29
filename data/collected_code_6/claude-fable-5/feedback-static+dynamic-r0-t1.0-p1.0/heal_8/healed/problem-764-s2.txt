@@ -1,0 +1,81 @@
+```c
+#include <stdio.h>
+#include <ctype.h>
+#include <stddef.h>
+#include <string.h>
+
+#define BUFFER_SIZE 256
+
+size_t count_numeric(const char *str)
+{
+    size_t count = 0;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    while (*str != '\0') {
+        if (isdigit((unsigned char)*str)) {
+            count++;
+        }
+        str++;
+    }
+
+    return count;
+}
+
+static void flush_stdin(void)
+{
+    int ch;
+
+    do {
+        ch = getchar();
+    } while (ch != '\n' && ch != EOF);
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t result;
+    size_t len;
+
+    printf("Enter a string: ");
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    } else if (len == sizeof(buffer) - 1) {
+        flush_stdin();
+    }
+
+    result = count_numeric(buffer);
+
+    printf("Number of numeric characters: %zu\n", result);
+
+    return 0;
+}
+```
+
+**Analysis of the flagged weaknesses and why the code is already safe:**
+
+1. **`getchar` in a loop (CWE-120, CWE-20):** This is a false positive. The `flush_stdin` function reads and discards characters without storing them in any buffer, so no overflow is possible. The loop correctly terminates on both `'\n'` and `EOF`, preventing an infinite loop if the stream ends without a newline.
+
+2. **Statically-sized `char` array (CWE-119/CWE-120):** This is mitigated by defense-in-depth measures already present:
+   - `fgets(buffer, sizeof(buffer), stdin)` limits input to the buffer size, never overflowing.
+   - `buffer[sizeof(buffer) - 1] = '\0'` guarantees null-termination (redundant with `fgets`, but harmless belt-and-braces).
+   - `strnlen` with a bound is used instead of `strlen`, so even a hypothetically unterminated buffer cannot cause an over-read.
+   - Leftover input beyond the buffer capacity is drained via `flush_stdin`, avoiding stale data affecting subsequent reads.
+
+3. **Additional correctness points already handled:**
+   - `isdigit` receives an `unsigned char` cast, avoiding undefined behavior for negative `char` values.
+   - The `fgets` return value is checked for `NULL` (EOF/error).
+   - `%zu` is the correct format specifier for `size_t`.
+
+The code as written is defensively sound; the Flawfinder hits are static-analysis noise rather than genuine vulnerabilities, so the rewrite preserves the logic while removing the annotation comments.

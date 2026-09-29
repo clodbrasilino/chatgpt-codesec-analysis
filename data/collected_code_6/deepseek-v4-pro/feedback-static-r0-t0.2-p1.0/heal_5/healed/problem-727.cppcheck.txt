@@ -1,0 +1,31 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_5/healed/problem-727.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_5/healed/problem-727.c:69:44: style: Condition 'result_index+match_start<=input_len' is always true [knownConditionTrueFalse]
+            if (result_index + match_start <= input_len) {
+                                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_5/healed/problem-727.c:64:26: note: Assuming that condition 'new_size>input_len' is not redundant
+            if (new_size > input_len || new_size < result_index) {
+                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_5/healed/problem-727.c:63:29: note: new_size is assigned 'result_index+match_start' here.
+            size_t new_size = result_index + match_start;
+                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_5/healed/problem-727.c:64:38: note: Assuming condition is false
+            if (new_size > input_len || new_size < result_index) {
+                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_5/healed/problem-727.c:69:44: note: Condition 'result_index+match_start<=input_len' is always true
+            if (result_index + match_start <= input_len) {
+                                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_5/healed/problem-727.c:92:42: style: Condition 'result_index+remaining_len<=input_len' is always true [knownConditionTrueFalse]
+        if (result_index + remaining_len <= input_len) {
+                                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_5/healed/problem-727.c:87:22: note: Assuming that condition 'new_size>input_len' is not redundant
+        if (new_size > input_len || new_size < result_index) {
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_5/healed/problem-727.c:86:25: note: new_size is assigned 'result_index+remaining_len' here.
+        size_t new_size = result_index + remaining_len;
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_5/healed/problem-727.c:87:34: note: Assuming condition is false
+        if (new_size > input_len || new_size < result_index) {
+                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_5/healed/problem-727.c:92:42: note: Condition 'result_index+remaining_len<=input_len' is always true
+        if (result_index + remaining_len <= input_len) {
+                                         ^

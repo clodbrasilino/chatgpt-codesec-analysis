@@ -1,0 +1,57 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#define MAX_INPUT_SIZE 256
+
+void toggle_case(char *str, size_t max_len)
+{
+    size_t i;
+    size_t len;
+
+    if (str == NULL || max_len == 0) {
+        return;
+    }
+
+    len = strnlen(str, max_len);
+    for (i = 0; i < len; i++) {
+        unsigned char c = (unsigned char)str[i];
+        if (isupper(c)) {
+            str[i] = (char)tolower(c);
+        } else if (islower(c)) {
+            str[i] = (char)toupper(c);
+        }
+    }
+}
+
+int main(void)
+{
+    char buffer[MAX_INPUT_SIZE];
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+    buffer[strcspn(buffer, "\n")] = '\0';
+
+    toggle_case(buffer, sizeof(buffer));
+
+    if (printf("%s\n", buffer) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+Key changes made to address the identified weaknesses:
+
+1. **CWE-126 (strlen over-read)**: Replaced `strlen()` with `strnlen()`, which takes a maximum length parameter. The `toggle_case` function now accepts the buffer's capacity as an explicit argument, guaranteeing the read never exceeds the buffer bounds even if the string were somehow not null-terminated.
+
+2. **CWE-119/CWE-120 (statically-sized array)**: The buffer size is now defined via a named constant (`MAX_INPUT_SIZE`), `fgets` remains bounded by `sizeof(buffer)`, and an explicit null-terminator is forced at `buffer[sizeof(buffer) - 1]` as a defensive guarantee before any string operations occur.
+
+3. **Defensive API design**: `toggle_case` validates both the pointer and the length parameter, so it can never operate on an unbounded string.

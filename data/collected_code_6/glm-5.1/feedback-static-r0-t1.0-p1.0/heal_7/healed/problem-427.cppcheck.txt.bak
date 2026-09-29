@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-427.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-427.c:53:35: style: Condition 'convert_date_format(NULL)==NULL' is always true [knownConditionTrueFalse]
+    if (convert_date_format(NULL) == NULL) {
+                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-427.c:53:28: note: Calling function 'convert_date_format' returns 0
+    if (convert_date_format(NULL) == NULL) {
+                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-427.c:53:35: note: Condition 'convert_date_format(NULL)==NULL' is always true
+    if (convert_date_format(NULL) == NULL) {
+                                  ^

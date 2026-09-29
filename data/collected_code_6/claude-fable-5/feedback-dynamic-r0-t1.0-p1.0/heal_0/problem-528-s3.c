@@ -1,0 +1,70 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct List {
+    int *items;
+    size_t length;
+};
+
+int find_min_list(const struct List *lists, size_t count, size_t *min_index)
+{
+    size_t i;
+
+    if (lists == NULL || min_index == NULL || count == 0U) {
+        return -1;
+    }
+
+    *min_index = 0U;
+    for (i = 1U; i < count; i++) {
+        if (lists[i].length < lists[*min_index].length) {
+            *min_index = i;
+        }
+    }
+
+    return 0;
+}
+
+static void print_list(const struct List *list)
+{
+    size_t i;
+
+    if (list == NULL || list->items == NULL) {
+        printf("(empty)\n");
+        return;
+    }
+
+    printf("[");
+    for (i = 0U; i < list->length; i++) {
+        printf("%d", list->items[i]);
+        if (i + 1U < list->length) {
+            printf(", ");
+        }
+    }
+    printf("]\n");
+}
+
+int main(void)
+{
+    int a[] = {1, 2, 3, 4};
+    int b[] = {5, 6};
+    int c[] = {7, 8, 9};
+    struct List lists[3];
+    size_t min_index = 0U;
+
+    lists[0].items = a;
+    lists[0].length = sizeof(a) / sizeof(a[0]);
+    lists[1].items = b;
+    lists[1].length = sizeof(b) / sizeof(b[0]);
+    lists[2].items = c;
+    lists[2].length = sizeof(c) / sizeof(c[0]);
+
+    if (find_min_list(lists, sizeof(lists) / sizeof(lists[0]), &min_index) != 0) {
+        fprintf(stderr, "Error: invalid input to find_min_list\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("List with minimum length (index %zu): ", min_index);
+    print_list(&lists[min_index]);
+
+    return EXIT_SUCCESS;
+}

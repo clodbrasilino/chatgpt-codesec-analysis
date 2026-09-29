@@ -1,0 +1,90 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+#include <stdlib.h>
+
+#define MAX_INPUT_LEN 256U
+
+static bool is_vowel(char c)
+{
+    switch (c) {
+    case 'a': case 'e': case 'i': case 'o': case 'u':
+    case 'A': case 'E': case 'I': case 'O': case 'U':
+        return true;
+    default:
+        return false;
+    }
+}
+
+static char *reverse_vowels(char *s, size_t max_len)
+{
+    size_t left;
+    size_t right;
+    size_t len;
+
+    if (s == NULL) {
+        return NULL;
+    }
+
+    len = strnlen(s, max_len);
+    if (len >= max_len) {
+        return NULL;
+    }
+
+    if (len < 2U) {
+        return s;
+    }
+
+    left = 0U;
+    right = len - 1U;
+
+    while (left < right) {
+        if (!is_vowel(s[left])) {
+            left++;
+        } else if (!is_vowel(s[right])) {
+            right--;
+        } else {
+            char tmp = s[left];
+            s[left] = s[right];
+            s[right] = tmp;
+            left++;
+            right--;
+        }
+    }
+
+    return s;
+}
+
+int main(void)
+{
+    char buffer[MAX_INPUT_LEN];
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1U] = '\0';
+    buffer[strcspn(buffer, "\n")] = '\0';
+
+    if (reverse_vowels(buffer, sizeof(buffer)) == NULL) {
+        fprintf(stderr, "Invalid string\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("%s\n", buffer) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Summary of hardening changes:**
+
+1. **CWE-126 (`strlen` over-read):** Replaced `strlen` with `strnlen`, bounded by a `max_len` parameter passed from the caller. If no null terminator is found within the bound, the function rejects the input by returning `NULL` instead of reading past the buffer.
+
+2. **CWE-119/CWE-120 (statically-sized array):** The buffer size is now defined once via `MAX_INPUT_LEN` and consistently propagated (`sizeof(buffer)` to both `fgets` and `reverse_vowels`), so there is a single source of truth for bounds. A defensive explicit null termination (`buffer[sizeof(buffer) - 1U] = '\0'`) guarantees the string is terminated even if the stream state were unusual, ensuring all subsequent string operations (`strcspn`, `strnlen`, `printf`) operate on a well-formed, bounded string.
+
+3. `reverse_vowels` retains its `NULL`-safety check and now cannot read or write outside the caller-specified bounds, making it safe to reuse with any buffer size.

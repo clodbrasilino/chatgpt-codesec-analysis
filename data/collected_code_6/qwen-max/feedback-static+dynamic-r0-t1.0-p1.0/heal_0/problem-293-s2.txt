@@ -1,0 +1,28 @@
+```c
+#include <stdio.h>
+#include <math.h>
+
+double find_third_side(double a, double b, int is_hypotenuse) {
+    if (is_hypotenuse) {
+        return sqrt(a * a + b * b);
+    } else {
+        if (a > b) {
+            return sqrt(a * a - b * b);
+        } else {
+            return sqrt(b * b - a * a);
+        }
+    }
+}
+
+int main() {
+    double side1 = 3.0;
+    double side2 = 4.0;
+    int is_hypotenuse = 1; // 1 if the required side is the hypotenuse, 0 otherwise
+
+    double result = find_third_side(side1, side2, is_hypotenuse);
+
+    printf("The third side of the right-angled triangle is: %f\n", result);
+
+    return 0;
+}
+```

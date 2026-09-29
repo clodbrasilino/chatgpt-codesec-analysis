@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-727.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-727.c:56:41: style: Condition 'result_index+copy_len<=input_len' is always true [knownConditionTrueFalse]
+            if (result_index + copy_len <= input_len) {
+                                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-727.c:51:41: note: Assuming that condition 'result_index+copy_len>input_len' is not redundant
+            if (result_index + copy_len > input_len) {
+                                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-727.c:56:41: note: Condition 'result_index+copy_len<=input_len' is always true
+            if (result_index + copy_len <= input_len) {
+                                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-727.c:78:46: style: Condition 'result_index+remaining_len<=input_len' is always true [knownConditionTrueFalse]
+            if (result_index + remaining_len <= input_len) {
+                                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-727.c:73:46: note: Assuming that condition 'result_index+remaining_len>input_len' is not redundant
+            if (result_index + remaining_len > input_len) {
+                                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-727.c:78:46: note: Condition 'result_index+remaining_len<=input_len' is always true
+            if (result_index + remaining_len <= input_len) {
+                                             ^

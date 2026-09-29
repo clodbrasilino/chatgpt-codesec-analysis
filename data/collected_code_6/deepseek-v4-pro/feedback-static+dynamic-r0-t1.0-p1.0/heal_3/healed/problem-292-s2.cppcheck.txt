@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-292-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-292-s2.c:20:33: style: Condition 'divide(a,b,&quotient)==-1' is always false [knownConditionTrueFalse]
+    if (divide(a, b, &quotient) == -1) {
+                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-292-s2.c:20:15: note: Calling function 'divide' returns 0
+    if (divide(a, b, &quotient) == -1) {
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-292-s2.c:20:33: note: Condition 'divide(a,b,&quotient)==-1' is always false
+    if (divide(a, b, &quotient) == -1) {
+                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-292-s2.c:29:34: style: Condition 'divide(c,d,&quotient2)==-1' is always true [knownConditionTrueFalse]
+    if (divide(c, d, &quotient2) == -1) {
+                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-292-s2.c:29:15: note: Calling function 'divide' returns -1
+    if (divide(c, d, &quotient2) == -1) {
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-292-s2.c:29:34: note: Condition 'divide(c,d,&quotient2)==-1' is always true
+    if (divide(c, d, &quotient2) == -1) {
+                                 ^

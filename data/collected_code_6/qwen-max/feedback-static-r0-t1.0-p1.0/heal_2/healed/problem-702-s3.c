@@ -1,0 +1,40 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+int compare(const void *a, const void *b) {
+    return (*(int *)a - *(int *)b);
+}
+
+int find_min_removals(const int *arr, int n, int k) {
+    if (n <= 1) return 0;
+    int min_removals = n - 1;
+    int *sorted_arr = malloc(n * sizeof(int));
+    if (sorted_arr == NULL) return -1;
+    
+    for (int i = 0; i < n; ++i) {
+        sorted_arr[i] = arr[i];
+    }
+    
+    qsort(sorted_arr, n, sizeof(int), compare);
+    
+    int l = 0;
+    for (int r = 0; r < n; ++r) {
+        while (sorted_arr[r] - sorted_arr[l] > k) ++l;
+        if (min_removals > (r - l + 1)) {
+            min_removals = (r - l + 1);
+        }
+    }
+    
+    free(sorted_arr);
+    return n - min_removals;
+}
+
+int main() {
+    const int arr[] = {4, 6, 2, 9, 5, 7};
+    int n = 6;
+    int k = 2;
+    int result = find_min_removals(arr, n, k);
+    printf("%d\n", result);
+    return 0;
+}

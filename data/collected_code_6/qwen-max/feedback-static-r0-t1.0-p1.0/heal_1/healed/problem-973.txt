@@ -1,0 +1,21 @@
+```c
+#include <stdio.h>
+#include <string.h>
+
+void left_rotate(char *str, int d) {
+    size_t n = strlen(str);
+    d = (d % (int)n + n) % n;  // Ensure d is wrapped around properly
+    if (d == 0) return;
+
+    memmove(str + d, str, n - d + 1);
+    memmove(str, str + n - d, d);
+}
+
+int main() {
+    char str[] = "abcdef";
+    int d = 2;
+    left_rotate(str, d);
+    printf("%s\n", str);
+    return 0;
+}
+```

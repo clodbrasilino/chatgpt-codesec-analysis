@@ -1,0 +1,58 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+static int cube_sum(unsigned int n, unsigned long long *result)
+{
+    unsigned long long sum;
+    unsigned long long half;
+
+    if (result == NULL) {
+        return -1;
+    }
+
+    if (n > 4294967U) {
+        return -1;
+    }
+
+    if ((n % 2U) == 0U) {
+        half = ((unsigned long long)n / 2ULL) * ((unsigned long long)n + 1ULL);
+    } else {
+        half = (unsigned long long)n * (((unsigned long long)n + 1ULL) / 2ULL);
+    }
+
+    if (half != 0ULL && half > (ULLONG_MAX / half)) {
+        return -1;
+    }
+
+    sum = half * half;
+    *result = sum;
+
+    return 0;
+}
+
+int main(void)
+{
+    unsigned int n;
+    unsigned long long result;
+    int scan_status;
+
+    printf("Enter a natural number n: ");
+
+    scan_status = scanf("%u", &n);
+    if (scan_status != 1) {
+        fprintf(stderr, "Error: invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (cube_sum(n, &result) != 0) {
+        fprintf(stderr, "Error: computation failed or value too large\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Cube sum of first %u natural numbers is %llu\n", n, result);
+
+    return EXIT_SUCCESS;
+}
+```

@@ -1,0 +1,130 @@
+#define _POSIX_C_SOURCE 200809L
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#define MAX_STRING_LEN 4096
+
+static char **split_at_lowercase(const char *str, size_t *count)
+{
+    char **result = NULL;
+    char **temp = NULL;
+    char *part = NULL;
+    size_t num_parts = 0;
+    size_t capacity = 8;
+    size_t len = 0;
+    size_t i = 0;
+
+    if (str == NULL || count == NULL)
+    {
+        return NULL;
+    }
+
+    *count = 0;
+    len = strnlen(str, MAX_STRING_LEN);
+
+    result = malloc(capacity * sizeof(*result));
+    if (result == NULL)
+    {
+        return NULL;
+    }
+
+    while (i < len)
+    {
+        size_t start;
+        size_t part_len;
+
+        while (i < len && islower((unsigned char)str[i]))
+        {
+            i++;
+        }
+        if (i >= len)
+        {
+            break;
+        }
+
+        start = i;
+        while (i < len && !islower((unsigned char)str[i]))
+        {
+            i++;
+        }
+        part_len = i - start;
+
+        if (num_parts >= capacity)
+        {
+            temp = realloc(result, capacity * 2 * sizeof(*result));
+            if (temp == NULL)
+            {
+                for (size_t j = 0; j < num_parts; j++)
+                {
+                    free(result[j]);
+                }
+                free(result);
+                return NULL;
+            }
+            result = temp;
+            capacity *= 2;
+        }
+
+        part = malloc(part_len + 1);
+        if (part == NULL)
+        {
+            for (size_t j = 0; j < num_parts; j++)
+            {
+                free(result[j]);
+            }
+            free(result);
+            return NULL;
+        }
+
+        snprintf(part, part_len + 1, "%.*s", (int)part_len, str + start);
+        result[num_parts] = part;
+        num_parts++;
+    }
+
+    *count = num_parts;
+    return result;
+}
+
+static void free_split(char **parts, size_t count)
+{
+    size_t i = 0;
+
+    if (parts == NULL)
+    {
+        return;
+    }
+
+    for (i = 0; i < count; i++)
+    {
+        free(parts[i]);
+    }
+    free(parts);
+}
+
+int main(void)
+{
+    const char *input = "ABCdefGHIjklMNOpqrSTU";
+    char **parts = NULL;
+    size_t count = 0;
+    size_t i = 0;
+
+    parts = split_at_lowercase(input, &count);
+    if (parts == NULL)
+    {
+        fprintf(stderr, "Error: failed to split string\n");
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i < count; i++)
+    {
+        printf("Part %zu: %s\n", i, parts[i]);
+    }
+
+    free_split(parts, count);
+    parts = NULL;
+
+    return EXIT_SUCCESS;
+}

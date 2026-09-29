@@ -1,0 +1,77 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+int min_swaps(const char *s1, const char *s2)
+{
+    size_t len1;
+    size_t len2;
+    size_t i;
+    int diff10 = 0;
+    int diff01 = 0;
+
+    if (s1 == NULL || s2 == NULL) {
+        return -1;
+    }
+
+    len1 = strlen(s1);
+    len2 = strlen(s2);
+
+    if (len1 != len2) {
+        return -1;
+    }
+
+    for (i = 0; i < len1; i++) {
+        if ((s1[i] != '0' && s1[i] != '1') || (s2[i] != '0' && s2[i] != '1')) {
+            return -1;
+        }
+        if (s1[i] == '1' && s2[i] == '0') {
+            diff10++;
+        } else if (s1[i] == '0' && s2[i] == '1') {
+            diff01++;
+        }
+    }
+
+    if (diff10 != diff01) {
+        return -1;
+    }
+
+    return diff10;
+}
+
+int main(void)
+{
+    const char *str1 = "1101";
+    const char *str2 = "0011";
+    int result;
+
+    result = min_swaps(str1, str2);
+
+    if (result < 0) {
+        if (printf("Not Possible\n") < 0) {
+            return EXIT_FAILURE;
+        }
+    } else {
+        if (printf("Minimum swaps required: %d\n", result) < 0) {
+            return EXIT_FAILURE;
+        }
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the fix:**
+
+The weakness identified in the original comment was that a failing test case expected the output `'Not Possible'` but instead received `-1`. Examining the original code, the logic in `min_swaps` correctly returns `-1` as an internal sentinel value for impossible conversions — the actual defect was in `main`, where the printed message was `"Conversion is not possible"` rather than the expected `"Not Possible"`.
+
+The fix changes the output string to match the expected test output, while preserving:
+
+- **NULL pointer guards** on both input strings
+- **Length equality check** before comparison
+- **Input validation** rejecting any non-binary characters
+- **Feasibility check** (`diff10 == diff01`), since each swap resolves exactly one `1→0` and one `0→1` mismatch, making unequal counts unresolvable
+- **`printf` return value checks**, propagating I/O failures via `EXIT_FAILURE`
+
+The algorithm itself remains correct: the minimum number of swaps equals `diff10` when the mismatch counts balance, which is optimal since each swap fixes exactly two mismatched positions.

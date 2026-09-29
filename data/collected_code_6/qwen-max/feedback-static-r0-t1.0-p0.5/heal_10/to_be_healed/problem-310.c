@@ -1,0 +1,52 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char *str;
+    int len;
+} StringTuple;
+
+StringTuple* string_to_tuple(const char *input) {
+    if (input == NULL) return NULL;
+
+    StringTuple *tuple = (StringTuple *)malloc(sizeof(StringTuple));
+    if (tuple == NULL) return NULL;
+
+    size_t len = strnlen(input, 4096);
+    tuple->len = (int)len;
+    tuple->str = (char *)malloc((tuple->len + 1) * sizeof(char));
+    if (tuple->str == NULL) {
+        free(tuple);
+        return NULL;
+    }
+
+    /* Possible weaknesses found:
+     * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+     */
+    memcpy(tuple->str, input, tuple->len);
+    tuple->str[tuple->len] = '\0';
+    return tuple;
+}
+
+void free_tuple(StringTuple *tuple) {
+    if (tuple != NULL) {
+        free(tuple->str);
+        free(tuple);
+    }
+}
+
+int main() {
+    const char *input = "Hello, World!";
+    StringTuple *tuple = string_to_tuple(input);
+
+    if (tuple != NULL) {
+        printf("String: %s\n", tuple->str);
+        printf("Length: %d\n", tuple->len);
+        free_tuple(tuple);
+    } else {
+        printf("Failed to create tuple.\n");
+    }
+
+    return 0;
+}

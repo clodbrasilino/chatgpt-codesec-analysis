@@ -1,0 +1,25 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-330-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-330-s3.c:50:39: style: Condition 'len<1' is always false [knownConditionTrueFalse]
+        if (len > MAX_WORD_LEN || len < 1) {
+                                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-330-s3.c:45:63: note: Assuming that condition 'match.rm_so>=match.rm_eo' is not redundant
+        if (match.rm_so < 0 || match.rm_eo < 0 || match.rm_so >= match.rm_eo) {
+                                                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-330-s3.c:49:31: note: Assignment 'len=match.rm_eo-match.rm_so', assigned value is greater than 0
+        int len = match.rm_eo - match.rm_so;
+                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-330-s3.c:50:39: note: Condition 'len<1' is always false
+        if (len > MAX_WORD_LEN || len < 1) {
+                                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-330-s3.c:65:25: style: Condition '(unsigned long)len<=remaining-(unsigned long)match.rm_so' is always true [knownConditionTrueFalse]
+        if ((size_t)len <= remaining - (size_t)match.rm_so) {
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-330-s3.c:55:87: note: Assuming that condition '(unsigned long)len>remaining-(unsigned long)match.rm_so' is not redundant
+        if (remaining < (size_t)len || (size_t)match.rm_so > remaining || (size_t)len > remaining - (size_t)match.rm_so) {
+                                                                                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-330-s3.c:60:13: note: Assuming condition is false
+        if (!word) {
+            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-330-s3.c:65:25: note: Condition '(unsigned long)len<=remaining-(unsigned long)match.rm_so' is always true
+        if ((size_t)len <= remaining - (size_t)match.rm_so) {
+                        ^

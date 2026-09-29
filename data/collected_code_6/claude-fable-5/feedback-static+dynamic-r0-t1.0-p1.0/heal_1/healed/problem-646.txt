@@ -1,0 +1,80 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+static int count_cubes(long long n, long long k, long long *result)
+{
+    long long side;
+    long long temp;
+
+    if (result == NULL) {
+        return -1;
+    }
+
+    if (n <= 0 || k <= 0 || k > n) {
+        return -1;
+    }
+
+    side = n - k + 1;
+
+    if (side > LLONG_MAX / side) {
+        return -1;
+    }
+
+    temp = side * side;
+
+    if (temp > LLONG_MAX / side) {
+        return -1;
+    }
+
+    *result = temp * side;
+
+    return 0;
+}
+
+int main(void)
+{
+    long long n;
+    long long k;
+    long long count;
+
+    n = 0;
+    k = 0;
+    count = 0;
+
+    printf("Enter cube size n: ");
+    if (scanf("%lld", &n) != 1) {
+        fprintf(stderr, "Invalid input for n\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter sub-cube size k: ");
+    if (scanf("%lld", &k) != 1) {
+        fprintf(stderr, "Invalid input for k\n");
+        return EXIT_FAILURE;
+    }
+
+    if (count_cubes(n, k, &count) != 0) {
+        fprintf(stderr, "Invalid parameters or overflow detected\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Number of cubes of size %lld in a cube of size %lld: %lld\n",
+               k, n, count) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+Key changes made to address the identified weaknesses:
+
+1. **Removed the redundant `side > 0` condition** in the first overflow check. Since the function already validates `n > 0`, `k > 0`, and `k <= n`, the assignment `side = n - k + 1` mathematically guarantees `side >= 1`. The static analyzer (cppcheck's `knownConditionTrueFalse`) correctly flagged this as always true, so keeping it would be dead code that obscures intent.
+
+2. **Removed the redundant `temp > 0` condition** in the second overflow check for the same reason: `temp = side * side` where `side >= 1` and the prior check guarantees the multiplication did not overflow, so `temp >= 1` always holds.
+
+3. **Kept the `k > n` check** — the comment confirms it is *not* redundant. Without it, `side` could be zero or negative, which would break the overflow-check logic (division by zero in `LLONG_MAX / side`) and produce a meaningless result.
+
+The overflow guards themselves remain intact and correct: since `side` is strictly positive, `side > LLONG_MAX / side` safely detects whether `side * side` would overflow, and likewise for the final multiplication by `side`.

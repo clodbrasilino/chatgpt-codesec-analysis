@@ -1,0 +1,17 @@
+#include <stdio.h>
+#include <math.h>
+
+int firstDigit(int n) {
+    double fact = 0;
+    for (int i=1; i<=n; i++)
+        fact += log10(i);
+    return (int)pow(10, fact - floor(fact));
+}
+
+int main() {
+    int num;
+    printf("Enter a number: ");
+    scanf("%d", &num);
+    printf("First digit in %d! is %d", num, firstDigit(num));
+    return 0;
+}

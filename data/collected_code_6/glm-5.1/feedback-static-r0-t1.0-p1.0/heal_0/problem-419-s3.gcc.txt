@@ -1,0 +1,15 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-419-s3.c: In function 'calculate_rounded_sum':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-419-s3.c:17:15: error: 'INT_MAX' undeclared (first use in this function)
+   17 |     if (sum > INT_MAX || sum < INT_MIN) {
+      |               ^~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-419-s3.c:4:1: note: 'INT_MAX' is defined in header '<limits.h>'; this is probably fixable by adding '#include <limits.h>'
+    3 | #include <stdlib.h>
+  +++ |+#include <limits.h>
+    4 | 
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-419-s3.c:17:15: note: each undeclared identifier is reported only once for each function it appears in
+   17 |     if (sum > INT_MAX || sum < INT_MIN) {
+      |               ^~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-419-s3.c:17:32: error: 'INT_MIN' undeclared (first use in this function)
+   17 |     if (sum > INT_MAX || sum < INT_MIN) {
+      |                                ^~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-419-s3.c:17:32: note: 'INT_MIN' is defined in header '<limits.h>'; this is probably fixable by adding '#include <limits.h>'

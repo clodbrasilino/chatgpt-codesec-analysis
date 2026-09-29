@@ -1,0 +1,81 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+#define MAX_INPUT_LEN 4096U
+
+static size_t boundedLength(const char *s, size_t maxLen)
+{
+    size_t i;
+
+    for (i = 0U; i < maxLen; i++)
+    {
+        if (s[i] == '\0')
+        {
+            break;
+        }
+    }
+
+    return i;
+}
+
+int countOddRotations(const char *s)
+{
+    size_t len;
+    size_t i;
+    int count;
+
+    if (s == NULL)
+    {
+        return -1;
+    }
+
+    len = boundedLength(s, MAX_INPUT_LEN);
+    if ((len == 0U) || (len >= MAX_INPUT_LEN))
+    {
+        return -1;
+    }
+
+    count = 0;
+    for (i = 0U; i < len; i++)
+    {
+        if (s[i] == '1')
+        {
+            count++;
+        }
+        else if (s[i] != '0')
+        {
+            return -1;
+        }
+    }
+
+    return count;
+}
+
+int main(void)
+{
+    const char *tests[] = { "011001", "11011", "0000", "1", "101" };
+    size_t numTests = sizeof(tests) / sizeof(tests[0]);
+    size_t i;
+
+    for (i = 0U; i < numTests; i++)
+    {
+        int result = countOddRotations(tests[i]);
+        if (result < 0)
+        {
+            if (fprintf(stderr, "Invalid input: %s\n", tests[i]) < 0)
+            {
+                return EXIT_FAILURE;
+            }
+        }
+        else
+        {
+            if (printf("String: %s -> Odd rotations: %d\n", tests[i], result) < 0)
+            {
+                return EXIT_FAILURE;
+            }
+        }
+    }
+
+    return EXIT_SUCCESS;
+}

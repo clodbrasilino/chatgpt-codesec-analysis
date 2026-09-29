@@ -1,0 +1,6 @@
+collected_code/problem-879-0.c:15:28: error: Cannot determine that 'string[0]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+    reti = regexec(&regex, string, 0, NULL, 0);
+                           ^
+collected_code/problem-879-0.c:23:32: error: Cannot determine that 'msgbuf[0]' is initialized [premium-bughuntingUninit]
+        regerror(reti, &regex, msgbuf, sizeof(msgbuf));
+                               ^

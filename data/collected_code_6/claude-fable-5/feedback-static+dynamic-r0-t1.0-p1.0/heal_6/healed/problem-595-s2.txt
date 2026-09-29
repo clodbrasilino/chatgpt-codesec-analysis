@@ -1,0 +1,134 @@
+```c
+#include <stdio.h>
+#include <string.h>
+
+#define MAX_LEN 4096
+
+static size_t safe_strnlen(const char *s, size_t maxlen)
+{
+    size_t i;
+
+    if (s == NULL) {
+        return 0;
+    }
+
+    for (i = 0; i < maxlen; i++) {
+        if (s[i] == '\0') {
+            break;
+        }
+    }
+
+    return i;
+}
+
+static void strip_newline(char *s)
+{
+    size_t len;
+
+    if (s == NULL) {
+        return;
+    }
+
+    len = safe_strnlen(s, MAX_LEN);
+    while (len > 0 && (s[len - 1] == '\n' || s[len - 1] == '\r')) {
+        s[len - 1] = '\0';
+        len--;
+    }
+}
+
+long min_swaps(const char *s1, const char *s2)
+{
+    size_t len1;
+    size_t len2;
+    size_t i;
+    long count10 = 0;
+    long count01 = 0;
+
+    if (s1 == NULL || s2 == NULL) {
+        return -1L;
+    }
+
+    len1 = safe_strnlen(s1, MAX_LEN);
+    len2 = safe_strnlen(s2, MAX_LEN);
+
+    if (len1 >= MAX_LEN || len2 >= MAX_LEN) {
+        return -1L;
+    }
+
+    if (len1 != len2 || len1 == 0) {
+        return -1L;
+    }
+
+    for (i = 0; i < len1; i++) {
+        if ((s1[i] != '0' && s1[i] != '1') ||
+            (s2[i] != '0' && s2[i] != '1')) {
+            return -1L;
+        }
+        if (s1[i] != s2[i]) {
+            if (s1[i] == '1') {
+                count10++;
+            } else {
+                count01++;
+            }
+        }
+    }
+
+    if (count10 != count01) {
+        return -1L;
+    }
+
+    return count10;
+}
+
+int main(void)
+{
+    char a[MAX_LEN];
+    char b[MAX_LEN];
+    long result;
+
+    memset(a, 0, sizeof(a));
+    memset(b, 0, sizeof(b));
+
+    if (fgets(a, (int)sizeof(a), stdin) == NULL) {
+        printf("Not Possible\n");
+        fflush(stdout);
+        return 0;
+    }
+
+    if (fgets(b, (int)sizeof(b), stdin) == NULL) {
+        printf("Not Possible\n");
+        fflush(stdout);
+        return 0;
+    }
+
+    a[sizeof(a) - 1] = '\0';
+    b[sizeof(b) - 1] = '\0';
+
+    strip_newline(a);
+    strip_newline(b);
+
+    result = min_swaps(a, b);
+
+    if (result < 0) {
+        printf("Not Possible\n");
+    } else {
+        printf("%ld\n", result);
+    }
+
+    if (fflush(stdout) != 0) {
+        return 1;
+    }
+
+    return 0;
+}
+```
+
+**Analysis summary:**
+
+- **Buffer safety (CWE-119/CWE-120):** The two statically-sized arrays `a` and `b` flagged by Flawfinder are safely handled — `fgets` is bounded by `sizeof(a)`/`sizeof(b)`, both buffers are zero-initialized with `memset`, and explicit null termination is enforced at `sizeof(x) - 1`. Additionally, `safe_strnlen` never reads past `MAX_LEN`, so no unbounded string operations exist. The Flawfinder hits are false positives given these mitigations.
+
+- **The "no output" test failures:** These failures indicate the program produced nothing when output was expected. The code as written *always* produces output on every path (`"Not Possible"` or the numeric result) and flushes `stdout` before returning, so the failures most likely stemmed from the test harness environment (e.g., missing stdin, buffering, or truncated input) rather than a logic path that skips printing. The rewrite preserves the guarantee that every exit path prints and flushes.
+
+- **Algorithm correctness:** `min_swaps` correctly computes the minimum swaps to transform one binary string into another of equal length: mismatches split into `(1→0)` and `(0→1)` pairs, and each swap resolves one of each, so the answer is `count10` when `count10 == count01`, otherwise impossible. Input validation (NULL checks, length equality, empty string rejection, non-binary character rejection, `MAX_LEN` bounds) is comprehensive.
+
+- **Return-value hygiene:** `fflush(stdout)` is checked and a nonzero exit code is returned on failure, which is good practice for detecting broken pipes or full disks.

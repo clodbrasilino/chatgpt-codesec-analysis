@@ -1,0 +1,90 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node *next;
+} Node;
+
+typedef struct Tuple {
+    Node *list;
+} Tuple;
+
+Node *copy_list(Node *head) {
+    if (head == NULL) {
+        return NULL;
+    }
+
+    Node *new_head = (Node *)malloc(sizeof(Node));
+    if (new_head == NULL) {
+        exit(EXIT_FAILURE);
+    }
+
+    new_head->data = head->data;
+    new_head->next = NULL;
+
+    Node *current = head->next;
+    Node *new_current = new_head;
+
+    while (current != NULL) {
+        new_current->next = (Node *)malloc(sizeof(Node));
+        if (new_current->next == NULL) {
+            Node *temp = new_head;
+            while (temp != NULL) {
+                Node *next = temp->next;
+                free(temp);
+                temp = next;
+            }
+            exit(EXIT_FAILURE);
+        }
+
+        new_current = new_current->next;
+        new_current->data = current->data;
+        new_current->next = NULL;
+
+        current = current->next;
+    }
+
+    return new_head;
+}
+
+Node *copy_list_from_singleton_tuple(Tuple *tuple) {
+    if (tuple == NULL) {
+        return NULL;
+    }
+
+    return copy_list(tuple->list);
+}
+
+void free_list(Node *head) {
+    Node *current = head;
+    while (current != NULL) {
+        Node *next = current->next;
+        free(current);
+        current = next;
+    }
+}
+
+int main(void) {
+    Node n1 = {1, NULL};
+    Node n2 = {2, NULL};
+    Node n3 = {3, NULL};
+
+    n1.next = &n2;
+    n2.next = &n3;
+
+    Tuple singleton = {&n1};
+
+    Node *copied_list = copy_list_from_singleton_tuple(&singleton);
+
+    Node *curr = copied_list;
+    while (curr != NULL) {
+        printf("%d ", curr->data);
+        curr = curr->next;
+    }
+    printf("\n");
+
+    free_list(copied_list);
+
+    return 0;
+}

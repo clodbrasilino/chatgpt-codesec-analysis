@@ -1,0 +1,117 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node *next;
+} Node;
+
+Node *create_node(int data);
+Node *append_node(Node **head, int data);
+Node *alternate_list(const Node *head);
+void free_list(Node *head);
+void print_list(const Node *head);
+
+Node *create_node(int data) {
+    Node *new_node = malloc(sizeof(*new_node));
+    if (new_node == NULL) {
+        return NULL;
+    }
+    new_node->data = data;
+    new_node->next = NULL;
+    return new_node;
+}
+
+Node *append_node(Node **head, int data) {
+    Node *new_node = create_node(data);
+    if (new_node == NULL) {
+        return NULL;
+    }
+    if (*head == NULL) {
+        *head = new_node;
+    } else {
+        Node *current = *head;
+        while (current->next != NULL) {
+            current = current->next;
+        }
+        current->next = new_node;
+    }
+    return new_node;
+}
+
+Node *alternate_list(const Node *head) {
+    Node *new_head = NULL;
+    Node *tail = NULL;
+    const Node *current = head;
+    int take = 1;
+
+    while (current != NULL) {
+        if (take) {
+            Node *new_node = create_node(current->data);
+            if (new_node == NULL) {
+                free_list(new_head);
+                return NULL;
+            }
+            if (new_head == NULL) {
+                new_head = new_node;
+            } else {
+                tail->next = new_node;
+            }
+            tail = new_node;
+        }
+        take = !take;
+        current = current->next;
+    }
+    return new_head;
+}
+
+void free_list(Node *head) {
+    Node *current = head;
+    while (current != NULL) {
+        Node *next = current->next;
+        free(current);
+        current = next;
+    }
+}
+
+void print_list(const Node *head) {
+    const Node *current = head;
+    while (current != NULL) {
+        printf("%d", current->data);
+        if (current->next != NULL) {
+            printf(" -> ");
+        }
+        current = current->next;
+    }
+    printf("\n");
+}
+
+int main(void) {
+    Node *list = NULL;
+    int values[] = {1, 2, 3, 4, 5, 6, 7, 8, 9};
+    size_t count = sizeof(values) / sizeof(values[0]);
+    size_t i;
+
+    for (i = 0; i < count; ++i) {
+        if (append_node(&list, values[i]) == NULL) {
+            free_list(list);
+            return EXIT_FAILURE;
+        }
+    }
+
+    Node *alternate = alternate_list(list);
+    if (alternate == NULL && list != NULL) {
+        free_list(list);
+        return EXIT_FAILURE;
+    }
+
+    printf("Original list: ");
+    print_list(list);
+    printf("Alternate list: ");
+    print_list(alternate);
+
+    free_list(alternate);
+    free_list(list);
+
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,41 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+double geometric_sum_recursive(int n);
+double geometric_sum_iterative(int n);
+
+double geometric_sum_recursive(int n) {
+    if (n == 0) {
+        return 0.0;
+    }
+    if (n == 1) {
+        return 1.0;
+    }
+    return 1.0 / pow(2.0, (double)(n - 1)) + geometric_sum_recursive(n - 1);
+}
+
+double geometric_sum_iterative(int n) {
+    double sum = 0.0;
+    for (int i = 0; i < n; i++) {
+        sum += 1.0 / pow(2.0, (double)i);
+    }
+    return sum;
+}
+ /* Possible weaknesses found:
+  * Fuzzing found a crash (signal 6) on input id:000000,sig:11,src:000003,time:219,execs:135,op:havoc,rep:5; likely memory-safety defect
+  */
+
+int main(void) {
+    int n = 0;
+    printf("Enter n: ");
+    if (scanf("%d", &n) != 1) {
+        return 1;
+    }
+    if (n < 0) {
+        return 1;
+    }
+    double result = geometric_sum_recursive(n);
+    printf("%.10f\n", result);
+    return 0;
+}

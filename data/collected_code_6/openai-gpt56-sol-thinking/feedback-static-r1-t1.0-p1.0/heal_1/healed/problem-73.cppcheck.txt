@@ -1,0 +1,22 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol-thinking/feedback-static-r1-t1.0-p1.0/heal_1/healed/problem-73.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol-thinking/feedback-static-r1-t1.0-p1.0/heal_1/healed/problem-73.c:145:25: style: Condition 'match_start==match_end' is always false [knownConditionTrueFalse]
+        if (match_start == match_end) {
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol-thinking/feedback-static-r1-t1.0-p1.0/heal_1/healed/problem-73.c:131:25: note: Assuming that condition 'match.rm_eo<match.rm_so' is not redundant
+            match.rm_eo < match.rm_so) {
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol-thinking/feedback-static-r1-t1.0-p1.0/heal_1/healed/problem-73.c:136:34: note: match_start is assigned '(unsigned long)match.rm_so' here.
+        const size_t match_start = (size_t)match.rm_so;
+                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol-thinking/feedback-static-r1-t1.0-p1.0/heal_1/healed/problem-73.c:137:34: note: Assignment 'match_end=(unsigned long)match.rm_eo', assigned value is less than symbolic=match_start-1
+        const size_t match_end = (size_t)match.rm_eo;
+                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol-thinking/feedback-static-r1-t1.0-p1.0/heal_1/healed/problem-73.c:140:37: note: Assuming condition is false
+        if (match_start > remaining || match_end > remaining) {
+                                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol-thinking/feedback-static-r1-t1.0-p1.0/heal_1/healed/problem-73.c:145:25: note: Condition 'match_start==match_end' is always false
+        if (match_start == match_end) {
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol-thinking/feedback-static-r1-t1.0-p1.0/heal_1/healed/problem-73.c:189:26: style: Parameter 'argv' can be declared as const array [constParameter]
+int main(int argc, char *argv[])
+                         ^

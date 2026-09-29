@@ -1,0 +1,54 @@
+#include<stdio.h>
+
+typedef struct tuple {
+    int a;
+    int b;
+    int c;
+    int d;
+} Tuple;
+
+int find_max(Tuple* records, int size) {
+    if (!records || size == 0) {
+        return -1;
+    }
+
+    int max = records[0].a;
+    
+    for (int i = 0; i < size; ++i) {
+        if (records[i].a > max) {
+            max = records[i].a;
+        }
+        if (records[i].b > max) {
+            max = records[i].b;
+        }
+        if (records[i].c > max) {
+            max = records[i].c;
+        }
+        if (records[i].d > max) {
+            max = records[i].d;
+        }
+    }
+
+    return max;
+}
+
+int main() {
+    Tuple records[] = { 
+        {1, 2, 3, 4},
+        {5, 16, 7, 8},
+        {9, 10, 11, 121},
+        {13, 14, 15, 16},
+        {17, 18, 19, 20}
+    };
+
+    int size = sizeof(records) / sizeof(records[0]);
+
+    int max = find_max(records, size);
+    if(max == -1) {
+        printf("Invalid Input.\n");
+    } else {
+        printf("The maximum element is %d.\n", max);
+    }
+
+    return 0;
+}

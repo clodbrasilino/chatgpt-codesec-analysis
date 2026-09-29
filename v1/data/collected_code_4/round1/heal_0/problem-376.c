@@ -1,0 +1,26 @@
+#include <stdio.h>
+#define ARRAY_SIZE 100
+#define DUPLICATE_VALUE -1
+
+void replaceDuplicates(int arr[], int n, int replaceNum) {
+    for (int i = 0; i < n; i++) {
+        for (int j = i + 1; j < n; j++) {
+            if (i != j && arr[i] == arr[j]) {
+                arr[j] = replaceNum;
+            }
+        }
+    }
+}
+
+int main() {
+    int arr[ARRAY_SIZE] = {1, 2, 3, 2, 1, 4, 5, 6, 5};
+    int n = sizeof(arr) / sizeof(arr[0]);
+
+    replaceDuplicates(arr, n, DUPLICATE_VALUE);
+
+    for (int i = 0; i < n; i++) {
+        printf("%d ", arr[i]);
+    }
+
+    return 0;
+}

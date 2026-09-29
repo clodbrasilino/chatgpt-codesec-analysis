@@ -1,0 +1,84 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int count_rotations(const int *arr, size_t n)
+{
+    size_t low;
+    size_t high;
+    size_t mid;
+
+    if (arr == NULL || n == 0U) {
+        return -1;
+    }
+
+    low = 0U;
+    high = n - 1U;
+
+    while (low < high) {
+        if (arr[low] <= arr[high]) {
+            return (int)low;
+        }
+
+        mid = low + ((high - low) / 2U);
+
+        if (arr[mid] > arr[high]) {
+            low = mid + 1U;
+        } else {
+            high = mid;
+        }
+    }
+
+    return (int)low;
+}
+
+int main(void)
+{
+    int arr1[] = {15, 18, 2, 3, 6, 12};
+    int arr2[] = {7, 9, 11, 12, 5};
+    int arr3[] = {1, 2, 3, 4, 5};
+    int result;
+
+    result = count_rotations(arr1, sizeof(arr1) / sizeof(arr1[0]));
+    if (result < 0) {
+        fprintf(stderr, "Error computing rotations for arr1\n");
+        return EXIT_FAILURE;
+    }
+    printf("Rotations for arr1: %d\n", result);
+
+    result = count_rotations(arr2, sizeof(arr2) / sizeof(arr2[0]));
+    if (result < 0) {
+        fprintf(stderr, "Error computing rotations for arr2\n");
+        return EXIT_FAILURE;
+    }
+    printf("Rotations for arr2: %d\n", result);
+
+    result = count_rotations(arr3, sizeof(arr3) / sizeof(arr3[0]));
+    if (result < 0) {
+        fprintf(stderr, "Error computing rotations for arr3\n");
+        return EXIT_FAILURE;
+    }
+    printf("Rotations for arr3: %d\n", result);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The comment indicated test case 1 previously failed with an off-by-one result (expected 2, got 3), which is the classic symptom of an incorrect binary search for the rotation pivot — typically caused by using `high = mid - 1U` instead of `high = mid`, or comparing `arr[mid]` against `arr[low]` instead of `arr[high]`.
+
+The corrected logic above resolves this:
+
+1. **`high = mid` (not `mid - 1`)** — when `arr[mid] <= arr[high]`, the element at `mid` itself could be the minimum, so it must remain in the search window. Excluding it is what produced the off-by-one `3` instead of `2` for `arr1`.
+2. **`low = mid + 1U`** — when `arr[mid] > arr[high]`, the pivot is strictly to the right of `mid`, so `mid` can be safely excluded.
+3. **Early exit `arr[low] <= arr[high]`** — the subrange is already sorted, so `low` is the pivot index; this also correctly handles the non-rotated `arr3` case, returning `0`.
+4. **NULL/zero-length guard** returning `-1` prevents dereferencing invalid input, and the caller checks for it.
+
+Expected output:
+
+```
+Rotations for arr1: 2
+Rotations for arr2: 4
+Rotations for arr3: 0
+```

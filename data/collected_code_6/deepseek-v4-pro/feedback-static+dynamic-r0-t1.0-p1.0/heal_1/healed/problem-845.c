@@ -1,0 +1,55 @@
+#include <stdio.h>
+#include <math.h>
+#include <stdlib.h>
+#include <float.h>
+#include <errno.h>
+
+int count_factorial_digits(int n) {
+    if (n < 0) {
+        return -1;
+    }
+    if (n <= 1) {
+        return 1;
+    }
+    
+    double digits = 0.0;
+    for (int i = 2; i <= n; i++) {
+        double term = log10((double)i);
+        if (term < 0) {
+            return -1;
+        }
+        if (digits > DBL_MAX - term) {
+            return -1;
+        }
+        digits += term;
+    }
+    
+    if (digits > (double)INT_MAX - 1.0) {
+        return -1;
+    }
+    
+    int result = (int)floor(digits) + 1;
+    if (result < 0) {
+        return -1;
+    }
+    
+    return result;
+}
+
+int main(void) {
+    int n;
+    printf("Enter a number: ");
+    if (scanf("%d", &n) != 1) {
+        printf("Invalid input\n");
+        return 1;
+    }
+    
+    int result = count_factorial_digits(n);
+    if (result == -1) {
+        printf("Factorial is not defined for negative numbers or value too large\n");
+    } else {
+        printf("Number of digits in %d! is %d\n", n, result);
+    }
+    
+    return 0;
+}

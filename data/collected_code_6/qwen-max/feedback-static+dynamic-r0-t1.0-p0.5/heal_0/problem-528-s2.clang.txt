@@ -1,0 +1,15 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-528-s2.c:45:29: error: assigning to 'List' (aka 'struct List') from incompatible type 'List *' (aka 'struct List *'); dereference with *
+   45 |             result[count++] = lists[i];
+      |                             ^ ~~~~~~~~
+      |                               *
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-528-s2.c:48:19: error: assigning to 'List' (aka 'struct List') from incompatible type 'void *'
+   48 |     result[count] = NULL;
+      |                   ^ ~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-528-s2.c:63:37: error: invalid operands to binary expression ('List' (aka 'struct List') and 'void *')
+   63 |     for (size_t i = 0; min_lists[i] != NULL; ++i) {
+      |                        ~~~~~~~~~~~~ ^  ~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-528-s2.c:64:63: error: member reference type 'List' (aka 'struct List') is not a pointer; did you mean to use '.'?
+   64 |         printf("List with minimum length: %zu\n", min_lists[i]->length);
+      |                                                   ~~~~~~~~~~~~^~
+      |                                                               .
+4 errors generated.

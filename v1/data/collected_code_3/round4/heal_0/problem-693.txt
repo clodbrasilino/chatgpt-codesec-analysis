@@ -1,0 +1,33 @@
+The C programming language does not natively support regular expressions (regex). However, you can use the POSIX regex library in C to perform regex operations. But in this case, to remove multiple spaces from a string, we don't need regex. We can simply iterate over the string and copy non-space characters or a single space after multiple spaces to a new string. Here is the code:
+
+```c
+#include <stdio.h>
+#include <stdbool.h>
+
+void removeMultipleSpaces(char* str) {
+    int i = 0, j = 0;
+    bool spaceFound = false;
+
+    while (str[i]) {
+        if (str[i] != ' ') {
+            str[j++] = str[i];
+            spaceFound = false;
+        }
+        else if (str[i] == ' ' && !spaceFound) {
+            str[j++] = str[i];
+            spaceFound = true;
+        }
+        i++;
+    }
+    str[j] = '\0';
+}
+
+int main() {
+    char str[] = "This   is  a    string  with   multiple   spaces";
+    removeMultipleSpaces(str);
+    printf("%s", str);
+    return 0;
+}
+```
+
+This program will print: "This is a string with multiple spaces"

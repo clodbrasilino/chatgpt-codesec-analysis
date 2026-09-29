@@ -1,0 +1,185 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdint.h>
+
+struct word_count {
+    char *word;
+    size_t length;
+    size_t count;
+};
+
+static char *duplicate_string(const char *src, size_t len)
+{
+    char *copy;
+
+    if (src == NULL) {
+        return NULL;
+    }
+    if (len >= SIZE_MAX) {
+        return NULL;
+    }
+    copy = malloc(len + 1);
+    if (copy == NULL) {
+        return NULL;
+    }
+    if (len > 0) {
+        /* Possible weaknesses found:
+         * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+         */
+        memcpy(copy, src, len);
+    }
+    copy[len] = '\0';
+    return copy;
+}
+
+static int add_word(struct word_count **table, size_t *size, size_t *capacity,
+                    const char *word, size_t len)
+{
+    size_t i;
+    struct word_count *tmp;
+    char *copy;
+
+    if (table == NULL || size == NULL || capacity == NULL || word == NULL) {
+        return -1;
+    }
+
+    for (i = 0; i < *size; i++) {
+        if ((*table)[i].length == len &&
+            memcmp((*table)[i].word, word, len) == 0) {
+            if ((*table)[i].count == SIZE_MAX) {
+                return -1;
+            }
+            (*table)[i].count++;
+            return 0;
+        }
+    }
+
+    if (*size == *capacity) {
+        size_t new_capacity = (*capacity == 0) ? 16 : (*capacity * 2);
+        if (new_capacity <= *capacity) {
+            return -1;
+        }
+        if (new_capacity > SIZE_MAX / sizeof(struct word_count)) {
+            return -1;
+        }
+        tmp = realloc(*table, new_capacity * sizeof(struct word_count));
+        if (tmp == NULL) {
+            return -1;
+        }
+        *table = tmp;
+        *capacity = new_capacity;
+    }
+
+    copy = duplicate_string(word, len);
+    if (copy == NULL) {
+        return -1;
+    }
+
+    (*table)[*size].word = copy;
+    (*table)[*size].length = len;
+    (*table)[*size].count = 1;
+    (*size)++;
+    return 0;
+}
+
+static void free_table(struct word_count *table, size_t size)
+{
+    size_t i;
+
+    if (table == NULL) {
+        return;
+    }
+    for (i = 0; i < size; i++) {
+        free(table[i].word);
+    }
+    free(table);
+}
+
+char *most_frequent_word(const char *const *strings, size_t num_strings)
+{
+    struct word_count *table = NULL;
+    size_t size = 0;
+    size_t capacity = 0;
+    size_t i;
+    size_t best_index;
+    char *result;
+
+    if (strings == NULL || num_strings == 0) {
+        return NULL;
+    }
+
+    for (i = 0; i < num_strings; i++) {
+        const char *p = strings[i];
+
+        if (p == NULL) {
+            continue;
+        }
+
+        while (*p != '\0') {
+            const char *start;
+            size_t len;
+
+            while (*p != '\0' && !isalnum((unsigned char)*p)) {
+                p++;
+            }
+            if (*p == '\0') {
+                break;
+            }
+            start = p;
+            while (*p != '\0' && isalnum((unsigned char)*p)) {
+                p++;
+            }
+            len = (size_t)(p - start);
+            if (len > 0) {
+                if (add_word(&table, &size, &capacity, start, len) != 0) {
+                    free_table(table, size);
+                    return NULL;
+                }
+            }
+        }
+    }
+
+    if (size == 0) {
+        free_table(table, size);
+        return NULL;
+    }
+
+    best_index = 0;
+    for (i = 1; i < size; i++) {
+        if (table[i].count > table[best_index].count) {
+            best_index = i;
+        }
+    }
+
+    result = duplicate_string(table[best_index].word,
+                              table[best_index].length);
+    free_table(table, size);
+    return result;
+}
+
+int main(void)
+{
+    const char *const strings[] = {
+        "the quick brown fox jumps over the lazy dog",
+        "the dog barked at the fox",
+        "a fox and the dog met the cat"
+    };
+    size_t num_strings = sizeof(strings) / sizeof(strings[0]);
+    char *result;
+
+    result = most_frequent_word(strings, num_strings);
+    if (result == NULL) {
+        fprintf(stderr, "Failed to find the most frequent word\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Most frequent word: %s\n", result) < 0) {
+        free(result);
+        return EXIT_FAILURE;
+    }
+
+    free(result);
+    return EXIT_SUCCESS;
+}

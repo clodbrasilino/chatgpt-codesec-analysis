@@ -1,0 +1,39 @@
+collected_code/heal_round_4/healed/problem-542.c: In function 'replace_chars':
+collected_code/heal_round_4/healed/problem-542.c:20:30: warning: heap-based buffer overflow [CWE-122] [-Wanalyzer-out-of-bounds]
+   20 |             new_str[len - 1] = '\0';
+      |             ~~~~~~~~~~~~~~~~~^~~~~~
+  'replace_chars': events 1-4
+    |
+    |   14 |     if (str) {
+    |      |        ^
+    |      |        |
+    |      |        (1) following 'true' branch (when 'str' is non-NULL)...
+    |   15 |         len = strlen(str) + 1;
+    |      |               ~~~~~~~~~~~
+    |      |               |
+    |      |               (2) ...to here
+    |   16 | 
+    |   17 |         char *new_str = malloc(len);
+    |      |                         ~~~~~~~~~~~
+    |      |                         |
+    |      |                         (3) capacity: 'len' bytes
+    |   18 |         if (new_str) {
+    |      |            ~
+    |      |            |
+    |      |            (4) following 'true' branch (when 'new_str' is non-NULL)...
+    |
+  'replace_chars': event 5
+    |
+    |   19 |             memcpy(new_str, str, len);
+    |      |             ^~~~~~
+    |      |             |
+    |      |             (5) ...to here
+    |
+  'replace_chars': event 6
+    |
+    |   20 |             new_str[len - 1] = '\0';
+    |      |             ~~~~~~~~~~~~~~~~~^~~~~~
+    |      |                              |
+    |      |                              (6) write of 1 byte at offset 'len + 18446744073709551615' exceeds the buffer
+    |
+-macosx_version_min has been renamed to -macos_version_min

@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-772-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-772-s3.c:48:46: style: Condition 'j+word_len<=len' is always true [knownConditionTrueFalse]
+            if (word_len > 0 && j + word_len <= len) {
+                                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-772-s3.c:44:30: note: Assuming condition 'j+word_len>len' is false
+            if (j + word_len > len) {
+                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-772-s3.c:48:46: note: Condition 'j+word_len<=len' is always true
+            if (word_len > 0 && j + word_len <= len) {
+                                             ^

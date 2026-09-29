@@ -1,0 +1,122 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int *data;
+    int size;
+    struct Node *next;
+} Node;
+
+Node *create_node(int *data, int size) {
+    Node *node = (Node *)malloc(sizeof(Node));
+    if (node == NULL) {
+        return NULL;
+    }
+    node->data = data;
+    node->size = size;
+    node->next = NULL;
+    return node;
+}
+
+void free_node(Node *node) {
+    if (node != NULL) {
+        free(node->data);
+        free(node);
+    }
+}
+
+Node *remove_out_of_range(Node *head, int min, int max) {
+    Node dummy;
+    dummy.next = head;
+    Node *prev = &dummy;
+    Node *curr = head;
+
+    while (curr != NULL) {
+        int valid = 1;
+        for (int i = 0; i < curr->size; i++) {
+            if (curr->data[i] < min || curr->data[i] > max) {
+                valid = 0;
+                break;
+            }
+        }
+
+        if (!valid) {
+            prev->next = curr->next;
+            Node *temp = curr;
+            curr = curr->next;
+            free_node(temp);
+        } else {
+            prev = curr;
+            curr = curr->next;
+        }
+    }
+
+    return dummy.next;
+}
+
+void print_list(Node *head) {
+    Node *curr = head;
+    while (curr != NULL) {
+        printf("[");
+        for (int i = 0; i < curr->size; i++) {
+            printf("%d", curr->data[i]);
+            if (i < curr->size - 1) {
+                printf(", ");
+            }
+        }
+        printf("]");
+        if (curr->next != NULL) {
+            printf(" -> ");
+        }
+        curr = curr->next;
+    }
+    printf("\n");
+}
+
+void free_list(Node *head) {
+    Node *curr = head;
+    while (curr != NULL) {
+        Node *temp = curr;
+        curr = curr->next;
+        free_node(temp);
+    }
+}
+
+int main(void) {
+    int a1[] = {1, 2, 3};
+    int a2[] = {4, 5, 6};
+    int a3[] = {7, 8, 9};
+    int a4[] = {10, 11, 12};
+
+    Node *head = create_node(a1, 3);
+    if (head == NULL) {
+        return 1;
+    }
+    head->next = create_node(a2, 3);
+    if (head->next == NULL) {
+        free_list(head);
+        return 1;
+    }
+    head->next->next = create_node(a3, 3);
+    if (head->next->next == NULL) {
+        free_list(head);
+        return 1;
+    }
+    head->next->next->next = create_node(a4, 3);
+    if (head->next->next->next == NULL) {
+        free_list(head);
+        return 1;
+    }
+
+    printf("Original list:\n");
+    print_list(head);
+
+    head = remove_out_of_range(head, 3, 8);
+
+    printf("Filtered list (range 3 to 8):\n");
+    print_list(head);
+
+    free_list(head);
+
+    return 0;
+}

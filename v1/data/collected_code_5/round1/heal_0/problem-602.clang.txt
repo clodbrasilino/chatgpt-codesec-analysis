@@ -1,0 +1,9 @@
+collected_code_5/round1/heal_0/problem-602.c:7:25: error: call to undeclared library function 'calloc' with type 'void *(unsigned long, unsigned long)'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+    7 |     int *count = (int *)calloc(sizeof(int), NO_OF_CHARS);
+      |                         ^
+collected_code_5/round1/heal_0/problem-602.c:7:25: note: include the header <stdlib.h> or explicitly provide a declaration for 'calloc'
+collected_code_5/round1/heal_0/problem-602.c:15:5: error: call to undeclared library function 'free' with type 'void (void *)'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   15 |     free(count);
+      |     ^
+collected_code_5/round1/heal_0/problem-602.c:15:5: note: include the header <stdlib.h> or explicitly provide a declaration for 'free'
+2 errors generated.

@@ -1,0 +1,35 @@
+#include <stdbool.h>
+#include <stdio.h>
+
+bool is_prime(int n) {
+    if (n <= 1) return false;
+    if (n == 2) return true;
+    if (n % 2 == 0) return false;
+    for (int i = 3; i * i <= n; i += 2) {
+        if (n % i == 0) return false;
+    }
+    return true;
+}
+
+int count_primes(int n) {
+    int count = 0;
+    for (int i = 2; i < n; ++i) {
+        if (is_prime(i)) {
+            count++;
+        }
+    }
+    return count;
+}
+
+int main() {
+    int number;
+    printf("Enter a non-negative number: ");
+    scanf("%d", &number);
+    if (number < 0) {
+        printf("Invalid input. Please enter a non-negative number.\n");
+        return 1;
+    }
+    int result = count_primes(number);
+    printf("Number of primes less than %d: %d\n", number, result);
+    return 0;
+}

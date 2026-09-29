@@ -1,0 +1,37 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Point {
+    double x;
+    double y;
+};
+
+int find_parabola_focus(double a, double b, double c, struct Point *focus) {
+    if (a == 0.0) {
+        return -1;
+    }
+    if (focus == NULL) {
+        return -1;
+    }
+
+    focus->x = -b / (2.0 * a);
+    focus->y = c - ((b * b) / (4.0 * a)) + (1.0 / (4.0 * a));
+
+    return 0;
+}
+
+int main(void) {
+    double a = 1.0;
+    double b = 0.0;
+    double c = 0.0;
+    struct Point focus = {0.0, 0.0};
+
+    if (find_parabola_focus(a, b, c, &focus) == 0) {
+        printf("Focus: (%.4f, %.4f)\n", focus.x, focus.y);
+    } else {
+        printf("Error: Invalid parameters for a parabola.\n");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

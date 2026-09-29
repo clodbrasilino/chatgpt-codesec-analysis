@@ -1,0 +1,126 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int is_list;
+    union {
+        int value;
+        struct Node *child;
+    } data;
+    struct Node *next;
+} Node;
+
+Node *create_value_node(int val) {
+    Node *n = (Node *)malloc(sizeof(Node));
+    if (!n) exit(EXIT_FAILURE);
+    n->is_list = 0;
+    n->data.value = val;
+    n->next = NULL;
+    return n;
+}
+
+Node *create_list_node(Node *child) {
+    Node *n = (Node *)malloc(sizeof(Node));
+    if (!n) exit(EXIT_FAILURE);
+    n->is_list = 1;
+    n->data.child = child;
+    n->next = NULL;
+    return n;
+}
+
+int value_exists(Node *list, int val) {
+    Node *curr = list;
+    while (curr) {
+        if (!curr->is_list) {
+            if (curr->data.value == val) return 1;
+        } else {
+            if (value_exists(curr->data.child, val)) return 1;
+        }
+        curr = curr->next;
+    }
+    return 0;
+}
+
+Node *find_nested_elements(Node *nested, Node *other) {
+    Node *result = NULL;
+    Node **tail = &result;
+    Node *curr = nested;
+    while (curr) {
+        if (curr->is_list) {
+            Node *sub_result = find_nested_elements(curr->data.child, other);
+            if (sub_result) {
+                Node *list_node = create_list_node(sub_result);
+                *tail = list_node;
+                tail = &(list_node->next);
+            }
+        } else {
+            if (value_exists(other, curr->data.value)) {
+                Node *val_node = create_value_node(curr->data.value);
+                *tail = val_node;
+                tail = &(val_node->next);
+            }
+        }
+        curr = curr->next;
+    }
+    return result;
+}
+
+void print_list(Node *list) {
+    Node *curr = list;
+    printf("[");
+    while (curr) {
+        if (curr->is_list) {
+            print_list(curr->data.child);
+        } else {
+            printf("%d", curr->data.value);
+        }
+        if (curr->next) printf(", ");
+        curr = curr->next;
+    }
+    printf("]");
+}
+
+void free_list(Node *list) {
+    Node *curr = list;
+    while (curr) {
+        Node *next = curr->next;
+        if (curr->is_list) {
+            free_list(curr->data.child);
+        }
+        free(curr);
+        curr = next;
+    }
+}
+
+int main(void) {
+    Node *other = create_value_node(2);
+    other->next = create_value_node(4);
+    other->next->next = create_value_node(6);
+
+    Node *nested = create_value_node(1);
+    nested->next = create_value_node(2);
+    Node *sub1 = create_value_node(3);
+    sub1->next = create_value_node(4);
+    nested->next->next = create_list_node(sub1);
+    Node *sub2 = create_value_node(5);
+    sub2->next = create_value_node(6);
+    nested->next->next->next = create_list_node(sub2);
+
+    Node *result = find_nested_elements(nested, other);
+
+    printf("Nested: ");
+    print_list(nested);
+    printf("\nOther: ");
+    print_list(other);
+    printf("\nResult: ");
+    print_list(result);
+    printf("\n");
+
+    free_list(nested);
+    free_list(other);
+    free_list(result);
+
+    return 0;
+}
+```

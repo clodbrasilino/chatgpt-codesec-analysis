@@ -1,0 +1,12 @@
+collected_code/problem-326-0.c:15:31: error: Cannot determine that 'strings[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+            if (strcmp(strings[i], strings[j]) == 0)
+                              ^
+collected_code/problem-326-0.c:15:43: error: Cannot determine that 'strings[j]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+            if (strcmp(strings[i], strings[j]) == 0)
+                                          ^
+collected_code/problem-326-0.c:21:39: error: Cannot determine that 'strings[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+            mostFrequentWord = strings[i];
+                                      ^
+collected_code/problem-326-0.c:25:12: error: Cannot determine that 'mostFrequentWord' is initialized [premium-bughuntingUninit]
+    return mostFrequentWord;
+           ^

@@ -1,0 +1,128 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+static int compare_ints(const void *a, const void *b)
+{
+    int x = *(const int *)a;
+    int y = *(const int *)b;
+
+    if (x < y) {
+        return -1;
+    }
+    if (x > y) {
+        return 1;
+    }
+    return 0;
+}
+
+static int *tuple_union(const int *tuple1, size_t len1,
+                        const int *tuple2, size_t len2,
+                        size_t *result_len)
+{
+    int *combined = NULL;
+    int *result = NULL;
+    int *shrunk = NULL;
+    size_t total = 0;
+    size_t i = 0;
+    size_t count = 0;
+
+    if (result_len == NULL) {
+        return NULL;
+    }
+    *result_len = 0;
+
+    if ((tuple1 == NULL && len1 > 0) || (tuple2 == NULL && len2 > 0)) {
+        return NULL;
+    }
+
+    if (len1 > SIZE_MAX - len2) {
+        return NULL;
+    }
+    total = len1 + len2;
+
+    if (total == 0) {
+        return NULL;
+    }
+
+    if (total > SIZE_MAX / sizeof(int)) {
+        return NULL;
+    }
+
+    combined = malloc(total * sizeof(int));
+    if (combined == NULL) {
+        return NULL;
+    }
+
+    if (len1 > 0) {
+        memcpy(combined, tuple1, len1 * sizeof(int));
+    }
+    if (len2 > 0) {
+        memcpy(combined + len1, tuple2, len2 * sizeof(int));
+    }
+
+    qsort(combined, total, sizeof(int), compare_ints);
+
+    result = malloc(total * sizeof(int));
+    if (result == NULL) {
+        free(combined);
+        return NULL;
+    }
+
+    for (i = 0; i < total; i++) {
+        if (count == 0 || result[count - 1] != combined[i]) {
+            result[count] = combined[i];
+            count++;
+        }
+    }
+
+    free(combined);
+
+    shrunk = realloc(result, count * sizeof(int));
+    if (shrunk != NULL) {
+        result = shrunk;
+    }
+
+    *result_len = count;
+    return result;
+}
+
+int main(void)
+{
+    int tuple1[] = {3, 4, 5, 6};
+    int tuple2[] = {5, 7, 4, 10};
+    size_t len1 = sizeof(tuple1) / sizeof(tuple1[0]);
+    size_t len2 = sizeof(tuple2) / sizeof(tuple2[0]);
+    size_t result_len = 0;
+    size_t i = 0;
+    int *result = NULL;
+
+    result = tuple_union(tuple1, len1, tuple2, len2, &result_len);
+    if (result == NULL) {
+        fprintf(stderr, "Failed to compute union\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Union: ");
+    for (i = 0; i < result_len; i++) {
+        if (printf("%d ", result[i]) < 0) {
+            free(result);
+            return EXIT_FAILURE;
+        }
+    }
+    printf("\n");
+
+    free(result);
+    return EXIT_SUCCESS;
+}
+```
+
+Note: `SIZE_MAX` requires `#include <stdint.h>`. Here is the corrected includes section:
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+```

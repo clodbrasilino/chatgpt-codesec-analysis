@@ -1,0 +1,16 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-890-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-890-s3.c:25:12: style: Condition 'n1>n2' is always false [knownConditionTrueFalse]
+    if (n1 > n2) {
+           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-890-s3.c:22:27: note: Assignment 'n1=sizeof(arr1)/sizeof(arr1[0])', assigned value is 6
+    int n1 = sizeof(arr1) / sizeof(arr1[0]);
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-890-s3.c:25:12: note: Condition 'n1>n2' is always false
+    if (n1 > n2) {
+           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-890-s3.c:3:28: style: Parameter 'arr1' can be declared as const array [constParameter]
+int find_extra_element(int arr1[], int arr2[], int n) {
+                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-890-s3.c:3:40: style: Parameter 'arr2' can be declared as const array [constParameter]
+int find_extra_element(int arr1[], int arr2[], int n) {
+                                       ^

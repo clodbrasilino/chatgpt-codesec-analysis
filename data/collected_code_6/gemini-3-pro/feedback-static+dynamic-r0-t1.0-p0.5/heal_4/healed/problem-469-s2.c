@@ -1,0 +1,81 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int maxProfit(int k, const int* prices, int pricesSize) {
+    if (pricesSize <= 1 || k <= 0) {
+        return 0;
+    }
+
+    if (k >= pricesSize / 2) {
+        int max_profit = 0;
+        for (int i = 1; i < pricesSize; i++) {
+            if (prices[i] > prices[i - 1]) {
+                max_profit += prices[i] - prices[i - 1];
+            }
+        }
+        return max_profit;
+    }
+
+    int* buy = (int*)malloc((k + 1) * sizeof(int));
+    int* sell = (int*)malloc((k + 1) * sizeof(int));
+
+    if (!buy || !sell) {
+        if (buy) free(buy);
+        if (sell) free(sell);
+        return 0;
+    }
+
+    for (int i = 0; i <= k; i++) {
+        buy[i] = -1000000000;
+        sell[i] = 0;
+    }
+
+    for (int i = 0; i < pricesSize; i++) {
+        for (int j = 1; j <= k; j++) {
+            int current_buy = sell[j - 1] - prices[i];
+            if (buy[j] < current_buy) {
+                buy[j] = current_buy;
+            }
+            int current_sell = buy[j] + prices[i];
+            if (sell[j] < current_sell) {
+                sell[j] = current_sell;
+            }
+        }
+    }
+
+    int result = sell[k];
+
+    free(buy);
+    free(sell);
+
+    return result;
+}
+
+int main(void) {
+    int k;
+    if (scanf("%d", &k) != 1) {
+        return 0;
+    }
+
+    int pricesSize;
+    if (scanf("%d", &pricesSize) != 1) {
+        return 0;
+    }
+
+    int* prices = (int*)malloc(pricesSize * sizeof(int));
+    if (!prices) {
+        return 0;
+    }
+
+    for (int i = 0; i < pricesSize; i++) {
+        if (scanf("%d", &prices[i]) != 1) {
+            free(prices);
+            return 0;
+        }
+    }
+
+    printf("%d\n", maxProfit(k, prices, pricesSize));
+
+    free(prices);
+    return 0;
+}

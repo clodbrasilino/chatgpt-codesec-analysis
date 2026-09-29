@@ -1,0 +1,66 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node* next;
+} Node;
+
+Node* createNode(int data) {
+    Node* newNode = (Node*)malloc(sizeof(Node));
+    if(newNode == NULL) {
+        printf("Error creating a new node.\n");
+        exit(0);
+    }
+    newNode->data = data;
+    newNode->next = NULL;
+
+    return newNode;
+}
+
+Node* insertBeforeEveryElement(Node* head, int data) {
+    if(head == NULL)
+        return NULL;
+
+    Node* current = head;
+    Node* prev = NULL;
+    while(current != NULL) {
+        Node* newNode = createNode(data);
+        if(prev == NULL) {
+            newNode->next = head;
+            head = newNode;
+        } else {
+            newNode->next = prev->next;
+            prev->next = newNode;
+        }
+        prev = current;
+        current = current->next;
+    }
+    return head;
+}
+
+void printList(Node* head) {
+    Node* ptr = head;
+    while(ptr) {
+        printf("%d -> ", ptr->data);
+        ptr = ptr->next;
+    }
+    printf("NULL\n");
+}
+
+int main() {
+    Node* head = createNode(1);
+    head->next = createNode(2);
+    head->next->next = createNode(3);
+    head->next->next->next = createNode(4);
+
+    printf("Initial list: ");
+    printList(head);
+
+    head = insertBeforeEveryElement(head, 0);
+
+    printf("List after insertion: ");
+    printList(head);
+
+    return 0;
+}

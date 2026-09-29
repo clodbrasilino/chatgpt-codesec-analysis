@@ -1,0 +1,69 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    char data;
+    struct Node *next;
+} Node;
+
+Node *string_to_list(const char *str) {
+    if (str == NULL) {
+        return NULL;
+    }
+
+    Node *head = NULL;
+    Node *tail = NULL;
+
+    for (const char *p = str; *p != '\0'; ++p) {
+        Node *new_node = malloc(sizeof(*new_node));
+        if (new_node == NULL) {
+            while (head != NULL) {
+                Node *temp = head;
+                head = head->next;
+                free(temp);
+            }
+            return NULL;
+        }
+
+        new_node->data = *p;
+        new_node->next = NULL;
+
+        if (tail == NULL) {
+            head = new_node;
+        } else {
+            tail->next = new_node;
+        }
+        tail = new_node;
+    }
+
+    return head;
+}
+
+void free_list(Node *head) {
+    while (head != NULL) {
+        Node *temp = head;
+        head = head->next;
+        free(temp);
+    }
+}
+
+void print_list(const Node *head) {
+    for (const Node *current = head; current != NULL; current = current->next) {
+        putchar(current->data);
+    }
+    putchar('\n');
+}
+
+int main(void) {
+    const char *text = "hello";
+    Node *list = string_to_list(text);
+
+    if (list != NULL) {
+        print_list(list);
+        free_list(list);
+    } else {
+        printf("Failed to convert string or string is empty.\n");
+    }
+
+    return 0;
+}

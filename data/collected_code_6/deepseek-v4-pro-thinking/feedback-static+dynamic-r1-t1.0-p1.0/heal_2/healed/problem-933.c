@@ -1,0 +1,77 @@
+#define _POSIX_C_SOURCE 200809L
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+char *camel_to_snake(const char *input) {
+    if (!input) return NULL;
+
+    size_t capacity = 32;
+    size_t len = 0;
+    char *output = malloc(capacity);
+    if (!output) return NULL;
+
+    const char *src = input;
+    while (*src) {
+        unsigned char c = (unsigned char)*src;
+        if (isupper(c)) {
+            if (len > 0) {
+                if (len + 2 > capacity) {
+                    capacity *= 2;
+                    char *tmp = realloc(output, capacity);
+                    if (!tmp) {
+                        free(output);
+                        return NULL;
+                    }
+                    output = tmp;
+                }
+                output[len++] = '_';
+            }
+            if (len + 1 > capacity) {
+                capacity *= 2;
+                char *tmp = realloc(output, capacity);
+                if (!tmp) {
+                    free(output);
+                    return NULL;
+                }
+                output = tmp;
+            }
+            output[len++] = (char)tolower(c);
+        } else {
+            if (len + 1 > capacity) {
+                capacity *= 2;
+                char *tmp = realloc(output, capacity);
+                if (!tmp) {
+                    free(output);
+                    return NULL;
+                }
+                output = tmp;
+            }
+            output[len++] = (char)c;
+        }
+        src++;
+    }
+
+    if (len + 1 > capacity) {
+        char *tmp = realloc(output, len + 1);
+        if (!tmp) {
+            free(output);
+            return NULL;
+        }
+        output = tmp;
+    }
+    output[len] = '\0';
+    return output;
+}
+
+int main(void) {
+    const char *input = "camelCaseString";
+    char *result = camel_to_snake(input);
+    if (result) {
+        printf("%s\n", result);
+        free(result);
+    }
+    return 0;
+}

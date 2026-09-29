@@ -1,0 +1,90 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    char data;
+    struct Node *next;
+} Node;
+
+static Node *create_node(char data)
+{
+    Node *node = malloc(sizeof(*node));
+    if (node == NULL) {
+        return NULL;
+    }
+    node->data = data;
+    node->next = NULL;
+    return node;
+}
+
+void free_list(Node *head)
+{
+    while (head != NULL) {
+        Node *tmp = head;
+        head = head->next;
+        free(tmp);
+    }
+}
+
+Node *string_to_list(const char *str)
+{
+    Node *head = NULL;
+    Node *tail = NULL;
+    size_t i;
+
+    if (str == NULL) {
+        return NULL;
+    }
+
+    for (i = 0; str[i] != '\0'; i++) {
+        Node *node = create_node(str[i]);
+        if (node == NULL) {
+            free_list(head);
+            return NULL;
+        }
+        if (tail == NULL) {
+            head = node;
+        } else {
+            tail->next = node;
+        }
+        tail = node;
+    }
+
+    return head;
+}
+
+void print_list(const Node *head)
+{
+    while (head != NULL) {
+        putchar(head->data);
+        head = head->next;
+    }
+    putchar('\n');
+}
+
+int main(void)
+{
+    const char *str = "Hello, World!";
+    Node *list = string_to_list(str);
+
+    if (list == NULL) {
+        fprintf(stderr, "Error: failed to convert string to list\n");
+        return EXIT_FAILURE;
+    }
+
+    print_list(list);
+    free_list(list);
+    list = NULL;
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Key fixes applied:**
+
+1. **Implicit declaration of `free_list`**: Moved the definition of `free_list` above `string_to_list`, so the function is fully declared and defined before its first use. This resolves both the `-Wimplicit-function-declaration` warnings and the "conflicting types" error (an implicit declaration assumes `int` return type, which conflicted with the later `void` definition).
+
+2. **Always-true condition**: Simplified `if (list == NULL && str[0] != '\0')` to `if (list == NULL)`. Since `str` points to the non-empty string literal `"Hello, World!"`, the second check was provably always true and added no value — a `NULL` return here can only mean allocation failure.
+
+3. **Removed unused include**: `<string.h>` was dropped since no string library functions are used (`size_t` is provided by `<stdio.h>`/`<stdlib.h>`).

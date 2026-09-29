@@ -1,0 +1,20 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-381-s2.c:14:6: error: conflicting types for 'qsort_r'; have 'void(void *, size_t,  size_t,  int (*)(const void *, const void *, void *), void *)' {aka 'void(void *, long unsigned int,  long unsigned int,  int (*)(const void *, const void *, void *), void *)'}
+   14 | void qsort_r(void *base, size_t nmemb, size_t size, int (*compar)(const void *, const void *, void *), void *arg) {
+      |      ^~~~~~~
+In file included from /Library/Developer/CommandLineTools/SDKs/MacOSX15.sdk/usr/include/stdlib.h:58,
+                 from /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-381-s2.c:2:
+/Library/Developer/CommandLineTools/SDKs/MacOSX15.sdk/usr/include/_stdlib.h:366:10: note: previous declaration of 'qsort_r' with type 'void(void *, size_t,  size_t,  void *, int (*)(void *, const void *, const void *))' {aka 'void(void *, long unsigned int,  long unsigned int,  void *, int (*)(void *, const void *, const void *))'}
+  366 | void     qsort_r(void *_LIBC_SIZE(__nel * __width) __base, size_t __nel, size_t __width, void *,
+      |          ^~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-381-s2.c: In function 'qsort_r':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-381-s2.c:24:9: error: implicit declaration of function 'memcpy' [-Wimplicit-function-declaration]
+   24 |         memcpy(tmp, p + (k * size), size);
+      |         ^~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-381-s2.c:3:1: note: include '<string.h>' or provide a declaration of 'memcpy'
+    2 | #include <stdlib.h>
+  +++ |+#include <string.h>
+    3 | 
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-381-s2.c:25:9: error: implicit declaration of function 'memmove' [-Wimplicit-function-declaration]
+   25 |         memmove(p + size, p, k * size);
+      |         ^~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-381-s2.c:25:9: note: include '<string.h>' or provide a declaration of 'memmove'

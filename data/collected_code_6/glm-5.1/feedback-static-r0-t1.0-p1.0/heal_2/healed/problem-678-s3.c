@@ -1,0 +1,38 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+void remove_spaces(const char *src, char *dst, size_t len) {
+    if (src == NULL || dst == NULL || len == 0) {
+        return;
+    }
+
+    const char *end = src + len;
+
+    while (*src != '\0' && src < end) {
+        if (*src != ' ') {
+            if (dst < end - 1) {
+                *dst = *src;
+                dst++;
+            }
+        }
+        src++;
+    }
+    *dst = '\0';
+}
+
+int main(void) {
+    char buffer[256];
+    char output[256];
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        return EXIT_FAILURE;
+    }
+
+    remove_spaces(buffer, output, sizeof(output));
+
+    if (fputs(output, stdout) == EOF) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

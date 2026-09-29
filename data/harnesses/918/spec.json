@@ -1,0 +1,69 @@
+{
+  "task_id": 918,
+  "text": "Write a C function to count coin change.",
+  "fn_candidates": [
+    "coin_change",
+    "CoinChange",
+    "coinChange",
+    "coinchange"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "coin_change",
+      "args": [
+        [
+          1,
+          2,
+          3
+        ],
+        3,
+        4
+      ],
+      "expected": 4,
+      "assert_src": "assert coin_change([1, 2, 3],3,4)==4"
+    },
+    {
+      "fn_name": "coin_change",
+      "args": [
+        [
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        6,
+        9
+      ],
+      "expected": 2,
+      "assert_src": "assert coin_change([4,5,6,7,8,9],6,9)==2"
+    },
+    {
+      "fn_name": "coin_change",
+      "args": [
+        [
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        6,
+        4
+      ],
+      "expected": 1,
+      "assert_src": "assert coin_change([4,5,6,7,8,9],6,4)==1"
+    }
+  ],
+  "arg_kinds": [
+    "int",
+    "int-list"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

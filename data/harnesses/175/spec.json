@@ -1,0 +1,44 @@
+{
+  "task_id": 175,
+  "text": "Write a C function to verify validity of a string of parentheses.",
+  "fn_candidates": [
+    "is_valid_parenthese",
+    "IsValidParenthese",
+    "isValidParenthese",
+    "isvalidparenthese"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "is_valid_parenthese",
+      "args": [
+        "(){}[]"
+      ],
+      "expected": true,
+      "assert_src": "assert is_valid_parenthese(\"(){}[]\")==True"
+    },
+    {
+      "fn_name": "is_valid_parenthese",
+      "args": [
+        "()[{)}"
+      ],
+      "expected": false,
+      "assert_src": "assert is_valid_parenthese(\"()[{)}\")==False"
+    },
+    {
+      "fn_name": "is_valid_parenthese",
+      "args": [
+        "()"
+      ],
+      "expected": true,
+      "assert_src": "assert is_valid_parenthese(\"()\")==True"
+    }
+  ],
+  "arg_kinds": [
+    "str"
+  ],
+  "return_kind": "bool",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

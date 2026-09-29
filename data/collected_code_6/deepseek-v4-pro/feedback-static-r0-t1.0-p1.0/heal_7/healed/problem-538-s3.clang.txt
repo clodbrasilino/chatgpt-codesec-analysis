@@ -1,0 +1,9 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-538-s3.c:60:19: error: member reference type 'Tuple *' is a pointer; did you mean to use '->'?
+   60 |         free(tuple.items[i]);
+      |              ~~~~~^
+      |                   ->
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-538-s3.c:62:15: error: member reference type 'Tuple *' is a pointer; did you mean to use '->'?
+   62 |     free(tuple.items);
+      |          ~~~~~^
+      |               ->
+2 errors generated.

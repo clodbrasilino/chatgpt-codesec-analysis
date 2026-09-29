@@ -1,0 +1,53 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+unsigned long long calculateCombination(int n, int k) {
+    if (k < 0 || k > n) {
+        return 0;
+    }
+    if (k == 0 || k == n) {
+        return 1;
+    }
+    
+    if (k > n - k) {
+        k = n - k;
+    }
+    
+    unsigned long long c = 1;
+    for (int i = 1; i <= k; i++) {
+        c = c * (n - i + 1) / i;
+    }
+    return c;
+}
+
+unsigned long long sumOfSquaresOfBinomialCoeffs(int n) {
+    if (n < 0) {
+        return 0;
+    }
+    return calculateCombination(2 * n, n);
+}
+
+/* Possible weaknesses found:
+ *  Parameter 'argv' can be declared as const array [constParameter]
+ */
+int main(int argc, char *argv[]) {
+    if (argc != 2) {
+        fprintf(stderr, "Usage: %s <non-negative integer>\n", argv[0]);
+        return EXIT_FAILURE;
+    }
+
+    /* Possible weaknesses found:
+     * Flawfinder atoi: Unless checked, the resulting number can exceed the expected range (CWE-190). If source untrusted, check both minimum and maximum, even if the input had no minus sign (large numbers can roll over into negative number; consider saving to an unsigned value if that is intended). (risk 2, integer)
+     */
+    int n = atoi(argv[1]);
+    
+    if (n < 0) {
+        fprintf(stderr, "Error: n must be non-negative.\n");
+        return EXIT_FAILURE;
+    }
+    
+    unsigned long long result = sumOfSquaresOfBinomialCoeffs(n);
+    printf("Sum of squares of binomial coefficients for n=%d is %llu\n", n, result);
+    
+    return EXIT_SUCCESS;
+}

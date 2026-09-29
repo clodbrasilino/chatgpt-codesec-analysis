@@ -1,0 +1,75 @@
+#include <ctype.h>
+#include <stdio.h>
+
+int is_even_hex(const char *hex) {
+    const char *p;
+    const char *last;
+    int digit;
+
+    if (hex == NULL || *hex == '\0') {
+        return -1;
+    }
+
+    p = hex;
+
+    if (*p == '+' || *p == '-') {
+        p++;
+    }
+
+    if (p[0] == '0' && (p[1] == 'x' || p[1] == 'X')) {
+        p += 2;
+    }
+
+    if (*p == '\0') {
+        return -1;
+    }
+
+    last = p;
+
+    while (*last != '\0') {
+        if (!isxdigit((unsigned char)*last)) {
+            return -1;
+        }
+        last++;
+    }
+
+    last--;
+
+    if (*last >= '0' && *last <= '9') {
+        digit = *last - '0';
+    } else {
+        digit = tolower((unsigned char)*last) - 'a' + 10;
+    }
+
+    return (digit & 1) ? 0 : 1;
+}
+
+int main(void) {
+    const char *tests[] = {
+        "0x1A",
+        "0xFF",
+        "0x10",
+        "0x0",
+        "0x",
+        "0xG",
+        "123",
+        "abc",
+        "-0x1A",
+        NULL
+    };
+    int i;
+
+    for (i = 0; tests[i] != NULL; i++) {
+        int result = is_even_hex(tests[i]);
+
+        if (result == 1) {
+            printf("%s is even\n", tests[i]);
+        } else if (result == 0) {
+            printf("%s is odd\n", tests[i]);
+        } else {
+            printf("%s is invalid\n", tests[i]);
+        }
+    }
+
+    return 0;
+}

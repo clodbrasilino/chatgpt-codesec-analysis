@@ -1,0 +1,69 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <limits.h>
+
+void decimalToBinary(int decimal, char *binary, size_t size) {
+    if (size == 0) {
+        return;
+    }
+
+    if (decimal == 0) {
+        if (size < 2) {
+            binary[0] = '\0';
+            return;
+        }
+        binary[0] = '0';
+        binary[1] = '\0';
+        return;
+    }
+
+    size_t index = 0;
+
+    unsigned int value;
+    if (decimal < 0) {
+        if (size < 2) {
+            binary[0] = '\0';
+            return;
+        }
+        binary[index++] = '-';
+        value = (unsigned int)(-(decimal + 1)) + 1;
+    } else {
+        value = (unsigned int)decimal;
+    }
+
+    char temp[sizeof(int) * CHAR_BIT + 1];
+    size_t temp_index = 0;
+
+    while (value > 0 && temp_index < sizeof(temp) - 1) {
+        temp[temp_index++] = (value % 2) + '0';
+        value /= 2;
+    }
+    temp[temp_index] = '\0';
+
+    for (size_t i = 0; i < temp_index && index < size - 1; i++) {
+        binary[index++] = temp[temp_index - i - 1];
+    }
+
+    if (index < size) {
+        binary[index] = '\0';
+    } else {
+        binary[size - 1] = '\0';
+    }
+}
+
+int main(void) {
+    int decimal;
+    char binary[sizeof(int) * CHAR_BIT + 2];
+
+    printf("Enter a decimal number: ");
+    if (scanf("%d", &decimal) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    decimalToBinary(decimal, binary, sizeof(binary));
+    printf("Binary representation: %s\n", binary);
+
+    return EXIT_SUCCESS;
+}

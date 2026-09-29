@@ -1,0 +1,7 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-902-s3.c:76:45: error: use of undeclared identifier 'INT_MAX'
+   76 |         if ((value > 0 && existing->value > INT_MAX - value) ||
+      |                                             ^~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-902-s3.c:77:45: error: use of undeclared identifier 'INT_MIN'
+   77 |             (value < 0 && existing->value < INT_MIN - value)) {
+      |                                             ^~~~~~~
+2 errors generated.

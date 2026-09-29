@@ -1,0 +1,50 @@
+#include <stdio.h>
+#include <stdint.h>
+#include <inttypes.h>
+#include <errno.h>
+#include <stdlib.h>
+
+uint32_t set_even_bits(uint32_t num) {
+    uint32_t even_bits_mask = 0x55555555U;
+    return num | even_bits_mask;
+}
+
+int main(void) {
+    char input_buffer[32];
+    uint32_t number;
+    char *endptr;
+    unsigned long parsed_value;
+
+    printf("Enter a number (uint32_t): ");
+
+    if (fgets(input_buffer, sizeof(input_buffer), stdin) == NULL) {
+        fprintf(stderr, "Invalid input.\n");
+        return 1;
+    }
+
+    errno = 0;
+    parsed_value = strtoul(input_buffer, &endptr, 10);
+
+    if (errno != 0 || endptr == input_buffer || parsed_value > UINT32_MAX) {
+        fprintf(stderr, "Invalid input.\n");
+        return 1;
+    }
+
+    while (*endptr == ' ' || *endptr == '\t' || *endptr == '\n' || *endptr == '\r') {
+        endptr++;
+    }
+
+    if (*endptr != '\0') {
+        fprintf(stderr, "Invalid input.\n");
+        return 1;
+    }
+
+    number = (uint32_t)parsed_value;
+
+    uint32_t result = set_even_bits(number);
+
+    printf("Original number: %" PRIu32 "\n", number);
+    printf("Number after setting even bits: %" PRIu32 "\n", result);
+
+    return 0;
+}

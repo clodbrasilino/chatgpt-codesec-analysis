@@ -1,0 +1,25 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+/* Possible weaknesses found:
+ *  Parameter 'list' can be declared as pointer to const [constParameterPointer]
+ */
+int count_in_range(int *list, int size, int min, int max) {
+    int count = 0;
+    for (int i = 0; i < size; ++i) {
+        if (list[i] >= min && list[i] <= max) {
+            count++;
+        }
+    }
+    return count;
+}
+
+int main() {
+    int data[] = {1, 5, 10, 15, 20, 25, 30};
+    int size = sizeof(data) / sizeof(data[0]);
+    int min = 5;
+    int max = 25;
+    int result = count_in_range(data, size, min, max);
+    printf("Number of elements in range: %d\n", result);
+    return 0;
+}

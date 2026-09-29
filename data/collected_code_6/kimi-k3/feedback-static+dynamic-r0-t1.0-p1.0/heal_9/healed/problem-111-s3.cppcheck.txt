@@ -1,0 +1,28 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-111-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-111-s3.c:53:19: style: The comparison 'copy_size > max_size*sizeof(int)' is always false because 'copy_size' and 'max_size*sizeof(int)' represent the same value. [knownConditionTrueFalse]
+    if (copy_size > max_size * sizeof(int)) {
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-111-s3.c:52:33: note: 'copy_size' is assigned value 'max_size*sizeof(int)' here.
+    size_t copy_size = max_size * sizeof(int);
+                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-111-s3.c:53:19: note: The comparison 'copy_size > max_size*sizeof(int)' is always false because 'copy_size' and 'max_size*sizeof(int)' represent the same value.
+    if (copy_size > max_size * sizeof(int)) {
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-111-s3.c:74:26: style: The comparison 'current_size > nested->lists[i].size*sizeof(int)' is always false because 'current_size' and 'nested->lists[i].size*sizeof(int)' represent the same value. [knownConditionTrueFalse]
+        if (current_size > nested->lists[i].size * sizeof(int)) {
+                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-111-s3.c:73:53: note: 'current_size' is assigned value 'nested->lists[i].size*sizeof(int)' here.
+        size_t current_size = nested->lists[i].size * sizeof(int);
+                                                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-111-s3.c:74:26: note: The comparison 'current_size > nested->lists[i].size*sizeof(int)' is always false because 'current_size' and 'nested->lists[i].size*sizeof(int)' represent the same value.
+        if (current_size > nested->lists[i].size * sizeof(int)) {
+                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-111-s3.c:184:23: style: The comparison 'copy_size > sizes[i]*sizeof(int)' is always false because 'copy_size' and 'sizes[i]*sizeof(int)' represent the same value. [knownConditionTrueFalse]
+        if (copy_size > sizes[i] * sizeof(int)) {
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-111-s3.c:183:37: note: 'copy_size' is assigned value 'sizes[i]*sizeof(int)' here.
+        size_t copy_size = sizes[i] * sizeof(int);
+                                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-111-s3.c:184:23: note: The comparison 'copy_size > sizes[i]*sizeof(int)' is always false because 'copy_size' and 'sizes[i]*sizeof(int)' represent the same value.
+        if (copy_size > sizes[i] * sizeof(int)) {
+                      ^

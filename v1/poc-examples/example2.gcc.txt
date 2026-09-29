@@ -1,0 +1,202 @@
+example2.c: In function 'main':
+example2.c:22:5: warning: 'bind' on possibly invalid file descriptor 'server_socket' [-Wanalyzer-fd-use-without-check]
+   22 |     bind(server_socket, (struct sockaddr *)&server_address, sizeof(server_address));
+      |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  'main': events 1-2
+    |
+    |   14 |     server_socket = socket(AF_INET, SOCK_STREAM, 0);
+    |      |                     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                     |
+    |      |                     (1) when 'socket' fails
+    |......
+    |   22 |     bind(server_socket, (struct sockaddr *)&server_address, sizeof(server_address));
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) 'server_socket' could be invalid
+    |
+example2.c:25:5: warning: 'listen' on file descriptor 'server_socket' in wrong phase [-Wanalyzer-fd-phase-mismatch]
+   25 |     listen(server_socket, 5);
+      |     ^~~~~~~~~~~~~~~~~~~~~~~~
+  'main': events 1-4
+    |
+    |   14 |     server_socket = socket(AF_INET, SOCK_STREAM, 0);
+    |      |                     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                     |
+    |      |                     (1) stream socket created here
+    |      |                     (2) when 'socket' succeeds
+    |......
+    |   22 |     bind(server_socket, (struct sockaddr *)&server_address, sizeof(server_address));
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (3) when 'bind' fails
+    |......
+    |   25 |     listen(server_socket, 5);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (4) 'listen' expects a bound stream socket file descriptor but 'server_socket' has not yet been bound
+    |
+example2.c:25:5: warning: 'listen' on possibly invalid file descriptor 'server_socket' [-Wanalyzer-fd-use-without-check]
+   25 |     listen(server_socket, 5);
+      |     ^~~~~~~~~~~~~~~~~~~~~~~~
+  'main': events 1-3
+    |
+    |   14 |     server_socket = socket(AF_INET, SOCK_STREAM, 0);
+    |      |                     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                     |
+    |      |                     (1) when 'socket' fails
+    |......
+    |   22 |     bind(server_socket, (struct sockaddr *)&server_address, sizeof(server_address));
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) when 'bind' fails
+    |......
+    |   25 |     listen(server_socket, 5);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (3) 'server_socket' could be invalid
+    |
+example2.c:30:21: warning: 'accept' on file descriptor 'server_socket' in wrong phase [-Wanalyzer-fd-phase-mismatch]
+   30 |     client_socket = accept(server_socket, (struct sockaddr *)&client_address, &client_address_size);
+      |                     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  'main': events 1-5
+    |
+    |   14 |     server_socket = socket(AF_INET, SOCK_STREAM, 0);
+    |      |                     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                     |
+    |      |                     (1) stream socket created here
+    |      |                     (2) when 'socket' succeeds
+    |......
+    |   22 |     bind(server_socket, (struct sockaddr *)&server_address, sizeof(server_address));
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (3) when 'bind' fails
+    |......
+    |   25 |     listen(server_socket, 5);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (4) when 'listen' fails
+    |......
+    |   30 |     client_socket = accept(server_socket, (struct sockaddr *)&client_address, &client_address_size);
+    |      |                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                     |
+    |      |                     (5) 'accept' expects a listening stream socket file descriptor but 'server_socket' has not yet been bound
+    |
+example2.c:30:21: warning: 'accept' on file descriptor 'server_socket' in wrong phase [-Wanalyzer-fd-phase-mismatch]
+   30 |     client_socket = accept(server_socket, (struct sockaddr *)&client_address, &client_address_size);
+      |                     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  'main': events 1-6
+    |
+    |   14 |     server_socket = socket(AF_INET, SOCK_STREAM, 0);
+    |      |                     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                     |
+    |      |                     (1) stream socket created here
+    |      |                     (2) when 'socket' succeeds
+    |......
+    |   22 |     bind(server_socket, (struct sockaddr *)&server_address, sizeof(server_address));
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (3) stream socket bound here
+    |      |     (4) when 'bind' succeeds
+    |......
+    |   25 |     listen(server_socket, 5);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (5) when 'listen' fails
+    |......
+    |   30 |     client_socket = accept(server_socket, (struct sockaddr *)&client_address, &client_address_size);
+    |      |                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                     |
+    |      |                     (6) 'accept' expects a listening stream socket file descriptor whereas 'server_socket' is bound but not yet listening
+    |
+example2.c:30:21: warning: 'accept' on non-stream-socket file descriptor 'server_socket' [-Wanalyzer-fd-type-mismatch]
+   30 |     client_socket = accept(server_socket, (struct sockaddr *)&client_address, &client_address_size);
+      |                     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  'main': events 1-4
+    |
+    |   14 |     server_socket = socket(AF_INET, SOCK_STREAM, 0);
+    |      |                     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                     |
+    |      |                     (1) when 'socket' fails
+    |......
+    |   22 |     bind(server_socket, (struct sockaddr *)&server_address, sizeof(server_address));
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) when 'bind' fails
+    |......
+    |   25 |     listen(server_socket, 5);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (3) when 'listen' fails
+    |......
+    |   30 |     client_socket = accept(server_socket, (struct sockaddr *)&client_address, &client_address_size);
+    |      |                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                     |
+    |      |                     (4) 'accept' expects a socket file descriptor but 'server_socket' is not a socket
+    |
+example2.c:30:21: warning: 'accept' on possibly invalid file descriptor 'server_socket' [-Wanalyzer-fd-use-without-check]
+   30 |     client_socket = accept(server_socket, (struct sockaddr *)&client_address, &client_address_size);
+      |                     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  'main': events 1-4
+    |
+    |   14 |     server_socket = socket(AF_INET, SOCK_STREAM, 0);
+    |      |                     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                     |
+    |      |                     (1) when 'socket' fails
+    |......
+    |   22 |     bind(server_socket, (struct sockaddr *)&server_address, sizeof(server_address));
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) when 'bind' fails
+    |......
+    |   25 |     listen(server_socket, 5);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (3) when 'listen' fails
+    |......
+    |   30 |     client_socket = accept(server_socket, (struct sockaddr *)&client_address, &client_address_size);
+    |      |                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                     |
+    |      |                     (4) 'server_socket' could be invalid
+    |
+In file included from /Library/Developer/CommandLineTools/SDKs/MacOSX13.sdk/usr/include/sys/_endian.h:130,
+                 from /Library/Developer/CommandLineTools/SDKs/MacOSX13.sdk/usr/include/i386/endian.h:101,
+                 from /Library/Developer/CommandLineTools/SDKs/MacOSX13.sdk/usr/include/machine/endian.h:35,
+                 from /Library/Developer/CommandLineTools/SDKs/MacOSX13.sdk/usr/include/sys/wait.h:186,
+                 from /Library/Developer/CommandLineTools/SDKs/MacOSX13.sdk/usr/include/stdlib.h:66,
+                 from example2.c:3:
+example2.c:31:101: warning: use of uninitialized value 'client_address.sin_port' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   31 |     printf("Client connected from %s:%d\n", inet_ntoa(client_address.sin_addr), ntohs(client_address.sin_port));
+      |                                                                                       ~~~~~~~~~~~~~~^~~~~~~~~
+  'main': events 1-5
+    |
+    |   13 |     struct sockaddr_in server_address, client_address;
+    |      |                                        ^~~~~~~~~~~~~~
+    |      |                                        |
+    |      |                                        (1) region created on stack here
+    |   14 |     server_socket = socket(AF_INET, SOCK_STREAM, 0);
+    |      |                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                     |
+    |      |                     (2) when 'socket' fails
+    |......
+    |   22 |     bind(server_socket, (struct sockaddr *)&server_address, sizeof(server_address));
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (3) when 'bind' fails
+    |......
+    |   25 |     listen(server_socket, 5);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~            
+    |      |     |
+    |      |     (4) when 'listen' fails
+    |......
+    |   30 |     client_socket = accept(server_socket, (struct sockaddr *)&client_address, &client_address_size);
+    |      |                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                     |
+    |      |                     (5) when 'accept' fails
+    |
+  'main': event 6
+    |
+    |   31 |     printf("Client connected from %s:%d\n", inet_ntoa(client_address.sin_addr), ntohs(client_address.sin_port));
+    |      |                                                                                       ~~~~~~~~~~~~~~^~~~~~~~~
+    |      |                                                                                                     |
+    |      |                                                                                                     (6) use of uninitialized value 'client_address.sin_port' here
+    |

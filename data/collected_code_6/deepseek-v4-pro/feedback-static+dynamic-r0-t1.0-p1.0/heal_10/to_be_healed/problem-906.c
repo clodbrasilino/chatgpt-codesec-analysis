@@ -1,0 +1,181 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+int extract_date_from_url(const char *url, int *year, int *month, int *day) {
+    if (url == NULL || year == NULL || month == NULL || day == NULL) {
+        return -1;
+    }
+
+    regex_t regex;
+    regmatch_t matches[4];
+    const char *pattern = "([0-9]{4})[-/]([0-9]{1,2})[-/]([0-9]{1,2})";
+    int ret;
+
+    ret = regcomp(&regex, pattern, REG_EXTENDED);
+    if (ret != 0) {
+        return -1;
+    }
+
+    ret = regexec(&regex, url, 4, matches, 0);
+    if (ret != 0) {
+        regfree(&regex);
+        return -1;
+    }
+
+    if (matches[1].rm_so == -1 || matches[2].rm_so == -1 || matches[3].rm_so == -1) {
+        regfree(&regex);
+        return -1;
+    }
+
+    size_t url_len = strnlen(url, 4096);
+
+    if ((size_t)matches[1].rm_so >= url_len || (size_t)matches[2].rm_so >= url_len || (size_t)matches[3].rm_so >= url_len) {
+        regfree(&regex);
+        return -1;
+    }
+
+    size_t y_start = (size_t)matches[1].rm_so;
+    size_t y_end = (size_t)matches[1].rm_eo;
+    size_t m_start = (size_t)matches[2].rm_so;
+    size_t m_end = (size_t)matches[2].rm_eo;
+    size_t d_start = (size_t)matches[3].rm_so;
+    size_t d_end = (size_t)matches[3].rm_eo;
+
+    size_t y_len = y_end - y_start;
+    size_t m_len = m_end - m_start;
+    size_t d_len = d_end - d_start;
+
+    if (y_len != 4 || m_len < 1 || m_len > 2 || d_len < 1 || d_len > 2) {
+        regfree(&regex);
+        return -1;
+    }
+
+    /* Possible weaknesses found:
+     *  Assuming that condition 'm_start+m_len>url_len' is not redundant
+     *  Assuming that condition 'y_start+y_len>url_len' is not redundant
+     *  Assuming that condition 'd_start+d_len>url_len' is not redundant
+     */
+    if (y_start + y_len > url_len || m_start + m_len > url_len || d_start + d_len > url_len) {
+        regfree(&regex);
+        return -1;
+    }
+
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char year_str[5] = {0};
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char month_str[3] = {0};
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char day_str[3] = {0};
+
+    /* Possible weaknesses found:
+     *  Assuming condition is false
+     */
+    if (y_len >= sizeof(year_str) || m_len >= sizeof(month_str) || d_len >= sizeof(day_str)) {
+        regfree(&regex);
+        return -1;
+    }
+
+    /* Possible weaknesses found:
+     *  Condition 'y_start+y_len>url_len' is always false
+     *  Condition 'y_start+y_len>url_len' is always false [knownConditionTrueFalse]
+     *  Condition 'm_start+m_len>url_len' is always false [knownConditionTrueFalse]
+     *  Condition 'm_start+m_len>url_len' is always false
+     *  Condition 'd_start+d_len>url_len' is always false [knownConditionTrueFalse]
+     *  Condition 'd_start+d_len>url_len' is always false
+     */
+    if (y_start + y_len > url_len || m_start + m_len > url_len || d_start + d_len > url_len) {
+        regfree(&regex);
+        return -1;
+    }
+
+    /* Possible weaknesses found:
+     * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+     */
+    memcpy(year_str, url + y_start, y_len);
+    year_str[sizeof(year_str) - 1] = '\0';
+
+    /* Possible weaknesses found:
+     * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+     */
+    memcpy(month_str, url + m_start, m_len);
+    month_str[sizeof(month_str) - 1] = '\0';
+
+    /* Possible weaknesses found:
+     * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+     */
+    memcpy(day_str, url + d_start, d_len);
+    day_str[sizeof(day_str) - 1] = '\0';
+
+    char *endptr;
+    long val;
+
+    val = strtol(year_str, &endptr, 10);
+    if (endptr == year_str || *endptr != '\0' || val < 1900 || val > 2100) {
+        regfree(&regex);
+        return -1;
+    }
+    *year = (int)val;
+
+    val = strtol(month_str, &endptr, 10);
+    if (endptr == month_str || *endptr != '\0' || val < 1 || val > 12) {
+        regfree(&regex);
+        return -1;
+    }
+    *month = (int)val;
+
+    val = strtol(day_str, &endptr, 10);
+    if (endptr == day_str || *endptr != '\0' || val < 1 || val > 31) {
+        regfree(&regex);
+        return -1;
+    }
+    *day = (int)val;
+
+    if (*month == 2) {
+        int is_leap = (*year % 4 == 0 && *year % 100 != 0) || (*year % 400 == 0);
+        int max_day = is_leap ? 29 : 28;
+        if (*day > max_day) {
+            regfree(&regex);
+            return -1;
+        }
+    } else if (*month == 4 || *month == 6 || *month == 9 || *month == 11) {
+        if (*day > 30) {
+            regfree(&regex);
+            return -1;
+        }
+    }
+
+    regfree(&regex);
+    return 0;
+}
+
+int main(void) {
+    const char *test_urls[] = {
+        "https://example.com/2023/12/25/article",
+        "http://test.org/2024-02-29/news",
+        "https://invalid.com/2023-13-01/test",
+        "https://invalid.com/2023-02-30/test",
+        "https://no-date.com/test",
+        NULL
+    };
+
+    for (int i = 0; test_urls[i] != NULL; i++) {
+        int year = 0, month = 0, day = 0;
+        int result = extract_date_from_url(test_urls[i], &year, &month, &day);
+        
+        if (result == 0) {
+            printf("URL: %s\nDate: %04d-%02d-%02d\n\n", test_urls[i], year, month, day);
+        } else {
+            printf("URL: %s\nNo valid date found\n\n", test_urls[i]);
+        }
+    }
+
+    return 0;
+}

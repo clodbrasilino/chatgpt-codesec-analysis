@@ -1,0 +1,37 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int key;
+    int value;
+} KeyValuePair;
+
+int dictionarySum(KeyValuePair* dict, int size) {
+    int sum = 0;
+    if (dict == NULL || size < 1) {
+        printf("Error: Invalid dictionary or size.\n");
+        return -1;
+    }
+
+    for (int i = 0; i < size; i++) {
+        sum += dict[i].value;
+    }
+
+    return sum;
+}
+
+int main() {
+    KeyValuePair dict[] = { {1, 10}, {2, 20}, {3, 30}, {4, 40} };
+
+    int len = sizeof(dict) / sizeof(dict[0]);
+    int result = dictionarySum(dict, len);
+
+    if (result != -1) {
+        printf("The sum of the dictionary items is: %d\n", result);
+    }
+
+    return 0;
+}
+```
+This program will first checks if the provided dictionary or its size are valid. It then iterates over the elements of the dictionary, summing the values. If the dictionary or size is invalid, it will output an error message and return -1. Otherwise, it outputs the sum of the values in the dictionary. There are no resources to manage, so CWE-664 does not apply. Similarly, CWE-703 is not applicable because the integrity of execution is preserved through proper input validation and error communication. Also, the function adheres to coding standards, making CWE-710 irrelevant.

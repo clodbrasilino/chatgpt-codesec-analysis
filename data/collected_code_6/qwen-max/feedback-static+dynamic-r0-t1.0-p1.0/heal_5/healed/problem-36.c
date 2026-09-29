@@ -1,0 +1,24 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int find_nth_digit(int numerator, int denominator, int n) {
+    long long remainder = numerator;
+    int digit = 0;
+    for (int i = 0; i < n; ++i) {
+        remainder *= 10;
+        digit = remainder / denominator;
+        remainder %= denominator;
+    }
+    return digit;
+}
+
+int main() {
+    int result, numerator = 1, denominator = 7, n = 5;
+    if (n > 0) {
+        result = find_nth_digit(numerator, denominator, n);
+        printf("The %dth digit of the fraction %d/%d is: %d\n", n, numerator, denominator, result);
+    } else {
+        printf("Invalid input: n must be greater than 0.\n");
+    }
+    return 0;
+}

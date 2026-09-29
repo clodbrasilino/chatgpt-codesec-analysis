@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-624-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-624-s2.c:36:31: style: Condition 'string_to_upper(NULL)==NULL' is always true [knownConditionTrueFalse]
+    if (string_to_upper(NULL) == NULL) {
+                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-624-s2.c:36:24: note: Calling function 'string_to_upper' returns 0
+    if (string_to_upper(NULL) == NULL) {
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-624-s2.c:36:31: note: Condition 'string_to_upper(NULL)==NULL' is always true
+    if (string_to_upper(NULL) == NULL) {
+                              ^

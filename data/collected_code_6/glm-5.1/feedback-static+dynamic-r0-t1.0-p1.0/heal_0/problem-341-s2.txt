@@ -1,0 +1,77 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int first;
+    int second;
+} Tuple;
+
+int compare_ints(const void *a, const void *b) {
+    int ia = *(const int *)a;
+    int ib = *(const int *)b;
+    if (ia < ib) return -1;
+    if (ia > ib) return 1;
+    return 0;
+}
+
+Tuple *convert_to_ordered_tuples(const int *set, size_t set_size, size_t *tuple_count) {
+    if (set == NULL || tuple_count == NULL) {
+        return NULL;
+    }
+
+    if (set_size < 2) {
+        *tuple_count = 0;
+        return NULL;
+    }
+
+    int *sorted_set = (int *)malloc(set_size * sizeof(int));
+    if (sorted_set == NULL) {
+        return NULL;
+    }
+
+    for (size_t i = 0; i < set_size; i++) {
+        sorted_set[i] = set[i];
+    }
+
+    qsort(sorted_set, set_size, sizeof(int), compare_ints);
+
+    *tuple_count = set_size - 1;
+    Tuple *tuples = (Tuple *)malloc(*tuple_count * sizeof(Tuple));
+    if (tuples == NULL) {
+        free(sorted_set);
+        return NULL;
+    }
+
+    for (size_t i = 0; i < *tuple_count; i++) {
+        tuples[i].first = sorted_set[i];
+        tuples[i].second = sorted_set[i + 1];
+    }
+
+    free(sorted_set);
+
+    return tuples;
+}
+
+int main() {
+    int set[] = {9, 3, 7, 1, 5};
+    size_t set_size = sizeof(set) / sizeof(set[0]);
+    size_t tuple_count = 0;
+
+    Tuple *tuples = convert_to_ordered_tuples(set, set_size, &tuple_count);
+
+    if (tuples != NULL) {
+        for (size_t i = 0; i < tuple_count; i++) {
+            printf("(%d, %d)\n", tuples[i].first, tuples[i].second);
+        }
+        free(tuples);
+    } else {
+        if (tuple_count > 0) {
+            fprintf(stderr, "Allocation failed\n");
+            return 1;
+        }
+    }
+
+    return 0;
+}
+```

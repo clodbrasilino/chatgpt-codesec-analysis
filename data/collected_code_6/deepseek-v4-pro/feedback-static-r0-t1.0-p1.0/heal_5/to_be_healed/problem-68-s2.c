@@ -1,0 +1,55 @@
+#include <stdbool.h>
+#include <stddef.h>
+#include <stdio.h>
+
+bool isMonotonic(const int *arr, size_t size) {
+    if (arr == NULL) {
+        return size == 0;
+    }
+    
+    if (size <= 1) {
+        return true;
+    }
+    
+    bool increasing = true;
+    bool decreasing = true;
+    
+    for (size_t i = 0; i < size - 1; i++) {
+        if (arr[i] > arr[i + 1]) {
+            increasing = false;
+        }
+        if (arr[i] < arr[i + 1]) {
+            decreasing = false;
+        }
+    }
+    
+    return increasing || decreasing;
+}
+
+int main(void) {
+    const int arr1[] = {1, 2, 3, 4, 5};
+    const int arr2[] = {5, 4, 3, 2, 1};
+    const int arr3[] = {1, 2, 2, 3, 4};
+    const int arr4[] = {1, 3, 2, 4, 5};
+    const int arr5[] = {7};
+    
+    printf("arr1 is monotonic: %s\n", isMonotonic(arr1, 5) ? "true" : "false");
+    printf("arr2 is monotonic: %s\n", isMonotonic(arr2, 5) ? "true" : "false");
+    printf("arr3 is monotonic: %s\n", isMonotonic(arr3, 5) ? "true" : "false");
+    printf("arr4 is monotonic: %s\n", isMonotonic(arr4, 5) ? "true" : "false");
+    printf("arr5 is monotonic: %s\n", isMonotonic(arr5, 1) ? "true" : "false");
+    /* Possible weaknesses found:
+     *  Calling function 'isMonotonic' returns 1
+     *  Condition 'isMonotonic(NULL,0)' is always true
+     *  Condition 'isMonotonic(NULL,0)' is always true [knownConditionTrueFalse]
+     */
+    printf("NULL with size 0 is monotonic: %s\n", isMonotonic(NULL, 0) ? "true" : "false");
+    /* Possible weaknesses found:
+     *  Calling function 'isMonotonic' returns 0
+     *  Condition 'isMonotonic(NULL,3)' is always false
+     *  Condition 'isMonotonic(NULL,3)' is always false [knownConditionTrueFalse]
+     */
+    printf("NULL with size > 0 is monotonic: %s\n", isMonotonic(NULL, 3) ? "true" : "false");
+    
+    return 0;
+}

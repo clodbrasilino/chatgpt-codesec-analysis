@@ -1,0 +1,48 @@
+collected_code_3/problem-958-3.c: In function 'intToRoman':
+collected_code_3/problem-958-3.c:13:13: warning: implicit declaration of function 'strcat' [-Wimplicit-function-declaration]
+   13 |             strcat(result, symbols[i]);
+      |             ^~~~~~
+collected_code_3/problem-958-3.c:3:1: note: include '<string.h>' or provide a declaration of 'strcat'
+    2 | #include <stdlib.h>
+  +++ |+#include <string.h>
+    3 | 
+collected_code_3/problem-958-3.c:13:13: warning: incompatible implicit declaration of built-in function 'strcat' [-Wbuiltin-declaration-mismatch]
+   13 |             strcat(result, symbols[i]);
+      |             ^~~~~~
+collected_code_3/problem-958-3.c:13:13: note: include '<string.h>' or provide a declaration of 'strcat'
+collected_code_3/problem-958-3.c:13:13: warning: use of possibly-NULL 'result' where non-null expected [CWE-690] [-Wanalyzer-possible-null-argument]
+   13 |             strcat(result, symbols[i]);
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~
+  'intToRoman': events 1-2
+    |
+    |    5 |     char* result = (char*)malloc(sizeof(char) * 16);
+    |      |                           ^~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                           |
+    |      |                           (1) this call could return NULL
+    |......
+    |   10 |     while(num > 0) {
+    |      |           ~~~~~~~          
+    |      |               |
+    |      |               (2) following 'true' branch (when 'num > 0')...
+    |
+  'intToRoman': event 3
+    |
+    |cc1:
+    | (3): ...to here
+    |
+  'intToRoman': events 4-6
+    |
+    |   11 |         while(num >= values[i]) {
+    |      |               ~~~~^~~~~~~~~~~~
+    |      |                   |
+    |      |                   (4) following 'true' branch...
+    |   12 |             num -= values[i];
+    |      |                    ~~~~~~~~~
+    |      |                          |
+    |      |                          (5) ...to here
+    |   13 |             strcat(result, symbols[i]);
+    |      |             ~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |             |
+    |      |             (6) argument 1 ('result') from (1) could be NULL where non-null expected
+    |
+<built-in>: note: argument 1 of 'strcat' must be non-null

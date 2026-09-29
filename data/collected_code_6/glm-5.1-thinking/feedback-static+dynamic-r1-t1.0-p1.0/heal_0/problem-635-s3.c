@@ -1,0 +1,113 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *data;
+    int capacity;
+    int size;
+} MinHeap;
+
+void swap(int *a, int *b) {
+    int temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+MinHeap* heap_create(int capacity) {
+    MinHeap *heap = (MinHeap*)malloc(sizeof(MinHeap));
+    if (heap == NULL) {
+        return NULL;
+    }
+    heap->data = (int*)malloc(sizeof(int) * capacity);
+    if (heap->data == NULL) {
+        free(heap);
+        return NULL;
+    }
+    heap->capacity = capacity;
+    heap->size = 0;
+    return heap;
+}
+
+void heap_destroy(MinHeap *heap) {
+    if (heap != NULL) {
+        free(heap->data);
+        free(heap);
+    }
+}
+
+void heap_push(MinHeap *heap, int value) {
+    if (heap == NULL || heap->size >= heap->capacity) {
+        return;
+    }
+    heap->data[heap->size] = value;
+    int current = heap->size;
+    heap->size++;
+    while (current > 0) {
+        int parent = (current - 1) / 2;
+        if (heap->data[current] < heap->data[parent]) {
+            swap(&heap->data[current], &heap->data[parent]);
+            current = parent;
+        } else {
+            break;
+        }
+    }
+}
+
+int heap_pop(MinHeap *heap) {
+    if (heap == NULL || heap->size == 0) {
+        return 0;
+    }
+    int min_val = heap->data[0];
+    heap->size--;
+    heap->data[0] = heap->data[heap->size];
+    int current = 0;
+    while (1) {
+        int left = 2 * current + 1;
+        int right = 2 * current + 2;
+        int smallest = current;
+        if (left < heap->size && heap->data[left] < heap->data[smallest]) {
+            smallest = left;
+        }
+        if (right < heap->size && heap->data[right] < heap->data[smallest]) {
+            smallest = right;
+        }
+        if (smallest != current) {
+            swap(&heap->data[current], &heap->data[smallest]);
+            current = smallest;
+        } else {
+            break;
+        }
+    }
+    return min_val;
+}
+
+void heap_sort(int *array, int length) {
+    if (array == NULL || length <= 0) {
+        return;
+    }
+    MinHeap *heap = heap_create(length);
+    if (heap == NULL) {
+        return;
+    }
+    for (int i = 0; i < length; i++) {
+        heap_push(heap, array[i]);
+    }
+    for (int i = 0; i < length; i++) {
+        array[i] = heap_pop(heap);
+    }
+    heap_destroy(heap);
+}
+
+int main(void) {
+    int array[] = {9, 4, 7, 1, 3, 8, 2, 6, 5};
+    int length = sizeof(array) / sizeof(array[0]);
+
+    heap_sort(array, length);
+
+    for (int i = 0; i < length; i++) {
+        printf("%d ", array[i]);
+    }
+    printf("\n");
+
+    return 0;
+}

@@ -1,0 +1,47 @@
+{
+  "task_id": 356,
+  "text": "Write a C function to find the third angle of a triangle using two angles.",
+  "fn_candidates": [
+    "find_angle",
+    "FindAngle",
+    "findAngle",
+    "findangle"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "find_angle",
+      "args": [
+        47,
+        89
+      ],
+      "expected": 44,
+      "assert_src": "assert find_angle(47,89)==44"
+    },
+    {
+      "fn_name": "find_angle",
+      "args": [
+        45,
+        95
+      ],
+      "expected": 40,
+      "assert_src": "assert find_angle(45,95)==40"
+    },
+    {
+      "fn_name": "find_angle",
+      "args": [
+        50,
+        40
+      ],
+      "expected": 90,
+      "assert_src": "assert find_angle(50,40)==90"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

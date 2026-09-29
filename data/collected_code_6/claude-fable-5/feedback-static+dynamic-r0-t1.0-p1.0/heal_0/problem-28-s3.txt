@@ -1,0 +1,73 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+int binomial_coefficient(unsigned int n, unsigned int k, unsigned long long *result);
+
+int binomial_coefficient(unsigned int n, unsigned int k, unsigned long long *result)
+{
+    unsigned long long value;
+    unsigned int i;
+
+    if (result == NULL) {
+        return -1;
+    }
+
+    if (k > n) {
+        *result = 0ULL;
+        return 0;
+    }
+
+    if (k > n - k) {
+        k = n - k;
+    }
+
+    value = 1ULL;
+
+    for (i = 0U; i < k; i++) {
+        unsigned long long factor = (unsigned long long)(n - i);
+
+        if (value > ULLONG_MAX / factor) {
+            return -1;
+        }
+
+        value = value * factor;
+        value = value / (unsigned long long)(i + 1U);
+    }
+
+    *result = value;
+    return 0;
+}
+
+int main(void)
+{
+    unsigned int n;
+    unsigned int k;
+    unsigned long long result;
+    int scan_count;
+
+    printf("Enter n: ");
+    scan_count = scanf("%u", &n);
+    if (scan_count != 1) {
+        fprintf(stderr, "Invalid input for n\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter k: ");
+    scan_count = scanf("%u", &k);
+    if (scan_count != 1) {
+        fprintf(stderr, "Invalid input for k\n");
+        return EXIT_FAILURE;
+    }
+
+    if (binomial_coefficient(n, k, &result) != 0) {
+        fprintf(stderr, "Computation failed due to overflow or invalid arguments\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("C(%u, %u) = %llu\n", n, k, result);
+
+    return EXIT_SUCCESS;
+}
+```

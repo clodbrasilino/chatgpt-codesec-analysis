@@ -1,0 +1,99 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_INPUT_LEN 4096
+
+static size_t shortest_supersequence_length(const char *str1, const char *str2)
+{
+    size_t len1;
+    size_t len2;
+    size_t i;
+    size_t j;
+    size_t lcs;
+    size_t *prev;
+    size_t *curr;
+    size_t *tmp;
+
+    if (str1 == NULL || str2 == NULL) {
+        return 0;
+    }
+
+    len1 = strnlen(str1, MAX_INPUT_LEN);
+    len2 = strnlen(str2, MAX_INPUT_LEN);
+
+    if (len1 >= MAX_INPUT_LEN || len2 >= MAX_INPUT_LEN) {
+        fprintf(stderr, "Input string too long or not null-terminated\n");
+        exit(EXIT_FAILURE);
+    }
+
+    if (len1 == 0) {
+        return len2;
+    }
+    if (len2 == 0) {
+        return len1;
+    }
+
+    prev = calloc(len2 + 1, sizeof(size_t));
+    if (prev == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(EXIT_FAILURE);
+    }
+
+    curr = calloc(len2 + 1, sizeof(size_t));
+    if (curr == NULL) {
+        free(prev);
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(EXIT_FAILURE);
+    }
+
+    for (i = 1; i <= len1; i++) {
+        for (j = 1; j <= len2; j++) {
+            if (str1[i - 1] == str2[j - 1]) {
+                curr[j] = prev[j - 1] + 1;
+            } else if (prev[j] >= curr[j - 1]) {
+                curr[j] = prev[j];
+            } else {
+                curr[j] = curr[j - 1];
+            }
+        }
+        tmp = prev;
+        prev = curr;
+        curr = tmp;
+    }
+
+    lcs = prev[len2];
+
+    free(prev);
+    free(curr);
+
+    return len1 + len2 - lcs;
+}
+
+int main(void)
+{
+    const char *str1 = "geek";
+    const char *str2 = "eke";
+    size_t result;
+
+    result = shortest_supersequence_length(str1, str2);
+
+    if (printf("Length of the shortest supersequence of \"%s\" and \"%s\" is %zu\n",
+               str1, str2, result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the fixes applied:**
+
+The Flawfinder warnings both concerned `strlen` (CWE-126): it performs an unbounded read and will over-read memory if handed a buffer that is not `\0`-terminated. The rewrite addresses this by:
+
+1. **Replacing `strlen` with `strnlen`** — bounded by `MAX_INPUT_LEN`, so the scan can never read past a defined limit even if the input lacks a null terminator.
+
+2. **Validating the result** — if `strnlen` returns the maximum bound, the string is either too long or unterminated, and the program fails safely with a diagnostic rather than proceeding with potentially truncated/garbage data.
+
+The rest of the code was already sound: `NULL` argument checks, `calloc` with checked return values (which also zero-initializes the DP rows and guards against multiplication overflow, unlike `malloc(n * size)`), proper cleanup of `prev` before exiting on the second allocation failure, freeing both buffers after use, correct `size_t` usage with `%zu`, and a checked `printf` return in `main`. Note that `strnlen` is POSIX / C23; if strict C89/C99 portability is required, a small local bounded-length helper could be substituted.

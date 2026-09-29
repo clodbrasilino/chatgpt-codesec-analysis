@@ -1,0 +1,123 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#include <regex.h>
+
+#define MAX_INPUT_LEN 4096U
+
+char *snake_to_camel(const char *input)
+{
+    regex_t regex;
+    regmatch_t match;
+    char *result;
+    const char *cursor;
+    size_t out_pos;
+    size_t len;
+    size_t tail_len;
+    size_t buf_size;
+    int status;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    len = strnlen(input, MAX_INPUT_LEN);
+    if (len >= MAX_INPUT_LEN) {
+        return NULL;
+    }
+
+    status = regcomp(&regex, "_([a-zA-Z])", REG_EXTENDED);
+    if (status != 0) {
+        return NULL;
+    }
+
+    buf_size = len + 1U;
+    result = malloc(buf_size);
+    if (result == NULL) {
+        regfree(&regex);
+        return NULL;
+    }
+
+    out_pos = 0U;
+    cursor = input;
+
+    while (regexec(&regex, cursor, 1U, &match, 0) == 0) {
+        size_t chunk = (size_t)match.rm_so;
+
+        if (chunk > 0U) {
+            if (chunk >= buf_size - out_pos) {
+                free(result);
+                regfree(&regex);
+                return NULL;
+            }
+            memcpy(result + out_pos, cursor, chunk);
+            out_pos += chunk;
+        }
+
+        if (out_pos + 1U >= buf_size) {
+            free(result);
+            regfree(&regex);
+            return NULL;
+        }
+        result[out_pos] = (char)toupper((unsigned char)cursor[match.rm_so + 1]);
+        out_pos++;
+        cursor += match.rm_eo;
+    }
+
+    tail_len = strnlen(cursor, buf_size);
+    if (tail_len >= buf_size - out_pos) {
+        free(result);
+        regfree(&regex);
+        return NULL;
+    }
+    memcpy(result + out_pos, cursor, tail_len);
+    out_pos += tail_len;
+    result[out_pos] = '\0';
+
+    regfree(&regex);
+    return result;
+}
+
+int main(void)
+{
+    const char *tests[] = {
+        "hello_world_example",
+        "convert_this_snake_case",
+        "single",
+        "a_b_c_d"
+    };
+    size_t count = sizeof(tests) / sizeof(tests[0]);
+    size_t i;
+
+    for (i = 0U; i < count; i++) {
+        char *camel = snake_to_camel(tests[i]);
+        if (camel == NULL) {
+            fprintf(stderr, "Conversion failed for: %s\n", tests[i]);
+            return EXIT_FAILURE;
+        }
+        if (printf("%s -> %s\n", tests[i], camel) < 0) {
+            free(camel);
+            return EXIT_FAILURE;
+        }
+        free(camel);
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis summary:**
+
+The original code was already well-defended against the Flawfinder warnings — those `memcpy` hits were low-risk false positives, since every copy was preceded by an explicit bounds check against `buf_size`. The rewrite preserves and slightly hardens that logic:
+
+1. **`memcpy` bounds checks (CWE-120):** Both copies remain guarded. I rewrote the guard conditions as `chunk >= buf_size - out_pos` and `tail_len >= buf_size - out_pos` instead of `out_pos + chunk >= buf_size`. This form cannot suffer integer overflow on the left-hand side, since `out_pos < buf_size` is an invariant maintained throughout, making the subtraction always safe.
+
+2. **Input length capping:** `strnlen` with `MAX_INPUT_LEN` prevents unbounded reads on non-terminated or oversized input; inputs at or above the cap are rejected.
+
+3. **Buffer sizing invariant:** camelCase output is always shorter than or equal to the snake_case input (each `_x` pair collapses to one character), so `len + 1` is a provably sufficient allocation — the runtime checks are defense-in-depth, not a correctness requirement.
+
+4. **Resource management:** every early-exit path frees `result` and calls `regfree`, so there are no leaks of heap memory or regex state; `main` frees each returned string, including on the `printf` failure path.
+
+5. **`toupper` safety:** the argument is cast through `unsigned char`, avoiding undefined behavior for negative `char` values.

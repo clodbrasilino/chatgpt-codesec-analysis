@@ -1,0 +1,123 @@
+#include <errno.h>
+#include <float.h>
+#include <math.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+static int cube_surface_area(double side, double *area)
+{
+    if (area == NULL || !isfinite(side) || side < 0.0) {
+        return -1;
+    }
+
+    if (side > sqrt(DBL_MAX / 6.0)) {
+        return -1;
+    }
+
+    *area = 6.0 * side * side;
+    return 0;
+}
+
+int main(void)
+{
+    char *input = NULL;
+    size_t capacity = 0;
+    size_t length = 0;
+    char *end;
+    double side;
+    double area;
+    int ch;
+
+    while ((ch = fgetc(stdin)) != '\n' && ch != EOF) {
+        char *resized;
+
+        if (ch == '\0') {
+            free(input);
+            fputs("Invalid side length.\n", stderr);
+            return EXIT_FAILURE;
+        }
+
+        if (length + 1 >= capacity) {
+            size_t new_capacity = capacity == 0 ? 64 : capacity * 2;
+
+            if (new_capacity <= capacity) {
+                free(input);
+                fputs("Input is too long.\n", stderr);
+                return EXIT_FAILURE;
+            }
+
+            resized = realloc(input, new_capacity);
+            if (resized == NULL) {
+                free(input);
+                fputs("Failed to allocate memory.\n", stderr);
+                return EXIT_FAILURE;
+            }
+
+            input = resized;
+            capacity = new_capacity;
+        }
+
+        input[length++] = (char)ch;
+    }
+
+    if (ferror(stdin)) {
+        free(input);
+        fputs("Failed to read the cube's side length.\n", stderr);
+        return EXIT_FAILURE;
+    }
+
+    if (length == 0 && ch == EOF) {
+        free(input);
+        fputs("Failed to read the cube's side length.\n", stderr);
+        return EXIT_FAILURE;
+    }
+
+    if (length + 1 >= capacity) {
+        size_t new_capacity = capacity == 0 ? 1 : capacity + 1;
+        char *resized = realloc(input, new_capacity);
+
+        if (resized == NULL) {
+            free(input);
+            fputs("Failed to allocate memory.\n", stderr);
+            return EXIT_FAILURE;
+        }
+
+        input = resized;
+        capacity = new_capacity;
+    }
+
+    input[length] = '\0';
+
+    errno = 0;
+    side = strtod(input, &end);
+
+    if (end == input || errno == ERANGE || !isfinite(side)) {
+        free(input);
+        fputs("Invalid side length.\n", stderr);
+        return EXIT_FAILURE;
+    }
+
+    while (*end == ' ' || *end == '\t' || *end == '\v' ||
+           *end == '\f' || *end == '\r') {
+        ++end;
+    }
+
+    if (*end != '\0') {
+        free(input);
+        fputs("Invalid trailing input.\n", stderr);
+        return EXIT_FAILURE;
+    }
+
+    free(input);
+
+    if (cube_surface_area(side, &area) != 0) {
+        fputs("Unable to calculate the surface area.\n", stderr);
+        return EXIT_FAILURE;
+    }
+
+    if (printf("%.10g\n", area) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

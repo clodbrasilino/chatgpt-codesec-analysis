@@ -1,0 +1,36 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int x;
+    int y;
+} Tuple;
+
+Tuple* repeat_tuple(Tuple t, int n) {
+    if (n <= 0) return NULL;
+    Tuple* result = (Tuple*)malloc(n * sizeof(Tuple));
+    if (result == NULL) return NULL;
+    for (int i = 0; i < n; ++i) {
+        result[i] = t;
+    }
+    return result;
+}
+
+void free_tuples(Tuple* tuples, int n) {
+    free(tuples);
+}
+
+int main() {
+    Tuple t = {5, 10};
+    int n = 4;
+    Tuple* repeated_tuples = repeat_tuple(t, n);
+    if (repeated_tuples != NULL) {
+        for (int i = 0; i < n; ++i) {
+            printf("(%d, %d)\n", repeated_tuples[i].x, repeated_tuples[i].y);
+        }
+        free_tuples(repeated_tuples, n);
+    }
+    return 0;
+}
+```

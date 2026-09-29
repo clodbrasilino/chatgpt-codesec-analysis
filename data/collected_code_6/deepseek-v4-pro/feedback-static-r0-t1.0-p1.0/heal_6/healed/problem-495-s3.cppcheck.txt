@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-495-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-495-s3.c:56:28: warning: Identical condition 'prefix_len>input_len-result_len', second condition is always false [identicalConditionAfterEarlyExit]
+            if (prefix_len > input_len - result_len) {
+                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-495-s3.c:51:24: note: If condition 'prefix_len>input_len-result_len' is true, the function will return/exit
+        if (prefix_len > input_len - result_len) {
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-495-s3.c:56:28: note: Testing identical condition 'prefix_len>input_len-result_len'
+            if (prefix_len > input_len - result_len) {
+                           ^

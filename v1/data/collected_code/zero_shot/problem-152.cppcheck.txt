@@ -1,0 +1,27 @@
+collected_code/problem-152-0.c:31:14: warning: Uninitialized variable: L [uninitvar]
+    arr[k] = L[i];
+             ^
+collected_code/problem-152-0.c:10:17: note: Assuming condition is false
+  for (i = 0; i < n1; i++)
+                ^
+collected_code/problem-152-0.c:31:14: note: Uninitialized variable: L
+    arr[k] = L[i];
+             ^
+collected_code/problem-152-0.c:37:14: warning: Uninitialized variable: R [uninitvar]
+    arr[k] = R[j];
+             ^
+collected_code/problem-152-0.c:12:17: note: Assuming condition is false
+  for (j = 0; j < n2; j++)
+                ^
+collected_code/problem-152-0.c:37:14: note: Uninitialized variable: R
+    arr[k] = R[j];
+             ^
+collected_code/problem-152-0.c:11:15: error: Cannot determine that 'arr[left+i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+    L[i] = arr[left + i];
+              ^
+collected_code/problem-152-0.c:13:15: error: Cannot determine that 'arr[mid+1+j]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+    R[j] = arr[mid + 1 + j];
+              ^
+collected_code/problem-152-0.c:57:22: error: Cannot determine that 'arr[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+    printf("%d ", arr[i]);
+                     ^

@@ -1,0 +1,43 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+long long sum_of_divisors(int n) {
+    if (n <= 0) {
+        return 0;
+    }
+
+    long long sum = 0;
+    for (int i = 1; i * i <= n; i++) {
+        if (n % i == 0) {
+            sum += i;
+            if (i != n / i && n / i != n) {
+                sum += n / i;
+            }
+        }
+    }
+
+    if (n != 1) {
+        sum += n;
+    }
+
+    return sum;
+}
+
+int main(void) {
+    int number = 0;
+    printf("Enter a positive integer: ");
+    if (scanf("%d", &number) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (number <= 0) {
+        fprintf(stderr, "Number must be positive\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Sum of divisors: %lld\n", sum_of_divisors(number));
+    return EXIT_SUCCESS;
+}
+```

@@ -1,0 +1,61 @@
+collected_code/heal_round_3/healed/problem-247.c: In function 'longestPalindromicSubsequence':
+collected_code/heal_round_3/healed/problem-247.c:49:16: warning: use of uninitialized value '*L' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   49 |     int res = L[0][n - 1];
+      |               ~^~~
+  'main': events 1-2
+    |
+    |   58 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |   59 |     char str[] = "ABCBDEFGCDCFEDGHIJKL";
+    |   60 |     int length = longestPalindromicSubsequence(str);
+    |      |                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                  |
+    |      |                  (2) calling 'longestPalindromicSubsequence' from 'main'
+    |
+    +--> 'longestPalindromicSubsequence': events 3-13
+           |
+           |    9 | int longestPalindromicSubsequence(const char* str) {
+           |      |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |     |
+           |      |     (3) entry to 'longestPalindromicSubsequence'
+           |   10 |     if(str == NULL || *str == '\0') {
+           |      |       ~
+           |      |       |
+           |      |       (4) following 'false' branch...
+           |......
+           |   14 |     int n = strlen(str);
+           |      |             ~~~~~~~~~~~
+           |      |             |
+           |      |             (5) ...to here
+           |   15 |     int i, j, cl;
+           |   16 |     int **L = (int **)malloc(n * sizeof(int *));
+           |      |                       ~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                       |
+           |      |                       (6) region created on heap here
+           |   17 | 
+           |   18 |     if(L == NULL) {
+           |      |       ~
+           |      |       |
+           |      |       (7) following 'false' branch (when 'L' is non-NULL)...
+           |......
+           |   22 |     for (i = 0; i < n; i++) {
+           |      |          ~~~~~  ~~~~~
+           |      |            |      |
+           |      |            |      (9) following 'false' branch (when 'i >= n')...
+           |      |            (8) ...to here
+           |......
+           |   36 |     for (cl = 2; cl <= n; cl++) {
+           |      |          ~~~~~~  ~~~~~~~
+           |      |             |       |
+           |      |             |       (11) following 'false' branch (when 'cl > n')...
+           |      |             (10) ...to here
+           |......
+           |   49 |     int res = L[0][n - 1];
+           |      |               ~~~~
+           |      |                |
+           |      |                (12) ...to here
+           |      |                (13) use of uninitialized value '*L' here
+           |
+-macosx_version_min has been renamed to -macos_version_min

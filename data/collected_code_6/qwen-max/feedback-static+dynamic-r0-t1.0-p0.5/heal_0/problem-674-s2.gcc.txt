@@ -1,0 +1,19 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-674-s2.c: In function 'remove_duplicates':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-674-s2.c:49:42: error: passing argument 3 of 'strtok_r' from incompatible pointer type [-Wincompatible-pointer-types]
+   49 |     token = strtok_r((char *)input, " ", &context);
+      |                                          ^~~~~~~~
+      |                                          |
+      |                                          const char **
+In file included from /Library/Developer/CommandLineTools/SDKs/MacOSX15.sdk/usr/include/string.h:58,
+                 from /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-674-s2.c:3:
+/Library/Developer/CommandLineTools/SDKs/MacOSX15.sdk/usr/include/_string.h:127:27: note: expected 'char **' but argument is of type 'const char **'
+  127 |         char *_LIBC_CSTR *__lasts);
+      |         ~~~~~~~~~~~~~~~~~~^~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-674-s2.c:55:37: error: passing argument 3 of 'strtok_r' from incompatible pointer type [-Wincompatible-pointer-types]
+   55 |         token = strtok_r(NULL, " ", &context);
+      |                                     ^~~~~~~~
+      |                                     |
+      |                                     const char **
+/Library/Developer/CommandLineTools/SDKs/MacOSX15.sdk/usr/include/_string.h:127:27: note: expected 'char **' but argument is of type 'const char **'
+  127 |         char *_LIBC_CSTR *__lasts);
+      |         ~~~~~~~~~~~~~~~~~~^~~~~~~

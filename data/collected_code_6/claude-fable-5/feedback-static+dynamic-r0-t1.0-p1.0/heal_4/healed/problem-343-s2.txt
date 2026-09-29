@@ -1,0 +1,78 @@
+```c
+#include <stdio.h>
+#include <ctype.h>
+#include <stddef.h>
+#include <string.h>
+
+#define INPUT_SIZE 256
+
+void count_digits_letters(const char *str, size_t max_len, size_t *digits, size_t *letters)
+{
+    size_t i;
+
+    if (str == NULL || digits == NULL || letters == NULL) {
+        return;
+    }
+
+    *digits = 0;
+    *letters = 0;
+
+    for (i = 0; i < max_len && str[i] != '\0'; i++) {
+        unsigned char c = (unsigned char)str[i];
+        if (isdigit(c)) {
+            (*digits)++;
+        } else if (isalpha(c)) {
+            (*letters)++;
+        }
+    }
+}
+
+static void flush_stdin(void)
+{
+    int c;
+    do {
+        c = getchar();
+    } while (c != '\n' && c != EOF);
+}
+
+int main(void)
+{
+    char input[INPUT_SIZE];
+    size_t digits = 0;
+    size_t letters = 0;
+    const char *newline;
+
+    printf("Enter a string: ");
+    if (fgets(input, sizeof(input), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    input[sizeof(input) - 1] = '\0';
+
+    newline = memchr(input, '\n', sizeof(input));
+    if (newline != NULL) {
+        size_t len = (size_t)(newline - input);
+        input[len] = '\0';
+    } else {
+        flush_stdin();
+    }
+
+    count_digits_letters(input, sizeof(input), &digits, &letters);
+
+    printf("Digits: %zu\n", digits);
+    printf("Letters: %zu\n", letters);
+
+    return 0;
+}
+```
+
+**Analysis notes:**
+
+The two Flawfinder findings were already properly mitigated in the original source, so the rewrite preserves those defenses rather than changing logic:
+
+1. **`char input[INPUT_SIZE]` (CWE-119/CWE-120, statically-sized buffer):** Mitigated because input is read exclusively with `fgets(input, sizeof(input), stdin)`, which enforces the buffer bound. A defensive `input[sizeof(input) - 1] = '\0'` guarantees NUL-termination, and `memchr` is used with an explicit length bound instead of `strchr`, so no unbounded scan occurs even on a malformed buffer.
+
+2. **`getchar()` in a loop (CWE-120/CWE-20):** The `flush_stdin()` loop stores the result in an `int` (not `char`), correctly distinguishing `EOF` from valid bytes, and never writes the characters anywhere — it only drains the excess input, so no buffer boundary can be violated. Terminating on both `'\n'` and `EOF` prevents an infinite loop when the stream ends without a newline.
+
+Additional robustness already present and retained: NULL-pointer guards in `count_digits_letters`, the cast to `unsigned char` before calling `isdigit`/`isalpha` (avoiding undefined behavior for negative `char` values), and a bounded iteration (`i < max_len`) as a second layer of defense against a missing terminator.

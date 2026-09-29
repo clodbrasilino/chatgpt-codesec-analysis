@@ -1,0 +1,62 @@
+#include <stdio.h>
+#include <math.h>
+
+double geometric_sum(double a, double r, int n)
+{
+    if (n <= 0)
+    {
+        return 0.0;
+    }
+    if (fabs(r - 1.0) < 1e-12)
+    {
+        return a * (double)n;
+    }
+    return a * (1.0 - pow(r, (double)n)) / (1.0 - r);
+}
+
+int main(void)
+{
+    double a;
+    double r;
+    int n;
+    double sum;
+
+    printf("Enter the first term: ");
+    if (scanf("%lf", &a) != 1)
+    {
+        fprintf(stderr, "Invalid input for first term.\n");
+        return 1;
+    }
+
+    printf("Enter the common ratio: ");
+    if (scanf("%lf", &r) != 1)
+    {
+        fprintf(stderr, "Invalid input for common ratio.\n");
+        return 1;
+    }
+
+    printf("Enter the number of terms: ");
+    if (scanf("%d", &n) != 1)
+    {
+        fprintf(stderr, "Invalid input for number of terms.\n");
+        return 1;
+    }
+
+    if (n < 0)
+    {
+        fprintf(stderr, "Number of terms must be non-negative.\n");
+        return 1;
+    }
+
+    sum = geometric_sum(a, r, n);
+
+    if (isinf(sum) || isnan(sum))
+    {
+        fprintf(stderr, "Result out of representable range.\n");
+        return 1;
+    }
+
+    printf("Sum of the geometric progression: %f\n", sum);
+
+    return 0;
+}

@@ -1,0 +1,25 @@
+```c
+#include <stdio.h>
+#include <string.h>
+
+void left_rotate(char *str, int d) {
+    size_t n = strlen(str);
+    if (n == 0 || d % n == 0) return;
+    d = d % n;
+
+    char *start = str + d;
+    size_t len1 = n - d;
+    memmove(str, start, len1 + 1);
+
+    strncpy(str + len1, str, d);
+    str[n] = '\0';
+}
+
+int main() {
+    char str[] = "abcdef";
+    int d = 2;
+    left_rotate(str, d);
+    printf("%s\n", str);
+    return 0;
+}
+```

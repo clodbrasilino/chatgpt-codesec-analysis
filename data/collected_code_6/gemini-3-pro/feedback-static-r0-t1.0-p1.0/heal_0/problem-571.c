@@ -1,0 +1,42 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int compare_desc(const void *a, const void *b) {
+    int int_a = *((int *)a);
+    int int_b = *((int *)b);
+    if (int_a < int_b) return 1;
+    if (int_a > int_b) return -1;
+    return 0;
+}
+
+int max_sum_disjoint_pairs(int *arr, size_t n, int k) {
+    if (arr == NULL || n == 0 || k < 0) {
+        return 0;
+    }
+
+    qsort(arr, n, sizeof(int), compare_desc);
+
+    int max_sum = 0;
+    size_t i = 0;
+    while (i < n - 1) {
+        if (arr[i] - arr[i + 1] < k) {
+            max_sum += arr[i] + arr[i + 1];
+            i += 2;
+        } else {
+            i += 1;
+        }
+    }
+
+    return max_sum;
+}
+
+int main(void) {
+    int arr[] = {3, 5, 10, 15, 17, 12, 9};
+    size_t n = sizeof(arr) / sizeof(arr[0]);
+    int k = 4;
+
+    int result = max_sum_disjoint_pairs(arr, n, k);
+    printf("Max sum of disjoint pairs: %d\n", result);
+
+    return 0;
+}

@@ -1,0 +1,6 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-411-s3.c:19:24: error: call to undeclared library function 'toupper' with type 'int (int)'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   19 |         camel_str[i] = toupper(camel_str[i + 1]);
+      |                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-411-s3.c:19:24: note: include the header <ctype.h> or explicitly provide a declaration for 'toupper'
+1 error generated.
+clang: error: unable to remove file: Operation not permitted

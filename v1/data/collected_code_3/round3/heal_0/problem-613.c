@@ -1,0 +1,24 @@
+#include <stdio.h>
+
+typedef struct {
+    int id;
+    int value;
+} Record;
+
+int findMaxValue(Record records[], int size) {
+    int max = records[0].value;
+    for(int i = 1; i < size; i++) {
+        if(records[i].value > max) {
+            max = records[i].value;
+        }
+    }
+    return max;
+}
+
+int main() {
+    Record records[] = {{1, 10}, {2, 20}, {3, 30}, {4, 40}, {5, 50}};
+    int size = sizeof(records) / sizeof(records[0]);
+    int max = findMaxValue(records, size);
+    printf("Max Value: %d\n", max);
+    return 0;
+}

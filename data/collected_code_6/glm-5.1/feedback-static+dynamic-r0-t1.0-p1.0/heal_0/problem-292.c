@@ -1,0 +1,27 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int find_quotient(int numerator, int denominator, int *quotient) {
+    if (denominator == 0) {
+        return EXIT_FAILURE;
+    }
+    if (quotient == NULL) {
+        return EXIT_FAILURE;
+    }
+    *quotient = numerator / denominator;
+    return EXIT_SUCCESS;
+}
+
+int main(void) {
+    int a = 10;
+    int b = 2;
+    int result;
+
+    if (find_quotient(a, b, &result) == EXIT_SUCCESS) {
+        printf("%d\n", result);
+    } else {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

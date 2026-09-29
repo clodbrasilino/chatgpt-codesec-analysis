@@ -1,0 +1,29 @@
+#include <stdio.h>
+
+int sumOfFourthPowerOfOddNumbers(int n) {
+    int sum = 0;
+    int oddNumber = 1;
+    
+    for (int i = 0; i < n; i++) {
+        sum += oddNumber * oddNumber * oddNumber * oddNumber;
+        oddNumber += 2;
+    }
+    
+    return sum;
+}
+
+int main() {
+    int n = 0;
+    printf("Enter the value of n: ");
+    scanf("%d", &n);
+    
+    if(n < 0){
+        printf("Error! Enter a positive number.");
+        return 1;
+    }
+    
+    int result = sumOfFourthPowerOfOddNumbers(n);
+    printf("The sum of fourth power of first %d odd natural numbers is: %d\n", n, result);
+    
+    return 0;
+}

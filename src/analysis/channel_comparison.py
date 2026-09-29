@@ -85,7 +85,7 @@ def channel_state(rep_dir: Path, base: str) -> dict[str, bool]:
 
 
 def scan(model: str) -> dict:
-    cell = REPO / "collected_code_6" / model / SLUG
+    cell = REPO / "data" / "collected_code_6" / model / SLUG
     dirs = [("heal_0", cell / "heal_0")]
     for d in sorted(cell.glob("heal_*")):
         if d.name == "heal_0" or not (d / "healed").is_dir():

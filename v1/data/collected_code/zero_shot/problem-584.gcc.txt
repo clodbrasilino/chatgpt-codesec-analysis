@@ -1,0 +1,12 @@
+collected_code/problem-584-0.c: In function 'findAdverbs':
+collected_code/problem-584-0.c:23:9: warning: implicit declaration of function 'strncpy' [-Wimplicit-function-declaration]
+   23 |         strncpy(adverb, sentence + position, match.rm_eo - match.rm_so);
+      |         ^~~~~~~
+collected_code/problem-584-0.c:3:1: note: include '<string.h>' or provide a declaration of 'strncpy'
+    2 | #include <regex.h>
+  +++ |+#include <string.h>
+    3 | 
+collected_code/problem-584-0.c:23:9: warning: incompatible implicit declaration of built-in function 'strncpy' [-Wbuiltin-declaration-mismatch]
+   23 |         strncpy(adverb, sentence + position, match.rm_eo - match.rm_so);
+      |         ^~~~~~~
+collected_code/problem-584-0.c:23:9: note: include '<string.h>' or provide a declaration of 'strncpy'

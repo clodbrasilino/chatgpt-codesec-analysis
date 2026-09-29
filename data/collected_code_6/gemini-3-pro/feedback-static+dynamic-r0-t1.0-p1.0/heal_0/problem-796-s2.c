@@ -1,0 +1,76 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    char* key;
+    int value;
+    struct Node* next;
+} Node;
+
+typedef struct Dictionary {
+    Node* head;
+} Dictionary;
+
+Dictionary* create_dictionary(void) {
+    Dictionary* dict = (Dictionary*)malloc(sizeof(Dictionary));
+    if (dict == NULL) {
+        exit(EXIT_FAILURE);
+    }
+    dict->head = NULL;
+    return dict;
+}
+
+void add_item(Dictionary* dict, char* key, int value) {
+    if (dict == NULL || key == NULL) {
+        return;
+    }
+    Node* new_node = (Node*)malloc(sizeof(Node));
+    if (new_node == NULL) {
+        exit(EXIT_FAILURE);
+    }
+    new_node->key = key;
+    new_node->value = value;
+    new_node->next = dict->head;
+    dict->head = new_node;
+}
+
+int sum_dictionary_values(Dictionary* dict) {
+    if (dict == NULL) {
+        return 0;
+    }
+    int sum = 0;
+    Node* current = dict->head;
+    while (current != NULL) {
+        sum += current->value;
+        current = current->next;
+    }
+    return sum;
+}
+
+void free_dictionary(Dictionary* dict) {
+    if (dict == NULL) {
+        return;
+    }
+    Node* current = dict->head;
+    while (current != NULL) {
+        Node* temp = current;
+        current = current->next;
+        free(temp);
+    }
+    free(dict);
+}
+
+int main(void) {
+    Dictionary* dict = create_dictionary();
+    
+    add_item(dict, "apple", 10);
+    add_item(dict, "banana", 20);
+    add_item(dict, "orange", 30);
+    
+    int total_sum = sum_dictionary_values(dict);
+    printf("Sum of all items: %d\n", total_sum);
+    
+    free_dictionary(dict);
+    
+    return 0;
+}

@@ -1,0 +1,114 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <string.h>
+
+#define MAX_HEX_DIGITS 16
+#define BUFFER_SIZE (MAX_HEX_DIGITS + 4)
+
+int isEvenHex(unsigned long long number)
+{
+    return (number & 1ULL) == 0ULL;
+}
+
+static size_t bounded_length(const char *str, size_t max_length)
+{
+    const char *terminator = (const char *)memchr(str, '\0', max_length);
+
+    if (terminator == NULL)
+    {
+        return max_length;
+    }
+
+    return (size_t)(terminator - str);
+}
+
+static void discard_remaining_input(void)
+{
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char discard_buffer[BUFFER_SIZE] = {0};
+    int newline_found = 0;
+
+    while (!newline_found &&
+           fgets(discard_buffer, (int)sizeof(discard_buffer), stdin) != NULL)
+    {
+        size_t discard_length = bounded_length(discard_buffer, sizeof(discard_buffer));
+
+        if (discard_length > 0U && discard_buffer[discard_length - 1U] == '\n')
+        {
+            newline_found = 1;
+        }
+    }
+}
+
+int main(void)
+{
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char buffer[BUFFER_SIZE] = {0};
+    char *endptr = NULL;
+    unsigned long long number = 0ULL;
+    size_t input_length = 0U;
+
+    printf("Enter a hexadecimal number: ");
+    fflush(stdout);
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL)
+    {
+        fprintf(stderr, "Failed to read input.\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1U] = '\0';
+    input_length = bounded_length(buffer, sizeof(buffer));
+
+    if (input_length == 0U)
+    {
+        fprintf(stderr, "Failed to read input.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (input_length == (sizeof(buffer) - 1U) &&
+        buffer[input_length - 1U] != '\n' &&
+        !feof(stdin))
+    {
+        discard_remaining_input();
+        fprintf(stderr, "Input exceeds maximum allowed length.\n");
+        return EXIT_FAILURE;
+    }
+
+    errno = 0;
+    number = strtoull(buffer, &endptr, 16);
+
+    if (endptr == buffer)
+    {
+        fprintf(stderr, "No hexadecimal digits were provided.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (errno == ERANGE)
+    {
+        fprintf(stderr, "Hexadecimal number is out of range.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (*endptr != '\n' && *endptr != '\0')
+    {
+        fprintf(stderr, "Invalid character in input.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (isEvenHex(number))
+    {
+        printf("%llX is even.\n", number);
+    }
+    else
+    {
+        printf("%llX is odd.\n", number);
+    }
+
+    return EXIT_SUCCESS;
+}

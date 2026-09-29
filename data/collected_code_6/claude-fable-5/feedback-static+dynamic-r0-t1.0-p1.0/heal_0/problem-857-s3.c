@@ -1,0 +1,53 @@
+#include <stdio.h>
+#include <stddef.h>
+
+typedef void (*string_func)(const char *str);
+
+static void print_string(const char *str)
+{
+    if (str != NULL)
+    {
+        if (printf("%s\n", str) < 0)
+        {
+            (void)fprintf(stderr, "Error writing to stdout\n");
+        }
+    }
+}
+
+static int map_strings(const char *const strings[], size_t count, string_func func)
+{
+    size_t i;
+
+    if ((strings == NULL) || (func == NULL))
+    {
+        return -1;
+    }
+
+    for (i = 0U; i < count; i++)
+    {
+        func(strings[i]);
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    const char *const strings[] = {
+        "apple",
+        "banana",
+        "cherry",
+        "date"
+    };
+    const size_t count = sizeof(strings) / sizeof(strings[0]);
+    int result;
+
+    result = map_strings(strings, count, print_string);
+    if (result != 0)
+    {
+        (void)fprintf(stderr, "Failed to map over strings\n");
+        return 1;
+    }
+
+    return 0;
+}

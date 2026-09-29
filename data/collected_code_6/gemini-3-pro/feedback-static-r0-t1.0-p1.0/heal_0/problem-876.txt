@@ -1,0 +1,38 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+unsigned long long calculate_gcd(unsigned long long a, unsigned long long b) {
+    while (b != 0) {
+        unsigned long long temp = b;
+        b = a % b;
+        a = temp;
+    }
+    return a;
+}
+
+unsigned long long calculate_lcm(unsigned long long a, unsigned long long b) {
+    if (a == 0 || b == 0) {
+        return 0;
+    }
+    return (a / calculate_gcd(a, b)) * b;
+}
+
+int main(void) {
+    unsigned long long num1 = 0;
+    unsigned long long num2 = 0;
+
+    if (scanf("%llu %llu", &num1, &num2) != 2) {
+        return EXIT_FAILURE;
+    }
+
+    if (num1 == 0 || num2 == 0) {
+        return EXIT_FAILURE;
+    }
+
+    unsigned long long result = calculate_lcm(num1, num2);
+    printf("%llu\n", result);
+
+    return EXIT_SUCCESS;
+}
+```

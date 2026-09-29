@@ -1,0 +1,48 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
+
+double sphere_volume(double radius)
+{
+    return (4.0 / 3.0) * M_PI * radius * radius * radius;
+}
+
+int main(void)
+{
+    double radius = 0.0;
+    double volume = 0.0;
+    int result = 0;
+
+    printf("Enter the radius of the sphere: ");
+
+    result = scanf("%lf", &radius);
+    if (result != 1) {
+        fprintf(stderr, "Error: invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (radius < 0.0) {
+        fprintf(stderr, "Error: radius cannot be negative.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (radius > 1e100) {
+        fprintf(stderr, "Error: radius too large.\n");
+        return EXIT_FAILURE;
+    }
+
+    volume = sphere_volume(radius);
+
+    if (isinf(volume) || isnan(volume)) {
+        fprintf(stderr, "Error: computation overflow.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Volume of the sphere: %f\n", volume);
+
+    return EXIT_SUCCESS;
+}

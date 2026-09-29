@@ -1,0 +1,27 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-657-s2.c: In function 'first_factorial_digit':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-657-s2.c:13:20: error: implicit declaration of function 'log10l' [-Wimplicit-function-declaration]
+   13 |         log_sum += log10l(i);
+      |                    ^~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-657-s2.c:3:1: note: include '<math.h>' or provide a declaration of 'log10l'
+    2 | #include <stdlib.h>
+  +++ |+#include <math.h>
+    3 | 
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-657-s2.c:15:40: error: implicit declaration of function 'floorl' [-Wimplicit-function-declaration]
+   15 |     long double fractional = log_sum - floorl(log_sum);
+      |                                        ^~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-657-s2.c:15:40: note: include '<math.h>' or provide a declaration of 'floorl'
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-657-s2.c:16:25: error: implicit declaration of function 'powl' [-Wimplicit-function-declaration]
+   16 |     long double first = powl(10.0L, fractional);
+      |                         ^~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-657-s2.c:16:25: note: include '<math.h>' or provide a declaration of 'powl'
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-657-s2.c: In function 'main':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-657-s2.c:25:26: error: 'INT_MAX' undeclared (first use in this function)
+   25 |     if (val < 0 || val > INT_MAX) {
+      |                          ^~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-657-s2.c:3:1: note: 'INT_MAX' is defined in header '<limits.h>'; this is probably fixable by adding '#include <limits.h>'
+    2 | #include <stdlib.h>
+  +++ |+#include <limits.h>
+    3 | 
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-657-s2.c:25:26: note: each undeclared identifier is reported only once for each function it appears in
+   25 |     if (val < 0 || val > INT_MAX) {
+      |                          ^~~~~~~

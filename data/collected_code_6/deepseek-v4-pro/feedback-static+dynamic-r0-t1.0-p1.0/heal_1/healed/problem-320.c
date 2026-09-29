@@ -1,0 +1,35 @@
+#include <stdio.h>
+#include <stdint.h>
+#include <inttypes.h>
+
+int64_t difference_of_squares(int n) {
+    if (n < 0) {
+        return -1;
+    }
+    
+    int64_t n64 = (int64_t)n;
+    
+    int64_t sum = n64 * (n64 + 1) / 2;
+    int64_t sum_sq = n64 * (n64 + 1) * (2 * n64 + 1) / 6;
+    
+    return sum * sum - sum_sq;
+}
+
+int main(void) {
+    int n;
+    
+    printf("Enter a natural number: ");
+    if (scanf("%d", &n) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return 1;
+    }
+    
+    if (n < 0) {
+        fprintf(stderr, "Number must be non-negative\n");
+        return 1;
+    }
+    
+    printf("Difference: %" PRId64 "\n", difference_of_squares(n));
+    
+    return 0;
+}

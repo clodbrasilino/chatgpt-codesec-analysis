@@ -1,0 +1,67 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+
+#define BUFFER_SIZE 256
+
+bool first_last_equal(const char *str, size_t max_len)
+{
+    size_t len;
+
+    if (str == NULL) {
+        return false;
+    }
+
+    len = strnlen(str, max_len);
+    if (len == 0 || len == max_len) {
+        return false;
+    }
+
+    return str[0] == str[len - 1];
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t len;
+
+    printf("Enter a string: ");
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    }
+
+    if (buffer[0] == '\0') {
+        printf("Empty string provided\n");
+        return 1;
+    }
+
+    if (first_last_equal(buffer, sizeof(buffer))) {
+        printf("The first and last characters are equal\n");
+    } else {
+        printf("The first and last characters are not equal\n");
+    }
+
+    return 0;
+}
+```
+
+**Analysis summary:**
+
+The Flawfinder warning (CWE-119/CWE-120) flags the statically-sized `buffer[BUFFER_SIZE]` as a *potential* risk, but the original code already mitigates it correctly:
+
+1. **Bounded input:** `fgets(buffer, sizeof(buffer), stdin)` limits reads to the buffer size, preventing overflow — unlike `gets()` or unbounded `scanf("%s", ...)`.
+2. **Guaranteed termination:** `buffer[sizeof(buffer) - 1] = '\0'` is defensive (technically redundant with `fgets`, which always null-terminates, but harmless).
+3. **Bounded length checks:** `strnlen()` is used instead of `strlen()`, both in `main` and in `first_last_equal`, so even a non-terminated string can't cause an out-of-bounds read.
+4. **Safe edge cases:** `first_last_equal` handles `NULL`, empty strings, and the `len == max_len` (unterminated) case before indexing `str[len - 1]`.
+5. **Error handling:** the `fgets` return value is checked, and empty input is rejected.
+
+No functional changes were required — the warning is a low-risk (risk 2) static-array advisory that this code already addresses through bounds-checked functions. The rewrite above is the same hardened code with comments removed as requested.

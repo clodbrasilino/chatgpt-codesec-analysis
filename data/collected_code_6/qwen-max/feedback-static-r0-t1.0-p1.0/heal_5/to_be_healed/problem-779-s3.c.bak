@@ -1,0 +1,85 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_LISTS 100
+#define MAX_ITEMS 10
+#define MAX_ITEM_LENGTH 5
+
+typedef struct {
+    char item[MAX_ITEM_LENGTH + 1];
+} Item;
+
+typedef struct {
+    Item items[MAX_ITEMS];
+    int count;
+} List;
+
+int listCompare(const void *a, const void *b) {
+    List *listA = (List *)a;
+    List *listB = (List *)b;
+
+    if (listA->count != listB->count) return 0;
+
+    for (int i = 0; i < listA->count; ++i) {
+        if (strcmp(listA->items[i].item, listB->items[i].item) != 0) return 0;
+    }
+
+    return 1;
+}
+
+int countUniqueLists(List lists[], int totalLists) {
+    int uniqueCount = 0;
+
+    for (int i = 0; i < totalLists; ++i) {
+        int isUnique = 1;
+        for (int j = 0; j < uniqueCount; ++j) {
+            if (listCompare(&lists[i], &lists[j])) {
+                isUnique = 0;
+                break;
+            }
+        }
+        if (isUnique) {
+            lists[uniqueCount++] = lists[i];
+        }
+    }
+
+    return uniqueCount;
+}
+
+int main() {
+    List lists[MAX_LISTS] = {
+        /* Possible weaknesses found:
+         *  (near initialization for 'lists[0].items')
+         *  field designator cannot initialize a non-struct, non-union type 'Item[10]'
+         *  field name not in record or union initializer
+         */
+        {{.item = "a"}, 1},
+        /* Possible weaknesses found:
+         *  field designator cannot initialize a non-struct, non-union type 'Item[10]'
+         *  initialization of 'int' from 'char *' makes integer from pointer without a cast [-Wint-conversion]
+         *  field name not in record or union initializer
+         *  initialization of non-aggregate type 'int' with a designated initializer list
+         *  (near initialization for 'lists[1].items')
+         *  (near initialization for 'lists[1].count')
+         */
+        {{.item = "a"}, { .item = "c"}, 2},
+        /* Possible weaknesses found:
+         *  field designator cannot initialize a non-struct, non-union type 'Item[10]'
+         *  (near initialization for 'lists[2].count')
+         *  initialization of 'int' from 'char *' makes integer from pointer without a cast [-Wint-conversion]
+         *  field name not in record or union initializer
+         *  initialization of non-aggregate type 'int' with a designated initializer list
+         *  (near initialization for 'lists[2]')
+         *  (near initialization for 'lists[2].items')
+         *  extra brace group at end of initializer
+         */
+        {{.item = "b"}, { .item = "a"}, { .item = "c"}, 3}
+    };
+    int totalLists = 3;
+
+    int uniqueCount = countUniqueLists(lists, totalLists);
+    printf("Number of unique lists: %d\n", uniqueCount);
+
+    return 0;
+}

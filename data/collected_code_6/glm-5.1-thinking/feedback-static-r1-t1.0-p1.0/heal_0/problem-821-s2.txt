@@ -1,0 +1,116 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char *key;
+    char *value;
+} DictEntry;
+
+typedef struct {
+    DictEntry *entries;
+    size_t size;
+    size_t capacity;
+} Dict;
+
+Dict *dict_create(size_t capacity) {
+    Dict *d = malloc(sizeof(Dict));
+    if (!d) return NULL;
+    d->entries = calloc(capacity, sizeof(DictEntry));
+    if (!d->entries) {
+        free(d);
+        return NULL;
+    }
+    d->size = 0;
+    d->capacity = capacity;
+    return d;
+}
+
+void dict_free(Dict *d) {
+    if (!d) return;
+    for (size_t i = 0; i < d->size; i++) {
+        free(d->entries[i].key);
+        free(d->entries[i].value);
+    }
+    free(d->entries);
+    free(d);
+}
+
+int dict_set(Dict *d, const char *key, const char *value) {
+    if (!d || !key || !value) return -1;
+    for (size_t i = 0; i < d->size; i++) {
+        if (strcmp(d->entries[i].key, key) == 0) {
+            char *new_val = strdup(value);
+            if (!new_val) return -1;
+            free(d->entries[i].value);
+            d->entries[i].value = new_val;
+            return 0;
+        }
+    }
+    if (d->size >= d->capacity) {
+        size_t new_cap = d->capacity == 0 ? 4 : d->capacity * 2;
+        DictEntry *new_entries = realloc(d->entries, new_cap * sizeof(DictEntry));
+        if (!new_entries) return -1;
+        d->entries = new_entries;
+        d->capacity = new_cap;
+    }
+    char *new_key = strdup(key);
+    if (!new_key) return -1;
+    char *new_val = strdup(value);
+    if (!new_val) {
+        free(new_key);
+        return -1;
+    }
+    d->entries[d->size].key = new_key;
+    d->entries[d->size].value = new_val;
+    d->size++;
+    return 0;
+}
+
+Dict *dict_merge(const Dict *d1, const Dict *d2) {
+    if (!d1 || !d2) return NULL;
+    Dict *merged = dict_create(d1->size + d2->size);
+    if (!merged) return NULL;
+    for (size_t i = 0; i < d1->size; i++) {
+        if (dict_set(merged, d1->entries[i].key, d1->entries[i].value) != 0) {
+            dict_free(merged);
+            return NULL;
+        }
+    }
+    for (size_t i = 0; i < d2->size; i++) {
+        if (dict_set(merged, d2->entries[i].key, d2->entries[i].value) != 0) {
+            dict_free(merged);
+            return NULL;
+        }
+    }
+    return merged;
+}
+
+int main(void) {
+    Dict *d1 = dict_create(4);
+    Dict *d2 = dict_create(4);
+    if (!d1 || !d2) {
+        dict_free(d1);
+        dict_free(d2);
+        return EXIT_FAILURE;
+    }
+    dict_set(d1, "a", "1");
+    dict_set(d1, "b", "2");
+    dict_set(d2, "b", "3");
+    dict_set(d2, "c", "4");
+    Dict *d3 = dict_merge(d1, d2);
+    if (!d3) {
+        dict_free(d1);
+        dict_free(d2);
+        return EXIT_FAILURE;
+    }
+    for (size_t i = 0; i < d3->size; i++) {
+        printf("%s: %s\n", d3->entries[i].key, d3->entries[i].value);
+    }
+    dict_free(d1);
+    dict_free(d2);
+    dict_free(d3);
+    return EXIT_SUCCESS;
+}
+```

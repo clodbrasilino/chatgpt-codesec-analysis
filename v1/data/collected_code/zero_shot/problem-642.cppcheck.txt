@@ -1,0 +1,24 @@
+collected_code/problem-642-0.c:11:25: error: Cannot determine that '*numRows' is initialized [premium-bughuntingUninit]
+    for (int i = 0; i < *numRows; i++) {
+                        ^
+collected_code/problem-642-0.c:20:30: error: Cannot determine that 'matrix[i][k]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+                if (matrix[i][k] != distinctRows[j][k]) {
+                             ^
+collected_code/problem-642-0.c:20:52: error: Cannot determine that 'distinctRows[j][k]' is initialized [premium-bughuntingUninit]
+                if (matrix[i][k] != distinctRows[j][k]) {
+                                                   ^
+collected_code/problem-642-0.c:36:59: error: Cannot determine that 'matrix[i][k]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+                distinctRows[distinctCount][k] = matrix[i][k];
+                                                          ^
+collected_code/problem-642-0.c:45:43: error: Cannot determine that 'distinctRows[i][j]' is initialized [premium-bughuntingUninit]
+            matrix[i][j] = distinctRows[i][j];
+                                          ^
+collected_code/problem-642-0.c:57:18: error: Cannot determine that 'numRows' is initialized [premium-bughuntingUninit]
+    scanf("%d", &numRows);
+                 ^
+collected_code/problem-642-0.c:59:18: error: Cannot determine that 'numCols' is initialized [premium-bughuntingUninit]
+    scanf("%d", &numCols);
+                 ^
+collected_code/problem-642-0.c:73:36: error: Cannot determine that 'matrix[i][j]' is initialized [premium-bughuntingUninit]
+            printf("%d ", matrix[i][j]);
+                                   ^

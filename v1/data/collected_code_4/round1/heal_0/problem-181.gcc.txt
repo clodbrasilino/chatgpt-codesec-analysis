@@ -1,0 +1,99 @@
+./collected_code_4/round1//heal_0//problem-181.c: In function 'longestCommonPrefix':
+./collected_code_4/round1//heal_0//problem-181.c:14:28: warning: write to string literal [-Wanalyzer-write-to-string-literal]
+   14 |                 strs[0][i] = 0;
+      |                 ~~~~~~~~~~~^~~
+  'main': events 1-2
+    |
+    |   22 | int main(){
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   25 |     char* prefix = longestCommonPrefix(strs, strsSize);
+    |      |                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                    |
+    |      |                    (2) calling 'longestCommonPrefix' from 'main'
+    |
+    +--> 'longestCommonPrefix': events 3-14
+           |
+           |    6 | char* longestCommonPrefix(char** strs, int strsSize) {
+           |      |       ^~~~~~~~~~~~~~~~~~~
+           |      |       |
+           |      |       (3) entry to 'longestCommonPrefix'
+           |    7 |     if (strsSize == 0 || *strs == NULL)
+           |      |        ~
+           |      |        |
+           |      |        (4) following 'false' branch...
+           |......
+           |   11 |     for (i = 0; i < strlen(strs[0]); i++) {
+           |      |          ~~~~~  ~~~~~~~~~~~~~~~~~~~
+           |      |            |      |
+           |      |            |      (6) following 'true' branch...
+           |      |            (5) ...to here
+           |   12 |         for (j = 1; j < strsSize; j++) {
+           |      |              ~~~~~  ~~~~~~~~~~~~  ~~~
+           |      |                |      |            |
+           |      |                |      |            (11) ...to here
+           |      |                |      (8) following 'true' branch (when 'j < strsSize')...
+           |      |                |      (12) following 'true' branch (when 'j < strsSize')...
+           |      |                (7) ...to here
+           |   13 |             if (strs[0][i] != strs[j][i]) {
+           |      |                ~~~~~~~~
+           |      |                |    |
+           |      |                |    (9) ...to here
+           |      |                |    (13) ...to here
+           |      |                (10) following 'false' branch...
+           |   14 |                 strs[0][i] = 0;
+           |      |                 ~~~~~~~~~~~~~~
+           |      |                            |
+           |      |                            (14) write to string literal here
+           |
+./collected_code_4/round1//heal_0//problem-181.c:14:28: warning: write to string literal [-Wanalyzer-write-to-string-literal]
+   14 |                 strs[0][i] = 0;
+      |                 ~~~~~~~~~~~^~~
+  'main': events 1-2
+    |
+    |   22 | int main(){
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   25 |     char* prefix = longestCommonPrefix(strs, strsSize);
+    |      |                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                    |
+    |      |                    (2) calling 'longestCommonPrefix' from 'main'
+    |
+    +--> 'longestCommonPrefix': events 3-14
+           |
+           |    6 | char* longestCommonPrefix(char** strs, int strsSize) {
+           |      |       ^~~~~~~~~~~~~~~~~~~
+           |      |       |
+           |      |       (3) entry to 'longestCommonPrefix'
+           |    7 |     if (strsSize == 0 || *strs == NULL)
+           |      |        ~
+           |      |        |
+           |      |        (4) following 'false' branch...
+           |......
+           |   11 |     for (i = 0; i < strlen(strs[0]); i++) {
+           |      |          ~~~~~  ~~~~~~~~~~~~~~~~~~~
+           |      |            |      |
+           |      |            |      (6) following 'true' branch...
+           |      |            |      (12) following 'true' branch...
+           |      |            (5) ...to here
+           |   12 |         for (j = 1; j < strsSize; j++) {
+           |      |              ~~~~~  ~~~~~~~~~~~~  ~~~
+           |      |                |      |            |
+           |      |                |      |            (11) ...to here
+           |      |                |      (8) following 'true' branch (when 'j < strsSize')...
+           |      |                (7) ...to here
+           |      |                (13) ...to here
+           |   13 |             if (strs[0][i] != strs[j][i]) {
+           |      |                ~~~~~~~~
+           |      |                |    |
+           |      |                |    (9) ...to here
+           |      |                (10) following 'false' branch...
+           |   14 |                 strs[0][i] = 0;
+           |      |                 ~~~~~~~~~~~~~~
+           |      |                            |
+           |      |                            (14) write to string literal here
+           |

@@ -1,0 +1,28 @@
+#include <stdio.h>
+
+int kthElement(int* array, int n, int k) {
+    if(array == NULL || n <= 0 || k <= 0) {
+        printf("Invalid input\n");
+        return -1;
+    }
+
+    if(k > n) {
+        printf("k exceeds the length of the array\n");
+        return -1;
+    }
+
+    return array[k-1];
+}
+
+int main() {
+    int array[] = {10, 20, 30, 40, 50};
+    int n = sizeof(array) / sizeof(array[0]);
+    int k = 3;
+
+    int element = kthElement(array, n, k);
+
+    if(element != -1)
+        printf("The %dth element is %d\n", k, element);
+
+    return 0;
+}

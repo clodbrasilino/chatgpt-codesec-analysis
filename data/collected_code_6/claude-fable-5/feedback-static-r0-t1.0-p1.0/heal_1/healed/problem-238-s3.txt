@@ -1,0 +1,63 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+#define MAX_INPUT_SIZE 1024
+
+unsigned long long count_substrings(const char *str, size_t max_len)
+{
+    size_t len;
+
+    if (str == NULL) {
+        return 0ULL;
+    }
+
+    len = strnlen(str, max_len);
+
+    return ((unsigned long long)len * (unsigned long long)(len + 1U)) / 2ULL;
+}
+
+int main(void)
+{
+    char buffer[MAX_INPUT_SIZE];
+    char *newline;
+    unsigned long long result;
+    int ch;
+
+    printf("Enter a string: ");
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error: failed to read input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    newline = strchr(buffer, '\n');
+    if (newline != NULL) {
+        *newline = '\0';
+    } else {
+        while ((ch = getchar()) != '\n' && ch != EOF) {
+        }
+    }
+
+    result = count_substrings(buffer, sizeof(buffer));
+
+    printf("Number of non-empty substrings: %llu\n", result);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Key changes made:**
+
+1. **`strlen` → `strnlen` (CWE-126 fix):** The `count_substrings` function now takes an explicit `max_len` parameter and uses `strnlen`, which bounds the scan. Even if a non-terminated buffer were passed, the read can never exceed the caller-specified limit, eliminating the over-read risk.
+
+2. **Guaranteed termination of the static buffer (CWE-119/CWE-120 mitigation):** While `fgets` already null-terminates on success, `buffer[sizeof(buffer) - 1] = '\0';` adds an explicit defensive guarantee that the array is always a valid C string before any string function touches it. Combined with the consistent use of `sizeof(buffer)` (never a hard-coded length), the fixed-size array cannot be overrun.
+
+3. **Input truncation handling:** If no newline is found in the buffer, the input was longer than the buffer and the remainder still sits in `stdin`. The added drain loop (`getchar()` until `\n` or `EOF`) discards the excess, preventing stale data from leaking into any subsequent reads.
+
+4. **Named constant for the buffer size:** `MAX_INPUT_SIZE` replaces the magic number, making the size restriction explicit and maintainable.
+
+The arithmetic in `count_substrings` remains safe in practice: with a 1024-byte buffer, `len` is at most 1023, so `len * (len + 1)` is far below `ULLONG_MAX` and cannot overflow.

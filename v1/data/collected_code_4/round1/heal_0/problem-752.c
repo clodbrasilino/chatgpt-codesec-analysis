@@ -1,0 +1,22 @@
+#include <stdio.h>
+
+long long jacobsthal(int n) {
+    if (n == 0)
+        return 0;
+    else if (n == 1)
+        return 1;
+    else
+        return jacobsthal(n - 1) * 2 + jacobsthal(n - 2);
+}
+
+int main() {
+    int n;
+    printf("Enter the (n) term: ");
+    scanf("%d", &n);
+    if (n < 0) {
+        printf("Invalid input. n should be a non-negative integer.");
+        return -1;
+    }
+    printf("nth Jacobsthal number: %lld\n", jacobsthal(n));
+    return 0;
+}

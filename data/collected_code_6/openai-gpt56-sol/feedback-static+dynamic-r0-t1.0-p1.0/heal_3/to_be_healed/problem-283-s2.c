@@ -1,0 +1,96 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <ctype.h>
+#include <stdint.h>
+
+static int frequencies_are_valid(const char *input)
+{
+    size_t frequencies[10] = {0};
+
+    if (input == NULL || *input == '\0') {
+        return 0;
+    }
+
+    for (const unsigned char *p = (const unsigned char *)input; *p != '\0'; ++p) {
+        if (!isdigit(*p)) {
+            return 0;
+        }
+
+        size_t digit = (size_t)(*p - (unsigned char)'0');
+
+        if (frequencies[digit] >= digit) {
+            return 0;
+        }
+
+        ++frequencies[digit];
+    }
+
+    return 1;
+}
+
+int main(void)
+{
+    char *input = NULL;
+    size_t capacity = 0;
+    size_t length = 0;
+    int ch;
+
+    /* Possible weaknesses found:
+     * Flawfinder fgetc: Check buffer boundaries if used in a loop including recursive loops (CWE-120, CWE-20). (risk 1, buffer)
+     */
+    while ((ch = fgetc(stdin)) != '\n' && ch != EOF) {
+        if (length == SIZE_MAX - 1) {
+            free(input);
+            fputs("Input too long\n", stderr);
+            return EXIT_FAILURE;
+        }
+
+        if (length + 1 >= capacity) {
+            size_t new_capacity;
+
+            if (capacity == 0) {
+                new_capacity = 128;
+            } else {
+                if (capacity > SIZE_MAX / 2) {
+                    free(input);
+                    fputs("Input too long\n", stderr);
+                    return EXIT_FAILURE;
+                }
+                new_capacity = capacity * 2;
+            }
+
+            char *temporary = realloc(input, new_capacity);
+            if (temporary == NULL) {
+                free(input);
+                fputs("Memory allocation error\n", stderr);
+                return EXIT_FAILURE;
+            }
+
+            input = temporary;
+            capacity = new_capacity;
+        }
+
+        input[length++] = (char)(unsigned char)ch;
+    }
+
+    if (ch == EOF && ferror(stdin)) {
+        free(input);
+        fputs("Input error\n", stderr);
+        return EXIT_FAILURE;
+    }
+
+    if (input == NULL) {
+        input = malloc(1);
+        if (input == NULL) {
+            fputs("Memory allocation error\n", stderr);
+            return EXIT_FAILURE;
+        }
+    }
+
+    input[length] = '\0';
+
+    puts(frequencies_are_valid(input) ? "true" : "false");
+
+    free(input);
+    return EXIT_SUCCESS;
+}

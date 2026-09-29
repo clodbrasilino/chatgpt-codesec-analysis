@@ -1,0 +1,33 @@
+```c
+#include <stdio.h>
+
+void find_two_numbers(long long l, long long r, long long *num1, long long *num2) {
+    if (l <= 0 || r <= 0 || l >= r || l * 2 > r) {
+        *num1 = -1;
+        *num2 = -1;
+        return;
+    }
+    
+    *num1 = l;
+    *num2 = l * 2;
+}
+
+int main(void) {
+    long long l, r;
+    long long num1, num2;
+    
+    if (scanf("%lld %lld", &l, &r) != 2) {
+        return 1;
+    }
+    
+    find_two_numbers(l, r, &num1, &num2);
+    
+    if (num1 == -1 && num2 == -1) {
+        printf("-1\n");
+    } else {
+        printf("%lld %lld\n", num1, num2);
+    }
+    
+    return 0;
+}
+```

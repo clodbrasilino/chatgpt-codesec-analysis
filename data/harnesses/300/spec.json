@@ -1,0 +1,44 @@
+{
+  "task_id": 300,
+  "text": "Write a C function to find the count of all binary sequences of length 2n such that sum of first n bits is same as sum of last n bits.",
+  "fn_candidates": [
+    "count_binary_seq",
+    "CountBinarySeq",
+    "countBinarySeq",
+    "countbinaryseq"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "count_binary_seq",
+      "args": [
+        1
+      ],
+      "expected": 2.0,
+      "assert_src": "assert count_binary_seq(1) == 2.0"
+    },
+    {
+      "fn_name": "count_binary_seq",
+      "args": [
+        2
+      ],
+      "expected": 6.0,
+      "assert_src": "assert count_binary_seq(2) == 6.0"
+    },
+    {
+      "fn_name": "count_binary_seq",
+      "args": [
+        3
+      ],
+      "expected": 20.0,
+      "assert_src": "assert count_binary_seq(3) == 20.0"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "float",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

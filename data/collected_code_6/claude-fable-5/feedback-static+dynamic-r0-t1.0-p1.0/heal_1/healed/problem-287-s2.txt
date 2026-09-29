@@ -1,0 +1,57 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+unsigned long long sum_of_squares_even(unsigned int n)
+{
+    unsigned long long sum = 0ULL;
+    unsigned long long i;
+
+    for (i = 1ULL; i <= (unsigned long long)n; i++) {
+        unsigned long long term = 2ULL * i;
+        term = term * term;
+        if (sum > ULLONG_MAX - term) {
+            fprintf(stderr, "Overflow detected during computation\n");
+            exit(EXIT_FAILURE);
+        }
+        sum += term;
+    }
+    return sum;
+}
+
+int main(void)
+{
+    unsigned int n;
+    int result;
+    unsigned long long answer;
+
+    printf("Enter the number of even natural numbers: ");
+    result = scanf("%u", &n);
+    if (result != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (n > 1000000U) {
+        fprintf(stderr, "Input too large\n");
+        return EXIT_FAILURE;
+    }
+
+    answer = sum_of_squares_even(n);
+    printf("Sum of squares of first %u even natural numbers: %llu\n", n, answer);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis summary:**
+
+The only weakness flagged was `[variableScope]` — the variable `term` was declared at function scope but only used inside the `for` loop body. The fix moves its declaration into the loop, minimizing its scope. This improves readability and reduces the risk of accidental reuse of a stale value.
+
+The rest of the code is already sound:
+
+- **Overflow protection:** The check `sum > ULLONG_MAX - term` correctly detects potential wraparound before adding. Additionally, `term = 2ULL * i` with `n ≤ 1,000,000` means `term ≤ 4×10¹²`, and squaring stays well within `unsigned long long` range, so per-term overflow cannot occur given the input cap.
+- **Input validation:** The `scanf` return value is checked, and an upper bound (`n > 1000000U`) prevents excessive computation and guards the overflow assumptions.
+- **Type safety:** The cast `(unsigned long long)n` in the loop condition avoids implicit-conversion surprises, and `ULL` suffixes ensure arithmetic is done in 64-bit unsigned throughout.
+- **Correct format specifiers:** `%u` for `unsigned int` and `%llu` for `unsigned long long` are used properly.

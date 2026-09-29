@@ -1,0 +1,36 @@
+{
+  "task_id": 395,
+  "text": "Write a C function to find the first non-repeated character in a given string.",
+  "fn_candidates": [
+    "first_non_repeating_character",
+    "FirstNonRepeatingCharacter",
+    "firstNonRepeatingCharacter",
+    "firstnonrepeatingcharacter"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "first_non_repeating_character",
+      "args": [
+        "abc"
+      ],
+      "expected": "a",
+      "assert_src": "assert first_non_repeating_character(\"abc\") == \"a\""
+    },
+    {
+      "fn_name": "first_non_repeating_character",
+      "args": [
+        "ababc"
+      ],
+      "expected": "c",
+      "assert_src": "assert first_non_repeating_character(\"ababc\") == \"c\""
+    }
+  ],
+  "arg_kinds": [
+    "str"
+  ],
+  "return_kind": "str",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

@@ -1,0 +1,58 @@
+```c
+#include <stdio.h>
+#include <ctype.h>
+#include <stddef.h>
+
+size_t count_lowercase(const char *str)
+{
+    size_t count = 0;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    while (*str != '\0') {
+        if (islower((unsigned char)*str)) {
+            count++;
+        }
+        str++;
+    }
+
+    return count;
+}
+
+int main(void)
+{
+    char buffer[256];
+    size_t result;
+
+    printf("Enter a string: ");
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input.\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    result = count_lowercase(buffer);
+    printf("Number of lowercase letters: %zu\n", result);
+
+    return 0;
+}
+```
+
+**Analysis of the original code:**
+
+The Flawfinder warning about the statically-sized `buffer[256]` (CWE-119/CWE-120) was already effectively mitigated in the original code, and the rewrite preserves those mitigations:
+
+1. **Bounded input:** `fgets(buffer, sizeof(buffer), stdin)` limits input to the buffer size and guarantees null termination on success. Using `sizeof(buffer)` rather than a hard-coded `256` keeps the bound correct if the array size ever changes.
+
+2. **Return value checked:** The `fgets` result is tested against `NULL`, handling EOF and read errors instead of processing an indeterminate buffer.
+
+3. **Defensive null termination:** I added an explicit `buffer[sizeof(buffer) - 1] = '\0';` as a belt-and-braces measure to guarantee the string is terminated before `count_lowercase` iterates over it.
+
+4. **Correct `ctype` usage:** The cast to `(unsigned char)` before `islower()` is retained — passing a plain `char` that is negative would be undefined behavior.
+
+5. **NULL guard:** `count_lowercase` safely handles a `NULL` pointer, and `size_t` with the `%zu` format specifier is used correctly for the count.
+
+The code is safe against buffer overflows as written; the Flawfinder hit is a low-risk (level 2) informational flag inherent to any fixed-size array, and the existing bounds-limited I/O satisfies the recommended remediation.

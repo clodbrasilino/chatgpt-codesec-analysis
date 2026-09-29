@@ -1,0 +1,47 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int find_index_of_smallest_triangular_with_n_digits(int n) {
+    if (n <= 0) {
+        return -1;
+    }
+
+    if (n == 1) {
+        return 1;
+    }
+
+    unsigned long long min_value = 1;
+    for (int i = 1; i < n; i++) {
+        min_value *= 10;
+    }
+
+    unsigned long long low = 1;
+    unsigned long long high = 1;
+    while ((high * (high + 1)) / 2 < min_value) {
+        high *= 2;
+    }
+
+    while (low < high) {
+        unsigned long long mid = low + (high - low) / 2;
+        unsigned long long triangular = (mid * (mid + 1)) / 2;
+        if (triangular < min_value) {
+            low = mid + 1;
+        } else {
+            high = mid;
+        }
+    }
+
+    return (int)low;
+}
+
+int main(void) {
+    int digits = 3;
+    int index = find_index_of_smallest_triangular_with_n_digits(digits);
+    if (index != -1) {
+        printf("Index of smallest %d-digit triangular number: %d\n", digits, index);
+    } else {
+        printf("Invalid input\n");
+    }
+
+    return 0;
+}

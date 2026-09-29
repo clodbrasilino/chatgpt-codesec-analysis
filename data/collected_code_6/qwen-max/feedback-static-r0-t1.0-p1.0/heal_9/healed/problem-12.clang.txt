@@ -1,0 +1,8 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-12.c:18:25: error: incompatible integer to pointer conversion assigning to 'int *' from 'int'; take the address with & [-Wint-conversion]
+   18 |         matrix[i][cols] = cols;
+      |                         ^ ~~~~
+      |                           &
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-12.c:31:14: error: variable-sized object may not be initialized
+   31 |     int data[rows][cols] = {
+      |              ^~~~
+2 errors generated.

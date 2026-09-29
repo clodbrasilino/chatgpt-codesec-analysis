@@ -1,0 +1,37 @@
+In C, there is no native support for regular expressions, so we can't remove all whitespaces from the given string using regex in C. Instead, we can write our function using simple character handling and string processing. 
+
+Here is a function that removes whitespaces from a given string using pointer manipulation:
+
+```c
+#include <stdio.h>
+#include <ctype.h>
+
+void remove_spaces(char* str) {
+    char* result = str;
+    char* ptr = str;
+  
+    while (*ptr != '\0') {
+        if(!isspace((unsigned char)*ptr)) {
+            *result = *ptr;
+            result++;
+        }
+        ptr++;
+    }
+    *result = '\0';
+}
+
+int main() {
+    char str[] = "Remove   me   some   spaces";
+    remove_spaces(str);
+    printf("%s\n", str);
+    return 0;
+}
+```
+
+Above code will print `Removemesomespaces` as a result of `remove_spaces(str)` invocation. 
+
+This function works by iterating over the input string with the `ptr` pointer. If it points to a non-space character, that character is copied into `result` and the `result` pointer is moved one step ahead. The process is then repeated for the next character `ptr` points to.
+
+Finally, `result` points to the first unused space after all non-space characters have been copied, and a null character is written into it to terminate the new, shortened string.
+
+Inability to use regex in C is handled, and there is no resource misuse or bad usage of coding standards.

@@ -1,0 +1,26 @@
+collected_code_3/problem-412-2.c: In function 'removeOdd':
+collected_code_3/problem-412-2.c:9:23: warning: dereference of possibly-NULL 'newArr' [CWE-690] [-Wanalyzer-possible-null-dereference]
+    9 |             newArr[j] = arr[i];
+      |             ~~~~~~~~~~^~~~~~~~
+  'removeOdd': events 1-6
+    |
+    |    5 |     int* newArr = (int*)malloc(size * sizeof(int));
+    |      |                         ^~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                         |
+    |      |                         (1) this call could return NULL
+    |    6 |     int j = 0;
+    |    7 |     for(int i = 0; i < size; i++) {
+    |      |                    ~~~~~~~~
+    |      |                      |
+    |      |                      (2) following 'true' branch (when 'i < size')...
+    |    8 |         if(arr[i] % 2 == 0) {
+    |      |           ~   ~          
+    |      |           |   |
+    |      |           |   (3) ...to here
+    |      |           (4) following 'true' branch...
+    |    9 |             newArr[j] = arr[i];
+    |      |             ~~~~~~~~~~~~~~~~~~
+    |      |                       |    |
+    |      |                       |    (5) ...to here
+    |      |                       (6) 'newArr + (long unsigned int)j * 4' could be NULL: unchecked value from (1)
+    |

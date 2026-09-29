@@ -1,0 +1,14 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-580-s3.c: In function 'extractEvenElements':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-580-s3.c:39:38: error: 'Tuple' has no member named 'next'
+   39 |             nestedTuple = nestedTuple->next;
+      |                                      ^~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-580-s3.c: In function 'main':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-580-s3.c:89:19: error: 'struct Tuple' has no member named 'next'
+   89 |     t4->tupleValue->next = t5;
+      |                   ^~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-580-s3.c:90:19: error: 'struct Tuple' has no member named 'next'
+   90 |     t5->tupleValue->next = t6;
+      |                   ^~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-580-s3.c:91:19: error: 'struct Tuple' has no member named 'next'
+   91 |     t6->tupleValue->next = NULL;
+      |                   ^~

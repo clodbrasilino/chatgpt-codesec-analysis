@@ -1,0 +1,38 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <regex.h>
+#include <string.h>
+
+void find_adverbs(const char *sentence) {
+    regex_t regex;
+    regmatch_t match[1];
+
+    if (regcomp(&regex, "\\b\\w+ly\\b", REG_EXTENDED|REG_NOSUB) != 0) {
+        return;
+    }
+
+    for (size_t i = 0; sentence[i] != '\0'; ) {
+        int reti = regexec(&regex, sentence + i, 1, match, 0);
+        if (!reti) {
+            size_t start_offset = match[0].rm_so + i;
+            size_t end_offset = match[0].rm_eo + i;
+            printf("Adverb: %.*s at position %zu to %zu\n", (int)(end_offset - start_offset), sentence + start_offset, start_offset, end_offset - 1);
+            i += end_offset - start_offset;
+        } else if (reti == REG_NOMATCH) {
+            i++;
+        } else {
+            regfree(&regex);
+            return;
+        }
+    }
+
+    regfree(&regex);
+}
+
+int main() {
+    const char *sentence = "He quickly and quietly walked away.";
+    find_adverbs(sentence);
+    return 0;
+}
+```

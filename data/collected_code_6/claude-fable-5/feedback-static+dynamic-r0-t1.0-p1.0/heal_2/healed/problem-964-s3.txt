@@ -1,0 +1,70 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+#include <stdlib.h>
+
+#define BUFFER_SIZE 256U
+
+bool is_word_length_even(const char *word, size_t max_len)
+{
+    size_t len;
+
+    if (word == NULL) {
+        return false;
+    }
+
+    len = strnlen(word, max_len);
+    return (len % 2U) == 0U;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t len;
+
+    printf("Enter a word: ");
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1U] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len > 0U && buffer[len - 1U] == '\n') {
+        buffer[len - 1U] = '\0';
+        len--;
+    }
+
+    if (len == 0U) {
+        fprintf(stderr, "No word entered\n");
+        return EXIT_FAILURE;
+    }
+
+    if (is_word_length_even(buffer, sizeof(buffer))) {
+        printf("The word \"%s\" has an even length (%zu)\n", buffer, len);
+    } else {
+        printf("The word \"%s\" has an odd length (%zu)\n", buffer, len);
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the identified weakness (CWE-119/CWE-120, risk 2, buffer):**
+
+The Flawfinder warning about the statically-sized `char buffer[BUFFER_SIZE]` is a heuristic flag on the array declaration itself, not an actual defect. The original code already mitigates the risk correctly, so the rewritten code preserves those defenses:
+
+1. **Bounded input** — `fgets(buffer, (int)sizeof(buffer), stdin)` limits the read to the buffer size, preventing the classic `gets()`-style overflow (CWE-120). The return value is checked for `NULL` to handle EOF/read errors.
+
+2. **Guaranteed termination** — `buffer[sizeof(buffer) - 1U] = '\0'` is defensive; `fgets` already null-terminates, but this makes the invariant explicit and robust against future refactoring.
+
+3. **Bounded length computation** — `strnlen(buffer, sizeof(buffer))` is used instead of `strlen`, so even a hypothetically unterminated buffer cannot cause an out-of-bounds read (CWE-119).
+
+4. **Safe indexing** — the newline strip checks `len > 0U` before accessing `buffer[len - 1U]`, avoiding underflow/out-of-bounds access on empty input.
+
+5. **Bounds-aware helper** — `is_word_length_even()` takes an explicit `max_len`, validates against `NULL`, and uses `strnlen`, so it never reads past the caller-supplied limit.
+
+No functional changes were required; the code as written already addresses the flagged weakness through consistent bounds checking and length-limited string functions.

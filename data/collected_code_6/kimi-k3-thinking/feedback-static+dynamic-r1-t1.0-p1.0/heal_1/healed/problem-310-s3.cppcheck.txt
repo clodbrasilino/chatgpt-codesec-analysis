@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_1/healed/problem-310-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_1/healed/problem-310-s3.c:115:14: style: Condition 'span<2' is always true [knownConditionTrueFalse]
+    if (span < 2 || body[0] != '(' || body[span - 1] != ')') {
+             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_1/healed/problem-310-s3.c:108:19: note: Assuming that condition 'length>start' is not redundant
+    while (length > start && str[length - 1] == ' ') {
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_1/healed/problem-310-s3.c:112:19: note: Assignment 'span=length-start', assigned value is less than 1
+    span = length - start;
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_1/healed/problem-310-s3.c:115:14: note: Condition 'span<2' is always true
+    if (span < 2 || body[0] != '(' || body[span - 1] != ')') {
+             ^

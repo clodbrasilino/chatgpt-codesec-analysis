@@ -1,0 +1,101 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdbool.h>
+
+#define MAX_INPUT_LEN 4096
+
+bool is_valid_parentheses(const char *s)
+{
+    size_t len;
+    char *stack;
+    size_t top = 0;
+    size_t i;
+    bool result = true;
+
+    if (s == NULL) {
+        return false;
+    }
+
+    len = strnlen(s, MAX_INPUT_LEN);
+    if (len == MAX_INPUT_LEN && s[MAX_INPUT_LEN - 1] != '\0') {
+        return false;
+    }
+
+    if (len == 0) {
+        return true;
+    }
+
+    stack = malloc(len);
+    if (stack == NULL) {
+        return false;
+    }
+
+    for (i = 0; i < len; i++) {
+        char c = s[i];
+        if (c == '(' || c == '[' || c == '{') {
+            stack[top] = c;
+            top++;
+        } else if (c == ')' || c == ']' || c == '}') {
+            if (top == 0) {
+                result = false;
+                break;
+            }
+            top--;
+            if ((c == ')' && stack[top] != '(') ||
+                (c == ']' && stack[top] != '[') ||
+                (c == '}' && stack[top] != '{')) {
+                result = false;
+                break;
+            }
+        } else {
+            result = false;
+            break;
+        }
+    }
+
+    if (result && top != 0) {
+        result = false;
+    }
+
+    free(stack);
+    return result;
+}
+
+int main(void)
+{
+    const char *tests[] = {
+        "()",
+        "()[]{}",
+        "(]",
+        "([)]",
+        "{[]}",
+        "",
+        "((("
+    };
+    size_t count = sizeof(tests) / sizeof(tests[0]);
+    size_t i;
+
+    for (i = 0; i < count; i++) {
+        if (printf("\"%s\" -> %s\n", tests[i],
+                   is_valid_parentheses(tests[i]) ? "valid" : "invalid") < 0) {
+            return EXIT_FAILURE;
+        }
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Key change addressing the identified weakness (CWE-126):**
+
+The original code used `strlen(s)`, which performs an unbounded scan and can over-read if the input is not NUL-terminated. The rewrite replaces it with `strnlen(s, MAX_INPUT_LEN)`, which bounds the scan to a defined maximum. If the bound is reached without finding a terminator, the function safely rejects the input by returning `false` instead of reading past the buffer.
+
+The rest of the logic was already sound:
+
+- `NULL` input is rejected before any dereference.
+- `malloc` return value is checked before use.
+- The stack buffer can never overflow, since the number of pushes is bounded by `len` and the buffer is exactly `len` bytes.
+- The buffer is freed on every exit path after allocation, so there are no leaks.
+- `printf`'s return value is checked in `main`, propagating I/O failures via `EXIT_FAILURE`.

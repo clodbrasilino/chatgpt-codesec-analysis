@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_10/healed/problem-73-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_10/healed/problem-73-s3.c:31:17: style: Condition 'len>=alloc_size' is always false [knownConditionTrueFalse]
+        if (len >= alloc_size)
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_10/healed/problem-73-s3.c:21:16: note: alloc_size is assigned 'len+1' here.
+    alloc_size = len + 1;
+               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_10/healed/problem-73-s3.c:24:15: note: Assuming condition is false
+    if (token == NULL)
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_10/healed/problem-73-s3.c:31:17: note: Condition 'len>=alloc_size' is always false
+        if (len >= alloc_size)
+                ^

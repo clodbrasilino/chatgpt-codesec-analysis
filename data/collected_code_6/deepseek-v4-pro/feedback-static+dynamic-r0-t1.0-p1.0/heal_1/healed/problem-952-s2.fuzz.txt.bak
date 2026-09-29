@@ -1,0 +1,10 @@
+problem-952-s2.c:9:24:medium:UBSan: signed integer overflow: -269283330532528 * 37694891480704 cannot be represented in type 'long long' (AFL crash: id:000000,sig:06,src:000000,time:9843,execs:6430,op:havoc,rep:8)
+problem-952-s2.c:9:24:medium:UBSan: signed integer overflow: 67210926036282 * -121658586146157 cannot be represented in type 'long long' (AFL crash: id:000001,sig:06,src:000000,time:18028,execs:11661,op:havoc,rep:3)
+problem-952-s2.c:11:16:medium:UBSan: signed integer overflow: 33686122555824 * 33686122555824 cannot be represented in type 'long long' (AFL crash: id:000000,sig:06,src:000000,time:9843,execs:6430,op:havoc,rep:8)
+problem-952-s2.c:11:16:medium:UBSan: signed integer overflow: 2821109907456 * 2821109907456 cannot be represented in type 'long long' (AFL crash: id:000001,sig:06,src:000000,time:18028,execs:11661,op:havoc,rep:3)
+problem-952-s2.c:34:32:medium:UBSan: signed integer overflow: 443351746704864 * 20836 cannot be represented in type 'long long' (AFL crash: id:000000,sig:06,src:000000,time:9843,execs:6430,op:havoc,rep:8)
+problem-952-s2.c:36:33:medium:UBSan: signed integer overflow: 152724087931844 * -363255105559352 cannot be represented in type 'long long' (AFL crash: id:000000,sig:06,src:000000,time:9843,execs:6430,op:havoc,rep:8)
+problem-952-s2.c:36:33:medium:UBSan: signed integer overflow: 1307674368000 * 107490885772289 cannot be represented in type 'long long' (AFL crash: id:000001,sig:06,src:000000,time:18028,execs:11661,op:havoc,rep:3)
+problem-952-s2.c:37:22:medium:UBSan: signed integer overflow: -123160992406548 * 389469702633292 cannot be represented in type 'long long' (AFL crash: id:000000,sig:06,src:000000,time:9843,execs:6430,op:havoc,rep:8)
+problem-952-s2.c:37:22:medium:UBSan: signed integer overflow: -24150752476488 * 5474430284490 cannot be represented in type 'long long' (AFL crash: id:000001,sig:06,src:000000,time:18028,execs:11661,op:havoc,rep:3)
+problem-952-s2.c:42:0:error:Fuzzing found a crash (signal 6) on input id:000002,sig:06,src:000018,time:45543,execs:13478,op:havoc,rep:2; likely memory-safety defect

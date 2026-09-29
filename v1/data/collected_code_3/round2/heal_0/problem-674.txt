@@ -1,0 +1,34 @@
+C language does not have a built-in collections module like Python. However, you can achieve the same functionality using C's standard library. Here's a simple C program that removes duplicate words from a string:
+
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+char* removeDuplicates(char* str) {
+    char* result = malloc(strlen(str) + 1);
+    char* word = strtok(str, " ");
+    strcpy(result, word);
+    strcat(result, " ");
+
+    while (word != NULL) {
+        word = strtok(NULL, " ");
+        if (word != NULL && !strstr(result, word)) {
+            strcat(result, word);
+            strcat(result, " ");
+        }
+    }
+
+    return result;
+}
+
+int main() {
+    char str[] = "This is a test. This is only a test.";
+    char* result = removeDuplicates(str);
+    printf("%s\n", result);
+    free(result);
+    return 0;
+}
+```
+
+This program uses the `strtok` function to split the input string into words. It then checks each word to see if it's already in the result string. If it's not, it adds the word to the result. Note that this program modifies the input string, so if you need the original string to remain unchanged, you should make a copy before calling `removeDuplicates`.

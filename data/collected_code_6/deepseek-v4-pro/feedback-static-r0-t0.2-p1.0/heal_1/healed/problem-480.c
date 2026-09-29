@@ -1,0 +1,65 @@
+#include <stdio.h>
+#include <string.h>
+#include <limits.h>
+#include <stdlib.h>
+
+char max_occurring_char(const char *str) {
+    int count[UCHAR_MAX + 1] = {0};
+    int max_count = 0;
+    char max_char = '\0';
+    const unsigned char *u_str = (const unsigned char *)str;
+
+    if (str == NULL || *str == '\0') {
+        return '\0';
+    }
+
+    while (*u_str) {
+        count[*u_str]++;
+        u_str++;
+    }
+
+    for (int i = 0; i <= UCHAR_MAX; i++) {
+        if (count[i] > max_count) {
+            max_count = count[i];
+            max_char = (char)i;
+        }
+    }
+
+    return max_char;
+}
+
+int main(void) {
+    size_t buffer_size = 1000;
+    char *str = NULL;
+    size_t len = 0;
+
+    str = (char *)malloc(buffer_size);
+    if (str == NULL) {
+        return 1;
+    }
+
+    printf("Enter a string: ");
+    if (fgets(str, (int)buffer_size, stdin) == NULL) {
+        free(str);
+        return 1;
+    }
+
+    len = strlen(str);
+    if (len > 0 && str[len - 1] != '\n' && len >= buffer_size - 1) {
+        int c;
+        while ((c = getchar()) != '\n' && c != EOF);
+    }
+
+    str[strcspn(str, "\n")] = '\0';
+
+    char result = max_occurring_char(str);
+
+    if (result == '\0') {
+        printf("Empty string\n");
+    } else {
+        printf("Maximum occurring character: %c\n", result);
+    }
+
+    free(str);
+    return 0;
+}

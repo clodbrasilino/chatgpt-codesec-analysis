@@ -1,0 +1,78 @@
+{
+  "task_id": 842,
+  "text": "Write a C function to find the number which occurs for odd number of times in the given array.",
+  "fn_candidates": [
+    "get_odd_occurence",
+    "GetOddOccurence",
+    "getOddOccurence",
+    "getoddoccurence"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "get_odd_occurence",
+      "args": [
+        [
+          2,
+          3,
+          5,
+          4,
+          5,
+          2,
+          4,
+          3,
+          5,
+          2,
+          4,
+          4,
+          2
+        ],
+        13
+      ],
+      "expected": 5,
+      "assert_src": "assert get_odd_occurence([2, 3, 5, 4, 5, 2, 4, 3, 5, 2, 4, 4, 2], 13) == 5"
+    },
+    {
+      "fn_name": "get_odd_occurence",
+      "args": [
+        [
+          1,
+          2,
+          3,
+          2,
+          3,
+          1,
+          3
+        ],
+        7
+      ],
+      "expected": 3,
+      "assert_src": "assert get_odd_occurence([1, 2, 3, 2, 3, 1, 3], 7) == 3"
+    },
+    {
+      "fn_name": "get_odd_occurence",
+      "args": [
+        [
+          5,
+          7,
+          2,
+          7,
+          5,
+          2,
+          5
+        ],
+        7
+      ],
+      "expected": 5,
+      "assert_src": "assert get_odd_occurence([5, 7, 2, 7, 5, 2, 5], 7) == 5"
+    }
+  ],
+  "arg_kinds": [
+    "int",
+    "int-list"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

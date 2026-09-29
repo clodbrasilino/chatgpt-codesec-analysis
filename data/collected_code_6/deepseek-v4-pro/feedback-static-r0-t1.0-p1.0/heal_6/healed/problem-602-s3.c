@@ -1,0 +1,56 @@
+#include <stdio.h>
+#include <string.h>
+#include <limits.h>
+
+char first_repeated_char(const char *str)
+{
+    int count[UCHAR_MAX + 1] = {0};
+
+    if (str == NULL) {
+        return '\0';
+    }
+
+    for (size_t i = 0; str[i] != '\0'; i++) {
+        unsigned char uc = (unsigned char)str[i];
+        count[uc]++;
+        if (count[uc] == 2) {
+            return str[i];
+        }
+    }
+
+    return '\0';
+}
+
+int main(void)
+{
+    char str[256];
+    char result;
+
+    printf("Enter a string: ");
+    if (fgets(str, sizeof(str), stdin) == NULL) {
+        return 1;
+    }
+
+    str[sizeof(str) - 1] = '\0';
+
+    size_t len = strlen(str);
+
+    if (len > 0 && str[len - 1] == '\n') {
+        str[len - 1] = '\0';
+    } else {
+        if (len == sizeof(str) - 1) {
+            int c;
+            while ((c = getchar()) != '\n' && c != EOF) {
+            }
+        }
+    }
+
+    result = first_repeated_char(str);
+    if (result != '\0') {
+        printf("First repeated character: %c\n", result);
+    } else {
+        printf("No repeated character found\n");
+    }
+
+    return 0;
+}

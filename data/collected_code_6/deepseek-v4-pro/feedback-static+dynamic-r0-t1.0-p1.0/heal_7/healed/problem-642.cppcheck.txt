@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-642.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-642.c:27:14: style: Condition 'cols>0' is always true [knownConditionTrueFalse]
+    if (cols > 0 && (size_t)rows > SIZE_MAX / sizeof(int *)) return NULL;
+             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-642.c:26:27: note: Assuming that condition 'cols<=0' is not redundant
+    if (rows <= 0 || cols <= 0) return NULL;
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-642.c:27:14: note: Condition 'cols>0' is always true
+    if (cols > 0 && (size_t)rows > SIZE_MAX / sizeof(int *)) return NULL;
+             ^

@@ -1,0 +1,139 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+#include <stdbool.h>
+
+typedef struct {
+    char **elements;
+    size_t count;
+} Tuple;
+
+static bool check_add_size(size_t a, size_t b, size_t *result)
+{
+    if (a > SIZE_MAX - b) {
+        return false;
+    }
+    *result = a + b;
+    return true;
+}
+
+static bool check_mul_size(size_t a, size_t b, size_t *result)
+{
+    if (a != 0 && b > SIZE_MAX / a) {
+        return false;
+    }
+    *result = a * b;
+    return true;
+}
+
+char *tuple_join(const Tuple *tuple, const char *delimiter)
+{
+    size_t total_length;
+    size_t delimiter_length;
+    size_t i;
+    char *result;
+    char *current;
+    size_t remaining;
+
+    if (tuple == NULL || delimiter == NULL) {
+        return NULL;
+    }
+
+    if (tuple->count == 0 || tuple->elements == NULL) {
+        result = malloc(1);
+        if (result != NULL) {
+            result[0] = '\0';
+        }
+        return result;
+    }
+
+    delimiter_length = strnlen(delimiter, 4096);
+    if (delimiter_length == 4096 && delimiter[4095] != '\0') {
+        return NULL;
+    }
+
+    total_length = 1;
+
+    for (i = 0; i < tuple->count; i++) {
+        size_t element_length;
+
+        if (tuple->elements[i] == NULL) {
+            return NULL;
+        }
+
+        element_length = strnlen(tuple->elements[i], 4096);
+        if (element_length == 4096 && tuple->elements[i][4095] != '\0') {
+            return NULL;
+        }
+
+        if (!check_add_size(total_length, element_length, &total_length)) {
+            return NULL;
+        }
+
+        if (i > 0) {
+            if (!check_add_size(total_length, delimiter_length, &total_length)) {
+                return NULL;
+            }
+        }
+    }
+
+    result = malloc(total_length);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    current = result;
+    remaining = total_length;
+
+    for (i = 0; i < tuple->count; i++) {
+        size_t element_length = strnlen(tuple->elements[i], 4096);
+
+        if (i > 0) {
+            if (remaining < delimiter_length) {
+                free(result);
+                return NULL;
+            }
+            if (delimiter_length > 0) {
+                memcpy(current, delimiter, delimiter_length);
+                current += delimiter_length;
+                remaining -= delimiter_length;
+            }
+        }
+
+        if (remaining < element_length) {
+            free(result);
+            return NULL;
+        }
+        if (element_length > 0) {
+            memcpy(current, tuple->elements[i], element_length);
+            current += element_length;
+            remaining -= element_length;
+        }
+    }
+
+    if (remaining < 1) {
+        free(result);
+        return NULL;
+    }
+    *current = '\0';
+    return result;
+}
+
+int main(void)
+{
+    char *data[] = {"apple", "banana", "cherry", "date"};
+    Tuple tuple = {data, 4};
+    char *joined;
+
+    joined = tuple_join(&tuple, ", ");
+    if (joined == NULL) {
+        fprintf(stderr, "Failed to join tuple elements\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("%s\n", joined);
+    free(joined);
+
+    return EXIT_SUCCESS;
+}

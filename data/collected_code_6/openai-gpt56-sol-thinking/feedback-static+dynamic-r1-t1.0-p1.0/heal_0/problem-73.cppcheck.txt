@@ -1,0 +1,40 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-73.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-73.c:152:25: style: Condition 'match_start==match_end' is always false [knownConditionTrueFalse]
+        if (match_start == match_end) {
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-73.c:136:25: note: Assuming that condition 'match.rm_eo<match.rm_so' is not redundant
+            match.rm_eo < match.rm_so) {
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-73.c:142:21: note: match_start is assigned '(unsigned long)match.rm_so' here.
+        match_start = (size_t)match.rm_so;
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-73.c:143:21: note: Assignment 'match_end=(unsigned long)match.rm_eo', assigned value is less than symbolic=match_start-1
+        match_end = (size_t)match.rm_eo;
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-73.c:146:37: note: Assuming condition is false
+        if (match_start > remaining || match_end > remaining) {
+                                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-73.c:152:25: note: Condition 'match_start==match_end' is always false
+        if (match_start == match_end) {
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-73.c:35:12: style: The scope of the variable 'new_capacity' can be reduced. [variableScope]
+    size_t new_capacity;
+           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-73.c:36:12: style: The scope of the variable 'maximum_capacity' can be reduced. [variableScope]
+    size_t maximum_capacity;
+           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-73.c:97:12: style: The scope of the variable 'match_start' can be reduced. [variableScope]
+    size_t match_start;
+           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-73.c:98:12: style: The scope of the variable 'match_end' can be reduced. [variableScope]
+    size_t match_end;
+           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-73.c:99:12: style: The scope of the variable 'remaining' can be reduced. [variableScope]
+    size_t remaining;
+           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-73.c:102:9: style: The scope of the variable 'execution_flags' can be reduced. [variableScope]
+    int execution_flags;
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-73.c:194:26: style: Parameter 'argv' can be declared as const array [constParameter]
+int main(int argc, char *argv[])
+                         ^

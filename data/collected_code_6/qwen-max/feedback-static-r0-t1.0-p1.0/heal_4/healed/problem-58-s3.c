@@ -1,0 +1,18 @@
+#include <stdio.h>
+
+int have_opposite_signs(int a, int b) {
+    return (a ^ b) < 0;
+}
+
+int main() {
+    int x = 10;
+    int y = -20;
+
+    if (have_opposite_signs(x, y)) {
+        printf("The numbers have opposite signs.\n");
+    } else {
+        printf("The numbers do not have opposite signs.\n");
+    }
+
+    return 0;
+}

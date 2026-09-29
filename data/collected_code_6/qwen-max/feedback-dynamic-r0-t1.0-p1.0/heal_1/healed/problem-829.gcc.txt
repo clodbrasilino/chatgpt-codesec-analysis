@@ -1,0 +1,15 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_1/healed/problem-829.c: In function 'secondMostFrequent':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_1/healed/problem-829.c:34:22: error: 'INT_MAX' undeclared (first use in this function)
+   34 |     int firstCount = INT_MAX, secondCount = INT_MIN;
+      |                      ^~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_1/healed/problem-829.c:4:1: note: 'INT_MAX' is defined in header '<limits.h>'; this is probably fixable by adding '#include <limits.h>'
+    3 | #include <string.h>
+  +++ |+#include <limits.h>
+    4 | 
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_1/healed/problem-829.c:34:22: note: each undeclared identifier is reported only once for each function it appears in
+   34 |     int firstCount = INT_MAX, secondCount = INT_MIN;
+      |                      ^~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_1/healed/problem-829.c:34:45: error: 'INT_MIN' undeclared (first use in this function)
+   34 |     int firstCount = INT_MAX, secondCount = INT_MIN;
+      |                                             ^~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_1/healed/problem-829.c:34:45: note: 'INT_MIN' is defined in header '<limits.h>'; this is probably fixable by adding '#include <limits.h>'

@@ -1,0 +1,96 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    int id;
+    char *value;
+} Tuple;
+
+typedef struct {
+    Tuple *tuples;
+    size_t size;
+} TupleList;
+
+typedef struct {
+    int *order;
+    size_t size;
+} OrderList;
+
+static int find_tuple_index(const TupleList *list, int id) {
+    for (size_t i = 0; i < list->size; i++) {
+        if (list->tuples[i].id == id) {
+            return (int)i;
+        }
+    }
+    return -1;
+}
+
+static void swap_tuples(Tuple *a, Tuple *b) {
+    Tuple temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+int rearrange_tuples(TupleList *list, const OrderList *order) {
+    if (list == NULL || order == NULL || list->tuples == NULL || order->order == NULL) {
+        return -1;
+    }
+
+    if (list->size != order->size) {
+        return -1;
+    }
+
+    for (size_t i = 0; i < order->size; i++) {
+        int target_index = find_tuple_index(list, order->order[i]);
+        if (target_index == -1) {
+            return -1;
+        }
+
+        if ((size_t)target_index != i) {
+            swap_tuples(&list->tuples[i], &list->tuples[target_index]);
+        }
+    }
+
+    return 0;
+}
+
+static void print_tuples(const TupleList *list) {
+    for (size_t i = 0; i < list->size; i++) {
+        printf("(%d, %s) ", list->tuples[i].id, list->tuples[i].value);
+    }
+    printf("\n");
+}
+
+int main(void) {
+    Tuple tuples[] = {
+        {1, "one"},
+        {2, "two"},
+        {3, "three"},
+        {4, "four"},
+        {5, "five"}
+    };
+
+    TupleList list = {
+        .tuples = tuples,
+        .size = sizeof(tuples) / sizeof(tuples[0])
+    };
+
+    int order_arr[] = {5, 3, 1, 4, 2};
+    OrderList order = {
+        .order = order_arr,
+        .size = sizeof(order_arr) / sizeof(order_arr[0])
+    };
+
+    printf("Before rearrangement: ");
+    print_tuples(&list);
+
+    if (rearrange_tuples(&list, &order) == 0) {
+        printf("After rearrangement: ");
+        print_tuples(&list);
+    } else {
+        printf("Failed to rearrange tuples\n");
+    }
+
+    return 0;
+}

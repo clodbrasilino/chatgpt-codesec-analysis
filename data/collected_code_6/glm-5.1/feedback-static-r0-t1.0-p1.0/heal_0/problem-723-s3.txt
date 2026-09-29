@@ -1,0 +1,43 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef int (*MapFunc)(int);
+
+int identity(int x) {
+    return x;
+}
+
+int count_same_pair(int *list1, int *list2, size_t size, MapFunc map) {
+    if (list1 == NULL || list2 == NULL || map == NULL || size == 0) {
+        return 0;
+    }
+
+    int count = 0;
+    for (size_t i = 0; i < size; i++) {
+        if (map(list1[i]) == map(list2[i])) {
+            count++;
+        }
+    }
+
+    return count;
+}
+
+int square(int x) {
+    return x * x;
+}
+
+int main(void) {
+    int a[] = {1, 2, 3, 4, 5};
+    int b[] = {1, -2, 3, -4, 5};
+    size_t size = sizeof(a) / sizeof(a[0]);
+
+    int result_identity = count_same_pair(a, b, size, identity);
+    printf("%d\n", result_identity);
+
+    int result_square = count_same_pair(a, b, size, square);
+    printf("%d\n", result_square);
+
+    return 0;
+}
+```

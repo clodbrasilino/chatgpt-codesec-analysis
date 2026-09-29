@@ -1,0 +1,14 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+double tupleToFloat(int a, int b) {
+    return (double)a + (double)b / 100.0;
+}
+
+int main() {
+    int a = 123;
+    int b = 45;
+    double result = tupleToFloat(a, b);
+    printf("%.2f\n", result);
+    return 0;
+}

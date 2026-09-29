@@ -1,0 +1,31 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+double calculate_perimeter(double length, double width);
+
+int main(void) {
+    double length = 0.0;
+    double width = 0.0;
+    double perimeter = 0.0;
+
+    if (scanf("%lf %lf", &length, &width) != 2) {
+        return EXIT_FAILURE;
+    }
+
+    perimeter = calculate_perimeter(length, width);
+    
+    if (perimeter < 0.0) {
+        return EXIT_FAILURE;
+    }
+
+    printf("%.2f\n", perimeter);
+
+    return EXIT_SUCCESS;
+}
+
+double calculate_perimeter(double length, double width) {
+    if (length < 0.0 || width < 0.0) {
+        return -1.0;
+    }
+    return 2.0 * (length + width);
+}

@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-838-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-838-s3.c:26:15: style: Condition 'len_a!=len_b' is always false [knownConditionTrueFalse]
+    if (len_a != len_b) {
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-838-s3.c:21:21: note: Assignment 'a="1100"', assigned value is "1100"
+    const char *a = "1100";
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-838-s3.c:23:26: note: Assignment 'len_a=strlen(a)', assigned value is 4
+    size_t len_a = strlen(a);
+                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-838-s3.c:26:15: note: Condition 'len_a!=len_b' is always false
+    if (len_a != len_b) {
+              ^

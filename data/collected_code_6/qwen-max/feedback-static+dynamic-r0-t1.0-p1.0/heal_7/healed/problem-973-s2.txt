@@ -1,0 +1,28 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+void left_rotate_string(char *str, int n) {
+    if (str == NULL) return;
+    size_t len = strlen(str);
+    if (n > 0 && len > 1) {
+        n = n % len;
+        char *temp = malloc(n + 1);
+        if (temp == NULL) return;
+        memcpy(temp, str, n);
+        temp[n] = '\0';
+        memmove(str, str + n, len - n + 1);
+        strcpy(str + len - n, temp);
+        free(temp);
+    }
+}
+
+int main() {
+    char str[] = "HelloWorld";
+    int n = 3;
+    left_rotate_string(str, n);
+    printf("%s\n", str);
+    return 0;
+}
+```

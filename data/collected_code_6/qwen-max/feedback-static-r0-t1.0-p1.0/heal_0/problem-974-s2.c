@@ -1,0 +1,24 @@
+#include <stdio.h>
+#include <limits.h>
+
+int minimumTotal(int** triangle, int row) {
+    for (int i = row - 2; i >= 0; --i) {
+        for (int j = 0; j <= i; ++j) {
+            triangle[i][j] += (triangle[i+1][j] < triangle[i+1][j+1] ? triangle[i+1][j] : triangle[i+1][j+1]);
+        }
+    }
+    return triangle[0][0];
+}
+
+int main() {
+    int triangle[][3] = { 
+        {2}, 
+        {3,4}, 
+        {6,5,7}, 
+        {4,1,8,3} 
+    };
+    int rows = 4;
+    int result = minimumTotal((int**)triangle, rows);
+    printf("Minimum total path sum: %d\n", result);
+    return 0;
+}

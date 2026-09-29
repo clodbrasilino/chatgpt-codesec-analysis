@@ -1,0 +1,99 @@
+{
+  "task_id": 1,
+  "text": "Write a C function to find the minimum cost path to reach (m, n) from (0, 0) for the given cost matrix cost[][] and a position (m, n) in cost[][].",
+  "fn_candidates": [
+    "min_cost",
+    "MinCost",
+    "minCost",
+    "mincost"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "min_cost",
+      "args": [
+        [
+          [
+            1,
+            2,
+            3
+          ],
+          [
+            4,
+            8,
+            2
+          ],
+          [
+            1,
+            5,
+            3
+          ]
+        ],
+        2,
+        2
+      ],
+      "expected": 8,
+      "assert_src": "assert min_cost([[1, 2, 3], [4, 8, 2], [1, 5, 3]], 2, 2) == 8"
+    },
+    {
+      "fn_name": "min_cost",
+      "args": [
+        [
+          [
+            2,
+            3,
+            4
+          ],
+          [
+            5,
+            9,
+            3
+          ],
+          [
+            2,
+            6,
+            4
+          ]
+        ],
+        2,
+        2
+      ],
+      "expected": 12,
+      "assert_src": "assert min_cost([[2, 3, 4], [5, 9, 3], [2, 6, 4]], 2, 2) == 12"
+    },
+    {
+      "fn_name": "min_cost",
+      "args": [
+        [
+          [
+            3,
+            4,
+            5
+          ],
+          [
+            6,
+            10,
+            4
+          ],
+          [
+            3,
+            7,
+            5
+          ]
+        ],
+        2,
+        2
+      ],
+      "expected": 16,
+      "assert_src": "assert min_cost([[3, 4, 5], [6, 10, 4], [3, 7, 5]], 2, 2) == 16"
+    }
+  ],
+  "arg_kinds": [
+    "2d-int-list",
+    "int"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

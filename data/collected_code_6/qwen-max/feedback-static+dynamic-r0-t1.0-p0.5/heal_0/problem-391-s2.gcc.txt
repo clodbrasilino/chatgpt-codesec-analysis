@@ -1,0 +1,8 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-391-s2.c: In function 'add_to_dictionary':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-391-s2.c:24:21: error: assignment to 'struct Node *' from incompatible pointer type 'Dictionary *' [-Wincompatible-pointer-types]
+   24 |     new_node->value = value;
+      |                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-391-s2.c: In function 'print_dictionary':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-391-s2.c:62:27: error: 'struct Node' has no member named 'head'
+   62 |         if (current->value->head == NULL) {
+      |                           ^~

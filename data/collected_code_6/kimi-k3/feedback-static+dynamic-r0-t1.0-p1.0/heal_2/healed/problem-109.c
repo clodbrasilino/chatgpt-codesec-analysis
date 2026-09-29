@@ -1,0 +1,95 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <limits.h>
+#include <errno.h>
+
+int countOddRotations(const char *binaryString, size_t maxLength, int *result) {
+    size_t length;
+    size_t i;
+    int count;
+    
+    if (binaryString == NULL || result == NULL || maxLength == 0) {
+        return -1;
+    }
+    
+    length = strnlen(binaryString, maxLength);
+    
+    if (length == 0) {
+        *result = 0;
+        return 0;
+    }
+    
+    if (length == maxLength && binaryString[length - 1] != '\0') {
+        return -1;
+    }
+    
+    for (i = 0; i < length; i++) {
+        if (binaryString[i] != '0' && binaryString[i] != '1') {
+            return -1;
+        }
+    }
+    
+    count = 0;
+    
+    for (i = 0; i < length; i++) {
+        if (binaryString[i] == '1') {
+            if (count == INT_MAX) {
+                return -1;
+            }
+            count++;
+        }
+    }
+    
+    *result = count;
+    return 0;
+}
+
+int main(void) {
+    char *buffer;
+    size_t bufferSize;
+    size_t inputLength;
+    int rotations;
+    int status;
+    
+    bufferSize = 1024;
+    buffer = malloc(bufferSize);
+    
+    if (buffer == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("Enter a binary string: ");
+    
+    if (fgets(buffer, (int)bufferSize, stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+    
+    inputLength = strlen(buffer);
+    
+    if (inputLength > 0 && buffer[inputLength - 1] != '\n' && !feof(stdin)) {
+        int c;
+        while ((c = getchar()) != '\n' && c != EOF);
+        fprintf(stderr, "Input too long\n");
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+    
+    buffer[strcspn(buffer, "\n")] = '\0';
+    
+    status = countOddRotations(buffer, bufferSize, &rotations);
+    
+    if (status != 0) {
+        fprintf(stderr, "Invalid input: string must contain only '0' and '1'\n");
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+    
+    printf("Count of rotations with odd value: %d\n", rotations);
+    
+    free(buffer);
+    return EXIT_SUCCESS;
+}

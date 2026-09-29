@@ -1,0 +1,30 @@
+```c
+#include <stdio.h>
+#include <string.h>
+
+char* replace_multiple_occurrences_with_single(char *str, char target) {
+    if (str == NULL) return str;
+    
+    char *src = str, *dst = str;
+    char prev_char = '\0';
+    
+    while (*src) {
+        if (*src != target || *src != prev_char) {
+            *dst = *src;
+            dst++;
+        }
+        prev_char = *src;
+        src++;
+    }
+    *dst = '\0';
+    return str;
+}
+
+int main() {
+    char str[] = "hello  w  or   ld   ";
+    printf("Before: %s\n", str);
+    replace_multiple_occurrences_with_single(str, ' ');
+    printf("After: %s\n", str);
+    return 0;
+}
+```

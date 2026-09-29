@@ -1,0 +1,154 @@
+#define _POSIX_C_SOURCE 200809L
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdbool.h>
+
+typedef struct {
+    char **words;
+    size_t count;
+    size_t capacity;
+} WordCollection;
+
+bool init_collection(WordCollection *collection, size_t initial_capacity) {
+    if (!collection || initial_capacity == 0) {
+        return false;
+    }
+    collection->words = malloc(initial_capacity * sizeof(char *));
+    if (!collection->words) {
+        return false;
+    }
+    collection->count = 0;
+    collection->capacity = initial_capacity;
+    return true;
+}
+
+void free_collection(WordCollection *collection) {
+    if (collection) {
+        for (size_t i = 0; i < collection->count; i++) {
+            free(collection->words[i]);
+        }
+        free(collection->words);
+        collection->words = NULL;
+        collection->count = 0;
+        collection->capacity = 0;
+    }
+}
+
+bool contains_word(const WordCollection *collection, const char *word) {
+    if (!collection || !word) {
+        return false;
+    }
+    for (size_t i = 0; i < collection->count; i++) {
+        if (strcmp(collection->words[i], word) == 0) {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool add_word(WordCollection *collection, const char *word) {
+    if (!collection || !word) {
+        return false;
+    }
+    if (collection->count >= collection->capacity) {
+        size_t new_capacity = collection->capacity * 2;
+        char **new_words = realloc(collection->words, new_capacity * sizeof(char *));
+        if (!new_words) {
+            return false;
+        }
+        collection->words = new_words;
+        collection->capacity = new_capacity;
+    }
+    
+    char *word_copy = strdup(word);
+    if (!word_copy) {
+        return false;
+    }
+    
+    collection->words[collection->count++] = word_copy;
+    return true;
+}
+
+char *remove_duplicate_words(const char *input) {
+    if (!input) {
+        return NULL;
+    }
+
+    size_t max_input_len = 1048576; 
+    size_t input_len = strnlen(input, max_input_len);
+    if (input_len == max_input_len && input[max_input_len] != '\0') {
+        return NULL;
+    }
+
+    char *input_copy = strdup(input);
+    if (!input_copy) {
+        return NULL;
+    }
+
+    char *result = calloc(input_len + 1, sizeof(char));
+    if (!result) {
+        free(input_copy);
+        return NULL;
+    }
+
+    WordCollection seen_words;
+    if (!init_collection(&seen_words, 10)) {
+        free(input_copy);
+        free(result);
+        return NULL;
+    }
+
+    char *saveptr = NULL;
+    char *token = strtok_r(input_copy, " \t\n", &saveptr);
+    bool first_word = true;
+    size_t current_len = 0;
+
+    while (token != NULL) {
+        if (!contains_word(&seen_words, token)) {
+            if (!add_word(&seen_words, token)) {
+                free_collection(&seen_words);
+                free(input_copy);
+                free(result);
+                return NULL;
+            }
+            if (!first_word) {
+                if (current_len < input_len) {
+                    result[current_len++] = ' ';
+                }
+            }
+            
+            size_t token_len = strnlen(token, input_len - current_len);
+            
+            if (current_len + token_len <= input_len) {
+                for (size_t i = 0; i < token_len; i++) {
+                    result[current_len + i] = token[i];
+                }
+                current_len += token_len;
+                result[current_len] = '\0';
+            }
+            first_word = false;
+        }
+        token = strtok_r(NULL, " \t\n", &saveptr);
+    }
+
+    free_collection(&seen_words);
+    free(input_copy);
+    return result;
+}
+
+int main(void) {
+    const char *input_string = "hello world hello C programming world C";
+    
+    char *unique_string = remove_duplicate_words(input_string);
+    if (!unique_string) {
+        fprintf(stderr, "Memory allocation failed or invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Original: %s\n", input_string);
+    printf("Unique:   %s\n", unique_string);
+
+    free(unique_string);
+    return EXIT_SUCCESS;
+}

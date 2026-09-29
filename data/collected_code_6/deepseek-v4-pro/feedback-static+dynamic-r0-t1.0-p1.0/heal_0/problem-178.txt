@@ -1,0 +1,61 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_KEYWORDS 32
+#define MAX_KEYWORD_LENGTH 64
+
+struct SearchResult {
+    int found;
+    int positions[MAX_KEYWORDS];
+};
+
+void search_literals(const char *text, const char *keywords[], int keyword_count, struct SearchResult *results) {
+    int i;
+    const char *ptr;
+
+    if (text == NULL || keywords == NULL || results == NULL || keyword_count <= 0) {
+        return;
+    }
+
+    for (i = 0; i < keyword_count && i < MAX_KEYWORDS; i++) {
+        results[i].found = 0;
+        if (keywords[i] == NULL) {
+            continue;
+        }
+        ptr = strstr(text, keywords[i]);
+        if (ptr != NULL) {
+            results[i].found = 1;
+            results[i].positions[0] = (int)(ptr - text);
+        }
+    }
+}
+
+int main(void) {
+    const char *text = "The quick brown fox jumps over the lazy dog";
+    const char *keywords[] = {"quick", "lazy", "cat", "dog"};
+    int keyword_count = sizeof(keywords) / sizeof(keywords[0]);
+    struct SearchResult *results;
+    int i;
+
+    results = (struct SearchResult *)calloc((size_t)keyword_count, sizeof(struct SearchResult));
+    if (results == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    search_literals(text, keywords, keyword_count, results);
+
+    for (i = 0; i < keyword_count; i++) {
+        if (results[i].found) {
+            printf("Keyword '%s' found at position %d\n", keywords[i], results[i].positions[0]);
+        } else {
+            printf("Keyword '%s' not found\n", keywords[i]);
+        }
+    }
+
+    free(results);
+    return EXIT_SUCCESS;
+}
+```

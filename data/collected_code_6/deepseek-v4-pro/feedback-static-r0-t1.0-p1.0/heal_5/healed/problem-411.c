@@ -1,0 +1,84 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+char *snake_to_camel(const char *input) {
+    if (!input) {
+        return NULL;
+    }
+
+    size_t len = strnlen(input, 4096);
+    if (len == 0) {
+        char *empty = (char *)malloc(1);
+        if (empty) {
+            empty[0] = '\0';
+        }
+        return empty;
+    }
+
+    size_t result_size = len + 1;
+    char *result = (char *)malloc(result_size);
+    if (!result) {
+        return NULL;
+    }
+
+    size_t dst_idx = 0;
+    size_t src_idx = 0;
+    int capitalize_next = 0;
+
+    while (src_idx < len) {
+        if (input[src_idx] == '_') {
+            capitalize_next = 1;
+            src_idx++;
+            continue;
+        }
+
+        if (dst_idx >= result_size - 1) {
+            free(result);
+            return NULL;
+        }
+
+        if (capitalize_next) {
+            result[dst_idx] = (char)toupper((unsigned char)input[src_idx]);
+            capitalize_next = 0;
+        } else {
+            result[dst_idx] = input[src_idx];
+        }
+        dst_idx++;
+        src_idx++;
+    }
+
+    result[dst_idx] = '\0';
+
+    char *final_result = (char *)realloc(result, dst_idx + 1);
+    return final_result ? final_result : result;
+}
+
+int main(void) {
+    const char *test_cases[] = {
+        "hello_world",
+        "snake_case_string",
+        "convert_this_to_camel",
+        "already_camel",
+        "multiple__underscores",
+        "_leading_underscore",
+        "trailing_underscore_",
+        "numbers_123_test",
+        "all_lower_case",
+        "",
+        NULL
+    };
+
+    for (int i = 0; test_cases[i] != NULL; i++) {
+        char *converted = snake_to_camel(test_cases[i]);
+        if (converted) {
+            printf("%s -> %s\n", test_cases[i], converted);
+            free(converted);
+        } else {
+            printf("%s -> NULL\n", test_cases[i]);
+        }
+    }
+
+    return 0;
+}

@@ -1,0 +1,26 @@
+#include <stdio.h>
+
+int countUpperCaseChars(const char *str) {
+    int count = 0;
+    if (str == NULL){
+        return count;
+    }
+
+    for (int i = 0; str[i] != '\0'; i++) {
+        if (str[i] >= 'A' && str[i] <= 'Z') {
+            count++;
+        }
+    }
+    return count;
+}
+
+int main() {
+    char str[101] = {'\0'};
+    printf("Enter a string: ");
+    fgets(str, sizeof(str), stdin);
+    
+    int result = countUpperCaseChars(str);
+    printf("Number of upper case characters: %d\n", result);
+
+    return 0;
+}

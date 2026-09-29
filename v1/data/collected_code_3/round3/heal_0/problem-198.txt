@@ -1,0 +1,43 @@
+```C
+#include <stdio.h>
+#include <math.h>
+
+typedef struct {
+    double a;
+    double b;
+} Ellipse;
+
+typedef struct {
+    double base;
+    double height;
+} Triangle;
+
+Ellipse getEllipse() {
+    Ellipse e;
+    printf("Enter the semi-major axis length: ");
+    scanf("%lf", &e.a);
+    printf("Enter the semi-minor axis length: ");
+    scanf("%lf", &e.b);
+    return e;
+}
+
+Triangle inscribedTriangle(Ellipse e) {
+    Triangle t;
+    t.base = 2 * e.a;
+    t.height = 2 * e.b;
+    return t;
+}
+
+double triangleArea(Triangle t) {
+    return 0.5 * t.base * t.height;
+}
+
+int main() {
+    Ellipse e = getEllipse();
+    Triangle t = inscribedTriangle(e);
+    double area = triangleArea(t);
+    printf("The largest triangle that can be inscribed in the given ellipse has an area of %.2lf\n", area);
+    return 0;
+}
+```
+This program assumes that the largest triangle that can be inscribed in an ellipse is a right triangle with its hypotenuse along the major axis of the ellipse and its other two sides along the minor axis. The semi-major axis length is taken as the base of the triangle and the semi-minor axis length is taken as the height. The area of the triangle is then calculated using the formula 1/2 * base * height.

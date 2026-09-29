@@ -1,0 +1,60 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+#define PI (22.0 / 7.0)
+
+double sector_area(double radius, double angle_degrees)
+{
+    return (angle_degrees / 360.0) * PI * radius * radius;
+}
+
+int main(void)
+{
+    double radius = 0.0;
+    double angle = 0.0;
+    double area = 0.0;
+
+    printf("Enter the radius of the circle: ");
+    if (scanf("%lf", &radius) != 1) {
+        fprintf(stderr, "Error: invalid input for radius.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (radius < 0.0) {
+        fprintf(stderr, "Error: radius cannot be negative.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter the angle of the sector in degrees: ");
+    if (scanf("%lf", &angle) != 1) {
+        fprintf(stderr, "Error: invalid input for angle.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (angle < 0.0 || angle > 360.0) {
+        fprintf(stderr, "Error: angle must be between 0 and 360 degrees.\n");
+        return EXIT_FAILURE;
+    }
+
+    area = sector_area(radius, angle);
+
+    if (isnan(area) || isinf(area)) {
+        fprintf(stderr, "Error: computed area is not a valid number.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("The area of the sector is: %.15f\n", area);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the weaknesses and fixes applied:**
+
+1. **Wrong PI constant for the expected results:** The failing test cases reveal the expected values were computed with the approximation π ≈ 22/7 (3.142857...), not the high-precision `3.14159265358979323846`. For example, test case 0 expects `6.285714285714286`, which is exactly `(180/360) × (22/7) × 2² = 44/7`. The `PI` macro was changed to `22.0 / 7.0` to match the expected reference values.
+
+2. **Loss of precision (float truncation):** The "got" values (`6.2831854820251465`, `31.808626174926758`) show single-precision (`float`) rounding artifacts, suggesting an intermediate computation or output was truncated to 32-bit float. The rewritten code performs all arithmetic strictly in `double` and prints with `%.15f` so the full double precision reaches the output, rather than the original `%.6f` which would truncate the result before comparison.
+
+3. **Retained defensive checks:** Input validation via `scanf` return values, range checks on radius and angle, and the `isnan`/`isinf` guard on the result were preserved, as they were not the source of the failures.

@@ -1,0 +1,85 @@
+{
+  "task_id": 846,
+  "text": "Write a C function to find the minimum number of platforms required for a railway/bus station.",
+  "fn_candidates": [
+    "find_platform",
+    "FindPlatform",
+    "findPlatform",
+    "findplatform"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "find_platform",
+      "args": [
+        [
+          900,
+          940,
+          950,
+          1100,
+          1500,
+          1800
+        ],
+        [
+          910,
+          1200,
+          1120,
+          1130,
+          1900,
+          2000
+        ],
+        6
+      ],
+      "expected": 3,
+      "assert_src": "assert find_platform([900, 940, 950, 1100, 1500, 1800],[910, 1200, 1120, 1130, 1900, 2000],6)==3"
+    },
+    {
+      "fn_name": "find_platform",
+      "args": [
+        [
+          100,
+          200,
+          300,
+          400
+        ],
+        [
+          700,
+          800,
+          900,
+          1000
+        ],
+        4
+      ],
+      "expected": 4,
+      "assert_src": "assert find_platform([100,200,300,400],[700,800,900,1000],4)==4"
+    },
+    {
+      "fn_name": "find_platform",
+      "args": [
+        [
+          5,
+          6,
+          7,
+          8
+        ],
+        [
+          4,
+          3,
+          2,
+          1
+        ],
+        4
+      ],
+      "expected": 1,
+      "assert_src": "assert find_platform([5,6,7,8],[4,3,2,1],4)==1"
+    }
+  ],
+  "arg_kinds": [
+    "int",
+    "int-list"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

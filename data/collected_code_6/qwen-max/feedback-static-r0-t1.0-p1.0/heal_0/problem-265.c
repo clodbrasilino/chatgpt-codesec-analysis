@@ -1,0 +1,99 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node* next;
+} Node;
+
+Node* create_node(int data) {
+    Node* new_node = (Node*)malloc(sizeof(Node));
+    new_node->data = data;
+    new_node->next = NULL;
+    return new_node;
+}
+
+void append_node(Node** head, int data) {
+    Node* new_node = create_node(data);
+    if (*head == NULL) {
+        *head = new_node;
+    } else {
+        Node* temp = *head;
+        while (temp->next != NULL) {
+            temp = temp->next;
+        }
+        temp->next = new_node;
+    }
+}
+
+void split_list(Node** head, int n, Node*** lists, int* list_count) {
+    if (*head == NULL || n <= 0) {
+        *list_count = 0;
+        return;
+    }
+
+    *lists = (Node**)calloc(1, sizeof(Node*));
+    *list_count = 1;
+    Node* current = *head;
+    Node* sublist = *head;
+    Node* previous = NULL;
+    int count = 1;
+
+    while (current != NULL) {
+        if (count % n == 0) {
+            previous->next = NULL;
+            *lists = (Node**)realloc(*lists, (*list_count + 1) * sizeof(Node*));
+            (*lists)[*list_count] = current->next;
+            *list_count += 1;
+            sublist = current->next;
+            previous = current;
+            current = current->next;
+        } else {
+            previous = current;
+            current = current->next;
+        }
+        count++;
+    }
+}
+
+void free_list(Node* head) {
+    Node* temp;
+    while (head != NULL) {
+        temp = head;
+        head = head->next;
+        free(temp);
+    }
+}
+
+int main() {
+    Node* head = NULL;
+    append_node(&head, 1);
+    append_node(&head, 2);
+    append_node(&head, 3);
+    append_node(&head, 4);
+    append_node(&head, 5);
+    append_node(&head, 6);
+    append_node(&head, 7);
+
+    int n = 3;
+    Node** lists;
+    int list_count = 0;
+
+    split_list(&head, n, &lists, &list_count);
+
+    for (int i = 0; i < list_count; i++) {
+        Node* current = lists[i];
+        while (current != NULL) {
+            printf("%d -> ", current->data);
+            current = current->next;
+        }
+        printf("NULL\n");
+    }
+
+    for (int i = 0; i < list_count; i++) {
+        free_list(lists[i]);
+    }
+    free(lists);
+
+    return 0;
+}

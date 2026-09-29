@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-408-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-408-s2.c:107:36: style: Condition 'copy_size<=result_bytes' is always true [knownConditionTrueFalse]
+    if (copy_size > 0 && copy_size <= result_bytes) {
+                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-408-s2.c:100:19: note: Assuming that condition 'copy_size!=result_bytes' is not redundant
+    if (copy_size != result_bytes || copy_size > total_pairs * sizeof(Pair)) {
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-408-s2.c:107:36: note: Condition 'copy_size<=result_bytes' is always true
+    if (copy_size > 0 && copy_size <= result_bytes) {
+                                   ^

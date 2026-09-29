@@ -1,0 +1,147 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct ListNode {
+    int data;
+    struct ListNode *next;
+} ListNode;
+
+typedef struct List {
+    ListNode *head;
+    size_t length;
+} List;
+
+List *create_list(const int *values, size_t count) {
+    if (values == NULL && count > 0) {
+        return NULL;
+    }
+
+    List *list = malloc(sizeof(*list));
+    if (list == NULL) {
+        return NULL;
+    }
+
+    list->head = NULL;
+    list->length = 0;
+
+    ListNode *tail = NULL;
+
+    for (size_t i = 0; i < count; ++i) {
+        ListNode *node = malloc(sizeof(*node));
+        if (node == NULL) {
+            ListNode *current = list->head;
+            while (current != NULL) {
+                ListNode *next = current->next;
+                free(current);
+                current = next;
+            }
+            free(list);
+            return NULL;
+        }
+
+        node->data = values[i];
+        node->next = NULL;
+
+        if (tail == NULL) {
+            list->head = node;
+        } else {
+            tail->next = node;
+        }
+
+        tail = node;
+        ++list->length;
+    }
+
+    return list;
+}
+
+void free_list(List *list) {
+    if (list == NULL) {
+        return;
+    }
+
+    ListNode *current = list->head;
+    while (current != NULL) {
+        ListNode *next = current->next;
+        free(current);
+        current = next;
+    }
+
+    free(list);
+}
+
+void print_list(const List *list) {
+    if (list == NULL) {
+        printf("NULL\n");
+        return;
+    }
+
+    for (const ListNode *node = list->head; node != NULL; node = node->next) {
+        printf("%d ", node->data);
+    }
+
+    printf("\n");
+}
+
+List *find_minimum_sublist(List **lists, size_t count) {
+    if (lists == NULL || count == 0) {
+        return NULL;
+    }
+
+    List *min = NULL;
+
+    for (size_t i = 0; i < count; ++i) {
+        if (lists[i] == NULL) {
+            continue;
+        }
+
+        if (min == NULL || lists[i]->length < min->length) {
+            min = lists[i];
+        }
+    }
+
+    return min;
+}
+
+int main(void) {
+    /* Possible weaknesses found:
+     *  Variable 'a' can be declared as const array [constVariable]
+     */
+    int a[] = {1, 2, 3};
+    /* Possible weaknesses found:
+     *  Variable 'b' can be declared as const array [constVariable]
+     */
+    int b[] = {4, 5};
+    /* Possible weaknesses found:
+     *  Variable 'c' can be declared as const array [constVariable]
+     */
+    int c[] = {6, 7, 8, 9};
+
+    List *lists[3] = {NULL};
+
+    lists[0] = create_list(a, 3);
+    lists[1] = create_list(b, 2);
+    lists[2] = create_list(c, 4);
+
+    if (lists[0] == NULL || lists[1] == NULL || lists[2] == NULL) {
+        for (size_t i = 0; i < 3; ++i) {
+            free_list(lists[i]);
+        }
+        return EXIT_FAILURE;
+    }
+
+    /* Possible weaknesses found:
+     *  Variable 'min' can be declared as pointer to const [constVariablePointer]
+     */
+    List *min = find_minimum_sublist(lists, 3);
+
+    if (min != NULL) {
+        print_list(min);
+    }
+
+    for (size_t i = 0; i < 3; ++i) {
+        free_list(lists[i]);
+    }
+
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,69 @@
+#include <stdio.h>
+#include <string.h>
+#include <limits.h>
+#include <stdlib.h>
+
+int count_char_frequency(const char *str, size_t freq_size, unsigned long freq[])
+{
+    size_t i;
+
+    if (str == NULL || freq == NULL || freq_size < (size_t)UCHAR_MAX + 1) {
+        return -1;
+    }
+
+    for (i = 0; i < freq_size; i++) {
+        freq[i] = 0;
+    }
+
+    for (i = 0; str[i] != '\0'; i++) {
+        unsigned char c = (unsigned char)str[i];
+        if (freq[c] < ULONG_MAX) {
+            freq[c]++;
+        }
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char buffer[256];
+    unsigned long freq[UCHAR_MAX + 1];
+    size_t len;
+    int i;
+
+    printf("Enter a string: ");
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    len = strlen(buffer);
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    }
+
+    if (count_char_frequency(buffer, sizeof(freq) / sizeof(freq[0]), freq) != 0) {
+        fprintf(stderr, "Error counting character frequency\n");
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i <= UCHAR_MAX; i++) {
+        if (freq[i] > 0) {
+            if (i >= 32 && i < 127) {
+                printf("'%c' : %lu\n", (char)i, freq[i]);
+            } else {
+                printf("0x%02X : %lu\n", (unsigned int)i, freq[i]);
+            }
+        }
+    }
+
+    return EXIT_SUCCESS;
+}

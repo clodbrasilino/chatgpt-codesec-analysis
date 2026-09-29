@@ -1,0 +1,126 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_SIZE 100
+
+typedef struct {
+    char items[MAX_SIZE];
+    int top;
+} Stack;
+
+void initStack(Stack *s) {
+    s->top = -1;
+}
+
+int isEmpty(const Stack *s) {
+    return s->top == -1;
+}
+
+int isFull(const Stack *s) {
+    return s->top == MAX_SIZE - 1;
+}
+
+int push(Stack *s, char c) {
+    if (s == NULL) {
+        return 0;
+    }
+    if (isFull(s)) {
+        return 0;
+    }
+    s->top++;
+    s->items[s->top] = c;
+    return 1;
+}
+
+int pop(Stack *s, char *c) {
+    if (s == NULL || c == NULL) {
+        return 0;
+    }
+    if (isEmpty(s)) {
+        return 0;
+    }
+    *c = s->items[s->top];
+    s->top--;
+    return 1;
+}
+
+int isMatchingPair(char opening, char closing) {
+    if (opening == '(' && closing == ')') return 1;
+    if (opening == '{' && closing == '}') return 1;
+    if (opening == '[' && closing == ']') return 1;
+    return 0;
+}
+
+int isBalanced(const char *expression) {
+    Stack stack;
+    size_t i;
+    
+    if (expression == NULL) {
+        return 0;
+    }
+    
+    initStack(&stack);
+    
+    for (i = 0; i < MAX_SIZE && expression[i] != '\0'; i++) {
+        char current = expression[i];
+        
+        if (current == '(' || current == '{' || current == '[') {
+            if (!push(&stack, current)) {
+                return 0;
+            }
+        }
+        else if (current == ')' || current == '}' || current == ']') {
+            char topChar;
+            if (!pop(&stack, &topChar)) {
+                return 0;
+            }
+            if (!isMatchingPair(topChar, current)) {
+                return 0;
+            }
+        }
+    }
+    
+    if (expression[i] != '\0') {
+        return 0;
+    }
+    
+    return isEmpty(&stack);
+}
+
+int main() {
+    char *expression = NULL;
+    size_t bufsize = 0;
+    ssize_t characters;
+    
+    printf("Enter an expression: ");
+    
+    characters = getline(&expression, &bufsize, stdin);
+    if (characters == -1) {
+        fprintf(stderr, "Error reading input\n");
+        free(expression);
+        return 1;
+    }
+    
+    if (characters > 0 && expression[characters - 1] == '\n') {
+        expression[characters - 1] = '\0';
+        characters--;
+    }
+    
+    if (characters >= MAX_SIZE) {
+        fprintf(stderr, "Expression too long\n");
+        free(expression);
+        return 1;
+    }
+    
+    if (isBalanced(expression)) {
+        printf("Balanced\n");
+    } else {
+        printf("Not Balanced\n");
+    }
+    
+    free(expression);
+    return 0;
+}
+```

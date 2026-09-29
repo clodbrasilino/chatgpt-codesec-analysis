@@ -1,0 +1,49 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+double sum_of_inverse_divisors(unsigned int n)
+{
+    unsigned long long sum;
+    unsigned int i;
+
+    if (n == 0U) {
+        return 0.0;
+    }
+
+    sum = 0ULL;
+    for (i = 1U; i * i <= n; i++) {
+        if ((n % i) == 0U) {
+            sum += (unsigned long long)i;
+            if (i != (n / i)) {
+                sum += (unsigned long long)(n / i);
+            }
+        }
+    }
+
+    return (double)sum / (double)n;
+}
+
+int main(void)
+{
+    unsigned int n;
+    double result;
+
+    if (scanf("%u", &n) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (n == 0U) {
+        fprintf(stderr, "Input must be a positive integer\n");
+        return EXIT_FAILURE;
+    }
+
+    result = sum_of_inverse_divisors(n);
+    if (printf("%.6f\n", result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```

@@ -1,0 +1,25 @@
+```C
+#include <stdio.h>
+
+double regularPolygonPerimeter(int n, double a) {
+    if(n < 3 || a <= 0) {
+        printf("Invalid input\n");
+        return -1;
+    }
+    return n*a;
+}
+
+int main() {
+    int n;
+    double a;
+    printf("Enter the number of sides of regular polygon: ");
+    scanf("%d", &n);
+    printf("Enter the length of one side: ");
+    scanf("%lf", &a);
+    double perimeter = regularPolygonPerimeter(n, a);
+    if(perimeter != -1) {
+        printf("Perimeter of the regular polygon is: %.2f\n", perimeter);
+    }
+    return 0;
+}
+```

@@ -1,0 +1,9 @@
+collected_code/heal_round_2/healed/problem-72.c: In function 'isDifferenceOfSquares':
+collected_code/heal_round_2/healed/problem-72.c:8:34: warning: implicit declaration of function 'abs' [-Wimplicit-function-declaration]
+    8 |         int sqrtDiff = (int)sqrt(abs(diff));
+      |                                  ^~~
+collected_code/heal_round_2/healed/problem-72.c:4:1: note: include '<stdlib.h>' or provide a declaration of 'abs'
+    3 | #include <math.h>
+  +++ |+#include <stdlib.h>
+    4 | 
+-macosx_version_min has been renamed to -macos_version_min

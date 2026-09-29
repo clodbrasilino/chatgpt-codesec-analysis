@@ -1,0 +1,8 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-206.c:6:24: error: call to undeclared function 'strnlen_s'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+    6 |     size_t len_a = a ? strnlen_s(a, 1024) : 0;
+      |                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-206.c:6:24: note: did you mean 'strnlen'?
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/_string.h:164:10: note: 'strnlen' declared here
+  164 | size_t   strnlen(const char *_LIBC_COUNT(__n) __s1, size_t __n) __OSX_AVAILABLE_STARTING(__MAC_10_7, __IPHONE_4_3);
+      |          ^
+1 error generated.

@@ -1,0 +1,103 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+int findClosestTriplet(const int *arr1, size_t size1,
+                       const int *arr2, size_t size2,
+                       const int *arr3, size_t size3,
+                       int *result1, int *result2, int *result3)
+{
+    size_t i, j, k;
+    long long minDiff;
+    int best1, best2, best3;
+
+    if (arr1 == NULL || arr2 == NULL || arr3 == NULL ||
+        result1 == NULL || result2 == NULL || result3 == NULL) {
+        return -1;
+    }
+    if (size1 == 0 || size2 == 0 || size3 == 0) {
+        return -1;
+    }
+
+    i = 0;
+    j = 0;
+    k = 0;
+    minDiff = LLONG_MAX;
+    best1 = arr1[0];
+    best2 = arr2[0];
+    best3 = arr3[0];
+
+    while (i < size1 && j < size2 && k < size3) {
+        int a = arr1[i];
+        int b = arr2[j];
+        int c = arr3[k];
+        int maxVal = a;
+        int minVal = a;
+        long long diff;
+
+        if (b > maxVal) {
+            maxVal = b;
+        }
+        if (c > maxVal) {
+            maxVal = c;
+        }
+        if (b < minVal) {
+            minVal = b;
+        }
+        if (c < minVal) {
+            minVal = c;
+        }
+
+        diff = (long long)maxVal - (long long)minVal;
+
+        if (diff < minDiff) {
+            minDiff = diff;
+            best1 = a;
+            best2 = b;
+            best3 = c;
+        }
+
+        if (diff == 0) {
+            break;
+        }
+
+        if (minVal == a) {
+            i++;
+        } else if (minVal == b) {
+            j++;
+        } else {
+            k++;
+        }
+    }
+
+    *result1 = best1;
+    *result2 = best2;
+    *result3 = best3;
+
+    return 0;
+}
+
+int main(void)
+{
+    int arr1[] = {1, 4, 10};
+    int arr2[] = {2, 15, 20};
+    int arr3[] = {10, 12};
+
+    size_t size1 = sizeof(arr1) / sizeof(arr1[0]);
+    size_t size2 = sizeof(arr2) / sizeof(arr2[0]);
+    size_t size3 = sizeof(arr3) / sizeof(arr3[0]);
+
+    int r1 = 0;
+    int r2 = 0;
+    int r3 = 0;
+
+    if (findClosestTriplet(arr1, size1, arr2, size2, arr3, size3,
+                           &r1, &r2, &r3) == 0) {
+        printf("Closest triplet: %d %d %d\n", r1, r2, r3);
+    } else {
+        fprintf(stderr, "Error: invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

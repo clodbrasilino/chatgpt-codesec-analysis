@@ -1,0 +1,34 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+
+int minSwapsToEqual(const char *a, const char *b) {
+    int count01 = 0, count10 = 0;
+    for (int i = 0; a[i] != '\0'; i++) {
+        if (a[i] == '0' && b[i] == '1') {
+            count01++;
+        } else if (a[i] == '1' && b[i] == '0') {
+            count10++;
+        }
+    }
+    if ((count01 + count10) % 2 != 0) {
+        return -1;
+    }
+    return (count01 + count10) / 2;
+}
+
+int main() {
+    char a[100], b[100];
+    scanf("%99s", a);
+    scanf("%99s", b);
+
+    int result = minSwapsToEqual(a, b);
+
+    if (result == -1) {
+        printf("Strings cannot be made equal by swapping\n");
+    } else {
+        printf("Minimum swaps required: %d\n", result);
+    }
+
+    return 0;
+}

@@ -1,0 +1,51 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char *replace_spaces(const char *str, char replacement, size_t max_len)
+{
+    char *result;
+    size_t i;
+    size_t len;
+
+    if (str == NULL) {
+        return NULL;
+    }
+
+    len = strnlen(str, max_len);
+    result = malloc(len + 1);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    for (i = 0; i < len; i++) {
+        if (str[i] == ' ') {
+            result[i] = replacement;
+        } else {
+            result[i] = str[i];
+        }
+    }
+    result[len] = '\0';
+
+    return result;
+}
+
+int main(void)
+{
+    const char *input = "Hello World Example";
+    char *modified;
+    size_t max_len = 1024;
+
+    modified = replace_spaces(input, '_', max_len);
+    if (modified == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Original: %s\n", input);
+    printf("Modified: %s\n", modified);
+
+    free(modified);
+
+    return EXIT_SUCCESS;
+}

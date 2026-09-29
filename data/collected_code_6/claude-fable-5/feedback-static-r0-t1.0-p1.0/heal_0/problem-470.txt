@@ -1,0 +1,66 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int add_pairwise(const int *input, size_t input_len, int *output, size_t output_len)
+{
+    size_t i;
+
+    if (input == NULL || output == NULL) {
+        return -1;
+    }
+    if (input_len < 2U) {
+        return -1;
+    }
+    if (output_len < (input_len - 1U)) {
+        return -1;
+    }
+
+    for (i = 0U; i < (input_len - 1U); i++) {
+        long sum = (long)input[i] + (long)input[i + 1U];
+        if (sum > (long)2147483647L || sum < (long)(-2147483647L - 1L)) {
+            return -1;
+        }
+        output[i] = (int)sum;
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    int tuple1[] = {1, 5, 7, 8, 10};
+    size_t len1 = sizeof(tuple1) / sizeof(tuple1[0]);
+    int result1[4];
+    size_t i;
+    int status;
+
+    status = add_pairwise(tuple1, len1, result1, len1 - 1U);
+    if (status != 0) {
+        (void)fprintf(stderr, "Error: pairwise addition failed\n");
+        return EXIT_FAILURE;
+    }
+
+    (void)printf("Input tuple: (");
+    for (i = 0U; i < len1; i++) {
+        (void)printf("%d", tuple1[i]);
+        if (i < (len1 - 1U)) {
+            (void)printf(", ");
+        }
+    }
+    (void)printf(")\n");
+
+    (void)printf("Pairwise sum: (");
+    for (i = 0U; i < (len1 - 1U); i++) {
+        (void)printf("%d", result1[i]);
+        if (i < (len1 - 2U)) {
+            (void)printf(", ");
+        }
+    }
+    (void)printf(")\n");
+
+    return EXIT_SUCCESS;
+}
+```
+
+This program computes the pairwise addition of consecutive elements in a tuple (array). For input `(1, 5, 7, 8, 10)`, it produces `(6, 12, 15, 18)`. The function validates all pointers, checks buffer lengths before writing, guards against integer overflow using a wider type, and returns a status code that the caller checks before using the results.

@@ -1,0 +1,12 @@
+collected_code/problem-16-0.c:5:33: error: Cannot determine that 'input_string[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+    for (int i = 0; input_string[i] != '\0'; i++) {
+                                ^
+collected_code/problem-16-0.c:6:25: error: Cannot determine that 'input_string[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        if (input_string[i] >= 'a' && input_string[i] <= 'z') {
+                        ^
+collected_code/problem-16-0.c:15:46: error: Cannot determine that 'input_string[j]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+                    printf("%c", input_string[j]);
+                                             ^
+collected_code/problem-16-0.c:24:38: error: Cannot determine that 'input_string[j]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+            printf("%c", input_string[j]);
+                                     ^

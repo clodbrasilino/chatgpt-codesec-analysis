@@ -1,0 +1,45 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int are_tuples_equal_length(int **tuples, int n, int m) {
+    for (int i = 0; i < n; ++i) {
+        if (tuples[i] == NULL) return 0;
+        for (int j = 0; j < m; ++j) {
+            if (tuples[i][j] == 0 && (j != m-1 || tuples[i][j+1] != 0)) return 0;
+        }
+    }
+    return 1;
+}
+
+int main() {
+    int n = 3;
+    int m = 2;
+    int *tuple1 = (int *)malloc(m * sizeof(int));
+    int *tuple2 = (int *)malloc(m * sizeof(int));
+    int *tuple3 = (int *)malloc(m * sizeof(int));
+
+    tuple1[0] = 1;
+    tuple1[1] = 2;
+    tuple2[0] = 3;
+    tuple2[1] = 4;
+    tuple3[0] = 5;
+    tuple3[1] = 6;
+
+    int *tuples[] = {tuple1, tuple2, tuple3};
+
+    int result = are_tuples_equal_length(tuples, n, m);
+
+    if (result) {
+        printf("All tuples have equal length.\n");
+    } else {
+        printf("Not all tuples have equal length.\n");
+    }
+
+    free(tuple1);
+    free(tuple2);
+    free(tuple3);
+
+    return 0;
+}
+```

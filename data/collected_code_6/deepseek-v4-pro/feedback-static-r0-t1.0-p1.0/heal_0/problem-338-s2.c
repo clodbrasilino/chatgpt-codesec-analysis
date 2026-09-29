@@ -1,0 +1,32 @@
+#include <stdio.h>
+#include <string.h>
+
+int count_substrings_same_ends(const char *str) {
+    int count[256] = {0};
+    int result = 0;
+    int len = strlen(str);
+
+    for (int i = 0; i < len; i++) {
+        count[(unsigned char)str[i]]++;
+    }
+
+    for (int i = 0; i < 256; i++) {
+        result += count[i] * (count[i] + 1) / 2;
+    }
+
+    return result;
+}
+
+int main(void) {
+    const char *test1 = "abcab";
+    const char *test2 = "aba";
+    const char *test3 = "aaaa";
+    const char *test4 = "";
+
+    printf("%d\n", count_substrings_same_ends(test1));
+    printf("%d\n", count_substrings_same_ends(test2));
+    printf("%d\n", count_substrings_same_ends(test3));
+    printf("%d\n", count_substrings_same_ends(test4));
+
+    return 0;
+}

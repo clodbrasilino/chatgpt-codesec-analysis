@@ -1,0 +1,40 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+double factorial(int n) {
+    double f= 1.0;
+    int i;
+    if(n < 0)
+        return 0.0;
+    for(i = 2; i <= n; i++)
+        f *= i;
+    return f;
+}
+
+double binomial_probability(int n, int k, double p) {
+    if(n < k) 
+        return 0.0;
+    return factorial(n) / (factorial(k) * factorial(n-k)) * pow(p, k) * pow(1-p, n-k);
+}
+
+int main(int argc, char **argv) {
+    int n, k;
+    double p;
+    if(argc != 4) {
+        printf("Usage: %s n k p\n", argv[0]);
+        exit(EXIT_FAILURE);
+    }
+
+    n = atoi(argv[1]);
+    k = atoi(argv[2]);
+    p = atof(argv[3]);
+    if(n < 0 || k < 0 || p < 0.0 || p > 1.0) {
+        printf("Invalid arguments\n");
+        exit(EXIT_FAILURE);
+    }
+
+    printf("Binomial probability: %lf\n", binomial_probability(n, k, p));
+
+    exit(EXIT_SUCCESS);
+}

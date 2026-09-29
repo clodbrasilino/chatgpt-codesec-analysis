@@ -1,0 +1,239 @@
+collected_code_3/problem-469-2.c: In function 'maxProfit':
+collected_code_3/problem-469-2.c:15:15: warning: dereference of possibly-NULL 'dp' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   15 |         dp[i] = (int*)malloc(pricesSize * sizeof(int));
+      |         ~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  'maxProfit': events 1-8
+    |
+    |    5 |     if(pricesSize == 0) return 0;
+    |      |       ^
+    |      |       |
+    |      |       (1) following 'false' branch (when 'pricesSize != 0')...
+    |    6 |     if(k >= pricesSize / 2) {
+    |      |       ~     ~~~~~~~~~~~~~~
+    |      |       |                |
+    |      |       |                (2) ...to here
+    |      |       (3) following 'false' branch...
+    |......
+    |   13 |     int** dp = (int**)malloc((k + 1) * sizeof(int*));
+    |      |                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                       |         |
+    |      |                       |         (4) ...to here
+    |      |                       (5) this call could return NULL
+    |   14 |     for(int i = 0; i <= k; i++) {
+    |      |                    ~~~~~~
+    |      |                      |
+    |      |                      (6) following 'true' branch (when 'i <= k')...
+    |   15 |         dp[i] = (int*)malloc(pricesSize * sizeof(int));
+    |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |               |       |
+    |      |               |       (7) ...to here
+    |      |               (8) 'dp + (long unsigned int)i * 8' could be NULL: unchecked value from (5)
+    |
+collected_code_3/problem-469-2.c:18:33: warning: use of uninitialized value '**_33' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   18 |         int localMax = dp[i - 1][0] - prices[0];
+      |                        ~~~~~~~~~^~~
+  'maxProfit': events 1-14
+    |
+    |    5 |     if(pricesSize == 0) return 0;
+    |      |       ^
+    |      |       |
+    |      |       (1) following 'false' branch (when 'pricesSize != 0')...
+    |    6 |     if(k >= pricesSize / 2) {
+    |      |       ~     ~~~~~~~~~~~~~~
+    |      |       |                |
+    |      |       |                (2) ...to here
+    |      |       (3) following 'false' branch...
+    |......
+    |   13 |     int** dp = (int**)malloc((k + 1) * sizeof(int*));
+    |      |                              ~~~~~~~
+    |      |                                 |
+    |      |                                 (4) ...to here
+    |   14 |     for(int i = 0; i <= k; i++) {
+    |      |                    ~~~~~~
+    |      |                      |
+    |      |                      (5) following 'true' branch (when 'i <= k')...
+    |      |                      (8) following 'true' branch (when 'i <= k')...
+    |      |                      (10) following 'false' branch (when 'i > k')...
+    |   15 |         dp[i] = (int*)malloc(pricesSize * sizeof(int));
+    |      |                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                       |
+    |      |                       (6) ...to here
+    |      |                       (7) region created on heap here
+    |      |                       (9) ...to here
+    |   16 |     }
+    |   17 |     for(int i = 1; i <= k; i++) {
+    |      |             ~      ~~~~~~
+    |      |             |        |
+    |      |             |        (12) following 'true' branch (when 'i <= k')...
+    |      |             (11) ...to here
+    |   18 |         int localMax = dp[i - 1][0] - prices[0];
+    |      |                        ~~~~~~~~~~~~
+    |      |                          |      |
+    |      |                          |      (14) use of uninitialized value '**_33' here
+    |      |                          (13) ...to here
+    |
+collected_code_3/problem-469-2.c:18:33: warning: dereference of possibly-NULL '*dp_97 + _32' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   18 |         int localMax = dp[i - 1][0] - prices[0];
+      |                        ~~~~~~~~~^~~
+  'maxProfit': events 1-14
+    |
+    |    5 |     if(pricesSize == 0) return 0;
+    |      |       ^
+    |      |       |
+    |      |       (1) following 'false' branch (when 'pricesSize != 0')...
+    |    6 |     if(k >= pricesSize / 2) {
+    |      |       ~     ~~~~~~~~~~~~~~
+    |      |       |                |
+    |      |       |                (2) ...to here
+    |      |       (3) following 'false' branch...
+    |......
+    |   13 |     int** dp = (int**)malloc((k + 1) * sizeof(int*));
+    |      |                              ~~~~~~~
+    |      |                                 |
+    |      |                                 (4) ...to here
+    |   14 |     for(int i = 0; i <= k; i++) {
+    |      |                    ~~~~~~
+    |      |                      |
+    |      |                      (5) following 'true' branch (when 'i <= k')...
+    |      |                      (8) following 'true' branch (when 'i <= k')...
+    |      |                      (10) following 'false' branch (when 'i > k')...
+    |   15 |         dp[i] = (int*)malloc(pricesSize * sizeof(int));
+    |      |                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                       |
+    |      |                       (6) ...to here
+    |      |                       (7) this call could return NULL
+    |      |                       (9) ...to here
+    |   16 |     }
+    |   17 |     for(int i = 1; i <= k; i++) {
+    |      |             ~      ~~~~~~
+    |      |             |        |
+    |      |             |        (12) following 'true' branch (when 'i <= k')...
+    |      |             (11) ...to here
+    |   18 |         int localMax = dp[i - 1][0] - prices[0];
+    |      |                        ~~~~~~~~~~~~
+    |      |                          |      |
+    |      |                          |      (14) '*dp_97 + _32' could be NULL: unchecked value from (7)
+    |      |                          (13) ...to here
+    |
+collected_code_3/problem-469-2.c:24:14: warning: use of uninitialized value '*dp_97 + _74' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   24 |     return dp[k][pricesSize - 1];
+      |            ~~^~~
+  'maxProfit': events 1-10
+    |
+    |    5 |     if(pricesSize == 0) return 0;
+    |      |       ^
+    |      |       |
+    |      |       (1) following 'false' branch (when 'pricesSize != 0')...
+    |    6 |     if(k >= pricesSize / 2) {
+    |      |       ~     ~~~~~~~~~~~~~~
+    |      |       |                |
+    |      |       |                (2) ...to here
+    |      |       (3) following 'false' branch...
+    |......
+    |   13 |     int** dp = (int**)malloc((k + 1) * sizeof(int*));
+    |      |                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                       |         |
+    |      |                       |         (4) ...to here
+    |      |                       (5) region created on heap here
+    |   14 |     for(int i = 0; i <= k; i++) {
+    |      |                    ~~~~~~
+    |      |                      |
+    |      |                      (6) following 'false' branch (when 'i > k')...
+    |......
+    |   17 |     for(int i = 1; i <= k; i++) {
+    |      |             ~      ~~~~~~
+    |      |             |        |
+    |      |             |        (8) following 'false' branch (when 'i > k')...
+    |      |             (7) ...to here
+    |......
+    |   24 |     return dp[k][pricesSize - 1];
+    |      |            ~~~~~
+    |      |              |
+    |      |              (9) ...to here
+    |      |              (10) use of uninitialized value '*dp_97 + _74' here
+    |
+collected_code_3/problem-469-2.c:24:17: warning: leak of '<unknown>' [CWE-401] [-Wanalyzer-malloc-leak]
+   24 |     return dp[k][pricesSize - 1];
+      |            ~~~~~^~~~~~~~~~~~~~~~
+  'maxProfit': events 1-12
+    |
+    |    5 |     if(pricesSize == 0) return 0;
+    |      |       ^
+    |      |       |
+    |      |       (1) following 'false' branch (when 'pricesSize != 0')...
+    |    6 |     if(k >= pricesSize / 2) {
+    |      |       ~     ~~~~~~~~~~~~~~
+    |      |       |                |
+    |      |       |                (2) ...to here
+    |      |       (3) following 'false' branch...
+    |......
+    |   13 |     int** dp = (int**)malloc((k + 1) * sizeof(int*));
+    |      |                              ~~~~~~~
+    |      |                                 |
+    |      |                                 (4) ...to here
+    |   14 |     for(int i = 0; i <= k; i++) {
+    |      |                    ~~~~~~
+    |      |                      |
+    |      |                      (5) following 'true' branch (when 'i <= k')...
+    |      |                      (8) following 'false' branch (when 'i > k')...
+    |   15 |         dp[i] = (int*)malloc(pricesSize * sizeof(int));
+    |      |                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                       |
+    |      |                       (6) ...to here
+    |      |                       (7) allocated here
+    |   16 |     }
+    |   17 |     for(int i = 1; i <= k; i++) {
+    |      |             ~      ~~~~~~
+    |      |             |        |
+    |      |             |        (10) following 'false' branch (when 'i > k')...
+    |      |             (9) ...to here
+    |......
+    |   24 |     return dp[k][pricesSize - 1];
+    |      |            ~~~~~~~~~~~~~~~~~~~~~
+    |      |              |  |
+    |      |              |  (12) '<unknown>' leaks here; was allocated at (7)
+    |      |              (11) ...to here
+    |
+collected_code_3/problem-469-2.c:24:17: warning: leak of 'dp' [CWE-401] [-Wanalyzer-malloc-leak]
+   24 |     return dp[k][pricesSize - 1];
+      |            ~~~~~^~~~~~~~~~~~~~~~
+  'maxProfit': events 1-13
+    |
+    |    5 |     if(pricesSize == 0) return 0;
+    |      |       ^
+    |      |       |
+    |      |       (1) following 'false' branch (when 'pricesSize != 0')...
+    |    6 |     if(k >= pricesSize / 2) {
+    |      |       ~     ~~~~~~~~~~~~~~
+    |      |       |                |
+    |      |       |                (2) ...to here
+    |      |       (3) following 'false' branch...
+    |......
+    |   13 |     int** dp = (int**)malloc((k + 1) * sizeof(int*));
+    |      |                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                       |         |
+    |      |                       |         (4) ...to here
+    |      |                       (5) allocated here
+    |   14 |     for(int i = 0; i <= k; i++) {
+    |      |                    ~~~~~~
+    |      |                      |
+    |      |                      (6) following 'true' branch (when 'i <= k')...
+    |      |                      (9) following 'false' branch (when 'i > k')...
+    |   15 |         dp[i] = (int*)malloc(pricesSize * sizeof(int));
+    |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |               |       |
+    |      |               |       (7) ...to here
+    |      |               (8) assuming 'dp' is non-NULL
+    |   16 |     }
+    |   17 |     for(int i = 1; i <= k; i++) {
+    |      |             ~      ~~~~~~
+    |      |             |        |
+    |      |             |        (11) following 'false' branch (when 'i > k')...
+    |      |             (10) ...to here
+    |......
+    |   24 |     return dp[k][pricesSize - 1];
+    |      |            ~~~~~~~~~~~~~~~~~~~~~
+    |      |              |  |
+    |      |              |  (13) 'dp' leaks here; was allocated at (5)
+    |      |              (12) ...to here
+    |

@@ -1,0 +1,91 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+#include <ctype.h>
+#include <stddef.h>
+
+bool is_word_present(const char *sentence, const char *word) {
+    if (sentence == NULL || word == NULL) {
+        return false;
+    }
+    
+    size_t word_len = strnlen(word, 64);
+    
+    if (word_len == 0 || word_len >= 64) {
+        return false;
+    }
+    
+    size_t sentence_len = strnlen(sentence, 256);
+    const char *pos = sentence;
+    const char *end = sentence + sentence_len;
+    
+    while (pos < end && (size_t)(end - pos) >= word_len) {
+        const char *found = NULL;
+        for (const char *p = pos; p <= end - word_len; p++) {
+            if (strncmp(p, word, word_len) == 0) {
+                found = p;
+                break;
+            }
+        }
+        
+        if (found == NULL) {
+            break;
+        }
+        
+        pos = found;
+        bool start_ok = (pos == sentence) || !isalnum((unsigned char)pos[-1]);
+        bool end_ok = (pos + word_len >= end) || !isalnum((unsigned char)pos[word_len]);
+        
+        if (start_ok && end_ok) {
+            return true;
+        }
+        pos++;
+    }
+    
+    return false;
+}
+
+int main(void) {
+    char sentence[256];
+    char word[64];
+    
+    printf("Enter a sentence: ");
+    if (fgets(sentence, sizeof(sentence), stdin) == NULL) {
+        fprintf(stderr, "Error reading sentence\n");
+        return 1;
+    }
+    
+    size_t len = strnlen(sentence, sizeof(sentence));
+    
+    if (len > 0 && sentence[len - 1] == '\n') {
+        sentence[len - 1] = '\0';
+    } else if (len == sizeof(sentence)) {
+        sentence[sizeof(sentence) - 1] = '\0';
+        int c;
+        while ((c = getchar()) != '\n' && c != EOF);
+    }
+    
+    printf("Enter a word to search: ");
+    if (fgets(word, sizeof(word), stdin) == NULL) {
+        fprintf(stderr, "Error reading word\n");
+        return 1;
+    }
+    
+    len = strnlen(word, sizeof(word));
+    
+    if (len > 0 && word[len - 1] == '\n') {
+        word[len - 1] = '\0';
+    } else if (len == sizeof(word)) {
+        word[sizeof(word) - 1] = '\0';
+        int c;
+        while ((c = getchar()) != '\n' && c != EOF);
+    }
+    
+    if (is_word_present(sentence, word)) {
+        printf("The word \"%s\" is present in the sentence.\n", word);
+    } else {
+        printf("The word \"%s\" is not present in the sentence.\n", word);
+    }
+    
+    return 0;
+}

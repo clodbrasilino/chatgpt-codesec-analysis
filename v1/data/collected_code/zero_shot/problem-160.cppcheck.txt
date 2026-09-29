@@ -1,0 +1,21 @@
+collected_code/problem-160-0.c:32:24: error: Cannot determine that 'a' is initialized [premium-bughuntingUninit]
+    scanf("%d %d %d", &a, &b, &n);
+                       ^
+collected_code/problem-160-0.c:32:28: error: Cannot determine that 'b' is initialized [premium-bughuntingUninit]
+    scanf("%d %d %d", &a, &b, &n);
+                           ^
+collected_code/problem-160-0.c:32:32: error: Cannot determine that 'n' is initialized [premium-bughuntingUninit]
+    scanf("%d %d %d", &a, &b, &n);
+                               ^
+collected_code/problem-160-0.c:34:23: error: Cannot determine that 'x' is initialized [premium-bughuntingUninit]
+    find_xy(a, b, n, &x, &y);
+                      ^
+collected_code/problem-160-0.c:34:27: error: Cannot determine that 'y' is initialized [premium-bughuntingUninit]
+    find_xy(a, b, n, &x, &y);
+                          ^
+collected_code/problem-160-0.c:35:32: error: Cannot determine that 'x' is initialized [premium-bughuntingUninit]
+    printf("x = %d, y = %d\n", x, y);
+                               ^
+collected_code/problem-160-0.c:35:35: error: Cannot determine that 'y' is initialized [premium-bughuntingUninit]
+    printf("x = %d, y = %d\n", x, y);
+                                  ^

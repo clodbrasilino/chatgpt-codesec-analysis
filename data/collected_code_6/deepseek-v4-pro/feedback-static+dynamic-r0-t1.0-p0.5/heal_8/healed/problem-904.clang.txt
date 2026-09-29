@@ -1,0 +1,7 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_8/healed/problem-904.c:17:57: error: call to undeclared function 'getpid'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   17 |         seed = (unsigned int)time(NULL) ^ (unsigned int)getpid();
+      |                                                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_8/healed/problem-904.c:20:61: error: call to undeclared function 'getpid'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   20 |             seed = (unsigned int)time(NULL) ^ (unsigned int)getpid();
+      |                                                             ^
+2 errors generated.

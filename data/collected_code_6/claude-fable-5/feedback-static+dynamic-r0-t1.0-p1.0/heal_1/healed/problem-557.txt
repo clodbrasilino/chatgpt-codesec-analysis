@@ -1,0 +1,61 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#define BUFFER_SIZE 256
+
+void toggle_case(char *str, size_t max_len)
+{
+    size_t i;
+    size_t len;
+
+    if (str == NULL) {
+        return;
+    }
+
+    len = strnlen(str, max_len);
+    for (i = 0; i < len; i++) {
+        unsigned char c = (unsigned char)str[i];
+        if (isupper(c)) {
+            str[i] = (char)tolower(c);
+        } else if (islower(c)) {
+            str[i] = (char)toupper(c);
+        }
+    }
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+
+    memset(buffer, 0, sizeof(buffer));
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+    buffer[strcspn(buffer, "\n")] = '\0';
+
+    toggle_case(buffer, sizeof(buffer));
+
+    if (printf("%s\n", buffer) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+Key changes made to address the identified weaknesses:
+
+1. **CWE-126 (strlen over-read):** Replaced `strlen` with `strnlen`, which takes a maximum length parameter, guaranteeing the read is bounded even if the string were somehow not null-terminated. The `toggle_case` function signature now accepts the buffer capacity so the caller communicates the safe bound.
+
+2. **CWE-119/CWE-120 (statically-sized array):** The buffer is zero-initialized with `memset` before use, and `buffer[sizeof(buffer) - 1] = '\0'` defensively guarantees null-termination regardless of input. All operations on the buffer (`fgets`, `strnlen`, `strcspn`) are bounded by `sizeof(buffer)`, so no overflow is possible.
+
+3. The buffer size is defined as a named constant (`BUFFER_SIZE`) rather than a magic number, making future maintenance safer.
+
+Note that the original code was already largely safe in practice — `fgets` null-terminates and bounds its writes — but these changes make the safety guarantees explicit and defensive, which satisfies the static analyzer findings.

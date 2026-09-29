@@ -1,0 +1,31 @@
+```c
+#include <stdio.h>
+#include <limits.h>
+
+int numWays(int n, int k) {
+    if (n == 0) return 0;
+    if (n == 1) return k;
+
+    long same = 0, diff = k;
+
+    for (int i = 2; i <= n; i++) {
+        long sum = same + diff;
+        if (sum > INT_MAX || sum < INT_MIN) return -1;
+        same = diff;
+        long new_diff = (k - 1) * sum;
+        if (new_diff > INT_MAX || new_diff < INT_MIN) return -1;
+        diff = new_diff;
+    }
+
+    long result = same + diff;
+    if (result > INT_MAX || result < INT_MIN) return -1;
+    return (int)result;
+}
+
+int main() {
+    int n, k;
+    scanf("%d%d", &n, &k);
+    printf("%d\n", numWays(n, k));
+    return 0;
+}
+```

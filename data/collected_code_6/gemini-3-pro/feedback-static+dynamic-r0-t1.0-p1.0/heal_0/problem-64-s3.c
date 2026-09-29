@@ -1,0 +1,60 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int first;
+    int second;
+} Tuple;
+
+static int compare_tuples(const void *a, const void *b) {
+    if (!a || !b) {
+        return 0;
+    }
+    const Tuple *t1 = (const Tuple *)a;
+    const Tuple *t2 = (const Tuple *)b;
+    
+    if (t1->first != t2->first) {
+        return (t1->first > t2->first) - (t1->first < t2->first);
+    }
+    return (t1->second > t2->second) - (t1->second < t2->second);
+}
+
+void sort_tuples(Tuple *array, size_t size) {
+    if (!array || size == 0) {
+        return;
+    }
+    
+    #ifdef __BLOCKS__
+    qsort_b(array, size, sizeof(Tuple), ^int(const void *a, const void *b) {
+        const Tuple *t1 = (const Tuple *)a;
+        const Tuple *t2 = (const Tuple *)b;
+        if (t1->first != t2->first) {
+            return (t1->first > t2->first) - (t1->first < t2->first);
+        }
+        return (t1->second > t2->second) - (t1->second < t2->second);
+    });
+    #else
+    qsort(array, size, sizeof(Tuple), compare_tuples);
+    #endif
+}
+
+int main(void) {
+    Tuple tuples[] = {
+        {5, 2},
+        {1, 9},
+        {5, 1},
+        {3, 4},
+        {1, 2}
+    };
+    size_t size = sizeof(tuples) / sizeof(tuples[0]);
+
+    sort_tuples(tuples, size);
+
+    for (size_t i = 0; i < size; i++) {
+        if (printf("(%d, %d)\n", tuples[i].first, tuples[i].second) < 0) {
+            return EXIT_FAILURE;
+        }
+    }
+
+    return EXIT_SUCCESS;
+}

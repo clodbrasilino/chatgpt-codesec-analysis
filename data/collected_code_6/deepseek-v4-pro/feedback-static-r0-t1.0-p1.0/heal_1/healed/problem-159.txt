@@ -1,0 +1,71 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+static bool is_leap_year(int year) {
+    return (year % 4 == 0 && year % 100 != 0) || (year % 400 == 0);
+}
+
+static bool is_valid_date(int month, int day, int year) {
+    if (month < 1 || month > 12 || day < 1 || day > 31) {
+        return false;
+    }
+
+    if ((month == 4 || month == 6 || month == 9 || month == 11) && day > 30) {
+        return false;
+    }
+
+    if (month == 2) {
+        int max_day = is_leap_year(year) ? 29 : 28;
+        if (day > max_day) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+static void print_season(int month, int day) {
+    if ((month == 3 && day >= 20) || month == 4 || month == 5 || (month == 6 && day < 21)) {
+        printf("Spring\n");
+    } else if ((month == 6 && day >= 21) || month == 7 || month == 8 || (month == 9 && day < 22)) {
+        printf("Summer\n");
+    } else if ((month == 9 && day >= 22) || month == 10 || month == 11 || (month == 12 && day < 21)) {
+        printf("Autumn\n");
+    } else {
+        printf("Winter\n");
+    }
+}
+
+int main(void) {
+    int month, day, year;
+
+    printf("Enter year: ");
+    if (scanf("%d", &year) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter month (1-12): ");
+    if (scanf("%d", &month) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter day (1-31): ");
+    if (scanf("%d", &day) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (!is_valid_date(month, day, year)) {
+        fprintf(stderr, "Invalid date\n");
+        return EXIT_FAILURE;
+    }
+
+    print_season(month, day);
+
+    return 0;
+}
+```

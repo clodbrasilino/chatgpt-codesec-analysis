@@ -1,0 +1,22 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-622-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-622-s3.c:51:11: style: Condition 'n!=n2' is always false [knownConditionTrueFalse]
+    if (n != n2) {
+          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-622-s3.c:48:29: note: Assignment 'n=sizeof(arr1)/sizeof(arr1[0])', assigned value is 5
+    size_t n = sizeof(arr1) / sizeof(arr1[0]);
+                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-622-s3.c:51:11: note: Condition 'n!=n2' is always false
+    if (n != n2) {
+          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-622-s3.c:56:11: style: Condition 'n==0' is always false [knownConditionTrueFalse]
+    if (n == 0) {
+          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-622-s3.c:49:30: note: Assignment 'n2=sizeof(arr2)/sizeof(arr2[0])', assigned value is 5
+    size_t n2 = sizeof(arr2) / sizeof(arr2[0]);
+                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-622-s3.c:51:11: note: Assuming that condition 'n!=n2' is not redundant
+    if (n != n2) {
+          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-622-s3.c:56:11: note: Condition 'n==0' is always false
+    if (n == 0) {
+          ^

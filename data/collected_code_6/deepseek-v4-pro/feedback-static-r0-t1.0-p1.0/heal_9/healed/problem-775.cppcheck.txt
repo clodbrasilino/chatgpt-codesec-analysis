@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-775.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-775.c:39:18: style: Condition 'null_arr==NULL' is always true [knownConditionTrueFalse]
+    if (null_arr == NULL || null_len < 2) {
+                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-775.c:37:27: note: Assignment 'null_arr=NULL', assigned value is 0
+    const int *null_arr = NULL;
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-775.c:39:18: note: Condition 'null_arr==NULL' is always true
+    if (null_arr == NULL || null_len < 2) {
+                 ^

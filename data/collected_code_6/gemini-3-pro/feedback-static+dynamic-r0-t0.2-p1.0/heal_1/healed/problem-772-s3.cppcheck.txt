@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_1/healed/problem-772-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_1/healed/problem-772-s3.c:12:9: style: The scope of the variable 'word_start' can be reduced. [variableScope]
+    int word_start = 0;
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_1/healed/problem-772-s3.c:13:9: style: The scope of the variable 'word_len' can be reduced. [variableScope]
+    int word_len = 0;
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_1/healed/problem-772-s3.c:12:20: style: Variable 'word_start' is assigned a value that is never used. [unreadVariable]
+    int word_start = 0;
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_1/healed/problem-772-s3.c:13:18: style: Variable 'word_len' is assigned a value that is never used. [unreadVariable]
+    int word_len = 0;
+                 ^

@@ -1,0 +1,52 @@
+```c
+#include <stdbool.h>
+#include <limits.h>
+#include <stdio.h>
+
+typedef struct Node {
+    long long value;
+    struct Node *next;
+} Node;
+
+static bool list_sum_recursive(const Node *node, long long *sum)
+{
+    long long remaining_sum;
+
+    if (sum == NULL) {
+        return false;
+    }
+
+    if (node == NULL) {
+        *sum = 0;
+        return true;
+    }
+
+    if (!list_sum_recursive(node->next, &remaining_sum)) {
+        return false;
+    }
+
+    if ((node->value > 0 && remaining_sum > LLONG_MAX - node->value) ||
+        (node->value < 0 && remaining_sum < LLONG_MIN - node->value)) {
+        return false;
+    }
+
+    *sum = node->value + remaining_sum;
+    return true;
+}
+
+int main(void)
+{
+    Node third = {30, NULL};
+    Node second = {20, &third};
+    Node first = {10, &second};
+    long long sum;
+
+    if (!list_sum_recursive(&first, &sum)) {
+        fputs("Unable to calculate the list sum.\n", stderr);
+        return 1;
+    }
+
+    printf("Sum: %lld\n", sum);
+    return 0;
+}
+```

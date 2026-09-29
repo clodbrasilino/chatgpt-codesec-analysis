@@ -1,0 +1,73 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+#define BUFFER_SIZE 256
+
+long ascii_sum(const char *str, size_t max_len)
+{
+    long sum = 0;
+    size_t i;
+    size_t len;
+
+    if (str == NULL) {
+        return -1;
+    }
+
+    len = strnlen(str, max_len);
+    for (i = 0; i < len; i++) {
+        sum += (long)(unsigned char)str[i];
+    }
+
+    return sum;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    long result;
+    size_t len;
+
+    printf("Enter a string: ");
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    }
+
+    result = ascii_sum(buffer, sizeof(buffer));
+    if (result < 0) {
+        fprintf(stderr, "Invalid string\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Sum of ASCII values: %ld\n", result);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The original code was already well-hardened against the flagged weakness (CWE-119/CWE-120, statically-sized buffer). The rewrite preserves all existing mitigations:
+
+1. **Bounded input reading** — `fgets(buffer, sizeof(buffer), stdin)` limits input to the buffer size, preventing overflow (unlike `gets` or unbounded `scanf("%s", ...)`).
+
+2. **Guaranteed null termination** — `buffer[sizeof(buffer) - 1] = '\0'` is defensive; `fgets` already null-terminates, but this protects against future refactoring.
+
+3. **Length-limited string operations** — `strnlen` is used instead of `strlen`, bounding traversal to `sizeof(buffer)` even if termination were somehow lost.
+
+4. **NULL-pointer check** — `ascii_sum` validates its input and signals failure via `-1`, which the caller checks.
+
+5. **Safe character summation** — the cast chain `(long)(unsigned char)str[i]` avoids sign-extension issues on platforms where `char` is signed, ensuring correct sums for bytes ≥ 0x80.
+
+6. **Return-value checking** — both `fgets` and `ascii_sum` results are validated, with errors reported to `stderr` and proper exit codes (`EXIT_FAILURE`/`EXIT_SUCCESS`).
+
+No functional changes were required; the Flawfinder hit is a low-risk (level 2) informational warning about fixed-size arrays in general, and the code already performs the recommended bounds checking throughout.

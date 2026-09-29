@@ -1,0 +1,16 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-347-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-347-s3.c:19:15: style: Condition 'a!=0' is always true [knownConditionTrueFalse]
+        if (a != 0 && b > LLONG_MAX / a) {
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-347-s3.c:6:15: note: Assuming that condition 'width<=0' is not redundant
+    if (width <= 0 || height <= 0) {
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-347-s3.c:10:17: note: w is assigned 'width' here.
+    long long w = width;
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-347-s3.c:16:32: note: Assignment 'a=w-size+1', assigned value is greater than 0
+        long long a = w - size + 1;
+                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-347-s3.c:19:15: note: Condition 'a!=0' is always true
+        if (a != 0 && b > LLONG_MAX / a) {
+              ^

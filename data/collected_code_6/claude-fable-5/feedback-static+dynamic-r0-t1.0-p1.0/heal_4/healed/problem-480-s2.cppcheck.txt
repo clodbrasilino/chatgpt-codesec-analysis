@@ -1,0 +1,4 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-480-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-480-s2.c:67:54: error: The code contains unhandled character(s) (character code=226). Neither unicode nor extended ascii is supported. [syntaxError]
+2. **`strcspn`** is used safely to strip the newline — it never writes beyond the string.
+                                                     ^

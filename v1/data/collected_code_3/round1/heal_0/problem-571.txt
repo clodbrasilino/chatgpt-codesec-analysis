@@ -1,0 +1,29 @@
+```C
+#include <stdio.h>
+#include <stdlib.h>
+
+int compare(const void * a, const void * b) {
+   return ( *(int*)a - *(int*)b );
+}
+
+int maxSumPairWithDifferenceLessThanK(int arr[], int n, int k) {
+    int maxSum = 0;
+    qsort(arr, n, sizeof(int), compare);
+    for (int i=n-1; i>0; --i) {
+        if (arr[i] - arr[i-1] < k) {
+            maxSum += arr[i];
+            maxSum += arr[i-1];
+            --i;
+        }
+    }
+    return maxSum;
+}
+
+int main() {
+    int arr[] = {3, 5, 10, 15, 17, 12, 9};
+    int n = sizeof(arr)/sizeof(arr[0]);
+    int k = 4;
+    printf("Maximum sum of pairs with difference less than %d is %d", k, maxSumPairWithDifferenceLessThanK(arr, n, k));
+    return 0;
+}
+```

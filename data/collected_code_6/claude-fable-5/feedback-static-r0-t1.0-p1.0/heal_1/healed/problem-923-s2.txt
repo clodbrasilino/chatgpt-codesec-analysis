@@ -1,0 +1,97 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_INPUT_LEN 4096
+
+static size_t shortest_supersequence_length(const char *str1, const char *str2)
+{
+    size_t len1;
+    size_t len2;
+    size_t i;
+    size_t j;
+    size_t lcs;
+    size_t *prev;
+    size_t *curr;
+    size_t *tmp;
+
+    if (str1 == NULL || str2 == NULL) {
+        return 0;
+    }
+
+    len1 = strnlen(str1, MAX_INPUT_LEN);
+    len2 = strnlen(str2, MAX_INPUT_LEN);
+
+    if (len1 >= MAX_INPUT_LEN || len2 >= MAX_INPUT_LEN) {
+        fprintf(stderr, "Input string too long or not null-terminated\n");
+        exit(EXIT_FAILURE);
+    }
+
+    if (len1 == 0) {
+        return len2;
+    }
+    if (len2 == 0) {
+        return len1;
+    }
+
+    prev = calloc(len2 + 1, sizeof(size_t));
+    if (prev == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(EXIT_FAILURE);
+    }
+
+    curr = calloc(len2 + 1, sizeof(size_t));
+    if (curr == NULL) {
+        free(prev);
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(EXIT_FAILURE);
+    }
+
+    for (i = 1; i <= len1; i++) {
+        for (j = 1; j <= len2; j++) {
+            if (str1[i - 1] == str2[j - 1]) {
+                curr[j] = prev[j - 1] + 1;
+            } else if (prev[j] >= curr[j - 1]) {
+                curr[j] = prev[j];
+            } else {
+                curr[j] = curr[j - 1];
+            }
+        }
+        tmp = prev;
+        prev = curr;
+        curr = tmp;
+    }
+
+    lcs = prev[len2];
+
+    free(prev);
+    free(curr);
+
+    return len1 + len2 - lcs;
+}
+
+int main(void)
+{
+    const char *str1 = "geek";
+    const char *str2 = "eke";
+    size_t result;
+
+    result = shortest_supersequence_length(str1, str2);
+
+    if (printf("Length of the shortest supersequence of \"%s\" and \"%s\" is %zu\n",
+               str1, str2, result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis summary:**
+
+The original code was already well-written: it validates NULL pointers, checks allocation failures, avoids leaks on the error path (freeing `prev` before exiting when `curr` allocation fails), uses `size_t` consistently, swaps row buffers to achieve O(min·max) time with O(len2) space, and even checks the return value of `printf`.
+
+The only flagged weaknesses were the two Flawfinder hits on `strlen` (CWE-126, risk level 1 — the lowest). These are largely informational: `strlen` over-reads only if the input is not null-terminated, which cannot happen here since both inputs are string literals. Nonetheless, to satisfy the audit, I replaced `strlen` with `strnlen` bounded by `MAX_INPUT_LEN`. If a string reaches the bound, it is treated as potentially unterminated and the program fails safely rather than over-reading. This makes the function defensively robust if it is later reused with untrusted or externally-sourced buffers.
+
+One subtle pre-existing correctness detail worth noting: `curr` is never reset between outer-loop iterations, but this is safe because every `curr[j]` for `j ≥ 1` is unconditionally overwritten each iteration, and `curr[0]` remains 0 from `calloc` — so no fix was needed there.

@@ -1,0 +1,85 @@
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <limits.h>
+#include <stdlib.h>
+
+int find_longest_word_length(const char *str, size_t *out_length)
+{
+    size_t max_len = 0;
+    size_t current_len = 0;
+    int in_word = 0;
+
+    if (str == NULL || out_length == NULL)
+    {
+        return -1;
+    }
+
+    while (*str != '\0')
+    {
+        if (isalpha((unsigned char)*str))
+        {
+            if (!in_word)
+            {
+                in_word = 1;
+                current_len = 1;
+            }
+            else
+            {
+                current_len++;
+            }
+        }
+        else
+        {
+            if (in_word)
+            {
+                if (current_len > max_len)
+                {
+                    max_len = current_len;
+                }
+                in_word = 0;
+                current_len = 0;
+            }
+        }
+        str++;
+    }
+
+    if (in_word && current_len > max_len)
+    {
+        max_len = current_len;
+    }
+
+    *out_length = max_len;
+    return 0;
+}
+
+int main(void)
+{
+    char *buffer = NULL;
+    size_t buffer_size = 0;
+    ssize_t line_length;
+    size_t longest_length;
+
+    line_length = getline(&buffer, &buffer_size, stdin);
+    if (line_length == -1)
+    {
+        free(buffer);
+        return 1;
+    }
+
+    if (line_length > 0 && buffer[line_length - 1] == '\n')
+    {
+        buffer[line_length - 1] = '\0';
+    }
+
+    if (find_longest_word_length(buffer, &longest_length) != 0)
+    {
+        free(buffer);
+        return 1;
+    }
+
+    printf("%zu\n", longest_length);
+
+    free(buffer);
+    return 0;
+}

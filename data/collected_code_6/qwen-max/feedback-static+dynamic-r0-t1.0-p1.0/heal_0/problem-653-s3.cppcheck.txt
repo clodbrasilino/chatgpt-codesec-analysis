@@ -1,0 +1,7 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-653-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-653-s3.c:128:11: style: Variable 'keys' can be declared as const array [constVariable]
+    char *keys[] = {"one", "two", "three", "two"};
+          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-653-s3.c:129:9: style: Variable 'values' can be declared as const array [constVariable]
+    int values[] = {1, 2, 3, 4};
+        ^

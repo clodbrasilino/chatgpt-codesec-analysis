@@ -1,0 +1,33 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+#include <math.h>
+
+#define EPSILON 1e-9
+
+bool are_roots_reciprocal(double a, double b, double c);
+
+bool are_roots_reciprocal(double a, double b, double c) {
+    if (fabs(a) < EPSILON) {
+        return false; 
+    }
+    return fabs(a - c) < EPSILON;
+}
+
+int main(void) {
+    double a = 0.0;
+    double b = 0.0;
+    double c = 0.0;
+
+    if (scanf("%lf %lf %lf", &a, &b, &c) != 3) {
+        return EXIT_FAILURE;
+    }
+
+    if (are_roots_reciprocal(a, b, c)) {
+        printf("Roots are reciprocal.\n");
+    } else {
+        printf("Roots are not reciprocal.\n");
+    }
+
+    return EXIT_SUCCESS;
+}

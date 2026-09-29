@@ -1,0 +1,27 @@
+#include <stdio.h>
+#include <stddef.h>
+
+size_t count_even_elements(const int *array, size_t size) {
+    if (array == NULL) {
+        return 0;
+    }
+
+    size_t count = 0;
+    for (size_t i = 0; i < size; i++) {
+        if (array[i] % 2 == 0) {
+            count++;
+        }
+    }
+    return count;
+}
+
+int main(void) {
+    int my_list[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    size_t size = sizeof(my_list) / sizeof(my_list[0]);
+    
+    size_t even_count = count_even_elements(my_list, size);
+    
+    printf("Number of even elements: %zu\n", even_count);
+    
+    return 0;
+}

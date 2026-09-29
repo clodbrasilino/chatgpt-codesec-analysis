@@ -1,0 +1,77 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+static unsigned int count_set_bits(unsigned int num)
+{
+    unsigned int count = 0U;
+
+    while (num > 0U)
+    {
+        count += (num & 1U);
+        num >>= 1U;
+    }
+
+    return count;
+}
+
+static unsigned long long total_set_bits(unsigned int n)
+{
+    unsigned long long total = 0ULL;
+    unsigned int i = 1U;
+
+    for (;;)
+    {
+        total += (unsigned long long)count_set_bits(i);
+
+        if (i == n)
+        {
+            break;
+        }
+
+        i++;
+    }
+
+    return total;
+}
+
+int main(void)
+{
+    unsigned int n = 0U;
+    int result;
+
+    printf("Enter a positive integer n: ");
+
+    result = scanf("%u", &n);
+    if (result != 1)
+    {
+        fprintf(stderr, "Error: invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (n == 0U)
+    {
+        fprintf(stderr, "Error: n must be greater than 0\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Total set bits from 1 to %u: %llu\n", n, total_set_bits(n));
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the original code and the reported weaknesses:**
+
+The reported test failures suggest the expected behavior is a *cumulative* count of set bits from 1 to n:
+
+- **Test case 1:** n = 3 → bits(1) + bits(2) + bits(3) = 1 + 1 + 2 = **4** (a failing version returning 2 was likely only counting `count_set_bits(n)` itself, since bits(3) = 2).
+- **Test case 2:** n = 10 → cumulative total = **17** (a failing version returning 3 again matches `count_set_bits(10)` alone, since 10 = 0b1010 has 2 bits — or a similar single-value bug).
+
+The failing implementation almost certainly computed the popcount of `n` only, rather than summing over the range 1..n. The corrected version above accumulates `count_set_bits(i)` for every `i` in [1, n], which yields 4 for n = 3 and 17 for n = 10, satisfying both test cases.
+
+**Additional robustness notes:**
+
+1. The loop uses `if (i == n) break;` rather than `i <= n` as the condition, which correctly avoids an infinite loop when `n == UINT_MAX` (where `i++` would wrap to 0 and `i <= n` would always be true).
+2. The accumulator is `unsigned long long`, which prevents overflow of the running total for large `n` (max total ≈ 32 × 2³² ≈ 2³⁷, well within 64-bit range).
+3. Input is validated: `scanf` return value is checked, and `n == 0` is rejected, so `total_set_bits` is never called with an argument that would break its loop invariant.

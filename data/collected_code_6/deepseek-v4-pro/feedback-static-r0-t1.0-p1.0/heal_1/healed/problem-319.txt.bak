@@ -1,0 +1,46 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+void find_five_char_words(const char *str) {
+    regex_t regex;
+    regmatch_t match;
+    const char *pattern = "\\b[A-Za-z]{5}\\b";
+    const char *cursor = str;
+    int result;
+
+    result = regcomp(&regex, pattern, REG_EXTENDED);
+    if (result != 0) {
+        fprintf(stderr, "Could not compile regex\n");
+        return;
+    }
+
+    while (regexec(&regex, cursor, 1, &match, 0) == 0) {
+        size_t word_len = match.rm_eo - match.rm_so;
+        char *word = (char *)malloc(word_len + 1);
+        if (word == NULL) {
+            regfree(&regex);
+            fprintf(stderr, "Memory allocation failed\n");
+            return;
+        }
+        memcpy(word, cursor + match.rm_so, word_len);
+        word[word_len] = '\0';
+        printf("%s\n", word);
+        free(word);
+        cursor += match.rm_eo;
+    }
+
+    regfree(&regex);
+}
+
+int main(int argc, const char *argv[]) {
+    if (argc != 2) {
+        fprintf(stderr, "Usage: %s <string>\n", argv[0]);
+        return EXIT_FAILURE;
+    }
+    find_five_char_words(argv[1]);
+    return EXIT_SUCCESS;
+}
+```

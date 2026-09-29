@@ -1,0 +1,36 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+typedef struct {
+    int *elements;
+    size_t size;
+} Tuple;
+
+bool is_tuple_size_k(Tuple tuple, size_t k) {
+    return tuple.size == k;
+}
+
+int main(void) {
+    size_t k = 3;
+    Tuple tuple;
+    tuple.size = 3;
+    tuple.elements = (int *)malloc(tuple.size * sizeof(int));
+    
+    if (tuple.elements == NULL) {
+        return 1;
+    }
+
+    tuple.elements[0] = 10;
+    tuple.elements[1] = 20;
+    tuple.elements[2] = 30;
+
+    if (is_tuple_size_k(tuple, k)) {
+        printf("The tuple contains exactly %zu elements.\n", k);
+    } else {
+        printf("The tuple does not contain exactly %zu elements.\n", k);
+    }
+
+    free(tuple.elements);
+    return 0;
+}

@@ -1,0 +1,139 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *data;
+    int size;
+    int capacity;
+} MinHeap;
+
+void min_heap_init(MinHeap *heap, int capacity) {
+    heap->data = (int *)malloc(sizeof(int) * capacity);
+    heap->size = 0;
+    heap->capacity = capacity;
+}
+
+void min_heap_swap(int *a, int *b) {
+    int temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+void min_heapify_up(MinHeap *heap, int index) {
+    while (index > 0) {
+        int parent = (index - 1) / 2;
+        if (heap->data[index] < heap->data[parent]) {
+            min_heap_swap(&heap->data[index], &heap->data[parent]);
+            index = parent;
+        } else {
+            break;
+        }
+    }
+}
+
+void min_heapify_down(MinHeap *heap, int index) {
+    int smallest = index;
+    int left = 2 * index + 1;
+    int right = 2 * index + 2;
+
+    if (left < heap->size && heap->data[left] < heap->data[smallest]) {
+        smallest = left;
+    }
+    if (right < heap->size && heap->data[right] < heap->data[smallest]) {
+        smallest = right;
+    }
+    if (smallest != index) {
+        min_heap_swap(&heap->data[index], &heap->data[smallest]);
+        min_heapify_down(heap, smallest);
+    }
+}
+
+void min_heap_insert(MinHeap *heap, int value) {
+    if (heap->size >= heap->capacity) {
+        heap->capacity *= 2;
+        heap->data = (int *)realloc(heap->data, sizeof(int) * heap->capacity);
+        if (heap->data == NULL) {
+            exit(EXIT_FAILURE);
+        }
+    }
+    heap->data[heap->size] = value;
+    min_heapify_up(heap, heap->size);
+    heap->size++;
+}
+
+int min_heap_extract_min(MinHeap *heap) {
+    if (heap->size <= 0) {
+        exit(EXIT_FAILURE);
+    }
+    if (heap->size == 1) {
+        heap->size--;
+        return heap->data[0];
+    }
+
+    int root = heap->data[0];
+    heap->data[0] = heap->data[heap->size - 1];
+    heap->size--;
+    min_heapify_down(heap, 0);
+    return root;
+}
+
+void min_heap_free(MinHeap *heap) {
+    free(heap->data);
+    heap->data = NULL;
+    heap->size = 0;
+    heap->capacity = 0;
+}
+
+/* Possible weaknesses found:
+ *  Parameter 'arr' can be declared as pointer to const [constParameterPointer]
+ */
+int *find_smallest_integers(int *arr, int n, int k, int *result_size) {
+    if (k <= 0 || n <= 0 || k > n) {
+        *result_size = 0;
+        return NULL;
+    }
+
+    MinHeap heap;
+    min_heap_init(&heap, n);
+    
+    for (int i = 0; i < n; i++) {
+        min_heap_insert(&heap, arr[i]);
+    }
+
+    int *result = (int *)malloc(sizeof(int) * k);
+    if (result == NULL) {
+        min_heap_free(&heap);
+        *result_size = 0;
+        return NULL;
+    }
+
+    for (int i = 0; i < k; i++) {
+        result[i] = min_heap_extract_min(&heap);
+    }
+
+    min_heap_free(&heap);
+    *result_size = k;
+    return result;
+}
+
+int main(void) {
+    int arr[] = {7, 10, 4, 3, 20, 15, 8, 12, 6};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    int k = 4;
+    int result_size = 0;
+
+    int *result = find_smallest_integers(arr, n, k, &result_size);
+
+    if (result != NULL && result_size > 0) {
+        printf("The %d smallest integers are:\n", k);
+        for (int i = 0; i < result_size; i++) {
+            printf("%d ", result[i]);
+        }
+        printf("\n");
+        free(result);
+    } else {
+        printf("Invalid input parameters.\n");
+    }
+
+    return 0;
+}

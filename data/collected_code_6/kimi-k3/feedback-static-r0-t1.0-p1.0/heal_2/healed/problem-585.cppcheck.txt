@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-585.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-585.c:156:17: error: Array 'name[7]' accessed at index 63, which is out of bounds. [arrayIndexOutOfBounds]
+        if (name[i] == '\0') {
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-585.c:155:19: note: Assuming that condition 'i<sizeof(item->name)' is not redundant
+    for (i = 0; i < sizeof(item->name); i++) {
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-585.c:156:17: note: Array index out of bounds
+        if (name[i] == '\0') {
+                ^

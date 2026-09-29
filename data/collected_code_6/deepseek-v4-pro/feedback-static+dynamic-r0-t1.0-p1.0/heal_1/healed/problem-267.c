@@ -1,0 +1,41 @@
+#include <stdio.h>
+#include <limits.h>
+
+int sum_of_squares_odd(int n) {
+    int sum = 0;
+    int odd = 1;
+    for (int i = 0; i < n; i++) {
+        if (odd > 0 && odd * odd / odd != odd) {
+            return -1;
+        }
+        if (sum > INT_MAX - odd * odd) {
+            return -1;
+        }
+        sum += odd * odd;
+        if (odd > INT_MAX - 2) {
+            return -1;
+        }
+        odd += 2;
+    }
+    return sum;
+}
+
+int main(void) {
+    int n;
+    printf("Enter n: ");
+    if (scanf("%d", &n) != 1) {
+        printf("Invalid input\n");
+        return 1;
+    }
+    if (n < 0) {
+        printf("n must be non-negative\n");
+        return 1;
+    }
+    int result = sum_of_squares_odd(n);
+    if (result == -1 && n > 0) {
+        printf("Overflow detected\n");
+        return 1;
+    }
+    printf("Sum of squares of first %d odd natural numbers: %d\n", n, result);
+    return 0;
+}

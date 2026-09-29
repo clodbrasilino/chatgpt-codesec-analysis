@@ -1,0 +1,44 @@
+{
+  "task_id": 541,
+  "text": "Write a C function to find if the given number is abundant or not.",
+  "fn_candidates": [
+    "check_abundant",
+    "CheckAbundant",
+    "checkAbundant",
+    "checkabundant"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "check_abundant",
+      "args": [
+        12
+      ],
+      "expected": true,
+      "assert_src": "assert check_abundant(12) == True"
+    },
+    {
+      "fn_name": "check_abundant",
+      "args": [
+        15
+      ],
+      "expected": false,
+      "assert_src": "assert check_abundant(15) == False"
+    },
+    {
+      "fn_name": "check_abundant",
+      "args": [
+        18
+      ],
+      "expected": true,
+      "assert_src": "assert check_abundant(18) == True"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "bool",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

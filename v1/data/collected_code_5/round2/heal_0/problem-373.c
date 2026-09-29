@@ -1,0 +1,29 @@
+#include <stdio.h>
+
+double calculateCuboidVolume(double length, double width, double height) {
+    if(length <= 0 || width <= 0 || height <= 0) 
+        return -1;
+        
+    double volume = length * width * height;
+    return volume;
+}
+
+int main() {
+    double length, width, height;
+    printf("Enter length of the cuboid: ");
+    scanf("%lf", &length);
+    printf("Enter width of the cuboid: ");
+    scanf("%lf", &width);
+    printf("Enter height of the cuboid: ");
+    scanf("%lf", &height);
+
+    double volume = calculateCuboidVolume(length, width, height);
+    
+    if(volume == -1) {
+        printf("Input parameters should be all positive values.\n");
+    } else {
+        printf("The volume of the cuboid is %.2lf cubic units.\n", volume);
+    }
+
+    return 0;
+}

@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_5/healed/problem-674.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_5/healed/problem-674.c:122:57: style: Condition 'output_index+temp_len<=output_size' is always true [knownConditionTrueFalse]
+                            if (output_index + temp_len <= output_size) {
+                                                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_5/healed/problem-674.c:121:53: note: Assuming that condition 'output_index+temp_len<output_size' is not redundant
+                        if (output_index + temp_len < output_size) {
+                                                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_5/healed/problem-674.c:122:57: note: Condition 'output_index+temp_len<=output_size' is always true
+                            if (output_index + temp_len <= output_size) {
+                                                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_5/healed/problem-674.c:159:49: style: Condition 'output_index+temp_len<=output_size' is always true [knownConditionTrueFalse]
+                    if (output_index + temp_len <= output_size) {
+                                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_5/healed/problem-674.c:158:45: note: Assuming that condition 'output_index+temp_len<output_size' is not redundant
+                if (output_index + temp_len < output_size) {
+                                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_5/healed/problem-674.c:159:49: note: Condition 'output_index+temp_len<=output_size' is always true
+                    if (output_index + temp_len <= output_size) {
+                                                ^

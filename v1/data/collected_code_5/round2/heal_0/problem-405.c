@@ -1,0 +1,37 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+struct Tuple {
+    int size;
+    int values[100];
+};
+
+bool check_element_in_tuple(struct Tuple *tuple, int element) {
+    for(int i = 0; i < tuple->size; i++) {
+        if(tuple->values[i] == element)
+            return true;
+    }
+    return false;
+}
+
+int main() {
+    struct Tuple tuple;
+
+    tuple.size = 5;
+    tuple.values[0] = 1;
+    tuple.values[1] = 2;
+    tuple.values[2] = 3;
+    tuple.values[3] = 4;
+    tuple.values[4] = 5;
+
+    int element_to_check = 3;
+
+    bool result = check_element_in_tuple(&tuple, element_to_check);
+
+    if(result)
+        printf("Element found in tuple.\n");
+    else
+        printf("Element not found in tuple.\n");
+
+    return 0;
+}

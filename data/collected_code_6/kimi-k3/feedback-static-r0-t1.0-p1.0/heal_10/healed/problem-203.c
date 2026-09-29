@@ -1,0 +1,71 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+#include <errno.h>
+#include <string.h>
+
+unsigned int hamming_distance(unsigned int x, unsigned int y)
+{
+    unsigned int xor_result = x ^ y;
+    unsigned int distance = 0U;
+
+    while (xor_result != 0U) {
+        distance += xor_result & 1U;
+        xor_result >>= 1U;
+    }
+
+    return distance;
+}
+
+static int read_unsigned_input(const char *prompt, unsigned int *out_value)
+{
+    char *input_buffer = NULL;
+    size_t buffer_size = 0;
+    ssize_t input_length;
+    char *end_ptr = NULL;
+    unsigned long parsed_value = 0UL;
+
+    printf("%s", prompt);
+    fflush(stdout);
+
+    input_length = getline(&input_buffer, &buffer_size, stdin);
+    if (input_length == -1) {
+        fprintf(stderr, "Error reading input.\n");
+        free(input_buffer);
+        return 0;
+    }
+
+    if (input_length > 0 && input_buffer[input_length - 1] == '\n') {
+        input_buffer[input_length - 1] = '\0';
+    }
+
+    errno = 0;
+    parsed_value = strtoul(input_buffer, &end_ptr, 10);
+    if ((errno == ERANGE) || (parsed_value > UINT_MAX) || (end_ptr == input_buffer) || (*end_ptr != '\0')) {
+        fprintf(stderr, "Invalid input.\n");
+        free(input_buffer);
+        return 0;
+    }
+
+    *out_value = (unsigned int)parsed_value;
+    free(input_buffer);
+    return 1;
+}
+
+int main(void)
+{
+    unsigned int a = 0U;
+    unsigned int b = 0U;
+
+    if (!read_unsigned_input("Enter first integer: ", &a)) {
+        return EXIT_FAILURE;
+    }
+
+    if (!read_unsigned_input("Enter second integer: ", &b)) {
+        return EXIT_FAILURE;
+    }
+
+    printf("Hamming distance: %u\n", hamming_distance(a, b));
+
+    return EXIT_SUCCESS;
+}

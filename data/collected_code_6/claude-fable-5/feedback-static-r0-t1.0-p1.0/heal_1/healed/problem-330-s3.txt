@@ -1,0 +1,87 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+#define ERRBUF_SIZE 256
+#define WORD_SIZE 256
+
+static int find_words(const char *text)
+{
+    regex_t regex;
+    regmatch_t match;
+    const char *cursor;
+    int ret;
+    char errbuf[ERRBUF_SIZE];
+    char word[WORD_SIZE];
+    int found;
+
+    if (text == NULL) {
+        return -1;
+    }
+
+    ret = regcomp(&regex, "[[:alpha:]]+", REG_EXTENDED);
+    if (ret != 0) {
+        regerror(ret, &regex, errbuf, sizeof(errbuf));
+        fprintf(stderr, "regcomp failed: %s\n", errbuf);
+        return -1;
+    }
+
+    cursor = text;
+    found = 0;
+
+    while ((ret = regexec(&regex, cursor, 1, &match, 0)) == 0) {
+        if (match.rm_so >= 0 && match.rm_eo >= match.rm_so) {
+            const size_t length = (size_t)(match.rm_eo - match.rm_so);
+            if (length >= 3 && length <= 5 && length < sizeof(word)) {
+                memcpy(word, cursor + match.rm_so, length);
+                word[length] = '\0';
+                printf("%s\n", word);
+                found++;
+            }
+        }
+        if (match.rm_eo == 0) {
+            break;
+        }
+        cursor += match.rm_eo;
+    }
+
+    if (ret != 0 && ret != REG_NOMATCH) {
+        regerror(ret, &regex, errbuf, sizeof(errbuf));
+        fprintf(stderr, "regexec failed: %s\n", errbuf);
+        regfree(&regex);
+        return -1;
+    }
+
+    regfree(&regex);
+    return found;
+}
+
+int main(void)
+{
+    const char *text = "The quick brown fox jumps over a lazy dog nearby";
+    int count;
+
+    count = find_words(text);
+    if (count < 0) {
+        fprintf(stderr, "Error while searching for words\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Total words found: %d\n", count);
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the fixes applied:**
+
+1. **CWE-119/CWE-120 (statically-sized buffers `errbuf` and `word`)** — Both buffers are retained but all accesses are strictly bounds-checked. `regerror` is always called with `sizeof(errbuf)`, which guarantees truncation rather than overflow. Named constants (`ERRBUF_SIZE`, `WORD_SIZE`) replace magic numbers for maintainability.
+
+2. **CWE-120 (`memcpy` without bounds check)** — The copy is guarded by `length < sizeof(word)`, which guarantees room for both the `length` bytes and the null terminator (`word[length] = '\0'`). An additional sanity check on `rm_so`/`rm_eo` was added to prevent a negative-offset subtraction from wrapping into a huge `size_t` value, which would have been the only realistic path to an overflow in the original code.
+
+3. **`variableScope` (cppcheck)** — `length` is now declared `const` inside the loop body where it is used, minimizing its scope and preventing accidental reuse of stale values across iterations.
+
+4. **Resource management** — `regfree` is called on every exit path after successful `regcomp`, so no leak of the compiled regex is possible; behavior on `regexec` hard errors is preserved.
+
+The functional behavior is unchanged: it prints all alphabetic words of length 3–5 (`The`, `quick`, `brown`, `fox`, `jumps`, `over`, `lazy`, `dog`) and reports the total count.

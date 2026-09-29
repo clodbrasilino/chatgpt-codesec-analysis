@@ -1,0 +1,50 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+static int difference_squares(unsigned int n, unsigned long long *result)
+{
+    unsigned long long sum;
+    unsigned long long squared_sum;
+    unsigned long long sum_of_squares;
+
+    if (result == NULL) {
+        return -1;
+    }
+
+    if (n > 92680U) {
+        return -1;
+    }
+
+    sum = ((unsigned long long)n * ((unsigned long long)n + 1ULL)) / 2ULL;
+    squared_sum = sum * sum;
+    sum_of_squares = ((unsigned long long)n * ((unsigned long long)n + 1ULL) *
+                      (2ULL * (unsigned long long)n + 1ULL)) / 6ULL;
+
+    *result = squared_sum - sum_of_squares;
+
+    return 0;
+}
+
+int main(void)
+{
+    unsigned int n;
+    unsigned long long result;
+    int scan_status;
+
+    printf("Enter n: ");
+
+    scan_status = scanf("%u", &n);
+    if (scan_status != 1) {
+        fprintf(stderr, "Error: invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (difference_squares(n, &result) != 0) {
+        fprintf(stderr, "Error: value of n is too large or invalid.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Difference for n = %u is %llu\n", n, result);
+
+    return EXIT_SUCCESS;
+}

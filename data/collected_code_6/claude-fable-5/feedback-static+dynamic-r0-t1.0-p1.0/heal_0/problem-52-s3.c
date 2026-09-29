@@ -1,0 +1,36 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+double parallelogram_area(double base, double height)
+{
+    return base * height;
+}
+
+int main(void)
+{
+    double base;
+    double height;
+    double area;
+
+    printf("Enter base: ");
+    if (scanf("%lf", &base) != 1) {
+        fprintf(stderr, "Invalid input for base\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter height: ");
+    if (scanf("%lf", &height) != 1) {
+        fprintf(stderr, "Invalid input for height\n");
+        return EXIT_FAILURE;
+    }
+
+    if (base <= 0.0 || height <= 0.0) {
+        fprintf(stderr, "Base and height must be positive values\n");
+        return EXIT_FAILURE;
+    }
+
+    area = parallelogram_area(base, height);
+    printf("Area of parallelogram: %f\n", area);
+
+    return EXIT_SUCCESS;
+}

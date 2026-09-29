@@ -1,0 +1,70 @@
+#include<stdio.h>
+#include<stdlib.h>
+
+typedef struct node{
+    int data;
+    struct node *next;
+}Node;
+
+Node* createNode(int data){
+    Node* newNode = (Node*)malloc(sizeof(Node));
+    if(newNode == NULL) {
+        printf("Error in memory allocation\n");
+        exit(0);
+    }
+    newNode->data = data;
+    newNode->next = NULL;
+    return newNode;
+}
+
+Node* insertAtEnd(Node* head, int data){
+    Node* newNode = createNode(data);
+    if(head == NULL){
+        head = newNode;
+        return head;
+    }
+  
+    Node* temp = head;
+    while(temp->next != NULL) temp = temp->next;
+    temp->next = newNode;
+  
+    return head;
+}
+
+void findMaxSublist(Node* head){
+    int maxLength = 0, length = 0, maxData = 0;
+    Node* temp = head;
+    while(temp) {
+        length = 0;
+        int data = temp->data;
+        Node* current = temp;
+        while(current && current->data == data) {
+            length++;
+            current = current->next;
+        }
+        if(length > maxLength) {
+            maxLength = length;
+            maxData = data;
+        }
+        temp = current;
+    }
+
+    printf("Maximum length sublist is of length %d having data %d\n", maxLength, maxData);
+}
+
+int main(){
+    Node* head = NULL;
+    int n, data;
+    printf("Enter the number of elements: ");
+    scanf("%d", &n);
+    printf("Enter the elements: ");
+    for(int i=0; i<n; i++){
+        scanf("%d", &data);
+        head = insertAtEnd(head, data);
+    }
+
+    findMaxSublist(head);
+
+    free(head);
+    return 0;
+}

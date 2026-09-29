@@ -1,0 +1,61 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int is_valid_triangle(double a, double b, double c);
+int is_scalene(double a, double b, double c);
+
+int is_valid_triangle(double a, double b, double c)
+{
+    if (a <= 0.0 || b <= 0.0 || c <= 0.0) {
+        return 0;
+    }
+    if ((a + b <= c) || (a + c <= b) || (b + c <= a)) {
+        return 0;
+    }
+    return 1;
+}
+
+int is_scalene(double a, double b, double c)
+{
+    if (a != b && b != c && a != c) {
+        return 1;
+    }
+    return 0;
+}
+
+int main(void)
+{
+    double a = 0.0;
+    double b = 0.0;
+    double c = 0.0;
+    int result = 0;
+
+    printf("Enter the three sides of the triangle: ");
+    result = scanf("%lf %lf %lf", &a, &b, &c);
+
+    if (result != 3) {
+        fprintf(stderr, "Error: invalid input. Please enter three numbers.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (!is_valid_triangle(a, b, c)) {
+        fprintf(stderr, "Error: the given sides do not form a valid triangle.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (is_scalene(a, b, c)) {
+        printf("The triangle is scalene.\n");
+    } else {
+        printf("The triangle is not scalene.\n");
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+This implementation addresses the specified concerns:
+
+- **CWE-703 (Improper Check or Handling of Exceptional Conditions):** The return value of `scanf` is checked to ensure exactly three values were read, and the sides are validated (positive values, triangle inequality) before classification.
+- **CWE-664 (Improper Control of a Resource Through its Lifetime):** No dynamic memory or file handles are used, so there are no resources left in an inconsistent state; all variables are initialized before use.
+- **CWE-710 (Improper Adherence to Coding Standards):** The code uses `int main(void)`, returns `EXIT_SUCCESS`/`EXIT_FAILURE`, declares function prototypes, writes errors to `stderr`, and avoids implicit conversions or undefined behavior.

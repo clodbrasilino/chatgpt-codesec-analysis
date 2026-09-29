@@ -1,0 +1,58 @@
+./collected_code_4/round1//heal_0//problem-215.c: In function 'decode':
+./collected_code_4/round1//heal_0//problem-215.c:11:17: warning: leak of '<unknown>' [CWE-401] [-Wanalyzer-malloc-leak]
+   11 |     for (i = 0; sscanf(str + count, "%d%c", &repeats, &letter) == 2; i+=repeats) {
+      |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  'decode': events 1-8
+    |
+    |   11 |     for (i = 0; sscanf(str + count, "%d%c", &repeats, &letter) == 2; i+=repeats) {
+    |      |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~
+    |      |                 |                                              |
+    |      |                 |                                              (1) following 'true' branch...
+    |      |                 |                                              (5) following 'true' branch...
+    |      |                 (8) '<unknown>' leaks here; was allocated at (3)
+    |   12 |         decoded_string = (char *)realloc(decoded_string, i + repeats + 1);
+    |      |                                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                                  |                         |
+    |      |                                  |                         (2) ...to here
+    |      |                                  (3) allocated here        (6) ...to here
+    |      |                                  (4) when 'realloc' succeeds, moving buffer
+    |      |                                  (7) when 'realloc' fails
+    |
+./collected_code_4/round1//heal_0//problem-215.c:16:23: warning: dereference of possibly-NULL 'decoded_string' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   16 |     decoded_string[i] = '\0';
+      |     ~~~~~~~~~~~~~~~~~~^~~~~~
+  'main': events 1-2
+    |
+    |   20 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   25 |     char *dec = decode(str);
+    |      |                 ~~~~~~~~~~~
+    |      |                 |
+    |      |                 (2) calling 'decode' from 'main'
+    |
+    +--> 'decode': events 3-7
+           |
+           |    5 | char *decode(const char *str) {
+           |      |       ^~~~~~
+           |      |       |
+           |      |       (3) entry to 'decode'
+           |......
+           |    9 |     char *decoded_string = (char *)malloc(1);
+           |      |                                    ~~~~~~~~~
+           |      |                                    |
+           |      |                                    (4) this call could return NULL
+           |   10 | 
+           |   11 |     for (i = 0; sscanf(str + count, "%d%c", &repeats, &letter) == 2; i+=repeats) {
+           |      |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                                                                |
+           |      |                                                                (5) following 'false' branch...
+           |......
+           |   16 |     decoded_string[i] = '\0';
+           |      |     ~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                   |   |
+           |      |                   |   (7) 'decoded_string + i' could be NULL: unchecked value from (4)
+           |      |                   (6) ...to here
+           |

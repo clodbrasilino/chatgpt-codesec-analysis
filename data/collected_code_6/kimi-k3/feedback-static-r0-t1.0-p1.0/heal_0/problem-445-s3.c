@@ -1,0 +1,82 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <limits.h>
+
+typedef struct {
+    int *data;
+    size_t size;
+} Tuple;
+
+int multiply_tuples(const Tuple *t1, const Tuple *t2, Tuple *result) {
+    if (t1 == NULL || t2 == NULL || result == NULL) {
+        return -1;
+    }
+    
+    if (t1->size != t2->size) {
+        return -1;
+    }
+    
+    if (t1->size == 0) {
+        result->data = NULL;
+        result->size = 0;
+        return 0;
+    }
+    
+    if (t1->data == NULL || t2->data == NULL) {
+        return -1;
+    }
+    
+    int *new_data = malloc(t1->size * sizeof(int));
+    if (new_data == NULL) {
+        return -1;
+    }
+    
+    for (size_t i = 0; i < t1->size; i++) {
+        if (t1->data[i] != 0 && t2->data[i] > INT_MAX / t1->data[i]) {
+            free(new_data);
+            return -1;
+        }
+        if (t1->data[i] != 0 && t2->data[i] < INT_MIN / t1->data[i]) {
+            free(new_data);
+            return -1;
+        }
+        new_data[i] = t1->data[i] * t2->data[i];
+    }
+    
+    result->data = new_data;
+    result->size = t1->size;
+    return 0;
+}
+
+void free_tuple(Tuple *t) {
+    if (t != NULL) {
+        free(t->data);
+        t->data = NULL;
+        t->size = 0;
+    }
+}
+
+int main(void) {
+    int arr1[] = {1, 2, 3, 4, 5};
+    int arr2[] = {6, 7, 8, 9, 10};
+    
+    Tuple t1 = {arr1, 5};
+    Tuple t2 = {arr2, 5};
+    Tuple result = {NULL, 0};
+    
+    if (multiply_tuples(&t1, &t2, &result) != 0) {
+        fprintf(stderr, "Error: multiplication failed\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("Result: ");
+    for (size_t i = 0; i < result.size; i++) {
+        printf("%d ", result.data[i]);
+    }
+    printf("\n");
+    
+    free_tuple(&result);
+    
+    return EXIT_SUCCESS;
+}

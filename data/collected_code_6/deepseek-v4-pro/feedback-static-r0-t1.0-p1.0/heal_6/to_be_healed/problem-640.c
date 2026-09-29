@@ -1,0 +1,90 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char *remove_parenthesis_area(const char *str) {
+    if (str == NULL) {
+        return NULL;
+    }
+
+    size_t len = strnlen(str, 65536);
+    char *result = malloc(len + 1);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    size_t i = 0, j = 0;
+    int depth = 0;
+
+    while (i < len) {
+        if (str[i] == '(') {
+            depth++;
+            i++;
+        } else if (str[i] == ')' && depth > 0) {
+            depth--;
+            i++;
+        } else if (depth == 0) {
+            result[j++] = str[i++];
+        } else {
+            i++;
+        }
+    }
+
+    result[j] = '\0';
+
+    char *shrunk = realloc(result, j + 1);
+    return shrunk ? shrunk : result;
+}
+
+int main(void) {
+    const char *test1 = "Hello (world) example";
+    const char *test2 = "No parentheses here";
+    const char *test3 = "Nested (paren(thesis) area) test";
+    const char *test4 = "((()))";
+    const char *test5 = "Before (unclosed";
+    const char *test6 = "After ) unmatched";
+    const char *test7 = "Multiple (one) and (two) areas";
+    /* Possible weaknesses found:
+     *  Assignment 'test8=NULL', assigned value is 0
+     */
+    const char *test8 = NULL;
+
+    char *r1 = remove_parenthesis_area(test1);
+    char *r2 = remove_parenthesis_area(test2);
+    char *r3 = remove_parenthesis_area(test3);
+    char *r4 = remove_parenthesis_area(test4);
+    char *r5 = remove_parenthesis_area(test5);
+    char *r6 = remove_parenthesis_area(test6);
+    char *r7 = remove_parenthesis_area(test7);
+    /* Possible weaknesses found:
+     *  Calling function 'remove_parenthesis_area' returns 0
+     *  Assignment 'r8=remove_parenthesis_area(test8)', assigned value is 0
+     */
+    char *r8 = remove_parenthesis_area(test8);
+
+    printf("Test 1: '%s' -> '%s'\n", test1 ? test1 : "NULL", r1 ? r1 : "NULL");
+    printf("Test 2: '%s' -> '%s'\n", test2 ? test2 : "NULL", r2 ? r2 : "NULL");
+    printf("Test 3: '%s' -> '%s'\n", test3 ? test3 : "NULL", r3 ? r3 : "NULL");
+    printf("Test 4: '%s' -> '%s'\n", test4 ? test4 : "NULL", r4 ? r4 : "NULL");
+    printf("Test 5: '%s' -> '%s'\n", test5 ? test5 : "NULL", r5 ? r5 : "NULL");
+    printf("Test 6: '%s' -> '%s'\n", test6 ? test6 : "NULL", r6 ? r6 : "NULL");
+    printf("Test 7: '%s' -> '%s'\n", test7 ? test7 : "NULL", r7 ? r7 : "NULL");
+    /* Possible weaknesses found:
+     *  Condition 'test8' is always false
+     *  Condition 'r8' is always false [knownConditionTrueFalse]
+     *  Condition 'r8' is always false
+     *  Condition 'test8' is always false [knownConditionTrueFalse]
+     */
+    printf("Test 8: '%s' -> '%s'\n", test8 ? test8 : "NULL", r8 ? r8 : "NULL");
+
+    free(r1);
+    free(r2);
+    free(r3);
+    free(r4);
+    free(r5);
+    free(r6);
+    free(r7);
+    free(r8);
+
+    return 0;
+}

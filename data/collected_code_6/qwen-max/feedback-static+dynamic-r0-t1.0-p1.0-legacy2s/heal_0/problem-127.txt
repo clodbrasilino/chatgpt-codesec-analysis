@@ -1,0 +1,34 @@
+```c
+#include <stdio.h>
+
+int multiply(int a, int b) {
+    int result = 0;
+    int positive = 1;
+
+    if (b < 0) {
+        positive = -positive;
+        b = -b;
+    }
+
+    while (b > 0) {
+        if (b & 1) {
+            result += a;
+        }
+        a <<= 1;
+        b >>= 1;
+    }
+
+    return positive == 1 ? result : -result;
+}
+
+int main() {
+    int a, b;
+    printf("Enter two integers: ");
+    scanf("%d %d", &a, &b);
+
+    int result = multiply(a, b);
+    printf("Result: %d\n", result);
+
+    return 0;
+}
+```

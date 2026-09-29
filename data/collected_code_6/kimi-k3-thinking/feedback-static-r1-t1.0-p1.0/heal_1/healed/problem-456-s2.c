@@ -1,0 +1,137 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX_STRING_LENGTH 1024
+
+static size_t bounded_strlen(const char *str, size_t max_len)
+{
+    size_t len = 0;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    while (len < max_len && str[len] != '\0') {
+        len++;
+    }
+
+    return len;
+}
+
+static int reverse_string(char *str)
+{
+    size_t len;
+    size_t i;
+
+    if (str == NULL) {
+        return -1;
+    }
+
+    len = bounded_strlen(str, MAX_STRING_LENGTH);
+    if (len == MAX_STRING_LENGTH) {
+        return -1;
+    }
+
+    for (i = 0; i < len / 2; i++) {
+        char temp = str[i];
+        str[i] = str[len - 1 - i];
+        str[len - 1 - i] = temp;
+    }
+
+    return 0;
+}
+
+static int reverse_string_list(char **list, size_t count)
+{
+    size_t i;
+
+    if (list == NULL) {
+        return -1;
+    }
+
+    for (i = 0; i < count; i++) {
+        if (reverse_string(list[i]) != 0) {
+            return -1;
+        }
+    }
+
+    return 0;
+}
+
+static char *duplicate_string(const char *src)
+{
+    size_t len;
+    char *copy;
+    int written;
+
+    if (src == NULL) {
+        return NULL;
+    }
+
+    len = bounded_strlen(src, MAX_STRING_LENGTH);
+    if (len == MAX_STRING_LENGTH) {
+        return NULL;
+    }
+    len++;
+
+    copy = malloc(len);
+    if (copy == NULL) {
+        return NULL;
+    }
+
+    written = snprintf(copy, len, "%s", src);
+    if (written < 0 || (size_t)written >= len) {
+        free(copy);
+        return NULL;
+    }
+
+    return copy;
+}
+
+int main(void)
+{
+    const char *words[] = {"hello", "world", "reverse", "strings", "example"};
+    const size_t count = sizeof(words) / sizeof(words[0]);
+    char **list;
+    size_t i;
+    int status = EXIT_SUCCESS;
+
+    list = calloc(count, sizeof(*list));
+    if (list == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i < count; i++) {
+        list[i] = duplicate_string(words[i]);
+        if (list[i] == NULL) {
+            fprintf(stderr, "Failed to duplicate string\n");
+            status = EXIT_FAILURE;
+            break;
+        }
+    }
+
+    if (status == EXIT_SUCCESS) {
+        printf("Original strings:\n");
+        for (i = 0; i < count; i++) {
+            printf("%s\n", list[i]);
+        }
+
+        if (reverse_string_list(list, count) != 0) {
+            fprintf(stderr, "Failed to reverse string list\n");
+            status = EXIT_FAILURE;
+        } else {
+            printf("Reversed strings:\n");
+            for (i = 0; i < count; i++) {
+                printf("%s\n", list[i]);
+            }
+        }
+    }
+
+    for (i = 0; i < count; i++) {
+        free(list[i]);
+    }
+    free(list);
+
+    return status;
+}

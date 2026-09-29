@@ -1,0 +1,81 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *data;
+    size_t length;
+} Sublist;
+
+const Sublist* find_max_length_sublist(const Sublist *sublists, size_t num_sublists);
+
+const Sublist* find_max_length_sublist(const Sublist *sublists, size_t num_sublists) {
+    if (!sublists || num_sublists == 0) {
+        return NULL;
+    }
+
+    size_t max_index = 0;
+    size_t max_length = sublists[0].length;
+
+    for (size_t i = 1; i < num_sublists; ++i) {
+        if (sublists[i].length > max_length) {
+            max_length = sublists[i].length;
+            max_index = i;
+        }
+    }
+
+    return &sublists[max_index];
+}
+
+int main(void) {
+    size_t num_sublists = 3;
+    Sublist *sublists = calloc(num_sublists, sizeof(Sublist));
+    
+    if (!sublists) {
+        return EXIT_FAILURE;
+    }
+
+    sublists[0].length = 2;
+    sublists[0].data = calloc(sublists[0].length, sizeof(int));
+    if (!sublists[0].data) {
+        free(sublists);
+        return EXIT_FAILURE;
+    }
+
+    sublists[1].length = 5;
+    sublists[1].data = calloc(sublists[1].length, sizeof(int));
+    if (!sublists[1].data) {
+        free(sublists[0].data);
+        free(sublists);
+        return EXIT_FAILURE;
+    }
+
+    sublists[2].length = 3;
+    sublists[2].data = calloc(sublists[2].length, sizeof(int));
+    if (!sublists[2].data) {
+        free(sublists[1].data);
+        free(sublists[0].data);
+        free(sublists);
+        return EXIT_FAILURE;
+    }
+
+    const Sublist *max_sublist = find_max_length_sublist(sublists, num_sublists);
+    
+    if (max_sublist) {
+        if (printf("%zu\n", max_sublist->length) < 0) {
+            for (size_t i = 0; i < num_sublists; ++i) {
+                free(sublists[i].data);
+            }
+            free(sublists);
+            return EXIT_FAILURE;
+        }
+    }
+
+    for (size_t i = 0; i < num_sublists; ++i) {
+        free(sublists[i].data);
+    }
+    free(sublists);
+
+    return EXIT_SUCCESS;
+}
+```

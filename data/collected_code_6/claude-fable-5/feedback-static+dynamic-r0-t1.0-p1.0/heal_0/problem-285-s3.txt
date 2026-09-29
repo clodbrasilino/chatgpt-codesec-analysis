@@ -1,0 +1,67 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+int match_a_followed_by_bb(const char *text)
+{
+    size_t i;
+    size_t len;
+
+    if (text == NULL) {
+        return 0;
+    }
+
+    len = strlen(text);
+
+    for (i = 0; i < len; i++) {
+        if (text[i] == 'a') {
+            size_t count = 0;
+            size_t j = i + 1;
+
+            while (j < len && text[j] == 'b' && count < 3) {
+                count++;
+                j++;
+            }
+
+            if (count >= 2 && count <= 3) {
+                return 1;
+            }
+        }
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    const char *tests[] = {
+        "abb",
+        "abbb",
+        "abbbb",
+        "ab",
+        "aabbc",
+        "xyz",
+        "aabbbbc",
+        ""
+    };
+    size_t num_tests = sizeof(tests) / sizeof(tests[0]);
+    size_t i;
+
+    for (i = 0; i < num_tests; i++) {
+        int result = match_a_followed_by_bb(tests[i]);
+        if (printf("\"%s\" -> %s\n", tests[i], result ? "match" : "no match") < 0) {
+            return EXIT_FAILURE;
+        }
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+A few notes on the design choices:
+
+- **No dynamic allocation or external resources** are used, which eliminates any lifetime management concerns (CWE-664).
+- **`NULL` input is explicitly checked** before use, and the return value of `printf` is verified, addressing exceptional condition handling (CWE-703).
+- The pattern `ab{2,3}` is matched greedily up to 3 `b` characters: `"abbbb"` correctly reports **no match** at that position for the greedy interpretation, but since `count` caps at 3, it reports a match (`abbb` is a valid prefix). If you want strict "exactly 2 or 3 b's, not more", change the check to also verify `(j >= len || text[j] != 'b')`.
+- `main` uses `EXIT_SUCCESS`/`EXIT_FAILURE`, `void` parameter lists, and `size_t` for indexing, adhering to standard coding conventions (CWE-710).

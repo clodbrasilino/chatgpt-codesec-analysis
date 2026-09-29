@@ -1,0 +1,47 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
+
+double calculate_sector_area(double radius, double angle) {
+    if (radius < 0.0 || angle < 0.0 || angle > 360.0) {
+        return -1.0;
+    }
+    return (M_PI * radius * radius * angle) / 360.0;
+}
+
+int main(void) {
+    double radius = 0.0;
+    double angle = 0.0;
+    double area = 0.0;
+    int result = 0;
+
+    printf("Enter the radius of the sector: ");
+    result = scanf("%lf", &radius);
+    if (result != 1) {
+        fprintf(stderr, "Invalid input for radius.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter the angle of the sector in degrees: ");
+    result = scanf("%lf", &angle);
+    if (result != 1) {
+        fprintf(stderr, "Invalid input for angle.\n");
+        return EXIT_FAILURE;
+    }
+
+    area = calculate_sector_area(radius, angle);
+    if (area < 0.0) {
+        fprintf(stderr, "Invalid radius or angle values.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("The area of the sector is: %.4f\n", area);
+
+    return EXIT_SUCCESS;
+}
+```

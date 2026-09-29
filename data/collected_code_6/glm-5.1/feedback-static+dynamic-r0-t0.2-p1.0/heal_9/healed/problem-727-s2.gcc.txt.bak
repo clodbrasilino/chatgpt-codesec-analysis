@@ -1,0 +1,8 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_9/healed/problem-727-s2.c: In function 'remove_non_alnum':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_9/healed/problem-727-s2.c:10:24: error: implicit declaration of function 'strlen' [-Wimplicit-function-declaration]
+   10 |     size_t input_len = strlen(input);
+      |                        ^~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_9/healed/problem-727-s2.c:4:1: note: include '<string.h>' or provide a declaration of 'strlen'
+    3 | #include <ctype.h>
+  +++ |+#include <string.h>
+    4 | 

@@ -1,0 +1,44 @@
+{
+  "task_id": 192,
+  "text": "Write a C function to check whether a string has atleast one letter and one number.",
+  "fn_candidates": [
+    "check_String",
+    "CheckString",
+    "checkString",
+    "checkString"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "check_String",
+      "args": [
+        "thishasboth29"
+      ],
+      "expected": true,
+      "assert_src": "assert check_String('thishasboth29') == True"
+    },
+    {
+      "fn_name": "check_String",
+      "args": [
+        "python"
+      ],
+      "expected": false,
+      "assert_src": "assert check_String('python') == False"
+    },
+    {
+      "fn_name": "check_String",
+      "args": [
+        "string"
+      ],
+      "expected": false,
+      "assert_src": "assert check_String ('string') == False"
+    }
+  ],
+  "arg_kinds": [
+    "str"
+  ],
+  "return_kind": "bool",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

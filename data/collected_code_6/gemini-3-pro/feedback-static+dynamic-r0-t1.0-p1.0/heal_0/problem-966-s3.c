@@ -1,0 +1,80 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int length;
+    int* elements;
+} Tuple;
+
+typedef struct {
+    int count;
+    Tuple* tuples;
+} TupleList;
+
+void removeEmptyTuples(TupleList* list) {
+    if (list == NULL || list->tuples == NULL) {
+        return;
+    }
+
+    int writeIndex = 0;
+
+    for (int i = 0; i < list->count; i++) {
+        if (list->tuples[i].length > 0) {
+            list->tuples[writeIndex] = list->tuples[i];
+            writeIndex++;
+        } else {
+            if (list->tuples[i].elements != NULL) {
+                free(list->tuples[i].elements);
+                list->tuples[i].elements = NULL;
+            }
+        }
+    }
+
+    list->count = writeIndex;
+}
+
+int main() {
+    TupleList list;
+    list.count = 4;
+    list.tuples = (Tuple*)malloc(list.count * sizeof(Tuple));
+    if (list.tuples == NULL) {
+        return 1;
+    }
+
+    list.tuples[0].length = 2;
+    list.tuples[0].elements = (int*)malloc(2 * sizeof(int));
+    if (list.tuples[0].elements) {
+        list.tuples[0].elements[0] = 1;
+        list.tuples[0].elements[1] = 2;
+    }
+
+    list.tuples[1].length = 0;
+    list.tuples[1].elements = NULL;
+
+    list.tuples[2].length = 1;
+    list.tuples[2].elements = (int*)malloc(sizeof(int));
+    if (list.tuples[2].elements) {
+        list.tuples[2].elements[0] = 3;
+    }
+
+    list.tuples[3].length = 0;
+    list.tuples[3].elements = NULL;
+
+    removeEmptyTuples(&list);
+
+    for (int i = 0; i < list.count; i++) {
+        printf("Tuple %d length: %d\n", i, list.tuples[i].length);
+    }
+
+    for (int i = 0; i < list.count; i++) {
+        if (list.tuples[i].elements != NULL) {
+            free(list.tuples[i].elements);
+        }
+    }
+    
+    if (list.tuples != NULL) {
+        free(list.tuples);
+    }
+
+    return 0;
+}

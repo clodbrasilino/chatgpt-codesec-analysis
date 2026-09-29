@@ -1,0 +1,16 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_0/problem-438.c: In function 'main':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_0/problem-438.c:155:22: error: expected ')' before 'SCNd64'
+  155 |         if (scanf("%" SCNd64 " %" SCNd64,
+      |                  ~   ^~~~~~~
+      |                      )
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_0/problem-438.c:3:1: note: 'SCNd64' is defined in header '<inttypes.h>'; this is probably fixable by adding '#include <inttypes.h>'
+    2 | #include <stdlib.h>
+  +++ |+#include <inttypes.h>
+    3 | #include <stdint.h>
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_0/problem-438.c:169:19: error: expected ')' before 'PRIu64'
+  169 |     if (printf("%" PRIu64 "\n", result) < 0) {
+      |               ~   ^~~~~~~
+      |                   )
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_0/problem-438.c:169:20: note: 'PRIu64' is defined in header '<inttypes.h>'; this is probably fixable by adding '#include <inttypes.h>'
+  169 |     if (printf("%" PRIu64 "\n", result) < 0) {
+      |                    ^~~~~~

@@ -1,0 +1,140 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#include <errno.h>
+#include <math.h>
+#include <stdbool.h>
+
+#define MAX_ELEMENTS 100
+#define MAX_STR_LEN 64
+
+typedef struct {
+    char data[MAX_ELEMENTS][MAX_STR_LEN];
+    size_t count;
+} StringList;
+
+int is_convertible_to_float(const char *str) {
+    if (str == NULL || *str == '\0') {
+        return 0;
+    }
+    
+    char *endptr;
+    errno = 0;
+    strtof(str, &endptr);
+    
+    if (errno == ERANGE) {
+        return 0;
+    }
+    
+    if (endptr == str) {
+        return 0;
+    }
+    
+    while (*endptr != '\0') {
+        if (!isspace((unsigned char)*endptr)) {
+            return 0;
+        }
+        endptr++;
+    }
+    
+    return 1;
+}
+
+size_t convert_to_float(const StringList *list, float *output, size_t max_output) {
+    if (list == NULL || output == NULL || max_output == 0) {
+        return 0;
+    }
+    
+    size_t converted = 0;
+    
+    for (size_t i = 0; i < list->count && i < MAX_ELEMENTS && converted < max_output; i++) {
+        if (is_convertible_to_float(list->data[i])) {
+            char *endptr;
+            errno = 0;
+            float value = strtof(list->data[i], &endptr);
+            
+            if (errno != ERANGE && endptr != list->data[i]) {
+                output[converted] = value;
+                converted++;
+            }
+        }
+    }
+    
+    return converted;
+}
+
+void init_string_list(StringList *list) {
+    if (list != NULL) {
+        list->count = 0;
+        memset(list->data, 0, sizeof(list->data));
+    }
+}
+
+int add_string(StringList *list, const char *str, size_t str_len) {
+    if (list == NULL || str == NULL || list->count >= MAX_ELEMENTS) {
+        return 0;
+    }
+    
+    if (str_len >= MAX_STR_LEN) {
+        return 0;
+    }
+    
+    size_t actual_len = strnlen(str, MAX_STR_LEN);
+    if (actual_len < str_len) {
+        str_len = actual_len;
+    }
+    
+    if (str_len >= MAX_STR_LEN) {
+        return 0;
+    }
+    
+    size_t i;
+    for (i = 0; i < str_len && i < MAX_STR_LEN - 1; i++) {
+        list->data[list->count][i] = str[i];
+    }
+    list->data[list->count][i] = '\0';
+    list->count++;
+    
+    return 1;
+}
+
+void print_float_array(const float *arr, size_t count) {
+    if (arr == NULL) {
+        return;
+    }
+    
+    printf("Converted floats: ");
+    for (size_t i = 0; i < count && i < MAX_ELEMENTS; i++) {
+        printf("%.2f ", arr[i]);
+    }
+    printf("\n");
+}
+
+int main(void) {
+    StringList list;
+    float floats[MAX_ELEMENTS];
+    
+    init_string_list(&list);
+    
+    add_string(&list, "3.14", 4);
+    add_string(&list, "42", 2);
+    add_string(&list, "-2.5", 4);
+    add_string(&list, "hello", 5);
+    add_string(&list, "1e3", 3);
+    add_string(&list, "0.001", 5);
+    add_string(&list, "abc", 3);
+    add_string(&list, "7.77", 4);
+    add_string(&list, "  5.5  ", 7);
+    add_string(&list, "", 0);
+    add_string(&list, "12.34.56", 8);
+    add_string(&list, "100", 3);
+    
+    size_t converted = convert_to_float(&list, floats, MAX_ELEMENTS);
+    
+    printf("Total elements: %zu\n", list.count);
+    printf("Converted elements: %zu\n", converted);
+    print_float_array(floats, converted);
+    
+    return 0;
+}

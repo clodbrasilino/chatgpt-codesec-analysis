@@ -1,0 +1,222 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_STRING_LEN 4096U
+
+typedef enum {
+    ITEM_INT,
+    ITEM_STR
+} ItemType;
+
+typedef struct {
+    ItemType type;
+    union {
+        long ival;
+        char *sval;
+    } data;
+} Item;
+
+static char *duplicate_string(const char *src)
+{
+    size_t len;
+    size_t alloc_size;
+    char *copy;
+
+    if (src == NULL) {
+        return NULL;
+    }
+    len = strnlen(src, MAX_STRING_LEN);
+    if (len >= MAX_STRING_LEN) {
+        return NULL;
+    }
+    alloc_size = len + 1U;
+    if (alloc_size < len) {
+        return NULL;
+    }
+    copy = malloc(alloc_size);
+    if (copy == NULL) {
+        return NULL;
+    }
+    if (len > 0U && len < alloc_size) {
+        memcpy(copy, src, len);
+    }
+    copy[len] = '\0';
+    return copy;
+}
+
+static int compare_items(const void *a, const void *b)
+{
+    const Item *ia = (const Item *)a;
+    const Item *ib = (const Item *)b;
+
+    if (ia->type != ib->type) {
+        return (ia->type == ITEM_INT) ? -1 : 1;
+    }
+    if (ia->type == ITEM_INT) {
+        if (ia->data.ival < ib->data.ival) {
+            return -1;
+        }
+        if (ia->data.ival > ib->data.ival) {
+            return 1;
+        }
+        return 0;
+    }
+    if (ia->data.sval == NULL || ib->data.sval == NULL) {
+        if (ia->data.sval == ib->data.sval) {
+            return 0;
+        }
+        return (ia->data.sval == NULL) ? -1 : 1;
+    }
+    return strcmp(ia->data.sval, ib->data.sval);
+}
+
+static void sort_mixed_list(Item *items, size_t count)
+{
+    if (items == NULL || count < 2U) {
+        return;
+    }
+    qsort(items, count, sizeof(Item), compare_items);
+}
+
+static void free_items(Item *items, size_t count)
+{
+    size_t i;
+
+    if (items == NULL) {
+        return;
+    }
+    for (i = 0U; i < count; i++) {
+        if (items[i].type == ITEM_STR) {
+            free(items[i].data.sval);
+            items[i].data.sval = NULL;
+        }
+    }
+    free(items);
+}
+
+static int add_int(Item *items, size_t capacity, size_t index, long value)
+{
+    if (items == NULL || index >= capacity) {
+        return -1;
+    }
+    items[index].type = ITEM_INT;
+    items[index].data.ival = value;
+    return 0;
+}
+
+static int add_str(Item *items, size_t capacity, size_t index, const char *value)
+{
+    char *copy;
+
+    if (items == NULL || index >= capacity) {
+        return -1;
+    }
+    copy = duplicate_string(value);
+    if (copy == NULL) {
+        return -1;
+    }
+    items[index].type = ITEM_STR;
+    items[index].data.sval = copy;
+    return 0;
+}
+
+static void print_items(const Item *items, size_t count)
+{
+    size_t i;
+
+    if (items == NULL) {
+        return;
+    }
+    for (i = 0U; i < count; i++) {
+        if (items[i].type == ITEM_INT) {
+            if (printf("%ld\n", items[i].data.ival) < 0) {
+                return;
+            }
+        } else {
+            if (items[i].data.sval != NULL) {
+                if (printf("%s\n", items[i].data.sval) < 0) {
+                    return;
+                }
+            }
+        }
+    }
+}
+
+int main(void)
+{
+    const size_t count = 7U;
+    size_t filled = 0U;
+    Item *items;
+
+    items = calloc(count, sizeof(Item));
+    if (items == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    if (add_int(items, count, filled, 42L) != 0) {
+        free_items(items, filled);
+        return EXIT_FAILURE;
+    }
+    filled++;
+
+    if (add_str(items, count, filled, "banana") != 0) {
+        free_items(items, filled);
+        return EXIT_FAILURE;
+    }
+    filled++;
+
+    if (add_int(items, count, filled, -7L) != 0) {
+        free_items(items, filled);
+        return EXIT_FAILURE;
+    }
+    filled++;
+
+    if (add_str(items, count, filled, "apple") != 0) {
+        free_items(items, filled);
+        return EXIT_FAILURE;
+    }
+    filled++;
+
+    if (add_int(items, count, filled, 13L) != 0) {
+        free_items(items, filled);
+        return EXIT_FAILURE;
+    }
+    filled++;
+
+    if (add_str(items, count, filled, "cherry") != 0) {
+        free_items(items, filled);
+        return EXIT_FAILURE;
+    }
+    filled++;
+
+    if (add_int(items, count, filled, 0L) != 0) {
+        free_items(items, filled);
+        return EXIT_FAILURE;
+    }
+    filled++;
+
+    sort_mixed_list(items, filled);
+    print_items(items, filled);
+    free_items(items, filled);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis summary:**
+
+The flagged weakness was the `memcpy` call in `duplicate_string` (CWE-120, buffer overflow risk). In the original code this was already effectively safe, because:
+
+1. `strnlen(src, MAX_STRING_LEN)` bounds the measured length, preventing runaway reads on unterminated input.
+2. The `len >= MAX_STRING_LEN` check rejects oversized or unterminated strings.
+3. The destination is allocated with exactly `len + 1U` bytes, so `memcpy(copy, src, len)` can never overflow it.
+
+In the rewrite I hardened it further by:
+
+- Computing `alloc_size = len + 1U` explicitly and checking for unsigned wraparound (`alloc_size < len`) before `malloc`, defending against any future change to `MAX_STRING_LEN` that could approach `SIZE_MAX`.
+- Guarding the `memcpy` with `len < alloc_size`, making the invariant "destination can always hold the source data" locally verifiable at the call site, which also silences the static-analysis finding.
+
+The rest of the program was already sound: capacity checks in `add_int`/`add_str`, `NULL`-safe comparison and cleanup, `calloc` for zero-initialized storage, and consistent error paths that free only the `filled` items — so it was preserved as-is.

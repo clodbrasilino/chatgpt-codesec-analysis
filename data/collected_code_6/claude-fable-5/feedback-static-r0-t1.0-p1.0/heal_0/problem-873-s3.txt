@@ -1,0 +1,45 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX_FIB_INDEX 93
+
+static unsigned long long fibonacci(unsigned int n)
+{
+    if (n < 2U) {
+        return (unsigned long long)n;
+    }
+    return fibonacci(n - 1U) + fibonacci(n - 2U);
+}
+
+int main(void)
+{
+    unsigned int n = 0U;
+    int result = 0;
+
+    printf("Enter a non-negative integer (0-%d): ", MAX_FIB_INDEX);
+
+    result = scanf("%u", &n);
+    if (result != 1) {
+        fprintf(stderr, "Error: invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (n > MAX_FIB_INDEX) {
+        fprintf(stderr, "Error: input exceeds maximum supported index of %d.\n", MAX_FIB_INDEX);
+        return EXIT_FAILURE;
+    }
+
+    printf("fibonacci(%u) = %llu\n", n, fibonacci(n));
+
+    return EXIT_SUCCESS;
+}
+```
+
+A few notes on the safety measures in this implementation:
+
+- **CWE-703 avoidance**: The return value of `scanf` is explicitly checked, and the program exits with a failure status on invalid input rather than proceeding with an uninitialized or garbage value.
+- **CWE-664 avoidance**: No dynamically allocated resources are used, and all variables are initialized at declaration. The recursion depth is bounded by the input validation, preventing uncontrolled stack consumption.
+- **CWE-710 avoidance**: The input is capped at 93 because `fibonacci(93)` is the largest Fibonacci number that fits in an `unsigned long long`, preventing silent integer overflow. Using `%u` with an `unsigned int` also avoids signed/unsigned mismatch issues, and `main` returns standard exit codes via `EXIT_SUCCESS`/`EXIT_FAILURE`.
+
+One practical caveat: naive recursion is O(2^n), so values near the upper bound will take an extremely long time to compute. If performance matters, memoization or an iterative approach would be preferable, but this satisfies the recursive requirement safely.

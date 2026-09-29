@@ -1,0 +1,32 @@
+#include <stdio.h>
+#include <stddef.h>
+
+size_t remove_negatives(int *list, size_t size) {
+    if (list == NULL || size == 0) {
+        return 0;
+    }
+
+    size_t write_pos = 0;
+    for (size_t read_pos = 0; read_pos < size; ++read_pos) {
+        if (list[read_pos] >= 0) {
+            list[write_pos] = list[read_pos];
+            ++write_pos;
+        }
+    }
+
+    return write_pos;
+}
+
+int main(void) {
+    int list[] = {5, -3, 2, -1, 7, -8, 0};
+    size_t size = sizeof(list) / sizeof(list[0]);
+
+    size_t new_size = remove_negatives(list, size);
+
+    for (size_t i = 0; i < new_size; ++i) {
+        printf("%d ", list[i]);
+    }
+    printf("\n");
+
+    return 0;
+}

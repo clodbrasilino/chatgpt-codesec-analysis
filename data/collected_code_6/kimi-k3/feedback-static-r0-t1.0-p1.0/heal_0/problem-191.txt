@@ -1,0 +1,69 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdbool.h>
+
+#define MAX_MONTH_LEN 16
+
+static bool has_30_days(const char *month)
+{
+    static const char *const months_30[] = {
+        "April", "June", "September", "November"
+    };
+    size_t i;
+
+    if (month == NULL) {
+        return false;
+    }
+
+    for (i = 0; i < sizeof(months_30) / sizeof(months_30[0]); i++) {
+        if (strcmp(month, months_30[i]) == 0) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+static void trim_newline(char *str)
+{
+    size_t len;
+
+    if (str == NULL) {
+        return;
+    }
+
+    len = strlen(str);
+    if (len > 0 && str[len - 1] == '\n') {
+        str[len - 1] = '\0';
+    }
+}
+
+int main(void)
+{
+    char month[MAX_MONTH_LEN];
+
+    if (printf("Enter month name: ") < 0) {
+        return 1;
+    }
+
+    if (fgets(month, sizeof(month), stdin) == NULL) {
+        return 1;
+    }
+
+    trim_newline(month);
+
+    if (has_30_days(month)) {
+        if (printf("%s has 30 days.\n", month) < 0) {
+            return 1;
+        }
+    } else {
+        if (printf("%s does not have 30 days.\n", month) < 0) {
+            return 1;
+        }
+    }
+
+    return 0;
+}
+```

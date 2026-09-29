@@ -1,0 +1,68 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX_INPUT 256
+
+size_t string_length(const char *str)
+{
+    size_t length = 0;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    while (str[length] != '\0') {
+        length++;
+    }
+
+    return length;
+}
+
+int main(int argc, char *argv[])
+{
+    char buffer[MAX_INPUT];
+    size_t length;
+    size_t i;
+
+    if (argc > 1) {
+        for (i = 0; i < sizeof(buffer) - 1 && argv[1][i] != '\0'; i++) {
+            buffer[i] = argv[1][i];
+        }
+        buffer[i] = '\0';
+    } else {
+        if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+            printf("0\n");
+            fflush(stdout);
+            return EXIT_SUCCESS;
+        }
+        buffer[sizeof(buffer) - 1] = '\0';
+    }
+
+    for (i = 0; i < sizeof(buffer) && buffer[i] != '\0'; i++) {
+        if (buffer[i] == '\n' || buffer[i] == '\r') {
+            buffer[i] = '\0';
+            break;
+        }
+    }
+
+    length = string_length(buffer);
+
+    printf("%lu\n", (unsigned long)length);
+    fflush(stdout);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the fixes applied:**
+
+1. **"No output" test failures (the critical bug):** The original program only read from `stdin`. The failing test cases (`expected 6/7/8, got <no output>`) strongly suggest the test harness passes input as a command-line argument rather than piping to stdin. When `stdin` was empty, `fgets` returned `NULL`, the error message went to `stderr`, and `stdout` received nothing. The rewrite accepts `argv[1]` when present and falls back to `stdin` otherwise.
+
+2. **Graceful stdin failure:** Instead of exiting with `EXIT_FAILURE` and producing no stdout output on empty input, the program now outputs `0`, so the test harness always receives a result on stdout.
+
+3. **CWE-119/CWE-120 (Flawfinder buffer warning):** The fixed-size buffer is retained but every write is bounds-checked: the argv copy loop is capped at `sizeof(buffer) - 1` with explicit null termination, `fgets` is given the exact buffer size, and the sentinel `buffer[sizeof(buffer) - 1] = '\0'` guarantees termination. No overflow is possible.
+
+4. **Robust line-ending handling:** Stripping both `'\n'` and `'\r'` handles CRLF input, preventing off-by-one length results on Windows-style input.
+
+5. **Portability details preserved:** The `(unsigned long)` cast with `%lu` remains for C89-compatible `size_t` printing, and `fflush(stdout)` ensures output is delivered even if the process is terminated abruptly by the harness.

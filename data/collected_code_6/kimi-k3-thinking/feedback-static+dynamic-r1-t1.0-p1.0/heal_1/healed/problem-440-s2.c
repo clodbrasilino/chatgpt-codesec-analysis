@@ -1,0 +1,195 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdbool.h>
+#include <stdint.h>
+
+#define MAX_SENTENCE_LENGTH ((size_t)16 * 1024 * 1024)
+
+typedef struct {
+    const char *start;
+    size_t length;
+    size_t char_pos;
+    size_t word_pos;
+} AdverbOccurrence;
+
+typedef struct {
+    AdverbOccurrence *items;
+    size_t count;
+} AdverbList;
+
+static const char *const COMMON_ADVERBS[] = {
+    "very", "too", "quite", "rather", "almost", "nearly", "just",
+    "always", "never", "often", "sometimes", "rarely", "seldom",
+    "usually", "frequently", "occasionally", "hardly", "scarcely",
+    "now", "then", "here", "there", "soon", "today", "yesterday",
+    "tomorrow", "still", "already", "yet", "again", "also", "even",
+    "only", "really", "well", "fast", "hard", "late", "early",
+    "much", "more", "most", "not", "so", "thus", "therefore",
+    "however", "perhaps", "maybe", "certainly", "surely", "indeed",
+    "else", "ever", "ago", "away", "back", "once", "twice",
+    "together", "apart", "abroad", "anyway", "anywhere", "somewhere"
+};
+
+static const char *const LY_EXCEPTIONS[] = {
+    "apply", "reply", "supply", "imply", "comply", "multiply",
+    "family", "holy", "ugly", "friendly", "lonely", "lively",
+    "lovely", "costly", "orderly", "elderly", "likely", "belly",
+    "jelly", "silly", "jolly", "ally", "rally", "tally", "bully",
+    "fly", "sly", "shy", "rely"
+};
+
+static size_t bounded_length(const char *s, size_t max_len)
+{
+    size_t n = 0;
+    if (s == NULL) {
+        return 0;
+    }
+    while (n < max_len && s[n] != '\0') {
+        n++;
+    }
+    return n;
+}
+
+static bool word_matches(const char *word, size_t len, const char *reference)
+{
+    if (word == NULL || reference == NULL) {
+        return false;
+    }
+    for (size_t i = 0; i < len; i++) {
+        if (reference[i] == '\0') {
+            return false;
+        }
+        if (tolower((unsigned char)word[i]) != (unsigned char)reference[i]) {
+            return false;
+        }
+    }
+    return reference[len] == '\0';
+}
+
+static bool in_list(const char *word, size_t len,
+                    const char *const list[], size_t list_size)
+{
+    for (size_t i = 0; i < list_size; i++) {
+        if (word_matches(word, len, list[i])) {
+            return true;
+        }
+    }
+    return false;
+}
+
+static bool is_adverb(const char *word, size_t len)
+{
+    size_t adverb_count = sizeof(COMMON_ADVERBS) / sizeof(COMMON_ADVERBS[0]);
+    if (in_list(word, len, COMMON_ADVERBS, adverb_count)) {
+        return true;
+    }
+    if (len < 3) {
+        return false;
+    }
+    if (tolower((unsigned char)word[len - 2]) != 'l' ||
+        tolower((unsigned char)word[len - 1]) != 'y') {
+        return false;
+    }
+    size_t exception_count = sizeof(LY_EXCEPTIONS) / sizeof(LY_EXCEPTIONS[0]);
+    return !in_list(word, len, LY_EXCEPTIONS, exception_count);
+}
+
+static void adverb_list_destroy(AdverbList *list)
+{
+    if (list == NULL) {
+        return;
+    }
+    free(list->items);
+    list->items = NULL;
+    list->count = 0;
+}
+
+static bool find_adverbs(const char *sentence, AdverbList *result)
+{
+    if (sentence == NULL || result == NULL) {
+        return false;
+    }
+
+    result->items = NULL;
+    result->count = 0;
+
+    size_t length = bounded_length(sentence, MAX_SENTENCE_LENGTH);
+    if (length == 0) {
+        return true;
+    }
+
+    size_t capacity = length / 2 + 1;
+    if (capacity > SIZE_MAX / sizeof(AdverbOccurrence)) {
+        return false;
+    }
+
+    AdverbOccurrence *items = malloc(capacity * sizeof(*items));
+    if (items == NULL) {
+        return false;
+    }
+
+    size_t count = 0;
+    size_t word_index = 0;
+    size_t i = 0;
+
+    while (i < length) {
+        if (isalpha((unsigned char)sentence[i])) {
+            size_t start = i;
+            while (i < length && isalpha((unsigned char)sentence[i])) {
+                i++;
+            }
+            size_t word_len = i - start;
+            if (is_adverb(sentence + start, word_len)) {
+                items[count].start = sentence + start;
+                items[count].length = word_len;
+                items[count].char_pos = start;
+                items[count].word_pos = word_index;
+                count++;
+            }
+            word_index++;
+        } else {
+            i++;
+        }
+    }
+
+    if (count == 0) {
+        free(items);
+        return true;
+    }
+
+    result->items = items;
+    result->count = count;
+    return true;
+}
+
+int main(void)
+{
+    const char *sentence =
+        "She quickly ran to the store, but she was very tired "
+        "and almost never arrived there on time.";
+
+    AdverbList adverbs;
+    if (!find_adverbs(sentence, &adverbs)) {
+        fprintf(stderr, "Error: failed to analyze the sentence.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Sentence: %s\n\n", sentence);
+    if (adverbs.count == 0) {
+        printf("No adverbs found.\n");
+    } else {
+        printf("Found %zu adverb(s):\n", adverbs.count);
+        for (size_t i = 0; i < adverbs.count; i++) {
+            printf("  \"%.*s\" at character %zu, word %zu\n",
+                   (int)adverbs.items[i].length,
+                   adverbs.items[i].start,
+                   adverbs.items[i].char_pos,
+                   adverbs.items[i].word_pos + 1);
+        }
+    }
+
+    adverb_list_destroy(&adverbs);
+    return EXIT_SUCCESS;
+}

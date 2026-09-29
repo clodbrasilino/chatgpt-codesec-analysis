@@ -1,0 +1,187 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct Node {
+    char *key;
+    int value;
+    struct Node *next;
+} Node;
+
+typedef struct {
+    Node **buckets;
+    size_t size;
+} Map;
+
+unsigned long hash(const char *str) {
+    unsigned long hash = 5381;
+    int c;
+    while ((c = *str++)) {
+        hash = ((hash << 5) + hash) + c;
+    }
+    return hash;
+}
+
+Map *create_map(size_t size) {
+    Map *map = malloc(sizeof(Map));
+    if (!map) return NULL;
+    map->size = size;
+    map->buckets = calloc(size, sizeof(Node *));
+    if (!map->buckets) {
+        free(map);
+        return NULL;
+    }
+    return map;
+}
+
+void map_put(Map *map, const char *key, int value) {
+    unsigned long index = hash(key) % map->size;
+    Node *current = map->buckets[index];
+    while (current) {
+        if (strcmp(current->key, key) == 0) {
+            current->value = value;
+            return;
+        }
+        current = current->next;
+    }
+    Node *new_node = malloc(sizeof(Node));
+    if (!new_node) return;
+    new_node->key = malloc(strlen(key) + 1);
+    if (!new_node->key) {
+        free(new_node);
+        return;
+    }
+    strcpy(new_node->key, key);
+    new_node->value = value;
+    new_node->next = map->buckets[index];
+    map->buckets[index] = new_node;
+}
+
+Node *map_get(Map *map, const char *key) {
+    unsigned long index = hash(key) % map->size;
+    Node *current = map->buckets[index];
+    while (current) {
+        if (strcmp(current->key, key) == 0) {
+            return current;
+        }
+        current = current->next;
+    }
+    return NULL;
+}
+
+void free_map(Map *map) {
+    if (!map) return;
+    for (size_t i = 0; i < map->size; i++) {
+        Node *current = map->buckets[i];
+        while (current) {
+            Node *next = current->next;
+            free(current->key);
+            free(current);
+            current = next;
+        }
+    }
+    free(map->buckets);
+    free(map);
+}
+
+typedef struct {
+    char *key;
+    int value;
+} Pair;
+
+typedef struct {
+    Node **buckets;
+    size_t size;
+} GroupedMap;
+
+GroupedMap *group_pairs(Pair *pairs, size_t count, size_t map_size) {
+    GroupedMap *grouped = malloc(sizeof(GroupedMap));
+    if (!grouped) return NULL;
+    grouped->size = map_size;
+    grouped->buckets = calloc(map_size, sizeof(Node *));
+    if (!grouped->buckets) {
+        free(grouped);
+        return NULL;
+    }
+    for (size_t i = 0; i < count; i++) {
+        unsigned long index = hash(pairs[i].key) % map_size;
+        Node *new_node = malloc(sizeof(Node));
+        if (!new_node) {
+            for (size_t j = 0; j < map_size; j++) {
+                Node *current = grouped->buckets[j];
+                while (current) {
+                    Node *next = current->next;
+                    free(current->key);
+                    free(current);
+                    current = next;
+                }
+            }
+            free(grouped->buckets);
+            free(grouped);
+            return NULL;
+        }
+        new_node->key = malloc(strlen(pairs[i].key) + 1);
+        if (!new_node->key) {
+            free(new_node);
+            for (size_t j = 0; j < map_size; j++) {
+                Node *current = grouped->buckets[j];
+                while (current) {
+                    Node *next = current->next;
+                    free(current->key);
+                    free(current);
+                    current = next;
+                }
+            }
+            free(grouped->buckets);
+            free(grouped);
+            return NULL;
+        }
+        strcpy(new_node->key, pairs[i].key);
+        new_node->value = pairs[i].value;
+        new_node->next = grouped->buckets[index];
+        grouped->buckets[index] = new_node;
+    }
+    return grouped;
+}
+
+void free_grouped_map(GroupedMap *map) {
+    if (!map) return;
+    for (size_t i = 0; i < map->size; i++) {
+        Node *current = map->buckets[i];
+        while (current) {
+            Node *next = current->next;
+            free(current->key);
+            free(current);
+            current = next;
+        }
+    }
+    free(map->buckets);
+    free(map);
+}
+
+int main(void) {
+    Pair pairs[] = {
+        {"apple", 1},
+        {"banana", 2},
+        {"apple", 3},
+        {"cherry", 4},
+        {"banana", 5},
+        {"date", 6}
+    };
+    size_t count = sizeof(pairs) / sizeof(pairs[0]);
+    size_t map_size = 10;
+    GroupedMap *grouped = group_pairs(pairs, count, map_size);
+    if (!grouped) {
+        fprintf(stderr, "Failed to group pairs\n");
+        return 1;
+    }
+    for (size_t i = 0; i < grouped->size; i++) {
+        Node *current = grouped->buckets[i];
+        while (current) {
+            printf("%s: %d\n", current->key, current->value);
+            current = current->next;
+        }
+    }
+    free_grouped_map(grouped);
+    return 0;
+}

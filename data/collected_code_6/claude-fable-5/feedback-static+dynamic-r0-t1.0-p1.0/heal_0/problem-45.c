@@ -1,0 +1,78 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+
+static int gcd(int a, int b)
+{
+    if (a < 0) {
+        a = -a;
+    }
+    if (b < 0) {
+        b = -b;
+    }
+    while (b != 0) {
+        int temp = b;
+        b = a % b;
+        a = temp;
+    }
+    return a;
+}
+
+static int find_gcd(const int *arr, size_t n)
+{
+    size_t i;
+    int result;
+
+    if (arr == NULL || n == 0) {
+        return 0;
+    }
+
+    result = arr[0];
+    for (i = 1; i < n; i++) {
+        result = gcd(result, arr[i]);
+        if (result == 1) {
+            break;
+        }
+    }
+    return result;
+}
+
+int main(void)
+{
+    size_t n;
+    size_t i;
+    int *arr;
+    int result;
+
+    printf("Enter the number of elements: ");
+    if (scanf("%zu", &n) != 1 || n == 0) {
+        fprintf(stderr, "Invalid input for number of elements.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (n > SIZE_MAX / sizeof(int)) {
+        fprintf(stderr, "Requested size is too large.\n");
+        return EXIT_FAILURE;
+    }
+
+    arr = malloc(n * sizeof(int));
+    if (arr == NULL) {
+        fprintf(stderr, "Memory allocation failed.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter %zu integers: ", n);
+    for (i = 0; i < n; i++) {
+        if (scanf("%d", &arr[i]) != 1) {
+            fprintf(stderr, "Invalid integer input.\n");
+            free(arr);
+            return EXIT_FAILURE;
+        }
+    }
+
+    result = find_gcd(arr, n);
+    printf("GCD of the array elements: %d\n", result);
+
+    free(arr);
+    return EXIT_SUCCESS;
+}

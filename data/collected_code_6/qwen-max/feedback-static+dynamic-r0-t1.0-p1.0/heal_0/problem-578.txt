@@ -1,0 +1,92 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int value;
+    struct Node *next;
+} Node;
+
+Node* create_node(int value) {
+    Node *new_node = (Node *)malloc(sizeof(Node));
+    new_node->value = value;
+    new_node->next = NULL;
+    return new_node;
+}
+
+void append_node(Node **head, int value) {
+    Node *new_node = create_node(value);
+    if (*head == NULL) {
+        *head = new_node;
+        return;
+    }
+    Node *current = *head;
+    while (current->next != NULL) {
+        current = current->next;
+    }
+    current->next = new_node;
+}
+
+Node* interleave_lists(Node *list1, Node *list2) {
+    if (list1 == NULL && list2 == NULL) return NULL;
+    if (list1 == NULL) return list2;
+    if (list2 == NULL) return list1;
+
+    Node *head = list1;
+    Node *current1 = list1;
+    Node *current2 = list2;
+    Node *tmp1, *tmp2;
+
+    while (current1 != NULL && current2 != NULL) {
+        tmp1 = current1->next;
+        tmp2 = current2->next;
+
+        current1->next = current2;
+        if (tmp1 != NULL) current2->next = tmp1;
+
+        current1 = tmp1;
+        current2 = tmp2;
+    }
+
+    return head;
+}
+
+void print_list(Node *head) {
+    while (head != NULL) {
+        printf("%d -> ", head->value);
+        head = head->next;
+    }
+    printf("NULL\n");
+}
+
+int main() {
+    Node *list1 = NULL;
+    Node *list2 = NULL;
+
+    append_node(&list1, 1);
+    append_node(&list1, 3);
+    append_node(&list1, 5);
+
+    append_node(&list2, 2);
+    append_node(&list2, 4);
+    append_node(&list2, 6);
+
+    Node *result = interleave_lists(list1, list2);
+
+    print_list(result);
+
+    while (list1 != NULL) {
+        Node *temp = list1;
+        list1 = list1->next;
+        free(temp);
+    }
+
+    while (list2 != NULL) {
+        Node *temp = list2;
+        list2 = list2->next;
+        free(temp);
+    }
+
+    return 0;
+}
+```

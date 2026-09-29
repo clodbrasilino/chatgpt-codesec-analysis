@@ -1,0 +1,103 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *elements;
+    size_t size;
+} Tuple;
+
+static int count_total_digits(const Tuple *t)
+{
+    int total = 0;
+    size_t i;
+
+    if (t == NULL || t->elements == NULL) {
+        return 0;
+    }
+
+    for (i = 0; i < t->size; i++) {
+        int num = t->elements[i];
+        if (num == 0) {
+            total += 1;
+        } else {
+            if (num < 0) {
+                num = -num;
+            }
+            while (num != 0) {
+                total++;
+                num /= 10;
+            }
+        }
+    }
+
+    return total;
+}
+
+static int compare_tuples(const void *a, const void *b)
+{
+    const Tuple *ta = (const Tuple *)a;
+    const Tuple *tb = (const Tuple *)b;
+    int da = count_total_digits(ta);
+    int db = count_total_digits(tb);
+
+    if (da < db) {
+        return -1;
+    }
+    if (da > db) {
+        return 1;
+    }
+    return 0;
+}
+
+void sort_tuples_by_digit_count(Tuple *tuples, size_t count)
+{
+    if (tuples == NULL || count == 0) {
+        return;
+    }
+    qsort(tuples, count, sizeof(Tuple), compare_tuples);
+}
+
+int main(void)
+{
+    Tuple tuples[4];
+    int data0[] = {123, 45};
+    int data1[] = {7};
+    int data2[] = {89, 100, 3};
+    int data3[] = {4567};
+    size_t i, j;
+    size_t count = sizeof(tuples) / sizeof(tuples[0]);
+
+    tuples[0].elements = data0;
+    tuples[0].size = sizeof(data0) / sizeof(data0[0]);
+
+    tuples[1].elements = data1;
+    tuples[1].size = sizeof(data1) / sizeof(data1[0]);
+
+    tuples[2].elements = data2;
+    tuples[2].size = sizeof(data2) / sizeof(data2[0]);
+
+    tuples[3].elements = data3;
+    tuples[3].size = sizeof(data3) / sizeof(data3[0]);
+
+    printf("Before sorting:\n");
+    for (i = 0; i < count; i++) {
+        printf("Tuple %zu (digits=%d): ", i, count_total_digits(&tuples[i]));
+        for (j = 0; j < tuples[i].size; j++) {
+            printf("%d ", tuples[i].elements[j]);
+        }
+        printf("\n");
+    }
+
+    sort_tuples_by_digit_count(tuples, count);
+
+    printf("\nAfter sorting:\n");
+    for (i = 0; i < count; i++) {
+        printf("Tuple %zu (digits=%d): ", i, count_total_digits(&tuples[i]));
+        for (j = 0; j < tuples[i].size; j++) {
+            printf("%d ", tuples[i].elements[j]);
+        }
+        printf("\n");
+    }
+
+    return 0;
+}

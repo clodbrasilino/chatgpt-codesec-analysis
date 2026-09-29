@@ -1,0 +1,156 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#include <limits.h>
+#include <errno.h>
+
+int is_hex_number(const char *str) {
+    if (str == NULL || *str == '\0') {
+        return 0;
+    }
+    
+    const char *p = str;
+    
+    if (p[0] == '0' && (p[1] == 'x' || p[1] == 'X')) {
+        p += 2;
+        if (*p == '\0') {
+            return 0;
+        }
+    }
+    
+    while (*p != '\0') {
+        if (!isxdigit((unsigned char)*p)) {
+            return 0;
+        }
+        p++;
+    }
+    
+    return 1;
+}
+
+int count_hex_numbers_in_range(const char *start, const char *end) {
+    if (start == NULL || end == NULL) {
+        return 0;
+    }
+    
+    if (!is_hex_number(start) || !is_hex_number(end)) {
+        return 0;
+    }
+    
+    char *endptr_start = NULL;
+    char *endptr_end = NULL;
+    
+    errno = 0;
+    long start_val = strtol(start, &endptr_start, 16);
+    
+    if (endptr_start == NULL || *endptr_start != '\0' || errno == ERANGE) {
+        return 0;
+    }
+    
+    errno = 0;
+    long end_val = strtol(end, &endptr_end, 16);
+    
+    if (endptr_end == NULL || *endptr_end != '\0' || errno == ERANGE) {
+        return 0;
+    }
+    
+    if (start_val > end_val) {
+        return 0;
+    }
+    
+    if (start_val < 0 && end_val > LONG_MAX + start_val) {
+        return INT_MAX;
+    }
+    
+    unsigned long diff;
+    if (start_val < 0 && end_val >= 0) {
+        unsigned long abs_start = (unsigned long)(-(start_val + 1)) + 1;
+        diff = abs_start + (unsigned long)end_val;
+    } else if (start_val < 0) {
+        diff = (unsigned long)(end_val - start_val);
+    } else {
+        diff = (unsigned long)(end_val - start_val);
+    }
+    
+    if (diff > (unsigned long)(INT_MAX - 1)) {
+        return INT_MAX;
+    }
+    
+    return (int)diff + 1;
+}
+
+int main(int argc, const char *argv[]) {
+    char *start = NULL;
+    char *end = NULL;
+    
+    if (argc == 3) {
+        size_t start_len = strnlen(argv[1], 4096);
+        size_t end_len = strnlen(argv[2], 4096);
+        
+        if (start_len >= 4096 || end_len >= 4096) {
+            return 1;
+        }
+        
+        start = malloc(start_len + 1);
+        end = malloc(end_len + 1);
+        
+        if (start == NULL || end == NULL) {
+            free(start);
+            free(end);
+            return 1;
+        }
+        
+        /* Possible weaknesses found:
+         * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+         */
+        memcpy(start, argv[1], start_len);
+        start[start_len] = '\0';
+        /* Possible weaknesses found:
+         * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+         */
+        memcpy(end, argv[2], end_len);
+        end[end_len] = '\0';
+    } else {
+        start = malloc(1024);
+        end = malloc(1024);
+        
+        if (start == NULL || end == NULL) {
+            free(start);
+            free(end);
+            return 1;
+        }
+        
+        printf("Enter start hexadecimal number: ");
+        if (fgets(start, 1024, stdin) == NULL) {
+            free(start);
+            free(end);
+            return 1;
+        }
+        start[strcspn(start, "\n")] = '\0';
+        
+        printf("Enter end hexadecimal number: ");
+        if (fgets(end, 1024, stdin) == NULL) {
+            free(start);
+            free(end);
+            return 1;
+        }
+        end[strcspn(end, "\n")] = '\0';
+    }
+    
+    int count = count_hex_numbers_in_range(start, end);
+    
+    if (count == 0 && strcmp(start, end) != 0) {
+        printf("Invalid input or range\n");
+        free(start);
+        free(end);
+        return 1;
+    }
+    
+    printf("Number of hexadecimal values in range [%s, %s]: %d\n", start, end, count);
+    
+    free(start);
+    free(end);
+    
+    return 0;
+}

@@ -1,0 +1,7 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-933-s3.c:14:17: warning: Value stored to 'replacement' during its initialization is never read [deadcode.DeadStores]
+   14 |     const char *replacement = "\\1_\\2";
+      |                 ^~~~~~~~~~~   ~~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-933-s3.c:38:20: warning: Value stored to 'pmatches' during its initialization is never read [deadcode.DeadStores]
+   38 |         regmatch_t pmatches[2] = {pmatch[0], pmatch[1]};
+      |                    ^~~~~~~~      ~~~~~~~~~~~~~~~~~~~~~~
+2 warnings generated.

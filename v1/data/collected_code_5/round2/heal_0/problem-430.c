@@ -1,0 +1,24 @@
+#include <stdio.h>
+
+double findDirectrix(double a, double b, double c) {
+    if(a == 0){
+        printf("Invalid coefficients. 'a' should not be zero in a quadratic equation.\n");
+        return -1;
+    } else {
+        return (c - (b * b) / (4 * a));
+    }
+}
+
+int main() {
+    double a, b, c;
+    
+    printf("Enter coefficients a, b and c:\n");
+    scanf("%lf %lf %lf", &a, &b, &c);
+    
+    double directrix = findDirectrix(a, b, c);
+    if(directrix != -1){
+        printf("The directrix of the parabola is: %lf\n", directrix);
+    }
+
+    return 0;
+}

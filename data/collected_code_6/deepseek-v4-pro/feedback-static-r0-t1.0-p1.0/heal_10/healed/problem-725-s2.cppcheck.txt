@@ -1,0 +1,16 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-725-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-725-s2.c:102:35: style: Condition 'len<available' is always false [knownConditionTrueFalse]
+            size_t copy_len = len < available ? len : available;
+                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-725-s2.c:81:17: note: Assuming that condition 'len>input_len-(cursor_offset+start)' is not redundant
+        if (len > input_len - (cursor_offset + start)) {
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-725-s2.c:91:29: note: Assuming condition is false
+        if (results[*count] == NULL) {
+                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-725-s2.c:101:30: note: available is assigned 'input_len-(cursor_offset+start)' here.
+            size_t available = input_len - (cursor_offset + start);
+                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-725-s2.c:102:35: note: Condition 'len<available' is always false
+            size_t copy_len = len < available ? len : available;
+                                  ^

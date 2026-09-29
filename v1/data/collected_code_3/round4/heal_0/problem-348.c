@@ -1,0 +1,33 @@
+#include <stdio.h>
+
+#define MAX 100
+
+int countSeq(int arr[], int n, int len, int sum) {
+    if (len == 0)
+        return sum >= 0;
+    if (sum < 0)
+        return 0;
+    int res = 0;
+    for (int i = 0; i < n; ++i)
+        res += countSeq(arr, n, len - 1, sum - arr[i]);
+    return res;
+}
+
+int countSeqUtil(int arr[], int n, int len) {
+    int dp[MAX][MAX];
+    for (int i = 0; i <= len; ++i)
+        for (int j = 0; j <= len * n; ++j)
+            dp[i][j] = -1;
+    int ans = 0;
+    for (int sum = 0; sum <= len * n; ++sum)
+        ans += countSeq(arr, n, len, sum);
+    return ans;
+}
+
+int main() {
+    int arr[] = {1, 2, 3};
+    int len = 3;
+    int n = sizeof(arr) / sizeof(arr[0]);
+    printf("%d", countSeqUtil(arr, n, len));
+    return 0;
+}

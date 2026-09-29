@@ -1,0 +1,33 @@
+#include <stdio.h>
+#include <string.h>
+
+int minimizeRotations(char *str) {
+    int n = strlen(str);
+    char temp[2*n + 1];
+    strcpy(temp, str);
+    strcat(temp, str);
+ 
+    int minRotations = n;
+    for (int i = 0; i < n; i++) {
+        int currRotations = 0;
+
+        while (currRotations < n) {
+            if (str[currRotations] != temp[i + currRotations]) {
+                break;
+            }
+            ++currRotations;
+        }
+
+        if (currRotations == n && currRotations < minRotations) {
+            minRotations = currRotations;
+        }
+    }
+
+    return minRotations;
+}
+
+int main(void) {
+    char str[] = "geek";
+    printf("The minimum number of rotations required to get the same string are %d\n", minimizeRotations(str));
+    return 0;
+}

@@ -1,0 +1,66 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <string.h>
+#include <stdlib.h>
+
+bool are_chars_unique(const char *str) {
+    if (str == NULL) {
+        return false;
+    }
+
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    size_t len = strlen(str);
+    if (len > 256) {
+        return false;
+    }
+
+    bool *seen = (bool *)calloc(256, sizeof(bool));
+    if (seen == NULL) {
+        return false;
+    }
+
+    for (size_t i = 0; i < len; i++) {
+        unsigned char c = (unsigned char)str[i];
+        if (seen[c]) {
+            free(seen);
+            return false;
+        }
+        seen[c] = true;
+    }
+
+    free(seen);
+    return true;
+}
+
+int main(void) {
+    const char *test1 = "abcdef";
+    const char *test2 = "hello";
+    const char *test3 = NULL;
+
+    if (are_chars_unique(test1)) {
+        printf("%s: Unique\n", test1);
+    } else {
+        printf("%s: Not Unique\n", test1);
+    }
+
+    if (are_chars_unique(test2)) {
+        printf("%s: Unique\n", test2);
+    } else {
+        printf("%s: Not Unique\n", test2);
+    }
+
+    /* Possible weaknesses found:
+     *  Condition 'are_chars_unique(test3)' is always false [knownConditionTrueFalse]
+     *  Condition 'are_chars_unique(test3)' is always false
+     *  Calling function 'are_chars_unique' returns 0
+     */
+    if (are_chars_unique(test3)) {
+        printf("NULL: Unique\n");
+    } else {
+        printf("NULL: Not Unique\n");
+    }
+
+    return 0;
+}

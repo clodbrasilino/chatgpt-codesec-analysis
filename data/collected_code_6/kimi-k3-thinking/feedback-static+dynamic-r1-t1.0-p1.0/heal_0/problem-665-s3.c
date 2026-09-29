@@ -1,0 +1,121 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node *next;
+} Node;
+
+Node *create_node(int data)
+{
+    Node *new_node = malloc(sizeof(*new_node));
+    if (new_node == NULL) {
+        return NULL;
+    }
+    new_node->data = data;
+    new_node->next = NULL;
+    return new_node;
+}
+
+int append_node(Node **head, int data)
+{
+    Node *new_node;
+    Node *current;
+
+    if (head == NULL) {
+        return -1;
+    }
+
+    new_node = create_node(data);
+    if (new_node == NULL) {
+        return -1;
+    }
+
+    if (*head == NULL) {
+        *head = new_node;
+        return 0;
+    }
+
+    current = *head;
+    while (current->next != NULL) {
+        current = current->next;
+    }
+    current->next = new_node;
+    return 0;
+}
+
+void shift_first_to_end(Node **head)
+{
+    Node *first;
+    Node *last;
+
+    if (head == NULL || *head == NULL || (*head)->next == NULL) {
+        return;
+    }
+
+    first = *head;
+    *head = first->next;
+    first->next = NULL;
+
+    last = *head;
+    while (last->next != NULL) {
+        last = last->next;
+    }
+    last->next = first;
+}
+
+void print_list(const Node *head)
+{
+    const Node *current = head;
+    while (current != NULL) {
+        printf("%d ", current->data);
+        current = current->next;
+    }
+    printf("\n");
+}
+
+void free_list(Node **head)
+{
+    Node *current;
+    Node *next;
+
+    if (head == NULL) {
+        return;
+    }
+
+    current = *head;
+    while (current != NULL) {
+        next = current->next;
+        free(current);
+        current = next;
+    }
+    *head = NULL;
+}
+
+int main(void)
+{
+    Node *head = NULL;
+    int values[] = {1, 2, 3, 4, 5};
+    size_t count = sizeof(values) / sizeof(values[0]);
+    size_t i;
+
+    for (i = 0; i < count; i++) {
+        if (append_node(&head, values[i]) != 0) {
+            fprintf(stderr, "Error: memory allocation failed\n");
+            free_list(&head);
+            return EXIT_FAILURE;
+        }
+    }
+
+    printf("Original list: ");
+    print_list(head);
+
+    shift_first_to_end(&head);
+
+    printf("List after shifting first element to end: ");
+    print_list(head);
+
+    free_list(&head);
+
+    return EXIT_SUCCESS;
+}

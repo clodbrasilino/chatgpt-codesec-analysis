@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-247.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-247.c:16:32: warning: Either the condition 'n<10000' is redundant or the array 's[6]' is accessed at index 9999, which is out of bounds. [arrayIndexOutOfBoundsCond]
+    while (n < MAX_LPS_LEN && s[n] != '\0') {
+                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-247.c:16:14: note: Assuming that condition 'n<10000' is not redundant
+    while (n < MAX_LPS_LEN && s[n] != '\0') {
+             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-247.c:16:32: note: Array index out of bounds
+    while (n < MAX_LPS_LEN && s[n] != '\0') {
+                               ^

@@ -1,0 +1,63 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+long long find_max_periodic(long long n, long long k);
+
+long long find_max_periodic(long long n, long long k)
+{
+    long long quotient;
+
+    if (k <= 0LL || n < 0LL) {
+        return -1LL;
+    }
+
+    quotient = n / k;
+
+    if (quotient < (k - 1LL)) {
+        return quotient;
+    }
+
+    return k - 1LL;
+}
+
+int main(void)
+{
+    long long n;
+    long long k;
+    long long result;
+
+    printf("Enter n: ");
+    if (scanf("%lld", &n) != 1) {
+        fprintf(stderr, "Invalid input for n\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter k: ");
+    if (scanf("%lld", &k) != 1) {
+        fprintf(stderr, "Invalid input for k\n");
+        return EXIT_FAILURE;
+    }
+
+    result = find_max_periodic(n, k);
+
+    if (result < 0LL) {
+        fprintf(stderr, "Invalid arguments: n must be >= 0 and k must be > 0\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Maximum value of f(x) = (x / k) %% k for x in [0, %lld] is: %lld\n", n, result);
+
+    return EXIT_SUCCESS;
+}
+```
+
+This solves the classic problem of maximizing the periodic function **f(x) = ⌊x / k⌋ mod k** for x in the range [0, n].
+
+Key design decisions:
+
+- **CWE-703 avoidance:** Every `scanf` return value is checked, and invalid arguments (k ≤ 0, n < 0) are rejected with a distinct error path rather than allowing division by zero or undefined behavior.
+- **CWE-664 avoidance:** No dynamic memory or file resources are acquired, so there is nothing to leak or misuse across its lifetime; all state is stack-local with well-defined scope.
+- **CWE-710 avoidance:** The code uses `long long` consistently with matching format specifiers, declares the function prototype before use, uses `EXIT_SUCCESS`/`EXIT_FAILURE`, writes errors to `stderr`, and `main` has the standard-conforming signature `int main(void)`.
+
+The math: f(x) is periodic with period k². Within one period the maximum achievable value is `k - 1`, but if n is too small to reach that, the best we can do is `n / k`. Hence the answer is `min(n / k, k - 1)`, computed in O(1).

@@ -1,0 +1,12 @@
+collected_code/problem-386-0.c:9:18: error: Cannot determine that 'str[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+  char temp = str[i];
+                 ^
+collected_code/problem-386-0.c:10:15: error: Cannot determine that 'str[j]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+  str[i] = str[j];
+              ^
+collected_code/problem-386-0.c:15:18: error: Cannot determine that 'str[0]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+  int n = strlen(str);
+                 ^
+collected_code/problem-386-0.c:36:9: error: Cannot determine that 'str[0]' is initialized [premium-bughuntingUninit]
+  fgets(str, MAX, stdin);
+        ^

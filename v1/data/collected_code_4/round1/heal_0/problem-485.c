@@ -1,0 +1,36 @@
+#include <stdio.h>
+
+int isPalindrome(int n) {
+    int reversed = 0;
+    int original = n;
+    while (n != 0) {
+        int digit = n % 10;
+        reversed = reversed * 10 + digit;
+        n /= 10;
+    }
+    return original == reversed;
+}
+
+int findLargestPalindrome(int* array, int size) {
+    int max = -1;
+    for (int i = 0; i < size; i++) {
+        if (array[i] > max && isPalindrome(array[i])) {
+            max = array[i];
+        }
+    }
+    return max;
+}
+
+int main() {
+    int array[] = {123, 121, 242, 545, 999, 234, 666, 343, 2442};
+    int size = sizeof(array) / sizeof(int);
+    int maxPalindrome = findLargestPalindrome(array, size);
+
+    if(maxPalindrome == -1) {
+        printf("No palindrome number found in the given array.\n");
+    } else {
+        printf("The largest palindromic number in the given array is: %d\n", maxPalindrome);
+    }
+
+    return 0;
+}

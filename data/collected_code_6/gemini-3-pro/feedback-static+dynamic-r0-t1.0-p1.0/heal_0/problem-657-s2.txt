@@ -1,0 +1,40 @@
+```c
+#include <stdio.h>
+#include <math.h>
+
+int findFirstDigitInFactorial(int n) {
+    if (n < 0) {
+        return -1;
+    }
+    if (n == 0 || n == 1) {
+        return 1;
+    }
+    
+    double log_sum = 0.0;
+    for (int i = 2; i <= n; i++) {
+        log_sum += log10((double)i);
+    }
+    
+    double fractional_part = log_sum - floor(log_sum);
+    double first_digit = pow(10.0, fractional_part);
+    
+    return (int)floor(first_digit);
+}
+
+int main(void) {
+    int n;
+    
+    if (scanf("%d", &n) != 1) {
+        return 1;
+    }
+    
+    int result = findFirstDigitInFactorial(n);
+    if (result == -1) {
+        return 1;
+    }
+    
+    printf("%d\n", result);
+    
+    return 0;
+}
+```

@@ -1,0 +1,117 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stddef.h>
+
+typedef struct {
+    int id;
+    double price;
+} Item;
+
+static int compare_desc(const void *a, const void *b) {
+    const Item *left = (const Item *)a;
+    const Item *right = (const Item *)b;
+    if (left->price < right->price) return 1;
+    if (left->price > right->price) return -1;
+    return 0;
+}
+
+Item *find_expensive_items(const Item *dataset, size_t item_count, size_t n, size_t *result_count) {
+    if (dataset == NULL || item_count == 0 || n == 0 || n > item_count) {
+        if (result_count != NULL) {
+            *result_count = 0;
+        }
+        return NULL;
+    }
+
+    Item *heap = malloc(n * sizeof(Item));
+    if (heap == NULL) {
+        if (result_count != NULL) {
+            *result_count = 0;
+        }
+        return NULL;
+    }
+
+    size_t heap_size = 0;
+
+    for (size_t i = 0; i < item_count; i++) {
+        if (heap_size < n) {
+            heap[heap_size] = dataset[i];
+            heap_size++;
+
+            size_t child = heap_size - 1;
+            while (child > 0) {
+                size_t parent = (child - 1) / 2;
+                if (heap[parent].price > heap[child].price) {
+                    Item temp = heap[parent];
+                    heap[parent] = heap[child];
+                    heap[child] = temp;
+                    child = parent;
+                } else {
+                    break;
+                }
+            }
+        } else if (dataset[i].price > heap[0].price) {
+            heap[0] = dataset[i];
+
+            size_t parent = 0;
+            for (;;) {
+                size_t left = parent * 2 + 1;
+                size_t right = left + 1;
+                size_t smallest = parent;
+
+                if (left < heap_size && heap[left].price < heap[smallest].price) {
+                    smallest = left;
+                }
+                if (right < heap_size && heap[right].price < heap[smallest].price) {
+                    smallest = right;
+                }
+                if (smallest == parent) {
+                    break;
+                }
+
+                Item temp = heap[parent];
+                heap[parent] = heap[smallest];
+                heap[smallest] = temp;
+                parent = smallest;
+            }
+        }
+    }
+
+    qsort(heap, heap_size, sizeof(Item), compare_desc);
+
+    if (result_count != NULL) {
+        *result_count = heap_size;
+    }
+
+    return heap;
+}
+
+int main(void) {
+    Item items[] = {
+        {1, 10.0},
+        {2, 200.0},
+        {3, 50.0},
+        {4, 150.0},
+        {5, 300.0},
+        {6, 20.0},
+        {7, 120.0}
+    };
+
+    size_t item_count = sizeof(items) / sizeof(items[0]);
+    size_t n = 3;
+    size_t result_count = 0;
+
+    Item *top_items = find_expensive_items(items, item_count, n, &result_count);
+
+    if (top_items == NULL) {
+        printf("Error: could not determine top items\n");
+        return EXIT_FAILURE;
+    }
+
+    for (size_t i = 0; i < result_count; i++) {
+        printf("Item ID: %d, Price: %.2f\n", top_items[i].id, top_items[i].price);
+    }
+
+    free(top_items);
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,57 @@
+{
+  "task_id": 7,
+  "text": "Write a C function to find all words which are at least 4 characters long in a string by using regex.",
+  "fn_candidates": [
+    "find_char_long",
+    "FindCharLong",
+    "findCharLong",
+    "findcharlong"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "find_char_long",
+      "args": [
+        "Please move back to stream"
+      ],
+      "expected": [
+        "Please",
+        "move",
+        "back",
+        "stream"
+      ],
+      "assert_src": "assert find_char_long('Please move back to stream') == ['Please', 'move', 'back', 'stream']"
+    },
+    {
+      "fn_name": "find_char_long",
+      "args": [
+        "Jing Eco and Tech"
+      ],
+      "expected": [
+        "Jing",
+        "Tech"
+      ],
+      "assert_src": "assert find_char_long('Jing Eco and Tech') == ['Jing', 'Tech']"
+    },
+    {
+      "fn_name": "find_char_long",
+      "args": [
+        "Jhingai wulu road Zone 3"
+      ],
+      "expected": [
+        "Jhingai",
+        "wulu",
+        "road",
+        "Zone"
+      ],
+      "assert_src": "assert find_char_long('Jhingai wulu road Zone 3') == ['Jhingai', 'wulu', 'road', 'Zone']"
+    }
+  ],
+  "arg_kinds": [
+    "str"
+  ],
+  "return_kind": "str-list",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

@@ -1,0 +1,52 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+void find_words(const char *text) {
+    if (text == NULL) {
+        return;
+    }
+
+    regex_t regex;
+    int reti;
+    regmatch_t pmatch[1];
+    const char *p = text;
+
+    reti = regcomp(&regex, "\\b[a-zA-Z0-9_]{4,}\\b", REG_EXTENDED);
+    if (reti != 0) {
+        return;
+    }
+
+    while (1) {
+        reti = regexec(&regex, p, 1, pmatch, 0);
+        if (reti != 0) {
+            break;
+        }
+
+        regoff_t start = pmatch[0].rm_so;
+        regoff_t end = pmatch[0].rm_eo;
+        regoff_t len = end - start;
+
+        char *word = malloc(len + 1);
+        if (word != NULL) {
+            /* Possible weaknesses found:
+             * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+             */
+            memcpy(word, p + start, len);
+            word[len] = '\0';
+            printf("%s\n", word);
+            free(word);
+        }
+
+        p += end;
+    }
+
+    regfree(&regex);
+}
+
+int main(void) {
+    const char *sample_text = "This is a sample string with some short and longer words.";
+    find_words(sample_text);
+    return 0;
+}

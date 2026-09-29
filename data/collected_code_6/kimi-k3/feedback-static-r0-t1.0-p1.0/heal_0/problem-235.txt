@@ -1,0 +1,25 @@
+```c
+#include <stdio.h>
+#include <stdint.h>
+
+uint32_t set_even_bits(uint32_t num) {
+    uint32_t even_bits_mask = 0x55555555;
+    return num | even_bits_mask;
+}
+
+int main(void) {
+    uint32_t number;
+    uint32_t result;
+
+    printf("Enter a number: ");
+    if (scanf("%u", &number) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return 1;
+    }
+
+    result = set_even_bits(number);
+    printf("Number after setting all even bits: %u\n", result);
+
+    return 0;
+}
+```

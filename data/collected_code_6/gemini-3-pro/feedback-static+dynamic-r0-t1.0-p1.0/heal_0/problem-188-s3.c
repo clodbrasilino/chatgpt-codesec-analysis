@@ -1,0 +1,37 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+bool canBeRepresentedByProductOfTwoSquares(int n) {
+    if (n < 0) {
+        return false;
+    }
+    
+    for (int i = 1; i * i <= n; i++) {
+        if (n % (i * i) == 0) {
+            int remaining = n / (i * i);
+            for (int j = 1; j * j <= remaining; j++) {
+                if (j * j == remaining) {
+                    return true;
+                }
+            }
+        }
+    }
+    
+    return false;
+}
+
+int main(void) {
+    int testCases[] = {36, 18, 100, -5, 0, 1, 12};
+    size_t numTests = sizeof(testCases) / sizeof(testCases[0]);
+
+    for (size_t i = 0; i < numTests; i++) {
+        int n = testCases[i];
+        if (canBeRepresentedByProductOfTwoSquares(n)) {
+            printf("%d: Yes\n", n);
+        } else {
+            printf("%d: No\n", n);
+        }
+    }
+
+    return 0;
+}

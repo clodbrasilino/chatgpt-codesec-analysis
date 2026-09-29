@@ -1,0 +1,45 @@
+{
+  "task_id": 904,
+  "text": "Write a C function to return true if the given number is even else return false.",
+  "fn_candidates": [
+    "even_num",
+    "EvenNum",
+    "evenNum",
+    "evennum"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "even_num",
+      "args": [
+        13.5
+      ],
+      "expected": false,
+      "assert_src": "assert even_num(13.5)==False"
+    },
+    {
+      "fn_name": "even_num",
+      "args": [
+        0
+      ],
+      "expected": true,
+      "assert_src": "assert even_num(0)==True"
+    },
+    {
+      "fn_name": "even_num",
+      "args": [
+        -9
+      ],
+      "expected": false,
+      "assert_src": "assert even_num(-9)==False"
+    }
+  ],
+  "arg_kinds": [
+    "float",
+    "int"
+  ],
+  "return_kind": "bool",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

@@ -1,0 +1,43 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+int findFirstDigit(int n) {
+    if (n < 0) {
+        return -1;
+    }
+    
+    if (n == 0 || n == 1) {
+        return 1;
+    }
+
+    double d = 0;
+    for (int i = 2; i <= n; i++) {
+        d += log10(i);
+    }
+
+    double fractional_part = d - floor(d);
+    double first_digit = pow(10, fractional_part);
+
+    return (int)first_digit;
+}
+
+int main(void) {
+    int n;
+
+    if (scanf("%d", &n) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    int result = findFirstDigit(n);
+
+    if (result == -1) {
+        fprintf(stderr, "Factorial not defined for negative numbers\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("%d\n", result);
+
+    return EXIT_SUCCESS;
+}

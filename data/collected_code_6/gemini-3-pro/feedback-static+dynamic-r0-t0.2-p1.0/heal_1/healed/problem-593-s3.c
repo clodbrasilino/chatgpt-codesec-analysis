@@ -1,0 +1,83 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char* remove_leading_zeroes(const char* ip) {
+    if (ip == NULL) {
+        return NULL;
+    }
+
+    size_t len = 0;
+    while (len < 128 && ip[len] != '\0') {
+        len++;
+    }
+    
+    if (len == 128) {
+        return NULL;
+    }
+
+    char* result = malloc(len + 1);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    const char* ptr = ip;
+    char* res_ptr = result;
+    int in_octet = 0;
+    int zero_count = 0;
+
+    while (*ptr != '\0') {
+        if (*ptr == '.') {
+            if (zero_count > 0 && !in_octet) {
+                *res_ptr++ = '0';
+            }
+            *res_ptr++ = '.';
+            in_octet = 0;
+            zero_count = 0;
+        } else if (*ptr == '0') {
+            if (in_octet) {
+                *res_ptr++ = '0';
+            } else {
+                zero_count++;
+            }
+        } else if (*ptr > '0' && *ptr <= '9') {
+            *res_ptr++ = *ptr;
+            in_octet = 1;
+        } else {
+            free(result);
+            return NULL;
+        }
+        ptr++;
+    }
+
+    if (zero_count > 0 && !in_octet) {
+        *res_ptr++ = '0';
+    }
+
+    *res_ptr = '\0';
+    return result;
+}
+
+int main(void) {
+    const char* test_ips[] = {
+        "192.168.001.001",
+        "010.000.000.001",
+        "000.000.000.000",
+        "127.0.0.1",
+        "255.255.255.255",
+        "00.01.02.03",
+        NULL
+    };
+
+    for (int i = 0; test_ips[i] != NULL; i++) {
+        char* cleaned_ip = remove_leading_zeroes(test_ips[i]);
+        if (cleaned_ip != NULL) {
+            printf("%s -> %s\n", test_ips[i], cleaned_ip);
+            free(cleaned_ip);
+        } else {
+            printf("Invalid IP or memory allocation failed for: %s\n", test_ips[i]);
+        }
+    }
+
+    return 0;
+}

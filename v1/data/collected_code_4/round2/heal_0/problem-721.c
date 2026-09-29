@@ -1,0 +1,39 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+#include <float.h>
+
+double findMaxAveragePath(int n, int matrix[n][n]) {
+    if(n <= 0){
+        return 0.0;
+    }
+    double dp[n][n];
+    dp[0][0] = matrix[0][0];
+    
+    for(int i=1; i<n; i++) {
+        dp[i][0] = dp[i-1][0] + matrix[i][0];
+        dp[0][i] = dp[0][i-1] + matrix[0][i];
+    }
+    for(int i=1; i<n; i++) {
+        for(int j=1; j<n; j++){
+            dp[i][j] = (double)matrix[i][j] + (i>=j ? dp[i-1][j] / (i+j) : dp[i][j-1] / (i+j));
+        }
+    }
+    return dp[n-1][n-1] / (2*n-1);
+}
+
+int main() {
+    int n;
+    printf("Enter the size of square matrix: ");
+    scanf("%d",&n);
+    
+    int matrix[n][n];
+    printf("Enter the elements of matrix:\n");
+    for(int i=0; i<n; i++) {
+        for(int j=0; j<n; j++) {
+            scanf("%d", &matrix[i][j]);
+        }
+    }
+    printf("\nMaximum average of all paths is: %.2lf\n", findMaxAveragePath(n, matrix));
+    return 0;
+}

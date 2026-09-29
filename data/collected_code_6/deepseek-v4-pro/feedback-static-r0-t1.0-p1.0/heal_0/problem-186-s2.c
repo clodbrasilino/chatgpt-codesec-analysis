@@ -1,0 +1,51 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+int search_patterns(const char *text, const char **patterns, int pattern_count) {
+    if (text == NULL || patterns == NULL || pattern_count <= 0) {
+        return -1;
+    }
+
+    regex_t regex;
+    int found_count = 0;
+
+    for (int i = 0; i < pattern_count; i++) {
+        if (patterns[i] == NULL) {
+            continue;
+        }
+
+        int ret = regcomp(&regex, patterns[i], REG_EXTENDED | REG_NOSUB);
+        if (ret != 0) {
+            continue;
+        }
+
+        ret = regexec(&regex, text, 0, NULL, 0);
+        if (ret == 0) {
+            found_count++;
+        }
+
+        regfree(&regex);
+    }
+
+    return found_count;
+}
+
+int main(void) {
+    const char *text = "The quick brown fox jumps over the lazy dog";
+    const char *patterns[] = {
+        "quick",
+        "fox",
+        "cat",
+        "lazy",
+        "dog$"
+    };
+
+    int pattern_count = sizeof(patterns) / sizeof(patterns[0]);
+    int matches = search_patterns(text, patterns, pattern_count);
+
+    printf("Found %d matching patterns\n", matches);
+
+    return 0;
+}

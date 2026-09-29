@@ -1,0 +1,16 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <limits.h>
+
+void toggleFirstLastBits(unsigned int *num) {
+    unsigned int mask = 1 | (1U << ((sizeof(unsigned int) * CHAR_BIT) - 1));
+    *num ^= mask;
+}
+
+int main() {
+    unsigned int num = 0b10100001; 
+    printf("Before: %u\n", num);
+    toggleFirstLastBits(&num);
+    printf("After: %u\n", num);
+    return 0;
+}

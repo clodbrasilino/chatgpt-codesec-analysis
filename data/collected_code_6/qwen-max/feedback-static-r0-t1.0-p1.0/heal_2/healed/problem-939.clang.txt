@@ -1,0 +1,28 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-939.c:34:11: error: field designator cannot initialize a non-struct, non-union type 'DictionaryEntry[2]'
+   34 |         {{.key = "name", .value = "Alice"}, {.key = "age", .value = "30"}},
+      |           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-939.c:34:26: error: field designator cannot initialize a non-struct, non-union type 'DictionaryEntry[2]'
+   34 |         {{.key = "name", .value = "Alice"}, {.key = "age", .value = "30"}},
+      |                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-939.c:34:45: error: initialization of non-aggregate type 'int' with a designated initializer list
+   34 |         {{.key = "name", .value = "Alice"}, {.key = "age", .value = "30"}},
+      |                                             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-939.c:35:11: error: field designator cannot initialize a non-struct, non-union type 'DictionaryEntry[2]'
+   35 |         {{.key = "name", .value = "Bob"}, {.key = "age", .value = "25"}},
+      |           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-939.c:35:26: error: field designator cannot initialize a non-struct, non-union type 'DictionaryEntry[2]'
+   35 |         {{.key = "name", .value = "Bob"}, {.key = "age", .value = "25"}},
+      |                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-939.c:35:43: error: initialization of non-aggregate type 'int' with a designated initializer list
+   35 |         {{.key = "name", .value = "Bob"}, {.key = "age", .value = "25"}},
+      |                                           ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-939.c:36:11: error: field designator cannot initialize a non-struct, non-union type 'DictionaryEntry[2]'
+   36 |         {{.key = "name", .value = "Charlie"}, {.key = "age", .value = "35"}}
+      |           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-939.c:36:26: error: field designator cannot initialize a non-struct, non-union type 'DictionaryEntry[2]'
+   36 |         {{.key = "name", .value = "Charlie"}, {.key = "age", .value = "35"}}
+      |                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-939.c:36:47: error: initialization of non-aggregate type 'int' with a designated initializer list
+   36 |         {{.key = "name", .value = "Charlie"}, {.key = "age", .value = "35"}}
+      |                                               ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+9 errors generated.

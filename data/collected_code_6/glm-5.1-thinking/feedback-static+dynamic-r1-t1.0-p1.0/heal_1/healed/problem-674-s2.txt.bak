@@ -1,0 +1,78 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char *remove_duplicate_words(const char *str) {
+    if (str == NULL) {
+        return NULL;
+    }
+
+    char *copy = strdup(str);
+    if (copy == NULL) {
+        return NULL;
+    }
+
+    size_t len = strlen(str);
+    char **seen = malloc(sizeof(char *) * (len + 1));
+    if (seen == NULL) {
+        free(copy);
+        return NULL;
+    }
+    int seen_count = 0;
+
+    size_t capacity = len + 2;
+    char *result = malloc(capacity);
+    if (result == NULL) {
+        free(copy);
+        free(seen);
+        return NULL;
+    }
+    result[0] = '\0';
+
+    char *saveptr = NULL;
+    const char *delim = " \t\n";
+    char *token = strtok_r(copy, delim, &saveptr);
+
+    while (token != NULL) {
+        int is_dup = 0;
+        for (int i = 0; i < seen_count; i++) {
+            if (strcmp(seen[i], token) == 0) {
+                is_dup = 1;
+                break;
+            }
+        }
+
+        if (!is_dup) {
+            seen[seen_count++] = token;
+            if (result[0] != '\0') {
+                strcat(result, " ");
+            }
+            strcat(result, token);
+        }
+        token = strtok_r(NULL, delim, &saveptr);
+    }
+
+    free(seen);
+    free(copy);
+
+    size_t final_len = strlen(result) + 1;
+    char *final_result = malloc(final_len);
+    if (final_result != NULL) {
+        memcpy(final_result, result, final_len);
+    }
+    free(result);
+
+    return final_result;
+}
+
+int main(void) {
+    const char *text = "hello world hello this is a test test world";
+    char *unique = remove_duplicate_words(text);
+    if (unique != NULL) {
+        printf("%s\n", unique);
+        free(unique);
+    }
+    return 0;
+}
+```

@@ -1,0 +1,83 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char *remove_parentheses(const char *input)
+{
+    size_t len;
+    size_t i;
+    size_t j;
+    int depth;
+    char *result;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    len = strlen(input);
+    result = calloc(len + 1, sizeof(char));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    depth = 0;
+    j = 0;
+    for (i = 0; i < len; i++) {
+        if (input[i] == '(') {
+            depth++;
+        } else if (input[i] == ')') {
+            if (depth > 0) {
+                depth--;
+            }
+        } else if (depth == 0) {
+            result[j] = input[i];
+            j++;
+        }
+    }
+    result[j] = '\0';
+
+    return result;
+}
+
+int main(void)
+{
+    const char *tests[] = {
+        "Hello (remove me) World",
+        "Nested (outer (inner) text) example",
+        "No parentheses here"
+    };
+    size_t num_tests;
+    size_t i;
+    char *output;
+
+    num_tests = sizeof(tests) / sizeof(tests[0]);
+
+    for (i = 0; i < num_tests; i++) {
+        output = remove_parentheses(tests[i]);
+        if (output == NULL) {
+            fprintf(stderr, "Memory allocation failed\n");
+            return EXIT_FAILURE;
+        }
+        printf("%s\n", output);
+        free(output);
+        output = NULL;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis:**
+
+The symptoms described in the comments (garbage/multibyte output like `��` and `ࡒ` instead of expected strings) are classic signs of reading uninitialized or freed memory. Reviewing the original code:
+
+1. **Buffer termination** — The original code was actually safe here: `calloc` zero-initializes the buffer, and `result[j] = '\0'` is explicitly written. Since `j <= len` is always true, the write is within bounds. Both defenses are retained.
+
+2. **Use-after-free risk** — In the original `main`, the `output` pointer was reused across three test blocks and freed each time, but never set to `NULL` after `free`. If a later refactor accidentally reordered a `printf` after `free`, you'd get exactly the garbage output described. The rewrite sets `output = NULL` immediately after freeing to make any dangling access fail deterministically.
+
+3. **Code duplication** — The three copy-pasted test blocks were a maintenance hazard (a common source of the "fixed one, forgot the others" bug class). Consolidating into a loop over a test array ensures every test path is identical.
+
+4. **Depth underflow protection** — Unbalanced `)` characters are still safely ignored via the `depth > 0` guard, preventing negative-depth logic errors on malformed input like `"a)b(c"`.
+
+5. **NULL input and allocation failure** — Both remain explicitly handled, with allocation failures reported to `stderr` and a non-zero exit code returned.

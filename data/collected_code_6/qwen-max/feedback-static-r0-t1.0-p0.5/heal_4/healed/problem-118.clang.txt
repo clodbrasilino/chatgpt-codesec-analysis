@@ -1,0 +1,10 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p0.5/heal_4/healed/problem-118.c:35:13: error: call to undeclared function 'freeList'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   35 |             freeList(head);
+      |             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p0.5/heal_4/healed/problem-118.c:61:6: error: conflicting types for 'freeList'
+   61 | void freeList(ListNode *head) {
+      |      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p0.5/heal_4/healed/problem-118.c:35:13: note: previous implicit declaration is here
+   35 |             freeList(head);
+      |             ^
+2 errors generated.

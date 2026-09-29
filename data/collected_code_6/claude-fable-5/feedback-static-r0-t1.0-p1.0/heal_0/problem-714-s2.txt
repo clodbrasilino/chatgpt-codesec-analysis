@@ -1,0 +1,66 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+static unsigned long countDistinctPrimePowers(unsigned long n)
+{
+    unsigned long count = 0UL;
+    unsigned long p = 2UL;
+
+    if (n < 2UL)
+    {
+        return 0UL;
+    }
+
+    while ((p <= n / p))
+    {
+        if ((n % p) == 0UL)
+        {
+            unsigned long exponent = 0UL;
+
+            while ((n % p) == 0UL)
+            {
+                n /= p;
+                exponent++;
+            }
+            count += exponent;
+        }
+        p++;
+    }
+
+    if (n > 1UL)
+    {
+        count += 1UL;
+    }
+
+    return count;
+}
+
+int main(void)
+{
+    unsigned long n = 0UL;
+    unsigned long result = 0UL;
+    int scanResult = 0;
+
+    printf("Enter a positive integer: ");
+
+    scanResult = scanf("%lu", &n);
+    if (scanResult != 1)
+    {
+        fprintf(stderr, "Error: invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (n == 0UL)
+    {
+        fprintf(stderr, "Error: input must be greater than zero.\n");
+        return EXIT_FAILURE;
+    }
+
+    result = countDistinctPrimePowers(n);
+
+    printf("Number of distinct powers of prime factors of %lu: %lu\n", n, result);
+
+    return EXIT_SUCCESS;
+}
+```

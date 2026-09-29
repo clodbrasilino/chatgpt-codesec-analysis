@@ -1,0 +1,61 @@
+```c
+#include <stdio.h>
+#include <regex.h>
+#include <string.h>
+#include <stddef.h>
+
+int is_valid_email(const char *email, size_t max_len) {
+    regex_t regex;
+    int ret;
+    const char *pattern = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
+    int result = 0;
+    size_t len;
+
+    if (email == NULL) {
+        return 0;
+    }
+
+    len = strnlen(email, max_len);
+    if (len == 0 || len == max_len) {
+        return 0;
+    }
+
+    ret = regcomp(&regex, pattern, REG_EXTENDED);
+    if (ret != 0) {
+        return 0;
+    }
+
+    ret = regexec(&regex, email, 0, NULL, 0);
+    if (ret == 0) {
+        result = 1;
+    }
+
+    regfree(&regex);
+    return result;
+}
+
+int main(void) {
+    const char *test_emails[] = {
+        "user@example.com",
+        "john.doe+tag@domain.co.uk",
+        "invalid.email@",
+        "@missinglocal.com",
+        "no-at-sign.com",
+        "spaces in@email.com",
+        "valid.email@sub.domain.org"
+    };
+    int num_tests = sizeof(test_emails) / sizeof(test_emails[0]);
+    int i;
+    size_t max_email_len = 254;
+
+    for (i = 0; i < num_tests; i++) {
+        if (is_valid_email(test_emails[i], max_email_len)) {
+            printf("%s: Valid\n", test_emails[i]);
+        } else {
+            printf("%s: Invalid\n", test_emails[i]);
+        }
+    }
+
+    return 0;
+}
+```

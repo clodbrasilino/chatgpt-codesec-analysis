@@ -1,0 +1,44 @@
+{
+  "task_id": 173,
+  "text": "Write a C function to remove everything except alphanumeric characters from a string.",
+  "fn_candidates": [
+    "remove_splchar",
+    "RemoveSplchar",
+    "removeSplchar",
+    "removesplchar"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "remove_splchar",
+      "args": [
+        "python  @#&^%$*program123"
+      ],
+      "expected": "pythonprogram123",
+      "assert_src": "assert remove_splchar('python  @#&^%$*program123')==('pythonprogram123')"
+    },
+    {
+      "fn_name": "remove_splchar",
+      "args": [
+        "python %^$@!^&*()  programming24%$^^()    language"
+      ],
+      "expected": "pythonprogramming24language",
+      "assert_src": "assert remove_splchar('python %^$@!^&*()  programming24%$^^()    language')==('pythonprogramming24language')"
+    },
+    {
+      "fn_name": "remove_splchar",
+      "args": [
+        "python   ^%&^()(+_)(_^&67)                  program"
+      ],
+      "expected": "python67program",
+      "assert_src": "assert remove_splchar('python   ^%&^()(+_)(_^&67)                  program')==('python67program')"
+    }
+  ],
+  "arg_kinds": [
+    "str"
+  ],
+  "return_kind": "str",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

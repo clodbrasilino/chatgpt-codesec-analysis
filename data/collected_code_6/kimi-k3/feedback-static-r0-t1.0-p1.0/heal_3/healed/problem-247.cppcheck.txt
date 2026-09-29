@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-247.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-247.c:106:37: style: Condition 'len>0' is always true [knownConditionTrueFalse]
+        printf("Length: %zu\n", len > 0 ? strlen(result) : 0);
+                                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-247.c:100:34: note: Assignment 'len=sizeof(testStr)-1', assigned value is 9
+    size_t len = sizeof(testStr) - 1;
+                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-247.c:106:37: note: Condition 'len>0' is always true
+        printf("Length: %zu\n", len > 0 ? strlen(result) : 0);
+                                    ^

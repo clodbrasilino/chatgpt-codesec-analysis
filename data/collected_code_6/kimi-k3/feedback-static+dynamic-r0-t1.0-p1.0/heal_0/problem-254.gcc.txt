@@ -1,0 +1,12 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_0/problem-254.c: In function 'find_words_starting_with_ae':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_0/problem-254.c:31:20: error: implicit declaration of function 'malloc' [-Wimplicit-function-declaration]
+   31 |     char *buffer = malloc(len + 1);
+      |                    ^~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_0/problem-254.c:5:1: note: include '<stdlib.h>' or provide a declaration of 'malloc'
+    4 | #include <stdbool.h>
+  +++ |+#include <stdlib.h>
+    5 | 
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_0/problem-254.c:58:5: error: implicit declaration of function 'free' [-Wimplicit-function-declaration]
+   58 |     free(buffer);
+      |     ^~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_0/problem-254.c:58:5: note: include '<stdlib.h>' or provide a declaration of 'free'

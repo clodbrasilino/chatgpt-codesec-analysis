@@ -1,0 +1,22 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+double find_surface_area(double edge);
+
+int main() {
+    double edge;
+    printf("Enter edge length of the cube: ");
+    scanf("%lf", &edge);
+
+    if (edge <= 0) {
+        printf("Edge length of a cube cannot be zero or negative.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Surface area of the cube: %.2lf\n", find_surface_area(edge));
+    return EXIT_SUCCESS;
+}
+
+double find_surface_area(double edge) {
+    return 6 * edge * edge;
+}

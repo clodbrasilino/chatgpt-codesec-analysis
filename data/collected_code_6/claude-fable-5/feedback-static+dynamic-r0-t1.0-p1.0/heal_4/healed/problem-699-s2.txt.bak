@@ -1,0 +1,69 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+int min_swaps(const char *s1, const char *s2)
+{
+    size_t len1;
+    size_t len2;
+    size_t i;
+    int diff10 = 0;
+    int diff01 = 0;
+
+    if (s1 == NULL || s2 == NULL) {
+        return -1;
+    }
+
+    len1 = strlen(s1);
+    len2 = strlen(s2);
+
+    if (len1 != len2) {
+        return -1;
+    }
+
+    for (i = 0; i < len1; i++) {
+        if ((s1[i] != '0' && s1[i] != '1') || (s2[i] != '0' && s2[i] != '1')) {
+            return -1;
+        }
+        if (s1[i] == '1' && s2[i] == '0') {
+            diff10++;
+        } else if (s1[i] == '0' && s2[i] == '1') {
+            diff01++;
+        }
+    }
+
+    if (diff10 != diff01) {
+        return -1;
+    }
+
+    return diff10;
+}
+
+int main(void)
+{
+    const char *str1 = "1101";
+    const char *str2 = "0011";
+    int result;
+
+    result = min_swaps(str1, str2);
+
+    if (result < 0) {
+        if (printf("Not Possible\n") < 0) {
+            return EXIT_FAILURE;
+        }
+    } else {
+        if (printf("Minimum swaps required: %d\n", result) < 0) {
+            return EXIT_FAILURE;
+        }
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the fixes applied:**
+
+1. **Test case 0 (`expected 1, got 2`) and Test case 2 (`expected 3, got 4`):** The original formula `(diff10 / 2) + (diff01 / 2) + 2 * (diff10 % 2)` computed swap counts for a different problem variant (cross-string swaps). For the in-place swap problem, each swap of a mismatched `1→0` position with a mismatched `0→1` position resolves exactly two mismatches simultaneously, so the correct minimum is simply `diff10` (which equals `diff01` in any solvable case). For example, `diff10 = 1, diff01 = 1` now yields `1` instead of `2`, and `diff10 = 3, diff01 = 3` yields `3` instead of `4`.
+
+2. **Test case 1 (`expected 'Not Possible', got -1`):** The original feasibility check `(diff10 + diff01) % 2 != 0` was too weak — it accepted cases like `diff10 = 2, diff01 = 1`... actually it rejected odd sums but wrongly accepted unequal even/odd mixes and miscomputed results for unequal counts. The corrected condition `diff10 != diff01` properly detects impossibility (the strings must contain the same multiset of characters), so the sentinel `-1` propagates and `main` correctly prints `Not Possible` for the sample input `"1101"` vs `"0011"`.

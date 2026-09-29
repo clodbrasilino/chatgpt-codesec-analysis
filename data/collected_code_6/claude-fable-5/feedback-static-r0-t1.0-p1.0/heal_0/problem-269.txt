@@ -1,0 +1,33 @@
+```c
+#include <stdio.h>
+
+int get_ascii_value(char c)
+{
+    return (int)(unsigned char)c;
+}
+
+int main(void)
+{
+    int input;
+
+    printf("Enter a character: ");
+
+    input = getchar();
+    if (input == EOF) {
+        fprintf(stderr, "Error: failed to read input.\n");
+        return 1;
+    }
+
+    printf("The ASCII value of '%c' is %d\n", (char)input, get_ascii_value((char)input));
+
+    return 0;
+}
+```
+
+**Explanation of key design choices:**
+
+1. **CWE-703 (Improper Check or Handling of Exceptional Conditions):** The return value of `getchar()` is checked against `EOF` before use, and an error message with a non-zero exit code is returned on failure.
+
+2. **CWE-710 (Improper Adherence to Coding Standards):** The code uses `int main(void)`, explicit return values, casts through `unsigned char` to avoid implementation-defined behavior with negative `char` values, and consistent brace style.
+
+3. **CWE-664 (Improper Control of a Resource Through its Lifetime):** No dynamic memory or file handles are allocated, so there are no resources left unreleased or used outside their valid lifetime. Only standard streams managed by the runtime are used.

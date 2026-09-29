@@ -1,0 +1,7 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-337-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-337-s2.c:17:15: style: Array index 'len_str' is used before limits check. [arrayIndexThenCheck]
+    while (str[len_str] != '\0' && len_str < 1024) len_str++;
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-337-s2.c:21:16: style: Array index 'len_word' is used before limits check. [arrayIndexThenCheck]
+    while (word[len_word] != '\0' && len_word < 1024) len_word++;
+               ^

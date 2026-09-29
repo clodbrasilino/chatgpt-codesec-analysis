@@ -1,6 +1,6 @@
 """Flawfinder reprocess stages 1-2: convert reports, quarantine trajectories.
 
-Stage 1 — convert every raw .flawfinder.txt under collected_code_6 to the
+Stage 1 — convert every raw .flawfinder.txt under data/collected_code_6 to the
 normalized standard format (in place; no-hits reports become empty files,
 matching the other analyzers). The qwen legacy cell is never touched.
 
@@ -28,7 +28,7 @@ from src.pipeline.flawfinder_norm import extract_flawfinder_raw  # noqa: E402
 from src.pipeline.comment_inject import extract_standard_messages  # noqa: E402
 from src.config import discover_rounds  # noqa: E402
 
-ROOT = REPO / "collected_code_6"
+ROOT = REPO / "data" / "collected_code_6"
 LEGACY_MARKER = "legacy"
 HEALED_SUFFIXES = [
     ".c", ".txt", ".o",

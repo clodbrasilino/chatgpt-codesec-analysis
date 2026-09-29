@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-44.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-44.c:55:9: style: Condition '!null_test1' is always true [knownConditionTrueFalse]
+    if (!null_test1 && !null_test2 && !null_test3) {
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-44.c:51:46: note: Calling function 'match_word_at_beginning' returns 0
+    bool null_test1 = match_word_at_beginning(NULL, "test");
+                                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-44.c:51:46: note: Assignment 'null_test1=match_word_at_beginning(NULL,"test")', assigned value is 0
+    bool null_test1 = match_word_at_beginning(NULL, "test");
+                                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-44.c:55:9: note: Condition '!null_test1' is always true
+    if (!null_test1 && !null_test2 && !null_test3) {
+        ^

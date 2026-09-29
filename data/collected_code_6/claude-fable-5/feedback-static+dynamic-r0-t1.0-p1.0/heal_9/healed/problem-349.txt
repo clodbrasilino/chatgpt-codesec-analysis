@@ -1,0 +1,74 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+
+#define BUFFER_SIZE 256
+
+bool is_binary_string(const char *str)
+{
+    size_t i;
+
+    if (str == NULL) {
+        return false;
+    }
+
+    if (str[0] == '\0') {
+        return false;
+    }
+
+    for (i = 0; str[i] != '\0'; i++) {
+        if (str[i] != '0' && str[i] != '1') {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t len;
+
+    printf("Enter a string: ");
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    }
+
+    if (is_binary_string(buffer)) {
+        printf("\"%s\" is a binary string\n", buffer);
+    } else {
+        printf("\"%s\" is not a binary string\n", buffer);
+    }
+
+    return 0;
+}
+```
+
+**Analysis of the original code and how the weakness is mitigated:**
+
+The Flawfinder warning flagged the statically-sized `char buffer[BUFFER_SIZE]` as a potential CWE-119/CWE-120 (buffer overflow) risk. This is a heuristic warning — fixed-size buffers are only dangerous when combined with unbounded writes. The code already contains the proper defenses, which I preserved in the rewrite:
+
+1. **Bounded input:** `fgets(buffer, sizeof(buffer), stdin)` limits the read to at most `BUFFER_SIZE - 1` characters plus the null terminator, unlike unsafe alternatives such as `gets()` or `scanf("%s", ...)`. Using `sizeof(buffer)` instead of the macro directly ties the bound to the actual array declaration, preventing desynchronization if the size changes.
+
+2. **NULL check on fgets:** Read failures (EOF, I/O error) are detected and handled rather than operating on an indeterminate buffer.
+
+3. **Defensive termination:** `buffer[sizeof(buffer) - 1] = '\0';` is technically redundant after a successful `fgets` (which always null-terminates), but it's harmless belt-and-suspenders hardening.
+
+4. **Bounded length calculation:** `strnlen(buffer, sizeof(buffer))` instead of `strlen()` guarantees the scan can never run past the buffer even if termination were somehow violated.
+
+5. **Safe newline stripping:** The `len > 0` check prevents an out-of-bounds access at `buffer[-1]` for empty input.
+
+6. **Robust helper function:** `is_binary_string()` guards against `NULL` and empty strings before iterating, and iterates strictly to the null terminator.
+
+The code was already correct with respect to the flagged weakness; the rewrite keeps all mitigations intact with comments removed as requested.

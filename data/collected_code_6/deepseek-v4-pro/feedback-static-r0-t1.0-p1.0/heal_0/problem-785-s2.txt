@@ -1,0 +1,152 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+typedef struct {
+    int *values;
+    size_t count;
+} IntTuple;
+
+IntTuple parse_tuple(const char *str) {
+    IntTuple result = {NULL, 0};
+    
+    if (str == NULL) {
+        return result;
+    }
+    
+    while (*str && isspace((unsigned char)*str)) {
+        str++;
+    }
+    
+    if (*str != '(') {
+        return result;
+    }
+    str++;
+    
+    size_t capacity = 0;
+    int *temp_values = NULL;
+    
+    while (*str) {
+        while (*str && isspace((unsigned char)*str)) {
+            str++;
+        }
+        
+        if (*str == '\0') {
+            break;
+        }
+        
+        if (*str == ')') {
+            str++;
+            while (*str && isspace((unsigned char)*str)) {
+                str++;
+            }
+            if (*str == '\0') {
+                result.values = temp_values;
+                result.count = capacity;
+                return result;
+            } else {
+                free(temp_values);
+                return result;
+            }
+        }
+        
+        char *endptr;
+        long val = strtol(str, &endptr, 10);
+        
+        if (endptr == str) {
+            free(temp_values);
+            result.values = NULL;
+            result.count = 0;
+            return result;
+        }
+        
+        int *new_values = realloc(temp_values, (capacity + 1) * sizeof(int));
+        if (new_values == NULL) {
+            free(temp_values);
+            result.values = NULL;
+            result.count = 0;
+            return result;
+        }
+        temp_values = new_values;
+        temp_values[capacity] = (int)val;
+        capacity++;
+        
+        str = endptr;
+        
+        while (*str && isspace((unsigned char)*str)) {
+            str++;
+        }
+        
+        if (*str == ',') {
+            str++;
+        } else if (*str == ')') {
+            str++;
+            while (*str && isspace((unsigned char)*str)) {
+                str++;
+            }
+            if (*str == '\0') {
+                result.values = temp_values;
+                result.count = capacity;
+                return result;
+            } else {
+                free(temp_values);
+                result.values = NULL;
+                result.count = 0;
+                return result;
+            }
+        } else {
+            free(temp_values);
+            result.values = NULL;
+            result.count = 0;
+            return result;
+        }
+    }
+    
+    free(temp_values);
+    return result;
+}
+
+void free_tuple(IntTuple *tuple) {
+    if (tuple != NULL) {
+        free(tuple->values);
+        tuple->values = NULL;
+        tuple->count = 0;
+    }
+}
+
+int main() {
+    const char *test_cases[] = {
+        "(1, 2, 3, 4, 5)",
+        "(10,20,30)",
+        "   (7, 8, 9)   ",
+        "()",
+        "(1, 2, 3",
+        "invalid",
+        NULL
+    };
+    
+    for (int i = 0; test_cases[i] != NULL; i++) {
+        IntTuple tuple = parse_tuple(test_cases[i]);
+        
+        printf("Input: '%s'\n", test_cases[i]);
+        printf("Count: %zu\n", tuple.count);
+        
+        if (tuple.values != NULL && tuple.count > 0) {
+            printf("Values: ");
+            for (size_t j = 0; j < tuple.count; j++) {
+                printf("%d ", tuple.values[j]);
+            }
+            printf("\n");
+        } else {
+            printf("No valid tuple parsed\n");
+        }
+        printf("\n");
+        
+        free_tuple(&tuple);
+    }
+    
+    return 0;
+}
+```

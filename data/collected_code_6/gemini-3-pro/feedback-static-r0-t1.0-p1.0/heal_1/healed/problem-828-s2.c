@@ -1,0 +1,51 @@
+#define _POSIX_C_SOURCE 200809L
+#include <stdio.h>
+#include <stdlib.h>
+#include <ctype.h>
+
+void count_characters(const char *str, int *alphabets, int *digits, int *specials) {
+    if (str == NULL || alphabets == NULL || digits == NULL || specials == NULL) {
+        return;
+    }
+
+    *alphabets = 0;
+    *digits = 0;
+    *specials = 0;
+
+    while (*str) {
+        if (isalpha((unsigned char)*str)) {
+            (*alphabets)++;
+        } else if (isdigit((unsigned char)*str)) {
+            (*digits)++;
+        } else if (!isspace((unsigned char)*str)) {
+            (*specials)++;
+        }
+        str++;
+    }
+}
+
+int main(void) {
+    char *buffer = NULL;
+    size_t bufsize = 0;
+    ssize_t len;
+    int alphabets = 0;
+    int digits = 0;
+    int specials = 0;
+
+    len = getline(&buffer, &bufsize, stdin);
+
+    if (len != -1) {
+        if (len > 0 && buffer[len - 1] == '\n') {
+            buffer[len - 1] = '\0';
+        }
+
+        count_characters(buffer, &alphabets, &digits, &specials);
+
+        printf("Alphabets: %d\n", alphabets);
+        printf("Digits: %d\n", digits);
+        printf("Special characters: %d\n", specials);
+    }
+
+    free(buffer);
+    return 0;
+}

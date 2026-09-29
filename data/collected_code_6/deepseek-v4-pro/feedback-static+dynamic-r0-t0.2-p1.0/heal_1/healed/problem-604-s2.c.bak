@@ -1,0 +1,66 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+void reverse_range(char *start, char *end) {
+    while (start < end) {
+        char temp = *start;
+        *start = *end;
+        *end = temp;
+        start++;
+        end--;
+    }
+}
+
+char *reverse_words(char *str) {
+    if (str == NULL) {
+        return NULL;
+    }
+
+    size_t len = strlen(str);
+    if (len == 0) {
+        return str;
+    }
+
+    reverse_range(str, str + len - 1);
+
+    char *word_start = str;
+    char *p = str;
+
+    while (*p != '\0') {
+        if (*p == ' ') {
+            reverse_range(word_start, p - 1);
+            word_start = p + 1;
+        }
+        p++;
+    }
+
+    reverse_range(word_start, p - 1);
+
+    return str;
+}
+
+int main(void) {
+    char str1[] = "Hello World from C";
+    char str2[] = "   leading and trailing   ";
+    char str3[] = "single";
+    char str4[] = "";
+    char str5[] = "multiple   spaces   between words";
+
+    printf("Original: '%s'\n", str1);
+    printf("Reversed: '%s'\n\n", reverse_words(str1));
+
+    printf("Original: '%s'\n", str2);
+    printf("Reversed: '%s'\n\n", reverse_words(str2));
+
+    printf("Original: '%s'\n", str3);
+    printf("Reversed: '%s'\n\n", reverse_words(str3));
+
+    printf("Original: '%s'\n", str4);
+    printf("Reversed: '%s'\n\n", reverse_words(str4));
+
+    printf("Original: '%s'\n", str5);
+    printf("Reversed: '%s'\n\n", reverse_words(str5));
+
+    return 0;
+}

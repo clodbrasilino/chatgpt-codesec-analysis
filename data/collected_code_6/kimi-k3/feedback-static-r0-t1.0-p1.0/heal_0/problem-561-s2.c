@@ -1,0 +1,78 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int first;
+    int second;
+} Pair;
+
+typedef struct {
+    int element;
+    int paired_with;
+} ElementPair;
+
+int assign_pair_elements(const Pair *pairs, size_t pair_count, ElementPair **result, size_t *result_count) {
+    size_t i;
+    size_t idx;
+    ElementPair *temp;
+
+    if (pairs == NULL || result == NULL || result_count == NULL) {
+        return -1;
+    }
+
+    if (pair_count == 0) {
+        *result = NULL;
+        *result_count = 0;
+        return 0;
+    }
+
+    if (pair_count > SIZE_MAX / (2 * sizeof(ElementPair))) {
+        return -1;
+    }
+
+    temp = (ElementPair *)malloc(pair_count * 2 * sizeof(ElementPair));
+    if (temp == NULL) {
+        return -1;
+    }
+
+    idx = 0;
+    for (i = 0; i < pair_count; i++) {
+        temp[idx].element = pairs[i].first;
+        temp[idx].paired_with = pairs[i].second;
+        idx++;
+
+        temp[idx].element = pairs[i].second;
+        temp[idx].paired_with = pairs[i].first;
+        idx++;
+    }
+
+    *result = temp;
+    *result_count = idx;
+    return 0;
+}
+
+int main(void) {
+    Pair pairs[] = {{1, 2}, {3, 4}, {5, 6}};
+    size_t pair_count = sizeof(pairs) / sizeof(pairs[0]);
+    ElementPair *result = NULL;
+    size_t result_count = 0;
+    size_t i;
+    int status;
+
+    status = assign_pair_elements(pairs, pair_count, &result, &result_count);
+    if (status != 0) {
+        fprintf(stderr, "Error: Failed to assign pair elements\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Element -> Paired With\n");
+    printf("----------------------\n");
+    for (i = 0; i < result_count; i++) {
+        printf("%d -> %d\n", result[i].element, result[i].paired_with);
+    }
+
+    free(result);
+    result = NULL;
+
+    return EXIT_SUCCESS;
+}

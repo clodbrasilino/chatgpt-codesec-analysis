@@ -1,0 +1,52 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+static int sum_of_cubes(unsigned int n, unsigned long long *result)
+{
+    unsigned long long half;
+    unsigned long long temp;
+
+    if (result == NULL) {
+        return -1;
+    }
+
+    if (n == 0U) {
+        *result = 0ULL;
+        return 0;
+    }
+
+    half = ((unsigned long long)n * ((unsigned long long)n + 1ULL)) / 2ULL;
+
+    if (half != 0ULL && half > (ULLONG_MAX / half)) {
+        return -1;
+    }
+
+    temp = half * half;
+    *result = temp;
+    return 0;
+}
+
+int main(void)
+{
+    unsigned int n = 0U;
+    unsigned long long sum = 0ULL;
+    int scan_result;
+
+    printf("Enter n: ");
+
+    scan_result = scanf("%u", &n);
+    if (scan_result != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (sum_of_cubes(n, &sum) != 0) {
+        fprintf(stderr, "Computation error: overflow or invalid argument\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Sum of series up to %u^3 is %llu\n", n, sum);
+
+    return EXIT_SUCCESS;
+}

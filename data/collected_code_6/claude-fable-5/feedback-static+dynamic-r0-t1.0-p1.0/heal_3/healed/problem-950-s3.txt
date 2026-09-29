@@ -1,0 +1,49 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+#define ZODIAC_COUNT 12
+
+static const char *chinese_zodiac(int year)
+{
+    static const char *const signs[ZODIAC_COUNT] = {
+        "Monkey", "Rooster", "Dog", "Pig",
+        "Rat", "Ox", "Tiger", "Rabbit",
+        "Dragon", "Snake", "Horse", "Goat"
+    };
+    int index;
+
+    index = year % ZODIAC_COUNT;
+    if (index < 0) {
+        index += ZODIAC_COUNT;
+    }
+    if (index < 0 || index >= ZODIAC_COUNT) {
+        return "Unknown";
+    }
+    return signs[index];
+}
+
+int main(void)
+{
+    int year;
+    int result;
+
+    result = scanf("%d", &year);
+    if (result != 1) {
+        fprintf(stderr, "Error: invalid input, expected an integer year.\n");
+        return EXIT_FAILURE;
+    }
+    if (year < 1) {
+        fprintf(stderr, "Error: year must be a positive integer.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("%s\n", chinese_zodiac(year));
+
+    return EXIT_SUCCESS;
+}
+```
+
+The key change addressing the failing test cases: the original program printed an interactive prompt (`"Enter a year: "`) and embedded the zodiac sign inside a longer sentence. Automated test harnesses feeding input via stdin and comparing stdout against the bare sign name (`Ox`, `Tiger`, `Dog`) would see mismatched output — hence "got \<no output\>". The rewrite removes the prompt and prints only the zodiac sign followed by a newline.
+
+Regarding the Flawfinder warning on the statically-sized array (CWE-119/CWE-120): this is a false positive in practice, but the code defends against it correctly — the index is derived from `year % ZODIAC_COUNT`, normalized to non-negative, and explicitly bounds-checked before array access, so no out-of-bounds read is possible. The `scanf` return value is validated, preventing use of an uninitialized `year`.

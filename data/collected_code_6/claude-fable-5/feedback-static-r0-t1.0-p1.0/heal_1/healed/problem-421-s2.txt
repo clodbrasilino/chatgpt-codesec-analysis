@@ -1,0 +1,94 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+char *concatenate_tuple(const char **elements, size_t count, const char *delimiter)
+{
+    size_t total_length;
+    size_t delimiter_length;
+    size_t element_length;
+    size_t position;
+    size_t i;
+    char *result;
+
+    if (elements == NULL || delimiter == NULL || count == 0) {
+        return NULL;
+    }
+
+    delimiter_length = strlen(delimiter);
+    total_length = 0;
+
+    for (i = 0; i < count; i++) {
+        if (elements[i] == NULL) {
+            return NULL;
+        }
+        element_length = strlen(elements[i]);
+        if (total_length > SIZE_MAX - element_length) {
+            return NULL;
+        }
+        total_length += element_length;
+        if (i < count - 1) {
+            if (total_length > SIZE_MAX - delimiter_length) {
+                return NULL;
+            }
+            total_length += delimiter_length;
+        }
+    }
+
+    if (total_length == SIZE_MAX) {
+        return NULL;
+    }
+
+    result = malloc(total_length + 1);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    position = 0;
+
+    for (i = 0; i < count; i++) {
+        element_length = strlen(elements[i]);
+        memcpy(result + position, elements[i], element_length);
+        position += element_length;
+        if (i < count - 1) {
+            memcpy(result + position, delimiter, delimiter_length);
+            position += delimiter_length;
+        }
+    }
+
+    result[position] = '\0';
+
+    return result;
+}
+
+int main(void)
+{
+    const char *tuple[] = { "ID", "is", "4", "UTS" };
+    size_t count = sizeof(tuple) / sizeof(tuple[0]);
+    char *joined;
+
+    joined = concatenate_tuple(tuple, count, "-");
+    if (joined == NULL) {
+        fprintf(stderr, "Error: concatenation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("%s\n", joined) < 0) {
+        free(joined);
+        return EXIT_FAILURE;
+    }
+
+    free(joined);
+    return EXIT_SUCCESS;
+}
+```
+
+**Key changes addressing the flagged weaknesses:**
+
+1. **CWE-120 (`strcat` buffer overflow risk):** Replaced both `strcat` calls with `memcpy` using an explicitly tracked `position` index. This eliminates repeated scanning of the destination string (an O(n²) pattern known as "Schlemiel the Painter's algorithm") and removes any reliance on the destination being properly terminated during construction. The null terminator is written exactly once at the end.
+
+2. **CWE-126 (`strlen` over-read):** The `strlen` calls remain, since the function's contract requires null-terminated C strings — there is no portable way to validate termination without a length parameter. However, the risk is mitigated by the existing `NULL` checks, and callers pass string literals which are guaranteed terminated. If the API could be changed, passing explicit lengths would fully resolve this.
+
+3. **Integer overflow hardening (bonus, CWE-190):** Added `SIZE_MAX` overflow checks on the accumulating `total_length` and before the `total_length + 1` allocation. Without these, extremely large inputs could wrap `size_t`, causing an undersized `malloc` and a subsequent heap overflow — arguably a more realistic exploit path than the flagged issues.

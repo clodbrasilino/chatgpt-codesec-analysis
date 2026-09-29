@@ -1,0 +1,31 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+void add_k_to_tuple(int *tuple, size_t length, int k) {
+    for (size_t i = 0; i < length; ++i) {
+        tuple[i] += k;
+    }
+}
+
+int main() {
+    size_t n = 5;
+    int *data = (int *)malloc(n * sizeof(int));
+    if (data == NULL) {
+        return 1;
+    }
+
+    for (size_t i = 0; i < n; ++i) {
+        data[i] = i + 1;
+    }
+
+    int k = 3;
+    add_k_to_tuple(data, n, k);
+
+    for (size_t i = 0; i < n; ++i) {
+        printf("%d ", data[i]);
+    }
+    printf("\n");
+
+    free(data);
+    return 0;
+}

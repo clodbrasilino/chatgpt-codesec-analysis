@@ -1,0 +1,99 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+#include <errno.h>
+#include <float.h>
+#include <math.h>
+
+#define NUMBER_BUFFER_SIZE 64
+
+static int extract_max_number(const char *input, double *result)
+{
+    regex_t regex;
+    regmatch_t match;
+    const char *cursor;
+    double max_value;
+    int found;
+    int ret;
+
+    if (input == NULL || result == NULL) {
+        return -1;
+    }
+
+    ret = regcomp(&regex, "-?[0-9]+(\\.[0-9]+)?", REG_EXTENDED);
+    if (ret != 0) {
+        return -1;
+    }
+
+    cursor = input;
+    found = 0;
+    max_value = -DBL_MAX;
+
+    while (regexec(&regex, cursor, 1, &match, 0) == 0) {
+        size_t len = (size_t)(match.rm_eo - match.rm_so);
+
+        if (len > 0 && len < NUMBER_BUFFER_SIZE) {
+            char buffer[NUMBER_BUFFER_SIZE];
+            char *endptr = NULL;
+            double value;
+
+            memcpy(buffer, cursor + match.rm_so, len);
+            buffer[len] = '\0';
+
+            errno = 0;
+            value = strtod(buffer, &endptr);
+            if (errno == 0 && endptr != buffer && isfinite(value)) {
+                if (!found || value > max_value) {
+                    max_value = value;
+                    found = 1;
+                }
+            }
+        }
+
+        if (match.rm_eo == 0) {
+            break;
+        }
+        cursor += match.rm_eo;
+    }
+
+    regfree(&regex);
+
+    if (!found) {
+        return -1;
+    }
+
+    *result = max_value;
+    return 0;
+}
+
+int main(void)
+{
+    const char *test = "Values: 42, -17, 3.14, 1000.5, and 999";
+    double max_value = 0.0;
+
+    if (extract_max_number(test, &max_value) != 0) {
+        if (fprintf(stderr, "No numeric value found\n") < 0) {
+            return EXIT_FAILURE;
+        }
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Maximum value: %g\n", max_value) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Key changes made:**
+
+1. **Buffer safety (CWE-119/CWE-120):** Instead of truncating oversized matches (which silently corrupts the parsed value — e.g. truncating `"12345...678"` to a smaller number and comparing garbage), matches with `len >= NUMBER_BUFFER_SIZE` are now **skipped entirely**. The `memcpy` is only reached when `len < NUMBER_BUFFER_SIZE` is proven, so the destination (including the null terminator) can always hold the source data. A named constant `NUMBER_BUFFER_SIZE` replaces the magic number.
+
+2. **Variable scope reduction (cppcheck `variableScope`):** `value`, `len`, `endptr`, and `buffer` itself are now declared inside the loop body where they are actually used, minimizing their lifetime and preventing accidental reuse of stale values across iterations.
+
+3. **Zero-length match guard:** The `len > 0` check avoids processing empty matches, complementing the existing `match.rm_eo == 0` infinite-loop guard.
+
+4. **Minor hardening:** `extract_max_number` is declared `static` (internal linkage), `endptr` and `max_value` are initialized, and the `fprintf` return value is checked for consistency with the `printf` check.

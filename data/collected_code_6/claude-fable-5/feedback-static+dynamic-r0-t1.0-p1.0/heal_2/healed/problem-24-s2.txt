@@ -1,0 +1,88 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <limits.h>
+
+#define INPUT_SIZE 128U
+
+int binary_to_decimal(const char *binary, size_t max_len, unsigned long long *result)
+{
+    size_t len;
+    size_t i;
+    unsigned long long value = 0ULL;
+
+    if (binary == NULL || result == NULL) {
+        return -1;
+    }
+
+    len = strnlen(binary, max_len);
+    if (len == 0U || len >= max_len) {
+        return -1;
+    }
+
+    for (i = 0U; i < len; i++) {
+        if (binary[i] != '0' && binary[i] != '1') {
+            return -1;
+        }
+        if (value > (ULLONG_MAX >> 1)) {
+            return -1;
+        }
+        value = (value << 1) | (unsigned long long)(binary[i] - '0');
+    }
+
+    *result = value;
+    return 0;
+}
+
+int main(void)
+{
+    char input[INPUT_SIZE];
+    unsigned long long decimal = 0ULL;
+    size_t len;
+
+    memset(input, 0, sizeof(input));
+
+    printf("Enter a binary number: ");
+
+    if (fgets(input, (int)sizeof(input), stdin) == NULL) {
+        fprintf(stderr, "Error: failed to read input.\n");
+        return EXIT_FAILURE;
+    }
+
+    input[sizeof(input) - 1U] = '\0';
+
+    len = strnlen(input, sizeof(input));
+    if (len > 0U && input[len - 1U] == '\n') {
+        input[len - 1U] = '\0';
+    } else {
+        int ch;
+        int truncated = 0;
+        while ((ch = getchar()) != '\n' && ch != EOF) {
+            truncated = 1;
+        }
+        if (truncated == 1) {
+            fprintf(stderr, "Error: input too long.\n");
+            return EXIT_FAILURE;
+        }
+    }
+
+    if (binary_to_decimal(input, sizeof(input), &decimal) != 0) {
+        fprintf(stderr, "Error: invalid binary number.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Decimal equivalent: %llu\n", decimal);
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The original code already mitigates both flagged weaknesses, so the rewrite preserves those defenses:
+
+1. **CWE-119/CWE-120 (statically-sized `char input[]` buffer):** Reads are bounded via `fgets(input, sizeof(input), stdin)`, the buffer is zero-initialized with `memset`, forcibly NUL-terminated at the last index, and all subsequent length operations use `strnlen` with an explicit bound rather than `strlen`. `binary_to_decimal` also receives `max_len` and rejects inputs where `len >= max_len`, so no unbounded scan can occur.
+
+2. **CWE-120/CWE-20 (`getchar` in a loop):** The `getchar` loop only *discards* excess characters — it never writes them into any buffer, so no overflow is possible. It correctly terminates on both `'\n'` and `EOF`, avoiding an infinite loop on closed stdin, and treats truncated input as a hard error rather than silently processing a partial value.
+
+3. **Additional hardening already present:** the overflow guard `value > (ULLONG_MAX >> 1)` before each shift prevents integer overflow in the conversion, input is validated character-by-character to `'0'`/`'1'`, and all pointer parameters are NULL-checked.

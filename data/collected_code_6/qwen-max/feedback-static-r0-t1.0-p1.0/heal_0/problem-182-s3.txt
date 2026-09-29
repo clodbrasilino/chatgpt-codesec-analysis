@@ -1,0 +1,44 @@
+```c
+#include <stdio.h>
+#include <regex.h>
+
+void find_characters(const char *str) {
+    regex_t regex_uppercase;
+    regex_t regex_lowercase;
+    regex_t regex_special;
+    regex_t regex_numeric;
+
+    if (regcomp(&regex_uppercase, "[A-Z]", REG_EXTENDED) != 0) return;
+    if (regcomp(&regex_lowercase, "[a-z]", REG_EXTENDED) != 0) return;
+    if (regcomp(&regex_special, "[^A-Za-z0-9]", REG_EXTENDED) != 0) return;
+    if (regcomp(&regex_numeric, "[0-9]", REG_EXTENDED) != 0) return;
+
+    int uppercase = regexec(&regex_uppercase, str, 0, NULL, 0);
+    int lowercase = regexec(&regex_lowercase, str, 0, NULL, 0);
+    int special = regexec(&regex_special, str, 0, NULL, 0);
+    int numeric = regexec(&regex_numeric, str, 0, NULL, 0);
+
+    if (uppercase == 0) printf("Uppercase: Yes\n");
+    else printf("Uppercase: No\n");
+
+    if (lowercase == 0) printf("Lowercase: Yes\n");
+    else printf("Lowercase: No\n");
+
+    if (special == 0) printf("Special: Yes\n");
+    else printf("Special: No\n");
+
+    if (numeric == 0) printf("Numeric: Yes\n");
+    else printf("Numeric: No\n");
+
+    regfree(&regex_uppercase);
+    regfree(&regex_lowercase);
+    regfree(&regex_special);
+    regfree(&regex_numeric);
+}
+
+int main() {
+    const char *input = "HelloWorld123!";
+    find_characters(input);
+    return 0;
+}
+```

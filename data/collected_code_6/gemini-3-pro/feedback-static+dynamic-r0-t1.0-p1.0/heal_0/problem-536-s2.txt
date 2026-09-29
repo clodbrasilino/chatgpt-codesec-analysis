@@ -1,0 +1,88 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node* next;
+} Node;
+
+Node* createNode(int data) {
+    Node* newNode = (Node*)malloc(sizeof(Node));
+    if (newNode == NULL) {
+        exit(EXIT_FAILURE);
+    }
+    newNode->data = data;
+    newNode->next = NULL;
+    return newNode;
+}
+
+void appendNode(Node** head, int data) {
+    if (head == NULL) {
+        return;
+    }
+    Node* newNode = createNode(data);
+    if (*head == NULL) {
+        *head = newNode;
+        return;
+    }
+    Node* temp = *head;
+    while (temp->next != NULL) {
+        temp = temp->next;
+    }
+    temp->next = newNode;
+}
+
+void freeList(Node* head) {
+    Node* temp;
+    while (head != NULL) {
+        temp = head;
+        head = head->next;
+        free(temp);
+    }
+}
+
+Node* selectNthNodes(Node* head, int n) {
+    if (head == NULL || n <= 0) {
+        return NULL;
+    }
+
+    Node* resultHead = NULL;
+    Node* current = head;
+    int count = 1;
+
+    while (current != NULL) {
+        if (count % n == 0) {
+            appendNode(&resultHead, current->data);
+        }
+        current = current->next;
+        count++;
+    }
+
+    return resultHead;
+}
+
+int main(void) {
+    Node* head = NULL;
+    Node* result = NULL;
+    Node* temp = NULL;
+
+    for (int i = 1; i <= 10; i++) {
+        appendNode(&head, i);
+    }
+
+    result = selectNthNodes(head, 3);
+
+    temp = result;
+    while (temp != NULL) {
+        printf("%d ", temp->data);
+        temp = temp->next;
+    }
+    printf("\n");
+
+    freeList(head);
+    freeList(result);
+
+    return 0;
+}
+```

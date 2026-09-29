@@ -1,0 +1,50 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <string.h>
+
+void findNextPalindrome(char *num) {
+    int length = strlen(num);
+    bool isPalindrome = true;
+    for(int i = 0; i < length / 2; i++) {
+        if(num[i] != num[length - 1 - i]) {
+            isPalindrome = false;
+            break;
+        }
+    }
+    if(!isPalindrome) {
+        int mid = length / 2;
+        bool leftSmaller = false;
+        int i = mid - 1;
+        int j = (length % 2) ? mid + 1 : mid;
+        while(i >= 0 && num[i] == num[j]) i--, j++;
+        if(i < 0 || num[i] < num[j]) leftSmaller = true;
+        while(i >= 0) {
+            num[j++] = num[i--];
+        }
+        if(leftSmaller) {
+            int carry = 1;
+            i = mid - 1;
+            if(length % 2 == 1) {
+                num[mid] += carry;
+                carry = num[mid] / 10;
+                num[mid] %= 10;
+                j = mid + 1;
+            } else j = mid;
+            while(i >= 0) {
+                num[i] += carry;
+                carry = num[i] / 10;
+                num[i] %= 10;
+                num[j++] = num[i--];
+            }
+        }
+    } else {
+        printf("%s\n", num);
+    }
+}
+
+int main() {
+    char number[100] = "1234321";
+    findNextPalindrome(number);
+    printf("%s\n", number);
+    return 0;
+}

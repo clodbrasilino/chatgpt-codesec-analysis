@@ -1,0 +1,98 @@
+./collected_code_3/round1/heal_3/healed/problem-108.c: In function 'minHeapify':
+./collected_code_3/round1/heal_3/healed/problem-108.c:25:32: warning: use of uninitialized value '*arr_41(D) + _14' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   25 |     if (right < heapSize && arr[right] != NULL && arr[right]->val < arr[smallest]->val)
+      |                             ~~~^~~~~~~
+  'main': events 1-2
+    |
+    |   78 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   89 |     mergeSortedArrays(arr, size, n);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) calling 'mergeSortedArrays' from 'main'
+    |
+    +--> 'mergeSortedArrays': events 3-17
+           |
+           |   40 | void mergeSortedArrays(int **arr, int *size, int n) {
+           |      |      ^~~~~~~~~~~~~~~~~
+           |      |      |
+           |      |      (3) entry to 'mergeSortedArrays'
+           |   41 |     Node **heapArr = (Node **)malloc(sizeof(Node *) * n);
+           |      |                               ~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                               |
+           |      |                               (4) region created on heap here
+           |   42 |     if (!heapArr) exit(1);
+           |      |        ~
+           |      |        |
+           |      |        (5) following 'false' branch (when 'heapArr' is non-NULL)...
+           |......
+           |   45 |     for (i = 0; i < n; ++i) {
+           |      |          ~~~~~  ~~~~~
+           |      |            |      |
+           |      |            |      (7) following 'true' branch (when 'i < n')...
+           |      |            |      (11) following 'true' branch (when 'i < n')...
+           |      |            |      (15) following 'false' branch (when 'i >= n')...
+           |      |            (6) ...to here
+           |   46 |         Node *node = (Node *)malloc(sizeof(Node));
+           |      |                              ~~~~~~~~~~~~~~~~~~~~
+           |      |                              |
+           |      |                              (8) ...to here
+           |      |                              (12) ...to here
+           |   47 |         if (!node) exit(1);
+           |      |            ~
+           |      |            |
+           |      |            (9) following 'false' branch (when 'node' is non-NULL)...
+           |      |            (13) following 'false' branch (when 'node' is non-NULL)...
+           |   48 | 
+           |   49 |         node->val = arr[i][0];
+           |      |                        ~
+           |      |                        |
+           |      |                        (10) ...to here
+           |      |                        (14) ...to here
+           |......
+           |   55 |     buildMinHeap(heapArr, n);
+           |      |     ~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |     |
+           |      |     (16) ...to here
+           |      |     (17) calling 'buildMinHeap' from 'mergeSortedArrays'
+           |
+           +--> 'buildMinHeap': events 18-21
+                  |
+                  |   34 | void buildMinHeap(Node **arr, int n) {
+                  |      |      ^~~~~~~~~~~~
+                  |      |      |
+                  |      |      (18) entry to 'buildMinHeap'
+                  |   35 |     int i;
+                  |   36 |     for (i = (n - 2) / 2; i >= 0; --i)
+                  |      |                           ~~~~~~
+                  |      |                             |
+                  |      |                             (19) following 'true' branch (when 'i >= 0')...
+                  |   37 |         minHeapify(arr, i, n);
+                  |      |         ~~~~~~~~~~~~~~~~~~~~~
+                  |      |         |
+                  |      |         (20) ...to here
+                  |      |         (21) calling 'minHeapify' from 'buildMinHeap'
+                  |
+                  +--> 'minHeapify': events 22-27
+                         |
+                         |   17 | void minHeapify(Node **arr, int i, int heapSize) {
+                         |      |      ^~~~~~~~~~
+                         |      |      |
+                         |      |      (22) entry to 'minHeapify'
+                         |......
+                         |   22 |     if (left < heapSize && arr[left]->val < arr[smallest]->val)
+                         |      |        ~                      ~
+                         |      |        |                      |
+                         |      |        |                      (24) ...to here
+                         |      |        (23) following 'true' branch (when 'left < heapSize')...
+                         |......
+                         |   25 |     if (right < heapSize && arr[right] != NULL && arr[right]->val < arr[smallest]->val)
+                         |      |        ~                    ~~~~~~~~~~
+                         |      |        |                       |
+                         |      |        |                       (26) ...to here
+                         |      |        |                       (27) use of uninitialized value '*arr_41(D) + _14' here
+                         |      |        (25) following 'true' branch (when 'right < heapSize')...
+                         |

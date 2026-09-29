@@ -1,0 +1,31 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+void remove_parenthesis(char *str) {
+    char *src, *dst;
+    int level = 0;
+
+    for (src = dst = str; *src != '\0'; src++) {
+        if (*src == '(') {
+            level++;
+            continue;
+        } else if (*src == ')') {
+            if (level > 0)
+                level--;
+            continue;
+        }
+
+        if (level == 0) {
+            *dst++ = *src;
+        }
+    }
+    *dst = '\0';
+}
+
+int main() {
+    char input[] = "This is a (test) string with (multiple) parenthesis.";
+    remove_parenthesis(input);
+    printf("%s\n", input);
+    return 0;
+}

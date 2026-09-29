@@ -1,0 +1,80 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct Tuple {
+    int first;
+    int second;
+} Tuple;
+
+typedef struct Set {
+    Tuple *items;
+    size_t count;
+    size_t capacity;
+} Set;
+
+Set* createSet(size_t initialCapacity) {
+    Set *set = (Set *)malloc(sizeof(Set));
+    if (set == NULL) {
+        exit(EXIT_FAILURE);
+    }
+    set->items = (Tuple *)malloc(initialCapacity * sizeof(Tuple));
+    if (set->items == NULL) {
+        free(set);
+        exit(EXIT_FAILURE);
+    }
+    set->count = 0;
+    set->capacity = initialCapacity;
+    return set;
+}
+
+int tupleExists(Set *set, Tuple tuple) {
+    for (size_t i = 0; i < set->count; ++i) {
+        if (tuple.first == set->items[i].first && tuple.second == set->items[i].second) {
+            return 1;
+        }
+    }
+    return 0;
+}
+
+void addTupleToSet(Set *set, Tuple tuple) {
+    if (set->count >= set->capacity) {
+        set->capacity *= 2;
+        set->items = (Tuple *)realloc(set->items, set->capacity * sizeof(Tuple));
+        if (set->items == NULL) {
+            free(set);
+            exit(EXIT_FAILURE);
+        }
+    }
+    if (!tupleExists(set, tuple)) {
+        set->items[set->count++] = tuple;
+    }
+}
+
+void printSet(Set *set) {
+    printf("Set: { ");
+    for (size_t i = 0; i < set->count; ++i) {
+        printf("(%d, %d) ", set->items[i].first, set->items[i].second);
+    }
+    printf("}\n");
+}
+
+void deleteSet(Set *set) {
+    free(set->items);
+    free(set);
+}
+
+int main(void) {
+    Set *set = createSet(4);
+
+    Tuple tuples[] = {{1, 2}, {3, 4}, {1, 2}, {5, 6}};
+    for (size_t i = 0; i < sizeof(tuples) / sizeof(tuples[0]); ++i) {
+        addTupleToSet(set, tuples[i]);
+    }
+
+    printSet(set);
+
+    deleteSet(set);
+
+    return 0;
+}

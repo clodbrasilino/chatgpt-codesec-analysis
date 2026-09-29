@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_4/healed/problem-421-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_4/healed/problem-421-s2.c:76:81: style: Condition 'delim_length<=remaining' is always true [knownConditionTrueFalse]
+            if (current + delim_length <= result + total_length && delim_length <= remaining) {
+                                                                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_4/healed/problem-421-s2.c:71:27: note: Assuming that condition 'remaining<delim_length' is not redundant
+            if (remaining < delim_length) {
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_4/healed/problem-421-s2.c:76:81: note: Condition 'delim_length<=remaining' is always true
+            if (current + delim_length <= result + total_length && delim_length <= remaining) {
+                                                                                ^

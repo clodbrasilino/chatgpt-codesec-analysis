@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-972.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-972.c:47:35: style: Condition 'dest_size<src_size' is always false [knownConditionTrueFalse]
+    size_t copy_size = (dest_size < src_size) ? dest_size : src_size;
+                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-972.c:37:23: note: alloc_size is assigned 'sizeof(void*)*size' here.
+    size_t alloc_size = sizeof(void *) * size;
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-972.c:40:9: note: Assuming condition is false
+    if (!tuple->elements) {
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-972.c:45:22: note: dest_size is assigned 'alloc_size' here.
+    size_t dest_size = alloc_size;
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-972.c:46:38: note: Assignment 'src_size=sizeof(void*)*size', assigned value is symbolic=dest_size
+    size_t src_size = sizeof(void *) * size;
+                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-972.c:47:35: note: Condition 'dest_size<src_size' is always false
+    size_t copy_size = (dest_size < src_size) ? dest_size : src_size;
+                                  ^

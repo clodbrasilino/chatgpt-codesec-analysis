@@ -1,0 +1,89 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <limits.h>
+#include <float.h>
+
+typedef enum {
+    TYPE_INT,
+    TYPE_FLOAT,
+    TYPE_DOUBLE,
+    TYPE_CHAR
+} DataType;
+
+typedef struct {
+    DataType type;
+    union {
+        int i;
+        float f;
+        double d;
+        char c;
+    } value;
+} HeterogeneousElement;
+
+int find_minimum(const HeterogeneousElement *list, size_t size, double *result) {
+    if (list == NULL || result == NULL || size == 0) {
+        return -1;
+    }
+    
+    double min_value = DBL_MAX;
+    int found = 0;
+    
+    for (size_t i = 0; i < size; i++) {
+        double current_value;
+        
+        switch (list[i].type) {
+            case TYPE_INT:
+                current_value = (double)list[i].value.i;
+                break;
+            case TYPE_FLOAT:
+                current_value = (double)list[i].value.f;
+                break;
+            case TYPE_DOUBLE:
+                current_value = list[i].value.d;
+                break;
+            case TYPE_CHAR:
+                current_value = (double)list[i].value.c;
+                break;
+            default:
+                continue;
+        }
+        
+        if (!found || current_value < min_value) {
+            min_value = current_value;
+            found = 1;
+        }
+    }
+    
+    if (!found) {
+        return -1;
+    }
+    
+    *result = min_value;
+    return 0;
+}
+
+int main(void) {
+    HeterogeneousElement list[] = {
+        {TYPE_INT, .value.i = 42},
+        {TYPE_FLOAT, .value.f = 3.14f},
+        {TYPE_DOUBLE, .value.d = -7.5},
+        {TYPE_CHAR, .value.c = 'A'},
+        {TYPE_INT, .value.i = -100},
+        {TYPE_DOUBLE, .value.d = 2.718}
+    };
+    
+    size_t size = sizeof(list) / sizeof(list[0]);
+    double minimum;
+    
+    if (find_minimum(list, size, &minimum) == 0) {
+        printf("Minimum value: %f\n", minimum);
+    } else {
+        fprintf(stderr, "Error: Could not find minimum value\n");
+        return EXIT_FAILURE;
+    }
+    
+    return EXIT_SUCCESS;
+}
+```

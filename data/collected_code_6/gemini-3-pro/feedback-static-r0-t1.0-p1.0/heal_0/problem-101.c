@@ -1,0 +1,30 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int find_kth_element(const int *array, size_t size, size_t k, int *result) {
+    if (array == NULL || result == NULL) {
+        return -1;
+    }
+    
+    if (k >= size) {
+        return -1;
+    }
+    
+    *result = array[k];
+    return 0;
+}
+
+int main(void) {
+    int array[] = {10, 20, 30, 40, 50};
+    size_t size = sizeof(array) / sizeof(array[0]);
+    size_t k = 2;
+    int result = 0;
+    
+    if (find_kth_element(array, size, k, &result) == 0) {
+        printf("%d\n", result);
+    } else {
+        printf("Error: Invalid input or k out of bounds.\n");
+    }
+    
+    return EXIT_SUCCESS;
+}

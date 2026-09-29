@@ -1,0 +1,36 @@
+#include <stdio.h>
+#include <limits.h>
+#include <stdbool.h>
+
+bool get_closest_smaller(int n, int *result) {
+    if (result == NULL) {
+        return false;
+    }
+    
+    if (n == INT_MIN) {
+        return false;
+    }
+    
+    *result = n - 1;
+    return true;
+}
+
+int main(void) {
+    int target = 10;
+    int closest_smaller = 0;
+
+    if (get_closest_smaller(target, &closest_smaller)) {
+        printf("%d\n", closest_smaller);
+    } else {
+        printf("Error: Could not compute closest smaller number.\n");
+    }
+
+    target = INT_MIN;
+    if (get_closest_smaller(target, &closest_smaller)) {
+        printf("%d\n", closest_smaller);
+    } else {
+        printf("Error: Could not compute closest smaller number.\n");
+    }
+
+    return 0;
+}

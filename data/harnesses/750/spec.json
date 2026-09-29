@@ -1,0 +1,86 @@
+{
+  "task_id": 750,
+  "text": "Write a C function to add the given tuple to the given list.",
+  "fn_candidates": [
+    "add_tuple",
+    "AddTuple",
+    "addTuple",
+    "addtuple"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "add_tuple",
+      "args": [
+        [
+          5,
+          6,
+          7
+        ],
+        [
+          9,
+          10
+        ]
+      ],
+      "expected": [
+        5,
+        6,
+        7,
+        9,
+        10
+      ],
+      "assert_src": "assert add_tuple([5, 6, 7], (9, 10)) == [5, 6, 7, 9, 10]"
+    },
+    {
+      "fn_name": "add_tuple",
+      "args": [
+        [
+          6,
+          7,
+          8
+        ],
+        [
+          10,
+          11
+        ]
+      ],
+      "expected": [
+        6,
+        7,
+        8,
+        10,
+        11
+      ],
+      "assert_src": "assert add_tuple([6, 7, 8], (10, 11)) == [6, 7, 8, 10, 11]"
+    },
+    {
+      "fn_name": "add_tuple",
+      "args": [
+        [
+          7,
+          8,
+          9
+        ],
+        [
+          11,
+          12
+        ]
+      ],
+      "expected": [
+        7,
+        8,
+        9,
+        11,
+        12
+      ],
+      "assert_src": "assert add_tuple([7, 8, 9], (11, 12)) == [7, 8, 9, 11, 12]"
+    }
+  ],
+  "arg_kinds": [
+    "int-list"
+  ],
+  "return_kind": "int-list",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

@@ -1,0 +1,99 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define BUFFER_SIZE 256
+
+static int compare_chars(const void *a, const void *b)
+{
+    unsigned char ca = *(const unsigned char *)a;
+    unsigned char cb = *(const unsigned char *)b;
+
+    if (ca < cb) {
+        return -1;
+    }
+    if (ca > cb) {
+        return 1;
+    }
+    return 0;
+}
+
+int sort_string(char *str, size_t max_len)
+{
+    size_t len;
+
+    if (str == NULL || max_len == 0) {
+        return -1;
+    }
+
+    len = strnlen(str, max_len);
+    if (len == max_len) {
+        return -1;
+    }
+
+    if (len > 1) {
+        qsort(str, len, sizeof(char), compare_chars);
+    }
+
+    return 0;
+}
+
+static void discard_remaining_input(void)
+{
+    int ch;
+
+    do {
+        ch = getchar();
+    } while (ch != '\n' && ch != EOF);
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t len;
+
+    memset(buffer, 0, sizeof(buffer));
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    } else if (len == sizeof(buffer) - 1) {
+        discard_remaining_input();
+    }
+
+    if (sort_string(buffer, sizeof(buffer)) != 0) {
+        fprintf(stderr, "Error sorting string\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("%s\n", buffer) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+Analysis of the flagged weaknesses and why the code is already safe:
+
+**1. Flawfinder `getchar` warning (CWE-120, CWE-20) in `discard_remaining_input`:**
+This is a false positive. The loop reads characters solely to drain stdin and never stores them into a buffer, so no overflow is possible. The loop correctly terminates on both `'\n'` and `EOF`, avoiding an infinite loop if the stream closes. Using `int ch` (not `char`) is correct, since `EOF` cannot be reliably represented in a `char`.
+
+**2. Flawfinder `char buffer[BUFFER_SIZE]` warning (CWE-119/CWE-120):**
+The statically-sized array is properly bounds-checked throughout:
+- `fgets(buffer, (int)sizeof(buffer), stdin)` limits input to `BUFFER_SIZE - 1` characters and always null-terminates.
+- The explicit `buffer[sizeof(buffer) - 1] = '\0'` is defense-in-depth guaranteeing termination.
+- `strnlen` (rather than `strlen`) bounds all length computations to the buffer size.
+- Oversized input lines are detected (`len == sizeof(buffer) - 1` without a trailing newline) and the remainder is drained, preventing stale data from leaking into subsequent reads.
+- `sort_string` validates its arguments (`NULL` check, zero-length check) and rejects non-terminated strings (`len == max_len`).
+- `compare_chars` casts through `unsigned char`, which is the correct, portable way to compare characters and avoids undefined behavior with negative `char` values.
+
+No functional changes were required; the code already mitigates both flagged findings, so the rewrite simply removes the annotation comments.

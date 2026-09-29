@@ -1,0 +1,15 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-319-s3.c: In function 'find_five_char_words':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-319-s3.c:23:38: error: passing argument 4 of 'regerror' makes integer from pointer without a cast [-Wint-conversion]
+   23 |         regerror(reti, &regex, NULL, &msgbuf_size);
+      |                                      ^~~~~~~~~~~~
+      |                                      |
+      |                                      size_t * {aka long unsigned int *}
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-319-s3.c:23:38: note: possible fix: dereference with '*'
+   23 |         regerror(reti, &regex, NULL, &msgbuf_size);
+      |                                      ^~~~~~~~~~~~
+      |                                      *
+In file included from /Library/Developer/CommandLineTools/SDKs/MacOSX15.sdk/usr/include/regex.h:89,
+                 from /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-319-s3.c:3:
+/Library/Developer/CommandLineTools/SDKs/MacOSX15.sdk/usr/include/_regex.h:213:103: note: expected 'size_t' {aka 'long unsigned int'} but argument is of type 'size_t *' {aka 'long unsigned int *'}
+  213 | size_t  regerror(int, const regex_t * __restrict, char *_LIBC_COUNT(__errbuf_size) __restrict, size_t __errbuf_size) __cold;
+      |                                                                                                ~~~~~~~^~~~~~~~~~~~~

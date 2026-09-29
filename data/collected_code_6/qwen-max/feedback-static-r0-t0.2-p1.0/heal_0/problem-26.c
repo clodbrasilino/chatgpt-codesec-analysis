@@ -1,0 +1,33 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *elements;
+    size_t count;
+} Tuple;
+
+int check_k_elements(Tuple t, int k) {
+    if (t.count != k) {
+        return 0;
+    }
+    for (size_t i = 0; i < t.count; ++i) {
+        if (t.elements[i] == 0) {
+            return 0;
+        }
+    }
+    return 1;
+}
+
+int main() {
+    int elements[] = {1, 2, 3};
+    Tuple t = {elements, 3};
+    int k = 3;
+
+    if (check_k_elements(t, k)) {
+        printf("All %d elements are present.\n", k);
+    } else {
+        printf("Not all %d elements are present.\n", k);
+    }
+
+    return 0;
+}

@@ -1,0 +1,63 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <limits.h>
+
+size_t count_char_in_repeated_string(const char *str, size_t str_len, char c, size_t n) {
+    if (str == NULL) {
+        return 0;
+    }
+
+    if (str_len == 0) {
+        return 0;
+    }
+
+    size_t count_single = 0;
+    for (size_t i = 0; i < str_len; i++) {
+        if (str[i] == c) {
+            count_single++;
+        }
+    }
+
+    if (n <= (SIZE_MAX / str_len)) {
+        size_t full_repeats = n / str_len;
+        size_t remainder = n % str_len;
+
+        size_t total_count = count_single * full_repeats;
+
+        for (size_t i = 0; i < remainder; i++) {
+            if (str[i] == c) {
+                total_count++;
+            }
+        }
+
+        return total_count;
+    } else {
+        size_t i = 0;
+        size_t total_count = 0;
+        while (i < n) {
+            for (size_t j = 0; j < str_len && i < n; j++) {
+                if (str[j] == c) {
+                    total_count++;
+                }
+                i++;
+            }
+        }
+        return total_count;
+    }
+}
+
+int main(void) {
+    const char *str = "abc";
+    char c = 'a';
+    size_t n = 10;
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    size_t len = strlen(str);
+
+    size_t count = count_char_in_repeated_string(str, len, c, n);
+    printf("%zu\n", count);
+
+    return 0;
+}

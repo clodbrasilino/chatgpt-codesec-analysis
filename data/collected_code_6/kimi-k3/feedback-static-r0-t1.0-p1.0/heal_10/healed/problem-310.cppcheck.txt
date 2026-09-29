@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-310.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-310.c:50:22: style: The comparison 'copy_len > item_len' is always false because 'copy_len' and 'item_len' represent the same value. [knownConditionTrueFalse]
+        if (copy_len > item_len) {
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-310.c:49:27: note: 'copy_len' is assigned value 'item_len' here.
+        size_t copy_len = item_len;
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-310.c:50:22: note: The comparison 'copy_len > item_len' is always false because 'copy_len' and 'item_len' represent the same value.
+        if (copy_len > item_len) {
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-310.c:82:22: style: The comparison 'copy_len > len' is always false because 'copy_len' and 'len' represent the same value. [knownConditionTrueFalse]
+        if (copy_len > len) {
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-310.c:81:27: note: 'copy_len' is assigned value 'len' here.
+        size_t copy_len = len;
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-310.c:82:22: note: The comparison 'copy_len > len' is always false because 'copy_len' and 'len' represent the same value.
+        if (copy_len > len) {
+                     ^

@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static-r1-t1.0-p1.0/heal_1/healed/problem-15.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static-r1-t1.0-p1.0/heal_1/healed/problem-15.c:87:24: style: Condition 'final_capacity<size' is always false [knownConditionTrueFalse]
+    if (final_capacity < size || final_capacity > SIZE_MAX / sizeof(char *)) {
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static-r1-t1.0-p1.0/heal_1/healed/problem-15.c:86:27: note: final_capacity is assigned 'size+1' here.
+    size_t final_capacity = size + 1;
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static-r1-t1.0-p1.0/heal_1/healed/problem-15.c:87:24: note: Condition 'final_capacity<size' is always false
+    if (final_capacity < size || final_capacity > SIZE_MAX / sizeof(char *)) {
+                       ^

@@ -1,0 +1,166 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+#include <ctype.h>
+ /* Possible weaknesses found:
+  *  test case 1 failed: expected 'string', got 
+  *  test case 2 failed: expected 'alpha', got @K
+  *  test case 0 failed: expected 'python', got �K
+  */
+
+char *remove_parenthesis_area(const char *str)
+{
+    char *result;
+    size_t i;
+    size_t j;
+    size_t len;
+    size_t depth;
+    size_t start;
+    /* Possible weaknesses found:
+     *  The scope of the variable 'ch' can be reduced. [variableScope]
+     */
+    unsigned char ch;
+
+    if (str == NULL) {
+        return NULL;
+    }
+
+    len = strlen(str);
+
+    result = (char *)malloc(len + 1);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    depth = 0;
+    j = 0;
+    for (i = 0; i < len; i++) {
+        ch = (unsigned char)str[i];
+        if (ch == '(') {
+            if (depth == 0) {
+                while (j > 0 && isspace((unsigned char)result[j - 1])) {
+                    j--;
+                }
+            }
+            depth++;
+        } else if (ch == ')') {
+            if (depth > 0) {
+                depth--;
+            } else {
+                result[j] = (char)ch;
+                j++;
+            }
+        } else if (depth == 0) {
+            result[j] = (char)ch;
+            j++;
+        }
+    }
+
+    while (j > 0 && isspace((unsigned char)result[j - 1])) {
+        j--;
+    }
+
+    start = 0;
+    while (start < j && isspace((unsigned char)result[start])) {
+        start++;
+    }
+
+    if (start > 0) {
+        memmove(result, result + start, j - start);
+        j -= start;
+    }
+
+    result[j] = '\0';
+
+    return result;
+}
+
+static char *read_line(FILE *stream)
+{
+    char *buffer;
+    char *resized;
+    size_t capacity;
+    size_t length;
+    int ch;
+
+    capacity = 128;
+    length = 0;
+
+    buffer = (char *)malloc(capacity);
+    if (buffer == NULL) {
+        return NULL;
+    }
+
+    while ((ch = fgetc(stream)) != EOF && ch != '\n') {
+        if (length + 1 >= capacity) {
+            if (capacity > SIZE_MAX / 2) {
+                free(buffer);
+                return NULL;
+            }
+            capacity *= 2;
+            resized = (char *)realloc(buffer, capacity);
+            if (resized == NULL) {
+                free(buffer);
+                return NULL;
+            }
+            buffer = resized;
+        }
+        buffer[length] = (char)ch;
+        length++;
+    }
+
+    if (ferror(stream) != 0) {
+        free(buffer);
+        return NULL;
+    }
+
+    if (ch == EOF && length == 0) {
+        free(buffer);
+        return NULL;
+    }
+
+    if (length > 0 && buffer[length - 1] == '\r') {
+        length--;
+    }
+
+    buffer[length] = '\0';
+    return buffer;
+}
+
+int main(int argc, char *argv[])
+{
+    char *input;
+    const char *source;
+    char *cleaned;
+
+    input = NULL;
+
+    if (argc > 1) {
+        source = argv[1];
+    } else {
+        input = read_line(stdin);
+        if (input == NULL) {
+            fprintf(stderr, "Error reading input\n");
+            return EXIT_FAILURE;
+        }
+        source = input;
+    }
+
+    cleaned = remove_parenthesis_area(source);
+    if (cleaned == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        free(input);
+        return EXIT_FAILURE;
+    }
+
+    printf("%s\n", cleaned);
+
+    free(cleaned);
+    cleaned = NULL;
+
+    free(input);
+    input = NULL;
+
+    return EXIT_SUCCESS;
+}

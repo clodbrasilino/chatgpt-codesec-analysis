@@ -1,0 +1,78 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct ListNode {
+    int data;
+    struct ListNode *next;
+} ListNode;
+
+ListNode* createNode(int data) {
+    ListNode *newNode = (ListNode*)malloc(sizeof(ListNode));
+    if (newNode == NULL) exit(EXIT_FAILURE);
+    newNode->data = data;
+    newNode->next = NULL;
+    return newNode;
+}
+
+void insertNode(ListNode **head, int data) {
+    ListNode *newNode = createNode(data);
+    if (*head == NULL) {
+        *head = newNode;
+    } else {
+        ListNode *temp = *head;
+        while (temp->next != NULL) temp = temp->next;
+        temp->next = newNode;
+    }
+}
+
+void printList(const ListNode *head) {
+    while (head != NULL) {
+        printf("%d ", head->data);
+        head = head->next;
+    }
+    printf("\n");
+}
+
+ListNode* splitNth(ListNode *head, int n) {
+    if (n <= 0 || head == NULL) return head;
+
+    ListNode *firstTail = head, *secondHead = NULL, *secondTail = NULL;
+
+    for (int i = 1; firstTail != NULL && firstTail->next != NULL; i++) {
+        if (i % n == 0) {
+            secondTail = firstTail->next;
+            firstTail->next = secondTail->next;
+            secondTail->next = secondHead;
+            secondHead = secondTail;
+            firstTail = firstTail->next;
+            i = 0;
+        } else {
+            firstTail = firstTail->next;
+        }
+    }
+
+    return secondHead;
+}
+
+int main() {
+    ListNode *head = NULL;
+    for (int i = 1; i <= 10; i++) {
+        insertNode(&head, i);
+    }
+
+    printf("Original list: ");
+    printList(head);
+
+    int n = 3;
+    ListNode *secondList = splitNth(head, n);
+
+    printf("First list: ");
+    printList(head);
+
+    printf("Second list: ");
+    printList(secondList);
+
+    return 0;
+}
+```

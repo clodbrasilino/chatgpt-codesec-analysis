@@ -1,0 +1,34 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+
+char* snake_to_camel(char *snake_str) {
+    char *camel_str = snake_str;
+    int capitalize_next = 0;
+
+    while (*snake_str) {
+        if (*snake_str == '_') {
+            capitalize_next = 1;
+            snake_str++;
+            continue;
+        }
+        if (capitalize_next) {
+            *camel_str = toupper((unsigned char)*snake_str);
+            capitalize_next = 0;
+        } else {
+            *camel_str = *snake_str;
+        }
+        camel_str++;
+        snake_str++;
+    }
+    *camel_str = '\0';
+    return camel_str - (snake_str - snake_case);
+}
+
+int main() {
+    char snake_case[] = "this_is_a_snake_case_string";
+    printf("%s\n", snake_to_camel(snake_case));
+    return 0;
+}
+```

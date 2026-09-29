@@ -1,0 +1,40 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+unsigned long long calculate_combination(int n, int k) {
+    if (k < 0 || k > n) {
+        return 0;
+    }
+    if (k == 0 || k == n) {
+        return 1;
+    }
+    if (k > n / 2) {
+        k = n - k;
+    }
+    
+    unsigned long long result = 1;
+    for (int i = 1; i <= k; i++) {
+        result = result * n;
+        result = result / i;
+        n--;
+    }
+    return result;
+}
+
+unsigned long long sum_of_product_of_binomial_coefficients(int n) {
+    if (n < 0) {
+        return 0;
+    }
+    
+    unsigned long long result = calculate_combination(2 * n, n);
+    return result;
+}
+
+int main() {
+    int n = 5;
+    
+    unsigned long long result = sum_of_product_of_binomial_coefficients(n);
+    printf("%llu\n", result);
+    
+    return 0;
+}

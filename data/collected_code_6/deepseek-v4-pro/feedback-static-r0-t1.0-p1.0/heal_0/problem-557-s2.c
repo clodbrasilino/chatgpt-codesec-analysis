@@ -1,0 +1,44 @@
+#include <stdio.h>
+#include <ctype.h>
+
+void toggle_case(char *str) {
+    if (str == NULL) {
+        return;
+    }
+    
+    while (*str != '\0') {
+        if (isupper((unsigned char)*str)) {
+            *str = tolower((unsigned char)*str);
+        } else if (islower((unsigned char)*str)) {
+            *str = toupper((unsigned char)*str);
+        }
+        str++;
+    }
+}
+
+int main(void) {
+    char str1[] = "Hello, World!";
+    char str2[] = "HELLO world 123";
+    char str3[] = "MiXeD CaSe StRiNg";
+    char str4[] = "";
+    
+    printf("Original: %s\n", str1);
+    toggle_case(str1);
+    printf("Toggled: %s\n\n", str1);
+    
+    printf("Original: %s\n", str2);
+    toggle_case(str2);
+    printf("Toggled: %s\n\n", str2);
+    
+    printf("Original: %s\n", str3);
+    toggle_case(str3);
+    printf("Toggled: %s\n\n", str3);
+    
+    printf("Original: %s\n", str4);
+    toggle_case(str4);
+    printf("Toggled: %s\n\n", str4);
+    
+    toggle_case(NULL);
+    
+    return 0;
+}

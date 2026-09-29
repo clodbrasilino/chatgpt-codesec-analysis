@@ -1,0 +1,22 @@
+#include <stdio.h>
+#include <string.h>
+
+int countSubstringsWithSameFirstAndLastChar(const char *str, size_t len) {
+    int count = 0;
+    for (size_t i = 0; i < len; ++i) {
+        for (size_t j = i; j < len; ++j) {
+            if (str[i] == str[j]) {
+                count++;
+            }
+        }
+    }
+    return count;
+}
+
+int main() {
+    const char input[] = "abcab";
+    size_t input_len = sizeof(input) - 1;
+    int result = countSubstringsWithSameFirstAndLastChar(input, input_len);
+    printf("Number of substrings with the same first and last character: %d\n", result);
+    return 0;
+}

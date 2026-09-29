@@ -1,0 +1,62 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <errno.h>
+#include <limits.h>
+
+char *decimal_to_binary(int num) {
+    unsigned int unum;
+    int bits = sizeof(int) * CHAR_BIT;
+    char *binary;
+    int i;
+    int is_negative = 0;
+
+    if (num < 0) {
+        is_negative = 1;
+        unum = (unsigned int)(-(num + 1)) + 1u;
+    } else {
+        unum = (unsigned int)num;
+    }
+
+    binary = (char *)malloc(bits + 1);
+    if (binary == NULL) {
+        return NULL;
+    }
+
+    for (i = bits - 1; i >= 0; i--) {
+        binary[bits - 1 - i] = ((unum >> i) & 1u) ? '1' : '0';
+    }
+    binary[bits] = '\0';
+
+    if (is_negative) {
+        char *negative_binary = (char *)malloc(bits + 2);
+        if (negative_binary == NULL) {
+            free(binary);
+            return NULL;
+        }
+        negative_binary[0] = '-';
+        memcpy(negative_binary + 1, binary, bits + 1);
+        free(binary);
+        return negative_binary;
+    }
+
+    return binary;
+}
+
+int main(void) {
+    int test_values[] = {0, 1, 2, 5, 10, 42, 255, -1, -2, -42, INT_MAX, INT_MIN};
+    size_t num_tests = sizeof(test_values) / sizeof(test_values[0]);
+    size_t i;
+
+    for (i = 0; i < num_tests; i++) {
+        char *result = decimal_to_binary(test_values[i]);
+        if (result == NULL) {
+            fprintf(stderr, "Memory allocation failed for number %d\n", test_values[i]);
+            return EXIT_FAILURE;
+        }
+        printf("%d in binary: %s\n", test_values[i], result);
+        free(result);
+    }
+
+    return EXIT_SUCCESS;
+}

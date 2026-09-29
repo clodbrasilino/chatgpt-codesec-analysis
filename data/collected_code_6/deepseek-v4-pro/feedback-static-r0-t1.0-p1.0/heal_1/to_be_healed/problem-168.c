@@ -1,0 +1,23 @@
+#include <stdio.h>
+
+/* Possible weaknesses found:
+ *  Parameter 'arr' can be declared as const array [constParameter]
+ */
+int frequency_of_number(int arr[], int size, int target) {
+    int count = 0;
+    for (int i = 0; i < size; i++) {
+        if (arr[i] == target) {
+            count++;
+        }
+    }
+    return count;
+}
+
+int main(void) {
+    int arr[] = {1, 2, 3, 2, 4, 2, 5};
+    int size = sizeof(arr) / sizeof(arr[0]);
+    int target = 2;
+    int freq = frequency_of_number(arr, size, target);
+    printf("Frequency of %d: %d\n", target, freq);
+    return 0;
+}

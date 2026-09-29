@@ -1,0 +1,149 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int value;
+    int count;
+} Element;
+
+typedef struct {
+    int size;
+    int capacity;
+    Element *elements;
+} Heap;
+
+Heap* createHeap(int capacity) {
+    Heap* heap = (Heap*)malloc(sizeof(Heap));
+    if (heap == NULL) exit(EXIT_FAILURE);
+    heap->size = 0;
+    heap->capacity = capacity;
+    heap->elements = (Element*)malloc(capacity * sizeof(Element));
+    if (heap->elements == NULL) exit(EXIT_FAILURE);
+    return heap;
+}
+
+void freeHeap(Heap* heap) {
+    free(heap->elements);
+    free(heap);
+}
+
+void swap(Element *a, Element *b) {
+    Element temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+int parent(int i) { return (i - 1) / 2; }
+int leftChild(int i) { return 2 * i + 1; }
+int rightChild(int i) { return 2 * i + 2; }
+
+void maxHeapify(Heap* heap, int i) {
+    int largest = i;
+    int left = leftChild(i);
+    int right = rightChild(i);
+
+    if (left < heap->size && heap->elements[left].count > heap->elements[largest].count)
+        largest = left;
+    if (right < heap->size && heap->elements[right].count > heap->elements[largest].count)
+        largest = right;
+
+    if (largest != i) {
+        swap(&heap->elements[i], &heap->elements[largest]);
+        maxHeapify(heap, largest);
+    }
+}
+
+void buildMaxHeap(Heap* heap) {
+    for (int i = (heap->size / 2) - 1; i >= 0; i--) {
+        maxHeapify(heap, i);
+    }
+}
+
+void insertHeap(Heap* heap, Element element) {
+    if (heap->size == heap->capacity) return;
+    heap->elements[heap->size] = element;
+    int i = heap->size;
+    heap->size++;
+    while (i != 0 && heap->elements[parent(i)].count < element.count) {
+        heap->elements[i] = heap->elements[parent(i)];
+        i = parent(i);
+    }
+    heap->elements[i] = element;
+}
+
+Element extractMax(Heap* heap) {
+    if (heap->size <= 0) return (Element){0, 0};
+    if (heap->size == 1) {
+        heap->size--;
+        return heap->elements[0];
+    }
+    Element root = heap->elements[0];
+    heap->elements[0] = heap->elements[heap->size - 1];
+    heap->size--;
+    maxHeapify(heap, 0);
+    return root;
+}
+
+int* topKFrequent(const int* nums, int numsSize, int k, int* returnSize) {
+    /* Possible weaknesses found:
+     *  variable 'min' declared const here
+     *  variable 'max' declared const here
+     */
+    const int min = nums[0], max = nums[numsSize - 1];
+    for (int i = 1; i < numsSize; i++) {
+        /* Possible weaknesses found:
+         *  cannot assign to variable 'min' with const-qualified type 'const int'
+         *  assignment of read-only variable 'min'
+         */
+        if (nums[i] < min) min = nums[i];
+        /* Possible weaknesses found:
+         *  assignment of read-only variable 'max'
+         *  cannot assign to variable 'max' with const-qualified type 'const int'
+         */
+        if (nums[i] > max) max = nums[i];
+    }
+    int range = max - min + 1;
+    int* counts = (int*)calloc(range, sizeof(int));
+    if (counts == NULL) exit(EXIT_FAILURE);
+
+    for (int i = 0; i < numsSize; i++) {
+        counts[nums[i] - min]++;
+    }
+
+    Heap* heap = createHeap(k);
+    for (int i = 0; i < range; i++) {
+        if (counts[i] > 0) {
+            Element e = {i + min, counts[i]};
+            if (heap->size < k) {
+                insertHeap(heap, e);
+            } else if (e.count > heap->elements[0].count) {
+                extractMax(heap);
+                insertHeap(heap, e);
+            }
+        }
+    }
+
+    *returnSize = k;
+    int* result = (int*)malloc(k * sizeof(int));
+    if (result == NULL) exit(EXIT_FAILURE);
+    for (int i = 0; i < k; i++) {
+        result[i] = extractMax(heap).value;
+    }
+
+    free(counts);
+    freeHeap(heap);
+    return result;
+}
+
+int main() {
+    const int nums[] = {1, 1, 2, 2, 3, 3, 3, 4, 4, 4, 4};
+    int numsSize = 11;
+    int k = 2;
+    int returnSize;
+    int* result = topKFrequent(nums, numsSize, k, &returnSize);
+    for (int i = 0; i < returnSize; i++) {
+        printf("%d ", result[i]);
+    }
+    free(result);
+    return 0;
+}

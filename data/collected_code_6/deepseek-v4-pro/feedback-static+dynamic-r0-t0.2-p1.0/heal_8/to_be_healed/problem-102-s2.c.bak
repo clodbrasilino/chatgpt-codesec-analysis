@@ -1,0 +1,110 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+char *snake_to_camel(const char *snake) {
+    if (snake == NULL) {
+        return NULL;
+    }
+
+    size_t len = strlen(snake);
+    char *camel = (char *)malloc(len + 1);
+    if (camel == NULL) {
+        return NULL;
+    }
+
+    size_t i = 0, j = 0;
+    int capitalize_next = 1;
+
+    while (snake[i] != '\0') {
+        if (snake[i] == '_') {
+            capitalize_next = 1;
+            i++;
+            continue;
+        }
+
+        if (capitalize_next) {
+            camel[j++] = (char)toupper((unsigned char)snake[i]);
+            capitalize_next = 0;
+        } else {
+            camel[j++] = snake[i];
+        }
+        i++;
+    }
+
+    camel[j] = '\0';
+    return camel;
+}
+
+int main(void) {
+    const char *test1 = "hello_world";
+    const char *test2 = "this_is_a_long_snake_case_string";
+    const char *test3 = "alreadyCamel";
+    const char *test4 = "_leading_underscore";
+    const char *test5 = "trailing_underscore_";
+    const char *test6 = "multiple__underscores";
+    const char *test7 = "";
+
+    char *result;
+
+    result = snake_to_camel(test1);
+    if (result != NULL) {
+        printf("%s -> %s\n", test1, result);
+        free(result);
+    }
+
+    result = snake_to_camel(test2);
+    if (result != NULL) {
+        printf("%s -> %s\n", test2, result);
+        free(result);
+    }
+
+    result = snake_to_camel(test3);
+    if (result != NULL) {
+        printf("%s -> %s\n", test3, result);
+        free(result);
+    }
+
+    result = snake_to_camel(test4);
+    if (result != NULL) {
+        printf("%s -> %s\n", test4, result);
+        free(result);
+    }
+
+    result = snake_to_camel(test5);
+    if (result != NULL) {
+        printf("%s -> %s\n", test5, result);
+        free(result);
+    }
+
+    result = snake_to_camel(test6);
+    if (result != NULL) {
+        printf("%s -> %s\n", test6, result);
+        free(result);
+    }
+
+    result = snake_to_camel(test7);
+    if (result != NULL) {
+        printf("\"%s\" -> \"%s\"\n", test7, result);
+        free(result);
+    }
+
+    const char *null_input = NULL;
+    /* Possible weaknesses found:
+     *  Assignment 'result=snake_to_camel(null_input)', assigned value is 0
+     *  Calling function 'snake_to_camel' returns 0
+     */
+    result = snake_to_camel(null_input);
+    /* Possible weaknesses found:
+     *  Condition 'result==NULL' is always true [knownConditionTrueFalse]
+     *  Condition 'result==NULL' is always true
+     */
+    if (result == NULL) {
+        printf("NULL input handled correctly\n");
+    } else {
+        free(result);
+    }
+
+    return 0;
+}

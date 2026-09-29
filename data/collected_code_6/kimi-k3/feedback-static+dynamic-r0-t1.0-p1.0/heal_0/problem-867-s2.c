@@ -1,0 +1,50 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int addMinToMakeEven(int arr[], int n) {
+    int sum = 0;
+    int min = arr[0];
+    
+    for (int i = 0; i < n; i++) {
+        sum += arr[i];
+        if (arr[i] < min) {
+            min = arr[i];
+        }
+    }
+    
+    if (sum % 2 == 0) {
+        return 0;
+    }
+    
+    if (min % 2 != 0) {
+        return min;
+    }
+    
+    return min + 1;
+}
+
+int main() {
+    int n;
+    
+    if (scanf("%d", &n) != 1 || n <= 0) {
+        return 1;
+    }
+    
+    int *arr = malloc(n * sizeof(int));
+    if (arr == NULL) {
+        return 1;
+    }
+    
+    for (int i = 0; i < n; i++) {
+        if (scanf("%d", &arr[i]) != 1) {
+            free(arr);
+            return 1;
+        }
+    }
+    
+    int result = addMinToMakeEven(arr, n);
+    printf("%d\n", result);
+    
+    free(arr);
+    return 0;
+}

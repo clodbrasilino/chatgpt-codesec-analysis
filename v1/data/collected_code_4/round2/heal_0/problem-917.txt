@@ -1,0 +1,51 @@
+```c
+#include <stdio.h>
+#include <ctype.h>
+#include <stddef.h>
+#include <string.h>
+
+size_t find_seq(const char *str, char *buf, size_t buf_size) {
+    size_t count = 0;
+    size_t i;
+
+    for (i = 0; str[i] != '\0';) {
+        if (isupper((unsigned char)str[i])) {
+            unsigned start = i;
+
+            for (++i; str[i] != '\0' && islower((unsigned char)str[i]); ++i);
+
+            if (start != i - 1) {
+                size_t len = i - start < buf_size ? i - start : buf_size - 1;
+                strncpy(buf, str + start, len);
+                buf[len] = '\0';
+                buf += len + 1;
+
+                buf_size -= len + 1;
+                ++count;
+            }
+        }
+        else {
+            ++i;
+        }
+    }
+
+    return count;
+}
+
+int main(void) {
+    char str[] = "Hello World";
+    char buf[20];
+
+    size_t count = find_seq(str, buf, sizeof(buf));
+
+    printf("Number of sequences = %zu\n", count);
+    printf("Sequences:");
+    for (size_t i = 0, start = 0; i < count; ++i) {
+        printf(" %s", buf + start);
+        start += strlen(buf + start) + 1;
+    }
+    printf("\n");
+
+    return 0;
+}
+```

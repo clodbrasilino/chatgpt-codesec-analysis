@@ -1,0 +1,22 @@
+./collected_code_4/round2//heal_0/problem-217.c: In function 'firstRepeatingChar':
+./collected_code_4/round2//heal_0/problem-217.c:7:24: warning: implicit declaration of function 'calloc' [-Wimplicit-function-declaration]
+    7 |     int* count = (int*)calloc(sizeof(int), NO_OF_CHARS);
+      |                        ^~~~~~
+./collected_code_4/round2//heal_0/problem-217.c:3:1: note: include '<stdlib.h>' or provide a declaration of 'calloc'
+    2 | #include <limits.h>
+  +++ |+#include <stdlib.h>
+    3 | 
+./collected_code_4/round2//heal_0/problem-217.c:7:24: warning: incompatible implicit declaration of built-in function 'calloc' [-Wbuiltin-declaration-mismatch]
+    7 |     int* count = (int*)calloc(sizeof(int), NO_OF_CHARS);
+      |                        ^~~~~~
+./collected_code_4/round2//heal_0/problem-217.c:7:24: note: include '<stdlib.h>' or provide a declaration of 'calloc'
+./collected_code_4/round2//heal_0/problem-217.c:13:13: warning: implicit declaration of function 'free' [-Wimplicit-function-declaration]
+   13 |             free(count);
+      |             ^~~~
+./collected_code_4/round2//heal_0/problem-217.c:13:13: note: include '<stdlib.h>' or provide a declaration of 'free'
+./collected_code_4/round2//heal_0/problem-217.c:13:13: warning: incompatible implicit declaration of built-in function 'free' [-Wbuiltin-declaration-mismatch]
+./collected_code_4/round2//heal_0/problem-217.c:13:13: note: include '<stdlib.h>' or provide a declaration of 'free'
+./collected_code_4/round2//heal_0/problem-217.c:17:5: warning: incompatible implicit declaration of built-in function 'free' [-Wbuiltin-declaration-mismatch]
+   17 |     free(count);
+      |     ^~~~
+./collected_code_4/round2//heal_0/problem-217.c:17:5: note: include '<stdlib.h>' or provide a declaration of 'free'

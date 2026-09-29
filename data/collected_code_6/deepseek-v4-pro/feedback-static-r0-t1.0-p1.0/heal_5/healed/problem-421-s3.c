@@ -1,0 +1,149 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdarg.h>
+#include <stdint.h>
+
+char* concat_elements(const char* delimiter, int count, ...) {
+    if (delimiter == NULL || count <= 0) {
+        return NULL;
+    }
+
+    size_t delim_len = 0;
+    while (delimiter[delim_len] != '\0') {
+        delim_len++;
+        if (delim_len > SIZE_MAX / 2) {
+            return NULL;
+        }
+    }
+
+    va_list args;
+    va_start(args, count);
+
+    size_t total_len = 0;
+
+    for (int i = 0; i < count; i++) {
+        const char* elem = va_arg(args, const char*);
+        if (elem == NULL) {
+            va_end(args);
+            return NULL;
+        }
+
+        size_t elem_len = 0;
+        while (elem[elem_len] != '\0') {
+            elem_len++;
+            if (elem_len > SIZE_MAX / 2) {
+                va_end(args);
+                return NULL;
+            }
+        }
+
+        if (total_len > SIZE_MAX - elem_len) {
+            va_end(args);
+            return NULL;
+        }
+        total_len += elem_len;
+
+        if (i < count - 1) {
+            if (total_len > SIZE_MAX - delim_len) {
+                va_end(args);
+                return NULL;
+            }
+            total_len += delim_len;
+        }
+    }
+
+    va_end(args);
+
+    if (total_len > SIZE_MAX - 1) {
+        return NULL;
+    }
+
+    char* result = (char*)malloc(total_len + 1);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    va_start(args, count);
+
+    char* current = result;
+    for (int i = 0; i < count; i++) {
+        const char* elem = va_arg(args, const char*);
+
+        size_t elem_len = 0;
+        while (elem[elem_len] != '\0') {
+            elem_len++;
+        }
+
+        size_t remaining = total_len - (current - result);
+        if (elem_len > remaining) {
+            free(result);
+            va_end(args);
+            return NULL;
+        }
+
+        size_t j;
+        for (j = 0; j < elem_len; j++) {
+            current[j] = elem[j];
+        }
+        current += elem_len;
+
+        if (i < count - 1) {
+            remaining = total_len - (current - result);
+            if (delim_len > remaining) {
+                free(result);
+                va_end(args);
+                return NULL;
+            }
+
+            for (j = 0; j < delim_len; j++) {
+                current[j] = delimiter[j];
+            }
+            current += delim_len;
+        }
+    }
+    *current = '\0';
+
+    va_end(args);
+    return result;
+}
+
+int main(void) {
+    char* result1 = concat_elements("-", 3, "a", "b", "c");
+    if (result1 != NULL) {
+        printf("%s\n", result1);
+        free(result1);
+    }
+
+    char* result2 = concat_elements(", ", 4, "one", "two", "three", "four");
+    if (result2 != NULL) {
+        printf("%s\n", result2);
+        free(result2);
+    }
+
+    char* result3 = concat_elements("", 3, "x", "y", "z");
+    if (result3 != NULL) {
+        printf("%s\n", result3);
+        free(result3);
+    }
+
+    char* result4 = concat_elements("-", 1, "single");
+    if (result4 != NULL) {
+        printf("%s\n", result4);
+        free(result4);
+    }
+
+    char* result5 = concat_elements(NULL, 3, "a", "b", "c");
+    if (result5 != NULL) {
+        printf("%s\n", result5);
+        free(result5);
+    }
+
+    char* result6 = concat_elements("-", 0);
+    if (result6 != NULL) {
+        printf("%s\n", result6);
+        free(result6);
+    }
+
+    return 0;
+}

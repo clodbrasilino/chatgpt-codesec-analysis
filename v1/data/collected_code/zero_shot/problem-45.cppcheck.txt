@@ -1,0 +1,6 @@
+collected_code/problem-45-0.c:11:21: error: Cannot determine that 'arr[0]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+    int result = arr[0];
+                    ^
+collected_code/problem-45-0.c:13:25: error: Cannot determine that 'arr[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        result = gcd(arr[i], result);
+                        ^

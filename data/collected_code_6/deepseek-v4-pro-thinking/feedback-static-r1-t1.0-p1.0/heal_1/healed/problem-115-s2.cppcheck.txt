@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_1/healed/problem-115-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_1/healed/problem-115-s2.c:35:42: style: Condition 'all_dictionaries_empty(null_dictionaries,zero)' is always true [knownConditionTrueFalse]
+    printf("%s\n", all_dictionaries_empty(null_dictionaries, zero) ? "true" : "false");
+                                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_1/healed/problem-115-s2.c:35:42: note: Calling function 'all_dictionaries_empty' returns 1
+    printf("%s\n", all_dictionaries_empty(null_dictionaries, zero) ? "true" : "false");
+                                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_1/healed/problem-115-s2.c:35:42: note: Condition 'all_dictionaries_empty(null_dictionaries,zero)' is always true
+    printf("%s\n", all_dictionaries_empty(null_dictionaries, zero) ? "true" : "false");
+                                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_1/healed/problem-115-s2.c:36:42: style: Condition 'all_dictionaries_empty(null_dictionaries,one)' is always false [knownConditionTrueFalse]
+    printf("%s\n", all_dictionaries_empty(null_dictionaries, one) ? "true" : "false");
+                                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_1/healed/problem-115-s2.c:36:42: note: Calling function 'all_dictionaries_empty' returns 0
+    printf("%s\n", all_dictionaries_empty(null_dictionaries, one) ? "true" : "false");
+                                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_1/healed/problem-115-s2.c:36:42: note: Condition 'all_dictionaries_empty(null_dictionaries,one)' is always false
+    printf("%s\n", all_dictionaries_empty(null_dictionaries, one) ? "true" : "false");
+                                         ^

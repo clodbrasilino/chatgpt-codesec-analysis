@@ -1,0 +1,44 @@
+{
+  "task_id": 360,
+  "text": "Write a C function to find the n\u2019th carol number.",
+  "fn_candidates": [
+    "get_carol",
+    "GetCarol",
+    "getCarol",
+    "getcarol"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "get_carol",
+      "args": [
+        2
+      ],
+      "expected": 7,
+      "assert_src": "assert get_carol(2) == 7"
+    },
+    {
+      "fn_name": "get_carol",
+      "args": [
+        4
+      ],
+      "expected": 223,
+      "assert_src": "assert get_carol(4) == 223"
+    },
+    {
+      "fn_name": "get_carol",
+      "args": [
+        5
+      ],
+      "expected": 959,
+      "assert_src": "assert get_carol(5) == 959"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

@@ -1,0 +1,96 @@
+./collected_code_4/round2//heal_0/problem-260.c: In function 'nswn_prime':
+./collected_code_4/round2//heal_0/problem-260.c:23:16: warning: use of uninitialized value 'result' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   23 |         return result;
+      |                ^~~~~~
+  'nswn_prime': events 1-9
+    |
+    |    5 |     int result;
+    |      |         ^~~~~~
+    |      |         |
+    |      |         (1) region created on stack here
+    |      |         (2) capacity: 4 bytes
+    |    6 |     if(n == 0)
+    |      |       ~  
+    |      |       |
+    |      |       (3) following 'false' branch (when 'n != 0')...
+    |......
+    |   10 |     else if(n == 1)
+    |      |            ~
+    |      |            |
+    |      |            (4) ...to here
+    |      |            (5) following 'false' branch (when 'n != 1')...
+    |......
+    |   16 |         int a = 1, b = 1;
+    |      |             ~
+    |      |             |
+    |      |             (6) ...to here
+    |   17 |         for(int i = 2; i <= n; i++)
+    |      |                        ~~~~~~
+    |      |                          |
+    |      |                          (7) following 'false' branch (when 'i > n')...
+    |......
+    |   23 |         return result;
+    |      |                ~~~~~~
+    |      |                |
+    |      |                (8) ...to here
+    |      |                (9) use of uninitialized value 'result' here
+    |
+./collected_code_4/round2//heal_0/problem-260.c:23:16: warning: use of uninitialized value 'result' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   23 |         return result;
+      |                ^~~~~~
+  'main': events 1-4
+    |
+    |   29 | int main()
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   34 |     if(number >= 0)
+    |      |       ~
+    |      |       |
+    |      |       (2) following 'true' branch...
+    |   35 |     {
+    |   36 |         printf("%dth Newman–Shanks–Williams prime number is %d\n", number, nswn_prime(number));
+    |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |         |
+    |      |         (3) ...to here
+    |      |         (4) calling 'nswn_prime' from 'main'
+    |
+    +--> 'nswn_prime': events 5-14
+           |
+           |    3 | int nswn_prime(int n)
+           |      |     ^~~~~~~~~~
+           |      |     |
+           |      |     (5) entry to 'nswn_prime'
+           |    4 | {
+           |    5 |     int result;
+           |      |         ~~~~~~
+           |      |         |
+           |      |         (6) region created on stack here
+           |      |         (7) capacity: 4 bytes
+           |    6 |     if(n == 0)
+           |      |       ~
+           |      |       |
+           |      |       (8) following 'false' branch (when 'n != 0')...
+           |......
+           |   10 |     else if(n == 1)
+           |      |            ~
+           |      |            |
+           |      |            (9) ...to here
+           |      |            (10) following 'false' branch (when 'n != 1')...
+           |......
+           |   16 |         int a = 1, b = 1;
+           |      |             ~
+           |      |             |
+           |      |             (11) ...to here
+           |   17 |         for(int i = 2; i <= n; i++)
+           |      |                        ~~~~~~
+           |      |                          |
+           |      |                          (12) following 'false' branch (when 'i > n')...
+           |......
+           |   23 |         return result;
+           |      |                ~~~~~~
+           |      |                |
+           |      |                (13) ...to here
+           |      |                (14) use of uninitialized value 'result' here
+           |

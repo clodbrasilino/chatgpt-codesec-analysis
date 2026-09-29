@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-705.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-705.c:18:27: style: Condition 'la->len<lb->len' is always false [knownConditionTrueFalse]
+    int min_len = la->len < lb->len ? la->len : lb->len;
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-705.c:14:17: note: Assuming that condition 'la->len!=lb->len' is not redundant
+    if (la->len != lb->len) {
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-705.c:18:27: note: Condition 'la->len<lb->len' is always false
+    int min_len = la->len < lb->len ? la->len : lb->len;
+                          ^

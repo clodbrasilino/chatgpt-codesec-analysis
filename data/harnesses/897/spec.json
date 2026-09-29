@@ -1,0 +1,47 @@
+{
+  "task_id": 897,
+  "text": "Write a C function to check whether the word is present in a given sentence or not.",
+  "fn_candidates": [
+    "is_Word_Present",
+    "IsWordPresent",
+    "isWordPresent",
+    "isWordPresent"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "is_Word_Present",
+      "args": [
+        "machine learning",
+        "machine"
+      ],
+      "expected": true,
+      "assert_src": "assert is_Word_Present(\"machine learning\",\"machine\") == True"
+    },
+    {
+      "fn_name": "is_Word_Present",
+      "args": [
+        "easy",
+        "fun"
+      ],
+      "expected": false,
+      "assert_src": "assert is_Word_Present(\"easy\",\"fun\") == False"
+    },
+    {
+      "fn_name": "is_Word_Present",
+      "args": [
+        "python language",
+        "code"
+      ],
+      "expected": false,
+      "assert_src": "assert is_Word_Present(\"python language\",\"code\") == False"
+    }
+  ],
+  "arg_kinds": [
+    "str"
+  ],
+  "return_kind": "bool",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

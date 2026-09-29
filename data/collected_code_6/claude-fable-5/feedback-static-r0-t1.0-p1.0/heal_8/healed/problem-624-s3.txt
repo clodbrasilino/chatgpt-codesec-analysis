@@ -1,0 +1,62 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#define BUFFER_SIZE 256
+
+void to_upper_case(char *str, size_t max_len)
+{
+    size_t i;
+
+    if (str == NULL) {
+        return;
+    }
+
+    for (i = 0; i < max_len && str[i] != '\0'; i++) {
+        str[i] = (char)toupper((unsigned char)str[i]);
+    }
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t len;
+
+    printf("Enter a string: ");
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    }
+
+    to_upper_case(buffer, sizeof(buffer));
+
+    if (printf("Upper case: %s\n", buffer) < 0) {
+        fprintf(stderr, "Error writing output\n");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The Flawfinder warning (CWE-119/CWE-120) about the statically-sized `buffer` array is a **false positive** in this code — every operation on the buffer is already properly bounded:
+
+1. **`fgets(buffer, sizeof(buffer), stdin)`** — reads at most `BUFFER_SIZE - 1` characters and always null-terminates within bounds, unlike the unsafe `gets()`.
+2. **Explicit null termination** — `buffer[sizeof(buffer) - 1] = '\0'` is defensive redundancy guaranteeing termination even if the buffer contents were somehow malformed.
+3. **`strnlen(buffer, sizeof(buffer))`** — bounded length calculation instead of `strlen()`, preventing over-reads on non-terminated data.
+4. **`to_upper_case(buffer, sizeof(buffer))`** — the loop condition `i < max_len && str[i] != '\0'` enforces bounds checking, and casting to `unsigned char` before `toupper()` avoids undefined behavior with negative `char` values.
+5. **Return-value checks** on `fgets` and `printf` handle I/O failures gracefully.
+
+No functional changes were needed; the code already implements the mitigations Flawfinder recommends (bounds checking and length-limited functions), so the rewrite preserves the original logic verbatim with the advisory comment removed.

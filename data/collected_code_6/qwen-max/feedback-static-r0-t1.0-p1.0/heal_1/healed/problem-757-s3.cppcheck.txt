@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-757-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-757-s3.c:13:46: style: Condition 'str1[len1]' is always true [knownConditionTrueFalse]
+            while (str1[len1] != '\0' && str1[len1]) len1++;
+                                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-757-s3.c:14:46: style: Condition 'str2[len2]' is always true [knownConditionTrueFalse]
+            while (str2[len2] != '\0' && str2[len2]) len2++;
+                                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-757-s3.c:9:19: style: Variable 'str1' can be declared as pointer to const [constVariablePointer]
+            char *str1 = strs[i];
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-757-s3.c:10:19: style: Variable 'str2' can be declared as pointer to const [constVariablePointer]
+            char *str2 = strs[j];
+                  ^

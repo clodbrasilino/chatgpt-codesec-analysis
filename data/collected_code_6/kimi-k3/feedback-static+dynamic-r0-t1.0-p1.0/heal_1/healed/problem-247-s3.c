@@ -1,0 +1,58 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+static int max(int a, int b)
+{
+    return (a > b) ? a : b;
+}
+
+static int longestPalindromeSubseq(const char *s, size_t len)
+{
+    if (s == NULL || len == 0) {
+        return 0;
+    }
+
+    if (len > (SIZE_MAX / sizeof(int)) / len) {
+        return -1;
+    }
+
+    int *dp = (int *)calloc(len * len, sizeof(int));
+    if (dp == NULL) {
+        return -1;
+    }
+
+    for (size_t i = 0; i < len; i++) {
+        dp[i * len + i] = 1;
+    }
+
+    for (size_t sublen = 2; sublen <= len; sublen++) {
+        for (size_t i = 0; i <= len - sublen; i++) {
+            size_t j = i + sublen - 1;
+            if (s[i] == s[j]) {
+                dp[i * len + j] = (sublen == 2) ? 2 : dp[(i + 1) * len + (j - 1)] + 2;
+            } else {
+                dp[i * len + j] = max(dp[(i + 1) * len + j], dp[i * len + (j - 1)]);
+            }
+        }
+    }
+
+    int result = dp[len - 1];
+    free(dp);
+    return result;
+}
+
+int main(void)
+{
+    const char str[] = "bbbab";
+    int result = longestPalindromeSubseq(str, sizeof(str) - 1);
+    
+    if (result >= 0) {
+        printf("Length of longest palindromic subsequence: %d\n", result);
+    } else {
+        fprintf(stderr, "Error: Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

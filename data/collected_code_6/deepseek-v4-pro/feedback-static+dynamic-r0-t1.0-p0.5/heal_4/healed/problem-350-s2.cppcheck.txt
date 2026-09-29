@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_4/healed/problem-350-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_4/healed/problem-350-s2.c:69:43: style: Condition 'r5' is always false [knownConditionTrueFalse]
+    printf("Input: (null), Output: %s\n", r5 ? r5 : "NULL");
+                                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_4/healed/problem-350-s2.c:63:31: note: Calling function 'minimize_string' returns 0
+    char *r5 = minimize_string(test5);
+                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_4/healed/problem-350-s2.c:63:31: note: Assignment 'r5=minimize_string(test5)', assigned value is 0
+    char *r5 = minimize_string(test5);
+                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_4/healed/problem-350-s2.c:69:43: note: Condition 'r5' is always false
+    printf("Input: (null), Output: %s\n", r5 ? r5 : "NULL");
+                                          ^

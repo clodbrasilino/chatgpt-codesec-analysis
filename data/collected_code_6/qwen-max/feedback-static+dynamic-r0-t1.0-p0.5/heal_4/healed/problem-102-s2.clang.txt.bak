@@ -1,0 +1,10 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_4/healed/problem-102-s2.c:19:21: error: call to undeclared function 'count_char'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   19 |     camel_str[len - count_char(snake_str, '_')] = '\0';
+      |                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_4/healed/problem-102-s2.c:23:5: error: conflicting types for 'count_char'
+   23 | int count_char(const char *str, char c) {
+      |     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_4/healed/problem-102-s2.c:19:21: note: previous implicit declaration is here
+   19 |     camel_str[len - count_char(snake_str, '_')] = '\0';
+      |                     ^
+2 errors generated.

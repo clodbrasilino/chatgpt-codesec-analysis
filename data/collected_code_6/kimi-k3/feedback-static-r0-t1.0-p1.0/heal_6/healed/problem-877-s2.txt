@@ -1,0 +1,57 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+void sortString(char *str, size_t max_len) {
+    if (str == NULL || max_len == 0) {
+        return;
+    }
+    
+    size_t len = strnlen(str, max_len);
+    if (len == 0) {
+        return;
+    }
+    
+    for (size_t i = 0; i < len - 1; i++) {
+        for (size_t j = 0; j < len - i - 1; j++) {
+            if (str[j] > str[j + 1]) {
+                char temp = str[j];
+                str[j] = str[j + 1];
+                str[j + 1] = temp;
+            }
+        }
+    }
+}
+
+int main(void) {
+    char *input = NULL;
+    size_t buffer_size = 256;
+    size_t len;
+    
+    input = malloc(buffer_size);
+    if (input == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("Enter a string: ");
+    if (fgets(input, buffer_size, stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        free(input);
+        return EXIT_FAILURE;
+    }
+    
+    len = strnlen(input, buffer_size);
+    if (len > 0 && input[len - 1] == '\n') {
+        input[len - 1] = '\0';
+    }
+    
+    sortString(input, buffer_size);
+    
+    printf("Sorted string: %s\n", input);
+    
+    free(input);
+    return EXIT_SUCCESS;
+}
+```

@@ -1,0 +1,95 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+/* Possible weaknesses found:
+ *  'INT_MAX' is defined in header '<limits.h>'; this is probably fixable by adding '#include <limits.h>'
+ */
+#include <stdint.h>
+
+int shortest_common_supersequence_length(const char *str1, const char *str2) {
+    if (str1 == NULL || str2 == NULL) {
+        return -1;
+    }
+
+    size_t m_len = strnlen(str1, SIZE_MAX);
+    size_t n_len = strnlen(str2, SIZE_MAX);
+
+    if (m_len > (size_t)(-1) / sizeof(int) || n_len > (size_t)(-1) / sizeof(int)) {
+        return -1;
+    }
+
+    /* Possible weaknesses found:
+     *  each undeclared identifier is reported only once for each function it appears in
+     *  use of undeclared identifier 'INT_MAX'
+     *  'INT_MAX' undeclared (first use in this function)
+     */
+    if (m_len > INT_MAX || n_len > INT_MAX) {
+        return -1;
+    }
+
+    int m = (int)m_len;
+    int n = (int)n_len;
+
+    int **dp = (int **)malloc((m + 1) * sizeof(int *));
+    if (dp == NULL) {
+        return -1;
+    }
+
+    for (int i = 0; i <= m; i++) {
+        dp[i] = NULL;
+    }
+
+    int allocation_successful = 1;
+    for (int i = 0; i <= m && allocation_successful; i++) {
+        dp[i] = (int *)malloc((n + 1) * sizeof(int));
+        if (dp[i] == NULL) {
+            allocation_successful = 0;
+        }
+    }
+
+    if (!allocation_successful) {
+        for (int j = 0; j <= m; j++) {
+            free(dp[j]);
+        }
+        free(dp);
+        return -1;
+    }
+
+    for (int i = 0; i <= m; i++) {
+        dp[i][0] = i;
+    }
+    for (int j = 0; j <= n; j++) {
+        dp[0][j] = j;
+    }
+
+    for (int i = 1; i <= m; i++) {
+        for (int j = 1; j <= n; j++) {
+            if (str1[i - 1] == str2[j - 1]) {
+                dp[i][j] = dp[i - 1][j - 1] + 1;
+            } else {
+                int left = dp[i - 1][j] + 1;
+                int up = dp[i][j - 1] + 1;
+                dp[i][j] = (left < up) ? left : up;
+            }
+        }
+    }
+
+    int result = dp[m][n];
+
+    for (int i = 0; i <= m; i++) {
+        free(dp[i]);
+    }
+    free(dp);
+
+    return result;
+}
+
+int main(void) {
+    const char *str1 = "AGGTAB";
+    const char *str2 = "GXTXAYB";
+    int length = shortest_common_supersequence_length(str1, str2);
+    if (length >= 0) {
+        printf("%d\n", length);
+    }
+    return 0;
+}

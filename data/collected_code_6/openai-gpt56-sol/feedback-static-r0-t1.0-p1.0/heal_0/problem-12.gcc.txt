@@ -1,0 +1,17 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_0/problem-12.c: In function 'read_matrix':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_0/problem-12.c:16:26: error: expected ')' before 'SCNd64'
+   16 |             if (scanf("%" SCNd64, &matrix[i * columns + j]) != 1) {
+      |                      ~   ^~~~~~~
+      |                          )
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_0/problem-12.c:3:1: note: 'SCNd64' is defined in header '<inttypes.h>'; this is probably fixable by adding '#include <inttypes.h>'
+    2 | #include <stdlib.h>
+  +++ |+#include <inttypes.h>
+    3 | #include <stdint.h>
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_0/problem-12.c: In function 'print_matrix':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_0/problem-12.c:71:23: error: expected ')' before 'PRId64'
+   71 |             printf("%" PRId64 "%c", matrix[i * columns + j],
+      |                   ~   ^~~~~~~
+      |                       )
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_0/problem-12.c:71:24: note: 'PRId64' is defined in header '<inttypes.h>'; this is probably fixable by adding '#include <inttypes.h>'
+   71 |             printf("%" PRId64 "%c", matrix[i * columns + j],
+      |                        ^~~~~~

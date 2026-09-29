@@ -1,0 +1,6 @@
+collected_code/problem-785-0.c:7:28: error: Cannot determine that 'tupleString[0]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+    int tupleSize = strlen(tupleString) / 2;
+                           ^
+collected_code/problem-785-0.c:29:31: error: Cannot determine that 'intTuple[i]' is initialized [premium-bughuntingUninit]
+        printf("%d ", intTuple[i]);
+                              ^

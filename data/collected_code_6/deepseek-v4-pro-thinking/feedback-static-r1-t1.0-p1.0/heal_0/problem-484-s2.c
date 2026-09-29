@@ -1,0 +1,107 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stddef.h>
+
+typedef struct {
+    int x;
+    int y;
+} Tuple;
+
+static int tuple_equal(const Tuple *left, const Tuple *right) {
+    return left != NULL && right != NULL && left->x == right->x && left->y == right->y;
+}
+
+int remove_matching_tuples(Tuple *first, size_t *first_len, Tuple *second, size_t *second_len) {
+    if (first == NULL || first_len == NULL || second == NULL || second_len == NULL) {
+        return -1;
+    }
+
+    size_t first_original_len = *first_len;
+    size_t second_original_len = *second_len;
+    unsigned char *remove_first = NULL;
+    unsigned char *remove_second = NULL;
+
+    if (first_original_len > 0) {
+        remove_first = malloc(first_original_len * sizeof(unsigned char));
+        if (remove_first == NULL) {
+            return -1;
+        }
+        for (size_t i = 0; i < first_original_len; ++i) {
+            remove_first[i] = 0;
+        }
+    }
+
+    if (second_original_len > 0) {
+        remove_second = malloc(second_original_len * sizeof(unsigned char));
+        if (remove_second == NULL) {
+            free(remove_first);
+            return -1;
+        }
+        for (size_t i = 0; i < second_original_len; ++i) {
+            remove_second[i] = 0;
+        }
+    }
+
+    for (size_t i = 0; i < first_original_len; ++i) {
+        for (size_t j = 0; j < second_original_len; ++j) {
+            if (tuple_equal(&first[i], &second[j])) {
+                remove_first[i] = 1;
+                remove_second[j] = 1;
+            }
+        }
+    }
+
+    size_t write = 0;
+    for (size_t i = 0; i < first_original_len; ++i) {
+        if (!remove_first[i]) {
+            first[write++] = first[i];
+        }
+    }
+    *first_len = write;
+
+    write = 0;
+    for (size_t i = 0; i < second_original_len; ++i) {
+        if (!remove_second[i]) {
+            second[write++] = second[i];
+        }
+    }
+    *second_len = write;
+
+    free(remove_first);
+    free(remove_second);
+    return 0;
+}
+
+int main(void) {
+    Tuple first[] = {
+        {1, 2},
+        {3, 4},
+        {5, 6},
+        {3, 4}
+    };
+    size_t first_len = sizeof(first) / sizeof(first[0]);
+
+    Tuple second[] = {
+        {3, 4},
+        {7, 8},
+        {5, 6}
+    };
+    size_t second_len = sizeof(second) / sizeof(second[0]);
+
+    int result = remove_matching_tuples(first, &first_len, second, &second_len);
+    if (result != 0) {
+        return 1;
+    }
+
+    for (size_t i = 0; i < first_len; ++i) {
+        printf("(%d,%d) ", first[i].x, first[i].y);
+    }
+    printf("\n");
+
+    for (size_t i = 0; i < second_len; ++i) {
+        printf("(%d,%d) ", second[i].x, second[i].y);
+    }
+    printf("\n");
+
+    return 0;
+}

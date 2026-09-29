@@ -1,0 +1,24 @@
+```C
+#include <stdio.h>
+#include <math.h>
+
+double lateral_surface_area(double radius, double slant_height) {
+    return M_PI * radius * slant_height;
+}
+
+int main() {
+    double radius, slant_height, area;
+
+    printf("Enter radius of the cone: ");
+    scanf("%lf", &radius);
+
+    printf("Enter slant height of the cone: ");
+    scanf("%lf", &slant_height);
+
+    area = lateral_surface_area(radius, slant_height);
+
+    printf("Lateral Surface Area of the cone = %.2lf", area);
+
+    return 0;
+}
+```

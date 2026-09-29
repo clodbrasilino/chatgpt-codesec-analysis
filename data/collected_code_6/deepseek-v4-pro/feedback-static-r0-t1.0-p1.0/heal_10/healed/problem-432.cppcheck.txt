@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-432.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-432.c:100:28: style: Condition 'null_median_status==TRAPEZIUM_INVALID_INPUT' is always true [knownConditionTrueFalse]
+    if (null_median_status == TRAPEZIUM_INVALID_INPUT) {
+                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-432.c:99:58: note: Calling function 'trapezium_median' returns 1
+    TrapeziumStatus null_median_status = trapezium_median(&trapezoids[0], NULL);
+                                                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-432.c:99:58: note: Assignment 'null_median_status=trapezium_median(trapezoids,NULL)', assigned value is 1
+    TrapeziumStatus null_median_status = trapezium_median(&trapezoids[0], NULL);
+                                                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-432.c:100:28: note: Condition 'null_median_status==TRAPEZIUM_INVALID_INPUT' is always true
+    if (null_median_status == TRAPEZIUM_INVALID_INPUT) {
+                           ^

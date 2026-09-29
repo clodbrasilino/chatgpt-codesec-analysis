@@ -1,0 +1,65 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+int add_consecutive(const int *list, size_t length, int **result, size_t *result_length)
+{
+    size_t i;
+    int *sums;
+
+    if (list == NULL || result == NULL || result_length == NULL) {
+        return -1;
+    }
+
+    if (length < 2) {
+        *result = NULL;
+        *result_length = 0;
+        return -1;
+    }
+
+    sums = malloc((length - 1) * sizeof(int));
+    if (sums == NULL) {
+        *result = NULL;
+        *result_length = 0;
+        return -1;
+    }
+
+    for (i = 0; i < length - 1; i++) {
+        if ((list[i + 1] > 0 && list[i] > INT_MAX - list[i + 1]) ||
+            (list[i + 1] < 0 && list[i] < INT_MIN - list[i + 1])) {
+            free(sums);
+            *result = NULL;
+            *result_length = 0;
+            return -1;
+        }
+        sums[i] = list[i] + list[i + 1];
+    }
+
+    *result = sums;
+    *result_length = length - 1;
+    return 0;
+}
+
+int main(void)
+{
+    int numbers[] = {1, 2, 3, 4, 5};
+    size_t count = sizeof(numbers) / sizeof(numbers[0]);
+    int *sums = NULL;
+    size_t sums_count = 0;
+    size_t i;
+
+    if (add_consecutive(numbers, count, &sums, &sums_count) != 0) {
+        fprintf(stderr, "Failed to compute consecutive sums\n");
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i < sums_count; i++) {
+        if (printf("%d\n", sums[i]) < 0) {
+            free(sums);
+            return EXIT_FAILURE;
+        }
+    }
+
+    free(sums);
+    return EXIT_SUCCESS;
+}

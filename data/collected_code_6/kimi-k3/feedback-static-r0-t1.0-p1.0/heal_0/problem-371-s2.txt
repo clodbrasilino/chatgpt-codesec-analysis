@@ -1,0 +1,30 @@
+```c
+#include <stdio.h>
+
+int findSmallestMissing(const int arr[], int size) {
+    int low = 0;
+    int high = size - 1;
+
+    while (low <= high) {
+        int mid = low + (high - low) / 2;
+
+        if (arr[mid] == mid) {
+            low = mid + 1;
+        } else {
+            high = mid - 1;
+        }
+    }
+
+    return low;
+}
+
+int main(void) {
+    int arr[] = {0, 1, 2, 3, 4, 6, 7, 8, 9};
+    int size = (int)(sizeof(arr) / sizeof(arr[0]));
+
+    int missing = findSmallestMissing(arr, size);
+    printf("Smallest missing element: %d\n", missing);
+
+    return 0;
+}
+```

@@ -1,0 +1,28 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+void reverseWords(char *str) {
+    char *word = strtok(str, " ");
+    char *reversed[50];
+    int i = 0;
+    
+    while (word != NULL) {
+        reversed[i++] = word;
+        word = strtok(NULL, " ");
+    }
+    
+    for (int j = i - 1; j >= 0; j--) {
+        strcat(str, reversed[j]);
+        if (j > 0) {
+            strcat(str, " ");
+        }
+    }
+}
+
+int main() {
+    char str[] = "Hello World This is C";
+    reverseWords(str);
+    printf("%s\n", str);
+    return 0;
+}

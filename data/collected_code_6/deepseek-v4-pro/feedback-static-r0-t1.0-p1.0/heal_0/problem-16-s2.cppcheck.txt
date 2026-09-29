@@ -1,0 +1,28 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-16-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-16-s2.c:43:29: style: Condition 'seq_len>1' is always true [knownConditionTrueFalse]
+                if (seq_len > 1 && current[seq_len-2] != '_') {
+                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-16-s2.c:41:63: note: Assuming condition 'seq_len>1' is true
+            if (in_sequence && valid_sequence == 0 && seq_len > 1 && current[seq_len-1] == '_') {
+                                                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-16-s2.c:43:29: note: Condition 'seq_len>1' is always true
+                if (seq_len > 1 && current[seq_len-2] != '_') {
+                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-16-s2.c:57:21: style: Condition 'seq_len>1' is always true [knownConditionTrueFalse]
+        if (seq_len > 1 && current[seq_len-2] != '_') {
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-16-s2.c:55:55: note: Assuming condition 'seq_len>1' is true
+    if (in_sequence && valid_sequence == 0 && seq_len > 1 && current[seq_len-1] == '_' && count < max_sequences) {
+                                                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-16-s2.c:57:21: note: Condition 'seq_len>1' is always true
+        if (seq_len > 1 && current[seq_len-2] != '_') {
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-16-s2.c:55:62: warning: Uninitialized variable: current [uninitvar]
+    if (in_sequence && valid_sequence == 0 && seq_len > 1 && current[seq_len-1] == '_' && count < max_sequences) {
+                                                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-16-s2.c:20:38: note: Assuming condition is false
+    for (int i = 0; input[i] != '\0' && count < max_sequences; i++) {
+                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-16-s2.c:55:62: note: Uninitialized variable: current
+    if (in_sequence && valid_sequence == 0 && seq_len > 1 && current[seq_len-1] == '_' && count < max_sequences) {
+                                                             ^

@@ -1,0 +1,42 @@
+#include <stdio.h>
+
+#define p 1000000007
+
+long long factorial(int n) {
+    long long fact = 1;
+    for(int i = 2; i <= n; i++)
+        fact = (fact * i) % p;
+    return fact;
+}
+
+long long power(long long x, int y) {
+    long long res = 1;
+    x = x % p;
+    while (y > 0) {
+        if (y & 1)
+            res = (res*x) % p;
+        y = y>>1;
+        x = (x*x) % p;
+    }
+    return res;
+}
+
+long long modInverse(long long n) {
+    return power(n, p-2);
+}
+
+long long nCrModP(int n, int r) {
+    if (r==0)
+        return 1;
+    long long fac[n+1];
+    fac[0] = 1;
+    for (int i=1 ; i<=n; i++)
+        fac[i] = fac[i-1]*i%p;
+    return (fac[n]* modInverse(fac[r]) % p * modInverse(fac[n-r]) % p) % p;
+}
+
+int main() {
+    int n = 10, r = 2;
+    printf("Value of nCr mod p is %lld", nCrModP(n, r));
+    return 0;
+}

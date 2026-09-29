@@ -1,0 +1,139 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    long value;
+    int prime;
+    int index;
+} HeapNode;
+
+typedef struct {
+    HeapNode *data;
+    int size;
+    int capacity;
+} MinHeap;
+
+MinHeap* createHeap(int capacity) {
+    MinHeap *heap = (MinHeap*)malloc(sizeof(MinHeap));
+    heap->data = (HeapNode*)malloc(sizeof(HeapNode) * capacity);
+    heap->size = 0;
+    heap->capacity = capacity;
+    return heap;
+}
+
+void swap(HeapNode *a, HeapNode *b) {
+    HeapNode temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+void heapifyDown(MinHeap *heap, int idx) {
+    int smallest = idx;
+    int left = 2 * idx + 1;
+    int right = 2 * idx + 2;
+    
+    if (left < heap->size && heap->data[left].value < heap->data[smallest].value)
+        smallest = left;
+    if (right < heap->size && heap->data[right].value < heap->data[smallest].value)
+        smallest = right;
+    
+    if (smallest != idx) {
+        swap(&heap->data[idx], &heap->data[smallest]);
+        heapifyDown(heap, smallest);
+    }
+}
+
+void heapifyUp(MinHeap *heap, int idx) {
+    int parent = (idx - 1) / 2;
+    while (idx > 0 && heap->data[parent].value > heap->data[idx].value) {
+        swap(&heap->data[parent], &heap->data[idx]);
+        idx = parent;
+        parent = (idx - 1) / 2;
+    }
+}
+
+void heapPush(MinHeap *heap, HeapNode node) {
+    if (heap->size >= heap->capacity) {
+        heap->capacity *= 2;
+        heap->data = (HeapNode*)realloc(heap->data, sizeof(HeapNode) * heap->capacity);
+    }
+    heap->data[heap->size] = node;
+    heapifyUp(heap, heap->size);
+    heap->size++;
+}
+
+HeapNode heapPop(MinHeap *heap) {
+    HeapNode top = heap->data[0];
+    heap->data[0] = heap->data[heap->size - 1];
+    heap->size--;
+    heapifyDown(heap, 0);
+    return top;
+}
+
+void freeHeap(MinHeap *heap) {
+    free(heap->data);
+    free(heap);
+}
+
+int nthSuperUglyNumber(int n, const int* primes, int primesSize) {
+    if (n <= 0 || primesSize <= 0) return 0;
+    if (n == 1) return 1;
+    
+    long *ugly = (long*)malloc(sizeof(long) * n);
+    ugly[0] = 1;
+    
+    MinHeap *heap = createHeap(primesSize);
+    
+    for (int i = 0; i < primesSize; i++) {
+        HeapNode node;
+        node.value = primes[i];
+        node.prime = primes[i];
+        node.index = 0;
+        heapPush(heap, node);
+    }
+    
+    for (int i = 1; i < n; i++) {
+        HeapNode minNode = heapPop(heap);
+        ugly[i] = minNode.value;
+        
+        minNode.index++;
+        minNode.value = (long)minNode.prime * ugly[minNode.index];
+        heapPush(heap, minNode);
+        
+        while (heap->size > 0 && heap->data[0].value == ugly[i]) {
+            HeapNode dupNode = heapPop(heap);
+            dupNode.index++;
+            dupNode.value = (long)dupNode.prime * ugly[dupNode.index];
+            heapPush(heap, dupNode);
+        }
+    }
+    
+    int result = (int)ugly[n - 1];
+    free(ugly);
+    freeHeap(heap);
+    return result;
+}
+
+int main() {
+    const int primes1[] = {2, 7, 13, 19};
+    int n1 = 12;
+    printf("Test 1: %d\n", nthSuperUglyNumber(n1, primes1, 4));
+    
+    const int primes2[] = {2, 3, 5};
+    int n2 = 10;
+    printf("Test 2: %d\n", nthSuperUglyNumber(n2, primes2, 3));
+    
+    const int primes3[] = {3, 5, 7, 11, 13};
+    int n3 = 20;
+    printf("Test 3: %d\n", nthSuperUglyNumber(n3, primes3, 5));
+    
+    const int primes4[] = {2};
+    int n4 = 10;
+    printf("Test 4: %d\n", nthSuperUglyNumber(n4, primes4, 1));
+    
+    const int primes5[] = {2, 3, 5, 7, 11, 13, 17, 19, 23, 29};
+    int n5 = 100;
+    printf("Test 5: %d\n", nthSuperUglyNumber(n5, primes5, 10));
+    
+    return 0;
+}

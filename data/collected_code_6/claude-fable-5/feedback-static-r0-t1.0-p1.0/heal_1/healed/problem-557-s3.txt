@@ -1,0 +1,84 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#define MAX_INPUT_LEN 4096U
+
+char *toggle_case(const char *input)
+{
+    size_t len;
+    size_t i;
+    char *result;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    len = strnlen(input, MAX_INPUT_LEN);
+    if (len >= MAX_INPUT_LEN) {
+        return NULL;
+    }
+
+    result = malloc(len + 1U);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    for (i = 0U; i < len; i++) {
+        unsigned char c = (unsigned char)input[i];
+        if (isupper(c)) {
+            result[i] = (char)tolower(c);
+        } else if (islower(c)) {
+            result[i] = (char)toupper(c);
+        } else {
+            result[i] = (char)c;
+        }
+    }
+    result[len] = '\0';
+
+    return result;
+}
+
+int main(void)
+{
+    const char *original = "Hello, World! 123 abcXYZ";
+    char *toggled;
+
+    toggled = toggle_case(original);
+    if (toggled == NULL) {
+        if (fprintf(stderr, "Error: failed to toggle case\n") < 0) {
+            return EXIT_FAILURE;
+        }
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Original: %s\n", original) < 0) {
+        free(toggled);
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Toggled:  %s\n", toggled) < 0) {
+        free(toggled);
+        return EXIT_FAILURE;
+    }
+
+    free(toggled);
+    return EXIT_SUCCESS;
+}
+```
+
+**Key change addressing the identified weakness:**
+
+The Flawfinder warning (CWE-126, buffer over-read) concerned `strlen()` reading past the end of a buffer if the input string is not NUL-terminated. The fix replaces `strlen()` with `strnlen()`, which bounds the scan to `MAX_INPUT_LEN` bytes. If no terminator is found within that bound (i.e., `len >= MAX_INPUT_LEN`), the function safely returns `NULL` instead of over-reading.
+
+All other defensive properties of the original code are preserved:
+
+- **NULL input check** before any dereference.
+- **`malloc` return value checked** before use (CWE-476 avoidance).
+- **`unsigned char` cast** before passing to `isupper`/`islower`/`tolower`/`toupper`, avoiding undefined behavior for negative `char` values.
+- **Explicit NUL termination** of the result buffer.
+- **Checked return values** of `printf`/`fprintf`, with `free()` on every exit path to prevent memory leaks (CWE-401).
+
+Note: `strnlen()` is POSIX.1-2008 (and available on all mainstream platforms); if strict C89/C99 portability were required, an equivalent bounded loop could be substituted.

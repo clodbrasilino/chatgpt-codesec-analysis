@@ -1,0 +1,67 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+static int validate_lengths(size_t larger_len, size_t smaller_len)
+{
+    if (smaller_len == (size_t)-1) {
+        return 0;
+    }
+    return larger_len == smaller_len + 1;
+}
+
+static int find_extra_element_index(const int *larger, const int *smaller, size_t smaller_len)
+{
+    size_t low = 0;
+    size_t high = smaller_len;
+
+    while (low < high) {
+        size_t mid = low + (high - low) / 2;
+        if (larger[mid] == smaller[mid]) {
+            low = mid + 1;
+        } else {
+            high = mid;
+        }
+    }
+
+    return (int)low;
+}
+
+static int process_arrays(const int *larger, size_t larger_len,
+                          const int *smaller, size_t smaller_len)
+{
+    if (larger == NULL || smaller == NULL) {
+        fprintf(stderr, "Invalid input: array pointer is NULL\n");
+        return EXIT_FAILURE;
+    }
+
+    if (!validate_lengths(larger_len, smaller_len)) {
+        fprintf(stderr, "Invalid input: larger array must contain exactly one extra element\n");
+        return EXIT_FAILURE;
+    }
+
+    int index = find_extra_element_index(larger, smaller, smaller_len);
+
+    if (index < 0 || (size_t)index >= larger_len) {
+        fprintf(stderr, "Error: computed index out of bounds\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Index of extra element: %d\n", index) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Extra element value: %d\n", larger[index]) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+
+int main(void)
+{
+    int larger[] = {2, 4, 6, 8, 9, 10, 12};
+    int smaller[] = {2, 4, 6, 8, 10, 12};
+
+    return process_arrays(larger, sizeof(larger) / sizeof(larger[0]),
+                          smaller, sizeof(smaller) / sizeof(smaller[0]));
+}

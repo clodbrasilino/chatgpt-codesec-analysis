@@ -1,0 +1,36 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int find_element(int *arr, int n, int rotations, int index) {
+    if (arr == NULL || n <= 0 || index < 0 || index >= n) {
+        return -1;
+    }
+    int effective_rotations = rotations % n;
+    if (effective_rotations < 0) {
+        effective_rotations += n;
+    }
+    int original_index = (index - effective_rotations + n) % n;
+    return arr[original_index];
+}
+
+int main() {
+    int *arr = malloc(5 * sizeof(int));
+    if (arr == NULL) {
+        return 1;
+    }
+    arr[0] = 1;
+    arr[1] = 2;
+    arr[2] = 3;
+    arr[3] = 4;
+    arr[4] = 5;
+    
+    int rotations = 2;
+    int index = 1;
+    int result = find_element(arr, 5, rotations, index);
+    printf("%d\n", result);
+    
+    free(arr);
+    return 0;
+}
+```

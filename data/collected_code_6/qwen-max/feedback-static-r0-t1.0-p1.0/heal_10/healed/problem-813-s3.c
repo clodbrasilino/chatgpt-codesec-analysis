@@ -1,0 +1,25 @@
+#include <stdio.h>
+#include <string.h>
+
+ssize_t string_length(const char *str, size_t max_len) {
+    size_t i = 0;
+    while (i < max_len && str[i] != '\0') {
+        i++;
+    }
+    if (i == max_len && str[i-1] != '\0') {
+        return -1; // Indicate potential overflow
+    }
+    return (ssize_t)i;
+}
+
+int main() {
+    const char *test_string = "Hello, World!";
+    size_t max_len = 256;
+    ssize_t length = string_length(test_string, max_len);
+    if (length == -1) {
+        printf("Length: %zu (Possible overflow)\n", max_len);
+    } else {
+        printf("Length: %zu\n", (size_t)length);
+    }
+    return 0;
+}

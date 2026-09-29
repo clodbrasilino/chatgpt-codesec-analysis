@@ -1,0 +1,20 @@
+```c
+#include <stdio.h>
+
+int find_last_digit(int num) {
+    int last_digit = abs(num) % 10;
+    return last_digit;
+}
+
+int main() {
+    int num;
+    printf("Enter a number: ");
+    if (scanf("%d", &num) != 1) {
+        fprintf(stderr, "Invalid input. Please enter an integer.\n");
+        return 1;
+    }
+    int result = find_last_digit(num);
+    printf("The last digit of %d is: %d\n", num, result);
+    return 0;
+}
+```

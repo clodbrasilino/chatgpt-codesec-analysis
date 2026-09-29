@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-912.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-912.c:31:21: warning: Identical condition 'n==0', second condition is always false [identicalConditionAfterEarlyExit]
+    if (m > 0 && (n == 0)) return 0;
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-912.c:30:11: note: If condition 'n==0' is true, the function will return/exit
+    if (n == 0) return 0;
+          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-912.c:31:21: note: Testing identical condition 'n==0'
+    if (m > 0 && (n == 0)) return 0;
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-912.c:39:21: style: Condition 'denominator==0' is always false [knownConditionTrueFalse]
+    if (denominator == 0) {
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-912.c:37:44: note: Assignment 'denominator=m+n+1', assigned value is greater than 0
+    unsigned long long denominator = m + n + 1;
+                                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-912.c:39:21: note: Condition 'denominator==0' is always false
+    if (denominator == 0) {
+                    ^

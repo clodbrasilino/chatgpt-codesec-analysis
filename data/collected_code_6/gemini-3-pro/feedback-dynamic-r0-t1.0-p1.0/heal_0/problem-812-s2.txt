@@ -1,0 +1,59 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char* abbreviate_road(const char* input) {
+    if (input == NULL) {
+        return NULL;
+    }
+
+    const char* target = "road";
+    const char* replacement = "rd.";
+    size_t target_len = strlen(target);
+    size_t replacement_len = strlen(replacement);
+
+    int count = 0;
+    const char* tmp = input;
+    while ((tmp = strstr(tmp, target)) != NULL) {
+        count++;
+        tmp += target_len;
+    }
+
+    size_t new_size = strlen(input) + count * (replacement_len - target_len) + 1;
+    char* result = (char*)malloc(new_size);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    char* dest = result;
+    const char* src = input;
+    while ((tmp = strstr(src, target)) != NULL) {
+        size_t len = tmp - src;
+        memcpy(dest, src, len);
+        dest += len;
+        memcpy(dest, replacement, replacement_len);
+        dest += replacement_len;
+        src = tmp + target_len;
+    }
+    strcpy(dest, src);
+
+    return result;
+}
+
+int main(void) {
+    const char* test_str = "The road to the road is a long road.";
+    char* abbreviated = abbreviate_road(test_str);
+
+    if (abbreviated != NULL) {
+        printf("Original: %s\n", test_str);
+        printf("Abbreviated: %s\n", abbreviated);
+        free(abbreviated);
+    } else {
+        fprintf(stderr, "Memory allocation failed or input was NULL.\n");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```

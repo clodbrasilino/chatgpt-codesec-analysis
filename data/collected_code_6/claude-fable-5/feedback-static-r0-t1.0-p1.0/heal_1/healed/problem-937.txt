@@ -1,0 +1,65 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <limits.h>
+
+#define MAX_INPUT_LEN 4096
+
+int most_common_char(const char *str, size_t max_len, char *result)
+{
+    size_t counts[UCHAR_MAX + 1] = {0};
+    size_t max_count = 0;
+    size_t i;
+    size_t len;
+    unsigned char best = 0;
+
+    if (str == NULL || result == NULL) {
+        return -1;
+    }
+
+    len = strnlen(str, max_len);
+    if (len == 0 || len == max_len) {
+        return -1;
+    }
+
+    for (i = 0; i < len; i++) {
+        unsigned char c = (unsigned char)str[i];
+        counts[c]++;
+        if (counts[c] > max_count) {
+            max_count = counts[c];
+            best = c;
+        }
+    }
+
+    *result = (char)best;
+    return 0;
+}
+
+int main(void)
+{
+    const char *text = "programming in c is powerful";
+    char most_common;
+
+    if (most_common_char(text, MAX_INPUT_LEN, &most_common) != 0) {
+        fprintf(stderr, "Error: invalid or empty input string\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Most common character: '%c'\n", most_common) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+Key changes made to address the identified weakness:
+
+1. **Replaced `strlen` with `strnlen`** — this bounds the scan of the string, preventing a buffer over-read (CWE-126) if the input is not NUL-terminated within the expected size.
+
+2. **Added a `max_len` parameter** — the caller now specifies the maximum permissible length, making the function's contract explicit and safe for use with fixed-size buffers.
+
+3. **Rejecting `len == max_len`** — if `strnlen` returns exactly `max_len`, no NUL terminator was found within bounds, so the input is treated as invalid rather than silently truncated. This makes the unterminated-string case a detectable error instead of undefined behavior.
+
+The rest of the original logic was already sound: NULL-pointer checks, proper `unsigned char` casting before indexing (avoiding negative-index UB with `char` values above 127), checked `printf` return, and correct use of `EXIT_SUCCESS`/`EXIT_FAILURE`.

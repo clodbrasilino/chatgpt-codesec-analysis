@@ -1,0 +1,46 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_2/healed/problem-400-s3.c: In function 'extract_tuple_frequencies':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_2/healed/problem-400-s3.c:62:29: error: initialization of 'int' from 'void *' makes integer from pointer without a cast [-Wint-conversion]
+   62 |     int boolean_processed = NULL;
+      |                             ^~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_2/healed/problem-400-s3.c:79:23: error: assignment to 'int' from 'int *' makes integer from pointer without a cast [-Wint-conversion]
+   79 |     boolean_processed = (int *)calloc((size_t)tuple_count, sizeof(int));
+      |                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_2/healed/problem-400-s3.c:83:14: error: passing argument 1 of 'free' makes pointer from integer without a cast [-Wint-conversion]
+   83 |         free(boolean_processed);
+      |              ^~~~~~~~~~~~~~~~~
+      |              |
+      |              int
+In file included from /Library/Developer/CommandLineTools/SDKs/MacOSX15.sdk/usr/include/_stdlib.h:139,
+                 from /Library/Developer/CommandLineTools/SDKs/MacOSX15.sdk/usr/include/stdlib.h:58,
+                 from /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_2/healed/problem-400-s3.c:2:
+/Library/Developer/CommandLineTools/SDKs/MacOSX15.sdk/usr/include/malloc/_malloc.h:56:12: note: expected 'void *' but argument is of type 'int'
+   56 | void  free(void * __unsafe_indexable);
+      |            ^~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_2/healed/problem-400-s3.c:92:30: error: subscripted value is neither array nor pointer nor vector
+   92 |         if (boolean_processed[i]) {
+      |                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_2/healed/problem-400-s3.c:102:18: error: passing argument 1 of 'free' makes pointer from integer without a cast [-Wint-conversion]
+  102 |             free(boolean_processed);
+      |                  ^~~~~~~~~~~~~~~~~
+      |                  |
+      |                  int
+/Library/Developer/CommandLineTools/SDKs/MacOSX15.sdk/usr/include/malloc/_malloc.h:56:12: note: expected 'void *' but argument is of type 'int'
+   56 | void  free(void * __unsafe_indexable);
+      |            ^~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_2/healed/problem-400-s3.c:112:26: error: subscripted value is neither array nor pointer nor vector
+  112 |         boolean_processed[i] = 1;
+      |                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_2/healed/problem-400-s3.c:115:35: error: subscripted value is neither array nor pointer nor vector
+  115 |             if (!boolean_processed[j] && compare_tuples(tuples[i], tuples[j], tuple_size) == 1) {
+      |                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_2/healed/problem-400-s3.c:117:34: error: subscripted value is neither array nor pointer nor vector
+  117 |                 boolean_processed[j] = 1;
+      |                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_2/healed/problem-400-s3.c:124:10: error: passing argument 1 of 'free' makes pointer from integer without a cast [-Wint-conversion]
+  124 |     free(boolean_processed);
+      |          ^~~~~~~~~~~~~~~~~
+      |          |
+      |          int
+/Library/Developer/CommandLineTools/SDKs/MacOSX15.sdk/usr/include/malloc/_malloc.h:56:12: note: expected 'void *' but argument is of type 'int'
+   56 | void  free(void * __unsafe_indexable);
+      |            ^~~~~~

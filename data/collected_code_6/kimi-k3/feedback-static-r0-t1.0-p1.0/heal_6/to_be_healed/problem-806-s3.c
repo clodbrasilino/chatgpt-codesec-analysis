@@ -1,0 +1,68 @@
+#include <stdio.h>
+#include <ctype.h>
+#include <string.h>
+#include <stdlib.h>
+
+int max_uppercase_run(const char *str) {
+    int max_run = 0;
+    int current_run = 0;
+    
+    if (str == NULL) {
+        return 0;
+    }
+    
+    for (size_t i = 0; str[i] != '\0'; i++) {
+        if (isupper((unsigned char)str[i])) {
+            current_run++;
+            if (current_run > max_run) {
+                max_run = current_run;
+            }
+        } else {
+            current_run = 0;
+        }
+    }
+    
+    return max_run;
+}
+
+int main(void) {
+    size_t buffer_size = 1024;
+    char *buffer = malloc(buffer_size);
+    
+    if (buffer == NULL) {
+        return 1;
+    }
+    
+    size_t len = 0;
+    int c;
+    
+    /* Possible weaknesses found:
+     * Flawfinder getchar: Check buffer boundaries if used in a loop including recursive loops (CWE-120, CWE-20). (risk 1, buffer)
+     */
+    while ((c = getchar()) != EOF && c != '\n') {
+        if (len + 1 >= buffer_size) {
+            size_t new_size = buffer_size * 2;
+            if (new_size <= buffer_size) {
+                free(buffer);
+                return 1;
+            }
+            char *new_buffer = realloc(buffer, new_size);
+            if (new_buffer == NULL) {
+                free(buffer);
+                return 1;
+            }
+            buffer = new_buffer;
+            buffer_size = new_size;
+        }
+        buffer[len++] = (char)c;
+    }
+    
+    buffer[len] = '\0';
+    
+    int result = max_uppercase_run(buffer);
+    printf("%d\n", result);
+    
+    free(buffer);
+    
+    return 0;
+}

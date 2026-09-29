@@ -1,0 +1,5 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-933.c:19:48: error: call to undeclared library function 'tolower' with type 'int (int)'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   19 |         output[offset + pmatch[0].rm_eo + 1] = tolower(input[offset + pmatch[0].rm_eo]);
+      |                                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-933.c:19:48: note: include the header <ctype.h> or explicitly provide a declaration for 'tolower'
+1 error generated.

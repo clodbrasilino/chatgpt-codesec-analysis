@@ -1,0 +1,50 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int value;
+    int count;
+} ElementCount;
+
+int compare(const void *a, const void *b) {
+    return (*(ElementCount*)a).value - (*(ElementCount*)b).value;
+}
+
+void countFrequencies(int **lists, int listSize, int *listLen, ElementCount *result, int *resultLen) {
+    for (int i = 0; i < listSize; i++) {
+        for (int j = 0; j < listLen[i]; j++) {
+            int found = 0;
+            for (int k = 0; k < *resultLen; k++) {
+                if (result[k].value == lists[i][j]) {
+                    result[k].count++;
+                    found = 1;
+                    break;
+                }
+            }
+            if (!found) {
+                result[*resultLen].value = lists[i][j];
+                result[(*resultLen)++].count = 1;
+            }
+        }
+    }
+    qsort(result, *resultLen, sizeof(ElementCount), compare);
+}
+
+int main() {
+    int lists[3][5] = {{1, 2, 3, 4, 5}, {1, 2, 3, 4, 5}, {1, 2, 3, 4, 5}};
+    int *listPtrs[3] = {lists[0], lists[1], lists[2]};
+    int listLen[] = {5, 5, 5};
+    int listSize = 3;
+
+    int resultLen = 0;
+    ElementCount *result = (ElementCount *)malloc(listSize * 5 * sizeof(ElementCount));
+    
+    countFrequencies((int **)listPtrs, listSize, listLen, result, &resultLen);
+
+    for (int i = 0; i < resultLen; i++) {
+        printf("Value: %d, Count: %d\n", result[i].value, result[i].count);
+    }
+
+    free(result);
+    return 0;
+}

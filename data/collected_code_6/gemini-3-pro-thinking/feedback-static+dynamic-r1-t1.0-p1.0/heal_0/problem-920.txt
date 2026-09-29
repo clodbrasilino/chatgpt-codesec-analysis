@@ -1,0 +1,148 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+typedef struct {
+    void **items;
+    size_t size;
+} Tuple;
+
+typedef struct {
+    Tuple *tuples;
+    size_t size;
+} TupleList;
+
+void remove_all_none_tuples(TupleList *list);
+TupleList* create_tuple_list(size_t capacity);
+void free_tuple_list(TupleList *list);
+
+void remove_all_none_tuples(TupleList *list) {
+    if (list == NULL || list->tuples == NULL) {
+        return;
+    }
+
+    size_t write_index = 0;
+
+    for (size_t i = 0; i < list->size; i++) {
+        bool all_none = true;
+
+        if (list->tuples[i].size > 0 && list->tuples[i].items != NULL) {
+            for (size_t j = 0; j < list->tuples[i].size; j++) {
+                if (list->tuples[i].items[j] != NULL) {
+                    all_none = false;
+                    break;
+                }
+            }
+        }
+
+        if (all_none) {
+            if (list->tuples[i].items != NULL) {
+                free(list->tuples[i].items);
+                list->tuples[i].items = NULL;
+            }
+        } else {
+            if (write_index != i) {
+                list->tuples[write_index] = list->tuples[i];
+            }
+            write_index++;
+        }
+    }
+
+    list->size = write_index;
+
+    if (list->size == 0) {
+        free(list->tuples);
+        list->tuples = NULL;
+    } else {
+        Tuple *new_tuples = realloc(list->tuples, list->size * sizeof(Tuple));
+        if (new_tuples != NULL) {
+            list->tuples = new_tuples;
+        }
+    }
+}
+
+TupleList* create_tuple_list(size_t capacity) {
+    TupleList *list = malloc(sizeof(TupleList));
+    if (list == NULL) {
+        return NULL;
+    }
+
+    if (capacity == 0) {
+        list->tuples = NULL;
+        list->size = 0;
+        return list;
+    }
+
+    list->tuples = malloc(capacity * sizeof(Tuple));
+    if (list->tuples == NULL) {
+        free(list);
+        return NULL;
+    }
+
+    list->size = capacity;
+    for (size_t i = 0; i < capacity; i++) {
+        list->tuples[i].items = NULL;
+        list->tuples[i].size = 0;
+    }
+
+    return list;
+}
+
+void free_tuple_list(TupleList *list) {
+    if (list == NULL) {
+        return;
+    }
+    if (list->tuples != NULL) {
+        for (size_t i = 0; i < list->size; i++) {
+            if (list->tuples[i].items != NULL) {
+                free(list->tuples[i].items);
+            }
+        }
+        free(list->tuples);
+    }
+    free(list);
+}
+
+int main(void) {
+    TupleList *list = create_tuple_list(3);
+    if (list == NULL) {
+        return EXIT_FAILURE;
+    }
+
+    list->tuples[0].items = malloc(2 * sizeof(void*));
+    if (list->tuples[0].items != NULL) {
+        list->tuples[0].size = 2;
+        list->tuples[0].items[0] = NULL;
+        list->tuples[0].items[1] = NULL;
+    } else {
+        list->tuples[0].size = 0;
+    }
+
+    list->tuples[1].items = malloc(2 * sizeof(void*));
+    if (list->tuples[1].items != NULL) {
+        list->tuples[1].size = 2;
+        int dummy = 42;
+        list->tuples[1].items[0] = &dummy;
+        list->tuples[1].items[1] = NULL;
+    } else {
+        list->tuples[1].size = 0;
+    }
+
+    list->tuples[2].items = malloc(3 * sizeof(void*));
+    if (list->tuples[2].items != NULL) {
+        list->tuples[2].size = 3;
+        list->tuples[2].items[0] = NULL;
+        list->tuples[2].items[1] = NULL;
+        list->tuples[2].items[2] = NULL;
+    } else {
+        list->tuples[2].size = 0;
+    }
+
+    remove_all_none_tuples(list);
+
+    free_tuple_list(list);
+
+    return EXIT_SUCCESS;
+}
+```

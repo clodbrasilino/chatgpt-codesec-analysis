@@ -1,0 +1,73 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char *key;
+    int value;
+} DictionaryEntry;
+
+typedef struct {
+    DictionaryEntry *entries;
+    size_t count;
+    size_t capacity;
+} Dictionary;
+
+Dictionary* create_dictionary(size_t initial_capacity) {
+    Dictionary *dict = (Dictionary*)malloc(sizeof(Dictionary));
+    dict->entries = (DictionaryEntry*)malloc(initial_capacity * sizeof(DictionaryEntry));
+    dict->count = 0;
+    dict->capacity = initial_capacity;
+    return dict;
+}
+
+void free_dictionary(Dictionary *dict) {
+    for (size_t i = 0; i < dict->count; ++i) {
+        free(dict->entries[i].key);
+    }
+    free(dict->entries);
+    free(dict);
+}
+
+int add_entry(Dictionary *dict, const char *key, int value) {
+    if (dict->count >= dict->capacity) {
+        return -1;
+    }
+    dict->entries[dict->count].key = strdup(key);
+    dict->entries[dict->count].value = value;
+    dict->count++;
+    return 0;
+}
+
+Dictionary* merge_dictionaries(Dictionary *dict1, Dictionary *dict2) {
+    Dictionary *merged = create_dictionary(dict1->count + dict2->count);
+    for (size_t i = 0; i < dict1->count; ++i) {
+        add_entry(merged, dict1->entries[i].key, dict1->entries[i].value);
+    }
+    for (size_t i = 0; i < dict2->count; ++i) {
+        add_entry(merged, dict2->entries[i].key, dict2->entries[i].value);
+    }
+    return merged;
+}
+
+int main() {
+    Dictionary *dict1 = create_dictionary(3);
+    add_entry(dict1, "one", 1);
+    add_entry(dict1, "two", 2);
+
+    Dictionary *dict2 = create_dictionary(3);
+    add_entry(dict2, "three", 3);
+    add_entry(dict2, "four", 4);
+
+    Dictionary *merged = merge_dictionaries(dict1, dict2);
+
+    for (size_t i = 0; i < merged->count; ++i) {
+        printf("%s: %d\n", merged->entries[i].key, merged->entries[i].value);
+    }
+
+    free_dictionary(dict1);
+    free_dictionary(dict2);
+    free_dictionary(merged);
+
+    return 0;
+}

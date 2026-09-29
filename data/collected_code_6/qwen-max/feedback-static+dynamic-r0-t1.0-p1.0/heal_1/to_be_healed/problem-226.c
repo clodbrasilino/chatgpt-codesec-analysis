@@ -1,0 +1,32 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+char* remove_odd_indexed_chars(const char *input) {
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    size_t len = strlen(input);
+    char *result = (char *)malloc((len / 2 + 1) * sizeof(char));
+    if (result == NULL) return NULL;
+
+    for (size_t i = 0, j = 0; i < len; i += 2, j++) {
+        result[j] = input[i];
+    }
+    result[len / 2] = '\0';
+    return result;
+}
+
+int main() {
+    const char *input = "Hello, World!";
+    char *output = remove_odd_indexed_chars(input);
+
+    if (output != NULL) {
+        printf("%s\n", output);
+        free(output);
+    } else {
+        fprintf(stderr, "Memory allocation failed\n");
+    }
+
+    return 0;
+}

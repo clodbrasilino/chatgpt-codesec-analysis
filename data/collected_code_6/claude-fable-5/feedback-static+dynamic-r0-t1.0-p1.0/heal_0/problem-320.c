@@ -1,0 +1,55 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+static int difference(unsigned long long n, unsigned long long *result)
+{
+    unsigned long long sum;
+    unsigned long long squared_sum;
+    unsigned long long sum_of_squares;
+
+    if (result == NULL) {
+        return -1;
+    }
+
+    if (n == 0ULL || n > 92681ULL) {
+        return -1;
+    }
+
+    sum = (n * (n + 1ULL)) / 2ULL;
+
+    if (sum != 0ULL && sum > ULLONG_MAX / sum) {
+        return -1;
+    }
+
+    squared_sum = sum * sum;
+    sum_of_squares = (n * (n + 1ULL) * (2ULL * n + 1ULL)) / 6ULL;
+
+    if (squared_sum < sum_of_squares) {
+        return -1;
+    }
+
+    *result = squared_sum - sum_of_squares;
+    return 0;
+}
+
+int main(void)
+{
+    unsigned long long n;
+    unsigned long long result;
+
+    n = 10ULL;
+
+    if (difference(n, &result) != 0) {
+        if (fprintf(stderr, "Error: computation failed for n = %llu\n", n) < 0) {
+            return EXIT_FAILURE;
+        }
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Difference for n = %llu is %llu\n", n, result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,22 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-473-s2.c:50:29: error: use of undeclared identifier 'sorted'; did you mean 'strtod'?
+   50 |             temp.elements = sorted;
+      |                             ^~~~~~
+      |                             strtod
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/_stdlib.h:189:9: note: 'strtod' declared here
+  189 | double   strtod(const char *, char *_LIBC_CSTR *) __DARWIN_ALIAS(strtod);
+      |          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-473-s2.c:61:34: error: use of undeclared identifier 'sorted'; did you mean 'strtod'?
+   61 |             new_tuple.elements = sorted;
+      |                                  ^~~~~~
+      |                                  strtod
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/_stdlib.h:189:9: note: 'strtod' declared here
+  189 | double   strtod(const char *, char *_LIBC_CSTR *) __DARWIN_ALIAS(strtod);
+      |          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-473-s2.c:70:18: error: use of undeclared identifier 'sorted'; did you mean 'strtod'?
+   70 |             free(sorted);
+      |                  ^~~~~~
+      |                  strtod
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/_stdlib.h:189:9: note: 'strtod' declared here
+  189 | double   strtod(const char *, char *_LIBC_CSTR *) __DARWIN_ALIAS(strtod);
+      |          ^
+3 errors generated.

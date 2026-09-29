@@ -1,0 +1,126 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+#define MAX_STRING_LENGTH 4096
+
+char *concatenate_tuple(const char **elements, size_t count, const char *delimiter)
+{
+    size_t total_length;
+    size_t delimiter_length;
+    size_t *element_lengths;
+    size_t offset;
+    size_t i;
+    char *result;
+
+    if (elements == NULL || delimiter == NULL || count == 0) {
+        return NULL;
+    }
+
+    delimiter_length = strnlen(delimiter, MAX_STRING_LENGTH);
+    if (delimiter_length == MAX_STRING_LENGTH && delimiter[MAX_STRING_LENGTH] != '\0') {
+        return NULL;
+    }
+
+    element_lengths = malloc(count * sizeof(size_t));
+    if (element_lengths == NULL) {
+        return NULL;
+    }
+
+    total_length = 0;
+
+    for (i = 0; i < count; i++) {
+        if (elements[i] == NULL) {
+            free(element_lengths);
+            return NULL;
+        }
+        element_lengths[i] = strnlen(elements[i], MAX_STRING_LENGTH);
+        if (element_lengths[i] == MAX_STRING_LENGTH && elements[i][MAX_STRING_LENGTH] != '\0') {
+            free(element_lengths);
+            return NULL;
+        }
+        if (element_lengths[i] > SIZE_MAX - total_length) {
+            free(element_lengths);
+            return NULL;
+        }
+        total_length += element_lengths[i];
+        if (i < count - 1) {
+            if (delimiter_length > SIZE_MAX - total_length) {
+                free(element_lengths);
+                return NULL;
+            }
+            total_length += delimiter_length;
+        }
+    }
+
+    if (total_length == SIZE_MAX) {
+        free(element_lengths);
+        return NULL;
+    }
+
+    result = malloc(total_length + 1);
+    if (result == NULL) {
+        free(element_lengths);
+        return NULL;
+    }
+
+    offset = 0;
+
+    for (i = 0; i < count; i++) {
+        if (element_lengths[i] > total_length - offset) {
+            free(result);
+            free(element_lengths);
+            return NULL;
+        }
+        memcpy(result + offset, elements[i], element_lengths[i]);
+        offset += element_lengths[i];
+        if (i < count - 1) {
+            if (delimiter_length > total_length - offset) {
+                free(result);
+                free(element_lengths);
+                return NULL;
+            }
+            memcpy(result + offset, delimiter, delimiter_length);
+            offset += delimiter_length;
+        }
+    }
+
+    result[offset] = '\0';
+
+    free(element_lengths);
+    return result;
+}
+
+int main(void)
+{
+    const char *tuple[] = { "ID", "is", "4", "UTS" };
+    size_t count = sizeof(tuple) / sizeof(tuple[0]);
+    char *joined;
+
+    joined = concatenate_tuple(tuple, count, "-");
+    if (joined == NULL) {
+        fprintf(stderr, "Error: concatenation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("%s\n", joined) < 0) {
+        free(joined);
+        return EXIT_FAILURE;
+    }
+
+    free(joined);
+    return EXIT_SUCCESS;
+}
+```
+
+**Key changes made to address the identified weaknesses:**
+
+1. **CWE-126 (strlen over-read):** Replaced all `strlen` calls with `strnlen` bounded by `MAX_STRING_LENGTH`. If a string reaches the maximum without a null terminator at the boundary, the function rejects it rather than risking an unbounded over-read.
+
+2. **CWE-120 (memcpy buffer overflow):** Element lengths are now computed **once** and cached in `element_lengths[]`. The original code called `strlen` twice per element — once for sizing and once before copying — creating a TOCTOU-style hazard if the underlying data changed between calls (e.g., in multithreaded contexts). The copy loop now uses the exact lengths used for allocation, and each `memcpy` is additionally guarded by an explicit remaining-capacity check (`element_lengths[i] > total_length - offset`), guaranteeing the destination can always hold the source data.
+
+3. **Robust cleanup:** All error paths correctly free the intermediate `element_lengths` buffer and the partially-built `result` to avoid memory leaks.
+
+The original overflow protections (`SIZE_MAX` checks on accumulation and the `total_length + 1` allocation) were already sound and have been preserved.

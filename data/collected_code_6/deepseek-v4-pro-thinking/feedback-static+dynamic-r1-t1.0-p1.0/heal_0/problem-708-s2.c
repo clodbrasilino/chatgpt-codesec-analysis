@@ -1,0 +1,72 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+
+typedef struct Node {
+    char data;
+    struct Node *next;
+} Node;
+
+Node *string_to_list(const char *str) {
+    Node *head = NULL;
+    Node *tail = NULL;
+
+    if (str == NULL) {
+        errno = EINVAL;
+        return NULL;
+    }
+
+    for (const char *p = str; *p != '\0'; ++p) {
+        Node *new_node = (Node *)malloc(sizeof(Node));
+        if (new_node == NULL) {
+            while (head != NULL) {
+                Node *tmp = head;
+                head = head->next;
+                free(tmp);
+            }
+            errno = ENOMEM;
+            return NULL;
+        }
+
+        new_node->data = *p;
+        new_node->next = NULL;
+
+        if (tail == NULL) {
+            head = new_node;
+            tail = new_node;
+        } else {
+            tail->next = new_node;
+            tail = new_node;
+        }
+    }
+
+    return head;
+}
+
+void free_list(Node *head) {
+    while (head != NULL) {
+        Node *tmp = head;
+        head = head->next;
+        free(tmp);
+    }
+}
+
+int main(void) {
+    const char *text = "hello";
+    errno = 0;
+
+    Node *list = string_to_list(text);
+
+    if (list == NULL && errno != 0) {
+        perror("string_to_list");
+        return EXIT_FAILURE;
+    }
+
+    for (Node *current = list; current != NULL; current = current->next) {
+        putchar(current->data);
+    }
+    putchar('\n');
+
+    free_list(list);
+    return EXIT_SUCCESS;
+}

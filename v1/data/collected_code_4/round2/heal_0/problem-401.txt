@@ -1,0 +1,36 @@
+```c
+#include <stdio.h>
+
+typedef struct {
+    int first;
+    int second;
+} Tuple;
+
+Tuple add_tuples(Tuple t1, Tuple t2) {
+    Tuple result;
+    result.first = t1.first + t2.first;
+    result.second = t1.second + t2.second;
+
+    return result;
+}
+
+int main() {
+    
+    Tuple t1, t2;
+
+    // Assigning values to first tuple
+    t1.first = 5;
+    t1.second = 10;
+
+    // Assigning values to second tuple
+    t2.first = 3;
+    t2.second = 7;
+
+    // Add tuples
+    Tuple result = add_tuples(t1, t2);
+
+    printf("Added Tuple is {%d, %d}\n", result.first, result.second);
+
+    return 0;
+}
+```

@@ -1,0 +1,21 @@
+collected_code/problem-843-0.c:16:44: error: Memory is allocated but not initialized: indices[j] [uninitdata]
+            ugNums[j] = uglyNumbers[indices[j]] * primes[j];
+                                           ^
+collected_code/problem-843-0.c:16:44: error: Cannot determine that 'indices[j]' is initialized [premium-bughuntingUninit]
+            ugNums[j] = uglyNumbers[indices[j]] * primes[j];
+                                           ^
+collected_code/problem-843-0.c:16:57: error: Cannot determine that 'primes[j]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+            ugNums[j] = uglyNumbers[indices[j]] * primes[j];
+                                                        ^
+collected_code/problem-843-0.c:27:24: error: Cannot determine that 'indices[j]' is initialized [premium-bughuntingUninit]
+                indices[j]++;
+                       ^
+collected_code/problem-843-0.c:34:10: error: Cannot determine that 'uglyNumbers[0]' is initialized [premium-bughuntingUninit]
+    free(uglyNumbers);
+         ^
+collected_code/problem-843-0.c:35:10: error: Cannot determine that 'indices[0]' is initialized [premium-bughuntingUninit]
+    free(indices);
+         ^
+collected_code/problem-843-0.c:36:10: error: Cannot determine that 'ugNums[0]' is initialized [premium-bughuntingUninit]
+    free(ugNums);
+         ^

@@ -1,0 +1,59 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_SIZE 100
+
+typedef struct {
+    int id;
+    int occurrences;
+} Record;
+
+int findOccurrences(Record records[], int size, int id) {
+    for(int i = 0; i < size; i++) {
+        if(records[i].id == id) {
+            return records[i].occurrences;
+        }
+    }
+    return -1;
+}
+
+void updateOccurrences(Record records[], int* size, int id) {
+    for(int i = 0; i < *size; i++) {
+        if(records[i].id == id) {
+            records[i].occurrences++;
+            return;
+        }
+    }
+    records[*size].id = id;
+    records[*size].occurrences = 1;
+    (*size)++;
+}
+
+int checkOccurrences(Record records[], int size, int occurrences) {
+    int count = 0;
+    for(int i = 0; i < size; i++) {
+        if(records[i].occurrences == occurrences) {
+            count++;
+        }
+    }
+    return count;
+}
+
+int main() {
+    int tuples[] = {1, 2, 3, 1, 2, 3, 4, 4, 5};
+    int length = sizeof(tuples) / sizeof(tuples[0]);
+    Record records[MAX_SIZE];
+    int size = 0;
+
+    for(int i = 0; i < length; i++) {
+        updateOccurrences(records, &size, tuples[i]);
+    }
+
+    for(int i = 0; i < size; i++) {
+        int count = checkOccurrences(records, size, records[i].occurrences);
+        printf("The record with id %d occurs %d times and there are %d records with the same number of occurrences.\n", records[i].id, records[i].occurrences, count);
+    }
+
+    return 0;
+}

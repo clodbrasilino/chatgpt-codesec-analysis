@@ -1,0 +1,40 @@
+./collected_code_4/round2//heal_0/problem-290.c: In function 'main':
+./collected_code_4/round2//heal_0/problem-290.c:35:24: warning: dereference of possibly-NULL 'listOfLists' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   35 |         listOfLists[i] = (List*)malloc(sizeof(List));
+      |         ~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  'main': events 1-4
+    |
+    |   32 |     List** listOfLists = (List**)malloc(sizeof(List*) * size);
+    |      |                                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                                  |
+    |      |                                  (1) this call could return NULL
+    |   33 | 
+    |   34 |     for(int i = 0; i < size; i++) {
+    |      |                    ~~~~~~~~       
+    |      |                      |
+    |      |                      (2) following 'true' branch (when 'i < size')...
+    |   35 |         listOfLists[i] = (List*)malloc(sizeof(List));
+    |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                    |   |
+    |      |                    |   (4) 'listOfLists + (long unsigned int)i * 8' could be NULL: unchecked value from (1)
+    |      |                    (3) ...to here
+    |
+./collected_code_4/round2//heal_0/problem-290.c:36:31: warning: dereference of possibly-NULL '*listOfLists_37 + _11' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   36 |         listOfLists[i]->array = (int*)malloc(sizeof(int) * (i+1));
+      |         ~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  'main': events 1-4
+    |
+    |   34 |     for(int i = 0; i < size; i++) {
+    |      |                    ~~^~~~~~
+    |      |                      |
+    |      |                      (1) following 'true' branch (when 'i < size')...
+    |   35 |         listOfLists[i] = (List*)malloc(sizeof(List));
+    |      |                    ~            ~~~~~~~~~~~~~~~~~~~~
+    |      |                    |            |
+    |      |                    |            (3) this call could return NULL
+    |      |                    (2) ...to here
+    |   36 |         listOfLists[i]->array = (int*)malloc(sizeof(int) * (i+1));
+    |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                               |
+    |      |                               (4) '*listOfLists_37 + _11' could be NULL: unchecked value from (3)
+    |

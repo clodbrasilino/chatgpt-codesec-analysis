@@ -1,0 +1,96 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int minimum_path_sum(int **triangle, int rows, int *result)
+{
+    int *dp;
+    int i;
+    int j;
+    int left;
+    int right;
+
+    if (triangle == NULL || rows <= 0 || result == NULL) {
+        return -1;
+    }
+
+    dp = malloc((size_t)rows * sizeof(int));
+    if (dp == NULL) {
+        return -1;
+    }
+
+    for (j = 0; j < rows; j++) {
+        dp[j] = triangle[rows - 1][j];
+    }
+
+    for (i = rows - 2; i >= 0; i--) {
+        for (j = 0; j <= i; j++) {
+            left = dp[j];
+            right = dp[j + 1];
+            if (left < right) {
+                dp[j] = left + triangle[i][j];
+            } else {
+                dp[j] = right + triangle[i][j];
+            }
+        }
+    }
+
+    *result = dp[0];
+    free(dp);
+    return 0;
+}
+
+int main(void)
+{
+    int rows = 4;
+    int data[4][4] = {
+        {2, 0, 0, 0},
+        {3, 4, 0, 0},
+        {6, 5, 7, 0},
+        {4, 1, 8, 3}
+    };
+    int **triangle;
+    int i;
+    int j;
+    int result;
+
+    triangle = malloc((size_t)rows * sizeof(int *));
+    if (triangle == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i < rows; i++) {
+        triangle[i] = malloc((size_t)(i + 1) * sizeof(int));
+        if (triangle[i] == NULL) {
+            for (j = 0; j < i; j++) {
+                free(triangle[j]);
+            }
+            free(triangle);
+            fprintf(stderr, "Memory allocation failed\n");
+            return EXIT_FAILURE;
+        }
+        for (j = 0; j <= i; j++) {
+            triangle[i][j] = data[i][j];
+        }
+    }
+
+    if (minimum_path_sum(triangle, rows, &result) != 0) {
+        for (i = 0; i < rows; i++) {
+            free(triangle[i]);
+        }
+        free(triangle);
+        fprintf(stderr, "Computation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Minimum path sum: %d\n", result);
+
+    for (i = 0; i < rows; i++) {
+        free(triangle[i]);
+    }
+    free(triangle);
+
+    return EXIT_SUCCESS;
+}
+```

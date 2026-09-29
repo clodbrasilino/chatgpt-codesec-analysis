@@ -1,0 +1,5 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_8/healed/problem-542.c: In function 'replace_chars':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_8/healed/problem-542.c:30:39: error: 'i' undeclared (first use in this function)
+   30 |     size_t remaining_len = str_len - (i - pmatch[0].rm_eo);
+      |                                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_8/healed/problem-542.c:30:39: note: each undeclared identifier is reported only once for each function it appears in

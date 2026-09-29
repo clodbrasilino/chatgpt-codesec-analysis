@@ -1,0 +1,28 @@
+#include <stdio.h>
+#include <stddef.h>
+
+void remove_even_characters(char *str);
+
+void remove_even_characters(char *str) {
+    if (str == NULL) {
+        return;
+    }
+
+    size_t write_index = 0;
+    for (size_t read_index = 0; str[read_index] != '\0'; read_index++) {
+        if (read_index % 2 != 0) {
+            str[write_index] = str[read_index];
+            write_index++;
+        }
+    }
+    str[write_index] = '\0';
+}
+
+int main(void) {
+    char test_string[] = "HelloWorld";
+    
+    remove_even_characters(test_string);
+    printf("%s\n", test_string);
+    
+    return 0;
+}

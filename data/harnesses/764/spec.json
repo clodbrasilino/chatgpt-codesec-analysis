@@ -1,0 +1,44 @@
+{
+  "task_id": 764,
+  "text": "Write a C function to count numeric values in a given string.",
+  "fn_candidates": [
+    "number_ctr",
+    "NumberCtr",
+    "numberCtr",
+    "numberctr"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "number_ctr",
+      "args": [
+        "program2bedone"
+      ],
+      "expected": 1,
+      "assert_src": "assert number_ctr('program2bedone') == 1"
+    },
+    {
+      "fn_name": "number_ctr",
+      "args": [
+        "3wonders"
+      ],
+      "expected": 1,
+      "assert_src": "assert number_ctr('3wonders') ==1"
+    },
+    {
+      "fn_name": "number_ctr",
+      "args": [
+        "123"
+      ],
+      "expected": 3,
+      "assert_src": "assert number_ctr('123') == 3"
+    }
+  ],
+  "arg_kinds": [
+    "str"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

@@ -1,0 +1,79 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node* next;
+} Node;
+
+Node* create_node(int data) {
+    Node* new_node = (Node*)malloc(sizeof(Node));
+    if (!new_node) {
+        exit(EXIT_FAILURE);
+    }
+    new_node->data = data;
+    new_node->next = NULL;
+    return new_node;
+}
+
+void append_node(Node** head, int data) {
+    if (!head) {
+        return;
+    }
+    Node* new_node = create_node(data);
+    if (!*head) {
+        *head = new_node;
+        return;
+    }
+    Node* current = *head;
+    while (current->next) {
+        current = current->next;
+    }
+    current->next = new_node;
+}
+
+void free_list(Node* head) {
+    Node* current = head;
+    while (current) {
+        Node* temp = current;
+        current = current->next;
+        free(temp);
+    }
+}
+
+Node* get_nth_item(Node* head, size_t n) {
+    Node* current = head;
+    size_t count = 0;
+    while (current) {
+        if (count == n) {
+            return current;
+        }
+        count++;
+        current = current->next;
+    }
+    return NULL;
+}
+
+int main(void) {
+    Node* head = NULL;
+    
+    for (int i = 0; i < 10; i++) {
+        append_node(&head, i * 10);
+    }
+    
+    size_t n = 4;
+    /* Possible weaknesses found:
+     *  Variable 'nth_node' can be declared as pointer to const [constVariablePointer]
+     */
+    Node* nth_node = get_nth_item(head, n);
+    
+    if (nth_node) {
+        printf("%d\n", nth_node->data);
+    } else {
+        printf("Item not found\n");
+    }
+    
+    free_list(head);
+    
+    return EXIT_SUCCESS;
+}

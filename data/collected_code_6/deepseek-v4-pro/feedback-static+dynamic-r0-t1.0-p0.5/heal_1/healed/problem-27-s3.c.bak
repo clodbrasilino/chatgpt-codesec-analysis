@@ -1,0 +1,58 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+char *remove_digits(const char *str) {
+    size_t len = strlen(str);
+    char *result = malloc(len + 1);
+    if (result == NULL) {
+        return NULL;
+    }
+    
+    size_t j = 0;
+    for (size_t i = 0; i < len; i++) {
+        if (!isdigit((unsigned char)str[i])) {
+            result[j++] = str[i];
+        }
+    }
+    result[j] = '\0';
+    return result;
+}
+
+void remove_digits_from_list(const char **list, size_t count, char **output) {
+    if (list == NULL || output == NULL) {
+        return;
+    }
+    
+    for (size_t i = 0; i < count; i++) {
+        output[i] = remove_digits(list[i]);
+    }
+}
+
+int main(void) {
+    const char *strings[] = {
+        "abc123def",
+        "456",
+        "hello",
+        "a1b2c3"
+    };
+    
+    size_t count = sizeof(strings) / sizeof(strings[0]);
+    char **cleaned = malloc(count * sizeof(char *));
+    if (cleaned == NULL) {
+        return 1;
+    }
+    
+    remove_digits_from_list(strings, count, cleaned);
+    
+    for (size_t i = 0; i < count; i++) {
+        if (cleaned[i] != NULL) {
+            printf("%s\n", cleaned[i]);
+            free(cleaned[i]);
+        }
+    }
+    
+    free(cleaned);
+    return 0;
+}

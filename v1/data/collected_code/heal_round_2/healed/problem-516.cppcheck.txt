@@ -1,0 +1,9 @@
+collected_code/heal_round_2/healed/problem-516.c:27:18: warning: Uninitialized variable: output [uninitvar]
+        arr[i] = output[i];
+                 ^
+collected_code/heal_round_2/healed/problem-516.c:22:27: note: Assuming condition is false
+    for (int i = n - 1; i >= 0; i--) {
+                          ^
+collected_code/heal_round_2/healed/problem-516.c:27:18: note: Uninitialized variable: output
+        arr[i] = output[i];
+                 ^

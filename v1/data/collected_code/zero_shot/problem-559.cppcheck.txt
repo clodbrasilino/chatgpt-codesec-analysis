@@ -1,0 +1,9 @@
+collected_code/problem-559-0.c:5:26: error: Cannot determine that 'arr[0]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+    int max_current = arr[0];
+                         ^
+collected_code/problem-559-0.c:6:25: error: Cannot determine that 'arr[0]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+    int max_global = arr[0];
+                        ^
+collected_code/problem-559-0.c:10:27: error: Cannot determine that 'arr[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        max_current = (arr[i] > max_current + arr[i]) ? arr[i] : max_current + arr[i];
+                          ^

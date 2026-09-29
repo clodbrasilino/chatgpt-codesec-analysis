@@ -1,0 +1,31 @@
+```C
+#include <stdio.h>
+#include <stdbool.h>
+
+bool isPalindrome(int n) {
+    int reversed = 0;
+    int original = n;
+    while (n != 0) {
+        int digit = n % 10;
+        reversed = reversed * 10 + digit;
+        n /= 10;
+    }
+    return original == reversed;
+}
+
+int previousPalindrome(int n) {
+    n--;
+    while (!isPalindrome(n)) {
+        n--;
+    }
+    return n;
+}
+
+int main() {
+    int number;
+    printf("Enter a number: ");
+    scanf("%d", &number);
+    printf("Previous palindrome: %d\n", previousPalindrome(number));
+    return 0;
+}
+```

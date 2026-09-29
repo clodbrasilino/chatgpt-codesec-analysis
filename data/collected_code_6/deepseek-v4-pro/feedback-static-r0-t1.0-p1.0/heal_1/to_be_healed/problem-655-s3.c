@@ -1,0 +1,44 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+unsigned long long sum_fifth_power(int n) {
+    unsigned long long sum = 0;
+    /* Possible weaknesses found:
+     *  The scope of the variable 'term' can be reduced. [variableScope]
+     */
+    unsigned long long term;
+    for (int i = 1; i <= n; i++) {
+        term = (unsigned long long)i * i * i * i * i;
+        sum += term;
+    }
+    return sum;
+}
+
+int main(void) {
+    int n;
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char input[64];
+    char *endptr;
+
+    printf("Enter a positive integer: ");
+    if (fgets(input, sizeof(input), stdin) == NULL) {
+        fprintf(stderr, "Error reading input.\n");
+        return EXIT_FAILURE;
+    }
+
+    n = (int)strtol(input, &endptr, 10);
+    if (endptr == input || *endptr != '\n') {
+        fprintf(stderr, "Invalid input. Please enter a positive integer.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (n <= 0) {
+        fprintf(stderr, "Number must be positive.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Sum of fifth powers: %llu\n", sum_fifth_power(n));
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,72 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *elements;
+    size_t size;
+} Tuple;
+
+Tuple* create_tuple(size_t size) {
+    if (size == 0) {
+        return NULL;
+    }
+    
+    Tuple *tuple = (Tuple*)malloc(sizeof(Tuple));
+    if (tuple == NULL) {
+        return NULL;
+    }
+    
+    tuple->elements = (int*)malloc(size * sizeof(int));
+    if (tuple->elements == NULL) {
+        free(tuple);
+        return NULL;
+    }
+    
+    tuple->size = size;
+    return tuple;
+}
+
+void destroy_tuple(Tuple *tuple) {
+    if (tuple != NULL) {
+        free(tuple->elements);
+        free(tuple);
+    }
+}
+
+size_t count_occurrences(const Tuple *tuple, int target) {
+    if (tuple == NULL || tuple->elements == NULL) {
+        return 0;
+    }
+    
+    size_t count = 0;
+    for (size_t i = 0; i < tuple->size; ++i) {
+        if (tuple->elements[i] == target) {
+            count++;
+        }
+    }
+    
+    return count;
+}
+
+int main(void) {
+    Tuple *my_tuple = create_tuple(5);
+    if (my_tuple == NULL) {
+        return EXIT_FAILURE;
+    }
+    
+    my_tuple->elements[0] = 1;
+    my_tuple->elements[1] = 2;
+    my_tuple->elements[2] = 3;
+    my_tuple->elements[3] = 2;
+    my_tuple->elements[4] = 4;
+    
+    int target = 2;
+    size_t occurrences = count_occurrences(my_tuple, target);
+    
+    printf("Occurrences of %d: %zu\n", target, occurrences);
+    
+    destroy_tuple(my_tuple);
+    return EXIT_SUCCESS;
+}
+```

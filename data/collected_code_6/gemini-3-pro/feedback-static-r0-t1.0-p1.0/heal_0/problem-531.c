@@ -1,0 +1,49 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+int minCoins(int coins[], int m, int V) {
+    if (V == 0) return 0;
+    if (V < 0 || m <= 0) return -1;
+
+    int *table = (int *)malloc(sizeof(int) * (V + 1));
+    if (table == NULL) {
+        return -1;
+    }
+
+    table[0] = 0;
+    for (int i = 1; i <= V; i++) {
+        table[i] = INT_MAX;
+    }
+
+    for (int i = 1; i <= V; i++) {
+        for (int j = 0; j < m; j++) {
+            if (coins[j] <= i) {
+                int sub_res = table[i - coins[j]];
+                if (sub_res != INT_MAX && sub_res + 1 < table[i]) {
+                    table[i] = sub_res + 1;
+                }
+            }
+        }
+    }
+
+    int result = table[V];
+    free(table);
+
+    return (result == INT_MAX) ? -1 : result;
+}
+
+int main(void) {
+    int coins[] = {9, 6, 5, 1};
+    int m = sizeof(coins) / sizeof(coins[0]);
+    int V = 11;
+    
+    int res = minCoins(coins, m, V);
+    if (res != -1) {
+        printf("%d\n", res);
+    } else {
+        printf("Not possible\n");
+    }
+    
+    return 0;
+}

@@ -1,0 +1,69 @@
+{
+  "task_id": 861,
+  "text": "Write a C function to find all anagrams of a string in a given list of strings.",
+  "fn_candidates": [
+    "anagram_lambda",
+    "AnagramLambda",
+    "anagramLambda",
+    "anagramlambda"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "anagram_lambda",
+      "args": [
+        [
+          "bcda",
+          "abce",
+          "cbda",
+          "cbea",
+          "adcb"
+        ],
+        "abcd"
+      ],
+      "expected": [
+        "bcda",
+        "cbda",
+        "adcb"
+      ],
+      "assert_src": "assert anagram_lambda([\"bcda\", \"abce\", \"cbda\", \"cbea\", \"adcb\"],\"abcd\")==['bcda', 'cbda', 'adcb']"
+    },
+    {
+      "fn_name": "anagram_lambda",
+      "args": [
+        [
+          "recitals",
+          " python"
+        ],
+        "articles"
+      ],
+      "expected": [
+        "recitals"
+      ],
+      "assert_src": "assert anagram_lambda([\"recitals\",\" python\"], \"articles\" )==[\"recitals\"]"
+    },
+    {
+      "fn_name": "anagram_lambda",
+      "args": [
+        [
+          " keep",
+          " abcdef",
+          " xyz"
+        ],
+        " peek"
+      ],
+      "expected": [
+        " keep"
+      ],
+      "assert_src": "assert anagram_lambda([\" keep\",\" abcdef\",\" xyz\"],\" peek\")==[\" keep\"]"
+    }
+  ],
+  "arg_kinds": [
+    "str",
+    "str-list"
+  ],
+  "return_kind": "str-list",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

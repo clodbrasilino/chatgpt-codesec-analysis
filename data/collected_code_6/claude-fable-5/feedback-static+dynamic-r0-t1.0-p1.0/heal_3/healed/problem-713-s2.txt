@@ -1,0 +1,81 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+#include <stddef.h>
+
+bool check_valid(const bool *tup, size_t size)
+{
+    if (tup == NULL || size == 0U)
+    {
+        return false;
+    }
+
+    for (size_t i = 0U; i < size; i++)
+    {
+        if (tup[i] == false)
+        {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+int main(void)
+{
+    bool tup1[] = { true, true, true, true };
+    bool tup2[] = { true, false, true, true };
+    bool tup3[] = { true, true, true };
+
+    size_t size1 = sizeof(tup1) / sizeof(tup1[0]);
+    size_t size2 = sizeof(tup2) / sizeof(tup2[0]);
+    size_t size3 = sizeof(tup3) / sizeof(tup3[0]);
+
+    if (check_valid(tup1, size1) == true)
+    {
+        (void)printf("Tuple 1: True\n");
+    }
+    else
+    {
+        (void)printf("Tuple 1: False\n");
+    }
+
+    if (check_valid(tup2, size2) == true)
+    {
+        (void)printf("Tuple 2: True\n");
+    }
+    else
+    {
+        (void)printf("Tuple 2: False\n");
+    }
+
+    if (check_valid(tup3, size3) == true)
+    {
+        (void)printf("Tuple 3: True\n");
+    }
+    else
+    {
+        (void)printf("Tuple 3: False\n");
+    }
+
+    return 0;
+}
+```
+
+**Analysis notes:**
+
+The original code was, in fact, functionally correct. `check_valid` properly returns `true` only when every element of the array is `true`, and correctly guards against `NULL` pointers and zero-length arrays. Tracing execution:
+
+- **Tuple 1** (`{true, true, true, true}`) → `True` ✓
+- **Tuple 2** (`{true, false, true, true}`) → `False` ✓
+- **Tuple 3** (`{true, true, true}`) → `True` ✓
+
+The comment block claiming "test case 0 failed" and "test case 2 failed: expected True, got 0" describes failures that would not occur with this implementation — those failures would only appear if the loop bound were wrong (e.g., iterating with `<=`, using a hardcoded size, or if `size` were computed incorrectly on a decayed pointer via `sizeof`). Notably, the code avoids the classic pitfall of computing `sizeof(tup)/sizeof(tup[0])` *inside* the function (where `tup` is a pointer, not an array) — the sizes are correctly computed in `main` where the array types are still intact.
+
+The rewrite keeps that correct structure: explicit comparisons against `true`/`false`, `size_t` for indexing, `const`-qualified input pointer, cast-to-void on `printf` returns, and defensive checks on the pointer and size. Compiled with `-Wall -Wextra -Wpedantic`, it produces no diagnostics and outputs:
+
+```
+Tuple 1: True
+Tuple 2: False
+Tuple 3: True
+```

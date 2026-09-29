@@ -1,0 +1,93 @@
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdlib.h>
+
+int roman_to_int(const char *s) {
+    int values[256] = {0};
+    values['I'] = 1;
+    values['V'] = 5;
+    values['X'] = 10;
+    values['L'] = 50;
+    values['C'] = 100;
+    values['D'] = 500;
+    values['M'] = 1000;
+    
+    int total = 0;
+    int prev = 0;
+    
+    if (s == NULL) {
+        return -1;
+    }
+    
+    size_t len = 0;
+    const char *ptr = s;
+    while (len < 128 && *ptr != '\0') {
+        if (!isalpha((unsigned char)*ptr)) {
+            return -1;
+        }
+        len++;
+        ptr++;
+    }
+    
+    if (len == 0 || *ptr != '\0') {
+        return -1;
+    }
+    
+    for (size_t i = len; i > 0; i--) {
+        char c = toupper((unsigned char)s[i - 1]);
+        int curr = values[(unsigned char)c];
+        
+        if (curr == 0) {
+            return -1;
+        }
+        
+        if (curr < prev) {
+            total -= curr;
+        } else {
+            total += curr;
+        }
+        prev = curr;
+    }
+    
+    return total;
+}
+
+int main(void) {
+    char *input = NULL;
+    size_t bufsize = 0;
+    ssize_t characters;
+    
+    printf("Enter a Roman numeral: ");
+    characters = getline(&input, &bufsize, stdin);
+    
+    if (characters == -1) {
+        free(input);
+        printf("Invalid Roman numeral\n");
+        return 1;
+    }
+    
+    if (characters > 0 && input[characters - 1] == '\n') {
+        input[characters - 1] = '\0';
+        characters--;
+    }
+    
+    if (characters == 0 || characters >= 128) {
+        free(input);
+        printf("Invalid Roman numeral\n");
+        return 1;
+    }
+    
+    int result = roman_to_int(input);
+    
+    free(input);
+    
+    if (result == -1) {
+        printf("Invalid Roman numeral\n");
+        return 1;
+    }
+    
+    printf("%d\n", result);
+    
+    return 0;
+}

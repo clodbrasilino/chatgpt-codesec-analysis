@@ -1,0 +1,4 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-536-s2.c:5:77: error: invalid operands to binary expression ('size_t' (aka 'unsigned long') and 'const char *')
+    5 |     if (n >= (size_t)(-1) / element_size || n * element_size > (size_t)(-1) - (const char*)list) {
+      |                                                                ~~~~~~~~~~~~ ^ ~~~~~~~~~~~~~~~~~
+1 error generated.

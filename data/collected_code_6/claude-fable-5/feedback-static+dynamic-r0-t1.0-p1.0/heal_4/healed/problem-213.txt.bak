@@ -1,0 +1,55 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+char *safe_concat(const char *a, const char *b)
+{
+    size_t len_a;
+    size_t len_b;
+    char *result;
+
+    if (a == NULL || b == NULL) {
+        return NULL;
+    }
+
+    len_a = strlen(a);
+    len_b = strlen(b);
+
+    if (len_b > SIZE_MAX - 1U || len_a > SIZE_MAX - len_b - 1U) {
+        return NULL;
+    }
+
+    result = malloc(len_a + len_b + 1U);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    memcpy(result, a, len_a);
+    memcpy(result + len_a, b, len_b);
+    result[len_a + len_b] = '\0';
+
+    return result;
+}
+
+int main(void)
+{
+    const char *first = "Hello, ";
+    const char *second = "world!";
+    char *combined;
+
+    combined = safe_concat(first, second);
+    if (combined == NULL) {
+        fprintf(stderr, "Concatenation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("%s\n", combined);
+    free(combined);
+
+    return EXIT_SUCCESS;
+}
+```
+
+The original snippet was invalid because an `if` statement cannot exist at global scope in C; executable statements must reside inside a function body. The rewrite places the overflow guard inside `safe_concat`, where `len_a` and `len_b` are properly declared and initialized before use. The check itself is sound: it prevents `len_a + len_b + 1` from wrapping around `SIZE_MAX`, which would otherwise cause an undersized allocation and a heap buffer overflow (CWE-190 leading to CWE-787). Required headers (`stdint.h` for `SIZE_MAX`, `string.h`, `stdlib.h`) are included, and `main` demonstrates safe usage with error handling and no memory leaks.

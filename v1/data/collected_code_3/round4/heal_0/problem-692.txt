@@ -1,0 +1,24 @@
+```C
+#include <stdio.h>
+
+int lastTwoDigitsOfFactorial(int n) {
+    if (n == 0 || n == 1)
+        return 1;
+    if (n == 2)
+        return 2;
+    if (n == 3)
+        return 6;
+    if (n == 4)
+        return 4;
+    return 0;
+}
+
+int main() {
+    int num;
+    printf("Enter a number: ");
+    scanf("%d", &num);
+    printf("Last two digits of factorial of %d is %02d\n", num, lastTwoDigitsOfFactorial(num));
+    return 0;
+}
+```
+This code will only work for numbers from 0 to 4. For numbers 5 and above, the last two digits of the factorial will always be 0. This is because the factorial of any number greater than 4 will always be a multiple of 10 (since it's a product of at least one each of 2 and 5), and hence end in 0.

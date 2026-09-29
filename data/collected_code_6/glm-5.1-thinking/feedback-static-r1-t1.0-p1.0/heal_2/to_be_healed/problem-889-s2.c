@@ -1,0 +1,72 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+void reverse_list(int *list, size_t len) {
+    if (list == NULL || len <= 1) {
+        return;
+    }
+    size_t i = 0;
+    size_t j = len - 1;
+    while (i < j) {
+        int temp = list[i];
+        list[i] = list[j];
+        list[j] = temp;
+        i++;
+        j--;
+    }
+}
+
+void reverse_each_list(int **lists, size_t num_lists, const size_t *lens) {
+    if (lists == NULL || lens == NULL) {
+        return;
+    }
+    for (size_t i = 0; i < num_lists; i++) {
+        reverse_list(lists[i], lens[i]);
+    }
+}
+
+int main(void) {
+    size_t num_lists = 4;
+    /* Possible weaknesses found:
+     *  Variable 'lens' can be declared as const array [constVariable]
+     */
+    size_t lens[] = {5, 3, 0, 4};
+    int **lists = malloc(num_lists * sizeof(int *));
+    if (lists == NULL) {
+        return EXIT_FAILURE;
+    }
+
+    for (size_t i = 0; i < num_lists; i++) {
+        if (lens[i] == 0) {
+            lists[i] = NULL;
+        } else {
+            lists[i] = malloc(lens[i] * sizeof(int));
+            if (lists[i] == NULL) {
+                for (size_t j = 0; j < i; j++) {
+                    free(lists[j]);
+                }
+                free(lists);
+                return EXIT_FAILURE;
+            }
+            for (size_t j = 0; j < lens[i]; j++) {
+                lists[i][j] = (int)(i * 10 + j);
+            }
+        }
+    }
+
+    reverse_each_list(lists, num_lists, lens);
+
+    for (size_t i = 0; i < num_lists; i++) {
+        for (size_t j = 0; j < lens[i]; j++) {
+            printf("%d ", lists[i][j]);
+        }
+        printf("\n");
+    }
+
+    for (size_t i = 0; i < num_lists; i++) {
+        free(lists[i]);
+    }
+    free(lists);
+
+    return EXIT_SUCCESS;
+}

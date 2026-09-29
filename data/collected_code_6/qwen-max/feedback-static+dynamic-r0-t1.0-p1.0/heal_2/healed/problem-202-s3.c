@@ -1,0 +1,22 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+void remove_even_characters(char *str) {
+    if (str == NULL) return;
+    int idx = 0, j = 0;
+    while (str[j] != '\0') {
+        if ((j + 1) % 2 != 0) {
+            str[idx++] = str[j];
+        }
+        j++;
+    }
+    str[idx] = '\0';
+}
+
+int main() {
+    char input[] = "abcdef";
+    remove_even_characters(input);
+    printf("%s\n", input);
+    return 0;
+}

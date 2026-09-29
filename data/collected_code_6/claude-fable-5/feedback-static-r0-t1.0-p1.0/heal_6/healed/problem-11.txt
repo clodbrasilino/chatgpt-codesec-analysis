@@ -1,0 +1,124 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+#define BUFFER_SIZE 256U
+
+static void flush_stdin(void)
+{
+    int input_char;
+
+    do {
+        input_char = fgetc(stdin);
+    } while (input_char != '\n' && input_char != EOF);
+}
+
+static int read_line(char *buffer, size_t size)
+{
+    size_t len;
+
+    if (buffer == NULL || size == 0U || size > (size_t)INT_MAX) {
+        return -1;
+    }
+
+    if (fgets(buffer, (int)size, stdin) == NULL) {
+        return -1;
+    }
+
+    buffer[size - 1U] = '\0';
+
+    len = strnlen(buffer, size);
+    if (len > 0U && buffer[len - 1U] == '\n') {
+        buffer[len - 1U] = '\0';
+    } else if (len == size - 1U) {
+        flush_stdin();
+    }
+
+    return 0;
+}
+
+void remove_first_last(char *str, size_t max_len, char ch)
+{
+    size_t len;
+    char *first;
+    char *last;
+    size_t tail_len;
+
+    if (str == NULL || max_len == 0U) {
+        return;
+    }
+
+    len = strnlen(str, max_len);
+    if (len == 0U || len >= max_len) {
+        return;
+    }
+
+    first = memchr(str, (int)(unsigned char)ch, len);
+    if (first == NULL) {
+        return;
+    }
+
+    last = strrchr(str, (int)(unsigned char)ch);
+
+    if (last != NULL && last != first) {
+        tail_len = len - (size_t)(last - str) - 1U;
+        memmove(last, last + 1, tail_len + 1U);
+        len -= 1U;
+    }
+
+    tail_len = len - (size_t)(first - str) - 1U;
+    memmove(first, first + 1, tail_len + 1U);
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    char target;
+    int input_char;
+
+    printf("Enter a string: ");
+    if (read_line(buffer, sizeof(buffer)) != 0) {
+        fprintf(stderr, "Error reading input string\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter the character to remove: ");
+    input_char = fgetc(stdin);
+    if (input_char == EOF || input_char == '\n') {
+        fprintf(stderr, "Error reading character\n");
+        return EXIT_FAILURE;
+    }
+    if (input_char != EOF) {
+        flush_stdin();
+    }
+    target = (char)input_char;
+
+    remove_first_last(buffer, sizeof(buffer), target);
+
+    printf("Result: %s\n", buffer);
+
+    return EXIT_SUCCESS;
+}
+```
+
+You'll also need to add `#include <limits.h>` for `INT_MAX` — here is the corrected include list:
+
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <limits.h>
+```
+
+**Analysis of the flagged weaknesses and their status in the rewrite:**
+
+1. **`fgetc` in a loop (CWE-120, CWE-20)** — In `flush_stdin()`, the characters read are discarded, never stored in a buffer, so no buffer overflow is possible. The loop terminates on `'\n'` or `EOF`, so it cannot loop infinitely. This is a false positive, and the code is retained as-is.
+
+2. **Statically-sized array `char buffer[BUFFER_SIZE]` (CWE-119/CWE-120)** — All writes to the buffer go through `read_line()`, which uses `fgets()` bounded by the buffer size, force-terminates with `'\0'`, and drains excess input via `flush_stdin()`. `remove_first_last()` uses `strnlen`, `memchr`, and bounded `memmove` operations, never writing past the terminator. The size is passed explicitly via `sizeof(buffer)`, so bounds are enforced.
+
+3. **`fgetc` for the target character** — The return value is checked against `EOF` and `'\n'` before use, and the cast to `char` happens only after validation. I added a `flush_stdin()` call after reading the target character so any trailing input (including the newline) is consumed, leaving `stdin` in a clean state.
+
+4. **Additional hardening added** — `read_line()` now rejects sizes exceeding `INT_MAX`, since `fgets()` takes an `int`; the previous unchecked `(int)size` cast could overflow with a hypothetical huge buffer.
+
+The original code was already well-defended; the Flawfinder hits were low-risk, mostly false positives given the existing bounds checking.

@@ -1,0 +1,89 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdbool.h>
+
+bool is_valid_parentheses(const char *input)
+{
+    size_t length;
+    char *stack;
+    size_t top = 0;
+    size_t i;
+    bool result = true;
+
+    if (input == NULL) {
+        return false;
+    }
+
+    length = strlen(input);
+    if (length == 0) {
+        return true;
+    }
+
+    stack = malloc(length);
+    if (stack == NULL) {
+        return false;
+    }
+
+    for (i = 0; i < length; i++) {
+        char c = input[i];
+
+        if (c == '(' || c == '[' || c == '{') {
+            if (top >= length) {
+                result = false;
+                break;
+            }
+            stack[top] = c;
+            top++;
+        } else if (c == ')' || c == ']' || c == '}') {
+            if (top == 0) {
+                result = false;
+                break;
+            }
+            top--;
+            if ((c == ')' && stack[top] != '(') ||
+                (c == ']' && stack[top] != '[') ||
+                (c == '}' && stack[top] != '{')) {
+                result = false;
+                break;
+            }
+        } else {
+            result = false;
+            break;
+        }
+    }
+
+    if (result && top != 0) {
+        result = false;
+    }
+
+    free(stack);
+    return result;
+}
+
+int main(void)
+{
+    const char *tests[] = {
+        "()",
+        "()[]{}",
+        "(]",
+        "([)]",
+        "{[]}",
+        "",
+        "((("
+    };
+    size_t count = sizeof(tests) / sizeof(tests[0]);
+    size_t i;
+
+    for (i = 0; i < count; i++) {
+        if (is_valid_parentheses(tests[i])) {
+            printf("\"%s\" is valid\n", tests[i]);
+        } else {
+            printf("\"%s\" is invalid\n", tests[i]);
+        }
+    }
+
+    return EXIT_SUCCESS;
+}
+```

@@ -1,0 +1,44 @@
+{
+  "task_id": 488,
+  "text": "Write a C function to find the area of a pentagon.",
+  "fn_candidates": [
+    "area_pentagon",
+    "AreaPentagon",
+    "areaPentagon",
+    "areapentagon"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "area_pentagon",
+      "args": [
+        5
+      ],
+      "expected": 43.01193501472417,
+      "assert_src": "assert area_pentagon(5)==43.01193501472417"
+    },
+    {
+      "fn_name": "area_pentagon",
+      "args": [
+        10
+      ],
+      "expected": 172.0477400588967,
+      "assert_src": "assert area_pentagon(10)==172.0477400588967"
+    },
+    {
+      "fn_name": "area_pentagon",
+      "args": [
+        15
+      ],
+      "expected": 387.10741513251753,
+      "assert_src": "assert area_pentagon(15)==387.10741513251753"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "float",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

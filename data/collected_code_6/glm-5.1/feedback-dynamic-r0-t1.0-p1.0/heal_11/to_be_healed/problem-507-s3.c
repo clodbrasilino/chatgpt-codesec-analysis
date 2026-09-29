@@ -1,0 +1,109 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+ /* Possible weaknesses found:
+  *  test case 1 failed: expected ['red', 'green', 'blue', 'white'], got <no output>
+  *  test case 2 failed: expected ['red', 'green', 'black', 'orange'], got <no output>
+  *  test case 0 failed: expected ['red', 'green', 'blue', 'black'], got <no output>
+  */
+
+char** remove_words(char** list, int* count, const char* word) {
+    if (!list || !count || !word) {
+        return list;
+    }
+
+    int new_count = 0;
+    for (int i = 0; i < *count; i++) {
+        if (strcmp(list[i], word) == 0) {
+            free(list[i]);
+        } else {
+            list[new_count++] = list[i];
+        }
+    }
+
+    *count = new_count;
+
+    if (new_count == 0) {
+        free(list);
+        return NULL;
+    }
+
+    char** temp = realloc(list, new_count * sizeof(char*));
+    if (temp) {
+        list = temp;
+    }
+
+    return list;
+}
+
+char** create_list(const char* items[], int size) {
+    char** list = malloc(size * sizeof(char*));
+    if (!list) {
+        return NULL;
+    }
+    for (int i = 0; i < size; i++) {
+        list[i] = malloc(strlen(items[i]) + 1);
+        if (!list[i]) {
+            for (int j = 0; j < i; j++) {
+                free(list[j]);
+            }
+            free(list);
+            return NULL;
+        }
+        strcpy(list[i], items[i]);
+    }
+    return list;
+}
+
+void free_list(char** list, int count) {
+    if (!list) {
+        return;
+    }
+    for (int i = 0; i < count; i++) {
+        free(list[i]);
+    }
+    free(list);
+}
+
+int main(void) {
+    const char* test0[] = {"red", "green", "blue", "black"};
+    int count0 = 4;
+    char** list0 = create_list(test0, count0);
+    list0 = remove_words(list0, &count0, "blue");
+    if (list0) {
+        for (int i = 0; i < count0; i++) {
+            printf("%s", list0[i]);
+            if (i < count0 - 1) printf(" ");
+        }
+        printf("\n");
+        free_list(list0, count0);
+    }
+
+    const char* test1[] = {"red", "green", "blue", "white"};
+    int count1 = 4;
+    char** list1 = create_list(test1, count1);
+    list1 = remove_words(list1, &count1, "blue");
+    if (list1) {
+        for (int i = 0; i < count1; i++) {
+            printf("%s", list1[i]);
+            if (i < count1 - 1) printf(" ");
+        }
+        printf("\n");
+        free_list(list1, count1);
+    }
+
+    const char* test2[] = {"red", "green", "black", "orange"};
+    int count2 = 4;
+    char** list2 = create_list(test2, count2);
+    list2 = remove_words(list2, &count2, "banana");
+    if (list2) {
+        for (int i = 0; i < count2; i++) {
+            printf("%s", list2[i]);
+            if (i < count2 - 1) printf(" ");
+        }
+        printf("\n");
+        free_list(list2, count2);
+    }
+
+    return 0;
+}

@@ -1,0 +1,24 @@
+#include <stdio.h>
+#include <stdint.h>
+
+int is_leap_year(int year) {
+    return (year % 4 == 0 && year % 100 != 0) || (year % 400 == 0);
+}
+
+int odd_days(int year) {
+    int64_t days = (int64_t)year * 365 + (int64_t)(year - 1) / 4 - (int64_t)(year - 1) / 100 + (int64_t)(year - 1) / 400;
+    int64_t weeks = days / 7;
+    int64_t odd_day_count = days - (weeks * 7);
+    if (is_leap_year(year)) {
+        odd_day_count++;
+    }
+    return (int)(odd_day_count % 7);
+}
+
+int main() {
+    int year;
+    printf("Enter a year: ");
+    scanf("%d", &year);
+    printf("Number of odd days in %d: %d\n", year, odd_days(year));
+    return 0;
+}

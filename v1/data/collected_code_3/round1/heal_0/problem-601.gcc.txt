@@ -1,0 +1,21 @@
+collected_code_3/problem-601-1.c: In function 'maxChainLength':
+collected_code_3/problem-601-1.c:11:16: warning: dereference of possibly-NULL 'mcl' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   11 |         mcl[i] = 1;
+      |         ~~~~~~~^~~
+  'maxChainLength': events 1-4
+    |
+    |    8 |     int *mcl = (int*) malloc(sizeof(int) * n);
+    |      |                       ^~~~~~~~~~~~~~~~~~~~~~~
+    |      |                       |
+    |      |                       (1) this call could return NULL
+    |    9 | 
+    |   10 |     for (i = 0; i < n; i++)
+    |      |                 ~~~~~  
+    |      |                   |
+    |      |                   (2) following 'true' branch (when 'i < n')...
+    |   11 |         mcl[i] = 1;
+    |      |         ~~~~~~~~~~     
+    |      |            |   |
+    |      |            |   (4) 'mcl + (long unsigned int)i * 4' could be NULL: unchecked value from (1)
+    |      |            (3) ...to here
+    |

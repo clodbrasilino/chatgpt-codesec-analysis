@@ -1,0 +1,112 @@
+{
+  "task_id": 815,
+  "text": "Write a C function to sort the given array without using any sorting algorithm. the given array consists of only 0, 1, and 2.",
+  "fn_candidates": [
+    "sort_by_dnf",
+    "SortByDnf",
+    "sortByDnf",
+    "sortbydnf"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "sort_by_dnf",
+      "args": [
+        [
+          1,
+          2,
+          0,
+          1,
+          0,
+          1,
+          2,
+          1,
+          1
+        ],
+        9
+      ],
+      "expected": [
+        0,
+        0,
+        1,
+        1,
+        1,
+        1,
+        1,
+        2,
+        2
+      ],
+      "assert_src": "assert sort_by_dnf([1,2,0,1,0,1,2,1,1], 9) == [0, 0, 1, 1, 1, 1, 1, 2, 2]"
+    },
+    {
+      "fn_name": "sort_by_dnf",
+      "args": [
+        [
+          1,
+          0,
+          0,
+          1,
+          2,
+          1,
+          2,
+          2,
+          1,
+          0
+        ],
+        10
+      ],
+      "expected": [
+        0,
+        0,
+        0,
+        1,
+        1,
+        1,
+        1,
+        2,
+        2,
+        2
+      ],
+      "assert_src": "assert sort_by_dnf([1,0,0,1,2,1,2,2,1,0], 10) == [0, 0, 0, 1, 1, 1, 1, 2, 2, 2]"
+    },
+    {
+      "fn_name": "sort_by_dnf",
+      "args": [
+        [
+          2,
+          2,
+          1,
+          0,
+          0,
+          0,
+          1,
+          1,
+          2,
+          1
+        ],
+        10
+      ],
+      "expected": [
+        0,
+        0,
+        0,
+        1,
+        1,
+        1,
+        1,
+        2,
+        2,
+        2
+      ],
+      "assert_src": "assert sort_by_dnf([2,2,1,0,0,0,1,1,2,1], 10) == [0, 0, 0, 1, 1, 1, 1, 2, 2, 2]"
+    }
+  ],
+  "arg_kinds": [
+    "int",
+    "int-list"
+  ],
+  "return_kind": "int-list",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

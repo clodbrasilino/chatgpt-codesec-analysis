@@ -1,0 +1,135 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    int *data;
+    size_t size;
+} Tuple;
+
+typedef struct {
+    Tuple *tuples;
+    size_t count;
+} TupleList;
+
+typedef struct {
+    int **data;
+    size_t rows;
+    size_t cols;
+} Matrix;
+
+void initTupleList(TupleList *list, size_t count) {
+    if (list == NULL) {
+        return;
+    }
+    list->tuples = (Tuple *)malloc(count * sizeof(Tuple));
+    if (list->tuples == NULL) {
+        list->count = 0;
+        return;
+    }
+    list->count = count;
+    for (size_t i = 0; i < count; i++) {
+        list->tuples[i].data = NULL;
+        list->tuples[i].size = 0;
+    }
+}
+
+void freeTupleList(TupleList *list) {
+    if (list == NULL || list->tuples == NULL) {
+        return;
+    }
+    for (size_t i = 0; i < list->count; i++) {
+        free(list->tuples[i].data);
+        list->tuples[i].data = NULL;
+    }
+    free(list->tuples);
+    list->tuples = NULL;
+    list->count = 0;
+}
+
+int flattenMatrixToColumns(const Matrix *matrix, TupleList *result) {
+    if (matrix == NULL || result == NULL || matrix->data == NULL) {
+        return -1;
+    }
+    if (matrix->rows == 0 || matrix->cols == 0) {
+        return -1;
+    }
+
+    initTupleList(result, matrix->cols);
+    if (result->tuples == NULL) {
+        return -1;
+    }
+
+    for (size_t col = 0; col < matrix->cols; col++) {
+        result->tuples[col].data = (int *)malloc(matrix->rows * sizeof(int));
+        if (result->tuples[col].data == NULL) {
+            freeTupleList(result);
+            return -1;
+        }
+        result->tuples[col].size = matrix->rows;
+
+        for (size_t row = 0; row < matrix->rows; row++) {
+            if (matrix->data[row] == NULL) {
+                freeTupleList(result);
+                return -1;
+            }
+            result->tuples[col].data[row] = matrix->data[row][col];
+        }
+    }
+    return 0;
+}
+
+void printTupleList(const TupleList *list) {
+    if (list == NULL || list->tuples == NULL) {
+        return;
+    }
+    printf("[");
+    for (size_t i = 0; i < list->count; i++) {
+        printf("(");
+        for (size_t j = 0; j < list->tuples[i].size; j++) {
+            printf("%d", list->tuples[i].data[j]);
+            if (j < list->tuples[i].size - 1) {
+                printf(", ");
+            }
+        }
+        printf(")");
+        if (i < list->count - 1) {
+            printf(", ");
+        }
+    }
+    printf("]\n");
+}
+
+int main(void) {
+    int row0[] = {1, 2, 3};
+    int row1[] = {4, 5, 6};
+    int row2[] = {7, 8, 9};
+    int *matrixData[] = {row0, row1, row2};
+
+    Matrix matrix;
+    matrix.data = matrixData;
+    matrix.rows = 3;
+    matrix.cols = 3;
+
+    TupleList result;
+    memset(&result, 0, sizeof(TupleList));
+
+    if (flattenMatrixToColumns(&matrix, &result) != 0) {
+        fprintf(stderr, "Error: Failed to flatten matrix\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Original matrix:\n");
+    for (size_t i = 0; i < matrix.rows; i++) {
+        for (size_t j = 0; j < matrix.cols; j++) {
+            printf("%d ", matrix.data[i][j]);
+        }
+        printf("\n");
+    }
+
+    printf("\nFlattened tuple list (columns):\n");
+    printTupleList(&result);
+
+    freeTupleList(&result);
+    return EXIT_SUCCESS;
+}

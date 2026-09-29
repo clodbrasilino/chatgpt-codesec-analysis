@@ -1,0 +1,78 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    int first;
+    int second;
+} Tuple;
+
+char* flatten_tuples(const Tuple* tuples, size_t count) {
+    if (!tuples || count == 0) {
+        return NULL;
+    }
+
+    size_t total_len = 1; 
+    
+    for (size_t i = 0; i < count; i++) {
+        int len = snprintf(NULL, 0, "(%d, %d)", tuples[i].first, tuples[i].second);
+        if (len < 0) {
+            return NULL;
+        }
+        total_len += (size_t)len;
+        if (i < count - 1) {
+            total_len += 2; 
+        }
+    }
+
+    char* result = malloc(total_len);
+    if (!result) {
+        return NULL;
+    }
+
+    char* current = result;
+    size_t remaining = total_len;
+
+    for (size_t i = 0; i < count; i++) {
+        int written = snprintf(current, remaining, "(%d, %d)", tuples[i].first, tuples[i].second);
+        if (written < 0 || (size_t)written >= remaining) {
+            free(result);
+            return NULL;
+        }
+        current += written;
+        remaining -= (size_t)written;
+
+        if (i < count - 1) {
+            written = snprintf(current, remaining, ", ");
+            if (written < 0 || (size_t)written >= remaining) {
+                free(result);
+                return NULL;
+            }
+            current += written;
+            remaining -= (size_t)written;
+        }
+    }
+
+    return result;
+}
+
+int main(void) {
+    const Tuple tuples[] = {
+        {1, 2},
+        {3, 4},
+        {5, 6},
+        {-10, 999}
+    };
+    
+    size_t count = sizeof(tuples) / sizeof(tuples[0]);
+
+    char* flattened = flatten_tuples(tuples, count);
+    if (flattened) {
+        printf("%s\n", flattened);
+        free(flattened);
+    }
+
+    return 0;
+}
+```

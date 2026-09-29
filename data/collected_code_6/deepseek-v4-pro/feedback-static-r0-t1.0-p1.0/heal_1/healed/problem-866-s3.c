@@ -1,0 +1,64 @@
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdlib.h>
+
+#define MAX_MONTH_NAME 32
+
+int has_31_days(const char *month) {
+    if (month == NULL) {
+        return 0;
+    }
+    
+    char *lower_month = NULL;
+    size_t len = 0;
+    
+    while (month[len] != '\0') {
+        if (len >= MAX_MONTH_NAME - 1) {
+            return 0;
+        }
+        len++;
+    }
+    
+    lower_month = malloc(len + 1);
+    if (lower_month == NULL) {
+        return 0;
+    }
+    
+    for (size_t i = 0; i < len; i++) {
+        lower_month[i] = tolower((unsigned char)month[i]);
+    }
+    lower_month[len] = '\0';
+    
+    const char *months_31[] = {
+        "january", "march", "may", "july",
+        "august", "october", "december"
+    };
+    
+    int result = 0;
+    for (int i = 0; i < 7; i++) {
+        if (strcmp(lower_month, months_31[i]) == 0) {
+            result = 1;
+            break;
+        }
+    }
+    
+    free(lower_month);
+    return result;
+}
+
+int main(void) {
+    const char *test_months[] = {
+        "January", "February", "March", "April",
+        "May", "June", "July", "August",
+        "September", "October", "November", "December",
+        "JANUARY", "march", "InvalidMonth", NULL
+    };
+    
+    for (int i = 0; test_months[i] != NULL; i++) {
+        printf("%s: %s\n", test_months[i], 
+               has_31_days(test_months[i]) ? "31 days" : "not 31 days");
+    }
+    
+    return 0;
+}

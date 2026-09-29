@@ -1,0 +1,44 @@
+{
+  "task_id": 194,
+  "text": "Write a C function to convert octal number to decimal number.",
+  "fn_candidates": [
+    "octal_To_Decimal",
+    "OctalToDecimal",
+    "octalToDecimal",
+    "octalToDecimal"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "octal_To_Decimal",
+      "args": [
+        25
+      ],
+      "expected": 21,
+      "assert_src": "assert octal_To_Decimal(25) == 21"
+    },
+    {
+      "fn_name": "octal_To_Decimal",
+      "args": [
+        30
+      ],
+      "expected": 24,
+      "assert_src": "assert octal_To_Decimal(30) == 24"
+    },
+    {
+      "fn_name": "octal_To_Decimal",
+      "args": [
+        40
+      ],
+      "expected": 32,
+      "assert_src": "assert octal_To_Decimal(40) == 32"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

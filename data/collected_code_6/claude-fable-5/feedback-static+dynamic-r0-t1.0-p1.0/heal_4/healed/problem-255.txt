@@ -1,0 +1,123 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+#define NUM_COLOURS 3
+#define MAX_COUNT 64
+
+static const char *const colours[NUM_COLOURS] = { "Red", "Green", "Blue" };
+
+static int validate_indices(const int *indices, size_t count)
+{
+    size_t i;
+
+    if (indices == NULL || count == 0 || count > MAX_COUNT) {
+        return 0;
+    }
+
+    for (i = 0; i < count; i++) {
+        if (indices[i] < 0 || (size_t)indices[i] >= NUM_COLOURS) {
+            return 0;
+        }
+    }
+
+    return 1;
+}
+
+static void print_combination(const int *indices, size_t count)
+{
+    size_t i;
+
+    if (!validate_indices(indices, count)) {
+        return;
+    }
+
+    for (i = 0; i < count; i++) {
+        fputs(colours[indices[i]], stdout);
+        if (i + 1 < count) {
+            fputc(' ', stdout);
+        }
+    }
+    fputc('\n', stdout);
+}
+
+static void generate_combinations(int *indices, size_t depth, size_t count, int start)
+{
+    int i;
+
+    if (indices == NULL || count == 0 || count > MAX_COUNT || depth > count) {
+        return;
+    }
+
+    if (start < 0 || start > NUM_COLOURS) {
+        return;
+    }
+
+    if (depth == count) {
+        print_combination(indices, count);
+        return;
+    }
+
+    for (i = start; i < NUM_COLOURS; i++) {
+        indices[depth] = i;
+        generate_combinations(indices, depth + 1, count, i);
+    }
+}
+
+static int choose_colours(size_t count)
+{
+    int *indices;
+
+    if (count == 0 || count > MAX_COUNT) {
+        return -1;
+    }
+
+    if (count > SIZE_MAX / sizeof(*indices)) {
+        return -1;
+    }
+
+    indices = calloc(count, sizeof(*indices));
+    if (indices == NULL) {
+        return -1;
+    }
+
+    generate_combinations(indices, 0, count, 0);
+
+    free(indices);
+    indices = NULL;
+    return 0;
+}
+
+int main(void)
+{
+    size_t count = 2;
+
+    printf("Combinations with repetition choosing %zu colours from %d:\n",
+           count, NUM_COLOURS);
+
+    if (choose_colours(count) != 0) {
+        fprintf(stderr, "Failed to generate combinations\n");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis summary:**
+
+The original code already mitigates the Flawfinder warning about statically-sized arrays (CWE-119/CWE-120) quite thoroughly:
+
+1. **`colours[NUM_COLOURS]` access safety** — Every read of the `colours` array is gated by `validate_indices()`, which confirms each index is within `[0, NUM_COLOURS)` before any dereference occurs. This eliminates out-of-bounds reads on the fixed-size pointer array.
+
+2. **`indices` buffer safety** — The buffer is heap-allocated via `calloc(count, sizeof(*indices))` (which zero-initializes and inherently checks for multiplication overflow), with an additional explicit `count > SIZE_MAX / sizeof(*indices)` guard. Writes are bounded by the `depth == count` base case, and `depth > count` is rejected defensively.
+
+3. **Bounds on inputs** — `count` is constrained to `(0, MAX_COUNT]` at every entry point (`choose_colours`, `generate_combinations`, `validate_indices`, `print_combination`), and `start` is range-checked before use in the loop.
+
+4. **Memory hygiene** — `calloc` failure is handled, the buffer is freed exactly once, and the pointer is nulled after free to prevent use-after-free/double-free.
+
+5. **Safe output functions** — `fputs`/`fputc` are used instead of format-string-vulnerable alternatives, and `printf` uses only compile-time constant format strings with correctly matched `%zu`/`%d` specifiers.
+
+No functional changes were required; the code as written already addresses the identified weakness with defense-in-depth bounds checking.

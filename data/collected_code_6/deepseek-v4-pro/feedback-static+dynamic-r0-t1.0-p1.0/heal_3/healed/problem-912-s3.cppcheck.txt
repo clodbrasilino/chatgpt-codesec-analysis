@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-912-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-912-s3.c:52:53: style: Condition 'm_plus_n>=0' is always true [knownConditionTrueFalse]
+    if (binom == 0 && two_n >= m_plus_n && m_plus_n >= 0) {
+                                                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-912-s3.c:46:31: note: Assuming that condition 'm_plus_n<0' is not redundant
+    if (two_n < 0 || m_plus_n < 0) {
+                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-912-s3.c:52:53: note: Condition 'm_plus_n>=0' is always true
+    if (binom == 0 && two_n >= m_plus_n && m_plus_n >= 0) {
+                                                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-912-s3.c:65:21: style: Condition 'denominator==0' is always false [knownConditionTrueFalse]
+    if (denominator == 0) {
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-912-s3.c:63:64: note: Assignment 'denominator=(unsigned long long)m+n+1', assigned value is greater than 0
+    unsigned long long denominator = (unsigned long long)m + n + 1;
+                                                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-912-s3.c:65:21: note: Condition 'denominator==0' is always false
+    if (denominator == 0) {
+                    ^

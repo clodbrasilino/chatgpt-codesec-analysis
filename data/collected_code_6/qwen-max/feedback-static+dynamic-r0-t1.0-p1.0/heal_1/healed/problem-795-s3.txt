@@ -1,0 +1,49 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int price;
+    int index;
+} Item;
+
+int cmp(const void *a, const void *b) {
+    return ((Item *)a)->price - ((Item *)b)->price;
+}
+
+void find_cheapest_n_items(const int *prices, int n, int *result, int size) {
+    Item *items = (Item *)malloc(size * sizeof(Item));
+    if (!items) {
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(1);
+    }
+    for (int i = 0; i < size; i++) {
+        items[i].price = prices[i];
+        items[i].index = i;
+    }
+    qsort(items, size, sizeof(Item), cmp);
+    for (int i = 0; i < n && i < size; i++) {
+        result[i] = items[i].index;
+    }
+    free(items);
+}
+
+int main() {
+    int prices[] = {120, 50, 80, 20, 40, 70, 30, 60, 90};
+    int size = sizeof(prices) / sizeof(prices[0]);
+    int n = 3;
+    int *result = (int *)malloc(n * sizeof(int));
+    if (!result) {
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(1);
+    }
+    find_cheapest_n_items(prices, n, result, size);
+    printf("Indices of the cheapest %d items: ", n);
+    for (int i = 0; i < n; i++) {
+        printf("%d ", result[i]);
+    }
+    printf("\n");
+    free(result);
+    return 0;
+}
+```

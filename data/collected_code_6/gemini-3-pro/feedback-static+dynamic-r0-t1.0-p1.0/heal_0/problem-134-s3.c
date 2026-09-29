@@ -1,0 +1,36 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+void check_last_element(int *arr, size_t size, int p) {
+    if (arr == NULL || size == 0) {
+        printf("Invalid input\n");
+        return;
+    }
+
+    int last_element = arr[size - 1];
+    
+    if (p < 0) {
+        printf("Invalid operation count\n");
+        return;
+    }
+
+    for (int i = 0; i < p; i++) {
+        last_element += 1;
+    }
+
+    if (last_element % 2 == 0) {
+        printf("Even\n");
+    } else {
+        printf("Odd\n");
+    }
+}
+
+int main(void) {
+    int arr[] = {1, 2, 3, 4, 5};
+    size_t size = sizeof(arr) / sizeof(arr[0]);
+    int p = 3;
+
+    check_last_element(arr, size, p);
+
+    return EXIT_SUCCESS;
+}

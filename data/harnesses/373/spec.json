@@ -1,0 +1,50 @@
+{
+  "task_id": 373,
+  "text": "Write a C function to find the volume of a cuboid.",
+  "fn_candidates": [
+    "volume_cuboid",
+    "VolumeCuboid",
+    "volumeCuboid",
+    "volumecuboid"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "volume_cuboid",
+      "args": [
+        1,
+        2,
+        3
+      ],
+      "expected": 6,
+      "assert_src": "assert volume_cuboid(1,2,3)==6"
+    },
+    {
+      "fn_name": "volume_cuboid",
+      "args": [
+        5,
+        7,
+        9
+      ],
+      "expected": 315,
+      "assert_src": "assert volume_cuboid(5,7,9)==315"
+    },
+    {
+      "fn_name": "volume_cuboid",
+      "args": [
+        10,
+        15,
+        21
+      ],
+      "expected": 3150,
+      "assert_src": "assert volume_cuboid(10,15,21)==3150"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

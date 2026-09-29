@@ -1,0 +1,55 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int a;
+    int b;
+} Tuple;
+
+Tuple* create_tuple(int a, int b) {
+    Tuple *t = (Tuple *)malloc(sizeof(Tuple));
+    t->a = a;
+    t->b = b;
+    return t;
+}
+
+void free_tuples(Tuple **tuples, int count) {
+    for (int i = 0; i < count; ++i) {
+        if (tuples[i] != NULL) {
+            free(tuples[i]);
+        }
+    }
+    free(tuples);
+}
+
+int remove_none_tuples(Tuple **tuples, int *count) {
+    int write_index = 0;
+    for (int i = 0; i < *count; ++i) {
+        if (tuples[i]->a != -1 || tuples[i]->b != -1) {
+            tuples[write_index++] = tuples[i];
+        } else {
+            free(tuples[i]);
+        }
+    }
+    *count = write_index;
+    return 0;
+}
+
+int main() {
+    int count = 5;
+    Tuple **tuples = (Tuple **)malloc(count * sizeof(Tuple *));
+    tuples[0] = create_tuple(1, 2);
+    tuples[1] = create_tuple(-1, -1);
+    tuples[2] = create_tuple(3, 4);
+    tuples[3] = create_tuple(-1, -1);
+    tuples[4] = create_tuple(5, 6);
+
+    remove_none_tuples(tuples, &count);
+
+    for (int i = 0; i < count; ++i) {
+        printf("(%d, %d)\n", tuples[i]->a, tuples[i]->b);
+    }
+
+    free_tuples(tuples, 5);
+    return 0;
+}

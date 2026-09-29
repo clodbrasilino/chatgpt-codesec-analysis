@@ -1,0 +1,39 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+int compare_chars(const void *a, const void *b) {
+    return (*(const unsigned char *)a - *(const unsigned char *)b);
+}
+
+void sort_string(char *str, size_t len) {
+    if (str == NULL || len == 0) {
+        return;
+    }
+    qsort(str, len, sizeof(char), compare_chars);
+}
+
+int main(void) {
+    char str[1024];
+    size_t len;
+    
+    if (fgets(str, sizeof(str), stdin) == NULL) {
+        return 1;
+    }
+    
+    len = strcspn(str, "\n");
+    if (len < sizeof(str)) {
+        str[len] = '\0';
+    } else {
+        str[sizeof(str) - 1] = '\0';
+        len = sizeof(str) - 1;
+    }
+    
+    sort_string(str, len);
+    
+    printf("%s\n", str);
+    
+    return 0;
+}
+```

@@ -1,0 +1,42 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+long long sum_in_range(const int *list, size_t size, size_t start_index, size_t end_index) {
+    if (list == NULL) {
+        return 0;
+    }
+
+    if (start_index >= size || end_index >= size || start_index > end_index) {
+        return 0;
+    }
+
+    long long sum = 0;
+    for (size_t i = start_index; i <= end_index; ++i) {
+        sum += list[i];
+    }
+
+    return sum;
+}
+
+int main(void) {
+    size_t size = 10;
+    int *list = (int *)malloc(size * sizeof(int));
+    if (list == NULL) {
+        return 1;
+    }
+
+    for (size_t i = 0; i < size; ++i) {
+        list[i] = (int)(i + 1);
+    }
+
+    size_t start = 2;
+    size_t end = 6;
+
+    long long total_sum = sum_in_range(list, size, start, end);
+    printf("%lld\n", total_sum);
+
+    free(list);
+    list = NULL;
+
+    return 0;
+}

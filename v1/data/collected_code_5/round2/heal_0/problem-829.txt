@@ -1,0 +1,54 @@
+```C
+#include<stdio.h>
+#include<string.h>
+
+#define MAX_STRINGS 1000
+#define MAX_LENGTH 100  
+
+void secondMostRepeated(char *str[], int n) {
+    int count[MAX_STRINGS] = {0};
+    int i, j;
+
+    for (i = 0; i < n; i++) {
+        for (j = i+1; j < n; j++) {
+            if (strcmp(str[i], str[j]) == 0) {
+                count[i]++;
+            }
+        }
+    }
+
+    int first_max = 0, sec_max = 0;
+    for (i = 0; i < n; i++) {
+        if (count[i] > count[first_max]) {
+            sec_max = first_max;
+            first_max = i;
+        } else if (count[i] > count[sec_max] && count[i] < count[first_max]) {
+            sec_max = i;
+        }
+    }
+
+    printf("Second most repeated string is %s\n", str[sec_max]);
+}
+
+int main(){
+    int n, i;
+    printf("Enter the number of strings : ");
+    scanf("%d",&n);
+
+    char str[MAX_STRINGS][MAX_LENGTH];
+
+    printf("Enter strings one by one: \n");
+    for(i = 0; i < n; i++) {
+        scanf("%s",str[i]);
+    }
+
+    char *str_ptr[n];
+
+    for (i = 0; i < n; i++) {
+        str_ptr[i] = str[i];
+    }
+
+    secondMostRepeated(str_ptr, n);
+    return 0;
+}
+```

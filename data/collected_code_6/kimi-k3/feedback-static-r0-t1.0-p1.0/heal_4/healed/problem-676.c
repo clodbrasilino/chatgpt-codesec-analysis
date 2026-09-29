@@ -1,0 +1,48 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+char* remove_non_alphanumeric(const char* input, size_t input_len) {
+    char* result = NULL;
+    size_t result_len = 0;
+    size_t i;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    result = (char*)malloc(input_len + 1);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    for (i = 0; i < input_len; i++) {
+        if (isalnum((unsigned char)input[i])) {
+            result[result_len++] = input[i];
+        }
+    }
+
+    result[result_len] = '\0';
+    return result;
+}
+
+int main(void) {
+    const char test_string[] = "Hello, World! 123 @#$";
+    size_t test_len;
+    char* cleaned;
+
+    test_len = sizeof(test_string) - 1;
+    cleaned = remove_non_alphanumeric(test_string, test_len);
+
+    if (cleaned != NULL) {
+        printf("Original: %s\n", test_string);
+        printf("Cleaned: %s\n", cleaned);
+        free(cleaned);
+    } else {
+        fprintf(stderr, "Error processing string\n");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

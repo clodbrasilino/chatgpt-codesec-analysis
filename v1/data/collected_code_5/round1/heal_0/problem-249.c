@@ -1,0 +1,52 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int isPresent(int arr[], int n, int key) {
+    int i;
+    for(i = 0; i < n; i++) {
+        if(arr[i] == key) {
+            return 1;
+        }
+    }
+    return 0;
+}
+
+int* intersection(int arr1[], int n1, int arr2[], int n2, int *len) {
+    int i;
+    *len = 0;
+    int *result = malloc(sizeof(int) * n1);
+
+    if(result == NULL) {
+        return NULL;
+    }
+
+    for(i = 0; i < n1; i++) {
+        if(isPresent(arr2, n2, arr1[i])) {
+            result[(*len)++] = arr1[i];
+        }
+    }
+
+    return result;
+}
+
+int main() {
+    int arr1[] = {1, 2, 3, 4};
+    int n1 = sizeof(arr1) / sizeof(arr1[0]);
+    int arr2[] = {3, 4, 5, 6};
+    int n2 = sizeof(arr2) / sizeof(arr2[0]);
+    int len, i;
+
+    int *result = intersection(arr1, n1, arr2, n2, &len);
+
+    if(result == NULL) {
+        printf("Memory allocation failed\n");
+        return 1;
+    }
+
+    for(i = 0; i < len; i++) {
+        printf("%d ", result[i]);
+    }
+
+    free(result);
+    return 0;
+}

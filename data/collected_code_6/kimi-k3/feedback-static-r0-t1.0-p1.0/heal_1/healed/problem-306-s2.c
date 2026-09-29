@@ -1,0 +1,51 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int maxSumIncreasingSubseq(const int arr[], int n, int i, int k) {
+    if (n <= 0 || i < 0 || k >= n || k <= i) {
+        return -1;
+    }
+
+    int *dp = (int *)malloc(n * sizeof(int));
+    if (dp == NULL) {
+        return -1;
+    }
+
+    for (int idx = 0; idx < n; idx++) {
+        dp[idx] = arr[idx];
+    }
+
+    for (int idx = 1; idx <= i; idx++) {
+        for (int j = 0; j < idx; j++) {
+            if (arr[idx] > arr[j] && dp[idx] < dp[j] + arr[idx]) {
+                dp[idx] = dp[j] + arr[idx];
+            }
+        }
+    }
+
+    int maxSum = -1;
+    for (int idx = 0; idx <= i; idx++) {
+        if (arr[idx] < arr[k] && dp[idx] + arr[k] > maxSum) {
+            maxSum = dp[idx] + arr[k];
+        }
+    }
+
+    free(dp);
+    return maxSum;
+}
+
+int main(void) {
+    int arr[] = {1, 101, 2, 3, 100, 4, 5};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    int i = 4;
+    int k = 6;
+
+    int result = maxSumIncreasingSubseq(arr, n, i, k);
+    if (result != -1) {
+        printf("Maximum sum: %d\n", result);
+    } else {
+        printf("Invalid input or no valid subsequence exists.\n");
+    }
+
+    return 0;
+}

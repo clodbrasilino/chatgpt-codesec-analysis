@@ -1,0 +1,90 @@
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+
+int is_word_present(const char *sentence, const char *word) {
+    if (sentence == NULL || word == NULL || *sentence == '\0' || *word == '\0') {
+        return 0;
+    }
+
+    size_t word_len = 0;
+    while (word[word_len] != '\0') {
+        word_len++;
+    }
+
+    const char *pos = sentence;
+
+    while (*pos != '\0') {
+        while (*pos != '\0' && !isalpha((unsigned char)*pos)) {
+            pos++;
+        }
+
+        if (*pos == '\0') {
+            break;
+        }
+
+        const char *start = pos;
+        while (*pos != '\0' && isalpha((unsigned char)*pos)) {
+            pos++;
+        }
+
+        size_t token_len = (size_t)(pos - start);
+        if (token_len == word_len) {
+            int match = 1;
+            for (size_t i = 0; i < word_len; i++) {
+                if (tolower((unsigned char)start[i]) != tolower((unsigned char)word[i])) {
+                    match = 0;
+                    break;
+                }
+            }
+            if (match) {
+                return 1;
+            }
+        }
+    }
+
+    return 0;
+}
+
+int main(void) {
+    char sentence[1024] = {0};
+    char word[256] = {0};
+
+    printf("Enter a sentence: ");
+    if (fgets(sentence, sizeof(sentence), stdin) == NULL) {
+        printf("Error reading input.\n");
+        return 1;
+    }
+
+    size_t len = 0;
+    while (sentence[len] != '\0') {
+        if (sentence[len] == '\n') {
+            sentence[len] = '\0';
+            break;
+        }
+        len++;
+    }
+
+    printf("Enter a word to search: ");
+    if (fgets(word, sizeof(word), stdin) == NULL) {
+        printf("Error reading input.\n");
+        return 1;
+    }
+
+    len = 0;
+    while (word[len] != '\0') {
+        if (word[len] == '\n') {
+            word[len] = '\0';
+            break;
+        }
+        len++;
+    }
+
+    if (is_word_present(sentence, word)) {
+        printf("The word \"%s\" is present in the sentence.\n", word);
+    } else {
+        printf("The word \"%s\" is not present in the sentence.\n", word);
+    }
+
+    return 0;
+}

@@ -1,0 +1,18 @@
+```c
+#include <stdio.h>
+
+unsigned int toggle_first_last_bits(unsigned int num) {
+    unsigned int highest_bit = sizeof(num) * 8 - 1;
+    num ^= 1u;
+    num ^= 1u << highest_bit;
+    return num;
+}
+
+int main(void) {
+    unsigned int num = 0x80000001u;
+    printf("Before: 0x%X\n", num);
+    num = toggle_first_last_bits(num);
+    printf("After:  0x%X\n", num);
+    return 0;
+}
+```

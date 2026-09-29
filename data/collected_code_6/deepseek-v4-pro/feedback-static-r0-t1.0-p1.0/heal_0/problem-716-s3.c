@@ -1,0 +1,30 @@
+#include <stdio.h>
+#include <math.h>
+
+double rhombus_perimeter(double side) {
+    if (side <= 0) {
+        return -1;
+    }
+    return 4 * side;
+}
+
+int main(void) {
+    double side;
+    
+    printf("Enter the side length of the rhombus: ");
+    if (scanf("%lf", &side) != 1) {
+        printf("Invalid input\n");
+        return 1;
+    }
+    
+    double perimeter = rhombus_perimeter(side);
+    
+    if (perimeter < 0) {
+        printf("Side length must be positive\n");
+        return 1;
+    }
+    
+    printf("Perimeter of the rhombus: %.2f\n", perimeter);
+    
+    return 0;
+}

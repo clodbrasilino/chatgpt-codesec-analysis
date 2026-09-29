@@ -1,0 +1,33 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char* tuple_to_string(int *tuple, size_t len) {
+    if (len == 0) return NULL;
+    size_t string_length = len * 2 - 1; // spaces between numbers and null terminator
+    char *result = (char *)malloc(string_length + 1);
+    if (result == NULL) return NULL;
+
+    for (size_t i = 0; i < len; ++i) {
+        if (i != 0) {
+            strcat(result, " ");
+        }
+        sprintf(result + strlen(result), "%d", tuple[i]);
+    }
+    return result;
+}
+
+int main() {
+    int tuple[] = {1, 2, 3, 4};
+    size_t len = sizeof(tuple) / sizeof(tuple[0]);
+
+    char *str = tuple_to_string(tuple, len);
+    if (str != NULL) {
+        printf("%s\n", str);
+        free(str);
+    } else {
+        printf("Conversion failed.\n");
+    }
+
+    return 0;
+}

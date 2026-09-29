@@ -1,0 +1,89 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int is_divisible_by_digits(int num) {
+    if (num <= 0) {
+        return 0;
+    }
+    int temp = num;
+    while (temp > 0) {
+        int digit = temp % 10;
+        if (digit == 0) {
+            return 0;
+        }
+        if (num % digit != 0) {
+            return 0;
+        }
+        temp /= 10;
+    }
+    return 1;
+}
+
+int* find_numbers(int start, int end, int* result_size) {
+    if (start > end || result_size == NULL) {
+        if (result_size != NULL) {
+            *result_size = 0;
+        }
+        return NULL;
+    }
+    
+    int count = 0;
+    for (int i = start; i <= end; i++) {
+        if (is_divisible_by_digits(i)) {
+            count++;
+        }
+    }
+    
+    if (count == 0) {
+        *result_size = 0;
+        return NULL;
+    }
+    
+    int* result = (int*)malloc(count * sizeof(int));
+    if (result == NULL) {
+        *result_size = 0;
+        return NULL;
+    }
+    
+    int index = 0;
+    for (int i = start; i <= end; i++) {
+        if (is_divisible_by_digits(i)) {
+            result[index++] = i;
+        }
+    }
+    
+    *result_size = count;
+    return result;
+}
+
+/* Possible weaknesses found:
+ *  Parameter 'argv' can be declared as const array [constParameter]
+ */
+int main(int argc, char* argv[]) {
+    int start = 1;
+    int end = 100;
+    
+    if (argc == 3) {
+        /* Possible weaknesses found:
+         * Flawfinder atoi: Unless checked, the resulting number can exceed the expected range (CWE-190). If source untrusted, check both minimum and maximum, even if the input had no minus sign (large numbers can roll over into negative number; consider saving to an unsigned value if that is intended). (risk 2, integer)
+         */
+        start = atoi(argv[1]);
+        /* Possible weaknesses found:
+         * Flawfinder atoi: Unless checked, the resulting number can exceed the expected range (CWE-190). If source untrusted, check both minimum and maximum, even if the input had no minus sign (large numbers can roll over into negative number; consider saving to an unsigned value if that is intended). (risk 2, integer)
+         */
+        end = atoi(argv[2]);
+    }
+    
+    int size = 0;
+    int* numbers = find_numbers(start, end, &size);
+    
+    if (numbers != NULL) {
+        for (int i = 0; i < size; i++) {
+            printf("%d ", numbers[i]);
+        }
+        printf("\n");
+        free(numbers);
+    }
+    
+    return 0;
+}

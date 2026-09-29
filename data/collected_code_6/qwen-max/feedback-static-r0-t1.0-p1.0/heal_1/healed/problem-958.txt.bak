@@ -1,0 +1,30 @@
+```c
+#include <stdio.h>
+#include <string.h>
+
+void intToRoman(int num, char *roman) {
+    const char *ones[] = {"", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX"};
+    const char *tens[] = {"", "X", "XX", "XXX", "XL", "L", "LX", "LXX", "LXXX", "XC"};
+    const char *hundreds[] = {"", "C", "CC", "CCC", "CD", "D", "DC", "DCC", "DCCC", "CM"};
+    const char *thousands[] = {"", "M", "MM", "MMM"};
+
+    strcpy(roman, thousands[num / 1000]);
+    strcat(roman, hundreds[(num % 1000) / 100]);
+    strcat(roman, tens[(num % 100) / 10]);
+    strcat(roman, ones[num % 10]);
+}
+
+int main() {
+    int number;
+    printf("Enter an integer: ");
+    if (scanf("%d", &number) == 1 && number > 0 && number < 4000) {
+        char roman[16] = "";
+        intToRoman(number, roman);
+        printf("Roman numeral: %s\n", roman);
+    } else {
+        printf("Invalid input. Please enter an integer between 1 and 3999.\n");
+    }
+
+    return 0;
+}
+```

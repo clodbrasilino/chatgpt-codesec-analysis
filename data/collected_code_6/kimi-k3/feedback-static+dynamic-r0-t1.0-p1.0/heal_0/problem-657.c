@@ -1,0 +1,65 @@
+#include <stdio.h>
+#include <math.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <limits.h>
+
+int get_first_digit_factorial(int n) {
+    if (n < 0) {
+        return -1;
+    }
+    
+    if (n == 0 || n == 1) {
+        return 1;
+    }
+    
+    double log_sum = 0.0;
+    for (int i = 2; i <= n; i++) {
+        log_sum += log10((double)i);
+        if (isinf(log_sum) || isnan(log_sum)) {
+            return -1;
+        }
+    }
+    
+    double fractional_part = log_sum - floor(log_sum);
+    double first_digit_value = pow(10.0, fractional_part);
+    
+    if (isnan(first_digit_value) || isinf(first_digit_value)) {
+        return -1;
+    }
+    
+    int first_digit = (int)first_digit_value;
+    
+    if (first_digit < 1 || first_digit > 9) {
+        return -1;
+    }
+    
+    return first_digit;
+}
+
+int main(void) {
+    int number;
+    
+    printf("Enter a non-negative integer: ");
+    
+    if (scanf("%d", &number) != 1) {
+        fprintf(stderr, "Error: Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    if (number < 0) {
+        fprintf(stderr, "Error: Number must be non-negative\n");
+        return EXIT_FAILURE;
+    }
+    
+    int result = get_first_digit_factorial(number);
+    
+    if (result == -1) {
+        fprintf(stderr, "Error: Calculation failed\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("First digit of %d! is: %d\n", number, result);
+    
+    return EXIT_SUCCESS;
+}

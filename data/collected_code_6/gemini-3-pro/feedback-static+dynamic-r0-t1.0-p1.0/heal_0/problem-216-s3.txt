@@ -1,0 +1,153 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+typedef enum {
+    LIST_NODE_INT,
+    LIST_NODE_LIST
+} NodeType;
+
+typedef struct ListNode {
+    NodeType type;
+    union {
+        int value;
+        struct List* list;
+    } data;
+    struct ListNode* next;
+} ListNode;
+
+typedef struct List {
+    ListNode* head;
+} List;
+
+ListNode* createIntNode(int value) {
+    ListNode* node = (ListNode*)malloc(sizeof(ListNode));
+    if (!node) exit(EXIT_FAILURE);
+    node->type = LIST_NODE_INT;
+    node->data.value = value;
+    node->next = NULL;
+    return node;
+}
+
+ListNode* createListNode(List* list) {
+    ListNode* node = (ListNode*)malloc(sizeof(ListNode));
+    if (!node) exit(EXIT_FAILURE);
+    node->type = LIST_NODE_LIST;
+    node->data.list = list;
+    node->next = NULL;
+    return node;
+}
+
+List* createList() {
+    List* list = (List*)malloc(sizeof(List));
+    if (!list) exit(EXIT_FAILURE);
+    list->head = NULL;
+    return list;
+}
+
+void appendNode(List* list, ListNode* node) {
+    if (!list || !node) return;
+    if (!list->head) {
+        list->head = node;
+    } else {
+        ListNode* current = list->head;
+        while (current->next) {
+            current = current->next;
+        }
+        current->next = node;
+    }
+}
+
+void freeList(List* list) {
+    if (!list) return;
+    ListNode* current = list->head;
+    while (current) {
+        ListNode* temp = current;
+        current = current->next;
+        if (temp->type == LIST_NODE_LIST) {
+            freeList(temp->data.list);
+        }
+        free(temp);
+    }
+    free(list);
+}
+
+bool isNodeEqual(ListNode* a, ListNode* b);
+
+bool isListEqual(List* a, List* b) {
+    if (!a && !b) return true;
+    if (!a || !b) return false;
+
+    ListNode* currA = a->head;
+    ListNode* currB = b->head;
+
+    while (currA && currB) {
+        if (!isNodeEqual(currA, currB)) return false;
+        currA = currA->next;
+        currB = currB->next;
+    }
+
+    return currA == NULL && currB == NULL;
+}
+
+bool isNodeEqual(ListNode* a, ListNode* b) {
+    if (!a && !b) return true;
+    if (!a || !b) return false;
+    if (a->type != b->type) return false;
+
+    if (a->type == LIST_NODE_INT) {
+        return a->data.value == b->data.value;
+    } else {
+        return isListEqual(a->data.list, b->data.list);
+    }
+}
+
+bool isListSubset(List* sub, List* super) {
+    if (!sub) return true;
+    if (!super) return false;
+
+    ListNode* currSub = sub->head;
+    while (currSub) {
+        bool found = false;
+        ListNode* currSuper = super->head;
+        while (currSuper) {
+            if (isNodeEqual(currSub, currSuper)) {
+                found = true;
+                break;
+            }
+            currSuper = currSuper->next;
+        }
+        if (!found) return false;
+        currSub = currSub->next;
+    }
+    return true;
+}
+
+int main() {
+    List* superList = createList();
+    appendNode(superList, createIntNode(1));
+    appendNode(superList, createIntNode(2));
+    
+    List* nested1 = createList();
+    appendNode(nested1, createIntNode(3));
+    appendNode(nested1, createIntNode(4));
+    appendNode(superList, createListNode(nested1));
+
+    List* subList = createList();
+    appendNode(subList, createIntNode(2));
+    
+    List* nested2 = createList();
+    appendNode(nested2, createIntNode(3));
+    appendNode(nested2, createIntNode(4));
+    appendNode(subList, createListNode(nested2));
+
+    bool result = isListSubset(subList, superList);
+    printf("Is subList a subset of superList? %s\n", result ? "True" : "False");
+
+    freeList(superList);
+    freeList(subList);
+
+    return EXIT_SUCCESS;
+}
+```

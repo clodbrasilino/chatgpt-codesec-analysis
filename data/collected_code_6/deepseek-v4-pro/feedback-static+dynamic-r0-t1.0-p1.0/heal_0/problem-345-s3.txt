@@ -1,0 +1,45 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int* find_consecutive_differences(const int *list, size_t size, size_t *diff_count) {
+    if (list == NULL || size < 2 || diff_count == NULL) {
+        return NULL;
+    }
+
+    *diff_count = size - 1;
+    int *differences = (int *)malloc(*diff_count * sizeof(int));
+    if (differences == NULL) {
+        *diff_count = 0;
+        return NULL;
+    }
+
+    for (size_t i = 0; i < *diff_count; i++) {
+        differences[i] = list[i + 1] - list[i];
+    }
+
+    return differences;
+}
+
+int main(void) {
+    int numbers[] = {10, 15, 22, 30, 25};
+    size_t size = sizeof(numbers) / sizeof(numbers[0]);
+    size_t diff_count = 0;
+
+    int *diff = find_consecutive_differences(numbers, size, &diff_count);
+
+    if (diff == NULL) {
+        fprintf(stderr, "Failed to calculate differences\n");
+        return 1;
+    }
+
+    printf("Differences: ");
+    for (size_t i = 0; i < diff_count; i++) {
+        printf("%d ", diff[i]);
+    }
+    printf("\n");
+
+    free(diff);
+    return 0;
+}
+```

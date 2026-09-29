@@ -1,0 +1,26 @@
+#include <stdio.h>
+#include <string.h>
+
+int checkSubstring(char *str[], int size, char *sub) {
+    int i;
+    for(i = 0; i < size; i++) {
+        if(strstr(str[i], sub) != NULL) {
+            return 1;
+        }
+    }
+    return 0;
+}
+
+int main() {
+    char *str[] = {"Hello", "World", "Programming", "Language", "C"};
+    char *sub = "ram";
+    int size = sizeof(str)/sizeof(str[0]);
+
+    if(checkSubstring(str, size, sub)) {
+        printf("Substring is present in the list of strings.\n");
+    } else {
+        printf("Substring is not present in the list of strings.\n");
+    }
+
+    return 0;
+}

@@ -1,0 +1,27 @@
+#include <stdio.h>
+#include <limits.h>
+#include <math.h>
+
+double periodic_function(double x) {
+    return (x - 3.0) * (x - 3.0) + 2.0 * sin(x);
+}
+
+double find_minimum(double (*func)(double), double start, double end, double step) {
+    double min_value = func(start);
+    for (double x = start; x <= end; x += step) {
+        double current_value = func(x);
+        if (current_value < min_value) {
+            min_value = current_value;
+        }
+    }
+    return min_value;
+}
+
+int main() {
+    double start = -10.0;
+    double end = 10.0;
+    double step = 0.01;
+    double minimum = find_minimum(periodic_function, start, end, step);
+    printf("Minimum value: %f\n", minimum);
+    return 0;
+}

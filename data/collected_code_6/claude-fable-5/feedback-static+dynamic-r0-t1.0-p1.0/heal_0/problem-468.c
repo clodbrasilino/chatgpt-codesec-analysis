@@ -1,0 +1,73 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+long long max_product_increasing_subsequence(const int *arr, size_t n, int *status);
+
+long long max_product_increasing_subsequence(const int *arr, size_t n, int *status)
+{
+    long long *dp = NULL;
+    long long result = 0LL;
+    size_t i;
+    size_t j;
+
+    if (arr == NULL || n == 0U || status == NULL) {
+        if (status != NULL) {
+            *status = -1;
+        }
+        return 0LL;
+    }
+
+    dp = (long long *)malloc(n * sizeof(long long));
+    if (dp == NULL) {
+        *status = -1;
+        return 0LL;
+    }
+
+    for (i = 0U; i < n; i++) {
+        dp[i] = (long long)arr[i];
+    }
+
+    for (i = 1U; i < n; i++) {
+        for (j = 0U; j < i; j++) {
+            if (arr[j] < arr[i]) {
+                long long candidate = dp[j] * (long long)arr[i];
+                if (candidate > dp[i]) {
+                    dp[i] = candidate;
+                }
+            }
+        }
+    }
+
+    result = dp[0];
+    for (i = 1U; i < n; i++) {
+        if (dp[i] > result) {
+            result = dp[i];
+        }
+    }
+
+    free(dp);
+    dp = NULL;
+
+    *status = 0;
+    return result;
+}
+
+int main(void)
+{
+    int arr[] = {3, 100, 4, 5, 150, 6};
+    size_t n = sizeof(arr) / sizeof(arr[0]);
+    int status = 0;
+    long long answer;
+
+    answer = max_product_increasing_subsequence(arr, n, &status);
+    if (status != 0) {
+        (void)fprintf(stderr, "Error computing maximum product\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Maximum product of an increasing subsequence: %lld\n", answer) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

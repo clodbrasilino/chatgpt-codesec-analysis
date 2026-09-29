@@ -1,0 +1,24 @@
+```c
+#include <stdio.h>
+#include <math.h>
+
+long nextPerfectSquare(long n) {
+    if(n < 0)
+        return -1;
+    long root = (long)sqrt(n);
+    return (root + 1) * (root + 1);
+}
+
+int main() {
+    long n;
+    printf("Enter a number: ");
+    scanf("%ld", &n);
+    long result = nextPerfectSquare(n);
+    if(result == -1)
+        printf("Invalid input. Number must be non-negative\n");
+    else
+        printf("The next perfect square greater than %ld is %ld\n", n, result);
+    return 0;
+}
+```
+The program takes a non-negative long integer as input. It finds the square root of the given number and increments it by one to find the next value, then squares it to get the next perfect square. If the input is negative, the function returns -1 as an error sign. The main function checks this error sign and prints an appropriate message. Failing to check the negativity of the input could result in the `sqrt` function being called with a negative argument, potentially causing a domain error (CWE-703).  Also, remember to validate the result of the user's input before using this as part of the main program to avoid CWE-664 issue.

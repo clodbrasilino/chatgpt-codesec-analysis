@@ -1,0 +1,41 @@
+#include <stdio.h>
+
+typedef struct list {
+    int length;
+    int *elements;
+} List;
+
+List* findMaxLengthList(List **lists, int numberOfLists) {
+    if(numberOfLists <= 0 || lists == NULL) {
+        return NULL;
+    }
+
+    List* maxList = lists[0];
+    for(int i = 1; i < numberOfLists; i++) {
+        if(lists[i] != NULL && lists[i]->length > maxList->length) {
+            maxList = lists[i];
+        }
+    }
+
+    return maxList;
+}
+
+int main() {
+    int arr1[] = {1, 2, 3};
+    int arr2[] = {4, 5, 6, 7, 8};
+
+    List list1 = { sizeof(arr1)/sizeof(arr1[0]), arr1 };
+    List list2 = { sizeof(arr2)/sizeof(arr2[0]), arr2 };
+    
+    List* lists[] = {&list1, &list2};
+    
+    List* maxList = findMaxLengthList(lists, sizeof(lists)/sizeof(lists[0]));
+    
+    if(maxList != NULL) {
+        printf("The length of the longest list is: %d\n", maxList->length);
+    } else {
+        printf("No valid input provided.\n");
+    }
+
+    return 0;
+}

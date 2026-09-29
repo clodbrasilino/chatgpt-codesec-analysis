@@ -1,0 +1,39 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int divide_lists(const double *a, const double *b, double *result, size_t size) {
+    if (a == NULL || b == NULL || result == NULL) {
+        return -1;
+    }
+    for (size_t i = 0; i < size; i++) {
+        if (b[i] == 0.0) {
+            return -1;
+        }
+        result[i] = a[i] / b[i];
+    }
+    return 0;
+}
+
+int main(void) {
+    double a[] = {10.0, 20.0, 30.0, 40.0, 50.0};
+    double b[] = {2.0, 4.0, 5.0, 8.0, 10.0};
+    size_t size = sizeof(a) / sizeof(a[0]);
+
+    double *result = malloc(size * sizeof(double));
+    if (result == NULL) {
+        return EXIT_FAILURE;
+    }
+
+    if (divide_lists(a, b, result, size) != 0) {
+        free(result);
+        return EXIT_FAILURE;
+    }
+
+    for (size_t i = 0; i < size; i++) {
+        printf("%.2f ", result[i]);
+    }
+    printf("\n");
+
+    free(result);
+    return EXIT_SUCCESS;
+}

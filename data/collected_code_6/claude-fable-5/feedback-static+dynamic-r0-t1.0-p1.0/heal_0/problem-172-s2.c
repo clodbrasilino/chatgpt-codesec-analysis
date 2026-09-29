@@ -1,0 +1,35 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+size_t count_std_occurrences(const char *input)
+{
+    size_t count = 0;
+    const char *position = NULL;
+
+    if (input == NULL) {
+        return 0;
+    }
+
+    position = strstr(input, "std");
+    while (position != NULL) {
+        count++;
+        position = strstr(position + 1, "std");
+    }
+
+    return count;
+}
+
+int main(void)
+{
+    const char *test_string = "std::cout is part of std namespace in stdlib";
+    size_t occurrences = 0;
+
+    occurrences = count_std_occurrences(test_string);
+
+    if (printf("The substring 'std' occurs %zu times.\n", occurrences) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,7 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-882-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-882-s2.c:22:47: warning: Storing getchar() return value in char variable and then comparing with EOF. [checkCastIntToCharAndBack]
+        while ((extra = getchar()) != '\n' && extra != EOF);
+                                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-882-s2.c:30:47: warning: Storing getchar() return value in char variable and then comparing with EOF. [checkCastIntToCharAndBack]
+        while ((extra = getchar()) != '\n' && extra != EOF);
+                                              ^

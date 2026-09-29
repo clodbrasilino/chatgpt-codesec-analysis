@@ -1,0 +1,49 @@
+```c
+#include <stdio.h>
+#include <stddef.h>
+#include <stdbool.h>
+
+bool has_none_value(const void *const *tuple, size_t size)
+{
+    size_t i;
+
+    if (tuple == NULL) {
+        return true;
+    }
+
+    for (i = 0; i < size; i++) {
+        if (tuple[i] == NULL) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+int main(void)
+{
+    int a = 10;
+    double b = 3.14;
+    const char *c = "hello";
+
+    const void *tuple1[] = { &a, &b, c };
+    const void *tuple2[] = { &a, NULL, c };
+
+    size_t size1 = sizeof(tuple1) / sizeof(tuple1[0]);
+    size_t size2 = sizeof(tuple2) / sizeof(tuple2[0]);
+
+    if (has_none_value(tuple1, size1)) {
+        printf("Tuple 1 contains a none value\n");
+    } else {
+        printf("Tuple 1 does not contain a none value\n");
+    }
+
+    if (has_none_value(tuple2, size2)) {
+        printf("Tuple 2 contains a none value\n");
+    } else {
+        printf("Tuple 2 does not contain a none value\n");
+    }
+
+    return 0;
+}
+```

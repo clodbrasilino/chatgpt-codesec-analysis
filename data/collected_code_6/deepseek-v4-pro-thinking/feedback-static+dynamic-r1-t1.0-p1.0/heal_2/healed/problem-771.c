@@ -1,0 +1,83 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define INITIAL_STACK_CAPACITY 16
+
+int isBalanced(const char *expr) {
+    if (expr == NULL) {
+        return 0;
+    }
+
+    size_t capacity = INITIAL_STACK_CAPACITY;
+    char *stack = malloc(capacity);
+    if (stack == NULL) {
+        return -1;
+    }
+
+    size_t top = 0;
+
+    for (size_t i = 0; expr[i] != '\0'; ++i) {
+        char ch = expr[i];
+
+        if (ch == '(' || ch == '[' || ch == '{') {
+            if (top == capacity) {
+                size_t new_capacity = capacity * 2;
+                char *new_stack = realloc(stack, new_capacity);
+                if (new_stack == NULL) {
+                    free(stack);
+                    return -1;
+                }
+                stack = new_stack;
+                capacity = new_capacity;
+            }
+            stack[top] = ch;
+            ++top;
+        } else if (ch == ')' || ch == ']' || ch == '}') {
+            if (top == 0) {
+                free(stack);
+                return 0;
+            }
+
+            --top;
+            char opening = stack[top];
+
+            if ((ch == ')' && opening != '(') ||
+                (ch == ']' && opening != '[') ||
+                (ch == '}' && opening != '{')) {
+                free(stack);
+                return 0;
+            }
+        }
+    }
+
+    int balanced = (top == 0) ? 1 : 0;
+    free(stack);
+    return balanced;
+}
+
+int main(void) {
+    const char *tests[] = {
+        "",
+        "()",
+        "()[]{}",
+        "(]",
+        "([{}])",
+        "({[})",
+        "(((",
+        ")))",
+        "a+b*(c-d)",
+        NULL
+    };
+
+    for (size_t i = 0; tests[i] != NULL; ++i) {
+        int result = isBalanced(tests[i]);
+
+        if (result == -1) {
+            printf("\"%s\": memory allocation failed\n", tests[i]);
+        } else {
+            printf("\"%s\": %s\n", tests[i], result == 1 ? "balanced" : "not balanced");
+        }
+    }
+
+    return 0;
+}

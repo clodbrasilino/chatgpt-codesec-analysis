@@ -1,0 +1,120 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+static int compare_ints(const void *a, const void *b)
+{
+    int x = *(const int *)a;
+    int y = *(const int *)b;
+
+    if (x < y)
+        return -1;
+    if (x > y)
+        return 1;
+    return 0;
+}
+
+int *largestDivisibleSubset(int *nums, int numsSize, int *returnSize)
+{
+    int *dp;
+    int *parent;
+    int *result;
+    int maxIndex = 0;
+    int maxSize = 1;
+    int idx;
+    int current;
+    int i;
+    int j;
+
+    if (nums == NULL || numsSize <= 0 || returnSize == NULL)
+    {
+        if (returnSize != NULL)
+            *returnSize = 0;
+        return NULL;
+    }
+
+    qsort(nums, (size_t)numsSize, sizeof(int), compare_ints);
+
+    dp = (int *)malloc((size_t)numsSize * sizeof(int));
+    if (dp == NULL)
+    {
+        *returnSize = 0;
+        return NULL;
+    }
+
+    parent = (int *)malloc((size_t)numsSize * sizeof(int));
+    if (parent == NULL)
+    {
+        free(dp);
+        *returnSize = 0;
+        return NULL;
+    }
+
+    for (i = 0; i < numsSize; i++)
+    {
+        dp[i] = 1;
+        parent[i] = -1;
+        for (j = 0; j < i; j++)
+        {
+            if (nums[i] % nums[j] == 0 && dp[j] + 1 > dp[i])
+            {
+                dp[i] = dp[j] + 1;
+                parent[i] = j;
+            }
+        }
+        if (dp[i] > maxSize)
+        {
+            maxSize = dp[i];
+            maxIndex = i;
+        }
+    }
+
+    result = (int *)malloc((size_t)maxSize * sizeof(int));
+    if (result == NULL)
+    {
+        free(dp);
+        free(parent);
+        *returnSize = 0;
+        return NULL;
+    }
+
+    idx = maxSize - 1;
+    current = maxIndex;
+    while (current != -1)
+    {
+        result[idx] = nums[current];
+        idx--;
+        current = parent[current];
+    }
+
+    free(dp);
+    free(parent);
+
+    *returnSize = maxSize;
+    return result;
+}
+
+int main(void)
+{
+    int nums[] = {1, 2, 3, 4, 8, 9, 16};
+    int size = (int)(sizeof(nums) / sizeof(nums[0]));
+    int returnSize = 0;
+    int *subset;
+    int i;
+
+    subset = largestDivisibleSubset(nums, size, &returnSize);
+    if (subset == NULL)
+    {
+        fprintf(stderr, "Error: failed to compute largest divisible subset\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Largest divisible subset: ");
+    for (i = 0; i < returnSize; i++)
+        printf("%d ", subset[i]);
+    printf("\n");
+
+    free(subset);
+    return EXIT_SUCCESS;
+}
+```

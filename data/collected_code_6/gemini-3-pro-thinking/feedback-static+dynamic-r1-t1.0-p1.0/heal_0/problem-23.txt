@@ -1,0 +1,63 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+#include <limits.h>
+#include <stddef.h>
+
+bool find_max_list_sum(const int *const *lists, const size_t *sizes, size_t num_lists, long long *max_sum) {
+    if (lists == NULL || sizes == NULL || max_sum == NULL || num_lists == 0) {
+        return false;
+    }
+
+    long long current_max = LLONG_MIN;
+    bool has_valid_list = false;
+
+    for (size_t i = 0; i < num_lists; ++i) {
+        if (lists[i] == NULL) {
+            continue;
+        }
+
+        long long current_sum = 0;
+        for (size_t j = 0; j < sizes[i]; ++j) {
+            current_sum += lists[i][j];
+        }
+
+        if (!has_valid_list || current_sum > current_max) {
+            current_max = current_sum;
+            has_valid_list = true;
+        }
+    }
+
+    if (!has_valid_list) {
+        return false;
+    }
+
+    *max_sum = current_max;
+    return true;
+}
+
+int main(void) {
+    const int list0[] = {1, -2, 3, 4};
+    const int list1[] = {10, 20, -5};
+    const int list2[] = {-1, -2, -3};
+
+    const int *const lists[] = {list0, list1, list2};
+    const size_t sizes[] = {
+        sizeof(list0) / sizeof(list0[0]),
+        sizeof(list1) / sizeof(list1[0]),
+        sizeof(list2) / sizeof(list2[0])
+    };
+    
+    const size_t num_lists = sizeof(lists) / sizeof(lists[0]);
+    long long max_sum = 0;
+
+    if (find_max_list_sum(lists, sizes, num_lists, &max_sum)) {
+        printf("%lld\n", max_sum);
+    } else {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```

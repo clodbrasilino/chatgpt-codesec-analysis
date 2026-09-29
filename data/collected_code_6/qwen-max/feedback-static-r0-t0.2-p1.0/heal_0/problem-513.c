@@ -1,0 +1,83 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char **elements;
+    size_t count;
+} Tuple;
+
+typedef struct {
+    char **elements;
+    size_t count;
+} List;
+
+List *tupleToList(Tuple *tuple, const char *separator) {
+    if (tuple == NULL || tuple->elements == NULL || separator == NULL) {
+        return NULL;
+    }
+
+    List *list = (List *)malloc(sizeof(List));
+    if (list == NULL) {
+        return NULL;
+    }
+    list->count = 2 * tuple->count - 1;
+    list->elements = (char **)malloc(list->count * sizeof(char *));
+    if (list->elements == NULL) {
+        free(list);
+        return NULL;
+    }
+
+    for (size_t i = 0; i < tuple->count; ++i) {
+        list->elements[2 * i] = strdup(tuple->elements[i]);
+        if (list->elements[2 * i] == NULL) {
+            for (size_t j = 0; j < 2 * i; ++j) {
+                free(list->elements[j]);
+            }
+            free(list->elements);
+            free(list);
+            return NULL;
+        }
+        if (i < tuple->count - 1) {
+            list->elements[2 * i + 1] = strdup(separator);
+            if (list->elements[2 * i + 1] == NULL) {
+                for (size_t j = 0; j < 2 * i + 1; ++j) {
+                    free(list->elements[j]);
+                }
+                free(list->elements);
+                free(list);
+                return NULL;
+            }
+        }
+    }
+
+    return list;
+}
+
+void freeList(List *list) {
+    if (list != NULL) {
+        for (size_t i = 0; i < list->count; ++i) {
+            free(list->elements[i]);
+        }
+        free(list->elements);
+        free(list);
+    }
+}
+
+int main() {
+    Tuple tuple = { .elements = (char *[]){"a", "b", "c"}, .count = 3 };
+    const char *separator = ",";
+
+    List *list = tupleToList(&tuple, separator);
+    if (list != NULL) {
+        for (size_t i = 0; i < list->count; ++i) {
+            printf("%s ", list->elements[i]);
+        }
+        printf("\n");
+        freeList(list);
+    } else {
+        printf("Failed to convert tuple to list.\n");
+    }
+
+    return 0;
+}

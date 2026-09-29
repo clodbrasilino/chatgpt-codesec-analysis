@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_3/healed/problem-381.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_3/healed/problem-381.c:98:33: style: The comparison 'row_size < 3' is always false. [knownConditionTrueFalse]
+    size_t copy_size = row_size < 3 ? row_size : 3;
+                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_3/healed/problem-381.c:97:23: note: 'row_size' is assigned value '3' here.
+    size_t row_size = 3;
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_3/healed/problem-381.c:98:33: note: The comparison 'row_size < 3' is always false.
+    size_t copy_size = row_size < 3 ? row_size : 3;
+                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_3/healed/problem-381.c:98:48: style: Same expression in both branches of ternary operator. [duplicateExpressionTernary]
+    size_t copy_size = row_size < 3 ? row_size : 3;
+                                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_3/healed/problem-381.c:97:23: note: 'row_size' is assigned value '3' here.
+    size_t row_size = 3;
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_3/healed/problem-381.c:98:48: note: Same expression in both branches of ternary operator.
+    size_t copy_size = row_size < 3 ? row_size : 3;
+                                               ^

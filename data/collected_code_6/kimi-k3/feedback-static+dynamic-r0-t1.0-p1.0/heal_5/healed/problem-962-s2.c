@@ -1,0 +1,85 @@
+#include <stdio.h>
+#include <stdint.h>
+#include <inttypes.h>
+
+int64_t sum_even_natural(int64_t l, int64_t r)
+{
+    if (l > r || r < 2)
+    {
+        return 0;
+    }
+
+    if (l < 2)
+    {
+        l = 2;
+    }
+
+    int64_t first;
+    int64_t last;
+
+    if (l % 2 == 0)
+    {
+        first = l;
+    }
+    else
+    {
+        if (l == INT64_MAX)
+        {
+            return 0;
+        }
+        first = l + 1;
+    }
+
+    if (r % 2 == 0)
+    {
+        last = r;
+    }
+    else
+    {
+        if (r == INT64_MIN)
+        {
+            return 0;
+        }
+        last = r - 1;
+    }
+
+    if (first > last)
+    {
+        return 0;
+    }
+
+    uint64_t uf = (uint64_t)first;
+    uint64_t ul = (uint64_t)last;
+    uint64_t count = (ul - uf) / 2 + 1;
+    uint64_t sum = uf + ul;
+    uint64_t result;
+
+    if (count % 2 == 0)
+    {
+        result = (count / 2) * sum;
+    }
+    else
+    {
+        result = count * (sum / 2);
+    }
+
+    return (int64_t)result;
+}
+
+int main(void)
+{
+    int64_t l, r;
+
+    if (scanf("%" SCNd64, &l) != 1)
+    {
+        return 1;
+    }
+
+    if (scanf("%" SCNd64, &r) != 1)
+    {
+        return 1;
+    }
+
+    printf("%" PRId64 "\n", sum_even_natural(l, r));
+    return 0;
+}

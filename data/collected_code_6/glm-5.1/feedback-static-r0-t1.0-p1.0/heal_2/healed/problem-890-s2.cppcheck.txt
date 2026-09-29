@@ -1,0 +1,28 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-890-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-890-s2.c:27:12: style: Condition 'n1<=0' is always false [knownConditionTrueFalse]
+    if (n1 <= 0 || n2 <= 0) {
+           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-890-s2.c:24:27: note: Assignment 'n1=sizeof(arr1)/sizeof(arr1[0])', assigned value is 7
+    int n1 = sizeof(arr1) / sizeof(arr1[0]);
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-890-s2.c:27:12: note: Condition 'n1<=0' is always false
+    if (n1 <= 0 || n2 <= 0) {
+           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-890-s2.c:27:23: style: Condition 'n2<=0' is always false [knownConditionTrueFalse]
+    if (n1 <= 0 || n2 <= 0) {
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-890-s2.c:25:27: note: Assignment 'n2=sizeof(arr2)/sizeof(arr2[0])', assigned value is 6
+    int n2 = sizeof(arr2) / sizeof(arr2[0]);
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-890-s2.c:27:23: note: Condition 'n2<=0' is always false
+    if (n1 <= 0 || n2 <= 0) {
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-890-s2.c:35:12: style: Condition 'n1>n2' is always true [knownConditionTrueFalse]
+    if (n1 > n2) {
+           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-890-s2.c:24:27: note: Assignment 'n1=sizeof(arr1)/sizeof(arr1[0])', assigned value is 7
+    int n1 = sizeof(arr1) / sizeof(arr1[0]);
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-890-s2.c:35:12: note: Condition 'n1>n2' is always true
+    if (n1 > n2) {
+           ^

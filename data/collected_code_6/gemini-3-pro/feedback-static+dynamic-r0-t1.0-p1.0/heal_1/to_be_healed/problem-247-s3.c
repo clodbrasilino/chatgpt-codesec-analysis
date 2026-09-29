@@ -1,0 +1,73 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+int max(int a, int b) {
+    return (a > b) ? a : b;
+}
+
+int longestPalindromicSubsequence(char *str) {
+    if (str == NULL) {
+        return 0;
+    }
+
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    int n = strlen(str);
+    if (n == 0) {
+        return 0;
+    }
+
+    int **dp = (int **)malloc(n * sizeof(int *));
+    if (dp == NULL) {
+        return 0;
+    }
+
+    for (int i = 0; i < n; i++) {
+        dp[i] = (int *)malloc(n * sizeof(int));
+        if (dp[i] == NULL) {
+            for (int j = 0; j < i; j++) {
+                free(dp[j]);
+            }
+            free(dp);
+            return 0;
+        }
+        for (int j = 0; j < n; j++) {
+            dp[i][j] = 0;
+        }
+    }
+
+    for (int i = 0; i < n; i++) {
+        dp[i][i] = 1;
+    }
+
+    for (int cl = 2; cl <= n; cl++) {
+        for (int i = 0; i < n - cl + 1; i++) {
+            int j = i + cl - 1;
+            if (str[i] == str[j] && cl == 2) {
+                dp[i][j] = 2;
+            } else if (str[i] == str[j]) {
+                dp[i][j] = dp[i + 1][j - 1] + 2;
+            } else {
+                dp[i][j] = max(dp[i][j - 1], dp[i + 1][j]);
+            }
+        }
+    }
+
+    int lps = dp[0][n - 1];
+
+    for (int i = 0; i < n; i++) {
+        free(dp[i]);
+    }
+    free(dp);
+
+    return lps;
+}
+
+int main(void) {
+    char str[] = "BBABCBCAB";
+    int length = longestPalindromicSubsequence(str);
+    printf("%d\n", length);
+    return 0;
+}

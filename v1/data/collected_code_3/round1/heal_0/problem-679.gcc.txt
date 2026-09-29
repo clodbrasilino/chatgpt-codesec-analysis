@@ -1,0 +1,16 @@
+collected_code_3/problem-679-1.c: In function 'main':
+collected_code_3/problem-679-1.c:26:23: warning: dereference of possibly-NULL 'dict.pairs' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   26 |     dict.pairs[0].key = "key1";
+      |     ~~~~~~~~~~~~~~~~~~^~~~~~~~
+  'main': events 1-2
+    |
+    |   24 |     dict.pairs = malloc(sizeof(KeyValuePair) * dict.size);
+    |      |                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                  |
+    |      |                  (1) this call could return NULL
+    |   25 | 
+    |   26 |     dict.pairs[0].key = "key1";
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                       |
+    |      |                       (2) 'dict.pairs' could be NULL: unchecked value from (1)
+    |

@@ -1,0 +1,16 @@
+collected_code/problem-808-0.c:1:1: error: unknown type name 'bool'
+    1 | bool containsK(int tuples[], int k, int size) {
+      | ^~~~
+collected_code/problem-808-0.c:1:1: note: 'bool' is defined in header '<stdbool.h>'; did you forget to '#include <stdbool.h>'?
+  +++ |+#include <stdbool.h>
+    1 | bool containsK(int tuples[], int k, int size) {
+collected_code/problem-808-0.c: In function 'containsK':
+collected_code/problem-808-0.c:4:20: error: 'true' undeclared (first use in this function)
+    4 |             return true;
+      |                    ^~~~
+collected_code/problem-808-0.c:4:20: note: 'true' is defined in header '<stdbool.h>'; did you forget to '#include <stdbool.h>'?
+collected_code/problem-808-0.c:4:20: note: each undeclared identifier is reported only once for each function it appears in
+collected_code/problem-808-0.c:7:12: error: 'false' undeclared (first use in this function)
+    7 |     return false;
+      |            ^~~~~
+collected_code/problem-808-0.c:7:12: note: 'false' is defined in header '<stdbool.h>'; did you forget to '#include <stdbool.h>'?

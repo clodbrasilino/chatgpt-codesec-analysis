@@ -1,0 +1,37 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+
+bool check_sequence(const int arr[], int size, const int pattern[], int pattern_size) {
+    for (int i = 0, j = 0; i < size && j < pattern_size;) {
+        if (arr[i] == pattern[j]) {
+            i++;
+            j++;
+        } else {
+            i++;
+        }
+
+        if (j == pattern_size) {
+            return true;
+        }
+    }
+    return false;
+}
+
+int main() {
+    const int arr[] = {1, 2, 3, 4, 5, 6, 7};
+    int size = sizeof(arr) / sizeof(arr[0]);
+
+    const int pattern[] = {3, 4, 6};
+    int pattern_size = sizeof(pattern) / sizeof(pattern[0]);
+
+    bool result = check_sequence(arr, size, pattern, pattern_size);
+    if (result) {
+        printf("Sequence matches the pattern.\n");
+    } else {
+        printf("Sequence does not match the pattern.\n");
+    }
+
+    return 0;
+}
+```

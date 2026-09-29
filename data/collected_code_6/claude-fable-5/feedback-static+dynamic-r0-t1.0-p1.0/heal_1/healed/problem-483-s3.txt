@@ -1,0 +1,77 @@
+## Analysis
+
+Looking at this code as an experienced C developer:
+
+**Algorithm correctness (small inputs):** The incremental computation `remainder = (remainder * (n % x)) % x` is mathematically sound for tracking `n! mod x`, since modular multiplication is congruence-preserving. Test failures like "expected 4, got 5" point at the arithmetic going wrong mid-computation.
+
+**The real weakness — integer overflow:** Both `remainder` and `n % x` are strictly less than `x`. Their product can be up to `(x-1)²`, which overflows `unsigned long long` whenever `x > 2³²`. When the multiplication wraps around, the remainder becomes garbage — it may fail to hit zero at the correct `n` and then spuriously hit zero one or more iterations later (exactly the "expected 4, got 5" symptom of overshooting the correct answer). The fix is to perform the modular multiplication in 128-bit arithmetic (or via a `mulmod` helper).
+
+**Minor points:**
+- `1ULL % x` correctly handles `x == 1` (returns `n = 1`, since `1! = 1` is divisible by 1).
+- The `result == 0` check in `main` is dead code once `x == 0` is rejected earlier, but it's harmless defensive programming.
+- Input validation via `scanf` return status is correct.
+
+Here is the corrected version:
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+static unsigned long long mulmod(unsigned long long a, unsigned long long b, unsigned long long m)
+{
+    return (unsigned long long)(((unsigned __int128)a * b) % m);
+}
+
+static unsigned long long first_factorial_divisible(unsigned long long x)
+{
+    unsigned long long remainder;
+    unsigned long long n;
+
+    if (x == 0ULL) {
+        return 0ULL;
+    }
+
+    remainder = 1ULL % x;
+    n = 1ULL;
+
+    while (remainder != 0ULL) {
+        n++;
+        remainder = mulmod(remainder, n % x, x);
+    }
+
+    return n;
+}
+
+int main(void)
+{
+    unsigned long long x;
+    unsigned long long result;
+    int scan_status;
+
+    printf("Enter a positive integer: ");
+    scan_status = scanf("%llu", &x);
+
+    if (scan_status != 1) {
+        fprintf(stderr, "Error: invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (x == 0ULL) {
+        fprintf(stderr, "Error: input must be a positive integer.\n");
+        return EXIT_FAILURE;
+    }
+
+    result = first_factorial_divisible(x);
+
+    if (result == 0ULL) {
+        fprintf(stderr, "Error: computation failed.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("The first natural number whose factorial is divisible by %llu is %llu\n", x, result);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Key change:** the raw `(remainder * (n % x)) % x` multiplication was replaced with a `mulmod` helper using `unsigned __int128`, guaranteeing the intermediate product never wraps. This makes the result correct for the full `unsigned long long` input range, eliminating the class of failures where the loop terminates at the wrong `n` (e.g., 5 instead of 4). If strict C99 portability without `__int128` is required, `mulmod` can be swapped for a shift-and-add (Russian peasant) implementation without touching the rest of the program.

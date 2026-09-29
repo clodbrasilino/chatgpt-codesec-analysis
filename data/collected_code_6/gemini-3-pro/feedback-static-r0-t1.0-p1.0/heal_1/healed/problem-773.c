@@ -1,0 +1,41 @@
+#define _POSIX_C_SOURCE 200809L
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stddef.h>
+
+#define MAX_STRING_LEN 4096
+
+void find_substring(const char *str, const char *sub) {
+    if (str == NULL || sub == NULL) {
+        return;
+    }
+
+    size_t str_len = strnlen(str, MAX_STRING_LEN);
+    size_t sub_len = strnlen(sub, MAX_STRING_LEN);
+
+    if (sub_len == 0 || sub_len > str_len) {
+        return;
+    }
+
+    int count = 0;
+    const char *tmp = str;
+
+    while ((tmp = strstr(tmp, sub)) != NULL) {
+        printf("Occurrence %d at position %td\n", ++count, tmp - str);
+        tmp++;
+    }
+
+    if (count == 0) {
+        printf("Substring not found.\n");
+    }
+}
+
+int main(void) {
+    const char *text = "The quick brown fox jumps over the lazy dog. The fox is quick.";
+    const char *substring = "fox";
+
+    find_substring(text, substring);
+
+    return 0;
+}

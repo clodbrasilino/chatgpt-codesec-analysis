@@ -1,0 +1,12 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-12.c:17:90: error: too many arguments to function call, expected 4, have 5
+   17 |     qsort(*matrix, rows, sizeof(int*), (int(*)(const void*, const void*, void*))compare, &cols);
+      |     ~~~~~                                                                                ^~~~~
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/_stdlib.h:180:7: note: 'qsort' declared here
+  180 | void     qsort(void *_LIBC_SIZE(__nel * __width) __base, size_t __nel, size_t __width,
+      |          ^     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  181 |             int (* _Nonnull __compar)(const void *, const void *));
+      |             ~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-12.c:27:14: error: variable-sized object may not be initialized
+   27 |     int data[rows][cols] = {
+      |              ^~~~
+2 errors generated.

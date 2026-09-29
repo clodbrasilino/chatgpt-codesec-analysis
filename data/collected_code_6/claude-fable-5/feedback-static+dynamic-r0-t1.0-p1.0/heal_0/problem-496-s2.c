@@ -1,0 +1,112 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+static void swap_int(int *a, int *b)
+{
+    int tmp = *a;
+    *a = *b;
+    *b = tmp;
+}
+
+static void sift_down(int *heap, size_t size, size_t index)
+{
+    for (;;) {
+        size_t smallest = index;
+        size_t left = 2U * index + 1U;
+        size_t right = 2U * index + 2U;
+
+        if (left < size && heap[left] < heap[smallest]) {
+            smallest = left;
+        }
+        if (right < size && heap[right] < heap[smallest]) {
+            smallest = right;
+        }
+        if (smallest == index) {
+            break;
+        }
+        swap_int(&heap[index], &heap[smallest]);
+        index = smallest;
+    }
+}
+
+static void build_heap(int *heap, size_t size)
+{
+    if (size < 2U) {
+        return;
+    }
+    for (size_t i = size / 2U; i > 0U; i--) {
+        sift_down(heap, size, i - 1U);
+    }
+}
+
+static int heap_pop(int *heap, size_t *size)
+{
+    int top = heap[0];
+    (*size)--;
+    heap[0] = heap[*size];
+    sift_down(heap, *size, 0U);
+    return top;
+}
+
+static int *find_smallest(const int *numbers, size_t count, size_t k, size_t *out_count)
+{
+    if (numbers == NULL || out_count == NULL || count == 0U || k == 0U) {
+        if (out_count != NULL) {
+            *out_count = 0U;
+        }
+        return NULL;
+    }
+
+    if (k > count) {
+        k = count;
+    }
+
+    int *heap = malloc(count * sizeof(int));
+    if (heap == NULL) {
+        *out_count = 0U;
+        return NULL;
+    }
+    memcpy(heap, numbers, count * sizeof(int));
+
+    int *result = malloc(k * sizeof(int));
+    if (result == NULL) {
+        free(heap);
+        *out_count = 0U;
+        return NULL;
+    }
+
+    build_heap(heap, count);
+
+    size_t heap_size = count;
+    for (size_t i = 0U; i < k; i++) {
+        result[i] = heap_pop(heap, &heap_size);
+    }
+
+    free(heap);
+    *out_count = k;
+    return result;
+}
+
+int main(void)
+{
+    int numbers[] = { 25, 35, 22, 85, 14, 65, 75, 22, 58 };
+    size_t count = sizeof(numbers) / sizeof(numbers[0]);
+    size_t k = 3U;
+    size_t result_count = 0U;
+
+    int *smallest = find_smallest(numbers, count, k, &result_count);
+    if (smallest == NULL) {
+        fprintf(stderr, "Failed to compute smallest elements\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("The %zu smallest numbers are:", result_count);
+    for (size_t i = 0U; i < result_count; i++) {
+        printf(" %d", smallest[i]);
+    }
+    printf("\n");
+
+    free(smallest);
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,77 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *data;
+    size_t length;
+} Tuple;
+
+Tuple create_tuple(size_t length) {
+    Tuple t;
+    t.data = (int *)malloc(length * sizeof(int));
+    t.length = length;
+    return t;
+}
+
+void free_tuple(Tuple *t) {
+    free(t->data);
+    t->data = NULL;
+    t->length = 0;
+}
+
+Tuple remove_matching_tuples(const Tuple *t1, const Tuple *t2) {
+    size_t i, j, count = 0;
+    for (i = 0; i < t1->length; ++i) {
+        for (j = 0; j < t2->length; ++j) {
+            if (t1->data[i] == t2->data[j]) {
+                break;
+            }
+        }
+        if (j == t2->length) {
+            ++count;
+        }
+    }
+
+    Tuple result = create_tuple(count);
+    count = 0;
+    for (i = 0; i < t1->length; ++i) {
+        for (j = 0; j < t2->length; ++j) {
+            if (t1->data[i] == t2->data[j]) {
+                break;
+            }
+        }
+        if (j == t2->length) {
+            result.data[count++] = t1->data[i];
+        }
+    }
+    return result;
+}
+
+int main() {
+    Tuple t1 = create_tuple(5);
+    t1.data[0] = 1;
+    t1.data[1] = 2;
+    t1.data[2] = 3;
+    t1.data[3] = 4;
+    t1.data[4] = 5;
+
+    Tuple t2 = create_tuple(3);
+    t2.data[0] = 3;
+    t2.data[1] = 4;
+    t2.data[2] = 5;
+
+    Tuple result = remove_matching_tuples(&t1, &t2);
+
+    for (size_t i = 0; i < result.length; ++i) {
+        printf("%d ", result.data[i]);
+    }
+    printf("\n");
+
+    free_tuple(&t1);
+    free_tuple(&t2);
+    free_tuple(&result);
+
+    return 0;
+}
+```

@@ -1,0 +1,65 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+int compare_strings(const void* a, const void* b) {
+    return strcmp(*(char* const*)a, *(char* const*)b);
+}
+
+char** remove_duplicates(char** words, int* count) {
+    if (words == NULL || count == NULL || *count <= 0) {
+        return NULL;
+    }
+    
+    qsort(words, *count, sizeof(char*), compare_strings);
+
+    char** new_words = malloc(*count * sizeof(char*));
+    if (new_words == NULL) {
+        return NULL;
+    }
+
+    int j = 0;
+    new_words[0] = words[0];
+    
+    for (int i = 1; i < *count; i++) {
+        if (strcmp(words[i], new_words[j]) != 0) {
+            new_words[++j] = words[i];
+        } else {
+            free(words[i]);
+        }
+    }
+
+    *count = j + 1;
+    return realloc(new_words, (*count) * sizeof(char*));
+}
+
+int main() {
+    int count = 5;
+    char* words[] = {
+        strdup("apple"),
+        strdup("banana"),
+        strdup("apple"),
+        strdup("cherry"),
+        strdup("banana")
+    };
+
+    /* Possible weaknesses found:
+     *  assignment to expression with array type
+     *  array type 'char *[5]' is not assignable
+     */
+    words = remove_duplicates(words, &count);
+
+    for (int i = 0; i < count; i++) {
+        printf("%s\n", words[i]);
+    }
+
+    for (int i = 0; i < count; i++) {
+        free(words[i]);
+    }
+    /* Possible weaknesses found:
+     *  Deallocation of an auto-variable results in undefined behaviour. [autovarInvalidDeallocation]
+     */
+    free(words);
+
+    return 0;
+}

@@ -1,0 +1,67 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <limits.h>
+
+int binary_to_decimal(const char *binary, long long *result) {
+    long long decimal;
+    const char *ptr;
+
+    if (binary == NULL || result == NULL) {
+        return -1;
+    }
+
+    if (*binary == '\0') {
+        return -1;
+    }
+
+    ptr = binary;
+    while (*ptr != '\0') {
+        if (*ptr != '0' && *ptr != '1') {
+            return -1;
+        }
+        ptr++;
+    }
+
+    decimal = 0;
+    ptr = binary;
+    while (*ptr != '\0') {
+        if (decimal > (LLONG_MAX - 1) / 2) {
+            return -1;
+        }
+        decimal = decimal * 2 + (*ptr - '0');
+        ptr++;
+    }
+
+    *result = decimal;
+    return 0;
+}
+
+int main(void) {
+    char input[65];
+    long long decimal;
+
+    if (fgets(input, sizeof(input), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    char *newline = input;
+    while (*newline != '\0') {
+        if (*newline == '\n') {
+            *newline = '\0';
+            break;
+        }
+        newline++;
+    }
+
+    if (binary_to_decimal(input, &decimal) != 0) {
+        fprintf(stderr, "Invalid binary number\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("%lld\n", decimal);
+    return EXIT_SUCCESS;
+}
+```

@@ -1,0 +1,156 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+typedef struct Node {
+    int data;
+    struct Node* next;
+} Node;
+
+typedef struct NestedList {
+    Node* inner_list;
+    struct NestedList* next;
+} NestedList;
+
+Node* create_node(int data) {
+    Node* new_node = (Node*)malloc(sizeof(Node));
+    if (!new_node) {
+        exit(EXIT_FAILURE);
+    }
+    new_node->data = data;
+    new_node->next = NULL;
+    return new_node;
+}
+
+NestedList* create_nested_node(Node* inner_list) {
+    NestedList* new_node = (NestedList*)malloc(sizeof(NestedList));
+    if (!new_node) {
+        exit(EXIT_FAILURE);
+    }
+    new_node->inner_list = inner_list;
+    new_node->next = NULL;
+    return new_node;
+}
+
+void append_node(Node** head, int data) {
+    Node* new_node = create_node(data);
+    if (!*head) {
+        *head = new_node;
+        return;
+    }
+    Node* current = *head;
+    while (current->next) {
+        current = current->next;
+    }
+    current->next = new_node;
+}
+
+void append_nested_node(NestedList** head, Node* inner_list) {
+    NestedList* new_node = create_nested_node(inner_list);
+    if (!*head) {
+        *head = new_node;
+        return;
+    }
+    NestedList* current = *head;
+    while (current->next) {
+        current = current->next;
+    }
+    current->next = new_node;
+}
+
+bool contains(Node* list, int target) {
+    Node* current = list;
+    while (current) {
+        if (current->data == target) {
+            return true;
+        }
+        current = current->next;
+    }
+    return false;
+}
+
+Node* find_common_elements(NestedList* nested_list, Node* target_list) {
+    if (!nested_list || !target_list) {
+        return NULL;
+    }
+
+    Node* result = NULL;
+    NestedList* current_outer = nested_list;
+
+    while (current_outer) {
+        Node* current_inner = current_outer->inner_list;
+        while (current_inner) {
+            if (contains(target_list, current_inner->data)) {
+                if (!contains(result, current_inner->data)) {
+                    append_node(&result, current_inner->data);
+                }
+            }
+            current_inner = current_inner->next;
+        }
+        current_outer = current_outer->next;
+    }
+
+    return result;
+}
+
+void print_list(Node* head) {
+    Node* current = head;
+    while (current) {
+        printf("%d ", current->data);
+        current = current->next;
+    }
+    printf("\n");
+}
+
+void free_list(Node* head) {
+    Node* current = head;
+    while (current) {
+        Node* temp = current;
+        current = current->next;
+        free(temp);
+    }
+}
+
+void free_nested_list(NestedList* head) {
+    NestedList* current = head;
+    while (current) {
+        NestedList* temp = current;
+        free_list(temp->inner_list);
+        current = current->next;
+        free(temp);
+    }
+}
+
+int main(void) {
+    Node* list1 = NULL;
+    append_node(&list1, 1);
+    append_node(&list1, 2);
+    append_node(&list1, 3);
+
+    Node* list2 = NULL;
+    append_node(&list2, 3);
+    append_node(&list2, 4);
+    append_node(&list2, 5);
+
+    NestedList* nested_list = NULL;
+    append_nested_node(&nested_list, list1);
+    append_nested_node(&nested_list, list2);
+
+    Node* target_list = NULL;
+    append_node(&target_list, 2);
+    append_node(&target_list, 3);
+    append_node(&target_list, 5);
+    append_node(&target_list, 6);
+
+    Node* common_elements = find_common_elements(nested_list, target_list);
+
+    print_list(common_elements);
+
+    free_list(common_elements);
+    free_list(target_list);
+    free_nested_list(nested_list);
+
+    return EXIT_SUCCESS;
+}
+```

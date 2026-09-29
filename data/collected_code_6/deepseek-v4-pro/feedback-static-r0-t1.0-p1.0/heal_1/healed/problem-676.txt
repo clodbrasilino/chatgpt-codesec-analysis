@@ -1,0 +1,72 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+void remove_non_alphanumeric(char *str) {
+    if (str == NULL) {
+        return;
+    }
+
+    regex_t regex;
+    regmatch_t match;
+    int ret;
+    char *src = str;
+    char *dst = str;
+
+    ret = regcomp(&regex, "[^a-zA-Z0-9]", REG_EXTENDED);
+    if (ret != 0) {
+        return;
+    }
+
+    while (*src != '\0') {
+        ret = regexec(&regex, src, 1, &match, 0);
+        if (ret == REG_NOMATCH) {
+            while (*src != '\0') {
+                *dst++ = *src++;
+            }
+            break;
+        } else if (ret != 0) {
+            regfree(&regex);
+            return;
+        }
+
+        size_t match_start = match.rm_so;
+        if (match_start > 0) {
+            memmove(dst, src, match_start);
+            dst += match_start;
+        }
+
+        src += match.rm_eo;
+    }
+
+    *dst = '\0';
+    regfree(&regex);
+}
+
+int main(void) {
+    char str1[] = "Hello, World! 123";
+    char str2[] = "C Programming @2023 #$%";
+    char str3[] = "";
+    char str4[] = "ABC123xyz";
+    
+    printf("Original: %s\n", str1);
+    remove_non_alphanumeric(str1);
+    printf("Modified: %s\n\n", str1);
+    
+    printf("Original: %s\n", str2);
+    remove_non_alphanumeric(str2);
+    printf("Modified: %s\n\n", str2);
+    
+    printf("Original: %s\n", str3);
+    remove_non_alphanumeric(str3);
+    printf("Modified: %s\n\n", str3);
+    
+    printf("Original: %s\n", str4);
+    remove_non_alphanumeric(str4);
+    printf("Modified: %s\n", str4);
+    
+    return 0;
+}
+```

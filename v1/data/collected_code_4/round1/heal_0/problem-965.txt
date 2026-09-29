@@ -1,0 +1,42 @@
+```c
+#include <ctype.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdio.h>
+
+char* camelToSnake(char *str)
+{
+    int i, j = 0, len = strlen(str);
+    char *snake_str = malloc(sizeof(char) * (2 * len));
+
+    if(!snake_str) return NULL;
+
+    for (i = 0; i < len; i++, j++) 
+    {
+        if (i > 0 && str[i] >= 'A' && str[i] <= 'Z') 
+        {
+            snake_str[j] = '_';
+            j++;
+        }
+        snake_str[j] = tolower((unsigned char) str[i]);
+    }
+    
+    snake_str[j] = '\0';
+    
+    return snake_str;
+}
+
+int main()
+{
+    char str[] = "camelCaseString";
+    char *snake_str = camelToSnake(str);
+    
+    if(snake_str)
+    {
+        printf("%s\n", snake_str);
+        free(snake_str);
+    }
+    
+    return 0;
+}
+```

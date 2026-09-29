@@ -1,0 +1,32 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <regex.h>
+#include <string.h>
+
+void find_words(const char *str) {
+    regex_t regex;
+    regmatch_t match;
+    const char *pattern = "\\b[a-zA-Z]{3,5}\\b";
+    const char *cursor = str;
+
+    if (regcomp(&regex, pattern, REG_EXTENDED) != 0) {
+        fprintf(stderr, "Could not compile regex\n");
+        return;
+    }
+
+    while (regexec(&regex, cursor, 1, &match, 0) == 0) {
+        int length = match.rm_eo - match.rm_so;
+        printf("%.*s\n", length, cursor + match.rm_so);
+        cursor += match.rm_eo;
+    }
+
+    regfree(&regex);
+}
+
+int main() {
+    const char *text = "This is a test string with words of various lengths like tree, four, and five.";
+    find_words(text);
+    return 0;
+}
+```

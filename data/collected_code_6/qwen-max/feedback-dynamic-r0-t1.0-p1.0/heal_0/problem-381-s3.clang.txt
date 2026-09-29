@@ -1,0 +1,11 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-381-s3.c:12:24: error: call to undeclared library function 'index' with type 'char *(const char *, int)'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   12 |     return listA->data[index] - listB->data[index];
+      |                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-381-s3.c:12:24: note: include the header <strings.h> or explicitly provide a declaration for 'index'
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-381-s3.c:12:23: error: array subscript is not an integer
+   12 |     return listA->data[index] - listB->data[index];
+      |                       ^~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-381-s3.c:12:44: error: array subscript is not an integer
+   12 |     return listA->data[index] - listB->data[index];
+      |                                            ^~~~~~
+3 errors generated.

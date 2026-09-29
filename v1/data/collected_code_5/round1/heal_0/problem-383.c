@@ -1,0 +1,12 @@
+#include <stdio.h>
+
+unsigned int toggleOddBits(unsigned int num) {
+    unsigned int mask = 0xAAAAAAAA;
+    return (num ^ mask);
+}
+
+int main() {
+    unsigned int number = 23;
+    printf("Result after toggle is %u\n", toggleOddBits(number));
+    return 0;
+}

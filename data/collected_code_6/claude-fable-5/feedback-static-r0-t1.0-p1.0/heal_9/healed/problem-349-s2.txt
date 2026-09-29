@@ -1,0 +1,198 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+
+#define BUFFER_SIZE 256U
+
+static bool is_binary_string(const char *str, size_t max_len)
+{
+    size_t i;
+
+    if (str == NULL) {
+        return false;
+    }
+
+    if (max_len == 0U) {
+        return false;
+    }
+
+    if (str[0] == '\0') {
+        return false;
+    }
+
+    for (i = 0U; (i < max_len) && (str[i] != '\0'); i++) {
+        if ((str[i] != '0') && (str[i] != '1')) {
+            return false;
+        }
+    }
+
+    if (i >= max_len) {
+        return false;
+    }
+
+    return true;
+}
+
+static void discard_remaining_input(void)
+{
+    int ch;
+
+    do {
+        ch = getchar();
+    } while ((ch != '\n') && (ch != EOF));
+}
+
+static bool read_line(char *buffer, size_t size)
+{
+    size_t len;
+
+    if ((buffer == NULL) || (size < 2U) || (size > (size_t)INT_MAX)) {
+        return false;
+    }
+
+    if (fgets(buffer, (int)size, stdin) == NULL) {
+        return false;
+    }
+
+    buffer[size - 1U] = '\0';
+
+    len = strnlen(buffer, size);
+    if ((len > 0U) && (buffer[len - 1U] == '\n')) {
+        buffer[len - 1U] = '\0';
+    } else if (len == (size - 1U)) {
+        discard_remaining_input();
+    }
+
+    return true;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+
+    (void)memset(buffer, 0, sizeof(buffer));
+
+    printf("Enter a string: ");
+    (void)fflush(stdout);
+
+    if (!read_line(buffer, sizeof(buffer))) {
+        (void)fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    if (is_binary_string(buffer, sizeof(buffer))) {
+        printf("The string is a binary string\n");
+    } else {
+        printf("The string is not a binary string\n");
+    }
+
+    return 0;
+}
+```
+
+Wait — I introduced `INT_MAX` without its header. Here is the corrected, complete version:
+
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+#include <limits.h>
+
+#define BUFFER_SIZE 256U
+
+static bool is_binary_string(const char *str, size_t max_len)
+{
+    size_t i;
+
+    if (str == NULL) {
+        return false;
+    }
+
+    if (max_len == 0U) {
+        return false;
+    }
+
+    if (str[0] == '\0') {
+        return false;
+    }
+
+    for (i = 0U; (i < max_len) && (str[i] != '\0'); i++) {
+        if ((str[i] != '0') && (str[i] != '1')) {
+            return false;
+        }
+    }
+
+    if (i >= max_len) {
+        return false;
+    }
+
+    return true;
+}
+
+static void discard_remaining_input(void)
+{
+    int ch;
+
+    do {
+        ch = getchar();
+    } while ((ch != '\n') && (ch != EOF));
+}
+
+static bool read_line(char *buffer, size_t size)
+{
+    size_t len;
+
+    if ((buffer == NULL) || (size < 2U) || (size > (size_t)INT_MAX)) {
+        return false;
+    }
+
+    if (fgets(buffer, (int)size, stdin) == NULL) {
+        return false;
+    }
+
+    buffer[size - 1U] = '\0';
+
+    len = strnlen(buffer, size);
+    if ((len > 0U) && (buffer[len - 1U] == '\n')) {
+        buffer[len - 1U] = '\0';
+    } else if (len == (size - 1U)) {
+        discard_remaining_input();
+    }
+
+    return true;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+
+    (void)memset(buffer, 0, sizeof(buffer));
+
+    printf("Enter a string: ");
+    (void)fflush(stdout);
+
+    if (!read_line(buffer, sizeof(buffer))) {
+        (void)fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    if (is_binary_string(buffer, sizeof(buffer))) {
+        printf("The string is a binary string\n");
+    } else {
+        printf("The string is not a binary string\n");
+    }
+
+    return 0;
+}
+```
+
+**Analysis summary:**
+
+The two Flawfinder findings in the original code were both low-risk, largely informational warnings, and the original code already mitigated them properly:
+
+1. **`getchar` in a loop (CWE-120, CWE-20):** `discard_remaining_input()` never writes to a buffer — it only consumes characters until newline or EOF, so no overflow is possible. The loop is correctly bounded by the `EOF` check, preventing an infinite loop on stream closure. No change required.
+
+2. **Statically-sized `char` array (CWE-119/CWE-120):** The `buffer[BUFFER_SIZE]` array is used safely: `fgets` receives `sizeof(buffer)` limiting writes, the buffer is explicitly NUL-terminated at `size - 1`, `strnlen` bounds the length scan, and overflow input is drained from stdin. No overflow path exists.
+
+The only substantive hardening I added is a guard against `size > INT_MAX` before the `(int)size` cast in `read_line`, which prevents a theoretical signed-integer truncation/overflow (CWE-197) if the function were ever called with a very large size on a platform where `size_t` is wider than `int`.

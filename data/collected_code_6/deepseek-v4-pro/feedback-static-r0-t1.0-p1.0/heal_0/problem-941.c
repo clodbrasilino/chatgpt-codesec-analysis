@@ -1,0 +1,88 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Element {
+    int type;
+    int value;
+    struct Element *next;
+} Element;
+
+#define TYPE_INT 0
+#define TYPE_TUPLE 1
+
+int count_until_tuple(Element *head) {
+    if (head == NULL) {
+        return 0;
+    }
+    
+    int count = 0;
+    Element *current = head;
+    
+    while (current != NULL && current->type != TYPE_TUPLE) {
+        count++;
+        current = current->next;
+    }
+    
+    return count;
+}
+
+Element *create_element(int type, int value) {
+    Element *new_element = (Element *)malloc(sizeof(Element));
+    if (new_element == NULL) {
+        return NULL;
+    }
+    new_element->type = type;
+    new_element->value = value;
+    new_element->next = NULL;
+    return new_element;
+}
+
+void free_list(Element *head) {
+    Element *current = head;
+    while (current != NULL) {
+        Element *next = current->next;
+        free(current);
+        current = next;
+    }
+}
+
+int main(void) {
+    Element *list = create_element(TYPE_INT, 10);
+    if (list == NULL) {
+        return 1;
+    }
+    
+    Element *second = create_element(TYPE_INT, 20);
+    if (second == NULL) {
+        free_list(list);
+        return 1;
+    }
+    list->next = second;
+    
+    Element *third = create_element(TYPE_INT, 30);
+    if (third == NULL) {
+        free_list(list);
+        return 1;
+    }
+    second->next = third;
+    
+    Element *fourth = create_element(TYPE_TUPLE, 0);
+    if (fourth == NULL) {
+        free_list(list);
+        return 1;
+    }
+    third->next = fourth;
+    
+    Element *fifth = create_element(TYPE_INT, 50);
+    if (fifth == NULL) {
+        free_list(list);
+        return 1;
+    }
+    fourth->next = fifth;
+    
+    int result = count_until_tuple(list);
+    printf("%d\n", result);
+    
+    free_list(list);
+    return 0;
+}

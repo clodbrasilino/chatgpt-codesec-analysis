@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-662.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-662.c:82:35: style: Condition 'entry->key!=NULL' is always true [knownConditionTrueFalse]
+    if (key_len > 0 && entry->key != NULL && key != NULL) {
+                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-662.c:72:16: warning: Either the condition 'key!=NULL' is redundant or there is possible null pointer dereference: key. [nullPointerRedundantCheck]
+    if (memchr(key, '\0', key_len) != NULL) {
+               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-662.c:82:50: note: Assuming that condition 'key!=NULL' is not redundant
+    if (key_len > 0 && entry->key != NULL && key != NULL) {
+                                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-662.c:72:16: note: Null pointer dereference
+    if (memchr(key, '\0', key_len) != NULL) {
+               ^

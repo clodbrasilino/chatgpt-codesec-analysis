@@ -1,0 +1,53 @@
+#define _POSIX_C_SOURCE 200809L
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+int add_spaces_before_capitals(const char *input, char *output, size_t output_size) {
+    size_t out_pos = 0;
+
+    if (input == NULL || output == NULL || output_size == 0) {
+        return 0;
+    }
+
+    for (size_t i = 0; input[i] != '\0'; i++) {
+        unsigned char c = (unsigned char)input[i];
+        if (isupper(c)) {
+            if (i > 0 && out_pos > 0 && !isspace((unsigned char)output[out_pos - 1])) {
+                if (out_pos + 1 >= output_size) {
+                    return 0;
+                }
+                output[out_pos++] = ' ';
+            }
+        }
+        if (out_pos >= output_size - 1) {
+            return 0;
+        }
+        output[out_pos++] = (char)c;
+    }
+    output[out_pos] = '\0';
+    return 1;
+}
+
+int main(void) {
+    const char *input = "HelloWorldThisIsATest";
+    size_t input_len = strnlen(input, 1024);
+    size_t output_size = 2 * input_len + 1;
+    char *output = malloc(output_size);
+
+    if (output == NULL) {
+        fputs("Memory allocation failed\n", stderr);
+        return EXIT_FAILURE;
+    }
+
+    if (add_spaces_before_capitals(input, output, output_size)) {
+        puts(output);
+        free(output);
+        return EXIT_SUCCESS;
+    }
+
+    fputs("Error processing input\n", stderr);
+    free(output);
+    return EXIT_FAILURE;
+}

@@ -1,0 +1,64 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int digit_sum_difference(long long number);
+
+int digit_sum_difference(long long number)
+{
+    int even_sum = 0;
+    int odd_sum = 0;
+    unsigned long long magnitude;
+
+    if (number < 0) {
+        magnitude = (unsigned long long)(-(number + 1)) + 1ULL;
+    } else {
+        magnitude = (unsigned long long)number;
+    }
+
+    if (magnitude == 0ULL) {
+        return 0;
+    }
+
+    while (magnitude > 0ULL) {
+        const int digit = (int)(magnitude % 10ULL);
+        if ((digit % 2) == 0) {
+            even_sum += digit;
+        } else {
+            odd_sum += digit;
+        }
+        magnitude /= 10ULL;
+    }
+
+    return even_sum - odd_sum;
+}
+
+int main(void)
+{
+    long long input = 0;
+    int result;
+
+    printf("Enter an integer: ");
+    if (scanf("%lld", &input) != 1) {
+        fprintf(stderr, "Error: invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    result = digit_sum_difference(input);
+    printf("Difference between sum of even and odd digits: %d\n", result);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the fix:**
+
+The original code contained undefined behavior flagged by UBSan and discovered via AFL fuzzing: when `number` equals `LLONG_MIN` (-9223372036854775808), the expression `-number` overflows because the positive counterpart cannot be represented in a signed `long long` (whose maximum is 9223372036854775807).
+
+The rewritten version eliminates this by:
+
+1. **Converting to an unsigned magnitude safely:** For negative inputs, `-(number + 1)` is always representable (for `LLONG_MIN`, it yields `LLONG_MAX`), and adding `1ULL` after casting to `unsigned long long` reconstructs the correct absolute value without ever overflowing a signed type.
+
+2. **Performing all digit arithmetic on `unsigned long long`:** modulo and division on unsigned types are fully defined, so the digit-extraction loop is safe for the entire input range, including `LLONG_MIN`.
+
+The observable behavior for all previously valid inputs is unchanged, and the crash case (`id:000000,sig:06`) is resolved.

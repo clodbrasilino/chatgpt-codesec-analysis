@@ -1,0 +1,47 @@
+{
+  "task_id": 668,
+  "text": "Write a C function to replace multiple occurence of character by single.",
+  "fn_candidates": [
+    "replace",
+    "Replace",
+    "replace",
+    "replace"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "replace",
+      "args": [
+        "peep",
+        "e"
+      ],
+      "expected": "pep",
+      "assert_src": "assert replace('peep','e') == 'pep'"
+    },
+    {
+      "fn_name": "replace",
+      "args": [
+        "Greek",
+        "e"
+      ],
+      "expected": "Grek",
+      "assert_src": "assert replace('Greek','e') == 'Grek'"
+    },
+    {
+      "fn_name": "replace",
+      "args": [
+        "Moon",
+        "o"
+      ],
+      "expected": "Mon",
+      "assert_src": "assert replace('Moon','o') == 'Mon'"
+    }
+  ],
+  "arg_kinds": [
+    "str"
+  ],
+  "return_kind": "str",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

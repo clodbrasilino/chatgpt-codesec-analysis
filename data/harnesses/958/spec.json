@@ -1,0 +1,44 @@
+{
+  "task_id": 958,
+  "text": "Write a C function to convert an integer into a roman numeral.",
+  "fn_candidates": [
+    "int_to_roman",
+    "IntToRoman",
+    "intToRoman",
+    "inttoroman"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "int_to_roman",
+      "args": [
+        1
+      ],
+      "expected": "I",
+      "assert_src": "assert int_to_roman(1)==(\"I\")"
+    },
+    {
+      "fn_name": "int_to_roman",
+      "args": [
+        50
+      ],
+      "expected": "L",
+      "assert_src": "assert int_to_roman(50)==(\"L\")"
+    },
+    {
+      "fn_name": "int_to_roman",
+      "args": [
+        4
+      ],
+      "expected": "IV",
+      "assert_src": "assert int_to_roman(4)==(\"IV\")"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "str",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

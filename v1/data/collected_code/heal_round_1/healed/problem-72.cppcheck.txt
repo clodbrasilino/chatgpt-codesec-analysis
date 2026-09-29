@@ -1,0 +1,12 @@
+collected_code/healed/problem-72.c:8:34: warning: Invalid sqrt() argument nr 1. The value is -1 but the valid values are '0.0:'. [invalidFunctionArg]
+        int sqrtDiff = (int)sqrt((double)diff);
+                                 ^
+collected_code/healed/problem-72.c:6:18: note: Assignment 'i=0', assigned value is 0
+    for (int i = 0; i * i <= num; ++i) {
+                 ^
+collected_code/healed/problem-72.c:7:18: note: diff is assigned 'num-i*i' here.
+        int diff = num - i * i;
+                 ^
+collected_code/healed/problem-72.c:8:34: note: Invalid argument
+        int sqrtDiff = (int)sqrt((double)diff);
+                                 ^

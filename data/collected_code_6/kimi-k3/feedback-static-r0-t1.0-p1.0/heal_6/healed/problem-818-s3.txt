@@ -1,0 +1,40 @@
+```c
+#include <stdio.h>
+#include <ctype.h>
+#include <string.h>
+#include <stdlib.h>
+
+int count_lowercase(const char *str)
+{
+    int count = 0;
+    if (str == NULL)
+        return 0;
+    while (*str != '\0')
+    {
+        if (islower((unsigned char)*str))
+            count++;
+        str++;
+    }
+    return count;
+}
+
+int main(void)
+{
+    char *str = NULL;
+    size_t size = 0;
+    ssize_t len;
+    
+    len = getline(&str, &size, stdin);
+    if (len != -1)
+    {
+        if (len > 0 && str[len - 1] == '\n')
+            str[len - 1] = '\0';
+        
+        int result = count_lowercase(str);
+        printf("%d\n", result);
+    }
+    
+    free(str);
+    return 0;
+}
+```

@@ -1,0 +1,11 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-389-s3.c: In function 'add':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-389-s3.c:19:20: error: 'LLONG_MAX' undeclared (first use in this function)
+   19 |     if (sum_high > LLONG_MAX) {
+      |                    ^~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-389-s3.c:4:1: note: 'LLONG_MAX' is defined in header '<limits.h>'; this is probably fixable by adding '#include <limits.h>'
+    3 | #include <inttypes.h>
+  +++ |+#include <limits.h>
+    4 | 
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-389-s3.c:19:20: note: each undeclared identifier is reported only once for each function it appears in
+   19 |     if (sum_high > LLONG_MAX) {
+      |                    ^~~~~~~~~

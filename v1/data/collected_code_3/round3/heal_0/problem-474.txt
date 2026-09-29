@@ -1,0 +1,24 @@
+```C
+#include <stdio.h>
+#include <string.h>
+
+void replace_char(char *str, char find, char replace) {
+    for(int i = 0; i < strlen(str); i++) {
+        if(str[i] == find) {
+            str[i] = replace;
+        }
+    }
+}
+
+int main() {
+    char str[] = "Hello, World!";
+    char find = 'o';
+    char replace = 'a';
+
+    printf("Original string: %s\n", str);
+    replace_char(str, find, replace);
+    printf("Modified string: %s\n", str);
+
+    return 0;
+}
+```

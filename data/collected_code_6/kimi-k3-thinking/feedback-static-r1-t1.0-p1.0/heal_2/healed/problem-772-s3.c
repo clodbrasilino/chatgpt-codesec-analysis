@@ -1,0 +1,164 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#include <errno.h>
+#include <stdint.h>
+
+#define INPUT_BUFFER_SIZE 1024
+#define MAX_PROCESSED_LENGTH 4096
+#define MAX_DISCARD_CHARS 8192
+#define LENGTH_BUFFER_SIZE 32
+
+static size_t safe_strnlen(const char *s, size_t max_len)
+{
+    size_t n = 0;
+
+    if (s == NULL) {
+        return 0;
+    }
+
+    while (n < max_len && s[n] != '\0') {
+        n++;
+    }
+
+    return n;
+}
+
+char *remove_words_of_length(const char *str, size_t k)
+{
+    if (str == NULL) {
+        return NULL;
+    }
+
+    size_t len = safe_strnlen(str, MAX_PROCESSED_LENGTH + 1);
+    if (len > MAX_PROCESSED_LENGTH) {
+        return NULL;
+    }
+
+    char *result = (char *)malloc(len + 1);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    size_t i = 0;
+    size_t j = 0;
+    int first_word = 1;
+
+    while (i < len) {
+        while (i < len && isspace((unsigned char)str[i])) {
+            i++;
+        }
+        if (i >= len) {
+            break;
+        }
+
+        size_t word_start = i;
+        while (i < len && !isspace((unsigned char)str[i])) {
+            i++;
+        }
+        size_t word_len = i - word_start;
+
+        if (word_len != k) {
+            size_t needed = word_len + (first_word ? (size_t)0 : (size_t)1);
+
+            if (j > len || needed > len - j) {
+                free(result);
+                return NULL;
+            }
+            if (!first_word) {
+                result[j++] = ' ';
+            }
+            if (word_len > 0) {
+                memcpy(result + j, str + word_start, word_len);
+                j += word_len;
+            }
+            first_word = 0;
+        }
+    }
+    result[j] = '\0';
+
+    char *shrunk = (char *)realloc(result, j + 1);
+    if (shrunk != NULL) {
+        result = shrunk;
+    }
+
+    return result;
+}
+
+int main(void)
+{
+    char input[INPUT_BUFFER_SIZE];
+    char length_input[LENGTH_BUFFER_SIZE];
+    size_t k = 0;
+
+    printf("Enter a string: ");
+    if (fgets(input, sizeof(input), stdin) == NULL) {
+        fprintf(stderr, "Error reading input.\n");
+        return EXIT_FAILURE;
+    }
+
+    size_t input_len = safe_strnlen(input, sizeof(input));
+
+    if (input_len > 0 && input[input_len - 1] == '\n') {
+        input[input_len - 1] = '\0';
+    } else if (input_len == sizeof(input) - 1) {
+        int ch;
+        size_t discarded = 0;
+
+        while ((ch = getchar()) != '\n' && ch != EOF) {
+            discarded++;
+            if (discarded > MAX_DISCARD_CHARS) {
+                break;
+            }
+        }
+        fprintf(stderr, "Input exceeds the maximum allowed length.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter the word length to remove: ");
+    if (fgets(length_input, sizeof(length_input), stdin) == NULL) {
+        fprintf(stderr, "Error reading input.\n");
+        return EXIT_FAILURE;
+    }
+
+    const char *p = length_input;
+    while (isspace((unsigned char)*p)) {
+        p++;
+    }
+    if (*p == '-' || *p == '\0') {
+        fprintf(stderr, "Invalid length value.\n");
+        return EXIT_FAILURE;
+    }
+
+    errno = 0;
+    char *end = NULL;
+    unsigned long long value = strtoull(p, &end, 10);
+    if (errno != 0 || end == p) {
+        fprintf(stderr, "Invalid length value.\n");
+        return EXIT_FAILURE;
+    }
+    while (*end != '\0') {
+        if (!isspace((unsigned char)*end)) {
+            fprintf(stderr, "Invalid length value.\n");
+            return EXIT_FAILURE;
+        }
+        end++;
+    }
+    if (value > (unsigned long long)SIZE_MAX) {
+        fprintf(stderr, "Invalid length value.\n");
+        return EXIT_FAILURE;
+    }
+    k = (size_t)value;
+
+    char *modified = remove_words_of_length(input, k);
+    if (modified == NULL) {
+        fprintf(stderr, "Failed to process the string.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Result: \"%s\"\n", modified);
+
+    free(modified);
+    return EXIT_SUCCESS;
+}

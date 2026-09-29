@@ -1,0 +1,50 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node* next;
+} Node;
+
+Node* createNode(int data) {
+    Node* newNode = (Node*)malloc(sizeof(Node));
+    if(newNode == NULL) {
+        printf("Error creating a new node.\n");
+        exit(0);
+    }
+    newNode->data = data;
+    newNode->next = NULL;
+
+    return newNode;
+}
+
+Node* copyList(Node* head) {
+    if(head == NULL) {
+        return NULL;
+    }
+    Node* newHead = createNode(head->data);
+    Node* current = head->next;
+    Node* copy = newHead;
+
+    while(current != NULL) {
+        copy->next = createNode(current->data);
+        current = current->next;
+        copy = copy->next;
+    }
+    return newHead;
+}
+
+int main() {
+    Node* head = createNode(1);
+    head->next = createNode(2);
+    head->next->next = createNode(3);
+
+    Node* copy = copyList(head);
+
+    Node* temp = copy;
+    while(temp != NULL) {
+        printf("%d ", temp->data);
+        temp = temp->next;
+    }
+    return 0;
+}

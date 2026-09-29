@@ -1,0 +1,44 @@
+{
+  "task_id": 138,
+  "text": "Write a C function to check whether the given number can be represented as sum of non-zero powers of 2 or not.",
+  "fn_candidates": [
+    "is_Sum_Of_Powers_Of_Two",
+    "IsSumOfPowersOfTwo",
+    "isSumOfPowersOfTwo",
+    "isSumOfPowersOfTwo"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "is_Sum_Of_Powers_Of_Two",
+      "args": [
+        10
+      ],
+      "expected": true,
+      "assert_src": "assert is_Sum_Of_Powers_Of_Two(10) == True"
+    },
+    {
+      "fn_name": "is_Sum_Of_Powers_Of_Two",
+      "args": [
+        7
+      ],
+      "expected": false,
+      "assert_src": "assert is_Sum_Of_Powers_Of_Two(7) == False"
+    },
+    {
+      "fn_name": "is_Sum_Of_Powers_Of_Two",
+      "args": [
+        14
+      ],
+      "expected": true,
+      "assert_src": "assert is_Sum_Of_Powers_Of_Two(14) == True"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "bool",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

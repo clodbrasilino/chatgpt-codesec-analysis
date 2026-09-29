@@ -1,0 +1,69 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+#include <stddef.h>
+
+struct KeyValuePair {
+    const char *key;
+    int value;
+};
+
+struct Dictionary {
+    const struct KeyValuePair *pairs;
+    size_t count;
+};
+
+bool are_all_values_same(const struct Dictionary *dict) {
+    if (dict == NULL || dict->pairs == NULL) {
+        return false;
+    }
+
+    if (dict->count <= 1) {
+        return true;
+    }
+
+    int first_value = dict->pairs[0].value;
+
+    for (size_t i = 1; i < dict->count; ++i) {
+        if (dict->pairs[i].value != first_value) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+int main(void) {
+    const struct KeyValuePair pairs1[] = {
+        {"alpha", 42},
+        {"beta", 42},
+        {"gamma", 42}
+    };
+    
+    struct Dictionary dict1 = {
+        .pairs = pairs1,
+        .count = sizeof(pairs1) / sizeof(pairs1[0])
+    };
+
+    const struct KeyValuePair pairs2[] = {
+        {"alpha", 42},
+        {"beta", 99},
+        {"gamma", 42}
+    };
+    
+    struct Dictionary dict2 = {
+        .pairs = pairs2,
+        .count = sizeof(pairs2) / sizeof(pairs2[0])
+    };
+
+    bool result1 = are_all_values_same(&dict1);
+    bool result2 = are_all_values_same(&dict2);
+    bool result3 = are_all_values_same(NULL);
+
+    printf("%d\n", result1);
+    printf("%d\n", result2);
+    printf("%d\n", result3);
+
+    return 0;
+}
+```

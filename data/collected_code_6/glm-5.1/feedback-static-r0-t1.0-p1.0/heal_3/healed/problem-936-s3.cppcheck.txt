@@ -1,0 +1,30 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-936-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-936-s3.c:58:22: style: Condition 'ordered_size>0' is always true [knownConditionTrueFalse]
+    if (ordered_size > 0 && arg_size > ordered_size) {
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-936-s3.c:47:83: note: Assuming that condition 'ordered_size==0' is not redundant
+    if (tuples == NULL || ordered_keys == NULL || tuple_size == 0 || ordered_size == 0) {
+                                                                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-936-s3.c:53:13: note: Assuming condition is false
+    if (arg == NULL) {
+            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-936-s3.c:58:22: note: Condition 'ordered_size>0' is always true
+    if (ordered_size > 0 && arg_size > ordered_size) {
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-936-s3.c:58:38: style: Condition 'arg_size>ordered_size' is always true [knownConditionTrueFalse]
+    if (ordered_size > 0 && arg_size > ordered_size) {
+                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-936-s3.c:51:21: note: arg_size is assigned 'ordered_size+1' here.
+    size_t arg_size = ordered_size + 1;
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-936-s3.c:53:13: note: Assuming condition is false
+    if (arg == NULL) {
+            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-936-s3.c:58:38: note: Condition 'arg_size>ordered_size' is always true
+    if (ordered_size > 0 && arg_size > ordered_size) {
+                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-936-s3.c:22:26: style: Parameter 'arg' can be declared as pointer to const [constParameterPointer]
+int compare_tuples(void *arg, const void *a, const void *b) {
+                         ^
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-936-s3.c: __APPLE__...
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-936-s3.c: __linux__...

@@ -1,0 +1,55 @@
+{
+  "task_id": 105,
+  "text": "Write a C function to count true booleans in the given list.",
+  "fn_candidates": [
+    "count",
+    "Count",
+    "count",
+    "count"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "count",
+      "args": [
+        [
+          true,
+          false,
+          true
+        ]
+      ],
+      "expected": 2,
+      "assert_src": "assert count([True,False,True]) == 2"
+    },
+    {
+      "fn_name": "count",
+      "args": [
+        [
+          false,
+          false
+        ]
+      ],
+      "expected": 0,
+      "assert_src": "assert count([False,False]) == 0"
+    },
+    {
+      "fn_name": "count",
+      "args": [
+        [
+          true,
+          true,
+          true
+        ]
+      ],
+      "expected": 3,
+      "assert_src": "assert count([True,True,True]) == 3"
+    }
+  ],
+  "arg_kinds": [
+    "bool-list"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

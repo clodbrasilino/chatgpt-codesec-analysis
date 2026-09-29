@@ -1,0 +1,109 @@
+{
+  "task_id": 730,
+  "text": "Write a C function to remove consecutive duplicates of a given list.",
+  "fn_candidates": [
+    "consecutive_duplicates",
+    "ConsecutiveDuplicates",
+    "consecutiveDuplicates",
+    "consecutiveduplicates"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "consecutive_duplicates",
+      "args": [
+        [
+          0,
+          0,
+          1,
+          2,
+          3,
+          4,
+          4,
+          5,
+          6,
+          6,
+          6,
+          7,
+          8,
+          9,
+          4,
+          4
+        ]
+      ],
+      "expected": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        4
+      ],
+      "assert_src": "assert consecutive_duplicates([0, 0, 1, 2, 3, 4, 4, 5, 6, 6, 6, 7, 8, 9, 4, 4 ])==[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 4]"
+    },
+    {
+      "fn_name": "consecutive_duplicates",
+      "args": [
+        [
+          10,
+          10,
+          15,
+          19,
+          18,
+          18,
+          17,
+          26,
+          26,
+          17,
+          18,
+          10
+        ]
+      ],
+      "expected": [
+        10,
+        15,
+        19,
+        18,
+        17,
+        26,
+        17,
+        18,
+        10
+      ],
+      "assert_src": "assert consecutive_duplicates([10, 10, 15, 19, 18, 18, 17, 26, 26, 17, 18, 10])==[10, 15, 19, 18, 17, 26, 17, 18, 10]"
+    },
+    {
+      "fn_name": "consecutive_duplicates",
+      "args": [
+        [
+          "a",
+          "a",
+          "b",
+          "c",
+          "d",
+          "d"
+        ]
+      ],
+      "expected": [
+        "a",
+        "b",
+        "c",
+        "d"
+      ],
+      "assert_src": "assert consecutive_duplicates(['a', 'a', 'b', 'c', 'd', 'd'])==['a', 'b', 'c', 'd']"
+    }
+  ],
+  "arg_kinds": [
+    "int-list",
+    "str-list"
+  ],
+  "return_kind": "int-list",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

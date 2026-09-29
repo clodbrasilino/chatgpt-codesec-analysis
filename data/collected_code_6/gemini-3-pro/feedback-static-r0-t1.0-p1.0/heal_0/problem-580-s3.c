@@ -1,0 +1,113 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+#include <ctype.h>
+#include <string.h>
+
+typedef enum {
+    TYPE_INT,
+    TYPE_TUPLE
+} ElementType;
+
+typedef struct Element {
+    ElementType type;
+    union {
+        int i_val;
+        struct Tuple* t_val;
+    } data;
+} Element;
+
+typedef struct Tuple {
+    size_t size;
+    Element* elements;
+} Tuple;
+
+Tuple* create_tuple(size_t size) {
+    if (size == 0) return NULL;
+    Tuple* t = (Tuple*)malloc(sizeof(Tuple));
+    if (t == NULL) return NULL;
+    t->size = size;
+    t->elements = (Element*)calloc(size, sizeof(Element));
+    if (t->elements == NULL) {
+        free(t);
+        return NULL;
+    }
+    return t;
+}
+
+void free_tuple(Tuple* t) {
+    if (t == NULL) return;
+    for (size_t i = 0; i < t->size; ++i) {
+        if (t->elements[i].type == TYPE_TUPLE) {
+            free_tuple(t->elements[i].data.t_val);
+        }
+    }
+    free(t->elements);
+    free(t);
+}
+
+void extract_evens(const Tuple* t, int** evens, size_t* count, size_t* capacity) {
+    if (t == NULL || evens == NULL || count == NULL || capacity == NULL || *evens == NULL) return;
+
+    for (size_t i = 0; i < t->size; ++i) {
+        if (t->elements[i].type == TYPE_INT) {
+            if (t->elements[i].data.i_val % 2 == 0) {
+                if (*count >= *capacity) {
+                    *capacity = (*capacity == 0) ? 4 : (*capacity * 2);
+                    int* temp = (int*)realloc(*evens, (*capacity) * sizeof(int));
+                    if (temp == NULL) {
+                        return;
+                    }
+                    *evens = temp;
+                }
+                (*evens)[(*count)++] = t->elements[i].data.i_val;
+            }
+        } else if (t->elements[i].type == TYPE_TUPLE) {
+            extract_evens(t->elements[i].data.t_val, evens, count, capacity);
+        }
+    }
+}
+
+int main(void) {
+    Tuple* root = create_tuple(3);
+    if (!root) return 1;
+
+    root->elements[0].type = TYPE_INT;
+    root->elements[0].data.i_val = 1;
+
+    root->elements[1].type = TYPE_TUPLE;
+    root->elements[1].data.t_val = create_tuple(2);
+    if (!root->elements[1].data.t_val) {
+        free_tuple(root);
+        return 1;
+    }
+    
+    root->elements[1].data.t_val->elements[0].type = TYPE_INT;
+    root->elements[1].data.t_val->elements[0].data.i_val = 2;
+    
+    root->elements[1].data.t_val->elements[1].type = TYPE_INT;
+    root->elements[1].data.t_val->elements[1].data.i_val = 3;
+
+    root->elements[2].type = TYPE_INT;
+    root->elements[2].data.i_val = 4;
+
+    size_t capacity = 4;
+    size_t count = 0;
+    int* evens = (int*)malloc(capacity * sizeof(int));
+    if (!evens) {
+        free_tuple(root);
+        return 1;
+    }
+
+    extract_evens(root, &evens, &count, &capacity);
+
+    for (size_t i = 0; i < count; ++i) {
+        printf("%d ", evens[i]);
+    }
+    printf("\n");
+
+    free(evens);
+    free_tuple(root);
+
+    return 0;
+}

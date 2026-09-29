@@ -1,0 +1,11 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_0/problem-85.c: In function 'sphere_surface_area':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_0/problem-85.c:14:23: error: 'DBL_MAX' undeclared (first use in this function)
+   14 |     if (radius > sqrt(DBL_MAX / (4.0 * pi))) {
+      |                       ^~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_0/problem-85.c:5:1: note: 'DBL_MAX' is defined in header '<float.h>'; this is probably fixable by adding '#include <float.h>'
+    4 | #include <stdlib.h>
+  +++ |+#include <float.h>
+    5 | 
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_0/problem-85.c:14:23: note: each undeclared identifier is reported only once for each function it appears in
+   14 |     if (radius > sqrt(DBL_MAX / (4.0 * pi))) {
+      |                       ^~~~~~~

@@ -1,0 +1,34 @@
+Here is a C program that calculates the Bell numbers using a dynamic programming approach. The Bell number B(n) is the number of ways to partition a set of n elements.
+
+```c
+#include <stdio.h>
+
+#define MAX 100
+
+unsigned long long int bell[MAX][MAX];
+
+unsigned long long int bellNumber(int n) {
+    bell[0][0] = 1;
+    for (int i=1; i<=n; i++) {
+        bell[i][0] = bell[i-1][i-1];
+        for (int j=1; j<=i; j++) {
+            bell[i][j] = bell[i-1][j-1] + bell[i][j-1];
+        }
+    }
+    return bell[n][0];
+}
+
+int main() {
+    int n;
+    printf("Enter a number: ");
+    scanf("%d", &n);
+    printf("Bell number is: %llu\n", bellNumber(n));
+    return 0;
+}
+```
+
+This program first asks the user to input a number. It then calculates the Bell number for that number using a dynamic programming approach. The Bell number is then printed to the console. The Bell number is calculated using the formula:
+
+B(n) = B(n-1) + B(n-1, n-2) + B(n-2, n-3) + ... + B(1, 0)
+
+where B(i, j) is the number of ways to partition a set of i elements into j non-empty subsets.

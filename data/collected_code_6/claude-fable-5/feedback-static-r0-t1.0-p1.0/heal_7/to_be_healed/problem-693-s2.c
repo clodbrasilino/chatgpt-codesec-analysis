@@ -1,0 +1,183 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+char *remove_multiple_spaces(const char *input);
+
+static int safe_copy(char *dest, size_t dest_size, size_t dest_offset,
+                     const char *src, size_t copy_len)
+{
+    if (dest == NULL || src == NULL) {
+        return -1;
+    }
+    if (dest_offset >= dest_size) {
+        return -1;
+    }
+    if (copy_len > (dest_size - dest_offset)) {
+        return -1;
+    }
+    /* Possible weaknesses found:
+     * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+     */
+    memcpy(dest + dest_offset, src, copy_len);
+    return 0;
+}
+
+char *remove_multiple_spaces(const char *input)
+{
+    regex_t regex;
+    regmatch_t match;
+    char *output;
+    const char *cursor;
+    size_t input_len;
+    size_t out_len;
+    size_t remainder_len;
+    size_t output_size;
+    int ret;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    ret = regcomp(&regex, "  +", REG_EXTENDED);
+    if (ret != 0) {
+        return NULL;
+    }
+
+    input_len = strnlen(input, (size_t)-1 / 2U);
+
+    if (input_len >= ((size_t)-1 / 2U)) {
+        regfree(&regex);
+        return NULL;
+    }
+
+    output_size = input_len + 1U;
+
+    output = malloc(output_size);
+    if (output == NULL) {
+        regfree(&regex);
+        return NULL;
+    }
+
+    out_len = 0U;
+    cursor = input;
+
+    while ((ret = regexec(&regex, cursor, 1U, &match, 0)) == 0) {
+        size_t prefix_len;
+
+        if (match.rm_so < 0 || match.rm_eo < match.rm_so) {
+            free(output);
+            regfree(&regex);
+            return NULL;
+        }
+
+        prefix_len = (size_t)match.rm_so;
+
+        if (prefix_len > (output_size - 1U) ||
+            out_len > ((output_size - 1U) - prefix_len)) {
+            free(output);
+            regfree(&regex);
+            return NULL;
+        }
+
+        if ((out_len + prefix_len + 1U) > output_size) {
+            free(output);
+            regfree(&regex);
+            return NULL;
+        }
+
+        if (prefix_len > 0U) {
+            if (safe_copy(output, output_size, out_len, cursor,
+                          prefix_len) != 0) {
+                free(output);
+                regfree(&regex);
+                return NULL;
+            }
+            out_len += prefix_len;
+        }
+
+        if (out_len >= output_size) {
+            free(output);
+            regfree(&regex);
+            return NULL;
+        }
+
+        output[out_len] = ' ';
+        out_len += 1U;
+        cursor += match.rm_eo;
+    }
+
+    if (ret != REG_NOMATCH) {
+        free(output);
+        regfree(&regex);
+        return NULL;
+    }
+
+    if ((size_t)(cursor - input) > input_len) {
+        free(output);
+        regfree(&regex);
+        return NULL;
+    }
+
+    remainder_len = strnlen(cursor, input_len - (size_t)(cursor - input));
+
+    if (remainder_len > (output_size - 1U) ||
+        out_len > ((output_size - 1U) - remainder_len)) {
+        free(output);
+        regfree(&regex);
+        return NULL;
+    }
+
+    if ((out_len + remainder_len + 1U) > output_size) {
+        free(output);
+        regfree(&regex);
+        return NULL;
+    }
+
+    if (remainder_len > 0U) {
+        if (safe_copy(output, output_size, out_len, cursor,
+                      remainder_len) != 0) {
+            free(output);
+            regfree(&regex);
+            return NULL;
+        }
+        out_len += remainder_len;
+    }
+
+    if (out_len >= output_size) {
+        free(output);
+        regfree(&regex);
+        return NULL;
+    }
+
+    output[out_len] = '\0';
+
+    regfree(&regex);
+    return output;
+}
+
+int main(void)
+{
+    const char *test = "This   is  a    string   with     multiple spaces.";
+    char *result;
+
+    result = remove_multiple_spaces(test);
+    if (result == NULL) {
+        fprintf(stderr, "Failed to process the string.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Original: %s\n", test) < 0) {
+        free(result);
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Cleaned:  %s\n", result) < 0) {
+        free(result);
+        return EXIT_FAILURE;
+    }
+
+    free(result);
+    return EXIT_SUCCESS;
+}

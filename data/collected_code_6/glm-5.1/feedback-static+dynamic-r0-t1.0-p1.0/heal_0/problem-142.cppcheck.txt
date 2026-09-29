@@ -1,0 +1,37 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-142.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-142.c:35:12: style: Condition 'na==0' is always false [knownConditionTrueFalse]
+    if (na == 0 || nb == 0 || nc == 0) {
+           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-142.c:31:24: note: Assignment 'na=sizeof(a)/sizeof(a[0])', assigned value is 6
+    int na = sizeof(a) / sizeof(a[0]);
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-142.c:35:12: note: Condition 'na==0' is always false
+    if (na == 0 || nb == 0 || nc == 0) {
+           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-142.c:35:23: style: Condition 'nb==0' is always false [knownConditionTrueFalse]
+    if (na == 0 || nb == 0 || nc == 0) {
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-142.c:32:24: note: Assignment 'nb=sizeof(b)/sizeof(b[0])', assigned value is 5
+    int nb = sizeof(b) / sizeof(b[0]);
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-142.c:35:23: note: Condition 'nb==0' is always false
+    if (na == 0 || nb == 0 || nc == 0) {
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-142.c:35:34: style: Condition 'nc==0' is always false [knownConditionTrueFalse]
+    if (na == 0 || nb == 0 || nc == 0) {
+                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-142.c:33:24: note: Assignment 'nc=sizeof(c)/sizeof(c[0])', assigned value is 8
+    int nc = sizeof(c) / sizeof(c[0]);
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-142.c:35:34: note: Condition 'nc==0' is always false
+    if (na == 0 || nb == 0 || nc == 0) {
+                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-142.c:4:26: style: Parameter 'a' can be declared as pointer to const [constParameterPointer]
+int count_same_pair(int *a, int *b, int *c, int na, int nb, int nc) {
+                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-142.c:4:34: style: Parameter 'b' can be declared as pointer to const [constParameterPointer]
+int count_same_pair(int *a, int *b, int *c, int na, int nb, int nc) {
+                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-142.c:4:42: style: Parameter 'c' can be declared as pointer to const [constParameterPointer]
+int count_same_pair(int *a, int *b, int *c, int na, int nb, int nc) {
+                                         ^

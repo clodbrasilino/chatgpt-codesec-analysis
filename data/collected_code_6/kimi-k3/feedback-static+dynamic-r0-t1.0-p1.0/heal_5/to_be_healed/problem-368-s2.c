@@ -1,0 +1,157 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+#include <stdbool.h>
+
+typedef struct {
+    int *data;
+    size_t size;
+} IntTuple;
+
+static bool safe_multiply_size(size_t a, size_t b, size_t *result) {
+    if (a == 0 || b == 0) {
+        *result = 0;
+        return true;
+    }
+    if (a > SIZE_MAX / b) {
+        return false;
+    }
+    *result = a * b;
+    return true;
+}
+
+IntTuple* tuple_create(const int *data, size_t size) {
+    if (data == NULL || size == 0) {
+        return NULL;
+    }
+    
+    size_t alloc_size;
+    if (!safe_multiply_size(size, sizeof(int), &alloc_size)) {
+        return NULL;
+    }
+    
+    IntTuple *tuple = malloc(sizeof(IntTuple));
+    if (tuple == NULL) {
+        return NULL;
+    }
+    
+    tuple->data = malloc(alloc_size);
+    if (tuple->data == NULL) {
+        free(tuple);
+        return NULL;
+    }
+    
+    /* Possible weaknesses found:
+     * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+     */
+    memcpy(tuple->data, data, alloc_size);
+    tuple->size = size;
+    
+    return tuple;
+}
+
+IntTuple* tuple_repeat(const IntTuple *tuple, size_t n) {
+    if (tuple == NULL || tuple->data == NULL || n == 0) {
+        return NULL;
+    }
+    
+    size_t new_size;
+    if (!safe_multiply_size(tuple->size, n, &new_size)) {
+        return NULL;
+    }
+    
+    size_t alloc_size;
+    if (!safe_multiply_size(new_size, sizeof(int), &alloc_size)) {
+        return NULL;
+    }
+    
+    IntTuple *result = malloc(sizeof(IntTuple));
+    if (result == NULL) {
+        return NULL;
+    }
+    
+    result->data = malloc(alloc_size);
+    if (result->data == NULL) {
+        free(result);
+        return NULL;
+    }
+    
+    size_t element_size = tuple->size * sizeof(int);
+    for (size_t i = 0; i < n; i++) {
+        size_t offset;
+        if (!safe_multiply_size(i, element_size, &offset)) {
+            free(result->data);
+            free(result);
+            return NULL;
+        }
+        
+        if (offset > alloc_size || element_size > alloc_size - offset) {
+            free(result->data);
+            free(result);
+            return NULL;
+        }
+        
+        /* Possible weaknesses found:
+         * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+         */
+        memcpy((char *)result->data + offset, tuple->data, element_size);
+    }
+    
+    result->size = new_size;
+    
+    return result;
+}
+
+void tuple_destroy(IntTuple *tuple) {
+    if (tuple != NULL) {
+        free(tuple->data);
+        free(tuple);
+    }
+}
+
+void tuple_print(const IntTuple *tuple) {
+    if (tuple == NULL || tuple->data == NULL) {
+        printf("()\n");
+        return;
+    }
+    
+    printf("(");
+    for (size_t i = 0; i < tuple->size; i++) {
+        printf("%d", tuple->data[i]);
+        if (i < tuple->size - 1) {
+            printf(", ");
+        }
+    }
+    printf(")\n");
+}
+
+int main(void) {
+    int original_data[] = {1, 2, 3};
+    size_t original_size = sizeof(original_data) / sizeof(original_data[0]);
+    size_t repeat_count = 3;
+    
+    IntTuple *original = tuple_create(original_data, original_size);
+    if (original == NULL) {
+        fprintf(stderr, "Failed to create tuple\n");
+        return EXIT_FAILURE;
+    }
+    
+    IntTuple *repeated = tuple_repeat(original, repeat_count);
+    if (repeated == NULL) {
+        fprintf(stderr, "Failed to repeat tuple\n");
+        tuple_destroy(original);
+        return EXIT_FAILURE;
+    }
+    
+    printf("Original: ");
+    tuple_print(original);
+    
+    printf("Repeated %zu times: ", repeat_count);
+    tuple_print(repeated);
+    
+    tuple_destroy(original);
+    tuple_destroy(repeated);
+    
+    return EXIT_SUCCESS;
+}

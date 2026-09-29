@@ -1,0 +1,17 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int findLastDigit(int number){
+    return abs(number % 10);
+}
+
+int main(){
+    int number;
+
+    printf("Enter a number: ");
+    scanf("%d", &number);
+
+    printf("The last digit of the number is: %d\n", findLastDigit(number));
+	
+    return 0;
+}

@@ -1,0 +1,23 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int nth_digit(int a, int b, int n) {
+    if (b <= 0 || n < 0) return -1;
+    long long result = 0, remainder = a % b, multiplier = 1;
+    for (int i = 0; i < n && remainder; ++i) {
+        remainder *= 10;
+        int digit = remainder / b;
+        remainder %= b;
+        result += digit * multiplier;
+        multiplier *= 10;
+    }
+    return remainder == 0 ? -1 : result;
+}
+
+int main() {
+    int a, b, n;
+    scanf("%d %d %d", &a, &b, &n);
+    int digit = nth_digit(a, b, n);
+    printf("%d\n", digit);
+    return 0;
+}

@@ -1,0 +1,86 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int first;
+    int second;
+    int third;
+} Tuple;
+
+typedef struct Node {
+    Tuple data;
+    struct Node* next;
+} Node;
+
+int extract_rear_elements(Node* head, int** result, size_t* size) {
+    if (head == NULL || result == NULL || size == NULL) {
+        return -1;
+    }
+
+    size_t count = 0;
+    Node* current = head;
+    while (current != NULL) {
+        count++;
+        current = current->next;
+    }
+
+    *result = (int*)malloc(count * sizeof(int));
+    if (*result == NULL) {
+        return -1;
+    }
+
+    *size = count;
+    current = head;
+    size_t index = 0;
+    while (current != NULL) {
+        (*result)[index++] = current->data.third;
+        current = current->next;
+    }
+
+    return 0;
+}
+
+void free_list(Node* head) {
+    Node* current = head;
+    while (current != NULL) {
+        Node* next = current->next;
+        free(current);
+        current = next;
+    }
+}
+
+int main() {
+    Node* head = (Node*)malloc(sizeof(Node));
+    if (head == NULL) {
+        return 1;
+    }
+    head->data.first = 1;
+    head->data.second = 2;
+    head->data.third = 3;
+
+    head->next = (Node*)malloc(sizeof(Node));
+    if (head->next == NULL) {
+        free_list(head);
+        return 1;
+    }
+    head->next->data.first = 4;
+    head->next->data.second = 5;
+    head->next->data.third = 6;
+    head->next->next = NULL;
+
+    int* rear_elements = NULL;
+    size_t size = 0;
+
+    if (extract_rear_elements(head, &rear_elements, &size) == 0) {
+        for (size_t i = 0; i < size; i++) {
+            printf("%d\n", rear_elements[i]);
+        }
+        free(rear_elements);
+    } else {
+        free_list(head);
+        return 1;
+    }
+
+    free_list(head);
+    return 0;
+}

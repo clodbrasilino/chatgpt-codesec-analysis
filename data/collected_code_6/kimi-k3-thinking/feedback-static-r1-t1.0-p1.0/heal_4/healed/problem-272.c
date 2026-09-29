@@ -1,0 +1,247 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define TUPLE_NAME_CAPACITY 32U
+
+typedef struct {
+    int id;
+    double value;
+    char *name;
+} Tuple;
+
+typedef struct Node {
+    Tuple data;
+    struct Node *next;
+} Node;
+
+typedef struct {
+    Node *head;
+    Node *tail;
+    size_t size;
+} TupleList;
+
+static size_t bounded_strnlen(const char *s, size_t max_length)
+{
+    size_t length = 0U;
+
+    if (s == NULL) {
+        return 0U;
+    }
+
+    while (length < max_length && s[length] != '\0') {
+        length++;
+    }
+
+    return length;
+}
+
+int tuple_init(Tuple *tuple, int id, double value, const char *name)
+{
+    size_t name_length;
+    size_t name_buffer_size;
+    char *name_copy;
+    int written;
+
+    if (tuple == NULL) {
+        return -1;
+    }
+
+    tuple->id = id;
+    tuple->value = value;
+    tuple->name = NULL;
+
+    if (name == NULL) {
+        return 0;
+    }
+
+    name_length = bounded_strnlen(name, TUPLE_NAME_CAPACITY);
+    if (name_length >= TUPLE_NAME_CAPACITY) {
+        return -1;
+    }
+
+    name_buffer_size = name_length + 1U;
+    name_copy = malloc(name_buffer_size);
+    if (name_copy == NULL) {
+        return -1;
+    }
+
+    written = snprintf(name_copy, name_buffer_size, "%s", name);
+    if (written < 0 || (size_t)written >= name_buffer_size) {
+        free(name_copy);
+        return -1;
+    }
+
+    tuple->name = name_copy;
+
+    return 0;
+}
+
+void tuple_clear(Tuple *tuple)
+{
+    if (tuple == NULL) {
+        return;
+    }
+
+    free(tuple->name);
+    tuple->name = NULL;
+}
+
+int tuple_copy(Tuple *dest, const Tuple *src)
+{
+    if (dest == NULL || src == NULL) {
+        return -1;
+    }
+
+    return tuple_init(dest, src->id, src->value, src->name);
+}
+
+void tuple_list_init(TupleList *list)
+{
+    if (list == NULL) {
+        return;
+    }
+
+    list->head = NULL;
+    list->tail = NULL;
+    list->size = 0U;
+}
+
+int tuple_list_append(TupleList *list, const Tuple *tuple)
+{
+    Node *node;
+
+    if (list == NULL || tuple == NULL) {
+        return -1;
+    }
+
+    node = malloc(sizeof(*node));
+    if (node == NULL) {
+        return -1;
+    }
+
+    if (tuple_copy(&node->data, tuple) != 0) {
+        free(node);
+        return -1;
+    }
+
+    node->next = NULL;
+
+    if (list->tail != NULL) {
+        list->tail->next = node;
+    } else {
+        list->head = node;
+    }
+
+    list->tail = node;
+    list->size++;
+
+    return 0;
+}
+
+int tuple_list_extract_rear(TupleList *list, Tuple *out)
+{
+    Node *prev;
+    Node *rear;
+
+    if (list == NULL || out == NULL) {
+        return -1;
+    }
+
+    if (list->tail == NULL) {
+        return 1;
+    }
+
+    rear = list->tail;
+
+    if (list->head == rear) {
+        list->head = NULL;
+        list->tail = NULL;
+    } else {
+        prev = list->head;
+        while (prev->next != rear) {
+            prev = prev->next;
+        }
+        prev->next = NULL;
+        list->tail = prev;
+    }
+
+    *out = rear->data;
+    free(rear);
+
+    if (list->size > 0U) {
+        list->size--;
+    }
+
+    return 0;
+}
+
+void tuple_list_destroy(TupleList *list)
+{
+    Node *current;
+    Node *next;
+
+    if (list == NULL) {
+        return;
+    }
+
+    current = list->head;
+    while (current != NULL) {
+        next = current->next;
+        tuple_clear(&current->data);
+        free(current);
+        current = next;
+    }
+
+    list->head = NULL;
+    list->tail = NULL;
+    list->size = 0U;
+}
+
+int main(void)
+{
+    TupleList list;
+    Tuple extracted;
+    Tuple samples[4];
+    size_t i;
+    size_t count;
+    const int ids[] = {1, 2, 3, 4};
+    const double values[] = {10.5, 20.25, 30.75, 40.0};
+    const char *names[] = {"alpha", "beta", "gamma", "delta"};
+
+    count = sizeof(samples) / sizeof(samples[0]);
+
+    tuple_list_init(&list);
+
+    for (i = 0U; i < count; i++) {
+        if (tuple_init(&samples[i], ids[i], values[i], names[i]) != 0) {
+            fprintf(stderr, "Failed to initialize tuple at index %zu\n", i);
+            tuple_list_destroy(&list);
+            return EXIT_FAILURE;
+        }
+        if (tuple_list_append(&list, &samples[i]) != 0) {
+            fprintf(stderr, "Failed to append tuple at index %zu\n", i);
+            tuple_clear(&samples[i]);
+            tuple_list_destroy(&list);
+            return EXIT_FAILURE;
+        }
+        tuple_clear(&samples[i]);
+    }
+
+    while (tuple_list_extract_rear(&list, &extracted) == 0) {
+        printf("Extracted rear: id=%d value=%.2f name=%s\n",
+               extracted.id, extracted.value,
+               extracted.name != NULL ? extracted.name : "");
+        tuple_clear(&extracted);
+    }
+
+    if (list.size != 0U) {
+        fprintf(stderr, "List size inconsistency detected\n");
+        tuple_list_destroy(&list);
+        return EXIT_FAILURE;
+    }
+
+    tuple_list_destroy(&list);
+
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,313 @@
+./collected_code_3/round2/heal_1/healed/problem-108.c: In function 'insertHeap':
+./collected_code_3/round2/heal_1/healed/problem-108.c:69:9: warning: dereference of NULL 'heap' [CWE-476] [-Wanalyzer-null-dereference]
+   69 |     int i = heap->size;
+      |         ^
+  'main': events 1-4
+    |
+    |  116 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |  128 |     if (arr == NULL)
+    |      |        ~
+    |      |        |
+    |      |        (2) following 'false' branch (when 'arr' is non-NULL)...
+    |......
+    |  131 |     mergeSortedArrays(arr, size, input, lengths, 4);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (3) ...to here
+    |      |     (4) calling 'mergeSortedArrays' from 'main'
+    |
+    +--> 'mergeSortedArrays': events 5-6
+           |
+           |   96 | void mergeSortedArrays(int* arr, int size, int** input, int* lengths, int n) {
+           |      |      ^~~~~~~~~~~~~~~~~
+           |      |      |
+           |      |      (5) entry to 'mergeSortedArrays'
+           |   97 |     Heap* heap = createHeap(n);
+           |      |                  ~~~~~~~~~~~~~
+           |      |                  |
+           |      |                  (6) calling 'createHeap' from 'mergeSortedArrays'
+           |
+           +--> 'createHeap': event 7
+                  |
+                  |   28 | Heap* createHeap(int size) {
+                  |      |       ^~~~~~~~~~
+                  |      |       |
+                  |      |       (7) entry to 'createHeap'
+                  |
+                'createHeap': event 8
+                  |
+                  |   32 |         return NULL;
+                  |      |                ^~~~
+                  |      |                |
+                  |      |                (8) '0' is NULL
+                  |
+           <------+
+           |
+         'mergeSortedArrays': events 9-12
+           |
+           |   97 |     Heap* heap = createHeap(n);
+           |      |                  ^~~~~~~~~~~~~
+           |      |                  |
+           |      |                  (9) return of NULL to 'mergeSortedArrays' from 'createHeap'
+           |   98 | 
+           |   99 |     for (int i = 0; i < n; i++)
+           |      |                     ~~~~~
+           |      |                       |
+           |      |                       (10) following 'true' branch (when 'i < n')...
+           |  100 |         insertHeap(heap, createIterator(input[i], lengths[i]));
+           |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |         |                                                |
+           |      |         |                                                (11) ...to here
+           |      |         (12) calling 'createIterator' from 'mergeSortedArrays'
+           |
+           +--> 'createIterator': events 13-14
+                  |
+                  |   15 | Iterator* createIterator(int* arr, int size) {
+                  |      |           ^~~~~~~~~~~~~~
+                  |      |           |
+                  |      |           (13) entry to 'createIterator'
+                  |......
+                  |   18 |     if (it == NULL)
+                  |      |        ~   
+                  |      |        |
+                  |      |        (14) following 'true' branch (when 'it' is NULL)...
+                  |
+                'createIterator': event 15
+                  |
+                  |   19 |         return NULL;
+                  |      |                ^~~~
+                  |      |                |
+                  |      |                (15) ...to here
+                  |
+           <------+
+           |
+         'mergeSortedArrays': events 16-17
+           |
+           |  100 |         insertHeap(heap, createIterator(input[i], lengths[i]));
+           |      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |         |
+           |      |         (16) returning to 'mergeSortedArrays' from 'createIterator'
+           |      |         (17) calling 'insertHeap' from 'mergeSortedArrays'
+           |
+           +--> 'insertHeap': events 18-19
+                  |
+                  |   68 | void insertHeap(Heap* heap, Iterator* it) {
+                  |      |      ^~~~~~~~~~
+                  |      |      |
+                  |      |      (18) entry to 'insertHeap'
+                  |   69 |     int i = heap->size;
+                  |      |         ~
+                  |      |         |
+                  |      |         (19) dereference of NULL 'heap'
+                  |
+./collected_code_3/round2/heal_1/healed/problem-108.c:72:95: warning: dereference of NULL '0' [CWE-476] [-Wanalyzer-null-dereference]
+   72 |     while (i != 0 && heap->arr[(i - 1) / 2]->arr[heap->arr[(i - 1) / 2]->index] > heap->arr[i]->arr[heap->arr[i]->index]) {
+      |                                                                                   ~~~~~~~~~~~~^~~~~
+  'main': events 1-4
+    |
+    |  116 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |  128 |     if (arr == NULL)
+    |      |        ~
+    |      |        |
+    |      |        (2) following 'false' branch (when 'arr' is non-NULL)...
+    |......
+    |  131 |     mergeSortedArrays(arr, size, input, lengths, 4);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (3) ...to here
+    |      |     (4) calling 'mergeSortedArrays' from 'main'
+    |
+    +--> 'mergeSortedArrays': events 5-6
+           |
+           |   96 | void mergeSortedArrays(int* arr, int size, int** input, int* lengths, int n) {
+           |      |      ^~~~~~~~~~~~~~~~~
+           |      |      |
+           |      |      (5) entry to 'mergeSortedArrays'
+           |   97 |     Heap* heap = createHeap(n);
+           |      |                  ~~~~~~~~~~~~~
+           |      |                  |
+           |      |                  (6) calling 'createHeap' from 'mergeSortedArrays'
+           |
+           +--> 'createHeap': events 7-11
+                  |
+                  |   28 | Heap* createHeap(int size) {
+                  |      |       ^~~~~~~~~~
+                  |      |       |
+                  |      |       (7) entry to 'createHeap'
+                  |......
+                  |   31 |     if (heap == NULL)
+                  |      |        ~
+                  |      |        |
+                  |      |        (8) following 'false' branch (when 'heap' is non-NULL)...
+                  |......
+                  |   34 |     heap->arr = (Iterator**)malloc(sizeof(Iterator*) * size);
+                  |      |                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                  |      |                             |
+                  |      |                             (9) ...to here
+                  |   35 | 
+                  |   36 |     if (heap->arr == NULL) {
+                  |      |        ~
+                  |      |        |
+                  |      |        (10) following 'false' branch...
+                  |......
+                  |   41 |     heap->size = 0;
+                  |      |     ~~~~~~~~~~~~~~
+                  |      |                |
+                  |      |                (11) ...to here
+                  |
+           <------+
+           |
+         'mergeSortedArrays': events 12-15
+           |
+           |   97 |     Heap* heap = createHeap(n);
+           |      |                  ^~~~~~~~~~~~~
+           |      |                  |
+           |      |                  (12) returning to 'mergeSortedArrays' from 'createHeap'
+           |   98 | 
+           |   99 |     for (int i = 0; i < n; i++)
+           |      |                     ~~~~~
+           |      |                       |
+           |      |                       (13) following 'true' branch (when 'i < n')...
+           |  100 |         insertHeap(heap, createIterator(input[i], lengths[i]));
+           |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |         |                                                |
+           |      |         |                                                (14) ...to here
+           |      |         (15) calling 'createIterator' from 'mergeSortedArrays'
+           |
+           +--> 'createIterator': events 16-17
+                  |
+                  |   15 | Iterator* createIterator(int* arr, int size) {
+                  |      |           ^~~~~~~~~~~~~~
+                  |      |           |
+                  |      |           (16) entry to 'createIterator'
+                  |......
+                  |   18 |     if (it == NULL)
+                  |      |        ~   
+                  |      |        |
+                  |      |        (17) following 'true' branch (when 'it' is NULL)...
+                  |
+                'createIterator': event 18
+                  |
+                  |   19 |         return NULL;
+                  |      |                ^~~~
+                  |      |                |
+                  |      |                (18) ...to here
+                  |
+                'createIterator': event 19
+                  |
+                  |   19 |         return NULL;
+                  |      |                ^~~~
+                  |      |                |
+                  |      |                (19) '0' is NULL
+                  |
+           <------+
+           |
+         'mergeSortedArrays': events 20-21
+           |
+           |  100 |         insertHeap(heap, createIterator(input[i], lengths[i]));
+           |      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |         |
+           |      |         (20) returning to 'mergeSortedArrays' from 'createIterator'
+           |      |         (21) calling 'insertHeap' from 'mergeSortedArrays'
+           |
+           +--> 'insertHeap': events 22-25
+                  |
+                  |   68 | void insertHeap(Heap* heap, Iterator* it) {
+                  |      |      ^~~~~~~~~~
+                  |      |      |
+                  |      |      (22) entry to 'insertHeap'
+                  |   69 |     int i = heap->size;
+                  |   70 |     heap->arr[i] = it;
+                  |      |     ~~~~~~~~~~~~~~~~~
+                  |      |                  |
+                  |      |                  (23) 'it' is NULL
+                  |   71 | 
+                  |   72 |     while (i != 0 && heap->arr[(i - 1) / 2]->arr[heap->arr[(i - 1) / 2]->index] > heap->arr[i]->arr[heap->arr[i]->index]) {
+                  |      |            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                  |      |                   |
+                  |      |                   (24) following 'false' branch (when 'i == 0')...
+                  |......
+                  |   77 |     heap->size++;
+                  |      |     ~~~~~~~~~~
+                  |      |         |
+                  |      |         (25) ...to here
+                  |
+           <------+
+           |
+         'mergeSortedArrays': events 26-29
+           |
+           |   99 |     for (int i = 0; i < n; i++)
+           |      |                     ~~~~~
+           |      |                       |
+           |      |                       (27) following 'true' branch (when 'i < n')...
+           |  100 |         insertHeap(heap, createIterator(input[i], lengths[i]));
+           |      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |         |                                                |
+           |      |         |                                                (28) ...to here
+           |      |         (26) returning to 'mergeSortedArrays' from 'insertHeap'
+           |      |         (29) calling 'createIterator' from 'mergeSortedArrays'
+           |
+           +--> 'createIterator': events 30-31
+                  |
+                  |   15 | Iterator* createIterator(int* arr, int size) {
+                  |      |           ^~~~~~~~~~~~~~
+                  |      |           |
+                  |      |           (30) entry to 'createIterator'
+                  |......
+                  |   18 |     if (it == NULL)
+                  |      |        ~   
+                  |      |        |
+                  |      |        (31) following 'true' branch (when 'it' is NULL)...
+                  |
+                'createIterator': event 32
+                  |
+                  |   19 |         return NULL;
+                  |      |                ^~~~
+                  |      |                |
+                  |      |                (32) ...to here
+                  |
+                'createIterator': event 33
+                  |
+                  |   19 |         return NULL;
+                  |      |                ^~~~
+                  |      |                |
+                  |      |                (33) '0' is NULL
+                  |
+           <------+
+           |
+         'mergeSortedArrays': events 34-35
+           |
+           |  100 |         insertHeap(heap, createIterator(input[i], lengths[i]));
+           |      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |         |
+           |      |         (34) returning to 'mergeSortedArrays' from 'createIterator'
+           |      |         (35) calling 'insertHeap' from 'mergeSortedArrays'
+           |
+           +--> 'insertHeap': events 36-42
+                  |
+                  |   68 | void insertHeap(Heap* heap, Iterator* it) {
+                  |      |      ^~~~~~~~~~
+                  |      |      |
+                  |      |      (36) entry to 'insertHeap'
+                  |   69 |     int i = heap->size;
+                  |   70 |     heap->arr[i] = it;
+                  |      |     ~~~~~~~~~~~~~~~~~
+                  |      |                  |
+                  |      |                  (37) 'it' is NULL
+                  |   71 | 
+                  |   72 |     while (i != 0 && heap->arr[(i - 1) / 2]->arr[heap->arr[(i - 1) / 2]->index] > heap->arr[i]->arr[heap->arr[i]->index]) {
+                  |      |            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                  |      |                   |      |                                                                 |  |              |
+                  |      |                   |      |                                                                 |  |              (41) '0' is NULL
+                  |      |                   |      |                                                                 |  (42) dereference of NULL '*_36 + _38'
+                  |      |                   |      (39) ...to here                                                   (40) '0' is NULL
+                  |      |                   (38) following 'true' branch (when 'i != 0')...
+                  |

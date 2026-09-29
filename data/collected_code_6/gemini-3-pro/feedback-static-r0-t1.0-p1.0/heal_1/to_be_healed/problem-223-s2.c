@@ -1,0 +1,51 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+/* Possible weaknesses found:
+ *  Parameter 'arr' can be declared as pointer to const [constParameterPointer]
+ */
+int findMajorityElement(int *arr, int size) {
+    if (arr == NULL || size <= 0) {
+        return -1;
+    }
+
+    int mid = size / 2;
+    int candidate = arr[mid];
+    int count = 0;
+
+    for (int i = 0; i < size; i++) {
+        if (arr[i] == candidate) {
+            count++;
+        }
+    }
+
+    if (count > size / 2) {
+        return candidate;
+    }
+
+    return -1;
+}
+
+int main(void) {
+    int arr1[] = {1, 2, 2, 2, 2, 3, 5};
+    int size1 = sizeof(arr1) / sizeof(arr1[0]);
+    int result1 = findMajorityElement(arr1, size1);
+    
+    if (result1 != -1) {
+        printf("%d\n", result1);
+    } else {
+        printf("None\n");
+    }
+
+    int arr2[] = {1, 2, 3, 4, 5};
+    int size2 = sizeof(arr2) / sizeof(arr2[0]);
+    int result2 = findMajorityElement(arr2, size2);
+    
+    if (result2 != -1) {
+        printf("%d\n", result2);
+    } else {
+        printf("None\n");
+    }
+
+    return 0;
+}

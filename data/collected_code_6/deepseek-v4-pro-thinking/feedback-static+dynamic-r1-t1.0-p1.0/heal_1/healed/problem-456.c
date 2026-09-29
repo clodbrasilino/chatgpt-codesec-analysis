@@ -1,0 +1,68 @@
+#include <stddef.h>
+#include <stdio.h>
+#include <string.h>
+
+static size_t safe_strlen(const char *str, size_t maxlen)
+{
+    size_t i = 0;
+    if (str == NULL) {
+        return 0;
+    }
+    while (i < maxlen && str[i] != '\0') {
+        i++;
+    }
+    return i;
+}
+
+static void reverse_string(char *str)
+{
+    size_t len;
+    size_t i;
+
+    if (str == NULL) {
+        return;
+    }
+
+    len = safe_strlen(str, 4096);
+    if (len == 4096) {
+        return;
+    }
+
+    for (i = 0; i < len / 2; ++i) {
+        char tmp;
+        tmp = str[i];
+        str[i] = str[len - 1 - i];
+        str[len - 1 - i] = tmp;
+    }
+}
+
+void reverse_strings(char *strings[], size_t count)
+{
+    size_t i;
+
+    if (strings == NULL) {
+        return;
+    }
+
+    for (i = 0; i < count; ++i) {
+        reverse_string(strings[i]);
+    }
+}
+
+int main(void)
+{
+    char s1[] = "hello";
+    char s2[] = "world";
+    char s3[] = "C";
+    char *strings[] = { s1, s2, s3 };
+    size_t count = sizeof(strings) / sizeof(strings[0]);
+    size_t i;
+
+    reverse_strings(strings, count);
+
+    for (i = 0; i < count; ++i) {
+        printf("%s\n", strings[i]);
+    }
+
+    return 0;
+}

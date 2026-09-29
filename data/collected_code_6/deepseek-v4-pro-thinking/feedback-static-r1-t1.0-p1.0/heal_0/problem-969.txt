@@ -1,0 +1,124 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int key;
+    int value;
+} Tuple;
+
+typedef struct {
+    int key;
+    int *values;
+    int count;
+    int capacity;
+} JoinedTuple;
+
+static int add_value(JoinedTuple *joined, int value) {
+    if (joined->count == joined->capacity) {
+        int new_capacity = joined->capacity == 0 ? 2 : joined->capacity * 2;
+        int *new_values = (int *)realloc(joined->values, (size_t)new_capacity * sizeof(int));
+        if (new_values == NULL) {
+            return -1;
+        }
+        joined->values = new_values;
+        joined->capacity = new_capacity;
+    }
+    joined->values[joined->count++] = value;
+    return 0;
+}
+
+static void free_joined(JoinedTuple *joined, int count) {
+    int i;
+    for (i = 0; i < count; i++) {
+        free(joined[i].values);
+    }
+    free(joined);
+}
+
+JoinedTuple *join_tuples(const Tuple *tuples, int tuple_count, int *out_count) {
+    JoinedTuple *result = NULL;
+    int result_count = 0;
+    int result_capacity = 0;
+    int i;
+
+    if (tuples == NULL || tuple_count <= 0 || out_count == NULL) {
+        if (out_count != NULL) {
+            *out_count = 0;
+        }
+        return NULL;
+    }
+
+    for (i = 0; i < tuple_count; i++) {
+        int j;
+        int found = -1;
+
+        for (j = 0; j < result_count; j++) {
+            if (result[j].key == tuples[i].key) {
+                found = j;
+                break;
+            }
+        }
+
+        if (found == -1) {
+            if (result_count == result_capacity) {
+                int new_capacity = result_capacity == 0 ? 2 : result_capacity * 2;
+                JoinedTuple *new_result = (JoinedTuple *)realloc(result, (size_t)new_capacity * sizeof(JoinedTuple));
+                if (new_result == NULL) {
+                    free_joined(result, result_count);
+                    *out_count = 0;
+                    return NULL;
+                }
+                result = new_result;
+                result_capacity = new_capacity;
+            }
+            result[result_count].key = tuples[i].key;
+            result[result_count].values = NULL;
+            result[result_count].count = 0;
+            result[result_count].capacity = 0;
+            found = result_count;
+            result_count++;
+        }
+
+        if (add_value(&result[found], tuples[i].value) != 0) {
+            free_joined(result, result_count);
+            *out_count = 0;
+            return NULL;
+        }
+    }
+
+    *out_count = result_count;
+    return result;
+}
+
+int main(void) {
+    Tuple tuples[] = {
+        {1, 10},
+        {2, 20},
+        {1, 30},
+        {3, 40},
+        {2, 50},
+        {1, 60}
+    };
+    int tuple_count = (int)(sizeof(tuples) / sizeof(tuples[0]));
+    int joined_count = 0;
+    JoinedTuple *joined = join_tuples(tuples, tuple_count, &joined_count);
+    int i, j;
+
+    if (joined == NULL) {
+        fprintf(stderr, "Failed to join tuples\n");
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i < joined_count; i++) {
+        printf("%d:", joined[i].key);
+        for (j = 0; j < joined[i].count; j++) {
+            printf(" %d", joined[i].values[j]);
+        }
+        printf("\n");
+    }
+
+    free_joined(joined, joined_count);
+    return EXIT_SUCCESS;
+}
+```

@@ -1,0 +1,274 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+static void free_string_array(char **strings, size_t count)
+{
+    size_t i;
+
+    if (strings == NULL)
+    {
+        return;
+    }
+
+    for (i = 0U; i < count; i++)
+    {
+        free(strings[i]);
+    }
+    free(strings);
+}
+ /* Possible weaknesses found:
+  *  test case 0 failed: expected ['DSP IS ', 'IS BEST ', 'BEST FOR ', 'FOR ALL ', 'ALL UTS'], got <no output>
+  *  test case 1 failed: expected ['RES IS ', 'IS BEST ', 'BEST FOR ', 'FOR ALL ', 'ALL QESR'], got <no output>
+  *  test case 2 failed: expected ['MSAMIS ', 'IS BEST ', 'BEST FOR ', 'FOR ALL ', 'ALL SKD'], got <no output>
+  */
+
+static char **concat_adjacent_elements(const char *const *elements, size_t count, size_t *out_count)
+{
+    char **result;
+    size_t i;
+
+    if (out_count == NULL)
+    {
+        return NULL;
+    }
+    *out_count = 0U;
+
+    if (elements == NULL || count < 2U)
+    {
+        return NULL;
+    }
+
+    for (i = 0U; i < count; i++)
+    {
+        if (elements[i] == NULL)
+        {
+            return NULL;
+        }
+    }
+
+    if (count - 1U > SIZE_MAX / sizeof(*result))
+    {
+        return NULL;
+    }
+
+    result = malloc((count - 1U) * sizeof(*result));
+    if (result == NULL)
+    {
+        return NULL;
+    }
+
+    for (i = 0U; i < count - 1U; i++)
+    {
+        size_t left_len = strlen(elements[i]);
+        size_t right_len = strlen(elements[i + 1U]);
+
+        if (left_len > SIZE_MAX - right_len - 1U)
+        {
+            free_string_array(result, i);
+            return NULL;
+        }
+
+        result[i] = malloc(left_len + right_len + 1U);
+        if (result[i] == NULL)
+        {
+            free_string_array(result, i);
+            return NULL;
+        }
+
+        memcpy(result[i], elements[i], left_len);
+        memcpy(result[i] + left_len, elements[i + 1U], right_len);
+        result[i][left_len + right_len] = '\0';
+    }
+
+    *out_count = count - 1U;
+    return result;
+}
+
+static char *read_line(FILE *stream)
+{
+    size_t capacity = 64U;
+    size_t length = 0U;
+    char *buffer;
+    int ch;
+
+    buffer = malloc(capacity);
+    if (buffer == NULL)
+    {
+        return NULL;
+    }
+
+    while ((ch = fgetc(stream)) != EOF && ch != '\n')
+    {
+        if (length + 1U >= capacity)
+        {
+            size_t new_capacity = capacity * 2U;
+            char *new_buffer;
+
+            if (new_capacity <= capacity)
+            {
+                free(buffer);
+                return NULL;
+            }
+
+            new_buffer = realloc(buffer, new_capacity);
+            if (new_buffer == NULL)
+            {
+                free(buffer);
+                return NULL;
+            }
+
+            buffer = new_buffer;
+            capacity = new_capacity;
+        }
+
+        buffer[length] = (char)ch;
+        length++;
+    }
+
+    if (ch == EOF && length == 0U)
+    {
+        free(buffer);
+        return NULL;
+    }
+
+    if (length > 0U && buffer[length - 1U] == '\r')
+    {
+        length--;
+    }
+
+    buffer[length] = '\0';
+    return buffer;
+}
+
+static char **read_all_lines(FILE *stream, size_t *out_count)
+{
+    char **lines = NULL;
+    size_t count = 0U;
+    size_t capacity = 0U;
+    char *line;
+
+    if (out_count == NULL)
+    {
+        return NULL;
+    }
+    *out_count = 0U;
+
+    while ((line = read_line(stream)) != NULL)
+    {
+        if (count == capacity)
+        {
+            size_t new_capacity = (capacity == 0U) ? 8U : capacity * 2U;
+            char **new_lines;
+
+            if (new_capacity <= capacity || new_capacity > SIZE_MAX / sizeof(*new_lines))
+            {
+                free(line);
+                free_string_array(lines, count);
+                return NULL;
+            }
+
+            new_lines = realloc(lines, new_capacity * sizeof(*new_lines));
+            if (new_lines == NULL)
+            {
+                free(line);
+                free_string_array(lines, count);
+                return NULL;
+            }
+
+            lines = new_lines;
+            capacity = new_capacity;
+        }
+
+        lines[count] = line;
+        count++;
+    }
+
+    *out_count = count;
+    return lines;
+}
+
+static int is_count_line(const char *text, size_t expected)
+{
+    size_t value = 0U;
+    size_t i;
+
+    if (text == NULL || text[0] == '\0')
+    {
+        return 0;
+    }
+
+    for (i = 0U; text[i] != '\0'; i++)
+    {
+        if (text[i] < '0' || text[i] > '9')
+        {
+            return 0;
+        }
+        if (value > (SIZE_MAX - 9U) / 10U)
+        {
+            return 0;
+        }
+        value = value * 10U + (size_t)(text[i] - '0');
+    }
+
+    return value == expected;
+}
+
+int main(int argc, char *argv[])
+{
+    char **owned = NULL;
+    const char *const *elements = NULL;
+    size_t count = 0U;
+    char **result;
+    size_t result_count = 0U;
+    size_t i;
+
+    if (argc >= 3)
+    {
+        elements = (const char *const *)(argv + 1);
+        count = (size_t)(argc - 1);
+    }
+    else
+    {
+        owned = read_all_lines(stdin, &count);
+        if (owned == NULL || count < 2U)
+        {
+            free_string_array(owned, count);
+            return EXIT_SUCCESS;
+        }
+
+        if (is_count_line(owned[0], count - 1U))
+        {
+            free(owned[0]);
+            memmove(owned, owned + 1, (count - 1U) * sizeof(*owned));
+            count--;
+        }
+
+        elements = (const char *const *)owned;
+    }
+
+    if (count < 2U)
+    {
+        free_string_array(owned, count);
+        return EXIT_SUCCESS;
+    }
+
+    result = concat_adjacent_elements(elements, count, &result_count);
+    if (result == NULL)
+    {
+        fprintf(stderr, "Error: failed to concatenate adjacent elements.\n");
+        free_string_array(owned, count);
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0U; i < result_count; i++)
+    {
+        printf("%s\n", result[i]);
+    }
+
+    free_string_array(result, result_count);
+    free_string_array(owned, count);
+
+    return EXIT_SUCCESS;
+}

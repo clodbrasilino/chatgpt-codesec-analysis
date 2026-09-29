@@ -1,0 +1,143 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stddef.h>
+
+typedef struct {
+    int *elements;
+    size_t length;
+} Tuple;
+
+static Tuple *create_tuple(const int *values, size_t length)
+{
+    Tuple *t;
+    size_t i;
+
+    t = malloc(sizeof(Tuple));
+    if (t == NULL) {
+        return NULL;
+    }
+
+    if (length > 0U) {
+        t->elements = malloc(length * sizeof(int));
+        if (t->elements == NULL) {
+            free(t);
+            return NULL;
+        }
+        for (i = 0U; i < length; i++) {
+            t->elements[i] = values[i];
+        }
+    } else {
+        t->elements = NULL;
+    }
+
+    t->length = length;
+    return t;
+}
+
+static void free_tuple(Tuple *t)
+{
+    if (t != NULL) {
+        free(t->elements);
+        free(t);
+    }
+}
+
+static size_t remove_tuples_with_length_k(Tuple **tuples, size_t count, size_t k)
+{
+    size_t write_index;
+    size_t read_index;
+
+    if (tuples == NULL) {
+        return 0U;
+    }
+
+    write_index = 0U;
+    for (read_index = 0U; read_index < count; read_index++) {
+        if (tuples[read_index] == NULL) {
+            continue;
+        }
+        if (tuples[read_index]->length == k) {
+            free_tuple(tuples[read_index]);
+            tuples[read_index] = NULL;
+        } else {
+            tuples[write_index] = tuples[read_index];
+            if (write_index != read_index) {
+                tuples[read_index] = NULL;
+            }
+            write_index++;
+        }
+    }
+
+    return write_index;
+}
+
+static void print_tuples(Tuple **tuples, size_t count)
+{
+    size_t i;
+    size_t j;
+
+    printf("[");
+    for (i = 0U; i < count; i++) {
+        if (tuples[i] == NULL) {
+            continue;
+        }
+        printf("(");
+        for (j = 0U; j < tuples[i]->length; j++) {
+            printf("%d", tuples[i]->elements[j]);
+            if (j + 1U < tuples[i]->length) {
+                printf(", ");
+            }
+        }
+        printf(")");
+        if (i + 1U < count) {
+            printf(", ");
+        }
+    }
+    printf("]\n");
+}
+
+int main(void)
+{
+    int data1[] = {4, 5};
+    int data2[] = {4};
+    int data3[] = {8, 6, 7};
+    int data4[] = {1};
+    int data5[] = {3, 4, 6, 7};
+    Tuple *tuples[5];
+    size_t count;
+    size_t i;
+    size_t k;
+
+    tuples[0] = create_tuple(data1, 2U);
+    tuples[1] = create_tuple(data2, 1U);
+    tuples[2] = create_tuple(data3, 3U);
+    tuples[3] = create_tuple(data4, 1U);
+    tuples[4] = create_tuple(data5, 4U);
+
+    count = 5U;
+    for (i = 0U; i < count; i++) {
+        if (tuples[i] == NULL) {
+            fprintf(stderr, "Memory allocation failed\n");
+            for (i = 0U; i < count; i++) {
+                free_tuple(tuples[i]);
+            }
+            return EXIT_FAILURE;
+        }
+    }
+
+    k = 1U;
+
+    printf("Original tuples: ");
+    print_tuples(tuples, count);
+
+    count = remove_tuples_with_length_k(tuples, count, k);
+
+    printf("After removing tuples of length %zu: ", k);
+    print_tuples(tuples, count);
+
+    for (i = 0U; i < count; i++) {
+        free_tuple(tuples[i]);
+    }
+
+    return EXIT_SUCCESS;
+}

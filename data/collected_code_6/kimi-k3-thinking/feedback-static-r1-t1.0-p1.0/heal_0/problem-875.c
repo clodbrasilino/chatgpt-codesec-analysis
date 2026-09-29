@@ -1,0 +1,65 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+#include <limits.h>
+
+typedef struct {
+    int first;
+    int second;
+} IntPair;
+
+static long long pair_difference(const IntPair *pair)
+{
+    long long diff;
+
+    if (pair == NULL) {
+        return LLONG_MAX;
+    }
+
+    diff = (long long)pair->first - (long long)pair->second;
+    return (diff < 0) ? -diff : diff;
+}
+
+int find_min_difference(const IntPair *pairs, size_t count, long long *result)
+{
+    size_t i;
+    long long min_diff;
+
+    if (pairs == NULL || result == NULL || count == 0U) {
+        return -1;
+    }
+
+    min_diff = pair_difference(&pairs[0]);
+
+    for (i = 1U; i < count; i++) {
+        long long diff = pair_difference(&pairs[i]);
+        if (diff < min_diff) {
+            min_diff = diff;
+        }
+    }
+
+    *result = min_diff;
+    return 0;
+}
+
+int main(void)
+{
+    IntPair pairs[] = {
+        {2, 5},
+        {3, 4},
+        {8, 19},
+        {11, 6},
+        {10, 7}
+    };
+    size_t count = sizeof(pairs) / sizeof(pairs[0]);
+    long long min_diff = 0;
+
+    if (find_min_difference(pairs, count, &min_diff) == 0) {
+        printf("Minimum difference among tuple pairs: %lld\n", min_diff);
+    } else {
+        fprintf(stderr, "Error: invalid input provided\n");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

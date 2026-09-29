@@ -6,7 +6,7 @@ Per cell: generate -> sanitize -> analyze(measure) -> comment_inject(feedback)
 -> heal loop {heal -> sanitize -> analyze -> comment_inject} until no findings
 remain or max_rounds reached.
 
-Foldering: collected_code_6/{model}/{cell_slug}/heal_N/{to_be_healed,healed}/
+Foldering: data/collected_code_6/{model}/{cell_slug}/heal_N/{to_be_healed,healed}/
 cell_slug = feedback-{fb}-r{reasoning}-t{temp}-p{top_p}
 
 Semantics:
@@ -50,7 +50,7 @@ class ExperimentCell:
     max_rounds: int = field(default_factory=max_healing_rounds)
     samples: int = 1
     fuzz: bool = False  # AFL++ channel (stdin/argv consumers only; costly)
-    root: str = "collected_code_6"
+    root: str = "data/collected_code_6"
     gen_source: str | None = None  # sibling cell slug to import round-0 from
     gen_source_reports: bool = False  # also import static reports + .o
 
@@ -64,7 +64,7 @@ def _load_tasks() -> list[dict]:
     """Load BCT problems (id, text) from bct.py."""
     import ast
 
-    tree = ast.parse((REPO_ROOT / "bct.py").read_text())
+    tree = ast.parse((REPO_ROOT / "data" / "bct.py").read_text())
     for node in tree.body:
         if isinstance(node, ast.Assign):
             for target in node.targets:

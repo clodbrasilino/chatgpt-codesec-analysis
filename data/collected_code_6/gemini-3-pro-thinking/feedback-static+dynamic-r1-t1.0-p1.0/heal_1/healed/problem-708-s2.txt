@@ -1,0 +1,78 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+struct CharNode {
+    char data;
+    struct CharNode* next;
+};
+
+struct CharNode* create_node(char data) {
+    struct CharNode* new_node = (struct CharNode*)malloc(sizeof(struct CharNode));
+    if (new_node == NULL) {
+        return NULL;
+    }
+    new_node->data = data;
+    new_node->next = NULL;
+    return new_node;
+}
+
+void free_list(struct CharNode* head) {
+    struct CharNode* current = head;
+    while (current != NULL) {
+        struct CharNode* next_node = current->next;
+        free(current);
+        current = next_node;
+    }
+}
+
+struct CharNode* string_to_list(const char* str) {
+    if (str == NULL) {
+        return NULL;
+    }
+
+    struct CharNode* head = NULL;
+    struct CharNode* tail = NULL;
+
+    for (size_t i = 0; str[i] != '\0'; ++i) {
+        struct CharNode* new_node = create_node(str[i]);
+        if (new_node == NULL) {
+            free_list(head);
+            return NULL;
+        }
+
+        if (head == NULL) {
+            head = new_node;
+            tail = new_node;
+        } else {
+            tail->next = new_node;
+            tail = new_node;
+        }
+    }
+
+    return head;
+}
+
+int main(void) {
+    const char* input_string = "Hello, World!";
+    
+    struct CharNode* list = string_to_list(input_string);
+    
+    if (list == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    struct CharNode* current = list;
+    while (current != NULL) {
+        putchar(current->data);
+        current = current->next;
+    }
+    putchar('\n');
+
+    free_list(list);
+    list = NULL;
+
+    return EXIT_SUCCESS;
+}
+```

@@ -1,0 +1,91 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int value;
+    struct Node *next;
+} Node;
+
+Node* create_node(int value) {
+    Node *new_node = (Node*)malloc(sizeof(Node));
+    new_node->value = value;
+    new_node->next = NULL;
+    return new_node;
+}
+
+void append_node(Node **head, int value) {
+    Node *new_node = create_node(value);
+    if (*head == NULL) {
+        *head = new_node;
+    } else {
+        Node *current = *head;
+        while (current->next != NULL) {
+            current = current->next;
+        }
+        current->next = new_node;
+    }
+}
+
+void print_list(Node *head) {
+    while (head != NULL) {
+        printf("%d -> ", head->value);
+        head = head->next;
+    }
+    printf("NULL\n");
+}
+
+Node** split_list(Node *head, int n, int *count) {
+    if (n <= 0 || head == NULL) {
+        *count = 0;
+        return NULL;
+    }
+
+    Node **lists = (Node**)malloc(sizeof(Node*) * 100); // Assume a maximum of 100 sublists
+    *count = 0;
+
+    Node *current = head;
+    int index = 0;
+
+    while (current != NULL) {
+        lists[*count] = create_node(current->value);
+        Node *sublist_current = lists[*count];
+        for (int i = 1; i < n && current->next != NULL; i++) {
+            current = current->next;
+            sublist_current->next = create_node(current->value);
+            sublist_current = sublist_current->next;
+        }
+        (*count)++;
+        current = current->next;
+    }
+
+    return lists;
+}
+
+int main() {
+    Node *head = NULL;
+    for (int i = 1; i <= 15; i++) {
+        append_node(&head, i);
+    }
+
+    print_list(head);
+
+    int count;
+    int n = 5;
+    Node **lists = split_list(head, n, &count);
+
+    for (int i = 0; i < count; i++) {
+        print_list(lists[i]);
+        Node *temp = lists[i];
+        while (temp != NULL) {
+            Node *to_free = temp;
+            temp = temp->next;
+            free(to_free);
+        }
+    }
+
+    free(lists);
+
+    return 0;
+}
+```

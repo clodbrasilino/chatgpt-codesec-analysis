@@ -1,0 +1,35 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-370.c: In function 'main':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-370.c:35:66: error: 'Tuple' has no member named 'label'
+   35 |                 for (size_t j = 0; j < count; j++) free(tuples[j].label);
+      |                                                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-370.c:41:66: error: 'Tuple' has no member named 'label'
+   41 |                 for (size_t j = 0; j < count; j++) free(tuples[j].label);
+      |                                                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-370.c:47:66: error: 'Tuple' has no member named 'label'
+   47 |                 for (size_t j = 0; j < count; j++) free(tuples[j].label);
+      |                                                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-370.c:58:22: error: 'Tuple' has no member named 'label'
+   58 |         tuples[count].label = (char *)malloc(len + 1);
+      |                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-370.c:59:26: error: 'Tuple' has no member named 'label'
+   59 |         if (tuples[count].label == NULL) {
+      |                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-370.c:60:62: error: 'Tuple' has no member named 'label'
+   60 |             for (size_t j = 0; j < count; j++) free(tuples[j].label);
+      |                                                              ^
+In file included from /usr/local/Cellar/gcc/15.2.0/lib/gcc/current/gcc/x86_64-apple-darwin24/15/include-fixed/_stdio.h:522,
+                 from /usr/local/Cellar/gcc/15.2.0/lib/gcc/current/gcc/x86_64-apple-darwin24/15/include-fixed/stdio.h:75,
+                 from /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-370.c:1:
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-370.c:64:31: error: 'Tuple' has no member named 'label'
+   64 |         snprintf(tuples[count].label, len + 1, fmt, i);
+      |                               ^
+In file included from /Library/Developer/CommandLineTools/SDKs/MacOSX15.sdk/usr/include/secure/_stdio.h:32:
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-370.c:64:31: error: 'Tuple' has no member named 'label'
+   64 |         snprintf(tuples[count].label, len + 1, fmt, i);
+      |                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-370.c:72:92: error: 'Tuple' has no member named 'label'
+   72 |         printf("id: %d, value: %.2f, label: %s\n", tuples[i].id, tuples[i].value, tuples[i].label);
+      |                                                                                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-370.c:76:23: error: 'Tuple' has no member named 'label'
+   76 |         free(tuples[i].label);
+      |                       ^

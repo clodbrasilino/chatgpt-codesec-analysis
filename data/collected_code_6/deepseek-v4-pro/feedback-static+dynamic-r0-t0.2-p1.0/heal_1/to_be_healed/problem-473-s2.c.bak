@@ -1,0 +1,149 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    int *elements;
+    int size;
+} Tuple;
+
+typedef struct {
+    Tuple *tuples;
+    int count;
+} TupleList;
+
+int compare_ints(const void *a, const void *b) {
+    int arg1 = *(const int *)a;
+    int arg2 = *(const int *)b;
+    return (arg1 > arg2) - (arg1 < arg2);
+}
+
+int *tuple_intersection(TupleList *list, int *result_size) {
+    /* Possible weaknesses found:
+     *  Assuming that condition 'result_size==NULL' is not redundant
+     */
+    if (list == NULL || list->count == 0 || result_size == NULL) {
+        /* Possible weaknesses found:
+         *  Null pointer dereference
+         *  Either the condition 'result_size==NULL' is redundant or there is possible null pointer dereference: result_size. [nullPointerRedundantCheck]
+         */
+        *result_size = 0;
+        return NULL;
+    }
+
+    int **sorted_tuples = (int **)malloc(list->count * sizeof(int *));
+    if (sorted_tuples == NULL) {
+        *result_size = 0;
+        return NULL;
+    }
+
+    for (int i = 0; i < list->count; i++) {
+        sorted_tuples[i] = (int *)malloc(list->tuples[i].size * sizeof(int));
+        if (sorted_tuples[i] == NULL) {
+            for (int j = 0; j < i; j++) {
+                free(sorted_tuples[j]);
+            }
+            free(sorted_tuples);
+            *result_size = 0;
+            return NULL;
+        }
+        memcpy(sorted_tuples[i], list->tuples[i].elements, list->tuples[i].size * sizeof(int));
+        qsort(sorted_tuples[i], list->tuples[i].size, sizeof(int), compare_ints);
+    }
+
+    int *temp_result = (int *)malloc(list->tuples[0].size * sizeof(int));
+    if (temp_result == NULL) {
+        for (int i = 0; i < list->count; i++) {
+            free(sorted_tuples[i]);
+        }
+        free(sorted_tuples);
+        *result_size = 0;
+        return NULL;
+    }
+
+    int temp_size = 0;
+    for (int i = 0; i < list->tuples[0].size; i++) {
+        int candidate = sorted_tuples[0][i];
+        int found_in_all = 1;
+
+        for (int j = 1; j < list->count; j++) {
+            int found = 0;
+            for (int k = 0; k < list->tuples[j].size; k++) {
+                if (sorted_tuples[j][k] == candidate) {
+                    found = 1;
+                    break;
+                }
+            }
+            if (!found) {
+                found_in_all = 0;
+                break;
+            }
+        }
+
+        if (found_in_all) {
+            int already_added = 0;
+            for (int m = 0; m < temp_size; m++) {
+                if (temp_result[m] == candidate) {
+                    already_added = 1;
+                    break;
+                }
+            }
+            if (!already_added) {
+                temp_result[temp_size++] = candidate;
+            }
+        }
+    }
+
+    int *final_result = (int *)malloc(temp_size * sizeof(int));
+    if (final_result == NULL && temp_size > 0) {
+        free(temp_result);
+        for (int i = 0; i < list->count; i++) {
+            free(sorted_tuples[i]);
+        }
+        free(sorted_tuples);
+        *result_size = 0;
+        return NULL;
+    }
+
+    if (temp_size > 0) {
+        memcpy(final_result, temp_result, temp_size * sizeof(int));
+    }
+
+    free(temp_result);
+    for (int i = 0; i < list->count; i++) {
+        free(sorted_tuples[i]);
+    }
+    free(sorted_tuples);
+
+    *result_size = temp_size;
+    return final_result;
+}
+
+int main(void) {
+    int tuple1_data[] = {1, 2, 3, 4, 5};
+    int tuple2_data[] = {3, 4, 5, 6, 7};
+    int tuple3_data[] = {5, 3, 9, 4, 1};
+
+    Tuple tuple1 = {tuple1_data, 5};
+    Tuple tuple2 = {tuple2_data, 5};
+    Tuple tuple3 = {tuple3_data, 5};
+
+    Tuple tuples[] = {tuple1, tuple2, tuple3};
+    TupleList list = {tuples, 3};
+
+    int result_size = 0;
+    int *result = tuple_intersection(&list, &result_size);
+
+    if (result != NULL) {
+        printf("Intersection: ");
+        for (int i = 0; i < result_size; i++) {
+            printf("%d ", result[i]);
+        }
+        printf("\n");
+        free(result);
+    } else {
+        printf("No intersection found or error occurred.\n");
+    }
+
+    return 0;
+}

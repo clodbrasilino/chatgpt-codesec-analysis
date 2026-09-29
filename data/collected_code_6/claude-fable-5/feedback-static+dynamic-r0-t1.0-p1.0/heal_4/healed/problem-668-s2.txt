@@ -1,0 +1,107 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define BUFFER_SIZE 256U
+
+void squeeze_char(char *str, size_t max_len, char ch);
+static void flush_stdin(void);
+
+void squeeze_char(char *str, size_t max_len, char ch)
+{
+    size_t read_idx;
+    size_t write_idx;
+    size_t len;
+
+    if ((str == NULL) || (max_len == 0U)) {
+        return;
+    }
+
+    len = strnlen(str, max_len);
+    if (len >= max_len) {
+        str[max_len - 1U] = '\0';
+        len = max_len - 1U;
+    }
+
+    write_idx = 0U;
+
+    for (read_idx = 0U; read_idx < len; read_idx++) {
+        if ((str[read_idx] == ch) &&
+            (read_idx > 0U) &&
+            (str[read_idx - 1U] == ch)) {
+            continue;
+        }
+        str[write_idx] = str[read_idx];
+        write_idx++;
+    }
+
+    str[write_idx] = '\0';
+}
+
+static void flush_stdin(void)
+{
+    int input_char;
+
+    input_char = getchar();
+    while ((input_char != EOF) && (input_char != (int)'\n')) {
+        input_char = getchar();
+    }
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    char target;
+    int input_char;
+    size_t len;
+
+    printf("Enter a string: ");
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input string\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1U] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if ((len > 0U) && (buffer[len - 1U] == '\n')) {
+        buffer[len - 1U] = '\0';
+    } else if (len == (sizeof(buffer) - 1U)) {
+        flush_stdin();
+    }
+
+    printf("Enter character to squeeze: ");
+    input_char = getchar();
+    if (input_char == EOF) {
+        fprintf(stderr, "Error reading character\n");
+        return EXIT_FAILURE;
+    }
+
+    target = (char)input_char;
+
+    squeeze_char(buffer, sizeof(buffer), target);
+
+    printf("Result: %s\n", buffer);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the identified weaknesses and their mitigations:**
+
+1. **`char buffer[BUFFER_SIZE]` (CWE-119/CWE-120, risk 2):** This warning flags the statically-sized array. The code already mitigates it correctly:
+   - `fgets(buffer, (int)sizeof(buffer), stdin)` limits the read to the buffer size, so no overflow is possible.
+   - Explicit null-termination via `buffer[sizeof(buffer) - 1U] = '\0'` is defensive (technically redundant since `fgets` always null-terminates on success, but harmless).
+   - `strnlen` is used instead of `strlen`, bounding the length computation.
+   - `squeeze_char` receives `sizeof(buffer)` and performs its own bounds validation, including handling a NULL pointer and zero-length case.
+
+2. **`getchar()` in loops (CWE-120/CWE-20, risk 1):** These are low-risk informational warnings. `getchar()` returns an `int` here (never assigned into a `char` before the `EOF` check), which is the correct pattern:
+   - `flush_stdin()` stores the result in `int input_char` and checks against `EOF` and `'\n'` — no buffer is written, so no overflow is possible.
+   - In `main`, the `EOF` check happens before the narrowing cast to `char`, which is correct ordering.
+
+3. **Additional robustness already present:**
+   - The `len == sizeof(buffer) - 1U` check detects truncated input and drains the remainder of the line via `flush_stdin()`, preventing stale characters from polluting the subsequent `getchar()` call for the target character.
+   - `squeeze_char` truncates defensively if the string somehow isn't terminated within `max_len`, and the write index can never exceed the read index, so the in-place compaction is safe.
+
+The code as written contains no exploitable instances of the flagged CWEs; the flawfinder hits are pattern-based false positives that the existing bounds checks, length-limited functions (`fgets`, `strnlen`), and correct `int`-based `getchar()` handling already neutralize.

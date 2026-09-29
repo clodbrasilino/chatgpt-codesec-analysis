@@ -1,0 +1,105 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+char *first_repeated_word(const char *str)
+{
+    if (str == NULL) {
+        return NULL;
+    }
+
+    char **seen = NULL;
+    size_t seen_count = 0;
+    size_t seen_capacity = 0;
+    const char *p = str;
+
+    while (*p != '\0') {
+        while (*p != '\0' && !isalnum((unsigned char)*p)) {
+            p++;
+        }
+
+        if (*p == '\0') {
+            break;
+        }
+
+        const char *start = p;
+
+        while (*p != '\0' && isalnum((unsigned char)*p)) {
+            p++;
+        }
+
+        size_t len = (size_t)(p - start);
+        char *word = malloc(len + 1);
+
+        if (word == NULL) {
+            for (size_t i = 0; i < seen_count; i++) {
+                free(seen[i]);
+            }
+            free(seen);
+            return NULL;
+        }
+
+        memcpy(word, start, len);
+        word[len] = '\0';
+
+        int found = 0;
+
+        for (size_t i = 0; i < seen_count; i++) {
+            if (strcmp(seen[i], word) == 0) {
+                found = 1;
+                break;
+            }
+        }
+
+        if (found) {
+            for (size_t i = 0; i < seen_count; i++) {
+                free(seen[i]);
+            }
+            free(seen);
+            return word;
+        }
+
+        if (seen_count == seen_capacity) {
+            size_t new_capacity = seen_capacity == 0 ? 8 : seen_capacity * 2;
+            char **new_seen = realloc(seen, new_capacity * sizeof(*seen));
+
+            if (new_seen == NULL) {
+                free(word);
+                for (size_t i = 0; i < seen_count; i++) {
+                    free(seen[i]);
+                }
+                free(seen);
+                return NULL;
+            }
+
+            seen = new_seen;
+            seen_capacity = new_capacity;
+        }
+
+        seen[seen_count] = word;
+        seen_count++;
+    }
+
+    for (size_t i = 0; i < seen_count; i++) {
+        free(seen[i]);
+    }
+    free(seen);
+
+    return NULL;
+}
+
+int main(void)
+{
+    const char *text = "this is a test string and this is a repeat";
+    char *result = first_repeated_word(text);
+
+    if (result != NULL) {
+        printf("%s\n", result);
+        free(result);
+    } else {
+        printf("No repeated word\n");
+    }
+
+    return 0;
+}

@@ -1,0 +1,42 @@
+#include <stdio.h>
+
+// Function to calculate product of binomial coefficients 
+int productBinomialCoeff(int n) 
+{ 
+    int prod = 1; 
+    for (int i = 0; i <= n; i++)
+    { 
+        /* Possible weaknesses found:
+         *  call to undeclared function 'choose'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+         */
+        prod *= choose(n, i); 
+    } 
+    return prod; 
+} 
+
+// Function to calculate binomial coefficients 
+int choose(int n, int k) 
+{ 
+    int res = 1; 
+    if (k > n - k) 
+        k = n - k; 
+    for (int i = 0; i < k; ++i) 
+    { 
+        res *= (n - i); 
+        res /= (i + 1); 
+    } 
+  
+    return res; 
+} 
+
+int main() 
+{ 
+    int n = 5; 
+    int sum = 0;
+    for (int i = 0; i <= n; i++)
+    { 
+        sum += productBinomialCoeff(i); 
+    } 
+    printf("Sum of product of binomial coefficients is %d.\n", sum);
+    return 0;
+}

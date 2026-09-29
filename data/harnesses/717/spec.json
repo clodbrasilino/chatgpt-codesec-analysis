@@ -1,0 +1,65 @@
+{
+  "task_id": 717,
+  "text": "Write a C function to calculate the standard deviation.",
+  "fn_candidates": [
+    "sd_calc",
+    "SdCalc",
+    "sdCalc",
+    "sdcalc"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "sd_calc",
+      "args": [
+        [
+          4,
+          2,
+          5,
+          8,
+          6
+        ]
+      ],
+      "expected": 2.23606797749979,
+      "assert_src": "assert sd_calc([4, 2, 5, 8, 6])== 2.23606797749979"
+    },
+    {
+      "fn_name": "sd_calc",
+      "args": [
+        [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ]
+      ],
+      "expected": 2.160246899469287,
+      "assert_src": "assert sd_calc([1,2,3,4,5,6,7])==2.160246899469287"
+    },
+    {
+      "fn_name": "sd_calc",
+      "args": [
+        [
+          5,
+          9,
+          10,
+          15,
+          6,
+          4
+        ]
+      ],
+      "expected": 4.070217029430577,
+      "assert_src": "assert sd_calc([5,9,10,15,6,4])==4.070217029430577"
+    }
+  ],
+  "arg_kinds": [
+    "int-list"
+  ],
+  "return_kind": "float",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

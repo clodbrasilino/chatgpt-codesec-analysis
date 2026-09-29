@@ -1,0 +1,34 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+double calculateGeometricSum(int n) {
+    if(n < 0) {
+        printf("Invalid input: Number cannot be negative.\n");
+        exit(EXIT_FAILURE);
+    }
+
+    double sum = 0;
+    double term = 1;
+    
+    for(int i= 0; i < n; i++) {
+        sum += term;
+        term = term / 2;
+    }
+
+    return sum;
+}
+
+int main(void) {
+    int n;
+
+    printf("Enter a number: ");
+    if(scanf("%d", &n) != 1) {
+        printf("Invalid input. Program Terminating.\n");
+        return EXIT_FAILURE;
+    }
+    
+    double result = calculateGeometricSum(n);
+    printf("Geometric sum: %.2f\n", result);
+
+    return EXIT_SUCCESS;
+}

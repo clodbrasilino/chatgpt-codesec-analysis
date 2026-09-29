@@ -1,0 +1,212 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct IntNode {
+    int value;
+    struct IntNode *next;
+} IntNode;
+
+typedef struct ListNode {
+    IntNode *head;
+    struct ListNode *next;
+} ListNode;
+
+static IntNode *int_node_create(int value)
+{
+    IntNode *node = malloc(sizeof(*node));
+    if (node == NULL) {
+        return NULL;
+    }
+    node->value = value;
+    node->next = NULL;
+    return node;
+}
+
+static int int_list_append(IntNode **head, int value)
+{
+    IntNode *node;
+    IntNode *current;
+
+    if (head == NULL) {
+        return -1;
+    }
+    node = int_node_create(value);
+    if (node == NULL) {
+        return -1;
+    }
+    if (*head == NULL) {
+        *head = node;
+        return 0;
+    }
+    current = *head;
+    while (current->next != NULL) {
+        current = current->next;
+    }
+    current->next = node;
+    return 0;
+}
+
+static int int_list_equal(const IntNode *a, const IntNode *b)
+{
+    while (a != NULL && b != NULL) {
+        if (a->value != b->value) {
+            return 0;
+        }
+        a = a->next;
+        b = b->next;
+    }
+    return a == NULL && b == NULL;
+}
+
+static void int_list_free(IntNode *head)
+{
+    while (head != NULL) {
+        IntNode *next = head->next;
+        free(head);
+        head = next;
+    }
+}
+
+static ListNode *list_node_create(void)
+{
+    ListNode *node = malloc(sizeof(*node));
+    if (node == NULL) {
+        return NULL;
+    }
+    node->head = NULL;
+    node->next = NULL;
+    return node;
+}
+
+static void list_node_free(ListNode *node)
+{
+    if (node == NULL) {
+        return;
+    }
+    int_list_free(node->head);
+    free(node);
+}
+
+static void list_of_lists_free(ListNode *head)
+{
+    while (head != NULL) {
+        ListNode *next = head->next;
+        list_node_free(head);
+        head = next;
+    }
+}
+
+static int list_of_lists_append(ListNode **head, const int *values, size_t count)
+{
+    ListNode *node;
+    ListNode *current;
+    size_t i;
+
+    if (head == NULL || (values == NULL && count > 0)) {
+        return -1;
+    }
+    node = list_node_create();
+    if (node == NULL) {
+        return -1;
+    }
+    for (i = 0; i < count; i++) {
+        if (int_list_append(&node->head, values[i]) != 0) {
+            list_node_free(node);
+            return -1;
+        }
+    }
+    if (*head == NULL) {
+        *head = node;
+        return 0;
+    }
+    current = *head;
+    while (current->next != NULL) {
+        current = current->next;
+    }
+    current->next = node;
+    return 0;
+}
+
+void remove_duplicate_lists(ListNode **head)
+{
+    ListNode *current;
+
+    if (head == NULL || *head == NULL) {
+        return;
+    }
+    current = *head;
+    while (current != NULL) {
+        ListNode *prev = current;
+        ListNode *cursor = current->next;
+        while (cursor != NULL) {
+            if (int_list_equal(current->head, cursor->head)) {
+                prev->next = cursor->next;
+                list_node_free(cursor);
+                cursor = prev->next;
+            } else {
+                prev = cursor;
+                cursor = cursor->next;
+            }
+        }
+        current = current->next;
+    }
+}
+
+static void int_list_print(const IntNode *head)
+{
+    putchar('[');
+    while (head != NULL) {
+        printf("%d", head->value);
+        if (head->next != NULL) {
+            printf(", ");
+        }
+        head = head->next;
+    }
+    putchar(']');
+}
+
+static void list_of_lists_print(const ListNode *head)
+{
+    putchar('{');
+    while (head != NULL) {
+        int_list_print(head->head);
+        if (head->next != NULL) {
+            printf(", ");
+        }
+        head = head->next;
+    }
+    printf("}\n");
+}
+
+int main(void)
+{
+    ListNode *lists = NULL;
+    const int a[] = {1, 2, 3};
+    const int b[] = {4, 5};
+    const int c[] = {1, 2, 3};
+    const int d[] = {6};
+    const int e[] = {4, 5};
+    const int f[] = {1, 2, 3};
+
+    if (list_of_lists_append(&lists, a, sizeof(a) / sizeof(a[0])) != 0 ||
+        list_of_lists_append(&lists, b, sizeof(b) / sizeof(b[0])) != 0 ||
+        list_of_lists_append(&lists, c, sizeof(c) / sizeof(c[0])) != 0 ||
+        list_of_lists_append(&lists, d, sizeof(d) / sizeof(d[0])) != 0 ||
+        list_of_lists_append(&lists, e, sizeof(e) / sizeof(e[0])) != 0 ||
+        list_of_lists_append(&lists, f, sizeof(f) / sizeof(f[0])) != 0) {
+        fprintf(stderr, "error: failed to build list of lists\n");
+        list_of_lists_free(lists);
+        return EXIT_FAILURE;
+    }
+
+    printf("Before: ");
+    list_of_lists_print(lists);
+
+    remove_duplicate_lists(&lists);
+
+    printf("After:  ");
+    list_of_lists_print(lists);
+
+    list_of_lists_free(lists);
+    return EXIT_SUCCESS;
+}

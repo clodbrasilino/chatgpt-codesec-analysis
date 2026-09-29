@@ -1,0 +1,11 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-830-s3.c: In function 'round_up':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-830-s3.c:17:32: error: 'DBL_MAX' undeclared (first use in this function)
+   17 |     if (factor == 0.0 || num > DBL_MAX / factor || num < -DBL_MAX / factor) {
+      |                                ^~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-830-s3.c:4:1: note: 'DBL_MAX' is defined in header '<float.h>'; this is probably fixable by adding '#include <float.h>'
+    3 | #include <errno.h>
+  +++ |+#include <float.h>
+    4 | 
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-830-s3.c:17:32: note: each undeclared identifier is reported only once for each function it appears in
+   17 |     if (factor == 0.0 || num > DBL_MAX / factor || num < -DBL_MAX / factor) {
+      |                                ^~~~~~~

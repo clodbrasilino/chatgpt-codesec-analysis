@@ -1,0 +1,74 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+void split_string_at_uppercase(const char *input, char ***result, int *size) {
+    regex_t regex;
+    regmatch_t match[1];
+    int count = 0, p = 0;
+
+    if (regcomp(&regex, "[A-Z]", REG_EXTENDED) != 0) {
+        return;
+    }
+
+    while (regexec(&regex, input + p, 1, match, 0) == 0) {
+        count++;
+        p += match[0].rm_eo;
+    }
+    *size = count + 1;
+
+    *result = (char **)malloc((*size) * sizeof(char *));
+    for (int i = 0; i < *size; i++) {
+        (*result)[i] = NULL;
+    }
+
+    p = 0;
+    int i = 0;
+    while (regexec(&regex, input + p, 1, match, 0) == 0) {
+        size_t len = match[0].rm_so - p;
+        (*result)[i] = (char *)malloc((len + 1) * sizeof(char));
+        /* Possible weaknesses found:
+         * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+         */
+        memcpy((*result)[i], input + p, len);
+        (*result)[i][len] = '\0';
+        p += match[0].rm_eo;
+        i++;
+    }
+
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    size_t len = strlen(input + p);
+    (*result)[i] = (char *)malloc((len + 1) * sizeof(char));
+    /* Possible weaknesses found:
+     * Flawfinder strncpy: Easily used incorrectly; doesn't always \0-terminate or check for invalid pointers [MS-banned] (CWE-120). (risk 1, buffer)
+     */
+    strncpy((*result)[i], input + p, len);
+    (*result)[i][len] = '\0';
+
+    regfree(&regex);
+}
+
+void free_result(char ***result, int size) {
+    for (int i = 0; i < size; i++) {
+        free((*result)[i]);
+    }
+    free(*result);
+}
+
+int main() {
+    const char *input = "ThisIsAStringToSplitAtUppercaseLetters";
+    char **result = NULL;
+    int size;
+
+    split_string_at_uppercase(input, &result, &size);
+
+    for (int i = 0; i < size; i++) {
+        printf("%s\n", result[i]);
+    }
+
+    free_result(&result, size);
+    return 0;
+}

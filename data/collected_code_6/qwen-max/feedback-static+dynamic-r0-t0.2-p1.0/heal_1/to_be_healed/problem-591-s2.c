@@ -1,0 +1,82 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node* next;
+} Node;
+
+Node* createNode(int data) {
+    Node* newNode = (Node*)malloc(sizeof(Node));
+    if (newNode == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(1);
+    }
+    newNode->data = data;
+    newNode->next = NULL;
+    return newNode;
+}
+
+void swapFirstLast(Node** head) {
+    if (*head == NULL || (*head)->next == NULL) {
+        return;
+    }
+
+    Node* current = *head;
+    Node* prev = NULL;
+    while (current->next != NULL) {
+        prev = current;
+        current = current->next;
+    }
+
+    int temp = (*head)->data;
+    (*head)->data = current->data;
+    current->data = temp;
+
+    if (prev != NULL) {
+        prev->next = *head;
+        *head = current;
+        prev = current;
+        current = (*head)->next;
+        /* Possible weaknesses found:
+         * ASan: SEGV
+         * UBSan: member access within null pointer of type 'Node' (aka 'struct Node')
+         */
+        while (current->next != prev) {
+            current = current->next;
+        }
+        current->next = NULL;
+    }
+}
+
+void printList(Node* head) {
+    while (head != NULL) {
+        printf("%d -> ", head->data);
+        head = head->next;
+    }
+    printf("NULL\n");
+}
+
+int main() {
+    Node* head = createNode(1);
+    head->next = createNode(2);
+    head->next->next = createNode(3);
+    head->next->next->next = createNode(4);
+
+    printf("Original list: ");
+    printList(head);
+
+    swapFirstLast(&head);
+
+    printf("List after swapping first and last elements: ");
+    printList(head);
+
+    // Free the allocated memory
+    while (head != NULL) {
+        Node* temp = head;
+        head = head->next;
+        free(temp);
+    }
+
+    return 0;
+}

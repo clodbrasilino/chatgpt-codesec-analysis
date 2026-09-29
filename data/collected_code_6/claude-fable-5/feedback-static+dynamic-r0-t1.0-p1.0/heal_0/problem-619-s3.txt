@@ -1,0 +1,83 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+int move_numbers_to_end(char *str)
+{
+    size_t len;
+    size_t i;
+    size_t j;
+    char *digits;
+    char *others;
+    size_t dcount;
+    size_t ocount;
+
+    if (str == NULL) {
+        return -1;
+    }
+
+    len = strlen(str);
+    if (len == 0U) {
+        return 0;
+    }
+
+    digits = (char *)malloc(len + 1U);
+    if (digits == NULL) {
+        return -1;
+    }
+
+    others = (char *)malloc(len + 1U);
+    if (others == NULL) {
+        free(digits);
+        return -1;
+    }
+
+    dcount = 0U;
+    ocount = 0U;
+
+    for (i = 0U; i < len; i++) {
+        if (isdigit((unsigned char)str[i]) != 0) {
+            digits[dcount] = str[i];
+            dcount++;
+        } else {
+            others[ocount] = str[i];
+            ocount++;
+        }
+    }
+
+    for (i = 0U; i < ocount; i++) {
+        str[i] = others[i];
+    }
+
+    for (j = 0U; j < dcount; j++) {
+        str[ocount + j] = digits[j];
+    }
+
+    str[len] = '\0';
+
+    free(digits);
+    free(others);
+
+    return 0;
+}
+
+int main(void)
+{
+    char input[] = "a1b2c3d4e5";
+    int result;
+
+    result = move_numbers_to_end(input);
+    if (result != 0) {
+        (void)fprintf(stderr, "Error: failed to process string\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("%s\n", input) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```

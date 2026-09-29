@@ -1,0 +1,96 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int first;
+    int second;
+} Tuple;
+
+typedef struct Node {
+    Tuple data;
+    struct Node *next;
+} Node;
+
+typedef struct {
+    Node *head;
+    Node *tail;
+    size_t size;
+} List;
+
+List* create_list() {
+    List *list = (List*)malloc(sizeof(List));
+    if (list == NULL) exit(EXIT_FAILURE);
+    list->head = NULL;
+    list->tail = NULL;
+    list->size = 0;
+    return list;
+}
+
+void free_list(List *list) {
+    Node *current = list->head;
+    while (current != NULL) {
+        Node *temp = current;
+        current = current->next;
+        free(temp);
+    }
+    free(list);
+}
+
+int add_tuple(List *list, int first, int second) {
+    Node *new_node = (Node*)malloc(sizeof(Node));
+    if (new_node == NULL) return -1;
+    new_node->data.first = first;
+    new_node->data.second = second;
+    new_node->next = NULL;
+
+    if (list->size == 0) {
+        list->head = new_node;
+        list->tail = new_node;
+    } else {
+        list->tail->next = new_node;
+        list->tail = new_node;
+    }
+
+    list->size++;
+    return 0;
+}
+
+int extract_rear(List *list, Tuple *result) {
+    if (list->size == 0) return -1;
+
+    Node *temp = list->tail;
+    *result = temp->data;
+
+    if (list->size == 1) {
+        list->head = NULL;
+        list->tail = NULL;
+    } else {
+        Node *current = list->head;
+        while (current->next != list->tail) {
+            current = current->next;
+        }
+        current->next = NULL;
+        list->tail = current;
+    }
+
+    free(temp);
+    list->size--;
+    return 0;
+}
+
+int main() {
+    List *list = create_list();
+    add_tuple(list, 1, 2);
+    add_tuple(list, 3, 4);
+    add_tuple(list, 5, 6);
+
+    Tuple result;
+    if (extract_rear(list, &result) == 0) {
+        printf("Extracted rear: (%d, %d)\n", result.first, result.second);
+    } else {
+        printf("Failed to extract rear\n");
+    }
+
+    free_list(list);
+    return 0;
+}

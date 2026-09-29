@@ -1,0 +1,89 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    void **elements;
+    int tuple_size;
+} Tuple;
+
+typedef struct {
+    Tuple *tuples;
+    int count;
+} TupleList;
+
+void *extract_nth_element(TupleList *list, int tuple_index, int n) {
+    if (list == NULL || tuple_index < 0 || tuple_index >= list->count) {
+        return NULL;
+    }
+    
+    Tuple *tuple = &list->tuples[tuple_index];
+    
+    if (n < 0 || n >= tuple->tuple_size) {
+        return NULL;
+    }
+    
+    return tuple->elements[n];
+}
+
+int main(void) {
+    TupleList list;
+    list.count = 3;
+    list.tuples = malloc(sizeof(Tuple) * list.count);
+    
+    if (list.tuples == NULL) {
+        return 1;
+    }
+    
+    for (int i = 0; i < list.count; i++) {
+        list.tuples[i].tuple_size = 3;
+        list.tuples[i].elements = malloc(sizeof(void *) * 3);
+        
+        if (list.tuples[i].elements == NULL) {
+            for (int j = 0; j < i; j++) {
+                free(list.tuples[j].elements);
+            }
+            free(list.tuples);
+            return 1;
+        }
+        
+        int *a = malloc(sizeof(int));
+        int *b = malloc(sizeof(int));
+        int *c = malloc(sizeof(int));
+        
+        if (a == NULL || b == NULL || c == NULL) {
+            free(a);
+            free(b);
+            free(c);
+            for (int j = 0; j <= i; j++) {
+                free(list.tuples[j].elements);
+            }
+            free(list.tuples);
+            return 1;
+        }
+        
+        *a = i * 10 + 1;
+        *b = i * 10 + 2;
+        *c = i * 10 + 3;
+        
+        list.tuples[i].elements[0] = a;
+        list.tuples[i].elements[1] = b;
+        list.tuples[i].elements[2] = c;
+    }
+    
+    const int *result = (const int *)extract_nth_element(&list, 1, 2);
+    
+    if (result != NULL) {
+        printf("%d\n", *result);
+    }
+    
+    for (int i = 0; i < list.count; i++) {
+        for (int j = 0; j < list.tuples[i].tuple_size; j++) {
+            free(list.tuples[i].elements[j]);
+        }
+        free(list.tuples[i].elements);
+    }
+    free(list.tuples);
+    
+    return 0;
+}

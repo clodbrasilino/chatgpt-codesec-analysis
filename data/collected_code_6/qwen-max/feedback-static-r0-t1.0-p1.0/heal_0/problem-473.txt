@@ -1,0 +1,71 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_TUPLES 100
+#define TUPLE_SIZE 2
+
+typedef struct {
+    int a;
+    int b;
+} Tuple;
+
+int compare_tuples(const void *t1, const void *t2) {
+    if (((Tuple *)t1)->a == ((Tuple *)t2)->a) {
+        return ((Tuple *)t1)->b - ((Tuple *)t2)->b;
+    }
+    return ((Tuple *)t1)->a - ((Tuple *)t2)->a;
+}
+
+void sort_tuple(Tuple *tuple) {
+    if (tuple->a > tuple->b) {
+        int temp = tuple->a;
+        tuple->a = tuple->b;
+        tuple->b = temp;
+    }
+}
+
+int find_intersection(Tuple *tuples1, int size1, Tuple *tuples2, int size2, Tuple *result) {
+    for (int i = 0; i < size1; ++i) {
+        sort_tuple(&tuples1[i]);
+    }
+    for (int i = 0; i < size2; ++i) {
+        sort_tuple(&tuples2[i]);
+    }
+
+    qsort(tuples1, size1, sizeof(Tuple), compare_tuples);
+    qsort(tuples2, size2, sizeof(Tuple), compare_tuples);
+
+    int idx1 = 0, idx2 = 0, result_idx = 0;
+    while (idx1 < size1 && idx2 < size2) {
+        if (tuples1[idx1].a == tuples2[idx2].a && tuples1[idx1].b == tuples2[idx2].b) {
+            result[result_idx++] = tuples1[idx1];
+            idx1++;
+            idx2++;
+        } else if (compare_tuples(&tuples1[idx1], &tuples2[idx2]) < 0) {
+            idx1++;
+        } else {
+            idx2++;
+        }
+    }
+    return result_idx;
+}
+
+int main() {
+    Tuple tuples1[] = {{3, 1}, {2, 4}, {5, 6}};
+    Tuple tuples2[] = {{1, 3}, {4, 2}, {7, 8}};
+    Tuple result[MAX_TUPLES];
+
+    int size1 = sizeof(tuples1) / sizeof(tuples1[0]);
+    int size2 = sizeof(tuples2) / sizeof(tuples2[0]);
+
+    int result_size = find_intersection(tuples1, size1, tuples2, size2, result);
+
+    for (int i = 0; i < result_size; ++i) {
+        printf("(%d, %d)\n", result[i].a, result[i].b);
+    }
+
+    return 0;
+}
+```

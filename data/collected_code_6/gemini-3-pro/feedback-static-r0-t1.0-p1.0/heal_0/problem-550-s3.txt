@@ -1,0 +1,42 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int findMax(int arr[], int low, int high) {
+    if (low == high) {
+        return arr[low];
+    }
+    
+    if (high == low + 1) {
+        if (arr[low] >= arr[high]) {
+            return arr[low];
+        } else {
+            return arr[high];
+        }
+    }
+
+    int mid = low + (high - low) / 2;
+
+    if (arr[low] < arr[mid]) {
+        if (arr[mid] > arr[high]) {
+            return findMax(arr, mid, high);
+        } else {
+            return arr[high];
+        }
+    } else {
+        return findMax(arr, low, mid - 1);
+    }
+}
+
+int main(void) {
+    int arr[] = {3, 4, 5, 1, 2};
+    int n = sizeof(arr) / sizeof(arr[0]);
+
+    if (n > 0) {
+        int maxElement = findMax(arr, 0, n - 1);
+        printf("%d\n", maxElement);
+    }
+
+    return EXIT_SUCCESS;
+}
+```

@@ -1,0 +1,41 @@
+C does not natively support regular expressions, so we cannot use regex directly in C. However, we can use the POSIX regex library in C to accomplish this task. Here is a C program that uses the POSIX regex library to put spaces before words starting with capital letters in a given string.
+
+```c
+#include <stdio.h>
+#include <string.h>
+#include <regex.h>
+
+#define MAX_MATCHES 100
+
+void add_spaces(char *str) {
+    regex_t regexCompiled;
+    regmatch_t groupArray[MAX_MATCHES];
+    char *cursor = str;
+
+    if (regcomp(&regexCompiled, "[A-Z]", REG_EXTENDED)) {
+        printf("Could not compile regular expression.\n");
+        return;
+    };
+
+    while (!regexec(&regexCompiled, cursor, MAX_MATCHES, groupArray, 0)) {
+        int offset = groupArray[0].rm_eo;
+
+        memmove(cursor + offset + 1, cursor + offset, strlen(cursor + offset) + 1);
+        cursor[offset] = ' ';
+
+        cursor += offset + 1;
+    }
+
+    regfree(&regexCompiled);
+}
+
+int main() {
+    char str[] = "HelloWorldThisIsATest";
+    printf("Before: %s\n", str);
+    add_spaces(str);
+    printf("After: %s\n", str);
+    return 0;
+}
+```
+
+This program first compiles a regular expression that matches any uppercase letter. It then repeatedly applies this regular expression to the string, each time moving the rest of the string one character to the right and inserting a space before the matched uppercase letter. This continues until no more matches are found.

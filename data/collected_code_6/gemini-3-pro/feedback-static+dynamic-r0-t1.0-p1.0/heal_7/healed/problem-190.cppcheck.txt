@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-190.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-190.c:27:23: style: Variable 'p1_high' is assigned a value that is never used. [unreadVariable]
+    long long p1_high = 0, p2_high = 0;
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-190.c:27:36: style: Variable 'p2_high' is assigned a value that is never used. [unreadVariable]
+    long long p1_high = 0, p2_high = 0;
+                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-190.c:28:24: style: Unused variable: p1_low [unusedVariable]
+    unsigned long long p1_low, p2_low;
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-190.c:28:32: style: Unused variable: p2_low [unusedVariable]
+    unsigned long long p1_low, p2_low;
+                               ^

@@ -1,0 +1,45 @@
+#include <stdio.h>
+#include <ctype.h>
+#include <stdlib.h>
+
+char* convert_to_lowercase(const char* str) {
+    if (str == NULL) {
+        return NULL;
+    }
+
+    size_t len = 0;
+    while (str[len] != '\0') {
+        len++;
+    }
+
+    char* lower_str = (char*)malloc(len + 1);
+    
+    if (lower_str == NULL) {
+        return NULL;
+    }
+
+    for (size_t i = 0; i < len; i++) {
+        lower_str[i] = (char)tolower((unsigned char)str[i]);
+    }
+    
+    lower_str[len] = '\0';
+    
+    return lower_str;
+}
+
+int main(void) {
+    const char* original_str = "HELLO, World! 123";
+    
+    char* lower_str = convert_to_lowercase(original_str);
+    
+    if (lower_str != NULL) {
+        printf("Original: %s\n", original_str);
+        printf("Lowercase: %s\n", lower_str);
+        free(lower_str);
+    } else {
+        printf("Memory allocation failed or input was NULL.\n");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,44 @@
+#include <stdio.h>
+#include <ctype.h>
+
+int has_letter_and_number(const char *str) {
+    int has_letter = 0;
+    int has_number = 0;
+    
+    if (str == NULL) {
+        return 0;
+    }
+    
+    while (*str) {
+        if (isalpha((unsigned char)*str)) {
+            has_letter = 1;
+        }
+        if (isdigit((unsigned char)*str)) {
+            has_number = 1;
+        }
+        if (has_letter && has_number) {
+            return 1;
+        }
+        str++;
+    }
+    
+    return 0;
+}
+
+int main(void) {
+    const char *test1 = "abc123";
+    const char *test2 = "abcdef";
+    const char *test3 = "123456";
+    const char *test4 = "a1";
+    const char *test5 = "";
+    const char *test6 = NULL;
+    
+    printf("Test 1 (%s): %d\n", test1, has_letter_and_number(test1));
+    printf("Test 2 (%s): %d\n", test2, has_letter_and_number(test2));
+    printf("Test 3 (%s): %d\n", test3, has_letter_and_number(test3));
+    printf("Test 4 (%s): %d\n", test4, has_letter_and_number(test4));
+    printf("Test 5 (%s): %d\n", test5, has_letter_and_number(test5));
+    printf("Test 6 (NULL): %d\n", has_letter_and_number(test6));
+    
+    return 0;
+}

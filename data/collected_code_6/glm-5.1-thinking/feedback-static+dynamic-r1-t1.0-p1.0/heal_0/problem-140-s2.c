@@ -1,0 +1,67 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int* extract_singly(const int* tuple_list, size_t size, size_t* out_size) {
+    if (tuple_list == NULL || out_size == NULL) {
+        if (out_size != NULL) {
+            *out_size = 0;
+        }
+        return NULL;
+    }
+
+    if (size == 0) {
+        *out_size = 0;
+        return NULL;
+    }
+
+    int* result = (int*)malloc(size * sizeof(int));
+    if (result == NULL) {
+        *out_size = 0;
+        return NULL;
+    }
+
+    size_t count = 0;
+    for (size_t i = 0; i < size; i++) {
+        int freq = 0;
+        for (size_t j = 0; j < size; j++) {
+            if (tuple_list[i] == tuple_list[j]) {
+                freq++;
+            }
+        }
+        if (freq == 1) {
+            result[count] = tuple_list[i];
+            count++;
+        }
+    }
+
+    if (count == 0) {
+        free(result);
+        *out_size = 0;
+        return NULL;
+    }
+
+    int* trimmed = (int*)realloc(result, count * sizeof(int));
+    if (trimmed != NULL) {
+        result = trimmed;
+    }
+
+    *out_size = count;
+    return result;
+}
+
+int main(void) {
+    int tuple_list[] = {1, 2, 3, 2, 4, 1, 5};
+    size_t size = sizeof(tuple_list) / sizeof(tuple_list[0]);
+    size_t out_size = 0;
+
+    int* singles = extract_singly(tuple_list, size, &out_size);
+
+    for (size_t i = 0; i < out_size; i++) {
+        printf("%d ", singles[i]);
+    }
+    printf("\n");
+
+    free(singles);
+
+    return 0;
+}

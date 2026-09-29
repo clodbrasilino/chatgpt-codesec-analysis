@@ -1,0 +1,92 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+#define BUFFER_SIZE 256U
+
+static void remove_first_last(char *str, size_t max_len, char ch)
+{
+    size_t len;
+    size_t i;
+    size_t first_idx;
+    size_t last_idx;
+    int found_first;
+    int found_last;
+
+    if (str == NULL) {
+        return;
+    }
+
+    len = strnlen(str, max_len);
+    if (len == 0U || len >= max_len) {
+        if (len >= max_len) {
+            str[max_len - 1U] = '\0';
+            len = max_len - 1U;
+        }
+        if (len == 0U) {
+            return;
+        }
+    }
+
+    found_first = 0;
+    found_last = 0;
+    first_idx = 0U;
+    last_idx = 0U;
+
+    for (i = 0U; i < len; i++) {
+        if (str[i] == ch) {
+            if (found_first == 0) {
+                first_idx = i;
+                found_first = 1;
+            }
+            last_idx = i;
+            found_last = 1;
+        }
+    }
+
+    if (found_first == 0) {
+        return;
+    }
+
+    if (found_last == 1 && last_idx != first_idx) {
+        memmove(&str[last_idx], &str[last_idx + 1U], len - last_idx);
+        len--;
+    }
+
+    memmove(&str[first_idx], &str[first_idx + 1U], len - first_idx);
+}
+
+int main(void)
+{
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char buffer[BUFFER_SIZE];
+    char ch;
+    int c;
+
+    printf("Enter a string: ");
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input string\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[strcspn(buffer, "\n")] = '\0';
+
+    printf("Enter a character to remove: ");
+    /* Possible weaknesses found:
+     * Flawfinder getchar: Check buffer boundaries if used in a loop including recursive loops (CWE-120, CWE-20). (risk 1, buffer)
+     */
+    c = getchar();
+    if (c == EOF) {
+        fprintf(stderr, "Error reading character\n");
+        return EXIT_FAILURE;
+    }
+    ch = (char)c;
+
+    remove_first_last(buffer, sizeof(buffer), ch);
+
+    printf("Result: %s\n", buffer);
+
+    return EXIT_SUCCESS;
+}

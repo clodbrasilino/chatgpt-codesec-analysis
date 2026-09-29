@@ -1,0 +1,33 @@
+#include <stdio.h>
+#include <string.h>
+
+size_t count_char_occurrences(const char *str, char target)
+{
+    size_t count = 0;
+    
+    if (str == NULL) {
+        return 0;
+    }
+    
+    for (size_t i = 0; str[i] != '\0'; i++) {
+        if (str[i] == target) {
+            count++;
+        }
+    }
+    
+    return count;
+}
+
+int main(void)
+{
+    const char *text = "Hello, World!";
+    char target = 'o';
+    size_t result;
+    
+    result = count_char_occurrences(text, target);
+    
+    printf("The character '%c' appears %zu times in \"%s\".\n", 
+           target, result, text);
+    
+    return 0;
+}

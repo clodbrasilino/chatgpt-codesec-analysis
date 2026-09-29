@@ -1,0 +1,82 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node *next;
+} Node;
+
+Node *create_node(int data) {
+    Node *node = malloc(sizeof(Node));
+    if (node == NULL) {
+        exit(EXIT_FAILURE);
+    }
+    node->data = data;
+    node->next = NULL;
+    return node;
+}
+
+int is_present(Node *head, int value) {
+    Node *curr = head;
+    while (curr != NULL) {
+        if (curr->data == value) {
+            return 1;
+        }
+        curr = curr->next;
+    }
+    return 0;
+}
+
+void remove_elements(Node **list1, Node *list2) {
+    if (list1 == NULL || *list1 == NULL || list2 == NULL) {
+        return;
+    }
+    Node **curr = list1;
+    while (*curr != NULL) {
+        if (is_present(list2, (*curr)->data)) {
+            Node *to_free = *curr;
+            *curr = (*curr)->next;
+            free(to_free);
+        } else {
+            curr = &((*curr)->next);
+        }
+    }
+}
+
+void free_list(Node *head) {
+    Node *curr = head;
+    while (curr != NULL) {
+        Node *to_free = curr;
+        curr = curr->next;
+        free(to_free);
+    }
+}
+
+void print_list(Node *head) {
+    Node *curr = head;
+    while (curr != NULL) {
+        printf("%d ", curr->data);
+        curr = curr->next;
+    }
+    printf("\n");
+}
+
+int main(void) {
+    Node *list1 = create_node(1);
+    list1->next = create_node(2);
+    list1->next->next = create_node(3);
+    list1->next->next->next = create_node(4);
+    list1->next->next->next->next = create_node(5);
+
+    Node *list2 = create_node(2);
+    list2->next = create_node(4);
+
+    remove_elements(&list1, list2);
+
+    print_list(list1);
+
+    free_list(list1);
+    free_list(list2);
+
+    return 0;
+}

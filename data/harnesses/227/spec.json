@@ -1,0 +1,50 @@
+{
+  "task_id": 227,
+  "text": "Write a C function to find minimum of three numbers.",
+  "fn_candidates": [
+    "min_of_three",
+    "MinOfThree",
+    "minOfThree",
+    "minofthree"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "min_of_three",
+      "args": [
+        10,
+        20,
+        0
+      ],
+      "expected": 0,
+      "assert_src": "assert min_of_three(10,20,0)==0"
+    },
+    {
+      "fn_name": "min_of_three",
+      "args": [
+        19,
+        15,
+        18
+      ],
+      "expected": 15,
+      "assert_src": "assert min_of_three(19,15,18)==15"
+    },
+    {
+      "fn_name": "min_of_three",
+      "args": [
+        -10,
+        -20,
+        -30
+      ],
+      "expected": -30,
+      "assert_src": "assert min_of_three(-10,-20,-30)==-30"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

@@ -1,0 +1,31 @@
+#include <stdio.h>
+#include <string.h>
+#include <limits.h>
+
+int findMostCommonChar(const char *str) {
+    int count[256] = {0};
+    int max_count = 0;
+    int result = '\0';
+
+    for (int i = 0; str[i]; i++) {
+        count[(unsigned char)str[i]]++;
+        if (count[(unsigned char)str[i]] > max_count) {
+            max_count = count[(unsigned char)str[i]];
+            result = (unsigned char)str[i];
+        }
+    }
+
+    return result;
+}
+
+int main() {
+    const char *input = "example string: hello world";
+    int most_common_char = findMostCommonChar(input);
+    if (most_common_char != '\0') {
+        printf("The most common character is '%c' with a count of %d.\n", most_common_char, (int)most_common_char - (int)'a' + 1);
+    } else {
+        printf("No characters found in the input string.\n");
+    }
+
+    return 0;
+}

@@ -1,0 +1,31 @@
+#include <stdio.h>
+
+double calculate_cuboid_volume(double length, double width, double height) {
+    return length * width * height;
+}
+
+int main(void) {
+    double length = 0.0;
+    double width = 0.0;
+    double height = 0.0;
+    double volume = 0.0;
+    int scan_result = 0;
+
+    printf("Enter length, width, and height: ");
+    scan_result = scanf("%lf %lf %lf", &length, &width, &height);
+
+    if (scan_result != 3) {
+        fprintf(stderr, "Error: Invalid input. Expected three numeric values.\n");
+        return 1;
+    }
+
+    if (length < 0.0 || width < 0.0 || height < 0.0) {
+        fprintf(stderr, "Error: Dimensions must be non-negative.\n");
+        return 1;
+    }
+
+    volume = calculate_cuboid_volume(length, width, height);
+    printf("Volume of cuboid: %.2f\n", volume);
+
+    return 0;
+}

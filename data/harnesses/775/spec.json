@@ -1,0 +1,61 @@
+{
+  "task_id": 775,
+  "text": "Write a C function to check whether every odd index contains odd numbers of a given list.",
+  "fn_candidates": [
+    "odd_position",
+    "OddPosition",
+    "oddPosition",
+    "oddposition"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "odd_position",
+      "args": [
+        [
+          2,
+          1,
+          4,
+          3,
+          6,
+          7,
+          6,
+          3
+        ]
+      ],
+      "expected": true,
+      "assert_src": "assert odd_position([2,1,4,3,6,7,6,3]) == True"
+    },
+    {
+      "fn_name": "odd_position",
+      "args": [
+        [
+          4,
+          1,
+          2
+        ]
+      ],
+      "expected": true,
+      "assert_src": "assert odd_position([4,1,2]) == True"
+    },
+    {
+      "fn_name": "odd_position",
+      "args": [
+        [
+          1,
+          2,
+          3
+        ]
+      ],
+      "expected": false,
+      "assert_src": "assert odd_position([1,2,3]) == False"
+    }
+  ],
+  "arg_kinds": [
+    "int-list"
+  ],
+  "return_kind": "bool",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

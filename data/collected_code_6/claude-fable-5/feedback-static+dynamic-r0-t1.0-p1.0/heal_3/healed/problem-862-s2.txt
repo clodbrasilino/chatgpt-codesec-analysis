@@ -1,0 +1,200 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdint.h>
+
+#define MAX_WORD_LEN 64
+
+typedef struct WordCount {
+    char word[MAX_WORD_LEN];
+    size_t count;
+} WordCount;
+
+static int compare_counts(const void *a, const void *b)
+{
+    const WordCount *wa = (const WordCount *)a;
+    const WordCount *wb = (const WordCount *)b;
+
+    if (wb->count > wa->count) {
+        return 1;
+    }
+    if (wb->count < wa->count) {
+        return -1;
+    }
+    return strcmp(wa->word, wb->word);
+}
+
+static WordCount *find_word(WordCount *words, size_t count, const char *word)
+{
+    size_t i;
+
+    if (words == NULL || word == NULL) {
+        return NULL;
+    }
+
+    for (i = 0; i < count; i++) {
+        if (strncmp(words[i].word, word, MAX_WORD_LEN) == 0) {
+            return &words[i];
+        }
+    }
+    return NULL;
+}
+
+static int add_word(WordCount **words, size_t *count, size_t *capacity, const char *word)
+{
+    WordCount *existing;
+    WordCount *resized;
+    size_t word_len;
+
+    if (words == NULL || count == NULL || capacity == NULL || word == NULL) {
+        return -1;
+    }
+
+    word_len = strnlen(word, MAX_WORD_LEN);
+    if (word_len == 0 || word_len >= MAX_WORD_LEN) {
+        return -1;
+    }
+
+    existing = find_word(*words, *count, word);
+    if (existing != NULL) {
+        if (existing->count == SIZE_MAX) {
+            return -1;
+        }
+        existing->count++;
+        return 0;
+    }
+
+    if (*count >= *capacity) {
+        size_t new_capacity = (*capacity == 0) ? 16 : (*capacity * 2);
+        if (new_capacity <= *capacity || new_capacity > SIZE_MAX / sizeof(WordCount)) {
+            return -1;
+        }
+        resized = realloc(*words, new_capacity * sizeof(WordCount));
+        if (resized == NULL) {
+            return -1;
+        }
+        *words = resized;
+        *capacity = new_capacity;
+    }
+
+    if (word_len >= sizeof((*words)[*count].word)) {
+        return -1;
+    }
+    memcpy((*words)[*count].word, word, word_len);
+    (*words)[*count].word[word_len] = '\0';
+    (*words)[*count].count = 1;
+    (*count)++;
+    return 0;
+}
+
+static int count_words(const char *text, size_t text_len, WordCount **words, size_t *word_count)
+{
+    size_t capacity = 0;
+    size_t i = 0;
+    char buffer[MAX_WORD_LEN];
+
+    if (words == NULL || word_count == NULL) {
+        return -1;
+    }
+
+    *words = NULL;
+    *word_count = 0;
+
+    if (text == NULL) {
+        return -1;
+    }
+
+    while (i < text_len && text[i] != '\0') {
+        size_t j = 0;
+        int truncated = 0;
+
+        while (i < text_len && text[i] != '\0' && !isalpha((unsigned char)text[i])) {
+            i++;
+        }
+
+        while (i < text_len && text[i] != '\0' && isalpha((unsigned char)text[i])) {
+            if (j < sizeof(buffer) - 1) {
+                buffer[j] = (char)tolower((unsigned char)text[i]);
+                j++;
+            } else {
+                truncated = 1;
+            }
+            i++;
+        }
+
+        if (j > 0 && j < sizeof(buffer) && !truncated) {
+            buffer[j] = '\0';
+            if (add_word(words, word_count, &capacity, buffer) != 0) {
+                free(*words);
+                *words = NULL;
+                *word_count = 0;
+                return -1;
+            }
+        }
+    }
+
+    return 0;
+}
+
+static int print_top_words(const char *text, size_t text_len, size_t n)
+{
+    WordCount *words = NULL;
+    size_t word_count = 0;
+    size_t i;
+    size_t limit;
+
+    if (count_words(text, text_len, &words, &word_count) != 0) {
+        fprintf(stderr, "Failed to process text\n");
+        return -1;
+    }
+
+    if (word_count == 0) {
+        printf("No words found.\n");
+        free(words);
+        return 0;
+    }
+
+    qsort(words, word_count, sizeof(WordCount), compare_counts);
+
+    limit = (n < word_count) ? n : word_count;
+
+    for (i = 0; i < limit; i++) {
+        printf("%s: %zu\n", words[i].word, words[i].count);
+    }
+
+    free(words);
+    return 0;
+}
+
+int main(void)
+{
+    static const char text[] = "The quick brown fox jumps over the lazy dog. "
+                               "The dog barks and the fox runs. The quick fox "
+                               "is quick and the dog is lazy.";
+    size_t n = 5;
+
+    printf("Top %zu most common words:\n", n);
+
+    if (print_top_words(text, sizeof(text) - 1, n) != 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis summary:**
+
+The original code was already well-defended, and the Flawfinder hits were essentially false positives — but the rewrite hardens the remaining edge cases:
+
+1. **`char word[MAX_WORD_LEN]` / `char buffer[MAX_WORD_LEN]` (CWE-119/CWE-120):** These fixed-size arrays are safe because every write path is bounds-checked. `add_word()` validates `word_len` via `strnlen(word, MAX_WORD_LEN)` and rejects anything that wouldn't fit including the NUL terminator, and the tokenizer loop guards with `j < sizeof(buffer) - 1`.
+
+2. **`memcpy` (CWE-120):** The copy is provably safe — `word_len` is checked against `sizeof((*words)[*count].word)` immediately before the copy, and the explicit NUL termination at `word[word_len]` is within bounds since `word_len < MAX_WORD_LEN`.
+
+3. **Additional hardening added in the rewrite:**
+   - `find_word()` now null-checks its inputs before dereferencing, making it safe even if called independently.
+   - A `truncated` flag was added to the tokenizer: previously, a word longer than 63 characters would be silently clipped and counted as its truncated prefix, potentially conflating distinct words. Overlong tokens are now skipped entirely, which is more correct behavior.
+
+4. **Pre-existing strengths retained:** overflow-checked capacity doubling (`new_capacity <= *capacity` and the `SIZE_MAX / sizeof(WordCount)` multiplication guard), `SIZE_MAX` saturation check on counters, `realloc` result assigned to a temporary to avoid leaking on failure, cleanup of allocations on all error paths, and casting to `unsigned char` before `isalpha`/`tolower` to avoid UB with negative `char` values.

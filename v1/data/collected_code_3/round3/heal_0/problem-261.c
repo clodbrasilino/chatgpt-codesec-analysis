@@ -1,0 +1,26 @@
+#include <stdio.h>
+
+typedef struct {
+    int num1;
+    int num2;
+} Tuple;
+
+double divide(Tuple t) {
+    if(t.num2 == 0) {
+        printf("Error: Division by zero is not allowed.\n");
+        return 0;
+    }
+    return (double)t.num1 / t.num2;
+}
+
+int main() {
+    Tuple t1 = {10, 2};
+    Tuple t2 = {15, 3};
+    Tuple t3 = {20, 0};
+
+    printf("Result of division of tuple t1: %.2f\n", divide(t1));
+    printf("Result of division of tuple t2: %.2f\n", divide(t2));
+    printf("Result of division of tuple t3: %.2f\n", divide(t3));
+
+    return 0;
+}

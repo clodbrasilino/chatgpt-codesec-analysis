@@ -1,0 +1,42 @@
+#include <stdio.h>
+#include <stdbool.h>
+ /* Possible weaknesses found:
+  *  test case 0 failed: expected True, got 0
+  *  test case 1 failed: expected True, got 0
+  */
+
+bool has_decreasing_trend(const int *sequence, size_t length) {
+    if (sequence == NULL || length < 2) {
+        return false;
+    }
+
+    for (size_t i = 1; i < length; ++i) {
+        if (sequence[i] >= sequence[i - 1]) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+int main(void) {
+    const int numbers1[] = {5, 4, 3, 2, 1};
+    const int numbers2[] = {1, 2, 3, 4, 5};
+    const int numbers3[] = {7, 6, 5, 5, 4};
+    const int numbers4[] = {10};
+    const int numbers5[] = {9, 8};
+
+    bool result1 = has_decreasing_trend(numbers1, sizeof(numbers1) / sizeof(numbers1[0]));
+    bool result2 = has_decreasing_trend(numbers2, sizeof(numbers2) / sizeof(numbers2[0]));
+    bool result3 = has_decreasing_trend(numbers3, sizeof(numbers3) / sizeof(numbers3[0]));
+    bool result4 = has_decreasing_trend(numbers4, sizeof(numbers4) / sizeof(numbers4[0]));
+    bool result5 = has_decreasing_trend(numbers5, sizeof(numbers5) / sizeof(numbers5[0]));
+
+    printf("Sequence 1 decreasing: %s\n", result1 ? "True" : "False");
+    printf("Sequence 2 decreasing: %s\n", result2 ? "True" : "False");
+    printf("Sequence 3 decreasing: %s\n", result3 ? "True" : "False");
+    printf("Sequence 4 decreasing: %s\n", result4 ? "True" : "False");
+    printf("Sequence 5 decreasing: %s\n", result5 ? "True" : "False");
+
+    return 0;
+}

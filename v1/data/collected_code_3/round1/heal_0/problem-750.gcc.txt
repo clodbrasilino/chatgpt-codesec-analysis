@@ -1,0 +1,15 @@
+collected_code_3/problem-750-1.c: In function 'addTupleToList':
+collected_code_3/problem-750-1.c:16:19: warning: dereference of possibly-NULL 'newNode' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   16 |     newNode->data = tuple;
+      |     ~~~~~~~~~~~~~~^~~~~~~
+  'addTupleToList': events 1-2
+    |
+    |   15 |     Node* newNode = (Node*)malloc(sizeof(Node));
+    |      |                            ^~~~~~~~~~~~~~~~~~~~
+    |      |                            |
+    |      |                            (1) this call could return NULL
+    |   16 |     newNode->data = tuple;
+    |      |     ~~~~~~~~~~~~~~~~~~~~~   
+    |      |                   |
+    |      |                   (2) 'newNode' could be NULL: unchecked value from (1)
+    |

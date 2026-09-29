@@ -1,0 +1,36 @@
+collected_code/problem-906-0.c:27:32: error: Cannot determine that 'match[1]' is initialized [premium-bughuntingUninit]
+        int year_length = match[1].rm_eo - match[1].rm_so;
+                               ^
+collected_code/problem-906-0.c:28:33: error: Cannot determine that 'match[2]' is initialized [premium-bughuntingUninit]
+        int month_length = match[2].rm_eo - match[2].rm_so;
+                                ^
+collected_code/problem-906-0.c:29:32: error: Cannot determine that 'match[3]' is initialized [premium-bughuntingUninit]
+        int date_length = match[3].rm_eo - match[3].rm_so;
+                               ^
+collected_code/problem-906-0.c:36:16: error: Cannot determine that 'year[0]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        memcpy(year, url + match[1].rm_so, year_length);
+               ^
+collected_code/problem-906-0.c:36:33: error: Cannot determine that 'match[1]' is initialized [premium-bughuntingUninit]
+        memcpy(year, url + match[1].rm_so, year_length);
+                                ^
+collected_code/problem-906-0.c:39:16: error: Cannot determine that 'month[0]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        memcpy(month, url + match[2].rm_so, month_length);
+               ^
+collected_code/problem-906-0.c:39:34: error: Cannot determine that 'match[2]' is initialized [premium-bughuntingUninit]
+        memcpy(month, url + match[2].rm_so, month_length);
+                                 ^
+collected_code/problem-906-0.c:42:16: error: Cannot determine that 'date[0]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        memcpy(date, url + match[3].rm_so, date_length);
+               ^
+collected_code/problem-906-0.c:42:33: error: Cannot determine that 'match[3]' is initialized [premium-bughuntingUninit]
+        memcpy(date, url + match[3].rm_so, date_length);
+                                ^
+collected_code/problem-906-0.c:65:30: error: Cannot determine that 'year[0]' is initialized [premium-bughuntingUninit]
+        printf("Year: %s\n", year);
+                             ^
+collected_code/problem-906-0.c:66:31: error: Cannot determine that 'month[0]' is initialized [premium-bughuntingUninit]
+        printf("Month: %s\n", month);
+                              ^
+collected_code/problem-906-0.c:67:30: error: Cannot determine that 'date[0]' is initialized [premium-bughuntingUninit]
+        printf("Date: %s\n", date);
+                             ^

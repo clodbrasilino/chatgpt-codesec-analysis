@@ -1,0 +1,32 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+bool is_even_at_even_index(int *arr, int size) {
+    for (int i = 0; i < size; i += 2) {
+        if (arr[i] % 2 != 0) {
+            return false;
+        }
+    }
+    return true;
+}
+
+int main() {
+    int arr1[] = {2, 3, 4, 5, 6};
+    int arr2[] = {2, 3, 5, 5, 6};
+    int size1 = sizeof(arr1) / sizeof(arr1[0]);
+    int size2 = sizeof(arr2) / sizeof(arr2[0]);
+
+    if (is_even_at_even_index(arr1, size1)) {
+        printf("Array 1: Every even index has an even number.\n");
+    } else {
+        printf("Array 1: Not every even index has an even number.\n");
+    }
+
+    if (is_even_at_even_index(arr2, size2)) {
+        printf("Array 2: Every even index has an even number.\n");
+    } else {
+        printf("Array 2: Not every even index has an even number.\n");
+    }
+
+    return 0;
+}

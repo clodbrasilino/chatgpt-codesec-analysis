@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-421-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-421-s3.c:77:57: style: Condition 'element_length>total_length-offset' is always false [knownConditionTrueFalse]
+            if (offset > total_length || element_length > total_length - offset) {
+                                                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-421-s3.c:72:28: note: Assuming that condition 'element_length>total_length-offset' is not redundant
+        if (element_length > total_length - offset) {
+                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-421-s3.c:77:57: note: Condition 'element_length>total_length-offset' is always false
+            if (offset > total_length || element_length > total_length - offset) {
+                                                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-421-s3.c:91:63: style: Condition 'delimiter_length>total_length-offset' is always false [knownConditionTrueFalse]
+                if (offset > total_length || delimiter_length > total_length - offset) {
+                                                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-421-s3.c:86:34: note: Assuming that condition 'delimiter_length>total_length-offset' is not redundant
+            if (delimiter_length > total_length - offset) {
+                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-421-s3.c:91:63: note: Condition 'delimiter_length>total_length-offset' is always false
+                if (offset > total_length || delimiter_length > total_length - offset) {
+                                                              ^

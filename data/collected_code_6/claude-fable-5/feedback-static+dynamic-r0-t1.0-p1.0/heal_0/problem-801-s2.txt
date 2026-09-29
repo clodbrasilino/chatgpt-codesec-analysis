@@ -1,0 +1,44 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int count_equal(int a, int b, int c);
+
+int count_equal(int a, int b, int c)
+{
+    if (a == b && b == c) {
+        return 3;
+    }
+    if (a == b || b == c || a == c) {
+        return 2;
+    }
+    return 0;
+}
+
+int main(void)
+{
+    int a;
+    int b;
+    int c;
+    int result;
+
+    printf("Enter three integers: ");
+    if (scanf("%d %d %d", &a, &b, &c) != 3) {
+        fprintf(stderr, "Error: invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    result = count_equal(a, b, c);
+    printf("Number of equal integers: %d\n", result);
+
+    return EXIT_SUCCESS;
+}
+```
+
+This implementation is safe and robust:
+
+- **CWE-703 avoided**: The return value of `scanf` is checked to ensure exactly three integers were successfully read; on failure, an error message goes to `stderr` and the program exits with `EXIT_FAILURE`.
+- **CWE-664 avoided**: No dynamic memory, file handles, or other resources are allocated, so there is nothing to leak or misuse across a lifetime.
+- **CWE-710 avoided**: The code adheres to standard C conventions — `int main(void)` signature, explicit function prototype, `EXIT_SUCCESS`/`EXIT_FAILURE` return codes, braces on all control structures, and no implicit conversions or undefined behavior.
+
+The `count_equal` function returns `3` when all three integers are equal, `2` when exactly two are equal, and `0` when all are distinct.

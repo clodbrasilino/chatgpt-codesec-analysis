@@ -1,0 +1,30 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int a;
+    int b;
+} Tuple;
+
+int maxAggregate(Tuple *tuples, int n) {
+    if (n <= 0) return 0;
+
+    int max = tuples[0].a + tuples[0].b;
+    for (int i = 1; i < n; ++i) {
+        int sum = tuples[i].a + tuples[i].b;
+        if (sum > max) {
+            max = sum;
+        }
+    }
+    return max;
+}
+
+int main() {
+    Tuple tuples[] = {{1, 2}, {3, 4}, {5, 6}};
+    int n = sizeof(tuples) / sizeof(tuples[0]);
+
+    int result = maxAggregate(tuples, n);
+    printf("Maximum aggregate: %d\n", result);
+
+    return 0;
+}

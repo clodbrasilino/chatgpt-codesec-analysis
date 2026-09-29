@@ -1,0 +1,60 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int check_same_elements(const int *list, size_t size) {
+    if (list == NULL || size == 0) {
+        return -1;
+    }
+    
+    if (size == 1) {
+        return 1;
+    }
+    
+    int first = list[0];
+    for (size_t i = 1; i < size; i++) {
+        if (list[i] != first) {
+            return 0;
+        }
+    }
+    
+    return 1;
+}
+
+int main(void) {
+    int list1[] = {5, 5, 5, 5, 5};
+    int list2[] = {5, 5, 3, 5, 5};
+    int list3[] = {7};
+    size_t size1 = sizeof(list1) / sizeof(list1[0]);
+    size_t size2 = sizeof(list2) / sizeof(list2[0]);
+    size_t size3 = sizeof(list3) / sizeof(list3[0]);
+    
+    int result1 = check_same_elements(list1, size1);
+    int result2 = check_same_elements(list2, size2);
+    int result3 = check_same_elements(list3, size3);
+    
+    if (result1 == 1) {
+        printf("List 1: All elements are same\n");
+    } else if (result1 == 0) {
+        printf("List 1: Elements are not same\n");
+    } else {
+        printf("List 1: Invalid input\n");
+    }
+    
+    if (result2 == 1) {
+        printf("List 2: All elements are same\n");
+    } else if (result2 == 0) {
+        printf("List 2: Elements are not same\n");
+    } else {
+        printf("List 2: Invalid input\n");
+    }
+    
+    if (result3 == 1) {
+        printf("List 3: All elements are same\n");
+    } else if (result3 == 0) {
+        printf("List 3: Elements are not same\n");
+    } else {
+        printf("List 3: Invalid input\n");
+    }
+    
+    return 0;
+}

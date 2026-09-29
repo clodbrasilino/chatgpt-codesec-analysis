@@ -1,0 +1,38 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+void print_positive_numbers(const int *list, size_t size) {
+    for (size_t i = 0; i < size; i++) {
+        if (list[i] > 0) {
+            printf("%d\n", list[i]);
+        }
+    }
+}
+
+int main(void) {
+    int *numbers = NULL;
+    size_t count = 0;
+    int input;
+
+    printf("Enter numbers (non-numeric to stop):\n");
+    while (scanf("%d", &input) == 1) {
+        int *temp = realloc(numbers, (count + 1) * sizeof(int));
+        if (temp == NULL) {
+            free(numbers);
+            return EXIT_FAILURE;
+        }
+        numbers = temp;
+        numbers[count] = input;
+        count++;
+    }
+
+    if (numbers != NULL) {
+        printf("Positive numbers:\n");
+        print_positive_numbers(numbers, count);
+    }
+
+    free(numbers);
+    return EXIT_SUCCESS;
+}
+```

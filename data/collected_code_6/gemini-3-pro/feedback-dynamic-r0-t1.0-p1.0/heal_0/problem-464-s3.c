@@ -1,0 +1,114 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdbool.h>
+
+typedef struct {
+    char *key;
+    int value;
+} KeyValuePair;
+
+typedef struct {
+    KeyValuePair *items;
+    size_t size;
+} Dictionary;
+
+bool are_all_values_same(const Dictionary *dict) {
+    if (dict == NULL || dict->size == 0) {
+        return true;
+    }
+
+    int first_value = dict->items[0].value;
+
+    for (size_t i = 1; i < dict->size; i++) {
+        if (dict->items[i].value != first_value) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+Dictionary* create_dictionary(size_t size) {
+    Dictionary *dict = (Dictionary*)malloc(sizeof(Dictionary));
+    if (dict == NULL) {
+        return NULL;
+    }
+
+    dict->items = (KeyValuePair*)malloc(size * sizeof(KeyValuePair));
+    if (dict->items == NULL) {
+        free(dict);
+        return NULL;
+    }
+
+    dict->size = size;
+    for (size_t i = 0; i < size; i++) {
+        dict->items[i].key = NULL;
+        dict->items[i].value = 0;
+    }
+
+    return dict;
+}
+
+void free_dictionary(Dictionary *dict) {
+    if (dict != NULL) {
+        if (dict->items != NULL) {
+            for (size_t i = 0; i < dict->size; i++) {
+                if (dict->items[i].key != NULL) {
+                    free(dict->items[i].key);
+                }
+            }
+            free(dict->items);
+        }
+        free(dict);
+    }
+}
+
+int main() {
+    Dictionary *dict1 = create_dictionary(3);
+    if (dict1 == NULL) {
+        return 1;
+    }
+
+    dict1->items[0].key = strdup("a");
+    dict1->items[0].value = 5;
+    dict1->items[1].key = strdup("b");
+    dict1->items[1].value = 5;
+    dict1->items[2].key = strdup("c");
+    dict1->items[2].value = 5;
+
+    if (dict1->items[0].key == NULL || dict1->items[1].key == NULL || dict1->items[2].key == NULL) {
+        free_dictionary(dict1);
+        return 1;
+    }
+
+    bool result1 = are_all_values_same(dict1);
+    printf("%d\n", result1);
+
+    Dictionary *dict2 = create_dictionary(3);
+    if (dict2 == NULL) {
+        free_dictionary(dict1);
+        return 1;
+    }
+
+    dict2->items[0].key = strdup("a");
+    dict2->items[0].value = 5;
+    dict2->items[1].key = strdup("b");
+    dict2->items[1].value = 10;
+    dict2->items[2].key = strdup("c");
+    dict2->items[2].value = 5;
+
+    if (dict2->items[0].key == NULL || dict2->items[1].key == NULL || dict2->items[2].key == NULL) {
+        free_dictionary(dict1);
+        free_dictionary(dict2);
+        return 1;
+    }
+
+    bool result2 = are_all_values_same(dict2);
+    printf("%d\n", result2);
+
+    free_dictionary(dict1);
+    free_dictionary(dict2);
+
+    return 0;
+}

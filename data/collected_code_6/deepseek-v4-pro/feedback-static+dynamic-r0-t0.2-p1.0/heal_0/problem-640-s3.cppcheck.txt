@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-640-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-640-s3.c:67:36: style: Condition 'r8' is always false [knownConditionTrueFalse]
+    printf("Test 8: NULL -> %s\n", r8 ? r8 : "NULL");
+                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-640-s3.c:58:39: note: Calling function 'remove_parenthesis_area' returns 0
+    char *r8 = remove_parenthesis_area(NULL);
+                                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-640-s3.c:58:39: note: Assignment 'r8=remove_parenthesis_area(NULL)', assigned value is 0
+    char *r8 = remove_parenthesis_area(NULL);
+                                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-640-s3.c:67:36: note: Condition 'r8' is always false
+    printf("Test 8: NULL -> %s\n", r8 ? r8 : "NULL");
+                                   ^

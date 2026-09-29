@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_3/healed/problem-898.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_3/healed/problem-898.c:56:22: style: Condition 'null_extract==NULL' is always true [knownConditionTrueFalse]
+    if (null_extract == NULL) {
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_3/healed/problem-898.c:55:43: note: Calling function 'extract_contiguous' returns 0
+    int *null_extract = extract_contiguous(NULL, list_len, 0, 2);
+                                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_3/healed/problem-898.c:55:43: note: Assignment 'null_extract=extract_contiguous(NULL,list_len,0,2)', assigned value is 0
+    int *null_extract = extract_contiguous(NULL, list_len, 0, 2);
+                                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_3/healed/problem-898.c:56:22: note: Condition 'null_extract==NULL' is always true
+    if (null_extract == NULL) {
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_3/healed/problem-898.c:50:10: style: Variable 'invalid_extract' can be declared as pointer to const [constVariablePointer]
+    int *invalid_extract = extract_contiguous(list, list_len, 8, 5);
+         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_3/healed/problem-898.c:55:10: style: Variable 'null_extract' can be declared as pointer to const [constVariablePointer]
+    int *null_extract = extract_contiguous(NULL, list_len, 0, 2);
+         ^

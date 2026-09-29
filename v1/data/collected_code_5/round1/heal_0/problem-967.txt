@@ -1,0 +1,55 @@
+```c
+#include <stdbool.h>
+#include <string.h>
+#include <stdio.h>
+
+bool checkAllVowels(char* str) {
+    bool flags[5] = {false};
+
+    for(int i = 0; i < strlen(str); i++) {
+        switch(str[i]) {
+            case 'a':
+            case 'A':
+                flags[0] = true;
+                break;
+
+            case 'e':
+            case 'E':
+                flags[1] = true;
+                break;
+
+            case 'i':
+            case 'I':
+                flags[2] = true;
+                break;
+
+            case 'o':
+            case 'O':
+                flags[3] = true;
+                break;
+
+            case 'u':
+            case 'U':
+                flags[4] = true;
+                break;
+
+            default:
+                break;
+        }
+    }
+
+    return (flags[0] && flags[1] && flags[2] && flags[3] && flags[4]);
+}
+
+int main(void) {
+    char str[] = "Education Qualification";
+    
+    if(checkAllVowels(str)) {
+        printf("The string contains all vowels\n");
+    } else {
+        printf("The string does not contain all vowels\n");
+    }
+
+    return 0;
+}
+```

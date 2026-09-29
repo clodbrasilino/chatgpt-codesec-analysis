@@ -1,0 +1,72 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node* next;
+};
+
+void push(struct Node** head_ref, int new_data) {
+    struct Node* new_node = (struct Node*)malloc(sizeof(struct Node));
+     
+    if (!new_node) return;   // added check for null
+    
+    new_node->data = new_data;
+    new_node->next = (*head_ref);
+    (*head_ref) = new_node;
+}
+
+void freeList(struct Node* node) { // function to properly free memory
+    struct Node* tmp;
+
+    while (node != NULL){
+        tmp = node;
+        node = node->next;
+        free(tmp);
+    }
+}
+
+void printList(struct Node *node) {
+    while (node != NULL) {
+        printf("%d ", node->data);
+        node = node->next;
+    }
+}
+
+void findSingleOccurrence(struct Node** head) {
+    struct Node* current = *head;
+    struct Node* prev = NULL;
+    while (current != NULL) {
+        if (current->next != NULL && current->data == current->next->data) {
+            while (current->next != NULL && current->data == current->next->data) {
+                current = current->next;
+            }
+            if (prev != NULL) {
+                prev->next = current->next;
+            } else {
+                *head = current->next;
+            }
+        } else {
+            prev = current;
+        }
+        current = current->next;
+    }
+    printList(*head);
+    freeList(*head); // properly free the memory at the end
+}
+
+int main() {
+    struct Node* head = NULL;
+
+    push(&head, 5);
+    push(&head, 5);
+    push(&head, 4);
+    push(&head, 3);
+    push(&head, 3);
+    push(&head, 2);
+    push(&head, 1);
+
+    findSingleOccurrence(&head);
+
+    return 0;
+}

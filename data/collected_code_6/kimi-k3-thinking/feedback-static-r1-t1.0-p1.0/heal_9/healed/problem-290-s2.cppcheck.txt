@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_9/healed/problem-290-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_9/healed/problem-290-s2.c:108:30: style: Condition 'src_size<=copy_size' is always true [knownConditionTrueFalse]
+                if (src_size <= copy_size && src_size > 0) {
+                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_9/healed/problem-290-s2.c:95:30: note: Assuming that condition 'src_size>copy_size' is not redundant
+                if (src_size > copy_size || lists[i].data == NULL) {
+                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_9/healed/problem-290-s2.c:102:42: note: Assuming condition is false
+                if (result.lists[j].data == NULL) {
+                                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_9/healed/problem-290-s2.c:108:30: note: Condition 'src_size<=copy_size' is always true
+                if (src_size <= copy_size && src_size > 0) {
+                             ^

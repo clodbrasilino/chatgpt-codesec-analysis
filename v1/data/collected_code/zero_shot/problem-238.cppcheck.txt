@@ -1,0 +1,6 @@
+collected_code/problem-238-0.c:5:25: error: Cannot determine that 'str[0]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+    int length = strlen(str);
+                        ^
+collected_code/problem-238-0.c:20:21: error: Cannot determine that 'str[0]' is initialized [premium-bughuntingUninit]
+    scanf("%[^\n]", str);
+                    ^

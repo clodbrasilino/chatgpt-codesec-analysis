@@ -1,0 +1,102 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_INPUT_LEN 4096
+
+struct Node {
+    char data;
+    struct Node *next;
+};
+
+struct Node *create_node(char c)
+{
+    struct Node *node = malloc(sizeof(struct Node));
+    if (node == NULL) {
+        return NULL;
+    }
+    node->data = c;
+    node->next = NULL;
+    return node;
+}
+
+void free_list(struct Node *head)
+{
+    while (head != NULL) {
+        struct Node *tmp = head;
+        head = head->next;
+        free(tmp);
+    }
+}
+
+struct Node *string_to_list(const char *str)
+{
+    struct Node *head = NULL;
+    struct Node *tail = NULL;
+    size_t i;
+    size_t len;
+
+    if (str == NULL) {
+        return NULL;
+    }
+
+    len = strnlen(str, MAX_INPUT_LEN);
+
+    for (i = 0; i < len; i++) {
+        struct Node *node = create_node(str[i]);
+        if (node == NULL) {
+            free_list(head);
+            return NULL;
+        }
+        if (head == NULL) {
+            head = node;
+            tail = node;
+        } else {
+            tail->next = node;
+            tail = node;
+        }
+    }
+
+    return head;
+}
+
+void print_list(const struct Node *head)
+{
+    const struct Node *current = head;
+    while (current != NULL) {
+        if (printf("%c -> ", current->data) < 0) {
+            return;
+        }
+        current = current->next;
+    }
+    (void)printf("NULL\n");
+}
+
+int main(void)
+{
+    const char *input = "Hello, World!";
+    struct Node *list = string_to_list(input);
+
+    if (list == NULL) {
+        (void)fprintf(stderr, "Failed to convert string to list\n");
+        return EXIT_FAILURE;
+    }
+
+    print_list(list);
+    free_list(list);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Key change:** The `strlen` call was replaced with `strnlen(str, MAX_INPUT_LEN)`, which bounds the scan to a defined maximum length. This mitigates the CWE-126 over-read risk flagged by Flawfinder: if the function is ever passed a buffer that is not properly `\0`-terminated, the read is capped at `MAX_INPUT_LEN` bytes rather than running off the end of the allocation.
+
+A few additional notes on the code's robustness:
+
+- **NULL input** is already guarded in `string_to_list`, avoiding a dereference of a NULL pointer.
+- **Allocation failure** in `create_node` is handled correctly — the partially built list is freed before returning `NULL`, so there are no memory leaks on the error path.
+- **`printf` return values** are checked or explicitly cast to `(void)`, satisfying stricter static analyzers (e.g., MISRA/CERT-style checks).
+- Since `MAX_INPUT_LEN` truncates overly long input silently, if truncation should be treated as an error in your use case, you could compare the result of `strnlen` against `MAX_INPUT_LEN` and reject the input when they're equal.
+
+Note that `strnlen` is POSIX (and C23); if you need strict C99/C11 portability, an equivalent bounded loop can be written manually.

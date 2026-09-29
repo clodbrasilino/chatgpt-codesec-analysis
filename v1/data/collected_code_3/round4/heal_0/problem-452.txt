@@ -1,0 +1,28 @@
+```C
+#include <stdio.h>
+
+float calculateLoss(float costPrice, float sellingPrice) {
+    float loss = costPrice - sellingPrice;
+    return (loss > 0) ? loss : 0;
+}
+
+int main() {
+    float costPrice, sellingPrice, loss;
+
+    printf("Enter cost price: ");
+    scanf("%f", &costPrice);
+
+    printf("Enter selling price: ");
+    scanf("%f", &sellingPrice);
+
+    loss = calculateLoss(costPrice, sellingPrice);
+
+    if(loss > 0) {
+        printf("Loss amount: %.2f\n", loss);
+    } else {
+        printf("No loss\n");
+    }
+
+    return 0;
+}
+```

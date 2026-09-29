@@ -1,0 +1,44 @@
+#include <stdio.h>
+#include <math.h>
+
+int count_quadratic_solutions(double a, double b, double c) {
+    if (a == 0.0) {
+        if (b == 0.0) {
+            return (c == 0.0) ? -1 : 0;
+        }
+        return 1;
+    }
+
+    double discriminant = (b * b) - (4 * a * c);
+
+    if (discriminant > 0.0) {
+        return 2;
+    } else if (discriminant == 0.0) {
+        return 1;
+    } else {
+        return 0;
+    }
+}
+
+int main(void) {
+    double a = 0.0;
+    double b = 0.0;
+    double c = 0.0;
+
+    int result = scanf("%lf %lf %lf", &a, &b, &c);
+    
+    if (result != 3) {
+        fprintf(stderr, "Error: Invalid input.\n");
+        return 1;
+    }
+
+    int solutions = count_quadratic_solutions(a, b, c);
+
+    if (solutions == -1) {
+        printf("Infinite solutions\n");
+    } else {
+        printf("%d\n", solutions);
+    }
+
+    return 0;
+}

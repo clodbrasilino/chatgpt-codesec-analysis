@@ -1,0 +1,44 @@
+{
+  "task_id": 681,
+  "text": "Write a C function to find the smallest prime divisor of a number.",
+  "fn_candidates": [
+    "smallest_Divisor",
+    "SmallestDivisor",
+    "smallestDivisor",
+    "smallestDivisor"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "smallest_Divisor",
+      "args": [
+        10
+      ],
+      "expected": 2,
+      "assert_src": "assert smallest_Divisor(10) == 2"
+    },
+    {
+      "fn_name": "smallest_Divisor",
+      "args": [
+        25
+      ],
+      "expected": 5,
+      "assert_src": "assert smallest_Divisor(25) == 5"
+    },
+    {
+      "fn_name": "smallest_Divisor",
+      "args": [
+        31
+      ],
+      "expected": 31,
+      "assert_src": "assert smallest_Divisor(31) == 31"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

@@ -1,0 +1,65 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node* next;
+} Node;
+
+int count_elements_in_range(Node* head, int min_val, int max_val) {
+    int count = 0;
+    Node* current = head;
+    
+    if (min_val > max_val) {
+        return 0;
+    }
+    
+    while (current != NULL) {
+        if (current->data >= min_val && current->data <= max_val) {
+            count++;
+        }
+        current = current->next;
+    }
+    
+    return count;
+}
+
+Node* create_node(int data) {
+    Node* new_node = (Node*)malloc(sizeof(Node));
+    if (new_node == NULL) {
+        exit(EXIT_FAILURE);
+    }
+    new_node->data = data;
+    new_node->next = NULL;
+    return new_node;
+}
+
+void free_list(Node* head) {
+    Node* current = head;
+    Node* next_node;
+    
+    while (current != NULL) {
+        next_node = current->next;
+        free(current);
+        current = next_node;
+    }
+}
+
+int main(void) {
+    Node* head = create_node(5);
+    head->next = create_node(10);
+    head->next->next = create_node(15);
+    head->next->next->next = create_node(20);
+    head->next->next->next->next = create_node(25);
+    
+    int min_val = 10;
+    int max_val = 20;
+    
+    int count = count_elements_in_range(head, min_val, max_val);
+    
+    printf("Number of elements in range [%d, %d]: %d\n", min_val, max_val, count);
+    
+    free_list(head);
+    
+    return EXIT_SUCCESS;
+}

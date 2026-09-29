@@ -1,0 +1,52 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+
+void remove_words_of_length(char *str, size_t bufsize, size_t k) {
+    if (!str || bufsize == 0) {
+        return;
+    }
+
+    size_t r = 0;
+    size_t w = 0;
+
+    while (r < bufsize && str[r] != '\0') {
+        if (isalpha((unsigned char)str[r])) {
+            size_t start = r;
+            size_t length = 0;
+
+            while (r < bufsize && str[r] != '\0' && isalpha((unsigned char)str[r])) {
+                length++;
+                r++;
+            }
+
+            if (length != k) {
+                for (size_t i = 0; i < length; i++) {
+                    if (w < bufsize - 1) {
+                        str[w++] = str[start + i];
+                    }
+                }
+            }
+        } else {
+            if (w < bufsize - 1) {
+                str[w++] = str[r];
+            }
+            r++;
+        }
+    }
+
+    str[w] = '\0';
+}
+
+int main(void) {
+    char text[] = "The quick brown fox jumps over the lazy dog";
+    size_t k = 3;
+
+    printf("Before: %s\n", text);
+    remove_words_of_length(text, sizeof(text), k);
+    printf("After: %s\n", text);
+
+    return 0;
+}
+```

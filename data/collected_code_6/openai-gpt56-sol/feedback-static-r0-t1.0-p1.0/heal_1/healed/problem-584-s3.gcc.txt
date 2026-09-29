@@ -1,0 +1,10 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-584-s3.c: In function 'find_adverbs':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-584-s3.c:71:14: error: 'uintmax_t' undeclared (first use in this function); did you mean 'uintptr_t'?
+   71 |         if ((uintmax_t)match.rm_so > SIZE_MAX - offset ||
+      |              ^~~~~~~~~
+      |              uintptr_t
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-584-s3.c:71:14: note: each undeclared identifier is reported only once for each function it appears in
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-584-s3.c:71:24: error: expected ')' before 'match'
+   71 |         if ((uintmax_t)match.rm_so > SIZE_MAX - offset ||
+      |            ~           ^~~~~
+      |                        )

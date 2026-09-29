@@ -1,0 +1,7 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-772.c:14:40: error: call to undeclared function 'strtok_r'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   14 |     for (const char *s = str; (token = strtok_r((char*)s, " ", &saveptr)) != NULL; s = NULL) {
+      |                                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-772.c:14:38: error: incompatible integer to pointer conversion assigning to 'const char *' from 'int' [-Wint-conversion]
+   14 |     for (const char *s = str; (token = strtok_r((char*)s, " ", &saveptr)) != NULL; s = NULL) {
+      |                                      ^ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+2 errors generated.

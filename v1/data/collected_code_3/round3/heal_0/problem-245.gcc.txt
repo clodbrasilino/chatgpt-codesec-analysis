@@ -1,0 +1,68 @@
+collected_code_3/problem-245-3.c: In function 'maxBiotonic':
+collected_code_3/problem-245-3.c:9:12: warning: dereference of possibly-NULL 'inc' [CWE-690] [-Wanalyzer-possible-null-dereference]
+    9 |     inc[0] = 1;
+      |     ~~~~~~~^~~
+  'maxBiotonic': events 1-2
+    |
+    |    5 |     int *inc = (int *)malloc(sizeof(int) * n);
+    |      |                       ^~~~~~~~~~~~~~~~~~~~~~~
+    |      |                       |
+    |      |                       (1) this call could return NULL
+    |......
+    |    9 |     inc[0] = 1;
+    |      |     ~~~~~~~~~~         
+    |      |            |
+    |      |            (2) 'inc' could be NULL: unchecked value from (1)
+    |
+collected_code_3/problem-245-3.c:20:23: warning: dereference of possibly-NULL 'dec' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   20 |     max = inc[0] + dec[0] - 1;
+      |                    ~~~^~~
+  'main': events 1-2
+    |
+    |   33 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   36 |     printf("Length of max length Bitonic Subarray is %d\n", maxBiotonic(arr, n));
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) calling 'maxBiotonic' from 'main'
+    |
+    +--> 'maxBiotonic': events 3-13
+           |
+           |    4 | int maxBiotonic(int *arr, int n) {
+           |      |     ^~~~~~~~~~~
+           |      |     |
+           |      |     (3) entry to 'maxBiotonic'
+           |    5 |     int *inc = (int *)malloc(sizeof(int) * n);
+           |    6 |     int *dec = (int *)malloc(sizeof(int) * n);
+           |      |                       ~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                       |
+           |      |                       (4) this call could return NULL
+           |......
+           |   12 |     for (i = 1; i < n; i++) {
+           |      |                 ~~~~~
+           |      |                   |
+           |      |                   (5) following 'true' branch (when 'i < n')...
+           |   13 |         inc[i] = (arr[i] >= arr[i - 1]) ? inc[i - 1] + 1 : 1;
+           |      |                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                      |                       |           |
+           |      |                      |                       |           (7) following 'true' branch...
+           |      |                      (6) ...to here          (8) ...to here
+           |......
+           |   16 |     for (i = n - 2; i >= 0; i--) {
+           |      |                     ~~~~~~
+           |      |                       |
+           |      |                       (9) following 'true' branch (when 'i >= 0')...
+           |   17 |         dec[i] = (arr[i] >= arr[i + 1]) ? dec[i + 1] + 1 : 1;
+           |      |                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                      |                       |           |
+           |      |                      |                       |           (11) following 'true' branch...
+           |      |                      (10) ...to here         (12) ...to here
+           |......
+           |   20 |     max = inc[0] + dec[0] - 1;
+           |      |                    ~~~~~~
+           |      |                       |
+           |      |                       (13) 'dec' could be NULL: unchecked value from (4)
+           |

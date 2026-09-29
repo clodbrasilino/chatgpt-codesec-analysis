@@ -1,0 +1,7 @@
+./collected_code_4/round2//heal_0/problem-298.c:18:1: error: unknown type name 'bool'
+   18 | bool isPresent (struct Node *head, int data)
+      | ^~~~
+./collected_code_4/round2//heal_0/problem-298.c:3:1: note: 'bool' is defined in header '<stdbool.h>'; did you forget to '#include <stdbool.h>'?
+    2 | #include <stdlib.h>
+  +++ |+#include <stdbool.h>
+    3 | 

@@ -1,0 +1,70 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdbool.h>
+#include <limits.h>
+
+#define MAX_INPUT_LEN 4096
+
+bool can_rearrange_no_adjacent(const char *str, size_t max_len)
+{
+    size_t counts[UCHAR_MAX + 1] = {0};
+    size_t len;
+    size_t max_count = 0;
+    size_t i;
+
+    if (str == NULL) {
+        return false;
+    }
+
+    len = strnlen(str, max_len);
+    if (len == max_len && str[len - 1] != '\0') {
+        return false;
+    }
+
+    if (len == 0) {
+        return true;
+    }
+
+    for (i = 0; i < len; i++) {
+        unsigned char c = (unsigned char)str[i];
+        counts[c]++;
+        if (counts[c] > max_count) {
+            max_count = counts[c];
+        }
+    }
+
+    return max_count <= (len + 1) / 2;
+}
+
+int main(void)
+{
+    const char *tests[] = {
+        "aab",
+        "aaab",
+        "aabb",
+        "a",
+        "",
+        "abcdef",
+        "aaaa"
+    };
+    size_t num_tests = sizeof(tests) / sizeof(tests[0]);
+    size_t i;
+
+    for (i = 0; i < num_tests; i++) {
+        bool result = can_rearrange_no_adjacent(tests[i], MAX_INPUT_LEN);
+        if (printf("\"%s\": %s\n", tests[i], result ? "yes" : "no") < 0) {
+            return EXIT_FAILURE;
+        }
+    }
+
+    if (can_rearrange_no_adjacent(NULL, MAX_INPUT_LEN)) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+The key change addresses the Flawfinder CWE-126 finding: `strlen` was replaced with `strnlen` bounded by an explicit maximum length passed as a parameter. This guarantees the scan for the terminator never reads past `max_len` bytes, preventing a buffer over-read if a non-terminated string is passed. If the bound is reached without finding a terminator, the function safely rejects the input instead of over-reading. The rest of the logic (frequency counting via `unsigned char` indexing into a `UCHAR_MAX + 1` array, the `(len + 1) / 2` pigeonhole check, `NULL` handling, and the checked `printf` return value) was already sound and is preserved.

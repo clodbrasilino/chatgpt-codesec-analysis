@@ -1,0 +1,71 @@
+```c
+#include <stdio.h>
+#include <stddef.h>
+#include <string.h>
+
+#define BUFFER_SIZE 256
+
+size_t string_length(const char *str)
+{
+    size_t length = 0;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    while (str[length] != '\0') {
+        length++;
+    }
+
+    return length;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t length;
+    size_t i;
+
+    printf("Enter a string: ");
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    i = 0;
+    while (i < sizeof(buffer) && buffer[i] != '\0') {
+        if (buffer[i] == '\n') {
+            buffer[i] = '\0';
+            break;
+        }
+        i++;
+    }
+
+    length = string_length(buffer);
+
+    printf("Length of the string: %zu\n", length);
+
+    return 0;
+}
+```
+
+**Analysis of the original code:**
+
+The Flawfinder warning about the statically-sized `char buffer[BUFFER_SIZE]` (CWE-119/CWE-120) is a low-risk, informational finding rather than an actual vulnerability in this code. The original source already implements all the recommended mitigations:
+
+1. **Bounded input reading** — `fgets(buffer, sizeof(buffer), stdin)` limits input to the buffer size, unlike the dangerous `gets()`. It writes at most `sizeof(buffer) - 1` characters plus a null terminator.
+
+2. **Guaranteed null termination** — `buffer[sizeof(buffer) - 1] = '\0';` is a defensive measure ensuring termination even in edge cases (technically redundant after a successful `fgets`, but harmless).
+
+3. **Bounds-checked iteration** — The newline-stripping loop checks `i < sizeof(buffer)` before dereferencing, preventing out-of-bounds reads.
+
+4. **Safe custom length function** — `string_length()` includes a `NULL` check and only reads until the terminator, which is guaranteed to exist by the earlier steps.
+
+5. **Return value checking** — The `fgets` result is checked for `NULL`, handling EOF and read errors gracefully.
+
+6. **Correct format specifier** — `%zu` is the proper specifier for `size_t`, avoiding undefined behavior on platforms where `size_t` differs from `unsigned int`.
+
+Since the code already satisfies the bounds-checking requirements the warning suggests, the rewrite is functionally identical with the comments removed. No actual fix was required — the warning is a false positive triggered simply by the presence of a fixed-size array.

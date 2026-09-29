@@ -1,0 +1,38 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_2/healed/problem-400-s3.c:62:9: error: incompatible pointer to integer conversion initializing 'int' with an expression of type 'void *' [-Wint-conversion]
+   62 |     int boolean_processed = NULL;
+      |         ^                   ~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_2/healed/problem-400-s3.c:79:23: error: incompatible pointer to integer conversion assigning to 'int' from 'int *'; dereference with * [-Wint-conversion]
+   79 |     boolean_processed = (int *)calloc((size_t)tuple_count, sizeof(int));
+      |                       ^ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      |                         *
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_2/healed/problem-400-s3.c:83:14: error: incompatible integer to pointer conversion passing 'int' to parameter of type 'void *' [-Wint-conversion]
+   83 |         free(boolean_processed);
+      |              ^~~~~~~~~~~~~~~~~
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/malloc/_malloc.h:56:37: note: passing argument to parameter here
+   56 | void  free(void * __unsafe_indexable);
+      |                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_2/healed/problem-400-s3.c:92:30: error: subscripted value is not an array, pointer, or vector
+   92 |         if (boolean_processed[i]) {
+      |             ~~~~~~~~~~~~~~~~~^~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_2/healed/problem-400-s3.c:102:18: error: incompatible integer to pointer conversion passing 'int' to parameter of type 'void *' [-Wint-conversion]
+  102 |             free(boolean_processed);
+      |                  ^~~~~~~~~~~~~~~~~
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/malloc/_malloc.h:56:37: note: passing argument to parameter here
+   56 | void  free(void * __unsafe_indexable);
+      |                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_2/healed/problem-400-s3.c:112:26: error: subscripted value is not an array, pointer, or vector
+  112 |         boolean_processed[i] = 1;
+      |         ~~~~~~~~~~~~~~~~~^~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_2/healed/problem-400-s3.c:115:35: error: subscripted value is not an array, pointer, or vector
+  115 |             if (!boolean_processed[j] && compare_tuples(tuples[i], tuples[j], tuple_size) == 1) {
+      |                  ~~~~~~~~~~~~~~~~~^~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_2/healed/problem-400-s3.c:117:34: error: subscripted value is not an array, pointer, or vector
+  117 |                 boolean_processed[j] = 1;
+      |                 ~~~~~~~~~~~~~~~~~^~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_2/healed/problem-400-s3.c:124:10: error: incompatible integer to pointer conversion passing 'int' to parameter of type 'void *' [-Wint-conversion]
+  124 |     free(boolean_processed);
+      |          ^~~~~~~~~~~~~~~~~
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/malloc/_malloc.h:56:37: note: passing argument to parameter here
+   56 | void  free(void * __unsafe_indexable);
+      |                                     ^
+9 errors generated.

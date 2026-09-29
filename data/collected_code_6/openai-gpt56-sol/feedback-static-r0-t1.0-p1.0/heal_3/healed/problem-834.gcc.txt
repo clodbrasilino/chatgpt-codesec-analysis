@@ -1,0 +1,21 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-834.c: In function 'read_matrix_size':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-834.c:123:9: error: implicit declaration of function 'strchr' [-Wimplicit-function-declaration]
+  123 |     if (strchr(buffer, '\n') == NULL) {
+      |         ^~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-834.c:6:1: note: include '<string.h>' or provide a declaration of 'strchr'
+    5 | #include <stdlib.h>
+  +++ |+#include <string.h>
+    6 | 
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-834.c:143:5: error: 'errno' undeclared (first use in this function)
+  143 |     errno = 0;
+      |     ^~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-834.c:6:1: note: 'errno' is defined in header '<errno.h>'; this is probably fixable by adding '#include <errno.h>'
+    5 | #include <stdlib.h>
+  +++ |+#include <errno.h>
+    6 | 
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-834.c:143:5: note: each undeclared identifier is reported only once for each function it appears in
+  143 |     errno = 0;
+      |     ^~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-834.c:146:18: error: 'ERANGE' undeclared (first use in this function)
+  146 |     if (errno == ERANGE || end == start || parsed == 0) {
+      |                  ^~~~~~

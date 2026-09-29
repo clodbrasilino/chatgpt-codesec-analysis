@@ -1,0 +1,52 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+long long binomial_coefficient(int n, int k) {
+    if (k < 0 || k > n || n < 0) {
+        return 0;
+    }
+    
+    if (k > n - k) {
+        k = n - k;
+    }
+    
+    long long result = 1;
+    for (int i = 0; i < k; i++) {
+        if (result > LLONG_MAX / (n - i)) {
+            return 0;
+        }
+        result = result * (n - i);
+        result = result / (i + 1);
+    }
+    
+    return result;
+}
+
+int main(void) {
+    int n, k;
+    
+    printf("Enter n: ");
+    if (scanf("%d", &n) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("Enter k: ");
+    if (scanf("%d", &k) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    long long result = binomial_coefficient(n, k);
+    if (result == 0 && n > 0 && k > 0 && k < n) {
+        fprintf(stderr, "Result overflow\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("C(%d, %d) = %lld\n", n, k, result);
+    
+    return EXIT_SUCCESS;
+}
+```

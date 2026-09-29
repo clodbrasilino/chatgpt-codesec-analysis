@@ -1,0 +1,4 @@
+problem-348-s2.c:8:42:medium:UBSan: index 99 out of bounds for type 'long long[51][201]' (AFL crash: id:000001,sig:06,src:000000,time:12823,execs:5042,op:havoc,rep:7)
+problem-348-s2.c:15:13:medium:UBSan: index 96 out of bounds for type 'long long[51][201]' (AFL crash: id:000001,sig:06,src:000000,time:12823,execs:5042,op:havoc,rep:7)
+problem-348-s2.c:19:12:medium:UBSan: index 96 out of bounds for type 'long long[51][201]' (AFL crash: id:000001,sig:06,src:000000,time:12823,execs:5042,op:havoc,rep:7)
+problem-348-s2.c:21:0:error:Fuzzing found a crash (signal 6) on input id:000000,sig:06,src:000000,time:641,execs:244,op:havoc,rep:4; likely memory-safety defect

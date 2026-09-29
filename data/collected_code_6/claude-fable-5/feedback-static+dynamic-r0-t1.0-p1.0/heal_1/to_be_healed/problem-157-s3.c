@@ -1,0 +1,82 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int value;
+    size_t count;
+} RlePair;
+
+static RlePair *run_length_encode(const int *data, size_t length, size_t *out_size)
+{
+    RlePair *result;
+    size_t capacity;
+    size_t pairs;
+    size_t i;
+
+    if (out_size == NULL) {
+        return NULL;
+    }
+
+    *out_size = 0;
+
+    if (data == NULL || length == 0) {
+        return NULL;
+    }
+
+    capacity = length;
+    result = malloc(capacity * sizeof(RlePair));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    /* Possible weaknesses found:
+     *  Value stored to 'pairs' is never read [deadcode.DeadStores]
+     */
+    pairs = 0;
+    result[0].value = data[0];
+    result[0].count = 1;
+    pairs = 1;
+
+    for (i = 1; i < length; i++) {
+        if (data[i] == result[pairs - 1].value) {
+            result[pairs - 1].count++;
+        } else {
+            result[pairs].value = data[i];
+            result[pairs].count = 1;
+            pairs++;
+        }
+    }
+
+    if (pairs < capacity) {
+        RlePair *shrunk = realloc(result, pairs * sizeof(RlePair));
+        if (shrunk != NULL) {
+            result = shrunk;
+        }
+    }
+
+    *out_size = pairs;
+    return result;
+}
+
+int main(void)
+{
+    int input[] = {1, 1, 2, 3, 3, 3, 4, 4, 5, 5, 5, 5};
+    size_t input_length = sizeof(input) / sizeof(input[0]);
+    size_t encoded_size = 0;
+    size_t i;
+    RlePair *encoded;
+
+    encoded = run_length_encode(input, input_length, &encoded_size);
+    if (encoded == NULL) {
+        fprintf(stderr, "Encoding failed\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Run-length encoding:\n");
+    for (i = 0; i < encoded_size; i++) {
+        printf("(%d, %zu)\n", encoded[i].value, encoded[i].count);
+    }
+
+    free(encoded);
+    return EXIT_SUCCESS;
+}

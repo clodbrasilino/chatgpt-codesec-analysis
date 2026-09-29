@@ -1,0 +1,47 @@
+{
+  "task_id": 874,
+  "text": "Write a C function to check if the string is a concatenation of another string.",
+  "fn_candidates": [
+    "check_Concat",
+    "CheckConcat",
+    "checkConcat",
+    "checkConcat"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "check_Concat",
+      "args": [
+        "abcabcabc",
+        "abc"
+      ],
+      "expected": true,
+      "assert_src": "assert check_Concat(\"abcabcabc\",\"abc\") == True"
+    },
+    {
+      "fn_name": "check_Concat",
+      "args": [
+        "abcab",
+        "abc"
+      ],
+      "expected": false,
+      "assert_src": "assert check_Concat(\"abcab\",\"abc\") == False"
+    },
+    {
+      "fn_name": "check_Concat",
+      "args": [
+        "aba",
+        "ab"
+      ],
+      "expected": false,
+      "assert_src": "assert check_Concat(\"aba\",\"ab\") == False"
+    }
+  ],
+  "arg_kinds": [
+    "str"
+  ],
+  "return_kind": "bool",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

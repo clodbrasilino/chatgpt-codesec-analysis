@@ -1,0 +1,85 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+#define MAX_DIGITS 32
+
+static int is_palindrome(unsigned long long n)
+{
+    unsigned char digits[MAX_DIGITS];
+    size_t count = 0;
+    size_t i;
+
+    do {
+        if (count >= MAX_DIGITS) {
+            return 0;
+        }
+        digits[count] = (unsigned char)(n % 10ULL);
+        count++;
+        n /= 10ULL;
+    } while (n > 0ULL);
+
+    for (i = 0; i < count / 2; i++) {
+        if (digits[i] != digits[count - 1 - i]) {
+            return 0;
+        }
+    }
+    return 1;
+}
+
+static int next_palindrome(unsigned long long n, unsigned long long *result)
+{
+    if (result == NULL) {
+        return -1;
+    }
+    while (n < ULLONG_MAX) {
+        n++;
+        if (is_palindrome(n)) {
+            *result = n;
+            return 0;
+        }
+    }
+    return -1;
+}
+
+int main(void)
+{
+    unsigned long long n;
+    unsigned long long pal;
+
+    if (printf("Enter a non-negative number: ") < 0) {
+        return EXIT_FAILURE;
+    }
+
+    if (scanf("%llu", &n) != 1) {
+        fprintf(stderr, "Error: invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (next_palindrome(n, &pal) != 0) {
+        fprintf(stderr, "Error: no next palindrome exists within the representable range\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Next palindrome: %llu\n", pal) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The original code was already well-defended against the flagged weakness. The Flawfinder warning on `unsigned char digits[MAX_DIGITS]` (CWE-119/CWE-120) is a heuristic hit on any statically-sized array; the actual risk is mitigated because:
+
+1. **Bounds checking is enforced** — the `if (count >= MAX_DIGITS) return 0;` guard executes *before* every write to `digits[count]`, making overflow impossible. Additionally, `unsigned long long` has at most 20 decimal digits, so `MAX_DIGITS` of 32 provides ample headroom.
+
+2. **The read loop is safe** — indices `i` and `count - 1 - i` are always within `[0, count)` since `i < count / 2` and `count >= 1` (the `do/while` guarantees at least one digit is stored).
+
+3. **No unbounded string functions** are used; `scanf("%llu", ...)` parses a numeric value into a fixed-size integer rather than a buffer.
+
+4. **Overflow in `next_palindrome`** is prevented by the `n < ULLONG_MAX` guard before incrementing, and the `NULL` check protects the output pointer.
+
+The rewrite preserves all these defenses, splits the increment out of the array-index expression for clarity, and adds a return-value check on the prompt `printf` for full I/O error handling consistency. No functional or security changes were required beyond what the original already implemented correctly.

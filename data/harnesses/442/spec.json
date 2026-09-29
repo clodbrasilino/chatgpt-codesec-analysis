@@ -1,0 +1,82 @@
+{
+  "task_id": 442,
+  "text": "Write a C function to find the ration of positive numbers in an array of integers.",
+  "fn_candidates": [
+    "positive_count",
+    "PositiveCount",
+    "positiveCount",
+    "positivecount"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "positive_count",
+      "args": [
+        [
+          0,
+          1,
+          2,
+          -1,
+          -5,
+          6,
+          0,
+          -3,
+          -2,
+          3,
+          4,
+          6,
+          8
+        ]
+      ],
+      "expected": 0.54,
+      "assert_src": "assert positive_count([0, 1, 2, -1, -5, 6, 0, -3, -2, 3, 4, 6, 8])==0.54"
+    },
+    {
+      "fn_name": "positive_count",
+      "args": [
+        [
+          2,
+          1,
+          2,
+          -1,
+          -5,
+          6,
+          4,
+          -3,
+          -2,
+          3,
+          4,
+          6,
+          8
+        ]
+      ],
+      "expected": 0.69,
+      "assert_src": "assert positive_count([2, 1, 2, -1, -5, 6, 4, -3, -2, 3, 4, 6, 8])==0.69"
+    },
+    {
+      "fn_name": "positive_count",
+      "args": [
+        [
+          2,
+          4,
+          -6,
+          -9,
+          11,
+          -12,
+          14,
+          -5,
+          17
+        ]
+      ],
+      "expected": 0.56,
+      "assert_src": "assert positive_count([2, 4, -6, -9, 11, -12, 14, -5, 17])==0.56"
+    }
+  ],
+  "arg_kinds": [
+    "int-list"
+  ],
+  "return_kind": "float",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

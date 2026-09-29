@@ -1,0 +1,4 @@
+problem-36-s2.c:11:21:medium:UBSan: negation of -9223372036854775808 cannot be represented in type 'long long'; cast to an unsigned type to negate this value to itself (AFL crash: id:000003,sig:06,src:000010,time:45898,execs:25655,op:havoc,rep:2)
+problem-36-s2.c:20:19:medium:UBSan: signed integer overflow: 1000000000000000000 * 10 cannot be represented in type 'long long' (AFL crash: id:000000,sig:06,src:000001,time:518,execs:344,op:havoc,rep:3)
+problem-36-s2.c:20:19:medium:UBSan: signed integer overflow: 3000000000000000000 * 10 cannot be represented in type 'long long' (AFL crash: id:000001,sig:06,src:000009,time:8901,execs:5269,op:havoc,rep:4)
+problem-36-s2.c:20:19:medium:UBSan: signed integer overflow: 1800000000000000000 * 10 cannot be represented in type 'long long' (AFL crash: id:000002,sig:06,src:000010,time:31106,execs:17645,op:havoc,rep:23)

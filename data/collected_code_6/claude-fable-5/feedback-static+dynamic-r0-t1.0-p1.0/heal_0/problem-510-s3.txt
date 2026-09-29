@@ -1,0 +1,74 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+long long countSubsequencesHelper(const long long *arr, size_t n, size_t idx,
+                                  long long prod, int taken, long long k)
+{
+    long long excluded;
+    long long included;
+    long long next;
+
+    if (idx == n) {
+        if ((taken != 0) && (prod < k)) {
+            return 1LL;
+        }
+        return 0LL;
+    }
+
+    excluded = countSubsequencesHelper(arr, n, idx + 1U, prod, taken, k);
+
+    if ((arr[idx] != 0LL) && (prod > (k / arr[idx]))) {
+        next = k;
+    } else {
+        next = prod * arr[idx];
+        if (next > k) {
+            next = k;
+        }
+    }
+
+    included = countSubsequencesHelper(arr, n, idx + 1U, next, 1, k);
+
+    return excluded + included;
+}
+
+long long countSubsequences(const long long *arr, size_t n, long long k)
+{
+    size_t i;
+
+    if ((arr == NULL) || (n == 0U) || (k <= 0LL)) {
+        return 0LL;
+    }
+
+    for (i = 0U; i < n; i++) {
+        if (arr[i] < 0LL) {
+            return -1LL;
+        }
+    }
+
+    return countSubsequencesHelper(arr, n, 0U, 1LL, 0, k);
+}
+
+int main(void)
+{
+    long long arr[] = { 1LL, 2LL, 3LL, 4LL };
+    size_t n = sizeof(arr) / sizeof(arr[0]);
+    long long k = 10LL;
+    long long result;
+
+    result = countSubsequences(arr, n, k);
+
+    if (result < 0LL) {
+        if (fprintf(stderr, "Error: input array must contain only non-negative values\n") < 0) {
+            return EXIT_FAILURE;
+        }
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Number of subsequences with product smaller than %lld: %lld\n", k, result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```

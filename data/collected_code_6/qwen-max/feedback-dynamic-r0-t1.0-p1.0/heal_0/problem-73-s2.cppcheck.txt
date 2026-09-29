@@ -1,0 +1,16 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-73-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-73-s2.c:28:9: error: Common realloc mistake: 'parts' nulled but not freed upon failure [memleakOnRealloc]
+        parts = realloc(parts, (count + 2) * sizeof(char*));
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-73-s2.c:45:9: error: Common realloc mistake: 'parts' nulled but not freed upon failure [memleakOnRealloc]
+        parts = realloc(parts, (count + 1) * sizeof(char*));
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-73-s2.c:57:5: error: Common realloc mistake: 'parts' nulled but not freed upon failure [memleakOnRealloc]
+    parts = realloc(parts, (count + 1) * sizeof(char*));
+    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-73-s2.c:6:9: style: The scope of the variable 'status' can be reduced. [variableScope]
+    int status;
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-73-s2.c:53:17: style: Variable 'part_idx' is assigned a value that is never used. [unreadVariable]
+        part_idx++;
+                ^

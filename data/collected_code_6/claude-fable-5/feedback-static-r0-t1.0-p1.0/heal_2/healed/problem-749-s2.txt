@@ -1,0 +1,177 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <errno.h>
+#include <limits.h>
+
+#define MAX_NUM_STR_LEN 32U
+
+static int parse_number(const char *str, long *result)
+{
+    char *endptr = NULL;
+    long value;
+
+    if (str == NULL || result == NULL) {
+        return -1;
+    }
+
+    errno = 0;
+    value = strtol(str, &endptr, 10);
+
+    if (errno == ERANGE) {
+        return -1;
+    }
+    if (endptr == str || *endptr != '\0') {
+        return -1;
+    }
+
+    *result = value;
+    return 0;
+}
+
+static int compare_numeric(const void *a, const void *b)
+{
+    const char *const *sa = (const char *const *)a;
+    const char *const *sb = (const char *const *)b;
+    long va = 0;
+    long vb = 0;
+
+    if (parse_number(*sa, &va) != 0) {
+        va = 0;
+    }
+    if (parse_number(*sb, &vb) != 0) {
+        vb = 0;
+    }
+
+    if (va < vb) {
+        return -1;
+    }
+    if (va > vb) {
+        return 1;
+    }
+    return 0;
+}
+
+static int sort_number_strings(char **strings, size_t count)
+{
+    size_t i;
+    long dummy;
+
+    if (strings == NULL || count == 0U) {
+        return -1;
+    }
+
+    for (i = 0U; i < count; i++) {
+        if (parse_number(strings[i], &dummy) != 0) {
+            return -1;
+        }
+    }
+
+    qsort(strings, count, sizeof(char *), compare_numeric);
+    return 0;
+}
+
+static size_t bounded_length(const char *str, size_t max_len)
+{
+    const char *terminator;
+
+    if (str == NULL) {
+        return max_len;
+    }
+
+    terminator = (const char *)memchr(str, '\0', max_len);
+    if (terminator == NULL) {
+        return max_len;
+    }
+
+    return (size_t)(terminator - str);
+}
+
+static char *duplicate_string(const char *str, size_t max_len)
+{
+    size_t len;
+    char *copy;
+
+    if (str == NULL || max_len == 0U || max_len > (SIZE_MAX - 1U)) {
+        return NULL;
+    }
+
+    len = bounded_length(str, max_len);
+    if (len >= max_len) {
+        return NULL;
+    }
+
+    copy = (char *)malloc(len + 1U);
+    if (copy == NULL) {
+        return NULL;
+    }
+
+    (void)memcpy(copy, str, len);
+    copy[len] = '\0';
+
+    return copy;
+}
+
+int main(void)
+{
+    const char *source[] = { "42", "-7", "1000", "3", "0", "-250", "17" };
+    size_t count = sizeof(source) / sizeof(source[0]);
+    char **list;
+    size_t i;
+    int status = EXIT_SUCCESS;
+
+    list = (char **)calloc(count, sizeof(char *));
+    if (list == NULL) {
+        (void)fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0U; i < count; i++) {
+        list[i] = duplicate_string(source[i], MAX_NUM_STR_LEN);
+        if (list[i] == NULL) {
+            size_t j;
+            for (j = 0U; j < i; j++) {
+                free(list[j]);
+            }
+            free(list);
+            (void)fprintf(stderr, "String duplication failed\n");
+            return EXIT_FAILURE;
+        }
+    }
+
+    if (sort_number_strings(list, count) != 0) {
+        (void)fprintf(stderr, "Sorting failed: invalid numeric string\n");
+        status = EXIT_FAILURE;
+    } else {
+        for (i = 0U; i < count; i++) {
+            if (printf("%s\n", list[i]) < 0) {
+                status = EXIT_FAILURE;
+                break;
+            }
+        }
+    }
+
+    for (i = 0U; i < count; i++) {
+        free(list[i]);
+    }
+    free(list);
+
+    return status;
+}
+```
+
+**Analysis notes:**
+
+The flawfinder warning on `memcpy` in `duplicate_string` is a **false positive**. The destination buffer is allocated with `malloc(len + 1U)` immediately before the copy of exactly `len` bytes, so the destination is guaranteed to hold the source data plus the null terminator. The bounds are further protected because:
+
+1. `bounded_length` uses `memchr` to scan at most `max_len` bytes, so it never reads past the caller-specified bound even for unterminated input.
+2. The `len >= max_len` check rejects strings that fill or exceed the bound, guaranteeing `len < max_len` and preventing any overflow in `len + 1U` for sane `max_len` values.
+3. `copy[len] = '\0'` writes within the allocated `len + 1` bytes.
+
+Changes made in the rewrite as defense-in-depth rather than actual bug fixes:
+
+- Added an explicit guard in `duplicate_string` against `max_len == 0` and against arithmetic overflow of `len + 1U`, making the safety invariant locally verifiable by static analyzers.
+- Replaced `malloc(count * sizeof(char *))` with `calloc(count, sizeof(char *))` in `main`, which provides built-in multiplication overflow checking (CWE-190) and zero-initializes the pointer array.
+
+The rest of the code was already sound: `strtol` error handling covers `ERANGE`, empty input, and trailing garbage; all allocations have matching frees on every path including the partial-failure cleanup loop; and `qsort`'s comparator is a valid total order over the parsed values.

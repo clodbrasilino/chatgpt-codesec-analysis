@@ -1,0 +1,99 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    int a;
+    int b;
+} Tuple;
+
+typedef struct {
+    Tuple key;
+    int count;
+} TupleMap;
+
+int compare_tuples(const void *x, const void *y) {
+    const Tuple *t1 = (const Tuple *)x;
+    const Tuple *t2 = (const Tuple *)y;
+    if (t1->a != t2->a) {
+        return t1->a - t2->a;
+    }
+    return t1->b - t2->b;
+}
+
+TupleMap* extract_frequencies(Tuple *tuples, size_t length, size_t *unique_count) {
+    if (tuples == NULL || length == 0 || unique_count == NULL) {
+        if (unique_count != NULL) {
+            *unique_count = 0;
+        }
+        return NULL;
+    }
+
+    Tuple *sorted = (Tuple *)malloc(length * sizeof(Tuple));
+    if (sorted == NULL) {
+        *unique_count = 0;
+        return NULL;
+    }
+
+    memcpy(sorted, tuples, length * sizeof(Tuple));
+    qsort(sorted, length, sizeof(Tuple), compare_tuples);
+
+    size_t capacity = 16;
+    TupleMap *map = (TupleMap *)malloc(capacity * sizeof(TupleMap));
+    if (map == NULL) {
+        free(sorted);
+        *unique_count = 0;
+        return NULL;
+    }
+
+    size_t count = 0;
+    size_t i = 0;
+
+    while (i < length) {
+        size_t j = i;
+        while (j < length && compare_tuples(&sorted[i], &sorted[j]) == 0) {
+            j++;
+        }
+
+        if (count >= capacity) {
+            capacity *= 2;
+            TupleMap *temp = (TupleMap *)realloc(map, capacity * sizeof(TupleMap));
+            if (temp == NULL) {
+                free(sorted);
+                free(map);
+                *unique_count = 0;
+                return NULL;
+            }
+            map = temp;
+        }
+
+        map[count].key = sorted[i];
+        map[count].count = j - i;
+        count++;
+
+        i = j;
+    }
+
+    free(sorted);
+    *unique_count = count;
+    return map;
+}
+
+int main() {
+    Tuple data[] = {{1, 2}, {3, 4}, {1, 2}, {5, 6}, {3, 4}, {1, 2}};
+    size_t length = sizeof(data) / sizeof(data[0]);
+    size_t unique_count = 0;
+
+    TupleMap *frequencies = extract_frequencies(data, length, &unique_count);
+
+    if (frequencies != NULL) {
+        for (size_t i = 0; i < unique_count; i++) {
+            printf("(%d, %d): %d\n", frequencies[i].key.a, frequencies[i].key.b, frequencies[i].count);
+        }
+        free(frequencies);
+    }
+
+    return 0;
+}
+```

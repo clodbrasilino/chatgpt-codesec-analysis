@@ -1,0 +1,105 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+long long countIntegralPoints(long long x1, long long y1, long long x2, long long y2)
+{
+    unsigned long long side_x;
+    unsigned long long side_y;
+    unsigned long long inner;
+    unsigned long long product;
+
+    if (x2 >= x1)
+    {
+        side_x = (unsigned long long)x2 - (unsigned long long)x1;
+    }
+    else
+    {
+        side_x = (unsigned long long)x1 - (unsigned long long)x2;
+    }
+
+    if (y2 >= y1)
+    {
+        side_y = (unsigned long long)y2 - (unsigned long long)y1;
+    }
+    else
+    {
+        side_y = (unsigned long long)y1 - (unsigned long long)y2;
+    }
+
+    if (side_x != side_y)
+    {
+        return -1;
+    }
+
+    if (side_x < 2)
+    {
+        return 0;
+    }
+
+    inner = side_x - 1ULL;
+
+    if (inner > (unsigned long long)LLONG_MAX / inner)
+    {
+        return -2;
+    }
+
+    product = inner * inner;
+
+    if (product > (unsigned long long)LLONG_MAX)
+    {
+        return -2;
+    }
+
+    return (long long)product;
+}
+
+int main(void)
+{
+    long long x1;
+    long long y1;
+    long long x2;
+    long long y2;
+    long long result;
+
+    printf("Enter bottom-left corner (x1 y1): ");
+    if (scanf("%lld %lld", &x1, &y1) != 2)
+    {
+        fprintf(stderr, "Invalid input for first corner\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter top-right corner (x2 y2): ");
+    if (scanf("%lld %lld", &x2, &y2) != 2)
+    {
+        fprintf(stderr, "Invalid input for second corner\n");
+        return EXIT_FAILURE;
+    }
+
+    result = countIntegralPoints(x1, y1, x2, y2);
+    if (result == -1)
+    {
+        fprintf(stderr, "The given coordinates do not form a square\n");
+        return EXIT_FAILURE;
+    }
+
+    if (result == -2)
+    {
+        fprintf(stderr, "Result too large to represent\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Number of integral coordinates inside the square: %lld\n", result);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Key fixes applied:**
+
+1. **Signed integer overflow in multiplication (UBSan/AFL crash):** The expression `(side_x - 1) * (side_x - 1)` could overflow `long long` for large side lengths. The rewrite computes the product in `unsigned long long` and guards with a pre-multiplication check (`inner > LLONG_MAX / inner`) plus a final range check before casting back, returning a distinct error code (`-2`) that `main` reports cleanly instead of invoking undefined behavior.
+
+2. **Signed overflow in the difference/negation:** The original `x2 - x1` and `side_x = -side_x` are both UB when the operands span the full `long long` range (e.g., `x1 = LLONG_MIN`, `x2 = LLONG_MAX`, or negating `LLONG_MIN`). This also explains the "expected 1, got 0" test failure — a wrapped-around difference can produce a wrong side length. The rewrite computes the absolute difference in unsigned arithmetic with an explicit ordering check, which is well-defined for every possible input pair and yields the mathematically correct magnitude up to `ULLONG_MAX`.
+
+3. **Error-code disambiguation:** `-1` (not a square) and `-2` (overflow) are now distinguished so the caller can emit an accurate diagnostic rather than misreporting an overflow as "not a square".

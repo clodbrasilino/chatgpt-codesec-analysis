@@ -1,0 +1,30 @@
+## Analysis
+
+**What the program does:** It reads a natural number `x` and finds the smallest natural number `n` such that `n!` is divisible by `x`. Instead of computing `n!` directly (which would overflow almost immediately for 64-bit types), it maintains the running value of `i! mod x` using a 128-bit modular multiplication — a sound overflow-avoidance technique.
+
+**Correctness review:**
+
+- `remainder` starts at `1` and is multiplied (mod `x`) by `2, 3, ..., i`, so after each iteration it equals `i! mod x`. When it hits `0`, `i!` is divisible by `x` — mathematically correct.
+- The reported weakness (*"test case 2 failed: expected 4, got 5"*) is the classic off-by-one signature: returning the loop counter **after** it has advanced past the successful iteration, or checking the remainder **before** folding in the current `i`. The fix is to guarantee the divisibility check happens immediately after multiplying in `i`, and to return `i` from inside the loop at that exact point — never a post-loop, post-increment counter.
+- The trailing `return x;` is kept as a safe fallback (it is actually unreachable, since `x` always divides `x!`, so at latest `i == x` triggers the zero remainder).
+- The `x == 1` short-circuit is correct (`1! = 1` is divisible by 1).
+- Input validation (`scanf` result, rejection of `0`) is proper.
+- `unsigned __int128` is a GCC/Clang extension, acceptable on typical 64-bit targets; it prevents overflow in `a * b` for full 64-bit operands.
+
+## Rewritten source
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+static unsigned long long mulmod(unsigned long long a, unsigned long long b, unsigned long long m)
+{
+    return (unsigned long long)(((unsigned __int128)a * (unsigned __int128)b) % (unsigned __int128)m);
+}
+
+unsigned long long first_factorial_divisible(unsigned long long x)
+{
+    unsigned long long remainder;
+    unsigned long long i;
+
+    if (x == 1ULL) {

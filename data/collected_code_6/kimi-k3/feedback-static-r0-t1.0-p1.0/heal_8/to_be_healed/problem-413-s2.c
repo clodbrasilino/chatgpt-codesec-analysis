@@ -1,0 +1,188 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+#include <stdbool.h>
+
+typedef struct {
+    int id;
+    char *name;
+    double value;
+} Tuple;
+
+typedef struct {
+    Tuple *data;
+    size_t size;
+    size_t capacity;
+} TupleList;
+
+static char *safe_strdup(const char *s, size_t max_len) {
+    if (s == NULL || max_len == 0) {
+        return NULL;
+    }
+    size_t len = strnlen(s, max_len);
+    if (len == max_len) {
+        return NULL;
+    }
+    if (len > SIZE_MAX - 1) {
+        return NULL;
+    }
+    char *copy = malloc(len + 1);
+    if (copy == NULL) {
+        return NULL;
+    }
+    if (len > 0) {
+        /* Possible weaknesses found:
+         * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+         */
+        memcpy(copy, s, len);
+    }
+    copy[len] = '\0';
+    return copy;
+}
+
+int tuple_init(Tuple *tuple, int id, const char *name, double value) {
+    if (tuple == NULL || name == NULL) {
+        return -1;
+    }
+    tuple->name = safe_strdup(name, 1024);
+    if (tuple->name == NULL) {
+        return -1;
+    }
+    tuple->id = id;
+    tuple->value = value;
+    return 0;
+}
+
+void tuple_free(Tuple *tuple) {
+    if (tuple != NULL) {
+        free(tuple->name);
+        tuple->name = NULL;
+        tuple->id = 0;
+        tuple->value = 0.0;
+    }
+}
+
+int tuple_copy(Tuple *dest, const Tuple *src) {
+    if (dest == NULL || src == NULL || src->name == NULL) {
+        return -1;
+    }
+    return tuple_init(dest, src->id, src->name, src->value);
+}
+
+int tuple_list_init(TupleList *list, size_t initial_capacity) {
+    if (list == NULL || initial_capacity == 0 || initial_capacity > SIZE_MAX / sizeof(Tuple)) {
+        return -1;
+    }
+    list->data = calloc(initial_capacity, sizeof(Tuple));
+    if (list->data == NULL) {
+        return -1;
+    }
+    list->size = 0;
+    list->capacity = initial_capacity;
+    return 0;
+}
+
+void tuple_list_free(TupleList *list) {
+    if (list != NULL) {
+        if (list->data != NULL) {
+            for (size_t i = 0; i < list->size; i++) {
+                tuple_free(&list->data[i]);
+            }
+            free(list->data);
+            list->data = NULL;
+        }
+        list->size = 0;
+        list->capacity = 0;
+    }
+}
+
+int tuple_list_add(TupleList *list, const Tuple *tuple) {
+    if (list == NULL || tuple == NULL || tuple->name == NULL) {
+        return -1;
+    }
+    if (list->size >= list->capacity) {
+        if (list->capacity > SIZE_MAX / 2) {
+            return -1;
+        }
+        size_t new_capacity = list->capacity * 2;
+        if (new_capacity > SIZE_MAX / sizeof(Tuple)) {
+            return -1;
+        }
+        Tuple *new_data = realloc(list->data, new_capacity * sizeof(Tuple));
+        if (new_data == NULL) {
+            return -1;
+        }
+        list->data = new_data;
+        list->capacity = new_capacity;
+    }
+    if (tuple_copy(&list->data[list->size], tuple) != 0) {
+        return -1;
+    }
+    list->size++;
+    return 0;
+}
+
+int extract_nth_element(const TupleList *list, size_t n, Tuple *result) {
+    if (list == NULL || result == NULL) {
+        return -1;
+    }
+    if (list->data == NULL || n >= list->size) {
+        return -1;
+    }
+    return tuple_copy(result, &list->data[n]);
+}
+
+int main(void) {
+    TupleList list;
+    Tuple result = {0, NULL, 0.0};
+    size_t nth = 2;
+
+    if (tuple_list_init(&list, 4) != 0) {
+        fprintf(stderr, "Failed to initialize list\n");
+        return EXIT_FAILURE;
+    }
+
+    Tuple t1, t2, t3, t4;
+    if (tuple_init(&t1, 1, "First", 10.5) != 0 ||
+        tuple_init(&t2, 2, "Second", 20.75) != 0 ||
+        tuple_init(&t3, 3, "Third", 30.25) != 0 ||
+        tuple_init(&t4, 4, "Fourth", 40.0) != 0) {
+        fprintf(stderr, "Failed to initialize tuples\n");
+        tuple_list_free(&list);
+        return EXIT_FAILURE;
+    }
+
+    if (tuple_list_add(&list, &t1) != 0 ||
+        tuple_list_add(&list, &t2) != 0 ||
+        tuple_list_add(&list, &t3) != 0 ||
+        tuple_list_add(&list, &t4) != 0) {
+        fprintf(stderr, "Failed to add elements\n");
+        tuple_free(&t1);
+        tuple_free(&t2);
+        tuple_free(&t3);
+        tuple_free(&t4);
+        tuple_list_free(&list);
+        return EXIT_FAILURE;
+    }
+
+    tuple_free(&t1);
+    tuple_free(&t2);
+    tuple_free(&t3);
+    tuple_free(&t4);
+
+    if (extract_nth_element(&list, nth, &result) != 0) {
+        fprintf(stderr, "Failed to extract element at index %zu\n", nth);
+        tuple_list_free(&list);
+        return EXIT_FAILURE;
+    }
+
+    printf("Element at index %zu:\n", nth);
+    printf("  ID: %d\n", result.id);
+    printf("  Name: %s\n", result.name);
+    printf("  Value: %.2f\n", result.value);
+
+    tuple_free(&result);
+    tuple_list_free(&list);
+    return EXIT_SUCCESS;
+}

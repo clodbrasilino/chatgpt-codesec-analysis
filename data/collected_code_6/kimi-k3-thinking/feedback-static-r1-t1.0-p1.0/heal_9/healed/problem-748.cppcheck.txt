@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_9/healed/problem-748.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_9/healed/problem-748.c:85:20: style: Condition 'space_left==0' is always false [knownConditionTrueFalse]
+    if (space_left == 0 || data_len >= space_left)
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_9/healed/problem-748.c:78:17: note: Assuming that condition '*length>=*capacity' is not redundant
+    if (*length >= *capacity)
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_9/healed/problem-748.c:83:28: note: Assignment 'space_left=*capacity-*length', assigned value is greater than 0
+    space_left = *capacity - *length;
+                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_9/healed/problem-748.c:85:20: note: Condition 'space_left==0' is always false
+    if (space_left == 0 || data_len >= space_left)
+                   ^

@@ -1,0 +1,21 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int sum_in_range(int *numbers, int start, int end, int length) {
+    if (numbers == NULL || start < 0 || end >= length || start > end) {
+        return -1;
+    }
+    int sum = 0;
+    for (int i = start; i <= end; i++) {
+        sum += numbers[i];
+    }
+    return sum;
+}
+
+int main() {
+    int nums[] = {10, 20, 30, 40, 50};
+    int length = sizeof(nums) / sizeof(nums[0]);
+    int result = sum_in_range(nums, 1, 3, length);
+    printf("Sum: %d\n", result);
+    return 0;
+}

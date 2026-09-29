@@ -1,0 +1,8 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-900.c: In function 'string_starts_with_number':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-900.c:32:15: error: implicit declaration of function 'strncmp' [-Wimplicit-function-declaration]
+   32 |     matches = strncmp(string, prefix, (size_t)required_length) == 0;
+      |               ^~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-900.c:5:1: note: include '<string.h>' or provide a declaration of 'strncmp'
+    4 | #include <stdlib.h>
+  +++ |+#include <string.h>
+    5 | 

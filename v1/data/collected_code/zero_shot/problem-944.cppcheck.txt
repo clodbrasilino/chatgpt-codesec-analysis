@@ -1,0 +1,9 @@
+collected_code/problem-944-0.c:6:27: error: Cannot determine that 'string[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+    for (int i = 0; string[i] != '\0'; i++) {
+                          ^
+collected_code/problem-944-0.c:7:27: error: Cannot determine that 'string[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        if (isdigit(string[i])) {
+                          ^
+collected_code/problem-944-0.c:8:56: error: Cannot determine that 'string[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+            printf("Number: %c, Position: %d\n", string[i], i);
+                                                       ^

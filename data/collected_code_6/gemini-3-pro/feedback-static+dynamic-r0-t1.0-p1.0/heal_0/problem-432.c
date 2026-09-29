@@ -1,0 +1,30 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+double find_trapezium_median(double base1, double base2) {
+    if (base1 < 0.0 || base2 < 0.0) {
+        return -1.0;
+    }
+    return (base1 + base2) / 2.0;
+}
+
+int main(void) {
+    double base1 = 0.0;
+    double base2 = 0.0;
+    double median = 0.0;
+    int result = 0;
+
+    result = scanf("%lf %lf", &base1, &base2);
+    if (result != 2) {
+        return EXIT_FAILURE;
+    }
+
+    median = find_trapezium_median(base1, base2);
+    if (median < 0.0) {
+        return EXIT_FAILURE;
+    }
+
+    printf("%.2f\n", median);
+
+    return EXIT_SUCCESS;
+}

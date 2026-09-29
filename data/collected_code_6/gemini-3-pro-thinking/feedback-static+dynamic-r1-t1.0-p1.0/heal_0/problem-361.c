@@ -1,0 +1,130 @@
+#include <stdlib.h>
+
+typedef struct SubNode {
+    int value;
+    struct SubNode* next;
+} SubNode;
+
+typedef struct ListNode {
+    SubNode* sub_list;
+    struct ListNode* next;
+} ListNode;
+
+SubNode* create_sub_node(int value);
+ListNode* create_list_node(SubNode* sub_list);
+ListNode* remove_empty_lists(ListNode* head);
+void free_sub_list(SubNode* head);
+void free_list(ListNode* head);
+
+SubNode* create_sub_node(int value) {
+    SubNode* node = (SubNode*)malloc(sizeof(SubNode));
+    if (node != NULL) {
+        node->value = value;
+        node->next = NULL;
+    }
+    return node;
+}
+
+void free_sub_list(SubNode* head) {
+    while (head != NULL) {
+        SubNode* temp = head;
+        head = head->next;
+        free(temp);
+    }
+}
+
+ListNode* create_list_node(SubNode* sub_list) {
+    ListNode* node = (ListNode*)malloc(sizeof(ListNode));
+    if (node != NULL) {
+        node->sub_list = sub_list;
+        node->next = NULL;
+    } else {
+        free_sub_list(sub_list);
+    }
+    return node;
+}
+
+void free_list(ListNode* head) {
+    while (head != NULL) {
+        ListNode* temp = head;
+        head = head->next;
+        free_sub_list(temp->sub_list);
+        free(temp);
+    }
+}
+
+ListNode* remove_empty_lists(ListNode* head) {
+    ListNode dummy;
+    dummy.sub_list = NULL;
+    dummy.next = head;
+
+    ListNode* prev = &dummy;
+    ListNode* curr = head;
+
+    while (curr != NULL) {
+        if (curr->sub_list == NULL) {
+            prev->next = curr->next;
+            free(curr);
+            curr = prev->next;
+        } else {
+            prev = curr;
+            curr = curr->next;
+        }
+    }
+    return dummy.next;
+}
+
+int main(void) {
+    SubNode* sn1 = create_sub_node(1);
+    SubNode* sn2 = create_sub_node(2);
+    
+    if (sn1 != NULL) {
+        sn1->next = sn2;
+    } else {
+        free_sub_list(sn2);
+    }
+
+    ListNode* ln1 = create_list_node(sn1);
+    ListNode* ln2 = create_list_node(NULL);
+    
+    SubNode* sn3 = create_sub_node(3);
+    ListNode* ln3 = create_list_node(sn3);
+    
+    ListNode* ln4 = create_list_node(NULL);
+
+    ListNode* head = NULL;
+    ListNode* curr = NULL;
+
+    if (ln1 != NULL) {
+        head = ln1;
+        curr = ln1;
+    }
+    if (ln2 != NULL) {
+        if (curr != NULL) {
+            curr->next = ln2;
+        } else {
+            head = ln2;
+        }
+        curr = ln2;
+    }
+    if (ln3 != NULL) {
+        if (curr != NULL) {
+            curr->next = ln3;
+        } else {
+            head = ln3;
+        }
+        curr = ln3;
+    }
+    if (ln4 != NULL) {
+        if (curr != NULL) {
+            curr->next = ln4;
+        } else {
+            head = ln4;
+        }
+    }
+
+    head = remove_empty_lists(head);
+    free_list(head);
+
+    return EXIT_SUCCESS;
+}

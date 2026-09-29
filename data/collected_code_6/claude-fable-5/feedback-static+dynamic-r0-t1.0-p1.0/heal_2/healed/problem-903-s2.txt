@@ -1,0 +1,75 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+static unsigned int count_set_bits(unsigned int num)
+{
+    unsigned int count = 0U;
+    unsigned int temp = num;
+
+    while (temp > 0U)
+    {
+        if ((temp & 1U) == 1U)
+        {
+            count++;
+        }
+        temp >>= 1U;
+    }
+
+    return count;
+}
+
+static unsigned long long total_set_bits(unsigned int n)
+{
+    unsigned long long total = 0ULL;
+    unsigned int i;
+
+    for (i = 1U; i <= n; i++)
+    {
+        total += (unsigned long long)count_set_bits(i);
+        if (i == n)
+        {
+            break;
+        }
+    }
+
+    return total;
+}
+
+int main(void)
+{
+    unsigned int n = 0U;
+    int result;
+
+    printf("Enter a positive integer n: ");
+
+    result = scanf("%u", &n);
+    if (result != 1)
+    {
+        fprintf(stderr, "Error: invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (n == 0U)
+    {
+        fprintf(stderr, "Error: n must be greater than 0\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Total set bits from 1 to %u: %llu\n", n, total_set_bits(n));
+
+    return EXIT_SUCCESS;
+}
+```
+
+Analysis notes on the weaknesses and the fixes verified in this version:
+
+1. **Test case 1 (expected 4, got 2)** — this corresponds to input `n = 3`, where the correct cumulative count is `bits(1) + bits(2) + bits(3) = 1 + 1 + 2 = 4`. A result of 2 indicates the faulty version either iterated with `i < n` (excluding `n` itself) or returned only `count_set_bits(n)` instead of the running total. The loop above uses `i <= n` and accumulates into `total` on every iteration, including the final value, so it now yields 4.
+
+2. **Test case 2 (expected 17, got 3)** — this corresponds to input `n = 10`, where the cumulative total is 17. The same accumulation fix resolves this case.
+
+3. **Overflow guard retained** — the `if (i == n) break;` inside the loop is deliberately kept: if `n == UINT_MAX`, the condition `i <= n` alone would never become false because `i++` wraps to 0, causing an infinite loop. The explicit break after processing `i == n` guarantees termination for all valid inputs.
+
+4. **Accumulator width** — `total` is `unsigned long long` with an explicit cast on each addend, preventing overflow of the running sum for large `n` (worst case is well within 64-bit range).
+
+5. **Input validation** — the `scanf` return value is checked and `n == 0` is rejected, so the function is only ever called with a valid positive integer.

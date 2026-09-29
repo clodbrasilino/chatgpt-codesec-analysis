@@ -1,0 +1,64 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *elements;
+    size_t length;
+} Tuple;
+
+Tuple create_tuple(size_t length) {
+    Tuple t = {NULL, length};
+    if (length > 0) {
+        t.elements = (int *)malloc(length * sizeof(int));
+        if (t.elements == NULL) {
+            exit(EXIT_FAILURE);
+        }
+    }
+    return t;
+}
+
+void destroy_tuple(Tuple *t) {
+    free(t->elements);
+    t->elements = NULL;
+    t->length = 0;
+}
+
+Tuple mod_tuples(const Tuple t1, const Tuple t2) {
+    if (t1.length != t2.length) {
+        exit(EXIT_FAILURE);
+    }
+
+    Tuple result = create_tuple(t1.length);
+    for (size_t i = 0; i < t1.length; ++i) {
+        if (t2.elements[i] == 0) {
+            exit(EXIT_FAILURE);
+        }
+        result.elements[i] = t1.elements[i] % t2.elements[i];
+    }
+    return result;
+}
+
+int main() {
+    Tuple t1 = create_tuple(3);
+    t1.elements[0] = 10;
+    t1.elements[1] = 20;
+    t1.elements[2] = 30;
+
+    Tuple t2 = create_tuple(3);
+    t2.elements[0] = 3;
+    t2.elements[1] = 4;
+    t2.elements[2] = 5;
+
+    Tuple result = mod_tuples(t1, t2);
+
+    for (size_t i = 0; i < result.length; ++i) {
+        printf("%d ", result.elements[i]);
+    }
+    printf("\n");
+
+    destroy_tuple(&t1);
+    destroy_tuple(&t2);
+    destroy_tuple(&result);
+
+    return 0;
+}

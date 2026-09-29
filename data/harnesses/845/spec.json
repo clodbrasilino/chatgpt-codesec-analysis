@@ -1,0 +1,44 @@
+{
+  "task_id": 845,
+  "text": "Write a C function to count the number of digits in factorial of a given number.",
+  "fn_candidates": [
+    "find_Digits",
+    "FindDigits",
+    "findDigits",
+    "findDigits"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "find_Digits",
+      "args": [
+        7
+      ],
+      "expected": 4,
+      "assert_src": "assert find_Digits(7) == 4"
+    },
+    {
+      "fn_name": "find_Digits",
+      "args": [
+        5
+      ],
+      "expected": 3,
+      "assert_src": "assert find_Digits(5) == 3"
+    },
+    {
+      "fn_name": "find_Digits",
+      "args": [
+        4
+      ],
+      "expected": 2,
+      "assert_src": "assert find_Digits(4) == 2"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

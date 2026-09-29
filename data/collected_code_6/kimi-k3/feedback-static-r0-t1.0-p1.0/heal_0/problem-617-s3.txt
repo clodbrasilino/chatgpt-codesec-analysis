@@ -1,0 +1,51 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+int minJumps(int jumpLength, int targetX) {
+    if (jumpLength <= 0 || targetX < 0) {
+        return -1;
+    }
+    
+    if (targetX == 0) {
+        return 0;
+    }
+    
+    if (targetX <= jumpLength) {
+        return 1;
+    }
+    
+    int jumps = targetX / jumpLength;
+    int remainder = targetX % jumpLength;
+    
+    if (remainder == 0) {
+        return jumps;
+    }
+    
+    if (remainder <= jumpLength) {
+        return jumps + 1;
+    }
+    
+    return jumps + 2;
+}
+
+int main(void) {
+    int jumpLength, targetX;
+    
+    if (scanf("%d %d", &jumpLength, &targetX) != 2) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    int result = minJumps(jumpLength, targetX);
+    
+    if (result == -1) {
+        printf("Invalid parameters\n");
+    } else {
+        printf("%d\n", result);
+    }
+    
+    return EXIT_SUCCESS;
+}
+```

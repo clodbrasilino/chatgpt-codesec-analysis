@@ -14,7 +14,7 @@ from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 MBPP_PATH = REPO_ROOT / "mbpp" / "mbpp.jsonl"
-SPEC_DIR = REPO_ROOT / "harnesses"
+SPEC_DIR = REPO_ROOT / "data" / "harnesses"
 
 # Kinds the C driver generator can materialize (see harness/driver_gen.py).
 # Args: scalars + 1-D/2-D homogeneous lists. Returns: scalars + 1-D lists
@@ -117,7 +117,7 @@ def _exec_reference(record: dict) -> dict[str, object] | None:
 
 
 def build_spec(record: dict, force: bool = False) -> HarnessSpec | None:
-    """Build a HarnessSpec for one MBPP record (cached in harnesses/{id}/)."""
+    """Build a HarnessSpec for one MBPP record (cached in data/harnesses/{id}/)."""
     task_id = int(record["task_id"])
     spec_path = SPEC_DIR / str(task_id) / "spec.json"
     if spec_path.exists() and not force:

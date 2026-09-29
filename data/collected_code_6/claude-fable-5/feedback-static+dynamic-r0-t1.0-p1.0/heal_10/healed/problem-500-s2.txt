@@ -1,0 +1,166 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+#define MAX_STRING_LEN 4096U
+
+char *concatenate_list(const char *const *list, size_t count)
+{
+    size_t total = 0;
+    size_t i;
+    size_t *lengths = NULL;
+    size_t remaining;
+    size_t capacity;
+    char *result = NULL;
+    char *pos = NULL;
+
+    if (list == NULL) {
+        return NULL;
+    }
+
+    if (count == 0) {
+        result = malloc(1);
+        if (result != NULL) {
+            result[0] = '\0';
+        }
+        return result;
+    }
+
+    if (count > SIZE_MAX / sizeof(size_t)) {
+        return NULL;
+    }
+
+    lengths = malloc(count * sizeof(size_t));
+    if (lengths == NULL) {
+        return NULL;
+    }
+
+    for (i = 0; i < count; i++) {
+        size_t len;
+
+        if (list[i] == NULL) {
+            free(lengths);
+            return NULL;
+        }
+
+        len = strnlen(list[i], MAX_STRING_LEN);
+        if (len >= MAX_STRING_LEN) {
+            free(lengths);
+            return NULL;
+        }
+
+        if (len > SIZE_MAX - 1 - total) {
+            free(lengths);
+            return NULL;
+        }
+
+        lengths[i] = len;
+        total += len;
+    }
+
+    capacity = total + 1;
+    result = malloc(capacity);
+    if (result == NULL) {
+        free(lengths);
+        return NULL;
+    }
+
+    pos = result;
+    remaining = total;
+    for (i = 0; i < count; i++) {
+        size_t verify_len;
+        size_t used;
+        size_t space_left;
+
+        used = (size_t)(pos - result);
+        if (used >= capacity) {
+            free(lengths);
+            free(result);
+            return NULL;
+        }
+
+        space_left = (capacity - 1) - used;
+        if (lengths[i] > space_left) {
+            free(lengths);
+            free(result);
+            return NULL;
+        }
+
+        if (lengths[i] > remaining) {
+            free(lengths);
+            free(result);
+            return NULL;
+        }
+
+        verify_len = strnlen(list[i], MAX_STRING_LEN);
+        if (verify_len != lengths[i]) {
+            free(lengths);
+            free(result);
+            return NULL;
+        }
+
+        if (lengths[i] > 0) {
+            memcpy(pos, list[i], lengths[i]);
+        }
+        pos += lengths[i];
+        remaining -= lengths[i];
+    }
+
+    if (remaining != 0) {
+        free(lengths);
+        free(result);
+        return NULL;
+    }
+
+    if ((size_t)(pos - result) >= capacity) {
+        free(lengths);
+        free(result);
+        return NULL;
+    }
+
+    *pos = '\0';
+
+    free(lengths);
+    return result;
+}
+
+int main(void)
+{
+    const char *const list[] = { "Hello", ", ", "world", "!" };
+    size_t count = sizeof(list) / sizeof(list[0]);
+    char *joined = concatenate_list(list, count);
+
+    if (joined == NULL) {
+        fprintf(stderr, "Concatenation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("%s\n", joined) < 0) {
+        free(joined);
+        return EXIT_FAILURE;
+    }
+
+    free(joined);
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis summary:**
+
+The original code was already well-defended against the Flawfinder-reported `memcpy` weakness (CWE-120). The flagged risk is a false positive in practice, because the code guarantees the destination can hold the source data through multiple layers of protection:
+
+1. **Length pre-computation with overflow guards** — each string's length is bounded by `MAX_STRING_LEN` via `strnlen`, and the running `total` is checked against `SIZE_MAX - 1` before accumulation, preventing integer overflow when computing the allocation size.
+
+2. **Allocation-size overflow check** — `count > SIZE_MAX / sizeof(size_t)` prevents overflow in the `lengths` array allocation.
+
+3. **Per-iteration bounds verification before `memcpy`** — the rewrite makes the check slightly more explicit: it first verifies `used < capacity` (avoiding any possible underflow in `capacity - 1 - used`), then computes `space_left` and confirms `lengths[i] <= space_left` before copying.
+
+4. **TOCTOU mitigation** — `strnlen` is re-run on each string (`verify_len`) to detect if a string was mutated between the measuring pass and the copying pass, which would otherwise be the only realistic path to an overflow.
+
+5. **Post-loop invariant checks** — `remaining == 0` and `pos - result < capacity` are validated before writing the NUL terminator.
+
+6. **Consistent resource cleanup** — every failure path frees `lengths` and `result`, so no memory leaks occur.
+
+The rewrite preserves all these mitigations, restructuring the pre-copy bounds check to be strictly safe against unsigned underflow while keeping identical behavior and API.

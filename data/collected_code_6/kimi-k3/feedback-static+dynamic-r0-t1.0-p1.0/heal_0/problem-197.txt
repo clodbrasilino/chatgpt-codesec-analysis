@@ -1,0 +1,95 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+#include <errno.h>
+#include <string.h>
+
+typedef struct {
+    double *data;
+    size_t size;
+} Tuple;
+
+int tuple_exponentiate(const Tuple *base, const Tuple *exp, Tuple *result) {
+    size_t i;
+    
+    if (base == NULL || exp == NULL || result == NULL) {
+        return -1;
+    }
+    
+    if (base->data == NULL || exp->data == NULL) {
+        return -1;
+    }
+    
+    if (base->size != exp->size) {
+        return -1;
+    }
+    
+    if (base->size == 0) {
+        return -1;
+    }
+    
+    result->data = (double *)malloc(base->size * sizeof(double));
+    if (result->data == NULL) {
+        return -1;
+    }
+    
+    result->size = base->size;
+    
+    for (i = 0; i < base->size; i++) {
+        errno = 0;
+        result->data[i] = pow(base->data[i], exp->data[i]);
+        
+        if (errno == EDOM || errno == ERANGE) {
+            free(result->data);
+            result->data = NULL;
+            result->size = 0;
+            return -1;
+        }
+    }
+    
+    return 0;
+}
+
+void tuple_free(Tuple *t) {
+    if (t != NULL) {
+        free(t->data);
+        t->data = NULL;
+        t->size = 0;
+    }
+}
+
+int main(void) {
+    Tuple base, exp, result;
+    double base_arr[] = {2.0, 3.0, 4.0, 5.0};
+    double exp_arr[] = {3.0, 2.0, 0.5, 1.0};
+    size_t i;
+    int status;
+    
+    base.data = base_arr;
+    base.size = sizeof(base_arr) / sizeof(base_arr[0]);
+    
+    exp.data = exp_arr;
+    exp.size = sizeof(exp_arr) / sizeof(exp_arr[0]);
+    
+    result.data = NULL;
+    result.size = 0;
+    
+    status = tuple_exponentiate(&base, &exp, &result);
+    
+    if (status != 0) {
+        fprintf(stderr, "Error: exponentiation failed\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("Result: ");
+    for (i = 0; i < result.size; i++) {
+        printf("%.2f ", result.data[i]);
+    }
+    printf("\n");
+    
+    tuple_free(&result);
+    
+    return EXIT_SUCCESS;
+}
+```

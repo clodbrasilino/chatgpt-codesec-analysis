@@ -1,0 +1,21 @@
+```c
+#include <stdio.h>
+
+int sum_of_odds(int l, int r) {
+    int sum = 0;
+    if (l > r) return 0;
+    for (int i = l; i <= r; i++) {
+        if (i % 2 != 0) {
+            sum += i;
+        }
+    }
+    return sum;
+}
+
+int main() {
+    int l = 1;
+    int r = 10;
+    printf("Sum of odd numbers between %d and %d: %d\n", l, r, sum_of_odds(l, r));
+    return 0;
+}
+```

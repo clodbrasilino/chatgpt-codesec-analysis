@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-7-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-7-s3.c:74:22: style: Condition 'copy_len>0' is always true [knownConditionTrueFalse]
+        if (copy_len > 0 && (p + match.rm_so + copy_len) <= (text + text_len)) {
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-7-s3.c:62:22: note: Assuming that condition 'copy_len==0' is not redundant
+        if (copy_len == 0) {
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-7-s3.c:69:13: note: Assuming condition is false
+        if (!result) {
+            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-7-s3.c:74:22: note: Condition 'copy_len>0' is always true
+        if (copy_len > 0 && (p + match.rm_so + copy_len) <= (text + text_len)) {
+                     ^

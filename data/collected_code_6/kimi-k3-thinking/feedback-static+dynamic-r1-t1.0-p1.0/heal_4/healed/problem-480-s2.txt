@@ -1,0 +1,123 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define ASCII_RANGE 256
+#define BUFFER_SIZE 1024
+#define MAX_DISCARD_COUNT 1048576UL
+
+static size_t safe_strnlen(const char *s, size_t maxlen)
+{
+    size_t i;
+
+    if (s == NULL) {
+        return 0;
+    }
+
+    for (i = 0; i < maxlen; i++) {
+        if (s[i] == '\0') {
+            break;
+        }
+    }
+
+    return i;
+}
+
+char find_max_occurring_char(const char *str, size_t len)
+{
+    size_t counts[ASCII_RANGE] = {0};
+    size_t i;
+    char max_char;
+    size_t max_count;
+
+    if (str == NULL || len == 0) {
+        return '\0';
+    }
+
+    for (i = 0; i < len; i++) {
+        counts[(unsigned char)str[i]]++;
+    }
+
+    max_char = str[0];
+    max_count = counts[(unsigned char)str[0]];
+
+    for (i = 1; i < len; i++) {
+        if (counts[(unsigned char)str[i]] > max_count) {
+            max_count = counts[(unsigned char)str[i]];
+            max_char = str[i];
+        }
+    }
+
+    return max_char;
+}
+
+static int discard_remaining_input(void)
+{
+    char discard_buffer[BUFFER_SIZE];
+    size_t discarded = 0;
+    size_t chunk_len;
+
+    while (fgets(discard_buffer, sizeof(discard_buffer), stdin) != NULL) {
+        chunk_len = safe_strnlen(discard_buffer, sizeof(discard_buffer));
+        discarded += chunk_len;
+        if (discarded >= MAX_DISCARD_COUNT) {
+            return -1;
+        }
+        if (chunk_len > 0 && discard_buffer[chunk_len - 1] == '\n') {
+            return 0;
+        }
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    char result;
+    size_t len;
+
+    printf("Enter a string: ");
+    fflush(stdout);
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    len = safe_strnlen(buffer, sizeof(buffer));
+
+    if (len >= sizeof(buffer)) {
+        fprintf(stderr, "Input is not properly null-terminated\n");
+        return EXIT_FAILURE;
+    }
+
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+        len--;
+    } else if (len == sizeof(buffer) - 1) {
+        if (discard_remaining_input() != 0) {
+            fprintf(stderr, "Error while discarding excess input\n");
+        }
+        fprintf(stderr, "Input exceeds maximum allowed length\n");
+        return EXIT_FAILURE;
+    }
+
+    if (len == 0) {
+        fprintf(stderr, "Empty string provided\n");
+        return EXIT_FAILURE;
+    }
+
+    result = find_max_occurring_char(buffer, len);
+
+    if (result == '\0') {
+        fprintf(stderr, "Could not determine maximum occurring character\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Maximum occurring character: '%c'\n", result);
+
+    return EXIT_SUCCESS;
+}
+```

@@ -1,0 +1,121 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+static void swap_long(long long *a, long long *b)
+{
+    long long tmp = *a;
+    *a = *b;
+    *b = tmp;
+}
+
+static void sift_down(long long *heap, size_t start, size_t end)
+{
+    size_t root = start;
+    while (root * 2 + 1 <= end) {
+        size_t child = root * 2 + 1;
+        size_t target = root;
+        if (heap[target] < heap[child]) {
+            target = child;
+        }
+        if (child + 1 <= end && heap[target] < heap[child + 1]) {
+            target = child + 1;
+        }
+        if (target == root) {
+            return;
+        }
+        swap_long(&heap[root], &heap[target]);
+        root = target;
+    }
+}
+
+static void heapify(long long *heap, size_t count)
+{
+    size_t start = (count - 2) / 2;
+    for (;;) {
+        sift_down(heap, start, count - 1);
+        if (start == 0) {
+            break;
+        }
+        start--;
+    }
+}
+
+static void heap_sort(long long *arr, size_t count)
+{
+    size_t end;
+    if (count < 2) {
+        return;
+    }
+    heapify(arr, count);
+    end = count - 1;
+    while (end > 0) {
+        swap_long(&arr[0], &arr[end]);
+        end--;
+        sift_down(arr, 0, end);
+    }
+}
+
+static int max_product_of_three(const int *nums, size_t count, long long *result)
+{
+    long long *heap;
+    long long product_a;
+    long long product_b;
+    size_t i;
+
+    if (nums == NULL || result == NULL || count < 3) {
+        return -1;
+    }
+
+    heap = malloc(count * sizeof(*heap));
+    if (heap == NULL) {
+        return -1;
+    }
+
+    for (i = 0; i < count; i++) {
+        heap[i] = (long long)nums[i];
+    }
+
+    heap_sort(heap, count);
+
+    product_a = heap[count - 1] * heap[count - 2] * heap[count - 3];
+    product_b = heap[0] * heap[1] * heap[count - 1];
+
+    *result = (product_a > product_b) ? product_a : product_b;
+
+    free(heap);
+    return 0;
+}
+
+int main(void)
+{
+    int data1[] = {12, 74, 9, 50, 61, 41};
+    int data2[] = {-10, -3, 5, 6, -2};
+    int data3[] = {1, 2, 3};
+    long long result;
+
+    if (max_product_of_three(data1, sizeof(data1) / sizeof(data1[0]), &result) == 0) {
+        printf("Max product: %lld\n", result);
+    } else {
+        fprintf(stderr, "Error computing product for data1\n");
+        return EXIT_FAILURE;
+    }
+
+    if (max_product_of_three(data2, sizeof(data2) / sizeof(data2[0]), &result) == 0) {
+        printf("Max product: %lld\n", result);
+    } else {
+        fprintf(stderr, "Error computing product for data2\n");
+        return EXIT_FAILURE;
+    }
+
+    if (max_product_of_three(data3, sizeof(data3) / sizeof(data3[0]), &result) == 0) {
+        printf("Max product: %lld\n", result);
+    } else {
+        fprintf(stderr, "Error computing product for data3\n");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```

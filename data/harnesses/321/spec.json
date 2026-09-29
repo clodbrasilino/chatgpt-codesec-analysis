@@ -1,0 +1,44 @@
+{
+  "task_id": 321,
+  "text": "Write a C function to find the demlo number for the given number.",
+  "fn_candidates": [
+    "find_demlo",
+    "FindDemlo",
+    "findDemlo",
+    "finddemlo"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "find_demlo",
+      "args": [
+        "111111"
+      ],
+      "expected": "12345654321",
+      "assert_src": "assert find_demlo(\"111111\") == '12345654321'"
+    },
+    {
+      "fn_name": "find_demlo",
+      "args": [
+        "1111"
+      ],
+      "expected": "1234321",
+      "assert_src": "assert find_demlo(\"1111\") == '1234321'"
+    },
+    {
+      "fn_name": "find_demlo",
+      "args": [
+        "13333122222"
+      ],
+      "expected": "123456789101110987654321",
+      "assert_src": "assert find_demlo(\"13333122222\") == '123456789101110987654321'"
+    }
+  ],
+  "arg_kinds": [
+    "str"
+  ],
+  "return_kind": "str",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

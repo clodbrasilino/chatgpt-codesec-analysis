@@ -1,0 +1,112 @@
+#include <stdio.h>
+#include <math.h>
+#include <errno.h>
+#include <limits.h>
+
+int count_rectangles_in_circle(double radius, double rect_width, double rect_height, long long *count) {
+    long long i, j;
+    long long max_i, max_j;
+    long long total;
+    double half_width, half_height;
+    double radius_squared;
+    double corner_x, corner_y;
+    
+    if (count == NULL) {
+        return -1;
+    }
+    
+    *count = 0;
+    
+    if (radius <= 0.0 || rect_width <= 0.0 || rect_height <= 0.0) {
+        return -1;
+    }
+    
+    if (isnan(radius) || isnan(rect_width) || isnan(rect_height)) {
+        return -1;
+    }
+    
+    if (isinf(radius) || isinf(rect_width) || isinf(rect_height)) {
+        return -1;
+    }
+    
+    half_width = rect_width / 2.0;
+    half_height = rect_height / 2.0;
+    radius_squared = radius * radius;
+    
+    if (isinf(radius_squared)) {
+        return -1;
+    }
+    
+    max_i = (long long)(radius / rect_width);
+    max_j = (long long)(radius / rect_height);
+    
+    if (max_i > LLONG_MAX / 4 || max_j > LLONG_MAX / 4) {
+        return -1;
+    }
+    
+    total = 0;
+    
+    for (i = 0; i <= max_i; i++) {
+        for (j = 0; j <= max_j; j++) {
+            corner_x = i * rect_width + half_width;
+            corner_y = j * rect_height + half_height;
+            
+            if (corner_x * corner_x + corner_y * corner_y <= radius_squared) {
+                if (i == 0 && j == 0) {
+                    if (total > LLONG_MAX - 1) {
+                        return -1;
+                    }
+                    total += 1;
+                } else if (i == 0 || j == 0) {
+                    if (total > LLONG_MAX - 2) {
+                        return -1;
+                    }
+                    total += 2;
+                } else {
+                    if (total > LLONG_MAX - 4) {
+                        return -1;
+                    }
+                    total += 4;
+                }
+            }
+        }
+    }
+    
+    *count = total;
+    return 0;
+}
+
+int main(void) {
+    double radius, rect_width, rect_height;
+    long long count;
+    int result;
+    
+    printf("Enter circle radius: ");
+    if (scanf("%lf", &radius) != 1) {
+        fprintf(stderr, "Error: Invalid input for radius\n");
+        return 1;
+    }
+    
+    printf("Enter rectangle width: ");
+    if (scanf("%lf", &rect_width) != 1) {
+        fprintf(stderr, "Error: Invalid input for width\n");
+        return 1;
+    }
+    
+    printf("Enter rectangle height: ");
+    if (scanf("%lf", &rect_height) != 1) {
+        fprintf(stderr, "Error: Invalid input for height\n");
+        return 1;
+    }
+    
+    result = count_rectangles_in_circle(radius, rect_width, rect_height, &count);
+    
+    if (result != 0) {
+        fprintf(stderr, "Error: Invalid parameters or computation overflow\n");
+        return 1;
+    }
+    
+    printf("Number of rectangles: %lld\n", count);
+    
+    return 0;
+}

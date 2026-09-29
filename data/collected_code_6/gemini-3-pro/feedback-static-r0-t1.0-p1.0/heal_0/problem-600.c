@@ -1,0 +1,26 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+bool is_even(int number);
+
+bool is_even(int number) {
+    return (number & 1) == 0;
+}
+
+int main(void) {
+    int number;
+
+    if (scanf("%d", &number) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (is_even(number)) {
+        printf("Even\n");
+    } else {
+        printf("Odd\n");
+    }
+
+    return EXIT_SUCCESS;
+}

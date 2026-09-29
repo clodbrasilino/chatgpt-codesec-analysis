@@ -1,0 +1,12 @@
+collected_code/problem-761-0.c:17:18: error: Cannot determine that 'radius' is initialized [premium-bughuntingUninit]
+    scanf("%f", &radius);
+                 ^
+collected_code/problem-761-0.c:20:18: error: Cannot determine that 'angle' is initialized [premium-bughuntingUninit]
+    scanf("%f", &angle);
+                 ^
+collected_code/problem-761-0.c:22:33: error: Cannot determine that 'radius' is initialized [premium-bughuntingUninit]
+    result = calculateArcLength(radius, angle);
+                                ^
+collected_code/problem-761-0.c:22:41: error: Cannot determine that 'angle' is initialized [premium-bughuntingUninit]
+    result = calculateArcLength(radius, angle);
+                                        ^

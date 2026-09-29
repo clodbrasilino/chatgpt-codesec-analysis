@@ -1,0 +1,77 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char* longestCommonPrefix(char** strs, int strsSize) {
+    if (strsSize == 0 || strs == NULL) {
+        char* empty = (char*)malloc(1);
+        if (empty) {
+            empty[0] = '\0';
+        }
+        return empty;
+    }
+
+    int prefixLen = 0;
+    while (strs[0] != NULL && strs[0][prefixLen] != '\0') {
+        prefixLen++;
+    }
+    
+    for (int i = 1; i < strsSize; i++) {
+        if (strs[i] == NULL) {
+            char* empty = (char*)malloc(1);
+            if (empty) {
+                empty[0] = '\0';
+            }
+            return empty;            
+        }
+        int j = 0;
+        while (j < prefixLen && strs[0][j] == strs[i][j] && strs[0][j] != '\0') {
+            j++;
+        }
+        prefixLen = j;
+        if (prefixLen == 0) {
+            break;
+        }
+    }
+
+    char* result = (char*)malloc((prefixLen + 1) * sizeof(char));
+    if (result == NULL) {
+        return NULL;
+    }
+    
+    /* Possible weaknesses found:
+     * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+     */
+    memcpy(result, strs[0], prefixLen);
+    result[prefixLen] = '\0';
+    
+    return result;
+}
+
+int main(void) {
+    char* test1[] = {"flower", "flow", "flight"};
+    int size1 = sizeof(test1) / sizeof(test1[0]);
+    char* res1 = longestCommonPrefix(test1, size1);
+    if (res1) {
+        printf("%s\n", res1);
+        free(res1);
+    }
+
+    char* test2[] = {"dog", "racecar", "car"};
+    int size2 = sizeof(test2) / sizeof(test2[0]);
+    char* res2 = longestCommonPrefix(test2, size2);
+    if (res2) {
+        printf("%s\n", res2);
+        free(res2);
+    }
+
+    char* test3[] = {"interstellar", "internet", "interval"};
+    int size3 = sizeof(test3) / sizeof(test3[0]);
+    char* res3 = longestCommonPrefix(test3, size3);
+    if (res3) {
+        printf("%s\n", res3);
+        free(res3);
+    }
+
+    return 0;
+}

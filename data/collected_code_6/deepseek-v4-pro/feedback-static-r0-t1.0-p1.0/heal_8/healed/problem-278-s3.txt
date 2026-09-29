@@ -1,0 +1,108 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_NAME_LENGTH 49
+
+typedef struct {
+    int id;
+    char *name;
+    float value;
+} Record;
+
+typedef struct {
+    Record *elements;
+    size_t size;
+} Tuple;
+
+size_t count_before_record(const Tuple *tuple, int target_id) {
+    if (tuple == NULL || tuple->elements == NULL) {
+        return 0;
+    }
+    
+    size_t count = 0;
+    for (size_t i = 0; i < tuple->size; i++) {
+        if (tuple->elements[i].id == target_id) {
+            return count;
+        }
+        count++;
+    }
+    
+    return tuple->size;
+}
+
+static Record create_record(int id, const char *name, float value) {
+    Record record;
+    record.id = id;
+    record.value = value;
+    record.name = NULL;
+    
+    if (name == NULL) {
+        name = "";
+    }
+    
+    size_t name_len = strnlen(name, MAX_NAME_LENGTH);
+    if (name_len > MAX_NAME_LENGTH) {
+        name_len = MAX_NAME_LENGTH;
+    }
+    
+    record.name = malloc(name_len + 1);
+    if (record.name == NULL) {
+        fprintf(stderr, "Memory allocation failed for name\n");
+        exit(1);
+    }
+    
+    if (name_len > 0) {
+        memcpy(record.name, name, name_len);
+    }
+    record.name[name_len] = '\0';
+    
+    return record;
+}
+
+static void free_record(Record *record) {
+    if (record != NULL && record->name != NULL) {
+        free(record->name);
+        record->name = NULL;
+    }
+}
+
+static void free_tuple(Tuple *tuple) {
+    if (tuple != NULL && tuple->elements != NULL) {
+        for (size_t i = 0; i < tuple->size; i++) {
+            free_record(&tuple->elements[i]);
+        }
+        free(tuple->elements);
+        tuple->elements = NULL;
+        tuple->size = 0;
+    }
+}
+
+int main(void) {
+    Tuple tuple;
+    tuple.size = 5;
+    tuple.elements = malloc(tuple.size * sizeof(Record));
+    
+    if (tuple.elements == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return 1;
+    }
+    
+    tuple.elements[0] = create_record(101, "Alpha", 10.5f);
+    tuple.elements[1] = create_record(102, "Beta", 20.5f);
+    tuple.elements[2] = create_record(103, "Gamma", 30.5f);
+    tuple.elements[3] = create_record(104, "Delta", 40.5f);
+    tuple.elements[4] = create_record(105, "Epsilon", 50.5f);
+    
+    size_t result = count_before_record(&tuple, 103);
+    printf("Elements before record with id 103: %zu\n", result);
+    
+    result = count_before_record(&tuple, 999);
+    printf("Elements before record with id 999: %zu\n", result);
+    
+    free_tuple(&tuple);
+    
+    return 0;
+}
+```

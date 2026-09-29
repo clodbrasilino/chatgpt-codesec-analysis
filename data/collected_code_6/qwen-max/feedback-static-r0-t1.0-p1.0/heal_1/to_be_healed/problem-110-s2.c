@@ -1,0 +1,59 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int start;
+    int end;
+} Range;
+
+int compare(const void *a, const void *b) {
+    return ((Range *)a)->start - ((Range *)b)->start;
+}
+
+/* Possible weaknesses found:
+ *  Parameter 'list' can be declared as pointer to const [constParameterPointer]
+ */
+void findMissingRanges(int *list, int listSize, int start, int end, Range **result, int *resultSize) {
+    *result = (Range *)malloc((end - start + 1) * sizeof(Range));
+    *resultSize = 0;
+
+    int i = 0;
+    int current = start;
+
+    while (i < listSize && list[i] <= end) {
+        if (list[i] > current) {
+            (*result)[*resultSize].start = current;
+            (*result)[*resultSize].end = list[i] - 1;
+            (*resultSize)++;
+        }
+        current = list[i] + 1;
+        i++;
+    }
+
+    if (current <= end) {
+        (*result)[*resultSize].start = current;
+        (*result)[*resultSize].end = end;
+        (*resultSize)++;
+    }
+}
+
+int main() {
+    int list[] = {3, 5, 10};
+    int listSize = sizeof(list) / sizeof(list[0]);
+    int start = 1;
+    int end = 12;
+
+    Range *result = NULL;
+    int resultSize = 0;
+
+    findMissingRanges(list, listSize, start, end, &result, &resultSize);
+
+    qsort(result, resultSize, sizeof(Range), compare);
+
+    for (int i = 0; i < resultSize; i++) {
+        printf("Missing range: %d -> %d\n", result[i].start, result[i].end);
+    }
+
+    free(result);
+    return 0;
+}

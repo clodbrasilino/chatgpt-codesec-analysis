@@ -1,0 +1,106 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char *key;
+    int value;
+} DictEntry;
+
+typedef struct {
+    DictEntry *entries;
+    size_t size;
+    size_t capacity;
+} Dictionary;
+
+Dictionary *dict_create(size_t capacity) {
+    Dictionary *dict = malloc(sizeof(Dictionary));
+    if (!dict) return NULL;
+    dict->entries = malloc(capacity * sizeof(DictEntry));
+    if (!dict->entries) {
+        free(dict);
+        return NULL;
+    }
+    dict->size = 0;
+    dict->capacity = capacity;
+    return dict;
+}
+
+int dict_add(Dictionary *dict, const char *key, int value) {
+    if (!dict || dict->size >= dict->capacity) return -1;
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    dict->entries[dict->size].key = malloc(strlen(key) + 1);
+    if (!dict->entries[dict->size].key) return -1;
+    /* Possible weaknesses found:
+     * Flawfinder strcpy: Does not check for buffer overflows when copying to destination [MS-banned] (CWE-120). Consider using snprintf, strcpy_s, or strlcpy (warning: strncpy easily misused). (risk 4, buffer)
+     */
+    strcpy(dict->entries[dict->size].key, key);
+    dict->entries[dict->size].value = value;
+    dict->size++;
+    return 0;
+}
+
+void dict_free(Dictionary *dict) {
+    if (!dict) return;
+    for (size_t i = 0; i < dict->size; i++) {
+        free(dict->entries[i].key);
+    }
+    free(dict->entries);
+    free(dict);
+}
+
+Dictionary *dict_filter_by_value(Dictionary *original, int target_value) {
+    if (!original) return NULL;
+    
+    Dictionary *filtered = dict_create(original->capacity);
+    if (!filtered) return NULL;
+    
+    for (size_t i = 0; i < original->size; i++) {
+        if (original->entries[i].value == target_value) {
+            if (dict_add(filtered, original->entries[i].key, original->entries[i].value) != 0) {
+                dict_free(filtered);
+                return NULL;
+            }
+        }
+    }
+    return filtered;
+}
+
+int main(void) {
+    Dictionary *dict = dict_create(5);
+    if (!dict) return EXIT_FAILURE;
+    
+    if (dict_add(dict, "apple", 1) != 0) {
+        dict_free(dict);
+        return EXIT_FAILURE;
+    }
+    if (dict_add(dict, "banana", 2) != 0) {
+        dict_free(dict);
+        return EXIT_FAILURE;
+    }
+    if (dict_add(dict, "cherry", 1) != 0) {
+        dict_free(dict);
+        return EXIT_FAILURE;
+    }
+    if (dict_add(dict, "date", 3) != 0) {
+        dict_free(dict);
+        return EXIT_FAILURE;
+    }
+    
+    Dictionary *filtered = dict_filter_by_value(dict, 1);
+    if (!filtered) {
+        dict_free(dict);
+        return EXIT_FAILURE;
+    }
+    
+    for (size_t i = 0; i < filtered->size; i++) {
+        printf("%s: %d\n", filtered->entries[i].key, filtered->entries[i].value);
+    }
+    
+    dict_free(filtered);
+    dict_free(dict);
+    
+    return EXIT_SUCCESS;
+}

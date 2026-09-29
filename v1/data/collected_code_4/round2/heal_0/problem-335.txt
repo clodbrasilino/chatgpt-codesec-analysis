@@ -1,0 +1,19 @@
+```c
+#include <stdio.h>
+
+int find_sum_of_arithmetic_progression(int first, int last, int total) {
+    if (total <= 0) {
+        return 0;
+    }
+    int sum = (total / 2) * (first + last);
+    return sum;
+}
+
+int main() {
+    int first = 1, last = 10, total = 10;
+    int sum = find_sum_of_arithmetic_progression(first, last, total);
+    printf("Sum: %d\n", sum);
+
+    return 0;
+}
+```

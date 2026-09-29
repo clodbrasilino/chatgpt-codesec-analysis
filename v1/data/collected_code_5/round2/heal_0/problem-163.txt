@@ -1,0 +1,29 @@
+```C
+#include <stdio.h> 
+#include <math.h> 
+
+double calculate_area(int sides, double side_length) {
+    if (sides < 3 || side_length <= 0) {
+        printf("Invalid input. A polygon should have at least 3 sides and side length should be greater than 0.\n");
+        return -1;
+    }
+    double area = (side_length * side_length * sides) / (4.0 * tan(M_PI / sides));
+    return area;
+}
+
+int main() {
+    int sides;
+    double side_length;
+    
+    printf("Enter the number of sides: ");
+    scanf("%d", &sides);
+    printf("Enter the length of a side: ");
+    scanf("%lf", &side_length);
+
+    double area = calculate_area(sides, side_length);
+    if (area != -1) {
+        printf("The area of the polygon is %.2lf\n", area);
+    }
+    return 0;
+}
+```

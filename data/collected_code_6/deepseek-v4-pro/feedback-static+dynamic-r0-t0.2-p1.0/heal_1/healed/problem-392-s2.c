@@ -1,0 +1,47 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <signal.h>
+
+long long *memo;
+long long memo_size;
+
+long long f(long long n) {
+    if (n == 0) return 0;
+    if (n < 12) return n;
+    if (n >= memo_size) {
+        return f(n / 2) + f(n / 3) + f(n / 4) + f(n / 5);
+    }
+    if (memo[n] != -1) return memo[n];
+    long long sum = f(n / 2) + f(n / 3) + f(n / 4) + f(n / 5);
+    memo[n] = (sum > n) ? sum : n;
+    return memo[n];
+}
+
+int main() {
+    long long n;
+    printf("Enter n: ");
+    if (scanf("%lld", &n) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return 1;
+    }
+    if (n < 0) {
+        fprintf(stderr, "n must be non-negative\n");
+        return 1;
+    }
+    if (n > 1000000) {
+        fprintf(stderr, "n too large\n");
+        return 1;
+    }
+    memo_size = n + 1;
+    memo = (long long *)malloc(memo_size * sizeof(long long));
+    if (memo == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return 1;
+    }
+    for (long long i = 0; i < memo_size; i++) {
+        memo[i] = -1;
+    }
+    printf("%lld\n", f(n));
+    free(memo);
+    return 0;
+}

@@ -1,0 +1,86 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+char *camel_to_snake(const char *input) {
+    if (input == NULL) {
+        return NULL;
+    }
+
+    size_t input_len = strnlen(input, 1024);
+    size_t capacity = input_len * 2 + 1;
+    char *result = (char *)malloc(capacity);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    size_t result_len = 0;
+    size_t pos = 0;
+
+    while (pos < input_len) {
+        if (isupper((unsigned char)input[pos])) {
+            if (result_len > 0 && result[result_len - 1] != '_' && pos > 0) {
+                if (result_len + 1 >= capacity) {
+                    capacity = capacity * 2 + 1;
+                    char *tmp = (char *)realloc(result, capacity);
+                    if (tmp == NULL) {
+                        free(result);
+                        return NULL;
+                    }
+                    result = tmp;
+                }
+                result[result_len++] = '_';
+            }
+
+            if (result_len + 1 >= capacity) {
+                capacity = capacity * 2 + 1;
+                char *tmp = (char *)realloc(result, capacity);
+                if (tmp == NULL) {
+                    free(result);
+                    return NULL;
+                }
+                result = tmp;
+            }
+            result[result_len++] = tolower((unsigned char)input[pos]);
+        } else {
+            if (result_len + 1 >= capacity) {
+                capacity = capacity * 2 + 1;
+                char *tmp = (char *)realloc(result, capacity);
+                if (tmp == NULL) {
+                    free(result);
+                    return NULL;
+                }
+                result = tmp;
+            }
+            result[result_len++] = input[pos];
+        }
+        pos++;
+    }
+
+    result[result_len] = '\0';
+    return result;
+}
+
+int main(int argc, char *argv[]) {
+    const char *test_strings[] = {
+        "camelCaseString",
+        "thisIsATest",
+        "single",
+        "",
+        "ALLCAPS",
+        "mixedCASEString"
+    };
+
+    size_t test_count = sizeof(test_strings) / sizeof(test_strings[0]);
+
+    for (size_t i = 0; i < test_count; i++) {
+        char *converted = camel_to_snake(test_strings[i]);
+        if (converted != NULL) {
+            printf("%s -> %s\n", test_strings[i], converted);
+            free(converted);
+        }
+    }
+
+    return 0;
+}

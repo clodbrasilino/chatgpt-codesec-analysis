@@ -13,7 +13,7 @@ from collections import Counter, defaultdict
 
 REPO = Path(__file__).resolve().parents[2]
 RES = REPO / "results"
-COLL = REPO / "collected_code_6"
+COLL = REPO / "data" / "collected_code_6"
 CAP = 5
 
 

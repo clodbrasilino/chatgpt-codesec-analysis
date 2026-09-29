@@ -1,0 +1,71 @@
+./collected_code_4/round1//heal_0//problem-640.c: In function 'removeParenthesis':
+./collected_code_4/round1//heal_0//problem-640.c:26:29: warning: dereference of possibly-NULL 'result' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   26 |                 result[j++] = str[i];
+      |                 ~~~~~~~~~~~~^~~~~~~~
+  'removeParenthesis': events 1-12
+    |
+    |    8 |     if (len == 0) {
+    |      |        ^
+    |      |        |
+    |      |        (1) following 'false' branch (when 'len != 0')...
+    |......
+    |   12 |     char* result = (char*)malloc(sizeof(char) * (len + 1));
+    |      |                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                           |                          |
+    |      |                           |                          (2) ...to here
+    |      |                           (3) this call could return NULL
+    |......
+    |   15 |     for (i = 0; i < len; ++i) {
+    |      |                 ~~~~~~~
+    |      |                   |
+    |      |                   (4) following 'true' branch (when 'i < len')...
+    |   16 |         if (str[i] == '(') {
+    |      |            ~   ~
+    |      |            |   |
+    |      |            |   (5) ...to here
+    |      |            (6) following 'false' branch...
+    |   17 |             parenthesis_level++;
+    |   18 |         } else if (str[i] == ')') {
+    |      |                   ~   ~
+    |      |                   |   |
+    |      |                   |   (7) ...to here
+    |      |                   (8) following 'false' branch...
+    |......
+    |   25 |             if (parenthesis_level == 0) {
+    |      |                ~
+    |      |                |
+    |      |                (9) ...to here
+    |      |                (10) following 'true' branch (when 'parenthesis_level == 0')...
+    |   26 |                 result[j++] = str[i];
+    |      |                 ~~~~~~~~~~~~~~~~~~~~
+    |      |                             |    |
+    |      |                             |    (11) ...to here
+    |      |                             (12) 'result + (sizetype)j' could be NULL: unchecked value from (3)
+    |
+./collected_code_4/round1//heal_0//problem-640.c:35:15: warning: dereference of possibly-NULL 'result' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   35 |     result[j] = '\0';
+      |     ~~~~~~~~~~^~~~~~
+  'removeParenthesis': events 1-6
+    |
+    |    8 |     if (len == 0) {
+    |      |        ^
+    |      |        |
+    |      |        (1) following 'false' branch (when 'len != 0')...
+    |......
+    |   12 |     char* result = (char*)malloc(sizeof(char) * (len + 1));
+    |      |                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                           |                          |
+    |      |                           |                          (2) ...to here
+    |      |                           (3) this call could return NULL
+    |......
+    |   30 |     if (parenthesis_level != 0) {
+    |      |        ~
+    |      |        |
+    |      |        (4) following 'false' branch (when 'parenthesis_level == 0')...
+    |......
+    |   35 |     result[j] = '\0';
+    |      |     ~~~~~~~~~~~~~~~~
+    |      |           |   |
+    |      |           |   (6) 'result + (sizetype)j' could be NULL: unchecked value from (3)
+    |      |           (5) ...to here
+    |

@@ -1,0 +1,71 @@
+In C programming, there's no built-in Tuple or List type as in Python. However, you can accomplish something similar using structures and linked lists. Here's how you can create a new 'tuple' (struct) from a given string and a 'list' (linked list). 
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct Node {
+    int value;
+    struct Node *next;
+} Node;
+
+typedef struct {
+    char *string;
+    Node *list;
+} Tuple;
+
+Tuple* create_tuple(const char *str, Node *list) {
+    Tuple *tuple = malloc(sizeof(Tuple));
+    if(tuple == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return NULL;
+    }
+
+    tuple->string = malloc(strlen(str) + 1);
+    if(tuple->string == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        free(tuple);
+        return NULL;
+    }
+
+    strcpy(tuple->string, str);
+    tuple->list = list;
+
+    return tuple;
+}
+
+void free_tuple(Tuple *tuple) {
+    if(tuple == NULL) {
+        return;
+    }
+
+    free(tuple->string);
+    free(tuple);
+}
+
+int main() {
+    Node *list = malloc(sizeof(Node));
+    list->value = 1;
+    list->next = NULL;
+
+    Tuple *tuple = create_tuple("Example", list);
+    if(tuple == NULL) {
+        fprintf(stderr, "Tuple creation failed\n");
+        return 1;
+    }
+
+    printf("Tuple created: %s\n", tuple->string);
+
+    free_tuple(tuple);
+    free(list);
+
+    return 0;
+}
+```
+
+This code first defines the structure 'Node' to represent a linked list node, and 'Tuple' to represent a tuple. Then a function 'create_tuple' is defined to create a new tuple from a given string and linked list. 
+
+In the 'create_tuple' function, a new tuple is allocated and then the input string is copied to the tuple's string member. The list is directly assigned from the input, this basic example assumes that list points to dynamically allocated memory and thus doesn't copy the list. It just demonstrates a simple representation of a tuple from the given string and list.
+
+`main` function creates a list node and a tuple using the 'create_tuple' function, and then prints the string from the tuple. After this, it frees the allocated memory.  

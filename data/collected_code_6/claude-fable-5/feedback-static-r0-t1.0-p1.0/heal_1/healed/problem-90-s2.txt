@@ -1,0 +1,82 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#define BUFFER_SIZE 1024
+
+size_t longest_word_length(const char *str)
+{
+    size_t max_len = 0;
+    size_t current_len = 0;
+    size_t i = 0;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    while (str[i] != '\0') {
+        if (isspace((unsigned char)str[i])) {
+            if (current_len > max_len) {
+                max_len = current_len;
+            }
+            current_len = 0;
+        } else {
+            current_len++;
+        }
+        i++;
+    }
+
+    if (current_len > max_len) {
+        max_len = current_len;
+    }
+
+    return max_len;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t result;
+    size_t len;
+
+    if (printf("Enter a sentence: ") < 0) {
+        return EXIT_FAILURE;
+    }
+
+    if (fflush(stdout) != 0) {
+        return EXIT_FAILURE;
+    }
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input.\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    }
+
+    result = longest_word_length(buffer);
+
+    if (printf("Length of the longest word: %zu\n", result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The two Flawfinder findings in the original code were largely false positives, but the rewrite hardens against them anyway:
+
+1. **CWE-119/CWE-120 (statically-sized buffer):** The original code was already safe because `fgets(buffer, sizeof(buffer), stdin)` bounds the read to the buffer size and guarantees null termination on success. The rewrite keeps this pattern and adds a defensive explicit null terminator at `buffer[sizeof(buffer) - 1]` as belt-and-suspenders, plus uses a named constant for the size.
+
+2. **CWE-126 (`strlen` over-read on non-terminated strings):** Since `fgets` always null-terminates on success, `strlen` could not over-read in practice. The rewrite substitutes `strnlen(buffer, sizeof(buffer))`, which bounds the scan to the buffer size regardless, eliminating the theoretical over-read entirely.
+
+Additional hardening added: the return value of the prompt `printf` is checked, and `fflush(stdout)` ensures the prompt is visible before blocking on input (the prompt has no trailing newline, so line-buffered stdout might otherwise not display it).

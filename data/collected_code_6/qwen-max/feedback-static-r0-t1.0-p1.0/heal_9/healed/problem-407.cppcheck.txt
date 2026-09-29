@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-407.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-407.c:18:30: style: Condition 'str[len]!='\0'' is always false [knownConditionTrueFalse]
+    if (len > 10 || str[len] != '\0') {
+                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-407.c:16:16: note: len is assigned 'strlen(str)' here.
+    size_t len = strlen(str);
+               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-407.c:16:24: note: Return index of string to the first element that is 0
+    size_t len = strlen(str);
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-407.c:18:30: note: Condition 'str[len]!='\0'' is always false
+    if (len > 10 || str[len] != '\0') {
+                             ^

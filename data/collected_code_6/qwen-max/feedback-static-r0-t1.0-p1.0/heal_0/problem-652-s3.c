@@ -1,0 +1,73 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *data;
+    size_t rows;
+    size_t cols;
+} TupleMatrix;
+
+typedef struct {
+    int *data;
+    size_t length;
+} TupleList;
+
+TupleList* flattenTupleMatrix(TupleMatrix *matrix) {
+    if (matrix == NULL || matrix->data == NULL) {
+        return NULL;
+    }
+
+    TupleList *result = (TupleList*)malloc(sizeof(TupleList));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    result->length = matrix->rows * matrix->cols;
+    result->data = (int*)malloc(result->length * sizeof(int));
+    if (result->data == NULL) {
+        free(result);
+        return NULL;
+    }
+
+    for (size_t col = 0; col < matrix->cols; ++col) {
+        for (size_t row = 0; row < matrix->rows; ++row) {
+            result->data[col * matrix->rows + row] = matrix->data[row * matrix->cols + col];
+        }
+    }
+
+    return result;
+}
+
+void printTupleList(TupleList *list) {
+    for (size_t i = 0; i < list->length; ++i) {
+        printf("%d ", list->data[i]);
+        if ((i + 1) % 3 == 0) {
+            printf("\n");
+        }
+    }
+}
+
+void freeTupleList(TupleList *list) {
+    if (list != NULL) {
+        if (list->data != NULL) {
+            free(list->data);
+        }
+        free(list);
+    }
+}
+
+int main() {
+    int data[] = {1, 2, 3, 4, 5, 6};
+    TupleMatrix matrix = {data, 2, 3};
+
+    TupleList *flattened = flattenTupleMatrix(&matrix);
+    if (flattened == NULL) {
+        return 1;
+    }
+
+    printTupleList(flattened);
+
+    freeTupleList(flattened);
+
+    return 0;
+}

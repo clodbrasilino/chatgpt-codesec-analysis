@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_7/healed/problem-326.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_7/healed/problem-326.c:47:27: style: Condition 'dest_capacity>len' is always true [knownConditionTrueFalse]
+        if (dest_capacity > len) {
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_7/healed/problem-326.c:46:30: note: dest_capacity is assigned 'len+1' here.
+        size_t dest_capacity = len + 1;
+                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_7/healed/problem-326.c:47:27: note: Condition 'dest_capacity>len' is always true
+        if (dest_capacity > len) {
+                          ^

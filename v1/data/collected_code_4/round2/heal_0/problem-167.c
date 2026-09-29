@@ -1,0 +1,27 @@
+#include<stdio.h>
+#include<math.h>
+
+unsigned int smallestPowerof2(unsigned int n) {
+    if(n > 0 && !(n & (n - 1))) {
+        return n;
+    }
+
+    unsigned int p = 1;
+
+    while(p < n) {
+        p <<= 1;
+    }
+
+    return p;
+}
+
+int main() {
+    unsigned int n;
+    printf("Enter a number: ");
+    scanf("%u", &n);
+
+    unsigned int answer = smallestPowerof2(n);
+    printf("Smallest power of 2 greater than or equal to %u is %u\n", n, answer);
+
+    return 0;
+}

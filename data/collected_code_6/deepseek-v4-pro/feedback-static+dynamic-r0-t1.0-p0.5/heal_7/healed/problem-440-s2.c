@@ -1,0 +1,131 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#define MAX_WORDS 100
+#define MAX_WORD_LEN 50
+#define MAX_ADVERBS 50
+#define MAX_SENTENCE_LEN 1000
+
+typedef struct {
+    char word[MAX_WORD_LEN];
+    int position;
+} AdverbInfo;
+
+static int is_adverb(const char *word) {
+    size_t len;
+    size_t irregular_len;
+    int i;
+    
+    if (word == NULL) return 0;
+    
+    len = strnlen(word, MAX_WORD_LEN);
+    if (len < 2 || len >= MAX_WORD_LEN) return 0;
+    
+    if (strncmp(word + len - 2, "ly", 2) == 0) return 1;
+    
+    static const char *irregular[] = {
+        "well", "fast", "hard", "late", "early", "daily", "weekly",
+        "monthly", "yearly", "always", "never", "often", "seldom",
+        "sometimes", "usually", "already", "yet", "still", "just",
+        "soon", "now", "then", "here", "there", "everywhere",
+        "nowhere", "somewhere", "quite", "rather", "very", "too",
+        "almost", "enough", "indeed", "perhaps", "maybe", "certainly",
+        "definitely", "probably", "possibly", "absolutely", "completely",
+        "entirely", "extremely", "fairly", "highly", "really", "slightly",
+        "totally", "utterly", "wholly", "badly", "carefully", "easily",
+        "happily", "loudly", "quickly", "quietly", "sadly", "slowly",
+        "softly", "suddenly", "angrily", "calmly", "gently", "politely",
+        "rudely", "seriously", "sharply", "smoothly", "strongly", "weakly",
+        NULL
+    };
+    
+    for (i = 0; irregular[i] != NULL; i++) {
+        irregular_len = strnlen(irregular[i], MAX_WORD_LEN);
+        if (irregular_len == len && strncmp(word, irregular[i], len) == 0) return 1;
+    }
+    
+    return 0;
+}
+
+static int find_adverbs(const char *sentence, AdverbInfo *adverbs, int max_adverbs) {
+    int count;
+    int pos;
+    char word[MAX_WORD_LEN];
+    int word_len;
+    size_t len;
+    size_t limit;
+    size_t i;
+    
+    if (sentence == NULL || adverbs == NULL || max_adverbs <= 0) return 0;
+    
+    count = 0;
+    pos = 0;
+    word_len = 0;
+    len = strnlen(sentence, MAX_SENTENCE_LEN);
+    limit = len < MAX_SENTENCE_LEN ? len : MAX_SENTENCE_LEN - 1;
+    
+    for (i = 0; i <= limit; i++) {
+        if (i < limit && isalpha((unsigned char)sentence[i])) {
+            if (word_len < MAX_WORD_LEN - 1) {
+                word[word_len++] = (char)tolower((unsigned char)sentence[i]);
+            }
+        } else {
+            if (word_len > 0) {
+                word[word_len] = '\0';
+                if (is_adverb(word) && count < max_adverbs) {
+                    size_t copy_len = strnlen(word, MAX_WORD_LEN - 1);
+                    if (copy_len >= MAX_WORD_LEN) copy_len = MAX_WORD_LEN - 1;
+                    if (copy_len < MAX_WORD_LEN) {
+                        size_t j;
+                        for (j = 0; j < copy_len && j < MAX_WORD_LEN - 1; j++) {
+                            adverbs[count].word[j] = word[j];
+                        }
+                        adverbs[count].word[j] = '\0';
+                        adverbs[count].position = pos;
+                        count++;
+                    }
+                }
+                word_len = 0;
+            }
+            if (i < limit && (sentence[i] == ' ' || sentence[i] == '\t' || sentence[i] == '\n')) {
+                pos = (int)(i + 1);
+            }
+        }
+    }
+    
+    return count;
+}
+
+int main(void) {
+    char sentence[MAX_SENTENCE_LEN];
+    AdverbInfo adverbs[MAX_ADVERBS];
+    size_t input_len;
+    int count;
+    int i;
+    
+    printf("Enter a sentence: ");
+    if (fgets(sentence, sizeof(sentence), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+    
+    input_len = strnlen(sentence, MAX_SENTENCE_LEN);
+    if (input_len > 0 && sentence[input_len - 1] == '\n') {
+        sentence[input_len - 1] = '\0';
+    }
+    
+    count = find_adverbs(sentence, adverbs, MAX_ADVERBS);
+    
+    if (count == 0) {
+        printf("No adverbs found.\n");
+    } else {
+        printf("Adverbs found:\n");
+        for (i = 0; i < count; i++) {
+            printf("  '%s' at position %d\n", adverbs[i].word, adverbs[i].position);
+        }
+    }
+    
+    return 0;
+}

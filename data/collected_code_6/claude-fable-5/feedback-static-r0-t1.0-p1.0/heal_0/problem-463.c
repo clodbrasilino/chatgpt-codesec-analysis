@@ -1,0 +1,65 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+int maxProductSubarray(const int *arr, size_t n, int *result)
+{
+    if (arr == NULL || n == 0 || result == NULL) {
+        return -1;
+    }
+
+    long long maxEnding = arr[0];
+    long long minEnding = arr[0];
+    long long best = arr[0];
+
+    for (size_t i = 1; i < n; i++) {
+        long long current = arr[i];
+        long long candidateMax = maxEnding * current;
+        long long candidateMin = minEnding * current;
+
+        maxEnding = current;
+        if (candidateMax > maxEnding) {
+            maxEnding = candidateMax;
+        }
+        if (candidateMin > maxEnding) {
+            maxEnding = candidateMin;
+        }
+
+        minEnding = current;
+        if (candidateMax < minEnding) {
+            minEnding = candidateMax;
+        }
+        if (candidateMin < minEnding) {
+            minEnding = candidateMin;
+        }
+
+        if (maxEnding > best) {
+            best = maxEnding;
+        }
+    }
+
+    if (best > INT_MAX || best < INT_MIN) {
+        return -1;
+    }
+
+    *result = (int)best;
+    return 0;
+}
+
+int main(void)
+{
+    int arr[] = { 2, 3, -2, 4, -1 };
+    size_t n = sizeof(arr) / sizeof(arr[0]);
+    int result = 0;
+
+    if (maxProductSubarray(arr, n, &result) != 0) {
+        fprintf(stderr, "Error computing maximum product subarray\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Maximum product subarray: %d\n", result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

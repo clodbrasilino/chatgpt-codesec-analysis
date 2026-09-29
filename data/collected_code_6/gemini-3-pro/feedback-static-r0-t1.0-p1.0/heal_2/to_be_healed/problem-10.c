@@ -1,0 +1,66 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+int compare(const void *a, const void *b) {
+    return (*(const int*)a - *(const int*)b);
+}
+
+int* get_n_smallest(const int* dataset, size_t dataset_size, size_t n, size_t* out_size) {
+    if (dataset == NULL || dataset_size == 0 || out_size == NULL) {
+        return NULL;
+    }
+
+    if (n > dataset_size) {
+        n = dataset_size;
+    }
+
+    int* result = (int*)malloc(n * sizeof(int));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    int* temp_dataset = (int*)malloc(dataset_size * sizeof(int));
+    if (temp_dataset == NULL) {
+        free(result);
+        return NULL;
+    }
+
+    /* Possible weaknesses found:
+     * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+     */
+    memcpy(temp_dataset, dataset, dataset_size * sizeof(int));
+
+    qsort(temp_dataset, dataset_size, sizeof(int), compare);
+
+    /* Possible weaknesses found:
+     * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+     */
+    memcpy(result, temp_dataset, n * sizeof(int));
+
+    *out_size = n;
+    free(temp_dataset);
+
+    return result;
+}
+
+int main(void) {
+    int dataset[] = {9, 4, 7, 1, 5, 8, 2, 6, 3};
+    size_t dataset_size = sizeof(dataset) / sizeof(dataset[0]);
+    size_t n = 4;
+    size_t out_size = 0;
+
+    int* smallest = get_n_smallest(dataset, dataset_size, n, &out_size);
+
+    if (smallest != NULL) {
+        for (size_t i = 0; i < out_size; ++i) {
+            printf("%d ", smallest[i]);
+        }
+        printf("\n");
+        free(smallest);
+    } else {
+        printf("Failed to get smallest items.\n");
+    }
+
+    return 0;
+}

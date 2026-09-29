@@ -1,0 +1,47 @@
+```c
+#include <stdio.h>
+#include <limits.h>
+
+long long sumEvenNaturalNumbers(int l, int r) {
+    if (l > r) {
+        return 0;
+    }
+    
+    long long sum = 0;
+    
+    for (int i = l; i <= r; i++) {
+        if (i % 2 == 0) {
+            sum += i;
+        }
+    }
+    
+    return sum;
+}
+
+int main(void) {
+    int l, r;
+    
+    printf("Enter the range (l and r): ");
+    
+    if (scanf("%d %d", &l, &r) != 2) {
+        fprintf(stderr, "Error: Invalid input\n");
+        return 1;
+    }
+    
+    if (l < 0 || r < 0) {
+        fprintf(stderr, "Error: Natural numbers must be non-negative\n");
+        return 1;
+    }
+    
+    if (l > r) {
+        fprintf(stderr, "Error: Lower bound must be less than or equal to upper bound\n");
+        return 1;
+    }
+    
+    long long result = sumEvenNaturalNumbers(l, r);
+    
+    printf("Sum of even natural numbers in range [%d, %d]: %lld\n", l, r, result);
+    
+    return 0;
+}
+```

@@ -1,0 +1,37 @@
+```C
+#include <stdbool.h>
+#include <stdio.h>
+
+// Function to check if a number is prime or not
+bool isPrime(int n) {
+    if (n <= 1) return false;
+    for (int i = 2; i * i <= n; i++) {
+        if (n % i == 0) return false;
+    }
+    return true;
+}
+
+// Function to find the smallest prime divisor
+int smallestPrime(int n) {
+    for (int i = 2; i <= n; i++) {
+        if (isPrime(i) && n % i == 0) return i;
+    }
+    return -1;
+}
+
+
+int main() {
+    int num;
+    printf("Enter a number: ");
+    scanf("%d", &num);
+    
+    int smallest_prime = smallestPrime(num);
+   
+    if(smallest_prime == -1) 
+        printf("No prime divisor found\n");
+    else 
+        printf("Smallest Prime divisor is: %d\n", smallest_prime);
+    
+    return 0;
+}
+```

@@ -1,0 +1,99 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#define MAX_INPUT_LEN 4096U
+
+char *snake_to_camel(const char *input)
+{
+    char *result;
+    size_t len;
+    size_t i;
+    size_t out_pos;
+    int capitalize_next;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    len = strnlen(input, MAX_INPUT_LEN);
+    if (len >= MAX_INPUT_LEN) {
+        return NULL;
+    }
+
+    result = malloc(len + 1U);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    out_pos = 0U;
+    capitalize_next = 1;
+
+    for (i = 0U; i < len; i++) {
+        if (input[i] == '_') {
+            capitalize_next = 1;
+        } else {
+            if (capitalize_next && isalpha((unsigned char)input[i])) {
+                result[out_pos] = (char)toupper((unsigned char)input[i]);
+            } else {
+                result[out_pos] = input[i];
+            }
+            out_pos++;
+            capitalize_next = 0;
+        }
+    }
+
+    result[out_pos] = '\0';
+    return result;
+}
+
+int main(void)
+{
+    const char *tests[] = {
+        "android_tv",
+        "google_pixel",
+        "apple_watch",
+        "hello_world_example",
+        "convert_this_snake_case",
+        "single",
+        "a_b_c_d"
+    };
+    size_t count = sizeof(tests) / sizeof(tests[0]);
+    size_t i;
+
+    if (setvbuf(stdout, NULL, _IONBF, 0) != 0) {
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0U; i < count; i++) {
+        char *camel = snake_to_camel(tests[i]);
+        if (camel == NULL) {
+            fprintf(stderr, "Conversion failed for: %s\n", tests[i]);
+            return EXIT_FAILURE;
+        }
+        if (printf("%s\n", camel) < 0) {
+            free(camel);
+            return EXIT_FAILURE;
+        }
+        if (fflush(stdout) != 0) {
+            free(camel);
+            return EXIT_FAILURE;
+        }
+        free(camel);
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the identified weaknesses:**
+
+The conversion logic itself was correct — `snake_to_camel("android_tv")` properly produces `"AndroidTv"`. The reported failures (`expected 'AndroidTv', got <no output>`) indicate the output never reached the test harness, which points to **stdout buffering** as the root cause. When stdout is connected to a pipe (as in automated test harnesses), it is fully buffered rather than line-buffered. If the process is terminated or the pipe is read before the buffer is flushed at exit, the harness sees no output at all.
+
+**Fixes applied:**
+
+1. **`setvbuf(stdout, NULL, _IONBF, 0)`** — disables stdout buffering entirely so every `printf` is immediately visible to the consuming process.
+2. **Explicit `fflush(stdout)` after each print** — a defensive belt-and-braces guarantee that output is delivered even if buffering mode changes, with error checking so a failed flush is not silently ignored.
+3. All existing defensive measures were preserved: `NULL` input check, `strnlen` bounding against `MAX_INPUT_LEN` to prevent unbounded reads, `malloc` failure handling, `unsigned char` casts before `ctype.h` calls (avoiding UB on negative `char` values), and freeing memory on every exit path.

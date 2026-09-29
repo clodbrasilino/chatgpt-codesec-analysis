@@ -1,0 +1,91 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+#include <stdlib.h>
+
+#define BUFFER_SIZE 256U
+
+static bool is_word_length_even(const char *word, size_t max_len)
+{
+    size_t len;
+
+    if (word == NULL) {
+        return false;
+    }
+
+    len = strnlen(word, max_len);
+    return (len % 2U) == 0U;
+}
+
+static bool discard_remaining_input(void)
+{
+    int ch;
+    bool truncated = false;
+
+    do {
+        ch = getchar();
+        if (ch != '\n' && ch != EOF) {
+            truncated = true;
+        }
+    } while (ch != '\n' && ch != EOF);
+
+    return truncated;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t len;
+
+    printf("Enter a word: ");
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1U] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len > 0U && buffer[len - 1U] == '\n') {
+        buffer[len - 1U] = '\0';
+        len--;
+    }
+
+    if (len == 0U) {
+        fprintf(stderr, "No word entered\n");
+        return EXIT_FAILURE;
+    }
+
+    if (len == (sizeof(buffer) - 1U)) {
+        if (discard_remaining_input()) {
+            fprintf(stderr, "Input too long: maximum %zu characters allowed\n",
+                    sizeof(buffer) - 1U);
+            return EXIT_FAILURE;
+        }
+    }
+
+    if (is_word_length_even(buffer, sizeof(buffer))) {
+        printf("The word \"%s\" has an even length (%zu)\n", buffer, len);
+    } else {
+        printf("The word \"%s\" has an odd length (%zu)\n", buffer, len);
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis summary:**
+
+The original code was already defensively written; both flawfinder findings were low-risk, largely mitigated warnings rather than actual vulnerabilities:
+
+1. **CWE-119/CWE-120 (statically-sized `buffer`)** — Mitigated because `fgets` is called with `sizeof(buffer)`, which guarantees no write beyond the array bounds. The explicit NUL termination at `buffer[sizeof(buffer) - 1U]` is technically redundant (as `fgets` always NUL-terminates on success) but harmless as defense-in-depth. All subsequent string operations use `strnlen` with an explicit bound, so no unbounded reads occur either.
+
+2. **CWE-120/CWE-20 (`getchar` in a loop)** — The loop only reads and discards characters; nothing is written to a buffer, so no overflow is possible. In the rewrite I extracted this logic into `discard_remaining_input()` to isolate the input-draining concern and make the bounded behavior explicit.
+
+Additional hardening retained/applied in the rewrite:
+- `is_word_length_even` guards against `NULL` and uses `strnlen` with a caller-supplied bound rather than `strlen`.
+- Functions are declared `static` to limit linkage scope.
+- Truncation detection: if the input filled the buffer exactly, remaining stdin characters are drained and the user is informed, preventing silent truncation and leftover-input bugs on subsequent reads.
+- Consistent use of `size_t`, unsigned literals, and `EXIT_SUCCESS`/`EXIT_FAILURE` for portability.

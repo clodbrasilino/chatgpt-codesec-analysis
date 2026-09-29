@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_1/healed/problem-65-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_1/healed/problem-65-s3.c:46:20: style: Condition 'num_values>0' is always true [knownConditionTrueFalse]
+    if (num_values > 0) {
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_1/healed/problem-65-s3.c:44:40: note: Assignment 'num_values=sizeof(values)/sizeof(values[0])', assigned value is 5
+    size_t num_values = sizeof(values) / sizeof(values[0]);
+                                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_1/healed/problem-65-s3.c:46:20: note: Condition 'num_values>0' is always true
+    if (num_values > 0) {
+                   ^

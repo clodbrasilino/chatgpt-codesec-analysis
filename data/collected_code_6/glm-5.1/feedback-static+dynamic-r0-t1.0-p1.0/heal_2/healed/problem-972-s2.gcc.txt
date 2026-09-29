@@ -1,0 +1,5 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-972-s2.c: In function 'concatenate_to_nested':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-972-s2.c:42:9: error: implicit declaration of function 'memcpy_s'; did you mean 'memcpy'? [-Wimplicit-function-declaration]
+   42 |         memcpy_s(nt.t1.items, a.len * sizeof(int), a.items, a.len * sizeof(int));
+      |         ^~~~~~~~
+      |         memcpy

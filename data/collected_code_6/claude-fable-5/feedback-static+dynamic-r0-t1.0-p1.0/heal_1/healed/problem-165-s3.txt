@@ -1,0 +1,64 @@
+```c
+#include <stdio.h>
+#include <string.h>
+
+#define BUFFER_SIZE 256
+
+int count_matching_positions(const char *str, size_t max_len)
+{
+    int count = 0;
+    size_t len;
+    size_t i;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    len = strnlen(str, max_len);
+
+    for (i = 0; i < len; i++) {
+        char c = str[i];
+        if (c >= 'a' && c <= 'z') {
+            if ((size_t)(c - 'a') == i) {
+                count++;
+            }
+        } else if (c >= 'A' && c <= 'Z') {
+            if ((size_t)(c - 'A') == i) {
+                count++;
+            }
+        }
+    }
+
+    return count;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    int result;
+
+    printf("Enter a string: ");
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+    buffer[strcspn(buffer, "\n")] = '\0';
+
+    result = count_matching_positions(buffer, sizeof(buffer));
+
+    printf("Number of characters at same position as in alphabet: %d\n", result);
+
+    return 0;
+}
+```
+
+**Key changes addressing the identified weaknesses:**
+
+1. **CWE-126 (`strlen` over-read):** Replaced `strlen` with `strnlen`, which takes a maximum length parameter. The function signature now accepts `max_len` so the caller communicates the buffer bound, guaranteeing the scan never reads past the buffer even if the string is not NUL-terminated.
+
+2. **CWE-119/CWE-120 (statically-sized buffer):** The buffer size is defined once via `BUFFER_SIZE` and consistently referenced with `sizeof(buffer)` in `fgets`, the explicit NUL-termination, and the call to `count_matching_positions`. An explicit `buffer[sizeof(buffer) - 1] = '\0';` guarantees termination as defense-in-depth (although `fgets` already terminates on success, this protects against future refactoring where the read function might change).
+
+The original logic — counting characters whose position matches their alphabetical index (case-insensitive) — is preserved exactly.

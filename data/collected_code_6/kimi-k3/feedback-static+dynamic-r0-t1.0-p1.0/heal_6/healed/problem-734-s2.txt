@@ -1,0 +1,87 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+#include <stdint.h>
+
+long long sumOfSubarrayProducts(const int *arr, int n) {
+    if (arr == NULL || n <= 0) {
+        return 0;
+    }
+    
+    long long totalSum = 0;
+    
+    for (int i = 0; i < n; i++) {
+        long long product = 1;
+        for (int j = i; j < n; j++) {
+            long long val = (long long)arr[j];
+            
+            if (val != 0) {
+                if (product == LLONG_MIN && val == -1) {
+                    product = LLONG_MAX;
+                } else if (product > 0 && val > 0 && product > LLONG_MAX / val) {
+                    product = LLONG_MAX;
+                } else if (product > 0 && val < 0 && val != LLONG_MIN && product > LLONG_MIN / val) {
+                    product = LLONG_MIN;
+                } else if (product < 0 && val > 0 && product < LLONG_MIN / val) {
+                    product = LLONG_MIN;
+                } else if (product < 0 && val < 0 && val != -1 && val != LLONG_MIN && product < LLONG_MAX / val) {
+                    product = LLONG_MAX;
+                } else if (product < 0 && val == -1) {
+                    if (product < -LLONG_MAX) {
+                        product = LLONG_MAX;
+                    } else {
+                        product = -product;
+                    }
+                } else {
+                    product *= val;
+                }
+            }
+            
+            if (product > 0 && totalSum > LLONG_MAX - product) {
+                totalSum = LLONG_MAX;
+            } else if (product < 0 && totalSum < LLONG_MIN - product) {
+                totalSum = LLONG_MIN;
+            } else {
+                totalSum += product;
+            }
+        }
+    }
+    
+    return totalSum;
+}
+
+int main(void) {
+    int n;
+    
+    if (scanf("%d", &n) != 1 || n <= 0) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    if ((size_t)n > SIZE_MAX / sizeof(int)) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    int *arr = malloc((size_t)n * sizeof(int));
+    if (arr == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+    
+    for (int i = 0; i < n; i++) {
+        if (scanf("%d", &arr[i]) != 1) {
+            fprintf(stderr, "Invalid input\n");
+            free(arr);
+            return EXIT_FAILURE;
+        }
+    }
+    
+    long long result = sumOfSubarrayProducts(arr, n);
+    printf("%lld\n", result);
+    
+    free(arr);
+    return EXIT_SUCCESS;
+}
+```

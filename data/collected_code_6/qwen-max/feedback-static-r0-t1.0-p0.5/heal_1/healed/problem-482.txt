@@ -1,0 +1,38 @@
+```c
+#include <stdio.h>
+#include <regex.h>
+#include <string.h>
+
+void find_sequences(const char *input) {
+    regex_t regex;
+    if (regcomp(&regex, "[A-Z][a-z]+", REG_EXTENDED | REG_NEWLINE) != 0) {
+        fprintf(stderr, "Could not compile regex\n");
+        return;
+    }
+
+    regmatch_t pmatch[1];
+    const size_t nmatch = 1;
+
+    for (const char *ptr = input; ptr != NULL; ptr += pmatch[0].rm_eo) {
+        int reti = regexec(&regex, ptr, nmatch, pmatch, 0);
+        if (reti == 0) {
+            printf("Found: %.*s\n", pmatch[0].rm_eo - pmatch[0].rm_so, &ptr[pmatch[0].rm_so]);
+        } else if (reti == REG_NOMATCH) {
+            break;
+        } else {
+            char msgbuf[100];
+            regerror(reti, &regex, msgbuf, sizeof(msgbuf));
+            fprintf(stderr, "Regex match failed: %s\n", msgbuf);
+            break;
+        }
+    }
+
+    regfree(&regex);
+}
+
+int main() {
+    const char *test_string = "This is a Test String with SomeWords and OtherWords";
+    find_sequences(test_string);
+    return 0;
+}
+```

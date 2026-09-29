@@ -1,0 +1,24 @@
+#include <stdio.h>
+
+int count_unset_bits(int n) {
+    int total_unset_bits = 0;
+    for (int i = 1; i <= n; ++i) {
+        int num = i;
+        while (num > 0) {
+            if ((num & 1) == 0) {
+                total_unset_bits++;
+            }
+            num >>= 1;
+        }
+    }
+    return total_unset_bits;
+}
+
+int main() {
+    int n;
+    printf("Enter a number: ");
+    scanf("%d", &n);
+    int result = count_unset_bits(n);
+    printf("Total unset bits from 1 to %d is %d\n", n, result);
+    return 0;
+}

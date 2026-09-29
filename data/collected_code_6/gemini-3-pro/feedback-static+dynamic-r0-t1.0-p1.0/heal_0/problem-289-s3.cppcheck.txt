@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-289-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-289-s3.c:25:34: style: Variable 'odd_days' is reassigned a value before the old one has been used. [redundantAssignment]
+    if (centuries == 1) odd_days = 5;
+                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-289-s3.c:22:14: note: odd_days is assigned
+    odd_days = (prev_year % 400) % 7;
+             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-289-s3.c:25:34: note: odd_days is overwritten
+    if (centuries == 1) odd_days = 5;
+                                 ^

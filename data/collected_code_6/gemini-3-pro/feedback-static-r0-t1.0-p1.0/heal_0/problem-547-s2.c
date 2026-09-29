@@ -1,0 +1,30 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+unsigned long long calculate_hamming_distance_sum(unsigned int n) {
+    unsigned long long sum = 0;
+    for (unsigned int i = 1; i <= n; i++) {
+        unsigned int xor_result = i ^ (i - 1);
+        unsigned int distance = 0;
+        unsigned int temp = xor_result;
+        while (temp > 0) {
+            distance += temp & 1;
+            temp >>= 1;
+        }
+        sum += distance;
+    }
+    return sum;
+}
+
+int main() {
+    unsigned int n;
+    
+    if (scanf("%u", &n) != 1) {
+        return EXIT_FAILURE;
+    }
+    
+    unsigned long long result = calculate_hamming_distance_sum(n);
+    printf("%llu\n", result);
+    
+    return EXIT_SUCCESS;
+}

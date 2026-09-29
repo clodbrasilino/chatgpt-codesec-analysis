@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-584.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-584.c:107:105: style: Condition 'copy_len<=length' is always true [knownConditionTrueFalse]
+            if (copy_len > 0 && copy_len <= length && src_offset + copy_len <= sentence_len && copy_len <= length) {
+                                                                                                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-584.c:107:42: note: Assuming that condition 'copy_len<=length' is not redundant
+            if (copy_len > 0 && copy_len <= length && src_offset + copy_len <= sentence_len && copy_len <= length) {
+                                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-584.c:107:105: note: Condition 'copy_len<=length' is always true
+            if (copy_len > 0 && copy_len <= length && src_offset + copy_len <= sentence_len && copy_len <= length) {
+                                                                                                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-584.c:107:93: style: Same expression 'copy_len<=length' found multiple times in chain of '&&' operators. [duplicateExpression]
+            if (copy_len > 0 && copy_len <= length && src_offset + copy_len <= sentence_len && copy_len <= length) {
+                                                                                            ^

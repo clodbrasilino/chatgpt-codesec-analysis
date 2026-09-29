@@ -1,0 +1,94 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define TUPLE_STR_LEN 32
+
+struct Tuple {
+    int first;
+    double second;
+    char third[TUPLE_STR_LEN];
+};
+
+static int tuple_set_third(struct Tuple *t, const char *value)
+{
+    size_t len;
+
+    if (t == NULL || value == NULL) {
+        return -1;
+    }
+
+    len = strlen(value);
+    if (len >= sizeof(t->third)) {
+        return -1;
+    }
+
+    memcpy(t->third, value, len);
+    t->third[len] = '\0';
+    return 0;
+}
+
+char *tuple_to_string(const struct Tuple *t)
+{
+    char *result;
+    int needed;
+
+    if (t == NULL) {
+        return NULL;
+    }
+
+    needed = snprintf(NULL, 0, "(%d, %.2f, %s)", t->first, t->second, t->third);
+    if (needed < 0) {
+        return NULL;
+    }
+
+    result = malloc((size_t)needed + 1U);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    if (snprintf(result, (size_t)needed + 1U, "(%d, %.2f, %s)", t->first, t->second, t->third) < 0) {
+        free(result);
+        return NULL;
+    }
+
+    return result;
+}
+
+int main(void)
+{
+    struct Tuple t;
+    char *str;
+
+    t.first = 42;
+    t.second = 3.14;
+
+    if (tuple_set_third(&t, "hello") != 0) {
+        (void)fprintf(stderr, "Failed to set tuple string field\n");
+        return EXIT_FAILURE;
+    }
+
+    str = tuple_to_string(&t);
+    if (str == NULL) {
+        (void)fprintf(stderr, "Failed to convert tuple to string\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("%s\n", str) < 0) {
+        free(str);
+        return EXIT_FAILURE;
+    }
+
+    free(str);
+    return EXIT_SUCCESS;
+}
+```
+
+**Key changes addressing the identified weaknesses:**
+
+1. **CWE-120 (`strncpy` misuse):** Replaced `strncpy` with a dedicated `tuple_set_third()` helper. `strncpy` is banned in many coding standards because it silently truncates and doesn't guarantee null-termination. The helper instead validates the source length against the buffer size *before* copying with `memcpy`, and explicitly null-terminates. This turns silent truncation into a detectable error condition.
+
+2. **CWE-119/CWE-120 (statically-sized array):** The fixed-size buffer `third[32]` remains (a reasonable design choice), but all writes to it now go through the bounds-checked setter, so no code path can overflow it or leave it unterminated. The magic number `32` was also lifted into a named constant `TUPLE_STR_LEN` for maintainability.
+
+3. **Preserved existing safe patterns:** The `tuple_to_string()` function already followed the correct two-pass `snprintf` idiom (size query with `NULL` buffer, then bounded write), with proper NULL checks, allocation failure handling, and cleanup on error paths — so it was kept intact.

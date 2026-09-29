@@ -1,0 +1,65 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+long long calculate_max_sum(long long n, long long *memo, size_t memo_size);
+
+long long calculate_max_sum(long long n, long long *memo, size_t memo_size) {
+    long long sum = 0;
+    long long result = 0;
+
+    if (n <= 0) {
+        return 0;
+    }
+
+    if ((size_t)n < memo_size && memo[n] != -1) {
+        return memo[n];
+    }
+
+    sum = calculate_max_sum(n / 2, memo, memo_size) +
+          calculate_max_sum(n / 3, memo, memo_size) +
+          calculate_max_sum(n / 4, memo, memo_size) +
+          calculate_max_sum(n / 5, memo, memo_size);
+
+    result = (sum > n) ? sum : n;
+
+    if ((size_t)n < memo_size) {
+        memo[n] = result;
+    }
+
+    return result;
+}
+
+int main(void) {
+    long long n = 0;
+    size_t memo_size = 1000000;
+    long long *memo = NULL;
+    size_t i = 0;
+    long long result = 0;
+
+    if (scanf("%lld", &n) != 1) {
+        return EXIT_FAILURE;
+    }
+
+    if (n < 0) {
+        return EXIT_FAILURE;
+    }
+
+    memo = (long long *)malloc(memo_size * sizeof(long long));
+    if (memo == NULL) {
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i < memo_size; i++) {
+        memo[i] = -1;
+    }
+
+    result = calculate_max_sum(n, memo, memo_size);
+    printf("%lld\n", result);
+
+    free(memo);
+    memo = NULL;
+
+    return EXIT_SUCCESS;
+}
+```

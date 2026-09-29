@@ -1,0 +1,22 @@
+#include <stdio.h>
+#include <string.h>
+
+int matchWordWithZ(const char *str) {
+    int len = strlen(str);
+    for (int i = 0; i < len; i++) {
+        if (str[i] == 'z' || str[i] == 'Z') {
+            return 1;
+        }
+    }
+    return 0;
+}
+
+int main() {
+    const char *str = "Hello, buzz";
+    if(matchWordWithZ(str)) {
+        printf("The word contains 'z'.\n");
+    } else {
+        printf("The word does not contain 'z'.\n");
+    }
+    return 0;
+}

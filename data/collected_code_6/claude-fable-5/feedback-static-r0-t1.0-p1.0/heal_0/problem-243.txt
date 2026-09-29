@@ -1,0 +1,96 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int first;
+    int second;
+} Pair;
+
+typedef struct {
+    Pair pair;
+    size_t count;
+    size_t index;
+} SortItem;
+
+static int compare_items(const void *a, const void *b)
+{
+    const SortItem *ia = (const SortItem *)a;
+    const SortItem *ib = (const SortItem *)b;
+
+    if (ia->count > ib->count) {
+        return -1;
+    }
+    if (ia->count < ib->count) {
+        return 1;
+    }
+    if (ia->index < ib->index) {
+        return -1;
+    }
+    if (ia->index > ib->index) {
+        return 1;
+    }
+    return 0;
+}
+
+static int sort_by_first_occurrence(Pair *pairs, size_t n)
+{
+    SortItem *items;
+    size_t i;
+    size_t j;
+
+    if (pairs == NULL || n == 0U) {
+        return -1;
+    }
+
+    items = malloc(n * sizeof(*items));
+    if (items == NULL) {
+        return -1;
+    }
+
+    for (i = 0U; i < n; i++) {
+        items[i].pair = pairs[i];
+        items[i].index = i;
+        items[i].count = 0U;
+        for (j = 0U; j < n; j++) {
+            if (pairs[j].first == pairs[i].first) {
+                items[i].count++;
+            }
+        }
+    }
+
+    qsort(items, n, sizeof(*items), compare_items);
+
+    for (i = 0U; i < n; i++) {
+        pairs[i] = items[i].pair;
+    }
+
+    free(items);
+    return 0;
+}
+
+int main(void)
+{
+    Pair data[] = {
+        {1, 3}, {4, 5}, {6, 7}, {1, 3}, {1, 3}, {4, 5}
+    };
+    size_t n = sizeof(data) / sizeof(data[0]);
+    size_t i;
+
+    if (sort_by_first_occurrence(data, n) != 0) {
+        fprintf(stderr, "Sorting failed\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("[");
+    for (i = 0U; i < n; i++) {
+        printf("(%d, %d)", data[i].first, data[i].second);
+        if (i + 1U < n) {
+            printf(", ");
+        }
+    }
+    printf("]\n");
+
+    return EXIT_SUCCESS;
+}
+```

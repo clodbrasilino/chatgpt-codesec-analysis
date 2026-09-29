@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-647.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-647.c:76:22: style: The comparison 'part_len <= str_len-start' is always true because 'part_len' and 'str_len-start' represent the same value. [knownConditionTrueFalse]
+        if (part_len <= str_len - start) {
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-647.c:67:35: note: 'part_len' is assigned value 'str_len-start' here.
+        size_t part_len = str_len - start;
+                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-647.c:76:22: note: The comparison 'part_len <= str_len-start' is always true because 'part_len' and 'str_len-start' represent the same value.
+        if (part_len <= str_len - start) {
+                     ^

@@ -1,0 +1,143 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <regex.h>
+#include <limits.h>
+
+#define DATE_PATTERN "([0-9]{4})/([0-9]{1,2})/([0-9]{1,2})"
+#define MATCH_COUNT 4
+#define MAX_YEAR_DIGITS 4
+#define MAX_MONTH_DIGITS 2
+#define MAX_DAY_DIGITS 2
+
+typedef struct {
+    int year;
+    int month;
+    int day;
+} DateComponents;
+
+static int parse_digits(const char *start, size_t len, int *out)
+{
+    long value = 0;
+    size_t i;
+
+    if (start == NULL || out == NULL || len == 0) {
+        return -1;
+    }
+
+    for (i = 0; i < len; i++) {
+        if (start[i] < '0' || start[i] > '9') {
+            return -1;
+        }
+        value = value * 10 + (long)(start[i] - '0');
+        if (value > INT_MAX) {
+            return -1;
+        }
+    }
+
+    *out = (int)value;
+    return 0;
+}
+
+static int is_leap_year(int year)
+{
+    return (year % 4 == 0 && year % 100 != 0) || (year % 400 == 0);
+}
+
+static int days_in_month(int year, int month)
+{
+    static const int days[] = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
+
+    if (month < 1 || month > 12) {
+        return 0;
+    }
+
+    if (month == 2 && is_leap_year(year)) {
+        return 29;
+    }
+
+    return days[month - 1];
+}
+
+static int extract_date_from_url(const char *url, DateComponents *date)
+{
+    regex_t regex;
+    regmatch_t matches[MATCH_COUNT];
+    size_t year_len;
+    size_t month_len;
+    size_t day_len;
+    int ret = -1;
+
+    if (url == NULL || date == NULL) {
+        return -1;
+    }
+
+    if (regcomp(&regex, DATE_PATTERN, REG_EXTENDED) != 0) {
+        return -1;
+    }
+
+    if (regexec(&regex, url, MATCH_COUNT, matches, 0) != 0) {
+        goto cleanup;
+    }
+
+    if (matches[1].rm_so < 0 || matches[1].rm_eo < matches[1].rm_so ||
+        matches[2].rm_so < 0 || matches[2].rm_eo < matches[2].rm_so ||
+        matches[3].rm_so < 0 || matches[3].rm_eo < matches[3].rm_so) {
+        goto cleanup;
+    }
+
+    year_len = (size_t)(matches[1].rm_eo - matches[1].rm_so);
+    month_len = (size_t)(matches[2].rm_eo - matches[2].rm_so);
+    day_len = (size_t)(matches[3].rm_eo - matches[3].rm_so);
+
+    if (year_len != MAX_YEAR_DIGITS ||
+        month_len < 1 || month_len > MAX_MONTH_DIGITS ||
+        day_len < 1 || day_len > MAX_DAY_DIGITS) {
+        goto cleanup;
+    }
+
+    if (parse_digits(url + matches[1].rm_so, year_len, &date->year) != 0 ||
+        parse_digits(url + matches[2].rm_so, month_len, &date->month) != 0 ||
+        parse_digits(url + matches[3].rm_so, day_len, &date->day) != 0) {
+        goto cleanup;
+    }
+
+    if (date->year < 1000 || date->year > 9999 ||
+        date->month < 1 || date->month > 12 ||
+        date->day < 1 || date->day > days_in_month(date->year, date->month)) {
+        goto cleanup;
+    }
+
+    ret = 0;
+
+cleanup:
+    regfree(&regex);
+    return ret;
+}
+
+int main(int argc, char *argv[])
+{
+    const char *default_url = "https://example.com/2024/03/15/sample-article";
+    const char *url;
+    DateComponents date = {0, 0, 0};
+
+    if (argc > 2) {
+        fprintf(stderr, "Usage: %s [url]\n", argv[0]);
+        return EXIT_FAILURE;
+    }
+
+    url = (argc == 2) ? argv[1] : default_url;
+
+    if (extract_date_from_url(url, &date) != 0) {
+        fprintf(stderr, "Failed to extract date from URL: %s\n", url);
+        return EXIT_FAILURE;
+    }
+
+    printf("URL: %s\n", url);
+    printf("Year: %d\n", date.year);
+    printf("Month: %02d\n", date.month);
+    printf("Day: %02d\n", date.day);
+
+    return EXIT_SUCCESS;
+}
+```

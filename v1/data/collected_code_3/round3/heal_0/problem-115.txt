@@ -1,0 +1,42 @@
+```C
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int count;
+} Dictionary;
+
+int areAllDictionariesEmpty(Dictionary** dictList, int size) {
+    for(int i = 0; i < size; i++) {
+        if(dictList[i]->count != 0) {
+            return 0;
+        }
+    }
+    return 1;
+}
+
+int main() {
+    int size = 3;
+    Dictionary** dictList = malloc(size * sizeof(Dictionary*));
+    for(int i = 0; i < size; i++) {
+        dictList[i] = malloc(sizeof(Dictionary));
+        dictList[i]->count = 0;
+    }
+
+    if(areAllDictionariesEmpty(dictList, size)) {
+        printf("All dictionaries are empty\n");
+    } else {
+        printf("Not all dictionaries are empty\n");
+    }
+
+    for(int i = 0; i < size; i++) {
+        free(dictList[i]);
+    }
+    free(dictList);
+
+    return 0;
+}
+```
+This code assumes that a "dictionary" is a struct with a count of the number of elements in it. The function `areAllDictionariesEmpty` checks each dictionary in the list to see if its count is 0. If any dictionary has a count that is not 0, it returns 0 (false). If it gets through all the dictionaries without finding a non-empty one, it returns 1 (true).
+
+In the `main` function, we create a list of dictionaries and set all their counts to 0, then call `areAllDictionariesEmpty` to check if they're all empty. The result is printed to the console. Finally, we free the memory allocated for the dictionaries and the list.

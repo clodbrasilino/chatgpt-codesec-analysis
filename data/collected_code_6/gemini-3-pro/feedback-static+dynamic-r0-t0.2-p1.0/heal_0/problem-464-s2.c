@@ -1,0 +1,78 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+#include <string.h>
+
+typedef struct {
+    char *key;
+    int value;
+} KeyValuePair;
+
+typedef struct {
+    KeyValuePair *items;
+    size_t size;
+} Dictionary;
+
+bool are_all_values_same(const Dictionary *dict) {
+    if (dict == NULL || dict->items == NULL) {
+        return false;
+    }
+    
+    if (dict->size <= 1) {
+        return true;
+    }
+    
+    int first_value = dict->items[0].value;
+    
+    for (size_t i = 1; i < dict->size; i++) {
+        if (dict->items[i].value != first_value) {
+            return false;
+        }
+    }
+    
+    return true;
+}
+
+int main(void) {
+    Dictionary dict1;
+    dict1.size = 3;
+    dict1.items = (KeyValuePair *)malloc(dict1.size * sizeof(KeyValuePair));
+    
+    if (dict1.items == NULL) {
+        return 1;
+    }
+    
+    dict1.items[0].key = "a";
+    dict1.items[0].value = 5;
+    dict1.items[1].key = "b";
+    dict1.items[1].value = 5;
+    dict1.items[2].key = "c";
+    dict1.items[2].value = 5;
+    
+    bool result1 = are_all_values_same(&dict1);
+    printf("%d\n", result1);
+    
+    free(dict1.items);
+    
+    Dictionary dict2;
+    dict2.size = 3;
+    dict2.items = (KeyValuePair *)malloc(dict2.size * sizeof(KeyValuePair));
+    
+    if (dict2.items == NULL) {
+        return 1;
+    }
+    
+    dict2.items[0].key = "x";
+    dict2.items[0].value = 5;
+    dict2.items[1].key = "y";
+    dict2.items[1].value = 10;
+    dict2.items[2].key = "z";
+    dict2.items[2].value = 5;
+    
+    bool result2 = are_all_values_same(&dict2);
+    printf("%d\n", result2);
+    
+    free(dict2.items);
+    
+    return 0;
+}

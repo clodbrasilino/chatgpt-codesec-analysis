@@ -1,0 +1,50 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int find_difference(int number) {
+    int even_sum = 0;
+    int odd_sum = 0;
+    /* Possible weaknesses found:
+     *  The scope of the variable 'digit' can be reduced. [variableScope]
+     */
+    int digit;
+
+    if (number < 0) {
+        number = -number;
+    }
+
+    while (number > 0) {
+        digit = number % 10;
+        if (digit % 2 == 0) {
+            even_sum += digit;
+        } else {
+            odd_sum += digit;
+        }
+        number /= 10;
+    }
+
+    return even_sum - odd_sum;
+}
+
+/* Possible weaknesses found:
+ *  Parameter 'argv' can be declared as const array [constParameter]
+ */
+int main(int argc, char *argv[]) {
+    int num;
+    int result;
+
+    if (argc != 2) {
+        fprintf(stderr, "Usage: %s <integer>\n", argv[0]);
+        return EXIT_FAILURE;
+    }
+
+    if (sscanf(argv[1], "%d", &num) != 1) {
+        fprintf(stderr, "Invalid input. Please provide a valid integer.\n");
+        return EXIT_FAILURE;
+    }
+
+    result = find_difference(num);
+    printf("%d\n", result);
+
+    return EXIT_SUCCESS;
+}

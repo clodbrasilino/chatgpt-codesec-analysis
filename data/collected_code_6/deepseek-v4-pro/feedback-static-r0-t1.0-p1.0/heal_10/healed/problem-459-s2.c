@@ -1,0 +1,114 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+#include <stdint.h>
+
+char *remove_uppercase_substrings(const char *input) {
+    regex_t regex;
+    regmatch_t match;
+    const char *pattern = "[A-Z]+";
+    size_t input_len;
+    char *result;
+    char *tmp;
+    int ret;
+    const char *cursor;
+    size_t result_len;
+    size_t remaining;
+    size_t prefix_len;
+    size_t total_allocated;
+    
+    if (!input) return NULL;
+    
+    input_len = strnlen(input, SIZE_MAX);
+    if (input_len == 0 || input_len == SIZE_MAX) {
+        result = malloc(1);
+        if (result) result[0] = '\0';
+        return result;
+    }
+    
+    total_allocated = input_len + 1;
+    result = malloc(total_allocated);
+    if (!result) return NULL;
+    result[0] = '\0';
+    
+    ret = regcomp(&regex, pattern, REG_EXTENDED);
+    if (ret) {
+        free(result);
+        return NULL;
+    }
+    
+    cursor = input;
+    result_len = 0;
+    
+    while (cursor < input + input_len) {
+        if (regexec(&regex, cursor, 1, &match, 0) == 0 && match.rm_so != -1) {
+            prefix_len = (size_t)match.rm_so;
+            if (prefix_len > 0) {
+                if (result_len + prefix_len >= total_allocated) {
+                    size_t new_size = total_allocated * 2;
+                    if (new_size < result_len + prefix_len + 1) {
+                        new_size = result_len + prefix_len + 1;
+                    }
+                    tmp = realloc(result, new_size);
+                    if (!tmp) {
+                        free(result);
+                        regfree(&regex);
+                        return NULL;
+                    }
+                    result = tmp;
+                    total_allocated = new_size;
+                }
+                memcpy(result + result_len, cursor, prefix_len);
+                result_len += prefix_len;
+            }
+            cursor += match.rm_eo;
+            if (cursor > input + input_len) {
+                cursor = input + input_len;
+            }
+        } else {
+            remaining = input_len - (size_t)(cursor - input);
+            if (remaining > 0) {
+                if (result_len + remaining >= total_allocated) {
+                    size_t new_size = total_allocated * 2;
+                    if (new_size < result_len + remaining + 1) {
+                        new_size = result_len + remaining + 1;
+                    }
+                    tmp = realloc(result, new_size);
+                    if (!tmp) {
+                        free(result);
+                        regfree(&regex);
+                        return NULL;
+                    }
+                    result = tmp;
+                    total_allocated = new_size;
+                }
+                memcpy(result + result_len, cursor, remaining);
+                result_len += remaining;
+            }
+            break;
+        }
+    }
+    
+    result[result_len] = '\0';
+    regfree(&regex);
+    
+    tmp = realloc(result, result_len + 1);
+    return tmp ? tmp : result;
+}
+
+int main(void) {
+    const char *test_string = "abcDEFghIJKlmnoP";
+    char *cleaned = remove_uppercase_substrings(test_string);
+    
+    if (cleaned) {
+        printf("Original: %s\n", test_string);
+        printf("Cleaned: %s\n", cleaned);
+        free(cleaned);
+    } else {
+        fprintf(stderr, "Error processing string\n");
+        return EXIT_FAILURE;
+    }
+    
+    return EXIT_SUCCESS;
+}

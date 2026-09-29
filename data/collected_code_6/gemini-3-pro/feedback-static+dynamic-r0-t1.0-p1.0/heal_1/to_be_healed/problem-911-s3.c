@@ -1,0 +1,116 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+void swap(int* a, int* b) {
+    int temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+void min_heapify(int heap[], int size, int i) {
+    int smallest = i;
+    int left = 2 * i + 1;
+    int right = 2 * i + 2;
+
+    if (left < size && heap[left] < heap[smallest])
+        smallest = left;
+
+    if (right < size && heap[right] < heap[smallest])
+        smallest = right;
+
+    if (smallest != i) {
+        swap(&heap[i], &heap[smallest]);
+        min_heapify(heap, size, smallest);
+    }
+}
+
+void max_heapify(int heap[], int size, int i) {
+    int largest = i;
+    int left = 2 * i + 1;
+    int right = 2 * i + 2;
+
+    if (left < size && heap[left] > heap[largest])
+        largest = left;
+
+    if (right < size && heap[right] > heap[largest])
+        largest = right;
+
+    if (largest != i) {
+        swap(&heap[i], &heap[largest]);
+        max_heapify(heap, size, largest);
+    }
+}
+
+/* Possible weaknesses found:
+ *  Parameter 'nums' can be declared as const array [constParameter]
+ */
+long long maximum_product(int nums[], int size) {
+    if (nums == NULL || size < 3) {
+        return 0;
+    }
+
+    int top_three[3] = {INT_MIN, INT_MIN, INT_MIN};
+    int bottom_two[2] = {INT_MAX, INT_MAX};
+    int top_size = 0;
+    int bottom_size = 0;
+
+    for (int i = 0; i < size; i++) {
+        if (top_size < 3) {
+            top_three[top_size++] = nums[i];
+            if (top_size == 3) {
+                for (int j = 1; j >= 0; j--) {
+                    min_heapify(top_three, 3, j);
+                }
+            }
+        } else if (nums[i] > top_three[0]) {
+            top_three[0] = nums[i];
+            min_heapify(top_three, 3, 0);
+        }
+
+        if (bottom_size < 2) {
+            bottom_two[bottom_size++] = nums[i];
+            if (bottom_size == 2) {
+                max_heapify(bottom_two, 2, 0);
+            }
+        } else if (nums[i] < bottom_two[0]) {
+            bottom_two[0] = nums[i];
+            max_heapify(bottom_two, 2, 0);
+        }
+    }
+
+    long long prod1 = (long long)top_three[0] * top_three[1] * top_three[2];
+    /* Possible weaknesses found:
+     *  prod2 is initialized
+     *  Value stored to 'prod2' during its initialization is never read [deadcode.DeadStores]
+     */
+    long long prod2 = (long long)bottom_two[0] * bottom_two[1] * (top_three[0] > top_three[1] ? (top_three[0] > top_three[2] ? top_three[0] : top_three[2]) : (top_three[1] > top_three[2] ? top_three[1] : top_three[2]));
+    
+    int max_top = top_three[0];
+    if (top_three[1] > max_top) max_top = top_three[1];
+    if (top_three[2] > max_top) max_top = top_three[2];
+
+    /* Possible weaknesses found:
+     *  Redundant initialization for 'prod2'. The initialized value is overwritten before it is read. [redundantInitialization]
+     *  prod2 is overwritten
+     */
+    prod2 = (long long)bottom_two[0] * bottom_two[1] * max_top;
+
+    return prod1 > prod2 ? prod1 : prod2;
+}
+
+int main() {
+    int nums[] = {1, 2, 3, 4};
+    int size = sizeof(nums) / sizeof(nums[0]);
+    
+    long long result = maximum_product(nums, size);
+    printf("%lld\n", result);
+
+    int nums2[] = {-10, -10, 1, 3, 2};
+    size = sizeof(nums2) / sizeof(nums2[0]);
+    
+    result = maximum_product(nums2, size);
+    printf("%lld\n", result);
+
+    return 0;
+}

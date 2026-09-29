@@ -1,0 +1,81 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+
+int64_t mul_mod(int64_t a, int64_t b, int64_t p) {
+    int64_t res = 0;
+    a %= p;
+    b %= p;
+    if (a < 0) a += p;
+    if (b < 0) b += p;
+    while (b > 0) {
+        if (b & 1) {
+            if (a > INT64_MAX - res) {
+                int64_t diff = INT64_MAX - res;
+                int64_t overflow = a - diff - 1;
+                res = (overflow % p + diff % p + 1) % p;
+            } else {
+                res = (res + a) % p;
+            }
+        }
+        if (a > INT64_MAX - a) {
+            int64_t diff = INT64_MAX - a;
+            int64_t overflow = a - diff - 1;
+            a = (overflow % p + diff % p + 1) % p;
+        } else {
+            a = (a + a) % p;
+        }
+        b >>= 1;
+    }
+    return res;
+}
+
+int64_t power(int64_t a, int64_t b, int64_t p) {
+    int64_t res = 1;
+    a %= p;
+    if (a < 0) a += p;
+    while (b > 0) {
+        if (b & 1)
+            res = mul_mod(res, a, p);
+        b >>= 1;
+        a = mul_mod(a, a, p);
+    }
+    return res;
+}
+
+int64_t mod_inverse(int64_t n, int64_t p) {
+    return power(n, p - 2, p);
+}
+
+int64_t ncr_mod_p(int64_t n, int64_t r, int64_t p) {
+    if (r < 0 || r > n)
+        return 0;
+    if (r == 0 || r == n)
+        return 1;
+    if (r > n - r)
+        r = n - r;
+
+    int64_t numerator = 1;
+    int64_t denominator = 1;
+
+    for (int64_t i = 0; i < r; i++) {
+        numerator = mul_mod(numerator, (n - i) % p, p);
+        denominator = mul_mod(denominator, (i + 1) % p, p);
+    }
+
+    return mul_mod(numerator, mod_inverse(denominator, p), p);
+}
+
+int main(void) {
+    int64_t n, r, p;
+    if (scanf("%lld %lld %lld", &n, &r, &p) != 3) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    if (p <= 1) {
+        fprintf(stderr, "p must be a prime number greater than 1\n");
+        return EXIT_FAILURE;
+    }
+    printf("%lld\n", ncr_mod_p(n, r, p));
+    return EXIT_SUCCESS;
+}

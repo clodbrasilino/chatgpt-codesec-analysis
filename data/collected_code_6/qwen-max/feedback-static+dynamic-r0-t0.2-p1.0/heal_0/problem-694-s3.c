@@ -1,0 +1,52 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char *key;
+    int value;
+} DictionaryEntry;
+
+typedef struct {
+    DictionaryEntry *entries;
+    int size;
+} Dictionary;
+
+int compare(const void *a, const void *b) {
+    return ((DictionaryEntry *)a)->value - ((DictionaryEntry *)b)->value;
+}
+
+void extractUniqueValues(Dictionary *dict, int **uniqueValues, int *uniqueCount) {
+    qsort(dict->entries, dict->size, sizeof(DictionaryEntry), compare);
+    *uniqueCount = 0;
+    for (int i = 0; i < dict->size; ++i) {
+        if (i == 0 || dict->entries[i].value != dict->entries[i - 1].value) {
+            (*uniqueValues)[(*uniqueCount)++] = dict->entries[i].value;
+        }
+    }
+}
+
+int main() {
+    Dictionary dict = {
+        .entries = (DictionaryEntry[]) {
+            {"a", 1},
+            {"b", 2},
+            {"c", 1},
+            {"d", 3},
+            {"e", 2}
+        },
+        .size = 5
+    };
+
+    int *uniqueValues = (int *)malloc(dict.size * sizeof(int));
+    int uniqueCount;
+
+    extractUniqueValues(&dict, &uniqueValues, &uniqueCount);
+
+    for (int i = 0; i < uniqueCount; ++i) {
+        printf("%d\n", uniqueValues[i]);
+    }
+
+    free(uniqueValues);
+    return 0;
+}

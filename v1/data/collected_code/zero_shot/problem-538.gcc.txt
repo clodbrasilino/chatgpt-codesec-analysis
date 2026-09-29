@@ -1,0 +1,21 @@
+collected_code/problem-538-0.c: In function 'convertStringListToTuple':
+collected_code/problem-538-0.c:16:23: warning: dereference of possibly-NULL 'tuple.data' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   16 |         tuple.data[i] = (char *)malloc((strlen(stringList[i]) + 1) * sizeof(char));
+      |         ~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  'convertStringListToTuple': events 1-4
+    |
+    |   12 |     tuple.data = (char **)malloc(size * sizeof(char *));
+    |      |                           ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                           |
+    |      |                           (1) this call could return NULL
+    |......
+    |   15 |     for (int i = 0; i < size; i++) {
+    |      |                     ~~~~~~~~
+    |      |                       |
+    |      |                       (2) following 'true' branch (when 'i < size')...
+    |   16 |         tuple.data[i] = (char *)malloc((strlen(stringList[i]) + 1) * sizeof(char));
+    |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                       |                                  |
+    |      |                       |                                  (3) ...to here
+    |      |                       (4) 'tuple.data + (long unsigned int)i * 8' could be NULL: unchecked value from (1)
+    |

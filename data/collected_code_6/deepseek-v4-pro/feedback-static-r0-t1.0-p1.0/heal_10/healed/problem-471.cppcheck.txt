@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-471.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-471.c:58:22: style: Condition 'findRemainder(arr4,size4,n4,&result4)' is always false [knownConditionTrueFalse]
+    if (findRemainder(arr4, size4, n4, &result4)) {
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-471.c:58:22: note: Calling function 'findRemainder' returns 0
+    if (findRemainder(arr4, size4, n4, &result4)) {
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-471.c:58:22: note: Condition 'findRemainder(arr4,size4,n4,&result4)' is always false
+    if (findRemainder(arr4, size4, n4, &result4)) {
+                     ^

@@ -1,0 +1,3 @@
+collected_code/problem-640-0.c:5:25: error: Cannot determine that 'string[0]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+    int length = strlen(string);
+                        ^

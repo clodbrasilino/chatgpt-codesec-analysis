@@ -1,0 +1,27 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+int sumOfNonRepeatedElements(const int arr[], int n) {
+    int sum = 0;
+    for (int i = 0; i < n; i++) {
+        bool isRepeated = false;
+        for (int j = 0; j < n; j++) {
+            if (i != j && arr[i] == arr[j]) {
+                isRepeated = true;
+                break;
+            }
+        }
+        if (!isRepeated) {
+            sum += arr[i];
+        }
+    }
+    return sum;
+}
+
+int main() {
+    int arr[] = {1, 2, 3, 2, 4, 5, 5};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    int result = sumOfNonRepeatedElements(arr, n);
+    printf("Sum of non-repeated elements: %d\n", result);
+    return 0;
+}

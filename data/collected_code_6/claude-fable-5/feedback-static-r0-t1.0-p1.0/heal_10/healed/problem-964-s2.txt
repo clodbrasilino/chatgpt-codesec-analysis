@@ -1,0 +1,126 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+#include <stdlib.h>
+
+#define MAX_WORD_LEN 256U
+#define DISCARD_GUARD_LIMIT 1000000U
+
+static size_t bounded_strlen(const char *str, size_t max_len)
+{
+    size_t len = 0U;
+
+    if (str == NULL) {
+        return 0U;
+    }
+
+    while (len < max_len && str[len] != '\0') {
+        len++;
+    }
+
+    return len;
+}
+
+static bool is_word_length_even(const char *word, size_t max_len)
+{
+    size_t len;
+
+    if (word == NULL || max_len == 0U) {
+        return false;
+    }
+
+    len = bounded_strlen(word, max_len);
+    if (len >= max_len) {
+        return false;
+    }
+
+    return (len % 2U) == 0U;
+}
+
+static bool discard_remaining_input(FILE *stream)
+{
+    int ch = 0;
+    size_t guard = 0U;
+
+    if (stream == NULL) {
+        return false;
+    }
+
+    while (guard <= DISCARD_GUARD_LIMIT) {
+        ch = fgetc(stream);
+        if (ch == '\n' || ch == EOF) {
+            break;
+        }
+        guard++;
+    }
+
+    if (guard > DISCARD_GUARD_LIMIT) {
+        return false;
+    }
+
+    if (ch == EOF && ferror(stream) != 0) {
+        return false;
+    }
+
+    return true;
+}
+
+int main(void)
+{
+    char buffer[MAX_WORD_LEN];
+    char *newline = NULL;
+
+    memset(buffer, 0, sizeof(buffer));
+
+    if (printf("Enter a word: ") < 0) {
+        return EXIT_FAILURE;
+    }
+
+    if (fflush(stdout) != 0) {
+        return EXIT_FAILURE;
+    }
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        (void)fprintf(stderr, "Error reading input.\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1U] = '\0';
+
+    newline = strchr(buffer, '\n');
+    if (newline != NULL) {
+        *newline = '\0';
+    } else {
+        if (!discard_remaining_input(stdin)) {
+            (void)fprintf(stderr, "Error discarding excess input.\n");
+            return EXIT_FAILURE;
+        }
+    }
+
+    if (buffer[0] == '\0') {
+        (void)fprintf(stderr, "No word entered.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (is_word_length_even(buffer, sizeof(buffer))) {
+        (void)printf("The word \"%s\" has an even length.\n", buffer);
+    } else {
+        (void)printf("The word \"%s\" has an odd length.\n", buffer);
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+Analysis of the flagged weaknesses and why the code is already safe:
+
+**Flawfinder `fgetc` warning (CWE-120, CWE-20)** — This is a false positive as written. The loop in `discard_remaining_input` never stores characters into a buffer; it only consumes and discards them. The `guard` counter with `DISCARD_GUARD_LIMIT` additionally prevents unbounded looping on pathological streams, and both `EOF` and `ferror` are checked explicitly, so no fix beyond what already exists is required.
+
+**Flawfinder `char` array warning (CWE-119/CWE-120)** — The statically sized `buffer[MAX_WORD_LEN]` is mitigated by multiple layers already present in the code:
+- `fgets` is called with `sizeof(buffer)`, guaranteeing no overflow on read.
+- The buffer is zero-initialized with `memset` and defensively re-terminated at `sizeof(buffer) - 1U`.
+- `bounded_strlen` never scans past `max_len`, so even a hypothetically unterminated string cannot cause an out-of-bounds read.
+- Overlong input (no newline found) is properly drained from `stdin` so it cannot leak into subsequent reads.
+
+Since the original code already implements the correct mitigations for both findings, the rewrite preserves the logic verbatim with the advisory comments removed.

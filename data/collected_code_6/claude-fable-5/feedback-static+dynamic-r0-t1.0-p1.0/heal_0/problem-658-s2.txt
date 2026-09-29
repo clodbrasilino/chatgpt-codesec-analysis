@@ -1,0 +1,48 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int find_max_occurrence(const int *arr, size_t size, int *result)
+{
+    if (arr == NULL || size == 0 || result == NULL) {
+        return -1;
+    }
+
+    int max_item = arr[0];
+    size_t max_count = 0;
+
+    for (size_t i = 0; i < size; i++) {
+        size_t count = 0;
+        for (size_t j = 0; j < size; j++) {
+            if (arr[j] == arr[i]) {
+                count++;
+            }
+        }
+        if (count > max_count) {
+            max_count = count;
+            max_item = arr[i];
+        }
+    }
+
+    *result = max_item;
+    return 0;
+}
+
+int main(void)
+{
+    int numbers[] = {2, 5, 3, 2, 8, 2, 5, 5, 5, 9};
+    size_t size = sizeof(numbers) / sizeof(numbers[0]);
+    int max_item = 0;
+
+    if (find_max_occurrence(numbers, size, &max_item) != 0) {
+        fprintf(stderr, "Error: invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Item with maximum occurrences: %d\n", max_item) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```

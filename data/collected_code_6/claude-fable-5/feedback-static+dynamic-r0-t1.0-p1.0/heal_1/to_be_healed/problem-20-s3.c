@@ -1,0 +1,53 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+int is_woodall(unsigned long long x)
+{
+    unsigned long long n;
+    /* Possible weaknesses found:
+     *  The scope of the variable 'value' can be reduced. [variableScope]
+     */
+    unsigned long long value;
+
+    if (x < 1ULL) {
+        return 0;
+    }
+
+    for (n = 1ULL; n < 64ULL; n++) {
+        if (n > (ULLONG_MAX >> n)) {
+            break;
+        }
+        value = n << n;
+        if (value - 1ULL == x) {
+            return 1;
+        }
+        if (value - 1ULL > x) {
+            break;
+        }
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    unsigned long long num;
+    int result;
+
+    printf("Enter a number: ");
+    if (scanf("%llu", &num) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    result = is_woodall(num);
+
+    if (result == 1) {
+        printf("%llu is a Woodall number\n", num);
+    } else {
+        printf("%llu is not a Woodall number\n", num);
+    }
+
+    return EXIT_SUCCESS;
+}

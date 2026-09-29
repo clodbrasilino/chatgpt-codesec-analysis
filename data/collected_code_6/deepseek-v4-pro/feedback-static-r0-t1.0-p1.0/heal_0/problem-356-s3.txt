@@ -1,0 +1,27 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int third_angle(int angle1, int angle2) {
+    if (angle1 <= 0 || angle2 <= 0 || angle1 >= 180 || angle2 >= 180) {
+        fprintf(stderr, "Error: angles must be positive and less than 180 degrees\n");
+        exit(EXIT_FAILURE);
+    }
+    if (angle1 + angle2 >= 180) {
+        fprintf(stderr, "Error: sum of two angles must be less than 180 degrees\n");
+        exit(EXIT_FAILURE);
+    }
+    return 180 - angle1 - angle2;
+}
+
+int main(void) {
+    int a, b;
+    printf("Enter two angles of a triangle: ");
+    if (scanf("%d %d", &a, &b) != 2) {
+        fprintf(stderr, "Error: invalid input\n");
+        return EXIT_FAILURE;
+    }
+    printf("Third angle: %d\n", third_angle(a, b));
+    return EXIT_SUCCESS;
+}
+```

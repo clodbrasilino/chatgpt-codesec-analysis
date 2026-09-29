@@ -1,0 +1,11 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_3/healed/problem-969-s2.c: In function 'safe_append':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_3/healed/problem-969-s2.c:85:55: error: implicit declaration of function 'offsetof' [-Wimplicit-function-declaration]
+   85 |     size_t add_len = safe_strlen(src, sizeof(Tuple) - offsetof(Tuple, value));
+      |                                                       ^~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_3/healed/problem-969-s2.c:4:1: note: 'offsetof' is defined in header '<stddef.h>'; this is probably fixable by adding '#include <stddef.h>'
+    3 | #include <string.h>
+  +++ |+#include <stddef.h>
+    4 | 
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_3/healed/problem-969-s2.c:85:64: error: expected expression before 'Tuple'
+   85 |     size_t add_len = safe_strlen(src, sizeof(Tuple) - offsetof(Tuple, value));
+      |                                                                ^~~~~

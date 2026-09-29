@@ -1,0 +1,44 @@
+{
+  "task_id": 315,
+  "text": "Write a C function to find the first maximum length of even word.",
+  "fn_candidates": [
+    "find_Max_Len_Even",
+    "FindMaxLenEven",
+    "findMaxLenEven",
+    "findMaxLenEven"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "find_Max_Len_Even",
+      "args": [
+        "python language"
+      ],
+      "expected": "language",
+      "assert_src": "assert find_Max_Len_Even(\"python language\") == \"language\""
+    },
+    {
+      "fn_name": "find_Max_Len_Even",
+      "args": [
+        "maximum even length"
+      ],
+      "expected": "length",
+      "assert_src": "assert find_Max_Len_Even(\"maximum even length\") == \"length\""
+    },
+    {
+      "fn_name": "find_Max_Len_Even",
+      "args": [
+        "eve"
+      ],
+      "expected": "-1",
+      "assert_src": "assert find_Max_Len_Even(\"eve\") == \"-1\""
+    }
+  ],
+  "arg_kinds": [
+    "str"
+  ],
+  "return_kind": "str",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

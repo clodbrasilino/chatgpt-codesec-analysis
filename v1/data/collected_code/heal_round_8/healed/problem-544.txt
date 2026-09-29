@@ -1,0 +1,38 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+char* flattenTuple(int* tuple, int size) {
+    int strSize = 20 * size;
+    char *str = (char*) calloc(strSize, sizeof(char));
+
+    if (str == NULL)
+        return NULL;
+
+    for (int i = 0; i < size; i++) {
+        if (2*(i+1) >= strSize)
+            break;
+
+        snprintf(str + 2*i, strSize - 2*i, "%d,", tuple[i]);
+    }
+
+    str[strSize - 2] = '\0';
+    
+    return str;
+}
+
+int main() {
+   int tuple[] = {1, 2, 3, 4, 5};
+   int size = sizeof(tuple) / sizeof(tuple[0]);
+   char* result = flattenTuple(tuple, size);
+
+   if (result == NULL) {
+      printf("Memory allocation failed\n");
+      return -1;
+   }
+   
+   printf("%s\n", result);
+   free(result);
+   return 0;
+}
+```

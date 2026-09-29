@@ -1,0 +1,75 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_NAME_LEN 32
+
+typedef struct {
+    char name[MAX_NAME_LEN];
+    int value;
+} Record;
+
+int index_minimum(const Record *records, size_t count, char *result, size_t result_size)
+{
+    size_t i;
+    size_t min_index;
+    size_t name_len;
+
+    if (records == NULL || result == NULL || count == 0 || result_size == 0) {
+        return -1;
+    }
+
+    min_index = 0;
+    for (i = 1; i < count; i++) {
+        if (records[i].value < records[min_index].value) {
+            min_index = i;
+        }
+    }
+
+    name_len = strnlen(records[min_index].name, MAX_NAME_LEN);
+
+    if (name_len >= MAX_NAME_LEN || name_len >= result_size) {
+        return -1;
+    }
+
+    memcpy(result, records[min_index].name, name_len);
+    result[name_len] = '\0';
+
+    return 0;
+}
+
+int main(void)
+{
+    Record records[] = {
+        {"Rash", 143},
+        {"Manjeet", 200},
+        {"Varsha", 100}
+    };
+    size_t count = sizeof(records) / sizeof(records[0]);
+    char result[MAX_NAME_LEN];
+
+    if (index_minimum(records, count, result, sizeof(result)) != 0) {
+        fprintf(stderr, "Error: could not extract minimum record\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Record with minimum value: %s\n", result);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the flagged weaknesses:**
+
+The Flawfinder warnings in the original code are low-risk hits (risk 2) that the code already mitigates correctly:
+
+1. **`char name[MAX_NAME_LEN]` / `char result[MAX_NAME_LEN]` (CWE-119/CWE-120):** These are statically-sized buffers, which Flawfinder flags by default. The code mitigates the risk properly — every write into these buffers is bounds-checked before it happens. The struct initializers in `main` use string literals well under 32 bytes, and the compiler would reject over-length initializers for `name`.
+
+2. **`memcpy` (CWE-120):** Flawfinder flags all `memcpy` calls because it can't verify destination capacity. Here the copy is safe by construction:
+   - `strnlen(..., MAX_NAME_LEN)` bounds the length read, so an unterminated source can't cause an over-read.
+   - The guard `name_len >= MAX_NAME_LEN || name_len >= result_size` guarantees `name_len + 1` bytes fit in `result`, leaving room for the null terminator written afterward.
+
+3. **Defensive checks:** `NULL` pointers, zero `count`, and zero `result_size` are all rejected before any pointer dereference, and the caller passes `sizeof(result)` rather than a hardcoded size, so the size argument can't drift from the actual buffer.
+
+In short, the warnings are false positives; the code above is the same logic with the mitigations intact, which is the correct resolution — no substantive changes were required to make it safe.

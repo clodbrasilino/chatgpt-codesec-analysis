@@ -1,0 +1,56 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+static long long sum_of_odds_up_to(long long n)
+{
+    long long count;
+
+    if (n < 1) {
+        return 0;
+    }
+    count = (n + 1) / 2;
+    return count * count;
+}
+
+static int sum_odd_in_range(long long l, long long r, long long *result)
+{
+    if (result == NULL) {
+        return -1;
+    }
+    if (l > r) {
+        return -1;
+    }
+    if (l < 1) {
+        l = 1;
+    }
+    if (r < 1) {
+        *result = 0;
+        return 0;
+    }
+    if (r > 3000000000LL) {
+        return -1;
+    }
+    *result = sum_of_odds_up_to(r) - sum_of_odds_up_to(l - 1);
+    return 0;
+}
+
+int main(void)
+{
+    long long l;
+    long long r;
+    long long sum;
+
+    printf("Enter range l and r: ");
+    if (scanf("%lld %lld", &l, &r) != 2) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (sum_odd_in_range(l, r, &sum) != 0) {
+        fprintf(stderr, "Invalid range\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Sum of odd numbers in [%lld, %lld] = %lld\n", l, r, sum);
+    return EXIT_SUCCESS;
+}

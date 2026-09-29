@@ -1,0 +1,25 @@
+#include <stdio.h>
+#include <stdint.h>
+
+uint64_t sum_of_fourth_powers(uint64_t n) {
+    uint64_t sum = 0;
+    for (uint64_t i = 0; i < n; ++i) {
+        uint64_t odd_number = 2 * i + 1;
+        sum += odd_number * odd_number * odd_number * odd_number;
+    }
+    return sum;
+}
+
+int main() {
+    uint64_t n;
+    printf("Enter the number of first odd natural numbers: ");
+    if (scanf("%lu", &n) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return 1;
+    }
+
+    uint64_t result = sum_of_fourth_powers(n);
+    printf("Sum of the fourth power of first %lu odd natural numbers is: %lu\n", n, result);
+
+    return 0;
+}

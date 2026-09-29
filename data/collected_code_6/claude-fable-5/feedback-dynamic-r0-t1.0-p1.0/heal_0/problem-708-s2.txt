@@ -1,0 +1,92 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+struct Node {
+    char data;
+    struct Node *next;
+};
+
+struct Node *string_to_list(const char *str)
+{
+    struct Node *head = NULL;
+    struct Node *tail = NULL;
+    size_t i;
+    size_t len;
+
+    if (str == NULL) {
+        return NULL;
+    }
+
+    len = strlen(str);
+
+    for (i = 0; i < len; i++) {
+        struct Node *node = malloc(sizeof(struct Node));
+        if (node == NULL) {
+            while (head != NULL) {
+                struct Node *tmp = head;
+                head = head->next;
+                free(tmp);
+            }
+            return NULL;
+        }
+        node->data = str[i];
+        node->next = NULL;
+
+        if (head == NULL) {
+            head = node;
+        } else {
+            tail->next = node;
+        }
+        tail = node;
+    }
+
+    return head;
+}
+
+void free_list(struct Node *head)
+{
+    while (head != NULL) {
+        struct Node *tmp = head;
+        head = head->next;
+        free(tmp);
+    }
+}
+
+void print_list(const struct Node *head)
+{
+    const struct Node *current = head;
+
+    while (current != NULL) {
+        if (printf("%c -> ", current->data) < 0) {
+            return;
+        }
+        current = current->next;
+    }
+    (void)printf("NULL\n");
+}
+
+int main(void)
+{
+    const char *input = "Hello, World!";
+    struct Node *list;
+
+    list = string_to_list(input);
+    if (list == NULL) {
+        (void)fprintf(stderr, "Failed to convert string to list\n");
+        return EXIT_FAILURE;
+    }
+
+    print_list(list);
+    free_list(list);
+
+    return EXIT_SUCCESS;
+}
+```
+
+This implementation converts a string into a singly linked list where each node holds one character. Key safety measures include:
+
+- **CWE-664 (Resource lifetime)**: Every allocated node is tracked through the list structure, and `free_list` releases all memory before program exit. On allocation failure mid-construction, all previously allocated nodes are freed before returning.
+- **CWE-703 (Exceptional conditions)**: The code checks for `NULL` input, verifies every `malloc` return value, checks `printf` return values, and reports failure via `stderr` with a proper exit code.
+- **CWE-710 (Coding standards)**: Uses `int main(void)`, standard exit macros, explicit `(void)` casts for ignored return values, and consistent brace style with no implicit conversions or undefined behavior.

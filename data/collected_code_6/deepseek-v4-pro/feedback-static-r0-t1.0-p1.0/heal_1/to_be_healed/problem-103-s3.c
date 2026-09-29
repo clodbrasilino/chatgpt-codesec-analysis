@@ -1,0 +1,67 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+unsigned long long eulerian_number(int n, int m) {
+    /* Possible weaknesses found:
+     *  Assuming that condition 'm>=n' is not redundant
+     */
+    if (n < 0 || m < 0 || m >= n) {
+        return 0;
+    }
+    
+    /* Possible weaknesses found:
+     *  Assuming that condition 'n==0' is not redundant
+     */
+    if (n == 0) {
+        /* Possible weaknesses found:
+         *  Condition 'm==0' is always false
+         *  Condition 'm==0' is always false [knownConditionTrueFalse]
+         */
+        return (m == 0) ? 1 : 0;
+    }
+    
+    unsigned long long **dp = (unsigned long long **)malloc((n + 1) * sizeof(unsigned long long *));
+    if (dp == NULL) {
+        return 0;
+    }
+    
+    for (int i = 0; i <= n; i++) {
+        dp[i] = (unsigned long long *)calloc((i + 1), sizeof(unsigned long long));
+        if (dp[i] == NULL) {
+            for (int j = 0; j < i; j++) {
+                free(dp[j]);
+            }
+            free(dp);
+            return 0;
+        }
+    }
+    
+    dp[0][0] = 1;
+    
+    for (int i = 1; i <= n; i++) {
+        for (int j = 0; j < i; j++) {
+            dp[i][j] = (i - j) * dp[i-1][j-1] + (j + 1) * dp[i-1][j];
+        }
+    }
+    
+    unsigned long long result = dp[n][m];
+    
+    for (int i = 0; i <= n; i++) {
+        free(dp[i]);
+    }
+    free(dp);
+    
+    return result;
+}
+
+int main(void) {
+    int n, m;
+    
+    printf("Enter n and m: ");
+    scanf("%d %d", &n, &m);
+    
+    unsigned long long result = eulerian_number(n, m);
+    printf("Eulerian number A(%d, %d) = %llu\n", n, m, result);
+    
+    return 0;
+}

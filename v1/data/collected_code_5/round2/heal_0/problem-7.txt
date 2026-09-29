@@ -1,0 +1,45 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <regex.h>
+#include <string.h>
+
+void findWords(char *str) {
+  regex_t regex;
+  regmatch_t matches[2];
+  char *p = str;
+  int len;
+
+  if (regcomp(&regex, "\\b\\w{4,}\\b", 0)) {
+    fprintf(stderr, "Could not compile regex\n");
+    exit(1);
+  }
+
+  while (!regexec(&regex, p, 2, matches, 0)) {
+    len = matches[0].rm_eo - matches[0].rm_so;
+    char *match = malloc(len + 1);
+    if (!match) {
+      fprintf(stderr, "Could not allocate memory\n");
+      exit(1);
+    }
+    strncpy(match, p + matches[0].rm_so, len);
+    match[len] = '\0';
+    printf("%s\n", match);
+    free(match);
+    p += matches[0].rm_eo;
+  }
+  
+  regfree(&regex);
+}
+
+int main() {
+  char str[] = "This is a sample string.";
+  findWords(str);
+  return 0;
+}
+```
+C doesn't support regex directly and requires the POSIX regex library. This code uses the POSIX regex library functions 'regcomp' to compile the regex, 'regexec' to execute it, 'regfree' to free the regex data structure. 
+
+The example uses '\b\w{4,}\b' as the regular expression, where '\b' matches a word boundary (the position between a word and a non-word), '\w' matches any word character (equal to [a-zA-Z0-9_]), and '{4,}' refers to the previous token must be repeated at least 4 times. 
+
+The main function calls the 'findWords' function with a sample string. This function finds and prints all words which are at least 4 characters long in the given string. Refer to CWE points, specifically CWE-664 is avoided via proper allocation and deallocation of the 'match' memory. CWE-703 is handled with accurate error messages and program exits in case of memory allocation failure or regex compilation failure. Achieved CWE-710 by adhering to coding standards, using appropriate data types, and maintaining code clarity.

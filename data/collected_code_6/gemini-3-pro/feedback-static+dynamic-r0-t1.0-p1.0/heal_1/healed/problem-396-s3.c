@@ -1,0 +1,49 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+int check_same_start_end(const char *str) {
+    if (str == NULL || str[0] == '\0') {
+        return 0;
+    }
+
+    regex_t regex;
+    int reti;
+    const char *pattern = "^(.).*\\1$|^.$";
+
+    reti = regcomp(&regex, pattern, REG_EXTENDED);
+    if (reti) {
+        return 0;
+    }
+
+    reti = regexec(&regex, str, 0, NULL, 0);
+    regfree(&regex);
+
+    if (!reti) {
+        return 1;
+    } else if (reti == REG_NOMATCH) {
+        return 0;
+    } else {
+        return 0;
+    }
+}
+
+int main(void) {
+    const char *test_cases[] = {
+        "radar",
+        "hello",
+        "a",
+        "aa",
+        "ab",
+        "testt",
+        NULL
+    };
+
+    for (int i = 0; test_cases[i] != NULL; i++) {
+        int result = check_same_start_end(test_cases[i]);
+        printf("'%s': %d\n", test_cases[i], result);
+    }
+
+    return 0;
+}

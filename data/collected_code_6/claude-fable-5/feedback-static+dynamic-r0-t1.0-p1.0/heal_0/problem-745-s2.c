@@ -1,0 +1,69 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+bool is_self_dividing(int number)
+{
+    int n;
+
+    if (number <= 0) {
+        return false;
+    }
+
+    n = number;
+    while (n > 0) {
+        int digit = n % 10;
+        if (digit == 0 || (number % digit) != 0) {
+            return false;
+        }
+        n /= 10;
+    }
+    return true;
+}
+
+int find_self_dividing_in_range(int start, int end, int *results, int max_results)
+{
+    int count = 0;
+    int i;
+
+    if (results == NULL || max_results <= 0 || start > end) {
+        return 0;
+    }
+
+    for (i = start; i <= end && count < max_results; i++) {
+        if (is_self_dividing(i)) {
+            results[count] = i;
+            count++;
+        }
+    }
+    return count;
+}
+
+int main(void)
+{
+    int start = 1;
+    int end = 200;
+    int results[256];
+    int count;
+    int i;
+
+    count = find_self_dividing_in_range(start, end, results, (int)(sizeof(results) / sizeof(results[0])));
+
+    if (count == 0) {
+        if (printf("No numbers found in range [%d, %d]\n", start, end) < 0) {
+            return 1;
+        }
+        return 0;
+    }
+
+    if (printf("Numbers in range [%d, %d] divisible by all their digits:\n", start, end) < 0) {
+        return 1;
+    }
+
+    for (i = 0; i < count; i++) {
+        if (printf("%d\n", results[i]) < 0) {
+            return 1;
+        }
+    }
+
+    return 0;
+}

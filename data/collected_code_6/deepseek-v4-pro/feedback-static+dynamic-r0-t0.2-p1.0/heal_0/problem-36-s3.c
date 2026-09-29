@@ -1,0 +1,55 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int nth_digit_of_fraction(int numerator, int denominator, int n) {
+    if (denominator == 0) {
+        fprintf(stderr, "Error: Division by zero\n");
+        exit(EXIT_FAILURE);
+    }
+    if (numerator < 0 || denominator < 0) {
+        fprintf(stderr, "Error: Negative numbers not allowed\n");
+        exit(EXIT_FAILURE);
+    }
+    if (n < 1) {
+        fprintf(stderr, "Error: n must be positive\n");
+        exit(EXIT_FAILURE);
+    }
+
+    long long remainder = numerator % denominator;
+    int digit = 0;
+
+    for (int i = 0; i < n; i++) {
+        remainder *= 10;
+        digit = remainder / denominator;
+        remainder %= denominator;
+    }
+
+    return digit;
+}
+
+int main(void) {
+    int numerator, denominator, n;
+
+    printf("Enter numerator: ");
+    if (scanf("%d", &numerator) != 1) {
+        fprintf(stderr, "Error: Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter denominator: ");
+    if (scanf("%d", &denominator) != 1) {
+        fprintf(stderr, "Error: Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter n: ");
+    if (scanf("%d", &n) != 1) {
+        fprintf(stderr, "Error: Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    int result = nth_digit_of_fraction(numerator, denominator, n);
+    printf("The %d-th digit after decimal point is: %d\n", n, result);
+
+    return EXIT_SUCCESS;
+}

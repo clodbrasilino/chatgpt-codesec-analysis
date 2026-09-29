@@ -1,0 +1,134 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_STRING_LEN 4096
+
+typedef struct {
+    char *key;
+    char *value;
+} DictionaryElement;
+
+typedef struct {
+    DictionaryElement *elements;
+    size_t count;
+    size_t capacity;
+} Dictionary;
+
+Dictionary* create_dictionary(size_t capacity) {
+    if (capacity == 0) {
+        return NULL;
+    }
+
+    Dictionary *dict = (Dictionary*)malloc(sizeof(Dictionary));
+    if (!dict) {
+        return NULL;
+    }
+
+    dict->elements = (DictionaryElement*)malloc(capacity * sizeof(DictionaryElement));
+    if (!dict->elements) {
+        free(dict);
+        return NULL;
+    }
+
+    dict->count = 0;
+    dict->capacity = capacity;
+    
+    return dict;
+}
+
+void free_dictionary(Dictionary *dict) {
+    if (!dict) {
+        return;
+    }
+
+    for (size_t i = 0; i < dict->count; ++i) {
+        free(dict->elements[i].key);
+        free(dict->elements[i].value);
+    }
+    
+    free(dict->elements);
+    free(dict);
+}
+
+static char* duplicate_string_safe(const char *str) {
+    if (!str) {
+        return NULL;
+    }
+    
+    size_t len = 0;
+    while (str[len] != '\0' && len < MAX_STRING_LEN) {
+        len++;
+    }
+    
+    char *new_str = (char*)malloc(len + 1);
+    if (!new_str) {
+        return NULL;
+    }
+    
+    memcpy(new_str, str, len);
+    new_str[len] = '\0';
+    
+    return new_str;
+}
+
+int add_element(Dictionary *dict, const char *key, const char *value) {
+    if (!dict || !key || !value || dict->count >= dict->capacity) {
+        return -1;
+    }
+    
+    char *new_key = duplicate_string_safe(key);
+    if (!new_key) {
+        return -1;
+    }
+    
+    char *new_value = duplicate_string_safe(value);
+    if (!new_value) {
+        free(new_key);
+        return -1;
+    }
+    
+    dict->elements[dict->count].key = new_key;
+    dict->elements[dict->count].value = new_value;
+    dict->count++;
+    
+    return 0;
+}
+
+const DictionaryElement* get_element_by_index(const Dictionary *dict, size_t index) {
+    if (!dict || index >= dict->count) {
+        return NULL;
+    }
+    
+    return &dict->elements[index];
+}
+
+int main(void) {
+    Dictionary *dict = create_dictionary(10);
+    if (!dict) {
+        return EXIT_FAILURE;
+    }
+
+    if (add_element(dict, "username", "admin") != 0) {
+        free_dictionary(dict);
+        return EXIT_FAILURE;
+    }
+    
+    if (add_element(dict, "timeout", "300") != 0) {
+        free_dictionary(dict);
+        return EXIT_FAILURE;
+    }
+
+    size_t target_index = 1;
+    const DictionaryElement *elem = get_element_by_index(dict, target_index);
+    
+    if (elem) {
+        printf("%s: %s\n", elem->key, elem->value);
+    } else {
+        printf("Element not found at index %zu\n", target_index);
+    }
+
+    free_dictionary(dict);
+    
+    return EXIT_SUCCESS;
+}

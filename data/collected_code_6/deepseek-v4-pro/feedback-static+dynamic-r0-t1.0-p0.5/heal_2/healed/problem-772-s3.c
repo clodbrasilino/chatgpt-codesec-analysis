@@ -1,0 +1,82 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+char* remove_words_with_length(char* str, int k) {
+    if (str == NULL || k <= 0) {
+        return NULL;
+    }
+
+    size_t len = strnlen(str, 4096);
+    if (len == 0 || len >= 4096) {
+        char* empty = (char*)malloc(1);
+        if (empty != NULL) {
+            empty[0] = '\0';
+        }
+        return empty;
+    }
+
+    char* result = (char*)malloc(len + 1);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    size_t i = 0, j = 0;
+    int word_start = -1;
+    int word_length = 0;
+
+    while (i <= len) {
+        if (i < len && isalnum((unsigned char)str[i])) {
+            if (word_start == -1) {
+                word_start = (int)i;
+            }
+            word_length++;
+        } else {
+            if (word_start != -1) {
+                if (word_length != k) {
+                    if (j > 0 && result[j-1] != ' ') {
+                        if (j < len) {
+                            result[j++] = ' ';
+                        }
+                    }
+                    if (j + word_length <= len) {
+                        size_t remaining = len - j;
+                        size_t to_copy = (size_t)word_length;
+                        if (to_copy > remaining) {
+                            to_copy = remaining;
+                        }
+                        memcpy(result + j, str + word_start, to_copy);
+                        j += to_copy;
+                    }
+                }
+                word_start = -1;
+                word_length = 0;
+            }
+        }
+        i++;
+    }
+
+    if (j > 0 && result[j-1] == ' ') {
+        j--;
+    }
+
+    result[j] = '\0';
+    return result;
+}
+
+int main(void) {
+    char input[] = "This is a test string with words of different lengths";
+    int k = 2;
+    
+    char* result = remove_words_with_length(input, k);
+    if (result != NULL) {
+        printf("Original: %s\n", input);
+        printf("After removing %d-letter words: %s\n", k, result);
+        free(result);
+    } else {
+        printf("Memory allocation failed\n");
+    }
+    
+    return 0;
+}

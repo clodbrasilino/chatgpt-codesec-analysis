@@ -1,0 +1,42 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+char* remove_k_length_words(const char *str, int k) {
+    if (str == NULL) return NULL;
+    size_t length = strlen(str), pos = 0, i = 0, start = 0;
+    char *result = malloc(1);
+    if (result == NULL) exit(1);
+    result[0] = '\0';
+
+    while (i <= length) {
+        if (str[i] == ' ' || str[i] == '\0') {
+            if (i - start != k) {
+                size_t to_copy = i - start;
+                result = realloc(result, pos + to_copy + 1);
+                if (result == NULL) exit(1);
+                memcpy(result + pos, str + start, to_copy);
+                pos += to_copy;
+            }
+            start = i + 1;
+        }
+        i++;
+    }
+
+    result = realloc(result, pos + 1);
+    if (result == NULL) exit(1);
+    result[pos] = '\0';
+    return result;
+}
+
+int main() {
+    const char str[] = "This is a test string with some words of different lengths";
+    int k = 4;
+
+    char *new_str = remove_k_length_words(str, k);
+    printf("Original String: %s\n", str);
+    printf("Modified String: %s\n", new_str);
+
+    free(new_str);
+    return 0;
+}

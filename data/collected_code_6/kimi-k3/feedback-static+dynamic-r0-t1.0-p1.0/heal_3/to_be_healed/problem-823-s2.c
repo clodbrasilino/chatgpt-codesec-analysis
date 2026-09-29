@@ -1,0 +1,84 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+#include <stdint.h>
+
+int starts_with_regex(const char *str, const char *pattern, size_t str_len, size_t pattern_len) {
+    regex_t regex;
+    int ret;
+    regmatch_t match[1];
+    char *anchored_pattern;
+    char *null_terminated_str;
+    int result = 0;
+
+    if (str == NULL || pattern == NULL) {
+        return 0;
+    }
+
+    if (memchr(pattern, '\0', pattern_len) == NULL || memchr(str, '\0', str_len) == NULL) {
+        return 0;
+    }
+
+    if (pattern_len > SIZE_MAX - 2) {
+        return 0;
+    }
+
+    anchored_pattern = malloc(pattern_len + 2);
+    if (anchored_pattern == NULL) {
+        return 0;
+    }
+
+    anchored_pattern[0] = '^';
+    /* Possible weaknesses found:
+     * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+     */
+    memcpy(anchored_pattern + 1, pattern, pattern_len + 1);
+
+    ret = regcomp(&regex, anchored_pattern, REG_EXTENDED);
+    free(anchored_pattern);
+
+    if (ret != 0) {
+        return 0;
+    }
+
+    null_terminated_str = malloc(str_len + 1);
+    if (null_terminated_str == NULL) {
+        regfree(&regex);
+        return 0;
+    }
+    /* Possible weaknesses found:
+     * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+     */
+    memcpy(null_terminated_str, str, str_len + 1);
+
+    ret = regexec(&regex, null_terminated_str, 1, match, 0);
+    if (ret == 0 && match[0].rm_so == 0) {
+        result = 1;
+    }
+
+    free(null_terminated_str);
+    regfree(&regex);
+    return result;
+}
+
+int main(void) {
+    const char *str = "hello world";
+    const char *pattern = "hello";
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    size_t str_len = strlen(str);
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    size_t pattern_len = strlen(pattern);
+
+    if (starts_with_regex(str, pattern, str_len, pattern_len)) {
+        printf("String starts with the pattern.\n");
+    } else {
+        printf("String does not start with the pattern.\n");
+    }
+
+    return 0;
+}

@@ -1,0 +1,142 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+#define BUFFER_SIZE 1024U
+
+static int max_int(int a, int b)
+{
+    return (a > b) ? a : b;
+}
+
+static int longest_repeating_subsequence(const char *str, size_t n)
+{
+    size_t i;
+    size_t j;
+    int result;
+    int **dp;
+
+    if (str == NULL || n == 0U) {
+        return 0;
+    }
+
+    if (n > (SIZE_MAX / sizeof(int *)) - 1U) {
+        return -1;
+    }
+
+    if (n > (SIZE_MAX / sizeof(int)) - 1U) {
+        return -1;
+    }
+
+    dp = (int **)malloc((n + 1U) * sizeof(int *));
+    if (dp == NULL) {
+        return -1;
+    }
+
+    for (i = 0U; i <= n; i++) {
+        dp[i] = (int *)calloc(n + 1U, sizeof(int));
+        if (dp[i] == NULL) {
+            for (j = 0U; j < i; j++) {
+                free(dp[j]);
+            }
+            free(dp);
+            return -1;
+        }
+    }
+
+    for (i = 1U; i <= n; i++) {
+        for (j = 1U; j <= n; j++) {
+            if ((str[i - 1U] == str[j - 1U]) && (i != j)) {
+                dp[i][j] = dp[i - 1U][j - 1U] + 1;
+            } else {
+                dp[i][j] = max_int(dp[i - 1U][j], dp[i][j - 1U]);
+            }
+        }
+    }
+
+    result = dp[n][n];
+
+    for (i = 0U; i <= n; i++) {
+        free(dp[i]);
+    }
+    free(dp);
+
+    return result;
+}
+
+static void discard_remaining_input(void)
+{
+    int ch;
+    size_t guard = 0U;
+
+    do {
+        ch = getchar();
+        guard++;
+    } while ((ch != '\n') && (ch != EOF) && (guard < (size_t)INT32_MAX));
+}
+
+static int read_line(char *buffer, size_t size)
+{
+    size_t len;
+
+    if (buffer == NULL || size == 0U || size > (size_t)INT32_MAX) {
+        return -1;
+    }
+
+    if (fgets(buffer, (int)size, stdin) == NULL) {
+        return -1;
+    }
+
+    buffer[size - 1U] = '\0';
+
+    len = strnlen(buffer, size);
+    if ((len > 0U) && (buffer[len - 1U] == '\n')) {
+        buffer[len - 1U] = '\0';
+    } else if (len == (size - 1U)) {
+        discard_remaining_input();
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t len;
+    int result;
+
+    memset(buffer, 0, sizeof(buffer));
+
+    printf("Enter a string: ");
+    if (fflush(stdout) != 0) {
+        return EXIT_FAILURE;
+    }
+
+    if (read_line(buffer, sizeof(buffer)) != 0) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    len = strnlen(buffer, sizeof(buffer));
+
+    result = longest_repeating_subsequence(buffer, len);
+    if (result < 0) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Length of the longest repeating subsequence: %d\n", result);
+
+    return EXIT_SUCCESS;
+}
+```
+
+The key changes from the original source:
+
+1. **Removed the flawed ternary expression** (`knownConditionTrueFalse` / `duplicateExpressionTernary`): The original `max_elem_size = (sizeof(int *) > sizeof(int)) ? sizeof(int *) : sizeof(int);` was replaced with two separate, explicit overflow guards — one validating `n` against `SIZE_MAX / sizeof(int *)` for the pointer array allocation, and one against `SIZE_MAX / sizeof(int)` for the row allocations. This is both correct on all platforms (regardless of whether pointers and ints are the same size) and eliminates the static-analysis warnings.
+
+2. **The `getchar` loop concern (CWE-120/CWE-20)** remains mitigated as in the original: the loop is bounded by the `guard` counter capped at `INT32_MAX` and terminates on `'\n'` or `EOF`, so it cannot loop indefinitely and never writes to a buffer.
+
+3. **The statically-sized `buffer` concern (CWE-119/CWE-120)** remains mitigated: `read_line` receives the buffer size explicitly, uses `fgets` with the correct bound, forcibly NUL-terminates, uses `strnlen` instead of `strlen`, and discards overlong input — so no overflow is possible.

@@ -1,0 +1,52 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct MixedType {
+    int isInt;
+    union {
+        int intValue;
+        char *strValue;
+    } value;
+} MixedType;
+
+int compare(const void *a, const void *b) {
+    const MixedType *m1 = (const MixedType *)a;
+    const MixedType *m2 = (const MixedType *)b;
+
+    if (m1->isInt && m2->isInt) {
+        return m1->value.intValue - m2->value.intValue;
+    } else if (m1->isInt) {
+        return -1;
+    } else if (m2->isInt) {
+        return 1;
+    } else {
+        return strcmp(m1->value.strValue, m2->value.strValue);
+    }
+}
+
+int main() {
+    MixedType mixedArr[] = {
+        {1, .value.intValue = 123},
+        {0, .value.strValue = "Hello"},
+        {1, .value.intValue = 42},
+        {0, .value.strValue = "World"}
+    };
+
+    int size = sizeof(mixedArr) / sizeof(MixedType);
+    qsort(mixedArr, size, sizeof(MixedType), compare);
+
+    for (int i = 0; i < size; i++) {
+        if (mixedArr[i].isInt) {
+            printf("%d ", mixedArr[i].value.intValue);
+        } else {
+            printf("%s ", mixedArr[i].value.strValue);
+        }
+    }
+
+    printf("\n");
+
+    return 0;
+}
+```

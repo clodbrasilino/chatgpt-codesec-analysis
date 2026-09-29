@@ -1,0 +1,42 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int* decode_list(int* encoded, int size, int* return_size) {
+    *return_size = 0;
+    for (int i = 0; i < size; i += 2) {
+        *return_size += encoded[i];
+    }
+
+    int* decoded = (int*)malloc(*return_size * sizeof(int));
+    if (!decoded) {
+        *return_size = 0;
+        return NULL;
+    }
+
+    int index = 0;
+    for (int i = 0; i < size; i += 2) {
+        for (int j = 0; j < encoded[i]; ++j) {
+            decoded[index++] = encoded[i + 1];
+        }
+    }
+
+    return decoded;
+}
+
+int main() {
+    int encoded[] = {6, 112, 3, 121, 1, 115, 6, 111, 1, 110};
+    int size = sizeof(encoded) / sizeof(encoded[0]);
+    int return_size;
+
+    int* decoded = decode_list(encoded, size, &return_size);
+    if (decoded) {
+        for (int i = 0; i < return_size; ++i) {
+            printf("%c", decoded[i]);
+        }
+        free(decoded);
+    } else {
+        printf("Memory allocation failed\n");
+    }
+
+    return 0;
+}

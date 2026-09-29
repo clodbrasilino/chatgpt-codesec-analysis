@@ -1,0 +1,76 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+void convertListToFloat(const char **list, int size, float **out_floats, int *out_size) {
+    if (list == NULL || size <= 0 || out_floats == NULL || out_size == NULL) {
+        return;
+    }
+
+    float *temp_floats = (float *)malloc(size * sizeof(float));
+    if (temp_floats == NULL) {
+        return;
+    }
+
+    int valid_count = 0;
+
+    for (int i = 0; i < size; i++) {
+        if (list[i] == NULL) {
+            continue;
+        }
+
+        char *endptr;
+        float val = strtof(list[i], &endptr);
+
+        while (isspace((unsigned char)*endptr)) {
+            endptr++;
+        }
+
+        if (*endptr == '\0' && endptr != list[i]) {
+            temp_floats[valid_count++] = val;
+        }
+    }
+
+    if (valid_count > 0) {
+        float *final_floats = (float *)realloc(temp_floats, valid_count * sizeof(float));
+        if (final_floats != NULL) {
+            *out_floats = final_floats;
+        } else {
+            *out_floats = temp_floats; 
+        }
+        *out_size = valid_count;
+    } else {
+        free(temp_floats);
+        *out_floats = NULL;
+        *out_size = 0;
+    }
+}
+
+int main(void) {
+    const char *list[] = {
+        "3.14",
+        "hello",
+        "-42.5",
+        "0.0",
+        "  100.1  ",
+        "not a float123",
+        NULL
+    };
+    int size = sizeof(list) / sizeof(list[0]);
+
+    float *floats = NULL;
+    int float_count = 0;
+
+    convertListToFloat(list, size, &floats, &float_count);
+
+    if (floats != NULL) {
+        for (int i = 0; i < float_count; i++) {
+            printf("%f\n", floats[i]);
+        }
+        free(floats);
+        floats = NULL;
+    }
+
+    return 0;
+}

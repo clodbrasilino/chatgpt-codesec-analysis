@@ -1,0 +1,35 @@
+#include <stdio.h>
+#include <math.h>
+
+int digits_in_factorial(int n) {
+    if (n < 0) {
+        return -1;
+    }
+    if (n <= 1) {
+        return 1;
+    }
+    double sum = 0.0;
+    for (int i = 2; i <= n; i++) {
+        sum += log10((double)i);
+    }
+    return (int)floor(sum) + 1;
+}
+
+int main(void) {
+    int n;
+    printf("Enter a number: ");
+    if (scanf("%d", &n) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return 1;
+    }
+    
+    if (n < 0) {
+        fprintf(stderr, "Number must be non-negative\n");
+        return 1;
+    }
+    
+    int result = digits_in_factorial(n);
+    printf("Number of digits in %d! is: %d\n", n, result);
+    
+    return 0;
+}

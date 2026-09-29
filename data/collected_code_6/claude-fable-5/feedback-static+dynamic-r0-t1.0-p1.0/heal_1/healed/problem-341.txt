@@ -1,0 +1,82 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+static int compare_ints(const void *a, const void *b)
+{
+    int x = *(const int *)a;
+    int y = *(const int *)b;
+
+    if (x < y) {
+        return -1;
+    }
+    if (x > y) {
+        return 1;
+    }
+    return 0;
+}
+
+int *set_to_ordered_tuple(const int *set, size_t size)
+{
+    int *tuple = NULL;
+    size_t total_bytes = 0U;
+
+    if (set == NULL || size == 0U) {
+        return NULL;
+    }
+
+    if (size > SIZE_MAX / sizeof(int)) {
+        return NULL;
+    }
+
+    total_bytes = size * sizeof(int);
+
+    tuple = malloc(total_bytes);
+    if (tuple == NULL) {
+        return NULL;
+    }
+
+    memcpy(tuple, set, total_bytes);
+    qsort(tuple, size, sizeof(int), compare_ints);
+
+    return tuple;
+}
+
+int main(void)
+{
+    int set[] = {7, 2, 9, 4, 1};
+    size_t size = sizeof(set) / sizeof(set[0]);
+    size_t i = 0U;
+    int *tuple = NULL;
+
+    tuple = set_to_ordered_tuple(set, size);
+    if (tuple == NULL) {
+        fprintf(stderr, "Failed to create ordered tuple\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("(");
+    for (i = 0U; i < size; i++) {
+        if (i > 0U) {
+            printf(", ");
+        }
+        printf("%d", tuple[i]);
+    }
+    printf(")\n");
+
+    free(tuple);
+    tuple = NULL;
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis summary:**
+
+- **Original weakness:** Flawfinder flagged `memcpy` (CWE-120). While the original code's destination buffer was allocated with the same expression (`size * sizeof(int)`) used for the copy length, an unchecked multiplication of `size * sizeof(int)` could overflow `size_t` for very large `size` values, causing `malloc` to allocate a smaller buffer than the copy expects — a genuine heap overflow vector.
+
+- **Fix applied:** Added an explicit overflow guard (`size > SIZE_MAX / sizeof(int)`) before computing the allocation size, and computed `total_bytes` once so the allocation and copy lengths are guaranteed identical. This ensures the destination can always hold the source data, resolving the CWE-120 concern.
+
+- **Retained good practices:** NULL/zero-size input validation, `malloc` failure check, correct `qsort` comparator that avoids the subtraction-overflow anti-pattern (`x - y`), freeing and nulling the pointer, and correct `sizeof` idioms for array length.

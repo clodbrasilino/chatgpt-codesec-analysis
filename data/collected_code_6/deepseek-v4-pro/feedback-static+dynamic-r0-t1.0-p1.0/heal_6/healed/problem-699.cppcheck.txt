@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-699.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-699.c:12:45: style: Condition 'len2>=101' is always false [knownConditionTrueFalse]
+    if (len1 != len2 || len1 >= 101 || len2 >= 101) {
+                                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-699.c:12:30: note: Assuming that condition 'len1>=101' is not redundant
+    if (len1 != len2 || len1 >= 101 || len2 >= 101) {
+                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-699.c:12:14: note: Assuming that condition 'len1!=len2' is not redundant
+    if (len1 != len2 || len1 >= 101 || len2 >= 101) {
+             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-699.c:12:45: note: Condition 'len2>=101' is always false
+    if (len1 != len2 || len1 >= 101 || len2 >= 101) {
+                                            ^

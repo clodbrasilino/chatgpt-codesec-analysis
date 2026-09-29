@@ -1,0 +1,64 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+typedef struct {
+    int value1;
+    int value2;
+    int value3;
+} TupleRecord;
+
+int find_maximum_element(TupleRecord* records, size_t num_records, int* max_element) {
+    if (records == NULL || num_records == 0 || max_element == NULL) {
+        return -1;
+    }
+
+    *max_element = INT_MIN;
+
+    for (size_t i = 0; i < num_records; ++i) {
+        if (records[i].value1 > *max_element) {
+            *max_element = records[i].value1;
+        }
+        if (records[i].value2 > *max_element) {
+            *max_element = records[i].value2;
+        }
+        if (records[i].value3 > *max_element) {
+            *max_element = records[i].value3;
+        }
+    }
+
+    return 0;
+}
+
+int main(void) {
+    size_t num_records = 3;
+    TupleRecord* records = (TupleRecord*)malloc(num_records * sizeof(TupleRecord));
+
+    if (records == NULL) {
+        return 1;
+    }
+
+    records[0].value1 = 10;
+    records[0].value2 = 25;
+    records[0].value3 = 5;
+
+    records[1].value1 = 45;
+    records[1].value2 = 12;
+    records[1].value3 = 33;
+
+    records[2].value1 = 7;
+    records[2].value2 = 99;
+    records[2].value3 = 14;
+
+    int max_val;
+    if (find_maximum_element(records, num_records, &max_val) == 0) {
+        printf("Maximum element is: %d\n", max_val);
+    } else {
+        printf("Failed to find maximum element.\n");
+    }
+
+    free(records);
+    return 0;
+}
+```

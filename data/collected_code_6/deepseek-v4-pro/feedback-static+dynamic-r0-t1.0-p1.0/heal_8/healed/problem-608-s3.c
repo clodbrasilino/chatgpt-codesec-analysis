@@ -1,0 +1,71 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <errno.h>
+#include <limits.h>
+
+long long bell_number(int n) {
+    if (n < 0) return -1;
+    if (n == 0) return 1;
+    
+    if (n > 25) return -2;
+    
+    long long **bell_triangle = (long long **)malloc((n + 1) * sizeof(long long *));
+    if (bell_triangle == NULL) return -1;
+    
+    for (int i = 0; i <= n; i++) {
+        bell_triangle[i] = (long long *)calloc(i + 1, sizeof(long long));
+        if (bell_triangle[i] == NULL) {
+            for (int k = 0; k < i; k++) {
+                free(bell_triangle[k]);
+            }
+            free(bell_triangle);
+            return -1;
+        }
+    }
+    
+    bell_triangle[0][0] = 1;
+    
+    for (int i = 1; i <= n; i++) {
+        bell_triangle[i][0] = bell_triangle[i - 1][i - 1];
+        
+        for (int j = 1; j <= i; j++) {
+            if (bell_triangle[i][j - 1] > LLONG_MAX - bell_triangle[i - 1][j - 1]) {
+                for (int k = 0; k <= n; k++) {
+                    free(bell_triangle[k]);
+                }
+                free(bell_triangle);
+                return -2;
+            }
+            bell_triangle[i][j] = bell_triangle[i][j - 1] + bell_triangle[i - 1][j - 1];
+        }
+    }
+    
+    long long result = bell_triangle[n][0];
+    
+    for (int i = 0; i <= n; i++) {
+        free(bell_triangle[i]);
+    }
+    free(bell_triangle);
+    
+    return result;
+}
+
+int main() {
+    int test_cases[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 20, 25};
+    int num_cases = sizeof(test_cases) / sizeof(test_cases[0]);
+    
+    for (int i = 0; i < num_cases; i++) {
+        int n = test_cases[i];
+        long long result = bell_number(n);
+        if (result >= 0) {
+            printf("Bell number B%d = %lld\n", n, result);
+        } else if (result == -1) {
+            fprintf(stderr, "Error computing B%d\n", n);
+        } else {
+            fprintf(stderr, "Overflow for B%d\n", n);
+        }
+    }
+    
+    return 0;
+}

@@ -1,0 +1,25 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_3/healed/problem-411-s2.c: In function 'snake_to_camel':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_3/healed/problem-411-s2.c:31:68: error: passing argument 4 of 'regexec' makes pointer from integer without a cast [-Wint-conversion]
+   31 |     while (src_pos < len && regexec(&regex, cursor, len - src_pos, 2, matches, 0) == 0) {
+      |                                                                    ^
+      |                                                                    |
+      |                                                                    int
+In file included from /Library/Developer/CommandLineTools/SDKs/MacOSX15.sdk/usr/include/regex.h:89,
+                 from /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_3/healed/problem-411-s2.c:4:
+/Library/Developer/CommandLineTools/SDKs/MacOSX15.sdk/usr/include/_regex.h:219:28: note: expected 'regmatch_t * restrict' but argument is of type 'int'
+  219 |                 regmatch_t __pmatch[ __restrict _LIBC_COUNT(__nmatch)], int);
+      |                 ~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_3/healed/problem-411-s2.c:31:71: error: passing argument 5 of 'regexec' makes integer from pointer without a cast [-Wint-conversion]
+   31 |     while (src_pos < len && regexec(&regex, cursor, len - src_pos, 2, matches, 0) == 0) {
+      |                                                                       ^~~~~~~
+      |                                                                       |
+      |                                                                       regmatch_t *
+/Library/Developer/CommandLineTools/SDKs/MacOSX15.sdk/usr/include/_regex.h:219:73: note: expected 'int' but argument is of type 'regmatch_t *'
+  219 |                 regmatch_t __pmatch[ __restrict _LIBC_COUNT(__nmatch)], int);
+      |                                                                         ^~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_3/healed/problem-411-s2.c:31:29: error: too many arguments to function 'regexec'; expected 5, have 6
+   31 |     while (src_pos < len && regexec(&regex, cursor, len - src_pos, 2, matches, 0) == 0) {
+      |                             ^~~~~~~                                            ~
+/Library/Developer/CommandLineTools/SDKs/MacOSX15.sdk/usr/include/_regex.h:218:9: note: declared here
+  218 | int     regexec(const regex_t * __restrict, const char * __restrict, size_t __nmatch,
+      |         ^~~~~~~

@@ -1,0 +1,106 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_STR_LEN 4096
+
+size_t safe_strnlen(const char *str, size_t max_len);
+char *concatenate_tuple(const char **tuple, size_t num_elements, const char *delimiter);
+
+size_t safe_strnlen(const char *str, size_t max_len) {
+    const char *end = (const char *)memchr(str, '\0', max_len);
+    if (end == NULL) {
+        return max_len;
+    }
+    return (size_t)(end - str);
+}
+
+char *concatenate_tuple(const char **tuple, size_t num_elements, const char *delimiter) {
+    if (tuple == NULL || delimiter == NULL || num_elements == 0) {
+        return NULL;
+    }
+
+    size_t delim_len = safe_strnlen(delimiter, MAX_STR_LEN);
+    size_t total_length = 0;
+
+    for (size_t i = 0; i < num_elements; ++i) {
+        if (tuple[i] == NULL) {
+            return NULL;
+        }
+        size_t len = safe_strnlen(tuple[i], MAX_STR_LEN);
+        if (total_length > ((size_t)-1) - len) {
+            return NULL;
+        }
+        total_length += len;
+    }
+
+    size_t delim_total = 0;
+    if (num_elements > 1 && delim_len > 0) {
+        if ((num_elements - 1) > ((size_t)-1) / delim_len) {
+            return NULL;
+        }
+        delim_total = (num_elements - 1) * delim_len;
+    }
+
+    if (total_length > ((size_t)-1) - delim_total - 1) {
+        return NULL;
+    }
+    total_length += delim_total + 1;
+
+    char *result = (char *)malloc(total_length);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    char *current_pos = result;
+    size_t remaining = total_length;
+
+    for (size_t i = 0; i < num_elements; ++i) {
+        size_t len = safe_strnlen(tuple[i], MAX_STR_LEN);
+        
+        if (len > remaining) {
+            free(result);
+            return NULL;
+        }
+        memcpy(current_pos, tuple[i], len);
+        current_pos += len;
+        remaining -= len;
+
+        if (i < num_elements - 1) {
+            if (delim_len > remaining) {
+                free(result);
+                return NULL;
+            }
+            memcpy(current_pos, delimiter, delim_len);
+            current_pos += delim_len;
+            remaining -= delim_len;
+        }
+    }
+
+    if (remaining > 0) {
+        *current_pos = '\0';
+    } else {
+        result[total_length - 1] = '\0';
+    }
+
+    return result;
+}
+
+int main(void) {
+    const char *my_tuple[] = {"apple", "banana", "cherry", "date"};
+    size_t num_elements = sizeof(my_tuple) / sizeof(my_tuple[0]);
+    const char *delimiter = ", ";
+
+    char *result = concatenate_tuple(my_tuple, num_elements, delimiter);
+
+    if (result != NULL) {
+        printf("%s\n", result);
+        free(result);
+        result = NULL;
+    } else {
+        fprintf(stderr, "Error: Memory allocation failed or invalid input provided.\n");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,227 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+typedef struct {
+    char *key;
+    char *value;
+} KeyValuePair;
+
+typedef struct {
+    char *key;
+    char **values;
+    size_t count;
+    size_t capacity;
+} MapEntry;
+
+typedef struct {
+    MapEntry *entries;
+    size_t count;
+    size_t capacity;
+} Map;
+
+static char *duplicate_string(const char *s)
+{
+    size_t len;
+    char *copy;
+
+    if (s == NULL) {
+        return NULL;
+    }
+    len = strlen(s);
+    copy = malloc(len + 1);
+    if (copy == NULL) {
+        return NULL;
+    }
+    memcpy(copy, s, len + 1);
+    return copy;
+}
+
+Map *map_create(void)
+{
+    Map *map = malloc(sizeof(*map));
+
+    if (map == NULL) {
+        return NULL;
+    }
+    map->entries = NULL;
+    map->count = 0;
+    map->capacity = 0;
+    return map;
+}
+
+static MapEntry *map_find_entry(Map *map, const char *key)
+{
+    size_t i;
+
+    for (i = 0; i < map->count; i++) {
+        if (strcmp(map->entries[i].key, key) == 0) {
+            return &map->entries[i];
+        }
+    }
+    return NULL;
+}
+
+static int entry_add_value(MapEntry *entry, const char *value)
+{
+    char **new_values;
+    char *value_copy;
+    /* Possible weaknesses found:
+     *  The scope of the variable 'new_capacity' can be reduced. [variableScope]
+     */
+    size_t new_capacity;
+
+    value_copy = duplicate_string(value);
+    if (value_copy == NULL) {
+        return -1;
+    }
+    if (entry->count == entry->capacity) {
+        if (entry->capacity > SIZE_MAX / 2 / sizeof(*new_values)) {
+            free(value_copy);
+            return -1;
+        }
+        new_capacity = (entry->capacity == 0) ? 4 : entry->capacity * 2;
+        new_values = realloc(entry->values, new_capacity * sizeof(*new_values));
+        if (new_values == NULL) {
+            free(value_copy);
+            return -1;
+        }
+        entry->values = new_values;
+        entry->capacity = new_capacity;
+    }
+    entry->values[entry->count] = value_copy;
+    entry->count++;
+    return 0;
+}
+
+static int map_add(Map *map, const char *key, const char *value)
+{
+    MapEntry *entry;
+    MapEntry *new_entries;
+    char *key_copy;
+    /* Possible weaknesses found:
+     *  The scope of the variable 'new_capacity' can be reduced. [variableScope]
+     */
+    size_t new_capacity;
+
+    if (map == NULL || key == NULL || value == NULL) {
+        return -1;
+    }
+    entry = map_find_entry(map, key);
+    if (entry != NULL) {
+        return entry_add_value(entry, value);
+    }
+    key_copy = duplicate_string(key);
+    if (key_copy == NULL) {
+        return -1;
+    }
+    if (map->count == map->capacity) {
+        if (map->capacity > SIZE_MAX / 2 / sizeof(*new_entries)) {
+            free(key_copy);
+            return -1;
+        }
+        new_capacity = (map->capacity == 0) ? 4 : map->capacity * 2;
+        new_entries = realloc(map->entries, new_capacity * sizeof(*new_entries));
+        if (new_entries == NULL) {
+            free(key_copy);
+            return -1;
+        }
+        map->entries = new_entries;
+        map->capacity = new_capacity;
+    }
+    entry = &map->entries[map->count];
+    entry->key = key_copy;
+    entry->values = NULL;
+    entry->count = 0;
+    entry->capacity = 0;
+    if (entry_add_value(entry, value) != 0) {
+        free(entry->key);
+        free(entry->values);
+        entry->key = NULL;
+        entry->values = NULL;
+        return -1;
+    }
+    map->count++;
+    return 0;
+}
+
+int group_pairs(Map *map, const KeyValuePair *pairs, size_t pair_count)
+{
+    size_t i;
+
+    if (map == NULL || (pairs == NULL && pair_count > 0)) {
+        return -1;
+    }
+    for (i = 0; i < pair_count; i++) {
+        if (map_add(map, pairs[i].key, pairs[i].value) != 0) {
+            return -1;
+        }
+    }
+    return 0;
+}
+
+void map_free(Map *map)
+{
+    size_t i;
+    size_t j;
+
+    if (map == NULL) {
+        return;
+    }
+    for (i = 0; i < map->count; i++) {
+        for (j = 0; j < map->entries[i].count; j++) {
+            free(map->entries[i].values[j]);
+        }
+        free(map->entries[i].values);
+        free(map->entries[i].key);
+    }
+    free(map->entries);
+    free(map);
+}
+
+void map_print(const Map *map)
+{
+    size_t i;
+    size_t j;
+
+    if (map == NULL) {
+        return;
+    }
+    for (i = 0; i < map->count; i++) {
+        printf("%s: [", map->entries[i].key);
+        for (j = 0; j < map->entries[i].count; j++) {
+            printf("%s%s", map->entries[i].values[j],
+                   (j + 1 < map->entries[i].count) ? ", " : "");
+        }
+        printf("]\n");
+    }
+}
+
+int main(void)
+{
+    const KeyValuePair pairs[] = {
+        {"fruit", "apple"},
+        {"vegetable", "carrot"},
+        {"fruit", "banana"},
+        {"grain", "rice"},
+        {"vegetable", "broccoli"},
+        {"fruit", "cherry"}
+    };
+    Map *map;
+    int status = EXIT_SUCCESS;
+
+    map = map_create();
+    if (map == NULL) {
+        fprintf(stderr, "error: out of memory\n");
+        return EXIT_FAILURE;
+    }
+    if (group_pairs(map, pairs, sizeof(pairs) / sizeof(pairs[0])) != 0) {
+        fprintf(stderr, "error: failed to group pairs\n");
+        status = EXIT_FAILURE;
+    } else {
+        map_print(map);
+    }
+    map_free(map);
+    return status;
+}

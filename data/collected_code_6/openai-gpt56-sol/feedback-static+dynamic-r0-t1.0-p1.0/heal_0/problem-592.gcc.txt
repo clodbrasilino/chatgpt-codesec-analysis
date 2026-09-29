@@ -1,0 +1,16 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_0/problem-592.c: In function 'compute_sum':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_0/problem-592.c:19:31: error: 'ULLONG_MAX' undeclared (first use in this function)
+   19 |         if (c_m != 0 && c_n > ULLONG_MAX / c_m) {
+      |                               ^~~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_0/problem-592.c:4:1: note: 'ULLONG_MAX' is defined in header '<limits.h>'; this is probably fixable by adding '#include <limits.h>'
+    3 | #include <errno.h>
+  +++ |+#include <limits.h>
+    4 | 
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_0/problem-592.c:19:31: note: each undeclared identifier is reported only once for each function it appears in
+   19 |         if (c_m != 0 && c_n > ULLONG_MAX / c_m) {
+      |                               ^~~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_0/problem-592.c: In function 'parse_unsigned':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_0/problem-592.c:63:18: error: 'UINT_MAX' undeclared (first use in this function)
+   63 |         parsed > UINT_MAX) {
+      |                  ^~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_0/problem-592.c:63:18: note: 'UINT_MAX' is defined in header '<limits.h>'; this is probably fixable by adding '#include <limits.h>'

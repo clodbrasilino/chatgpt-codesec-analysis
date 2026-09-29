@@ -1,0 +1,35 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int max(int a, int b, int c) {
+    return (a > b) ? ((a > c) ? a : c) : ((b > c) ? b : c);
+}
+
+int maxGold(int gold[][100], int m, int n) {
+    int dp[100][100] = {0};
+    for (int col = n - 1; col >= 0; --col) {
+        for (int row = 0; row < m; ++row) {
+            int right = (col == n - 1) ? 0 : dp[row][col + 1];
+            int right_up = (row == 0 || col == n - 1) ? 0 : dp[row - 1][col + 1];
+            int right_down = (row == m - 1 || col == n - 1) ? 0 : dp[row + 1][col + 1];
+
+            dp[row][col] = gold[row][col] + max(right, right_up, right_down);
+        }
+    }
+
+    int result = 0;
+    for (int i = 0; i < m; ++i) {
+        result = (result > dp[i][0]) ? result : dp[i][0];
+    }
+    return result;
+}
+
+int main() {
+    int gold[4][4] = { {1, 3, 1, 5},
+                       {2, 2, 4, 1},
+                       {5, 0, 2, 3},
+                       {0, 6, 1, 2} };
+    int m = 4, n = 4;
+    printf("%d\n", maxGold(gold, m, n));
+    return 0;
+}

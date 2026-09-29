@@ -1,0 +1,31 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+void* select_nth_item(const void** list, size_t n, size_t item_size) {
+    if (list == NULL || n >= (sizeof(list) / sizeof(list[0]))) {
+        return NULL;
+    }
+    return (void*)((const char*)list + n * item_size);
+}
+
+int main() {
+    const int numbers[] = {10, 20, 30, 40, 50};
+    const int* number_list = (const int*)malloc(5 * sizeof(int));
+    for (size_t i = 0; i < 5; ++i) {
+        /* Possible weaknesses found:
+         *  assignment of read-only location '*(number_list + (sizetype)(i * 4))'
+         *  read-only variable is not assignable
+         */
+        number_list[i] = numbers[i];
+    }
+
+    const int* nth_number = (const int*)select_nth_item((const void**)number_list, 2, sizeof(int));
+    if (nth_number != NULL) {
+        printf("%d\n", *nth_number);
+    } else {
+        printf("Invalid index\n");
+    }
+
+    free((void*)number_list);
+    return 0;
+}

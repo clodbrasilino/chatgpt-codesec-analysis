@@ -1,0 +1,98 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *elements;
+    int capacity;
+    int count;
+} Heap;
+
+Heap* createHeap(int cap) {
+    Heap *h = (Heap*)malloc(sizeof(Heap));
+    h->capacity = cap;
+    h->count = 0;
+    h->elements = (int*)malloc(cap * sizeof(int));
+    return h;
+}
+
+void freeHeap(Heap *h) {
+    free(h->elements);
+    free(h);
+}
+
+void heapifyDown(Heap *h, int idx) {
+    while (1) {
+        int left = 2 * idx + 1;
+        int right = 2 * idx + 2;
+        int smallest = idx;
+
+        if (left < h->count && h->elements[left] < h->elements[smallest]) {
+            smallest = left;
+        }
+
+        if (right < h->count && h->elements[right] < h->elements[smallest]) {
+            smallest = right;
+        }
+
+        if (smallest != idx) {
+            int temp = h->elements[idx];
+            h->elements[idx] = h->elements[smallest];
+            h->elements[smallest] = temp;
+            idx = smallest;
+        } else {
+            break;
+        }
+    }
+}
+
+void heapifyUp(Heap *h, int idx) {
+    while (idx > 0) {
+        int parent = (idx - 1) / 2;
+        if (h->elements[parent] > h->elements[idx]) {
+            int temp = h->elements[parent];
+            h->elements[parent] = h->elements[idx];
+            h->elements[idx] = temp;
+            idx = parent;
+        } else {
+            break;
+        }
+    }
+}
+
+void deleteAndInsert(Heap *h, int item) {
+    if (h->count == 0) return;
+    h->elements[0] = item;
+    h->count--;
+    heapifyDown(h, 0);
+}
+
+int main() {
+    Heap *heap = createHeap(10);
+    
+    heap->elements[heap->count++] = 10;
+    heap->elements[heap->count++] = 20;
+    heap->elements[heap->count++] = 15;
+    heap->elements[heap->count++] = 30;
+    heap->elements[heap->count++] = 40;
+
+    for (int i = (heap->count - 1) / 2; i >= 0; i--) {
+        heapifyDown(heap, i);
+    }
+
+    printf("Heap after insertion: ");
+    for (int i = 0; i < heap->count; i++) {
+        printf("%d ", heap->elements[i]);
+    }
+    printf("\n");
+
+    deleteAndInsert(heap, 5);
+
+    printf("Heap after deleting and inserting 5: ");
+    for (int i = 0; i < heap->count; i++) {
+        printf("%d ", heap->elements[i]);
+    }
+    printf("\n");
+
+    freeHeap(heap);
+    return 0;
+}

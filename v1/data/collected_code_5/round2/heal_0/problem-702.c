@@ -1,0 +1,50 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int compare(const void* a, const void* b) {
+    return (*(int*)a - *(int*)b);
+}
+
+int minDelete(int* array, int len, int k) {
+    qsort(array, len, sizeof(int), compare);
+    int l = 0, r = len - 1;
+    int result = len;
+    while(l <= r) {
+        if (array[r] - array[l] <= k) {
+            result = len - (r - l + 1);
+            break;
+        }
+        array[l] < array[r] - k ? l++ : r--;
+    }
+    return result;
+}
+
+int main() {
+    int len;
+    int k;
+
+    printf("Enter length of the array: ");
+    scanf("%d", &len);
+
+    printf("Enter the limit: ");
+    scanf("%d", &k);
+
+    int* array = malloc(len * sizeof(int));
+    if(!array) {
+        printf("Memory allocation failed\n");
+        return 1;
+    }
+    
+    printf("Enter elements of the array: ");
+    for(int i = 0; i < len; i++) {
+        scanf("%d", &array[i]);
+    }
+    
+    int result = minDelete(array, len, k);
+    
+    free(array);
+    
+    printf("Minimum number of deletions: %d\n", result);
+    
+    return 0;
+}

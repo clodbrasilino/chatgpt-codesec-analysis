@@ -1,0 +1,71 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char *key;
+    char *value;
+} KeyValuePair;
+
+typedef struct {
+    KeyValuePair *pairs;
+    int count;
+} Dictionary;
+
+KeyValuePair *create_pair(char *key, char *value) {
+    KeyValuePair *pair = (KeyValuePair *)malloc(sizeof(KeyValuePair));
+    pair->key = strdup(key);
+    pair->value = strdup(value);
+    return pair;
+}
+
+Dictionary *create_dictionary(int capacity) {
+    Dictionary *dict = (Dictionary *)malloc(sizeof(Dictionary));
+    dict->pairs = (KeyValuePair *)malloc(capacity * sizeof(KeyValuePair));
+    dict->count = 0;
+    return dict;
+}
+
+void add_to_dictionary(Dictionary *dict, char *key, char *value) {
+    if (dict->count >= 100) {
+        fprintf(stderr, "Dictionary is full\n");
+        exit(EXIT_FAILURE);
+    }
+    dict->pairs[dict->count++] = *create_pair(key, value);
+}
+
+Dictionary *tuple_to_dictionary(char **tuple, int length) {
+    if (length % 2 != 0) {
+        fprintf(stderr, "Tuple length must be even\n");
+        exit(EXIT_FAILURE);
+    }
+    Dictionary *dict = create_dictionary(length / 2);
+    for (int i = 0; i < length; i += 2) {
+        add_to_dictionary(dict, tuple[i], tuple[i + 1]);
+    }
+    return dict;
+}
+
+void free_dictionary(Dictionary *dict) {
+    for (int i = 0; i < dict->count; ++i) {
+        free(dict->pairs[i].key);
+        free(dict->pairs[i].value);
+    }
+    free(dict->pairs);
+    free(dict);
+}
+
+int main() {
+    char *tuple[] = {"key1", "value1", "key2", "value2", "key3", "value3"};
+    int length = 6;
+    Dictionary *dict = tuple_to_dictionary(tuple, length);
+
+    for (int i = 0; i < dict->count; ++i) {
+        printf("%s: %s\n", dict->pairs[i].key, dict->pairs[i].value);
+    }
+
+    free_dictionary(dict);
+    return 0;
+}
+```

@@ -1,0 +1,24 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int count_elements_in_range(const int *list, int list_size, int lower_bound, int upper_bound) {
+    int count = 0;
+    for (int i = 0; i < list_size; i++) {
+        if (list[i] >= lower_bound && list[i] <= upper_bound) {
+            count++;
+        }
+    }
+    return count;
+}
+
+int main() {
+    int list[] = {1, 5, 10, 15, 20, 25, 30};
+    int list_size = sizeof(list) / sizeof(list[0]);
+    int lower_bound = 10;
+    int upper_bound = 20;
+
+    int result = count_elements_in_range(list, list_size, lower_bound, upper_bound);
+    printf("Number of elements in range: %d\n", result);
+
+    return 0;
+}

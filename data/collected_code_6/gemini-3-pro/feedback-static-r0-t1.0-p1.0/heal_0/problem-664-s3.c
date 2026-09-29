@@ -1,0 +1,36 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+double average_of_even_numbers(int n) {
+    if (n < 2) {
+        return 0.0;
+    }
+    
+    if (n % 2 != 0) {
+        n -= 1;
+    }
+
+    long long count = n / 2;
+    long long sum = count * (count + 1);
+
+    return (double)sum / count;
+}
+
+int main(void) {
+    int input;
+
+    if (scanf("%d", &input) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (input < 0) {
+        fprintf(stderr, "Input must be non-negative\n");
+        return EXIT_FAILURE;
+    }
+
+    double average = average_of_even_numbers(input);
+    printf("%f\n", average);
+
+    return EXIT_SUCCESS;
+}

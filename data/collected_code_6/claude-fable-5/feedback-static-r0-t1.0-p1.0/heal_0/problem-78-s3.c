@@ -1,0 +1,53 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+static int count_set_bits(unsigned int value)
+{
+    int count = 0;
+
+    while (value != 0U) {
+        count += (int)(value & 1U);
+        value >>= 1U;
+    }
+
+    return count;
+}
+
+static unsigned long count_odd_set_bits(unsigned int n)
+{
+    unsigned long result = 0UL;
+    unsigned int i;
+
+    for (i = 1U; i <= n; i++) {
+        if ((count_set_bits(i) % 2) != 0) {
+            result++;
+        }
+        if (i == n) {
+            break;
+        }
+    }
+
+    return result;
+}
+
+int main(void)
+{
+    unsigned int n = 0U;
+    unsigned long answer;
+
+    printf("Enter a non-negative integer: ");
+    if (scanf("%u", &n) != 1) {
+        fprintf(stderr, "Error: invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (n == 0U) {
+        answer = 0UL;
+    } else {
+        answer = count_odd_set_bits(n);
+    }
+
+    printf("Numbers from 1 to %u with an odd number of set bits: %lu\n", n, answer);
+
+    return EXIT_SUCCESS;
+}

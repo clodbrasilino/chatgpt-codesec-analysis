@@ -1,0 +1,62 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <limits.h>
+
+static int is_palindrome(unsigned long long n)
+{
+    char buf[32];
+    int written;
+    int i;
+    int len;
+
+    written = snprintf(buf, sizeof(buf), "%llu", n);
+    if (written < 0 || written >= (int)sizeof(buf)) {
+        return 0;
+    }
+    len = written;
+    for (i = 0; i < len / 2; i++) {
+        if (buf[i] != buf[len - 1 - i]) {
+            return 0;
+        }
+    }
+    return 1;
+}
+
+static int next_palindrome(unsigned long long n, unsigned long long *result)
+{
+    if (result == NULL) {
+        return -1;
+    }
+    while (n < ULLONG_MAX) {
+        n++;
+        if (is_palindrome(n)) {
+            *result = n;
+            return 0;
+        }
+    }
+    return -1;
+}
+
+int main(void)
+{
+    unsigned long long n;
+    unsigned long long pal;
+
+    printf("Enter a non-negative number: ");
+    if (scanf("%llu", &n) != 1) {
+        fprintf(stderr, "Error: invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (next_palindrome(n, &pal) != 0) {
+        fprintf(stderr, "Error: no next palindrome exists within the representable range\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Next palindrome: %llu\n", pal) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

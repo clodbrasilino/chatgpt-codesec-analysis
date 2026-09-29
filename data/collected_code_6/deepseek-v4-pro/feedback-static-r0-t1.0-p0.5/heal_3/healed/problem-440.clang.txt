@@ -1,0 +1,22 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p0.5/heal_3/healed/problem-440.c:43:29: error: use of undeclared identifier 'count'
+   43 |     while (token != NULL && count < max_adverbs) {
+      |                             ^~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p0.5/heal_3/healed/problem-440.c:56:28: error: use of undeclared identifier 'count'
+   56 |             memcpy(adverbs[count].word, token, copy_len);
+      |                            ^~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p0.5/heal_3/healed/problem-440.c:56:28: error: use of undeclared identifier 'count'
+   56 |             memcpy(adverbs[count].word, token, copy_len);
+      |                            ^~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p0.5/heal_3/healed/problem-440.c:57:21: error: use of undeclared identifier 'count'
+   57 |             adverbs[count].word[copy_len] = '\0';
+      |                     ^~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p0.5/heal_3/healed/problem-440.c:58:21: error: use of undeclared identifier 'count'
+   58 |             adverbs[count].position = position;
+      |                     ^~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p0.5/heal_3/healed/problem-440.c:59:13: error: use of undeclared identifier 'count'
+   59 |             count++;
+      |             ^~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p0.5/heal_3/healed/problem-440.c:66:12: error: use of undeclared identifier 'count'
+   66 |     return count;
+      |            ^~~~~
+7 errors generated.

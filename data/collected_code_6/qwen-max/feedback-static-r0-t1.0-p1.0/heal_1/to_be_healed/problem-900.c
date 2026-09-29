@@ -1,0 +1,26 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+int string_starts_with_number(const char *str, const char *number) {
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    if (strncmp(str, number, strlen(number)) == 0) {
+        return 1;
+    }
+    return 0;
+}
+
+int main() {
+    const char *str = "1234_start";
+    const char *number = "1234";
+    
+    if (string_starts_with_number(str, number)) {
+        printf("The string starts with the specified number.\n");
+    } else {
+        printf("The string does not start with the specified number.\n");
+    }
+
+    return 0;
+}

@@ -1,0 +1,174 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <ctype.h>
+#include <stddef.h>
+#include <stdbool.h>
+#include <stdint.h>
+#include <limits.h>
+
+#define SUCCESS 0
+#define ERR_NULL -1
+#define ERR_NOT_FOUND -2
+
+#define INITIAL_INPUT_CAPACITY 64
+
+int find_first_max_even_word(const char *str, size_t *start, size_t *length)
+{
+    size_t i = 0;
+    size_t word_start = 0;
+    size_t word_len = 0;
+    size_t max_start = 0;
+    size_t max_len = 0;
+    bool in_word = false;
+    bool found = false;
+
+    if (str == NULL || start == NULL || length == NULL) {
+        return ERR_NULL;
+    }
+
+    for (;;) {
+        unsigned char c = (unsigned char)str[i];
+
+        if (c != '\0' && !isspace(c)) {
+            if (!in_word) {
+                word_start = i;
+                in_word = true;
+            }
+            if (word_len < SIZE_MAX) {
+                word_len++;
+            }
+        } else {
+            if (in_word) {
+                if (word_len % 2 == 0 && word_len > max_len) {
+                    max_len = word_len;
+                    max_start = word_start;
+                    found = true;
+                }
+                in_word = false;
+                word_len = 0;
+            }
+            if (c == '\0') {
+                break;
+            }
+        }
+        if (i == SIZE_MAX) {
+            break;
+        }
+        i++;
+    }
+
+    if (!found) {
+        return ERR_NOT_FOUND;
+    }
+
+    *start = max_start;
+    *length = max_len;
+    return SUCCESS;
+}
+
+static char *read_input_line(FILE *stream)
+{
+    size_t capacity = INITIAL_INPUT_CAPACITY;
+    size_t length = 0;
+    char *buffer;
+    int c;
+
+    if (stream == NULL) {
+        return NULL;
+    }
+
+    buffer = malloc(capacity);
+    if (buffer == NULL) {
+        return NULL;
+    }
+
+    while ((c = fgetc(stream)) != EOF && c != '\n') {
+        if (length + 1 >= capacity) {
+            size_t new_capacity;
+            char *new_buffer;
+
+            if (capacity == 0 || capacity > SIZE_MAX / 2) {
+                free(buffer);
+                return NULL;
+            }
+            new_capacity = capacity * 2;
+            if (new_capacity <= capacity || new_capacity - capacity < 2) {
+                free(buffer);
+                return NULL;
+            }
+            new_buffer = realloc(buffer, new_capacity);
+            if (new_buffer == NULL) {
+                free(buffer);
+                return NULL;
+            }
+            buffer = new_buffer;
+            capacity = new_capacity;
+        }
+
+        if (length < capacity - 1) {
+            buffer[length] = (char)c;
+            length++;
+        } else {
+            free(buffer);
+            return NULL;
+        }
+    }
+
+    if (ferror(stream)) {
+        free(buffer);
+        return NULL;
+    }
+
+    if (c == EOF && length == 0) {
+        free(buffer);
+        return NULL;
+    }
+
+    if (length >= capacity) {
+        free(buffer);
+        return NULL;
+    }
+
+    buffer[length] = '\0';
+    return buffer;
+}
+
+int main(void)
+{
+    char *buffer;
+    size_t start = 0;
+    size_t length = 0;
+    int status;
+
+    printf("Enter a sentence: ");
+    fflush(stdout);
+
+    buffer = read_input_line(stdin);
+    if (buffer == NULL) {
+        fprintf(stderr, "Failed to read input.\n");
+        return 1;
+    }
+
+    status = find_first_max_even_word(buffer, &start, &length);
+
+    if (status == SUCCESS) {
+        if (length > (size_t)INT_MAX || start > SIZE_MAX - length) {
+            fprintf(stderr, "Word too large to display.\n");
+            free(buffer);
+            return 1;
+        }
+        printf("First maximum length even word: %.*s\n", (int)length, buffer + start);
+        printf("Word length: %zu\n", length);
+    } else if (status == ERR_NOT_FOUND) {
+        printf("No even-length word found in the input.\n");
+    } else {
+        fprintf(stderr, "Invalid input provided.\n");
+        free(buffer);
+        return 1;
+    }
+
+    free(buffer);
+    return 0;
+}
+```

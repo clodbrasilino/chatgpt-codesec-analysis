@@ -1,0 +1,103 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stddef.h>
+
+void sort_list_of_lists(int **list, size_t rows, size_t cols, size_t sort_index) {
+    if (!list || rows == 0 || cols == 0 || sort_index >= cols) {
+        return;
+    }
+
+    for (size_t gap = rows / 2; gap > 0; gap /= 2) {
+        for (size_t i = gap; i < rows; i++) {
+            int *temp = list[i];
+            if (!temp) {
+                continue;
+            }
+
+            size_t j;
+            for (j = i; j >= gap; j -= gap) {
+                if (!list[j - gap]) {
+                    continue;
+                }
+                if (list[j - gap][sort_index] > temp[sort_index]) {
+                    list[j] = list[j - gap];
+                } else {
+                    break;
+                }
+            }
+            list[j] = temp;
+        }
+    }
+}
+
+int **allocate_matrix(size_t rows, size_t cols) {
+    if (rows == 0 || cols == 0) {
+        return NULL;
+    }
+
+    int **matrix = malloc(rows * sizeof(int *));
+    if (!matrix) {
+        return NULL;
+    }
+
+    for (size_t i = 0; i < rows; i++) {
+        matrix[i] = malloc(cols * sizeof(int));
+        if (!matrix[i]) {
+            for (size_t j = 0; j < i; j++) {
+                free(matrix[j]);
+            }
+            free(matrix);
+            return NULL;
+        }
+    }
+
+    return matrix;
+}
+
+void free_matrix(int **matrix, size_t rows) {
+    if (!matrix) {
+        return;
+    }
+
+    for (size_t i = 0; i < rows; i++) {
+        free(matrix[i]);
+    }
+    free(matrix);
+}
+
+int main(void) {
+    size_t rows = 4;
+    size_t cols = 3;
+    size_t sort_idx = 1;
+
+    int **matrix = allocate_matrix(rows, cols);
+    if (!matrix) {
+        return EXIT_FAILURE;
+    }
+
+    int initial_values[4][3] = {
+        {10, 50, 90},
+        {20, 10, 80},
+        {30, 40, 70},
+        {40, 20, 60}
+    };
+
+    for (size_t i = 0; i < rows; i++) {
+        for (size_t j = 0; j < cols; j++) {
+            matrix[i][j] = initial_values[i][j];
+        }
+    }
+
+    sort_list_of_lists(matrix, rows, cols, sort_idx);
+
+    for (size_t i = 0; i < rows; i++) {
+        for (size_t j = 0; j < cols; j++) {
+            printf("%d ", matrix[i][j]);
+        }
+        printf("\n");
+    }
+
+    free_matrix(matrix, rows);
+
+    return EXIT_SUCCESS;
+}

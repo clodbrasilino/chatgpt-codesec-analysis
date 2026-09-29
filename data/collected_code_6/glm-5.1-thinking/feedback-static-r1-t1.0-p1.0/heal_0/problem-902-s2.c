@@ -1,0 +1,164 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define TABLE_SIZE 64
+
+typedef struct Entry {
+    char *key;
+    int value;
+    struct Entry *next;
+} Entry;
+
+typedef struct {
+    Entry *buckets[TABLE_SIZE];
+} Dict;
+
+static unsigned int hash(const char *key) {
+    unsigned int h = 0;
+    while (*key) {
+        h = (h * 31 + (unsigned char)*key) % TABLE_SIZE;
+        key++;
+    }
+    return h;
+}
+
+Dict *dict_create(void) {
+    Dict *d = malloc(sizeof(Dict));
+    if (!d) return NULL;
+    memset(d->buckets, 0, sizeof(d->buckets));
+    return d;
+}
+
+void dict_free(Dict *d) {
+    if (!d) return;
+    for (int i = 0; i < TABLE_SIZE; i++) {
+        Entry *e = d->buckets[i];
+        while (e) {
+            Entry *next = e->next;
+            free(e->key);
+            free(e);
+            e = next;
+        }
+    }
+    free(d);
+}
+
+int dict_set(Dict *d, const char *key, int value) {
+    if (!d || !key) return -1;
+    unsigned int idx = hash(key);
+    Entry *e = d->buckets[idx];
+    while (e) {
+        if (strcmp(e->key, key) == 0) {
+            e->value = value;
+            return 0;
+        }
+        e = e->next;
+    }
+    e = malloc(sizeof(Entry));
+    if (!e) return -1;
+    e->key = strdup(key);
+    if (!e->key) {
+        free(e);
+        return -1;
+    }
+    e->value = value;
+    e->next = d->buckets[idx];
+    d->buckets[idx] = e;
+    return 0;
+}
+
+static int dict_add(Dict *d, const char *key, int value) {
+    if (!d || !key) return -1;
+    unsigned int idx = hash(key);
+    Entry *e = d->buckets[idx];
+    while (e) {
+        if (strcmp(e->key, key) == 0) {
+            e->value += value;
+            return 0;
+        }
+        e = e->next;
+    }
+    e = malloc(sizeof(Entry));
+    if (!e) return -1;
+    e->key = strdup(key);
+    if (!e->key) {
+        free(e);
+        return -1;
+    }
+    e->value = value;
+    e->next = d->buckets[idx];
+    d->buckets[idx] = e;
+    return 0;
+}
+
+Dict *dict_combine(const Dict *d1, const Dict *d2) {
+    if (!d1 || !d2) return NULL;
+    Dict *result = dict_create();
+    if (!result) return NULL;
+    for (int i = 0; i < TABLE_SIZE; i++) {
+        Entry *e = d1->buckets[i];
+        while (e) {
+            if (dict_set(result, e->key, e->value) != 0) {
+                dict_free(result);
+                return NULL;
+            }
+            e = e->next;
+        }
+    }
+    for (int i = 0; i < TABLE_SIZE; i++) {
+        Entry *e = d2->buckets[i];
+        while (e) {
+            if (dict_add(result, e->key, e->value) != 0) {
+                dict_free(result);
+                return NULL;
+            }
+            e = e->next;
+        }
+    }
+    return result;
+}
+
+void dict_print(const Dict *d) {
+    if (!d) return;
+    for (int i = 0; i < TABLE_SIZE; i++) {
+        Entry *e = d->buckets[i];
+        while (e) {
+            printf("%s: %d\n", e->key, e->value);
+            e = e->next;
+        }
+    }
+}
+
+int main(void) {
+    Dict *d1 = dict_create();
+    if (!d1) return EXIT_FAILURE;
+    Dict *d2 = dict_create();
+    if (!d2) {
+        dict_free(d1);
+        return EXIT_FAILURE;
+    }
+
+    dict_set(d1, "apple", 3);
+    dict_set(d1, "banana", 5);
+    dict_set(d1, "cherry", 2);
+
+    dict_set(d2, "banana", 4);
+    dict_set(d2, "cherry", 1);
+    dict_set(d2, "date", 7);
+
+    Dict *combined = dict_combine(d1, d2);
+    if (!combined) {
+        dict_free(d1);
+        dict_free(d2);
+        return EXIT_FAILURE;
+    }
+
+    dict_print(combined);
+
+    dict_free(d1);
+    dict_free(d2);
+    dict_free(combined);
+
+    return EXIT_SUCCESS;
+}

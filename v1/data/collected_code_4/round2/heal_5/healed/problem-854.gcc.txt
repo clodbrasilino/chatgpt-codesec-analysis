@@ -1,0 +1,160 @@
+./collected_code_4/round2//heal_5/healed/problem-854.c: In function 'insert':
+./collected_code_4/round2//heal_5/healed/problem-854.c:28:31: warning: dereference of possibly-NULL 'array.arr' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   28 |     array->arr[array->used++] = element;
+      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~
+  'main': events 1-2
+    |
+    |   82 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |   83 |     Array array;
+    |   84 |     create(&array, 1);
+    |      |     ~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) calling 'create' from 'main'
+    |
+    +--> 'create': events 3-4
+           |
+           |   10 | void create(Array* array, size_t initialSize) {
+           |      |      ^~~~~~
+           |      |      |
+           |      |      (3) entry to 'create'
+           |   11 |     array->arr = (int*)malloc(initialSize * sizeof(int));
+           |      |                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                        |
+           |      |                        (4) this call could return NULL
+           |
+    <------+
+    |
+  'main': events 5-6
+    |
+    |   84 |     create(&array, 1);
+    |      |     ^~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (5) returning to 'main' from 'create'
+    |   85 | 
+    |   86 |     insert(&array, 10);
+    |      |     ~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (6) calling 'insert' from 'main'
+    |
+    +--> 'insert': events 7-10
+           |
+           |   16 | void insert(Array* array, int element) {
+           |      |      ^~~~~~
+           |      |      |
+           |      |      (7) entry to 'insert'
+           |   17 |     if (array->used == array->size) {
+           |      |        ~
+           |      |        |
+           |      |        (8) following 'false' branch...
+           |......
+           |   28 |     array->arr[array->used++] = element;
+           |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |          |                    |
+           |      |          (9) ...to here       (10) '*array.arr + *array.used * 4' could be NULL: unchecked value from (4)
+           |
+./collected_code_4/round2//heal_5/healed/problem-854.c:28:31: warning: dereference of NULL '0' [CWE-476] [-Wanalyzer-null-dereference]
+   28 |     array->arr[array->used++] = element;
+      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~
+  'main': events 1-2
+    |
+    |   82 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   86 |     insert(&array, 10);
+    |      |     ~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) calling 'insert' from 'main'
+    |
+    +--> 'insert': events 3-5
+           |
+           |   16 | void insert(Array* array, int element) {
+           |      |      ^~~~~~
+           |      |      |
+           |      |      (3) entry to 'insert'
+           |   17 |     if (array->used == array->size) {
+           |      |        ~
+           |      |        |
+           |      |        (4) following 'false' branch...
+           |......
+           |   28 |     array->arr[array->used++] = element;
+           |      |     ~~~~~~~~~~
+           |      |          |
+           |      |          (5) ...to here
+           |
+    <------+
+    |
+  'main': events 6-7
+    |
+    |   86 |     insert(&array, 10);
+    |      |     ^~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (6) returning to 'main' from 'insert'
+    |   87 |     insert(&array, 15);
+    |      |     ~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (7) calling 'insert' from 'main'
+    |
+    +--> 'insert': events 8-13
+           |
+           |   16 | void insert(Array* array, int element) {
+           |      |      ^~~~~~
+           |      |      |
+           |      |      (8) entry to 'insert'
+           |   17 |     if (array->used == array->size) {
+           |      |        ~
+           |      |        |
+           |      |        (9) following 'true' branch...
+           |   18 |         array->size *= 2;
+           |      |         ~~~~~~~~~~~
+           |      |              |
+           |      |              (10) ...to here
+           |   19 |         int* temp_arr = realloc(array->arr, array->size * sizeof(int));
+           |      |                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                         |
+           |      |                         (11) when 'realloc' fails
+           |   20 |         if (temp_arr == NULL) {
+           |      |            ~
+           |      |            |
+           |      |            (12) following 'true' branch (when 'temp_arr' is NULL)...
+           |   21 |             free(array->arr);
+           |      |                  ~~~~~~~~~~
+           |      |                       |
+           |      |                       (13) ...to here
+           |
+    <------+
+    |
+  'main': events 14-15
+    |
+    |   87 |     insert(&array, 15);
+    |      |     ^~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (14) returning to 'main' from 'insert'
+    |   88 |     insert(&array, 30);
+    |      |     ~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (15) calling 'insert' from 'main'
+    |
+    +--> 'insert': events 16-21
+           |
+           |   16 | void insert(Array* array, int element) {
+           |      |      ^~~~~~
+           |      |      |
+           |      |      (16) entry to 'insert'
+           |   17 |     if (array->used == array->size) {
+           |      |        ~
+           |      |        |
+           |      |        (17) following 'false' branch...
+           |......
+           |   28 |     array->arr[array->used++] = element;
+           |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |          |    |               |
+           |      |          |    |               (21) dereference of NULL '*array.arr + *array.used * 4'
+           |      |          |    (20) 'array.arr' is NULL
+           |      |          (18) ...to here
+           |      |          (19) 'array.arr' is NULL
+           |

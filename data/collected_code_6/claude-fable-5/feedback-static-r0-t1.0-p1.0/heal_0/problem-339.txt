@@ -1,0 +1,67 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+long long max_occurring_divisor(long long low, long long high);
+
+long long max_occurring_divisor(long long low, long long high)
+{
+    if (low == high)
+    {
+        return low;
+    }
+    return 2;
+}
+
+int main(void)
+{
+    long long low = 0;
+    long long high = 0;
+    int read_count = 0;
+
+    printf("Enter interval start: ");
+    read_count = scanf("%lld", &low);
+    if (read_count != 1)
+    {
+        fprintf(stderr, "Error: invalid input for interval start.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter interval end: ");
+    read_count = scanf("%lld", &high);
+    if (read_count != 1)
+    {
+        fprintf(stderr, "Error: invalid input for interval end.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (low < 2)
+    {
+        fprintf(stderr, "Error: interval start must be at least 2.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (high < low)
+    {
+        fprintf(stderr, "Error: interval end must not be less than interval start.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Maximum occurring divisor in [%lld, %lld] is %lld\n",
+           low, high, max_occurring_divisor(low, high));
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Explanation of the logic:**
+
+- Every second number in any interval is divisible by 2, so 2 divides roughly `(high - low) / 2 + 1` numbers, which is more than or equal to the count for any larger divisor `d` (which divides only about `(high - low) / d + 1` numbers).
+- Therefore, whenever the interval contains more than one number, **2** is always the maximum occurring divisor (ignoring the trivial divisor 1, which divides everything).
+- The only special case is when `low == high` — the interval contains a single number, and that number itself is its own maximum occurring divisor.
+
+**Safety measures addressing the listed CWEs:**
+
+- **CWE-703:** Every `scanf` return value is checked, and invalid or out-of-range input is rejected with a clear error message and a failure exit code.
+- **CWE-664:** No dynamic resources (heap memory, file handles) are allocated, so there is nothing to leak or misuse across its lifetime.
+- **CWE-710:** The code follows standard conventions — `int main(void)`, explicit prototypes, `EXIT_SUCCESS`/`EXIT_FAILURE`, initialized variables, and braces on all control structures.

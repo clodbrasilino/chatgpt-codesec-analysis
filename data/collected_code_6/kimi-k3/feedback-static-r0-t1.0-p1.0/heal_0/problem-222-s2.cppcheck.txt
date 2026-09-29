@@ -1,0 +1,16 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_0/problem-222-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_0/problem-222-s2.c:69:47: style: Condition 'check_same_type(NULL,5)' is always false [knownConditionTrueFalse]
+    printf("NULL tuple: %s\n", check_same_type(NULL, 5) ? "true" : "false");
+                                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_0/problem-222-s2.c:69:47: note: Calling function 'check_same_type' returns 0
+    printf("NULL tuple: %s\n", check_same_type(NULL, 5) ? "true" : "false");
+                                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_0/problem-222-s2.c:69:47: note: Condition 'check_same_type(NULL,5)' is always false
+    printf("NULL tuple: %s\n", check_same_type(NULL, 5) ? "true" : "false");
+                                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_0/problem-222-s2.c:20:7: style: struct member 'TupleElement::data' is never used. [unusedStructMember]
+    } data;
+      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_0/problem-222-s2.c:19:14: style: union member 'Anonymous0::c' is never used. [unusedStructMember]
+        char c;
+             ^

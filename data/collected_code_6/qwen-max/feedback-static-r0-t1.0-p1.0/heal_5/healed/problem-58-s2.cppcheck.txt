@@ -1,0 +1,25 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-58-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-58-s2.c:11:28: style: Condition 'have_opposite_signs(a,b)' is always true [knownConditionTrueFalse]
+    if (have_opposite_signs(a, b)) {
+                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-58-s2.c:8:14: note: Assignment 'a=-5', assigned value is -5
+    int a = -5;
+             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-58-s2.c:11:28: note: Calling function 'have_opposite_signs' returns 1
+    if (have_opposite_signs(a, b)) {
+                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-58-s2.c:11:28: note: Condition 'have_opposite_signs(a,b)' is always true
+    if (have_opposite_signs(a, b)) {
+                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-58-s2.c:19:28: style: Condition 'have_opposite_signs(a,b)' is always false [knownConditionTrueFalse]
+    if (have_opposite_signs(a, b)) {
+                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-58-s2.c:17:9: note: Assignment 'a=5', assigned value is 5
+    a = 5;
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-58-s2.c:19:28: note: Calling function 'have_opposite_signs' returns 0
+    if (have_opposite_signs(a, b)) {
+                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-58-s2.c:19:28: note: Condition 'have_opposite_signs(a,b)' is always false
+    if (have_opposite_signs(a, b)) {
+                           ^

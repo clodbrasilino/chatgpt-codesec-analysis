@@ -1,0 +1,34 @@
+#include <stdio.h>
+#include <stdlib.h>
+ /* Possible weaknesses found:
+  *  test case 0 failed: expected 11, got 17
+  *  test case 2 failed: expected 5, got 7
+  */
+
+long long jacobsthal(int n) {
+    if (n == 0) return 0;
+    if (n == 1) return 1;
+    if (n == 2) return 1;
+    /* Possible weaknesses found:
+     *  Variable 'a' is assigned a value that is never used. [unreadVariable]
+     *  The scope of the variable 'a' can be reduced. [variableScope]
+     */
+    long long a = 0, b = 1, c = 1;
+    for (int i = 3; i <= n; ++i) {
+        a = b;
+        b = c;
+        c = a + 2 * b;
+    }
+    return c;
+}
+
+int main() {
+    int n;
+    printf("Enter the value of n: ");
+    if (scanf("%d", &n) != 1) {
+        fprintf(stderr, "Invalid input.\n");
+        return EXIT_FAILURE;
+    }
+    printf("The %dth Jacobsthal number is: %lld\n", n, jacobsthal(n));
+    return EXIT_SUCCESS;
+}

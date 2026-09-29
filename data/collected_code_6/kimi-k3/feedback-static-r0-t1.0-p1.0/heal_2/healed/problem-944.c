@@ -1,0 +1,92 @@
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <limits.h>
+
+int extract_numbers(const char *str, size_t max_len) {
+    if (str == NULL) {
+        fprintf(stderr, "Error: NULL string provided\n");
+        return -1;
+    }
+    
+    if (max_len == 0) {
+        fprintf(stderr, "Error: Invalid length\n");
+        return -1;
+    }
+    
+    size_t len = 0;
+    while (len < max_len && str[len] != '\0') {
+        len++;
+    }
+    
+    if (len == max_len && str[len - 1] != '\0') {
+        fprintf(stderr, "Error: String not null-terminated within bounds\n");
+        return -1;
+    }
+    
+    size_t i = 0;
+    
+    while (i < len) {
+        if (isdigit((unsigned char)str[i])) {
+            size_t start = i;
+            while (i < len && isdigit((unsigned char)str[i])) {
+                i++;
+            }
+            
+            size_t num_len = i - start;
+            if (num_len > INT_MAX) {
+                fprintf(stderr, "Error: Number too long\n");
+                return -1;
+            }
+            
+            if (printf("Number: %.*s, Position: %zu\n", (int)num_len, str + start, start) < 0) {
+                fprintf(stderr, "Error: Output error\n");
+                return -1;
+            }
+        } else {
+            i++;
+        }
+    }
+    
+    return 0;
+}
+
+int main(void) {
+    char *input = NULL;
+    size_t input_size = 256;
+    size_t len;
+    
+    input = malloc(input_size);
+    if (input == NULL) {
+        fprintf(stderr, "Error: Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("Enter a string: ");
+    if (fgets(input, input_size, stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        free(input);
+        return EXIT_FAILURE;
+    }
+    
+    len = strnlen(input, input_size);
+    if (len == input_size) {
+        fprintf(stderr, "Error: Input too long\n");
+        free(input);
+        return EXIT_FAILURE;
+    }
+    
+    if (len > 0 && input[len - 1] == '\n') {
+        input[len - 1] = '\0';
+    }
+    
+    if (extract_numbers(input, input_size) != 0) {
+        free(input);
+        return EXIT_FAILURE;
+    }
+    
+    free(input);
+    return EXIT_SUCCESS;
+}

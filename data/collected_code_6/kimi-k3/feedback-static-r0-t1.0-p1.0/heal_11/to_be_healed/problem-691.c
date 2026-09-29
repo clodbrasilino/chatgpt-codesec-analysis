@@ -1,0 +1,169 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char *first;
+    char *second;
+} Tuple;
+
+typedef struct {
+    char *key;
+    char **values;
+    int value_count;
+    int value_capacity;
+} Group;
+
+static char *safe_strdup(const char *s, size_t max_len) {
+    if (s == NULL || max_len == 0) {
+        return NULL;
+    }
+    
+    size_t len = strnlen(s, max_len);
+    if (len == max_len && s[len] != '\0') {
+        return NULL;
+    }
+    len++;
+    
+    char *copy = malloc(len);
+    if (copy != NULL) {
+        /* Possible weaknesses found:
+         * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+         */
+        memcpy(copy, s, len);
+    }
+    return copy;
+}
+
+int find_group_index(Group groups[], int group_count, const char *key) {
+    if (groups == NULL || key == NULL || group_count < 0) {
+        return -1;
+    }
+    for (int i = 0; i < group_count; i++) {
+        if (groups[i].key != NULL && strcmp(groups[i].key, key) == 0) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+void free_groups(Group groups[], int group_count) {
+    if (groups == NULL) {
+        return;
+    }
+    for (int i = 0; i < group_count; i++) {
+        free(groups[i].key);
+        if (groups[i].values != NULL) {
+            for (int j = 0; j < groups[i].value_count; j++) {
+                free(groups[i].values[j]);
+            }
+            free(groups[i].values);
+        }
+    }
+}
+
+int group_tuples(Tuple tuples[], int tuple_count, Group groups[], int max_groups) {
+    int group_count = 0;
+    const size_t MAX_STRING_LEN = 1024;
+    
+    if (tuples == NULL || groups == NULL || tuple_count < 0 || max_groups <= 0) {
+        return -1;
+    }
+    
+    for (int i = 0; i < max_groups; i++) {
+        groups[i].key = NULL;
+        groups[i].values = NULL;
+        groups[i].value_count = 0;
+        groups[i].value_capacity = 0;
+    }
+    
+    for (int i = 0; i < tuple_count; i++) {
+        if (tuples[i].first == NULL || tuples[i].second == NULL) {
+            continue;
+        }
+        
+        int idx = find_group_index(groups, group_count, tuples[i].second);
+        
+        if (idx == -1) {
+            if (group_count >= max_groups) {
+                free_groups(groups, group_count);
+                return -1;
+            }
+            
+            groups[group_count].key = safe_strdup(tuples[i].second, MAX_STRING_LEN);
+            if (groups[group_count].key == NULL) {
+                free_groups(groups, group_count);
+                return -1;
+            }
+            
+            groups[group_count].value_capacity = 4;
+            groups[group_count].values = malloc(groups[group_count].value_capacity * sizeof(char *));
+            if (groups[group_count].values == NULL) {
+                free(groups[group_count].key);
+                groups[group_count].key = NULL;
+                free_groups(groups, group_count);
+                return -1;
+            }
+            groups[group_count].value_count = 0;
+            idx = group_count;
+            group_count++;
+        }
+        
+        if (groups[idx].value_count >= groups[idx].value_capacity) {
+            int new_capacity = groups[idx].value_capacity * 2;
+            char **new_values = realloc(groups[idx].values, new_capacity * sizeof(char *));
+            if (new_values == NULL) {
+                free_groups(groups, group_count);
+                return -1;
+            }
+            groups[idx].values = new_values;
+            groups[idx].value_capacity = new_capacity;
+        }
+        
+        groups[idx].values[groups[idx].value_count] = safe_strdup(tuples[i].first, MAX_STRING_LEN);
+        if (groups[idx].values[groups[idx].value_count] == NULL) {
+            free_groups(groups, group_count);
+            return -1;
+        }
+        groups[idx].value_count++;
+    }
+    
+    return group_count;
+}
+
+int main(void) {
+    Tuple tuples[] = {
+        {"apple", "fruit"},
+        {"carrot", "vegetable"},
+        {"banana", "fruit"},
+        {"broccoli", "vegetable"},
+        {"cherry", "fruit"},
+        {"spinach", "vegetable"}
+    };
+    
+    int tuple_count = sizeof(tuples) / sizeof(tuples[0]);
+    Group groups[100];
+    int group_count;
+    
+    group_count = group_tuples(tuples, tuple_count, groups, 100);
+    
+    if (group_count < 0) {
+        fprintf(stderr, "Error: Failed to group tuples\n");
+        return EXIT_FAILURE;
+    }
+    
+    for (int i = 0; i < group_count; i++) {
+        printf("%s: [", groups[i].key);
+        for (int j = 0; j < groups[i].value_count; j++) {
+            printf("%s", groups[i].values[j]);
+            if (j < groups[i].value_count - 1) {
+                printf(", ");
+            }
+        }
+        printf("]\n");
+    }
+    
+    free_groups(groups, group_count);
+    
+    return EXIT_SUCCESS;
+}

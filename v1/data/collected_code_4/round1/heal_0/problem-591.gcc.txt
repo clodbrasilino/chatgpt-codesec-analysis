@@ -1,0 +1,40 @@
+./collected_code_4/round1//heal_0//problem-591.c:5:5: error: unknown type name 'Node'
+    5 |     Node* next;
+      |     ^~~~
+./collected_code_4/round1//heal_0//problem-591.c:8:11: error: unknown type name 'Node'
+    8 | void swap(Node **head_ref)
+      |           ^~~~
+./collected_code_4/round1//heal_0//problem-591.c:28:11: error: unknown type name 'Node'
+   28 | void push(Node** head_ref, int new_data)
+      |           ^~~~
+./collected_code_4/round1//heal_0//problem-591.c: In function 'printList':
+./collected_code_4/round1//heal_0//problem-591.c:42:14: warning: assignment to 'struct Node *' from incompatible pointer type 'int *' [-Wincompatible-pointer-types]
+   42 |         node = node->next;
+      |              ^
+./collected_code_4/round1//heal_0//problem-591.c: In function 'main':
+./collected_code_4/round1//heal_0//problem-591.c:48:5: error: unknown type name 'Node'; use 'struct' keyword to refer to the type
+   48 |     Node* start = NULL;
+      |     ^~~~
+      |     struct 
+./collected_code_4/round1//heal_0//problem-591.c:53:8: warning: implicit declaration of function 'push' [-Wimplicit-function-declaration]
+   53 |        push(&start, arr[i]);
+      |        ^~~~
+./collected_code_4/round1//heal_0//problem-591.c:56:15: warning: passing argument 1 of 'printList' from incompatible pointer type [-Wincompatible-pointer-types]
+   56 |     printList(start);
+      |               ^~~~~
+      |               |
+      |               int *
+./collected_code_4/round1//heal_0//problem-591.c:37:29: note: expected 'struct Node *' but argument is of type 'int *'
+   37 | void printList(struct Node *node)
+      |                ~~~~~~~~~~~~~^~~~
+./collected_code_4/round1//heal_0//problem-591.c:58:5: warning: implicit declaration of function 'swap' [-Wimplicit-function-declaration]
+   58 |     swap(&start);
+      |     ^~~~
+./collected_code_4/round1//heal_0//problem-591.c:61:15: warning: passing argument 1 of 'printList' from incompatible pointer type [-Wincompatible-pointer-types]
+   61 |     printList(start);
+      |               ^~~~~
+      |               |
+      |               int *
+./collected_code_4/round1//heal_0//problem-591.c:37:29: note: expected 'struct Node *' but argument is of type 'int *'
+   37 | void printList(struct Node *node)
+      |                ~~~~~~~~~~~~~^~~~

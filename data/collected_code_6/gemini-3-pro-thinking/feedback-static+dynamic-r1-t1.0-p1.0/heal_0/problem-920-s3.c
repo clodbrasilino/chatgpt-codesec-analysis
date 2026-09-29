@@ -1,0 +1,118 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+typedef struct {
+    void **values;
+    size_t size;
+} Tuple;
+
+typedef struct {
+    Tuple *tuples;
+    size_t count;
+} TupleList;
+
+Tuple create_tuple(void **vals, size_t size);
+void free_tuple_list(TupleList *list);
+void remove_all_none_tuples(TupleList *list);
+
+Tuple create_tuple(void **vals, size_t size) {
+    Tuple t;
+    t.size = size;
+    t.values = NULL;
+    
+    if (size > 0 && vals) {
+        t.values = (void **)malloc(size * sizeof(void *));
+        if (!t.values) {
+            exit(EXIT_FAILURE);
+        }
+        for (size_t i = 0; i < size; i++) {
+            t.values[i] = vals[i];
+        }
+    } else {
+        t.size = 0;
+    }
+    
+    return t;
+}
+
+void free_tuple_list(TupleList *list) {
+    if (!list || !list->tuples) {
+        return;
+    }
+    
+    for (size_t i = 0; i < list->count; i++) {
+        if (list->tuples[i].values) {
+            free(list->tuples[i].values);
+            list->tuples[i].values = NULL;
+        }
+    }
+    
+    free(list->tuples);
+    list->tuples = NULL;
+    list->count = 0;
+}
+
+void remove_all_none_tuples(TupleList *list) {
+    if (!list || !list->tuples) {
+        return;
+    }
+
+    size_t write_index = 0;
+    
+    for (size_t i = 0; i < list->count; i++) {
+        bool all_none = true;
+        
+        for (size_t j = 0; j < list->tuples[i].size; j++) {
+            if (list->tuples[i].values[j] != NULL) {
+                all_none = false;
+                break;
+            }
+        }
+
+        if (all_none) {
+            if (list->tuples[i].values) {
+                free(list->tuples[i].values);
+                list->tuples[i].values = NULL;
+            }
+        } else {
+            if (write_index != i) {
+                list->tuples[write_index] = list->tuples[i];
+            }
+            write_index++;
+        }
+    }
+    
+    list->count = write_index;
+}
+
+int main(void) {
+    TupleList list;
+    list.count = 4;
+    
+    list.tuples = (Tuple *)malloc(list.count * sizeof(Tuple));
+    if (!list.tuples) {
+        return EXIT_FAILURE;
+    }
+
+    int val1 = 10;
+    int val2 = 20;
+
+    void *arr0[] = {&val1, NULL, &val2};
+    list.tuples[0] = create_tuple(arr0, 3);
+
+    void *arr1[] = {NULL, NULL, NULL};
+    list.tuples[1] = create_tuple(arr1, 3);
+
+    void *arr2[] = {NULL, NULL};
+    list.tuples[2] = create_tuple(arr2, 2);
+
+    void *arr3[] = {NULL, &val1};
+    list.tuples[3] = create_tuple(arr3, 2);
+
+    remove_all_none_tuples(&list);
+
+    free_tuple_list(&list);
+
+    return EXIT_SUCCESS;
+}

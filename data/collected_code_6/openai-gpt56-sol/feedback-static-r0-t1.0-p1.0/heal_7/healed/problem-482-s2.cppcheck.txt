@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-482-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-482-s2.c:77:57: style: Condition 'end<=start' is always true [knownConditionTrueFalse]
+        if (start > remaining || end > remaining || end <= start) {
+                                                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-482-s2.c:68:25: note: Assuming that condition 'match.rm_eo<=match.rm_so' is not redundant
+            match.rm_eo <= match.rm_so) {
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-482-s2.c:74:15: note: start is assigned '(unsigned long)match.rm_so' here.
+        start = (size_t)match.rm_so;
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-482-s2.c:75:15: note: Assignment 'end=(unsigned long)match.rm_eo', assigned value is less than symbolic=start
+        end = (size_t)match.rm_eo;
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-482-s2.c:77:57: note: Condition 'end<=start' is always true
+        if (start > remaining || end > remaining || end <= start) {
+                                                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-482-s2.c:187:26: style: Parameter 'argv' can be declared as const array [constParameter]
+int main(int argc, char *argv[])
+                         ^

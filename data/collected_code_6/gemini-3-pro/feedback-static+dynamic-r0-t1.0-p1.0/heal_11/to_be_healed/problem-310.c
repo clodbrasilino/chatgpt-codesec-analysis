@@ -1,0 +1,138 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_INPUT_LENGTH 1048576
+
+typedef struct {
+    char **elements;
+    size_t count;
+} Tuple;
+ /* Possible weaknesses found:
+  *  test case 0 failed: expected ['p', 'y', 't', 'h', 'o', 'n', '3', '.', '0'], got <no output>
+  *  test case 1 failed: expected ['i', 't', 'e', 'm', '1'], got <no output>
+  *  test case 2 failed: expected ['1', '5', '.', '1', '0'], got <no output>
+  */
+
+Tuple* string_to_tuple(const char *str) {
+    if (!str) {
+        return NULL;
+    }
+
+    size_t len = 0;
+    /* Possible weaknesses found:
+     *  Array index 'len' is used before limits check. [arrayIndexThenCheck]
+     */
+    while (str[len] != '\0' && len < MAX_INPUT_LENGTH) {
+        len++;
+    }
+
+    Tuple *tuple = malloc(sizeof(Tuple));
+    if (!tuple) {
+        return NULL;
+    }
+
+    tuple->count = len;
+    tuple->elements = NULL;
+
+    if (len > 0) {
+        tuple->elements = malloc(len * sizeof(char *));
+        if (!tuple->elements) {
+            free(tuple);
+            return NULL;
+        }
+        for (size_t i = 0; i < len; i++) {
+            tuple->elements[i] = malloc(2);
+            if (tuple->elements[i]) {
+                tuple->elements[i][0] = str[i];
+                tuple->elements[i][1] = '\0';
+            }
+        }
+    }
+
+    return tuple;
+}
+
+void free_tuple(Tuple *tuple) {
+    if (!tuple) {
+        return;
+    }
+    if (tuple->elements) {
+        for (size_t i = 0; i < tuple->count; i++) {
+            free(tuple->elements[i]);
+        }
+        free(tuple->elements);
+    }
+    free(tuple);
+}
+
+int main(int argc, char *argv[]) {
+    char *input_string = NULL;
+
+    if (argc > 1) {
+        size_t len = 0;
+        while (argv[1][len] != '\0' && len < MAX_INPUT_LENGTH) {
+            len++;
+        }
+        input_string = malloc(len + 1);
+        if (input_string) {
+            /* Possible weaknesses found:
+             * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+             */
+            memcpy(input_string, argv[1], len);
+            input_string[len] = '\0';
+        }
+    } else {
+        char *buffer = malloc(MAX_INPUT_LENGTH);
+        if (!buffer) {
+            return EXIT_FAILURE;
+        }
+        
+        if (fgets(buffer, MAX_INPUT_LENGTH, stdin)) {
+            size_t len = 0;
+            /* Possible weaknesses found:
+             *  Array index 'len' is used before limits check. [arrayIndexThenCheck]
+             */
+            while (buffer[len] != '\0' && len < MAX_INPUT_LENGTH) {
+                len++;
+            }
+            while (len > 0 && (buffer[len - 1] == '\n' || buffer[len - 1] == '\r')) {
+                buffer[len - 1] = '\0';
+                len--;
+            }
+            input_string = malloc(len + 1);
+            if (input_string) {
+                /* Possible weaknesses found:
+                 * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+                 */
+                memcpy(input_string, buffer, len);
+                input_string[len] = '\0';
+            }
+        }
+        free(buffer);
+    }
+
+    if (!input_string) {
+        return EXIT_SUCCESS;
+    }
+
+    Tuple *tuple = string_to_tuple(input_string);
+    if (!tuple) {
+        free(input_string);
+        return EXIT_FAILURE;
+    }
+
+    printf("[");
+    for (size_t i = 0; i < tuple->count; i++) {
+        printf("'%s'", tuple->elements[i]);
+        if (i < tuple->count - 1) {
+            printf(", ");
+        }
+    }
+    printf("]\n");
+
+    free_tuple(tuple);
+    free(input_string);
+    
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,254 @@
+collected_code_3/problem-73-1.c: In function 'split_string_by_regex':
+collected_code_3/problem-73-1.c:23:12: warning: leak of '<unknown>' [CWE-401] [-Wanalyzer-malloc-leak]
+   23 |         if (result == NULL) {
+      |            ^
+  'split_string_by_regex': events 1-16
+    |
+    |   11 |     if (regcomp(&regex_comp, regex_pattern, REG_EXTENDED)) {
+    |      |        ^
+    |      |        |
+    |      |        (1) following 'false' branch...
+    |......
+    |   15 |     char *cursor = str;
+    |      |           ~~~~~~
+    |      |           |
+    |      |           (2) ...to here
+    |   16 |     while (!regexec(&regex_comp, cursor, 2, group_array, 0)) {
+    |      |            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |            |
+    |      |            (3) following 'true' branch...
+    |      |            (9) following 'true' branch...
+    |      |            (14) following 'true' branch...
+    |   17 |         int start = group_array[0].rm_so;
+    |      |                     ~~~~~~~~~~~~~~~~~~~~
+    |      |                                   |
+    |      |                                   (4) ...to here
+    |      |                                   (10) ...to here
+    |      |                                   (15) ...to here
+    |   18 |         int end = group_array[0].rm_eo;
+    |   19 |         char *token = strndup(cursor + start, end - start);
+    |      |                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                       |
+    |      |                       (5) allocated here
+    |......
+    |   22 |         result = realloc(result, sizeof(char*) * count);
+    |      |                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                  |
+    |      |                  (6) when 'realloc' succeeds, moving buffer
+    |      |                  (11) when 'realloc' succeeds, without moving buffer
+    |   23 |         if (result == NULL) {
+    |      |            ~
+    |      |            |
+    |      |            (7) following 'false' branch (when 'result' is non-NULL)...
+    |      |            (12) following 'false' branch (when 'result' is non-NULL)...
+    |      |            (16) '<unknown>' leaks here; was allocated at (5)
+    |......
+    |   26 |         result[count-1] = token;
+    |      |               ~
+    |      |               |
+    |      |               (8) ...to here
+    |      |               (13) ...to here
+    |
+collected_code_3/problem-73-1.c:30:11: warning: leak of '<unknown>' [CWE-401] [-Wanalyzer-malloc-leak]
+   30 |     result[count] = 0;
+      |           ^
+  'main': events 1-2
+    |
+    |   34 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   38 |     tokens = split_string_by_regex(str, regex_pattern);
+    |      |              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |              |
+    |      |              (2) calling 'split_string_by_regex' from 'main'
+    |
+    +--> 'split_string_by_regex': events 3-19
+           |
+           |    6 | char **split_string_by_regex(char *str, char *regex_pattern) {
+           |      |        ^~~~~~~~~~~~~~~~~~~~~
+           |      |        |
+           |      |        (3) entry to 'split_string_by_regex'
+           |......
+           |   11 |     if (regcomp(&regex_comp, regex_pattern, REG_EXTENDED)) {
+           |      |        ~
+           |      |        |
+           |      |        (4) following 'false' branch...
+           |......
+           |   15 |     char *cursor = str;
+           |      |           ~~~~~~
+           |      |           |
+           |      |           (5) ...to here
+           |   16 |     while (!regexec(&regex_comp, cursor, 2, group_array, 0)) {
+           |      |            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |            |
+           |      |            (6) following 'true' branch...
+           |      |            (12) following 'true' branch...
+           |      |            (17) following 'false' branch...
+           |   17 |         int start = group_array[0].rm_so;
+           |      |                     ~~~~~~~~~~~~~~~~~~~~
+           |      |                                   |
+           |      |                                   (7) ...to here
+           |      |                                   (13) ...to here
+           |   18 |         int end = group_array[0].rm_eo;
+           |   19 |         char *token = strndup(cursor + start, end - start);
+           |      |                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                       |
+           |      |                       (8) allocated here
+           |......
+           |   22 |         result = realloc(result, sizeof(char*) * count);
+           |      |                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                  |
+           |      |                  (9) when 'realloc' succeeds, moving buffer
+           |      |                  (14) when 'realloc' succeeds, without moving buffer
+           |   23 |         if (result == NULL) {
+           |      |            ~
+           |      |            |
+           |      |            (10) following 'false' branch (when 'result' is non-NULL)...
+           |      |            (15) following 'false' branch (when 'result' is non-NULL)...
+           |......
+           |   26 |         result[count-1] = token;
+           |      |               ~
+           |      |               |
+           |      |               (11) ...to here
+           |      |               (16) ...to here
+           |   27 |     }
+           |   28 |     regfree(&regex_comp);
+           |      |     ~~~~~~~~~~~~~~~~~~~~
+           |      |     |
+           |      |     (18) ...to here
+           |   29 |     result = realloc(result, sizeof(char*) * (count + 1));
+           |   30 |     result[count] = 0;
+           |      |           ~
+           |      |           |
+           |      |           (19) '<unknown>' leaks here; was allocated at (8)
+           |
+collected_code_3/problem-73-1.c:30:19: warning: dereference of NULL 'result' [CWE-476] [-Wanalyzer-null-dereference]
+   30 |     result[count] = 0;
+      |     ~~~~~~~~~~~~~~^~~
+  'main': events 1-2
+    |
+    |   34 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   38 |     tokens = split_string_by_regex(str, regex_pattern);
+    |      |              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |              |
+    |      |              (2) calling 'split_string_by_regex' from 'main'
+    |
+    +--> 'split_string_by_regex': events 3-12
+           |
+           |    6 | char **split_string_by_regex(char *str, char *regex_pattern) {
+           |      |        ^~~~~~~~~~~~~~~~~~~~~
+           |      |        |
+           |      |        (3) entry to 'split_string_by_regex'
+           |    7 |     char **result = 0;
+           |      |            ~~~~~~
+           |      |            |
+           |      |            (4) 'result' is NULL
+           |......
+           |   11 |     if (regcomp(&regex_comp, regex_pattern, REG_EXTENDED)) {
+           |      |        ~
+           |      |        |
+           |      |        (5) following 'false' branch...
+           |......
+           |   15 |     char *cursor = str;
+           |      |           ~~~~~~
+           |      |           |
+           |      |           (6) ...to here
+           |   16 |     while (!regexec(&regex_comp, cursor, 2, group_array, 0)) {
+           |      |            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |            |
+           |      |            (7) following 'false' branch...
+           |......
+           |   28 |     regfree(&regex_comp);
+           |      |     ~~~~~~~~~~~~~~~~~~~~
+           |      |     |
+           |      |     (8) ...to here
+           |   29 |     result = realloc(result, sizeof(char*) * (count + 1));
+           |      |              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |              |
+           |      |              (9) when 'realloc' fails
+           |   30 |     result[count] = 0;
+           |      |     ~~~~~~~~~~~~~~~~~
+           |      |           |       |
+           |      |           |       (12) dereference of NULL 'result + count * 8'
+           |      |           (10) 'result' is NULL
+           |   31 |     return result;
+           |      |            ~~~~~~
+           |      |            |
+           |      |            (11) 'result' is NULL
+           |
+collected_code_3/problem-73-1.c:31:12: warning: leak of 'result' [CWE-401] [-Wanalyzer-malloc-leak]
+   31 |     return result;
+      |            ^~~~~~
+  'main': events 1-2
+    |
+    |   34 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   38 |     tokens = split_string_by_regex(str, regex_pattern);
+    |      |              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |              |
+    |      |              (2) calling 'split_string_by_regex' from 'main'
+    |
+    +--> 'split_string_by_regex': events 3-15
+           |
+           |    6 | char **split_string_by_regex(char *str, char *regex_pattern) {
+           |      |        ^~~~~~~~~~~~~~~~~~~~~
+           |      |        |
+           |      |        (3) entry to 'split_string_by_regex'
+           |......
+           |   11 |     if (regcomp(&regex_comp, regex_pattern, REG_EXTENDED)) {
+           |      |        ~
+           |      |        |
+           |      |        (4) following 'false' branch...
+           |......
+           |   15 |     char *cursor = str;
+           |      |           ~~~~~~
+           |      |           |
+           |      |           (5) ...to here
+           |   16 |     while (!regexec(&regex_comp, cursor, 2, group_array, 0)) {
+           |      |            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |            |
+           |      |            (6) following 'true' branch...
+           |      |            (12) following 'false' branch...
+           |   17 |         int start = group_array[0].rm_so;
+           |      |                     ~~~~~~~~~~~~~~~~~~~~
+           |      |                                   |
+           |      |                                   (7) ...to here
+           |......
+           |   22 |         result = realloc(result, sizeof(char*) * count);
+           |      |                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                  |
+           |      |                  (8) allocated here
+           |      |                  (9) when 'realloc' succeeds, moving buffer
+           |   23 |         if (result == NULL) {
+           |      |            ~
+           |      |            |
+           |      |            (10) following 'false' branch (when 'result' is non-NULL)...
+           |......
+           |   26 |         result[count-1] = token;
+           |      |               ~
+           |      |               |
+           |      |               (11) ...to here
+           |   27 |     }
+           |   28 |     regfree(&regex_comp);
+           |      |     ~~~~~~~~~~~~~~~~~~~~
+           |      |     |
+           |      |     (13) ...to here
+           |   29 |     result = realloc(result, sizeof(char*) * (count + 1));
+           |      |              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |              |
+           |      |              (14) when 'realloc' fails
+           |   30 |     result[count] = 0;
+           |   31 |     return result;
+           |      |            ~~~~~~
+           |      |            |
+           |      |            (15) 'result' leaks here; was allocated at (8)
+           |

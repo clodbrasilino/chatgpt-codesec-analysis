@@ -1,0 +1,80 @@
+```c
+#define _POSIX_C_SOURCE 200809L
+
+#include <stdio.h>
+#include <string.h>
+
+#define MAX_INPUT_SIZE 256
+
+int count_matching_positions(const char *str, size_t max_len)
+{
+    int count = 0;
+    size_t len;
+    size_t i;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    len = strnlen(str, max_len);
+
+    for (i = 0; i < len; i++) {
+        char c = str[i];
+        if (c >= 'a' && c <= 'z') {
+            if ((size_t)(c - 'a') == i) {
+                count++;
+            }
+        } else if (c >= 'A' && c <= 'Z') {
+            if ((size_t)(c - 'A') == i) {
+                count++;
+            }
+        }
+    }
+
+    return count;
+}
+
+int main(void)
+{
+    char buffer[MAX_INPUT_SIZE];
+    int result;
+
+    memset(buffer, 0, sizeof(buffer));
+
+    printf("Enter a string: ");
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+    buffer[strcspn(buffer, "\n")] = '\0';
+
+    result = count_matching_positions(buffer, sizeof(buffer));
+
+    printf("Number of characters at same position as in alphabet: %d\n", result);
+
+    return 0;
+}
+```
+
+**Analysis summary:**
+
+The original code was already well-hardened against the Flawfinder warning (CWE-119/CWE-120) regarding the statically-sized `buffer` array. The mitigations in place, which I have preserved, are:
+
+1. **Bounded input reading**: `fgets(buffer, sizeof(buffer), stdin)` limits input to the buffer size, preventing overflow — unlike unsafe alternatives such as `gets()` or `scanf("%s", ...)`.
+
+2. **Guaranteed null-termination**: `buffer[sizeof(buffer) - 1] = '\0'` is a defensive belt-and-suspenders measure ensuring the string is always terminated (technically redundant with `fgets`, but harmless).
+
+3. **Bounded string length calculation**: `strnlen(str, max_len)` instead of `strlen()` guarantees the scan never reads past the buffer, even if a non-terminated string were passed.
+
+4. **NULL-pointer check** in `count_matching_positions()` guards against misuse of the API.
+
+5. **Buffer initialization**: `memset(buffer, 0, sizeof(buffer))` ensures no uninitialized memory is ever read.
+
+6. **Portable trailing-newline removal** via `strcspn(buffer, "\n")`, which is safe even when no newline is present (it indexes the terminating null in that case).
+
+7. **`_POSIX_C_SOURCE 200809L`** correctly exposes the `strnlen` declaration.
+
+No functional changes were required — the Flawfinder hit is a level-2 informational warning triggered by the mere presence of a fixed-size `char` array, and all recommended countermeasures (bounds checking and length-limited functions) are already implemented correctly.

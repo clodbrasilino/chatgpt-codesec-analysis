@@ -1,0 +1,148 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+typedef struct {
+    int *elements;
+    size_t length;
+} Tuple;
+
+int create_tuple(Tuple *t, const int *values, size_t length)
+{
+    if (t == NULL || (values == NULL && length > 0U)) {
+        return -1;
+    }
+
+    t->elements = NULL;
+    t->length = 0U;
+
+    if (length > 0U) {
+        size_t total_size;
+
+        if (length > SIZE_MAX / sizeof(int)) {
+            return -1;
+        }
+        total_size = length * sizeof(int);
+        t->elements = malloc(total_size);
+        if (t->elements == NULL) {
+            return -1;
+        }
+        memcpy(t->elements, values, total_size);
+        t->length = length;
+    }
+
+    return 0;
+}
+
+void destroy_tuple(Tuple *t)
+{
+    if (t != NULL) {
+        free(t->elements);
+        t->elements = NULL;
+        t->length = 0U;
+    }
+}
+
+size_t remove_tuples_with_length_k(Tuple *tuples, size_t count, size_t k)
+{
+    size_t write_index = 0U;
+    size_t read_index;
+
+    if (tuples == NULL) {
+        return 0U;
+    }
+
+    for (read_index = 0U; read_index < count; read_index++) {
+        if (tuples[read_index].length == k) {
+            destroy_tuple(&tuples[read_index]);
+        } else {
+            if (write_index != read_index) {
+                tuples[write_index] = tuples[read_index];
+                tuples[read_index].elements = NULL;
+                tuples[read_index].length = 0U;
+            }
+            write_index++;
+        }
+    }
+
+    return write_index;
+}
+
+void print_tuples(const Tuple *tuples, size_t count)
+{
+    size_t i;
+    size_t j;
+
+    if (tuples == NULL) {
+        return;
+    }
+
+    printf("[");
+    for (i = 0U; i < count; i++) {
+        printf("(");
+        for (j = 0U; j < tuples[i].length; j++) {
+            printf("%d", tuples[i].elements[j]);
+            if (j + 1U < tuples[i].length) {
+                printf(", ");
+            }
+        }
+        printf(")");
+        if (i + 1U < count) {
+            printf(", ");
+        }
+    }
+    printf("]\n");
+}
+
+int main(void)
+{
+    Tuple tuples[5];
+    size_t count = 5U;
+    size_t i;
+    size_t k = 2U;
+
+    static const int data0[] = {4, 5};
+    static const int data1[] = {4};
+    static const int data2[] = {8, 6, 7};
+    static const int data3[] = {1, 2};
+    static const int data4[] = {3, 4, 6, 7};
+
+    memset(tuples, 0, sizeof(tuples));
+
+    if (create_tuple(&tuples[0], data0, 2U) != 0 ||
+        create_tuple(&tuples[1], data1, 1U) != 0 ||
+        create_tuple(&tuples[2], data2, 3U) != 0 ||
+        create_tuple(&tuples[3], data3, 2U) != 0 ||
+        create_tuple(&tuples[4], data4, 4U) != 0) {
+        for (i = 0U; i < count; i++) {
+            destroy_tuple(&tuples[i]);
+        }
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Original tuples: ");
+    print_tuples(tuples, count);
+
+    count = remove_tuples_with_length_k(tuples, count, k);
+
+    printf("After removing tuples of length %zu: ", k);
+    print_tuples(tuples, count);
+
+    for (i = 0U; i < count; i++) {
+        destroy_tuple(&tuples[i]);
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+Analysis of the fixes applied:
+
+1. **Variable scope (`total_size`)**: The declaration of `total_size` was moved from function scope into the `if (length > 0U)` block where it is actually used. This addresses the cppcheck `variableScope` finding, improving readability and reducing the chance of accidental misuse elsewhere in the function.
+
+2. **Flawfinder `memcpy` warning (CWE-120)**: This is a heuristic warning rather than a genuine defect here. The code already guarantees the destination can hold the source data: the allocation size (`total_size`) is computed with an explicit overflow guard (`length > SIZE_MAX / sizeof(int)`), the `malloc` result is null-checked, and the exact same `total_size` is used for both allocation and copy. No functional change was required; the safeguards remain in place.
+
+The rest of the code is already sound: `remove_tuples_with_length_k` uses a correct read/write compaction pattern without leaking memory, ownership transfer nulls out moved-from slots to prevent double-free, `destroy_tuple` is idempotent, and all error paths in `main` clean up allocated tuples before exiting.

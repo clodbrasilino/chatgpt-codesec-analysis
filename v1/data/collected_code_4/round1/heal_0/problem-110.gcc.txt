@@ -1,0 +1,450 @@
+./collected_code_4/round1//heal_0//problem-110.c: In function 'getMissingRanges':
+./collected_code_4/round1//heal_0//problem-110.c:13:45: warning: dereference of possibly-NULL 'rangeArray' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   13 |             rangeArray[array[i]-startRange] = 1;
+      |             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~
+  'main': events 1-2
+    |
+    |   49 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   55 |     Range* missingRanges = getMissingRanges(array, arraySize, startRange, endRange, &missingSize);
+    |      |                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                            |
+    |      |                            (2) calling 'getMissingRanges' from 'main'
+    |
+    +--> 'getMissingRanges': events 3-9
+           |
+           |    9 | Range* getMissingRanges(int* array, int arraySize, int startRange, int endRange, int* missingSize) {
+           |      |        ^~~~~~~~~~~~~~~~
+           |      |        |
+           |      |        (3) entry to 'getMissingRanges'
+           |   10 |     int* rangeArray = calloc(endRange - startRange + 1, sizeof(int));
+           |      |                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                       |
+           |      |                       (4) this call could return NULL
+           |   11 |     for(int i = 0; i < arraySize; i++) {
+           |      |                    ~~~~~~~~~~~~~
+           |      |                      |
+           |      |                      (5) following 'true' branch (when 'i < arraySize')...
+           |   12 |         if(array[i] >= startRange && array[i] <= endRange) {
+           |      |           ~     ~
+           |      |           |     |
+           |      |           |     (6) ...to here
+           |      |           (7) following 'true' branch...
+           |   13 |             rangeArray[array[i]-startRange] = 1;
+           |      |             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                             |               |
+           |      |                             (8) ...to here  (9) 'rangeArray + (long unsigned int)(*array_100(D) + _13 - startRange) * 4' could be NULL: unchecked value from (4)
+           |
+./collected_code_4/round1//heal_0//problem-110.c:20:35: warning: dereference of possibly-NULL 'rangeArray' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   20 |         if(flag == 0 && rangeArray[i] == 0){
+      |                         ~~~~~~~~~~^~~
+  'getMissingRanges': events 1-6
+    |
+    |   10 |     int* rangeArray = calloc(endRange - startRange + 1, sizeof(int));
+    |      |                       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                       |
+    |      |                       (1) this call could return NULL
+    |......
+    |   19 |     for(int i = 0; i <= endRange - startRange; i++) {
+    |      |                    ~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                      |
+    |      |                      (2) following 'true' branch...
+    |   20 |         if(flag == 0 && rangeArray[i] == 0){
+    |      |           ~             ~~~~~~~~~~~~~
+    |      |           |                       |
+    |      |           |                       (5) ...to here
+    |      |           (3) ...to here          (6) 'rangeArray + (long unsigned int)i * 4' could be NULL: unchecked value from (1)
+    |      |           (4) following 'true' branch (when 'flag == 0')...
+    |
+./collected_code_4/round1//heal_0//problem-110.c:32:47: warning: dereference of possibly-NULL 'missingRanges' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   32 |             missingRanges[currentIndex].start = i + startRange;
+      |             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~
+  'main': events 1-2
+    |
+    |   49 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   55 |     Range* missingRanges = getMissingRanges(array, arraySize, startRange, endRange, &missingSize);
+    |      |                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                            |
+    |      |                            (2) calling 'getMissingRanges' from 'main'
+    |
+    +--> 'getMissingRanges': events 3-51
+           |
+           |    9 | Range* getMissingRanges(int* array, int arraySize, int startRange, int endRange, int* missingSize) {
+           |      |        ^~~~~~~~~~~~~~~~
+           |      |        |
+           |      |        (3) entry to 'getMissingRanges'
+           |   10 |     int* rangeArray = calloc(endRange - startRange + 1, sizeof(int));
+           |   11 |     for(int i = 0; i < arraySize; i++) {
+           |      |                    ~~~~~~~~~~~~~
+           |      |                      |
+           |      |                      (4) following 'true' branch (when 'i < arraySize')...
+           |      |                      (8) following 'true' branch (when 'i < arraySize')...
+           |      |                      (12) following 'true' branch (when 'i < arraySize')...
+           |      |                      (16) following 'true' branch (when 'i < arraySize')...
+           |      |                      (20) following 'true' branch (when 'i < arraySize')...
+           |      |                      (24) following 'true' branch (when 'i < arraySize')...
+           |      |                      (28) following 'false' branch (when 'i >= arraySize')...
+           |   12 |         if(array[i] >= startRange && array[i] <= endRange) {
+           |      |           ~     ~
+           |      |           |     |
+           |      |           |     (5) ...to here
+           |      |           |     (9) ...to here
+           |      |           |     (13) ...to here
+           |      |           |     (17) ...to here
+           |      |           |     (21) ...to here
+           |      |           |     (25) ...to here
+           |      |           (6) following 'true' branch...
+           |      |           (10) following 'true' branch...
+           |      |           (14) following 'true' branch...
+           |      |           (18) following 'true' branch...
+           |      |           (22) following 'true' branch...
+           |      |           (26) following 'true' branch...
+           |   13 |             rangeArray[array[i]-startRange] = 1;
+           |      |                             ~
+           |      |                             |
+           |      |                             (7) ...to here
+           |      |                             (11) ...to here
+           |      |                             (15) ...to here
+           |      |                             (19) ...to here
+           |      |                             (23) ...to here
+           |      |                             (27) ...to here
+           |......
+           |   17 |     int flag = 0;
+           |      |         ~~~~
+           |      |         |
+           |      |         (29) ...to here
+           |   18 |     *missingSize = 0;
+           |   19 |     for(int i = 0; i <= endRange - startRange; i++) {
+           |      |                    ~~~~~~~~~~~~~~~~~~~~~~~~~~  ~~~
+           |      |                      |                          |
+           |      |                      |                          (37) ...to here
+           |      |                      (30) following 'true' branch...
+           |   20 |         if(flag == 0 && rangeArray[i] == 0){
+           |      |           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |           |          |            |
+           |      |           |          |            (33) ...to here
+           |      |           |          (34) following 'false' branch...
+           |      |           (31) ...to here
+           |      |           (32) following 'true' branch (when 'flag == 0')...
+           |......
+           |   23 |         } else if(flag == 1 && rangeArray[i] == 1){
+           |      |                  ~
+           |      |                  |
+           |      |                  (35) ...to here
+           |      |                  (36) following 'false' branch (when 'flag != 1')...
+           |......
+           |   28 |     Range* missingRanges = malloc(*missingSize * sizeof(Range));
+           |      |                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                            |
+           |      |                            (38) this call could return NULL
+           |   29 |     int currentIndex = 0, flag2 = 0;
+           |   30 |     for(int i = 0; i <= endRange - startRange; i++) {
+           |      |                    ~~~~~~~~~~~~~~~~~~~~~~~~~~  ~~~
+           |      |                      |                          |
+           |      |                      |                          (46) ...to here
+           |      |                      (39) following 'true' branch...
+           |      |                      (47) following 'true' branch...
+           |   31 |         if(flag2 == 0 && rangeArray[i] == 0){
+           |      |           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |           |           |            |
+           |      |           |           |            (42) ...to here
+           |      |           |           |            (50) ...to here
+           |      |           |           (43) following 'false' branch...
+           |      |           (40) ...to here
+           |      |           (41) following 'true' branch (when 'flag2 == 0')...
+           |      |           (48) ...to here
+           |      |           (49) following 'true' branch (when 'flag2 == 0')...
+           |   32 |             missingRanges[currentIndex].start = i + startRange;
+           |      |             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                                               |
+           |      |                                               (51) 'missingRanges + (long unsigned int)currentIndex * 8' could be NULL: unchecked value from (38)
+           |   33 |             flag2 = 1;
+           |   34 |         } else if(flag2 == 1 && rangeArray[i] == 1){
+           |      |                  ~
+           |      |                  |
+           |      |                  (44) ...to here
+           |      |                  (45) following 'false' branch (when 'flag2 != 1')...
+           |
+./collected_code_4/round1//heal_0//problem-110.c: In function 'main':
+./collected_code_4/round1//heal_0//problem-110.c:58:9: warning: use of uninitialized value '*missingRanges_24 + _2.end' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   58 |         printf("Missing Range is : %d - %d\n", missingRanges[i].start, missingRanges[i].end);
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  'main': events 1-2
+    |
+    |   49 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   55 |     Range* missingRanges = getMissingRanges(array, arraySize, startRange, endRange, &missingSize);
+    |      |                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                            |
+    |      |                            (2) calling 'getMissingRanges' from 'main'
+    |
+    +--> 'getMissingRanges': events 3-52
+           |
+           |    9 | Range* getMissingRanges(int* array, int arraySize, int startRange, int endRange, int* missingSize) {
+           |      |        ^~~~~~~~~~~~~~~~
+           |      |        |
+           |      |        (3) entry to 'getMissingRanges'
+           |   10 |     int* rangeArray = calloc(endRange - startRange + 1, sizeof(int));
+           |   11 |     for(int i = 0; i < arraySize; i++) {
+           |      |                    ~~~~~~~~~~~~~
+           |      |                      |
+           |      |                      (4) following 'true' branch (when 'i < arraySize')...
+           |      |                      (8) following 'true' branch (when 'i < arraySize')...
+           |      |                      (12) following 'true' branch (when 'i < arraySize')...
+           |      |                      (16) following 'true' branch (when 'i < arraySize')...
+           |      |                      (20) following 'true' branch (when 'i < arraySize')...
+           |      |                      (24) following 'true' branch (when 'i < arraySize')...
+           |      |                      (28) following 'false' branch (when 'i >= arraySize')...
+           |   12 |         if(array[i] >= startRange && array[i] <= endRange) {
+           |      |           ~     ~
+           |      |           |     |
+           |      |           |     (5) ...to here
+           |      |           |     (9) ...to here
+           |      |           |     (13) ...to here
+           |      |           |     (17) ...to here
+           |      |           |     (21) ...to here
+           |      |           |     (25) ...to here
+           |      |           (6) following 'true' branch...
+           |      |           (10) following 'true' branch...
+           |      |           (14) following 'true' branch...
+           |      |           (18) following 'true' branch...
+           |      |           (22) following 'true' branch...
+           |      |           (26) following 'true' branch...
+           |   13 |             rangeArray[array[i]-startRange] = 1;
+           |      |                             ~
+           |      |                             |
+           |      |                             (7) ...to here
+           |      |                             (11) ...to here
+           |      |                             (15) ...to here
+           |      |                             (19) ...to here
+           |      |                             (23) ...to here
+           |      |                             (27) ...to here
+           |......
+           |   17 |     int flag = 0;
+           |      |         ~~~~
+           |      |         |
+           |      |         (29) ...to here
+           |   18 |     *missingSize = 0;
+           |   19 |     for(int i = 0; i <= endRange - startRange; i++) {
+           |      |                    ~~~~~~~~~~~~~~~~~~~~~~~~~~  ~~~
+           |      |                      |                          |
+           |      |                      |                          (37) ...to here
+           |      |                      |                          (41) ...to here
+           |      |                      (30) following 'true' branch...
+           |   20 |         if(flag == 0 && rangeArray[i] == 0){
+           |      |           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |           |          |            |
+           |      |           |          |            (33) ...to here
+           |      |           |          |            (39) ...to here
+           |      |           |          (34) following 'false' branch...
+           |      |           (31) ...to here
+           |      |           (32) following 'true' branch (when 'flag == 0')...
+           |      |           (38) following 'true' branch (when 'flag == 0')...
+           |......
+           |   23 |         } else if(flag == 1 && rangeArray[i] == 1){
+           |      |                  ~
+           |      |                  |
+           |      |                  (35) ...to here
+           |      |                  (36) following 'false' branch (when 'flag != 1')...
+           |      |                  (40) following 'false' branch (when 'flag != 1')...
+           |......
+           |   28 |     Range* missingRanges = malloc(*missingSize * sizeof(Range));
+           |      |                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                            |
+           |      |                            (42) region created on heap here
+           |   29 |     int currentIndex = 0, flag2 = 0;
+           |   30 |     for(int i = 0; i <= endRange - startRange; i++) {
+           |      |                    ~~~~~~~~~~~~~~~~~~~~~~~~~~  ~~~
+           |      |                      |                          |
+           |      |                      |                          (50) ...to here
+           |      |                      (43) following 'true' branch...
+           |   31 |         if(flag2 == 0 && rangeArray[i] == 0){
+           |      |           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |           |           |            |
+           |      |           |           |            (46) ...to here
+           |      |           |           (47) following 'false' branch...
+           |      |           (44) ...to here
+           |      |           (45) following 'true' branch (when 'flag2 == 0')...
+           |......
+           |   34 |         } else if(flag2 == 1 && rangeArray[i] == 1){
+           |      |                  ~
+           |      |                  |
+           |      |                  (48) ...to here
+           |      |                  (49) following 'false' branch (when 'flag2 != 1')...
+           |......
+           |   40 |     if(flag2 == 1) {
+           |      |       ~ 
+           |      |       |
+           |      |       (51) following 'false' branch (when 'flag2 != 1')...
+           |......
+           |   44 |     free(rangeArray);
+           |      |     ~~~~~~~~~~~~~~~~
+           |      |     |
+           |      |     (52) ...to here
+           |
+    <------+
+    |
+  'main': events 53-56
+    |
+    |   55 |     Range* missingRanges = getMissingRanges(array, arraySize, startRange, endRange, &missingSize);
+    |      |                            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                            |
+    |      |                            (53) returning to 'main' from 'getMissingRanges'
+    |   56 | 
+    |   57 |     for(int i = 0; i < missingSize; i++) {
+    |      |                    ~~~~~~~~~~~~~~~
+    |      |                      |
+    |      |                      (54) following 'true' branch...
+    |   58 |         printf("Missing Range is : %d - %d\n", missingRanges[i].start, missingRanges[i].end);
+    |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |         |                                                                           |
+    |      |         (56) use of uninitialized value '*missingRanges_24 + _2.end' here           (55) ...to here
+    |
+./collected_code_4/round1//heal_0//problem-110.c:58:9: warning: dereference of possibly-NULL 'missingRanges' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   58 |         printf("Missing Range is : %d - %d\n", missingRanges[i].start, missingRanges[i].end);
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  'main': events 1-2
+    |
+    |   49 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   55 |     Range* missingRanges = getMissingRanges(array, arraySize, startRange, endRange, &missingSize);
+    |      |                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                            |
+    |      |                            (2) calling 'getMissingRanges' from 'main'
+    |
+    +--> 'getMissingRanges': events 3-52
+           |
+           |    9 | Range* getMissingRanges(int* array, int arraySize, int startRange, int endRange, int* missingSize) {
+           |      |        ^~~~~~~~~~~~~~~~
+           |      |        |
+           |      |        (3) entry to 'getMissingRanges'
+           |   10 |     int* rangeArray = calloc(endRange - startRange + 1, sizeof(int));
+           |   11 |     for(int i = 0; i < arraySize; i++) {
+           |      |                    ~~~~~~~~~~~~~
+           |      |                      |
+           |      |                      (4) following 'true' branch (when 'i < arraySize')...
+           |      |                      (8) following 'true' branch (when 'i < arraySize')...
+           |      |                      (12) following 'true' branch (when 'i < arraySize')...
+           |      |                      (16) following 'true' branch (when 'i < arraySize')...
+           |      |                      (20) following 'true' branch (when 'i < arraySize')...
+           |      |                      (24) following 'true' branch (when 'i < arraySize')...
+           |      |                      (28) following 'false' branch (when 'i >= arraySize')...
+           |   12 |         if(array[i] >= startRange && array[i] <= endRange) {
+           |      |           ~     ~
+           |      |           |     |
+           |      |           |     (5) ...to here
+           |      |           |     (9) ...to here
+           |      |           |     (13) ...to here
+           |      |           |     (17) ...to here
+           |      |           |     (21) ...to here
+           |      |           |     (25) ...to here
+           |      |           (6) following 'true' branch...
+           |      |           (10) following 'true' branch...
+           |      |           (14) following 'true' branch...
+           |      |           (18) following 'true' branch...
+           |      |           (22) following 'true' branch...
+           |      |           (26) following 'true' branch...
+           |   13 |             rangeArray[array[i]-startRange] = 1;
+           |      |                             ~
+           |      |                             |
+           |      |                             (7) ...to here
+           |      |                             (11) ...to here
+           |      |                             (15) ...to here
+           |      |                             (19) ...to here
+           |      |                             (23) ...to here
+           |      |                             (27) ...to here
+           |......
+           |   17 |     int flag = 0;
+           |      |         ~~~~
+           |      |         |
+           |      |         (29) ...to here
+           |   18 |     *missingSize = 0;
+           |   19 |     for(int i = 0; i <= endRange - startRange; i++) {
+           |      |                    ~~~~~~~~~~~~~~~~~~~~~~~~~~  ~~~
+           |      |                      |                          |
+           |      |                      |                          (37) ...to here
+           |      |                      |                          (41) ...to here
+           |      |                      (30) following 'true' branch...
+           |   20 |         if(flag == 0 && rangeArray[i] == 0){
+           |      |           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |           |          |            |
+           |      |           |          |            (33) ...to here
+           |      |           |          |            (39) ...to here
+           |      |           |          (34) following 'false' branch...
+           |      |           (31) ...to here
+           |      |           (32) following 'true' branch (when 'flag == 0')...
+           |      |           (38) following 'true' branch (when 'flag == 0')...
+           |......
+           |   23 |         } else if(flag == 1 && rangeArray[i] == 1){
+           |      |                  ~
+           |      |                  |
+           |      |                  (35) ...to here
+           |      |                  (36) following 'false' branch (when 'flag != 1')...
+           |      |                  (40) following 'false' branch (when 'flag != 1')...
+           |......
+           |   28 |     Range* missingRanges = malloc(*missingSize * sizeof(Range));
+           |      |                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                            |
+           |      |                            (42) this call could return NULL
+           |   29 |     int currentIndex = 0, flag2 = 0;
+           |   30 |     for(int i = 0; i <= endRange - startRange; i++) {
+           |      |                    ~~~~~~~~~~~~~~~~~~~~~~~~~~  ~~~
+           |      |                      |                          |
+           |      |                      |                          (50) ...to here
+           |      |                      (43) following 'true' branch...
+           |   31 |         if(flag2 == 0 && rangeArray[i] == 0){
+           |      |           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |           |           |            |
+           |      |           |           |            (46) ...to here
+           |      |           |           (47) following 'false' branch...
+           |      |           (44) ...to here
+           |      |           (45) following 'true' branch (when 'flag2 == 0')...
+           |......
+           |   34 |         } else if(flag2 == 1 && rangeArray[i] == 1){
+           |      |                  ~
+           |      |                  |
+           |      |                  (48) ...to here
+           |      |                  (49) following 'false' branch (when 'flag2 != 1')...
+           |......
+           |   40 |     if(flag2 == 1) {
+           |      |       ~ 
+           |      |       |
+           |      |       (51) following 'false' branch (when 'flag2 != 1')...
+           |......
+           |   44 |     free(rangeArray);
+           |      |     ~~~~~~~~~~~~~~~~
+           |      |     |
+           |      |     (52) ...to here
+           |
+    <------+
+    |
+  'main': events 53-56
+    |
+    |   55 |     Range* missingRanges = getMissingRanges(array, arraySize, startRange, endRange, &missingSize);
+    |      |                            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                            |
+    |      |                            (53) possible return of NULL to 'main' from 'getMissingRanges'
+    |   56 | 
+    |   57 |     for(int i = 0; i < missingSize; i++) {
+    |      |                    ~~~~~~~~~~~~~~~
+    |      |                      |
+    |      |                      (54) following 'true' branch...
+    |   58 |         printf("Missing Range is : %d - %d\n", missingRanges[i].start, missingRanges[i].end);
+    |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |         |                                                                           |
+    |      |         |                                                                           (55) ...to here
+    |      |         (56) 'missingRanges + (long unsigned int)i * 8' could be NULL: unchecked value from (42)
+    |

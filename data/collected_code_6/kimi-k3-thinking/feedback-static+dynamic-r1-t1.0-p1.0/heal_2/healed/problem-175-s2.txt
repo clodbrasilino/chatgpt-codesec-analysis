@@ -1,0 +1,56 @@
+```c
+#define _POSIX_C_SOURCE 200809L
+
+#include <stdio.h>
+#include <stdbool.h>
+#include <stddef.h>
+#include <string.h>
+#include <stdlib.h>
+
+bool is_valid_parentheses(const char *str)
+{
+    size_t balance;
+    size_t i;
+
+    if (str == NULL) {
+        return false;
+    }
+
+    balance = 0;
+    i = 0;
+    while (str[i] != '\0') {
+        if (str[i] == '(') {
+            balance++;
+        } else if (str[i] == ')') {
+            if (balance == 0) {
+                return false;
+            }
+            balance--;
+        }
+        i++;
+    }
+
+    return balance == 0;
+}
+
+int main(int argc, const char *argv[])
+{
+    char *line;
+    size_t capacity;
+
+    if (argc > 1) {
+        printf("%s\n", is_valid_parentheses(argv[1]) ? "True" : "False");
+        return 0;
+    }
+
+    line = NULL;
+    capacity = 0;
+    while (getline(&line, &capacity, stdin) != -1) {
+        line[strcspn(line, "\r\n")] = '\0';
+        printf("%s\n", is_valid_parentheses(line) ? "True" : "False");
+    }
+
+    free(line);
+    return 0;
+}
+```

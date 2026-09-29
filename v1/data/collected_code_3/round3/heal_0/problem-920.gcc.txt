@@ -1,0 +1,351 @@
+collected_code_3/problem-920-3.c: In function 'removeNoneTuples':
+collected_code_3/problem-920-3.c:38:33: warning: dereference of possibly-NULL 'newList.tuples' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   38 |             newList.tuples[j++] = list.tuples[i];
+      |             ~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~
+  'main': events 1-2
+    |
+    |   45 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   53 |     TupleList newList = removeNoneTuples(list);
+    |      |                         ~~~~~~~~~~~~~~~~~~~~~~
+    |      |                         |
+    |      |                         (2) calling 'removeNoneTuples' from 'main'
+    |
+    +--> 'removeNoneTuples': events 3-6
+           |
+           |   23 | TupleList removeNoneTuples(TupleList list) {
+           |      |           ^~~~~~~~~~~~~~~~
+           |      |           |
+           |      |           (3) entry to 'removeNoneTuples'
+           |   24 |     int noneTuplesCount = 0;
+           |   25 |     for (int i = 0; i < list.size; i++) {
+           |      |                     ~~~~~~~~~~~~~
+           |      |                       |
+           |      |                       (4) following 'true' branch...
+           |   26 |         if (isNoneTuple(list.tuples[i])) {
+           |      |             ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |             |               |
+           |      |             |               (5) ...to here
+           |      |             (6) calling 'isNoneTuple' from 'removeNoneTuples'
+           |
+           +--> 'isNoneTuple': events 7-11
+                  |
+                  |   14 | int isNoneTuple(Tuple tuple) {
+                  |      |     ^~~~~~~~~~~
+                  |      |     |
+                  |      |     (7) entry to 'isNoneTuple'
+                  |   15 |     for (int i = 0; i < tuple.size; i++) {
+                  |      |                     ~~~~~~~~~~~~~~  ~~~
+                  |      |                       |              |
+                  |      |                       |              (11) ...to here
+                  |      |                       (8) following 'true' branch...
+                  |   16 |         if (tuple.values[i] != 0) {
+                  |      |            ~~~~~~~~~~~~~
+                  |      |            |     |
+                  |      |            |     (9) ...to here
+                  |      |            (10) following 'false' branch...
+                  |
+           <------+
+           |
+         'removeNoneTuples': events 12-16
+           |
+           |   26 |         if (isNoneTuple(list.tuples[i])) {
+           |      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |             |
+           |      |             (12) returning to 'removeNoneTuples' from 'isNoneTuple'
+           |......
+           |   33 |     newList.tuples = (Tuple *)malloc(newList.size * sizeof(Tuple));
+           |      |                               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                               |
+           |      |                               (13) this call could return NULL
+           |......
+           |   36 |     for (int i = 0; i < list.size; i++) {
+           |      |                     ~~~~~~~~~~~~~
+           |      |                       |
+           |      |                       (14) following 'true' branch...
+           |   37 |         if (!isNoneTuple(list.tuples[i])) {
+           |      |              ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |              |               |
+           |      |              |               (15) ...to here
+           |      |              (16) calling 'isNoneTuple' from 'removeNoneTuples'
+           |
+           +--> 'isNoneTuple': events 17-21
+                  |
+                  |   14 | int isNoneTuple(Tuple tuple) {
+                  |      |     ^~~~~~~~~~~
+                  |      |     |
+                  |      |     (17) entry to 'isNoneTuple'
+                  |   15 |     for (int i = 0; i < tuple.size; i++) {
+                  |      |                     ~~~~~~~~~~~~~~  ~~~
+                  |      |                       |              |
+                  |      |                       |              (21) ...to here
+                  |      |                       (18) following 'true' branch...
+                  |   16 |         if (tuple.values[i] != 0) {
+                  |      |            ~~~~~~~~~~~~~
+                  |      |            |     |
+                  |      |            |     (19) ...to here
+                  |      |            (20) following 'false' branch...
+                  |
+           <------+
+           |
+         'removeNoneTuples': events 22-25
+           |
+           |   37 |         if (!isNoneTuple(list.tuples[i])) {
+           |      |            ~ ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |            | |
+           |      |            | (22) returning to 'removeNoneTuples' from 'isNoneTuple'
+           |      |            (23) following 'true' branch...
+           |   38 |             newList.tuples[j++] = list.tuples[i];
+           |      |             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                                 |     |
+           |      |                                 |     (24) ...to here
+           |      |                                 (25) 'newList.tuples + (long unsigned int)j * 16' could be NULL: unchecked value from (13)
+           |
+collected_code_3/problem-920-3.c: In function 'main':
+collected_code_3/problem-920-3.c:56:46: warning: use of uninitialized value '*_10 + _12.size' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   56 |         for (int j = 0; j < newList.tuples[i].size; j++) {
+      |                             ~~~~~~~~~~~~~~~~~^~~~~
+  'main': events 1-2
+    |
+    |   45 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   53 |     TupleList newList = removeNoneTuples(list);
+    |      |                         ~~~~~~~~~~~~~~~~~~~~~~
+    |      |                         |
+    |      |                         (2) calling 'removeNoneTuples' from 'main'
+    |
+    +--> 'removeNoneTuples': events 3-6
+           |
+           |   23 | TupleList removeNoneTuples(TupleList list) {
+           |      |           ^~~~~~~~~~~~~~~~
+           |      |           |
+           |      |           (3) entry to 'removeNoneTuples'
+           |   24 |     int noneTuplesCount = 0;
+           |   25 |     for (int i = 0; i < list.size; i++) {
+           |      |                     ~~~~~~~~~~~~~
+           |      |                       |
+           |      |                       (4) following 'true' branch...
+           |   26 |         if (isNoneTuple(list.tuples[i])) {
+           |      |             ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |             |               |
+           |      |             |               (5) ...to here
+           |      |             (6) calling 'isNoneTuple' from 'removeNoneTuples'
+           |
+           +--> 'isNoneTuple': events 7-11
+                  |
+                  |   14 | int isNoneTuple(Tuple tuple) {
+                  |      |     ^~~~~~~~~~~
+                  |      |     |
+                  |      |     (7) entry to 'isNoneTuple'
+                  |   15 |     for (int i = 0; i < tuple.size; i++) {
+                  |      |                     ~~~~~~~~~~~~~~  ~~~
+                  |      |                       |              |
+                  |      |                       |              (11) ...to here
+                  |      |                       (8) following 'true' branch...
+                  |   16 |         if (tuple.values[i] != 0) {
+                  |      |            ~~~~~~~~~~~~~
+                  |      |            |     |
+                  |      |            |     (9) ...to here
+                  |      |            (10) following 'false' branch...
+                  |
+           <------+
+           |
+         'removeNoneTuples': events 12-16
+           |
+           |   26 |         if (isNoneTuple(list.tuples[i])) {
+           |      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |             |
+           |      |             (12) returning to 'removeNoneTuples' from 'isNoneTuple'
+           |......
+           |   33 |     newList.tuples = (Tuple *)malloc(newList.size * sizeof(Tuple));
+           |      |                               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                               |
+           |      |                               (13) region created on heap here
+           |......
+           |   36 |     for (int i = 0; i < list.size; i++) {
+           |      |                     ~~~~~~~~~~~~~
+           |      |                       |
+           |      |                       (14) following 'true' branch...
+           |   37 |         if (!isNoneTuple(list.tuples[i])) {
+           |      |              ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |              |               |
+           |      |              |               (15) ...to here
+           |      |              (16) calling 'isNoneTuple' from 'removeNoneTuples'
+           |
+           +--> 'isNoneTuple': events 17-21
+                  |
+                  |   14 | int isNoneTuple(Tuple tuple) {
+                  |      |     ^~~~~~~~~~~
+                  |      |     |
+                  |      |     (17) entry to 'isNoneTuple'
+                  |   15 |     for (int i = 0; i < tuple.size; i++) {
+                  |      |                     ~~~~~~~~~~~~~~  ~~~
+                  |      |                       |              |
+                  |      |                       |              (21) ...to here
+                  |      |                       (18) following 'true' branch...
+                  |   16 |         if (tuple.values[i] != 0) {
+                  |      |            ~~~~~~~~~~~~~
+                  |      |            |     |
+                  |      |            |     (19) ...to here
+                  |      |            (20) following 'false' branch...
+                  |
+           <------+
+           |
+         'removeNoneTuples': events 22-24
+           |
+           |   36 |     for (int i = 0; i < list.size; i++) {
+           |      |                                    ~~~
+           |      |                                     |
+           |      |                                     (24) ...to here
+           |   37 |         if (!isNoneTuple(list.tuples[i])) {
+           |      |            ~ ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |            | |
+           |      |            | (22) returning to 'removeNoneTuples' from 'isNoneTuple'
+           |      |            (23) following 'false' branch...
+           |
+    <------+
+    |
+  'main': events 25-28
+    |
+    |   53 |     TupleList newList = removeNoneTuples(list);
+    |      |                         ^~~~~~~~~~~~~~~~~~~~~~
+    |      |                         |
+    |      |                         (25) returning to 'main' from 'removeNoneTuples'
+    |   54 | 
+    |   55 |     for (int i = 0; i < newList.size; i++) {
+    |      |                     ~~~~~~~~~~~~~~~~
+    |      |                       |
+    |      |                       (26) following 'true' branch...
+    |   56 |         for (int j = 0; j < newList.tuples[i].size; j++) {
+    |      |                  ~          ~~~~~~~~~~~~~~~~~~~~~~
+    |      |                  |                           |
+    |      |                  (27) ...to here             (28) use of uninitialized value '*_10 + _12.size' here
+    |
+collected_code_3/problem-920-3.c:56:46: warning: dereference of possibly-NULL 'newList.tuples' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   56 |         for (int j = 0; j < newList.tuples[i].size; j++) {
+      |                             ~~~~~~~~~~~~~~~~~^~~~~
+  'main': events 1-2
+    |
+    |   45 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   53 |     TupleList newList = removeNoneTuples(list);
+    |      |                         ~~~~~~~~~~~~~~~~~~~~~~
+    |      |                         |
+    |      |                         (2) calling 'removeNoneTuples' from 'main'
+    |
+    +--> 'removeNoneTuples': events 3-6
+           |
+           |   23 | TupleList removeNoneTuples(TupleList list) {
+           |      |           ^~~~~~~~~~~~~~~~
+           |      |           |
+           |      |           (3) entry to 'removeNoneTuples'
+           |   24 |     int noneTuplesCount = 0;
+           |   25 |     for (int i = 0; i < list.size; i++) {
+           |      |                     ~~~~~~~~~~~~~
+           |      |                       |
+           |      |                       (4) following 'true' branch...
+           |   26 |         if (isNoneTuple(list.tuples[i])) {
+           |      |             ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |             |               |
+           |      |             |               (5) ...to here
+           |      |             (6) calling 'isNoneTuple' from 'removeNoneTuples'
+           |
+           +--> 'isNoneTuple': events 7-11
+                  |
+                  |   14 | int isNoneTuple(Tuple tuple) {
+                  |      |     ^~~~~~~~~~~
+                  |      |     |
+                  |      |     (7) entry to 'isNoneTuple'
+                  |   15 |     for (int i = 0; i < tuple.size; i++) {
+                  |      |                     ~~~~~~~~~~~~~~  ~~~
+                  |      |                       |              |
+                  |      |                       |              (11) ...to here
+                  |      |                       (8) following 'true' branch...
+                  |   16 |         if (tuple.values[i] != 0) {
+                  |      |            ~~~~~~~~~~~~~
+                  |      |            |     |
+                  |      |            |     (9) ...to here
+                  |      |            (10) following 'false' branch...
+                  |
+           <------+
+           |
+         'removeNoneTuples': events 12-16
+           |
+           |   26 |         if (isNoneTuple(list.tuples[i])) {
+           |      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |             |
+           |      |             (12) returning to 'removeNoneTuples' from 'isNoneTuple'
+           |......
+           |   33 |     newList.tuples = (Tuple *)malloc(newList.size * sizeof(Tuple));
+           |      |                               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                               |
+           |      |                               (13) this call could return NULL
+           |......
+           |   36 |     for (int i = 0; i < list.size; i++) {
+           |      |                     ~~~~~~~~~~~~~
+           |      |                       |
+           |      |                       (14) following 'true' branch...
+           |   37 |         if (!isNoneTuple(list.tuples[i])) {
+           |      |              ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |              |               |
+           |      |              |               (15) ...to here
+           |      |              (16) calling 'isNoneTuple' from 'removeNoneTuples'
+           |
+           +--> 'isNoneTuple': events 17-21
+                  |
+                  |   14 | int isNoneTuple(Tuple tuple) {
+                  |      |     ^~~~~~~~~~~
+                  |      |     |
+                  |      |     (17) entry to 'isNoneTuple'
+                  |   15 |     for (int i = 0; i < tuple.size; i++) {
+                  |      |                     ~~~~~~~~~~~~~~  ~~~
+                  |      |                       |              |
+                  |      |                       |              (21) ...to here
+                  |      |                       (18) following 'true' branch...
+                  |   16 |         if (tuple.values[i] != 0) {
+                  |      |            ~~~~~~~~~~~~~
+                  |      |            |     |
+                  |      |            |     (19) ...to here
+                  |      |            (20) following 'false' branch...
+                  |
+           <------+
+           |
+         'removeNoneTuples': events 22-24
+           |
+           |   36 |     for (int i = 0; i < list.size; i++) {
+           |      |                                    ~~~
+           |      |                                     |
+           |      |                                     (24) ...to here
+           |   37 |         if (!isNoneTuple(list.tuples[i])) {
+           |      |            ~ ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |            | |
+           |      |            | (22) returning to 'removeNoneTuples' from 'isNoneTuple'
+           |      |            (23) following 'false' branch...
+           |
+    <------+
+    |
+  'main': events 25-28
+    |
+    |   53 |     TupleList newList = removeNoneTuples(list);
+    |      |                         ^~~~~~~~~~~~~~~~~~~~~~
+    |      |                         |
+    |      |                         (25) returning to 'main' from 'removeNoneTuples'
+    |   54 | 
+    |   55 |     for (int i = 0; i < newList.size; i++) {
+    |      |                     ~~~~~~~~~~~~~~~~
+    |      |                       |
+    |      |                       (26) following 'true' branch...
+    |   56 |         for (int j = 0; j < newList.tuples[i].size; j++) {
+    |      |                  ~          ~~~~~~~~~~~~~~~~~~~~~~
+    |      |                  |                           |
+    |      |                  (27) ...to here             (28) 'newList.tuples + (long unsigned int)i * 16' could be NULL: unchecked value from (13)
+    |

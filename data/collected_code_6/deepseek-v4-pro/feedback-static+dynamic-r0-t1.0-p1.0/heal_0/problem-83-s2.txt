@@ -1,0 +1,36 @@
+```c
+#include <stdio.h>
+#include <string.h>
+
+char sum_of_characters(const char *str) {
+    if (str == NULL) {
+        return 0;
+    }
+    
+    char sum = 0;
+    size_t len = strlen(str);
+    
+    for (size_t i = 0; i < len; i++) {
+        sum += str[i];
+    }
+    
+    return sum;
+}
+
+int main(void) {
+    const char *test_strings[] = {
+        "hello",
+        "world",
+        "",
+        "A",
+        "abc123"
+    };
+    
+    for (size_t i = 0; i < sizeof(test_strings) / sizeof(test_strings[0]); i++) {
+        char result = sum_of_characters(test_strings[i]);
+        printf("String: \"%s\", Sum: %d\n", test_strings[i], (int)result);
+    }
+    
+    return 0;
+}
+```

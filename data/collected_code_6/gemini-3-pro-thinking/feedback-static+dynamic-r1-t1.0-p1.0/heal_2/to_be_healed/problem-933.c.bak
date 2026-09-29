@@ -1,0 +1,63 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+ /* Possible weaknesses found:
+  *  test case 0 failed: expected 'google_assistant', got <no output>
+  *  test case 2 failed: expected 'quad_core', got <no output>
+  *  test case 1 failed: expected 'chrome_cast', got <no output>
+  */
+
+char *camel_to_snake(const char *input) {
+    if (input == NULL) {
+        return NULL;
+    }
+
+    size_t len = strlen(input);
+    size_t max_len = (len * 2) + 1;
+    char *result = (char *)malloc(max_len);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    size_t j = 0;
+    for (size_t i = 0; i < len; i++) {
+        if (isupper((unsigned char)input[i])) {
+            if (i > 0 && (islower((unsigned char)input[i - 1]) || isdigit((unsigned char)input[i - 1]))) {
+                result[j++] = '_';
+            }
+            result[j++] = tolower((unsigned char)input[i]);
+        } else {
+            result[j++] = tolower((unsigned char)input[i]);
+        }
+    }
+    result[j] = '\0';
+
+    return result;
+}
+
+int main(void) {
+    const char *test_cases[] = {
+        "camelCase",
+        "thisIsATest",
+        "already_snake_case",
+        "convert123ToSnake",
+        "SimpleTest",
+        "googleAssistant",
+        "chromeCast",
+        "quadCore",
+        NULL
+    };
+
+    for (size_t i = 0; test_cases[i] != NULL; ++i) {
+        char *snake = camel_to_snake(test_cases[i]);
+        if (snake != NULL) {
+            printf("%s -> %s\n", test_cases[i], snake);
+            free(snake);
+        } else {
+            fprintf(stderr, "Failed to convert %s\n", test_cases[i]);
+        }
+    }
+
+    return 0;
+}

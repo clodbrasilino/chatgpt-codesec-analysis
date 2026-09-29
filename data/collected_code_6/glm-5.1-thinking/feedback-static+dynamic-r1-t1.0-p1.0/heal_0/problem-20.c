@@ -1,0 +1,34 @@
+#include <stdio.h>
+#include <limits.h>
+
+int isWoodall(unsigned long long num) {
+    unsigned long long power = 2;
+    for (unsigned long long n = 1; ; n++) {
+        if (power > ULLONG_MAX / n) {
+            return 0;
+        }
+        unsigned long long val = n * power - 1;
+        if (val == num) {
+            return 1;
+        }
+        if (val > num) {
+            return 0;
+        }
+        if (power > ULLONG_MAX / 2) {
+            return 0;
+        }
+        power *= 2;
+    }
+}
+
+int main(void) {
+    unsigned long long num;
+    if (scanf("%llu", &num) == 1) {
+        if (isWoodall(num)) {
+            printf("Yes\n");
+        } else {
+            printf("No\n");
+        }
+    }
+    return 0;
+}

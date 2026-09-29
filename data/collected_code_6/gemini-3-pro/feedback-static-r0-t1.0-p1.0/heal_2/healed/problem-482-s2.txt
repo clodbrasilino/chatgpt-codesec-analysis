@@ -1,0 +1,59 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+void find_sequences(const char *str) {
+    if (str == NULL) {
+        return;
+    }
+
+    regex_t regex;
+    int ret;
+    const char *pattern = "[A-Z][a-z]+";
+    
+    ret = regcomp(&regex, pattern, REG_EXTENDED);
+    if (ret != 0) {
+        fprintf(stderr, "Could not compile regex\n");
+        return;
+    }
+
+    regmatch_t pmatch[1];
+    const char *p = str;
+
+    while (1) {
+        ret = regexec(&regex, p, 1, pmatch, 0);
+        if (ret == 0) {
+            int start = pmatch[0].rm_so;
+            int end = pmatch[0].rm_eo;
+            int len = end - start;
+            
+            printf("Found: %.*s\n", len, p + start);
+            
+            p += end;
+        } else if (ret == REG_NOMATCH) {
+            break;
+        } else {
+            size_t errbuf_size = regerror(ret, &regex, NULL, 0);
+            char *msgbuf = malloc(errbuf_size);
+            if (msgbuf != NULL) {
+                regerror(ret, &regex, msgbuf, errbuf_size);
+                fprintf(stderr, "Regex match failed: %s\n", msgbuf);
+                free(msgbuf);
+            } else {
+                fprintf(stderr, "Regex match failed; could not allocate error buffer\n");
+            }
+            break;
+        }
+    }
+
+    regfree(&regex);
+}
+
+int main(void) {
+    const char *test_str = "This is a Test String with Some Sequences of Upper and lower Case Letters.";
+    find_sequences(test_str);
+    return 0;
+}
+```

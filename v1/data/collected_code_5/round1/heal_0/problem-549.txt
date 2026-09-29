@@ -1,0 +1,34 @@
+```c
+#include <stdio.h>
+
+long long sumFifthPower(int n) {
+    long long sum = 0;
+    int i;
+    for(i=0; i<n; ++i) {
+        long long odd = (2*i)+1;
+        long long power = odd;
+        int j;
+        for(j=1; j<5; ++j) {
+            power *= odd;
+        }
+        sum += power;
+    }
+    return sum;
+}
+
+int main() {
+    int n;
+    printf("Enter a number: ");
+    scanf("%d", &n);
+
+    if(n < 0) {
+        printf("Invalid input. Please enter a positive integer.\n");
+        return 1;
+    }
+
+    long long res = sumFifthPower(n);
+    printf("Sum of the fifth powers of first %d odd natural numbers is: %lld\n", n, res);
+
+    return 0;
+} 
+```

@@ -1,0 +1,61 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <limits.h>
+
+#define BUF_SIZE 256
+
+void remove_chars(char *first, const char *second)
+{
+    int present[UCHAR_MAX + 1] = {0};
+    size_t i;
+    size_t j;
+
+    if (first == NULL || second == NULL) {
+        return;
+    }
+
+    for (i = 0; second[i] != '\0'; i++) {
+        present[(unsigned char)second[i]] = 1;
+    }
+
+    j = 0;
+    for (i = 0; first[i] != '\0'; i++) {
+        if (!present[(unsigned char)first[i]]) {
+            first[j] = first[i];
+            j++;
+        }
+    }
+    first[j] = '\0';
+}
+
+int main(void)
+{
+    char first[BUF_SIZE];
+    char second[BUF_SIZE];
+
+    if (fgets(first, sizeof(first), stdin) == NULL) {
+        fprintf(stderr, "Failed to read first string\n");
+        return 1;
+    }
+    first[strcspn(first, "\n")] = '\0';
+
+    if (fgets(second, sizeof(second), stdin) == NULL) {
+        fprintf(stderr, "Failed to read second string\n");
+        return 1;
+    }
+    second[strcspn(second, "\n")] = '\0';
+
+    remove_chars(first, second);
+
+    if (printf("%s\n", first) < 0) {
+        return 1;
+    }
+
+    return 0;
+}
+```
+
+Analysis summary: The Flawfinder warnings on the two `char` arrays are false positives in this code. Both buffers are statically sized and every read into them is properly bounded — `fgets(first, sizeof(first), stdin)` and `fgets(second, sizeof(second), stdin)` guarantee no more than `BUF_SIZE - 1` characters plus a null terminator are written. The `strcspn` trick safely strips the trailing newline without risking an out-of-bounds index, since `strcspn` returns at most the string length, which always points at a valid byte within the buffer.
+
+The `remove_chars` function is also defensively written: it null-checks both pointers, casts to `unsigned char` before indexing the `present` lookup table (avoiding negative-index UB on platforms where `char` is signed), sizes the table with `UCHAR_MAX + 1` rather than a hard-coded 256, and only ever shrinks `first` in place, so no overflow is possible there either. No changes were required beyond removing the comments.

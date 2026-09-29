@@ -1,0 +1,67 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+static unsigned int digit_sum(int number)
+{
+    unsigned int sum = 0U;
+    unsigned int value;
+
+    if (number < 0) {
+        value = (unsigned int)(-(number + 1)) + 1U;
+    } else {
+        value = (unsigned int)number;
+    }
+
+    while (value > 0U) {
+        sum += value % 10U;
+        value /= 10U;
+    }
+
+    return sum;
+}
+
+static int compute_digit_sums(const int *numbers, size_t count, unsigned int *results)
+{
+    size_t i;
+
+    if ((numbers == NULL) || (results == NULL)) {
+        return -1;
+    }
+
+    for (i = 0U; i < count; i++) {
+        results[i] = digit_sum(numbers[i]);
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    int numbers[] = { 123, -456, 0, 7890, INT_MAX, INT_MIN };
+    size_t count = sizeof(numbers) / sizeof(numbers[0]);
+    unsigned int *results;
+    size_t i;
+
+    results = (unsigned int *)malloc(count * sizeof(unsigned int));
+    if (results == NULL) {
+        (void)fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    if (compute_digit_sums(numbers, count, results) != 0) {
+        (void)fprintf(stderr, "Failed to compute digit sums\n");
+        free(results);
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0U; i < count; i++) {
+        if (printf("Digit sum of %d is %u\n", numbers[i], results[i]) < 0) {
+            free(results);
+            return EXIT_FAILURE;
+        }
+    }
+
+    free(results);
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,30 @@
+#include <stdio.h>
+#include <stdint.h>
+
+int64_t nth_nonagonal(int64_t n) {
+    int64_t result = n * (7 * n - 5) / 2;
+    if (result / n != (7 * n - 5) / 2) {
+        fprintf(stderr, "Integer overflow detected.\n");
+        return -1;
+    }
+    return result;
+}
+
+int main() {
+    int64_t n;
+    printf("Enter the value of n: ");
+    if (scanf("%ld", &n) != 1) {
+        fprintf(stderr, "Invalid input.\n");
+        return 1;
+    }
+    if (n <= 0) {
+        fprintf(stderr, "n must be a positive integer.\n");
+        return 1;
+    }
+    int64_t nonagonal_number = nth_nonagonal(n);
+    if (nonagonal_number == -1) {
+        return 1;
+    }
+    printf("The %ldth nonagonal number is: %ld\n", n, nonagonal_number);
+    return 0;
+}

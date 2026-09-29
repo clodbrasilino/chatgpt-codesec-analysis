@@ -1,0 +1,62 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <regex.h>
+
+int match_a_followed_by_bs(const char *text)
+{
+    regex_t regex;
+    int ret;
+
+    if (text == NULL) {
+        return 0;
+    }
+
+    ret = regcomp(&regex, "^ab*$", REG_EXTENDED | REG_NOSUB);
+    if (ret != 0) {
+        char errbuf[256];
+        errbuf[0] = '\0';
+        regerror(ret, &regex, errbuf, sizeof(errbuf));
+        errbuf[sizeof(errbuf) - 1] = '\0';
+        fprintf(stderr, "Regex compilation failed: %s\n", errbuf);
+        return -1;
+    }
+
+    ret = regexec(&regex, text, 0, NULL, 0);
+    regfree(&regex);
+
+    if (ret == 0) {
+        return 1;
+    } else if (ret == REG_NOMATCH) {
+        return 0;
+    } else {
+        fprintf(stderr, "Regex execution failed\n");
+        return -1;
+    }
+}
+
+int main(void)
+{
+    const char *tests[] = { "a", "ab", "abbbb", "b", "abc", "aab", "" };
+    size_t count = sizeof(tests) / sizeof(tests[0]);
+    size_t i;
+
+    for (i = 0; i < count; i++) {
+        int result = match_a_followed_by_bs(tests[i]);
+        if (result < 0) {
+            return EXIT_FAILURE;
+        }
+        printf("\"%s\": %s\n", tests[i], result == 1 ? "match" : "no match");
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Changes made to address the identified weaknesses:**
+
+1. **Flawfinder buffer warning (CWE-119/CWE-120):** The `errbuf` array is now explicitly initialized before use and forcibly null-terminated after the `regerror()` call. While `regerror()` is passed `sizeof(errbuf)` (which already limits writes to the buffer's bounds), the explicit termination guarantees the buffer is always a valid C string even if the library implementation misbehaves, making the subsequent `fprintf` safe.
+
+2. **Variable scope (cppcheck `variableScope`):** The `result` variable was moved from function scope in `main()` into the body of the `for` loop, since it is only used within a single iteration. This reduces its scope to the minimum necessary, improving readability and preventing accidental reuse of stale values.
+
+The rest of the code was already sound: `text` is checked for `NULL`, `regfree()` is called on all paths after successful compilation (no resource leak), and all return codes from `regcomp()`/`regexec()` are properly handled.

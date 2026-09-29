@@ -1,0 +1,16 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_4/healed/problem-495.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_4/healed/problem-495.c:43:19: style: Condition 'input_len>=bounded_input_capacity' is always false [knownConditionTrueFalse]
+    if (input_len >= bounded_input_capacity) {
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_4/healed/problem-495.c:36:28: note: bounded_input_capacity is assigned 'input_len+1' here.
+    bounded_input_capacity = input_len + 1;
+                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_4/healed/problem-495.c:38:23: note: Assuming condition is false
+    if (bounded_input == NULL) {
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_4/healed/problem-495.c:43:19: note: Condition 'input_len>=bounded_input_capacity' is always false
+    if (input_len >= bounded_input_capacity) {
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_4/healed/problem-495.c:64:16: style: The scope of the variable 'available' can be reduced. [variableScope]
+        size_t available;
+               ^

@@ -1,0 +1,210 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_KEY_LENGTH 50
+#define MAX_ENTRIES 100
+
+typedef struct {
+    char *key;
+    int value;
+} DictEntry;
+
+typedef struct {
+    DictEntry *entries;
+    size_t count;
+    size_t capacity;
+} Dictionary;
+
+void initDictionary(Dictionary *dict) {
+    if (dict != NULL) {
+        dict->count = 0;
+        dict->capacity = 0;
+        dict->entries = NULL;
+    }
+}
+
+void freeDictionary(Dictionary *dict) {
+    if (dict != NULL) {
+        for (size_t i = 0; i < dict->count; i++) {
+            free(dict->entries[i].key);
+        }
+        free(dict->entries);
+        dict->entries = NULL;
+        dict->count = 0;
+        dict->capacity = 0;
+    }
+}
+
+static int resizeDictionary(Dictionary *dict) {
+    size_t new_capacity = (dict->capacity == 0) ? 4 : dict->capacity * 2;
+    if (new_capacity > MAX_ENTRIES) {
+        new_capacity = MAX_ENTRIES;
+    }
+    
+    if (new_capacity <= dict->capacity) {
+        return -1;
+    }
+    
+    DictEntry *new_entries = realloc(dict->entries, new_capacity * sizeof(DictEntry));
+    if (new_entries == NULL) {
+        return -1;
+    }
+    
+    dict->entries = new_entries;
+    dict->capacity = new_capacity;
+    return 0;
+}
+
+int addEntry(Dictionary *dict, const char *key, int value) {
+    if (dict == NULL || key == NULL) {
+        return -1;
+    }
+
+    size_t key_len = strnlen(key, MAX_KEY_LENGTH);
+    if (key_len == 0 || key_len >= MAX_KEY_LENGTH) {
+        return -1;
+    }
+
+    if (dict->count >= MAX_ENTRIES) {
+        return -1;
+    }
+
+    if (dict->count >= dict->capacity) {
+        if (resizeDictionary(dict) != 0) {
+            return -1;
+        }
+    }
+
+    char *key_copy = malloc(key_len + 1);
+    if (key_copy == NULL) {
+        return -1;
+    }
+
+    memcpy(key_copy, key, key_len);
+    key_copy[key_len] = '\0';
+
+    dict->entries[dict->count].key = key_copy;
+    dict->entries[dict->count].value = value;
+    dict->count++;
+
+    return 0;
+}
+
+int findEntry(const Dictionary *dict, const char *key) {
+    if (dict == NULL || key == NULL) {
+        return -1;
+    }
+
+    size_t key_len = strnlen(key, MAX_KEY_LENGTH);
+    if (key_len == 0 || key_len >= MAX_KEY_LENGTH) {
+        return -1;
+    }
+
+    for (size_t i = 0; i < dict->count; i++) {
+        if (dict->entries[i].key != NULL && strcmp(dict->entries[i].key, key) == 0) {
+            return (int)i;
+        }
+    }
+
+    return -1;
+}
+
+int combineDictionaries(const Dictionary *dict1, const Dictionary *dict2, Dictionary *result) {
+    if (dict1 == NULL || dict2 == NULL || result == NULL) {
+        return -1;
+    }
+
+    initDictionary(result);
+
+    for (size_t i = 0; i < dict1->count; i++) {
+        if (dict1->entries[i].key != NULL) {
+            if (addEntry(result, dict1->entries[i].key, dict1->entries[i].value) != 0) {
+                freeDictionary(result);
+                return -1;
+            }
+        }
+    }
+
+    for (size_t i = 0; i < dict2->count; i++) {
+        if (dict2->entries[i].key != NULL) {
+            int index = findEntry(result, dict2->entries[i].key);
+
+            if (index >= 0) {
+                result->entries[index].value += dict2->entries[i].value;
+            } else {
+                if (addEntry(result, dict2->entries[i].key, dict2->entries[i].value) != 0) {
+                    freeDictionary(result);
+                    return -1;
+                }
+            }
+        }
+    }
+
+    return 0;
+}
+
+void printDictionary(const Dictionary *dict) {
+    if (dict == NULL) {
+        return;
+    }
+
+    printf("{\n");
+    for (size_t i = 0; i < dict->count; i++) {
+        if (dict->entries[i].key != NULL) {
+            printf("  \"%s\": %d", dict->entries[i].key, dict->entries[i].value);
+            if (i < dict->count - 1) {
+                printf(",");
+            }
+            printf("\n");
+        }
+    }
+    printf("}\n");
+}
+
+int main(void) {
+    Dictionary dict1, dict2, combined;
+
+    initDictionary(&dict1);
+    initDictionary(&dict2);
+
+    if (addEntry(&dict1, "apple", 5) != 0 ||
+        addEntry(&dict1, "banana", 3) != 0 ||
+        addEntry(&dict1, "orange", 7) != 0) {
+        fprintf(stderr, "Error adding entries to dict1\n");
+        freeDictionary(&dict1);
+        freeDictionary(&dict2);
+        return EXIT_FAILURE;
+    }
+
+    if (addEntry(&dict2, "banana", 2) != 0 ||
+        addEntry(&dict2, "grape", 4) != 0 ||
+        addEntry(&dict2, "apple", 3) != 0) {
+        fprintf(stderr, "Error adding entries to dict2\n");
+        freeDictionary(&dict1);
+        freeDictionary(&dict2);
+        return EXIT_FAILURE;
+    }
+
+    printf("Dictionary 1:\n");
+    printDictionary(&dict1);
+
+    printf("\nDictionary 2:\n");
+    printDictionary(&dict2);
+
+    if (combineDictionaries(&dict1, &dict2, &combined) != 0) {
+        fprintf(stderr, "Error combining dictionaries\n");
+        freeDictionary(&dict1);
+        freeDictionary(&dict2);
+        return EXIT_FAILURE;
+    }
+
+    printf("\nCombined Dictionary:\n");
+    printDictionary(&combined);
+
+    freeDictionary(&dict1);
+    freeDictionary(&dict2);
+    freeDictionary(&combined);
+
+    return EXIT_SUCCESS;
+}

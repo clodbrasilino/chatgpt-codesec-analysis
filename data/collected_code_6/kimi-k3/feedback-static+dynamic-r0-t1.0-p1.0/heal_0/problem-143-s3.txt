@@ -1,0 +1,161 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+typedef enum {
+    TYPE_INT,
+    TYPE_LIST
+} ElementType;
+
+typedef struct Element {
+    ElementType type;
+    union {
+        int value;
+        struct {
+            struct Element *data;
+            size_t size;
+        } list;
+    } content;
+} Element;
+
+typedef struct {
+    Element *data;
+    size_t size;
+} Tuple;
+
+int count_lists_in_tuple(const Tuple *tuple) {
+    if (tuple == NULL || tuple->data == NULL) {
+        return 0;
+    }
+    
+    int count = 0;
+    for (size_t i = 0; i < tuple->size; i++) {
+        if (tuple->data[i].type == TYPE_LIST) {
+            count++;
+        }
+    }
+    return count;
+}
+
+void free_element(Element *elem) {
+    if (elem == NULL) {
+        return;
+    }
+    if (elem->type == TYPE_LIST && elem->content.list.data != NULL) {
+        for (size_t i = 0; i < elem->content.list.size; i++) {
+            free_element(&elem->content.list.data[i]);
+        }
+        free(elem->content.list.data);
+        elem->content.list.data = NULL;
+        elem->content.list.size = 0;
+    }
+}
+
+void free_tuple(Tuple *tuple) {
+    if (tuple == NULL || tuple->data == NULL) {
+        return;
+    }
+    for (size_t i = 0; i < tuple->size; i++) {
+        free_element(&tuple->data[i]);
+    }
+    free(tuple->data);
+    tuple->data = NULL;
+    tuple->size = 0;
+}
+
+bool init_tuple(Tuple *tuple, size_t size) {
+    if (tuple == NULL) {
+        return false;
+    }
+    if (size == 0) {
+        tuple->data = NULL;
+        tuple->size = 0;
+        return true;
+    }
+    tuple->data = calloc(size, sizeof(Element));
+    if (tuple->data == NULL) {
+        return false;
+    }
+    tuple->size = size;
+    return true;
+}
+
+bool set_int(Element *elem, int value) {
+    if (elem == NULL) {
+        return false;
+    }
+    elem->type = TYPE_INT;
+    elem->content.value = value;
+    return true;
+}
+
+bool set_list(Element *elem, size_t list_size) {
+    if (elem == NULL) {
+        return false;
+    }
+    elem->type = TYPE_LIST;
+    elem->content.list.size = list_size;
+    if (list_size == 0) {
+        elem->content.list.data = NULL;
+        return true;
+    }
+    elem->content.list.data = calloc(list_size, sizeof(Element));
+    if (elem->content.list.data == NULL) {
+        elem->content.list.size = 0;
+        return false;
+    }
+    return true;
+}
+
+int main(void) {
+    Tuple tuple = {0};
+    
+    if (!init_tuple(&tuple, 5)) {
+        fprintf(stderr, "Failed to initialize tuple\n");
+        return EXIT_FAILURE;
+    }
+    
+    if (!set_int(&tuple.data[0], 42)) {
+        fprintf(stderr, "Failed to set element\n");
+        free_tuple(&tuple);
+        return EXIT_FAILURE;
+    }
+    
+    if (!set_list(&tuple.data[1], 3)) {
+        fprintf(stderr, "Failed to set list element\n");
+        free_tuple(&tuple);
+        return EXIT_FAILURE;
+    }
+    set_int(&tuple.data[1].content.list.data[0], 1);
+    set_int(&tuple.data[1].content.list.data[1], 2);
+    set_int(&tuple.data[1].content.list.data[2], 3);
+    
+    if (!set_int(&tuple.data[2], 100)) {
+        fprintf(stderr, "Failed to set element\n");
+        free_tuple(&tuple);
+        return EXIT_FAILURE;
+    }
+    
+    if (!set_list(&tuple.data[3], 2)) {
+        fprintf(stderr, "Failed to set list element\n");
+        free_tuple(&tuple);
+        return EXIT_FAILURE;
+    }
+    set_int(&tuple.data[3].content.list.data[0], 10);
+    set_int(&tuple.data[3].content.list.data[1], 20);
+    
+    if (!set_list(&tuple.data[4], 0)) {
+        fprintf(stderr, "Failed to set list element\n");
+        free_tuple(&tuple);
+        return EXIT_FAILURE;
+    }
+    
+    int list_count = count_lists_in_tuple(&tuple);
+    printf("Number of lists in tuple: %d\n", list_count);
+    
+    free_tuple(&tuple);
+    
+    return EXIT_SUCCESS;
+}
+```

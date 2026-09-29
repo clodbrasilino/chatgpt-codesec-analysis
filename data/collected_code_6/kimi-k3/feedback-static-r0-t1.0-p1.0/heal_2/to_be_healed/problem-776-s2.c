@@ -1,0 +1,65 @@
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+
+int is_vowel(char c) {
+    c = tolower((unsigned char)c);
+    return (c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u');
+}
+
+int count_chars_with_vowel_neighbors(const char *str, size_t max_len) {
+    int count = 0;
+    size_t len;
+    size_t i;
+    
+    if (str == NULL) {
+        return 0;
+    }
+    
+    len = strnlen(str, max_len);
+    
+    if (len < 2) {
+        return 0;
+    }
+    
+    for (i = 0; i < len; i++) {
+        int has_vowel_neighbor = 0;
+        
+        if (i > 0 && is_vowel(str[i - 1])) {
+            has_vowel_neighbor = 1;
+        }
+        
+        if (i < len - 1 && is_vowel(str[i + 1])) {
+            has_vowel_neighbor = 1;
+        }
+        
+        if (has_vowel_neighbor) {
+            count++;
+        }
+    }
+    
+    return count;
+}
+
+int main(void) {
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char str[1000];
+    int result;
+    
+    printf("Enter a string: ");
+    
+    if (fgets(str, sizeof(str), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+    
+    str[strcspn(str, "\n")] = '\0';
+    
+    result = count_chars_with_vowel_neighbors(str, sizeof(str));
+    
+    printf("Count: %d\n", result);
+    
+    return 0;
+}

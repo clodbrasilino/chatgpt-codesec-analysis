@@ -1,0 +1,22 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-327.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-327.c:10:12: style: Condition 'b>0' is always true [knownConditionTrueFalse]
+    if ((b > 0 && a > INT_MAX - b) || (c > 0 && a > INT_MAX - c) || (c > 0 && b > INT_MAX - c)) {
+           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-327.c:7:21: note: Assuming that condition 'b<=0' is not redundant
+    if (a <= 0 || b <= 0 || c <= 0) {
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-327.c:10:12: note: Condition 'b>0' is always true
+    if ((b > 0 && a > INT_MAX - b) || (c > 0 && a > INT_MAX - c) || (c > 0 && b > INT_MAX - c)) {
+           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-327.c:10:42: style: Condition 'c>0' is always true [knownConditionTrueFalse]
+    if ((b > 0 && a > INT_MAX - b) || (c > 0 && a > INT_MAX - c) || (c > 0 && b > INT_MAX - c)) {
+                                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-327.c:7:31: note: Assuming that condition 'c<=0' is not redundant
+    if (a <= 0 || b <= 0 || c <= 0) {
+                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-327.c:10:42: note: Condition 'c>0' is always true
+    if ((b > 0 && a > INT_MAX - b) || (c > 0 && a > INT_MAX - c) || (c > 0 && b > INT_MAX - c)) {
+                                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-327.c:29:33: style: Parameter 'argv' can be declared as const array [constParameter]
+int main(int argc, char * const argv[const]) {
+                                ^

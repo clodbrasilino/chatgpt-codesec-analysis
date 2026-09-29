@@ -1,0 +1,142 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_INPUT_LEN 4096
+
+typedef struct {
+    char *items;
+    size_t count;
+    size_t capacity;
+} Tuple;
+
+static size_t bounded_strlen(const char *str, size_t max_len)
+{
+    size_t len = 0;
+    while (len < max_len && str[len] != '\0') {
+        len++;
+    }
+    return len;
+}
+
+static Tuple *tuple_create(size_t capacity)
+{
+    if (capacity == 0) {
+        return NULL;
+    }
+
+    Tuple *t = malloc(sizeof(Tuple));
+    if (t == NULL) {
+        return NULL;
+    }
+
+    t->items = malloc(capacity * sizeof(char));
+    if (t->items == NULL) {
+        free(t);
+        return NULL;
+    }
+
+    t->count = 0;
+    t->capacity = capacity;
+    return t;
+}
+
+static void tuple_destroy(Tuple *t)
+{
+    if (t != NULL) {
+        free(t->items);
+        free(t);
+    }
+}
+
+static Tuple *string_to_tuple(const char *str)
+{
+    if (str == NULL) {
+        return NULL;
+    }
+
+    size_t len = bounded_strlen(str, MAX_INPUT_LEN);
+    if (len == 0 || len >= MAX_INPUT_LEN) {
+        return NULL;
+    }
+
+    Tuple *t = tuple_create(len);
+    if (t == NULL) {
+        return NULL;
+    }
+
+    for (size_t i = 0; i < len && t->count < t->capacity; i++) {
+        t->items[t->count] = str[i];
+        t->count++;
+    }
+
+    return t;
+}
+
+static void tuple_print(const Tuple *t)
+{
+    if (t == NULL || t->items == NULL || t->count == 0) {
+        printf("[]\n");
+        fflush(stdout);
+        return;
+    }
+
+    printf("[");
+    for (size_t i = 0; i < t->count; i++) {
+        printf("'%c'", t->items[i]);
+        if (i + 1 < t->count) {
+            printf(", ");
+        }
+    }
+    printf("]\n");
+    fflush(stdout);
+}
+
+static void strip_newline(char *str)
+{
+    if (str == NULL) {
+        return;
+    }
+    size_t len = bounded_strlen(str, MAX_INPUT_LEN);
+    while (len > 0 && (str[len - 1] == '\n' || str[len - 1] == '\r')) {
+        str[len - 1] = '\0';
+        len--;
+    }
+}
+
+int main(void)
+{
+    char buffer[MAX_INPUT_LEN];
+
+    while (fgets(buffer, sizeof(buffer), stdin) != NULL) {
+        strip_newline(buffer);
+
+        if (buffer[0] == '\0') {
+            continue;
+        }
+
+        Tuple *t = string_to_tuple(buffer);
+        if (t == NULL) {
+            fprintf(stderr, "Failed to convert string to tuple: \"%s\"\n", buffer);
+            return EXIT_FAILURE;
+        }
+
+        tuple_print(t);
+        tuple_destroy(t);
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the original code and the fix applied:**
+
+The core logic of the original program (`tuple_create`, `string_to_tuple`, `tuple_print`, memory management) was actually sound — no buffer overflows, no leaks, proper `NULL` checks throughout. The reason all three test cases reported `<no output>` is that the test harness supplies the strings (`"python3.0"`, `"item1"`, `"15.10"`) via **stdin**, one per test case, while the original program ignored stdin entirely and iterated over a hardcoded array. From the harness's perspective, the program never responded to its input.
+
+Key changes:
+
+1. **Input now comes from stdin** via `fgets` into a fixed `MAX_INPUT_LEN` buffer, so each test case receives the output corresponding to its own input.
+2. **Newline/carriage-return stripping** (`strip_newline`) ensures the trailing `\n` (or `\r\n` on Windows-style input) doesn't end up as a tuple element, which would corrupt the expected output.
+3. **Empty lines are skipped** rather than treated as errors, avoiding spurious `EXIT_FAILURE` on trailing blank lines.
+4. All original defensive measures are preserved: bounded length calculation, capacity checks in the copy loop, allocation failure handling with cleanup, and `fflush(stdout)` so output is not lost in buffering if the harness reads pipes eagerly.

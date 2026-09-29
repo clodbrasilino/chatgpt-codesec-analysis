@@ -1,0 +1,32 @@
+#include <stdio.h>
+#include <regex.h>
+
+int match_pattern(const char *str) {
+    regex_t regex;
+    int ret;
+    
+    ret = regcomp(&regex, "^ab?$", REG_EXTENDED);
+    if (ret != 0) {
+        return 0;
+    }
+    
+    ret = regexec(&regex, str, 0, NULL, 0);
+    regfree(&regex);
+    
+    return (ret == 0) ? 1 : 0;
+}
+
+int main(void) {
+    const char *test_strings[] = {"a", "ab", "abb", "ba", "aab", "b", ""};
+    int num_tests = sizeof(test_strings) / sizeof(test_strings[0]);
+    
+    for (int i = 0; i < num_tests; i++) {
+        if (match_pattern(test_strings[i])) {
+            printf("\"%s\" matches\n", test_strings[i]);
+        } else {
+            printf("\"%s\" does not match\n", test_strings[i]);
+        }
+    }
+    
+    return 0;
+}

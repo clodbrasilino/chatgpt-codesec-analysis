@@ -1,0 +1,53 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int find_common_divisor(int a, int b)
+{
+    int temp_a;
+    int temp_b;
+
+    if (a == 0 && b == 0)
+    {
+        return 0;
+    }
+
+    temp_a = abs(a);
+    temp_b = abs(b);
+
+    while (temp_b != 0)
+    {
+        int temp = temp_b;
+        temp_b = temp_a % temp_b;
+        temp_a = temp;
+    }
+
+    return temp_a;
+}
+
+int main(void)
+{
+    int num1;
+    int num2;
+    int result;
+
+    printf("Enter two integers: ");
+    
+    if (scanf("%d %d", &num1, &num2) != 2)
+    {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    result = find_common_divisor(num1, num2);
+
+    if (result == 0 && num1 == 0 && num2 == 0)
+    {
+        printf("GCD is undefined for (0, 0)\n");
+    }
+    else
+    {
+        printf("GCD: %d\n", result);
+    }
+
+    return EXIT_SUCCESS;
+}

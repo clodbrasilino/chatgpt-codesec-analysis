@@ -1,0 +1,50 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+size_t count_char(const char *str, char ch) {
+    size_t count = 0;
+    if (str == NULL) {
+        return 0;
+    }
+    while (*str != '\0') {
+        if (*str == ch) {
+            count++;
+        }
+        str++;
+    }
+    return count;
+}
+
+int main(void) {
+    char *buffer = NULL;
+    size_t buffer_size = 0;
+    ssize_t line_length;
+    char ch;
+    size_t result;
+
+    printf("Enter a string: ");
+    line_length = getline(&buffer, &buffer_size, stdin);
+    if (line_length == -1) {
+        fprintf(stderr, "Error reading input.\n");
+        free(buffer);
+        return 1;
+    }
+
+    if (line_length > 0 && buffer[line_length - 1] == '\n') {
+        buffer[line_length - 1] = '\0';
+    }
+
+    printf("Enter a character to count: ");
+    if (scanf(" %c", &ch) != 1) {
+        fprintf(stderr, "Error reading character.\n");
+        free(buffer);
+        return 1;
+    }
+
+    result = count_char(buffer, ch);
+    printf("The character '%c' appears %zu time(s) in the string.\n", ch, result);
+
+    free(buffer);
+    return 0;
+}

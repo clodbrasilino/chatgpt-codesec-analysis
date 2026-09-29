@@ -1,0 +1,77 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+#include <stdlib.h>
+
+#define MAX_WORD_LEN 128
+
+bool is_word_length_even(const char *word, size_t max_len)
+{
+    size_t len;
+
+    if (word == NULL) {
+        return false;
+    }
+
+    len = strnlen(word, max_len);
+    return (len % 2U) == 0U;
+}
+
+static void flush_stdin(void)
+{
+    int c;
+
+    do {
+        c = getchar();
+    } while (c != '\n' && c != EOF);
+}
+
+int main(void)
+{
+    char buffer[MAX_WORD_LEN];
+    size_t len;
+
+    printf("Enter a word: ");
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error: failed to read input.\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1U] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+
+    if (len > 0U && buffer[len - 1U] == '\n') {
+        buffer[len - 1U] = '\0';
+        len--;
+    } else if (len == sizeof(buffer) - 1U) {
+        flush_stdin();
+        fprintf(stderr, "Error: input too long (maximum %u characters).\n",
+                (unsigned int)(MAX_WORD_LEN - 1U));
+        return EXIT_FAILURE;
+    }
+
+    if (len == 0U) {
+        fprintf(stderr, "Error: no word entered.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (is_word_length_even(buffer, sizeof(buffer))) {
+        printf("The word \"%s\" has an even length (%zu).\n", buffer, len);
+    } else {
+        printf("The word \"%s\" has an odd length (%zu).\n", buffer, len);
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Key changes addressing the identified weaknesses:**
+
+1. **CWE-126 (`strlen` over-read):** Replaced both `strlen` calls with `strnlen`, which takes a maximum length bound and cannot read past the buffer even if null-termination were somehow missing. Additionally, `buffer[sizeof(buffer) - 1U] = '\0';` guarantees the buffer is always null-terminated before any string operation.
+
+2. **CWE-119/CWE-120 (statically-sized array):** The fixed-size array is retained (it's appropriate here), but bounds are now enforced everywhere: `fgets` is limited by `sizeof(buffer)`, explicit termination is guaranteed, and truncated input (a word longer than the buffer) is now detected and rejected rather than silently processed, with the remaining stdin characters drained via `flush_stdin()` to avoid leaving stale input.
+
+3. **Defensive API change:** `is_word_length_even` now accepts a `max_len` parameter so the callee itself can never over-read, rather than relying on the caller's guarantees.

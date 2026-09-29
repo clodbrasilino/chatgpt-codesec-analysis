@@ -1,0 +1,134 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char name[50];
+    double price;
+} Item;
+
+typedef struct {
+    Item* items;
+    int size;
+    int capacity;
+} MaxHeap;
+
+MaxHeap* createMaxHeap(int capacity) {
+    if (capacity <= 0) return NULL;
+    MaxHeap* heap = (MaxHeap*)malloc(sizeof(MaxHeap));
+    if (!heap) return NULL;
+    heap->items = (Item*)malloc(capacity * sizeof(Item));
+    if (!heap->items) {
+        free(heap);
+        return NULL;
+    }
+    heap->size = 0;
+    heap->capacity = capacity;
+    return heap;
+}
+
+void freeMaxHeap(MaxHeap* heap) {
+    if (heap) {
+        free(heap->items);
+        free(heap);
+    }
+}
+
+void swap(Item* a, Item* b) {
+    Item temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+void heapify(MaxHeap* heap, int i) {
+    int largest = i;
+    int left = 2 * i + 1;
+    int right = 2 * i + 2;
+
+    if (left < heap->size && heap->items[left].price > heap->items[largest].price)
+        largest = left;
+
+    if (right < heap->size && heap->items[right].price > heap->items[largest].price)
+        largest = right;
+
+    if (largest != i) {
+        swap(&heap->items[i], &heap->items[largest]);
+        heapify(heap, largest);
+    }
+}
+
+int insertMaxHeap(MaxHeap* heap, Item item) {
+    if (!heap) return -1;
+    if (heap->size < heap->capacity) {
+        heap->items[heap->size] = item;
+        int i = heap->size;
+        heap->size++;
+        while (i != 0 && heap->items[(i - 1) / 2].price < heap->items[i].price) {
+            swap(&heap->items[i], &heap->items[(i - 1) / 2]);
+            i = (i - 1) / 2;
+        }
+    } else if (item.price < heap->items[0].price) {
+        heap->items[0] = item;
+        heapify(heap, 0);
+    }
+    return 0;
+}
+
+/* Possible weaknesses found:
+ *  Parameter 'dataset' can be declared as pointer to const [constParameterPointer]
+ */
+Item* findNCheapestItems(Item* dataset, int datasetSize, int n, int* resultSize) {
+    if (!dataset || datasetSize <= 0 || n <= 0 || !resultSize) return NULL;
+    
+    int heapCapacity = (n < datasetSize) ? n : datasetSize;
+    MaxHeap* heap = createMaxHeap(heapCapacity);
+    if (!heap) return NULL;
+
+    for (int i = 0; i < datasetSize; i++) {
+        if (insertMaxHeap(heap, dataset[i]) != 0) {
+            freeMaxHeap(heap);
+            return NULL;
+        }
+    }
+
+    Item* result = (Item*)malloc(heap->size * sizeof(Item));
+    if (!result) {
+        freeMaxHeap(heap);
+        return NULL;
+    }
+
+    *resultSize = heap->size;
+    for (int i = 0; i < heap->size; i++) {
+        result[i] = heap->items[i];
+    }
+
+    freeMaxHeap(heap);
+    return result;
+}
+
+int main() {
+    Item dataset[] = {
+        {"Item A", 15.5},
+        {"Item B", 8.2},
+        {"Item C", 20.0},
+        {"Item D", 5.0},
+        {"Item E", 12.3},
+        {"Item F", 3.5}
+    };
+    int datasetSize = sizeof(dataset) / sizeof(dataset[0]);
+    int n = 3;
+    int resultSize = 0;
+
+    Item* cheapestItems = findNCheapestItems(dataset, datasetSize, n, &resultSize);
+
+    if (cheapestItems) {
+        for (int i = 0; i < resultSize; i++) {
+            printf("%s: $%.2f\n", cheapestItems[i].name, cheapestItems[i].price);
+        }
+        free(cheapestItems);
+    } else {
+        printf("Failed to find cheapest items.\n");
+    }
+
+    return 0;
+}

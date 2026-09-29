@@ -1,0 +1,24 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+int find_max_sum(int *list, int size) {
+    int max = INT_MIN, sum;
+    for (int i = 0; i < size; ++i) {
+        sum = 0;
+        for (int j = 0; j < list[i]; ++j) {
+            sum += list[i + 1 + j];
+        }
+        if (sum > max) max = sum;
+        i += list[i];
+    }
+    return max;
+}
+
+int main() {
+    int data[] = {3, 1, 2, 3, 4, 4, -1, 5, 2, 6, 7};
+    int n_lists = 2;
+    int result = find_max_sum(data, n_lists);
+    printf("%d\n", result);
+    return 0;
+}

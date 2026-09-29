@@ -1,0 +1,43 @@
+#include <stdio.h>
+#include <string.h>
+#include <regex.h>
+#include <stdlib.h>
+
+char* remove_special(char* str) { 
+    regex_t regex; 
+    int reti; 
+    char* new_str = malloc(strlen(str)+1);  
+    int index=0;  
+    reti = regcomp(&regex, "[a-zA-Z0-9]", 0); 
+    if( reti ){ 
+        fprintf(stderr, "Could not compile regex\n"); 
+        return NULL; 
+    }
+    for(int i = 0; i < strlen(str); i++) {
+        reti = regexec(&regex, &str[i], 0, NULL, 0); 
+        if(!reti){
+            /* Possible weaknesses found:
+             *  dereference of possibly-NULL 'new_str' [CWE-690] [-Wanalyzer-possible-null-dereference]
+             */
+            new_str[index++] = str[i]; 
+        } 
+    }
+    /* Possible weaknesses found:
+     *  dereference of possibly-NULL 'new_str' [CWE-690] [-Wanalyzer-possible-null-dereference]
+     */
+    new_str[index] = '\0';
+    regfree(&regex);      
+    return new_str; 
+}
+
+int main() { 
+    char str[] = "ABc#$12@test"; 
+    char* res = remove_special(str); 
+    if(res != NULL){
+        printf("The string after removing special characters is %s\n", res); 
+        free(res); 
+    }else{
+        printf("An error occurred while compiling the regex.\n"); 
+    } 
+    return 0; 
+}

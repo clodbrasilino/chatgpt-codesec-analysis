@@ -1,0 +1,19 @@
+#include <stdio.h>
+
+void printPositiveNumbers(int *list, int size) {
+    for (int i = 0; i < size; ++i) {
+        if (list[i] > 0) {
+            printf("%d ", list[i]);
+        }
+    }
+    printf("\n");
+}
+
+int main() {
+    int list[] = {-3, 4, -2, 0, 5, 10, -1};
+    int size = sizeof(list) / sizeof(list[0]);
+
+    printPositiveNumbers(list, size);
+
+    return 0;
+}

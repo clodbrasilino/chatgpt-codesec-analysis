@@ -1,0 +1,100 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct List {
+    int* data;
+    int size;
+    struct List* next;
+} List;
+
+List* create_list(int size) {
+    List* new_list = (List*)malloc(sizeof(List));
+    if (!new_list) return NULL;
+    new_list->data = (int*)malloc(size * sizeof(int));
+    if (!new_list->data) {
+        free(new_list);
+        return NULL;
+    }
+    new_list->size = size;
+    new_list->next = NULL;
+    return new_list;
+}
+
+void append_to_list(List** head, List* new_list) {
+    if (*head == NULL) {
+        *head = new_list;
+    } else {
+        List* current = *head;
+        while (current->next != NULL) {
+            current = current->next;
+        }
+        current->next = new_list;
+    }
+}
+
+List* remove_empty_lists(List* head) {
+    List* dummy = (List*)malloc(sizeof(List));
+    if (!dummy) return NULL;
+    dummy->next = head;
+    List* prev = dummy;
+    List* current = head;
+
+    while (current != NULL) {
+        if (current->size == 0) {
+            prev->next = current->next;
+            free(current->data);
+            free(current);
+            current = prev->next;
+        } else {
+            prev = current;
+            current = current->next;
+        }
+    }
+
+    List* result = dummy->next;
+    free(dummy);
+    return result;
+}
+
+void print_list_of_lists(List* head) {
+    while (head != NULL) {
+        for (int i = 0; i < head->size; ++i) {
+            printf("%d ", head->data[i]);
+        }
+        printf("\n");
+        head = head->next;
+    }
+}
+
+int main() {
+    List* list1 = create_list(3);
+    List* list2 = create_list(0);
+    List* list3 = create_list(2);
+
+    if (list1 && list3) {
+        list1->data[0] = 1;
+        list1->data[1] = 2;
+        list1->data[2] = 3;
+
+        list3->data[0] = 4;
+        list3->data[1] = 5;
+    }
+
+    List* head = NULL;
+    append_to_list(&head, list1);
+    append_to_list(&head, list2);
+    append_to_list(&head, list3);
+
+    head = remove_empty_lists(head);
+
+    print_list_of_lists(head);
+
+    while (head != NULL) {
+        List* temp = head;
+        head = head->next;
+        free(temp->data);
+        free(temp);
+    }
+
+    return 0;
+}

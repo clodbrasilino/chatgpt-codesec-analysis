@@ -1,0 +1,79 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+void remove_lowercase_substrings(const char *input, char *output, size_t output_size) {
+    if (input == NULL || output == NULL || output_size == 0) {
+        return;
+    }
+
+    regex_t regex;
+    regmatch_t match;
+    int ret = regcomp(&regex, "[a-z]+", REG_EXTENDED);
+    
+    if (ret != 0) {
+        if (output_size > 0) {
+            output[0] = '\0';
+        }
+        return;
+    }
+
+    size_t in_pos = 0;
+    size_t out_pos = 0;
+    size_t input_len = strnlen(input, output_size * 2);
+
+    while (in_pos < input_len && out_pos < output_size - 1) {
+        ret = regexec(&regex, input + in_pos, 1, &match, 0);
+        
+        if (ret == REG_NOMATCH) {
+            size_t remaining = input_len - in_pos;
+            size_t available = output_size - out_pos - 1;
+            size_t copy_len = remaining < available ? remaining : available;
+            if (copy_len > 0 && out_pos + copy_len < output_size) {
+                memcpy(output + out_pos, input + in_pos, copy_len);
+                out_pos += copy_len;
+            }
+            break;
+        } else if (ret == 0) {
+            size_t match_start = match.rm_so;
+            if (match_start > 0) {
+                size_t available = output_size - out_pos - 1;
+                size_t copy_len = match_start < available ? match_start : available;
+                if (copy_len > 0 && out_pos + copy_len < output_size) {
+                    memcpy(output + out_pos, input + in_pos, copy_len);
+                    out_pos += copy_len;
+                }
+            }
+            size_t match_len = match.rm_eo;
+            if (in_pos + match_len > in_pos) {
+                in_pos += match_len;
+            } else {
+                break;
+            }
+        } else {
+            break;
+        }
+    }
+
+    if (out_pos < output_size) {
+        output[out_pos] = '\0';
+    } else if (output_size > 0) {
+        output[output_size - 1] = '\0';
+    }
+    regfree(&regex);
+}
+
+int main(void) {
+    const char *test_str = "HelloWorld123abcDEFxyz456";
+    char *result = calloc(256, sizeof(char));
+    
+    if (result != NULL) {
+        remove_lowercase_substrings(test_str, result, 256);
+        printf("Original: %s\n", test_str);
+        printf("Result: %s\n", result);
+        free(result);
+    }
+
+    return 0;
+}

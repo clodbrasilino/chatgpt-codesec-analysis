@@ -1,0 +1,36 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char* remove_parenthesis(const char *input, size_t input_len) {
+    char *output = (char *)malloc(input_len + 1);
+    if (!output) return NULL;
+    int j = 0, depth = 0;
+    for (size_t i = 0; i < input_len; ++i) {
+        if (input[i] == '(') {
+            depth++;
+        } else if (input[i] == ')') {
+            depth--;
+        } else if (depth == 0) {
+            output[j++] = input[i];
+        }
+    }
+    output[j] = '\0';
+    return output;
+}
+
+int main() {
+    const char *test_cases[] = {"python", "string", "alpha", "Hello, (this is a test) and this should stay."};
+    const char *expected_results[] = {"python", "string", "alpha", "Hello,  and this should stay."};
+
+    for (int i = 0; i < 4; ++i) {
+        size_t input_len = strlen(test_cases[i]);
+        char *result = remove_parenthesis(test_cases[i], input_len);
+        if (result) {
+            printf("Test case %d: Expected '%s', got '%s'\n", i, expected_results[i], result);
+            free(result);
+        }
+    }
+
+    return 0;
+}

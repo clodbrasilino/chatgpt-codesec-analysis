@@ -1,0 +1,66 @@
+{
+  "task_id": 19,
+  "text": "Write a C function to find whether a given array of integers contains any duplicate element.",
+  "fn_candidates": [
+    "test_duplicate",
+    "TestDuplicate",
+    "testDuplicate",
+    "testduplicate"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "test_duplicate",
+      "args": [
+        [
+          1,
+          2,
+          3,
+          4,
+          5
+        ]
+      ],
+      "expected": false,
+      "assert_src": "assert test_duplicate(([1,2,3,4,5]))==False"
+    },
+    {
+      "fn_name": "test_duplicate",
+      "args": [
+        [
+          1,
+          2,
+          3,
+          4,
+          4
+        ]
+      ],
+      "expected": true,
+      "assert_src": "assert test_duplicate(([1,2,3,4, 4]))==True"
+    },
+    {
+      "fn_name": "test_duplicate",
+      "args": [
+        [
+          1,
+          1,
+          2,
+          2,
+          3,
+          3,
+          4,
+          4,
+          5
+        ]
+      ],
+      "expected": true,
+      "assert_src": "assert test_duplicate([1,1,2,2,3,3,4,4,5])==True"
+    }
+  ],
+  "arg_kinds": [
+    "int-list"
+  ],
+  "return_kind": "bool",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

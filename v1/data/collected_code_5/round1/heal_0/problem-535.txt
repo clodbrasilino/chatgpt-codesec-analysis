@@ -1,0 +1,27 @@
+```C
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+double calculate_surface_area(double radius) {
+    if(radius < 0) {
+        printf("Negative inputs not allowed.\n");
+        exit(0);
+    }
+
+    double area = M_PI * radius * radius;
+
+    return area;
+}
+
+int main() {
+    double radius;
+    printf("Enter the radius of the cylinder: ");
+    scanf("%lf", &radius);
+
+    double area = calculate_surface_area(radius);
+    printf("The top or bottom surface area of the cylinder is: %.2lf\n", area);
+
+    return 0;
+}
+```

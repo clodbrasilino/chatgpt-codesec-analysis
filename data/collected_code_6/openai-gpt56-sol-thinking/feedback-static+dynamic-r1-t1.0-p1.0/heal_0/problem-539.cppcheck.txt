@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-539.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-539.c:41:46: style: Parameter 'context' can be declared as pointer to const. However it seems that 'power_mapper' is a callback function, if 'context' is declared with const you might also need to cast function pointer(s). [constParameterCallback]
+static bool power_mapper(size_t index, void *context, uint64_t *result)
+                                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-539.c:89:29: note: You might need to cast the function pointer here
+    if (!map(values, count, power_mapper, &base)) {
+                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-539.c:41:46: note: Parameter 'context' can be declared as pointer to const
+static bool power_mapper(size_t index, void *context, uint64_t *result)
+                                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-539.c:130:26: style: Parameter 'argv' can be declared as const array [constParameter]
+int main(int argc, char *argv[])
+                         ^

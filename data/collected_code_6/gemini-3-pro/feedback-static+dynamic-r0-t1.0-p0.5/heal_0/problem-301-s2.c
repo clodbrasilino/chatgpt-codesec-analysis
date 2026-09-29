@@ -1,0 +1,95 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct DictionaryNode {
+    char *key;
+    struct DictionaryNode *value_dict;
+    struct DictionaryNode *next;
+} DictionaryNode;
+
+DictionaryNode* create_node(const char *key, DictionaryNode *value_dict) {
+    if (!key) return NULL;
+    
+    DictionaryNode *node = (DictionaryNode *)malloc(sizeof(DictionaryNode));
+    if (!node) return NULL;
+    
+    node->key = strdup(key);
+    if (!node->key) {
+        free(node);
+        return NULL;
+    }
+    
+    node->value_dict = value_dict;
+    node->next = NULL;
+    
+    return node;
+}
+
+void free_dictionary(DictionaryNode *head) {
+    DictionaryNode *current = head;
+    while (current != NULL) {
+        DictionaryNode *next = current->next;
+        free(current->key);
+        if (current->value_dict != NULL) {
+            free_dictionary(current->value_dict);
+        }
+        free(current);
+        current = next;
+    }
+}
+
+int get_dictionary_depth(DictionaryNode *head) {
+    if (head == NULL) {
+        return 0;
+    }
+    
+    int max_depth = 0;
+    DictionaryNode *current = head;
+    
+    while (current != NULL) {
+        int current_depth = 1;
+        if (current->value_dict != NULL) {
+            current_depth += get_dictionary_depth(current->value_dict);
+        }
+        
+        if (current_depth > max_depth) {
+            max_depth = current_depth;
+        }
+        
+        current = current->next;
+    }
+    
+    return max_depth;
+}
+
+int main(void) {
+    DictionaryNode *level3 = create_node("key3", NULL);
+    if (!level3) return 1;
+    
+    DictionaryNode *level2 = create_node("key2", level3);
+    if (!level2) {
+        free_dictionary(level3);
+        return 1;
+    }
+    
+    DictionaryNode *level1 = create_node("key1", level2);
+    if (!level1) {
+        free_dictionary(level2);
+        return 1;
+    }
+    
+    DictionaryNode *sibling = create_node("sibling", NULL);
+    if (!sibling) {
+        free_dictionary(level1);
+        return 1;
+    }
+    level1->next = sibling;
+    
+    int depth = get_dictionary_depth(level1);
+    printf("Dictionary depth: %d\n", depth);
+    
+    free_dictionary(level1);
+    
+    return 0;
+}

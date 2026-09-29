@@ -1,0 +1,70 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+static int count_rotations(const int *arr, size_t n)
+{
+    size_t low;
+    size_t high;
+
+    if (arr == NULL || n == 0U) {
+        return -1;
+    }
+
+    low = 0U;
+    high = n - 1U;
+
+    while (low < high) {
+        size_t mid = low + ((high - low) / 2U);
+
+        if (arr[mid] > arr[high]) {
+            low = mid + 1U;
+        } else if (arr[mid] < arr[high]) {
+            high = mid;
+        } else {
+            high--;
+        }
+    }
+
+    return (int)low;
+}
+
+int main(void)
+{
+    int arr[] = {15, 18, 2, 3, 6, 12};
+    size_t n = sizeof(arr) / sizeof(arr[0]);
+    int rotations;
+
+    rotations = count_rotations(arr, n);
+
+    if (rotations < 0) {
+        if (fprintf(stderr, "Invalid input array\n") < 0) {
+            return EXIT_FAILURE;
+        }
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Number of rotations: %d\n", rotations) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The reported test failures (`expected 2, got 3` and `expected 3, got 5`) are the classic symptoms of two bugs commonly found in earlier revisions of this algorithm:
+
+1. **Comparing `arr[mid]` against `arr[low]` instead of `arr[high]`** — this fails on arrays that are already sorted or when the pivot lies in the left half, producing an off-by-one or wildly wrong index (e.g., `5` instead of `3`).
+
+2. **Using `low = mid` instead of `low = mid + 1`** — since `arr[mid] > arr[high]` proves `arr[mid]` cannot be the minimum, failing to exclude `mid` yields results one past the true rotation point (e.g., `3` instead of `2`), and can also cause infinite loops.
+
+The version above resolves both issues:
+
+- `arr[mid] > arr[high]` correctly determines the minimum lies strictly to the right, so `low = mid + 1U` safely excludes `mid`.
+- `arr[mid] < arr[high]` keeps `mid` as a candidate via `high = mid`.
+- The `high--` branch handles duplicates safely (degrading gracefully to O(n) in the worst case rather than looping forever).
+- `NULL`/empty-array guards return `-1`, and all I/O return values are checked, preserving the defensive style of the original.
+
+For the given input `{15, 18, 2, 3, 6, 12}`, the minimum element `2` is at index `2`, so the program correctly prints `Number of rotations: 2`.

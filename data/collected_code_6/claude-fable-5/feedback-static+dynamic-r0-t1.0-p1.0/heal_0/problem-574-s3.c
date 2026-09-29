@@ -1,0 +1,42 @@
+#include <stdio.h>
+#include <math.h>
+#include <stdlib.h>
+
+double cylinder_surface_area(double radius, double height)
+{
+    return 2.0 * M_PI * radius * (radius + height);
+}
+
+int main(void)
+{
+    double radius = 0.0;
+    double height = 0.0;
+
+    printf("Enter the radius of the cylinder: ");
+    if (scanf("%lf", &radius) != 1) {
+        fprintf(stderr, "Error: invalid input for radius.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter the height of the cylinder: ");
+    if (scanf("%lf", &height) != 1) {
+        fprintf(stderr, "Error: invalid input for height.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (radius < 0.0 || height < 0.0) {
+        fprintf(stderr, "Error: radius and height must be non-negative.\n");
+        return EXIT_FAILURE;
+    }
+
+    double area = cylinder_surface_area(radius, height);
+
+    if (!isfinite(area)) {
+        fprintf(stderr, "Error: computation overflow.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Surface area of the cylinder: %.6f\n", area);
+
+    return EXIT_SUCCESS;
+}

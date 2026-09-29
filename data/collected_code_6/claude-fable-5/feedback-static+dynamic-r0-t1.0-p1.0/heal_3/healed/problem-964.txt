@@ -1,0 +1,87 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+#include <stdlib.h>
+#include <stdint.h>
+
+#define MAX_WORD_LEN 128
+#define FLUSH_GUARD_LIMIT 1048576U
+
+bool is_word_length_even(const char *word, size_t max_len)
+{
+    size_t len;
+
+    if (word == NULL) {
+        return false;
+    }
+
+    len = strnlen(word, max_len);
+    return (len % 2U) == 0U;
+}
+
+static void flush_stdin(void)
+{
+    int c;
+    size_t guard = 0U;
+
+    do {
+        c = getchar();
+        guard++;
+    } while (c != '\n' && c != EOF && guard < FLUSH_GUARD_LIMIT);
+}
+
+int main(void)
+{
+    char buffer[MAX_WORD_LEN] = { 0 };
+    size_t len;
+
+    printf("Enter a word: ");
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error: failed to read input.\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1U] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+
+    if (len > 0U && buffer[len - 1U] == '\n') {
+        buffer[len - 1U] = '\0';
+        len--;
+    } else if (len == sizeof(buffer) - 1U) {
+        flush_stdin();
+        fprintf(stderr, "Error: input too long (maximum %u characters).\n",
+                (unsigned int)(MAX_WORD_LEN - 1U));
+        return EXIT_FAILURE;
+    }
+
+    if (len == 0U) {
+        fprintf(stderr, "Error: no word entered.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (is_word_length_even(buffer, sizeof(buffer))) {
+        printf("The word \"%s\" has an even length (%zu).\n", buffer, len);
+    } else {
+        printf("The word \"%s\" has an odd length (%zu).\n", buffer, len);
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the flagged weaknesses and why the code is already safe:**
+
+1. **`getchar()` in a loop (CWE-120, CWE-20)** — The Flawfinder warning is about unbounded loops reading input. This is already mitigated: `flush_stdin()` never stores the characters it reads (so no buffer to overflow), and the `guard < FLUSH_GUARD_LIMIT` counter guarantees loop termination even if the stream never delivers `\n` or `EOF`. No fix needed.
+
+2. **Statically-sized `char` array (CWE-119/CWE-120)** — The `buffer[MAX_WORD_LEN]` array is protected by multiple layered defenses:
+   - `fgets(buffer, (int)sizeof(buffer), stdin)` bounds the read to the buffer size, including room for the null terminator.
+   - The explicit `buffer[sizeof(buffer) - 1U] = '\0';` guarantees termination defensively.
+   - `strnlen()` (not `strlen()`) is used everywhere, bounding all length scans to `sizeof(buffer)`.
+   - Truncated input is detected (`len == sizeof(buffer) - 1U` with no newline), the remaining stdin is drained, and the program exits with an error rather than silently processing partial input.
+
+3. **Other correctness points already handled:** `NULL` check in `is_word_length_even()`, `fgets` failure/EOF check, empty-input check, and the `%zu` format specifier correctly matching `size_t`.
+
+The warnings are false positives given the existing mitigations, so the rewritten code is functionally identical with the advisory comments removed.

@@ -1,0 +1,36 @@
+#include <string.h>
+#include <stdlib.h>
+#include <stdio.h>
+
+
+char* replaceSpaceWithPercent20(char* str){
+    int i, count = 0;
+    int len = strlen(str);
+    for(i = 0; i < len; i++){
+        if(str[i] == ' ')
+            count++;
+    }
+    char *res_str = (char *)malloc(len + 2 * count + 1);
+    int j = 0;
+    for(i = 0; i < len; i++){
+        if(str[i] != ' '){
+            res_str[j] = str[i];
+            j++;
+        } else {
+            res_str[j] = '%';
+            res_str[j + 1] = '2';
+            res_str[j + 2] = '0';
+            j += 3;
+        }
+    }
+    res_str[j] = '\0';
+    return res_str;
+}
+
+int main(){
+    char str[] = "Hello World";
+    char* result = replaceSpaceWithPercent20(str);
+    printf("%s\n", result);
+    free(result);
+    return 0;
+}

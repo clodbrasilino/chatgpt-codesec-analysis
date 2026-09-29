@@ -1,0 +1,37 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+unsigned long long sum_of_even_squares(unsigned int n);
+
+unsigned long long sum_of_even_squares(unsigned int n) {
+    unsigned long long un = (unsigned long long)n;
+    unsigned long long sum = (2ULL * un * (un + 1ULL) * (2ULL * un + 1ULL)) / 3ULL;
+    return sum;
+}
+
+int main(void) {
+    int input;
+    unsigned int n;
+    unsigned long long result;
+
+    if (printf("Enter the value of n: ") < 0) {
+        return EXIT_FAILURE;
+    }
+
+    if (scanf("%d", &input) != 1) {
+        return EXIT_FAILURE;
+    }
+
+    if (input < 0) {
+        return EXIT_FAILURE;
+    }
+
+    n = (unsigned int)input;
+    result = sum_of_even_squares(n);
+
+    if (printf("%llu\n", result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

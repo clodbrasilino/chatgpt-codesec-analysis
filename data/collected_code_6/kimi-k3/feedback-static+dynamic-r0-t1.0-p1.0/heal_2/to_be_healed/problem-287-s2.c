@@ -1,0 +1,64 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <limits.h>
+
+unsigned long long sum_of_squares_even(int n) {
+    unsigned long long sum = 0;
+    int i;
+    for (i = 1; i <= n; i++) {
+        unsigned long long even_num = 2ULL * (unsigned int)i;
+        sum += even_num * even_num;
+    }
+    return sum;
+}
+
+int main(void) {
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char buffer[256];
+    char *endptr;
+    long val;
+    int n;
+    unsigned long long result;
+    size_t len;
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    len = 0;
+    while (len < sizeof(buffer) && buffer[len] != '\0') {
+        len++;
+    }
+    
+    if (len == sizeof(buffer)) {
+        fprintf(stderr, "Invalid input: input too long\n");
+        return EXIT_FAILURE;
+    }
+
+    errno = 0;
+    val = strtol(buffer, &endptr, 10);
+    
+    if (errno == ERANGE || val > INT_MAX || val < 0) {
+        fprintf(stderr, "Invalid input: out of range\n");
+        return EXIT_FAILURE;
+    }
+    
+    if (endptr == buffer || (*endptr != '\n' && *endptr != '\0')) {
+        fprintf(stderr, "Invalid input: not a valid integer\n");
+        return EXIT_FAILURE;
+    }
+
+    n = (int)val;
+    result = sum_of_squares_even(n);
+    
+    if (printf("%llu\n", result) < 0) {
+        fprintf(stderr, "Error writing output\n");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

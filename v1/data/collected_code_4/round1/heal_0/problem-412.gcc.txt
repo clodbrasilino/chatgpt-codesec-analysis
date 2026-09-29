@@ -1,0 +1,15 @@
+./collected_code_4/round1//heal_0//problem-412.c: In function 'push':
+./collected_code_4/round1//heal_0//problem-412.c:36:20: warning: dereference of possibly-NULL 'new_node' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   36 |     new_node->data = new_data;
+      |     ~~~~~~~~~~~~~~~^~~~~~~~~~
+  'push': events 1-2
+    |
+    |   35 |     Node_t* new_node = (Node_t*)malloc(sizeof(Node_t));
+    |      |                                 ^~~~~~~~~~~~~~~~~~~~~~
+    |      |                                 |
+    |      |                                 (1) this call could return NULL
+    |   36 |     new_node->data = new_data;
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~    
+    |      |                    |
+    |      |                    (2) 'new_node' could be NULL: unchecked value from (1)
+    |

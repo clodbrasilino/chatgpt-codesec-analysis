@@ -1,0 +1,93 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <errno.h>
+#include <limits.h>
+#include <ctype.h>
+
+int string_starts_with_number(const char *str, long number)
+{
+    char *endptr;
+    long parsed;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    if (!isdigit((unsigned char)str[0]) && str[0] != '-' && str[0] != '+') {
+        return 0;
+    }
+
+    errno = 0;
+    parsed = strtol(str, &endptr, 10);
+
+    if (errno == ERANGE) {
+        return 0;
+    }
+
+    if (endptr == str) {
+        return 0;
+    }
+
+    return (parsed == number) ? 1 : 0;
+}
+
+int main(void)
+{
+    const char *test1 = "42abc";
+    const char *test2 = "100 apples";
+    const char *test3 = "hello42";
+    const char *test4 = "-7degrees";
+
+    if (string_starts_with_number(test1, 42)) {
+        if (printf("\"%s\" starts with 42\n", test1) < 0) {
+            return EXIT_FAILURE;
+        }
+    } else {
+        if (printf("\"%s\" does not start with 42\n", test1) < 0) {
+            return EXIT_FAILURE;
+        }
+    }
+
+    if (string_starts_with_number(test2, 100)) {
+        if (printf("\"%s\" starts with 100\n", test2) < 0) {
+            return EXIT_FAILURE;
+        }
+    } else {
+        if (printf("\"%s\" does not start with 100\n", test2) < 0) {
+            return EXIT_FAILURE;
+        }
+    }
+
+    if (string_starts_with_number(test3, 42)) {
+        if (printf("\"%s\" starts with 42\n", test3) < 0) {
+            return EXIT_FAILURE;
+        }
+    } else {
+        if (printf("\"%s\" does not start with 42\n", test3) < 0) {
+            return EXIT_FAILURE;
+        }
+    }
+
+    if (string_starts_with_number(test4, -7)) {
+        if (printf("\"%s\" starts with -7\n", test4) < 0) {
+            return EXIT_FAILURE;
+        }
+    } else {
+        if (printf("\"%s\" does not start with -7\n", test4) < 0) {
+            return EXIT_FAILURE;
+        }
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Key safety measures in this code:**
+
+- **CWE-664 (Resource lifetime):** No dynamic memory allocation is used, so there are no leaks or use-after-free risks. All strings are read-only literals and never modified.
+
+- **CWE-703 (Exceptional conditions):** The function checks for `NULL` input, validates that parsing actually consumed characters (`endptr == str`), checks `errno` for `ERANGE` overflow from `strtol`, and `main` checks the return value of every `printf` call.
+
+- **CWE-710 (Coding standards):** Uses `strtol` instead of the unsafe `atoi`, casts to `unsigned char` before calling `isdigit` to avoid undefined behavior with negative `char` values, uses `EXIT_SUCCESS`/`EXIT_FAILURE` macros, and declares `main(void)` per the C standard.

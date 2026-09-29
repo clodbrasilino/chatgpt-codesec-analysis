@@ -1,0 +1,26 @@
+collected_code_3/problem-570-2.c: In function 'removeWords':
+collected_code_3/problem-570-2.c:11:28: warning: dereference of possibly-NULL 'newList' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   11 |             newList[count] = malloc(strlen(strList[i]) + 1);
+      |             ~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  'removeWords': events 1-6
+    |
+    |    7 |     char **newList = malloc(listSize * sizeof(char*));
+    |      |                      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                      |
+    |      |                      (1) this call could return NULL
+    |    8 | 
+    |    9 |     for(i = 0; i < listSize; i++) {
+    |      |                ~~~~~~~~~~~~
+    |      |                  |
+    |      |                  (2) following 'true' branch (when 'i < listSize')...
+    |   10 |         if(strstr(strList[i], target) == NULL) {
+    |      |           ~              ~
+    |      |           |              |
+    |      |           |              (3) ...to here
+    |      |           (4) following 'true' branch...
+    |   11 |             newList[count] = malloc(strlen(strList[i]) + 1);
+    |      |             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                            |                      |
+    |      |                            |                      (5) ...to here
+    |      |                            (6) 'newList + (long unsigned int)count * 8' could be NULL: unchecked value from (1)
+    |

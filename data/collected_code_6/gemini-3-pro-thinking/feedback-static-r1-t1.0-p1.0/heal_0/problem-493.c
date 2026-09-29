@@ -1,0 +1,100 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
+
+typedef struct {
+    double x;
+    double y;
+} Point;
+
+typedef struct {
+    Point points[6];
+} Hexagon;
+
+typedef struct {
+    Hexagon *hexagons;
+    size_t count;
+} HexagonGrid;
+
+HexagonGrid* create_hexagon_grid(int rows, int cols, double size);
+void free_hexagon_grid(HexagonGrid *grid);
+
+HexagonGrid* create_hexagon_grid(int rows, int cols, double size) {
+    if (rows <= 0 || cols <= 0 || size <= 0.0 || rows > 10000 || cols > 10000) {
+        return NULL;
+    }
+
+    HexagonGrid *grid = (HexagonGrid*)malloc(sizeof(HexagonGrid));
+    if (!grid) {
+        return NULL;
+    }
+
+    size_t total_hexagons = (size_t)rows * (size_t)cols;
+    grid->hexagons = (Hexagon*)malloc(total_hexagons * sizeof(Hexagon));
+    if (!grid->hexagons) {
+        free(grid);
+        return NULL;
+    }
+
+    grid->count = total_hexagons;
+
+    double width = 2.0 * size;
+    double height = sqrt(3.0) * size;
+    double horiz_spacing = width * 0.75;
+    double vert_spacing = height;
+
+    size_t index = 0;
+    for (int r = 0; r < rows; r++) {
+        for (int c = 0; c < cols; c++) {
+            double cx = (double)c * horiz_spacing;
+            double cy = (double)r * vert_spacing;
+            
+            if (c % 2 == 1) {
+                cy += height / 2.0;
+            }
+
+            for (int i = 0; i < 6; i++) {
+                double angle_rad = (M_PI / 180.0) * (60.0 * i);
+                grid->hexagons[index].points[i].x = cx + size * cos(angle_rad);
+                grid->hexagons[index].points[i].y = cy + size * sin(angle_rad);
+            }
+            index++;
+        }
+    }
+
+    return grid;
+}
+
+void free_hexagon_grid(HexagonGrid *grid) {
+    if (grid) {
+        free(grid->hexagons);
+        free(grid);
+    }
+}
+
+int main(void) {
+    int rows = 3;
+    int cols = 4;
+    double size = 10.0;
+
+    HexagonGrid *grid = create_hexagon_grid(rows, cols, size);
+    if (!grid) {
+        fprintf(stderr, "Error: Failed to create hexagon grid or invalid dimensions.\n");
+        return EXIT_FAILURE;
+    }
+
+    for (size_t i = 0; i < grid->count; i++) {
+        printf("Hexagon %zu:\n", i);
+        for (int j = 0; j < 6; j++) {
+            printf("  Point %d: (%8.2f, %8.2f)\n", j, grid->hexagons[i].points[j].x, grid->hexagons[i].points[j].y);
+        }
+    }
+
+    free_hexagon_grid(grid);
+
+    return EXIT_SUCCESS;
+}

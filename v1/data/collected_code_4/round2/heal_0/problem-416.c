@@ -1,0 +1,16 @@
+#include <stdio.h>
+
+long int sumOfParts(long int num) {
+    if(num < 2)
+        return 0;
+    else
+        return num / 2 + num / 3 + num / 4 + sumOfParts(num / 2) + sumOfParts(num / 3) + sumOfParts(num / 4);
+}
+
+int main() {
+    long int num;
+    printf("Enter a number:");
+    scanf("%ld",&num);
+    printf("Maximum sum of parts: %ld\n", sumOfParts(num));
+    return 0;
+}

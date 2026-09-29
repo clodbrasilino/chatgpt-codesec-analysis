@@ -1,0 +1,39 @@
+#include <stdio.h>
+#include <math.h>
+#include <stdlib.h>
+
+double tetrahedron_area(double edge)
+{
+    return sqrt(3.0) * edge * edge;
+}
+
+int main(void)
+{
+    double edge = 0.0;
+    double area = 0.0;
+    int result = 0;
+
+    printf("Enter the edge length of the tetrahedron: ");
+    result = scanf("%lf", &edge);
+
+    if (result != 1) {
+        fprintf(stderr, "Error: invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (edge <= 0.0 || !isfinite(edge)) {
+        fprintf(stderr, "Error: edge length must be a positive finite number.\n");
+        return EXIT_FAILURE;
+    }
+
+    area = tetrahedron_area(edge);
+
+    if (!isfinite(area)) {
+        fprintf(stderr, "Error: computation overflow.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Surface area of the tetrahedron: %f\n", area);
+
+    return EXIT_SUCCESS;
+}

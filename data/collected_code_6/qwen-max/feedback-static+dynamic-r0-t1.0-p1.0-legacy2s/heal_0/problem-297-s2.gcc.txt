@@ -1,0 +1,16 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_0/problem-297-s2.c: In function 'main':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_0/problem-297-s2.c:75:9: error: assignment to 'Node *' {aka 'struct _Node *'} from incompatible pointer type 'NestedList *' {aka 'struct _NestedList *'} [-Wincompatible-pointer-types]
+   75 |     ptr = nested;
+      |         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_0/problem-297-s2.c:77:28: error: initialization of 'NestedList *' {aka 'struct _NestedList *'} from incompatible pointer type 'struct _Node *' [-Wincompatible-pointer-types]
+   77 |         NestedList *next = ptr->next;
+      |                            ^~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_0/problem-297-s2.c:78:16: error: 'Node' {aka 'struct _Node'} has no member named 'child'
+   78 |         if (ptr->child) {
+      |                ^~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_0/problem-297-s2.c:79:36: error: 'Node' {aka 'struct _Node'} has no member named 'child'
+   79 |             NestedList *child = ptr->child;
+      |                                    ^~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_0/problem-297-s2.c:87:13: error: assignment to 'Node *' {aka 'struct _Node *'} from incompatible pointer type 'NestedList *' {aka 'struct _NestedList *'} [-Wincompatible-pointer-types]
+   87 |         ptr = next;
+      |             ^

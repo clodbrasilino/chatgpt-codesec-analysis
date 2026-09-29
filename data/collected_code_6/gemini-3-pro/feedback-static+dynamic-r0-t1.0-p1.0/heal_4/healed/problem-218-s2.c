@@ -1,0 +1,17 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int min_operations(int a, int b) {
+    return abs(a - b);
+}
+
+int main(void) {
+    int a = 2;
+    int b = 6;
+    
+    int result = min_operations(a, b);
+    
+    printf("%d\n", result);
+    
+    return EXIT_SUCCESS;
+}

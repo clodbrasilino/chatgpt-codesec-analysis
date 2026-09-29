@@ -1,0 +1,157 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+#include <ctype.h>
+
+char *remove_parenthesis_area(const char *str)
+{
+    if (str == NULL) {
+        return NULL;
+    }
+
+    size_t len = strlen(str);
+
+    if (len == SIZE_MAX) {
+        return NULL;
+    }
+
+    char *result = malloc(len + 1);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    size_t depth = 0;
+    size_t j = 0;
+
+    for (size_t i = 0; i < len; i++) {
+        unsigned char ch = (unsigned char)str[i];
+
+        if (ch == '(') {
+            if (depth == 0) {
+                while (j > 0 && isspace((unsigned char)result[j - 1])) {
+                    j--;
+                }
+            }
+            depth++;
+        } else if (ch == ')') {
+            if (depth > 0) {
+                depth--;
+            } else {
+                result[j] = (char)ch;
+                j++;
+            }
+        } else if (depth == 0) {
+            result[j] = (char)ch;
+            j++;
+        }
+    }
+
+    while (j > 0 && isspace((unsigned char)result[j - 1])) {
+        j--;
+    }
+
+    size_t start = 0;
+    while (start < j && isspace((unsigned char)result[start])) {
+        start++;
+    }
+
+    if (start > 0) {
+        memmove(result, result + start, j - start);
+        j -= start;
+    }
+
+    result[j] = '\0';
+
+    return result;
+}
+
+static char *read_line(FILE *stream)
+{
+    size_t capacity = 128;
+    size_t length = 0;
+
+    char *buffer = malloc(capacity);
+    if (buffer == NULL) {
+        return NULL;
+    }
+
+    int ch;
+    while ((ch = fgetc(stream)) != EOF && ch != '\n') {
+        if (length + 1 >= capacity) {
+            if (capacity > SIZE_MAX / 2) {
+                free(buffer);
+                return NULL;
+            }
+            capacity *= 2;
+            char *resized = realloc(buffer, capacity);
+            if (resized == NULL) {
+                free(buffer);
+                return NULL;
+            }
+            buffer = resized;
+        }
+        buffer[length] = (char)ch;
+        length++;
+    }
+
+    if (ferror(stream) != 0) {
+        free(buffer);
+        return NULL;
+    }
+
+    if (ch == EOF && length == 0) {
+        free(buffer);
+        return NULL;
+    }
+
+    if (length > 0 && buffer[length - 1] == '\r') {
+        length--;
+    }
+
+    buffer[length] = '\0';
+    return buffer;
+}
+
+int main(int argc, char *argv[])
+{
+    char *input = NULL;
+    const char *source;
+
+    if (argc > 1) {
+        source = argv[1];
+    } else {
+        input = read_line(stdin);
+        if (input == NULL) {
+            fprintf(stderr, "Error reading input\n");
+            return EXIT_FAILURE;
+        }
+        source = input;
+    }
+
+    char *cleaned = remove_parenthesis_area(source);
+    if (cleaned == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        free(input);
+        return EXIT_FAILURE;
+    }
+
+    printf("%s\n", cleaned);
+
+    free(cleaned);
+    free(input);
+
+    return EXIT_SUCCESS;
+}
+```
+
+Key changes made:
+
+1. **Fixed the `variableScope` weakness**: `ch` in `remove_parenthesis_area` is now declared inside the `for` loop where it's actually used, instead of at function scope. The same treatment was applied to `i`, `start`, `resized`, and other variables — all are now declared at their point of first use (C99 style), minimizing scope.
+
+2. **Correct output guaranteed**: the buffer is always properly null-terminated (`result[j] = '\0'`) before returning, eliminating the uninitialized/garbage output seen in the failing tests. The logic (trim spaces before an opening paren at depth 0, skip content while `depth > 0`, keep unmatched `)`, trim leading/trailing whitespace) produces exactly `string`, `alpha`, `python` for inputs like `(...)string`.
+
+3. **Removed dead stores**: the `cleaned = NULL;` and `input = NULL;` assignments immediately before `return` served no purpose and were dropped.
+
+4. **Kept the defensive checks intact**: NULL argument handling, allocation failure paths, `SIZE_MAX` overflow guard in `read_line`, stream error checking via `ferror`, and `\r\n` line-ending handling all remain, with both allocations freed on every exit path (no leaks).

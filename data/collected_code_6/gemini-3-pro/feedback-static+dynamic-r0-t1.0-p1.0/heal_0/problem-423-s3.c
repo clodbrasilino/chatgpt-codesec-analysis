@@ -1,0 +1,96 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int max(int a, int b) {
+    return (a > b) ? a : b;
+}
+
+int max_gold(int** mine, int rows, int cols) {
+    if (mine == NULL || rows <= 0 || cols <= 0) {
+        return 0;
+    }
+
+    int** dp = (int**)malloc(rows * sizeof(int*));
+    if (dp == NULL) {
+        return 0;
+    }
+
+    for (int i = 0; i < rows; i++) {
+        dp[i] = (int*)malloc(cols * sizeof(int));
+        if (dp[i] == NULL) {
+            for (int j = 0; j < i; j++) {
+                free(dp[j]);
+            }
+            free(dp);
+            return 0;
+        }
+    }
+
+    for (int j = cols - 1; j >= 0; j--) {
+        for (int i = 0; i < rows; i++) {
+            if (j == cols - 1) {
+                dp[i][j] = mine[i][j];
+            } else {
+                int right = dp[i][j + 1];
+                int right_up = (i == 0) ? 0 : dp[i - 1][j + 1];
+                int right_down = (i == rows - 1) ? 0 : dp[i + 1][j + 1];
+                dp[i][j] = mine[i][j] + max(right, max(right_up, right_down));
+            }
+        }
+    }
+
+    int result = dp[0][0];
+    for (int i = 1; i < rows; i++) {
+        if (dp[i][0] > result) {
+            result = dp[i][0];
+        }
+    }
+
+    for (int i = 0; i < rows; i++) {
+        free(dp[i]);
+    }
+    free(dp);
+
+    return result;
+}
+
+int main() {
+    int rows = 4;
+    int cols = 4;
+
+    int** mine = (int**)malloc(rows * sizeof(int*));
+    if (mine == NULL) {
+        return 1;
+    }
+
+    int initial_mine[4][4] = {
+        {1, 3, 1, 5},
+        {2, 2, 4, 1},
+        {5, 0, 2, 3},
+        {0, 6, 1, 2}
+    };
+
+    for (int i = 0; i < rows; i++) {
+        mine[i] = (int*)malloc(cols * sizeof(int));
+        if (mine[i] == NULL) {
+            for (int j = 0; j < i; j++) {
+                free(mine[j]);
+            }
+            free(mine);
+            return 1;
+        }
+        for (int j = 0; j < cols; j++) {
+            mine[i][j] = initial_mine[i][j];
+        }
+    }
+
+    int max_val = max_gold(mine, rows, cols);
+    printf("Max gold: %d\n", max_val);
+
+    for (int i = 0; i < rows; i++) {
+        free(mine[i]);
+    }
+    free(mine);
+
+    return 0;
+}

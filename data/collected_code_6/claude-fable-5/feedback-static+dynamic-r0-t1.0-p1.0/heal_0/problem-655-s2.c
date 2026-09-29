@@ -1,0 +1,43 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+unsigned long long sum_of_fifth_powers(unsigned int n)
+{
+    unsigned long long sum = 0ULL;
+    unsigned int i;
+
+    for (i = 1U; i <= n; i++) {
+        unsigned long long term = (unsigned long long)i;
+        term = term * i;
+        term = term * i;
+        term = term * i;
+        term = term * i;
+        sum += term;
+    }
+
+    return sum;
+}
+
+int main(void)
+{
+    unsigned int n = 0U;
+    int result;
+
+    printf("Enter a natural number: ");
+    result = scanf("%u", &n);
+
+    if (result != 1) {
+        fprintf(stderr, "Invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (n > 7130U) {
+        fprintf(stderr, "Input too large, result would overflow.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Sum of fifth powers of first %u natural numbers: %llu\n",
+           n, sum_of_fifth_powers(n));
+
+    return EXIT_SUCCESS;
+}

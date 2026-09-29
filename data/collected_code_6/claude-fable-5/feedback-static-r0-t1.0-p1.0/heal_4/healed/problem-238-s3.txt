@@ -1,0 +1,75 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+#define MAX_INPUT_SIZE 1024
+
+static unsigned long long count_substrings(const char *str, size_t max_len)
+{
+    size_t len;
+
+    if (str == NULL) {
+        return 0ULL;
+    }
+
+    len = strnlen(str, max_len);
+
+    return ((unsigned long long)len * (unsigned long long)(len + 1U)) / 2ULL;
+}
+
+static void flush_stdin(void)
+{
+    int ch;
+
+    do {
+        ch = getchar();
+    } while (ch != '\n' && ch != EOF);
+}
+
+int main(void)
+{
+    char buffer[MAX_INPUT_SIZE];
+    char *newline;
+    unsigned long long result;
+
+    printf("Enter a string: ");
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error: failed to read input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    newline = strchr(buffer, '\n');
+    if (newline != NULL) {
+        *newline = '\0';
+    } else {
+        flush_stdin();
+    }
+
+    result = count_substrings(buffer, sizeof(buffer));
+
+    printf("Number of non-empty substrings: %llu\n", result);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the flagged weaknesses and why the code is safe:**
+
+1. **`getchar()` in a loop (CWE-120, CWE-20):** The `flush_stdin()` function uses `getchar()` purely to discard excess characters — nothing is stored in any buffer, so there is no possibility of overflow. The loop terminates correctly on both `'\n'` and `EOF`, and `ch` is declared as `int` (not `char`), which is essential for correctly detecting `EOF`.
+
+2. **Statically-sized `char` array (CWE-119/CWE-120):** The `buffer` array is protected on multiple levels:
+   - `fgets(buffer, (int)sizeof(buffer), stdin)` limits input to at most `MAX_INPUT_SIZE - 1` characters plus the null terminator, preventing overflow.
+   - The return value of `fgets` is checked against `NULL` to handle read errors or immediate EOF.
+   - `buffer[sizeof(buffer) - 1] = '\0';` is a defensive belt-and-suspenders guarantee of null termination.
+   - When the input exceeds the buffer (no newline found), `flush_stdin()` drains the rest of the line so leftover characters don't pollute subsequent reads.
+
+3. **Additional robustness already present:**
+   - `strnlen(str, max_len)` is used instead of `strlen`, bounding the scan even if termination were somehow violated.
+   - The substring count uses `unsigned long long` arithmetic with explicit casts, avoiding integer overflow — the maximum value (`1023 * 1024 / 2 = 523,776`) fits trivially, but the code would remain correct for far larger limits.
+   - `count_substrings` guards against a `NULL` pointer argument.
+
+The code as written already mitigates both Flawfinder findings; they are informational (risk levels 1–2) rather than actual vulnerabilities, so the rewrite preserves the logic with the comments removed.

@@ -1,0 +1,6 @@
+collected_code/problem-515-0.c:14:22: error: Cannot determine that 'arr[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        int mod = arr[i] % m;
+                     ^
+collected_code/problem-515-0.c:18:11: error: Cannot determine that 'dp[0]' is initialized [premium-bughuntingUninit]
+    if (dp[0] > 0)
+          ^

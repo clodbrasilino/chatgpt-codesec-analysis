@@ -1,0 +1,63 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+
+struct Node {
+    int data;
+    struct Node* next;
+};
+
+bool have_common_element(struct Node* list1, struct Node* list2) {
+    if (list1 == NULL || list2 == NULL) {
+        return false;
+    }
+
+    struct Node* current1 = list1;
+    while (current1 != NULL) {
+        struct Node* current2 = list2;
+        while (current2 != NULL) {
+            if (current1->data == current2->data) {
+                return true;
+            }
+            current2 = current2->next;
+        }
+        current1 = current1->next;
+    }
+
+    return false;
+}
+
+int main() {
+    struct Node node1 = {1, NULL};
+    struct Node node2 = {2, NULL};
+    struct Node node3 = {3, NULL};
+    struct Node node4 = {4, NULL};
+    
+    node1.next = &node2;
+    node3.next = &node2; 
+    node2.next = &node4;
+    
+    struct Node list_a_node1 = {10, NULL};
+    struct Node list_a_node2 = {20, NULL};
+    struct Node list_b_node1 = {30, NULL};
+    
+    list_a_node1.next = &list_a_node2;
+    
+    bool result1 = have_common_element(&node1, &node3);
+    bool result2 = have_common_element(&list_a_node1, &list_b_node1);
+    
+    if (result1) {
+        printf("List1 and List2 have a common element.\n");
+    } else {
+        printf("List1 and List2 do not have a common element.\n");
+    }
+
+    if (result2) {
+        printf("ListA and ListB have a common element.\n");
+    } else {
+        printf("ListA and ListB do not have a common element.\n");
+    }
+
+    return 0;
+}
+```

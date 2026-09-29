@@ -1,0 +1,9 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_1/healed/problem-421-s3.c: In function 'main':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_1/healed/problem-421-s3.c:75:25: error: passing argument 1 of 'join_tuple' from incompatible pointer type [-Wincompatible-pointer-types]
+   75 |     result = join_tuple(null_tuple, count, delimiter);
+      |                         ^~~~~~~~~~
+      |                         |
+      |                         char **
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_1/healed/problem-421-s3.c:5:37: note: expected 'const char * const*' but argument is of type 'char **'
+    5 | char *join_tuple(const char * const tuple[], size_t count, const char *delimiter) {
+      |                  ~~~~~~~~~~~~~~~~~~~^~~~~~~

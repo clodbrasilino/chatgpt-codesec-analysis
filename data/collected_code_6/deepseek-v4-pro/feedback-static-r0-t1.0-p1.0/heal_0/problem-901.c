@@ -1,0 +1,50 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+long long gcd(long long a, long long b) {
+    while (b != 0) {
+        long long temp = b;
+        b = a % b;
+        a = temp;
+    }
+    return a;
+}
+
+long long lcm(long long a, long long b) {
+    if (a == 0 || b == 0) {
+        return 0;
+    }
+    return (a / gcd(a, b)) * b;
+}
+
+long long smallest_multiple(int n) {
+    if (n <= 0) {
+        return 0;
+    }
+    
+    long long result = 1;
+    for (int i = 2; i <= n; i++) {
+        result = lcm(result, (long long)i);
+    }
+    return result;
+}
+
+int main(void) {
+    int n;
+    
+    printf("Enter a number: ");
+    if (scanf("%d", &n) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    long long result = smallest_multiple(n);
+    if (result <= 0) {
+        fprintf(stderr, "Input must be positive\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("Smallest multiple of first %d numbers: %lld\n", n, result);
+    
+    return EXIT_SUCCESS;
+}

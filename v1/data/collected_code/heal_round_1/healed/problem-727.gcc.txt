@@ -1,0 +1,102 @@
+collected_code/healed/problem-727.c: In function 'removeSpecialCharacters':
+collected_code/healed/problem-727.c:13:9: warning: leak of 'result' [CWE-401] [-Wanalyzer-malloc-leak]
+   13 |         return;
+      |         ^~~~~~
+  'removeSpecialCharacters': events 1-5
+    |
+    |   11 |     if (ret) {
+    |      |        ^
+    |      |        |
+    |      |        (1) following 'false' branch (when 'ret == 0')...
+    |......
+    |   16 |     ret = regexec(&regex, str, 0, NULL, 0);
+    |      |           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |           |
+    |      |           (2) ...to here
+    |   17 |     if(!ret){
+    |      |       ~ 
+    |      |       |
+    |      |       (3) following 'true' branch (when 'ret == 0')...
+    |   18 |         regfree(&regex);
+    |      |         ~~~~~~~~~~~~~~~
+    |      |         |
+    |      |         (4) ...to here
+    |......
+    |   21 |         char* result = (char*)malloc(sizeof(char) * (strlen(str) + 1));
+    |      |                               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                               |
+    |      |                               (5) allocated here
+    |
+  'removeSpecialCharacters': event 6
+    |
+    |   22 |         memset(result, 0, sizeof(char) * (strlen(str) + 1));
+    |      |         ^~~~~~
+    |      |         |
+    |      |         (6) assuming 'result' is non-NULL
+    |
+  'removeSpecialCharacters': events 7-11
+    |
+    |   13 |         return;
+    |      |         ~~~~~~
+    |      |         |
+    |      |         (11) 'result' leaks here; was allocated at (5)
+    |......
+    |   35 |         if ((result+index) != NULL  && (str+index+pmatch.rm_so) != NULL && (pmatch.rm_eo - pmatch.rm_so) >= 0)
+    |      |            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |            |                                                            |         |
+    |      |            |                                                            |         (8) ...to here
+    |      |            (7) following 'true' branch...                               (9) following 'false' branch...
+    |......
+    |   38 |             return;
+    |      |             ~~~~~~
+    |      |             |
+    |      |             (10) ...to here
+    |
+collected_code/healed/problem-727.c:40:11: warning: check of 'str' for NULL after already dereferencing it [-Wanalyzer-deref-before-check]
+   40 |         if(str!=NULL && strlen(str)>=strlen(result) )
+      |           ^
+  'removeSpecialCharacters': events 1-6
+    |
+    |   11 |     if (ret) {
+    |      |        ^
+    |      |        |
+    |      |        (1) following 'false' branch (when 'ret == 0')...
+    |......
+    |   16 |     ret = regexec(&regex, str, 0, NULL, 0);
+    |      |           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |           |
+    |      |           (2) ...to here
+    |   17 |     if(!ret){
+    |      |       ~ 
+    |      |       |
+    |      |       (3) following 'true' branch (when 'ret == 0')...
+    |   18 |         regfree(&regex);
+    |      |         ~~~~~~~~~~~~~~~
+    |      |         |
+    |      |         (4) ...to here
+    |......
+    |   21 |         char* result = (char*)malloc(sizeof(char) * (strlen(str) + 1));
+    |      |                                                      ~~~~~~~~~~~
+    |      |                                                      |
+    |      |                                                      (5) pointer 'str' is dereferenced here
+    |......
+    |   35 |         if ((result+index) != NULL  && (str+index+pmatch.rm_so) != NULL && (pmatch.rm_eo - pmatch.rm_so) >= 0)
+    |      |            ~
+    |      |            |
+    |      |            (6) following 'true' branch...
+    |
+  'removeSpecialCharacters': event 7
+    |
+    |   36 |             strncpy(result + index, str + index + pmatch.rm_so, pmatch.rm_eo - pmatch.rm_so);
+    |      |             ^~~~~~~
+    |      |             |
+    |      |             (7) ...to here
+    |
+  'removeSpecialCharacters': event 8
+    |
+    |   40 |         if(str!=NULL && strlen(str)>=strlen(result) )
+    |      |           ^
+    |      |           |
+    |      |           (8) pointer 'str' is checked for NULL here but it was already dereferenced at (5)
+    |
+-macosx_version_min has been renamed to -macos_version_min

@@ -1,0 +1,75 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+#include <ctype.h>
+
+bool match_word_at_start(const char *str, size_t str_len, const char *word, size_t word_len)
+{
+    if (str == NULL || word == NULL)
+    {
+        return false;
+    }
+
+    if (word_len == 0)
+    {
+        return false;
+    }
+
+    if (str_len < word_len)
+    {
+        return false;
+    }
+
+    if (strncmp(str, word, word_len) != 0)
+    {
+        return false;
+    }
+
+    if (word_len < str_len && str[word_len] != '\0' && !isspace((unsigned char)str[word_len]) && 
+        str[word_len] != ',' && str[word_len] != '.' && str[word_len] != '!' && 
+        str[word_len] != '?' && str[word_len] != ';' && str[word_len] != ':')
+    {
+        return false;
+    }
+
+    return true;
+}
+
+int main(void)
+{
+    const char *test_str1 = "hello world";
+    const char *test_str2 = "hello, world";
+    const char *test_str3 = "helloworld";
+    const char *test_str4 = "hi there";
+    const char *word = "hello";
+
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    printf("Test 1: %s\n", match_word_at_start(test_str1, strlen(test_str1), word, strlen(word)) ? "Match" : "No match");
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    printf("Test 2: %s\n", match_word_at_start(test_str2, strlen(test_str2), word, strlen(word)) ? "Match" : "No match");
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    printf("Test 3: %s\n", match_word_at_start(test_str3, strlen(test_str3), word, strlen(word)) ? "Match" : "No match");
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    printf("Test 4: %s\n", match_word_at_start(test_str4, strlen(test_str4), word, strlen(word)) ? "Match" : "No match");
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     *  Condition 'match_word_at_start(NULL,0,word,strlen(word))' is always false
+     *  Condition 'match_word_at_start(NULL,0,word,strlen(word))' is always false [knownConditionTrueFalse]
+     *  Calling function 'match_word_at_start' returns 0
+     */
+    printf("Test 5: %s\n", match_word_at_start(NULL, 0, word, strlen(word)) ? "Match" : "No match");
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    printf("Test 6: %s\n", match_word_at_start(test_str1, strlen(test_str1), NULL, 0) ? "Match" : "No match");
+
+    return 0;
+}

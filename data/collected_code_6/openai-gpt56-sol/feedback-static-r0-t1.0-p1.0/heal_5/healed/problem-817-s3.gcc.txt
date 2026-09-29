@@ -1,0 +1,11 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-817-s3.c: In function 'is_divisible_by':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-817-s3.c:74:18: error: 'LONG_MIN' undeclared (first use in this function)
+   74 |     if (value == LONG_MIN && divisor == -1) {
+      |                  ^~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-817-s3.c:7:1: note: 'LONG_MIN' is defined in header '<limits.h>'; this is probably fixable by adding '#include <limits.h>'
+    6 | #include <stdlib.h>
+  +++ |+#include <limits.h>
+    7 | 
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-817-s3.c:74:18: note: each undeclared identifier is reported only once for each function it appears in
+   74 |     if (value == LONG_MIN && divisor == -1) {
+      |                  ^~~~~~~~

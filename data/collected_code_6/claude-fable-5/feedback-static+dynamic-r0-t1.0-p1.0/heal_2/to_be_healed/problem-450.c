@@ -1,0 +1,131 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+#define MAX_STRING_LENGTH 4096
+
+char **extract_strings_by_size(const char **list, size_t list_count, size_t target_size, size_t *result_count);
+void free_string_list(char **list, size_t count);
+static size_t bounded_length(const char *s, size_t max_len);
+
+static size_t bounded_length(const char *s, size_t max_len)
+{
+    size_t len = 0;
+
+    while (len < max_len && s[len] != '\0') {
+        len++;
+    }
+    return len;
+}
+
+char **extract_strings_by_size(const char **list, size_t list_count, size_t target_size, size_t *result_count)
+{
+    char **result = NULL;
+    size_t count = 0;
+    size_t i;
+    size_t len;
+
+    if (result_count == NULL) {
+        return NULL;
+    }
+
+    *result_count = 0;
+
+    if (list == NULL || list_count == 0 || target_size >= MAX_STRING_LENGTH) {
+        return NULL;
+    }
+
+    for (i = 0; i < list_count; i++) {
+        if (list[i] != NULL) {
+            len = bounded_length(list[i], MAX_STRING_LENGTH);
+            if (len < MAX_STRING_LENGTH && len == target_size) {
+                count++;
+            }
+        }
+    }
+
+    if (count == 0) {
+        return NULL;
+    }
+
+    if (count > SIZE_MAX / sizeof(char *)) {
+        return NULL;
+    }
+
+    result = malloc(count * sizeof(char *));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    count = 0;
+    for (i = 0; i < list_count; i++) {
+        if (list[i] != NULL) {
+            len = bounded_length(list[i], MAX_STRING_LENGTH);
+            if (len < MAX_STRING_LENGTH && len == target_size) {
+                result[count] = malloc(len + 1);
+                if (result[count] == NULL) {
+                    free_string_list(result, count);
+                    return NULL;
+                }
+                /* Possible weaknesses found:
+                 * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+                 */
+                memcpy(result[count], list[i], len);
+                result[count][len] = '\0';
+                count++;
+            }
+        }
+    }
+
+    *result_count = count;
+    return result;
+}
+
+void free_string_list(char **list, size_t count)
+{
+    size_t i;
+
+    if (list == NULL) {
+        return;
+    }
+
+    for (i = 0; i < count; i++) {
+        free(list[i]);
+    }
+    free(list);
+}
+
+int main(void)
+{
+    const char *strings[] = { "apple", "cat", "dog", "banana", "fox", "grape" };
+    size_t total = sizeof(strings) / sizeof(strings[0]);
+    size_t result_count = 0;
+    size_t target_size = 3;
+    char **extracted;
+    size_t i;
+
+    extracted = extract_strings_by_size(strings, total, target_size, &result_count);
+
+    if (extracted == NULL) {
+        if (printf("No strings of size %zu found.\n", target_size) < 0) {
+            return EXIT_FAILURE;
+        }
+        return EXIT_SUCCESS;
+    }
+
+    if (printf("Strings of size %zu:\n", target_size) < 0) {
+        free_string_list(extracted, result_count);
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i < result_count; i++) {
+        if (printf("%s\n", extracted[i]) < 0) {
+            free_string_list(extracted, result_count);
+            return EXIT_FAILURE;
+        }
+    }
+
+    free_string_list(extracted, result_count);
+    return EXIT_SUCCESS;
+}

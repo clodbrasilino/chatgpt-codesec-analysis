@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_6/healed/problem-743.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_6/healed/problem-743.c:82:20: style: Condition 'tail_bytes>arr_capacity' is always false [knownConditionTrueFalse]
+    if (tail_bytes > arr_capacity)
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_6/healed/problem-743.c:74:20: note: Assuming that condition 'tail_bytes>arr_capacity' is not redundant
+    if (tail_bytes > arr_capacity || head_bytes > arr_capacity - tail_bytes)
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_6/healed/problem-743.c:82:20: note: Condition 'tail_bytes>arr_capacity' is always false
+    if (tail_bytes > arr_capacity)
+                   ^

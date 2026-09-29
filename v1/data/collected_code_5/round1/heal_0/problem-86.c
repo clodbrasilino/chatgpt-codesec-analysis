@@ -1,0 +1,31 @@
+#include <stdio.h>
+
+long long int getHexagonalNum(int n)
+{
+    if (n <= 0)
+    {
+        return -1;
+    }
+
+    return 3 * n * (n - 1) + 1;
+}
+
+int main()
+{
+    int n;
+    printf("Enter a number: \n");
+    scanf("%d", &n);
+
+    long long int hexagonalNum = getHexagonalNum(n);
+
+    if (hexagonalNum != -1)
+    {
+        printf("The %d-th centered hexagonal number is %lld\n", n, hexagonalNum);
+    }
+    else
+    {
+        printf("Invalid input. Please enter a positive number.\n");
+    }
+    
+    return 0;
+}

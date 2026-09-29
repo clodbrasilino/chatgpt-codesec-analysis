@@ -1,0 +1,59 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+long long max(long long a, long long b) {
+    return a > b ? a : b;
+}
+
+long long maxSum(int n, int** grid) {
+    if (n <= 0) return 0;
+    
+    long long incl = max(grid[0][0], grid[1][0]);
+    long long excl = 0;
+    long long excl_new;
+
+    for (int i = 1; i < n; i++) {
+        excl_new = max(incl, excl);
+        incl = excl + max(grid[0][i], grid[1][i]);
+        excl = excl_new;
+    }
+
+    return max(incl, excl);
+}
+
+int main() {
+    int n = 5;
+    
+    int** grid = (int**)malloc(2 * sizeof(int*));
+    if (grid == NULL) {
+        return 1;
+    }
+    
+    for (int i = 0; i < 2; i++) {
+        grid[i] = (int*)malloc(n * sizeof(int));
+        if (grid[i] == NULL) {
+            for (int j = 0; j < i; j++) {
+                free(grid[j]);
+            }
+            free(grid);
+            return 1;
+        }
+    }
+    
+    int row1[] = {1, 4, 5, 3, 2};
+    int row2[] = {2, 5, 6, 1, 3};
+    for (int i = 0; i < n; i++) {
+        grid[0][i] = row1[i];
+        grid[1][i] = row2[i];
+    }
+    
+    long long result = maxSum(n, grid);
+    printf("%lld\n", result);
+    
+    for (int i = 0; i < 2; i++) {
+        free(grid[i]);
+    }
+    free(grid);
+    
+    return 0;
+}

@@ -1,0 +1,115 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef int (*CompareFunction)(const void *, const void *);
+
+int compare_rows(const void *a, const void *b) {
+    const int *rowA = *(const int **)a;
+    const int *rowB = *(const int **)b;
+    for (int i = 0; ; ++i) {
+        if (rowA[i] != rowB[i]) {
+            return rowA[i] - rowB[i];
+        }
+        if (rowA[i] == -1 && rowB[i] == -1) {
+            break;
+        }
+    }
+    return 0;
+}
+
+int **remove_similar_rows(int **matrix, int n, int m, int *returnSize) {
+    qsort(matrix, n, sizeof(int *), compare_rows);
+
+    int capacity = 1;
+    int *uniqueCounters = (int *)malloc(capacity * sizeof(int));
+    int *uniqueIndices = (int *)malloc(capacity * sizeof(int));
+    if (!uniqueCounters || !uniqueIndices) {
+        free(uniqueCounters);
+        free(uniqueIndices);
+        return NULL;
+    }
+
+    uniqueCounters[0] = 1;
+    uniqueIndices[0] = 0;
+
+    for (int i = 1; i < n; ++i) {
+        if (compare_rows(&matrix[i], &matrix[i-1]) != 0) {
+            if (capacity <= i) {
+                capacity *= 2;
+                int *tempUniqueCounters = (int *)realloc(uniqueCounters, capacity * sizeof(int));
+                int *tempUniqueIndices = (int *)realloc(uniqueIndices, capacity * sizeof(int));
+                if (!tempUniqueCounters || !tempUniqueIndices) {
+                    free(tempUniqueCounters);
+                    free(tempUniqueIndices);
+                    free(uniqueCounters);
+                    free(uniqueIndices);
+                    return NULL;
+                }
+                uniqueCounters = tempUniqueCounters;
+                uniqueIndices = tempUniqueIndices;
+            }
+            uniqueIndices[i] = i;
+            uniqueCounters[i] = 1;
+        } else {
+            uniqueCounters[i-1]++;
+        }
+    }
+
+    *returnSize = 0;
+    for (int i = 0; i < n; ++i) {
+        if (uniqueCounters[i] == 1) {
+            (*returnSize)++;
+        }
+    }
+
+    int **result = (int **)malloc(*returnSize * sizeof(int *));
+    if (!result) {
+        free(uniqueCounters);
+        free(uniqueIndices);
+        return NULL;
+    }
+
+    int k = 0;
+    for (int i = 0; i < n; ++i) {
+        if (uniqueCounters[i] == 1) {
+            result[k++] = matrix[uniqueIndices[i]];
+        }
+    }
+
+    free(uniqueCounters);
+    free(uniqueIndices);
+    return result;
+}
+
+int main() {
+    int n = 5;
+    int m = 3;
+    int **matrix = (int **)malloc(n * sizeof(int *));
+    for (int i = 0; i < n; ++i) {
+        matrix[i] = (int *)malloc(m * sizeof(int));
+        for (int j = 0; j < m; ++j) {
+            scanf("%d", &matrix[i][j]);
+        }
+    }
+
+    int returnSize;
+    int **result = remove_similar_rows(matrix, n, m, &returnSize);
+
+    for (int i = 0; i < returnSize; ++i) {
+        for (int j = 0; j < m; ++j) {
+            printf("%d ", result[i][j]);
+        }
+        printf("\n");
+    }
+
+    for (int i = 0; i < n; ++i) {
+        free(matrix[i]);
+    }
+    free(matrix);
+    for (int i = 0; i < returnSize; ++i) {
+        free(result[i]);
+    }
+    free(result);
+
+    return 0;
+}

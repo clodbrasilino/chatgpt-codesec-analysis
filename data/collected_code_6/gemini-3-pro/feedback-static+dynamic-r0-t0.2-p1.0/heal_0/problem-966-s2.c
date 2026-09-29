@@ -1,0 +1,113 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *elements;
+    size_t size;
+} Tuple;
+
+typedef struct {
+    Tuple *tuples;
+    size_t size;
+    size_t capacity;
+} TupleList;
+
+TupleList* create_tuple_list(size_t capacity) {
+    TupleList *list = (TupleList*)malloc(sizeof(TupleList));
+    if (!list) return NULL;
+    
+    list->tuples = (Tuple*)malloc(capacity * sizeof(Tuple));
+    if (!list->tuples) {
+        free(list);
+        return NULL;
+    }
+    
+    list->size = 0;
+    list->capacity = capacity;
+    return list;
+}
+
+void free_tuple_list(TupleList *list) {
+    if (!list) return;
+    for (size_t i = 0; i < list->size; ++i) {
+        if (list->tuples[i].elements) {
+            free(list->tuples[i].elements);
+        }
+    }
+    free(list->tuples);
+    free(list);
+}
+
+int add_tuple(TupleList *list, int *elements, size_t size) {
+    if (!list || list->size >= list->capacity) return -1;
+    
+    Tuple *t = &list->tuples[list->size];
+    t->size = size;
+    if (size > 0) {
+        t->elements = (int*)malloc(size * sizeof(int));
+        if (!t->elements) return -1;
+        for (size_t i = 0; i < size; ++i) {
+            t->elements[i] = elements[i];
+        }
+    } else {
+        t->elements = NULL;
+    }
+    
+    list->size++;
+    return 0;
+}
+
+void remove_empty_tuples(TupleList *list) {
+    if (!list) return;
+    
+    size_t write_idx = 0;
+    for (size_t read_idx = 0; read_idx < list->size; ++read_idx) {
+        if (list->tuples[read_idx].size > 0) {
+            if (write_idx != read_idx) {
+                list->tuples[write_idx] = list->tuples[read_idx];
+            }
+            write_idx++;
+        } else {
+            if (list->tuples[read_idx].elements) {
+                free(list->tuples[read_idx].elements);
+            }
+        }
+    }
+    list->size = write_idx;
+}
+
+void print_tuple_list(const TupleList *list) {
+    if (!list) return;
+    printf("[");
+    for (size_t i = 0; i < list->size; ++i) {
+        printf("(");
+        for (size_t j = 0; j < list->tuples[i].size; ++j) {
+            printf("%d", list->tuples[i].elements[j]);
+            if (j < list->tuples[i].size - 1) printf(", ");
+        }
+        printf(")");
+        if (i < list->size - 1) printf(", ");
+    }
+    printf("]\n");
+}
+
+int main(void) {
+    TupleList *list = create_tuple_list(5);
+    if (!list) return 1;
+
+    int t1[] = {1, 2};
+    int t3[] = {3, 4, 5};
+    
+    if (add_tuple(list, t1, 2) != 0) goto cleanup;
+    if (add_tuple(list, NULL, 0) != 0) goto cleanup;
+    if (add_tuple(list, t3, 3) != 0) goto cleanup;
+    if (add_tuple(list, NULL, 0) != 0) goto cleanup;
+
+    print_tuple_list(list);
+    remove_empty_tuples(list);
+    print_tuple_list(list);
+
+cleanup:
+    free_tuple_list(list);
+    return 0;
+}

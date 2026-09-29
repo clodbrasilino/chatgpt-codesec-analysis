@@ -1,0 +1,32 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *data;
+    size_t size;
+} TupleList;
+
+int max_of_nth_column(TupleList *list, int n) {
+    if (list == NULL || list->data == NULL || n < 0 || (size_t)n >= list->size) {
+        return -1;
+    }
+    int max = list->data[n];
+    for (size_t i = n; i < list->size * (n + 1); i += (n + 1)) {
+        if (list->data[i] > max) {
+            max = list->data[i];
+        }
+    }
+    return max;
+}
+
+int main() {
+    int data[] = {1, 2, 3, 4, 5, 6, 7, 8, 9};
+    TupleList list = {data, 3};
+
+    int n = 1;
+    int max_val = max_of_nth_column(&list, n);
+
+    printf("Max of column %d: %d\n", n + 1, max_val);
+
+    return 0;
+}

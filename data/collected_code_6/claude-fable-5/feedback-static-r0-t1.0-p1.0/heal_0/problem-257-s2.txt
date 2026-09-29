@@ -1,0 +1,38 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+void swap(int *a, int *b)
+{
+    int temp;
+
+    if (a == NULL || b == NULL) {
+        return;
+    }
+
+    temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+int main(void)
+{
+    int x = 5;
+    int y = 10;
+
+    printf("Before swap: x = %d, y = %d\n", x, y);
+
+    swap(&x, &y);
+
+    printf("After swap: x = %d, y = %d\n", x, y);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Key design decisions:**
+
+- **NULL pointer check** in `swap()` guards against invalid input, addressing CWE-703 (improper handling of exceptional conditions).
+- **Pass-by-pointer** is required in C to modify caller variables; the pointers reference stack variables with well-defined lifetimes, avoiding CWE-664 issues.
+- **`int main(void)`** with an explicit `EXIT_SUCCESS` return follows the C standard, and all functions have complete prototypes, satisfying CWE-710 (adherence to coding standards).
+- No dynamic memory is allocated, so there are no resource lifetime concerns such as leaks or use-after-free.

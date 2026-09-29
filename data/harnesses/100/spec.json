@@ -1,0 +1,44 @@
+{
+  "task_id": 100,
+  "text": "Write a C function to find the next smallest palindrome of a specified number.",
+  "fn_candidates": [
+    "next_smallest_palindrome",
+    "NextSmallestPalindrome",
+    "nextSmallestPalindrome",
+    "nextsmallestpalindrome"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "next_smallest_palindrome",
+      "args": [
+        99
+      ],
+      "expected": 101,
+      "assert_src": "assert next_smallest_palindrome(99)==101"
+    },
+    {
+      "fn_name": "next_smallest_palindrome",
+      "args": [
+        1221
+      ],
+      "expected": 1331,
+      "assert_src": "assert next_smallest_palindrome(1221)==1331"
+    },
+    {
+      "fn_name": "next_smallest_palindrome",
+      "args": [
+        120
+      ],
+      "expected": 121,
+      "assert_src": "assert next_smallest_palindrome(120)==121"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

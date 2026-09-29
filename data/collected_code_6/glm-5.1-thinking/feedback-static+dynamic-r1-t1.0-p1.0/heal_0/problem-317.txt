@@ -1,0 +1,79 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+
+typedef struct {
+    int count;
+    int value;
+} RLE;
+
+RLE* modified_rle(const int* list, int len, int* out_len) {
+    if (list == NULL || out_len == NULL || len <= 0) {
+        if (out_len != NULL) {
+            *out_len = 0;
+        }
+        return NULL;
+    }
+
+    if ((size_t)len > SIZE_MAX / sizeof(RLE)) {
+        *out_len = 0;
+        return NULL;
+    }
+
+    RLE* result = malloc((size_t)len * sizeof(RLE));
+    if (result == NULL) {
+        *out_len = 0;
+        return NULL;
+    }
+
+    int res_idx = 0;
+    int i = 0;
+    while (i < len) {
+        int current = list[i];
+        int count = 1;
+        while (i + count < len && list[i + count] == current) {
+            count++;
+        }
+        result[res_idx].count = count;
+        result[res_idx].value = current;
+        res_idx++;
+        i += count;
+    }
+
+    *out_len = res_idx;
+
+    if ((size_t)res_idx < (size_t)len) {
+        RLE* temp = realloc(result, (size_t)res_idx * sizeof(RLE));
+        if (temp != NULL) {
+            result = temp;
+        }
+    }
+
+    return result;
+}
+
+int main(void) {
+    int list[] = {1, 1, 1, 2, 3, 3, 4, 5, 5, 5, 5, 6};
+    int len = (int)(sizeof(list) / sizeof(list[0]));
+    int out_len = 0;
+    RLE* rle = modified_rle(list, len, &out_len);
+
+    if (rle != NULL) {
+        for (int i = 0; i < out_len; i++) {
+            if (rle[i].count > 1) {
+                printf("(%d, %d)", rle[i].count, rle[i].value);
+            } else {
+                printf("%d", rle[i].value);
+            }
+            if (i < out_len - 1) {
+                printf(", ");
+            }
+        }
+        printf("\n");
+        free(rle);
+    }
+
+    return 0;
+}
+```

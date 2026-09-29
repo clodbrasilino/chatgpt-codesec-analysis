@@ -1,0 +1,94 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct dict_entry {
+    char *key;
+    void *value;
+    int is_dict;
+    struct dict_entry *next;
+} dict_entry;
+
+typedef struct {
+    dict_entry *head;
+} dict;
+
+dict *dict_create(void) {
+    dict *d = (dict *)malloc(sizeof(dict));
+    if (!d) return NULL;
+    d->head = NULL;
+    return d;
+}
+
+void dict_set(dict *d, const char *key, void *value, int is_dict) {
+    if (!d || !key) return;
+    dict_entry *e = (dict_entry *)malloc(sizeof(dict_entry));
+    if (!e) return;
+    e->key = (char *)malloc(strlen(key) + 1);
+    if (!e->key) {
+        free(e);
+        return;
+    }
+    strcpy(e->key, key);
+    e->value = value;
+    e->is_dict = is_dict;
+    e->next = d->head;
+    d->head = e;
+}
+
+dict_entry *dict_get_entry(dict *d, const char *key) {
+    if (!d || !key) return NULL;
+    dict_entry *cur = d->head;
+    while (cur) {
+        if (strcmp(cur->key, key) == 0) return cur;
+        cur = cur->next;
+    }
+    return NULL;
+}
+
+void dict_free(dict *d) {
+    if (!d) return;
+    dict_entry *cur = d->head;
+    while (cur) {
+        dict_entry *next = cur->next;
+        free(cur->key);
+        if (cur->is_dict && cur->value) {
+            dict_free((dict *)cur->value);
+        }
+        free(cur);
+        cur = next;
+    }
+    free(d);
+}
+
+int dict_depth(dict *d) {
+    if (!d || !d->head) return 0;
+    int max_depth = 0;
+    dict_entry *cur = d->head;
+    while (cur) {
+        if (cur->is_dict && cur->value) {
+            int child_depth = dict_depth((dict *)cur->value);
+            if (child_depth > max_depth) max_depth = child_depth;
+        }
+        cur = cur->next;
+    }
+    return max_depth + 1;
+}
+
+int main(void) {
+    dict *root = dict_create();
+    dict *level1 = dict_create();
+    dict *level2 = dict_create();
+    dict *level3 = dict_create();
+
+    dict_set(level3, "key3", NULL, 0);
+    dict_set(level2, "key2", level3, 1);
+    dict_set(level1, "key1", level2, 1);
+    dict_set(root, "root_key", level1, 1);
+    dict_set(root, "simple", NULL, 0);
+
+    printf("Depth: %d\n", dict_depth(root));
+
+    dict_free(root);
+    return 0;
+}

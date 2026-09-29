@@ -1,0 +1,48 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+void split_and_append(int *arr, size_t length, size_t split_index) {
+    if (arr == NULL || length == 0 || split_index == 0 || split_index >= length) {
+        return;
+    }
+
+    int *temp = (int *)malloc(split_index * sizeof(int));
+    if (temp == NULL) {
+        return;
+    }
+
+    for (size_t i = 0; i < split_index; i++) {
+        temp[i] = arr[i];
+    }
+
+    for (size_t i = 0; i < length - split_index; i++) {
+        arr[i] = arr[i + split_index];
+    }
+
+    for (size_t i = 0; i < split_index; i++) {
+        arr[length - split_index + i] = temp[i];
+    }
+
+    free(temp);
+}
+
+void print_array(const int *arr, size_t length) {
+    if (arr == NULL) {
+        return;
+    }
+    for (size_t i = 0; i < length; i++) {
+        printf("%d ", arr[i]);
+    }
+    printf("\n");
+}
+
+int main(void) {
+    int arr[] = {1, 2, 3, 4, 5, 6, 7};
+    size_t length = sizeof(arr) / sizeof(arr[0]);
+    size_t split_index = 2;
+
+    split_and_append(arr, length, split_index);
+    print_array(arr, length);
+
+    return 0;
+}

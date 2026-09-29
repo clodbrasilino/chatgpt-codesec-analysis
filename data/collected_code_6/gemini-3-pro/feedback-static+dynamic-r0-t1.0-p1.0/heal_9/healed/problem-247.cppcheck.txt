@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-247.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-247.c:17:38: warning: Either the condition 'len>=8192' is redundant or the array 's[6]' is accessed at index 8191, which is out of bounds. [arrayIndexOutOfBoundsCond]
+    while (len < MAX_ALLOWED_LEN && s[len] != '\0') {
+                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-247.c:21:25: note: Assuming that condition 'len>=8192' is not redundant
+    if (len == 0 || len >= MAX_ALLOWED_LEN) {
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-247.c:17:38: note: Array index out of bounds
+    while (len < MAX_ALLOWED_LEN && s[len] != '\0') {
+                                     ^

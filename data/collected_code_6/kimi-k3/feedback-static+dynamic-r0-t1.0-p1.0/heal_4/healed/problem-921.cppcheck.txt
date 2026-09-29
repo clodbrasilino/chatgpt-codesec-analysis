@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-921.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-921.c:135:42: style: Condition 'copy_bytes<=(unsigned long)(total_bytes-offset_bytes)' is always true [knownConditionTrueFalse]
+        if (copy_bytes > 0 && copy_bytes <= (size_t)(total_bytes - offset_bytes)) {
+                                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-921.c:121:54: note: Assuming that condition 'copy_bytes>total_bytes-offset_bytes' is not redundant
+        if (offset_bytes > total_bytes || copy_bytes > total_bytes - offset_bytes) {
+                                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-921.c:127:36: note: Assuming condition is false
+        if (result->chunks[i].data == NULL) {
+                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-921.c:135:42: note: Condition 'copy_bytes<=(unsigned long)(total_bytes-offset_bytes)' is always true
+        if (copy_bytes > 0 && copy_bytes <= (size_t)(total_bytes - offset_bytes)) {
+                                         ^

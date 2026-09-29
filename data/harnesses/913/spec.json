@@ -1,0 +1,44 @@
+{
+  "task_id": 913,
+  "text": "Write a C function to check for a number at the end of a string.",
+  "fn_candidates": [
+    "end_num",
+    "EndNum",
+    "endNum",
+    "endnum"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "end_num",
+      "args": [
+        "abcdef"
+      ],
+      "expected": false,
+      "assert_src": "assert end_num('abcdef')==False"
+    },
+    {
+      "fn_name": "end_num",
+      "args": [
+        "abcdef7"
+      ],
+      "expected": true,
+      "assert_src": "assert end_num('abcdef7')==True"
+    },
+    {
+      "fn_name": "end_num",
+      "args": [
+        "abc"
+      ],
+      "expected": false,
+      "assert_src": "assert end_num('abc')==False"
+    }
+  ],
+  "arg_kinds": [
+    "str"
+  ],
+  "return_kind": "bool",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

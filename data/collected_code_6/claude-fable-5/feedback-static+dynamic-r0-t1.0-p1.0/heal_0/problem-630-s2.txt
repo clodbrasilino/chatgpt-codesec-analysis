@@ -1,0 +1,91 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+#include <stdbool.h>
+
+typedef struct {
+    long x;
+    long y;
+} Coordinate;
+
+static bool safe_add(long a, long b, long *result)
+{
+    if ((b > 0 && a > LONG_MAX - b) || (b < 0 && a < LONG_MIN - b)) {
+        return false;
+    }
+    *result = a + b;
+    return true;
+}
+
+static Coordinate *get_adjacent_coordinates(Coordinate point, size_t *count)
+{
+    static const long offsets[8][2] = {
+        {-1, -1}, {-1, 0}, {-1, 1},
+        { 0, -1},          { 0, 1},
+        { 1, -1}, { 1, 0}, { 1, 1}
+    };
+    Coordinate *neighbors = NULL;
+    size_t found = 0;
+    size_t i;
+
+    if (count == NULL) {
+        return NULL;
+    }
+    *count = 0;
+
+    neighbors = malloc(8 * sizeof(*neighbors));
+    if (neighbors == NULL) {
+        return NULL;
+    }
+
+    for (i = 0; i < 8; i++) {
+        long nx;
+        long ny;
+        if (!safe_add(point.x, offsets[i][0], &nx)) {
+            continue;
+        }
+        if (!safe_add(point.y, offsets[i][1], &ny)) {
+            continue;
+        }
+        neighbors[found].x = nx;
+        neighbors[found].y = ny;
+        found++;
+    }
+
+    if (found == 0) {
+        free(neighbors);
+        return NULL;
+    }
+
+    *count = found;
+    return neighbors;
+}
+
+int main(void)
+{
+    Coordinate point;
+    Coordinate *neighbors = NULL;
+    size_t count = 0;
+    size_t i;
+
+    point.x = 3;
+    point.y = 5;
+
+    neighbors = get_adjacent_coordinates(point, &count);
+    if (neighbors == NULL) {
+        fprintf(stderr, "Failed to compute adjacent coordinates\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Adjacent coordinates of (%ld, %ld):\n", point.x, point.y);
+    for (i = 0; i < count; i++) {
+        printf("(%ld, %ld)\n", neighbors[i].x, neighbors[i].y);
+    }
+
+    free(neighbors);
+    neighbors = NULL;
+
+    return EXIT_SUCCESS;
+}
+```

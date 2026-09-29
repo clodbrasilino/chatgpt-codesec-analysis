@@ -1,0 +1,57 @@
+#define _POSIX_C_SOURCE 200809L
+#include <ctype.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_INPUT_LENGTH 4096
+
+char *snake_to_camel(const char *snake, size_t snake_len)
+{
+    if (snake == NULL) {
+        return NULL;
+    }
+
+    char *result = malloc(snake_len + 1);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    size_t dest = 0;
+    int capitalize_next = 0;
+
+    for (size_t i = 0; i < snake_len; i++) {
+        char ch = snake[i];
+        if (ch == '_') {
+            capitalize_next = 1;
+        } else {
+            if (capitalize_next) {
+                result[dest++] = (char)toupper((unsigned char)ch);
+                capitalize_next = 0;
+            } else {
+                result[dest++] = ch;
+            }
+        }
+
+        if (dest > snake_len) {
+            free(result);
+            return NULL;
+        }
+    }
+
+    result[dest] = '\0';
+    return result;
+}
+
+int main(int argc, char **argv)
+{
+    const char *input = (argc > 1) ? argv[1] : "snake_case_string";
+    size_t input_len = strnlen(input, MAX_INPUT_LENGTH);
+    char *camel = snake_to_camel(input, input_len);
+    if (camel == NULL) {
+        return EXIT_FAILURE;
+    }
+    printf("%s\n", camel);
+    free(camel);
+    return EXIT_SUCCESS;
+}

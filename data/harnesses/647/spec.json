@@ -1,0 +1,54 @@
+{
+  "task_id": 647,
+  "text": "Write a C function to split a string at uppercase letters.",
+  "fn_candidates": [
+    "split_upperstring",
+    "SplitUpperstring",
+    "splitUpperstring",
+    "splitupperstring"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "split_upperstring",
+      "args": [
+        "PythonProgramLanguage"
+      ],
+      "expected": [
+        "Python",
+        "Program",
+        "Language"
+      ],
+      "assert_src": "assert split_upperstring(\"PythonProgramLanguage\")==['Python','Program','Language']"
+    },
+    {
+      "fn_name": "split_upperstring",
+      "args": [
+        "PythonProgram"
+      ],
+      "expected": [
+        "Python",
+        "Program"
+      ],
+      "assert_src": "assert split_upperstring(\"PythonProgram\")==['Python','Program']"
+    },
+    {
+      "fn_name": "split_upperstring",
+      "args": [
+        "ProgrammingLanguage"
+      ],
+      "expected": [
+        "Programming",
+        "Language"
+      ],
+      "assert_src": "assert split_upperstring(\"ProgrammingLanguage\")==['Programming','Language']"
+    }
+  ],
+  "arg_kinds": [
+    "str"
+  ],
+  "return_kind": "str-list",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

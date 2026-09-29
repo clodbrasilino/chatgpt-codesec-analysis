@@ -1,0 +1,182 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+static int append_bytes(char *output, size_t output_size, size_t *out_pos,
+                        const char *src, size_t len);
+int remove_multiple_spaces(const char *input, char *output, size_t output_size);
+
+static int append_bytes(char *output, size_t output_size, size_t *out_pos,
+                        const char *src, size_t len)
+{
+    size_t space_left;
+    size_t i;
+
+    if ((output == NULL) || (out_pos == NULL) || (src == NULL)) {
+        return -1;
+    }
+
+    if (*out_pos >= output_size) {
+        return -1;
+    }
+
+    space_left = output_size - *out_pos;
+
+    if (len >= space_left) {
+        return -1;
+    }
+
+    for (i = 0U; i < len; i++) {
+        output[*out_pos + i] = src[i];
+    }
+    *out_pos += len;
+
+    return 0;
+}
+
+int remove_multiple_spaces(const char *input, char *output, size_t output_size)
+{
+    regex_t regex;
+    regmatch_t match;
+    const char *cursor;
+    size_t out_pos = 0U;
+    int ret;
+
+    if ((input == NULL) || (output == NULL) || (output_size == 0U)) {
+        return -1;
+    }
+
+    output[0] = '\0';
+
+    ret = regcomp(&regex, "  +", REG_EXTENDED);
+    if (ret != 0) {
+        return -1;
+    }
+
+    cursor = input;
+    while (regexec(&regex, cursor, 1, &match, 0) == 0) {
+        size_t prefix_len;
+
+        if ((match.rm_so < 0) || (match.rm_eo <= match.rm_so)) {
+            regfree(&regex);
+            return -1;
+        }
+
+        prefix_len = (size_t)match.rm_so;
+
+        if (append_bytes(output, output_size, &out_pos, cursor, prefix_len) != 0) {
+            regfree(&regex);
+            return -1;
+        }
+
+        if ((out_pos + 1U) >= output_size) {
+            regfree(&regex);
+            return -1;
+        }
+
+        output[out_pos] = ' ';
+        out_pos++;
+
+        cursor += (size_t)match.rm_eo;
+    }
+
+    {
+        size_t remaining;
+
+        if (out_pos >= output_size) {
+            regfree(&regex);
+            return -1;
+        }
+
+        remaining = strnlen(cursor, output_size);
+
+        if (remaining >= output_size) {
+            regfree(&regex);
+            return -1;
+        }
+
+        if (append_bytes(output, output_size, &out_pos, cursor, remaining) != 0) {
+            regfree(&regex);
+            return -1;
+        }
+
+        if (out_pos >= output_size) {
+            regfree(&regex);
+            return -1;
+        }
+
+        output[out_pos] = '\0';
+    }
+
+    regfree(&regex);
+    return 0;
+}
+
+int main(void)
+{
+    static const char test[] = "This   is  a    string   with  multiple     spaces.";
+    size_t input_len;
+    size_t buffer_size;
+    char *result;
+
+    input_len = strlen(test);
+
+    if (input_len >= (SIZE_MAX - 1U)) {
+        (void)fprintf(stderr, "Input too long.\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer_size = input_len + 1U;
+
+    result = (char *)calloc(buffer_size, sizeof(char));
+    if (result == NULL) {
+        (void)fprintf(stderr, "Memory allocation failed.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (remove_multiple_spaces(test, result, buffer_size) != 0) {
+        (void)fprintf(stderr, "Failed to process the string.\n");
+        free(result);
+        return EXIT_FAILURE;
+    }
+
+    result[buffer_size - 1U] = '\0';
+
+    if (printf("Original: %s\n", test) < 0) {
+        free(result);
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Cleaned:  %s\n", result) < 0) {
+        free(result);
+        return EXIT_FAILURE;
+    }
+
+    free(result);
+    return EXIT_SUCCESS;
+}
+```
+
+Note: this version requires `#include <stdint.h>` for `SIZE_MAX`:
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+#include <regex.h>
+```
+
+Key changes from the original:
+
+1. **Dynamic allocation instead of a statically-sized array**: The flagged weakness (CWE-119/CWE-120) concerned the fixed-size `result[RESULT_BUFFER_SIZE]` buffer. The rewrite sizes the output buffer from the actual input length (`strlen(test) + 1`), which is provably sufficient since removing repeated spaces can never grow the string. This eliminates the class of bugs where the buffer is improperly restricted relative to the input.
+
+2. **Overflow guard on the size computation**: The `input_len >= SIZE_MAX - 1` check prevents integer wraparound when computing `buffer_size`.
+
+3. **`calloc` for zero-initialization**: Replaces the separate `memset`, guaranteeing the buffer starts NUL-filled.
+
+4. **Consistent resource cleanup**: Every failure path in `main` frees the allocated buffer, and all `remove_multiple_spaces` error paths already call `regfree`, so no leaks remain.
+
+5. **All existing bounds checking preserved**: `append_bytes` and the explicit `out_pos`/`output_size` checks already enforced strict length limits; those defensive checks are retained so the function remains safe even if called with a smaller buffer than the input requires.

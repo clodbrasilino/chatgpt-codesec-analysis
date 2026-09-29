@@ -1,0 +1,65 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *data;
+    size_t len;
+} List;
+
+typedef struct {
+    List *items;
+    size_t count;
+} ListOfLists;
+
+List *find_min_length_list(ListOfLists *lol) {
+    if (lol == NULL || lol->count == 0) {
+        return NULL;
+    }
+    List *min_list = &(lol->items[0]);
+    for (size_t i = 1; i < lol->count; i++) {
+        if (lol->items[i].len < min_list->len) {
+            min_list = &(lol->items[i]);
+        }
+    }
+    return min_list;
+}
+
+int main(void) {
+    size_t counts[] = {5, 2, 8, 1, 4};
+    size_t num_lists = sizeof(counts) / sizeof(counts[0]);
+    ListOfLists lol;
+    lol.count = num_lists;
+    lol.items = (List *)malloc(lol.count * sizeof(List));
+    if (lol.items == NULL) {
+        return EXIT_FAILURE;
+    }
+    for (size_t i = 0; i < lol.count; i++) {
+        lol.items[i].len = counts[i];
+        lol.items[i].data = (int *)malloc(lol.items[i].len * sizeof(int));
+        if (lol.items[i].data == NULL) {
+            for (size_t j = 0; j < i; j++) {
+                free(lol.items[j].data);
+            }
+            free(lol.items);
+            return EXIT_FAILURE;
+        }
+        for (size_t k = 0; k < lol.items[i].len; k++) {
+            lol.items[i].data[k] = (int)((i + 1) * 10 + k);
+        }
+    }
+    List *min_list = find_min_length_list(&lol);
+    if (min_list != NULL) {
+        printf("Minimum length list has length %zu\n", min_list->len);
+        for (size_t i = 0; i < min_list->len; i++) {
+            printf("%d ", min_list->data[i]);
+        }
+        printf("\n");
+    }
+    for (size_t i = 0; i < lol.count; i++) {
+        free(lol.items[i].data);
+    }
+    free(lol.items);
+    return EXIT_SUCCESS;
+}
+```

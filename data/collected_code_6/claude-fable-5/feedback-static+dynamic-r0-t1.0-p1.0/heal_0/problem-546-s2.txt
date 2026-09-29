@@ -1,0 +1,65 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+const char *find_last_occurrence(const char *str, char ch)
+{
+    const char *last = NULL;
+
+    if (str == NULL) {
+        return NULL;
+    }
+
+    while (*str != '\0') {
+        if (*str == ch) {
+            last = str;
+        }
+        str++;
+    }
+
+    if (ch == '\0') {
+        return str;
+    }
+
+    return last;
+}
+
+int main(void)
+{
+    const char *text = "hello world";
+    char target = 'o';
+    const char *result = find_last_occurrence(text, target);
+
+    if (result != NULL) {
+        printf("Last occurrence of '%c' found at index %td\n",
+               target, result - text);
+    } else {
+        printf("Character '%c' not found in \"%s\"\n", target, text);
+    }
+
+    result = find_last_occurrence(text, 'z');
+
+    if (result != NULL) {
+        printf("Last occurrence of 'z' found at index %td\n",
+               result - text);
+    } else {
+        printf("Character 'z' not found in \"%s\"\n", text);
+    }
+
+    result = find_last_occurrence(NULL, 'a');
+
+    if (result == NULL) {
+        printf("NULL input handled safely\n");
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+This implementation:
+
+- **CWE-664 (Improper Control of a Resource Through its Lifetime):** No dynamic memory is allocated, so there are no leaks or use-after-free risks. The returned pointer references memory within the caller's string, which remains valid for the caller's lifetime of that string.
+
+- **CWE-703 (Improper Check or Handling of Exceptional Conditions):** The function explicitly checks for a `NULL` input pointer and returns `NULL` rather than dereferencing it. The caller checks every return value before use.
+
+- **CWE-710 (Improper Adherence to Coding Standards):** The code uses `const`-correct signatures, `int main(void)`, `EXIT_SUCCESS`, the `%td` format specifier for `ptrdiff_t` pointer differences, and matches the standard `strrchr` semantics (including treating `'\0'` as findable at the terminator), keeping behavior predictable and standards-compliant.

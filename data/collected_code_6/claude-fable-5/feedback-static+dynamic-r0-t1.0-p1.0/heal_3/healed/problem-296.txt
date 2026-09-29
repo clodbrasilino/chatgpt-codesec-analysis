@@ -1,0 +1,158 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+static long long merge(int *arr, int *temp, size_t n, size_t left, size_t mid, size_t right)
+{
+    size_t i = left;
+    size_t j = mid;
+    size_t k = left;
+    long long inv_count = 0;
+    size_t span;
+    size_t idx;
+
+    if (arr == NULL || temp == NULL || right >= n || left > mid || mid > right || mid == 0) {
+        return -1;
+    }
+
+    while (i <= mid - 1 && j <= right) {
+        if (arr[i] <= arr[j]) {
+            temp[k] = arr[i];
+            k++;
+            i++;
+        } else {
+            temp[k] = arr[j];
+            k++;
+            j++;
+            inv_count += (long long)(mid - i);
+        }
+    }
+
+    while (i <= mid - 1) {
+        temp[k] = arr[i];
+        k++;
+        i++;
+    }
+
+    while (j <= right) {
+        temp[k] = arr[j];
+        k++;
+        j++;
+    }
+
+    span = right - left + 1;
+    if (span > n - left || span > SIZE_MAX / sizeof(int)) {
+        return -1;
+    }
+
+    for (idx = left; idx <= right; idx++) {
+        arr[idx] = temp[idx];
+    }
+
+    return inv_count;
+}
+
+static long long merge_sort(int *arr, int *temp, size_t n, size_t left, size_t right)
+{
+    long long inv_count = 0;
+
+    if (right > left) {
+        size_t mid = left + (right - left) / 2;
+        long long partial;
+
+        partial = merge_sort(arr, temp, n, left, mid);
+        if (partial < 0) {
+            return -1;
+        }
+        inv_count += partial;
+
+        partial = merge_sort(arr, temp, n, mid + 1, right);
+        if (partial < 0) {
+            return -1;
+        }
+        inv_count += partial;
+
+        partial = merge(arr, temp, n, left, mid + 1, right);
+        if (partial < 0) {
+            return -1;
+        }
+        inv_count += partial;
+    }
+
+    return inv_count;
+}
+
+long long count_inversions(const int *arr, size_t n)
+{
+    int *copy = NULL;
+    int *temp = NULL;
+    long long result;
+    size_t bytes;
+    size_t idx;
+
+    if (arr == NULL || n == 0) {
+        return 0;
+    }
+
+    if (n > SIZE_MAX / sizeof(int)) {
+        return -1;
+    }
+
+    bytes = n * sizeof(int);
+
+    copy = malloc(bytes);
+    if (copy == NULL) {
+        return -1;
+    }
+
+    temp = malloc(bytes);
+    if (temp == NULL) {
+        free(copy);
+        return -1;
+    }
+
+    for (idx = 0; idx < n; idx++) {
+        copy[idx] = arr[idx];
+    }
+
+    result = merge_sort(copy, temp, n, 0, n - 1);
+
+    free(copy);
+    free(temp);
+
+    return result;
+}
+
+int main(void)
+{
+    int arr[] = { 8, 4, 2, 1 };
+    size_t n = sizeof(arr) / sizeof(arr[0]);
+    long long inversions;
+
+    inversions = count_inversions(arr, n);
+    if (inversions < 0) {
+        if (fprintf(stderr, "Error: memory allocation failed\n") < 0) {
+            return EXIT_FAILURE;
+        }
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Number of inversions: %lld\n", inversions) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the changes:**
+
+The original code was already fairly defensive, but the two Flawfinder `memcpy` warnings (CWE-120) were addressed as follows:
+
+1. **In `merge()`**: The `memcpy(&arr[left], &temp[left], span * sizeof(int))` was replaced with an explicit bounded element-by-element copy loop from `left` to `right`. Since `right >= n` is rejected at function entry and the `span > n - left` overflow guard remains in place, the loop indices are provably within the bounds of both buffers, eliminating any possibility of an overflow that a raw byte-count `memcpy` could mask.
+
+2. **In `count_inversions()`**: The `memcpy(copy, arr, bytes)` was replaced with an indexed copy loop bounded by `n`. Because `copy` was allocated with exactly `n * sizeof(int)` bytes (with the `SIZE_MAX / sizeof(int)` overflow check preceding the multiplication), the loop cannot write past the destination.
+
+The rest of the code was preserved as-is since it was already sound: the `mid == 0` guard prevents the `mid - 1` underflow, the allocation failure paths properly free previously acquired memory, negative return values propagate errors cleanly through the recursion, and the arithmetic overflow checks on `size_t` multiplications remain intact. The program still correctly reports 6 inversions for the input `{8, 4, 2, 1}`.

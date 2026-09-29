@@ -1,0 +1,179 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+#define TUPLE_SIZE 3
+#define MAX_STRING_LEN 4096
+
+typedef struct {
+    char *items[TUPLE_SIZE];
+} StringTuple;
+
+static size_t bounded_strlen(const char *s, size_t maxlen)
+{
+    size_t len = 0;
+    while (len < maxlen && s[len] != '\0') {
+        len++;
+    }
+    return len;
+}
+
+static char *concat_strings(const char *a, const char *b)
+{
+    if (a == NULL || b == NULL) {
+        return NULL;
+    }
+
+    size_t len_a = bounded_strlen(a, MAX_STRING_LEN);
+    size_t len_b = bounded_strlen(b, MAX_STRING_LEN);
+
+    if (len_a >= MAX_STRING_LEN || len_b >= MAX_STRING_LEN) {
+        return NULL;
+    }
+
+    if (len_a > SIZE_MAX - len_b - 1u) {
+        return NULL;
+    }
+
+    size_t total = len_a + len_b + 1u;
+    char *result = (char *)malloc(total);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    memcpy(result, a, len_a);
+    memcpy(result + len_a, b, len_b);
+    result[len_a + len_b] = '\0';
+
+    return result;
+}
+
+static int concat_tuples(const StringTuple *t1, const StringTuple *t2, StringTuple *out)
+{
+    if (t1 == NULL || t2 == NULL || out == NULL) {
+        return -1;
+    }
+
+    for (size_t i = 0; i < TUPLE_SIZE; i++) {
+        out->items[i] = concat_strings(t1->items[i], t2->items[i]);
+        if (out->items[i] == NULL) {
+            for (size_t j = 0; j < i; j++) {
+                free(out->items[j]);
+                out->items[j] = NULL;
+            }
+            return -1;
+        }
+    }
+
+    return 0;
+}
+
+static void free_tuple(StringTuple *t)
+{
+    if (t != NULL) {
+        for (size_t i = 0; i < TUPLE_SIZE; i++) {
+            free(t->items[i]);
+            t->items[i] = NULL;
+        }
+    }
+}
+
+static int print_tuple(const StringTuple *t)
+{
+    if (t == NULL) {
+        return -1;
+    }
+
+    if (fputs("[", stdout) == EOF) {
+        return -1;
+    }
+
+    for (size_t i = 0; i < TUPLE_SIZE; i++) {
+        if (t->items[i] == NULL) {
+            return -1;
+        }
+        if (printf("'%s'", t->items[i]) < 0) {
+            return -1;
+        }
+        if (i < TUPLE_SIZE - 1u) {
+            if (fputs(", ", stdout) == EOF) {
+                return -1;
+            }
+        }
+    }
+
+    if (fputs("]\n", stdout) == EOF) {
+        return -1;
+    }
+
+    if (fflush(stdout) != 0) {
+        return -1;
+    }
+
+    return 0;
+}
+
+static int run_test_case(const StringTuple *a, const StringTuple *b)
+{
+    StringTuple result;
+
+    for (size_t i = 0; i < TUPLE_SIZE; i++) {
+        result.items[i] = NULL;
+    }
+
+    if (concat_tuples(a, b, &result) != 0) {
+        fprintf(stderr, "Error: tuple concatenation failed\n");
+        return -1;
+    }
+
+    if (print_tuple(&result) != 0) {
+        free_tuple(&result);
+        return -1;
+    }
+
+    free_tuple(&result);
+    return 0;
+}
+
+int main(void)
+{
+    StringTuple a0 = { { "Manjeet", "Nikhil", "Akshat" } };
+    StringTuple b0 = { { " Singh", " Meherwal", " Garg" } };
+
+    StringTuple a1 = { { "Shaik", "Ayesha", "Sanya" } };
+    StringTuple b1 = { { " Dawood", " Begum", " Singh" } };
+
+    StringTuple a2 = { { "Harpreet", "Priyanka", "Muskan" } };
+    StringTuple b2 = { { "Kour", " Agarwal", "Sethi" } };
+
+    if (run_test_case(&a0, &b0) != 0) {
+        return EXIT_FAILURE;
+    }
+
+    if (run_test_case(&a1, &b1) != 0) {
+        return EXIT_FAILURE;
+    }
+
+    if (run_test_case(&a2, &b2) != 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The original code was logically sound, but the test failures (`<no output>`) point to a build/portability problem rather than a runtime bug: `strnlen` is a POSIX function, not part of standard C. Without `#define _POSIX_C_SOURCE 200809L` (or `_GNU_SOURCE`) before the includes, strict compilers (e.g. `gcc -std=c99`) fail to declare it, causing compilation errors and therefore no output at all.
+
+**Fixes applied:**
+
+1. **Replaced `strnlen` with a portable `bounded_strlen`** — eliminates the non-standard dependency that was the likely cause of all three failing test cases, while preserving the bounds-limited length scan (mitigating CWE-119/CWE-120 concerns from unterminated input).
+
+2. **`memcpy` warnings (CWE-120)** — these were already false positives: the destination is allocated with exactly `len_a + len_b + 1` bytes after overflow-checked arithmetic (`len_a > SIZE_MAX - len_b - 1u`), so both copies are provably within bounds. Kept as-is.
+
+3. **Statically-sized array warning (CWE-119)** — every loop over `items` is bounded by `TUPLE_SIZE`, and all accesses are index-checked by loop conditions; no change needed beyond retaining that discipline.
+
+4. **Existing good practices preserved** — NULL checks on all pointers, cleanup-on-failure in `concat_tuples` (no leaks on partial success), pointers nulled after `free` to prevent double-free, and all I/O return values checked.

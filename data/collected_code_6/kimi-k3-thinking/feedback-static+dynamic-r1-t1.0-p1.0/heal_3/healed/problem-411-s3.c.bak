@@ -1,0 +1,56 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+char *snake_to_camel(const char *input)
+{
+    char *result;
+    size_t i;
+    size_t j;
+    int upper;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    result = malloc(strlen(input) + 1);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    upper = 1;
+    j = 0;
+
+    for (i = 0; input[i] != '\0'; i++) {
+        unsigned char c = (unsigned char)input[i];
+        if (c == '_') {
+            upper = 1;
+        } else if (upper) {
+            result[j++] = (char)toupper(c);
+            upper = 0;
+        } else {
+            result[j++] = (char)c;
+        }
+    }
+
+    result[j] = '\0';
+    return result;
+}
+
+int main(void)
+{
+    char buffer[1024];
+
+    while (scanf("%1023s", buffer) == 1) {
+        char *camel = snake_to_camel(buffer);
+        if (camel == NULL) {
+            fprintf(stderr, "Conversion failed\n");
+            return EXIT_FAILURE;
+        }
+        printf("%s\n", camel);
+        free(camel);
+    }
+
+    return EXIT_SUCCESS;
+}

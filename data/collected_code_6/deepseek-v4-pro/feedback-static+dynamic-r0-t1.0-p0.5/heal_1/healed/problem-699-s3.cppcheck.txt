@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_1/healed/problem-699-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_1/healed/problem-699-s3.c:24:12: style: Same expression used in consecutive assignments of 'temp1_len' and 'temp2_len'. [duplicateAssignExpression]
+    size_t temp1_len = len + 1;
+           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_1/healed/problem-699-s3.c:25:12: note: Same expression used in consecutive assignments of 'temp1_len' and 'temp2_len'.
+    size_t temp2_len = len + 1;
+           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_1/healed/problem-699-s3.c:24:12: note: Same expression used in consecutive assignments of 'temp1_len' and 'temp2_len'.
+    size_t temp1_len = len + 1;
+           ^

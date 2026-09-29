@@ -1,0 +1,39 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <regex.h>
+
+void sanitize_str(char *str, size_t size) {
+    regex_t re;
+    regmatch_t pmatch[1];
+    int status, pos = 0;
+    const char *pattern = "[^a-zA-Z0-9]";
+
+    status = regcomp(&re, pattern, REG_EXTENDED);
+    if (status != 0) {
+        char error_message[100];
+        regerror(status, &re, error_message, 100);
+        return;
+    }
+
+    while (pos < size && regexec(&re, str + pos, 1, pmatch, 0) == 0) {
+        size_t len = strlen(str + pos + pmatch[0].rm_eo);
+        if (len + pos + 1 <= size) {
+            memmove(str + pos, str + pos + pmatch[0].rm_eo, len + 1);
+        } else {
+            str[size - 1] = '\0';
+            break;
+        }
+        pos += pmatch[0].rm_eo - pmatch[0].rm_so;
+    }
+
+    regfree(&re);
+}
+
+int main() {
+    char input[] = "Hello, World! 123";
+    sanitize_str(input, sizeof(input));
+    printf("%s\n", input);
+    return 0;
+}
+```

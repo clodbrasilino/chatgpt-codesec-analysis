@@ -1,0 +1,84 @@
+#include <stdio.h>
+#include <string.h>
+#include <limits.h>
+#include <errno.h>
+#include <stdlib.h>
+
+int sum_ascii_values(const char *str, size_t len, int *result)
+{
+    int sum;
+    size_t i;
+
+    if (str == NULL || result == NULL)
+    {
+        return -1;
+    }
+
+    sum = 0;
+
+    for (i = 0; i < len; i++)
+    {
+        if (sum > INT_MAX - (unsigned char)str[i])
+        {
+            return -2;
+        }
+        sum += (unsigned char)str[i];
+    }
+
+    *result = sum;
+    return 0;
+}
+
+int main(void)
+{
+    char *buffer = NULL;
+    size_t buffer_size = 0;
+    ssize_t line_length;
+    size_t len;
+    int total;
+    int status;
+
+    printf("Enter a string: ");
+
+    errno = 0;
+    line_length = getline(&buffer, &buffer_size, stdin);
+
+    if (line_length == -1)
+    {
+        if (errno == ENOMEM)
+        {
+            fprintf(stderr, "Error: Memory allocation failed\n");
+        }
+        else
+        {
+            fprintf(stderr, "Error reading input\n");
+        }
+        free(buffer);
+        return 1;
+    }
+
+    len = strcspn(buffer, "\n");
+    buffer[len] = '\0';
+
+    status = sum_ascii_values(buffer, len, &total);
+
+    if (status == 0)
+    {
+        printf("Total ASCII value: %d\n", total);
+    }
+    else if (status == -2)
+    {
+        fprintf(stderr, "Error: Integer overflow occurred\n");
+        free(buffer);
+        return 1;
+    }
+    else
+    {
+        fprintf(stderr, "Error: Invalid input\n");
+        free(buffer);
+        return 1;
+    }
+
+    free(buffer);
+    return 0;
+}

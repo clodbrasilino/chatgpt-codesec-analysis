@@ -1,0 +1,88 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <limits.h>
+
+#define MAX_INPUT_LEN 256
+
+static size_t bounded_strlen(const char *str, size_t maxlen)
+{
+    size_t i;
+
+    for (i = 0; i < maxlen; i++) {
+        if (str[i] == '\0') {
+            break;
+        }
+    }
+
+    return i;
+}
+
+int find_first_repeated_char(const char *str, size_t maxlen, char *result)
+{
+    int seen[UCHAR_MAX + 1] = {0};
+    size_t i;
+    size_t len;
+
+    if (str == NULL || result == NULL || maxlen == 0) {
+        return -1;
+    }
+
+    len = bounded_strlen(str, maxlen);
+
+    for (i = 0; i < len; i++) {
+        unsigned char c = (unsigned char)str[i];
+        if (seen[c] != 0) {
+            *result = str[i];
+            return 0;
+        }
+        seen[c] = 1;
+    }
+
+    return 1;
+}
+
+int main(void)
+{
+    char buffer[MAX_INPUT_LEN];
+    char repeated = '\0';
+    int status;
+
+    memset(buffer, 0, sizeof(buffer));
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+    buffer[strcspn(buffer, "\n")] = '\0';
+
+    status = find_first_repeated_char(buffer, sizeof(buffer), &repeated);
+
+    if (status < 0) {
+        fprintf(stderr, "Invalid arguments\n");
+        return 1;
+    }
+
+    if (status == 0) {
+        if (printf("First repeated character: %c\n", repeated) < 0) {
+            return 1;
+        }
+    } else {
+        if (printf("No repeated character found\n") < 0) {
+            return 1;
+        }
+    }
+
+    return 0;
+}
+```
+
+The rewritten source is functionally identical to the original, which was already sound. The compiler and static-analysis errors reported (`stray '\342'`, `unexpected character <U+2014>`, `unknown type name`, `implicit int`) were not defects in the C code itself — they were caused by the prose analysis text and Unicode characters (em dashes, backticks) being fed to the compiler as if they were part of the translation unit. Removing all non-code content resolves every one of those findings.
+
+The remaining Flawfinder hits are informational and already mitigated:
+
+- **CWE-120 (fgets/buffer)**: input is read with `fgets` bounded by `sizeof(buffer)`, never `gets`.
+- **CWE-119 (statically-sized array)**: every access to `buffer` is bounds-checked — `fgets` limits the write, explicit termination at `sizeof(buffer) - 1`, and `bounded_strlen` caps traversal at `maxlen`.
+- **CWE-20 (read in loop)**: the scan loop in `find_first_repeated_char` iterates only up to the bounded length, and the `unsigned char` cast guarantees `seen[]` is indexed with a value in `[0, UCHAR_MAX]`, avoiding signed-`char` negative indexing.

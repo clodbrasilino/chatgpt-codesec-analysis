@@ -1,0 +1,28 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-938-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-938-s3.c:29:65: warning: Uninitialized variable: res_i [uninitvar]
+    printf("The three closest elements are: %d, %d, %d\n", arr1[res_i], arr2[res_j], arr3[res_k]);
+                                                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-938-s3.c:13:35: note: Assuming condition is false
+    while (i < size1 && j < size2 && k < size3) {
+                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-938-s3.c:29:65: note: Uninitialized variable: res_i
+    printf("The three closest elements are: %d, %d, %d\n", arr1[res_i], arr2[res_j], arr3[res_k]);
+                                                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-938-s3.c:29:78: warning: Uninitialized variable: res_j [uninitvar]
+    printf("The three closest elements are: %d, %d, %d\n", arr1[res_i], arr2[res_j], arr3[res_k]);
+                                                                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-938-s3.c:13:35: note: Assuming condition is false
+    while (i < size1 && j < size2 && k < size3) {
+                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-938-s3.c:29:78: note: Uninitialized variable: res_j
+    printf("The three closest elements are: %d, %d, %d\n", arr1[res_i], arr2[res_j], arr3[res_k]);
+                                                                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-938-s3.c:29:91: warning: Uninitialized variable: res_k [uninitvar]
+    printf("The three closest elements are: %d, %d, %d\n", arr1[res_i], arr2[res_j], arr3[res_k]);
+                                                                                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-938-s3.c:13:35: note: Assuming condition is false
+    while (i < size1 && j < size2 && k < size3) {
+                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-938-s3.c:29:91: note: Uninitialized variable: res_k
+    printf("The three closest elements are: %d, %d, %d\n", arr1[res_i], arr2[res_j], arr3[res_k]);
+                                                                                          ^

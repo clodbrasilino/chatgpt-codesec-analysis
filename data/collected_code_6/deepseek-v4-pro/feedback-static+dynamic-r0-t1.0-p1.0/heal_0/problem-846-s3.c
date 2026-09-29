@@ -1,0 +1,76 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int findMinimumPlatforms(int arrival[], int departure[], int n) {
+    if (n <= 0 || arrival == NULL || departure == NULL) {
+        return -1;
+    }
+
+    int *arr_sorted = (int *)malloc(n * sizeof(int));
+    int *dep_sorted = (int *)malloc(n * sizeof(int));
+    
+    if (arr_sorted == NULL || dep_sorted == NULL) {
+        free(arr_sorted);
+        free(dep_sorted);
+        return -1;
+    }
+
+    for (int i = 0; i < n; i++) {
+        arr_sorted[i] = arrival[i];
+        dep_sorted[i] = departure[i];
+    }
+
+    for (int i = 0; i < n - 1; i++) {
+        for (int j = 0; j < n - i - 1; j++) {
+            if (arr_sorted[j] > arr_sorted[j + 1]) {
+                int temp = arr_sorted[j];
+                arr_sorted[j] = arr_sorted[j + 1];
+                arr_sorted[j + 1] = temp;
+            }
+            if (dep_sorted[j] > dep_sorted[j + 1]) {
+                int temp = dep_sorted[j];
+                dep_sorted[j] = dep_sorted[j + 1];
+                dep_sorted[j + 1] = temp;
+            }
+        }
+    }
+
+    int platforms_needed = 1;
+    int max_platforms = 1;
+    int i = 1;
+    int j = 0;
+
+    while (i < n && j < n) {
+        if (arr_sorted[i] <= dep_sorted[j]) {
+            platforms_needed++;
+            i++;
+            if (platforms_needed > max_platforms) {
+                max_platforms = platforms_needed;
+            }
+        } else {
+            platforms_needed--;
+            j++;
+        }
+    }
+
+    free(arr_sorted);
+    free(dep_sorted);
+    
+    return max_platforms;
+}
+
+int main(void) {
+    int arrival[] = {900, 940, 950, 1100, 1500, 1800};
+    int departure[] = {910, 1200, 1120, 1130, 1900, 2000};
+    int n = sizeof(arrival) / sizeof(arrival[0]);
+
+    int result = findMinimumPlatforms(arrival, departure, n);
+    
+    if (result == -1) {
+        printf("Error: Invalid input or memory allocation failure\n");
+    } else {
+        printf("Minimum number of platforms required: %d\n", result);
+    }
+
+    return 0;
+}

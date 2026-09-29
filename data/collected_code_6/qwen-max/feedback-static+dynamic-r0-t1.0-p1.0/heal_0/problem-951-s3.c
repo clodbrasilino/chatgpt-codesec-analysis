@@ -1,0 +1,36 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int first;
+    int second;
+} Tuple;
+
+Tuple* find_max(Tuple* list1, Tuple* list2, int size) {
+    Tuple* result = (Tuple*)malloc(size * sizeof(Tuple));
+    for (int i = 0; i < size; i++) {
+        result[i].first = (list1[i].first > list2[i].first) ? list1[i].first : list2[i].first;
+        result[i].second = (list1[i].second > list2[i].second) ? list1[i].second : list2[i].second;
+    }
+    return result;
+}
+
+void print_tuples(Tuple* list, int size) {
+    for (int i = 0; i < size; i++) {
+        printf("(%d, %d) ", list[i].first, list[i].second);
+    }
+    printf("\n");
+}
+
+int main() {
+    Tuple list1[] = {{1, 2}, {3, 4}, {5, 6}};
+    Tuple list2[] = {{2, 1}, {4, 3}, {6, 5}};
+    int size = sizeof(list1)/sizeof(list1[0]);
+
+    Tuple* max_list = find_max(list1, list2, size);
+
+    print_tuples(max_list, size);
+
+    free(max_list);
+    return 0;
+}

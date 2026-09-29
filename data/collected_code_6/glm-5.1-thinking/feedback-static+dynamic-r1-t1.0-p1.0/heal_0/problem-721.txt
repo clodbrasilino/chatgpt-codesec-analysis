@@ -1,0 +1,50 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+
+double find_max_average(int *mat, int n) {
+    if (mat == NULL || n <= 0) {
+        return 0.0;
+    }
+    if (n == 1) {
+        return (double)mat[0];
+    }
+    if ((size_t)n > SIZE_MAX / sizeof(int) / (size_t)n) {
+        return 0.0;
+    }
+    size_t size = (size_t)n * n;
+    int *dp = malloc(size * sizeof(int));
+    if (dp == NULL) {
+        return 0.0;
+    }
+    dp[0] = mat[0];
+    for (int i = 1; i < n; i++) {
+        dp[(size_t)i * n] = dp[((size_t)i - 1) * n] + mat[(size_t)i * n];
+        dp[(size_t)i] = dp[(size_t)i - 1] + mat[(size_t)i];
+    }
+    for (int i = 1; i < n; i++) {
+        for (int j = 1; j < n; j++) {
+            int up = dp[((size_t)i - 1) * n + j];
+            int left = dp[(size_t)i * n + j - 1];
+            dp[(size_t)i * n + j] = (up > left ? up : left) + mat[(size_t)i * n + j];
+        }
+    }
+    double max_sum = (double)dp[size - 1];
+    free(dp);
+    double path_len = 2.0 * n - 1.0;
+    return max_sum / path_len;
+}
+
+int main(void) {
+    int mat[3][3] = {
+        {1, 2, 3},
+        {4, 5, 6},
+        {7, 8, 9}
+    };
+    int n = 3;
+    double avg = find_max_average((int *)mat, n);
+    printf("%f\n", avg);
+    return 0;
+}
+```

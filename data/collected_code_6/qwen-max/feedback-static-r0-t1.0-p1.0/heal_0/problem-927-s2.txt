@@ -1,0 +1,46 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct TreeNode {
+    int value;
+    struct TreeNode *left;
+    struct TreeNode *right;
+} TreeNode;
+
+int max(int a, int b) {
+    return (a > b) ? a : b;
+}
+
+int calculate_tree_height(TreeNode *root) {
+    if (root == NULL) {
+        return 0;
+    }
+    int left_height = calculate_tree_height(root->left);
+    int right_height = calculate_tree_height(root->right);
+    return 1 + max(left_height, right_height);
+}
+
+TreeNode* create_node(int value) {
+    TreeNode *newNode = (TreeNode*)malloc(sizeof(TreeNode));
+    newNode->value = value;
+    newNode->left = NULL;
+    newNode->right = NULL;
+    return newNode;
+}
+
+int main() {
+    TreeNode *root = create_node(1);
+    root->left = create_node(2);
+    root->right = create_node(3);
+    root->left->left = create_node(4);
+    root->left->right = create_node(5);
+    root->right->left = create_node(6);
+    root->right->right = create_node(7);
+
+    int height = calculate_tree_height(root);
+    printf("Height of the tree: %d\n", height);
+
+    return 0;
+}
+```

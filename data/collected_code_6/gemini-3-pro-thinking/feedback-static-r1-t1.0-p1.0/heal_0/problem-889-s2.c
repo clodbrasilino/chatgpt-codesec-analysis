@@ -1,0 +1,141 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct ListNode {
+    int data;
+    struct ListNode* next;
+} ListNode;
+
+typedef struct ListList {
+    ListNode* head;
+    struct ListList* next;
+} ListList;
+
+ListNode* reverseList(ListNode* head) {
+    ListNode* prev = NULL;
+    ListNode* current = head;
+    ListNode* next = NULL;
+    
+    while (current != NULL) {
+        next = current->next;
+        current->next = prev;
+        prev = current;
+        current = next;
+    }
+    return prev;
+}
+
+void reverseEachList(ListList* listOfLists) {
+    ListList* current = listOfLists;
+    while (current != NULL) {
+        current->head = reverseList(current->head);
+        current = current->next;
+    }
+}
+
+ListNode* createListNode(int data) {
+    ListNode* newNode = (ListNode*)malloc(sizeof(ListNode));
+    if (newNode == NULL) {
+        return NULL;
+    }
+    newNode->data = data;
+    newNode->next = NULL;
+    return newNode;
+}
+
+ListList* createListList(void) {
+    ListList* newNode = (ListList*)malloc(sizeof(ListList));
+    if (newNode == NULL) {
+        return NULL;
+    }
+    newNode->head = NULL;
+    newNode->next = NULL;
+    return newNode;
+}
+
+void freeList(ListNode* head) {
+    ListNode* current = head;
+    ListNode* next = NULL;
+    while (current != NULL) {
+        next = current->next;
+        free(current);
+        current = next;
+    }
+}
+
+void freeListList(ListList* listOfLists) {
+    ListList* current = listOfLists;
+    ListList* next = NULL;
+    while (current != NULL) {
+        next = current->next;
+        freeList(current->head);
+        free(current);
+        current = next;
+    }
+}
+
+void printList(ListNode* head) {
+    ListNode* current = head;
+    while (current != NULL) {
+        printf("%d ", current->data);
+        current = current->next;
+    }
+    printf("\n");
+}
+
+void printListList(ListList* listOfLists) {
+    ListList* current = listOfLists;
+    while (current != NULL) {
+        printList(current->head);
+        current = current->next;
+    }
+}
+
+int main(void) {
+    ListList* mainList = createListList();
+    if (mainList == NULL) {
+        return EXIT_FAILURE;
+    }
+
+    mainList->head = createListNode(1);
+    if (mainList->head == NULL) {
+        freeListList(mainList);
+        return EXIT_FAILURE;
+    }
+
+    mainList->head->next = createListNode(2);
+    if (mainList->head->next == NULL) {
+        freeListList(mainList);
+        return EXIT_FAILURE;
+    }
+
+    mainList->head->next->next = createListNode(3);
+    if (mainList->head->next->next == NULL) {
+        freeListList(mainList);
+        return EXIT_FAILURE;
+    }
+
+    mainList->next = createListList();
+    if (mainList->next == NULL) {
+        freeListList(mainList);
+        return EXIT_FAILURE;
+    }
+
+    mainList->next->head = createListNode(4);
+    if (mainList->next->head == NULL) {
+        freeListList(mainList);
+        return EXIT_FAILURE;
+    }
+
+    mainList->next->head->next = createListNode(5);
+    if (mainList->next->head->next == NULL) {
+        freeListList(mainList);
+        return EXIT_FAILURE;
+    }
+
+    reverseEachList(mainList);
+    printListList(mainList);
+    freeListList(mainList);
+
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-408.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-408.c:214:11: warning: Either the condition 'sorted2!=NULL' is redundant or there is possible null pointer dereference: sorted2. [nullPointerRedundantCheck]
+    qsort(sorted2, size2, sizeof(int), compare_ints);
+          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-408.c:209:51: note: Assuming that condition 'sorted2!=NULL' is not redundant
+    if (copy_size2 > 0 && arr2 != NULL && sorted2 != NULL) {
+                                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-408.c:214:11: note: Null pointer dereference
+    qsort(sorted2, size2, sizeof(int), compare_ints);
+          ^

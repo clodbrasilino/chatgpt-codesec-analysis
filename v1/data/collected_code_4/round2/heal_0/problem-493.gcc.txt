@@ -1,0 +1,33 @@
+./collected_code_4/round2//heal_0/problem-493.c: In function 'hexagonalGrid':
+./collected_code_4/round2//heal_0/problem-493.c:18:30: warning: dereference of possibly-NULL '*hex[k]' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   18 |                 (*hex)[k]->x = (j + 0.5 * (i % 2) + k%3 - 1) * scale;
+      |                 ~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  'hexagonalGrid': events 1-8
+    |
+    |   13 |     for (int i = 0; i < height; ++i) {
+    |      |                     ~~^~~~~~~~
+    |      |                       |
+    |      |                       (1) following 'true' branch (when 'i < height')...
+    |   14 |         for (int j = 0; j < width; ++j) {
+    |      |                  ~      ~~~~~~~~~
+    |      |                  |        |
+    |      |                  |        (3) following 'true' branch (when 'j < width')...
+    |      |                  (2) ...to here
+    |   15 |             Hexagon *hex = &grid[i * width + j];
+    |      |                                  ~~~~~~~~~
+    |      |                                    |
+    |      |                                    (4) ...to here
+    |   16 |             for (int k = 0; k < 6; ++k) {
+    |      |                             ~~~~~
+    |      |                               |
+    |      |                               (5) following 'true' branch (when 'k <= 5')...
+    |   17 |                 (*hex)[k] = (Point*) malloc(sizeof(Point));
+    |      |                                      ~~~~~~~~~~~~~~~~~~~~~
+    |      |                                      |
+    |      |                                      (6) ...to here
+    |      |                                      (7) this call could return NULL
+    |   18 |                 (*hex)[k]->x = (j + 0.5 * (i % 2) + k%3 - 1) * scale;
+    |      |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                              |
+    |      |                              (8) '*hex[k]' could be NULL: unchecked value from (7)
+    |

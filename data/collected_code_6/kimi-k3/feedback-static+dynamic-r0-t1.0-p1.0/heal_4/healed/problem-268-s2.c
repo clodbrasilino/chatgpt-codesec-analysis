@@ -1,0 +1,34 @@
+#include <stdio.h>
+#include <stdint.h>
+#include <inttypes.h>
+#include <stdlib.h>
+#include <errno.h>
+
+uint64_t star_number(uint64_t n) {
+    return 6 * n * (n - 1) + 1;
+}
+
+int main(void) {
+    uint64_t n;
+    char buf[64];
+    char *endptr;
+    
+    if (fgets(buf, sizeof(buf), stdin) == NULL) {
+        return 1;
+    }
+    
+    errno = 0;
+    n = strtoull(buf, &endptr, 10);
+    
+    if (errno == ERANGE || endptr == buf || (*endptr != '\n' && *endptr != '\0')) {
+        return 1;
+    }
+    
+    if (n == 0 || n > 1753413056ULL) {
+        return 1;
+    }
+    
+    printf("%" PRIu64 "\n", star_number(n));
+    
+    return 0;
+}

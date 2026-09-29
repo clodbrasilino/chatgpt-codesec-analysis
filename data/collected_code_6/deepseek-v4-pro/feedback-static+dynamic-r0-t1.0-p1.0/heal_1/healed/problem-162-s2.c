@@ -1,0 +1,43 @@
+#include <stdio.h>
+#include <limits.h>
+#include <stdlib.h>
+
+int sum_positive_series(int n) {
+    int sum = 0;
+    int term = n;
+    
+    while (term > 0) {
+        if (sum > INT_MAX - term) {
+            return -1;
+        }
+        sum += term;
+        term -= 2;
+    }
+    
+    return sum;
+}
+
+int main(void) {
+    int n;
+    
+    printf("Enter a positive integer: ");
+    if (scanf("%d", &n) != 1 || n <= 0) {
+        printf("Invalid input. Please enter a positive integer.\n");
+        return 1;
+    }
+    
+    if (n > INT_MAX / 2) {
+        printf("Input too large, overflow would occur.\n");
+        return 1;
+    }
+    
+    int result = sum_positive_series(n);
+    if (result == -1) {
+        printf("Overflow detected during calculation.\n");
+        return 1;
+    }
+    
+    printf("Sum of series: %d\n", result);
+    
+    return 0;
+}

@@ -1,0 +1,73 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#define MAX_INPUT_SIZE 256
+
+static size_t bounded_strlen(const char *str, size_t max_len)
+{
+    size_t i = 0;
+
+    while (i < max_len && str[i] != '\0') {
+        i++;
+    }
+
+    return i;
+}
+
+void toggle_case(char *str, size_t max_len)
+{
+    size_t i;
+    size_t len;
+
+    if (str == NULL || max_len == 0) {
+        return;
+    }
+
+    len = bounded_strlen(str, max_len);
+    for (i = 0; i < len; i++) {
+        unsigned char c = (unsigned char)str[i];
+        if (isupper(c)) {
+            str[i] = (char)tolower(c);
+        } else if (islower(c)) {
+            str[i] = (char)toupper(c);
+        }
+    }
+}
+
+int main(void)
+{
+    char buffer[MAX_INPUT_SIZE];
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+    buffer[strcspn(buffer, "\n")] = '\0';
+
+    toggle_case(buffer, sizeof(buffer));
+
+    if (printf("%s\n", buffer) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The original code was already well-hardened against the Flawfinder warning (CWE-119/CWE-120). The flagged issue is a low-risk, heuristic hit on the statically-sized `char buffer[MAX_INPUT_SIZE]` declaration — Flawfinder flags all fixed-size buffers regardless of how they're used. The mitigations in place are:
+
+1. **Bounded input:** `fgets(buffer, sizeof(buffer), stdin)` never writes beyond the buffer, unlike `gets()` or unbounded `scanf("%s")`.
+2. **Guaranteed termination:** `buffer[sizeof(buffer) - 1] = '\0'` is defensive (technically redundant after `fgets`, but harmless and protects against future refactoring).
+3. **Newline stripping via `strcspn`:** avoids the classic `buffer[strlen(buffer) - 1]` underflow bug on empty strings.
+4. **Bounded length computation:** the code uses a length-limited scan rather than plain `strlen`, so a hypothetically unterminated buffer can't cause an out-of-bounds read.
+5. **Correct `ctype.h` usage:** casting to `unsigned char` before `isupper`/`islower`/`toupper`/`tolower` avoids undefined behavior for negative `char` values.
+6. **NULL/zero-length guards** in `toggle_case`, and checked return values for both `fgets` and `printf`.
+
+The one portability improvement made in the rewrite: `strnlen` is POSIX (and only in ISO C via Annex K as `strnlen_s`), so depending on compiler flags (`-std=c99`/`-std=c11` without POSIX feature-test macros) it may not be declared. I replaced it with a small local `bounded_strlen` helper that provides identical bounded semantics in strictly conforming C, eliminating any implicit-declaration risk while preserving the overflow-safe behavior.

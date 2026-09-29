@@ -1,0 +1,41 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+long long product_of_unique_elements(const int *arr, int n) {
+    if (n == 0) return 1;
+
+    int *unique = (int *)malloc(n * sizeof(int));
+    if (unique == NULL) exit(EXIT_FAILURE);
+
+    int unique_count = 0;
+    for (int i = 0; i < n; i++) {
+        int is_unique = 1;
+        for (int j = 0; j < unique_count; j++) {
+            if (arr[i] == unique[j]) {
+                is_unique = 0;
+                break;
+            }
+        }
+        if (is_unique) {
+            unique[unique_count++] = arr[i];
+        }
+    }
+
+    long long product = 1;
+    for (int i = 0; i < unique_count; i++) {
+        product *= unique[i];
+    }
+
+    free(unique);
+    return product;
+}
+
+int main() {
+    int arr[] = {2, 3, 4, 3, 2, 5};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    long long result = product_of_unique_elements(arr, n);
+    printf("%lld\n", result);
+    return 0;
+}
+```

@@ -1,0 +1,30 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int sum_of_negative_numbers(const int *numbers, size_t length) {
+    if (numbers == NULL) {
+        return 0;
+    }
+
+    int sum = 0;
+    for (size_t i = 0; i < length; ++i) {
+        if (numbers[i] < 0) {
+            sum += numbers[i];
+        }
+    }
+    
+    return sum;
+}
+
+int main(void) {
+    int numbers[] = {3, -1, 4, -5, 9, -2, 6, 0, -8};
+    size_t length = sizeof(numbers) / sizeof(numbers[0]);
+
+    int result = sum_of_negative_numbers(numbers, length);
+
+    printf("Sum of negative numbers: %d\n", result);
+
+    return 0;
+}
+```

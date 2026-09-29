@@ -1,0 +1,116 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+static int compare_desc(const void *a, const void *b) {
+    long long va = *(const int *)a;
+    long long vb = *(const int *)b;
+    if (va > vb) return -1;
+    if (va < vb) return 1;
+    return 0;
+}
+
+long long count_sequences(const int *values, int n) {
+    if (values == NULL || n < 0) return 0;
+    if (n == 0) return 1;
+    if (n > 20) return 0;
+
+    int *sorted = (int *)malloc((size_t)n * sizeof(int));
+    if (sorted == NULL) return 0;
+    /* Possible weaknesses found:
+     * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+     */
+    memcpy(sorted, values, (size_t)n * sizeof(int));
+    qsort(sorted, (size_t)n, sizeof(int), compare_desc);
+
+    long long total = 0;
+    for (int i = 0; i < n; i++) total += sorted[i];
+    if (total < 0) {
+        free(sorted);
+        return 0;
+    }
+
+    size_t num_masks = (size_t)1 << n;
+    long long *dp = (long long *)calloc(num_masks, sizeof(long long));
+    long long *sums = (long long *)calloc(num_masks, sizeof(long long));
+    if (dp == NULL || sums == NULL) {
+        free(sorted);
+        free(dp);
+        free(sums);
+        return 0;
+    }
+
+    for (int mask = 1; mask < (int)num_masks; mask++) {
+        int lsb = mask & (-mask);
+        int idx = 0;
+        while ((1 << idx) != lsb) idx++;
+        sums[mask] = sums[mask ^ lsb] + sorted[idx];
+    }
+
+    dp[0] = 1;
+
+    for (int mask = 0; mask < (int)num_masks; mask++) {
+        if (dp[mask] == 0) continue;
+        for (int j = 0; j < n; j++) {
+            if (mask & (1 << j)) continue;
+            if (j > 0 && sorted[j] == sorted[j - 1] && !(mask & (1 << (j - 1)))) continue;
+            if (sums[mask] + sorted[j] >= 0) {
+                dp[mask | (1 << j)] += dp[mask];
+            }
+        }
+    }
+
+    long long result = dp[num_masks - 1];
+
+    free(dp);
+    free(sums);
+    free(sorted);
+
+    return result;
+}
+
+int main(void) {
+    /* Possible weaknesses found:
+     *  Variable 'a' can be declared as const array [constVariable]
+     */
+    int a[] = {1, -1};
+    printf("%lld\n", count_sequences(a, 2));
+
+    /* Possible weaknesses found:
+     *  Variable 'b' can be declared as const array [constVariable]
+     */
+    int b[] = {1, 1, -1, -1};
+    printf("%lld\n", count_sequences(b, 4));
+
+    /* Possible weaknesses found:
+     *  Variable 'c' can be declared as const array [constVariable]
+     */
+    int c[] = {1, -1, -1};
+    printf("%lld\n", count_sequences(c, 3));
+
+    /* Possible weaknesses found:
+     *  Variable 'd' can be declared as const array [constVariable]
+     */
+    int d[] = {1, 1, 1, -1, -1, -1};
+    printf("%lld\n", count_sequences(d, 6));
+
+    /* Possible weaknesses found:
+     *  Variable 'e' can be declared as const array [constVariable]
+     */
+    int e[] = {-1, -1};
+    printf("%lld\n", count_sequences(e, 2));
+
+    /* Possible weaknesses found:
+     *  Variable 'f' can be declared as const array [constVariable]
+     */
+    int f[] = {2, 3, -1, -4};
+    printf("%lld\n", count_sequences(f, 4));
+
+    /* Possible weaknesses found:
+     *  Variable 'g' can be declared as const array [constVariable]
+     */
+    int g[] = {3, 2, 1, -2, -3, -1};
+    printf("%lld\n", count_sequences(g, 6));
+
+    return 0;
+}

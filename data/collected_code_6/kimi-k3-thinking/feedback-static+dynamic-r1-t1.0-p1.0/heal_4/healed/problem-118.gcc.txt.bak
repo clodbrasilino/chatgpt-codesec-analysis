@@ -1,0 +1,9 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_4/healed/problem-118.c: In function 'main':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_4/healed/problem-118.c:22:38: error: passing argument 2 of 'join_arguments' from incompatible pointer type [-Wincompatible-pointer-types]
+   22 |         input = join_arguments(argc, argv);
+      |                                      ^~~~
+      |                                      |
+      |                                      char **
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_4/healed/problem-118.c:15:51: note: expected 'const char * const*' but argument is of type 'char **'
+   15 | char *join_arguments(int argc, const char * const argv[]);
+      |                                ~~~~~~~~~~~~~~~~~~~^~~~~~

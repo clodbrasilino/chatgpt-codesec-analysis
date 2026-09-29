@@ -1,0 +1,141 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+static long long absDiff(long long a, long long b)
+{
+    if (a > b)
+    {
+        return a - b;
+    }
+    return b - a;
+}
+
+static int findClosest(const int arr1[], size_t n1,
+                       const int arr2[], size_t n2,
+                       const int arr3[], size_t n3,
+                       int *res1, int *res2, int *res3)
+{
+    size_t i;
+    size_t j;
+    size_t k;
+    /* Possible weaknesses found:
+     *  The scope of the variable 'diff' can be reduced. [variableScope]
+     */
+    long long diff;
+    long long minDiff;
+    /* Possible weaknesses found:
+     *  The scope of the variable 'maxVal' can be reduced. [variableScope]
+     */
+    long long maxVal;
+    /* Possible weaknesses found:
+     *  The scope of the variable 'minVal' can be reduced. [variableScope]
+     */
+    long long minVal;
+
+    if ((arr1 == NULL) || (arr2 == NULL) || (arr3 == NULL))
+    {
+        return -1;
+    }
+    if ((n1 == 0U) || (n2 == 0U) || (n3 == 0U))
+    {
+        return -1;
+    }
+    if ((res1 == NULL) || (res2 == NULL) || (res3 == NULL))
+    {
+        return -1;
+    }
+
+    i = 0U;
+    j = 0U;
+    k = 0U;
+    minDiff = LLONG_MAX;
+    *res1 = arr1[0];
+    *res2 = arr2[0];
+    *res3 = arr3[0];
+
+    while ((i < n1) && (j < n2) && (k < n3))
+    {
+        long long a = (long long)arr1[i];
+        long long b = (long long)arr2[j];
+        long long c = (long long)arr3[k];
+
+        minVal = a;
+        if (b < minVal)
+        {
+            minVal = b;
+        }
+        if (c < minVal)
+        {
+            minVal = c;
+        }
+
+        maxVal = a;
+        if (b > maxVal)
+        {
+            maxVal = b;
+        }
+        if (c > maxVal)
+        {
+            maxVal = c;
+        }
+
+        diff = absDiff(maxVal, minVal);
+        if (diff < minDiff)
+        {
+            minDiff = diff;
+            *res1 = arr1[i];
+            *res2 = arr2[j];
+            *res3 = arr3[k];
+        }
+
+        if (minDiff == 0LL)
+        {
+            break;
+        }
+
+        if (a == minVal)
+        {
+            i++;
+        }
+        else if (b == minVal)
+        {
+            j++;
+        }
+        else
+        {
+            k++;
+        }
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    int arr1[] = {1, 4, 10};
+    int arr2[] = {2, 15, 20};
+    int arr3[] = {10, 12};
+    int r1;
+    int r2;
+    int r3;
+    int status;
+
+    status = findClosest(arr1, sizeof(arr1) / sizeof(arr1[0]),
+                         arr2, sizeof(arr2) / sizeof(arr2[0]),
+                         arr3, sizeof(arr3) / sizeof(arr3[0]),
+                         &r1, &r2, &r3);
+
+    if (status != 0)
+    {
+        (void)fprintf(stderr, "Error: invalid input to findClosest\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Closest elements: %d %d %d\n", r1, r2, r3) < 0)
+    {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

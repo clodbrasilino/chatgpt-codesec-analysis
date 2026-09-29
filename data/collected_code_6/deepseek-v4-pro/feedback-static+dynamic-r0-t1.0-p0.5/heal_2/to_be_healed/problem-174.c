@@ -1,0 +1,186 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct KeyValue {
+    char *key;
+    char *value;
+} KeyValue;
+
+typedef struct Node {
+    char *value;
+    struct Node *next;
+} Node;
+
+typedef struct DictEntry {
+    char *key;
+    Node *values;
+    struct DictEntry *next;
+} DictEntry;
+
+typedef struct Dictionary {
+    DictEntry *head;
+} Dictionary;
+
+void free_dictionary(Dictionary *dict);
+
+Dictionary *create_dictionary(void) {
+    Dictionary *dict = (Dictionary *)malloc(sizeof(Dictionary));
+    if (dict == NULL) {
+        return NULL;
+    }
+    dict->head = NULL;
+    return dict;
+}
+
+DictEntry *find_entry(Dictionary *dict, const char *key) {
+    DictEntry *entry = dict->head;
+    while (entry != NULL) {
+        if (strcmp(entry->key, key) == 0) {
+            return entry;
+        }
+        entry = entry->next;
+    }
+    return NULL;
+}
+
+int add_to_dict(Dictionary *dict, const char *key, const char *value) {
+    if (dict == NULL || key == NULL || value == NULL) {
+        return 0;
+    }
+
+    DictEntry *entry = find_entry(dict, key);
+    if (entry == NULL) {
+        entry = (DictEntry *)malloc(sizeof(DictEntry));
+        if (entry == NULL) {
+            return 0;
+        }
+        /* Possible weaknesses found:
+         * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+         */
+        size_t key_len = strlen(key);
+        entry->key = (char *)malloc(key_len + 1);
+        if (entry->key == NULL) {
+            free(entry);
+            return 0;
+        }
+        /* Possible weaknesses found:
+         * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+         */
+        memcpy(entry->key, key, key_len + 1);
+        entry->values = NULL;
+        entry->next = dict->head;
+        dict->head = entry;
+    }
+
+    Node *new_node = (Node *)malloc(sizeof(Node));
+    if (new_node == NULL) {
+        return 0;
+    }
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    size_t value_len = strlen(value);
+    new_node->value = (char *)malloc(value_len + 1);
+    if (new_node->value == NULL) {
+        free(new_node);
+        return 0;
+    }
+    /* Possible weaknesses found:
+     * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+     */
+    memcpy(new_node->value, value, value_len + 1);
+    new_node->next = entry->values;
+    entry->values = new_node;
+
+    return 1;
+}
+
+void free_dictionary(Dictionary *dict) {
+    if (dict == NULL) {
+        return;
+    }
+
+    DictEntry *entry = dict->head;
+    while (entry != NULL) {
+        DictEntry *next_entry = entry->next;
+        Node *node = entry->values;
+        while (node != NULL) {
+            Node *next_node = node->next;
+            free(node->value);
+            free(node);
+            node = next_node;
+        }
+        free(entry->key);
+        free(entry);
+        entry = next_entry;
+    }
+    free(dict);
+}
+
+Dictionary *group_pairs(KeyValue *pairs, int count) {
+    if (pairs == NULL || count <= 0) {
+        return NULL;
+    }
+
+    Dictionary *dict = create_dictionary();
+    if (dict == NULL) {
+        return NULL;
+    }
+
+    for (int i = 0; i < count; i++) {
+        if (pairs[i].key == NULL || pairs[i].value == NULL) {
+            continue;
+        }
+        if (!add_to_dict(dict, pairs[i].key, pairs[i].value)) {
+            free_dictionary(dict);
+            return NULL;
+        }
+    }
+
+    return dict;
+}
+
+void print_dictionary(Dictionary *dict) {
+    if (dict == NULL) {
+        return;
+    }
+
+    DictEntry *entry = dict->head;
+    while (entry != NULL) {
+        printf("%s: [", entry->key);
+        Node *node = entry->values;
+        while (node != NULL) {
+            printf("%s", node->value);
+            if (node->next != NULL) {
+                printf(", ");
+            }
+            node = node->next;
+        }
+        printf("]\n");
+        entry = entry->next;
+    }
+}
+
+int main(void) {
+    KeyValue pairs[] = {
+        {"fruit", "apple"},
+        {"color", "red"},
+        {"fruit", "banana"},
+        {"color", "blue"},
+        {"fruit", "cherry"},
+        {"animal", "dog"}
+    };
+    int count = sizeof(pairs) / sizeof(pairs[0]);
+
+    Dictionary *dict = group_pairs(pairs, count);
+    if (dict == NULL) {
+        fprintf(stderr, "Failed to group pairs\n");
+        return 1;
+    }
+
+    print_dictionary(dict);
+    free_dictionary(dict);
+
+    return 0;
+}

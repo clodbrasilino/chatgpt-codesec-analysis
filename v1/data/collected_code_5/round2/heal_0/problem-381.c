@@ -1,0 +1,68 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+  int count;
+  int* data;
+} InnerList;
+
+void swap(InnerList *a, InnerList *b){
+    InnerList temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+int partition (InnerList arr[], int low, int high, int idx) {
+    int pivot = arr[high].data[idx];
+    int i = (low - 1);
+
+    for (int j = low; j <= high - 1; j++) {
+        if (arr[j].data[idx] < pivot) {
+            i++; 
+            swap(&arr[i], &arr[j]);
+        }
+    }
+    swap(&arr[i + 1], &arr[high]);
+    return (i + 1);
+}
+
+void quickSort(InnerList arr[], int low, int high, int idx) {
+    if (low < high) {
+        int parIndex = partition(arr, low, high, idx);
+        quickSort(arr, low, parIndex - 1, idx);
+        quickSort(arr, parIndex + 1, high, idx);
+    }
+}
+
+int main(){
+    int numLists = 5;
+    int numElements = 4;
+    int idx = 2; 
+
+    InnerList *arr = malloc(numLists * sizeof(InnerList));
+
+    for(int i = 0; i < numLists; i++){
+        arr[i].count = numElements;
+        arr[i].data = malloc(numElements * sizeof(int));
+        
+        for(int j = 0; j < numElements; j++){
+            arr[i].data[j] = numElements-j + i;
+        }
+    }
+
+    quickSort(arr, 0, numLists-1, idx);
+
+    for(int i = 0; i < numLists; i++){
+        for(int j = 0; j < numElements; j++){
+            printf("%d ", arr[i].data[j]);
+        }
+        printf("\n");
+    }
+
+    for(int i = 0; i < numLists; i++){
+        free(arr[i].data);
+    }
+    free(arr);
+
+    return 0;
+}

@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_10/healed/problem-73.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_10/healed/problem-73.c:105:20: style: Condition 'token_size<=len' is always false [knownConditionTrueFalse]
+    if (token_size <= len || token_size > MAX_STRING_LENGTH) {
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_10/healed/problem-73.c:103:16: note: token_size is assigned 'len+1' here.
+    token_size = len + 1;
+               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_10/healed/problem-73.c:105:20: note: Condition 'token_size<=len' is always false
+    if (token_size <= len || token_size > MAX_STRING_LENGTH) {
+                   ^

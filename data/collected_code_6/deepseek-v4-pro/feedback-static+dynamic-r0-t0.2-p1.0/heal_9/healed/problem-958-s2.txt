@@ -1,0 +1,64 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char *int_to_roman(int num) {
+    if (num <= 0 || num > 3999) {
+        return NULL;
+    }
+
+    const int values[] = {1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1};
+    const char *symbols[] = {"M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I"};
+    const size_t symbol_lens[] = {1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1};
+
+    int temp = num;
+    size_t max_len = 1;
+    for (int i = 0; i < 13; i++) {
+        int count = temp / values[i];
+        max_len += count * symbol_lens[i];
+        temp %= values[i];
+    }
+
+    char *result = malloc(max_len);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    size_t current_length = 0;
+    result[0] = '\0';
+
+    for (int i = 0; i < 13; i++) {
+        size_t symbol_len = symbol_lens[i];
+        while (num >= values[i]) {
+            if (current_length + symbol_len + 1 > max_len) {
+                free(result);
+                return NULL;
+            }
+            memcpy(result + current_length, symbols[i], symbol_len);
+            current_length += symbol_len;
+            result[current_length] = '\0';
+            num -= values[i];
+        }
+    }
+
+    return result;
+}
+
+int main(void) {
+    int test_values[] = {1, 4, 9, 58, 1994, 3999, 0, 4000};
+    int num_tests = sizeof(test_values) / sizeof(test_values[0]);
+
+    for (int i = 0; i < num_tests; i++) {
+        char *roman = int_to_roman(test_values[i]);
+        if (roman != NULL) {
+            printf("%d -> %s\n", test_values[i], roman);
+            free(roman);
+        } else {
+            printf("%d -> Invalid input\n", test_values[i]);
+        }
+    }
+
+    return 0;
+}
+```

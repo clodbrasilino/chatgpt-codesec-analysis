@@ -1,0 +1,33 @@
+#include <stdio.h>
+#include <math.h>
+
+double calculate_wind_chill(double temperature_celsius, double wind_speed_kmh) {
+    double wind_speed_mps = wind_speed_kmh / 3.6;
+    double wind_chill = 13.12 + 0.6215 * temperature_celsius - 11.37 * pow(wind_speed_mps, 0.16) + 0.3965 * temperature_celsius * pow(wind_speed_mps, 0.16);
+    return wind_chill;
+}
+
+int main(void) {
+    double temperature, wind_speed;
+    double wind_chill;
+
+    printf("Enter temperature in Celsius: ");
+    if (scanf("%lf", &temperature) != 1) {
+        return 1;
+    }
+
+    printf("Enter wind speed in km/h: ");
+    if (scanf("%lf", &wind_speed) != 1) {
+        return 1;
+    }
+
+    if (temperature > 10.0 || wind_speed < 4.8) {
+        printf("Wind chill formula is only valid for temperatures at or below 10°C and wind speeds above 4.8 km/h.\n");
+        return 1;
+    }
+
+    wind_chill = calculate_wind_chill(temperature, wind_speed);
+    printf("Wind chill index: %.2f°C\n", wind_chill);
+
+    return 0;
+}

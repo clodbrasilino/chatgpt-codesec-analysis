@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_10/healed/problem-114.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_10/healed/problem-114.c:93:23: style: The comparison 'copy_size > alloc_size' is always false because 'copy_size' and 'alloc_size' represent the same value. [knownConditionTrueFalse]
+        if (copy_size > alloc_size) {
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_10/healed/problem-114.c:92:28: note: 'copy_size' is assigned value 'alloc_size' here.
+        size_t copy_size = alloc_size;
+                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_10/healed/problem-114.c:93:23: note: The comparison 'copy_size > alloc_size' is always false because 'copy_size' and 'alloc_size' represent the same value.
+        if (copy_size > alloc_size) {
+                      ^

@@ -1,0 +1,30 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+bool diffAtOneBitPosition(int n1, int n2) {
+    int x = n1 ^ n2;
+
+    if(x && !(x & (x-1))) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+int main() {
+    int num1, num2;
+
+    printf("Enter first number: ");
+    scanf("%d", &num1);
+
+    printf("Enter second number: ");
+    scanf("%d", &num2);
+
+    if(diffAtOneBitPosition(num1, num2)) {
+        printf("Numbers differ at only one bit position\n");
+    } else {
+        printf("Numbers do not differ at only one bit position\n");
+    }
+
+    return 0;
+}

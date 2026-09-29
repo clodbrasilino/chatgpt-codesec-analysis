@@ -1,0 +1,60 @@
+collected_code_3/problem-771-2.c: In function 'createStack':
+collected_code_3/problem-771-2.c:13:16: warning: dereference of possibly-NULL 'stack' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   13 |     stack->top = -1;
+      |     ~~~~~~~~~~~^~~~
+  'createStack': events 1-2
+    |
+    |   12 |     Stack* stack = (Stack*)malloc(sizeof(Stack));
+    |      |                            ^~~~~~~~~~~~~~~~~~~~~
+    |      |                            |
+    |      |                            (1) this call could return NULL
+    |   13 |     stack->top = -1;
+    |      |     ~~~~~~~~~~~~~~~         
+    |      |                |
+    |      |                (2) 'stack' could be NULL: unchecked value from (1)
+    |
+collected_code_3/problem-771-2.c: In function 'areParenthesisBalanced':
+collected_code_3/problem-771-2.c:47:34: warning: leak of 'stack' [CWE-401] [-Wanalyzer-malloc-leak]
+   47 |     if (stack->top == -1) return 1;
+      |                                  ^
+  'areParenthesisBalanced': events 1-2
+    |
+    |   35 | int areParenthesisBalanced(char exp[]) {
+    |      |     ^~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (1) entry to 'areParenthesisBalanced'
+    |   36 |     int i = 0;
+    |   37 |     Stack* stack = createStack();
+    |      |                    ~~~~~~~~~~~~~
+    |      |                    |
+    |      |                    (2) calling 'createStack' from 'areParenthesisBalanced'
+    |
+    +--> 'createStack': events 3-5
+           |
+           |   11 | Stack* createStack() {
+           |      |        ^~~~~~~~~~~
+           |      |        |
+           |      |        (3) entry to 'createStack'
+           |   12 |     Stack* stack = (Stack*)malloc(sizeof(Stack));
+           |      |                            ~~~~~~~~~~~~~~~~~~~~~
+           |      |                            |
+           |      |                            (4) allocated here
+           |   13 |     stack->top = -1;
+           |      |     ~~~~~~~~~~~~~~~
+           |      |                |
+           |      |                (5) assuming 'stack' is non-NULL
+           |
+    <------+
+    |
+  'areParenthesisBalanced': events 6-7
+    |
+    |   37 |     Stack* stack = createStack();
+    |      |                    ^~~~~~~~~~~~~
+    |      |                    |
+    |      |                    (6) returning to 'areParenthesisBalanced' from 'createStack'
+    |......
+    |   47 |     if (stack->top == -1) return 1;
+    |      |                                  ~
+    |      |                                  |
+    |      |                                  (7) 'stack' leaks here; was allocated at (4)
+    |

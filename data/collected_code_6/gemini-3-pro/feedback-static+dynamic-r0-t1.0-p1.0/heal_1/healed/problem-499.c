@@ -1,0 +1,45 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+double calculate_diameter(double radius) {
+    if (radius < 0.0) {
+        return -1.0;
+    }
+    return 2.0 * radius;
+}
+
+int main(void) {
+    double radius;
+    double diameter;
+    size_t buf_size = 256;
+    char *buffer = (char *)malloc(buf_size);
+
+    if (buffer == NULL) {
+        return EXIT_FAILURE;
+    }
+
+    if (fgets(buffer, buf_size, stdin) == NULL) {
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+
+    char *endptr;
+    radius = strtod(buffer, &endptr);
+
+    if (endptr == buffer || (*endptr != '\n' && *endptr != '\0')) {
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+
+    free(buffer);
+
+    diameter = calculate_diameter(radius);
+
+    if (diameter < 0.0) {
+        return EXIT_FAILURE;
+    }
+
+    printf("%f\n", diameter);
+
+    return EXIT_SUCCESS;
+}

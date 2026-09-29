@@ -1,0 +1,26 @@
+```c
+#include <stdio.h>
+#include <stdint.h>
+#include <inttypes.h>
+
+uint32_t toggle_first_last_bits(uint32_t num)
+{
+    return num ^ (1u | (1u << (sizeof(uint32_t) * 8 - 1)));
+}
+
+int main(void)
+{
+    uint32_t num;
+    
+    if (scanf("%" SCNu32, &num) != 1)
+    {
+        fprintf(stderr, "Invalid input\n");
+        return 1;
+    }
+    
+    uint32_t result = toggle_first_last_bits(num);
+    printf("%" PRIu32 "\n", result);
+    
+    return 0;
+}
+```

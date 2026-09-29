@@ -1,0 +1,60 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+static unsigned long long binomial(unsigned int n, unsigned int k)
+{
+    unsigned long long result = 1;
+    unsigned int i;
+
+    if (k > n) {
+        return 0;
+    }
+    if (k > n - k) {
+        k = n - k;
+    }
+    for (i = 1; i <= k; i++) {
+        result = result * (n - k + i) / i;
+    }
+    return result;
+}
+
+static int lobb_number(unsigned int m, unsigned int n, unsigned long long *out)
+{
+    unsigned long long binom;
+
+    if (out == NULL) {
+        return -1;
+    }
+    if (m > n) {
+        return -1;
+    }
+    if (n > 30) {
+        return -1;
+    }
+    binom = binomial(2U * n, m + n);
+    *out = ((2ULL * m + 1ULL) * binom) / (m + n + 1ULL);
+    return 0;
+}
+
+int main(void)
+{
+    unsigned int m;
+    unsigned int n;
+    unsigned long long result;
+    int rc;
+
+    m = 2;
+    n = 5;
+
+    rc = lobb_number(m, n, &result);
+    if (rc != 0) {
+        fprintf(stderr, "Invalid input: m=%u, n=%u\n", m, n);
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Lobb number L(%u, %u) = %llu\n", m, n, result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

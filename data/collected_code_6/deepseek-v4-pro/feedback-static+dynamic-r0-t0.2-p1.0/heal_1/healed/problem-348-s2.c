@@ -1,0 +1,60 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int count_sequences(const int *values, int values_count, int length) {
+    if (values == NULL || values_count <= 0 || length <= 0) {
+        return 0;
+    }
+
+    int *dp = (int *)calloc((size_t)length + 1, sizeof(int));
+    if (dp == NULL) {
+        return -1;
+    }
+
+    int *prefix = (int *)calloc((size_t)length + 1, sizeof(int));
+    if (prefix == NULL) {
+        free(dp);
+        return -1;
+    }
+
+    dp[0] = 1;
+    prefix[0] = 1;
+
+    for (int i = 1; i <= length; i++) {
+        int total = 0;
+        for (int j = 0; j < values_count; j++) {
+            if (values[j] >= 0) {
+                total += prefix[i - 1];
+            } else {
+                int needed = -values[j];
+                if (i - 1 >= needed) {
+                    total += prefix[i - 1] - prefix[i - 1 - needed];
+                }
+            }
+        }
+        dp[i] = total;
+        prefix[i] = prefix[i - 1] + dp[i];
+    }
+
+    int result = dp[length];
+    free(dp);
+    free(prefix);
+    return result;
+}
+
+int main(void) {
+    int values[] = {1, -1};
+    int length = 4;
+    int result = count_sequences(values, 2, length);
+    printf("%d\n", result);
+
+    int values2[] = {1, -1, 2};
+    result = count_sequences(values2, 3, 3);
+    printf("%d\n", result);
+
+    int values3[] = {-1, -2};
+    result = count_sequences(values3, 2, 5);
+    printf("%d\n", result);
+
+    return 0;
+}

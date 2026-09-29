@@ -1,0 +1,64 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char *concatenate_tuple(const char *const *elements, size_t count, const char *delimiter)
+{
+    size_t total_length;
+    size_t delimiter_length;
+    size_t i;
+    char *result;
+
+    if (elements == NULL || delimiter == NULL || count == 0U) {
+        return NULL;
+    }
+
+    delimiter_length = strlen(delimiter);
+    total_length = 0U;
+
+    for (i = 0U; i < count; i++) {
+        if (elements[i] == NULL) {
+            return NULL;
+        }
+        total_length += strlen(elements[i]);
+    }
+
+    total_length += delimiter_length * (count - 1U);
+
+    result = malloc(total_length + 1U);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    result[0] = '\0';
+
+    for (i = 0U; i < count; i++) {
+        if (i > 0U) {
+            strcat(result, delimiter);
+        }
+        strcat(result, elements[i]);
+    }
+
+    return result;
+}
+
+int main(void)
+{
+    const char *tuple[] = {"ID", "is", "4", "UTS"};
+    size_t count = sizeof(tuple) / sizeof(tuple[0]);
+    char *joined;
+
+    joined = concatenate_tuple(tuple, count, "-");
+    if (joined == NULL) {
+        fprintf(stderr, "Error: concatenation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("%s\n", joined) < 0) {
+        free(joined);
+        return EXIT_FAILURE;
+    }
+
+    free(joined);
+    return EXIT_SUCCESS;
+}

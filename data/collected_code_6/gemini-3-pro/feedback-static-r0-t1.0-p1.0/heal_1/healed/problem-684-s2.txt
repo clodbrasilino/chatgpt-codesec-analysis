@@ -1,0 +1,52 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+long long count_occurrences(const char *s, long long n, char c) {
+    if (s == NULL || n < 0) {
+        return -1;
+    }
+
+    size_t len = 0;
+    long long count_in_single = 0;
+
+    while (s[len] != '\0') {
+        if (s[len] == c) {
+            count_in_single++;
+        }
+        len++;
+    }
+
+    if (len == 0) {
+        return 0;
+    }
+
+    long long full_repeats = n / len;
+    long long remainder = n % len;
+    long long total_count = full_repeats * count_in_single;
+
+    for (size_t i = 0; i < (size_t)remainder; ++i) {
+        if (s[i] == c) {
+            total_count++;
+        }
+    }
+
+    return total_count;
+}
+
+int main(void) {
+    const char *str = "abcac";
+    long long n = 10;
+    char target = 'a';
+
+    long long result = count_occurrences(str, n, target);
+    if (result != -1) {
+        printf("%lld\n", result);
+    } else {
+        fprintf(stderr, "Error: Invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```

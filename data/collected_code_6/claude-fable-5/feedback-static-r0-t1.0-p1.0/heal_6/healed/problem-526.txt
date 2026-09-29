@@ -1,0 +1,84 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#define BUFFER_SIZE 1024
+
+void capitalize_first_last(char *str, size_t max_len)
+{
+    size_t i;
+    size_t len;
+
+    if (str == NULL || max_len == 0) {
+        return;
+    }
+
+    len = strnlen(str, max_len);
+    i = 0;
+
+    while (i < len) {
+        while (i < len && isspace((unsigned char)str[i])) {
+            i++;
+        }
+
+        if (i >= len) {
+            break;
+        }
+
+        {
+            size_t start = i;
+            size_t end;
+
+            while (i < len && !isspace((unsigned char)str[i])) {
+                i++;
+            }
+
+            end = i - 1;
+
+            str[start] = (char)toupper((unsigned char)str[start]);
+            str[end] = (char)toupper((unsigned char)str[end]);
+        }
+    }
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    char *newline;
+
+    printf("Enter a string: ");
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    newline = strchr(buffer, '\n');
+    if (newline != NULL) {
+        *newline = '\0';
+    }
+
+    capitalize_first_last(buffer, sizeof(buffer));
+
+    printf("Result: %s\n", buffer);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The original code is already well-hardened, and the Flawfinder warning (CWE-119/CWE-120) is effectively a false positive that has been properly mitigated:
+
+1. **Bounded input:** `fgets(buffer, sizeof(buffer), stdin)` limits reads to the buffer size, preventing overflow — the classic fix for the statically-sized array concern.
+2. **Guaranteed termination:** `buffer[sizeof(buffer) - 1] = '\0';` is defensive (technically redundant, since `fgets` always null-terminates on success, but harmless).
+3. **Bounded string operations:** `strnlen(str, max_len)` is used instead of `strlen`, so even a non-terminated buffer can't cause an out-of-bounds read.
+4. **Correct `ctype` usage:** All `isspace`/`toupper` calls cast to `unsigned char`, avoiding undefined behavior with negative `char` values (e.g., extended/UTF-8 bytes on platforms where `char` is signed).
+5. **NULL and edge-case checks:** The function guards against `NULL`, zero length, and the `fgets` return value is checked.
+6. **No underflow risk in `end = i - 1`:** Since the inner loop is only entered when `i < len` and a non-space character exists at `str[start]`, `i` is always incremented at least once, so `i - 1 >= start`.
+
+No functional changes were required — the code stands as-is with the comments removed.

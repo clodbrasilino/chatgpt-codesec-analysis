@@ -1,0 +1,16 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-813-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-813-s3.c:6:30: warning: Either the condition 'i<max_len' is redundant or the array 'str[14]' is accessed at index 255, which is out of bounds. [arrayIndexOutOfBoundsCond]
+    while (i < max_len && str[i] != '\0') {
+                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-813-s3.c:14:22: note: Assignment 'max_len=256', assigned value is 256
+    size_t max_len = 256;
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-813-s3.c:15:56: note: Calling function 'string_length', 2nd argument 'max_len' value is 256
+    printf("Length: %zu\n", string_length(test_string, max_len));
+                                                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-813-s3.c:6:14: note: Assuming that condition 'i<max_len' is not redundant
+    while (i < max_len && str[i] != '\0') {
+             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-813-s3.c:6:30: note: Array index out of bounds
+    while (i < max_len && str[i] != '\0') {
+                             ^

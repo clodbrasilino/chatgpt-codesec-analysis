@@ -1,0 +1,72 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#define BUFFER_SIZE 256
+
+void string_to_lower(char *str)
+{
+    size_t i;
+
+    if (str == NULL) {
+        return;
+    }
+
+    for (i = 0; str[i] != '\0'; i++) {
+        str[i] = (char)tolower((unsigned char)str[i]);
+    }
+}
+
+static void flush_stdin(void)
+{
+    int ch;
+
+    do {
+        ch = getchar();
+    } while (ch != '\n' && ch != EOF);
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+
+    printf("Enter a string: ");
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    if (strchr(buffer, '\n') == NULL && !feof(stdin)) {
+        flush_stdin();
+    }
+
+    buffer[strcspn(buffer, "\n")] = '\0';
+
+    string_to_lower(buffer);
+
+    printf("Lowercase: %s\n", buffer);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the flagged weaknesses:**
+
+1. **`getchar` in a loop (CWE-120, CWE-20):** This is a false positive in this context. The `flush_stdin` function only reads and discards characters into an `int` — no buffer is written to, so no overflow is possible. The loop terminates correctly on both `'\n'` and `EOF`, avoiding an infinite loop if the stream closes.
+
+2. **Statically-sized `char` array (CWE-119/CWE-120):** This is properly mitigated. The code uses `fgets` with `sizeof(buffer)` as the bound, which guarantees no more than `BUFFER_SIZE - 1` characters plus a null terminator are written. The defensive `buffer[sizeof(buffer) - 1] = '\0'` is technically redundant (since `fgets` always null-terminates on success) but harmless.
+
+Additional good practices already present:
+
+- Checks the return value of `fgets` and reports read failures.
+- Detects and drains leftover input when the line exceeds the buffer, preventing stale data from affecting subsequent reads.
+- Uses `strcspn` to strip the trailing newline safely, which works even if no newline is present.
+- Casts to `unsigned char` before calling `tolower`, avoiding undefined behavior for negative `char` values.
+- `string_to_lower` guards against a `NULL` pointer.
+
+The code is already secure as written; the Flawfinder hits are low-risk informational warnings that are fully addressed by the existing bounds checking and input handling.

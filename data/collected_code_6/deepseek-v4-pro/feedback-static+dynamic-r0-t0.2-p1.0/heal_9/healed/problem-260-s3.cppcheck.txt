@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_9/healed/problem-260-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_9/healed/problem-260-s3.c:22:11: style: Condition '2==prev2' is always false [knownConditionTrueFalse]
+    if (2 == prev2) {
+          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_9/healed/problem-260-s3.c:18:23: note: Assignment 'prev2=1', assigned value is 1
+    long long prev2 = 1;
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_9/healed/problem-260-s3.c:22:11: note: Condition '2==prev2' is always false
+    if (2 == prev2) {
+          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_9/healed/problem-260-s3.c:27:11: style: Condition '2==prev1' is always false [knownConditionTrueFalse]
+    if (2 == prev1) {
+          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_9/healed/problem-260-s3.c:19:23: note: Assignment 'prev1=1', assigned value is 1
+    long long prev1 = 1;
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_9/healed/problem-260-s3.c:27:11: note: Condition '2==prev1' is always false
+    if (2 == prev1) {
+          ^

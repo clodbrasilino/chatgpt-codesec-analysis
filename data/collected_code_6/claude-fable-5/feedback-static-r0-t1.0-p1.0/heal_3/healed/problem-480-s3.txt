@@ -1,0 +1,79 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <limits.h>
+
+int max_occurring_char(const char *str, char *result)
+{
+    size_t counts[UCHAR_MAX + 1] = {0};
+    size_t max_count = 0;
+    size_t i;
+    unsigned char best = 0;
+
+    if (str == NULL || result == NULL) {
+        return -1;
+    }
+
+    if (str[0] == '\0') {
+        return -1;
+    }
+
+    for (i = 0; str[i] != '\0'; i++) {
+        unsigned char c = (unsigned char)str[i];
+        counts[c]++;
+        if (counts[c] > max_count) {
+            max_count = counts[c];
+            best = c;
+        }
+    }
+
+    *result = (char)best;
+    return 0;
+}
+
+int main(void)
+{
+    char buffer[256];
+    char max_char = '\0';
+    size_t len;
+
+    memset(buffer, 0, sizeof(buffer));
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    }
+
+    if (max_occurring_char(buffer, &max_char) != 0) {
+        fprintf(stderr, "Invalid or empty input\n");
+        return 1;
+    }
+
+    if (printf("Maximum occurring character: %c\n", max_char) < 0) {
+        return 1;
+    }
+
+    return 0;
+}
+```
+
+The code as provided already addresses the flagged weakness (CWE-119/CWE-120) correctly, so the rewrite preserves those mitigations:
+
+1. **Bounded input read**: `fgets(buffer, (int)sizeof(buffer), stdin)` limits input to the buffer size, preventing overflow — unlike `gets()` or unbounded `scanf("%s", ...)`.
+
+2. **Guaranteed null termination**: `buffer[sizeof(buffer) - 1] = '\0'` is defensive; `fgets` already null-terminates, but this guards against future refactoring mistakes.
+
+3. **Bounded length calculation**: `strnlen(buffer, sizeof(buffer))` instead of `strlen()` ensures the scan never runs past the buffer even if termination were somehow lost.
+
+4. **Safe character indexing**: casting to `unsigned char` before indexing `counts[]` avoids negative array indices on platforms where `char` is signed (a subtle but real out-of-bounds read/write risk).
+
+5. **Null-pointer and empty-string checks** in `max_occurring_char` prevent dereferencing invalid input, and return codes are checked at every I/O boundary (`fgets`, `printf`).
+
+The statically-sized `buffer[256]` flagged by Flawfinder is acceptable because every operation touching it is explicitly bounded by `sizeof(buffer)`.

@@ -1,0 +1,27 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+unsigned long long count_max_equilateral_triangles(unsigned int n) {
+    unsigned long long total = 0;
+    unsigned long long n_ll = n;
+
+    if (n % 2 == 0) {
+        total = (n_ll * (n_ll + 2) * (2 * n_ll + 1)) / 8;
+    } else {
+        total = (n_ll * (n_ll + 2) * (2 * n_ll + 1) - 1) / 8;
+    }
+
+    return total;
+}
+
+int main(void) {
+    unsigned int n;
+
+    if (scanf("%u", &n) != 1) {
+        return EXIT_FAILURE;
+    }
+
+    printf("%llu\n", count_max_equilateral_triangles(n));
+
+    return EXIT_SUCCESS;
+}

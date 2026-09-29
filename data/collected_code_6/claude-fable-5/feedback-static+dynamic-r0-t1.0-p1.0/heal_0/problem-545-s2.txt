@@ -1,0 +1,52 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+unsigned int toggle_first_last(unsigned int n)
+{
+    unsigned int msb_pos;
+    unsigned int temp;
+
+    if (n == 0U) {
+        return 1U;
+    }
+
+    if (n == 1U) {
+        return 0U;
+    }
+
+    msb_pos = 0U;
+    temp = n;
+    while (temp > 1U) {
+        temp >>= 1U;
+        msb_pos++;
+    }
+
+    n ^= 1U;
+    n ^= (1U << msb_pos);
+
+    return n;
+}
+
+int main(void)
+{
+    unsigned int number;
+    unsigned int result;
+    int scan_result;
+
+    printf("Enter a non-negative number: ");
+
+    scan_result = scanf("%u", &number);
+    if (scan_result != 1) {
+        fprintf(stderr, "Error: invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    result = toggle_first_last(number);
+
+    printf("Original number: %u\n", number);
+    printf("After toggling first and last bits: %u\n", result);
+
+    return EXIT_SUCCESS;
+}
+```

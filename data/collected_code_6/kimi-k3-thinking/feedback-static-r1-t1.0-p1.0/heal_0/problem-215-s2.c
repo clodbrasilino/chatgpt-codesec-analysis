@@ -1,0 +1,79 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+
+int *rle_decode(const int *encoded, size_t encoded_size, size_t *out_size)
+{
+    size_t i;
+    size_t j;
+    size_t total;
+    size_t pos;
+    int *decoded;
+
+    if (encoded == NULL || out_size == NULL) {
+        return NULL;
+    }
+
+    *out_size = 0;
+
+    if (encoded_size == 0 || encoded_size % 2 != 0) {
+        return NULL;
+    }
+
+    total = 0;
+    for (i = 0; i < encoded_size; i += 2) {
+        if (encoded[i] <= 0) {
+            return NULL;
+        }
+        if ((size_t)encoded[i] > SIZE_MAX - total) {
+            return NULL;
+        }
+        total += (size_t)encoded[i];
+    }
+
+    if (total > SIZE_MAX / sizeof(*decoded)) {
+        return NULL;
+    }
+
+    decoded = (int *)malloc(total * sizeof(*decoded));
+    if (decoded == NULL) {
+        return NULL;
+    }
+
+    pos = 0;
+    for (i = 0; i < encoded_size; i += 2) {
+        for (j = 0; j < (size_t)encoded[i]; j++) {
+            decoded[pos] = encoded[i + 1];
+            pos++;
+        }
+    }
+
+    *out_size = total;
+    return decoded;
+}
+
+int main(void)
+{
+    int encoded[] = {3, 5, 2, 8, 1, 7, 4, 1};
+    size_t encoded_size = sizeof(encoded) / sizeof(encoded[0]);
+    size_t decoded_size = 0;
+    size_t i;
+    int *decoded;
+
+    decoded = rle_decode(encoded, encoded_size, &decoded_size);
+    if (decoded == NULL) {
+        fprintf(stderr, "Error: failed to decode the run-length encoded list.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Decoded list: ");
+    for (i = 0; i < decoded_size; i++) {
+        printf("%d ", decoded[i]);
+    }
+    printf("\n");
+
+    free(decoded);
+    decoded = NULL;
+
+    return EXIT_SUCCESS;
+}

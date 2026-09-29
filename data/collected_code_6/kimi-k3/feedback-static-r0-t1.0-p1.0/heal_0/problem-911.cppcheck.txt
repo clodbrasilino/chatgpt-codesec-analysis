@@ -1,0 +1,28 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_0/problem-911.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_0/problem-911.c:198:65: style: Condition 'max_heap_push(max_data,&max_heap_size,arr[i])!=0' is always false [knownConditionTrueFalse]
+            if (max_heap_push(max_data, &max_heap_size, arr[i]) != 0) {
+                                                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_0/problem-911.c:198:30: note: Calling function 'max_heap_push' returns 0
+            if (max_heap_push(max_data, &max_heap_size, arr[i]) != 0) {
+                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_0/problem-911.c:198:65: note: Condition 'max_heap_push(max_data,&max_heap_size,arr[i])!=0' is always false
+            if (max_heap_push(max_data, &max_heap_size, arr[i]) != 0) {
+                                                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_0/problem-911.c:205:31: style: Condition 'max_heap_size==0' is always false [knownConditionTrueFalse]
+            if (max_heap_size == 0) {
+                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_0/problem-911.c:197:27: note: Assuming that condition 'max_heap_size<2' is not redundant
+        if (max_heap_size < 2) {
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_0/problem-911.c:205:31: note: Condition 'max_heap_size==0' is always false
+            if (max_heap_size == 0) {
+                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_0/problem-911.c:219:69: style: Condition 'max_heap_push(max_data,&max_heap_size,arr[i])!=0' is always false [knownConditionTrueFalse]
+                if (max_heap_push(max_data, &max_heap_size, arr[i]) != 0) {
+                                                                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_0/problem-911.c:219:34: note: Calling function 'max_heap_push' returns 0
+                if (max_heap_push(max_data, &max_heap_size, arr[i]) != 0) {
+                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_0/problem-911.c:219:69: note: Condition 'max_heap_push(max_data,&max_heap_size,arr[i])!=0' is always false
+                if (max_heap_push(max_data, &max_heap_size, arr[i]) != 0) {
+                                                                    ^

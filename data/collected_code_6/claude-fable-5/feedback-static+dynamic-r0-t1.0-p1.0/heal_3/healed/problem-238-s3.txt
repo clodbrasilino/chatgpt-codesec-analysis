@@ -1,0 +1,70 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+#define MAX_INPUT_SIZE 1024
+
+unsigned long long count_substrings(const char *str, size_t max_len)
+{
+    size_t len;
+
+    if (str == NULL) {
+        return 0ULL;
+    }
+
+    len = strnlen(str, max_len);
+
+    return ((unsigned long long)len * (unsigned long long)(len + 1U)) / 2ULL;
+}
+
+int main(void)
+{
+    char *buffer;
+    char *newline;
+    unsigned long long result;
+
+    buffer = calloc(MAX_INPUT_SIZE, sizeof(char));
+    if (buffer == NULL) {
+        fprintf(stderr, "Error: memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter a string: ");
+
+    if (fgets(buffer, MAX_INPUT_SIZE, stdin) == NULL) {
+        fprintf(stderr, "Error: failed to read input\n");
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+
+    buffer[MAX_INPUT_SIZE - 1] = '\0';
+
+    newline = strchr(buffer, '\n');
+    if (newline != NULL) {
+        *newline = '\0';
+    }
+
+    result = count_substrings(buffer, MAX_INPUT_SIZE);
+
+    printf("Number of non-empty substrings: %llu\n", result);
+
+    free(buffer);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the original code and the changes made:**
+
+The original code was already largely defensive, but the Flawfinder warning flagged the statically-sized stack array `char buffer[MAX_INPUT_SIZE]` as a potential CWE-119/CWE-120 risk. Key points:
+
+1. **Buffer allocation** — The stack array was replaced with a heap allocation via `calloc`, which zero-initializes the memory (guaranteeing NUL-termination from the start) and moves the large buffer off the stack, avoiding potential stack exhaustion issues. Allocation failure is explicitly checked.
+
+2. **Bounded input** — `fgets(buffer, MAX_INPUT_SIZE, stdin)` remains the correct, length-limited read function; it never writes more than `MAX_INPUT_SIZE - 1` characters plus the terminator, satisfying the bounds-checking requirement.
+
+3. **Guaranteed termination** — The explicit `buffer[MAX_INPUT_SIZE - 1] = '\0'` is retained as belt-and-braces defense, and `strnlen` in `count_substrings` ensures the length computation can never run past the buffer even if termination were somehow lost.
+
+4. **Overflow-safe arithmetic** — The substring count `len * (len + 1) / 2` is computed in `unsigned long long`, which cannot overflow for any `len ≤ 1024` (max value ≈ 524,800).
+
+5. **Resource hygiene** — `free(buffer)` is called on every exit path, preventing leaks.

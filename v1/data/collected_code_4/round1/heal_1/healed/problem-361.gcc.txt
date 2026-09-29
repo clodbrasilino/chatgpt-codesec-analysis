@@ -1,0 +1,579 @@
+./collected_code_4/round1//heal_1/healed//problem-361.c: In function 'main':
+./collected_code_4/round1//heal_1/healed//problem-361.c:63:14: warning: dereference of NULL '0' [CWE-476] [-Wanalyzer-null-dereference]
+   63 |     l1->next = l2;
+      |     ~~~~~~~~~^~~~
+  'main': events 1-2
+    |
+    |   54 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |   55 |     Node* n1 = newNode(1);
+    |      |                ~~~~~~~~~~
+    |      |                |
+    |      |                (2) calling 'newNode' from 'main'
+    |
+    +--> 'newNode': events 3-4
+           |
+           |   14 | Node* newNode(int data) {
+           |      |       ^~~~~~~
+           |      |       |
+           |      |       (3) entry to 'newNode'
+           |   15 |     Node* temp = (Node*)malloc(sizeof(Node));
+           |   16 |     if(temp == NULL) {
+           |      |       ~
+           |      |       |
+           |      |       (4) following 'true' branch (when 'temp' is NULL)...
+           |
+         'newNode': event 5
+           |
+           |   17 |         return NULL;
+           |      |                ^~~~
+           |      |                |
+           |      |                (5) ...to here
+           |
+    <------+
+    |
+  'main': events 6-7
+    |
+    |   55 |     Node* n1 = newNode(1);
+    |      |                ^~~~~~~~~~
+    |      |                |
+    |      |                (6) returning to 'main' from 'newNode'
+    |   56 |     Node* n2 = NULL;
+    |   57 |     Node* n3 = newNode(3);
+    |      |                ~~~~~~~~~~
+    |      |                |
+    |      |                (7) calling 'newNode' from 'main'
+    |
+    +--> 'newNode': events 8-9
+           |
+           |   14 | Node* newNode(int data) {
+           |      |       ^~~~~~~
+           |      |       |
+           |      |       (8) entry to 'newNode'
+           |   15 |     Node* temp = (Node*)malloc(sizeof(Node));
+           |   16 |     if(temp == NULL) {
+           |      |       ~
+           |      |       |
+           |      |       (9) following 'true' branch (when 'temp' is NULL)...
+           |
+         'newNode': event 10
+           |
+           |   17 |         return NULL;
+           |      |                ^~~~
+           |      |                |
+           |      |                (10) ...to here
+           |
+    <------+
+    |
+  'main': events 11-12
+    |
+    |   57 |     Node* n3 = newNode(3);
+    |      |                ^~~~~~~~~~
+    |      |                |
+    |      |                (11) returning to 'main' from 'newNode'
+    |   58 | 
+    |   59 |     List* l1 = newList(n1);
+    |      |                ~~~~~~~~~~~
+    |      |                |
+    |      |                (12) calling 'newList' from 'main'
+    |
+    +--> 'newList': events 13-14
+           |
+           |   24 | List* newList(Node* node) {
+           |      |       ^~~~~~~
+           |      |       |
+           |      |       (13) entry to 'newList'
+           |   25 |     List* temp = (List*)malloc(sizeof(List));
+           |   26 |     if(temp == NULL) {
+           |      |       ~
+           |      |       |
+           |      |       (14) following 'true' branch (when 'temp' is NULL)...
+           |
+         'newList': event 15
+           |
+           |   27 |         return NULL;
+           |      |                ^~~~
+           |      |                |
+           |      |                (15) ...to here
+           |
+         'newList': event 16
+           |
+           |   27 |         return NULL;
+           |      |                ^~~~
+           |      |                |
+           |      |                (16) '0' is NULL
+           |
+    <------+
+    |
+  'main': events 17-19
+    |
+    |   59 |     List* l1 = newList(n1);
+    |      |           ~~   ^~~~~~~~~~~
+    |      |           |    |
+    |      |           |    (17) returning to 'main' from 'newList'
+    |      |           (18) 'l1' is NULL
+    |   60 |     List* l2 = newList(n2);
+    |      |                ~~~~~~~~~~~
+    |      |                |
+    |      |                (19) calling 'newList' from 'main'
+    |
+    +--> 'newList': events 20-22
+           |
+           |   24 | List* newList(Node* node) {
+           |      |       ^~~~~~~
+           |      |       |
+           |      |       (20) entry to 'newList'
+           |   25 |     List* temp = (List*)malloc(sizeof(List));
+           |   26 |     if(temp == NULL) {
+           |      |       ~
+           |      |       |
+           |      |       (21) following 'false' branch (when 'temp' is non-NULL)...
+           |......
+           |   29 |     temp->head = node;
+           |      |     ~~~~~~~~~~~~~~~~~
+           |      |                |
+           |      |                (22) ...to here
+           |
+    <------+
+    |
+  'main': events 23-24
+    |
+    |   60 |     List* l2 = newList(n2);
+    |      |                ^~~~~~~~~~~
+    |      |                |
+    |      |                (23) returning to 'main' from 'newList'
+    |   61 |     List* l3 = newList(n3);
+    |      |                ~~~~~~~~~~~
+    |      |                |
+    |      |                (24) calling 'newList' from 'main'
+    |
+    +--> 'newList': events 25-27
+           |
+           |   24 | List* newList(Node* node) {
+           |      |       ^~~~~~~
+           |      |       |
+           |      |       (25) entry to 'newList'
+           |   25 |     List* temp = (List*)malloc(sizeof(List));
+           |   26 |     if(temp == NULL) {
+           |      |       ~
+           |      |       |
+           |      |       (26) following 'false' branch (when 'temp' is non-NULL)...
+           |......
+           |   29 |     temp->head = node;
+           |      |     ~~~~~~~~~~~~~~~~~
+           |      |                |
+           |      |                (27) ...to here
+           |
+    <------+
+    |
+  'main': events 28-30
+    |
+    |   61 |     List* l3 = newList(n3);
+    |      |                ^~~~~~~~~~~
+    |      |                |
+    |      |                (28) returning to 'main' from 'newList'
+    |   62 | 
+    |   63 |     l1->next = l2;
+    |      |     ~~~~~~~~~~~~~
+    |      |       |      |
+    |      |       |      (30) dereference of NULL 'l1'
+    |      |       (29) 'l1' is NULL
+    |
+./collected_code_4/round1//heal_1/healed//problem-361.c:63:14: warning: dereference of NULL 'l3' [CWE-476] [-Wanalyzer-null-dereference]
+   63 |     l1->next = l2;
+      |     ~~~~~~~~~^~~~
+  'main': events 1-2
+    |
+    |   54 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |   55 |     Node* n1 = newNode(1);
+    |      |                ~~~~~~~~~~
+    |      |                |
+    |      |                (2) calling 'newNode' from 'main'
+    |
+    +--> 'newNode': events 3-4
+           |
+           |   14 | Node* newNode(int data) {
+           |      |       ^~~~~~~
+           |      |       |
+           |      |       (3) entry to 'newNode'
+           |   15 |     Node* temp = (Node*)malloc(sizeof(Node));
+           |   16 |     if(temp == NULL) {
+           |      |       ~
+           |      |       |
+           |      |       (4) following 'true' branch (when 'temp' is NULL)...
+           |
+         'newNode': event 5
+           |
+           |   17 |         return NULL;
+           |      |                ^~~~
+           |      |                |
+           |      |                (5) ...to here
+           |
+    <------+
+    |
+  'main': events 6-7
+    |
+    |   55 |     Node* n1 = newNode(1);
+    |      |                ^~~~~~~~~~
+    |      |                |
+    |      |                (6) returning to 'main' from 'newNode'
+    |   56 |     Node* n2 = NULL;
+    |   57 |     Node* n3 = newNode(3);
+    |      |                ~~~~~~~~~~
+    |      |                |
+    |      |                (7) calling 'newNode' from 'main'
+    |
+    +--> 'newNode': events 8-9
+           |
+           |   14 | Node* newNode(int data) {
+           |      |       ^~~~~~~
+           |      |       |
+           |      |       (8) entry to 'newNode'
+           |   15 |     Node* temp = (Node*)malloc(sizeof(Node));
+           |   16 |     if(temp == NULL) {
+           |      |       ~
+           |      |       |
+           |      |       (9) following 'true' branch (when 'temp' is NULL)...
+           |
+         'newNode': event 10
+           |
+           |   17 |         return NULL;
+           |      |                ^~~~
+           |      |                |
+           |      |                (10) ...to here
+           |
+    <------+
+    |
+  'main': events 11-12
+    |
+    |   57 |     Node* n3 = newNode(3);
+    |      |                ^~~~~~~~~~
+    |      |                |
+    |      |                (11) returning to 'main' from 'newNode'
+    |   58 | 
+    |   59 |     List* l1 = newList(n1);
+    |      |                ~~~~~~~~~~~
+    |      |                |
+    |      |                (12) calling 'newList' from 'main'
+    |
+    +--> 'newList': events 13-14
+           |
+           |   24 | List* newList(Node* node) {
+           |      |       ^~~~~~~
+           |      |       |
+           |      |       (13) entry to 'newList'
+           |   25 |     List* temp = (List*)malloc(sizeof(List));
+           |   26 |     if(temp == NULL) {
+           |      |       ~
+           |      |       |
+           |      |       (14) following 'true' branch (when 'temp' is NULL)...
+           |
+         'newList': event 15
+           |
+           |   27 |         return NULL;
+           |      |                ^~~~
+           |      |                |
+           |      |                (15) ...to here
+           |
+         'newList': event 16
+           |
+           |   27 |         return NULL;
+           |      |                ^~~~
+           |      |                |
+           |      |                (16) '0' is NULL
+           |
+    <------+
+    |
+  'main': events 17-19
+    |
+    |   59 |     List* l1 = newList(n1);
+    |      |           ~~   ^~~~~~~~~~~
+    |      |           |    |
+    |      |           |    (17) returning to 'main' from 'newList'
+    |      |           (18) 'l1' is NULL
+    |   60 |     List* l2 = newList(n2);
+    |      |                ~~~~~~~~~~~
+    |      |                |
+    |      |                (19) calling 'newList' from 'main'
+    |
+    +--> 'newList': events 20-22
+           |
+           |   24 | List* newList(Node* node) {
+           |      |       ^~~~~~~
+           |      |       |
+           |      |       (20) entry to 'newList'
+           |   25 |     List* temp = (List*)malloc(sizeof(List));
+           |   26 |     if(temp == NULL) {
+           |      |       ~
+           |      |       |
+           |      |       (21) following 'false' branch (when 'temp' is non-NULL)...
+           |......
+           |   29 |     temp->head = node;
+           |      |     ~~~~~~~~~~~~~~~~~
+           |      |                |
+           |      |                (22) ...to here
+           |
+    <------+
+    |
+  'main': events 23-24
+    |
+    |   60 |     List* l2 = newList(n2);
+    |      |                ^~~~~~~~~~~
+    |      |                |
+    |      |                (23) returning to 'main' from 'newList'
+    |   61 |     List* l3 = newList(n3);
+    |      |                ~~~~~~~~~~~
+    |      |                |
+    |      |                (24) calling 'newList' from 'main'
+    |
+    +--> 'newList': events 25-26
+           |
+           |   24 | List* newList(Node* node) {
+           |      |       ^~~~~~~
+           |      |       |
+           |      |       (25) entry to 'newList'
+           |   25 |     List* temp = (List*)malloc(sizeof(List));
+           |   26 |     if(temp == NULL) {
+           |      |       ~
+           |      |       |
+           |      |       (26) following 'true' branch (when 'temp' is NULL)...
+           |
+         'newList': event 27
+           |
+           |   27 |         return NULL;
+           |      |                ^~~~
+           |      |                |
+           |      |                (27) ...to here
+           |
+         'newList': event 28
+           |
+           |   27 |         return NULL;
+           |      |                ^~~~
+           |      |                |
+           |      |                (28) 'l1' is NULL
+           |
+    <------+
+    |
+  'main': events 29-32
+    |
+    |   61 |     List* l3 = newList(n3);
+    |      |                ^~~~~~~~~~~
+    |      |                |
+    |      |                (29) returning to 'main' from 'newList'
+    |   62 | 
+    |   63 |     l1->next = l2;
+    |      |     ~~~~~~~~~~~~~
+    |      |       |      |
+    |      |       |      (32) dereference of NULL 'l1'
+    |      |       (30) 'l1' is NULL
+    |   64 |     l2->next = l3;
+    |      |     ~~~~~~~~~~~~~
+    |      |              |
+    |      |              (31) 'l3' is NULL
+    |
+./collected_code_4/round1//heal_1/healed//problem-361.c:63:14: warning: dereference of NULL 'l2' [CWE-476] [-Wanalyzer-null-dereference]
+   63 |     l1->next = l2;
+      |     ~~~~~~~~~^~~~
+  'main': events 1-2
+    |
+    |   54 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |   55 |     Node* n1 = newNode(1);
+    |      |                ~~~~~~~~~~
+    |      |                |
+    |      |                (2) calling 'newNode' from 'main'
+    |
+    +--> 'newNode': events 3-4
+           |
+           |   14 | Node* newNode(int data) {
+           |      |       ^~~~~~~
+           |      |       |
+           |      |       (3) entry to 'newNode'
+           |   15 |     Node* temp = (Node*)malloc(sizeof(Node));
+           |   16 |     if(temp == NULL) {
+           |      |       ~
+           |      |       |
+           |      |       (4) following 'true' branch (when 'temp' is NULL)...
+           |
+         'newNode': event 5
+           |
+           |   17 |         return NULL;
+           |      |                ^~~~
+           |      |                |
+           |      |                (5) ...to here
+           |
+    <------+
+    |
+  'main': events 6-7
+    |
+    |   55 |     Node* n1 = newNode(1);
+    |      |                ^~~~~~~~~~
+    |      |                |
+    |      |                (6) returning to 'main' from 'newNode'
+    |   56 |     Node* n2 = NULL;
+    |   57 |     Node* n3 = newNode(3);
+    |      |                ~~~~~~~~~~
+    |      |                |
+    |      |                (7) calling 'newNode' from 'main'
+    |
+    +--> 'newNode': events 8-9
+           |
+           |   14 | Node* newNode(int data) {
+           |      |       ^~~~~~~
+           |      |       |
+           |      |       (8) entry to 'newNode'
+           |   15 |     Node* temp = (Node*)malloc(sizeof(Node));
+           |   16 |     if(temp == NULL) {
+           |      |       ~
+           |      |       |
+           |      |       (9) following 'true' branch (when 'temp' is NULL)...
+           |
+         'newNode': event 10
+           |
+           |   17 |         return NULL;
+           |      |                ^~~~
+           |      |                |
+           |      |                (10) ...to here
+           |
+    <------+
+    |
+  'main': events 11-12
+    |
+    |   57 |     Node* n3 = newNode(3);
+    |      |                ^~~~~~~~~~
+    |      |                |
+    |      |                (11) returning to 'main' from 'newNode'
+    |   58 | 
+    |   59 |     List* l1 = newList(n1);
+    |      |                ~~~~~~~~~~~
+    |      |                |
+    |      |                (12) calling 'newList' from 'main'
+    |
+    +--> 'newList': events 13-14
+           |
+           |   24 | List* newList(Node* node) {
+           |      |       ^~~~~~~
+           |      |       |
+           |      |       (13) entry to 'newList'
+           |   25 |     List* temp = (List*)malloc(sizeof(List));
+           |   26 |     if(temp == NULL) {
+           |      |       ~
+           |      |       |
+           |      |       (14) following 'true' branch (when 'temp' is NULL)...
+           |
+         'newList': event 15
+           |
+           |   27 |         return NULL;
+           |      |                ^~~~
+           |      |                |
+           |      |                (15) ...to here
+           |
+         'newList': event 16
+           |
+           |   27 |         return NULL;
+           |      |                ^~~~
+           |      |                |
+           |      |                (16) '0' is NULL
+           |
+    <------+
+    |
+  'main': events 17-19
+    |
+    |   59 |     List* l1 = newList(n1);
+    |      |           ~~   ^~~~~~~~~~~
+    |      |           |    |
+    |      |           |    (17) returning to 'main' from 'newList'
+    |      |           (18) 'l1' is NULL
+    |   60 |     List* l2 = newList(n2);
+    |      |                ~~~~~~~~~~~
+    |      |                |
+    |      |                (19) calling 'newList' from 'main'
+    |
+    +--> 'newList': events 20-21
+           |
+           |   24 | List* newList(Node* node) {
+           |      |       ^~~~~~~
+           |      |       |
+           |      |       (20) entry to 'newList'
+           |   25 |     List* temp = (List*)malloc(sizeof(List));
+           |   26 |     if(temp == NULL) {
+           |      |       ~
+           |      |       |
+           |      |       (21) following 'true' branch (when 'temp' is NULL)...
+           |
+         'newList': event 22
+           |
+           |   27 |         return NULL;
+           |      |                ^~~~
+           |      |                |
+           |      |                (22) ...to here
+           |
+         'newList': event 23
+           |
+           |   27 |         return NULL;
+           |      |                ^~~~
+           |      |                |
+           |      |                (23) 'l1' is NULL
+           |
+    <------+
+    |
+  'main': events 24-25
+    |
+    |   60 |     List* l2 = newList(n2);
+    |      |                ^~~~~~~~~~~
+    |      |                |
+    |      |                (24) returning to 'main' from 'newList'
+    |   61 |     List* l3 = newList(n3);
+    |      |                ~~~~~~~~~~~
+    |      |                |
+    |      |                (25) calling 'newList' from 'main'
+    |
+    +--> 'newList': events 26-27
+           |
+           |   24 | List* newList(Node* node) {
+           |      |       ^~~~~~~
+           |      |       |
+           |      |       (26) entry to 'newList'
+           |   25 |     List* temp = (List*)malloc(sizeof(List));
+           |   26 |     if(temp == NULL) {
+           |      |       ~
+           |      |       |
+           |      |       (27) following 'true' branch (when 'temp' is NULL)...
+           |
+         'newList': event 28
+           |
+           |   27 |         return NULL;
+           |      |                ^~~~
+           |      |                |
+           |      |                (28) ...to here
+           |
+         'newList': event 29
+           |
+           |   27 |         return NULL;
+           |      |                ^~~~
+           |      |                |
+           |      |                (29) 'l1' is NULL
+           |
+    <------+
+    |
+  'main': events 30-33
+    |
+    |   61 |     List* l3 = newList(n3);
+    |      |                ^~~~~~~~~~~
+    |      |                |
+    |      |                (30) returning to 'main' from 'newList'
+    |   62 | 
+    |   63 |     l1->next = l2;
+    |      |     ~~~~~~~~~~~~~
+    |      |       |      |
+    |      |       |      (32) 'l2' is NULL
+    |      |       |      (33) dereference of NULL 'l1'
+    |      |       (31) 'l1' is NULL
+    |

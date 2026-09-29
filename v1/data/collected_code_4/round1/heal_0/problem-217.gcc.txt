@@ -1,0 +1,13 @@
+./collected_code_4/round1//heal_0//problem-217.c: In function 'findFirstRepeatedChar':
+./collected_code_4/round1//heal_0//problem-217.c:7:5: error: unknown type name 'bool'
+    7 |     bool charSet[ASCII_SIZE] = {0};
+      |     ^~~~
+./collected_code_4/round1//heal_0//problem-217.c:3:1: note: 'bool' is defined in header '<stdbool.h>'; did you forget to '#include <stdbool.h>'?
+    2 | #include <string.h>
+  +++ |+#include <stdbool.h>
+    3 | #define ASCII_SIZE 256
+./collected_code_4/round1//heal_0//problem-217.c:10:31: error: 'true' undeclared (first use in this function)
+   10 |         if(charSet[str[i]] == true)
+      |                               ^~~~
+./collected_code_4/round1//heal_0//problem-217.c:10:31: note: 'true' is defined in header '<stdbool.h>'; did you forget to '#include <stdbool.h>'?
+./collected_code_4/round1//heal_0//problem-217.c:10:31: note: each undeclared identifier is reported only once for each function it appears in

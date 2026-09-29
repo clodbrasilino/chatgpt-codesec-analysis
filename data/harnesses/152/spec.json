@@ -1,0 +1,90 @@
+{
+  "task_id": 152,
+  "text": "Write a C function to sort the given array by using merge sort.",
+  "fn_candidates": [
+    "merge_sort",
+    "MergeSort",
+    "mergeSort",
+    "mergesort"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "merge_sort",
+      "args": [
+        [
+          3,
+          4,
+          2,
+          6,
+          5,
+          7,
+          1,
+          9
+        ]
+      ],
+      "expected": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        9
+      ],
+      "assert_src": "assert merge_sort([3, 4, 2, 6, 5, 7, 1, 9]) == [1, 2, 3, 4, 5, 6, 7, 9]"
+    },
+    {
+      "fn_name": "merge_sort",
+      "args": [
+        [
+          7,
+          25,
+          45,
+          78,
+          11,
+          33,
+          19
+        ]
+      ],
+      "expected": [
+        7,
+        11,
+        19,
+        25,
+        33,
+        45,
+        78
+      ],
+      "assert_src": "assert merge_sort([7, 25, 45, 78, 11, 33, 19]) == [7, 11, 19, 25, 33, 45, 78]"
+    },
+    {
+      "fn_name": "merge_sort",
+      "args": [
+        [
+          3,
+          1,
+          4,
+          9,
+          8
+        ]
+      ],
+      "expected": [
+        1,
+        3,
+        4,
+        8,
+        9
+      ],
+      "assert_src": "assert merge_sort([3, 1, 4, 9, 8]) == [1, 3, 4, 8, 9]"
+    }
+  ],
+  "arg_kinds": [
+    "int-list"
+  ],
+  "return_kind": "int-list",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

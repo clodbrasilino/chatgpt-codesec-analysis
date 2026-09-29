@@ -1,0 +1,91 @@
+{
+  "task_id": 409,
+  "text": "Write a C function to find the minimum product from the pairs of tuples within a given list.",
+  "fn_candidates": [
+    "min_product_tuple",
+    "MinProductTuple",
+    "minProductTuple",
+    "minproducttuple"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "min_product_tuple",
+      "args": [
+        [
+          [
+            2,
+            7
+          ],
+          [
+            2,
+            6
+          ],
+          [
+            1,
+            8
+          ],
+          [
+            4,
+            9
+          ]
+        ]
+      ],
+      "expected": 8,
+      "assert_src": "assert min_product_tuple([(2, 7), (2, 6), (1, 8), (4, 9)] )==8"
+    },
+    {
+      "fn_name": "min_product_tuple",
+      "args": [
+        [
+          [
+            10,
+            20
+          ],
+          [
+            15,
+            2
+          ],
+          [
+            5,
+            10
+          ]
+        ]
+      ],
+      "expected": 30,
+      "assert_src": "assert min_product_tuple([(10,20), (15,2), (5,10)] )==30"
+    },
+    {
+      "fn_name": "min_product_tuple",
+      "args": [
+        [
+          [
+            11,
+            44
+          ],
+          [
+            10,
+            15
+          ],
+          [
+            20,
+            5
+          ],
+          [
+            12,
+            9
+          ]
+        ]
+      ],
+      "expected": 100,
+      "assert_src": "assert min_product_tuple([(11,44), (10,15), (20,5), (12, 9)] )==100"
+    }
+  ],
+  "arg_kinds": [
+    "2d-int-list"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

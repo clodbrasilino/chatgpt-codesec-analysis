@@ -1,0 +1,64 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int key;
+    int value;
+} hashMap;
+
+hashMap *createHashTable(int elements) {
+    hashMap *hashTable = malloc(elements * sizeof(hashMap));
+    for (int i = 0; i < elements; i++) {
+        hashTable[i].key = -1;
+        hashTable[i].value = 0;
+    }
+
+    return hashTable;
+}
+
+int hashCode(int key, int elements) {
+    return (key % elements);
+}
+
+void insert(hashMap *hashTable, int key, int elements) {
+    int hashIndex = hashCode(key, elements);
+
+    while (hashTable[hashIndex].key != -1 && hashTable[hashIndex].key != key) {
+        hashIndex++;
+        hashIndex %= elements;
+    }
+
+    hashTable[hashIndex].key = key;
+
+    if (hashTable[hashIndex].value != 0) {
+        hashTable[hashIndex].value++;
+    } else {
+        hashTable[hashIndex].value = 1;
+    }
+}
+
+void frequency(int *array, int size, int elements) {
+    hashMap *hashTable = createHashTable(elements);
+
+    for (int i = 0; i < size; i++) {
+        insert(hashTable, array[i], elements);
+    }
+
+    printf("Elements : Count\n");
+    for (int i = 0; i < elements; i++) {
+        if (hashTable[i].value != 0) {
+            printf("%d : %d\n", hashTable[i].key, hashTable[i].value);
+        }
+    }
+
+    free(hashTable);
+}
+
+int main() {
+    int array[] = {2, 3, 2, 4, 5, 12, 2, 3, 3, 12, 12};
+    int size = sizeof(array) / sizeof(array[0]);
+
+    frequency(array, size, size);
+
+    return 0;
+}

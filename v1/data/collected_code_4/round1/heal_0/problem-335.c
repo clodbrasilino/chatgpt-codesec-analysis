@@ -1,0 +1,34 @@
+#include <stdio.h>
+
+int sumOfArithmeticSeries(int start, int diff, int terms) {
+    int result;
+    if (terms < 1) {
+        return 0;
+    } else {
+        result = (terms * (2*start + (terms-1)*diff)) / 2;
+    }
+    return result;  
+}
+
+int main() {
+   int start, diff, terms, result;
+   
+   printf("Enter the first term of the series: ");
+   scanf("%d", &start);
+
+   printf("\nEnter the common difference of the series: ");
+   scanf("%d", &diff);
+   
+   printf("\nEnter the number of terms in the series: ");
+   scanf("%d", &terms);
+   
+   result = sumOfArithmeticSeries(start, diff, terms);
+
+   if (result == 0) {
+       printf("\nInput incorrect. The number of terms must be non-zero.");
+   } else {
+       printf("\nThe sum of the arithmetic series is: %d", result);
+   }
+   
+   return 0;
+}

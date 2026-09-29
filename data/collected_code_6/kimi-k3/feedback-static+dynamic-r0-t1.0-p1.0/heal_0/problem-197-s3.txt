@@ -1,0 +1,57 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+#include <errno.h>
+#include <fenv.h>
+
+struct Tuple {
+    double base;
+    double exponent;
+};
+
+int tuple_exponentiation(const struct Tuple *input, double *result) {
+    if (input == NULL || result == NULL) {
+        return -1;
+    }
+
+    errno = 0;
+    feclearexcept(FE_ALL_EXCEPT);
+
+    double value = pow(input->base, input->exponent);
+
+    if (errno != 0 || fetestexcept(FE_INVALID | FE_DIVBYZERO | FE_OVERFLOW | FE_UNDERFLOW) != 0) {
+        return -1;
+    }
+
+    *result = value;
+    return 0;
+}
+
+int main(void) {
+    struct Tuple t1 = {2.0, 3.0};
+    struct Tuple t2 = {5.0, 0.0};
+    struct Tuple t3 = {-2.0, 0.5};
+    double result = 0.0;
+
+    if (tuple_exponentiation(&t1, &result) == 0) {
+        printf("(%.2f, %.2f) = %.2f\n", t1.base, t1.exponent, result);
+    } else {
+        fprintf(stderr, "Error computing exponentiation\n");
+    }
+
+    if (tuple_exponentiation(&t2, &result) == 0) {
+        printf("(%.2f, %.2f) = %.2f\n", t2.base, t2.exponent, result);
+    } else {
+        fprintf(stderr, "Error computing exponentiation\n");
+    }
+
+    if (tuple_exponentiation(&t3, &result) == 0) {
+        printf("(%.2f, %.2f) = %.2f\n", t3.base, t3.exponent, result);
+    } else {
+        fprintf(stderr, "Error computing exponentiation for (%.2f, %.2f)\n", t3.base, t3.exponent);
+    }
+
+    return EXIT_SUCCESS;
+}
+```

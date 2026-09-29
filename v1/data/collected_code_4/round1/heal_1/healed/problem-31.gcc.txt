@@ -1,0 +1,582 @@
+./collected_code_4/round1//heal_1/healed//problem-31.c: In function 'findKTop':
+./collected_code_4/round1//heal_1/healed//problem-31.c:89:17: warning: leak of '<unknown>' [CWE-401] [-Wanalyzer-malloc-leak]
+   89 |                 free(h->array);
+      |                 ^~~~~~~~~~~~~~
+  'main': events 1-2
+    |
+    |  114 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |  118 |     findKTop(arr, n, k);
+    |      |     ~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) calling 'findKTop' from 'main'
+    |
+    +--> 'findKTop': events 3-4
+           |
+           |   81 | void findKTop(int *array, int n, int k) {
+           |      |      ^~~~~~~~
+           |      |      |
+           |      |      (3) entry to 'findKTop'
+           |   82 |     Heap* h = createHeap(k);
+           |      |               ~~~~~~~~~~~~~
+           |      |               |
+           |      |               (4) calling 'createHeap' from 'findKTop'
+           |
+           +--> 'createHeap': events 5-9
+                  |
+                  |   14 | Heap* createHeap(int capacity) {
+                  |      |       ^~~~~~~~~~
+                  |      |       |
+                  |      |       (5) entry to 'createHeap'
+                  |   15 |     Heap* h = (Heap*)malloc(sizeof(Heap));
+                  |   16 |     if (!h)
+                  |      |        ~
+                  |      |        |
+                  |      |        (6) following 'false' branch (when 'h' is non-NULL)...
+                  |......
+                  |   19 |     h->capacity = capacity;
+                  |      |     ~~~~~~~~~~~~~~~~~~~~~~
+                  |      |                 |
+                  |      |                 (7) ...to here
+                  |......
+                  |   22 |     if (!h->array) {
+                  |      |        ~
+                  |      |        |
+                  |      |        (8) following 'false' branch...
+                  |......
+                  |   27 |     return h;
+                  |      |            ~
+                  |      |            |
+                  |      |            (9) ...to here
+                  |
+           <------+
+           |
+         'findKTop': events 10-17
+           |
+           |   82 |     Heap* h = createHeap(k);
+           |      |               ^~~~~~~~~~~~~
+           |      |               |
+           |      |               (10) returning to 'findKTop' from 'createHeap'
+           |   83 |     if (!h)
+           |      |        ~       
+           |      |        |
+           |      |        (11) following 'false' branch (when 'h' is non-NULL)...
+           |   84 |         return;
+           |   85 |     for(int i = 0; i < n; i++) {
+           |      |             ~      ~~~~~
+           |      |             |        |
+           |      |             |        (13) following 'true' branch (when 'i < n')...
+           |      |             (12) ...to here
+           |   86 |         if(i < k) {
+           |      |           ~    
+           |      |           |
+           |      |           (14) ...to here
+           |      |           (15) following 'true' branch (when 'i < k')...
+           |   87 |             h->array[i] = createNode(array[i], array[i]);
+           |      |                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                           |                         |
+           |      |                           |                         (16) ...to here
+           |      |                           (17) calling 'createNode' from 'findKTop'
+           |
+           +--> 'createNode': events 18-22
+                  |
+                  |   30 | Node* createNode(int key, int freq) {
+                  |      |       ^~~~~~~~~~
+                  |      |       |
+                  |      |       (18) entry to 'createNode'
+                  |   31 |     Node* n = (Node*)malloc(sizeof(Node));
+                  |      |                      ~~~~~~~~~~~~~~~~~~~~
+                  |      |                      |
+                  |      |                      (19) allocated here
+                  |   32 |     if (!n)
+                  |      |        ~
+                  |      |        |
+                  |      |        (20) assuming 'n' is non-NULL
+                  |      |        (21) following 'false' branch (when 'n' is non-NULL)...
+                  |......
+                  |   35 |     n->key = key;
+                  |      |     ~~~~~~~~~~~~
+                  |      |            |
+                  |      |            (22) ...to here
+                  |
+           <------+
+           |
+         'findKTop': events 23-32
+           |
+           |   85 |     for(int i = 0; i < n; i++) {
+           |      |                    ~~~~~  ~~~
+           |      |                      |     |
+           |      |                      |     (27) ...to here
+           |      |                      (28) following 'true' branch (when 'i < n')...
+           |   86 |         if(i < k) {
+           |      |           ~                
+           |      |           |
+           |      |           (29) ...to here
+           |      |           (30) following 'true' branch (when 'i < k')...
+           |   87 |             h->array[i] = createNode(array[i], array[i]);
+           |      |                           ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                           |                         |
+           |      |                           |                         (31) ...to here
+           |      |                           (23) returning to 'findKTop' from 'createNode'
+           |      |                           (32) calling 'createNode' from 'findKTop'
+           |   88 |             if (!h->array[i]) {
+           |      |                ~           
+           |      |                |
+           |      |                (24) following 'false' branch...
+           |......
+           |   93 |             if(i == k - 1)
+           |      |               ~     ~~~~~  
+           |      |               |       |
+           |      |               |       (25) ...to here
+           |      |               (26) following 'false' branch...
+           |
+           +--> 'createNode': events 33-34
+                  |
+                  |   30 | Node* createNode(int key, int freq) {
+                  |      |       ^~~~~~~~~~
+                  |      |       |
+                  |      |       (33) entry to 'createNode'
+                  |   31 |     Node* n = (Node*)malloc(sizeof(Node));
+                  |   32 |     if (!n)
+                  |      |        ~
+                  |      |        |
+                  |      |        (34) following 'true' branch (when 'n' is NULL)...
+                  |
+                'createNode': event 35
+                  |
+                  |   33 |         return NULL;
+                  |      |                ^~~~
+                  |      |                |
+                  |      |                (35) ...to here
+                  |
+           <------+
+           |
+         'findKTop': events 36-39
+           |
+           |   87 |             h->array[i] = createNode(array[i], array[i]);
+           |      |                           ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                           |
+           |      |                           (36) returning to 'findKTop' from 'createNode'
+           |   88 |             if (!h->array[i]) {
+           |      |                ~           
+           |      |                |
+           |      |                (37) following 'true' branch...
+           |   89 |                 free(h->array);
+           |      |                 ~~~~~~~~~~~~~~
+           |      |                 |     |
+           |      |                 |     (38) ...to here
+           |      |                 (39) '<unknown>' leaks here; was allocated at (19)
+           |
+./collected_code_4/round1//heal_1/healed//problem-31.c:96:35: warning: use of uninitialized value '*h_51->array' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   96 |             if(array[i] > h->array[0]->freq) {
+      |                           ~~~~~~~~^~~
+  'findKTop': events 1-2
+    |
+    |   81 | void findKTop(int *array, int n, int k) {
+    |      |      ^~~~~~~~
+    |      |      |
+    |      |      (1) entry to 'findKTop'
+    |   82 |     Heap* h = createHeap(k);
+    |      |               ~~~~~~~~~~~~~
+    |      |               |
+    |      |               (2) calling 'createHeap' from 'findKTop'
+    |
+    +--> 'createHeap': events 3-8
+           |
+           |   14 | Heap* createHeap(int capacity) {
+           |      |       ^~~~~~~~~~
+           |      |       |
+           |      |       (3) entry to 'createHeap'
+           |   15 |     Heap* h = (Heap*)malloc(sizeof(Heap));
+           |   16 |     if (!h)
+           |      |        ~
+           |      |        |
+           |      |        (4) following 'false' branch (when 'h' is non-NULL)...
+           |......
+           |   19 |     h->capacity = capacity;
+           |      |     ~~~~~~~~~~~~~~~~~~~~~~
+           |      |                 |
+           |      |                 (5) ...to here
+           |   20 |     h->size = 0;
+           |   21 |     h->array = (Node**)malloc(h->capacity * sizeof(Node*));
+           |      |                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                        |
+           |      |                        (6) region created on heap here
+           |   22 |     if (!h->array) {
+           |      |        ~
+           |      |        |
+           |      |        (7) following 'false' branch...
+           |......
+           |   27 |     return h;
+           |      |            ~
+           |      |            |
+           |      |            (8) ...to here
+           |
+    <------+
+    |
+  'findKTop': events 9-16
+    |
+    |   82 |     Heap* h = createHeap(k);
+    |      |               ^~~~~~~~~~~~~
+    |      |               |
+    |      |               (9) returning to 'findKTop' from 'createHeap'
+    |   83 |     if (!h)
+    |      |        ~       
+    |      |        |
+    |      |        (10) following 'false' branch (when 'h' is non-NULL)...
+    |   84 |         return;
+    |   85 |     for(int i = 0; i < n; i++) {
+    |      |             ~      ~~~~~
+    |      |             |        |
+    |      |             |        (12) following 'true' branch (when 'i < n')...
+    |      |             (11) ...to here
+    |   86 |         if(i < k) {
+    |      |           ~    
+    |      |           |
+    |      |           (13) ...to here
+    |      |           (14) following 'false' branch (when 'i >= k')...
+    |......
+    |   96 |             if(array[i] > h->array[0]->freq) {
+    |      |                     ~     ~~~~~~~~~~~
+    |      |                     |             |
+    |      |                     |             (16) use of uninitialized value '*h_51->array' here
+    |      |                     (15) ...to here
+    |
+./collected_code_4/round1//heal_1/healed//problem-31.c:110:5: warning: leak of '<unknown>' [CWE-401] [-Wanalyzer-malloc-leak]
+  110 |     free(h->array);
+      |     ^~~~~~~~~~~~~~
+  'main': events 1-2
+    |
+    |  114 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |  118 |     findKTop(arr, n, k);
+    |      |     ~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) calling 'findKTop' from 'main'
+    |
+    +--> 'findKTop': events 3-4
+           |
+           |   81 | void findKTop(int *array, int n, int k) {
+           |      |      ^~~~~~~~
+           |      |      |
+           |      |      (3) entry to 'findKTop'
+           |   82 |     Heap* h = createHeap(k);
+           |      |               ~~~~~~~~~~~~~
+           |      |               |
+           |      |               (4) calling 'createHeap' from 'findKTop'
+           |
+           +--> 'createHeap': events 5-9
+                  |
+                  |   14 | Heap* createHeap(int capacity) {
+                  |      |       ^~~~~~~~~~
+                  |      |       |
+                  |      |       (5) entry to 'createHeap'
+                  |   15 |     Heap* h = (Heap*)malloc(sizeof(Heap));
+                  |   16 |     if (!h)
+                  |      |        ~
+                  |      |        |
+                  |      |        (6) following 'false' branch (when 'h' is non-NULL)...
+                  |......
+                  |   19 |     h->capacity = capacity;
+                  |      |     ~~~~~~~~~~~~~~~~~~~~~~
+                  |      |                 |
+                  |      |                 (7) ...to here
+                  |......
+                  |   22 |     if (!h->array) {
+                  |      |        ~
+                  |      |        |
+                  |      |        (8) following 'false' branch...
+                  |......
+                  |   27 |     return h;
+                  |      |            ~
+                  |      |            |
+                  |      |            (9) ...to here
+                  |
+           <------+
+           |
+         'findKTop': events 10-17
+           |
+           |   82 |     Heap* h = createHeap(k);
+           |      |               ^~~~~~~~~~~~~
+           |      |               |
+           |      |               (10) returning to 'findKTop' from 'createHeap'
+           |   83 |     if (!h)
+           |      |        ~       
+           |      |        |
+           |      |        (11) following 'false' branch (when 'h' is non-NULL)...
+           |   84 |         return;
+           |   85 |     for(int i = 0; i < n; i++) {
+           |      |             ~      ~~~~~
+           |      |             |        |
+           |      |             |        (13) following 'true' branch (when 'i < n')...
+           |      |             (12) ...to here
+           |   86 |         if(i < k) {
+           |      |           ~    
+           |      |           |
+           |      |           (14) ...to here
+           |      |           (15) following 'true' branch (when 'i < k')...
+           |   87 |             h->array[i] = createNode(array[i], array[i]);
+           |      |                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                           |                         |
+           |      |                           |                         (16) ...to here
+           |      |                           (17) calling 'createNode' from 'findKTop'
+           |
+           +--> 'createNode': events 18-22
+                  |
+                  |   30 | Node* createNode(int key, int freq) {
+                  |      |       ^~~~~~~~~~
+                  |      |       |
+                  |      |       (18) entry to 'createNode'
+                  |   31 |     Node* n = (Node*)malloc(sizeof(Node));
+                  |      |                      ~~~~~~~~~~~~~~~~~~~~
+                  |      |                      |
+                  |      |                      (19) allocated here
+                  |   32 |     if (!n)
+                  |      |        ~
+                  |      |        |
+                  |      |        (20) assuming 'n' is non-NULL
+                  |      |        (21) following 'false' branch (when 'n' is non-NULL)...
+                  |......
+                  |   35 |     n->key = key;
+                  |      |     ~~~~~~~~~~~~
+                  |      |            |
+                  |      |            (22) ...to here
+                  |
+           <------+
+           |
+         'findKTop': events 23-32
+           |
+           |   85 |     for(int i = 0; i < n; i++) {
+           |      |                    ~~~~~  ~~~
+           |      |                      |     |
+           |      |                      |     (27) ...to here
+           |      |                      (28) following 'true' branch (when 'i < n')...
+           |   86 |         if(i < k) {
+           |      |           ~                
+           |      |           |
+           |      |           (29) ...to here
+           |      |           (30) following 'true' branch (when 'i < k')...
+           |   87 |             h->array[i] = createNode(array[i], array[i]);
+           |      |                           ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                           |                         |
+           |      |                           |                         (31) ...to here
+           |      |                           (23) returning to 'findKTop' from 'createNode'
+           |      |                           (32) calling 'createNode' from 'findKTop'
+           |   88 |             if (!h->array[i]) {
+           |      |                ~           
+           |      |                |
+           |      |                (24) following 'false' branch...
+           |......
+           |   93 |             if(i == k - 1)
+           |      |               ~     ~~~~~  
+           |      |               |       |
+           |      |               |       (25) ...to here
+           |      |               (26) following 'false' branch...
+           |
+           +--> 'createNode': events 33-35
+                  |
+                  |   30 | Node* createNode(int key, int freq) {
+                  |      |       ^~~~~~~~~~
+                  |      |       |
+                  |      |       (33) entry to 'createNode'
+                  |   31 |     Node* n = (Node*)malloc(sizeof(Node));
+                  |   32 |     if (!n)
+                  |      |        ~
+                  |      |        |
+                  |      |        (34) following 'false' branch (when 'n' is non-NULL)...
+                  |......
+                  |   35 |     n->key = key;
+                  |      |     ~~~~~~~~~~~~
+                  |      |            |
+                  |      |            (35) ...to here
+                  |
+           <------+
+           |
+         'findKTop': events 36-45
+           |
+           |   85 |     for(int i = 0; i < n; i++) {
+           |      |                    ~~~~~  ~~~
+           |      |                      |     |
+           |      |                      |     (40) ...to here
+           |      |                      (41) following 'true' branch (when 'i < n')...
+           |   86 |         if(i < k) {
+           |      |           ~                
+           |      |           |
+           |      |           (42) ...to here
+           |      |           (43) following 'true' branch (when 'i < k')...
+           |   87 |             h->array[i] = createNode(array[i], array[i]);
+           |      |                           ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                           |                         |
+           |      |                           |                         (44) ...to here
+           |      |                           (36) returning to 'findKTop' from 'createNode'
+           |      |                           (45) calling 'createNode' from 'findKTop'
+           |   88 |             if (!h->array[i]) {
+           |      |                ~           
+           |      |                |
+           |      |                (37) following 'false' branch...
+           |......
+           |   93 |             if(i == k - 1)
+           |      |               ~     ~~~~~  
+           |      |               |       |
+           |      |               |       (38) ...to here
+           |      |               (39) following 'false' branch...
+           |
+           +--> 'createNode': events 46-48
+                  |
+                  |   30 | Node* createNode(int key, int freq) {
+                  |      |       ^~~~~~~~~~
+                  |      |       |
+                  |      |       (46) entry to 'createNode'
+                  |   31 |     Node* n = (Node*)malloc(sizeof(Node));
+                  |   32 |     if (!n)
+                  |      |        ~
+                  |      |        |
+                  |      |        (47) following 'false' branch (when 'n' is non-NULL)...
+                  |......
+                  |   35 |     n->key = key;
+                  |      |     ~~~~~~~~~~~~
+                  |      |            |
+                  |      |            (48) ...to here
+                  |
+           <------+
+           |
+         'findKTop': events 49-54
+           |
+           |   87 |             h->array[i] = createNode(array[i], array[i]);
+           |      |                           ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                           |
+           |      |                           (49) returning to 'findKTop' from 'createNode'
+           |   88 |             if (!h->array[i]) {
+           |      |                ~           
+           |      |                |
+           |      |                (50) following 'false' branch...
+           |......
+           |   93 |             if(i == k - 1)
+           |      |               ~     ~~~~~  
+           |      |               |       |
+           |      |               |       (51) ...to here
+           |      |               (52) following 'true' branch...
+           |   94 |                 heapify(h, i);
+           |      |                 ~~~~~~~~~~~~~
+           |      |                 |
+           |      |                 (53) ...to here
+           |      |                 (54) calling 'heapify' from 'findKTop'
+           |
+           +--> 'heapify': events 55-61
+                  |
+                  |   46 | void heapify(Heap* h, int idx) {
+                  |      |      ^~~~~~~
+                  |      |      |
+                  |      |      (55) entry to 'heapify'
+                  |......
+                  |   51 |     if (left < h->size && h->array[left]->freq < h->array[smallest]->freq)
+                  |      |        ~
+                  |      |        |
+                  |      |        (56) following 'false' branch...
+                  |......
+                  |   54 |     if (right < h->size && h->array[right]->freq < h->array[smallest]->freq)
+                  |      |        ~        ~~~~~~~
+                  |      |        |         |
+                  |      |        |         (57) ...to here
+                  |      |        (58) following 'false' branch...
+                  |......
+                  |   57 |     if (smallest != idx) {
+                  |      |        ~
+                  |      |        |
+                  |      |        (59) ...to here
+                  |      |        (60) following 'false' branch (when 'smallest == idx')...
+                  |......
+                  |   61 | }
+                  |      | ~     
+                  |      | |
+                  |      | (61) ...to here
+                  |
+           <------+
+           |
+         'findKTop': events 62-69
+           |
+           |   85 |     for(int i = 0; i < n; i++) {
+           |      |                    ~~~~~
+           |      |                      |
+           |      |                      (63) following 'true' branch (when 'i < n')...
+           |   86 |         if(i < k) {
+           |      |           ~      
+           |      |           |
+           |      |           (64) ...to here
+           |      |           (65) following 'false' branch (when 'i >= k')...
+           |......
+           |   94 |                 heapify(h, i);
+           |      |                 ^~~~~~~~~~~~~
+           |      |                 |
+           |      |                 (62) returning to 'findKTop' from 'heapify'
+           |   95 |         } else {
+           |   96 |             if(array[i] > h->array[0]->freq) {
+           |      |               ~     ~
+           |      |               |     |
+           |      |               |     (66) ...to here
+           |      |               (67) following 'true' branch...
+           |   97 |                 h->array[0]->key = array[i];
+           |      |                                         ~
+           |      |                                         |
+           |      |                                         (68) ...to here
+           |   98 |                 h->array[0]->freq = array[i];
+           |   99 |                 heapify(h, 0);
+           |      |                 ~~~~~~~~~~~~~
+           |      |                 |
+           |      |                 (69) calling 'heapify' from 'findKTop'
+           |
+           +--> 'heapify': events 70-76
+                  |
+                  |   46 | void heapify(Heap* h, int idx) {
+                  |      |      ^~~~~~~
+                  |      |      |
+                  |      |      (70) entry to 'heapify'
+                  |......
+                  |   51 |     if (left < h->size && h->array[left]->freq < h->array[smallest]->freq)
+                  |      |        ~
+                  |      |        |
+                  |      |        (71) following 'false' branch...
+                  |......
+                  |   54 |     if (right < h->size && h->array[right]->freq < h->array[smallest]->freq)
+                  |      |        ~        ~~~~~~~
+                  |      |        |         |
+                  |      |        |         (72) ...to here
+                  |      |        (73) following 'false' branch...
+                  |......
+                  |   57 |     if (smallest != idx) {
+                  |      |        ~
+                  |      |        |
+                  |      |        (74) ...to here
+                  |      |        (75) following 'false' branch (when 'smallest == idx')...
+                  |......
+                  |   61 | }
+                  |      | ~     
+                  |      | |
+                  |      | (76) ...to here
+                  |
+           <------+
+           |
+         'findKTop': events 77-80
+           |
+           |   99 |                 heapify(h, 0);
+           |      |                 ^~~~~~~~~~~~~
+           |      |                 |
+           |      |                 (77) returning to 'findKTop' from 'heapify'
+           |......
+           |  105 |     while(h->size) {
+           |      |           ~      
+           |      |           |
+           |      |           (78) following 'false' branch...
+           |......
+           |  110 |     free(h->array);
+           |      |     ~~~~~~~~~~~~~~
+           |      |     |     |
+           |      |     |     (79) ...to here
+           |      |     (80) '<unknown>' leaks here; was allocated at (19)
+           |

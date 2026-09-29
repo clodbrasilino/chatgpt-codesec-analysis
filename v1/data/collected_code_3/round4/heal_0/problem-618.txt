@@ -1,0 +1,29 @@
+```c
+#include <stdio.h>
+
+#define SIZE 5
+
+void divide_lists(double list1[], double list2[], double result[], int size) {
+    for(int i = 0; i < size; i++) {
+        if(list2[i] != 0) {
+            result[i] = list1[i] / list2[i];
+        } else {
+            result[i] = 0;
+        }
+    }
+}
+
+int main() {
+    double list1[SIZE] = {10.0, 20.0, 30.0, 40.0, 50.0};
+    double list2[SIZE] = {2.0, 4.0, 5.0, 8.0, 10.0};
+    double result[SIZE];
+
+    divide_lists(list1, list2, result, SIZE);
+
+    for(int i = 0; i < SIZE; i++) {
+        printf("%f ", result[i]);
+    }
+
+    return 0;
+}
+```

@@ -1,0 +1,23 @@
+#include <stdio.h>
+
+double circle_diameter(double radius) {
+    return 2 * radius;
+}
+
+int main(void) {
+    double radius;
+
+    printf("Enter radius: ");
+    if (scanf("%lf", &radius) != 1) {
+        printf("Invalid input.\n");
+        return 1;
+    }
+
+    if (radius < 0) {
+        printf("Radius cannot be negative.\n");
+        return 1;
+    }
+
+    printf("Diameter: %.2f\n", circle_diameter(radius));
+    return 0;
+}

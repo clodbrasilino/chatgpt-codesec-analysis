@@ -1,0 +1,11 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-584.c: In function 'find_adverbs':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-584.c:61:30: error: 'SIZE_MAX' undeclared (first use in this function)
+   61 |         if (relative_start > SIZE_MAX - offset ||
+      |                              ^~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-584.c:7:1: note: 'SIZE_MAX' is defined in header '<stdint.h>'; this is probably fixable by adding '#include <stdint.h>'
+    6 | #include <stdlib.h>
+  +++ |+#include <stdint.h>
+    7 | 
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-584.c:61:30: note: each undeclared identifier is reported only once for each function it appears in
+   61 |         if (relative_start > SIZE_MAX - offset ||
+      |                              ^~~~~~~~

@@ -1,0 +1,44 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+
+bool calculate_profit(double cost_price, double selling_price, double *profit) {
+    if (profit == NULL) {
+        return false;
+    }
+    
+    if (cost_price < 0.0 || selling_price < 0.0) {
+        return false;
+    }
+
+    if (selling_price > cost_price) {
+        *profit = selling_price - cost_price;
+        return true;
+    }
+
+    return false;
+}
+
+int main(void) {
+    double cost_price = 100.0;
+    double selling_price = 150.0;
+    double profit = 0.0;
+
+    if (calculate_profit(cost_price, selling_price, &profit)) {
+        printf("Profit amount: %.2f\n", profit);
+    } else {
+        printf("None\n");
+    }
+
+    cost_price = 200.0;
+    selling_price = 150.0;
+
+    if (calculate_profit(cost_price, selling_price, &profit)) {
+        printf("Profit amount: %.2f\n", profit);
+    } else {
+        printf("None\n");
+    }
+
+    return 0;
+}
+```

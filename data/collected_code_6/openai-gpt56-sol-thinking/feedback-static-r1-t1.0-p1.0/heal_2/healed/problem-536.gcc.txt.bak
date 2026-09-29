@@ -1,0 +1,9 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol-thinking/feedback-static-r1-t1.0-p1.0/heal_2/healed/problem-536.c: In function 'parse_position':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol-thinking/feedback-static-r1-t1.0-p1.0/heal_2/healed/problem-536.c:76:23: error: implicit declaration of function 'strtoumax'; did you mean 'strtouq'? [-Wimplicit-function-declaration]
+   76 |     uintmax_t value = strtoumax(text, &end, 10);
+      |                       ^~~~~~~~~
+      |                       strtouq
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol-thinking/feedback-static-r1-t1.0-p1.0/heal_2/healed/problem-536.c: In function 'parse_item':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol-thinking/feedback-static-r1-t1.0-p1.0/heal_2/healed/problem-536.c:95:22: error: implicit declaration of function 'strtoimax' [-Wimplicit-function-declaration]
+   95 |     intmax_t value = strtoimax(text, &end, 10);
+      |                      ^~~~~~~~~

@@ -1,0 +1,26 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+
+int get_parity(uint32_t n);
+
+int get_parity(uint32_t n) {
+    int parity = 0;
+    while (n != 0) {
+        parity = !parity;
+        n = n & (n - 1);
+    }
+    return parity;
+}
+
+int main(void) {
+    uint32_t number = 0;
+
+    if (scanf("%u", &number) != 1) {
+        return EXIT_FAILURE;
+    }
+
+    printf("%d\n", get_parity(number));
+
+    return EXIT_SUCCESS;
+}

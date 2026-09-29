@@ -1,0 +1,30 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+void remove_char_occurrences(char *str, char ch, size_t max_len) {
+    if (str == NULL || max_len == 0) return;
+
+    char *src = str;
+    char *dst = str;
+
+    while (*src && (size_t)(src - str) < max_len) {
+        if (*src != ch) {
+            *dst = *src;
+            dst++;
+        }
+        src++;
+    }
+    *dst = '\0';
+}
+
+int main() {
+    char str[100] = "hello world";
+    char ch = 'l';
+
+    printf("Original string: %s\n", str);
+    remove_char_occurrences(str, ch, sizeof(str) - 1);
+    printf("Modified string: %s\n", str);
+
+    return 0;
+}

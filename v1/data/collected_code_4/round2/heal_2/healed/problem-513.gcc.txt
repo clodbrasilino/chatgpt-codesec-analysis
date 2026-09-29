@@ -1,0 +1,164 @@
+./collected_code_4/round2//heal_2/healed/problem-513.c: In function 'free_list':
+./collected_code_4/round2//heal_2/healed/problem-513.c:39:5: warning: leak of '<unknown>' [CWE-401] [-Wanalyzer-malloc-leak]
+   39 |     free(list);
+      |     ^~~~~~~~~~
+  'main': events 1-2
+    |
+    |   42 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   47 |     char** list = convert_tuple_to_list(tuple, size, str);
+    |      |                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                   |
+    |      |                   (2) calling 'convert_tuple_to_list' from 'main'
+    |
+    +--> 'convert_tuple_to_list': events 3-10
+           |
+           |    5 | char** convert_tuple_to_list(char* tuple[], int size, char* str) {
+           |      |        ^~~~~~~~~~~~~~~~~~~~~
+           |      |        |
+           |      |        (3) entry to 'convert_tuple_to_list'
+           |......
+           |    9 |     if(list == NULL)
+           |      |       ~ 
+           |      |       |
+           |      |       (4) following 'false' branch (when 'list' is non-NULL)...
+           |......
+           |   14 |     for (int i = 0; i < size; i++) {
+           |      |              ~      ~~~~~~~~
+           |      |              |        |
+           |      |              |        (6) following 'true' branch (when 'i < size')...
+           |      |              (5) ...to here
+           |   15 |         list[i*2] = tuple[i];
+           |      |                          ~
+           |      |                          |
+           |      |                          (7) ...to here
+           |   16 |         list[i*2 + 1] = (char*) malloc(strSize + 1);
+           |      |                                 ~~~~~~~~~~~~~~~~~~~
+           |      |                                 |
+           |      |                                 (8) allocated here
+           |   17 | 
+           |   18 |         if(list[i*2 + 1] == NULL)
+           |      |           ~
+           |      |           |
+           |      |           (9) assuming '<unknown>' is non-NULL
+           |      |           (10) following 'false' branch...
+           |
+         'convert_tuple_to_list': event 11
+           |
+           |   27 |         strcpy(list[i*2 + 1], str);
+           |      |                     ~^~
+           |      |                      |
+           |      |                      (11) ...to here
+           |
+         'convert_tuple_to_list': events 12-14
+           |
+           |   14 |     for (int i = 0; i < size; i++) {
+           |      |                     ~~^~~~~~
+           |      |                       |
+           |      |                       (12) following 'true' branch (when 'i < size')...
+           |   15 |         list[i*2] = tuple[i];
+           |      |                          ~
+           |      |                          |
+           |      |                          (13) ...to here
+           |......
+           |   18 |         if(list[i*2 + 1] == NULL)
+           |      |           ~            
+           |      |           |
+           |      |           (14) following 'false' branch...
+           |
+         'convert_tuple_to_list': event 15
+           |
+           |   27 |         strcpy(list[i*2 + 1], str);
+           |      |                     ~^~
+           |      |                      |
+           |      |                      (15) ...to here
+           |
+         'convert_tuple_to_list': events 16-18
+           |
+           |   14 |     for (int i = 0; i < size; i++) {
+           |      |                     ~~^~~~~~
+           |      |                       |
+           |      |                       (16) following 'true' branch (when 'i < size')...
+           |   15 |         list[i*2] = tuple[i];
+           |      |                          ~
+           |      |                          |
+           |      |                          (17) ...to here
+           |......
+           |   18 |         if(list[i*2 + 1] == NULL)
+           |      |           ~            
+           |      |           |
+           |      |           (18) following 'false' branch...
+           |
+         'convert_tuple_to_list': event 19
+           |
+           |   27 |         strcpy(list[i*2 + 1], str);
+           |      |                     ~^~
+           |      |                      |
+           |      |                      (19) ...to here
+           |
+         'convert_tuple_to_list': events 20-21
+           |
+           |   14 |     for (int i = 0; i < size; i++) {
+           |      |                     ~~^~~~~~
+           |      |                       |
+           |      |                       (20) following 'false' branch (when 'i >= size')...
+           |......
+           |   30 |     return list;
+           |      |            ~~~~        
+           |      |            |
+           |      |            (21) ...to here
+           |
+    <------+
+    |
+  'main': events 22-27
+    |
+    |   47 |     char** list = convert_tuple_to_list(tuple, size, str);
+    |      |                   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                   |
+    |      |                   (22) returning to 'main' from 'convert_tuple_to_list'
+    |   48 | 
+    |   49 |     if(list == NULL)
+    |      |       ~            
+    |      |       |
+    |      |       (23) following 'false' branch (when 'list' is non-NULL)...
+    |......
+    |   54 |     for(int i = 0; i < size * 2; i++) {
+    |      |             ~      ~~~~~~~~~~~~
+    |      |             |        |
+    |      |             |        (25) following 'true' branch...
+    |      |             (24) ...to here
+    |   55 |         printf("%s ", list[i]);
+    |      |                           ~
+    |      |                           |
+    |      |                           (26) ...to here
+    |......
+    |   59 |     free_list(list, size * 2);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (27) calling 'free_list' from 'main'
+    |
+    +--> 'free_list': events 28-33
+           |
+           |   33 | void free_list(char** list, int size) {
+           |      |      ^~~~~~~~~
+           |      |      |
+           |      |      (28) entry to 'free_list'
+           |   34 |     for(int i = 0; i < size; i++) {
+           |      |                    ~~~~~~~~  ~~~
+           |      |                      |        |
+           |      |                      |        (32) ...to here
+           |      |                      (29) following 'true' branch (when 'i < size')...
+           |   35 |         if(i%2 != 0) {
+           |      |           ~~~~~~~~~
+           |      |           |    |
+           |      |           |    (30) ...to here
+           |      |           (31) following 'false' branch...
+           |......
+           |   39 |     free(list);
+           |      |     ~~~~~~~~~~
+           |      |     |
+           |      |     (33) '<unknown>' leaks here; was allocated at (8)
+           |

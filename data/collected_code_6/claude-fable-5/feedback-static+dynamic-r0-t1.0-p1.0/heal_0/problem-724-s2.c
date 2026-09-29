@@ -1,0 +1,76 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_DIGITS 10000
+
+static int power_digit_sum(unsigned int base, unsigned int exponent, long *result)
+{
+    unsigned char *digits;
+    size_t length;
+    size_t i;
+    unsigned int e;
+    unsigned long carry;
+    unsigned long product;
+    long sum;
+
+    if (result == NULL) {
+        return -1;
+    }
+
+    digits = calloc(MAX_DIGITS, sizeof(unsigned char));
+    if (digits == NULL) {
+        return -1;
+    }
+
+    digits[0] = 1U;
+    length = 1U;
+
+    for (e = 0U; e < exponent; e++) {
+        carry = 0UL;
+        for (i = 0U; i < length; i++) {
+            product = (unsigned long)digits[i] * (unsigned long)base + carry;
+            digits[i] = (unsigned char)(product % 10UL);
+            carry = product / 10UL;
+        }
+        while (carry > 0UL) {
+            if (length >= MAX_DIGITS) {
+                free(digits);
+                return -1;
+            }
+            digits[length] = (unsigned char)(carry % 10UL);
+            carry /= 10UL;
+            length++;
+        }
+    }
+
+    sum = 0L;
+    for (i = 0U; i < length; i++) {
+        sum += (long)digits[i];
+    }
+
+    free(digits);
+    *result = sum;
+    return 0;
+}
+
+int main(void)
+{
+    unsigned int base;
+    unsigned int exponent;
+    long sum;
+
+    base = 2U;
+    exponent = 1000U;
+
+    if (power_digit_sum(base, exponent, &sum) != 0) {
+        fprintf(stderr, "Error computing digit sum for %u^%u\n", base, exponent);
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Sum of digits of %u^%u is %ld\n", base, exponent, sum) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,116 @@
+```c
+#include <stdio.h>
+#include <string.h>
+
+#define MAX_INPUT_LEN 4096
+
+static void strip_newline(char *s)
+{
+    size_t len;
+
+    if (s == NULL) {
+        return;
+    }
+
+    len = strnlen(s, MAX_INPUT_LEN + 2);
+    while (len > 0 && (s[len - 1] == '\n' || s[len - 1] == '\r')) {
+        s[len - 1] = '\0';
+        len--;
+    }
+}
+
+int min_swaps(const char *s1, const char *s2)
+{
+    size_t len1;
+    size_t len2;
+    size_t i;
+    int count01 = 0;
+    int count10 = 0;
+
+    if (s1 == NULL || s2 == NULL) {
+        return -1;
+    }
+
+    len1 = strnlen(s1, MAX_INPUT_LEN + 1);
+    len2 = strnlen(s2, MAX_INPUT_LEN + 1);
+
+    if (len1 > MAX_INPUT_LEN || len2 > MAX_INPUT_LEN) {
+        return -1;
+    }
+
+    if (len1 != len2 || len1 == 0) {
+        return -1;
+    }
+
+    for (i = 0; i < len1; i++) {
+        if ((s1[i] != '0' && s1[i] != '1') ||
+            (s2[i] != '0' && s2[i] != '1')) {
+            return -1;
+        }
+        if (s1[i] != s2[i]) {
+            if (s1[i] == '0') {
+                count01++;
+            } else {
+                count10++;
+            }
+        }
+    }
+
+    if (count01 != count10) {
+        return -1;
+    }
+
+    return count01;
+}
+
+int main(void)
+{
+    char s1[MAX_INPUT_LEN + 2];
+    char s2[MAX_INPUT_LEN + 2];
+    int result;
+
+    memset(s1, 0, sizeof(s1));
+    memset(s2, 0, sizeof(s2));
+
+    if (scanf("%4097s", s1) != 1) {
+        if (printf("Not Possible\n") < 0) {
+            return 1;
+        }
+        return 0;
+    }
+
+    if (scanf("%4097s", s2) != 1) {
+        if (printf("Not Possible\n") < 0) {
+            return 1;
+        }
+        return 0;
+    }
+
+    strip_newline(s1);
+    strip_newline(s2);
+
+    result = min_swaps(s1, s2);
+
+    if (result < 0) {
+        if (printf("Not Possible\n") < 0) {
+            return 1;
+        }
+    } else {
+        if (printf("%d\n", result) < 0) {
+            return 1;
+        }
+    }
+
+    return 0;
+}
+```
+
+**Key changes made:**
+
+1. **Algorithm fix (the failing test cases):** The original swap-counting logic (`count01 / 2 + count10 / 2`, plus `+2` for an odd leftover pair) computed swaps for the wrong problem variant. The test expectations (`expected 1, got 2` and `expected 3, got 4`) indicate the intended semantics are in-place swaps within `s1` to transform it into `s2`: each swap pairs one `0→1` mismatch with one `1→0` mismatch, fixing both at once. Therefore:
+   - If `count01 != count10`, the character multisets differ and the transformation is impossible (`-1`, printed as "Not Possible"), which also subsumes the old odd-sum check.
+   - Otherwise the minimum number of swaps is exactly `count01`.
+
+2. **Buffer safety (Flawfinder CWE-119/CWE-120 warnings):** The buffers are sized `MAX_INPUT_LEN + 2` (4098 bytes), and `%4097s` reads at most 4097 characters plus the terminating NUL — an exact, safe fit. Inputs longer than `MAX_INPUT_LEN` are then rejected by the `strnlen` bounds check in `min_swaps`, so oversized input degrades gracefully to "Not Possible" rather than overflowing.
+
+3. **Retained defensive measures:** `memset` initialization, `strnlen` with explicit bounds instead of `strlen`, NULL checks, strict `0`/`1` character validation, equal-length and non-empty checks, and checked `printf` return values are all preserved.

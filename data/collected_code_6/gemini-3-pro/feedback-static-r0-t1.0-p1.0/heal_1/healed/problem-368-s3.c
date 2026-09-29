@@ -1,0 +1,81 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+typedef struct {
+    int *data;
+    size_t length;
+} Tuple;
+
+Tuple* repeat_tuple(const Tuple *original, size_t n) {
+    if (original == NULL || original->data == NULL) {
+        return NULL;
+    }
+
+    if (n == 0) {
+        Tuple *empty_tuple = (Tuple*)malloc(sizeof(Tuple));
+        if (empty_tuple == NULL) {
+            return NULL;
+        }
+        empty_tuple->data = NULL;
+        empty_tuple->length = 0;
+        return empty_tuple;
+    }
+
+    size_t new_length = original->length * n;
+    if (new_length / n != original->length) {
+        return NULL; 
+    }
+
+    if (new_length > SIZE_MAX / sizeof(int)) {
+        return NULL;
+    }
+
+    Tuple *result = (Tuple*)malloc(sizeof(Tuple));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    result->data = (int*)malloc(new_length * sizeof(int));
+    if (result->data == NULL) {
+        free(result);
+        return NULL;
+    }
+
+    result->length = new_length;
+
+    for (size_t i = 0; i < n; ++i) {
+        memcpy(result->data + (i * original->length), original->data, original->length * sizeof(int));
+    }
+
+    return result;
+}
+
+void free_tuple(Tuple *t) {
+    if (t != NULL) {
+        free(t->data);
+        free(t);
+    }
+}
+
+int main(void) {
+    int initial_data[] = {1, 2, 3};
+    Tuple original_tuple = {initial_data, 3};
+    size_t repeat_count = 4;
+
+    Tuple *repeated_tuple = repeat_tuple(&original_tuple, repeat_count);
+
+    if (repeated_tuple != NULL) {
+        for (size_t i = 0; i < repeated_tuple->length; ++i) {
+            printf("%d ", repeated_tuple->data[i]);
+        }
+        printf("\n");
+        free_tuple(repeated_tuple);
+    } else {
+        fprintf(stderr, "Failed to repeat tuple.\n");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

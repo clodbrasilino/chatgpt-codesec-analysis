@@ -1,0 +1,91 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+#define ROWS 5
+#define COLS 2
+
+static int compare_by_second(const void *a, const void *b)
+{
+    const int *row_a = *(const int *const *)a;
+    const int *row_b = *(const int *const *)b;
+
+    if (row_a[1] < row_b[1]) {
+        return -1;
+    }
+    if (row_a[1] > row_b[1]) {
+        return 1;
+    }
+    return 0;
+}
+
+static int sort_by_second_element(int **list, size_t rows)
+{
+    if (list == NULL || rows == 0U) {
+        return -1;
+    }
+    qsort(list, rows, sizeof(int *), compare_by_second);
+    return 0;
+}
+
+static void free_list(int **list, size_t rows)
+{
+    size_t i;
+
+    if (list == NULL) {
+        return;
+    }
+    for (i = 0U; i < rows; i++) {
+        free(list[i]);
+    }
+    free(list);
+}
+
+int main(void)
+{
+    static const int initial[ROWS][COLS] = {
+        {1, 9},
+        {2, 3},
+        {3, 7},
+        {4, 1},
+        {5, 5}
+    };
+    int **list;
+    size_t i;
+    size_t j;
+
+    list = malloc((size_t)ROWS * sizeof(int *));
+    if (list == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0U; i < (size_t)ROWS; i++) {
+        list[i] = malloc((size_t)COLS * sizeof(int));
+        if (list[i] == NULL) {
+            fprintf(stderr, "Memory allocation failed\n");
+            free_list(list, i);
+            return EXIT_FAILURE;
+        }
+        for (j = 0U; j < (size_t)COLS; j++) {
+            list[i][j] = initial[i][j];
+        }
+    }
+
+    if (sort_by_second_element(list, (size_t)ROWS) != 0) {
+        fprintf(stderr, "Sort failed\n");
+        free_list(list, (size_t)ROWS);
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0U; i < (size_t)ROWS; i++) {
+        if (printf("[%d, %d]\n", list[i][0], list[i][1]) < 0) {
+            free_list(list, (size_t)ROWS);
+            return EXIT_FAILURE;
+        }
+    }
+
+    free_list(list, (size_t)ROWS);
+    return EXIT_SUCCESS;
+}
+```

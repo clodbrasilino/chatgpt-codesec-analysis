@@ -1,0 +1,56 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+#define ARRAY_SIZE 10
+ /* Possible weaknesses found:
+  *  test case 2 failed: expected 1, got <no output>
+  *  test case 0 failed: expected 4, got <no output>
+  *  test case 1 failed: expected -1, got <no output>
+  */
+
+int find_first_duplicate(const int *arr, int size) {
+    if (arr == NULL || size <= 0) {
+        return INT_MIN;
+    }
+
+    int min_val = arr[0];
+    int max_val = arr[0];
+    for (int i = 1; i < size; i++) {
+        if (arr[i] < min_val) min_val = arr[i];
+        if (arr[i] > max_val) max_val = arr[i];
+    }
+
+    int range = max_val - min_val + 1;
+    if (range <= 0) return INT_MIN;
+
+    int *count = (int *)calloc(range, sizeof(int));
+    if (count == NULL) {
+        return INT_MIN;
+    }
+
+    for (int i = 0; i < size; i++) {
+        int index = arr[i] - min_val;
+        count[index]++;
+        if (count[index] == 2) {
+            free(count);
+            return arr[i];
+        }
+    }
+
+    free(count);
+    return INT_MIN;
+}
+
+int main(void) {
+    const int arr[ARRAY_SIZE] = {3, 1, 4, 1, 5, 9, 2, 6, 5, 3};
+    int result = find_first_duplicate(arr, ARRAY_SIZE);
+
+    if (result != INT_MIN) {
+        printf("%d\n", result);
+    } else {
+        printf("-1\n");
+    }
+
+    return 0;
+}

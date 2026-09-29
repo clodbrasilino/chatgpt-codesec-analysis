@@ -1,0 +1,133 @@
+collected_code/problem-437-0.c: In function 'removeOddCharacters':
+collected_code/problem-437-0.c:11:18: warning: use of uninitialized value 'j' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   11 |             str[j++] = str[i];
+      |                 ~^~
+  'removeOddCharacters': events 1-7
+    |
+    |    4 |     int i, j;
+    |      |            ^
+    |      |            |
+    |      |            (1) region created on stack here
+    |      |            (2) capacity: 4 bytes
+    |......
+    |    7 |     for (i = 0; str[i] != '\0'; i++) {
+    |      |                 ~~~~~~~~~~~~~~
+    |      |                        |
+    |      |                        (3) following 'true' branch...
+    |    8 |         // Check if character at current index is odd
+    |    9 |         if (i % 2 == 0) {
+    |      |            ~~~~~~~~~~~
+    |      |            |      |
+    |      |            |      (4) ...to here
+    |      |            (5) following 'true' branch...
+    |   10 |             // If odd, copy it to the next even index
+    |   11 |             str[j++] = str[i];
+    |      |                 ~~~       ~
+    |      |                  |        |
+    |      |                  |        (6) ...to here
+    |      |                  (7) use of uninitialized value 'j' here
+    |
+collected_code/problem-437-0.c:11:18: warning: use of uninitialized value 'j' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   11 |             str[j++] = str[i];
+      |                 ~^~
+  'main': events 1-2
+    |
+    |   19 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   27 |     removeOddCharacters(str);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) calling 'removeOddCharacters' from 'main'
+    |
+    +--> 'removeOddCharacters': events 3-10
+           |
+           |    3 | void removeOddCharacters(char *str) {
+           |      |      ^~~~~~~~~~~~~~~~~~~
+           |      |      |
+           |      |      (3) entry to 'removeOddCharacters'
+           |    4 |     int i, j;
+           |      |            ~
+           |      |            |
+           |      |            (4) region created on stack here
+           |      |            (5) capacity: 4 bytes
+           |......
+           |    7 |     for (i = 0; str[i] != '\0'; i++) {
+           |      |                 ~~~~~~~~~~~~~~
+           |      |                        |
+           |      |                        (6) following 'true' branch...
+           |    8 |         // Check if character at current index is odd
+           |    9 |         if (i % 2 == 0) {
+           |      |            ~~~~~~~~~~~
+           |      |            |      |
+           |      |            |      (7) ...to here
+           |      |            (8) following 'true' branch...
+           |   10 |             // If odd, copy it to the next even index
+           |   11 |             str[j++] = str[i];
+           |      |                 ~~~       ~
+           |      |                  |        |
+           |      |                  |        (9) ...to here
+           |      |                  (10) use of uninitialized value 'j' here
+           |
+collected_code/problem-437-0.c:16:8: warning: use of uninitialized value 'j' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   16 |     str[j] = '\0';
+      |        ^
+  'removeOddCharacters': events 1-5
+    |
+    |    4 |     int i, j;
+    |      |            ^
+    |      |            |
+    |      |            (1) region created on stack here
+    |      |            (2) capacity: 4 bytes
+    |......
+    |    7 |     for (i = 0; str[i] != '\0'; i++) {
+    |      |                 ~~~~~~~~~~~~~~
+    |      |                        |
+    |      |                        (3) following 'false' branch...
+    |......
+    |   16 |     str[j] = '\0';
+    |      |        ~    
+    |      |        |
+    |      |        (4) ...to here
+    |      |        (5) use of uninitialized value 'j' here
+    |
+collected_code/problem-437-0.c:16:8: warning: use of uninitialized value 'j' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   16 |     str[j] = '\0';
+      |        ^
+  'main': events 1-2
+    |
+    |   19 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   27 |     removeOddCharacters(str);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) calling 'removeOddCharacters' from 'main'
+    |
+    +--> 'removeOddCharacters': events 3-8
+           |
+           |    3 | void removeOddCharacters(char *str) {
+           |      |      ^~~~~~~~~~~~~~~~~~~
+           |      |      |
+           |      |      (3) entry to 'removeOddCharacters'
+           |    4 |     int i, j;
+           |      |            ~
+           |      |            |
+           |      |            (4) region created on stack here
+           |      |            (5) capacity: 4 bytes
+           |......
+           |    7 |     for (i = 0; str[i] != '\0'; i++) {
+           |      |                 ~~~~~~~~~~~~~~
+           |      |                        |
+           |      |                        (6) following 'false' branch...
+           |......
+           |   16 |     str[j] = '\0';
+           |      |        ~
+           |      |        |
+           |      |        (7) ...to here
+           |      |        (8) use of uninitialized value 'j' here
+           |

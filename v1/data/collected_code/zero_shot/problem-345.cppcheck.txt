@@ -1,0 +1,12 @@
+collected_code/problem-345-0.c:5:30: error: Cannot determine that 'list[i+1]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        int difference = list[i + 1] - list[i];
+                             ^
+collected_code/problem-345-0.c:5:44: error: Cannot determine that 'list[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        int difference = list[i + 1] - list[i];
+                                           ^
+collected_code/problem-345-0.c:6:60: error: Cannot determine that 'list[i+1]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        printf("Difference between %d and %d is %d\n", list[i + 1], list[i], difference);
+                                                           ^
+collected_code/problem-345-0.c:6:73: error: Cannot determine that 'list[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        printf("Difference between %d and %d is %d\n", list[i + 1], list[i], difference);
+                                                                        ^

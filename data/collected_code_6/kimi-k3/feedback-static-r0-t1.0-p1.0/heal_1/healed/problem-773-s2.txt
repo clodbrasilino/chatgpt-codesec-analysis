@@ -1,0 +1,35 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stddef.h>
+
+void find_substrings(const char *str, const char *sub) {
+    if (str == NULL || sub == NULL || *sub == '\0') {
+        return;
+    }
+    
+    const char *pos = str;
+    int found = 0;
+    
+    while ((pos = strstr(pos, sub)) != NULL) {
+        printf("Found at index: %td\n", pos - str);
+        pos++;
+        found = 1;
+    }
+    
+    if (!found) {
+        printf("Substring not found\n");
+    }
+}
+
+int main(void) {
+    const char *str = "hello world, hello universe, hello again";
+    const char *sub = "hello";
+    
+    printf("String: %s\n", str);
+    printf("Substring: %s\n", sub);
+    find_substrings(str, sub);
+    
+    return 0;
+}
+```

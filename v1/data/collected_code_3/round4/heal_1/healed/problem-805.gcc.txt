@@ -1,0 +1,76 @@
+./collected_code_3/round4/heal_1/healed/problem-805.c: In function 'main':
+./collected_code_3/round4/heal_1/healed/problem-805.c:39:9: warning: dereference of NULL 'maxList' [CWE-476] [-Wanalyzer-null-dereference]
+   39 |         printf("%d ", maxList[i]);
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~
+  'main': events 1-2
+    |
+    |   24 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   34 |     int *maxList = findHighestSumList(lists, listSizes, numLists);
+    |      |                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                    |
+    |      |                    (2) calling 'findHighestSumList' from 'main'
+    |
+    +--> 'findHighestSumList': events 3-11
+           |
+           |    6 | int* findHighestSumList(int lists[MAX_LISTS][MAX_ELEMENTS], int listSizes[MAX_LISTS], int numLists) {
+           |      |      ^~~~~~~~~~~~~~~~~~
+           |      |      |
+           |      |      (3) entry to 'findHighestSumList'
+           |    7 |     int maxSum = 0;
+           |    8 |     int *maxList = NULL;
+           |      |          ~~~~~~~
+           |      |          |
+           |      |          (4) 'maxList' is NULL
+           |    9 | 
+           |   10 |     for(int i = 0; i < numLists; i++) {
+           |      |                    ~~~~~~~~~~~~  ~~~
+           |      |                      |            |
+           |      |                      |            (10) ...to here
+           |      |                      (5) following 'true' branch (when 'i < numLists')...
+           |   11 |         int currentSum = 0;
+           |      |             ~~~~~~~~~~
+           |      |             |
+           |      |             (6) ...to here
+           |   12 |         for(int j = 0; j < listSizes[i]; j++) {
+           |      |                        ~~~~~~~~~~~~~~~~
+           |      |                          |
+           |      |                          (7) following 'true' branch...
+           |   13 |             currentSum += lists[i][j];
+           |      |                                ~
+           |      |                                |
+           |      |                                (8) ...to here
+           |   14 |         }
+           |   15 |         if(currentSum > maxSum) {
+           |      |           ~
+           |      |           |
+           |      |           (9) following 'false' branch (when 'currentSum <= maxSum')...
+           |......
+           |   21 |     return maxList;
+           |      |            ~~~~~~~
+           |      |            |
+           |      |            (11) 'maxList' is NULL
+           |
+    <------+
+    |
+  'main': events 12-16
+    |
+    |   34 |     int *maxList = findHighestSumList(lists, listSizes, numLists);
+    |      |                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                    |
+    |      |                    (12) returning to 'main' from 'findHighestSumList'
+    |......
+    |   38 |     for(int i = 0; i < listSizes[index]; i++) {
+    |      |                    ~~~~~~~~~~~~~~~~~~~~
+    |      |                      |
+    |      |                      (13) following 'true' branch...
+    |   39 |         printf("%d ", maxList[i]);
+    |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |         |                    |
+    |      |         |                    (14) ...to here
+    |      |         |                    (15) 'maxList' is NULL
+    |      |         (16) dereference of NULL 'maxList + (long unsigned int)i * 4'
+    |

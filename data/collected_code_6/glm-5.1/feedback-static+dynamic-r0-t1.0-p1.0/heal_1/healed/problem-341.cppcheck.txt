@@ -1,0 +1,16 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-341.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-341.c:98:16: style: Condition 'tuples!=NULL' is always false [knownConditionTrueFalse]
+    if (tuples != NULL) {
+               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-341.c:96:41: note: Calling function 'set_to_ordered_tuples' returns 0
+    int **tuples = set_to_ordered_tuples(set, set_size, &tuple_count, &tuple_size);
+                                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-341.c:96:41: note: Assignment 'tuples=set_to_ordered_tuples(set,set_size,&tuple_count,&tuple_size)', assigned value is 0
+    int **tuples = set_to_ordered_tuples(set, set_size, &tuple_count, &tuple_size);
+                                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-341.c:98:16: note: Condition 'tuples!=NULL' is always false
+    if (tuples != NULL) {
+               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-341.c:91:10: style: Variable 'set' can be declared as pointer to const [constVariablePointer]
+    int *set = NULL;
+         ^

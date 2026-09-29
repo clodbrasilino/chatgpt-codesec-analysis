@@ -1,0 +1,19 @@
+```c
+#include <stdio.h>
+
+unsigned long long fibonacci(unsigned int n) {
+    if (n <= 1) return n;
+    return fibonacci(n - 1) + fibonacci(n - 2);
+}
+
+int main() {
+    unsigned int n;
+    printf("Enter the position in the Fibonacci sequence: ");
+    scanf("%u", &n);
+
+    unsigned long long result = fibonacci(n);
+    printf("Fibonacci number at position %u is %llu\n", n, result);
+
+    return 0;
+}
+```

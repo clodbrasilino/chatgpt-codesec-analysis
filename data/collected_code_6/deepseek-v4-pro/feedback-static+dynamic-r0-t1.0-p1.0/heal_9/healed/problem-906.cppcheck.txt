@@ -1,0 +1,37 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-906.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-906.c:69:25: style: Condition 'y_start+y_len>url_len' is always false [knownConditionTrueFalse]
+    if (y_start + y_len > url_len || m_start + m_len > url_len || d_start + d_len > url_len) {
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-906.c:55:25: note: Assuming that condition 'y_start+y_len>url_len' is not redundant
+    if (y_start + y_len > url_len || m_start + m_len > url_len || d_start + d_len > url_len) {
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-906.c:64:65: note: Assuming condition is false
+    if (y_len >= sizeof(year_str) || m_len >= sizeof(month_str) || d_len >= sizeof(day_str)) {
+                                                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-906.c:69:25: note: Condition 'y_start+y_len>url_len' is always false
+    if (y_start + y_len > url_len || m_start + m_len > url_len || d_start + d_len > url_len) {
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-906.c:69:54: style: Condition 'm_start+m_len>url_len' is always false [knownConditionTrueFalse]
+    if (y_start + y_len > url_len || m_start + m_len > url_len || d_start + d_len > url_len) {
+                                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-906.c:55:54: note: Assuming that condition 'm_start+m_len>url_len' is not redundant
+    if (y_start + y_len > url_len || m_start + m_len > url_len || d_start + d_len > url_len) {
+                                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-906.c:64:65: note: Assuming condition is false
+    if (y_len >= sizeof(year_str) || m_len >= sizeof(month_str) || d_len >= sizeof(day_str)) {
+                                                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-906.c:69:54: note: Condition 'm_start+m_len>url_len' is always false
+    if (y_start + y_len > url_len || m_start + m_len > url_len || d_start + d_len > url_len) {
+                                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-906.c:69:83: style: Condition 'd_start+d_len>url_len' is always false [knownConditionTrueFalse]
+    if (y_start + y_len > url_len || m_start + m_len > url_len || d_start + d_len > url_len) {
+                                                                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-906.c:55:83: note: Assuming that condition 'd_start+d_len>url_len' is not redundant
+    if (y_start + y_len > url_len || m_start + m_len > url_len || d_start + d_len > url_len) {
+                                                                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-906.c:64:65: note: Assuming condition is false
+    if (y_len >= sizeof(year_str) || m_len >= sizeof(month_str) || d_len >= sizeof(day_str)) {
+                                                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-906.c:69:83: note: Condition 'd_start+d_len>url_len' is always false
+    if (y_start + y_len > url_len || m_start + m_len > url_len || d_start + d_len > url_len) {
+                                                                                  ^

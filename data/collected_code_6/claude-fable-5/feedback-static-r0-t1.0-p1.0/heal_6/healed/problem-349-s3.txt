@@ -1,0 +1,97 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdbool.h>
+
+#define MAX_INPUT_LENGTH 256U
+#define FLUSH_GUARD_LIMIT 65536U
+
+static bool is_binary_string(const char *str)
+{
+    size_t i;
+
+    if (str == NULL) {
+        return false;
+    }
+
+    if (str[0] == '\0') {
+        return false;
+    }
+
+    for (i = 0U; str[i] != '\0'; i++) {
+        if ((str[i] != '0') && (str[i] != '1')) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+static void flush_stdin(void)
+{
+    int ch;
+    size_t guard = 0U;
+
+    do {
+        ch = getchar();
+        guard++;
+    } while ((ch != '\n') && (ch != EOF) && (guard < FLUSH_GUARD_LIMIT));
+}
+
+int main(void)
+{
+    char input[MAX_INPUT_LENGTH];
+    size_t len;
+    char *newline;
+    bool truncated;
+
+    (void)memset(input, 0, sizeof(input));
+
+    printf("Enter a string: ");
+    (void)fflush(stdout);
+
+    if (fgets(input, (int)sizeof(input), stdin) == NULL) {
+        (void)fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    input[sizeof(input) - 1U] = '\0';
+
+    truncated = true;
+    newline = memchr(input, '\n', sizeof(input));
+    if (newline != NULL) {
+        *newline = '\0';
+        truncated = false;
+    }
+
+    len = strnlen(input, sizeof(input));
+    if (truncated && (len >= (sizeof(input) - 1U))) {
+        flush_stdin();
+    }
+
+    if (is_binary_string(input)) {
+        printf("The string is a binary string.\n");
+    } else {
+        printf("The string is not a binary string.\n");
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the flagged weaknesses and why the code is already safe:**
+
+1. **`char input[MAX_INPUT_LENGTH]` (CWE-119/CWE-120, risk 2):** The statically-sized buffer is safe here because:
+   - `fgets()` is used with `sizeof(input)`, which guarantees no more than 255 characters plus a null terminator are written.
+   - The buffer is zero-initialized with `memset()` before use.
+   - A defensive `input[sizeof(input) - 1U] = '\0'` ensures null termination regardless of input.
+   - `strnlen()` is used instead of `strlen()`, bounding the length scan to the buffer size.
+   - `memchr()` is bounded by `sizeof(input)` rather than relying on string termination.
+
+2. **`getchar()` in a loop (CWE-120/CWE-20, risk 1):** The `flush_stdin()` loop is safe because:
+   - No data is stored into any buffer — characters are read and discarded, so no overflow is possible.
+   - The loop terminates on `'\n'`, `EOF`, and additionally a `FLUSH_GUARD_LIMIT` counter prevents unbounded looping on pathological streams (e.g., a pipe that never delivers a newline or EOF quickly).
+   - It is only invoked when truncation actually occurred (`truncated && len >= sizeof(input) - 1U`), avoiding an unnecessary blocking read when the line fit entirely.
+
+Both Flawfinder hits are false positives given the existing mitigations, so the rewrite preserves the logic verbatim with the comments removed. No functional changes were required.

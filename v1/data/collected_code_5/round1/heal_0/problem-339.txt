@@ -1,0 +1,36 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+#define N 1000001
+
+int freq[N] = {0};
+  
+int maxOccuringDivisor(int left, int right) {
+  
+    for (int i=1; i<=right; i++)
+        for (int j=i; j<=right; j+=i)
+            if (j >= left)
+                freq[i]++;
+  
+    int max_divisor = -1;
+    int max_freq = -1;
+  
+    for (int i=1; i<=right; i++) {
+        if (freq[i] > max_freq) {
+            max_freq = freq[i];
+            max_divisor = i;
+        }
+    }
+    return max_divisor;
+}
+  
+int main() {
+  
+    int left = 1, right = 10;
+  
+    printf("%d", maxOccuringDivisor(left, right));
+    return 0;
+}
+```
+This code should be compiled and run in a safe environment as it can consume up to 4MB of memory because of the global frequency array. The array freq[] keeps track of the frequency of every number in the range [1, right]. The function maxOccuringDivisor() iterates over this freq[] array to find the number with the maximum frequency. If there are multiple numbers with the same max frequency, it returns the smallest one because of the way it iterates over the array (from left to right). The function is called in main() to find the most occurring divisor in the range [left, right], and the result is printed to stdout.

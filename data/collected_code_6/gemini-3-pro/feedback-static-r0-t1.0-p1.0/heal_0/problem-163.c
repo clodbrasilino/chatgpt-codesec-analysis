@@ -1,0 +1,36 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
+
+double calculate_regular_polygon_area(int num_sides, double side_length) {
+    if (num_sides < 3 || side_length <= 0) {
+        return -1.0;
+    }
+    
+    return (num_sides * pow(side_length, 2)) / (4.0 * tan(M_PI / num_sides));
+}
+
+int main(void) {
+    int num_sides;
+    double side_length;
+    double area;
+    int result;
+
+    result = scanf("%d %lf", &num_sides, &side_length);
+    if (result != 2) {
+        return EXIT_FAILURE;
+    }
+
+    area = calculate_regular_polygon_area(num_sides, side_length);
+    if (area < 0) {
+        return EXIT_FAILURE;
+    }
+
+    printf("%.2f\n", area);
+
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,143 @@
+```c
+#include <stdio.h>
+#include <stdint.h>
+#include <inttypes.h>
+#include <errno.h>
+#include <limits.h>
+#include <stdlib.h>
+#include <ctype.h>
+
+static int nonagonal_number(uint64_t n, uint64_t *result)
+{
+    if (result == NULL)
+    {
+        return -1;
+    }
+
+    if (n == 0)
+    {
+        *result = 0;
+        return 0;
+    }
+
+    uint64_t n_minus_1 = n - 1;
+
+    if (n > UINT64_MAX / 7)
+    {
+        return -1;
+    }
+    uint64_t term1 = 7 * n;
+
+    if (n_minus_1 > UINT64_MAX / 5)
+    {
+        return -1;
+    }
+    uint64_t term2 = 5 * n_minus_1;
+
+    if (term1 < term2)
+    {
+        return -1;
+    }
+    uint64_t diff = term1 - term2;
+
+    if (diff % 2 != 0)
+    {
+        return -1;
+    }
+
+    *result = diff / 2;
+    return 0;
+}
+
+static int parse_input(const char *buffer, uint64_t *value)
+{
+    if (buffer == NULL || value == NULL)
+    {
+        return -1;
+    }
+
+    while (isspace((unsigned char)*buffer))
+    {
+        buffer++;
+    }
+
+    if (*buffer == '\0')
+    {
+        return -1;
+    }
+
+    char *endptr;
+    errno = 0;
+    unsigned long long temp = strtoull(buffer, &endptr, 10);
+
+    if (errno == ERANGE || endptr == buffer)
+    {
+        return -1;
+    }
+
+    while (isspace((unsigned char)*endptr))
+    {
+        endptr++;
+    }
+
+    if (*endptr != '\0')
+    {
+        return -1;
+    }
+
+    if (temp > UINT64_MAX)
+    {
+        return -1;
+    }
+
+    *value = (uint64_t)temp;
+    return 0;
+}
+
+int main(void)
+{
+    char buffer[64];
+    uint64_t n;
+    uint64_t result;
+
+    printf("Enter n: ");
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL)
+    {
+        fprintf(stderr, "Invalid input\n");
+        return 1;
+    }
+
+    size_t len = 0;
+    while (len < sizeof(buffer) && buffer[len] != '\0')
+    {
+        len++;
+    }
+
+    if (len == sizeof(buffer) - 1 && buffer[len - 1] != '\n')
+    {
+        int c;
+        while ((c = getchar()) != '\n' && c != EOF)
+        {
+        }
+        fprintf(stderr, "Invalid input\n");
+        return 1;
+    }
+
+    if (parse_input(buffer, &n) != 0)
+    {
+        fprintf(stderr, "Invalid input\n");
+        return 1;
+    }
+
+    if (nonagonal_number(n, &result) != 0)
+    {
+        fprintf(stderr, "Overflow or calculation error\n");
+        return 1;
+    }
+
+    printf("The %" PRIu64 "th nonagonal number is: %" PRIu64 "\n", n, result);
+
+    return 0;
+}
+```

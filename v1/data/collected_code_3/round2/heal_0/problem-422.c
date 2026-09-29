@@ -1,0 +1,17 @@
+#include <stdio.h>
+
+double averageOfCubes(int n) {
+    double sum = 0;
+    for(int i = 1; i <= n; i++) {
+        sum += i * i * i;
+    }
+    return sum / n;
+}
+
+int main() {
+    int n;
+    printf("Enter a number: ");
+    scanf("%d", &n);
+    printf("Average of cubes of first %d natural numbers is: %.2f\n", n, averageOfCubes(n));
+    return 0;
+}

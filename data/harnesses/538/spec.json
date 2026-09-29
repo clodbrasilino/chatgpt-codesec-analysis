@@ -1,0 +1,71 @@
+{
+  "task_id": 538,
+  "text": "Write a C function to convert a given string list to a tuple.",
+  "fn_candidates": [
+    "string_list_to_tuple",
+    "StringListToTuple",
+    "stringListToTuple",
+    "stringlisttotuple"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "string_list_to_tuple",
+      "args": [
+        "python 3.0"
+      ],
+      "expected": [
+        "p",
+        "y",
+        "t",
+        "h",
+        "o",
+        "n",
+        "3",
+        ".",
+        "0"
+      ],
+      "assert_src": "assert string_list_to_tuple((\"python 3.0\")) == ('p', 'y', 't', 'h', 'o', 'n', '3', '.', '0')"
+    },
+    {
+      "fn_name": "string_list_to_tuple",
+      "args": [
+        "bigdata"
+      ],
+      "expected": [
+        "b",
+        "i",
+        "g",
+        "d",
+        "a",
+        "t",
+        "a"
+      ],
+      "assert_src": "assert string_list_to_tuple((\"bigdata\")) == ('b', 'i', 'g', 'd', 'a', 't', 'a')"
+    },
+    {
+      "fn_name": "string_list_to_tuple",
+      "args": [
+        "language"
+      ],
+      "expected": [
+        "l",
+        "a",
+        "n",
+        "g",
+        "u",
+        "a",
+        "g",
+        "e"
+      ],
+      "assert_src": "assert string_list_to_tuple((\"language\")) == ('l', 'a', 'n', 'g', 'u', 'a', 'g','e')"
+    }
+  ],
+  "arg_kinds": [
+    "str"
+  ],
+  "return_kind": "str-list",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

@@ -1,0 +1,9 @@
+collected_code/problem-828-0.c:8:24: error: Cannot determine that 'str[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+    for (int i = 0; str[i] != '\0'; i++) {
+                       ^
+collected_code/problem-828-0.c:9:17: error: Cannot determine that 'str[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        if ((str[i] >= 'a' && str[i] <= 'z') || (str[i] >= 'A' && str[i] <= 'Z')) {
+                ^
+collected_code/problem-828-0.c:11:23: error: Cannot determine that 'str[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        } else if (str[i] >= '0' && str[i] <= '9') {
+                      ^

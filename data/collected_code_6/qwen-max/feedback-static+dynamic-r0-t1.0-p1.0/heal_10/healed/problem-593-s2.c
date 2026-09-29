@@ -1,0 +1,31 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+void remove_leading_zeroes(char *ip, size_t ip_len) {
+    size_t len = strnlen(ip, ip_len);
+    char *ip_copy = malloc(len + 1);
+    if (ip_copy == NULL) return;
+    memcpy(ip_copy, ip, len + 1);
+
+    char *token, *context = NULL;
+    token = strtok_r(ip_copy, ".", &context);
+    while (token) {
+        size_t token_len = strnlen(token, 4);
+        if (token_len > 1 && *token == '0') {
+            memmove(token, token + 1, token_len - 1);
+            token[token_len - 1] = '\0';
+        }
+        token = strtok_r(NULL, ".", &context);
+    }
+
+    snprintf(ip, ip_len, "%s", ip_copy);
+    free(ip_copy);
+}
+
+int main() {
+    char ip[INET_ADDRSTRLEN] = "192.168.01.01";
+    remove_leading_zeroes(ip, sizeof(ip));
+    printf("%s\n", ip);
+    return 0;
+}

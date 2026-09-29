@@ -1,0 +1,9 @@
+collected_code/problem-871-0.c:13:18: error: Overlapping read/write in strcat() is undefined behavior [overlappingWriteFunction]
+    char* temp = strcat(str1, str1);
+                 ^
+collected_code/problem-871-0.c:6:24: error: Cannot determine that 'str1[0]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+    int size1 = strlen(str1);
+                       ^
+collected_code/problem-871-0.c:7:24: error: Cannot determine that 'str2[0]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+    int size2 = strlen(str2);
+                       ^

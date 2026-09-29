@@ -1,0 +1,89 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+bool extract_nth_element(const int *matrix, size_t rows, size_t cols, size_t n, int *result)
+{
+    if (matrix == NULL || result == NULL)
+    {
+        return false;
+    }
+
+    if (rows == 0 || cols == 0 || n >= cols)
+    {
+        return false;
+    }
+
+    for (size_t i = 0; i < rows; i++)
+    {
+        result[i] = matrix[i * cols + n];
+    }
+
+    return true;
+}
+
+int main(void)
+{
+    const size_t rows = 3;
+    const size_t cols = 4;
+    const size_t n = 2;
+
+    int *matrix = malloc(rows * cols * sizeof(*matrix));
+    if (matrix == NULL)
+    {
+        fprintf(stderr, "Error: failed to allocate memory for matrix\n");
+        return EXIT_FAILURE;
+    }
+
+    for (size_t i = 0; i < rows; i++)
+    {
+        for (size_t j = 0; j < cols; j++)
+        {
+            matrix[i * cols + j] = (int)(i * cols + j + 1);
+        }
+    }
+
+    int *extracted = malloc(rows * sizeof(*extracted));
+    if (extracted == NULL)
+    {
+        fprintf(stderr, "Error: failed to allocate memory for result\n");
+        free(matrix);
+        matrix = NULL;
+        return EXIT_FAILURE;
+    }
+
+    if (!extract_nth_element(matrix, rows, cols, n, extracted))
+    {
+        fprintf(stderr, "Error: failed to extract element %zu from each row\n", n);
+        free(extracted);
+        extracted = NULL;
+        free(matrix);
+        matrix = NULL;
+        return EXIT_FAILURE;
+    }
+
+    printf("Matrix:\n");
+    for (size_t i = 0; i < rows; i++)
+    {
+        for (size_t j = 0; j < cols; j++)
+        {
+            printf("%4d", matrix[i * cols + j]);
+        }
+        printf("\n");
+    }
+
+    printf("Extracted element %zu from each row:\n", n);
+    for (size_t i = 0; i < rows; i++)
+    {
+        printf("%d\n", extracted[i]);
+    }
+
+    free(extracted);
+    extracted = NULL;
+    free(matrix);
+    matrix = NULL;
+
+    return EXIT_SUCCESS;
+}
+```

@@ -1,0 +1,23 @@
+```C
+#include <stdio.h>
+
+int lastDigitOfFactorialDivision(int a, int b) {
+    if (a < b) {
+        return 0;
+    } else if (a == b) {
+        return 1;
+    } else {
+        return 0;
+    }
+}
+
+int main() {
+    int a, b;
+    printf("Enter two numbers: ");
+    scanf("%d %d", &a, &b);
+    int result = lastDigitOfFactorialDivision(a, b);
+    printf("The last digit when factorial of %d divides factorial of %d is %d\n", a, b, result);
+    return 0;
+}
+```
+This function works on the principle that if a is less than b, then a! cannot divide b!. If a is equal to b, then a! can divide b! exactly once, so the last digit is 1. If a is greater than b, then a! cannot divide b!, so the last digit is 0.

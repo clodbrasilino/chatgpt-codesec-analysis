@@ -1,0 +1,21 @@
+collected_code/heal_round_2/healed/problem-729.c:51:20: error: Memory leak: l1 [memleak]
+    if (!l1->next) return 1;
+                   ^
+collected_code/heal_round_2/healed/problem-729.c:54:26: error: Memory leak: l1 [memleak]
+    if (!l1->next->next) return 1;
+                         ^
+collected_code/heal_round_2/healed/problem-729.c:59:14: error: Memory leak: l1 [memleak]
+    if (!l2) return 1;
+             ^
+collected_code/heal_round_2/healed/problem-729.c:62:20: error: Memory leak: l1 [memleak]
+    if (!l2->next) return 1;
+                   ^
+collected_code/heal_round_2/healed/problem-729.c:62:20: error: Memory leak: l2 [memleak]
+    if (!l2->next) return 1;
+                   ^
+collected_code/heal_round_2/healed/problem-729.c:65:26: error: Memory leak: l1 [memleak]
+    if (!l2->next->next) return 1;
+                         ^
+collected_code/heal_round_2/healed/problem-729.c:65:26: error: Memory leak: l2 [memleak]
+    if (!l2->next->next) return 1;
+                         ^

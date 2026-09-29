@@ -1,0 +1,26 @@
+./collected_code_4/round2//heal_0/problem-425.c: In function 'newNode':
+./collected_code_4/round2//heal_0/problem-425.c:12:43: warning: implicit declaration of function 'malloc' [-Wimplicit-function-declaration]
+   12 |     struct Node* newNode = (struct Node*) malloc(sizeof(struct Node));
+      |                                           ^~~~~~
+./collected_code_4/round2//heal_0/problem-425.c:2:1: note: include '<stdlib.h>' or provide a declaration of 'malloc'
+    1 | #include <stdio.h>
+  +++ |+#include <stdlib.h>
+    2 | 
+./collected_code_4/round2//heal_0/problem-425.c:12:43: warning: incompatible implicit declaration of built-in function 'malloc' [-Wbuiltin-declaration-mismatch]
+   12 |     struct Node* newNode = (struct Node*) malloc(sizeof(struct Node));
+      |                                           ^~~~~~
+./collected_code_4/round2//heal_0/problem-425.c:12:43: note: include '<stdlib.h>' or provide a declaration of 'malloc'
+./collected_code_4/round2//heal_0/problem-425.c:13:19: warning: dereference of possibly-NULL 'newNode' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   13 |     newNode->data = data;
+      |     ~~~~~~~~~~~~~~^~~~~~
+  'newNode': events 1-2
+    |
+    |   12 |     struct Node* newNode = (struct Node*) malloc(sizeof(struct Node));
+    |      |                                           ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                                           |
+    |      |                                           (1) this call could return NULL
+    |   13 |     newNode->data = data;
+    |      |     ~~~~~~~~~~~~~~~~~~~~                   
+    |      |                   |
+    |      |                   (2) 'newNode' could be NULL: unchecked value from (1)
+    |

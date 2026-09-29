@@ -1,0 +1,45 @@
+```C
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct nested_dictionary {
+    char *key;
+    struct nested_dictionary *inner_dict;
+} nested_dictionary;
+
+nested_dictionary *new_dictionary(char *key, nested_dictionary *inner_dict) {
+    nested_dictionary *dict = (nested_dictionary *) malloc(sizeof(nested_dictionary));
+    if (dict == NULL) {
+        printf("Memory allocation failed.\n");
+        exit(EXIT_FAILURE);
+    }
+    dict->key = key;
+    dict->inner_dict = inner_dict;
+    return dict;
+}
+
+void free_dictionary(nested_dictionary *dict) {
+    if (dict == NULL) {
+        return;
+    }
+    free_dictionary(dict->inner_dict);
+    free(dict);
+}
+
+nested_dictionary *convert_lists_to_nested_dict(char **keys, int num_keys) {
+    if (num_keys <= 0) return NULL;
+    return new_dictionary(keys[0], convert_lists_to_nested_dict(keys + 1, num_keys - 1));
+}
+
+int main() {
+    char *keys[] = {"key1", "key2", "key3"};
+    int num_keys = sizeof(keys) / sizeof(keys[0]);
+
+    nested_dictionary *dict = convert_lists_to_nested_dict(keys, num_keys);
+    
+    // Properly free the allocated memory
+    free_dictionary(dict);
+
+    return 0;
+}
+```

@@ -1,0 +1,68 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    int first;
+    int second;
+} Tuple;
+
+typedef int (*CompareFunc)(const void*, const void*);
+
+static int compare_by_first(const void *a, const void *b) {
+    const Tuple *ta = (const Tuple*)a;
+    const Tuple *tb = (const Tuple*)b;
+    return (ta->first > tb->first) - (ta->first < tb->first);
+}
+
+static int compare_by_second(const void *a, const void *b) {
+    const Tuple *ta = (const Tuple*)a;
+    const Tuple *tb = (const Tuple*)b;
+    return (ta->second > tb->second) - (ta->second < tb->second);
+}
+
+static int compare_by_sum(const void *a, const void *b) {
+    const Tuple *ta = (const Tuple*)a;
+    const Tuple *tb = (const Tuple*)b;
+    int sa = ta->first + ta->second;
+    int sb = tb->first + tb->second;
+    return (sa > sb) - (sa < sb);
+}
+
+static void sort_tuples(Tuple *tuples, size_t count, CompareFunc cmp) {
+    if (tuples == NULL || cmp == NULL || count <= 1) {
+        return;
+    }
+    qsort(tuples, count, sizeof(Tuple), cmp);
+}
+
+static void print_tuples(const Tuple *tuples, size_t count) {
+    for (size_t i = 0; i < count; i++) {
+        printf("(%d, %d) ", tuples[i].first, tuples[i].second);
+    }
+    printf("\n");
+}
+
+int main(void) {
+    Tuple tuples[] = {{3, 1}, {1, 5}, {2, 2}, {5, 3}, {4, 4}};
+    size_t count = sizeof(tuples) / sizeof(tuples[0]);
+
+    printf("Original: ");
+    print_tuples(tuples, count);
+
+    sort_tuples(tuples, count, compare_by_first);
+    printf("Sorted by first: ");
+    print_tuples(tuples, count);
+
+    sort_tuples(tuples, count, compare_by_second);
+    printf("Sorted by second: ");
+    print_tuples(tuples, count);
+
+    sort_tuples(tuples, count, compare_by_sum);
+    printf("Sorted by sum: ");
+    print_tuples(tuples, count);
+
+    return 0;
+}
+```

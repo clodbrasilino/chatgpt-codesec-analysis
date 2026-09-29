@@ -1,0 +1,158 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char **items;
+    size_t count;
+} Tuple;
+ /* Possible weaknesses found:
+  *  test case 0 failed: expected ['p', 'y', 't', 'h', 'o', 'n', '3', '.', '0'], got <no output>
+  *  test case 1 failed: expected ['i', 't', 'e', 'm', '1'], got <no output>
+  *  test case 2 failed: expected ['1', '5', '.', '1', '0'], got <no output>
+  */
+
+Tuple *string_to_tuple(const char *str, const char *delim) {
+    if (str == NULL || delim == NULL) {
+        return NULL;
+    }
+
+    Tuple *tuple = (Tuple *)malloc(sizeof(Tuple));
+    if (tuple == NULL) {
+        return NULL;
+    }
+
+    tuple->items = NULL;
+    tuple->count = 0;
+
+    if (strlen(str) == 0) {
+        return tuple;
+    }
+
+    char *temp = (char *)malloc(strlen(str) + 1);
+    if (temp == NULL) {
+        free(tuple);
+        return NULL;
+    }
+    strcpy(temp, str);
+
+    char *token = temp;
+    char *next_token = NULL;
+
+    while (*token) {
+        next_token = strstr(token, delim);
+        if (next_token != NULL) {
+            size_t len = next_token - token;
+            if (len > 0) {
+                char **new_items = (char **)realloc(tuple->items, (tuple->count + 1) * sizeof(char *));
+                if (new_items == NULL) {
+                    for (size_t i = 0; i < tuple->count; i++) {
+                        free(tuple->items[i]);
+                    }
+                    free(tuple->items);
+                    free(tuple);
+                    free(temp);
+                    return NULL;
+                }
+                tuple->items = new_items;
+                tuple->items[tuple->count] = (char *)malloc(len + 1);
+                if (tuple->items[tuple->count] == NULL) {
+                    for (size_t i = 0; i < tuple->count; i++) {
+                        free(tuple->items[i]);
+                    }
+                    free(tuple->items);
+                    free(tuple);
+                    free(temp);
+                    return NULL;
+                }
+                strncpy(tuple->items[tuple->count], token, len);
+                tuple->items[tuple->count][len] = '\0';
+                tuple->count++;
+            }
+            token = next_token + strlen(delim);
+        } else {
+            size_t len = strlen(token);
+            if (len > 0) {
+                char **new_items = (char **)realloc(tuple->items, (tuple->count + 1) * sizeof(char *));
+                if (new_items == NULL) {
+                    for (size_t i = 0; i < tuple->count; i++) {
+                        free(tuple->items[i]);
+                    }
+                    free(tuple->items);
+                    free(tuple);
+                    free(temp);
+                    return NULL;
+                }
+                tuple->items = new_items;
+                tuple->items[tuple->count] = (char *)malloc(len + 1);
+                if (tuple->items[tuple->count] == NULL) {
+                    for (size_t i = 0; i < tuple->count; i++) {
+                        free(tuple->items[i]);
+                    }
+                    free(tuple->items);
+                    free(tuple);
+                    free(temp);
+                    return NULL;
+                }
+                strcpy(tuple->items[tuple->count], token);
+                tuple->count++;
+            }
+            break;
+        }
+    }
+
+    free(temp);
+    return tuple;
+}
+
+void free_tuple(Tuple *tuple) {
+    if (tuple != NULL) {
+        for (size_t i = 0; i < tuple->count; i++) {
+            free(tuple->items[i]);
+        }
+        free(tuple->items);
+        free(tuple);
+    }
+}
+
+int main(void) {
+    const char *input1 = "python3.0";
+    const char *input2 = "item1";
+    const char *input3 = "15.10";
+    const char *delim = ".";
+
+    Tuple *t1 = string_to_tuple(input1, delim);
+    if (t1 != NULL) {
+        printf("[");
+        for (size_t i = 0; i < t1->count; i++) {
+            printf("'%s'", t1->items[i]);
+            if (i < t1->count - 1) printf(", ");
+        }
+        printf("]\n");
+        free_tuple(t1);
+    }
+
+    Tuple *t2 = string_to_tuple(input2, delim);
+    if (t2 != NULL) {
+        printf("[");
+        for (size_t i = 0; i < t2->count; i++) {
+            printf("'%s'", t2->items[i]);
+            if (i < t2->count - 1) printf(", ");
+        }
+        printf("]\n");
+        free_tuple(t2);
+    }
+
+    Tuple *t3 = string_to_tuple(input3, delim);
+    if (t3 != NULL) {
+        printf("[");
+        for (size_t i = 0; i < t3->count; i++) {
+            printf("'%s'", t3->items[i]);
+            if (i < t3->count - 1) printf(", ");
+        }
+        printf("]\n");
+        free_tuple(t3);
+    }
+
+    return EXIT_SUCCESS;
+}

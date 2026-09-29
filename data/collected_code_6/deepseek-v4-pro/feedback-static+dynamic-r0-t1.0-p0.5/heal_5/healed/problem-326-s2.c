@@ -1,0 +1,135 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct WordCount {
+    char *word;
+    int count;
+    struct WordCount *next;
+} WordCount;
+
+static WordCount *find_word(WordCount *head, const char *word) {
+    WordCount *current = head;
+    while (current != NULL) {
+        if (strcmp(current->word, word) == 0) {
+            return current;
+        }
+        current = current->next;
+    }
+    return NULL;
+}
+
+static WordCount *add_word(WordCount **head, const char *word) {
+    if (word == NULL) {
+        return NULL;
+    }
+
+    size_t word_len = strlen(word);
+    if (word_len > 1023) {
+        word_len = 1023;
+    }
+
+    WordCount *new_node = (WordCount *)malloc(sizeof(WordCount));
+    if (new_node == NULL) {
+        return NULL;
+    }
+
+    char *word_copy = (char *)malloc(word_len + 1);
+    if (word_copy == NULL) {
+        free(new_node);
+        return NULL;
+    }
+
+    memcpy(word_copy, word, word_len);
+    word_copy[word_len] = '\0';
+
+    new_node->word = word_copy;
+    new_node->count = 1;
+    new_node->next = *head;
+    *head = new_node;
+    return new_node;
+}
+
+static void free_list(WordCount *head) {
+    WordCount *current = head;
+    while (current != NULL) {
+        WordCount *next = current->next;
+        free(current->word);
+        free(current);
+        current = next;
+    }
+}
+
+char *most_frequent_word(char **strings, int count) {
+    if (strings == NULL || count <= 0) {
+        return NULL;
+    }
+
+    WordCount *head = NULL;
+    WordCount *max_node = NULL;
+
+    for (int i = 0; i < count; i++) {
+        if (strings[i] == NULL) {
+            continue;
+        }
+
+        WordCount *existing = find_word(head, strings[i]);
+        if (existing != NULL) {
+            existing->count++;
+        } else {
+            existing = add_word(&head, strings[i]);
+            if (existing == NULL) {
+                free_list(head);
+                return NULL;
+            }
+        }
+
+        if (max_node == NULL || existing->count > max_node->count) {
+            max_node = existing;
+        }
+    }
+
+    if (max_node == NULL) {
+        free_list(head);
+        return NULL;
+    }
+
+    size_t result_len = strlen(max_node->word);
+    if (result_len > 1023) {
+        result_len = 1023;
+    }
+
+    char *result = (char *)malloc(result_len + 1);
+    if (result == NULL) {
+        free_list(head);
+        return NULL;
+    }
+
+    memcpy(result, max_node->word, result_len);
+    result[result_len] = '\0';
+    free_list(head);
+    return result;
+}
+
+int main(void) {
+    char *strings[] = {
+        "apple",
+        "banana",
+        "apple",
+        "orange",
+        "banana",
+        "apple",
+        "grape"
+    };
+    int count = sizeof(strings) / sizeof(strings[0]);
+
+    char *result = most_frequent_word(strings, count);
+    if (result != NULL) {
+        printf("Most frequent word: %s\n", result);
+        free(result);
+    } else {
+        printf("No words found\n");
+    }
+
+    return 0;
+}

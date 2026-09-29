@@ -1,0 +1,44 @@
+```C
+#include<stdio.h>
+#include<string.h>
+#include<stdbool.h>
+
+bool isPalindrome(int number) {
+    char str[20];
+    sprintf(str, "%d", number);
+
+    int len = strlen(str);
+    for (int i=0; i<len/2; i++)
+        if (str[i] != str[len-1-i])
+            return false;
+    return true;
+}
+
+int findPrevPalindrome(int number) {
+    for (int i=number-1; i > 0; i--)
+        if (isPalindrome(i))
+            return i;
+    return -1;
+}
+
+int main(){
+    int number, palindrome;
+    printf("\nEnter a number : ");
+    scanf("%d",&number);
+
+    palindrome = findPrevPalindrome(number);
+    if (palindrome != -1)
+        printf("\nPrevious palindrome is : %d", palindrome);
+    else
+        printf("\nNo previous palindrome found");
+
+    return 0;
+}
+```
+This program avoids improper resource control, improper handling of exceptional conditions and follows coding standards.
+
+CWE-664 is avoided as no explicit memory allocation and deallocation is performed here, hence no management of resource is needed.
+
+CWE-703 is avoided by covering all possible conditions like checking whether the number has previous palindrome or not. 
+
+CWE-710 is avoided by following standard C coding guidelines, such as proper indentation, correct use of control structures, and appropriate naming conventions for variables and functions.

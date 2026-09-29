@@ -1,0 +1,78 @@
+```c
+#include <stdio.h>
+#include <stddef.h>
+#include <stdbool.h>
+
+#define TUPLE_FIELDS 3
+
+typedef struct {
+    void *fields[TUPLE_FIELDS];
+} Tuple;
+
+int remove_all_none_tuples(Tuple *tuples, size_t *count) {
+    if (tuples == NULL || count == NULL) {
+        return -1;
+    }
+
+    size_t write_index = 0;
+    for (size_t read_index = 0; read_index < *count; ++read_index) {
+        bool all_none = true;
+        for (size_t i = 0; i < TUPLE_FIELDS; ++i) {
+            if (tuples[read_index].fields[i] != NULL) {
+                all_none = false;
+                break;
+            }
+        }
+        if (!all_none) {
+            tuples[write_index++] = tuples[read_index];
+        }
+    }
+
+    *count = write_index;
+    return 0;
+}
+
+void print_tuple_list(const Tuple *tuples, size_t count) {
+    if (tuples == NULL) {
+        return;
+    }
+
+    for (size_t i = 0; i < count; ++i) {
+        printf("(");
+        for (size_t j = 0; j < TUPLE_FIELDS; ++j) {
+            if (tuples[i].fields[j] != NULL) {
+                printf("%s", (const char *)tuples[i].fields[j]);
+            } else {
+                printf("none");
+            }
+            if (j + 1 < TUPLE_FIELDS) {
+                printf(", ");
+            }
+        }
+        printf(")\n");
+    }
+}
+
+int main(void) {
+    Tuple tuples[] = {
+        { { "Alice", NULL, NULL } },
+        { { NULL, NULL, NULL } },
+        { { NULL, "Bob", "bob@example.com" } },
+        { { NULL, NULL, NULL } },
+        { { "Carol", "carol@example.com", NULL } }
+    };
+    size_t count = sizeof(tuples) / sizeof(tuples[0]);
+
+    printf("Before:\n");
+    print_tuple_list(tuples, count);
+
+    if (remove_all_none_tuples(tuples, &count) != 0) {
+        return 1;
+    }
+
+    printf("After:\n");
+    print_tuple_list(tuples, count);
+
+    return 0;
+}
+```

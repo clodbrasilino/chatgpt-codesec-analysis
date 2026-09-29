@@ -1,0 +1,122 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-813.c:58:11: error: expected '=', ',', ';', 'asm' or '__attribute__' before ':' token
+   58 | **Analysis:**
+      |           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-813.c:60:176: error: stray '`' in program
+   60 | The original code is already well-hardened against the Flawfinder warning (CWE-119/CWE-120). The rewrite preserves the code as-is because every access to the statically-sized `buffer` is properly bounds-checked:
+      |                                                                                                                                                                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-813.c:60:183: error: stray '`' in program
+   60 | The original code is already well-hardened against the Flawfinder warning (CWE-119/CWE-120). The rewrite preserves the code as-is because every access to the statically-sized `buffer` is properly bounds-checked:
+      |                                                                                                                                                                                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-813.c:62:27: error: stray '\342' in program
+   62 | 1. **Argument copy loop** <U+2014> bounded by `sizeof(buffer) - 1`, guaranteeing room for the null terminator, which is explicitly written after the loop. This prevents overflow regardless of `argv[1]` length.
+      |                           ^~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-813.c:62:40: error: stray '`' in program
+   62 | 1. **Argument copy loop** — bounded by `sizeof(buffer) - 1`, guaranteeing room for the null terminator, which is explicitly written after the loop. This prevents overflow regardless of `argv[1]` length.
+      |                                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-813.c:62:59: error: stray '`' in program
+   62 | 1. **Argument copy loop** — bounded by `sizeof(buffer) - 1`, guaranteeing room for the null terminator, which is explicitly written after the loop. This prevents overflow regardless of `argv[1]` length.
+      |                                                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-813.c:62:186: error: stray '`' in program
+   62 | 1. **Argument copy loop** — bounded by `sizeof(buffer) - 1`, guaranteeing room for the null terminator, which is explicitly written after the loop. This prevents overflow regardless of `argv[1]` length.
+      |                                                                                                                                                                                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-813.c:62:194: error: stray '`' in program
+   62 | 1. **Argument copy loop** — bounded by `sizeof(buffer) - 1`, guaranteeing room for the null terminator, which is explicitly written after the loop. This prevents overflow regardless of `argv[1]` length.
+      |                                                                                                                                                                                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-813.c:64:6: error: stray '`' in program
+   64 | 2. **`fgets` usage** — the size argument `(int)sizeof(buffer)` limits input to the buffer capacity, and the defensive `buffer[sizeof(buffer) - 1] = '\0'` guarantees termination even in edge cases.
+      |      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-813.c:64:12: error: stray '`' in program
+   64 | 2. **`fgets` usage** — the size argument `(int)sizeof(buffer)` limits input to the buffer capacity, and the defensive `buffer[sizeof(buffer) - 1] = '\0'` guarantees termination even in edge cases.
+      |            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-813.c:64:22: error: stray '\342' in program
+   64 | 2. **`fgets` usage** <U+2014> the size argument `(int)sizeof(buffer)` limits input to the buffer capacity, and the defensive `buffer[sizeof(buffer) - 1] = '\0'` guarantees termination even in edge cases.
+      |                      ^~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-813.c:64:42: error: stray '`' in program
+   64 | 2. **`fgets` usage** — the size argument `(int)sizeof(buffer)` limits input to the buffer capacity, and the defensive `buffer[sizeof(buffer) - 1] = '\0'` guarantees termination even in edge cases.
+      |                                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-813.c:64:62: error: stray '`' in program
+   64 | 2. **`fgets` usage** — the size argument `(int)sizeof(buffer)` limits input to the buffer capacity, and the defensive `buffer[sizeof(buffer) - 1] = '\0'` guarantees termination even in edge cases.
+      |                                                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-813.c:64:119: error: stray '`' in program
+   64 | 2. **`fgets` usage** — the size argument `(int)sizeof(buffer)` limits input to the buffer capacity, and the defensive `buffer[sizeof(buffer) - 1] = '\0'` guarantees termination even in edge cases.
+      |                                                                                                                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-813.c:64:153: error: stray '`' in program
+   64 | 2. **`fgets` usage** — the size argument `(int)sizeof(buffer)` limits input to the buffer capacity, and the defensive `buffer[sizeof(buffer) - 1] = '\0'` guarantees termination even in edge cases.
+      |                                                                                                                                                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-813.c:66:31: error: stray '\342' in program
+   66 | 3. **Newline-stripping loop** <U+2014> bounded by `sizeof(buffer)`, so it can never read past the array even if termination were somehow missing.
+      |                               ^~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-813.c:66:44: error: stray '`' in program
+   66 | 3. **Newline-stripping loop** — bounded by `sizeof(buffer)`, so it can never read past the array even if termination were somehow missing.
+      |                                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-813.c:66:59: error: stray '`' in program
+   66 | 3. **Newline-stripping loop** — bounded by `sizeof(buffer)`, so it can never read past the array even if termination were somehow missing.
+      |                                                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-813.c:68:6: error: stray '`' in program
+   68 | 4. **`string_length`** — handles `NULL` safely and only ever reads up to the terminator, which is guaranteed to exist by the earlier logic.
+      |      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-813.c:68:20: error: stray '`' in program
+   68 | 4. **`string_length`** — handles `NULL` safely and only ever reads up to the terminator, which is guaranteed to exist by the earlier logic.
+      |                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-813.c:68:24: error: stray '\342' in program
+   68 | 4. **`string_length`** <U+2014> handles `NULL` safely and only ever reads up to the terminator, which is guaranteed to exist by the earlier logic.
+      |                        ^~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-813.c:68:34: error: stray '`' in program
+   68 | 4. **`string_length`** — handles `NULL` safely and only ever reads up to the terminator, which is guaranteed to exist by the earlier logic.
+      |                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-813.c:68:39: error: stray '`' in program
+   68 | 4. **`string_length`** — handles `NULL` safely and only ever reads up to the terminator, which is guaranteed to exist by the earlier logic.
+      |                                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-813.c:70:28: error: stray '\342' in program
+   70 | 5. **No unsafe functions** <U+2014> no `strcpy`, `gets`, `sprintf`, or unbounded `scanf` are used; `printf` uses a constant format string, avoiding format-string vulnerabilities (CWE-134).
+      |                            ^~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-813.c:70:33: error: stray '`' in program
+   70 | 5. **No unsafe functions** — no `strcpy`, `gets`, `sprintf`, or unbounded `scanf` are used; `printf` uses a constant format string, avoiding format-string vulnerabilities (CWE-134).
+      |                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-813.c:70:40: error: stray '`' in program
+   70 | 5. **No unsafe functions** — no `strcpy`, `gets`, `sprintf`, or unbounded `scanf` are used; `printf` uses a constant format string, avoiding format-string vulnerabilities (CWE-134).
+      |                                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-813.c:70:43: error: stray '`' in program
+   70 | 5. **No unsafe functions** — no `strcpy`, `gets`, `sprintf`, or unbounded `scanf` are used; `printf` uses a constant format string, avoiding format-string vulnerabilities (CWE-134).
+      |                                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-813.c:70:48: error: stray '`' in program
+   70 | 5. **No unsafe functions** — no `strcpy`, `gets`, `sprintf`, or unbounded `scanf` are used; `printf` uses a constant format string, avoiding format-string vulnerabilities (CWE-134).
+      |                                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-813.c:70:51: error: stray '`' in program
+   70 | 5. **No unsafe functions** — no `strcpy`, `gets`, `sprintf`, or unbounded `scanf` are used; `printf` uses a constant format string, avoiding format-string vulnerabilities (CWE-134).
+      |                                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-813.c:70:59: error: stray '`' in program
+   70 | 5. **No unsafe functions** — no `strcpy`, `gets`, `sprintf`, or unbounded `scanf` are used; `printf` uses a constant format string, avoiding format-string vulnerabilities (CWE-134).
+      |                                                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-813.c:70:75: error: stray '`' in program
+   70 | 5. **No unsafe functions** — no `strcpy`, `gets`, `sprintf`, or unbounded `scanf` are used; `printf` uses a constant format string, avoiding format-string vulnerabilities (CWE-134).
+      |                                                                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-813.c:70:81: error: stray '`' in program
+   70 | 5. **No unsafe functions** — no `strcpy`, `gets`, `sprintf`, or unbounded `scanf` are used; `printf` uses a constant format string, avoiding format-string vulnerabilities (CWE-134).
+      |                                                                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-813.c:70:93: error: stray '`' in program
+   70 | 5. **No unsafe functions** — no `strcpy`, `gets`, `sprintf`, or unbounded `scanf` are used; `printf` uses a constant format string, avoiding format-string vulnerabilities (CWE-134).
+      |                                                                                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-813.c:70:100: error: stray '`' in program
+   70 | 5. **No unsafe functions** — no `strcpy`, `gets`, `sprintf`, or unbounded `scanf` are used; `printf` uses a constant format string, avoiding format-string vulnerabilities (CWE-134).
+      |                                                                                                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-813.c:70:94: error: unknown type name 'printf'
+   70 | 5. **No unsafe functions** — no `strcpy`, `gets`, `sprintf`, or unbounded `scanf` are used; `printf` uses a constant format string, avoiding format-string vulnerabilities (CWE-134).
+      |                                                                                              ^~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-813.c:3:1: note: 'printf' is defined in header '<stdio.h>'; this is probably fixable by adding '#include <stdio.h>'
+    2 | #include <stdlib.h>
+  +++ |+#include <stdio.h>
+    3 | 
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-813.c:70:107: error: expected '=', ',', ';', 'asm' or '__attribute__' before 'a'
+   70 | 5. **No unsafe functions** — no `strcpy`, `gets`, `sprintf`, or unbounded `scanf` are used; `printf` uses a constant format string, avoiding format-string vulnerabilities (CWE-134).
+      |                                                                                                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-813.c:70:107: error: unknown type name 'a'
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-813.c:72:23: error: stray '`' in program
+   72 | The Flawfinder hit on `char buffer[MAX_INPUT]` is a heuristic flag on any statically-sized array — the recommended mitigations (bounds checking, length-limiting functions) are already fully implemented, so no functional changes were required.
+      |                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-813.c:72:46: error: stray '`' in program
+   72 | The Flawfinder hit on `char buffer[MAX_INPUT]` is a heuristic flag on any statically-sized array — the recommended mitigations (bounds checking, length-limiting functions) are already fully implemented, so no functional changes were required.
+      |                                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-813.c:72:98: error: stray '\342' in program
+   72 | The Flawfinder hit on `char buffer[MAX_INPUT]` is a heuristic flag on any statically-sized array <U+2014> the recommended mitigations (bounds checking, length-limiting functions) are already fully implemented, so no functional changes were required.
+      |                                                                                                  ^~~~~~~~

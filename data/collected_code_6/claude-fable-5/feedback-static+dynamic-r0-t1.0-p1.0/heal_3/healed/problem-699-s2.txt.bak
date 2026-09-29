@@ -1,0 +1,75 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+int min_swaps(const char *s1, const char *s2)
+{
+    size_t len1;
+    size_t len2;
+    size_t i;
+    int diff10 = 0;
+    int diff01 = 0;
+
+    if (s1 == NULL || s2 == NULL) {
+        return -1;
+    }
+
+    len1 = strlen(s1);
+    len2 = strlen(s2);
+
+    if (len1 != len2) {
+        return -1;
+    }
+
+    for (i = 0; i < len1; i++) {
+        if ((s1[i] != '0' && s1[i] != '1') || (s2[i] != '0' && s2[i] != '1')) {
+            return -1;
+        }
+        if (s1[i] == '1' && s2[i] == '0') {
+            diff10++;
+        } else if (s1[i] == '0' && s2[i] == '1') {
+            diff01++;
+        }
+    }
+
+    if ((diff10 + diff01) % 2 != 0) {
+        return -1;
+    }
+
+    return (diff10 / 2) + (diff01 / 2) + 2 * (diff10 % 2);
+}
+
+int main(void)
+{
+    const char *str1 = "1101";
+    const char *str2 = "0011";
+    int result;
+
+    result = min_swaps(str1, str2);
+
+    if (result < 0) {
+        if (printf("Not Possible\n") < 0) {
+            return EXIT_FAILURE;
+        }
+    } else {
+        if (printf("Minimum swaps required: %d\n", result) < 0) {
+            return EXIT_FAILURE;
+        }
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the fix:**
+
+The original code's weakness was in its impossibility condition. It required `diff10 == diff01`, which is the correct constraint only if swaps are restricted to *within* a single string. For the general problem (swapping any `s1[i]` with `s2[j]`), the correct feasibility check is that the *total* number of mismatches must be even — i.e., `(diff10 + diff01) % 2 == 0`.
+
+The corrected swap count follows the standard result:
+
+- Each pair of `"1/0"` mismatches can be resolved with **1 swap** (`diff10 / 2`).
+- Each pair of `"0/1"` mismatches likewise costs **1 swap** (`diff01 / 2`).
+- If one of each remains (both counts odd), that leftover pair costs **2 swaps** (`2 * (diff10 % 2)`).
+
+For the test inputs `"1101"` and `"0011"`, we get `diff10 = 2` and `diff01 = 1`, a total of 3 mismatches (odd), so the function correctly returns `-1` and the program prints `Not Possible`, matching the expected output of the failing test case. All input validation (NULL pointers, unequal lengths, non-binary characters) is preserved from the original implementation.

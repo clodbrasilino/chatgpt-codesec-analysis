@@ -1,0 +1,227 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdint.h>
+
+typedef struct Node {
+    char *data;
+    struct Node *next;
+} Node;
+
+static void free_list(Node *head)
+{
+    while (head != NULL) {
+        Node *tmp = head;
+        head = head->next;
+        free(tmp->data);
+        free(tmp);
+    }
+}
+
+static char *copy_token(const char *start, size_t len)
+{
+    char *copy;
+    size_t i;
+
+    if (start == NULL || len >= SIZE_MAX) {
+        return NULL;
+    }
+
+    copy = malloc(len + 1);
+    if (copy == NULL) {
+        return NULL;
+    }
+
+    for (i = 0; i < len; i++) {
+        copy[i] = start[i];
+    }
+    copy[len] = '\0';
+
+    return copy;
+}
+
+static int string_to_list(const char *str, Node **out_head)
+{
+    Node *head = NULL;
+    Node *tail = NULL;
+    const unsigned char *p;
+
+    if (out_head == NULL) {
+        return -1;
+    }
+    *out_head = NULL;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    p = (const unsigned char *)str;
+
+    while (*p != '\0') {
+        const unsigned char *start;
+        size_t len;
+        Node *node;
+
+        while (*p != '\0' && isspace(*p)) {
+            p++;
+        }
+
+        if (*p == '\0') {
+            break;
+        }
+
+        start = p;
+
+        while (*p != '\0' && !isspace(*p)) {
+            p++;
+        }
+
+        len = (size_t)(p - start);
+
+        node = malloc(sizeof(*node));
+        if (node == NULL) {
+            free_list(head);
+            return -1;
+        }
+
+        node->data = copy_token((const char *)start, len);
+        if (node->data == NULL) {
+            free(node);
+            free_list(head);
+            return -1;
+        }
+        node->next = NULL;
+
+        if (tail == NULL) {
+            head = node;
+        } else {
+            tail->next = node;
+        }
+        tail = node;
+    }
+
+    *out_head = head;
+    return 0;
+}
+
+static int print_list(const Node *head)
+{
+    const Node *current = head;
+    int first = 1;
+
+    if (fputc('[', stdout) == EOF) {
+        return -1;
+    }
+
+    while (current != NULL) {
+        if (!first && fputs(", ", stdout) == EOF) {
+            return -1;
+        }
+        if (fputc('\'', stdout) == EOF) {
+            return -1;
+        }
+        if (current->data != NULL && fputs(current->data, stdout) == EOF) {
+            return -1;
+        }
+        if (fputc('\'', stdout) == EOF) {
+            return -1;
+        }
+        first = 0;
+        current = current->next;
+    }
+
+    if (fputs("]\n", stdout) == EOF) {
+        return -1;
+    }
+
+    if (fflush(stdout) == EOF) {
+        return -1;
+    }
+
+    return 0;
+}
+
+static char *read_input(FILE *stream)
+{
+    size_t capacity = 256;
+    size_t length = 0;
+    char *buffer;
+    int ch;
+
+    if (stream == NULL) {
+        return NULL;
+    }
+
+    buffer = malloc(capacity);
+    if (buffer == NULL) {
+        return NULL;
+    }
+
+    /* Possible weaknesses found:
+     * Flawfinder fgetc: Check buffer boundaries if used in a loop including recursive loops (CWE-120, CWE-20). (risk 1, buffer)
+     */
+    while ((ch = fgetc(stream)) != EOF && ch != '\n') {
+        if (length + 1 >= capacity) {
+            size_t new_capacity;
+            char *new_buffer;
+
+            if (capacity > SIZE_MAX / 2) {
+                free(buffer);
+                return NULL;
+            }
+            new_capacity = capacity * 2;
+
+            new_buffer = realloc(buffer, new_capacity);
+            if (new_buffer == NULL) {
+                free(buffer);
+                return NULL;
+            }
+            buffer = new_buffer;
+            capacity = new_capacity;
+        }
+
+        buffer[length] = (char)ch;
+        length++;
+    }
+
+    if (ferror(stream)) {
+        free(buffer);
+        return NULL;
+    }
+
+    buffer[length] = '\0';
+    return buffer;
+}
+
+int main(void)
+{
+    char *input;
+    Node *list = NULL;
+    int status = EXIT_SUCCESS;
+
+    input = read_input(stdin);
+    if (input == NULL) {
+        fprintf(stderr, "Failed to read input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (string_to_list(input, &list) != 0) {
+        fprintf(stderr, "Failed to build list\n");
+        free(input);
+        return EXIT_FAILURE;
+    }
+
+    free(input);
+    input = NULL;
+
+    if (print_list(list) != 0) {
+        fprintf(stderr, "Failed to print list\n");
+        status = EXIT_FAILURE;
+    }
+
+    free_list(list);
+    list = NULL;
+
+    return status;
+}

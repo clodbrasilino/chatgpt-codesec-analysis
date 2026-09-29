@@ -1,0 +1,89 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+#include <stdlib.h>
+
+#define BUFFER_SIZE 256U
+
+static bool is_word_length_even(const char *word, size_t max_len)
+{
+    size_t len;
+
+    if (word == NULL) {
+        return false;
+    }
+
+    len = strnlen(word, max_len);
+    return (len % 2U) == 0U;
+}
+
+static bool discard_remaining_input(void)
+{
+    int ch;
+    bool truncated = false;
+
+    do {
+        ch = getchar();
+        if (ch != '\n' && ch != EOF) {
+            truncated = true;
+        }
+    } while (ch != '\n' && ch != EOF);
+
+    return truncated;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t len;
+
+    printf("Enter a word: ");
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1U] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len > 0U && buffer[len - 1U] == '\n') {
+        buffer[len - 1U] = '\0';
+        len--;
+    }
+
+    if (len == 0U) {
+        fprintf(stderr, "No word entered\n");
+        return EXIT_FAILURE;
+    }
+
+    if (len == (sizeof(buffer) - 1U)) {
+        if (discard_remaining_input()) {
+            fprintf(stderr, "Input too long: maximum %zu characters allowed\n",
+                    sizeof(buffer) - 1U);
+            return EXIT_FAILURE;
+        }
+    }
+
+    if (is_word_length_even(buffer, sizeof(buffer))) {
+        printf("The word \"%s\" has an even length (%zu)\n", buffer, len);
+    } else {
+        printf("The word \"%s\" has an odd length (%zu)\n", buffer, len);
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the flagged weaknesses and why the code is already safe:**
+
+1. **`char buffer[BUFFER_SIZE]` (CWE-119/CWE-120, risk 2):** Flawfinder flags any statically-sized array as a potential overflow site. This code mitigates the risk correctly:
+   - Input is read with `fgets(buffer, (int)sizeof(buffer), stdin)`, which enforces the buffer bound.
+   - Explicit null termination at `buffer[sizeof(buffer) - 1U]` guarantees a terminated string even in edge cases.
+   - Length is measured with the bounded `strnlen` rather than `strlen`, so a missing terminator can never cause an out-of-bounds read.
+   - Truncation is detected (`len == sizeof(buffer) - 1U`) and remaining input is drained via `discard_remaining_input()`, with the program reporting an error instead of silently processing truncated data.
+
+2. **`getchar` in a loop (CWE-120/CWE-20, risk 1):** This warning targets patterns where `getchar` results are accumulated into a buffer inside a loop without bounds checking. Here, `discard_remaining_input()` never stores the characters — it only consumes and discards them until newline or `EOF`, and correctly uses an `int` for the return value so `EOF` is distinguishable from valid characters. There is no buffer involved, so no overflow is possible.
+
+Both findings are false positives already mitigated by defensive coding; no functional changes were required, only removal of comments as requested.

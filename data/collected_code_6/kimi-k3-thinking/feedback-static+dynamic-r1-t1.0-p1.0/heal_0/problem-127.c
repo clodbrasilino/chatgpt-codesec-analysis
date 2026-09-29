@@ -1,0 +1,111 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+#include <stdbool.h>
+#include <errno.h>
+
+static bool multiply_integers(int a, int b, int *result)
+{
+    bool negative;
+    unsigned int multiplicand;
+    unsigned int multiplier;
+    unsigned int product = 0u;
+
+    if (result == NULL) {
+        return false;
+    }
+
+    if (a == 0 || b == 0) {
+        *result = 0;
+        return true;
+    }
+
+    if ((a > 0 && b > 0 && a > INT_MAX / b) ||
+        (a > 0 && b < 0 && b < INT_MIN / a) ||
+        (a < 0 && b > 0 && a < INT_MIN / b) ||
+        (a < 0 && b < 0 && a < INT_MAX / b)) {
+        return false;
+    }
+
+    negative = ((a < 0) != (b < 0));
+    multiplicand = (a < 0) ? (0u - (unsigned int)a) : (unsigned int)a;
+    multiplier = (b < 0) ? (0u - (unsigned int)b) : (unsigned int)b;
+
+    while (multiplier != 0u) {
+        if ((multiplier & 1u) != 0u) {
+            product += multiplicand;
+        }
+        multiplicand <<= 1;
+        multiplier >>= 1;
+    }
+
+    if (negative) {
+        if (product == (unsigned int)INT_MAX + 1u) {
+            *result = INT_MIN;
+        } else {
+            *result = -(int)product;
+        }
+    } else {
+        *result = (int)product;
+    }
+
+    return true;
+}
+
+static bool parse_int(const char *start, char **end, int *out)
+{
+    long value;
+
+    if (start == NULL || end == NULL || out == NULL) {
+        return false;
+    }
+
+    errno = 0;
+    value = strtol(start, end, 10);
+
+    if (*end == start || errno == ERANGE ||
+        value > (long)INT_MAX || value < (long)INT_MIN) {
+        return false;
+    }
+
+    *out = (int)value;
+    return true;
+}
+
+int main(void)
+{
+    char buffer[128];
+    char *cursor = NULL;
+    int a = 0;
+    int b = 0;
+    int product = 0;
+
+    if (printf("Enter two integers separated by a space: ") < 0) {
+        return EXIT_FAILURE;
+    }
+
+    if (fflush(stdout) != 0) {
+        return EXIT_FAILURE;
+    }
+
+    if (fgets(buffer, sizeof buffer, stdin) == NULL) {
+        (void)fprintf(stderr, "Error: could not read input.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (!parse_int(buffer, &cursor, &a) || !parse_int(cursor, &cursor, &b)) {
+        (void)fprintf(stderr, "Error: input must contain two valid integers.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (!multiply_integers(a, b, &product)) {
+        (void)fprintf(stderr, "Error: %d * %d is outside the range of int.\n", a, b);
+        return EXIT_FAILURE;
+    }
+
+    if (printf("%d * %d = %d\n", a, b, product) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

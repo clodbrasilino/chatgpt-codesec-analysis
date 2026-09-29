@@ -1,0 +1,103 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_INPUT_LENGTH 4096U
+
+char *remove_words_of_length_k(const char *input, size_t k)
+{
+    char *result;
+    size_t len;
+    size_t i;
+    size_t out;
+    size_t start;
+    size_t word_len;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    len = strnlen(input, MAX_INPUT_LENGTH);
+    if (len >= MAX_INPUT_LENGTH) {
+        return NULL;
+    }
+
+    result = (char *)malloc(len + 1U);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    i = 0U;
+    out = 0U;
+
+    while (i <= len) {
+        if ((input[i] == ' ') || (input[i] == '\0')) {
+            i++;
+            continue;
+        }
+
+        start = i;
+        while ((i < len) && (input[i] != ' ') && (input[i] != '\0')) {
+            i++;
+        }
+        word_len = i - start;
+
+        if (word_len != k) {
+            if (out > 0U) {
+                if (out >= len) {
+                    free(result);
+                    return NULL;
+                }
+                result[out] = ' ';
+                out++;
+            }
+            if ((out + word_len) > len) {
+                free(result);
+                return NULL;
+            }
+            (void)memcpy(&result[out], &input[start], word_len);
+            out += word_len;
+        }
+    }
+
+    result[out] = '\0';
+    return result;
+}
+
+int main(void)
+{
+    const char *text = "the quick brown fox jumps over a lazy dog";
+    size_t k = 3U;
+    char *filtered;
+
+    filtered = remove_words_of_length_k(text, k);
+    if (filtered == NULL) {
+        (void)fprintf(stderr, "Failed to process string\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Original: %s\n", text) < 0) {
+        free(filtered);
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Filtered: %s\n", filtered) < 0) {
+        free(filtered);
+        return EXIT_FAILURE;
+    }
+
+    free(filtered);
+    return EXIT_SUCCESS;
+}
+```
+
+**Key changes made:**
+
+1. **CWE-126 (over-read via `strlen`):** Replaced `strlen` with `strnlen` bounded by `MAX_INPUT_LENGTH`. If the string is not NUL-terminated within that bound, the function safely rejects the input by returning `NULL` instead of reading past the end of the buffer.
+
+2. **CWE-120 (unchecked `memcpy`):** Added explicit bounds checks before writing the separator space (`out >= len`) and before the `memcpy` (`out + word_len > len`). Since the output can never legitimately exceed the input length, any violation indicates an inconsistency, and the function frees the buffer and returns `NULL` rather than overflowing.
+
+3. **Additional hardening:** The inner word-scanning loop now also checks `i < len`, guaranteeing the index can never run past the validated length even if the buffer contents change unexpectedly (defense in depth against TOCTOU-style issues).
+
+The program's observable behavior for valid input is unchanged: with `k = 3`, it prints the original sentence and the filtered result with all three-letter words (`the`, `fox`, `dog`) removed.

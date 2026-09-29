@@ -1,0 +1,61 @@
+```c
+#include <stdio.h>
+#include <ctype.h>
+#include <string.h>
+#include <stdlib.h>
+
+char *remove_non_alnum(char *str);
+
+char *remove_non_alnum(char *str)
+{
+    size_t read;
+    size_t write;
+
+    if (str == NULL) {
+        return NULL;
+    }
+
+    write = 0;
+    for (read = 0; str[read] != '\0'; read++) {
+        if (isalnum((unsigned char)str[read])) {
+            str[write] = str[read];
+            write++;
+        }
+    }
+    str[write] = '\0';
+
+    return str;
+}
+
+int main(void)
+{
+    char input[] = "Hello, World! 123 #$%^ test_case-42";
+    char *result;
+
+    result = remove_non_alnum(input);
+    if (result == NULL) {
+        fprintf(stderr, "Error: NULL input string\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Result: %s\n", result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The Flawfinder warnings flagged in the original source are all **risk-level 1 (informational)** hits on the identifier `read` — Flawfinder pattern-matches on the name `read` (as in the POSIX `read()` syscall) and warns about buffer boundary checks in loops. These are **false positives** here, because:
+
+1. **In-place compaction is inherently safe:** `write` can never exceed `read`, and `read` is bounded by the NUL terminator, so `str[write]` never writes past the original string length. The final `str[write] = '\0'` is likewise within bounds since `write <= strlen(str)`.
+
+2. **`isalnum()` is called correctly:** the argument is cast to `unsigned char`, avoiding undefined behavior for negative `char` values (a common real bug that Flawfinder does *not* catch).
+
+3. **NULL is handled** before any dereference.
+
+4. **`main` passes a writable array** (`char input[]`), not a string literal (`char *input = "..."` would cause UB when mutating).
+
+No functional changes are required — the code is already correct. The only legitimate "fix" for the warnings would be renaming `read`/`write` (e.g., `src_idx`/`dst_idx`) purely to silence the scanner, but the code as written contains no actual CWE-120/CWE-20 vulnerability.

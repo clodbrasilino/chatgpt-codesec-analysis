@@ -1,0 +1,220 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+#include <stddef.h>
+
+typedef enum {
+    NODE_INT,
+    NODE_LIST
+} NodeType;
+
+typedef struct Node {
+    NodeType type;
+    int value;
+    struct Node **items;
+    size_t count;
+} Node;
+
+static Node *node_create_int(int value);
+static Node *node_create_list(size_t count);
+static void node_free(Node *node);
+static bool node_valid(const Node *node);
+static bool node_equal(const Node *a, const Node *b);
+static bool list_contains(const Node *list, const Node *elem);
+static bool is_subset(const Node *sub, const Node *super);
+static Node *build_super(void);
+static Node *build_sub(void);
+static Node *build_not_sub(void);
+
+static Node *node_create_int(int value)
+{
+    Node *node = malloc(sizeof *node);
+    if (node == NULL) {
+        return NULL;
+    }
+    node->type = NODE_INT;
+    node->value = value;
+    node->items = NULL;
+    node->count = 0;
+    return node;
+}
+
+static Node *node_create_list(size_t count)
+{
+    Node *node = malloc(sizeof *node);
+    if (node == NULL) {
+        return NULL;
+    }
+    node->type = NODE_LIST;
+    node->value = 0;
+    node->count = count;
+    node->items = NULL;
+    if (count > 0) {
+        node->items = calloc(count, sizeof *node->items);
+        if (node->items == NULL) {
+            free(node);
+            return NULL;
+        }
+    }
+    return node;
+}
+
+static void node_free(Node *node)
+{
+    if (node == NULL) {
+        return;
+    }
+    if (node->type == NODE_LIST && node->items != NULL) {
+        for (size_t i = 0; i < node->count; i++) {
+            node_free(node->items[i]);
+        }
+        free(node->items);
+    }
+    free(node);
+}
+
+static bool node_valid(const Node *node)
+{
+    if (node == NULL) {
+        return false;
+    }
+    if (node->type == NODE_LIST) {
+        for (size_t i = 0; i < node->count; i++) {
+            if (!node_valid(node->items[i])) {
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
+static bool node_equal(const Node *a, const Node *b)
+{
+    if (a == NULL || b == NULL) {
+        return a == b;
+    }
+    if (a->type != b->type) {
+        return false;
+    }
+    if (a->type == NODE_INT) {
+        return a->value == b->value;
+    }
+    if (a->count != b->count) {
+        return false;
+    }
+    for (size_t i = 0; i < a->count; i++) {
+        if (!node_equal(a->items[i], b->items[i])) {
+            return false;
+        }
+    }
+    return true;
+}
+
+static bool list_contains(const Node *list, const Node *elem)
+{
+    if (list == NULL || list->type != NODE_LIST) {
+        return false;
+    }
+    for (size_t i = 0; i < list->count; i++) {
+        if (node_equal(list->items[i], elem)) {
+            return true;
+        }
+    }
+    return false;
+}
+
+static bool is_subset(const Node *sub, const Node *super)
+{
+    if (sub == NULL || super == NULL) {
+        return false;
+    }
+    if (sub->type != NODE_LIST || super->type != NODE_LIST) {
+        return false;
+    }
+    for (size_t i = 0; i < sub->count; i++) {
+        if (!list_contains(super, sub->items[i])) {
+            return false;
+        }
+    }
+    return true;
+}
+
+static Node *build_super(void)
+{
+    Node *list = node_create_list(4);
+    if (list == NULL) {
+        return NULL;
+    }
+    list->items[0] = node_create_int(1);
+    list->items[1] = node_create_int(2);
+    Node *inner = node_create_list(2);
+    if (inner != NULL) {
+        inner->items[0] = node_create_int(3);
+        inner->items[1] = node_create_int(4);
+    }
+    list->items[2] = inner;
+    list->items[3] = node_create_int(5);
+    return list;
+}
+
+static Node *build_sub(void)
+{
+    Node *list = node_create_list(2);
+    if (list == NULL) {
+        return NULL;
+    }
+    list->items[0] = node_create_int(2);
+    Node *inner = node_create_list(2);
+    if (inner != NULL) {
+        inner->items[0] = node_create_int(3);
+        inner->items[1] = node_create_int(4);
+    }
+    list->items[1] = inner;
+    return list;
+}
+
+static Node *build_not_sub(void)
+{
+    Node *list = node_create_list(2);
+    if (list == NULL) {
+        return NULL;
+    }
+    list->items[0] = node_create_int(1);
+    list->items[1] = node_create_int(6);
+    return list;
+}
+
+int main(void)
+{
+    Node *super = build_super();
+    Node *sub = build_sub();
+    Node *not_sub = build_not_sub();
+
+    if (!node_valid(super) || !node_valid(sub) || !node_valid(not_sub)) {
+        node_free(super);
+        node_free(sub);
+        node_free(not_sub);
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    if (is_subset(sub, super)) {
+        printf("sub is a subset of super\n");
+    } else {
+        printf("sub is not a subset of super\n");
+    }
+
+    if (is_subset(not_sub, super)) {
+        printf("not_sub is a subset of super\n");
+    } else {
+        printf("not_sub is not a subset of super\n");
+    }
+
+    node_free(super);
+    node_free(sub);
+    node_free(not_sub);
+
+    return EXIT_SUCCESS;
+}
+```

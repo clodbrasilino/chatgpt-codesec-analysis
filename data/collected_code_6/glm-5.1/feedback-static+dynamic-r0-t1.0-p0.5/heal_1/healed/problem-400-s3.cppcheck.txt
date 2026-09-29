@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_1/healed/problem-400-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_1/healed/problem-400-s3.c:42:13: style: Condition 'len>0' is always true [knownConditionTrueFalse]
+    if (len > 0 && memcpy(sorted, tuples, len * sizeof(Tuple)) == NULL) {
+            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_1/healed/problem-400-s3.c:29:50: note: Assuming that condition 'len==0' is not redundant
+    if (tuples == NULL || out_len == NULL || len == 0) {
+                                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_1/healed/problem-400-s3.c:37:16: note: Assuming condition is false
+    if (sorted == NULL) {
+               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_1/healed/problem-400-s3.c:42:13: note: Condition 'len>0' is always true
+    if (len > 0 && memcpy(sorted, tuples, len * sizeof(Tuple)) == NULL) {
+            ^

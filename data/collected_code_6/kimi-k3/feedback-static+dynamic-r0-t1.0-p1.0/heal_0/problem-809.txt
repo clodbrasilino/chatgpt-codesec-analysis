@@ -1,0 +1,50 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+#include <stddef.h>
+
+#define TUPLE_SIZE 5
+
+typedef struct {
+    int data[TUPLE_SIZE];
+    size_t size;
+} Tuple;
+
+bool check_elements_smaller(const Tuple *first, const Tuple *second) {
+    if (first == NULL || second == NULL) {
+        return false;
+    }
+    
+    if (first->size != second->size || first->size == 0 || first->size > TUPLE_SIZE) {
+        return false;
+    }
+    
+    for (size_t i = 0; i < first->size; i++) {
+        if (second->data[i] >= first->data[i]) {
+            return false;
+        }
+    }
+    
+    return true;
+}
+
+int main(void) {
+    Tuple tuple1 = {{10, 20, 30, 40, 50}, 5};
+    Tuple tuple2 = {{5, 15, 25, 35, 45}, 5};
+    Tuple tuple3 = {{15, 25, 35, 45, 55}, 5};
+    
+    if (check_elements_smaller(&tuple1, &tuple2)) {
+        printf("All elements in tuple2 are smaller than tuple1\n");
+    } else {
+        printf("Not all elements in tuple2 are smaller than tuple1\n");
+    }
+    
+    if (check_elements_smaller(&tuple1, &tuple3)) {
+        printf("All elements in tuple3 are smaller than tuple1\n");
+    } else {
+        printf("Not all elements in tuple3 are smaller than tuple1\n");
+    }
+    
+    return 0;
+}
+```

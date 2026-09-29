@@ -1,0 +1,37 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int a;
+    int b;
+} Tuple;
+
+int compareTuples(const void *t1, const void *t2) {
+    Tuple *tuple1 = (Tuple *)t1;
+    Tuple *tuple2 = (Tuple *)t2;
+    return (tuple1->a == tuple2->a && tuple1->b == tuple2->b) ? 0 : -1;
+}
+
+void findSimilarElements(Tuple *list1, Tuple *list2, int size1, int size2) {
+    for (int i = 0; i < size1; ++i) {
+        for (int j = 0; j < size2; ++j) {
+            if (compareTuples(&list1[i], &list2[j]) == 0) {
+                printf("(%d, %d) is similar in both lists.\n", list1[i].a, list1[i].b);
+                break;
+            }
+        }
+    }
+}
+
+int main() {
+    Tuple list1[] = {{1, 2}, {3, 4}, {5, 6}};
+    Tuple list2[] = {{3, 4}, {7, 8}, {1, 2}};
+    int size1 = sizeof(list1) / sizeof(list1[0]);
+    int size2 = sizeof(list2) / sizeof(list2[0]);
+
+    findSimilarElements(list1, list2, size1, size2);
+
+    return 0;
+}
+```

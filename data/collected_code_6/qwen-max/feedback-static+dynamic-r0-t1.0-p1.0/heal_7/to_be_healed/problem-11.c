@@ -1,0 +1,41 @@
+#include <stdio.h>
+#include <string.h>
+
+void remove_first_last_occurrence(char *str, char ch) {
+    size_t len;
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    if (str == NULL || (len = strlen(str)) == 0) return;
+
+    for (size_t i = 0; i < len; ++i) {
+        if (str[i] == ch) {
+            memmove(str, str + 1, len - i);
+            --len;
+            break;
+        }
+    }
+
+    int last = -1;
+    for (size_t i = 0; i < len; ++i) {
+        if (str[i] == ch) {
+            last = i;
+        }
+    }
+
+    if (last != -1) {
+        memmove(&str[last], &str[last + 1], len - last);
+        str[len - 1] = '\0';
+    }
+}
+
+int main() {
+    char str[] = "hello world";
+    char ch = 'o';
+
+    printf("Original string: %s\n", str);
+    remove_first_last_occurrence(str, ch);
+    printf("Modified string: %s\n", str);
+
+    return 0;
+}

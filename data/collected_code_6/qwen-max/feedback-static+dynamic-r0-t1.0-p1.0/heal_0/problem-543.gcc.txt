@@ -1,0 +1,8 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-543.c: In function 'sum_digits':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-543.c:6:40: error: implicit declaration of function 'abs' [-Wimplicit-function-declaration]
+    6 |     return (sum == 0) ? 1 : (int)log10(abs(sum)) + 1;
+      |                                        ^~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-543.c:3:1: note: include '<stdlib.h>' or provide a declaration of 'abs'
+    2 | #include <math.h>
+  +++ |+#include <stdlib.h>
+    3 | 

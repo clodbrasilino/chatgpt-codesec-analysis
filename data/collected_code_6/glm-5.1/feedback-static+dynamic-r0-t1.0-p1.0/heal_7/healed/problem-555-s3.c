@@ -1,0 +1,42 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+#include <limits.h>
+
+__int128 find_difference(int n) {
+    if (n <= 0) {
+        exit(EXIT_FAILURE);
+    }
+    __int128 sum = (__int128)n * (n + 1) / 2;
+    __int128 sum_cubes = sum * sum;
+    return sum_cubes - sum;
+}
+
+int main(void) {
+    int n = 0;
+    if (scanf("%d", &n) != 1) {
+        exit(EXIT_FAILURE);
+    }
+    __int128 result = find_difference(n);
+    if (result < 0) {
+        printf("-");
+        result = -result;
+    }
+    char buf[sizeof(__int128) * CHAR_BIT + 2];
+    size_t buf_size = sizeof(buf);
+    size_t pos = buf_size - 1;
+    buf[pos] = '\0';
+    if (result == 0) {
+        buf[--pos] = '0';
+    } else {
+        while (result > 0) {
+            if (pos == 0) {
+                exit(EXIT_FAILURE);
+            }
+            buf[--pos] = (result % 10) + '0';
+            result /= 10;
+        }
+    }
+    printf("%s\n", buf + pos);
+    return 0;
+}

@@ -1,0 +1,54 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stddef.h>
+
+static int is_self_inverse(long long value, long long p)
+{
+    long long r;
+
+    if (p <= 1) {
+        return 0;
+    }
+
+    r = value % p;
+    if (r < 0) {
+        r += p;
+    }
+
+    return ((r * r) % p == 1LL) ? 1 : 0;
+}
+
+size_t count_self_inverse(const long long *arr, size_t n, long long p)
+{
+    size_t count;
+    size_t i;
+
+    if (arr == NULL || n == 0 || p <= 1) {
+        return 0;
+    }
+
+    count = 0;
+    for (i = 0; i < n; i++) {
+        if (is_self_inverse(arr[i], p) == 1) {
+            count++;
+        }
+    }
+
+    return count;
+}
+
+int main(void)
+{
+    long long arr[] = {1LL, 6LL, 4LL, 5LL, 2LL, 3LL};
+    size_t n = sizeof(arr) / sizeof(arr[0]);
+    long long p = 7LL;
+    size_t result;
+
+    result = count_self_inverse(arr, n, p);
+
+    if (printf("Count of self-inverse elements mod %lld: %zu\n", p, result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

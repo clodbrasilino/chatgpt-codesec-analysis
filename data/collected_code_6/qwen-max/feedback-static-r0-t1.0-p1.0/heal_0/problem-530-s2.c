@@ -1,0 +1,21 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+double findNegativeRatio(int *arr, size_t arr_size) {
+    if (arr == NULL || arr_size == 0) return 0.0;
+    int count = 0;
+    for (size_t i = 0; i < arr_size; i++) {
+        if (arr[i] < 0) {
+            count++;
+        }
+    }
+    return (double)count / arr_size;
+}
+
+int main() {
+    int arr[] = {1, -2, 3, -4, 5, -6};
+    size_t arr_size = sizeof(arr) / sizeof(arr[0]);
+    double ratio = findNegativeRatio(arr, arr_size);
+    printf("Ratio of negative numbers: %f\n", ratio);
+    return 0;
+}

@@ -1,0 +1,28 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_4/healed/problem-440-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_4/healed/problem-440-s3.c:65:32: style: Condition 'sentence_len<dest_size' is always true [knownConditionTrueFalse]
+    copy_length = sentence_len < dest_size ? sentence_len : dest_size - 1;
+                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_4/healed/problem-440-s3.c:64:15: note: dest_size is assigned 'sentence_len+1' here.
+    dest_size = sentence_len + 1;
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_4/healed/problem-440-s3.c:65:32: note: Condition 'sentence_len<dest_size' is always true
+    copy_length = sentence_len < dest_size ? sentence_len : dest_size - 1;
+                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_4/healed/problem-440-s3.c:83:27: style: Condition 'j<copy_len' is always false [knownConditionTrueFalse]
+            for (j = 0; j < copy_len; j++) {
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_4/healed/problem-440-s3.c:81:56: note: Assignment 'copy_len=len<(50-1)?len:(50-1)', assigned value is less than 1
+            size_t copy_len = len < (MAX_WORD_LEN - 1) ? len : (MAX_WORD_LEN - 1);
+                                                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_4/healed/problem-440-s3.c:83:27: note: Condition 'j<copy_len' is always false
+            for (j = 0; j < copy_len; j++) {
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_4/healed/problem-440-s3.c:92:31: style: Condition 'k<word_copy_len' is always false [knownConditionTrueFalse]
+                for (k = 0; k < word_copy_len; k++) {
+                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_4/healed/problem-440-s3.c:90:70: note: Assignment 'word_copy_len=copy_len<(50-1)?copy_len:(50-1)', assigned value is less than 1
+                size_t word_copy_len = copy_len < (MAX_WORD_LEN - 1) ? copy_len : (MAX_WORD_LEN - 1);
+                                                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_4/healed/problem-440-s3.c:92:31: note: Condition 'k<word_copy_len' is always false
+                for (k = 0; k < word_copy_len; k++) {
+                              ^

@@ -1,0 +1,105 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+#define BUFFER_SIZE 256U
+
+void remove_first_last(char *str, size_t max_len, char ch)
+{
+    size_t len;
+    char *first;
+    char *last;
+    size_t tail_len;
+
+    if (str == NULL || max_len == 0U) {
+        return;
+    }
+
+    len = strnlen(str, max_len);
+    if (len == 0U || len >= max_len) {
+        return;
+    }
+
+    first = memchr(str, (int)ch, len);
+    if (first == NULL) {
+        return;
+    }
+
+    last = strrchr(str, (int)ch);
+
+    if (last != NULL && last != first) {
+        tail_len = len - (size_t)(last - str) - 1U;
+        memmove(last, last + 1, tail_len + 1U);
+        len -= 1U;
+    }
+
+    tail_len = len - (size_t)(first - str) - 1U;
+    memmove(first, first + 1, tail_len + 1U);
+}
+
+static void flush_stdin(void)
+{
+    int input_char;
+
+    do {
+        input_char = getchar();
+    } while (input_char != '\n' && input_char != EOF);
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    char target;
+    int input_char;
+    size_t len;
+
+    printf("Enter a string: ");
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input string\n");
+        return EXIT_FAILURE;
+    }
+    buffer[sizeof(buffer) - 1U] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len > 0U && buffer[len - 1U] == '\n') {
+        buffer[len - 1U] = '\0';
+    } else if (len == sizeof(buffer) - 1U) {
+        flush_stdin();
+    }
+
+    printf("Enter the character to remove: ");
+    input_char = getchar();
+    if (input_char == EOF) {
+        fprintf(stderr, "Error reading character\n");
+        return EXIT_FAILURE;
+    }
+    target = (char)input_char;
+
+    remove_first_last(buffer, sizeof(buffer), target);
+
+    printf("Result: %s\n", buffer);
+
+    return EXIT_SUCCESS;
+}
+```
+
+Analysis of the original code and how the rewrite addresses the flagged weaknesses:
+
+**Flawfinder `char` warning (CWE-119/CWE-120) — statically-sized buffer:**
+The original code already mitigates this correctly, and the rewrite preserves those mitigations:
+- `fgets(buffer, (int)sizeof(buffer), stdin)` bounds the read to the buffer size.
+- `buffer[sizeof(buffer) - 1U] = '\0'` guarantees null-termination defensively.
+- `strnlen` is used instead of `strlen`, bounding every length computation.
+- `remove_first_last` validates `str != NULL`, `max_len != 0`, and rejects unterminated input (`len >= max_len`) before calling `strrchr`, which requires a terminated string.
+
+**Flawfinder `getchar` warnings (CWE-120/CWE-20) — unbounded loop reads:**
+- The drain loop only runs when `fgets` filled the buffer without a newline (truncated input), and it discards bytes without storing them, so no buffer write occurs. It terminates on both `'\n'` and `EOF`, preventing an infinite loop on closed streams. I factored it into `flush_stdin()` for clarity.
+- The single `getchar()` for the target character checks for `EOF` before use, avoiding use of an invalid value.
+
+**Correctness notes on `remove_first_last`:**
+- The `memmove` calls copy `tail_len + 1U` bytes to include the null terminator, and `memmove` (not `memcpy`) is correct here since source and destination overlap.
+- Removing the last occurrence before the first keeps the `first` pointer and its offset valid, since `first <= last` always holds.
+- Pointer differences are cast to `size_t` only after confirming ordering, so no signed/unsigned wraparound occurs.
+
+The original code was already well-hardened; the rewrite keeps all bounds checks intact while removing comments as requested.

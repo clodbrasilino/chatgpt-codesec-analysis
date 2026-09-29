@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-674-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-674-s3.c:97:38: style: Condition 'remove_duplicate_words(NULL)==NULL' is always true [knownConditionTrueFalse]
+    if (remove_duplicate_words(NULL) == NULL) {
+                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-674-s3.c:97:31: note: Calling function 'remove_duplicate_words' returns 0
+    if (remove_duplicate_words(NULL) == NULL) {
+                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-674-s3.c:97:38: note: Condition 'remove_duplicate_words(NULL)==NULL' is always true
+    if (remove_duplicate_words(NULL) == NULL) {
+                                     ^

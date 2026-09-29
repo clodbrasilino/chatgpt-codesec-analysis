@@ -1,0 +1,105 @@
+example1.c: In function 'main':
+example1.c:45:22: warning: 'accept' on file descriptor 'sockfd' in wrong phase [-Wanalyzer-fd-phase-mismatch]
+   45 |         new_sockfd = accept(sockfd, (struct sockaddr *) &client_address, &client_len);
+      |                      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  'main': events 1-3
+    |
+    |   18 |     sockfd = socket(AF_INET, SOCK_STREAM, 0);
+    |      |              ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |              |
+    |      |              (1) stream socket created here
+    |      |              (2) when 'socket' succeeds
+    |   19 |     if (sockfd < 0) {
+    |      |        ~      
+    |      |        |
+    |      |        (3) following 'false' branch (when 'sockfd >= 0')...
+    |
+  'main': event 4
+    |
+    |   25 |     bzero((char *) &server_address, sizeof(server_address));
+    |      |     ^~~~~
+    |      |     |
+    |      |     (4) ...to here
+    |
+  'main': events 5-10
+    |
+    |   32 |     if (bind(sockfd, (struct sockaddr *) &server_address, sizeof(server_address)) < 0) {
+    |      |        ~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |        ||
+    |      |        |(5) stream socket bound here
+    |      |        |(6) when 'bind' succeeds
+    |      |        (7) following 'false' branch...
+    |......
+    |   38 |     listen(sockfd, 5);
+    |      |     ~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (8) ...to here
+    |      |     (9) when 'listen' fails
+    |......
+    |   45 |         new_sockfd = accept(sockfd, (struct sockaddr *) &client_address, &client_len);
+    |      |                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                      |
+    |      |                      (10) 'accept' expects a listening stream socket file descriptor whereas 'sockfd' is bound but not yet listening
+    |
+example1.c:61:17: warning: dereference of possibly-NULL 'path' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   61 |         path[0] = '\0';
+      |         ~~~~~~~~^~~~~~
+  'main': events 1-2
+    |
+    |   18 |     sockfd = socket(AF_INET, SOCK_STREAM, 0);
+    |      |              ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |              |
+    |      |              (1) when 'socket' succeeds
+    |   19 |     if (sockfd < 0) {
+    |      |        ~      
+    |      |        |
+    |      |        (2) following 'false' branch (when 'sockfd >= 0')...
+    |
+  'main': event 3
+    |
+    |   25 |     bzero((char *) &server_address, sizeof(server_address));
+    |      |     ^~~~~
+    |      |     |
+    |      |     (3) ...to here
+    |
+  'main': events 4-9
+    |
+    |   32 |     if (bind(sockfd, (struct sockaddr *) &server_address, sizeof(server_address)) < 0) {
+    |      |        ~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |        ||
+    |      |        |(4) when 'bind' succeeds
+    |      |        (5) following 'false' branch...
+    |......
+    |   38 |     listen(sockfd, 5);
+    |      |     ~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (6) ...to here
+    |      |     (7) when 'listen' succeeds
+    |......
+    |   45 |         new_sockfd = accept(sockfd, (struct sockaddr *) &client_address, &client_len);
+    |      |                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                      |
+    |      |                      (8) when 'accept' succeeds
+    |   46 |         if (new_sockfd < 0) {
+    |      |            ~
+    |      |            |
+    |      |            (9) following 'false' branch (when 'new_sockfd >= 0')...
+    |
+  'main': event 10
+    |
+    |   52 |         bzero(buffer, 4096);
+    |      |         ^~~~~
+    |      |         |
+    |      |         (10) ...to here
+    |
+  'main': events 11-12
+    |
+    |   60 |         char *path = malloc(web_root_len + strlen(filename) + 1);
+    |      |                      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                      |
+    |      |                      (11) this call could return NULL
+    |   61 |         path[0] = '\0';
+    |      |         ~~~~~~~~~~~~~~
+    |      |                 |
+    |      |                 (12) 'path' could be NULL: unchecked value from (11)
+    |

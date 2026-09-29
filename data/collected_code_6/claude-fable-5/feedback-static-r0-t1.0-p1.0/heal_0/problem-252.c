@@ -1,0 +1,63 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+struct Complex {
+    double real;
+    double imag;
+};
+
+struct Polar {
+    double magnitude;
+    double angle;
+};
+
+static int complex_to_polar(const struct Complex *c, struct Polar *p)
+{
+    if (c == NULL || p == NULL) {
+        return -1;
+    }
+
+    p->magnitude = hypot(c->real, c->imag);
+
+    if (c->real == 0.0 && c->imag == 0.0) {
+        p->angle = 0.0;
+    } else {
+        p->angle = atan2(c->imag, c->real);
+    }
+
+    if (isnan(p->magnitude) || isinf(p->magnitude)) {
+        return -1;
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    struct Complex c;
+    struct Polar p;
+
+    printf("Enter real part: ");
+    if (scanf("%lf", &c.real) != 1) {
+        fprintf(stderr, "Invalid input for real part\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter imaginary part: ");
+    if (scanf("%lf", &c.imag) != 1) {
+        fprintf(stderr, "Invalid input for imaginary part\n");
+        return EXIT_FAILURE;
+    }
+
+    if (complex_to_polar(&c, &p) != 0) {
+        fprintf(stderr, "Conversion failed\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Magnitude: %f\n", p.magnitude);
+    printf("Angle (radians): %f\n", p.angle);
+    printf("Angle (degrees): %f\n", p.angle * 180.0 / M_PI);
+
+    return EXIT_SUCCESS;
+}

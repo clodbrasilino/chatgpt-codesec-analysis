@@ -1,0 +1,39 @@
+#include <stdio.h>
+
+double find_third_angle(double angle1, double angle2);
+
+int main(void)
+{
+    double angle1 = 60.0;
+    double angle2 = 80.0;
+    double angle3;
+
+    angle3 = find_third_angle(angle1, angle2);
+
+    if (angle3 > 0.0)
+    {
+        printf("The third angle is: %.2f degrees\n", angle3);
+    }
+    else
+    {
+        printf("Invalid input: angles must be positive and sum to less than 180 degrees.\n");
+    }
+
+    return 0;
+}
+
+double find_third_angle(double angle1, double angle2)
+{
+    double result;
+
+    if (angle1 <= 0.0 || angle2 <= 0.0 || (angle1 + angle2) >= 180.0)
+    {
+        result = -1.0;
+    }
+    else
+    {
+        result = 180.0 - angle1 - angle2;
+    }
+
+    return result;
+}

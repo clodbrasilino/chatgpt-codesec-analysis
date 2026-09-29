@@ -1,0 +1,11 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p0.5/heal_8/healed/problem-748.c: In function 'add_spaces_between_capital_words':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p0.5/heal_8/healed/problem-748.c:28:13: error: implicit declaration of function 'strlen' [-Wimplicit-function-declaration]
+   28 |         if (strlen(result) + len + 1 < max_size) {
+      |             ^~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p0.5/heal_8/healed/problem-748.c:4:1: note: include '<string.h>' or provide a declaration of 'strlen'
+    3 | #include <regex.h>
+  +++ |+#include <string.h>
+    4 | 
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p0.5/heal_8/healed/problem-748.c:42:28: error: implicit declaration of function 'strnlen' [-Wimplicit-function-declaration]
+   42 |     size_t remaining_len = strnlen(remaining, max_size - (start));
+      |                            ^~~~~~~

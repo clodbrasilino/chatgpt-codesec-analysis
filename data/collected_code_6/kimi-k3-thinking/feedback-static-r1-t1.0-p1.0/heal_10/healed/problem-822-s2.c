@@ -1,0 +1,187 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdlib.h>
+
+#define PASSWORD_MIN_LENGTH 8U
+#define PASSWORD_MAX_LENGTH 64U
+#define DISCARD_BUFFER_SIZE 128U
+
+static size_t bounded_strlen(const char *s, size_t max_len)
+{
+    size_t len = 0U;
+
+    if (s == NULL)
+    {
+        return 0U;
+    }
+
+    while ((len < max_len) && (s[len] != '\0'))
+    {
+        len++;
+    }
+
+    return len;
+}
+
+static bool is_special_character(char c)
+{
+    const char *specials = "!@#$%^&*()-_=+[]{}|;:'\",.<>?/\\`~";
+
+    if (c == '\0')
+    {
+        return false;
+    }
+
+    return strchr(specials, c) != NULL;
+}
+
+bool is_password_valid(const char *password)
+{
+    bool has_upper = false;
+    bool has_lower = false;
+    bool has_digit = false;
+    bool has_special = false;
+    size_t length;
+    size_t i;
+
+    if (password == NULL)
+    {
+        return false;
+    }
+
+    length = bounded_strlen(password, PASSWORD_MAX_LENGTH + 1U);
+
+    if ((length < PASSWORD_MIN_LENGTH) || (length > PASSWORD_MAX_LENGTH))
+    {
+        return false;
+    }
+
+    for (i = 0U; i < length; i++)
+    {
+        const unsigned char ch = (unsigned char)password[i];
+
+        if (isupper(ch) != 0)
+        {
+            has_upper = true;
+        }
+        else if (islower(ch) != 0)
+        {
+            has_lower = true;
+        }
+        else if (isdigit(ch) != 0)
+        {
+            has_digit = true;
+        }
+        else if (is_special_character((char)ch))
+        {
+            has_special = true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    return has_upper && has_lower && has_digit && has_special;
+}
+
+static void discard_remaining_input(void)
+{
+    char *discard_buffer = calloc(DISCARD_BUFFER_SIZE, sizeof(char));
+    bool line_consumed = false;
+
+    if (discard_buffer == NULL)
+    {
+        int ch;
+
+        while ((ch = getchar()) != EOF)
+        {
+            if (ch == '\n')
+            {
+                break;
+            }
+        }
+
+        return;
+    }
+
+    while (!line_consumed)
+    {
+        size_t discard_len;
+
+        if (fgets(discard_buffer, (int)DISCARD_BUFFER_SIZE, stdin) == NULL)
+        {
+            break;
+        }
+
+        discard_buffer[DISCARD_BUFFER_SIZE - 1U] = '\0';
+        discard_len = bounded_strlen(discard_buffer, DISCARD_BUFFER_SIZE);
+
+        if ((discard_len > 0U) && (discard_buffer[discard_len - 1U] == '\n'))
+        {
+            line_consumed = true;
+        }
+    }
+
+    (void)memset(discard_buffer, 0, DISCARD_BUFFER_SIZE);
+    free(discard_buffer);
+}
+
+int main(void)
+{
+    const size_t buffer_size = PASSWORD_MAX_LENGTH + 2U;
+    char *buffer = calloc(buffer_size, sizeof(char));
+    size_t len;
+
+    if (buffer == NULL)
+    {
+        fprintf(stderr, "Memory allocation failed\n");
+        return 1;
+    }
+
+    printf("Enter password: ");
+
+    if (fgets(buffer, (int)buffer_size, stdin) == NULL)
+    {
+        fprintf(stderr, "Error reading input\n");
+        (void)memset(buffer, 0, buffer_size);
+        free(buffer);
+        return 1;
+    }
+
+    buffer[buffer_size - 1U] = '\0';
+
+    len = bounded_strlen(buffer, buffer_size);
+
+    if ((len > 0U) && (buffer[len - 1U] == '\n'))
+    {
+        buffer[len - 1U] = '\0';
+    }
+    else if (len == (buffer_size - 1U))
+    {
+        discard_remaining_input();
+        fprintf(stderr, "Input too long\n");
+        (void)memset(buffer, 0, buffer_size);
+        free(buffer);
+        return 1;
+    }
+    else
+    {
+    }
+
+    if (is_password_valid(buffer))
+    {
+        printf("Password is valid\n");
+    }
+    else
+    {
+        printf("Password is invalid\n");
+    }
+
+    (void)memset(buffer, 0, buffer_size);
+    free(buffer);
+
+    return 0;
+}

@@ -1,0 +1,57 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+static int is_power_of_two(unsigned long x)
+{
+    return (x != 0UL) && ((x & (x - 1UL)) == 0UL);
+}
+
+static long nth_polite(long n)
+{
+    long count = 0;
+    unsigned long num = 2UL;
+
+    if (n < 1) {
+        return -1L;
+    }
+
+    while (count < n) {
+        num++;
+        if (num == 0UL) {
+            return -1L;
+        }
+        if (!is_power_of_two(num)) {
+            count++;
+        }
+    }
+
+    return (long)num;
+}
+
+int main(void)
+{
+    long n = 0;
+    long result = 0;
+
+    printf("Enter n: ");
+    if (scanf("%ld", &n) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (n < 1 || n > 1000000000L) {
+        fprintf(stderr, "n must be between 1 and 1000000000\n");
+        return EXIT_FAILURE;
+    }
+
+    result = nth_polite(n);
+    if (result < 0) {
+        fprintf(stderr, "Computation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("The %ld-th polite number is %ld\n", n, result);
+    return EXIT_SUCCESS;
+}
+```

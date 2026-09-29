@@ -56,7 +56,7 @@ def round_dirs(cell: Path) -> list[Path]:
 
 def audit_model(model: str) -> tuple[dict, set[int]]:
     """Return {suffix -> set of task ids with >=1 finding} and all task ids."""
-    cell = REPO / "collected_code_6" / model / MAIN
+    cell = REPO / "data" / "collected_code_6" / model / MAIN
     programs = {b[:-2] for b in os.listdir(cell / "heal_0") if b.endswith(".c")}
     tasks = {int(m.group(1)) for b in programs if (m := TASK_RE.match(b))}
     sets: dict[str, set[int]] = {c: set() for c in COLS}
@@ -145,7 +145,7 @@ def main() -> None:
     # rescan everything that has an .asan.txt anywhere).
     asan_p, ubsan_p = set(), set()
     for model in MODELS:
-        cell = REPO / "collected_code_6" / model / MAIN
+        cell = REPO / "data" / "collected_code_6" / model / MAIN
         for d in round_dirs(cell):
             for f in d.glob("*.asan.txt"):
                 base = f.name[:-len(".asan.txt")]

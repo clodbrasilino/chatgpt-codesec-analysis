@@ -1,0 +1,7 @@
+problem-392-s2.c:13:17:medium:UBSan: signed integer overflow: 1365366241 + 827246255 cannot be represented in type 'int' (AFL crash: id:000000,sig:06,src:000000,time:3919,execs:676,op:havoc,rep:6)
+problem-392-s2.c:13:17:medium:UBSan: signed integer overflow: 1571084406 + 955056344 cannot be represented in type 'int' (AFL crash: id:000002,sig:06,src:000000,time:56404,execs:1776,op:havoc,rep:9)
+problem-392-s2.c:13:21:medium:UBSan: signed integer overflow: 2021431271 + 1365366241 cannot be represented in type 'int' (AFL crash: id:000000,sig:06,src:000000,time:3919,execs:676,op:havoc,rep:6)
+problem-392-s2.c:13:21:medium:UBSan: signed integer overflow: 1770522409 + 469175250 cannot be represented in type 'int' (AFL crash: id:000002,sig:06,src:000000,time:56404,execs:1776,op:havoc,rep:9)
+problem-392-s2.c:13:25:medium:UBSan: signed integer overflow: 2109534817 + 340454920 cannot be represented in type 'int' (AFL crash: id:000000,sig:06,src:000000,time:3919,execs:676,op:havoc,rep:6)
+problem-392-s2.c:13:25:medium:UBSan: signed integer overflow: 266208444 + 1948001824 cannot be represented in type 'int' (AFL crash: id:000002,sig:06,src:000000,time:56404,execs:1776,op:havoc,rep:9)
+problem-392-s2.c:18:0:error:Fuzzing found a crash (signal 6) on input id:000001,sig:06,src:000000,time:7395,execs:778,op:havoc,rep:11; likely memory-safety defect

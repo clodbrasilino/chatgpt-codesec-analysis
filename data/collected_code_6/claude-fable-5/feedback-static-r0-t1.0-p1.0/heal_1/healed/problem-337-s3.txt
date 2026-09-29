@@ -1,0 +1,90 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdbool.h>
+#include <stdlib.h>
+
+#define MAX_INPUT_LEN 4096
+
+bool matches_word_at_end(const char *str, const char *word)
+{
+    size_t str_len;
+    size_t word_len;
+    size_t end;
+
+    if (str == NULL || word == NULL) {
+        return false;
+    }
+
+    str_len = strnlen(str, MAX_INPUT_LEN);
+    if (str_len == MAX_INPUT_LEN && str[MAX_INPUT_LEN - 1] != '\0') {
+        return false;
+    }
+
+    word_len = strnlen(word, MAX_INPUT_LEN);
+    if (word_len == MAX_INPUT_LEN && word[MAX_INPUT_LEN - 1] != '\0') {
+        return false;
+    }
+
+    if (word_len == 0 || str_len < word_len) {
+        return false;
+    }
+
+    end = str_len;
+    while (end > 0 && ispunct((unsigned char)str[end - 1])) {
+        end--;
+    }
+
+    if (end < word_len) {
+        return false;
+    }
+
+    if (strncmp(str + (end - word_len), word, word_len) != 0) {
+        return false;
+    }
+
+    if (end > word_len) {
+        unsigned char before = (unsigned char)str[end - word_len - 1];
+        if (isalnum(before) || before == '_') {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+int main(void)
+{
+    const char *tests[][2] = {
+        { "Hello world", "world" },
+        { "Hello world!", "world" },
+        { "Hello world...", "world" },
+        { "Hello worldly", "world" },
+        { "world", "world" },
+        { "Say hello", "world" },
+        { "", "world" }
+    };
+    size_t count = sizeof(tests) / sizeof(tests[0]);
+    size_t i;
+
+    for (i = 0; i < count; i++) {
+        bool result = matches_word_at_end(tests[i][0], tests[i][1]);
+        if (printf("\"%s\" ends with \"%s\": %s\n",
+                   tests[i][0], tests[i][1],
+                   result ? "yes" : "no") < 0) {
+            return EXIT_FAILURE;
+        }
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the changes:**
+
+The original code was already quite defensive (NULL checks, `unsigned char` casts before `ctype.h` functions, bounds checking before indexing), but the flagged weakness was the use of `strlen` on inputs that could theoretically be non-NUL-terminated (CWE-126 buffer over-read).
+
+The fix replaces `strlen` with `strnlen` bounded by `MAX_INPUT_LEN`. After each call, the code verifies that a terminator was actually found within the bound — if `strnlen` returns the maximum and the last byte inside the bound is not `'\0'`, the string is treated as untrusted/unterminated and the function safely returns `false` instead of reading past the buffer.
+
+Everything else (the punctuation-trimming loop, the `strncmp` comparison, the word-boundary check on the preceding character, and the `printf` return-value check in `main`) was preserved, as it was already correct and safe.

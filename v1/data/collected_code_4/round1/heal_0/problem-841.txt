@@ -1,0 +1,33 @@
+```c
+#include <stdio.h>
+
+int countInversions(int array[], int array_size) {
+    int count = 0;
+    int i, j;
+
+    for (i=0; i<array_size-1; i++) {
+        for (j=i+1; j<array_size; j++) {
+            if (array[i] > array[j]) {
+                count ++;
+            }
+        }
+    }
+    return count;
+}
+
+int main() {
+    int array[] = {10, 20, 15, 30, 25};
+    int array_size = sizeof(array)/sizeof(array[0]);
+
+    int inversion_count = countInversions(array, array_size);
+
+    printf("Number of inversions are: %d \n", inversion_count);
+
+    return 0;
+}
+```
+In the script above, the function "countInversions" has time complexity of O(n^2) because it analyzes each unique couple of elements in the array within a nested loop. 
+
+The function works by moving rightward in the array with each proceeding iteration of the outer loop, while the inner loop starts from the next position and iterates to the end of the array. If an element right to the current element is smaller, an inversion has been found and the count is incremented. 
+
+The result is the total number of times the arrangement is disturbed. The function only consumes a constant amount of space throughout execution, so the space complexity is O(1).

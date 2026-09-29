@@ -1,0 +1,18 @@
+#include <stdio.h>
+
+int productKthIndex(int arr[][3], int n, int k) {
+    int product = 1;
+    for (int i = 0; i < n; i++) {
+        product *= arr[i][k];
+    }
+    return product;
+}
+
+int main() {
+    int arr[3][3] = {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    int k = 1;
+    int product = productKthIndex(arr, n, k);
+    printf("Product of elements at index %d in the tuples is %d\n", k, product);
+    return 0;
+}

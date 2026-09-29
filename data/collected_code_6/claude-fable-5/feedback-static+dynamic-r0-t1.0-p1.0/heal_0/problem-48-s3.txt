@@ -1,0 +1,39 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+unsigned int set_odd_bits(unsigned int num)
+{
+    unsigned int mask = 0U;
+    unsigned int bit;
+
+    for (bit = 1U; bit < (unsigned int)(sizeof(unsigned int) * CHAR_BIT); bit += 2U) {
+        mask |= (1U << bit);
+    }
+
+    return num | mask;
+}
+
+int main(void)
+{
+    unsigned int number = 0U;
+    unsigned int result = 0U;
+    int scan_status;
+
+    printf("Enter an unsigned integer: ");
+
+    scan_status = scanf("%u", &number);
+    if (scan_status != 1) {
+        fprintf(stderr, "Error: invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    result = set_odd_bits(number);
+
+    printf("Original number: %u\n", number);
+    printf("Number with all odd bits set: %u\n", result);
+
+    return EXIT_SUCCESS;
+}
+```

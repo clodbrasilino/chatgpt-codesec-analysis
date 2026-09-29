@@ -1,0 +1,62 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node* next;
+} Node;
+
+Node* createNode(int data) {
+    Node* newNode = (Node*)malloc(sizeof(Node));
+    if (!newNode) {
+        printf("Memory error\n");
+        return NULL;
+    }
+    newNode->data = data;
+    newNode->next = NULL;
+    return newNode;
+}
+
+Node* subtractLists(Node* list1, Node* list2) {
+    Node* result = NULL;
+    Node** lastPtrRef = &result;
+
+    while (list1 != NULL || list2 != NULL) {
+        int value = 0;
+        if (list1 != NULL) {
+            value += list1->data;
+            list1 = list1->next;
+        }
+        if (list2 != NULL) {
+            value -= list2->data;
+            list2 = list2->next;
+        }
+        *lastPtrRef = createNode(value);
+        lastPtrRef = &((*lastPtrRef)->next);
+    }
+    return result;
+}
+
+void printList(Node* node) {
+    while (node != NULL) {
+        printf("%d ", node->data);
+        node = node->next;
+    }
+    printf("\n");
+}
+
+int main() {
+    Node* list1 = createNode(10);
+    list1->next = createNode(20);
+    list1->next->next = createNode(30);
+
+    Node* list2 = createNode(5);
+    list2->next = createNode(15);
+    list2->next->next = createNode(25);
+
+    Node* result = subtractLists(list1, list2);
+
+    printList(result);
+
+    return 0;
+}

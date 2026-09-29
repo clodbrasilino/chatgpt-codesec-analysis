@@ -1,0 +1,68 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int count_inversions_type1(const int *arr, int n) {
+    int count = 0;
+    for (int i = 0; i < n - 1; i++) {
+        for (int j = i + 1; j < n; j++) {
+            if (arr[i] > arr[j]) {
+                count++;
+            }
+        }
+    }
+    return count;
+}
+
+int count_inversions_type2(const int *arr, int n) {
+    int count = 0;
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < i; j++) {
+            if (arr[j] > arr[i]) {
+                count++;
+            }
+        }
+    }
+    return count;
+}
+
+int check_inversion_counts(const int *arr, int n) {
+    if (arr == NULL || n <= 0) {
+        return 0;
+    }
+    
+    int count1 = count_inversions_type1(arr, n);
+    int count2 = count_inversions_type2(arr, n);
+    
+    return count1 == count2;
+}
+
+int main(void) {
+    int n;
+    if (scanf("%d", &n) != 1 || n <= 0) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    int *arr = (int *)malloc(sizeof(int) * n);
+    if (arr == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+    
+    for (int i = 0; i < n; i++) {
+        if (scanf("%d", &arr[i]) != 1) {
+            free(arr);
+            fprintf(stderr, "Invalid input\n");
+            return EXIT_FAILURE;
+        }
+    }
+    
+    if (check_inversion_counts(arr, n)) {
+        printf("Same inversion count\n");
+    } else {
+        printf("Different inversion count\n");
+    }
+    
+    free(arr);
+    return EXIT_SUCCESS;
+}

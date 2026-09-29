@@ -1,0 +1,71 @@
+#include <stdio.h>
+
+typedef struct {
+    float r;
+    float g;
+    float b;
+} RGB;
+
+typedef struct {
+    float h;
+    float s;
+    float v;
+} HSV;
+
+HSV rgb_to_hsv(RGB rgb) {
+    HSV hsv;
+    float max, min, delta;
+    
+    max = rgb.r;
+    if (rgb.g > max) max = rgb.g;
+    if (rgb.b > max) max = rgb.b;
+    
+    min = rgb.r;
+    if (rgb.g < min) min = rgb.g;
+    if (rgb.b < min) min = rgb.b;
+    
+    hsv.v = max;
+    delta = max - min;
+    
+    if (max > 0.0f) {
+        hsv.s = delta / max;
+    } else {
+        hsv.s = 0.0f;
+        hsv.h = 0.0f;
+        return hsv;
+    }
+    
+    if (delta > 0.0f) {
+        if (max == rgb.r) {
+            hsv.h = 60.0f * (fmodf(((rgb.g - rgb.b) / delta), 6.0f));
+        } else if (max == rgb.g) {
+            hsv.h = 60.0f * (((rgb.b - rgb.r) / delta) + 2.0f);
+        } else {
+            hsv.h = 60.0f * (((rgb.r - rgb.g) / delta) + 4.0f);
+        }
+        
+        if (hsv.h < 0.0f) {
+            hsv.h += 360.0f;
+        }
+    } else {
+        hsv.h = 0.0f;
+    }
+    
+    return hsv;
+}
+
+int main(void) {
+    RGB rgb_color;
+    HSV hsv_color;
+    
+    rgb_color.r = 255.0f;
+    rgb_color.g = 0.0f;
+    rgb_color.b = 0.0f;
+    
+    hsv_color = rgb_to_hsv(rgb_color);
+    
+    printf("RGB: (%.1f, %.1f, %.1f)\n", rgb_color.r, rgb_color.g, rgb_color.b);
+    printf("HSV: (%.1f, %.1f, %.1f)\n", hsv_color.h, hsv_color.s, hsv_color.v);
+    
+    return 0;
+}

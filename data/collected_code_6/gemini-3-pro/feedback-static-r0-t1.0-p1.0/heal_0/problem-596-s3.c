@@ -1,0 +1,68 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_TUPLE_ELEMENTS 100
+
+typedef struct {
+    void* elements[MAX_TUPLE_ELEMENTS];
+    size_t size;
+} Tuple;
+
+Tuple* create_tuple() {
+    Tuple* tuple = (Tuple*)malloc(sizeof(Tuple));
+    if (tuple == NULL) {
+        exit(EXIT_FAILURE);
+    }
+    tuple->size = 0;
+    return tuple;
+}
+
+int add_to_tuple(Tuple* tuple, void* element) {
+    if (tuple == NULL || tuple->size >= MAX_TUPLE_ELEMENTS) {
+        return -1; 
+    }
+    tuple->elements[tuple->size++] = element;
+    return 0;
+}
+
+size_t get_tuple_size(const Tuple* tuple) {
+    if (tuple == NULL) {
+        return 0;
+    }
+    return tuple->size;
+}
+
+void destroy_tuple(Tuple* tuple) {
+    if (tuple != NULL) {
+        free(tuple);
+    }
+}
+
+int main(void) {
+    Tuple* my_tuple = create_tuple();
+    
+    int a = 10;
+    double b = 20.5;
+    char c = 'Z';
+    
+    if (add_to_tuple(my_tuple, &a) != 0) {
+        destroy_tuple(my_tuple);
+        return EXIT_FAILURE;
+    }
+    if (add_to_tuple(my_tuple, &b) != 0) {
+        destroy_tuple(my_tuple);
+        return EXIT_FAILURE;
+    }
+    if (add_to_tuple(my_tuple, &c) != 0) {
+        destroy_tuple(my_tuple);
+        return EXIT_FAILURE;
+    }
+    
+    size_t size = get_tuple_size(my_tuple);
+    printf("Tuple size: %zu\n", size);
+    
+    destroy_tuple(my_tuple);
+    
+    return EXIT_SUCCESS;
+}

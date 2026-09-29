@@ -1,0 +1,5 @@
+problem-291-s3.c:12:36:medium:UBSan: signed integer overflow: 3333331 * 22222197777784 cannot be represented in type 'int64_t' (aka 'long long') (AFL crash: id:000001,sig:06,src:000002,time:689,execs:299,op:havoc,rep:1)
+problem-291-s3.c:12:44:medium:UBSan: signed integer overflow: 3559958832009428378 + 5760134388741632240 cannot be represented in type 'int64_t' (aka 'long long') (AFL crash: id:000000,sig:06,src:000002,time:361,execs:164,op:havoc,rep:2)
+problem-291-s3.c:13:0:high:ASan: FPE (AFL crash: id:000002,sig:06,src:000002,time:1202,execs:512,op:havoc,rep:2)
+problem-291-s3.c:13:22:medium:UBSan: division by zero (AFL crash: id:000002,sig:06,src:000002,time:1202,execs:512,op:havoc,rep:2)
+problem-291-s3.c:13:40:medium:UBSan: signed integer overflow: 3559958832009428378 + 5760134388741632240 cannot be represented in type 'int64_t' (aka 'long long') (AFL crash: id:000000,sig:06,src:000002,time:361,execs:164,op:havoc,rep:2)

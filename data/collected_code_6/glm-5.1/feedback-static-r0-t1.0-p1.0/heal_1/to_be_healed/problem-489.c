@@ -1,0 +1,47 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+/* Possible weaknesses found:
+ *  Parameter 'array' can be declared as pointer to const [constParameterPointer]
+ */
+size_t find_max_frequency(int *array, size_t size) {
+    if (array == NULL || size == 0) {
+        return 0;
+    }
+
+    int max_val = array[0];
+    size_t frequency = 1;
+
+    for (size_t i = 1; i < size; i++) {
+        if (array[i] > max_val) {
+            max_val = array[i];
+            frequency = 1;
+        } else if (array[i] == max_val) {
+            frequency++;
+        }
+    }
+
+    return frequency;
+}
+
+int main(void) {
+    int arr1[] = {1, 2, 3, 4, 5, 5, 5};
+    size_t size1 = sizeof(arr1) / sizeof(arr1[0]);
+    size_t result1 = find_max_frequency(arr1, size1);
+    printf("%zu\n", result1);
+
+    int arr2[] = {10, 10, 10, 10};
+    size_t size2 = sizeof(arr2) / sizeof(arr2[0]);
+    size_t result2 = find_max_frequency(arr2, size2);
+    printf("%zu\n", result2);
+
+    int arr3[] = {7};
+    size_t size3 = sizeof(arr3) / sizeof(arr3[0]);
+    size_t result3 = find_max_frequency(arr3, size3);
+    printf("%zu\n", result3);
+
+    size_t result4 = find_max_frequency(NULL, 0);
+    printf("%zu\n", result4);
+
+    return 0;
+}

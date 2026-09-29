@@ -1,0 +1,44 @@
+{
+  "task_id": 631,
+  "text": "Write a C function to replace whitespaces with an underscore and vice versa in a given string by using regex.",
+  "fn_candidates": [
+    "replace_spaces",
+    "ReplaceSpaces",
+    "replaceSpaces",
+    "replacespaces"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "replace_spaces",
+      "args": [
+        "Jumanji The Jungle"
+      ],
+      "expected": "Jumanji_The_Jungle",
+      "assert_src": "assert replace_spaces('Jumanji The Jungle') == 'Jumanji_The_Jungle'"
+    },
+    {
+      "fn_name": "replace_spaces",
+      "args": [
+        "The Avengers"
+      ],
+      "expected": "The_Avengers",
+      "assert_src": "assert replace_spaces('The Avengers') == 'The_Avengers'"
+    },
+    {
+      "fn_name": "replace_spaces",
+      "args": [
+        "Fast and Furious"
+      ],
+      "expected": "Fast_and_Furious",
+      "assert_src": "assert replace_spaces('Fast and Furious') == 'Fast_and_Furious'"
+    }
+  ],
+  "arg_kinds": [
+    "str"
+  ],
+  "return_kind": "str",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

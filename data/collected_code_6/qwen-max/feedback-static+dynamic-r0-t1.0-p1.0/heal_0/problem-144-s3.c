@@ -1,0 +1,23 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+long long sum_of_abs_diff(int *arr, int n) {
+    long long sum = 0;
+    
+    for (int i = 0; i < n - 1; ++i) {
+        for (int j = i + 1; j < n; ++j) {
+            sum += (long long) abs(arr[i] - arr[j]);
+        }
+    }
+    
+    return sum * 2;
+}
+
+int main() {
+    int arr[] = {1, 2, 3, 4};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    
+    printf("%lld\n", sum_of_abs_diff(arr, n));
+    
+    return 0;
+}

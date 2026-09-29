@@ -1,0 +1,11 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_1/healed/problem-956-s3.c: In function 'split_at_uppercase':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_1/healed/problem-956-s3.c:93:33: error: 'SIZE_MAX' undeclared (first use in this function)
+   93 |                 if (capacity > (SIZE_MAX / 2) / sizeof(*tokens)) {
+      |                                 ^~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_1/healed/problem-956-s3.c:7:1: note: 'SIZE_MAX' is defined in header '<stdint.h>'; this is probably fixable by adding '#include <stdint.h>'
+    6 | #include <regex.h>
+  +++ |+#include <stdint.h>
+    7 | 
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_1/healed/problem-956-s3.c:93:33: note: each undeclared identifier is reported only once for each function it appears in
+   93 |                 if (capacity > (SIZE_MAX / 2) / sizeof(*tokens)) {
+      |                                 ^~~~~~~~

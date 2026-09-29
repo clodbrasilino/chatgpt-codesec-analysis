@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-909-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-909-s2.c:112:13: style: Condition 'len>=capacity' is always false [knownConditionTrueFalse]
+    if (len >= capacity) len = capacity - 1;
+            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-909-s2.c:107:25: note: Assuming that condition 'len>=capacity' is not redundant
+    if (len == 0 || len >= capacity) return;
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-909-s2.c:110:13: note: Assuming condition is false
+    if (tmp == NULL) exit(EXIT_FAILURE);
+            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-909-s2.c:112:13: note: Condition 'len>=capacity' is always false
+    if (len >= capacity) len = capacity - 1;
+            ^

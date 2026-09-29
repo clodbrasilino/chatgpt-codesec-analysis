@@ -1,0 +1,12 @@
+collected_code/problem-384-0.c:4:28: error: Cannot determine that 'arr[0]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+    int smallestValue = arr[0];
+                           ^
+collected_code/problem-384-0.c:8:16: error: Cannot determine that 'arr[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        if (arr[i] < smallestValue) {
+               ^
+collected_code/problem-384-0.c:9:32: error: Cannot determine that 'arr[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+            smallestValue = arr[i];
+                               ^
+collected_code/problem-384-0.c:14:16: error: Cannot determine that 'arr[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        if (arr[i] == smallestValue) {
+               ^

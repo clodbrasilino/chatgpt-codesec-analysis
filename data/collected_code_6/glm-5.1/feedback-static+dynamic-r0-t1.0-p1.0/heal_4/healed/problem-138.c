@@ -1,0 +1,41 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <limits.h>
+
+int check_sum_non_zero_powers(int num) {
+    if (num <= 0) {
+        return 0;
+    }
+    num = num & (num - 1);
+    if (num == 0) {
+        return 0;
+    }
+    num = num & (num - 1);
+    if (num == 0) {
+        return 1;
+    }
+    return 0;
+}
+
+int main(int argc, char * const * const argv) {
+    if (argc != 2) {
+        fprintf(stderr, "Usage: %s <integer>\n", argv[0]);
+        return EXIT_FAILURE;
+    }
+    
+    char *endptr;
+    errno = 0;
+    long val = strtol(argv[1], &endptr, 10);
+    
+    if (errno == ERANGE || endptr == argv[1] || *endptr != '\0' || val > INT_MAX || val < INT_MIN) {
+        fprintf(stderr, "Invalid input or out of range\n");
+        return EXIT_FAILURE;
+    }
+    
+    int num = (int)val;
+    int result = check_sum_non_zero_powers(num);
+    
+    printf("%d\n", result);
+    return EXIT_SUCCESS;
+}

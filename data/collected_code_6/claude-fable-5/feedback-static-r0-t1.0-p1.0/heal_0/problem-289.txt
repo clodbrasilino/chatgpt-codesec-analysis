@@ -1,0 +1,68 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int calculateOddDays(int year);
+
+int calculateOddDays(int year)
+{
+    int leapYears;
+    int ordinaryYears;
+    int totalOddDays;
+
+    leapYears = (year / 4) - (year / 100) + (year / 400);
+    ordinaryYears = year - leapYears;
+    totalOddDays = ((ordinaryYears % 7) + ((leapYears * 2) % 7)) % 7;
+
+    return totalOddDays;
+}
+
+int main(void)
+{
+    int year;
+    int oddDays;
+    int result;
+
+    printf("Enter a year: ");
+    result = scanf("%d", &year);
+
+    if (result != 1)
+    {
+        fprintf(stderr, "Error: invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (year < 0)
+    {
+        fprintf(stderr, "Error: year must be non-negative.\n");
+        return EXIT_FAILURE;
+    }
+
+    oddDays = calculateOddDays(year);
+    printf("Number of odd days in year %d: %d\n", year, oddDays);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Explanation of the logic:**
+
+The concept of "odd days" comes from calendar arithmetic. For a given number of years, the odd days are the days left over after grouping all the days into complete weeks (i.e., total days modulo 7).
+
+- An ordinary year has 365 days = 52 weeks + **1 odd day**
+- A leap year has 366 days = 52 weeks + **2 odd days**
+
+The function works as follows:
+
+1. **Count leap years** up to the given year using the Gregorian rule: divisible by 4, minus centuries, plus those divisible by 400: `year/4 - year/100 + year/400`
+2. **Count ordinary years** as the remainder: `year - leapYears`
+3. **Compute odd days**: each ordinary year contributes 1 odd day and each leap year contributes 2, so the total is `(ordinaryYears + 2 * leapYears) % 7`. Intermediate modulo operations are applied to avoid any risk of integer overflow with large inputs.
+
+**Safety considerations addressed:**
+
+- The return value of `scanf` is checked before using `year` (CWE-703), preventing use of an uninitialized variable
+- Negative input is rejected explicitly
+- No dynamic resources (files, memory) are allocated, so there is nothing to leak (CWE-664)
+- The code uses `EXIT_SUCCESS`/`EXIT_FAILURE`, declares the prototype before use, uses `int main(void)`, and writes errors to `stderr`, adhering to standard C conventions (CWE-710)
+
+**Example:** For year 100: leap years = 25 - 1 + 0 = 24, ordinary = 76, odd days = (76 + 48) % 7 = 124 % 7 = **5**, which matches the classical calendar result.

@@ -1,0 +1,13 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-381-s2.c:22:22: error: use of undeclared identifier 'sort_index_global'
+   22 |     if (list_a->data[sort_index_global] < list_b->data[sort_index_global]) return -1;
+      |                      ^~~~~~~~~~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-381-s2.c:22:56: error: use of undeclared identifier 'sort_index_global'
+   22 |     if (list_a->data[sort_index_global] < list_b->data[sort_index_global]) return -1;
+      |                                                        ^~~~~~~~~~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-381-s2.c:23:22: error: use of undeclared identifier 'sort_index_global'
+   23 |     if (list_a->data[sort_index_global] > list_b->data[sort_index_global]) return 1;
+      |                      ^~~~~~~~~~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-381-s2.c:23:56: error: use of undeclared identifier 'sort_index_global'
+   23 |     if (list_a->data[sort_index_global] > list_b->data[sort_index_global]) return 1;
+      |                                                        ^~~~~~~~~~~~~~~~~
+4 errors generated.

@@ -1,0 +1,74 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+#include <math.h>
+
+static long long integer_sqrt(long long n)
+{
+    if (n <= 0) {
+        return n < 0 ? -1 : 0;
+    }
+
+    long long root = (long long)sqrt((double)n);
+
+    while (root > 0 && root * root > n) {
+        root--;
+    }
+    while ((root + 1) * (root + 1) <= n) {
+        root++;
+    }
+
+    return root;
+}
+
+static bool is_sum_of_two_squares(long long n)
+{
+    for (long long a = 0; a * a <= n; a++) {
+        long long remainder = n - a * a;
+        long long b = integer_sqrt(remainder);
+
+        if (b * b == remainder) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+int main(void)
+{
+    long long number;
+
+    printf("Enter a non-negative integer: ");
+
+    if (scanf("%lld", &number) != 1) {
+        fprintf(stderr, "Error: invalid input.\n");
+        return 1;
+    }
+
+    if (number < 0) {
+        fprintf(stderr, "Error: number must be non-negative.\n");
+        return 1;
+    }
+
+    if (is_sum_of_two_squares(number)) {
+        printf("%lld can be represented as the sum of two squares.\n", number);
+    } else {
+        printf("%lld cannot be represented as the sum of two squares.\n", number);
+    }
+
+    return 0;
+}
+```
+
+**Summary of fixes applied:**
+
+1. **Removed the redundant `n < 0` check in `is_sum_of_two_squares`** — the caller (`main`) already validates that the input is non-negative before calling the function, so the guard was dead code as flagged by the analyzer.
+
+2. **Removed the `remainder < 0` branch** — the loop condition `a * a <= n` guarantees `n - a * a >= 0`, so the analyzer correctly identified this condition as always false (`knownConditionTrueFalse`). The `break` was unreachable.
+
+3. **Removed the `b >= 0` check** — since `remainder` is provably non-negative, `integer_sqrt` can never return `-1` in this call path, making the check redundant.
+
+4. **Simplified the early-return logic in `integer_sqrt`** — merged the `n < 0` and `n == 0` cases into a single guard while preserving the defensive `-1` return for negative inputs (the function remains safe if reused elsewhere).
+
+The `a = 0` starting assignment flagged by the analyzer is intentional and correct — `0² + b²` is a valid decomposition (e.g., `4 = 0 + 4`), so it was kept.

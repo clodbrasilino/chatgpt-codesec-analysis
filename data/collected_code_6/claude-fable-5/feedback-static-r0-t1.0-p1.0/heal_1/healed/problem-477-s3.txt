@@ -1,0 +1,60 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+char *to_lower_case(char *str)
+{
+    size_t i;
+
+    if (str == NULL) {
+        return NULL;
+    }
+
+    for (i = 0; str[i] != '\0'; i++) {
+        str[i] = (char)tolower((unsigned char)str[i]);
+    }
+
+    return str;
+}
+
+int main(void)
+{
+    char buffer[256];
+    char *result;
+
+    memset(buffer, 0, sizeof(buffer));
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+    buffer[strcspn(buffer, "\n")] = '\0';
+
+    result = to_lower_case(buffer);
+    if (result == NULL) {
+        fprintf(stderr, "Conversion failed\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("%s\n", result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the original code and the applied hardening:**
+
+The original code was already largely safe. The Flawfinder warning about the statically-sized `buffer` (CWE-119/CWE-120) is a heuristic flag on the declaration itself, not a confirmed vulnerability. The original mitigations were correct:
+
+- **`fgets(buffer, sizeof(buffer), stdin)`** — bounds the read to the buffer size, preventing overflow (unlike `gets` or unbounded `scanf("%s", ...)`).
+- **`strcspn(buffer, "\n")`** — safely strips the trailing newline without risking out-of-bounds access, since it returns the length of the string if no newline exists.
+- **`tolower((unsigned char)str[i])`** — the cast to `unsigned char` avoids undefined behavior when `char` is signed and holds negative values.
+- **NULL checks** on `fgets`, the conversion result, and the `printf` return value.
+
+The rewrite adds two defense-in-depth measures: `memset` to zero-initialize the buffer (guarantees no uninitialized reads), and an explicit forced NUL terminator at `buffer[sizeof(buffer) - 1]` as belt-and-braces protection, even though `fgets` already guarantees termination on success.

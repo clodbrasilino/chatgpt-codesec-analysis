@@ -1,0 +1,77 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+int count_substrings(const char *str, size_t len) {
+    if (str == NULL || len == 0) {
+        return 0;
+    }
+    
+    int count = 0;
+    int *prefix = (int *)malloc((len + 1) * sizeof(int));
+    if (prefix == NULL) {
+        return -1;
+    }
+    
+    prefix[0] = 0;
+    for (size_t i = 0; i < len; i++) {
+        if (str[i] < '0' || str[i] > '9') {
+            free(prefix);
+            return -1;
+        }
+        prefix[i + 1] = prefix[i] + (str[i] - '0');
+    }
+    
+    for (size_t sub_len = 1; sub_len <= len; sub_len++) {
+        for (size_t i = 0; i <= len - sub_len; i++) {
+            int sum = prefix[i + sub_len] - prefix[i];
+            if ((size_t)sum == sub_len) {
+                count++;
+            }
+        }
+    }
+    
+    free(prefix);
+    return count;
+}
+
+int main(void) {
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char input[1024];
+    printf("Enter a numeric string: ");
+    
+    if (fgets(input, sizeof(input), stdin) == NULL) {
+        return 1;
+    }
+    
+    size_t len = 0;
+    while (len < sizeof(input) && input[len] != '\0') {
+        len++;
+    }
+    
+    if (len > 0 && input[len - 1] == '\n') {
+        input[len - 1] = '\0';
+        len--;
+    }
+    
+    if (len == 0) {
+        printf("0\n");
+        return 0;
+    }
+    
+    if (len >= sizeof(input)) {
+        printf("Invalid input\n");
+        return 1;
+    }
+    
+    int result = count_substrings(input, len);
+    if (result < 0) {
+        printf("Invalid input\n");
+        return 1;
+    }
+    
+    printf("%d\n", result);
+    return 0;
+}

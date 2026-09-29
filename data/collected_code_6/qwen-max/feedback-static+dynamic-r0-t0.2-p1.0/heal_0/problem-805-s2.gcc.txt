@@ -1,0 +1,17 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-805-s2.c: In function 'main':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-805-s2.c:31:11: error: initialization of 'int *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
+   31 |         {{1, 2, 3}, 3},
+      |           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-805-s2.c:31:11: note: (near initialization for 'lists[0].elements')
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-805-s2.c:32:11: error: initialization of 'int *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
+   32 |         {{4, 5, 6, 7}, 4},
+      |           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-805-s2.c:32:11: note: (near initialization for 'lists[1].elements')
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-805-s2.c:33:11: error: initialization of 'int *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
+   33 |         {{-1, -2, -3}, 3},
+      |           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-805-s2.c:33:11: note: (near initialization for 'lists[2].elements')
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-805-s2.c:34:11: error: initialization of 'int *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
+   34 |         {{8, 9}, 2}
+      |           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-805-s2.c:34:11: note: (near initialization for 'lists[3].elements')

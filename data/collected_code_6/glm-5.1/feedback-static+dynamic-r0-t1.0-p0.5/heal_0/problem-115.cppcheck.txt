@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-115.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-115.c:61:35: style: Condition 'are_all_dictionaries_empty(NULL)' is always true [knownConditionTrueFalse]
+    if (are_all_dictionaries_empty(NULL)) {
+                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-115.c:61:35: note: Calling function 'are_all_dictionaries_empty' returns 1
+    if (are_all_dictionaries_empty(NULL)) {
+                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-115.c:61:35: note: Condition 'are_all_dictionaries_empty(NULL)' is always true
+    if (are_all_dictionaries_empty(NULL)) {
+                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-115.c:6:10: style: struct member 'Dictionary::keys' is never used. [unusedStructMember]
+    int *keys;
+         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-115.c:7:10: style: struct member 'Dictionary::values' is never used. [unusedStructMember]
+    int *values;
+         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-115.c:9:12: style: struct member 'Dictionary::capacity' is never used. [unusedStructMember]
+    size_t capacity;
+           ^

@@ -1,0 +1,81 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define BUFFER_SIZE 256
+
+static int compare_chars(const void *a, const void *b)
+{
+    unsigned char ca = *(const unsigned char *)a;
+    unsigned char cb = *(const unsigned char *)b;
+
+    if (ca < cb) {
+        return -1;
+    }
+    if (ca > cb) {
+        return 1;
+    }
+    return 0;
+}
+
+int sort_string(char *str, size_t max_len)
+{
+    size_t len;
+
+    if (str == NULL || max_len == 0) {
+        return -1;
+    }
+
+    len = strnlen(str, max_len);
+    if (len >= max_len) {
+        return -1;
+    }
+
+    if (len > 1) {
+        qsort(str, len, sizeof(char), compare_chars);
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t len;
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    }
+
+    if (sort_string(buffer, sizeof(buffer)) != 0) {
+        fprintf(stderr, "Error sorting string\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("%s\n", buffer) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The original code was already well-defended against the Flawfinder warning (CWE-119/CWE-120). The identified weakness concerns the statically-sized `buffer[BUFFER_SIZE]`, but every access is bounded:
+
+1. **`fgets(buffer, sizeof(buffer), stdin)`** — reads at most `BUFFER_SIZE - 1` characters plus the null terminator, so no overflow is possible on input.
+2. **Explicit termination** — `buffer[sizeof(buffer) - 1] = '\0'` guarantees the buffer is null-terminated even in edge cases, making subsequent string operations safe.
+3. **`strnlen` instead of `strlen`** — bounds the length scan to the buffer size, preventing over-reads on non-terminated data.
+4. **`sort_string` validation** — checks for `NULL`, and rejects strings where `len >= max_len` (i.e., no terminator found within bounds) before calling `qsort`.
+
+The only change made in the rewrite is an added `max_len == 0` guard in `sort_string`, which prevents a theoretical misuse where a zero-length bound is passed (in that case `strnlen` would return 0 and `len >= max_len` would catch it anyway, but the explicit check makes the contract clearer and fails fast). All error paths from `fgets` and `printf` are checked, and return codes use the portable `EXIT_SUCCESS`/`EXIT_FAILURE` macros. The `qsort` comparator correctly uses `unsigned char` to avoid implementation-defined behavior with negative `char` values.

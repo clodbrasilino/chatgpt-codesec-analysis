@@ -1,0 +1,11 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_4/healed/problem-604.c: In function 'main':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_4/healed/problem-604.c:48:21: error: 'LONG_MAX' undeclared (first use in this function)
+   48 |     long max_size = LONG_MAX;
+      |                     ^~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_4/healed/problem-604.c:6:1: note: 'LONG_MAX' is defined in header '<limits.h>'; this is probably fixable by adding '#include <limits.h>'
+    5 | #include <errno.h>
+  +++ |+#include <limits.h>
+    6 | 
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_4/healed/problem-604.c:48:21: note: each undeclared identifier is reported only once for each function it appears in
+   48 |     long max_size = LONG_MAX;
+      |                     ^~~~~~~~

@@ -1,0 +1,134 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+char **split_string(const char *str, const char *pattern, size_t *count) {
+    regex_t regex;
+    regmatch_t match;
+    int ret;
+    size_t capacity = 10;
+    size_t idx = 0;
+    char **result = NULL;
+    const char *cursor = str;
+
+    if (str == NULL || pattern == NULL || count == NULL) {
+        return NULL;
+    }
+
+    *count = 0;
+
+    ret = regcomp(&regex, pattern, REG_EXTENDED);
+    if (ret != 0) {
+        return NULL;
+    }
+
+    result = (char **)malloc(capacity * sizeof(char *));
+    if (result == NULL) {
+        regfree(&regex);
+        return NULL;
+    }
+
+    while (1) {
+        ret = regexec(&regex, cursor, 1, &match, 0);
+        if (ret == REG_NOMATCH) {
+            size_t len = strlen(cursor);
+            if (len > 0) {
+                if (idx >= capacity) {
+                    capacity *= 2;
+                    char **tmp = (char **)realloc(result, capacity * sizeof(char *));
+                    if (tmp == NULL) {
+                        for (size_t i = 0; i < idx; i++) free(result[i]);
+                        free(result);
+                        regfree(&regex);
+                        return NULL;
+                    }
+                    result = tmp;
+                }
+                result[idx] = (char *)malloc(len + 1);
+                if (result[idx] == NULL) {
+                    for (size_t i = 0; i < idx; i++) free(result[i]);
+                    free(result);
+                    regfree(&regex);
+                    return NULL;
+                }
+                memcpy(result[idx], cursor, len);
+                result[idx][len] = '\0';
+                idx++;
+            }
+            break;
+        }
+
+        if (match.rm_so > 0) {
+            if (idx >= capacity) {
+                capacity *= 2;
+                char **tmp = (char **)realloc(result, capacity * sizeof(char *));
+                if (tmp == NULL) {
+                    for (size_t i = 0; i < idx; i++) free(result[i]);
+                    free(result);
+                    regfree(&regex);
+                    return NULL;
+                }
+                result = tmp;
+            }
+            result[idx] = (char *)malloc(match.rm_so + 1);
+            if (result[idx] == NULL) {
+                for (size_t i = 0; i < idx; i++) free(result[i]);
+                free(result);
+                regfree(&regex);
+                return NULL;
+            }
+            memcpy(result[idx], cursor, match.rm_so);
+            result[idx][match.rm_so] = '\0';
+            idx++;
+        }
+
+        cursor += match.rm_eo;
+        if (match.rm_so == match.rm_eo) {
+            if (*cursor == '\0') {
+                break;
+            }
+            cursor++;
+        }
+    }
+
+    regfree(&regex);
+
+    char **final_result = (char **)realloc(result, (idx + 1) * sizeof(char *));
+    if (final_result != NULL) {
+        result = final_result;
+    }
+    result[idx] = NULL;
+    *count = idx;
+
+    return result;
+}
+
+void free_split_result(char **result) {
+    if (result == NULL) {
+        return;
+    }
+    for (size_t i = 0; result[i] != NULL; i++) {
+        free(result[i]);
+    }
+    free(result);
+}
+
+int main(void) {
+    const char *str = "Hello,world;this.is:a-test";
+    const char *pattern = "[,;.: -]+";
+    size_t count = 0;
+
+    char **tokens = split_string(str, pattern, &count);
+    if (tokens == NULL) {
+        return EXIT_FAILURE;
+    }
+
+    for (size_t i = 0; i < count; i++) {
+        printf("%s\n", tokens[i]);
+    }
+
+    free_split_result(tokens);
+
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,34 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+bool differ_at_one_bit(unsigned int a, unsigned int b)
+{
+    unsigned int x = a ^ b;
+    return (x != 0U) && ((x & (x - 1U)) == 0U);
+}
+
+int main(void)
+{
+    unsigned int a;
+    unsigned int b;
+
+    printf("Enter first number: ");
+    if (scanf("%u", &a) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return 1;
+    }
+
+    printf("Enter second number: ");
+    if (scanf("%u", &b) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return 1;
+    }
+
+    if (differ_at_one_bit(a, b)) {
+        printf("%u and %u differ at exactly one bit position.\n", a, b);
+    } else {
+        printf("%u and %u do not differ at exactly one bit position.\n", a, b);
+    }
+
+    return 0;
+}

@@ -1,0 +1,119 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int id;
+    double price;
+} Item;
+
+static void swap_items(Item *a, Item *b)
+{
+    Item temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+static void heapify_up(Item *heap, size_t index)
+{
+    while (index > 0) {
+        size_t parent = (index - 1) / 2;
+        if (heap[parent].price >= heap[index].price) {
+            break;
+        }
+        swap_items(&heap[parent], &heap[index]);
+        index = parent;
+    }
+}
+
+static void heapify_down(Item *heap, size_t size, size_t index)
+{
+    while (1) {
+        size_t left = 2 * index + 1;
+        size_t right = 2 * index + 2;
+        size_t largest = index;
+
+        if (left < size && heap[left].price > heap[largest].price) {
+            largest = left;
+        }
+        if (right < size && heap[right].price > heap[largest].price) {
+            largest = right;
+        }
+        if (largest == index) {
+            break;
+        }
+        swap_items(&heap[index], &heap[largest]);
+        index = largest;
+    }
+}
+
+Item *find_n_cheapest_items(const Item *dataset, size_t dataset_size, size_t n, size_t *result_count)
+{
+    if (result_count == NULL) {
+        return NULL;
+    }
+    if (dataset == NULL || dataset_size == 0 || n == 0) {
+        *result_count = 0;
+        return NULL;
+    }
+
+    if (n > dataset_size) {
+        n = dataset_size;
+    }
+
+    Item *heap = malloc(n * sizeof(Item));
+    if (heap == NULL) {
+        *result_count = 0;
+        return NULL;
+    }
+
+    size_t heap_size = 0;
+
+    for (size_t i = 0; i < dataset_size; ++i) {
+        if (heap_size < n) {
+            heap[heap_size] = dataset[i];
+            ++heap_size;
+            heapify_up(heap, heap_size - 1);
+        } else if (dataset[i].price < heap[0].price) {
+            heap[0] = dataset[i];
+            heapify_down(heap, heap_size, 0);
+        }
+    }
+
+    for (size_t i = heap_size; i > 1; --i) {
+        swap_items(&heap[0], &heap[i - 1]);
+        heapify_down(heap, i - 1, 0);
+    }
+
+    *result_count = heap_size;
+    return heap;
+}
+
+int main(void)
+{
+    Item dataset[] = {
+        {1, 19.99},
+        {2, 5.49},
+        {3, 12.99},
+        {4, 7.25},
+        {5, 3.99},
+        {6, 15.00},
+        {7, 8.75}
+    };
+    size_t dataset_size = sizeof(dataset) / sizeof(dataset[0]);
+    size_t n = 3;
+    size_t result_count = 0;
+
+    Item *cheapest = find_n_cheapest_items(dataset, dataset_size, n, &result_count);
+
+    if (cheapest == NULL) {
+        fprintf(stderr, "Failed to find cheapest items.\n");
+        return EXIT_FAILURE;
+    }
+
+    for (size_t i = 0; i < result_count; ++i) {
+        printf("ID: %d, Price: %.2f\n", cheapest[i].id, cheapest[i].price);
+    }
+
+    free(cheapest);
+    return EXIT_SUCCESS;
+}

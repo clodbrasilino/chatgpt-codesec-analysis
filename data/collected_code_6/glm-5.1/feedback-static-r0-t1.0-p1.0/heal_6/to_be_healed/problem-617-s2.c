@@ -1,0 +1,80 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int min_jumps(int a, int b, int d) {
+    if (d == 0) {
+        return 0;
+    }
+    if (a == 0 && b == 0) {
+        return -1;
+    }
+    if (a == 0) {
+        if (d % b == 0) {
+            return d / b;
+        } else {
+            return -1;
+        }
+    }
+    if (b == 0) {
+        if (d % a == 0) {
+            int jumps = d / a;
+            if (jumps > 0) {
+                return jumps;
+            }
+        }
+        return -1;
+    }
+    int max_steps = d / a + 2;
+    int min_res = -1;
+    for (int y = 0; y <= max_steps; y++) {
+        int rem = d - y * b;
+        if (rem < 0) {
+            break;
+        }
+        if (rem % a == 0) {
+            int x = rem / a;
+            if (x >= 0) {
+                if (x >= y) {
+                    int res = x - y + 2 * y;
+                    if (min_res == -1 || res < min_res) {
+                        min_res = res;
+                    }
+                } else {
+                    int res = y;
+                    if (min_res == -1 || res < min_res) {
+                        min_res = res;
+                    }
+                }
+            }
+        }
+    }
+    return min_res;
+}
+
+/* Possible weaknesses found:
+ *  Parameter 'argv' can be declared as const array [constParameter]
+ */
+int main(int argc, char * const argv[]) {
+    if (argc != 4) {
+        fprintf(stderr, "Usage: %s <jumpA> <jumpB> <distance>\n", argv[0]);
+        return EXIT_FAILURE;
+    }
+    char *endptr_a, *endptr_b, *endptr_d;
+    long a_l = strtol(argv[1], &endptr_a, 10);
+    long b_l = strtol(argv[2], &endptr_b, 10);
+    long d_l = strtol(argv[3], &endptr_d, 10);
+    if (*endptr_a != '\0' || *endptr_b != '\0' || *endptr_d != '\0') {
+        fprintf(stderr, "Invalid integer input\n");
+        return EXIT_FAILURE;
+    }
+    if (a_l < 0 || b_l < 0 || d_l < 0) {
+        fprintf(stderr, "Inputs must be non-negative\n");
+        return EXIT_FAILURE;
+    }
+    int a = (int)a_l;
+    int b = (int)b_l;
+    int d = (int)d_l;
+    int result = min_jumps(a, b, d);
+    printf("%d\n", result);
+    return EXIT_SUCCESS;
+}

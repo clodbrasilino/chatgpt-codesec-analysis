@@ -1,0 +1,155 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int value;
+    struct Node* next;
+} Node;
+
+typedef struct Iterator {
+    Node* head;
+} Iterator;
+
+Iterator* create_iterator() {
+    Iterator* it = (Iterator*)malloc(sizeof(Iterator));
+    it->head = NULL;
+    return it;
+}
+
+void push(Iterator* it, int val) {
+    Node* new_node = (Node*)malloc(sizeof(Node));
+    new_node->value = val;
+    new_node->next = it->head;
+    it->head = new_node;
+}
+
+int pop(Iterator* it) {
+    if (!it->head) {
+        return -1; // Assuming no negative values in the input
+    }
+    Node* temp = it->head;
+    int ret = temp->value;
+    it->head = it->head->next;
+    free(temp);
+    return ret;
+}
+
+int peek(Iterator* it) {
+    if (it->head) {
+        return it->head->value;
+    }
+    return -1; // Assuming no negative values in the input
+}
+
+void free_iterator(Iterator* it) {
+    while (it->head) {
+        Node* temp = it->head;
+        it->head = it->head->next;
+        free(temp);
+    }
+    free(it);
+}
+
+typedef struct MinHeapItem {
+    int value;
+    Iterator* it;
+    struct MinHeapItem* next;
+} MinHeapItem;
+
+typedef struct MinHeap {
+    MinHeapItem* head;
+} MinHeap;
+
+MinHeap* create_min_heap() {
+    MinHeap* heap = (MinHeap*)malloc(sizeof(MinHeap));
+    heap->head = NULL;
+    return heap;
+}
+
+void push_heap(MinHeap* heap, MinHeapItem* item) {
+    if (heap->head == NULL || item->value < heap->head->value) {
+        item->next = heap->head;
+        heap->head = item;
+    } else {
+        MinHeapItem* temp = heap->head;
+        while (temp->next && temp->next->value <= item->value) {
+            temp = temp->next;
+        }
+        item->next = temp->next;
+        temp->next = item;
+    }
+}
+
+MinHeapItem* pop_heap(MinHeap* heap) {
+    if (heap->head) {
+        MinHeapItem* top = heap->head;
+        heap->head = heap->head->next;
+        return top;
+    }
+    return NULL;
+}
+
+void free_heap(MinHeap* heap) {
+    while (heap->head) {
+        MinHeapItem* temp = heap->head;
+        heap->head = heap->head->next;
+        free(temp);
+    }
+    free(heap);
+}
+
+int merge_k_sorted_iterators(Iterator** iterators, int k) {
+    MinHeap* heap = create_min_heap();
+    for (int i = 0; i < k; ++i) {
+        if (iterators[i]->head) {
+            MinHeapItem* item = (MinHeapItem*)malloc(sizeof(MinHeapItem));
+            item->value = peek(iterators[i]);
+            item->it = iterators[i];
+            push_heap(heap, item);
+        }
+    }
+
+    while (heap->head) {
+        MinHeapItem* min_item = pop_heap(heap);
+        printf("%d ", min_item->value);
+        pop(min_item->it);
+
+        if (min_item->it->head) {
+            min_item->value = peek(min_item->it);
+            push_heap(heap, min_item);
+        } else {
+            free(min_item);
+        }
+    }
+
+    free_heap(heap);
+    return 0;
+}
+
+int main() {
+    Iterator* iterators[3];
+    iterators[0] = create_iterator();
+    iterators[1] = create_iterator();
+    iterators[2] = create_iterator();
+
+    push(iterators[0], 1);
+    push(iterators[0], 4);
+    push(iterators[0], 5);
+
+    push(iterators[1], 1);
+    push(iterators[1], 3);
+    push(iterators[1], 4);
+
+    push(iterators[2], 2);
+    push(iterators[2], 6);
+
+    merge_k_sorted_iterators(iterators, 3);
+
+    for (int i = 0; i < 3; ++i) {
+        free_iterator(iterators[i]);
+    }
+
+    return 0;
+}
+```

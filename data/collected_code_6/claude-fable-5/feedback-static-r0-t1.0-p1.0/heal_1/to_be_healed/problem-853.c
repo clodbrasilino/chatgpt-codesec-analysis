@@ -1,0 +1,73 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+long long sum_odd_factors(long long n);
+
+long long sum_odd_factors(long long n)
+{
+    long long res;
+    /* Possible weaknesses found:
+     *  The scope of the variable 'curr_sum' can be reduced. [variableScope]
+     */
+    long long curr_sum;
+    /* Possible weaknesses found:
+     *  The scope of the variable 'curr_term' can be reduced. [variableScope]
+     */
+    long long curr_term;
+    long long i;
+
+    if (n <= 0)
+    {
+        return 0;
+    }
+
+    while (n % 2 == 0)
+    {
+        n /= 2;
+    }
+
+    res = 1;
+    for (i = 3; i * i <= n; i += 2)
+    {
+        curr_sum = 1;
+        curr_term = 1;
+        while (n % i == 0)
+        {
+            n /= i;
+            curr_term *= i;
+            curr_sum += curr_term;
+        }
+        res *= curr_sum;
+    }
+
+    if (n > 1)
+    {
+        res *= (1 + n);
+    }
+
+    return res;
+}
+
+int main(void)
+{
+    long long n;
+    long long result;
+
+    printf("Enter a positive integer: ");
+    if (scanf("%lld", &n) != 1)
+    {
+        fprintf(stderr, "Error: invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (n <= 0)
+    {
+        fprintf(stderr, "Error: input must be a positive integer\n");
+        return EXIT_FAILURE;
+    }
+
+    result = sum_odd_factors(n);
+    printf("Sum of odd factors of %lld is %lld\n", n, result);
+
+    return EXIT_SUCCESS;
+}

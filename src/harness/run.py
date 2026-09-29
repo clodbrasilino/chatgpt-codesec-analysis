@@ -56,7 +56,7 @@ def archive_scratch(scratch: Path, source: Path, kind: str) -> Path | None:
     (e.g. throwaway dry-runs).
 
     Layout: ``artifacts/<repo-relative source path minus .c>/<kind>/`` —
-    e.g. ``artifacts/collected_code_6/qwen-max/feedback-.../heal_0/
+    e.g. ``artifacts/data/collected_code_6/qwen-max/feedback-.../heal_0/
     to_be_healed/problem-42/build/``. Sources outside the repo fall back to
     ``artifacts/adhoc/<stem>/``.
     """

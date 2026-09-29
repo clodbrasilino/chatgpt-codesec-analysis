@@ -1,0 +1,74 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    char data;
+    struct Node *next;
+} Node;
+
+Node *string_to_list(const char *str) {
+    Node *head = NULL;
+    Node *tail = NULL;
+    const char *p = str;
+
+    if (str == NULL) {
+        return NULL;
+    }
+
+    for (; *p != '\0'; ++p) {
+        Node *new_node = malloc(sizeof(*new_node));
+        if (new_node == NULL) {
+            while (head != NULL) {
+                Node *tmp = head;
+                head = head->next;
+                free(tmp);
+            }
+            return NULL;
+        }
+
+        new_node->data = *p;
+        new_node->next = NULL;
+
+        if (head == NULL) {
+            head = new_node;
+        } else {
+            tail->next = new_node;
+        }
+        tail = new_node;
+    }
+
+    return head;
+}
+
+void free_list(Node *head) {
+    while (head != NULL) {
+        Node *tmp = head;
+        head = head->next;
+        free(tmp);
+    }
+}
+
+void print_list(const Node *head) {
+    const Node *current = head;
+
+    while (current != NULL) {
+        putchar(current->data);
+        current = current->next;
+    }
+    putchar('\n');
+}
+
+int main(void) {
+    const char *text = "hello";
+    Node *list = string_to_list(text);
+
+    if (list == NULL && *text != '\0') {
+        fprintf(stderr, "Failed to allocate list\n");
+        return EXIT_FAILURE;
+    }
+
+    print_list(list);
+    free_list(list);
+
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,51 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+void reverse_string(const char *str, size_t len, char *dest) {
+    for (size_t i = 0; i < len; i++) {
+        dest[len - 1 - i] = str[i];
+    }
+    dest[len] = '\0';
+}
+
+void reverse_strings_in_list(char **list, int count) {
+    if (list == NULL || count <= 0) return;
+    for (int i = 0; i < count; i++) {
+        if (list[i] != NULL) {
+            size_t len = strlen(list[i]);
+            char *reversed = malloc(len + 1);
+            if (reversed != NULL) {
+                reverse_string(list[i], len, reversed);
+                free(list[i]);
+                list[i] = reversed;
+            } else {
+                free(list[i]);
+                list[i] = NULL;
+            }
+        }
+    }
+}
+
+int main() {
+    const char *original_strings[] = {"hello", "world", "C", "programming"};
+    int count = sizeof(original_strings) / sizeof(original_strings[0]);
+    char **strings = malloc(count * sizeof(*strings));
+
+    for (int i = 0; i < count; i++) {
+        strings[i] = strdup(original_strings[i]);
+    }
+
+    reverse_strings_in_list(strings, count);
+
+    for (int i = 0; i < count; i++) {
+        printf("%s\n", strings[i]);
+    }
+
+    for (int i = 0; i < count; i++) {
+        free(strings[i]);
+    }
+    free(strings);
+
+    return 0;
+}

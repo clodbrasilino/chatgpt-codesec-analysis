@@ -1,0 +1,334 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+typedef struct {
+    char **items;
+    size_t count;
+} StringList;
+
+static size_t safe_strnlen(const char *s, size_t max_len) {
+    size_t len = 0;
+    if (s == NULL) {
+        return 0;
+    }
+    while (len < max_len && s[len] != '\0') {
+        len++;
+    }
+    return len;
+}
+
+static int is_valid_string(const char *s, size_t max_len) {
+    if (s == NULL) {
+        return 0;
+    }
+    return safe_strnlen(s, max_len) < max_len;
+}
+
+static int check_size_add_overflow(size_t a, size_t b, size_t *result) {
+    if (a > SIZE_MAX - b) {
+        return -1;
+    }
+    *result = a + b;
+    return 0;
+}
+
+static int check_size_mul_overflow(size_t a, size_t b, size_t *result) {
+    if (a != 0 && b > SIZE_MAX / a) {
+        return -1;
+    }
+    *result = a * b;
+    return 0;
+}
+
+char *join_tuple_with_string(char **tuple, size_t count, const char *separator) {
+    size_t total_length;
+    size_t separator_length;
+    size_t i;
+    char *result;
+    char *current_pos;
+    size_t temp;
+
+    if (tuple == NULL || separator == NULL || count == 0) {
+        return NULL;
+    }
+
+    if (!is_valid_string(separator, SIZE_MAX)) {
+        return NULL;
+    }
+
+    separator_length = safe_strnlen(separator, SIZE_MAX);
+    total_length = 1;
+
+    for (i = 0; i < count; i++) {
+        size_t item_length;
+        
+        if (tuple[i] == NULL) {
+            return NULL;
+        }
+        if (!is_valid_string(tuple[i], SIZE_MAX)) {
+            return NULL;
+        }
+        
+        item_length = safe_strnlen(tuple[i], SIZE_MAX);
+        
+        if (check_size_add_overflow(total_length, item_length, &temp) != 0) {
+            return NULL;
+        }
+        if (check_size_add_overflow(temp, separator_length, &total_length) != 0) {
+            return NULL;
+        }
+    }
+
+    result = malloc(total_length);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    current_pos = result;
+    for (i = 0; i < count; i++) {
+        size_t item_length = safe_strnlen(tuple[i], SIZE_MAX);
+        size_t remaining = total_length - (size_t)(current_pos - result);
+        
+        /* Possible weaknesses found:
+         *  Assuming that condition 'item_length>=remaining' is not redundant
+         */
+        if (item_length >= remaining) {
+            free(result);
+            return NULL;
+        }
+        
+        /* Possible weaknesses found:
+         *  Assuming condition is false
+         */
+        if (current_pos < result || current_pos >= result + total_length) {
+            free(result);
+            return NULL;
+        }
+        
+        /* Possible weaknesses found:
+         *  Condition 'item_length<remaining' is always true
+         *  Condition 'item_length<remaining' is always true [knownConditionTrueFalse]
+         */
+        if (item_length > 0 && item_length < remaining) {
+            /* Possible weaknesses found:
+             * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+             */
+            memcpy(current_pos, tuple[i], item_length);
+            current_pos += item_length;
+        }
+        
+        remaining = total_length - (size_t)(current_pos - result);
+        /* Possible weaknesses found:
+         *  Assuming that condition 'separator_length>=remaining' is not redundant
+         */
+        if (separator_length >= remaining) {
+            free(result);
+            return NULL;
+        }
+        
+        /* Possible weaknesses found:
+         *  Assuming condition is false
+         */
+        if (current_pos < result || current_pos >= result + total_length) {
+            free(result);
+            return NULL;
+        }
+        
+        /* Possible weaknesses found:
+         *  Condition 'separator_length<remaining' is always true
+         *  Condition 'separator_length<remaining' is always true [knownConditionTrueFalse]
+         */
+        if (separator_length > 0 && separator_length < remaining) {
+            /* Possible weaknesses found:
+             * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+             */
+            memcpy(current_pos, separator, separator_length);
+            current_pos += separator_length;
+        }
+    }
+    *current_pos = '\0';
+
+    return result;
+}
+
+StringList *tuple_to_list_with_string(char **tuple, size_t count, const char *separator) {
+    StringList *list;
+    size_t i;
+    size_t separator_length;
+    size_t alloc_count;
+
+    if (tuple == NULL || separator == NULL || count == 0) {
+        return NULL;
+    }
+
+    if (!is_valid_string(separator, SIZE_MAX)) {
+        return NULL;
+    }
+
+    if (check_size_mul_overflow(count, 2, &alloc_count) != 0) {
+        return NULL;
+    }
+
+    list = malloc(sizeof(StringList));
+    if (list == NULL) {
+        return NULL;
+    }
+
+    list->count = alloc_count;
+    list->items = calloc(alloc_count, sizeof(char *));
+    if (list->items == NULL) {
+        free(list);
+        return NULL;
+    }
+
+    separator_length = safe_strnlen(separator, SIZE_MAX);
+
+    for (i = 0; i < count; i++) {
+        size_t item_length;
+
+        if (tuple[i] == NULL) {
+            size_t j;
+            for (j = 0; j < i * 2; j++) {
+                free(list->items[j]);
+            }
+            free(list->items);
+            free(list);
+            return NULL;
+        }
+
+        if (!is_valid_string(tuple[i], SIZE_MAX)) {
+            size_t j;
+            for (j = 0; j < i * 2; j++) {
+                free(list->items[j]);
+            }
+            free(list->items);
+            free(list);
+            return NULL;
+        }
+
+        item_length = safe_strnlen(tuple[i], SIZE_MAX);
+        
+        if (item_length == SIZE_MAX) {
+            size_t j;
+            for (j = 0; j < i * 2; j++) {
+                free(list->items[j]);
+            }
+            free(list->items);
+            free(list);
+            return NULL;
+        }
+        
+        if (item_length + 1 < item_length) {
+            size_t j;
+            for (j = 0; j < i * 2; j++) {
+                free(list->items[j]);
+            }
+            free(list->items);
+            free(list);
+            return NULL;
+        }
+        
+        list->items[i * 2] = malloc(item_length + 1);
+        if (list->items[i * 2] == NULL) {
+            size_t j;
+            for (j = 0; j < i * 2; j++) {
+                free(list->items[j]);
+            }
+            free(list->items);
+            free(list);
+            return NULL;
+        }
+        
+        if (item_length > 0 && item_length < item_length + 1) {
+            /* Possible weaknesses found:
+             * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+             */
+            memcpy(list->items[i * 2], tuple[i], item_length);
+        }
+        list->items[i * 2][item_length] = '\0';
+
+        if (separator_length == SIZE_MAX) {
+            size_t j;
+            for (j = 0; j <= i * 2; j++) {
+                free(list->items[j]);
+            }
+            free(list->items);
+            free(list);
+            return NULL;
+        }
+        
+        if (separator_length + 1 < separator_length) {
+            size_t j;
+            for (j = 0; j <= i * 2; j++) {
+                free(list->items[j]);
+            }
+            free(list->items);
+            free(list);
+            return NULL;
+        }
+        
+        list->items[i * 2 + 1] = malloc(separator_length + 1);
+        if (list->items[i * 2 + 1] == NULL) {
+            size_t j;
+            for (j = 0; j <= i * 2; j++) {
+                free(list->items[j]);
+            }
+            free(list->items);
+            free(list);
+            return NULL;
+        }
+        
+        if (separator_length > 0 && separator_length < separator_length + 1) {
+            /* Possible weaknesses found:
+             * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+             */
+            memcpy(list->items[i * 2 + 1], separator, separator_length);
+        }
+        list->items[i * 2 + 1][separator_length] = '\0';
+    }
+
+    return list;
+}
+
+void free_string_list(StringList *list) {
+    if (list == NULL) {
+        return;
+    }
+
+    if (list->items != NULL) {
+        for (size_t i = 0; i < list->count; i++) {
+            free(list->items[i]);
+        }
+        free(list->items);
+    }
+
+    free(list);
+}
+
+int main(void) {
+    char *tuple[] = {"apple", "banana", "cherry"};
+    size_t tuple_count = 3;
+    const char *separator = "fruit";
+    StringList *result;
+
+    result = tuple_to_list_with_string(tuple, tuple_count, separator);
+    if (result == NULL) {
+        fprintf(stderr, "Error: Failed to convert tuple to list\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("[");
+    for (size_t i = 0; i < result->count; i++) {
+        printf("\"%s\"", result->items[i]);
+        if (i < result->count - 1) {
+            printf(", ");
+        }
+    }
+    printf("]\n");
+
+    free_string_list(result);
+
+    return EXIT_SUCCESS;
+}

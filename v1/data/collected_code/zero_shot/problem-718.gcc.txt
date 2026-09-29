@@ -1,0 +1,42 @@
+collected_code/problem-718-0.c: In function 'push':
+collected_code/problem-718-0.c:11:28: warning: implicit declaration of function 'malloc' [-Wimplicit-function-declaration]
+   11 |     Node* newNode = (Node*)malloc(sizeof(Node));
+      |                            ^~~~~~
+collected_code/problem-718-0.c:2:1: note: include '<stdlib.h>' or provide a declaration of 'malloc'
+    1 | #include <stdio.h>
+  +++ |+#include <stdlib.h>
+    2 | 
+collected_code/problem-718-0.c:11:28: warning: incompatible implicit declaration of built-in function 'malloc' [-Wbuiltin-declaration-mismatch]
+   11 |     Node* newNode = (Node*)malloc(sizeof(Node));
+      |                            ^~~~~~
+collected_code/problem-718-0.c:11:28: note: include '<stdlib.h>' or provide a declaration of 'malloc'
+collected_code/problem-718-0.c:12:19: warning: dereference of possibly-NULL 'newNode' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   12 |     newNode->data = data;
+      |     ~~~~~~~~~~~~~~^~~~~~
+  'main': events 1-2
+    |
+    |   56 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   59 |     push(&originalList, 6);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) calling 'push' from 'main'
+    |
+    +--> 'push': events 3-5
+           |
+           |   10 | void push(Node** head, int data) {
+           |      |      ^~~~
+           |      |      |
+           |      |      (3) entry to 'push'
+           |   11 |     Node* newNode = (Node*)malloc(sizeof(Node));
+           |      |                            ~~~~~~~~~~~~~~~~~~~~
+           |      |                            |
+           |      |                            (4) this call could return NULL
+           |   12 |     newNode->data = data;
+           |      |     ~~~~~~~~~~~~~~~~~~~~
+           |      |                   |
+           |      |                   (5) 'newNode' could be NULL: unchecked value from (4)
+           |

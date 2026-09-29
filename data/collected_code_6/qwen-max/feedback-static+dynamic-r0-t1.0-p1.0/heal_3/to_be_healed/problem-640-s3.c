@@ -1,0 +1,44 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+ /* Possible weaknesses found:
+  *  test case 0 failed: expected 'python', got <no output>
+  *  test case 2 failed: expected 'alpha', got <no output>
+  *  test case 1 failed: expected 'string', got <no output>
+  */
+
+char* remove_parenthesis(const char *input) {
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    size_t len = strlen(input);
+    char *output = (char *)malloc(len + 1);
+    if (!output) return NULL;
+    int j = 0, depth = 0;
+    for (size_t i = 0; i < len; ++i) {
+        if (input[i] == '(') {
+            depth++;
+        } else if (input[i] == ')') {
+            depth--;
+        } else if (depth == 0) {
+            output[j++] = input[i];
+        }
+    }
+    output[j] = '\0';
+    return output;
+}
+
+int main() {
+    const char *test_cases[] = {"python", "string", "alpha", "Hello, (this is a test) and this should stay."};
+    const char *expected_results[] = {"python", "string", "alpha", "Hello,  and this should stay."};
+
+    for (int i = 0; i < 4; ++i) {
+        char *result = remove_parenthesis(test_cases[i]);
+        if (result) {
+            printf("Test case %d: Expected '%s', got '%s'\n", i, expected_results[i], result);
+            free(result);
+        }
+    }
+
+    return 0;
+}

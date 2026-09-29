@@ -1,0 +1,27 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+double calculate_lateral_surface_area(double length, double width, double height) {
+    if (length < 0.0 || width < 0.0 || height < 0.0) {
+        return -1.0;
+    }
+    return 2.0 * height * (length + width);
+}
+
+int main(void) {
+    double length = 5.0;
+    double width = 3.0;
+    double height = 4.0;
+    double lsa;
+
+    lsa = calculate_lateral_surface_area(length, width, height);
+
+    if (lsa < 0.0) {
+        fprintf(stderr, "Error: Invalid dimensions provided.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("The lateral surface area of the cuboid is: %.2f\n", lsa);
+
+    return EXIT_SUCCESS;
+}

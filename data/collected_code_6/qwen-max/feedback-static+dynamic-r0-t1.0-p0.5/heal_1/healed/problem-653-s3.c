@@ -1,0 +1,139 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char *key;
+    char *value;
+} KeyValuePair;
+
+typedef struct Node {
+    char *value;
+    struct Node *next;
+} Node;
+
+typedef struct ListEntry {
+    char *key;
+    Node *head;
+    struct ListEntry *next;
+} ListEntry;
+
+typedef struct {
+    ListEntry **entries;
+    int size;
+    int capacity;
+} MapOfLists;
+
+MapOfLists* createMap(int capacity) {
+    MapOfLists *map = (MapOfLists *)malloc(sizeof(MapOfLists));
+    if (map == NULL) return NULL;
+    map->size = 0;
+    map->capacity = capacity;
+    map->entries = (ListEntry **)calloc(capacity, sizeof(ListEntry *));
+    if (map->entries == NULL) {
+        free(map);
+        return NULL;
+    }
+    return map;
+}
+
+void freeMap(MapOfLists *map) {
+    for (int i = 0; i < map->capacity; ++i) {
+        ListEntry *entry = map->entries[i];
+        while (entry != NULL) {
+            ListEntry *tempEntry = entry;
+            Node *node = entry->head;
+            while (node != NULL) {
+                Node *temp = node;
+                node = node->next;
+                free(temp->value);
+                free(temp);
+            }
+            free(tempEntry->key);
+            entry = entry->next;
+            free(tempEntry);
+        }
+        map->entries[i] = NULL;
+    }
+    free(map->entries);
+    free(map);
+}
+
+int hashFunction(const char *key, int capacity) {
+    int hash = 0;
+    for (int i = 0; key[i] != '\0'; ++i) {
+        hash = (hash * 31 + key[i]) % capacity;
+    }
+    return hash;
+}
+
+ListEntry* findEntry(MapOfLists *map, const char *key) {
+    int index = hashFunction(key, map->capacity);
+    ListEntry *entry = map->entries[index];
+    while (entry != NULL) {
+        if (strcmp(entry->key, key) == 0) {
+            return entry;
+        }
+        entry = entry->next;
+    }
+    return NULL;
+}
+
+void addToList(ListEntry *entry, const char *value) {
+    Node *newNode = (Node *)malloc(sizeof(Node));
+    newNode->value = strdup(value);
+    newNode->next = entry->head;
+    entry->head = newNode;
+}
+
+void insertIntoMap(MapOfLists *map, const char *key, const char *value) {
+    int index = hashFunction(key, map->capacity);
+    ListEntry *entry = findEntry(map, key);
+    if (entry == NULL) {
+        entry = (ListEntry *)malloc(sizeof(ListEntry));
+        entry->key = strdup(key);
+        entry->head = NULL;
+        entry->next = map->entries[index];
+        map->entries[index] = entry;
+        map->size++;
+    }
+    addToList(entry, value);
+}
+
+void printMap(MapOfLists *map) {
+    for (int i = 0; i < map->capacity; ++i) {
+        ListEntry *entry = map->entries[i];
+        while (entry != NULL) {
+            printf("%s: ", entry->key);
+            Node *node = entry->head;
+            while (node != NULL) {
+                printf("%s -> ", node->value);
+                node = node->next;
+            }
+            printf("NULL\n");
+            entry = entry->next;
+        }
+    }
+}
+
+int main() {
+    MapOfLists *map = createMap(10);
+    if (map == NULL) return 1;
+
+    KeyValuePair pairs[] = {
+        {"a", "1"},
+        {"b", "2"},
+        {"a", "3"},
+        {"c", "4"},
+        {"b", "5"}
+    };
+
+    for (int i = 0; i < 5; ++i) {
+        insertIntoMap(map, pairs[i].key, pairs[i].value);
+    }
+
+    printMap(map);
+
+    freeMap(map);
+    return 0;
+}

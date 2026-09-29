@@ -1,0 +1,75 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+#include <stdlib.h>
+
+#define MAX_WORD_LEN 256
+
+static bool is_length_odd(const char *word, size_t max_len)
+{
+    size_t len;
+
+    if (word == NULL) {
+        return false;
+    }
+
+    len = strnlen(word, max_len);
+    return (len % 2U) != 0U;
+}
+
+int main(void)
+{
+    char buffer[MAX_WORD_LEN] = {0};
+    size_t len;
+    int ch;
+
+    printf("Enter a word: ");
+    fflush(stdout);
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1U] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+
+    if (len > 0U && buffer[len - 1U] == '\n') {
+        buffer[len - 1U] = '\0';
+        len--;
+    } else if (len == sizeof(buffer) - 1U) {
+        do {
+            ch = getchar();
+        } while (ch != '\n' && ch != EOF);
+    }
+
+    if (buffer[0] == '\0') {
+        fprintf(stderr, "No word entered\n");
+        return EXIT_FAILURE;
+    }
+
+    if (is_length_odd(buffer, sizeof(buffer))) {
+        printf("The word \"%s\" has an odd length.\n", buffer);
+    } else {
+        printf("The word \"%s\" has an even length.\n", buffer);
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the original code and the fixes applied:**
+
+The original code was already fairly defensive, but the Flawfinder warnings pointed to a few areas worth hardening:
+
+1. **CWE-126 (`strlen` over-read):** Replaced both `strlen` calls with `strnlen`, bounding the scan to the buffer size. While `fgets` guarantees null-termination on success, `strnlen` provides defense-in-depth if the function is ever called with a non-terminated buffer. The `is_length_odd` function now takes an explicit maximum length so it cannot over-read regardless of caller behavior.
+
+2. **CWE-119/CWE-120 (statically-sized array):** The buffer is now zero-initialized at declaration, and an explicit `buffer[sizeof(buffer) - 1U] = '\0'` guarantees termination even in pathological cases. All reads remain bounded by `sizeof(buffer)`.
+
+3. **Truncation handling (robustness improvement):** The original silently accepted truncated input, leaving the remainder of an overlong line in `stdin`. The rewrite detects the truncation case (buffer full with no newline) and drains the rest of the line, preventing stale input from affecting any subsequent reads.
+
+4. **Minor correctness details:** Added `fflush(stdout)` after the prompt (since it lacks a newline, output may be buffered on some platforms), and cast `sizeof(buffer)` to `int` for `fgets` to satisfy strict conversion warnings.
+
+Note that `strnlen` is POSIX/C23; if strict C99 portability is required, a small local bounded-length helper would be the substitute.

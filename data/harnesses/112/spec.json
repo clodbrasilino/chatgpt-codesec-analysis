@@ -1,0 +1,47 @@
+{
+  "task_id": 112,
+  "text": "Write a C function to find the perimeter of a cylinder.",
+  "fn_candidates": [
+    "perimeter",
+    "Perimeter",
+    "perimeter",
+    "perimeter"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "perimeter",
+      "args": [
+        2,
+        4
+      ],
+      "expected": 12,
+      "assert_src": "assert perimeter(2,4) == 12"
+    },
+    {
+      "fn_name": "perimeter",
+      "args": [
+        1,
+        2
+      ],
+      "expected": 6,
+      "assert_src": "assert perimeter(1,2) == 6"
+    },
+    {
+      "fn_name": "perimeter",
+      "args": [
+        3,
+        1
+      ],
+      "expected": 8,
+      "assert_src": "assert perimeter(3,1) == 8"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

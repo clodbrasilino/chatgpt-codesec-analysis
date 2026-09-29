@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_2/healed/problem-885.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_2/healed/problem-885.c:45:40: style: Condition 'str7' is always false [knownConditionTrueFalse]
+    printf("%d\n", areIsomorphic(str7, str7 ? strnlen(str7, max_len) : 0, str8, str8 ? strnlen(str8, max_len) : 0));
+                                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_2/healed/problem-885.c:38:24: note: Assignment 'str7=NULL', assigned value is 0
+    const char *str7 = NULL;
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_2/healed/problem-885.c:45:40: note: Condition 'str7' is always false
+    printf("%d\n", areIsomorphic(str7, str7 ? strnlen(str7, max_len) : 0, str8, str8 ? strnlen(str8, max_len) : 0));
+                                       ^

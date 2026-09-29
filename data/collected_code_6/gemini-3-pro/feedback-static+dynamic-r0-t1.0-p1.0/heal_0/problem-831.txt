@@ -1,0 +1,30 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int count_equal_pairs(const int *array, size_t size) {
+    if (array == NULL || size == 0) {
+        return 0;
+    }
+
+    int count = 0;
+    for (size_t i = 0; i < size; i++) {
+        for (size_t j = i + 1; j < size; j++) {
+            if (array[i] == array[j]) {
+                count++;
+            }
+        }
+    }
+    return count;
+}
+
+int main(void) {
+    int array[] = {1, 2, 3, 1, 2, 1};
+    size_t size = sizeof(array) / sizeof(array[0]);
+
+    int pairs = count_equal_pairs(array, size);
+    printf("Number of equal pairs: %d\n", pairs);
+
+    return 0;
+}
+```

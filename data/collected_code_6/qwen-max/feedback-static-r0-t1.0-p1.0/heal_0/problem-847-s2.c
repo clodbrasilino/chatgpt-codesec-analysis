@@ -1,0 +1,80 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int value;
+    struct Node *next;
+} Node;
+
+typedef struct Tuple {
+    Node *list;
+} Tuple;
+
+Node* copy_list(Node *head) {
+    Node *new_head = NULL;
+    Node *current = head;
+    Node **temp = &new_head;
+
+    while (current != NULL) {
+        *temp = malloc(sizeof(Node));
+        if (*temp == NULL) {
+            exit(EXIT_FAILURE);
+        }
+        (*temp)->value = current->value;
+        (*temp)->next = NULL;
+        temp = &(*temp)->next;
+        current = current->next;
+    }
+
+    return new_head;
+}
+
+void free_list(Node *head) {
+    Node *current = head;
+    while (current != NULL) {
+        Node *next = current->next;
+        free(current);
+        current = next;
+    }
+}
+
+int main() {
+    // Create a sample list
+    Node *head = malloc(sizeof(Node));
+    head->value = 10;
+    head->next = malloc(sizeof(Node));
+    head->next->value = 20;
+    head->next->next = malloc(sizeof(Node));
+    head->next->next->value = 30;
+    head->next->next->next = NULL;
+
+    // Create a singleton tuple with the list
+    Tuple t;
+    t.list = head;
+
+    // Copy the list from the tuple
+    Node *copied_list = copy_list(t.list);
+
+    // Print the original and copied lists
+    Node *current = head;
+    printf("Original list: ");
+    while (current != NULL) {
+        printf("%d ", current->value);
+        current = current->next;
+    }
+    printf("\n");
+
+    current = copied_list;
+    printf("Copied list: ");
+    while (current != NULL) {
+        printf("%d ", current->value);
+        current = current->next;
+    }
+    printf("\n");
+
+    // Free the original and copied lists
+    free_list(head);
+    free_list(copied_list);
+
+    return 0;
+}

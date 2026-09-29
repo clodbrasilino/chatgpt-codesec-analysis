@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-415-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-415-s2.c:50:11: style: Condition 'n>=2' is always true [knownConditionTrueFalse]
+    if (n >= 2) {
+          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-415-s2.c:44:25: note: Assignment 'n=sizeof(arr)/sizeof(arr[0])', assigned value is 6
+    int n = sizeof(arr) / sizeof(arr[0]);
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-415-s2.c:50:11: note: Condition 'n>=2' is always true
+    if (n >= 2) {
+          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-415-s2.c:5:33: style: Parameter 'arr' can be declared as const array [constParameter]
+void findHighestProductPair(int arr[], int n, int *result1, int *result2) {
+                                ^

@@ -1,0 +1,95 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct ListNode {
+    int value;
+    struct ListNode *next;
+} ListNode;
+
+typedef struct List {
+    ListNode *head;
+    int length;
+} List;
+
+List* create_list() {
+    List *list = (List *)malloc(sizeof(List));
+    list->head = NULL;
+    list->length = 0;
+    return list;
+}
+
+void add_node(List *list, int value) {
+    ListNode *new_node = (ListNode *)malloc(sizeof(ListNode));
+    new_node->value = value;
+    new_node->next = list->head;
+    list->head = new_node;
+    list->length++;
+}
+
+void free_list(List *list) {
+    ListNode *current = list->head;
+    while (current != NULL) {
+        ListNode *next = current->next;
+        free(current);
+        current = next;
+    }
+    free(list);
+}
+
+List** find_min_length_lists(List **lists, int num_lists, int *min_length, int *result_count) {
+    *min_length = -1;
+    *result_count = 0;
+    for (int i = 0; i < num_lists; i++) {
+        if (*min_length == -1 || lists[i]->length < *min_length) {
+            *min_length = lists[i]->length;
+        }
+    }
+
+    List **result = (List **)malloc(num_lists * sizeof(List *));
+    for (int i = 0; i < num_lists; i++) {
+        if (lists[i]->length == *min_length) {
+            result[(*result_count)++] = lists[i];
+        }
+    }
+
+    return result;
+}
+
+int main() {
+    List *list1 = create_list();
+    List *list2 = create_list();
+    List *list3 = create_list();
+
+    add_node(list1, 1);
+    add_node(list1, 2);
+
+    add_node(list2, 3);
+
+    add_node(list3, 4);
+    add_node(list3, 5);
+    add_node(list3, 6);
+
+    List *lists[] = {list1, list2, list3};
+    int num_lists = 3;
+    int min_length;
+    int result_count;
+
+    List **min_lists = find_min_length_lists(lists, num_lists, &min_length, &result_count);
+
+    for (int i = 0; i < result_count; i++) {
+        printf("List with minimum length %d: ", min_length);
+        ListNode *current = min_lists[i]->head;
+        while (current != NULL) {
+            printf("%d ", current->value);
+            current = current->next;
+        }
+        printf("\n");
+    }
+
+    for (int i = 0; i < num_lists; i++) {
+        free_list(lists[i]);
+    }
+    free(min_lists);
+
+    return 0;
+}

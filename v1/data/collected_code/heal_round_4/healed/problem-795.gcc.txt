@@ -1,0 +1,176 @@
+collected_code/heal_round_4/healed/problem-795.c: In function 'heapify':
+collected_code/heal_round_4/healed/problem-795.c:28:46: warning: use of uninitialized value '*_4 + _6.price' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   28 |     if (left < heap->size && heap->data[left].price < heap->data[smallest].price)
+      |                              ~~~~~~~~~~~~~~~~^~~~~~
+  'main': events 1-2
+    |
+    |  116 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |  130 |     findNcheapItems(dataset, size, n);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) calling 'findNcheapItems' from 'main'
+    |
+    +--> 'findNcheapItems': events 3-4
+           |
+           |   90 | void findNcheapItems(Item* dataset, int size, int n) {
+           |      |      ^~~~~~~~~~~~~~~
+           |      |      |
+           |      |      (3) entry to 'findNcheapItems'
+           |   91 |     Heap* heap = createHeap(n);
+           |      |                  ~~~~~~~~~~~~~
+           |      |                  |
+           |      |                  (4) calling 'createHeap' from 'findNcheapItems'
+           |
+           +--> 'createHeap': events 5-10
+                  |
+                  |   40 | Heap* createHeap(int capacity) {
+                  |      |       ^~~~~~~~~~
+                  |      |       |
+                  |      |       (5) entry to 'createHeap'
+                  |......
+                  |   43 |     if(heap == NULL)
+                  |      |       ~
+                  |      |       |
+                  |      |       (6) following 'false' branch (when 'heap' is non-NULL)...
+                  |......
+                  |   46 |     heap->data = (Item*)malloc(sizeof(Item) * capacity);
+                  |      |                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                  |      |                         |
+                  |      |                         (7) ...to here
+                  |      |                         (8) region created on heap here
+                  |   47 | 
+                  |   48 |     if(heap->data == NULL) {
+                  |      |       ~
+                  |      |       |
+                  |      |       (9) following 'false' branch...
+                  |......
+                  |   53 |     heap->size = 0;
+                  |      |     ~~~~~~~~~~~~~~
+                  |      |                |
+                  |      |                (10) ...to here
+                  |
+           <------+
+           |
+         'findNcheapItems': events 11-18
+           |
+           |   91 |     Heap* heap = createHeap(n);
+           |      |                  ^~~~~~~~~~~~~
+           |      |                  |
+           |      |                  (11) returning to 'findNcheapItems' from 'createHeap'
+           |   92 | 
+           |   93 |     if(heap == NULL || heap->data == NULL)
+           |      |       ~           
+           |      |       |
+           |      |       (12) following 'false' branch...
+           |......
+           |   96 |     for (int i = 0; i < size; i++) {
+           |      |              ~      ~~~~~~~~
+           |      |              |        |
+           |      |              |        (14) following 'true' branch (when 'i < size')...
+           |      |              (13) ...to here
+           |   97 |         if (heap->size < n) {
+           |      |            ~~~~~~~~~~~
+           |      |            |    |
+           |      |            |    (15) ...to here
+           |      |            (16) following 'true' branch...
+           |   98 |             insert(heap, dataset[i]);
+           |      |             ~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |             |                   |
+           |      |             |                   (17) ...to here
+           |      |             (18) calling 'insert' from 'findNcheapItems'
+           |
+           +--> 'insert': events 19-23
+                  |
+                  |   58 | void insert(Heap* heap, Item item) {
+                  |      |      ^~~~~~
+                  |      |      |
+                  |      |      (19) entry to 'insert'
+                  |   59 |     if (heap->size == heap->capacity) {
+                  |      |        ~
+                  |      |        |
+                  |      |        (20) following 'false' branch...
+                  |......
+                  |   64 |     int i = heap->size;
+                  |      |         ~
+                  |      |         |
+                  |      |         (21) ...to here
+                  |......
+                  |   67 |     while (i > 0 && heap->data[(i - 1) / 2].price > heap->data[i].price) {
+                  |      |            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                  |      |                  |
+                  |      |                  (22) following 'false' branch (when 'i <= 0')...
+                  |......
+                  |   72 |     heap->size++;
+                  |      |     ~~~~~~~~~~
+                  |      |         |
+                  |      |         (23) ...to here
+                  |
+           <------+
+           |
+         'findNcheapItems': events 24-31
+           |
+           |   96 |     for (int i = 0; i < size; i++) {
+           |      |                     ~~~~~~~~
+           |      |                       |
+           |      |                       (25) following 'true' branch (when 'i < size')...
+           |   97 |         if (heap->size < n) {
+           |      |            ~~~~~~~~~~~
+           |      |            |    |
+           |      |            |    (26) ...to here
+           |      |            (27) following 'false' branch...
+           |   98 |             insert(heap, dataset[i]);
+           |      |             ^~~~~~~~~~~~~~~~~~~~~~~~
+           |      |             |
+           |      |             (24) returning to 'findNcheapItems' from 'insert'
+           |   99 |         }
+           |  100 |         else if (dataset[i].price < heap->data[0].price) {
+           |      |                 ~       ~
+           |      |                 |       |
+           |      |                 |       (28) ...to here
+           |      |                 (29) following 'true' branch...
+           |  101 |             extractMin(heap);
+           |      |             ~~~~~~~~~~~~~~~~
+           |      |             |
+           |      |             (30) ...to here
+           |      |             (31) calling 'extractMin' from 'findNcheapItems'
+           |
+           +--> 'extractMin': events 32-35
+                  |
+                  |   75 | Item extractMin(Heap* heap) {
+                  |      |      ^~~~~~~~~~
+                  |      |      |
+                  |      |      (32) entry to 'extractMin'
+                  |   76 |     if (heap->size == 0) {
+                  |      |        ~
+                  |      |        |
+                  |      |        (33) following 'false' branch...
+                  |......
+                  |   82 |     Item min = heap->data[0];
+                  |      |                ~~~~~~~~~~
+                  |      |                    |
+                  |      |                    (34) ...to here
+                  |......
+                  |   85 |     heapify(heap, 0);
+                  |      |     ~~~~~~~~~~~~~~~~
+                  |      |     |
+                  |      |     (35) calling 'heapify' from 'extractMin'
+                  |
+                  +--> 'heapify': events 36-39
+                         |
+                         |   23 | void heapify(Heap* heap, int index) {
+                         |      |      ^~~~~~~
+                         |      |      |
+                         |      |      (36) entry to 'heapify'
+                         |......
+                         |   28 |     if (left < heap->size && heap->data[left].price < heap->data[smallest].price)
+                         |      |        ~                     ~~~~~~~~~~~~~~~~~~~~~~
+                         |      |        |                         |           |
+                         |      |        |                         |           (39) use of uninitialized value '*_4 + _6.price' here
+                         |      |        |                         (38) ...to here
+                         |      |        (37) following 'true' branch...
+                         |
+-macosx_version_min has been renamed to -macos_version_min

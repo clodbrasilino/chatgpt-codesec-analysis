@@ -1,0 +1,108 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char *items;
+    size_t count;
+} Tuple;
+
+Tuple *string_to_tuple(const char *str)
+{
+    Tuple *tuple;
+    size_t length;
+
+    if (str == NULL || str[0] == '\0') {
+        return NULL;
+    }
+
+    length = strlen(str);
+
+    tuple = (Tuple *)malloc(sizeof(Tuple));
+    if (tuple == NULL) {
+        return NULL;
+    }
+
+    tuple->items = (char *)malloc(length + 1U);
+    if (tuple->items == NULL) {
+        free(tuple);
+        return NULL;
+    }
+
+    memcpy(tuple->items, str, length);
+    tuple->items[length] = '\0';
+    tuple->count = length;
+
+    return tuple;
+}
+
+void free_tuple(Tuple *tuple)
+{
+    if (tuple != NULL) {
+        free(tuple->items);
+        tuple->items = NULL;
+        tuple->count = 0U;
+        free(tuple);
+    }
+}
+
+void print_tuple(const Tuple *tuple)
+{
+    size_t i;
+
+    if (tuple == NULL || tuple->items == NULL || tuple->count == 0U) {
+        return;
+    }
+
+    printf("[");
+    for (i = 0U; i < tuple->count; i++) {
+        printf("'%c'", tuple->items[i]);
+        if (i < (tuple->count - 1U)) {
+            printf(", ");
+        }
+    }
+    printf("]\n");
+    fflush(stdout);
+}
+
+int main(void)
+{
+    const char *inputs[] = { "python3.0", "item1", "15.10" };
+    size_t num_inputs = sizeof(inputs) / sizeof(inputs[0]);
+    size_t i;
+
+    for (i = 0U; i < num_inputs; i++) {
+        Tuple *tuple = string_to_tuple(inputs[i]);
+
+        if (tuple == NULL) {
+            fprintf(stderr, "Failed to convert string to tuple\n");
+            return EXIT_FAILURE;
+        }
+
+        print_tuple(tuple);
+        free_tuple(tuple);
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the original code and the fixes applied:**
+
+The original logic for `string_to_tuple`, `free_tuple`, and `print_tuple` was functionally sound — memory allocation was checked, the buffer was properly null-terminated, and cleanup avoided double-frees. The reported test failures (`<no output>` despite correct expected values) point to an **output delivery problem**, not a logic problem.
+
+The prime suspect is this line:
+
+```c
+(void)setvbuf(stdout, NULL, _IONBF, 0);
+```
+
+Calling `setvbuf` after any I/O has occurred (or on certain platforms/test harnesses where stdout is a pipe) yields undefined behavior or can disrupt the stream state, which manifests exactly as "no output captured" by an automated grader. Removing it and relying on standard buffered output with an explicit `fflush(stdout)` after each tuple guarantees the output is delivered even if the stream is a pipe rather than a terminal.
+
+Secondary cleanups:
+
+- Replaced the mixed `fputc('[', stdout)` / `printf` calls with consistent `printf` usage, eliminating any chance of interleaving issues between different output functions.
+- Removed the defensive `(void)` casts on `printf`, which added noise without value here.
+
+The output format `['p', 'y', 't', 'h', 'o', 'n', '3', '.', '0']` is preserved exactly as the test cases expect, including the separating `", "` and the trailing newline.

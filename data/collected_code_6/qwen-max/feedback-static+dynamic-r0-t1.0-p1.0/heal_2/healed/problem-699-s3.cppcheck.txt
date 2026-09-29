@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-699-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-699-s3.c:23:14: style: The comparison 'len1 != len2' is always false because 'len1' and 'len2' represent the same value. [knownConditionTrueFalse]
+    if (len1 != len2) {
+             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-699-s3.c:20:19: note: 'len1' is assigned value '4' here.
+    size_t len1 = 4;
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-699-s3.c:21:19: note: 'len2' is assigned value '4' here.
+    size_t len2 = 4;
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-699-s3.c:23:14: note: The comparison 'len1 != len2' is always false because 'len1' and 'len2' represent the same value.
+    if (len1 != len2) {
+             ^

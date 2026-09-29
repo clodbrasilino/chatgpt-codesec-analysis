@@ -1,0 +1,89 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int value;
+    struct Node *next;
+} Node;
+
+typedef struct List {
+    Node *head;
+} List;
+
+List* create_list() {
+    List *list = (List*)malloc(sizeof(List));
+    list->head = NULL;
+    return list;
+}
+
+void add_node(List *list, int value) {
+    Node *new_node = (Node*)malloc(sizeof(Node));
+    new_node->value = value;
+    new_node->next = list->head;
+    list->head = new_node;
+}
+
+List* extract_column(List *lists[], int column_index, int num_lists) {
+    List *result = create_list();
+    for (int i = 0; i < num_lists; ++i) {
+        Node *current = lists[i]->head;
+        int index = 0;
+        while (current != NULL) {
+            if (index == column_index) {
+                add_node(result, current->value);
+                break;
+            }
+            current = current->next;
+            ++index;
+        }
+    }
+    return result;
+}
+
+void print_list(List *list) {
+    Node *current = list->head;
+    while (current != NULL) {
+        printf("%d ", current->value);
+        current = current->next;
+    }
+    printf("\n");
+}
+
+void free_list(List *list) {
+    Node *current = list->head;
+    while (current != NULL) {
+        Node *temp = current;
+        current = current->next;
+        free(temp);
+    }
+    free(list);
+}
+
+int main() {
+    List *lists[3];
+    for (int i = 0; i < 3; ++i) {
+        lists[i] = create_list();
+    }
+
+    add_node(lists[0], 3);
+    add_node(lists[0], 2);
+    add_node(lists[0], 1);
+
+    add_node(lists[1], 6);
+    add_node(lists[1], 5);
+    add_node(lists[1], 4);
+
+    add_node(lists[2], 9);
+    add_node(lists[2], 8);
+    add_node(lists[2], 7);
+
+    List *column = extract_column(lists, 1, 3);
+    print_list(column);
+
+    for (int i = 0; i < 3; ++i) {
+        free_list(lists[i]);
+    }
+    free_list(column);
+
+    return 0;
+}

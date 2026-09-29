@@ -1,0 +1,84 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Tuple {
+    int* values;
+    size_t size;
+} Tuple;
+
+typedef struct TupleList {
+    Tuple* tuples;
+    size_t size;
+} TupleList;
+
+TupleList* removeNoneValuesTuples(TupleList* list) {
+    TupleList* newList = malloc(sizeof(TupleList));
+    int nonNullTuples = 0;
+    for(int i=0; i < list->size; i++) {
+        int isAllNull = 1;
+        for(int j=0; j < list->tuples[i].size; j++) {
+            if(list->tuples[i].values[j] != 0) {
+                isAllNull = 0;
+                break;
+            }
+        }
+        if(!isAllNull) {
+            nonNullTuples++;
+        }
+    }
+
+    newList->tuples = malloc(sizeof(Tuple) * nonNullTuples);
+    newList->size = nonNullTuples;
+
+    int m = 0;
+    for(int i=0; i < list->size; i++) {
+        int isAllNull = 1;
+        for(int j=0; j < list->tuples[i].size; j++) {
+            if(list->tuples[i].values[j] != 0) {
+                isAllNull = 0;
+                break;
+            }
+        }
+        if(!isAllNull) {
+            newList->tuples[m] = list->tuples[i];
+            m++;
+        }
+    }
+
+    free(list->tuples);
+    free(list);
+    return newList;
+}
+
+int main() {
+    TupleList* list = malloc(sizeof(TupleList));
+    list->size = 3;
+
+    list->tuples = malloc(sizeof(Tuple) * list->size);
+
+    for(int i = 0; i < list->size; i++) {
+       list->tuples[i].values = malloc(sizeof(int) * 3);
+       list->tuples[i].size = 3;
+       for(int j = 0; j < 3; j++) {
+           list->tuples[i].values[j] = (i == j) ? 0 : i+j;
+       }
+    }
+
+    TupleList* newList = removeNoneValuesTuples(list);
+
+    for(int i=0; i<newList->size; i++) {
+        for(int j=0; j< newList->tuples[i].size; j++) {
+            printf("%d ", newList->tuples[i].values[j]);
+        }
+	printf("\n");
+    }
+
+    for(int i=0; i<newList->size; i++) {
+        free(newList->tuples[i].values);
+    }
+
+    free(newList->tuples);
+    free(newList);
+
+    return 0;
+}

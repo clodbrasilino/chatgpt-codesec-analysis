@@ -1,0 +1,70 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int* remove_duplicates(const int* tuple, size_t size, size_t* new_size) {
+    if (tuple == NULL || new_size == NULL) {
+        return NULL;
+    }
+    
+    if (size == 0) {
+        *new_size = 0;
+        int* empty = malloc(sizeof(int));
+        return empty;
+    }
+    
+    int* result = malloc(size * sizeof(int));
+    if (result == NULL) {
+        return NULL;
+    }
+    
+    size_t count = 0;
+    for (size_t i = 0; i < size; i++) {
+        int is_duplicate = 0;
+        for (size_t j = 0; j < count; j++) {
+            if (result[j] == tuple[i]) {
+                is_duplicate = 1;
+                break;
+            }
+        }
+        if (!is_duplicate) {
+            result[count] = tuple[i];
+            count++;
+        }
+    }
+    
+    int* final_result = realloc(result, count * sizeof(int));
+    if (final_result == NULL) {
+        *new_size = count;
+        return result;
+    }
+    
+    *new_size = count;
+    return final_result;
+}
+
+int main(void) {
+    int tuple[] = {1, 2, 3, 2, 4, 5, 1, 6, 3};
+    size_t size = sizeof(tuple) / sizeof(tuple[0]);
+    size_t new_size = 0;
+    
+    int* result = remove_duplicates(tuple, size, &new_size);
+    if (result == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("Original tuple: ");
+    for (size_t i = 0; i < size; i++) {
+        printf("%d ", tuple[i]);
+    }
+    printf("\n");
+    
+    printf("Tuple without duplicates: ");
+    for (size_t i = 0; i < new_size; i++) {
+        printf("%d ", result[i]);
+    }
+    printf("\n");
+    
+    free(result);
+    return EXIT_SUCCESS;
+}

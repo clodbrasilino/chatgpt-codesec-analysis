@@ -1,0 +1,6 @@
+collected_code/problem-627-0.c:14:16: error: Cannot determine that 'arr[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        if (arr[i] > 0 && arr[i] <= n) {
+               ^
+collected_code/problem-627-0.c:15:22: error: Cannot determine that 'arr[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+            count[arr[i]]++;
+                     ^

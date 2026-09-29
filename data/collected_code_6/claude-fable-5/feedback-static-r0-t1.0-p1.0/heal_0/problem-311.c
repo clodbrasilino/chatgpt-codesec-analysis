@@ -1,0 +1,46 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+unsigned int set_leftmost_unset_bit(unsigned int n)
+{
+    unsigned int temp;
+    unsigned int pos;
+    int i;
+
+    if (n == 0U) {
+        return 1U;
+    }
+
+    if ((n & (n + 1U)) == 0U) {
+        return n;
+    }
+
+    pos = 0U;
+    temp = n;
+    i = 0;
+    while (temp != 0U) {
+        if ((temp & 1U) == 0U) {
+            pos = (unsigned int)i;
+        }
+        temp >>= 1U;
+        i++;
+    }
+
+    return n | (1U << pos);
+}
+
+int main(void)
+{
+    unsigned int values[] = { 10U, 15U, 0U, 21U, 30U };
+    size_t count = sizeof(values) / sizeof(values[0]);
+    size_t i;
+
+    for (i = 0U; i < count; i++) {
+        unsigned int result = set_leftmost_unset_bit(values[i]);
+        if (printf("Input: %u -> Output: %u\n", values[i], result) < 0) {
+            return EXIT_FAILURE;
+        }
+    }
+
+    return EXIT_SUCCESS;
+}

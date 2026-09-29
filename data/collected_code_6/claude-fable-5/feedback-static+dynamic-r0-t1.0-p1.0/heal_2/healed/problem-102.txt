@@ -1,0 +1,88 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+char *snake_to_camel(const char *snake)
+{
+    size_t len;
+    size_t i;
+    size_t j;
+    char *camel;
+    int capitalize_next;
+
+    if (snake == NULL) {
+        return NULL;
+    }
+
+    len = strlen(snake);
+    camel = malloc(len + 1);
+    if (camel == NULL) {
+        return NULL;
+    }
+
+    capitalize_next = 1;
+    j = 0;
+    for (i = 0; i < len; i++) {
+        if (snake[i] == '_') {
+            capitalize_next = 1;
+        } else {
+            if (capitalize_next != 0) {
+                camel[j] = (char)toupper((unsigned char)snake[i]);
+                capitalize_next = 0;
+            } else {
+                camel[j] = (char)tolower((unsigned char)snake[i]);
+            }
+            j++;
+        }
+    }
+    camel[j] = '\0';
+
+    return camel;
+}
+
+int main(void)
+{
+    char input[1024];
+    char *result;
+    size_t len;
+
+    if (fgets(input, sizeof(input), stdin) == NULL) {
+        fprintf(stderr, "No input provided\n");
+        return EXIT_FAILURE;
+    }
+
+    len = strlen(input);
+    while (len > 0 && (input[len - 1] == '\n' || input[len - 1] == '\r')) {
+        input[len - 1] = '\0';
+        len--;
+    }
+
+    result = snake_to_camel(input);
+    if (result == NULL) {
+        fprintf(stderr, "Conversion failed\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("%s\n", result) < 0) {
+        free(result);
+        return EXIT_FAILURE;
+    }
+
+    free(result);
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the changes made:**
+
+1. **Root cause of the failed test cases:** The test failures (`expected 'PythonProgram', got <no output>`) indicate the test harness supplies input via **stdin** and expects the converted string as the sole output. The original program ignored stdin entirely, hardcoded `"hello_world_example"`, and printed decorated output (`Input: ...` / `Output: ...`) that would never match the expected values. The rewrite reads from stdin with `fgets()` and prints only the converted result.
+
+2. **Flawfinder CWE-126 (`strlen` over-read):** The concern is mitigated because the input buffer is guaranteed to be NUL-terminated — `fgets()` always terminates the buffer, and the bounded read (`sizeof(input)`) prevents overflow. Within `snake_to_camel`, the NULL check remains as a guard before `strlen` is called.
+
+3. **Robustness retained/added:**
+   - Trailing `\n` and `\r` are stripped so Windows-style line endings don't corrupt the output.
+   - `malloc` failure, `fgets` failure, and `printf` failure are all checked.
+   - `toupper`/`tolower` still receive `(unsigned char)` casts, avoiding undefined behavior for negative `char` values.
+   - `free(result)` is called on all exit paths after allocation, so there are no memory leaks.

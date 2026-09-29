@@ -1,0 +1,6 @@
+collected_code/problem-281-0.c:9:21: error: Cannot determine that 'list[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+            if (list[i] == list[j])
+                    ^
+collected_code/problem-281-0.c:9:32: error: Cannot determine that 'list[j]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+            if (list[i] == list[j])
+                               ^

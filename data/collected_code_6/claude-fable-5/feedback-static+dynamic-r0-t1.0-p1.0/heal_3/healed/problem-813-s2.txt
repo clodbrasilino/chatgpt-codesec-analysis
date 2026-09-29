@@ -1,0 +1,64 @@
+```c
+#include <stdio.h>
+#include <stddef.h>
+#include <string.h>
+
+#define BUFFER_SIZE 256
+
+size_t string_length(const char *str)
+{
+    size_t length = 0;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    while (str[length] != '\0') {
+        length++;
+    }
+
+    return length;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t length;
+    size_t i;
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    i = 0;
+    while (i < sizeof(buffer) && buffer[i] != '\0') {
+        if (buffer[i] == '\n') {
+            buffer[i] = '\0';
+            break;
+        }
+        i++;
+    }
+
+    length = string_length(buffer);
+
+    printf("%zu\n", length);
+
+    return 0;
+}
+```
+
+**Analysis of the changes:**
+
+The key issue identified in the comments was the failing test cases — all three expected a plain numeric output (`6`, `7`, `8`) but got `<no output>`. The root cause was the output format: the original program printed an interactive prompt (`"Enter a string: "`) and a verbose result line (`"Length of the string: %zu\n"`). Automated test harnesses comparing stdout against a bare number would fail to match. The fix removes the prompt and prints only the length followed by a newline.
+
+Regarding the Flawfinder warning (CWE-119/CWE-120) on the statically-sized `buffer`: this is a low-risk informational hit. The code already mitigates it correctly by:
+
+- Using `fgets()` with `sizeof(buffer)`, which guarantees no overflow on read.
+- Forcing null termination at `buffer[sizeof(buffer) - 1]` as a defensive measure.
+- Bounds-checking the newline-stripping loop with `i < sizeof(buffer)`.
+- Guarding against `NULL` in `string_length()`.
+
+No further changes were required for memory safety; the failing tests were purely an output-format defect, not a buffer weakness.

@@ -1,0 +1,90 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+typedef struct {
+    int *data;
+    size_t size;
+} IntList;
+
+void free_list(IntList *list) {
+    if (list != NULL) {
+        if (list->data != NULL) {
+            free(list->data);
+            list->data = NULL;
+        }
+        list->size = 0;
+    }
+}
+
+bool is_in_list(int value, const IntList *list) {
+    if (list == NULL || list->data == NULL) {
+        return false;
+    }
+    for (size_t i = 0; i < list->size; ++i) {
+        if (list->data[i] == value) {
+            return true;
+        }
+    }
+    return false;
+}
+
+IntList get_difference(const IntList *list1, const IntList *list2) {
+    IntList result = {NULL, 0};
+
+    if (list1 == NULL || list1->data == NULL || list2 == NULL) {
+        return result;
+    }
+
+    if (list1->size == 0) {
+        return result;
+    }
+
+    result.data = (int *)malloc(list1->size * sizeof(int));
+    if (result.data == NULL) {
+        return result;
+    }
+
+    size_t count = 0;
+    for (size_t i = 0; i < list1->size; ++i) {
+        if (!is_in_list(list1->data[i], list2)) {
+            result.data[count] = list1->data[i];
+            count++;
+        }
+    }
+
+    if (count == 0) {
+        free(result.data);
+        result.data = NULL;
+        result.size = 0;
+        return result;
+    }
+
+    if (count < list1->size) {
+        int *resized = (int *)realloc(result.data, count * sizeof(int));
+        if (resized != NULL) {
+            result.data = resized;
+        }
+    }
+
+    result.size = count;
+    return result;
+}
+
+int main(void) {
+    int arr1[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    int arr2[] = {2, 4, 6, 8, 10};
+
+    IntList list1 = {arr1, sizeof(arr1) / sizeof(arr1[0])};
+    IntList list2 = {arr2, sizeof(arr2) / sizeof(arr2[0])};
+
+    IntList diff = get_difference(&list1, &list2);
+
+    for (size_t i = 0; i < diff.size; ++i) {
+        printf("%d\n", diff.data[i]);
+    }
+
+    free_list(&diff);
+
+    return 0;
+}

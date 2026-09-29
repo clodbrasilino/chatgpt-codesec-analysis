@@ -1,0 +1,83 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int** find_pairs(int* arr, int size, int target, int* pair_count) {
+    if (size < 2) {
+        *pair_count = 0;
+        return NULL;
+    }
+
+    int capacity = 10;
+    int** pairs = (int**)malloc(capacity * sizeof(int*));
+    if (pairs == NULL) {
+        *pair_count = 0;
+        return NULL;
+    }
+
+    *pair_count = 0;
+
+    for (int i = 0; i < size - 1; i++) {
+        for (int j = i + 1; j < size; j++) {
+            if (arr[i] + arr[j] == target) {
+                if (*pair_count >= capacity) {
+                    capacity *= 2;
+                    int** temp = (int**)realloc(pairs, capacity * sizeof(int*));
+                    if (temp == NULL) {
+                        for (int k = 0; k < *pair_count; k++) {
+                            free(pairs[k]);
+                        }
+                        free(pairs);
+                        *pair_count = 0;
+                        return NULL;
+                    }
+                    pairs = temp;
+                }
+
+                pairs[*pair_count] = (int*)malloc(2 * sizeof(int));
+                if (pairs[*pair_count] == NULL) {
+                    for (int k = 0; k < *pair_count; k++) {
+                        free(pairs[k]);
+                    }
+                    free(pairs);
+                    *pair_count = 0;
+                    return NULL;
+                }
+
+                pairs[*pair_count][0] = arr[i];
+                pairs[*pair_count][1] = arr[j];
+                (*pair_count)++;
+            }
+        }
+    }
+
+    return pairs;
+}
+
+int main(void) {
+    int arr[] = {1, 4, 3, 2, 5, 7, 8, 6, 9, 0, -1, 11, 10};
+    int size = sizeof(arr) / sizeof(arr[0]);
+    int target = 10;
+    int pair_count = 0;
+
+    int** pairs = find_pairs(arr, size, target, &pair_count);
+
+    if (pairs == NULL && pair_count > 0) {
+        printf("Memory allocation failed.\n");
+        return 1;
+    }
+
+    printf("Pairs with sum %d:\n", target);
+    for (int i = 0; i < pair_count; i++) {
+        printf("(%d, %d)\n", pairs[i][0], pairs[i][1]);
+    }
+    printf("Total pairs: %d\n", pair_count);
+
+    for (int i = 0; i < pair_count; i++) {
+        free(pairs[i]);
+    }
+    free(pairs);
+
+    return 0;
+}
+```

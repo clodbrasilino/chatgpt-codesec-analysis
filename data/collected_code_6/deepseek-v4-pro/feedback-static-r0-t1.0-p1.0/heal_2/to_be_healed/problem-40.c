@@ -1,0 +1,134 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int value;
+    int frequency;
+    struct Node* next;
+} Node;
+
+typedef struct {
+    Node* head;
+} FrequencyList;
+
+Node* create_node(int value) {
+    Node* new_node = (Node*)malloc(sizeof(Node));
+    if (new_node == NULL) {
+        return NULL;
+    }
+    new_node->value = value;
+    new_node->frequency = 1;
+    new_node->next = NULL;
+    return new_node;
+}
+
+void add_frequency(FrequencyList* list, int value) {
+    if (list == NULL) {
+        return;
+    }
+    
+    Node* current = list->head;
+    Node* prev = NULL;
+    
+    while (current != NULL && current->value != value) {
+        prev = current;
+        current = current->next;
+    }
+    
+    if (current != NULL) {
+        current->frequency++;
+        return;
+    }
+    
+    Node* new_node = create_node(value);
+    if (new_node == NULL) {
+        return;
+    }
+    
+    if (prev == NULL) {
+        new_node->next = list->head;
+        list->head = new_node;
+    } else {
+        prev->next = new_node;
+        new_node->next = current;
+    }
+}
+
+void free_frequency_list(FrequencyList* list) {
+    if (list == NULL) {
+        return;
+    }
+    
+    Node* current = list->head;
+    while (current != NULL) {
+        Node* next = current->next;
+        free(current);
+        current = next;
+    }
+    
+    list->head = NULL;
+}
+
+FrequencyList* find_frequency(int** lists, int num_lists, const int* list_sizes) {
+    if (lists == NULL || list_sizes == NULL || num_lists <= 0) {
+        return NULL;
+    }
+    
+    FrequencyList* freq_list = (FrequencyList*)malloc(sizeof(FrequencyList));
+    if (freq_list == NULL) {
+        return NULL;
+    }
+    
+    freq_list->head = NULL;
+    
+    for (int i = 0; i < num_lists; i++) {
+        if (lists[i] == NULL || list_sizes[i] <= 0) {
+            continue;
+        }
+        
+        for (int j = 0; j < list_sizes[i]; j++) {
+            add_frequency(freq_list, lists[i][j]);
+        }
+    }
+    
+    return freq_list;
+}
+
+void print_frequencies(const FrequencyList* list) {
+    if (list == NULL) {
+        printf("Frequency list is NULL\n");
+        return;
+    }
+    
+    Node* current = list->head;
+    while (current != NULL) {
+        printf("Element %d: %d time(s)\n", current->value, current->frequency);
+        current = current->next;
+    }
+}
+
+int main(void) {
+    int list1[] = {1, 2, 3, 4, 5};
+    int list2[] = {2, 3, 5, 7};
+    int list3[] = {1, 5, 8, 9, 5};
+    
+    int* lists[] = {list1, list2, list3};
+    /* Possible weaknesses found:
+     *  Variable 'list_sizes' can be declared as const array [constVariable]
+     */
+    int list_sizes[] = {5, 4, 5};
+    
+    FrequencyList* result = find_frequency(lists, 3, list_sizes);
+    
+    if (result == NULL) {
+        printf("Failed to create frequency list\n");
+        return 1;
+    }
+    
+    print_frequencies(result);
+    
+    free_frequency_list(result);
+    free(result);
+    
+    return 0;
+}

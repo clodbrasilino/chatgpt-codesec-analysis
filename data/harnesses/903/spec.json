@@ -1,0 +1,44 @@
+{
+  "task_id": 903,
+  "text": "Write a C function to count the total unset bits from 1 to n.",
+  "fn_candidates": [
+    "count_Unset_Bits",
+    "CountUnsetBits",
+    "countUnsetBits",
+    "countUnsetBits"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "count_Unset_Bits",
+      "args": [
+        2
+      ],
+      "expected": 1,
+      "assert_src": "assert count_Unset_Bits(2) == 1"
+    },
+    {
+      "fn_name": "count_Unset_Bits",
+      "args": [
+        5
+      ],
+      "expected": 4,
+      "assert_src": "assert count_Unset_Bits(5) == 4"
+    },
+    {
+      "fn_name": "count_Unset_Bits",
+      "args": [
+        14
+      ],
+      "expected": 17,
+      "assert_src": "assert count_Unset_Bits(14) == 17"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

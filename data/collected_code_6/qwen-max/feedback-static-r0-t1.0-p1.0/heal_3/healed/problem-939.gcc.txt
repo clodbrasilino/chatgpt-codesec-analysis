@@ -1,0 +1,61 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-939.c: In function 'main':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-939.c:34:11: error: field name not in record or union initializer
+   34 |         {{.key = "name", .value = "Alice"}, {.key = "age", .value = "30"}, .count = 2},
+      |           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-939.c:34:11: note: (near initialization for 'dictionaries[0].entries')
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-939.c:34:26: error: field name not in record or union initializer
+   34 |         {{.key = "name", .value = "Alice"}, {.key = "age", .value = "30"}, .count = 2},
+      |                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-939.c:34:26: note: (near initialization for 'dictionaries[0].entries')
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-939.c:34:46: error: field name not in record or union initializer
+   34 |         {{.key = "name", .value = "Alice"}, {.key = "age", .value = "30"}, .count = 2},
+      |                                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-939.c:34:46: note: (near initialization for 'dictionaries[0].count')
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-939.c:34:53: error: initialization of 'int' from 'char *' makes integer from pointer without a cast [-Wint-conversion]
+   34 |         {{.key = "name", .value = "Alice"}, {.key = "age", .value = "30"}, .count = 2},
+      |                                                     ^~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-939.c:34:53: note: (near initialization for 'dictionaries[0].count')
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-939.c:34:60: error: field name not in record or union initializer
+   34 |         {{.key = "name", .value = "Alice"}, {.key = "age", .value = "30"}, .count = 2},
+      |                                                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-939.c:34:60: note: (near initialization for 'dictionaries[0].count')
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-939.c:35:11: error: field name not in record or union initializer
+   35 |         {{.key = "name", .value = "Bob"}, {.key = "age", .value = "25"}, .count = 2},
+      |           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-939.c:35:11: note: (near initialization for 'dictionaries[1].entries')
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-939.c:35:26: error: field name not in record or union initializer
+   35 |         {{.key = "name", .value = "Bob"}, {.key = "age", .value = "25"}, .count = 2},
+      |                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-939.c:35:26: note: (near initialization for 'dictionaries[1].entries')
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-939.c:35:44: error: field name not in record or union initializer
+   35 |         {{.key = "name", .value = "Bob"}, {.key = "age", .value = "25"}, .count = 2},
+      |                                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-939.c:35:44: note: (near initialization for 'dictionaries[1].count')
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-939.c:35:51: error: initialization of 'int' from 'char *' makes integer from pointer without a cast [-Wint-conversion]
+   35 |         {{.key = "name", .value = "Bob"}, {.key = "age", .value = "25"}, .count = 2},
+      |                                                   ^~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-939.c:35:51: note: (near initialization for 'dictionaries[1].count')
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-939.c:35:58: error: field name not in record or union initializer
+   35 |         {{.key = "name", .value = "Bob"}, {.key = "age", .value = "25"}, .count = 2},
+      |                                                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-939.c:35:58: note: (near initialization for 'dictionaries[1].count')
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-939.c:36:11: error: field name not in record or union initializer
+   36 |         {{.key = "name", .value = "Charlie"}, {.key = "age", .value = "35"}, .count = 2}
+      |           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-939.c:36:11: note: (near initialization for 'dictionaries[2].entries')
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-939.c:36:26: error: field name not in record or union initializer
+   36 |         {{.key = "name", .value = "Charlie"}, {.key = "age", .value = "35"}, .count = 2}
+      |                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-939.c:36:26: note: (near initialization for 'dictionaries[2].entries')
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-939.c:36:48: error: field name not in record or union initializer
+   36 |         {{.key = "name", .value = "Charlie"}, {.key = "age", .value = "35"}, .count = 2}
+      |                                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-939.c:36:48: note: (near initialization for 'dictionaries[2].count')
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-939.c:36:55: error: initialization of 'int' from 'char *' makes integer from pointer without a cast [-Wint-conversion]
+   36 |         {{.key = "name", .value = "Charlie"}, {.key = "age", .value = "35"}, .count = 2}
+      |                                                       ^~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-939.c:36:55: note: (near initialization for 'dictionaries[2].count')
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-939.c:36:62: error: field name not in record or union initializer
+   36 |         {{.key = "name", .value = "Charlie"}, {.key = "age", .value = "35"}, .count = 2}
+      |                                                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-939.c:36:62: note: (near initialization for 'dictionaries[2].count')

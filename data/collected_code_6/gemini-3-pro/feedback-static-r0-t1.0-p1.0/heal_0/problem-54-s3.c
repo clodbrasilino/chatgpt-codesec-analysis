@@ -1,0 +1,48 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+void countingSort(int arr[], int n) {
+    if (n <= 1) {
+        return;
+    }
+
+    int max = arr[0];
+    for (int i = 1; i < n; i++) {
+        if (arr[i] > max) {
+            max = arr[i];
+        }
+    }
+
+    int *count = (int *)calloc(max + 1, sizeof(int));
+    if (count == NULL) {
+        return;
+    }
+
+    for (int i = 0; i < n; i++) {
+        count[arr[i]]++;
+    }
+
+    int index = 0;
+    for (int i = 0; i <= max; i++) {
+        while (count[i] > 0) {
+            arr[index++] = i;
+            count[i]--;
+        }
+    }
+
+    free(count);
+}
+
+int main() {
+    int arr[] = {4, 2, 2, 8, 3, 3, 1};
+    int n = sizeof(arr) / sizeof(arr[0]);
+
+    countingSort(arr, n);
+
+    for (int i = 0; i < n; i++) {
+        printf("%d ", arr[i]);
+    }
+    printf("\n");
+
+    return 0;
+}

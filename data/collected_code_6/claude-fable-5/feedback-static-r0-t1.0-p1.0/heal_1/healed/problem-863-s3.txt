@@ -1,0 +1,97 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+static int compare_ints(const void *a, const void *b)
+{
+    int x = *(const int *)a;
+    int y = *(const int *)b;
+
+    if (x < y) {
+        return -1;
+    }
+    if (x > y) {
+        return 1;
+    }
+    return 0;
+}
+
+static int longest_consecutive_subsequence(const int *arr, size_t n)
+{
+    int *sorted = NULL;
+    size_t i;
+    size_t bytes;
+    int max_len;
+    int current_len;
+
+    if (arr == NULL || n == 0) {
+        return 0;
+    }
+
+    if (n > SIZE_MAX / sizeof(*sorted)) {
+        return -1;
+    }
+
+    bytes = n * sizeof(*sorted);
+
+    sorted = malloc(bytes);
+    if (sorted == NULL) {
+        return -1;
+    }
+
+    memcpy(sorted, arr, bytes);
+    qsort(sorted, n, sizeof(*sorted), compare_ints);
+
+    max_len = 1;
+    current_len = 1;
+
+    for (i = 1; i < n; i++) {
+        if (sorted[i] == sorted[i - 1]) {
+            continue;
+        }
+        if (sorted[i] == sorted[i - 1] + 1) {
+            current_len++;
+            if (current_len > max_len) {
+                max_len = current_len;
+            }
+        } else {
+            current_len = 1;
+        }
+    }
+
+    free(sorted);
+    return max_len;
+}
+
+int main(void)
+{
+    int arr[] = {1, 9, 3, 10, 4, 20, 2};
+    size_t n = sizeof(arr) / sizeof(arr[0]);
+    int result;
+
+    result = longest_consecutive_subsequence(arr, n);
+    if (result < 0) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Length of the longest consecutive subsequence is %d\n", result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the fix applied:**
+
+The original code's flawfinder warning on `memcpy` (CWE-120) flagged the possibility of a buffer overflow when copying data to the destination. While the original code was already largely safe — the destination was allocated with exactly `n * sizeof(*sorted)` bytes, the same size used for the copy — there was one latent weakness: the expression `n * sizeof(*sorted)` could suffer **integer overflow** on `size_t` if `n` were sufficiently large. In that case, `malloc` would allocate a small wrapped-around buffer, and `memcpy` would then write far beyond it, producing a genuine heap buffer overflow.
+
+The rewritten version addresses this by:
+
+1. **Overflow guard:** `if (n > SIZE_MAX / sizeof(*sorted)) return -1;` ensures the multiplication cannot wrap, requiring `<stdint.h>` for `SIZE_MAX`.
+2. **Single computed size:** The byte count is computed once into `bytes` and used consistently for both `malloc` and `memcpy`, guaranteeing the destination can always hold the copied source data — directly satisfying the flawfinder recommendation.
+
+All other behavior (NULL/zero-length handling, allocation-failure reporting via `-1`, checked `printf` return, and proper `free`) is preserved from the original.

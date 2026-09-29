@@ -1,0 +1,140 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+#include <inttypes.h>
+#include <errno.h>
+#include <ctype.h>
+ /* Possible weaknesses found:
+  *  include '<string.h>' or provide a declaration of 'strchr'
+  */
+
+static int read_intmax(intmax_t *value)
+{
+    if (value == NULL) {
+        return -1;
+    }
+
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char buffer[128];
+
+    if (fgets(buffer, sizeof buffer, stdin) == NULL) {
+        return -1;
+    }
+
+    /* Possible weaknesses found:
+     *  implicit declaration of function 'strchr' [-Wimplicit-function-declaration]
+     *  call to undeclared library function 'strchr' with type 'char *(const char *, int)'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     *  include the header <string.h> or explicitly provide a declaration for 'strchr'
+     */
+    if (strchr(buffer, '\n') == NULL && !feof(stdin)) {
+        int ch;
+
+        /* Possible weaknesses found:
+         * Flawfinder getchar: Check buffer boundaries if used in a loop including recursive loops (CWE-120, CWE-20). (risk 1, buffer)
+         */
+        while ((ch = getchar()) != '\n' && ch != EOF) {
+        }
+
+        return -1;
+    }
+
+    char *start = buffer;
+
+    while (isspace((unsigned char)*start)) {
+        ++start;
+    }
+
+    errno = 0;
+    char *end = NULL;
+    intmax_t parsed = strtoimax(start, &end, 10);
+
+    if (start == end || errno == ERANGE) {
+        return -1;
+    }
+
+    while (isspace((unsigned char)*end)) {
+        ++end;
+    }
+
+    if (*end != '\0') {
+        return -1;
+    }
+
+    *value = parsed;
+    return 0;
+}
+
+static int largest_adjacent_product(const int32_t *values,
+                                    size_t count,
+                                    int64_t *result)
+{
+    if (values == NULL || result == NULL || count < 2) {
+        return -1;
+    }
+
+    int64_t largest = (int64_t)values[0] * (int64_t)values[1];
+
+    for (size_t i = 1; i < count - 1; ++i) {
+        int64_t product = (int64_t)values[i] * (int64_t)values[i + 1];
+
+        if (product > largest) {
+            largest = product;
+        }
+    }
+
+    *result = largest;
+    return 0;
+}
+
+int main(void)
+{
+    intmax_t count_input;
+
+    if (read_intmax(&count_input) != 0 ||
+        count_input < 2 ||
+        (uintmax_t)count_input > (uintmax_t)(SIZE_MAX / sizeof(int32_t))) {
+        fputs("Invalid input\n", stderr);
+        return EXIT_FAILURE;
+    }
+
+    size_t count = (size_t)count_input;
+    int32_t *values = malloc(count * sizeof *values);
+
+    if (values == NULL) {
+        perror("malloc");
+        return EXIT_FAILURE;
+    }
+
+    for (size_t i = 0; i < count; ++i) {
+        intmax_t input;
+
+        if (read_intmax(&input) != 0 ||
+            input < INT32_MIN ||
+            input > INT32_MAX) {
+            fputs("Invalid input\n", stderr);
+            free(values);
+            return EXIT_FAILURE;
+        }
+
+        values[i] = (int32_t)input;
+    }
+
+    int64_t result;
+
+    if (largest_adjacent_product(values, count, &result) != 0) {
+        fputs("Unable to calculate product\n", stderr);
+        free(values);
+        return EXIT_FAILURE;
+    }
+
+    if (printf("%" PRId64 "\n", result) < 0) {
+        fputs("Output error\n", stderr);
+        free(values);
+        return EXIT_FAILURE;
+    }
+
+    free(values);
+    return EXIT_SUCCESS;
+}

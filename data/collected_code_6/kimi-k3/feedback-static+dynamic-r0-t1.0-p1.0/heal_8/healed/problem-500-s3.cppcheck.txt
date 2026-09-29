@@ -1,0 +1,16 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-500-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-500-s3.c:66:21: style: Condition 'len<=dest_remaining' is always true [knownConditionTrueFalse]
+            if (len <= dest_remaining) {
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-500-s3.c:59:17: note: Assuming that condition 'len>remaining' is not redundant
+        if (len > remaining) {
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-500-s3.c:57:26: note: remaining is assigned 'total_length-offset' here.
+        size_t remaining = total_length - offset;
+                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-500-s3.c:65:50: note: Assignment 'dest_remaining=total_length-offset', assigned value is greater than symbolic=len-1
+            size_t dest_remaining = total_length - offset;
+                                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-500-s3.c:66:21: note: Condition 'len<=dest_remaining' is always true
+            if (len <= dest_remaining) {
+                    ^

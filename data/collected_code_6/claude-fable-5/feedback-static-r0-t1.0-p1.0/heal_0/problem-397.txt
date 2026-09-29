@@ -1,0 +1,38 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+double median_of_three(double a, double b, double c);
+
+double median_of_three(double a, double b, double c)
+{
+    if ((a >= b && a <= c) || (a <= b && a >= c)) {
+        return a;
+    }
+    if ((b >= a && b <= c) || (b <= a && b >= c)) {
+        return b;
+    }
+    return c;
+}
+
+int main(void)
+{
+    double x;
+    double y;
+    double z;
+    double result;
+    int scanned;
+
+    printf("Enter three numbers: ");
+    scanned = scanf("%lf %lf %lf", &x, &y, &z);
+    if (scanned != 3) {
+        fprintf(stderr, "Error: invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    result = median_of_three(x, y, z);
+    printf("Median: %f\n", result);
+
+    return EXIT_SUCCESS;
+}
+```

@@ -1,0 +1,44 @@
+{
+  "task_id": 67,
+  "text": "Write a C function to find the number of ways to partition a set of bell numbers.",
+  "fn_candidates": [
+    "bell_number",
+    "BellNumber",
+    "bellNumber",
+    "bellnumber"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "bell_number",
+      "args": [
+        2
+      ],
+      "expected": 2,
+      "assert_src": "assert bell_number(2)==2"
+    },
+    {
+      "fn_name": "bell_number",
+      "args": [
+        10
+      ],
+      "expected": 115975,
+      "assert_src": "assert bell_number(10)==115975"
+    },
+    {
+      "fn_name": "bell_number",
+      "args": [
+        56
+      ],
+      "expected": 6775685320645824322581483068371419745979053216268760300,
+      "assert_src": "assert bell_number(56)==6775685320645824322581483068371419745979053216268760300"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

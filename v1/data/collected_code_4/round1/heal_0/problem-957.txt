@@ -1,0 +1,28 @@
+```c
+#include <stdio.h>
+
+// Function to get the rightmost set bit
+int rightmostSetBit(int n){
+    if (n == 0) {
+        return -1;
+    }
+    return log2(n & -n) + 1;
+}
+
+// Main function
+int main() {
+    int n;
+    printf("Enter a number: ");
+    scanf("%d", &n);
+
+    int position = rightmostSetBit(n);
+    if (position == -1) {
+        printf("There are no set bits in the number.\n");
+    } else {  
+        printf("The position of the rightmost set bit in the number is %d.\n", position);
+    }
+
+    return 0;
+}
+```
+Note: For getting the position of the rightmost set bit, we are doing bitwise AND of n and two's complement of n. The result of this operation will only have a single bit set (the rightmost set bit of n). The reason is that two's complement of a number has all bits reversed except for the rightmost set bit. When we do bitwise AND of n and two's complement of it, all bits are cleared to 0 except for the rightmost set bit. Then we use log2 to calculate the position of this bit, added 1 because bit positions start from 1 (not 0). If n is 0, then there's no set bit so we return -1. In the main function after we get the position, we are checking whether it's -1. If yes, we print a message saying there's no set bit, otherwise we output the position.

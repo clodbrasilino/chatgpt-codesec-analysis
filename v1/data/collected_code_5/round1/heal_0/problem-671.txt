@@ -1,0 +1,16 @@
+```C
+#include <stdio.h>
+
+unsigned int setRightmostUnsetBit(unsigned int n) {
+   n |= n + 1;
+   return n;
+}
+
+int main() {
+    unsigned int n = 21;
+    printf("Original number: %d\n", n);
+    n = setRightmostUnsetBit(n);
+    printf("Number after setting the rightmost unset bit: %d\n", n);
+    return 0;
+}
+```

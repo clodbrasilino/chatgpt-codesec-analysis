@@ -1,0 +1,70 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+long long countSubsequences(int* arr, int n, int k) {
+    if (arr == NULL || n <= 0 || k <= 0) {
+        return 0;
+    }
+
+    long long total_subarrays = (long long)n * (n + 1) / 2;
+    long long positive_subarrays = 0;
+    long long valid_positive_subarrays = 0;
+
+    int i = 0;
+    while (i < n) {
+        while (i < n && arr[i] == 0) {
+            i++;
+        }
+        if (i >= n) {
+            break;
+        }
+
+        int start = i;
+        while (i < n && arr[i] > 0) {
+            i++;
+        }
+        int end = i - 1;
+
+        long long len = end - start + 1;
+        positive_subarrays += len * (len + 1) / 2;
+
+        long double prod = 1.0L;
+        int left = start;
+
+        for (int right = start; right <= end; right++) {
+            prod *= (long double)arr[right];
+            while (prod >= (long double)k && left <= right) {
+                prod /= (long double)arr[left];
+                left++;
+            }
+            valid_positive_subarrays += (right - left + 1);
+        }
+    }
+
+    long long zero_subarrays = total_subarrays - positive_subarrays;
+    return valid_positive_subarrays + zero_subarrays;
+}
+
+int main() {
+    int arr1[] = {2, 1, 0, 3};
+    int n1 = sizeof(arr1) / sizeof(arr1[0]);
+    int k1 = 4;
+    long long res1 = countSubsequences(arr1, n1, k1);
+    printf("%lld\n", res1);
+
+    int arr2[] = {1, 2, 3, 4};
+    int n2 = sizeof(arr2) / sizeof(arr2[0]);
+    int k2 = 10;
+    long long res2 = countSubsequences(arr2, n2, k2);
+    printf("%lld\n", res2);
+
+    int arr3[] = {0, 0, 0};
+    int n3 = sizeof(arr3) / sizeof(arr3[0]);
+    int k3 = 1;
+    long long res3 = countSubsequences(arr3, n3, k3);
+    printf("%lld\n", res3);
+
+    return 0;
+}
+```

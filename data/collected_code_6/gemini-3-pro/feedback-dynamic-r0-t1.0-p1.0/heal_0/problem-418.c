@@ -1,0 +1,111 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node* next;
+} Node;
+
+typedef struct {
+    Node* head;
+    int length;
+} SublistInfo;
+
+SublistInfo find_max_sublist(Node* head) {
+    SublistInfo max_info = {NULL, 0};
+    if (head == NULL) {
+        return max_info;
+    }
+
+    Node* current = head;
+    Node* current_sublist_head = head;
+    int current_length = 1;
+
+    max_info.head = head;
+    max_info.length = 1;
+
+    while (current->next != NULL) {
+        if (current->data <= current->next->data) {
+            current_length++;
+        } else {
+            if (current_length > max_info.length) {
+                max_info.length = current_length;
+                max_info.head = current_sublist_head;
+            }
+            current_sublist_head = current->next;
+            current_length = 1;
+        }
+        current = current->next;
+    }
+
+    if (current_length > max_info.length) {
+        max_info.length = current_length;
+        max_info.head = current_sublist_head;
+    }
+
+    return max_info;
+}
+
+Node* create_node(int data) {
+    Node* new_node = (Node*)malloc(sizeof(Node));
+    if (new_node == NULL) {
+        exit(EXIT_FAILURE);
+    }
+    new_node->data = data;
+    new_node->next = NULL;
+    return new_node;
+}
+
+void append(Node** head, int data) {
+    Node* new_node = create_node(data);
+    if (*head == NULL) {
+        *head = new_node;
+        return;
+    }
+    Node* temp = *head;
+    while (temp->next != NULL) {
+        temp = temp->next;
+    }
+    temp->next = new_node;
+}
+
+void free_list(Node* head) {
+    Node* current = head;
+    Node* next;
+    while (current != NULL) {
+        next = current->next;
+        free(current);
+        current = next;
+    }
+}
+
+void print_sublist(Node* head, int length) {
+    Node* current = head;
+    for (int i = 0; i < length && current != NULL; i++) {
+        printf("%d ", current->data);
+        current = current->next;
+    }
+    printf("\n");
+}
+
+int main() {
+    Node* head = NULL;
+    append(&head, 1);
+    append(&head, 2);
+    append(&head, 5);
+    append(&head, 3);
+    append(&head, 4);
+    append(&head, 6);
+    append(&head, 7);
+    append(&head, 8);
+    append(&head, 1);
+
+    SublistInfo result = find_max_sublist(head);
+    
+    if (result.head != NULL) {
+        print_sublist(result.head, result.length);
+    }
+
+    free_list(head);
+    return 0;
+}

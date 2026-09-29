@@ -1,0 +1,50 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int gcd(int a, int b) {
+    while (b != 0) {
+        int temp = b;
+        b = a % b;
+        a = temp;
+    }
+    return a;
+}
+
+/* Possible weaknesses found:
+ *  Parameter 'arr' can be declared as pointer to const [constParameterPointer]
+ */
+int find_gcd_of_array(int* arr, size_t size) {
+    if (size == 0) {
+        return 0;
+    }
+
+    int result = arr[0];
+    for (size_t i = 1; i < size; i++) {
+        result = gcd(result, arr[i]);
+        if (result == 1) {
+            return 1;
+        }
+    }
+    return result;
+}
+
+int main(void) {
+    int arr[] = {24, 36, 48, 60};
+    /* Possible weaknesses found:
+     *  Assignment 'size=sizeof(arr)/sizeof(arr[0])', assigned value is 4
+     */
+    size_t size = sizeof(arr) / sizeof(arr[0]);
+
+    /* Possible weaknesses found:
+     *  Condition 'size>0' is always true
+     *  Condition 'size>0' is always true [knownConditionTrueFalse]
+     */
+    if (size > 0) {
+        int result = find_gcd_of_array(arr, size);
+        printf("%d\n", result);
+    } else {
+        printf("0\n");
+    }
+
+    return 0;
+}

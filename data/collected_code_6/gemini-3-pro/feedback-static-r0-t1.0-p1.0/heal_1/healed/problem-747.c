@@ -1,0 +1,97 @@
+#if defined(__linux__) || defined(__unix__) || defined(__APPLE__)
+#define _POSIX_C_SOURCE 200809L
+#endif
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_STR_LEN 4096
+
+int max(int a, int b) {
+    return (a > b) ? a : b;
+}
+
+int lcsOfThree(const char* s1, const char* s2, const char* s3) {
+    if (!s1 || !s2 || !s3) return 0;
+
+    int len1 = strnlen(s1, MAX_STR_LEN);
+    int len2 = strnlen(s2, MAX_STR_LEN);
+    int len3 = strnlen(s3, MAX_STR_LEN);
+
+    int*** dp = (int***)malloc((len1 + 1) * sizeof(int**));
+    if (!dp) return -1;
+
+    for (int i = 0; i <= len1; i++) {
+        dp[i] = (int**)malloc((len2 + 1) * sizeof(int*));
+        if (!dp[i]) {
+            for (int k = 0; k < i; k++) {
+                for (int j = 0; j <= len2; j++) {
+                    free(dp[k][j]);
+                }
+                free(dp[k]);
+            }
+            free(dp);
+            return -1;
+        }
+
+        for (int j = 0; j <= len2; j++) {
+            dp[i][j] = (int*)malloc((len3 + 1) * sizeof(int));
+            if (!dp[i][j]) {
+                for (int k = 0; k < j; k++) free(dp[i][k]);
+                free(dp[i]);
+                for (int k = 0; k < i; k++) {
+                    for (int l = 0; l <= len2; l++) {
+                        free(dp[k][l]);
+                    }
+                    free(dp[k]);
+                }
+                free(dp);
+                return -1;
+            }
+        }
+    }
+
+    for (int i = 0; i <= len1; i++) {
+        for (int j = 0; j <= len2; j++) {
+            for (int k = 0; k <= len3; k++) {
+                if (i == 0 || j == 0 || k == 0) {
+                    dp[i][j][k] = 0;
+                } else if (s1[i - 1] == s2[j - 1] && s1[i - 1] == s3[k - 1]) {
+                    dp[i][j][k] = dp[i - 1][j - 1][k - 1] + 1;
+                } else {
+                    dp[i][j][k] = max(max(dp[i - 1][j][k], dp[i][j - 1][k]), dp[i][j][k - 1]);
+                }
+            }
+        }
+    }
+
+    int result = dp[len1][len2][len3];
+
+    for (int i = 0; i <= len1; i++) {
+        for (int j = 0; j <= len2; j++) {
+            free(dp[i][j]);
+        }
+        free(dp[i]);
+    }
+    free(dp);
+
+    return result;
+}
+
+int main(void) {
+    const char* s1 = "geeks";
+    const char* s2 = "geeksfor";
+    const char* s3 = "geeksforgeeks";
+
+    int result = lcsOfThree(s1, s2, s3);
+    
+    if (result == -1) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return 1;
+    }
+
+    printf("Length of LCS is %d\n", result);
+
+    return 0;
+}

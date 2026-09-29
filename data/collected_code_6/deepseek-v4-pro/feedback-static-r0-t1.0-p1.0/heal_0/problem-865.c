@@ -1,0 +1,54 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef void (*map_fn)(int);
+
+void print_number(int n) {
+    printf("%d ", n);
+}
+
+void map_list(int *list, size_t size, map_fn fn) {
+    if (list == NULL || fn == NULL) {
+        return;
+    }
+
+    for (size_t i = 0; i < size; i++) {
+        fn(list[i]);
+    }
+    printf("\n");
+}
+
+int *create_list(size_t size) {
+    if (size == 0) {
+        return NULL;
+    }
+
+    int *list = malloc(size * sizeof(int));
+    if (list == NULL) {
+        return NULL;
+    }
+
+    for (size_t i = 0; i < size; i++) {
+        list[i] = (int)(i + 1);
+    }
+
+    return list;
+}
+
+int main(void) {
+    size_t size = 5;
+    int n = 3;
+
+    int *list = create_list(size);
+    if (list == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return 1;
+    }
+
+    for (int i = 0; i < n; i++) {
+        map_list(list, size, print_number);
+    }
+
+    free(list);
+    return 0;
+}

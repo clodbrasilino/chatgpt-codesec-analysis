@@ -1,0 +1,60 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+static long long get_max(long long a, long long b);
+long long max_sum_no_three_consecutive(const int *arr, size_t n);
+
+static long long get_max(long long a, long long b) {
+    return (a > b) ? a : b;
+}
+
+long long max_sum_no_three_consecutive(const int *arr, size_t n) {
+    if (arr == NULL || n == 0) {
+        return 0;
+    }
+
+    if (n == 1) {
+        return arr[0];
+    }
+
+    if (n == 2) {
+        return (long long)arr[0] + arr[1];
+    }
+
+    long long dp0 = arr[0];
+    long long dp1 = (long long)arr[0] + arr[1];
+    
+    long long opt2_1 = (long long)arr[0] + arr[2];
+    long long opt2_2 = (long long)arr[1] + arr[2];
+    long long dp2 = get_max(get_max(dp1, opt2_1), opt2_2);
+
+    if (n == 3) {
+        return dp2;
+    }
+
+    long long dp3 = 0;
+    for (size_t i = 3; i < n; i++) {
+        long long opt1 = dp2;
+        long long opt2 = dp1 + arr[i];
+        long long opt3 = dp0 + (long long)arr[i] + arr[i - 1];
+
+        dp3 = get_max(get_max(opt1, opt2), opt3);
+
+        dp0 = dp1;
+        dp1 = dp2;
+        dp2 = dp3;
+    }
+
+    return dp3;
+}
+
+int main(void) {
+    int arr[] = {300, 400, 400, 50, 50, 70, 70, 80, 80};
+    size_t n = sizeof(arr) / sizeof(arr[0]);
+
+    long long max_sum = max_sum_no_three_consecutive(arr, n);
+
+    printf("%lld\n", max_sum);
+
+    return EXIT_SUCCESS;
+}

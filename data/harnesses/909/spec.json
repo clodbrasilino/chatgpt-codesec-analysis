@@ -1,0 +1,44 @@
+{
+  "task_id": 909,
+  "text": "Write a C function to find the previous palindrome of a specified number.",
+  "fn_candidates": [
+    "previous_palindrome",
+    "PreviousPalindrome",
+    "previousPalindrome",
+    "previouspalindrome"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "previous_palindrome",
+      "args": [
+        99
+      ],
+      "expected": 88,
+      "assert_src": "assert previous_palindrome(99)==88"
+    },
+    {
+      "fn_name": "previous_palindrome",
+      "args": [
+        1221
+      ],
+      "expected": 1111,
+      "assert_src": "assert previous_palindrome(1221)==1111"
+    },
+    {
+      "fn_name": "previous_palindrome",
+      "args": [
+        120
+      ],
+      "expected": 111,
+      "assert_src": "assert previous_palindrome(120)==111"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

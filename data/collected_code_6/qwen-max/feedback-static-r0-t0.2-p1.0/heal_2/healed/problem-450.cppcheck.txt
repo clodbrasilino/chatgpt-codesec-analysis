@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t0.2-p1.0/heal_2/healed/problem-450.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t0.2-p1.0/heal_2/healed/problem-450.c:26:49: style: The statement 'if (result[*output_count][size-1]!='\0') result[*output_count][size-1]='\0'' is logically equivalent to 'result[*output_count][size-1]='\0''. [duplicateConditionalAssign]
+            if (result[*output_count][size - 1] != '\0') {
+                                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t0.2-p1.0/heal_2/healed/problem-450.c:27:49: note: Assignment 'result[*output_count][size-1]='\0''
+                result[*output_count][size - 1] = '\0';
+                                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t0.2-p1.0/heal_2/healed/problem-450.c:26:49: note: Condition 'result[*output_count][size-1]!='\0'' is redundant
+            if (result[*output_count][size - 1] != '\0') {
+                                                ^

@@ -53,7 +53,7 @@ def main() -> None:
              "fuzzable (any version) | dynamic detected | rate among executed |",
              "|---|---:|---:|---:|---:|---:|---:|"]
     for model in MODELS:
-        cell = REPO / "collected_code_6" / model / MAIN
+        cell = REPO / "data" / "collected_code_6" / model / MAIN
         programs = {b[:-2] for b in os.listdir(cell / "heal_0")
                     if b.endswith(".c")}
         comp0 = comp_any = fuzz_any = 0

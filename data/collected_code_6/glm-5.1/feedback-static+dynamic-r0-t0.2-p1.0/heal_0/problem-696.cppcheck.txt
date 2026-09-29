@@ -1,0 +1,7 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-696.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-696.c:4:35: style: Parameter 'sizes1' can be declared as pointer to const [constParameterPointer]
+int** zip_lists(int** list1, int* sizes1, int count1, int** list2, int* sizes2, int count2, int** out_sizes, int* out_count) {
+                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-696.c:4:73: style: Parameter 'sizes2' can be declared as pointer to const [constParameterPointer]
+int** zip_lists(int** list1, int* sizes1, int count1, int** list2, int* sizes2, int count2, int** out_sizes, int* out_count) {
+                                                                        ^

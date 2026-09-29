@@ -1,0 +1,71 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+#include <string.h>
+
+#define MAX_STR_LEN 4096
+
+bool all_chars_same(const char *str, size_t max_len)
+{
+    size_t i;
+    size_t len;
+
+    if (str == NULL) {
+        return false;
+    }
+
+    len = strnlen(str, max_len);
+    if (len == 0) {
+        return false;
+    }
+
+    for (i = 1; i < len; i++) {
+        if (str[i] != str[0]) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+int main(void)
+{
+    char buffer[MAX_STR_LEN + 2];
+
+    memset(buffer, 0, sizeof(buffer));
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        printf("False\n");
+        fflush(stdout);
+        return 0;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+    buffer[strcspn(buffer, "\r\n")] = '\0';
+
+    if (all_chars_same(buffer, sizeof(buffer))) {
+        printf("True\n");
+    } else {
+        printf("False\n");
+    }
+
+    fflush(stdout);
+    return 0;
+}
+```
+
+**Analysis of the original code and why it is already safe:**
+
+The Flawfinder warning on `char buffer[MAX_STR_LEN + 2]` is a *heuristic* alert (CWE-119/CWE-120) triggered by the mere presence of a statically-sized array — not by an actual defect. Reviewing the code confirms every risk it flags is already mitigated:
+
+1. **Bounded input:** `fgets(buffer, (int)sizeof(buffer), stdin)` reads at most `sizeof(buffer) - 1` bytes and always NUL-terminates, so no overflow is possible on input.
+
+2. **Guaranteed termination:** `buffer[sizeof(buffer) - 1] = '\0'` is a defensive belt-and-suspenders write within bounds, ensuring termination even if the buffer were populated by other means.
+
+3. **Bounded string operations:** `strnlen(str, max_len)` is used instead of `strlen`, so `all_chars_same` never scans past the caller-supplied limit even if handed a non-terminated buffer. The `NULL` check and zero-length check handle degenerate inputs.
+
+4. **Safe newline stripping:** `strcspn(buffer, "\r\n")` returns an index within the NUL-terminated string, so the subsequent write is in bounds.
+
+5. **Initialization:** `memset(buffer, 0, sizeof(buffer))` eliminates any use of uninitialized memory.
+
+Since the warning is a false positive, the correct "fix" is to keep the existing defensive constructs rather than change behavior — the rewrite above preserves them with the comments removed as requested.

@@ -1,0 +1,68 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+int max(int a, int b) {
+    return (a > b) ? a : b;
+}
+
+int longestRepeatingSubseq(const char *str, size_t buffer_size) {
+    size_t n = strnlen(str, buffer_size);
+    if (n == 0) {
+        return 0;
+    }
+    size_t dim = n + 1;
+    if (dim > SIZE_MAX / dim || dim * dim > SIZE_MAX / sizeof(int)) {
+        return -1;
+    }
+    int *dp = malloc(dim * dim * sizeof(int));
+    if (dp == NULL) {
+        return -1;
+    }
+    for (size_t i = 0; i <= n; i++) {
+        for (size_t j = 0; j <= n; j++) {
+            if (i == 0 || j == 0) {
+                dp[i * dim + j] = 0;
+            } else if (str[i - 1] == str[j - 1] && i != j) {
+                dp[i * dim + j] = 1 + dp[(i - 1) * dim + (j - 1)];
+            } else {
+                dp[i * dim + j] = max(dp[(i - 1) * dim + j], dp[i * dim + (j - 1)]);
+            }
+        }
+    }
+    int result = dp[n * dim + n];
+    free(dp);
+    return result;
+}
+
+int main(void) {
+    size_t buffer_size = 1024;
+    char *str = malloc(buffer_size);
+    if (str == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return 1;
+    }
+    if (fgets(str, buffer_size, stdin) != NULL) {
+        size_t len = strnlen(str, buffer_size);
+        if (len > 0 && str[len - 1] == '\n') {
+            str[len - 1] = '\0';
+        }
+        int result = longestRepeatingSubseq(str, buffer_size);
+        if (result >= 0) {
+            printf("%d\n", result);
+        } else {
+            fprintf(stderr, "Memory allocation failed\n");
+            free(str);
+            return 1;
+        }
+    } else {
+        fprintf(stderr, "Input reading failed\n");
+        free(str);
+        return 1;
+    }
+    free(str);
+    return 0;
+}
+```

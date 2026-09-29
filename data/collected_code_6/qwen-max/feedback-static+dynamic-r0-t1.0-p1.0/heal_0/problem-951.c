@@ -1,0 +1,54 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int index;
+    int value;
+} Tuple;
+
+int compare(const void *a, const void *b) {
+    return ((Tuple *)a)->index - ((Tuple *)b)->index;
+}
+
+void find_max_of_similar_indices(Tuple *list1, int size1, Tuple *list2, int size2, Tuple **result, int *result_size) {
+    qsort(list1, size1, sizeof(Tuple), compare);
+    qsort(list2, size2, sizeof(Tuple), compare);
+
+    int i = 0, j = 0;
+    *result_size = 0;
+    *result = (Tuple *)malloc((size1 + size2) * sizeof(Tuple));
+
+    while (i < size1 && j < size2) {
+        if (list1[i].index == list2[j].index) {
+            (*result)[*result_size] = (list1[i].value > list2[j].value) ? list1[i] : list2[j];
+            (*result_size)++;
+            i++;
+            j++;
+        } else if (list1[i].index < list2[j].index) {
+            i++;
+        } else {
+            j++;
+        }
+    }
+
+    /* Reallocate memory to the exact size needed */
+    *result = (Tuple *)realloc(*result, *result_size * sizeof(Tuple));
+}
+
+int main() {
+    Tuple list1[] = {{0, 10}, {1, 20}, {2, 30}, {3, 40}};
+    Tuple list2[] = {{0, 5}, {1, 15}, {2, 35}, {3, 45}};
+    int size1 = 4;
+    int size2 = 4;
+    Tuple *result = NULL;
+    int result_size = 0;
+
+    find_max_of_similar_indices(list1, size1, list2, size2, &result, &result_size);
+
+    for (int k = 0; k < result_size; k++) {
+        printf("Index: %d, Max Value: %d\n", result[k].index, result[k].value);
+    }
+
+    free(result);
+    return 0;
+}

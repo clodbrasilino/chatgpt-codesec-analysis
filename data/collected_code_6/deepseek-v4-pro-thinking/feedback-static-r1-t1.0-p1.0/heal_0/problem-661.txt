@@ -1,0 +1,68 @@
+```c
+#include <stddef.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+static long long max_ll(long long a, long long b) {
+    return a > b ? a : b;
+}
+
+long long max_sum_no_three_consecutive(const int *arr, size_t n) {
+    if (n == 0) {
+        return 0;
+    }
+
+    long long dp_im3 = 0;
+    long long dp_im2 = 0;
+    long long dp_im1 = 0;
+
+    for (size_t i = 0; i < n; ++i) {
+        long long skip = dp_im1;
+        long long take_current = (long long)arr[i] + dp_im2;
+        long long take_current_and_previous = (long long)arr[i] + dp_im3;
+
+        if (i > 0) {
+            take_current_and_previous += (long long)arr[i - 1];
+        }
+
+        long long current = max_ll(skip, max_ll(take_current, take_current_and_previous));
+
+        dp_im3 = dp_im2;
+        dp_im2 = dp_im1;
+        dp_im1 = current;
+    }
+
+    return dp_im1;
+}
+
+int main(void) {
+    size_t n;
+
+    if (scanf("%zu", &n) != 1) {
+        return EXIT_FAILURE;
+    }
+
+    if (n == 0) {
+        printf("0\n");
+        return EXIT_SUCCESS;
+    }
+
+    int *arr = malloc(n * sizeof(*arr));
+    if (arr == NULL) {
+        return EXIT_FAILURE;
+    }
+
+    for (size_t i = 0; i < n; ++i) {
+        if (scanf("%d", &arr[i]) != 1) {
+            free(arr);
+            return EXIT_FAILURE;
+        }
+    }
+
+    long long result = max_sum_no_three_consecutive(arr, n);
+    printf("%lld\n", result);
+
+    free(arr);
+    return EXIT_SUCCESS;
+}
+```

@@ -1,0 +1,36 @@
+Flawfinder version 2.0.19, (C) 2001-2019 David A. Wheeler.
+Number of rules (primarily dangerous function names) in C/C++ ruleset: 222
+Examining collected_code/problem-871-0.c
+
+FINAL RESULTS:
+
+collected_code/problem-871-0.c:13:  [4] (buffer) strcat:
+  Does not check for buffer overflows when concatenating to destination
+  [MS-banned] (CWE-120). Consider using strcat_s, strncat, strlcat, or
+  snprintf (warning: strncat is easily misused).
+collected_code/problem-871-0.c:6:  [1] (buffer) strlen:
+  Does not handle strings that are not \0-terminated; if given one it may
+  perform an over-read (it could cause a crash if unprotected) (CWE-126).
+collected_code/problem-871-0.c:7:  [1] (buffer) strlen:
+  Does not handle strings that are not \0-terminated; if given one it may
+  perform an over-read (it could cause a crash if unprotected) (CWE-126).
+
+ANALYSIS SUMMARY:
+
+Hits = 3
+Lines analyzed = 33 in approximately 0.31 seconds (108 lines/second)
+Physical Source Lines of Code (SLOC) = 26
+Hits@level = [0]   2 [1]   2 [2]   0 [3]   0 [4]   1 [5]   0
+Hits@level+ = [0+]   5 [1+]   3 [2+]   1 [3+]   1 [4+]   1 [5+]   0
+Hits/KSLOC@level+ = [0+] 192.308 [1+] 115.385 [2+] 38.4615 [3+] 38.4615 [4+] 38.4615 [5+]   0
+Minimum risk level = 1
+
+Not every hit is necessarily a security vulnerability.
+You can inhibit a report by adding a comment in this form:
+// flawfinder: ignore
+Make *sure* it's a false positive!
+You can use the option --neverignore to show these.
+
+There may be other security vulnerabilities; review your code!
+See 'Secure Programming HOWTO'
+(https://dwheeler.com/secure-programs) for more information.

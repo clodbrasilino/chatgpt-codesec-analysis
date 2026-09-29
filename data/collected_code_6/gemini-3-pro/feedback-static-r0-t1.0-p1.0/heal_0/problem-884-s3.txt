@@ -1,0 +1,37 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+
+bool checkBitsInRange(unsigned int n, unsigned int l, unsigned int r) {
+    if (l > r || r > 31) {
+        return false;
+    }
+    
+    unsigned int mask = ((1U << (r - l + 1)) - 1) << l;
+    return (n & mask) == n;
+}
+
+int main() {
+    unsigned int num1 = 14; 
+    unsigned int l1 = 1;
+    unsigned int r1 = 3;
+    
+    if (checkBitsInRange(num1, l1, r1)) {
+        printf("All set bits of %u are in range %u to %u.\n", num1, l1, r1);
+    } else {
+        printf("Not all set bits of %u are in range %u to %u.\n", num1, l1, r1);
+    }
+
+    unsigned int num2 = 18; 
+    unsigned int l2 = 1;
+    unsigned int r2 = 3;
+    
+    if (checkBitsInRange(num2, l2, r2)) {
+        printf("All set bits of %u are in range %u to %u.\n", num2, l2, r2);
+    } else {
+        printf("Not all set bits of %u are in range %u to %u.\n", num2, l2, r2);
+    }
+
+    return 0;
+}
+```

@@ -1,0 +1,38 @@
+```C
+#include <stdio.h>
+#include <stdlib.h>
+
+void printMissingRanges(int arr[], int n, int start, int end) {
+    int i, j;
+    int missingStart, missingEnd;
+
+    for (i = 0; i < n; i++) {
+        if (arr[i] > start) {
+            missingStart = start;
+            missingEnd = arr[i] - 1;
+            printf("%d - %d\n", missingStart, missingEnd);
+        }
+        start = arr[i] + 1;
+    }
+
+    if (start <= end) {
+        printf("%d - %d\n", start, end);
+    }
+}
+
+int compare(const void * a, const void * b) {
+    return (*(int*)a - *(int*)b);
+}
+
+int main() {
+    int arr[] = {10, 20, 30, 40, 50};
+    int n = sizeof(arr)/sizeof(arr[0]);
+    int start = 5, end = 60;
+
+    qsort(arr, n, sizeof(int), compare);
+
+    printMissingRanges(arr, n, start, end);
+
+    return 0;
+}
+```

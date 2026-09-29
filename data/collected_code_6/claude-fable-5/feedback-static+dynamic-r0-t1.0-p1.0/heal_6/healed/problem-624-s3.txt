@@ -1,0 +1,63 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#define BUFFER_SIZE 256
+
+void to_upper_case(char *str, size_t max_len)
+{
+    size_t i;
+
+    if (str == NULL) {
+        return;
+    }
+
+    for (i = 0; i < max_len && str[i] != '\0'; i++) {
+        str[i] = (char)toupper((unsigned char)str[i]);
+    }
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t len;
+
+    printf("Enter a string: ");
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    }
+
+    to_upper_case(buffer, sizeof(buffer));
+
+    if (printf("Upper case: %s\n", buffer) < 0) {
+        fprintf(stderr, "Error writing output\n");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis summary:**
+
+The original code already mitigates the flagged CWE-119/CWE-120 weakness (statically-sized buffer) correctly:
+
+1. **Bounded input:** `fgets(buffer, sizeof(buffer), stdin)` limits reads to the buffer size, preventing overflow (unlike `gets` or unbounded `scanf("%s", ...)`).
+2. **Guaranteed termination:** `buffer[sizeof(buffer) - 1] = '\0'` is a defensive belt-and-suspenders measure (fgets already null-terminates, but this costs nothing).
+3. **Bounded length calculation:** `strnlen` instead of `strlen` ensures traversal never exceeds the buffer, even if termination were somehow missing.
+4. **Bounded mutation:** `to_upper_case` takes an explicit `max_len` and checks both the bound and the terminator in its loop condition; it also handles `NULL` input.
+5. **Safe character conversion:** the cast to `unsigned char` before `toupper` avoids undefined behavior for negative `char` values on platforms where `char` is signed.
+6. **Error handling:** return values of `fgets` and `printf` are checked, with failures reported to `stderr` and signaled via `EXIT_FAILURE`.
+
+No functional changes were required—the Flawfinder hit is a heuristic warning on the array declaration itself, and all uses of the buffer are properly bounds-checked. Note that `strnlen` is POSIX (or C11 Annex K as `strnlen_s`), so compile with `-D_POSIX_C_SOURCE=200809L` if targeting strict ISO C environments.

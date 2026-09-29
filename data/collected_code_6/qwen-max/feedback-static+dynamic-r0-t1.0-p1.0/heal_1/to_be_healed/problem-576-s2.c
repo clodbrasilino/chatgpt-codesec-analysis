@@ -1,0 +1,36 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+/* Possible weaknesses found:
+ *  Parameter 'sub' can be declared as pointer to const [constParameterPointer]
+ *  Parameter 'arr' can be declared as pointer to const [constParameterPointer]
+ */
+bool is_subarray(int *arr, int arr_len, int *sub, int sub_len) {
+    if (sub_len > arr_len) return false;
+    for (int i = 0; i <= arr_len - sub_len; i++) {
+        bool match = true;
+        for (int j = 0; j < sub_len; j++) {
+            if (arr[i + j] != sub[j]) {
+                match = false;
+                break;
+            }
+        }
+        if (match) return true;
+    }
+    return false;
+}
+
+int main() {
+    int arr[] = {1, 2, 3, 4, 5};
+    int sub1[] = {2, 3};
+    int sub2[] = {3, 4, 6};
+    
+    int arr_len = sizeof(arr) / sizeof(arr[0]);
+    int sub_len1 = sizeof(sub1) / sizeof(sub1[0]);
+    int sub_len2 = sizeof(sub2) / sizeof(sub2[0]);
+
+    printf("%s\n", is_subarray(arr, arr_len, sub1, sub_len1) ? "Found" : "Not Found");
+    printf("%s\n", is_subarray(arr, arr_len, sub2, sub_len2) ? "Found" : "Not Found");
+
+    return 0;
+}

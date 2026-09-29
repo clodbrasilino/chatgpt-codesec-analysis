@@ -1,0 +1,33 @@
+#include <stdio.h>
+#include <limits.h>
+#include <errno.h>
+
+unsigned long long fibonacci(int n) {
+    if (n <= 0) {
+        return 0;
+    }
+    if (n == 1) {
+        return 1;
+    }
+    return fibonacci(n - 1) + fibonacci(n - 2);
+}
+
+int main(void) {
+    int n;
+    
+    printf("Enter the position in Fibonacci sequence (0-%d): ", 93);
+    
+    if (scanf("%d", &n) != 1) {
+        fprintf(stderr, "Error: Invalid input\n");
+        return 1;
+    }
+    
+    if (n < 0 || n > 93) {
+        fprintf(stderr, "Error: Input must be between 0 and 93 to avoid overflow\n");
+        return 1;
+    }
+    
+    printf("Fibonacci(%d) = %llu\n", n, fibonacci(n));
+    
+    return 0;
+}

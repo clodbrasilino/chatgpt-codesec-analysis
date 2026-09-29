@@ -1,0 +1,4 @@
+problem-346.c:7:0:high:ASan: heap-buffer-overflow (AFL crash: id:000001,sig:06,src:000002,time:54012,execs:1311,op:havoc,rep:5)
+problem-346.c:8:36:medium:UBSan: signed integer overflow: 1440367757 + 1528186493 cannot be represented in type 'int' (AFL crash: id:000001,sig:06,src:000002,time:54012,execs:1311,op:havoc,rep:5)
+problem-346.c:8:54:medium:UBSan: signed integer overflow: 2083702528 + 619222008 cannot be represented in type 'int' (AFL crash: id:000001,sig:06,src:000002,time:54012,execs:1311,op:havoc,rep:5)
+problem-346.c:11:0:error:Fuzzing found a crash (signal 6) on input id:000000,sig:06,src:000002,time:316,execs:163,op:havoc,rep:1; likely memory-safety defect

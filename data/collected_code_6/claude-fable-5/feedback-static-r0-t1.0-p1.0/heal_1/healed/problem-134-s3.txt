@@ -1,0 +1,46 @@
+```c
+#include <stdio.h>
+#include <stddef.h>
+
+static const char *last_element_parity(const int arr[], size_t n, size_t p)
+{
+    unsigned int parity;
+
+    if (arr == NULL || n == 0U) {
+        return "invalid";
+    }
+
+    if ((n == 1U) || (p < (n - 1U))) {
+        parity = (unsigned int)arr[n - 1U] & 1U;
+    } else {
+        parity = 0U;
+        for (size_t i = 0U; i < n; i++) {
+            parity ^= ((unsigned int)arr[i] & 1U);
+        }
+    }
+
+    if (parity == 0U) {
+        return "even";
+    }
+
+    return "odd";
+}
+
+int main(void)
+{
+    int arr[] = { 7, 3, 5, 1, 4 };
+    size_t n = sizeof(arr) / sizeof(arr[0]);
+    size_t p = 2U;
+    const char *result;
+
+    result = last_element_parity(arr, n, p);
+
+    if (printf("The last element is %s after %zu operations.\n", result, p) < 0) {
+        return 1;
+    }
+
+    return 0;
+}
+```
+
+The fix applied addresses the `[variableScope]` weakness: the loop counter `i` was previously declared at function scope, but it is only used within the `for` loop in the `else` branch. Moving its declaration into the `for` statement itself (`for (size_t i = 0U; ...)`) reduces its scope to the minimum required, which improves readability and prevents accidental misuse elsewhere in the function. This requires C99 or later, which is consistent with the existing use of the `%zu` format specifier in `main`.

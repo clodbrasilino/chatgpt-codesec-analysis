@@ -1,0 +1,64 @@
+```c
+#include <stdio.h>
+#include <string.h>
+
+#define MAX_INPUT_LEN 4096
+
+int match_a_followed_by_optional_b(const char *str)
+{
+    size_t i;
+    size_t len;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    len = strnlen(str, MAX_INPUT_LEN);
+
+    for (i = 0; i < len; i++) {
+        if (str[i] == 'a') {
+            return 1;
+        }
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    const char *tests[] = { "ab", "a", "abc", "ac", "bb", "", "bab" };
+    size_t count = sizeof(tests) / sizeof(tests[0]);
+    size_t i;
+
+    for (i = 0; i < count; i++) {
+        if (match_a_followed_by_optional_b(tests[i])) {
+            if (printf("\"%s\" -> match\n", tests[i]) < 0) {
+                return 1;
+            }
+        } else {
+            if (printf("\"%s\" -> no match\n", tests[i]) < 0) {
+                return 1;
+            }
+        }
+    }
+
+    return 0;
+}
+```
+
+**Analysis of the fix:**
+
+The Flawfinder warning (CWE-126, buffer over-read) concerned `strlen()`, which reads memory until it finds a `\0` terminator. If the input string is not properly NUL-terminated, `strlen()` will read past the end of the buffer, potentially crashing the program or leaking adjacent memory contents.
+
+**Changes made:**
+
+1. **Replaced `strlen()` with `strnlen()`** — this bounded variant stops scanning after `MAX_INPUT_LEN` bytes even if no terminator is found, eliminating the unbounded over-read. `strnlen()` is specified in POSIX.1-2008 and available on all mainstream platforms.
+
+2. **Added `MAX_INPUT_LEN` constant** — a defined upper bound (4096 bytes) that caps how far the scan can proceed. This value can be tuned to the application's realistic maximum input size.
+
+**Remaining notes:**
+
+- The existing `NULL` check was already good defensive practice and is retained.
+- The `printf()` return-value checks in `main` are preserved, satisfying strict error-handling standards (e.g., CERT C ERR33-C).
+- Since the function receives a `const char *` with no explicit length parameter, a truly robust API would accept a `size_t buflen` argument from the caller; `strnlen()` with a sane cap is the best mitigation possible given the existing function signature.
+- The test inputs in `main` are string literals, which are always NUL-terminated, so the fix primarily hardens the function against untrusted external callers.

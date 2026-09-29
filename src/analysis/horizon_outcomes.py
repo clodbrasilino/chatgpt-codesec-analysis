@@ -19,7 +19,7 @@ from src.config import max_healing_rounds
 
 REPO = Path(__file__).resolve().parents[2]
 RES = REPO / "results"
-COLL = REPO / "collected_code_6"
+COLL = REPO / "data" / "collected_code_6"
 CAP = max_healing_rounds()
 MAIN_SLUG = "feedback-static+dynamic-r0-t1.0-p1.0"
 MODELS = ["claude-fable-5", "openai-gpt56-sol", "gemini-3-pro", "kimi-k3",

@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-854.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-854.c:48:11: style: Condition 'n>capacity' is always false [knownConditionTrueFalse]
+    if (n > capacity) {
+          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-854.c:46:24: note: Assignment 'n=sizeof(values)/sizeof(values[0])', assigned value is 10
+    n = sizeof(values) / sizeof(values[0]);
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-854.c:48:11: note: Condition 'n>capacity' is always false
+    if (n > capacity) {
+          ^

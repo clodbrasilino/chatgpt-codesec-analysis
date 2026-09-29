@@ -1,0 +1,52 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+int compare_ints(const void *a, const void *b) {
+    int arg1 = *(const int *)a;
+    int arg2 = *(const int *)b;
+    if (arg1 < arg2) return -1;
+    if (arg1 > arg2) return 1;
+    return 0;
+}
+
+int* get_n_smallest(const int *data, size_t data_size, size_t n, size_t *result_size) {
+    if (data == NULL || result_size == NULL || data_size == 0 || n == 0) {
+        if (result_size != NULL) *result_size = 0;
+        return NULL;
+    }
+    
+    size_t count = (n < data_size) ? n : data_size;
+    int *result = malloc(count * sizeof(int));
+    if (result == NULL) {
+        *result_size = 0;
+        return NULL;
+    }
+    
+    memcpy(result, data, count * sizeof(int));
+    qsort(result, count, sizeof(int), compare_ints);
+    *result_size = count;
+    return result;
+}
+
+int main(void) {
+    int dataset[] = {64, 34, 25, 12, 22, 11, 90, 88, 45, 50};
+    size_t data_size = sizeof(dataset) / sizeof(dataset[0]);
+    size_t n = 4;
+    size_t result_size = 0;
+    
+    int *smallest = get_n_smallest(dataset, data_size, n, &result_size);
+    if (smallest == NULL) {
+        fprintf(stderr, "Error: Failed to get smallest items\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("The %zu smallest items are: ", result_size);
+    for (size_t i = 0; i < result_size; i++) {
+        printf("%d ", smallest[i]);
+    }
+    printf("\n");
+    
+    free(smallest);
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,17 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-833-s2.c: In function 'dictionary_keys':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-833-s2.c:88:47: error: 'DictionaryEntry' has no member named 'key_length'
+   88 |         if (duplicate_string(entry->key, entry->key_length,
+      |                                               ^~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-833-s2.c: In function 'main':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-833-s2.c:103:18: error: initialization of 'const char *' from 'long unsigned int' makes pointer from integer without a cast [-Wint-conversion]
+  103 |         {"name", sizeof("name") - 1U},
+      |                  ^~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-833-s2.c:103:18: note: (near initialization for 'entries[0].value')
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-833-s2.c:104:22: error: initialization of 'const char *' from 'long unsigned int' makes pointer from integer without a cast [-Wint-conversion]
+  104 |         {"language", sizeof("language") - 1U},
+      |                      ^~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-833-s2.c:104:22: note: (near initialization for 'entries[1].value')
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-833-s2.c:105:19: error: initialization of 'const char *' from 'long unsigned int' makes pointer from integer without a cast [-Wint-conversion]
+  105 |         {"level", sizeof("level") - 1U}
+      |                   ^~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-833-s2.c:105:19: note: (near initialization for 'entries[2].value')

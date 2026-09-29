@@ -1,0 +1,206 @@
+./collected_code_4/round2//heal_0/problem-152.c: In function 'merge':
+./collected_code_4/round2//heal_0/problem-152.c:13:9: warning: leak of 'R' [CWE-401] [-Wanalyzer-malloc-leak]
+   13 |         return;
+      |         ^~~~~~
+  'mergeSort': events 1-4
+    |
+    |   52 | void mergeSort(int *arr, int l, int r) {
+    |      |      ^~~~~~~~~
+    |      |      |
+    |      |      (1) entry to 'mergeSort'
+    |   53 |     if (l < r) {
+    |      |        ~
+    |      |        |
+    |      |        (2) following 'true' branch (when 'l < r')...
+    |   54 |         int m = l+(r-l)/2;
+    |      |                   ~~~~~
+    |      |                     |
+    |      |                     (3) ...to here
+    |   55 | 
+    |   56 |         mergeSort(arr, l, m);
+    |      |         ~~~~~~~~~~~~~~~~~~~~
+    |      |         |
+    |      |         (4) calling 'mergeSort' from 'mergeSort'
+    |
+    +--> 'mergeSort': events 5-8
+           |
+           |   52 | void mergeSort(int *arr, int l, int r) {
+           |      |      ^~~~~~~~~
+           |      |      |
+           |      |      (5) entry to 'mergeSort'
+           |   53 |     if (l < r) {
+           |      |        ~
+           |      |        |
+           |      |        (6) following 'true' branch (when 'l < r')...
+           |   54 |         int m = l+(r-l)/2;
+           |      |                   ~~~~~
+           |      |                     |
+           |      |                     (7) ...to here
+           |   55 | 
+           |   56 |         mergeSort(arr, l, m);
+           |      |         ~~~~~~~~~~~~~~~~~~~~
+           |      |         |
+           |      |         (8) calling 'mergeSort' from 'mergeSort'
+           |
+           +--> 'mergeSort': events 9-11
+                  |
+                  |   52 | void mergeSort(int *arr, int l, int r) {
+                  |      |      ^~~~~~~~~
+                  |      |      |
+                  |      |      (9) entry to 'mergeSort'
+                  |   53 |     if (l < r) {
+                  |      |        ~
+                  |      |        |
+                  |      |        (10) following 'false' branch (when 'l >= r')...
+                  |......
+                  |   61 | }
+                  |      | ~     
+                  |      | |
+                  |      | (11) ...to here
+                  |
+           <------+
+           |
+         'mergeSort': events 12-13
+           |
+           |   56 |         mergeSort(arr, l, m);
+           |      |         ^~~~~~~~~~~~~~~~~~~~
+           |      |         |
+           |      |         (12) returning to 'mergeSort' from 'mergeSort'
+           |......
+           |   59 |         merge(arr, l, m, r);
+           |      |         ~~~~~~~~~~~~~~~~~~~
+           |      |         |
+           |      |         (13) calling 'merge' from 'mergeSort'
+           |
+           +--> 'merge': events 14-18
+                  |
+                  |    4 | void merge(int *arr, int l, int m, int r) {
+                  |      |      ^~~~~
+                  |      |      |
+                  |      |      (14) entry to 'merge'
+                  |......
+                  |   10 |     int *R = malloc(n2 * sizeof(int));
+                  |      |              ~~~~~~~~~~~~~~~~~~~~~~~~
+                  |      |              |
+                  |      |              (15) allocated here
+                  |   11 | 
+                  |   12 |     if (L == NULL || R == NULL) {
+                  |      |        ~
+                  |      |        |
+                  |      |        (16) following 'true' branch (when 'L' is NULL)...
+                  |   13 |         return;
+                  |      |         ~~~~~~
+                  |      |         |
+                  |      |         (17) ...to here
+                  |      |         (18) 'R' leaks here; was allocated at (15)
+                  |
+./collected_code_4/round2//heal_0/problem-152.c:13:9: warning: leak of 'L' [CWE-401] [-Wanalyzer-malloc-leak]
+   13 |         return;
+      |         ^~~~~~
+  'mergeSort': events 1-4
+    |
+    |   52 | void mergeSort(int *arr, int l, int r) {
+    |      |      ^~~~~~~~~
+    |      |      |
+    |      |      (1) entry to 'mergeSort'
+    |   53 |     if (l < r) {
+    |      |        ~
+    |      |        |
+    |      |        (2) following 'true' branch (when 'l < r')...
+    |   54 |         int m = l+(r-l)/2;
+    |      |                   ~~~~~
+    |      |                     |
+    |      |                     (3) ...to here
+    |   55 | 
+    |   56 |         mergeSort(arr, l, m);
+    |      |         ~~~~~~~~~~~~~~~~~~~~
+    |      |         |
+    |      |         (4) calling 'mergeSort' from 'mergeSort'
+    |
+    +--> 'mergeSort': events 5-8
+           |
+           |   52 | void mergeSort(int *arr, int l, int r) {
+           |      |      ^~~~~~~~~
+           |      |      |
+           |      |      (5) entry to 'mergeSort'
+           |   53 |     if (l < r) {
+           |      |        ~
+           |      |        |
+           |      |        (6) following 'true' branch (when 'l < r')...
+           |   54 |         int m = l+(r-l)/2;
+           |      |                   ~~~~~
+           |      |                     |
+           |      |                     (7) ...to here
+           |   55 | 
+           |   56 |         mergeSort(arr, l, m);
+           |      |         ~~~~~~~~~~~~~~~~~~~~
+           |      |         |
+           |      |         (8) calling 'mergeSort' from 'mergeSort'
+           |
+           +--> 'mergeSort': events 9-11
+                  |
+                  |   52 | void mergeSort(int *arr, int l, int r) {
+                  |      |      ^~~~~~~~~
+                  |      |      |
+                  |      |      (9) entry to 'mergeSort'
+                  |   53 |     if (l < r) {
+                  |      |        ~
+                  |      |        |
+                  |      |        (10) following 'false' branch (when 'l >= r')...
+                  |......
+                  |   61 | }
+                  |      | ~     
+                  |      | |
+                  |      | (11) ...to here
+                  |
+           <------+
+           |
+         'mergeSort': events 12-13
+           |
+           |   56 |         mergeSort(arr, l, m);
+           |      |         ^~~~~~~~~~~~~~~~~~~~
+           |      |         |
+           |      |         (12) returning to 'mergeSort' from 'mergeSort'
+           |......
+           |   59 |         merge(arr, l, m, r);
+           |      |         ~~~~~~~~~~~~~~~~~~~
+           |      |         |
+           |      |         (13) calling 'merge' from 'mergeSort'
+           |
+           +--> 'merge': events 14-17
+                  |
+                  |    4 | void merge(int *arr, int l, int m, int r) {
+                  |      |      ^~~~~
+                  |      |      |
+                  |      |      (14) entry to 'merge'
+                  |......
+                  |    9 |     int *L = malloc(n1 * sizeof(int));
+                  |      |              ~~~~~~~~~~~~~~~~~~~~~~~~
+                  |      |              |
+                  |      |              (15) allocated here
+                  |......
+                  |   12 |     if (L == NULL || R == NULL) {
+                  |      |        ~
+                  |      |        |
+                  |      |        (16) assuming 'L' is non-NULL
+                  |      |        (17) following 'false' branch (when 'L' is non-NULL)...
+                  |
+                'merge': event 18
+                  |
+                  |   12 |     if (L == NULL || R == NULL) {
+                  |      |                   ^
+                  |      |                   |
+                  |      |                   (18) ...to here
+                  |
+                'merge': events 19-21
+                  |
+                  |   12 |     if (L == NULL || R == NULL) {
+                  |      |                   ^
+                  |      |                   |
+                  |      |                   (19) following 'true' branch (when 'R' is NULL)...
+                  |   13 |         return;
+                  |      |         ~~~~~~     
+                  |      |         |
+                  |      |         (20) ...to here
+                  |      |         (21) 'L' leaks here; was allocated at (15)
+                  |

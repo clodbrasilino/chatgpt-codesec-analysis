@@ -1,0 +1,10 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_4/healed/problem-450-s3.c:141:9: error: call to undeclared function 'free_extracted_strings'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+  141 |         free_extracted_strings(final_result);
+      |         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_4/healed/problem-450-s3.c:148:6: error: conflicting types for 'free_extracted_strings'
+  148 | void free_extracted_strings(char** strings) {
+      |      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_4/healed/problem-450-s3.c:141:9: note: previous implicit declaration is here
+  141 |         free_extracted_strings(final_result);
+      |         ^
+2 errors generated.

@@ -1,0 +1,77 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+long long count_binary_sequences(int n)
+{
+    if (n <= 0)
+    {
+        return 0;
+    }
+
+    int len = n + 1;
+    long long *prev = (long long *)calloc((size_t)len, sizeof(long long));
+    long long *curr = (long long *)calloc((size_t)len, sizeof(long long));
+
+    if (prev == NULL || curr == NULL)
+    {
+        free(prev);
+        free(curr);
+        return -1;
+    }
+
+    prev[0] = 1;
+
+    for (int i = 1; i <= n; i++)
+    {
+        for (int j = 0; j <= i; j++)
+        {
+            curr[j] = prev[j];
+            if (j > 0)
+            {
+                curr[j] += prev[j - 1];
+            }
+        }
+
+        for (int j = i + 1; j <= n; j++)
+        {
+            curr[j] = 0;
+        }
+
+        long long *temp = prev;
+        prev = curr;
+        curr = temp;
+    }
+
+    long long result = 0;
+
+    for (int k = 0; k <= n; k++)
+    {
+        result += prev[k] * prev[k];
+    }
+
+    free(prev);
+    free(curr);
+
+    return result;
+}
+
+int main(void)
+{
+    int n;
+
+    if (scanf("%d", &n) != 1)
+    {
+        return 1;
+    }
+
+    long long result = count_binary_sequences(n);
+
+    if (result < 0)
+    {
+        return 1;
+    }
+
+    printf("%lld\n", result);
+
+    return 0;
+}

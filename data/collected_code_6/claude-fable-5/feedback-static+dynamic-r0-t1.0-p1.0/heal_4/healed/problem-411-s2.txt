@@ -1,0 +1,109 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#define MAX_INPUT_LEN 4096U
+
+static char *snake_to_camel(const char *input)
+{
+    char *result;
+    size_t len;
+    size_t in_pos;
+    size_t out_pos;
+    int capitalize_next;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    len = 0U;
+    while (len < MAX_INPUT_LEN && input[len] != '\0') {
+        len++;
+    }
+
+    result = malloc(len + 1U);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    out_pos = 0U;
+    capitalize_next = 1;
+
+    for (in_pos = 0U; in_pos < len; in_pos++) {
+        unsigned char c = (unsigned char)input[in_pos];
+
+        if (c == (unsigned char)'_') {
+            capitalize_next = 1;
+        } else {
+            if (capitalize_next != 0) {
+                result[out_pos] = (char)toupper((int)c);
+                capitalize_next = 0;
+            } else {
+                result[out_pos] = (char)c;
+            }
+            out_pos++;
+        }
+    }
+
+    result[out_pos] = '\0';
+
+    return result;
+}
+
+int main(void)
+{
+    char line[MAX_INPUT_LEN + 2U];
+    int status = EXIT_SUCCESS;
+
+    while (fgets(line, (int)sizeof(line), stdin) != NULL) {
+        size_t len;
+        char *converted;
+
+        line[sizeof(line) - 1U] = '\0';
+        len = strlen(line);
+
+        while (len > 0U && (line[len - 1U] == '\n' || line[len - 1U] == '\r')) {
+            line[len - 1U] = '\0';
+            len--;
+        }
+
+        if (len == 0U) {
+            continue;
+        }
+
+        converted = snake_to_camel(line);
+        if (converted == NULL) {
+            (void)fprintf(stderr, "Conversion failed for: %s\n", line);
+            status = EXIT_FAILURE;
+            continue;
+        }
+
+        if (printf("%s\n", converted) < 0) {
+            free(converted);
+            status = EXIT_FAILURE;
+            break;
+        }
+
+        free(converted);
+
+        if (fflush(stdout) != 0) {
+            status = EXIT_FAILURE;
+            break;
+        }
+    }
+
+    return status;
+}
+```
+
+**Analysis of the original code and the fixes applied:**
+
+1. **Root cause of the failing test cases (`<no output>`):** The original code contained a spurious bounds check inside the conversion loop: `if (out_pos >= len) { free(result); return NULL; }`. While logically `out_pos` can never exceed `len` (since underscores are skipped, the output is always shorter than or equal to the input), on some platforms `strnlen` may not be declared (it is POSIX, not strictly C89/C99), causing an implicit declaration with a wrong return type — the resulting garbage `len` makes the bounds check fire or `malloc` receive a bogus size, so every conversion returned `NULL` and nothing was printed. The rewrite removes the dependency on `strnlen` in the conversion function (manual bounded scan) and removes the unnecessary early-exit check, since the output buffer of `len + 1` bytes is provably sufficient.
+
+2. **CWE-119/CWE-120 (Flawfinder buffer warning):** `fgets` is already bounded by `sizeof(line)`, but the rewrite adds an explicit `line[sizeof(line) - 1U] = '\0'` guarantee before calling `strlen`, so the buffer is always NUL-terminated regardless of input, eliminating any out-of-bounds read risk.
+
+3. **`toupper` undefined behavior:** Passing a plain `char` that may be negative to `toupper` is UB; the value is now cast through `unsigned char` and explicitly to `int`, which is the correct, portable idiom.
+
+4. **Minor hardening:** The `fprintf` failure path no longer breaks out inconsistently, memory is freed before the flush-failure break, and all allocation/error paths remain leak-free.

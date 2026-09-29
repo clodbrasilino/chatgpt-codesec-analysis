@@ -1,0 +1,87 @@
+{
+  "task_id": 250,
+  "text": "Write a C function to count the occcurences of an element in a tuple.",
+  "fn_candidates": [
+    "count_X",
+    "CountX",
+    "countX",
+    "countX"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "count_X",
+      "args": [
+        [
+          10,
+          8,
+          5,
+          2,
+          10,
+          15,
+          10,
+          8,
+          5,
+          8,
+          8,
+          2
+        ],
+        4
+      ],
+      "expected": 0,
+      "assert_src": "assert count_X((10, 8, 5, 2, 10, 15, 10, 8, 5, 8, 8, 2),4) == 0"
+    },
+    {
+      "fn_name": "count_X",
+      "args": [
+        [
+          10,
+          8,
+          5,
+          2,
+          10,
+          15,
+          10,
+          8,
+          5,
+          8,
+          8,
+          2
+        ],
+        10
+      ],
+      "expected": 3,
+      "assert_src": "assert count_X((10, 8, 5, 2, 10, 15, 10, 8, 5, 8, 8, 2),10) == 3"
+    },
+    {
+      "fn_name": "count_X",
+      "args": [
+        [
+          10,
+          8,
+          5,
+          2,
+          10,
+          15,
+          10,
+          8,
+          5,
+          8,
+          8,
+          2
+        ],
+        8
+      ],
+      "expected": 4,
+      "assert_src": "assert count_X((10, 8, 5, 2, 10, 15, 10, 8, 5, 8, 8, 2),8) == 4"
+    }
+  ],
+  "arg_kinds": [
+    "int",
+    "int-list"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

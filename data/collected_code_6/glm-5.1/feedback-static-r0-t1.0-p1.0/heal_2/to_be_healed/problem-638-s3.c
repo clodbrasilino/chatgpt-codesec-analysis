@@ -1,0 +1,47 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+double calculate_wind_chill(double temperature, double wind_speed)
+{
+    if (temperature > 10.0 || wind_speed <= 4.8)
+    {
+        return NAN;
+    }
+    return 13.12 + 0.6215 * temperature - 11.37 * pow(wind_speed, 0.16) + 0.3965 * temperature * pow(wind_speed, 0.16);
+}
+
+/* Possible weaknesses found:
+ *  Parameter 'argv' can be declared as const array [constParameter]
+ */
+int main(int argc, char * const argv[])
+{
+    if (argc != 3)
+    {
+        fprintf(stderr, "Usage: %s <temperature_c> <wind_speed_kph>\n", argv[0]);
+        return EXIT_FAILURE;
+    }
+
+    char *temp_endptr;
+    char *wind_endptr;
+    double temperature = strtod(argv[1], &temp_endptr);
+    double wind_speed = strtod(argv[2], &wind_endptr);
+
+    if (temp_endptr == argv[1] || wind_endptr == argv[2])
+    {
+        fprintf(stderr, "Error: Invalid numeric input provided.\n");
+        return EXIT_FAILURE;
+    }
+
+    double wind_chill = calculate_wind_chill(temperature, wind_speed);
+
+    if (isnan(wind_chill))
+    {
+        fprintf(stderr, "Error: Invalid parameters for wind chill calculation. Temperature must be <= 10.0C and wind speed must be > 4.8 kph.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("%.2f\n", wind_chill);
+
+    return EXIT_SUCCESS;
+}

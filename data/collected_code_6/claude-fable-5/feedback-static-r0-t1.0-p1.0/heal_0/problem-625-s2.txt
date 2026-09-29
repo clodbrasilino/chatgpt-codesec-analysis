@@ -1,0 +1,56 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int swap_first_last(int *arr, size_t size)
+{
+    int temp;
+
+    if (arr == NULL || size == 0U) {
+        return -1;
+    }
+
+    if (size == 1U) {
+        return 0;
+    }
+
+    temp = arr[0];
+    arr[0] = arr[size - 1U];
+    arr[size - 1U] = temp;
+
+    return 0;
+}
+
+static void print_list(const int *arr, size_t size)
+{
+    size_t i;
+
+    if (arr == NULL) {
+        return;
+    }
+
+    for (i = 0U; i < size; i++) {
+        (void)printf("%d ", arr[i]);
+    }
+    (void)printf("\n");
+}
+
+int main(void)
+{
+    int list[] = {10, 20, 30, 40, 50};
+    size_t size = sizeof(list) / sizeof(list[0]);
+
+    (void)printf("Original list: ");
+    print_list(list, size);
+
+    if (swap_first_last(list, size) != 0) {
+        (void)fprintf(stderr, "Error: invalid list or size\n");
+        return EXIT_FAILURE;
+    }
+
+    (void)printf("Modified list: ");
+    print_list(list, size);
+
+    return EXIT_SUCCESS;
+}
+```

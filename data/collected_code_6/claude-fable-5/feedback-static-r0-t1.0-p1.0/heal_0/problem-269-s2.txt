@@ -1,0 +1,38 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int get_ascii_value(char c)
+{
+    return (int)(unsigned char)c;
+}
+
+int main(void)
+{
+    int input;
+
+    printf("Enter a character: ");
+
+    input = getchar();
+    if (input == EOF) {
+        fprintf(stderr, "Error: failed to read input\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("The ASCII value of '%c' is %d\n", (char)input, get_ascii_value((char)input));
+
+    return EXIT_SUCCESS;
+}
+```
+
+Key design decisions from an experienced C perspective:
+
+1. **`getchar()` returns `int`, not `char`** — I store the result in an `int` so that `EOF` can be reliably distinguished from valid character values (addresses CWE-703, proper handling of exceptional conditions).
+
+2. **EOF check** — Input is validated before use; on failure the program reports the error to `stderr` and exits with `EXIT_FAILURE` (CWE-703).
+
+3. **Cast through `unsigned char`** — In `get_ascii_value`, casting to `unsigned char` first avoids implementation-defined behavior on platforms where plain `char` is signed, guaranteeing a non-negative value (CWE-710, standards adherence).
+
+4. **`int main(void)` with explicit return values** — Uses the standard-conforming signature and `EXIT_SUCCESS`/`EXIT_FAILURE` from `<stdlib.h>` (CWE-710).
+
+5. **No dynamically allocated resources** — Nothing to leak or mismanage; `stdout`/`stderr` lifetimes are managed by the runtime (CWE-664).

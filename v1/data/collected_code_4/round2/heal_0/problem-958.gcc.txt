@@ -1,0 +1,12 @@
+./collected_code_4/round2//heal_0/problem-958.c: In function 'intToRoman':
+./collected_code_4/round2//heal_0/problem-958.c:12:17: warning: implicit declaration of function 'strcat' [-Wimplicit-function-declaration]
+   12 |                 strcat(result, symbols[i]);
+      |                 ^~~~~~
+./collected_code_4/round2//heal_0/problem-958.c:3:1: note: include '<string.h>' or provide a declaration of 'strcat'
+    2 | #include <stdlib.h>
+  +++ |+#include <string.h>
+    3 | 
+./collected_code_4/round2//heal_0/problem-958.c:12:17: warning: incompatible implicit declaration of built-in function 'strcat' [-Wbuiltin-declaration-mismatch]
+   12 |                 strcat(result, symbols[i]);
+      |                 ^~~~~~
+./collected_code_4/round2//heal_0/problem-958.c:12:17: note: include '<string.h>' or provide a declaration of 'strcat'

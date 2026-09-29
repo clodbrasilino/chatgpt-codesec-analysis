@@ -1,0 +1,26 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int add_consecutive(int *arr, int size) {
+    if (arr == NULL || size <= 0) {
+        return 0;
+    }
+
+    int sum = 0;
+    for (int i = 0; i < size - 1; i++) {
+        if (arr[i + 1] == arr[i] + 1) {
+            sum += arr[i] + arr[i + 1];
+        }
+    }
+    return sum;
+}
+
+int main(void) {
+    int numbers[] = {1, 2, 3, 5, 6, 8, 9, 10};
+    int size = sizeof(numbers) / sizeof(numbers[0]);
+    
+    int result = add_consecutive(numbers, size);
+    printf("Sum of consecutive pairs: %d\n", result);
+    
+    return 0;
+}

@@ -1,0 +1,3 @@
+problem-129-s3.c:14:43:medium:UBSan: signed integer overflow: -1026405035 * -1026405035 cannot be represented in type 'int' (AFL crash: id:000001,sig:06,src:000000,time:1339,execs:1332,op:havoc,rep:3)
+problem-129-s3.c:37:32:medium:UBSan: signed integer overflow: -1026405035 * -1026405035 cannot be represented in type 'int' (AFL crash: id:000001,sig:06,src:000000,time:1339,execs:1332,op:havoc,rep:3)
+problem-129-s3.c:65:0:error:Fuzzing found a crash (signal 6) on input id:000000,sig:06,src:000000,time:157,execs:177,op:havoc,rep:3; likely memory-safety defect

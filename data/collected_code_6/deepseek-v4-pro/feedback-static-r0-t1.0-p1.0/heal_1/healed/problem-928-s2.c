@@ -1,0 +1,98 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <errno.h>
+#include <limits.h>
+
+#define DATE_LENGTH 11
+
+int convert_date_format(const char *input, char *output, size_t output_size) {
+    if (input == NULL || output == NULL) {
+        return -1;
+    }
+    
+    size_t len = strnlen(input, DATE_LENGTH);
+    if (len != 10) {
+        return -1;
+    }
+    
+    if (input[4] != '-' || input[7] != '-') {
+        return -1;
+    }
+    
+    for (int i = 0; i < 10; i++) {
+        if (i == 4 || i == 7) {
+            continue;
+        }
+        if (input[i] < '0' || input[i] > '9') {
+            return -1;
+        }
+    }
+    
+    if (output_size < DATE_LENGTH) {
+        return -1;
+    }
+    
+    char year_str[5] = {0};
+    char month_str[3] = {0};
+    char day_str[3] = {0};
+    
+    memcpy(year_str, input, 4);
+    memcpy(month_str, input + 5, 2);
+    memcpy(day_str, input + 8, 2);
+    
+    char *endptr;
+    errno = 0;
+    long year = strtol(year_str, &endptr, 10);
+    if (errno != 0 || *endptr != '\0' || year < 0 || year > 9999) {
+        return -1;
+    }
+    
+    errno = 0;
+    long month = strtol(month_str, &endptr, 10);
+    if (errno != 0 || *endptr != '\0' || month < 1 || month > 12) {
+        return -1;
+    }
+    
+    errno = 0;
+    long day = strtol(day_str, &endptr, 10);
+    if (errno != 0 || *endptr != '\0' || day < 1 || day > 31) {
+        return -1;
+    }
+    
+    int days_in_month[] = {0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+    
+    if ((year % 4 == 0 && year % 100 != 0) || (year % 400 == 0)) {
+        days_in_month[2] = 29;
+    }
+    
+    if (day > days_in_month[month]) {
+        return -1;
+    }
+    
+    snprintf(output, output_size, "%02ld-%02ld-%04ld", day, month, year);
+    
+    return 0;
+}
+
+int main(void) {
+    char input_date[DATE_LENGTH];
+    char output_date[DATE_LENGTH];
+    
+    printf("Enter date (yyyy-mm-dd): ");
+    if (fgets(input_date, sizeof(input_date), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+    
+    input_date[strcspn(input_date, "\n")] = '\0';
+    
+    if (convert_date_format(input_date, output_date, sizeof(output_date)) != 0) {
+        fprintf(stderr, "Invalid date format\n");
+        return 1;
+    }
+    
+    printf("Converted date: %s\n", output_date);
+    
+    return 0;
+}

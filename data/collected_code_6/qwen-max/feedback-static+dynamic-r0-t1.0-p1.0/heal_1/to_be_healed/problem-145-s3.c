@@ -1,0 +1,32 @@
+#include <stdio.h>
+#include <limits.h>
+
+/* Possible weaknesses found:
+ *  Parameter 'arr' can be declared as const array [constParameter]
+ */
+int maxDifference(int arr[], int n) {
+    if (n < 2) return -1;
+    int min_val = arr[0];
+    int max_diff = INT_MIN;
+    for (int i = 1; i < n; ++i) {
+        if (arr[i] - min_val > max_diff) {
+            max_diff = arr[i] - min_val;
+        }
+        if (arr[i] < min_val) {
+            min_val = arr[i];
+        }
+    }
+    return max_diff;
+}
+
+int main() {
+    int arr[] = {3, 5, 1, 8, 2, 9, 4};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    int result = maxDifference(arr, n);
+    if (result != -1) {
+        printf("Maximum difference is %d\n", result);
+    } else {
+        printf("Array should have at least two elements\n");
+    }
+    return 0;
+}

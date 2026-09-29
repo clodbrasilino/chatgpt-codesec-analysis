@@ -1,0 +1,38 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+void removeChars(char* str1, const char* str2) {
+    if (str1 == NULL || str2 == NULL) {
+        return;
+    }
+
+    int hash[256] = {0};
+    int i = 0;
+    int j = 0;
+
+    while (str2[i] != '\0') {
+        hash[(unsigned char)str2[i]] = 1;
+        i++;
+    }
+
+    i = 0;
+    while (str1[i] != '\0') {
+        if (hash[(unsigned char)str1[i]] == 0) {
+            str1[j++] = str1[i];
+        }
+        i++;
+    }
+    str1[j] = '\0';
+}
+
+int main(void) {
+    char str1[] = "Hello World!";
+    const char str2[] = "orld";
+
+    removeChars(str1, str2);
+
+    printf("%s\n", str1);
+
+    return 0;
+}

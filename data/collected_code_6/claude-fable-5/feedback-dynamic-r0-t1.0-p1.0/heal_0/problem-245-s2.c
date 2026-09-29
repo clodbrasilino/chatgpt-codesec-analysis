@@ -1,0 +1,75 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int max_sum_bitonic_subsequence(const int *arr, int n)
+{
+    int *inc;
+    int *dec;
+    int i;
+    int j;
+    int max_sum;
+
+    if (arr == NULL || n <= 0) {
+        return 0;
+    }
+
+    inc = (int *)malloc((size_t)n * sizeof(int));
+    if (inc == NULL) {
+        return 0;
+    }
+
+    dec = (int *)malloc((size_t)n * sizeof(int));
+    if (dec == NULL) {
+        free(inc);
+        return 0;
+    }
+
+    for (i = 0; i < n; i++) {
+        inc[i] = arr[i];
+        dec[i] = arr[i];
+    }
+
+    for (i = 1; i < n; i++) {
+        for (j = 0; j < i; j++) {
+            if (arr[i] > arr[j] && inc[i] < inc[j] + arr[i]) {
+                inc[i] = inc[j] + arr[i];
+            }
+        }
+    }
+
+    for (i = n - 2; i >= 0; i--) {
+        for (j = n - 1; j > i; j--) {
+            if (arr[i] > arr[j] && dec[i] < dec[j] + arr[i]) {
+                dec[i] = dec[j] + arr[i];
+            }
+        }
+    }
+
+    max_sum = inc[0] + dec[0] - arr[0];
+    for (i = 1; i < n; i++) {
+        int current = inc[i] + dec[i] - arr[i];
+        if (current > max_sum) {
+            max_sum = current;
+        }
+    }
+
+    free(inc);
+    free(dec);
+
+    return max_sum;
+}
+
+int main(void)
+{
+    int arr[] = {1, 15, 51, 45, 33, 100, 12, 18, 9};
+    int n = (int)(sizeof(arr) / sizeof(arr[0]));
+    int result;
+
+    result = max_sum_bitonic_subsequence(arr, n);
+
+    if (printf("Maximum sum of bi-tonic sub-sequence: %d\n", result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

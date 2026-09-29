@@ -1,0 +1,12 @@
+collected_code/problem-751-0.c:6:16: error: Cannot determine that 'arr[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        if (arr[i] > arr[2 * i + 1])
+               ^
+collected_code/problem-751-0.c:6:25: error: Cannot determine that 'arr[2*i+1]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        if (arr[i] > arr[2 * i + 1])
+                        ^
+collected_code/problem-751-0.c:8:33: error: Cannot determine that 'arr[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        if (2 * i + 2 < n && arr[i] > arr[2 * i + 2])
+                                ^
+collected_code/problem-751-0.c:8:42: error: Cannot determine that 'arr[2*i+2]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        if (2 * i + 2 < n && arr[i] > arr[2 * i + 2])
+                                         ^

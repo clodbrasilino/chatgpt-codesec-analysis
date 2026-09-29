@@ -1,0 +1,44 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+long long sumXOR(int arr[], int n) {
+    long long sum = 0;
+    for (int i = 0; i < 32; i++) {
+        long long zero_cnt = 0, one_cnt = 0;
+        for (int j = 0; j < n; j++) {
+            if (arr[j] % 2 == 0) {
+                zero_cnt++;
+            } else {
+                one_cnt++;
+            }
+            arr[j] /= 2;
+        }
+        sum += (zero_cnt * one_cnt) * (1LL << i);
+    }
+    return sum;
+}
+
+int main() {
+    int n;
+    if (scanf("%d", &n) != 1 || n <= 0) {
+        return 1;
+    }
+
+    int *arr = (int *)malloc(n * sizeof(int));
+    if (arr == NULL) {
+        return 1;
+    }
+
+    for (int i = 0; i < n; i++) {
+        if (scanf("%d", &arr[i]) != 1) {
+            free(arr);
+            return 1;
+        }
+    }
+
+    long long result = sumXOR(arr, n);
+    printf("%lld\n", result);
+
+    free(arr);
+    return 0;
+}

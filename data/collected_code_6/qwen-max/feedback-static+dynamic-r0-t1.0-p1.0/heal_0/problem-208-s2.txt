@@ -1,0 +1,25 @@
+```c
+#include <stdio.h>
+#include <regex.h>
+
+int check_decimal(const char *input);
+
+int main() {
+    const char *test1 = "123.45";
+    const char *test2 = "123.456";
+    printf("%s: %d\n", test1, check_decimal(test1));
+    printf("%s: %d\n", test2, check_decimal(test2));
+    return 0;
+}
+
+int check_decimal(const char *input) {
+    int result;
+    regex_t regex;
+    if (regcomp(&regex, "^[0-9]+(\\.[0-9]{1,2})?$", REG_EXTENDED)) {
+        return -1;
+    }
+    result = regexec(&regex, input, 0, NULL, 0);
+    regfree(&regex);
+    return result == 0 ? 1 : 0;
+}
+```

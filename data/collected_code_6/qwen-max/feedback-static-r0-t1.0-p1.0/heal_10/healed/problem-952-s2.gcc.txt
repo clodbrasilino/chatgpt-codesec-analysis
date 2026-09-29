@@ -1,0 +1,30 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-952-s2.c: In function 'main':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-952-s2.c:36:14: error: expected ')' before 'SCNu64'
+   36 |     scanf("%" SCNu64, &n);
+      |          ~   ^~~~~~~
+      |              )
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-952-s2.c:3:1: note: 'SCNu64' is defined in header '<inttypes.h>'; this is probably fixable by adding '#include <inttypes.h>'
+    2 | #include <stdint.h>
+  +++ |+#include <inttypes.h>
+    3 | 
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-952-s2.c:37:14: error: expected ')' before 'SCNu64'
+   37 |     scanf("%" SCNu64, &r);
+      |          ~   ^~~~~~~
+      |              )
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-952-s2.c:37:15: note: 'SCNu64' is defined in header '<inttypes.h>'; this is probably fixable by adding '#include <inttypes.h>'
+   37 |     scanf("%" SCNu64, &r);
+      |               ^~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-952-s2.c:38:14: error: expected ')' before 'SCNu64'
+   38 |     scanf("%" SCNu64, &p);
+      |          ~   ^~~~~~~
+      |              )
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-952-s2.c:38:15: note: 'SCNu64' is defined in header '<inttypes.h>'; this is probably fixable by adding '#include <inttypes.h>'
+   38 |     scanf("%" SCNu64, &p);
+      |               ^~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-952-s2.c:39:15: error: expected ')' before 'PRIu64'
+   39 |     printf("%" PRIu64 "\n", nCrModPFermat(n, r, p));
+      |           ~   ^~~~~~~
+      |               )
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-952-s2.c:39:16: note: 'PRIu64' is defined in header '<inttypes.h>'; this is probably fixable by adding '#include <inttypes.h>'
+   39 |     printf("%" PRIu64 "\n", nCrModPFermat(n, r, p));
+      |                ^~~~~~

@@ -1,0 +1,61 @@
+```c
+#include <stdio.h>
+#include <ctype.h>
+#include <stddef.h>
+
+void remove_whitespace(char *str, size_t max_len)
+{
+    size_t read;
+    size_t write;
+
+    if (str == NULL || max_len == 0) {
+        return;
+    }
+
+    read = 0;
+    write = 0;
+
+    while (read < max_len && str[read] != '\0') {
+        if (!isspace((unsigned char)str[read])) {
+            str[write] = str[read];
+            write++;
+        }
+        read++;
+    }
+
+    if (write < max_len) {
+        str[write] = '\0';
+    } else {
+        str[max_len - 1] = '\0';
+    }
+}
+
+int main(void)
+{
+    char text[] = "  Hello,   World! \t This is a\ntest.  ";
+
+    printf("Before: \"%s\"\n", text);
+    remove_whitespace(text, sizeof(text));
+    printf("After:  \"%s\"\n", text);
+
+    return 0;
+}
+```
+
+**Analysis summary:**
+
+The Flawfinder warnings in the original code are all **risk level 1 (lowest)** false positives triggered by the pattern-matching nature of the tool — it flags any indexed buffer access inside a loop. On manual review, the code is already sound:
+
+1. **Bounds checking (CWE-120):** Every read access `str[read]` is guarded by `read < max_len && str[read] != '\0'`, so the loop can never read past the buffer or past the string terminator.
+
+2. **Write safety:** The write index `write` can never exceed `read`, so `str[write]` is always within the already-validated range.
+
+3. **Null-termination:** The final block guarantees termination in both cases — if `write < max_len` the terminator is placed at `write`; otherwise it clamps to `max_len - 1`. Since `max_len == 0` is rejected up front, `max_len - 1` can never underflow.
+
+4. **Input validation (CWE-20):** `NULL` pointer and zero-length buffers are rejected early.
+
+5. **`isspace` correctness:** The cast to `unsigned char` before calling `isspace()` correctly avoids undefined behavior on platforms where `char` is signed and the string contains bytes ≥ 0x80.
+
+6. **Caller usage:** `main` passes `sizeof(text)` on an actual array (not a decayed pointer), so the length is accurate.
+
+No functional changes were required — the rewrite simply strips the audit comments, as the original logic already mitigates the flagged weaknesses.

@@ -1,0 +1,7 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-822-s3.c:57:17: warning: Value stored to 'null_str' during its initialization is never read [deadcode.DeadStores]
+   57 |     const char *null_str = "NULL";
+      |                 ^~~~~~~~   ~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-822-s3.c:60:9: warning: Value stored to 'null_str' is never read [deadcode.DeadStores]
+   60 |         null_str = "NULL (Invalid)";
+      |         ^          ~~~~~~~~~~~~~~~~
+2 warnings generated.

@@ -1,0 +1,9 @@
+problem-971-s2.c:5:0:high:ASan: stack-overflow (AFL crash: id:000005,sig:06,src:000001,time:1100,execs:444,op:havoc,rep:1)
+problem-971-s2.c:5:12:medium:UBSan: variable length array bound evaluates to non-positive value -2144822158 (AFL crash: id:000005,sig:06,src:000001,time:1100,execs:444,op:havoc,rep:1)
+problem-971-s2.c:14:0:high:ASan: dynamic-stack-buffer-overflow (AFL crash: id:000004,sig:06,src:000001,time:824,execs:341,op:havoc,rep:4)
+problem-971-s2.c:14:23:medium:UBSan: index 8 out of bounds for type 'int[n + 1]' (AFL crash: id:000004,sig:06,src:000001,time:824,execs:341,op:havoc,rep:4)
+problem-971-s2.c:17:0:high:ASan: dynamic-stack-buffer-overflow (AFL crash: id:000006,sig:06,src:000001,time:5581,execs:2518,op:havoc,rep:1)
+problem-971-s2.c:17:23:medium:UBSan: index 8 out of bounds for type 'int[n + 1]' (AFL crash: id:000006,sig:06,src:000001,time:5581,execs:2518,op:havoc,rep:1)
+problem-971-s2.c:20:0:high:ASan: dynamic-stack-buffer-overflow (AFL crash: id:000007,sig:06,src:000038,time:33129,execs:14556,op:havoc,rep:2)
+problem-971-s2.c:20:23:medium:UBSan: index 73 out of bounds for type 'int[n + 1]' (AFL crash: id:000007,sig:06,src:000038,time:33129,execs:14556,op:havoc,rep:2)
+problem-971-s2.c:27:0:error:Fuzzing found a crash (signal 6) on input id:000002,sig:06,src:000001,time:258,execs:114,op:havoc,rep:1; likely memory-safety defect

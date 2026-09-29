@@ -1,0 +1,53 @@
+./collected_code_4/round2//heal_0/problem-722.c: In function 'filterStudents':
+./collected_code_4/round2//heal_0/problem-722.c:16:23: warning: leak of 'filtered' [CWE-401] [-Wanalyzer-malloc-leak]
+   16 |             *filtered = realloc(*filtered, sizeof(Student*) * (filteredLen + 1));
+      |             ~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  'main': events 1-2
+    |
+    |   27 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   37 |     filteredLen = filterStudents(students, 4, 160, 50, &filtered);
+    |      |                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                   |
+    |      |                   (2) calling 'filterStudents' from 'main'
+    |
+    +--> 'filterStudents': events 3-17
+           |
+           |   11 | int filterStudents(Student *students, size_t len, int minHeight, int minWidth, Student ***filtered) {
+           |      |     ^~~~~~~~~~~~~~
+           |      |     |
+           |      |     (3) entry to 'filterStudents'
+           |......
+           |   14 |     for (i = 0; i < len; i++) {
+           |      |                 ~~~~~~~
+           |      |                   |
+           |      |                   (4) following 'true' branch (when 'i < len')...
+           |      |                   (12) following 'true' branch (when 'i < len')...
+           |   15 |         if (students[i].height >= minHeight && students[i].width >= minWidth) {
+           |      |            ~        ~
+           |      |            |        |
+           |      |            |        (5) ...to here
+           |      |            |        (13) ...to here
+           |      |            (6) following 'true' branch...
+           |      |            (14) following 'true' branch...
+           |   16 |             *filtered = realloc(*filtered, sizeof(Student*) * (filteredLen + 1));
+           |      |             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                       | |                                                  |
+           |      |                       | |                                                  (7) ...to here
+           |      |                       | (8) allocated here                                 (15) ...to here
+           |      |                       | (9) when 'realloc' succeeds, moving buffer
+           |      |                       | (16) when 'realloc' fails
+           |      |                       (17) 'filtered' leaks here; was allocated at (8)
+           |   17 |             if (*filtered == NULL) {
+           |      |                ~
+           |      |                |
+           |      |                (10) following 'false' branch...
+           |......
+           |   20 |             (*filtered)[filteredLen] = &students[i];
+           |      |                                                 ~
+           |      |                                                 |
+           |      |                                                 (11) ...to here
+           |

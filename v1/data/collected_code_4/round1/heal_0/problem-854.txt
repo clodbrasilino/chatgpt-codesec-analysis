@@ -1,0 +1,52 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#define LEFT(i) (2 * i + 1)
+#define RIGHT(i) (2 * i + 2)
+#define PARENT(i) ((i - 1) / 2)
+
+void swap(int* a, int* b) {
+    int temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+void heapify(int* arr, int heapSize, int i) {
+    int largest = i;
+    int left = LEFT(i);
+    int right = RIGHT(i);
+
+    if(left < heapSize && arr[left] > arr[largest])
+        largest = left;
+
+    if(right < heapSize && arr[right] > arr[largest])
+        largest = right;
+
+    if(largest != i){
+        swap(&arr[i], &arr[largest]);
+        heapify(arr, heapSize, largest);
+    }
+}
+
+void convertToHeap(int* arr, int n) {
+    for(int i = n / 2; i >= 0; i--)
+        heapify(arr, n, i);
+}
+
+void Print(int* arr, int n) {
+    for(int i = 0; i < n; ++i)
+        printf("%d ", arr[i]);
+    printf("\n");
+}
+
+int main() {
+    int arr[] = {3, 2, 6, 5, 9, 8};
+    int n = sizeof(arr) / sizeof(arr[0]);
+
+    convertToHeap(arr, n);
+
+    printf("Converted array is \n");
+    Print(arr, n);
+    return 0;
+}
+```

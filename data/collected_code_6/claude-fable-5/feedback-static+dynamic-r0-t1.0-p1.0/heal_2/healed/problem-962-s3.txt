@@ -1,0 +1,96 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+static int sum_even_in_range(long long l, long long r, long long *result)
+{
+    long long first;
+    long long last;
+    long long count;
+    long long avg;
+
+    *result = 0;
+
+    if (l > r) {
+        return 0;
+    }
+
+    if (l < 2) {
+        l = 2;
+    }
+
+    if (r < 2) {
+        return 0;
+    }
+
+    if (l % 2 == 0) {
+        first = l;
+    } else {
+        if (l == LLONG_MAX) {
+            return 0;
+        }
+        first = l + 1;
+    }
+
+    if (r % 2 == 0) {
+        last = r;
+    } else {
+        last = r - 1;
+    }
+
+    if (first > last) {
+        return 0;
+    }
+
+    count = ((last - first) / 2) + 1;
+    avg = (first / 2) + (last / 2);
+
+    if (__builtin_mul_overflow(count, avg, result)) {
+        return -1;
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    long long l;
+    long long r;
+    long long result;
+
+    printf("Enter the lower bound: ");
+    if (scanf("%lld", &l) != 1) {
+        fprintf(stderr, "Error: invalid input for lower bound.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter the upper bound: ");
+    if (scanf("%lld", &r) != 1) {
+        fprintf(stderr, "Error: invalid input for upper bound.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (l > r) {
+        fprintf(stderr, "Error: lower bound must not exceed upper bound.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (sum_even_in_range(l, r, &result) != 0) {
+        fprintf(stderr, "Error: result overflows the representable range.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Sum of even natural numbers in [%lld, %lld] = %lld\n", l, r, result);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the fixes applied:**
+
+1. **First UBSan issue (`l + 1` overflow):** The original code computed `first = l + 1` when `l` was odd. If `l == LLONG_MAX` (which is odd, `9223372036854775807`), the increment overflowed. The fix explicitly checks for `l == LLONG_MAX` before incrementing; in that case no even number can exist in the range at or above `l`, so returning `0` with an empty sum is correct.
+
+2. **Second UBSan issue (`last - first` overflow):** The crash report showed a subtraction like `9223372036854775806 - (-9223372036854775808)`, which occurs when `first` is a large negative number. The clamping of `l` to a minimum of `2` guarantees `first >= 2`, so `last - first` can never exceed `LLONG_MAX - 2` and the subtraction is now safe. Similarly `r - 1` is safe because `r >= 2` at that point.
+
+3. **Multiplication overflow:** The final `count * avg` is already handled safely with `__builtin_mul_overflow`, which detects overflow without invoking undefined behavior. Note the arithmetic is exact: since `first` and `last` are both even, `first/2 + last/2 == (first + last)/2`, so the Gauss-sum formula holds without rounding loss and without risking overflow in `first + last`.

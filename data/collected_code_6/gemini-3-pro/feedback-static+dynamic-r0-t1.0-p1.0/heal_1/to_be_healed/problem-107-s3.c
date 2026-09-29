@@ -1,0 +1,50 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+
+long long count_hexadecimal_numbers(const char *start_hex, const char *end_hex) {
+    char *endptr;
+    long long start_val;
+    long long end_val;
+
+    errno = 0;
+    start_val = strtoll(start_hex, &endptr, 16);
+    if (errno != 0 || *endptr != '\0') {
+        return -1;
+    }
+
+    errno = 0;
+    end_val = strtoll(end_hex, &endptr, 16);
+    if (errno != 0 || *endptr != '\0') {
+        return -1;
+    }
+
+    if (start_val > end_val) {
+        return 0;
+    }
+
+    return (end_val - start_val) + 1;
+}
+
+/* Possible weaknesses found:
+ *  Parameter 'argv' can be declared as const array [constParameter]
+ */
+int main(int argc, char *argv[]) {
+    long long count;
+
+    if (argc != 3) {
+        fprintf(stderr, "Usage: %s <start_hex> <end_hex>\n", argv[0]);
+        return EXIT_FAILURE;
+    }
+
+    count = count_hexadecimal_numbers(argv[1], argv[2]);
+
+    if (count == -1) {
+        fprintf(stderr, "Error: Invalid hexadecimal input.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("%lld\n", count);
+
+    return EXIT_SUCCESS;
+}

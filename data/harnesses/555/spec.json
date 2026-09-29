@@ -1,0 +1,44 @@
+{
+  "task_id": 555,
+  "text": "Write a C function to find the difference between sum of cubes of first n natural numbers and the sum of first n natural numbers.",
+  "fn_candidates": [
+    "difference",
+    "Difference",
+    "difference",
+    "difference"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "difference",
+      "args": [
+        3
+      ],
+      "expected": 30,
+      "assert_src": "assert difference(3) == 30"
+    },
+    {
+      "fn_name": "difference",
+      "args": [
+        5
+      ],
+      "expected": 210,
+      "assert_src": "assert difference(5) == 210"
+    },
+    {
+      "fn_name": "difference",
+      "args": [
+        2
+      ],
+      "expected": 6,
+      "assert_src": "assert difference(2) == 6"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

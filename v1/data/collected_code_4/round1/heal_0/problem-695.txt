@@ -1,0 +1,29 @@
+```C
+#include <stdio.h>
+
+int tupleCheck(int len, int tuple1[], int tuple2[]) {
+    for (int i = 0; i < len; i++) {
+        if (tuple2[i] <= tuple1[i]) {
+            return 0;
+        }
+    }
+    return 1;
+}
+
+int main() {
+    int length = 3;
+    
+    int tuple1[] = {1, 2, 3};
+    int tuple2[] = {2, 3, 4};
+
+    int result = tupleCheck(length, tuple1, tuple2);
+    
+    if(result == 1){
+        printf("All elements in the second tuple are greater than their corresponding indices in the first tuple.\n");
+    } else {
+         printf("Not all elements in the second tuple are greater than their corresponding indices in the first  tuple.\n");
+    }
+
+    return 0;
+}
+```

@@ -1,0 +1,156 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#include <errno.h>
+#include <math.h>
+#include <stdint.h>
+
+typedef struct {
+    float *values;
+    size_t count;
+} FloatTuple;
+
+static int is_valid_float(const char *s, size_t len) {
+    if (s == NULL || len == 0) return 0;
+    int dot = 0, digit = 0;
+    size_t i = 0;
+    if (s[i] == '-' || s[i] == '+') {
+        i++;
+        if (i >= len) return 0;
+    }
+    for (; i < len; i++) {
+        if (s[i] == '.') {
+            if (dot) return 0;
+            dot = 1;
+        } else if (isdigit((unsigned char)s[i])) {
+            digit = 1;
+        } else {
+            return 0;
+        }
+    }
+    return digit;
+}
+
+FloatTuple *string_to_tuple(const char *str, size_t len) {
+    if (str == NULL) return NULL;
+    
+    if (len == 0) return NULL;
+    
+    size_t actual_len = 0;
+    while (actual_len < len && str[actual_len] != '\0') {
+        actual_len++;
+    }
+    if (actual_len != len) return NULL;
+    
+    if (len == SIZE_MAX) return NULL;
+    
+    char *copy = malloc(len + 1);
+    if (copy == NULL) return NULL;
+    
+    /* Possible weaknesses found:
+     * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+     */
+    memcpy(copy, str, len);
+    copy[len] = '\0';
+    
+    FloatTuple *tuple = malloc(sizeof(FloatTuple));
+    if (tuple == NULL) {
+        free(copy);
+        return NULL;
+    }
+    tuple->values = NULL;
+    tuple->count = 0;
+    
+    size_t capacity = 0;
+    size_t pos = 0;
+    
+    while (pos < len) {
+        while (pos < len && (copy[pos] == ' ' || copy[pos] == '\t' || 
+               copy[pos] == '\n' || copy[pos] == '\r' || copy[pos] == ',')) {
+            pos++;
+        }
+        if (pos >= len) break;
+        
+        size_t start = pos;
+        while (pos < len && copy[pos] != ' ' && copy[pos] != '\t' && 
+               copy[pos] != '\n' && copy[pos] != '\r' && copy[pos] != ',') {
+            pos++;
+        }
+        size_t token_len = pos - start;
+        
+        if (!is_valid_float(copy + start, token_len)) {
+            free(tuple->values);
+            free(tuple);
+            free(copy);
+            return NULL;
+        }
+        
+        if (tuple->count >= capacity) {
+            size_t new_cap = capacity == 0 ? 4 : capacity * 2;
+            if (new_cap > SIZE_MAX / sizeof(float)) {
+                free(tuple->values);
+                free(tuple);
+                free(copy);
+                return NULL;
+            }
+            float *new_vals = realloc(tuple->values, new_cap * sizeof(float));
+            if (new_vals == NULL) {
+                free(tuple->values);
+                free(tuple);
+                free(copy);
+                return NULL;
+            }
+            tuple->values = new_vals;
+            capacity = new_cap;
+        }
+        
+        char saved = copy[pos];
+        copy[pos] = '\0';
+        
+        char *endptr;
+        errno = 0;
+        float val = strtof(copy + start, &endptr);
+        if (errno == ERANGE || *endptr != '\0' || endptr == copy + start) {
+            copy[pos] = saved;
+            free(tuple->values);
+            free(tuple);
+            free(copy);
+            return NULL;
+        }
+        
+        copy[pos] = saved;
+        tuple->values[tuple->count++] = val;
+    }
+    
+    free(copy);
+    return tuple;
+}
+
+void free_tuple(FloatTuple *tuple) {
+    if (tuple != NULL) {
+        free(tuple->values);
+        free(tuple);
+    }
+}
+
+int main(void) {
+    const char input[] = "1.5, 2.3, -3.7, 4.0";
+    size_t input_len = sizeof(input) - 1;
+    
+    FloatTuple *tuple = string_to_tuple(input, input_len);
+    if (tuple == NULL) {
+        fprintf(stderr, "Conversion failed\n");
+        return 1;
+    }
+    
+    printf("Tuple: (");
+    for (size_t i = 0; i < tuple->count; i++) {
+        printf("%.2f", tuple->values[i]);
+        if (i < tuple->count - 1) printf(", ");
+    }
+    printf(")\n");
+    
+    free_tuple(tuple);
+    return 0;
+}

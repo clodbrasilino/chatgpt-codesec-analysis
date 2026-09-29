@@ -1,0 +1,164 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int *get_n_smallest(const int *dataset, size_t dataset_len, size_t n) {
+    if (dataset == NULL) {
+        return NULL;
+    }
+
+    if (n == 0) {
+        return NULL;
+    }
+
+    size_t actual_n = n;
+    if (n > dataset_len) {
+        actual_n = dataset_len;
+    }
+
+    int *result = (int *)malloc(actual_n * sizeof(int));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    for (size_t i = 0; i < actual_n; i++) {
+        result[i] = dataset[i];
+    }
+
+    for (size_t i = actual_n / 2; i > 0; i--) {
+        size_t root = i;
+        while (1) {
+            size_t left = 2 * root;
+            size_t right = 2 * root + 1;
+            size_t largest = root;
+
+            if (left <= actual_n && result[left - 1] > result[largest - 1]) {
+                largest = left;
+            }
+            if (right <= actual_n && result[right - 1] > result[largest - 1]) {
+                largest = right;
+            }
+            if (largest == root) {
+                break;
+            }
+
+            int temp = result[root - 1];
+            result[root - 1] = result[largest - 1];
+            result[largest - 1] = temp;
+
+            root = largest;
+        }
+    }
+
+    for (size_t i = actual_n; i < dataset_len; i++) {
+        if (dataset[i] < result[0]) {
+            result[0] = dataset[i];
+
+            size_t root = 1;
+            while (1) {
+                size_t left = 2 * root;
+                size_t right = 2 * root + 1;
+                size_t largest = root;
+
+                if (left <= actual_n && result[left - 1] > result[largest - 1]) {
+                    largest = left;
+                }
+                if (right <= actual_n && result[right - 1] > result[largest - 1]) {
+                    largest = right;
+                }
+                if (largest == root) {
+                    break;
+                }
+
+                int temp = result[root - 1];
+                result[root - 1] = result[largest - 1];
+                result[largest - 1] = temp;
+
+                root = largest;
+            }
+        }
+    }
+
+    for (size_t i = actual_n - 1; i > 0; i--) {
+        int temp = result[0];
+        result[0] = result[i];
+        result[i] = temp;
+
+        size_t heap_size = i;
+        size_t root = 1;
+        while (1) {
+            size_t left = 2 * root;
+            size_t right = 2 * root + 1;
+            size_t largest = root;
+
+            if (left <= heap_size && result[left - 1] > result[largest - 1]) {
+                largest = left;
+            }
+            if (right <= heap_size && result[right - 1] > result[largest - 1]) {
+                largest = right;
+            }
+            if (largest == root) {
+                break;
+            }
+
+            int temp2 = result[root - 1];
+            result[root - 1] = result[largest - 1];
+            result[largest - 1] = temp2;
+
+            root = largest;
+        }
+    }
+
+    return result;
+}
+
+int main(void) {
+    int data[] = {12, 3, 5, 7, 19, 1, 8, 2, 10, 4};
+    /* Possible weaknesses found:
+     *  Assignment 'data_len=sizeof(data)/sizeof(data[0])', assigned value is 10
+     */
+    size_t data_len = sizeof(data) / sizeof(data[0]);
+    /* Possible weaknesses found:
+     *  Assignment 'n=4', assigned value is 4
+     */
+    size_t n = 4;
+
+    int *smallest = get_n_smallest(data, data_len, n);
+    /* Possible weaknesses found:
+     *  Assuming condition is false
+     */
+    if (smallest == NULL) {
+        /* Possible weaknesses found:
+         *  Condition 'data_len>0' is always true [knownConditionTrueFalse]
+         *  Condition 'data_len>0' is always true
+         *  Condition 'n>0' is always true
+         *  Condition 'n>0' is always true [knownConditionTrueFalse]
+         */
+        if (n > 0 && data_len > 0) {
+            return 1;
+        }
+        return 0;
+    }
+
+    /* Possible weaknesses found:
+     *  actual_n is assigned 'n' here.
+     *  Assignment 'actual_n=n', assigned value is 4
+     */
+    size_t actual_n = n;
+    /* Possible weaknesses found:
+     *  Condition 'n>data_len' is always false [knownConditionTrueFalse]
+     *  Condition 'n>data_len' is always false
+     */
+    if (n > data_len) {
+        actual_n = data_len;
+    }
+
+    for (size_t i = 0; i < actual_n; i++) {
+        printf("%d ", smallest[i]);
+    }
+    printf("\n");
+
+    free(smallest);
+    smallest = NULL;
+
+    return 0;
+}

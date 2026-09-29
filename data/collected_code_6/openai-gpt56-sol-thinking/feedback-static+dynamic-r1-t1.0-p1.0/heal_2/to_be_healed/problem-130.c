@@ -1,0 +1,140 @@
+#include <errno.h>
+#include <limits.h>
+#include <stdbool.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef enum {
+    FIND_SUCCESS = 0,
+    FIND_INVALID_ARGUMENT,
+    FIND_MEMORY_ERROR
+} FindResult;
+
+static int compare_ints(const void *left, const void *right)
+{
+    const int a = *(const int *)left;
+    const int b = *(const int *)right;
+
+    return (a > b) - (a < b);
+}
+
+static FindResult find_most_frequent(const int *items, size_t count,
+                                     int *result_item,
+                                     size_t *result_frequency)
+{
+    int *sorted_items;
+    int best_item;
+    size_t best_frequency = 1U;
+    size_t current_frequency = 1U;
+    size_t i;
+
+    if (items == NULL || count == 0U ||
+        result_item == NULL || result_frequency == NULL) {
+        return FIND_INVALID_ARGUMENT;
+    }
+
+    if (count > SIZE_MAX / sizeof(*sorted_items)) {
+        return FIND_MEMORY_ERROR;
+    }
+
+    sorted_items = malloc(count * sizeof(*sorted_items));
+    if (sorted_items == NULL) {
+        return FIND_MEMORY_ERROR;
+    }
+
+    for (i = 0U; i < count; ++i) {
+        sorted_items[i] = items[i];
+    }
+
+    qsort(sorted_items, count, sizeof(*sorted_items), compare_ints);
+    best_item = sorted_items[0];
+
+    for (i = 1U; i < count; ++i) {
+        if (sorted_items[i] == sorted_items[i - 1U]) {
+            ++current_frequency;
+        } else {
+            if (current_frequency > best_frequency) {
+                best_frequency = current_frequency;
+                best_item = sorted_items[i - 1U];
+            }
+            current_frequency = 1U;
+        }
+    }
+
+    if (current_frequency > best_frequency) {
+        best_frequency = current_frequency;
+        best_item = sorted_items[count - 1U];
+    }
+
+    free(sorted_items);
+
+    *result_item = best_item;
+    *result_frequency = best_frequency;
+
+    return FIND_SUCCESS;
+}
+
+/* Possible weaknesses found:
+ * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+ *  Parameter 'argv' can be declared as const array [constParameter]
+ */
+int main(int argc, char *argv[const])
+{
+    int *items;
+    int most_frequent_item;
+    size_t count;
+    size_t frequency;
+    size_t i;
+    FindResult result;
+
+    if (argc < 2) {
+        fprintf(stderr, "Usage: %s integer [integer ...]\n", argv[0]);
+        return EXIT_FAILURE;
+    }
+
+    count = (size_t)argc - 1U;
+
+    if (count > SIZE_MAX / sizeof(*items)) {
+        fputs("Input is too large.\n", stderr);
+        return EXIT_FAILURE;
+    }
+
+    items = malloc(count * sizeof(*items));
+    if (items == NULL) {
+        fputs("Memory allocation failed.\n", stderr);
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0U; i < count; ++i) {
+        const char *argument = argv[i + 1U];
+        char *end;
+        long value;
+
+        errno = 0;
+        value = strtol(argument, &end, 10);
+
+        if (errno == ERANGE || end == argument || *end != '\0' ||
+            value < INT_MIN || value > INT_MAX) {
+            fprintf(stderr, "Invalid integer: %s\n", argument);
+            free(items);
+            return EXIT_FAILURE;
+        }
+
+        items[i] = (int)value;
+    }
+
+    result = find_most_frequent(items, count,
+                                &most_frequent_item, &frequency);
+    free(items);
+
+    if (result != FIND_SUCCESS) {
+        fputs("Unable to determine the most frequent item.\n", stderr);
+        return EXIT_FAILURE;
+    }
+
+    printf("Item: %d\nFrequency: %zu\n",
+           most_frequent_item, frequency);
+
+    return EXIT_SUCCESS;
+}

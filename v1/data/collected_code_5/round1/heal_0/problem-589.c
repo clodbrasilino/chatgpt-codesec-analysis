@@ -1,0 +1,26 @@
+#include <stdio.h>
+#include <math.h>
+
+void find_perfect_squares(int low, int high) {
+    int start = ceil(sqrt(low));
+    int end = floor(sqrt(high));
+    for(int i = start; i <= end; i++) {
+        printf("%d ", i * i);
+    }
+    printf("\n");
+}
+
+int main() {
+    int low, high;
+    printf("Enter the lower limit: ");
+    scanf("%d", &low);
+    printf("Enter the upper limit: ");
+    scanf("%d", &high);
+    if(low > high) {
+        printf("Error: lower limit should be less than or equal to upper limit\n");
+        return 1;
+    }
+    printf("Perfect squares between %d and %d are: ", low, high);
+    find_perfect_squares(low, high);
+    return 0;
+}

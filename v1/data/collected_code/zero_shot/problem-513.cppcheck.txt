@@ -1,0 +1,12 @@
+collected_code/problem-513-0.c:8:10: error: Cannot determine that 'list[0]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+  strcpy(list, "");
+         ^
+collected_code/problem-513-0.c:10:25: error: Cannot determine that 'tuple[0]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+  for(i = 0; i < strlen(tuple); i++) {
+                        ^
+collected_code/problem-513-0.c:12:18: error: Cannot determine that 'string[0]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+    strcat(list, string);
+                 ^
+collected_code/problem-513-0.c:23:18: error: Cannot determine that 'list[0]' is initialized [premium-bughuntingUninit]
+  printf("%s\n", list);
+                 ^

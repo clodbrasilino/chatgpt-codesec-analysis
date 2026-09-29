@@ -1,0 +1,229 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+typedef struct {
+    const char *key;
+    int value;
+} Pair;
+
+typedef struct {
+    char *key;
+    int *values;
+    size_t count;
+    size_t capacity;
+} Entry;
+
+typedef struct {
+    Entry *entries;
+    size_t count;
+    size_t capacity;
+} Map;
+
+static char *duplicate_string(const char *src)
+{
+    size_t len;
+    char *dst;
+
+    if (src == NULL) {
+        return NULL;
+    }
+    len = strnlen(src, SIZE_MAX - 1);
+    if (len >= SIZE_MAX - 1) {
+        return NULL;
+    }
+    dst = malloc(len + 1);
+    if (dst == NULL) {
+        return NULL;
+    }
+    memcpy(dst, src, len);
+    dst[len] = '\0';
+    return dst;
+}
+
+static Map *map_create(void)
+{
+    Map *m = malloc(sizeof(*m));
+    if (m == NULL) {
+        return NULL;
+    }
+    m->entries = NULL;
+    m->count = 0;
+    m->capacity = 0;
+    return m;
+}
+
+static void map_destroy(Map *m)
+{
+    size_t i;
+
+    if (m == NULL) {
+        return;
+    }
+    for (i = 0; i < m->count; i++) {
+        free(m->entries[i].key);
+        free(m->entries[i].values);
+    }
+    free(m->entries);
+    free(m);
+}
+
+static Entry *map_find(Map *m, const char *key)
+{
+    size_t i;
+
+    for (i = 0; i < m->count; i++) {
+        if (strcmp(m->entries[i].key, key) == 0) {
+            return &m->entries[i];
+        }
+    }
+    return NULL;
+}
+
+static int entry_append(Entry *e, int value)
+{
+    if (e->count == e->capacity) {
+        size_t new_capacity = (e->capacity == 0) ? 4 : e->capacity * 2;
+        int *tmp;
+
+        if (new_capacity <= e->capacity || new_capacity > SIZE_MAX / sizeof(int)) {
+            return -1;
+        }
+        tmp = realloc(e->values, new_capacity * sizeof(int));
+        if (tmp == NULL) {
+            return -1;
+        }
+        e->values = tmp;
+        e->capacity = new_capacity;
+    }
+    e->values[e->count] = value;
+    e->count++;
+    return 0;
+}
+
+static int map_add(Map *m, const char *key, int value)
+{
+    Entry *e = map_find(m, key);
+
+    if (e != NULL) {
+        return entry_append(e, value);
+    }
+
+    if (m->count == m->capacity) {
+        size_t new_capacity = (m->capacity == 0) ? 4 : m->capacity * 2;
+        Entry *tmp;
+
+        if (new_capacity <= m->capacity || new_capacity > SIZE_MAX / sizeof(Entry)) {
+            return -1;
+        }
+        tmp = realloc(m->entries, new_capacity * sizeof(Entry));
+        if (tmp == NULL) {
+            return -1;
+        }
+        m->entries = tmp;
+        m->capacity = new_capacity;
+    }
+
+    e = &m->entries[m->count];
+    e->key = duplicate_string(key);
+    if (e->key == NULL) {
+        return -1;
+    }
+    e->values = NULL;
+    e->count = 0;
+    e->capacity = 0;
+
+    if (entry_append(e, value) != 0) {
+        free(e->key);
+        return -1;
+    }
+
+    m->count++;
+    return 0;
+}
+
+static Map *group_pairs(const Pair *pairs, size_t n)
+{
+    Map *m;
+    size_t i;
+
+    if (pairs == NULL && n > 0) {
+        return NULL;
+    }
+
+    m = map_create();
+    if (m == NULL) {
+        return NULL;
+    }
+
+    for (i = 0; i < n; i++) {
+        if (pairs[i].key == NULL) {
+            map_destroy(m);
+            return NULL;
+        }
+        if (map_add(m, pairs[i].key, pairs[i].value) != 0) {
+            map_destroy(m);
+            return NULL;
+        }
+    }
+    return m;
+}
+
+static void map_print(const Map *m)
+{
+    size_t i;
+    size_t j;
+
+    if (m == NULL) {
+        return;
+    }
+    for (i = 0; i < m->count; i++) {
+        printf("%s: [", m->entries[i].key);
+        for (j = 0; j < m->entries[i].count; j++) {
+            printf("%d", m->entries[i].values[j]);
+            if (j + 1 < m->entries[i].count) {
+                printf(", ");
+            }
+        }
+        printf("]\n");
+    }
+}
+
+int main(void)
+{
+    Pair pairs[] = {
+        { "apple", 1 },
+        { "banana", 2 },
+        { "apple", 3 },
+        { "cherry", 4 },
+        { "banana", 5 },
+        { "apple", 6 }
+    };
+    size_t n = sizeof(pairs) / sizeof(pairs[0]);
+    Map *m;
+
+    m = group_pairs(pairs, n);
+    if (m == NULL) {
+        fprintf(stderr, "Failed to group pairs\n");
+        return EXIT_FAILURE;
+    }
+
+    map_print(m);
+    map_destroy(m);
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis summary:**
+
+The flagged `memcpy` in `duplicate_string` was already safe in practice — the destination is allocated as `len + 1` bytes and exactly `len` bytes are copied, followed by manual null termination. The rewrite hardens it further:
+
+1. **`duplicate_string`**: Added an explicit guard rejecting strings whose measured length hits the `strnlen` cap (`SIZE_MAX - 1`), which guarantees `len + 1` cannot overflow and that the destination buffer always fully holds the copied data plus terminator. This directly addresses the CWE-120 concern.
+
+2. **`entry_append` / `map_add`**: Added `new_capacity <= capacity` checks to detect `size_t` overflow from the doubling strategy before the multiplication guard, preventing a wrapped capacity from passing validation.
+
+3. **`map_print`**: Added a `NULL` guard for defensive consistency with the rest of the API.
+
+All other logic (ownership semantics, cleanup on partial failure in `map_add`, `map_destroy` freeing only initialized entries via `m->count`) was already correct and is preserved unchanged.

@@ -1,0 +1,63 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+#include <string.h>
+#include <limits.h>
+
+#define MAX_INPUT_LEN 256
+
+bool all_chars_unique(const char *str, size_t max_len)
+{
+    bool seen[UCHAR_MAX + 1] = { false };
+    size_t i;
+
+    if (str == NULL) {
+        return false;
+    }
+
+    for (i = 0; i < max_len && str[i] != '\0'; i++) {
+        unsigned char c = (unsigned char)str[i];
+        if (seen[c]) {
+            return false;
+        }
+        seen[c] = true;
+    }
+
+    return true;
+}
+
+int main(void)
+{
+    char buffer[MAX_INPUT_LEN];
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+    buffer[strcspn(buffer, "\n")] = '\0';
+
+    if (all_chars_unique(buffer, sizeof(buffer))) {
+        printf("All characters are unique\n");
+    } else {
+        printf("Duplicate characters found\n");
+    }
+
+    return 0;
+}
+```
+
+**Analysis of the flagged weakness (CWE-119/CWE-120):**
+
+The Flawfinder warning about the statically-sized `char buffer[MAX_INPUT_LEN]` is already properly mitigated in this code:
+
+1. **Bounded read:** `fgets(buffer, (int)sizeof(buffer), stdin)` limits input to `sizeof(buffer) - 1` characters plus the null terminator, preventing buffer overflow. Using `sizeof(buffer)` rather than a hardcoded constant means the bound stays correct even if `MAX_INPUT_LEN` changes.
+
+2. **Defensive null termination:** `buffer[sizeof(buffer) - 1] = '\0';` guarantees termination even in edge cases (technically redundant after `fgets`, but harmless defense-in-depth).
+
+3. **Safe newline stripping:** `strcspn(buffer, "\n")` returns an index within the string bounds whether or not a newline is present, so the assignment never writes out of bounds — unlike the common unsafe idiom `buffer[strlen(buffer) - 1] = '\0'`, which underflows on an empty string.
+
+4. **Safe indexing in `all_chars_unique`:** The cast to `unsigned char` before indexing `seen[]` prevents negative indices on platforms where `char` is signed, and the loop is bounded by both `max_len` and the null terminator. The `NULL` check guards against invalid pointers.
+
+The warning is a false positive in this context; the code already performs the bounds checking Flawfinder recommends, so the rewrite preserves the original logic with comments removed.

@@ -1,0 +1,156 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdint.h>
+
+#define MAX_INPUT_LENGTH ((size_t)4096)
+
+static void free_tokens(char **tokens, size_t count)
+{
+    size_t i;
+
+    if (tokens == NULL)
+    {
+        return;
+    }
+
+    for (i = 0; i < count; i++)
+    {
+        free(tokens[i]);
+    }
+    free(tokens);
+}
+
+char **split_at_lowercase(const char *str, size_t *count)
+{
+    size_t n;
+    size_t i;
+    size_t tokens;
+    size_t idx;
+    char **result;
+    const char *nul;
+
+    if (str == NULL || count == NULL)
+    {
+        return NULL;
+    }
+
+    *count = 0;
+
+    nul = memchr(str, '\0', MAX_INPUT_LENGTH);
+    if (nul == NULL)
+    {
+        return NULL;
+    }
+    n = (size_t)(nul - str);
+
+    tokens = 0;
+    i = 0;
+
+    while (i < n)
+    {
+        if (islower((unsigned char)str[i]))
+        {
+            i++;
+        }
+        else
+        {
+            tokens++;
+            while (i < n && !islower((unsigned char)str[i]))
+            {
+                i++;
+            }
+        }
+    }
+
+    if (tokens > (SIZE_MAX / sizeof(*result)) - 1)
+    {
+        return NULL;
+    }
+
+    result = malloc((tokens + 1) * sizeof(*result));
+    if (result == NULL)
+    {
+        return NULL;
+    }
+
+    idx = 0;
+    i = 0;
+
+    while (i < n && idx < tokens)
+    {
+        if (islower((unsigned char)str[i]))
+        {
+            i++;
+        }
+        else
+        {
+            size_t start = i;
+            size_t len;
+            size_t dest_size;
+
+            while (i < n && !islower((unsigned char)str[i]))
+            {
+                i++;
+            }
+            len = i - start;
+
+            if (len == SIZE_MAX)
+            {
+                free_tokens(result, idx);
+                return NULL;
+            }
+            dest_size = len + 1;
+
+            result[idx] = malloc(dest_size);
+            if (result[idx] == NULL)
+            {
+                free_tokens(result, idx);
+                return NULL;
+            }
+
+            if (start > n || len > n - start)
+            {
+                free(result[idx]);
+                free_tokens(result, idx);
+                return NULL;
+            }
+
+            memcpy(result[idx], str + start, len);
+            result[idx][len] = '\0';
+            idx++;
+        }
+    }
+
+    result[idx] = NULL;
+    *count = idx;
+    return result;
+}
+
+void free_split(char **tokens, size_t count)
+{
+    free_tokens(tokens, count);
+}
+
+int main(void)
+{
+    const char *input = "ABCdefGHIjklMNO";
+    size_t count = 0;
+    size_t i;
+    char **tokens = split_at_lowercase(input, &count);
+
+    if (tokens == NULL)
+    {
+        fprintf(stderr, "Failed to split string\n");
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i < count; i++)
+    {
+        printf("Token %zu: %s\n", i, tokens[i]);
+    }
+
+    free_split(tokens, count);
+    return EXIT_SUCCESS;
+}

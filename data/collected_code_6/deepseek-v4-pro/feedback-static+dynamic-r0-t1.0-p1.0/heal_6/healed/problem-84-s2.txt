@@ -1,0 +1,94 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <limits.h>
+#include <errno.h>
+
+int newman_conway(int n, int *memo) {
+    if (n < 1) {
+        return 0;
+    }
+    if (n == 1 || n == 2) {
+        return 1;
+    }
+    if (memo[n] != 0) {
+        return memo[n];
+    }
+    int prev = newman_conway(n - 1, memo);
+    if (prev >= n || prev < 1) {
+        return 0;
+    }
+    int term1 = newman_conway(prev, memo);
+    int term2 = newman_conway(n - prev, memo);
+    if (term1 == 0 || term2 == 0) {
+        return 0;
+    }
+    if (term1 > 0 && term2 > 0) {
+        if (term1 > INT_MAX - term2) {
+            return 0;
+        }
+        int sum = term1 + term2;
+        memo[n] = sum;
+        return memo[n];
+    }
+    return 0;
+}
+
+int main(void) {
+    int n;
+    char *buffer = NULL;
+    size_t bufsize = 0;
+    ssize_t linelen;
+    
+    printf("Enter n: ");
+    linelen = getline(&buffer, &bufsize, stdin);
+    if (linelen == -1) {
+        fprintf(stderr, "Invalid input\n");
+        free(buffer);
+        return 1;
+    }
+    
+    if (linelen > 0 && buffer[linelen - 1] == '\n') {
+        buffer[linelen - 1] = '\0';
+    }
+    
+    char *endptr;
+    errno = 0;
+    long val = strtol(buffer, &endptr, 10);
+    
+    if (buffer == endptr || *endptr != '\0') {
+        fprintf(stderr, "Invalid input\n");
+        free(buffer);
+        return 1;
+    }
+    
+    if (errno == ERANGE || val < 1 || val > 1000) {
+        fprintf(stderr, "n must be between 1 and 1000\n");
+        free(buffer);
+        return 1;
+    }
+    
+    n = (int)val;
+    
+    int *memo = calloc((size_t)n + 1, sizeof(int));
+    if (memo == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        free(buffer);
+        return 1;
+    }
+    
+    int result = newman_conway(n, memo);
+    if (result == 0) {
+        fprintf(stderr, "Computation failed\n");
+        free(memo);
+        free(buffer);
+        return 1;
+    }
+    
+    printf("%d\n", result);
+    free(memo);
+    free(buffer);
+    return 0;
+}
+```

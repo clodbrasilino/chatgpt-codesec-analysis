@@ -1,0 +1,114 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *elements;
+    int size;
+} Tuple;
+
+typedef struct {
+    Tuple *tuples;
+    int count;
+} TupleList;
+
+int compare_last_element(const void *a, const void *b) {
+    const Tuple *tuple_a = (const Tuple *)a;
+    const Tuple *tuple_b = (const Tuple *)b;
+    
+    int last_a = tuple_a->elements[tuple_a->size - 1];
+    int last_b = tuple_b->elements[tuple_b->size - 1];
+    
+    return last_a - last_b;
+}
+
+void sort_tuples_by_last_element(TupleList *list) {
+    if (list == NULL || list->tuples == NULL || list->count <= 0) {
+        return;
+    }
+    
+    qsort(list->tuples, list->count, sizeof(Tuple), compare_last_element);
+}
+
+Tuple create_tuple(int *elements, int size) {
+    Tuple tuple;
+    tuple.size = size;
+    tuple.elements = (int *)malloc(size * sizeof(int));
+    
+    if (tuple.elements == NULL) {
+        tuple.size = 0;
+        return tuple;
+    }
+    
+    for (int i = 0; i < size; i++) {
+        tuple.elements[i] = elements[i];
+    }
+    
+    return tuple;
+}
+
+void free_tuple_list(TupleList *list) {
+    if (list == NULL) {
+        return;
+    }
+    
+    for (int i = 0; i < list->count; i++) {
+        free(list->tuples[i].elements);
+    }
+    
+    free(list->tuples);
+    list->tuples = NULL;
+    list->count = 0;
+}
+
+void print_tuple_list(TupleList *list) {
+    if (list == NULL || list->tuples == NULL) {
+        return;
+    }
+    
+    for (int i = 0; i < list->count; i++) {
+        printf("(");
+        for (int j = 0; j < list->tuples[i].size; j++) {
+            printf("%d", list->tuples[i].elements[j]);
+            if (j < list->tuples[i].size - 1) {
+                printf(", ");
+            }
+        }
+        printf(")");
+        if (i < list->count - 1) {
+            printf(", ");
+        }
+    }
+    printf("\n");
+}
+
+int main() {
+    TupleList list;
+    list.count = 3;
+    list.tuples = (Tuple *)malloc(list.count * sizeof(Tuple));
+    
+    if (list.tuples == NULL) {
+        return 1;
+    }
+    
+    int tuple1_data[] = {2, 5};
+    int tuple2_data[] = {1, 2};
+    int tuple3_data[] = {4, 4, 5};
+    int tuple4_data[] = {4, 4};
+    int tuple5_data[] = {3, 2, 1};
+    
+    list.tuples[0] = create_tuple(tuple1_data, 2);
+    list.tuples[1] = create_tuple(tuple2_data, 2);
+    list.tuples[2] = create_tuple(tuple3_data, 3);
+    
+    printf("Original list:\n");
+    print_tuple_list(&list);
+    
+    sort_tuples_by_last_element(&list);
+    
+    printf("Sorted list by last element:\n");
+    print_tuple_list(&list);
+    
+    free_tuple_list(&list);
+    
+    return 0;
+}

@@ -1,0 +1,159 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+#include <limits.h>
+#include <stdbool.h>
+
+#define MAX_KEY_LENGTH 50
+#define MAX_ENTRIES 100
+
+typedef struct {
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char key[MAX_KEY_LENGTH];
+    int value;
+} DictEntry;
+
+typedef struct {
+    DictEntry entries[MAX_ENTRIES];
+    size_t count;
+} Dictionary;
+
+void initDictionary(Dictionary *dict) {
+    if (dict != NULL) {
+        dict->count = 0;
+        memset(dict->entries, 0, sizeof(dict->entries));
+    }
+}
+
+static bool isValidKey(const char *key) {
+    if (key == NULL) {
+        return false;
+    }
+    size_t len = strnlen(key, MAX_KEY_LENGTH);
+    return (len > 0 && len < MAX_KEY_LENGTH);
+}
+
+int addEntry(Dictionary *dict, const char *key, int value) {
+    if (dict == NULL || !isValidKey(key) || dict->count >= MAX_ENTRIES) {
+        return -1;
+    }
+    
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    size_t key_len = strlen(key);
+    /* Possible weaknesses found:
+     * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+     */
+    memcpy(dict->entries[dict->count].key, key, key_len + 1);
+    dict->entries[dict->count].value = value;
+    dict->count++;
+    
+    return 0;
+}
+
+int findEntry(const Dictionary *dict, const char *key) {
+    if (dict == NULL || !isValidKey(key)) {
+        return -1;
+    }
+    
+    for (size_t i = 0; i < dict->count; i++) {
+        if (strcmp(dict->entries[i].key, key) == 0) {
+            return (int)i;
+        }
+    }
+    
+    return -1;
+}
+
+int combineDictionaries(const Dictionary *dict1, const Dictionary *dict2, Dictionary *result) {
+    if (dict1 == NULL || dict2 == NULL || result == NULL) {
+        return -1;
+    }
+    
+    if (dict1 == result || dict2 == result) {
+        return -1;
+    }
+    
+    initDictionary(result);
+    
+    for (size_t i = 0; i < dict1->count; i++) {
+        if (addEntry(result, dict1->entries[i].key, dict1->entries[i].value) != 0) {
+            return -1;
+        }
+    }
+    
+    for (size_t i = 0; i < dict2->count; i++) {
+        int index = findEntry(result, dict2->entries[i].key);
+        
+        if (index >= 0) {
+            if ((dict2->entries[i].value > 0 && result->entries[index].value > INT_MAX - dict2->entries[i].value) ||
+                (dict2->entries[i].value < 0 && result->entries[index].value < INT_MIN - dict2->entries[i].value)) {
+                return -1;
+            }
+            result->entries[index].value += dict2->entries[i].value;
+        } else {
+            if (addEntry(result, dict2->entries[i].key, dict2->entries[i].value) != 0) {
+                return -1;
+            }
+        }
+    }
+    
+    return 0;
+}
+
+void printDictionary(const Dictionary *dict) {
+    if (dict == NULL) {
+        return;
+    }
+    
+    printf("{\n");
+    for (size_t i = 0; i < dict->count; i++) {
+        printf("  \"%s\": %d", dict->entries[i].key, dict->entries[i].value);
+        if (i < dict->count - 1) {
+            printf(",");
+        }
+        printf("\n");
+    }
+    printf("}\n");
+}
+
+int main(void) {
+    Dictionary dict1, dict2, combined;
+    
+    initDictionary(&dict1);
+    initDictionary(&dict2);
+    
+    if (addEntry(&dict1, "apple", 5) != 0 ||
+        addEntry(&dict1, "banana", 3) != 0 ||
+        addEntry(&dict1, "orange", 7) != 0) {
+        fprintf(stderr, "Error adding entries to dict1\n");
+        return EXIT_FAILURE;
+    }
+    
+    if (addEntry(&dict2, "banana", 2) != 0 ||
+        addEntry(&dict2, "grape", 4) != 0 ||
+        addEntry(&dict2, "apple", 3) != 0) {
+        fprintf(stderr, "Error adding entries to dict2\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("Dictionary 1:\n");
+    printDictionary(&dict1);
+    
+    printf("\nDictionary 2:\n");
+    printDictionary(&dict2);
+    
+    if (combineDictionaries(&dict1, &dict2, &combined) != 0) {
+        fprintf(stderr, "Error combining dictionaries\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("\nCombined Dictionary:\n");
+    printDictionary(&combined);
+    
+    return EXIT_SUCCESS;
+}

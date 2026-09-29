@@ -1,0 +1,28 @@
+collected_code/problem-783-0.c: In function 'RGBtoHSV':
+collected_code/problem-783-0.c:2:18: warning: implicit declaration of function 'fmax' [-Wimplicit-function-declaration]
+    2 |     double max = fmax(fmax(r, g), b);
+      |                  ^~~~
+collected_code/problem-783-0.c:1:1: note: include '<math.h>' or provide a declaration of 'fmax'
+  +++ |+#include <math.h>
+    1 | void RGBtoHSV(int r, int g, int b, double* h, double* s, double* v) {
+collected_code/problem-783-0.c:2:18: warning: incompatible implicit declaration of built-in function 'fmax' [-Wbuiltin-declaration-mismatch]
+    2 |     double max = fmax(fmax(r, g), b);
+      |                  ^~~~
+collected_code/problem-783-0.c:2:18: note: include '<math.h>' or provide a declaration of 'fmax'
+collected_code/problem-783-0.c:3:18: warning: implicit declaration of function 'fmin' [-Wimplicit-function-declaration]
+    3 |     double min = fmin(fmin(r, g), b);
+      |                  ^~~~
+collected_code/problem-783-0.c:3:18: note: include '<math.h>' or provide a declaration of 'fmin'
+collected_code/problem-783-0.c:3:18: warning: incompatible implicit declaration of built-in function 'fmin' [-Wbuiltin-declaration-mismatch]
+collected_code/problem-783-0.c:3:18: note: include '<math.h>' or provide a declaration of 'fmin'
+collected_code/problem-783-0.c:10:19: warning: implicit declaration of function 'fmod' [-Wimplicit-function-declaration]
+   10 |         *h = 60 * fmod(((g - b) / delta), 6);
+      |                   ^~~~
+collected_code/problem-783-0.c:10:19: note: include '<math.h>' or provide a declaration of 'fmod'
+collected_code/problem-783-0.c:10:19: warning: incompatible implicit declaration of built-in function 'fmod' [-Wbuiltin-declaration-mismatch]
+collected_code/problem-783-0.c:10:19: note: include '<math.h>' or provide a declaration of 'fmod'
+Undefined symbols for architecture x86_64:
+  "_main", referenced from:
+     implicit entry/start for main executable
+ld: symbol(s) not found for architecture x86_64
+collect2: error: ld returned 1 exit status

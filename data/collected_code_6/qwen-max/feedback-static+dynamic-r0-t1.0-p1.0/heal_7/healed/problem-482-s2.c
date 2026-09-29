@@ -1,0 +1,47 @@
+#include <stdio.h>
+#include <regex.h>
+#include <string.h>
+
+void find_sequences(const char *input) {
+    regex_t re;
+    int reti;
+    char msgbuf[100];
+
+    if (regcomp(&re, "[A-Z][a-z]+", 0) != 0) {
+        fprintf(stderr, "Could not compile regex\n");
+        return;
+    }
+
+    if ((reti = regexec(&re, input, 0, NULL, 0)) == REG_NOMATCH) {
+        printf("No matches found\n");
+    } else if (reti != 0) {
+        regerror(reti, &re, msgbuf, sizeof(msgbuf));
+        fprintf(stderr, "Regex match failed: %s\n", msgbuf);
+    } else {
+        size_t input_len = strlen(input);
+        const char *current_input = input;
+
+        while (1) {
+            regmatch_t pmatch[1];
+            if (regexec(&re, current_input, 1, pmatch, 0) != 0) {
+                break;
+            }
+            for (int i = 0; i < 1; i++) {
+                if (pmatch[i].rm_so == (size_t)-1 || pmatch[i].rm_eo > input_len) {
+                    break;
+                }
+                const char *start = current_input + pmatch[i].rm_so;
+                printf("%.*s\n", (int)(pmatch[i].rm_eo - pmatch[i].rm_so), start);
+                current_input += pmatch[i].rm_eo;
+                input_len -= pmatch[i].rm_eo;
+            }
+        }
+    }
+    regfree(&re);
+}
+
+int main() {
+    const char *test_str = "HelloWorld isAnExample OfPattern Matching";
+    find_sequences(test_str);
+    return 0;
+}

@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static-r1-t1.0-p1.0/heal_7/healed/problem-513.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static-r1-t1.0-p1.0/heal_7/healed/problem-513.c:12:15: style: Condition 'total<len' is always false [knownConditionTrueFalse]
+    if (total < len) {
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static-r1-t1.0-p1.0/heal_7/healed/problem-513.c:11:18: note: total is assigned 'len+1' here.
+    size_t total = len + 1;
+                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static-r1-t1.0-p1.0/heal_7/healed/problem-513.c:12:15: note: Condition 'total<len' is always false
+    if (total < len) {
+              ^

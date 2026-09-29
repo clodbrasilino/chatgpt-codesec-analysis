@@ -1,0 +1,122 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define TUPLE_COUNT 5
+#define NAME_LEN 32
+
+typedef struct {
+    char name[NAME_LEN];
+    float value;
+} Tuple;
+
+static int set_tuple_name(Tuple *tuple, const char *name)
+{
+    size_t len;
+
+    if (tuple == NULL || name == NULL) {
+        return -1;
+    }
+
+    len = strnlen(name, NAME_LEN);
+    if (len >= NAME_LEN) {
+        return -1;
+    }
+
+    if (len >= sizeof(tuple->name)) {
+        return -1;
+    }
+
+    memcpy(tuple->name, name, len);
+    tuple->name[len] = '\0';
+    return 0;
+}
+
+static int compare_tuples(const void *a, const void *b)
+{
+    const Tuple *ta = (const Tuple *)a;
+    const Tuple *tb = (const Tuple *)b;
+
+    if (ta->value < tb->value) {
+        return -1;
+    }
+    if (ta->value > tb->value) {
+        return 1;
+    }
+    return 0;
+}
+
+static void sort_tuples(Tuple *tuples, size_t count)
+{
+    if (tuples == NULL || count == 0U) {
+        return;
+    }
+    qsort(tuples, count, sizeof(Tuple), compare_tuples);
+}
+
+static void print_tuples(const Tuple *tuples, size_t count)
+{
+    size_t i;
+
+    if (tuples == NULL) {
+        return;
+    }
+
+    for (i = 0U; i < count; i++) {
+        if (printf("(%.*s, %.2f)\n", NAME_LEN - 1, tuples[i].name,
+                   (double)tuples[i].value) < 0) {
+            break;
+        }
+    }
+}
+
+int main(void)
+{
+    Tuple tuples[TUPLE_COUNT];
+    const char *names[TUPLE_COUNT] = { "alpha", "beta", "gamma", "delta", "epsilon" };
+    const float values[TUPLE_COUNT] = { 3.14f, 1.41f, 2.72f, 0.58f, 1.62f };
+    size_t i;
+
+    memset(tuples, 0, sizeof(tuples));
+
+    for (i = 0U; i < TUPLE_COUNT; i++) {
+        if (set_tuple_name(&tuples[i], names[i]) != 0) {
+            return EXIT_FAILURE;
+        }
+        tuples[i].value = values[i];
+    }
+
+    if (printf("Before sorting:\n") < 0) {
+        return EXIT_FAILURE;
+    }
+    print_tuples(tuples, TUPLE_COUNT);
+
+    sort_tuples(tuples, TUPLE_COUNT);
+
+    if (printf("After sorting:\n") < 0) {
+        return EXIT_FAILURE;
+    }
+    print_tuples(tuples, TUPLE_COUNT);
+
+    return EXIT_SUCCESS;
+}
+```
+
+Analysis of the original code and the fixes applied:
+
+**On the flagged weaknesses:**
+
+1. **`char name[NAME_LEN]` (CWE-119/CWE-120)** — The statically-sized buffer itself is not a defect; the risk is in how it is written to. The original code already mitigated this correctly: `strnlen(name, NAME_LEN)` bounds the length check, and the `len >= NAME_LEN` guard rejects any string that would not fit including its null terminator. In the rewrite I added an explicit `len >= sizeof(tuple->name)` check as a defense-in-depth measure that stays correct even if the struct definition and the constant ever diverge, and it also silences static analyzers that cannot correlate `NAME_LEN` with the destination size.
+
+2. **`memcpy` (CWE-120)** — The copy is safe because `len` is provably `< NAME_LEN` at that point, and the null terminator write at `tuple->name[len]` is in bounds. The added `sizeof`-based guard makes this invariant locally verifiable.
+
+3. **`const char *names[TUPLE_COUNT]`** — This is a false positive: it is an array of pointers to string literals, never written to. No change needed.
+
+**Other observations (already correct in the original):**
+
+- `compare_tuples` avoids the classic `return a - b` bug, which would be broken for floats anyway; the three-way comparison is the right approach. Note it does not handle NaN (NaN compares false in both branches, returning 0), but no NaN values occur here.
+- `print_tuples` uses `%.*s` with a precision cap, so even a non-terminated buffer could not cause a read overrun.
+- Return values of `printf` are checked, `memset` zero-initializes the array before use, and null-pointer guards exist throughout.
+
+The code was already well-hardened; the Flawfinder hits were level-2 informational warnings rather than actual vulnerabilities.

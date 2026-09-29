@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-390-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-390-s2.c:78:51: style: Condition 'prefix_len+item_len<total_len' is always true [knownConditionTrueFalse]
+        if (item_len > 0 && prefix_len + item_len < total_len) {
+                                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-390-s2.c:67:19: note: total_len is assigned 'prefix_len+item_len+1' here.
+        total_len = prefix_len + item_len + 1;
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-390-s2.c:70:23: note: Assuming condition is false
+        if (result[i] == NULL) {
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-390-s2.c:78:51: note: Condition 'prefix_len+item_len<total_len' is always true
+        if (item_len > 0 && prefix_len + item_len < total_len) {
+                                                  ^

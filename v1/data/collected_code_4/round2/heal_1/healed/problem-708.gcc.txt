@@ -1,0 +1,129 @@
+./collected_code_4/round2//heal_1/healed/problem-708.c: In function 'main':
+./collected_code_4/round2//heal_1/healed/problem-708.c:54:29: warning: use of uninitialized value '*current.data' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   54 |         printf("%c", current->data);
+      |                      ~~~~~~~^~~~~~
+  'main': events 1-2
+    |
+    |   43 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |   44 |     char myString[] = "Hello World!";
+    |   45 |     Node* list = stringToList(myString);
+    |      |                  ~~~~~~~~~~~~~~~~~~~~~~
+    |      |                  |
+    |      |                  (2) calling 'stringToList' from 'main'
+    |
+    +--> 'stringToList': events 3-20
+           |
+           |   10 | Node* stringToList(char* str) {
+           |      |       ^~~~~~~~~~~~
+           |      |       |
+           |      |       (3) entry to 'stringToList'
+           |   11 |     if(str == NULL)
+           |      |       ~
+           |      |       |
+           |      |       (4) following 'false' branch (when 'str' is non-NULL)...
+           |   12 |         return NULL;
+           |   13 |     Node* head = malloc(sizeof(Node));
+           |      |                  ~~~~~~~~~~~~~~~~~~~~
+           |      |                  |
+           |      |                  (5) ...to here
+           |   14 |     if(head == NULL)
+           |      |       ~
+           |      |       |
+           |      |       (6) following 'false' branch (when 'head' is non-NULL)...
+           |......
+           |   17 |     Node* current = head;
+           |      |           ~~~~~~~
+           |      |           |
+           |      |           (7) ...to here
+           |......
+           |   20 |     for(size_t i = 0; i < length; i++) {
+           |      |                       ~~~~~~~~~~
+           |      |                         |
+           |      |                         (8) following 'true' branch (when 'i < length')...
+           |      |                         (10) following 'true' branch (when 'i < length')...
+           |      |                         (14) following 'true' branch (when 'i < length')...
+           |      |                         (19) following 'false' branch (when 'i >= length')...
+           |   21 |         current->data = str[i];
+           |      |                            ~
+           |      |                            |
+           |      |                            (9) ...to here
+           |      |                            (11) ...to here
+           |      |                            (15) ...to here
+           |   22 |         if(i+1 < length) {
+           |   23 |             current->next = malloc(sizeof(Node));
+           |      |                             ~~~~~~~~~~~~~~~~~~~~
+           |      |                             |
+           |      |                             (16) region created on heap here
+           |   24 |             if(current->next == NULL)
+           |      |               ~
+           |      |               |
+           |      |               (12) following 'false' branch...
+           |      |               (17) following 'false' branch...
+           |   25 |                 return NULL;
+           |   26 |             current = current->next;
+           |      |             ~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                     |
+           |      |                     (13) ...to here
+           |      |                     (18) ...to here
+           |......
+           |   31 |     return head;
+           |      |            ~~~~
+           |      |            |
+           |      |            (20) ...to here
+           |
+    <------+
+    |
+  'main': events 21-23
+    |
+    |   45 |     Node* list = stringToList(myString);
+    |      |                  ^~~~~~~~~~~~~~~~~~~~~~
+    |      |                  |
+    |      |                  (21) returning to 'main' from 'stringToList'
+    |   46 | 
+    |   47 |     if(list == NULL) {
+    |      |       ~           
+    |      |       |
+    |      |       (22) following 'false' branch (when 'list' is non-NULL)...
+    |......
+    |   52 |     Node* current = list;
+    |      |           ~~~~~~~ 
+    |      |           |
+    |      |           (23) ...to here
+    |
+  'main': events 24-25
+    |
+    |   53 |     while(current != NULL){
+    |      |                   ^
+    |      |                   |
+    |      |                   (24) following 'true' branch (when 'current' is non-NULL)...
+    |   54 |         printf("%c", current->data);
+    |      |                      ~~~~~~~~~~~~~
+    |      |                             |
+    |      |                             (25) ...to here
+    |
+  'main': events 26-27
+    |
+    |   53 |     while(current != NULL){
+    |      |                   ^
+    |      |                   |
+    |      |                   (26) following 'true' branch (when 'current' is non-NULL)...
+    |   54 |         printf("%c", current->data);
+    |      |                      ~~~~~~~~~~~~~
+    |      |                             |
+    |      |                             (27) ...to here
+    |
+  'main': events 28-30
+    |
+    |   53 |     while(current != NULL){
+    |      |                   ^
+    |      |                   |
+    |      |                   (28) following 'true' branch (when 'current' is non-NULL)...
+    |   54 |         printf("%c", current->data);
+    |      |                      ~~~~~~~~~~~~~
+    |      |                             |
+    |      |                             (29) ...to here
+    |      |                             (30) use of uninitialized value '*current.data' here
+    |

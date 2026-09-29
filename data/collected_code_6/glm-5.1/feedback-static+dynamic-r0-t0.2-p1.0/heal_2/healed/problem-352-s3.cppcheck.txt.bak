@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_2/healed/problem-352-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_2/healed/problem-352-s3.c:37:74: style: Condition 'are_characters_unique(test4)' is always false [knownConditionTrueFalse]
+    printf("\"(null)\" %s all unique characters\n", are_characters_unique(test4) ? "has" : "does not have");
+                                                                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_2/healed/problem-352-s3.c:37:74: note: Calling function 'are_characters_unique' returns 0
+    printf("\"(null)\" %s all unique characters\n", are_characters_unique(test4) ? "has" : "does not have");
+                                                                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_2/healed/problem-352-s3.c:37:74: note: Condition 'are_characters_unique(test4)' is always false
+    printf("\"(null)\" %s all unique characters\n", are_characters_unique(test4) ? "has" : "does not have");
+                                                                         ^

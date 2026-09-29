@@ -1,0 +1,117 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node* next;
+} Node;
+
+typedef struct ListOfLists {
+    Node* head;
+    struct ListOfLists* next;
+} ListOfLists;
+
+void freeList(Node* head) {
+    Node* current = head;
+    while (current != NULL) {
+        Node* temp = current;
+        current = current->next;
+        free(temp);
+    }
+}
+
+void removeEmptyLists(ListOfLists** headRef) {
+    if (headRef == NULL || *headRef == NULL) {
+        return;
+    }
+
+    ListOfLists* current = *headRef;
+    ListOfLists* prev = NULL;
+
+    while (current != NULL) {
+        if (current->head == NULL) {
+            ListOfLists* temp = current;
+            if (prev == NULL) {
+                *headRef = current->next;
+            } else {
+                prev->next = current->next;
+            }
+            current = current->next;
+            free(temp);
+        } else {
+            prev = current;
+            current = current->next;
+        }
+    }
+}
+
+void freeListOfLists(ListOfLists* head) {
+    ListOfLists* current = head;
+    while (current != NULL) {
+        ListOfLists* temp = current;
+        current = current->next;
+        freeList(temp->head);
+        free(temp);
+    }
+}
+
+Node* createNode(int data) {
+    Node* newNode = (Node*)malloc(sizeof(Node));
+    if (newNode == NULL) {
+        exit(EXIT_FAILURE);
+    }
+    newNode->data = data;
+    newNode->next = NULL;
+    return newNode;
+}
+
+ListOfLists* createListOfListsNode(Node* head) {
+    ListOfLists* newNode = (ListOfLists*)malloc(sizeof(ListOfLists));
+    if (newNode == NULL) {
+        exit(EXIT_FAILURE);
+    }
+    newNode->head = head;
+    newNode->next = NULL;
+    return newNode;
+}
+
+void printListOfLists(ListOfLists* head) {
+    ListOfLists* currentList = head;
+    while (currentList != NULL) {
+        Node* currentNode = currentList->head;
+        printf("[");
+        while (currentNode != NULL) {
+            printf("%d", currentNode->data);
+            if (currentNode->next != NULL) {
+                printf(", ");
+            }
+            currentNode = currentNode->next;
+        }
+        printf("]\n");
+        currentList = currentList->next;
+    }
+}
+
+int main() {
+    Node* list1 = createNode(1);
+    list1->next = createNode(2);
+
+    Node* list2 = NULL;
+
+    Node* list3 = createNode(3);
+
+    Node* list4 = NULL;
+
+    ListOfLists* lol = createListOfListsNode(list1);
+    lol->next = createListOfListsNode(list2);
+    lol->next->next = createListOfListsNode(list3);
+    lol->next->next->next = createListOfListsNode(list4);
+
+    removeEmptyLists(&lol);
+
+    printListOfLists(lol);
+
+    freeListOfLists(lol);
+
+    return 0;
+}

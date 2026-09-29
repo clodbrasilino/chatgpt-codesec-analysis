@@ -1,0 +1,84 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+size_t replace_chars(char *str, size_t n)
+{
+    size_t count = 0;
+    size_t i;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    for (i = 0; str[i] != '\0' && count < n; i++) {
+        if (str[i] == ' ' || str[i] == ',' || str[i] == '.') {
+            str[i] = ':';
+            count++;
+        }
+    }
+
+    return count;
+}
+
+int main(void)
+{
+    static const char source[] = "Hello world, this is a test. Replace them all.";
+    char *buffer;
+    size_t buf_size;
+    size_t len;
+    size_t replaced;
+
+    buf_size = sizeof(source);
+    len = strnlen(source, buf_size - 1U);
+
+    buffer = malloc(buf_size);
+    if (buffer == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    if (len >= buf_size) {
+        fprintf(stderr, "Source length exceeds buffer capacity\n");
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+
+    memcpy(buffer, source, len);
+    buffer[len] = '\0';
+
+    replaced = replace_chars(buffer, 5U);
+
+    if (printf("Original: %s\n", source) < 0) {
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+    if (printf("Modified: %s\n", buffer) < 0) {
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+    if (printf("Replacements made: %zu\n", replaced) < 0) {
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+
+    free(buffer);
+    buffer = NULL;
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the original code and the applied fix:**
+
+The Flawfinder warning on `memcpy` (CWE-120) flags the risk of copying more bytes than the destination can hold. In the original code, this was already implicitly safe: `buffer` is allocated with `buf_size = sizeof(source)` bytes, and `strnlen(source, buf_size - 1U)` guarantees `len <= buf_size - 1`, so `memcpy(buffer, source, len)` plus the null terminator at `buffer[len]` can never exceed the allocation.
+
+To satisfy the static analyzer and make the invariant explicit rather than implicit, the rewrite adds a defensive bounds check (`len >= buf_size`) before the copy, failing cleanly with an error message and freeing the buffer if the invariant were ever violated (for example, if the code were later refactored and the size relationship broken).
+
+Other notable qualities preserved from the original:
+
+- `replace_chars` safely handles `NULL` input and respects both the string terminator and the replacement cap `n`.
+- All `printf` return values are checked, with `free(buffer)` on every exit path — no memory leaks.
+- `buffer = NULL;` after `free` prevents accidental use-after-free/double-free in future modifications.
+- `strnlen` is used instead of `strlen`, bounding the length scan to the known buffer size.

@@ -1,0 +1,5 @@
+problem-469-s2.c:92:35:medium:UBSan: signed integer overflow: 3333333333333333333 * 10 cannot be represented in type 'long long' (AFL crash: id:000003,sig:06,src:000021,time:27980,execs:13863,op:havoc,rep:13)
+problem-469-s2.c:112:23:medium:UBSan: signed integer overflow: 3333333333333333333 * 10 cannot be represented in type 'long long' (AFL crash: id:000000,sig:06,src:000000,time:943,execs:656,op:havoc,rep:3)
+problem-469-s2.c:112:23:medium:UBSan: signed integer overflow: 6666666666666676666 * 10 cannot be represented in type 'long long' (AFL crash: id:000001,sig:06,src:000000,time:1914,execs:1271,op:havoc,rep:4)
+problem-469-s2.c:112:23:medium:UBSan: signed integer overflow: 7777777777777777777 * 10 cannot be represented in type 'long long' (AFL crash: id:000002,sig:06,src:000000,time:25226,execs:12515,op:havoc,rep:4)
+problem-469-s2.c:123:0:error:Fuzzing found a crash (signal 6) on input id:000004,sig:06,src:000014,time:28236,execs:13978,op:havoc,rep:12; likely memory-safety defect

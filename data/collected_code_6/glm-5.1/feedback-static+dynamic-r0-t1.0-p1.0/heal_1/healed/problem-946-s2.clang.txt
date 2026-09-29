@@ -1,0 +1,8 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-946-s2.c:109:77: error: use of undeclared identifier 'Capacity'; did you mean 'capacity'?
+  109 |                 WordCount *new_words = realloc(words, new_capacity * sizeof(Capacity));
+      |                                                                             ^~~~~~~~
+      |                                                                             capacity
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-946-s2.c:29:12: note: 'capacity' declared here
+   29 |     size_t capacity = 0;
+      |            ^
+1 error generated.

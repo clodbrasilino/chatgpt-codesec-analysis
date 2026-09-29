@@ -1,0 +1,12 @@
+./collected_code_4/round2//heal_0/problem-587.c: In function 'convertToTuple':
+./collected_code_4/round2//heal_0/problem-587.c:11:9: warning: implicit declaration of function 'exit' [-Wimplicit-function-declaration]
+   11 |         exit(0);
+      |         ^~~~
+./collected_code_4/round2//heal_0/problem-587.c:2:1: note: include '<stdlib.h>' or provide a declaration of 'exit'
+    1 | #include <stdio.h>
+  +++ |+#include <stdlib.h>
+    2 | 
+./collected_code_4/round2//heal_0/problem-587.c:11:9: warning: incompatible implicit declaration of built-in function 'exit' [-Wbuiltin-declaration-mismatch]
+   11 |         exit(0);
+      |         ^~~~
+./collected_code_4/round2//heal_0/problem-587.c:11:9: note: include '<stdlib.h>' or provide a declaration of 'exit'

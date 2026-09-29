@@ -1,0 +1,91 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node *next;
+};
+
+int appendNode(struct Node **head_ref, int data) {
+    struct Node *newNode = (struct Node *)malloc(sizeof(struct Node));
+    if (newNode == NULL) {
+        return 0;
+    }
+    newNode->data = data;
+    newNode->next = NULL;
+    if (*head_ref == NULL) {
+        *head_ref = newNode;
+        return 1;
+    }
+    struct Node *temp = *head_ref;
+    while (temp->next != NULL) {
+        temp = temp->next;
+    }
+    temp->next = newNode;
+    return 1;
+}
+
+void rotateLeft(struct Node **head_ref, int k) {
+    if (*head_ref == NULL || k <= 0) {
+        return;
+    }
+
+    struct Node *current = *head_ref;
+    int length = 1;
+
+    while (current->next != NULL) {
+        current = current->next;
+        length++;
+    }
+
+    k %= length;
+    if (k == 0) {
+        return;
+    }
+
+    current->next = *head_ref;
+
+    current = *head_ref;
+    for (int i = 1; i < k; i++) {
+        current = current->next;
+    }
+
+    *head_ref = current->next;
+    current->next = NULL;
+}
+
+void printList(const struct Node *head) {
+    while (head != NULL) {
+        printf("%d ", head->data);
+        head = head->next;
+    }
+    printf("\n");
+}
+
+void freeList(struct Node *head) {
+    while (head != NULL) {
+        struct Node *temp = head;
+        head = head->next;
+        free(temp);
+    }
+}
+
+int main(void) {
+    struct Node *head = NULL;
+
+    if (!appendNode(&head, 1) ||
+        !appendNode(&head, 2) ||
+        !appendNode(&head, 3) ||
+        !appendNode(&head, 4) ||
+        !appendNode(&head, 5)) {
+        freeList(head);
+        return EXIT_FAILURE;
+    }
+
+    printList(head);
+    rotateLeft(&head, 2);
+    printList(head);
+
+    freeList(head);
+    return EXIT_SUCCESS;
+}

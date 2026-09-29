@@ -1,0 +1,107 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+#include <stdbool.h>
+#include <errno.h>
+
+typedef struct {
+    double x;
+    double y;
+} Point;
+
+typedef struct {
+    Point vertices[3];
+    double area;
+} Triangle;
+
+static double triangle_area(const Point *p1, const Point *p2, const Point *p3);
+static bool parse_double(const char *text, double *value);
+bool ellipse_largest_triangle(double a, double b, Triangle *triangle);
+
+static double triangle_area(const Point *p1, const Point *p2, const Point *p3)
+{
+    return 0.5 * fabs((p2->x - p1->x) * (p3->y - p1->y) -
+                      (p3->x - p1->x) * (p2->y - p1->y));
+}
+
+bool ellipse_largest_triangle(double a, double b, Triangle *triangle)
+{
+    const double two_pi = 6.28318530717958647692;
+    int i;
+
+    if (triangle == NULL) {
+        return false;
+    }
+    if (!isfinite(a) || !isfinite(b) || a <= 0.0 || b <= 0.0) {
+        return false;
+    }
+
+    for (i = 0; i < 3; i++) {
+        double theta = two_pi * (double)i / 3.0;
+        triangle->vertices[i].x = a * cos(theta);
+        triangle->vertices[i].y = b * sin(theta);
+    }
+
+    triangle->area = triangle_area(&triangle->vertices[0],
+                                   &triangle->vertices[1],
+                                   &triangle->vertices[2]);
+    if (!isfinite(triangle->area)) {
+        return false;
+    }
+
+    return true;
+}
+
+static bool parse_double(const char *text, double *value)
+{
+    char *endptr;
+    double parsed;
+
+    if (text == NULL || value == NULL || text[0] == '\0') {
+        return false;
+    }
+
+    errno = 0;
+    parsed = strtod(text, &endptr);
+    if (errno != 0 || endptr == text || *endptr != '\0') {
+        return false;
+    }
+
+    *value = parsed;
+    return true;
+}
+
+/* Possible weaknesses found:
+ *  Parameter 'argv' can be declared as const array [constParameter]
+ */
+int main(int argc, char *argv[])
+{
+    double a = 5.0;
+    double b = 3.0;
+    Triangle triangle;
+    int i;
+
+    if (argc == 3) {
+        if (!parse_double(argv[1], &a) || !parse_double(argv[2], &b)) {
+            fprintf(stderr, "Error: semi-axes must be valid numbers.\n");
+            return EXIT_FAILURE;
+        }
+    } else if (argc != 1) {
+        fprintf(stderr, "Usage: %s [semi_axis_a semi_axis_b]\n", argv[0]);
+        return EXIT_FAILURE;
+    }
+
+    if (!ellipse_largest_triangle(a, b, &triangle)) {
+        fprintf(stderr, "Error: semi-axes must be positive and finite.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Ellipse semi-axes: a = %.6f, b = %.6f\n", a, b);
+    for (i = 0; i < 3; i++) {
+        printf("Vertex %d: (%.6f, %.6f)\n", i + 1,
+               triangle.vertices[i].x, triangle.vertices[i].y);
+    }
+    printf("Largest inscribed triangle area: %.6f\n", triangle.area);
+
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,208 @@
+./collected_code_4/round1//heal_1/healed//problem-213.c: In function 'concatenate_tuples':
+./collected_code_4/round1//heal_1/healed//problem-213.c:21:28: warning: use of possibly-NULL 't1.first' where non-null expected [CWE-690] [-Wanalyzer-possible-null-argument]
+   21 |     result->first = malloc(strlen(t1->first) + strlen(t2->first) + 1);
+      |                            ^~~~~~~~~~~~~~~~~
+  'main': events 1-3
+    |
+    |   39 | int main(){
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   43 |     t1.first = strdup("Hello");
+    |      |                ~~~~~~~~~~~~~~~
+    |      |                |
+    |      |                (2) this call could return NULL
+    |......
+    |   48 |     StringTuple *result = concatenate_tuples(&t1, &t2);
+    |      |                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                           |
+    |      |                           (3) calling 'concatenate_tuples' from 'main'
+    |
+    +--> 'concatenate_tuples': events 4-9
+           |
+           |   10 | StringTuple* concatenate_tuples(StringTuple *t1, StringTuple *t2){
+           |      |              ^~~~~~~~~~~~~~~~~~
+           |      |              |
+           |      |              (4) entry to 'concatenate_tuples'
+           |   11 |     if(!t1 || !t2){
+           |      |       ~       
+           |      |       |
+           |      |       (5) following 'false' branch...
+           |......
+           |   15 |     StringTuple *result = (StringTuple*) malloc(sizeof(StringTuple));
+           |      |                                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                                          |
+           |      |                                          (6) ...to here
+           |   16 | 
+           |   17 |     if(result == NULL) {
+           |      |       ~       
+           |      |       |
+           |      |       (7) following 'false' branch (when 'result' is non-NULL)...
+           |......
+           |   21 |     result->first = malloc(strlen(t1->first) + strlen(t2->first) + 1);
+           |      |                            ~~~~~~~~~~~~~~~~~
+           |      |                            |        |
+           |      |                            |        (8) ...to here
+           |      |                            (9) argument 1 ('*t1.first') from (2) could be NULL where non-null expected
+           |
+In file included from ./collected_code_4/round1//heal_1/healed//problem-213.c:2:
+/Library/Developer/CommandLineTools/SDKs/MacOSX14.sdk/usr/include/string.h:82:10: note: argument 1 of 'strlen' must be non-null
+   82 | size_t   strlen(const char *__s);
+      |          ^~~~~~
+./collected_code_4/round1//heal_1/healed//problem-213.c:21:48: warning: use of possibly-NULL 't2.first' where non-null expected [CWE-690] [-Wanalyzer-possible-null-argument]
+   21 |     result->first = malloc(strlen(t1->first) + strlen(t2->first) + 1);
+      |                                                ^~~~~~~~~~~~~~~~~
+  'main': events 1-3
+    |
+    |   39 | int main(){
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   45 |     t2.first = strdup("Goodbye");
+    |      |                ~~~~~~~~~~~~~~~~~
+    |      |                |
+    |      |                (2) this call could return NULL
+    |......
+    |   48 |     StringTuple *result = concatenate_tuples(&t1, &t2);
+    |      |                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                           |
+    |      |                           (3) calling 'concatenate_tuples' from 'main'
+    |
+    +--> 'concatenate_tuples': events 4-9
+           |
+           |   10 | StringTuple* concatenate_tuples(StringTuple *t1, StringTuple *t2){
+           |      |              ^~~~~~~~~~~~~~~~~~
+           |      |              |
+           |      |              (4) entry to 'concatenate_tuples'
+           |   11 |     if(!t1 || !t2){
+           |      |       ~       
+           |      |       |
+           |      |       (5) following 'false' branch...
+           |......
+           |   15 |     StringTuple *result = (StringTuple*) malloc(sizeof(StringTuple));
+           |      |                                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                                          |
+           |      |                                          (6) ...to here
+           |   16 | 
+           |   17 |     if(result == NULL) {
+           |      |       ~       
+           |      |       |
+           |      |       (7) following 'false' branch (when 'result' is non-NULL)...
+           |......
+           |   21 |     result->first = malloc(strlen(t1->first) + strlen(t2->first) + 1);
+           |      |                                   ~~~~~~~~~    ~~~~~~~~~~~~~~~~~
+           |      |                                     |          |
+           |      |                                     |          (9) argument 1 ('*t2.first') from (2) could be NULL where non-null expected
+           |      |                                     (8) ...to here
+           |
+/Library/Developer/CommandLineTools/SDKs/MacOSX14.sdk/usr/include/string.h:82:10: note: argument 1 of 'strlen' must be non-null
+   82 | size_t   strlen(const char *__s);
+      |          ^~~~~~
+./collected_code_4/round1//heal_1/healed//problem-213.c:22:29: warning: use of possibly-NULL 't1.second' where non-null expected [CWE-690] [-Wanalyzer-possible-null-argument]
+   22 |     result->second = malloc(strlen(t1->second) + strlen(t2->second) + 1);
+      |                             ^~~~~~~~~~~~~~~~~~
+  'main': events 1-3
+    |
+    |   39 | int main(){
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   44 |     t1.second = strdup("World");
+    |      |                 ~~~~~~~~~~~~~~~
+    |      |                 |
+    |      |                 (2) this call could return NULL
+    |......
+    |   48 |     StringTuple *result = concatenate_tuples(&t1, &t2);
+    |      |                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                           |
+    |      |                           (3) calling 'concatenate_tuples' from 'main'
+    |
+    +--> 'concatenate_tuples': events 4-9
+           |
+           |   10 | StringTuple* concatenate_tuples(StringTuple *t1, StringTuple *t2){
+           |      |              ^~~~~~~~~~~~~~~~~~
+           |      |              |
+           |      |              (4) entry to 'concatenate_tuples'
+           |   11 |     if(!t1 || !t2){
+           |      |       ~       
+           |      |       |
+           |      |       (5) following 'false' branch...
+           |......
+           |   15 |     StringTuple *result = (StringTuple*) malloc(sizeof(StringTuple));
+           |      |                                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                                          |
+           |      |                                          (6) ...to here
+           |   16 | 
+           |   17 |     if(result == NULL) {
+           |      |       ~       
+           |      |       |
+           |      |       (7) following 'false' branch (when 'result' is non-NULL)...
+           |......
+           |   21 |     result->first = malloc(strlen(t1->first) + strlen(t2->first) + 1);
+           |      |                                   ~~~~~~~~~
+           |      |                                     |
+           |      |                                     (8) ...to here
+           |   22 |     result->second = malloc(strlen(t1->second) + strlen(t2->second) + 1);
+           |      |                             ~~~~~~~~~~~~~~~~~~
+           |      |                             |
+           |      |                             (9) argument 1 ('*t1.second') from (2) could be NULL where non-null expected
+           |
+/Library/Developer/CommandLineTools/SDKs/MacOSX14.sdk/usr/include/string.h:82:10: note: argument 1 of 'strlen' must be non-null
+   82 | size_t   strlen(const char *__s);
+      |          ^~~~~~
+./collected_code_4/round1//heal_1/healed//problem-213.c:22:50: warning: use of possibly-NULL 't2.second' where non-null expected [CWE-690] [-Wanalyzer-possible-null-argument]
+   22 |     result->second = malloc(strlen(t1->second) + strlen(t2->second) + 1);
+      |                                                  ^~~~~~~~~~~~~~~~~~
+  'main': events 1-3
+    |
+    |   39 | int main(){
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   46 |     t2.second = strdup("Universe");
+    |      |                 ~~~~~~~~~~~~~~~~~~
+    |      |                 |
+    |      |                 (2) this call could return NULL
+    |   47 | 
+    |   48 |     StringTuple *result = concatenate_tuples(&t1, &t2);
+    |      |                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                           |
+    |      |                           (3) calling 'concatenate_tuples' from 'main'
+    |
+    +--> 'concatenate_tuples': events 4-9
+           |
+           |   10 | StringTuple* concatenate_tuples(StringTuple *t1, StringTuple *t2){
+           |      |              ^~~~~~~~~~~~~~~~~~
+           |      |              |
+           |      |              (4) entry to 'concatenate_tuples'
+           |   11 |     if(!t1 || !t2){
+           |      |       ~       
+           |      |       |
+           |      |       (5) following 'false' branch...
+           |......
+           |   15 |     StringTuple *result = (StringTuple*) malloc(sizeof(StringTuple));
+           |      |                                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                                          |
+           |      |                                          (6) ...to here
+           |   16 | 
+           |   17 |     if(result == NULL) {
+           |      |       ~       
+           |      |       |
+           |      |       (7) following 'false' branch (when 'result' is non-NULL)...
+           |......
+           |   21 |     result->first = malloc(strlen(t1->first) + strlen(t2->first) + 1);
+           |      |                                   ~~~~~~~~~
+           |      |                                     |
+           |      |                                     (8) ...to here
+           |   22 |     result->second = malloc(strlen(t1->second) + strlen(t2->second) + 1);
+           |      |                                                  ~~~~~~~~~~~~~~~~~~
+           |      |                                                  |
+           |      |                                                  (9) argument 1 ('*t2.second') from (2) could be NULL where non-null expected
+           |
+/Library/Developer/CommandLineTools/SDKs/MacOSX14.sdk/usr/include/string.h:82:10: note: argument 1 of 'strlen' must be non-null
+   82 | size_t   strlen(const char *__s);
+      |          ^~~~~~

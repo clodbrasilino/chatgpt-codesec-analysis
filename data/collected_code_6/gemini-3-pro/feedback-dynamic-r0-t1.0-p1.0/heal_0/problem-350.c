@@ -1,0 +1,49 @@
+#include <stdio.h>
+#include <string.h>
+
+void minimizeStringLength(char* str) {
+    if (str == NULL) {
+        return;
+    }
+
+    int n = strlen(str);
+    if (n == 0) {
+        return;
+    }
+
+    int freq[256] = {0};
+    int maxFreq = 0;
+    char charToRemove = '\0';
+
+    for (int i = 0; i < n; i++) {
+        freq[(unsigned char)str[i]]++;
+        if (freq[(unsigned char)str[i]] > maxFreq) {
+            maxFreq = freq[(unsigned char)str[i]];
+            charToRemove = str[i];
+        }
+    }
+
+    int j = 0;
+    for (int i = 0; i < n; i++) {
+        if (str[i] != charToRemove) {
+            str[j++] = str[i];
+        }
+    }
+    str[j] = '\0';
+}
+
+int main() {
+    char str1[] = "programming";
+    minimizeStringLength(str1);
+    printf("%s\n", str1);
+
+    char str2[] = "hello world";
+    minimizeStringLength(str2);
+    printf("%s\n", str2);
+
+    char str3[] = "a";
+    minimizeStringLength(str3);
+    printf("%s\n", str3);
+
+    return 0;
+}

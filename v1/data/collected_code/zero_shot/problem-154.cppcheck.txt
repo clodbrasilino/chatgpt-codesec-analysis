@@ -1,0 +1,6 @@
+collected_code/problem-154-0.c:5:31: error: Cannot determine that 'elements[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        int element = elements[i];
+                              ^
+collected_code/problem-154-0.c:10:29: error: Cannot determine that 'list[row][col]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+                if(list[row][col] == element) {
+                            ^

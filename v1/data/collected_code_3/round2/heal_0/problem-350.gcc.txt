@@ -1,0 +1,8 @@
+collected_code_3/problem-350-2.c: In function 'main':
+collected_code_3/problem-350-2.c:34:18: warning: implicit declaration of function 'tolower' [-Wimplicit-function-declaration]
+   34 |         str[i] = tolower(str[i]);
+      |                  ^~~~~~~
+collected_code_3/problem-350-2.c:3:1: note: include '<ctype.h>' or provide a declaration of 'tolower'
+    2 | #include <string.h>
+  +++ |+#include <ctype.h>
+    3 | 

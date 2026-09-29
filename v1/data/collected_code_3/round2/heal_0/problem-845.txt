@@ -1,0 +1,24 @@
+```C
+#include <stdio.h>
+#include <math.h>
+
+int factorialDigitCount(int n) {
+    if (n < 0)
+        return 0;
+
+    if (n <= 1)
+        return 1;
+
+    double x = ((n * log10(n / M_E) + log10(2 * M_PI * n) / 2.0));
+    return floor(x) + 1;
+}
+
+int main() {
+    int num;
+    printf("Enter a number: ");
+    scanf("%d", &num);
+    printf("Number of digits in %d! is %d", num, factorialDigitCount(num));
+    return 0;
+}
+```
+This code uses Stirling's approximation to calculate the number of digits in a factorial. This is a more efficient method than calculating the factorial itself, which can become very large very quickly. The approximation is used to calculate the logarithm of the factorial, which is then used to calculate the number of digits.

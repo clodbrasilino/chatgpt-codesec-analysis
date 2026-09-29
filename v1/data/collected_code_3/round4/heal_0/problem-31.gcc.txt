@@ -1,0 +1,114 @@
+collected_code_3/round4/heal_0/problem-31.c: In function 'insert':
+collected_code_3/round4/heal_0/problem-31.c:39:20: warning: dereference of possibly-NULL '*h.heap' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   39 |         h->heap[0] = node;
+      |         ~~~~~~~~~~~^~~~~~
+  'topKFrequent': events 1-5
+    |
+    |   49 | void topKFrequent(int* nums, int numsSize, int k) {
+    |      |      ^~~~~~~~~~~~
+    |      |      |
+    |      |      (1) entry to 'topKFrequent'
+    |   50 |     Heap* h = (Heap*)malloc(sizeof(Heap));
+    |   51 |     h->heap = (Node*)malloc(sizeof(Node) * k);
+    |      |                      ~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                      |
+    |      |                      (2) this call could return NULL
+    |......
+    |   54 |     for (int i = 0; i < numsSize; i++) {
+    |      |                     ~~~~~~~~~~~~
+    |      |                       |
+    |      |                       (3) following 'true' branch (when 'i < numsSize')...
+    |   55 |         Node node;
+    |   56 |         node.num = nums[i];
+    |      |                        ~
+    |      |                        |
+    |      |                        (4) ...to here
+    |......
+    |   68 |         insert(h, node);
+    |      |         ~~~~~~~~~~~~~~~
+    |      |         |
+    |      |         (5) calling 'insert' from 'topKFrequent'
+    |
+    +--> 'insert': events 6-9
+           |
+           |   37 | void insert(Heap* h, Node node) {
+           |      |      ^~~~~~
+           |      |      |
+           |      |      (6) entry to 'insert'
+           |   38 |     if (h->size == 0) {
+           |      |        ~
+           |      |        |
+           |      |        (7) following 'true' branch...
+           |   39 |         h->heap[0] = node;
+           |      |         ~~~~~~~~~~~~~~~~~
+           |      |          |         |
+           |      |          |         (9) '*h.heap' could be NULL: unchecked value from (2)
+           |      |          (8) ...to here
+           |
+collected_code_3/round4/heal_0/problem-31.c: In function 'topKFrequent':
+collected_code_3/round4/heal_0/problem-31.c:51:13: warning: dereference of possibly-NULL 'h' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   51 |     h->heap = (Node*)malloc(sizeof(Node) * k);
+      |     ~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  'topKFrequent': events 1-2
+    |
+    |   50 |     Heap* h = (Heap*)malloc(sizeof(Heap));
+    |      |                      ^~~~~~~~~~~~~~~~~~~~
+    |      |                      |
+    |      |                      (1) this call could return NULL
+    |   51 |     h->heap = (Node*)malloc(sizeof(Node) * k);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |             |
+    |      |             (2) 'h' could be NULL: unchecked value from (1)
+    |
+collected_code_3/round4/heal_0/problem-31.c:72:9: warning: use of uninitialized value '*_18 + _20.num' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   72 |         printf("%d ", h->heap[i].num);
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  'topKFrequent': events 1-6
+    |
+    |   51 |     h->heap = (Node*)malloc(sizeof(Node) * k);
+    |      |                      ^~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                      |
+    |      |                      (1) region created on heap here
+    |......
+    |   54 |     for (int i = 0; i < numsSize; i++) {
+    |      |                     ~~~~~~~~~~~~
+    |      |                       |
+    |      |                       (2) following 'false' branch (when 'i >= numsSize')...
+    |......
+    |   71 |     for (int i = 0; i < k; i++) {
+    |      |              ~      ~~~~~
+    |      |              |        |
+    |      |              |        (4) following 'true' branch (when 'i < k')...
+    |      |              (3) ...to here
+    |   72 |         printf("%d ", h->heap[i].num);
+    |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |         |              |
+    |      |         |              (5) ...to here
+    |      |         (6) use of uninitialized value '*_18 + _20.num' here
+    |
+collected_code_3/round4/heal_0/problem-31.c:72:9: warning: dereference of possibly-NULL '*h.heap + (long unsigned int)i * 8' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   72 |         printf("%d ", h->heap[i].num);
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  'topKFrequent': events 1-6
+    |
+    |   51 |     h->heap = (Node*)malloc(sizeof(Node) * k);
+    |      |                      ^~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                      |
+    |      |                      (1) this call could return NULL
+    |......
+    |   54 |     for (int i = 0; i < numsSize; i++) {
+    |      |                     ~~~~~~~~~~~~
+    |      |                       |
+    |      |                       (2) following 'false' branch (when 'i >= numsSize')...
+    |......
+    |   71 |     for (int i = 0; i < k; i++) {
+    |      |              ~      ~~~~~
+    |      |              |        |
+    |      |              |        (4) following 'true' branch (when 'i < k')...
+    |      |              (3) ...to here
+    |   72 |         printf("%d ", h->heap[i].num);
+    |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |         |              |
+    |      |         |              (5) ...to here
+    |      |         (6) '*h.heap + (long unsigned int)i * 8' could be NULL: unchecked value from (1)
+    |

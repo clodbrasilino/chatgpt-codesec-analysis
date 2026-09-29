@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-247-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-247-s2.c:66:19: style: Condition 'allocSize==0' is always false [knownConditionTrueFalse]
+    if (allocSize == 0 || (int)allocSize - 1 != lpsLength) {
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-247-s2.c:64:42: note: Assignment 'allocSize=(unsigned long)lpsLength+1', assigned value is greater than 0
+    size_t allocSize = (size_t)lpsLength + 1;
+                                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-247-s2.c:66:19: note: Condition 'allocSize==0' is always false
+    if (allocSize == 0 || (int)allocSize - 1 != lpsLength) {
+                  ^

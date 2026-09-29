@@ -1,0 +1,43 @@
+Here's a sample C code that demonstrates how to accomplish this task:
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <ctype.h>
+
+char *moveNumbersToString(const char *input) {
+    long inputLen = strlen(input);
+    char *result = (char*)malloc((inputLen * sizeof(char)) + 1);
+
+    if (!result) {
+        perror("Failed to allocate memory for result string");
+        exit(EXIT_FAILURE);
+    }
+
+    int j = 0;
+    for (long i = 0; i < inputLen; i++) {
+        if (isdigit(input[i])) {
+            result[j++] = input[i];
+        }
+    }
+
+    result[j] = '\0';
+    return result;
+}
+
+int main(void) {
+    const char *input = "a1b2c3d4";
+    char *result = moveNumbersToString(input);
+
+    if (result) {
+        printf("%s\n", result);
+        free(result);
+    }
+
+    return 0;
+}
+```
+
+This code will create a new string where all of the numeric characters from the input string are copied over. If the memory allocation for the output string fails, the program will print an error message and terminate. At the end of the main function, the dynamically allocated memory used for the string of numbers is deallocated.
+  
+This code avoids using resources after their lifetime has ended by deallocating any dynamically allocated memory before the program terminates. The code also avoids the improper handling of exceptional conditions by checking the results of functions such as malloc and providing appropriate error handling. Finally, this code adheres to established coding standards in the C programming language.

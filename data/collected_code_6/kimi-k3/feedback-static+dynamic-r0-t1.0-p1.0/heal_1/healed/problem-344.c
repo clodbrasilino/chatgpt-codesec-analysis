@@ -1,0 +1,59 @@
+#include <stdio.h>
+#include <math.h>
+#include <stdint.h>
+
+static long long isqrt_ll(long long n) {
+    if (n <= 0) {
+        return 0;
+    }
+    
+    long long x = (long long)sqrt((double)n);
+    
+    if (x < 0) {
+        x = 0;
+    }
+    
+    while (x > 0 && x > n / x) {
+        x--;
+    }
+    
+    while ((x + 1) <= n / (x + 1)) {
+        x++;
+    }
+    
+    return x;
+}
+
+long long countOddFactors(long long start, long long end) {
+    if (start > end) {
+        long long temp = start;
+        start = end;
+        end = temp;
+    }
+    
+    if (end < 1) {
+        return 0;
+    }
+    
+    if (start < 1) {
+        start = 1;
+    }
+    
+    long long sqrt_end = isqrt_ll(end);
+    long long sqrt_start_minus_1 = isqrt_ll(start - 1);
+    
+    return sqrt_end - sqrt_start_minus_1;
+}
+
+int main(void) {
+    long long start, end;
+    
+    if (scanf("%lld %lld", &start, &end) != 2) {
+        return 1;
+    }
+    
+    long long result = countOddFactors(start, end);
+    printf("%lld\n", result);
+    
+    return 0;
+}

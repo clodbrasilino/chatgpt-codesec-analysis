@@ -1,0 +1,39 @@
+#include <stdio.h>
+#include <math.h>
+
+typedef struct {
+    double base;
+    double height;
+    double area;
+} Triangle;
+
+Triangle largest_triangle_in_semicircle(double radius) {
+    Triangle t;
+    if (radius <= 0.0) {
+        t.base = 0.0;
+        t.height = 0.0;
+        t.area = 0.0;
+        return t;
+    }
+    t.base = 2.0 * radius;
+    t.height = radius;
+    t.area = 0.5 * t.base * t.height;
+    return t;
+}
+
+int main(void) {
+    double radius;
+    printf("Enter the radius of the semicircle: ");
+    if (scanf("%lf", &radius) != 1) {
+        fprintf(stderr, "Invalid input.\n");
+        return 1;
+    }
+    if (radius <= 0.0) {
+        fprintf(stderr, "Radius must be positive.\n");
+        return 1;
+    }
+    Triangle t = largest_triangle_in_semicircle(radius);
+    printf("Largest triangle: base = %.6f, height = %.6f, area = %.6f\n",
+           t.base, t.height, t.area);
+    return 0;
+}

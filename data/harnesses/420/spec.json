@@ -1,0 +1,44 @@
+{
+  "task_id": 420,
+  "text": "Write a C function to find the cube sum of first n even natural numbers.",
+  "fn_candidates": [
+    "cube_Sum",
+    "CubeSum",
+    "cubeSum",
+    "cubeSum"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "cube_Sum",
+      "args": [
+        2
+      ],
+      "expected": 72,
+      "assert_src": "assert cube_Sum(2) == 72"
+    },
+    {
+      "fn_name": "cube_Sum",
+      "args": [
+        3
+      ],
+      "expected": 288,
+      "assert_src": "assert cube_Sum(3) == 288"
+    },
+    {
+      "fn_name": "cube_Sum",
+      "args": [
+        4
+      ],
+      "expected": 800,
+      "assert_src": "assert cube_Sum(4) == 800"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

@@ -1,0 +1,174 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+#define MAX_NAME_LEN 64
+#define MAX_ENTRIES 128
+
+typedef struct {
+    char name[MAX_NAME_LEN];
+    int score;
+} StudentTuple;
+
+typedef struct {
+    char name[MAX_NAME_LEN];
+    long total;
+} Aggregate;
+
+static int safe_copy_name(char *dest, size_t dest_size, const char *src)
+{
+    size_t len;
+
+    if (dest == NULL || src == NULL || dest_size == 0) {
+        return -1;
+    }
+
+    len = strnlen(src, dest_size);
+    if (len >= dest_size) {
+        return -1;
+    }
+
+    memset(dest, 0, dest_size);
+    memmove(dest, src, len);
+    dest[len] = '\0';
+
+    return 0;
+}
+
+static int max_aggregate(const StudentTuple *tuples, size_t count,
+                         char *out_name, size_t out_name_size,
+                         long *out_total)
+{
+    Aggregate *aggregates;
+    size_t agg_count = 0;
+    size_t i;
+    size_t j;
+    size_t max_index = 0;
+    size_t name_len;
+
+    if (tuples == NULL || out_name == NULL || out_total == NULL) {
+        return -1;
+    }
+    if (count == 0 || count > MAX_ENTRIES || out_name_size == 0) {
+        return -1;
+    }
+
+    aggregates = calloc(count, sizeof(Aggregate));
+    if (aggregates == NULL) {
+        return -1;
+    }
+
+    for (i = 0; i < count; i++) {
+        int found = 0;
+
+        name_len = strnlen(tuples[i].name, MAX_NAME_LEN);
+        if (name_len == 0 || name_len >= MAX_NAME_LEN) {
+            free(aggregates);
+            return -1;
+        }
+
+        for (j = 0; j < agg_count; j++) {
+            if (strncmp(aggregates[j].name, tuples[i].name, MAX_NAME_LEN) == 0) {
+                if (tuples[i].score > 0 &&
+                    aggregates[j].total > LONG_MAX - (long)tuples[i].score) {
+                    free(aggregates);
+                    return -1;
+                }
+                aggregates[j].total += (long)tuples[i].score;
+                found = 1;
+                break;
+            }
+        }
+
+        if (found == 0) {
+            if (agg_count >= count) {
+                free(aggregates);
+                return -1;
+            }
+            if (safe_copy_name(aggregates[agg_count].name, MAX_NAME_LEN,
+                               tuples[i].name) != 0) {
+                free(aggregates);
+                return -1;
+            }
+            aggregates[agg_count].total = (long)tuples[i].score;
+            agg_count++;
+        }
+    }
+
+    if (agg_count == 0) {
+        free(aggregates);
+        return -1;
+    }
+
+    for (j = 1; j < agg_count; j++) {
+        if (aggregates[j].total > aggregates[max_index].total) {
+            max_index = j;
+        }
+    }
+
+    name_len = strnlen(aggregates[max_index].name, MAX_NAME_LEN);
+    if (name_len >= out_name_size) {
+        free(aggregates);
+        return -1;
+    }
+
+    if (safe_copy_name(out_name, out_name_size,
+                       aggregates[max_index].name) != 0) {
+        free(aggregates);
+        return -1;
+    }
+
+    *out_total = aggregates[max_index].total;
+
+    free(aggregates);
+    return 0;
+}
+
+int main(void)
+{
+    StudentTuple data[] = {
+        {"Juan Whelan", 90},
+        {"Sabah Colley", 88},
+        {"Peter Nichols", 7},
+        {"Juan Whelan", 122},
+        {"Sabah Colley", 84}
+    };
+    size_t count = sizeof(data) / sizeof(data[0]);
+    char result_name[MAX_NAME_LEN] = {0};
+    long result_total = 0;
+    int status;
+
+    status = max_aggregate(data, count, result_name,
+                           sizeof(result_name), &result_total);
+    if (status != 0) {
+        fprintf(stderr, "Error: failed to compute maximum aggregate\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Maximum aggregate: (%s, %ld)\n",
+               result_name, result_total) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+Note: this version requires `#include <limits.h>` for `LONG_MAX` — add it to the includes:
+
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <limits.h>
+```
+
+Key changes addressing the flagged weaknesses (CWE-119/CWE-120):
+
+1. **Dynamic allocation for `aggregates`** — sized exactly to `count` via `calloc`, removing the large fixed-size stack array and guaranteeing the buffer matches the maximum possible number of unique entries.
+2. **Explicit input cap** — `count > MAX_ENTRIES` is rejected up front, bounding all downstream work.
+3. **Strict length validation** — every name is checked with `strnlen` against `MAX_NAME_LEN` (rejecting unterminated or empty names) before any copy, and `safe_copy_name` re-validates against the destination size, so no write can exceed its buffer.
+4. **Overflow guard on accumulation** — the `total` addition is checked against `LONG_MAX` to prevent signed integer overflow.
+5. **Consistent resource cleanup** — every error path frees the allocated buffer, avoiding leaks.
+6. **Output buffer safety preserved** — the caller passes `sizeof(result_name)` and the result length is verified against `out_name_size` before copying, so the remaining fixed-size arrays are always used with enforced bounds.

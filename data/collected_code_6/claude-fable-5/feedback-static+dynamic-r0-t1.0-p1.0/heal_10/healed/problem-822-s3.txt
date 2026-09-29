@@ -1,0 +1,155 @@
+## Analysis
+
+The two Flawfinder hits are essentially false positives, but the rewrite below hardens them anyway:
+
+1. **`getchar` (CWE-120/CWE-20)** – already bounded by `MAX_DISCARD`; the fix keeps a hard loop bound so the drain cannot spin forever on a pathological stream, and it returns an error signal on `ferror`.
+2. **Statically-sized `char` array (CWE-119/CWE-120)** – the buffer is only ever written by `fgets` with `sizeof(buffer)` and is explicitly NUL-terminated afterwards; all length calculations use `strnlen` with an explicit bound, so no overflow is possible. The rewrite keeps all reads/writes bounds-checked and clears the buffer on every exit path.
+
+Other points preserved: `secure_clear` uses a `volatile` pointer so the compiler cannot elide the wipe, truncated input is rejected rather than silently validated, and `ctype` functions receive `unsigned char` values to avoid UB on negative `char`.
+
+## Rewritten source
+
+```c
+#include <stdio.h>
+#include <stdbool.h>
+#include <string.h>
+#include <ctype.h>
+
+#define MIN_LENGTH 8
+#define MAX_LENGTH 64
+#define BUFFER_SIZE 128
+#define MAX_DISCARD 4096
+
+static void secure_clear(void *ptr, size_t size)
+{
+    volatile unsigned char *p;
+
+    if (ptr == NULL || size == 0) {
+        return;
+    }
+
+    p = (volatile unsigned char *)ptr;
+
+    while (size--) {
+        *p++ = 0;
+    }
+}
+
+static bool flush_stdin(void)
+{
+    int ch;
+    bool discarded = false;
+    size_t count = 0;
+
+    do {
+        ch = getchar();
+        if (ch != '\n' && ch != EOF) {
+            discarded = true;
+        }
+        count++;
+    } while (ch != '\n' && ch != EOF && count < MAX_DISCARD);
+
+    if (count >= MAX_DISCARD && ch != '\n' && ch != EOF) {
+        discarded = true;
+    }
+
+    if (ferror(stdin)) {
+        discarded = true;
+    }
+
+    return discarded;
+}
+
+static bool is_valid_password(const char *password, size_t max_size)
+{
+    size_t length;
+    size_t i;
+    bool has_upper = false;
+    bool has_lower = false;
+    bool has_digit = false;
+    bool has_special = false;
+
+    if (password == NULL || max_size == 0) {
+        return false;
+    }
+
+    length = strnlen(password, max_size);
+
+    if (length == max_size) {
+        return false;
+    }
+
+    if (length < MIN_LENGTH || length > MAX_LENGTH) {
+        return false;
+    }
+
+    for (i = 0; i < length; i++) {
+        unsigned char c = (unsigned char)password[i];
+
+        if (!isprint(c)) {
+            return false;
+        }
+
+        if (isupper(c)) {
+            has_upper = true;
+        } else if (islower(c)) {
+            has_lower = true;
+        } else if (isdigit(c)) {
+            has_digit = true;
+        } else if (ispunct(c)) {
+            has_special = true;
+        } else {
+            return false;
+        }
+    }
+
+    return has_upper && has_lower && has_digit && has_special;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t length;
+    bool truncated = false;
+
+    printf("Enter password: ");
+
+    if (fflush(stdout) != 0) {
+        fprintf(stderr, "Error flushing output\n");
+        return 1;
+    }
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        secure_clear(buffer, sizeof(buffer));
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    length = strnlen(buffer, sizeof(buffer));
+
+    if (length > 0 && buffer[length - 1] == '\n') {
+        buffer[length - 1] = '\0';
+    } else {
+        truncated = flush_stdin();
+    }
+
+    if (!truncated && is_valid_password(buffer, sizeof(buffer))) {
+        printf("Password is valid\n");
+    } else {
+        printf("Password is invalid\n");
+    }
+
+    secure_clear(buffer, sizeof(buffer));
+
+    return 0;
+}
+```
+
+### Why this is safe against the flagged CWEs
+
+| Finding | Mitigation in rewrite |
+|---|---|
+| `getchar` in loop (CWE-120/20) | Loop is bounded by `MAX_DISCARD`, terminates on `\n`/`EOF`, checks `ferror`, and any discarded data forces password rejection — overlong input can never be validated. |
+| Fixed-size `char buffer` (CWE-119/120) | Writes only via `fgets(buffer, sizeof(buffer), ...)`, forced NUL terminator, `strnlen` with explicit bound, truncation detection, and `secure_clear` on all exit paths so the password never lingers in memory. |

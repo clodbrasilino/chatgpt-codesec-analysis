@@ -1,0 +1,90 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int count_rotations(const int *arr, int n);
+
+int count_rotations(const int *arr, int n)
+{
+    int low;
+    int high;
+
+    if (arr == NULL || n <= 0) {
+        return -1;
+    }
+
+    low = 0;
+    high = n - 1;
+
+    while (low <= high) {
+        if (arr[low] <= arr[high]) {
+            return low;
+        }
+
+        int mid = low + (high - low) / 2;
+        int next = (mid + 1) % n;
+        int prev = (mid + n - 1) % n;
+
+        if (arr[mid] <= arr[next] && arr[mid] <= arr[prev]) {
+            return mid;
+        }
+
+        if (arr[mid] >= arr[low]) {
+            low = mid + 1;
+        } else {
+            high = mid - 1;
+        }
+    }
+
+    return -1;
+}
+
+int main(void)
+{
+    int arr1[] = {15, 18, 2, 3, 6, 12};
+    int arr2[] = {7, 9, 11, 12, 5};
+    int arr3[] = {1, 2, 3, 4, 5};
+    int n1 = (int)(sizeof(arr1) / sizeof(arr1[0]));
+    int n2 = (int)(sizeof(arr2) / sizeof(arr2[0]));
+    int n3 = (int)(sizeof(arr3) / sizeof(arr3[0]));
+    int result;
+
+    result = count_rotations(arr1, n1);
+    if (result < 0) {
+        fprintf(stderr, "Error computing rotations for arr1\n");
+        return EXIT_FAILURE;
+    }
+    printf("Rotations for arr1: %d\n", result);
+
+    result = count_rotations(arr2, n2);
+    if (result < 0) {
+        fprintf(stderr, "Error computing rotations for arr2\n");
+        return EXIT_FAILURE;
+    }
+    printf("Rotations for arr2: %d\n", result);
+
+    result = count_rotations(arr3, n3);
+    if (result < 0) {
+        fprintf(stderr, "Error computing rotations for arr3\n");
+        return EXIT_FAILURE;
+    }
+    printf("Rotations for arr3: %d\n", result);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+1. **Variable scope weakness fixed:** The `mid` variable was declared at function scope but only used inside the `while` loop. It has been moved inside the loop body, reducing its scope as recommended by the static analyzer.
+
+2. **Test case 1 (expected 2, got 3):** Tracing the algorithm against `arr1 = {15, 18, 2, 3, 6, 12}`: on the first iteration, `low = 0`, `high = 5`, `arr[0] = 15 > arr[5] = 12`, so `mid = 2`. Since `arr[2] = 2 <= arr[3] = 3` and `arr[2] = 2 <= arr[1] = 18`, the function correctly returns `2`. The rotation-point detection logic (checking that the middle element is less than or equal to both neighbors, using modular arithmetic for wraparound) is sound, and the binary search branch correctly narrows toward the unsorted half via the `arr[mid] >= arr[low]` comparison, which is safe because the `arr[low] <= arr[high]` early return guarantees the segment is rotated.
+
+3. **Robustness retained:** The `NULL`/non-positive size guard, overflow-safe midpoint calculation (`low + (high - low) / 2`), and error checking on all return values in `main` are all preserved.
+
+Expected output:
+```
+Rotations for arr1: 2
+Rotations for arr2: 4
+Rotations for arr3: 0
+```

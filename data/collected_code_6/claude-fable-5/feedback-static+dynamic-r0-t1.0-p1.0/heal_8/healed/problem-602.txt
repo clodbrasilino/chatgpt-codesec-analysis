@@ -1,0 +1,87 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+#include <string.h>
+#include <limits.h>
+
+#define BUFFER_SIZE 256
+
+int first_repeated_char(const char *str)
+{
+    bool seen[UCHAR_MAX + 1] = { false };
+    size_t i;
+
+    if (str == NULL) {
+        return -1;
+    }
+
+    for (i = 0; str[i] != '\0'; i++) {
+        unsigned char c = (unsigned char)str[i];
+        if (seen[c]) {
+            return (int)c;
+        }
+        seen[c] = true;
+    }
+
+    return -1;
+}
+
+static void flush_stdin(void)
+{
+    int ch;
+
+    do {
+        ch = getchar();
+    } while (ch != '\n' && ch != EOF);
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    int result;
+
+    printf("Enter a string: ");
+    if (fflush(stdout) != 0) {
+        fprintf(stderr, "Error flushing output\n");
+        return 1;
+    }
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    if (strchr(buffer, '\n') == NULL && !feof(stdin)) {
+        flush_stdin();
+    }
+
+    buffer[strcspn(buffer, "\n")] = '\0';
+
+    result = first_repeated_char(buffer);
+
+    if (result == -1) {
+        printf("No repeated character found\n");
+    } else {
+        printf("First repeated character: %c\n", (char)result);
+    }
+
+    return 0;
+}
+```
+
+**Analysis of the original code and the flagged weaknesses:**
+
+The original source was already largely well-defended. Here is my assessment of each flagged item and what the rewrite addresses:
+
+1. **`getchar()` in a loop (CWE-120, CWE-20)** — This was a false positive in practice. `flush_stdin()` never stores the read characters into a buffer; it merely discards them until newline or `EOF`, and the `EOF` check prevents an infinite loop on a closed stream. The rewrite keeps this logic but guards the call site with a `!feof(stdin)` check, avoiding a pointless read attempt when input was already exhausted (e.g., input exactly filling the buffer with no trailing newline before EOF).
+
+2. **Statically-sized `char buffer[256]` (CWE-119/CWE-120)** — The original already mitigated this correctly: `fgets(buffer, sizeof(buffer), stdin)` limits the read to the buffer size, and the explicit null termination at `sizeof(buffer) - 1` is defensive (technically redundant, since `fgets` always null-terminates on success, but harmless). No overflow is possible. The rewrite retains all bounds-safe idioms.
+
+3. **Additional hardening in the rewrite:**
+   - `seen` array sized via `UCHAR_MAX + 1` rather than a magic `256`, making the correctness of the `unsigned char` indexing self-documenting and portable.
+   - Return value of `fflush(stdout)` is checked rather than ignored.
+   - The cast to `(int)sizeof(buffer)` for `fgets` avoids any implicit conversion ambiguity, though on any sane platform this is cosmetic.
+
+The core safety properties — bounded reads, guaranteed null termination, `unsigned char` cast before array indexing (preventing negative-index UB with signed `char` on platforms where `char` is signed), and NULL-pointer checking in `first_repeated_char` — were all correct in the original and are preserved.

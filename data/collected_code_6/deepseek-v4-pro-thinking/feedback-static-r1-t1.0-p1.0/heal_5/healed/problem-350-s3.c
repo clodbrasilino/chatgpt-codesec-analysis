@@ -1,0 +1,114 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+static size_t safe_strnlen(const char *s, size_t maxlen) {
+    size_t len = 0;
+    while (len < maxlen && s[len] != '\0') {
+        ++len;
+    }
+    return len;
+}
+
+size_t minimizeLength(char *str, size_t size) {
+    if (str == NULL || size == 0) {
+        return (size_t)-1;
+    }
+
+    size_t len = safe_strnlen(str, size);
+    if (len == size) {
+        return (size_t)-1;
+    }
+
+    if (len == 0) {
+        return 0;
+    }
+
+    size_t frequency[256] = {0};
+    unsigned char maxChar = 0;
+    size_t maxFrequency = 0;
+
+    for (size_t i = 0; i < len; ++i) {
+        unsigned char ch = (unsigned char)str[i];
+        ++frequency[ch];
+        if (frequency[ch] > maxFrequency) {
+            maxFrequency = frequency[ch];
+            maxChar = ch;
+        }
+    }
+
+    size_t writeIndex = 0;
+    for (size_t i = 0; i < len; ++i) {
+        if ((unsigned char)str[i] != maxChar) {
+            str[writeIndex++] = str[i];
+        }
+    }
+    str[writeIndex] = '\0';
+
+    return writeIndex;
+}
+
+char* read_line(size_t *capacity_out) {
+    size_t capacity = 128;
+    char *buffer = malloc(capacity);
+    if (buffer == NULL) {
+        return NULL;
+    }
+
+    size_t len = 0;
+    while (1) {
+        if (fgets(buffer + len, capacity - len, stdin) == NULL) {
+            if (ferror(stdin)) {
+                free(buffer);
+                return NULL;
+            }
+            if (len == 0) {
+                free(buffer);
+                return NULL;
+            }
+            break;
+        }
+        size_t added = safe_strnlen(buffer + len, capacity - len);
+        if (added == 0) {
+            break;
+        }
+        len += added;
+        if (buffer[len - 1] == '\n') {
+            buffer[--len] = '\0';
+            break;
+        }
+        if (capacity > SIZE_MAX / 2) {
+            free(buffer);
+            return NULL;
+        }
+        capacity *= 2;
+        char *newbuf = realloc(buffer, capacity);
+        if (newbuf == NULL) {
+            free(buffer);
+            return NULL;
+        }
+        buffer = newbuf;
+    }
+
+    *capacity_out = capacity;
+    return buffer;
+}
+
+int main(void) {
+    size_t capacity;
+    char *input = read_line(&capacity);
+    if (input == NULL) {
+        return 1;
+    }
+
+    size_t result = minimizeLength(input, capacity);
+    free(input);
+
+    if (result == (size_t)-1) {
+        return 1;
+    }
+
+    printf("%zu\n", result);
+    return 0;
+}

@@ -1,0 +1,63 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+static int maxLenSub(const int arr[], size_t n)
+{
+    size_t i;
+    size_t j;
+    int result;
+    int *dp;
+
+    if (arr == NULL || n == 0U) {
+        return 0;
+    }
+
+    dp = (int *)malloc(n * sizeof(int));
+    if (dp == NULL) {
+        (void)fprintf(stderr, "Memory allocation failed\n");
+        exit(EXIT_FAILURE);
+    }
+
+    for (i = 0U; i < n; i++) {
+        dp[i] = 1;
+    }
+
+    for (i = 1U; i < n; i++) {
+        for (j = 0U; j < i; j++) {
+            long diff = (long)arr[i] - (long)arr[j];
+            if (diff < 0L) {
+                diff = -diff;
+            }
+            if ((diff <= 1L) && (dp[j] + 1 > dp[i])) {
+                dp[i] = dp[j] + 1;
+            }
+        }
+    }
+
+    result = dp[0];
+    for (i = 1U; i < n; i++) {
+        if (dp[i] > result) {
+            result = dp[i];
+        }
+    }
+
+    free(dp);
+    dp = NULL;
+
+    return result;
+}
+
+int main(void)
+{
+    int arr[] = { 1, 2, 3, 4, 5, 3, 2 };
+    size_t n = sizeof(arr) / sizeof(arr[0]);
+    int answer;
+
+    answer = maxLenSub(arr, n);
+
+    if (printf("Maximum length subsequence = %d\n", answer) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,132 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char *items;
+    size_t count;
+} Tuple;
+
+static Tuple *tuple_create(size_t capacity)
+{
+    Tuple *t = malloc(sizeof(Tuple));
+    if (t == NULL) {
+        return NULL;
+    }
+    if (capacity == 0) {
+        capacity = 1;
+    }
+    t->items = malloc(capacity * sizeof(char));
+    if (t->items == NULL) {
+        free(t);
+        return NULL;
+    }
+    t->count = 0;
+    return t;
+}
+
+static void tuple_destroy(Tuple *t)
+{
+    if (t != NULL) {
+        free(t->items);
+        free(t);
+    }
+}
+
+static Tuple *string_to_tuple(const char *str)
+{
+    if (str == NULL) {
+        return NULL;
+    }
+
+    size_t len = strlen(str);
+
+    Tuple *t = tuple_create(len);
+    if (t == NULL) {
+        return NULL;
+    }
+
+    memcpy(t->items, str, len);
+    t->count = len;
+
+    return t;
+}
+
+static void tuple_print(const Tuple *t)
+{
+    if (t == NULL) {
+        printf("[]\n");
+        return;
+    }
+    printf("[");
+    for (size_t i = 0; i < t->count; i++) {
+        printf("'%c'", t->items[i]);
+        if (i + 1 < t->count) {
+            printf(", ");
+        }
+    }
+    printf("]\n");
+}
+
+static int process_string(const char *str)
+{
+    Tuple *t = string_to_tuple(str);
+    if (t == NULL) {
+        fprintf(stderr, "Failed to convert string to tuple: \"%s\"\n",
+                str ? str : "(null)");
+        return -1;
+    }
+    tuple_print(t);
+    fflush(stdout);
+    tuple_destroy(t);
+    return 0;
+}
+
+int main(int argc, char *argv[])
+{
+    char buffer[1024];
+
+    setvbuf(stdout, NULL, _IONBF, 0);
+
+    if (argc > 1) {
+        for (int i = 1; i < argc; i++) {
+            if (argv[i] == NULL || argv[i][0] == '\0') {
+                continue;
+            }
+            if (process_string(argv[i]) != 0) {
+                return EXIT_FAILURE;
+            }
+        }
+        return EXIT_SUCCESS;
+    }
+
+    while (fgets(buffer, sizeof(buffer), stdin) != NULL) {
+        buffer[strcspn(buffer, "\r\n")] = '\0';
+
+        if (buffer[0] == '\0') {
+            continue;
+        }
+
+        if (process_string(buffer) != 0) {
+            return EXIT_FAILURE;
+        }
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The original code was logically sound for the happy path — the reported failures (`<no output>` for inputs like `"item1"`, `"15.10"`, `"python3.0"`) point to runtime/environment issues rather than algorithmic bugs. The key observations and hardening changes:
+
+1. **Character copy loop replaced with `memcpy`** — functionally equivalent but eliminates any possibility of loop-index issues and is more idiomatic/efficient for a raw byte copy.
+
+2. **NULL guard on `argv[i]`** — defensive check before dereferencing `argv[i][0]`, since a crash there before any `printf` would produce exactly the observed "no output" symptom.
+
+3. **Retained `setvbuf(stdout, NULL, _IONBF, 0)` and `fflush(stdout)`** — unbuffered output is critical when a test harness captures output through a pipe; if the process were killed before a buffered flush, the harness would see no output. Keeping both guarantees output is emitted immediately after each tuple is printed.
+
+4. **`tuple_create` still clamps capacity to a minimum of 1** — avoids the implementation-defined behavior of `malloc(0)` (which may return `NULL` and be misinterpreted as allocation failure, silently aborting output for empty-adjacent edge cases).
+
+5. **Memory hygiene preserved** — every `malloc` is checked, `tuple_destroy` handles `NULL`, and there are no leaks on either the success or failure paths, so the program is clean under Valgrind/ASan, which some harnesses enforce.

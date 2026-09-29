@@ -1,0 +1,74 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+static unsigned int get_max(const unsigned int *arr, size_t n) {
+    unsigned int max = arr[0];
+    for (size_t i = 1; i < n; i++) {
+        if (arr[i] > max) {
+            max = arr[i];
+        }
+    }
+    return max;
+}
+
+static int counting_sort(unsigned int *arr, size_t n, unsigned int exp) {
+    unsigned int *output = malloc(n * sizeof(unsigned int));
+    if (!output) {
+        return -1;
+    }
+
+    unsigned int count[10] = {0};
+
+    for (size_t i = 0; i < n; i++) {
+        count[(arr[i] / exp) % 10]++;
+    }
+
+    for (size_t i = 1; i < 10; i++) {
+        count[i] += count[i - 1];
+    }
+
+    for (size_t i = n; i > 0; i--) {
+        output[count[(arr[i - 1] / exp) % 10] - 1] = arr[i - 1];
+        count[(arr[i - 1] / exp) % 10]--;
+    }
+
+    for (size_t i = 0; i < n; i++) {
+        arr[i] = output[i];
+    }
+
+    free(output);
+    return 0;
+}
+
+int radix_sort(unsigned int *arr, size_t n) {
+    if (!arr || n == 0) {
+        return -1;
+    }
+
+    unsigned int max = get_max(arr, n);
+
+    for (unsigned int exp = 1; max / exp > 0; exp *= 10) {
+        if (counting_sort(arr, n, exp) != 0) {
+            return -1;
+        }
+    }
+
+    return 0;
+}
+
+int main(void) {
+    unsigned int arr[] = {170, 45, 75, 90, 802, 24, 2, 66};
+    size_t n = sizeof(arr) / sizeof(arr[0]);
+
+    if (radix_sort(arr, n) != 0) {
+        fprintf(stderr, "Sorting failed\n");
+        return EXIT_FAILURE;
+    }
+
+    for (size_t i = 0; i < n; i++) {
+        printf("%u ", arr[i]);
+    }
+    printf("\n");
+
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,21 @@
+#include <stdio.h>
+
+int findRemainder(int arr[], int len, int n) {
+    int mul = 1;
+    
+    for (int i = 0; i < len; i++) {
+        mul = (mul * (arr[i] % n)) % n;
+    }
+    
+    return mul % n;
+}
+
+int main() {
+    int arr[] = {100, 10, 5, 25, 35, 14};
+    int len = sizeof(arr) / sizeof(arr[0]);
+    int n = 11;
+    
+    printf("Remainder = %d", findRemainder(arr, len, n));
+    
+    return 0;
+}

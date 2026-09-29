@@ -1,0 +1,89 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int row_sum(const int* row, int cols) {
+    int sum = 0;
+    for (int i = 0; i < cols; i++) {
+        sum += row[i];
+    }
+    return sum;
+}
+
+int compare_rows(const void* a, const void* b, void* arg) {
+    int cols = *(int*)arg;
+    const int* row_a = *(const int**)a;
+    const int* row_b = *(const int**)b;
+
+    int sum_a = row_sum(row_a, cols);
+    int sum_b = row_sum(row_b, cols);
+
+    if (sum_a < sum_b) return -1;
+    if (sum_a > sum_b) return 1;
+    return 0;
+}
+
+#ifdef _GNU_SOURCE
+void sort_matrix(int** matrix, int rows, int cols) {
+    if (!matrix || rows <= 0 || cols <= 0) return;
+    qsort_r(matrix, rows, sizeof(int*), compare_rows, &cols);
+}
+#else
+int global_cols = 0;
+
+int compare_rows_standard(const void* a, const void* b) {
+    const int* row_a = *(const int**)a;
+    const int* row_b = *(const int**)b;
+
+    int sum_a = row_sum(row_a, global_cols);
+    int sum_b = row_sum(row_b, global_cols);
+
+    if (sum_a < sum_b) return -1;
+    if (sum_a > sum_b) return 1;
+    return 0;
+}
+
+void sort_matrix(int** matrix, int rows, int cols) {
+    if (!matrix || rows <= 0 || cols <= 0) return;
+    global_cols = cols;
+    qsort(matrix, rows, sizeof(int*), compare_rows_standard);
+}
+#endif
+
+int main(void) {
+    int rows = 3;
+    int cols = 3;
+
+    int** matrix = (int**)malloc(rows * sizeof(int*));
+    if (!matrix) return EXIT_FAILURE;
+
+    for (int i = 0; i < rows; i++) {
+        matrix[i] = (int*)malloc(cols * sizeof(int));
+        if (!matrix[i]) {
+            for (int j = 0; j < i; j++) {
+                free(matrix[j]);
+            }
+            free(matrix);
+            return EXIT_FAILURE;
+        }
+    }
+
+    matrix[0][0] = 7; matrix[0][1] = 8; matrix[0][2] = 9;
+    matrix[1][0] = 1; matrix[1][1] = 2; matrix[1][2] = 3;
+    matrix[2][0] = 4; matrix[2][1] = 5; matrix[2][2] = 6;
+
+    sort_matrix(matrix, rows, cols);
+
+    for (int i = 0; i < rows; i++) {
+        for (int j = 0; j < cols; j++) {
+            printf("%d ", matrix[i][j]);
+        }
+        printf("\n");
+    }
+
+    for (int i = 0; i < rows; i++) {
+        free(matrix[i]);
+    }
+    free(matrix);
+
+    return EXIT_SUCCESS;
+}

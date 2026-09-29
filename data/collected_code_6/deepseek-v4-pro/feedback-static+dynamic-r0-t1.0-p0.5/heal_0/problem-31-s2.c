@@ -1,0 +1,204 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int value;
+    int frequency;
+} Pair;
+
+typedef struct {
+    Pair *data;
+    int size;
+    int capacity;
+} MinHeap;
+
+MinHeap* createMinHeap(int capacity) {
+    MinHeap *heap = (MinHeap*)malloc(sizeof(MinHeap));
+    if (!heap) return NULL;
+    heap->data = (Pair*)malloc(sizeof(Pair) * capacity);
+    if (!heap->data) {
+        free(heap);
+        return NULL;
+    }
+    heap->size = 0;
+    heap->capacity = capacity;
+    return heap;
+}
+
+void swapPairs(Pair *a, Pair *b) {
+    Pair temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+void heapifyDown(MinHeap *heap, int index) {
+    int smallest = index;
+    int left = 2 * index + 1;
+    int right = 2 * index + 2;
+
+    if (left < heap->size && heap->data[left].frequency < heap->data[smallest].frequency)
+        smallest = left;
+    if (right < heap->size && heap->data[right].frequency < heap->data[smallest].frequency)
+        smallest = right;
+
+    if (smallest != index) {
+        swapPairs(&heap->data[index], &heap->data[smallest]);
+        heapifyDown(heap, smallest);
+    }
+}
+
+void heapifyUp(MinHeap *heap, int index) {
+    int parent = (index - 1) / 2;
+    while (index > 0 && heap->data[parent].frequency > heap->data[index].frequency) {
+        swapPairs(&heap->data[parent], &heap->data[index]);
+        index = parent;
+        parent = (index - 1) / 2;
+    }
+}
+
+void insertHeap(MinHeap *heap, int value, int frequency) {
+    if (heap->size < heap->capacity) {
+        heap->data[heap->size].value = value;
+        heap->data[heap->size].frequency = frequency;
+        heap->size++;
+        heapifyUp(heap, heap->size - 1);
+    } else if (frequency > heap->data[0].frequency) {
+        heap->data[0].value = value;
+        heap->data[0].frequency = frequency;
+        heapifyDown(heap, 0);
+    }
+}
+
+Pair extractMin(MinHeap *heap) {
+    Pair min = heap->data[0];
+    heap->data[0] = heap->data[heap->size - 1];
+    heap->size--;
+    heapifyDown(heap, 0);
+    return min;
+}
+
+void freeMinHeap(MinHeap *heap) {
+    if (heap) {
+        free(heap->data);
+        free(heap);
+    }
+}
+
+int* topKFrequent(int* nums1, int nums1Size, int* nums2, int nums2Size, int k, int* returnSize) {
+    if (k <= 0 || nums1Size < 0 || nums2Size < 0) {
+        *returnSize = 0;
+        return NULL;
+    }
+
+    int maxSize = nums1Size + nums2Size;
+    if (maxSize == 0) {
+        *returnSize = 0;
+        return NULL;
+    }
+
+    int *merged = (int*)malloc(sizeof(int) * maxSize);
+    if (!merged) {
+        *returnSize = 0;
+        return NULL;
+    }
+
+    int i = 0, j = 0, m = 0;
+    while (i < nums1Size && j < nums2Size) {
+        if (nums1[i] < nums2[j]) {
+            merged[m++] = nums1[i++];
+        } else if (nums1[i] > nums2[j]) {
+            merged[m++] = nums2[j++];
+        } else {
+            merged[m++] = nums1[i];
+            i++;
+            j++;
+        }
+    }
+    while (i < nums1Size) merged[m++] = nums1[i++];
+    while (j < nums2Size) merged[m++] = nums2[j++];
+
+    if (m == 0) {
+        free(merged);
+        *returnSize = 0;
+        return NULL;
+    }
+
+    int *values = (int*)malloc(sizeof(int) * m);
+    int *freqs = (int*)malloc(sizeof(int) * m);
+    if (!values || !freqs) {
+        free(merged);
+        free(values);
+        free(freqs);
+        *returnSize = 0;
+        return NULL;
+    }
+
+    int uniqueCount = 0;
+    values[uniqueCount] = merged[0];
+    freqs[uniqueCount] = 1;
+    uniqueCount++;
+
+    for (int idx = 1; idx < m; idx++) {
+        if (merged[idx] == values[uniqueCount - 1]) {
+            freqs[uniqueCount - 1]++;
+        } else {
+            values[uniqueCount] = merged[idx];
+            freqs[uniqueCount] = 1;
+            uniqueCount++;
+        }
+    }
+
+    free(merged);
+
+    int actualK = k < uniqueCount ? k : uniqueCount;
+    MinHeap *heap = createMinHeap(actualK);
+    if (!heap) {
+        free(values);
+        free(freqs);
+        *returnSize = 0;
+        return NULL;
+    }
+
+    for (int idx = 0; idx < uniqueCount; idx++) {
+        insertHeap(heap, values[idx], freqs[idx]);
+    }
+
+    int *result = (int*)malloc(sizeof(int) * actualK);
+    if (!result) {
+        freeMinHeap(heap);
+        free(values);
+        free(freqs);
+        *returnSize = 0;
+        return NULL;
+    }
+
+    for (int idx = actualK - 1; idx >= 0; idx--) {
+        Pair p = extractMin(heap);
+        result[idx] = p.value;
+    }
+
+    freeMinHeap(heap);
+    free(values);
+    free(freqs);
+
+    *returnSize = actualK;
+    return result;
+}
+
+int main() {
+    int nums1[] = {1, 2, 3, 4, 5};
+    int nums2[] = {2, 3, 4, 5, 6};
+    int k = 3;
+    int returnSize = 0;
+
+    int *result = topKFrequent(nums1, 5, nums2, 5, k, &returnSize);
+
+    printf("Top %d frequent elements: ", k);
+    for (int i = 0; i < returnSize; i++) {
+        printf("%d ", result[i]);
+    }
+    printf("\n");
+
+    free(result);
+    return 0;
+}

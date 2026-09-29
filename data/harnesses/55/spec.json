@@ -1,0 +1,50 @@
+{
+  "task_id": 55,
+  "text": "Write a C function to find t-nth term of geometric series.",
+  "fn_candidates": [
+    "tn_gp",
+    "TnGp",
+    "tnGp",
+    "tngp"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "tn_gp",
+      "args": [
+        1,
+        5,
+        2
+      ],
+      "expected": 16,
+      "assert_src": "assert tn_gp(1,5,2)==16"
+    },
+    {
+      "fn_name": "tn_gp",
+      "args": [
+        1,
+        5,
+        4
+      ],
+      "expected": 256,
+      "assert_src": "assert tn_gp(1,5,4)==256"
+    },
+    {
+      "fn_name": "tn_gp",
+      "args": [
+        2,
+        6,
+        3
+      ],
+      "expected": 486,
+      "assert_src": "assert tn_gp(2,6,3)==486"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

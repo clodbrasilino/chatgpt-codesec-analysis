@@ -1,0 +1,8 @@
+collected_code/problem-131-0.c: In function 'isVowel':
+collected_code/problem-131-0.c:5:10: warning: implicit declaration of function 'tolower' [-Wimplicit-function-declaration]
+    5 |     ch = tolower(ch);
+      |          ^~~~~~~
+collected_code/problem-131-0.c:3:1: note: include '<ctype.h>' or provide a declaration of 'tolower'
+    2 | #include <string.h>
+  +++ |+#include <ctype.h>
+    3 | 

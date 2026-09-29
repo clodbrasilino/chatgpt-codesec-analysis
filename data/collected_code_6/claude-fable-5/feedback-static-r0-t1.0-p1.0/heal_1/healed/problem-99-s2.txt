@@ -1,0 +1,91 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <limits.h>
+
+#define MAX_BITS 64
+
+int decimal_to_binary(unsigned long long decimal, char *buffer, size_t buffer_size)
+{
+    size_t index = 0;
+    size_t i = 0;
+    char temp[MAX_BITS + 1];
+
+    if (buffer == NULL || buffer_size == 0) {
+        return -1;
+    }
+
+    memset(temp, 0, sizeof(temp));
+
+    if (decimal == 0) {
+        if (buffer_size < 2) {
+            return -1;
+        }
+        buffer[0] = '0';
+        buffer[1] = '\0';
+        return 0;
+    }
+
+    while (decimal > 0 && index < MAX_BITS) {
+        temp[index] = (char)('0' + (decimal % 2ULL));
+        decimal /= 2ULL;
+        index++;
+    }
+
+    if (decimal > 0) {
+        return -1;
+    }
+
+    if (buffer_size < index + 1) {
+        return -1;
+    }
+
+    for (i = 0; i < index; i++) {
+        buffer[i] = temp[index - 1 - i];
+    }
+    buffer[index] = '\0';
+
+    return 0;
+}
+
+int main(void)
+{
+    unsigned long long number = 0;
+    char binary[MAX_BITS + 1];
+    int scan_result = 0;
+
+    memset(binary, 0, sizeof(binary));
+
+    printf("Enter a non-negative decimal number: ");
+
+    scan_result = scanf("%llu", &number);
+    if (scan_result != 1) {
+        fprintf(stderr, "Error: invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (decimal_to_binary(number, binary, sizeof(binary)) != 0) {
+        fprintf(stderr, "Error: conversion failed.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Binary equivalent: %s\n", binary);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The Flawfinder warnings on both `temp` and `binary` are informational (risk level 2) — they flag statically-sized arrays as *potential* overflow sites, not confirmed vulnerabilities. The original code was already largely safe. The rewritten version hardens it further:
+
+1. **Bounds checking (already present, preserved):** The `index < MAX_BITS` loop guard prevents writing past `temp`, and the `buffer_size < index + 1` check prevents overflowing the caller's buffer before the null terminator is written.
+
+2. **`memset` initialization (added):** Both arrays are zero-initialized, guaranteeing no reads of indeterminate memory and ensuring the buffers are always null-terminated even in unexpected code paths.
+
+3. **Truncation detection (added):** The `if (decimal > 0) return -1;` check after the conversion loop makes the failure explicit if the value somehow exceeds `MAX_BITS` bits, rather than silently producing a truncated result. Since `unsigned long long` is guaranteed at least 64 bits (and commonly exactly 64), this is defensive but correct.
+
+4. **Sizing correctness:** `MAX_BITS + 1` correctly accounts for the worst case of 64 binary digits plus the null terminator, and `sizeof(binary)` is passed rather than a hardcoded constant, so the size stays in sync with the declaration.
+
+5. **Input validation (preserved):** `scanf`'s return value is checked, and `%llu` matches the `unsigned long long` argument type exactly.

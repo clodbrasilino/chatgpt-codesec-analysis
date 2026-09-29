@@ -1,0 +1,48 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+double findMedianSortedArrays(const int* nums1, const int* nums2, int size) {
+    int* merged = (int*)malloc((size * 2) * sizeof(int));
+    int i = 0, j = 0, k = 0;
+
+    while (i < size && j < size) {
+        if (nums1[i] <= nums2[j]) {
+            merged[k++] = nums1[i++];
+        } else {
+            merged[k++] = nums2[j++];
+        }
+    }
+
+    while (i < size) {
+        merged[k++] = nums1[i++];
+    }
+
+    while (j < size) {
+        merged[k++] = nums2[j++];
+    }
+
+    double median;
+    if ((size * 2) % 2 == 0) {
+        median = (merged[(size * 2 - 1) / 2] + merged[(size * 2) / 2]) / 2.0;
+    } else {
+        median = merged[(size * 2) / 2];
+    }
+
+    free(merged);
+    return median;
+}
+
+int main() {
+    /* Possible weaknesses found:
+     *  Variable 'nums1' can be declared as const array [constVariable]
+     */
+    int nums1[] = {1, 3, 5};
+    /* Possible weaknesses found:
+     *  Variable 'nums2' can be declared as const array [constVariable]
+     */
+    int nums2[] = {2, 4, 6};
+    int size = 3;
+    double median = findMedianSortedArrays(nums1, nums2, size);
+    printf("Median: %.1f\n", median);
+    return 0;
+}

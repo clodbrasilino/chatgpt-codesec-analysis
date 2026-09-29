@@ -1,0 +1,44 @@
+{
+  "task_id": 868,
+  "text": "Write a C function to find the length of the last word in a given string.",
+  "fn_candidates": [
+    "length_Of_Last_Word",
+    "LengthOfLastWord",
+    "lengthOfLastWord",
+    "lengthOfLastWord"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "length_Of_Last_Word",
+      "args": [
+        "python language"
+      ],
+      "expected": 8,
+      "assert_src": "assert length_Of_Last_Word(\"python language\") == 8"
+    },
+    {
+      "fn_name": "length_Of_Last_Word",
+      "args": [
+        "PHP"
+      ],
+      "expected": 3,
+      "assert_src": "assert length_Of_Last_Word(\"PHP\") == 3"
+    },
+    {
+      "fn_name": "length_Of_Last_Word",
+      "args": [
+        ""
+      ],
+      "expected": 0,
+      "assert_src": "assert length_Of_Last_Word(\"\") == 0"
+    }
+  ],
+  "arg_kinds": [
+    "str"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

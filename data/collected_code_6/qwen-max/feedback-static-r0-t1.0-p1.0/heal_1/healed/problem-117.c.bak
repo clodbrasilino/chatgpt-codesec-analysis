@@ -1,0 +1,54 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdbool.h>
+
+#define MAX_LIST_SIZE 100
+
+typedef struct {
+    char *value;
+} ListElement;
+
+bool is_convertible(const char *str) {
+    if (str == NULL || *str == '\0') return false;
+    while (*str) {
+        if (!isdigit(*str) && *str != '.' && *str != '-' && *str != '+') return false;
+        str++;
+    }
+    return true;
+}
+
+float convert_to_float(const char *str) {
+    return atof(str);
+}
+
+void convert_list(ListElement *list, int count) {
+    for (int i = 0; i < count; i++) {
+        if (is_convertible(list[i].value)) {
+            float value = convert_to_float(list[i].value);
+            int len = snprintf(NULL, 0, "%f", value) + 1;
+            list[i].value = (char *)realloc(list[i].value, len);
+            sprintf(list[i].value, "%f", value);
+        }
+    }
+}
+
+int main() {
+    ListElement list[MAX_LIST_SIZE] = {0};
+    int count = 0;
+
+    const char *input[] = {"123", "45.67", "abc", "89.01", "1e-5", "0.0001", "test"};
+    for (size_t j = 0; j < sizeof(input) / sizeof(input[0]); j++) {
+        list[count++].value = strdup(input[j]);
+    }
+
+    convert_list(list, count);
+
+    for (int i = 0; i < count; i++) {
+        printf("%s\n", list[i].value);
+        free(list[i].value);
+    }
+
+    return 0;
+}

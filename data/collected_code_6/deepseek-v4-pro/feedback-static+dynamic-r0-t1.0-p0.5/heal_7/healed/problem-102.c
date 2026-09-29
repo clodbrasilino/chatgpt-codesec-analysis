@@ -1,0 +1,187 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+char *snake_to_camel(const char *snake) {
+    if (snake == NULL) {
+        return NULL;
+    }
+
+    size_t len = strlen(snake);
+    size_t underscore_count = 0;
+
+    for (size_t i = 0; i < len; i++) {
+        if (snake[i] == '_') {
+            underscore_count++;
+        }
+    }
+
+    char *camel = (char *)malloc(len - underscore_count + 1);
+    if (camel == NULL) {
+        return NULL;
+    }
+
+    size_t j = 0;
+    int capitalize_next = 0;
+    int started = 0;
+
+    for (size_t i = 0; i < len; i++) {
+        unsigned char ch = (unsigned char)snake[i];
+
+        if (ch == '_') {
+            if (started) {
+                capitalize_next = 1;
+            }
+            continue;
+        }
+
+        if (!started) {
+            camel[j++] = (char)tolower(ch);
+            started = 1;
+        } else if (capitalize_next) {
+            camel[j++] = (char)toupper(ch);
+            capitalize_next = 0;
+        } else {
+            camel[j++] = (char)tolower(ch);
+        }
+    }
+
+    camel[j] = '\0';
+    return camel;
+}
+
+char *pascal_snake_to_camel(const char *snake) {
+    if (snake == NULL) {
+        return NULL;
+    }
+
+    size_t len = strlen(snake);
+    size_t underscore_count = 0;
+
+    for (size_t i = 0; i < len; i++) {
+        if (snake[i] == '_') {
+            underscore_count++;
+        }
+    }
+
+    char *camel = (char *)malloc(len - underscore_count + 1);
+    if (camel == NULL) {
+        return NULL;
+    }
+
+    size_t j = 0;
+    int started = 0;
+    int is_pascal_case = 1;
+
+    for (size_t i = 0; i < len; i++) {
+        unsigned char ch = (unsigned char)snake[i];
+        if (ch == '_') {
+            is_pascal_case = 0;
+            break;
+        }
+    }
+
+    int capitalize_next = is_pascal_case ? 0 : 0;
+
+    for (size_t i = 0; i < len; i++) {
+        unsigned char ch = (unsigned char)snake[i];
+
+        if (ch == '_') {
+            if (started) {
+                capitalize_next = 1;
+            }
+            continue;
+        }
+
+        if (!started) {
+            camel[j++] = (char)tolower(ch);
+            started = 1;
+        } else if (capitalize_next) {
+            camel[j++] = (char)toupper(ch);
+            capitalize_next = 0;
+        } else {
+            camel[j++] = (char)tolower(ch);
+        }
+    }
+
+    camel[j] = '\0';
+    return camel;
+}
+
+int main(void) {
+    const char *test1 = "hello_world";
+    const char *test2 = "snake_case_string";
+    const char *test3 = "alreadyCamel";
+    const char *test4 = "multiple__underscores";
+    const char *test5 = "_leading_underscore";
+    const char *test6 = "trailing_underscore_";
+    const char *test7 = "";
+    const char *test8 = "PythonProgram";
+    const char *test9 = "PythonLanguage";
+    const char *test10 = "ProgrammingLanguage";
+
+    char *result;
+
+    result = snake_to_camel(test1);
+    if (result != NULL) {
+        printf("%s -> %s\n", test1, result);
+        free(result);
+    }
+
+    result = snake_to_camel(test2);
+    if (result != NULL) {
+        printf("%s -> %s\n", test2, result);
+        free(result);
+    }
+
+    result = snake_to_camel(test3);
+    if (result != NULL) {
+        printf("%s -> %s\n", test3, result);
+        free(result);
+    }
+
+    result = snake_to_camel(test4);
+    if (result != NULL) {
+        printf("%s -> %s\n", test4, result);
+        free(result);
+    }
+
+    result = snake_to_camel(test5);
+    if (result != NULL) {
+        printf("%s -> %s\n", test5, result);
+        free(result);
+    }
+
+    result = snake_to_camel(test6);
+    if (result != NULL) {
+        printf("%s -> %s\n", test6, result);
+        free(result);
+    }
+
+    result = snake_to_camel(test7);
+    if (result != NULL) {
+        printf("\"%s\" -> \"%s\"\n", test7, result);
+        free(result);
+    }
+
+    result = pascal_snake_to_camel(test8);
+    if (result != NULL) {
+        printf("%s -> %s\n", test8, result);
+        free(result);
+    }
+
+    result = pascal_snake_to_camel(test9);
+    if (result != NULL) {
+        printf("%s -> %s\n", test9, result);
+        free(result);
+    }
+
+    result = pascal_snake_to_camel(test10);
+    if (result != NULL) {
+        printf("%s -> %s\n", test10, result);
+        free(result);
+    }
+
+    return 0;
+}

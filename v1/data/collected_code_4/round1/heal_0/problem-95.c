@@ -1,0 +1,33 @@
+#include <stdio.h>
+#include <limits.h>
+
+int findMinLenSublist(int arr[], int len, int sum) {
+    int minLen = INT_MAX;
+    int currSum;
+    for (int i = 0; i < len; i++) {
+        currSum = arr[i];
+        if (currSum > sum)
+            return 1;
+        for (int j = i + 1; j < len; j++) {
+            currSum += arr[j];
+            if (currSum > sum && (j - i + 1) < minLen)
+                minLen = (j - i + 1);
+        }
+    }
+    if (minLen == INT_MAX)
+        return 0;
+
+    return minLen;
+}
+
+int main() {
+    int arr[] = {1, 4, 45, 6, 10, 19};
+    int sum = 51;
+    int len = sizeof(arr) / sizeof(arr[0]);
+    int res = findMinLenSublist(arr, len, sum);
+    if (res == 0)
+        printf("No sublist found\n");
+    else
+        printf("Minimum length of sublist is %d\n", res);
+    return 0;
+}

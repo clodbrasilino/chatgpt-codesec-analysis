@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-92.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-92.c:72:30: style: Checking if unsigned expression 'new_capacity' is less than zero. [unsignedLessThanZero]
+            if (new_capacity <= length) {
+                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-92.c:62:26: note: Assuming that condition 'capacity==0U' is not redundant
+            if (capacity == 0U) {
+                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-92.c:58:20: note: Assuming that condition 'length==capacity' is not redundant
+        if (length == capacity) {
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-92.c:72:30: note: Unsigned less than zero
+            if (new_capacity <= length) {
+                             ^

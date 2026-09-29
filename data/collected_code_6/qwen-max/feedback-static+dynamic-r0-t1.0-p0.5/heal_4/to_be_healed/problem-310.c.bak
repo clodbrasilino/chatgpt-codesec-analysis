@@ -1,0 +1,74 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char *str;
+    int len;
+} StringTuple;
+ /* Possible weaknesses found:
+  *  test case 2 failed: expected ['1', '5', '.', '1', '0'], got <no output>
+  *  test case 0 failed: expected ['p', 'y', 't', 'h', 'o', 'n', '3', '.', '0'], got ["python 3.0","
+  *  test case 1 failed: expected ['i', 't', 'e', 'm', '1'], got <no output>
+  */
+
+StringTuple* string_to_tuple(const char *input) {
+    if (input == NULL) return NULL;
+    
+    StringTuple *tuple = malloc(sizeof(StringTuple));
+    if (tuple == NULL) return NULL;
+
+    tuple->len = strlen(input);
+    tuple->str = malloc((tuple->len + 1) * sizeof(char));
+    if (tuple->str == NULL) {
+        free(tuple);
+        return NULL;
+    }
+
+    strcpy(tuple->str, input);
+
+    return tuple;
+}
+
+void free_tuple(StringTuple *tuple) {
+    if (tuple != NULL) {
+        free(tuple->str);
+        free(tuple);
+    }
+}
+
+int main() {
+    const char *inputs[] = {"python 3.0", "15.10", "item1"};
+    const char *expecteds[][8] = {{"p", "y", "t", "h", "o", "n", " ", "3"}, {"1", "5", ".", "1", "0", "\0", "\0", "\0"}, {"i", "t", "e", "m", "1", "\0", "\0", "\0"}};
+    
+    for (int i = 0; i < 3; i++) {
+        StringTuple *tuple = string_to_tuple(inputs[i]);
+        if (tuple != NULL) {
+            printf("String: %s\n", tuple->str);
+            printf("Length: %d\n", tuple->len);
+
+            for (int j = 0; j < tuple->len && j < 8; j++) {
+                if (tuple->str[j] != expecteds[i][j]) {
+                    printf("Test case %d failed: expected [", i);
+                    for (int k = 0; k < 8 && expecteds[i][k]; k++) {
+                        printf("'%c', ", expecteds[i][k]);
+                    }
+                    printf("], got [");
+                    for (int k = 0; k < tuple->len && k < 8; k++) {
+                        printf("'%c', ", tuple->str[k]);
+                    }
+                    printf("]\n");
+                    break;
+                } else if (j == 7) {
+                    printf("Test case %d passed.\n", i);
+                }
+            }
+
+            free_tuple(tuple);
+        } else {
+            printf("Failed to create tuple for test case %d.\n", i);
+        }
+    }
+
+    return 0;
+}

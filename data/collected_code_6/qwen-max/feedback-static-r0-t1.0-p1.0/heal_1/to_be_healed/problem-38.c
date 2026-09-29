@@ -1,0 +1,32 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+/* Possible weaknesses found:
+ *  Parameter 'arr' can be declared as pointer to const [constParameterPointer]
+ */
+double divideFirstEvenOdd(int *arr, int size) {
+    int firstEven = -1, firstOdd = -1;
+    for (int i = 0; i < size; i++) {
+        if (firstEven == -1 && arr[i] % 2 == 0) {
+            firstEven = arr[i];
+        }
+        if (firstOdd == -1 && arr[i] % 2 != 0) {
+            firstOdd = arr[i];
+        }
+        if (firstEven != -1 && firstOdd != -1) {
+            break;
+        }
+    }
+    if (firstEven == -1 || firstOdd == -1) {
+        return 0.0;
+    }
+    return (double)firstEven / firstOdd;
+}
+
+int main() {
+    int arr[] = {5, 8, 3, 2, 9};
+    int size = sizeof(arr) / sizeof(arr[0]);
+    double result = divideFirstEvenOdd(arr, size);
+    printf("Result: %.2f\n", result);
+    return 0;
+}

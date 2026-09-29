@@ -1,0 +1,58 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+void split_string_at_uppercase(const char *input, char ***result, int *count) {
+    regex_t re;
+    regmatch_t match[1];
+    char *p = (char *)input;
+    int nmatch = 1;
+    /* Possible weaknesses found:
+     *  Value stored to 'len' during its initialization is never read [deadcode.DeadStores]
+     *  Variable 'len' is assigned a value that is never used. [unreadVariable]
+     */
+    size_t len = strlen(input);
+    *result = NULL;
+    *count = 0;
+
+    if (regcomp(&re, "[A-Z]", REG_EXTENDED) != 0) {
+        return;
+    }
+
+    while (regexec(&re, p, nmatch, match, 0) == 0) {
+        if (match[0].rm_so > 0 || (match[0].rm_so == 0 && *p == '\0')) {
+            (*count)++;
+            *result = realloc(*result, sizeof(char *) * (*count));
+            (*result)[*count - 1] = strndup(p, match[0].rm_so);
+            p += match[0].rm_so + 1;
+        } else {
+            p++;
+        }
+    }
+
+    if (strlen(p) > 0) {
+        (*count)++;
+        *result = realloc(*result, sizeof(char *) * (*count));
+        (*result)[*count - 1] = strdup(p);
+    }
+
+    regfree(&re);
+}
+
+int main() {
+    const char *str = "ThisIsAStringToSplitAtUppercaseLetters";
+    char **result = NULL;
+    int count = 0;
+
+    split_string_at_uppercase(str, &result, &count);
+
+    for (int i = 0; i < count; i++) {
+        printf("Substring %d: %s\n", i + 1, result[i]);
+        free(result[i]);
+    }
+
+    free(result);
+
+    return 0;
+}

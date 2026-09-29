@@ -1,0 +1,192 @@
+./collected_code_3/round2/heal_1/healed/problem-843.c: In function 'heapify':
+./collected_code_3/round2/heal_1/healed/problem-843.c:32:34: warning: use of uninitialized value '*h.data[left]' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   32 |     if (left < h->size && h->data[left] < h->data[smallest])
+      |                           ~~~~~~~^~~~~~
+  'nthSuperUglyNumber': events 1-2
+    |
+    |   75 | int nthSuperUglyNumber(int n, int* primes, int primesSize) {
+    |      |     ^~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (1) entry to 'nthSuperUglyNumber'
+    |   76 |     Heap* h = createHeap();
+    |      |               ~~~~~~~~~~~~
+    |      |               |
+    |      |               (2) calling 'createHeap' from 'nthSuperUglyNumber'
+    |
+    +--> 'createHeap': events 3-6
+           |
+           |   11 | Heap* createHeap() {
+           |      |       ^~~~~~~~~~
+           |      |       |
+           |      |       (3) entry to 'createHeap'
+           |   12 |     Heap* h = (Heap*)malloc(sizeof(Heap));
+           |      |                      ~~~~~~~~~~~~~~~~~~~~
+           |      |                      |
+           |      |                      (4) region created on heap here
+           |   13 | 
+           |   14 |     if(h == NULL){
+           |      |       ~
+           |      |       |
+           |      |       (5) following 'false' branch (when 'h' is non-NULL)...
+           |......
+           |   17 |     h->size = 0;
+           |      |     ~~~~~~~~~~~
+           |      |             |
+           |      |             (6) ...to here
+           |
+    <------+
+    |
+  'nthSuperUglyNumber': events 7-10
+    |
+    |   76 |     Heap* h = createHeap();
+    |      |               ^~~~~~~~~~~~
+    |      |               |
+    |      |               (7) returning to 'nthSuperUglyNumber' from 'createHeap'
+    |   77 |     if(h == NULL){
+    |      |       ~        
+    |      |       |
+    |      |       (8) following 'false' branch (when 'h' is non-NULL)...
+    |......
+    |   80 |     insertHeap(h, 1);
+    |      |     ~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (9) ...to here
+    |      |     (10) calling 'insertHeap' from 'nthSuperUglyNumber'
+    |
+    +--> 'insertHeap': events 11-14
+           |
+           |   44 | void insertHeap(Heap* h, int val) {
+           |      |      ^~~~~~~~~~
+           |      |      |
+           |      |      (11) entry to 'insertHeap'
+           |   45 |     if (h->size == MAX_HEAP_SIZE) {
+           |      |        ~
+           |      |        |
+           |      |        (12) following 'false' branch...
+           |......
+           |   50 |     h->data[h->size++] = val;
+           |      |             ~~~~~~~
+           |      |              |
+           |      |              (13) ...to here
+           |......
+           |   53 |     while (i != 0 && h->data[(i - 1) / 2] > h->data[i]) {
+           |      |            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                   |
+           |      |                   (14) following 'false' branch (when 'i == 0')...
+           |
+         'insertHeap': event 15
+           |
+           |cc1:
+           | (15): ...to here
+           |
+    <------+
+    |
+  'nthSuperUglyNumber': events 16-19
+    |
+    |   80 |     insertHeap(h, 1);
+    |      |     ^~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (16) returning to 'nthSuperUglyNumber' from 'insertHeap'
+    |......
+    |   84 |     while (count < n) {
+    |      |            ~~~~~~~~~
+    |      |                  |
+    |      |                  (17) following 'true' branch (when 'count < n')...
+    |   85 |         val = deleteHeap(h);
+    |      |               ~~~~~~~~~~~~~
+    |      |               |
+    |      |               (18) ...to here
+    |      |               (19) calling 'deleteHeap' from 'nthSuperUglyNumber'
+    |
+    +--> 'deleteHeap': events 20-24
+           |
+           |   59 | int deleteHeap(Heap* h) {
+           |      |     ^~~~~~~~~~
+           |      |     |
+           |      |     (20) entry to 'deleteHeap'
+           |   60 |     if (h->size <= 0)
+           |      |        ~
+           |      |        |
+           |      |        (21) following 'false' branch...
+           |   61 |         return -1;
+           |   62 |     if (h->size == 1) {
+           |      |        ~~~~~~~~
+           |      |        | |
+           |      |        | (22) ...to here
+           |      |        (23) following 'true' branch...
+           |   63 |     h->size--;
+           |      |     ~~~~~~~
+           |      |      |
+           |      |      (24) ...to here
+           |
+    <------+
+    |
+  'nthSuperUglyNumber': events 25-32
+    |
+    |   84 |     while (count < n) {
+    |      |            ~~~~~~~~~
+    |      |                  |
+    |      |                  (29) ...to here
+    |      |                  (30) following 'true' branch (when 'count < n')...
+    |   85 |         val = deleteHeap(h);
+    |      |               ^~~~~~~~~~~~~
+    |      |               |
+    |      |               (25) returning to 'nthSuperUglyNumber' from 'deleteHeap'
+    |      |               (31) ...to here
+    |      |               (32) calling 'deleteHeap' from 'nthSuperUglyNumber'
+    |   86 |         while (h->size > 0 && h->data[0] == val)
+    |      |                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                            |
+    |      |                            (26) following 'false' branch...
+    |   87 |             val = deleteHeap(h);
+    |   88 |         count++;
+    |      |         ~~~~~~~
+    |      |              |
+    |      |              (27) ...to here
+    |   89 | 
+    |   90 |         for (int i = 0; i < primesSize; i++)
+    |      |                         ~~~~~~~~~~~~~~
+    |      |                           |
+    |      |                           (28) following 'false' branch (when 'i >= primesSize')...
+    |
+    +--> 'deleteHeap': events 33-38
+           |
+           |   59 | int deleteHeap(Heap* h) {
+           |      |     ^~~~~~~~~~
+           |      |     |
+           |      |     (33) entry to 'deleteHeap'
+           |   60 |     if (h->size <= 0)
+           |      |        ~
+           |      |        |
+           |      |        (34) following 'false' branch...
+           |   61 |         return -1;
+           |   62 |     if (h->size == 1) {
+           |      |        ~~~~~~~~
+           |      |        | |
+           |      |        | (35) ...to here
+           |      |        (36) following 'false' branch...
+           |......
+           |   67 |     int root = h->data[0];
+           |      |         ~~~~
+           |      |         |
+           |      |         (37) ...to here
+           |......
+           |   70 |     heapify(h, 0);
+           |      |     ~~~~~~~~~~~~~
+           |      |     |
+           |      |     (38) calling 'heapify' from 'deleteHeap'
+           |
+           +--> 'heapify': events 39-42
+                  |
+                  |   27 | void heapify(Heap* h, int i) {
+                  |      |      ^~~~~~~
+                  |      |      |
+                  |      |      (39) entry to 'heapify'
+                  |......
+                  |   32 |     if (left < h->size && h->data[left] < h->data[smallest])
+                  |      |        ~                  ~~~~~~~~~~~~~
+                  |      |        |                         |
+                  |      |        |                         (41) ...to here
+                  |      |        |                         (42) use of uninitialized value '*h.data[left]' here
+                  |      |        (40) following 'true' branch...
+                  |

@@ -1,0 +1,79 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *data;
+    size_t size;
+} List;
+
+List *list_create(size_t size) {
+    List *list = (List *)malloc(sizeof(List));
+    if (list == NULL) {
+        return NULL;
+    }
+    list->data = (int *)calloc(size, sizeof(int));
+    if (list->data == NULL) {
+        free(list);
+        return NULL;
+    }
+    list->size = size;
+    return list;
+}
+
+void list_destroy(List *list) {
+    if (list != NULL) {
+        free(list->data);
+        free(list);
+    }
+}
+
+int *list_get_multiple(const List *list, const size_t *indices, size_t count) {
+    if (list == NULL || indices == NULL || count == 0) {
+        return NULL;
+    }
+    
+    int *result = (int *)malloc(count * sizeof(int));
+    if (result == NULL) {
+        return NULL;
+    }
+    
+    for (size_t i = 0; i < count; i++) {
+        if (indices[i] >= list->size) {
+            free(result);
+            return NULL;
+        }
+        result[i] = list->data[indices[i]];
+    }
+    
+    return result;
+}
+
+int main(void) {
+    List *list = list_create(10);
+    if (list == NULL) {
+        return EXIT_FAILURE;
+    }
+    
+    for (size_t i = 0; i < list->size; i++) {
+        list->data[i] = (int)(i * 10);
+    }
+    
+    size_t indices[] = {2, 5, 7, 9};
+    size_t count = sizeof(indices) / sizeof(indices[0]);
+    
+    int *result = list_get_multiple(list, indices, count);
+    if (result == NULL) {
+        list_destroy(list);
+        return EXIT_FAILURE;
+    }
+    
+    for (size_t i = 0; i < count; i++) {
+        printf("%d ", result[i]);
+    }
+    printf("\n");
+    
+    free(result);
+    list_destroy(list);
+    
+    return EXIT_SUCCESS;
+}

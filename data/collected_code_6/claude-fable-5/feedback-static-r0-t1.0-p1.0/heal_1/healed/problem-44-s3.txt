@@ -1,0 +1,84 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdbool.h>
+#include <stdlib.h>
+
+#define MAX_WORD_LEN 256U
+#define MAX_STR_LEN 4096U
+
+bool match_word_at_start(const char *str, const char *word)
+{
+    size_t word_len;
+    size_t str_len;
+
+    if (str == NULL || word == NULL) {
+        return false;
+    }
+
+    word_len = strnlen(word, MAX_WORD_LEN);
+    if (word_len == 0 || word_len >= MAX_WORD_LEN) {
+        return false;
+    }
+
+    str_len = strnlen(str, MAX_STR_LEN);
+    if (str_len >= MAX_STR_LEN || str_len < word_len) {
+        return false;
+    }
+
+    if (strncmp(str, word, word_len) != 0) {
+        return false;
+    }
+
+    if (str[word_len] != '\0' && isalnum((unsigned char)str[word_len])) {
+        return false;
+    }
+
+    return true;
+}
+
+int main(void)
+{
+    const char *text = "hello world";
+    const char *word1 = "hello";
+    const char *word2 = "hell";
+    const char *word3 = "world";
+
+    if (match_word_at_start(text, word1)) {
+        if (printf("'%s' matches at the start of '%s'\n", word1, text) < 0) {
+            return EXIT_FAILURE;
+        }
+    } else {
+        if (printf("'%s' does not match at the start of '%s'\n", word1, text) < 0) {
+            return EXIT_FAILURE;
+        }
+    }
+
+    if (match_word_at_start(text, word2)) {
+        if (printf("'%s' matches at the start of '%s'\n", word2, text) < 0) {
+            return EXIT_FAILURE;
+        }
+    } else {
+        if (printf("'%s' does not match at the start of '%s'\n", word2, text) < 0) {
+            return EXIT_FAILURE;
+        }
+    }
+
+    if (match_word_at_start(text, word3)) {
+        if (printf("'%s' matches at the start of '%s'\n", word3, text) < 0) {
+            return EXIT_FAILURE;
+        }
+    } else {
+        if (printf("'%s' does not match at the start of '%s'\n", word3, text) < 0) {
+            return EXIT_FAILURE;
+        }
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+The key change addresses the flagged CWE-126 (buffer over-read) weakness: `strlen(word)` was replaced with `strnlen(word, MAX_WORD_LEN)`, which bounds the scan so a non-NUL-terminated input cannot cause an unbounded read. A rejection path handles the case where the bound is hit (`word_len >= MAX_WORD_LEN`), since that indicates a missing terminator or an oversized input.
+
+Additionally, `strnlen` is applied to `str` with its own bound, and the check `str_len < word_len` guarantees that both the `strncmp` comparison and the subsequent access to `str[word_len]` stay within the verified, terminated region of the string — eliminating the possible over-read that existed when `word` was longer than `str`.

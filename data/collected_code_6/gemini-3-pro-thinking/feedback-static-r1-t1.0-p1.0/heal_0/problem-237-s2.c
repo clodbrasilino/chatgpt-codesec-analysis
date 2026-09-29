@@ -1,0 +1,81 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int compare_ints(const void *a, const void *b) {
+    int int_a = *(const int *)a;
+    int int_b = *(const int *)b;
+    if (int_a == int_b) {
+        return 0;
+    }
+    return (int_a < int_b) ? -1 : 1;
+}
+
+int compare_size_t(const void *a, const void *b) {
+    size_t size_a = *(const size_t *)a;
+    size_t size_b = *(const size_t *)b;
+    if (size_a == size_b) {
+        return 0;
+    }
+    return (size_a < size_b) ? -1 : 1;
+}
+
+void check_similar_occurrences(const int *tuples, size_t size) {
+    if (tuples == NULL || size == 0) {
+        return;
+    }
+
+    int *sorted_tuples = malloc(size * sizeof(int));
+    if (sorted_tuples == NULL) {
+        return;
+    }
+
+    for (size_t i = 0; i < size; i++) {
+        sorted_tuples[i] = tuples[i];
+    }
+
+    qsort(sorted_tuples, size, sizeof(int), compare_ints);
+
+    size_t *frequencies = malloc(size * sizeof(size_t));
+    if (frequencies == NULL) {
+        free(sorted_tuples);
+        return;
+    }
+
+    size_t unique_count = 0;
+    size_t current_streak = 1;
+
+    for (size_t i = 1; i < size; i++) {
+        if (sorted_tuples[i] == sorted_tuples[i - 1]) {
+            current_streak++;
+        } else {
+            frequencies[unique_count++] = current_streak;
+            current_streak = 1;
+        }
+    }
+    frequencies[unique_count++] = current_streak;
+
+    qsort(frequencies, unique_count, sizeof(size_t), compare_size_t);
+
+    size_t freq_streak = 1;
+    for (size_t i = 1; i < unique_count; i++) {
+        if (frequencies[i] == frequencies[i - 1]) {
+            freq_streak++;
+        } else {
+            printf("%zu records occur %zu times\n", freq_streak, frequencies[i - 1]);
+            freq_streak = 1;
+        }
+    }
+    printf("%zu records occur %zu times\n", freq_streak, frequencies[unique_count - 1]);
+
+    free(frequencies);
+    free(sorted_tuples);
+}
+
+int main(void) {
+    int tuples[] = {1, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5, 5, 6, 6, 6, 6};
+    size_t size = sizeof(tuples) / sizeof(tuples[0]);
+
+    check_similar_occurrences(tuples, size);
+
+    return 0;
+}

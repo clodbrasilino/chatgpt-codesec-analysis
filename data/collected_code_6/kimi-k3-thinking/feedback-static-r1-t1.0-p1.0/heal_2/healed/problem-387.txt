@@ -1,0 +1,100 @@
+```c
+#define _POSIX_C_SOURCE 200809L
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/types.h>
+
+static int hex_digit_value(char c)
+{
+    if (c >= '0' && c <= '9') {
+        return c - '0';
+    }
+    if (c >= 'a' && c <= 'f') {
+        return c - 'a' + 10;
+    }
+    if (c >= 'A' && c <= 'F') {
+        return c - 'A' + 10;
+    }
+    return -1;
+}
+
+static size_t bounded_length(const char *s, size_t max_len)
+{
+    const char *nul = memchr(s, '\0', max_len);
+
+    if (nul == NULL) {
+        return max_len;
+    }
+    return (size_t)(nul - s);
+}
+
+static int is_hex_even(const char *hex, size_t max_len)
+{
+    size_t len;
+    size_t i;
+    size_t start = 0;
+    int last;
+
+    if (hex == NULL) {
+        return -1;
+    }
+
+    len = bounded_length(hex, max_len);
+    if (len == max_len) {
+        return -1;
+    }
+
+    if (len > 2 && hex[0] == '0' && (hex[1] == 'x' || hex[1] == 'X')) {
+        start = 2;
+    }
+
+    if (len - start == 0) {
+        return -1;
+    }
+
+    for (i = start; i < len; i++) {
+        if (hex_digit_value(hex[i]) < 0) {
+            return -1;
+        }
+    }
+
+    last = hex_digit_value(hex[len - 1]);
+    return (last % 2 == 0) ? 1 : 0;
+}
+
+int main(void)
+{
+    char *buffer = NULL;
+    size_t capacity = 0;
+    ssize_t nread;
+    int result;
+
+    printf("Enter a hexadecimal number: ");
+
+    nread = getline(&buffer, &capacity, stdin);
+    if (nread < 0) {
+        fprintf(stderr, "Error: failed to read input\n");
+        free(buffer);
+        return 1;
+    }
+
+    if (nread > 0 && buffer[nread - 1] == '\n') {
+        buffer[nread - 1] = '\0';
+    }
+
+    result = is_hex_even(buffer, (size_t)nread + 1);
+
+    if (result < 0) {
+        fprintf(stderr, "Error: invalid hexadecimal number\n");
+        free(buffer);
+        return 1;
+    }
+
+    printf("The hexadecimal number is %s\n", result == 1 ? "even" : "odd");
+
+    free(buffer);
+    return 0;
+}
+```

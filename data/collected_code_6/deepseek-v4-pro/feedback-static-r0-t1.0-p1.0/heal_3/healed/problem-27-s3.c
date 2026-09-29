@@ -1,0 +1,99 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+char *remove_digits(const char *str) {
+    if (str == NULL) {
+        return NULL;
+    }
+    
+    size_t len = strnlen(str, SIZE_MAX);
+    char *result = malloc(len + 1);
+    if (result == NULL) {
+        return NULL;
+    }
+    
+    size_t j = 0;
+    for (size_t i = 0; i < len; i++) {
+        if (!isdigit((unsigned char)str[i])) {
+            result[j++] = str[i];
+        }
+    }
+    result[j] = '\0';
+    
+    char *shrunk = realloc(result, j + 1);
+    return shrunk ? shrunk : result;
+}
+
+int remove_all_digits(char **list, size_t size) {
+    if (list == NULL) {
+        return -1;
+    }
+    
+    for (size_t i = 0; i < size; i++) {
+        if (list[i] == NULL) {
+            continue;
+        }
+        
+        char *filtered = remove_digits(list[i]);
+        if (filtered == NULL) {
+            return -1;
+        }
+        
+        free(list[i]);
+        list[i] = filtered;
+    }
+    
+    return 0;
+}
+
+int main(void) {
+    const char *strings[] = {"h3ll0", "w0rld123", "c0d1ng", "t3st456"};
+    size_t count = sizeof(strings) / sizeof(strings[0]);
+    
+    char **list = malloc(count * sizeof(char *));
+    if (list == NULL) {
+        return EXIT_FAILURE;
+    }
+    
+    for (size_t i = 0; i < count; i++) {
+        list[i] = NULL;
+    }
+    
+    for (size_t i = 0; i < count; i++) {
+        size_t len = strnlen(strings[i], SIZE_MAX);
+        list[i] = malloc(len + 1);
+        if (list[i] == NULL) {
+            for (size_t j = 0; j < i; j++) {
+                free(list[j]);
+            }
+            free(list);
+            return EXIT_FAILURE;
+        }
+        if (len > 0) {
+            memmove(list[i], strings[i], len + 1);
+        } else {
+            list[i][0] = '\0';
+        }
+    }
+    
+    if (remove_all_digits(list, count) != 0) {
+        for (size_t i = 0; i < count; i++) {
+            free(list[i]);
+        }
+        free(list);
+        return EXIT_FAILURE;
+    }
+    
+    for (size_t i = 0; i < count; i++) {
+        printf("%s\n", list[i]);
+    }
+    
+    for (size_t i = 0; i < count; i++) {
+        free(list[i]);
+    }
+    free(list);
+    
+    return EXIT_SUCCESS;
+}

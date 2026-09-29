@@ -1,0 +1,7 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-308.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-308.c:18:33: style: Parameter 'list_a' can be declared as pointer to const [constParameterPointer]
+int* find_largest_products(int *list_a, int size_a, int *list_b, int size_b, int k, int *result_size) {
+                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-308.c:18:58: style: Parameter 'list_b' can be declared as pointer to const [constParameterPointer]
+int* find_largest_products(int *list_a, int size_a, int *list_b, int size_b, int k, int *result_size) {
+                                                         ^

@@ -1,0 +1,22 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int count_equal_pairs(int *array, int size) {
+    int count = 0;
+    for (int i = 0; i < size - 1; ++i) {
+        for (int j = i + 1; j < size; ++j) {
+            if (array[i] == array[j]) {
+                count++;
+            }
+        }
+    }
+    return count;
+}
+
+int main() {
+    int array[] = {1, 2, 3, 2, 3, 3, 4};
+    int size = sizeof(array) / sizeof(array[0]);
+    int result = count_equal_pairs(array, size);
+    printf("Number of equal element pairs: %d\n", result);
+    return 0;
+}

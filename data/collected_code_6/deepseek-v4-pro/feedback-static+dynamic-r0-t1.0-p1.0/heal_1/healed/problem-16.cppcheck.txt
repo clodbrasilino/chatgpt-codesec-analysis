@@ -1,0 +1,4 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-16.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-16.c:27:51: style: Redundant condition: The condition 'input[i] != '\0'' is redundant since 'input[i] == '_'' is sufficient. [redundantCondition]
+            if (i < input_len && input[i] != '\0' && input[i] == '_') {
+                                                  ^

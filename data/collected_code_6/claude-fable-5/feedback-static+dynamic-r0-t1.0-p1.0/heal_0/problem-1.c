@@ -1,0 +1,93 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+#define ROWS 3
+#define COLS 3
+
+static int min_of_three(int a, int b, int c)
+{
+    int min = a;
+    if (b < min) {
+        min = b;
+    }
+    if (c < min) {
+        min = c;
+    }
+    return min;
+}
+
+static int min_cost_path(const int cost[ROWS][COLS], int m, int n, int *result)
+{
+    int (*dp)[COLS] = NULL;
+    int i;
+    int j;
+
+    if (result == NULL) {
+        return -1;
+    }
+    if ((m < 0) || (m >= ROWS) || (n < 0) || (n >= COLS)) {
+        return -1;
+    }
+
+    dp = malloc(sizeof(int[ROWS][COLS]));
+    if (dp == NULL) {
+        return -1;
+    }
+
+    dp[0][0] = cost[0][0];
+
+    for (i = 1; i <= m; i++) {
+        if (dp[i - 1][0] > INT_MAX - cost[i][0]) {
+            free(dp);
+            return -1;
+        }
+        dp[i][0] = dp[i - 1][0] + cost[i][0];
+    }
+
+    for (j = 1; j <= n; j++) {
+        if (dp[0][j - 1] > INT_MAX - cost[0][j]) {
+            free(dp);
+            return -1;
+        }
+        dp[0][j] = dp[0][j - 1] + cost[0][j];
+    }
+
+    for (i = 1; i <= m; i++) {
+        for (j = 1; j <= n; j++) {
+            int best = min_of_three(dp[i - 1][j - 1], dp[i - 1][j], dp[i][j - 1]);
+            if (best > INT_MAX - cost[i][j]) {
+                free(dp);
+                return -1;
+            }
+            dp[i][j] = best + cost[i][j];
+        }
+    }
+
+    *result = dp[m][n];
+    free(dp);
+    return 0;
+}
+
+int main(void)
+{
+    int cost[ROWS][COLS] = {
+        {1, 2, 3},
+        {4, 8, 2},
+        {1, 5, 3}
+    };
+    int result = 0;
+
+    if (min_cost_path(cost, 2, 2, &result) != 0) {
+        if (fprintf(stderr, "Error computing minimum cost path\n") < 0) {
+            return EXIT_FAILURE;
+        }
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Minimum cost path: %d\n", result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,50 @@
+#include <stdio.h>
+
+long binomialCoeff(int n, int k)
+{
+    long res = 1;
+    if (k > n - k)
+        k = n - k;
+    for (int i = 0; i < k; ++i)
+    {
+        res *= (n - i);
+        res /= (i + 1);
+    }
+    return res;
+}
+
+long rencontresNumber(int n, int m)
+{
+    long dp[n+1][m+1];
+    for (int i = 0; i <= n; i++)
+    {
+        for (int j = 0; j <= m; j++)
+        {
+            if (j <= i)
+            {
+               if (i == 0 && j == 0)
+                   dp[i][j] = 1;
+               else if (j == 0)
+                   dp[i][j] = i * dp[i - 1][0] + dp[i - 1][1];
+               else if (j == 1)
+                   dp[i][j] = i * dp[i - 1][0] + (i - 1) * dp[i - 1][1] + dp[i - 1][2];
+               else
+                   dp[i][j] = i * dp[i - 1][j - 1] + (i - 1) * dp[i - 1][j] + dp[i - 1][j + 1];
+            }
+            else
+               dp[i][j] = 0;
+        }
+    }
+    long sum = 0;
+    for (int i = 0; i <= m; i++)
+        sum += (binomialCoeff(n, i)*dp[m][i]);
+    return sum;
+}
+
+int main()
+{
+    int n = 7;
+    for (int m = 0; m <= n; m++)
+        printf("%ld ", rencontresNumber(n, m));
+    return 0;
+}

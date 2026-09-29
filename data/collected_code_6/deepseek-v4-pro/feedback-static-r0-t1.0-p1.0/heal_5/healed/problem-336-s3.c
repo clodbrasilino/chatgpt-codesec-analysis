@@ -1,0 +1,48 @@
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+
+int has_28_days(const char *month) {
+    if (month == NULL) {
+        return 0;
+    }
+    
+    char lower_month[32];
+    size_t len = 0;
+    size_t max_len = sizeof(lower_month) - 1;
+    size_t month_len = 0;
+    
+    while (month[month_len] != '\0') {
+        month_len++;
+        if (month_len > max_len) {
+            return 0;
+        }
+    }
+    
+    if (month_len >= max_len) {
+        return 0;
+    }
+    
+    for (len = 0; len < month_len; len++) {
+        lower_month[len] = tolower((unsigned char)month[len]);
+    }
+    
+    lower_month[len] = '\0';
+    
+    return strcmp(lower_month, "february") == 0;
+}
+
+int main(void) {
+    const char *months[] = {
+        "January", "February", "March", "April",
+        "May", "June", "July", "August",
+        "September", "October", "November", "December"
+    };
+    
+    for (int i = 0; i < 12; i++) {
+        printf("%s has %s\n", months[i], 
+               has_28_days(months[i]) ? "28 days" : "not 28 days");
+    }
+    
+    return 0;
+}

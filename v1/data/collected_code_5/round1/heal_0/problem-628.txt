@@ -1,0 +1,42 @@
+```c
+#include<stdio.h>
+#include<string.h>
+
+void replaceSpaces(char *str) {
+    int countSpaces = 0, i;
+    
+    for(i = 0; str[i]; i++) {
+        if(str[i] == ' ') {
+            countSpaces++;  
+        }
+    }
+    
+    int newLength = i + countSpaces*2 + 1;
+    
+    char newStr[newLength];
+    newStr[newLength] = '\0';
+
+    int j = newLength - 1;
+    for(i = i - 1; i >= 0; i--) {
+        if(str[i] == ' ') {
+            newStr[j] = '0';
+            newStr[j - 1] = '2';
+            newStr[j - 2] = '%';
+            j = j - 3;
+        } else {
+            newStr[j] = str[i];
+            j--;
+        }
+    }
+    
+    strcpy(str, newStr);
+}
+
+int main() {
+    char str[50] = "Hello World How are you";
+    printf("Before replacement: %s\n", str);
+    replaceSpaces(str);
+    printf("After replacement: %s\n", str);
+    return 0;
+}
+```

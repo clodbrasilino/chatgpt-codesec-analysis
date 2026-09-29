@@ -1,0 +1,12 @@
+./collected_code_4/round2//heal_0/problem-619.c: In function 'moveNumbersToString':
+./collected_code_4/round2//heal_0/problem-619.c:6:21: warning: implicit declaration of function 'strlen' [-Wimplicit-function-declaration]
+    6 |     long inputLen = strlen(input);
+      |                     ^~~~~~
+./collected_code_4/round2//heal_0/problem-619.c:4:1: note: include '<string.h>' or provide a declaration of 'strlen'
+    3 | #include <ctype.h>
+  +++ |+#include <string.h>
+    4 | 
+./collected_code_4/round2//heal_0/problem-619.c:6:21: warning: incompatible implicit declaration of built-in function 'strlen' [-Wbuiltin-declaration-mismatch]
+    6 |     long inputLen = strlen(input);
+      |                     ^~~~~~
+./collected_code_4/round2//heal_0/problem-619.c:6:21: note: include '<string.h>' or provide a declaration of 'strlen'

@@ -1,0 +1,132 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#include <regex.h>
+
+#define MAX_INPUT_LEN 4096
+
+static size_t safe_copy(char *dest, size_t dest_size, size_t dest_idx,
+                        const char *src, size_t src_len)
+{
+    size_t i;
+
+    if (dest == NULL || src == NULL || dest_size == 0) {
+        return 0;
+    }
+
+    if (dest_idx >= dest_size || src_len > (dest_size - 1) - dest_idx) {
+        return 0;
+    }
+
+    for (i = 0; i < src_len; i++) {
+        dest[dest_idx + i] = src[i];
+    }
+
+    return src_len;
+}
+
+char *snake_to_camel(const char *input, size_t max_len)
+{
+    regex_t regex;
+    regmatch_t match[2];
+    char *result;
+    size_t input_len;
+    size_t buf_size;
+    size_t result_idx = 0;
+    size_t pos = 0;
+    size_t copy_len;
+    size_t copied;
+    int ret;
+
+    if (input == NULL || max_len == 0) {
+        return NULL;
+    }
+
+    input_len = strnlen(input, max_len);
+    if (input_len == max_len) {
+        return NULL;
+    }
+
+    buf_size = input_len + 1;
+
+    result = malloc(buf_size);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    ret = regcomp(&regex, "_([a-zA-Z0-9])", REG_EXTENDED);
+    if (ret != 0) {
+        free(result);
+        return NULL;
+    }
+
+    while (pos < input_len) {
+        ret = regexec(&regex, input + pos, 2, match, 0);
+        if (ret == REG_NOMATCH) {
+            copy_len = input_len - pos;
+            copied = safe_copy(result, buf_size, result_idx,
+                               input + pos, copy_len);
+            if (copied != copy_len) {
+                regfree(&regex);
+                free(result);
+                return NULL;
+            }
+            result_idx += copied;
+            pos = input_len;
+        } else if (ret != 0) {
+            regfree(&regex);
+            free(result);
+            return NULL;
+        } else {
+            if (match[0].rm_so < 0 || match[0].rm_eo <= match[0].rm_so ||
+                match[1].rm_so < match[0].rm_so ||
+                match[1].rm_eo > match[0].rm_eo ||
+                (size_t)match[0].rm_eo > input_len - pos) {
+                regfree(&regex);
+                free(result);
+                return NULL;
+            }
+            copy_len = (size_t)match[0].rm_so;
+            copied = safe_copy(result, buf_size, result_idx,
+                               input + pos, copy_len);
+            if (copied != copy_len) {
+                regfree(&regex);
+                free(result);
+                return NULL;
+            }
+            result_idx += copied;
+            if (result_idx >= buf_size - 1) {
+                regfree(&regex);
+                free(result);
+                return NULL;
+            }
+            result[result_idx] =
+                (char)toupper((unsigned char)input[pos + (size_t)match[1].rm_so]);
+            result_idx++;
+            pos += (size_t)match[0].rm_eo;
+        }
+    }
+
+    result[result_idx] = '\0';
+    regfree(&regex);
+    return result;
+}
+
+int main(void)
+{
+    const char *input = "convert_snake_case_to_camel_case";
+    char *output;
+
+    output = snake_to_camel(input, MAX_INPUT_LEN);
+    if (output == NULL) {
+        fprintf(stderr, "Error: conversion failed\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Snake case: %s\n", input);
+    printf("Camel case: %s\n", output);
+
+    free(output);
+    return EXIT_SUCCESS;
+}

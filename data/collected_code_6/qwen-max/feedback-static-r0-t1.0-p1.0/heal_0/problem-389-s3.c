@@ -1,0 +1,33 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+long long lucas_number(int n) {
+    if (n == 0) return 2;
+    if (n == 1) return 1;
+
+    long long a = 2, b = 1, c;
+    for (int i = 2; i <= n; ++i) {
+        c = a + b;
+        a = b;
+        b = c;
+    }
+    return b;
+}
+
+int main() {
+    int n;
+    printf("Enter the index of the Lucas number: ");
+    if (scanf("%d", &n) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (n < 0) {
+        fprintf(stderr, "Index must be non-negative\n");
+        return EXIT_FAILURE;
+    }
+
+    long long result = lucas_number(n);
+    printf("The %dth Lucas number is: %lld\n", n, result);
+    return EXIT_SUCCESS;
+}

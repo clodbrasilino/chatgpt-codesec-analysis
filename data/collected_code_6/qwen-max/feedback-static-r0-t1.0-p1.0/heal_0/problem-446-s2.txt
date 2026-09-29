@@ -1,0 +1,47 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int* data;
+    size_t length;
+} List;
+
+typedef struct {
+    int* data;
+    size_t length;
+} Tuple;
+
+void count_occurrences(const Tuple* tuple, const List* list, int* counts) {
+    for (size_t i = 0; i < list->length; ++i) {
+        counts[i] = 0;
+        for (size_t j = 0; j < tuple->length; ++j) {
+            if (tuple->data[j] == list->data[i]) {
+                counts[i]++;
+            }
+        }
+    }
+}
+
+int main() {
+    int tuple_data[] = {1, 2, 3, 2, 1, 4, 1};
+    int list_data[] = {1, 2, 3, 4};
+
+    Tuple tuple = {tuple_data, sizeof(tuple_data) / sizeof(tuple_data[0])};
+    List list = {list_data, sizeof(list_data) / sizeof(list_data[0])};
+
+    int* counts = (int*)malloc(list.length * sizeof(int));
+    if (counts == NULL) {
+        return EXIT_FAILURE;
+    }
+
+    count_occurrences(&tuple, &list, counts);
+
+    for (size_t i = 0; i < list.length; ++i) {
+        printf("Element %d occurs %d times\n", list.data[i], counts[i]);
+    }
+
+    free(counts);
+    return EXIT_SUCCESS;
+}
+```

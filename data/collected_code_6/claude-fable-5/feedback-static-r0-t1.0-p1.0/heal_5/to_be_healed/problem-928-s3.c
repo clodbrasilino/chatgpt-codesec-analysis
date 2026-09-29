@@ -1,0 +1,129 @@
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdlib.h>
+
+#define DATE_INPUT_LEN 10U
+#define OUTPUT_MIN_SIZE 11U
+#define INPUT_BUF_SIZE 32U
+#define OUTPUT_BUF_SIZE 16U
+
+static int days_in_month(unsigned int year, unsigned int month)
+{
+    static const unsigned int days[12] = {
+        31U, 28U, 31U, 30U, 31U, 30U, 31U, 31U, 30U, 31U, 30U, 31U
+    };
+    unsigned int result;
+
+    if (month < 1U || month > 12U) {
+        return -1;
+    }
+
+    result = days[month - 1U];
+
+    if (month == 2U) {
+        if ((year % 4U == 0U && year % 100U != 0U) || (year % 400U == 0U)) {
+            result = 29U;
+        }
+    }
+
+    return (int)result;
+}
+
+int convert_date(const char *input, size_t input_size, char *output, size_t output_size)
+{
+    unsigned int year;
+    unsigned int month;
+    unsigned int day;
+    size_t i;
+    size_t len;
+    int written;
+    int max_day;
+
+    if (input == NULL || output == NULL) {
+        return -1;
+    }
+
+    if (input_size == 0U || output_size < OUTPUT_MIN_SIZE) {
+        return -1;
+    }
+
+    if (memchr(input, '\0', input_size) == NULL) {
+        return -1;
+    }
+
+    len = strnlen(input, input_size);
+    if (len != DATE_INPUT_LEN) {
+        return -1;
+    }
+
+    for (i = 0U; i < DATE_INPUT_LEN; i++) {
+        if (i == 4U || i == 7U) {
+            if (input[i] != '-') {
+                return -1;
+            }
+        } else {
+            if (!isdigit((unsigned char)input[i])) {
+                return -1;
+            }
+        }
+    }
+
+    if (sscanf(input, "%4u-%2u-%2u", &year, &month, &day) != 3) {
+        return -1;
+    }
+
+    if (year < 1U || year > 9999U) {
+        return -1;
+    }
+
+    if (month < 1U || month > 12U) {
+        return -1;
+    }
+
+    max_day = days_in_month(year, month);
+    if (max_day < 0) {
+        return -1;
+    }
+
+    if (day < 1U || day > (unsigned int)max_day) {
+        return -1;
+    }
+
+    written = snprintf(output, output_size, "%02u-%02u-%04u", day, month, year);
+    if (written < 0 || (size_t)written >= output_size) {
+        return -1;
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char input[INPUT_BUF_SIZE];
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char output[OUTPUT_BUF_SIZE];
+
+    printf("Enter date (yyyy-mm-dd): ");
+
+    if (fgets(input, (int)sizeof(input), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    input[strcspn(input, "\n")] = '\0';
+
+    if (convert_date(input, sizeof(input), output, sizeof(output)) != 0) {
+        fprintf(stderr, "Invalid date format\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("%s\n", output);
+
+    return EXIT_SUCCESS;
+}

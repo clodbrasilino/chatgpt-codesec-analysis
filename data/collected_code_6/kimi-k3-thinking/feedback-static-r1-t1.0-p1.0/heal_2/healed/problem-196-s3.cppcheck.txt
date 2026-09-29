@@ -1,0 +1,28 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_2/healed/problem-196-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_2/healed/problem-196-s3.c:87:23: style: Condition 'copy_size>dest_capacity' is always false [knownConditionTrueFalse]
+        if (copy_size > dest_capacity || copy_size > list->tuples[list->count].capacity) {
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_2/healed/problem-196-s3.c:80:30: note: dest_capacity is assigned 'copy_size' here.
+        size_t dest_capacity = copy_size;
+                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_2/healed/problem-196-s3.c:82:44: note: Assuming condition is false
+        if (list->tuples[list->count].data == NULL) {
+                                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_2/healed/problem-196-s3.c:87:23: note: Condition 'copy_size>dest_capacity' is always false
+        if (copy_size > dest_capacity || copy_size > list->tuples[list->count].capacity) {
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_2/healed/problem-196-s3.c:87:52: style: Condition 'copy_size>list->tuples[list->count].capacity' is always false [knownConditionTrueFalse]
+        if (copy_size > dest_capacity || copy_size > list->tuples[list->count].capacity) {
+                                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_2/healed/problem-196-s3.c:80:30: note: dest_capacity is assigned 'copy_size' here.
+        size_t dest_capacity = copy_size;
+                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_2/healed/problem-196-s3.c:82:44: note: Assuming condition is false
+        if (list->tuples[list->count].data == NULL) {
+                                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_2/healed/problem-196-s3.c:86:46: note: Assignment 'list->tuples[list->count].capacity=dest_capacity', assigned value is symbolic=copy_size
+        list->tuples[list->count].capacity = dest_capacity;
+                                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_2/healed/problem-196-s3.c:87:52: note: Condition 'copy_size>list->tuples[list->count].capacity' is always false
+        if (copy_size > dest_capacity || copy_size > list->tuples[list->count].capacity) {
+                                                   ^

@@ -1,0 +1,91 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+#define IP_MAX_LEN 16
+
+char* remove_leading_zeroes(const char *ip) {
+    if (ip == NULL) {
+        return NULL;
+    }
+
+    char *result = malloc(IP_MAX_LEN);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    size_t ip_len = strnlen(ip, IP_MAX_LEN);
+    char *input_copy = malloc(ip_len + 1);
+    if (input_copy == NULL) {
+        free(result);
+        return NULL;
+    }
+
+    /* Possible weaknesses found:
+     * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+     */
+    memcpy(input_copy, ip, ip_len);
+    input_copy[ip_len] = '\0';
+
+    char *token;
+    char *rest = input_copy;
+    int first = 1;
+    size_t result_len = 0;
+
+    result[0] = '\0';
+
+    while ((token = strsep(&rest, ".")) != NULL && result_len < IP_MAX_LEN - 1) {
+        if (!first) {
+            if (result_len < IP_MAX_LEN - 1) {
+                result[result_len] = '.';
+                result_len++;
+                result[result_len] = '\0';
+            }
+        }
+        first = 0;
+
+        char *start = token;
+        while (*start == '0' && *(start + 1) != '\0') {
+            start++;
+        }
+
+        size_t token_len = strnlen(start, IP_MAX_LEN);
+        size_t remaining = IP_MAX_LEN - result_len - 1;
+        if (token_len > remaining) {
+            token_len = remaining;
+        }
+        if (token_len > 0) {
+            /* Possible weaknesses found:
+             * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+             */
+            memcpy(result + result_len, start, token_len);
+            result_len += token_len;
+            result[result_len] = '\0';
+        }
+    }
+
+    free(input_copy);
+    return result;
+}
+
+int main(void) {
+    const char *ip1 = "192.168.001.001";
+    const char *ip2 = "010.000.000.001";
+    const char *ip3 = "000.000.000.000";
+    const char *ip4 = "255.255.255.255";
+    const char *ip5 = "001.002.003.004";
+
+    char *result1 = remove_leading_zeroes(ip1);
+    char *result2 = remove_leading_zeroes(ip2);
+    char *result3 = remove_leading_zeroes(ip3);
+    char *result4 = remove_leading_zeroes(ip4);
+    char *result5 = remove_leading_zeroes(ip5);
+
+    if (result1) { printf("%s\n", result1); free(result1); }
+    if (result2) { printf("%s\n", result2); free(result2); }
+    if (result3) { printf("%s\n", result3); free(result3); }
+    if (result4) { printf("%s\n", result4); free(result4); }
+    if (result5) { printf("%s\n", result5); free(result5); }
+
+    return 0;
+}

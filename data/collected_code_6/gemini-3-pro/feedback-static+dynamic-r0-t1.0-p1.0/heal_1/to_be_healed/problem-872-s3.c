@@ -1,0 +1,138 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+typedef enum {
+    TYPE_INT,
+    TYPE_LIST
+} ElementType;
+
+typedef struct Element {
+    ElementType type;
+    union {
+        int int_val;
+        struct {
+            struct Element** elements;
+            size_t size;
+        } list_val;
+    } data;
+} Element;
+
+Element* create_int_element(int value) {
+    Element* el = (Element*)malloc(sizeof(Element));
+    if (!el) return NULL;
+    el->type = TYPE_INT;
+    el->data.int_val = value;
+    return el;
+}
+
+Element* create_list_element(size_t size) {
+    Element* el = (Element*)malloc(sizeof(Element));
+    if (!el) return NULL;
+    el->type = TYPE_LIST;
+    el->data.list_val.size = size;
+    el->data.list_val.elements = size > 0 ? (Element**)calloc(size, sizeof(Element*)) : NULL;
+    if (size > 0 && !el->data.list_val.elements) {
+        free(el);
+        return NULL;
+    }
+    return el;
+}
+
+void free_element(Element* el) {
+    if (!el) return;
+    if (el->type == TYPE_LIST) {
+        for (size_t i = 0; i < el->data.list_val.size; i++) {
+            free_element(el->data.list_val.elements[i]);
+        }
+        free(el->data.list_val.elements);
+    }
+    free(el);
+}
+
+bool elements_equal(const Element* a, const Element* b) {
+    if (!a || !b) return a == b;
+    if (a->type != b->type) return false;
+    
+    if (a->type == TYPE_INT) {
+        return a->data.int_val == b->data.int_val;
+    } else {
+        if (a->data.list_val.size != b->data.list_val.size) return false;
+        for (size_t i = 0; i < a->data.list_val.size; i++) {
+            if (!elements_equal(a->data.list_val.elements[i], b->data.list_val.elements[i])) {
+                return false;
+            }
+        }
+        return true;
+    }
+}
+
+bool contains_element(const Element* list, const Element* target) {
+    if (!list || list->type != TYPE_LIST || !target) return false;
+    
+    for (size_t i = 0; i < list->data.list_val.size; i++) {
+        if (elements_equal(list->data.list_val.elements[i], target)) {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool is_subset(const Element* sub, const Element* super) {
+    if (!sub || !super || sub->type != TYPE_LIST || super->type != TYPE_LIST) return false;
+    
+    for (size_t i = 0; i < sub->data.list_val.size; i++) {
+        if (!contains_element(super, sub->data.list_val.elements[i])) {
+            return false;
+        }
+    }
+    return true;
+}
+
+int main(void) {
+    Element* super = create_list_element(3);
+    if (!super) return 1;
+    
+    super->data.list_val.elements[0] = create_int_element(1);
+    super->data.list_val.elements[1] = create_list_element(2);
+    super->data.list_val.elements[2] = create_int_element(4);
+    
+    if (super->data.list_val.elements[1]) {
+        super->data.list_val.elements[1]->data.list_val.elements[0] = create_int_element(2);
+        super->data.list_val.elements[1]->data.list_val.elements[1] = create_int_element(3);
+    }
+
+    Element* sub = create_list_element(2);
+    if (!sub) {
+        free_element(super);
+        return 1;
+    }
+    
+    sub->data.list_val.elements[0] = create_int_element(4);
+    sub->data.list_val.elements[1] = create_list_element(2);
+    
+    if (sub->data.list_val.elements[1]) {
+        sub->data.list_val.elements[1]->data.list_val.elements[0] = create_int_element(2);
+        sub->data.list_val.elements[1]->data.list_val.elements[1] = create_int_element(3);
+    }
+
+    if (super->data.list_val.elements[0] && 
+        super->data.list_val.elements[1] && super->data.list_val.elements[1]->data.list_val.elements[0] && super->data.list_val.elements[1]->data.list_val.elements[1] &&
+        super->data.list_val.elements[2] &&
+        sub->data.list_val.elements[0] &&
+        sub->data.list_val.elements[1] && sub->data.list_val.elements[1]->data.list_val.elements[0] && sub->data.list_val.elements[1]->data.list_val.elements[1]) {
+        
+        bool result = is_subset(sub, super);
+        /* Possible weaknesses found:
+         * Flawfinder printf: If format strings can be influenced by an attacker, they can be exploited (CWE-134). Use a constant for the format specification. (risk 4, format)
+         */
+        printf(result ? "True\n" : "False\n");
+    } else {
+        printf("Memory allocation failed\n");
+    }
+
+    free_element(sub);
+    free_element(super);
+    
+    return 0;
+}

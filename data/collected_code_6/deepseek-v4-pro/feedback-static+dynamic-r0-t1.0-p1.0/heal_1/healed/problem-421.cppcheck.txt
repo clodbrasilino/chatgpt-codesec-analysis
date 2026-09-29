@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-421.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-421.c:21:24: style: Variable 'total_alloc' is assigned a value that is never used. [unreadVariable]
+    size_t total_alloc = 0;
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-421.c:30:21: style: Variable 'total_alloc' is assigned a value that is never used. [unreadVariable]
+        total_alloc += lens[i];
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-421.c:32:17: style: Variable 'total_alloc' is assigned a value that is never used. [unreadVariable]
+    total_alloc += (tuple_size - 1) * delim_len;
+                ^

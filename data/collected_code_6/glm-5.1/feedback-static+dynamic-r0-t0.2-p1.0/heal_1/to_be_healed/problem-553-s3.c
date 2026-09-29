@@ -1,0 +1,53 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <errno.h>
+
+typedef struct {
+    int numerator;
+    int denominator;
+} Tuple;
+
+int tuple_to_float(const Tuple *t, float *out) {
+    if (t == NULL || out == NULL) {
+        return -1;
+    }
+    if (t->denominator == 0) {
+        return -1;
+    }
+    errno = 0;
+    *out = (float)t->numerator / (float)t->denominator;
+    if (errno != 0) {
+        return -1;
+    }
+    return 0;
+}
+
+/* Possible weaknesses found:
+ *  Parameter 'argv' can be declared as const array [constParameter]
+ */
+int main(int argc, char *argv[]) {
+    if (argc != 3) {
+        fprintf(stderr, "Usage: %s <numerator> <denominator>\n", argv[0]);
+        return EXIT_FAILURE;
+    }
+    char *endptr;
+    long num = strtol(argv[1], &endptr, 10);
+    if (*endptr != '\0' || errno != 0) {
+        return EXIT_FAILURE;
+    }
+    long den = strtol(argv[2], &endptr, 10);
+    if (*endptr != '\0' || errno != 0) {
+        return EXIT_FAILURE;
+    }
+    Tuple t;
+    t.numerator = (int)num;
+    t.denominator = (int)den;
+    float result;
+    if (tuple_to_float(&t, &result) != 0) {
+        fprintf(stderr, "Conversion failed\n");
+        return EXIT_FAILURE;
+    }
+    printf("%f\n", result);
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,253 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct Entry {
+    char *key;
+    char *value;
+    struct Entry *next;
+} Entry;
+
+typedef struct {
+    Entry **buckets;
+    size_t size;
+    size_t count;
+} Dict;
+
+Dict *dict_create(size_t size);
+void dict_destroy(Dict *dict);
+int dict_put(Dict *dict, const char *key, const char *value);
+const char *dict_get(const Dict *dict, const char *key);
+Dict *dict_merge(const Dict *first, const Dict *second);
+void dict_print(const Dict *dict);
+
+static unsigned long hash_string(const char *str)
+{
+    unsigned long hash = 5381UL;
+    int c;
+
+    while ((c = (unsigned char)*str++) != 0) {
+        hash = ((hash << 5) + hash) + (unsigned long)c;
+    }
+    return hash;
+}
+
+static char *str_duplicate(const char *str)
+{
+    size_t len = strlen(str) + 1U;
+    char *copy = malloc(len);
+
+    if (copy != NULL) {
+        memcpy(copy, str, len);
+    }
+    return copy;
+}
+
+Dict *dict_create(size_t size)
+{
+    Dict *dict = malloc(sizeof(*dict));
+
+    if (dict == NULL) {
+        return NULL;
+    }
+    if (size == 0U) {
+        size = 16U;
+    }
+    dict->buckets = calloc(size, sizeof(*dict->buckets));
+    if (dict->buckets == NULL) {
+        free(dict);
+        return NULL;
+    }
+    dict->size = size;
+    dict->count = 0U;
+    return dict;
+}
+
+void dict_destroy(Dict *dict)
+{
+    size_t i;
+
+    if (dict == NULL) {
+        return;
+    }
+    for (i = 0U; i < dict->size; i++) {
+        Entry *entry = dict->buckets[i];
+
+        while (entry != NULL) {
+            Entry *next = entry->next;
+
+            free(entry->key);
+            free(entry->value);
+            free(entry);
+            entry = next;
+        }
+    }
+    free(dict->buckets);
+    free(dict);
+}
+
+int dict_put(Dict *dict, const char *key, const char *value)
+{
+    unsigned long index;
+    Entry *entry;
+    Entry *new_entry;
+
+    if (dict == NULL || key == NULL || value == NULL) {
+        return -1;
+    }
+    index = hash_string(key) % dict->size;
+    entry = dict->buckets[index];
+    while (entry != NULL) {
+        if (strcmp(entry->key, key) == 0) {
+            char *new_value = str_duplicate(value);
+
+            if (new_value == NULL) {
+                return -1;
+            }
+            free(entry->value);
+            entry->value = new_value;
+            return 0;
+        }
+        entry = entry->next;
+    }
+    new_entry = malloc(sizeof(*new_entry));
+    if (new_entry == NULL) {
+        return -1;
+    }
+    new_entry->key = str_duplicate(key);
+    if (new_entry->key == NULL) {
+        free(new_entry);
+        return -1;
+    }
+    new_entry->value = str_duplicate(value);
+    if (new_entry->value == NULL) {
+        free(new_entry->key);
+        free(new_entry);
+        return -1;
+    }
+    new_entry->next = dict->buckets[index];
+    dict->buckets[index] = new_entry;
+    dict->count++;
+    return 0;
+}
+
+const char *dict_get(const Dict *dict, const char *key)
+{
+    unsigned long index;
+    Entry *entry;
+
+    if (dict == NULL || key == NULL) {
+        return NULL;
+    }
+    index = hash_string(key) % dict->size;
+    entry = dict->buckets[index];
+    while (entry != NULL) {
+        if (strcmp(entry->key, key) == 0) {
+            return entry->value;
+        }
+        entry = entry->next;
+    }
+    return NULL;
+}
+
+Dict *dict_merge(const Dict *first, const Dict *second)
+{
+    Dict *merged;
+    size_t i;
+    Entry *entry;
+
+    if (first == NULL || second == NULL) {
+        return NULL;
+    }
+    merged = dict_create(first->size + second->size);
+    if (merged == NULL) {
+        return NULL;
+    }
+    for (i = 0U; i < first->size; i++) {
+        entry = first->buckets[i];
+        while (entry != NULL) {
+            if (dict_put(merged, entry->key, entry->value) != 0) {
+                dict_destroy(merged);
+                return NULL;
+            }
+            entry = entry->next;
+        }
+    }
+    for (i = 0U; i < second->size; i++) {
+        entry = second->buckets[i];
+        while (entry != NULL) {
+            if (dict_put(merged, entry->key, entry->value) != 0) {
+                dict_destroy(merged);
+                return NULL;
+            }
+            entry = entry->next;
+        }
+    }
+    return merged;
+}
+
+void dict_print(const Dict *dict)
+{
+    size_t i;
+    Entry *entry;
+
+    if (dict == NULL) {
+        return;
+    }
+    for (i = 0U; i < dict->size; i++) {
+        entry = dict->buckets[i];
+        while (entry != NULL) {
+            printf("%s: %s\n", entry->key, entry->value);
+            entry = entry->next;
+        }
+    }
+}
+
+int main(void)
+{
+    Dict *first = dict_create(16U);
+    Dict *second;
+    Dict *merged;
+
+    if (first == NULL) {
+        fprintf(stderr, "Failed to create first dictionary\n");
+        return EXIT_FAILURE;
+    }
+    second = dict_create(16U);
+    if (second == NULL) {
+        fprintf(stderr, "Failed to create second dictionary\n");
+        dict_destroy(first);
+        return EXIT_FAILURE;
+    }
+    if (dict_put(first, "apple", "red") != 0 ||
+        dict_put(first, "banana", "yellow") != 0 ||
+        dict_put(first, "grape", "purple") != 0) {
+        fprintf(stderr, "Failed to populate first dictionary\n");
+        dict_destroy(first);
+        dict_destroy(second);
+        return EXIT_FAILURE;
+    }
+    if (dict_put(second, "kiwi", "green") != 0 ||
+        dict_put(second, "banana", "ripe yellow") != 0 ||
+        dict_put(second, "cherry", "dark red") != 0) {
+        fprintf(stderr, "Failed to populate second dictionary\n");
+        dict_destroy(first);
+        dict_destroy(second);
+        return EXIT_FAILURE;
+    }
+    merged = dict_merge(first, second);
+    if (merged == NULL) {
+        fprintf(stderr, "Failed to merge dictionaries\n");
+        dict_destroy(first);
+        dict_destroy(second);
+        return EXIT_FAILURE;
+    }
+    printf("Merged dictionary (%zu entries):\n", merged->count);
+    dict_print(merged);
+    dict_destroy(first);
+    dict_destroy(second);
+    dict_destroy(merged);
+    return EXIT_SUCCESS;
+}
+```

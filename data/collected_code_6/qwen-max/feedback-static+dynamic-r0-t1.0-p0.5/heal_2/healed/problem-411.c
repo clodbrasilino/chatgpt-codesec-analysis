@@ -1,0 +1,42 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#include <regex.h>
+
+char *snake_to_camel(const char *snake_str) {
+    regex_t regex;
+    regmatch_t matches[2];
+    char *camel_str = strdup(snake_str);
+    int i, len;
+
+    if (regcomp(&regex, "(_[a-z])", REG_EXTENDED | REG_NEWLINE) != 0) {
+        free(camel_str);
+        return NULL;
+    }
+
+    for (i = 0; regexec(&regex, camel_str + i, 2, matches, 0) == 0; i += matches[0].rm_eo - 1) {
+        len = strlen(camel_str + matches[1].rm_so - i);
+        camel_str[matches[1].rm_so - i] = toupper((unsigned char)camel_str[matches[1].rm_so - i + 1]);
+        memmove(camel_str + matches[1].rm_so - i + 1, camel_str + matches[1].rm_so - i + 2, len);
+    }
+
+    regfree(&regex);
+    return camel_str;
+}
+
+int main() {
+    const char *snake_str[] = {"android_tv", "google_pixel", "apple_watch", "this_is_a_snake_case_string"};
+    for (int j = 0; j < 4; j++) {
+        char *camel_str = snake_to_camel(snake_str[j]);
+
+        if (camel_str != NULL) {
+            printf("%s\n", camel_str);
+            free(camel_str);
+        } else {
+            printf("Error converting string.\n");
+        }
+    }
+
+    return 0;
+}

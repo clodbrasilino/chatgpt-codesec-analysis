@@ -1,0 +1,132 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+typedef struct Node {
+    int data;
+    struct Node *next;
+} Node;
+
+static Node *create_node(int data)
+{
+    Node *node = malloc(sizeof *node);
+    if (node == NULL) {
+        return NULL;
+    }
+    node->data = data;
+    node->next = NULL;
+    return node;
+}
+
+static int append_node(Node **head, int data)
+{
+    Node *node;
+    Node *current;
+
+    if (head == NULL) {
+        return -1;
+    }
+    node = create_node(data);
+    if (node == NULL) {
+        return -1;
+    }
+    if (*head == NULL) {
+        *head = node;
+        return 0;
+    }
+    current = *head;
+    while (current->next != NULL) {
+        current = current->next;
+    }
+    current->next = node;
+    return 0;
+}
+
+void free_list(Node *head)
+{
+    while (head != NULL) {
+        Node *next = head->next;
+        free(head);
+        head = next;
+    }
+}
+
+Node *subtract_lists(const Node *list_a, const Node *list_b)
+{
+    Node *result = NULL;
+    const Node *a = list_a;
+    const Node *b = list_b;
+
+    while (a != NULL && b != NULL) {
+        long diff = (long)a->data - (long)b->data;
+        if (diff > INT_MAX || diff < INT_MIN) {
+            free_list(result);
+            return NULL;
+        }
+        if (append_node(&result, (int)diff) != 0) {
+            free_list(result);
+            return NULL;
+        }
+        a = a->next;
+        b = b->next;
+    }
+    return result;
+}
+
+static void print_list(const Node *head)
+{
+    printf("[");
+    while (head != NULL) {
+        printf("%d", head->data);
+        if (head->next != NULL) {
+            printf(", ");
+        }
+        head = head->next;
+    }
+    printf("]\n");
+}
+
+int main(void)
+{
+    Node *list_a = NULL;
+    Node *list_b = NULL;
+    Node *result = NULL;
+
+    if (append_node(&list_a, 10) != 0 ||
+        append_node(&list_a, 25) != 0 ||
+        append_node(&list_a, 40) != 0) {
+        fprintf(stderr, "error: failed to build list A\n");
+        free_list(list_a);
+        return EXIT_FAILURE;
+    }
+
+    if (append_node(&list_b, 1) != 0 ||
+        append_node(&list_b, 5) != 0 ||
+        append_node(&list_b, 9) != 0) {
+        fprintf(stderr, "error: failed to build list B\n");
+        free_list(list_a);
+        free_list(list_b);
+        return EXIT_FAILURE;
+    }
+
+    result = subtract_lists(list_a, list_b);
+    if (result == NULL) {
+        fprintf(stderr, "error: subtraction failed\n");
+        free_list(list_a);
+        free_list(list_b);
+        return EXIT_FAILURE;
+    }
+
+    printf("List A: ");
+    print_list(list_a);
+    printf("List B: ");
+    print_list(list_b);
+    printf("A - B:  ");
+    print_list(result);
+
+    free_list(list_a);
+    free_list(list_b);
+    free_list(result);
+
+    return EXIT_SUCCESS;
+}

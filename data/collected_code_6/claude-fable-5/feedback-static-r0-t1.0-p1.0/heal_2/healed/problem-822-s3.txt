@@ -1,0 +1,116 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+#include <string.h>
+#include <ctype.h>
+
+#define MIN_LENGTH 8
+#define MAX_LENGTH 64
+#define BUFFER_SIZE 128
+
+static void secure_clear(void *buf, size_t size)
+{
+    volatile unsigned char *p = (volatile unsigned char *)buf;
+    while (size--) {
+        *p++ = 0;
+    }
+}
+
+static void drain_stdin(void)
+{
+    int ch;
+    while ((ch = getchar()) != '\n' && ch != EOF) {
+    }
+}
+
+bool is_valid_password(const char *password, size_t max_len)
+{
+    size_t length;
+    size_t i;
+    bool has_upper = false;
+    bool has_lower = false;
+    bool has_digit = false;
+    bool has_special = false;
+
+    if (password == NULL || max_len == 0) {
+        return false;
+    }
+
+    length = strnlen(password, max_len);
+
+    if (length >= max_len) {
+        return false;
+    }
+
+    if (length < MIN_LENGTH || length > MAX_LENGTH) {
+        return false;
+    }
+
+    for (i = 0; i < length; i++) {
+        unsigned char c = (unsigned char)password[i];
+
+        if (!isprint(c)) {
+            return false;
+        }
+
+        if (isupper(c)) {
+            has_upper = true;
+        } else if (islower(c)) {
+            has_lower = true;
+        } else if (isdigit(c)) {
+            has_digit = true;
+        } else if (ispunct(c)) {
+            has_special = true;
+        } else {
+            return false;
+        }
+    }
+
+    return has_upper && has_lower && has_digit && has_special;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t length;
+
+    printf("Enter password: ");
+    fflush(stdout);
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+    length = strnlen(buffer, sizeof(buffer));
+
+    if (length > 0 && buffer[length - 1] == '\n') {
+        buffer[length - 1] = '\0';
+    } else {
+        drain_stdin();
+    }
+
+    if (is_valid_password(buffer, sizeof(buffer))) {
+        printf("Password is valid\n");
+    } else {
+        printf("Password is invalid\n");
+    }
+
+    secure_clear(buffer, sizeof(buffer));
+
+    return 0;
+}
+```
+
+Analysis of the original code and the flagged weaknesses:
+
+**Flawfinder warning 1 — `char buffer[BUFFER_SIZE]` (CWE-119/CWE-120):** This is a false positive in practice, but the mitigations are verified in the rewrite. All reads into the buffer are bounded: `fgets(buffer, sizeof(buffer), stdin)` never writes more than `BUFFER_SIZE` bytes including the terminator, and the explicit `buffer[sizeof(buffer) - 1] = '\0'` guarantees termination even in edge cases. All subsequent operations use `strnlen` with `sizeof(buffer)` rather than unbounded `strlen`, so no read can run past the array.
+
+**Flawfinder warning 2 — `getchar` in a loop (CWE-120/CWE-20):** Also a false positive. The loop discards excess input without storing it anywhere, so no buffer boundary is involved. It correctly terminates on both `'\n'` and `EOF`, preventing an infinite loop on closed stdin. I extracted it into `drain_stdin()` for clarity.
+
+**Other defensive properties preserved/strengthened:**
+- `secure_clear` uses a `volatile` pointer so the compiler cannot optimize away the wipe of the password from memory.
+- `is_valid_password` rejects `NULL`, rejects truncated input (`length >= max_len` means the string may have been cut off), enforces length bounds, and casts to `unsigned char` before calling `ctype` functions — avoiding undefined behavior on negative `char` values.
+- Added a `max_len == 0` guard as a minor hardening improvement.
+- The `else` branch after the `isprint` chain is unreachable in most locales (space would hit it), which correctly rejects passwords containing spaces per the character-class policy.

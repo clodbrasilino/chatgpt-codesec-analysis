@@ -1,0 +1,44 @@
+```C
+#include <stdio.h>
+
+#define p 1000000007
+
+long long factorial[1000001];
+
+void generateFactorial(int n) {
+    factorial[0] = 1;
+    for(int i = 1; i <= n; i++) {
+        factorial[i] = (factorial[i - 1] * i) % p;
+    }
+}
+
+long long power(long long x, long long y) {
+    long long res = 1;
+    x = x % p;
+    while (y > 0) {
+        if (y & 1)
+            res = (res * x) % p;
+        y = y >> 1;
+        x = (x * x) % p;
+    }
+    return res;
+}
+
+long long modInverse(long long n) {
+    return power(n, p - 2);
+}
+
+long long nCrModP(int n, int r) {
+    if (r == 0)
+        return 1;
+    long long denominator = modInverse((factorial[r] * factorial[n - r]) % p);
+    return (factorial[n] * denominator) % p;
+}
+
+int main() {
+    int n = 5, r = 2;
+    generateFactorial(n);
+    printf("Value of nCr mod p is %lld", nCrModP(n, r));
+    return 0;
+}
+```

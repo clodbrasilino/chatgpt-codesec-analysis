@@ -1,0 +1,78 @@
+{
+  "task_id": 929,
+  "text": "Write a C function to count repeated items of a tuple.",
+  "fn_candidates": [
+    "count_tuplex",
+    "CountTuplex",
+    "countTuplex",
+    "counttuplex"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "count_tuplex",
+      "args": [
+        [
+          2,
+          4,
+          5,
+          6,
+          2,
+          3,
+          4,
+          4,
+          7
+        ],
+        4
+      ],
+      "expected": 3,
+      "assert_src": "assert count_tuplex((2, 4, 5, 6, 2, 3, 4, 4, 7),4)==3"
+    },
+    {
+      "fn_name": "count_tuplex",
+      "args": [
+        [
+          2,
+          4,
+          5,
+          6,
+          2,
+          3,
+          4,
+          4,
+          7
+        ],
+        2
+      ],
+      "expected": 2,
+      "assert_src": "assert count_tuplex((2, 4, 5, 6, 2, 3, 4, 4, 7),2)==2"
+    },
+    {
+      "fn_name": "count_tuplex",
+      "args": [
+        [
+          2,
+          4,
+          7,
+          7,
+          7,
+          3,
+          4,
+          4,
+          7
+        ],
+        7
+      ],
+      "expected": 4,
+      "assert_src": "assert count_tuplex((2, 4, 7, 7, 7, 3, 4, 4, 7),7)==4"
+    }
+  ],
+  "arg_kinds": [
+    "int",
+    "int-list"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

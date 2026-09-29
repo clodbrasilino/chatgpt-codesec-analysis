@@ -1,0 +1,45 @@
+#include <stdio.h>
+#include <limits.h>
+
+int find_sum_of_extremes(const int *arr, size_t size, int *result) {
+    if (arr == NULL || size == 0 || result == NULL) {
+        return -1;
+    }
+
+    int largest = arr[0];
+    int smallest = arr[0];
+
+    for (size_t i = 1; i < size; i++) {
+        if (arr[i] > largest) {
+            largest = arr[i];
+        } else if (arr[i] < smallest) {
+            smallest = arr[i];
+        }
+    }
+
+    if ((largest > 0 && smallest > INT_MAX - largest) ||
+        (largest < 0 && smallest < INT_MIN - largest)) {
+        return -2;
+    }
+
+    *result = largest + smallest;
+    return 0;
+}
+
+int main(void) {
+    int array[] = {12, 45, 2, 89, 34, -5, 100};
+    size_t size = sizeof(array) / sizeof(array[0]);
+    int sum = 0;
+
+    int status = find_sum_of_extremes(array, size, &sum);
+
+    if (status == 0) {
+        printf("Sum of largest and smallest: %d\n", sum);
+    } else if (status == -1) {
+        printf("Invalid input parameters.\n");
+    } else if (status == -2) {
+        printf("Integer overflow detected during addition.\n");
+    }
+
+    return 0;
+}

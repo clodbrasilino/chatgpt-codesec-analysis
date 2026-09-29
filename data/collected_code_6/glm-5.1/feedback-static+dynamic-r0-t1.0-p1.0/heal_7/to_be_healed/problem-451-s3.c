@@ -1,0 +1,54 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <ctype.h>
+#include <string.h>
+
+char *remove_whitespaces(const char *str) {
+    if (str == NULL) {
+        return NULL;
+    }
+
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    size_t len = strlen(str);
+
+    char *result = malloc(len + 1);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    size_t res_idx = 0;
+    for (size_t i = 0; i < len; i++) {
+        if (!isspace((unsigned char)str[i])) {
+            result[res_idx++] = str[i];
+        }
+    }
+
+    result[res_idx] = '\0';
+    
+    char *shrunk = realloc(result, res_idx + 1);
+    if (shrunk != NULL) {
+        result = shrunk;
+    }
+
+    return result;
+}
+
+int main(void) {
+    const char *inputs[] = {
+        "Google Flutter",
+        "Google Dart",
+        "iOS Swift"
+    };
+
+    for (size_t i = 0; i < sizeof(inputs) / sizeof(inputs[0]); i++) {
+        char *output = remove_whitespaces(inputs[i]);
+        if (output != NULL) {
+            printf("%s\n", output);
+            free(output);
+        }
+    }
+
+    return 0;
+}

@@ -1,0 +1,25 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_2/healed/problem-537-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_2/healed/problem-537-s2.c:87:40: style: Condition 'result_len<=word_len' is always true [knownConditionTrueFalse]
+                        if (result_len <= word_len) {
+                                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_2/healed/problem-537-s2.c:80:69: note: Assignment 'result_len=word_len<100?word_len:100', assigned value is less than 1
+                        size_t result_len = word_len < MAX_WORD_LEN ? word_len : MAX_WORD_LEN;
+                                                                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_2/healed/problem-537-s2.c:82:29: note: Assuming condition is false
+                        if (!result) {
+                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_2/healed/problem-537-s2.c:87:40: note: Condition 'result_len<=word_len' is always true
+                        if (result_len <= word_len) {
+                                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_2/healed/problem-537-s2.c:133:32: style: Condition 'result_len<=word_len' is always true [knownConditionTrueFalse]
+                if (result_len <= word_len) {
+                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_2/healed/problem-537-s2.c:126:61: note: Assignment 'result_len=word_len<100?word_len:100', assigned value is less than 1
+                size_t result_len = word_len < MAX_WORD_LEN ? word_len : MAX_WORD_LEN;
+                                                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_2/healed/problem-537-s2.c:128:21: note: Assuming condition is false
+                if (!result) {
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_2/healed/problem-537-s2.c:133:32: note: Condition 'result_len<=word_len' is always true
+                if (result_len <= word_len) {
+                               ^

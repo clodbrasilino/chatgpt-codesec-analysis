@@ -1,0 +1,266 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+#include <ctype.h>
+
+#define MAX_INPUT 16384
+#define MAX_ITEMS 256
+
+static char *duplicate_range(const char *start, size_t len)
+{
+    char *s;
+
+    s = malloc(len + 1u);
+    if (s == NULL) {
+        return NULL;
+    }
+
+    memcpy(s, start, len);
+    s[len] = '\0';
+
+    return s;
+}
+
+static char *concat_strings(const char *a, const char *b)
+{
+    size_t len_a;
+    size_t len_b;
+    char *result;
+
+    if (a == NULL || b == NULL) {
+        return NULL;
+    }
+
+    len_a = strlen(a);
+    len_b = strlen(b);
+
+    if (len_a > SIZE_MAX - len_b - 1u) {
+        return NULL;
+    }
+
+    result = malloc(len_a + len_b + 1u);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    memcpy(result, a, len_a);
+    memcpy(result + len_a, b, len_b + 1u);
+
+    return result;
+}
+
+static void free_items(char **items, size_t count)
+{
+    size_t i;
+
+    for (i = 0; i < count; i++) {
+        free(items[i]);
+        items[i] = NULL;
+    }
+}
+
+static size_t parse_quoted(const char *start, const char *end, char **items, size_t max_items)
+{
+    size_t count = 0;
+    const char *p = start;
+
+    while (p < end && count < max_items) {
+        if (*p == '\'' || *p == '"') {
+            char quote = *p;
+            const char *s = p + 1;
+            const char *q = s;
+
+            while (q < end && *q != quote) {
+                q++;
+            }
+
+            if (q >= end) {
+                break;
+            }
+
+            items[count] = duplicate_range(s, (size_t)(q - s));
+            if (items[count] == NULL) {
+                break;
+            }
+            count++;
+            p = q + 1;
+        } else {
+            p++;
+        }
+    }
+
+    return count;
+}
+
+static size_t parse_unquoted(const char *start, const char *end, char **items, size_t max_items)
+{
+    size_t count = 0;
+    const char *p = start;
+
+    while (p < end && count < max_items) {
+        const char *field_start;
+        const char *field_end;
+
+        field_start = p;
+        while (p < end && *p != ',') {
+            p++;
+        }
+        field_end = p;
+
+        while (field_start < field_end && isspace((unsigned char)*field_start)) {
+            field_start++;
+        }
+        while (field_end > field_start && isspace((unsigned char)*(field_end - 1))) {
+            field_end--;
+        }
+
+        if (field_end > field_start) {
+            items[count] = duplicate_range(field_start, (size_t)(field_end - field_start));
+            if (items[count] == NULL) {
+                break;
+            }
+            count++;
+        }
+
+        if (p < end) {
+            p++;
+        }
+    }
+
+    return count;
+}
+
+static size_t parse_tuple(const char *start, const char *end, char **items, size_t max_items)
+{
+    const char *p;
+    int has_quote = 0;
+
+    for (p = start; p < end; p++) {
+        if (*p == '\'' || *p == '"') {
+            has_quote = 1;
+            break;
+        }
+    }
+
+    if (has_quote) {
+        return parse_quoted(start, end, items, max_items);
+    }
+
+    return parse_unquoted(start, end, items, max_items);
+}
+
+static size_t read_all_input(char *buf, size_t size)
+{
+    size_t total;
+
+    total = fread(buf, 1u, size - 1u, stdin);
+    buf[total] = '\0';
+
+    return total;
+}
+
+static int find_tuples(const char *buf,
+                       const char **s1, const char **e1,
+                       const char **s2, const char **e2)
+{
+    const char *p1;
+    const char *q1;
+    const char *p2;
+    const char *q2;
+
+    p1 = strchr(buf, '(');
+    if (p1 != NULL) {
+        q1 = strchr(p1 + 1, ')');
+        if (q1 != NULL) {
+            p2 = strchr(q1 + 1, '(');
+            if (p2 != NULL) {
+                q2 = strchr(p2 + 1, ')');
+                if (q2 != NULL) {
+                    *s1 = p1 + 1;
+                    *e1 = q1;
+                    *s2 = p2 + 1;
+                    *e2 = q2;
+                    return 0;
+                }
+            }
+        }
+    }
+
+    p1 = buf;
+    q1 = strchr(buf, '\n');
+    if (q1 == NULL) {
+        return -1;
+    }
+
+    p2 = q1 + 1;
+    q2 = strchr(p2, '\n');
+    if (q2 == NULL) {
+        q2 = p2 + strlen(p2);
+    }
+
+    *s1 = p1;
+    *e1 = q1;
+    *s2 = p2;
+    *e2 = q2;
+
+    return 0;
+}
+
+int main(void)
+{
+    char buf[MAX_INPUT];
+    char *tuple1[MAX_ITEMS];
+    char *tuple2[MAX_ITEMS];
+    char *results[MAX_ITEMS];
+    const char *s1;
+    const char *e1;
+    const char *s2;
+    const char *e2;
+    size_t count1;
+    size_t count2;
+    size_t i;
+
+    if (read_all_input(buf, sizeof(buf)) == 0) {
+        fprintf(stderr, "Error: failed to read input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (find_tuples(buf, &s1, &e1, &s2, &e2) != 0) {
+        fprintf(stderr, "Error: failed to locate two tuples\n");
+        return EXIT_FAILURE;
+    }
+
+    count1 = parse_tuple(s1, e1, tuple1, MAX_ITEMS);
+    count2 = parse_tuple(s2, e2, tuple2, MAX_ITEMS);
+
+    if (count1 == 0 || count1 != count2) {
+        fprintf(stderr, "Error: tuples are empty or of different lengths\n");
+        free_items(tuple1, count1);
+        free_items(tuple2, count2);
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i < count1; i++) {
+        results[i] = concat_strings(tuple1[i], tuple2[i]);
+        if (results[i] == NULL) {
+            fprintf(stderr, "Error: tuple concatenation failed\n");
+            free_items(results, i);
+            free_items(tuple1, count1);
+            free_items(tuple2, count2);
+            return EXIT_FAILURE;
+        }
+    }
+
+    printf("[");
+    for (i = 0; i < count1; i++) {
+        printf("'%s'%s", results[i], (i + 1 < count1) ? ", " : "");
+    }
+    printf("]\n");
+
+    free_items(results, count1);
+    free_items(tuple1, count1);
+    free_items(tuple2, count2);
+
+    return EXIT_SUCCESS;
+}

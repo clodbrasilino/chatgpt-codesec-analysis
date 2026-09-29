@@ -1,0 +1,53 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#define MAX_INPUT_LENGTH 4096
+
+char *remove_lowercase_substrings(const char *input) {
+    if (input == NULL) {
+        return NULL;
+    }
+
+    size_t len = strnlen(input, MAX_INPUT_LENGTH);
+    if (len == MAX_INPUT_LENGTH) {
+        return NULL;
+    }
+
+    char *result = malloc(len + 1);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    size_t i = 0;
+    size_t j = 0;
+    while (i < len) {
+        if (islower((unsigned char)input[i])) {
+            while (i < len && islower((unsigned char)input[i])) {
+                i++;
+            }
+        } else {
+            result[j++] = input[i++];
+        }
+    }
+    result[j] = '\0';
+
+    return result;
+}
+
+int main(void) {
+    const char *input = "Hello World lowercase example ABC";
+    char *output = remove_lowercase_substrings(input);
+    if (output == NULL) {
+        fprintf(stderr, "Error processing string\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Input: %s\n", input);
+    printf("Output: %s\n", output);
+    free(output);
+    return EXIT_SUCCESS;
+}
+```

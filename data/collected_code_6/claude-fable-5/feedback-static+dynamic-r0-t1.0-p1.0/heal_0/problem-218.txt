@@ -1,0 +1,52 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+static unsigned long long min_operations(long long a, long long b)
+{
+    unsigned long long ua;
+    unsigned long long ub;
+
+    ua = (unsigned long long)a;
+    ub = (unsigned long long)b;
+
+    if (a >= b) {
+        return ua - ub;
+    }
+    return ub - ua;
+}
+
+int main(void)
+{
+    long long a;
+    long long b;
+    int result;
+
+    printf("Enter first number: ");
+    result = scanf("%lld", &a);
+    if (result != 1) {
+        fprintf(stderr, "Invalid input for first number\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter second number: ");
+    result = scanf("%lld", &b);
+    if (result != 1) {
+        fprintf(stderr, "Invalid input for second number\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Minimum operations required: %llu\n", min_operations(a, b));
+
+    return EXIT_SUCCESS;
+}
+```
+
+This solution treats each operation as incrementing or decrementing one of the numbers by 1, so the minimum number of operations is the absolute difference between them.
+
+Key safety measures taken:
+
+- **CWE-703 avoided**: Every `scanf` return value is checked before the values are used, and failures exit cleanly with an error message rather than proceeding with uninitialized data.
+- **CWE-664 avoided**: No dynamic memory or file handles are allocated, so there are no resources that can leak or be used outside their valid lifetime; all variables are stack-scoped and initialized before use.
+- **CWE-710 avoided**: The code uses `int main(void)`, standard exit codes via `EXIT_SUCCESS`/`EXIT_FAILURE`, matching format specifiers (`%lld` for `long long`, `%llu` for `unsigned long long`), and braces on all control structures.
+- **Overflow safety**: The difference is computed in unsigned arithmetic after ordering the operands, which avoids signed integer overflow (undefined behavior) that would occur with a naive `llabs(a - b)` when the operands are far apart (e.g., `LLONG_MAX` and `LLONG_MIN`).

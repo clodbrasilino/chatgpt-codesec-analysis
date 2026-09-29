@@ -1,0 +1,56 @@
+```c
+#include <stdio.h>
+#include <stddef.h>
+
+size_t string_length(const char *str)
+{
+    size_t length = 0;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    while (str[length] != '\0') {
+        length++;
+    }
+
+    return length;
+}
+
+int main(void)
+{
+    char buffer[256];
+    size_t length;
+    size_t i;
+
+    printf("Enter a string: ");
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    i = 0;
+    while (buffer[i] != '\0') {
+        if (buffer[i] == '\n') {
+            buffer[i] = '\0';
+            break;
+        }
+        i++;
+    }
+
+    length = string_length(buffer);
+
+    printf("Length of the string: %zu\n", length);
+
+    return 0;
+}
+```
+
+Key safety measures in this implementation:
+
+1. **NULL pointer check** in `string_length` prevents dereferencing an invalid resource (addresses CWE-664).
+2. **Checking the return value of `fgets`** handles the exceptional condition of failed input (addresses CWE-703).
+3. **Bounded input** via `fgets` with `sizeof(buffer)` prevents buffer overflow.
+4. **`size_t` for lengths and indices**, `const` correctness, `int main(void)` signature, and explicit return values follow standard C conventions (addresses CWE-710).
+5. **Newline stripping** is done safely within the known bounds of the buffer.

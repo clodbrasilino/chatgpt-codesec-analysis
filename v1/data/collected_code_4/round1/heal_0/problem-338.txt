@@ -1,0 +1,37 @@
+```c
+#include <stdio.h>
+#include <string.h>
+
+int countSubstring(char str[])
+{
+    int length = strlen(str);
+    int result = 0;
+    int start;
+    int end;
+
+    for(start = 0; start < length; start++)
+    {
+        for(end = start; end < length; end++)
+        {
+            if(str[start] == str[end])
+            {
+                result++;
+            }
+        }
+    }
+
+    return result;
+}
+
+int main()
+{
+    char str[] = "abcab";
+    printf("Number of substrings with same first and last characters is: %d", countSubstring(str));
+    return 0;
+}
+```
+In this code:
+1. A function 'countSubstring' is defined which takes a character array as input and counts all the substrings which start and end with the same character.
+2. Two nested loops are used to traverse the array twice, first to fix a character and then to check for the same character in the rest of the array. If found, the result counter is incremented.
+3. Finally, it returns the count.
+4. The 'main' function is also provided to test the 'countSubstring' method with a sample string "abcab".

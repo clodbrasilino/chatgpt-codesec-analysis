@@ -1,0 +1,32 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+/* Possible weaknesses found:
+ *  Parameter 'tuples' can be declared as pointer to const [constParameterPointer]
+ */
+int minDiffInTuplePairs(int *tuples, int length) {
+    if (length < 2) return -1;
+    int min_diff = INT_MAX;
+    for (int i = 0; i < length - 1; i++) {
+        for (int j = i + 1; j < length; j++) {
+            int diff = abs(tuples[i] - tuples[j]);
+            if (diff < min_diff) {
+                min_diff = diff;
+            }
+        }
+    }
+    return min_diff == INT_MAX ? -1 : min_diff;
+}
+
+int main() {
+    int tuples[] = {4, 5, 8, 10, 20};
+    int length = sizeof(tuples) / sizeof(tuples[0]);
+    int result = minDiffInTuplePairs(tuples, length);
+    if (result != -1) {
+        printf("Minimum difference: %d\n", result);
+    } else {
+        printf("Not enough elements in the array.\n");
+    }
+    return 0;
+}

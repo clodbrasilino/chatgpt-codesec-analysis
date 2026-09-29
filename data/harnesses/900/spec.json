@@ -1,0 +1,44 @@
+{
+  "task_id": 900,
+  "text": "Write a C function where a string will start with a specific number.",
+  "fn_candidates": [
+    "match_num",
+    "MatchNum",
+    "matchNum",
+    "matchnum"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "match_num",
+      "args": [
+        "5-2345861"
+      ],
+      "expected": true,
+      "assert_src": "assert match_num('5-2345861')==True"
+    },
+    {
+      "fn_name": "match_num",
+      "args": [
+        "6-2345861"
+      ],
+      "expected": false,
+      "assert_src": "assert match_num('6-2345861')==False"
+    },
+    {
+      "fn_name": "match_num",
+      "args": [
+        "78910"
+      ],
+      "expected": false,
+      "assert_src": "assert match_num('78910')==False"
+    }
+  ],
+  "arg_kinds": [
+    "str"
+  ],
+  "return_kind": "bool",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

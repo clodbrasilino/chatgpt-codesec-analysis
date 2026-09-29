@@ -1,0 +1,73 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#define MAX_INPUT_LENGTH 4096
+
+char *string_to_lower(const char *input)
+{
+    size_t len;
+    size_t i;
+    char *result;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    len = strnlen(input, MAX_INPUT_LENGTH);
+    if (len >= MAX_INPUT_LENGTH) {
+        return NULL;
+    }
+
+    result = malloc(len + 1);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    for (i = 0; i < len; i++) {
+        result[i] = (char)tolower((unsigned char)input[i]);
+    }
+    result[len] = '\0';
+
+    return result;
+}
+
+int main(void)
+{
+    const char *original = "Hello, World! THIS Is A Test String.";
+    char *lowered;
+
+    lowered = string_to_lower(original);
+    if (lowered == NULL) {
+        fprintf(stderr, "Error: conversion failed\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Original: %s\n", original) < 0) {
+        free(lowered);
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Lowered:  %s\n", lowered) < 0) {
+        free(lowered);
+        return EXIT_FAILURE;
+    }
+
+    free(lowered);
+    lowered = NULL;
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Key changes made:**
+
+1. **Replaced `strlen` with `strnlen`**: This directly addresses the Flawfinder CWE-126 warning. `strnlen` accepts a maximum bound (`MAX_INPUT_LENGTH`), so even if a non-null-terminated buffer is passed, the read is capped and cannot over-read indefinitely.
+
+2. **Added a length sanity check**: If `strnlen` returns a value equal to the maximum bound, the string is either too long or unterminated within the bound, so the function fails safely by returning `NULL` rather than processing potentially truncated/invalid data.
+
+3. **Retained existing good practices**: the `NULL` input guard, `malloc` failure check, the `(unsigned char)` cast before `tolower` (avoiding undefined behavior for negative `char` values), explicit null termination, checked `printf` return values, and freeing plus nulling the pointer before exit.
+
+**Portability note:** `strnlen` is POSIX.1-2008 / C23 (`strnlen_s` in C11 Annex K). If you must target strict C89/C99 without POSIX, you'd implement a small bounded-length helper loop yourself — but on any modern Linux/BSD/macOS toolchain, `strnlen` is available via `<string.h>`.

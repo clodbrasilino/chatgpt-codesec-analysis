@@ -1,0 +1,97 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#define MAX_INPUT_LEN 4096U
+
+char *camel_to_snake(const char *input);
+
+char *camel_to_snake(const char *input)
+{
+    char *output = NULL;
+    size_t in_len = 0;
+    size_t out_len = 0;
+    size_t out_cap = 0;
+    size_t i = 0;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    in_len = strnlen(input, MAX_INPUT_LEN);
+    if (in_len >= MAX_INPUT_LEN) {
+        return NULL;
+    }
+
+    out_cap = (in_len * 2U) + 1U;
+    output = malloc(out_cap);
+    if (output == NULL) {
+        return NULL;
+    }
+
+    for (i = 0; i < in_len; i++) {
+        unsigned char c = (unsigned char)input[i];
+
+        if (isupper(c)) {
+            if (i > 0U) {
+                if ((out_len + 1U) >= out_cap) {
+                    free(output);
+                    return NULL;
+                }
+                output[out_len] = '_';
+                out_len++;
+            }
+            if ((out_len + 1U) >= out_cap) {
+                free(output);
+                return NULL;
+            }
+            output[out_len] = (char)tolower(c);
+            out_len++;
+        } else {
+            if ((out_len + 1U) >= out_cap) {
+                free(output);
+                return NULL;
+            }
+            output[out_len] = (char)c;
+            out_len++;
+        }
+    }
+
+    if (out_len >= out_cap) {
+        free(output);
+        return NULL;
+    }
+
+    output[out_len] = '\0';
+
+    return output;
+}
+
+int main(void)
+{
+    const char *tests[] = {
+        "GoogleAssistant",
+        "ChromeCast",
+        "QuadCore",
+        "camelCaseString",
+        "ThisIsATest",
+        "already_snake",
+        "simpleXMLParser",
+        ""
+    };
+    size_t count = sizeof(tests) / sizeof(tests[0]);
+    size_t i = 0;
+
+    for (i = 0; i < count; i++) {
+        char *result = camel_to_snake(tests[i]);
+        if (result == NULL) {
+            fprintf(stderr, "Conversion failed for: %s\n", tests[i]);
+            return EXIT_FAILURE;
+        }
+        printf("%s -> %s\n", tests[i], result);
+        free(result);
+    }
+
+    return EXIT_SUCCESS;
+}

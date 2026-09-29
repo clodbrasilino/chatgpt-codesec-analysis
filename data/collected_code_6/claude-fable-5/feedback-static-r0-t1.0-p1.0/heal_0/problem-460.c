@@ -1,0 +1,52 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int get_first_elements(int **sublists, const size_t *lengths, size_t count, int *result)
+{
+    size_t i;
+
+    if (sublists == NULL || lengths == NULL || result == NULL) {
+        return -1;
+    }
+
+    for (i = 0; i < count; i++) {
+        if (sublists[i] == NULL || lengths[i] == 0) {
+            return -1;
+        }
+        result[i] = sublists[i][0];
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    int a[] = {1, 2, 3};
+    int b[] = {4, 5};
+    int c[] = {7, 8, 9, 10};
+    int *sublists[3];
+    size_t lengths[3];
+    int result[3];
+    size_t i;
+
+    sublists[0] = a;
+    sublists[1] = b;
+    sublists[2] = c;
+
+    lengths[0] = sizeof(a) / sizeof(a[0]);
+    lengths[1] = sizeof(b) / sizeof(b[0]);
+    lengths[2] = sizeof(c) / sizeof(c[0]);
+
+    if (get_first_elements(sublists, lengths, 3, result) != 0) {
+        fprintf(stderr, "Error: invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i < 3; i++) {
+        if (printf("%d\n", result[i]) < 0) {
+            return EXIT_FAILURE;
+        }
+    }
+
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,143 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+#include <stdbool.h>
+
+#define MAX_HEAP_SIZE 100
+
+typedef struct {
+    int *data;
+    int size;
+    int capacity;
+} MinHeap;
+
+MinHeap* createMinHeap(int capacity) {
+    MinHeap *heap = (MinHeap*)malloc(sizeof(MinHeap));
+    if (heap == NULL) {
+        return NULL;
+    }
+    heap->data = (int*)malloc(capacity * sizeof(int));
+    if (heap->data == NULL) {
+        free(heap);
+        return NULL;
+    }
+    heap->size = 0;
+    heap->capacity = capacity;
+    return heap;
+}
+
+void destroyMinHeap(MinHeap *heap) {
+    if (heap != NULL) {
+        free(heap->data);
+        free(heap);
+    }
+}
+
+void swap(int *a, int *b) {
+    int temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+void heapifyUp(MinHeap *heap, int index) {
+    int parent = (index - 1) / 2;
+    while (index > 0 && heap->data[parent] > heap->data[index]) {
+        swap(&heap->data[parent], &heap->data[index]);
+        index = parent;
+        parent = (index - 1) / 2;
+    }
+}
+
+void heapifyDown(MinHeap *heap, int index) {
+    int smallest = index;
+    int left = 2 * index + 1;
+    int right = 2 * index + 2;
+
+    if (left < heap->size && heap->data[left] < heap->data[smallest]) {
+        smallest = left;
+    }
+    if (right < heap->size && heap->data[right] < heap->data[smallest]) {
+        smallest = right;
+    }
+    if (smallest != index) {
+        swap(&heap->data[index], &heap->data[smallest]);
+        heapifyDown(heap, smallest);
+    }
+}
+
+bool insertMinHeap(MinHeap *heap, int value) {
+    if (heap->size >= heap->capacity) {
+        return false;
+    }
+    heap->data[heap->size] = value;
+    heapifyUp(heap, heap->size);
+    heap->size++;
+    return true;
+}
+
+bool deleteMinHeap(MinHeap *heap, int *removedValue) {
+    if (heap->size <= 0) {
+        return false;
+    }
+    *removedValue = heap->data[0];
+    heap->data[0] = heap->data[heap->size - 1];
+    heap->size--;
+    heapifyDown(heap, 0);
+    return true;
+}
+
+void deleteSmallestAndInsert(MinHeap *heap, int newItem) {
+    if (heap == NULL || heap->size <= 0) {
+        return;
+    }
+    heap->data[0] = newItem;
+    heapifyDown(heap, 0);
+}
+
+void printHeap(MinHeap *heap) {
+    if (heap == NULL) {
+        return;
+    }
+    for (int i = 0; i < heap->size; i++) {
+        printf("%d ", heap->data[i]);
+    }
+    printf("\n");
+}
+
+int main() {
+    MinHeap *heap = createMinHeap(MAX_HEAP_SIZE);
+    if (heap == NULL) {
+        fprintf(stderr, "Failed to create heap\n");
+        return 1;
+    }
+
+    int values[] = {7, 3, 5, 1, 9, 2, 8};
+    int numValues = sizeof(values) / sizeof(values[0]);
+
+    for (int i = 0; i < numValues; i++) {
+        if (!insertMinHeap(heap, values[i])) {
+            fprintf(stderr, "Failed to insert value\n");
+            destroyMinHeap(heap);
+            return 1;
+        }
+    }
+
+    printf("Original heap: ");
+    printHeap(heap);
+
+    int removed;
+    if (deleteMinHeap(heap, &removed)) {
+        printf("Removed smallest: %d\n", removed);
+    }
+
+    printf("Heap after deletion: ");
+    printHeap(heap);
+
+    int newItem = 4;
+    deleteSmallestAndInsert(heap, newItem);
+    printf("Heap after deleting smallest and inserting %d: ", newItem);
+    printHeap(heap);
+
+    destroyMinHeap(heap);
+    return 0;
+}

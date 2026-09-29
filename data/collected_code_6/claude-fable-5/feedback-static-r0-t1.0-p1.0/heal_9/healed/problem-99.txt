@@ -1,0 +1,90 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+#define MAX_BITS (sizeof(unsigned int) * CHAR_BIT)
+
+static int decimal_to_binary(unsigned int number, char *buffer, size_t buffer_size)
+{
+    size_t index = 0U;
+    size_t start;
+    size_t end;
+
+    if (buffer == NULL || buffer_size < 2U) {
+        return -1;
+    }
+
+    if (number == 0U) {
+        buffer[0] = '0';
+        buffer[1] = '\0';
+        return 0;
+    }
+
+    while (number > 0U && index < (buffer_size - 1U)) {
+        buffer[index] = (char)('0' + (number % 2U));
+        number /= 2U;
+        index++;
+    }
+
+    if (number > 0U) {
+        buffer[0] = '\0';
+        return -1;
+    }
+
+    buffer[index] = '\0';
+
+    start = 0U;
+    end = index - 1U;
+    while (start < end) {
+        char temp = buffer[start];
+        buffer[start] = buffer[end];
+        buffer[end] = temp;
+        start++;
+        end--;
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    unsigned int value = 0U;
+    char binary[MAX_BITS + 1U] = {0};
+    int scan_result;
+    int ch;
+
+    printf("Enter a non-negative decimal number: ");
+
+    scan_result = scanf("%u", &value);
+    if (scan_result != 1) {
+        fprintf(stderr, "Error: invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    do {
+        ch = getchar();
+    } while (ch != '\n' && ch != EOF);
+
+    if (decimal_to_binary(value, binary, sizeof(binary)) != 0) {
+        fprintf(stderr, "Error: conversion failed.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Binary equivalent: %s\n", binary);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the original code and the flagged weakness:**
+
+The Flawfinder warning on the `char binary[MAX_BITS + 1U]` declaration is a **false positive** in practical terms, but it deserves verification:
+
+1. **Buffer sizing is correct.** `MAX_BITS` is computed as `sizeof(unsigned int) * CHAR_BIT`, which is the maximum number of binary digits an `unsigned int` can produce. Adding 1 reserves space for the null terminator. The buffer can never be too small for any valid `unsigned int` value.
+
+2. **Bounds checking is already enforced.** `decimal_to_binary()` receives the buffer size via `sizeof(binary)` at the call site, validates it (`buffer_size < 2U`), limits the write loop with `index < (buffer_size - 1U)`, detects truncation (`if (number > 0U)`), and always null-terminates within bounds. There is no path that writes past the end of the buffer.
+
+3. **Input handling is safe.** `scanf("%u", ...)` writes into a fixed-size scalar, not a string buffer, so no overflow is possible there; its return value is checked.
+
+The only functional addition in the rewrite is draining the rest of the input line after `scanf`, which is good hygiene against leftover input in `stdin`, though not a security issue in this single-read program. The buffer-related warning required no code change — only confirmation that bounds are properly checked, which they are.

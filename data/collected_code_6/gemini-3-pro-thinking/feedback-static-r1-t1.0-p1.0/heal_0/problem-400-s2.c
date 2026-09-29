@@ -1,0 +1,103 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int a;
+    int b;
+} Tuple;
+
+typedef struct {
+    Tuple tuple;
+    size_t count;
+} TupleFrequency;
+
+Tuple normalize_tuple(Tuple t);
+int tuples_equal(Tuple t1, Tuple t2);
+TupleFrequency* extract_frequencies(const Tuple* input, size_t input_size, size_t* out_size);
+
+Tuple normalize_tuple(Tuple t) {
+    Tuple normalized;
+    if (t.a <= t.b) {
+        normalized.a = t.a;
+        normalized.b = t.b;
+    } else {
+        normalized.a = t.b;
+        normalized.b = t.a;
+    }
+    return normalized;
+}
+
+int tuples_equal(Tuple t1, Tuple t2) {
+    return (t1.a == t2.a && t1.b == t2.b);
+}
+
+TupleFrequency* extract_frequencies(const Tuple* input, size_t input_size, size_t* out_size) {
+    if (!input || !out_size) {
+        return NULL;
+    }
+
+    if (input_size == 0) {
+        *out_size = 0;
+        return NULL;
+    }
+
+    TupleFrequency* freq_list = (TupleFrequency*)malloc(input_size * sizeof(TupleFrequency));
+    if (!freq_list) {
+        return NULL;
+    }
+
+    size_t unique_count = 0;
+
+    for (size_t i = 0; i < input_size; ++i) {
+        Tuple current = normalize_tuple(input[i]);
+        int found = 0;
+
+        for (size_t j = 0; j < unique_count; ++j) {
+            if (tuples_equal(freq_list[j].tuple, current)) {
+                freq_list[j].count++;
+                found = 1;
+                break;
+            }
+        }
+
+        if (!found) {
+            freq_list[unique_count].tuple = current;
+            freq_list[unique_count].count = 1;
+            unique_count++;
+        }
+    }
+
+    *out_size = unique_count;
+
+    TupleFrequency* resized_list = (TupleFrequency*)realloc(freq_list, unique_count * sizeof(TupleFrequency));
+    if (!resized_list) {
+        return freq_list;
+    }
+
+    return resized_list;
+}
+
+int main(void) {
+    Tuple input[] = {
+        {1, 2}, {2, 1}, {3, 4}, {1, 2}, {4, 3}, {5, 6}
+    };
+    size_t input_size = sizeof(input) / sizeof(input[0]);
+    size_t out_size = 0;
+
+    TupleFrequency* frequencies = extract_frequencies(input, input_size, &out_size);
+    
+    if (!frequencies && input_size > 0) {
+        return EXIT_FAILURE;
+    }
+
+    for (size_t i = 0; i < out_size; ++i) {
+        printf("(%d, %d): %zu\n",
+               frequencies[i].tuple.a,
+               frequencies[i].tuple.b,
+               frequencies[i].count);
+    }
+
+    free(frequencies);
+    
+    return EXIT_SUCCESS;
+}

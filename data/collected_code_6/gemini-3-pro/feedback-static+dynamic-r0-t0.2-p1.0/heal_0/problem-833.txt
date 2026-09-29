@@ -1,0 +1,128 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct KeyValuePair {
+    char* key;
+    int value;
+    struct KeyValuePair* next;
+} KeyValuePair;
+
+typedef struct Dictionary {
+    KeyValuePair* head;
+} Dictionary;
+
+Dictionary* create_dictionary() {
+    Dictionary* dict = (Dictionary*)malloc(sizeof(Dictionary));
+    if (dict != NULL) {
+        dict->head = NULL;
+    }
+    return dict;
+}
+
+int add_to_dictionary(Dictionary* dict, const char* key, int value) {
+    if (dict == NULL || key == NULL) {
+        return 0;
+    }
+
+    KeyValuePair* new_pair = (KeyValuePair*)malloc(sizeof(KeyValuePair));
+    if (new_pair == NULL) {
+        return 0;
+    }
+
+    new_pair->key = strdup(key);
+    if (new_pair->key == NULL) {
+        free(new_pair);
+        return 0;
+    }
+
+    new_pair->value = value;
+    new_pair->next = dict->head;
+    dict->head = new_pair;
+
+    return 1;
+}
+
+char** get_dictionary_keys(Dictionary* dict, int* num_keys) {
+    if (dict == NULL || num_keys == NULL) {
+        return NULL;
+    }
+
+    int count = 0;
+    KeyValuePair* current = dict->head;
+    while (current != NULL) {
+        count++;
+        current = current->next;
+    }
+
+    char** keys = (char**)malloc(count * sizeof(char*));
+    if (keys == NULL) {
+        *num_keys = 0;
+        return NULL;
+    }
+
+    current = dict->head;
+    int i = 0;
+    while (current != NULL) {
+        keys[i] = strdup(current->key);
+        if (keys[i] == NULL) {
+            for (int j = 0; j < i; j++) {
+                free(keys[j]);
+            }
+            free(keys);
+            *num_keys = 0;
+            return NULL;
+        }
+        i++;
+        current = current->next;
+    }
+
+    *num_keys = count;
+    return keys;
+}
+
+void free_dictionary(Dictionary* dict) {
+    if (dict == NULL) {
+        return;
+    }
+
+    KeyValuePair* current = dict->head;
+    while (current != NULL) {
+        KeyValuePair* next = current->next;
+        free(current->key);
+        free(current);
+        current = next;
+    }
+    free(dict);
+}
+
+int main() {
+    Dictionary* dict = create_dictionary();
+    if (dict == NULL) {
+        return 1;
+    }
+
+    if (!add_to_dictionary(dict, "apple", 1) ||
+        !add_to_dictionary(dict, "banana", 2) ||
+        !add_to_dictionary(dict, "cherry", 3)) {
+        free_dictionary(dict);
+        return 1;
+    }
+
+    int num_keys = 0;
+    char** keys = get_dictionary_keys(dict, &num_keys);
+
+    if (keys != NULL) {
+        for (int i = 0; i < num_keys; i++) {
+            printf("%s\n", keys[i]);
+            free(keys[i]);
+        }
+        free(keys);
+    }
+
+    free_dictionary(dict);
+
+    return 0;
+}
+```

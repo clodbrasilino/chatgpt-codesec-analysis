@@ -1,0 +1,31 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+long long int find_nth_term(long long int a, long long int d, long long int n) {
+    if (n <= 0) {
+        return 0;
+    }
+    return a + (n - 1) * d;
+}
+
+int main(void) {
+    long long int a = 0;
+    long long int d = 0;
+    long long int n = 0;
+    long long int result = 0;
+
+    if (scanf("%lld %lld %lld", &a, &d, &n) != 3) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (n <= 0) {
+        fprintf(stderr, "n must be greater than 0\n");
+        return EXIT_FAILURE;
+    }
+
+    result = find_nth_term(a, d, n);
+    printf("%lld\n", result);
+
+    return EXIT_SUCCESS;
+}

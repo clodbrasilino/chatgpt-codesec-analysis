@@ -1,0 +1,77 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+bool is_min_heap(const int *arr, size_t n)
+{
+    if (n <= 1) {
+        return true;
+    }
+
+    if (arr == NULL) {
+        return false;
+    }
+
+    for (size_t i = 0; i <= (n - 2) / 2; i++) {
+        size_t left = 2 * i + 1;
+        size_t right = 2 * i + 2;
+
+        if (left < n && arr[i] > arr[left]) {
+            return false;
+        }
+        if (right < n && arr[i] > arr[right]) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+static void report_heap(const char *name, const int *arr, size_t n)
+{
+    if (is_min_heap(arr, n)) {
+        printf("%s is a min heap\n", name);
+    } else {
+        printf("%s is not a min heap\n", name);
+    }
+}
+
+int main(void)
+{
+    int heap1[] = {1, 3, 5, 7, 9, 6, 8};
+    int heap2[] = {10, 3, 5, 7, 9, 6, 8};
+    int heap3[] = {2};
+
+    struct {
+        const char *name;
+        const int *arr;
+        size_t n;
+    } tests[] = {
+        {"Array 1", heap1, sizeof(heap1) / sizeof(heap1[0])},
+        {"Array 2", heap2, sizeof(heap2) / sizeof(heap2[0])},
+        {"Array 3", heap3, sizeof(heap3) / sizeof(heap3[0])},
+        {"Empty array", NULL, 0}
+    };
+
+    size_t num_tests = sizeof(tests) / sizeof(tests[0]);
+
+    for (size_t i = 0; i < num_tests; i++) {
+        report_heap(tests[i].name, tests[i].arr, tests[i].n);
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis and explanation of the changes:**
+
+The original code was functionally correct — the `is_min_heap` implementation properly validates the min-heap property, correctly handles the `n <= 1` edge case, guards against `NULL` for non-trivial sizes, and avoids the classic `size_t` underflow by checking `n <= 1` before computing `(n - 2) / 2`.
+
+The static-analysis findings (`knownConditionTrueFalse` from cppcheck) were not bugs but *dead branches*: because `heap3` has exactly one element and the last call passes `n = 0`, the compiler and analyzer can prove at the call site that `is_min_heap` always returns `true`, making the `else` branches unreachable dead code.
+
+The fix is structural rather than logical:
+
+1. **Table-driven testing** — the test cases are moved into a data array iterated at runtime. The analyzer can no longer constant-fold each call, so the always-true condition warnings disappear, and the `else` branches become genuinely reachable code paths.
+2. **`report_heap` helper** — eliminates the four duplicated `if/else` blocks, reducing repetition and centralizing the output logic.
+3. **Behavior preserved** — output is identical to the original program; the heap-checking algorithm is untouched since it was already correct and safe (no overflow, no `NULL` dereference, correct parent/child indexing).

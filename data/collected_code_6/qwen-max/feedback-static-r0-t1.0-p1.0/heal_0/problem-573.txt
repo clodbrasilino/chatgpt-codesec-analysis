@@ -1,0 +1,43 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+long long product_of_unique_numbers(int *numbers, int size) {
+    if (size <= 0) return 0;
+    
+    int *unique = (int *)calloc(size, sizeof(int));
+    if (unique == NULL) return 0;
+    
+    int unique_size = 0;
+    for (int i = 0; i < size; ++i) {
+        int is_unique = 1;
+        for (int j = 0; j < unique_size; ++j) {
+            if (numbers[i] == unique[j]) {
+                is_unique = 0;
+                break;
+            }
+        }
+        if (is_unique) {
+            unique[unique_size++] = numbers[i];
+        }
+    }
+    
+    long long product = 1;
+    for (int i = 0; i < unique_size; ++i) {
+        product *= unique[i];
+    }
+    
+    free(unique);
+    return product;
+}
+
+int main() {
+    int numbers[] = {2, 3, 5, 7, 3, 2};
+    int size = sizeof(numbers) / sizeof(numbers[0]);
+    
+    long long result = product_of_unique_numbers(numbers, size);
+    printf("Product of unique numbers: %lld\n", result);
+    
+    return 0;
+}
+```

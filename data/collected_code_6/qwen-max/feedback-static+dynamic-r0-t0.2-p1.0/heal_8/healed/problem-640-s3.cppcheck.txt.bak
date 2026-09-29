@@ -1,0 +1,37 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_8/healed/problem-640-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_8/healed/problem-640-s3.c:15:43: style: Condition 'input[i]!='('' is always true [knownConditionTrueFalse]
+        } else if (depth == 0 && input[i] != '(' && input[i] != ')') {
+                                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_8/healed/problem-640-s3.c:11:22: note: Assuming condition 'input[i]=='('' is false
+        if (input[i] == '(') {
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_8/healed/problem-640-s3.c:15:43: note: Condition 'input[i]!='('' is always true
+        } else if (depth == 0 && input[i] != '(' && input[i] != ')') {
+                                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_8/healed/problem-640-s3.c:15:62: style: Condition 'input[i]!=')'' is always true [knownConditionTrueFalse]
+        } else if (depth == 0 && input[i] != '(' && input[i] != ')') {
+                                                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_8/healed/problem-640-s3.c:13:29: note: Assuming condition 'input[i]==')'' is false
+        } else if (input[i] == ')') {
+                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_8/healed/problem-640-s3.c:15:62: note: Condition 'input[i]!=')'' is always true
+        } else if (depth == 0 && input[i] != '(' && input[i] != ')') {
+                                                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_8/healed/problem-640-s3.c:33:43: style: Condition 'input[i]!='('' is always true [knownConditionTrueFalse]
+        } else if (depth == 0 && input[i] != '(' && input[i] != ')') {
+                                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_8/healed/problem-640-s3.c:29:22: note: Assuming condition 'input[i]=='('' is false
+        if (input[i] == '(') {
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_8/healed/problem-640-s3.c:33:43: note: Condition 'input[i]!='('' is always true
+        } else if (depth == 0 && input[i] != '(' && input[i] != ')') {
+                                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_8/healed/problem-640-s3.c:33:62: style: Condition 'input[i]!=')'' is always true [knownConditionTrueFalse]
+        } else if (depth == 0 && input[i] != '(' && input[i] != ')') {
+                                                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_8/healed/problem-640-s3.c:31:29: note: Assuming condition 'input[i]==')'' is false
+        } else if (input[i] == ')') {
+                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_8/healed/problem-640-s3.c:33:62: note: Condition 'input[i]!=')'' is always true
+        } else if (depth == 0 && input[i] != '(' && input[i] != ')') {
+                                                             ^

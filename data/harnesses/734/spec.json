@@ -1,0 +1,60 @@
+{
+  "task_id": 734,
+  "text": "Write a C function to find sum of products of all possible subarrays.",
+  "fn_candidates": [
+    "sum_Of_Subarray_Prod",
+    "SumOfSubarrayProd",
+    "sumOfSubarrayProd",
+    "sumOfSubarrayProd"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "sum_Of_Subarray_Prod",
+      "args": [
+        [
+          1,
+          2,
+          3
+        ],
+        3
+      ],
+      "expected": 20,
+      "assert_src": "assert sum_Of_Subarray_Prod([1,2,3],3) == 20"
+    },
+    {
+      "fn_name": "sum_Of_Subarray_Prod",
+      "args": [
+        [
+          1,
+          2
+        ],
+        2
+      ],
+      "expected": 5,
+      "assert_src": "assert sum_Of_Subarray_Prod([1,2],2) == 5"
+    },
+    {
+      "fn_name": "sum_Of_Subarray_Prod",
+      "args": [
+        [
+          1,
+          2,
+          3,
+          4
+        ],
+        4
+      ],
+      "expected": 84,
+      "assert_src": "assert sum_Of_Subarray_Prod([1,2,3,4],4) == 84"
+    }
+  ],
+  "arg_kinds": [
+    "int",
+    "int-list"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

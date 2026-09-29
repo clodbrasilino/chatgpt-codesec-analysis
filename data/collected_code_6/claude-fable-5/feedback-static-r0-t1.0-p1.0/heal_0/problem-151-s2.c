@@ -1,0 +1,56 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int gcd(int a, int b)
+{
+    while (b != 0) {
+        int temp = b;
+        b = a % b;
+        a = temp;
+    }
+    return a;
+}
+
+int is_coprime(int a, int b)
+{
+    if (a <= 0 || b <= 0) {
+        return -1;
+    }
+    if (gcd(a, b) == 1) {
+        return 1;
+    }
+    return 0;
+}
+
+int main(void)
+{
+    int num1;
+    int num2;
+    int result;
+
+    printf("Enter first number: ");
+    if (scanf("%d", &num1) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter second number: ");
+    if (scanf("%d", &num2) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    result = is_coprime(num1, num2);
+    if (result == -1) {
+        fprintf(stderr, "Numbers must be positive integers\n");
+        return EXIT_FAILURE;
+    }
+
+    if (result == 1) {
+        printf("%d and %d are co-prime\n", num1, num2);
+    } else {
+        printf("%d and %d are not co-prime\n", num1, num2);
+    }
+
+    return EXIT_SUCCESS;
+}

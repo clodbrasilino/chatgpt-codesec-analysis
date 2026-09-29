@@ -1,0 +1,45 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+long long decimal_to_octal(long long decimal)
+{
+    long long octal = 0;
+    long long place = 1;
+    int negative = 0;
+
+    if (decimal < 0) {
+        negative = 1;
+        decimal = -decimal;
+    }
+
+    while (decimal > 0) {
+        octal += (decimal % 8) * place;
+        decimal /= 8;
+        place *= 10;
+    }
+
+    return negative ? -octal : octal;
+}
+
+int main(void)
+{
+    long long decimal;
+    int result;
+
+    printf("Enter a decimal number: ");
+    result = scanf("%lld", &decimal);
+
+    if (result != 1) {
+        fprintf(stderr, "Error: invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (decimal > 134217727 || decimal < -134217727) {
+        fprintf(stderr, "Error: number out of supported range\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Octal equivalent: %lld\n", decimal_to_octal(decimal));
+
+    return EXIT_SUCCESS;
+}

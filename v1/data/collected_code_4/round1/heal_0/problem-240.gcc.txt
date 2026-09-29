@@ -1,0 +1,82 @@
+./collected_code_4/round1//heal_0//problem-240.c: In function 'create_sample_list':
+./collected_code_4/round1//heal_0//problem-240.c:34:23: warning: dereference of NULL 'current' [CWE-476] [-Wanalyzer-null-dereference]
+   34 |         current->next = create_node(start_val + i);
+      |         ~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  'create_sample_list': events 1-2
+    |
+    |   30 | node_t* create_sample_list(int num_nodes, int start_val) {
+    |      |         ^~~~~~~~~~~~~~~~~~
+    |      |         |
+    |      |         (1) entry to 'create_sample_list'
+    |   31 |     node_t* node = create_node(start_val);
+    |      |                    ~~~~~~~~~~~~~~~~~~~~~~
+    |      |                    |
+    |      |                    (2) calling 'create_node' from 'create_sample_list'
+    |
+    +--> 'create_node': events 3-7
+           |
+           |    9 | node_t* create_node(int data) {
+           |      |         ^~~~~~~~~~~
+           |      |         |
+           |      |         (3) entry to 'create_node'
+           |   10 |     node_t* new_node = (node_t*)malloc(sizeof(node_t));
+           |      |                                 ~~~~~~~~~~~~~~~~~~~~~~
+           |      |                                 |
+           |      |                                 (4) allocated here
+           |   11 |     if(new_node != NULL) {
+           |      |       ~  
+           |      |       |
+           |      |       (5) assuming 'new_node' is NULL
+           |      |       (6) following 'false' branch (when 'new_node' is NULL)...
+           |......
+           |   15 |     return new_node;
+           |      |            ~~~~~~~~
+           |      |            |
+           |      |            (7) ...to here
+           |
+    <------+
+    |
+  'create_sample_list': events 8-11
+    |
+    |   31 |     node_t* node = create_node(start_val);
+    |      |                    ^~~~~~~~~~~~~~~~~~~~~~
+    |      |                    |
+    |      |                    (8) return of NULL to 'create_sample_list' from 'create_node'
+    |   32 |     node_t* current = node;
+    |   33 |     for(int i=1; i<num_nodes; i++) {
+    |      |                  ~~~~~~~~~~~
+    |      |                   |
+    |      |                   (9) following 'true' branch (when 'i < num_nodes')...
+    |   34 |         current->next = create_node(start_val + i);
+    |      |                         ~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                         |
+    |      |                         (10) ...to here
+    |      |                         (11) calling 'create_node' from 'create_sample_list'
+    |
+    +--> 'create_node': events 12-14
+           |
+           |    9 | node_t* create_node(int data) {
+           |      |         ^~~~~~~~~~~
+           |      |         |
+           |      |         (12) entry to 'create_node'
+           |   10 |     node_t* new_node = (node_t*)malloc(sizeof(node_t));
+           |   11 |     if(new_node != NULL) {
+           |      |       ~  
+           |      |       |
+           |      |       (13) following 'false' branch (when 'new_node' is NULL)...
+           |......
+           |   15 |     return new_node;
+           |      |            ~~~~~~~~
+           |      |            |
+           |      |            (14) ...to here
+           |
+    <------+
+    |
+  'create_sample_list': events 15-16
+    |
+    |   34 |         current->next = create_node(start_val + i);
+    |      |         ~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                       | |
+    |      |                       | (15) returning to 'create_sample_list' from 'create_node'
+    |      |                       (16) dereference of NULL 'current'
+    |

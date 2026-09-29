@@ -1,0 +1,20 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+bool is_odd(int num) {
+    return (num % 2) != 0;
+}
+
+int main() {
+    int number = 0;
+    printf("Enter an integer: ");
+    scanf("%d", &number);
+    
+    if (is_odd(number)) {
+        printf("The number is odd.\n");
+    } else {
+        printf("The number is not odd.\n");
+    }
+    
+    return 0;
+}

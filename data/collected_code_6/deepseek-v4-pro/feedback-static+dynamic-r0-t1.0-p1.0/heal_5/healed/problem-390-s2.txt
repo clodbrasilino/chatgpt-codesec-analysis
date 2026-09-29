@@ -1,0 +1,116 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct Node {
+    char *data;
+    struct Node *next;
+} Node;
+
+Node *create_node(const char *str) {
+    Node *new_node = (Node *)malloc(sizeof(Node));
+    if (new_node == NULL) {
+        return NULL;
+    }
+    
+    size_t len = strnlen(str, 4096);
+    new_node->data = (char *)malloc(len + 1);
+    if (new_node->data == NULL) {
+        free(new_node);
+        return NULL;
+    }
+    
+    if (len > 0) {
+        memcpy(new_node->data, str, len);
+    }
+    new_node->data[len] = '\0';
+    new_node->next = NULL;
+    return new_node;
+}
+
+void insert_at_beginning(Node **head, const char *str) {
+    Node *new_node = create_node(str);
+    if (new_node == NULL) {
+        return;
+    }
+    new_node->next = *head;
+    *head = new_node;
+}
+
+void prepend_to_all(Node *head, const char *prefix) {
+    Node *current = head;
+    while (current != NULL) {
+        size_t prefix_len = strnlen(prefix, 4096);
+        size_t data_len = strnlen(current->data, 4096);
+        
+        if (prefix_len > 4096 || data_len > 4096) {
+            return;
+        }
+        
+        if (prefix_len > SIZE_MAX - data_len) {
+            return;
+        }
+        size_t new_len = prefix_len + data_len + 1;
+        
+        if (new_len <= prefix_len) {
+            return;
+        }
+        
+        char *new_str = (char *)malloc(new_len);
+        if (new_str == NULL) {
+            return;
+        }
+        
+        if (prefix_len > 0) {
+            memcpy(new_str, prefix, prefix_len);
+        }
+        if (data_len > 0) {
+            memcpy(new_str + prefix_len, current->data, data_len);
+        }
+        new_str[prefix_len + data_len] = '\0';
+        
+        free(current->data);
+        current->data = new_str;
+        current = current->next;
+    }
+}
+
+void free_list(Node *head) {
+    Node *current = head;
+    while (current != NULL) {
+        Node *next = current->next;
+        free(current->data);
+        free(current);
+        current = next;
+    }
+}
+
+void print_list(Node *head) {
+    Node *current = head;
+    while (current != NULL) {
+        printf("%s\n", current->data);
+        current = current->next;
+    }
+}
+
+int main(void) {
+    Node *list = NULL;
+    
+    insert_at_beginning(&list, "world");
+    insert_at_beginning(&list, "there");
+    insert_at_beginning(&list, "hello");
+    
+    printf("Original list:\n");
+    print_list(list);
+    
+    prepend_to_all(list, "say_");
+    
+    printf("\nModified list:\n");
+    print_list(list);
+    
+    free_list(list);
+    
+    return 0;
+}
+```

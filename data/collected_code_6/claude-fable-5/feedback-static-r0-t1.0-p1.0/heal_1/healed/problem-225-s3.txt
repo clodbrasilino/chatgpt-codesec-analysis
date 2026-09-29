@@ -1,0 +1,59 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int find_min(const int *arr, size_t n, int *result)
+{
+    size_t low;
+    size_t high;
+
+    if (arr == NULL || n == 0U || result == NULL) {
+        return -1;
+    }
+
+    low = 0U;
+    high = n - 1U;
+
+    while (low < high) {
+        size_t mid = low + ((high - low) / 2U);
+        if (arr[mid] > arr[high]) {
+            low = mid + 1U;
+        } else {
+            high = mid;
+        }
+    }
+
+    *result = arr[low];
+    return 0;
+}
+
+int main(void)
+{
+    int arr[] = {5, 6, 7, 1, 2, 3, 4};
+    size_t n = sizeof(arr) / sizeof(arr[0]);
+    int minimum;
+
+    if (find_min(arr, n, &minimum) != 0) {
+        (void)fprintf(stderr, "Error: invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Minimum element: %d\n", minimum) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the fix:**
+
+The static-analysis finding `[variableScope]` flagged that `mid` was declared at function scope but only used inside the `while` loop. The fix moves the declaration of `mid` into the loop body, reducing its scope to the smallest region where it is needed.
+
+This change matters for several reasons:
+
+- **Readability and maintainability** — a reader immediately sees that `mid` is a loop-local temporary with no state carried across iterations.
+- **Reduced risk of misuse** — the variable cannot be accidentally read before initialization or reused stale after the loop.
+- **No performance cost** — any modern compiler generates identical code; the register allocation is unaffected.
+
+The rest of the code was already robust and left unchanged: it validates all pointer and size inputs, uses the overflow-safe midpoint calculation `low + ((high - low) / 2U)`, uses `size_t` consistently for indices, checks the return values of `printf` and `find_min`, and correctly finds the minimum of a rotated sorted array in O(log n).

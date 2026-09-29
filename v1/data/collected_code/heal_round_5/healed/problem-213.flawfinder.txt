@@ -1,0 +1,40 @@
+Flawfinder version 2.0.19, (C) 2001-2019 David A. Wheeler.
+Number of rules (primarily dangerous function names) in C/C++ ruleset: 222
+Examining collected_code/heal_round_5/healed/problem-213.c
+
+FINAL RESULTS:
+
+collected_code/heal_round_5/healed/problem-213.c:35:  [2] (buffer) strcpy:
+  Does not check for buffer overflows when copying to destination [MS-banned]
+  (CWE-120). Consider using snprintf, strcpy_s, or strlcpy (warning: strncpy
+  easily misused). Risk is low because the source is a constant string.
+collected_code/heal_round_5/healed/problem-213.c:36:  [2] (buffer) strcpy:
+  Does not check for buffer overflows when copying to destination [MS-banned]
+  (CWE-120). Consider using snprintf, strcpy_s, or strlcpy (warning: strncpy
+  easily misused). Risk is low because the source is a constant string.
+collected_code/heal_round_5/healed/problem-213.c:23:  [1] (buffer) strncpy:
+  Easily used incorrectly; doesn't always \0-terminate or check for invalid
+  pointers [MS-banned] (CWE-120).
+collected_code/heal_round_5/healed/problem-213.c:25:  [1] (buffer) strncpy:
+  Easily used incorrectly; doesn't always \0-terminate or check for invalid
+  pointers [MS-banned] (CWE-120).
+
+ANALYSIS SUMMARY:
+
+Hits = 4
+Lines analyzed = 45 in approximately 0.00 seconds (12373 lines/second)
+Physical Source Lines of Code (SLOC) = 37
+Hits@level = [0]   1 [1]   2 [2]   2 [3]   0 [4]   0 [5]   0
+Hits@level+ = [0+]   5 [1+]   4 [2+]   2 [3+]   0 [4+]   0 [5+]   0
+Hits/KSLOC@level+ = [0+] 135.135 [1+] 108.108 [2+] 54.0541 [3+]   0 [4+]   0 [5+]   0
+Minimum risk level = 1
+
+Not every hit is necessarily a security vulnerability.
+You can inhibit a report by adding a comment in this form:
+// flawfinder: ignore
+Make *sure* it's a false positive!
+You can use the option --neverignore to show these.
+
+There may be other security vulnerabilities; review your code!
+See 'Secure Programming HOWTO'
+(https://dwheeler.com/secure-programs) for more information.

@@ -1,0 +1,4 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-237.c: In function 'find_similar_time_records':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-237.c:136:54: error: assignment of read-only location '(records + (sizetype)((long unsigned int)i * 60))->name[49]'
+  136 |         records[i].name[sizeof(records[i].name) - 1] = '\0';
+      |                                                      ^

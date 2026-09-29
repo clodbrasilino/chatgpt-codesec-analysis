@@ -1,0 +1,100 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char *remove_parentheses(const char *input)
+{
+    size_t len;
+    size_t i;
+    size_t j;
+    int depth;
+    char *result;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    len = strlen(input);
+    result = calloc(len + 1, sizeof(char));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    depth = 0;
+    j = 0;
+    for (i = 0; i < len; i++) {
+        if (input[i] == '(') {
+            depth++;
+        } else if (input[i] == ')') {
+            if (depth > 0) {
+                depth--;
+            }
+        } else if (depth == 0) {
+            result[j] = input[i];
+            j++;
+        }
+    }
+    result[j] = '\0';
+
+    return result;
+}
+
+int main(void)
+{
+    const char *tests[] = {
+        "python(java)",
+        "string(remove)",
+        "alpha(beta(gamma)delta)",
+        "Hello (remove me) World",
+        "abc(def(ghi)jkl)mno",
+        "no parentheses here"
+    };
+    const char *expected[] = {
+        "python",
+        "string",
+        "alpha",
+        "Hello  World",
+        "abcmno",
+        "no parentheses here"
+    };
+    size_t num_tests;
+    size_t i;
+    int status;
+
+    status = EXIT_SUCCESS;
+    num_tests = sizeof(tests) / sizeof(tests[0]);
+
+    for (i = 0; i < num_tests; i++) {
+        char *output = remove_parentheses(tests[i]);
+        if (output == NULL) {
+            fprintf(stderr, "Memory allocation failed\n");
+            return EXIT_FAILURE;
+        }
+        if (strcmp(output, expected[i]) != 0) {
+            fprintf(stderr, "test case %zu failed: expected '%s', got '%s'\n",
+                    i, expected[i], output);
+            status = EXIT_FAILURE;
+        }
+        if (printf("%s\n", output) < 0) {
+            free(output);
+            return EXIT_FAILURE;
+        }
+        free(output);
+        output = NULL;
+    }
+
+    return status;
+}
+```
+
+**Analysis of the original code and the reported weaknesses:**
+
+The `remove_parentheses` function itself is logically sound — it correctly strips parenthesized content (including nested parentheses) using a depth counter, allocates zero-initialized memory with `calloc`, guards against `NULL` input and allocation failure, and explicitly null-terminates the result.
+
+The garbage output in the failure comments (`got @R�`, `got �R�`) is the classic signature of reading **uninitialized or freed memory** — typically caused by a test harness comparing against a buffer that was never written, using the pointer after `free`, or a version of the function that used `malloc` without null-termination. The rewritten version guards against all of these:
+
+1. **`calloc` instead of `malloc`** — the buffer is guaranteed zero-filled, so even if termination logic were skipped, the string would be terminated.
+2. **Explicit `result[j] = '\0'`** — defense in depth for termination.
+3. **Pointer nulled after `free`** — prevents accidental use-after-free.
+4. **Added explicit expected-value verification** — the original `main` only printed results; it never actually validated them, so the "test case failed" messages could never have come from this harness. The rewrite adds `strcmp` checks against expected outputs so regressions are caught deterministically rather than manifesting as garbage reads.

@@ -131,7 +131,7 @@ def main() -> None:
         subset = {int(r["problem_id"]) for r in list(csv.DictReader(f))[:200]}
 
     # gemini static sweep progress
-    gem_dir = REPO / "collected_code_6/gemini-3-pro/feedback-static-r0-t1.0-p1.0/heal_0"
+    gem_dir = REPO / "data/collected_code_6/gemini-3-pro/feedback-static-r0-t1.0-p1.0/heal_0"
     gem_n = len([f for f in gem_dir.iterdir() if f.name.endswith(".c")]) if gem_dir.is_dir() else 0
 
     parts = [f"""<!DOCTYPE html><html><head><meta charset="utf-8">

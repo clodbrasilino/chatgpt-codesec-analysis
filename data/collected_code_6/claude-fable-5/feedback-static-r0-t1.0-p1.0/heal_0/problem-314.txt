@@ -1,0 +1,88 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+static int max_int(int a, int b)
+{
+    return (a > b) ? a : b;
+}
+
+static int max_sum_no_adjacent(const int grid[2][100], int n)
+{
+    int incl;
+    int excl;
+    int i;
+    int current;
+    int new_excl;
+
+    if (n <= 0) {
+        return 0;
+    }
+
+    incl = max_int(grid[0][0], grid[1][0]);
+    excl = 0;
+
+    for (i = 1; i < n; i++) {
+        current = max_int(grid[0][i], grid[1][i]);
+        new_excl = max_int(incl, excl);
+        incl = excl + current;
+        excl = new_excl;
+    }
+
+    return max_int(incl, excl);
+}
+
+int main(void)
+{
+    int grid[2][100];
+    int n;
+    int i;
+    int j;
+    int result;
+
+    printf("Enter number of columns (1 to 100): ");
+    if (scanf("%d", &n) != 1) {
+        fprintf(stderr, "Error: invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (n < 1 || n > 100) {
+        fprintf(stderr, "Error: number of columns out of range\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter grid values row by row:\n");
+    for (i = 0; i < 2; i++) {
+        for (j = 0; j < n; j++) {
+            if (scanf("%d", &grid[i][j]) != 1) {
+                fprintf(stderr, "Error: invalid grid value\n");
+                return EXIT_FAILURE;
+            }
+        }
+    }
+
+    result = max_sum_no_adjacent((const int (*)[100])grid, n);
+    printf("Maximum sum with no two adjacent numbers: %d\n", result);
+
+    return EXIT_SUCCESS;
+}
+```
+
+This solution works as follows:
+
+1. **`max_sum_no_adjacent`**: Since choosing any number in a column makes the entire adjacent column unusable (vertical, horizontal, and diagonal adjacency), only one value per column can ever be picked, and picked columns cannot be consecutive. So the problem reduces to the classic "house robber" dynamic programming problem applied to the column-wise maximums, solved in O(n) time and O(1) extra space using `incl`/`excl` tracking.
+
+2. **Safety measures** addressing the listed CWEs:
+   - All `scanf` return values are checked, and errors are reported to `stderr` with a failure exit code (CWE-703).
+   - The column count `n` is validated against the fixed buffer bounds before any array access, preventing out-of-bounds writes (CWE-664).
+   - Fixed-size stack storage avoids dynamic allocation lifetime issues entirely; `main` uses the standard `int main(void)` signature and returns `EXIT_SUCCESS`/`EXIT_FAILURE` (CWE-710).
+
+**Sample run:**
+```
+Enter number of columns (1 to 100): 5
+Enter grid values row by row:
+1 4 5 3 2
+2 3 8 4 6
+Maximum sum with no two adjacent numbers: 16
+```
+(Columns picked: max(2,1)=2? No — DP selects columns 1, 3, 5 → 2 + 8 + 6 = 16.)

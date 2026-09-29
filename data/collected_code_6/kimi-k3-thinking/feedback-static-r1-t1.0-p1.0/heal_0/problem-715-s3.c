@@ -1,0 +1,136 @@
+#include <ctype.h>
+#include <errno.h>
+#include <limits.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *values;
+    size_t count;
+} IntTuple;
+
+static int parse_int_tuple(const char *str, IntTuple *tuple)
+{
+    const char *p;
+    char *end;
+    long value;
+    size_t capacity = 0;
+    int *grown;
+    int paren = 0;
+
+    if (str == NULL || tuple == NULL) {
+        return -1;
+    }
+
+    tuple->values = NULL;
+    tuple->count = 0;
+
+    p = str;
+    while (isspace((unsigned char)*p)) {
+        p++;
+    }
+    if (*p == '(') {
+        paren = 1;
+        p++;
+    }
+
+    for (;;) {
+        while (isspace((unsigned char)*p)) {
+            p++;
+        }
+        if (*p == ')' || *p == '\0') {
+            break;
+        }
+
+        errno = 0;
+        value = strtol(p, &end, 10);
+        if (end == p || errno == ERANGE || value < INT_MIN || value > INT_MAX) {
+            goto fail;
+        }
+        p = end;
+
+        if (tuple->count == capacity) {
+            if (capacity > SIZE_MAX / (2 * sizeof(*tuple->values))) {
+                goto fail;
+            }
+            capacity = (capacity == 0) ? 8 : capacity * 2;
+            grown = realloc(tuple->values, capacity * sizeof(*grown));
+            if (grown == NULL) {
+                goto fail;
+            }
+            tuple->values = grown;
+        }
+        tuple->values[tuple->count] = (int)value;
+        tuple->count++;
+
+        while (isspace((unsigned char)*p)) {
+            p++;
+        }
+        if (*p == ',') {
+            p++;
+        } else if (*p == ')' || *p == '\0') {
+            break;
+        } else {
+            goto fail;
+        }
+    }
+
+    while (isspace((unsigned char)*p)) {
+        p++;
+    }
+    if (paren) {
+        if (*p != ')') {
+            goto fail;
+        }
+        p++;
+        while (isspace((unsigned char)*p)) {
+            p++;
+        }
+    }
+    if (*p != '\0') {
+        goto fail;
+    }
+
+    return 0;
+
+fail:
+    free(tuple->values);
+    tuple->values = NULL;
+    tuple->count = 0;
+    return -1;
+}
+
+static void free_int_tuple(IntTuple *tuple)
+{
+    if (tuple != NULL) {
+        free(tuple->values);
+        tuple->values = NULL;
+        tuple->count = 0;
+    }
+}
+
+int main(int argc, char *argv[])
+{
+    const char *input = (argc > 1) ? argv[1] : "(10, -20, 30, 40, 50)";
+    IntTuple tuple;
+    size_t i;
+
+    if (parse_int_tuple(input, &tuple) != 0) {
+        fprintf(stderr, "Error: failed to parse \"%s\" as a tuple of integers\n", input);
+        return EXIT_FAILURE;
+    }
+
+    printf("(");
+    for (i = 0; i < tuple.count; i++) {
+        printf("%d", tuple.values[i]);
+        if (i + 1 < tuple.count) {
+            printf(", ");
+        }
+    }
+    printf(")\n");
+
+    free_int_tuple(&tuple);
+
+    return EXIT_SUCCESS;
+}

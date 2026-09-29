@@ -1,0 +1,62 @@
+```c
+#include <stdio.h>
+#include <ctype.h>
+#include <stdlib.h>
+#include <string.h>
+
+char *remove_non_alnum(char *str)
+{
+    size_t read_idx;
+    size_t write_idx;
+
+    if (str == NULL) {
+        return NULL;
+    }
+
+    write_idx = 0;
+    for (read_idx = 0; str[read_idx] != '\0'; read_idx++) {
+        if (isalnum((unsigned char)str[read_idx])) {
+            str[write_idx] = str[read_idx];
+            write_idx++;
+        }
+    }
+    str[write_idx] = '\0';
+
+    return str;
+}
+
+int main(void)
+{
+    char buffer[] = "Hello, World! 123 #$% foo_bar";
+    char *result;
+
+    result = remove_non_alnum(buffer);
+    if (result == NULL) {
+        fprintf(stderr, "Error: null string provided\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("%s\n", result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Key design decisions:**
+
+1. **In-place modification** — avoids dynamic allocation entirely, which sidesteps CWE-664 concerns (no resource to leak or mismanage). The two-index technique guarantees `write_idx <= read_idx`, so no buffer overrun is possible.
+
+2. **NULL check** on the input pointer, and the return value is validated in `main` — addresses CWE-703 by explicitly handling the exceptional condition rather than assuming valid input.
+
+3. **Cast to `unsigned char` before `isalnum()`** — passing a plain `char` (which may be signed and negative) to `<ctype.h>` functions is undefined behavior per the C standard. This cast is required for strict standards adherence (CWE-710).
+
+4. **Checked return value of `printf`** and use of `EXIT_SUCCESS`/`EXIT_FAILURE` rather than magic numbers — again for CWE-703 and CWE-710 compliance.
+
+5. **`int main(void)`** — the standard-conforming signature when arguments aren't used.
+
+**Example output:**
+```
+HelloWorld123foobar
+```

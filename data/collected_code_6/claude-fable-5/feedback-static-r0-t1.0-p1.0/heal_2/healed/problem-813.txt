@@ -1,0 +1,68 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX_INPUT 256
+
+size_t string_length(const char *str)
+{
+    size_t length = 0;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    while (str[length] != '\0') {
+        length++;
+    }
+
+    return length;
+}
+
+static void flush_stdin(void)
+{
+    int ch;
+
+    do {
+        ch = getchar();
+    } while (ch != '\n' && ch != EOF);
+}
+
+int main(void)
+{
+    char buffer[MAX_INPUT];
+    size_t length;
+
+    printf("Enter a string: ");
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    length = string_length(buffer);
+
+    if (length > 0 && buffer[length - 1] == '\n') {
+        buffer[length - 1] = '\0';
+        length--;
+    } else if (length == sizeof(buffer) - 1) {
+        flush_stdin();
+    }
+
+    printf("Length of the string: %zu\n", length);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the original code and the fixes applied:**
+
+1. **CWE-119/CWE-120 (statically-sized buffer):** The original code was actually already safe here because `fgets(buffer, sizeof(buffer), stdin)` bounds the read to the buffer size. As defense-in-depth, I added an explicit null-terminator write at `buffer[sizeof(buffer) - 1]`, guaranteeing the buffer is always a valid C string regardless of stream state.
+
+2. **CWE-120/CWE-20 (`getchar` in a loop):** The drain loop reads into no buffer at all — it merely discards characters until newline or `EOF`, so there is no overflow risk. I moved it into a `flush_stdin()` helper using a `do/while` construct, which is clearer and has a bounded, well-defined termination condition (`'\n'` or `EOF`).
+
+3. **Redundant logic removed:** The original second `for` loop scanning for `'\n'` was dead code — the newline was already stripped (or truncated input drained) by the preceding branch. Removing it simplifies the code and eliminates a second unnecessary pass. Similarly, the second call to `string_length` was avoided by decrementing `length` when the newline is stripped.
+
+4. **`string_length` remains safe:** it null-checks its argument and only reads up to the terminator, which is now guaranteed to exist.

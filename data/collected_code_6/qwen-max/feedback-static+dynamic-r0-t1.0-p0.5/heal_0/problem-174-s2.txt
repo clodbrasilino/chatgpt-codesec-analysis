@@ -1,0 +1,117 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char *key;
+    char *value;
+} KeyValuePair;
+
+typedef struct Node {
+    char *value;
+    struct Node *next;
+} Node;
+
+typedef struct {
+    char *key;
+    Node *head;
+} DictionaryEntry;
+
+typedef struct {
+    DictionaryEntry **entries;
+    int capacity;
+    int size;
+} Dictionary;
+
+Dictionary* createDictionary(int capacity) {
+    Dictionary *dict = (Dictionary*)malloc(sizeof(Dictionary));
+    dict->capacity = capacity;
+    dict->size = 0;
+    dict->entries = (DictionaryEntry**)calloc(capacity, sizeof(DictionaryEntry*));
+    return dict;
+}
+
+int hashFunction(const char *key, int capacity) {
+    int hash = 0;
+    for (int i = 0; key[i] != '\0'; ++i) {
+        hash = (hash * 31 + key[i]) % capacity;
+    }
+    return hash;
+}
+
+void insertIntoDictionary(Dictionary *dict, const char *key, const char *value) {
+    int index = hashFunction(key, dict->capacity);
+    DictionaryEntry *entry = dict->entries[index];
+    if (entry == NULL) {
+        entry = (DictionaryEntry*)malloc(sizeof(DictionaryEntry));
+        entry->key = strdup(key);
+        entry->head = (Node*)malloc(sizeof(Node));
+        entry->head->value = strdup(value);
+        entry->head->next = NULL;
+        dict->entries[index] = entry;
+        dict->size++;
+    } else {
+        while (entry->head->next != NULL) {
+            entry->head = entry->head->next;
+        }
+        Node *newNode = (Node*)malloc(sizeof(Node));
+        newNode->value = strdup(value);
+        newNode->next = NULL;
+        entry->head->next = newNode;
+    }
+}
+
+void printDictionary(Dictionary *dict) {
+    for (int i = 0; i < dict->capacity; ++i) {
+        if (dict->entries[i] != NULL) {
+            printf("%s: ", dict->entries[i]->key);
+            Node *current = dict->entries[i]->head;
+            while (current != NULL) {
+                printf("%s -> ", current->value);
+                current = current->next;
+            }
+            printf("NULL\n");
+        }
+    }
+}
+
+void freeDictionary(Dictionary *dict) {
+    for (int i = 0; i < dict->capacity; ++i) {
+        if (dict->entries[i] != NULL) {
+            Node *current = dict->entries[i]->head;
+            while (current != NULL) {
+                Node *temp = current;
+                current = current->next;
+                free(temp->value);
+                free(temp);
+            }
+            free(dict->entries[i]->key);
+            free(dict->entries[i]);
+        }
+    }
+    free(dict->entries);
+    free(dict);
+}
+
+int main() {
+    Dictionary *dict = createDictionary(10);
+    KeyValuePair pairs[] = {
+        {"a", "1"},
+        {"b", "2"},
+        {"a", "3"},
+        {"b", "4"},
+        {"c", "5"}
+    };
+    int numPairs = sizeof(pairs) / sizeof(pairs[0]);
+
+    for (int i = 0; i < numPairs; ++i) {
+        insertIntoDictionary(dict, pairs[i].key, pairs[i].value);
+    }
+
+    printDictionary(dict);
+
+    freeDictionary(dict);
+    return 0;
+}
+```

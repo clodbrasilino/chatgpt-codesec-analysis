@@ -1,0 +1,47 @@
+```c
+#include <stdio.h>
+#include <ctype.h>
+
+int get_ascii_value(char c)
+{
+    return (int)(unsigned char)c;
+}
+
+int main(void)
+{
+    int input;
+
+    printf("Enter a character: ");
+    fflush(stdout);
+
+    input = getchar();
+    if (input == EOF) {
+        fprintf(stderr, "Error: failed to read input.\n");
+        return 1;
+    }
+
+    if (isprint((unsigned char)input)) {
+        printf("The ASCII value of '%c' is %d\n", (char)input, get_ascii_value((char)input));
+    } else {
+        printf("The ASCII value of the entered character is %d\n", get_ascii_value((char)input));
+    }
+
+    return 0;
+}
+```
+
+**Analysis of the original code and the flagged weakness:**
+
+The Flawfinder warning on `getchar()` (CWE-120 buffer overflow, CWE-20 improper input validation) is a low-risk, heuristic-based alert. It fires on any use of `getchar()` because the function is *often* misused in loops that write into fixed-size buffers without bounds checking. In this program, that risk does not materialize, and the code as written already contains the correct mitigations:
+
+1. **No buffer involved** — `getchar()` returns a single `int` stored in `input`. There is no character array being filled, no loop, and no recursion, so CWE-120 (classic buffer copy without size check) cannot occur here.
+
+2. **EOF handled correctly** — `input` is declared as `int`, not `char`. This is critical: `getchar()` returns an `int` so that `EOF` (typically `-1`) can be distinguished from all valid `unsigned char` values. Storing the result in a `char` would make EOF detection unreliable or break on platforms where `char` is unsigned. The explicit `EOF` check satisfies CWE-20 input validation concerns.
+
+3. **Safe use of `isprint()`** — the value is cast to `(unsigned char)` before being passed to `isprint()`. Passing a negative `char` value to `<ctype.h>` functions is undefined behavior; the cast prevents that.
+
+4. **No sign-extension surprises** — `get_ascii_value()` casts through `unsigned char` before widening to `int`, so characters ≥ 0x80 on signed-`char` platforms yield 128–255 rather than negative values.
+
+5. **No format-string vulnerabilities** — all `printf`/`fprintf` calls use constant format strings; user input is only ever passed as an argument to `%c`/`%d`.
+
+Conclusion: the warning is a false positive for this usage pattern. The rewritten code is functionally identical because the original already implemented the defenses the tool is asking you to verify.

@@ -1,0 +1,61 @@
+```c
+#include <stdio.h>
+#include <ctype.h>
+#include <stddef.h>
+
+void remove_whitespace(char *str, size_t max_len)
+{
+    size_t read;
+    size_t write;
+
+    if (str == NULL || max_len == 0) {
+        return;
+    }
+
+    read = 0;
+    write = 0;
+
+    while (read < max_len && str[read] != '\0') {
+        if (!isspace((unsigned char)str[read])) {
+            if (write < max_len - 1) {
+                str[write] = str[read];
+                write++;
+            } else {
+                break;
+            }
+        }
+        read++;
+    }
+
+    if (write < max_len) {
+        str[write] = '\0';
+    } else {
+        str[max_len - 1] = '\0';
+    }
+}
+
+int main(void)
+{
+    char text[] = "  Hello,   World! \t This is a\ntest.  ";
+
+    printf("Before: \"%s\"\n", text);
+    remove_whitespace(text, sizeof(text));
+    printf("After:  \"%s\"\n", text);
+
+    return 0;
+}
+```
+
+**Analysis summary:**
+
+The Flawfinder warnings here are all *risk level 1* (the lowest), and they are generic heuristic hits on array indexing inside loops — not confirmed vulnerabilities. On review, the original code already mitigates every flagged concern:
+
+1. **CWE-120 (Buffer overflow) — read side:** The loop condition `read < max_len && str[read] != '\0'` guarantees `str[read]` never indexes past the caller-supplied bound, even if the buffer is not NUL-terminated. Checking `read < max_len` *before* dereferencing avoids an out-of-bounds read via short-circuit evaluation.
+
+2. **CWE-120 — write side:** The guard `write < max_len - 1` reserves one byte for the terminator, and since `write <= read` always holds, the write index can never outrun the read index. The `max_len == 0` early return prevents the `max_len - 1` unsigned underflow.
+
+3. **CWE-20 (Improper input validation):** `str == NULL` and `max_len == 0` are rejected up front, and the cast to `unsigned char` before `isspace()` avoids undefined behavior when `char` is signed and the byte value is negative (e.g., extended/UTF-8 bytes).
+
+4. **Guaranteed termination:** The final block ensures the result is always NUL-terminated within bounds regardless of which loop exit path was taken.
+
+Since the code as written already contains the correct fixes for each flagged pattern, the rewrite is functionally identical with the audit comments stripped. The `main()` correctly passes `sizeof(text)`, which for a stack array initialized from a string literal includes the terminating NUL — the appropriate capacity value for this API.

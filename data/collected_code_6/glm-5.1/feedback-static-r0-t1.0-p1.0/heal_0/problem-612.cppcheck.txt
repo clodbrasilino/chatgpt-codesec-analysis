@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-612.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-612.c:67:44: style: Condition 'num_lists==0' is always false [knownConditionTrueFalse]
+        if (result_count == 0 && num_lists == 0) {
+                                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-612.c:54:21: note: Assignment 'num_lists=3', assigned value is 3
+    int num_lists = 3;
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-612.c:67:44: note: Condition 'num_lists==0' is always false
+        if (result_count == 0 && num_lists == 0) {
+                                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-612.c:4:42: style: Parameter 'list_sizes' can be declared as pointer to const [constParameterPointer]
+int** merge_first_last(int** lists, int* list_sizes, int num_lists, int* result_sizes, int* result_count) {
+                                         ^

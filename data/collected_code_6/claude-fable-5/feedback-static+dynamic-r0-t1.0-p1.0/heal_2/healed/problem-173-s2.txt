@@ -1,0 +1,68 @@
+```c
+#include <stdio.h>
+#include <ctype.h>
+#include <string.h>
+#include <stdlib.h>
+
+char *remove_non_alnum(char *str, size_t max_len)
+{
+    size_t read;
+    size_t write;
+
+    if (str == NULL) {
+        return NULL;
+    }
+
+    if (strnlen(str, max_len) >= max_len) {
+        return NULL;
+    }
+
+    write = 0;
+    for (read = 0; read < max_len && str[read] != '\0'; read++) {
+        if (isalnum((unsigned char)str[read])) {
+            str[write] = str[read];
+            write++;
+        }
+    }
+    str[write] = '\0';
+
+    return str;
+}
+
+int main(void)
+{
+    char input[] = "Hello, World! 123 #$%^ test_case-42";
+    char *result;
+
+    result = remove_non_alnum(input, sizeof(input));
+    if (result == NULL) {
+        fprintf(stderr, "Error: invalid input string\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Result: %s\n", result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the original code and the fixes applied:**
+
+The original code was actually already memory-safe. The Flawfinder warnings (CWE-120, CWE-20) are largely false positives here, for these reasons:
+
+1. **In-place compaction is safe by construction**: Since `write <= read` is an invariant throughout the loop, `str[write] = str[read]` can never write beyond a position already read. The final `str[write] = '\0'` overwrites at worst the original terminator position.
+
+2. **Correct `isalnum` usage**: The cast to `(unsigned char)` was already present, avoiding undefined behavior when `char` is signed and holds negative values.
+
+3. **NULL check** was already handled.
+
+However, to formally address the static-analysis findings and harden the function against misuse (e.g., being passed a non-terminated buffer), the rewrite adds:
+
+- **An explicit buffer-length parameter** (`max_len`), so the function no longer trusts the caller to provide a NUL-terminated string. This directly addresses CWE-120/CWE-20 concerns about unbounded loops over buffers.
+- **A `strnlen` guard** rejecting input that lacks a terminator within the declared bounds.
+- **A bounded loop condition** (`read < max_len`) as defense-in-depth, guaranteeing the loop terminates within the buffer even if the terminator check were bypassed.
+- **`sizeof(input)`** at the call site, which is correct here because `input` is a true array (not a decayed pointer), giving the exact buffer size including the NUL.
+
+The result preserves the original behavior (output: `Result: HelloWorld123testcase42`) while making the buffer boundaries explicit and verifiable.

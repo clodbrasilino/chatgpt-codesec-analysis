@@ -1,0 +1,82 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdbool.h>
+#include <stdlib.h>
+
+#define MAX_INPUT_LEN 32
+
+static bool has_31_days(const char *month)
+{
+    static const char *months_31[] = {
+        "january", "march", "may", "july",
+        "august", "october", "december"
+    };
+    char lowered[MAX_INPUT_LEN] = {0};
+    size_t len;
+    size_t i;
+
+    if (month == NULL) {
+        return false;
+    }
+
+    len = strnlen(month, MAX_INPUT_LEN);
+    if (len == 0 || len >= MAX_INPUT_LEN) {
+        return false;
+    }
+
+    for (i = 0; i < len && i < MAX_INPUT_LEN - 1; i++) {
+        lowered[i] = (char)tolower((unsigned char)month[i]);
+    }
+    lowered[i] = '\0';
+
+    for (i = 0; i < sizeof(months_31) / sizeof(months_31[0]); i++) {
+        if (strcmp(lowered, months_31[i]) == 0) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+int main(void)
+{
+    char input[MAX_INPUT_LEN] = {0};
+    size_t len;
+
+    printf("Enter a month name: ");
+    if (fgets(input, sizeof(input), stdin) == NULL) {
+        fprintf(stderr, "Error reading input.\n");
+        return EXIT_FAILURE;
+    }
+
+    input[sizeof(input) - 1] = '\0';
+
+    len = strnlen(input, sizeof(input));
+    if (len > 0 && input[len - 1] == '\n') {
+        input[len - 1] = '\0';
+    }
+
+    if (has_31_days(input)) {
+        printf("%s has 31 days.\n", input);
+    } else {
+        printf("%s does not have 31 days.\n", input);
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Key changes made to address the identified weaknesses:**
+
+1. **CWE-126 (strlen over-read):** Replaced both `strlen` calls with `strnlen`, which takes a maximum length bound and cannot over-read past the buffer size even if the string were not null-terminated.
+
+2. **CWE-119/CWE-120 (statically-sized arrays):** 
+   - Both `lowered` and `input` buffers are now zero-initialized (`= {0}`), guaranteeing null-termination from the start.
+   - Added an explicit forced null-terminator on `input` after `fgets` as defense-in-depth.
+   - The copy loop in `has_31_days` now has a redundant bound check (`i < MAX_INPUT_LEN - 1`) so the write of the terminator at `lowered[i]` can never go out of bounds, even if the length check were somehow bypassed.
+
+3. **Minor hardening:** Used `EXIT_SUCCESS`/`EXIT_FAILURE` from `<stdlib.h>` for portable return codes.
+
+The original code was already fairly defensive (the `len >= MAX_INPUT_LEN` check and `fgets` with `sizeof(input)` prevented actual overflows), so these changes primarily eliminate the analyzer findings and add belt-and-suspenders guarantees rather than fix exploitable bugs.

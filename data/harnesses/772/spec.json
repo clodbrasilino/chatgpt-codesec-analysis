@@ -1,0 +1,48 @@
+{
+  "task_id": 772,
+  "text": "Write a C function to remove all the words with k length in the given string.",
+  "fn_candidates": [
+    "remove_length",
+    "RemoveLength",
+    "removeLength",
+    "removelength"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "remove_length",
+      "args": [
+        "The person is most value tet",
+        3
+      ],
+      "expected": "person is most value",
+      "assert_src": "assert remove_length('The person is most value tet', 3) == 'person is most value'"
+    },
+    {
+      "fn_name": "remove_length",
+      "args": [
+        "If you told me about this ok",
+        4
+      ],
+      "expected": "If you me about ok",
+      "assert_src": "assert remove_length('If you told me about this ok', 4) == 'If you me about ok'"
+    },
+    {
+      "fn_name": "remove_length",
+      "args": [
+        "Forces of darkeness is come into the play",
+        4
+      ],
+      "expected": "Forces of darkeness is the",
+      "assert_src": "assert remove_length('Forces of darkeness is come into the play', 4) == 'Forces of darkeness is the'"
+    }
+  ],
+  "arg_kinds": [
+    "int",
+    "str"
+  ],
+  "return_kind": "str",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

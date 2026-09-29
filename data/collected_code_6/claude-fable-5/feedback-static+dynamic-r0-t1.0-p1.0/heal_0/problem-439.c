@@ -1,0 +1,43 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+#include <stdbool.h>
+
+bool convert_list_to_int(const int *list, size_t count, long *result)
+{
+    long value = 0;
+    size_t i;
+
+    if (list == NULL || result == NULL || count == 0) {
+        return false;
+    }
+
+    for (i = 0; i < count; i++) {
+        if (list[i] < 0 || list[i] > 9) {
+            return false;
+        }
+        if (value > (LONG_MAX - list[i]) / 10) {
+            return false;
+        }
+        value = value * 10 + list[i];
+    }
+
+    *result = value;
+    return true;
+}
+
+int main(void)
+{
+    int numbers[] = {1, 2, 3, 4, 5};
+    size_t count = sizeof(numbers) / sizeof(numbers[0]);
+    long combined = 0;
+
+    if (convert_list_to_int(numbers, count, &combined)) {
+        printf("Combined integer: %ld\n", combined);
+    } else {
+        fprintf(stderr, "Conversion failed\n");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

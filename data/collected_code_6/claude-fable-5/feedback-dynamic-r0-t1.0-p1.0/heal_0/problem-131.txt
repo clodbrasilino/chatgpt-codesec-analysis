@@ -1,0 +1,85 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdbool.h>
+
+static bool is_vowel(char c)
+{
+    char lower = (char)tolower((unsigned char)c);
+    return (lower == 'a' || lower == 'e' || lower == 'i' ||
+            lower == 'o' || lower == 'u');
+}
+
+static int reverse_vowels(char *str)
+{
+    size_t left;
+    size_t right;
+    size_t len;
+    char temp;
+
+    if (str == NULL) {
+        return -1;
+    }
+
+    len = strlen(str);
+    if (len < 2U) {
+        return 0;
+    }
+
+    left = 0U;
+    right = len - 1U;
+
+    while (left < right) {
+        while ((left < right) && (!is_vowel(str[left]))) {
+            left++;
+        }
+        while ((left < right) && (!is_vowel(str[right]))) {
+            right--;
+        }
+        if (left < right) {
+            temp = str[left];
+            str[left] = str[right];
+            str[right] = temp;
+            left++;
+            right--;
+        }
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    char input1[] = "hello world";
+    char input2[] = "Programming";
+    char input3[] = "xyz";
+
+    if (reverse_vowels(input1) != 0) {
+        fprintf(stderr, "Error reversing vowels\n");
+        return EXIT_FAILURE;
+    }
+    if (printf("%s\n", input1) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    if (reverse_vowels(input2) != 0) {
+        fprintf(stderr, "Error reversing vowels\n");
+        return EXIT_FAILURE;
+    }
+    if (printf("%s\n", input2) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    if (reverse_vowels(input3) != 0) {
+        fprintf(stderr, "Error reversing vowels\n");
+        return EXIT_FAILURE;
+    }
+    if (printf("%s\n", input3) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```

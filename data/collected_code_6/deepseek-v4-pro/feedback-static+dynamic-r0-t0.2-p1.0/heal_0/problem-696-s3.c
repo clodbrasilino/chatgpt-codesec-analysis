@@ -1,0 +1,210 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    void *data;
+    struct Node *next;
+} Node;
+
+typedef struct List {
+    Node *head;
+    Node *tail;
+    size_t length;
+} List;
+
+typedef struct ZipResult {
+    List **lists;
+    size_t count;
+} ZipResult;
+
+List *list_create(void) {
+    List *list = (List *)malloc(sizeof(List));
+    if (list == NULL) {
+        return NULL;
+    }
+    list->head = NULL;
+    list->tail = NULL;
+    list->length = 0;
+    return list;
+}
+
+void list_destroy(List *list) {
+    if (list == NULL) {
+        return;
+    }
+    Node *current = list->head;
+    while (current != NULL) {
+        Node *next = current->next;
+        free(current);
+        current = next;
+    }
+    free(list);
+}
+
+int list_append(List *list, void *data) {
+    if (list == NULL) {
+        return -1;
+    }
+    Node *node = (Node *)malloc(sizeof(Node));
+    if (node == NULL) {
+        return -1;
+    }
+    node->data = data;
+    node->next = NULL;
+    if (list->tail == NULL) {
+        list->head = node;
+        list->tail = node;
+    } else {
+        list->tail->next = node;
+        list->tail = node;
+    }
+    list->length++;
+    return 0;
+}
+
+void *list_get(List *list, size_t index) {
+    if (list == NULL || index >= list->length) {
+        return NULL;
+    }
+    Node *current = list->head;
+    for (size_t i = 0; i < index; i++) {
+        current = current->next;
+    }
+    return current->data;
+}
+
+size_t list_length(List *list) {
+    if (list == NULL) {
+        return 0;
+    }
+    return list->length;
+}
+
+ZipResult *zip_lists(List *list1, List *list2) {
+    if (list1 == NULL || list2 == NULL) {
+        return NULL;
+    }
+    
+    size_t len1 = list_length(list1);
+    size_t len2 = list_length(list2);
+    size_t min_len = len1 < len2 ? len1 : len2;
+    
+    ZipResult *result = (ZipResult *)malloc(sizeof(ZipResult));
+    if (result == NULL) {
+        return NULL;
+    }
+    
+    result->lists = (List **)malloc(sizeof(List *) * min_len);
+    if (result->lists == NULL) {
+        free(result);
+        return NULL;
+    }
+    
+    result->count = min_len;
+    
+    for (size_t i = 0; i < min_len; i++) {
+        List *inner_list = list_create();
+        if (inner_list == NULL) {
+            for (size_t j = 0; j < i; j++) {
+                list_destroy(result->lists[j]);
+            }
+            free(result->lists);
+            free(result);
+            return NULL;
+        }
+        
+        void *item1 = list_get(list1, i);
+        void *item2 = list_get(list2, i);
+        
+        if (list_append(inner_list, item1) != 0) {
+            list_destroy(inner_list);
+            for (size_t j = 0; j < i; j++) {
+                list_destroy(result->lists[j]);
+            }
+            free(result->lists);
+            free(result);
+            return NULL;
+        }
+        
+        if (list_append(inner_list, item2) != 0) {
+            list_destroy(inner_list);
+            for (size_t j = 0; j < i; j++) {
+                list_destroy(result->lists[j]);
+            }
+            free(result->lists);
+            free(result);
+            return NULL;
+        }
+        
+        result->lists[i] = inner_list;
+    }
+    
+    return result;
+}
+
+void zip_result_destroy(ZipResult *result) {
+    if (result == NULL) {
+        return;
+    }
+    for (size_t i = 0; i < result->count; i++) {
+        list_destroy(result->lists[i]);
+    }
+    free(result->lists);
+    free(result);
+}
+
+int main(void) {
+    List *list1 = list_create();
+    List *list2 = list_create();
+    
+    if (list1 == NULL || list2 == NULL) {
+        list_destroy(list1);
+        list_destroy(list2);
+        return 1;
+    }
+    
+    int data1[] = {1, 2, 3, 4};
+    int data2[] = {10, 20, 30};
+    
+    for (size_t i = 0; i < sizeof(data1) / sizeof(data1[0]); i++) {
+        if (list_append(list1, &data1[i]) != 0) {
+            list_destroy(list1);
+            list_destroy(list2);
+            return 1;
+        }
+    }
+    
+    for (size_t i = 0; i < sizeof(data2) / sizeof(data2[0]); i++) {
+        if (list_append(list2, &data2[i]) != 0) {
+            list_destroy(list1);
+            list_destroy(list2);
+            return 1;
+        }
+    }
+    
+    ZipResult *result = zip_lists(list1, list2);
+    if (result == NULL) {
+        list_destroy(list1);
+        list_destroy(list2);
+        return 1;
+    }
+    
+    for (size_t i = 0; i < result->count; i++) {
+        List *inner = result->lists[i];
+        printf("[");
+        for (size_t j = 0; j < list_length(inner); j++) {
+            int *val = (int *)list_get(inner, j);
+            if (j > 0) {
+                printf(", ");
+            }
+            printf("%d", *val);
+        }
+        printf("]\n");
+    }
+    
+    zip_result_destroy(result);
+    list_destroy(list1);
+    list_destroy(list2);
+    
+    return 0;
+}

@@ -1,0 +1,150 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+#define MAX_INPUT_LEN 4096
+
+char *remove_uppercase(const char *input);
+
+char *remove_uppercase(const char *input)
+{
+    regex_t regex;
+    regmatch_t match;
+    char *result;
+    size_t input_len;
+    size_t result_len;
+    size_t result_cap;
+    const char *cursor;
+    int ret;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    input_len = strnlen(input, MAX_INPUT_LEN);
+    if (input_len >= MAX_INPUT_LEN) {
+        return NULL;
+    }
+
+    result_cap = input_len + 1;
+    result = malloc(result_cap);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    ret = regcomp(&regex, "[A-Z]+", REG_EXTENDED);
+    if (ret != 0) {
+        free(result);
+        return NULL;
+    }
+
+    result_len = 0;
+    cursor = input;
+
+    while (*cursor != '\0') {
+        size_t consumed = (size_t)(cursor - input);
+
+        if (consumed > input_len) {
+            regfree(&regex);
+            free(result);
+            return NULL;
+        }
+
+        ret = regexec(&regex, cursor, 1, &match, 0);
+        if (ret == REG_NOMATCH) {
+            size_t remaining = strnlen(cursor, input_len - consumed);
+            if (result_len >= result_cap ||
+                remaining >= result_cap - result_len) {
+                regfree(&regex);
+                free(result);
+                return NULL;
+            }
+            if (remaining > 0 &&
+                result_len + remaining < result_cap) {
+                memcpy(result + result_len, cursor, remaining);
+                result_len += remaining;
+            }
+            break;
+        }
+        if (ret != 0) {
+            regfree(&regex);
+            free(result);
+            return NULL;
+        }
+        if (match.rm_so < 0 || match.rm_eo <= match.rm_so) {
+            regfree(&regex);
+            free(result);
+            return NULL;
+        }
+        if ((size_t)match.rm_so > input_len - consumed ||
+            (size_t)match.rm_eo > input_len - consumed) {
+            regfree(&regex);
+            free(result);
+            return NULL;
+        }
+        if (result_len >= result_cap ||
+            (size_t)match.rm_so >= result_cap - result_len) {
+            regfree(&regex);
+            free(result);
+            return NULL;
+        }
+        if ((size_t)match.rm_so > 0 &&
+            result_len + (size_t)match.rm_so < result_cap) {
+            memcpy(result + result_len, cursor, (size_t)match.rm_so);
+            result_len += (size_t)match.rm_so;
+        }
+        cursor += match.rm_eo;
+    }
+
+    if (result_len >= result_cap) {
+        regfree(&regex);
+        free(result);
+        return NULL;
+    }
+
+    result[result_len] = '\0';
+    regfree(&regex);
+    return result;
+}
+
+int main(void)
+{
+    const char *test_strings[] = {
+        "helloWORLDthisIS a TEST string",
+        "ALLUPPERCASE",
+        "nolowercasehere",
+        "MixedCASEString"
+    };
+    size_t count = sizeof(test_strings) / sizeof(test_strings[0]);
+    size_t i;
+
+    for (i = 0; i < count; i++) {
+        char *cleaned = remove_uppercase(test_strings[i]);
+        if (cleaned == NULL) {
+            fprintf(stderr, "Failed to process string: %s\n", test_strings[i]);
+            return EXIT_FAILURE;
+        }
+        if (printf("Original: \"%s\" -> Result: \"%s\"\n", test_strings[i], cleaned) < 0) {
+            free(cleaned);
+            return EXIT_FAILURE;
+        }
+        free(cleaned);
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the original code and the fixes applied:**
+
+The two `memcpy` calls flagged by Flawfinder (CWE-120) were the main concern. In the original code, both were actually already guarded by preceding bounds checks (`result_len >= result_cap || remaining >= result_cap - result_len` and the analogous check for `match.rm_so`), so the Flawfinder warnings were largely false positives. However, to make the safety invariant explicit and directly adjacent to each copy, the rewrite wraps each `memcpy` in an additional guard verifying `result_len + n < result_cap` immediately before copying, and skips zero-length copies entirely.
+
+Other defensive properties preserved from the original:
+
+- **Input validation:** `NULL` check and `strnlen` with `MAX_INPUT_LEN` cap prevent unbounded reads on non-terminated buffers.
+- **Allocation sizing:** `result_cap = input_len + 1` is sufficient since output length can never exceed input length (characters are only removed), and overflow is impossible given the `MAX_INPUT_LEN` bound.
+- **Regex match sanity checks:** `rm_so`/`rm_eo` are validated for negativity, ordering, and against the remaining input length before being used as offsets, guarding against pathological regex library behavior.
+- **Resource cleanup:** every error path frees both the `regex_t` (via `regfree`) and the result buffer, avoiding leaks; `main` frees each returned string and checks `printf`'s return value.
+- **Termination:** the final write of the NUL terminator is bounds-checked against `result_cap`.

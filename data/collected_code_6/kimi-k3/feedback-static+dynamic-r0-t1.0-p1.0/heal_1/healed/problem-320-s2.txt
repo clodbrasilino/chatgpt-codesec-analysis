@@ -1,0 +1,113 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <limits.h>
+#include <stdint.h>
+#include <inttypes.h>
+
+int calculate_difference(int n, long long *result)
+{
+    int64_t sum;
+    int64_t sum_of_squares;
+    int64_t n64;
+    int64_t term1;
+    int64_t term2;
+    int64_t term3;
+    int64_t sum_squared;
+    int64_t diff;
+
+    if (result == NULL)
+    {
+        return -1;
+    }
+
+    if (n < 1)
+    {
+        return -1;
+    }
+
+    n64 = (int64_t)n;
+
+    if (n64 > INT64_MAX / (n64 + 1))
+    {
+        return -1;
+    }
+    term1 = n64 * (n64 + 1);
+
+    if (term1 % 2 == 0)
+    {
+        sum = term1 / 2;
+    }
+    else
+    {
+        if ((n64 + 1) / 2 > INT64_MAX / n64)
+        {
+            return -1;
+        }
+        sum = n64 * ((n64 + 1) / 2);
+    }
+
+    if (n64 > INT64_MAX / 2 - 1)
+    {
+        return -1;
+    }
+    term3 = 2 * n64 + 1;
+
+    if (term1 > INT64_MAX / term3)
+    {
+        return -1;
+    }
+    term2 = term1 * term3;
+
+    if (term2 % 6 != 0)
+    {
+        return -1;
+    }
+    sum_of_squares = term2 / 6;
+
+    if (sum != 0 && llabs(sum) > INT64_MAX / llabs(sum))
+    {
+        return -1;
+    }
+    sum_squared = sum * sum;
+
+    if ((sum_squared > 0 && sum_of_squares < INT64_MIN + sum_squared) ||
+        (sum_squared < 0 && sum_of_squares > INT64_MAX + sum_squared))
+    {
+        return -1;
+    }
+    diff = sum_squared - sum_of_squares;
+
+    *result = diff;
+
+    return 0;
+}
+
+int main(void)
+{
+    int n;
+    long long difference;
+    int status;
+
+    printf("Enter a positive integer: ");
+
+    if (scanf("%d", &n) != 1)
+    {
+        fprintf(stderr, "Error: Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    status = calculate_difference(n, &difference);
+
+    if (status != 0)
+    {
+        fprintf(stderr, "Error: Invalid input or calculation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Difference: %lld\n", difference);
+
+    return EXIT_SUCCESS;
+}
+```

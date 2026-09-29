@@ -1,0 +1,72 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int first;
+    int second;
+} Tuple;
+
+int compare(const void *a, const void *b) {
+    Tuple *tupleA = (Tuple *)a;
+    Tuple *tupleB = (Tuple *)b;
+    return tupleA->second - tupleB->second;
+}
+
+void groupBySecond(Tuple *tuples, int n, Tuple **groupedTuples, int *sizes) {
+    if (n == 0) return;
+    qsort(tuples, n, sizeof(Tuple), compare);
+
+    int currentGroupIndex = 0;
+    int currentIndex = 0;
+    int currentKey = tuples[0].second;
+
+    while (currentIndex < n) {
+        sizes[currentGroupIndex] = 0;
+        while (currentIndex < n && tuples[currentIndex].second == currentKey) {
+            groupedTuples[currentGroupIndex][sizes[currentGroupIndex]++] = tuples[currentIndex++];
+        }
+        if (currentIndex < n) currentKey = tuples[currentIndex].second;
+        currentGroupIndex++;
+    }
+}
+
+int main() {
+    Tuple *tuples = NULL;
+    int n, i;
+
+    printf("Enter the number of tuples: ");
+    scanf("%d", &n);
+    if (n <= 0) return 1;
+
+    tuples = (Tuple *)malloc(n * sizeof(Tuple));
+    if (tuples == NULL) return 1;
+
+    printf("Enter the tuples (first, second): \n");
+    for (i = 0; i < n; i++) {
+        scanf("%d %d", &tuples[i].first, &tuples[i].second);
+    }
+
+    Tuple **groupedTuples = (Tuple **)malloc(n * sizeof(Tuple *));
+    int *sizes = (int *)calloc(n, sizeof(int));
+
+    for (i = 0; i < n; i++) {
+        groupedTuples[i] = (Tuple *)malloc(n * sizeof(Tuple));
+    }
+
+    groupBySecond(tuples, n, groupedTuples, sizes);
+
+    for (i = 0; i < n; i++) {
+        if (sizes[i] > 0) {
+            for (int j = 0; j < sizes[i]; j++) {
+                printf("(%d, %d) ", groupedTuples[i][j].first, groupedTuples[i][j].second);
+            }
+            printf("\n");
+            free(groupedTuples[i]);
+        } else break;
+    }
+
+    free(tuples);
+    free(sizes);
+    free(groupedTuples);
+    return 0;
+}

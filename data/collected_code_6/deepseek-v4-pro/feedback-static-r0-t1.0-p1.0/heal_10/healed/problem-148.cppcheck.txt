@@ -1,0 +1,16 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-148.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-148.c:73:24: style: Condition 'right_copy>0' is always true [knownConditionTrueFalse]
+        if (right_copy > 0) {
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-148.c:55:34: note: Assuming that condition 'split<len' is not redundant
+    for (size_t split = 1; split < len; split++) {
+                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-148.c:68:32: note: Assignment 'right_len=len-split', assigned value is greater than 0
+        size_t right_len = len - split;
+                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-148.c:69:29: note: Assignment 'right_copy=right_len', assigned value is greater than 0
+        size_t right_copy = right_len;
+                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-148.c:73:24: note: Condition 'right_copy>0' is always true
+        if (right_copy > 0) {
+                       ^

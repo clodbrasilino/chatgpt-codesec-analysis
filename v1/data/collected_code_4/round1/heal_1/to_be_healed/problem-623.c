@@ -1,0 +1,43 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+double* powerElementsInList(double* list, int length, int power) {
+    if (list == NULL || length <= 0) {
+        return NULL;
+    }
+
+    double* poweredList = (double*)malloc(length * sizeof(double));
+    if (poweredList == NULL) {
+        return NULL;
+    }
+
+    for (int i = 0; i < length; ++i) {
+        poweredList[i] = pow(list[i], power);
+    }
+
+    return poweredList;
+}
+
+int main() {
+    const int listLength = 5;
+    /* Possible weaknesses found:
+     *  variable-sized object may not be initialized except with an empty initializer
+     */
+    double list[listLength] = {1, 2, 3, 4, 5};
+    int power = 3;
+
+    double* poweredList = powerElementsInList(list, listLength, power);
+    if (poweredList != NULL) {
+        printf("List after raising each element to the power of %d: \n", power);
+        for(int i = 0; i < listLength; ++i) {
+            printf("%f \n", poweredList[i]);
+        }
+
+        free(poweredList);
+    } else {
+        printf("Error while generating powered list\n");
+    }
+
+    return 0;
+}

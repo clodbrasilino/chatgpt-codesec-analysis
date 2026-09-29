@@ -1,0 +1,168 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int id;
+    double price;
+} Item;
+
+typedef struct {
+    Item *items;
+    int size;
+    int capacity;
+} MinHeap;
+
+void swap(Item *a, Item *b) {
+    Item temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+MinHeap *create_min_heap(int capacity) {
+    MinHeap *heap = (MinHeap *)malloc(sizeof(MinHeap));
+    if (heap == NULL) {
+        return NULL;
+    }
+    heap->items = (Item *)malloc(sizeof(Item) * capacity);
+    if (heap->items == NULL) {
+        free(heap);
+        return NULL;
+    }
+    heap->size = 0;
+    heap->capacity = capacity;
+    return heap;
+}
+
+void destroy_min_heap(MinHeap *heap) {
+    if (heap != NULL) {
+        free(heap->items);
+        free(heap);
+    }
+}
+
+void min_heapify(MinHeap *heap, int index) {
+    int smallest = index;
+    int left = 2 * index + 1;
+    int right = 2 * index + 2;
+
+    if (left < heap->size && heap->items[left].price < heap->items[smallest].price) {
+        smallest = left;
+    }
+    if (right < heap->size && heap->items[right].price < heap->items[smallest].price) {
+        smallest = right;
+    }
+    if (smallest != index) {
+        swap(&heap->items[index], &heap->items[smallest]);
+        min_heapify(heap, smallest);
+    }
+}
+
+void build_min_heap(MinHeap *heap) {
+    for (int i = heap->size / 2 - 1; i >= 0; i--) {
+        min_heapify(heap, i);
+    }
+}
+
+void insert_min_heap(MinHeap *heap, Item item) {
+    if (heap->size >= heap->capacity) {
+        return;
+    }
+    heap->items[heap->size] = item;
+    int i = heap->size;
+    heap->size++;
+
+    while (i > 0 && heap->items[(i - 1) / 2].price > heap->items[i].price) {
+        swap(&heap->items[i], &heap->items[(i - 1) / 2]);
+        i = (i - 1) / 2;
+    }
+}
+
+Item extract_min(MinHeap *heap) {
+    Item min_item = heap->items[0];
+    heap->items[0] = heap->items[heap->size - 1];
+    heap->size--;
+    min_heapify(heap, 0);
+    return min_item;
+}
+
+Item *find_n_expensive_items(Item *dataset, int dataset_size, int n, int *result_size) {
+    if (dataset == NULL || dataset_size <= 0 || n <= 0 || result_size == NULL) {
+        *result_size = 0;
+        return NULL;
+    }
+
+    if (n > dataset_size) {
+        n = dataset_size;
+    }
+
+    MinHeap *heap = create_min_heap(n);
+    if (heap == NULL) {
+        *result_size = 0;
+        return NULL;
+    }
+
+    for (int i = 0; i < n; i++) {
+        insert_min_heap(heap, dataset[i]);
+    }
+
+    for (int i = n; i < dataset_size; i++) {
+        if (dataset[i].price > heap->items[0].price) {
+            extract_min(heap);
+            insert_min_heap(heap, dataset[i]);
+        }
+    }
+
+    Item *result = (Item *)malloc(sizeof(Item) * n);
+    if (result == NULL) {
+        destroy_min_heap(heap);
+        *result_size = 0;
+        return NULL;
+    }
+
+    *result_size = n;
+    for (int i = 0; i < n; i++) {
+        result[i] = extract_min(heap);
+    }
+
+    destroy_min_heap(heap);
+    return result;
+}
+
+int compare_items(const void *a, const void *b) {
+    Item *item_a = (Item *)a;
+    Item *item_b = (Item *)b;
+    if (item_a->price < item_b->price) return -1;
+    if (item_a->price > item_b->price) return 1;
+    return 0;
+}
+
+int main(void) {
+    Item dataset[] = {
+        {1, 10.5},
+        {2, 20.0},
+        {3, 5.25},
+        {4, 50.75},
+        {5, 30.0},
+        {6, 15.5},
+        {7, 40.0},
+        {8, 25.25}
+    };
+    int dataset_size = sizeof(dataset) / sizeof(dataset[0]);
+    int n = 3;
+    int result_size = 0;
+
+    Item *result = find_n_expensive_items(dataset, dataset_size, n, &result_size);
+
+    if (result != NULL && result_size > 0) {
+        qsort(result, result_size, sizeof(Item), compare_items);
+        printf("Top %d expensive items:\n", result_size);
+        for (int i = 0; i < result_size; i++) {
+            printf("ID: %d, Price: %.2f\n", result[i].id, result[i].price);
+        }
+        free(result);
+    } else {
+        printf("No items found or invalid input.\n");
+    }
+
+    return 0;
+}

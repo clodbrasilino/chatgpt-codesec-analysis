@@ -1,0 +1,138 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define TABLE_SIZE 1024
+
+typedef struct {
+    int a;
+    int b;
+} Tuple;
+
+typedef struct Entry {
+    Tuple tuple;
+    int freq;
+    struct Entry *next;
+} Entry;
+
+typedef struct {
+    Entry *buckets[TABLE_SIZE];
+} HashMap;
+
+static unsigned int hash(Tuple t) {
+    unsigned int h = (unsigned int)(t.a * 31u + t.b * 17u);
+    return h % TABLE_SIZE;
+}
+
+static int tuple_equal(Tuple t1, Tuple t2) {
+    return t1.a == t2.a && t1.b == t2.b;
+}
+
+static void map_init(HashMap *map) {
+    memset(map->buckets, 0, sizeof(map->buckets));
+}
+
+static int map_insert_or_increment(HashMap *map, Tuple t) {
+    unsigned int idx = hash(t);
+    Entry *cur = map->buckets[idx];
+    while (cur != NULL) {
+        if (tuple_equal(cur->tuple, t)) {
+            cur->freq++;
+            return 0;
+        }
+        cur = cur->next;
+    }
+    Entry *entry = (Entry *)malloc(sizeof(Entry));
+    if (entry == NULL) {
+        return -1;
+    }
+    entry->tuple = t;
+    entry->freq = 1;
+    entry->next = map->buckets[idx];
+    map->buckets[idx] = entry;
+    return 1;
+}
+
+static void map_free(HashMap *map) {
+    for (int i = 0; i < TABLE_SIZE; i++) {
+        Entry *cur = map->buckets[i];
+        while (cur != NULL) {
+            Entry *tmp = cur;
+            cur = cur->next;
+            free(tmp);
+        }
+        map->buckets[i] = NULL;
+    }
+}
+
+typedef struct {
+    Tuple tuple;
+    int freq;
+} TupleFreq;
+
+int extract_unique_frequencies(const Tuple *tuples, int count, TupleFreq **results, int *result_count) {
+    if (tuples == NULL || count <= 0 || results == NULL || result_count == NULL) {
+        return -1;
+    }
+
+    HashMap map;
+    map_init(&map);
+
+    int unique = 0;
+
+    for (int i = 0; i < count; i++) {
+        int res = map_insert_or_increment(&map, tuples[i]);
+        if (res == -1) {
+            map_free(&map);
+            return -1;
+        }
+        if (res == 1) {
+            unique++;
+        }
+    }
+
+    *results = (TupleFreq *)malloc((size_t)unique * sizeof(TupleFreq));
+    if (*results == NULL) {
+        map_free(&map);
+        return -1;
+    }
+
+    int ri = 0;
+    for (int i = 0; i < TABLE_SIZE; i++) {
+        Entry *cur = map.buckets[i];
+        while (cur != NULL) {
+            (*results)[ri].tuple = cur->tuple;
+            (*results)[ri].freq = cur->freq;
+            ri++;
+            cur = cur->next;
+        }
+    }
+
+    *result_count = ri;
+    map_free(&map);
+    return 0;
+}
+
+int main(void) {
+    Tuple data[] = {
+        {1, 2}, {3, 4}, {1, 2}, {5, 6},
+        {3, 4}, {1, 2}, {5, 6}, {7, 8}
+    };
+    int count = (int)(sizeof(data) / sizeof(data[0]));
+
+    TupleFreq *results = NULL;
+    int result_count = 0;
+
+    if (extract_unique_frequencies(data, count, &results, &result_count) != 0) {
+        fprintf(stderr, "Error extracting frequencies\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Unique Tuple Frequencies:\n");
+    for (int i = 0; i < result_count; i++) {
+        printf("(%d, %d) -> %d\n", results[i].tuple.a, results[i].tuple.b, results[i].freq);
+    }
+
+    free(results);
+    return EXIT_SUCCESS;
+}

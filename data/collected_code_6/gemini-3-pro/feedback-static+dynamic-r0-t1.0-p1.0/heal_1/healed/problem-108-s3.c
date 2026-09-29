@@ -1,0 +1,148 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+typedef struct {
+    int value;
+    int index;
+    int array_index;
+} HeapNode;
+
+typedef struct {
+    HeapNode *data;
+    size_t size;
+    size_t capacity;
+} MinHeap;
+
+MinHeap *create_heap(size_t capacity) {
+    if (capacity == 0) return NULL;
+    MinHeap *heap = (MinHeap *)malloc(sizeof(MinHeap));
+    if (!heap) return NULL;
+    heap->data = (HeapNode *)malloc(capacity * sizeof(HeapNode));
+    if (!heap->data) {
+        free(heap);
+        return NULL;
+    }
+    heap->size = 0;
+    heap->capacity = capacity;
+    return heap;
+}
+
+void destroy_heap(MinHeap *heap) {
+    if (heap) {
+        free(heap->data);
+        free(heap);
+    }
+}
+
+void swap_nodes(HeapNode *a, HeapNode *b) {
+    HeapNode temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+void heapify(MinHeap *heap, size_t idx) {
+    size_t smallest = idx;
+    size_t left = 2 * idx + 1;
+    size_t right = 2 * idx + 2;
+
+    if (left < heap->size && heap->data[left].value < heap->data[smallest].value)
+        smallest = left;
+
+    if (right < heap->size && heap->data[right].value < heap->data[smallest].value)
+        smallest = right;
+
+    if (smallest != idx) {
+        swap_nodes(&heap->data[idx], &heap->data[smallest]);
+        heapify(heap, smallest);
+    }
+}
+
+int insert_heap(MinHeap *heap, HeapNode node) {
+    if (heap->size == heap->capacity) return -1;
+    size_t i = heap->size++;
+    heap->data[i] = node;
+    while (i != 0 && heap->data[(i - 1) / 2].value > heap->data[i].value) {
+        swap_nodes(&heap->data[i], &heap->data[(i - 1) / 2]);
+        i = (i - 1) / 2;
+    }
+    return 0;
+}
+
+int extract_min(MinHeap *heap, HeapNode *min_node) {
+    if (heap->size == 0) return -1;
+    if (heap->size == 1) {
+        heap->size--;
+        *min_node = heap->data[0];
+        return 0;
+    }
+    *min_node = heap->data[0];
+    heap->data[0] = heap->data[heap->size - 1];
+    heap->size--;
+    heapify(heap, 0);
+    return 0;
+}
+
+void merge_sorted_arrays(int **arrays, const size_t *sizes, size_t num_arrays, int *output) {
+    if (!arrays || !sizes || num_arrays == 0 || !output) return;
+
+    MinHeap *heap = create_heap(num_arrays);
+    if (!heap) return;
+
+    for (size_t i = 0; i < num_arrays; i++) {
+        if (sizes[i] > 0) {
+            HeapNode node = {arrays[i][0], 0, (int)i};
+            if (insert_heap(heap, node) != 0) {
+                destroy_heap(heap);
+                return;
+            }
+        }
+    }
+
+    size_t out_idx = 0;
+    HeapNode min_node;
+    while (extract_min(heap, &min_node) == 0) {
+        output[out_idx++] = min_node.value;
+        int arr_idx = min_node.array_index;
+        int next_elem_idx = min_node.index + 1;
+        if ((size_t)next_elem_idx < sizes[arr_idx]) {
+            HeapNode next_node = {arrays[arr_idx][next_elem_idx], next_elem_idx, arr_idx};
+            if (insert_heap(heap, next_node) != 0) {
+                destroy_heap(heap);
+                return;
+            }
+        }
+    }
+
+    destroy_heap(heap);
+}
+
+int main(void) {
+    int arr1[] = {1, 4, 7, 10};
+    int arr2[] = {2, 5, 8, 11};
+    int arr3[] = {3, 6, 9, 12};
+
+    int *arrays[] = {arr1, arr2, arr3};
+    size_t sizes[] = {4, 4, 4};
+    size_t num_arrays = 3;
+
+    size_t total_size = 0;
+    for (size_t i = 0; i < num_arrays; i++) {
+        total_size += sizes[i];
+    }
+
+    int *output = (int *)malloc(total_size * sizeof(int));
+    if (!output) {
+        return EXIT_FAILURE;
+    }
+
+    merge_sorted_arrays(arrays, sizes, num_arrays, output);
+
+    for (size_t i = 0; i < total_size; i++) {
+        printf("%d ", output[i]);
+    }
+    printf("\n");
+
+    free(output);
+    return EXIT_SUCCESS;
+}

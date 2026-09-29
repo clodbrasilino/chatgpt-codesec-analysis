@@ -1,0 +1,49 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node* next;
+};
+
+void push(struct Node** head_ref, int new_data) {
+    struct Node* new_node = (struct Node*)malloc(sizeof(struct Node));
+    /* Possible weaknesses found:
+     *  dereference of possibly-NULL 'new_node' [CWE-690] [-Wanalyzer-possible-null-dereference]
+     */
+    new_node->data = new_data;
+    new_node->next = (*head_ref);
+    (*head_ref) = new_node;
+}
+
+int minSubList(struct Node* head) {
+    int min_length = 0;
+    struct Node* temp = head;
+    while(temp != NULL) {
+        int count = 0;
+        while(temp->next != NULL && temp->data == temp->next->data) {
+            count++;
+            temp = temp->next;
+        }
+        if(min_length == 0 || count < min_length) {
+            min_length = count;
+        }
+        temp = temp->next;
+    }
+    return min_length + 1;
+}
+
+int main() {
+    struct Node* head = NULL;
+    push(&head, 5);
+    push(&head, 5);
+    push(&head, 5);
+    push(&head, 4);
+    push(&head, 4);
+    push(&head, 3);
+    push(&head, 3);
+    push(&head, 3);
+    push(&head, 3);
+    printf("Minimum length of sublist is %d\n", minSubList(head));
+    return 0;
+}

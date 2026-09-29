@@ -1,0 +1,757 @@
+./collected_code_3/round3/heal_1/healed/problem-450.c: In function 'extractStrings':
+./collected_code_3/round3/heal_1/healed/problem-450.c:14:27: warning: heap-based buffer overflow [CWE-122] [-Wanalyzer-out-of-bounds]
+   14 |             result[index] = (char *)malloc(sizeof(char) * (strSize + 1));
+      |             ~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  'main': events 1-2
+    |
+    |   32 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   36 |     char **result = extractStrings(list, listSize, strSize);
+    |      |                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                     |
+    |      |                     (2) calling 'extractStrings' from 'main'
+    |
+    +--> 'extractStrings': events 3-11
+           |
+           |    5 | char **extractStrings(char **list, int listSize, int strSize) {
+           |      |        ^~~~~~~~~~~~~~
+           |      |        |
+           |      |        (3) entry to 'extractStrings'
+           |    6 |     char **result = (char **)malloc(sizeof(char *) * listSize);
+           |      |                              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                              |
+           |      |                              (4) capacity: 40 bytes
+           |    7 |     if (result == NULL) {
+           |      |        ~
+           |      |        |
+           |      |        (5) following 'false' branch (when 'result' is non-NULL)...
+           |......
+           |   10 |     int index = 0;
+           |      |         ~~~~~
+           |      |         |
+           |      |         (6) ...to here
+           |   11 |     int i;
+           |   12 |     for(i = 0; i < listSize; i++) {
+           |      |                ~~~~~~~~~~~~
+           |      |                  |
+           |      |                  (7) following 'true' branch (when 'i < listSize')...
+           |   13 |         if(strlen(list[i]) == strSize) {
+           |      |           ~           ~
+           |      |           |           |
+           |      |           |           (8) ...to here
+           |      |           (9) following 'true' branch...
+           |   14 |             result[index] = (char *)malloc(sizeof(char) * (strSize + 1));
+           |      |                                                           ~~~~~~~~~~~~~
+           |      |                                                                    |
+           |      |                                                                    (10) ...to here
+           |   15 |             if (result[index] == NULL) {
+           |      |                ~
+           |      |                |
+           |      |                (11) following 'false' branch...
+           |
+         'extractStrings': event 12
+           |
+           |   22 |             strcpy(result[index], list[i]);
+           |      |                          ^
+           |      |                          |
+           |      |                          (12) ...to here
+           |
+         'extractStrings': events 13-17
+           |
+           |   12 |     for(i = 0; i < listSize; i++) {
+           |      |                ~~^~~~~~~~~~
+           |      |                  |
+           |      |                  (13) following 'true' branch (when 'i < listSize')...
+           |   13 |         if(strlen(list[i]) == strSize) {
+           |      |           ~           ~
+           |      |           |           |
+           |      |           |           (14) ...to here
+           |      |           (15) following 'true' branch...
+           |   14 |             result[index] = (char *)malloc(sizeof(char) * (strSize + 1));
+           |      |                                                           ~~~~~~~~~~~~~
+           |      |                                                                    |
+           |      |                                                                    (16) ...to here
+           |   15 |             if (result[index] == NULL) {
+           |      |                ~  
+           |      |                |
+           |      |                (17) following 'false' branch...
+           |
+         'extractStrings': event 18
+           |
+           |   22 |             strcpy(result[index], list[i]);
+           |      |                          ^
+           |      |                          |
+           |      |                          (18) ...to here
+           |
+         'extractStrings': events 19-25
+           |
+           |   12 |     for(i = 0; i < listSize; i++) {
+           |      |                ~~^~~~~~~~~~  ~~~
+           |      |                  |            |
+           |      |                  |            (22) ...to here
+           |      |                  (19) following 'true' branch (when 'i < listSize')...
+           |      |                  (23) following 'true' branch (when 'i < listSize')...
+           |   13 |         if(strlen(list[i]) == strSize) {
+           |      |           ~           ~
+           |      |           |           |
+           |      |           |           (20) ...to here
+           |      |           |           (24) ...to here
+           |      |           (21) following 'false' branch...
+           |   14 |             result[index] = (char *)malloc(sizeof(char) * (strSize + 1));
+           |   15 |             if (result[index] == NULL) {
+           |      |                ~  
+           |      |                |
+           |      |                (25) following 'false' branch...
+           |
+         'extractStrings': event 26
+           |
+           |   22 |             strcpy(result[index], list[i]);
+           |      |                          ^
+           |      |                          |
+           |      |                          (26) ...to here
+           |
+         'extractStrings': events 27-29
+           |
+           |   12 |     for(i = 0; i < listSize; i++) {
+           |      |                ~~^~~~~~~~~~
+           |      |                  |
+           |      |                  (27) following 'true' branch (when 'i < listSize')...
+           |   13 |         if(strlen(list[i]) == strSize) {
+           |      |                       ~
+           |      |                       |
+           |      |                       (28) ...to here
+           |   14 |             result[index] = (char *)malloc(sizeof(char) * (strSize + 1));
+           |   15 |             if (result[index] == NULL) {
+           |      |                ~  
+           |      |                |
+           |      |                (29) following 'false' branch...
+           |
+         'extractStrings': event 30
+           |
+           |   22 |             strcpy(result[index], list[i]);
+           |      |                          ^
+           |      |                          |
+           |      |                          (30) ...to here
+           |
+         'extractStrings': events 31-33
+           |
+           |   12 |     for(i = 0; i < listSize; i++) {
+           |      |                ~~^~~~~~~~~~
+           |      |                  |
+           |      |                  (31) following 'true' branch (when 'i < listSize')...
+           |   13 |         if(strlen(list[i]) == strSize) {
+           |      |                       ~
+           |      |                       |
+           |      |                       (32) ...to here
+           |   14 |             result[index] = (char *)malloc(sizeof(char) * (strSize + 1));
+           |   15 |             if (result[index] == NULL) {
+           |      |                ~  
+           |      |                |
+           |      |                (33) following 'false' branch...
+           |
+         'extractStrings': event 34
+           |
+           |   22 |             strcpy(result[index], list[i]);
+           |      |                          ^
+           |      |                          |
+           |      |                          (34) ...to here
+           |
+         'extractStrings': events 35-37
+           |
+           |   12 |     for(i = 0; i < listSize; i++) {
+           |      |                ~~^~~~~~~~~~
+           |      |                  |
+           |      |                  (35) following 'true' branch (when 'i < listSize')...
+           |   13 |         if(strlen(list[i]) == strSize) {
+           |      |                       ~
+           |      |                       |
+           |      |                       (36) ...to here
+           |   14 |             result[index] = (char *)malloc(sizeof(char) * (strSize + 1));
+           |      |             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                           |
+           |      |                           (37) out-of-bounds write from byte 40 till byte 47 but region ends at byte 40
+           |
+./collected_code_3/round3/heal_1/healed/problem-450.c:14:27: note: write of 8 bytes to beyond the end of the region
+   14 |             result[index] = (char *)malloc(sizeof(char) * (strSize + 1));
+      |             ~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+./collected_code_3/round3/heal_1/healed/problem-450.c:14:27: warning: heap-based buffer overflow [CWE-122] [-Wanalyzer-out-of-bounds]
+  'main': events 1-2
+    |
+    |   32 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   36 |     char **result = extractStrings(list, listSize, strSize);
+    |      |                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                     |
+    |      |                     (2) calling 'extractStrings' from 'main'
+    |
+    +--> 'extractStrings': events 3-11
+           |
+           |    5 | char **extractStrings(char **list, int listSize, int strSize) {
+           |      |        ^~~~~~~~~~~~~~
+           |      |        |
+           |      |        (3) entry to 'extractStrings'
+           |    6 |     char **result = (char **)malloc(sizeof(char *) * listSize);
+           |      |                              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                              |
+           |      |                              (4) capacity: 40 bytes
+           |    7 |     if (result == NULL) {
+           |      |        ~
+           |      |        |
+           |      |        (5) following 'false' branch (when 'result' is non-NULL)...
+           |......
+           |   10 |     int index = 0;
+           |      |         ~~~~~
+           |      |         |
+           |      |         (6) ...to here
+           |   11 |     int i;
+           |   12 |     for(i = 0; i < listSize; i++) {
+           |      |                ~~~~~~~~~~~~
+           |      |                  |
+           |      |                  (7) following 'true' branch (when 'i < listSize')...
+           |   13 |         if(strlen(list[i]) == strSize) {
+           |      |           ~           ~
+           |      |           |           |
+           |      |           |           (8) ...to here
+           |      |           (9) following 'true' branch...
+           |   14 |             result[index] = (char *)malloc(sizeof(char) * (strSize + 1));
+           |      |                                                           ~~~~~~~~~~~~~
+           |      |                                                                    |
+           |      |                                                                    (10) ...to here
+           |   15 |             if (result[index] == NULL) {
+           |      |                ~
+           |      |                |
+           |      |                (11) following 'false' branch...
+           |
+         'extractStrings': event 12
+           |
+           |   22 |             strcpy(result[index], list[i]);
+           |      |                          ^
+           |      |                          |
+           |      |                          (12) ...to here
+           |
+         'extractStrings': events 13-17
+           |
+           |   12 |     for(i = 0; i < listSize; i++) {
+           |      |                ~~^~~~~~~~~~
+           |      |                  |
+           |      |                  (13) following 'true' branch (when 'i < listSize')...
+           |   13 |         if(strlen(list[i]) == strSize) {
+           |      |           ~           ~
+           |      |           |           |
+           |      |           |           (14) ...to here
+           |      |           (15) following 'true' branch...
+           |   14 |             result[index] = (char *)malloc(sizeof(char) * (strSize + 1));
+           |      |                                                           ~~~~~~~~~~~~~
+           |      |                                                                    |
+           |      |                                                                    (16) ...to here
+           |   15 |             if (result[index] == NULL) {
+           |      |                ~  
+           |      |                |
+           |      |                (17) following 'false' branch...
+           |
+         'extractStrings': event 18
+           |
+           |   22 |             strcpy(result[index], list[i]);
+           |      |                          ^
+           |      |                          |
+           |      |                          (18) ...to here
+           |
+         'extractStrings': events 19-25
+           |
+           |   12 |     for(i = 0; i < listSize; i++) {
+           |      |                ~~^~~~~~~~~~  ~~~
+           |      |                  |            |
+           |      |                  |            (22) ...to here
+           |      |                  (19) following 'true' branch (when 'i < listSize')...
+           |      |                  (23) following 'true' branch (when 'i < listSize')...
+           |   13 |         if(strlen(list[i]) == strSize) {
+           |      |           ~           ~
+           |      |           |           |
+           |      |           |           (20) ...to here
+           |      |           |           (24) ...to here
+           |      |           (21) following 'false' branch...
+           |   14 |             result[index] = (char *)malloc(sizeof(char) * (strSize + 1));
+           |   15 |             if (result[index] == NULL) {
+           |      |                ~  
+           |      |                |
+           |      |                (25) following 'false' branch...
+           |
+         'extractStrings': event 26
+           |
+           |   22 |             strcpy(result[index], list[i]);
+           |      |                          ^
+           |      |                          |
+           |      |                          (26) ...to here
+           |
+         'extractStrings': events 27-29
+           |
+           |   12 |     for(i = 0; i < listSize; i++) {
+           |      |                ~~^~~~~~~~~~
+           |      |                  |
+           |      |                  (27) following 'true' branch (when 'i < listSize')...
+           |   13 |         if(strlen(list[i]) == strSize) {
+           |      |                       ~
+           |      |                       |
+           |      |                       (28) ...to here
+           |   14 |             result[index] = (char *)malloc(sizeof(char) * (strSize + 1));
+           |   15 |             if (result[index] == NULL) {
+           |      |                ~  
+           |      |                |
+           |      |                (29) following 'false' branch...
+           |
+         'extractStrings': event 30
+           |
+           |   22 |             strcpy(result[index], list[i]);
+           |      |                          ^
+           |      |                          |
+           |      |                          (30) ...to here
+           |
+         'extractStrings': events 31-33
+           |
+           |   12 |     for(i = 0; i < listSize; i++) {
+           |      |                ~~^~~~~~~~~~
+           |      |                  |
+           |      |                  (31) following 'true' branch (when 'i < listSize')...
+           |   13 |         if(strlen(list[i]) == strSize) {
+           |      |                       ~
+           |      |                       |
+           |      |                       (32) ...to here
+           |   14 |             result[index] = (char *)malloc(sizeof(char) * (strSize + 1));
+           |   15 |             if (result[index] == NULL) {
+           |      |                ~  
+           |      |                |
+           |      |                (33) following 'false' branch...
+           |
+         'extractStrings': event 34
+           |
+           |   22 |             strcpy(result[index], list[i]);
+           |      |                          ^
+           |      |                          |
+           |      |                          (34) ...to here
+           |
+         'extractStrings': events 35-37
+           |
+           |   12 |     for(i = 0; i < listSize; i++) {
+           |      |                ~~^~~~~~~~~~
+           |      |                  |
+           |      |                  (35) following 'true' branch (when 'i < listSize')...
+           |   13 |         if(strlen(list[i]) == strSize) {
+           |      |                       ~
+           |      |                       |
+           |      |                       (36) ...to here
+           |   14 |             result[index] = (char *)malloc(sizeof(char) * (strSize + 1));
+           |   15 |             if (result[index] == NULL) {
+           |      |                ~  
+           |      |                |
+           |      |                (37) following 'false' branch...
+           |
+         'extractStrings': event 38
+           |
+           |   22 |             strcpy(result[index], list[i]);
+           |      |                          ^
+           |      |                          |
+           |      |                          (38) ...to here
+           |
+         'extractStrings': events 39-41
+           |
+           |   12 |     for(i = 0; i < listSize; i++) {
+           |      |                ~~^~~~~~~~~~
+           |      |                  |
+           |      |                  (39) following 'true' branch (when 'i < listSize')...
+           |   13 |         if(strlen(list[i]) == strSize) {
+           |      |                       ~
+           |      |                       |
+           |      |                       (40) ...to here
+           |   14 |             result[index] = (char *)malloc(sizeof(char) * (strSize + 1));
+           |      |             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                           |
+           |      |                           (41) out-of-bounds write from byte 48 till byte 55 but region ends at byte 40
+           |
+./collected_code_3/round3/heal_1/healed/problem-450.c:14:27: note: write of 8 bytes to beyond the end of the region
+   14 |             result[index] = (char *)malloc(sizeof(char) * (strSize + 1));
+      |             ~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+./collected_code_3/round3/heal_1/healed/problem-450.c:15:23: warning: heap-based buffer over-read [CWE-126] [-Wanalyzer-out-of-bounds]
+   15 |             if (result[index] == NULL) {
+      |                 ~~~~~~^~~~~~~
+  'main': events 1-2
+    |
+    |   32 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   36 |     char **result = extractStrings(list, listSize, strSize);
+    |      |                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                     |
+    |      |                     (2) calling 'extractStrings' from 'main'
+    |
+    +--> 'extractStrings': events 3-11
+           |
+           |    5 | char **extractStrings(char **list, int listSize, int strSize) {
+           |      |        ^~~~~~~~~~~~~~
+           |      |        |
+           |      |        (3) entry to 'extractStrings'
+           |    6 |     char **result = (char **)malloc(sizeof(char *) * listSize);
+           |      |                              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                              |
+           |      |                              (4) capacity: 40 bytes
+           |    7 |     if (result == NULL) {
+           |      |        ~
+           |      |        |
+           |      |        (5) following 'false' branch (when 'result' is non-NULL)...
+           |......
+           |   10 |     int index = 0;
+           |      |         ~~~~~
+           |      |         |
+           |      |         (6) ...to here
+           |   11 |     int i;
+           |   12 |     for(i = 0; i < listSize; i++) {
+           |      |                ~~~~~~~~~~~~
+           |      |                  |
+           |      |                  (7) following 'true' branch (when 'i < listSize')...
+           |   13 |         if(strlen(list[i]) == strSize) {
+           |      |           ~           ~
+           |      |           |           |
+           |      |           |           (8) ...to here
+           |      |           (9) following 'true' branch...
+           |   14 |             result[index] = (char *)malloc(sizeof(char) * (strSize + 1));
+           |      |                                                           ~~~~~~~~~~~~~
+           |      |                                                                    |
+           |      |                                                                    (10) ...to here
+           |   15 |             if (result[index] == NULL) {
+           |      |                ~
+           |      |                |
+           |      |                (11) following 'false' branch...
+           |
+         'extractStrings': event 12
+           |
+           |   22 |             strcpy(result[index], list[i]);
+           |      |                          ^
+           |      |                          |
+           |      |                          (12) ...to here
+           |
+         'extractStrings': events 13-17
+           |
+           |   12 |     for(i = 0; i < listSize; i++) {
+           |      |                ~~^~~~~~~~~~
+           |      |                  |
+           |      |                  (13) following 'true' branch (when 'i < listSize')...
+           |   13 |         if(strlen(list[i]) == strSize) {
+           |      |           ~           ~
+           |      |           |           |
+           |      |           |           (14) ...to here
+           |      |           (15) following 'true' branch...
+           |   14 |             result[index] = (char *)malloc(sizeof(char) * (strSize + 1));
+           |      |                                                           ~~~~~~~~~~~~~
+           |      |                                                                    |
+           |      |                                                                    (16) ...to here
+           |   15 |             if (result[index] == NULL) {
+           |      |                ~  
+           |      |                |
+           |      |                (17) following 'false' branch...
+           |
+         'extractStrings': event 18
+           |
+           |   22 |             strcpy(result[index], list[i]);
+           |      |                          ^
+           |      |                          |
+           |      |                          (18) ...to here
+           |
+         'extractStrings': events 19-25
+           |
+           |   12 |     for(i = 0; i < listSize; i++) {
+           |      |                ~~^~~~~~~~~~  ~~~
+           |      |                  |            |
+           |      |                  |            (22) ...to here
+           |      |                  (19) following 'true' branch (when 'i < listSize')...
+           |      |                  (23) following 'true' branch (when 'i < listSize')...
+           |   13 |         if(strlen(list[i]) == strSize) {
+           |      |           ~           ~
+           |      |           |           |
+           |      |           |           (20) ...to here
+           |      |           |           (24) ...to here
+           |      |           (21) following 'false' branch...
+           |   14 |             result[index] = (char *)malloc(sizeof(char) * (strSize + 1));
+           |   15 |             if (result[index] == NULL) {
+           |      |                ~  
+           |      |                |
+           |      |                (25) following 'false' branch...
+           |
+         'extractStrings': event 26
+           |
+           |   22 |             strcpy(result[index], list[i]);
+           |      |                          ^
+           |      |                          |
+           |      |                          (26) ...to here
+           |
+         'extractStrings': events 27-29
+           |
+           |   12 |     for(i = 0; i < listSize; i++) {
+           |      |                ~~^~~~~~~~~~
+           |      |                  |
+           |      |                  (27) following 'true' branch (when 'i < listSize')...
+           |   13 |         if(strlen(list[i]) == strSize) {
+           |      |                       ~
+           |      |                       |
+           |      |                       (28) ...to here
+           |   14 |             result[index] = (char *)malloc(sizeof(char) * (strSize + 1));
+           |   15 |             if (result[index] == NULL) {
+           |      |                ~  
+           |      |                |
+           |      |                (29) following 'false' branch...
+           |
+         'extractStrings': event 30
+           |
+           |   22 |             strcpy(result[index], list[i]);
+           |      |                          ^
+           |      |                          |
+           |      |                          (30) ...to here
+           |
+         'extractStrings': events 31-33
+           |
+           |   12 |     for(i = 0; i < listSize; i++) {
+           |      |                ~~^~~~~~~~~~
+           |      |                  |
+           |      |                  (31) following 'true' branch (when 'i < listSize')...
+           |   13 |         if(strlen(list[i]) == strSize) {
+           |      |                       ~
+           |      |                       |
+           |      |                       (32) ...to here
+           |   14 |             result[index] = (char *)malloc(sizeof(char) * (strSize + 1));
+           |   15 |             if (result[index] == NULL) {
+           |      |                ~  
+           |      |                |
+           |      |                (33) following 'false' branch...
+           |
+         'extractStrings': event 34
+           |
+           |   22 |             strcpy(result[index], list[i]);
+           |      |                          ^
+           |      |                          |
+           |      |                          (34) ...to here
+           |
+         'extractStrings': events 35-37
+           |
+           |   12 |     for(i = 0; i < listSize; i++) {
+           |      |                ~~^~~~~~~~~~
+           |      |                  |
+           |      |                  (35) following 'true' branch (when 'i < listSize')...
+           |   13 |         if(strlen(list[i]) == strSize) {
+           |      |                       ~
+           |      |                       |
+           |      |                       (36) ...to here
+           |   14 |             result[index] = (char *)malloc(sizeof(char) * (strSize + 1));
+           |   15 |             if (result[index] == NULL) {
+           |      |                 ~~~~~~~~~~~~~
+           |      |                       |
+           |      |                       (37) out-of-bounds read from byte 40 till byte 47 but region ends at byte 40
+           |
+./collected_code_3/round3/heal_1/healed/problem-450.c:15:23: note: read of 8 bytes from after the end of the region
+   15 |             if (result[index] == NULL) {
+      |                 ~~~~~~^~~~~~~
+./collected_code_3/round3/heal_1/healed/problem-450.c:15:23: warning: heap-based buffer over-read [CWE-126] [-Wanalyzer-out-of-bounds]
+  'main': events 1-2
+    |
+    |   32 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   36 |     char **result = extractStrings(list, listSize, strSize);
+    |      |                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                     |
+    |      |                     (2) calling 'extractStrings' from 'main'
+    |
+    +--> 'extractStrings': events 3-11
+           |
+           |    5 | char **extractStrings(char **list, int listSize, int strSize) {
+           |      |        ^~~~~~~~~~~~~~
+           |      |        |
+           |      |        (3) entry to 'extractStrings'
+           |    6 |     char **result = (char **)malloc(sizeof(char *) * listSize);
+           |      |                              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                              |
+           |      |                              (4) capacity: 40 bytes
+           |    7 |     if (result == NULL) {
+           |      |        ~
+           |      |        |
+           |      |        (5) following 'false' branch (when 'result' is non-NULL)...
+           |......
+           |   10 |     int index = 0;
+           |      |         ~~~~~
+           |      |         |
+           |      |         (6) ...to here
+           |   11 |     int i;
+           |   12 |     for(i = 0; i < listSize; i++) {
+           |      |                ~~~~~~~~~~~~
+           |      |                  |
+           |      |                  (7) following 'true' branch (when 'i < listSize')...
+           |   13 |         if(strlen(list[i]) == strSize) {
+           |      |           ~           ~
+           |      |           |           |
+           |      |           |           (8) ...to here
+           |      |           (9) following 'true' branch...
+           |   14 |             result[index] = (char *)malloc(sizeof(char) * (strSize + 1));
+           |      |                                                           ~~~~~~~~~~~~~
+           |      |                                                                    |
+           |      |                                                                    (10) ...to here
+           |   15 |             if (result[index] == NULL) {
+           |      |                ~
+           |      |                |
+           |      |                (11) following 'false' branch...
+           |
+         'extractStrings': event 12
+           |
+           |   22 |             strcpy(result[index], list[i]);
+           |      |                          ^
+           |      |                          |
+           |      |                          (12) ...to here
+           |
+         'extractStrings': events 13-17
+           |
+           |   12 |     for(i = 0; i < listSize; i++) {
+           |      |                ~~^~~~~~~~~~
+           |      |                  |
+           |      |                  (13) following 'true' branch (when 'i < listSize')...
+           |   13 |         if(strlen(list[i]) == strSize) {
+           |      |           ~           ~
+           |      |           |           |
+           |      |           |           (14) ...to here
+           |      |           (15) following 'true' branch...
+           |   14 |             result[index] = (char *)malloc(sizeof(char) * (strSize + 1));
+           |      |                                                           ~~~~~~~~~~~~~
+           |      |                                                                    |
+           |      |                                                                    (16) ...to here
+           |   15 |             if (result[index] == NULL) {
+           |      |                ~  
+           |      |                |
+           |      |                (17) following 'false' branch...
+           |
+         'extractStrings': event 18
+           |
+           |   22 |             strcpy(result[index], list[i]);
+           |      |                          ^
+           |      |                          |
+           |      |                          (18) ...to here
+           |
+         'extractStrings': events 19-25
+           |
+           |   12 |     for(i = 0; i < listSize; i++) {
+           |      |                ~~^~~~~~~~~~  ~~~
+           |      |                  |            |
+           |      |                  |            (22) ...to here
+           |      |                  (19) following 'true' branch (when 'i < listSize')...
+           |      |                  (23) following 'true' branch (when 'i < listSize')...
+           |   13 |         if(strlen(list[i]) == strSize) {
+           |      |           ~           ~
+           |      |           |           |
+           |      |           |           (20) ...to here
+           |      |           |           (24) ...to here
+           |      |           (21) following 'false' branch...
+           |   14 |             result[index] = (char *)malloc(sizeof(char) * (strSize + 1));
+           |   15 |             if (result[index] == NULL) {
+           |      |                ~  
+           |      |                |
+           |      |                (25) following 'false' branch...
+           |
+         'extractStrings': event 26
+           |
+           |   22 |             strcpy(result[index], list[i]);
+           |      |                          ^
+           |      |                          |
+           |      |                          (26) ...to here
+           |
+         'extractStrings': events 27-29
+           |
+           |   12 |     for(i = 0; i < listSize; i++) {
+           |      |                ~~^~~~~~~~~~
+           |      |                  |
+           |      |                  (27) following 'true' branch (when 'i < listSize')...
+           |   13 |         if(strlen(list[i]) == strSize) {
+           |      |                       ~
+           |      |                       |
+           |      |                       (28) ...to here
+           |   14 |             result[index] = (char *)malloc(sizeof(char) * (strSize + 1));
+           |   15 |             if (result[index] == NULL) {
+           |      |                ~  
+           |      |                |
+           |      |                (29) following 'false' branch...
+           |
+         'extractStrings': event 30
+           |
+           |   22 |             strcpy(result[index], list[i]);
+           |      |                          ^
+           |      |                          |
+           |      |                          (30) ...to here
+           |
+         'extractStrings': events 31-33
+           |
+           |   12 |     for(i = 0; i < listSize; i++) {
+           |      |                ~~^~~~~~~~~~
+           |      |                  |
+           |      |                  (31) following 'true' branch (when 'i < listSize')...
+           |   13 |         if(strlen(list[i]) == strSize) {
+           |      |                       ~
+           |      |                       |
+           |      |                       (32) ...to here
+           |   14 |             result[index] = (char *)malloc(sizeof(char) * (strSize + 1));
+           |   15 |             if (result[index] == NULL) {
+           |      |                ~  
+           |      |                |
+           |      |                (33) following 'false' branch...
+           |
+         'extractStrings': event 34
+           |
+           |   22 |             strcpy(result[index], list[i]);
+           |      |                          ^
+           |      |                          |
+           |      |                          (34) ...to here
+           |
+         'extractStrings': events 35-37
+           |
+           |   12 |     for(i = 0; i < listSize; i++) {
+           |      |                ~~^~~~~~~~~~
+           |      |                  |
+           |      |                  (35) following 'true' branch (when 'i < listSize')...
+           |   13 |         if(strlen(list[i]) == strSize) {
+           |      |                       ~
+           |      |                       |
+           |      |                       (36) ...to here
+           |   14 |             result[index] = (char *)malloc(sizeof(char) * (strSize + 1));
+           |   15 |             if (result[index] == NULL) {
+           |      |                ~  
+           |      |                |
+           |      |                (37) following 'false' branch...
+           |
+         'extractStrings': event 38
+           |
+           |   22 |             strcpy(result[index], list[i]);
+           |      |                          ^
+           |      |                          |
+           |      |                          (38) ...to here
+           |
+         'extractStrings': events 39-41
+           |
+           |   12 |     for(i = 0; i < listSize; i++) {
+           |      |                ~~^~~~~~~~~~
+           |      |                  |
+           |      |                  (39) following 'true' branch (when 'i < listSize')...
+           |   13 |         if(strlen(list[i]) == strSize) {
+           |      |                       ~
+           |      |                       |
+           |      |                       (40) ...to here
+           |   14 |             result[index] = (char *)malloc(sizeof(char) * (strSize + 1));
+           |   15 |             if (result[index] == NULL) {
+           |      |                 ~~~~~~~~~~~~~
+           |      |                       |
+           |      |                       (41) out-of-bounds read from byte 48 till byte 55 but region ends at byte 40
+           |
+./collected_code_3/round3/heal_1/healed/problem-450.c:15:23: note: read of 8 bytes from after the end of the region
+   15 |             if (result[index] == NULL) {
+      |                 ~~~~~~^~~~~~~

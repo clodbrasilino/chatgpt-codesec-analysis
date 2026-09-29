@@ -1,0 +1,8 @@
+./collected_code_4/round2//heal_0/problem-415.c: In function 'maxProductPair':
+./collected_code_4/round2//heal_0/problem-415.c:25:26: warning: implicit declaration of function 'abs' [-Wimplicit-function-declaration]
+   25 |         if(arr[i] < 0 && abs(arr[i]) > abs(nega))
+      |                          ^~~
+./collected_code_4/round2//heal_0/problem-415.c:3:1: note: include '<stdlib.h>' or provide a declaration of 'abs'
+    2 | #include <limits.h>
+  +++ |+#include <stdlib.h>
+    3 | 

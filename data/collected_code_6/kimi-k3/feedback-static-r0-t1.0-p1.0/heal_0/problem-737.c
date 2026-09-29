@@ -1,0 +1,59 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <regex.h>
+#include <string.h>
+
+int starts_with_vowel(const char *str) {
+    regex_t regex;
+    int result;
+    int ret;
+
+    if (str == NULL) {
+        return -1;
+    }
+
+    ret = regcomp(&regex, "^[aeiouAEIOU]", REG_EXTENDED);
+    if (ret != 0) {
+        return -1;
+    }
+
+    result = regexec(&regex, str, 0, NULL, 0);
+    regfree(&regex);
+
+    if (result == 0) {
+        return 1;
+    } else if (result == REG_NOMATCH) {
+        return 0;
+    } else {
+        return -1;
+    }
+}
+
+int main(void) {
+    const char *test_strings[] = {
+        "apple",
+        "banana",
+        "Elephant",
+        "grape",
+        "orange",
+        "umbrella",
+        "xyz",
+        "",
+        NULL
+    };
+    int i;
+    int status;
+
+    for (i = 0; test_strings[i] != NULL; i++) {
+        status = starts_with_vowel(test_strings[i]);
+        if (status == 1) {
+            printf("\"%s\" starts with a vowel.\n", test_strings[i]);
+        } else if (status == 0) {
+            printf("\"%s\" does not start with a vowel.\n", test_strings[i]);
+        } else {
+            fprintf(stderr, "Error processing string: \"%s\"\n", test_strings[i]);
+        }
+    }
+
+    return EXIT_SUCCESS;
+}

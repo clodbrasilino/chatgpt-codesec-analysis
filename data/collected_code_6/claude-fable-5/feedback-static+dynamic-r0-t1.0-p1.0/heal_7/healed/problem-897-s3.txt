@@ -1,0 +1,132 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdlib.h>
+#include <limits.h>
+
+#define MAX_LEN 1024
+
+static size_t bounded_strlen(const char *s, size_t max_len)
+{
+    size_t i = 0U;
+
+    if (s == NULL) {
+        return 0U;
+    }
+    while (i < max_len && s[i] != '\0') {
+        i++;
+    }
+    return i;
+}
+
+int is_word_present(const char *sentence, const char *word)
+{
+    size_t word_len;
+    const char *p;
+    const char *end;
+
+    if (sentence == NULL || word == NULL) {
+        return 0;
+    }
+
+    word_len = bounded_strlen(word, MAX_LEN);
+    if (word_len == 0U || word_len >= MAX_LEN) {
+        return 0;
+    }
+
+    p = sentence;
+    end = sentence + bounded_strlen(sentence, MAX_LEN);
+
+    while (p < end && *p != '\0') {
+        while (p < end && *p != '\0' && !isalnum((unsigned char)*p)) {
+            p++;
+        }
+        if (p >= end || *p == '\0') {
+            break;
+        }
+        const char *start = p;
+        while (p < end && *p != '\0' && isalnum((unsigned char)*p)) {
+            p++;
+        }
+        size_t token_len = (size_t)(p - start);
+        if (token_len == word_len && strncmp(start, word, word_len) == 0) {
+            return 1;
+        }
+    }
+    return 0;
+}
+
+static void strip_newline(char *s, size_t max_len)
+{
+    size_t len;
+
+    if (s == NULL || max_len == 0U) {
+        return;
+    }
+    len = bounded_strlen(s, max_len);
+    while (len > 0U && (s[len - 1U] == '\n' || s[len - 1U] == '\r')) {
+        s[len - 1U] = '\0';
+        len--;
+    }
+}
+
+static int read_line(char *buffer, size_t size)
+{
+    if (buffer == NULL || size == 0U || size > (size_t)INT_MAX) {
+        return 0;
+    }
+    if (fgets(buffer, (int)size, stdin) == NULL) {
+        buffer[0] = '\0';
+        return 0;
+    }
+    buffer[size - 1U] = '\0';
+    strip_newline(buffer, size);
+    return 1;
+}
+
+static void print_result(int present)
+{
+    if (present == 1) {
+        fputs("True\n", stdout);
+    } else {
+        fputs("False\n", stdout);
+    }
+    fflush(stdout);
+}
+
+int main(void)
+{
+    char sentence[MAX_LEN];
+    char word[MAX_LEN];
+    int sentence_ok;
+    int word_ok;
+
+    memset(sentence, 0, sizeof(sentence));
+    memset(word, 0, sizeof(word));
+
+    sentence_ok = read_line(sentence, sizeof(sentence));
+    word_ok = read_line(word, sizeof(word));
+
+    if (sentence_ok == 0 || word_ok == 0) {
+        print_result(0);
+        return EXIT_SUCCESS;
+    }
+
+    print_result(is_word_present(sentence, word));
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the original code and the fixes applied:**
+
+1. **Test case failures (`<no output>`)**: The most likely cause of the harness receiving no output was the early-return structure in `main`. If reading the sentence failed, the program exited before ever attempting to read the word. The rewrite reads both lines unconditionally before evaluating, guaranteeing that `print_result` is always reached exactly once and output is always flushed to stdout, regardless of input state (EOF, empty input, or partial input).
+
+2. **Flawfinder CWE-119/CWE-120 warnings on the fixed-size buffers**: These are informational warnings on any statically-sized array. The code already mitigates them correctly:
+   - `read_line` uses `fgets` with an explicit size limit and validates that the size fits in an `int` before the cast.
+   - Buffers are zero-initialized with `memset` and explicitly NUL-terminated (`buffer[size - 1U] = '\0'`) after `fgets`.
+   - All string traversal uses `bounded_strlen` with a hard `MAX_LEN` cap, and the tokenizer in `is_word_present` checks `p < end` before every dereference, so no read can run past the buffer.
+   - `strncmp` with a bounded length is used instead of `strcmp`.
+
+3. **Defensive checks retained**: NULL-pointer guards, rejection of empty or oversized words, and `fflush(stdout)` after printing all remain in place, keeping the program safe against malformed or truncated input.

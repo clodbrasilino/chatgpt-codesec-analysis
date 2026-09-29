@@ -1,0 +1,22 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+double tupleToFloat(int num1, int num2) {
+    char tuple[50];
+    sprintf(tuple, "%d.%d", num1, num2);
+    return atof(tuple);
+}
+
+int main(){
+    int num1 = 3, num2 = 14;
+    double result = tupleToFloat(num1, num2);
+
+    printf("The floating point number from given tuple is: %f\n", result);
+
+    return 0;
+}
+```
+The function `tupleToFloat` converts a tuple of two integers to a floating-point number using `sprintf` and `atof`. The `sprintf` function formats and stores a series of characters and values in the array `tuple`. The `atof` function then converts the string of characters to a float. The floating-point number is then returned by the `tupleToFloat` function.
+
+The main function defines two integers, `num1` and `num2`, to represent a tuple. It then calls the `tupleToFloat` function with these two integers as arguments and prints out the floating-point number that the function returns.

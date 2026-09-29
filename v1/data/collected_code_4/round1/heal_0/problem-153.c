@@ -1,0 +1,43 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Point {
+    double x;
+    double y;
+};
+
+struct Parabola {
+    double a;
+    double b;
+    double c;
+};
+
+struct Point findVertex(struct Parabola p) {
+    struct Point vertex;
+    
+    if(p.a == 0) {
+        printf("Not a valid parabola (a cannot be 0)\n");
+        exit(1);
+    }
+
+    vertex.x = -(p.b / (2 * p.a));
+    vertex.y = p.a * vertex.x * vertex.x + p.b * vertex.x + p.c;
+
+    return vertex;
+}
+
+int main() {
+    struct Parabola myParabola;
+    struct Point myVertex;
+    
+    // Let our quadratic equation be 2x^2 + 3x + 4
+    myParabola.a = 2;
+    myParabola.b = 3;
+    myParabola.c = 4;
+
+    myVertex = findVertex(myParabola);
+
+    printf("The vertex of the given parabola is at the point (%lf, %lf)\n", myVertex.x, myVertex.y);
+
+    return 0;
+}

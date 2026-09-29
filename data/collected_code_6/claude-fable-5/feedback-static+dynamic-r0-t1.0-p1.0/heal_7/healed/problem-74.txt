@@ -1,0 +1,127 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdbool.h>
+#include <stdint.h>
+
+#define MAX_LEN 4096U
+#define MAP_SIZE 256U
+
+static bool follows_pattern(const char *pattern, const char *text)
+{
+    bool result = true;
+    size_t plen;
+    size_t tlen;
+    size_t i = 0U;
+    size_t j;
+    char *copy = NULL;
+    char *token = NULL;
+    char *saveptr = NULL;
+    const char *map[MAP_SIZE];
+
+    if (pattern == NULL || text == NULL) {
+        return false;
+    }
+
+    for (j = 0U; j < MAP_SIZE; j++) {
+        map[j] = NULL;
+    }
+
+    plen = strnlen(pattern, MAX_LEN);
+    tlen = strnlen(text, MAX_LEN);
+
+    if (plen == 0U || tlen == 0U || plen >= MAX_LEN || tlen >= MAX_LEN) {
+        return false;
+    }
+
+    if (tlen >= (SIZE_MAX - 1U)) {
+        return false;
+    }
+
+    copy = malloc(tlen + 1U);
+    if (copy == NULL) {
+        return false;
+    }
+
+    memcpy(copy, text, tlen);
+    copy[tlen] = '\0';
+
+    token = strtok_r(copy, " ", &saveptr);
+    while (token != NULL) {
+        if (i >= plen) {
+            result = false;
+            break;
+        }
+
+        unsigned char c = (unsigned char)pattern[i];
+
+        if ((size_t)c >= MAP_SIZE) {
+            result = false;
+            break;
+        }
+
+        if (map[c] != NULL) {
+            if (strcmp(map[c], token) != 0) {
+                result = false;
+                break;
+            }
+        } else {
+            for (j = 0U; j < MAP_SIZE; j++) {
+                if ((map[j] != NULL) && (strcmp(map[j], token) == 0)) {
+                    result = false;
+                    break;
+                }
+            }
+            if (!result) {
+                break;
+            }
+            map[c] = token;
+        }
+
+        i++;
+        token = strtok_r(NULL, " ", &saveptr);
+    }
+
+    if (result && (i != plen)) {
+        result = false;
+    }
+
+    free(copy);
+    return result;
+}
+
+int main(void)
+{
+    const char *patterns[] = { "abba", "abba", "aaaa", "abba" };
+    const char *texts[] = {
+        "dog cat cat dog",
+        "dog cat cat fish",
+        "dog cat cat dog",
+        "dog dog dog dog"
+    };
+    size_t count = sizeof(patterns) / sizeof(patterns[0]);
+    size_t i;
+
+    for (i = 0U; i < count; i++) {
+        bool ok = follows_pattern(patterns[i], texts[i]);
+        if (printf("Pattern \"%s\" with \"%s\": %s\n",
+                   patterns[i], texts[i],
+                   ok ? "matches" : "does not match") < 0) {
+            return EXIT_FAILURE;
+        }
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the flagged weaknesses and why the code is safe:**
+
+1. **`const char *map[MAP_SIZE]` (CWE-119/CWE-120, statically-sized array):** This is a false positive in practice. The array holds 256 pointers and is only ever indexed by an `unsigned char` value (range 0–255), with an additional explicit guard `if ((size_t)c >= MAP_SIZE)` before every access. Out-of-bounds access is impossible. The array is also fully initialized to `NULL` before use, so no uninitialized reads occur.
+
+2. **`memcpy` (CWE-120, unchecked destination size):** Also a false positive here. The destination buffer is allocated as `malloc(tlen + 1U)` immediately before the copy, and exactly `tlen` bytes are copied followed by explicit NUL termination at `copy[tlen]`. The length is bounded via `strnlen(text, MAX_LEN)` with a rejection of `tlen >= MAX_LEN`, and the `tlen >= (SIZE_MAX - 1U)` check prevents integer overflow in the `tlen + 1U` allocation size.
+
+**One genuine fix applied:** The original code used `SIZE_MAX` without including `<stdint.h>` (it is not guaranteed to be available via the other headers), which would fail to compile on strictly conforming implementations. The rewritten version adds `#include <stdint.h>`.
+
+Other defensive properties preserved: NULL-parameter checks, `strnlen` instead of `strlen` to bound untrusted input, `strtok_r` (reentrant, thread-safe) instead of `strtok`, `malloc` return checked, single `free` on all exit paths after allocation, and the bijection check (both pattern→word and word→pattern uniqueness) is enforced.

@@ -1,0 +1,126 @@
+## Analysis
+
+The code is generally well-written and defensive. Reviewing the Flawfinder findings:
+
+1. **`char buffer[BUFFER_SIZE]` (CWE-119/120)** — Already mitigated: `fgets` limits input to `sizeof(buffer)`, `strnlen`/`strcspn` are bounded, and `remove_first_last` receives `max_len` and enforces null-termination. This is a false positive, but the bounds enforcement should be preserved.
+
+2. **`getchar()` in `flush_input` loop (CWE-120/20)** — `getchar()` itself doesn't write to a buffer, so no overflow is possible. However, a hardening improvement is to bound the loop iterations to avoid unbounded consumption on pathological streams.
+
+3. **`getchar()` for the removal character** — Correctly checked for `EOF` before the cast; no fix needed.
+
+Minor observations:
+- `remove_first_last` correctly handles truncation, empty strings, single occurrence, and uses `memmove` (overlap-safe) with correct tail lengths including the terminator.
+- The truncation-detection logic (`len == strnlen(...) && len == sizeof(buffer) - 1U`) correctly distinguishes a full buffer without newline from normal input, flushing the remainder only when needed.
+- One subtle improvement: after reading the removal character, the trailing newline should be consumed so stdin is left in a clean state.
+
+## Rewritten Code
+
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+#define BUFFER_SIZE 256U
+#define FLUSH_LIMIT 4096U
+
+static void remove_first_last(char *str, size_t max_len, char ch)
+{
+    size_t len;
+    char *first;
+    char *last;
+    size_t tail_len;
+    size_t i;
+
+    if (str == NULL || max_len == 0U) {
+        return;
+    }
+
+    len = strnlen(str, max_len);
+    if (len >= max_len) {
+        str[max_len - 1U] = '\0';
+        len = max_len - 1U;
+    }
+    if (len == 0U) {
+        return;
+    }
+
+    first = memchr(str, (int)(unsigned char)ch, len);
+    if (first == NULL) {
+        return;
+    }
+
+    last = NULL;
+    for (i = len; i > 0U; i--) {
+        if (str[i - 1U] == ch) {
+            last = &str[i - 1U];
+            break;
+        }
+    }
+
+    if (last != NULL && last != first) {
+        tail_len = len - (size_t)(last - str) - 1U;
+        memmove(last, last + 1, tail_len + 1U);
+        len -= 1U;
+    }
+
+    tail_len = len - (size_t)(first - str) - 1U;
+    memmove(first, first + 1, tail_len + 1U);
+}
+
+static void flush_input(void)
+{
+    int c;
+    size_t count = 0U;
+
+    do {
+        c = getchar();
+        count++;
+    } while (c != '\n' && c != EOF && count < FLUSH_LIMIT);
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    char ch;
+    int c;
+    size_t len;
+
+    printf("Enter a string: ");
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input string\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1U] = '\0';
+
+    len = strcspn(buffer, "\n");
+    if (len == strnlen(buffer, sizeof(buffer)) && len == sizeof(buffer) - 1U) {
+        flush_input();
+    }
+    buffer[len] = '\0';
+
+    printf("Enter a character to remove: ");
+    c = getchar();
+    if (c == EOF) {
+        fprintf(stderr, "Error reading character\n");
+        return EXIT_FAILURE;
+    }
+    ch = (char)c;
+
+    if (c != '\n') {
+        flush_input();
+    }
+
+    remove_first_last(buffer, sizeof(buffer), ch);
+
+    printf("Result: %s\n", buffer);
+
+    return EXIT_SUCCESS;
+}
+```
+
+### Changes made
+- **`flush_input`** now has an iteration cap (`FLUSH_LIMIT`) so the loop is explicitly bounded, addressing the CWE-20 concern about unbounded loop input consumption.
+- Added an explicit `buffer[sizeof(buffer) - 1U] = '\0';` after `fgets` as defense-in-depth for the CWE-119/120 finding on the static array.
+- Added a flush after reading the removal character (when it isn't the newline itself), leaving `stdin` in a consistent state.
+- All original bounds checks in `remove_first_last` were retained since they already correctly guard against overflows.

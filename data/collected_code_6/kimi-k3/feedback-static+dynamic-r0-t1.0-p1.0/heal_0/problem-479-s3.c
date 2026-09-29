@@ -1,0 +1,26 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int first_digit(int number)
+{
+    int abs_number = abs(number);
+    
+    while (abs_number >= 10) {
+        abs_number /= 10;
+    }
+    
+    return abs_number;
+}
+
+int main(void)
+{
+    int number;
+    
+    if (scanf("%d", &number) != 1) {
+        return EXIT_FAILURE;
+    }
+    
+    printf("%d\n", first_digit(number));
+    
+    return EXIT_SUCCESS;
+}

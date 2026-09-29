@@ -1,0 +1,96 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+char *concat_tuple(const char **tuple, size_t size, const char *delimiter) {
+    if (tuple == NULL || delimiter == NULL || size == 0) {
+        return NULL;
+    }
+
+    size_t delim_length = strlen(delimiter);
+    size_t total_length = 0;
+
+    for (size_t i = 0; i < size; i++) {
+        if (tuple[i] == NULL) {
+            return NULL;
+        }
+        total_length += strlen(tuple[i]);
+    }
+
+    total_length += delim_length * (size - 1);
+
+    if (total_length > SIZE_MAX - 1) {
+        return NULL;
+    }
+
+    char *result = (char *)malloc(total_length + 1);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    size_t offset = 0;
+    for (size_t i = 0; i < size; i++) {
+        size_t len = strlen(tuple[i]);
+        memcpy(result + offset, tuple[i], len);
+        offset += len;
+        
+        if (i < size - 1) {
+            memcpy(result + offset, delimiter, delim_length);
+            offset += delim_length;
+        }
+    }
+
+    result[offset] = '\0';
+    return result;
+}
+
+int main(void) {
+    const char *tuple1[] = {"Hello", "World", "C"};
+    const char *tuple2[] = {"apple", "banana", "cherry", "date"};
+    const char *tuple3[] = {"single"};
+    const char *empty_tuple[] = {""};
+    const char *tuple_with_null[] = {"first", NULL, "third"};
+
+    char *result = concat_tuple(tuple1, 3, "-");
+    if (result != NULL) {
+        printf("%s\n", result);
+        free(result);
+    }
+
+    result = concat_tuple(tuple2, 4, ", ");
+    if (result != NULL) {
+        printf("%s\n", result);
+        free(result);
+    }
+
+    result = concat_tuple(tuple3, 1, "|");
+    if (result != NULL) {
+        printf("%s\n", result);
+        free(result);
+    }
+
+    result = concat_tuple(empty_tuple, 1, ";");
+    if (result != NULL) {
+        printf("%s\n", result);
+        free(result);
+    }
+
+    result = concat_tuple(tuple_with_null, 3, "-");
+    if (result != NULL) {
+        printf("%s\n", result);
+        free(result);
+    } else {
+        printf("NULL\n");
+    }
+
+    result = concat_tuple(NULL, 3, "|");
+    if (result != NULL) {
+        printf("%s\n", result);
+        free(result);
+    } else {
+        printf("NULL\n");
+    }
+
+    return 0;
+}

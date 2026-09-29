@@ -1,0 +1,32 @@
+#include <stdio.h>
+
+unsigned long long factorial(int n) {
+    int i;
+    unsigned long long f = 1;
+    for (i = 1; i <= n; i++)
+        f *= i;
+    return f;
+}
+
+unsigned long long binomialCoeff(int n, int k) {
+    unsigned long long binomial;
+    binomial = factorial(n) / (factorial(k) * factorial(n - k));
+    return binomial;
+}
+
+long long sumOfProduct(int n)
+{
+    long long sum = 0;
+    for (int i = 0; i <= n; i++) {
+        for (int j = i; j <= n; j++) {
+            sum += (binomialCoeff(n, i) * binomialCoeff(n, j));
+        }
+    }
+    return sum;
+}
+
+int main() {
+    int n = 4;
+    printf("%lld", sumOfProduct(n));
+    return 0;
+}

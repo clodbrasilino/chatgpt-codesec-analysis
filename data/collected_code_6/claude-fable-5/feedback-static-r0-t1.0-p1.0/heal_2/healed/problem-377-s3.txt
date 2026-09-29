@@ -1,0 +1,67 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define BUFFER_SIZE 256
+
+void remove_char(char *str, char c)
+{
+    size_t read_idx = 0;
+    size_t write_idx = 0;
+
+    if (str == NULL) {
+        return;
+    }
+
+    while (str[read_idx] != '\0') {
+        if (str[read_idx] != c) {
+            str[write_idx] = str[read_idx];
+            write_idx++;
+        }
+        read_idx++;
+    }
+    str[write_idx] = '\0';
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    const char *source = "hello world, hello everyone";
+    char target = 'l';
+    size_t source_len;
+    int written;
+
+    source_len = strnlen(source, sizeof(buffer));
+    if (source_len >= sizeof(buffer)) {
+        fprintf(stderr, "Source string too long\n");
+        return EXIT_FAILURE;
+    }
+
+    written = snprintf(buffer, sizeof(buffer), "%s", source);
+    if (written < 0 || (size_t)written >= sizeof(buffer)) {
+        fprintf(stderr, "Failed to copy source string safely\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Original string: %s\n", buffer);
+    remove_char(buffer, target);
+    printf("After removing '%c': %s\n", target, buffer);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis summary:**
+
+The original code was already well-hardened against the Flawfinder warning (CWE-119/CWE-120) regarding the statically-sized `buffer`:
+
+1. **Bounds checking before copy** — `strnlen(source, ...)` is used instead of `strlen`, guaranteeing the length check itself cannot read past `BUFFER_SIZE` bytes, and the result is validated against `sizeof(buffer)` before any copy occurs.
+
+2. **Safe, length-limited copy** — `snprintf(buffer, sizeof(buffer), "%s", source)` is used rather than `strcpy`/`sprintf`, so the destination can never overflow. The return value is checked both for encoding errors (`written < 0`) and truncation (`(size_t)written >= sizeof(buffer)`).
+
+3. **Safe in-place mutation** — `remove_char` guards against `NULL`, only shrinks the string (write index never exceeds read index), and properly re-terminates with `'\0'`, so it cannot write out of bounds on any valid NUL-terminated input.
+
+4. **Consistent use of `sizeof(buffer)`** — the only change I made was using `sizeof(buffer)` in the `strnlen` call instead of the raw `BUFFER_SIZE` macro, so all bounds derive from the actual array declaration, preventing a mismatch if the buffer size is ever changed.
+
+The Flawfinder hit is a low-risk (level 2) informational flag inherent to any fixed-size array; the mitigations above satisfy its recommendation to "perform bounds checking" and "use functions that limit length."

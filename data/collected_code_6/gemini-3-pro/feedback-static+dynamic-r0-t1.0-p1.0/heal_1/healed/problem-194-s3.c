@@ -1,0 +1,45 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+long long octalToDecimal(long long octalNumber) {
+    long long decimalNumber = 0;
+    long long multiplier = 1;
+    long long temp = octalNumber;
+
+    if (octalNumber < 0) {
+        return -1; 
+    }
+
+    while (temp != 0) {
+        int remainder = temp % 10;
+        
+        if (remainder >= 8) {
+            return -1; 
+        }
+        
+        decimalNumber += remainder * multiplier;
+        multiplier *= 8;
+        temp /= 10;
+    }
+
+    return decimalNumber;
+}
+
+int main(void) {
+    long long octalNumber;
+    long long decimalNumber;
+
+    if (scanf("%lld", &octalNumber) != 1) {
+        return EXIT_FAILURE;
+    }
+
+    decimalNumber = octalToDecimal(octalNumber);
+
+    if (decimalNumber == -1) {
+        return EXIT_FAILURE;
+    }
+
+    printf("%lld\n", decimalNumber);
+
+    return EXIT_SUCCESS;
+}

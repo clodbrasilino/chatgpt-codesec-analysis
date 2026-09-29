@@ -1,0 +1,89 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+static char *duplicate_string(const char *str) {
+    if (!str) {
+        return NULL;
+    }
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    size_t len = strlen(str);
+    char *copy = malloc(len + 1);
+    if (copy) {
+        /* Possible weaknesses found:
+         * Flawfinder strcpy: Does not check for buffer overflows when copying to destination [MS-banned] (CWE-120). Consider using snprintf, strcpy_s, or strlcpy (warning: strncpy easily misused). (risk 4, buffer)
+         */
+        strcpy(copy, str);
+    }
+    return copy;
+}
+
+char **convert_tuple_to_list(const char **tuple, size_t tuple_size, const char *add_str, size_t *out_size) {
+    if (!tuple || !add_str || !out_size) {
+        return NULL;
+    }
+
+    *out_size = tuple_size * 2;
+    if (*out_size == 0) {
+        return NULL;
+    }
+
+    char **list = malloc(*out_size * sizeof(char *));
+    if (!list) {
+        return NULL;
+    }
+
+    for (size_t i = 0; i < tuple_size; ++i) {
+        if (!tuple[i]) {
+            for (size_t j = 0; j < i * 2; ++j) {
+                free(list[j]);
+            }
+            free(list);
+            return NULL;
+        }
+
+        list[i * 2] = duplicate_string(tuple[i]);
+        if (!list[i * 2]) {
+            for (size_t j = 0; j < i * 2; ++j) {
+                free(list[j]);
+            }
+            free(list);
+            return NULL;
+        }
+
+        list[i * 2 + 1] = duplicate_string(add_str);
+        if (!list[i * 2 + 1]) {
+            free(list[i * 2]);
+            for (size_t j = 0; j < i * 2; ++j) {
+                free(list[j]);
+            }
+            free(list);
+            return NULL;
+        }
+    }
+
+    return list;
+}
+
+int main(void) {
+    const char *tuple[] = {"item1", "item2", "item3"};
+    size_t tuple_size = sizeof(tuple) / sizeof(tuple[0]);
+    const char *add_str = "added_string";
+    size_t out_size = 0;
+
+    char **list = convert_tuple_to_list(tuple, tuple_size, add_str, &out_size);
+    
+    if (list) {
+        for (size_t i = 0; i < out_size; ++i) {
+            printf("%s\n", list[i]);
+            free(list[i]);
+        }
+        free(list);
+    } else {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

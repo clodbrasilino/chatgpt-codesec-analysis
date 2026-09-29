@@ -1,0 +1,31 @@
+```c
+#include <stdio.h>
+#include <limits.h>
+
+int countRotations(const int arr[], int n) {
+    for (int i = 1; i < n; i++) {
+        if (arr[i] < arr[i - 1]) {
+            return i;
+        }
+    }
+    return 0;
+}
+
+int main() {
+    const int test_cases[][7] = {
+        {15, 18, 2, 3, 6, 12},
+        {4, 5, 6, 7, 0, 1, 2},
+        {1, 2, 3, 4, 5, 6, 7}
+    };
+    const int test_case_sizes[] = {6, 7, 7};
+    const int expected_outputs[] = {2, 4, 0};
+    int num_test_cases = sizeof(test_cases) / sizeof(test_cases[0]);
+
+    for (int test = 0; test < num_test_cases; test++) {
+        int rotations = countRotations(test_cases[test], test_case_sizes[test]);
+        printf("Test case %d: Expected: %d, Got: %d\n", test + 1, expected_outputs[test], rotations);
+    }
+
+    return 0;
+}
+```

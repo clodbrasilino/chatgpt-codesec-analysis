@@ -1,0 +1,90 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdbool.h>
+
+bool is_palindrome(const char *str) {
+    if (str == NULL) {
+        return false;
+    }
+    
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    size_t len = strlen(str);
+    if (len == 0) {
+        return false;
+    }
+    
+    for (size_t i = 0; i < len / 2; i++) {
+        if (str[i] != str[len - 1 - i]) {
+            return false;
+        }
+    }
+    return true;
+}
+
+char **find_palindromes(const char **strings, size_t count, size_t *out_count) {
+    if (strings == NULL || out_count == NULL) {
+        if (out_count != NULL) {
+            *out_count = 0;
+        }
+        return NULL;
+    }
+
+    char **palindromes = malloc(count * sizeof(char *));
+    if (palindromes == NULL) {
+        *out_count = 0;
+        return NULL;
+    }
+
+    size_t found_count = 0;
+    for (size_t i = 0; i < count; i++) {
+        if (is_palindrome(strings[i])) {
+            char *copy = strdup(strings[i]);
+            if (copy == NULL) {
+                for (size_t j = 0; j < found_count; j++) {
+                    free(palindromes[j]);
+                }
+                free(palindromes);
+                *out_count = 0;
+                return NULL;
+            }
+            palindromes[found_count++] = copy;
+        }
+    }
+
+    *out_count = found_count;
+    char **shrunk = realloc(palindromes, found_count * sizeof(char *));
+    if (shrunk != NULL || found_count == 0) {
+        palindromes = shrunk;
+    }
+
+    return palindromes;
+}
+
+int main(void) {
+    const char *test_strings[] = {
+        "radar",
+        "hello",
+        "level",
+        "world",
+        "racecar",
+        "",
+        "a"
+    };
+    size_t count = sizeof(test_strings) / sizeof(test_strings[0]);
+    size_t palindrome_count = 0;
+
+    char **palindromes = find_palindromes(test_strings, count, &palindrome_count);
+    
+    if (palindromes != NULL) {
+        for (size_t i = 0; i < palindrome_count; i++) {
+            printf("%s\n", palindromes[i]);
+            free(palindromes[i]);
+        }
+        free(palindromes);
+    }
+
+    return 0;
+}

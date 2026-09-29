@@ -1,0 +1,69 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *data;
+    size_t size;
+} Tuple;
+
+int remove_duplicates_replace(Tuple *t, int replacement) {
+    if (t == NULL || t->data == NULL || t->size == 0) {
+        return -1;
+    }
+
+    for (size_t i = 0; i < t->size; i++) {
+        int count = 0;
+        for (size_t j = 0; j < t->size; j++) {
+            if (t->data[i] == t->data[j]) {
+                count++;
+            }
+        }
+        if (count > 1) {
+            t->data[i] = replacement;
+        }
+    }
+
+    return 0;
+}
+
+int main(void) {
+    int arr[] = {1, 2, 2, 3, 4, 4, 5};
+    size_t size = sizeof(arr) / sizeof(arr[0]);
+
+    Tuple t;
+    t.data = malloc(size * sizeof(int));
+    if (t.data == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+    t.size = size;
+
+    for (size_t i = 0; i < size; i++) {
+        t.data[i] = arr[i];
+    }
+
+    printf("Original tuple: ");
+    for (size_t i = 0; i < t.size; i++) {
+        printf("%d ", t.data[i]);
+    }
+    printf("\n");
+
+    if (remove_duplicates_replace(&t, -1) != 0) {
+        fprintf(stderr, "Failed to process tuple\n");
+        free(t.data);
+        t.data = NULL;
+        return EXIT_FAILURE;
+    }
+
+    printf("Modified tuple: ");
+    for (size_t i = 0; i < t.size; i++) {
+        printf("%d ", t.data[i]);
+    }
+    printf("\n");
+
+    free(t.data);
+    t.data = NULL;
+    t.size = 0;
+
+    return EXIT_SUCCESS;
+}

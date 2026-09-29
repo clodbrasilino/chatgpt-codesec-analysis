@@ -1,0 +1,44 @@
+```c
+#include <stdio.h>
+
+long long squaredSum(int n) {
+    long long sum = 0;
+    for (int i = 1; i <= n; i++) {
+        sum += i;
+    }
+    return sum * sum;
+}
+
+long long sumOfSquared(int n) {
+    long long sum = 0;
+    for (int i = 1; i <= n; i++) {
+        sum += i * i;
+    }
+    return sum;
+}
+
+long long calculateDiff(int n) {
+    return squaredSum(n) - sumOfSquared(n);
+}
+
+int main() {
+    int n = 0;
+    
+    printf("Enter a number: ");
+    if (scanf("%d", &n) != 1) {
+        printf("Invalid input! Please enter a valid number.\n");
+        return 1;
+    }
+
+    if (n < 1) {
+        printf("Invalid number! Please enter a positive natural number.\n");
+        return 1;
+    }
+
+    long long diff = calculateDiff(n);
+    printf("The difference between the squared sum and the sum of squares of first %d natural numbers is: %lld\n", n, diff);
+    
+    return 0;
+}
+```
+This code properly initializes and controls resources, properly checks for exceptional conditions, and adheres to coding standards.

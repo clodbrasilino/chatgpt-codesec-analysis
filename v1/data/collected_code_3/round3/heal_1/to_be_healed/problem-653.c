@@ -1,0 +1,83 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct Node {
+    char* value;
+    struct Node* next;
+} Node;
+
+typedef struct Map {
+    char* key;
+    Node* values;
+    struct Map* next;
+} Map;
+
+Node* createNode(char* value) {
+    Node* newNode = (Node*)malloc(sizeof(Node));
+    /* Possible weaknesses found:
+     *  dereference of possibly-NULL 'newNode' [CWE-690] [-Wanalyzer-possible-null-dereference]
+     */
+    newNode->value = value;
+    newNode->next = NULL;
+    return newNode;
+}
+
+Map* createMap(char* key, char* value) {
+    Map* newMap = (Map*)malloc(sizeof(Map));
+    /* Possible weaknesses found:
+     *  dereference of possibly-NULL 'newMap' [CWE-690] [-Wanalyzer-possible-null-dereference]
+     */
+    newMap->key = key;
+    newMap->values = createNode(value);
+    newMap->next = NULL;
+    return newMap;
+}
+
+void addValue(Map* map, char* key, char* value) {
+    while(map != NULL) {
+        if(strcmp(map->key, key) == 0) {
+            Node* temp = map->values;
+            while(temp->next != NULL) {
+                temp = temp->next;
+            }
+            temp->next = createNode(value);
+            return;
+        }
+        map = map->next;
+    }
+}
+
+Map* addKey(Map* map, char* key, char* value) {
+    if(map == NULL) {
+        return createMap(key, value);
+    }
+    Map* temp = map;
+    while(temp->next != NULL) {
+        temp = temp->next;
+    }
+    temp->next = createMap(key, value);
+    return map;
+}
+
+void printMap(Map* map) {
+    while(map != NULL) {
+        printf("%s: ", map->key);
+        Node* temp = map->values;
+        while(temp != NULL) {
+            printf("%s ", temp->value);
+            temp = temp->next;
+        }
+        printf("\n");
+        map = map->next;
+    }
+}
+
+int main() {
+    Map* map = NULL;
+    map = addKey(map, "key1", "value1");
+    addValue(map, "key1", "value2");
+    map = addKey(map, "key2", "value3");
+    printMap(map);
+    return 0;
+}

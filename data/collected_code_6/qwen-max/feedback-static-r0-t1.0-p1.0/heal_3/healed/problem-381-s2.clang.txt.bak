@@ -1,0 +1,7 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-381-s2.c:15:6: error: conflicting types for 'qsort_r'
+   15 | void qsort_r(void *base, size_t nmemb, size_t size, int (*compar)(const void *, const void *, void *), void *arg) {
+      |      ^
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/_stdlib.h:371:7: note: previous declaration is here
+  371 | void     qsort_r(void *_LIBC_SIZE(__nel * __width) __base, size_t __nel, size_t __width, void *,
+      |          ^
+1 error generated.

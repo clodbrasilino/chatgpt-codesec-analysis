@@ -1,0 +1,87 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef enum {
+    SUCCESS = 0,
+    ERROR_INVALID_PARAMETER,
+    ERROR_INVALID_LENGTH,
+    ERROR_OUT_OF_MEMORY
+} DictStatus;
+
+typedef struct {
+    int key;
+    int value;
+} KeyValuePair;
+
+typedef struct {
+    KeyValuePair *pairs;
+    size_t count;
+} Dictionary;
+
+void free_dictionary(Dictionary *dict) {
+    if (dict != NULL) {
+        if (dict->pairs != NULL) {
+            free(dict->pairs);
+            dict->pairs = NULL;
+        }
+        free(dict);
+    }
+}
+
+DictStatus tuple_to_dictionary(const int *tuple, size_t length, Dictionary **out_dict) {
+    if (tuple == NULL || out_dict == NULL) {
+        return ERROR_INVALID_PARAMETER;
+    }
+    if (length % 2 != 0) {
+        return ERROR_INVALID_LENGTH;
+    }
+
+    Dictionary *dict = (Dictionary *)malloc(sizeof(Dictionary));
+    if (dict == NULL) {
+        return ERROR_OUT_OF_MEMORY;
+    }
+
+    size_t pair_count = length / 2;
+    dict->count = pair_count;
+
+    if (pair_count > 0) {
+        dict->pairs = (KeyValuePair *)malloc(pair_count * sizeof(KeyValuePair));
+        if (dict->pairs == NULL) {
+            free(dict);
+            return ERROR_OUT_OF_MEMORY;
+        }
+
+        for (size_t i = 0; i < pair_count; i++) {
+            dict->pairs[i].key = tuple[i * 2];
+            dict->pairs[i].value = tuple[i * 2 + 1];
+        }
+    } else {
+        dict->pairs = NULL;
+    }
+
+    *out_dict = dict;
+    return SUCCESS;
+}
+
+int main(void) {
+    const int tuple[] = {10, 100, 20, 200, 30, 300, 40, 400};
+    size_t length = sizeof(tuple) / sizeof(tuple[0]);
+    Dictionary *dict = NULL;
+
+    DictStatus status = tuple_to_dictionary(tuple, length, &dict);
+
+    if (status == SUCCESS && dict != NULL) {
+        for (size_t i = 0; i < dict->count; i++) {
+            printf("Key: %d, Value: %d\n", dict->pairs[i].key, dict->pairs[i].value);
+        }
+        free_dictionary(dict);
+        dict = NULL;
+    } else {
+        fprintf(stderr, "Error converting tuple. Status code: %d\n", status);
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```

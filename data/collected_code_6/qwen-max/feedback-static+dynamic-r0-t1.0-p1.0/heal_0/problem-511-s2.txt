@@ -1,0 +1,25 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int min_sum_of_factors(int num) {
+    int sum = 0;
+    for (int i = 2; i * i <= num; i++) {
+        while (num % i == 0) {
+            sum += i;
+            num /= i;
+        }
+    }
+    if (num > 1) {
+        sum += num;
+    }
+    return sum;
+}
+
+int main() {
+    int number = 60;
+    int result = min_sum_of_factors(number);
+    printf("Minimum sum of factors of %d is %d\n", number, result);
+    return 0;
+}
+```

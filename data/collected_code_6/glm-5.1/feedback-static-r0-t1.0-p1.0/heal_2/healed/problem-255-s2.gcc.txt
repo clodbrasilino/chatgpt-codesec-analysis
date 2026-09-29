@@ -1,0 +1,9 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-255-s2.c: In function 'main':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-255-s2.c:44:27: error: passing argument 1 of 'generate_combinations' from incompatible pointer type [-Wincompatible-pointer-types]
+   44 |     generate_combinations(colors, num_colors, choose, current, 0);
+      |                           ^~~~~~
+      |                           |
+      |                           const char **
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-255-s2.c:6:35: note: expected 'char **' but argument is of type 'const char **'
+    6 | void generate_combinations(char **colors, int num_colors, int choose, char **current, int index) {
+      |                            ~~~~~~~^~~~~~

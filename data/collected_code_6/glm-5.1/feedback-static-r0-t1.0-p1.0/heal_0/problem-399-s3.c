@@ -1,0 +1,33 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+unsigned int tuple_xor(unsigned int *a, unsigned int *b, size_t size, unsigned int *result) {
+    if (a == NULL || b == NULL || result == NULL || size == 0) {
+        return 1;
+    }
+    for (size_t i = 0; i < size; i++) {
+        result[i] = a[i] ^ b[i];
+    }
+    return 0;
+}
+
+int main(void) {
+    unsigned int t1[] = {12, 34, 56, 78};
+    unsigned int t2[] = {90, 23, 45, 67};
+    size_t size = sizeof(t1) / sizeof(t1[0]);
+    unsigned int *res = (unsigned int *)malloc(size * sizeof(unsigned int));
+    if (res == NULL) {
+        return EXIT_FAILURE;
+    }
+    unsigned int status = tuple_xor(t1, t2, size, res);
+    if (status != 0) {
+        free(res);
+        return EXIT_FAILURE;
+    }
+    for (size_t i = 0; i < size; i++) {
+        printf("%u ", res[i]);
+    }
+    printf("\n");
+    free(res);
+    return EXIT_SUCCESS;
+}

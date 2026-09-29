@@ -1,0 +1,88 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdbool.h>
+
+bool string_starts_with_number(const char *str, int number)
+{
+    char prefix[32];
+    int written;
+    size_t prefix_len;
+
+    if (str == NULL) {
+        return false;
+    }
+
+    written = snprintf(prefix, sizeof(prefix), "%d", number);
+    if (written < 0 || (size_t)written >= sizeof(prefix)) {
+        return false;
+    }
+
+    prefix_len = (size_t)written;
+
+    if (strnlen(str, prefix_len) < prefix_len) {
+        return false;
+    }
+
+    return strncmp(str, prefix, prefix_len) == 0;
+}
+
+int main(void)
+{
+    const char *test1 = "42 is the answer";
+    const char *test2 = "hello world";
+    const char *test3 = "100 percent";
+    int result_status = EXIT_SUCCESS;
+
+    if (string_starts_with_number(test1, 42)) {
+        if (printf("\"%s\" starts with 42\n", test1) < 0) {
+            result_status = EXIT_FAILURE;
+        }
+    } else {
+        if (printf("\"%s\" does not start with 42\n", test1) < 0) {
+            result_status = EXIT_FAILURE;
+        }
+    }
+
+    if (string_starts_with_number(test2, 7)) {
+        if (printf("\"%s\" starts with 7\n", test2) < 0) {
+            result_status = EXIT_FAILURE;
+        }
+    } else {
+        if (printf("\"%s\" does not start with 7\n", test2) < 0) {
+            result_status = EXIT_FAILURE;
+        }
+    }
+
+    if (string_starts_with_number(test3, 100)) {
+        if (printf("\"%s\" starts with 100\n", test3) < 0) {
+            result_status = EXIT_FAILURE;
+        }
+    } else {
+        if (printf("\"%s\" does not start with 100\n", test3) < 0) {
+            result_status = EXIT_FAILURE;
+        }
+    }
+
+    return result_status;
+}
+```
+
+**Analysis summary:**
+
+The flagged weakness (CWE-119/CWE-120, statically-sized buffer `prefix[32]`) was already properly mitigated in the original code, and those mitigations are preserved:
+
+1. **Bounded write:** `snprintf(prefix, sizeof(prefix), "%d", number)` limits the write to the buffer size and null-terminates. A 32-byte buffer is more than sufficient for any `int` (max ~11 characters including sign).
+
+2. **Truncation/error check:** The return value of `snprintf` is validated — negative values (encoding errors) and values `>= sizeof(prefix)` (truncation) both cause an early `false` return, so `prefix_len` can never exceed the buffer bounds.
+
+3. **Bounded string inspection:** `strnlen(str, prefix_len)` guarantees no read past `prefix_len` bytes of the input, safely handling short or non-numeric strings before the comparison.
+
+4. **Bounded comparison:** `strncmp(str, prefix, prefix_len)` compares only within the validated length.
+
+5. **NULL guard:** `str == NULL` is rejected before any dereference.
+
+6. **Robust I/O:** every `printf` return value is checked, propagating `EXIT_FAILURE` on output errors.
+
+No changes to logic were required — the code as written already performs correct bounds checking and cannot overflow the static buffer.

@@ -1,0 +1,121 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int key;
+    int value;
+    struct Node* next;
+} Node;
+
+typedef struct {
+    Node** buckets;
+    size_t size;
+} HashMap;
+
+HashMap* create_hashmap(size_t size) {
+    HashMap* map = (HashMap*)malloc(sizeof(HashMap));
+    if (!map) return NULL;
+    
+    map->size = size;
+    map->buckets = (Node**)calloc(size, sizeof(Node*));
+    if (!map->buckets) {
+        free(map);
+        return NULL;
+    }
+    
+    return map;
+}
+
+void hashmap_put(HashMap* map, int key, int value) {
+    if (!map) return;
+    
+    size_t index = (size_t)key % map->size;
+    Node* current = map->buckets[index];
+    
+    while (current) {
+        if (current->key == key) {
+            current->value = value;
+            return;
+        }
+        current = current->next;
+    }
+    
+    Node* new_node = (Node*)malloc(sizeof(Node));
+    if (!new_node) return;
+    
+    new_node->key = key;
+    new_node->value = value;
+    new_node->next = map->buckets[index];
+    map->buckets[index] = new_node;
+}
+
+int hashmap_get(HashMap* map, int key, int* value) {
+    if (!map || !value) return 0;
+    
+    size_t index = (size_t)key % map->size;
+    Node* current = map->buckets[index];
+    
+    while (current) {
+        if (current->key == key) {
+            *value = current->value;
+            return 1;
+        }
+        current = current->next;
+    }
+    
+    return 0;
+}
+
+void hashmap_free(HashMap* map) {
+    if (!map) return;
+    
+    for (size_t i = 0; i < map->size; ++i) {
+        Node* current = map->buckets[i];
+        while (current) {
+            Node* temp = current;
+            current = current->next;
+            free(temp);
+        }
+    }
+    free(map->buckets);
+    free(map);
+}
+
+/* Possible weaknesses found:
+ *  Parameter 'list1' can be declared as pointer to const [constParameterPointer]
+ *  Parameter 'list2' can be declared as pointer to const [constParameterPointer]
+ */
+int count_same_pairs(int* list1, int* list2, size_t size) {
+    if (!list1 || !list2 || size == 0) return 0;
+    
+    HashMap* map = create_hashmap(size * 2);
+    if (!map) return 0;
+    
+    for (size_t i = 0; i < size; ++i) {
+        hashmap_put(map, list1[i], list2[i]);
+    }
+    
+    int count = 0;
+    for (size_t i = 0; i < size; ++i) {
+        int val;
+        if (hashmap_get(map, list1[i], &val)) {
+            if (val == list2[i]) {
+                count++;
+            }
+        }
+    }
+    
+    hashmap_free(map);
+    return count;
+}
+
+int main() {
+    int list1[] = {1, 2, 3, 4, 1};
+    int list2[] = {10, 20, 30, 40, 10};
+    size_t size = sizeof(list1) / sizeof(list1[0]);
+    
+    int result = count_same_pairs(list1, list2, size);
+    printf("%d\n", result);
+    
+    return 0;
+}

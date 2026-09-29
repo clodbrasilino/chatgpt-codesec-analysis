@@ -1,0 +1,63 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <stddef.h>
+
+static bool is_min_heap(const int arr[], size_t n)
+{
+    size_t i;
+    size_t left;
+    size_t right;
+
+    if (arr == NULL) {
+        return false;
+    }
+
+    if (n <= 1U) {
+        return true;
+    }
+
+    for (i = 0U; i <= (n - 2U) / 2U; i++) {
+        left = (2U * i) + 1U;
+        right = (2U * i) + 2U;
+
+        if ((left < n) && (arr[i] > arr[left])) {
+            return false;
+        }
+        if ((right < n) && (arr[i] > arr[right])) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+static void print_result(const int arr[], size_t n)
+{
+    size_t i;
+
+    printf("Array: ");
+    for (i = 0U; i < n; i++) {
+        printf("%d ", arr[i]);
+    }
+
+    if (is_min_heap(arr, n)) {
+        printf("-> is a min heap\n");
+    } else {
+        printf("-> is NOT a min heap\n");
+    }
+}
+
+int main(void)
+{
+    int heap1[] = {1, 3, 5, 7, 9, 6, 8};
+    int heap2[] = {10, 3, 5, 7, 9, 6, 8};
+    int heap3[] = {2};
+    int heap4[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+
+    print_result(heap1, sizeof(heap1) / sizeof(heap1[0]));
+    print_result(heap2, sizeof(heap2) / sizeof(heap2[0]));
+    print_result(heap3, sizeof(heap3) / sizeof(heap3[0]));
+    print_result(heap4, sizeof(heap4) / sizeof(heap4[0]));
+
+    return 0;
+}

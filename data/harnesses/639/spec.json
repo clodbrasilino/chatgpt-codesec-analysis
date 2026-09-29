@@ -1,0 +1,63 @@
+{
+  "task_id": 639,
+  "text": "Write a C function to sum the length of the names of a given list of names after removing the names that start with a lowercase letter.",
+  "fn_candidates": [
+    "sample_nam",
+    "SampleNam",
+    "sampleNam",
+    "samplenam"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "sample_nam",
+      "args": [
+        [
+          "sally",
+          "Dylan",
+          "rebecca",
+          "Diana",
+          "Joanne",
+          "keith"
+        ]
+      ],
+      "expected": 16,
+      "assert_src": "assert sample_nam(['sally', 'Dylan', 'rebecca', 'Diana', 'Joanne', 'keith'])==16"
+    },
+    {
+      "fn_name": "sample_nam",
+      "args": [
+        [
+          "php",
+          "res",
+          "Python",
+          "abcd",
+          "Java",
+          "aaa"
+        ]
+      ],
+      "expected": 10,
+      "assert_src": "assert sample_nam([\"php\", \"res\", \"Python\", \"abcd\", \"Java\", \"aaa\"])==10"
+    },
+    {
+      "fn_name": "sample_nam",
+      "args": [
+        [
+          "abcd",
+          "Python",
+          "abba",
+          "aba"
+        ]
+      ],
+      "expected": 6,
+      "assert_src": "assert sample_nam([\"abcd\", \"Python\", \"abba\", \"aba\"])==6"
+    }
+  ],
+  "arg_kinds": [
+    "str-list"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

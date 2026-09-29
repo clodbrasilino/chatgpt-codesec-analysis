@@ -1,0 +1,86 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+char *extract_quoted(const char *input)
+{
+    const char *start;
+    const char *end;
+    char *result;
+    size_t length;
+    size_t buffer_size;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    start = strchr(input, '"');
+    if (start == NULL) {
+        return NULL;
+    }
+    start++;
+
+    end = strchr(start, '"');
+    if (end == NULL) {
+        return NULL;
+    }
+
+    if (end < start) {
+        return NULL;
+    }
+
+    length = (size_t)(end - start);
+    if (length >= SIZE_MAX - 1) {
+        return NULL;
+    }
+
+    buffer_size = length + 1;
+    result = (char *)malloc(buffer_size);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    if (length > 0 && length < buffer_size) {
+        memcpy(result, start, length);
+    }
+    result[length] = '\0';
+
+    return result;
+}
+
+int main(void)
+{
+    const char *text = "He said \"hello world\" to everyone.";
+    char *extracted;
+
+    extracted = extract_quoted(text);
+    if (extracted == NULL) {
+        fprintf(stderr, "No quoted value found or allocation failed.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Extracted: %s\n", extracted) < 0) {
+        free(extracted);
+        return EXIT_FAILURE;
+    }
+
+    free(extracted);
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The original code was already fundamentally safe — the flawfinder warning on `memcpy` is a heuristic flag (risk level 2), not a confirmed vulnerability. Here's why the copy was safe, and what the rewrite adds:
+
+1. **Destination sizing is correct by construction**: `buffer_size = length + 1` is allocated, and exactly `length` bytes are copied, leaving room for the NUL terminator. There is no overflow path.
+
+2. **Explicit guard added**: The rewrite adds `length < buffer_size` to the copy condition, making the destination-capacity invariant explicit at the call site. This silences the static-analysis concern by demonstrating the bounds relationship directly rather than relying on the reader tracing the allocation logic.
+
+3. **Defensive pointer-ordering check**: `end < start` can't actually occur since `strchr(start, ...)` searches forward, but the explicit check documents the invariant and protects against future refactoring errors before the pointer subtraction.
+
+4. **Overflow guard retained**: `length >= SIZE_MAX - 1` prevents the `length + 1` computation from wrapping, though in practice `strchr` results make this unreachable.
+
+5. **Existing good practices preserved**: NULL input handling, `malloc` failure checking, guaranteed NUL termination, checked `printf` return, and `free` on all exit paths — the code has no leaks or UB.

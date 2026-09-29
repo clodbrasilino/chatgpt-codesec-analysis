@@ -1,0 +1,47 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+static long long max_ll(long long a, long long b)
+{
+    return (a > b) ? a : b;
+}
+
+static long long max_sum_no_adjacent(const int *row0, const int *row1, size_t n)
+{
+    long long incl;
+    long long excl;
+    size_t i;
+
+    if ((row0 == NULL) || (row1 == NULL) || (n == 0U)) {
+        return 0LL;
+    }
+
+    incl = max_ll((long long)row0[0], (long long)row1[0]);
+    excl = 0LL;
+
+    for (i = 1U; i < n; i++) {
+        long long new_excl = max_ll(incl, excl);
+        incl = excl + max_ll((long long)row0[i], (long long)row1[i]);
+        excl = new_excl;
+    }
+
+    return max_ll(incl, excl);
+}
+
+int main(void)
+{
+    const int row0[] = { 1, 4, 5, 8 };
+    const int row1[] = { 2, 3, 10, 6 };
+    size_t n = sizeof(row0) / sizeof(row0[0]);
+    long long result;
+
+    result = max_sum_no_adjacent(row0, row1, n);
+
+    if (printf("Maximum sum: %lld\n", result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```

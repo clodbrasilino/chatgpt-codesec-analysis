@@ -1,0 +1,35 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int findLastRemoved(int *arr, int size){
+    int i = size - 1;
+    while(i >= 0) {
+        if(arr[i] == 0)
+            return i;
+        i--;
+    }
+    return -1;
+}
+
+int main(){
+    int *arr = (int*)malloc(sizeof(int) * 10);
+    if (arr == NULL) {
+        printf("Failed to allocate memory\n");
+        return 1;
+    }
+    for (int i = 0; i < 10; ++i){
+        arr[i] = i+1;
+    }
+
+    arr[7] = 0;
+    int position = findLastRemoved(arr, 10);
+
+    if (position != -1){
+        printf("The position of the last removed element is: %d\n", position);
+    } else {
+        printf("No element is removed from the array.\n");
+    }
+
+    free(arr);
+    return 0;
+}

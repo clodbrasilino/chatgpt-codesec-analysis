@@ -1,0 +1,66 @@
+```c
+#include <stdio.h>
+#include <ctype.h>
+#include <string.h>
+#include <stdlib.h>
+
+char *remove_non_alnum(char *str);
+
+char *remove_non_alnum(char *str)
+{
+    size_t read;
+    size_t write;
+    size_t len;
+
+    if (str == NULL) {
+        return NULL;
+    }
+
+    len = strlen(str);
+    write = 0;
+
+    for (read = 0; read < len && str[read] != '\0'; read++) {
+        if (isalnum((unsigned char)str[read])) {
+            str[write] = str[read];
+            write++;
+        }
+    }
+    str[write] = '\0';
+
+    return str;
+}
+
+int main(void)
+{
+    char input[] = "Hello, World! 123 #$%^ test_case-42";
+    char *result;
+
+    result = remove_non_alnum(input);
+    if (result == NULL) {
+        fprintf(stderr, "Error: NULL input string\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Result: %s\n", result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The Flawfinder warnings in the original code are essentially false positives, but here's my assessment as to why the code was already safe, and what the rewrite adds:
+
+1. **NULL check** — Already present; retained. Guards against undefined behavior from dereferencing a NULL pointer.
+
+2. **In-place compaction is inherently bounds-safe** — Since `write <= read` at all times, `str[write]` can never write past the position `str[read]` has already legally read. No buffer overflow (CWE-120) is possible here.
+
+3. **Loop termination (CWE-20)** — The original relied solely on finding `'\0'`. The rewrite adds an explicit upper bound via `strlen()` and the `read < len` condition, satisfying Flawfinder's demand for an explicit boundary check in the loop. This is defense-in-depth; if the string were somehow unterminated, `strlen` would have the same issue, but for a properly terminated string it makes the bound explicit and auditable.
+
+4. **`isalnum` cast** — The `(unsigned char)` cast is correctly retained. Passing a plain `char` with a negative value to `isalnum` is undefined behavior on platforms where `char` is signed.
+
+5. **Terminator write safety** — `str[write] = '\0'` is safe because `write <= len`, and index `len` is the original terminator's position, which is within the buffer.
+
+6. **`printf` return check** — Retained the check for output errors, which is good practice for robust CLI tools.

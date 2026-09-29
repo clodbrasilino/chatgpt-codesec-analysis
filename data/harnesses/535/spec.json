@@ -1,0 +1,44 @@
+{
+  "task_id": 535,
+  "text": "Write a C function to find the top or bottom surface area of a cylinder.",
+  "fn_candidates": [
+    "topbottom_surfacearea",
+    "TopbottomSurfacearea",
+    "topbottomSurfacearea",
+    "topbottomsurfacearea"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "topbottom_surfacearea",
+      "args": [
+        10
+      ],
+      "expected": 314.15000000000003,
+      "assert_src": "assert topbottom_surfacearea(10)==314.15000000000003"
+    },
+    {
+      "fn_name": "topbottom_surfacearea",
+      "args": [
+        5
+      ],
+      "expected": 78.53750000000001,
+      "assert_src": "assert topbottom_surfacearea(5)==78.53750000000001"
+    },
+    {
+      "fn_name": "topbottom_surfacearea",
+      "args": [
+        4
+      ],
+      "expected": 50.264,
+      "assert_src": "assert topbottom_surfacearea(4)==50.264"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "float",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

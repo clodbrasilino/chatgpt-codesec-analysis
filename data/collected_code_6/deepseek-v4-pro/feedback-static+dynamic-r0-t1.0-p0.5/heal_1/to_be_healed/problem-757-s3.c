@@ -1,0 +1,53 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+int count_reverse_pairs(char **strs, int n) {
+    int count = 0;
+    char **reversed = (char **)malloc(n * sizeof(char *));
+    if (reversed == NULL) {
+        return -1;
+    }
+
+    for (int i = 0; i < n; i++) {
+        /* Possible weaknesses found:
+         * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+         */
+        int len = strlen(strs[i]);
+        reversed[i] = (char *)malloc((len + 1) * sizeof(char));
+        if (reversed[i] == NULL) {
+            for (int j = 0; j < i; j++) {
+                free(reversed[j]);
+            }
+            free(reversed);
+            return -1;
+        }
+        for (int j = 0; j < len; j++) {
+            reversed[i][j] = strs[i][len - 1 - j];
+        }
+        reversed[i][len] = '\0';
+    }
+
+    for (int i = 0; i < n; i++) {
+        for (int j = i + 1; j < n; j++) {
+            if (strcmp(strs[i], reversed[j]) == 0) {
+                count++;
+            }
+        }
+    }
+
+    for (int i = 0; i < n; i++) {
+        free(reversed[i]);
+    }
+    free(reversed);
+
+    return count;
+}
+
+int main() {
+    char *strs[] = {"abc", "cba", "def", "fed", "ghi"};
+    int n = sizeof(strs) / sizeof(strs[0]);
+    int result = count_reverse_pairs(strs, n);
+    printf("%d\n", result);
+    return 0;
+}

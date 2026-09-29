@@ -1,0 +1,38 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+bool isBalanced(const char *expr, size_t exprLen) {
+    int stack[exprLen];
+    int top = -1;
+
+    for (size_t i = 0; i < exprLen; ++i) {
+        if (expr[i] == '(' || expr[i] == '[' || expr[i] == '{') {
+            if (top + 1 >= (int)exprLen) return false;
+            stack[++top] = expr[i];
+        } else if (expr[i] == ')' || expr[i] == ']' || expr[i] == '}') {
+            if (top == -1) return false;
+            char c = stack[top--];
+            if ((expr[i] == ')' && c != '(') ||
+                (expr[i] == ']' && c != '[') ||
+                (expr[i] == '}' && c != '{')) {
+                return false;
+            }
+        }
+    }
+
+    return top == -1;
+}
+
+int main() {
+    const char *expr1 = "([]{})";
+    const char *expr2 = "([)]";
+    const char *expr3 = "((()))";
+    const char *expr4 = "({[)]}";
+
+    printf("%s: %s\n", expr1, isBalanced(expr1, sizeof(expr1) - 1) ? "Balanced" : "Not Balanced");
+    printf("%s: %s\n", expr2, isBalanced(expr2, sizeof(expr2) - 1) ? "Balanced" : "Not Balanced");
+    printf("%s: %s\n", expr3, isBalanced(expr3, sizeof(expr3) - 1) ? "Balanced" : "Not Balanced");
+    printf("%s: %s\n", expr4, isBalanced(expr4, sizeof(expr4) - 1) ? "Balanced" : "Not Balanced");
+
+    return 0;
+}

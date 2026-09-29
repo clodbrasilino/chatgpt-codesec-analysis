@@ -1,0 +1,137 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct Node {
+    char *key;
+    char *value;
+    struct Node *child;
+    struct Node *next;
+} Node;
+
+Node* create_node(const char *key, const char *value) {
+    Node *new_node = (Node*)malloc(sizeof(Node));
+    if (!new_node) {
+        return NULL;
+    }
+    
+    new_node->key = strdup(key);
+    if (!new_node->key) {
+        free(new_node);
+        return NULL;
+    }
+    
+    if (value) {
+        new_node->value = strdup(value);
+        if (!new_node->value) {
+            free(new_node->key);
+            free(new_node);
+            return NULL;
+        }
+    } else {
+        new_node->value = NULL;
+    }
+    
+    new_node->child = NULL;
+    new_node->next = NULL;
+    return new_node;
+}
+
+void free_dict(Node *root) {
+    if (!root) {
+        return;
+    }
+    free_dict(root->child);
+    free_dict(root->next);
+    free(root->key);
+    free(root->value);
+    free(root);
+}
+
+/* Possible weaknesses found:
+ *  Parameter 'list_lengths' can be declared as pointer to const [constParameterPointer]
+ */
+Node* lists_to_nested_dict(char ***lists, int num_lists, int *list_lengths) {
+    if (!lists || num_lists <= 0 || !list_lengths) {
+        return NULL;
+    }
+
+    Node *root = NULL;
+    Node *current = NULL;
+
+    for (int i = 0; i < num_lists; i++) {
+        if (list_lengths[i] < 2) {
+            continue;
+        }
+
+        Node *new_branch = create_node(lists[i][0], NULL);
+        if (!new_branch) {
+            free_dict(root);
+            return NULL;
+        }
+
+        Node *branch_curr = new_branch;
+        for (int j = 1; j < list_lengths[i] - 1; j++) {
+            branch_curr->child = create_node(lists[i][j], NULL);
+            if (!branch_curr->child) {
+                free_dict(new_branch);
+                free_dict(root);
+                return NULL;
+            }
+            branch_curr = branch_curr->child;
+        }
+
+        branch_curr->child = create_node(lists[i][list_lengths[i] - 1], lists[i][list_lengths[i] - 1]);
+        if (!branch_curr->child) {
+            free_dict(new_branch);
+            free_dict(root);
+            return NULL;
+        }
+
+        if (!root) {
+            root = new_branch;
+            current = root;
+        } else {
+            current->next = new_branch;
+            current = current->next;
+        }
+    }
+
+    return root;
+}
+
+void print_dict(Node *node, int indent) {
+    while (node) {
+        for (int i = 0; i < indent; i++) {
+            printf("  ");
+        }
+        if (node->value) {
+            printf("%s: %s\n", node->key, node->value);
+        } else {
+            printf("%s:\n", node->key);
+            print_dict(node->child, indent + 1);
+        }
+        node = node->next;
+    }
+}
+
+int main(void) {
+    char *list1[] = {"A", "B", "C", "val1"};
+    char *list2[] = {"X", "Y", "val2"};
+    char *list3[] = {"1", "2", "3", "4", "val3"};
+
+    char **lists[] = {list1, list2, list3};
+    int list_lengths[] = {4, 3, 5};
+    int num_lists = 3;
+
+    Node *dict = lists_to_nested_dict(lists, num_lists, list_lengths);
+
+    if (dict) {
+        print_dict(dict, 0);
+        free_dict(dict);
+    } else {
+        printf("Failed to create nested dictionary.\n");
+    }
+
+    return 0;
+}

@@ -1,0 +1,118 @@
+#include <ctype.h>
+#include <errno.h>
+#include <math.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+static int cylinder_perimeter(double radius, double height, double *result)
+{
+    const double pi = acos(-1.0);
+    double value;
+
+    if (result == NULL ||
+        !isfinite(radius) ||
+        !isfinite(height) ||
+        radius < 0.0 ||
+        height < 0.0) {
+        return -1;
+    }
+
+    value = 2.0 * (2.0 * pi * radius + height);
+
+    if (!isfinite(value)) {
+        return -1;
+    }
+
+    *result = value;
+    return 0;
+}
+
+static int read_double(double *value)
+{
+    int ch;
+    int first;
+    char buffer[256];
+    size_t length = 0;
+    char *end;
+
+    if (value == NULL) {
+        return -1;
+    }
+
+    do {
+        ch = fgetc(stdin);
+    } while (ch != EOF && isspace((unsigned char)ch));
+
+    if (ch == EOF) {
+        return -1;
+    }
+
+    first = ch;
+
+    while (ch != EOF && !isspace((unsigned char)ch)) {
+        if (length + 1 >= sizeof buffer) {
+            do {
+                ch = fgetc(stdin);
+            } while (ch != EOF && !isspace((unsigned char)ch));
+            return -1;
+        }
+
+        buffer[length++] = (char)ch;
+        ch = fgetc(stdin);
+    }
+
+    if (length == 0) {
+        return -1;
+    }
+
+    buffer[length] = '\0';
+
+    errno = 0;
+    *value = strtod(buffer, &end);
+
+    if (end == buffer ||
+        *end != '\0' ||
+        errno == ERANGE ||
+        !isfinite(*value)) {
+        return -1;
+    }
+
+    (void)first;
+    return 0;
+}
+
+static int only_trailing_whitespace(void)
+{
+    int ch;
+
+    while ((ch = fgetc(stdin)) != EOF) {
+        if (!isspace((unsigned char)ch)) {
+            return 0;
+        }
+    }
+
+    return !ferror(stdin);
+}
+
+int main(void)
+{
+    double radius;
+    double height;
+    double perimeter;
+
+    if (read_double(&radius) != 0 ||
+        read_double(&height) != 0 ||
+        !only_trailing_whitespace()) {
+        return EXIT_FAILURE;
+    }
+
+    if (cylinder_perimeter(radius, height, &perimeter) != 0) {
+        return EXIT_FAILURE;
+    }
+
+    if (printf("%.10g\n", perimeter) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,73 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+size_t replace_chars(char *str, size_t n)
+{
+    size_t count = 0;
+    size_t i;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    for (i = 0; str[i] != '\0' && count < n; i++) {
+        if (str[i] == ' ' || str[i] == ',' || str[i] == '.') {
+            str[i] = ':';
+            count++;
+        }
+    }
+
+    return count;
+}
+
+int main(void)
+{
+    static const char source[] = "Hello world, this is a test. Replace them all.";
+    char *buffer;
+    size_t buf_size;
+    size_t len;
+    size_t replaced;
+
+    buf_size = sizeof(source);
+    len = strnlen(source, buf_size - 1U);
+
+    buffer = malloc(buf_size);
+    if (buffer == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    memcpy(buffer, source, len);
+    buffer[len] = '\0';
+
+    replaced = replace_chars(buffer, 5U);
+
+    if (printf("Original: %s\n", source) < 0) {
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+    if (printf("Modified: %s\n", buffer) < 0) {
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+    if (printf("Replacements made: %zu\n", replaced) < 0) {
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+
+    free(buffer);
+    buffer = NULL;
+
+    return EXIT_SUCCESS;
+}
+```
+
+Key changes made to address the identified weaknesses:
+
+1. **CWE-126 (`strlen` over-read):** Replaced `strlen` with `strnlen`, bounded by `sizeof(source)`. Since `source` is a fixed-size array whose full size is known at compile time, `sizeof` gives a guaranteed safe upper bound, so the length computation can never read past the end of the buffer even if the string were not NUL-terminated.
+
+2. **CWE-120 (`memcpy` unchecked copy):** The destination buffer is now allocated with exactly `buf_size = sizeof(source)` bytes, and the copy is limited to `len` bytes (where `len < buf_size` is guaranteed by `strnlen`). The NUL terminator is written explicitly after the copy, so the destination can always hold the copied data and is always properly terminated.
+
+3. Made `source` `static const` so its storage and size semantics are unambiguous, and all subsequent operations (`replace_chars`, `printf`) operate only on the correctly sized, NUL-terminated `buffer`.

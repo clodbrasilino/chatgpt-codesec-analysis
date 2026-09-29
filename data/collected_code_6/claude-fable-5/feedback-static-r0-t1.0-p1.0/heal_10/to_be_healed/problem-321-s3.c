@@ -1,0 +1,144 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <limits.h>
+
+#define MAX_REPUNIT_LEN 9
+#define INPUT_BUF_SIZE 32
+#define MAX_DISCARD 4096
+
+#if MAX_REPUNIT_LEN > 9
+#error "MAX_REPUNIT_LEN must not exceed 9"
+#endif
+
+static size_t bounded_strlen(const char *str, size_t max_len)
+{
+    size_t i;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    for (i = 0; i < max_len; i++) {
+        if (str[i] == '\0') {
+            return i;
+        }
+    }
+    return max_len;
+}
+
+static char *find_demlo(const char *str, size_t max_len)
+{
+    size_t len;
+    size_t i;
+    size_t pos;
+    size_t out_size;
+    char *result;
+
+    if (str == NULL || max_len == 0 || max_len > 9) {
+        return NULL;
+    }
+
+    len = bounded_strlen(str, max_len + 1);
+    if (len == 0 || len > max_len) {
+        return NULL;
+    }
+
+    for (i = 0; i < len; i++) {
+        if (str[i] != '1') {
+            return NULL;
+        }
+    }
+
+    out_size = 2 * len;
+    result = malloc(out_size);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    pos = 0;
+    for (i = 1; i <= len && pos < out_size - 1; i++) {
+        result[pos++] = (char)('0' + i);
+    }
+    for (i = len; i > 1 && pos < out_size - 1; i--) {
+        result[pos++] = (char)('0' + (i - 1));
+    }
+    result[pos] = '\0';
+
+    return result;
+}
+
+static int read_line(char *buf, size_t size)
+{
+    size_t len;
+
+    if (buf == NULL || size < 2 || size > (size_t)INT_MAX) {
+        return -1;
+    }
+
+    if (fgets(buf, (int)size, stdin) == NULL) {
+        return -1;
+    }
+
+    buf[size - 1] = '\0';
+
+    len = strcspn(buf, "\n");
+    if (buf[len] != '\n' && len == size - 1) {
+        size_t discarded = 0;
+        /* Possible weaknesses found:
+         *  The scope of the variable 'ch' can be reduced. [variableScope]
+         */
+        int ch;
+
+        while (discarded < MAX_DISCARD) {
+            /* Possible weaknesses found:
+             * Flawfinder getchar: Check buffer boundaries if used in a loop including recursive loops (CWE-120, CWE-20). (risk 1, buffer)
+             */
+            ch = getchar();
+            if (ch == '\n' || ch == EOF) {
+                break;
+            }
+            discarded++;
+        }
+        return -2;
+    }
+    buf[len] = '\0';
+
+    return 0;
+}
+
+int main(void)
+{
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char input[INPUT_BUF_SIZE];
+    char *demlo;
+    int rc;
+
+    memset(input, 0, sizeof(input));
+
+    printf("Enter a repunit number (only 1s, max %d digits): ", MAX_REPUNIT_LEN);
+    fflush(stdout);
+
+    rc = read_line(input, sizeof(input));
+    if (rc == -1) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+    if (rc == -2) {
+        fprintf(stderr, "Input too long\n");
+        return EXIT_FAILURE;
+    }
+
+    demlo = find_demlo(input, MAX_REPUNIT_LEN);
+    if (demlo == NULL) {
+        fprintf(stderr, "Invalid input: must be a repunit of 1 to %d ones\n", MAX_REPUNIT_LEN);
+        return EXIT_FAILURE;
+    }
+
+    printf("Demlo number: %s\n", demlo);
+    free(demlo);
+
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,145 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    double data;
+    struct Node *next;
+} Node;
+
+static Node *create_node(double value)
+{
+    Node *new_node = (Node *)malloc(sizeof(Node));
+    if (new_node == NULL) {
+        return NULL;
+    }
+    new_node->data = value;
+    new_node->next = NULL;
+    return new_node;
+}
+
+static void free_list(Node *head)
+{
+    Node *current = head;
+    while (current != NULL) {
+        Node *temp = current;
+        current = current->next;
+        free(temp);
+    }
+}
+
+static int append_node(Node **head, double value)
+{
+    Node *new_node = create_node(value);
+    if (new_node == NULL) {
+        return -1;
+    }
+    if (*head == NULL) {
+        *head = new_node;
+        return 0;
+    }
+    Node *current = *head;
+    while (current->next != NULL) {
+        current = current->next;
+    }
+    current->next = new_node;
+    return 0;
+}
+
+static Node *divide_lists(const Node *list1, const Node *list2, int *error)
+{
+    Node *result = NULL;
+    const Node *ptr1 = list1;
+    const Node *ptr2 = list2;
+    *error = 0;
+
+    if (list1 == NULL || list2 == NULL) {
+        *error = 1;
+        return NULL;
+    }
+
+    while (ptr1 != NULL && ptr2 != NULL) {
+        if (ptr2->data == 0.0) {
+            *error = 1;
+            free_list(result);
+            return NULL;
+        }
+        if (append_node(&result, ptr1->data / ptr2->data) != 0) {
+            *error = 1;
+            free_list(result);
+            return NULL;
+        }
+        ptr1 = ptr1->next;
+        ptr2 = ptr2->next;
+    }
+
+    if (ptr1 != NULL || ptr2 != NULL) {
+        *error = 1;
+        free_list(result);
+        return NULL;
+    }
+
+    return result;
+}
+
+static void print_list(const Node *head)
+{
+    const Node *current = head;
+    while (current != NULL) {
+        printf("%.2f", current->data);
+        if (current->next != NULL) {
+            printf(" -> ");
+        }
+        current = current->next;
+    }
+    printf("\n");
+}
+
+int main(void)
+{
+    Node *list1 = NULL;
+    Node *list2 = NULL;
+    Node *result = NULL;
+    int error = 0;
+    size_t i;
+
+    double values1[] = {10.0, 20.0, 30.0, 40.0, 50.0};
+    double values2[] = {2.0, 4.0, 5.0, 8.0, 10.0};
+    size_t size = sizeof(values1) / sizeof(values1[0]);
+
+    for (i = 0; i < size; i++) {
+        if (append_node(&list1, values1[i]) != 0) {
+            fprintf(stderr, "Memory allocation failed\n");
+            free_list(list1);
+            free_list(list2);
+            return EXIT_FAILURE;
+        }
+        if (append_node(&list2, values2[i]) != 0) {
+            fprintf(stderr, "Memory allocation failed\n");
+            free_list(list1);
+            free_list(list2);
+            return EXIT_FAILURE;
+        }
+    }
+
+    printf("List 1: ");
+    print_list(list1);
+    printf("List 2: ");
+    print_list(list2);
+
+    result = divide_lists(list1, list2, &error);
+    if (error != 0) {
+        fprintf(stderr, "Error: division failed (division by zero, length mismatch, or allocation failure)\n");
+        free_list(list1);
+        free_list(list2);
+        return EXIT_FAILURE;
+    }
+
+    printf("Result: ");
+    print_list(result);
+
+    free_list(list1);
+    free_list(list2);
+    free_list(result);
+
+    return EXIT_SUCCESS;
+}

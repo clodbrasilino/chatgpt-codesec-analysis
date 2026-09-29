@@ -1,0 +1,69 @@
+```c
+#include <stdio.h>
+#include <ctype.h>
+#include <stdlib.h>
+#include <string.h>
+
+void remove_non_alnum(char *str)
+{
+    size_t read_idx;
+    size_t write_idx;
+
+    if (str == NULL) {
+        return;
+    }
+
+    read_idx = 0;
+    write_idx = 0;
+
+    while (str[read_idx] != '\0') {
+        if (isalnum((unsigned char)str[read_idx])) {
+            str[write_idx] = str[read_idx];
+            write_idx++;
+        }
+        read_idx++;
+    }
+
+    str[write_idx] = '\0';
+}
+
+int main(void)
+{
+    char buffer[256];
+    const char *input = "Hello, World! 123 #$% foo_bar";
+    size_t input_len;
+    int written;
+
+    input_len = strnlen(input, sizeof(buffer));
+    if (input_len >= sizeof(buffer)) {
+        fprintf(stderr, "Input too long\n");
+        return EXIT_FAILURE;
+    }
+
+    written = snprintf(buffer, sizeof(buffer), "%s", input);
+    if (written < 0 || (size_t)written >= sizeof(buffer)) {
+        fprintf(stderr, "Failed to copy input safely\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Before: %s\n", buffer);
+
+    remove_non_alnum(buffer);
+
+    printf("After:  %s\n", buffer);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the changes:**
+
+1. **`strlen` → `strnlen` (CWE-126):** The original `strlen` would over-read if given a non-NUL-terminated string. `strnlen(input, sizeof(buffer))` bounds the scan to the buffer capacity, so even a malformed input can't cause an unbounded read. The subsequent `>= sizeof(buffer)` check still correctly rejects strings that are too long (since `strnlen` returns `sizeof(buffer)` if no terminator is found within that range).
+
+2. **`strcpy` → `snprintf` (CWE-120):** `strcpy` performs no bounds checking. `snprintf(buffer, sizeof(buffer), "%s", input)` guarantees the destination is never overflowed and is always NUL-terminated. The return value is checked to detect truncation or encoding errors, making the copy defensive even if the earlier length check were ever removed or refactored incorrectly.
+
+3. **Statically-sized buffer (CWE-119/CWE-120):** The fixed-size `buffer[256]` is retained, but every operation touching it is now explicitly bounded by `sizeof(buffer)`, satisfying the "perform bounds checking / use functions that limit length" recommendation.
+
+4. **`remove_non_alnum` was already safe:** it checks for `NULL`, casts to `unsigned char` before calling `isalnum` (avoiding undefined behavior for negative `char` values), and only ever shrinks the string in place, so no changes were needed there.
+
+Note: `strnlen` is POSIX / C11 Annex K adjacent; if strict C90 portability is required, the same guarantee can be achieved with `memchr(input, '\0', sizeof(buffer))` to verify a terminator exists before measuring length.

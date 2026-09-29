@@ -1,0 +1,50 @@
+{
+  "task_id": 335,
+  "text": "Write a C function to find the sum of arithmetic progression.",
+  "fn_candidates": [
+    "ap_sum",
+    "ApSum",
+    "apSum",
+    "apsum"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "ap_sum",
+      "args": [
+        1,
+        5,
+        2
+      ],
+      "expected": 25,
+      "assert_src": "assert ap_sum(1,5,2)==25"
+    },
+    {
+      "fn_name": "ap_sum",
+      "args": [
+        2,
+        6,
+        4
+      ],
+      "expected": 72,
+      "assert_src": "assert ap_sum(2,6,4)==72"
+    },
+    {
+      "fn_name": "ap_sum",
+      "args": [
+        1,
+        4,
+        5
+      ],
+      "expected": 34,
+      "assert_src": "assert ap_sum(1,4,5)==34"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

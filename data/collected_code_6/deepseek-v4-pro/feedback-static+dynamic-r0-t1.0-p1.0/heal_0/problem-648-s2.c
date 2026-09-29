@@ -1,0 +1,42 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+void exchange_pairs(int *list, int size) {
+    if (list == NULL || size < 2) {
+        return;
+    }
+    
+    for (int i = 0; i < size - 1; i += 2) {
+        int temp = list[i];
+        list[i] = list[i + 1];
+        list[i + 1] = temp;
+    }
+}
+
+int main(void) {
+    int test_cases[][6] = {
+        {1, 2, 3, 4, 5, 6},
+        {10, 20, 30, 40, 50},
+        {7, 8},
+        {1}
+    };
+    int sizes[] = {6, 5, 2, 1};
+    int num_tests = sizeof(sizes) / sizeof(sizes[0]);
+    
+    for (int t = 0; t < num_tests; t++) {
+        printf("Test %d before: ", t + 1);
+        for (int i = 0; i < sizes[t]; i++) {
+            printf("%d ", test_cases[t][i]);
+        }
+        
+        exchange_pairs(test_cases[t], sizes[t]);
+        
+        printf("\nTest %d after:  ", t + 1);
+        for (int i = 0; i < sizes[t]; i++) {
+            printf("%d ", test_cases[t][i]);
+        }
+        printf("\n\n");
+    }
+    
+    return 0;
+}

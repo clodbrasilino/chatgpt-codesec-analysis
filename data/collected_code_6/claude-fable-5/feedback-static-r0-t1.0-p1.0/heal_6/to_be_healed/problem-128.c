@@ -1,0 +1,160 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+#define MAX_WORD_LEN 4096
+
+static size_t bounded_strlen(const char *s, size_t max_len)
+{
+    size_t len = 0;
+
+    while (len < max_len && s[len] != '\0') {
+        len++;
+    }
+    return len;
+}
+
+static char *duplicate_word(const char *word, size_t len)
+{
+    char *copy;
+    size_t alloc_size;
+    /* Possible weaknesses found:
+     *  The scope of the variable 'i' can be reduced. [variableScope]
+     */
+    size_t i;
+
+    if (word == NULL || len >= MAX_WORD_LEN) {
+        return NULL;
+    }
+
+    if (len > SIZE_MAX - 1) {
+        return NULL;
+    }
+
+    alloc_size = len + 1;
+
+    copy = malloc(alloc_size);
+    if (copy == NULL) {
+        return NULL;
+    }
+
+    if (len > 0) {
+        if (bounded_strlen(word, MAX_WORD_LEN) < len) {
+            free(copy);
+            return NULL;
+        }
+        for (i = 0; i < len && i < alloc_size - 1; i++) {
+            copy[i] = word[i];
+        }
+    }
+    copy[len] = '\0';
+
+    return copy;
+}
+
+char **shortlist_words(const char **words, size_t count, size_t n, size_t *result_count)
+{
+    char **result = NULL;
+    size_t found = 0;
+    size_t i;
+
+    if (words == NULL || result_count == NULL) {
+        return NULL;
+    }
+
+    *result_count = 0;
+
+    for (i = 0; i < count; i++) {
+        if (words[i] != NULL) {
+            size_t len = bounded_strlen(words[i], MAX_WORD_LEN);
+            if (len < MAX_WORD_LEN && len > n) {
+                found++;
+            }
+        }
+    }
+
+    if (found == 0) {
+        return NULL;
+    }
+
+    if (found > SIZE_MAX / sizeof(char *)) {
+        return NULL;
+    }
+
+    result = calloc(found, sizeof(char *));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    for (i = 0; i < count && *result_count < found; i++) {
+        if (words[i] != NULL) {
+            size_t len = bounded_strlen(words[i], MAX_WORD_LEN);
+            if (len < MAX_WORD_LEN && len > n) {
+                char *copy = duplicate_word(words[i], len);
+                if (copy == NULL) {
+                    size_t j;
+                    for (j = 0; j < *result_count; j++) {
+                        free(result[j]);
+                    }
+                    free(result);
+                    *result_count = 0;
+                    return NULL;
+                }
+                result[*result_count] = copy;
+                (*result_count)++;
+            }
+        }
+    }
+
+    return result;
+}
+
+void free_shortlist(char **list, size_t count)
+{
+    size_t i;
+
+    if (list == NULL) {
+        return;
+    }
+
+    for (i = 0; i < count; i++) {
+        free(list[i]);
+    }
+    free(list);
+}
+
+int main(void)
+{
+    const char *words[] = { "apple", "cat", "banana", "dog", "elephant", "hi" };
+    size_t count = sizeof(words) / sizeof(words[0]);
+    size_t n = 3;
+    size_t result_count = 0;
+    char **result;
+    size_t i;
+
+    result = shortlist_words(words, count, n, &result_count);
+
+    if (result == NULL) {
+        if (printf("No words longer than %zu found.\n", n) < 0) {
+            return EXIT_FAILURE;
+        }
+        return EXIT_SUCCESS;
+    }
+
+    if (printf("Words longer than %zu:\n", n) < 0) {
+        free_shortlist(result, result_count);
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i < result_count; i++) {
+        if (printf("%s\n", result[i]) < 0) {
+            free_shortlist(result, result_count);
+            return EXIT_FAILURE;
+        }
+    }
+
+    free_shortlist(result, result_count);
+
+    return EXIT_SUCCESS;
+}

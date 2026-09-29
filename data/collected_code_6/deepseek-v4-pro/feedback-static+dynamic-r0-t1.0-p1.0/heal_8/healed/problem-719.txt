@@ -1,0 +1,68 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+
+bool match_pattern(const char *str) {
+    if (str == NULL) {
+        return false;
+    }
+    
+    if (str[0] == '\0') {
+        return false;
+    }
+    
+    if (str[0] != 'a') {
+        return false;
+    }
+    
+    const char *ptr = str + 1;
+    while (*ptr != '\0') {
+        if (*ptr != 'b') {
+            return false;
+        }
+        ptr++;
+    }
+    
+    return true;
+}
+
+int main(void) {
+    char input[256];
+    
+    printf("Enter a string: ");
+    if (fgets(input, sizeof(input), stdin) == NULL) {
+        return 1;
+    }
+    
+    int has_newline = 0;
+    for (size_t i = 0; i < sizeof(input); i++) {
+        if (input[i] == '\n') {
+            input[i] = '\0';
+            has_newline = 1;
+            break;
+        }
+        if (input[i] == '\0') {
+            break;
+        }
+    }
+    
+    if (!has_newline && input[0] != '\0') {
+        int c;
+        while ((c = getchar()) != '\n' && c != EOF) {
+        }
+    }
+    
+    if (input[0] == '\0') {
+        return 1;
+    }
+    
+    if (match_pattern(input)) {
+        printf("Match\n");
+    } else {
+        printf("No match\n");
+    }
+    
+    return 0;
+}
+```

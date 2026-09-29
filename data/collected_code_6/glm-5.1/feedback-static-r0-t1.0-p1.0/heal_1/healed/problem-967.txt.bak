@@ -1,0 +1,52 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+int contains_all_vowels(const char *str) {
+    if (str == NULL) {
+        return 0;
+    }
+
+    int a_found = 0;
+    int e_found = 0;
+    int i_found = 0;
+    int o_found = 0;
+    int u_found = 0;
+
+    for (size_t idx = 0; idx < strlen(str); idx++) {
+        char ch = tolower((unsigned char)str[idx]);
+        if (ch == 'a') {
+            a_found = 1;
+        } else if (ch == 'e') {
+            e_found = 1;
+        } else if (ch == 'i') {
+            i_found = 1;
+        } else if (ch == 'o') {
+            o_found = 1;
+        } else if (ch == 'u') {
+            u_found = 1;
+        }
+
+        if (a_found && e_found && i_found && o_found && u_found) {
+            return 1;
+        }
+    }
+
+    return 0;
+}
+
+int main(int argc, char * const argv[]) {
+    if (argc != 2) {
+        fprintf(stderr, "Usage: %s <string>\n", argv[0]);
+        return EXIT_FAILURE;
+    }
+
+    if (contains_all_vowels(argv[1])) {
+        printf("Accepted\n");
+    } else {
+        printf("Rejected\n");
+    }
+
+    return EXIT_SUCCESS;
+}

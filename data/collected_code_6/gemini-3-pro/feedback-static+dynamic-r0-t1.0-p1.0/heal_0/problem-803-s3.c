@@ -1,0 +1,30 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <math.h>
+#include <stdlib.h>
+
+bool is_perfect_square(int n) {
+    if (n < 0) {
+        return false;
+    }
+    
+    int root = (int)round(sqrt(n));
+    return (root * root == n);
+}
+
+int main(void) {
+    int number = 0;
+    
+    if (scanf("%d", &number) != 1) {
+        fprintf(stderr, "Invalid input.\n");
+        return EXIT_FAILURE;
+    }
+    
+    if (is_perfect_square(number)) {
+        printf("%d is a perfect square.\n", number);
+    } else {
+        printf("%d is not a perfect square.\n", number);
+    }
+    
+    return EXIT_SUCCESS;
+}

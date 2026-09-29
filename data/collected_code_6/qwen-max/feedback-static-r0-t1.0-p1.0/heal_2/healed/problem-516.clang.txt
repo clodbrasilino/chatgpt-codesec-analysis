@@ -1,0 +1,15 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-516.c:36:6: error: conflicting types for 'radixsort'
+   36 | void radixsort(int arr[], int n) {
+      |      ^
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/_stdlib.h:373:6: note: previous declaration is here
+  373 | int      radixsort(const unsigned char *_LIBC_UNSAFE_INDEXABLE *_LIBC_COUNT(__nel) __base, int __nel, const unsigned char *_LIBC_COUNT_OR_NULL(256) __table,
+      |          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-516.c:47:21: error: too few arguments to function call, expected 4, have 2
+   47 |     radixsort(arr, n);
+      |     ~~~~~~~~~       ^
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/_stdlib.h:373:6: note: 'radixsort' declared here
+  373 | int      radixsort(const unsigned char *_LIBC_UNSAFE_INDEXABLE *_LIBC_COUNT(__nel) __base, int __nel, const unsigned char *_LIBC_COUNT_OR_NULL(256) __table,
+      |          ^         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  374 |             unsigned __endbyte);
+      |             ~~~~~~~~~~~~~~~~~~
+2 errors generated.

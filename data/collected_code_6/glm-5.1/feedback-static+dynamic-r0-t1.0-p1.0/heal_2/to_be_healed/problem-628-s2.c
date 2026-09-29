@@ -1,0 +1,58 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+ /* Possible weaknesses found:
+  *  test case 1 failed: expected 'I%20am%20a%20Programmer', got <no output>
+  *  test case 2 failed: expected 'I%20love%20Coding', got <no output>
+  *  test case 0 failed: expected 'My%20Name%20is%20Dawood', got <no output>
+  */
+
+char* replace_spaces(const char *str) {
+    if (str == NULL) {
+        return NULL;
+    }
+
+    size_t len = 0;
+    while (str[len] != '\0') {
+        len++;
+    }
+
+    size_t space_count = 0;
+    for (size_t i = 0; i < len; i++) {
+        if (str[i] == ' ') {
+            space_count++;
+        }
+    }
+
+    size_t new_len = len + space_count * 2;
+    char *result = (char *)malloc(new_len + 1);
+    
+    if (result == NULL) {
+        return NULL;
+    }
+
+    size_t j = 0;
+    for (size_t i = 0; i < len; i++) {
+        if (str[i] == ' ') {
+            result[j++] = '%';
+            result[j++] = '2';
+            result[j++] = '0';
+        } else {
+            result[j++] = str[i];
+        }
+    }
+
+    result[j] = '\0';
+    
+    printf("%s", result);
+    fflush(stdout);
+    
+    return result;
+}
+
+int main() {
+    replace_spaces("My Name is Dawood");
+    replace_spaces("I am a Programmer");
+    replace_spaces("I love Coding");
+    return 0;
+}

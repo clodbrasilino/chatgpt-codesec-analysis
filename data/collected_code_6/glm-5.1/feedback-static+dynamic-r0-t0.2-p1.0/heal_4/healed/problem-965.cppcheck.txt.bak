@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_4/healed/problem-965.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_4/healed/problem-965.c:68:30: style: Condition 'camel_to_snake(NULL)==NULL' is always true [knownConditionTrueFalse]
+    if (camel_to_snake(NULL) == NULL) {
+                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_4/healed/problem-965.c:68:23: note: Calling function 'camel_to_snake' returns 0
+    if (camel_to_snake(NULL) == NULL) {
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_4/healed/problem-965.c:68:30: note: Condition 'camel_to_snake(NULL)==NULL' is always true
+    if (camel_to_snake(NULL) == NULL) {
+                             ^

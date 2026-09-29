@@ -1,0 +1,90 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+#include <stdint.h>
+
+int sum_arithmetic_progression(int first_term, int common_difference, int number_of_terms) {
+    if (number_of_terms <= 0) {
+        return 0;
+    }
+    
+    if (common_difference == 0) {
+        long long product = (long long)first_term * number_of_terms;
+        if (product > INT_MAX || product < INT_MIN) {
+            return 0;
+        }
+        return (int)product;
+    }
+    
+    long long ll_first = first_term;
+    long long ll_diff = common_difference;
+    long long ll_n = number_of_terms;
+    
+    long long last_term = ll_first + (ll_n - 1) * ll_diff;
+    
+    long long sum_first_last = ll_first + last_term;
+    
+    long long sum;
+    if (ll_n % 2 == 0) {
+        if (ll_n / 2 > LLONG_MAX / sum_first_last || ll_n / 2 < LLONG_MIN / sum_first_last) {
+            return 0;
+        }
+        sum = (ll_n / 2) * sum_first_last;
+    } else {
+        if (sum_first_last % 2 != 0) {
+            long long half_sum = sum_first_last / 2;
+            if (ll_n > LLONG_MAX / half_sum || ll_n < LLONG_MIN / half_sum) {
+                return 0;
+            }
+            sum = ll_n * half_sum + (sum_first_last > 0 ? 1 : -1) * (ll_n / 2 + 1);
+        } else {
+            long long half_sum = sum_first_last / 2;
+            if (ll_n > LLONG_MAX / half_sum || ll_n < LLONG_MIN / half_sum) {
+                return 0;
+            }
+            sum = ll_n * half_sum;
+        }
+    }
+    
+    if (sum > INT_MAX || sum < INT_MIN) {
+        return 0;
+    }
+    
+    return (int)sum;
+}
+ /* Possible weaknesses found:
+  * Fuzzing found a crash (signal 6) on input id:000000,sig:06,src:000007,time:41715,execs:26447,op:havoc,rep:40; likely memory-safety defect
+  */
+
+int main(void) {
+    int a1, d, n;
+    int result;
+    
+    printf("Enter first term: ");
+    if (scanf("%d", &a1) != 1) {
+        fprintf(stderr, "Error: Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("Enter common difference: ");
+    if (scanf("%d", &d) != 1) {
+        fprintf(stderr, "Error: Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("Enter number of terms: ");
+    if (scanf("%d", &n) != 1) {
+        fprintf(stderr, "Error: Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    if (n <= 0) {
+        fprintf(stderr, "Error: Number of terms must be positive\n");
+        return EXIT_FAILURE;
+    }
+    
+    result = sum_arithmetic_progression(a1, d, n);
+    printf("Sum of arithmetic progression: %d\n", result);
+    
+    return EXIT_SUCCESS;
+}

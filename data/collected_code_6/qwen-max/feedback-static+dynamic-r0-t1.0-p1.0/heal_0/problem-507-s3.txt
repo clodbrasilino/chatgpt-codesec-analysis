@@ -1,0 +1,70 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+struct Node {
+    char *word;
+    struct Node *next;
+};
+
+void add_word(struct Node **head, const char *data) {
+    struct Node *newNode = (struct Node *)malloc(sizeof(struct Node));
+    newNode->word = strdup(data);
+    newNode->next = *head;
+    *head = newNode;
+}
+
+void remove_word(struct Node **head, const char *target) {
+    struct Node *temp = *head;
+    struct Node *prev = NULL;
+
+    while (temp != NULL) {
+        if (strcmp(temp->word, target) == 0) {
+            if (prev == NULL) {
+                *head = temp->next;
+            } else {
+                prev->next = temp->next;
+            }
+            free(temp->word);
+            free(temp);
+            temp = prev ? prev->next : *head;
+        } else {
+            prev = temp;
+            temp = temp->next;
+        }
+    }
+}
+
+void free_list(struct Node *head) {
+    struct Node *current = head;
+    while (current != NULL) {
+        struct Node *next = current->next;
+        free(current->word);
+        free(current);
+        current = next;
+    }
+}
+
+int main() {
+    struct Node *words = NULL;
+    
+    add_word(&words, "apple");
+    add_word(&words, "banana");
+    add_word(&words, "cherry");
+    add_word(&words, "date");
+    add_word(&words, "banana");
+
+    remove_word(&words, "banana");
+
+    struct Node *temp = words;
+    while (temp != NULL) {
+        printf("%s\n", temp->word);
+        temp = temp->next;
+    }
+
+    free_list(words);
+
+    return 0;
+}
+```

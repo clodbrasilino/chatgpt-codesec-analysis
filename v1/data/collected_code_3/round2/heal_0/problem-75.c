@@ -1,0 +1,32 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+#define SIZE 10
+
+bool isDivisible(int arr[], int n, int k) {
+    for(int i = 0; i < n; i++) {
+        if(arr[i] % k != 0) {
+            return false;
+        }
+    }
+    return true;
+}
+
+void findTuples(int tuples[][SIZE], int m, int n, int k) {
+    for(int i = 0; i < m; i++) {
+        if(isDivisible(tuples[i], n, k)) {
+            printf("Tuple %d: ", i+1);
+            for(int j = 0; j < n; j++) {
+                printf("%d ", tuples[i][j]);
+            }
+            printf("\n");
+        }
+    }
+}
+
+int main() {
+    int tuples[3][SIZE] = {{10, 20, 30, 40}, {15, 25, 35, 45}, {50, 60, 70, 80}};
+    int k = 5;
+    findTuples(tuples, 3, 4, k);
+    return 0;
+}

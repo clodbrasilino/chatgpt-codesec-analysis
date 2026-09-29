@@ -1,0 +1,67 @@
+./collected_code_4/round2//heal_0/problem-495.c: In function 'removeLowercase':
+./collected_code_4/round2//heal_0/problem-495.c:14:22: warning: implicit declaration of function 'malloc' [-Wimplicit-function-declaration]
+   14 |     newStr = (char*) malloc(strlen(str)+1);
+      |                      ^~~~~~
+./collected_code_4/round2//heal_0/problem-495.c:4:1: note: include '<stdlib.h>' or provide a declaration of 'malloc'
+    3 | #include <stdio.h>
+  +++ |+#include <stdlib.h>
+    4 | 
+./collected_code_4/round2//heal_0/problem-495.c:14:22: warning: incompatible implicit declaration of built-in function 'malloc' [-Wbuiltin-declaration-mismatch]
+   14 |     newStr = (char*) malloc(strlen(str)+1);
+      |                      ^~~~~~
+./collected_code_4/round2//heal_0/problem-495.c:14:22: note: include '<stdlib.h>' or provide a declaration of 'malloc'
+./collected_code_4/round2//heal_0/problem-495.c: In function 'main':
+./collected_code_4/round2//heal_0/problem-495.c:35:5: warning: implicit declaration of function 'free' [-Wimplicit-function-declaration]
+   35 |     free(output);
+      |     ^~~~
+./collected_code_4/round2//heal_0/problem-495.c:35:5: note: include '<stdlib.h>' or provide a declaration of 'free'
+./collected_code_4/round2//heal_0/problem-495.c:35:5: warning: incompatible implicit declaration of built-in function 'free' [-Wbuiltin-declaration-mismatch]
+./collected_code_4/round2//heal_0/problem-495.c:35:5: note: include '<stdlib.h>' or provide a declaration of 'free'
+./collected_code_4/round2//heal_0/problem-495.c:34:5: warning: use of NULL 'output' where non-null expected [CWE-476] [-Wanalyzer-null-argument]
+   34 |     printf("%s\n", output);
+      |     ^~~~~~~~~~~~~~~~~~~~~~
+  'main': events 1-2
+    |
+    |   31 | int main()  {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |   32 |     char input[] = "HeLlO WoRlD!";
+    |   33 |     char *output = removeLowercase(input);
+    |      |                    ~~~~~~~~~~~~~~~~~~~~~~
+    |      |                    |
+    |      |                    (2) calling 'removeLowercase' from 'main'
+    |
+    +--> 'removeLowercase': events 3-4
+           |
+           |    5 | char *removeLowercase(char *str)  {
+           |      |       ^~~~~~~~~~~~~~~
+           |      |       |
+           |      |       (3) entry to 'removeLowercase'
+           |......
+           |    8 |     char *newStr = NULL;
+           |      |           ~~~~~~
+           |      |           |
+           |      |           (4) 'newStr' is NULL
+           |
+         'removeLowercase': event 5
+           |
+           |   12 |         return NULL;
+           |      |                ^~~~
+           |      |                |
+           |      |                (5) '0' is NULL
+           |
+    <------+
+    |
+  'main': events 6-7
+    |
+    |   33 |     char *output = removeLowercase(input);
+    |      |                    ^~~~~~~~~~~~~~~~~~~~~~
+    |      |                    |
+    |      |                    (6) returning to 'main' from 'removeLowercase'
+    |   34 |     printf("%s\n", output);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (7) argument 1 ('output') NULL where non-null expected
+    |
+<built-in>: note: argument 1 of '__builtin_puts' must be non-null

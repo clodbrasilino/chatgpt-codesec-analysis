@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-640-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-640-s2.c:17:53: style: Condition 'str[i]!=')'' is always true [knownConditionTrueFalse]
+        } else if (parenthesis_level == 0 && str[i] != ')' && str[i] != '(') {
+                                                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-640-s2.c:15:27: note: Assuming condition 'str[i]==')'' is false
+        } else if (str[i] == ')') {
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-640-s2.c:17:53: note: Condition 'str[i]!=')'' is always true
+        } else if (parenthesis_level == 0 && str[i] != ')' && str[i] != '(') {
+                                                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-640-s2.c:17:70: style: Condition 'str[i]!='('' is always true [knownConditionTrueFalse]
+        } else if (parenthesis_level == 0 && str[i] != ')' && str[i] != '(') {
+                                                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-640-s2.c:13:20: note: Assuming condition 'str[i]=='('' is false
+        if (str[i] == '(') {
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-640-s2.c:17:70: note: Condition 'str[i]!='('' is always true
+        } else if (parenthesis_level == 0 && str[i] != ')' && str[i] != '(') {
+                                                                     ^

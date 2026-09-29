@@ -1,0 +1,43 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-80-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-80-s3.c:15:11: style: Condition 'n>0' is always true [knownConditionTrueFalse]
+    if (n > 0 && n1 > 0 && n2 > 0 && n1 < n2 && (n1 / 6) < (LONG_MAX / n2) && (n * (n1 / 6)) < (LONG_MAX / n2)) {
+          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-80-s3.c:7:11: note: Assuming that condition 'n<=0' is not redundant
+    if (n <= 0) return 0;
+          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-80-s3.c:9:11: note: Assuming condition is false
+    if (n > (long)((sqrt(8.0 * (double)max_div_6 + 1.0) - 1.0) / 2.0)) {
+          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-80-s3.c:15:11: note: Condition 'n>0' is always true
+    if (n > 0 && n1 > 0 && n2 > 0 && n1 < n2 && (n1 / 6) < (LONG_MAX / n2) && (n * (n1 / 6)) < (LONG_MAX / n2)) {
+          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-80-s3.c:15:21: style: Condition 'n1>0' is always true [knownConditionTrueFalse]
+    if (n > 0 && n1 > 0 && n2 > 0 && n1 < n2 && (n1 / 6) < (LONG_MAX / n2) && (n * (n1 / 6)) < (LONG_MAX / n2)) {
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-80-s3.c:7:11: note: Assuming that condition 'n<=0' is not redundant
+    if (n <= 0) return 0;
+          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-80-s3.c:9:11: note: Assuming condition is false
+    if (n > (long)((sqrt(8.0 * (double)max_div_6 + 1.0) - 1.0) / 2.0)) {
+          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-80-s3.c:13:17: note: Assignment 'n1=n+1', assigned value is greater than 1
+    long n1 = n + 1;
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-80-s3.c:15:21: note: Condition 'n1>0' is always true
+    if (n > 0 && n1 > 0 && n2 > 0 && n1 < n2 && (n1 / 6) < (LONG_MAX / n2) && (n * (n1 / 6)) < (LONG_MAX / n2)) {
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-80-s3.c:15:31: style: Condition 'n2>0' is always true [knownConditionTrueFalse]
+    if (n > 0 && n1 > 0 && n2 > 0 && n1 < n2 && (n1 / 6) < (LONG_MAX / n2) && (n * (n1 / 6)) < (LONG_MAX / n2)) {
+                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-80-s3.c:7:11: note: Assuming that condition 'n<=0' is not redundant
+    if (n <= 0) return 0;
+          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-80-s3.c:9:11: note: Assuming condition is false
+    if (n > (long)((sqrt(8.0 * (double)max_div_6 + 1.0) - 1.0) / 2.0)) {
+          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-80-s3.c:14:17: note: Assignment 'n2=n+2', assigned value is greater than 2
+    long n2 = n + 2;
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-80-s3.c:15:31: note: Condition 'n2>0' is always true
+    if (n > 0 && n1 > 0 && n2 > 0 && n1 < n2 && (n1 / 6) < (LONG_MAX / n2) && (n * (n1 / 6)) < (LONG_MAX / n2)) {
+                              ^

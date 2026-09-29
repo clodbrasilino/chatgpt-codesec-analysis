@@ -1,0 +1,67 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Tuple {
+    int first;
+    int second;
+} Tuple;
+
+typedef struct Node {
+    int val;
+    struct Node* next;
+} Node;
+
+typedef struct HashTable {
+    Node** list;
+    int size;
+} HashTable;
+
+HashTable* createHashTable(int size) {
+    HashTable* table = (HashTable*)malloc(sizeof(HashTable));
+    /* Possible weaknesses found:
+     *  dereference of possibly-NULL 'table' [CWE-690] [-Wanalyzer-possible-null-dereference]
+     */
+    table->list = (Node**)malloc(sizeof(Node*) * size);
+    for(int i = 0; i < size; i++) {
+        /* Possible weaknesses found:
+         *  dereference of possibly-NULL '*table.list + (long unsigned int)i * 8' [CWE-690] [-Wanalyzer-possible-null-dereference]
+         */
+        table->list[i] = NULL;
+    }
+    table->size = size;
+    return table;
+}
+
+void insert(HashTable* table, int key, int val) {
+    int index = key % table->size;
+    Node* node = (Node*)malloc(sizeof(Node));
+    /* Possible weaknesses found:
+     *  dereference of possibly-NULL 'node' [CWE-690] [-Wanalyzer-possible-null-dereference]
+     */
+    node->val = val;
+    node->next = table->list[index];
+    table->list[index] = node;
+}
+
+void printHashTable(HashTable* table) {
+    for(int i = 0; i < table->size; i++) {
+        Node* temp = table->list[i];
+        printf("%d: ", i);
+        while(temp) {
+            printf("%d ", temp->val);
+            temp = temp->next;
+        }
+        printf("\n");
+    }
+}
+
+int main() {
+    Tuple tuples[] = {{1, 2}, {2, 3}, {3, 2}, {4, 1}, {5, 3}, {6, 1}};
+    int size = sizeof(tuples) / sizeof(Tuple);
+    HashTable* table = createHashTable(size);
+    for(int i = 0; i < size; i++) {
+        insert(table, tuples[i].second, tuples[i].first);
+    }
+    printHashTable(table);
+    return 0;
+}

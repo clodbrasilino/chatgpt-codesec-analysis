@@ -1,0 +1,20 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+bool differAtOneBitPosition(int num1, int num2) {
+    int xorResult = num1 ^ num2;
+    return (xorResult && !(xorResult & (xorResult - 1)));
+}
+
+int main() {
+    int a = 10;
+    int b = 12;
+    
+    if (differAtOneBitPosition(a, b)) {
+        printf("The numbers differ at one bit position only.\n");
+    } else {
+        printf("The numbers do not differ at one bit position only.\n");
+    }
+    
+    return 0;
+}

@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-899-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-899-s2.c:4:35: style: Parameter 'arr' can be declared as const array [constParameter]
+int check_sortable_by_corners(int arr[], int n) {
+                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-899-s2.c:57:13: warning: Uninitialized variable: sorted_arr [uninitvar]
+        if (sorted_arr[i] < sorted_arr[i-1]) return 0;
+            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-899-s2.c:15:17: note: Assuming condition is false
+    while (left <= right) {
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-899-s2.c:57:13: note: Uninitialized variable: sorted_arr
+        if (sorted_arr[i] < sorted_arr[i-1]) return 0;
+            ^

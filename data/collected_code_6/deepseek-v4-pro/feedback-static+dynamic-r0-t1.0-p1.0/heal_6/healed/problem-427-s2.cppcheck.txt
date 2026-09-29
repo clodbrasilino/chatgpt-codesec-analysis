@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-427-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-427-s2.c:35:52: style: Condition 'input_len!=10' is always true [knownConditionTrueFalse]
+    if (input_len >= DATE_BUFFER_SIZE && input_len != 10) {
+                                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-427-s2.c:35:19: note: Assuming that condition 'input_len>=11' is not redundant
+    if (input_len >= DATE_BUFFER_SIZE && input_len != 10) {
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-427-s2.c:35:52: note: Condition 'input_len!=10' is always true
+    if (input_len >= DATE_BUFFER_SIZE && input_len != 10) {
+                                                   ^

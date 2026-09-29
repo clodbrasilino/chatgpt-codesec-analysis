@@ -1,0 +1,112 @@
+#define _POSIX_C_SOURCE 200809L
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+#include <string.h>
+#include <ctype.h>
+
+#define MIN_PASSWORD_LENGTH ((size_t)8)
+#define MAX_PASSWORD_LENGTH ((size_t)64)
+#define INPUT_BUFFER_SIZE (MAX_PASSWORD_LENGTH + 2)
+
+bool is_valid_password(const char *password, size_t buffer_size);
+
+bool is_valid_password(const char *password, size_t buffer_size)
+{
+    size_t length;
+    size_t i;
+    bool has_upper = false;
+    bool has_lower = false;
+    bool has_digit = false;
+    bool has_special = false;
+
+    if (password == NULL || buffer_size == 0)
+    {
+        return false;
+    }
+
+    length = strnlen(password, buffer_size);
+
+    if (length < MIN_PASSWORD_LENGTH || length > MAX_PASSWORD_LENGTH)
+    {
+        return false;
+    }
+
+    for (i = 0; i < length; i++)
+    {
+        unsigned char c = (unsigned char)password[i];
+
+        if (isupper(c))
+        {
+            has_upper = true;
+        }
+        else if (islower(c))
+        {
+            has_lower = true;
+        }
+        else if (isdigit(c))
+        {
+            has_digit = true;
+        }
+        else if (ispunct(c))
+        {
+            has_special = true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    return has_upper && has_lower && has_digit && has_special;
+}
+
+int main(void)
+{
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char password[INPUT_BUFFER_SIZE];
+    size_t input_length;
+
+    printf("Enter password: ");
+
+    if (fgets(password, sizeof(password), stdin) == NULL)
+    {
+        fprintf(stderr, "Failed to read input.\n");
+        return EXIT_FAILURE;
+    }
+
+    input_length = strnlen(password, sizeof(password));
+
+    if (input_length > 0 && password[input_length - 1] == '\n')
+    {
+        password[input_length - 1] = '\0';
+    }
+    else if (input_length == sizeof(password) - 1)
+    {
+        int ch;
+
+        /* Possible weaknesses found:
+         * Flawfinder getchar: Check buffer boundaries if used in a loop including recursive loops (CWE-120, CWE-20). (risk 1, buffer)
+         */
+        while ((ch = getchar()) != '\n' && ch != EOF)
+        {
+        }
+
+        printf("Password is invalid.\n");
+        return EXIT_SUCCESS;
+    }
+
+    if (is_valid_password(password, sizeof(password)))
+    {
+        printf("Password is valid.\n");
+    }
+    else
+    {
+        printf("Password is invalid.\n");
+    }
+
+    return EXIT_SUCCESS;
+}

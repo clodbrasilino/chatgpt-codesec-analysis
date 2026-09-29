@@ -1,0 +1,19 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+double average(int *numbers, size_t length) {
+    if (length == 0) return 0.0;
+    double sum = 0.0;
+    for (size_t i = 0; i < length; ++i) {
+        sum += numbers[i];
+    }
+    return sum / length;
+}
+
+int main() {
+    int numbers[] = {10, 20, 30, 40, 50};
+    size_t length = sizeof(numbers) / sizeof(numbers[0]);
+    double avg = average(numbers, length);
+    printf("The average is: %.2f\n", avg);
+    return 0;
+}

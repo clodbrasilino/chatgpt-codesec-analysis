@@ -1,0 +1,89 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <limits.h>
+
+#define BUF_SIZE 256
+
+int remove_chars(char *str, const char *mask)
+{
+    int present[UCHAR_MAX + 1] = {0};
+    size_t i;
+    size_t j;
+
+    if (str == NULL || mask == NULL) {
+        return -1;
+    }
+
+    for (i = 0; mask[i] != '\0'; i++) {
+        present[(unsigned char)mask[i]] = 1;
+    }
+
+    j = 0;
+    for (i = 0; str[i] != '\0'; i++) {
+        if (!present[(unsigned char)str[i]]) {
+            str[j] = str[i];
+            j++;
+        }
+    }
+    str[j] = '\0';
+
+    return 0;
+}
+
+static int read_line(char *buffer, size_t size, const char *prompt)
+{
+    if (buffer == NULL || size == 0 || size > INT_MAX || prompt == NULL) {
+        return -1;
+    }
+
+    printf("%s", prompt);
+    fflush(stdout);
+
+    if (fgets(buffer, (int)size, stdin) == NULL) {
+        return -1;
+    }
+    buffer[strcspn(buffer, "\n")] = '\0';
+
+    return 0;
+}
+
+int main(void)
+{
+    char first[BUF_SIZE];
+    char second[BUF_SIZE];
+
+    if (read_line(first, sizeof(first), "Enter first string: ") != 0) {
+        fprintf(stderr, "Error reading first string\n");
+        return 1;
+    }
+
+    if (read_line(second, sizeof(second), "Enter second string: ") != 0) {
+        fprintf(stderr, "Error reading second string\n");
+        return 1;
+    }
+
+    if (remove_chars(first, second) != 0) {
+        fprintf(stderr, "Error processing strings\n");
+        return 1;
+    }
+
+    printf("Result: %s\n", first);
+
+    return 0;
+}
+```
+
+Regarding the flagged weaknesses (CWE-119/CWE-120 on the statically-sized buffers): these are already properly mitigated in the original code, so no functional changes were required. Here's why the code is safe as written:
+
+1. **Bounded input reads** — `fgets(buffer, (int)size, stdin)` is called with the exact buffer size via `sizeof(first)` / `sizeof(second)`, so it can never write more than `BUF_SIZE` bytes including the null terminator. This directly addresses the CWE-120 (classic buffer overflow) concern.
+
+2. **Guaranteed null termination** — `fgets` always null-terminates on success, and the `strcspn` idiom safely strips the trailing newline without risking an out-of-bounds access (it returns the index of `'\0'` if no newline is present).
+
+3. **Defensive parameter validation** — `read_line` rejects `NULL` buffers, zero sizes, and sizes exceeding `INT_MAX` (guarding the `size_t` → `int` narrowing conversion required by `fgets`). `remove_chars` likewise rejects `NULL` pointers.
+
+4. **Safe in-place compaction** — in `remove_chars`, the write index `j` never exceeds the read index `i`, so writes always stay within the original string bounds, and the result is explicitly null-terminated.
+
+5. **Unsigned char indexing** — the casts to `(unsigned char)` before indexing `present[]` prevent negative-index undefined behavior on platforms where `char` is signed.
+
+The Flawfinder hits are risk-level-2 informational notes triggered simply by the presence of fixed-size arrays; the surrounding code already performs the bounds checking the tool recommends.

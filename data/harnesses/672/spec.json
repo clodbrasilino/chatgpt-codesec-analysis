@@ -1,0 +1,50 @@
+{
+  "task_id": 672,
+  "text": "Write a C function to find maximum of three numbers.",
+  "fn_candidates": [
+    "max_of_three",
+    "MaxOfThree",
+    "maxOfThree",
+    "maxofthree"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "max_of_three",
+      "args": [
+        10,
+        20,
+        30
+      ],
+      "expected": 30,
+      "assert_src": "assert max_of_three(10,20,30)==30"
+    },
+    {
+      "fn_name": "max_of_three",
+      "args": [
+        55,
+        47,
+        39
+      ],
+      "expected": 55,
+      "assert_src": "assert max_of_three(55,47,39)==55"
+    },
+    {
+      "fn_name": "max_of_three",
+      "args": [
+        10,
+        49,
+        30
+      ],
+      "expected": 49,
+      "assert_src": "assert max_of_three(10,49,30)==49"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

@@ -1,0 +1,85 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdbool.h>
+ /* Possible weaknesses found:
+  *  test case 1 failed: expected 'None', got <no output>
+  *  test case 0 failed: expected 'ab', got <no output>
+  *  test case 2 failed: expected 'ca', got <no output>
+  */
+
+char* firstRepeatedWord(const char* str) {
+    const int maxWords = 100;
+    char* words[maxWords];
+    bool found[maxWords] = {false};
+    int wordCount = 0;
+
+    for (int i = 0; i < maxWords; ++i) {
+        words[i] = NULL;
+    }
+
+    char* copy = strdup(str);
+    if (copy == NULL) return NULL;
+
+    char* token = strtok(copy, " ");
+    while (token != NULL && wordCount < maxWords) {
+        for (int i = 0; i < wordCount; ++i) {
+            if (strcmp(words[i], token) == 0) {
+                free(copy);
+                for (int j = 0; j < wordCount; ++j) {
+                    free(words[j]);
+                }
+                return strdup(token);
+            }
+        }
+        words[wordCount] = strdup(token);
+        if (words[wordCount] == NULL) {
+            for (int i = 0; i < wordCount; ++i) {
+                free(words[i]);
+            }
+            free(copy);
+            return NULL;
+        }
+        found[wordCount++] = true;
+        token = strtok(NULL, " ");
+    }
+
+    for (int i = 0; i < wordCount; ++i) {
+        free(words[i]);
+    }
+    free(copy);
+
+    return NULL;
+}
+
+int main() {
+    const char* input1 = "";
+    const char* input2 = "a b c a";
+    const char* input3 = "a b";
+
+    char* result1 = firstRepeatedWord(input1);
+    if (result1 != NULL) {
+        printf("First repeated word: %s\n", result1);
+        free(result1);
+    } else {
+        printf("None\n");
+    }
+
+    char* result2 = firstRepeatedWord(input2);
+    if (result2 != NULL) {
+        printf("First repeated word: %s\n", result2);
+        free(result2);
+    } else {
+        printf("None\n");
+    }
+
+    char* result3 = firstRepeatedWord(input3);
+    if (result3 != NULL) {
+        printf("First repeated word: %s\n", result3);
+        free(result3);
+    } else {
+        printf("None\n");
+    }
+
+    return 0;
+}

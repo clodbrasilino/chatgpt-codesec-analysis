@@ -1,0 +1,28 @@
+#include <stdio.h>
+
+int newmanConway(int n) {
+    if (n <= 0)
+        return 0;
+
+    int p[n+1];
+    p[0] = 0;
+    p[1] = 1;
+    p[2] = 1;
+    for (int i = 3; i <= n; i++) {
+        p[i] = p[p[i-1]] + p[i-p[i-1]];
+    }
+    return p[n];
+}
+
+int main() {
+    int n;
+    printf("Enter the number term you want to find: ");
+    scanf("%d", &n);
+    int result = newmanConway(n);
+    if (result)
+        printf("The %dth term in Newman Conway sequence is: %d\n", n, result);
+    else
+        printf("Please input a positive integer\n");
+
+    return 0;
+}

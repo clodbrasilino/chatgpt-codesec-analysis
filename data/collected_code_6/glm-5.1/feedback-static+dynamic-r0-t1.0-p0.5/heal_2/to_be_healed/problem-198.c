@@ -1,0 +1,57 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+double triangle_area(double a, double b, double theta1, double theta2, double theta3) {
+    double x1 = a * cos(theta1);
+    double y1 = b * sin(theta1);
+    double x2 = a * cos(theta2);
+    double y2 = b * sin(theta2);
+    double x3 = a * cos(theta3);
+    double y3 = b * sin(theta3);
+    return 0.5 * fabs(x1 * (y2 - y3) + x2 * (y3 - y1) + x3 * (y1 - y2));
+}
+
+double find_largest_inscribed_triangle(double a, double b) {
+    if (a <= 0.0 || b <= 0.0) {
+        return 0.0;
+    }
+    double max_area = 0.0;
+    int num_steps = 1000;
+    double step = 2.0 * M_PI / num_steps;
+    for (int i = 0; i < num_steps; i++) {
+        double theta1 = i * step;
+        for (int j = 0; j < num_steps; j++) {
+            double theta2 = j * step;
+            for (int k = 0; k < num_steps; k++) {
+                double theta3 = k * step;
+                double area = triangle_area(a, b, theta1, theta2, theta3);
+                if (area > max_area) {
+                    max_area = area;
+                }
+            }
+        }
+    }
+    return max_area;
+}
+
+/* Possible weaknesses found:
+ *  Parameter 'argv' can be declared as const array [constParameter]
+ */
+int main(int argc, char * const argv[]) {
+    if (argc != 3) {
+        fprintf(stderr, "Usage: %s <semi_major_axis> <semi_minor_axis>\n", argv[0]);
+        return EXIT_FAILURE;
+    }
+    char *endptr1 = NULL;
+    char *endptr2 = NULL;
+    double a = strtod(argv[1], &endptr1);
+    double b = strtod(argv[2], &endptr2);
+    if (endptr1 == argv[1] || endptr2 == argv[2] || a <= 0.0 || b <= 0.0) {
+        fprintf(stderr, "Error: Semi-major and semi-minor axes must be positive numbers.\n");
+        return EXIT_FAILURE;
+    }
+    double area = find_largest_inscribed_triangle(a, b);
+    printf("Largest inscribed triangle area: %f\n", area);
+    return EXIT_SUCCESS;
+}

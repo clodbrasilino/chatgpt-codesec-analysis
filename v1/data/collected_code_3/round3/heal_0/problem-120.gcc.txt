@@ -1,0 +1,7 @@
+collected_code_3/problem-120-3.c: In function 'maxProduct':
+collected_code_3/problem-120-3.c:12:19: warning: implicit declaration of function 'max' [-Wimplicit-function-declaration]
+   12 |         max_val = max(prev_max * arr[i], max(prev_min * arr[i], arr[i]));
+      |                   ^~~
+collected_code_3/problem-120-3.c:13:19: warning: implicit declaration of function 'min' [-Wimplicit-function-declaration]
+   13 |         min_val = min(prev_max * arr[i], min(prev_min * arr[i], arr[i]));
+      |                   ^~~

@@ -1,0 +1,30 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+
+bool match_string(const char *str) {
+    if (str[0] != 'a') {
+        return false;
+    }
+    int index = 1;
+    while (str[index] == 'b') {
+        index++;
+    }
+    return str[index] == '\0';
+}
+
+int main() {
+    const char *test1 = "abbb";
+    const char *test2 = "ac";
+    const char *test3 = "a";
+    const char *test4 = "abb";
+
+    printf("%s: %s\n", test1, match_string(test1) ? "Match" : "No Match");
+    printf("%s: %s\n", test2, match_string(test2) ? "Match" : "No Match");
+    printf("%s: %s\n", test3, match_string(test3) ? "Match" : "No Match");
+    printf("%s: %s\n", test4, match_string(test4) ? "Match" : "No Match");
+
+    return 0;
+}
+```

@@ -1,0 +1,45 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+#include <string.h>
+#include <ctype.h>
+
+bool validate_string(const char *str, size_t required_length) {
+    if (str == NULL) {
+        return false;
+    }
+
+    if (strnlen(str, required_length + 1) != required_length) {
+        return false;
+    }
+
+    bool has_upper = false;
+    bool has_lower = false;
+    bool has_digit = false;
+
+    for (size_t i = 0; i < required_length; i++) {
+        if (isupper((unsigned char)str[i])) {
+            has_upper = true;
+        } else if (islower((unsigned char)str[i])) {
+            has_lower = true;
+        } else if (isdigit((unsigned char)str[i])) {
+            has_digit = true;
+        }
+    }
+
+    return has_upper && has_lower && has_digit;
+}
+
+int main(void) {
+    const char *test_str = "Password123";
+    size_t req_len = 11;
+
+    if (validate_string(test_str, req_len)) {
+        printf("String is valid.\n");
+    } else {
+        printf("String is invalid.\n");
+    }
+
+    return 0;
+}
+```

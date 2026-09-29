@@ -1,0 +1,25 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+char* removeLeadingZeroes(char* ip) {
+    char *new_ip = malloc(16);
+    char *token;
+    int index = 0;
+
+    token = strtok(ip, ".");
+    while(token != NULL) {
+        int num = atoi(token);
+        index += sprintf(&new_ip[index], index ? ".%d" : "%d", num);
+        token = strtok(NULL, ".");
+    }
+    return new_ip;
+}
+
+int main() {
+    char ip[16] = "192.168.001.001";
+    char *new_ip = removeLeadingZeroes(ip);
+    printf("New IP: %s\n", new_ip);
+    free(new_ip);
+    return 0;
+}

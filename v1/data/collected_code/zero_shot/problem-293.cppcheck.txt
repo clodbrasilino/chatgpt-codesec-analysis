@@ -1,0 +1,12 @@
+collected_code/problem-293-0.c:13:19: error: Cannot determine that 'side1' is initialized [premium-bughuntingUninit]
+    scanf("%lf", &side1);
+                  ^
+collected_code/problem-293-0.c:16:19: error: Cannot determine that 'side2' is initialized [premium-bughuntingUninit]
+    scanf("%lf", &side2);
+                  ^
+collected_code/problem-293-0.c:18:38: error: Cannot determine that 'side1' is initialized [premium-bughuntingUninit]
+    double thirdSide = findThirdSide(side1, side2);
+                                     ^
+collected_code/problem-293-0.c:18:45: error: Cannot determine that 'side2' is initialized [premium-bughuntingUninit]
+    double thirdSide = findThirdSide(side1, side2);
+                                            ^

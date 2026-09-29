@@ -1,0 +1,50 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+int match_a_zero_or_more_b(const char *str) {
+    if (str == NULL) {
+        return 0;
+    }
+
+    regex_t regex;
+    int reti;
+    int match_result = 0;
+
+    reti = regcomp(&regex, "^ab*$", REG_EXTENDED);
+    if (reti) {
+        return 0;
+    }
+
+    reti = regexec(&regex, str, 0, NULL, 0);
+    if (!reti) {
+        match_result = 1;
+    }
+
+    regfree(&regex);
+    return match_result;
+}
+
+int main(void) {
+    const char *test_cases[] = {
+        "a",
+        "ab",
+        "abb",
+        "abbb",
+        "b",
+        "ba",
+        "abc",
+        NULL
+    };
+
+    for (int i = 0; test_cases[i] != NULL; ++i) {
+        if (match_a_zero_or_more_b(test_cases[i])) {
+            printf("'%s' matches\n", test_cases[i]);
+        } else {
+            printf("'%s' does not match\n", test_cases[i]);
+        }
+    }
+
+    return EXIT_SUCCESS;
+}

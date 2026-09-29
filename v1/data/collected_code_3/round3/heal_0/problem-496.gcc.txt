@@ -1,0 +1,15 @@
+collected_code_3/problem-496-3.c: In function 'main':
+collected_code_3/problem-496-3.c:58:16: warning: dereference of possibly-NULL 'heap' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   58 |     heap->size = 0;
+      |     ~~~~~~~~~~~^~~
+  'main': events 1-2
+    |
+    |   57 |     Heap *heap = (Heap *)malloc(sizeof(Heap));
+    |      |                          ^~~~~~~~~~~~~~~~~~~~
+    |      |                          |
+    |      |                          (1) this call could return NULL
+    |   58 |     heap->size = 0;
+    |      |     ~~~~~~~~~~~~~~        
+    |      |                |
+    |      |                (2) 'heap' could be NULL: unchecked value from (1)
+    |

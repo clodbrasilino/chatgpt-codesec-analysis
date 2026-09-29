@@ -1,0 +1,28 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-142-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-142-s2.c:34:9: style: Condition '!size_a' is always false [knownConditionTrueFalse]
+    if (!size_a || !size_b || !size_c) {
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-142-s2.c:30:31: note: Assignment 'size_a=sizeof(a)/sizeof(a[0])', assigned value is 3
+    size_t size_a = sizeof(a) / sizeof(a[0]);
+                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-142-s2.c:34:9: note: Condition '!size_a' is always false
+    if (!size_a || !size_b || !size_c) {
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-142-s2.c:34:20: style: Condition '!size_b' is always false [knownConditionTrueFalse]
+    if (!size_a || !size_b || !size_c) {
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-142-s2.c:31:31: note: Assignment 'size_b=sizeof(b)/sizeof(b[0])', assigned value is 3
+    size_t size_b = sizeof(b) / sizeof(b[0]);
+                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-142-s2.c:34:20: note: Condition '!size_b' is always false
+    if (!size_a || !size_b || !size_c) {
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-142-s2.c:34:31: style: Condition '!size_c' is always false [knownConditionTrueFalse]
+    if (!size_a || !size_b || !size_c) {
+                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-142-s2.c:32:31: note: Assignment 'size_c=sizeof(c)/sizeof(c[0])', assigned value is 3
+    size_t size_c = sizeof(c) / sizeof(c[0]);
+                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-142-s2.c:34:31: note: Condition '!size_c' is always false
+    if (!size_a || !size_b || !size_c) {
+                              ^

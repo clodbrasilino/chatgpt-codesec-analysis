@@ -1,0 +1,57 @@
+```c
+#include <stdio.h>
+#include <ctype.h>
+
+int get_ascii_value(char c)
+{
+    return (int)(unsigned char)c;
+}
+
+static void flush_stdin(void)
+{
+    int ch;
+    while ((ch = getchar()) != '\n' && ch != EOF) {
+        ;
+    }
+}
+
+int main(void)
+{
+    int input;
+
+    printf("Enter a character: ");
+    if (fflush(stdout) != 0) {
+        return 1;
+    }
+
+    input = getchar();
+    if (input == EOF) {
+        fprintf(stderr, "Error: failed to read input.\n");
+        return 1;
+    }
+
+    if (input != '\n') {
+        flush_stdin();
+    }
+
+    if (isprint((unsigned char)input)) {
+        printf("The ASCII value of '%c' is %d\n", (char)input, get_ascii_value((char)input));
+    } else {
+        printf("The ASCII value of the entered character is %d\n", get_ascii_value((char)input));
+    }
+
+    return 0;
+}
+```
+
+**Analysis of the original code and applied fixes:**
+
+The Flawfinder warnings on `getchar()` (CWE-120, CWE-20) are largely false positives — `getchar()` reads a single character into an `int` and cannot overflow a buffer by itself. The tool flags it because character-reading in loops is *often* combined with unsafe buffer writes. In this code, no buffer is ever written, so there is no actual overflow risk. That said, the rewrite hardens the code in a few genuine ways:
+
+1. **`isprint()` argument safety** — passing a plain `char`/`int` derived from a possibly negative `char` value to `isprint()` is undefined behavior on platforms where `char` is signed. The value is now cast to `unsigned char` before the call (it's already guaranteed not to be `EOF` at that point).
+
+2. **Newline-only input handling** — the original code called the flush loop unconditionally. If the user pressed only Enter, `input` would be `'\n'` and the flush loop would block waiting for more input. The rewrite skips draining when the first character read is already the newline.
+
+3. **`fflush` return value checked** — a minor robustness improvement; stream errors are no longer silently ignored.
+
+4. **Flush logic isolated in a helper** — the drain loop is bounded by design (terminates on `'\n'` or `EOF`, writes nothing), which directly addresses the CWE-120/CWE-20 concern: no memory is written, so no boundary can be violated.

@@ -1,0 +1,76 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#include <limits.h>
+#include <errno.h>
+
+char* remove_k_length_words(const char* str, int k) {
+    if (str == NULL || k < 0) {
+        return NULL;
+    }
+
+    size_t len = 0;
+    while (str[len] != '\0') {
+        len++;
+    }
+
+    char* result = (char*)malloc(len + 1);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    size_t res_idx = 0;
+    size_t i = 0;
+
+    while (i < len) {
+        if (isalpha((unsigned char)str[i])) {
+            size_t word_start = i;
+            while (i < len && isalpha((unsigned char)str[i])) {
+                i++;
+            }
+            size_t word_len = i - word_start;
+
+            if ((int)word_len != k) {
+                size_t j;
+                for (j = 0; j < word_len; j++) {
+                    result[res_idx + j] = str[word_start + j];
+                }
+                res_idx += word_len;
+            }
+        } else {
+            result[res_idx++] = str[i];
+            i++;
+        }
+    }
+
+    result[res_idx] = '\0';
+    return result;
+}
+
+int main(int argc, char const* const argv[]) {
+    if (argc != 3) {
+        fprintf(stderr, "Usage: %s <string> <k>\n", argv[0]);
+        return 1;
+    }
+
+    char* endptr;
+    long k_long = strtol(argv[2], &endptr, 10);
+    if (endptr == argv[2] || *endptr != '\0' || k_long < 0 || k_long > INT_MAX || errno == ERANGE) {
+        fprintf(stderr, "Invalid input for k\n");
+        return 1;
+    }
+    int k = (int)k_long;
+
+    char* processed = remove_k_length_words(argv[1], k);
+
+    if (processed == NULL) {
+        fprintf(stderr, "Memory allocation failed or invalid input\n");
+        return 1;
+    }
+
+    printf("%s\n", processed);
+    free(processed);
+
+    return 0;
+}

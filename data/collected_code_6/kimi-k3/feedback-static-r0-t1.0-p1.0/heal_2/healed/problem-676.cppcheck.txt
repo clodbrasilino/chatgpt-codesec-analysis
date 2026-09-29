@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-676.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-676.c:75:21: style: Condition 'test_string!=NULL' is always true [knownConditionTrueFalse]
+    if (test_string != NULL) {
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-676.c:71:31: note: Assignment 'test_string="Hello, World! 123 @#$"', assigned value is "Hello, World! 123 @#$"
+    const char* test_string = "Hello, World! 123 @#$";
+                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-676.c:75:21: note: Condition 'test_string!=NULL' is always true
+    if (test_string != NULL) {
+                    ^

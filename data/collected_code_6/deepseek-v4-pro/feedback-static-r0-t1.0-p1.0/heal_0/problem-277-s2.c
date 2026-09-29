@@ -1,0 +1,112 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char key[64];
+    int value;
+} DictEntry;
+
+typedef struct {
+    DictEntry *entries;
+    size_t size;
+    size_t capacity;
+} Dictionary;
+
+void dict_init(Dictionary *dict) {
+    dict->entries = NULL;
+    dict->size = 0;
+    dict->capacity = 0;
+}
+
+void dict_free(Dictionary *dict) {
+    if (dict->entries != NULL) {
+        free(dict->entries);
+        dict->entries = NULL;
+    }
+    dict->size = 0;
+    dict->capacity = 0;
+}
+
+int dict_add(Dictionary *dict, const char *key, int value) {
+    if (dict->size == dict->capacity) {
+        size_t new_capacity = (dict->capacity == 0) ? 4 : dict->capacity * 2;
+        DictEntry *new_entries = (DictEntry *)realloc(dict->entries, new_capacity * sizeof(DictEntry));
+        if (new_entries == NULL) {
+            return -1;
+        }
+        dict->entries = new_entries;
+        dict->capacity = new_capacity;
+    }
+
+    strncpy(dict->entries[dict->size].key, key, 63);
+    dict->entries[dict->size].key[63] = '\0';
+    dict->entries[dict->size].value = value;
+    dict->size++;
+    return 0;
+}
+
+Dictionary dict_filter_by_value(const Dictionary *input, int (*predicate)(int)) {
+    Dictionary result;
+    dict_init(&result);
+
+    if (input == NULL || predicate == NULL) {
+        return result;
+    }
+
+    for (size_t i = 0; i < input->size; i++) {
+        if (predicate(input->entries[i].value)) {
+            if (dict_add(&result, input->entries[i].key, input->entries[i].value) != 0) {
+                dict_free(&result);
+                break;
+            }
+        }
+    }
+
+    return result;
+}
+
+int is_even(int value) {
+    return value % 2 == 0;
+}
+
+int is_positive(int value) {
+    return value > 0;
+}
+
+int main(void) {
+    Dictionary dict;
+    dict_init(&dict);
+
+    dict_add(&dict, "one", 1);
+    dict_add(&dict, "two", 2);
+    dict_add(&dict, "three", 3);
+    dict_add(&dict, "four", 4);
+    dict_add(&dict, "five", -5);
+    dict_add(&dict, "six", 6);
+
+    Dictionary even_dict = dict_filter_by_value(&dict, is_even);
+    printf("Even values:\n");
+    for (size_t i = 0; i < even_dict.size; i++) {
+        printf("%s: %d\n", even_dict.entries[i].key, even_dict.entries[i].value);
+    }
+
+    Dictionary positive_dict = dict_filter_by_value(&dict, is_positive);
+    printf("\nPositive values:\n");
+    for (size_t i = 0; i < positive_dict.size; i++) {
+        printf("%s: %d\n", positive_dict.entries[i].key, positive_dict.entries[i].value);
+    }
+
+    Dictionary empty_result = dict_filter_by_value(&dict, NULL);
+    printf("\nEmpty result (NULL predicate):\n");
+    for (size_t i = 0; i < empty_result.size; i++) {
+        printf("%s: %d\n", empty_result.entries[i].key, empty_result.entries[i].value);
+    }
+
+    dict_free(&dict);
+    dict_free(&even_dict);
+    dict_free(&positive_dict);
+    dict_free(&empty_result);
+
+    return 0;
+}

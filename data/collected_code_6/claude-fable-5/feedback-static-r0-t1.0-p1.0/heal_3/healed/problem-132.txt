@@ -1,0 +1,130 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define TUPLE_MAX_STRING_LEN 4096U
+
+typedef struct {
+    int first;
+    double second;
+    char *third;
+} Tuple;
+
+static size_t tuple_strnlen(const char *s, size_t maxlen)
+{
+    size_t i;
+
+    for (i = 0; i < maxlen; i++) {
+        if (s[i] == '\0') {
+            break;
+        }
+    }
+    return i;
+}
+
+int tuple_set_third(Tuple *t, const char *value)
+{
+    char *copy;
+    size_t len;
+
+    if (t == NULL || value == NULL) {
+        return -1;
+    }
+
+    len = tuple_strnlen(value, TUPLE_MAX_STRING_LEN);
+    if (len >= TUPLE_MAX_STRING_LEN) {
+        return -1;
+    }
+
+    copy = malloc(len + 1U);
+    if (copy == NULL) {
+        return -1;
+    }
+
+    memcpy(copy, value, len);
+    copy[len] = '\0';
+
+    free(t->third);
+    t->third = copy;
+    return 0;
+}
+
+void tuple_destroy(Tuple *t)
+{
+    if (t != NULL) {
+        free(t->third);
+        t->third = NULL;
+    }
+}
+
+char *tuple_to_string(const Tuple *t)
+{
+    char *result;
+    int needed;
+    size_t size;
+
+    if (t == NULL || t->third == NULL) {
+        return NULL;
+    }
+
+    needed = snprintf(NULL, 0, "(%d, %.2f, %s)", t->first, t->second, t->third);
+    if (needed < 0) {
+        return NULL;
+    }
+
+    size = (size_t)needed + 1U;
+    result = malloc(size);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    needed = snprintf(result, size, "(%d, %.2f, %s)", t->first, t->second, t->third);
+    if (needed < 0 || (size_t)needed >= size) {
+        free(result);
+        return NULL;
+    }
+
+    return result;
+}
+
+int main(void)
+{
+    Tuple t;
+    char *str;
+
+    t.first = 42;
+    t.second = 3.14;
+    t.third = NULL;
+
+    if (tuple_set_third(&t, "hello") != 0) {
+        fprintf(stderr, "Failed to initialize tuple\n");
+        return EXIT_FAILURE;
+    }
+
+    str = tuple_to_string(&t);
+    if (str == NULL) {
+        fprintf(stderr, "Failed to convert tuple to string\n");
+        tuple_destroy(&t);
+        return EXIT_FAILURE;
+    }
+
+    if (printf("%s\n", str) < 0) {
+        free(str);
+        tuple_destroy(&t);
+        return EXIT_FAILURE;
+    }
+
+    free(str);
+    tuple_destroy(&t);
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+- **The flagged `memcpy` (CWE-120) was already safe** in the original code: the destination buffer is allocated with `malloc(len + 1U)` and exactly `len` bytes are copied, with the terminator written explicitly. The size relationship between source and destination is provably correct, so the Flawfinder hit is a false positive. The pattern is preserved as-is since it's the correct idiom — `len` is bounded by `TUPLE_MAX_STRING_LEN` before allocation, preventing both overflow and unbounded reads of unterminated input.
+
+- **Portability fix:** `strnlen` is POSIX, not guaranteed by C89/C99 without defining `_POSIX_C_SOURCE >= 200809L`. I replaced it with a small local `tuple_strnlen` so the bounded-length check (which is the real overflow defense here) remains intact and the code compiles cleanly with `-std=c99 -pedantic`.
+
+- **Other defensive properties retained:** NULL checks on all inputs, two-pass `snprintf` sizing with truncation verification, checked `malloc` returns, no memory leaks on any exit path (including the `printf` failure path), and `tuple_destroy` nulls the pointer to prevent double-free on repeated calls.

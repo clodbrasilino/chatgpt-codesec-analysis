@@ -1,0 +1,18 @@
+collected_code/problem-185-0.c:10:24: error: Cannot determine that 'a' is initialized [premium-bughuntingUninit]
+    scanf("%f %f %f", &a, &b, &c);
+                       ^
+collected_code/problem-185-0.c:10:28: error: Cannot determine that 'b' is initialized [premium-bughuntingUninit]
+    scanf("%f %f %f", &a, &b, &c);
+                           ^
+collected_code/problem-185-0.c:10:32: error: Cannot determine that 'c' is initialized [premium-bughuntingUninit]
+    scanf("%f %f %f", &a, &b, &c);
+                               ^
+collected_code/problem-185-0.c:12:29: error: Cannot determine that 'a' is initialized [premium-bughuntingUninit]
+    float focus = findFocus(a, b, c);
+                            ^
+collected_code/problem-185-0.c:12:32: error: Cannot determine that 'b' is initialized [premium-bughuntingUninit]
+    float focus = findFocus(a, b, c);
+                               ^
+collected_code/problem-185-0.c:12:35: error: Cannot determine that 'c' is initialized [premium-bughuntingUninit]
+    float focus = findFocus(a, b, c);
+                                  ^

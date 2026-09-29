@@ -1,0 +1,31 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-100.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-100.c:21:17: style: Condition 'max_len<n' is always false [knownConditionTrueFalse]
+    if (max_len < n) return NULL;
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-100.c:20:20: note: max_len is assigned 'n+3' here.
+    size_t max_len = n + 3;
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-100.c:21:17: note: Condition 'max_len<n' is always false
+    if (max_len < n) return NULL;
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-100.c:26:11: style: Condition 'n>=max_len' is always false [knownConditionTrueFalse]
+    if (n >= max_len) {
+          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-100.c:20:20: note: max_len is assigned 'n+3' here.
+    size_t max_len = n + 3;
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-100.c:24:9: note: Assuming condition is false
+    if (!result) return NULL;
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-100.c:26:11: note: Condition 'n>=max_len' is always false
+    if (n >= max_len) {
+          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-100.c:67:25: style: Condition 'new_len<n' is always false [knownConditionTrueFalse]
+            if (new_len < n || new_len > SIZE_MAX - 1) {
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-100.c:66:28: note: new_len is assigned 'n+2' here.
+            size_t new_len = n + 2;
+                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-100.c:67:25: note: Condition 'new_len<n' is always false
+            if (new_len < n || new_len > SIZE_MAX - 1) {
+                        ^

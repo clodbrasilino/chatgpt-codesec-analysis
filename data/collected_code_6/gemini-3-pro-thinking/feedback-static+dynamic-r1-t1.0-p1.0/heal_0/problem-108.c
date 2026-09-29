@@ -1,0 +1,235 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+typedef struct {
+    const int *data;
+    size_t length;
+    size_t current_index;
+} InputSequence;
+
+typedef struct {
+    int value;
+    size_t sequence_index;
+} HeapNode;
+
+typedef struct {
+    HeapNode *nodes;
+    size_t size;
+    size_t capacity;
+} MinHeap;
+
+typedef struct {
+    InputSequence *sequences;
+    size_t num_sequences;
+    MinHeap *heap;
+} MergeIterator;
+
+static void swap(HeapNode *a, HeapNode *b) {
+    HeapNode temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+static void heapify_up(MinHeap *heap, size_t index) {
+    while (index > 0) {
+        size_t parent = (index - 1) / 2;
+        if (heap->nodes[index].value < heap->nodes[parent].value) {
+            swap(&heap->nodes[index], &heap->nodes[parent]);
+            index = parent;
+        } else {
+            break;
+        }
+    }
+}
+
+static void heapify_down(MinHeap *heap, size_t index) {
+    while (true) {
+        size_t left = 2 * index + 1;
+        size_t right = 2 * index + 2;
+        size_t smallest = index;
+
+        if (left < heap->size && heap->nodes[left].value < heap->nodes[smallest].value) {
+            smallest = left;
+        }
+        if (right < heap->size && heap->nodes[right].value < heap->nodes[smallest].value) {
+            smallest = right;
+        }
+        if (smallest != index) {
+            swap(&heap->nodes[index], &heap->nodes[smallest]);
+            index = smallest;
+        } else {
+            break;
+        }
+    }
+}
+
+static MinHeap* create_heap(size_t capacity) {
+    if (capacity == 0) {
+        return NULL;
+    }
+    MinHeap *heap = malloc(sizeof(MinHeap));
+    if (!heap) {
+        return NULL;
+    }
+    heap->nodes = malloc(capacity * sizeof(HeapNode));
+    if (!heap->nodes) {
+        free(heap);
+        return NULL;
+    }
+    heap->size = 0;
+    heap->capacity = capacity;
+    return heap;
+}
+
+static void destroy_heap(MinHeap *heap) {
+    if (heap) {
+        free(heap->nodes);
+        free(heap);
+    }
+}
+
+static bool heap_push(MinHeap *heap, int value, size_t sequence_index) {
+    if (!heap || heap->size >= heap->capacity) {
+        return false;
+    }
+    heap->nodes[heap->size].value = value;
+    heap->nodes[heap->size].sequence_index = sequence_index;
+    heapify_up(heap, heap->size);
+    heap->size++;
+    return true;
+}
+
+static bool heap_pop(MinHeap *heap, HeapNode *out_node) {
+    if (!heap || heap->size == 0 || !out_node) {
+        return false;
+    }
+    *out_node = heap->nodes[0];
+    heap->nodes[0] = heap->nodes[heap->size - 1];
+    heap->size--;
+    heapify_down(heap, 0);
+    return true;
+}
+
+static MergeIterator* create_merge_iterator(const int **inputs, const size_t *lengths, size_t num_inputs) {
+    if (!inputs || !lengths || num_inputs == 0) {
+        return NULL;
+    }
+
+    MergeIterator *iter = malloc(sizeof(MergeIterator));
+    if (!iter) {
+        return NULL;
+    }
+
+    iter->sequences = malloc(num_inputs * sizeof(InputSequence));
+    if (!iter->sequences) {
+        free(iter);
+        return NULL;
+    }
+
+    iter->heap = create_heap(num_inputs);
+    if (!iter->heap) {
+        free(iter->sequences);
+        free(iter);
+        return NULL;
+    }
+
+    iter->num_sequences = num_inputs;
+
+    for (size_t i = 0; i < num_inputs; i++) {
+        iter->sequences[i].data = inputs[i];
+        iter->sequences[i].length = lengths[i];
+        iter->sequences[i].current_index = 0;
+
+        if (inputs[i] && lengths[i] > 0) {
+            if (!heap_push(iter->heap, inputs[i][0], i)) {
+                destroy_heap(iter->heap);
+                free(iter->sequences);
+                free(iter);
+                return NULL;
+            }
+            iter->sequences[i].current_index++;
+        }
+    }
+
+    return iter;
+}
+
+static void destroy_merge_iterator(MergeIterator *iter) {
+    if (iter) {
+        destroy_heap(iter->heap);
+        free(iter->sequences);
+        free(iter);
+    }
+}
+
+static bool merge_iterator_has_next(const MergeIterator *iter) {
+    if (!iter || !iter->heap) {
+        return false;
+    }
+    return iter->heap->size > 0;
+}
+
+static bool merge_iterator_next(MergeIterator *iter, int *out_value) {
+    if (!iter || !out_value) {
+        return false;
+    }
+
+    HeapNode min_node;
+    if (!heap_pop(iter->heap, &min_node)) {
+        return false;
+    }
+
+    *out_value = min_node.value;
+    size_t seq_idx = min_node.sequence_index;
+
+    if (seq_idx >= iter->num_sequences) {
+        return false;
+    }
+
+    InputSequence *seq = &iter->sequences[seq_idx];
+
+    if (seq->current_index < seq->length && seq->data) {
+        if (!heap_push(iter->heap, seq->data[seq->current_index], seq_idx)) {
+            return false;
+        }
+        seq->current_index++;
+    }
+
+    return true;
+}
+
+int main(void) {
+    int arr1[] = {1, 5, 9, 15};
+    int arr2[] = {2, 6, 8};
+    int arr3[] = {3, 4, 7, 10, 12};
+
+    const int *inputs[] = {arr1, arr2, arr3};
+    size_t lengths[] = {
+        sizeof(arr1) / sizeof(arr1[0]),
+        sizeof(arr2) / sizeof(arr2[0]),
+        sizeof(arr3) / sizeof(arr3[0])
+    };
+    size_t num_inputs = sizeof(inputs) / sizeof(inputs[0]);
+
+    MergeIterator *iter = create_merge_iterator(inputs, lengths, num_inputs);
+    if (!iter) {
+        fprintf(stderr, "Failed to initialize merge iterator\n");
+        return EXIT_FAILURE;
+    }
+
+    int value;
+    while (merge_iterator_has_next(iter)) {
+        if (merge_iterator_next(iter, &value)) {
+            printf("%d ", value);
+        } else {
+            fprintf(stderr, "\nError reading next value\n");
+            destroy_merge_iterator(iter);
+            return EXIT_FAILURE;
+        }
+    }
+    printf("\n");
+
+    destroy_merge_iterator(iter);
+    return EXIT_SUCCESS;
+}

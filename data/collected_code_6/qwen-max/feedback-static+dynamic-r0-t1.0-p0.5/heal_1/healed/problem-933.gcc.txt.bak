@@ -1,0 +1,8 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_1/healed/problem-933.c: In function 'camel_to_snake':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_1/healed/problem-933.c:33:24: error: implicit declaration of function 'tolower' [-Wimplicit-function-declaration]
+   33 |             snake[i] = tolower(snake[i]);
+      |                        ^~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_1/healed/problem-933.c:5:1: note: include '<ctype.h>' or provide a declaration of 'tolower'
+    4 | #include <regex.h>
+  +++ |+#include <ctype.h>
+    5 | 

@@ -1,0 +1,27 @@
+#include <stdio.h>
+#include <limits.h>
+
+int multiply(int x, int y) {
+    long long result = 0;
+    if (y < 0) {
+        y = -y;
+        x = -x;
+    }
+    while (y > 0) {
+        if (y & 1) {
+            result += x;
+        }
+        x = (long long)x * 2;
+        y >>= 1;
+    }
+    return (int)result;
+}
+
+int main() {
+    int a, b;
+    printf("Enter two integers: ");
+    scanf("%d %d", &a, &b);
+    int product = multiply(a, b);
+    printf("Product: %d\n", product);
+    return 0;
+}

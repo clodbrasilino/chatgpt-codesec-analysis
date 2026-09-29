@@ -1,0 +1,54 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int is_lucky(int num) {
+    int digit;
+    int count = 0;
+    int temp = num;
+    
+    if (num <= 0) {
+        return 0;
+    }
+    
+    while (temp > 0) {
+        digit = temp % 10;
+        if (digit == 4 || digit == 7) {
+            count++;
+        }
+        temp /= 10;
+    }
+    
+    return count > 0;
+}
+
+void print_lucky_numbers(int n) {
+    int count = 0;
+    int num = 1;
+    
+    if (n <= 0) {
+        return;
+    }
+    
+    while (count < n) {
+        if (is_lucky(num)) {
+            printf("%d ", num);
+            count++;
+        }
+        num++;
+    }
+    printf("\n");
+}
+
+int main(void) {
+    int n;
+    
+    printf("Enter the number of lucky numbers to print: ");
+    if (scanf("%d", &n) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    print_lucky_numbers(n);
+    
+    return EXIT_SUCCESS;
+}

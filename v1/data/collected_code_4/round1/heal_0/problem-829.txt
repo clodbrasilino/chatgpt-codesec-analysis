@@ -1,0 +1,55 @@
+```c
+#include <stdio.h>
+#include <string.h>
+
+#define MAX_STRING_SIZE 100
+#define MAX_STRINGS 1000
+
+char mostFrequentStr[MAX_STRING_SIZE] = {'\0'};
+char secondMostFrequentStr[MAX_STRING_SIZE] = {'\0'};
+int mostFrequentCount = 0;
+int secondMostFrequentCount = 0;
+
+void evaluateString(char strings[MAX_STRINGS][MAX_STRING_SIZE], char str[MAX_STRING_SIZE], int totalStrings) {
+    int count = 0;
+
+    for (int i = 0; i < totalStrings; i++) {
+        if (strcmp(strings[i], str) == 0) {
+            count++;
+        }
+    }
+
+    if (count > mostFrequentCount) {
+        secondMostFrequentCount = mostFrequentCount;
+        strcpy(secondMostFrequentStr, mostFrequentStr);
+
+        mostFrequentCount = count;
+        strcpy(mostFrequentStr, str);
+    } else if (count > secondMostFrequentCount && count != mostFrequentCount) {
+        secondMostFrequentCount = count;
+        strcpy(secondMostFrequentStr, str);
+    }
+}
+
+void findSecondMostFrequent(char strings[MAX_STRINGS][MAX_STRING_SIZE], int totalStrings) {
+    for (int i = 0; i < totalStrings; i++) {
+        evaluateString(strings, strings[i], totalStrings);
+    }
+}
+
+int main() {
+    char strings[MAX_STRINGS][MAX_STRING_SIZE];
+    int totalStrings = 0;
+    printf("Enter total number of strings: \n");
+    scanf("%d", &totalStrings);
+    printf("Enter the strings: \n");
+    for(int i=0; i<totalStrings; i++) {
+        scanf("%s", strings[i]);
+    }
+    findSecondMostFrequent(strings, totalStrings);
+
+    printf("Second most frequent string is: %s, repeated %d times.\n", secondMostFrequentStr, secondMostFrequentCount);
+
+    return 0;
+}
+```

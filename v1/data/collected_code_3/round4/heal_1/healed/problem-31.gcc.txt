@@ -1,0 +1,60 @@
+./collected_code_3/round4/heal_1/healed/problem-31.c: In function 'insert':
+./collected_code_3/round4/heal_1/healed/problem-31.c:39:17: warning: leak of '<unknown>' [CWE-401] [-Wanalyzer-malloc-leak]
+   39 |         h->heap = (Node*)malloc(sizeof(Node));
+      |         ~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  'topKFrequent': events 1-10
+    |
+    |   55 | void topKFrequent(int* nums, int numsSize, int k) {
+    |      |      ^~~~~~~~~~~~
+    |      |      |
+    |      |      (1) entry to 'topKFrequent'
+    |......
+    |   58 |     if(h == NULL) {
+    |      |       ~
+    |      |       |
+    |      |       (2) following 'false' branch (when 'h' is non-NULL)...
+    |......
+    |   62 |     h->heap = (Node*)malloc(sizeof(Node) * k);
+    |      |                      ~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                      |
+    |      |                      (3) ...to here
+    |      |                      (4) allocated here
+    |......
+    |   65 |     if(h->heap == NULL) {
+    |      |       ~
+    |      |       |
+    |      |       (5) assuming '<unknown>' is non-NULL
+    |      |       (6) following 'false' branch...
+    |......
+    |   70 |     for (int i = 0; i < numsSize; i++) {
+    |      |              ~      ~~~~~~~~~~~~
+    |      |              |        |
+    |      |              |        (8) following 'true' branch (when 'i < numsSize')...
+    |      |              (7) ...to here
+    |   71 |         Node node;
+    |   72 |         node.num = nums[i];
+    |      |                        ~
+    |      |                        |
+    |      |                        (9) ...to here
+    |......
+    |   84 |         insert(h, node);
+    |      |         ~~~~~~~~~~~~~~~
+    |      |         |
+    |      |         (10) calling 'insert' from 'topKFrequent'
+    |
+    +--> 'insert': events 11-14
+           |
+           |   37 | void insert(Heap* h, Node node) {
+           |      |      ^~~~~~
+           |      |      |
+           |      |      (11) entry to 'insert'
+           |   38 |     if (h->size == 0) {
+           |      |        ~
+           |      |        |
+           |      |        (12) following 'true' branch...
+           |   39 |         h->heap = (Node*)malloc(sizeof(Node));
+           |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                 |        |
+           |      |                 |        (13) ...to here
+           |      |                 (14) '<unknown>' leaks here; was allocated at (4)
+           |

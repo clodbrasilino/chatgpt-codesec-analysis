@@ -1,0 +1,9 @@
+collected_code/problem-756-0.c:5:18: error: Cannot determine that 'string[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+    while (string[i] != '\0') {
+                 ^
+collected_code/problem-756-0.c:6:19: error: Cannot determine that 'string[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        if (string[i] == 'a') {
+                  ^
+collected_code/problem-756-0.c:7:23: error: Cannot determine that 'string[i+1]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+            if (string[i + 1] == 'b' || string[i + 1] == '\0') {
+                      ^

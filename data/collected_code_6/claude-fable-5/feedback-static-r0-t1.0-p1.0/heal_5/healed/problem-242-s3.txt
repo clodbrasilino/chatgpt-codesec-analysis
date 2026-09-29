@@ -1,0 +1,63 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define BUFFER_SIZE 256
+
+size_t count_characters(const char *str)
+{
+    size_t count = 0;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    while (str[count] != '\0') {
+        count++;
+    }
+
+    return count;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t length;
+
+    memset(buffer, 0, sizeof(buffer));
+
+    printf("Enter a string: ");
+    fflush(stdout);
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+    buffer[strcspn(buffer, "\n")] = '\0';
+
+    length = count_characters(buffer);
+
+    printf("Total characters: %zu\n", length);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the original code and the flagged weakness:**
+
+The Flawfinder warning (`CWE-119`/`CWE-120`) about the statically-sized array `buffer[BUFFER_SIZE]` is a heuristic hit rather than an actual vulnerability here. The original code already implements every mitigation that the warning recommends:
+
+1. **Bounds-checked input:** `fgets(buffer, sizeof(buffer), stdin)` limits reads to `BUFFER_SIZE - 1` characters plus the null terminator, so no overflow is possible. Using `sizeof(buffer)` rather than the macro directly means the size stays correct even if the declaration changes.
+
+2. **Guaranteed null termination:** `buffer[sizeof(buffer) - 1] = '\0'` is defensive (technically redundant since `fgets` always null-terminates on success, and `memset` pre-zeroes the buffer, but harmless and self-documenting).
+
+3. **Return-value checking:** The `NULL` check on `fgets` correctly handles EOF and read errors.
+
+4. **Safe newline stripping:** `buffer[strcspn(buffer, "\n")] = '\0'` avoids the classic `buffer[strlen(buffer) - 1]` underflow bug that occurs when the first character read is `NUL`.
+
+5. **Safe length counting:** `count_characters` guards against `NULL` and only reads up to the terminator, which is guaranteed to exist.
+
+The only change I made was adding `fflush(stdout)` after the prompt, since `stdout` may be fully buffered when not connected to a terminal, and the prompt could otherwise fail to appear before the program blocks on input. The static buffer itself is appropriate for this use case; switching to `getline()` with dynamic allocation would be an alternative if arbitrarily long input needed to be counted, but it would introduce heap management concerns (and POSIX dependency) without fixing any real defect in this program.

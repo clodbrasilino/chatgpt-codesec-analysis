@@ -1,0 +1,114 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+int find_adverbs(const char *sentence) {
+    regex_t regex;
+    regmatch_t match;
+    const char *cursor = sentence;
+    size_t offset = 0;
+    int ret;
+    int found = 0;
+    char *errbuf = NULL;
+    size_t errbuf_size = 256;
+
+    if (sentence == NULL) {
+        fprintf(stderr, "Error: sentence is NULL\n");
+        return -1;
+    }
+
+    errbuf = (char *)malloc(errbuf_size);
+    if (errbuf == NULL) {
+        fprintf(stderr, "Error: memory allocation failed\n");
+        return -1;
+    }
+
+    ret = regcomp(&regex, "[A-Za-z]+ly", REG_EXTENDED);
+    if (ret != 0) {
+        size_t errlen = regerror(ret, &regex, errbuf, errbuf_size);
+        if (errlen > errbuf_size) {
+            errbuf[errbuf_size - 1] = '\0';
+        }
+        fprintf(stderr, "Regex compilation failed: %s\n", errbuf);
+        free(errbuf);
+        return -1;
+    }
+
+    while (1) {
+        ret = regexec(&regex, cursor, 1, &match, 0);
+        if (ret == REG_NOMATCH) {
+            break;
+        } else if (ret != 0) {
+            size_t errlen = regerror(ret, &regex, errbuf, errbuf_size);
+            if (errlen > errbuf_size) {
+                errbuf[errbuf_size - 1] = '\0';
+            }
+            fprintf(stderr, "Regex execution failed: %s\n", errbuf);
+            regfree(&regex);
+            free(errbuf);
+            return -1;
+        }
+
+        size_t start = offset + (size_t)match.rm_so;
+        size_t end = offset + (size_t)match.rm_eo;
+        int length = (int)(match.rm_eo - match.rm_so);
+
+        printf("Adverb: %.*s | Position: %zu to %zu\n",
+               length, cursor + match.rm_so, start, end - 1);
+
+        found = 1;
+        offset += (size_t)match.rm_eo;
+        cursor += match.rm_eo;
+
+        if (match.rm_eo == 0) {
+            cursor++;
+            offset++;
+            if (*cursor == '\0') {
+                break;
+            }
+        }
+    }
+
+    if (!found) {
+        printf("No adverbs found.\n");
+    }
+
+    regfree(&regex);
+    free(errbuf);
+    return 0;
+}
+
+int main(void) {
+    char *sentence = NULL;
+    size_t sentence_size = 1024;
+    size_t len;
+    ssize_t read_len;
+
+    sentence = (char *)malloc(sentence_size);
+    if (sentence == NULL) {
+        fprintf(stderr, "Error: memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter a sentence: ");
+    read_len = getline(&sentence, &sentence_size, stdin);
+    if (read_len == -1) {
+        fprintf(stderr, "Error reading input\n");
+        free(sentence);
+        return EXIT_FAILURE;
+    }
+
+    len = strnlen(sentence, sentence_size);
+    if (len > 0 && sentence[len - 1] == '\n') {
+        sentence[len - 1] = '\0';
+    }
+
+    if (find_adverbs(sentence) != 0) {
+        free(sentence);
+        return EXIT_FAILURE;
+    }
+
+    free(sentence);
+    return EXIT_SUCCESS;
+}

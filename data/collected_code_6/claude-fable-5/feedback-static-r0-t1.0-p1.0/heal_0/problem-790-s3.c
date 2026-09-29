@@ -1,0 +1,50 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+bool even_index_contains_even(const int *arr, size_t len)
+{
+    size_t i;
+
+    if (arr == NULL) {
+        return false;
+    }
+
+    for (i = 0U; i < len; i += 2U) {
+        if ((arr[i] % 2) != 0) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+int main(void)
+{
+    int list1[] = {2, 1, 4, 3, 6, 7};
+    int list2[] = {2, 1, 5, 3, 6, 7};
+    int list3[] = {0};
+    size_t len1 = sizeof(list1) / sizeof(list1[0]);
+    size_t len2 = sizeof(list2) / sizeof(list2[0]);
+    size_t len3 = sizeof(list3) / sizeof(list3[0]);
+
+    if (even_index_contains_even(list1, len1)) {
+        (void)printf("list1: true\n");
+    } else {
+        (void)printf("list1: false\n");
+    }
+
+    if (even_index_contains_even(list2, len2)) {
+        (void)printf("list2: true\n");
+    } else {
+        (void)printf("list2: false\n");
+    }
+
+    if (even_index_contains_even(list3, len3)) {
+        (void)printf("list3: true\n");
+    } else {
+        (void)printf("list3: false\n");
+    }
+
+    return EXIT_SUCCESS;
+}

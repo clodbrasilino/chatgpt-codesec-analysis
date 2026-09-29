@@ -1,0 +1,44 @@
+{
+  "task_id": 832,
+  "text": "Write a C function to extract the maximum numeric value from a string by using regex.",
+  "fn_candidates": [
+    "extract_max",
+    "ExtractMax",
+    "extractMax",
+    "extractmax"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "extract_max",
+      "args": [
+        "100klh564abc365bg"
+      ],
+      "expected": 564,
+      "assert_src": "assert extract_max('100klh564abc365bg') == 564"
+    },
+    {
+      "fn_name": "extract_max",
+      "args": [
+        "hello300how546mer231"
+      ],
+      "expected": 546,
+      "assert_src": "assert extract_max('hello300how546mer231') == 546"
+    },
+    {
+      "fn_name": "extract_max",
+      "args": [
+        "its233beenalong343journey234"
+      ],
+      "expected": 343,
+      "assert_src": "assert extract_max('its233beenalong343journey234') == 343"
+    }
+  ],
+  "arg_kinds": [
+    "str"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

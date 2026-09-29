@@ -1,0 +1,58 @@
+```C
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int x;
+    int y;
+} Tuple;
+
+typedef struct {
+    Tuple t1;
+    Tuple t2;
+} NestedTuple;
+
+NestedTuple* concatenate_tuples(Tuple* tuple1, Tuple* tuple2) {
+    if(tuple1 == NULL || tuple2 == NULL) {
+        return NULL;
+    }
+
+    NestedTuple* result = malloc(sizeof(NestedTuple));
+    if(result == NULL) {
+        return NULL;
+    }
+
+    result->t1.x = tuple1->x;
+    result->t1.y = tuple1->y;
+    result->t2.x = tuple2->x;
+    result->t2.y = tuple2->y;
+
+    return result;
+}
+
+void print_nested_tuple(NestedTuple* nestTup) {
+    if(nestTup == NULL) {
+        printf("Nested Tuple is NULL\n");
+        return;
+    }
+
+    printf("(%d, %d), (%d, %d)\n",
+        nestTup->t1.x, nestTup->t1.y,
+        nestTup->t2.x, nestTup->t2.y);
+}
+
+int main() {
+    Tuple t1 = {1, 2};
+    Tuple t2 = {3, 4};
+    NestedTuple* result = concatenate_tuples(&t1, &t2);
+    if(result == NULL) {
+        printf("Failed to concatenate tuples\n");
+        return 1;
+    }
+
+    print_nested_tuple(result);
+    free(result);
+
+    return 0;
+}
+```

@@ -1,0 +1,24 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int get_rightmost_set_bit_pos(int n) {
+    if (n == 0) {
+        return -1;
+    }
+    unsigned int un = (unsigned int)n;
+    int pos = 0;
+    while ((un & 1) == 0) {
+        un >>= 1;
+        pos++;
+    }
+    return pos;
+}
+
+int main(void) {
+    int num = 18;
+    int pos = get_rightmost_set_bit_pos(num);
+    printf("%d\n", pos);
+    return 0;
+}
+```

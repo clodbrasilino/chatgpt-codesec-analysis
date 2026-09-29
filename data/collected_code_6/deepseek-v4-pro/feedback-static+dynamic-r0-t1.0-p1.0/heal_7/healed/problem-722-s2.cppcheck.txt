@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-722-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-722-s2.c:67:42: style: Condition 'copy_student_name(NULL,0,name)!=0' is always true [knownConditionTrueFalse]
+    if (copy_student_name(NULL, 0, name) != 0) {
+                                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-722-s2.c:67:26: note: Calling function 'copy_student_name' returns -1
+    if (copy_student_name(NULL, 0, name) != 0) {
+                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-722-s2.c:67:42: note: Condition 'copy_student_name(NULL,0,name)!=0' is always true
+    if (copy_student_name(NULL, 0, name) != 0) {
+                                         ^

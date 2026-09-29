@@ -1,0 +1,42 @@
+./collected_code_4/round1//heal_0//problem-570.c: In function 'remove_words':
+./collected_code_4/round1//heal_0//problem-570.c:8:12: warning: use of possibly-NULL '*list_31(D) + _2' where non-null expected [CWE-690] [-Wanalyzer-possible-null-argument]
+    8 |         if(strstr(list[i], substring) != NULL) {
+      |            ^~~~~~~~~~~~~~~~~~~~~~~~~~
+  'main': events 1-3
+    |
+    |   22 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   25 |     list[0] = strdup("Hello, World!");
+    |      |               ~~~~~~~~~~~~~~~~~~~~~~~
+    |      |               |
+    |      |               (2) this call could return NULL
+    |......
+    |   31 |     remove_words(list, count, "World");
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (3) calling 'remove_words' from 'main'
+    |
+    +--> 'remove_words': events 4-7
+           |
+           |    5 | void remove_words(char** list, int count, char* substring) {
+           |      |      ^~~~~~~~~~~~
+           |      |      |
+           |      |      (4) entry to 'remove_words'
+           |    6 |     int i = 0;
+           |    7 |     while(i < count) {
+           |      |           ~~~~~~~~~
+           |      |             |
+           |      |             (5) following 'true' branch (when 'i < count')...
+           |    8 |         if(strstr(list[i], substring) != NULL) {
+           |      |            ~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |            |          |
+           |      |            |          (6) ...to here
+           |      |            (7) argument 1 ('*list_31(D) + _2') from (2) could be NULL where non-null expected
+           |
+In file included from ./collected_code_4/round1//heal_0//problem-570.c:2:
+/Library/Developer/CommandLineTools/SDKs/MacOSX14.sdk/usr/include/string.h:89:10: note: argument 1 of 'strstr' must be non-null
+   89 | char    *strstr(const char *__big, const char *__little);
+      |          ^~~~~~

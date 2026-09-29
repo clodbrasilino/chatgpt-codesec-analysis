@@ -1,0 +1,5 @@
+problem-291-s3.c:11:24:medium:UBSan: signed integer overflow: -1215526009 * 2955006954679884144 cannot be represented in type 'int64_t' (aka 'long long') (AFL crash: id:000000,sig:06,src:000003,time:6,execs:15,op:(null),pos:0)
+problem-291-s3.c:11:24:medium:UBSan: signed integer overflow: 343 * -6683084242404468040 cannot be represented in type 'int64_t' (aka 'long long') (AFL crash: id:000001,sig:06,src:000003,time:3548,execs:1211,op:havoc,rep:2)
+problem-291-s3.c:11:32:medium:UBSan: signed integer overflow: 4481394221449555648 + 7282265609855527928 cannot be represented in type 'int64_t' (aka 'long long') (AFL crash: id:000001,sig:06,src:000003,time:3548,execs:1211,op:havoc,rep:2)
+problem-291-s3.c:12:36:medium:UBSan: signed integer overflow: 4481394221449555648 + 7282265609855527928 cannot be represented in type 'int64_t' (aka 'long long') (AFL crash: id:000001,sig:06,src:000003,time:3548,execs:1211,op:havoc,rep:2)
+problem-291-s3.c:17:0:error:Fuzzing found a crash (signal 6) on input id:000002,sig:06,src:000003,time:3755,execs:1278,op:havoc,rep:2; likely memory-safety defect

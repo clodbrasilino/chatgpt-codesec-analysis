@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-31-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-31-s2.c:140:21: style: Variable 'initialized' is reassigned a value before the old one has been used. [redundantAssignment]
+        initialized = 0;
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-31-s2.c:124:25: note: initialized is assigned
+            initialized = 1;
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-31-s2.c:140:21: note: initialized is overwritten
+        initialized = 0;
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-31-s2.c:75:14: style: Variable 'elemA' can be declared as pointer to const [constVariablePointer]
+    Element* elemA = (Element*)a;
+             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-31-s2.c:76:14: style: Variable 'elemB' can be declared as pointer to const [constVariablePointer]
+    Element* elemB = (Element*)b;
+             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-31-s2.c:83:39: style: Parameter 'list_sizes' can be declared as pointer to const [constParameterPointer]
+int* top_k_frequent(int** lists, int* list_sizes, int num_lists, int k, int* return_size) {
+                                      ^

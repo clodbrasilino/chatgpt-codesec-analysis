@@ -1,0 +1,182 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+#define MAX_NAME_LEN 64
+
+typedef struct {
+    char name[MAX_NAME_LEN];
+    double height;
+    double width;
+} Student;
+
+typedef struct {
+    Student *entries;
+    size_t count;
+    size_t capacity;
+} StudentDict;
+
+int dict_init(StudentDict *dict, size_t initial_capacity);
+int dict_add(StudentDict *dict, const char *name, double height, double width);
+int dict_filter(const StudentDict *src, StudentDict *dst,
+                double min_height, double min_width);
+void dict_free(StudentDict *dict);
+void dict_print(const StudentDict *dict);
+
+int dict_init(StudentDict *dict, size_t initial_capacity)
+{
+    if (dict == NULL || initial_capacity == 0) {
+        return -1;
+    }
+    if (initial_capacity > SIZE_MAX / sizeof(Student)) {
+        return -1;
+    }
+    dict->entries = calloc(initial_capacity, sizeof(Student));
+    if (dict->entries == NULL) {
+        return -1;
+    }
+    dict->count = 0;
+    dict->capacity = initial_capacity;
+    return 0;
+}
+
+int dict_add(StudentDict *dict, const char *name, double height, double width)
+{
+    size_t name_len;
+    Student *entry;
+
+    if (dict == NULL || name == NULL || dict->entries == NULL) {
+        return -1;
+    }
+    name_len = strnlen(name, MAX_NAME_LEN);
+    if (name_len >= MAX_NAME_LEN) {
+        return -1;
+    }
+    if (dict->count == dict->capacity) {
+        if (dict->capacity > SIZE_MAX / (2 * sizeof(Student))) {
+            return -1;
+        }
+        size_t new_capacity = dict->capacity * 2;
+        Student *tmp = realloc(dict->entries, new_capacity * sizeof(Student));
+        if (tmp == NULL) {
+            return -1;
+        }
+        dict->entries = tmp;
+        dict->capacity = new_capacity;
+    }
+    entry = &dict->entries[dict->count];
+    if (name_len >= sizeof(entry->name)) {
+        return -1;
+    }
+    memcpy(entry->name, name, name_len);
+    entry->name[name_len] = '\0';
+    entry->height = height;
+    entry->width = width;
+    dict->count++;
+    return 0;
+}
+
+int dict_filter(const StudentDict *src, StudentDict *dst,
+                double min_height, double min_width)
+{
+    if (src == NULL || dst == NULL || src->entries == NULL) {
+        return -1;
+    }
+    for (size_t i = 0; i < src->count; i++) {
+        if (src->entries[i].height >= min_height &&
+            src->entries[i].width >= min_width) {
+            if (dict_add(dst, src->entries[i].name,
+                         src->entries[i].height,
+                         src->entries[i].width) != 0) {
+                return -1;
+            }
+        }
+    }
+    return 0;
+}
+
+void dict_free(StudentDict *dict)
+{
+    if (dict != NULL) {
+        free(dict->entries);
+        dict->entries = NULL;
+        dict->count = 0;
+        dict->capacity = 0;
+    }
+}
+
+void dict_print(const StudentDict *dict)
+{
+    if (dict == NULL || dict->entries == NULL) {
+        return;
+    }
+    for (size_t i = 0; i < dict->count; i++) {
+        printf("%s: height=%.2f, width=%.2f\n",
+               dict->entries[i].name,
+               dict->entries[i].height,
+               dict->entries[i].width);
+    }
+}
+
+int main(void)
+{
+    StudentDict students;
+    StudentDict filtered;
+
+    if (dict_init(&students, 4) != 0) {
+        fprintf(stderr, "Failed to initialize student dictionary\n");
+        return EXIT_FAILURE;
+    }
+    if (dict_init(&filtered, 4) != 0) {
+        fprintf(stderr, "Failed to initialize filtered dictionary\n");
+        dict_free(&students);
+        return EXIT_FAILURE;
+    }
+
+    if (dict_add(&students, "Alice", 165.5, 40.0) != 0 ||
+        dict_add(&students, "Bob", 180.2, 55.3) != 0 ||
+        dict_add(&students, "Carol", 158.0, 38.5) != 0 ||
+        dict_add(&students, "Dave", 175.0, 50.0) != 0) {
+        fprintf(stderr, "Failed to add student\n");
+        dict_free(&students);
+        dict_free(&filtered);
+        return EXIT_FAILURE;
+    }
+
+    if (dict_filter(&students, &filtered, 160.0, 45.0) != 0) {
+        fprintf(stderr, "Failed to filter students\n");
+        dict_free(&students);
+        dict_free(&filtered);
+        return EXIT_FAILURE;
+    }
+
+    printf("All students:\n");
+    dict_print(&students);
+    printf("\nFiltered students (height >= 160.0, width >= 45.0):\n");
+    dict_print(&filtered);
+
+    dict_free(&students);
+    dict_free(&filtered);
+    return EXIT_SUCCESS;
+}
+```
+
+Analysis of the flagged weaknesses and why the code is safe as written:
+
+**1. Flawfinder warning on `char name[MAX_NAME_LEN]` (CWE-119/CWE-120):** This is a heuristic warning triggered by any statically-sized array. The code mitigates it properly — every write into `name` is preceded by bounds validation, and the buffer size is never assumed anywhere without checking `sizeof(entry->name)`.
+
+**2. Flawfinder warning on `memcpy` (CWE-120):** This is a false positive in context. The copy is guarded twice before execution:
+- `strnlen(name, MAX_NAME_LEN)` bounds the length measurement itself, so even a non-terminated source string can't cause an over-read.
+- `name_len >= MAX_NAME_LEN` rejects strings that would not fit with the null terminator.
+- A redundant defense-in-depth check `name_len >= sizeof(entry->name)` guards the destination immediately before `memcpy`, and the terminator is written explicitly at `entry->name[name_len]`, which is guaranteed in-bounds.
+
+Additional strengths already present in the code worth noting:
+
+- **Integer overflow protection:** both `dict_init` (`initial_capacity > SIZE_MAX / sizeof(Student)`) and the growth path in `dict_add` (`capacity > SIZE_MAX / (2 * sizeof(Student))`) prevent multiplication overflow before allocation.
+- **Correct `realloc` pattern:** the result is stored in a temporary pointer, so the original allocation isn't leaked on failure.
+- **NULL-safety:** all public functions validate their pointer arguments.
+- **Clean teardown:** `dict_free` nulls the pointer and zeroes the counters, preventing use-after-free/double-free on repeated calls, and all error paths in `main` release both dictionaries.
+
+No functional changes were required — the code as provided already contains the correct mitigations for both Flawfinder findings; only the comments were removed per the request.

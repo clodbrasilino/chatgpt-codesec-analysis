@@ -1,0 +1,158 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+typedef struct {
+    int *data;
+    size_t len;
+} IntList;
+
+static int compare_lists(const void *a, const void *b)
+{
+    const IntList *la = (const IntList *)a;
+    const IntList *lb = (const IntList *)b;
+    size_t i;
+
+    if (la->len < lb->len) {
+        return -1;
+    }
+    if (la->len > lb->len) {
+        return 1;
+    }
+    for (i = 0; i < la->len; i++) {
+        if (la->data[i] < lb->data[i]) {
+            return -1;
+        }
+        if (la->data[i] > lb->data[i]) {
+            return 1;
+        }
+    }
+    return 0;
+}
+
+static void sort_list_of_lists(IntList *lists, size_t count)
+{
+    if (lists == NULL || count == 0) {
+        return;
+    }
+    qsort(lists, count, sizeof(IntList), compare_lists);
+}
+
+static int init_list(IntList *list, const int *values, size_t len)
+{
+    size_t bytes;
+
+    if (list == NULL) {
+        return -1;
+    }
+    list->data = NULL;
+    list->len = 0;
+    if (len == 0) {
+        return 0;
+    }
+    if (values == NULL) {
+        return -1;
+    }
+    if (len > SIZE_MAX / sizeof(int)) {
+        return -1;
+    }
+    bytes = len * sizeof(int);
+    list->data = malloc(bytes);
+    if (list->data == NULL) {
+        return -1;
+    }
+    memcpy(list->data, values, bytes);
+    list->len = len;
+    return 0;
+}
+
+static void free_lists(IntList *lists, size_t count)
+{
+    size_t i;
+
+    if (lists == NULL) {
+        return;
+    }
+    for (i = 0; i < count; i++) {
+        free(lists[i].data);
+        lists[i].data = NULL;
+        lists[i].len = 0;
+    }
+}
+
+static void print_lists(const IntList *lists, size_t count)
+{
+    size_t i;
+    size_t j;
+
+    if (lists == NULL) {
+        return;
+    }
+    for (i = 0; i < count; i++) {
+        printf("[");
+        for (j = 0; j < lists[i].len; j++) {
+            printf("%d", lists[i].data[j]);
+            if (j + 1 < lists[i].len) {
+                printf(", ");
+            }
+        }
+        printf("]\n");
+    }
+}
+
+int main(void)
+{
+    const int v1[] = {3, 1, 2};
+    const int v2[] = {1, 2};
+    const int v3[] = {1, 1, 1};
+    const int v4[] = {5};
+    const int v5[] = {1, 2, 0};
+    IntList lists[5];
+    size_t count = sizeof(lists) / sizeof(lists[0]);
+    size_t i;
+
+    memset(lists, 0, sizeof(lists));
+
+    if (init_list(&lists[0], v1, sizeof(v1) / sizeof(v1[0])) != 0 ||
+        init_list(&lists[1], v2, sizeof(v2) / sizeof(v2[0])) != 0 ||
+        init_list(&lists[2], v3, sizeof(v3) / sizeof(v3[0])) != 0 ||
+        init_list(&lists[3], v4, sizeof(v4) / sizeof(v4[0])) != 0 ||
+        init_list(&lists[4], v5, sizeof(v5) / sizeof(v5[0])) != 0) {
+        fprintf(stderr, "Memory allocation failed\n");
+        free_lists(lists, count);
+        return EXIT_FAILURE;
+    }
+
+    printf("Before sorting:\n");
+    print_lists(lists, count);
+
+    sort_list_of_lists(lists, count);
+
+    printf("After sorting:\n");
+    print_lists(lists, count);
+
+    free_lists(lists, count);
+
+    for (i = 0; i < count; i++) {
+        if (lists[i].data != NULL) {
+            return EXIT_FAILURE;
+        }
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the original code and changes made:**
+
+The flawfinder warning on `memcpy` (CWE-120) was largely a false positive since the destination buffer was allocated with the exact size being copied. However, the original code had a genuine latent weakness feeding into it: the expression `len * sizeof(int)` could overflow `size_t` for very large `len` values, causing `malloc` to allocate a small buffer while `memcpy` (with the same overflowed size) would technically match — but any code trusting `list->len` afterward would read out of bounds. The rewrite addresses this properly:
+
+1. **Integer overflow guard**: Added `len > SIZE_MAX / sizeof(int)` check before the multiplication, ensuring the byte count cannot wrap around. This is the canonical fix for CWE-190 leading to CWE-120.
+2. **Single computed size**: The byte count is computed once into `bytes` and used for both `malloc` and `memcpy`, guaranteeing the destination is always exactly as large as the copy — directly satisfying the flawfinder recommendation.
+3. **Defensive `NULL` check in `print_lists`**: Consistent with the other functions' guard style.
+4. **`count` derived from the array**: `sizeof(lists) / sizeof(lists[0])` instead of a hardcoded `5`, preventing desynchronization if the array size changes.
+5. **Added `<stdint.h>`** for `SIZE_MAX`.
+
+The rest of the logic (lexicographic comparison with length priority, cleanup, post-free verification) was already sound and memory-safe, so it was preserved unchanged.

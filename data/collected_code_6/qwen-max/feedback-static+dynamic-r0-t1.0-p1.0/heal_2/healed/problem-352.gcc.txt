@@ -1,0 +1,5 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-352.c: In function 'areCharactersUnique':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-352.c:7:21: error: implicit declaration of function 'strnlen_s'; did you mean 'strnlen'? [-Wimplicit-function-declaration]
+    7 |     size_t length = strnlen_s(str, 257);
+      |                     ^~~~~~~~~
+      |                     strnlen

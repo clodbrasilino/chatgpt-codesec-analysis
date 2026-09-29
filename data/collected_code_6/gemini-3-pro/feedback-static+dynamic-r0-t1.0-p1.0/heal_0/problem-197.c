@@ -1,0 +1,40 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+typedef struct {
+    double first;
+    double second;
+} Tuple;
+
+Tuple* power_tuples(const Tuple* base, const Tuple* exponent) {
+    if (base == NULL || exponent == NULL) {
+        return NULL;
+    }
+
+    Tuple* result = (Tuple*)malloc(sizeof(Tuple));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    result->first = pow(base->first, exponent->first);
+    result->second = pow(base->second, exponent->second);
+
+    return result;
+}
+
+int main() {
+    Tuple base = {2.0, 3.0};
+    Tuple exponent = {3.0, 2.0};
+
+    Tuple* result = power_tuples(&base, &exponent);
+
+    if (result != NULL) {
+        printf("Result: (%.2f, %.2f)\n", result->first, result->second);
+        free(result);
+    } else {
+        printf("Error computing tuple exponentiation.\n");
+    }
+
+    return 0;
+}

@@ -1,0 +1,44 @@
+{
+  "task_id": 269,
+  "text": "Write a C function to find the ascii value of a character.",
+  "fn_candidates": [
+    "ascii_value",
+    "AsciiValue",
+    "asciiValue",
+    "asciivalue"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "ascii_value",
+      "args": [
+        "A"
+      ],
+      "expected": 65,
+      "assert_src": "assert ascii_value('A')==65"
+    },
+    {
+      "fn_name": "ascii_value",
+      "args": [
+        "R"
+      ],
+      "expected": 82,
+      "assert_src": "assert ascii_value('R')==82"
+    },
+    {
+      "fn_name": "ascii_value",
+      "args": [
+        "S"
+      ],
+      "expected": 83,
+      "assert_src": "assert ascii_value('S')==83"
+    }
+  ],
+  "arg_kinds": [
+    "str"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

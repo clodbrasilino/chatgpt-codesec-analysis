@@ -1,0 +1,78 @@
+#include <stdio.h>
+#include <limits.h>
+#include <stddef.h>
+
+typedef struct {
+    int first;
+    int second;
+} IntPair;
+
+int max_tuple_product(const IntPair *pairs, size_t count, int *max_product, size_t *max_index)
+{
+    if (pairs == NULL || max_product == NULL)
+    {
+        return -1;
+    }
+
+    if (count == 0)
+    {
+        return -2;
+    }
+
+    long long best = (long long)pairs[0].first * (long long)pairs[0].second;
+    size_t best_index = 0;
+
+    for (size_t i = 1; i < count; i++)
+    {
+        long long product = (long long)pairs[i].first * (long long)pairs[i].second;
+        if (product > best)
+        {
+            best = product;
+            best_index = i;
+        }
+    }
+
+    if (best > INT_MAX || best < INT_MIN)
+    {
+        return -3;
+    }
+
+    *max_product = (int)best;
+
+    if (max_index != NULL)
+    {
+        *max_index = best_index;
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    const IntPair pairs[] = {
+        {2, 3},
+        {4, 5},
+        {1, 6},
+        {7, 2},
+        {3, 3}
+    };
+    const size_t count = sizeof(pairs) / sizeof(pairs[0]);
+
+    int max_product = 0;
+    size_t max_index = 0;
+
+    int status = max_tuple_product(pairs, count, &max_product, &max_index);
+    if (status != 0)
+    {
+        fprintf(stderr, "Failed to compute maximum product (error %d)\n", status);
+        return 1;
+    }
+
+    printf("Maximum product: %d (from tuple (%d, %d) at index %zu)\n",
+           max_product,
+           pairs[max_index].first,
+           pairs[max_index].second,
+           max_index);
+
+    return 0;
+}

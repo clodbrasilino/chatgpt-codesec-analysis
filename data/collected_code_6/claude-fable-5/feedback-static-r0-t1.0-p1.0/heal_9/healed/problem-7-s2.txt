@@ -1,0 +1,228 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+#define MAX_INPUT_LENGTH 4096
+
+static void print_regex_error(int errcode, const regex_t *regex)
+{
+    size_t needed;
+    char *errbuf;
+
+    needed = regerror(errcode, regex, NULL, 0);
+    if (needed == 0) {
+        fprintf(stderr, "Regex compilation failed: unknown error\n");
+        return;
+    }
+
+    errbuf = malloc(needed);
+    if (errbuf == NULL) {
+        fprintf(stderr, "Regex compilation failed: unable to allocate error buffer\n");
+        return;
+    }
+
+    (void)regerror(errcode, regex, errbuf, needed);
+    errbuf[needed - 1] = '\0';
+    fprintf(stderr, "Regex compilation failed: %s\n", errbuf);
+    free(errbuf);
+}
+
+int find_long_words(const char *text)
+{
+    regex_t regex;
+    regmatch_t match;
+    const char *cursor;
+    int ret;
+    size_t remaining;
+
+    if (text == NULL) {
+        return -1;
+    }
+
+    remaining = strnlen(text, MAX_INPUT_LENGTH);
+    if (remaining >= MAX_INPUT_LENGTH && text[MAX_INPUT_LENGTH - 1] != '\0') {
+        fprintf(stderr, "Input exceeds maximum allowed length\n");
+        return -1;
+    }
+
+    ret = regcomp(&regex, "[[:alpha:]]{4,}", REG_EXTENDED);
+    if (ret != 0) {
+        print_regex_error(ret, &regex);
+        return -1;
+    }
+
+    cursor = text;
+
+    while (regexec(&regex, cursor, 1, &match, 0) == 0) {
+        size_t start;
+        size_t end;
+        size_t length;
+
+        if (match.rm_so < 0 || match.rm_eo <= match.rm_so) {
+            break;
+        }
+
+        start = (size_t)match.rm_so;
+        end = (size_t)match.rm_eo;
+
+        if (end > remaining) {
+            break;
+        }
+
+        length = end - start;
+
+        if (length > (size_t)INT_MAX) {
+            break;
+        }
+
+        printf("%.*s\n", (int)length, cursor + start);
+
+        cursor += end;
+        remaining -= end;
+
+        if (remaining == 0 || *cursor == '\0') {
+            break;
+        }
+    }
+
+    regfree(&regex);
+    return 0;
+}
+
+int main(void)
+{
+    const char *input = "The quick brown fox jumps over a lazy dog near it";
+
+    if (find_long_words(input) != 0) {
+        fprintf(stderr, "Failed to process input string\n");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+Wait — `INT_MAX` requires `<limits.h>`. Here is the corrected final version:
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <limits.h>
+#include <regex.h>
+
+#define MAX_INPUT_LENGTH 4096
+
+static void print_regex_error(int errcode, const regex_t *regex)
+{
+    size_t needed;
+    char *errbuf;
+
+    needed = regerror(errcode, regex, NULL, 0);
+    if (needed == 0) {
+        fprintf(stderr, "Regex compilation failed: unknown error\n");
+        return;
+    }
+
+    errbuf = malloc(needed);
+    if (errbuf == NULL) {
+        fprintf(stderr, "Regex compilation failed: unable to allocate error buffer\n");
+        return;
+    }
+
+    (void)regerror(errcode, regex, errbuf, needed);
+    errbuf[needed - 1] = '\0';
+    fprintf(stderr, "Regex compilation failed: %s\n", errbuf);
+    free(errbuf);
+}
+
+int find_long_words(const char *text)
+{
+    regex_t regex;
+    regmatch_t match;
+    const char *cursor;
+    int ret;
+    size_t remaining;
+
+    if (text == NULL) {
+        return -1;
+    }
+
+    remaining = strnlen(text, MAX_INPUT_LENGTH);
+    if (remaining >= MAX_INPUT_LENGTH && text[MAX_INPUT_LENGTH - 1] != '\0') {
+        fprintf(stderr, "Input exceeds maximum allowed length\n");
+        return -1;
+    }
+
+    ret = regcomp(&regex, "[[:alpha:]]{4,}", REG_EXTENDED);
+    if (ret != 0) {
+        print_regex_error(ret, &regex);
+        return -1;
+    }
+
+    cursor = text;
+
+    while (regexec(&regex, cursor, 1, &match, 0) == 0) {
+        size_t start;
+        size_t end;
+        size_t length;
+
+        if (match.rm_so < 0 || match.rm_eo <= match.rm_so) {
+            break;
+        }
+
+        start = (size_t)match.rm_so;
+        end = (size_t)match.rm_eo;
+
+        if (end > remaining) {
+            break;
+        }
+
+        length = end - start;
+
+        if (length > (size_t)INT_MAX) {
+            break;
+        }
+
+        printf("%.*s\n", (int)length, cursor + start);
+
+        cursor += end;
+        remaining -= end;
+
+        if (remaining == 0 || *cursor == '\0') {
+            break;
+        }
+    }
+
+    regfree(&regex);
+    return 0;
+}
+
+int main(void)
+{
+    const char *input = "The quick brown fox jumps over a lazy dog near it";
+
+    if (find_long_words(input) != 0) {
+        fprintf(stderr, "Failed to process input string\n");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Summary of fixes applied:**
+
+1. **CWE-120 (memcpy buffer overflow risk)** — eliminated entirely by removing the `malloc`/`memcpy`/`free` cycle and printing the match directly with `printf("%.*s\n", ...)`. No destination buffer means no overflow possibility and no allocation-failure path inside the loop.
+
+2. **Redundant `remaining > 0` condition** — removed from the loop guard; termination is now handled explicitly at the bottom of the loop where `remaining == 0` is meaningful after decrementing.
+
+3. **`length = end - start` possibly less than 1** — prevented by rejecting matches where `match.rm_eo <= match.rm_so` before any conversion, guaranteeing `length >= 1`.
+
+4. **Always-false condition `length > remaining - start`** — removed. Since `end <= remaining` and `start < end` are already enforced, the check was dead code.
+
+5. **Removed the impossible `length >= (size_t)-1` check** — replaced with a meaningful `length > (size_t)INT_MAX` guard, since `%.*s` requires an `int` width and this prevents a signed conversion overflow.
+
+6. **Unchecked `remaining -= end`** — now provably safe because `end > remaining` breaks the loop first, so the subtraction can never underflow.

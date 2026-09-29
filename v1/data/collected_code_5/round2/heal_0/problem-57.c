@@ -1,0 +1,26 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+int compare(const void* a, const void* b){
+    return (*(char*)b - *(char*)a);
+}
+
+void largestNum(char* arr, int n) {
+    qsort(arr, n, sizeof(arr[0]), compare);
+}
+
+int main() {
+    char arr[] = {'1', '7', '8', '9', '3', '5'};
+    int n = sizeof(arr)/sizeof(arr[0]);
+
+    largestNum(arr, n);
+
+    printf("The largest number formed with the given digits is: ");
+    for(int i = 0; i < n; i++) {
+        printf("%c", arr[i]);
+    }
+    printf("\n");
+
+    return 0;
+}

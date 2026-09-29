@@ -1,0 +1,101 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int print_sublist(const int *list, size_t n, unsigned long mask)
+{
+    size_t i;
+    int first = 1;
+
+    if (list == NULL)
+    {
+        return -1;
+    }
+
+    if (printf("[") < 0)
+    {
+        return -1;
+    }
+
+    for (i = 0; i < n; i++)
+    {
+        if ((mask >> i) & 1UL)
+        {
+            if (!first)
+            {
+                if (printf(", ") < 0)
+                {
+                    return -1;
+                }
+            }
+            if (printf("%d", list[i]) < 0)
+            {
+                return -1;
+            }
+            first = 0;
+        }
+    }
+
+    if (printf("]\n") < 0)
+    {
+        return -1;
+    }
+
+    return 0;
+}
+
+int generate_sublists(const int *list, size_t n)
+{
+    unsigned long total;
+    unsigned long mask;
+
+    if (list == NULL && n > 0)
+    {
+        return -1;
+    }
+
+    if (n >= (sizeof(unsigned long) * 8UL) - 1UL)
+    {
+        return -1;
+    }
+
+    total = 1UL << n;
+
+    for (mask = 0; mask < total; mask++)
+    {
+        if (print_sublist(list, n, mask) != 0)
+        {
+            return -1;
+        }
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    size_t n = 4;
+    int *list;
+    size_t i;
+
+    list = malloc(n * sizeof(*list));
+    if (list == NULL)
+    {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i < n; i++)
+    {
+        list[i] = (int)(i + 1);
+    }
+
+    if (generate_sublists(list, n) != 0)
+    {
+        fprintf(stderr, "Failed to generate sublists\n");
+        free(list);
+        return EXIT_FAILURE;
+    }
+
+    free(list);
+    return EXIT_SUCCESS;
+}

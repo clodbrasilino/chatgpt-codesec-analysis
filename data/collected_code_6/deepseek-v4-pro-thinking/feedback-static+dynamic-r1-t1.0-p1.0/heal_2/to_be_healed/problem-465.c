@@ -1,0 +1,176 @@
+#include <stddef.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define STRING_MAX 65535
+
+typedef struct {
+    char *key;
+    char *value;
+} DictionaryEntry;
+
+typedef struct {
+    DictionaryEntry *entries;
+    size_t count;
+    size_t capacity;
+} Dictionary;
+
+static size_t safe_strlen(const char *str, size_t max) {
+    if (!str) return 0;
+    size_t i = 0;
+    while (i < max && str[i] != '\0') {
+        i++;
+    }
+    return i;
+}
+
+static char *string_duplicate(const char *str) {
+    if (!str) return NULL;
+    size_t len = safe_strlen(str, STRING_MAX);
+    if (len >= STRING_MAX) return NULL;
+    size_t size = len + 1;
+    char *copy = malloc(size);
+    if (!copy) return NULL;
+    /* Possible weaknesses found:
+     * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+     */
+    memcpy(copy, str, size);
+    return copy;
+}
+
+void dictionary_init(Dictionary *dict) {
+    if (!dict) return;
+    dict->entries = NULL;
+    dict->count = 0;
+    dict->capacity = 0;
+}
+
+static int dictionary_reserve(Dictionary *dict, size_t needed) {
+    if (dict->capacity >= needed) return 0;
+    size_t new_capacity = dict->capacity ? dict->capacity * 2 : 8;
+    if (new_capacity < dict->capacity) return -1;
+    while (new_capacity < needed) {
+        if (new_capacity > (size_t)-1 / 2) {
+            new_capacity = needed;
+            break;
+        }
+        new_capacity *= 2;
+    }
+    if (new_capacity > (size_t)-1 / sizeof(*dict->entries)) return -1;
+    DictionaryEntry *new_entries = realloc(dict->entries, new_capacity * sizeof(*new_entries));
+    if (!new_entries) return -1;
+    dict->entries = new_entries;
+    dict->capacity = new_capacity;
+    return 0;
+}
+
+int dictionary_add(Dictionary *dict, const char *key, const char *value) {
+    if (!dict || !key || !value) return -1;
+    if (dict->count == (size_t)-1) return -1;
+    if (dictionary_reserve(dict, dict->count + 1) != 0) return -1;
+    char *key_copy = string_duplicate(key);
+    if (!key_copy) return -1;
+    char *value_copy = string_duplicate(value);
+    if (!value_copy) {
+        free(key_copy);
+        return -1;
+    }
+    dict->entries[dict->count].key = key_copy;
+    dict->entries[dict->count].value = value_copy;
+    dict->count++;
+    return 0;
+}
+
+void dictionary_free(Dictionary *dict) {
+    if (!dict) return;
+    for (size_t i = 0; i < dict->count; i++) {
+        free(dict->entries[i].key);
+        free(dict->entries[i].value);
+    }
+    free(dict->entries);
+    dict->entries = NULL;
+    dict->count = 0;
+    dict->capacity = 0;
+}
+
+void dictionary_drop_empty(Dictionary *dict) {
+    if (!dict || !dict->entries) return;
+    size_t write = 0;
+    /* Possible weaknesses found:
+     * Flawfinder read: Check buffer boundaries if used in a loop including recursive loops (CWE-120, CWE-20). (risk 1, buffer)
+     */
+    for (size_t read = 0; read < dict->count; read++) {
+        /* Possible weaknesses found:
+         * Flawfinder read: Check buffer boundaries if used in a loop including recursive loops (CWE-120, CWE-20). (risk 1, buffer)
+         */
+        if (read >= dict->capacity) break;
+        /* Possible weaknesses found:
+         * Flawfinder read: Check buffer boundaries if used in a loop including recursive loops (CWE-120, CWE-20). (risk 1, buffer)
+         */
+        char *key = dict->entries[read].key;
+        /* Possible weaknesses found:
+         * Flawfinder read: Check buffer boundaries if used in a loop including recursive loops (CWE-120, CWE-20). (risk 1, buffer)
+         */
+        char *value = dict->entries[read].value;
+        if (value && value[0] != '\0') {
+            /* Possible weaknesses found:
+             * Flawfinder read: Check buffer boundaries if used in a loop including recursive loops (CWE-120, CWE-20). (risk 1, buffer)
+             */
+            if (write != read) {
+                if (write >= dict->capacity) break;
+                dict->entries[write].key = key;
+                dict->entries[write].value = value;
+                /* Possible weaknesses found:
+                 * Flawfinder read: Check buffer boundaries if used in a loop including recursive loops (CWE-120, CWE-20). (risk 1, buffer)
+                 */
+                dict->entries[read].key = NULL;
+                /* Possible weaknesses found:
+                 * Flawfinder read: Check buffer boundaries if used in a loop including recursive loops (CWE-120, CWE-20). (risk 1, buffer)
+                 */
+                dict->entries[read].value = NULL;
+            }
+            write++;
+        } else {
+            free(key);
+            free(value);
+            /* Possible weaknesses found:
+             * Flawfinder read: Check buffer boundaries if used in a loop including recursive loops (CWE-120, CWE-20). (risk 1, buffer)
+             */
+            dict->entries[read].key = NULL;
+            /* Possible weaknesses found:
+             * Flawfinder read: Check buffer boundaries if used in a loop including recursive loops (CWE-120, CWE-20). (risk 1, buffer)
+             */
+            dict->entries[read].value = NULL;
+        }
+    }
+    dict->count = write;
+}
+
+int main(void) {
+    Dictionary dict;
+    dictionary_init(&dict);
+    if (dictionary_add(&dict, "a", "apple") != 0) {
+        dictionary_free(&dict);
+        return 1;
+    }
+    if (dictionary_add(&dict, "b", "") != 0) {
+        dictionary_free(&dict);
+        return 1;
+    }
+    if (dictionary_add(&dict, "c", "cherry") != 0) {
+        dictionary_free(&dict);
+        return 1;
+    }
+    if (dictionary_add(&dict, "d", "") != 0) {
+        dictionary_free(&dict);
+        return 1;
+    }
+    dictionary_drop_empty(&dict);
+    for (size_t i = 0; i < dict.count; i++) {
+        if (i >= dict.capacity) break;
+        printf("%s: %s\n", dict.entries[i].key, dict.entries[i].value);
+    }
+    dictionary_free(&dict);
+    return 0;
+}

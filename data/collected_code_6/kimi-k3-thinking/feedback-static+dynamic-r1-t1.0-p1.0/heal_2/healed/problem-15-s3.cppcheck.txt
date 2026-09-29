@@ -1,0 +1,16 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_2/healed/problem-15-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_2/healed/problem-15-s3.c:112:65: style: Condition 'tok_len>=alloc_size' is always false [knownConditionTrueFalse]
+            if (start > len || tok_len > len - start || tok_len >= alloc_size) {
+                                                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_2/healed/problem-15-s3.c:100:24: note: alloc_size is assigned 'tok_len+1' here.
+            alloc_size = tok_len + 1;
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_2/healed/problem-15-s3.c:103:23: note: Assuming condition is false
+            if (token == NULL) {
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_2/healed/problem-15-s3.c:112:65: note: Condition 'tok_len>=alloc_size' is always false
+            if (start > len || tok_len > len - start || tok_len >= alloc_size) {
+                                                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_2/healed/problem-15-s3.c:42:16: style: The scope of the variable 'alloc_size' can be reduced. [variableScope]
+        size_t alloc_size;
+               ^

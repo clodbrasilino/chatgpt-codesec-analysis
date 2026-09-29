@@ -1,0 +1,221 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdint.h>
+#include <fcntl.h>
+#include <sys/stat.h>
+#include <unistd.h>
+
+#define MAX_WORD_LEN 64
+#define INITIAL_CAPACITY 128
+#define TOP_COUNT 10
+
+typedef struct {
+    char word[MAX_WORD_LEN];
+    size_t count;
+} WordEntry;
+
+typedef struct {
+    WordEntry *entries;
+    size_t size;
+    size_t capacity;
+} WordTable;
+
+static int word_table_init(WordTable *table)
+{
+    table->entries = malloc(INITIAL_CAPACITY * sizeof(WordEntry));
+    if (table->entries == NULL) {
+        return -1;
+    }
+    table->size = 0;
+    table->capacity = INITIAL_CAPACITY;
+    return 0;
+}
+
+static void word_table_destroy(WordTable *table)
+{
+    if (table != NULL) {
+        free(table->entries);
+        table->entries = NULL;
+        table->size = 0;
+        table->capacity = 0;
+    }
+}
+
+static int word_table_add(WordTable *table, const char *word)
+{
+    size_t i;
+    size_t len;
+
+    len = strnlen(word, MAX_WORD_LEN);
+    if (len == 0 || len >= MAX_WORD_LEN) {
+        return -1;
+    }
+
+    for (i = 0; i < table->size; i++) {
+        if (strncmp(table->entries[i].word, word, MAX_WORD_LEN) == 0) {
+            table->entries[i].count++;
+            return 0;
+        }
+    }
+
+    if (table->size == table->capacity) {
+        size_t new_capacity;
+        WordEntry *new_entries;
+
+        if (table->capacity > SIZE_MAX / (2 * sizeof(WordEntry))) {
+            return -1;
+        }
+        new_capacity = table->capacity * 2;
+        new_entries = realloc(table->entries, new_capacity * sizeof(WordEntry));
+        if (new_entries == NULL) {
+            return -1;
+        }
+        table->entries = new_entries;
+        table->capacity = new_capacity;
+    }
+
+    if (len > sizeof(table->entries[table->size].word) - 1) {
+        return -1;
+    }
+    memcpy(table->entries[table->size].word, word, len);
+    table->entries[table->size].word[len] = '\0';
+    table->entries[table->size].count = 1;
+    table->size++;
+    return 0;
+}
+
+static int compare_entries(const void *a, const void *b)
+{
+    const WordEntry *ea = (const WordEntry *)a;
+    const WordEntry *eb = (const WordEntry *)b;
+
+    if (eb->count > ea->count) {
+        return 1;
+    }
+    if (eb->count < ea->count) {
+        return -1;
+    }
+    return strncmp(ea->word, eb->word, MAX_WORD_LEN);
+}
+
+static int flush_word(WordTable *table, char *buffer, size_t *pos)
+{
+    if (*pos > 0) {
+        buffer[*pos] = '\0';
+        if (word_table_add(table, buffer) != 0) {
+            return -1;
+        }
+        *pos = 0;
+    }
+    return 0;
+}
+
+static int count_words(FILE *fp, WordTable *table)
+{
+    char buffer[MAX_WORD_LEN];
+    size_t pos = 0;
+    int c;
+
+    while ((c = fgetc(fp)) != EOF) {
+        if (isalpha((unsigned char)c)) {
+            if (pos < sizeof(buffer) - 1) {
+                buffer[pos] = (char)tolower((unsigned char)c);
+                pos++;
+            }
+        } else {
+            if (flush_word(table, buffer, &pos) != 0) {
+                return -1;
+            }
+        }
+    }
+
+    if (ferror(fp)) {
+        return -1;
+    }
+
+    if (flush_word(table, buffer, &pos) != 0) {
+        return -1;
+    }
+
+    return 0;
+}
+
+static void print_top_words(const WordTable *table, size_t limit)
+{
+    size_t i;
+    size_t count = table->size < limit ? table->size : limit;
+
+    for (i = 0; i < count; i++) {
+        printf("%zu %s\n", table->entries[i].count, table->entries[i].word);
+    }
+}
+
+static FILE *open_regular_file(const char *path)
+{
+    int fd;
+    struct stat st;
+    FILE *fp;
+
+    fd = open(path, O_RDONLY | O_NOFOLLOW | O_NOCTTY);
+    if (fd < 0) {
+        return NULL;
+    }
+
+    if (fstat(fd, &st) != 0 || !S_ISREG(st.st_mode)) {
+        close(fd);
+        return NULL;
+    }
+
+    fp = fdopen(fd, "r");
+    if (fp == NULL) {
+        close(fd);
+        return NULL;
+    }
+
+    return fp;
+}
+
+int main(int argc, char *const argv[])
+{
+    FILE *fp = NULL;
+    WordTable table;
+    int status = EXIT_FAILURE;
+
+    if (argc != 2) {
+        fprintf(stderr, "Usage: %s <dictionary_file>\n", argv[0]);
+        return EXIT_FAILURE;
+    }
+
+    fp = open_regular_file(argv[1]);
+    if (fp == NULL) {
+        fprintf(stderr, "Error: cannot open file '%s'\n", argv[1]);
+        return EXIT_FAILURE;
+    }
+
+    if (word_table_init(&table) != 0) {
+        fprintf(stderr, "Error: memory allocation failed\n");
+        if (fclose(fp) != 0) {
+            fprintf(stderr, "Error: failed to close file\n");
+        }
+        return EXIT_FAILURE;
+    }
+
+    if (count_words(fp, &table) != 0) {
+        fprintf(stderr, "Error: failed while counting words\n");
+    } else {
+        qsort(table.entries, table.size, sizeof(WordEntry), compare_entries);
+        print_top_words(&table, TOP_COUNT);
+        status = EXIT_SUCCESS;
+    }
+
+    word_table_destroy(&table);
+
+    if (fclose(fp) != 0) {
+        fprintf(stderr, "Error: failed to close file\n");
+        status = EXIT_FAILURE;
+    }
+
+    return status;
+}

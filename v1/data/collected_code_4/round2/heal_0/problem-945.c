@@ -1,0 +1,67 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct element {
+    int value;
+    struct element *next;
+};
+
+struct element *new_element(int value) {
+    struct element *e = (struct element*) malloc(sizeof(struct element));
+    if (e == NULL) {
+        printf("Memory allocation failed!\n");
+        exit(EXIT_FAILURE);
+    }
+    e->value = value;
+    e->next = NULL;
+    return e;
+}
+
+struct element *add_element(struct element *set, int value) {
+    if (set == NULL) {
+        return new_element(value);
+    }
+    struct element *iter = set;
+    while (iter != NULL) {
+        if (iter->value == value) {
+            return set;
+        }
+        if (iter->next == NULL) {
+            break;
+        }
+        iter = iter->next;
+    }
+    struct element *newElement = new_element(value);
+    iter->next = newElement;
+    return set;
+}
+
+void free_set(struct element *set) {
+    while (set != NULL) {
+        struct element *nextElement = set->next;
+        free(set);
+        set = nextElement;
+    }
+}
+
+void print_set(struct element *set) {
+    struct element *iter = set;
+    printf("{");
+    while (iter != NULL) {
+        printf(" %d ", iter->value);
+        iter = iter->next;
+    }
+    printf("}\n");
+}
+
+int main() {
+    int tuples[] = {1, 2, 2, 3, 3, 3, 4, 4, 4, 4};
+    int size = sizeof(tuples) / sizeof(tuples[0]);
+    struct element *set = NULL;
+    for (int i = 0; i < size; i++) {
+        set = add_element(set, tuples[i]);
+    }
+    print_set(set);
+    free_set(set);
+    return 0;
+}

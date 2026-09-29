@@ -1,0 +1,36 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct map {
+    int key;
+    int value;
+} map;
+
+int count_pairs(int *list1, int *list2, int n) {
+    map hashmap[10] = {0};
+    int i, count = 0;
+
+    for(i = 0; i < n; i++) {
+        hashmap[list1[i]].key = list1[i];
+        hashmap[list1[i]].value++;
+    }
+
+    for(i = 0; i < n; i++) {
+        if(hashmap[list2[i]].value > 0) {
+            count++;
+            hashmap[list2[i]].value--;
+        }
+    }
+
+    return count;
+}
+
+int main() {
+    int list1[] = {1, 2, 3, 4, 5};
+    int list2[] = {1, 2, 3, 6, 7};
+    int n = sizeof(list1) / sizeof(list1[0]);
+
+    printf("Count of same pairs: %d\n", count_pairs(list1, list2, n));
+
+    return 0;
+}

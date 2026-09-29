@@ -1,0 +1,52 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int x;
+    int y;
+} Tuple;
+
+typedef struct Node {
+    Tuple tuple;
+    struct Node* next;
+} Node;
+
+typedef struct {
+    Node* head;
+} List;
+
+void addTupleToList(List* list, Tuple t) {
+    Node* newNode = (Node*)malloc(sizeof(Node));
+    if (newNode == NULL) {
+        fprintf(stderr, "Failed to allocate memory\n");
+        return;
+    }
+    newNode->tuple = t;
+    newNode->next = list->head;
+    list->head = newNode;
+}
+
+void freeList(List* list) {
+    Node* current = list->head;
+    while (current != NULL) {
+        Node* next = current->next;
+        free(current);
+        current = next;
+    }
+    list->head = NULL;
+}
+
+int main() {
+    List myList = {NULL};
+    Tuple t = {1, 2};
+
+    addTupleToList(&myList, t);
+
+    // Print the list (for debugging purposes)
+    for (Node* current = myList.head; current != NULL; current = current->next) {
+        printf("(%d, %d) ", current->tuple.x, current->tuple.y);
+    }
+
+    freeList(&myList);
+    return 0;
+}

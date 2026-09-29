@@ -1,0 +1,164 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <limits.h>
+#include <stdint.h>
+#include <ctype.h>
+
+#define MAX_TEXT_LEN 1024
+#define MAX_DISCARD 65536
+
+typedef struct {
+    unsigned char element;
+    size_t count;
+} ElementCount;
+
+static size_t bounded_strlen(const char *s, size_t max_len)
+{
+    size_t i = 0;
+
+    if (s == NULL) {
+        return 0;
+    }
+    while (i < max_len && s[i] != '\0') {
+        i++;
+    }
+    return i;
+}
+
+static int find_most_common(const char *text, size_t text_size, ElementCount *results, size_t max_results, size_t *num_results)
+{
+    size_t counts[UCHAR_MAX + 1] = {0};
+    size_t max_count = 0;
+    size_t i;
+    size_t len;
+    size_t found = 0;
+
+    if (text == NULL || results == NULL || num_results == NULL || max_results == 0 || text_size == 0) {
+        return -1;
+    }
+
+    *num_results = 0;
+
+    len = bounded_strlen(text, text_size);
+    if (len == text_size) {
+        return -1;
+    }
+    if (len == 0) {
+        return 0;
+    }
+
+    for (i = 0; i < len; i++) {
+        unsigned char c = (unsigned char)text[i];
+        if (counts[c] < SIZE_MAX) {
+            counts[c]++;
+        }
+        if (counts[c] > max_count) {
+            max_count = counts[c];
+        }
+    }
+
+    for (i = 0; i <= UCHAR_MAX; i++) {
+        if (counts[i] == max_count) {
+            if (found < max_results) {
+                results[found].element = (unsigned char)i;
+                results[found].count = counts[i];
+                found++;
+            } else {
+                break;
+            }
+        }
+    }
+
+    *num_results = found;
+    return 0;
+}
+
+static int discard_rest_of_line(FILE *stream)
+{
+    int ch;
+    size_t discarded = 0;
+
+    if (stream == NULL) {
+        return -1;
+    }
+
+    for (;;) {
+        if (discarded >= MAX_DISCARD) {
+            return -1;
+        }
+        ch = fgetc(stream);
+        discarded++;
+        if (ch == '\n' || ch == EOF) {
+            break;
+        }
+    }
+
+    return 0;
+}
+
+static int read_line(char *buffer, size_t buffer_size, FILE *stream)
+{
+    size_t len;
+
+    if (buffer == NULL || buffer_size < 2 || buffer_size > INT_MAX || stream == NULL) {
+        return -1;
+    }
+
+    if (fgets(buffer, (int)buffer_size, stream) == NULL) {
+        return -1;
+    }
+
+    buffer[buffer_size - 1] = '\0';
+
+    len = bounded_strlen(buffer, buffer_size);
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    } else if (len == buffer_size - 1) {
+        if (discard_rest_of_line(stream) != 0) {
+            return -1;
+        }
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    char text[MAX_TEXT_LEN];
+    ElementCount results[UCHAR_MAX + 1];
+    size_t num_results = 0;
+    size_t i;
+
+    memset(text, 0, sizeof(text));
+    memset(results, 0, sizeof(results));
+
+    printf("Enter text: ");
+    fflush(stdout);
+
+    if (read_line(text, sizeof(text), stdin) != 0) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (find_most_common(text, sizeof(text), results, UCHAR_MAX + 1, &num_results) != 0) {
+        fprintf(stderr, "Error processing text\n");
+        return EXIT_FAILURE;
+    }
+
+    if (num_results == 0) {
+        printf("No elements found\n");
+        return EXIT_SUCCESS;
+    }
+
+    printf("Most common element(s):\n");
+    for (i = 0; i < num_results; i++) {
+        if (isprint((int)results[i].element)) {
+            printf("'%c' : %zu\n", results[i].element, results[i].count);
+        } else {
+            printf("0x%02X : %zu\n", results[i].element, results[i].count);
+        }
+    }
+
+    return EXIT_SUCCESS;
+}

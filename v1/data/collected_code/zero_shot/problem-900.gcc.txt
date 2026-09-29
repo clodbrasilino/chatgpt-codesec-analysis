@@ -1,0 +1,13 @@
+collected_code/problem-900-0.c: In function 'startsWithNumber':
+collected_code/problem-900-0.c:12:8: warning: implicit declaration of function 'isdigit' [-Wimplicit-function-declaration]
+   12 |    if (isdigit(str[0])) {
+      |        ^~~~~~~
+collected_code/problem-900-0.c:2:1: note: include '<ctype.h>' or provide a declaration of 'isdigit'
+    1 | #include <string.h>
+  +++ |+#include <ctype.h>
+    2 | 
+Undefined symbols for architecture x86_64:
+  "_main", referenced from:
+     implicit entry/start for main executable
+ld: symbol(s) not found for architecture x86_64
+collect2: error: ld returned 1 exit status

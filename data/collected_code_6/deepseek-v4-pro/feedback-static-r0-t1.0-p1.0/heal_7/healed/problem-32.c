@@ -1,0 +1,66 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <limits.h>
+
+long long largest_prime_factor(long long n) {
+    long long max_prime = -1;
+    long long i;
+
+    if (n <= 1) {
+        return -1;
+    }
+
+    while (n % 2 == 0) {
+        max_prime = 2;
+        n /= 2;
+    }
+
+    for (i = 3; i * i <= n; i += 2) {
+        while (n % i == 0) {
+            max_prime = i;
+            n /= i;
+        }
+    }
+
+    if (n > 2) {
+        max_prime = n;
+    }
+
+    return max_prime;
+}
+
+int main(int argc, char const *argv[]) {
+    long long number;
+    long long result;
+    char *endptr;
+
+    if (argc != 2) {
+        fprintf(stderr, "Usage: %s <number>\n", argv[0]);
+        return EXIT_FAILURE;
+    }
+
+    errno = 0;
+    number = strtoll(argv[1], &endptr, 10);
+
+    if (errno == ERANGE || *endptr != '\0' || endptr == argv[1]) {
+        fprintf(stderr, "Error: Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (number <= 1) {
+        fprintf(stderr, "Error: Number must be greater than 1\n");
+        return EXIT_FAILURE;
+    }
+
+    result = largest_prime_factor(number);
+
+    if (result == -1) {
+        fprintf(stderr, "Error: Invalid number\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("%lld\n", result);
+
+    return EXIT_SUCCESS;
+}

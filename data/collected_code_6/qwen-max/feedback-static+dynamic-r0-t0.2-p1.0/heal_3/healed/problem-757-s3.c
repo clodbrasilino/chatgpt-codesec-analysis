@@ -1,0 +1,33 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+int count_reverse_pairs(char *strings[], int n) {
+    int count = 0;
+    for (int i = 0; i < n; ++i) {
+        for (int j = i + 1; j < n; ++j) {
+            size_t len1 = 0, len2 = 0;
+            while (strings[i][len1] != '\0') len1++;
+            while (strings[j][len2] != '\0') len2++;
+            if (len1 == len2) {
+                for (size_t k = 0; k < len1; ++k) {
+                    if (strings[i][k] != strings[j][len1 - k - 1]) {
+                        break;
+                    }
+                    if (k == len1 - 1) {
+                        count++;
+                    }
+                }
+            }
+        }
+    }
+    return count;
+}
+
+int main() {
+    char *strings[] = {"abc", "cba", "bca", "xyz", "zyx", "yxz"};
+    int n = sizeof(strings) / sizeof(strings[0]);
+    int result = count_reverse_pairs(strings, n);
+    printf("Number of reverse string pairs: %d\n", result);
+    return 0;
+}

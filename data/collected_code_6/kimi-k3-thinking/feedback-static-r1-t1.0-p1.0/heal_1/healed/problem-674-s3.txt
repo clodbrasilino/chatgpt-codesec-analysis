@@ -1,0 +1,118 @@
+Here's the rewritten code with fixes for each flagged weakness:
+
+- **`strlen` (CWE-126, both sites):** replaced with `strnlen()` bounded by a maximum length. If no NUL terminator is found within the bound, the function bails out instead of over-reading. The token-length read is also bounded.
+- **`strcpy` (CWE-120):** replaced with `memcpy(copy, str, len + 1)`. Since `strnlen` already proved the terminator exists at `str[len]` and `copy` is exactly `len + 1` bytes, the copy is exact and cannot overflow.
+- **`memcpy` (CWE-120):** an explicit bounds check (`sep > len - out_len || wlen > len - out_len - sep`) now guarantees the separator + word + terminator always fit in the `len + 1`-byte destination before copying. The check is written to avoid `size_t` underflow.
+
+```c
+#define _POSIX_C_SOURCE 200809L
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_INPUT_LENGTH 65536
+
+char *remove_duplicate_words(const char *str)
+{
+    if (str == NULL) {
+        return NULL;
+    }
+
+    size_t len = strnlen(str, MAX_INPUT_LENGTH);
+    if (len == MAX_INPUT_LENGTH) {
+        return NULL;
+    }
+
+    char *result = malloc(len + 1);
+    if (result == NULL) {
+        return NULL;
+    }
+    result[0] = '\0';
+
+    char *copy = malloc(len + 1);
+    if (copy == NULL) {
+        free(result);
+        return NULL;
+    }
+    memcpy(copy, str, len + 1);
+
+    char **seen = NULL;
+    size_t seen_count = 0;
+    size_t out_len = 0;
+
+    char *word = strtok(copy, " \t\n");
+    while (word != NULL) {
+        int found = 0;
+        size_t i;
+        for (i = 0; i < seen_count; i++) {
+            if (strcmp(seen[i], word) == 0) {
+                found = 1;
+                break;
+            }
+        }
+
+        if (!found) {
+            char **tmp = realloc(seen, (seen_count + 1) * sizeof(*seen));
+            size_t wlen;
+            size_t sep;
+
+            if (tmp == NULL) {
+                free(seen);
+                free(copy);
+                free(result);
+                return NULL;
+            }
+            seen = tmp;
+            seen[seen_count] = word;
+            seen_count++;
+
+            wlen = strnlen(word, len + 1);
+            sep = (out_len > 0) ? 1 : 0;
+
+            if (sep > len - out_len || wlen > len - out_len - sep) {
+                free(seen);
+                free(copy);
+                free(result);
+                return NULL;
+            }
+
+            if (sep) {
+                result[out_len++] = ' ';
+            }
+            memcpy(result + out_len, word, wlen);
+            out_len += wlen;
+            result[out_len] = '\0';
+        }
+
+        word = strtok(NULL, " \t\n");
+    }
+
+    free(seen);
+    free(copy);
+    return result;
+}
+
+int main(void)
+{
+    const char *input = "the quick brown fox jumps over the lazy dog the fox";
+    char *output = remove_duplicate_words(input);
+
+    if (output == NULL) {
+        fprintf(stderr, "Error: failed to process the input string\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Input:  %s\n", input);
+    printf("Output: %s\n", output);
+
+    free(output);
+    return EXIT_SUCCESS;
+}
+```
+
+Additional notes on the approach:
+
+- The `_POSIX_C_SOURCE 200809L` feature-test macro ensures `strnlen` is properly declared on POSIX systems.
+- The output of `remove_duplicate_words` can never exceed the input length (it only ever removes words), so the `len + 1` allocation is provably sufficient — the new bounds check turns that invariant into an enforced runtime guarantee that static analyzers and future maintainers can verify.
+- All error paths free every allocation made so far, so the failure handling remains leak-free.

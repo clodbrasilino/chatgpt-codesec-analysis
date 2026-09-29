@@ -1,0 +1,28 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+int compare(const void* a, const void* b) {
+    return strcmp(*(const char**)a, *(const char**)b);
+}
+
+void sort_sublist(char** list, int n) {
+    qsort(list, n, sizeof(const char*), compare);
+}
+
+int main() {
+    int n = 3;
+    char* list[n];
+
+    list[0] = "apple";
+    list[1] = "banana";
+    list[2] = "cherry";
+
+    sort_sublist(list, n);
+
+    for(int i = 0; i < n; i++) {
+        printf("%s\n", list[i]);
+    }
+
+    return 0;
+}

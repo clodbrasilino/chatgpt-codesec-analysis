@@ -1,0 +1,22 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_10/healed/problem-450-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_10/healed/problem-450-s3.c:33:24: style: Condition 'alloc_size<size_s' is always false [knownConditionTrueFalse]
+        if (alloc_size < size_s) {
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_10/healed/problem-450-s3.c:32:27: note: alloc_size is assigned 'size_s+1' here.
+        size_t alloc_size = size_s + 1;
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_10/healed/problem-450-s3.c:33:24: note: Condition 'alloc_size<size_s' is always false
+        if (alloc_size < size_s) {
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_10/healed/problem-450-s3.c:52:20: style: Condition 'size_s>=alloc_size' is always false [knownConditionTrueFalse]
+        if (size_s >= alloc_size) {
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_10/healed/problem-450-s3.c:32:27: note: alloc_size is assigned 'size_s+1' here.
+        size_t alloc_size = size_s + 1;
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_10/healed/problem-450-s3.c:43:31: note: Assuming condition is false
+        if (result[extracted] == NULL) {
+                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_10/healed/problem-450-s3.c:52:20: note: Condition 'size_s>=alloc_size' is always false
+        if (size_s >= alloc_size) {
+                   ^

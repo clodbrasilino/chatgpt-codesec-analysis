@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-503-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-503-s3.c:47:18: style: Condition 'size>0' is always true [knownConditionTrueFalse]
+        if (size > 0) {
+                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-503-s3.c:35:32: note: Assignment 'size=sizeof(list)/sizeof(list[0])', assigned value is 5
+    size_t size = sizeof(list) / sizeof(list[0]);
+                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-503-s3.c:47:18: note: Condition 'size>0' is always true
+        if (size > 0) {
+                 ^

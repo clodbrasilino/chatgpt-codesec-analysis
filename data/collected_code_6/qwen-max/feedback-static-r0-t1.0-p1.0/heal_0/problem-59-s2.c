@@ -1,0 +1,21 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+long nth_octagonal_number(long n) {
+    return n * (3 * n - 2);
+}
+
+int main() {
+    long n;
+    printf("Enter a number: ");
+    if(scanf("%ld", &n) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    if(n <= 0) {
+        fprintf(stderr, "Input should be a positive integer\n");
+        return EXIT_FAILURE;
+    }
+    printf("The %ldth octagonal number is %ld\n", n, nth_octagonal_number(n));
+    return EXIT_SUCCESS;
+}

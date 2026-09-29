@@ -1,0 +1,37 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+void decode_run_length(const int* encoded, int n, int** decoded, int* decoded_size) {
+    *decoded = (int*)malloc(2 * n * sizeof(int));
+    if (*decoded == NULL) return;
+    
+    int* current = *decoded;
+    for (int i = 0; i < n; i += 2) {
+        int count = encoded[i];
+        int value = encoded[i + 1];
+        for (int j = 0; j < count; ++j) {
+            *current = value;
+            ++current;
+        }
+    }
+    *decoded_size = current - *decoded;
+}
+
+int main() {
+    int encoded[] = {3, 1, 2, 2, 1, 3};
+    int n = sizeof(encoded) / sizeof(encoded[0]);
+    
+    int* decoded;
+    int decoded_size;
+    
+    decode_run_length(encoded, n, &decoded, &decoded_size);
+    
+    for (int i = 0; i < decoded_size; ++i) {
+        printf("%d ", decoded[i]);
+    }
+    
+    free(decoded);
+    return 0;
+}
+```

@@ -1,0 +1,146 @@
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+static int longest_repeating_subsequence(const unsigned char *str,
+                                         size_t length,
+                                         size_t *result)
+{
+    size_t columns;
+    size_t *previous;
+    size_t *current;
+
+    if (result == NULL || (str == NULL && length != 0) || length == SIZE_MAX) {
+        return -1;
+    }
+
+    columns = length + 1;
+
+    if (columns > SIZE_MAX / sizeof(*previous)) {
+        return -1;
+    }
+
+    previous = calloc(columns, sizeof(*previous));
+    current = calloc(columns, sizeof(*current));
+
+    if (previous == NULL || current == NULL) {
+        free(previous);
+        free(current);
+        return -1;
+    }
+
+    for (size_t i = 1; i <= length; ++i) {
+        current[0] = 0;
+
+        for (size_t j = 1; j <= length; ++j) {
+            if (i != j && str[i - 1] == str[j - 1]) {
+                current[j] = previous[j - 1] + 1;
+            } else {
+                current[j] = previous[j] > current[j - 1]
+                                 ? previous[j]
+                                 : current[j - 1];
+            }
+        }
+
+        size_t *temporary = previous;
+        previous = current;
+        current = temporary;
+    }
+
+    *result = previous[length];
+
+    free(previous);
+    free(current);
+    return 0;
+}
+
+static int read_line(FILE *stream, unsigned char **buffer, size_t *length)
+{
+    unsigned char *data;
+    size_t used = 0;
+    size_t capacity = 64;
+
+    if (stream == NULL || buffer == NULL || length == NULL) {
+        return -1;
+    }
+
+    *buffer = NULL;
+    *length = 0;
+
+    data = malloc(capacity);
+    if (data == NULL) {
+        return -1;
+    }
+
+    for (;;) {
+        int character = fgetc(stream);
+
+        if (character == EOF) {
+            if (ferror(stream)) {
+                free(data);
+                return -1;
+            }
+            break;
+        }
+
+        if (character == '\n') {
+            break;
+        }
+
+        if (used == capacity) {
+            size_t new_capacity;
+            unsigned char *new_data;
+
+            if (capacity > SIZE_MAX / 2) {
+                free(data);
+                return -1;
+            }
+
+            new_capacity = capacity * 2;
+            new_data = realloc(data, new_capacity);
+            if (new_data == NULL) {
+                free(data);
+                return -1;
+            }
+
+            data = new_data;
+            capacity = new_capacity;
+        }
+
+        data[used++] = (unsigned char)character;
+    }
+
+    if (used > 0 && data[used - 1] == '\r') {
+        --used;
+    }
+
+    *buffer = data;
+    *length = used;
+    return 0;
+}
+
+int main(void)
+{
+    unsigned char *input = NULL;
+    size_t length = 0;
+    size_t result;
+    int status = EXIT_FAILURE;
+
+    if (read_line(stdin, &input, &length) != 0) {
+        goto cleanup;
+    }
+
+    if (longest_repeating_subsequence(input, length, &result) != 0) {
+        goto cleanup;
+    }
+
+    if (printf("%zu\n", result) < 0) {
+        goto cleanup;
+    }
+
+    status = EXIT_SUCCESS;
+
+cleanup:
+    free(input);
+    return status;
+}

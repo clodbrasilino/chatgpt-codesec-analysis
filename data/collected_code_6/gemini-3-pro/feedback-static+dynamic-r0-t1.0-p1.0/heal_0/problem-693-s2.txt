@@ -1,0 +1,56 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+void remove_multiple_spaces(char *str) {
+    if (str == NULL) {
+        return;
+    }
+
+    regex_t regex;
+    int ret = regcomp(&regex, "  +", REG_EXTENDED);
+    if (ret != 0) {
+        return;
+    }
+
+    regmatch_t pmatch[1];
+    char *cursor = str;
+    char *temp = malloc(strlen(str) + 1);
+    
+    if (temp == NULL) {
+        regfree(&regex);
+        return;
+    }
+
+    temp[0] = '\0';
+    size_t temp_len = 0;
+
+    while (regexec(&regex, cursor, 1, pmatch, 0) == 0) {
+        strncat(temp + temp_len, cursor, pmatch[0].rm_so);
+        temp_len += pmatch[0].rm_so;
+        
+        strcat(temp + temp_len, " ");
+        temp_len += 1;
+        
+        cursor += pmatch[0].rm_eo;
+    }
+
+    strcat(temp + temp_len, cursor);
+    strcpy(str, temp);
+
+    free(temp);
+    regfree(&regex);
+}
+
+int main(void) {
+    char str[] = "This   is   a    string    with    multiple   spaces.";
+    
+    remove_multiple_spaces(str);
+    
+    printf("%s\n", str);
+    
+    return 0;
+}
+```

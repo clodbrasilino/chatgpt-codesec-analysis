@@ -1,0 +1,42 @@
+collected_code_3/problem-391-1.c: In function 'createNode':
+collected_code_3/problem-391-1.c:13:18: warning: dereference of possibly-NULL 'newNode' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   13 |     newNode->key = strdup(key);
+      |     ~~~~~~~~~~~~~^~~~~~~~~~~~~
+  'main': events 1-2
+    |
+    |   40 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   46 |     Node *dict1 = convertListToDict(list1, size1);
+    |      |                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                   |
+    |      |                   (2) calling 'convertListToDict' from 'main'
+    |
+    +--> 'convertListToDict': events 3-4
+           |
+           |   19 | Node* convertListToDict(char **list, int size) {
+           |      |       ^~~~~~~~~~~~~~~~~
+           |      |       |
+           |      |       (3) entry to 'convertListToDict'
+           |   20 |     Node *root = createNode(list[0]);
+           |      |                  ~~~~~~~~~~~~~~~~~~~
+           |      |                  |
+           |      |                  (4) calling 'createNode' from 'convertListToDict'
+           |
+           +--> 'createNode': events 5-7
+                  |
+                  |   11 | Node* createNode(char *key) {
+                  |      |       ^~~~~~~~~~
+                  |      |       |
+                  |      |       (5) entry to 'createNode'
+                  |   12 |     Node *newNode = (Node*)malloc(sizeof(Node));
+                  |      |                            ~~~~~~~~~~~~~~~~~~~~
+                  |      |                            |
+                  |      |                            (6) this call could return NULL
+                  |   13 |     newNode->key = strdup(key);
+                  |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~
+                  |      |                  |
+                  |      |                  (7) 'newNode' could be NULL: unchecked value from (6)
+                  |

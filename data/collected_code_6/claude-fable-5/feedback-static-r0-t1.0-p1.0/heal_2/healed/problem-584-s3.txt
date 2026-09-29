@@ -1,0 +1,123 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#include <regex.h>
+
+#define MAX_SENTENCE_LEN 4096
+
+static void print_regex_error(int errcode, const regex_t *regex)
+{
+    size_t needed;
+    char *errbuf;
+
+    needed = regerror(errcode, regex, NULL, 0);
+    if (needed == 0) {
+        fprintf(stderr, "Regex error (unable to determine message length).\n");
+        return;
+    }
+
+    errbuf = malloc(needed);
+    if (errbuf == NULL) {
+        fprintf(stderr, "Regex error (memory allocation failed).\n");
+        return;
+    }
+
+    regerror(errcode, regex, errbuf, needed);
+    errbuf[needed - 1] = '\0';
+    fprintf(stderr, "Regex error: %s\n", errbuf);
+    free(errbuf);
+}
+
+static int find_adverbs(const char *sentence)
+{
+    regex_t regex;
+    regmatch_t match;
+    size_t offset;
+    size_t len;
+    int ret;
+    int found;
+
+    if (sentence == NULL) {
+        return -1;
+    }
+
+    len = strnlen(sentence, MAX_SENTENCE_LEN);
+    if (len >= MAX_SENTENCE_LEN) {
+        fprintf(stderr, "Input sentence too long or not null-terminated.\n");
+        return -1;
+    }
+
+    ret = regcomp(&regex, "[a-zA-Z]+ly", REG_EXTENDED);
+    if (ret != 0) {
+        print_regex_error(ret, &regex);
+        return -1;
+    }
+
+    found = 0;
+    offset = 0;
+
+    while (offset < len) {
+        ret = regexec(&regex, sentence + offset, 1, &match, 0);
+        if (ret == REG_NOMATCH) {
+            break;
+        }
+        if (ret != 0) {
+            print_regex_error(ret, &regex);
+            regfree(&regex);
+            return -1;
+        }
+
+        if (match.rm_so < 0 || match.rm_eo < 0) {
+            break;
+        }
+
+        {
+            size_t start = offset + (size_t)match.rm_so;
+            size_t end = offset + (size_t)match.rm_eo;
+
+            if (start > len || end > len || end < start) {
+                break;
+            }
+
+            if ((start == 0 || !isalpha((unsigned char)sentence[start - 1])) &&
+                (end >= len || !isalpha((unsigned char)sentence[end]))) {
+                printf("Adverb found: \"%.*s\" at position %zu\n",
+                       (int)(end - start), sentence + start, start);
+                found = 1;
+            }
+
+            if (match.rm_eo > match.rm_so) {
+                offset = end;
+            } else {
+                offset += 1;
+            }
+        }
+    }
+
+    regfree(&regex);
+
+    if (found == 0) {
+        printf("No adverbs found.\n");
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    const char *sentence = "She quickly ran home and quietly opened the door, then slowly walked upstairs.";
+
+    printf("Sentence: %s\n", sentence);
+
+    if (find_adverbs(sentence) != 0) {
+        fprintf(stderr, "Failed to process the sentence.\n");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+The key change addressing the Flawfinder finding (CWE-119/CWE-120, statically-sized `errbuf` array): the fixed-size stack buffer was replaced by a two-pass `regerror` pattern — first querying the exact required message length, then allocating precisely that many bytes on the heap. This eliminates any possibility of truncation or improper size assumptions, guarantees null-termination, and removes the statically-sized buffer entirely. Additional hardening was added by validating that `rm_so`/`rm_eo` are non-negative and that `end >= start` before performing pointer arithmetic, preventing any out-of-bounds computation from unexpected regex offsets. The existing `strnlen` bound check against `MAX_SENTENCE_LEN` was retained, as it already correctly guards against unterminated or oversized input.

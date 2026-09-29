@@ -1,0 +1,18 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+
+bool is_odd_length(const char *word, size_t max_len) {
+    size_t length = strnlen(word, max_len);
+    return length % 2 != 0;
+}
+
+int main() {
+    const char word[] = "example";
+    if (is_odd_length(word, sizeof(word) - 1)) {
+        printf("%s has an odd length.\n", word);
+    } else {
+        printf("%s has an even length.\n", word);
+    }
+    return 0;
+}

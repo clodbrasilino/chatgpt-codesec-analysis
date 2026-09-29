@@ -1,0 +1,34 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+#define ARR_SIZE 50
+
+bool check_seq(int arr[], int size, int pattern[], int pSize) {
+    int i = 0, j = 0;
+
+    if(!arr || !pattern || size <= 0 || pSize <= 0)
+        return false;
+
+    while(i < size && j < pSize) {
+        if(arr[i] == pattern[j]) {
+            j++;
+        }
+        i++;
+    }
+
+    return j == pSize;
+}
+
+
+int main() {
+    int arr[ARR_SIZE] = {1, 2, 3, 4, 5};
+    int pattern[] = {1, 3, 5};
+
+    if(check_seq(arr, 5, pattern, 3)) {
+        printf("It follows the sequence.\n");
+    } else {
+        printf("It does not follow the sequence.\n");
+    }
+    
+    return 0;
+}

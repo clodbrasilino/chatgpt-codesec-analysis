@@ -1,0 +1,19 @@
+#include <stdio.h>
+
+int findExtraElementIndex(int *arr1, int *arr2, int size) {
+    for (int i = 0; i < size; i++) {
+        if (arr1[i] != arr2[i]) {
+            return i;
+        }
+    }
+    return size - 1;
+}
+
+int main() {
+    int arr1[] = {2, 4, 6, 8, 9, 10, 12};
+    int arr2[] = {2, 4, 6, 8, 10, 12};
+    int size = sizeof(arr2) / sizeof(arr2[0]);
+    int index = findExtraElementIndex(arr1, arr2, size);
+    printf("Extra element is at index %d\n", index);
+    return 0;
+}

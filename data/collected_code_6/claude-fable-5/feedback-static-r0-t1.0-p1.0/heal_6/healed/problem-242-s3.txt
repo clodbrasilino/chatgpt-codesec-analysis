@@ -1,0 +1,60 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define BUFFER_SIZE 256
+
+size_t count_characters(const char *str)
+{
+    size_t count = 0;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    while (str[count] != '\0') {
+        count++;
+    }
+
+    return count;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t length;
+
+    memset(buffer, 0, sizeof(buffer));
+
+    printf("Enter a string: ");
+    fflush(stdout);
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+    buffer[strcspn(buffer, "\n")] = '\0';
+
+    length = count_characters(buffer);
+
+    printf("Total characters: %zu\n", length);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The original code already mitigates the flagged CWE-119/CWE-120 concern about the statically-sized buffer:
+
+1. **Bounded input** — `fgets(buffer, sizeof(buffer), stdin)` limits reads to at most `BUFFER_SIZE - 1` characters plus the null terminator, so no overflow is possible via user input.
+2. **Guaranteed termination** — `buffer[sizeof(buffer) - 1] = '\0'` is a defensive belt-and-suspenders measure (technically redundant since `fgets` always null-terminates on success, but harmless and good practice against future refactoring).
+3. **Safe initialization** — `memset` zeroes the buffer before use, avoiding reads of indeterminate memory.
+4. **Newline stripping** — `strcspn(buffer, "\n")` safely locates the newline (or the terminating null if absent), so the assignment never writes out of bounds.
+5. **NULL guard** — `count_characters` checks for `NULL` before dereferencing, and its bounded loop cannot overrun because the string is guaranteed null-terminated by the steps above.
+6. **Error handling** — the `fgets` return value is checked, and `%zu` is the correct format specifier for `size_t`.
+
+Since the Flawfinder warning was a static heuristic (risk level 2) rather than an actual exploitable flaw, no functional changes were required — the rewrite simply removes the comments as requested while preserving the already-correct defensive measures.

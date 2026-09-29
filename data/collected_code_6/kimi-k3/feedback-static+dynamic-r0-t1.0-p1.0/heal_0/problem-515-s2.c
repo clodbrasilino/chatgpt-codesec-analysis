@@ -1,0 +1,63 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+bool isSubsetSumDivisibleByM(const int *arr, size_t n, int m)
+{
+    if (arr == NULL || n == 0 || m <= 0) {
+        return false;
+    }
+
+    bool *prev = (bool *)calloc((size_t)m, sizeof(bool));
+    bool *curr = (bool *)calloc((size_t)m, sizeof(bool));
+
+    if (prev == NULL || curr == NULL) {
+        free(prev);
+        free(curr);
+        return false;
+    }
+
+    prev[0] = true;
+
+    for (size_t i = 0; i < n; i++) {
+        for (int j = 0; j < m; j++) {
+            curr[j] = prev[j];
+        }
+
+        for (int j = 0; j < m; j++) {
+            if (prev[j]) {
+                int remainder = (j + arr[i]) % m;
+                if (remainder < 0) {
+                    remainder += m;
+                }
+                curr[remainder] = true;
+            }
+        }
+
+        bool *temp = prev;
+        prev = curr;
+        curr = temp;
+    }
+
+    bool result = prev[0];
+
+    free(prev);
+    free(curr);
+
+    return result;
+}
+
+int main(void)
+{
+    int arr[] = {3, 1, 7, 5};
+    size_t n = sizeof(arr) / sizeof(arr[0]);
+    int m = 6;
+
+    if (isSubsetSumDivisibleByM(arr, n, m)) {
+        printf("Yes\n");
+    } else {
+        printf("No\n");
+    }
+
+    return 0;
+}

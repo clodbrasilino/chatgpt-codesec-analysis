@@ -1,0 +1,22 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_9/healed/problem-542-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_9/healed/problem-542-s2.c:49:35: style: Condition 'r_idx+p_len<=max_result_len' is always true [knownConditionTrueFalse]
+                if (r_idx + p_len <= max_result_len) {
+                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_9/healed/problem-542-s2.c:43:31: note: Assuming that condition 'r_idx+p_len>=max_result_len' is not redundant
+            if (r_idx + p_len >= max_result_len) {
+                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_9/healed/problem-542-s2.c:49:35: note: Condition 'r_idx+p_len<=max_result_len' is always true
+                if (r_idx + p_len <= max_result_len) {
+                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_9/healed/problem-542-s2.c:72:35: style: Condition 'r_idx+match_len<=max_result_len' is always true [knownConditionTrueFalse]
+            if (r_idx + match_len <= max_result_len) {
+                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_9/healed/problem-542-s2.c:65:35: note: Assuming that condition 'r_idx+match_len+1>=max_result_len' is not redundant
+        if (r_idx + match_len + 1 >= max_result_len) {
+                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_9/healed/problem-542-s2.c:72:35: note: Condition 'r_idx+match_len<=max_result_len' is always true
+            if (r_idx + match_len <= max_result_len) {
+                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_9/healed/problem-542-s2.c:99:32: style: Parameter 'argv' can be declared as const array [constParameter]
+int main(int argc, char* const argv[]) {
+                               ^

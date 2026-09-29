@@ -1,0 +1,17 @@
+```C
+#include <stdio.h>
+#include <math.h>
+
+double largestTriangleInSemiCircle(double radius) {
+    return (radius * radius);
+}
+
+int main() {
+    double radius;
+    printf("Enter the radius of the semicircle: ");
+    scanf("%lf", &radius);
+    double area = largestTriangleInSemiCircle(radius);
+    printf("The largest area of the triangle that can be inscribed in the semicircle is: %.2lf\n", area);
+    return 0;
+}
+```

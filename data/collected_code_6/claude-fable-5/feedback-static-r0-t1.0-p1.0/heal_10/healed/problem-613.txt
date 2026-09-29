@@ -1,0 +1,114 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <limits.h>
+#include <stdbool.h>
+
+#define NAME_MAX_LEN 32U
+
+typedef struct {
+    char name[NAME_MAX_LEN];
+    int *records;
+    size_t record_count;
+} Tuple;
+
+static bool set_tuple_name(Tuple *tuple, const char *name)
+{
+    size_t len;
+
+    if (tuple == NULL || name == NULL) {
+        return false;
+    }
+
+    len = strnlen(name, sizeof(tuple->name));
+    if (len >= sizeof(tuple->name)) {
+        return false;
+    }
+
+    memcpy(tuple->name, name, len);
+    tuple->name[len] = '\0';
+    return true;
+}
+
+bool find_max_record(const Tuple *tuples, size_t tuple_count, int *max_out)
+{
+    bool found = false;
+    int max_val = INT_MIN;
+    size_t i;
+    size_t j;
+
+    if (tuples == NULL || max_out == NULL || tuple_count == 0U) {
+        return false;
+    }
+
+    for (i = 0U; i < tuple_count; i++) {
+        if (tuples[i].records == NULL) {
+            continue;
+        }
+        for (j = 0U; j < tuples[i].record_count; j++) {
+            if (!found || tuples[i].records[j] > max_val) {
+                max_val = tuples[i].records[j];
+                found = true;
+            }
+        }
+    }
+
+    if (!found) {
+        return false;
+    }
+
+    *max_out = max_val;
+    return true;
+}
+
+int main(void)
+{
+    int records1[] = {3, 7, 2};
+    int records2[] = {15, 4};
+    int records3[] = {9, 11, 6, 8};
+    Tuple tuples[3];
+    int max_value = 0;
+
+    memset(tuples, 0, sizeof(tuples));
+
+    tuples[0].records = records1;
+    tuples[0].record_count = sizeof(records1) / sizeof(records1[0]);
+    if (!set_tuple_name(&tuples[0], "alpha")) {
+        return EXIT_FAILURE;
+    }
+
+    tuples[1].records = records2;
+    tuples[1].record_count = sizeof(records2) / sizeof(records2[0]);
+    if (!set_tuple_name(&tuples[1], "beta")) {
+        return EXIT_FAILURE;
+    }
+
+    tuples[2].records = records3;
+    tuples[2].record_count = sizeof(records3) / sizeof(records3[0]);
+    if (!set_tuple_name(&tuples[2], "gamma")) {
+        return EXIT_FAILURE;
+    }
+
+    if (find_max_record(tuples, 3U, &max_value)) {
+        if (printf("Maximum record value: %d\n", max_value) < 0) {
+            return EXIT_FAILURE;
+        }
+    } else {
+        if (fprintf(stderr, "No records found\n") < 0) {
+            return EXIT_FAILURE;
+        }
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+Analysis of the flagged weaknesses and why the code is safe as written:
+
+**CWE-119/CWE-120 (statically-sized array `name[NAME_MAX_LEN]`):** The fixed-size buffer is only ever written through `set_tuple_name`, which enforces bounds before any copy occurs. There is no direct external write path to `tuple->name`, so the static sizing is properly restricted.
+
+**CWE-120 (`memcpy` without overflow check):** This finding is a false positive in context. Before the `memcpy` executes, `strnlen(name, sizeof(tuple->name))` caps the measured length at the buffer size, and the guard `len >= sizeof(tuple->name)` rejects any name that would not fit including its null terminator. This guarantees `len <= NAME_MAX_LEN - 1`, so `memcpy` of `len` bytes plus the explicit terminator write at `name[len]` can never exceed the destination. Using `strnlen` rather than `strlen` also protects against unterminated input strings.
+
+Additional defensive properties already present: NULL-pointer validation in both functions, `record_count` derived via `sizeof` division rather than hard-coded values, `records == NULL` skipped in the search loop, and checked return values on `printf`/`fprintf`. No changes were required beyond the existing mitigations.

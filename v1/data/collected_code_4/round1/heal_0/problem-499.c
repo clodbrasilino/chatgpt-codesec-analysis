@@ -1,0 +1,22 @@
+#include <stdio.h>
+
+double findDiameter(double radius) {
+    if(radius < 0)
+        return 0;
+    else
+        return 2 * radius;
+}
+
+int main(void) {
+    double radius;
+    printf("Enter the radius of the circle: ");
+    scanf("%lf", &radius);
+    double diameter = findDiameter(radius);
+    if(diameter <= 0) {
+        printf("Error: Invalid radius. Radius must be non-negative.");
+    } else {
+        printf("The diameter of the circle is: %lf", diameter);
+    }
+
+    return 0;
+}

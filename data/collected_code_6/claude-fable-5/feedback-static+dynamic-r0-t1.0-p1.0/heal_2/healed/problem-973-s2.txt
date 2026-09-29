@@ -1,0 +1,82 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_STR_LEN 4096
+
+int left_rotate(char *str, size_t buf_size, size_t d)
+{
+    size_t len;
+    char *temp;
+
+    if (str == NULL || buf_size == 0 || buf_size > MAX_STR_LEN) {
+        return -1;
+    }
+
+    len = strnlen(str, buf_size);
+    if (len == buf_size) {
+        return -1;
+    }
+
+    if (len == 0) {
+        return 0;
+    }
+
+    d = d % len;
+    if (d == 0) {
+        return 0;
+    }
+
+    if (len + 1 > buf_size || d > len || len - d > len) {
+        return -1;
+    }
+
+    temp = malloc(len + 1);
+    if (temp == NULL) {
+        return -1;
+    }
+
+    memcpy(temp, str + d, len - d);
+    memcpy(temp + (len - d), str, d);
+    temp[len] = '\0';
+
+    memcpy(str, temp, len + 1);
+    free(temp);
+
+    return 0;
+}
+
+int main(void)
+{
+    char str[] = "GeeksforGeeks";
+    size_t d = 2;
+
+    if (left_rotate(str, sizeof(str), d) != 0) {
+        fprintf(stderr, "Rotation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("%s\n", str) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The original code was already well-hardened, and the Flawfinder warnings were false positives. Here's why each `memcpy` is safe:
+
+1. **`memcpy(temp, str + d, len - d)`** — `temp` holds `len + 1` bytes; since `d >= 1` after the modulo check, `len - d < len + 1`. Safe.
+
+2. **`memcpy(temp + (len - d), str, d)`** — writes `d` bytes starting at offset `len - d`, ending exactly at offset `len`, within the `len + 1` allocation. Safe.
+
+3. **`memcpy(str, temp, len + 1)`** — guarded by the explicit `len + 1 > buf_size` check, so the destination buffer is guaranteed large enough. Safe.
+
+**Changes made in the rewrite:**
+
+- Moved the bounds validation (`len + 1 > buf_size`, `d > len`, `len - d > len`) *before* the `malloc`, avoiding an unnecessary allocation/free on the failure path and making the guard clearly precede all copies.
+- Added a `buf_size > MAX_STR_LEN` sanity check so the previously unused `MAX_STR_LEN` macro serves as an upper bound against absurd buffer sizes.
+- Retained `strnlen` (bounded) rather than `strlen`, the `len == buf_size` check for unterminated buffers, the `d % len` normalization guarding against oversized rotation counts, and the `malloc` NULL check — all of which were correct defensive measures in the original.

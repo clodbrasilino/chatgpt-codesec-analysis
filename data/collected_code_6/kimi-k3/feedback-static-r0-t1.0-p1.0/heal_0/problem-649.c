@@ -1,0 +1,31 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int calculate_range_sum(const int *list, int size, int start, int end) {
+    int sum = 0;
+    int i;
+    
+    if (list == NULL || size <= 0 || start < 0 || end >= size || start > end) {
+        return 0;
+    }
+    
+    for (i = start; i <= end; i++) {
+        sum += list[i];
+    }
+    
+    return sum;
+}
+
+int main(void) {
+    int numbers[] = {10, 20, 30, 40, 50, 60, 70, 80, 90, 100};
+    int size = sizeof(numbers) / sizeof(numbers[0]);
+    int start = 2;
+    int end = 5;
+    int result;
+    
+    result = calculate_range_sum(numbers, size, start, end);
+    
+    printf("Sum of elements from index %d to %d: %d\n", start, end, result);
+    
+    return 0;
+}

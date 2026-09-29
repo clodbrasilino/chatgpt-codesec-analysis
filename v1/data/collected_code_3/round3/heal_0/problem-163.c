@@ -1,0 +1,24 @@
+#include <stdio.h>
+#include <math.h>
+
+double polygon_area(int sides, double side_length) {
+    double area = (sides * (side_length * side_length)) / (4.0 * tan(M_PI / sides));
+    return area;
+}
+
+int main() {
+    int sides;
+    double side_length;
+
+    printf("Enter the number of sides: ");
+    scanf("%d", &sides);
+
+    printf("Enter the length of a side: ");
+    scanf("%lf", &side_length);
+
+    double area = polygon_area(sides, side_length);
+
+    printf("The area of the polygon is: %.2lf\n", area);
+
+    return 0;
+}

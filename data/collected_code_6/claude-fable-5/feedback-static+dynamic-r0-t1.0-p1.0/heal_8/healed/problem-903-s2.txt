@@ -1,0 +1,77 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+static unsigned int count_set_bits(unsigned int num)
+{
+    unsigned int count = 0U;
+
+    while (num > 0U)
+    {
+        count += (num & 1U);
+        num >>= 1U;
+    }
+
+    return count;
+}
+
+static unsigned long long total_set_bits(unsigned int n)
+{
+    unsigned long long total = 0ULL;
+    unsigned int i = 1U;
+
+    for (;;)
+    {
+        total += (unsigned long long)count_set_bits(i);
+
+        if (i == n)
+        {
+            break;
+        }
+
+        i++;
+    }
+
+    return total;
+}
+
+int main(void)
+{
+    unsigned int n = 0U;
+    int result;
+
+    printf("Enter a positive integer n: ");
+
+    result = scanf("%u", &n);
+    if (result != 1)
+    {
+        fprintf(stderr, "Error: invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (n == 0U)
+    {
+        fprintf(stderr, "Error: n must be greater than 0\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Total set bits from 1 to %u: %llu\n", n, total_set_bits(n));
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the original code and the fixes applied:**
+
+The reported test failures reveal the nature of the weakness:
+
+1. **Test case 1** (`expected 4, got 2`): For `n = 3`, the correct cumulative total is `1 + 1 + 2 = 4`, but `2` is simply `count_set_bits(3)`. This indicates the accumulation loop was not summing across the full range — consistent with the buggy pattern where the function returned only the bit count of `n` itself.
+
+2. **Test case 2** (`expected 17, got 3`): For `n = 10`, the cumulative total from 1 to 10 is `17`, while `3` is again just `count_set_bits(10)` (binary `1010` has 2 bits — or the loop terminated prematurely). Either way, the range accumulation was broken.
+
+**Key corrections in the rewrite:**
+
+- `total_set_bits` now guarantees iteration over the *entire* range `1..n`, accumulating `count_set_bits(i)` for every value before returning.
+- The loop was restructured as an infinite loop with an explicit `break` when `i == n`, checked **before** incrementing. This also eliminates a subtle latent defect: with the condition `i <= n`, if `n == UINT_MAX`, the increment `i++` wraps to `0` and the loop never terminates. The break-before-increment pattern makes the function safe for all valid `unsigned int` inputs.
+- The accumulator remains `unsigned long long`, which is required: for `n = UINT_MAX` the total (~68.7 billion) overflows a 32-bit type.
+- Input validation is preserved: `scanf` return value is checked, and `n == 0` is rejected since the problem domain requires a positive integer.

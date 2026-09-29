@@ -1,0 +1,88 @@
+#define _POSIX_C_SOURCE 200809L
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#define MAX_INPUT_LENGTH 1024
+
+void remove_digits(char *str)
+{
+    if (str == NULL)
+    {
+        return;
+    }
+
+    size_t read_index = 0;
+    size_t write_index = 0;
+
+    while (str[read_index] != '\0')
+    {
+        if (isdigit((unsigned char)str[read_index]) == 0)
+        {
+            str[write_index] = str[read_index];
+            write_index++;
+        }
+        read_index++;
+    }
+    str[write_index] = '\0';
+}
+
+int main(void)
+{
+    const char *input[] = {"abc123", "h3ll0 w0rld", "98765", "no digits", "y2k2024"};
+    size_t count = sizeof(input) / sizeof(input[0]);
+    char **strings = malloc(count * sizeof(*strings));
+
+    if (strings == NULL)
+    {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    size_t i;
+    for (i = 0; i < count; i++)
+    {
+        size_t len = strnlen(input[i], MAX_INPUT_LENGTH);
+        strings[i] = malloc(len + 1);
+        if (strings[i] == NULL)
+        {
+            fprintf(stderr, "Memory allocation failed\n");
+            while (i > 0)
+            {
+                i--;
+                free(strings[i]);
+            }
+            free(strings);
+            return EXIT_FAILURE;
+        }
+        if (snprintf(strings[i], len + 1, "%.*s", (int)len, input[i]) < 0)
+        {
+            fprintf(stderr, "String copy failed\n");
+            size_t j;
+            for (j = 0; j <= i; j++)
+            {
+                free(strings[j]);
+            }
+            free(strings);
+            return EXIT_FAILURE;
+        }
+    }
+
+    for (i = 0; i < count; i++)
+    {
+        remove_digits(strings[i]);
+        printf("%s\n", strings[i]);
+    }
+
+    for (i = 0; i < count; i++)
+    {
+        free(strings[i]);
+        strings[i] = NULL;
+    }
+    free(strings);
+    strings = NULL;
+
+    return EXIT_SUCCESS;
+}

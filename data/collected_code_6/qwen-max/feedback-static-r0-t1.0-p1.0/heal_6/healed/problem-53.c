@@ -1,0 +1,26 @@
+#include <stdio.h>
+#include <string.h>
+
+int isFirstLastCharEqual(const char *str) {
+    if (str == NULL || *str == '\0' || str[1] == '\0') {
+        return 0;
+    }
+    size_t len = strlen(str);
+    if (len < 2) {
+        return 0;
+    }
+    const char *end = str + len - 1;
+    return *str == *end;
+}
+
+int main() {
+    const char *testStr1 = "level";
+    const char *testStr2 = "world";
+    const char *testStr3 = "";
+
+    printf("Is first and last char equal in \"%s\"? %s\n", testStr1, isFirstLastCharEqual(testStr1) ? "Yes" : "No");
+    printf("Is first and last char equal in \"%s\"? %s\n", testStr2, isFirstLastCharEqual(testStr2) ? "Yes" : "No");
+    printf("Is first and last char equal in \"%s\"? %s\n", testStr3, isFirstLastCharEqual(testStr3) ? "Yes" : "No");
+
+    return 0;
+}

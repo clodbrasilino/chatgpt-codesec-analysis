@@ -1,0 +1,49 @@
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdbool.h>
+
+bool has_number_at_end(const char *str, size_t max_len) {
+    if (str == NULL || max_len == 0) {
+        return false;
+    }
+
+    size_t len = 0;
+    while (len < max_len && str[len] != '\0') {
+        len++;
+    }
+
+    if (len == 0) {
+        return false;
+    }
+
+    return isdigit((unsigned char)str[len - 1]) != 0;
+}
+
+int main(void) {
+    const char *test_strings[] = {
+        "hello123",
+        "world",
+        "test ",
+        "12345",
+        "",
+        NULL
+    };
+    
+    size_t num_tests = sizeof(test_strings) / sizeof(test_strings[0]);
+    size_t max_buffer_size = 256;
+    
+    for (size_t i = 0; i < num_tests; i++) {
+        if (test_strings[i] != NULL) {
+            bool result = has_number_at_end(test_strings[i], max_buffer_size);
+            printf("String: \"%s\" -> Ends with number: %s\n", 
+                   test_strings[i], result ? "true" : "false");
+        } else {
+            bool result = has_number_at_end(test_strings[i], max_buffer_size);
+            printf("String: NULL -> Ends with number: %s\n", 
+                   result ? "true" : "false");
+        }
+    }
+
+    return 0;
+}

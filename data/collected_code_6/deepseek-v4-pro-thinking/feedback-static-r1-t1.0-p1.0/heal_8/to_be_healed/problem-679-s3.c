@@ -1,0 +1,100 @@
+#include <stddef.h>
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+#define MAX_DICT_SIZE 64
+#define KEY_MAX_LENGTH 63
+
+typedef struct {
+    char *key;
+    int value;
+} DictEntry;
+
+typedef struct {
+    DictEntry entries[MAX_DICT_SIZE];
+    size_t count;
+} Dict;
+
+static size_t get_string_length(const char *str, size_t max_len) {
+    size_t len = 0;
+    while (len < max_len && str[len] != '\0') {
+        ++len;
+    }
+    if (len == max_len) {
+        return (size_t)-1;
+    }
+    return len;
+}
+
+int dict_add(Dict *dict, const char *key, int value) {
+    if (dict == NULL || key == NULL || dict->count >= MAX_DICT_SIZE) {
+        return -1;
+    }
+
+    size_t key_len = get_string_length(key, KEY_MAX_LENGTH + 1);
+    if (key_len == (size_t)-1 || key_len > KEY_MAX_LENGTH) {
+        return -1;
+    }
+
+    for (size_t i = 0; i < dict->count; ++i) {
+        if (strcmp(dict->entries[i].key, key) == 0) {
+            dict->entries[i].value = value;
+            return 0;
+        }
+    }
+
+    char *new_key = malloc(key_len + 1);
+    if (new_key == NULL) {
+        return -1;
+    }
+    /* Possible weaknesses found:
+     * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+     */
+    memcpy(new_key, key, key_len + 1);
+
+    dict->entries[dict->count].key = new_key;
+    dict->entries[dict->count].value = value;
+    ++dict->count;
+    return 0;
+}
+
+int dict_get_element_by_index(const Dict *dict, size_t index, const char **key, int *value) {
+    if (dict == NULL || key == NULL || value == NULL || index >= dict->count) {
+        return -1;
+    }
+    *key = dict->entries[index].key;
+    *value = dict->entries[index].value;
+    return 0;
+}
+
+void dict_free(Dict *dict) {
+    if (dict == NULL) return;
+    for (size_t i = 0; i < dict->count; ++i) {
+        free(dict->entries[i].key);
+    }
+    dict->count = 0;
+}
+
+int main(void) {
+    Dict dict = {0};
+    const char *key = NULL;
+    int value = 0;
+
+    if (dict_add(&dict, "one", 1) != 0 ||
+        dict_add(&dict, "two", 2) != 0 ||
+        dict_add(&dict, "three", 3) != 0) {
+        dict_free(&dict);
+        return 1;
+    }
+
+    if (dict_get_element_by_index(&dict, 1, &key, &value) != 0) {
+        dict_free(&dict);
+        return 1;
+    }
+
+    printf("%s: %d\n", key, value);
+
+    dict_free(&dict);
+    return 0;
+}

@@ -1,0 +1,6 @@
+collected_code/problem-710-0.c:4:22: error: Cannot determine that 'tuple[0]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+    int first = tuple[0];
+                     ^
+collected_code/problem-710-0.c:5:21: error: Cannot determine that 'tuple[size-1]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+    int last = tuple[size - 1];
+                    ^

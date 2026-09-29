@@ -146,7 +146,7 @@ If a run is interrupted, we just run the same command again. The pipeline skips 
 
 ## 8. Generated reports
 
-The data of each cell is stored in `collected_code_6/<model>/<cell>/`, split by round:
+The data of each cell is stored in `data/collected_code_6/<model>/<cell>/`, split by round:
 
 - `heal_0/`: the initial generation and its reports
 - `heal_<n>/to_be_healed/`: the code with the findings inserted as comments, exactly as it was sent to the model in round `n`
@@ -173,7 +173,7 @@ For each cell, the pipeline also produces:
 
 ## 9. Reproducing the paper's results
 
-The analyses do not call the models. They read the collected data in `collected_code_6/` and `results/` and write their output to `results/`, overwriting existing files. All of them run with the same command format, replacing `<name>` with the analysis name:
+The analyses do not call the models. They read the collected data in `data/collected_code_6/` and `results/` and write their output to `results/`, overwriting existing files. All of them run with the same command format, replacing `<name>` with the analysis name:
 
 ```sh
 .venv/bin/python -m src.analysis.<name>
@@ -198,4 +198,4 @@ Figures:
 
 - API calls have a cost, so we recommend starting with the quick test.
 - LLMs do not always produce the same answer, even with the same parameters. A new run therefore produces code different from the code we collected. To check the paper's numbers, we use the collected data (Section 9).
-- The test harnesses, which run the test cases of each task, are already in `harnesses/<id>/spec.json`. The `mbpp/mbpp.jsonl` file, from the Mostly Basic Python Problems (MBPP) dataset, is only needed to rebuild them.
+- The test harnesses, which run the test cases of each task, are already in `data/harnesses/<id>/spec.json`. The `mbpp/mbpp.jsonl` file, from the Mostly Basic Python Problems (MBPP) dataset, is only needed to rebuild them.

@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-780-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-780-s2.c:23:31: style: Parameter 'indices' can be declared as pointer to const [constParameterPointer]
+int is_valid_combination(int *indices, int size, int *used, int used_size) {
+                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-780-s2.c:23:55: style: Parameter 'used' can be declared as pointer to const [constParameterPointer]
+int is_valid_combination(int *indices, int size, int *used, int used_size) {
+                                                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-780-s2.c:6:10: style: struct member 'Tuple::elements' is never used. [unusedStructMember]
+    int *elements;
+         ^

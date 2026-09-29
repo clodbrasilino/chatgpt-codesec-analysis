@@ -1,0 +1,33 @@
+#include <stdio.h>
+#include <math.h>
+#include <stdint.h>
+
+typedef struct {
+    int* array;
+    int length;
+} IntArray;
+
+int convertToInt(IntArray ints) {
+    int64_t result = 0;
+    for (int i = 0; i < ints.length; i++) {
+        if (result > pow(2, 53) || ints.array[i] < 0 || ints.array[i] > 9) {
+            printf("Invalid input. Aborting conversion.\n");
+            return -1;
+        }
+        result = result * 10 + ints.array[i];
+    }
+
+    return result;
+}
+
+int main() {
+    int array[] = {1, 2, 3, 4, 5, 6, 7, 8, 9};
+    IntArray ints = {array, 9};
+    int64_t number = convertToInt(ints);
+
+    if(number != -1){
+        printf("The number is %lld\n", number);
+    }
+
+    return 0;
+}

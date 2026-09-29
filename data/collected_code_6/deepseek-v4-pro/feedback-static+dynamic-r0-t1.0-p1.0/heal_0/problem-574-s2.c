@@ -1,0 +1,46 @@
+#include <stdio.h>
+#include <math.h>
+
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
+
+double cylinder_surface_area(double radius, double height) {
+    if (radius < 0.0 || height < 0.0) {
+        return -1.0;
+    }
+    if (radius == 0.0 || height == 0.0) {
+        return 0.0;
+    }
+    return 2.0 * M_PI * radius * (radius + height);
+}
+
+int main(void) {
+    double radius;
+    double height;
+    double area;
+    int result;
+
+    printf("Enter radius: ");
+    result = scanf("%lf", &radius);
+    if (result != 1) {
+        fprintf(stderr, "Invalid radius input\n");
+        return 1;
+    }
+
+    printf("Enter height: ");
+    result = scanf("%lf", &height);
+    if (result != 1) {
+        fprintf(stderr, "Invalid height input\n");
+        return 1;
+    }
+
+    area = cylinder_surface_area(radius, height);
+    if (area < 0.0) {
+        fprintf(stderr, "Radius and height must be non-negative\n");
+        return 1;
+    }
+
+    printf("Surface area: %.2f\n", area);
+    return 0;
+}

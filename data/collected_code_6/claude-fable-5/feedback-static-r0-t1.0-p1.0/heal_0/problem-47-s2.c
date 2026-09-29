@@ -1,0 +1,56 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int last_digit_factorial_divide(unsigned long long a, unsigned long long b);
+
+int last_digit_factorial_divide(unsigned long long a, unsigned long long b)
+{
+    unsigned long long i;
+    unsigned int result = 1U;
+
+    if (a > b) {
+        return -1;
+    }
+
+    if (b - a >= 5ULL) {
+        return 0;
+    }
+
+    for (i = a + 1ULL; i <= b; i++) {
+        result = (result * (unsigned int)(i % 10ULL)) % 10U;
+        if (result == 0U) {
+            return 0;
+        }
+    }
+
+    return (int)result;
+}
+
+int main(void)
+{
+    unsigned long long a;
+    unsigned long long b;
+    int digit;
+
+    printf("Enter a: ");
+    if (scanf("%llu", &a) != 1) {
+        fprintf(stderr, "Invalid input for a\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter b: ");
+    if (scanf("%llu", &b) != 1) {
+        fprintf(stderr, "Invalid input for b\n");
+        return EXIT_FAILURE;
+    }
+
+    digit = last_digit_factorial_divide(a, b);
+    if (digit < 0) {
+        fprintf(stderr, "Error: a must be less than or equal to b\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Last digit of b!/a! is: %d\n", digit);
+
+    return EXIT_SUCCESS;
+}

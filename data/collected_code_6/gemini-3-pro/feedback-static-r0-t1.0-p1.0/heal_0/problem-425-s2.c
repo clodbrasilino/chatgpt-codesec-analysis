@@ -1,0 +1,104 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+struct Node {
+    int data;
+    struct Node* next;
+};
+
+struct List {
+    struct Node* head;
+    struct List* next;
+};
+
+void add_node(struct Node** head_ref, int new_data) {
+    if (!head_ref) return;
+    struct Node* new_node = (struct Node*)malloc(sizeof(struct Node));
+    if (!new_node) exit(EXIT_FAILURE);
+    new_node->data = new_data;
+    new_node->next = *head_ref;
+    *head_ref = new_node;
+}
+
+void add_list(struct List** list_head_ref, struct Node* new_head) {
+    if (!list_head_ref) return;
+    struct List* new_list = (struct List*)malloc(sizeof(struct List));
+    if (!new_list) exit(EXIT_FAILURE);
+    new_list->head = new_head;
+    new_list->next = *list_head_ref;
+    *list_head_ref = new_list;
+}
+
+bool contains_element(struct Node* head, int target) {
+    struct Node* current = head;
+    while (current != NULL) {
+        if (current->data == target) {
+            return true;
+        }
+        current = current->next;
+    }
+    return false;
+}
+
+int count_sublists_with_element(struct List* list_of_lists, int target) {
+    int count = 0;
+    struct List* current_list = list_of_lists;
+    while (current_list != NULL) {
+        if (contains_element(current_list->head, target)) {
+            count++;
+        }
+        current_list = current_list->next;
+    }
+    return count;
+}
+
+void free_nodes(struct Node* head) {
+    struct Node* tmp;
+    while (head != NULL) {
+        tmp = head;
+        head = head->next;
+        free(tmp);
+    }
+}
+
+void free_lists(struct List* head) {
+    struct List* tmp;
+    while (head != NULL) {
+        tmp = head;
+        head = head->next;
+        free_nodes(tmp->head);
+        free(tmp);
+    }
+}
+
+int main(void) {
+    struct List* list_of_lists = NULL;
+
+    struct Node* l1 = NULL;
+    add_node(&l1, 3);
+    add_node(&l1, 2);
+    add_node(&l1, 1);
+    add_list(&list_of_lists, l1);
+
+    struct Node* l2 = NULL;
+    add_node(&l2, 6);
+    add_node(&l2, 5);
+    add_node(&l2, 4);
+    add_list(&list_of_lists, l2);
+
+    struct Node* l3 = NULL;
+    add_node(&l3, 2);
+    add_node(&l3, 8);
+    add_node(&l3, 7);
+    add_list(&list_of_lists, l3);
+
+    int target = 2;
+    int count = count_sublists_with_element(list_of_lists, target);
+
+    printf("%d\n", count);
+
+    free_lists(list_of_lists);
+
+    return 0;
+}

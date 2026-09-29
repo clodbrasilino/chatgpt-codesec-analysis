@@ -1,0 +1,69 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    void *value;
+    int type;  // 0 for int, 1 for char, 2 for nested tuple
+} Element;
+
+typedef struct Tuple {
+    Element data;
+    struct Tuple *next;
+} Tuple;
+
+void add_element(Tuple **head, void *value, int type) {
+    Tuple *newNode = (Tuple*)malloc(sizeof(Tuple));
+    newNode->data.value = value;
+    newNode->data.type = type;
+    newNode->next = *head;
+    *head = newNode;
+}
+
+int count_elements(Tuple *head, void *target, int type) {
+    int count = 0;
+    while (head) {
+        if (head->data.type == type && (type != 2 || head->data.value == target)) {
+            if (type == 0 && (*(int*)head->data.value == *(int*)target))
+                count++;
+            else if (type == 1 && (*(char*)head->data.value == *(char*)target))
+                count++;
+            else if (type == 2)
+                count += count_elements((Tuple*)head->data.value, target, type);
+        }
+        head = head->next;
+    }
+    return count;
+}
+
+int main() {
+    Tuple *root = NULL;
+    int i1 = 5, i2 = 5, i3 = 10;
+    char c1 = 'a', c2 = 'b', c3 = 'a';
+    Tuple *nested1 = NULL, *nested2 = NULL;
+
+    add_element(&nested1, &i1, 0);
+    add_element(&nested1, &c1, 1);
+    add_element(&nested1, &nested1, 2);
+
+    add_element(&nested2, &i2, 0);
+    add_element(&nested2, &c2, 1);
+
+    add_element(&root, &i3, 0);
+    add_element(&root, &c3, 1);
+    add_element(&root, nested1, 2);
+    add_element(&root, nested2, 2);
+    add_element(&root, &c1, 1);
+
+    printf("Count of %d: %d\n", 5, count_elements(root, &i1, 0));
+    printf("Count of '%c': %d\n", 'a', count_elements(root, &c1, 1));
+
+    while (root) {
+        Tuple *temp = root;
+        root = root->next;
+        if (temp->data.type == 2)
+            free(temp->data.value);
+        free(temp);
+    }
+
+    return 0;
+}

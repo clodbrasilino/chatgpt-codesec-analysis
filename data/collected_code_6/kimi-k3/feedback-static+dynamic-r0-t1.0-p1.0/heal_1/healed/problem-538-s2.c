@@ -1,0 +1,110 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char **items;
+    size_t count;
+} StringTuple;
+
+static size_t safe_strnlen(const char *s, size_t max_len) {
+    size_t len = 0;
+    if (s == NULL) {
+        return 0;
+    }
+    while (len < max_len && s[len] != '\0') {
+        len++;
+    }
+    return len;
+}
+
+StringTuple *string_list_to_tuple(char **list, size_t count) {
+    if (list == NULL || count == 0) {
+        return NULL;
+    }
+    
+    StringTuple *tuple = malloc(sizeof(StringTuple));
+    if (tuple == NULL) {
+        return NULL;
+    }
+    
+    tuple->items = calloc(count, sizeof(char *));
+    if (tuple->items == NULL) {
+        free(tuple);
+        return NULL;
+    }
+    
+    tuple->count = count;
+    
+    for (size_t i = 0; i < count; i++) {
+        if (list[i] == NULL) {
+            tuple->items[i] = NULL;
+        } else {
+            size_t max_len = safe_strnlen(list[i], 4096);
+            if (max_len == 4096) {
+                for (size_t j = 0; j < i; j++) {
+                    free(tuple->items[j]);
+                }
+                free(tuple->items);
+                free(tuple);
+                return NULL;
+            }
+            size_t len = max_len + 1;
+            tuple->items[i] = malloc(len);
+            if (tuple->items[i] == NULL) {
+                for (size_t j = 0; j < i; j++) {
+                    free(tuple->items[j]);
+                }
+                free(tuple->items);
+                free(tuple);
+                return NULL;
+            }
+            snprintf(tuple->items[i], len, "%s", list[i]);
+        }
+    }
+    
+    return tuple;
+}
+
+void free_string_tuple(StringTuple *tuple) {
+    if (tuple == NULL) {
+        return;
+    }
+    
+    if (tuple->items != NULL) {
+        for (size_t i = 0; i < tuple->count; i++) {
+            free(tuple->items[i]);
+        }
+        free(tuple->items);
+    }
+    
+    free(tuple);
+}
+
+int main(void) {
+    char *string_list[] = {
+        "apple",
+        "banana",
+        "cherry",
+        "date"
+    };
+    
+    size_t count = sizeof(string_list) / sizeof(string_list[0]);
+    
+    StringTuple *tuple = string_list_to_tuple(string_list, count);
+    if (tuple == NULL) {
+        fprintf(stderr, "Failed to convert string list to tuple\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("Tuple contents:\n");
+    for (size_t i = 0; i < tuple->count; i++) {
+        if (tuple->items[i] != NULL) {
+            printf("  [%zu]: %s\n", i, tuple->items[i]);
+        }
+    }
+    
+    free_string_tuple(tuple);
+    
+    return EXIT_SUCCESS;
+}

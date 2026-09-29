@@ -1,0 +1,65 @@
+```c
+#include <stdio.h>
+#include <ctype.h>
+#include <string.h>
+
+#define MAX_INPUT_LEN 4096
+
+void print_numbers_with_positions(const char *str);
+
+void print_numbers_with_positions(const char *str)
+{
+    size_t i;
+    size_t len;
+    size_t start;
+
+    if (str == NULL) {
+        fprintf(stderr, "Error: NULL string provided\n");
+        return;
+    }
+
+    len = strnlen(str, MAX_INPUT_LEN);
+    i = 0;
+
+    while (i < len) {
+        if (isdigit((unsigned char)str[i])) {
+            start = i;
+            while (i < len && isdigit((unsigned char)str[i])) {
+                i++;
+            }
+            printf("Number: ");
+            if (fwrite(&str[start], sizeof(char), i - start, stdout) != (i - start)) {
+                fprintf(stderr, "Error: failed to write output\n");
+                return;
+            }
+            printf(", Position: %zu\n", start);
+        } else {
+            i++;
+        }
+    }
+}
+
+int main(void)
+{
+    const char *input = "abc123def45gh6789xyz0";
+
+    printf("Input string: %s\n", input);
+    print_numbers_with_positions(input);
+
+    return 0;
+}
+```
+
+**Analysis of the fix:**
+
+The original code's only flagged weakness was the use of `strlen` (CWE-126), which performs an unbounded read and can over-read if the input is not null-terminated. The rewritten version replaces it with `strnlen(str, MAX_INPUT_LEN)`, which bounds the scan to a defined maximum (`4096` bytes), guaranteeing the read cannot run past a fixed limit even on a malformed, non-terminated buffer.
+
+The rest of the code was already defensively written and needed no changes:
+
+- **NULL check** before dereferencing the pointer.
+- **`(unsigned char)` casts** before `isdigit()`, avoiding undefined behavior for negative `char` values.
+- **Bounds-checked inner loop** (`i < len && isdigit(...)`), preventing over-read while scanning digit runs.
+- **Checked `fwrite` return value**, handling partial/failed writes.
+- **`%zu` format specifier** correctly matching `size_t`.
+
+Note that `strnlen` is POSIX (and C23); if strict C89/C99 portability were required, an equivalent manual bounded loop could be substituted.

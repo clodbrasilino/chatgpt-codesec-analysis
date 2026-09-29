@@ -1,0 +1,54 @@
+{
+  "task_id": 187,
+  "text": "Write a C function to find the longest common subsequence for the given two sequences.",
+  "fn_candidates": [
+    "longest_common_subsequence",
+    "LongestCommonSubsequence",
+    "longestCommonSubsequence",
+    "longestcommonsubsequence"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "longest_common_subsequence",
+      "args": [
+        "AGGTAB",
+        "GXTXAYB",
+        6,
+        7
+      ],
+      "expected": 4,
+      "assert_src": "assert longest_common_subsequence(\"AGGTAB\" , \"GXTXAYB\", 6, 7) == 4"
+    },
+    {
+      "fn_name": "longest_common_subsequence",
+      "args": [
+        "ABCDGH",
+        "AEDFHR",
+        6,
+        6
+      ],
+      "expected": 3,
+      "assert_src": "assert longest_common_subsequence(\"ABCDGH\" , \"AEDFHR\", 6, 6) == 3"
+    },
+    {
+      "fn_name": "longest_common_subsequence",
+      "args": [
+        "AXYT",
+        "AYZX",
+        4,
+        4
+      ],
+      "expected": 2,
+      "assert_src": "assert longest_common_subsequence(\"AXYT\" , \"AYZX\", 4, 4) == 2"
+    }
+  ],
+  "arg_kinds": [
+    "int",
+    "str"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

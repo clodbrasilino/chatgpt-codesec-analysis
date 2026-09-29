@@ -1,0 +1,25 @@
+```C
+#include <stdio.h>
+
+int perrin(int n) {
+    if(n == 0)
+        return 3;
+    else if(n == 1)
+        return 0;
+    else if(n == 2)
+        return 2;
+    else
+        return perrin(n - 2) + perrin(n - 3);
+}
+
+int main() {
+    int num;
+
+    printf("Enter the position of Perrin number: ");
+    scanf("%d", &num);
+
+    printf("Perrin number at position %d is %d", num, perrin(num));
+
+    return 0;
+}
+```

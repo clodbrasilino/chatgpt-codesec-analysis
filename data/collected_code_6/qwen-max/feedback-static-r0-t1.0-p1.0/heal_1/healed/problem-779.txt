@@ -1,0 +1,45 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct List {
+    int *items;
+    int size;
+} List;
+
+int compare_lists(const void *a, const void *b) {
+    const List *list1 = (const List *)a;
+    const List *list2 = (const List *)b;
+    if (list1->size != list2->size) return 0;
+    return memcmp(list1->items, list2->items, list1->size * sizeof(int)) == 0;
+}
+
+int count_unique_lists(List *lists, int num_lists) {
+    int unique_count = 0;
+    for (int i = 0; i < num_lists; i++) {
+        int is_duplicate = 0;
+        for (int j = 0; j < i; j++) {
+            if (compare_lists(&lists[i], &lists[j])) {
+                is_duplicate = 1;
+                break;
+            }
+        }
+        if (!is_duplicate) unique_count++;
+    }
+    return unique_count;
+}
+
+int main() {
+    List lists[] = {
+        { .items = (int[]){1, 2, 3}, .size = 3 },
+        { .items = (int[]){4, 5, 6}, .size = 3 },
+        { .items = (int[]){1, 2, 3}, .size = 3 },
+        { .items = (int[]){7, 8, 9}, .size = 3 }
+    };
+    int num_lists = sizeof(lists) / sizeof(lists[0]);
+    int unique_count = count_unique_lists(lists, num_lists);
+    printf("Unique lists: %d\n", unique_count);
+    return 0;
+}
+```

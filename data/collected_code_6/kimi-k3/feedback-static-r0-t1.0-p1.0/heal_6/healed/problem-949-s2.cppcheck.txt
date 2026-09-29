@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-949-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-949-s2.c:153:57: style: The comparison 'copy_size <= counts[i]*sizeof(int)' is always true because 'copy_size' and 'counts[i]*sizeof(int)' represent the same value. [knownConditionTrueFalse]
+            if (copy_size <= data_sizes[i] && copy_size <= counts[i] * sizeof(int)) {
+                                                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-949-s2.c:152:42: note: 'copy_size' is assigned value 'counts[i]*sizeof(int)' here.
+            size_t copy_size = counts[i] * sizeof(int);
+                                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-949-s2.c:153:57: note: The comparison 'copy_size <= counts[i]*sizeof(int)' is always true because 'copy_size' and 'counts[i]*sizeof(int)' represent the same value.
+            if (copy_size <= data_sizes[i] && copy_size <= counts[i] * sizeof(int)) {
+                                                        ^

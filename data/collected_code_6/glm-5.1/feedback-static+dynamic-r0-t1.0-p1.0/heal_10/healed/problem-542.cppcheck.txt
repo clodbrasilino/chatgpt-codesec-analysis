@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-542.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-542.c:56:32: style: Condition 'chunk_size!=prefix_len' is always true [knownConditionTrueFalse]
+                if (chunk_size != prefix_len) {
+                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-542.c:53:35: note: chunk_size is assigned 'prefix_len<(alloc_size-dest_offset-1)?prefix_len:(alloc_size-dest_offset-1)' here.
+                size_t chunk_size = prefix_len < (alloc_size - dest_offset - 1) ? prefix_len : (alloc_size - dest_offset - 1);
+                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-542.c:56:32: note: Condition 'chunk_size!=prefix_len' is always true
+                if (chunk_size != prefix_len) {
+                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-542.c:81:32: style: Condition 'chunk_size!=remaining' is always true [knownConditionTrueFalse]
+                if (chunk_size != remaining) {
+                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-542.c:78:35: note: chunk_size is assigned 'remaining<(alloc_size-dest_offset-1)?remaining:(alloc_size-dest_offset-1)' here.
+                size_t chunk_size = remaining < (alloc_size - dest_offset - 1) ? remaining : (alloc_size - dest_offset - 1);
+                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-542.c:81:32: note: Condition 'chunk_size!=remaining' is always true
+                if (chunk_size != remaining) {
+                               ^

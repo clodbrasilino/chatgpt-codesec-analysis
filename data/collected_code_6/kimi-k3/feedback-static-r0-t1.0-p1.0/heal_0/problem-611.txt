@@ -1,0 +1,74 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+int find_max_nth_column(int **tuple_list, int num_tuples, int tuple_size, int n) {
+    if (tuple_list == NULL || num_tuples <= 0 || tuple_size <= 0 || n < 0 || n >= tuple_size) {
+        return INT_MIN;
+    }
+
+    int max = INT_MIN;
+    int found = 0;
+
+    for (int i = 0; i < num_tuples; i++) {
+        if (tuple_list[i] == NULL) {
+            continue;
+        }
+        if (!found || tuple_list[i][n] > max) {
+            max = tuple_list[i][n];
+            found = 1;
+        }
+    }
+
+    if (!found) {
+        return INT_MIN;
+    }
+
+    return max;
+}
+
+int main(void) {
+    int num_tuples = 4;
+    int tuple_size = 3;
+    int n = 1;
+
+    int **tuple_list = malloc((size_t)num_tuples * sizeof(int *));
+    if (tuple_list == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    for (int i = 0; i < num_tuples; i++) {
+        tuple_list[i] = malloc((size_t)tuple_size * sizeof(int));
+        if (tuple_list[i] == NULL) {
+            fprintf(stderr, "Memory allocation failed\n");
+            for (int j = 0; j < i; j++) {
+                free(tuple_list[j]);
+            }
+            free(tuple_list);
+            return EXIT_FAILURE;
+        }
+    }
+
+    tuple_list[0][0] = 1; tuple_list[0][1] = 5; tuple_list[0][2] = 9;
+    tuple_list[1][0] = 3; tuple_list[1][1] = 7; tuple_list[1][2] = 2;
+    tuple_list[2][0] = 8; tuple_list[2][1] = 4; tuple_list[2][2] = 6;
+    tuple_list[3][0] = 2; tuple_list[3][1] = 9; tuple_list[3][2] = 1;
+
+    int max = find_max_nth_column(tuple_list, num_tuples, tuple_size, n);
+
+    if (max == INT_MIN) {
+        printf("Invalid input or empty list\n");
+    } else {
+        printf("Maximum of column %d: %d\n", n, max);
+    }
+
+    for (int i = 0; i < num_tuples; i++) {
+        free(tuple_list[i]);
+    }
+    free(tuple_list);
+
+    return EXIT_SUCCESS;
+}
+```

@@ -1,0 +1,34 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+ /* Possible weaknesses found:
+  *  test case 0 failed: expected 1, got -1
+  *  test case 2 failed: expected 'Not Possible', got -1
+  *  test case 1 failed: expected 'Not Possible', got -1
+  */
+
+int minSwaps(char *a, const char *b) {
+    int count[2] = {0, 0};
+    int n = strlen(a);
+    for (int i = 0; i < n; i++) {
+        if (a[i] != b[i]) {
+            count[a[i] - '0']++;
+        }
+    }
+    return (count[1] % 2 == 0) ? count[1] / 2 : -1;
+}
+
+int main() {
+    char a[] = "1100";
+    /* Possible weaknesses found:
+     *  Variable 'b' can be declared as const array [constVariable]
+     */
+    char b[] = "1001";
+    int result = minSwaps(a, b);
+    if (result != -1) {
+        printf("Minimum swaps required: %d\n", result);
+    } else {
+        printf("Conversion not possible\n");
+    }
+    return 0;
+}

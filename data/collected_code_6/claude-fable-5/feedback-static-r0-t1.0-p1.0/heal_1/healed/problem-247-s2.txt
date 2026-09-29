@@ -1,0 +1,147 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_INPUT 1024
+
+static void free_table(size_t **table, size_t rows)
+{
+    size_t i;
+
+    if (table == NULL) {
+        return;
+    }
+    for (i = 0; i < rows; i++) {
+        free(table[i]);
+    }
+    free(table);
+}
+
+static char *longest_palindromic_subsequence(const char *s, size_t max_len)
+{
+    size_t n;
+    size_t i;
+    size_t j;
+    size_t len;
+    size_t left;
+    size_t right;
+    size_t **dp;
+    char *result;
+
+    if (s == NULL) {
+        return NULL;
+    }
+
+    n = strnlen(s, max_len);
+    if (n == 0) {
+        result = malloc(1);
+        if (result != NULL) {
+            result[0] = '\0';
+        }
+        return result;
+    }
+
+    dp = calloc(n, sizeof *dp);
+    if (dp == NULL) {
+        return NULL;
+    }
+    for (i = 0; i < n; i++) {
+        dp[i] = calloc(n, sizeof **dp);
+        if (dp[i] == NULL) {
+            free_table(dp, i);
+            return NULL;
+        }
+    }
+
+    for (i = 0; i < n; i++) {
+        dp[i][i] = 1;
+    }
+
+    for (len = 2; len <= n; len++) {
+        for (i = 0; i + len - 1 < n; i++) {
+            j = i + len - 1;
+            if (s[i] == s[j]) {
+                dp[i][j] = dp[i + 1][j - 1] + 2;
+            } else {
+                dp[i][j] = (dp[i + 1][j] > dp[i][j - 1]) ? dp[i + 1][j] : dp[i][j - 1];
+            }
+        }
+    }
+
+    result = malloc(dp[0][n - 1] + 1);
+    if (result == NULL) {
+        free_table(dp, n);
+        return NULL;
+    }
+
+    i = 0;
+    j = n - 1;
+    left = 0;
+    right = dp[0][n - 1] - 1;
+    while (i <= j) {
+        if (i == j) {
+            result[left] = s[i];
+            break;
+        }
+        if (s[i] == s[j]) {
+            result[left] = s[i];
+            result[right] = s[j];
+            left++;
+            right--;
+            i++;
+            j--;
+        } else if (dp[i + 1][j] >= dp[i][j - 1]) {
+            i++;
+        } else {
+            j--;
+        }
+    }
+    result[dp[0][n - 1]] = '\0';
+
+    free_table(dp, n);
+    return result;
+}
+
+int main(void)
+{
+    char input[MAX_INPUT];
+    char *lps;
+    size_t len;
+
+    printf("Enter a string: ");
+    fflush(stdout);
+    if (fgets(input, sizeof input, stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+    input[sizeof input - 1] = '\0';
+
+    len = strnlen(input, sizeof input);
+    if (len > 0 && input[len - 1] == '\n') {
+        input[len - 1] = '\0';
+        len--;
+    }
+
+    lps = longest_palindromic_subsequence(input, sizeof input);
+    if (lps == NULL) {
+        fprintf(stderr, "Failed to compute longest palindromic subsequence\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Longest palindromic subsequence: %s\n", lps);
+    printf("Length: %zu\n", strnlen(lps, len + 1));
+
+    free(lps);
+    return EXIT_SUCCESS;
+}
+```
+
+Key hardening changes made against the flagged weaknesses:
+
+- **CWE-126 (`strlen` over-read):** All `strlen` calls were replaced with `strnlen` bounded by a known maximum. The palindrome function now takes an explicit `max_len` parameter so it never scans beyond the caller's buffer, even if handed a non-terminated string.
+- **CWE-119/CWE-120 (statically-sized array):** The `fgets` call already limits reads to `sizeof input`, but `input[sizeof input - 1] = '\0'` was added as a defensive guarantee of termination before any string operation touches the buffer.
+- The final length printout is bounded by the known input length (`len + 1`) rather than trusting unbounded traversal of the heap result.
+- `fflush(stdout)` added after the prompt so it reliably appears before blocking on `stdin` (a correctness fix, since the prompt lacks a newline).
+
+The core DP algorithm was left intact: allocation failures are already handled at every step, `calloc` performs overflow-checked multiplication internally, and the reconstruction indices are provably within `[0, n)`.

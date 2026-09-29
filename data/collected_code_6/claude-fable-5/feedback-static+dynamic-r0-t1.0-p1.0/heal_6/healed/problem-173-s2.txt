@@ -1,0 +1,79 @@
+```c
+#include <stdio.h>
+#include <ctype.h>
+#include <string.h>
+#include <stdlib.h>
+
+char *remove_non_alnum(char *str, size_t max_len);
+
+char *remove_non_alnum(char *str, size_t max_len)
+{
+    size_t read;
+    size_t write;
+    size_t len;
+
+    if (str == NULL || max_len == 0) {
+        return NULL;
+    }
+
+    len = strnlen(str, max_len);
+    if (len >= max_len) {
+        return NULL;
+    }
+
+    write = 0;
+    for (read = 0; read < len && read < max_len; read++) {
+        if (isalnum((unsigned char)str[read])) {
+            if (write < max_len - 1) {
+                str[write] = str[read];
+                write++;
+            } else {
+                break;
+            }
+        }
+    }
+
+    if (write >= max_len) {
+        return NULL;
+    }
+    str[write] = '\0';
+
+    return str;
+}
+
+int main(void)
+{
+    char input[] = "Hello, World! 123 #$%^ test_case-42";
+    char *result;
+
+    result = remove_non_alnum(input, sizeof(input));
+    if (result == NULL) {
+        fprintf(stderr, "Error: invalid input string\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Result: %s\n", result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the original code and the changes made:**
+
+The original code was already in good shape — the Flawfinder hits are all *risk level 1* informational warnings about indexed buffer access in loops (CWE-120/CWE-20), which are heuristic flags rather than confirmed vulnerabilities. Here's why the code is safe and what was hardened:
+
+1. **NULL/zero-length guard:** `str == NULL || max_len == 0` is checked before any dereference, preventing NULL pointer dereference and underflow in `max_len - 1`.
+
+2. **Bounded length calculation:** `strnlen(str, max_len)` never reads past `max_len` bytes even if the string is unterminated, and the `len >= max_len` check rejects unterminated buffers entirely.
+
+3. **Read bounds:** The loop condition now includes an explicit `read < max_len` guard as defense-in-depth, directly satisfying the Flawfinder concern about `str[read]`.
+
+4. **Write bounds:** `write < max_len - 1` guarantees `str[write]` stays in bounds and reserves space for the terminator. I added an early `break` once the destination is full — since `write` can never exceed `read`, overflow was already impossible, but this makes the invariant explicit and avoids pointless iterations.
+
+5. **`isalnum` cast:** The `(unsigned char)` cast is correctly retained — passing a plain `char` that is negative invokes undefined behavior per the C standard.
+
+6. **Safe termination:** The final `write >= max_len` check (defensive, provably unreachable) precedes `str[write] = '\0'`, ensuring the terminator write is in bounds.
+
+7. **Caller correctness:** `main` passes `sizeof(input)` (which includes the NUL), checks the return value, and checks `printf`'s return — all correct as originally written.

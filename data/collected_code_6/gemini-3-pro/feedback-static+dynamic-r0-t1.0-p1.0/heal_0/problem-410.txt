@@ -1,0 +1,109 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef enum {
+    TYPE_INT,
+    TYPE_FLOAT,
+    TYPE_DOUBLE
+} ElementType;
+
+typedef struct {
+    ElementType type;
+    union {
+        int i_val;
+        float f_val;
+        double d_val;
+    } data;
+} HeterogeneousElement;
+
+typedef struct {
+    HeterogeneousElement* elements;
+    size_t size;
+} HeterogeneousList;
+
+void find_minimum(const HeterogeneousList* list, HeterogeneousElement* min_element) {
+    if (!list || !list->elements || list->size == 0 || !min_element) {
+        if (min_element) {
+            min_element->type = TYPE_INT;
+            min_element->data.i_val = 0;
+        }
+        return;
+    }
+
+    double min_val = 0.0;
+    size_t min_index = 0;
+    int first_set = 0;
+
+    for (size_t i = 0; i < list->size; i++) {
+        double current_val = 0.0;
+        switch (list->elements[i].type) {
+            case TYPE_INT:
+                current_val = (double)list->elements[i].data.i_val;
+                break;
+            case TYPE_FLOAT:
+                current_val = (double)list->elements[i].data.f_val;
+                break;
+            case TYPE_DOUBLE:
+                current_val = list->elements[i].data.d_val;
+                break;
+            default:
+                continue;
+        }
+
+        if (!first_set || current_val < min_val) {
+            min_val = current_val;
+            min_index = i;
+            first_set = 1;
+        }
+    }
+
+    if (first_set) {
+        *min_element = list->elements[min_index];
+    } else {
+        min_element->type = TYPE_INT;
+        min_element->data.i_val = 0;
+    }
+}
+
+int main(void) {
+    HeterogeneousList list;
+    list.size = 4;
+    list.elements = (HeterogeneousElement*)malloc(list.size * sizeof(HeterogeneousElement));
+    
+    if (!list.elements) {
+        return 1;
+    }
+
+    list.elements[0].type = TYPE_INT;
+    list.elements[0].data.i_val = 10;
+
+    list.elements[1].type = TYPE_FLOAT;
+    list.elements[1].data.f_val = 5.5f;
+
+    list.elements[2].type = TYPE_DOUBLE;
+    list.elements[2].data.d_val = -3.2;
+
+    list.elements[3].type = TYPE_INT;
+    list.elements[3].data.i_val = 7;
+
+    HeterogeneousElement min_element;
+    find_minimum(&list, &min_element);
+
+    switch (min_element.type) {
+        case TYPE_INT:
+            printf("Minimum: %d\n", min_element.data.i_val);
+            break;
+        case TYPE_FLOAT:
+            printf("Minimum: %f\n", min_element.data.f_val);
+            break;
+        case TYPE_DOUBLE:
+            printf("Minimum: %lf\n", min_element.data.d_val);
+            break;
+    }
+
+    free(list.elements);
+    return 0;
+}
+```

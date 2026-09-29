@@ -1,0 +1,101 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *array;
+    int size;
+    int current;
+} Iterator;
+
+int compare(const void *a, const void *b) {
+    return (*(int **)a)[0] - (*(int **)b)[0];
+}
+
+void push(int **heap, int *sizes, int *array, int size, int *heap_size) {
+    heap[*heap_size] = array;
+    sizes[*heap_size] = size;
+    int i = *heap_size;
+    while (i > 0 && heap[(i - 1) / 2][0] > heap[i][0]) {
+        int *temp_arr = heap[(i - 1) / 2];
+        int temp_size = sizes[(i - 1) / 2];
+        heap[(i - 1) / 2] = heap[i];
+        sizes[(i - 1) / 2] = sizes[i];
+        heap[i] = temp_arr;
+        sizes[i] = temp_size;
+        i = (i - 1) / 2;
+    }
+    (*heap_size)++;
+}
+
+int pop(int **heap, int *sizes, int *heap_size) {
+    if (*heap_size == 0) return -1;
+    int result = heap[0][0];
+    heap[0] = heap[*heap_size - 1];
+    sizes[0] = sizes[*heap_size - 1];
+    (*heap_size)--;
+    int i = 0;
+    while (i * 2 + 1 < *heap_size) {
+        int smallest = i;
+        if (heap[i][0] > heap[i * 2 + 1][0]) smallest = i * 2 + 1;
+        if (i * 2 + 2 < *heap_size && heap[smallest][0] > heap[i * 2 + 2][0]) smallest = i * 2 + 2;
+        if (smallest == i) break;
+        int *temp_arr = heap[smallest];
+        int temp_size = sizes[smallest];
+        heap[smallest] = heap[i];
+        sizes[smallest] = sizes[i];
+        heap[i] = temp_arr;
+        sizes[i] = temp_size;
+        i = smallest;
+    }
+    return result;
+}
+
+int next(Iterator *iter) {
+    if (iter->current >= iter->size) return -1;
+    return iter->array[iter->current++];
+}
+
+int main() {
+    int arr1[] = {1, 3, 5};
+    int arr2[] = {2, 4, 6};
+    int arr3[] = {0, 7, 8, 9};
+
+    int **arrays = malloc(3 * sizeof(int *));
+    arrays[0] = arr1;
+    arrays[1] = arr2;
+    arrays[2] = arr3;
+    /* Possible weaknesses found:
+     *  Variable 'sizes' can be declared as const array [constVariable]
+     */
+    int sizes[] = {3, 3, 4};
+    
+    int *result = malloc(10 * sizeof(int));
+    int result_index = 0;
+
+    int **heap = malloc(3 * sizeof(int *));
+    int *hsizes = malloc(3 * sizeof(int));
+    int heap_size = 0;
+
+    for (int i = 0; i < 3; i++) {
+        push(heap, hsizes, arrays[i], sizes[i], &heap_size);
+    }
+
+    while (heap_size > 0) {
+        int item = pop(heap, hsizes, &heap_size);
+        result[result_index++] = item;
+        int *arr = heap[0];
+        if (next((Iterator *)arr)) {
+            push(heap, hsizes, arr, sizes[0], &heap_size);
+        }
+    }
+
+    for (int i = 0; i < result_index; i++) {
+        printf("%d ", result[i]);
+    }
+    free(result);
+    free(arrays);
+    free(heap);
+    free(hsizes);
+
+    return 0;
+}

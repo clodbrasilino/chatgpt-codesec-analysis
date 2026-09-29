@@ -1,0 +1,57 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+double lateral_surface_area(double radius, double height)
+{
+    return 2.0 * M_PI * radius * height;
+}
+
+int main(void)
+{
+    double radius;
+    double height;
+
+    printf("Enter the radius of the cylinder: ");
+    if (scanf("%lf", &radius) != 1) {
+        fprintf(stderr, "Error: invalid input for radius\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter the height of the cylinder: ");
+    if (scanf("%lf", &height) != 1) {
+        fprintf(stderr, "Error: invalid input for height\n");
+        return EXIT_FAILURE;
+    }
+
+    if (radius < 0.0 || height < 0.0) {
+        fprintf(stderr, "Error: radius and height must be non-negative\n");
+        return EXIT_FAILURE;
+    }
+
+    if (!isfinite(radius) || !isfinite(height)) {
+        fprintf(stderr, "Error: radius and height must be finite values\n");
+        return EXIT_FAILURE;
+    }
+
+    double area = lateral_surface_area(radius, height);
+
+    if (!isfinite(area)) {
+        fprintf(stderr, "Error: result overflow\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Lateral surface area of the cylinder: %.6f\n", area);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Key points about this implementation:**
+
+- **CWE-703 avoidance:** Every `scanf` return value is checked, inputs are validated for negative values, and `isfinite()` guards against NaN/infinity in both inputs and the computed result.
+- **CWE-664 avoidance:** No dynamically allocated resources, file handles, or other resources are used, so there's nothing to leak or mismanage across its lifetime.
+- **CWE-710 avoidance:** The code adheres to standard C conventions — `int main(void)` signature, `EXIT_SUCCESS`/`EXIT_FAILURE` return codes, errors reported to `stderr`, and consistent formatting.
+
+Note: if your compiler doesn't define `M_PI` (it's POSIX, not strict ISO C), compile with `-D_USE_MATH_DEFINES` or define `M_PI` as `3.14159265358979323846` yourself.

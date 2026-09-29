@@ -1,0 +1,10 @@
+In file included from /Library/Developer/CommandLineTools/SDKs/MacOSX15.sdk/usr/include/_string.h:228,
+                 from /Library/Developer/CommandLineTools/SDKs/MacOSX15.sdk/usr/include/string.h:58,
+                 from /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-771.c:3:
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-771.c: In function 'main':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-771.c:61:5: error: expected ']' before ')' token
+   61 |     memcpy(safe_arg, argv[1, safe_arg_size);
+      |     ^~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-771.c:61:5: error: too few arguments to function '__builtin___memcpy_chk'; expected 4, have 2
+   61 |     memcpy(safe_arg, argv[1, safe_arg_size);
+      |     ^~~~~~

@@ -1,0 +1,64 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+bool isDivisibleSubset(int arr[], int n, int m) {
+    if (n > m) {
+        return true;
+    }
+
+    bool *dp = (bool *)calloc(m, sizeof(bool));
+    if (dp == NULL) {
+        return false;
+    }
+
+    for (int i = 0; i < n; i++) {
+        if (dp[0]) {
+            free(dp);
+            return true;
+        }
+
+        bool *temp = (bool *)calloc(m, sizeof(bool));
+        if (temp == NULL) {
+            free(dp);
+            return false;
+        }
+
+        for (int j = 0; j < m; j++) {
+            if (dp[j]) {
+                if (dp[(j + arr[i]) % m] == false) {
+                    temp[(j + arr[i]) % m] = true;
+                }
+            }
+        }
+
+        for (int j = 0; j < m; j++) {
+            if (temp[j]) {
+                dp[j] = true;
+            }
+        }
+
+        dp[arr[i] % m] = true;
+        free(temp);
+    }
+
+    bool result = dp[0];
+    free(dp);
+    return result;
+}
+
+int main() {
+    int arr[] = {3, 1, 4, 2, 6};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    int m = 5;
+
+    if (isDivisibleSubset(arr, n, m)) {
+        printf("Yes\n");
+    } else {
+        printf("No\n");
+    }
+
+    return 0;
+}
+```

@@ -1,0 +1,206 @@
+./collected_code_3/round4/heal_1/healed/problem-391.c: In function 'convertListToDict':
+./collected_code_3/round4/heal_1/healed/problem-391.c:29:24: warning: dereference of NULL 'temp' [CWE-476] [-Wanalyzer-null-dereference]
+   29 |             temp->next = createNode(keys[i], values[i]);
+      |             ~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  'main': events 1-2
+    |
+    |   50 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   53 |         createNode("value1", NULL),
+    |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |         |
+    |      |         (2) calling 'createNode' from 'main'
+    |
+    +--> 'createNode': events 3-5
+           |
+           |   11 | Node* createNode(char *key, Node *value) {
+           |      |       ^~~~~~~~~~
+           |      |       |
+           |      |       (3) entry to 'createNode'
+           |   12 |     Node *newNode = (Node*)malloc(sizeof(Node));
+           |   13 |     if(newNode != NULL) {
+           |      |       ~
+           |      |       |
+           |      |       (4) following 'false' branch (when 'newNode' is NULL)...
+           |......
+           |   18 |     return newNode;
+           |      |            ~~~~~~~
+           |      |            |
+           |      |            (5) ...to here
+           |
+    <------+
+    |
+  'main': events 6-7
+    |
+    |   53 |         createNode("value1", NULL),
+    |      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |         |
+    |      |         (6) returning to 'main' from 'createNode'
+    |   54 |         createNode("value2", NULL),
+    |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |         |
+    |      |         (7) calling 'createNode' from 'main'
+    |
+    +--> 'createNode': events 8-10
+           |
+           |   11 | Node* createNode(char *key, Node *value) {
+           |      |       ^~~~~~~~~~
+           |      |       |
+           |      |       (8) entry to 'createNode'
+           |   12 |     Node *newNode = (Node*)malloc(sizeof(Node));
+           |   13 |     if(newNode != NULL) {
+           |      |       ~
+           |      |       |
+           |      |       (9) following 'false' branch (when 'newNode' is NULL)...
+           |......
+           |   18 |     return newNode;
+           |      |            ~~~~~~~
+           |      |            |
+           |      |            (10) ...to here
+           |
+    <------+
+    |
+  'main': events 11-12
+    |
+    |   54 |         createNode("value2", NULL),
+    |      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |         |
+    |      |         (11) returning to 'main' from 'createNode'
+    |   55 |         createNode("value3", NULL)
+    |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |         |
+    |      |         (12) calling 'createNode' from 'main'
+    |
+    +--> 'createNode': events 13-15
+           |
+           |   11 | Node* createNode(char *key, Node *value) {
+           |      |       ^~~~~~~~~~
+           |      |       |
+           |      |       (13) entry to 'createNode'
+           |   12 |     Node *newNode = (Node*)malloc(sizeof(Node));
+           |   13 |     if(newNode != NULL) {
+           |      |       ~
+           |      |       |
+           |      |       (14) following 'false' branch (when 'newNode' is NULL)...
+           |......
+           |   18 |     return newNode;
+           |      |            ~~~~~~~
+           |      |            |
+           |      |            (15) ...to here
+           |
+    <------+
+    |
+  'main': events 16-17
+    |
+    |   55 |         createNode("value3", NULL)
+    |      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |         |
+    |      |         (16) returning to 'main' from 'createNode'
+    |   56 |     };
+    |   57 |     Node *dict = convertListToDict(keys, values, 3);
+    |      |                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                  |
+    |      |                  (17) calling 'convertListToDict' from 'main'
+    |
+    +--> 'convertListToDict': events 18-27
+           |
+           |   21 | Node* convertListToDict(char **keys, Node **values, int n) {
+           |      |       ^~~~~~~~~~~~~~~~~
+           |      |       |
+           |      |       (18) entry to 'convertListToDict'
+           |......
+           |   24 |     for(int i = 0; i < n; i++) {
+           |      |                    ~~~~~
+           |      |                      |
+           |      |                      (19) following 'true' branch (when 'i < n')...
+           |      |                      (23) following 'true' branch (when 'i < n')...
+           |   25 |         if(head == NULL) {
+           |      |           ~
+           |      |           |
+           |      |           (20) ...to here
+           |      |           (21) following 'true' branch (when 'head' is NULL)...
+           |      |           (24) ...to here
+           |      |           (25) following 'false' branch (when 'head' is non-NULL)...
+           |   26 |             head = createNode(keys[i], values[i]);
+           |      |                                              ~
+           |      |                                              |
+           |      |                                              (22) ...to here
+           |......
+           |   29 |             temp->next = createNode(keys[i], values[i]);
+           |      |                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                          |                         |
+           |      |                          |                         (26) ...to here
+           |      |                          (27) calling 'createNode' from 'convertListToDict'
+           |
+           +--> 'createNode': events 28-32
+                  |
+                  |   11 | Node* createNode(char *key, Node *value) {
+                  |      |       ^~~~~~~~~~
+                  |      |       |
+                  |      |       (28) entry to 'createNode'
+                  |   12 |     Node *newNode = (Node*)malloc(sizeof(Node));
+                  |      |                            ~~~~~~~~~~~~~~~~~~~~
+                  |      |                            |
+                  |      |                            (29) allocated here
+                  |   13 |     if(newNode != NULL) {
+                  |      |       ~
+                  |      |       |
+                  |      |       (30) assuming 'newNode' is NULL
+                  |      |       (31) following 'false' branch (when 'newNode' is NULL)...
+                  |......
+                  |   18 |     return newNode;
+                  |      |            ~~~~~~~
+                  |      |            |
+                  |      |            (32) ...to here
+                  |
+           <------+
+           |
+         'convertListToDict': events 33-38
+           |
+           |   24 |     for(int i = 0; i < n; i++) {
+           |      |                    ~~~~~  
+           |      |                      |
+           |      |                      (34) following 'true' branch (when 'i < n')...
+           |   25 |         if(head == NULL) {
+           |      |           ~               
+           |      |           |
+           |      |           (35) ...to here
+           |      |           (36) following 'false' branch (when 'head' is non-NULL)...
+           |......
+           |   29 |             temp->next = createNode(keys[i], values[i]);
+           |      |                          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                          |                         |
+           |      |                          |                         (37) ...to here
+           |      |                          (33) returning to 'convertListToDict' from 'createNode'
+           |      |                          (38) calling 'createNode' from 'convertListToDict'
+           |
+           +--> 'createNode': events 39-41
+                  |
+                  |   11 | Node* createNode(char *key, Node *value) {
+                  |      |       ^~~~~~~~~~
+                  |      |       |
+                  |      |       (39) entry to 'createNode'
+                  |   12 |     Node *newNode = (Node*)malloc(sizeof(Node));
+                  |   13 |     if(newNode != NULL) {
+                  |      |       ~
+                  |      |       |
+                  |      |       (40) following 'false' branch (when 'newNode' is NULL)...
+                  |......
+                  |   18 |     return newNode;
+                  |      |            ~~~~~~~
+                  |      |            |
+                  |      |            (41) ...to here
+                  |
+           <------+
+           |
+         'convertListToDict': events 42-43
+           |
+           |   29 |             temp->next = createNode(keys[i], values[i]);
+           |      |             ~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                        | |
+           |      |                        | (42) returning to 'convertListToDict' from 'createNode'
+           |      |                        (43) dereference of NULL 'temp'
+           |

@@ -1,0 +1,22 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-622.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-622.c:53:12: style: Condition 'n1!=n2' is always false [knownConditionTrueFalse]
+    if (n1 != n2) {
+           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-622.c:50:14: note: Assignment 'n1=(int)(sizeof(arr1)/sizeof(arr1[0]))', assigned value is 5
+    int n1 = (int)(sizeof(arr1) / sizeof(arr1[0]));
+             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-622.c:53:12: note: Condition 'n1!=n2' is always false
+    if (n1 != n2) {
+           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-622.c:58:12: style: Condition 'n1==0' is always false [knownConditionTrueFalse]
+    if (n1 == 0) {
+           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-622.c:51:14: note: Assignment 'n2=(int)(sizeof(arr2)/sizeof(arr2[0]))', assigned value is 5
+    int n2 = (int)(sizeof(arr2) / sizeof(arr2[0]));
+             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-622.c:53:12: note: Assuming that condition 'n1!=n2' is not redundant
+    if (n1 != n2) {
+           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-622.c:58:12: note: Condition 'n1==0' is always false
+    if (n1 == 0) {
+           ^

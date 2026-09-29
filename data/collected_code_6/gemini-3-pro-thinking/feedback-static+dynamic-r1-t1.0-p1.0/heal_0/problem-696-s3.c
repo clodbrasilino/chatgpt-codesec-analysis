@@ -1,0 +1,144 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct InnerNode {
+    int data;
+    struct InnerNode* next;
+} InnerNode;
+
+typedef struct OuterNode {
+    InnerNode* inner_head;
+    struct OuterNode* next;
+} OuterNode;
+
+typedef struct ZipNode {
+    InnerNode* list1_inner;
+    InnerNode* list2_inner;
+    struct ZipNode* next;
+} ZipNode;
+
+InnerNode* create_inner_node(int data) {
+    InnerNode* node = (InnerNode*)malloc(sizeof(InnerNode));
+    if (node == NULL) {
+        exit(EXIT_FAILURE);
+    }
+    node->data = data;
+    node->next = NULL;
+    return node;
+}
+
+OuterNode* create_outer_node(InnerNode* inner) {
+    OuterNode* node = (OuterNode*)malloc(sizeof(OuterNode));
+    if (node == NULL) {
+        exit(EXIT_FAILURE);
+    }
+    node->inner_head = inner;
+    node->next = NULL;
+    return node;
+}
+
+void free_inner(InnerNode* head) {
+    while (head != NULL) {
+        InnerNode* temp = head;
+        head = head->next;
+        free(temp);
+    }
+}
+
+void free_outer(OuterNode* head) {
+    while (head != NULL) {
+        OuterNode* temp = head;
+        free_inner(temp->inner_head);
+        head = head->next;
+        free(temp);
+    }
+}
+
+void free_zip(ZipNode* head) {
+    while (head != NULL) {
+        ZipNode* temp = head;
+        head = head->next;
+        free(temp);
+    }
+}
+
+ZipNode* zip_lists(OuterNode* list1, OuterNode* list2) {
+    ZipNode* head = NULL;
+    ZipNode** tail = &head;
+
+    while (list1 != NULL && list2 != NULL) {
+        ZipNode* new_node = (ZipNode*)malloc(sizeof(ZipNode));
+        if (new_node == NULL) {
+            free_zip(head);
+            return NULL;
+        }
+        new_node->list1_inner = list1->inner_head;
+        new_node->list2_inner = list2->inner_head;
+        new_node->next = NULL;
+
+        *tail = new_node;
+        tail = &(new_node->next);
+
+        list1 = list1->next;
+        list2 = list2->next;
+    }
+
+    return head;
+}
+
+void print_inner(InnerNode* head) {
+    printf("[");
+    while (head != NULL) {
+        printf("%d", head->data);
+        if (head->next != NULL) {
+            printf(", ");
+        }
+        head = head->next;
+    }
+    printf("]");
+}
+
+void print_zip(ZipNode* head) {
+    printf("[\n");
+    while (head != NULL) {
+        printf("  (");
+        print_inner(head->list1_inner);
+        printf(", ");
+        print_inner(head->list2_inner);
+        printf(")\n");
+        head = head->next;
+    }
+    printf("]\n");
+}
+
+int main(void) {
+    InnerNode* i1 = create_inner_node(1);
+    i1->next = create_inner_node(2);
+
+    InnerNode* i2 = create_inner_node(3);
+    i2->next = create_inner_node(4);
+
+    OuterNode* o1 = create_outer_node(i1);
+    o1->next = create_outer_node(i2);
+
+    InnerNode* i3 = create_inner_node(5);
+    i3->next = create_inner_node(6);
+
+    InnerNode* i4 = create_inner_node(7);
+    i4->next = create_inner_node(8);
+
+    OuterNode* o2 = create_outer_node(i3);
+    o2->next = create_outer_node(i4);
+
+    ZipNode* zipped = zip_lists(o1, o2);
+
+    if (zipped != NULL) {
+        print_zip(zipped);
+        free_zip(zipped);
+    }
+
+    free_outer(o1);
+    free_outer(o2);
+
+    return 0;
+}

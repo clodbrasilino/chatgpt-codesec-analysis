@@ -1,0 +1,66 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int sum_column(int **matrix, int rows, const int *row_sizes, int col_index) {
+    int sum = 0;
+    if (matrix == NULL || row_sizes == NULL || rows <= 0) {
+        return 0;
+    }
+    for (int i = 0; i < rows; i++) {
+        if (matrix[i] != NULL && col_index >= 0 && col_index < row_sizes[i]) {
+            sum += matrix[i][col_index];
+        }
+    }
+    return sum;
+}
+
+int main(void) {
+    int rows = 3;
+    int *row_sizes = malloc(rows * sizeof(int));
+    if (row_sizes == NULL) {
+        return EXIT_FAILURE;
+    }
+    row_sizes[0] = 3;
+    row_sizes[1] = 2;
+    row_sizes[2] = 4;
+
+    int **matrix = malloc(rows * sizeof(int *));
+    if (matrix == NULL) {
+        free(row_sizes);
+        return EXIT_FAILURE;
+    }
+
+    for (int i = 0; i < rows; i++) {
+        matrix[i] = malloc(row_sizes[i] * sizeof(int));
+        if (matrix[i] == NULL) {
+            for (int j = 0; j < i; j++) {
+                free(matrix[j]);
+            }
+            free(matrix);
+            free(row_sizes);
+            return EXIT_FAILURE;
+        }
+    }
+
+    matrix[0][0] = 1;
+    matrix[0][1] = 2;
+    matrix[0][2] = 3;
+    matrix[1][0] = 4;
+    matrix[1][1] = 5;
+    matrix[2][0] = 6;
+    matrix[2][1] = 7;
+    matrix[2][2] = 8;
+    matrix[2][3] = 9;
+
+    int col = 1;
+    int result = sum_column(matrix, rows, row_sizes, col);
+    printf("%d\n", result);
+
+    for (int i = 0; i < rows; i++) {
+        free(matrix[i]);
+    }
+    free(matrix);
+    free(row_sizes);
+
+    return EXIT_SUCCESS;
+}

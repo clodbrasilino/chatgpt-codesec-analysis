@@ -1,0 +1,6 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-311-s3.c: In function 'set_leftmost_unset_bit':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-311-s3.c:8:37: error: 'UINT32_WIDTH' undeclared (first use in this function); did you mean 'UINT_WIDTH'?
+    8 |     uint32_t mask = UINT32_C(1) << (UINT32_WIDTH - 1);
+      |                                     ^~~~~~~~~~~~
+      |                                     UINT_WIDTH
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-311-s3.c:8:37: note: each undeclared identifier is reported only once for each function it appears in

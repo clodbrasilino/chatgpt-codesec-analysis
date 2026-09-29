@@ -1,0 +1,32 @@
+```c
+#include <stdio.h>
+#include <ctype.h>
+
+int count_matching_position(const char *str) {
+    int count = 0;
+    if (str == NULL) {
+        return 0;
+    }
+    for (int i = 0; str[i] != '\0'; i++) {
+        if (isalpha((unsigned char)str[i])) {
+            if (islower((unsigned char)str[i])) {
+                if (str[i] - 'a' == i) {
+                    count++;
+                }
+            } else {
+                if (str[i] - 'A' == i) {
+                    count++;
+                }
+            }
+        }
+    }
+    return count;
+}
+
+int main(void) {
+    const char *test = "AbCd";
+    int result = count_matching_position(test);
+    printf("%d\n", result);
+    return 0;
+}
+```

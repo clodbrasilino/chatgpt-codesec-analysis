@@ -1,0 +1,53 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int longest_increasing_subsequence(const int *arr, int n) {
+    if (arr == NULL || n <= 0) {
+        return 0;
+    }
+
+    size_t alloc_size = (size_t)n * sizeof(int);
+    if (alloc_size / sizeof(int) != (size_t)n) {
+        return 0;
+    }
+
+    int *tail = (int *)malloc(alloc_size);
+    if (tail == NULL) {
+        return 0;
+    }
+
+    int length = 0;
+
+    for (int i = 0; i < n; i++) {
+        int low = 0;
+        int high = length;
+
+        while (low < high) {
+            int mid = low + (high - low) / 2;
+            if (tail[mid] < arr[i]) {
+                low = mid + 1;
+            } else {
+                high = mid;
+            }
+        }
+
+        tail[low] = arr[i];
+
+        if (low == length) {
+            length++;
+        }
+    }
+
+    free(tail);
+    return length;
+}
+
+int main(void) {
+    int arr[] = {10, 9, 2, 5, 3, 7, 101, 18};
+    int n = sizeof(arr) / sizeof(arr[0]);
+
+    int result = longest_increasing_subsequence(arr, n);
+    printf("%d\n", result);
+
+    return 0;
+}

@@ -1,0 +1,50 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int value;
+    int count;
+} ItemCount;
+
+int compare(const void *a, const void *b) {
+    return (*(int*)a - *(int*)b);
+}
+
+ItemCount findMaxOccurrence(int *arr, int n) {
+    if (n == 0) return (ItemCount){-1, 0};
+
+    qsort(arr, n, sizeof(int), compare);
+
+    ItemCount maxItem = {arr[0], 1};
+    int currentCount = 1;
+
+    for (int i = 1; i < n; i++) {
+        if (arr[i] == arr[i - 1]) {
+            currentCount++;
+        } else {
+            if (currentCount > maxItem.count) {
+                maxItem.value = arr[i - 1];
+                maxItem.count = currentCount;
+            }
+            currentCount = 1;
+        }
+    }
+
+    if (currentCount > maxItem.count) {
+        maxItem.value = arr[n - 1];
+        maxItem.count = currentCount;
+    }
+
+    return maxItem;
+}
+
+int main() {
+    int arr[] = {1, 3, 2, 3, 4, 5, 3, 2, 2, 2};
+    int n = sizeof(arr) / sizeof(arr[0]);
+
+    ItemCount result = findMaxOccurrence(arr, n);
+
+    printf("Value: %d, Count: %d\n", result.value, result.count);
+
+    return 0;
+}

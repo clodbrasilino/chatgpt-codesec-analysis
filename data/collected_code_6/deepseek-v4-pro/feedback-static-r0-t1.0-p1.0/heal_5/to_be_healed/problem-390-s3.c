@@ -1,0 +1,199 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct Node {
+    char *data;
+    struct Node *next;
+} Node;
+
+typedef struct {
+    Node *head;
+} List;
+
+static Node *create_node(const char *data) {
+    Node *new_node;
+    size_t len;
+
+    if (data == NULL) {
+        return NULL;
+    }
+
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    len = strlen(data);
+    if (len >= (size_t)-1) {
+        return NULL;
+    }
+
+    new_node = (Node *)malloc(sizeof(Node));
+    if (new_node == NULL) {
+        return NULL;
+    }
+
+    new_node->data = (char *)malloc(len + 1);
+    if (new_node->data == NULL) {
+        free(new_node);
+        return NULL;
+    }
+
+    if (len > 0) {
+        /* Possible weaknesses found:
+         * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+         */
+        memcpy(new_node->data, data, len);
+    }
+    new_node->data[len] = '\0';
+    new_node->next = NULL;
+    return new_node;
+}
+
+void list_init(List *list) {
+    if (list != NULL) {
+        list->head = NULL;
+    }
+}
+
+int list_append(List *list, const char *data) {
+    Node *new_node;
+    Node *current;
+
+    if (list == NULL || data == NULL) {
+        return 0;
+    }
+
+    new_node = create_node(data);
+    if (new_node == NULL) {
+        return 0;
+    }
+
+    if (list->head == NULL) {
+        list->head = new_node;
+        return 1;
+    }
+
+    current = list->head;
+    while (current->next != NULL) {
+        current = current->next;
+    }
+    current->next = new_node;
+    return 1;
+}
+
+void list_free(List *list) {
+    Node *current;
+    Node *next;
+
+    if (list == NULL) {
+        return;
+    }
+
+    current = list->head;
+    while (current != NULL) {
+        next = current->next;
+        free(current->data);
+        free(current);
+        current = next;
+    }
+    list->head = NULL;
+}
+
+int list_prepend_string(List *list, const char *prefix) {
+    Node *current;
+    char *new_data;
+    size_t prefix_len;
+    /* Possible weaknesses found:
+     *  The scope of the variable 'data_len' can be reduced. [variableScope]
+     */
+    size_t data_len;
+
+    if (list == NULL || prefix == NULL) {
+        return 0;
+    }
+
+    if (list->head == NULL) {
+        return 1;
+    }
+
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    prefix_len = strlen(prefix);
+    if (prefix_len >= (size_t)-1) {
+        return 0;
+    }
+
+    if (prefix_len > (size_t)-1 - 1) {
+        return 0;
+    }
+
+    current = list->head;
+    while (current != NULL) {
+        /* Possible weaknesses found:
+         * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+         */
+        data_len = strlen(current->data);
+        if (data_len >= (size_t)-1) {
+            return 0;
+        }
+
+        if (data_len > (size_t)-1 - prefix_len - 1) {
+            return 0;
+        }
+
+        new_data = (char *)malloc(prefix_len + data_len + 1);
+        if (new_data == NULL) {
+            return 0;
+        }
+
+        /* Possible weaknesses found:
+         * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+         */
+        memcpy(new_data, prefix, prefix_len);
+        /* Possible weaknesses found:
+         * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+         */
+        memcpy(new_data + prefix_len, current->data, data_len);
+        new_data[prefix_len + data_len] = '\0';
+        free(current->data);
+        current->data = new_data;
+        current = current->next;
+    }
+    return 1;
+}
+
+void list_print(const List *list) {
+    const Node *current;
+
+    if (list == NULL) {
+        return;
+    }
+
+    current = list->head;
+    while (current != NULL) {
+        printf("%s\n", current->data);
+        current = current->next;
+    }
+}
+
+int main(void) {
+    List list;
+
+    list_init(&list);
+    list_append(&list, "world");
+    list_append(&list, "example");
+    list_append(&list, "test");
+
+    printf("Before:\n");
+    list_print(&list);
+
+    list_prepend_string(&list, "hello_");
+
+    printf("After:\n");
+    list_print(&list);
+
+    list_free(&list);
+
+    return 0;
+}

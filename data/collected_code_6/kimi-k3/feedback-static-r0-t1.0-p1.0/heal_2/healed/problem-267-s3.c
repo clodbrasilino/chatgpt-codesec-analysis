@@ -1,0 +1,47 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <limits.h>
+
+long long sum_of_squares_of_odds(int n) {
+    if (n <= 0) {
+        return 0;
+    }
+    return (long long)n * (2LL * n - 1) * (2LL * n + 1) / 3;
+}
+
+int main(void) {
+    char buffer[128];
+    char *endptr = NULL;
+    long val;
+    int n;
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    errno = 0;
+    val = strtol(buffer, &endptr, 10);
+
+    if (errno != 0 || endptr == buffer || (*endptr != '\n' && *endptr != '\0')) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (val < 0 || val > INT_MAX) {
+        fprintf(stderr, "Input out of range\n");
+        return EXIT_FAILURE;
+    }
+
+    n = (int)val;
+
+    if (n > 1291590) {
+        fprintf(stderr, "Input too large for 64-bit result\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("%lld\n", sum_of_squares_of_odds(n));
+
+    return EXIT_SUCCESS;
+}

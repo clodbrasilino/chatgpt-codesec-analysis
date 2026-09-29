@@ -1,0 +1,33 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-674-s2.c:26:13: error: call to undeclared function 'collection_free'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   26 |             collection_free(col);
+      |             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-674-s2.c:26:13: note: did you mean 'collection_init'?
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-674-s2.c:12:6: note: 'collection_init' declared here
+   12 | void collection_init(Collection *col, size_t initial_capacity) {
+      |      ^
+   13 |     col->items = (char **)malloc(initial_capacity * sizeof(char *));
+   14 |     if (col->items == NULL) {
+   15 |         exit(EXIT_FAILURE);
+   16 |     }
+   17 |     col->size = 0;
+   18 |     col->capacity = initial_capacity;
+   19 | }
+   20 | 
+   21 | void collection_append(Collection *col, const char *item) {
+   22 |     if (col->size == col->capacity) {
+   23 |         col->capacity *= 2;
+   24 |         char **new_items = (char **)realloc(col->items, col->capacity * sizeof(char *));
+   25 |         if (new_items == NULL) {
+   26 |             collection_free(col);
+      |             ~~~~~~~~~~~~~~~
+      |             collection_init
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-674-s2.c:33:9: error: call to undeclared function 'collection_free'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   33 |         collection_free(col);
+      |         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-674-s2.c:49:6: error: conflicting types for 'collection_free'
+   49 | void collection_free(Collection *col) {
+      |      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-674-s2.c:26:13: note: previous implicit declaration is here
+   26 |             collection_free(col);
+      |             ^
+3 errors generated.

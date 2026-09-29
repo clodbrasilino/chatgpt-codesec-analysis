@@ -1,0 +1,37 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+long long sum_in_range(const int *list, size_t size, size_t start_idx, size_t end_idx) {
+    long long sum = 0;
+
+    if (list == NULL || size == 0) {
+        return 0;
+    }
+
+    if (start_idx > end_idx) {
+        return 0;
+    }
+
+    if (end_idx >= size) {
+        end_idx = size - 1;
+    }
+
+    for (size_t i = start_idx; i <= end_idx; i++) {
+        sum += (long long)list[i];
+    }
+
+    return sum;
+}
+
+int main(void) {
+    int my_list[] = {10, 20, 30, 40, 50, 60, 70, 80, 90, 100};
+    size_t size = sizeof(my_list) / sizeof(my_list[0]);
+    size_t start = 2;
+    size_t end = 6;
+
+    long long result = sum_in_range(my_list, size, start, end);
+    
+    printf("Sum between indices %zu and %zu is: %lld\n", start, end, result);
+
+    return 0;
+}

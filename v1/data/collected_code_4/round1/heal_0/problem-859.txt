@@ -1,0 +1,47 @@
+```C
+#include <stdio.h>
+#include <stdlib.h>
+
+void printSubLists(int *arr, int n) {
+    for (int i = 0; i < (1<<n); i++) {
+        printf("{ ");
+        for (int j = 0; j < n; j++)
+            if (i & (1<<j)) 
+                printf("%d ", arr[j]);
+        printf("}\n");
+    }
+}
+
+int main() {
+    int *arr;
+    int n;
+
+    printf("Enter number of elements in the array: ");
+    scanf("%d", &n);
+
+    if(n <= 0) {
+        printf("Size of array should be greater than zero\n");
+        return -1;
+    }
+
+    arr = (int*)malloc(n * sizeof(int));
+
+    if(arr == NULL) {
+        printf("Failed to allocate memory!\n");
+        return -1;
+    }
+
+    printf("Enter elements of the array: ");
+    for(int i = 0; i<n; i++) {
+        scanf("%d", &arr[i]);
+    }
+
+    printSubLists(arr, n);
+
+    free(arr);
+    
+    return 0;
+}
+```
+
+In this code, we start by getting the size of the array. If the size is less than or equal to zero, we return an error message and end the program. We then proceed to allocate memory of the appropriate size for the array, and if the allocation fails, we return an error message and end the program as well. We then read in the elements of the array and call the printSubLists function to display all the sublists of the array. After all the processing, we make sure to free the allocated memory to avoid any memory leaks, thereby ensuring proper control of the resource through its lifetime.

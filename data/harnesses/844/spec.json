@@ -1,0 +1,47 @@
+{
+  "task_id": 844,
+  "text": "Write a C function to find the kth element in an array containing odd elements first and then even elements.",
+  "fn_candidates": [
+    "get_Number",
+    "GetNumber",
+    "getNumber",
+    "getNumber"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "get_Number",
+      "args": [
+        8,
+        5
+      ],
+      "expected": 2,
+      "assert_src": "assert get_Number(8,5) == 2"
+    },
+    {
+      "fn_name": "get_Number",
+      "args": [
+        7,
+        2
+      ],
+      "expected": 3,
+      "assert_src": "assert get_Number(7,2) == 3"
+    },
+    {
+      "fn_name": "get_Number",
+      "args": [
+        5,
+        2
+      ],
+      "expected": 3,
+      "assert_src": "assert get_Number(5,2) == 3"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

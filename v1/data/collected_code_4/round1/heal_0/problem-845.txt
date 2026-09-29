@@ -1,0 +1,41 @@
+```C
+#include <stdio.h>
+#include <math.h>
+
+int countDigitsInFactorial(int n)
+{
+    if (n < 0)
+        return 0;
+
+    if (n <= 1)
+        return 1;
+
+    double x = (n * log10(n / M_E) + log10(2 * M_PI * n) / 2.0);
+
+    return floor(x) + 1;
+}
+
+int main()
+{
+    int num;
+    printf("Enter a number: ");
+    scanf("%d", &num);
+    printf("Number of digits in %d! is %d", num, countDigitsInFactorial(num));
+    return 0;
+}
+```
+This code works by making use of Stirling's approximation for a factorial to estimate the number of digits in the factorial of a number. Stirling's approximation for a factorial is `sqrt(2 * pi * n) * (n / e) ^ n`.
+
+Our method employs the formula logarithm of a number/digit `n (log10(n))` which gives the number of digit in `n`. But since `n`! is too large, we are calculating the logarithm of `n`! Using properties of logarithm: 
+
+`log(m*n) = log(m) + log(n)`
+
+`log(m^n) = n*log(m)`
+
+`log(e) = 1   // where log indicates to base e`
+
+Therefore the above formula becomes `log (n!)` = `1/2 * log(2*pi*n)` + `n * log(n/e)`
+
+Then, round down this value to the nearest whole number `(using the floor function)`, and add 1. The result is the number of digits in n factorial.
+
+It handles negative numbers(`CWE-703`), a common edge case for this problem, by returning `0`. It also avoids `CWE-664` and `CWE-710` through a concise implementation with no unnecessary variables or resources, and adherence to common C programming conventions including proper indentation, function names, and variable usage.

@@ -1,0 +1,44 @@
+{
+  "task_id": 235,
+  "text": "Write a C function to set all even bits of a given number.",
+  "fn_candidates": [
+    "even_bit_set_number",
+    "EvenBitSetNumber",
+    "evenBitSetNumber",
+    "evenbitsetnumber"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "even_bit_set_number",
+      "args": [
+        10
+      ],
+      "expected": 10,
+      "assert_src": "assert even_bit_set_number(10) == 10"
+    },
+    {
+      "fn_name": "even_bit_set_number",
+      "args": [
+        20
+      ],
+      "expected": 30,
+      "assert_src": "assert even_bit_set_number(20) == 30"
+    },
+    {
+      "fn_name": "even_bit_set_number",
+      "args": [
+        30
+      ],
+      "expected": 30,
+      "assert_src": "assert even_bit_set_number(30) == 30"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

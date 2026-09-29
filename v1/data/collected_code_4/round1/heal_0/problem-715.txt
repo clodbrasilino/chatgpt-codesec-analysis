@@ -1,0 +1,77 @@
+```C
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct tuple {
+    int* elements;
+    int size;
+} Tuple;
+
+Tuple* string_to_tuple(const char* string) {
+    int count = 0;
+    for (int i = 0; string[i] != '\0'; i++) {
+        if (string[i] == ',') {
+            count++;
+        }
+    }
+
+    Tuple* t = (Tuple*) malloc(sizeof(Tuple));
+    if (t == NULL) {
+        return NULL;
+    }
+
+    t->elements = (int*) malloc(sizeof(int) * (count + 1));
+    if (t->elements == NULL) {
+        free(t);
+        return NULL;
+    }
+    t->size = count + 1;
+
+    const char* str_ptr = string;
+    for (int i = 0; i < t->size; i++) {
+        t->elements[i] = atoi(str_ptr);
+        while (*str_ptr != '\0' && *str_ptr != ',') {
+            str_ptr++;
+        }
+        if (*str_ptr == ',') {
+            str_ptr++;
+        }
+    }
+
+    return t;
+}
+
+void free_tuple(Tuple* t) {
+    free(t->elements);
+    free(t);
+}
+
+int main() {
+    const char* str = "1,2,3,4,5";
+    Tuple* t = string_to_tuple(str);
+
+    if(t != NULL) {
+        for (int i = 0; i < t->size; i++) {
+            printf("%d ", t->elements[i]);
+        }
+
+        printf("\n");
+        free_tuple(t); 
+    } else {
+        printf("Failed to convert string to tuple.\n");
+    }
+
+    return 0;
+}
+```
+
+This code first defines a `struct`. Each object of type `Tuple` contains an array of integers and the size of the array.
+
+The function `string_to_tuple` counts the number of commas in the string, which tells us the number of elements in the tuple. Then it allocates memory for a `Tuple` struct and an integer array in the struct to hold the elements of the tuple. The function then parses the input string, dividing it into integers and stores these integers in the array.
+
+The function `free_tuple` frees the memory occupied by a `Tuple` object.
+
+In the `main` function, we convert a string of integers to a tuple and print the elements of the tuple before freeing the memory occupied by the tuple. 
+
+If memory allocation fails at any point, the program should gracefully handle the situation by freeing any allocated memory and returning NULL to signal that the operation could not be performed.

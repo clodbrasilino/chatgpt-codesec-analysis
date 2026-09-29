@@ -1,0 +1,47 @@
+{
+  "task_id": 501,
+  "text": "Write a C function to find common divisor between two numbers in a given pair.",
+  "fn_candidates": [
+    "num_comm_div",
+    "NumCommDiv",
+    "numCommDiv",
+    "numcommdiv"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "num_comm_div",
+      "args": [
+        2,
+        4
+      ],
+      "expected": 2,
+      "assert_src": "assert num_comm_div(2,4) == 2"
+    },
+    {
+      "fn_name": "num_comm_div",
+      "args": [
+        2,
+        8
+      ],
+      "expected": 2,
+      "assert_src": "assert num_comm_div(2,8) == 2"
+    },
+    {
+      "fn_name": "num_comm_div",
+      "args": [
+        12,
+        24
+      ],
+      "expected": 6,
+      "assert_src": "assert num_comm_div(12,24) == 6"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

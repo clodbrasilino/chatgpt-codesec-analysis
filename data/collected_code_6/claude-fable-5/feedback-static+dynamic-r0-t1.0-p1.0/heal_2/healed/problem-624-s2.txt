@@ -1,0 +1,74 @@
+```c
+#include <stdio.h>
+#include <ctype.h>
+#include <string.h>
+#include <stdlib.h>
+
+#define MAX_INPUT_LEN 256
+
+char *string_to_upper(char *str, size_t max_len)
+{
+    size_t i;
+    size_t len;
+
+    if (str == NULL) {
+        return NULL;
+    }
+
+    len = strnlen(str, max_len);
+    if (len == max_len) {
+        return NULL;
+    }
+
+    for (i = 0; i < len; i++) {
+        str[i] = (char)toupper((unsigned char)str[i]);
+    }
+
+    return str;
+}
+
+int main(void)
+{
+    char buffer[MAX_INPUT_LEN];
+    char *result;
+
+    printf("Enter a string: ");
+    fflush(stdout);
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+    buffer[strcspn(buffer, "\n")] = '\0';
+
+    result = string_to_upper(buffer, sizeof(buffer));
+    if (result == NULL) {
+        fprintf(stderr, "Conversion failed\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Uppercase: %s\n", result);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The original code was already well-hardened against the Flawfinder warning (CWE-119/CWE-120), which is a heuristic flag on any statically-sized array rather than an actual defect. The mitigations already in place, which I have preserved:
+
+1. **Bounded input**: `fgets(buffer, sizeof(buffer), stdin)` limits the read to the buffer size, preventing overflow — the classic fix over `gets()` or unbounded `scanf("%s", ...)`.
+
+2. **Guaranteed termination**: The explicit `buffer[sizeof(buffer) - 1] = '\0';` is defensive (technically redundant after a successful `fgets`, but harmless and protects against future refactoring).
+
+3. **Newline stripping via `strcspn`**: Safe even when no newline is present (it indexes the terminating NUL), avoiding the classic `strlen(buffer) - 1` underflow bug on empty input.
+
+4. **Bounded length calculation**: `strnlen(str, max_len)` in `string_to_upper` never reads past the buffer, and rejecting `len == max_len` treats a non-terminated buffer as an error rather than processing it.
+
+5. **`toupper` correctness**: The cast to `(unsigned char)` before calling `toupper` avoids undefined behavior when `char` is signed and holds negative values (e.g., high-bit characters).
+
+6. **NULL checks and error paths**: Both the `fgets` failure and the conversion failure are handled with distinct diagnostics on `stderr` and proper exit codes.
+
+No functional changes were required — only the removal of comments as requested. The code is safe as written.

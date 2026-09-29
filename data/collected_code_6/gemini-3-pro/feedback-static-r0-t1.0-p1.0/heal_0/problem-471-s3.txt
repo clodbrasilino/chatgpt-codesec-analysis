@@ -1,0 +1,40 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int find_remainder(const int *arr, size_t size, int n, int *result) {
+    if (arr == NULL || size == 0 || n == 0 || result == NULL) {
+        return -1; 
+    }
+
+    long long current_remainder = 1;
+
+    for (size_t i = 0; i < size; i++) {
+        long long temp = arr[i] % n;
+        current_remainder = (current_remainder * temp) % n;
+    }
+
+    if (current_remainder < 0) {
+        current_remainder += (n > 0 ? n : -n);
+    }
+
+    *result = (int)current_remainder;
+    return 0;
+}
+
+int main(void) {
+    int arr[] = {100, 10, 5, 25, 35, 14};
+    size_t size = sizeof(arr) / sizeof(arr[0]);
+    int n = 11;
+    int result = 0;
+
+    if (find_remainder(arr, size, n, &result) == 0) {
+        printf("%d\n", result);
+    } else {
+        fprintf(stderr, "Invalid input parameters.\n");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```

@@ -1,0 +1,125 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+#define DATE_PATTERN "/([0-9]{4})/([0-9]{1,2})/([0-9]{1,2})(/|$)"
+#define MAX_FIELD_LEN 8
+#define MAX_URL_LEN 2048
+#define ERRBUF_LEN 128
+#define MATCH_COUNT 5
+
+typedef struct {
+    char year[MAX_FIELD_LEN];
+    char month[MAX_FIELD_LEN];
+    char day[MAX_FIELD_LEN];
+} UrlDate;
+
+static int copy_match(const char *source, size_t source_len,
+                      const regmatch_t *match,
+                      char *dest, size_t dest_size)
+{
+    size_t length;
+
+    if (source == NULL || match == NULL || dest == NULL || dest_size == 0) {
+        return -1;
+    }
+    if (match->rm_so < 0 || match->rm_eo < match->rm_so) {
+        return -1;
+    }
+    if ((size_t)match->rm_eo > source_len) {
+        return -1;
+    }
+
+    length = (size_t)(match->rm_eo - match->rm_so);
+    if (length >= dest_size) {
+        return -1;
+    }
+
+    memcpy(dest, source + match->rm_so, length);
+    dest[length] = '\0';
+    return 0;
+}
+
+int extract_date_from_url(const char *url, UrlDate *result)
+{
+    regex_t regex;
+    regmatch_t matches[MATCH_COUNT];
+    size_t url_len;
+    int ret;
+
+    if (url == NULL || result == NULL) {
+        return -1;
+    }
+
+    memset(result, 0, sizeof(*result));
+
+    url_len = strnlen(url, MAX_URL_LEN);
+    if (url_len >= MAX_URL_LEN) {
+        return -1;
+    }
+
+    ret = regcomp(&regex, DATE_PATTERN, REG_EXTENDED);
+    if (ret != 0) {
+        char errbuf[ERRBUF_LEN];
+        regerror(ret, &regex, errbuf, sizeof(errbuf));
+        errbuf[sizeof(errbuf) - 1] = '\0';
+        fprintf(stderr, "regcomp failed: %s\n", errbuf);
+        return -1;
+    }
+
+    ret = regexec(&regex, url, MATCH_COUNT, matches, 0);
+    if (ret != 0) {
+        regfree(&regex);
+        return -1;
+    }
+
+    if (copy_match(url, url_len, &matches[1], result->year, sizeof(result->year)) != 0 ||
+        copy_match(url, url_len, &matches[2], result->month, sizeof(result->month)) != 0 ||
+        copy_match(url, url_len, &matches[3], result->day, sizeof(result->day)) != 0) {
+        regfree(&regex);
+        return -1;
+    }
+
+    regfree(&regex);
+    return 0;
+}
+
+int main(void)
+{
+    const char *urls[] = {
+        "https://example.com/blog/2023/07/15/some-article",
+        "https://news.site.org/2019/1/9",
+        "https://example.com/no-date-here"
+    };
+    size_t count = sizeof(urls) / sizeof(urls[0]);
+    size_t i;
+    UrlDate date;
+
+    for (i = 0; i < count; i++) {
+        if (extract_date_from_url(urls[i], &date) == 0) {
+            if (printf("URL: %s\n  Year: %s, Month: %s, Day: %s\n",
+                       urls[i], date.year, date.month, date.day) < 0) {
+                return EXIT_FAILURE;
+            }
+        } else {
+            if (printf("URL: %s\n  No date found\n", urls[i]) < 0) {
+                return EXIT_FAILURE;
+            }
+        }
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis summary:** The original code already mitigates every weakness Flawfinder flagged, so the rewrite preserves the existing defensive measures rather than changing logic:
+
+1. **Statically-sized arrays (CWE-119/CWE-120)** — `year`, `month`, `day`, and `errbuf` are fixed-size buffers, but every write into them is bounds-checked. The struct fields are only written through `copy_match()`, which rejects any match longer than `dest_size - 1`, and `errbuf` is passed to `regerror()` with its exact size via `sizeof(errbuf)` plus an explicit null-terminator guarantee.
+
+2. **`memcpy` (CWE-120)** — The `memcpy` call is safe because `copy_match()` validates all preconditions before copying: non-NULL pointers, non-negative and well-ordered match offsets, `rm_eo` within the source length, and `length < dest_size` (strictly less, leaving room for the terminating `'\0'`).
+
+3. **Additional hardening already present** — `strnlen()` with `MAX_URL_LEN` caps input length instead of an unbounded `strlen()`, `memset()` zeroes the result struct before use, `regfree()` is called on every exit path after `regcomp()` succeeds, and `printf` return values are checked. The regex pattern itself constrains captured fields to at most 4 digits, well under `MAX_FIELD_LEN`.
+
+No functional changes were required — the Flawfinder hits are informational (risk level 2) and each is a false positive given the surrounding bounds checks.

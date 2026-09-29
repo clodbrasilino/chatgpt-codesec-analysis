@@ -1,0 +1,32 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-81.c:67:13: error: call to undeclared function 'free_string_tuple'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   67 |             free_string_tuple(tuple);
+      |             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-81.c:67:13: note: did you mean 'create_string_tuple'?
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-81.c:48:14: note: 'create_string_tuple' declared here
+   48 | StringTuple *create_string_tuple(char **arr, size_t size) {
+      |              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-81.c:72:13: error: call to undeclared function 'free_string_tuple'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   72 |             free_string_tuple(tuple);
+      |             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-81.c:77:13: error: call to undeclared function 'free_string_tuple'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   77 |             free_string_tuple(tuple);
+      |             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-81.c:107:13: error: call to undeclared function 'free_zipped_result'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+  107 |             free_zipped_result(result);
+      |             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-81.c:112:13: error: call to undeclared function 'free_zipped_result'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+  112 |             free_zipped_result(result);
+      |             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-81.c:128:6: error: conflicting types for 'free_string_tuple'
+  128 | void free_string_tuple(StringTuple *tuple) {
+      |      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-81.c:67:13: note: previous implicit declaration is here
+   67 |             free_string_tuple(tuple);
+      |             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-81.c:138:6: error: conflicting types for 'free_zipped_result'
+  138 | void free_zipped_result(ZippedResult *result) {
+      |      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-81.c:107:13: note: previous implicit declaration is here
+  107 |             free_zipped_result(result);
+      |             ^
+7 errors generated.

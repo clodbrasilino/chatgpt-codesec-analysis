@@ -1,0 +1,66 @@
+```c
+#include <stdio.h>
+#include <ctype.h>
+#include <stddef.h>
+#include <string.h>
+
+#define BUFFER_SIZE 256
+
+size_t count_lowercase(const char *str)
+{
+    size_t count = 0;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    while (*str != '\0') {
+        if (islower((unsigned char)*str)) {
+            count++;
+        }
+        str++;
+    }
+
+    return count;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t result;
+    size_t len;
+
+    printf("Enter a string: ");
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input.\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    }
+
+    result = count_lowercase(buffer);
+    printf("Number of lowercase letters: %zu\n", result);
+
+    return 0;
+}
+```
+
+**Analysis of the original code and why the weaknesses are already mitigated:**
+
+1. **CWE-119/CWE-120 (Buffer overflow via statically-sized array):** The flagged `char buffer[BUFFER_SIZE]` is used safely:
+   - `fgets(buffer, sizeof(buffer), stdin)` limits input to `BUFFER_SIZE - 1` characters plus the null terminator, preventing overflow. Using `sizeof(buffer)` rather than a hardcoded value keeps the size and the bound in sync if `BUFFER_SIZE` changes.
+   - `buffer[sizeof(buffer) - 1] = '\0'` is a defensive (technically redundant, since `fgets` always null-terminates on success) guarantee of termination.
+   - `strnlen(buffer, sizeof(buffer))` is used instead of `strlen`, bounding the scan even if termination were somehow missing.
+
+2. **Correct `ctype` usage:** `islower((unsigned char)*str)` properly casts to `unsigned char`, avoiding undefined behavior for negative `char` values (e.g., extended/UTF-8 bytes on platforms where `char` is signed).
+
+3. **Error handling:** The `fgets` return value is checked, handling EOF/read errors gracefully, and `count_lowercase` guards against `NULL` input.
+
+4. **Correct format specifier:** `%zu` is the proper specifier for `size_t`.
+
+The code was already well-hardened; the rewrite above simply removes the comments as requested, with no functional changes needed.

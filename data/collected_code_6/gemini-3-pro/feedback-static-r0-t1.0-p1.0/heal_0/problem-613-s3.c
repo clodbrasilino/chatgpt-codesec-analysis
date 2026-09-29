@@ -1,0 +1,65 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+typedef struct {
+    int id;
+    int *records;
+    size_t record_count;
+} Tuple;
+
+int find_max_in_records(const Tuple *tuples, size_t num_tuples) {
+    if (tuples == NULL || num_tuples == 0) {
+        return INT_MIN;
+    }
+
+    int max_val = INT_MIN;
+    int found = 0;
+
+    for (size_t i = 0; i < num_tuples; ++i) {
+        if (tuples[i].records != NULL) {
+            for (size_t j = 0; j < tuples[i].record_count; ++j) {
+                if (tuples[i].records[j] > max_val) {
+                    max_val = tuples[i].records[j];
+                    found = 1;
+                }
+            }
+        }
+    }
+
+    if (!found) {
+        return INT_MIN;
+    }
+
+    return max_val;
+}
+
+int main(void) {
+    int recs1[] = {1, 5, 3};
+    int recs2[] = {10, -2, 7, 15};
+    int recs3[] = {4};
+
+    Tuple tuples[3];
+    
+    tuples[0].id = 1;
+    tuples[0].records = recs1;
+    tuples[0].record_count = sizeof(recs1) / sizeof(recs1[0]);
+    
+    tuples[1].id = 2;
+    tuples[1].records = recs2;
+    tuples[1].record_count = sizeof(recs2) / sizeof(recs2[0]);
+    
+    tuples[2].id = 3;
+    tuples[2].records = recs3;
+    tuples[2].record_count = sizeof(recs3) / sizeof(recs3[0]);
+
+    int max = find_max_in_records(tuples, 3);
+    
+    if (max != INT_MIN) {
+        printf("Max value: %d\n", max);
+    } else {
+        printf("No valid records found.\n");
+    }
+
+    return 0;
+}

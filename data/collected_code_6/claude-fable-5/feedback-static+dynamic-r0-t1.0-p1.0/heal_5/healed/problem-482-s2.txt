@@ -1,0 +1,147 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+#define ERRBUF_SIZE 256
+#define MAX_INPUT_LEN 4096
+
+static int report_regex_error(int code, const regex_t *regex, const char *context)
+{
+    char errbuf[ERRBUF_SIZE];
+    size_t needed;
+
+    memset(errbuf, 0, sizeof(errbuf));
+    needed = regerror(code, regex, errbuf, sizeof(errbuf) - 1);
+    if (needed >= sizeof(errbuf)) {
+        errbuf[sizeof(errbuf) - 1] = '\0';
+    }
+    fprintf(stderr, "Error: %s: %s\n", context, errbuf);
+    return -1;
+}
+
+int find_sequences(const char *input)
+{
+    regex_t regex;
+    regmatch_t match;
+    const char *pattern = "[A-Z][a-z]+";
+    const char *cursor;
+    size_t input_len;
+    size_t consumed;
+    int ret;
+
+    if (input == NULL) {
+        fprintf(stderr, "Error: input string is NULL\n");
+        return -1;
+    }
+
+    input_len = strnlen(input, MAX_INPUT_LEN);
+    if (input_len >= MAX_INPUT_LEN && input[MAX_INPUT_LEN - 1] != '\0') {
+        fprintf(stderr, "Error: input string too long or not terminated\n");
+        return -1;
+    }
+
+    ret = regcomp(&regex, pattern, REG_EXTENDED);
+    if (ret != 0) {
+        return report_regex_error(ret, &regex, "could not compile regex");
+    }
+
+    cursor = input;
+    consumed = 0;
+
+    while (consumed <= input_len) {
+        ret = regexec(&regex, cursor, 1, &match, 0);
+        if (ret == REG_NOMATCH) {
+            break;
+        }
+        if (ret != 0) {
+            report_regex_error(ret, &regex, "regex match failed");
+            regfree(&regex);
+            return -1;
+        }
+
+        {
+            regoff_t start = match.rm_so;
+            regoff_t end = match.rm_eo;
+            size_t remaining;
+            size_t len;
+            char *found;
+
+            if (start < 0 || end < start) {
+                fprintf(stderr, "Error: invalid match offsets\n");
+                regfree(&regex);
+                return -1;
+            }
+
+            remaining = input_len - consumed;
+            if ((size_t)end > remaining) {
+                fprintf(stderr, "Error: match offsets exceed input length\n");
+                regfree(&regex);
+                return -1;
+            }
+
+            len = (size_t)(end - start);
+
+            if (len == 0) {
+                if (consumed >= input_len) {
+                    break;
+                }
+                cursor++;
+                consumed++;
+                continue;
+            }
+
+            if (len > remaining || (size_t)start > remaining - len) {
+                fprintf(stderr, "Error: match length exceeds remaining input\n");
+                regfree(&regex);
+                return -1;
+            }
+
+            found = malloc(len + 1);
+            if (found == NULL) {
+                fprintf(stderr, "Error: memory allocation failed\n");
+                regfree(&regex);
+                return -1;
+            }
+
+            memcpy(found, cursor + start, len);
+            found[len] = '\0';
+            printf("Found sequence: %s\n", found);
+            free(found);
+
+            cursor += end;
+            consumed += (size_t)end;
+            if (consumed >= input_len) {
+                break;
+            }
+        }
+    }
+
+    regfree(&regex);
+    return 0;
+}
+
+int main(void)
+{
+    const char *test_string = "Hello world This is a Test String with Sequences";
+    int result;
+
+    printf("Input: %s\n", test_string);
+    result = find_sequences(test_string);
+    if (result != 0) {
+        fprintf(stderr, "Error: sequence search failed\n");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+Analysis of the original code and the fixes applied:
+
+**Flawfinder warning 1 — statically-sized `errbuf` (CWE-119/CWE-120):** This was already effectively mitigated in the original. `regerror` is called with `sizeof(errbuf) - 1`, guaranteeing it never writes past the buffer, and the buffer is zero-initialized with `memset` plus an explicit null-termination guard when the required size exceeds the buffer. This is a false positive as written; the mitigation is retained unchanged.
+
+**Flawfinder warning 2 — `memcpy` (CWE-120):** The original code was already largely safe: the destination is `malloc(len + 1)`, so the destination always holds exactly `len` bytes plus the terminator, and `len` was validated against `remaining`. The one theoretical gap was that the *source* range `cursor + start .. cursor + start + len` was only indirectly bounded (via `end <= remaining`). I added an explicit redundant check `(size_t)start > remaining - len` so the source read range is provably within the remaining input, making the `memcpy` demonstrably bounds-safe against any inconsistent offsets a regex implementation could return.
+
+Other defensive properties preserved: `strnlen` with `MAX_INPUT_LEN` prevents unbounded reads on non-terminated input, `regfree` is called on every exit path after successful `regcomp` (no resource leak), `malloc` failure is handled, negative/inverted match offsets are rejected, and zero-length match handling prevents infinite loops.

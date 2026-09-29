@@ -1,0 +1,95 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char *remove_parentheses(const char *input)
+{
+    size_t len;
+    size_t i;
+    size_t j;
+    int depth;
+    char *result;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    len = strlen(input);
+    result = calloc(len + 1, sizeof(char));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    depth = 0;
+    j = 0;
+    for (i = 0; i < len; i++) {
+        if (input[i] == '(') {
+            depth++;
+        } else if (input[i] == ')') {
+            if (depth > 0) {
+                depth--;
+            }
+        } else if (depth == 0) {
+            result[j] = input[i];
+            j++;
+        }
+    }
+    result[j] = '\0';
+
+    return result;
+}
+
+int main(void)
+{
+    const char *tests[] = {
+        "py(remove)thon",
+        "str(nested (inner))ing",
+        "(leading)alpha"
+    };
+    const char *expected[] = {
+        "python",
+        "string",
+        "alpha"
+    };
+    size_t num_tests;
+    size_t i;
+    char *output;
+    int status;
+
+    num_tests = sizeof(tests) / sizeof(tests[0]);
+    status = EXIT_SUCCESS;
+
+    for (i = 0; i < num_tests; i++) {
+        output = remove_parentheses(tests[i]);
+        if (output == NULL) {
+            fprintf(stderr, "Memory allocation failed\n");
+            return EXIT_FAILURE;
+        }
+        if (strcmp(output, expected[i]) == 0) {
+            printf("test case %zu passed: '%s'\n", i, output);
+        } else {
+            fprintf(stderr, "test case %zu failed: expected '%s', got '%s'\n",
+                    i, expected[i], output);
+            status = EXIT_FAILURE;
+        }
+        free(output);
+        output = NULL;
+    }
+
+    return status;
+}
+```
+
+Analysis of the original code and the weaknesses noted in the comments:
+
+The garbage output described in the comments (`�rr`, `` `sr ``, `` sr``) is characteristic of reading freed or uninitialized heap memory — a use-after-free or a missing null terminator in an earlier revision of this code. The version shown already contains the correct fixes, which I have preserved:
+
+1. **Null-terminated result** — `result[j] = '\0';` is explicitly set after the copy loop, and `calloc` zero-initializes the buffer as a defensive measure, so the string is always terminated even if the loop logic changes.
+2. **Use-after-free prevention** — `output` is freed only *after* both `strcmp` and the `printf`/`fprintf` calls that read it, and it is set to `NULL` immediately after `free`, preventing dangling-pointer reuse across loop iterations.
+3. **NULL input handling** — `remove_parentheses` guards against a `NULL` argument before calling `strlen`.
+4. **Allocation failure handling** — both the `calloc` failure inside the function and the `NULL` return in `main` are checked, avoiding dereference of a failed allocation.
+5. **Unbalanced parentheses safety** — `depth` is only decremented when positive, so stray `)` characters cannot drive it negative and corrupt the copy logic.
+6. **Correct sizing** — the buffer is `len + 1` bytes and `j` can never exceed `len`, so no out-of-bounds write is possible.
+
+Compiled and traced mentally, the three test cases now yield `python`, `string`, and `alpha`, and the program returns `EXIT_SUCCESS`.

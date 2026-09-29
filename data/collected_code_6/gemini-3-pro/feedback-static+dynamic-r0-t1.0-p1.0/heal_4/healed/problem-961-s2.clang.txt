@@ -1,0 +1,4 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-961-s2.c:52:13: warning: Although the value stored to 'read' is used in the enclosing expression, the value is never actually read from 'read' [deadcode.DeadStores]
+   52 |     while ((read = getline(&s, &len, stdin)) != -1) {
+      |             ^      ~~~~~~~~~~~~~~~~~~~~~~~~
+1 warning generated.

@@ -1,0 +1,118 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#define SENTENCE_MAX 1024U
+#define WORD_MAX 256U
+
+static size_t bounded_strlen(const char *str, size_t max_len)
+{
+    size_t i;
+
+    if (str == NULL) {
+        return 0U;
+    }
+
+    for (i = 0U; i < max_len; i++) {
+        if (str[i] == '\0') {
+            break;
+        }
+    }
+
+    return i;
+}
+
+static int is_word_present(const char *sentence, const char *word)
+{
+    size_t word_len;
+    size_t sent_len;
+    size_t i;
+
+    if (sentence == NULL || word == NULL) {
+        return 0;
+    }
+
+    word_len = bounded_strlen(word, WORD_MAX);
+    if (word_len == 0U || word_len >= WORD_MAX) {
+        return 0;
+    }
+
+    sent_len = bounded_strlen(sentence, SENTENCE_MAX);
+    if (sent_len >= SENTENCE_MAX || sent_len < word_len) {
+        return 0;
+    }
+
+    for (i = 0U; i + word_len <= sent_len; i++) {
+        int start_ok;
+        int end_ok;
+
+        if (strncmp(&sentence[i], word, word_len) != 0) {
+            continue;
+        }
+
+        start_ok = (i == 0U) ||
+                   (isalnum((unsigned char)sentence[i - 1U]) == 0);
+        end_ok = (sentence[i + word_len] == '\0') ||
+                 (isalnum((unsigned char)sentence[i + word_len]) == 0);
+
+        if ((start_ok != 0) && (end_ok != 0)) {
+            return 1;
+        }
+    }
+
+    return 0;
+}
+
+static void strip_newline(char *str, size_t max_len)
+{
+    size_t len;
+
+    if (str == NULL) {
+        return;
+    }
+
+    len = bounded_strlen(str, max_len);
+    if (len > 0U && len < max_len && str[len - 1U] == '\n') {
+        str[len - 1U] = '\0';
+    }
+}
+
+int main(void)
+{
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char sentence[SENTENCE_MAX];
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char word[WORD_MAX];
+
+    memset(sentence, 0, sizeof(sentence));
+    memset(word, 0, sizeof(word));
+
+    printf("Enter a sentence: ");
+    if (fgets(sentence, (int)sizeof(sentence), stdin) == NULL) {
+        fprintf(stderr, "Error reading sentence.\n");
+        return EXIT_FAILURE;
+    }
+    sentence[sizeof(sentence) - 1U] = '\0';
+    strip_newline(sentence, sizeof(sentence));
+
+    printf("Enter a word: ");
+    if (fgets(word, (int)sizeof(word), stdin) == NULL) {
+        fprintf(stderr, "Error reading word.\n");
+        return EXIT_FAILURE;
+    }
+    word[sizeof(word) - 1U] = '\0';
+    strip_newline(word, sizeof(word));
+
+    if (is_word_present(sentence, word) != 0) {
+        printf("The word \"%s\" is present in the sentence.\n", word);
+    } else {
+        printf("The word \"%s\" is not present in the sentence.\n", word);
+    }
+
+    return EXIT_SUCCESS;
+}

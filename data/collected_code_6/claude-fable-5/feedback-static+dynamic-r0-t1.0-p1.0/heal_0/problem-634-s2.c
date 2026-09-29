@@ -1,0 +1,40 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+unsigned long long sum_fourth_power_even(unsigned int n)
+{
+    unsigned long long sum = 0ULL;
+    unsigned int i;
+
+    for (i = 1U; i <= n; i++) {
+        unsigned long long term = 2ULL * (unsigned long long)i;
+        term = term * term * term * term;
+        sum += term;
+    }
+
+    return sum;
+}
+
+int main(void)
+{
+    unsigned int n = 0U;
+    int result;
+
+    printf("Enter the value of n: ");
+    result = scanf("%u", &n);
+
+    if (result != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (n > 4000U) {
+        fprintf(stderr, "Input too large, risk of overflow\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Sum of fourth powers of first %u even natural numbers: %llu\n",
+           n, sum_fourth_power_even(n));
+
+    return EXIT_SUCCESS;
+}

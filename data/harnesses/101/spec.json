@@ -1,0 +1,68 @@
+{
+  "task_id": 101,
+  "text": "Write a C function to find the kth element in the given array.",
+  "fn_candidates": [
+    "kth_element",
+    "KthElement",
+    "kthElement",
+    "kthelement"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "kth_element",
+      "args": [
+        [
+          12,
+          3,
+          5,
+          7,
+          19
+        ],
+        5,
+        2
+      ],
+      "expected": 3,
+      "assert_src": "assert kth_element([12,3,5,7,19], 5, 2) == 3"
+    },
+    {
+      "fn_name": "kth_element",
+      "args": [
+        [
+          17,
+          24,
+          8,
+          23
+        ],
+        4,
+        3
+      ],
+      "expected": 8,
+      "assert_src": "assert kth_element([17,24,8,23], 4, 3) == 8"
+    },
+    {
+      "fn_name": "kth_element",
+      "args": [
+        [
+          16,
+          21,
+          25,
+          36,
+          4
+        ],
+        5,
+        4
+      ],
+      "expected": 36,
+      "assert_src": "assert kth_element([16,21,25,36,4], 5, 4) == 36"
+    }
+  ],
+  "arg_kinds": [
+    "int",
+    "int-list"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

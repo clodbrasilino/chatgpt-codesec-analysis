@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_6/healed/problem-310-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_6/healed/problem-310-s3.c:38:17: style: Condition 'len+1>len' is always true [knownConditionTrueFalse]
+    if (len + 1 > len) {
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_6/healed/problem-310-s3.c:33:17: note: Assuming condition 'len+1<=len' is false
+    if (len + 1 <= len) {
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_6/healed/problem-310-s3.c:38:17: note: Condition 'len+1>len' is always true
+    if (len + 1 > len) {
+                ^

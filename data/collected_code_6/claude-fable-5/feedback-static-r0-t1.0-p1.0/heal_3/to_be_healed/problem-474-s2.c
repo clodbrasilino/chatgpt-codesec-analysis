@@ -1,0 +1,93 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_INPUT_LEN 1024
+
+size_t replace_char(char *str, size_t max_len, char old_char, char new_char)
+{
+    size_t count = 0;
+    size_t i;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    for (i = 0; i < max_len && str[i] != '\0'; i++) {
+        if (str[i] == old_char) {
+            str[i] = new_char;
+            count++;
+        }
+    }
+
+    return count;
+}
+
+int safe_copy(char *dest, size_t dest_size, const char *src, size_t src_len)
+{
+    if (dest == NULL || src == NULL) {
+        return -1;
+    }
+
+    if (src_len >= dest_size) {
+        return -1;
+    }
+
+    /* Possible weaknesses found:
+     * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+     */
+    memcpy(dest, src, src_len);
+    dest[src_len] = '\0';
+
+    return 0;
+}
+
+int main(void)
+{
+    static const char original[] = "hello world, hello everyone";
+    size_t len;
+    size_t buffer_size;
+    char *buffer;
+    size_t replaced;
+
+    len = strnlen(original, MAX_INPUT_LEN);
+    if (len >= MAX_INPUT_LEN) {
+        fprintf(stderr, "Input string too long or not terminated\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer_size = len + 1;
+    buffer = malloc(buffer_size);
+    if (buffer == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    if (safe_copy(buffer, buffer_size, original, len) != 0) {
+        fprintf(stderr, "Buffer copy failed\n");
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+
+    replaced = replace_char(buffer, len, 'l', 'L');
+
+    if (printf("Original: %s\n", original) < 0) {
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Modified: %s\n", buffer) < 0) {
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Replacements made: %zu\n", replaced) < 0) {
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+
+    free(buffer);
+    buffer = NULL;
+
+    return EXIT_SUCCESS;
+}

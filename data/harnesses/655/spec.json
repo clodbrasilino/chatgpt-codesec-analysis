@@ -1,0 +1,44 @@
+{
+  "task_id": 655,
+  "text": "Write a C function to find the sum of fifth power of n natural numbers.",
+  "fn_candidates": [
+    "fifth_Power_Sum",
+    "FifthPowerSum",
+    "fifthPowerSum",
+    "fifthPowerSum"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "fifth_Power_Sum",
+      "args": [
+        2
+      ],
+      "expected": 33,
+      "assert_src": "assert fifth_Power_Sum(2) == 33"
+    },
+    {
+      "fn_name": "fifth_Power_Sum",
+      "args": [
+        4
+      ],
+      "expected": 1300,
+      "assert_src": "assert fifth_Power_Sum(4) == 1300"
+    },
+    {
+      "fn_name": "fifth_Power_Sum",
+      "args": [
+        3
+      ],
+      "expected": 276,
+      "assert_src": "assert fifth_Power_Sum(3) == 276"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

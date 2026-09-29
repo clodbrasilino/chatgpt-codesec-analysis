@@ -1,0 +1,51 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int* decode_rle(const int* encoded, int encodedSize, int* returnSize) {
+    if (encoded == NULL || encodedSize % 2 != 0) {
+        *returnSize = 0;
+        return NULL;
+    }
+
+    int decodedCapacity = 0;
+    for (int i = 0; i < encodedSize; i += 2) {
+        decodedCapacity += encoded[i];
+    }
+
+    int* decoded = (int*)malloc(decodedCapacity * sizeof(int));
+    if (decoded == NULL) {
+        *returnSize = 0;
+        return NULL;
+    }
+
+    int index = 0;
+    for (int i = 0; i < encodedSize; i += 2) {
+        int freq = encoded[i];
+        int val = encoded[i + 1];
+        for (int j = 0; j < freq; ++j) {
+            decoded[index++] = val;
+        }
+    }
+
+    *returnSize = decodedCapacity;
+    return decoded;
+}
+
+int main() {
+    int encoded[] = {3, 2, 1, 5, 4, 1};
+    int encodedSize = sizeof(encoded) / sizeof(encoded[0]);
+    int returnSize;
+
+    int* decoded = decode_rle(encoded, encodedSize, &returnSize);
+
+    if (decoded != NULL) {
+        for (int i = 0; i < returnSize; ++i) {
+            printf("%d ", decoded[i]);
+        }
+        free(decoded);
+    } else {
+        printf("Decoding failed.\n");
+    }
+
+    return 0;
+}

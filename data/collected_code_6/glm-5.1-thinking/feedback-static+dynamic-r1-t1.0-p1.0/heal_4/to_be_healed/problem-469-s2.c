@@ -1,0 +1,72 @@
+#include <stdio.h>
+#include <stdlib.h>
+ /* Possible weaknesses found:
+  *  test case 1 failed: expected 7, got 0
+  *  test case 2 failed: expected 2, got 0
+  *  test case 0 failed: expected 10, got 5
+  */
+
+int maxProfit(int k, const int* prices, int pricesSize) {
+    if (prices == NULL || pricesSize <= 1 || k <= 0) {
+        return 0;
+    }
+
+    int n = pricesSize;
+
+    if (k >= n / 2) {
+        int profit = 0;
+        for (int i = 1; i < n; i++) {
+            if (prices[i] > prices[i - 1]) {
+                profit += prices[i] - prices[i - 1];
+            }
+        }
+        return profit;
+    }
+
+    int* dp = (int*)malloc(n * sizeof(int));
+    if (dp == NULL) {
+        return 0;
+    }
+
+    for (int i = 0; i < n; i++) {
+        dp[i] = 0;
+    }
+
+    for (int i = 1; i <= k; i++) {
+        int max_diff = -prices[0];
+        for (int j = 1; j < n; j++) {
+            int prev = dp[j];
+            if (prices[j] + max_diff > dp[j - 1]) {
+                dp[j] = prices[j] + max_diff;
+            } else {
+                dp[j] = dp[j - 1];
+            }
+            if (prev - prices[j] > max_diff) {
+                max_diff = prev - prices[j];
+            }
+        }
+    }
+
+    int result = dp[n - 1];
+    free(dp);
+    return result;
+}
+
+int main() {
+    int prices1[] = {2, 4, 1};
+    int k1 = 2;
+    int size1 = sizeof(prices1) / sizeof(prices1[0]);
+    printf("%d\n", maxProfit(k1, prices1, size1));
+
+    int prices2[] = {3, 2, 6, 5, 0, 3};
+    int k2 = 2;
+    int size2 = sizeof(prices2) / sizeof(prices2[0]);
+    printf("%d\n", maxProfit(k2, prices2, size2));
+
+    int prices0[] = {5, 10, 5, 10};
+    int k0 = 2;
+    int size0 = sizeof(prices0) / sizeof(prices0[0]);
+    printf("%d\n", maxProfit(k0, prices0, size0));
+
+    return 0;
+}

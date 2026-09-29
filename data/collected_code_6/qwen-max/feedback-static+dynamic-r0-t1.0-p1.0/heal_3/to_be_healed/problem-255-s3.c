@@ -1,0 +1,50 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+void generateCombinations(int *colors, int index, int k, int r) {
+    if (index == k) {
+        for (int i = 0; i < k; ++i) {
+            printf("%d ", colors[i]);
+        }
+        printf("\n");
+        return;
+    }
+
+    for (int i = 0; i < r; ++i) {
+        colors[index] = i + 1;
+        generateCombinations(colors, index + 1, k, r);
+    }
+}
+
+int main() {
+    int k, r;
+
+    printf("Enter the number of colors (max 3): ");
+    /* Possible weaknesses found:
+     * Flawfinder getchar: Check buffer boundaries if used in a loop including recursive loops (CWE-120, CWE-20). (risk 1, buffer)
+     */
+    if (scanf("%d", &r) != 1 || getchar() != '\n' || r > 3 || r <= 0) {
+        fprintf(stderr, "Invalid input\n");
+        return 1;
+    }
+
+    printf("Enter the number of selections: ");
+    /* Possible weaknesses found:
+     * Flawfinder getchar: Check buffer boundaries if used in a loop including recursive loops (CWE-120, CWE-20). (risk 1, buffer)
+     */
+    if (scanf("%d", &k) != 1 || getchar() != '\n' || k <= 0) {
+        fprintf(stderr, "Invalid input\n");
+        return 1;
+    }
+
+    int *colors = (int *)malloc(k * sizeof(int));
+    if (colors == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return 1;
+    }
+
+    generateCombinations(colors, 0, k, r);
+
+    free(colors);
+    return 0;
+}

@@ -1,0 +1,69 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+void extract_max_min_k(int *arr, int n, int k, int *max_k, int *min_k) {
+    int *temp = (int *)malloc(n * sizeof(int));
+    if (temp == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(EXIT_FAILURE);
+    }
+    
+    for (int i = 0; i < n; i++) {
+        temp[i] = arr[i];
+    }
+    
+    for (int i = 1; i < n; i++) {
+        int key = temp[i];
+        int j = i - 1;
+        while (j >= 0 && temp[j] > key) {
+            temp[j + 1] = temp[j];
+            j--;
+        }
+        temp[j + 1] = key;
+    }
+    
+    for (int i = 0; i < k; i++) {
+        min_k[i] = temp[i];
+    }
+    
+    for (int i = 0; i < k; i++) {
+        max_k[i] = temp[n - 1 - i];
+    }
+    
+    free(temp);
+}
+
+int main(void) {
+    int arr[] = {5, 2, 9, 1, 7, 6, 3, 8, 4, 0};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    int k = 3;
+    
+    int *max_k = (int *)malloc(k * sizeof(int));
+    int *min_k = (int *)malloc(k * sizeof(int));
+    
+    if (max_k == NULL || min_k == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        free(max_k);
+        free(min_k);
+        return EXIT_FAILURE;
+    }
+    
+    extract_max_min_k(arr, n, k, max_k, min_k);
+    
+    printf("Minimum %d elements: ", k);
+    for (int i = 0; i < k; i++) {
+        printf("%d ", min_k[i]);
+    }
+    printf("\n");
+    
+    printf("Maximum %d elements: ", k);
+    for (int i = 0; i < k; i++) {
+        printf("%d ", max_k[i]);
+    }
+    printf("\n");
+    
+    free(max_k);
+    free(min_k);
+    
+    return 0;
+}

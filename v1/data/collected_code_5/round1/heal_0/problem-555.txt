@@ -1,0 +1,36 @@
+```c
+#include <stdio.h>
+
+long calcSumOfCubes(int n) {
+    long sum = 0;
+    for (int i=1; i<=n; i++)
+        sum += i*i*i;
+    return sum;
+}
+
+long calcSumOfNaturalNum(int n) {
+    long sum = 0;
+    for (int i=1; i<=n; i++)
+        sum += i;
+    return sum;
+}
+
+long diffSum(int n) {
+    long sumOfCubes = calcSumOfCubes(n);
+    long sumOfNaturalNum = calcSumOfNaturalNum(n);
+    return sumOfCubes - sumOfNaturalNum;
+}
+
+int main() {
+    int n;
+    printf("Enter a number: ");
+    if(scanf("%d", &n) != 1 || n < 1){
+        printf("You didn't enter a valid number.\n");
+        return -1;
+    }
+
+    long difference = diffSum(n);
+    printf("The difference is: %ld\n", difference);
+    return 0;
+}
+```

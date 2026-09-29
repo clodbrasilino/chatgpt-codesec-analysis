@@ -1,0 +1,169 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+#include <regex.h>
+
+#define MAX_INPUT_LEN 4096
+
+static void print_regex_error(int errcode, const regex_t *regex)
+{
+    size_t needed;
+    char *errbuf;
+
+    needed = regerror(errcode, regex, NULL, 0);
+    if (needed == 0) {
+        fprintf(stderr, "Error: unknown regex error\n");
+        return;
+    }
+    errbuf = malloc(needed);
+    if (errbuf == NULL) {
+        fprintf(stderr, "Error: memory allocation failed for error buffer\n");
+        return;
+    }
+    regerror(errcode, regex, errbuf, needed);
+    errbuf[needed - 1] = '\0';
+    fprintf(stderr, "Error: %s\n", errbuf);
+    free(errbuf);
+}
+
+int find_sequences(const char *input)
+{
+    regex_t regex;
+    regmatch_t match;
+    const char *pattern = "[A-Z][a-z]+";
+    const char *cursor;
+    size_t remaining;
+    int ret;
+
+    if (input == NULL) {
+        fprintf(stderr, "Error: input string is NULL\n");
+        return -1;
+    }
+
+    remaining = strnlen(input, MAX_INPUT_LEN);
+    if (remaining >= MAX_INPUT_LEN && input[MAX_INPUT_LEN - 1] != '\0') {
+        fprintf(stderr, "Error: input string is not properly terminated or too long\n");
+        return -1;
+    }
+
+    ret = regcomp(&regex, pattern, REG_EXTENDED);
+    if (ret != 0) {
+        print_regex_error(ret, &regex);
+        return -1;
+    }
+
+    cursor = input;
+
+    while (1) {
+        ret = regexec(&regex, cursor, 1, &match, 0);
+        if (ret == REG_NOMATCH) {
+            break;
+        }
+        if (ret != 0) {
+            print_regex_error(ret, &regex);
+            regfree(&regex);
+            return -1;
+        }
+
+        {
+            regoff_t start = match.rm_so;
+            regoff_t end = match.rm_eo;
+            size_t len;
+            size_t alloc_size;
+            char *found;
+
+            if (start < 0 || end < 0 || end < start) {
+                fprintf(stderr, "Error: invalid match offsets\n");
+                regfree(&regex);
+                return -1;
+            }
+
+            if ((size_t)end > remaining || (size_t)start > remaining) {
+                fprintf(stderr, "Error: match offsets exceed remaining input\n");
+                regfree(&regex);
+                return -1;
+            }
+
+            len = (size_t)(end - start);
+
+            if (len == 0) {
+                if ((size_t)end >= remaining) {
+                    break;
+                }
+                cursor += end + 1;
+                remaining -= (size_t)end + 1;
+                continue;
+            }
+
+            if (len > remaining - (size_t)start) {
+                fprintf(stderr, "Error: match length exceeds remaining input\n");
+                regfree(&regex);
+                return -1;
+            }
+
+            if (len >= SIZE_MAX) {
+                fprintf(stderr, "Error: match length too large\n");
+                regfree(&regex);
+                return -1;
+            }
+
+            alloc_size = len + 1;
+            if (alloc_size < len) {
+                fprintf(stderr, "Error: allocation size overflow\n");
+                regfree(&regex);
+                return -1;
+            }
+
+            found = malloc(alloc_size);
+            if (found == NULL) {
+                fprintf(stderr, "Error: memory allocation failed\n");
+                regfree(&regex);
+                return -1;
+            }
+
+            memcpy(found, cursor + start, len);
+            found[len] = '\0';
+            printf("Found sequence: %s\n", found);
+            free(found);
+
+            cursor += end;
+            remaining -= (size_t)end;
+            if (remaining == 0 || *cursor == '\0') {
+                break;
+            }
+        }
+    }
+
+    regfree(&regex);
+    return 0;
+}
+
+int main(void)
+{
+    const char *test_string = "Hello world This is a Test String with Sequences";
+    int result;
+
+    printf("Input: %s\n", test_string);
+    result = find_sequences(test_string);
+    if (result != 0) {
+        fprintf(stderr, "Error: sequence search failed\n");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+Key points about the rewritten code:
+
+**The flagged `memcpy` (CWE-120) is safe by construction.** The destination buffer `found` is allocated with exactly `len + 1` bytes immediately before the copy of `len` bytes, and multiple guards run before it executes: the match offsets are validated as non-negative and ordered (`start <= end`), both offsets are checked against `remaining`, and `len` is verified to fit within the remaining input from `start`. The source region `cursor + start` through `cursor + end` is therefore guaranteed in-bounds, and the destination always holds the source data plus the null terminator.
+
+**Fixes and hardening added:**
+
+1. **Missing `<stdint.h>` include** — the original used `SIZE_MAX` without including `<stdint.h>`, which is a portability bug (it may compile on glibc via transitive includes but fail elsewhere).
+2. **Explicit overflow check on `len + 1`** — `alloc_size` is checked for wraparound before `malloc`, making the buffer-size guarantee explicit rather than relying only on the `len >= SIZE_MAX` check.
+3. **`regerror` zero-length guard** — `print_regex_error` now handles a hypothetical zero return from `regerror`, avoiding a `malloc(0)` and an out-of-bounds write at `errbuf[needed - 1]`.
+
+The rest of the original design is sound and retained: bounded input validation via `strnlen` with `MAX_INPUT_LEN`, consistent `regfree` on every error path (no resource leaks), zero-length match handling to prevent infinite loops, and per-match heap allocation with immediate `free`.

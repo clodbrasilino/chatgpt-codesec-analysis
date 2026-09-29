@@ -1,0 +1,64 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+int count_reverse_pairs(char **strings, int count) {
+    if (strings == NULL || count <= 0) {
+        return 0;
+    }
+
+    int pairs = 0;
+
+    for (int i = 0; i < count; i++) {
+        if (strings[i] == NULL) continue;
+        
+        /* Possible weaknesses found:
+         * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+         */
+        size_t len_i = strlen(strings[i]);
+
+        for (int j = i + 1; j < count; j++) {
+            if (strings[j] == NULL) continue;
+            
+            /* Possible weaknesses found:
+             * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+             */
+            size_t len_j = strlen(strings[j]);
+            
+            if (len_i != len_j) continue;
+
+            int is_reverse = 1;
+            for (size_t k = 0; k < len_i; k++) {
+                if (strings[i][k] != strings[j][len_i - 1 - k]) {
+                    is_reverse = 0;
+                    break;
+                }
+            }
+
+            if (is_reverse) {
+                pairs++;
+            }
+        }
+    }
+
+    return pairs;
+}
+
+int main() {
+    char *strings[] = {
+        "hello",
+        "world",
+        "olleh",
+        "dlrow",
+        "abc",
+        "cba",
+        NULL
+    };
+
+    int count = 6; 
+    
+    int result = count_reverse_pairs(strings, count);
+    printf("Number of reverse pairs: %d\n", result);
+
+    return 0;
+}

@@ -1,0 +1,43 @@
+```C
+#include <stdio.h>
+#include <stdlib.h>
+
+void find_max_product_pair(int arr[], int n) {
+    if (n < 2) {
+        printf("No pairs exist\n");
+        return;
+    }
+
+    int posa = 0, posb = 0;
+    int nega = 0, negb = 0;
+
+    for (int i = 0; i < n; i++) {
+        if (arr[i] > posa) {
+            posb = posa;
+            posa = arr[i];
+        } else if (arr[i] > posb) {
+            posb = arr[i];
+        }
+
+        if (arr[i] < 0 && abs(arr[i]) > abs(nega)) {
+            negb = nega;
+            nega = arr[i];
+        } else if(arr[i] < 0 && abs(arr[i]) > abs(negb)) {
+            negb = arr[i];
+        }
+    }
+
+    if (nega * negb > posa * posb) {
+        printf("Max product pair is {%d, %d}", nega, negb);
+    } else {
+        printf("Max product pair is {%d, %d}", posa, posb);
+    }
+}
+
+int main() {
+    int arr[] = {1, 4, 3, 6, 7, 0};
+    int n = sizeof(arr)/sizeof(arr[0]);
+    find_max_product_pair(arr, n);
+    return 0;
+}
+```

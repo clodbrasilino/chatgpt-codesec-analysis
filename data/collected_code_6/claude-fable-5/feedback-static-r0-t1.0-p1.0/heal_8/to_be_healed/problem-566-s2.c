@@ -1,0 +1,134 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <errno.h>
+#include <limits.h>
+#include <ctype.h>
+
+#define INPUT_BUFFER_SIZE 64
+
+static int digit_sum(unsigned long long n)
+{
+    int sum = 0;
+
+    while (n > 0ULL) {
+        sum += (int)(n % 10ULL);
+        n /= 10ULL;
+    }
+
+    return sum;
+}
+
+static int parse_non_negative(const char *str, unsigned long long *out)
+{
+    char *endptr = NULL;
+    unsigned long long value = 0ULL;
+
+    if (str == NULL || out == NULL) {
+        return -1;
+    }
+
+    while (isspace((unsigned char)*str)) {
+        str++;
+    }
+
+    if (*str == '-' || *str == '\0') {
+        return -1;
+    }
+
+    errno = 0;
+    value = strtoull(str, &endptr, 10);
+
+    if (errno == ERANGE) {
+        return -1;
+    }
+
+    if (endptr == str) {
+        return -1;
+    }
+
+    while (isspace((unsigned char)*endptr)) {
+        endptr++;
+    }
+
+    if (*endptr != '\0') {
+        return -1;
+    }
+
+    *out = value;
+    return 0;
+}
+
+static void discard_rest_of_line(void)
+{
+    int ch = 0;
+    size_t guard = 0;
+    const size_t guard_limit = (size_t)INT_MAX;
+
+    do {
+        /* Possible weaknesses found:
+         * Flawfinder fgetc: Check buffer boundaries if used in a loop including recursive loops (CWE-120, CWE-20). (risk 1, buffer)
+         */
+        ch = fgetc(stdin);
+        guard++;
+    } while (ch != '\n' && ch != EOF && guard < guard_limit);
+}
+
+static int read_line(char *buffer, size_t size)
+{
+    size_t len = 0;
+
+    if (buffer == NULL || size < 2 || size > (size_t)INT_MAX) {
+        return -1;
+    }
+
+    memset(buffer, 0, size);
+
+    if (fgets(buffer, (int)size, stdin) == NULL) {
+        return -1;
+    }
+
+    buffer[size - 1] = '\0';
+    len = strcspn(buffer, "\n");
+
+    if (buffer[len] == '\0' && len == size - 1) {
+        discard_rest_of_line();
+        return -1;
+    }
+
+    buffer[len] = '\0';
+    return 0;
+}
+
+int main(void)
+{
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char buffer[INPUT_BUFFER_SIZE];
+    unsigned long long number = 0ULL;
+    int result = 0;
+
+    memset(buffer, 0, sizeof(buffer));
+
+    printf("Enter a non-negative integer: ");
+    fflush(stdout);
+
+    if (read_line(buffer, sizeof(buffer)) != 0) {
+        fprintf(stderr, "Error: failed to read input or input too long.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (parse_non_negative(buffer, &number) != 0) {
+        fprintf(stderr, "Error: invalid non-negative integer input.\n");
+        return EXIT_FAILURE;
+    }
+
+    result = digit_sum(number);
+
+    if (printf("Digit sum of %llu is %d\n", number, result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

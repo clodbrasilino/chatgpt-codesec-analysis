@@ -1,0 +1,40 @@
+```c
+#include <ctype.h>
+#include <stdbool.h>
+#include <stdio.h>
+#include <string.h>
+
+bool is_integer(const char *str) {
+    if (str == NULL || *str == '\0') {
+        return false;
+    }
+    if (*str == '+' || *str == '-') {
+        str++;
+    }
+    while (*str) {
+        if (!isdigit(*str)) {
+            return false;
+        }
+        str++;
+    }
+    return true;
+}
+
+int main() {
+    char *test1 = "123";
+    char *test2 = "-123";
+    char *test3 = "+123";
+    char *test4 = "12.3";
+    char *test5 = "abc";
+    char *test6 = "";
+    
+    printf("%s: %s\n", test1, is_integer(test1) ? "true" : "false");
+    printf("%s: %s\n", test2, is_integer(test2) ? "true" : "false");
+    printf("%s: %s\n", test3, is_integer(test3) ? "true" : "false");
+    printf("%s: %s\n", test4, is_integer(test4) ? "true" : "false");
+    printf("%s: %s\n", test5, is_integer(test5) ? "true" : "false");
+    printf("%s: %s\n", test6, is_integer(test6) ? "true" : "false");
+
+    return 0;
+}
+```

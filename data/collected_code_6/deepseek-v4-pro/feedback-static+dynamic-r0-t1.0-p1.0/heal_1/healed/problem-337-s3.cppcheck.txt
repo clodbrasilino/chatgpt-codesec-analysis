@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-337-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-337-s3.c:11:15: warning: Either the condition 'str_len>1024' is redundant or the array 'str[1]' is accessed at index 1024, which is out of bounds. [arrayIndexOutOfBoundsCond]
+    while (str[str_len] != '\0') {
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-337-s3.c:13:21: note: Assuming that condition 'str_len>1024' is not redundant
+        if (str_len > 1024) {
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-337-s3.c:11:15: note: Array index out of bounds
+    while (str[str_len] != '\0') {
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-337-s3.c:19:16: warning: Either the condition 'word_len>1024' is redundant or the array 'word[6]' is accessed at index 1024, which is out of bounds. [arrayIndexOutOfBoundsCond]
+    while (word[word_len] != '\0') {
+               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-337-s3.c:21:22: note: Assuming that condition 'word_len>1024' is not redundant
+        if (word_len > 1024) {
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-337-s3.c:19:16: note: Array index out of bounds
+    while (word[word_len] != '\0') {
+               ^

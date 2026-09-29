@@ -1,0 +1,12 @@
+collected_code_3/problem-957-3.c: In function 'getRightmostSetBit':
+collected_code_3/problem-957-3.c:4:12: warning: implicit declaration of function 'log2' [-Wimplicit-function-declaration]
+    4 |     return log2(n & -n) + 1;
+      |            ^~~~
+collected_code_3/problem-957-3.c:2:1: note: include '<math.h>' or provide a declaration of 'log2'
+    1 | #include <stdio.h>
+  +++ |+#include <math.h>
+    2 | 
+collected_code_3/problem-957-3.c:4:12: warning: incompatible implicit declaration of built-in function 'log2' [-Wbuiltin-declaration-mismatch]
+    4 |     return log2(n & -n) + 1;
+      |            ^~~~
+collected_code_3/problem-957-3.c:4:12: note: include '<math.h>' or provide a declaration of 'log2'

@@ -1,0 +1,91 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stddef.h>
+
+typedef struct Node {
+    int data;
+    struct Node* next;
+} Node;
+
+Node* get_nth_item(Node* head, size_t n);
+Node* append_node(Node** head, int data);
+void free_list(Node* head);
+
+Node* get_nth_item(Node* head, size_t n) {
+    size_t current_index = 0;
+    Node* current = head;
+
+    while (current != NULL) {
+        if (current_index == n) {
+            return current;
+        }
+        current_index++;
+        current = current->next;
+    }
+
+    return NULL;
+}
+
+Node* append_node(Node** head, int data) {
+    if (head == NULL) {
+        return NULL;
+    }
+
+    Node* new_node = malloc(sizeof(*new_node));
+    if (new_node == NULL) {
+        return NULL;
+    }
+
+    new_node->data = data;
+    new_node->next = NULL;
+
+    if (*head == NULL) {
+        *head = new_node;
+    } else {
+        Node* current = *head;
+        while (current->next != NULL) {
+            current = current->next;
+        }
+        current->next = new_node;
+    }
+
+    return new_node;
+}
+
+void free_list(Node* head) {
+    Node* current = head;
+    while (current != NULL) {
+        Node* next_node = current->next;
+        free(current);
+        current = next_node;
+    }
+}
+
+int main(void) {
+    Node* head = NULL;
+    Node* target = NULL;
+
+    if (append_node(&head, 10) == NULL) {
+        goto cleanup;
+    }
+    if (append_node(&head, 20) == NULL) {
+        goto cleanup;
+    }
+    if (append_node(&head, 30) == NULL) {
+        goto cleanup;
+    }
+
+    target = get_nth_item(head, 1);
+    if (target != NULL) {
+        printf("%d\n", target->data);
+    } else {
+        printf("Index out of bounds or empty list\n");
+    }
+
+    free_list(head);
+    return EXIT_SUCCESS;
+
+cleanup:
+    free_list(head);
+    return EXIT_FAILURE;
+}

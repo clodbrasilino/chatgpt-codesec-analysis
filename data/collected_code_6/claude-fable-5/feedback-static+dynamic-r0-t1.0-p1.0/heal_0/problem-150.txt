@@ -1,0 +1,51 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+
+static bool is_present(long long first, long long diff, long long target)
+{
+    long long offset;
+
+    if (diff == 0LL) {
+        return (first == target);
+    }
+
+    offset = target - first;
+
+    if (offset % diff != 0LL) {
+        return false;
+    }
+
+    return (offset / diff) >= 0LL;
+}
+
+int main(void)
+{
+    long long first;
+    long long diff;
+    long long target;
+    int scanned;
+
+    scanned = scanf("%lld %lld %lld", &first, &diff, &target);
+    if (scanned != 3) {
+        fprintf(stderr, "Invalid input\n");
+        return 1;
+    }
+
+    if (is_present(first, diff, target)) {
+        printf("Yes\n");
+    } else {
+        printf("No\n");
+    }
+
+    return 0;
+}
+```
+
+This solves the standard problem: given an infinite arithmetic sequence starting at `first` with common difference `diff` (i.e., `first, first+diff, first+2*diff, ...`), determine whether `target` appears in it.
+
+Key points addressing the specified weaknesses:
+
+- **CWE-703**: The return value of `scanf` is checked before using the variables, and the `diff == 0` case is handled explicitly to prevent division by zero.
+- **CWE-664**: No dynamic resources (heap memory, file handles) are allocated, so nothing can leak or be misused across its lifetime; only stack variables with well-defined scope are used.
+- **CWE-710**: The code follows standard practices — `main` returns `int`, the helper is `static` with a prototype-style definition, `stdbool.h` is used for boolean semantics, and all variables are initialized before use.

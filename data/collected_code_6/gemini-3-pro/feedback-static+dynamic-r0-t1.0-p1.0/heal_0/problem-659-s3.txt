@@ -1,0 +1,60 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int compare_ints(const void *a, const void *b);
+void print_duplicates(const int *arr, size_t size);
+
+int compare_ints(const void *a, const void *b) {
+    int int_a = *((const int *)a);
+    int int_b = *((const int *)b);
+    
+    if (int_a < int_b) {
+        return -1;
+    }
+    if (int_a > int_b) {
+        return 1;
+    }
+    return 0;
+}
+
+void print_duplicates(const int *arr, size_t size) {
+    if (arr == NULL || size < 2) {
+        return;
+    }
+
+    int *sorted_arr = (int *)malloc(size * sizeof(int));
+    if (sorted_arr == NULL) {
+        return;
+    }
+
+    for (size_t i = 0; i < size; i++) {
+        sorted_arr[i] = arr[i];
+    }
+
+    qsort(sorted_arr, size, sizeof(int), compare_ints);
+
+    int already_printed = 0;
+    for (size_t i = 1; i < size; i++) {
+        if (sorted_arr[i] == sorted_arr[i - 1]) {
+            if (!already_printed) {
+                printf("%d\n", sorted_arr[i]);
+                already_printed = 1;
+            }
+        } else {
+            already_printed = 0;
+        }
+    }
+
+    free(sorted_arr);
+}
+
+int main(void) {
+    int test_array[] = {4, 1, 9, 4, 2, 7, 1, 8, 2, 2, 3};
+    size_t array_size = sizeof(test_array) / sizeof(test_array[0]);
+
+    print_duplicates(test_array, array_size);
+
+    return 0;
+}
+```

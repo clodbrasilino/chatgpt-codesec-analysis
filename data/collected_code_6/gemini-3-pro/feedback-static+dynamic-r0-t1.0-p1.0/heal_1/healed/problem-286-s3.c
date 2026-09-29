@@ -1,0 +1,73 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+
+long long int kadane(const int* arr, int n) {
+    if (n == 0) return 0;
+    long long int max_so_far = arr[0];
+    long long int curr_max = arr[0];
+
+    for (int i = 1; i < n; i++) {
+        long long int val = arr[i];
+        curr_max = (curr_max < 0) ? val : curr_max + val;
+        max_so_far = (max_so_far > curr_max) ? max_so_far : curr_max;
+    }
+    return max_so_far;
+}
+
+long long int maxSubArraySumModified(const int* arr, int n, int k) {
+    if (arr == NULL || n <= 0 || k <= 0) {
+        return 0;
+    }
+
+    if (k == 1) {
+        return kadane(arr, n);
+    }
+
+    long long int arrSum = 0;
+    for (int i = 0; i < n; i++) {
+        arrSum += arr[i];
+    }
+
+    int* twice_arr = (int*)malloc(2 * n * sizeof(int));
+    if (twice_arr == NULL) {
+        return 0;
+    }
+
+    for (int i = 0; i < n; i++) {
+        twice_arr[i] = arr[i];
+        twice_arr[n + i] = arr[i];
+    }
+
+    long long int max_twice = kadane(twice_arr, 2 * n);
+    free(twice_arr);
+
+    if (arrSum > 0) {
+        return max_twice + (k - 2) * arrSum;
+    } else {
+        return max_twice;
+    }
+}
+
+int main(void) {
+    int arr[] = {1, -2, 1};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    int k = 5;
+
+    long long int max_sum = maxSubArraySumModified(arr, n, k);
+    printf("%lld\n", max_sum);
+
+    int arr2[] = {-1, -2, -3};
+    n = sizeof(arr2) / sizeof(arr2[0]);
+    k = 3;
+    max_sum = maxSubArraySumModified(arr2, n, k);
+    printf("%lld\n", max_sum);
+
+    int arr3[] = {2, 3, 1};
+    n = sizeof(arr3) / sizeof(arr3[0]);
+    k = 4;
+    max_sum = maxSubArraySumModified(arr3, n, k);
+    printf("%lld\n", max_sum);
+
+    return 0;
+}

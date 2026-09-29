@@ -1,0 +1,29 @@
+#include <stdio.h>
+#include <string.h>
+
+void replaceBlankWithChar(char *str, char ch) {
+    int i;
+    for(i = 0; str[i]; i++) {
+        if(str[i] == ' ') {
+            str[i] = ch;
+        }
+    }
+}
+
+int main() {
+    char str[100];
+    char ch;
+
+    printf("Enter a string: ");
+    fgets(str, sizeof(str), stdin);
+    str[strlen(str) - 1] = '\0';
+
+    printf("Enter a character to replace blank spaces: ");
+    scanf("%c", &ch);
+
+    replaceBlankWithChar(str, ch);
+
+    printf("Modified string: %s\n", str);
+
+    return 0;
+}

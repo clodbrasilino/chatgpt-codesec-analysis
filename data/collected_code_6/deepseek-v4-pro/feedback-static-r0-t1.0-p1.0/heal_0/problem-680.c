@@ -1,0 +1,33 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+bool has_increasing_trend(const int *sequence, size_t length) {
+    if (sequence == NULL || length < 2) {
+        return false;
+    }
+    
+    for (size_t i = 1; i < length; i++) {
+        if (sequence[i] <= sequence[i - 1]) {
+            return false;
+        }
+    }
+    
+    return true;
+}
+
+int main(void) {
+    int seq1[] = {1, 2, 3, 4, 5};
+    int seq2[] = {1, 2, 2, 4, 5};
+    int seq3[] = {5, 4, 3, 2, 1};
+    int seq4[] = {10};
+    int seq5[] = {-3, -1, 0, 2, 7};
+    
+    printf("seq1: %s\n", has_increasing_trend(seq1, 5) ? "increasing" : "not increasing");
+    printf("seq2: %s\n", has_increasing_trend(seq2, 5) ? "increasing" : "not increasing");
+    printf("seq3: %s\n", has_increasing_trend(seq3, 5) ? "increasing" : "not increasing");
+    printf("seq4: %s\n", has_increasing_trend(seq4, 1) ? "increasing" : "not increasing");
+    printf("seq5: %s\n", has_increasing_trend(seq5, 5) ? "increasing" : "not increasing");
+    printf("null: %s\n", has_increasing_trend(NULL, 5) ? "increasing" : "not increasing");
+    
+    return 0;
+}

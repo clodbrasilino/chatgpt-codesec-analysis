@@ -1,0 +1,60 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+void find_five_char_words(const char *input) {
+    regex_t regex;
+    regmatch_t match;
+    const char *pattern = "\\b[a-zA-Z]{5}\\b";
+    int result = regcomp(&regex, pattern, REG_EXTENDED);
+    if (result != 0) {
+        char error_buffer[256];
+        regerror(result, &regex, error_buffer, sizeof(error_buffer));
+        fprintf(stderr, "Regex compilation failed: %s\n", error_buffer);
+        return;
+    }
+
+    const char *cursor = input;
+    while (regexec(&regex, cursor, 1, &match, 0) == 0) {
+        size_t word_length = match.rm_eo - match.rm_so;
+        if (word_length > 255) {
+            fprintf(stderr, "Word length exceeds maximum allowed\n");
+            regfree(&regex);
+            return;
+        }
+        char *word = (char *)malloc(word_length + 1);
+        if (word == NULL) {
+            fprintf(stderr, "Memory allocation failed\n");
+            regfree(&regex);
+            return;
+        }
+        memcpy(word, cursor + match.rm_so, word_length);
+        word[word_length] = '\0';
+        printf("%s\n", word);
+        free(word);
+        cursor += match.rm_eo;
+    }
+
+    regfree(&regex);
+}
+
+int main(void) {
+    char *input = NULL;
+    size_t buffer_size = 0;
+    printf("Enter a string: ");
+    if (getline(&input, &buffer_size, stdin) == -1) {
+        fprintf(stderr, "Error reading input\n");
+        free(input);
+        return EXIT_FAILURE;
+    }
+    size_t input_length = strlen(input);
+    if (input_length > 0 && input[input_length - 1] == '\n') {
+        input[input_length - 1] = '\0';
+    }
+
+    find_five_char_words(input);
+    free(input);
+
+    return EXIT_SUCCESS;
+}

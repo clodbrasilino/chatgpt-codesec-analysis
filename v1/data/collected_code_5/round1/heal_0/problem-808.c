@@ -1,0 +1,22 @@
+#include <stdbool.h>
+#include <stddef.h>
+
+bool contains(int tuple[], size_t size, int k) {
+    for (size_t i = 0; i < size; ++i) {
+        if (tuple[i] == k) {
+            return true;
+        }
+    }
+    return false;
+}
+
+int main() {
+    int tuple[] = {1, 2, 3, 4, 5};
+    int k = 3;
+    
+    if (contains(tuple, sizeof(tuple) / sizeof(tuple[0]), k)) {
+        return 0;
+    } else {
+        return 1;
+    }
+}

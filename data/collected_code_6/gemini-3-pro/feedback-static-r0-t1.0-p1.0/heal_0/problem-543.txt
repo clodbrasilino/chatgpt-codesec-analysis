@@ -1,0 +1,35 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+void add_and_print_digits(int a, int b) {
+    long long sum = (long long)a + b;
+    int digits = 0;
+    long long temp = sum;
+
+    if (temp < 0) {
+        temp = -temp;
+    }
+
+    do {
+        digits++;
+        temp /= 10;
+    } while (temp != 0);
+
+    printf("Sum: %lld\n", sum);
+    printf("Number of digits: %d\n", digits);
+}
+
+int main(void) {
+    int num1, num2;
+
+    if (scanf("%d %d", &num1, &num2) != 2) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    add_and_print_digits(num1, num2);
+
+    return EXIT_SUCCESS;
+}
+```

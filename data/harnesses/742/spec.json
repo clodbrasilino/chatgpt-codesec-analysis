@@ -1,0 +1,44 @@
+{
+  "task_id": 742,
+  "text": "Write a C function to caluclate the area of a tetrahedron.",
+  "fn_candidates": [
+    "area_tetrahedron",
+    "AreaTetrahedron",
+    "areaTetrahedron",
+    "areatetrahedron"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "area_tetrahedron",
+      "args": [
+        3
+      ],
+      "expected": 15.588457268119894,
+      "assert_src": "assert area_tetrahedron(3)==15.588457268119894"
+    },
+    {
+      "fn_name": "area_tetrahedron",
+      "args": [
+        20
+      ],
+      "expected": 692.8203230275509,
+      "assert_src": "assert area_tetrahedron(20)==692.8203230275509"
+    },
+    {
+      "fn_name": "area_tetrahedron",
+      "args": [
+        10
+      ],
+      "expected": 173.20508075688772,
+      "assert_src": "assert area_tetrahedron(10)==173.20508075688772"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "float",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

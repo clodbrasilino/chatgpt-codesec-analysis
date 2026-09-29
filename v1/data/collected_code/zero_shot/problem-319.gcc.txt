@@ -1,0 +1,6 @@
+collected_code/problem-319-0.c: In function 'findFiveCharacterWords':
+collected_code/problem-319-0.c:19:30: error: invalid operands to binary - (have 'regoff_t' {aka 'long long int'} and 'char *')
+   19 |       match += matches.rm_eo - match + 1;
+      |                ~~~~~~~~~~~~~ ^
+      |                       |
+      |                       regoff_t {aka long long int}

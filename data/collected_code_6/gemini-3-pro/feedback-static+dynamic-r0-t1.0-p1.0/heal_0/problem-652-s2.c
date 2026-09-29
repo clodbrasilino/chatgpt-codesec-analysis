@@ -1,0 +1,77 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int x;
+    int y;
+} Tuple;
+
+Tuple* flatten_columns(Tuple** matrix, int rows, int cols) {
+    if (matrix == NULL || rows <= 0 || cols <= 0) {
+        return NULL;
+    }
+
+    Tuple* flattened = (Tuple*)malloc((size_t)(rows * cols) * sizeof(Tuple));
+    if (flattened == NULL) {
+        return NULL;
+    }
+
+    int index = 0;
+    for (int j = 0; j < cols; j++) {
+        for (int i = 0; i < rows; i++) {
+            flattened[index++] = matrix[i][j];
+        }
+    }
+
+    return flattened;
+}
+
+int main() {
+    int rows = 2;
+    int cols = 3;
+
+    Tuple** matrix = (Tuple**)malloc((size_t)rows * sizeof(Tuple*));
+    if (matrix == NULL) {
+        return 1;
+    }
+
+    for (int i = 0; i < rows; i++) {
+        matrix[i] = (Tuple*)malloc((size_t)cols * sizeof(Tuple));
+        if (matrix[i] == NULL) {
+            for (int k = 0; k < i; k++) {
+                free(matrix[k]);
+            }
+            free(matrix);
+            return 1;
+        }
+    }
+
+    matrix[0][0] = (Tuple){1, 2};
+    matrix[0][1] = (Tuple){3, 4};
+    matrix[0][2] = (Tuple){5, 6};
+    matrix[1][0] = (Tuple){7, 8};
+    matrix[1][1] = (Tuple){9, 10};
+    matrix[1][2] = (Tuple){11, 12};
+
+    Tuple* flattened = flatten_columns(matrix, rows, cols);
+    if (flattened == NULL) {
+        for (int i = 0; i < rows; i++) {
+            free(matrix[i]);
+        }
+        free(matrix);
+        return 1;
+    }
+
+    for (int i = 0; i < rows * cols; i++) {
+        printf("(%d, %d) ", flattened[i].x, flattened[i].y);
+    }
+    printf("\n");
+
+    free(flattened);
+    for (int i = 0; i < rows; i++) {
+        free(matrix[i]);
+    }
+    free(matrix);
+
+    return 0;
+}

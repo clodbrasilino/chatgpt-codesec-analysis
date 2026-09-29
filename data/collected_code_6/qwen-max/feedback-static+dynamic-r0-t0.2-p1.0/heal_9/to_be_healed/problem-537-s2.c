@@ -1,0 +1,84 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+#include <stdlib.h>
+ /* Possible weaknesses found:
+  *  test case 2 failed: expected 'ca', got <no output>
+  *  test case 0 failed: expected 'ab', got <no output>
+  *  test case 1 failed: expected 'None', got <no output>
+  */
+
+char* find_first_repeated_word(const char *str) {
+    const int max_words = 1024;
+    char **words = (char **)malloc(max_words * sizeof(char *));
+    if (words == NULL) return NULL;
+
+    for (int i = 0; i < max_words; i++) {
+        words[i] = NULL;
+    }
+
+    bool seen[max_words] = {false};
+    int word_count = 0;
+
+    const char *p = str;
+    while (*p) {
+        const char *start = p;
+        while (*p && *p != ' ') p++;
+        if (start == p) break;
+
+        for (int j = 0; j < word_count; j++) {
+            if (strcmp(words[j], start) == 0) {
+                for (int k = 0; k < word_count; k++) {
+                    free(words[k]);
+                }
+                free(words);
+                return (char *)start;
+            }
+        }
+
+        if (word_count < max_words) {
+            int len = p - start;
+            words[word_count] = (char *)malloc(len + 1);
+            if (words[word_count] == NULL) {
+                for (int k = 0; k < word_count; k++) {
+                    free(words[k]);
+                }
+                free(words);
+                return NULL;
+            }
+            /* Possible weaknesses found:
+             * Flawfinder strncpy: Easily used incorrectly; doesn't always \0-terminate or check for invalid pointers [MS-banned] (CWE-120). (risk 1, buffer)
+             */
+            strncpy(words[word_count], start, len);
+            words[word_count][len] = '\0';
+            seen[word_count++] = true;
+        } else {
+            for (int k = 0; k < word_count; k++) {
+                free(words[k]);
+            }
+            free(words);
+            return NULL;
+        }
+
+        if (*p) p++;
+    }
+
+    for (int i = 0; i < word_count; i++) {
+        free(words[i]);
+    }
+    free(words);
+
+    return NULL;
+}
+
+int main() {
+    const char *input = "This is a test to find the first repeated word in this string";
+    char *result = find_first_repeated_word(input);
+    if (result) {
+        printf("First repeated word: %s\n", result);
+    } else {
+        printf("No repeated word found.\n");
+    }
+
+    return 0;
+}

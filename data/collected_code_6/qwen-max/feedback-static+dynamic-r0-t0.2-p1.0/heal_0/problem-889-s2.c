@@ -1,0 +1,91 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int value;
+    struct Node *next;
+} Node;
+
+typedef struct List {
+    Node *head;
+    Node *tail;
+} List;
+
+void addNode(List *list, int value) {
+    Node *newNode = (Node *)malloc(sizeof(Node));
+    if (newNode == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(EXIT_FAILURE);
+    }
+    newNode->value = value;
+    newNode->next = NULL;
+    if (list->head == NULL) {
+        list->head = newNode;
+        list->tail = newNode;
+    } else {
+        list->tail->next = newNode;
+        list->tail = newNode;
+    }
+}
+
+void reverseList(List *list) {
+    Node *prev = NULL;
+    Node *current = list->head;
+    Node *next = NULL;
+    while (current != NULL) {
+        next = current->next;
+        current->next = prev;
+        prev = current;
+        current = next;
+    }
+    list->tail = list->head;
+    list->head = prev;
+}
+
+void printList(const List *list) {
+    for (Node *node = list->head; node != NULL; node = node->next) {
+        printf("%d -> ", node->value);
+    }
+    printf("NULL\n");
+}
+
+void freeList(List *list) {
+    Node *current = list->head;
+    while (current != NULL) {
+        Node *next = current->next;
+        free(current);
+        current = next;
+    }
+    list->head = NULL;
+    list->tail = NULL;
+}
+
+int main() {
+    List lists[3] = {{NULL, NULL}, {NULL, NULL}, {NULL, NULL}};
+    
+    addNode(&lists[0], 1);
+    addNode(&lists[0], 2);
+    addNode(&lists[0], 3);
+
+    addNode(&lists[1], 4);
+    addNode(&lists[1], 5);
+
+    addNode(&lists[2], 6);
+    addNode(&lists[2], 7);
+    addNode(&lists[2], 8);
+    addNode(&lists[2], 9);
+
+    for (int i = 0; i < 3; ++i) {
+        printf("Original list %d: ", i + 1);
+        printList(&lists[i]);
+        reverseList(&lists[i]);
+        printf("Reversed list %d: ", i + 1);
+        printList(&lists[i]);
+    }
+
+    for (int i = 0; i < 3; ++i) {
+        freeList(&lists[i]);
+    }
+
+    return 0;
+}

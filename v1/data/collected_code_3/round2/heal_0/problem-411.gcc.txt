@@ -1,0 +1,95 @@
+collected_code_3/problem-411-2.c: In function 'snakeToCamel':
+collected_code_3/problem-411-2.c:8:19: warning: implicit declaration of function 'malloc' [-Wimplicit-function-declaration]
+    8 |     char* camel = malloc(len+1);
+      |                   ^~~~~~
+collected_code_3/problem-411-2.c:4:1: note: include '<stdlib.h>' or provide a declaration of 'malloc'
+    3 | #include <string.h>
+  +++ |+#include <stdlib.h>
+    4 | 
+collected_code_3/problem-411-2.c:8:19: warning: incompatible implicit declaration of built-in function 'malloc' [-Wbuiltin-declaration-mismatch]
+    8 |     char* camel = malloc(len+1);
+      |                   ^~~~~~
+collected_code_3/problem-411-2.c:8:19: note: include '<stdlib.h>' or provide a declaration of 'malloc'
+collected_code_3/problem-411-2.c: In function 'main':
+collected_code_3/problem-411-2.c:27:5: warning: implicit declaration of function 'free' [-Wimplicit-function-declaration]
+   27 |     free(camel);
+      |     ^~~~
+collected_code_3/problem-411-2.c:27:5: note: include '<stdlib.h>' or provide a declaration of 'free'
+collected_code_3/problem-411-2.c:27:5: warning: incompatible implicit declaration of built-in function 'free' [-Wbuiltin-declaration-mismatch]
+collected_code_3/problem-411-2.c:27:5: note: include '<stdlib.h>' or provide a declaration of 'free'
+collected_code_3/problem-411-2.c: In function 'snakeToCamel':
+collected_code_3/problem-411-2.c:13:22: warning: dereference of possibly-NULL 'camel' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   13 |             camel[j] = toupper(snake[i]);
+      |             ~~~~~~~~~^~~~~~~~~~~~~~~~~~~
+  'snakeToCamel': events 1-6
+    |
+    |    8 |     char* camel = malloc(len+1);
+    |      |                   ^~~~~~~~~~~~~
+    |      |                   |
+    |      |                   (1) this call could return NULL
+    |    9 | 
+    |   10 |     for(i = 0; i < len; i++) {
+    |      |                ~~~~~~~
+    |      |                  |
+    |      |                  (2) following 'true' branch (when 'i < len')...
+    |   11 |         if(snake[i] == '_') {
+    |      |           ~     ~  
+    |      |           |     |
+    |      |           |     (3) ...to here
+    |      |           (4) following 'true' branch...
+    |   12 |             i++;
+    |      |             ~~~    
+    |      |              |
+    |      |              (5) ...to here
+    |   13 |             camel[j] = toupper(snake[i]);
+    |      |             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                      |
+    |      |                      (6) 'camel + (sizetype)j' could be NULL: unchecked value from (1)
+    |
+collected_code_3/problem-411-2.c:15:22: warning: dereference of possibly-NULL 'camel' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   15 |             camel[j] = snake[i];
+      |             ~~~~~~~~~^~~~~~~~~~
+  'snakeToCamel': events 1-6
+    |
+    |    8 |     char* camel = malloc(len+1);
+    |      |                   ^~~~~~~~~~~~~
+    |      |                   |
+    |      |                   (1) this call could return NULL
+    |    9 | 
+    |   10 |     for(i = 0; i < len; i++) {
+    |      |                ~~~~~~~
+    |      |                  |
+    |      |                  (2) following 'true' branch (when 'i < len')...
+    |   11 |         if(snake[i] == '_') {
+    |      |           ~     ~  
+    |      |           |     |
+    |      |           |     (3) ...to here
+    |      |           (4) following 'false' branch...
+    |......
+    |   15 |             camel[j] = snake[i];
+    |      |             ~~~~~~~~~~~~~~~~~~~
+    |      |                      |      |
+    |      |                      |      (5) ...to here
+    |      |                      (6) 'camel + (sizetype)j' could be NULL: unchecked value from (1)
+    |
+collected_code_3/problem-411-2.c:19:14: warning: dereference of possibly-NULL 'camel' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   19 |     camel[j] = '\0';
+      |     ~~~~~~~~~^~~~~~
+  'snakeToCamel': events 1-4
+    |
+    |    8 |     char* camel = malloc(len+1);
+    |      |                   ^~~~~~~~~~~~~
+    |      |                   |
+    |      |                   (1) this call could return NULL
+    |    9 | 
+    |   10 |     for(i = 0; i < len; i++) {
+    |      |                ~~~~~~~
+    |      |                  |
+    |      |                  (2) following 'false' branch (when 'i >= len')...
+    |......
+    |   19 |     camel[j] = '\0';
+    |      |     ~~~~~~~~~~~~~~~
+    |      |          |   |
+    |      |          |   (4) 'camel + (sizetype)j' could be NULL: unchecked value from (1)
+    |      |          (3) ...to here
+    |

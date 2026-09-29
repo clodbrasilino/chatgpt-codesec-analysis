@@ -1,0 +1,79 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *array;
+    size_t size;
+} Tuple;
+
+typedef struct {
+    int a;
+    int b;
+} Pair;
+
+typedef struct {
+    Pair *pairs;
+    size_t size;
+} ZippedTuple;
+
+ZippedTuple* zip_tuples(const Tuple *t1, const Tuple *t2) {
+    if (!t1 || !t2 || !t1->array || !t2->array) {
+        return NULL;
+    }
+
+    size_t min_size = t1->size < t2->size ? t1->size : t2->size;
+
+    ZippedTuple *zipped = (ZippedTuple*)malloc(sizeof(ZippedTuple));
+    if (!zipped) {
+        return NULL;
+    }
+
+    zipped->size = min_size;
+    
+    if (min_size == 0) {
+        zipped->pairs = NULL;
+        return zipped;
+    }
+
+    zipped->pairs = (Pair*)malloc(min_size * sizeof(Pair));
+    if (!zipped->pairs) {
+        free(zipped);
+        return NULL;
+    }
+
+    for (size_t i = 0; i < min_size; i++) {
+        zipped->pairs[i].a = t1->array[i];
+        zipped->pairs[i].b = t2->array[i];
+    }
+
+    return zipped;
+}
+
+void free_zipped_tuple(ZippedTuple *zipped) {
+    if (zipped) {
+        free(zipped->pairs);
+        free(zipped);
+    }
+}
+
+int main(void) {
+    int arr1[] = {1, 2, 3};
+    int arr2[] = {4, 5, 6, 7};
+
+    Tuple t1 = {arr1, 3};
+    Tuple t2 = {arr2, 4};
+
+    ZippedTuple *zipped = zip_tuples(&t1, &t2);
+    if (!zipped) {
+        fprintf(stderr, "Failed to zip tuples\n");
+        return EXIT_FAILURE;
+    }
+
+    for (size_t i = 0; i < zipped->size; i++) {
+        printf("(%d, %d)\n", zipped->pairs[i].a, zipped->pairs[i].b);
+    }
+
+    free_zipped_tuple(zipped);
+
+    return EXIT_SUCCESS;
+}

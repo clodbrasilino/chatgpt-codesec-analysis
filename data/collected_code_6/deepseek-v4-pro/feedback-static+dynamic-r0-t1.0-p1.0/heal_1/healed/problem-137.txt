@@ -1,0 +1,36 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+double ratio_of_zeroes(const int *arr, size_t size) {
+    size_t zero_count = 0;
+    size_t i;
+
+    if (arr == NULL || size == 0) {
+        return 0.0;
+    }
+
+    for (i = 0; i < size; i++) {
+        if (arr[i] == 0) {
+            zero_count++;
+        }
+    }
+
+    return (double)zero_count / (double)size;
+}
+
+int main(void) {
+    int arr1[] = {0, 1, 0, 3, 0, 5};
+    int arr2[] = {1, 2, 3, 4, 5};
+    int arr3[] = {0, 0, 0, 0};
+    const int *null_arr = NULL;
+
+    printf("Ratio of zeroes in arr1: %.2f\n", ratio_of_zeroes(arr1, sizeof(arr1) / sizeof(arr1[0])));
+    printf("Ratio of zeroes in arr2: %.2f\n", ratio_of_zeroes(arr2, sizeof(arr2) / sizeof(arr2[0])));
+    printf("Ratio of zeroes in arr3: %.2f\n", ratio_of_zeroes(arr3, sizeof(arr3) / sizeof(arr3[0])));
+    printf("Ratio of zeroes in null_arr: %.2f\n", ratio_of_zeroes(null_arr, 0));
+    printf("Ratio of zeroes with size 0: %.2f\n", ratio_of_zeroes(arr1, 0));
+
+    return 0;
+}
+```

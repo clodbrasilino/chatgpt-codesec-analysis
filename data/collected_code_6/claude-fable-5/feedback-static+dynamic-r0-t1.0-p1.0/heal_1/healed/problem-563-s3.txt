@@ -1,0 +1,93 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char *extract_quoted(const char *input)
+{
+    const char *start;
+    const char *end;
+    char *result;
+    size_t length;
+    size_t buffer_size;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    start = strchr(input, '"');
+    if (start == NULL) {
+        return NULL;
+    }
+    start++;
+
+    end = strchr(start, '"');
+    if (end == NULL) {
+        return NULL;
+    }
+
+    if (end < start) {
+        return NULL;
+    }
+
+    length = (size_t)(end - start);
+
+    if (length == SIZE_MAX) {
+        return NULL;
+    }
+
+    buffer_size = length + 1;
+
+    result = malloc(buffer_size);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    if (length > 0 && length < buffer_size) {
+        memcpy(result, start, length);
+    }
+    result[length] = '\0';
+
+    return result;
+}
+
+int main(void)
+{
+    const char *text = "He said \"hello world\" to everyone.";
+    char *extracted;
+
+    extracted = extract_quoted(text);
+    if (extracted == NULL) {
+        fprintf(stderr, "No quoted value found or allocation failed.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Extracted: %s\n", extracted) < 0) {
+        free(extracted);
+        return EXIT_FAILURE;
+    }
+
+    free(extracted);
+    return EXIT_SUCCESS;
+}
+```
+
+Note: you'll also need `#include <stdint.h>` for `SIZE_MAX`:
+
+```c
+#include <stdint.h>
+```
+
+**Analysis of the changes:**
+
+The Flawfinder warning on `memcpy` (CWE-120) is a heuristic, risk-level-2 finding. In the original code the copy was already safe, because `result` is allocated with `malloc(length + 1)` and exactly `length` bytes are copied. However, to satisfy the audit and harden the code, the rewrite makes the safety explicit:
+
+1. **Explicit destination-size tracking** — `buffer_size` records the allocated size, and the copy is guarded by `length < buffer_size`, making the invariant *"destination can always hold the source data"* verifiable at the call site rather than implicit.
+
+2. **Overflow guard on the allocation size** — `length + 1` could theoretically wrap if `length == SIZE_MAX`, producing `malloc(0)` followed by an out-of-bounds write. The `SIZE_MAX` check eliminates that path (practically unreachable, but it satisfies strict integer-overflow review, CWE-190).
+
+3. **Defensive pointer-ordering check** — `end < start` cannot occur given `strchr` semantics, but the check documents and enforces the precondition that `end - start` is non-negative before the cast to `size_t`.
+
+4. **Zero-length short-circuit** — `memcpy` with `length == 0` is legal, but skipping it avoids any pedantic concerns and keeps the guard expression uniform.
+
+All original correctness properties are preserved: NULL-input handling, missing-quote handling, allocation-failure handling, proper NUL termination, and no memory leaks on any exit path in `main`.

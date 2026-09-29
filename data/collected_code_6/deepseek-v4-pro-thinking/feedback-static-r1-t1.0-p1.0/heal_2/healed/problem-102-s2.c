@@ -1,0 +1,71 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#define MAX_SNAKE_LEN 1024
+
+static size_t safe_strnlen(const char *s, size_t maxlen) {
+    size_t i;
+    for (i = 0; i < maxlen; i++) {
+        if (s[i] == '\0') {
+            return i;
+        }
+    }
+    return maxlen;
+}
+
+char *snake_to_camel(const char *snake) {
+    if (snake == NULL) {
+        return NULL;
+    }
+
+    size_t len = safe_strnlen(snake, MAX_SNAKE_LEN + 1);
+    if (len == MAX_SNAKE_LEN + 1) {
+        return NULL;
+    }
+
+    char *camel = malloc(len + 1);
+    if (camel == NULL) {
+        return NULL;
+    }
+
+    size_t j = 0;
+    int capitalize_next = 0;
+    int first_char = 1;
+
+    for (size_t i = 0; i < len; i++) {
+        unsigned char c = (unsigned char)snake[i];
+
+        if (c == '_') {
+            if (j > 0) {
+                capitalize_next = 1;
+            }
+            continue;
+        }
+
+        if (capitalize_next) {
+            camel[j++] = (char)toupper(c);
+            capitalize_next = 0;
+        } else if (first_char) {
+            camel[j++] = (char)tolower(c);
+            first_char = 0;
+        } else {
+            camel[j++] = (char)c;
+        }
+    }
+
+    camel[j] = '\0';
+    return camel;
+}
+
+int main(void) {
+    const char *snake = "hello_world";
+    char *camel = snake_to_camel(snake);
+    if (camel == NULL) {
+        return 1;
+    }
+    printf("%s\n", camel);
+    free(camel);
+    return 0;
+}

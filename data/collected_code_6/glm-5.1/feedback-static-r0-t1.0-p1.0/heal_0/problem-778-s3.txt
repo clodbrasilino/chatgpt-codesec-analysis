@@ -1,0 +1,113 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    void *data;
+    struct Node *next;
+} Node;
+
+typedef struct List {
+    Node *head;
+} List;
+
+List *create_list() {
+    List *l = (List *)malloc(sizeof(List));
+    if (l == NULL) {
+        exit(EXIT_FAILURE);
+    }
+    l->head = NULL;
+    return l;
+}
+
+void append(List *l, void *data) {
+    Node *n = (Node *)malloc(sizeof(Node));
+    if (n == NULL) {
+        exit(EXIT_FAILURE);
+    }
+    n->data = data;
+    n->next = NULL;
+    if (l->head == NULL) {
+        l->head = n;
+    } else {
+        Node *curr = l->head;
+        while (curr->next != NULL) {
+            curr = curr->next;
+        }
+        curr->next = n;
+    }
+}
+
+List *pack(List *l) {
+    List *result = create_list();
+    if (l->head == NULL) {
+        return result;
+    }
+    Node *curr = l->head;
+    while (curr != NULL) {
+        List *sublist = create_list();
+        void *current_val = curr->data;
+        append(sublist, current_val);
+        while (curr->next != NULL && curr->next->data == current_val) {
+            curr = curr->next;
+            append(sublist, curr->data);
+        }
+        append(result, sublist);
+        curr = curr->next;
+    }
+    return result;
+}
+
+void free_list(List *l, int free_data) {
+    Node *curr = l->head;
+    while (curr != NULL) {
+        Node *next = curr->next;
+        if (free_data) {
+            List *sublist = (List *)curr->data;
+            free_list(sublist, 0);
+        }
+        free(curr);
+        curr = next;
+    }
+    free(l);
+}
+
+int main(void) {
+    int v1 = 1, v2 = 2, v3 = 3;
+
+    List *l = create_list();
+    append(l, &v1);
+    append(l, &v1);
+    append(l, &v2);
+    append(l, &v3);
+    append(l, &v3);
+    append(l, &v3);
+
+    List *packed = pack(l);
+
+    Node *outer = packed->head;
+    while (outer != NULL) {
+        List *sublist = (List *)outer->data;
+        printf("[");
+        Node *inner = sublist->head;
+        while (inner != NULL) {
+            printf("%d", *(int *)inner->data);
+            inner = inner->next;
+            if (inner != NULL) {
+                printf(", ");
+            }
+        }
+        printf("]");
+        outer = outer->next;
+        if (outer != NULL) {
+            printf(", ");
+        }
+    }
+    printf("\n");
+
+    free_list(packed, 1);
+    free_list(l, 0);
+
+    return 0;
+}
+```

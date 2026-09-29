@@ -1,0 +1,43 @@
+#include <stdbool.h>
+#include <stdio.h>
+
+bool isPrime(int n) {
+    if(n <= 1)
+        return false;
+    if(n == 2)
+        return true;
+    if(n % 2 == 0)
+        return false;
+
+    for(int i = 3; i * i <= n; i += 2) {
+        if(n % i == 0)
+            return false;
+    }
+
+    return true;
+}
+
+int smallestPrimeFactor(int n) {
+    for(int i = 2; i * i <= n; i++)
+    {
+        if(n % i == 0 && isPrime(i))
+            return i;
+    }
+
+    return n;
+}
+
+int main() {
+    int number;
+    printf("Enter a number: ");
+    scanf("%d", &number);
+
+    if (number < 2) {
+        printf("Enter a number greater than or equal to 2\n");
+    	return 0;
+    }
+
+    printf("The smallest prime factor of %d is %d\n", number, smallestPrimeFactor(number));
+    
+    return 0;
+}

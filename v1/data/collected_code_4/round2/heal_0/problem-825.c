@@ -1,0 +1,25 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+void access_elements(int* array, int* indices, int array_len, int indices_len) {
+    int i;
+    for(i = 0; i < indices_len; i++) {
+        if(indices[i] < array_len && indices[i] >= 0) {
+            printf("%d ", array[indices[i]]);
+        } else {
+            printf("Index %d out of bounds\n", indices[i]);
+            exit(EXIT_FAILURE);
+        }
+    }
+    printf("\n");
+}
+
+int main(){
+    int arr[] = {1,2,3,4,5};
+    int indices[] = {0,2,3};
+    int array_length = sizeof(arr)/sizeof(arr[0]);
+    int indices_length = sizeof(indices)/sizeof(indices[0]);
+    access_elements(arr, indices, array_length, indices_length);
+
+    return 0;
+}

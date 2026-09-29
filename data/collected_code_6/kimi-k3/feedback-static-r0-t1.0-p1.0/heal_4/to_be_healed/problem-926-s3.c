@@ -1,0 +1,75 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <limits.h>
+#include <string.h>
+#include <ctype.h>
+
+unsigned long long rencontres(int n) {
+    if (n < 0) {
+        return 0;
+    }
+    if (n == 0) {
+        return 1;
+    }
+    if (n == 1) {
+        return 0;
+    }
+    
+    unsigned long long prev_prev = 1;
+    unsigned long long prev = 0;
+    unsigned long long current = 0;
+    
+    for (int i = 2; i <= n; i++) {
+        current = (unsigned long long)(i - 1) * (prev + prev_prev);
+        prev_prev = prev;
+        prev = current;
+    }
+    
+    return current;
+}
+
+int main(void) {
+    int n;
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char buffer[256];
+    char *endptr;
+    
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+    
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    size_t len = strlen(buffer);
+    if (len > 0 && buffer[len - 1] != '\n' && !feof(stdin)) {
+        fprintf(stderr, "Input too long\n");
+        return EXIT_FAILURE;
+    }
+    
+    errno = 0;
+    long val = strtol(buffer, &endptr, 10);
+    
+    if (errno == ERANGE || val < 0 || val > 20) {
+        fprintf(stderr, "Input must be between 0 and 20\n");
+        return EXIT_FAILURE;
+    }
+    
+    while (endptr != buffer + sizeof(buffer) && isspace((unsigned char)*endptr)) {
+        endptr++;
+    }
+    
+    if (endptr == buffer || *endptr != '\0') {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    n = (int)val;
+    printf("%llu\n", rencontres(n));
+    
+    return EXIT_SUCCESS;
+}

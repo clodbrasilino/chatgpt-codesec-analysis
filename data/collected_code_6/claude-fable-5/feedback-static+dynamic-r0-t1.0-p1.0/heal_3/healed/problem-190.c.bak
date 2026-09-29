@@ -1,0 +1,76 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+static unsigned long long absDiff(long long p, long long q)
+{
+    if (p > q)
+    {
+        return (unsigned long long)p - (unsigned long long)q;
+    }
+    return (unsigned long long)q - (unsigned long long)p;
+}
+
+int countIntegralPoints(long long x1, long long y1, long long x2, long long y2, unsigned long long *result)
+{
+    unsigned long long width = absDiff(x1, x2);
+    unsigned long long height = absDiff(y1, y2);
+    unsigned long long a;
+    unsigned long long b;
+
+    if (width == 0 && height == 0)
+    {
+        *result = 1;
+        return 0;
+    }
+
+    if (width < 2 || height < 2)
+    {
+        *result = 0;
+        return 0;
+    }
+
+    a = width - 1;
+    b = height - 1;
+
+    if (b > ULLONG_MAX / a)
+    {
+        return -1;
+    }
+
+    *result = a * b;
+    return 0;
+}
+
+int main(void)
+{
+    long long x1;
+    long long y1;
+    long long x2;
+    long long y2;
+    unsigned long long result;
+
+    printf("Enter bottom-left corner (x1 y1): ");
+    if (scanf("%lld %lld", &x1, &y1) != 2)
+    {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter top-right corner (x2 y2): ");
+    if (scanf("%lld %lld", &x2, &y2) != 2)
+    {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (countIntegralPoints(x1, y1, x2, y2, &result) != 0)
+    {
+        fprintf(stderr, "Result overflow\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Number of integral coordinates inside the square: %llu\n", result);
+
+    return EXIT_SUCCESS;
+}

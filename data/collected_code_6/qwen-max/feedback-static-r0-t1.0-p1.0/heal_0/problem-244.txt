@@ -1,0 +1,25 @@
+```c
+#include <stdio.h>
+#include <math.h>
+#include <stdint.h>
+
+uint64_t next_perfect_square(uint64_t n) {
+    uint64_t root = (uint64_t)sqrt(n);
+    if (root * root == n) {
+        root += 1;
+    }
+    return root * root;
+}
+
+int main() {
+    uint64_t number;
+    printf("Enter a number: ");
+    if (scanf("%llu", &number) != 1) {
+        printf("Invalid input.\n");
+        return 1;
+    }
+    uint64_t next_square = next_perfect_square(number);
+    printf("Next perfect square: %llu\n", next_square);
+    return 0;
+}
+```

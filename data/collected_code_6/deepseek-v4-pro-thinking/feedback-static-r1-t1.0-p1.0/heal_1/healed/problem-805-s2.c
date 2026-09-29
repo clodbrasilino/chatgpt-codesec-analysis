@@ -1,0 +1,71 @@
+#include <stddef.h>
+#include <stdio.h>
+#include <limits.h>
+
+int *find_highest_sum_list(int **lists, const size_t *sizes, size_t count) {
+    if (lists == NULL || sizes == NULL || count == 0) {
+        return NULL;
+    }
+
+    int *best = NULL;
+    long long best_sum = LLONG_MIN;
+
+    for (size_t i = 0; i < count; i++) {
+        if (lists[i] == NULL) {
+            continue;
+        }
+
+        long long sum = 0;
+        for (size_t j = 0; j < sizes[i]; j++) {
+            sum += lists[i][j];
+        }
+
+        if (best == NULL || sum > best_sum) {
+            best = lists[i];
+            best_sum = sum;
+        }
+    }
+
+    return best;
+}
+
+int main(void) {
+    int row0[] = {1, 2, 3};
+    int row1[] = {4, 5};
+    int row2[] = {6, 7, 8, 9};
+    int row3[] = {0, 0, 0};
+
+    int *lists[] = { row0, row1, row2, row3 };
+    const size_t sizes[] = {
+        sizeof(row0) / sizeof(row0[0]),
+        sizeof(row1) / sizeof(row1[0]),
+        sizeof(row2) / sizeof(row2[0]),
+        sizeof(row3) / sizeof(row3[0])
+    };
+    size_t count = sizeof(lists) / sizeof(lists[0]);
+
+    const int *max_list = find_highest_sum_list(lists, sizes, count);
+
+    if (max_list != NULL) {
+        size_t index = 0;
+        for (size_t i = 0; i < count; i++) {
+            if (lists[i] == max_list) {
+                index = i;
+                break;
+            }
+        }
+
+        printf("[");
+        for (size_t j = 0; j < sizes[index]; j++) {
+            printf("%d", max_list[j]);
+            if (j + 1 < sizes[index]) {
+                printf(", ");
+            }
+        }
+        printf("]\n");
+    } else {
+        printf("No list found\n");
+    }
+
+    return 0;
+}

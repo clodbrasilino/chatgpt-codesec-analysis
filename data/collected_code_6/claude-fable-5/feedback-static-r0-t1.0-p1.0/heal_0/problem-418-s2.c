@@ -1,0 +1,71 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct sublist {
+    int *data;
+    size_t length;
+};
+
+static const struct sublist *find_max_sublist(const struct sublist *lists, size_t count)
+{
+    const struct sublist *max_list;
+    size_t i;
+
+    if (lists == NULL || count == 0U) {
+        return NULL;
+    }
+
+    max_list = &lists[0];
+    for (i = 1U; i < count; i++) {
+        if (lists[i].length > max_list->length) {
+            max_list = &lists[i];
+        }
+    }
+
+    return max_list;
+}
+
+static void print_sublist(const struct sublist *list)
+{
+    size_t i;
+
+    if (list == NULL || list->data == NULL) {
+        return;
+    }
+
+    printf("[");
+    for (i = 0U; i < list->length; i++) {
+        if (i > 0U) {
+            printf(", ");
+        }
+        printf("%d", list->data[i]);
+    }
+    printf("]\n");
+}
+
+int main(void)
+{
+    int a[] = {1, 2};
+    int b[] = {3, 4, 5, 6};
+    int c[] = {7};
+    struct sublist lists[3];
+    const struct sublist *result;
+
+    lists[0].data = a;
+    lists[0].length = sizeof(a) / sizeof(a[0]);
+    lists[1].data = b;
+    lists[1].length = sizeof(b) / sizeof(b[0]);
+    lists[2].data = c;
+    lists[2].length = sizeof(c) / sizeof(c[0]);
+
+    result = find_max_sublist(lists, sizeof(lists) / sizeof(lists[0]));
+    if (result == NULL) {
+        fprintf(stderr, "No sublist found\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Sublist with maximum length (%zu): ", result->length);
+    print_sublist(result);
+
+    return EXIT_SUCCESS;
+}

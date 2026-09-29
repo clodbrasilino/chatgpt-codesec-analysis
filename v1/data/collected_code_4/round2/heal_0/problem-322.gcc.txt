@@ -1,0 +1,44 @@
+./collected_code_4/round2//heal_0/problem-322.c: In function 'find_min_indices':
+./collected_code_4/round2//heal_0/problem-322.c:24:38: warning: dereference of possibly-NULL 'indices' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   24 |             indices[indices_count++] = i;
+      |             ~~~~~~~~~~~~~~~~~~~~~~~~~^~~
+  'find_min_indices': events 1-10
+    |
+    |    5 |     if(length == 0 || array == NULL) {
+    |      |       ^
+    |      |       |
+    |      |       (1) following 'false' branch...
+    |......
+    |   10 |     int min = array[0];
+    |      |         ~~~
+    |      |         |
+    |      |         (2) ...to here
+    |   11 |     int *indices = (int*) malloc(length * sizeof(int));
+    |      |                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                           |
+    |      |                           (3) this call could return NULL
+    |......
+    |   15 |     for(int i = 0; i < length; i++) {
+    |      |                                ~~~
+    |      |                                 |
+    |      |                                 (5) ...to here
+    |   16 |         if(array[i] < min) {
+    |      |           ~
+    |      |           |
+    |      |           (4) following 'false' branch...
+    |......
+    |   22 |     for(int i = 0; i < length; i++) {
+    |      |                    ~~~~~~~~~~
+    |      |                      |
+    |      |                      (6) following 'true' branch (when 'i < length')...
+    |   23 |         if(array[i] == min) {
+    |      |           ~     ~
+    |      |           |     |
+    |      |           |     (7) ...to here
+    |      |           (8) following 'true' branch...
+    |   24 |             indices[indices_count++] = i;
+    |      |             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                                  |   |
+    |      |                                  |   (10) 'indices + (long unsigned int)indices_count * 4' could be NULL: unchecked value from (3)
+    |      |                                  (9) ...to here
+    |

@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-721.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-721.c:127:16: style: Same expression used in consecutive assignments of 'row' and 'column'. [duplicateAssignExpression]
+        size_t row = n - 1;
+               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-721.c:128:16: note: Same expression used in consecutive assignments of 'row' and 'column'.
+        size_t column = n - 1;
+               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-721.c:127:16: note: Same expression used in consecutive assignments of 'row' and 'column'.
+        size_t row = n - 1;
+               ^

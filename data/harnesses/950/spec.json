@@ -1,0 +1,44 @@
+{
+  "task_id": 950,
+  "text": "Write a C function to display sign of the chinese zodiac for given year.",
+  "fn_candidates": [
+    "chinese_zodiac",
+    "ChineseZodiac",
+    "chineseZodiac",
+    "chinesezodiac"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "chinese_zodiac",
+      "args": [
+        1997
+      ],
+      "expected": "Ox",
+      "assert_src": "assert chinese_zodiac(1997)==('Ox')"
+    },
+    {
+      "fn_name": "chinese_zodiac",
+      "args": [
+        1998
+      ],
+      "expected": "Tiger",
+      "assert_src": "assert chinese_zodiac(1998)==('Tiger')"
+    },
+    {
+      "fn_name": "chinese_zodiac",
+      "args": [
+        1994
+      ],
+      "expected": "Dog",
+      "assert_src": "assert chinese_zodiac(1994)==('Dog')"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "str",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

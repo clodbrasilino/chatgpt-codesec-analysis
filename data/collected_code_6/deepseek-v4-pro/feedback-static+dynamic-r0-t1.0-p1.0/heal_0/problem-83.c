@@ -1,0 +1,18 @@
+#include <stdio.h>
+#include <string.h>
+
+char sum_characters(const char *str) {
+    char sum = 0;
+    size_t len = strlen(str);
+    for (size_t i = 0; i < len; i++) {
+        sum += str[i];
+    }
+    return sum;
+}
+
+int main(void) {
+    const char *input = "Hello";
+    char result = sum_characters(input);
+    printf("Result: %d\n", result);
+    return 0;
+}

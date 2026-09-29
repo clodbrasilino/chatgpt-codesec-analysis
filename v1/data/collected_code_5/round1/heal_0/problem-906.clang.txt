@@ -1,0 +1,9 @@
+collected_code_5/round1/heal_0/problem-906.c:30:5: error: call to undeclared library function 'strncpy' with type 'char *(char *, const char *, unsigned long)'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   30 |     strncpy(year, &url[matches[0].rm_so], 4);
+      |     ^
+collected_code_5/round1/heal_0/problem-906.c:30:5: note: include the header <string.h> or explicitly provide a declaration for 'strncpy'
+collected_code_5/round1/heal_0/problem-906.c:53:9: error: call to undeclared library function 'strcspn' with type 'unsigned long (const char *, const char *)'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   53 |     url[strcspn(url, "\n")] = 0;
+      |         ^
+collected_code_5/round1/heal_0/problem-906.c:53:9: note: include the header <string.h> or explicitly provide a declaration for 'strcspn'
+2 errors generated.

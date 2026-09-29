@@ -1,0 +1,25 @@
+```c
+#include <stdio.h>
+#include <stdint.h>
+#include <stdlib.h>
+
+uint32_t set_even_bits(uint32_t num) {
+    return num | 0x55555555;
+}
+
+int main(void) {
+    uint32_t input;
+    uint32_t result;
+    int scan_result;
+
+    scan_result = scanf("%u", &input);
+    if (scan_result != 1) {
+        return EXIT_FAILURE;
+    }
+
+    result = set_even_bits(input);
+    printf("%u\n", result);
+
+    return EXIT_SUCCESS;
+}
+```

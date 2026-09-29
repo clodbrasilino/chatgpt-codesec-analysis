@@ -1,0 +1,68 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+#define MAX_INPUT_SIZE 1024
+
+long long countSubstrings(const char *str, size_t max_len)
+{
+    long long counts[256] = {0};
+    long long result = 0;
+    size_t i;
+    size_t len;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    len = strnlen(str, max_len);
+
+    for (i = 0; i < len; i++) {
+        counts[(unsigned char)str[i]]++;
+    }
+
+    for (i = 0; i < 256; i++) {
+        result += (counts[i] * (counts[i] + 1)) / 2;
+    }
+
+    return result;
+}
+
+int main(void)
+{
+    char buffer[MAX_INPUT_SIZE];
+    size_t len;
+    long long result;
+
+    memset(buffer, 0, sizeof(buffer));
+
+    printf("Enter a string: ");
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    }
+
+    result = countSubstrings(buffer, sizeof(buffer));
+
+    if (printf("Count of substrings: %lld\n", result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+Key changes made to address the identified weaknesses:
+
+1. **CWE-126 (over-read via `strlen`)**: Replaced both `strlen` calls with `strnlen`, which takes an explicit maximum length and cannot read past the buffer even if the string is not null-terminated. `countSubstrings` now receives a `max_len` parameter so the bound is enforced inside the function as well.
+
+2. **CWE-119/CWE-120 (statically-sized buffer)**: The buffer size is now defined via `MAX_INPUT_SIZE`, the buffer is zero-initialized with `memset`, and null-termination is explicitly guaranteed after `fgets` by forcing `buffer[sizeof(buffer) - 1] = '\0'`. Combined with `fgets(buffer, sizeof(buffer), stdin)`, this ensures reads and writes stay within bounds.

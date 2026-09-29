@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-390-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-390-s2.c:101:39: style: Condition 'total_len>=prefix_len+data_len' is always true [knownConditionTrueFalse]
+        if (data_len > 0 && total_len >= prefix_len + data_len) {
+                                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-390-s2.c:92:19: note: total_len is assigned 'prefix_len+data_len+1' here.
+        total_len = prefix_len + data_len + 1;
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-390-s2.c:94:22: note: Assuming condition is false
+        if (new_data == NULL) {
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-390-s2.c:101:39: note: Condition 'total_len>=prefix_len+data_len' is always true
+        if (data_len > 0 && total_len >= prefix_len + data_len) {
+                                      ^

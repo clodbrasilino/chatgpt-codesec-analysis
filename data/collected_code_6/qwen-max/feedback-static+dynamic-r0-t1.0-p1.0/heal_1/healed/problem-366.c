@@ -1,0 +1,22 @@
+#include <stdio.h>
+#include <limits.h>
+
+int findLargestAdjacentProduct(const int *arr, int length) {
+    if (length < 2) return INT_MIN;
+    int max_product = arr[0] * arr[1];
+    for (int i = 1; i < length - 1; ++i) {
+        int product = arr[i] * arr[i + 1];
+        if (product > max_product) {
+            max_product = product;
+        }
+    }
+    return max_product;
+}
+
+int main() {
+    int arr[] = {3, 6, -2, -5, 7, 3};
+    int length = sizeof(arr) / sizeof(arr[0]);
+    int result = findLargestAdjacentProduct(arr, length);
+    printf("The largest product of adjacent elements is: %d\n", result);
+    return 0;
+}

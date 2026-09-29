@@ -1,0 +1,30 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int compute_gcd(int a, int b) {
+    while (b != 0) {
+        int temp = b;
+        b = a % b;
+        a = temp;
+    }
+    return a;
+}
+
+int compute_lcm(int a, int b) {
+    if (a <= 0 || b <= 0) {
+        exit(EXIT_FAILURE);
+    }
+    int gcd = compute_gcd(a, b);
+    if (gcd == 0) {
+        exit(EXIT_FAILURE);
+    }
+    return (a / gcd) * b;
+}
+
+int main(void) {
+    int num1 = 12;
+    int num2 = 18;
+    int result = compute_lcm(num1, num2);
+    printf("%d\n", result);
+    return 0;
+}

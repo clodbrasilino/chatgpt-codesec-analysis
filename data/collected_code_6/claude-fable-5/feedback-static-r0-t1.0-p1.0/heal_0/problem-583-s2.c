@@ -1,0 +1,65 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+static int catalan(unsigned int n, unsigned long long *result)
+{
+    unsigned long long *table;
+    unsigned int i;
+    unsigned int j;
+
+    if (result == NULL) {
+        return -1;
+    }
+
+    table = calloc((size_t)n + 1U, sizeof(*table));
+    if (table == NULL) {
+        return -1;
+    }
+
+    table[0] = 1ULL;
+
+    for (i = 1U; i <= n; i++) {
+        table[i] = 0ULL;
+        for (j = 0U; j < i; j++) {
+            unsigned long long product;
+            if (table[j] != 0ULL &&
+                table[i - 1U - j] > ULLONG_MAX / table[j]) {
+                free(table);
+                return -1;
+            }
+            product = table[j] * table[i - 1U - j];
+            if (table[i] > ULLONG_MAX - product) {
+                free(table);
+                return -1;
+            }
+            table[i] += product;
+        }
+    }
+
+    *result = table[n];
+    free(table);
+    return 0;
+}
+
+int main(void)
+{
+    unsigned int n;
+    unsigned long long value;
+    int items;
+
+    printf("Enter n: ");
+    items = scanf("%u", &n);
+    if (items != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (catalan(n, &value) != 0) {
+        fprintf(stderr, "Computation failed or overflow occurred\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Catalan(%u) = %llu\n", n, value);
+    return EXIT_SUCCESS;
+}

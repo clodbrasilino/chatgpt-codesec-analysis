@@ -1,0 +1,70 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+int counting_sort(int *arr, size_t n)
+{
+    if (arr == NULL || n == 0) {
+        return -1;
+    }
+
+    int min = arr[0];
+    int max = arr[0];
+    for (size_t i = 1; i < n; i++) {
+        if (arr[i] < min) {
+            min = arr[i];
+        }
+        if (arr[i] > max) {
+            max = arr[i];
+        }
+    }
+
+    long long range_ll = (long long)max - (long long)min + 1LL;
+    if (range_ll <= 0 || (unsigned long long)range_ll > SIZE_MAX / sizeof(size_t)) {
+        return -1;
+    }
+    size_t range = (size_t)range_ll;
+
+    size_t *count = calloc(range, sizeof(size_t));
+    if (count == NULL) {
+        return -1;
+    }
+
+    for (size_t i = 0; i < n; i++) {
+        count[(size_t)((long long)arr[i] - (long long)min)]++;
+    }
+
+    size_t idx = 0;
+    for (size_t i = 0; i < range; i++) {
+        while (count[i] > 0) {
+            arr[idx] = (int)((long long)i + (long long)min);
+            idx++;
+            count[i]--;
+        }
+    }
+
+    free(count);
+    return 0;
+}
+
+int main(void)
+{
+    int arr[] = {4, -2, 7, 1, 0, -5, 9, 3, 3, -2};
+    size_t n = sizeof(arr) / sizeof(arr[0]);
+
+    if (counting_sort(arr, n) != 0) {
+        fprintf(stderr, "Sorting failed\n");
+        return EXIT_FAILURE;
+    }
+
+    for (size_t i = 0; i < n; i++) {
+        if (printf("%d ", arr[i]) < 0) {
+            return EXIT_FAILURE;
+        }
+    }
+    if (printf("\n") < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

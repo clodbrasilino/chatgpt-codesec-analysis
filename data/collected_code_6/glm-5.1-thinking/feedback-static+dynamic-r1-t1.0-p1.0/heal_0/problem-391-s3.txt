@@ -1,0 +1,161 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef enum {
+    STRING_TYPE,
+    DICT_TYPE
+} ValueType;
+
+typedef struct DictEntry {
+    char *key;
+    ValueType type;
+    union {
+        char *string_value;
+        struct Dict *dict_value;
+    } value;
+    struct DictEntry *next;
+} DictEntry;
+
+typedef struct Dict {
+    DictEntry *head;
+} Dict;
+
+Dict *create_dict(void) {
+    Dict *d = malloc(sizeof(Dict));
+    if (!d) return NULL;
+    d->head = NULL;
+    return d;
+}
+
+void free_dict(Dict *d) {
+    if (!d) return;
+    DictEntry *current = d->head;
+    while (current) {
+        DictEntry *next = current->next;
+        free(current->key);
+        if (current->type == STRING_TYPE) {
+            free(current->value.string_value);
+        } else if (current->type == DICT_TYPE) {
+            free_dict(current->value.dict_value);
+        }
+        free(current);
+        current = next;
+    }
+    free(d);
+}
+
+int dict_add_string(Dict *d, const char *key, const char *val) {
+    if (!d || !key || !val) return -1;
+    DictEntry *entry = malloc(sizeof(DictEntry));
+    if (!entry) return -1;
+    
+    entry->key = strdup(key);
+    if (!entry->key) {
+        free(entry);
+        return -1;
+    }
+    
+    entry->value.string_value = strdup(val);
+    if (!entry->value.string_value) {
+        free(entry->key);
+        free(entry);
+        return -1;
+    }
+    
+    entry->type = STRING_TYPE;
+    entry->next = d->head;
+    d->head = entry;
+    return 0;
+}
+
+int dict_add_dict(Dict *d, const char *key, Dict *val) {
+    if (!d || !key || !val) return -1;
+    DictEntry *entry = malloc(sizeof(DictEntry));
+    if (!entry) return -1;
+    
+    entry->key = strdup(key);
+    if (!entry->key) {
+        free(entry);
+        return -1;
+    }
+    
+    entry->value.dict_value = val;
+    entry->type = DICT_TYPE;
+    entry->next = d->head;
+    d->head = entry;
+    return 0;
+}
+
+Dict *list_to_dict(char **keys, char **values, int count) {
+    if (!keys || !values || count <= 0) return NULL;
+    Dict *d = create_dict();
+    if (!d) return NULL;
+    
+    for (int i = 0; i < count; i++) {
+        if (dict_add_string(d, keys[i], values[i]) != 0) {
+            free_dict(d);
+            return NULL;
+        }
+    }
+    return d;
+}
+
+Dict *lists_to_nested_dict(char **outer_keys, int outer_count, char **inner_keys, char **inner_values, int inner_count) {
+    if (!outer_keys || !inner_keys || !inner_values || outer_count <= 0 || inner_count <= 0) return NULL;
+    Dict *parent = create_dict();
+    if (!parent) return NULL;
+    
+    for (int i = 0; i < outer_count; i++) {
+        Dict *child = list_to_dict(inner_keys, inner_values, inner_count);
+        if (!child) {
+            free_dict(parent);
+            return NULL;
+        }
+        
+        if (dict_add_dict(parent, outer_keys[i], child) != 0) {
+            free_dict(child);
+            free_dict(parent);
+            return NULL;
+        }
+    }
+    return parent;
+}
+
+void print_dict(Dict *d, int indent) {
+    if (!d) return;
+    DictEntry *current = d->head;
+    while (current) {
+        for (int i = 0; i < indent; i++) printf("  ");
+        printf("%s: ", current->key);
+        if (current->type == STRING_TYPE) {
+            printf("%s\n", current->value.string_value);
+        } else if (current->type == DICT_TYPE) {
+            printf("\n");
+            print_dict(current->value.dict_value, indent + 1);
+        }
+        current = current->next;
+    }
+}
+
+int main(void) {
+    char *outer_keys[] = {"user1", "user2", "user3"};
+    int outer_count = 3;
+
+    char *inner_keys[] = {"role", "department", "active"};
+    char *inner_values[] = {"admin", "IT", "yes"};
+    int inner_count = 3;
+
+    Dict *nested = lists_to_nested_dict(outer_keys, outer_count, inner_keys, inner_values, inner_count);
+    if (!nested) {
+        fprintf(stderr, "Failed to create nested dictionary\n");
+        return 1;
+    }
+
+    print_dict(nested, 0);
+    free_dict(nested);
+
+    return 0;
+}
+```

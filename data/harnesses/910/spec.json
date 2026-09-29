@@ -1,0 +1,51 @@
+{
+  "task_id": 910,
+  "text": "Write a C function to validate a gregorian date.",
+  "fn_candidates": [
+    "check_date",
+    "CheckDate",
+    "checkDate",
+    "checkdate"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "check_date",
+      "args": [
+        11,
+        11,
+        2002
+      ],
+      "expected": true,
+      "assert_src": "assert check_date(11,11,2002)==True"
+    },
+    {
+      "fn_name": "check_date",
+      "args": [
+        13,
+        11,
+        2002
+      ],
+      "expected": false,
+      "assert_src": "assert check_date(13,11,2002)==False"
+    },
+    {
+      "fn_name": "check_date",
+      "args": [
+        "11",
+        "11",
+        "2002"
+      ],
+      "expected": true,
+      "assert_src": "assert check_date('11','11','2002')==True"
+    }
+  ],
+  "arg_kinds": [
+    "int",
+    "str"
+  ],
+  "return_kind": "bool",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

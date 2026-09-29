@@ -1,0 +1,44 @@
+{
+  "task_id": 928,
+  "text": "Write a C function to convert a date of yyyy-mm-dd format to dd-mm-yyyy format.",
+  "fn_candidates": [
+    "change_date_format",
+    "ChangeDateFormat",
+    "changeDateFormat",
+    "changedateformat"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "change_date_format",
+      "args": [
+        "2026-01-02"
+      ],
+      "expected": "02-01-2026",
+      "assert_src": "assert change_date_format('2026-01-02')=='02-01-2026'"
+    },
+    {
+      "fn_name": "change_date_format",
+      "args": [
+        "2021-01-04"
+      ],
+      "expected": "04-01-2021",
+      "assert_src": "assert change_date_format('2021-01-04')=='04-01-2021'"
+    },
+    {
+      "fn_name": "change_date_format",
+      "args": [
+        "2030-06-06"
+      ],
+      "expected": "06-06-2030",
+      "assert_src": "assert change_date_format('2030-06-06')=='06-06-2030'"
+    }
+  ],
+  "arg_kinds": [
+    "str"
+  ],
+  "return_kind": "str",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

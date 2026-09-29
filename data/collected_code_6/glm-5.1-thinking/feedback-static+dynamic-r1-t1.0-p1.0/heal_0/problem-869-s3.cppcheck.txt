@@ -1,0 +1,7 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-869-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-869-s3.c:14:30: style: Parameter 'values' can be declared as pointer to const [constParameterPointer]
+SubNode *create_sublist(int *values, int count) {
+                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-869-s3.c:35:51: style: Parameter 'counts' can be declared as pointer to const [constParameterPointer]
+ListNode *create_list_of_lists(int **values, int *counts, int list_count) {
+                                                  ^

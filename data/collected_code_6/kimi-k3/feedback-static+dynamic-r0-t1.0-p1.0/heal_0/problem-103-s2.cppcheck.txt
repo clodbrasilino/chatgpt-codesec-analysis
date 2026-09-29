@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_0/problem-103-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_0/problem-103-s2.c:9:21: style: Condition 'm==0' is always false [knownConditionTrueFalse]
+    if (n == 0 && m == 0) {
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_0/problem-103-s2.c:9:11: note: Assuming that condition 'n==0' is not redundant
+    if (n == 0 && m == 0) {
+          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_0/problem-103-s2.c:5:29: note: Assuming that condition 'm>=n' is not redundant
+    if (n < 0 || m < 0 || m >= n) {
+                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_0/problem-103-s2.c:9:21: note: Condition 'm==0' is always false
+    if (n == 0 && m == 0) {
+                    ^

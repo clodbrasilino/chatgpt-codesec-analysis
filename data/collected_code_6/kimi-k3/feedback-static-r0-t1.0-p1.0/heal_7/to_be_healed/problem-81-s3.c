@@ -1,0 +1,258 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+typedef struct {
+    void **elements;
+    size_t size;
+    size_t elem_size;
+} Tuple;
+
+typedef struct {
+    void *first;
+    void *second;
+} Pair;
+
+typedef struct {
+    Pair *pairs;
+    size_t size;
+} ZippedTuple;
+
+static int is_valid_element(const void *element, size_t elem_size) {
+    if (element == NULL || elem_size == 0) {
+        return 0;
+    }
+    return 1;
+}
+
+static int safe_memcpy(void *dest, const void *src, size_t dest_size, size_t src_size) {
+    if (dest == NULL || src == NULL || dest_size < src_size) {
+        return 0;
+    }
+    /* Possible weaknesses found:
+     * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+     */
+    memcpy(dest, src, src_size);
+    return 1;
+}
+
+Tuple* tuple_create(void **elements, size_t size, size_t elem_size) {
+    if (elements == NULL || size == 0 || elem_size == 0) {
+        return NULL;
+    }
+    
+    if (size > SIZE_MAX / sizeof(void*)) {
+        return NULL;
+    }
+    
+    Tuple *tuple = (Tuple*)malloc(sizeof(Tuple));
+    if (tuple == NULL) {
+        return NULL;
+    }
+    
+    tuple->elements = (void**)malloc(size * sizeof(void*));
+    if (tuple->elements == NULL) {
+        free(tuple);
+        return NULL;
+    }
+    
+    for (size_t i = 0; i < size; i++) {
+        if (!is_valid_element(elements[i], elem_size)) {
+            for (size_t j = 0; j < i; j++) {
+                free(tuple->elements[j]);
+            }
+            free(tuple->elements);
+            free(tuple);
+            return NULL;
+        }
+        
+        tuple->elements[i] = malloc(elem_size);
+        if (tuple->elements[i] == NULL) {
+            for (size_t j = 0; j < i; j++) {
+                free(tuple->elements[j]);
+            }
+            free(tuple->elements);
+            free(tuple);
+            return NULL;
+        }
+        
+        if (!safe_memcpy(tuple->elements[i], elements[i], elem_size, elem_size)) {
+            free(tuple->elements[i]);
+            for (size_t j = 0; j < i; j++) {
+                free(tuple->elements[j]);
+            }
+            free(tuple->elements);
+            free(tuple);
+            return NULL;
+        }
+    }
+    
+    tuple->size = size;
+    tuple->elem_size = elem_size;
+    return tuple;
+}
+
+void tuple_destroy(Tuple *tuple) {
+    if (tuple == NULL) {
+        return;
+    }
+    
+    if (tuple->elements != NULL) {
+        for (size_t i = 0; i < tuple->size; i++) {
+            if (tuple->elements[i] != NULL) {
+                free(tuple->elements[i]);
+            }
+        }
+        free(tuple->elements);
+    }
+    free(tuple);
+}
+
+ZippedTuple* tuple_zip(const Tuple *t1, const Tuple *t2) {
+    if (t1 == NULL || t2 == NULL || t1->size != t2->size || t1->size == 0) {
+        return NULL;
+    }
+    
+    if (t1->elements == NULL || t2->elements == NULL) {
+        return NULL;
+    }
+    
+    if (t1->size > SIZE_MAX / sizeof(Pair)) {
+        return NULL;
+    }
+    
+    ZippedTuple *zipped = (ZippedTuple*)malloc(sizeof(ZippedTuple));
+    if (zipped == NULL) {
+        return NULL;
+    }
+    
+    zipped->pairs = (Pair*)malloc(t1->size * sizeof(Pair));
+    if (zipped->pairs == NULL) {
+        free(zipped);
+        return NULL;
+    }
+    
+    for (size_t i = 0; i < t1->size; i++) {
+        if (!is_valid_element(t1->elements[i], t1->elem_size) || 
+            !is_valid_element(t2->elements[i], t2->elem_size)) {
+            for (size_t j = 0; j < i; j++) {
+                free(zipped->pairs[j].first);
+                free(zipped->pairs[j].second);
+            }
+            free(zipped->pairs);
+            free(zipped);
+            return NULL;
+        }
+        
+        zipped->pairs[i].first = malloc(t1->elem_size);
+        if (zipped->pairs[i].first == NULL) {
+            for (size_t j = 0; j < i; j++) {
+                free(zipped->pairs[j].first);
+                free(zipped->pairs[j].second);
+            }
+            free(zipped->pairs);
+            free(zipped);
+            return NULL;
+        }
+        
+        zipped->pairs[i].second = malloc(t2->elem_size);
+        if (zipped->pairs[i].second == NULL) {
+            free(zipped->pairs[i].first);
+            for (size_t j = 0; j < i; j++) {
+                free(zipped->pairs[j].first);
+                free(zipped->pairs[j].second);
+            }
+            free(zipped->pairs);
+            free(zipped);
+            return NULL;
+        }
+        
+        if (!safe_memcpy(zipped->pairs[i].first, t1->elements[i], t1->elem_size, t1->elem_size)) {
+            free(zipped->pairs[i].first);
+            free(zipped->pairs[i].second);
+            for (size_t j = 0; j < i; j++) {
+                free(zipped->pairs[j].first);
+                free(zipped->pairs[j].second);
+            }
+            free(zipped->pairs);
+            free(zipped);
+            return NULL;
+        }
+        
+        if (!safe_memcpy(zipped->pairs[i].second, t2->elements[i], t2->elem_size, t2->elem_size)) {
+            free(zipped->pairs[i].first);
+            free(zipped->pairs[i].second);
+            for (size_t j = 0; j < i; j++) {
+                free(zipped->pairs[j].first);
+                free(zipped->pairs[j].second);
+            }
+            free(zipped->pairs);
+            free(zipped);
+            return NULL;
+        }
+    }
+    
+    zipped->size = t1->size;
+    return zipped;
+}
+
+void zipped_destroy(ZippedTuple *zipped) {
+    if (zipped == NULL) {
+        return;
+    }
+    
+    if (zipped->pairs != NULL) {
+        for (size_t i = 0; i < zipped->size; i++) {
+            if (zipped->pairs[i].first != NULL) {
+                free(zipped->pairs[i].first);
+            }
+            if (zipped->pairs[i].second != NULL) {
+                free(zipped->pairs[i].second);
+            }
+        }
+        free(zipped->pairs);
+    }
+    free(zipped);
+}
+
+int main(void) {
+    int a = 1, b = 2, c = 3;
+    char x = 'a', y = 'b', z = 'c';
+    
+    void *int_elements[] = {&a, &b, &c};
+    void *char_elements[] = {&x, &y, &z};
+    
+    Tuple *t1 = tuple_create(int_elements, 3, sizeof(int));
+    if (t1 == NULL) {
+        fprintf(stderr, "Failed to create first tuple\n");
+        return EXIT_FAILURE;
+    }
+    
+    Tuple *t2 = tuple_create(char_elements, 3, sizeof(char));
+    if (t2 == NULL) {
+        fprintf(stderr, "Failed to create second tuple\n");
+        tuple_destroy(t1);
+        return EXIT_FAILURE;
+    }
+    
+    ZippedTuple *zipped = tuple_zip(t1, t2);
+    if (zipped == NULL) {
+        fprintf(stderr, "Failed to zip tuples\n");
+        tuple_destroy(t1);
+        tuple_destroy(t2);
+        return EXIT_FAILURE;
+    }
+    
+    for (size_t i = 0; i < zipped->size; i++) {
+        printf("(%d, %c)\n", 
+               *(int*)zipped->pairs[i].first, 
+               *(char*)zipped->pairs[i].second);
+    }
+    
+    zipped_destroy(zipped);
+    tuple_destroy(t1);
+    tuple_destroy(t2);
+    
+    return EXIT_SUCCESS;
+}

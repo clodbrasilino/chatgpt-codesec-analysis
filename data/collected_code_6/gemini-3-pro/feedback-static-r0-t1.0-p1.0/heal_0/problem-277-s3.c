@@ -1,0 +1,107 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char *key;
+    int value;
+} KeyValuePair;
+
+typedef struct {
+    KeyValuePair *entries;
+    size_t size;
+    size_t capacity;
+} Dictionary;
+
+Dictionary* create_dictionary(size_t capacity) {
+    Dictionary *dict = (Dictionary *)malloc(sizeof(Dictionary));
+    if (!dict) {
+        return NULL;
+    }
+    
+    dict->entries = (KeyValuePair *)calloc(capacity, sizeof(KeyValuePair));
+    if (!dict->entries) {
+        free(dict);
+        return NULL;
+    }
+    
+    dict->size = 0;
+    dict->capacity = capacity;
+    return dict;
+}
+
+void free_dictionary(Dictionary *dict) {
+    if (dict) {
+        for (size_t i = 0; i < dict->size; ++i) {
+            free(dict->entries[i].key);
+        }
+        free(dict->entries);
+        free(dict);
+    }
+}
+
+int add_entry(Dictionary *dict, const char *key, int value) {
+    if (!dict || !key || dict->size >= dict->capacity) {
+        return -1;
+    }
+    
+    dict->entries[dict->size].key = strdup(key);
+    if (!dict->entries[dict->size].key) {
+        return -1;
+    }
+    
+    dict->entries[dict->size].value = value;
+    dict->size++;
+    return 0;
+}
+
+Dictionary* filter_dictionary_by_value(const Dictionary *input_dict, int threshold) {
+    if (!input_dict) {
+        return NULL;
+    }
+    
+    Dictionary *filtered_dict = create_dictionary(input_dict->capacity);
+    if (!filtered_dict) {
+        return NULL;
+    }
+    
+    for (size_t i = 0; i < input_dict->size; ++i) {
+        if (input_dict->entries[i].value > threshold) {
+            if (add_entry(filtered_dict, input_dict->entries[i].key, input_dict->entries[i].value) != 0) {
+                free_dictionary(filtered_dict);
+                return NULL;
+            }
+        }
+    }
+    
+    return filtered_dict;
+}
+
+int main(void) {
+    Dictionary *dict = create_dictionary(5);
+    if (!dict) {
+        return EXIT_FAILURE;
+    }
+    
+    if (add_entry(dict, "apple", 10) != 0 ||
+        add_entry(dict, "banana", 5) != 0 ||
+        add_entry(dict, "cherry", 20) != 0) {
+        free_dictionary(dict);
+        return EXIT_FAILURE;
+    }
+    
+    Dictionary *filtered = filter_dictionary_by_value(dict, 8);
+    if (!filtered) {
+        free_dictionary(dict);
+        return EXIT_FAILURE;
+    }
+    
+    for (size_t i = 0; i < filtered->size; ++i) {
+        printf("%s: %d\n", filtered->entries[i].key, filtered->entries[i].value);
+    }
+    
+    free_dictionary(filtered);
+    free_dictionary(dict);
+    
+    return EXIT_SUCCESS;
+}

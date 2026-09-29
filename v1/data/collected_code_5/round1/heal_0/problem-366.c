@@ -1,0 +1,26 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+int findLargestProduct(int* arr, int length) {
+    if(arr == NULL || length <= 1) {
+        printf("Error: array is NULL or length is less than 2\n");
+        exit(EXIT_FAILURE);
+    }
+
+    int product = INT_MIN;
+    for(int i = 0; i < length - 1; i++) {
+        if(arr[i] * arr[i + 1] > product)
+            product = arr[i] * arr[i + 1];
+    }
+
+    return product;
+}
+
+int main() {
+    int arr[] = {1, 2, 3, 4, 5, 6};
+    int length = sizeof(arr) / sizeof(arr[0]);
+    int product = findLargestProduct(arr, length);
+    printf("Largest product of adjacent elements is %d\n", product);
+    return 0;
+}

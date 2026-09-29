@@ -1,0 +1,30 @@
+#include <stdio.h>
+#include <stdlib.h>
+ /* Possible weaknesses found:
+  *  test case 1 failed: expected -1, got 0
+  */
+
+double max_triangle_area(double radius) {
+    if (radius <= 0.0) {
+        return 0.0;
+    }
+    return radius * radius;
+}
+
+int main(void) {
+    double radius;
+    
+    if (scanf("%lf", &radius) != 1) {
+        return EXIT_FAILURE;
+    }
+    
+    if (radius < 0.0) {
+        return EXIT_FAILURE;
+    }
+    
+    double area = max_triangle_area(radius);
+    
+    printf("%.4f\n", area);
+    
+    return EXIT_SUCCESS;
+}

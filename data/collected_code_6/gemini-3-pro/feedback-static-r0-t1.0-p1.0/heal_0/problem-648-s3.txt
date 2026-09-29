@@ -1,0 +1,38 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+void swap_adjacent(int *arr, size_t length) {
+    if (arr == NULL || length < 2) {
+        return;
+    }
+
+    for (size_t i = 0; i < length - 1; i += 2) {
+        int temp = arr[i];
+        arr[i] = arr[i + 1];
+        arr[i + 1] = temp;
+    }
+}
+
+int main(void) {
+    size_t length = 6;
+    int *arr = (int *)malloc(length * sizeof(int));
+    if (arr == NULL) {
+        return EXIT_FAILURE;
+    }
+
+    for (size_t i = 0; i < length; ++i) {
+        arr[i] = (int)(i + 1);
+    }
+
+    swap_adjacent(arr, length);
+
+    for (size_t i = 0; i < length; ++i) {
+        printf("%d ", arr[i]);
+    }
+    printf("\n");
+
+    free(arr);
+    return EXIT_SUCCESS;
+}
+```

@@ -1,0 +1,111 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+typedef struct {
+    int *elems;
+    size_t len;
+    size_t capacity;
+} Tuple;
+
+typedef struct {
+    Tuple *tuples;
+    size_t count;
+} TupleArray;
+
+TupleArray join_tuples(TupleArray arr) {
+    for (size_t i = 0; i < arr.count; i++) {
+        if (arr.tuples[i].len == 0) continue;
+        for (size_t j = i + 1; j < arr.count; j++) {
+            if (arr.tuples[j].len == 0) continue;
+            if (arr.tuples[i].elems[0] == arr.tuples[j].elems[0]) {
+                size_t new_len = arr.tuples[i].len + arr.tuples[j].len - 1;
+                if (new_len < arr.tuples[i].len || new_len > SIZE_MAX / sizeof(int)) {
+                    continue;
+                }
+                int *new_elems = realloc(arr.tuples[i].elems, new_len * sizeof(int));
+                if (!new_elems) {
+                    return arr;
+                }
+                arr.tuples[i].elems = new_elems;
+                arr.tuples[i].capacity = new_len;
+                
+                size_t copy_len = arr.tuples[j].len - 1;
+                if (copy_len > 0 && arr.tuples[i].capacity - arr.tuples[i].len >= copy_len && copy_len <= SIZE_MAX / sizeof(int)) {
+                    memcpy(arr.tuples[i].elems + arr.tuples[i].len, arr.tuples[j].elems + 1, copy_len * sizeof(int));
+                }
+                arr.tuples[i].len = new_len;
+                
+                free(arr.tuples[j].elems);
+                arr.tuples[j].elems = NULL;
+                arr.tuples[j].len = 0;
+                arr.tuples[j].capacity = 0;
+            }
+        }
+    }
+    
+    size_t write_idx = 0;
+    for (size_t i = 0; i < arr.count; i++) {
+        if (arr.tuples[i].len > 0) {
+            arr.tuples[write_idx++] = arr.tuples[i];
+        }
+    }
+    arr.count = write_idx;
+    
+    return arr;
+}
+
+void free_tuple_array(TupleArray arr) {
+    for (size_t i = 0; i < arr.count; i++) {
+        free(arr.tuples[i].elems);
+    }
+    free(arr.tuples);
+}
+
+int main(void) {
+    TupleArray arr;
+    arr.count = 4;
+    arr.tuples = malloc(arr.count * sizeof(Tuple));
+    if (!arr.tuples) return EXIT_FAILURE;
+
+    for (size_t i = 0; i < arr.count; i++) {
+        arr.tuples[i].elems = NULL;
+        arr.tuples[i].len = 0;
+        arr.tuples[i].capacity = 0;
+    }
+
+    int a1[] = {1, 2, 3};
+    int a2[] = {1, 4, 5};
+    int a3[] = {2, 6};
+    int a4[] = {1, 7};
+
+    int *data[] = {a1, a2, a3, a4};
+    size_t lengths[] = {sizeof(a1) / sizeof(int), sizeof(a2) / sizeof(int), sizeof(a3) / sizeof(int), sizeof(a4) / sizeof(int)};
+
+    for (size_t i = 0; i < arr.count; i++) {
+        arr.tuples[i].len = lengths[i];
+        arr.tuples[i].capacity = lengths[i];
+        if (arr.tuples[i].len > 0 && arr.tuples[i].len <= SIZE_MAX / sizeof(int)) {
+            arr.tuples[i].elems = malloc(arr.tuples[i].capacity * sizeof(int));
+            if (!arr.tuples[i].elems) {
+                free_tuple_array(arr);
+                return EXIT_FAILURE;
+            }
+            memcpy(arr.tuples[i].elems, data[i], arr.tuples[i].len * sizeof(int));
+        }
+    }
+
+    TupleArray joined = join_tuples(arr);
+
+    for (size_t i = 0; i < joined.count; i++) {
+        for (size_t j = 0; j < joined.tuples[i].len; j++) {
+            printf("%d ", joined.tuples[i].elems[j]);
+        }
+        printf("\n");
+    }
+
+    free_tuple_array(joined);
+
+    return EXIT_SUCCESS;
+}

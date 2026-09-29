@@ -1,0 +1,118 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+char* remove_words_with_length(const char* input, int k) {
+    if (input == NULL || k <= 0) {
+        return NULL;
+    }
+    
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    size_t input_len = strlen(input);
+    
+    char* result = (char*)malloc(input_len + 1);
+    if (result == NULL) {
+        return NULL;
+    }
+    
+    size_t i = 0;
+    size_t j = 0;
+    int word_start = -1;
+    int word_length = 0;
+    
+    while (i <= input_len) {
+        if (i == input_len || isspace((unsigned char)input[i])) {
+            if (word_start != -1) {
+                if (word_length != k) {
+                    if (j > 0) {
+                        result[j++] = ' ';
+                    }
+                    
+                    if (j + (size_t)word_length > input_len) {
+                        free(result);
+                        return NULL;
+                    }
+                    
+                    /* Possible weaknesses found:
+                     * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+                     */
+                    memcpy(result + j, input + word_start, (size_t)word_length);
+                    j += (size_t)word_length;
+                }
+                word_start = -1;
+                word_length = 0;
+            }
+        } else {
+            if (word_start == -1) {
+                word_start = (int)i;
+            }
+            word_length++;
+        }
+        i++;
+    }
+    
+    while (j > 0 && result[j-1] == ' ') {
+        j--;
+    }
+    result[j] = '\0';
+    
+    char* final_result = (char*)realloc(result, j + 1);
+    if (final_result == NULL) {
+        free(result);
+        return NULL;
+    }
+    
+    return final_result;
+}
+
+int main(void) {
+    char* input = NULL;
+    size_t input_size = 0;
+    int k;
+    
+    printf("Enter a string: ");
+    if (getline(&input, &input_size, stdin) == -1) {
+        free(input);
+        return 1;
+    }
+    
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    size_t input_len = strlen(input);
+    if (input_len > 0 && input[input_len - 1] == '\n') {
+        input[input_len - 1] = '\0';
+        input_len--;
+    }
+    
+    if (input_len > 1000) {
+        free(input);
+        return 1;
+    }
+    
+    printf("Enter length k: ");
+    if (scanf("%d", &k) != 1) {
+        free(input);
+        return 1;
+    }
+    
+    if (k < 0) {
+        k = 0;
+    }
+    
+    char* result = remove_words_with_length(input, k);
+    if (result == NULL) {
+        printf("Error processing string\n");
+        free(input);
+        return 1;
+    }
+    
+    printf("Result: %s\n", result);
+    
+    free(result);
+    free(input);
+    return 0;
+}

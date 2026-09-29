@@ -1,0 +1,108 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char *key;
+    char *value;
+} KeyValuePair;
+
+typedef struct {
+    KeyValuePair *entries;
+    size_t size;
+    size_t capacity;
+} Dictionary;
+
+Dictionary *create_dictionary(size_t capacity) {
+    Dictionary *dict = malloc(sizeof(Dictionary));
+    if (!dict) return NULL;
+    dict->entries = malloc(capacity * sizeof(KeyValuePair));
+    if (!dict->entries) {
+        free(dict);
+        return NULL;
+    }
+    dict->size = 0;
+    dict->capacity = capacity;
+    return dict;
+}
+
+int add_entry(Dictionary *dict, const char *key, const char *value) {
+    if (!dict || !key || !value) return 0;
+    if (dict->size >= dict->capacity) return 0;
+    dict->entries[dict->size].key = strdup(key);
+    dict->entries[dict->size].value = strdup(value);
+    if (!dict->entries[dict->size].key || !dict->entries[dict->size].value) {
+        free(dict->entries[dict->size].key);
+        free(dict->entries[dict->size].value);
+        return 0;
+    }
+    dict->size++;
+    return 1;
+}
+
+void free_dictionary(Dictionary *dict) {
+    if (!dict) return;
+    for (size_t i = 0; i < dict->size; i++) {
+        free(dict->entries[i].key);
+        free(dict->entries[i].value);
+    }
+    free(dict->entries);
+    free(dict);
+}
+
+char **get_dictionary_keys(const Dictionary *dict, size_t *key_count) {
+    if (!dict || !key_count) {
+        if (key_count) *key_count = 0;
+        return NULL;
+    }
+    *key_count = dict->size;
+    if (dict->size == 0) return NULL;
+    char **keys = malloc(dict->size * sizeof(char *));
+    if (!keys) {
+        *key_count = 0;
+        return NULL;
+    }
+    for (size_t i = 0; i < dict->size; i++) {
+        keys[i] = strdup(dict->entries[i].key);
+        if (!keys[i]) {
+            for (size_t j = 0; j < i; j++) {
+                free(keys[j]);
+            }
+            free(keys);
+            *key_count = 0;
+            return NULL;
+        }
+    }
+    return keys;
+}
+
+void free_keys(char **keys, size_t count) {
+    if (!keys) return;
+    for (size_t i = 0; i < count; i++) {
+        free(keys[i]);
+    }
+    free(keys);
+}
+
+int main(void) {
+    Dictionary *dict = create_dictionary(3);
+    if (!dict) return EXIT_FAILURE;
+    if (!add_entry(dict, "name", "Alice") ||
+        !add_entry(dict, "age", "30") ||
+        !add_entry(dict, "city", "New York")) {
+        free_dictionary(dict);
+        return EXIT_FAILURE;
+    }
+    size_t key_count = 0;
+    char **keys = get_dictionary_keys(dict, &key_count);
+    if (keys) {
+        for (size_t i = 0; i < key_count; i++) {
+            printf("%s\n", keys[i]);
+        }
+        free_keys(keys, key_count);
+    }
+    free_dictionary(dict);
+    return EXIT_SUCCESS;
+}
+```

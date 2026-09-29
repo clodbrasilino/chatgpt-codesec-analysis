@@ -1,0 +1,68 @@
+```c
+#include <stdio.h>
+#include <string.h>
+
+#define BUFFER_SIZE 1024U
+
+unsigned long long count_substrings(const char *str, size_t max_len)
+{
+    unsigned long long n;
+
+    if (str == NULL)
+    {
+        return 0ULL;
+    }
+
+    n = (unsigned long long)strnlen(str, max_len);
+
+    return (n * (n + 1ULL)) / 2ULL;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    unsigned long long result;
+    size_t len;
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL)
+    {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1U] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len > 0U && buffer[len - 1U] == '\n')
+    {
+        buffer[len - 1U] = '\0';
+    }
+
+    result = count_substrings(buffer, sizeof(buffer));
+
+    if (printf("%llu\n", result) < 0)
+    {
+        return 1;
+    }
+
+    return 0;
+}
+```
+
+**Analysis of the original code and the flagged weakness:**
+
+The Flawfinder warning (CWE-119/CWE-120) about the statically-sized `char buffer[BUFFER_SIZE]` is a *low-risk, informational* finding, and the original code already mitigates it correctly. The rewritten code preserves those mitigations:
+
+1. **Bounded input reading** — `fgets(buffer, (int)sizeof(buffer), stdin)` limits input to the buffer size and always NUL-terminates, preventing a classic `gets()`-style overflow (CWE-120).
+
+2. **Defensive NUL termination** — `buffer[sizeof(buffer) - 1U] = '\0';` is redundant after a successful `fgets`, but it's harmless belt-and-suspenders hardening against future refactoring.
+
+3. **Bounded string operations** — `strnlen(buffer, sizeof(buffer))` is used instead of `strlen`, so even a hypothetically unterminated buffer can't cause an out-of-bounds read (CWE-125).
+
+4. **NULL guard** — `count_substrings` checks `str == NULL` before dereferencing.
+
+5. **Overflow-safe arithmetic** — `n * (n + 1) / 2` is computed in `unsigned long long`; with `n ≤ 1023`, the maximum result (~523,776) is nowhere near overflow.
+
+6. **Return-value checking** — Both `fgets` and `printf` return values are checked, satisfying stricter coding standards (e.g., MISRA/CERT).
+
+No functional changes were required; the code was already written defensively, so the rewrite simply strips the comments as requested.

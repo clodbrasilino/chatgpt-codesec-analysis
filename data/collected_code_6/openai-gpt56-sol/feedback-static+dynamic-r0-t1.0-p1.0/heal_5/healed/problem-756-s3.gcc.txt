@@ -1,0 +1,15 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-756-s3.c: In function 'main':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-756-s3.c:31:20: error: 'EXIT_FAILURE' undeclared (first use in this function)
+   31 |             return EXIT_FAILURE;
+      |                    ^~~~~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-756-s3.c:4:1: note: 'EXIT_FAILURE' is defined in header '<stdlib.h>'; this is probably fixable by adding '#include <stdlib.h>'
+    3 | #include <string.h>
+  +++ |+#include <stdlib.h>
+    4 | 
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-756-s3.c:31:20: note: each undeclared identifier is reported only once for each function it appears in
+   31 |             return EXIT_FAILURE;
+      |                    ^~~~~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-756-s3.c:41:16: error: 'EXIT_SUCCESS' undeclared (first use in this function)
+   41 |         return EXIT_SUCCESS;
+      |                ^~~~~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-756-s3.c:41:16: note: 'EXIT_SUCCESS' is defined in header '<stdlib.h>'; this is probably fixable by adding '#include <stdlib.h>'

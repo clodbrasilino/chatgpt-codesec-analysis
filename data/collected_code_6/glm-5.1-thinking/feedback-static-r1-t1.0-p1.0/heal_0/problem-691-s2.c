@@ -1,0 +1,121 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    int first;
+    int second;
+} Tuple;
+
+typedef struct {
+    int key;
+    int *values;
+    int count;
+    int capacity;
+} Group;
+
+typedef struct {
+    Group *groups;
+    int count;
+    int capacity;
+} GroupResult;
+
+void free_group_result(GroupResult *result) {
+    if (result == NULL) {
+        return;
+    }
+    for (int i = 0; i < result->count; i++) {
+        free(result->groups[i].values);
+        result->groups[i].values = NULL;
+    }
+    free(result->groups);
+    result->groups = NULL;
+    result->count = 0;
+    result->capacity = 0;
+}
+
+GroupResult group_by_second(Tuple *tuples, int n) {
+    GroupResult result;
+    result.groups = NULL;
+    result.count = 0;
+    result.capacity = 0;
+
+    if (tuples == NULL || n <= 0) {
+        return result;
+    }
+
+    for (int i = 0; i < n; i++) {
+        int found = -1;
+        for (int j = 0; j < result.count; j++) {
+            if (result.groups[j].key == tuples[i].second) {
+                found = j;
+                break;
+            }
+        }
+
+        if (found == -1) {
+            if (result.count >= result.capacity) {
+                int new_capacity = result.capacity == 0 ? 4 : result.capacity * 2;
+                Group *new_groups = realloc(result.groups, (size_t)new_capacity * sizeof(Group));
+                if (new_groups == NULL) {
+                    free_group_result(&result);
+                    return result;
+                }
+                result.groups = new_groups;
+                result.capacity = new_capacity;
+            }
+            found = result.count;
+            result.groups[found].key = tuples[i].second;
+            result.groups[found].capacity = 4;
+            result.groups[found].values = malloc((size_t)result.groups[found].capacity * sizeof(int));
+            if (result.groups[found].values == NULL) {
+                result.groups[found].count = 0;
+                result.groups[found].capacity = 0;
+                free_group_result(&result);
+                return result;
+            }
+            result.groups[found].count = 0;
+            result.count++;
+        }
+
+        Group *g = &result.groups[found];
+        if (g->count >= g->capacity) {
+            int new_capacity = g->capacity * 2;
+            int *new_values = realloc(g->values, (size_t)new_capacity * sizeof(int));
+            if (new_values == NULL) {
+                free_group_result(&result);
+                return result;
+            }
+            g->values = new_values;
+            g->capacity = new_capacity;
+        }
+        g->values[g->count] = tuples[i].first;
+        g->count++;
+    }
+
+    return result;
+}
+
+int main(void) {
+    Tuple tuples[] = {
+        {1, 10}, {2, 10}, {3, 20}, {4, 20}, {5, 10}, {6, 30}, {7, 20}
+    };
+    int n = (int)(sizeof(tuples) / sizeof(tuples[0]));
+
+    GroupResult result = group_by_second(tuples, n);
+
+    for (int i = 0; i < result.count; i++) {
+        printf("%d: [", result.groups[i].key);
+        for (int j = 0; j < result.groups[i].count; j++) {
+            printf("%d", result.groups[i].values[j]);
+            if (j < result.groups[i].count - 1) {
+                printf(", ");
+            }
+        }
+        printf("]\n");
+    }
+
+    free_group_result(&result);
+
+    return 0;
+}

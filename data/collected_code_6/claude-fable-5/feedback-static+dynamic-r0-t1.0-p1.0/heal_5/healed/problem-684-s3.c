@@ -1,0 +1,137 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <limits.h>
+
+#define BUFFER_SIZE 256
+#define DISCARD_GUARD_LIMIT 1000000UL
+
+static unsigned long long count_char_in_repeated(const char *str, size_t max_len, char target, unsigned long long total_length)
+{
+    size_t base_length;
+    unsigned long long count_in_base = 0ULL;
+    unsigned long long full_repeats;
+    unsigned long long remainder;
+    unsigned long long total;
+    size_t i;
+
+    if (str == NULL || max_len == 0U) {
+        return 0ULL;
+    }
+
+    base_length = strnlen(str, max_len);
+    if (base_length == 0U || base_length >= max_len || total_length == 0ULL) {
+        return 0ULL;
+    }
+
+    for (i = 0U; i < base_length; i++) {
+        if (str[i] == target) {
+            count_in_base++;
+        }
+    }
+
+    full_repeats = total_length / (unsigned long long)base_length;
+    remainder = total_length % (unsigned long long)base_length;
+
+    if (count_in_base != 0ULL && full_repeats > ULLONG_MAX / count_in_base) {
+        return 0ULL;
+    }
+
+    total = full_repeats * count_in_base;
+
+    for (i = 0U; i < (size_t)remainder && i < base_length; i++) {
+        if (str[i] == target) {
+            if (total == ULLONG_MAX) {
+                return 0ULL;
+            }
+            total++;
+        }
+    }
+
+    return total;
+}
+
+static void discard_remaining_input(void)
+{
+    int ch;
+    unsigned long guard = 0UL;
+
+    do {
+        ch = getchar();
+        guard++;
+        if (guard > DISCARD_GUARD_LIMIT) {
+            break;
+        }
+    } while (ch != '\n' && ch != EOF);
+}
+
+static int read_line(char *buffer, size_t size)
+{
+    size_t len;
+
+    if (buffer == NULL || size == 0U || size > (size_t)INT_MAX) {
+        return -1;
+    }
+
+    if (fgets(buffer, (int)size, stdin) == NULL) {
+        return -1;
+    }
+
+    buffer[size - 1U] = '\0';
+
+    len = strnlen(buffer, size);
+    if (len > 0U && buffer[len - 1U] == '\n') {
+        buffer[len - 1U] = '\0';
+    } else if (len == size - 1U) {
+        discard_remaining_input();
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    char target;
+    unsigned long long total_length = 0ULL;
+    unsigned long long result;
+    int ch;
+
+    memset(buffer, 0, sizeof(buffer));
+
+    printf("Enter the string: ");
+    if (read_line(buffer, sizeof(buffer)) != 0) {
+        fprintf(stderr, "Error reading string input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (buffer[0] == '\0') {
+        fprintf(stderr, "Empty string is not allowed\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter the character to count: ");
+    ch = getchar();
+    if (ch == EOF) {
+        fprintf(stderr, "Error reading character input\n");
+        return EXIT_FAILURE;
+    }
+    target = (char)ch;
+
+    if (ch != '\n') {
+        discard_remaining_input();
+    }
+
+    printf("Enter the total length of the repeated string: ");
+    if (scanf("%llu", &total_length) != 1) {
+        fprintf(stderr, "Error reading length input\n");
+        return EXIT_FAILURE;
+    }
+    discard_remaining_input();
+
+    result = count_char_in_repeated(buffer, sizeof(buffer), target, total_length);
+    printf("The character '%c' occurs %llu times in the first %llu characters of the repeated string.\n",
+           target, result, total_length);
+
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,44 @@
+{
+  "task_id": 435,
+  "text": "Write a C function to find the last digit of a given number.",
+  "fn_candidates": [
+    "last_Digit",
+    "LastDigit",
+    "lastDigit",
+    "lastDigit"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "last_Digit",
+      "args": [
+        123
+      ],
+      "expected": 3,
+      "assert_src": "assert last_Digit(123) == 3"
+    },
+    {
+      "fn_name": "last_Digit",
+      "args": [
+        25
+      ],
+      "expected": 5,
+      "assert_src": "assert last_Digit(25) == 5"
+    },
+    {
+      "fn_name": "last_Digit",
+      "args": [
+        30
+      ],
+      "expected": 0,
+      "assert_src": "assert last_Digit(30) == 0"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

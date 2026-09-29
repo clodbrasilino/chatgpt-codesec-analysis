@@ -1,0 +1,271 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+#include <limits.h>
+
+typedef struct {
+    int *data;
+    size_t size;
+} IntList;
+
+typedef struct {
+    IntList *list;
+    size_t count;
+} ListFreq;
+
+void free_lists(IntList *lists, size_t num_lists) {
+    if (lists == NULL) {
+        return;
+    }
+    for (size_t i = 0; i < num_lists; i++) {
+        free(lists[i].data);
+        lists[i].data = NULL;
+    }
+    free(lists);
+}
+
+int compare_lists(const void *a, const void *b) {
+    const IntList *la = (const IntList *)a;
+    const IntList *lb = (const IntList *)b;
+    if (la->size < lb->size) return -1;
+    if (la->size > lb->size) return 1;
+    for (size_t i = 0; i < la->size; i++) {
+        if (la->data[i] < lb->data[i]) return -1;
+        if (la->data[i] > lb->data[i]) return 1;
+    }
+    return 0;
+}
+
+int lists_equal(const IntList *a, const IntList *b) {
+    if (a->size != b->size) return 0;
+    if (a->size == 0) return 1;
+    return memcmp(a->data, b->data, a->size * sizeof(int)) == 0;
+}
+
+int safe_multiply_size(size_t a, size_t b, size_t *result) {
+    if (a == 0 || b == 0) {
+        *result = 0;
+        return 1;
+    }
+    if (a > SIZE_MAX / b) {
+        return 0;
+    }
+    *result = a * b;
+    return 1;
+}
+
+ListFreq *count_list_frequencies(IntList *lists, size_t num_lists, size_t *out_count) {
+    if (lists == NULL || out_count == NULL || num_lists == 0) {
+        if (out_count != NULL) *out_count = 0;
+        return NULL;
+    }
+
+    size_t alloc_size;
+    if (!safe_multiply_size(num_lists, sizeof(IntList), &alloc_size)) {
+        *out_count = 0;
+        return NULL;
+    }
+
+    IntList *sorted = malloc(alloc_size);
+    if (sorted == NULL) {
+        *out_count = 0;
+        return NULL;
+    }
+
+    for (size_t i = 0; i < num_lists; i++) {
+        sorted[i].size = lists[i].size;
+        if (lists[i].size > 0) {
+            if (!safe_multiply_size(lists[i].size, sizeof(int), &alloc_size)) {
+                for (size_t j = 0; j < i; j++) {
+                    free(sorted[j].data);
+                }
+                free(sorted);
+                *out_count = 0;
+                return NULL;
+            }
+            
+            if (lists[i].data == NULL) {
+                for (size_t j = 0; j < i; j++) {
+                    free(sorted[j].data);
+                }
+                free(sorted);
+                *out_count = 0;
+                return NULL;
+            }
+
+            sorted[i].data = malloc(alloc_size);
+            if (sorted[i].data == NULL) {
+                for (size_t j = 0; j < i; j++) {
+                    free(sorted[j].data);
+                }
+                free(sorted);
+                *out_count = 0;
+                return NULL;
+            }
+            
+            if (alloc_size > 0 && lists[i].size <= SIZE_MAX / sizeof(int)) {
+                size_t copy_size;
+                if (safe_multiply_size(lists[i].size, sizeof(int), &copy_size) && 
+                    copy_size <= alloc_size) {
+                    /* Possible weaknesses found:
+                     * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+                     */
+                    memcpy(sorted[i].data, lists[i].data, copy_size);
+                }
+            }
+        } else {
+            sorted[i].data = NULL;
+        }
+    }
+
+    qsort(sorted, num_lists, sizeof(IntList), compare_lists);
+
+    if (!safe_multiply_size(num_lists, sizeof(ListFreq), &alloc_size)) {
+        free_lists(sorted, num_lists);
+        *out_count = 0;
+        return NULL;
+    }
+
+    ListFreq *result = malloc(alloc_size);
+    if (result == NULL) {
+        free_lists(sorted, num_lists);
+        *out_count = 0;
+        return NULL;
+    }
+
+    size_t unique = 0;
+    for (size_t i = 0; i < num_lists; i++) {
+        if (i == 0 || !lists_equal(&sorted[i], &sorted[i - 1])) {
+            result[unique].list = malloc(sizeof(IntList));
+            if (result[unique].list == NULL) {
+                for (size_t j = 0; j < unique; j++) {
+                    free(result[j].list->data);
+                    free(result[j].list);
+                }
+                free(result);
+                free_lists(sorted, num_lists);
+                *out_count = 0;
+                return NULL;
+            }
+            result[unique].list->size = sorted[i].size;
+            if (sorted[i].size > 0) {
+                if (!safe_multiply_size(sorted[i].size, sizeof(int), &alloc_size)) {
+                    free(result[unique].list);
+                    for (size_t j = 0; j < unique; j++) {
+                        free(result[j].list->data);
+                        free(result[j].list);
+                    }
+                    free(result);
+                    free_lists(sorted, num_lists);
+                    *out_count = 0;
+                    return NULL;
+                }
+                
+                if (sorted[i].data == NULL) {
+                    free(result[unique].list);
+                    for (size_t j = 0; j < unique; j++) {
+                        free(result[j].list->data);
+                        free(result[j].list);
+                    }
+                    free(result);
+                    free_lists(sorted, num_lists);
+                    *out_count = 0;
+                    return NULL;
+                }
+
+                result[unique].list->data = malloc(alloc_size);
+                if (result[unique].list->data == NULL) {
+                    free(result[unique].list);
+                    for (size_t j = 0; j < unique; j++) {
+                        free(result[j].list->data);
+                        free(result[j].list);
+                    }
+                    free(result);
+                    free_lists(sorted, num_lists);
+                    *out_count = 0;
+                    return NULL;
+                }
+                
+                if (alloc_size > 0 && sorted[i].size <= SIZE_MAX / sizeof(int)) {
+                    size_t copy_size;
+                    if (safe_multiply_size(sorted[i].size, sizeof(int), &copy_size) && 
+                        copy_size <= alloc_size) {
+                        /* Possible weaknesses found:
+                         * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+                         */
+                        memcpy(result[unique].list->data, sorted[i].data, copy_size);
+                    }
+                }
+            } else {
+                result[unique].list->data = NULL;
+            }
+            result[unique].count = 1;
+            unique++;
+        } else {
+            result[unique - 1].count++;
+        }
+    }
+
+    ListFreq *trimmed = realloc(result, unique * sizeof(ListFreq));
+    if (trimmed != NULL) {
+        result = trimmed;
+    }
+
+    *out_count = unique;
+    free_lists(sorted, num_lists);
+    return result;
+}
+
+void free_freqs(ListFreq *freqs, size_t count) {
+    if (freqs == NULL) {
+        return;
+    }
+    for (size_t i = 0; i < count; i++) {
+        if (freqs[i].list != NULL) {
+            free(freqs[i].list->data);
+            free(freqs[i].list);
+        }
+    }
+    free(freqs);
+}
+
+int main(void) {
+    int d1[] = {1, 2, 3};
+    int d2[] = {4, 5};
+    int d3[] = {1, 2, 3};
+    int d4[] = {6};
+    int d5[] = {4, 5};
+    int d6[] = {1, 2, 3};
+
+    IntList *lists = malloc(6 * sizeof(IntList));
+    if (lists == NULL) {
+        return EXIT_FAILURE;
+    }
+
+    lists[0].data = d1; lists[0].size = 3;
+    lists[1].data = d2; lists[1].size = 2;
+    lists[2].data = d3; lists[2].size = 3;
+    lists[3].data = d4; lists[3].size = 1;
+    lists[4].data = d5; lists[4].size = 2;
+    lists[5].data = d6; lists[5].size = 3;
+
+    size_t unique_count = 0;
+    ListFreq *freqs = count_list_frequencies(lists, 6, &unique_count);
+    if (freqs == NULL) {
+        free(lists);
+        return EXIT_FAILURE;
+    }
+
+    for (size_t i = 0; i < unique_count; i++) {
+        printf("List [");
+        for (size_t j = 0; j < freqs[i].list->size; j++) {
+            printf("%d%s", freqs[i].list->data[j], (j + 1 < freqs[i].list->size) ? ", " : "");
+        }
+        printf("] -> %zu occurrence(s)\n", freqs[i].count);
+    }
+
+    free_freqs(freqs, unique_count);
+    free(lists);
+    return EXIT_SUCCESS;
+}

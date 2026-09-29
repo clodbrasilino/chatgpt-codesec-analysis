@@ -1,0 +1,56 @@
+collected_code_3/round4/heal_0/problem-593.c: In function 'removeLeadingZeroes':
+collected_code_3/round4/heal_0/problem-593.c:19:21: warning: dereference of possibly-NULL 'new_ip' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   19 |         new_ip[j++] = ip[i++];
+      |         ~~~~~~~~~~~~^~~~~~~~~
+  'removeLeadingZeroes': events 1-4
+    |
+    |    6 |     char *new_ip = malloc(16);
+    |      |                    ^~~~~~~~~~
+    |      |                    |
+    |      |                    (1) this call could return NULL
+    |......
+    |    9 |     while(ip[i]) {
+    |      |           ~~        
+    |      |           |
+    |      |           (2) following 'true' branch...
+    |   10 |         if(ip[i] == '0' && ip[i+1] != '.' && ip[i+1] != '\0' && zero_flag == 0) {
+    |      |              ~      
+    |      |              |
+    |      |              (3) ...to here
+    |......
+    |   19 |         new_ip[j++] = ip[i++];
+    |      |         ~~~~~~~~~~~~~~~~~~~~~
+    |      |                     |
+    |      |                     (4) 'new_ip + (sizetype)j' could be NULL: unchecked value from (1)
+    |
+collected_code_3/round4/heal_0/problem-593.c:21:15: warning: dereference of possibly-NULL 'new_ip' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   21 |     new_ip[j] = '\0';
+      |     ~~~~~~~~~~^~~~~~
+  'main': events 1-2
+    |
+    |   25 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   29 |     char *new_ip = removeLeadingZeroes(ip);
+    |      |                    ~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                    |
+    |      |                    (2) calling 'removeLeadingZeroes' from 'main'
+    |
+    +--> 'removeLeadingZeroes': events 3-5
+           |
+           |    5 | char* removeLeadingZeroes(char* ip) {
+           |      |       ^~~~~~~~~~~~~~~~~~~
+           |      |       |
+           |      |       (3) entry to 'removeLeadingZeroes'
+           |    6 |     char *new_ip = malloc(16);
+           |      |                    ~~~~~~~~~~
+           |      |                    |
+           |      |                    (4) this call could return NULL
+           |......
+           |   21 |     new_ip[j] = '\0';
+           |      |     ~~~~~~~~~~~~~~~~
+           |      |               |
+           |      |               (5) 'new_ip + (sizetype)j' could be NULL: unchecked value from (4)
+           |

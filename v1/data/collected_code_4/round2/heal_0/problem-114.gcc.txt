@@ -1,0 +1,208 @@
+./collected_code_4/round2//heal_0/problem-114.c: In function 'assignFrequencies':
+./collected_code_4/round2//heal_0/problem-114.c:30:44: warning: dereference of possibly-NULL 'results' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   30 |             (*results)[*resultCount].tuple = tuples[i];
+      |             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~
+  'main': events 1-2
+    |
+    |   37 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   47 |     assignFrequencies(tuples, sizeof(tuples) / sizeof(tuples[0]), &results, &resultCount);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) calling 'assignFrequencies' from 'main'
+    |
+    +--> 'assignFrequencies': events 3-11
+           |
+           |   14 | void assignFrequencies(Tuple *tuples, int tupleCount, TupleFrequency **results, int *resultCount) {
+           |      |      ^~~~~~~~~~~~~~~~~
+           |      |      |
+           |      |      (3) entry to 'assignFrequencies'
+           |   15 |     *results = malloc(sizeof(TupleFrequency) * tupleCount);
+           |      |                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                |
+           |      |                (4) this call could return NULL
+           |......
+           |   18 |     for (int i = 0; i < tupleCount; i++) {
+           |      |                     ~~~~~~~~~~~~~~
+           |      |                       |
+           |      |                       (5) following 'true' branch (when 'i < tupleCount')...
+           |......
+           |   21 |         for (j = 0; j < *resultCount; j++) {
+           |      |              ~~~~~  ~~~~~~~~~~~~~~~~
+           |      |                |      |
+           |      |                |      (7) following 'false' branch...
+           |      |                (6) ...to here
+           |......
+           |   29 |         if (j == *resultCount) {
+           |      |            ~     ~~~~~~~~~~~~
+           |      |            |     |
+           |      |            |     (8) ...to here
+           |      |            (9) following 'true' branch...
+           |   30 |             (*results)[*resultCount].tuple = tuples[i];
+           |      |             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                                            |       |
+           |      |                                            |       (10) ...to here
+           |      |                                            (11) '*results + (long unsigned int)*resultCount * 12' could be NULL: unchecked value from (4)
+           |
+./collected_code_4/round2//heal_0/problem-114.c:34:14: warning: leak of 'results' [CWE-401] [-Wanalyzer-malloc-leak]
+   34 |     *results = realloc(*results, sizeof(TupleFrequency) * (*resultCount));
+      |     ~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  'main': events 1-2
+    |
+    |   37 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   47 |     assignFrequencies(tuples, sizeof(tuples) / sizeof(tuples[0]), &results, &resultCount);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) calling 'assignFrequencies' from 'main'
+    |
+    +--> 'assignFrequencies': events 3-23
+           |
+           |   14 | void assignFrequencies(Tuple *tuples, int tupleCount, TupleFrequency **results, int *resultCount) {
+           |      |      ^~~~~~~~~~~~~~~~~
+           |      |      |
+           |      |      (3) entry to 'assignFrequencies'
+           |   15 |     *results = malloc(sizeof(TupleFrequency) * tupleCount);
+           |      |                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                |
+           |      |                (4) allocated here
+           |......
+           |   18 |     for (int i = 0; i < tupleCount; i++) {
+           |      |                     ~~~~~~~~~~~~~~  ~~~
+           |      |                       |              |
+           |      |                       |              (21) ...to here
+           |      |                       (5) following 'true' branch (when 'i < tupleCount')...
+           |      |                       (12) following 'true' branch (when 'i < tupleCount')...
+           |......
+           |   21 |         for (j = 0; j < *resultCount; j++) {
+           |      |              ~~~~~  ~~~~~~~~~~~~~~~~
+           |      |                |      |
+           |      |                |      (7) following 'false' branch...
+           |      |                |      (14) following 'true' branch...
+           |      |                (6) ...to here
+           |      |                (13) ...to here
+           |   22 |             if ((*results)[j].tuple.first == tuples[i].first &&
+           |      |                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                | |                                           |
+           |      |                | (15) ...to here                             (18) following 'true' branch...
+           |      |                (16) following 'true' branch...
+           |   23 |                 (*results)[j].tuple.second == tuples[i].second) {
+           |      |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                  |
+           |      |                  (17) ...to here
+           |   24 |                 (*results)[j].frequency++;
+           |      |                 ~~~~~~~~~~
+           |      |                  |
+           |      |                  (19) ...to here
+           |......
+           |   29 |         if (j == *resultCount) {
+           |      |            ~     ~~~~~~~~~~~~
+           |      |            |     |
+           |      |            |     (8) ...to here
+           |      |            (9) following 'true' branch...
+           |      |            (20) following 'false' branch...
+           |   30 |             (*results)[*resultCount].tuple = tuples[i];
+           |      |             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                                            |       |
+           |      |                                            |       (10) ...to here
+           |      |                                            (11) assuming 'results' is non-NULL
+           |......
+           |   34 |     *results = realloc(*results, sizeof(TupleFrequency) * (*resultCount));
+           |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |              | |
+           |      |              | (22) when 'realloc' fails
+           |      |              (23) 'results' leaks here; was allocated at (4)
+           |
+./collected_code_4/round2//heal_0/problem-114.c: In function 'main':
+./collected_code_4/round2//heal_0/problem-114.c:50:9: warning: dereference of NULL '0' [CWE-476] [-Wanalyzer-null-dereference]
+   50 |         printf("{(%d, %d), %d}\n", results[i].tuple.first, results[i].tuple.second, results[i].frequency);
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  'main': events 1-2
+    |
+    |   37 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   47 |     assignFrequencies(tuples, sizeof(tuples) / sizeof(tuples[0]), &results, &resultCount);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) calling 'assignFrequencies' from 'main'
+    |
+    +--> 'assignFrequencies': events 3-20
+           |
+           |   14 | void assignFrequencies(Tuple *tuples, int tupleCount, TupleFrequency **results, int *resultCount) {
+           |      |      ^~~~~~~~~~~~~~~~~
+           |      |      |
+           |      |      (3) entry to 'assignFrequencies'
+           |......
+           |   18 |     for (int i = 0; i < tupleCount; i++) {
+           |      |                     ~~~~~~~~~~~~~~  ~~~
+           |      |                       |              |
+           |      |                       |              (19) ...to here
+           |      |                       (4) following 'true' branch (when 'i < tupleCount')...
+           |      |                       (10) following 'true' branch (when 'i < tupleCount')...
+           |......
+           |   21 |         for (j = 0; j < *resultCount; j++) {
+           |      |              ~~~~~  ~~~~~~~~~~~~~~~~
+           |      |                |      |
+           |      |                |      (6) following 'false' branch...
+           |      |                |      (12) following 'true' branch...
+           |      |                (5) ...to here
+           |      |                (11) ...to here
+           |   22 |             if ((*results)[j].tuple.first == tuples[i].first &&
+           |      |                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                | |                                           |
+           |      |                | (13) ...to here                             (16) following 'true' branch...
+           |      |                (14) following 'true' branch...
+           |   23 |                 (*results)[j].tuple.second == tuples[i].second) {
+           |      |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                  |
+           |      |                  (15) ...to here
+           |   24 |                 (*results)[j].frequency++;
+           |      |                 ~~~~~~~~~~
+           |      |                  |
+           |      |                  (17) ...to here
+           |......
+           |   29 |         if (j == *resultCount) {
+           |      |            ~     ~~~~~~~~~~~~
+           |      |            |     |
+           |      |            |     (7) ...to here
+           |      |            (8) following 'true' branch...
+           |      |            (18) following 'false' branch...
+           |   30 |             (*results)[*resultCount].tuple = tuples[i];
+           |      |                                                    ~
+           |      |                                                    |
+           |      |                                                    (9) ...to here
+           |......
+           |   34 |     *results = realloc(*results, sizeof(TupleFrequency) * (*resultCount));
+           |      |                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                |
+           |      |                (20) when 'realloc' fails
+           |
+    <------+
+    |
+  'main': events 21-27
+    |
+    |   47 |     assignFrequencies(tuples, sizeof(tuples) / sizeof(tuples[0]), &results, &resultCount);
+    |      |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (21) returning to 'main' from 'assignFrequencies'
+    |   48 | 
+    |   49 |     for (int i = 0; i < resultCount; i++) {
+    |      |                     ~~~~~~~~~~~~~~~
+    |      |                       |
+    |      |                       (22) following 'true' branch...
+    |   50 |         printf("{(%d, %d), %d}\n", results[i].tuple.first, results[i].tuple.second, results[i].frequency);
+    |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |         |                                 |                       |                        |
+    |      |         |                                 |                       |                        (23) ...to here
+    |      |         |                                 (26) '0' is NULL        (25) '0' is NULL         (24) '0' is NULL
+    |      |         (27) dereference of NULL 'results + (long unsigned int)i * 12'
+    |

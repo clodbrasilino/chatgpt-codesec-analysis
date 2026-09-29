@@ -1,0 +1,55 @@
+In C, we don't have built-in support for dictionaries like Python. However, we can create a similar data structure using structures and linked lists. Here's a simple implementation of a list of empty dictionaries.
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct dict {
+    char key[50];
+    char value[50];
+    struct dict *next;
+} dict;
+
+typedef struct list {
+    dict *head;
+    struct list *next;
+} list;
+
+list* create_list() {
+    list *new_list = (list*)malloc(sizeof(list));
+    new_list->head = NULL;
+    new_list->next = NULL;
+    return new_list;
+}
+
+dict* create_dict() {
+    dict *new_dict = (dict*)malloc(sizeof(dict));
+    strcpy(new_dict->key, "");
+    strcpy(new_dict->value, "");
+    new_dict->next = NULL;
+    return new_dict;
+}
+
+void add_dict(list *lst) {
+    dict *new_dict = create_dict();
+    if(lst->head == NULL) {
+        lst->head = new_dict;
+    } else {
+        dict *temp = lst->head;
+        while(temp->next != NULL) {
+            temp = temp->next;
+        }
+        temp->next = new_dict;
+    }
+}
+
+int main() {
+    list *lst = create_list();
+    add_dict(lst);
+    add_dict(lst);
+    return 0;
+}
+```
+
+In this code, we define a `dict` structure that represents a dictionary with key-value pairs. We also define a `list` structure that represents a list of dictionaries. The `create_list` function creates a new list, and the `create_dict` function creates a new dictionary. The `add_dict` function adds a new dictionary to the list. In the `main` function, we create a list and add two dictionaries to it.

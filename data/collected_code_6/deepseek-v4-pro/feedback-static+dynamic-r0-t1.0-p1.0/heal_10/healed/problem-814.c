@@ -1,0 +1,83 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <errno.h>
+#include <float.h>
+
+double rhombus_area(double diagonal1, double diagonal2) {
+    if (diagonal1 <= 0 || diagonal2 <= 0) {
+        return -1.0;
+    }
+    if (diagonal1 > DBL_MAX / diagonal2) {
+        return -1.0;
+    }
+    return (diagonal1 * diagonal2) / 2.0;
+}
+
+int read_double(double *value) {
+    char input[256] = {0};
+    char *endptr;
+    size_t len;
+
+    if (fgets(input, sizeof(input), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 0;
+    }
+
+    len = strnlen(input, sizeof(input));
+    if (len > 0 && input[len - 1] == '\n') {
+        input[len - 1] = '\0';
+    } else {
+        if (len == sizeof(input) - 1 && input[len - 1] != '\n') {
+            int ch;
+            while ((ch = getchar()) != '\n' && ch != EOF) {
+            }
+            fprintf(stderr, "Input too long\n");
+            return 0;
+        }
+        if (len == 0) {
+            return 0;
+        }
+    }
+
+    endptr = input;
+    errno = 0;
+    *value = strtod(input, &endptr);
+    if (endptr == input) {
+        fprintf(stderr, "Invalid input\n");
+        return 0;
+    }
+    if (*endptr != '\0') {
+        fprintf(stderr, "Invalid input\n");
+        return 0;
+    }
+    if (errno == ERANGE) {
+        fprintf(stderr, "Number out of range\n");
+        return 0;
+    }
+
+    return 1;
+}
+
+int main(void) {
+    double d1, d2, area;
+
+    printf("Enter length of first diagonal: ");
+    if (!read_double(&d1)) {
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter length of second diagonal: ");
+    if (!read_double(&d2)) {
+        return EXIT_FAILURE;
+    }
+
+    area = rhombus_area(d1, d2);
+    if (area < 0) {
+        fprintf(stderr, "Diagonals must be positive and result must be representable\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Area of rhombus: %.2f\n", area);
+    return EXIT_SUCCESS;
+}

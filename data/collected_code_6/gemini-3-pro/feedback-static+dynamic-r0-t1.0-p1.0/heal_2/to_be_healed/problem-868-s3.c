@@ -1,0 +1,42 @@
+#include <stdio.h>
+ /* Possible weaknesses found:
+  *  test case 2 failed: expected 0, got <no output>
+  *  test case 1 failed: expected 3, got <no output>
+  *  test case 0 failed: expected 8, got <no output>
+  */
+
+int lengthOfLastWord(const char *s) {
+    if (s == NULL) {
+        return 0;
+    }
+
+    int length = 0;
+    int current_length = 0;
+
+    for (int i = 0; s[i] != '\0'; i++) {
+        if (s[i] != ' ') {
+            current_length++;
+            length = current_length;
+        } else {
+            current_length = 0;
+        }
+    }
+
+    return length;
+}
+
+int main(void) {
+    const char *test1 = "Hello World";
+    const char *test2 = "   fly me   to   the moon  ";
+    const char *test3 = "luffy is still joyboy";
+    const char *test4 = "";
+    const char *test5 = NULL;
+
+    printf("%d\n", lengthOfLastWord(test1));
+    printf("%d\n", lengthOfLastWord(test2));
+    printf("%d\n", lengthOfLastWord(test3));
+    printf("%d\n", lengthOfLastWord(test4));
+    printf("%d\n", lengthOfLastWord(test5));
+
+    return 0;
+}

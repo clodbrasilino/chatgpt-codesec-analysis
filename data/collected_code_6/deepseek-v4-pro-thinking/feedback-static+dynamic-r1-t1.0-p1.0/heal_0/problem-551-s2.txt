@@ -1,0 +1,47 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int *extract_column(int **list, int rows, int cols, int col)
+{
+    if (list == NULL || rows <= 0 || cols <= 0 || col < 0 || col >= cols)
+        return NULL;
+
+    if ((size_t)rows > ((size_t)-1) / sizeof(int))
+        return NULL;
+
+    int *column = malloc((size_t)rows * sizeof(int));
+    if (column == NULL)
+        return NULL;
+
+    for (int i = 0; i < rows; i++)
+    {
+        if (list[i] == NULL)
+        {
+            free(column);
+            return NULL;
+        }
+        column[i] = list[i][col];
+    }
+
+    return column;
+}
+
+int main(void)
+{
+    int row0[] = {1, 2, 3};
+    int row1[] = {4, 5, 6};
+    int row2[] = {7, 8, 9};
+    int *matrix[] = {row0, row1, row2};
+
+    int *column = extract_column(matrix, 3, 3, 1);
+    if (column == NULL)
+        return 1;
+
+    for (int i = 0; i < 3; i++)
+        printf("%d\n", column[i]);
+
+    free(column);
+    return 0;
+}
+```

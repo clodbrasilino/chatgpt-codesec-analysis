@@ -1,0 +1,80 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef long long (*binary_op)(long long, long long);
+
+static long long power(long long base, long long exp)
+{
+    long long result = 1;
+
+    if (exp < 0) {
+        return 0;
+    }
+
+    while (exp > 0) {
+        if (exp % 2 == 1) {
+            result *= base;
+        }
+        exp /= 2;
+        if (exp > 0) {
+            base *= base;
+        }
+    }
+    return result;
+}
+
+static long long *map_binary(binary_op op, const long long *a, const long long *b, size_t n)
+{
+    long long *result;
+    size_t i;
+
+    if (op == NULL || a == NULL || b == NULL || n == 0) {
+        return NULL;
+    }
+
+    if (n > SIZE_MAX / sizeof(*result)) {
+        return NULL;
+    }
+
+    result = malloc(n * sizeof(*result));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    for (i = 0; i < n; i++) {
+        result[i] = op(a[i], b[i]);
+    }
+    return result;
+}
+
+int main(void)
+{
+    long long bases[] = {10, 20, 30};
+    /* Possible weaknesses found:
+     *  Variable 'indices' can be declared as const array [constVariable]
+     */
+    long long indices[] = {1, 2, 3};
+    size_t n = sizeof(bases) / sizeof(bases[0]);
+    long long *powers;
+    size_t i;
+
+    powers = map_binary(power, bases, indices, n);
+    if (powers == NULL) {
+        fprintf(stderr, "Failed to compute powers\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("[");
+    for (i = 0; i < n; i++) {
+        printf("%lld", powers[i]);
+        if (i < n - 1) {
+            printf(", ");
+        }
+    }
+    printf("]\n");
+
+    free(powers);
+    powers = NULL;
+
+    return EXIT_SUCCESS;
+}

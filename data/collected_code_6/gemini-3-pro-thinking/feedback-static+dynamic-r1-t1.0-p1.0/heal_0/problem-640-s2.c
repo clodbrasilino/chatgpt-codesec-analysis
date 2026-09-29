@@ -1,0 +1,45 @@
+#include <stdio.h>
+#include <stddef.h>
+
+char *remove_parenthesis_area(char *str) {
+    if (!str) {
+        return NULL;
+    }
+
+    size_t read_idx = 0;
+    size_t write_idx = 0;
+    int paren_count = 0;
+
+    while (str[read_idx] != '\0') {
+        if (str[read_idx] == '(') {
+            paren_count++;
+        } else if (str[read_idx] == ')' && paren_count > 0) {
+            paren_count--;
+        } else if (paren_count == 0) {
+            str[write_idx++] = str[read_idx];
+        }
+        read_idx++;
+    }
+    
+    str[write_idx] = '\0';
+
+    return str;
+}
+
+int main(void) {
+    char str1[] = "This is a test (to remove).";
+    char str2[] = "Nested (parenthesis (are) handled) correctly.";
+    char str3[] = "No parentheses here.";
+    char str4[] = "Unbalanced (opening parenthesis.";
+    char str5[] = "Unbalanced closing) parenthesis.";
+
+    printf("%s\n", remove_parenthesis_area(str1));
+    printf("%s\n", remove_parenthesis_area(str2));
+    printf("%s\n", remove_parenthesis_area(str3));
+    printf("%s\n", remove_parenthesis_area(str4));
+    printf("%s\n", remove_parenthesis_area(str5));
+
+    remove_parenthesis_area(NULL);
+
+    return 0;
+}

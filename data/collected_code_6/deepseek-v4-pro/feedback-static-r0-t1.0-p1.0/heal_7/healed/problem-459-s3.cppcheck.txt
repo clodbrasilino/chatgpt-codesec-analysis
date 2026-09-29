@@ -1,0 +1,25 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-459-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-459-s3.c:75:27: style: Condition 'copy_size>0' is always true [knownConditionTrueFalse]
+            if (copy_size > 0) {
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-459-s3.c:65:25: note: Assuming that condition 'match_start>src_pos' is not redundant
+        if (match_start > src_pos) {
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-459-s3.c:66:44: note: Assignment 'copy_size=match_start-src_pos', assigned value is greater than 0
+            size_t copy_size = match_start - src_pos;
+                                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-459-s3.c:75:27: note: Condition 'copy_size>0' is always true
+            if (copy_size > 0) {
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-459-s3.c:110:23: style: Condition 'remaining>0' is always true [knownConditionTrueFalse]
+        if (remaining > 0) {
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-459-s3.c:100:17: note: Assuming that condition 'src_pos<len' is not redundant
+    if (src_pos < len) {
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-459-s3.c:101:32: note: Assignment 'remaining=len-src_pos', assigned value is greater than 0
+        size_t remaining = len - src_pos;
+                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-459-s3.c:110:23: note: Condition 'remaining>0' is always true
+        if (remaining > 0) {
+                      ^

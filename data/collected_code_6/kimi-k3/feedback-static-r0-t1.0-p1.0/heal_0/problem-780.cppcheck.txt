@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_0/problem-780.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_0/problem-780.c:76:13: warning: %zu in format string (no. 1) requires 'size_t' but the argument type is 'signed int'. [invalidPrintfArgType_uint]
+            printf("Tuple %zu (%d, %d) + Tuple %zu (%d, %d) = %d\n",
+            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_0/problem-780.c:76:13: warning: %zu in format string (no. 4) requires 'size_t' but the argument type is 'signed int'. [invalidPrintfArgType_uint]
+            printf("Tuple %zu (%d, %d) + Tuple %zu (%d, %d) = %d\n",
+            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_0/problem-780.c:69:12: style: The scope of the variable 'i' can be reduced. [variableScope]
+    size_t i;
+           ^

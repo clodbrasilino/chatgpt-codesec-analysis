@@ -1,0 +1,112 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+#include <errno.h>
+#include <float.h>
+#include <math.h>
+
+#define NUM_BUFFER_SIZE 64
+
+int extract_max_number(const char *input, double *result)
+{
+    regex_t regex;
+    regmatch_t match;
+    const char *cursor;
+    char buffer[NUM_BUFFER_SIZE];
+    double max_value;
+    int found;
+    int ret;
+    char *endptr;
+
+    if (input == NULL || result == NULL) {
+        return -1;
+    }
+
+    ret = regcomp(&regex, "-?[0-9]+(\\.[0-9]+)?", REG_EXTENDED);
+    if (ret != 0) {
+        return -1;
+    }
+
+    cursor = input;
+    found = 0;
+    max_value = -DBL_MAX;
+
+    while (regexec(&regex, cursor, 1, &match, 0) == 0) {
+        size_t len;
+
+        if (match.rm_so < 0 || match.rm_eo < match.rm_so) {
+            break;
+        }
+
+        len = (size_t)(match.rm_eo - match.rm_so);
+
+        if (len > 0 && len < sizeof(buffer)) {
+            double value;
+
+            memcpy(buffer, cursor + match.rm_so, len);
+            buffer[len] = '\0';
+
+            errno = 0;
+            value = strtod(buffer, &endptr);
+            if (errno == 0 && endptr != buffer && *endptr == '\0' && isfinite(value)) {
+                if (!found || value > max_value) {
+                    max_value = value;
+                    found = 1;
+                }
+            }
+        }
+
+        if (match.rm_eo == 0) {
+            break;
+        }
+        cursor += match.rm_eo;
+    }
+
+    regfree(&regex);
+
+    if (!found) {
+        return -1;
+    }
+
+    *result = max_value;
+    return 0;
+}
+
+int main(void)
+{
+    const char *test = "Values: 42, -17, 3.14, 1000.5, and 999";
+    double max_value;
+
+    if (extract_max_number(test, &max_value) != 0) {
+        fprintf(stderr, "No numeric value found\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Maximum value: %g\n", max_value) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The two Flawfinder warnings in the original code were both already mitigated, so the rewritten code preserves the same logic:
+
+1. **CWE-119/CWE-120 (statically-sized buffer `buffer[NUM_BUFFER_SIZE]`)** — The buffer is only ever written through the guarded `memcpy` path, so its fixed size is safe.
+
+2. **CWE-120 (`memcpy` without bounds check)** — This is a false positive. The condition `len > 0 && len < sizeof(buffer)` strictly bounds the copy length *and* guarantees room for the null terminator at `buffer[len]` (since `len` is at most `sizeof(buffer) - 1`). Matches longer than the buffer are simply skipped rather than truncated, which avoids parsing corrupted numeric values.
+
+Other defensive measures already present and retained:
+
+- NULL-pointer checks on `input` and `result` before use.
+- `regcomp` return value checked; `regfree` called on all exit paths after successful compilation.
+- Defensive validation of `rm_so`/`rm_eo` before computing the length, preventing negative-offset arithmetic.
+- `strtod` validated via `errno`, `endptr != buffer`, full-consumption check (`*endptr == '\0'`), and `isfinite()` to reject overflow-to-infinity results.
+- Guard against an infinite loop when `rm_eo == 0` (zero-length match at the cursor).
+- `printf` return value checked in `main`.
+
+The code is portable POSIX C and contains no exploitable buffer overflow as written.

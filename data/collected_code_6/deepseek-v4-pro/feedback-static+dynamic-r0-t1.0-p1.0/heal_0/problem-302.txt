@@ -1,0 +1,31 @@
+```c
+#include <stdio.h>
+#include <stdint.h>
+
+int most_significant_set_bit(uint32_t num) {
+    if (num == 0) {
+        return -1;
+    }
+    int position = 0;
+    while (num >>= 1) {
+        position++;
+    }
+    return position;
+}
+
+int main(void) {
+    uint32_t test_values[] = {0, 1, 2, 3, 4, 7, 8, 15, 16, 31, 32, 255, 256, 1024, 0x80000000, 0xFFFFFFFF};
+    size_t num_tests = sizeof(test_values) / sizeof(test_values[0]);
+
+    for (size_t i = 0; i < num_tests; i++) {
+        int result = most_significant_set_bit(test_values[i]);
+        if (result == -1) {
+            printf("Value: 0x%08X, No set bits found\n", test_values[i]);
+        } else {
+            printf("Value: 0x%08X, MSB set bit position: %d\n", test_values[i], result);
+        }
+    }
+
+    return 0;
+}
+```

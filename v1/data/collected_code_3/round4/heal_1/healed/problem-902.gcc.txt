@@ -1,0 +1,250 @@
+./collected_code_3/round4/heal_1/healed/problem-902.c: In function 'insert':
+./collected_code_3/round4/heal_1/healed/problem-902.c:50:24: warning: leak of '<unknown>' [CWE-401] [-Wanalyzer-malloc-leak]
+   50 |   hashArray[hashIndex] = item;
+      |   ~~~~~~~~~~~~~~~~~~~~~^~~~~~
+  'main': events 1-2
+    |
+    |   88 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   92 |     insert("key1", 10);
+    |      |     ~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) calling 'insert' from 'main'
+    |
+    +--> 'insert': events 3-8
+           |
+           |   24 | void insert(char* key, int data) {
+           |      |      ^~~~~~
+           |      |      |
+           |      |      (3) entry to 'insert'
+           |......
+           |   27 |   if(item == NULL)
+           |      |     ~ 
+           |      |     |
+           |      |     (4) following 'false' branch (when 'item' is non-NULL)...
+           |......
+           |   30 |   item->data = data;
+           |      |   ~~~~~~~~~~~~~~~~~
+           |      |              |
+           |      |              (5) ...to here
+           |......
+           |   33 |   if(item->key == NULL) {
+           |      |     ~ 
+           |      |     |
+           |      |     (6) following 'false' branch...
+           |......
+           |   38 |   int hashIndex = hash(key);
+           |      |                   ~~~~~~~~~
+           |      |                   |
+           |      |                   (7) ...to here
+           |      |                   (8) calling 'hash' from 'insert'
+           |
+           +--> 'hash': events 9-11
+                  |
+                  |   14 | unsigned long hash(char *str) {
+                  |      |               ^~~~
+                  |      |               |
+                  |      |               (9) entry to 'hash'
+                  |......
+                  |   18 |     while ((c = *str++))
+                  |      |            ~   
+                  |      |            |
+                  |      |            (10) following 'true' branch (when 'c != 0')...
+                  |   19 |         hash = ((hash << 5) + hash) + c;
+                  |      |                 ~~~~~~~~~~~
+                  |      |                       |
+                  |      |                       (11) ...to here
+                  |
+           <------+
+           |
+         'insert': events 12-16
+           |
+           |   38 |   int hashIndex = hash(key);
+           |      |                   ^~~~~~~~~
+           |      |                   |
+           |      |                   (12) returning to 'insert' from 'hash'
+           |   39 | 
+           |   40 |   while(hashArray[hashIndex] != NULL && hashArray[hashIndex]->key != NULL && strcmp(hashArray[hashIndex]->key, key) != 0) {
+           |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                                                                           |
+           |      |                                                                           (13) following 'false' branch...
+           |......
+           |   45 |   if(hashArray[hashIndex] != NULL) {
+           |      |     ~~~~~~~~~~~~~~~~~~~~~
+           |      |     |         |
+           |      |     |         (14) ...to here
+           |      |     (15) following 'false' branch...
+           |......
+           |   50 |   hashArray[hashIndex] = item;
+           |      |   ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                        |
+           |      |                        (16) ...to here
+           |
+    <------+
+    |
+  'main': events 17-18
+    |
+    |   92 |     insert("key1", 10);
+    |      |     ^~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (17) returning to 'main' from 'insert'
+    |   93 |     insert("key2", 20);
+    |      |     ~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (18) calling 'insert' from 'main'
+    |
+    +--> 'insert': events 19-26
+           |
+           |   24 | void insert(char* key, int data) {
+           |      |      ^~~~~~
+           |      |      |
+           |      |      (19) entry to 'insert'
+           |......
+           |   27 |   if(item == NULL)
+           |      |     ~ 
+           |      |     |
+           |      |     (20) following 'false' branch (when 'item' is non-NULL)...
+           |......
+           |   30 |   item->data = data;
+           |      |   ~~~~~~~~~~~~~~~~~
+           |      |              |
+           |      |              (21) ...to here
+           |   31 |   item->key = strdup(key);
+           |      |               ~~~~~~~~~~~
+           |      |               |
+           |      |               (22) allocated here
+           |   32 | 
+           |   33 |   if(item->key == NULL) {
+           |      |     ~ 
+           |      |     |
+           |      |     (23) assuming '<unknown>' is non-NULL
+           |      |     (24) following 'false' branch...
+           |......
+           |   38 |   int hashIndex = hash(key);
+           |      |                   ~~~~~~~~~
+           |      |                   |
+           |      |                   (25) ...to here
+           |      |                   (26) calling 'hash' from 'insert'
+           |
+           +--> 'hash': events 27-29
+                  |
+                  |   14 | unsigned long hash(char *str) {
+                  |      |               ^~~~
+                  |      |               |
+                  |      |               (27) entry to 'hash'
+                  |......
+                  |   18 |     while ((c = *str++))
+                  |      |            ~   
+                  |      |            |
+                  |      |            (28) following 'true' branch (when 'c != 0')...
+                  |   19 |         hash = ((hash << 5) + hash) + c;
+                  |      |                 ~~~~~~~~~~~
+                  |      |                       |
+                  |      |                       (29) ...to here
+                  |
+           <------+
+           |
+         'insert': events 30-34
+           |
+           |   38 |   int hashIndex = hash(key);
+           |      |                   ^~~~~~~~~
+           |      |                   |
+           |      |                   (30) returning to 'insert' from 'hash'
+           |   39 | 
+           |   40 |   while(hashArray[hashIndex] != NULL && hashArray[hashIndex]->key != NULL && strcmp(hashArray[hashIndex]->key, key) != 0) {
+           |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                                                                           |                  |
+           |      |                                                                           |                  (32) ...to here
+           |      |                                                                           (31) following 'true' branch...
+           |......
+           |   45 |   if(hashArray[hashIndex] != NULL) {
+           |      |     ~              
+           |      |     |
+           |      |     (33) following 'true' branch...
+           |   46 |     free(hashArray[hashIndex]->key);
+           |      |          ~~~~~~~~~~~~~~~~~~~~
+           |      |                   |
+           |      |                   (34) ...to here
+           |
+    <------+
+    |
+  'main': events 35-36
+    |
+    |   93 |     insert("key2", 20);
+    |      |     ^~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (35) returning to 'main' from 'insert'
+    |   94 |     insert("key3", 30);
+    |      |     ~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (36) calling 'insert' from 'main'
+    |
+    +--> 'insert': events 37-42
+           |
+           |   24 | void insert(char* key, int data) {
+           |      |      ^~~~~~
+           |      |      |
+           |      |      (37) entry to 'insert'
+           |......
+           |   27 |   if(item == NULL)
+           |      |     ~ 
+           |      |     |
+           |      |     (38) following 'false' branch (when 'item' is non-NULL)...
+           |......
+           |   30 |   item->data = data;
+           |      |   ~~~~~~~~~~~~~~~~~
+           |      |              |
+           |      |              (39) ...to here
+           |......
+           |   33 |   if(item->key == NULL) {
+           |      |     ~ 
+           |      |     |
+           |      |     (40) following 'false' branch...
+           |......
+           |   38 |   int hashIndex = hash(key);
+           |      |                   ~~~~~~~~~
+           |      |                   |
+           |      |                   (41) ...to here
+           |      |                   (42) calling 'hash' from 'insert'
+           |
+           +--> 'hash': events 43-46
+                  |
+                  |   14 | unsigned long hash(char *str) {
+                  |      |               ^~~~
+                  |      |               |
+                  |      |               (43) entry to 'hash'
+                  |......
+                  |   18 |     while ((c = *str++))
+                  |      |            ~   
+                  |      |            |
+                  |      |            (44) following 'true' branch (when 'c != 0')...
+                  |      |            (46) following 'false' branch (when 'c == 0')...
+                  |   19 |         hash = ((hash << 5) + hash) + c;
+                  |      |                 ~~~~~~~~~~~
+                  |      |                       |
+                  |      |                       (45) ...to here
+                  |
+                'hash': event 47
+                  |
+                  |   21 |     return hash % HASH_SIZE;
+                  |      |                 ^
+                  |      |                 |
+                  |      |                 (47) ...to here
+                  |
+           <------+
+           |
+         'insert': events 48-49
+           |
+           |   38 |   int hashIndex = hash(key);
+           |      |                   ^~~~~~~~~
+           |      |                   |
+           |      |                   (48) returning to 'insert' from 'hash'
+           |......
+           |   50 |   hashArray[hashIndex] = item;
+           |      |   ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                        |
+           |      |                        (49) '<unknown>' leaks here; was allocated at (22)
+           |

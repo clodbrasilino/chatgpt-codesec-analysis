@@ -1,0 +1,138 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int value;
+    struct Node **children;
+    int child_count;
+} Node;
+
+Node *create_node(int value, int child_count) {
+    Node *node = (Node *)malloc(sizeof(Node));
+    if (!node) return NULL;
+    node->value = value;
+    node->child_count = child_count;
+    node->children = child_count > 0 ? (Node **)calloc(child_count, sizeof(Node *)) : NULL;
+    if (child_count > 0 && !node->children) {
+        free(node);
+        return NULL;
+    }
+    return node;
+}
+
+void free_node(Node *node) {
+    if (!node) return;
+    for (int i = 0; i < node->child_count; i++) {
+        free_node(node->children[i]);
+    }
+    free(node->children);
+    free(node);
+}
+
+int *extract_column(Node *root, int column_index, int *result_size) {
+    if (!root || !result_size) {
+        if (result_size) {
+            *result_size = 0;
+        }
+        return NULL;
+    }
+
+    int capacity = 16;
+    int size = 0;
+    int *result = (int *)malloc(capacity * sizeof(int));
+    if (!result) {
+        *result_size = 0;
+        return NULL;
+    }
+
+    Node **stack = (Node **)malloc(sizeof(Node *));
+    if (!stack) {
+        free(result);
+        *result_size = 0;
+        return NULL;
+    }
+    int stack_size = 1;
+    int stack_capacity = 1;
+    stack[0] = root;
+
+    while (stack_size > 0) {
+        Node *current = stack[--stack_size];
+
+        if (column_index == 0) {
+            if (size >= capacity) {
+                capacity *= 2;
+                int *new_result = (int *)realloc(result, capacity * sizeof(int));
+                if (!new_result) {
+                    free(result);
+                    free(stack);
+                    *result_size = 0;
+                    return NULL;
+                }
+                result = new_result;
+            }
+            result[size++] = current->value;
+        } else {
+            int needed = current->child_count;
+            if (stack_size + needed > stack_capacity) {
+                while (stack_capacity < stack_size + needed) {
+                    stack_capacity *= 2;
+                }
+                Node **new_stack = (Node **)realloc(stack, stack_capacity * sizeof(Node *));
+                if (!new_stack) {
+                    free(result);
+                    free(stack);
+                    *result_size = 0;
+                    return NULL;
+                }
+                stack = new_stack;
+            }
+            for (int i = current->child_count - 1; i >= 0; i--) {
+                stack[stack_size++] = current->children[i];
+            }
+        }
+    }
+
+    free(stack);
+    *result_size = size;
+    return result;
+}
+
+int main(void) {
+    Node *leaf1 = create_node(10, 0);
+    Node *leaf2 = create_node(20, 0);
+    Node *leaf3 = create_node(30, 0);
+    Node *leaf4 = create_node(40, 0);
+    Node *leaf5 = create_node(50, 0);
+    Node *leaf6 = create_node(60, 0);
+
+    Node *mid1 = create_node(100, 2);
+    mid1->children[0] = leaf1;
+    mid1->children[1] = leaf2;
+
+    Node *mid2 = create_node(200, 2);
+    mid2->children[0] = leaf3;
+    mid2->children[1] = leaf4;
+
+    Node *mid3 = create_node(300, 2);
+    mid3->children[0] = leaf5;
+    mid3->children[1] = leaf6;
+
+    Node *root = create_node(1000, 3);
+    root->children[0] = mid1;
+    root->children[1] = mid2;
+    root->children[2] = mid3;
+
+    int size = 0;
+    int *column = extract_column(root, 1, &size);
+
+    if (column) {
+        for (int i = 0; i < size; i++) {
+            printf("%d ", column[i]);
+        }
+        printf("\n");
+        free(column);
+    }
+
+    free_node(root);
+    return 0;
+}

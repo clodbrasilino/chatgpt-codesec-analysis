@@ -1,0 +1,44 @@
+./collected_code_3/round3/heal_2/healed/problem-551.c: In function 'extractColumn':
+./collected_code_3/round3/heal_2/healed/problem-551.c:26:19: warning: leak of '<unknown>' [CWE-401] [-Wanalyzer-malloc-leak]
+   26 |         column[i] = &nestedList[i][colToExtract];
+      |         ~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  'extractColumn': events 1-11
+    |
+    |    5 |     if (nestedList == NULL) {
+    |      |        ^
+    |      |        |
+    |      |        (1) following 'false' branch (when 'nestedList' is non-NULL)...
+    |......
+    |    9 |     *returnSize = rows;
+    |      |     ~~~~~~~~~~~~~~~~~~
+    |      |                 |
+    |      |                 (2) ...to here
+    |   10 |     int** column = (int**)malloc(rows * sizeof(int*));
+    |   11 |     if (column == NULL) {
+    |      |        ~
+    |      |        |
+    |      |        (3) following 'false' branch (when 'column' is non-NULL)...
+    |......
+    |   15 |     for (int i = 0; i < rows; i++) {
+    |      |              ~      ~~~~~~~~
+    |      |              |        |
+    |      |              |        (5) following 'true' branch (when 'i < rows')...
+    |      |              (4) ...to here
+    |   16 |         column[i] = (int*)malloc(sizeof(int));
+    |      |               ~           ~~~~~~~~~~~~~~~~~~~
+    |      |               |           |
+    |      |               |           (7) allocated here
+    |      |               (6) ...to here
+    |   17 | 
+    |   18 |         if (column[i] == NULL) {
+    |      |            ~
+    |      |            |
+    |      |            (8) assuming '<unknown>' is non-NULL
+    |      |            (9) following 'false' branch...
+    |......
+    |   26 |         column[i] = &nestedList[i][colToExtract];
+    |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                   |            |
+    |      |                   |            (10) ...to here
+    |      |                   (11) '<unknown>' leaks here; was allocated at (7)
+    |

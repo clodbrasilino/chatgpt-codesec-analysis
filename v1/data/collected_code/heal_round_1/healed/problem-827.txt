@@ -1,0 +1,20 @@
+#include <stdio.h>
+
+int sumColumn(const int list[][3], int numRows, int column) {
+    int sum = 0;
+    for (int i = 0; i < numRows; i++) {
+        sum += list[i][column];
+    }
+    return sum;
+}
+
+int main() {
+    int list[4][3] = {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}, {10, 11, 12}};
+    int numRows = sizeof list / sizeof list[0];
+    int column = 1;
+
+    int result = sumColumn(list, numRows, column);
+    printf("Sum of column %d: %d\n", column, result);
+
+    return 0;
+}

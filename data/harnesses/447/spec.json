@@ -1,0 +1,80 @@
+{
+  "task_id": 447,
+  "text": "Write a C function to find cubes of individual elements in a list.",
+  "fn_candidates": [
+    "cube_nums",
+    "CubeNums",
+    "cubeNums",
+    "cubenums"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "cube_nums",
+      "args": [
+        [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10
+        ]
+      ],
+      "expected": [
+        1,
+        8,
+        27,
+        64,
+        125,
+        216,
+        343,
+        512,
+        729,
+        1000
+      ],
+      "assert_src": "assert cube_nums([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])==[1, 8, 27, 64, 125, 216, 343, 512, 729, 1000]"
+    },
+    {
+      "fn_name": "cube_nums",
+      "args": [
+        [
+          10,
+          20,
+          30
+        ]
+      ],
+      "expected": [
+        1000,
+        8000,
+        27000
+      ],
+      "assert_src": "assert cube_nums([10,20,30])==([1000, 8000, 27000])"
+    },
+    {
+      "fn_name": "cube_nums",
+      "args": [
+        [
+          12,
+          15
+        ]
+      ],
+      "expected": [
+        1728,
+        3375
+      ],
+      "assert_src": "assert cube_nums([12,15])==([1728, 3375])"
+    }
+  ],
+  "arg_kinds": [
+    "int-list"
+  ],
+  "return_kind": "int-list",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

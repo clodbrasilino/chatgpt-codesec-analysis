@@ -1,0 +1,45 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+unsigned long long count_numbers(unsigned int n)
+{
+    if (n == 1U) {
+        return 1ULL;
+    }
+    return 1ULL << (n - 2U);
+}
+
+int main(void)
+{
+    unsigned int n;
+
+    printf("Enter the number of bits (n): ");
+    if (scanf("%u", &n) != 1) {
+        fprintf(stderr, "Error: invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (n == 0U || n > 63U) {
+        fprintf(stderr, "Error: n must be between 1 and 63.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Count of numbers with 0th and %uth bits set: %llu\n",
+           n - 1U, count_numbers(n));
+
+    return EXIT_SUCCESS;
+}
+```
+
+**How it works:**
+
+- For an `n`-bit number, we require the 0th bit (least significant) and the `(n-1)`th bit (most significant) to be set.
+- With those two bits fixed to 1, the remaining `n - 2` bits are free, giving `2^(n-2)` possible numbers.
+- The special case `n == 1` means the 0th bit and the highest bit are the same bit, so only the number `1` qualifies, giving a count of 1.
+
+**Safety measures applied:**
+
+- The return value of `scanf` is checked before using `n`, preventing use of an uninitialized variable (addresses CWE-703).
+- `n` is validated to the range `[1, 63]` so the shift `1ULL << (n - 2U)` never invokes undefined behavior from an oversized shift (addresses CWE-664 and CWE-710).
+- Unsigned types and `EXIT_SUCCESS`/`EXIT_FAILURE` constants are used consistently for standards compliance.

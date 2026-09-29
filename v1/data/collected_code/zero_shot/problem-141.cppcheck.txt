@@ -1,0 +1,12 @@
+collected_code/problem-141-0.c:6:19: error: Cannot determine that 'arr[start]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        temp = arr[start];
+                  ^
+collected_code/problem-141-0.c:7:25: error: Cannot determine that 'arr[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        arr[start] = arr[i];
+                        ^
+collected_code/problem-141-0.c:17:16: error: Cannot determine that 'arr[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        if (arr[i] > arr[maxIndex]) {
+               ^
+collected_code/problem-141-0.c:17:25: error: Cannot determine that 'arr[maxIndex]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        if (arr[i] > arr[maxIndex]) {
+                        ^

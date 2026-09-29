@@ -1,0 +1,142 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+typedef struct {
+    int* values;
+    bool* is_none;
+    size_t size;
+} Tuple;
+
+typedef struct {
+    Tuple* tuples;
+    size_t count;
+} TupleList;
+
+TupleList remove_all_none_tuples(TupleList input_list) {
+    TupleList result;
+    result.count = 0;
+    
+    if (input_list.tuples == NULL || input_list.count == 0) {
+        result.tuples = NULL;
+        return result;
+    }
+
+    result.tuples = (Tuple*)malloc(input_list.count * sizeof(Tuple));
+    if (result.tuples == NULL) {
+        return result;
+    }
+
+    for (size_t i = 0; i < input_list.count; i++) {
+        bool all_none = true;
+        if (input_list.tuples[i].size > 0 && input_list.tuples[i].is_none != NULL) {
+            for (size_t j = 0; j < input_list.tuples[i].size; j++) {
+                if (!input_list.tuples[i].is_none[j]) {
+                    all_none = false;
+                    break;
+                }
+            }
+        } else if (input_list.tuples[i].size > 0) {
+            all_none = false;
+        }
+
+        if (!all_none) {
+            result.tuples[result.count].size = input_list.tuples[i].size;
+            
+            if (input_list.tuples[i].size > 0) {
+                result.tuples[result.count].values = (int*)malloc(input_list.tuples[i].size * sizeof(int));
+                result.tuples[result.count].is_none = (bool*)malloc(input_list.tuples[i].size * sizeof(bool));
+                
+                if (result.tuples[result.count].values == NULL || result.tuples[result.count].is_none == NULL) {
+                    free(result.tuples[result.count].values);
+                    free(result.tuples[result.count].is_none);
+                    
+                    for (size_t k = 0; k < result.count; k++) {
+                        free(result.tuples[k].values);
+                        free(result.tuples[k].is_none);
+                    }
+                    free(result.tuples);
+                    result.tuples = NULL;
+                    result.count = 0;
+                    return result;
+                }
+
+                for (size_t j = 0; j < input_list.tuples[i].size; j++) {
+                    result.tuples[result.count].values[j] = input_list.tuples[i].values[j];
+                    result.tuples[result.count].is_none[j] = input_list.tuples[i].is_none[j];
+                }
+            } else {
+                result.tuples[result.count].values = NULL;
+                result.tuples[result.count].is_none = NULL;
+            }
+            result.count++;
+        }
+    }
+
+    if (result.count == 0) {
+        free(result.tuples);
+        result.tuples = NULL;
+    } else {
+        Tuple* resized = (Tuple*)realloc(result.tuples, result.count * sizeof(Tuple));
+        if (resized != NULL) {
+            result.tuples = resized;
+        }
+    }
+
+    return result;
+}
+
+void free_tuple_list(TupleList* list) {
+    if (list != NULL && list->tuples != NULL) {
+        for (size_t i = 0; i < list->count; i++) {
+            free(list->tuples[i].values);
+            free(list->tuples[i].is_none);
+        }
+        free(list->tuples);
+        list->tuples = NULL;
+        list->count = 0;
+    }
+}
+
+int main(void) {
+    TupleList input_list;
+    input_list.count = 3;
+    input_list.tuples = (Tuple*)malloc(3 * sizeof(Tuple));
+    
+    if (input_list.tuples == NULL) {
+        return 1;
+    }
+
+    input_list.tuples[0].size = 2;
+    input_list.tuples[0].values = (int*)malloc(2 * sizeof(int));
+    input_list.tuples[0].is_none = (bool*)malloc(2 * sizeof(bool));
+    if (input_list.tuples[0].values && input_list.tuples[0].is_none) {
+        input_list.tuples[0].values[0] = 1; input_list.tuples[0].is_none[0] = false;
+        input_list.tuples[0].values[1] = 0; input_list.tuples[0].is_none[1] = true;
+    }
+
+    input_list.tuples[1].size = 2;
+    input_list.tuples[1].values = (int*)malloc(2 * sizeof(int));
+    input_list.tuples[1].is_none = (bool*)malloc(2 * sizeof(bool));
+    if (input_list.tuples[1].values && input_list.tuples[1].is_none) {
+        input_list.tuples[1].values[0] = 0; input_list.tuples[1].is_none[0] = true;
+        input_list.tuples[1].values[1] = 0; input_list.tuples[1].is_none[1] = true;
+    }
+
+    input_list.tuples[2].size = 2;
+    input_list.tuples[2].values = (int*)malloc(2 * sizeof(int));
+    input_list.tuples[2].is_none = (bool*)malloc(2 * sizeof(bool));
+    if (input_list.tuples[2].values && input_list.tuples[2].is_none) {
+        input_list.tuples[2].values[0] = 0; input_list.tuples[2].is_none[0] = true;
+        input_list.tuples[2].values[1] = 3; input_list.tuples[2].is_none[1] = false;
+    }
+
+    TupleList result = remove_all_none_tuples(input_list);
+
+    free_tuple_list(&input_list);
+    free_tuple_list(&result);
+
+    return 0;
+}
+```

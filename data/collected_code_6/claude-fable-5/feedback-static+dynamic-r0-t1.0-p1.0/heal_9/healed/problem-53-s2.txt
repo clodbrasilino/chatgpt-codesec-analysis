@@ -1,0 +1,74 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+
+#define BUFFER_SIZE 256
+
+bool first_last_equal(const char *str, size_t max_len)
+{
+    size_t len;
+
+    if (str == NULL || max_len == 0) {
+        return false;
+    }
+
+    len = strnlen(str, max_len);
+    if (len == 0 || len == max_len) {
+        return false;
+    }
+
+    return str[0] == str[len - 1];
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t len;
+
+    printf("Enter a string: ");
+    fflush(stdout);
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+        len--;
+    }
+
+    if (len == 0 || buffer[0] == '\0') {
+        printf("Empty string provided\n");
+        return 1;
+    }
+
+    if (first_last_equal(buffer, sizeof(buffer))) {
+        printf("The first and last characters are equal\n");
+    } else {
+        printf("The first and last characters are not equal\n");
+    }
+
+    return 0;
+}
+```
+
+**Analysis summary:**
+
+The original code was already well-defended against the flagged weakness (CWE-119/CWE-120, buffer overflow on a statically-sized array). Here's why the rewritten code remains safe:
+
+1. **Bounded input reading**: `fgets(buffer, (int)sizeof(buffer), stdin)` limits input to `BUFFER_SIZE - 1` characters plus the null terminator, preventing overflow at the read stage.
+
+2. **Defensive null termination**: `buffer[sizeof(buffer) - 1] = '\0'` guarantees termination even in pathological cases, making subsequent string operations safe.
+
+3. **Length-limited scanning**: `strnlen` is used instead of `strlen`, both in `main` and in `first_last_equal`, so the code never scans past the buffer boundary even if termination were somehow missing.
+
+4. **Robust helper function**: `first_last_equal` validates against `NULL`, zero `max_len`, empty strings, and the unterminated case (`len == max_len`) before indexing, so `str[0]` and `str[len - 1]` are always in-bounds.
+
+5. **Newline stripping with bounds check**: The trailing `\n` is removed only after confirming `len > 0`, avoiding an underflow when indexing `buffer[len - 1]`.
+
+The only functional addition is `fflush(stdout)` after the unterminated prompt, ensuring it appears before blocking on input — a portability nicety, not a security fix. The Flawfinder hit is a low-risk informational warning inherent to any fixed-size array; the mitigations above fully address it.

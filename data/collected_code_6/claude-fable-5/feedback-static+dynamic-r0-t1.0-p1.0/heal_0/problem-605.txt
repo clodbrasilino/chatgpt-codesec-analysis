@@ -1,0 +1,49 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+#include <stdlib.h>
+
+static bool is_prime(int n)
+{
+    if (n < 2) {
+        return false;
+    }
+    if (n < 4) {
+        return true;
+    }
+    if (n % 2 == 0) {
+        return false;
+    }
+    for (int i = 3; i <= n / i; i += 2) {
+        if (n % i == 0) {
+            return false;
+        }
+    }
+    return true;
+}
+
+int main(void)
+{
+    int number = 0;
+
+    printf("Enter an integer: ");
+    if (scanf("%d", &number) != 1) {
+        fprintf(stderr, "Error: invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (is_prime(number)) {
+        printf("%d is a prime number.\n", number);
+    } else {
+        printf("%d is not a prime number.\n", number);
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+Key safety considerations addressed:
+
+- **CWE-703**: The return value of `scanf` is checked to ensure valid input was actually read before using the variable. On failure, an error is reported to `stderr` and the program exits with a failure status.
+- **CWE-664**: No dynamically allocated resources or file handles are used, so there is nothing left unreleased; `number` is initialized before use.
+- **CWE-710**: The code adheres to standard practices — `main` returns `int`, uses `void` parameter list, `EXIT_SUCCESS`/`EXIT_FAILURE` constants, `bool` from `<stdbool.h>`, and the loop condition `i <= n / i` avoids the potential integer overflow that `i * i <= n` could cause for large inputs.

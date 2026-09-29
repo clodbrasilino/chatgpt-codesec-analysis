@@ -1,0 +1,119 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdbool.h>
+
+#define HEX_BUFFER_SIZE 66
+
+static bool is_valid_hex(const char *str, size_t max_len)
+{
+    size_t i = 0;
+    size_t len;
+
+    if (str == NULL || max_len == 0)
+    {
+        return false;
+    }
+
+    len = strnlen(str, max_len);
+    if (len == 0 || len >= max_len)
+    {
+        return false;
+    }
+
+    if (len >= 2 && str[0] == '0' && (str[1] == 'x' || str[1] == 'X'))
+    {
+        i = 2;
+    }
+
+    if (len <= i)
+    {
+        return false;
+    }
+
+    for (; i < len; i++)
+    {
+        if (isxdigit((unsigned char)str[i]) == 0)
+        {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+static bool is_hex_even(const char *str, size_t max_len)
+{
+    size_t len;
+    char last;
+
+    if (str == NULL || max_len == 0)
+    {
+        return false;
+    }
+
+    len = strnlen(str, max_len);
+    if (len == 0 || len >= max_len)
+    {
+        return false;
+    }
+
+    last = str[len - 1];
+
+    return strchr("02468aceACE", last) != NULL;
+}
+
+int main(void)
+{
+    char hex_input[HEX_BUFFER_SIZE];
+
+    printf("Enter a hexadecimal number: ");
+    fflush(stdout);
+
+    if (fgets(hex_input, sizeof(hex_input), stdin) == NULL)
+    {
+        fprintf(stderr, "Error: failed to read input.\n");
+        return 1;
+    }
+
+    if (strchr(hex_input, '\n') == NULL && !feof(stdin))
+    {
+        int ch;
+        while ((ch = getchar()) != '\n' && ch != EOF)
+        {
+        }
+        fprintf(stderr, "Error: input exceeds maximum length.\n");
+        return 1;
+    }
+
+    hex_input[strcspn(hex_input, "\n")] = '\0';
+
+    if (!is_valid_hex(hex_input, sizeof(hex_input)))
+    {
+        fprintf(stderr, "Error: invalid hexadecimal number.\n");
+        return 1;
+    }
+
+    if (is_hex_even(hex_input, sizeof(hex_input)))
+    {
+        printf("%s is an even number.\n", hex_input);
+    }
+    else
+    {
+        printf("%s is an odd number.\n", hex_input);
+    }
+
+    return 0;
+}
+```
+
+**Summary of fixes applied:**
+
+1. **CWE-126 (`strlen` over-read):** Replaced `strlen` with `strnlen(str, max_len)` in both `is_valid_hex()` and `is_hex_even()`. Both functions now receive the buffer's maximum size, guaranteeing no read beyond `max_len` bytes even if the string lacks a null terminator. If no terminator is found within the bound (`len >= max_len`), the input is rejected.
+
+2. **CWE-119/CWE-120 (fixed-size buffer):** Kept `fgets(hex_input, sizeof(hex_input), stdin)` so the write is strictly bounded by the array size, and explicitly pass `sizeof(hex_input)` to the validation helpers so all subsequent reads are bounds-checked against the actual buffer size.
+
+3. **CWE-120/CWE-20 (`getchar` flush loop):** The discard loop remains bounded by both `'\n'` and `EOF`, preventing an infinite loop on closed input, and no data is written into any buffer inside it.
+
+4. **Additional hardening:** Added NULL/zero-size guards at the top of both helpers, an empty-string check in `is_hex_even()` (preventing `str[len - 1]` from reading out of bounds when `len == 0`), and `fflush(stdout)` after the prompt to ensure it appears before reading.

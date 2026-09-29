@@ -1,0 +1,29 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int findPlatform(const int arr[], const int dep[], int n) {
+    int *platforms = (int *)malloc((2*n) * sizeof(int));
+    for (int i = 0; i < n; i++) {
+        platforms[2*i] = arr[i];
+        platforms[2*i + 1] = -dep[i];
+    }
+    int max_platforms = 1, required_platforms = 1;
+    for (int i = 0; i < 2*n; i++) {
+        if (platforms[i] > 0)
+            required_platforms++;
+        else
+            required_platforms--;
+        if (required_platforms > max_platforms)
+            max_platforms = required_platforms;
+    }
+    free(platforms);
+    return max_platforms;
+}
+
+int main() {
+    int arr[] = {900, 940, 950, 1100, 1500, 1800};
+    int dep[] = {910, 1200, 1120, 1130, 1900, 2000};
+    int n = 6;
+    printf("%d\n", findPlatform(arr, dep, n));
+    return 0;
+}

@@ -1,0 +1,19 @@
+#include <stdio.h>
+#include <stddef.h>
+
+typedef struct {
+    int a;
+    char b;
+    double c;
+} Tuple;
+
+size_t tuple_size(const Tuple *t) {
+    (void)t;
+    return sizeof(Tuple);
+}
+
+int main(void) {
+    Tuple t = {1, 'x', 3.14};
+    printf("Size of tuple: %zu\n", tuple_size(&t));
+    return 0;
+}

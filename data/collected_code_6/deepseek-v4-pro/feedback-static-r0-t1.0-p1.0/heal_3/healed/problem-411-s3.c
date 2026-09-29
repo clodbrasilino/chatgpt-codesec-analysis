@@ -1,0 +1,118 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+size_t safe_strlen(const char *str, size_t max_len) {
+    if (str == NULL) {
+        return 0;
+    }
+    size_t len = 0;
+    while (len < max_len && str[len] != '\0') {
+        len++;
+    }
+    return len;
+}
+
+char *snake_to_camel(const char *input) {
+    if (input == NULL) {
+        return NULL;
+    }
+
+    size_t len = safe_strlen(input, 257);
+    if (len == 0 || len > 256) {
+        return NULL;
+    }
+
+    char *result = malloc(len + 1);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    size_t result_index = 0;
+    size_t input_index = 0;
+    int capitalize_next = 0;
+
+    if (input[0] == '_') {
+        input_index++;
+        while (input_index < len && input[input_index] == '_') {
+            input_index++;
+        }
+    }
+
+    while (input_index < len) {
+        if (input[input_index] == '_') {
+            capitalize_next = 1;
+            input_index++;
+            while (input_index < len && input[input_index] == '_') {
+                input_index++;
+                capitalize_next = 1;
+            }
+            continue;
+        }
+
+        if (result_index >= len) {
+            free(result);
+            return NULL;
+        }
+
+        char current = input[input_index];
+
+        if (capitalize_next && current >= 'a' && current <= 'z') {
+            result[result_index++] = (char)toupper((unsigned char)current);
+            capitalize_next = 0;
+        } else if (capitalize_next && current >= 'A' && current <= 'Z') {
+            result[result_index++] = current;
+            capitalize_next = 0;
+        } else if (capitalize_next && current >= '0' && current <= '9') {
+            if (result_index + 2 > len) {
+                free(result);
+                return NULL;
+            }
+            result[result_index++] = '_';
+            result[result_index++] = current;
+            capitalize_next = 0;
+        } else {
+            result[result_index++] = current;
+            capitalize_next = 0;
+        }
+
+        input_index++;
+    }
+
+    if (result_index > len) {
+        free(result);
+        return NULL;
+    }
+
+    result[result_index] = '\0';
+    return result;
+}
+
+int main(void) {
+    const char *test_cases[] = {
+        "hello_world",
+        "snake_case_string",
+        "alreadyCamel",
+        "multiple__underscores",
+        "_leading_underscore",
+        "trailing_underscore_",
+        "",
+        "no_underscores_here",
+        "a_b_c_d_e"
+    };
+
+    size_t num_tests = sizeof(test_cases) / sizeof(test_cases[0]);
+
+    for (size_t i = 0; i < num_tests; i++) {
+        char *converted = snake_to_camel(test_cases[i]);
+        if (converted != NULL) {
+            printf("\"%s\" -> \"%s\"\n", test_cases[i], converted);
+            free(converted);
+        } else {
+            printf("\"%s\" -> NULL\n", test_cases[i]);
+        }
+    }
+
+    return 0;
+}

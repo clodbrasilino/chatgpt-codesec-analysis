@@ -1,0 +1,50 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX_SIZE 100
+
+int frequency[MAX_SIZE];
+
+void find_frequency(int arr[], int n) {
+    for(int i = 0; i < n; i++) {
+        frequency[arr[i]]++;
+    }
+}
+
+int main() {
+    int n, i, j, m;
+    int **arr;
+
+    printf("Enter the number of lists: ");
+    scanf("%d", &n);
+
+    arr = (int **)malloc(n * sizeof(int *));
+
+    for(i = 0; i < n; i++) {
+        printf("Enter the size of list %d: ", i+1);
+        scanf("%d", &m);
+        arr[i] = (int *)malloc(m * sizeof(int));
+        printf("Enter elements of list %d: ", i+1);
+        for(j = 0; j < m; j++) {
+            scanf("%d", &arr[i][j]);
+        }
+    }
+
+    for(i = 0; i < n; i++) {
+        find_frequency(arr[i], sizeof(arr[i])/sizeof(arr[i][0]));
+    }
+
+    printf("Frequency of all elements of list : \n");
+    for (i = 0; i < MAX_SIZE; i++) {
+        if(frequency[i] != 0) {
+            printf("%d occurs %d times\n", i, frequency[i]);
+        }
+    }
+
+    for(i = 0; i < n; i++) {
+        free(arr[i]);
+    }
+    free(arr);
+
+    return 0;
+}

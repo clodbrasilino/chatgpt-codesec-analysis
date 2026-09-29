@@ -1,0 +1,66 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+char *find_first_max_even_word(const char *str) {
+    if (str == NULL) {
+        return NULL;
+    }
+
+    size_t max_len = 0;
+    const char *max_start = NULL;
+    size_t current_len = 0;
+    const char *current_start = NULL;
+    int in_word = 0;
+
+    for (const char *p = str; ; ++p) {
+        if (*p != '\0' && !isspace((unsigned char)*p)) {
+            if (!in_word) {
+                in_word = 1;
+                current_start = p;
+                current_len = 1;
+            } else {
+                ++current_len;
+            }
+        } else {
+            if (in_word) {
+                if (current_len % 2 == 0 && current_len > max_len) {
+                    max_len = current_len;
+                    max_start = current_start;
+                }
+                in_word = 0;
+            }
+            if (*p == '\0') {
+                break;
+            }
+        }
+    }
+
+    if (max_start == NULL) {
+        return NULL;
+    }
+
+    char *result = (char *)malloc(max_len + 1);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    memcpy(result, max_start, max_len);
+    result[max_len] = '\0';
+    return result;
+}
+
+int main(void) {
+    const char *text = "This is a test string with even words like code and programming";
+    char *word = find_first_max_even_word(text);
+
+    if (word != NULL) {
+        printf("%s\n", word);
+        free(word);
+    } else {
+        printf("No even word found\n");
+    }
+
+    return 0;
+}

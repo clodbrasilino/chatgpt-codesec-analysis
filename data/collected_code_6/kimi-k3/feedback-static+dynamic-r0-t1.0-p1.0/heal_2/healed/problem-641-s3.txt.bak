@@ -1,0 +1,73 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <limits.h>
+
+long long nonagonal_number(int n) {
+    if (n < 0) {
+        return -1;
+    }
+    
+    if (n > 1518500249) {
+        errno = ERANGE;
+        return -1;
+    }
+    
+    long long a = n;
+    long long b = 7LL * n - 5;
+    
+    if (a % 2 == 0) {
+        a /= 2;
+    } else {
+        b /= 2;
+    }
+    
+    if (b != 0 && a > LLONG_MAX / b) {
+        errno = ERANGE;
+        return -1;
+    }
+    
+    return a * b;
+}
+
+int main(void) {
+    int n;
+    char buffer[256];
+    char *endptr;
+    long val;
+
+    printf("Enter the value of n: ");
+    
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    errno = 0;
+    val = strtol(buffer, &endptr, 10);
+    
+    if (errno == ERANGE || val > INT_MAX || val < 0) {
+        fprintf(stderr, "Invalid input: out of range\n");
+        return EXIT_FAILURE;
+    }
+    
+    if (endptr == buffer || (*endptr != '\n' && *endptr != '\0')) {
+        fprintf(stderr, "Invalid input: not a valid integer\n");
+        return EXIT_FAILURE;
+    }
+
+    n = (int)val;
+    
+    errno = 0;
+    long long result = nonagonal_number(n);
+    if (result == -1 && errno == ERANGE) {
+        fprintf(stderr, "Error: result would overflow\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("Nonagonal number for n=%d is %lld\n", n, result);
+    
+    return EXIT_SUCCESS;
+}
+```

@@ -1,0 +1,51 @@
+C language does not have built-in support for regular expressions. However, we can use external libraries such as POSIX regex library. Here is a C program that uses POSIX regex to extract the maximum numeric value from a string.
+
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <regex.h>
+
+#define MAX_MATCHES 100
+
+int extract_max_number(const char *str) {
+    regex_t regexCompiled;
+    regmatch_t groupArray[MAX_MATCHES];
+    char sourceCopy[1000];
+    char *cursor;
+    int max = 0;
+
+    if (regcomp(&regexCompiled, "[0-9]+", REG_EXTENDED)) {
+        printf("Could not compile regular expression.\n");
+        return 0;
+    };
+
+    cursor = (char*)str;
+    for (int m = 0; m < MAX_MATCHES; m ++) {
+        if (regexec(&regexCompiled, cursor, 1, groupArray, 0))
+            break;  // No more matches
+
+        int offset = groupArray[0].rm_eo;
+        char cursorCopy[strlen(cursor) + 1];
+        strcpy(cursorCopy, cursor);
+        cursorCopy[offset] = 0;
+        int num = atoi(cursorCopy + groupArray[0].rm_so);
+        if (num > max)
+            max = num;
+        cursor += offset;
+    }
+
+    regfree(&regexCompiled);
+
+    return max;
+}
+
+int main() {
+    const char *str = "abc123def456ghi789";
+    int max = extract_max_number(str);
+    printf("Max number: %d\n", max);
+    return 0;
+}
+```
+
+This program uses POSIX regex to find all numeric substrings in the input string, converts them to integers using `atoi`, and keeps track of the maximum value found.

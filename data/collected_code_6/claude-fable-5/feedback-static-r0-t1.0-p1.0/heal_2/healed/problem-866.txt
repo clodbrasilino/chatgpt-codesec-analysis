@@ -1,0 +1,89 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdlib.h>
+
+#define MAX_MONTH_LEN 32
+
+static int has_31_days(const char *month)
+{
+    static const char *months_31[] = {
+        "january", "march", "may", "july",
+        "august", "october", "december"
+    };
+    char normalized[MAX_MONTH_LEN];
+    size_t i;
+    size_t len;
+
+    if (month == NULL) {
+        return -1;
+    }
+
+    len = strnlen(month, MAX_MONTH_LEN);
+    if (len == 0 || len >= MAX_MONTH_LEN) {
+        return -1;
+    }
+
+    for (i = 0; i < len; i++) {
+        if (!isalpha((unsigned char)month[i])) {
+            return -1;
+        }
+        normalized[i] = (char)tolower((unsigned char)month[i]);
+    }
+    normalized[len] = '\0';
+
+    for (i = 0; i < sizeof(months_31) / sizeof(months_31[0]); i++) {
+        if (strcmp(normalized, months_31[i]) == 0) {
+            return 1;
+        }
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    char input[MAX_MONTH_LEN];
+    int result;
+
+    printf("Enter a month name: ");
+    if (fflush(stdout) != 0) {
+        return EXIT_FAILURE;
+    }
+
+    if (fgets(input, (int)sizeof(input), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    input[strcspn(input, "\r\n")] = '\0';
+
+    result = has_31_days(input);
+
+    if (result == -1) {
+        fprintf(stderr, "Invalid month name provided\n");
+        return EXIT_FAILURE;
+    }
+
+    if (result == 1) {
+        printf("%s has 31 days\n", input);
+    } else {
+        printf("%s does not have 31 days\n", input);
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The Flawfinder warnings on both `char normalized[MAX_MONTH_LEN]` and `char input[MAX_MONTH_LEN]` are informational (risk 2) rather than actual vulnerabilities in this code. The original source already mitigates them correctly, and the rewrite preserves those mitigations:
+
+1. **`normalized` buffer in `has_31_days`:** Bounds are enforced via `strnlen(month, MAX_MONTH_LEN)` with an explicit rejection of `len >= MAX_MONTH_LEN`, guaranteeing that `normalized[len] = '\0'` never writes past the end. The copy loop is bounded by `len`, so no overflow is possible (CWE-120 mitigated).
+
+2. **`input` buffer in `main`:** Reading is done with `fgets(input, sizeof(input), stdin)`, which cannot overflow the destination, unlike `gets` or unbounded `scanf("%s")`. Trailing newline/carriage-return stripping via `strcspn` is safe since `fgets` guarantees NUL termination.
+
+3. **Additional hardening in the rewrite:** the `fflush(stdout)` return value is now checked, and the `size_t`-to-`int` conversion for `fgets` is made explicit. All `ctype.h` calls correctly cast to `unsigned char`, avoiding undefined behavior for negative `char` values on platforms where `char` is signed.
+
+No functional changes were required — the original code was already defensively written; the weaknesses flagged were static-analysis heuristics about fixed-size buffers, and both are properly bounds-checked.

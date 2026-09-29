@@ -1,0 +1,11 @@
+collected_code/problem-774-0.c: In function 'isValidEmail':
+collected_code/problem-774-0.c:15:38: error: 'NULL' undeclared (first use in this function)
+   15 |     reti = regexec(&regex, email, 0, NULL, 0);
+      |                                      ^~~~
+collected_code/problem-774-0.c:2:1: note: 'NULL' is defined in header '<stddef.h>'; did you forget to '#include <stddef.h>'?
+    1 | #include <regex.h>
+  +++ |+#include <stddef.h>
+    2 | 
+collected_code/problem-774-0.c:15:38: note: each undeclared identifier is reported only once for each function it appears in
+   15 |     reti = regexec(&regex, email, 0, NULL, 0);
+      |                                      ^~~~

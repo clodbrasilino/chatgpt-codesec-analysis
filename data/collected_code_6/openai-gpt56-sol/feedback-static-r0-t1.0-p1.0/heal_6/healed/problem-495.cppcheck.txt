@@ -1,0 +1,16 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-495.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-495.c:65:27: style: Condition 'prefix_length>match_end' is always true [knownConditionTrueFalse]
+            prefix_length > match_end ||
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-495.c:55:59: note: Assuming that condition 'match.rm_eo<=match.rm_so' is not redundant
+        if (status != 0 || match.rm_so < 0 || match.rm_eo <= match.rm_so) {
+                                                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-495.c:61:23: note: prefix_length is assigned '(unsigned long)match.rm_so' here.
+        prefix_length = (size_t)match.rm_so;
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-495.c:62:21: note: Assignment 'match_end=(unsigned long)match.rm_eo', assigned value is less than symbolic=prefix_length
+        match_end = (size_t)match.rm_eo;
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-495.c:65:27: note: Condition 'prefix_length>match_end' is always true
+            prefix_length > match_end ||
+                          ^

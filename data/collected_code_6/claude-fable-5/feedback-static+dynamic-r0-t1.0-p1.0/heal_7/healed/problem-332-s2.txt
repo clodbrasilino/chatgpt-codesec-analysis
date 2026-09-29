@@ -1,0 +1,85 @@
+```c
+#define _POSIX_C_SOURCE 200809L
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define CHARSET_SIZE 256
+#define BUFFER_SIZE 1024
+
+int count_char_frequency(const char *str, size_t max_len, size_t freq[CHARSET_SIZE])
+{
+    size_t i;
+    size_t len;
+
+    if (str == NULL || freq == NULL || max_len == 0) {
+        return -1;
+    }
+
+    memset(freq, 0, CHARSET_SIZE * sizeof(size_t));
+
+    len = strnlen(str, max_len);
+    for (i = 0; i < len; i++) {
+        freq[(unsigned char)str[i]]++;
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t freq[CHARSET_SIZE];
+    size_t i;
+    size_t len;
+
+    memset(buffer, 0, sizeof(buffer));
+    memset(freq, 0, sizeof(freq));
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    }
+
+    if (count_char_frequency(buffer, sizeof(buffer), freq) != 0) {
+        fprintf(stderr, "Error counting character frequency\n");
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i < CHARSET_SIZE; i++) {
+        if (freq[i] > 0) {
+            if (i >= 32 && i < 127) {
+                printf("'%c' : %zu\n", (int)i, freq[i]);
+            } else {
+                printf("0x%02zX : %zu\n", i, freq[i]);
+            }
+        }
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The original code already mitigates the weaknesses flagged by Flawfinder (CWE-119/CWE-120), so the rewrite preserves those defenses rather than changing logic:
+
+1. **`buffer[BUFFER_SIZE]` overflow risk** — mitigated because input is read with `fgets(buffer, (int)sizeof(buffer), stdin)`, which limits the read to the buffer size and always NUL-terminates. The explicit `buffer[sizeof(buffer) - 1] = '\0';` is defense-in-depth (redundant after `fgets`, but harmless).
+
+2. **`freq[CHARSET_SIZE]` indexing risk** — mitigated by casting to `(unsigned char)` before indexing, guaranteeing the index is in `[0, 255]` even on platforms where `char` is signed. Without that cast, a negative `char` value would cause out-of-bounds access.
+
+3. **Bounded string operations** — `strnlen` is used instead of `strlen`, capping traversal at `max_len`/`sizeof(buffer)`, so even a non-terminated buffer cannot cause an over-read. The `_POSIX_C_SOURCE 200809L` define is required to expose `strnlen`.
+
+4. **Defensive API design** — `count_char_frequency` validates its pointers and `max_len` before use and zeroes the frequency table itself, so callers can't misuse it with stale data.
+
+5. **Output safety** — printable characters (32–126) are printed literally; everything else is printed as hex, avoiding emission of raw control characters to the terminal.
+
+No functional changes were needed — the code as written already addresses the flagged risks correctly.

@@ -1,0 +1,84 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdbool.h>
+#include <stdint.h>
+
+#define MAX_INPUT_LEN 4096
+
+bool are_rotations(const char *s1, const char *s2)
+{
+    size_t len1;
+    size_t len2;
+    char *temp;
+    bool result;
+
+    if (s1 == NULL || s2 == NULL) {
+        return false;
+    }
+
+    len1 = strnlen(s1, MAX_INPUT_LEN);
+    len2 = strnlen(s2, MAX_INPUT_LEN);
+
+    if (len1 >= MAX_INPUT_LEN || len2 >= MAX_INPUT_LEN) {
+        return false;
+    }
+
+    if (len1 != len2) {
+        return false;
+    }
+
+    if (len1 == 0) {
+        return true;
+    }
+
+    if (len1 > (SIZE_MAX - 1) / 2) {
+        return false;
+    }
+
+    temp = malloc((2 * len1) + 1);
+    if (temp == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(EXIT_FAILURE);
+    }
+
+    memcpy(temp, s1, len1);
+    memcpy(temp + len1, s1, len1);
+    temp[2 * len1] = '\0';
+
+    result = (strstr(temp, s2) != NULL);
+
+    free(temp);
+    return result;
+}
+
+int main(void)
+{
+    const char *str1 = "ABCD";
+    const char *str2 = "CDAB";
+    const char *str3 = "ACBD";
+
+    if (are_rotations(str1, str2)) {
+        printf("\"%s\" and \"%s\" are rotations of each other\n", str1, str2);
+    } else {
+        printf("\"%s\" and \"%s\" are not rotations of each other\n", str1, str2);
+    }
+
+    if (are_rotations(str1, str3)) {
+        printf("\"%s\" and \"%s\" are rotations of each other\n", str1, str3);
+    } else {
+        printf("\"%s\" and \"%s\" are not rotations of each other\n", str1, str3);
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+Key changes made to address the identified weaknesses:
+
+1. **Missing `<stdint.h>` include** — The original code used `SIZE_MAX` without including `<stdint.h>`, which would fail to compile on conforming implementations. This is now included.
+
+2. **CWE-126 (strlen over-read)** — Replaced `strlen` with `strnlen` bounded by `MAX_INPUT_LEN`. If a string is not properly NUL-terminated within the bound, the function safely rejects it instead of reading out of bounds indefinitely.
+
+3. **CWE-120 (memcpy buffer overflow)** — The `memcpy` calls were already safe in the original because the destination buffer is allocated as `(2 * len1) + 1` bytes, exactly matching the two `len1`-byte copies plus the terminator. The overflow guard `len1 > (SIZE_MAX - 1) / 2` prevents integer overflow in the allocation size, so the invariant holds and no changes were required beyond the length-bounding above.

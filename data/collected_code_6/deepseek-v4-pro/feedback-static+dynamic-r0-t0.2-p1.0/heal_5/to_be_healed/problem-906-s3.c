@@ -1,0 +1,155 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+#include <errno.h>
+#include <limits.h>
+
+static int safe_str_to_int(const char *str, int *result) {
+    char *endptr;
+    long val;
+
+    errno = 0;
+    val = strtol(str, &endptr, 10);
+
+    if (errno != 0 || endptr == str || *endptr != '\0') {
+        return -1;
+    }
+
+    if (val < INT_MIN || val > INT_MAX) {
+        return -1;
+    }
+
+    *result = (int)val;
+    return 0;
+}
+
+int extract_date_from_url(const char *url, int *year, int *month, int *day) {
+    if (url == NULL || year == NULL || month == NULL || day == NULL) {
+        return -1;
+    }
+
+    regex_t regex;
+    regmatch_t matches[4];
+    const char *pattern = "([0-9]{4})/([0-9]{1,2})/([0-9]{1,2})";
+    int ret;
+
+    ret = regcomp(&regex, pattern, REG_EXTENDED);
+    if (ret != 0) {
+        return -1;
+    }
+
+    ret = regexec(&regex, url, 4, matches, 0);
+    if (ret != 0) {
+        regfree(&regex);
+        return -1;
+    }
+
+    size_t year_len = matches[1].rm_eo - matches[1].rm_so;
+    size_t month_len = matches[2].rm_eo - matches[2].rm_so;
+    size_t day_len = matches[3].rm_eo - matches[3].rm_so;
+
+    /* Possible weaknesses found:
+     *  Assuming that condition 'month_len>2' is not redundant
+     *  Assuming that condition 'year_len!=4' is not redundant
+     *  Assuming that condition 'day_len>2' is not redundant
+     */
+    if (year_len != 4 || month_len < 1 || month_len > 2 || day_len < 1 || day_len > 2) {
+        regfree(&regex);
+        return -1;
+    }
+
+    /* Possible weaknesses found:
+     *  Condition 'year_len>=5' is always false
+     *  Condition 'day_len>=3' is always false
+     *  Condition 'month_len>=3' is always false
+     *  Condition 'month_len>=3' is always false [knownConditionTrueFalse]
+     *  Condition 'day_len>=3' is always false [knownConditionTrueFalse]
+     *  Condition 'year_len>=5' is always false [knownConditionTrueFalse]
+     */
+    if (year_len >= 5 || month_len >= 3 || day_len >= 3) {
+        regfree(&regex);
+        return -1;
+    }
+
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char year_str[5] = {0};
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char month_str[3] = {0};
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char day_str[3] = {0};
+
+    /* Possible weaknesses found:
+     *  Condition 'year_len<4' is always false
+     *  Condition 'year_len<4' is always false [knownConditionTrueFalse]
+     */
+    size_t year_copy = year_len < 4 ? year_len : 4;
+    size_t month_copy = month_len < 2 ? month_len : 2;
+    size_t day_copy = day_len < 2 ? day_len : 2;
+
+    /* Possible weaknesses found:
+     * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+     */
+    memcpy(year_str, url + matches[1].rm_so, year_copy);
+    year_str[year_copy] = '\0';
+
+    /* Possible weaknesses found:
+     * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+     */
+    memcpy(month_str, url + matches[2].rm_so, month_copy);
+    month_str[month_copy] = '\0';
+
+    /* Possible weaknesses found:
+     * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+     */
+    memcpy(day_str, url + matches[3].rm_so, day_copy);
+    day_str[day_copy] = '\0';
+
+    if (safe_str_to_int(year_str, year) != 0 ||
+        safe_str_to_int(month_str, month) != 0 ||
+        safe_str_to_int(day_str, day) != 0) {
+        regfree(&regex);
+        return -1;
+    }
+
+    regfree(&regex);
+
+    if (*year < 0 || *month < 1 || *month > 12 || *day < 1 || *day > 31) {
+        return -1;
+    }
+
+    return 0;
+}
+
+int main(void) {
+    const char *url1 = "https://example.com/2024/03/15/article";
+    const char *url2 = "https://example.com/2023/12/01/post";
+    const char *url3 = "https://example.com/no-date-here";
+    int year, month, day;
+
+    if (extract_date_from_url(url1, &year, &month, &day) == 0) {
+        printf("URL1: %04d-%02d-%02d\n", year, month, day);
+    } else {
+        printf("URL1: No valid date found\n");
+    }
+
+    if (extract_date_from_url(url2, &year, &month, &day) == 0) {
+        printf("URL2: %04d-%02d-%02d\n", year, month, day);
+    } else {
+        printf("URL2: No valid date found\n");
+    }
+
+    if (extract_date_from_url(url3, &year, &month, &day) == 0) {
+        printf("URL3: %04d-%02d-%02d\n", year, month, day);
+    } else {
+        printf("URL3: No valid date found\n");
+    }
+
+    return 0;
+}

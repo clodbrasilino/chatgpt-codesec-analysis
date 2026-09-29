@@ -1,0 +1,22 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-319-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-319-s2.c:69:31: warning: Identical inner 'if' condition is always true. [identicalInnerCondition]
+            if (bytes_to_copy <= word_length) {
+                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-319-s2.c:68:63: note: outer condition: bytes_to_copy<=word_length
+        if (src != NULL && bytes_to_copy > 0 && bytes_to_copy <= word_length) {
+                                                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-319-s2.c:69:31: note: identical inner condition: bytes_to_copy<=word_length
+            if (bytes_to_copy <= word_length) {
+                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-319-s2.c:102:17: style: Condition 'len>0' is always true [knownConditionTrueFalse]
+        if (len > 0 && input[len - 1] == '\n') {
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-319-s2.c:100:14: note: Assuming that condition 'read>0' is not redundant
+    if (read > 0 && (size_t)read <= MAX_INPUT_SIZE) {
+             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-319-s2.c:101:22: note: Assignment 'len=(unsigned long)read', assigned value is greater than 0
+        size_t len = (size_t)read;
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-319-s2.c:102:17: note: Condition 'len>0' is always true
+        if (len > 0 && input[len - 1] == '\n') {
+                ^

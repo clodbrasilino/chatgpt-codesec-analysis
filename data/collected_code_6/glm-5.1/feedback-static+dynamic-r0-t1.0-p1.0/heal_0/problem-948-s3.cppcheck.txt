@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-948-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-948-s3.c:56:14: style: Variable 'int_ptr' can be declared as pointer to const [constVariablePointer]
+        int *int_ptr = (int *)item;
+             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-948-s3.c:61:17: style: Variable 'dbl_ptr' can be declared as pointer to const [constVariablePointer]
+        double *dbl_ptr = (double *)item;
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-948-s3.c:66:15: style: Variable 'char_ptr' can be declared as pointer to const [constVariablePointer]
+        char *char_ptr = (char *)item;
+              ^

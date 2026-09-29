@@ -1,0 +1,87 @@
+```c
+#include <stdio.h>
+#include <ctype.h>
+#include <string.h>
+#include <stdlib.h>
+
+#define MAX_INPUT_LEN 4096
+
+char *remove_non_alnum(char *str, size_t max_len);
+
+char *remove_non_alnum(char *str, size_t max_len)
+{
+    size_t read;
+    size_t write;
+    size_t len;
+
+    if (str == NULL || max_len == 0) {
+        return NULL;
+    }
+
+    len = strnlen(str, max_len);
+    if (len >= max_len) {
+        return NULL;
+    }
+
+    write = 0;
+    for (read = 0; read < len && read < max_len; read++) {
+        if (isalnum((unsigned char)str[read])) {
+            if (write < max_len - 1) {
+                str[write] = str[read];
+                write++;
+            }
+        }
+    }
+
+    if (write < max_len) {
+        str[write] = '\0';
+    } else {
+        return NULL;
+    }
+
+    return str;
+}
+
+int main(void)
+{
+    char input[] = "Hello, World! 123 #$%^ test_case-42";
+    char *result;
+
+    if (sizeof(input) > MAX_INPUT_LEN) {
+        if (fprintf(stderr, "Error: input exceeds maximum length\n") < 0) {
+            return EXIT_FAILURE;
+        }
+        return EXIT_FAILURE;
+    }
+
+    result = remove_non_alnum(input, sizeof(input));
+    if (result == NULL) {
+        if (fprintf(stderr, "Error: invalid input string\n") < 0) {
+            return EXIT_FAILURE;
+        }
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Result: %s\n", result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis summary:**
+
+The original code was already largely defensive; the Flawfinder hits were low-risk (risk 1) informational warnings about buffer access patterns rather than confirmed vulnerabilities. Here's what the rewrite addresses:
+
+1. **Loop bounds (CWE-120/CWE-20):** The read loop now explicitly guards against `read < max_len` in addition to `read < len`, making the boundary invariant locally provable rather than relying solely on the earlier `strnlen` result.
+
+2. **Write index bounds:** The write position is explicitly checked against `max_len - 1` before each store, guaranteeing `str[write]` never exceeds the buffer even if invariants elsewhere were violated.
+
+3. **NUL terminator safety:** The terminating write `str[write] = '\0'` is now guarded by `write < max_len`, eliminating any theoretical off-by-one.
+
+4. **Existing mitigations preserved:** `strnlen` instead of `strlen` (bounded scan), the `(unsigned char)` cast for `isalnum` (avoids UB with negative `char` values per C standard), NULL/zero-length parameter validation, and checked return values on `printf`/`fprintf`.
+
+5. **Input length policy:** `MAX_INPUT_LEN` is now actually enforced in `main`, whereas previously it was defined but unused.
+
+The function remains in-place and O(n), with the invariant `write <= read < len < max_len` holding throughout execution.

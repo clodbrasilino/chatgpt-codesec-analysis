@@ -1,0 +1,62 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+long long carol_number(int n, int *error);
+
+long long carol_number(int n, int *error)
+{
+    long long p;
+    long long result;
+
+    if (error == NULL) {
+        return 0;
+    }
+
+    if (n < 1 || n > 31) {
+        *error = 1;
+        return 0;
+    }
+
+    p = (1LL << n) - 1LL;
+    result = p * p - 2LL;
+    *error = 0;
+    return result;
+}
+
+int main(void)
+{
+    int n;
+    int error;
+    long long result;
+    int scan_status;
+
+    printf("Enter n (1 to 31): ");
+    scan_status = scanf("%d", &n);
+
+    if (scan_status != 1) {
+        fprintf(stderr, "Invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    error = 0;
+    result = carol_number(n, &error);
+
+    if (error != 0) {
+        fprintf(stderr, "n must be between 1 and 31.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Carol number %d is %lld\n", n, result);
+    return EXIT_SUCCESS;
+}
+```
+
+**How it works:** The n'th Carol number is defined as (2ⁿ − 1)² − 2. The function computes 2ⁿ via a bit shift, squares it after subtracting one, then subtracts two.
+
+**Safety measures taken:**
+- The input range is restricted to 1–31 so the intermediate value `p * p` never overflows a signed 64-bit `long long` (avoiding undefined behavior, addressing CWE-703).
+- The return value of `scanf` is checked before using `n` (CWE-703).
+- Errors are reported via an explicit `error` out-parameter rather than a magic sentinel value, and the pointer is null-checked before dereferencing (CWE-664, CWE-710).
+- Standard exit codes (`EXIT_SUCCESS`/`EXIT_FAILURE`) and `stderr` for error messages follow common coding standards (CWE-710).

@@ -1,0 +1,64 @@
+```c
+#include <stdio.h>
+#include <ctype.h>
+#include <stddef.h>
+#include <string.h>
+
+void remove_whitespace(char *str, size_t max_len)
+{
+    size_t read;
+    size_t write;
+
+    if (str == NULL || max_len == 0) {
+        return;
+    }
+
+    read = 0;
+    write = 0;
+
+    while (read < max_len && str[read] != '\0') {
+        if (!isspace((unsigned char)str[read])) {
+            if (write < max_len - 1) {
+                str[write] = str[read];
+                write++;
+            } else {
+                break;
+            }
+        }
+        read++;
+    }
+
+    if (write < max_len) {
+        str[write] = '\0';
+    } else {
+        str[max_len - 1] = '\0';
+    }
+}
+
+int main(void)
+{
+    char text[] = "  Hello,   World! \t This is a\ntest.  ";
+
+    printf("Before: \"%s\"\n", text);
+    remove_whitespace(text, sizeof(text));
+    printf("After:  \"%s\"\n", text);
+
+    return 0;
+}
+```
+
+**Analysis of the original code and changes made:**
+
+The original code was already largely defensive, and the Flawfinder hits were low-risk (risk 1) advisory warnings rather than confirmed vulnerabilities. Here is why each was acceptable, and what was hardened:
+
+1. **NULL and zero-length guard** — Already present (`str == NULL || max_len == 0`), preventing dereference of invalid pointers and the `max_len - 1` underflow when `max_len == 0`. Retained as-is.
+
+2. **Loop bounds (`read < max_len && str[read] != '\0'`)** — The read index was already properly bounded before dereferencing, so no out-of-bounds read could occur even on a non-terminated buffer. Retained.
+
+3. **`isspace((unsigned char)str[read])`** — The cast to `unsigned char` was already correct; passing a negative `char` to `isspace()` is undefined behavior. Retained.
+
+4. **Write bounds (the actual hardening)** — In the original, `str[write] = str[read]` relied on the invariant `write <= read < max_len`. That invariant does hold, so it was not exploitable, but I added an explicit `write < max_len - 1` guard before every write. This makes the bounds check locally verifiable (satisfying CWE-120/CWE-20 concerns without relying on cross-statement reasoning), guarantees room for the null terminator, and future-proofs the loop against refactoring errors.
+
+5. **Termination logic** — Retained the defensive dual-path null termination, ensuring the string is always terminated within `max_len` regardless of input.
+
+The behavior of `main` is unchanged: output is `Hello,World!Thisisatest.` after stripping all whitespace.

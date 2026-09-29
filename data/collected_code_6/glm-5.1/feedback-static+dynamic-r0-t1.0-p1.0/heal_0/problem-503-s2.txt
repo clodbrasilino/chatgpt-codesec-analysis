@@ -1,0 +1,41 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int *add_consecutive(const int *list, size_t size) {
+    if (size < 2) {
+        return NULL;
+    }
+
+    int *result = malloc((size - 1) * sizeof(int));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    for (size_t i = 0; i < size - 1; i++) {
+        result[i] = list[i] + list[i + 1];
+    }
+
+    return result;
+}
+
+int main(void) {
+    int list[] = {1, 2, 3, 4, 5};
+    size_t size = sizeof(list) / sizeof(list[0]);
+
+    int *result = add_consecutive(list, size);
+    if (result == NULL) {
+        return EXIT_FAILURE;
+    }
+
+    for (size_t i = 0; i < size - 1; i++) {
+        printf("%d ", result[i]);
+    }
+    printf("\n");
+
+    free(result);
+    result = NULL;
+
+    return EXIT_SUCCESS;
+}
+```

@@ -1,0 +1,62 @@
+```c
+#include <stdio.h>
+#include <stddef.h>
+
+#define BUFFER_SIZE 256
+
+size_t string_length(const char *str)
+{
+    size_t length = 0;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    while (str[length] != '\0') {
+        length++;
+    }
+
+    return length;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t length;
+    size_t i;
+
+    printf("Enter a string: ");
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    i = 0;
+    while (i < sizeof(buffer) && buffer[i] != '\0') {
+        if (buffer[i] == '\n') {
+            buffer[i] = '\0';
+            break;
+        }
+        i++;
+    }
+
+    length = string_length(buffer);
+
+    printf("Length of the string: %zu\n", length);
+
+    return 0;
+}
+```
+
+Key points about this revision:
+
+- **Buffer bounds are enforced everywhere**: `fgets` is called with `sizeof(buffer)`, which guarantees at most 255 characters plus the null terminator are written. This already mitigates the CWE-119/CWE-120 concern flagged by Flawfinder.
+- **Defensive null termination**: `buffer[sizeof(buffer) - 1] = '\0';` guarantees the buffer is null-terminated even in unexpected edge cases, so subsequent string operations can never read past the array.
+- **Bounded newline-stripping loop**: The `i < sizeof(buffer)` condition ensures the loop can never index outside the array, even if the buffer somehow lacked a terminator.
+- **`string_length` remains safe**: It checks for `NULL` and only reads up to the terminator, which is now guaranteed to exist within bounds.
+- **Named constant**: `BUFFER_SIZE` replaces the magic number, making the size easier to audit and change consistently.
+
+The original code was already largely safe; the Flawfinder warning on `char buffer[256]` is a heuristic flag on any fixed-size array. The changes above make the bounds guarantees explicit and robust against future modifications.

@@ -1,0 +1,109 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#define MAX_WORD_LEN 256
+
+typedef struct {
+    char *word;
+    int count;
+} WordCount;
+
+void to_lowercase(char *str) {
+    if (!str) return;
+    for (int i = 0; str[i]; i++) {
+        str[i] = (char)tolower((unsigned char)str[i]);
+    }
+}
+
+int find_word(WordCount *wordCounts, int size, const char *word) {
+    if (!wordCounts || !word) return -1;
+    for (int i = 0; i < size; i++) {
+        if (strcmp(wordCounts[i].word, word) == 0) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+int compare_counts(const void *a, const void *b) {
+    const WordCount *wa = (const WordCount *)a;
+    const WordCount *wb = (const WordCount *)b;
+    return wb->count - wa->count;
+}
+
+void find_most_common_words(const char *text, int n) {
+    if (!text || n <= 0) return;
+
+    char *text_copy = strdup(text);
+    if (!text_copy) return;
+
+    int capacity = 100;
+    int size = 0;
+    WordCount *wordCounts = malloc(capacity * sizeof(WordCount));
+    if (!wordCounts) {
+        free(text_copy);
+        return;
+    }
+
+    char *saveptr;
+    char *token = strtok_r(text_copy, " \t\n\r.,;:!?()\"'", &saveptr);
+
+    while (token != NULL) {
+        to_lowercase(token);
+        
+        int index = find_word(wordCounts, size, token);
+        if (index != -1) {
+            wordCounts[index].count++;
+        } else {
+            if (size >= capacity) {
+                capacity *= 2;
+                WordCount *temp = realloc(wordCounts, capacity * sizeof(WordCount));
+                if (!temp) {
+                    for (int i = 0; i < size; i++) {
+                        free(wordCounts[i].word);
+                    }
+                    free(wordCounts);
+                    free(text_copy);
+                    return;
+                }
+                wordCounts = temp;
+            }
+            wordCounts[size].word = strdup(token);
+            if (!wordCounts[size].word) {
+                for (int i = 0; i < size; i++) {
+                    free(wordCounts[i].word);
+                }
+                free(wordCounts);
+                free(text_copy);
+                return;
+            }
+            wordCounts[size].count = 1;
+            size++;
+        }
+        token = strtok_r(NULL, " \t\n\r.,;:!?()\"'", &saveptr);
+    }
+
+    qsort(wordCounts, size, sizeof(WordCount), compare_counts);
+
+    int limit = (n < size) ? n : size;
+    for (int i = 0; i < limit; i++) {
+        printf("%s: %d\n", wordCounts[i].word, wordCounts[i].count);
+    }
+
+    for (int i = 0; i < size; i++) {
+        free(wordCounts[i].word);
+    }
+    free(wordCounts);
+    free(text_copy);
+}
+
+int main(void) {
+    const char *sample_text = "This is a sample text. This text is just a sample.";
+    int top_n = 3;
+
+    find_most_common_words(sample_text, top_n);
+
+    return 0;
+}

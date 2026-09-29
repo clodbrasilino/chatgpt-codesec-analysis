@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-478-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-478-s3.c:71:46: style: Condition 'result6' is always false [knownConditionTrueFalse]
+    printf("Original: (null)\nResult: %s\n", result6 ? result6 : "(null)");
+                                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-478-s3.c:64:48: note: Calling function 'remove_lowercase_substrings' returns 0
+    char *result6 = remove_lowercase_substrings(NULL);
+                                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-478-s3.c:64:48: note: Assignment 'result6=remove_lowercase_substrings(NULL)', assigned value is 0
+    char *result6 = remove_lowercase_substrings(NULL);
+                                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-478-s3.c:71:46: note: Condition 'result6' is always false
+    printf("Original: (null)\nResult: %s\n", result6 ? result6 : "(null)");
+                                             ^

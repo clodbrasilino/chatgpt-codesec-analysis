@@ -1,0 +1,97 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char *items;
+    size_t count;
+} Tuple;
+
+Tuple *string_to_tuple(const char *str)
+{
+    Tuple *tuple = NULL;
+    size_t length;
+    size_t i;
+
+    if ((str == NULL) || (str[0] == '\0')) {
+        return NULL;
+    }
+
+    length = strlen(str);
+
+    tuple = (Tuple *)malloc(sizeof(Tuple));
+    if (tuple == NULL) {
+        return NULL;
+    }
+
+    tuple->items = (char *)malloc(length * sizeof(char));
+    if (tuple->items == NULL) {
+        free(tuple);
+        return NULL;
+    }
+
+    for (i = 0U; i < length; i++) {
+        tuple->items[i] = str[i];
+    }
+    tuple->count = length;
+
+    return tuple;
+}
+
+void free_tuple(Tuple *tuple)
+{
+    if (tuple != NULL) {
+        free(tuple->items);
+        free(tuple);
+    }
+}
+
+void print_tuple(const Tuple *tuple)
+{
+    size_t i;
+
+    if (tuple == NULL) {
+        return;
+    }
+
+    (void)printf("[");
+    for (i = 0U; i < tuple->count; i++) {
+        (void)printf("'%c'", tuple->items[i]);
+        if (i < (tuple->count - 1U)) {
+            (void)printf(", ");
+        }
+    }
+    (void)printf("]\n");
+}
+
+int main(void)
+{
+    const char *inputs[] = { "python3.0", "item1", "15.10" };
+    size_t num_inputs = sizeof(inputs) / sizeof(inputs[0]);
+    size_t i;
+
+    for (i = 0U; i < num_inputs; i++) {
+        Tuple *tuple = string_to_tuple(inputs[i]);
+
+        if (tuple == NULL) {
+            (void)fprintf(stderr, "Failed to convert string to tuple\n");
+            return EXIT_FAILURE;
+        }
+
+        print_tuple(tuple);
+
+        free_tuple(tuple);
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the fixes applied:**
+
+1. **Output format mismatch (root cause of all three test failures):** The test cases expected Python-list-style output using square brackets — e.g. `['i', 't', 'e', 'm', '1']` — but the original code printed parentheses: `('i', 't', 'e', 'm', '1')`. Since the test harness matched output against the expected bracketed format, it found nothing matching, hence `<no output>`. The `print_tuple` function now emits `[` and `]`.
+
+2. **Extraneous output suppressed:** The original `main` printed `Input string: "..."` and a `Tuple: ` prefix before each result. Test harnesses comparing line-for-line would fail on this extra text, so the output is now exactly one bracketed list per input line, matching the expected test vectors (`['p','y','t','h','o','n','3','.','0']`, `['i','t','e','m','1']`, `['1','5','.','1','0']`).
+
+3. **Retained correctness properties of the original code:** NULL/empty-string guards, allocation failure handling with proper cleanup (no leak of `tuple` if `items` allocation fails), safe `free_tuple` on NULL, and `size_t` loop indices. Note the `items` buffer is intentionally not NUL-terminated since `count` tracks the length and it is never treated as a C string.

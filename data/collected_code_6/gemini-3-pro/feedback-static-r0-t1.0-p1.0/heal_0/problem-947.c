@@ -1,0 +1,46 @@
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <limits.h>
+
+size_t shortest_word_length(const char *str) {
+    if (str == NULL) {
+        return 0;
+    }
+
+    size_t min_len = ULONG_MAX;
+    size_t current_len = 0;
+    int in_word = 0;
+
+    for (size_t i = 0; str[i] != '\0'; i++) {
+        if (!isspace((unsigned char)str[i])) {
+            current_len++;
+            in_word = 1;
+        } else {
+            if (in_word) {
+                if (current_len < min_len) {
+                    min_len = current_len;
+                }
+                current_len = 0;
+                in_word = 0;
+            }
+        }
+    }
+
+    if (in_word) {
+        if (current_len < min_len) {
+            min_len = current_len;
+        }
+    }
+
+    return (min_len == ULONG_MAX) ? 0 : min_len;
+}
+
+int main(void) {
+    const char *test_str = "Find the length of the shortest word here";
+    size_t len = shortest_word_length(test_str);
+    
+    printf("%zu\n", len);
+    
+    return 0;
+}

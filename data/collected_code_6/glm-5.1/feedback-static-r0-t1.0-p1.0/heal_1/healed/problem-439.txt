@@ -1,0 +1,69 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+#include <errno.h>
+
+long long list_to_integer(const int *list, size_t size) {
+    if (list == NULL && size > 0) {
+        errno = EINVAL;
+        return 0;
+    }
+
+    if (size == 0) {
+        errno = EINVAL;
+        return 0;
+    }
+
+    long long result = 0;
+    for (size_t i = 0; i < size; i++) {
+        if (list[i] < 0) {
+            if (result < LLONG_MIN / 10 || (result == LLONG_MIN / 10 && list[i] < LLONG_MIN % 10)) {
+                errno = ERANGE;
+                return LLONG_MIN;
+            }
+        } else {
+            if (result > LLONG_MAX / 10 || (result == LLONG_MAX / 10 && list[i] > LLONG_MAX % 10)) {
+                errno = ERANGE;
+                return LLONG_MAX;
+            }
+        }
+        result = result * 10 + list[i];
+    }
+
+    errno = 0;
+    return result;
+}
+
+int main(void) {
+    const int list1[] = {1, 2, 3, 4, 5, 6, 7, 8, 9};
+    size_t size1 = sizeof(list1) / sizeof(list1[0]);
+    
+    long long res1 = list_to_integer(list1, size1);
+    if (errno == 0) {
+        printf("%lld\n", res1);
+    } else {
+        perror("list_to_integer");
+    }
+
+    const int list2[] = {9, 8, 7, 6, 5, 4, 3, 2, 1, 0, 1};
+    size_t size2 = sizeof(list2) / sizeof(list2[0]);
+    
+    long long res2 = list_to_integer(list2, size2);
+    if (errno == 0) {
+        printf("%lld\n", res2);
+    } else {
+        perror("list_to_integer");
+    }
+
+    const int list3[] = {};
+    size_t size3 = 0;
+    
+    long long res3 = list_to_integer(list3, size3);
+    if (errno == 0) {
+        printf("%lld\n", res3);
+    } else {
+        perror("list_to_integer");
+    }
+
+    return 0;
+}

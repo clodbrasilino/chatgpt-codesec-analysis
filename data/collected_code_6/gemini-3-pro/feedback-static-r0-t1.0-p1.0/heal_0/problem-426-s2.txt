@@ -1,0 +1,54 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int* filter_odd_numbers(const int* arr, size_t size, size_t* out_size) {
+    if (arr == NULL || out_size == NULL) {
+        return NULL;
+    }
+
+    size_t count = 0;
+    for (size_t i = 0; i < size; ++i) {
+        if (arr[i] % 2 != 0) {
+            count++;
+        }
+    }
+
+    int* odd_arr = (int*)malloc(count * sizeof(int));
+    if (odd_arr == NULL) {
+        *out_size = 0;
+        return NULL;
+    }
+
+    size_t index = 0;
+    for (size_t i = 0; i < size; ++i) {
+        if (arr[i] % 2 != 0) {
+            odd_arr[index++] = arr[i];
+        }
+    }
+
+    *out_size = count;
+    return odd_arr;
+}
+
+int main(void) {
+    int arr[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    size_t size = sizeof(arr) / sizeof(arr[0]);
+    size_t out_size = 0;
+
+    int* odd_arr = filter_odd_numbers(arr, size, &out_size);
+
+    if (odd_arr != NULL) {
+        for (size_t i = 0; i < out_size; ++i) {
+            printf("%d ", odd_arr[i]);
+        }
+        printf("\n");
+        free(odd_arr);
+    } else if (out_size > 0) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```

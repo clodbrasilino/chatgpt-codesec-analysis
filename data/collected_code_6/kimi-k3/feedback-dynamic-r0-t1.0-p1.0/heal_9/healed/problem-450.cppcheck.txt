@@ -1,0 +1,16 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-dynamic-r0-t1.0-p1.0/heal_9/healed/problem-450.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-dynamic-r0-t1.0-p1.0/heal_9/healed/problem-450.c:10:10: warning: Either the condition 'out_count==NULL' is redundant or there is possible null pointer dereference: out_count. [nullPointerRedundantCheck]
+        *out_count = 0;
+         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-dynamic-r0-t1.0-p1.0/heal_9/healed/problem-450.c:8:35: note: Assuming that condition 'out_count==NULL' is not redundant
+    if (list == NULL || out_count == NULL || count == 0 || extract_size == 0)
+                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-dynamic-r0-t1.0-p1.0/heal_9/healed/problem-450.c:10:10: note: Null pointer dereference
+        *out_count = 0;
+         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-dynamic-r0-t1.0-p1.0/heal_9/healed/problem-450.c:94:12: style: Variable 'extract_sizes' can be declared as const array [constVariable]
+    size_t extract_sizes[] = {8, 6, 9};
+           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-dynamic-r0-t1.0-p1.0/heal_9/healed/problem-450.c:92:25: style: Variable 'result_count' is assigned a value that is never used. [unreadVariable]
+    size_t result_count = 0;
+                        ^

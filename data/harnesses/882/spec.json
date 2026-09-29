@@ -1,0 +1,47 @@
+{
+  "task_id": 882,
+  "text": "Write a C function to caluclate perimeter of a parallelogram.",
+  "fn_candidates": [
+    "parallelogram_perimeter",
+    "ParallelogramPerimeter",
+    "parallelogramPerimeter",
+    "parallelogramperimeter"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "parallelogram_perimeter",
+      "args": [
+        10,
+        20
+      ],
+      "expected": 400,
+      "assert_src": "assert parallelogram_perimeter(10,20)==400"
+    },
+    {
+      "fn_name": "parallelogram_perimeter",
+      "args": [
+        15,
+        20
+      ],
+      "expected": 600,
+      "assert_src": "assert parallelogram_perimeter(15,20)==600"
+    },
+    {
+      "fn_name": "parallelogram_perimeter",
+      "args": [
+        8,
+        9
+      ],
+      "expected": 144,
+      "assert_src": "assert parallelogram_perimeter(8,9)==144"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

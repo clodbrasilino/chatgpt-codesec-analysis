@@ -1,0 +1,76 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+long long binaryToDecimal(const char *binaryString) {
+    if (binaryString == NULL) {
+        return -1;
+    }
+
+    long long decimalValue = 0;
+    size_t len = 0;
+
+    for (const char *p = binaryString; *p != '\0'; p++) {
+        if (len >= 63) {
+            return -1;
+        }
+        if (*p != '0' && *p != '1') {
+            return -1;
+        }
+        decimalValue = (decimalValue << 1) | (*p - '0');
+        len++;
+    }
+
+    if (len == 0) {
+        return -1;
+    }
+
+    return decimalValue;
+}
+
+int main(void) {
+    size_t capacity = 128;
+    char *binaryInput = malloc(capacity);
+    if (binaryInput == NULL) {
+        return EXIT_FAILURE;
+    }
+
+    size_t len = 0;
+    int ch;
+
+    /* Possible weaknesses found:
+     * Flawfinder fgetc: Check buffer boundaries if used in a loop including recursive loops (CWE-120, CWE-20). (risk 1, buffer)
+     */
+    while ((ch = fgetc(stdin)) != EOF && ch != '\n') {
+        if (len + 1 >= capacity) {
+            size_t new_capacity = capacity * 2;
+            char *temp = realloc(binaryInput, new_capacity);
+            if (temp == NULL) {
+                free(binaryInput);
+                return EXIT_FAILURE;
+            }
+            binaryInput = temp;
+            capacity = new_capacity;
+        }
+        binaryInput[len++] = (char)ch;
+    }
+    
+    binaryInput[len] = '\0';
+
+    if (len == 0 && ch == EOF) {
+        free(binaryInput);
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    long long result = binaryToDecimal(binaryInput);
+    free(binaryInput);
+
+    if (result != -1) {
+        printf("%lld\n", result);
+    } else {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

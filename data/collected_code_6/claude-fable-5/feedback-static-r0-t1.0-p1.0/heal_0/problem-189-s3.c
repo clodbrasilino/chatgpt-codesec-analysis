@@ -1,0 +1,58 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int first_missing_positive(int *nums, size_t size)
+{
+    size_t i;
+
+    if (nums == NULL || size == 0U) {
+        return 1;
+    }
+
+    for (i = 0U; i < size; i++) {
+        while (nums[i] > 0 && (size_t)nums[i] <= size &&
+               nums[(size_t)nums[i] - 1U] != nums[i]) {
+            int temp = nums[(size_t)nums[i] - 1U];
+            nums[(size_t)nums[i] - 1U] = nums[i];
+            nums[i] = temp;
+        }
+    }
+
+    for (i = 0U; i < size; i++) {
+        if (nums[i] != (int)(i + 1U)) {
+            return (int)(i + 1U);
+        }
+    }
+
+    return (int)(size + 1U);
+}
+
+int main(void)
+{
+    int data1[] = {3, 4, -1, 1};
+    int data2[] = {1, 2, 0};
+    int data3[] = {7, 8, 9, 11, 12};
+    int result;
+
+    result = first_missing_positive(data1, sizeof(data1) / sizeof(data1[0]));
+    if (printf("First missing positive: %d\n", result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    result = first_missing_positive(data2, sizeof(data2) / sizeof(data2[0]));
+    if (printf("First missing positive: %d\n", result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    result = first_missing_positive(data3, sizeof(data3) / sizeof(data3[0]));
+    if (printf("First missing positive: %d\n", result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    result = first_missing_positive(NULL, 0U);
+    if (printf("First missing positive: %d\n", result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

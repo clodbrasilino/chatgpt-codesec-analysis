@@ -1,0 +1,1 @@
+problem-452-s3.c:13:0:medium:Flawfinder sprintf: Does not check for buffer overflows (CWE-120). Use sprintf_s, snprintf, or vsnprintf. Risk is low because the source has a constant maximum length. (risk 2, buffer)

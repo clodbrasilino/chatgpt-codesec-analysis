@@ -52,7 +52,7 @@ def round_dirs(cell: Path) -> list[Path]:
 
 
 def audit_model(model: str) -> tuple[dict, int]:
-    cell = REPO / "collected_code_6" / model / MAIN
+    cell = REPO / "data" / "collected_code_6" / model / MAIN
     programs = {b[:-2] for b in os.listdir(cell / "heal_0") if b.endswith(".c")}
     sets = {c: set() for c in COLS}
     asan_ub = {"ASan": set(), "UBSan": set()}
@@ -115,7 +115,7 @@ def main() -> None:
         print(f"done {model}", file=sys.stderr)
 
     n_agg = len({(m, b) for m in MODELS for b in
-                 {f[:-2] for f in os.listdir(REPO / "collected_code_6" / m / MAIN / "heal_0")
+                 {f[:-2] for f in os.listdir(REPO / "data" / "collected_code_6" / m / MAIN / "heal_0")
                   if f.endswith(".c")}})
 
     def static_any(sets):

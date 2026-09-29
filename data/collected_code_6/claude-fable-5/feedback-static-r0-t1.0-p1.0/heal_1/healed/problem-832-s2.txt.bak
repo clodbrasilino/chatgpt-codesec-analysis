@@ -1,0 +1,93 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+#include <errno.h>
+#include <float.h>
+#include <math.h>
+
+int extract_max_number(const char *input, double *result)
+{
+    regex_t regex;
+    regmatch_t match;
+    const char *cursor;
+    char buffer[64];
+    double max_value;
+    int found;
+    int ret;
+
+    if (input == NULL || result == NULL) {
+        return -1;
+    }
+
+    ret = regcomp(&regex, "-?[0-9]+(\\.[0-9]+)?", REG_EXTENDED);
+    if (ret != 0) {
+        return -1;
+    }
+
+    cursor = input;
+    found = 0;
+    max_value = -DBL_MAX;
+
+    while (regexec(&regex, cursor, 1, &match, 0) == 0) {
+        size_t len = (size_t)(match.rm_eo - match.rm_so);
+        double value;
+        char *endptr;
+
+        if (len >= sizeof(buffer)) {
+            len = sizeof(buffer) - 1;
+        }
+        memcpy(buffer, cursor + match.rm_so, len);
+        buffer[len] = '\0';
+
+        errno = 0;
+        value = strtod(buffer, &endptr);
+        if (errno == 0 && endptr != buffer && isfinite(value)) {
+            if (!found || value > max_value) {
+                max_value = value;
+                found = 1;
+            }
+        }
+
+        if (match.rm_eo == 0) {
+            break;
+        }
+        cursor += match.rm_eo;
+    }
+
+    regfree(&regex);
+
+    if (!found) {
+        return -1;
+    }
+
+    *result = max_value;
+    return 0;
+}
+
+int main(void)
+{
+    const char *test = "Values: 42, -17, 3.14, 1000.5, and 999";
+    double max_value;
+
+    if (extract_max_number(test, &max_value) != 0) {
+        fprintf(stderr, "No numeric value found\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Maximum value: %g\n", max_value) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+The changes made address the identified weaknesses:
+
+1. **`value` scope reduced** — moved from function scope into the `while` loop body, since it is only used within a single iteration.
+2. **`len` scope reduced** — likewise moved into the loop body and initialized at its point of declaration.
+3. **`endptr` scope reduced** — although not flagged, it is only used inside the loop alongside `value`, so it was moved as well for consistency and tighter scoping.
+
+Reducing variable scope improves readability, limits the lifetime of variables to where they're actually needed, and prevents accidental use of stale values from previous iterations. The program's behavior is unchanged: it compiles the regex once, iterates over all numeric matches, safely bounds the copy into `buffer`, validates conversion with `strtod` (checking `errno`, `endptr`, and finiteness), and correctly reports the maximum value (`1000.5` for the given test string).

@@ -1,0 +1,86 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+#include <string.h>
+#include <limits.h>
+
+#define BUFFER_SIZE 256
+
+int first_repeated_char(const char *str)
+{
+    bool seen[UCHAR_MAX + 1] = { false };
+    size_t i;
+
+    if (str == NULL) {
+        return -1;
+    }
+
+    for (i = 0; str[i] != '\0' && i < BUFFER_SIZE; i++) {
+        unsigned char c = (unsigned char)str[i];
+        if (seen[c]) {
+            return (int)c;
+        }
+        seen[c] = true;
+    }
+
+    return -1;
+}
+
+static void flush_stdin(void)
+{
+    int ch;
+    size_t guard = 0;
+
+    do {
+        ch = getchar();
+        guard++;
+    } while (ch != '\n' && ch != EOF && guard < (size_t)INT_MAX);
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    int result;
+
+    memset(buffer, 0, sizeof(buffer));
+
+    printf("Enter a string: ");
+    if (fflush(stdout) != 0) {
+        fprintf(stderr, "Error flushing output\n");
+        return 1;
+    }
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    if (strchr(buffer, '\n') == NULL && !feof(stdin)) {
+        flush_stdin();
+    }
+
+    buffer[strcspn(buffer, "\n")] = '\0';
+
+    result = first_repeated_char(buffer);
+
+    if (result == -1) {
+        printf("No repeated character found\n");
+    } else {
+        printf("First repeated character: %c\n", (char)result);
+    }
+
+    return 0;
+}
+```
+
+**Analysis of the fixes applied:**
+
+1. **`getchar()` in a loop (CWE-120, CWE-20):** The original `flush_stdin()` was actually safe since it never stores the character into a buffer — it merely discards input. To fully satisfy the analyzer's concern about unbounded looping, I added a `guard` counter to enforce a hard upper bound on iterations, guaranteeing termination even against a pathological input stream that never yields `'\n'` or `EOF`.
+
+2. **Statically-sized `char` array (CWE-119/CWE-120):** The original code was already well-defended: `fgets()` limits reads to `sizeof(buffer)`, the buffer is explicitly NUL-terminated, and leftover input is drained. I hardened it further by zero-initializing the buffer with `memset()` before use, ensuring no uninitialized reads are possible, and by adding an explicit bounds check (`i < BUFFER_SIZE`) in `first_repeated_char()` so the scan can never run past the buffer even if a NUL terminator were somehow missing.
+
+3. **Existing good practices retained:** `fgets()` instead of `gets()`/`scanf("%s")`, checked return values for `fflush()` and `fgets()`, safe newline stripping via `strcspn()`, and casting to `unsigned char` before array indexing to avoid negative-index UB with signed `char` platforms.
+
+The program's behavior is unchanged: it reads a line, finds the first character that repeats, and reports it (or reports that none was found).

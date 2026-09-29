@@ -1,0 +1,57 @@
+{
+  "task_id": 330,
+  "text": "Write a C function to find all three, four, five characters long words in the given string by using regex.",
+  "fn_candidates": [
+    "find_char",
+    "FindChar",
+    "findChar",
+    "findchar"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "find_char",
+      "args": [
+        "For the four consumer complaints contact manager AKR reddy"
+      ],
+      "expected": [
+        "For",
+        "the",
+        "four",
+        "AKR",
+        "reddy"
+      ],
+      "assert_src": "assert find_char('For the four consumer complaints contact manager AKR reddy') == ['For', 'the', 'four', 'AKR', 'reddy']"
+    },
+    {
+      "fn_name": "find_char",
+      "args": [
+        "Certain service are subject to change MSR"
+      ],
+      "expected": [
+        "are",
+        "MSR"
+      ],
+      "assert_src": "assert find_char('Certain service are subject to change MSR') == ['are', 'MSR']"
+    },
+    {
+      "fn_name": "find_char",
+      "args": [
+        "Third party legal desclaimers"
+      ],
+      "expected": [
+        "Third",
+        "party",
+        "legal"
+      ],
+      "assert_src": "assert find_char('Third party legal desclaimers') == ['Third', 'party', 'legal']"
+    }
+  ],
+  "arg_kinds": [
+    "str"
+  ],
+  "return_kind": "str-list",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

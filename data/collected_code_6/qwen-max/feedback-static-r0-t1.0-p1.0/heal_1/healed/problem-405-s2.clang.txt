@@ -1,0 +1,7 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-405-s2.c:23:19: error: initialization of flexible array member is not allowed
+   23 |     Tuple t = {2, (void *[]){str1, str2}};
+      |                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-405-s2.c:8:11: note: initialized flexible array member 'items' is here
+    8 |     void *items[];
+      |           ^
+1 error generated.

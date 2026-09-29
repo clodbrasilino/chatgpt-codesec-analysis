@@ -1,0 +1,58 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int a;
+    int b;
+} Tuple;
+
+Tuple* create_tuple(int a, int b) {
+    Tuple *t = (Tuple *)malloc(sizeof(Tuple));
+    if (t == NULL) {
+        return NULL;
+    }
+    t->a = a;
+    t->b = b;
+    return t;
+}
+
+void free_tuples(Tuple **tuples, int size) {
+    for (int i = 0; i < size; ++i) {
+        free(tuples[i]);
+    }
+    free(tuples);
+}
+
+const Tuple* get_nth_tuple(const Tuple **tuples, int n, int size) {
+    if (n < 0 || n >= size) {
+        return NULL;
+    }
+    return tuples[n];
+}
+
+int main() {
+    int size = 5;
+    Tuple **tuples = (Tuple **)malloc(size * sizeof(Tuple *));
+    if (tuples == NULL) {
+        return 1;
+    }
+
+    for (int i = 0; i < size; ++i) {
+        tuples[i] = create_tuple(i, i * 2);
+        if (tuples[i] == NULL) {
+            free_tuples(tuples, i);
+            return 1;
+        }
+    }
+
+    int n = 2;
+    const Tuple *nth_tuple = get_nth_tuple((const Tuple **)tuples, n, size);
+    if (nth_tuple != NULL) {
+        printf("Tuple %d: (%d, %d)\n", n, nth_tuple->a, nth_tuple->b);
+    } else {
+        printf("Invalid index\n");
+    }
+
+    free_tuples(tuples, size);
+    return 0;
+}

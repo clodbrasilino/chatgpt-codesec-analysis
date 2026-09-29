@@ -1,0 +1,71 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char **string_to_list(const char *str, size_t len, size_t *list_len) {
+    if (str == NULL || len == 0 || list_len == NULL) {
+        return NULL;
+    }
+    
+    char *buf = malloc(len * sizeof(char));
+    if (buf == NULL) {
+        return NULL;
+    }
+    /* Possible weaknesses found:
+     * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+     */
+    memcpy(buf, str, len);
+
+    char **list = malloc((len + 1) * sizeof(char *));
+    if (list == NULL) {
+        free(buf);
+        return NULL;
+    }
+
+    for (size_t i = 0; i < len; i++) {
+        list[i] = malloc(2 * sizeof(char));
+        if (list[i] == NULL) {
+            for (size_t j = 0; j < i; j++) {
+                free(list[j]);
+            }
+            free(list);
+            free(buf);
+            return NULL;
+        }
+        list[i][0] = buf[i];
+        list[i][1] = '\0';
+    }
+
+    list[len] = NULL;
+    *list_len = len;
+
+    free(buf);
+    return list;
+}
+
+void free_list(char **list, size_t list_len) {
+    if (list == NULL) {
+        return;
+    }
+    for (size_t i = 0; i < list_len; i++) {
+        free(list[i]);
+    }
+    free(list);
+}
+
+int main(void) {
+    const char *str = "Hello";
+    size_t len = 5;
+    size_t list_len = 0;
+
+    char **list = string_to_list(str, len, &list_len);
+
+    if (list != NULL) {
+        for (size_t i = 0; i < list_len; i++) {
+            printf("%s\n", list[i]);
+        }
+        free_list(list, list_len);
+    }
+
+    return 0;
+}

@@ -1,0 +1,72 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+static int compare_ints(const void *a, const void *b)
+{
+    int x = *(const int *)a;
+    int y = *(const int *)b;
+
+    if (x < y) {
+        return -1;
+    }
+    if (x > y) {
+        return 1;
+    }
+    return 0;
+}
+
+static int min_difference(const int *arr, size_t n, long long *result)
+{
+    int *copy = NULL;
+    size_t i;
+    long long min_diff = LLONG_MAX;
+
+    if (arr == NULL || result == NULL || n < 2) {
+        return -1;
+    }
+
+    copy = malloc(n * sizeof(*copy));
+    if (copy == NULL) {
+        return -1;
+    }
+
+    for (i = 0; i < n; i++) {
+        copy[i] = arr[i];
+    }
+
+    qsort(copy, n, sizeof(*copy), compare_ints);
+
+    for (i = 1; i < n; i++) {
+        long long diff = (long long)copy[i] - (long long)copy[i - 1];
+        if (diff < min_diff) {
+            min_diff = diff;
+        }
+    }
+
+    free(copy);
+    *result = min_diff;
+    return 0;
+}
+
+int main(void)
+{
+    int arr[] = { 30, 5, 20, 9, 100, 12 };
+    size_t n = sizeof(arr) / sizeof(arr[0]);
+    long long result = 0;
+
+    if (min_difference(arr, n, &result) != 0) {
+        fprintf(stderr, "Error: could not compute minimum difference\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Minimum difference: %lld\n", result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+The single weakness identified — the scope of `diff` being wider than necessary (`variableScope`) — has been fixed by moving its declaration inside the `for` loop where it is actually used. This limits its lifetime to each iteration, improves readability, and helps the compiler and static analyzers reason about the code. All other aspects of the original code were already sound: null-pointer and size validation, checked `malloc`, safe widening to `long long` before subtraction to avoid signed overflow, proper `free`, and checked `printf` return value.

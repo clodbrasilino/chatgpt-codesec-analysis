@@ -1,0 +1,101 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <limits.h>
+#include <stddef.h>
+
+#define INPUT_BUFFER_SIZE 128U
+#define MAX_BINARY_DIGITS (sizeof(unsigned long) * 8U)
+#define FLUSH_GUARD_LIMIT 4096U
+
+int binary_to_decimal(const char *binary, size_t max_len, unsigned long *result)
+{
+    size_t len;
+    size_t i;
+    unsigned long value = 0UL;
+
+    if (binary == NULL || result == NULL || max_len == 0U) {
+        return -1;
+    }
+
+    len = strnlen(binary, max_len);
+    if (len == 0U || len >= max_len || len > MAX_BINARY_DIGITS) {
+        return -1;
+    }
+
+    for (i = 0U; i < len; i++) {
+        if (binary[i] != '0' && binary[i] != '1') {
+            return -1;
+        }
+        if (value > (ULONG_MAX >> 1)) {
+            return -1;
+        }
+        value = (value << 1) | (unsigned long)(binary[i] - '0');
+    }
+
+    *result = value;
+    return 0;
+}
+
+static void flush_stdin(void)
+{
+    int c;
+    size_t guard = 0U;
+
+    do {
+        c = getchar();
+        guard++;
+    } while (c != '\n' && c != EOF && guard < FLUSH_GUARD_LIMIT);
+}
+
+int main(void)
+{
+    char input[INPUT_BUFFER_SIZE];
+    unsigned long decimal = 0UL;
+    size_t len;
+
+    memset(input, 0, sizeof(input));
+
+    printf("Enter a binary number: ");
+
+    if (fgets(input, (int)sizeof(input), stdin) == NULL) {
+        fprintf(stderr, "Error: failed to read input.\n");
+        return 1;
+    }
+
+    input[sizeof(input) - 1U] = '\0';
+
+    len = strnlen(input, sizeof(input));
+    if (len > 0U && input[len - 1U] == '\n') {
+        input[len - 1U] = '\0';
+    } else if (len == sizeof(input) - 1U) {
+        flush_stdin();
+        fprintf(stderr, "Error: input too long.\n");
+        return 1;
+    }
+
+    if (binary_to_decimal(input, sizeof(input), &decimal) != 0) {
+        fprintf(stderr, "Error: invalid binary number.\n");
+        return 1;
+    }
+
+    printf("Decimal equivalent: %lu\n", decimal);
+    return 0;
+}
+```
+
+**Analysis summary:**
+
+The original code was already well-hardened; the Flawfinder hits were largely informational. Here is how each flagged weakness is addressed:
+
+1. **`getchar()` in a loop (CWE-120, CWE-20):** The loop reads into a single `int` and discards data, so no buffer can overflow. The original guard of `(size_t)INT_MAX` was effectively unbounded in practice; I replaced it with a much tighter `FLUSH_GUARD_LIMIT` (4096 iterations), which is more than enough to drain a line of leftover input while guaranteeing prompt termination even on a pathological or non-terminating stream.
+
+2. **Statically-sized `char` array (CWE-119/CWE-120):** All accesses to `input` are bounds-safe:
+   - `fgets(input, (int)sizeof(input), stdin)` limits the read to the buffer size.
+   - Explicit null termination at `input[sizeof(input) - 1U]` guarantees a terminated string.
+   - `strnlen(input, sizeof(input))` is used instead of `strlen`, so length computation can never run past the buffer.
+   - Overlong input (buffer filled without a newline) is detected, the stream is drained, and the program exits with an error rather than silently truncating.
+
+3. **Conversion robustness in `binary_to_decimal`:** Defensive checks are retained — NULL-pointer validation, length limits against `MAX_BINARY_DIGITS`, strict character validation (`'0'`/`'1'` only), and an overflow guard (`value > ULONG_MAX >> 1`) before each shift, preventing unsigned wraparound (CWE-190).
+
+The only functional changes are the tightened flush guard and replacing the array initializer with `memset` (equivalent behavior, explicit initialization); everything else was already correct and secure.

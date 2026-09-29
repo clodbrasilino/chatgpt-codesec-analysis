@@ -1,0 +1,147 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct SubNode {
+    int value;
+    struct SubNode *next;
+} SubNode;
+
+typedef struct ListNode {
+    SubNode *sublist;
+    struct ListNode *next;
+} ListNode;
+
+SubNode *create_sublist(const int *values, int count) {
+    SubNode *head = NULL;
+    SubNode *tail = NULL;
+    for (int i = 0; i < count; i++) {
+        SubNode *node = (SubNode *)malloc(sizeof(SubNode));
+        if (node == NULL) {
+            exit(EXIT_FAILURE);
+        }
+        node->value = values[i];
+        node->next = NULL;
+        if (head == NULL) {
+            head = node;
+            tail = node;
+        } else {
+            tail->next = node;
+            tail = node;
+        }
+    }
+    return head;
+}
+
+ListNode *create_list_of_lists(const int * const *values, const int *counts, int list_count) {
+    ListNode *head = NULL;
+    ListNode *tail = NULL;
+    for (int i = 0; i < list_count; i++) {
+        ListNode *node = (ListNode *)malloc(sizeof(ListNode));
+        if (node == NULL) {
+            exit(EXIT_FAILURE);
+        }
+        node->sublist = create_sublist(values[i], counts[i]);
+        node->next = NULL;
+        if (head == NULL) {
+            head = node;
+            tail = node;
+        } else {
+            tail->next = node;
+            tail = node;
+        }
+    }
+    return head;
+}
+
+int sublist_length(SubNode *head) {
+    int length = 0;
+    SubNode *current = head;
+    while (current != NULL) {
+        length++;
+        current = current->next;
+    }
+    return length;
+}
+
+void free_sublist(SubNode *head) {
+    SubNode *current = head;
+    while (current != NULL) {
+        SubNode *next = current->next;
+        free(current);
+        current = next;
+    }
+}
+
+void free_list_of_lists(ListNode *head) {
+    ListNode *current = head;
+    while (current != NULL) {
+        ListNode *next = current->next;
+        free_sublist(current->sublist);
+        free(current);
+        current = next;
+    }
+}
+
+ListNode *remove_sublists_outside_range(ListNode *head, int min_len, int max_len) {
+    ListNode dummy;
+    dummy.next = head;
+    ListNode *prev = &dummy;
+    ListNode *curr = head;
+
+    while (curr != NULL) {
+        int len = sublist_length(curr->sublist);
+        if (len < min_len || len > max_len) {
+            ListNode *to_remove = curr;
+            prev->next = curr->next;
+            curr = curr->next;
+            free_sublist(to_remove->sublist);
+            free(to_remove);
+        } else {
+            prev = curr;
+            curr = curr->next;
+        }
+    }
+
+    return dummy.next;
+}
+
+void print_list_of_lists(ListNode *head) {
+    ListNode *curr = head;
+    while (curr != NULL) {
+        SubNode *sub_curr = curr->sublist;
+        printf("[");
+        while (sub_curr != NULL) {
+            printf("%d", sub_curr->value);
+            if (sub_curr->next != NULL) {
+                printf(", ");
+            }
+            sub_curr = sub_curr->next;
+        }
+        printf("]\n");
+        curr = curr->next;
+    }
+}
+
+int main(void) {
+    int a[] = {1, 2, 3};
+    int b[] = {4};
+    int c[] = {5, 6};
+    int d[] = {7, 8, 9, 10};
+
+    int *values[] = {a, b, c, d};
+    int counts[] = {3, 1, 2, 4};
+
+    ListNode *list = create_list_of_lists(values, counts, 4);
+    
+    printf("Original:\n");
+    print_list_of_lists(list);
+
+    list = remove_sublists_outside_range(list, 2, 3);
+
+    printf("\nFiltered (range 2 to 3):\n");
+    print_list_of_lists(list);
+
+    free_list_of_lists(list);
+
+    return 0;
+}

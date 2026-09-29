@@ -1,0 +1,114 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_STRING_LEN 4096
+
+char *longest_common_prefix(const char *const *strs, size_t count)
+{
+    char *prefix = NULL;
+    size_t prefix_len = 0;
+    size_t alloc_size = 0;
+    size_t i;
+
+    if (strs == NULL || count == 0) {
+        return NULL;
+    }
+
+    for (i = 0; i < count; i++) {
+        if (strs[i] == NULL) {
+            return NULL;
+        }
+    }
+
+    prefix_len = strnlen(strs[0], MAX_STRING_LEN);
+    if (prefix_len == MAX_STRING_LEN) {
+        return NULL;
+    }
+
+    for (i = 1; i < count; i++) {
+        size_t j = 0;
+        size_t len = strnlen(strs[i], MAX_STRING_LEN);
+        if (len == MAX_STRING_LEN) {
+            return NULL;
+        }
+        while (j < prefix_len && j < len && strs[i][j] == strs[0][j]) {
+            j++;
+        }
+        prefix_len = j;
+        if (prefix_len == 0) {
+            break;
+        }
+    }
+
+    if (prefix_len >= MAX_STRING_LEN) {
+        return NULL;
+    }
+
+    if (prefix_len > SIZE_MAX - 1) {
+        return NULL;
+    }
+
+    alloc_size = prefix_len + 1;
+
+    prefix = malloc(alloc_size);
+    if (prefix == NULL) {
+        return NULL;
+    }
+
+    if (prefix_len > 0) {
+        if (prefix_len >= alloc_size) {
+            free(prefix);
+            return NULL;
+        }
+        memcpy(prefix, strs[0], prefix_len);
+    }
+    prefix[prefix_len] = '\0';
+
+    return prefix;
+}
+
+int main(void)
+{
+    const char *strings[] = {
+        "flowering",
+        "flower",
+        "flow",
+        "flourish"
+    };
+    size_t count = sizeof(strings) / sizeof(strings[0]);
+    char *result;
+
+    result = longest_common_prefix(strings, count);
+    if (result == NULL) {
+        fprintf(stderr, "Failed to compute longest common prefix\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Longest common prefix: \"%s\"\n", result) < 0) {
+        free(result);
+        return EXIT_FAILURE;
+    }
+
+    free(result);
+    return EXIT_SUCCESS;
+}
+```
+
+Note: you'll need `#include <stdint.h>` for `SIZE_MAX`:
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+```
+
+**Analysis summary of the original code:**
+
+1. **The flagged `memcpy` (CWE-120) was already safe** — the destination buffer `prefix` is allocated with `alloc_size = prefix_len + 1` bytes immediately before the copy of exactly `prefix_len` bytes. The rewrite makes this explicit with a defensive `prefix_len >= alloc_size` guard so both static analyzers and human reviewers can verify the invariant locally.
+
+2. **Integer overflow hardening** — `prefix_len + 1` could theoretically wrap if `prefix_len == SIZE_MAX`. It's unreachable here (capped at `MAX_STRING_LEN`), but the explicit check documents the invariant and survives future refactoring.
+
+3. **Existing good practices preserved**: `strnlen` with a bound instead of `strlen`, NULL checks on the array and each element, malloc failure handling, checked `printf` return, and no memory leaks on any path (`free` before every error return in `main`).

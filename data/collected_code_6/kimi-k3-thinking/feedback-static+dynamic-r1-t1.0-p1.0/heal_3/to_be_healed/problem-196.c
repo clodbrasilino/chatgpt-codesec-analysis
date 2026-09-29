@@ -1,0 +1,237 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+
+typedef struct {
+    int *data;
+    size_t length;
+} Tuple;
+
+typedef struct {
+    Tuple *tuples;
+    size_t count;
+    size_t capacity;
+} TupleList;
+
+static int tuple_is_valid(const Tuple *t)
+{
+    if (t == NULL) {
+        return 0;
+    }
+    if (t->length > 0 && t->data == NULL) {
+        return 0;
+    }
+    return 1;
+}
+
+int tuple_init(Tuple *t, const int *values, size_t length)
+{
+    if (t == NULL || (length > 0 && values == NULL)) {
+        return -1;
+    }
+    if (length > SIZE_MAX / sizeof(int)) {
+        return -1;
+    }
+    t->data = NULL;
+    t->length = 0;
+    if (length > 0) {
+        t->data = (int *)malloc(length * sizeof(int));
+        if (t->data == NULL) {
+            return -1;
+        }
+        for (size_t i = 0; i < length; i++) {
+            t->data[i] = values[i];
+        }
+    }
+    t->length = length;
+    return 0;
+}
+
+void tuple_free(Tuple *t)
+{
+    if (t == NULL) {
+        return;
+    }
+    free(t->data);
+    t->data = NULL;
+    t->length = 0;
+}
+
+int list_init(TupleList *list, size_t capacity)
+{
+    if (list == NULL || capacity == 0 || capacity > SIZE_MAX / sizeof(Tuple)) {
+        return -1;
+    }
+    list->tuples = (Tuple *)malloc(capacity * sizeof(Tuple));
+    if (list->tuples == NULL) {
+        return -1;
+    }
+    list->count = 0;
+    list->capacity = capacity;
+    return 0;
+}
+
+void list_free(TupleList *list)
+{
+    if (list == NULL) {
+        return;
+    }
+    if (list->tuples != NULL) {
+        size_t limit = list->count;
+        if (limit > list->capacity) {
+            limit = list->capacity;
+        }
+        for (size_t i = 0; i < limit; i++) {
+            tuple_free(&list->tuples[i]);
+        }
+    }
+    free(list->tuples);
+    list->tuples = NULL;
+    list->count = 0;
+    list->capacity = 0;
+}
+
+int list_append(TupleList *list, const int *values, size_t length)
+{
+    if (list == NULL || (length > 0 && values == NULL)) {
+        return -1;
+    }
+    if (length > SIZE_MAX / sizeof(int)) {
+        return -1;
+    }
+    if (list->count > list->capacity) {
+        return -1;
+    }
+    if (list->count == list->capacity) {
+        if (list->capacity > SIZE_MAX / 2) {
+            return -1;
+        }
+        size_t new_capacity = (list->capacity == 0) ? 4 : list->capacity * 2;
+        if (new_capacity > SIZE_MAX / sizeof(Tuple)) {
+            return -1;
+        }
+        Tuple *new_tuples = (Tuple *)realloc(list->tuples, new_capacity * sizeof(Tuple));
+        if (new_tuples == NULL) {
+            return -1;
+        }
+        list->tuples = new_tuples;
+        list->capacity = new_capacity;
+    }
+    if (list->count >= list->capacity) {
+        return -1;
+    }
+    if (tuple_init(&list->tuples[list->count], values, length) != 0) {
+        return -1;
+    }
+    list->count++;
+    return 0;
+}
+
+void remove_tuples_with_length(TupleList *list, size_t k)
+{
+    if (list == NULL || list->tuples == NULL) {
+        return;
+    }
+    if (list->capacity == 0 || list->count > list->capacity) {
+        return;
+    }
+    size_t write = 0;
+    /* Possible weaknesses found:
+     * Flawfinder read: Check buffer boundaries if used in a loop including recursive loops (CWE-120, CWE-20). (risk 1, buffer)
+     */
+    for (size_t read = 0; read < list->count && read < list->capacity; read++) {
+        /* Possible weaknesses found:
+         * Flawfinder read: Check buffer boundaries if used in a loop including recursive loops (CWE-120, CWE-20). (risk 1, buffer)
+         */
+        if (list->tuples[read].length == k) {
+            /* Possible weaknesses found:
+             * Flawfinder read: Check buffer boundaries if used in a loop including recursive loops (CWE-120, CWE-20). (risk 1, buffer)
+             */
+            tuple_free(&list->tuples[read]);
+        } else {
+            /* Possible weaknesses found:
+             * Flawfinder read: Check buffer boundaries if used in a loop including recursive loops (CWE-120, CWE-20). (risk 1, buffer)
+             */
+            if (write != read) {
+                if (write >= list->capacity) {
+                    break;
+                }
+                /* Possible weaknesses found:
+                 * Flawfinder read: Check buffer boundaries if used in a loop including recursive loops (CWE-120, CWE-20). (risk 1, buffer)
+                 */
+                list->tuples[write] = list->tuples[read];
+                /* Possible weaknesses found:
+                 * Flawfinder read: Check buffer boundaries if used in a loop including recursive loops (CWE-120, CWE-20). (risk 1, buffer)
+                 */
+                list->tuples[read].data = NULL;
+                /* Possible weaknesses found:
+                 * Flawfinder read: Check buffer boundaries if used in a loop including recursive loops (CWE-120, CWE-20). (risk 1, buffer)
+                 */
+                list->tuples[read].length = 0;
+            }
+            write++;
+        }
+    }
+    if (write <= list->capacity) {
+        list->count = write;
+    }
+}
+
+void list_print(const TupleList *list)
+{
+    if (list == NULL || list->tuples == NULL) {
+        return;
+    }
+    if (list->capacity == 0 || list->count > list->capacity) {
+        return;
+    }
+    for (size_t i = 0; i < list->count && i < list->capacity; i++) {
+        if (!tuple_is_valid(&list->tuples[i])) {
+            continue;
+        }
+        printf("(");
+        for (size_t j = 0; j < list->tuples[i].length; j++) {
+            printf("%d", list->tuples[i].data[j]);
+            if (j + 1 < list->tuples[i].length) {
+                printf(", ");
+            }
+        }
+        printf(")\n");
+    }
+}
+
+int main(void)
+{
+    TupleList list;
+    const int a[] = {1, 2};
+    const int b[] = {3, 4, 5};
+    const int c[] = {6};
+    const int d[] = {7, 8};
+    const int e[] = {9, 10, 11, 12};
+    size_t k = 2;
+
+    if (list_init(&list, 4) != 0) {
+        fprintf(stderr, "Failed to initialize tuple list\n");
+        return EXIT_FAILURE;
+    }
+    if (list_append(&list, a, 2) != 0 ||
+        list_append(&list, b, 3) != 0 ||
+        list_append(&list, c, 1) != 0 ||
+        list_append(&list, d, 2) != 0 ||
+        list_append(&list, e, 4) != 0) {
+        fprintf(stderr, "Failed to append tuple\n");
+        list_free(&list);
+        return EXIT_FAILURE;
+    }
+
+    printf("Before removal:\n");
+    list_print(&list);
+
+    remove_tuples_with_length(&list, k);
+
+    printf("After removing tuples of length %zu:\n", k);
+    list_print(&list);
+
+    list_free(&list);
+    return EXIT_SUCCESS;
+}

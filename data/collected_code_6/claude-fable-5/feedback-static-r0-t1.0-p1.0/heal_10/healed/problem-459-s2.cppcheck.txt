@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-459-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-459-s2.c:64:27: style: Condition 'remaining<result_cap-result_len' is always true [knownConditionTrueFalse]
+                remaining < result_cap - result_len) {
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-459-s2.c:58:27: note: Assuming that condition 'remaining>=result_cap-result_len' is not redundant
+                remaining >= result_cap - result_len) {
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-459-s2.c:64:27: note: Condition 'remaining<result_cap-result_len' is always true
+                remaining < result_cap - result_len) {
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-459-s2.c:93:33: style: Condition '(unsigned long)match.rm_so<result_cap-result_len' is always true [knownConditionTrueFalse]
+            (size_t)match.rm_so < result_cap - result_len) {
+                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-459-s2.c:87:33: note: Assuming that condition '(unsigned long)match.rm_so>=result_cap-result_len' is not redundant
+            (size_t)match.rm_so >= result_cap - result_len) {
+                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-459-s2.c:93:33: note: Condition '(unsigned long)match.rm_so<result_cap-result_len' is always true
+            (size_t)match.rm_so < result_cap - result_len) {
+                                ^

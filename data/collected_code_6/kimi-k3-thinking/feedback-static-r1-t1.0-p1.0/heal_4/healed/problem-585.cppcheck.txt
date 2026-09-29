@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_4/healed/problem-585.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_4/healed/problem-585.c:24:30: warning: Either the condition 'len<max_len' is redundant or the array 's[1]' is accessed at index 1023, which is out of bounds. [arrayIndexOutOfBoundsCond]
+    while (len < max_len && s[len] != '\0')
+                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_4/healed/problem-585.c:37:29: note: Calling function 'bounded_strlen', 2nd argument '1024' value is 1024
+    len = bounded_strlen(s, MAX_NAME_LENGTH);
+                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_4/healed/problem-585.c:24:16: note: Assuming that condition 'len<max_len' is not redundant
+    while (len < max_len && s[len] != '\0')
+               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_4/healed/problem-585.c:24:30: note: Array index out of bounds
+    while (len < max_len && s[len] != '\0')
+                             ^

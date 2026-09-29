@@ -1,0 +1,113 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char *key;
+    char *value;
+} DictEntry;
+
+typedef struct {
+    DictEntry *entries;
+    size_t size;
+    size_t capacity;
+} Dict;
+
+Dict *dict_create(size_t capacity) {
+    Dict *dict = malloc(sizeof(Dict));
+    if (dict == NULL) {
+        return NULL;
+    }
+    dict->entries = malloc(sizeof(DictEntry) * capacity);
+    if (dict->entries == NULL) {
+        free(dict);
+        return NULL;
+    }
+    dict->size = 0;
+    dict->capacity = capacity;
+    return dict;
+}
+
+int dict_insert(Dict *dict, const char *key, const char *value) {
+    if (dict == NULL || key == NULL || dict->size >= dict->capacity) {
+        return -1;
+    }
+    char *new_key = strdup(key);
+    if (new_key == NULL) {
+        return -1;
+    }
+    char *new_value = NULL;
+    if (value != NULL) {
+        new_value = strdup(value);
+        if (new_value == NULL) {
+            free(new_key);
+            return -1;
+        }
+    }
+    dict->entries[dict->size].key = new_key;
+    dict->entries[dict->size].value = new_value;
+    dict->size++;
+    return 0;
+}
+
+void dict_free(Dict *dict) {
+    if (dict == NULL) {
+        return;
+    }
+    for (size_t i = 0; i < dict->size; i++) {
+        free(dict->entries[i].key);
+        free(dict->entries[i].value);
+    }
+    free(dict->entries);
+    free(dict);
+}
+
+void drop_empty_items(Dict *dict) {
+    if (dict == NULL || dict->entries == NULL) {
+        return;
+    }
+    size_t write_index = 0;
+    for (size_t read_index = 0; read_index < dict->size; read_index++) {
+        char *key = dict->entries[read_index].key;
+        char *value = dict->entries[read_index].value;
+        int is_empty = 0;
+        if (key == NULL || strcmp(key, "") == 0) {
+            is_empty = 1;
+        } else if (value == NULL || strcmp(value, "") == 0) {
+            is_empty = 1;
+        }
+        if (!is_empty) {
+            if (write_index != read_index) {
+                dict->entries[write_index] = dict->entries[read_index];
+            }
+            write_index++;
+        } else {
+            free(dict->entries[read_index].key);
+            free(dict->entries[read_index].value);
+        }
+    }
+    dict->size = write_index;
+}
+
+int main(void) {
+    Dict *dict = dict_create(10);
+    if (dict == NULL) {
+        return EXIT_FAILURE;
+    }
+    
+    dict_insert(dict, "username", "admin");
+    dict_insert(dict, "session", "");
+    dict_insert(dict, "token", NULL);
+    dict_insert(dict, "role", "superuser");
+    dict_insert(dict, "", "orphan_value");
+    dict_insert(dict, "status", "active");
+
+    drop_empty_items(dict);
+
+    for (size_t i = 0; i < dict->size; i++) {
+        printf("%s: %s\n", dict->entries[i].key, dict->entries[i].value);
+    }
+
+    dict_free(dict);
+    return EXIT_SUCCESS;
+}

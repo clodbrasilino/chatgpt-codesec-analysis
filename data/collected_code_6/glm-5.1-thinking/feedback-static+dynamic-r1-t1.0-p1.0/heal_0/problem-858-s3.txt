@@ -1,0 +1,98 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int value;
+    struct Node* next;
+} Node;
+
+typedef struct ListOfLists {
+    Node* list;
+    struct ListOfLists* next;
+} ListOfLists;
+
+Node* create_node(int value) {
+    Node* new_node = (Node*)malloc(sizeof(Node));
+    if (new_node == NULL) {
+        return NULL;
+    }
+    new_node->value = value;
+    new_node->next = NULL;
+    return new_node;
+}
+
+ListOfLists* create_list_of_lists(Node* list) {
+    ListOfLists* new_lol = (ListOfLists*)malloc(sizeof(ListOfLists));
+    if (new_lol == NULL) {
+        return NULL;
+    }
+    new_lol->list = list;
+    new_lol->next = NULL;
+    return new_lol;
+}
+
+void free_node_list(Node* head) {
+    Node* current = head;
+    Node* next_node;
+    while (current != NULL) {
+        next_node = current->next;
+        free(current);
+        current = next_node;
+    }
+}
+
+void free_list_of_lists(ListOfLists* head) {
+    ListOfLists* current = head;
+    ListOfLists* next_lol;
+    while (current != NULL) {
+        next_lol = current->next;
+        free_node_list(current->list);
+        free(current);
+        current = next_lol;
+    }
+}
+
+size_t count_and_square_lists(ListOfLists* head) {
+    size_t count = 0;
+    ListOfLists* current = head;
+    while (current != NULL) {
+        count++;
+        current = current->next;
+    }
+    return count * count;
+}
+
+int main(void) {
+    ListOfLists* head = NULL;
+    ListOfLists* tail = NULL;
+    
+    for (int i = 0; i < 4; i++) {
+        Node* inner = create_node(i);
+        if (inner == NULL) {
+            continue;
+        }
+        
+        ListOfLists* outer = create_list_of_lists(inner);
+        if (outer == NULL) {
+            free_node_list(inner);
+            continue;
+        }
+        
+        if (head == NULL) {
+            head = outer;
+            tail = outer;
+        } else {
+            tail->next = outer;
+            tail = outer;
+        }
+    }
+    
+    size_t result = count_and_square_lists(head);
+    printf("%zu\n", result);
+    
+    free_list_of_lists(head);
+    
+    return 0;
+}
+```

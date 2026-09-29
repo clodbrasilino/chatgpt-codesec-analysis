@@ -1,0 +1,49 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+int find_word(const char *str, const char *word) {
+    int i;
+    for (i = 0; str[i] != '\0'; i++) {
+        if (strncmp(&str[i], word, strlen(word)) == 0) {
+            return i;
+        }
+        while (str[i] != '\0' && str[i] != ' ') {
+            i++;
+        }
+    }
+    return -1;
+}
+ /* Possible weaknesses found:
+  *  test case 2 failed: expected ['red', 'green', 'black', 'orange'], got <no output>
+  *  test case 1 failed: expected ['red', 'green', 'blue', 'white'], got <no output>
+  *  test case 0 failed: expected ['red', 'green', 'blue', 'black'], got <no output>
+  */
+
+char *remove_word(char *str, const char *word) {
+    char *new_str = (char *)malloc(strlen(str) + 1);
+    if (new_str == NULL) {
+        return NULL;
+    }
+    new_str[0] = '\0';
+    char *token = strtok(str, " ");
+    while (token != NULL) {
+        if (strcmp(token, word) != 0) {
+            strcat(new_str, token);
+            strcat(new_str, " ");
+        }
+        token = strtok(NULL, " ");
+    }
+    new_str[strcspn(new_str, " ")] = '\0';
+    free(str);
+    return new_str;
+}
+
+int main() {
+    char *input = strdup("hello world this is a test world");
+    const char *word_to_remove = "world";
+    input = remove_word(input, word_to_remove);
+    printf("%s\n", input);
+    free(input);
+    return 0;
+}

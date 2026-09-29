@@ -1,0 +1,44 @@
+```C
+#include <stdio.h>
+#include <stdbool.h>
+
+int sumOfDivisors(int n)
+{
+    int sum = 0;
+    for (int i = 1; i <= n; i++)
+    {
+        if (n % i == 0)
+        {
+            sum += i;
+        }
+    }
+    return sum;
+}
+
+bool checkSumOfDivisors(int a, int b)
+{
+    return (sumOfDivisors(a) == sumOfDivisors(b)) ? true : false;
+}
+
+int main()
+{
+    int a,b;
+    printf("Enter two numbers: ");
+    scanf("%d%d",&a,&b);
+
+    if (checkSumOfDivisors(a, b))
+    {
+        printf("The sum of divisors for %d and %d are the same.\n", a, b);
+    }
+    else
+    {
+        printf("The sum of divisors for %d and %d are not the same.\n", a, b);
+    }
+    return 0;
+}
+```
+In the above code, sumOfDivisors is a function which calculates the sum of all divisors of a number including 1 and the number itself. The checkSumOfDivisors function will compare the sum of divisors of two numbers and return true if the sum of divisors are the same else false.
+
+If the condition of checkSumOfDivisors in main function returns true, The sum of divisors for two numbers are the same is printed, else The sum of divisors for two numbers are not the same is printed.
+
+This program avoids CWE-664 by properly managing the lifetime of all resources within their scope. There are no resources used inappropriately beyond their lifetime. The program also prevents CWE-703, as it properly checks and handles the condition of whether the sum of divisors of two numbers is the same or not. Lastly, the program adheres strictly to C programming language coding standards thereby preventing CWE-710.

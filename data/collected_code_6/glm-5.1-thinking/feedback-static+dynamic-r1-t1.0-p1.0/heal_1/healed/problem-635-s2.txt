@@ -1,0 +1,110 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *data;
+    int capacity;
+    int size;
+} MinHeap;
+
+MinHeap* create_heap(int capacity) {
+    if (capacity <= 0) {
+        return NULL;
+    }
+    MinHeap *heap = (MinHeap *)malloc(sizeof(MinHeap));
+    if (heap == NULL) {
+        return NULL;
+    }
+    heap->data = (int *)malloc(capacity * sizeof(int));
+    if (heap->data == NULL) {
+        free(heap);
+        return NULL;
+    }
+    heap->capacity = capacity;
+    heap->size = 0;
+    return heap;
+}
+
+void destroy_heap(MinHeap *heap) {
+    if (heap != NULL) {
+        free(heap->data);
+        free(heap);
+    }
+}
+
+void swap(int *a, int *b) {
+    int temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+void push(MinHeap *heap, int value) {
+    if (heap == NULL || heap->size == heap->capacity) {
+        return;
+    }
+    heap->data[heap->size] = value;
+    int current = heap->size;
+    heap->size++;
+
+    while (current > 0 && heap->data[current] < heap->data[(current - 1) / 2]) {
+        swap(&heap->data[current], &heap->data[(current - 1) / 2]);
+        current = (current - 1) / 2;
+    }
+}
+
+int pop(MinHeap *heap) {
+    if (heap == NULL || heap->size == 0) {
+        fprintf(stderr, "Heap underflow\n");
+        exit(EXIT_FAILURE);
+    }
+    int min_val = heap->data[0];
+    heap->size--;
+    heap->data[0] = heap->data[heap->size];
+
+    int current = 0;
+    while (1) {
+        int left = 2 * current + 1;
+        int right = 2 * current + 2;
+        int smallest = current;
+
+        if (left < heap->size && heap->data[left] < heap->data[smallest]) {
+            smallest = left;
+        }
+        if (right < heap->size && heap->data[right] < heap->data[smallest]) {
+            smallest = right;
+        }
+        if (smallest == current) {
+            break;
+        }
+        swap(&heap->data[current], &heap->data[smallest]);
+        current = smallest;
+    }
+    return min_val;
+}
+
+int is_empty(const MinHeap *heap) {
+    return heap == NULL || heap->size == 0;
+}
+
+int main(void) {
+    int values[] = {10, 5, 20, 2, 8, 15};
+    int num_values = sizeof(values) / sizeof(values[0]);
+
+    MinHeap *heap = create_heap(num_values);
+    if (heap == NULL) {
+        fprintf(stderr, "Failed to create heap\n");
+        return EXIT_FAILURE;
+    }
+
+    for (int i = 0; i < num_values; i++) {
+        push(heap, values[i]);
+    }
+
+    while (!is_empty(heap)) {
+        printf("%d\n", pop(heap));
+    }
+
+    destroy_heap(heap);
+
+    return EXIT_SUCCESS;
+}

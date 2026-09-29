@@ -1,0 +1,16 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-395-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-395-s3.c:61:26: style: Condition 'capacity>=MAX_INPUT_LENGTH' is always false [knownConditionTrueFalse]
+            if (capacity >= MAX_INPUT_LENGTH) {
+                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-395-s3.c:50:19: note: Assuming that condition 'length<MAX_INPUT_LENGTH' is not redundant
+    while (length < MAX_INPUT_LENGTH) {
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-395-s3.c:53:23: note: Assuming condition is false
+        if (ch == EOF || ch == '\n') {
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-395-s3.c:57:20: note: Assuming that condition 'length==capacity' is not redundant
+        if (length == capacity) {
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-395-s3.c:61:26: note: Condition 'capacity>=MAX_INPUT_LENGTH' is always false
+            if (capacity >= MAX_INPUT_LENGTH) {
+                         ^

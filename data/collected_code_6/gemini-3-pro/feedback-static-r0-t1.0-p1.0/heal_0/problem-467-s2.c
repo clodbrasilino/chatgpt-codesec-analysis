@@ -1,0 +1,50 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+void decimalToOctal(int decimalNumber) {
+    if (decimalNumber < 0) {
+        printf("Error: Negative numbers are not supported in this basic conversion.\n");
+        return;
+    }
+
+    if (decimalNumber == 0) {
+        printf("0\n");
+        return;
+    }
+
+    int octalNum[100];
+    int i = 0;
+
+    while (decimalNumber != 0) {
+        if (i >= 100) {
+            printf("Error: Buffer overflow prevented.\n");
+            return;
+        }
+        octalNum[i] = decimalNumber % 8;
+        decimalNumber = decimalNumber / 8;
+        i++;
+    }
+
+    for (int j = i - 1; j >= 0; j--) {
+        printf("%d", octalNum[j]);
+    }
+    printf("\n");
+}
+
+int main(void) {
+    int decimalNumber;
+    int result;
+
+    printf("Enter a decimal number: ");
+    result = scanf("%d", &decimalNumber);
+
+    if (result != 1) {
+        printf("Error: Invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Octal equivalent: ");
+    decimalToOctal(decimalNumber);
+
+    return EXIT_SUCCESS;
+}

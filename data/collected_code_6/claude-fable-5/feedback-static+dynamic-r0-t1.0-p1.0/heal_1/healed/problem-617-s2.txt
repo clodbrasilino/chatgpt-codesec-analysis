@@ -1,0 +1,51 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+static long min_jumps(long step_length, long distance)
+{
+    if (step_length <= 0 || distance < 0) {
+        return -1;
+    }
+    if (distance == 0) {
+        return 0;
+    }
+    if (distance == step_length) {
+        return 1;
+    }
+    if (distance < step_length) {
+        return 2;
+    }
+    return (distance - 1) / step_length + 1;
+}
+
+int main(void)
+{
+    long step_length;
+    long distance;
+    long result;
+
+    printf("Enter jump length: ");
+    if (scanf("%ld", &step_length) != 1) {
+        fprintf(stderr, "Invalid input for jump length.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter target distance d: ");
+    if (scanf("%ld", &distance) != 1) {
+        fprintf(stderr, "Invalid input for distance.\n");
+        return EXIT_FAILURE;
+    }
+
+    result = min_jumps(step_length, distance);
+    if (result < 0) {
+        fprintf(stderr, "Invalid values: jump length must be positive and distance non-negative.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Minimum number of jumps required: %ld\n", result);
+    return EXIT_SUCCESS;
+}
+```
+
+The key change addresses the UBSan-detected signed integer overflow: the original expression `(distance + step_length - 1) / step_length` overflows when `distance` is near `LONG_MAX`. The rewritten form `(distance - 1) / step_length + 1` computes the same ceiling division safely, since at that point `distance > step_length >= 1` guarantees `distance - 1` cannot underflow and the quotient plus one cannot overflow.

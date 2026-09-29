@@ -1,0 +1,61 @@
+#include <stdio.h>
+#include <string.h>
+#include <limits.h>
+#include <stdlib.h>
+
+#define MAX_INPUT_LEN 1024
+
+long long countSubstrings(const char *str, size_t max_len)
+{
+    long long counts[UCHAR_MAX + 1] = {0};
+    long long result = 0;
+    size_t i;
+    size_t len;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    len = strnlen(str, max_len);
+
+    for (i = 0; i < len; i++) {
+        counts[(unsigned char)str[i]]++;
+    }
+
+    for (i = 0; i <= UCHAR_MAX; i++) {
+        result += (counts[i] * (counts[i] + 1)) / 2;
+    }
+
+    return result;
+}
+
+int main(void)
+{
+    char *buffer;
+    long long result;
+
+    buffer = calloc(MAX_INPUT_LEN, sizeof(char));
+    if (buffer == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return 1;
+    }
+
+    if (fgets(buffer, MAX_INPUT_LEN, stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        free(buffer);
+        return 1;
+    }
+
+    buffer[MAX_INPUT_LEN - 1] = '\0';
+    buffer[strcspn(buffer, "\n")] = '\0';
+
+    result = countSubstrings(buffer, MAX_INPUT_LEN);
+
+    if (printf("%lld\n", result) < 0) {
+        free(buffer);
+        return 1;
+    }
+
+    free(buffer);
+    return 0;
+}

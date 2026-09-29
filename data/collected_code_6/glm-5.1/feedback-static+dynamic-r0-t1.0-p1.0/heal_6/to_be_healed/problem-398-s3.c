@@ -1,0 +1,51 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+#include <errno.h>
+
+int compute_sum_of_digits(int num) {
+    int sum = 0;
+    int n = abs(num);
+    while (n > 0) {
+        sum += n % 10;
+        n /= 10;
+    }
+    return sum;
+}
+
+/* Possible weaknesses found:
+ *  Parameter 'argv' can be declared as const array [constParameter]
+ * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+ */
+int main(int argc, char * const argv[const]) {
+    if (argc < 2) {
+        return 1;
+    }
+
+    size_t count = (size_t)(argc - 1);
+    int *numbers = malloc(count * sizeof(int));
+    if (numbers == NULL) {
+        return 1;
+    }
+
+    for (size_t i = 0; i < count; ++i) {
+        char *endptr;
+        errno = 0;
+        long val = strtol(argv[i + 1], &endptr, 10);
+        if (errno != 0 || endptr == argv[i + 1] || *endptr != '\0' || val < INT_MIN || val > INT_MAX) {
+            free(numbers);
+            return 1;
+        }
+        numbers[i] = (int)val;
+    }
+
+    for (size_t i = 0; i < count; ++i) {
+        int sum = compute_sum_of_digits(numbers[i]);
+        printf("%d\n", sum);
+    }
+
+    free(numbers);
+    numbers = NULL;
+
+    return 0;
+}

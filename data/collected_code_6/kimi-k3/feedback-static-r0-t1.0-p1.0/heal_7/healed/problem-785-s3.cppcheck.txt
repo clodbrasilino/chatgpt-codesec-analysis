@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-785-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-785-s3.c:59:13: style: Condition 'end<start' is always false [knownConditionTrueFalse]
+    if (end < start) {
+            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-785-s3.c:54:13: note: Assuming that condition 'end<=start' is not redundant
+    if (end <= start || str[end - 1] != ')') {
+            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-785-s3.c:57:5: note: end is decremented', new value is symbolic=start-1
+    end--;
+    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-785-s3.c:59:13: note: Condition 'end<start' is always false
+    if (end < start) {
+            ^

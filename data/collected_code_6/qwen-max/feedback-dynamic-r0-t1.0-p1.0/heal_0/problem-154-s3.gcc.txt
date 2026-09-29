@@ -1,0 +1,9 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-154-s3.c: In function 'main':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-154-s3.c:12:37: error: passing argument 1 of 'extract_elements' from incompatible pointer type [-Wincompatible-pointer-types]
+   12 |     int **result = extract_elements(matrix, rows, cols, step);
+      |                                     ^~~~~~
+      |                                     |
+      |                                     int (*)[3]
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-154-s3.c:4:30: note: expected 'int **' but argument is of type 'int (*)[3]'
+    4 | int **extract_elements(int **matrix, int rows, int cols, int step);
+      |                        ~~~~~~^~~~~~

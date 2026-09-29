@@ -1,0 +1,9 @@
+collected_code/problem-232-0.c:5:12: error: Cannot determine that '*(int*)b' is initialized [premium-bughuntingUninit]
+   return (*(int*)b - *(int*)a);
+           ^
+collected_code/problem-232-0.c:5:23: error: Cannot determine that '*(int*)a' is initialized [premium-bughuntingUninit]
+   return (*(int*)b - *(int*)a);
+                      ^
+collected_code/problem-232-0.c:9:10: error: Cannot determine that 'arr[0]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+   qsort(arr, size, sizeof(int), cmpfunc);
+         ^

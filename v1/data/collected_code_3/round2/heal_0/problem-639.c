@@ -1,0 +1,21 @@
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+
+int sumLength(char* names[], int count) {
+    int sum = 0;
+    for(int i = 0; i < count; i++) {
+        if(isupper(names[i][0])) {
+            sum += strlen(names[i]);
+        }
+    }
+    return sum;
+}
+
+int main() {
+    char* names[] = {"John", "Doe", "jane", "doe", "Alice", "bob"};
+    int count = sizeof(names) / sizeof(names[0]);
+    int sum = sumLength(names, count);
+    printf("Sum of lengths of names starting with uppercase letter: %d\n", sum);
+    return 0;
+}

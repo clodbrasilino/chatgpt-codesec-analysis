@@ -1,0 +1,26 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_1/healed/problem-450-s2.c:1:8: error: unknown type name 'size_t'
+    1 | static size_t bounded_strnlen(const char *s, size_t max_len)
+      |        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_1/healed/problem-450-s2.c:1:46: error: unknown type name 'size_t'
+    1 | static size_t bounded_strnlen(const char *s, size_t max_len)
+      |                                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_1/healed/problem-450-s2.c:3:5: error: use of undeclared identifier 'size_t'; did you mean 'sizeof'?
+    3 |     size_t len = 0;
+      |     ^~~~~~
+      |     sizeof
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_1/healed/problem-450-s2.c:3:12: error: use of undeclared identifier 'len'
+    3 |     size_t len = 0;
+      |            ^~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_1/healed/problem-450-s2.c:4:12: error: use of undeclared identifier 'len'
+    4 |     while (len < max_len && s[len] != '\0') {
+      |            ^~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_1/healed/problem-450-s2.c:4:31: error: use of undeclared identifier 'len'
+    4 |     while (len < max_len && s[len] != '\0') {
+      |                               ^~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_1/healed/problem-450-s2.c:5:9: error: use of undeclared identifier 'len'
+    5 |         len++;
+      |         ^~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_1/healed/problem-450-s2.c:7:12: error: use of undeclared identifier 'len'
+    7 |     return len;
+      |            ^~~
+8 errors generated.

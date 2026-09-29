@@ -1,0 +1,27 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+long long count_sequences(const int arr[], int n, int k) {
+    /* Possible weaknesses found:
+     *  variable-sized object may not be initialized
+     *  variable-sized object may not be initialized except with an empty initializer
+     */
+    long long dp[k + 1] = {0};
+    dp[0] = 1;
+
+    for (int i = 0; i < n; ++i) {
+        for (int j = k; j >= arr[i]; --j) {
+            dp[j] += dp[j - arr[i]];
+        }
+    }
+
+    return dp[k];
+}
+
+int main() {
+    const int arr[] = {1, 2, 3};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    int k = 5;
+    printf("%lld\n", count_sequences(arr, n, k));
+    return 0;
+}

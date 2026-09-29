@@ -1,0 +1,64 @@
+```c
+#include <stdio.h>
+#include <ctype.h>
+#include <stdlib.h>
+#include <string.h>
+
+void remove_non_alnum(char *str)
+{
+    size_t read_idx;
+    size_t write_idx;
+
+    if (str == NULL) {
+        return;
+    }
+
+    read_idx = 0;
+    write_idx = 0;
+
+    while (str[read_idx] != '\0') {
+        if (isalnum((unsigned char)str[read_idx])) {
+            str[write_idx] = str[read_idx];
+            write_idx++;
+        }
+        read_idx++;
+    }
+
+    str[write_idx] = '\0';
+}
+
+int main(void)
+{
+    char buffer[256];
+    const char *input = "Hello, World! 123 #$% foo_bar";
+    int written;
+
+    written = snprintf(buffer, sizeof(buffer), "%s", input);
+    if (written < 0 || (size_t)written >= sizeof(buffer)) {
+        fprintf(stderr, "Input too long or encoding error\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Before: %s\n", buffer);
+
+    remove_non_alnum(buffer);
+
+    printf("After:  %s\n", buffer);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The original code already mitigates the Flawfinder finding (CWE-119/CWE-120) correctly, so the rewrite preserves those defenses rather than changing behavior:
+
+1. **Bounded copy into the fixed-size buffer** — `snprintf(buffer, sizeof(buffer), "%s", input)` guarantees no write past `buffer[255]` and always NUL-terminates, unlike `strcpy`/`sprintf`.
+
+2. **Truncation and error detection** — the return value of `snprintf` is checked both for negative values (encoding error) and for `>= sizeof(buffer)` (silent truncation), so oversized input is rejected explicitly instead of processed in a truncated form.
+
+3. **Safe `ctype` usage** — the cast to `(unsigned char)` before `isalnum()` avoids undefined behavior when `char` is signed and holds a negative value (e.g., bytes ≥ 0x80).
+
+4. **In-place compaction is inherently bounded** — `remove_non_alnum` only shrinks the string (`write_idx <= read_idx` always holds), so the final `str[write_idx] = '\0'` can never write past the original terminator's position. It also guards against a `NULL` pointer.
+
+Since `buffer` is 256 bytes and every write path into it is length-limited, the statically-sized array is safe as used; no further changes are required.

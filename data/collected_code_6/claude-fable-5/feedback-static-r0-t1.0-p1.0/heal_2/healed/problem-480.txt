@@ -1,0 +1,74 @@
+```c
+#include <stdio.h>
+#include <limits.h>
+#include <stddef.h>
+#include <string.h>
+
+int find_max_occurring_char(const char *str, char *result)
+{
+    size_t counts[UCHAR_MAX + 1] = {0};
+    size_t max_count = 0;
+    size_t i;
+    unsigned char max_char = 0;
+    int found = 0;
+
+    if (str == NULL || result == NULL) {
+        return -1;
+    }
+
+    for (i = 0; str[i] != '\0'; i++) {
+        unsigned char c = (unsigned char)str[i];
+        counts[c]++;
+        if (counts[c] > max_count) {
+            max_count = counts[c];
+            max_char = c;
+            found = 1;
+        }
+    }
+
+    if (found == 0) {
+        return -1;
+    }
+
+    *result = (char)max_char;
+    return 0;
+}
+
+int main(void)
+{
+    char input[256];
+    char max_char;
+    char *newline;
+
+    if (fgets(input, sizeof(input), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    input[sizeof(input) - 1] = '\0';
+
+    newline = memchr(input, '\n', sizeof(input));
+    if (newline != NULL) {
+        *newline = '\0';
+    }
+
+    if (find_max_occurring_char(input, &max_char) != 0) {
+        fprintf(stderr, "Empty string or invalid input\n");
+        return 1;
+    }
+
+    if (printf("Maximum occurring character: %c\n", max_char) < 0) {
+        return 1;
+    }
+
+    return 0;
+}
+```
+
+**Analysis of the fixes applied:**
+
+1. **CWE-119/CWE-120 (buffer overflow via statically-sized array):** The original code was already safe here — `fgets(input, sizeof(input), stdin)` bounds the read to the buffer size, and the explicit `input[sizeof(input) - 1] = '\0'` guarantees termination as a defensive measure. This pattern is retained.
+
+2. **CWE-126 (over-read via `strlen` on a non-terminated string):** The `strlen` call has been replaced with `memchr(input, '\n', sizeof(input))`, which is explicitly bounded by the buffer size and cannot read past the end of `input` even if termination were somehow lost. This eliminates the flagged over-read risk entirely while still correctly stripping the trailing newline.
+
+3. **Pre-existing sound practices retained:** the `unsigned char` cast before indexing `counts[]` (avoids negative-index UB on platforms with signed `char`), NULL-pointer checks in `find_max_occurring_char`, checked return values for `fgets` and `printf`, and the correctly sized `counts[UCHAR_MAX + 1]` table.

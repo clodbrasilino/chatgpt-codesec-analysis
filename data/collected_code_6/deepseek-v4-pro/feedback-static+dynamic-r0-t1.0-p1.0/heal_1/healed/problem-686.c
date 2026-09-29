@@ -1,0 +1,80 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int element;
+    int frequency;
+} FreqEntry;
+
+int compare_entries(const void *a, const void *b) {
+    const FreqEntry *entry_a = (const FreqEntry *)a;
+    const FreqEntry *entry_b = (const FreqEntry *)b;
+    return (entry_a->element > entry_b->element) - (entry_a->element < entry_b->element);
+}
+
+void find_frequencies(const int *list, int size, FreqEntry **result, int *result_size) {
+    if (result == NULL || result_size == NULL) {
+        return;
+    }
+
+    *result = NULL;
+    *result_size = 0;
+
+    if (list == NULL || size <= 0) {
+        return;
+    }
+
+    FreqEntry *entries = (FreqEntry *)malloc(size * sizeof(FreqEntry));
+    if (entries == NULL) {
+        return;
+    }
+
+    for (int i = 0; i < size; i++) {
+        entries[i].element = list[i];
+        entries[i].frequency = 1;
+    }
+
+    qsort(entries, size, sizeof(FreqEntry), compare_entries);
+
+    int unique_count = 0;
+    for (int i = 1; i < size; i++) {
+        if (entries[i].element == entries[unique_count].element) {
+            entries[unique_count].frequency++;
+        } else {
+            unique_count++;
+            entries[unique_count].element = entries[i].element;
+            entries[unique_count].frequency = 1;
+        }
+    }
+    unique_count++;
+
+    FreqEntry *shrunk = (FreqEntry *)realloc(entries, unique_count * sizeof(FreqEntry));
+    if (shrunk == NULL) {
+        free(entries);
+        return;
+    }
+
+    *result = shrunk;
+    *result_size = unique_count;
+}
+
+int main(void) {
+    int list[] = {4, 2, 2, 8, 3, 3, 3, 4, 4, 4, 4, 1};
+    int size = sizeof(list) / sizeof(list[0]);
+    FreqEntry *frequencies = NULL;
+    int freq_size = 0;
+
+    find_frequencies(list, size, &frequencies, &freq_size);
+
+    if (frequencies == NULL || freq_size <= 0) {
+        fprintf(stderr, "Failed to compute frequencies\n");
+        return 1;
+    }
+
+    for (int i = 0; i < freq_size; i++) {
+        printf("%d: %d\n", frequencies[i].element, frequencies[i].frequency);
+    }
+
+    free(frequencies);
+    return 0;
+}

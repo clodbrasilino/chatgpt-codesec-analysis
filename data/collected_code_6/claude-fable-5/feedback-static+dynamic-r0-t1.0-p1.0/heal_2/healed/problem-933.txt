@@ -1,0 +1,141 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#include <regex.h>
+
+#define MAX_INPUT_LEN 4096U
+
+char *camel_to_snake(const char *input)
+{
+    regex_t regex;
+    regmatch_t match;
+    char *output;
+    size_t in_len;
+    size_t out_len;
+    size_t out_pos;
+    size_t offset;
+    size_t chunk;
+    int rc;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    in_len = strnlen(input, MAX_INPUT_LEN);
+    if (in_len >= MAX_INPUT_LEN) {
+        return NULL;
+    }
+
+    out_len = (in_len * 2U) + 1U;
+    output = malloc(out_len);
+    if (output == NULL) {
+        return NULL;
+    }
+
+    rc = regcomp(&regex, "[A-Z]", REG_EXTENDED);
+    if (rc != 0) {
+        free(output);
+        return NULL;
+    }
+
+    out_pos = 0U;
+    offset = 0U;
+
+    while (offset < in_len) {
+        rc = regexec(&regex, input + offset, 1U, &match, 0);
+        if (rc == REG_NOMATCH) {
+            break;
+        }
+        if (rc != 0) {
+            regfree(&regex);
+            free(output);
+            return NULL;
+        }
+
+        chunk = (size_t)match.rm_so;
+        if ((offset + chunk) >= in_len) {
+            regfree(&regex);
+            free(output);
+            return NULL;
+        }
+        if ((out_pos + chunk + 2U) > out_len) {
+            regfree(&regex);
+            free(output);
+            return NULL;
+        }
+
+        memcpy(output + out_pos, input + offset, chunk);
+        out_pos += chunk;
+
+        if ((offset + chunk) > 0U) {
+            output[out_pos] = '_';
+            out_pos++;
+        }
+
+        output[out_pos] = (char)tolower((unsigned char)input[offset + chunk]);
+        out_pos++;
+        offset += (size_t)match.rm_eo;
+    }
+
+    if (offset > in_len) {
+        regfree(&regex);
+        free(output);
+        return NULL;
+    }
+
+    chunk = in_len - offset;
+    if ((out_pos + chunk + 1U) > out_len) {
+        regfree(&regex);
+        free(output);
+        return NULL;
+    }
+
+    memcpy(output + out_pos, input + offset, chunk);
+    out_pos += chunk;
+    output[out_pos] = '\0';
+
+    regfree(&regex);
+    return output;
+}
+
+int main(void)
+{
+    const char *tests[] = {
+        "camelCaseString",
+        "helloWorldExample",
+        "alreadysnake",
+        "MixedUPCase"
+    };
+    size_t i;
+    size_t count = sizeof(tests) / sizeof(tests[0]);
+
+    for (i = 0U; i < count; i++) {
+        char *result = camel_to_snake(tests[i]);
+        if (result == NULL) {
+            (void)fprintf(stderr, "Conversion failed for input: %s\n", tests[i]);
+            return EXIT_FAILURE;
+        }
+        if (printf("%s -> %s\n", tests[i], result) < 0) {
+            free(result);
+            return EXIT_FAILURE;
+        }
+        free(result);
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+Analysis of the original code and the applied fixes:
+
+**Assessment of the flagged `memcpy` calls (CWE-120):** Both flawfinder warnings were largely false positives, since the original code already performed explicit bounds checks (`out_pos + chunk + 2U > out_len` and `out_pos + chunk + 1U > out_len`) before each copy. The output buffer is sized at `2 * in_len + 1`, which covers the worst case where every character is uppercase (each producing `_` plus a lowercase character).
+
+**Hardening added in the rewrite:**
+
+1. **Match-position validation** — Added a check that `offset + chunk < in_len` before dereferencing `input[offset + chunk]`. Although a `[A-Z]` match guarantees the character exists within the NUL-terminated string, this defensive check makes the index provably in-bounds independent of regex library behavior.
+
+2. **Offset sanity check** — Added `offset > in_len` validation before computing `chunk = in_len - offset`, preventing a potential unsigned-integer underflow if `rm_eo` ever advanced the offset past the string length. An underflowed `chunk` would have produced a huge value; while the subsequent bounds check would have caught it, failing early and explicitly is safer and clearer.
+
+**Retained correct properties:** proper `NULL` handling, `strnlen` to cap input length, `regfree`/`free` on all error paths (no leaks), the `(unsigned char)` cast before `tolower` to avoid undefined behavior on negative `char` values, and checked return values for `printf` in `main`.

@@ -1,0 +1,101 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+typedef struct {
+    int id;
+    double value;
+} Tuple;
+
+static int compare_tuples(const void *a, const void *b) {
+    const Tuple *ta = (const Tuple *)a;
+    const Tuple *tb = (const Tuple *)b;
+    if (ta->value < tb->value) return -1;
+    if (ta->value > tb->value) return 1;
+    return 0;
+}
+
+size_t find_min_k_records(const Tuple *list, size_t count, size_t k, Tuple *result, size_t result_size) {
+    Tuple *temp;
+    size_t i;
+    size_t copy_size;
+
+    if (list == NULL || result == NULL || count == 0 || k == 0) {
+        return 0;
+    }
+
+    if (k > count) {
+        k = count;
+    }
+
+    if (result_size < k) {
+        return 0;
+    }
+
+    if (count > SIZE_MAX / sizeof(Tuple)) {
+        return 0;
+    }
+
+    temp = (Tuple *)malloc(count * sizeof(Tuple));
+    if (temp == NULL) {
+        return 0;
+    }
+
+    copy_size = count * sizeof(Tuple);
+    /* Possible weaknesses found:
+     *  Condition 'temp!=NULL' is always true [knownConditionTrueFalse]
+     */
+    if (copy_size > 0 && temp != NULL && list != NULL) {
+        /* Possible weaknesses found:
+         * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+         */
+        memcpy(temp, list, copy_size);
+    }
+
+    qsort(temp, count, sizeof(Tuple), compare_tuples);
+
+    for (i = 0; i < k; i++) {
+        result[i] = temp[i];
+    }
+
+    free(temp);
+    return k;
+}
+
+int main(void) {
+    Tuple records[] = {
+        {1, 45.2},
+        {2, 12.5},
+        {3, 78.9},
+        {4, 3.14},
+        {5, 56.7},
+        {6, 23.1},
+        {7, 89.4},
+        {8, 9.8}
+    };
+    size_t count = sizeof(records) / sizeof(records[0]);
+    size_t k = 3;
+    Tuple *min_records;
+    size_t found;
+
+    min_records = (Tuple *)malloc(k * sizeof(Tuple));
+    if (min_records == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    found = find_min_k_records(records, count, k, min_records, k);
+
+    if (found > 0) {
+        printf("Minimum %zu records:\n", found);
+        for (size_t i = 0; i < found; i++) {
+            printf("ID: %d, Value: %.2f\n", min_records[i].id, min_records[i].value);
+        }
+    } else {
+        printf("No records found or error occurred\n");
+    }
+
+    free(min_records);
+    return EXIT_SUCCESS;
+}

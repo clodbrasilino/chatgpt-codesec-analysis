@@ -1,0 +1,12 @@
+collected_code/problem-754-0.c:7:26: error: Cannot determine that 'list1[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+                if (list1[i] == list2[j] && list1[i] == list3[k]) {
+                         ^
+collected_code/problem-754-0.c:7:38: error: Cannot determine that 'list2[j]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+                if (list1[i] == list2[j] && list1[i] == list3[k]) {
+                                     ^
+collected_code/problem-754-0.c:7:62: error: Cannot determine that 'list3[k]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+                if (list1[i] == list2[j] && list1[i] == list3[k]) {
+                                                             ^
+collected_code/problem-754-0.c:8:40: error: Cannot determine that 'list1[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+                    printf("%d ", list1[i]);
+                                       ^

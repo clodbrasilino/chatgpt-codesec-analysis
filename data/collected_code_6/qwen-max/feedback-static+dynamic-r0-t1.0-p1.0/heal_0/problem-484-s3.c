@@ -1,0 +1,58 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int first;
+    int second;
+} Tuple;
+
+int compare_tuples(const void *a, const void *b) {
+    return ((Tuple*)a)->first - ((Tuple*)b)->first;
+}
+
+void remove_matching_tuples(Tuple *tuple1, int size1, Tuple *tuple2, int size2, Tuple **result, int *result_size) {
+    int i = 0, j = 0;
+    int index = 0;
+    
+    while (i < size1 && j < size2) {
+        if (tuple1[i].first < tuple2[j].first) {
+            i++;
+        } else if (tuple1[i].first > tuple2[j].first) {
+            j++;
+        } else {
+            if (tuple1[i].second != tuple2[j].second) {
+                (*result)[index++] = tuple1[i];
+            }
+            i++;
+            j++;
+        }
+    }
+
+    while (i < size1) {
+        (*result)[index++] = tuple1[i++];
+    }
+
+    *result_size = index;
+}
+
+int main() {
+    Tuple tuple1[] = {{1, 2}, {3, 4}, {5, 6}, {7, 8}};
+    Tuple tuple2[] = {{1, 3}, {3, 4}, {7, 9}};
+    int size1 = sizeof(tuple1) / sizeof(tuple1[0]);
+    int size2 = sizeof(tuple2) / sizeof(tuple2[0]);
+
+    qsort(tuple1, size1, sizeof(Tuple), compare_tuples);
+    qsort(tuple2, size2, sizeof(Tuple), compare_tuples);
+
+    Tuple *result = (Tuple *)malloc(size1 * sizeof(Tuple));
+    int result_size = 0;
+
+    remove_matching_tuples(tuple1, size1, tuple2, size2, &result, &result_size);
+
+    for (int i = 0; i < result_size; i++) {
+        printf("(%d, %d) ", result[i].first, result[i].second);
+    }
+
+    free(result);
+    return 0;
+}

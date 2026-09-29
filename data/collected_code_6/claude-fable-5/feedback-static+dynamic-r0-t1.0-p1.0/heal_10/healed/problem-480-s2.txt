@@ -1,0 +1,80 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <limits.h>
+
+#define BUFFER_SIZE 256
+
+int max_occurring_char(const char *str, char *result)
+{
+    size_t counts[UCHAR_MAX + 1] = {0};
+    size_t max_count = 0;
+    size_t i;
+    unsigned char best = 0;
+    int found = 0;
+
+    if (str == NULL || result == NULL) {
+        return -1;
+    }
+
+    for (i = 0; str[i] != '\0'; i++) {
+        unsigned char c = (unsigned char)str[i];
+        counts[c]++;
+        if (counts[c] > max_count) {
+            max_count = counts[c];
+            best = c;
+            found = 1;
+        }
+    }
+
+    if (!found) {
+        return -1;
+    }
+
+    *result = (char)best;
+    return 0;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    char result;
+
+    printf("Enter a string: ");
+    if (fflush(stdout) != 0) {
+        return 1;
+    }
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+    buffer[strcspn(buffer, "\n")] = '\0';
+
+    if (max_occurring_char(buffer, &result) != 0) {
+        fprintf(stderr, "No characters found in input\n");
+        return 1;
+    }
+
+    printf("Maximum occurring character: %c\n", result);
+    return 0;
+}
+```
+
+**Analysis notes:**
+
+The original code was already well-hardened, and the Flawfinder warning on `char buffer[256]` is a false positive in this context. Here's why the code is safe:
+
+1. **Buffer overflow (CWE-119/CWE-120)**: `fgets(buffer, (int)sizeof(buffer), stdin)` performs bounds-limited reading — it reads at most 255 characters plus the null terminator. The size argument is derived directly from `sizeof(buffer)`, so the two can never desynchronize.
+
+2. **Defensive null-termination**: `buffer[sizeof(buffer) - 1] = '\0'` is technically redundant (fgets always null-terminates on success), but it's harmless belt-and-suspenders hardening.
+
+3. **Newline stripping**: `strcspn(buffer, "\n")` safely handles both cases — newline present or absent — without risk of out-of-bounds access, since it returns the string length if no newline exists and writing `'\0'` at that index is valid.
+
+4. **Signed char pitfall avoided**: The cast to `unsigned char` before indexing `counts[]` prevents negative-index UB on platforms where `char` is signed and input contains bytes ≥ 0x80.
+
+5. **NULL checks and error propagation**: `max_occurring_char` validates both pointers and reports failure via return code rather than crashing; `main` checks the return values of `fflush` and `fgets`.
+
+The only change made was extracting the buffer size into a `BUFFER_SIZE` macro for maintainability. No functional fixes were required — the identified weakness was already mitigated.

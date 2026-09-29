@@ -1,0 +1,42 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+unsigned long long sum_even_numbers(unsigned int l, unsigned int r) {
+    if (l > r) {
+        return 0;
+    }
+
+    if (l % 2 != 0) {
+        l++;
+    }
+
+    if (r % 2 != 0) {
+        r--;
+    }
+
+    if (l > r) {
+        return 0;
+    }
+
+    unsigned long long n = ((unsigned long long)r - l) / 2 + 1;
+    unsigned long long sum = n * (l + r) / 2;
+
+    return sum;
+}
+
+int main(void) {
+    unsigned int l = 0;
+    unsigned int r = 0;
+
+    if (scanf("%u %u", &l, &r) != 2) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    unsigned long long result = sum_even_numbers(l, r);
+    printf("%llu\n", result);
+
+    return EXIT_SUCCESS;
+}
+```

@@ -1,0 +1,71 @@
+{
+  "task_id": 852,
+  "text": "Write a C function to remove negative numbers from a list.",
+  "fn_candidates": [
+    "remove_negs",
+    "RemoveNegs",
+    "removeNegs",
+    "removenegs"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "remove_negs",
+      "args": [
+        [
+          1,
+          -2,
+          3,
+          -4
+        ]
+      ],
+      "expected": [
+        1,
+        3
+      ],
+      "assert_src": "assert remove_negs([1,-2,3,-4]) == [1,3]"
+    },
+    {
+      "fn_name": "remove_negs",
+      "args": [
+        [
+          1,
+          2,
+          3,
+          -4
+        ]
+      ],
+      "expected": [
+        1,
+        2,
+        3
+      ],
+      "assert_src": "assert remove_negs([1,2,3,-4]) == [1,2,3]"
+    },
+    {
+      "fn_name": "remove_negs",
+      "args": [
+        [
+          4,
+          5,
+          -6,
+          7,
+          -8
+        ]
+      ],
+      "expected": [
+        4,
+        5,
+        7
+      ],
+      "assert_src": "assert remove_negs([4,5,-6,7,-8]) == [4,5,7]"
+    }
+  ],
+  "arg_kinds": [
+    "int-list"
+  ],
+  "return_kind": "int-list",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

@@ -1,0 +1,22 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-407-s3.c:20:9: error: use of undeclared identifier 'i'
+   20 |     if (i == -1) {
+      |         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-407-s3.c:24:31: error: use of undeclared identifier 'i'
+   24 |     for (int j = len - 1; j > i; --j) {
+      |                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-407-s3.c:25:32: error: use of undeclared identifier 'i'
+   25 |         if (numStr[j] > numStr[i]) {
+      |                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-407-s3.c:26:32: error: use of undeclared identifier 'i'
+   26 |             char temp = numStr[i];
+      |                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-407-s3.c:27:20: error: use of undeclared identifier 'i'
+   27 |             numStr[i] = numStr[j];
+      |                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-407-s3.c:33:20: error: use of undeclared identifier 'i'
+   33 |     qsort(numStr + i + 1, len - i - 1, 1, compare);
+      |                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-407-s3.c:33:33: error: use of undeclared identifier 'i'
+   33 |     qsort(numStr + i + 1, len - i - 1, 1, compare);
+      |                                 ^
+7 errors generated.

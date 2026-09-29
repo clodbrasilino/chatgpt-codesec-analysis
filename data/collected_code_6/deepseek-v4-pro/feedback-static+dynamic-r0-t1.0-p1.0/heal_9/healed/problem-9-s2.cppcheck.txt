@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-9-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-9-s2.c:19:36: style: Condition 'len>=doubled_size' is always false [knownConditionTrueFalse]
+    if (doubled_size <= len || len >= doubled_size) {
+                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-9-s2.c:19:22: note: Assuming that condition 'doubled_size<=len' is not redundant
+    if (doubled_size <= len || len >= doubled_size) {
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-9-s2.c:19:36: note: Condition 'len>=doubled_size' is always false
+    if (doubled_size <= len || len >= doubled_size) {
+                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-9-s2.c:19:29: style: Same expression on both sides of '||' because 'doubled_size<=len' and 'len>=doubled_size' represent the same value. [knownConditionTrueFalse]
+    if (doubled_size <= len || len >= doubled_size) {
+                            ^

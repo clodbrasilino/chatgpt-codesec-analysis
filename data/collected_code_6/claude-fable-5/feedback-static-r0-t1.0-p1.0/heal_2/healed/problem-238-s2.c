@@ -1,0 +1,48 @@
+#include <stdio.h>
+#include <string.h>
+
+#define BUFFER_SIZE 1024U
+
+unsigned long long count_substrings(const char *str, size_t max_len)
+{
+    unsigned long long n;
+
+    if (str == NULL)
+    {
+        return 0ULL;
+    }
+
+    n = (unsigned long long)strnlen(str, max_len);
+
+    return (n * (n + 1ULL)) / 2ULL;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    unsigned long long result;
+    size_t len;
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL)
+    {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1U] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len > 0U && buffer[len - 1U] == '\n')
+    {
+        buffer[len - 1U] = '\0';
+    }
+
+    result = count_substrings(buffer, sizeof(buffer));
+
+    if (printf("%llu\n", result) < 0)
+    {
+        return 1;
+    }
+
+    return 0;
+}

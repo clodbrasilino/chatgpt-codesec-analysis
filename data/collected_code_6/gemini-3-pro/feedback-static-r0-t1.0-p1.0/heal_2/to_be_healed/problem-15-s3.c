@@ -1,0 +1,75 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+char** split_string_at_lowercase(const char* str, int* out_count) {
+    if (!str || !out_count) {
+        return NULL;
+    }
+
+    int max_parts = 1;
+    for (int i = 0; str[i] != '\0'; i++) {
+        if (islower((unsigned char)str[i])) {
+            max_parts++;
+        }
+    }
+
+    char** result = (char**)calloc(max_parts, sizeof(char*));
+    if (!result) {
+        return NULL;
+    }
+
+    int count = 0;
+    int start = 0;
+    int i = 0;
+
+    for (i = 0; ; i++) {
+        unsigned char c = (unsigned char)str[i];
+        if (islower(c) || c == '\0') {
+            if (i > start || c == '\0') {
+                int part_len = i - start;
+                result[count] = (char*)malloc((part_len + 1) * sizeof(char));
+                if (!result[count]) {
+                    for (int j = 0; j < count; j++) {
+                        free(result[j]);
+                    }
+                    free(result);
+                    return NULL;
+                }
+                /* Possible weaknesses found:
+                 * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+                 */
+                memcpy(result[count], str + start, part_len);
+                result[count][part_len] = '\0';
+                count++;
+            }
+            if (c == '\0') {
+                break;
+            }
+            start = i + 1;
+        }
+    }
+
+    *out_count = count;
+    return result;
+}
+
+int main(void) {
+    const char* test_str = "HELLOwWORLDtTEST";
+    int count = 0;
+    
+    char** parts = split_string_at_lowercase(test_str, &count);
+    
+    if (parts) {
+        for (int i = 0; i < count; i++) {
+            printf("Part %d: %s\n", i, parts[i]);
+            free(parts[i]); 
+        }
+        free(parts);
+    } else {
+        printf("Failed to split string or empty result.\n");
+    }
+
+    return 0;
+}

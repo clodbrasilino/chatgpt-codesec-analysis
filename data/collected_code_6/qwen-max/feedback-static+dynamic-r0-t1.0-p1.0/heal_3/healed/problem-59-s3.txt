@@ -1,0 +1,33 @@
+```c
+#include <stdio.h>
+#include <stdint.h>
+#include <inttypes.h>
+#include <limits.h>
+
+int64_t nth_octagonal_number(int64_t n) {
+    if (n > 0) {
+        int64_t n_squared = n * n;
+        if (n_squared / n == n) {
+            int64_t three_n_squared = 3 * n_squared;
+            if (three_n_squared / 3 == n_squared) {
+                int64_t two_n = 2 * n;
+                if (two_n / 2 == n) {
+                    return three_n_squared - two_n;
+                }
+            }
+        }
+    }
+    return 0;
+}
+
+int main() {
+    int64_t n;
+    printf("Enter the value of n: ");
+    if (scanf("%" SCNd64, &n) != 1) {
+        return 1;
+    }
+    int64_t result = nth_octagonal_number(n);
+    printf("The %" PRId64 "th octagonal number is: %" PRId64 "\n", n, result);
+    return 0;
+}
+```

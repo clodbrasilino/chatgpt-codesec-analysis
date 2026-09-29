@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_7/healed/problem-352-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_7/healed/problem-352-s3.c:39:49: style: Condition 'test4' is always false [knownConditionTrueFalse]
+    printf("\"%s\" %s all unique characters\n", test4 ? test4 : "NULL", are_characters_unique(test4) ? "has" : "does not have");
+                                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_7/healed/problem-352-s3.c:33:25: note: Assignment 'test4=NULL', assigned value is 0
+    const char *test4 = NULL;
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_7/healed/problem-352-s3.c:39:49: note: Condition 'test4' is always false
+    printf("\"%s\" %s all unique characters\n", test4 ? test4 : "NULL", are_characters_unique(test4) ? "has" : "does not have");
+                                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_7/healed/problem-352-s3.c:39:94: style: Condition 'are_characters_unique(test4)' is always false [knownConditionTrueFalse]
+    printf("\"%s\" %s all unique characters\n", test4 ? test4 : "NULL", are_characters_unique(test4) ? "has" : "does not have");
+                                                                                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_7/healed/problem-352-s3.c:39:94: note: Calling function 'are_characters_unique' returns 0
+    printf("\"%s\" %s all unique characters\n", test4 ? test4 : "NULL", are_characters_unique(test4) ? "has" : "does not have");
+                                                                                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_7/healed/problem-352-s3.c:39:94: note: Condition 'are_characters_unique(test4)' is always false
+    printf("\"%s\" %s all unique characters\n", test4 ? test4 : "NULL", are_characters_unique(test4) ? "has" : "does not have");
+                                                                                             ^

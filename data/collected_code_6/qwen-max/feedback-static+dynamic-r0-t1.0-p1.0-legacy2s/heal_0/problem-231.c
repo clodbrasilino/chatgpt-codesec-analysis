@@ -1,0 +1,48 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int find_max_sum(int **triangle, int n) {
+    for (int i = n - 2; i >= 0; --i) {
+        for (int j = 0; j <= i; ++j) {
+            triangle[i][j] += (triangle[i + 1][j] > triangle[i + 1][j + 1]) ? triangle[i + 1][j] : triangle[i + 1][j + 1];
+        }
+    }
+    return triangle[0][0];
+}
+
+int main() {
+    int n;
+    printf("Enter the number of rows: ");
+    scanf("%d", &n);
+
+    int **triangle = (int **)malloc(n * sizeof(int *));
+    if (triangle == NULL) {
+        return 1;
+    }
+
+    for (int i = 0; i < n; ++i) {
+        triangle[i] = (int *)malloc((i + 1) * sizeof(int));
+        if (triangle[i] == NULL) {
+            for (int j = 0; j < i; ++j) {
+                free(triangle[j]);
+            }
+            free(triangle);
+            return 1;
+        }
+        for (int j = 0; j <= i; ++j) {
+            printf("Enter element [%d][%d]: ", i, j);
+            scanf("%d", &triangle[i][j]);
+        }
+    }
+
+    int max_sum = find_max_sum(triangle, n);
+
+    for (int i = 0; i < n; ++i) {
+        free(triangle[i]);
+    }
+    free(triangle);
+
+    printf("Maximum sum is %d\n", max_sum);
+
+    return 0;
+}

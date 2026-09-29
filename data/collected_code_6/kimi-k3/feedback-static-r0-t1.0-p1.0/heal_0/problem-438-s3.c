@@ -1,0 +1,130 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    int first;
+    int second;
+} Tuple;
+
+typedef struct {
+    Tuple *data;
+    size_t size;
+    size_t capacity;
+} TupleArray;
+
+int tuple_array_init(TupleArray *arr, size_t initial_capacity) {
+    if (arr == NULL || initial_capacity == 0) {
+        return -1;
+    }
+    arr->data = malloc(initial_capacity * sizeof(Tuple));
+    if (arr->data == NULL) {
+        return -1;
+    }
+    arr->size = 0;
+    arr->capacity = initial_capacity;
+    return 0;
+}
+
+void tuple_array_free(TupleArray *arr) {
+    if (arr != NULL) {
+        free(arr->data);
+        arr->data = NULL;
+        arr->size = 0;
+        arr->capacity = 0;
+    }
+}
+
+int tuple_array_add(TupleArray *arr, int first, int second) {
+    if (arr == NULL) {
+        return -1;
+    }
+    if (arr->size >= arr->capacity) {
+        size_t new_capacity = arr->capacity * 2;
+        Tuple *new_data = realloc(arr->data, new_capacity * sizeof(Tuple));
+        if (new_data == NULL) {
+            return -1;
+        }
+        arr->data = new_data;
+        arr->capacity = new_capacity;
+    }
+    arr->data[arr->size].first = first;
+    arr->data[arr->size].second = second;
+    arr->size++;
+    return 0;
+}
+
+int compare_tuples(const void *a, const void *b) {
+    const Tuple *ta = (const Tuple *)a;
+    const Tuple *tb = (const Tuple *)b;
+    if (ta->first != tb->first) {
+        return ta->first - tb->first;
+    }
+    return ta->second - tb->second;
+}
+
+size_t count_bidirectional_pairs(const TupleArray *arr) {
+    if (arr == NULL || arr->size == 0) {
+        return 0;
+    }
+
+    TupleArray sorted;
+    if (tuple_array_init(&sorted, arr->size) != 0) {
+        return 0;
+    }
+
+    for (size_t i = 0; i < arr->size; i++) {
+        int a = arr->data[i].first;
+        int b = arr->data[i].second;
+        if (tuple_array_add(&sorted, a < b ? a : b, a < b ? b : a) != 0) {
+            tuple_array_free(&sorted);
+            return 0;
+        }
+    }
+
+    qsort(sorted.data, sorted.size, sizeof(Tuple), compare_tuples);
+
+    size_t count = 0;
+    size_t i = 0;
+    while (i < sorted.size) {
+        size_t j = i;
+        while (j < sorted.size && 
+               sorted.data[j].first == sorted.data[i].first && 
+               sorted.data[j].second == sorted.data[i].second) {
+            j++;
+        }
+        size_t pair_count = j - i;
+        if (pair_count >= 2) {
+            count += pair_count * (pair_count - 1) / 2;
+        }
+        i = j;
+    }
+
+    tuple_array_free(&sorted);
+    return count;
+}
+
+int main(void) {
+    TupleArray arr;
+    if (tuple_array_init(&arr, 4) != 0) {
+        fprintf(stderr, "Failed to initialize array\n");
+        return EXIT_FAILURE;
+    }
+
+    if (tuple_array_add(&arr, 1, 2) != 0 ||
+        tuple_array_add(&arr, 2, 1) != 0 ||
+        tuple_array_add(&arr, 3, 4) != 0 ||
+        tuple_array_add(&arr, 4, 3) != 0 ||
+        tuple_array_add(&arr, 5, 6) != 0 ||
+        tuple_array_add(&arr, 1, 2) != 0) {
+        fprintf(stderr, "Failed to add elements\n");
+        tuple_array_free(&arr);
+        return EXIT_FAILURE;
+    }
+
+    size_t result = count_bidirectional_pairs(&arr);
+    printf("Bidirectional pairs: %zu\n", result);
+
+    tuple_array_free(&arr);
+    return EXIT_SUCCESS;
+}

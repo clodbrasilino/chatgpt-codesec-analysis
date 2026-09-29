@@ -1,0 +1,26 @@
+```C
+#include <stdio.h>
+#include <stdlib.h>
+
+int tuple_to_int(char *tuple){
+    char *end;
+    long result;
+    result = strtol(tuple, &end, 10);
+    if(end == tuple || *end != '\0' || result < 0 || result > INT_MAX){
+        fprintf(stderr, "Failed to convert tuple into integer.\n");
+        exit(EXIT_FAILURE);
+    }
+    return (int)result;
+}
+
+int main(int argc, char **argv){
+    if(argc != 2){
+        fprintf(stderr, "Usage: %s <tuple>\n", argv[0]);
+        return EXIT_FAILURE;
+    }
+    int value = tuple_to_int(argv[1]);
+    printf("%d\n", value);
+    return EXIT_SUCCESS;
+}
+```
+The above program reads tuple of positive integers as command-line argument and tries to convert it into an integer. It performs all necessary checks to prevent undefined behavior or crashes: if the argument is not a valid positive integer, it prints an error message and exits with a failure status. None of the mentioned weaknesses (CWE-664, CWE-703, CWE-710) are present in this program.

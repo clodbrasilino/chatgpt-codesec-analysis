@@ -1,0 +1,114 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int *filter_odd_numbers(const int *input, size_t input_size, size_t *output_size);
+void print_array(const int *array, size_t size);
+
+int *filter_odd_numbers(const int *input, size_t input_size, size_t *output_size)
+{
+    int *result = NULL;
+    size_t count = 0;
+    size_t i;
+
+    if (output_size != NULL) {
+        *output_size = 0;
+    }
+
+    if (input == NULL || output_size == NULL || input_size == 0) {
+        return NULL;
+    }
+
+    for (i = 0; i < input_size; i++) {
+        if (input[i] % 2 != 0) {
+            count++;
+        }
+    }
+
+    if (count == 0) {
+        return NULL;
+    }
+
+    result = malloc(count * sizeof(*result));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    count = 0;
+    for (i = 0; i < input_size; i++) {
+        if (input[i] % 2 != 0) {
+            result[count] = input[i];
+            count++;
+        }
+    }
+
+    *output_size = count;
+    return result;
+}
+
+void print_array(const int *array, size_t size)
+{
+    size_t i;
+
+    if (array == NULL || size == 0) {
+        printf("[]\n");
+        fflush(stdout);
+        return;
+    }
+
+    printf("[");
+    for (i = 0; i < size; i++) {
+        printf("%d", array[i]);
+        if (i + 1 < size) {
+            printf(", ");
+        }
+    }
+    printf("]\n");
+    fflush(stdout);
+}
+
+int main(void)
+{
+    int test0[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    int test1[] = {45, 22, 67, 88, 93, 100};
+    int test2[] = {5, 7, 9, 3, 2, 4, 6};
+    size_t odd_count = 0;
+    int *odd_numbers = NULL;
+
+    setvbuf(stdout, NULL, _IONBF, 0);
+
+    odd_numbers = filter_odd_numbers(test0, sizeof(test0) / sizeof(test0[0]), &odd_count);
+    print_array(odd_numbers, odd_count);
+    free(odd_numbers);
+    odd_numbers = NULL;
+
+    odd_numbers = filter_odd_numbers(test1, sizeof(test1) / sizeof(test1[0]), &odd_count);
+    print_array(odd_numbers, odd_count);
+    free(odd_numbers);
+    odd_numbers = NULL;
+
+    odd_numbers = filter_odd_numbers(test2, sizeof(test2) / sizeof(test2[0]), &odd_count);
+    print_array(odd_numbers, odd_count);
+    free(odd_numbers);
+    odd_numbers = NULL;
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The original source is actually logically sound — the filtering algorithm, memory management, and printing are all correct. Tracing execution by hand produces exactly the expected outputs:
+
+- Test 0: `[1, 3, 5, 7, 9]`
+- Test 1: `[45, 67, 93]`
+- Test 2: `[5, 7, 9, 3]`
+
+The reported weakness — `got <no output>` on **all** test cases — is characteristic of a buffering problem rather than a logic bug: when stdout is fully buffered (e.g., piped to a test harness) and output never gets flushed before the process is inspected or terminated abnormally, the harness sees nothing.
+
+The rewritten code hardens against this in two ways:
+
+1. `setvbuf(stdout, NULL, _IONBF, 0)` at the start of `main` disables stdout buffering entirely, so every `printf` reaches the pipe immediately.
+2. `fflush(stdout)` after each printed line in `print_array` acts as a belt-and-suspenders guarantee even if `setvbuf` were removed or failed.
+
+Other defensive properties preserved: `output_size` is zeroed before any early return (so the caller never reads stale counts), `NULL`/zero-size inputs are rejected, `malloc` failure is checked, `free(NULL)` safety is relied upon correctly, and pointers are nulled after freeing to avoid dangling references.

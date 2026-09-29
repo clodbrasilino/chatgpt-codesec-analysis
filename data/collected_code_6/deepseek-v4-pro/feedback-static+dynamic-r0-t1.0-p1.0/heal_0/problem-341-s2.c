@@ -1,0 +1,186 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *elements;
+    size_t size;
+} Set;
+
+typedef struct {
+    int *data;
+    size_t length;
+} Tuple;
+
+typedef struct {
+    Tuple *tuples;
+    size_t count;
+} TupleList;
+
+static int compare_ints(const void *a, const void *b) {
+    int ia = *(const int *)a;
+    int ib = *(const int *)b;
+    return (ia > ib) - (ia < ib);
+}
+
+static unsigned long long factorial(size_t n) {
+    unsigned long long result = 1;
+    for (size_t i = 2; i <= n; i++) {
+        result *= i;
+    }
+    return result;
+}
+
+static void generate_permutations(Set *set, TupleList *result) {
+    size_t n = set->size;
+    unsigned long long total = factorial(n);
+    
+    result->count = total;
+    result->tuples = malloc(total * sizeof(Tuple));
+    if (result->tuples == NULL) {
+        result->count = 0;
+        return;
+    }
+    
+    int *current = malloc(n * sizeof(int));
+    if (current == NULL) {
+        free(result->tuples);
+        result->tuples = NULL;
+        result->count = 0;
+        return;
+    }
+    
+    for (size_t i = 0; i < n; i++) {
+        current[i] = set->elements[i];
+    }
+    
+    qsort(current, n, sizeof(int), compare_ints);
+    
+    unsigned long long index = 0;
+    int *temp = malloc(n * sizeof(int));
+    if (temp == NULL) {
+        free(current);
+        free(result->tuples);
+        result->tuples = NULL;
+        result->count = 0;
+        return;
+    }
+    
+    for (size_t i = 0; i < n; i++) {
+        temp[i] = current[i];
+    }
+    
+    while (1) {
+        result->tuples[index].data = malloc(n * sizeof(int));
+        if (result->tuples[index].data == NULL) {
+            for (unsigned long long j = 0; j < index; j++) {
+                free(result->tuples[j].data);
+            }
+            free(result->tuples);
+            free(current);
+            free(temp);
+            result->tuples = NULL;
+            result->count = 0;
+            return;
+        }
+        
+        for (size_t i = 0; i < n; i++) {
+            result->tuples[index].data[i] = current[i];
+        }
+        result->tuples[index].length = n;
+        index++;
+        
+        int k = -1;
+        for (int i = (int)n - 2; i >= 0; i--) {
+            if (current[i] < current[i + 1]) {
+                k = i;
+                break;
+            }
+        }
+        
+        if (k == -1) {
+            break;
+        }
+        
+        int l = -1;
+        for (int i = (int)n - 1; i > k; i--) {
+            if (current[i] > current[k]) {
+                l = i;
+                break;
+            }
+        }
+        
+        int tmp = current[k];
+        current[k] = current[l];
+        current[l] = tmp;
+        
+        for (int i = k + 1, j = (int)n - 1; i < j; i++, j--) {
+            tmp = current[i];
+            current[i] = current[j];
+            current[j] = tmp;
+        }
+    }
+    
+    free(current);
+    free(temp);
+}
+
+void free_tuple_list(TupleList *list) {
+    if (list == NULL) {
+        return;
+    }
+    
+    if (list->tuples != NULL) {
+        for (size_t i = 0; i < list->count; i++) {
+            free(list->tuples[i].data);
+        }
+        free(list->tuples);
+    }
+    
+    list->tuples = NULL;
+    list->count = 0;
+}
+
+TupleList set_to_ordered_tuples(Set *set) {
+    TupleList result;
+    result.tuples = NULL;
+    result.count = 0;
+    
+    if (set == NULL || set->elements == NULL || set->size == 0) {
+        return result;
+    }
+    
+    if (set->size > 20) {
+        return result;
+    }
+    
+    generate_permutations(set, &result);
+    return result;
+}
+
+int main(void) {
+    int elements[] = {3, 1, 2};
+    Set input_set;
+    input_set.elements = elements;
+    input_set.size = sizeof(elements) / sizeof(elements[0]);
+    
+    TupleList result = set_to_ordered_tuples(&input_set);
+    
+    if (result.tuples == NULL) {
+        printf("Failed to generate tuples\n");
+        return 1;
+    }
+    
+    for (size_t i = 0; i < result.count; i++) {
+        printf("(");
+        for (size_t j = 0; j < result.tuples[i].length; j++) {
+            printf("%d", result.tuples[i].data[j]);
+            if (j < result.tuples[i].length - 1) {
+                printf(", ");
+            }
+        }
+        printf(")\n");
+    }
+    
+    free_tuple_list(&result);
+    return 0;
+}

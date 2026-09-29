@@ -1,0 +1,87 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+typedef struct {
+    const char *key;
+    int value;
+} Tuple;
+
+int rearrange_tuples(Tuple *tuples, size_t tuple_count, const char *const *order, size_t order_count)
+{
+    Tuple *temp = NULL;
+    size_t i;
+    size_t j;
+
+    if (tuples == NULL || order == NULL) {
+        return -1;
+    }
+    if (tuple_count == 0 || tuple_count != order_count) {
+        return -1;
+    }
+    if (tuple_count > SIZE_MAX / sizeof(Tuple)) {
+        return -1;
+    }
+
+    temp = malloc(tuple_count * sizeof(Tuple));
+    if (temp == NULL) {
+        return -1;
+    }
+
+    for (i = 0; i < order_count; ++i) {
+        int found = 0;
+
+        if (order[i] == NULL) {
+            free(temp);
+            temp = NULL;
+            return -1;
+        }
+        for (j = 0; j < tuple_count; ++j) {
+            if (tuples[j].key != NULL && strcmp(tuples[j].key, order[i]) == 0) {
+                temp[i] = tuples[j];
+                found = 1;
+                break;
+            }
+        }
+        if (!found) {
+            free(temp);
+            temp = NULL;
+            return -1;
+        }
+    }
+
+    for (i = 0; i < tuple_count; ++i) {
+        tuples[i] = temp[i];
+    }
+
+    free(temp);
+    temp = NULL;
+    return 0;
+}
+
+int main(void)
+{
+    Tuple tuples[] = {
+        {"b", 2},
+        {"c", 3},
+        {"a", 1}
+    };
+    const char *order[] = {"a", "b", "c"};
+    size_t tuple_count = sizeof(tuples) / sizeof(tuples[0]);
+    size_t order_count = sizeof(order) / sizeof(order[0]);
+    size_t i;
+
+    if (rearrange_tuples(tuples, tuple_count, order, order_count) != 0) {
+        fprintf(stderr, "Error: failed to rearrange tuples\n");
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i < tuple_count; ++i) {
+        printf("(%s, %d)\n", tuples[i].key, tuples[i].value);
+    }
+
+    return EXIT_SUCCESS;
+}
+```

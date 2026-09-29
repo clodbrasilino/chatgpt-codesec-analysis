@@ -1,0 +1,76 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char *key;
+    char *value;
+} DictionaryItem;
+
+typedef struct {
+    DictionaryItem *items;
+    size_t count;
+} Dictionary;
+
+Dictionary *create_dictionary(size_t initial_capacity) {
+    Dictionary *dict = (Dictionary *)malloc(sizeof(Dictionary));
+    if (dict == NULL) return NULL;
+    dict->items = (DictionaryItem *)calloc(initial_capacity, sizeof(DictionaryItem));
+    if (dict->items == NULL) {
+        free(dict);
+        return NULL;
+    }
+    dict->count = 0;
+    return dict;
+}
+
+void add_item(Dictionary *dict, const char *key, const char *value) {
+    if (dict->count >= (sizeof(dict->items) / sizeof(dict->items[0]))) {
+        size_t new_capacity = dict->count * 2;
+        DictionaryItem *new_items = (DictionaryItem *)realloc(dict->items, new_capacity * sizeof(DictionaryItem));
+        if (new_items == NULL) return;
+        dict->items = new_items;
+    }
+    dict->items[dict->count].key = strdup(key);
+    dict->items[dict->count].value = strdup(value);
+    ++dict->count;
+}
+
+Dictionary *drop_empty_items(Dictionary *dict) {
+    Dictionary *new_dict = create_dictionary(dict->count);
+    for (size_t i = 0; i < dict->count; ++i) {
+        if (dict->items[i].value != NULL && strlen(dict->items[i].value) > 0) {
+            add_item(new_dict, dict->items[i].key, dict->items[i].value);
+        }
+    }
+    return new_dict;
+}
+
+void free_dictionary(Dictionary *dict) {
+    for (size_t i = 0; i < dict->count; ++i) {
+        free(dict->items[i].key);
+        free(dict->items[i].value);
+    }
+    free(dict->items);
+    free(dict);
+}
+
+int main() {
+    Dictionary *dict = create_dictionary(3);
+    if (dict == NULL) return 1;
+
+    add_item(dict, "key1", "");
+    add_item(dict, "key2", "value2");
+    add_item(dict, "key3", "");
+
+    Dictionary *new_dict = drop_empty_items(dict);
+
+    for (size_t i = 0; i < new_dict->count; ++i) {
+        printf("%s: %s\n", new_dict->items[i].key, new_dict->items[i].value);
+    }
+
+    free_dictionary(dict);
+    free_dictionary(new_dict);
+
+    return 0;
+}

@@ -1,0 +1,44 @@
+{
+  "task_id": 451,
+  "text": "Write a C function to remove all whitespaces from the given string using regex.",
+  "fn_candidates": [
+    "remove_whitespaces",
+    "RemoveWhitespaces",
+    "removeWhitespaces",
+    "removewhitespaces"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "remove_whitespaces",
+      "args": [
+        " Google    Flutter "
+      ],
+      "expected": "GoogleFlutter",
+      "assert_src": "assert remove_whitespaces(' Google    Flutter ') == 'GoogleFlutter'"
+    },
+    {
+      "fn_name": "remove_whitespaces",
+      "args": [
+        " Google    Dart "
+      ],
+      "expected": "GoogleDart",
+      "assert_src": "assert remove_whitespaces(' Google    Dart ') == 'GoogleDart'"
+    },
+    {
+      "fn_name": "remove_whitespaces",
+      "args": [
+        " iOS    Swift "
+      ],
+      "expected": "iOSSwift",
+      "assert_src": "assert remove_whitespaces(' iOS    Swift ') == 'iOSSwift'"
+    }
+  ],
+  "arg_kinds": [
+    "str"
+  ],
+  "return_kind": "str",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

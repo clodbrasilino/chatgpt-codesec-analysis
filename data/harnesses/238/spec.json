@@ -1,0 +1,44 @@
+{
+  "task_id": 238,
+  "text": "Write a C function to count number of non-empty substrings of a given string.",
+  "fn_candidates": [
+    "number_of_substrings",
+    "NumberOfSubstrings",
+    "numberOfSubstrings",
+    "numberofsubstrings"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "number_of_substrings",
+      "args": [
+        "abc"
+      ],
+      "expected": 6,
+      "assert_src": "assert number_of_substrings(\"abc\") == 6"
+    },
+    {
+      "fn_name": "number_of_substrings",
+      "args": [
+        "abcd"
+      ],
+      "expected": 10,
+      "assert_src": "assert number_of_substrings(\"abcd\") == 10"
+    },
+    {
+      "fn_name": "number_of_substrings",
+      "args": [
+        "abcde"
+      ],
+      "expected": 15,
+      "assert_src": "assert number_of_substrings(\"abcde\") == 15"
+    }
+  ],
+  "arg_kinds": [
+    "str"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

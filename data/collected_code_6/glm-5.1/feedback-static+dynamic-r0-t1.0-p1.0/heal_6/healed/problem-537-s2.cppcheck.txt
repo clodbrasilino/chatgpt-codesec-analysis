@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-537-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-537-s2.c:91:9: style: Condition 'repeated3' is always false [knownConditionTrueFalse]
+    if (repeated3) {
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-537-s2.c:90:47: note: Calling function 'find_first_repeated_word' returns 0
+    char *repeated3 = find_first_repeated_word(null_str);
+                                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-537-s2.c:90:47: note: Assignment 'repeated3=find_first_repeated_word(null_str)', assigned value is 0
+    char *repeated3 = find_first_repeated_word(null_str);
+                                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-537-s2.c:91:9: note: Condition 'repeated3' is always false
+    if (repeated3) {
+        ^

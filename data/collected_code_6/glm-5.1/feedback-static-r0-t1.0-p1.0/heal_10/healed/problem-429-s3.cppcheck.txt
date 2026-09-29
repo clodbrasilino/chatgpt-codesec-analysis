@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-429-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-429-s3.c:73:36: style: Condition 'dest_buf_remaining>=elem_size' is always true [knownConditionTrueFalse]
+            if (dest_buf_remaining >= elem_size && src_buf_remaining >= elem_size) {
+                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-429-s3.c:65:65: note: Assuming condition 'dest_buf_remaining<elem_size' is false
+        if (src_buf_remaining < elem_size || dest_buf_remaining < elem_size) {
+                                                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-429-s3.c:73:36: note: Condition 'dest_buf_remaining>=elem_size' is always true
+            if (dest_buf_remaining >= elem_size && src_buf_remaining >= elem_size) {
+                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-429-s3.c:73:70: style: Condition 'src_buf_remaining>=elem_size' is always true [knownConditionTrueFalse]
+            if (dest_buf_remaining >= elem_size && src_buf_remaining >= elem_size) {
+                                                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-429-s3.c:65:31: note: Assuming condition 'src_buf_remaining<elem_size' is false
+        if (src_buf_remaining < elem_size || dest_buf_remaining < elem_size) {
+                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-429-s3.c:73:70: note: Condition 'src_buf_remaining>=elem_size' is always true
+            if (dest_buf_remaining >= elem_size && src_buf_remaining >= elem_size) {
+                                                                     ^

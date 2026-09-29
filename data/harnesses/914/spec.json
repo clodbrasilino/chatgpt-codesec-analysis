@@ -1,0 +1,44 @@
+{
+  "task_id": 914,
+  "text": "Write a C function to check whether the given string is made up of two alternating characters or not.",
+  "fn_candidates": [
+    "is_Two_Alter",
+    "IsTwoAlter",
+    "isTwoAlter",
+    "isTwoAlter"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "is_Two_Alter",
+      "args": [
+        "abab"
+      ],
+      "expected": true,
+      "assert_src": "assert is_Two_Alter(\"abab\") == True"
+    },
+    {
+      "fn_name": "is_Two_Alter",
+      "args": [
+        "aaaa"
+      ],
+      "expected": false,
+      "assert_src": "assert is_Two_Alter(\"aaaa\") == False"
+    },
+    {
+      "fn_name": "is_Two_Alter",
+      "args": [
+        "xyz"
+      ],
+      "expected": false,
+      "assert_src": "assert is_Two_Alter(\"xyz\") == False"
+    }
+  ],
+  "arg_kinds": [
+    "str"
+  ],
+  "return_kind": "bool",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

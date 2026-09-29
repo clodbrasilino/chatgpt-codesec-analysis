@@ -1,0 +1,71 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *data;
+    size_t length;
+} Tuple;
+
+typedef struct {
+    Tuple *tuples;
+    size_t count;
+} TupleList;
+
+void remove_tuples_of_length(TupleList *list, size_t k);
+
+void remove_tuples_of_length(TupleList *list, size_t k) {
+    if (list == NULL || list->tuples == NULL) {
+        return;
+    }
+
+    size_t write_idx = 0;
+    for (size_t i = 0; i < list->count; i++) {
+        if (list->tuples[i].length == k) {
+            free(list->tuples[i].data);
+            list->tuples[i].data = NULL;
+            list->tuples[i].length = 0;
+        } else {
+            list->tuples[write_idx] = list->tuples[i];
+            write_idx++;
+        }
+    }
+    list->count = write_idx;
+}
+
+int main(void) {
+    TupleList list;
+    size_t initial_count = 5;
+    
+    list.count = initial_count;
+    list.tuples = (Tuple *)malloc(list.count * sizeof(Tuple));
+    if (list.tuples == NULL) {
+        return EXIT_FAILURE;
+    }
+
+    for (size_t i = 0; i < list.count; i++) {
+        size_t len = (i % 3) + 1;
+        list.tuples[i].length = len;
+        list.tuples[i].data = (int *)malloc(len * sizeof(int));
+        if (list.tuples[i].data == NULL) {
+            for (size_t j = 0; j < i; j++) {
+                free(list.tuples[j].data);
+            }
+            free(list.tuples);
+            return EXIT_FAILURE;
+        }
+        for (size_t j = 0; j < len; j++) {
+            list.tuples[i].data[j] = (int)j;
+        }
+    }
+
+    remove_tuples_of_length(&list, 2);
+
+    for (size_t i = 0; i < list.count; i++) {
+        free(list.tuples[i].data);
+    }
+    free(list.tuples);
+
+    return EXIT_SUCCESS;
+}
+```

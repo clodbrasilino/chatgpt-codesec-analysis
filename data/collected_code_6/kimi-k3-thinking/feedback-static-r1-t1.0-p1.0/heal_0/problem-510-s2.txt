@@ -1,0 +1,129 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+#include <stdint.h>
+
+static int compareInts(const void *a, const void *b)
+{
+    int lhs = *(const int *)a;
+    int rhs = *(const int *)b;
+    return (lhs > rhs) - (lhs < rhs);
+}
+
+static unsigned long long saturatingAdd(unsigned long long a, unsigned long long b)
+{
+    if (a > ULLONG_MAX - b) {
+        return ULLONG_MAX;
+    }
+    return a + b;
+}
+
+static unsigned long long countFromSorted(const int *arr, size_t n, size_t start,
+                                          unsigned long long product, unsigned long long k)
+{
+    unsigned long long total = 0ULL;
+    for (size_t i = start; i < n; ++i) {
+        unsigned long long nextProduct;
+        if (arr[i] == 0 || product == 0ULL) {
+            nextProduct = 0ULL;
+        } else {
+            unsigned long long value = (unsigned long long)arr[i];
+            if (product > (k - 1ULL) / value) {
+                break;
+            }
+            nextProduct = product * value;
+        }
+        total = saturatingAdd(total,
+                              saturatingAdd(1ULL,
+                                            countFromSorted(arr, n, i + 1U, nextProduct, k)));
+    }
+    return total;
+}
+
+static unsigned long long countFromUnsorted(const int *arr, size_t n, size_t start,
+                                            unsigned long long product, unsigned long long k)
+{
+    unsigned long long total = 0ULL;
+    for (size_t i = start; i < n; ++i) {
+        unsigned long long nextProduct;
+        if (arr[i] == 0 || product == 0ULL) {
+            nextProduct = 0ULL;
+        } else {
+            unsigned long long value = (unsigned long long)arr[i];
+            if (product > (k - 1ULL) / value) {
+                continue;
+            }
+            nextProduct = product * value;
+        }
+        total = saturatingAdd(total,
+                              saturatingAdd(1ULL,
+                                            countFromUnsorted(arr, n, i + 1U, nextProduct, k)));
+    }
+    return total;
+}
+
+unsigned long long countSubsequencesWithProductLessThanK(const int *arr, size_t n, long long k)
+{
+    if (arr == NULL || n == 0U || k <= 0LL) {
+        return 0ULL;
+    }
+    int *sorted = malloc(n * sizeof *sorted);
+    if (sorted == NULL) {
+        return countFromUnsorted(arr, n, 0U, 1ULL, (unsigned long long)k);
+    }
+    for (size_t i = 0U; i < n; ++i) {
+        if (arr[i] < 0) {
+            free(sorted);
+            return 0ULL;
+        }
+        sorted[i] = arr[i];
+    }
+    qsort(sorted, n, sizeof *sorted, compareInts);
+    unsigned long long result = countFromSorted(sorted, n, 0U, 1ULL, (unsigned long long)k);
+    free(sorted);
+    return result;
+}
+
+int main(void)
+{
+    size_t n = 0U;
+    long long k = 0LL;
+
+    printf("Enter the number of elements: ");
+    if (scanf("%zu", &n) != 1) {
+        fprintf(stderr, "Invalid input for array size.\n");
+        return EXIT_FAILURE;
+    }
+    printf("Enter the value of k: ");
+    if (scanf("%lld", &k) != 1) {
+        fprintf(stderr, "Invalid input for k.\n");
+        return EXIT_FAILURE;
+    }
+    if (n == 0U) {
+        printf("Number of subsequences with product smaller than %lld: 0\n", k);
+        return EXIT_SUCCESS;
+    }
+    if (n > SIZE_MAX / sizeof(int)) {
+        fprintf(stderr, "Array size is too large.\n");
+        return EXIT_FAILURE;
+    }
+    int *arr = malloc(n * sizeof *arr);
+    if (arr == NULL) {
+        fprintf(stderr, "Memory allocation failed.\n");
+        return EXIT_FAILURE;
+    }
+    printf("Enter %zu non-negative elements: ", n);
+    for (size_t i = 0U; i < n; ++i) {
+        if (scanf("%d", &arr[i]) != 1 || arr[i] < 0) {
+            fprintf(stderr, "Invalid array element.\n");
+            free(arr);
+            return EXIT_FAILURE;
+        }
+    }
+    unsigned long long answer = countSubsequencesWithProductLessThanK(arr, n, k);
+    printf("Number of subsequences with product smaller than %lld: %llu\n", k, answer);
+    free(arr);
+    return EXIT_SUCCESS;
+}
+```

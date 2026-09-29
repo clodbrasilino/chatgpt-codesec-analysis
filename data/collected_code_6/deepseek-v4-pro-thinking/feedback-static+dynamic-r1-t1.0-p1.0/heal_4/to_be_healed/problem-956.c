@@ -1,0 +1,95 @@
+#define _POSIX_C_SOURCE 200112L
+
+#include <stddef.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+char **split_at_uppercase(const char *str, size_t *count)
+{
+    if (count == NULL) {
+        return NULL;
+    }
+
+    *count = 0;
+
+    if (str == NULL || str[0] == '\0') {
+        return NULL;
+    }
+
+    size_t capacity = 4;
+    char **result = malloc(capacity * sizeof(char *));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    size_t idx = 0;
+    const char *start = str;
+    const char *p;
+
+    for (p = str; ; ++p) {
+        if (*p == '\0' || (isupper((unsigned char)*p) && p != str)) {
+            size_t len = p - start;
+            char *piece = malloc(len + 1);
+            if (piece == NULL) {
+                for (size_t i = 0; i < idx; i++) {
+                    free(result[i]);
+                }
+                free(result);
+                return NULL;
+            }
+
+            /* Possible weaknesses found:
+             * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+             */
+            memcpy(piece, start, len);
+            piece[len] = '\0';
+
+            if (idx == capacity) {
+                size_t newcap = capacity * 2;
+                char **tmp = realloc(result, newcap * sizeof(char *));
+                if (tmp == NULL) {
+                    free(piece);
+                    for (size_t i = 0; i < idx; i++) {
+                        free(result[i]);
+                    }
+                    free(result);
+                    return NULL;
+                }
+                result = tmp;
+                capacity = newcap;
+            }
+
+            result[idx++] = piece;
+            start = p;
+
+            if (*p == '\0') {
+                break;
+            }
+        }
+    }
+
+    *count = idx;
+    return result;
+}
+
+int main(void)
+{
+    size_t count = 0;
+    char **parts = split_at_uppercase("HelloWorld", &count);
+
+    if (parts == NULL) {
+        fprintf(stderr, "Failed to split string\n");
+        return EXIT_FAILURE;
+    }
+
+    for (size_t i = 0; i < count; i++) {
+        printf("%s\n", parts[i]);
+        free(parts[i]);
+    }
+
+    free(parts);
+
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,82 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <limits.h>
+#include <stddef.h>
+
+#define MAX_INPUT_LEN 256
+
+int find_first_repeated_char(const char *str, size_t max_len, char *result)
+{
+    unsigned char seen[UCHAR_MAX + 1] = {0};
+    size_t i;
+
+    if (str == NULL || result == NULL || max_len == 0) {
+        return -1;
+    }
+
+    for (i = 0; i < max_len && str[i] != '\0'; i++) {
+        unsigned char c = (unsigned char)str[i];
+        if (seen[c] != 0) {
+            *result = str[i];
+            return 0;
+        }
+        seen[c] = 1;
+    }
+
+    return 1;
+}
+
+int main(void)
+{
+    char buffer[MAX_INPUT_LEN];
+    char repeated = '\0';
+    int status;
+    size_t len;
+
+    printf("Enter a string: ");
+    fflush(stdout);
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = strcspn(buffer, "\n");
+    if (len < sizeof(buffer)) {
+        buffer[len] = '\0';
+    }
+
+    status = find_first_repeated_char(buffer, sizeof(buffer), &repeated);
+
+    if (status == 0) {
+        printf("First repeated character: %c\n", repeated);
+    } else if (status == 1) {
+        printf("No repeated character found\n");
+    } else {
+        fprintf(stderr, "Invalid input to function\n");
+        return 1;
+    }
+
+    return 0;
+}
+```
+
+**Analysis of the flagged weaknesses and why the code is safe as written:**
+
+Both Flawfinder warnings (CWE-119/CWE-120) are low-risk, informational flags triggered simply by the *presence* of statically-sized arrays — not by actual defects. Reviewing each:
+
+1. **`unsigned char seen[UCHAR_MAX + 1]`** — Indexing is done exclusively via a value cast to `unsigned char`, which by definition ranges from `0` to `UCHAR_MAX`. The array is sized `UCHAR_MAX + 1`, so out-of-bounds access is impossible. This is the correct, portable idiom for a character lookup table.
+
+2. **`char buffer[MAX_INPUT_LEN]`** — Input is read with `fgets(buffer, (int)sizeof(buffer), stdin)`, which enforces the buffer bound and always null-terminates within it. The defensive `buffer[sizeof(buffer) - 1] = '\0';` is redundant but harmless. The `strcspn` newline-strip is bounds-safe since `strcspn` cannot return a value beyond the string length, which `fgets` guarantees fits in the buffer.
+
+Additional correctness points already handled:
+
+- `find_first_repeated_char` validates all pointers and `max_len` before use, returning `-1` on invalid input.
+- The `max_len` parameter caps iteration even if the string were somehow unterminated.
+- The cast to `unsigned char` before indexing avoids undefined behavior with negative `char` values on platforms where `char` is signed.
+- Return values of `fgets` and the search function are both checked.
+
+No functional changes were required; the rewrite confirms the original mitigations are sufficient.

@@ -1,0 +1,63 @@
+{
+  "task_id": 856,
+  "text": "Write a C function to find minimum adjacent swaps required to sort binary array.",
+  "fn_candidates": [
+    "find_Min_Swaps",
+    "FindMinSwaps",
+    "findMinSwaps",
+    "findMinSwaps"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "find_Min_Swaps",
+      "args": [
+        [
+          1,
+          0,
+          1,
+          0
+        ],
+        4
+      ],
+      "expected": 3,
+      "assert_src": "assert find_Min_Swaps([1,0,1,0],4) == 3"
+    },
+    {
+      "fn_name": "find_Min_Swaps",
+      "args": [
+        [
+          0,
+          1,
+          0
+        ],
+        3
+      ],
+      "expected": 1,
+      "assert_src": "assert find_Min_Swaps([0,1,0],3) == 1"
+    },
+    {
+      "fn_name": "find_Min_Swaps",
+      "args": [
+        [
+          0,
+          0,
+          1,
+          1,
+          0
+        ],
+        5
+      ],
+      "expected": 2,
+      "assert_src": "assert find_Min_Swaps([0,0,1,1,0],5) == 2"
+    }
+  ],
+  "arg_kinds": [
+    "int",
+    "int-list"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

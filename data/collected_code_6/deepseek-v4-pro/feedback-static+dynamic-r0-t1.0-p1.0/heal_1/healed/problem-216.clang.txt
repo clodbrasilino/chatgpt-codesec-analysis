@@ -1,0 +1,10 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-216.c:105:9: error: call to undeclared function 'add_node_node'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+  105 |         add_node_node(child_list, copy);
+      |         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-216.c:113:6: error: conflicting types for 'add_node_node'
+  113 | void add_node_node(NodeList *list, Node *node) {
+      |      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-216.c:105:9: note: previous implicit declaration is here
+  105 |         add_node_node(child_list, copy);
+      |         ^
+2 errors generated.

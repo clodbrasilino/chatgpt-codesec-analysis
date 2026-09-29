@@ -1,0 +1,38 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+unsigned long long count_non_empty_substrings(const char *str) {
+    if (str == NULL) {
+        return 0;
+    }
+    
+    unsigned long long len = (unsigned long long)strlen(str);
+    return len * (len + 1) / 2;
+}
+
+int main(void) {
+    const char *test1 = "abc";
+    const char *test2 = "";
+    const char *test3 = "programming";
+    const char *test4 = NULL;
+    
+    printf("String: \"%s\", Non-empty substrings: %llu\n", test1, count_non_empty_substrings(test1));
+    printf("String: \"%s\", Non-empty substrings: %llu\n", test2, count_non_empty_substrings(test2));
+    printf("String: \"%s\", Non-empty substrings: %llu\n", test3, count_non_empty_substrings(test3));
+    printf("String: NULL, Non-empty substrings: %llu\n", count_non_empty_substrings(test4));
+    
+    char input[256];
+    printf("Enter a string: ");
+    if (fgets(input, sizeof(input), stdin) != NULL) {
+        size_t len = strlen(input);
+        if (len > 0 && input[len - 1] == '\n') {
+            input[len - 1] = '\0';
+        }
+        printf("String: \"%s\", Non-empty substrings: %llu\n", input, count_non_empty_substrings(input));
+    }
+    
+    return 0;
+}
+```

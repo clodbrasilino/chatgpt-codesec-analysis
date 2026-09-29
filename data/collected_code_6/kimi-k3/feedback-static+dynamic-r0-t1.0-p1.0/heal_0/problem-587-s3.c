@@ -1,0 +1,109 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node *next;
+} Node;
+
+typedef struct {
+    int *data;
+    size_t size;
+} Tuple;
+
+Node *create_node(int value) {
+    Node *node = malloc(sizeof(Node));
+    if (node == NULL) {
+        return NULL;
+    }
+    node->data = value;
+    node->next = NULL;
+    return node;
+}
+
+void free_list(Node *head) {
+    while (head != NULL) {
+        Node *temp = head;
+        head = head->next;
+        free(temp);
+    }
+}
+
+Tuple list_to_tuple(Node *head) {
+    Tuple tuple = {NULL, 0};
+    size_t count = 0;
+    Node *current = head;
+
+    while (current != NULL) {
+        count++;
+        current = current->next;
+    }
+
+    if (count == 0) {
+        return tuple;
+    }
+
+    tuple.data = malloc(count * sizeof(int));
+    if (tuple.data == NULL) {
+        return tuple;
+    }
+
+    tuple.size = count;
+    current = head;
+    for (size_t i = 0; i < count; i++) {
+        tuple.data[i] = current->data;
+        current = current->next;
+    }
+
+    return tuple;
+}
+
+void free_tuple(Tuple *tuple) {
+    if (tuple != NULL) {
+        free(tuple->data);
+        tuple->data = NULL;
+        tuple->size = 0;
+    }
+}
+
+int main(void) {
+    Node *head = NULL;
+    Node *tail = NULL;
+    int values[] = {10, 20, 30, 40, 50};
+    size_t num_values = sizeof(values) / sizeof(values[0]);
+
+    for (size_t i = 0; i < num_values; i++) {
+        Node *node = create_node(values[i]);
+        if (node == NULL) {
+            free_list(head);
+            return EXIT_FAILURE;
+        }
+        if (head == NULL) {
+            head = node;
+            tail = node;
+        } else {
+            tail->next = node;
+            tail = node;
+        }
+    }
+
+    Tuple tuple = list_to_tuple(head);
+    if (tuple.data == NULL && tuple.size > 0) {
+        free_list(head);
+        return EXIT_FAILURE;
+    }
+
+    printf("(");
+    for (size_t i = 0; i < tuple.size; i++) {
+        printf("%d", tuple.data[i]);
+        if (i < tuple.size - 1) {
+            printf(", ");
+        }
+    }
+    printf(")\n");
+
+    free_tuple(&tuple);
+    free_list(head);
+
+    return EXIT_SUCCESS;
+}

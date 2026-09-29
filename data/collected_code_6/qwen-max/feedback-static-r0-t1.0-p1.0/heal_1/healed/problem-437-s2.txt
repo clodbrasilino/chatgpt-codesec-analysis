@@ -1,0 +1,27 @@
+```c
+#include <stdio.h>
+#include <string.h>
+
+void remove_odd_chars(char *str) {
+    char result[128] = "";
+    char *read = str;
+    char *write = result;
+    size_t length = strlen(str);
+    
+    for (size_t i = 0; i < length; i++) {
+        if ((*read - '0') % 2 == 0 || *read < '0' || *read > '9') {
+            *write++ = *read;
+        }
+        read++;
+    }
+    *write = '\0';
+    strcpy(str, result);
+}
+
+int main() {
+    char str[] = "1234567890";
+    remove_odd_chars(str);
+    printf("%s\n", str);
+    return 0;
+}
+```

@@ -1,0 +1,83 @@
+collected_code/problem-528-0.c: In function 'findMinLengthLists':
+collected_code/problem-528-0.c:32:12: warning: returning 'List **' from a function with incompatible return type 'List *' [-Wincompatible-pointer-types]
+   32 |     return minLists;
+      |            ^~~~~~~~
+collected_code/problem-528-0.c:32:12: warning: function returns address of local variable [-Wreturn-local-addr]
+collected_code/problem-528-0.c: In function 'main':
+collected_code/problem-528-0.c:42:23: warning: initialization of 'List **' from incompatible pointer type 'List *' [-Wincompatible-pointer-types]
+   42 |     List** minLists = findMinLengthLists(lists, sizeof(lists) / sizeof(lists[0]));
+      |                       ^~~~~~~~~~~~~~~~~~
+collected_code/problem-528-0.c:49:37: warning: dereference of NULL '0' [CWE-476] [-Wanalyzer-null-dereference]
+   49 |         for (int j = 0; j < minLists[i]->length; j++) {
+      |                             ~~~~~~~~^~~
+  'main': events 1-2
+    |
+    |   35 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   42 |     List** minLists = findMinLengthLists(lists, sizeof(lists) / sizeof(lists[0]));
+    |      |                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                       |
+    |      |                       (2) calling 'findMinLengthLists' from 'main'
+    |
+    +--> 'findMinLengthLists': events 3-11
+           |
+           |    8 | List* findMinLengthLists(List** lists, int numLists) {
+           |      |       ^~~~~~~~~~~~~~~~~~
+           |      |       |
+           |      |       (3) entry to 'findMinLengthLists'
+           |    9 |     if (numLists <= 0 || lists == NULL) {
+           |      |        ~
+           |      |        |
+           |      |        (4) following 'false' branch...
+           |......
+           |   13 |     List* minLists[numLists];
+           |      |     ~~~~
+           |      |     |
+           |      |     (5) ...to here
+           |......
+           |   17 |     for (int i = 0; i < numLists; i++) {
+           |      |                     ~~~~~~~~~~~~
+           |      |                       |
+           |      |                       (6) following 'true' branch (when 'i < numLists')...
+           |   18 |         if (lists[i]->length < minLen) {
+           |      |            ~     ~
+           |      |            |     |
+           |      |            |     (7) ...to here
+           |      |            (8) following 'false' branch...
+           |......
+           |   23 |         if (lists[i]->length == minLen) {
+           |      |            ~     ~
+           |      |            |     |
+           |      |            |     (9) ...to here
+           |      |            (10) following 'true' branch...
+           |   24 |             minLists[numMinLists++] = lists[i];
+           |      |                                            ~
+           |      |                                            |
+           |      |                                            (11) ...to here
+           |
+    <------+
+    |
+  'main': events 12-16
+    |
+    |   42 |     List** minLists = findMinLengthLists(lists, sizeof(lists) / sizeof(lists[0]));
+    |      |                       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                       |
+    |      |                       (12) returning to 'main' from 'findMinLengthLists'
+    |......
+    |   47 |     for (int i = 0; i < numMinLists; i++) {
+    |      |                     ~~~~~~~~~~~~~~~
+    |      |                       |
+    |      |                       (13) following 'true' branch (when 'i < numMinLists')...
+    |   48 |         printf("List %d: ", i + 1);
+    |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |         |
+    |      |         (14) ...to here
+    |   49 |         for (int j = 0; j < minLists[i]->length; j++) {
+    |      |                             ~~~~~~~~~~~
+    |      |                                     |
+    |      |                                     (15) '0' is NULL
+    |      |                                     (16) dereference of NULL 'minLists + (long unsigned int)i * 8'
+    |

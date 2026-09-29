@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-710-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-710-s2.c:22:27: style: Condition 'initial_name_size>0' is always true [knownConditionTrueFalse]
+    if (initial_name_size > 0) {
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-710-s2.c:14:27: note: Assuming that condition 'initial_name_size==0' is not redundant
+        initial_name_size == 0 || last_name_size == 0) {
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-710-s2.c:22:27: note: Condition 'initial_name_size>0' is always true
+    if (initial_name_size > 0) {
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-710-s2.c:31:24: style: Condition 'last_name_size>0' is always true [knownConditionTrueFalse]
+    if (last_name_size > 0) {
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-710-s2.c:14:50: note: Assuming that condition 'last_name_size==0' is not redundant
+        initial_name_size == 0 || last_name_size == 0) {
+                                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-710-s2.c:31:24: note: Condition 'last_name_size>0' is always true
+    if (last_name_size > 0) {
+                       ^

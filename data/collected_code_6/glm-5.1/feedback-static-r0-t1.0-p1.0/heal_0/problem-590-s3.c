@@ -1,0 +1,47 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+typedef struct {
+    double x;
+    double y;
+} Rectangular;
+
+typedef struct {
+    double r;
+    double theta;
+} Polar;
+
+int polar_to_rect(Polar p, Rectangular *result) {
+    if (result == NULL) {
+        return EXIT_FAILURE;
+    }
+
+    if (p.r < 0.0) {
+        return EXIT_FAILURE;
+    }
+
+    result->x = p.r * cos(p.theta);
+    result->y = p.r * sin(p.theta);
+
+    return EXIT_SUCCESS;
+}
+
+int main(void) {
+    Polar p;
+    Rectangular r;
+
+    if (scanf("%lf %lf", &p.r, &p.theta) != 2) {
+        return EXIT_FAILURE;
+    }
+
+    if (polar_to_rect(p, &r) != EXIT_SUCCESS) {
+        return EXIT_FAILURE;
+    }
+
+    if (printf("%f %f\n", r.x, r.y) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

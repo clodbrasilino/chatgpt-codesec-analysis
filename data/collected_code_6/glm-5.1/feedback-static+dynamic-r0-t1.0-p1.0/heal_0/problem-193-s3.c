@@ -1,0 +1,70 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *items;
+    size_t length;
+} Tuple;
+
+Tuple remove_duplicates(const Tuple *input) {
+    Tuple result;
+    if (input == NULL || input->items == NULL) {
+        result.items = NULL;
+        result.length = 0;
+        return result;
+    }
+
+    if (input->length == 0) {
+        result.items = (int *)malloc(0);
+        result.length = 0;
+        return result;
+    }
+
+    result.items = (int *)malloc(input->length * sizeof(int));
+    if (result.items == NULL) {
+        exit(EXIT_FAILURE);
+    }
+
+    result.length = 0;
+
+    for (size_t i = 0; i < input->length; i++) {
+        int is_duplicate = 0;
+        for (size_t j = 0; j < result.length; j++) {
+            if (input->items[i] == result.items[j]) {
+                is_duplicate = 1;
+                break;
+            }
+        }
+
+        if (!is_duplicate) {
+            result.items[result.length++] = input->items[i];
+        }
+    }
+
+    int *temp = (int *)realloc(result.items, result.length * sizeof(int));
+    if (temp != NULL || result.length == 0) {
+        result.items = temp;
+    }
+
+    return result;
+}
+
+int main(void) {
+    int data[] = {1, 2, 3, 2, 4, 1, 5};
+    size_t data_len = sizeof(data) / sizeof(data[0]);
+
+    Tuple input;
+    input.items = data;
+    input.length = data_len;
+
+    Tuple output = remove_duplicates(&input);
+
+    for (size_t i = 0; i < output.length; i++) {
+        printf("%d ", output.items[i]);
+    }
+    printf("\n");
+
+    free(output.items);
+
+    return 0;
+}

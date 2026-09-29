@@ -1,0 +1,56 @@
+#define _POSIX_C_SOURCE 200809L
+#include <stdio.h>
+#include <stdlib.h>
+#include <ctype.h>
+#include <string.h>
+
+int add_spaces_before_capitals(const char *input, char *output, size_t output_size) {
+    size_t out_pos = 0;
+
+    if (input == NULL || output == NULL || output_size == 0) {
+        return 0;
+    }
+
+    while (*input != '\0') {
+        unsigned char c = (unsigned char)*input;
+
+        if (isupper(c) && out_pos > 0 && !isspace((unsigned char)output[out_pos - 1])) {
+            if (out_pos + 2 >= output_size) {
+                return 0;
+            }
+            output[out_pos++] = ' ';
+        }
+
+        if (out_pos + 1 >= output_size) {
+            return 0;
+        }
+        output[out_pos++] = (char)c;
+        input++;
+    }
+
+    output[out_pos] = '\0';
+    return 1;
+}
+
+int main(void) {
+    const char *input = "HelloWorldThisIsATest";
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    size_t needed_size = 2 * strlen(input) + 1;
+    char *output = malloc(needed_size);
+    if (output == NULL) {
+        fputs("Memory allocation failed\n", stderr);
+        return EXIT_FAILURE;
+    }
+
+    if (add_spaces_before_capitals(input, output, needed_size)) {
+        puts(output);
+        free(output);
+        return EXIT_SUCCESS;
+    }
+
+    fputs("Error processing input\n", stderr);
+    free(output);
+    return EXIT_FAILURE;
+}

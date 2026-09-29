@@ -1,0 +1,76 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int* extract_elements(int** matrix, int rows, int cols, int specified_index, int* result_size) {
+    if (result_size == NULL) {
+        return NULL;
+    }
+    
+    *result_size = 0;
+    
+    if (matrix == NULL || rows <= 0 || cols <= 0) {
+        return NULL;
+    }
+    
+    if (specified_index >= cols || specified_index < 0) {
+        return NULL;
+    }
+    
+    int* result = (int*)malloc(rows * sizeof(int));
+    if (result == NULL) {
+        return NULL;
+    }
+    
+    for (int i = 0; i < rows; i++) {
+        if (matrix[i] == NULL) {
+            free(result);
+            return NULL;
+        }
+        result[i] = matrix[i][specified_index];
+    }
+    
+    *result_size = rows;
+    return result;
+}
+
+int main(void) {
+    int rows = 3;
+    int cols = 4;
+    int** matrix = (int**)malloc(rows * sizeof(int*));
+    
+    if (matrix == NULL) {
+        return 1;
+    }
+    
+    for (int i = 0; i < rows; i++) {
+        matrix[i] = (int*)malloc(cols * sizeof(int));
+        if (matrix[i] == NULL) {
+            for (int j = 0; j < i; j++) {
+                free(matrix[j]);
+            }
+            free(matrix);
+            return 1;
+        }
+        for (int j = 0; j < cols; j++) {
+            matrix[i][j] = i * cols + j + 1;
+        }
+    }
+    
+    int result_size = 0;
+    int* extracted = extract_elements(matrix, rows, cols, 0, &result_size);
+    
+    if (extracted != NULL) {
+        for (int i = 0; i < result_size; i++) {
+            printf("%d ", extracted[i]);
+        }
+        printf("\n");
+        free(extracted);
+    }
+    
+    for (int i = 0; i < rows; i++) {
+        free(matrix[i]);
+    }
+    free(matrix);
+    
+    return 0;
+}

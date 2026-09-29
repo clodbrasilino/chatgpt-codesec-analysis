@@ -1,0 +1,36 @@
+C does not support lambda functions or tuples as they are features of high-level languages like Python, C++, etc. However, you can achieve similar functionality using structures and function pointers in C. Here is an example of how you can sort a list of structures in C:
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int first;
+    int second;
+} Tuple;
+
+int compare(const void* a, const void* b) {
+    Tuple* tupleA = (Tuple*) a;
+    Tuple* tupleB = (Tuple*) b;
+    return tupleA->first - tupleB->first;
+}
+
+void sortTuples(Tuple* tuples, int size) {
+    qsort(tuples, size, sizeof(Tuple), compare);
+}
+
+int main() {
+    Tuple tuples[] = {{5, 10}, {1, 20}, {3, 30}, {2, 40}};
+    int size = sizeof(tuples) / sizeof(tuples[0]);
+
+    sortTuples(tuples, size);
+
+    for(int i = 0; i < size; i++) {
+        printf("(%d, %d)\n", tuples[i].first, tuples[i].second);
+    }
+
+    return 0;
+}
+```
+
+In this code, `Tuple` is a structure that acts like a tuple. The `compare` function is used by `qsort` to determine the order of the elements. It behaves like a lambda function. The `sortTuples` function sorts the array of tuples. The `main` function creates an array of tuples, sorts it, and then prints the sorted array.

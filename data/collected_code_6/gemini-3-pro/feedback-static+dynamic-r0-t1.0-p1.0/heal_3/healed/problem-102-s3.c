@@ -1,0 +1,83 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+char* snake_to_camel(const char* snake_str) {
+    if (snake_str == NULL) {
+        return NULL;
+    }
+
+    size_t len = strlen(snake_str);
+    char* camel_str = (char*)malloc(len + 1);
+    if (camel_str == NULL) {
+        return NULL;
+    }
+
+    size_t j = 0;
+    int capitalize_next = 1;
+
+    for (size_t i = 0; i < len; i++) {
+        if (snake_str[i] == '_') {
+            capitalize_next = 1;
+        } else {
+            if (capitalize_next) {
+                camel_str[j++] = toupper((unsigned char)snake_str[i]);
+                capitalize_next = 0;
+            } else {
+                camel_str[j++] = snake_str[i];
+            }
+        }
+    }
+    camel_str[j] = '\0';
+
+    return camel_str;
+}
+
+int main(void) {
+    size_t capacity = 1024;
+    size_t length = 0;
+    char* buffer = (char*)malloc(capacity);
+    
+    if (buffer == NULL) {
+        return 1;
+    }
+
+    int c;
+    while ((c = fgetc(stdin)) != EOF) {
+        if (isspace(c)) {
+            if (length > 0) {
+                buffer[length] = '\0';
+                char* camel = snake_to_camel(buffer);
+                if (camel != NULL) {
+                    printf("%s\n", camel);
+                    free(camel);
+                }
+                length = 0;
+            }
+        } else {
+            buffer[length++] = (char)c;
+            if (length >= capacity - 1) {
+                capacity *= 2;
+                char* temp = (char*)realloc(buffer, capacity);
+                if (temp == NULL) {
+                    free(buffer);
+                    return 1;
+                }
+                buffer = temp;
+            }
+        }
+    }
+
+    if (length > 0) {
+        buffer[length] = '\0';
+        char* camel = snake_to_camel(buffer);
+        if (camel != NULL) {
+            printf("%s\n", camel);
+            free(camel);
+        }
+    }
+
+    free(buffer);
+    return 0;
+}

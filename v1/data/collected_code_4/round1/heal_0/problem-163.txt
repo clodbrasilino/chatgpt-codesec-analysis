@@ -1,0 +1,30 @@
+```c
+#include <math.h>
+#include <stdio.h>
+
+double findArea(double side, int total_sides){
+    double area;
+    double apothem = side / 2.0 / tan(3.14159265 / total_sides);
+    area = 0.5 * total_sides * side * apothem;
+    return area;
+}
+
+int main() {
+    double side;
+    int total_sides; 
+
+    printf("Enter the length of a side and the number of sides of the regular polygon: \n");
+    scanf("%lf %d", &side, &total_sides);
+
+    if(side <= 0.0 || total_sides < 3) {
+        printf("Entered values are not proper for a polygon.\n");
+        return 0;
+    }
+
+    double area = findArea(side, total_sides);
+    printf("The area of the regular polygon is %.2lf.\n", area);
+
+    return 0;
+}
+```
+In the above code, the findArea function calculates the area of a regular polygon including error checks on the input values. It is called from main function which takes side length and total number of sides as inputs. It checks the condition that side length should be greater than zero and number of sides should be greater than or equal to three because a polygon cannot have less than three sides. If these conditions are not met, an error message is displayed and program exits. If the conditions are met, the area is calculated and returned.

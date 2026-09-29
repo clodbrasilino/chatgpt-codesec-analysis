@@ -1,0 +1,22 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+unsigned long long centered_hexagonal_number(unsigned int n) {
+    if (n == 0) {
+        return 0;
+    }
+    return 1ULL + 3ULL * n * (n - 1ULL);
+}
+
+int main(void) {
+    unsigned int n;
+    
+    if (scanf("%u", &n) != 1) {
+        return EXIT_FAILURE;
+    }
+    
+    unsigned long long result = centered_hexagonal_number(n);
+    printf("%llu\n", result);
+    
+    return EXIT_SUCCESS;
+}

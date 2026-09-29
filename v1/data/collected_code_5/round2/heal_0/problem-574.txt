@@ -1,0 +1,35 @@
+```C
+#include <stdio.h>
+#include <math.h>
+
+double getCylinderSurfaceArea(double radius, double height) {
+    if (radius <= 0 || height <= 0) {
+        return -1;
+    }
+    return 2 * M_PI * radius * (radius + height);
+}
+
+int main() {
+    double radius, height;
+
+    printf("Enter the radius of the cylinder: ");
+    scanf("%lf", &radius);
+
+    printf("Enter the height of the cylinder: ");
+    scanf("%lf", &height);
+
+    double surfaceArea = getCylinderSurfaceArea(radius, height);
+
+    if(surfaceArea == -1) {
+        printf("Radius and height should be greater than zero.\n");
+    } else {
+        printf("Surface area of the cylinder is %.2lf\n", surfaceArea);
+    }
+
+    return 0;
+}
+```
+
+This code includes math.h to use the constant value M_PI representing pi. The function getCylinderSurfaceArea gets the radius and height of a cylinder as parameters, checks if they are positive (since a radius or height of 0 or less wouldn't make sense for a physical cylinder), and calculates the surface area if they are valid. If either parameter is not valid, it returns -1.
+
+The main function asks the user to input values for the radius and height, then calls getCylinderSurfaceArea with these values. If the returned value is -1, it provides an error message indicating invalid input. Otherwise, it outputs the calculated surface area.

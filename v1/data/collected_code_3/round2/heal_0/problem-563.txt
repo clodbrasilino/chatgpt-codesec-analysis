@@ -1,0 +1,33 @@
+```C
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+char* extract_between_quotes(const char* str) {
+    char* result = NULL;
+    const char* start = strchr(str, '\"');
+    if (start) {
+        ++start;
+        const char* end = strchr(start, '\"');
+        if (end) {
+            size_t len = end - start;
+            result = (char*)malloc(len + 1);
+            strncpy(result, start, len);
+            result[len] = '\0';
+        }
+    }
+    return result;
+}
+
+int main() {
+    const char* str = "This is a \"test\" string.";
+    char* extracted = extract_between_quotes(str);
+    if (extracted) {
+        printf("Extracted string: %s\n", extracted);
+        free(extracted);
+    } else {
+        printf("No string found between quotes.\n");
+    }
+    return 0;
+}
+```

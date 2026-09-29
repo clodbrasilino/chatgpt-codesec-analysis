@@ -1,0 +1,72 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int find_extra_index(const int *arr1, const int *arr2, size_t n2)
+{
+    size_t low = 0;
+    size_t high = n2;
+
+    while (low < high) {
+        size_t mid = low + (high - low) / 2;
+        if (arr1[mid] == arr2[mid]) {
+            low = mid + 1;
+        } else {
+            high = mid;
+        }
+    }
+
+    return (int)low;
+}
+
+int process_arrays(const int *arr1, size_t n1, const int *arr2, size_t n2)
+{
+    if (arr1 == NULL || arr2 == NULL) {
+        fprintf(stderr, "Error: null array pointer\n");
+        return EXIT_FAILURE;
+    }
+
+    if (n1 != n2 + 1) {
+        fprintf(stderr, "Error: first array must contain exactly one extra element\n");
+        return EXIT_FAILURE;
+    }
+
+    int index = find_extra_index(arr1, arr2, n2);
+
+    if (index < 0 || (size_t)index >= n1) {
+        fprintf(stderr, "Error: invalid index computed\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Index of extra element: %d\n", index);
+    printf("Extra element value: %d\n", arr1[index]);
+
+    return EXIT_SUCCESS;
+}
+
+int main(void)
+{
+    int arr1[] = {2, 4, 6, 8, 10, 12};
+    int arr2[] = {2, 4, 6, 8, 10};
+
+    size_t n1 = sizeof(arr1) / sizeof(arr1[0]);
+    size_t n2 = sizeof(arr2) / sizeof(arr2[0]);
+
+    return process_arrays(arr1, n1, arr2, n2);
+}
+```
+
+**Analysis of the changes:**
+
+The original code triggered two static-analysis findings, both stemming from the fact that all values were compile-time constants visible to the analyzer within `main`:
+
+1. **`Condition 'n1!=n2+1' is always false [knownConditionTrueFalse]`** — Since `n1` and `n2` are derived from fixed-size local arrays, the analyzer could prove the guard was dead code. The fix moves the validation logic into a separate function, `process_arrays`, which receives the sizes as runtime parameters. From the function's perspective the values are no longer statically known, so the check becomes a genuine, meaningful precondition rather than provably-dead code. This also makes the logic reusable and independently testable with arbitrary inputs.
+
+2. **The assignment warning on `n1`** — This was informational (the analyzer tracking the constant value `6`). By passing the sizes through a function boundary, the constant propagation chain that fed the dead-condition diagnostic is broken.
+
+Additional hardening added along the way:
+
+- A **NULL-pointer check** on both array arguments, which is a sensible defensive measure now that the function accepts pointers from an external caller.
+- `main` simply returns the result of `process_arrays`, preserving the original exit-code semantics (`EXIT_SUCCESS` / `EXIT_FAILURE`).
+
+The core binary-search algorithm in `find_extra_index` was already correct — O(log n), overflow-safe midpoint calculation via `low + (high - low) / 2`, and it correctly handles the edge case where the extra element is the last one in `arr1` (loop terminates with `low == n2`) — so it was left untouched.

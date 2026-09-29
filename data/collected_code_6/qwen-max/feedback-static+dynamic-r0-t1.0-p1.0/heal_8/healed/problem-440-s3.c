@@ -1,0 +1,61 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <ctype.h>
+
+#define MAX_ADVERBS 100
+#define SENTENCE_MAX_LEN 1024
+
+typedef struct {
+    char word[51];
+    int start;
+    int end;
+} Adverb;
+
+int find_adverbs(const char *sentence, Adverb adverbs[], int *adverb_count) {
+    const char *adverb_endings[] = {"ly", "LY"};
+    int num_adverb_endings = sizeof(adverb_endings) / sizeof(adverb_endings[0]);
+    size_t len = strnlen(sentence, SENTENCE_MAX_LEN);
+    const char *p = sentence;
+    int start = 0;
+    *adverb_count = 0;
+
+    while (start < (int)len) {
+        while (start < (int)len && isspace(p[start])) start++;
+        if (start == (int)len) break;
+        int i = start;
+        while (i < (int)len && !isspace(p[i])) i++;
+        int word_len = i - start;
+        if (word_len >= 2 && word_len <= 50) {
+            for (int j = 0; j < num_adverb_endings; j++) {
+                size_t ending_len = strnlen(adverb_endings[j], 3);
+                if (word_len >= (int)ending_len && 
+                    strncmp(&p[start + word_len - ending_len], adverb_endings[j], ending_len) == 0 &&
+                    (p[start + word_len] == ' ' || p[start + word_len] == '\0')) {
+                    memcpy(adverbs[*adverb_count].word, &p[start], word_len);
+                    adverbs[*adverb_count].word[word_len] = '\0';
+                    adverbs[*adverb_count].start = start;
+                    adverbs[*adverb_count].end = start + word_len - 1;
+                    (*adverb_count)++;
+                    break;
+                }
+            }
+        }
+        start = i + 1;
+    }
+    return 0;
+}
+
+int main() {
+    const char *sentence = "He quickly and quietly walked away.";
+    Adverb adverbs[MAX_ADVERBS];
+    int adverb_count = 0;
+
+    find_adverbs(sentence, adverbs, &adverb_count);
+
+    for (int i = 0; i < adverb_count; i++) {
+        printf("Adverb: %s, Start: %d, End: %d\n", adverbs[i].word, adverbs[i].start, adverbs[i].end);
+    }
+
+    return 0;
+}

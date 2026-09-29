@@ -1,0 +1,63 @@
+{
+  "task_id": 736,
+  "text": "Write a C function to locate the left insertion point for a specified value in sorted order.",
+  "fn_candidates": [
+    "left_insertion",
+    "LeftInsertion",
+    "leftInsertion",
+    "leftinsertion"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "left_insertion",
+      "args": [
+        [
+          1,
+          2,
+          4,
+          5
+        ],
+        6
+      ],
+      "expected": 4,
+      "assert_src": "assert left_insertion([1,2,4,5],6)==4"
+    },
+    {
+      "fn_name": "left_insertion",
+      "args": [
+        [
+          1,
+          2,
+          4,
+          5
+        ],
+        3
+      ],
+      "expected": 2,
+      "assert_src": "assert left_insertion([1,2,4,5],3)==2"
+    },
+    {
+      "fn_name": "left_insertion",
+      "args": [
+        [
+          1,
+          2,
+          4,
+          5
+        ],
+        7
+      ],
+      "expected": 4,
+      "assert_src": "assert left_insertion([1,2,4,5],7)==4"
+    }
+  ],
+  "arg_kinds": [
+    "int",
+    "int-list"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

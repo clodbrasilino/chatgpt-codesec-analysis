@@ -1,0 +1,16 @@
+collected_code/problem-104-0.c: In function 'main':
+collected_code/problem-104-0.c:27:14: warning: dereference of possibly-NULL 'lists' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   27 |     lists[0] = list1;
+      |     ~~~~~~~~~^~~~~~~
+  'main': events 1-2
+    |
+    |   24 |     char*** lists = (char***) malloc(3 * sizeof(char**));
+    |      |                               ^~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                               |
+    |      |                               (1) this call could return NULL
+    |......
+    |   27 |     lists[0] = list1;
+    |      |     ~~~~~~~~~~~~~~~~           
+    |      |              |
+    |      |              (2) 'lists' could be NULL: unchecked value from (1)
+    |

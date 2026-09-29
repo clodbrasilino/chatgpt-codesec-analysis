@@ -1,0 +1,72 @@
+./collected_code_4/round2//heal_17/healed/problem-114.c: In function 'assignFrequencies':
+./collected_code_4/round2//heal_17/healed/problem-114.c:40:14: warning: leak of 'results' [CWE-401] [-Wanalyzer-malloc-leak]
+   40 |     *results = (TupleFrequency*)realloc(*results, sizeof(TupleFrequency) * (*resultCount));
+      |     ~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  'main': events 1-2
+    |
+    |   47 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   52 |     assignFrequencies(tuples, sizeof(tuples) / sizeof(Tuple), &results, &resultCount);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) calling 'assignFrequencies' from 'main'
+    |
+    +--> 'assignFrequencies': events 3-19
+           |
+           |   14 | void assignFrequencies(Tuple *tuples, int tupleCount, TupleFrequency **results, int *resultCount) {
+           |      |      ^~~~~~~~~~~~~~~~~
+           |      |      |
+           |      |      (3) entry to 'assignFrequencies'
+           |   15 |     if (tupleCount == 0 || results == NULL || resultCount == NULL) return;
+           |      |        ~
+           |      |        |
+           |      |        (4) following 'false' branch...
+           |   16 | 
+           |   17 |     *results = (TupleFrequency*)malloc(sizeof(TupleFrequency) * tupleCount);
+           |      |                                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                                 |
+           |      |                                 (5) ...to here
+           |      |                                 (6) allocated here
+           |   18 | 
+           |   19 |     if (*results == NULL) return;
+           |      |        ~
+           |      |        |
+           |      |        (7) assuming 'results' is non-NULL
+           |      |        (8) following 'false' branch...
+           |   20 | 
+           |   21 |     *resultCount = 0;
+           |      |     ~~~~~~~~~~~~~~~~
+           |      |                  |
+           |      |                  (9) ...to here
+           |   22 | 
+           |   23 |     for (int i = 0; i < tupleCount; i++) {
+           |      |                     ~~~~~~~~~~~~~~
+           |      |                       |
+           |      |                       (10) following 'true' branch (when 'i < tupleCount')...
+           |      |                       (16) following 'false' branch (when 'i >= tupleCount')...
+           |......
+           |   26 |         for (j = 0; j < *resultCount; j++) {
+           |      |              ~~~~~  ~~~~~~~~~~~~~~~~
+           |      |                |      |
+           |      |                |      (12) following 'false' branch...
+           |      |                (11) ...to here
+           |......
+           |   34 |         if (j == *resultCount) {
+           |      |            ~     ~~~~~~~~~~~~
+           |      |            |     |
+           |      |            |     (13) ...to here
+           |      |            (14) following 'true' branch...
+           |   35 |             (*results)[*resultCount].tuple = tuples[i];
+           |      |                                                    ~
+           |      |                                                    |
+           |      |                                                    (15) ...to here
+           |......
+           |   40 |     *results = (TupleFrequency*)realloc(*results, sizeof(TupleFrequency) * (*resultCount));
+           |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |              |                  |                                           |
+           |      |              |                  (18) when 'realloc' fails                   (17) ...to here
+           |      |              (19) 'results' leaks here; was allocated at (6)
+           |

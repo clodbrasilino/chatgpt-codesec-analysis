@@ -1,0 +1,102 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_INPUT_LEN 10
+
+static int findDemlo(const char *str, char *result, size_t result_size);
+
+static int findDemlo(const char *str, char *result, size_t result_size)
+{
+    size_t len;
+    size_t i;
+    size_t pos;
+
+    if (str == NULL || result == NULL || result_size == 0) {
+        return -1;
+    }
+
+    len = strnlen(str, MAX_INPUT_LEN);
+
+    if (len == 0 || len > 9) {
+        return -1;
+    }
+
+    for (i = 0; i < len; i++) {
+        if (str[i] != '1') {
+            return -1;
+        }
+    }
+
+    if (result_size < (2 * len)) {
+        return -1;
+    }
+
+    pos = 0;
+    for (i = 1; i <= len && pos < result_size - 1; i++) {
+        result[pos] = (char)('0' + (int)i);
+        pos++;
+    }
+    for (i = len - 1; i >= 1 && pos < result_size - 1; i--) {
+        result[pos] = (char)('0' + (int)i);
+        pos++;
+    }
+    result[pos] = '\0';
+
+    return 0;
+}
+
+int main(void)
+{
+    char input[MAX_INPUT_LEN + 2];
+    char output[2 * MAX_INPUT_LEN];
+    size_t len;
+
+    memset(input, 0, sizeof(input));
+    memset(output, 0, sizeof(output));
+
+    printf("Enter a repunit number (only 1s, max 9 digits): ");
+
+    if (fgets(input, (int)sizeof(input), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    input[sizeof(input) - 1] = '\0';
+
+    len = strnlen(input, sizeof(input));
+    if (len > 0 && input[len - 1] == '\n') {
+        input[len - 1] = '\0';
+    } else if (len == sizeof(input) - 1) {
+        int ch;
+        while ((ch = getchar()) != '\n' && ch != EOF) {
+        }
+        fprintf(stderr, "Invalid input: too long\n");
+        return EXIT_FAILURE;
+    }
+
+    if (findDemlo(input, output, sizeof(output)) != 0) {
+        fprintf(stderr, "Invalid input: must be a repunit of at most 9 ones\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Demlo number: %s\n", output);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the original code and applied fixes:**
+
+The original code was already quite defensive, and the Flawfinder findings were largely low-risk hits on static arrays rather than actual exploitable flaws. Here is my assessment as reflected in the rewrite:
+
+1. **CWE-119/CWE-120 on `input[]`** — Already mitigated: `fgets` is called with `sizeof(input)`, a forced null terminator is added, and overlong input is detected and rejected with the leftover stream drained via `getchar()`. No change needed beyond keeping those guards.
+
+2. **CWE-119/CWE-120 on `output[]`** — The original relied solely on the up-front `result_size < (2 * len)` check. While mathematically sufficient (a repunit of length *n* squared produces a Demlo number of `2n - 1` digits plus the terminator), I hardened both write loops with an explicit `pos < result_size - 1` bounds guard so the function can never write past the buffer even if the precondition logic were later modified.
+
+3. **CWE-120/CWE-20 on `getchar()`** — The drain loop terminates on both `'\n'` and `EOF` and writes nothing to a buffer, so it is safe as-is.
+
+4. **`size_t` underflow check** — The reverse loop `for (i = len - 1; i >= 1; i--)` is safe: with `len >= 1` guaranteed, `i` never wraps because the loop exits when `i` reaches `0` before the condition re-evaluates against an underflowed value.
+
+5. **`strnlen` usage** — Correctly bounded by `MAX_INPUT_LEN` and `sizeof(input)` respectively, preventing any over-read on non-terminated data.

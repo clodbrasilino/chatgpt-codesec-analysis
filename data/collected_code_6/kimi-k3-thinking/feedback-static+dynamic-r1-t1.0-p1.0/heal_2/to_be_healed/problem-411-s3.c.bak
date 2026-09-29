@@ -1,0 +1,71 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+ /* Possible weaknesses found:
+  *  test case 1 failed: expected 'GooglePixel', got <no output>
+  *  test case 2 failed: expected 'AppleWatch', got <no output>
+  *  test case 0 failed: expected 'AndroidTv', got <no output>
+  */
+
+char *snake_to_camel(const char *input)
+{
+    char *result;
+    size_t i;
+    size_t j;
+    int upper;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    result = malloc(strlen(input) + 1);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    upper = 1;
+    j = 0;
+
+    for (i = 0; input[i] != '\0'; i++) {
+        unsigned char c = (unsigned char)input[i];
+        if (c == '_') {
+            upper = 1;
+        } else if (upper) {
+            result[j++] = (char)toupper(c);
+            upper = 0;
+        } else {
+            result[j++] = (char)c;
+        }
+    }
+
+    result[j] = '\0';
+    return result;
+}
+
+int main(void)
+{
+    const char *tests[] = {
+        "android_tv",
+        "google_pixel",
+        "apple_watch",
+        "hello_world",
+        "snake_case_string",
+        "convert_this_to_camel",
+        "already",
+        NULL
+    };
+    size_t t;
+
+    for (t = 0; tests[t] != NULL; t++) {
+        char *camel = snake_to_camel(tests[t]);
+        if (camel == NULL) {
+            fprintf(stderr, "Conversion failed for: %s\n", tests[t]);
+            return EXIT_FAILURE;
+        }
+        printf("%s -> %s\n", tests[t], camel);
+        free(camel);
+    }
+
+    return EXIT_SUCCESS;
+}

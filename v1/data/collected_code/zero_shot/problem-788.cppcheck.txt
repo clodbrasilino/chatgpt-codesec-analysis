@@ -1,0 +1,6 @@
+collected_code/problem-788-0.c:18:27: error: Cannot determine that 'str[0]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+    int str_size = strlen(str);
+                          ^
+collected_code/problem-788-0.c:25:29: error: Cannot determine that 'list[0]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+    memcpy(new_tuple->list, list, list_size * sizeof(int));
+                            ^

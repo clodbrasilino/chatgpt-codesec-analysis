@@ -1,0 +1,53 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+#include <stdbool.h>
+
+bool match_a_to_b(const char *input) {
+    if (input == NULL) {
+        return false;
+    }
+
+    regex_t regex;
+    int ret_comp;
+    int ret_exec;
+    bool is_match = false;
+
+    ret_comp = regcomp(&regex, "^a.*b$", REG_EXTENDED);
+    if (ret_comp != 0) {
+        return false;
+    }
+
+    ret_exec = regexec(&regex, input, 0, NULL, 0);
+    if (ret_exec == 0) {
+        is_match = true;
+    } else {
+        is_match = false;
+    }
+
+    regfree(&regex);
+
+    return is_match;
+}
+
+int main(void) {
+    const char *test_cases[] = {
+        "axyzb",
+        "ab",
+        "a_b",
+        "a anything b",
+        "baxz",
+        "axzy",
+        "Axyzb",
+        "",
+        NULL
+    };
+
+    for (size_t i = 0; test_cases[i] != NULL; i++) {
+        bool result = match_a_to_b(test_cases[i]);
+        printf("%s\n", result ? "Match" : "No Match");
+    }
+
+    return EXIT_SUCCESS;
+}

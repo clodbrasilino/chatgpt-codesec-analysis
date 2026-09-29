@@ -1,0 +1,12 @@
+collected_code/problem-789-0.c:12:19: error: Cannot determine that 'sides' is initialized [premium-bughuntingUninit]
+    scanf("%lf", &sides);
+                  ^
+collected_code/problem-789-0.c:15:19: error: Cannot determine that 'length' is initialized [premium-bughuntingUninit]
+    scanf("%lf", &length);
+                  ^
+collected_code/problem-789-0.c:17:36: error: Cannot determine that 'sides' is initialized [premium-bughuntingUninit]
+    perimeter = calculatePerimeter(sides, length);
+                                   ^
+collected_code/problem-789-0.c:17:43: error: Cannot determine that 'length' is initialized [premium-bughuntingUninit]
+    perimeter = calculatePerimeter(sides, length);
+                                          ^

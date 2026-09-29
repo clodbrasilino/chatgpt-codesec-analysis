@@ -1,0 +1,117 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+#define BUFFER_SIZE 256U
+#define FLUSH_LIMIT 4096U
+
+static void remove_first_last(char *str, size_t max_len, char ch)
+{
+    size_t len;
+    char *first;
+    char *last;
+    size_t tail_len;
+    size_t i;
+
+    if (str == NULL || max_len == 0U) {
+        return;
+    }
+
+    len = strnlen(str, max_len);
+    if (len >= max_len) {
+        str[max_len - 1U] = '\0';
+        len = max_len - 1U;
+    }
+    if (len == 0U) {
+        return;
+    }
+
+    first = memchr(str, (int)(unsigned char)ch, len);
+    if (first == NULL) {
+        return;
+    }
+
+    last = NULL;
+    for (i = len; i > 0U; i--) {
+        if (str[i - 1U] == ch) {
+            last = &str[i - 1U];
+            break;
+        }
+    }
+
+    if (last != NULL && last != first) {
+        tail_len = len - (size_t)(last - str) - 1U;
+        memmove(last, last + 1, tail_len + 1U);
+        len -= 1U;
+    }
+
+    tail_len = len - (size_t)(first - str) - 1U;
+    memmove(first, first + 1, tail_len + 1U);
+}
+
+static void flush_input(void)
+{
+    int c;
+    size_t count = 0U;
+
+    do {
+        c = getchar();
+        count++;
+    } while (c != '\n' && c != EOF && count < FLUSH_LIMIT);
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    char ch;
+    int c;
+    size_t len;
+
+    printf("Enter a string: ");
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input string\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1U] = '\0';
+
+    len = strcspn(buffer, "\n");
+    if (len == strnlen(buffer, sizeof(buffer)) && len == sizeof(buffer) - 1U) {
+        flush_input();
+    }
+    buffer[len] = '\0';
+
+    printf("Enter a character to remove: ");
+    c = getchar();
+    if (c == EOF) {
+        fprintf(stderr, "Error reading character\n");
+        return EXIT_FAILURE;
+    }
+    ch = (char)c;
+
+    if (c != '\n') {
+        flush_input();
+    }
+
+    remove_first_last(buffer, sizeof(buffer), ch);
+
+    printf("Result: %s\n", buffer);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the identified weaknesses and their fixes:**
+
+1. **Flawfinder `char buffer[BUFFER_SIZE]` (CWE-119/CWE-120)** — Already mitigated. The statically-sized array is only written to via `fgets` with `sizeof(buffer)` as the limit, followed by explicit null-termination at `buffer[sizeof(buffer) - 1U]`. All downstream operations (`strnlen`, `strcspn`, `remove_first_last`) are bounds-limited by `sizeof(buffer)`, so no overflow is possible.
+
+2. **Flawfinder `getchar` in `flush_input` (CWE-120/CWE-20)** — Already mitigated. The loop never stores input into a buffer, and it is bounded by `FLUSH_LIMIT` (4096 iterations) in addition to the `\n`/`EOF` termination conditions, preventing unbounded looping on pathological input streams.
+
+3. **Flawfinder `getchar` in `main` (CWE-120/CWE-20)** — Already mitigated. The return value is captured as an `int` (not `char`), correctly checked against `EOF` before use, and only then narrowed to `char`. Trailing input is discarded via the bounded `flush_input`.
+
+4. **Truncation-detection logic** — The check `len == strnlen(...) && len == sizeof(buffer) - 1U` correctly detects when input filled the buffer without a newline, and flushes the remainder of the line to keep stdin synchronized for the subsequent `getchar` call.
+
+5. **`remove_first_last` robustness** — Defensive `NULL`/zero-length checks, forced termination via `strnlen` clamping, and careful `memmove` arithmetic (removing the last occurrence *before* the first so the `first` pointer remains valid) make the function safe against overflows and pointer invalidation.
+
+The code is already defensively written; the Flawfinder hits are informational (risk 1–2) and all are properly addressed by the existing bounds checks, so the rewrite preserves the logic with the comments removed.

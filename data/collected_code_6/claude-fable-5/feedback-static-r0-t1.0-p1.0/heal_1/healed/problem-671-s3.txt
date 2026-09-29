@@ -1,0 +1,43 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+unsigned int set_rightmost_unset_bit(unsigned int n)
+{
+    if (n == UINT_MAX) {
+        return n;
+    }
+    return n | (n + 1U);
+}
+
+int main(void)
+{
+    unsigned int value = 0U;
+    int result = 0;
+
+    printf("Enter an unsigned integer: ");
+    result = scanf("%u", &value);
+    if (result != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Original value: %u\n", value);
+    printf("After setting rightmost unset bit: %u\n", set_rightmost_unset_bit(value));
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the fix:**
+
+The static analyzer flagged `~n == 0U` as a condition that is always false. While the original logic was actually correct in intent (when `n` is `UINT_MAX`, all bits are set, so `~n` yields `0`), the expression can confuse analyzers and readers alike, particularly because integer promotion rules around `~` can produce subtle surprises on some type widths.
+
+The fix replaces the bitwise-complement check with a direct, explicit comparison against `UINT_MAX` from `<limits.h>`. This:
+
+1. **Eliminates the analyzer warning** — the comparison `n == UINT_MAX` is unambiguous and cannot be misinterpreted.
+2. **Improves readability** — the guard clause now clearly states its purpose: if all bits are already set, there is no unset bit to flip, so return `n` unchanged. This also prevents the unsigned wraparound in `n + 1U` from producing `n | 0`, which coincidentally works but only by accident.
+3. **Preserves behavior** — for all other inputs, `n | (n + 1U)` correctly sets the lowest zero bit, since adding 1 carries through the trailing set bits and lands exactly on the rightmost unset bit.
+
+The `main` function retains proper `scanf` return-value checking and correct use of `EXIT_SUCCESS`/`EXIT_FAILURE`.

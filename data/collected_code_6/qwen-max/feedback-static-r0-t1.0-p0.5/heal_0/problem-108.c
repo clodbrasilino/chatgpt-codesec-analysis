@@ -1,0 +1,110 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *data;
+    size_t size;
+    size_t capacity;
+} SortedArray;
+
+typedef struct {
+    int value;
+    int index;
+    int arrayIndex;
+} HeapNode;
+
+typedef struct {
+    HeapNode *heap;
+    SortedArray **arrays;
+    int heapSize;
+    int numArrays;
+} MergeIterator;
+
+int compare(const void *a, const void *b) {
+    return (*(HeapNode *)a).value - (*(HeapNode *)b).value;
+}
+
+void push(MergeIterator *it, int value, int index, int arrayIndex) {
+    if (it->heapSize == it->numArrays) {
+        it->heap = realloc(it->heap, (it->heapSize + 1) * sizeof(HeapNode));
+    }
+    it->heap[it->heapSize].value = value;
+    it->heap[it->heapSize].index = index;
+    it->heap[it->heapSize].arrayIndex = arrayIndex;
+    it->heapSize++;
+    qsort(it->heap, it->heapSize, sizeof(HeapNode), compare);
+}
+
+int pop(MergeIterator *it) {
+    if (it->heapSize == 0) {
+        return -1;
+    }
+    int value = it->heap[0].value;
+    it->heap[0] = it->heap[it->heapSize - 1];
+    it->heapSize--;
+    qsort(it->heap, it->heapSize, sizeof(HeapNode), compare);
+    return value;
+}
+
+MergeIterator *createMergeIterator(SortedArray **arrays, int numArrays) {
+    MergeIterator *it = (MergeIterator *)malloc(sizeof(MergeIterator));
+    it->heap = (HeapNode *)malloc(numArrays * sizeof(HeapNode));
+    it->arrays = arrays;
+    it->heapSize = 0;
+    it->numArrays = numArrays;
+    for (int i = 0; i < numArrays; i++) {
+        if (arrays[i]->size > 0) {
+            push(it, arrays[i]->data[0], 0, i);
+        }
+    }
+    return it;
+}
+
+int next(MergeIterator *it) {
+    if (it->heapSize == 0) {
+        return -1;
+    }
+    HeapNode minNode = it->heap[0];
+    int value = minNode.value;
+    int index = minNode.index;
+    int arrayIndex = minNode.arrayIndex;
+    if (index + 1 < it->arrays[arrayIndex]->size) {
+        push(it, it->arrays[arrayIndex]->data[index + 1], index + 1, arrayIndex);
+    }
+    pop(it);
+    return value;
+}
+
+void freeMergeIterator(MergeIterator *it) {
+    free(it->heap);
+    free(it);
+}
+
+int main() {
+    SortedArray *arrays[3];
+    for (int i = 0; i < 3; i++) {
+        arrays[i] = (SortedArray *)malloc(sizeof(SortedArray));
+        arrays[i]->data = (int *)malloc(5 * sizeof(int));
+        arrays[i]->size = 3;
+        arrays[i]->capacity = 5;
+    }
+
+    arrays[0]->data[0] = 1; arrays[0]->data[1] = 3; arrays[0]->data[2] = 5;
+    arrays[1]->data[0] = 2; arrays[1]->data[1] = 4; arrays[1]->data[2] = 6;
+    arrays[2]->data[0] = 0; arrays[2]->data[1] = 7; arrays[2]->data[2] = 8;
+
+    MergeIterator *it = createMergeIterator(arrays, 3);
+    int value;
+    while ((value = next(it)) != -1) {
+        printf("%d ", value);
+    }
+    printf("\n");
+
+    for (int i = 0; i < 3; i++) {
+        free(arrays[i]->data);
+        free(arrays[i]);
+    }
+    freeMergeIterator(it);
+
+    return 0;
+}

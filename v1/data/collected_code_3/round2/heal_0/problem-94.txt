@@ -1,0 +1,25 @@
+```C
+#include <stdio.h>
+
+typedef struct {
+    int index;
+    int value;
+} Tuple;
+
+int getMinIndex(Tuple arr[], int n) {
+    int minIndex = 0;
+    for(int i = 1; i < n; i++) {
+        if(arr[i].value < arr[minIndex].value) {
+            minIndex = i;
+        }
+    }
+    return arr[minIndex].index;
+}
+
+int main() {
+    Tuple arr[] = {{0, 20}, {1, 10}, {2, 30}, {3, 5}, {4, 15}};
+    int n = sizeof(arr)/sizeof(arr[0]);
+    printf("Index of minimum value is %d\n", getMinIndex(arr, n));
+    return 0;
+}
+```

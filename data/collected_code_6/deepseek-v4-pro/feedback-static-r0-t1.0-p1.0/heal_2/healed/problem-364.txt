@@ -1,0 +1,64 @@
+```c
+#include <stdio.h>
+#include <string.h>
+
+int min_flips_to_alternate(const char *str) {
+    int len = 0;
+    while (str[len] != '\0') {
+        len++;
+        if (len > 1000) return 0;
+    }
+    if (len == 0) return 0;
+    
+    int flips_start0 = 0;
+    int flips_start1 = 0;
+    
+    for (int i = 0; i < len; i++) {
+        char expected_bit = (i % 2 == 0) ? '0' : '1';
+        if (str[i] != expected_bit) {
+            flips_start0++;
+        }
+        
+        expected_bit = (i % 2 == 0) ? '1' : '0';
+        if (str[i] != expected_bit) {
+            flips_start1++;
+        }
+    }
+    
+    return (flips_start0 < flips_start1) ? flips_start0 : flips_start1;
+}
+
+int main(void) {
+    char input[1002];
+    
+    printf("Enter binary string: ");
+    if (fgets(input, sizeof(input), stdin) != NULL) {
+        size_t len = 0;
+        while (len < sizeof(input) && input[len] != '\0') {
+            len++;
+        }
+        if (len > 0 && input[len-1] == '\n') {
+            input[len-1] = '\0';
+            len--;
+        }
+        if (len > 0 && len <= 1000) {
+            int valid = 1;
+            for (size_t i = 0; i < len; i++) {
+                if (input[i] != '0' && input[i] != '1') {
+                    valid = 0;
+                    break;
+                }
+            }
+            if (valid) {
+                printf("Minimum flips required: %d\n", min_flips_to_alternate(input));
+            } else {
+                printf("Invalid input: string must contain only '0' and '1'\n");
+            }
+        } else if (len > 1000) {
+            printf("Invalid input: string exceeds maximum length of 1000\n");
+        }
+    }
+    
+    return 0;
+}
+```

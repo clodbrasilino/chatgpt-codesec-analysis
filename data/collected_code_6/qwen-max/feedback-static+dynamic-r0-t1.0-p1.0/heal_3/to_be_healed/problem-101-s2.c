@@ -1,0 +1,29 @@
+#include <stdio.h>
+#include <stdbool.h>
+ /* Possible weaknesses found:
+  *  test case 1 failed: expected 8, got <no output>
+  *  test case 2 failed: expected 36, got <no output>
+  *  test case 0 failed: expected 3, got <no output>
+  */
+
+int findKthElement(const int arr[], int size, int k) {
+    if (k > 0 && k <= size) {
+        return arr[k - 1];
+    }
+    return -1;
+}
+
+int main() {
+    const int arr[] = {3, 7, 4, 2, 8, 16, 10};
+    int size = sizeof(arr) / sizeof(arr[0]);
+    int k = 5;
+
+    int result = findKthElement(arr, size, k);
+    if (result != -1) {
+        printf("%d\n", result);
+    } else {
+        printf("Invalid k value\n");
+    }
+
+    return 0;
+}

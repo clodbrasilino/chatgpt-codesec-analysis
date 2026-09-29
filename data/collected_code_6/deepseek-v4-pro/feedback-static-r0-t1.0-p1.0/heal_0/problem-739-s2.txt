@@ -1,0 +1,25 @@
+```c
+#include <stdio.h>
+#include <math.h>
+
+int index_of_smallest_triangular_with_n_digits(int n) {
+    if (n <= 0) {
+        return -1;
+    }
+
+    double lower = ceil((sqrt(8 * pow(10, n - 1) + 1) - 1) / 2);
+    return (int)lower;
+}
+
+int main(void) {
+    printf("%d\n", index_of_smallest_triangular_with_n_digits(1));
+    printf("%d\n", index_of_smallest_triangular_with_n_digits(2));
+    printf("%d\n", index_of_smallest_triangular_with_n_digits(3));
+    printf("%d\n", index_of_smallest_triangular_with_n_digits(4));
+    printf("%d\n", index_of_smallest_triangular_with_n_digits(5));
+    printf("%d\n", index_of_smallest_triangular_with_n_digits(6));
+    printf("%d\n", index_of_smallest_triangular_with_n_digits(0));
+    printf("%d\n", index_of_smallest_triangular_with_n_digits(-1));
+    return 0;
+}
+```

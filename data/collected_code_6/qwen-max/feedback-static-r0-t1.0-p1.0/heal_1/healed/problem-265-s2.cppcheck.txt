@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-265-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-265-s2.c:42:9: error: Address of local auto-variable assigned to a function parameter. [autoVariables]
+        result[*size] = &sublist;
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-265-s2.c:87:21: style: Local variable 'result' shadows outer variable [shadowVariable]
+        print_list(*result[i]);
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-265-s2.c:78:14: note: Shadowed declaration
+    Node ****result = (Node ****)malloc(5 * sizeof(Node ***));
+             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-265-s2.c:87:21: note: Shadow variable
+        print_list(*result[i]);
+                    ^

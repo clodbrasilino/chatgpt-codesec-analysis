@@ -1,0 +1,133 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+typedef struct NestedList {
+    int value;
+    bool is_int;
+    struct NestedList **children;
+    int child_count;
+} NestedList;
+
+NestedList *create_int_node(int value) {
+    NestedList *node = (NestedList *)malloc(sizeof(NestedList));
+    if (!node) return NULL;
+    node->value = value;
+    node->is_int = true;
+    node->children = NULL;
+    node->child_count = 0;
+    return node;
+}
+
+NestedList *create_list_node(NestedList **children, int child_count) {
+    NestedList *node = (NestedList *)malloc(sizeof(NestedList));
+    if (!node) return NULL;
+    node->value = 0;
+    node->is_int = false;
+    node->children = children;
+    node->child_count = child_count;
+    return node;
+}
+
+void free_nested_list(NestedList *list) {
+    if (!list) return;
+    if (!list->is_int) {
+        for (int i = 0; i < list->child_count; i++) {
+            free_nested_list(list->children[i]);
+        }
+        free(list->children);
+    }
+    free(list);
+}
+
+bool nested_list_contains(NestedList *list, NestedList *target) {
+    if (list->is_int && target->is_int) {
+        return list->value == target->value;
+    }
+    if (!list->is_int && !target->is_int) {
+        for (int i = 0; i < target->child_count; i++) {
+            bool found = false;
+            for (int j = 0; j < list->child_count; j++) {
+                if (nested_list_contains(list->children[j], target->children[i])) {
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) return false;
+        }
+        return true;
+    }
+    return false;
+}
+
+bool is_subset(NestedList *subset, NestedList *superset) {
+    if (!subset || !superset) return false;
+    if (subset->is_int && superset->is_int) {
+        return subset->value == superset->value;
+    }
+    if (!subset->is_int && !superset->is_int) {
+        for (int i = 0; i < subset->child_count; i++) {
+            bool found = false;
+            for (int j = 0; j < superset->child_count; j++) {
+                if (is_subset(subset->children[i], superset->children[j])) {
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) return false;
+        }
+        return true;
+    }
+    if (subset->is_int && !superset->is_int) {
+        for (int j = 0; j < superset->child_count; j++) {
+            if (is_subset(subset, superset->children[j])) {
+                return true;
+            }
+        }
+        return false;
+    }
+    return false;
+}
+
+NestedList *build_nested_list() {
+    NestedList *int1 = create_int_node(1);
+    NestedList *int2 = create_int_node(2);
+    NestedList *inner_children1[] = {int1, int2};
+    NestedList *inner_list1 = create_list_node(inner_children1, 2);
+    
+    NestedList *int3 = create_int_node(3);
+    NestedList *outer_children[] = {inner_list1, int3};
+    NestedList *outer_list = create_list_node(outer_children, 2);
+    
+    return outer_list;
+}
+
+NestedList *build_subset_list() {
+    NestedList *int1 = create_int_node(1);
+    NestedList *int2 = create_int_node(2);
+    NestedList *inner_children[] = {int1, int2};
+    NestedList *inner_list = create_list_node(inner_children, 2);
+    
+    NestedList *outer_children[] = {inner_list};
+    NestedList *outer_list = create_list_node(outer_children, 1);
+    
+    return outer_list;
+}
+
+int main() {
+    NestedList *superset = build_nested_list();
+    NestedList *subset = build_subset_list();
+    
+    if (is_subset(subset, superset)) {
+        printf("subset is a subset of superset\n");
+    } else {
+        printf("subset is not a subset of superset\n");
+    }
+    
+    free_nested_list(superset);
+    free_nested_list(subset);
+    
+    return 0;
+}
+```

@@ -1,0 +1,62 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+static long long mul_mod(long long a, long long b, long long m)
+{
+    long long result = 0;
+    a %= m;
+    if (a < 0)
+        a += m;
+    b %= m;
+    if (b < 0)
+        b += m;
+    while (b > 0) {
+        if (b & 1) {
+            result += a;
+            if (result >= m)
+                result -= m;
+        }
+        a <<= 1;
+        if (a >= m)
+            a -= m;
+        b >>= 1;
+    }
+    return result;
+}
+
+int main(int argc, char *argv[])
+{
+    long long a, b, m;
+
+    if (argc == 4) {
+        a = strtoll(argv[1], NULL, 10);
+        b = strtoll(argv[2], NULL, 10);
+        m = strtoll(argv[3], NULL, 10);
+    } else {
+        if (scanf("%lld %lld %lld", &a, &b, &m) != 3) {
+            fprintf(stderr, "Usage: %s a b m\n", argv[0]);
+            return EXIT_FAILURE;
+        }
+    }
+
+    if (m <= 0) {
+        fprintf(stderr, "Modulus must be positive\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("(%lld * %lld) mod %lld = %lld\n", a, b, m, mul_mod(a, b, m));
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the original code and fixes applied:**
+
+1. **Unmatched `'('` / expected `')'`** — The original function declarator was truncated mid-parameter (`long long b, long`), leaving the parameter list unterminated. Fixed by completing the signature: `mul_mod(long long a, long long b, long long m)`.
+
+2. **Expected function body after function declarator** — The declaration had no body. A full definition is now provided, implementing overflow-safe modular multiplication via the shift-and-add (Russian peasant) method, which avoids the `a * b` intermediate overflow that a naive `(a * b) % m` would cause for large operands.
+
+3. **Missing `main`** — Added a `main` that accepts operands via command-line arguments or `stdin`, validates input, and guards against a non-positive modulus (preventing division-by-zero UB in the `%` operations).
+
+4. **Negative operand handling** — Inputs are normalized into `[0, m)` before the loop so the algorithm's invariants hold for negative `a` or `b`.

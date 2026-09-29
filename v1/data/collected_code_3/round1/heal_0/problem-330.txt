@@ -1,0 +1,37 @@
+```C
+#include <stdio.h>
+#include <string.h>
+#include <regex.h>
+
+void find_words(char *str) {
+    regex_t regex;
+    regmatch_t matches[1];
+    char *pattern = "\\b\\w{3,5}\\b";
+    int ret;
+
+    ret = regcomp(&regex, pattern, REG_EXTENDED);
+    if (ret) {
+        printf("Could not compile regex\n");
+        return;
+    }
+
+    while (!regexec(&regex, str, 1, matches, 0)) {
+        int start = matches[0].rm_so;
+        int end = matches[0].rm_eo;
+        char word[6];
+        strncpy(word, str + start, end - start);
+        word[end - start] = '\0';
+        printf("%s\n", word);
+        str += end;
+    }
+
+    regfree(&regex);
+}
+
+int main() {
+    char str[] = "This is a test string with several words of different lengths.";
+    find_words(str);
+    return 0;
+}
+```
+This code will print all words of length 3, 4, and 5 in the string. The regular expression `\b\w{3,5}\b` matches any word boundary (`\b`), followed by 3 to 5 word characters (`\w{3,5}`), followed by another word boundary (`\b`). The `regcomp` function compiles the regular expression, and `regexec` executes it on the string. The `regmatch_t` structure holds the start and end positions of the match, which are used to extract the word from the string. The `regfree` function is used to free the memory allocated for the regular expression.

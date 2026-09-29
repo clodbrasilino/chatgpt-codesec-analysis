@@ -1,0 +1,68 @@
+./collected_code_4/round2//heal_0/problem-400.c: In function 'extractFrequency':
+./collected_code_4/round2//heal_0/problem-400.c:27:38: warning: dereference of possibly-NULL 'tuples' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   27 |             tuples[tupleCount].count = 1;
+      |             ~~~~~~~~~~~~~~~~~~~~~~~~~^~~
+  'extractFrequency': events 1-5
+    |
+    |   19 | void extractFrequency(char* tuplesList[], int size) {
+    |      |      ^~~~~~~~~~~~~~~~
+    |      |      |
+    |      |      (1) entry to 'extractFrequency'
+    |   20 |     Tuple* tuples = malloc(sizeof(Tuple) * size);
+    |      |                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                     |
+    |      |                     (2) this call could return NULL
+    |......
+    |   23 |     for(int i = 0; i < size; i++) {
+    |      |                    ~~~~~~~~
+    |      |                      |
+    |      |                      (3) following 'true' branch (when 'i < size')...
+    |   24 |         int index = findTuple(tuples, tupleCount, tuplesList[i]);
+    |      |                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                     |                                       |
+    |      |                     |                                       (4) ...to here
+    |      |                     (5) calling 'findTuple' from 'extractFrequency'
+    |
+    +--> 'findTuple': events 6-8
+           |
+           |   10 | int findTuple(Tuple* tuples, int tupleCount, char* tuple) {
+           |      |     ^~~~~~~~~
+           |      |     |
+           |      |     (6) entry to 'findTuple'
+           |   11 |     for(int i = 0; i < tupleCount; i++) {
+           |      |                    ~~~~~~~~~~~~~~
+           |      |                      |
+           |      |                      (7) following 'false' branch (when 'i >= tupleCount')...
+           |......
+           |   16 |     return -1;
+           |      |            ~
+           |      |            |
+           |      |            (8) ...to here
+           |
+    <------+
+    |
+  'extractFrequency': events 9-10
+    |
+    |   24 |         int index = findTuple(tuples, tupleCount, tuplesList[i]);
+    |      |                     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                     |
+    |      |                     (9) returning to 'extractFrequency' from 'findTuple'
+    |   25 |         if (index == -1) {
+    |      |            ~         
+    |      |            |
+    |      |            (10) following 'true' branch (when 'index == -1')...
+    |
+  'extractFrequency': event 11
+    |
+    |   26 |             strcpy(tuples[tupleCount].tuple, tuplesList[i]);
+    |      |                          ^
+    |      |                          |
+    |      |                          (11) ...to here
+    |
+  'extractFrequency': event 12
+    |
+    |   27 |             tuples[tupleCount].count = 1;
+    |      |             ~~~~~~~~~~~~~~~~~~~~~~~~~^~~
+    |      |                                      |
+    |      |                                      (12) 'tuples + (long unsigned int)tupleCount * 260' could be NULL: unchecked value from (2)
+    |

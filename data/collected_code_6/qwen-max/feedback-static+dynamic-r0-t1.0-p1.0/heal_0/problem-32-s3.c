@@ -1,0 +1,38 @@
+#include <stdio.h>
+#include <math.h>
+#include <stdbool.h>
+
+bool is_prime(long n) {
+    if (n <= 1) return false;
+    if (n == 2 || n == 3) return true;
+    if (n % 2 == 0 || n % 3 == 0) return false;
+    for (long i = 5; i * i <= n; i += 6) {
+        if (n % i == 0 || n % (i + 2) == 0)
+            return false;
+    }
+    return true;
+}
+
+long largest_prime_factor(long number) {
+    long max_prime = -1;
+    while (number % 2 == 0) {
+        max_prime = 2;
+        number /= 2;
+    }
+    for (long i = 3; i <= sqrt(number); i += 2) {
+        while (number % i == 0) {
+            max_prime = i;
+            number = number / i;
+        }
+    }
+    if (number > 2 && is_prime(number))
+        max_prime = number;
+    return max_prime;
+}
+
+int main() {
+    long n;
+    scanf("%ld", &n);
+    printf("%ld\n", largest_prime_factor(n));
+    return 0;
+}

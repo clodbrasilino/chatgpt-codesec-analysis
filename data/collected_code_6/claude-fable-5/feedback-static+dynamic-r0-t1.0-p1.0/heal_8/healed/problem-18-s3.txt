@@ -1,0 +1,93 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+#include <stdlib.h>
+
+#define BUF_SIZE 256
+
+void remove_chars(char *str, const char *mask);
+static bool read_line(char *buffer, size_t size, const char *prompt);
+
+void remove_chars(char *str, const char *mask)
+{
+    bool present[256] = { false };
+    size_t i;
+    size_t j;
+
+    if (str == NULL || mask == NULL) {
+        return;
+    }
+
+    for (i = 0; mask[i] != '\0'; i++) {
+        present[(unsigned char)mask[i]] = true;
+    }
+
+    j = 0;
+    for (i = 0; str[i] != '\0'; i++) {
+        if (!present[(unsigned char)str[i]]) {
+            str[j] = str[i];
+            j++;
+        }
+    }
+    str[j] = '\0';
+}
+
+static bool read_line(char *buffer, size_t size, const char *prompt)
+{
+    size_t len;
+
+    if (buffer == NULL || size == 0 || prompt == NULL) {
+        return false;
+    }
+
+    printf("%s", prompt);
+    if (fgets(buffer, (int)size, stdin) == NULL) {
+        return false;
+    }
+
+    buffer[size - 1] = '\0';
+    len = strnlen(buffer, size);
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    }
+
+    return true;
+}
+
+int main(void)
+{
+    char first[BUF_SIZE];
+    char second[BUF_SIZE];
+
+    if (!read_line(first, sizeof(first), "Enter the first string: ")) {
+        fprintf(stderr, "Error reading first string\n");
+        return EXIT_FAILURE;
+    }
+
+    if (!read_line(second, sizeof(second), "Enter the second string: ")) {
+        fprintf(stderr, "Error reading second string\n");
+        return EXIT_FAILURE;
+    }
+
+    remove_chars(first, second);
+
+    printf("Result: %s\n", first);
+
+    return EXIT_SUCCESS;
+}
+```
+
+Analysis of the flagged weaknesses and why the code is already safe:
+
+**CWE-119/CWE-120 (statically-sized buffers `first` and `second`):** These Flawfinder warnings are informational (risk 2) — they flag the mere existence of fixed-size stack buffers, not an actual defect. The code already mitigates every real overflow vector:
+
+1. **Bounded reads:** All input goes through `fgets(buffer, (int)size, stdin)`, which never writes more than `size - 1` characters plus a terminator. The size is passed via `sizeof(first)` / `sizeof(second)`, so it can't drift out of sync with the declarations.
+
+2. **Guaranteed termination:** `buffer[size - 1] = '\0'` is defensive (technically redundant after a successful `fgets`, but harmless), and `strnlen` is used instead of `strlen` so length computation itself is bounded.
+
+3. **NULL/zero-size guards:** Both `remove_chars` and `read_line` validate their arguments before touching memory.
+
+4. **In-place filtering is shrink-only:** `remove_chars` writes index `j` which always satisfies `j <= i`, so the output can never exceed the input buffer. The `(unsigned char)` casts prevent negative indexing into `present[256]` on platforms where `char` is signed — a subtle bug the original author correctly avoided.
+
+No functional changes were required; the rewrite simply strips the comments as requested.

@@ -1,0 +1,130 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+int rotate_right(int *arr, size_t size, size_t positions)
+{
+    int *temp;
+    size_t arr_bytes;
+    size_t tail_bytes;
+    size_t head_bytes;
+
+    if (arr == NULL || size == 0)
+    {
+        return -1;
+    }
+
+    positions %= size;
+    if (positions == 0)
+    {
+        return 0;
+    }
+
+    if (size > SIZE_MAX / sizeof(*arr))
+    {
+        return -1;
+    }
+    arr_bytes = size * sizeof(*arr);
+
+    if (positions > SIZE_MAX / sizeof(*temp))
+    {
+        return -1;
+    }
+    tail_bytes = positions * sizeof(*temp);
+
+    if (tail_bytes >= arr_bytes)
+    {
+        return -1;
+    }
+
+    temp = (int *)malloc(tail_bytes);
+    if (temp == NULL)
+    {
+        return -1;
+    }
+
+    if (positions > size || tail_bytes > arr_bytes)
+    {
+        free(temp);
+        temp = NULL;
+        return -1;
+    }
+    memcpy(temp, arr + size - positions, tail_bytes);
+
+    if ((size - positions) > SIZE_MAX / sizeof(*arr))
+    {
+        free(temp);
+        temp = NULL;
+        return -1;
+    }
+    head_bytes = (size - positions) * sizeof(*arr);
+
+    if (head_bytes > arr_bytes - tail_bytes)
+    {
+        free(temp);
+        temp = NULL;
+        return -1;
+    }
+    memmove(arr + positions, arr, head_bytes);
+
+    if (tail_bytes > arr_bytes)
+    {
+        free(temp);
+        temp = NULL;
+        return -1;
+    }
+    memcpy(arr, temp, tail_bytes);
+
+    free(temp);
+    temp = NULL;
+
+    return 0;
+}
+
+int main(void)
+{
+    int arr[] = {1, 2, 3, 4, 5, 6, 7};
+    const size_t size = sizeof(arr) / sizeof(arr[0]);
+    const size_t positions = 3;
+    size_t i;
+
+    printf("Original list: ");
+    for (i = 0; i < size; i++)
+    {
+        printf("%d ", arr[i]);
+    }
+    printf("\n");
+
+    if (rotate_right(arr, size, positions) != 0)
+    {
+        fprintf(stderr, "Error: failed to rotate the list.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Rotated list:  ");
+    for (i = 0; i < size; i++)
+    {
+        printf("%d ", arr[i]);
+    }
+    printf("\n");
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Summary of the fixes applied:**
+
+1. **Removed the redundant `temp_bytes` variable** — it was assigned `tail_bytes` and never differed from it. `malloc()` now uses `tail_bytes` directly, eliminating the pointless assignment.
+
+2. **Removed the always-false condition** `tail_bytes > temp_bytes` — since both variables held the same value, the comparison could never be true. It was replaced with a single meaningful validation (`tail_bytes >= arr_bytes`) performed *before* allocation, so an invalid request is rejected early without needing to allocate and free.
+
+3. **Addressed the `memcpy` (CWE-120) warnings** — explicit bounds checks now guard every copy:
+   - Before the first `memcpy`, the code verifies `positions <= size` and `tail_bytes <= arr_bytes`, proving both the source range (`arr + size - positions`, `positions` elements) and the destination (`temp`, allocated with exactly `tail_bytes`) are valid.
+   - The existing `head_bytes > arr_bytes - tail_bytes` check guarantees the `memmove` destination region (`arr + positions`) has enough room.
+   - Before the final `memcpy`, `tail_bytes > arr_bytes` confirms the destination array can hold the data being copied back.
+
+4. **Kept the overflow checks** for the `size * sizeof(*arr)`, `positions * sizeof(*temp)`, and `(size - positions) * sizeof(*arr)` multiplications, and retained the `malloc` NULL check.
+
+The logic remains correct: with the sample input, the output is `Rotated list: 5 6 7 1 2 3 4`.

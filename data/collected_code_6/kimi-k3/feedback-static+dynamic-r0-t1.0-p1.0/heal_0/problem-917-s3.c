@@ -1,0 +1,58 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+void find_sequences(const char *str)
+{
+    size_t i = 0;
+    size_t len;
+
+    if (str == NULL) {
+        fprintf(stderr, "Error: NULL input string\n");
+        return;
+    }
+
+    len = strlen(str);
+
+    while (i < len) {
+        if (isupper((unsigned char)str[i])) {
+            size_t start = i;
+            size_t end = i + 1;
+
+            while (end < len && islower((unsigned char)str[end])) {
+                end++;
+            }
+
+            if (end > start + 1) {
+                printf("Sequence found: ");
+                for (size_t j = start; j < end; j++) {
+                    putchar(str[j]);
+                }
+                putchar('\n');
+            }
+
+            i = end;
+        } else {
+            i++;
+        }
+    }
+}
+
+int main(void)
+{
+    char buffer[1024];
+
+    printf("Enter a string: ");
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error: Failed to read input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[strcspn(buffer, "\n")] = '\0';
+
+    find_sequences(buffer);
+
+    return EXIT_SUCCESS;
+}

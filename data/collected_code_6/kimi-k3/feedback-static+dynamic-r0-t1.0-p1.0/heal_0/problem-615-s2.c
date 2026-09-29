@@ -1,0 +1,77 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+double find_average(int **tuple_of_tuples, int outer_size, int *inner_sizes) {
+    if (tuple_of_tuples == NULL || inner_sizes == NULL || outer_size <= 0) {
+        return 0.0;
+    }
+    
+    double sum = 0.0;
+    int count = 0;
+    
+    for (int i = 0; i < outer_size; i++) {
+        if (tuple_of_tuples[i] == NULL || inner_sizes[i] <= 0) {
+            continue;
+        }
+        
+        for (int j = 0; j < inner_sizes[i]; j++) {
+            sum += tuple_of_tuples[i][j];
+            count++;
+        }
+    }
+    
+    if (count == 0) {
+        return 0.0;
+    }
+    
+    return sum / count;
+}
+
+int main(void) {
+    int *tuple1 = malloc(3 * sizeof(int));
+    int *tuple2 = malloc(2 * sizeof(int));
+    int *tuple3 = malloc(4 * sizeof(int));
+    
+    if (tuple1 == NULL || tuple2 == NULL || tuple3 == NULL) {
+        free(tuple1);
+        free(tuple2);
+        free(tuple3);
+        return EXIT_FAILURE;
+    }
+    
+    tuple1[0] = 1;
+    tuple1[1] = 2;
+    tuple1[2] = 3;
+    
+    tuple2[0] = 4;
+    tuple2[1] = 5;
+    
+    tuple3[0] = 6;
+    tuple3[1] = 7;
+    tuple3[2] = 8;
+    tuple3[3] = 9;
+    
+    int **tuple_of_tuples = malloc(3 * sizeof(int *));
+    if (tuple_of_tuples == NULL) {
+        free(tuple1);
+        free(tuple2);
+        free(tuple3);
+        return EXIT_FAILURE;
+    }
+    
+    tuple_of_tuples[0] = tuple1;
+    tuple_of_tuples[1] = tuple2;
+    tuple_of_tuples[2] = tuple3;
+    
+    int inner_sizes[] = {3, 2, 4};
+    
+    double average = find_average(tuple_of_tuples, 3, inner_sizes);
+    printf("Average: %.2f\n", average);
+    
+    free(tuple1);
+    free(tuple2);
+    free(tuple3);
+    free(tuple_of_tuples);
+    
+    return EXIT_SUCCESS;
+}

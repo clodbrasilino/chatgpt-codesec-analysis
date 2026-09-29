@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-374-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-374-s3.c:29:11: style: Condition 'n>0' is always true [knownConditionTrueFalse]
+    if (n > 0) {
+          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-374-s3.c:27:25: note: Assignment 'n=sizeof(str)-1', assigned value is 3
+    int n = sizeof(str) - 1;
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-374-s3.c:29:11: note: Condition 'n>0' is always true
+    if (n > 0) {
+          ^

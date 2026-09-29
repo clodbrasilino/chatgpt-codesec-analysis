@@ -1,0 +1,72 @@
+```c
+#define _POSIX_C_SOURCE 200809L
+
+#include <stdio.h>
+#include <string.h>
+
+#define MAX_INPUT_SIZE 256
+
+int count_matching_positions(const char *str, size_t max_len)
+{
+    int count = 0;
+    size_t len;
+    size_t i;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    len = strnlen(str, max_len);
+
+    for (i = 0; i < len; i++) {
+        char c = str[i];
+        if (c >= 'a' && c <= 'z') {
+            if ((size_t)(c - 'a') == i) {
+                count++;
+            }
+        } else if (c >= 'A' && c <= 'Z') {
+            if ((size_t)(c - 'A') == i) {
+                count++;
+            }
+        }
+    }
+
+    return count;
+}
+
+int main(void)
+{
+    char buffer[MAX_INPUT_SIZE];
+    int result;
+
+    memset(buffer, 0, sizeof(buffer));
+
+    printf("Enter a string: ");
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+    buffer[strcspn(buffer, "\n")] = '\0';
+
+    result = count_matching_positions(buffer, sizeof(buffer));
+
+    printf("Number of characters at same position as in alphabet: %d\n", result);
+
+    return 0;
+}
+```
+
+**Analysis summary:**
+
+The Flawfinder warning (CWE-119/CWE-120) about the statically-sized `char buffer[MAX_INPUT_SIZE]` is already properly mitigated in the original code:
+
+1. **Bounded input**: `fgets(buffer, sizeof(buffer), stdin)` limits reads to the buffer size, preventing overflow — unlike unsafe alternatives such as `gets()` or unbounded `scanf("%s", ...)`.
+2. **Guaranteed termination**: `buffer[sizeof(buffer) - 1] = '\0'` is a defensive belt-and-suspenders measure (fgets already null-terminates), and `memset` pre-zeroes the buffer.
+3. **Bounded length calculation**: `count_matching_positions` uses `strnlen(str, max_len)` instead of `strlen`, so even a non-terminated string cannot cause an out-of-bounds read.
+4. **NULL check**: The function guards against a NULL pointer before dereferencing.
+5. **Newline stripping**: `strcspn(buffer, "\n")` safely removes the trailing newline without risking out-of-bounds access.
+
+The only change made was adding `#define _POSIX_C_SOURCE 200809L` before the includes, since `strnlen` is a POSIX.1-2008 function and may not be declared by `<string.h>` under strict ISO C compilation — an implicit declaration would itself be a latent defect. The Flawfinder hit is a false positive in this instance; the code already performs correct bounds checking throughout.

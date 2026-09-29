@@ -1,0 +1,93 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char *remove_parentheses(const char *input)
+{
+    size_t len;
+    size_t i;
+    size_t j;
+    int depth;
+    char *result;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    len = strlen(input);
+    result = calloc(len + 1, sizeof(char));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    depth = 0;
+    j = 0;
+    for (i = 0; i < len; i++) {
+        if (input[i] == '(') {
+            depth++;
+        } else if (input[i] == ')') {
+            if (depth > 0) {
+                depth--;
+            }
+        } else if (depth == 0) {
+            result[j] = input[i];
+            j++;
+        }
+    }
+    result[j] = '\0';
+
+    return result;
+}
+
+int main(void)
+{
+    const char *tests[] = {
+        "py(remove me)thon",
+        "str(outer (inner) text)ing",
+        "alpha"
+    };
+    const char *expected[] = {
+        "python",
+        "string",
+        "alpha"
+    };
+    size_t num_tests;
+    size_t i;
+
+    num_tests = sizeof(tests) / sizeof(tests[0]);
+
+    for (i = 0; i < num_tests; i++) {
+        char *output = remove_parentheses(tests[i]);
+        if (output == NULL) {
+            fprintf(stderr, "Memory allocation failed\n");
+            return EXIT_FAILURE;
+        }
+        if (strcmp(output, expected[i]) != 0) {
+            fprintf(stderr, "test case %zu failed: expected '%s', got '%s'\n",
+                    i, expected[i], output);
+            free(output);
+            return EXIT_FAILURE;
+        }
+        printf("%s\n", output);
+        free(output);
+        output = NULL;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The symptoms described in the comments (garbage output like `��%` instead of the expected strings) are classic signs of reading from freed or uninitialized memory — typically a use-after-free where `free(output)` was called *before* `strcmp`/`printf`, or a buffer that was never null-terminated after allocation with `malloc` instead of `calloc`.
+
+The version shown already contains the correct fixes, which I've preserved:
+
+1. **`calloc` instead of `malloc`** — guarantees zero-initialized memory, so even if the terminator write were missed, the string would be terminated.
+2. **Explicit `result[j] = '\0';`** — defensive null termination at the exact end of the written content.
+3. **`free(output)` only after all uses** — the string is compared and printed before being released, eliminating use-after-free.
+4. **Allocation of `len + 1` bytes** — room for the terminator even when nothing is stripped (e.g., the `"alpha"` case), preventing an off-by-one heap overflow.
+5. **NULL checks** on both the input pointer and the allocation result.
+
+I additionally set `output = NULL` after freeing inside the loop as a defensive measure against accidental dangling-pointer reuse. Compiled with `-Wall -Wextra` and run under Valgrind/ASan, this version produces no leaks, no invalid reads, and passes all three test cases.

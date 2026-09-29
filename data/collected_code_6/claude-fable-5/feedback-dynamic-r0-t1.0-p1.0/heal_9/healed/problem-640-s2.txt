@@ -1,0 +1,91 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char *remove_parentheses(const char *input)
+{
+    size_t len;
+    size_t i;
+    size_t j;
+    int depth;
+    char *result;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    len = strlen(input);
+    result = calloc(len + 1, sizeof(char));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    depth = 0;
+    j = 0;
+    for (i = 0; i < len; i++) {
+        if (input[i] == '(') {
+            depth++;
+        } else if (input[i] == ')') {
+            if (depth > 0) {
+                depth--;
+            }
+        } else if (depth == 0) {
+            result[j] = input[i];
+            j++;
+        }
+    }
+    result[j] = '\0';
+
+    return result;
+}
+
+int main(void)
+{
+    const char *tests[] = {
+        "py(remove)thon",
+        "str(nested (inner))ing",
+        "(leading)alpha"
+    };
+    const char *expected[] = {
+        "python",
+        "string",
+        "alpha"
+    };
+    size_t num_tests;
+    size_t i;
+    char *output;
+    int status;
+
+    num_tests = sizeof(tests) / sizeof(tests[0]);
+    status = EXIT_SUCCESS;
+
+    for (i = 0; i < num_tests; i++) {
+        output = remove_parentheses(tests[i]);
+        if (output == NULL) {
+            fprintf(stderr, "Memory allocation failed\n");
+            return EXIT_FAILURE;
+        }
+        if (strcmp(output, expected[i]) == 0) {
+            printf("test case %zu passed: '%s'\n", i, output);
+        } else {
+            fprintf(stderr, "test case %zu failed: expected '%s', got '%s'\n",
+                    i, expected[i], output);
+            status = EXIT_FAILURE;
+        }
+        free(output);
+        output = NULL;
+    }
+
+    return status;
+}
+```
+
+Analysis notes: the failure symptoms in the original comments (garbage bytes like `�"�` instead of `python`) are classic signs of reading uninitialized or freed memory — typically caused by a version that used `malloc` without null-terminating the result, or that returned a pointer to a stack buffer or freed allocation. The fixed version above guards against all of these weaknesses:
+
+1. **Null-termination guaranteed** — `calloc` zero-initializes the buffer, and `result[j] = '\0'` explicitly terminates the string, so no garbage bytes can leak past the copied content.
+2. **Heap allocation with ownership transfer** — the result is heap-allocated and returned to the caller (no dangling stack pointer), and `main` frees it exactly once per iteration, avoiding leaks and use-after-free.
+3. **NULL input and allocation-failure handling** — both are checked before use, and the caller verifies the return value before dereferencing.
+4. **Bounds safety** — `j` can never exceed `i < len`, so writes stay within the `len + 1` allocation; the depth counter is clamped at zero so unbalanced `)` characters can't corrupt state.
+
+With these guarantees, all three test cases produce `python`, `string`, and `alpha` as expected, and the program returns `EXIT_SUCCESS`.

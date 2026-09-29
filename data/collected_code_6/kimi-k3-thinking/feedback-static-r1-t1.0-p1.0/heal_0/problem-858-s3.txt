@@ -1,0 +1,191 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+
+typedef struct IntNode {
+    int value;
+    struct IntNode *next;
+} IntNode;
+
+typedef struct ListNode {
+    IntNode *list;
+    struct ListNode *next;
+} ListNode;
+
+static IntNode *int_node_create(int value)
+{
+    IntNode *node = malloc(sizeof(*node));
+    if (node == NULL) {
+        return NULL;
+    }
+    node->value = value;
+    node->next = NULL;
+    return node;
+}
+
+static ListNode *list_node_create(IntNode *list)
+{
+    ListNode *node = malloc(sizeof(*node));
+    if (node == NULL) {
+        return NULL;
+    }
+    node->list = list;
+    node->next = NULL;
+    return node;
+}
+
+static int int_list_append(IntNode **head, int value)
+{
+    IntNode *node;
+    IntNode *current;
+
+    if (head == NULL) {
+        return -1;
+    }
+    node = int_node_create(value);
+    if (node == NULL) {
+        return -1;
+    }
+    if (*head == NULL) {
+        *head = node;
+        return 0;
+    }
+    current = *head;
+    while (current->next != NULL) {
+        current = current->next;
+    }
+    current->next = node;
+    return 0;
+}
+
+static int list_of_lists_append(ListNode **head, IntNode *list)
+{
+    ListNode *node;
+    ListNode *current;
+
+    if (head == NULL) {
+        return -1;
+    }
+    node = list_node_create(list);
+    if (node == NULL) {
+        return -1;
+    }
+    if (*head == NULL) {
+        *head = node;
+        return 0;
+    }
+    current = *head;
+    while (current->next != NULL) {
+        current = current->next;
+    }
+    current->next = node;
+    return 0;
+}
+
+static size_t count_lists(const ListNode *head)
+{
+    size_t count = 0U;
+
+    while (head != NULL) {
+        count++;
+        head = head->next;
+    }
+    return count;
+}
+
+static int squared_list_count(const ListNode *head, size_t *result)
+{
+    size_t count;
+
+    if (result == NULL) {
+        return -1;
+    }
+    count = count_lists(head);
+    if (count > 0U && count > SIZE_MAX / count) {
+        return -1;
+    }
+    *result = count * count;
+    return 0;
+}
+
+static void int_list_destroy(IntNode *head)
+{
+    IntNode *next;
+
+    while (head != NULL) {
+        next = head->next;
+        free(head);
+        head = next;
+    }
+}
+
+static void list_of_lists_destroy(ListNode *head)
+{
+    ListNode *next;
+
+    while (head != NULL) {
+        next = head->next;
+        int_list_destroy(head->list);
+        free(head);
+        head = next;
+    }
+}
+
+int main(void)
+{
+    ListNode *lists = NULL;
+    IntNode *list1 = NULL;
+    IntNode *list2 = NULL;
+    IntNode *list3 = NULL;
+    size_t squared = 0U;
+
+    if (int_list_append(&list1, 1) != 0 ||
+        int_list_append(&list1, 2) != 0 ||
+        int_list_append(&list1, 3) != 0) {
+        int_list_destroy(list1);
+        return EXIT_FAILURE;
+    }
+    if (int_list_append(&list2, 4) != 0 ||
+        int_list_append(&list2, 5) != 0) {
+        int_list_destroy(list1);
+        int_list_destroy(list2);
+        return EXIT_FAILURE;
+    }
+    if (int_list_append(&list3, 6) != 0) {
+        int_list_destroy(list1);
+        int_list_destroy(list2);
+        int_list_destroy(list3);
+        return EXIT_FAILURE;
+    }
+
+    if (list_of_lists_append(&lists, list1) != 0) {
+        int_list_destroy(list1);
+        int_list_destroy(list2);
+        int_list_destroy(list3);
+        return EXIT_FAILURE;
+    }
+    if (list_of_lists_append(&lists, list2) != 0) {
+        list_of_lists_destroy(lists);
+        int_list_destroy(list2);
+        int_list_destroy(list3);
+        return EXIT_FAILURE;
+    }
+    if (list_of_lists_append(&lists, list3) != 0) {
+        list_of_lists_destroy(lists);
+        int_list_destroy(list3);
+        return EXIT_FAILURE;
+    }
+
+    if (squared_list_count(lists, &squared) != 0) {
+        list_of_lists_destroy(lists);
+        return EXIT_FAILURE;
+    }
+
+    printf("Number of lists: %zu\n", count_lists(lists));
+    printf("Squared count: %zu\n", squared);
+
+    list_of_lists_destroy(lists);
+    return EXIT_SUCCESS;
+}
+```

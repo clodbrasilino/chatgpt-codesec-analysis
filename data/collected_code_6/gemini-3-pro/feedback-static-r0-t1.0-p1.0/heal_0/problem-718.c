@@ -1,0 +1,92 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node* next;
+};
+
+struct Node* createNode(int data) {
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    if (!newNode) {
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(EXIT_FAILURE);
+    }
+    newNode->data = data;
+    newNode->next = NULL;
+    return newNode;
+}
+
+void append(struct Node** head, int data) {
+    if (!head) {
+        return;
+    }
+    struct Node* newNode = createNode(data);
+    if (!*head) {
+        *head = newNode;
+        return;
+    }
+    struct Node* current = *head;
+    while (current->next) {
+        current = current->next;
+    }
+    current->next = newNode;
+}
+
+struct Node* createAlternateList(struct Node* head) {
+    if (!head) {
+        return NULL;
+    }
+    struct Node* altList = NULL;
+    struct Node* current = head;
+    int take = 1;
+
+    while (current) {
+        if (take) {
+            append(&altList, current->data);
+        }
+        take = !take;
+        current = current->next;
+    }
+    return altList;
+}
+
+void printList(struct Node* head) {
+    struct Node* current = head;
+    while (current) {
+        printf("%d ", current->data);
+        current = current->next;
+    }
+    printf("\n");
+}
+
+void freeList(struct Node* head) {
+    struct Node* current = head;
+    struct Node* next = NULL;
+    while (current) {
+        next = current->next;
+        free(current);
+        current = next;
+    }
+}
+
+int main(void) {
+    struct Node* originalList = NULL;
+    
+    append(&originalList, 1);
+    append(&originalList, 2);
+    append(&originalList, 3);
+    append(&originalList, 4);
+    append(&originalList, 5);
+    append(&originalList, 6);
+
+    struct Node* alternateList = createAlternateList(originalList);
+
+    printList(originalList);
+    printList(alternateList);
+
+    freeList(originalList);
+    freeList(alternateList);
+
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,93 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdint.h>
+
+#define MAX_INPUT_LEN 4096U
+
+char *camel_to_snake(const char *input)
+{
+    size_t len;
+    size_t i;
+    size_t j;
+    char *output;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    len = strnlen(input, MAX_INPUT_LEN);
+    if (len >= MAX_INPUT_LEN) {
+        return NULL;
+    }
+
+    if (len > ((SIZE_MAX - 1U) / 2U)) {
+        return NULL;
+    }
+
+    output = malloc((len * 2U) + 1U);
+    if (output == NULL) {
+        return NULL;
+    }
+
+    j = 0U;
+    for (i = 0U; i < len; i++) {
+        unsigned char c = (unsigned char)input[i];
+        if (isupper(c) != 0) {
+            if (i > 0U) {
+                output[j] = '_';
+                j++;
+            }
+            output[j] = (char)tolower(c);
+            j++;
+        } else {
+            output[j] = (char)c;
+            j++;
+        }
+    }
+    output[j] = '\0';
+
+    return output;
+}
+
+int main(void)
+{
+    const char *tests[] = {
+        "camelCaseString",
+        "helloWorld",
+        "alreadylower",
+        "XMLParser",
+        ""
+    };
+    size_t count = sizeof(tests) / sizeof(tests[0]);
+    size_t i;
+    int status = EXIT_SUCCESS;
+
+    for (i = 0U; i < count; i++) {
+        char *result = camel_to_snake(tests[i]);
+        if (result == NULL) {
+            (void)fprintf(stderr, "Conversion failed for input: %s\n", tests[i]);
+            status = EXIT_FAILURE;
+        } else {
+            if (printf("%s -> %s\n", tests[i], result) < 0) {
+                status = EXIT_FAILURE;
+            }
+            free(result);
+        }
+    }
+
+    return status;
+}
+```
+
+**Key changes addressing the identified weakness (CWE-126):**
+
+1. **`strlen` → `strnlen`**: The flagged `strlen` call could over-read on a non-NUL-terminated buffer. `strnlen` bounds the scan to `MAX_INPUT_LEN` bytes, so the read is capped even if the terminator is missing.
+
+2. **Truncation detection**: If `strnlen` returns `MAX_INPUT_LEN`, the input either wasn't terminated within the bound or is too long — the function rejects it by returning `NULL` rather than processing potentially invalid data.
+
+3. **Overflow guard on allocation size**: Added an explicit check that `len * 2 + 1` cannot wrap around `SIZE_MAX` (CWE-190 hardening). With the current bound it's unreachable, but it keeps the function safe if `MAX_INPUT_LEN` is ever raised.
+
+The rest of the code was already sound: `isupper`/`tolower` receive values cast through `unsigned char` (avoiding UB for negative `char` values), allocation failures are checked, the worst-case output size (`2 * len + 1` when every character is uppercase) is correctly accounted for, and `main` frees each result and propagates I/O failures via the exit status.

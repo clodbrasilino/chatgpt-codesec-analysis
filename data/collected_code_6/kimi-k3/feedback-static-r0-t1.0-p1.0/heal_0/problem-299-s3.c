@@ -1,0 +1,59 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+typedef struct {
+    int *elements;
+    size_t size;
+} Tuple;
+
+int calculate_max_aggregate(const Tuple *tuples, size_t tuple_count) {
+    if (tuples == NULL || tuple_count == 0) {
+        return INT_MIN;
+    }
+    
+    int max_aggregate = INT_MIN;
+    
+    for (size_t i = 0; i < tuple_count; i++) {
+        if (tuples[i].elements == NULL || tuples[i].size == 0) {
+            continue;
+        }
+        
+        int sum = 0;
+        for (size_t j = 0; j < tuples[i].size; j++) {
+            sum += tuples[i].elements[j];
+        }
+        
+        if (sum > max_aggregate) {
+            max_aggregate = sum;
+        }
+    }
+    
+    return max_aggregate;
+}
+
+int main(void) {
+    int data1[] = {1, 2, 3};
+    int data2[] = {4, 5};
+    int data3[] = {10, 20, 30, 40};
+    int data4[] = {5};
+    
+    Tuple tuples[] = {
+        {data1, 3},
+        {data2, 2},
+        {data3, 4},
+        {data4, 1}
+    };
+    
+    size_t tuple_count = sizeof(tuples) / sizeof(tuples[0]);
+    
+    int result = calculate_max_aggregate(tuples, tuple_count);
+    
+    if (result != INT_MIN) {
+        printf("Maximum aggregate: %d\n", result);
+    } else {
+        printf("No valid tuples found\n");
+    }
+    
+    return 0;
+}

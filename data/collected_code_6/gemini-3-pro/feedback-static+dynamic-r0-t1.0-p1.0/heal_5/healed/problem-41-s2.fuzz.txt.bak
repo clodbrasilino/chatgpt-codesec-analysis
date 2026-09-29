@@ -1,0 +1,6 @@
+problem-41-s2.c:40:0:error:Fuzzing found a crash (signal 6) on input id:000003,sig:06,src:000000,time:13119,execs:1150,op:havoc,rep:7; likely memory-safety defect
+problem-41-s2.c:56:23:medium:UBSan: signed integer overflow: 666666666 * 10 cannot be represented in type 'int' (AFL crash: id:000000,sig:06,src:000000,time:694,execs:95,op:havoc,rep:14)
+problem-41-s2.c:56:23:medium:UBSan: signed integer overflow: 222022222 * 10 cannot be represented in type 'int' (AFL crash: id:000001,sig:06,src:000000,time:3201,execs:307,op:havoc,rep:14)
+problem-41-s2.c:56:23:medium:UBSan: signed integer overflow: 444444444 * 10 cannot be represented in type 'int' (AFL crash: id:000002,sig:06,src:000000,time:5858,execs:552,op:havoc,rep:10)
+problem-41-s2.c:56:23:medium:UBSan: signed integer overflow: 888888888 * 10 cannot be represented in type 'int' (AFL crash: id:000005,sig:06,src:000000,time:29707,execs:2491,op:havoc,rep:11)
+problem-41-s2.c:56:23:medium:UBSan: signed integer overflow: 333333333 * 10 cannot be represented in type 'int' (AFL crash: id:000006,sig:06,src:000000,time:34196,execs:2703,op:havoc,rep:9)

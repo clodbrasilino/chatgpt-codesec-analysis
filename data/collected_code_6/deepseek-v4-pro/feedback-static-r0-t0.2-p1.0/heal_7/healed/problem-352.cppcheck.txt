@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_7/healed/problem-352.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_7/healed/problem-352.c:44:35: style: Condition 'test5_result' is always false [knownConditionTrueFalse]
+    printf("Test 5 (NULL): %s\n", test5_result ? "unique" : "not unique");
+                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_7/healed/problem-352.c:43:41: note: Calling function 'all_unique_chars' returns 0
+    bool test5_result = all_unique_chars(test5);
+                                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_7/healed/problem-352.c:43:41: note: Assignment 'test5_result=all_unique_chars(test5)', assigned value is 0
+    bool test5_result = all_unique_chars(test5);
+                                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_7/healed/problem-352.c:44:35: note: Condition 'test5_result' is always false
+    printf("Test 5 (NULL): %s\n", test5_result ? "unique" : "not unique");
+                                  ^

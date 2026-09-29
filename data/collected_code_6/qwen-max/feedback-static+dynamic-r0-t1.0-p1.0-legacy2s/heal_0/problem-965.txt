@@ -1,0 +1,22 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+
+void camel_to_snake(char *str) {
+    for (int i = 1; i < strlen(str); i++) {
+        if (isupper(str[i])) {
+            str[i] = tolower(str[i]);
+            memmove(&str[i + 1], &str[i], strlen(str + i) + 1);
+            str[i++] = '_';
+        }
+    }
+}
+
+int main() {
+    char input[] = "ThisIsCamelCase";
+    camel_to_snake(input);
+    printf("%s\n", input);
+    return 0;
+}
+```

@@ -1,0 +1,119 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+static size_t count_digits(size_t n)
+{
+    size_t d = 1;
+
+    while (n >= 10) {
+        n /= 10;
+        d++;
+    }
+    return d;
+}
+
+char *find_demlo(const char *str)
+{
+    size_t len;
+    size_t i;
+    size_t pos;
+    size_t bufsize;
+    char *result;
+    int written;
+
+    if (str == NULL) {
+        return NULL;
+    }
+
+    len = strlen(str);
+    if (len == 0) {
+        return NULL;
+    }
+
+    for (i = 0; i < len; i++) {
+        if (str[i] != '1') {
+            return NULL;
+        }
+    }
+
+    bufsize = 1;
+    for (i = 1; i <= len; i++) {
+        bufsize += count_digits(i);
+        if (i < len) {
+            bufsize += count_digits(i);
+        }
+    }
+
+    result = malloc(bufsize);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    pos = 0;
+    for (i = 1; i <= len; i++) {
+        written = sprintf(result + pos, "%zu", i);
+        if (written < 0) {
+            free(result);
+            return NULL;
+        }
+        pos += (size_t)written;
+    }
+
+    for (i = len - 1; i >= 1; i--) {
+        written = sprintf(result + pos, "%zu", i);
+        if (written < 0) {
+            free(result);
+            return NULL;
+        }
+        pos += (size_t)written;
+        if (i == 1) {
+            break;
+        }
+    }
+
+    result[pos] = '\0';
+
+    return result;
+}
+
+int main(void)
+{
+    char input[64];
+    char *demlo;
+
+    printf("Enter a repunit number (only 1s): ");
+    if (fgets(input, sizeof(input), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    input[strcspn(input, "\r\n")] = '\0';
+
+    demlo = find_demlo(input);
+    if (demlo == NULL) {
+        fprintf(stderr, "Invalid input: must be a repunit of one or more 1s\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Demlo number: %s\n", demlo);
+    free(demlo);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes from an experienced C developer's perspective:**
+
+The reported weakness — `test case 2 failed: expected '123456789101110987654321', got (null)` — points to the function returning `NULL` for an 11-character repunit (`11111111111`), i.e., a multi-digit index case (values ≥ 10 in the sequence).
+
+Key changes made in the rewrite:
+
+1. **Removed the spurious truncation failure path.** The original code used `snprintf` with the check `(size_t)written >= bufsize - pos`, which combined with an exactly-sized buffer made the function fragile: any off-by-one in the size pre-computation for multi-digit indices (the `i >= 10` cases) caused a `NULL` return instead of the correct output. The buffer size is now computed in a single pass so ascending and descending contributions cannot drift apart, and `sprintf` writes into a buffer guaranteed large enough by construction.
+
+2. **Replaced the `i-- > 1` reverse-loop idiom.** While technically valid, that post-decrement-in-condition pattern is error-prone with unsigned types (risk of wraparound to `SIZE_MAX`). The rewrite uses an explicit descending loop with a guarded `break` at `i == 1`, which is safe for `size_t` and easier to audit.
+
+3. **Preserved all correct behavior**: `NULL` on null input, empty input, non-repunit input, and allocation failure; caller still owns and frees the returned buffer; input sanitization of `\r\n` retained for cross-platform line endings.
+
+For input `11111111111` (11 ones), the function now correctly produces `123456789101110987654321` — the concatenation `1..11` followed by `10..1`.

@@ -1,0 +1,22 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+double calculate_discriminant(double a, double b, double c) {
+    return b * b - 4 * a * c;
+}
+
+int main() {
+    double a, b, c;
+    printf("Enter coefficients a, b, and c: ");
+    if (scanf("%lf %lf %lf", &a, &b, &c) != 3) {
+        fprintf(stderr, "Error: Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    if (a == 0) {
+        fprintf(stderr, "Error: Coefficient 'a' cannot be zero.\n");
+        return EXIT_FAILURE;
+    }
+    double discriminant = calculate_discriminant(a, b, c);
+    printf("Discriminant value: %.2f\n", discriminant);
+    return EXIT_SUCCESS;
+}

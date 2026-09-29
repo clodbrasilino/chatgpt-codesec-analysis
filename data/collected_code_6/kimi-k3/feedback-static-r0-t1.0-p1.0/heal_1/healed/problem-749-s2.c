@@ -1,0 +1,98 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <errno.h>
+#include <limits.h>
+
+int compare_numeric_strings(const void *a, const void *b)
+{
+    const char *str_a = *(const char **)a;
+    const char *str_b = *(const char **)b;
+    char *endptr_a;
+    char *endptr_b;
+    long val_a;
+    long val_b;
+    
+    errno = 0;
+    val_a = strtol(str_a, &endptr_a, 10);
+    if (errno != 0 || endptr_a == str_a || *endptr_a != '\0') {
+        return 0;
+    }
+    
+    errno = 0;
+    val_b = strtol(str_b, &endptr_b, 10);
+    if (errno != 0 || endptr_b == str_b || *endptr_b != '\0') {
+        return 0;
+    }
+    
+    if (val_a < val_b) {
+        return -1;
+    } else if (val_a > val_b) {
+        return 1;
+    } else {
+        return 0;
+    }
+}
+
+int sort_numeric_strings(char **strings, size_t count)
+{
+    size_t i;
+    char *endptr;
+    
+    if (strings == NULL || count == 0) {
+        return -1;
+    }
+    
+    for (i = 0; i < count; i++) {
+        if (strings[i] == NULL) {
+            return -1;
+        }
+        
+        errno = 0;
+        strtol(strings[i], &endptr, 10);
+        if (errno != 0 || endptr == strings[i] || *endptr != '\0') {
+            return -1;
+        }
+    }
+    
+    qsort(strings, count, sizeof(char *), compare_numeric_strings);
+    
+    return 0;
+}
+
+int main(void)
+{
+    char *numbers[] = {
+        "123",
+        "45",
+        "6789",
+        "12",
+        "890",
+        "5",
+        "23456",
+        "1"
+    };
+    size_t count;
+    size_t i;
+    int result;
+    
+    count = sizeof(numbers) / sizeof(numbers[0]);
+    
+    printf("Original list:\n");
+    for (i = 0; i < count; i++) {
+        printf("%s\n", numbers[i]);
+    }
+    
+    result = sort_numeric_strings(numbers, count);
+    if (result != 0) {
+        fprintf(stderr, "Error: Failed to sort strings\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("\nSorted list:\n");
+    for (i = 0; i < count; i++) {
+        printf("%s\n", numbers[i]);
+    }
+    
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,47 @@
+{
+  "task_id": 163,
+  "text": "Write a C function to calculate the area of a regular polygon.",
+  "fn_candidates": [
+    "area_polygon",
+    "AreaPolygon",
+    "areaPolygon",
+    "areapolygon"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "area_polygon",
+      "args": [
+        4,
+        20
+      ],
+      "expected": 400.00000000000006,
+      "assert_src": "assert area_polygon(4,20)==400.00000000000006"
+    },
+    {
+      "fn_name": "area_polygon",
+      "args": [
+        10,
+        15
+      ],
+      "expected": 1731.1969896610804,
+      "assert_src": "assert area_polygon(10,15)==1731.1969896610804"
+    },
+    {
+      "fn_name": "area_polygon",
+      "args": [
+        9,
+        7
+      ],
+      "expected": 302.90938549487214,
+      "assert_src": "assert area_polygon(9,7)==302.90938549487214"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "float",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

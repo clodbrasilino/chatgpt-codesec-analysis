@@ -1,0 +1,11 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-647-s3.c: In function 'split_at_uppercase':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-647-s3.c:34:42: error: 'ptrdiff_t' undeclared (first use in this function)
+   34 |                 if (part_len <= (size_t)(ptrdiff_t)(str + len - (str + start))) {
+      |                                          ^~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-647-s3.c:5:1: note: 'ptrdiff_t' is defined in header '<stddef.h>'; this is probably fixable by adding '#include <stddef.h>'
+    4 | #include <ctype.h>
+  +++ |+#include <stddef.h>
+    5 | 
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-647-s3.c:34:42: note: each undeclared identifier is reported only once for each function it appears in
+   34 |                 if (part_len <= (size_t)(ptrdiff_t)(str + len - (str + start))) {
+      |                                          ^~~~~~~~~

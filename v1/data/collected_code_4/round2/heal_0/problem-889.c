@@ -1,0 +1,56 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node* next;
+};
+
+void push(struct Node** head, int data) {
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    if(newNode == NULL){
+        printf("Failed to allocate memory!\n");
+        return;
+    }
+    newNode->data = data;
+    newNode->next = *head;
+    *head = newNode;
+}
+
+void reverse(struct Node** head) {
+    struct Node* prev = NULL;
+    struct Node* current = *head;
+    struct Node* next;
+    while(current != NULL){
+        next = current->next;
+        current->next = prev;
+        prev = current;
+        current = next;
+    }
+    *head = prev;
+}
+
+void printList(struct Node* head) {
+    struct Node* temp = head;
+    while(temp != NULL){
+        printf("%d  ", temp->data);
+        temp = temp->next;
+    }
+}
+
+int main() {
+    struct Node* head = NULL;
+
+    push(&head, 20);
+    push(&head, 4);
+    push(&head, 15);
+    push(&head, 85);
+
+    printf("Given linked list\n");
+    printList(head);
+    reverse(&head);
+    printf("\nReversed Linked list \n");
+    printList(head);
+    
+    return 0;
+}

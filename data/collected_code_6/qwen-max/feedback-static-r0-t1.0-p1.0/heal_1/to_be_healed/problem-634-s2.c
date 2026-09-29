@@ -1,0 +1,26 @@
+#include <stdio.h>
+#include <stdint.h>
+
+uint64_t sum_of_fourth_powers(uint32_t n) {
+    uint64_t sum = 0;
+    for (uint32_t i = 1; i <= n; ++i) {
+        uint64_t even_number = 2 * i;
+        sum += even_number * even_number * even_number * even_number;
+    }
+    return sum;
+}
+
+int main() {
+    uint32_t n;
+    printf("Enter a positive integer: ");
+    if (scanf("%u", &n) != 1 || n == 0) {
+        fprintf(stderr, "Input error. Please enter a positive integer.\n");
+        return 1;
+    }
+    uint64_t result = sum_of_fourth_powers(n);
+    /* Possible weaknesses found:
+     *  %llu in format string (no. 2) requires 'unsigned long long' but the argument type is 'unsigned long'. [invalidPrintfArgType_uint]
+     */
+    printf("The sum of the fourth powers of the first %u even natural numbers is: %llu\n", n, result);
+    return 0;
+}

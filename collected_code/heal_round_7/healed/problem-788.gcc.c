@@ -1,1 +1,0 @@
--macosx_version_min has been renamed to -macos_version_min

@@ -1,0 +1,631 @@
+./collected_code_4/round2//heal_0/problem-578.c: In function 'main':
+./collected_code_4/round2//heal_0/problem-578.c:47:13: warning: dereference of NULL 'a' [CWE-476] [-Wanalyzer-null-dereference]
+   47 |     a->next = newNode(2);
+      |     ~~~~~~~~^~~~~~~~~~~~
+  'main': events 1-2
+    |
+    |   45 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |   46 |     Node* a = newNode(1);
+    |      |               ~~~~~~~~~~
+    |      |               |
+    |      |               (2) calling 'newNode' from 'main'
+    |
+    +--> 'newNode': events 3-4
+           |
+           |    9 | Node* newNode(int data) {
+           |      |       ^~~~~~~
+           |      |       |
+           |      |       (3) entry to 'newNode'
+           |   10 |     Node* node = (Node*)malloc(sizeof(Node));
+           |   11 |     if(node == NULL) {
+           |      |       ~
+           |      |       |
+           |      |       (4) following 'true' branch (when 'node' is NULL)...
+           |
+         'newNode': event 5
+           |
+           |   12 |         return NULL;
+           |      |                ^~~~
+           |      |                |
+           |      |                (5) ...to here
+           |
+         'newNode': event 6
+           |
+           |   12 |         return NULL;
+           |      |                ^~~~
+           |      |                |
+           |      |                (6) '0' is NULL
+           |
+    <------+
+    |
+  'main': events 7-8
+    |
+    |   46 |     Node* a = newNode(1);
+    |      |               ^~~~~~~~~~
+    |      |               |
+    |      |               (7) returning to 'main' from 'newNode'
+    |   47 |     a->next = newNode(2);
+    |      |               ~~~~~~~~~~
+    |      |               |
+    |      |               (8) calling 'newNode' from 'main'
+    |
+    +--> 'newNode': events 9-10
+           |
+           |    9 | Node* newNode(int data) {
+           |      |       ^~~~~~~
+           |      |       |
+           |      |       (9) entry to 'newNode'
+           |   10 |     Node* node = (Node*)malloc(sizeof(Node));
+           |   11 |     if(node == NULL) {
+           |      |       ~
+           |      |       |
+           |      |       (10) following 'true' branch (when 'node' is NULL)...
+           |
+         'newNode': event 11
+           |
+           |   12 |         return NULL;
+           |      |                ^~~~
+           |      |                |
+           |      |                (11) ...to here
+           |
+         'newNode': event 12
+           |
+           |   12 |         return NULL;
+           |      |                ^~~~
+           |      |                |
+           |      |                (12) 'a' is NULL
+           |
+    <------+
+    |
+  'main': events 13-16
+    |
+    |   47 |     a->next = newNode(2);
+    |      |     ~~~~~~~~~~^~~~~~~~~~
+    |      |             | |
+    |      |             | (13) returning to 'main' from 'newNode'
+    |      |             (14) 'a' is NULL
+    |      |             (16) dereference of NULL 'a'
+    |   48 |     a->next->next = newNode(3);
+    |      |     ~~~~~~~    
+    |      |      |
+    |      |      (15) 'a' is NULL
+    |
+./collected_code_4/round2//heal_0/problem-578.c:48:19: warning: dereference of NULL '0' [CWE-476] [-Wanalyzer-null-dereference]
+   48 |     a->next->next = newNode(3);
+      |     ~~~~~~~~~~~~~~^~~~~~~~~~~~
+  'main': events 1-2
+    |
+    |   45 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |   46 |     Node* a = newNode(1);
+    |      |               ~~~~~~~~~~
+    |      |               |
+    |      |               (2) calling 'newNode' from 'main'
+    |
+    +--> 'newNode': events 3-5
+           |
+           |    9 | Node* newNode(int data) {
+           |      |       ^~~~~~~
+           |      |       |
+           |      |       (3) entry to 'newNode'
+           |   10 |     Node* node = (Node*)malloc(sizeof(Node));
+           |   11 |     if(node == NULL) {
+           |      |       ~
+           |      |       |
+           |      |       (4) following 'false' branch (when 'node' is non-NULL)...
+           |......
+           |   14 |     node->data = data;
+           |      |     ~~~~~~~~~~~~~~~~~
+           |      |                |
+           |      |                (5) ...to here
+           |
+    <------+
+    |
+  'main': events 6-7
+    |
+    |   46 |     Node* a = newNode(1);
+    |      |               ^~~~~~~~~~
+    |      |               |
+    |      |               (6) returning to 'main' from 'newNode'
+    |   47 |     a->next = newNode(2);
+    |      |               ~~~~~~~~~~
+    |      |               |
+    |      |               (7) calling 'newNode' from 'main'
+    |
+    +--> 'newNode': events 8-9
+           |
+           |    9 | Node* newNode(int data) {
+           |      |       ^~~~~~~
+           |      |       |
+           |      |       (8) entry to 'newNode'
+           |   10 |     Node* node = (Node*)malloc(sizeof(Node));
+           |   11 |     if(node == NULL) {
+           |      |       ~
+           |      |       |
+           |      |       (9) following 'true' branch (when 'node' is NULL)...
+           |
+         'newNode': event 10
+           |
+           |   12 |         return NULL;
+           |      |                ^~~~
+           |      |                |
+           |      |                (10) ...to here
+           |
+         'newNode': event 11
+           |
+           |   12 |         return NULL;
+           |      |                ^~~~
+           |      |                |
+           |      |                (11) '0' is NULL
+           |
+    <------+
+    |
+  'main': events 12-14
+    |
+    |   47 |     a->next = newNode(2);
+    |      |               ^~~~~~~~~~
+    |      |               |
+    |      |               (12) returning to 'main' from 'newNode'
+    |   48 |     a->next->next = newNode(3);
+    |      |     ~~~~~~~         ~~~~~~~~~~
+    |      |      |              |
+    |      |      |              (14) calling 'newNode' from 'main'
+    |      |      (13) '0' is NULL
+    |
+    +--> 'newNode': events 15-16
+           |
+           |    9 | Node* newNode(int data) {
+           |      |       ^~~~~~~
+           |      |       |
+           |      |       (15) entry to 'newNode'
+           |   10 |     Node* node = (Node*)malloc(sizeof(Node));
+           |   11 |     if(node == NULL) {
+           |      |       ~
+           |      |       |
+           |      |       (16) following 'true' branch (when 'node' is NULL)...
+           |
+         'newNode': event 17
+           |
+           |   12 |         return NULL;
+           |      |                ^~~~
+           |      |                |
+           |      |                (17) ...to here
+           |
+         'newNode': event 18
+           |
+           |   12 |         return NULL;
+           |      |                ^~~~
+           |      |                |
+           |      |                (18) '0' is NULL
+           |
+    <------+
+    |
+  'main': events 19-21
+    |
+    |   48 |     a->next->next = newNode(3);
+    |      |     ~~~~~~~~~~~~~~~~^~~~~~~~~~
+    |      |                   | |
+    |      |                   | (19) returning to 'main' from 'newNode'
+    |      |                   (20) '0' is NULL
+    |      |                   (21) dereference of NULL '*a.next'
+    |
+./collected_code_4/round2//heal_0/problem-578.c:51:13: warning: dereference of NULL 'b' [CWE-476] [-Wanalyzer-null-dereference]
+   51 |     b->next = newNode(5);
+      |     ~~~~~~~~^~~~~~~~~~~~
+  'main': events 1-2
+    |
+    |   45 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |   46 |     Node* a = newNode(1);
+    |      |               ~~~~~~~~~~
+    |      |               |
+    |      |               (2) calling 'newNode' from 'main'
+    |
+    +--> 'newNode': events 3-5
+           |
+           |    9 | Node* newNode(int data) {
+           |      |       ^~~~~~~
+           |      |       |
+           |      |       (3) entry to 'newNode'
+           |   10 |     Node* node = (Node*)malloc(sizeof(Node));
+           |   11 |     if(node == NULL) {
+           |      |       ~
+           |      |       |
+           |      |       (4) following 'false' branch (when 'node' is non-NULL)...
+           |......
+           |   14 |     node->data = data;
+           |      |     ~~~~~~~~~~~~~~~~~
+           |      |                |
+           |      |                (5) ...to here
+           |
+    <------+
+    |
+  'main': events 6-7
+    |
+    |   46 |     Node* a = newNode(1);
+    |      |               ^~~~~~~~~~
+    |      |               |
+    |      |               (6) returning to 'main' from 'newNode'
+    |   47 |     a->next = newNode(2);
+    |      |               ~~~~~~~~~~
+    |      |               |
+    |      |               (7) calling 'newNode' from 'main'
+    |
+    +--> 'newNode': events 8-10
+           |
+           |    9 | Node* newNode(int data) {
+           |      |       ^~~~~~~
+           |      |       |
+           |      |       (8) entry to 'newNode'
+           |   10 |     Node* node = (Node*)malloc(sizeof(Node));
+           |   11 |     if(node == NULL) {
+           |      |       ~
+           |      |       |
+           |      |       (9) following 'false' branch (when 'node' is non-NULL)...
+           |......
+           |   14 |     node->data = data;
+           |      |     ~~~~~~~~~~~~~~~~~
+           |      |                |
+           |      |                (10) ...to here
+           |
+    <------+
+    |
+  'main': events 11-12
+    |
+    |   47 |     a->next = newNode(2);
+    |      |               ^~~~~~~~~~
+    |      |               |
+    |      |               (11) returning to 'main' from 'newNode'
+    |   48 |     a->next->next = newNode(3);
+    |      |                     ~~~~~~~~~~
+    |      |                     |
+    |      |                     (12) calling 'newNode' from 'main'
+    |
+    +--> 'newNode': events 13-14
+           |
+           |    9 | Node* newNode(int data) {
+           |      |       ^~~~~~~
+           |      |       |
+           |      |       (13) entry to 'newNode'
+           |   10 |     Node* node = (Node*)malloc(sizeof(Node));
+           |   11 |     if(node == NULL) {
+           |      |       ~
+           |      |       |
+           |      |       (14) following 'true' branch (when 'node' is NULL)...
+           |
+         'newNode': event 15
+           |
+           |   12 |         return NULL;
+           |      |                ^~~~
+           |      |                |
+           |      |                (15) ...to here
+           |
+         'newNode': event 16
+           |
+           |   12 |         return NULL;
+           |      |                ^~~~
+           |      |                |
+           |      |                (16) '0' is NULL
+           |
+    <------+
+    |
+  'main': events 17-18
+    |
+    |   48 |     a->next->next = newNode(3);
+    |      |                     ^~~~~~~~~~
+    |      |                     |
+    |      |                     (17) returning to 'main' from 'newNode'
+    |   49 | 
+    |   50 |     Node* b = newNode(4);
+    |      |               ~~~~~~~~~~
+    |      |               |
+    |      |               (18) calling 'newNode' from 'main'
+    |
+    +--> 'newNode': events 19-20
+           |
+           |    9 | Node* newNode(int data) {
+           |      |       ^~~~~~~
+           |      |       |
+           |      |       (19) entry to 'newNode'
+           |   10 |     Node* node = (Node*)malloc(sizeof(Node));
+           |   11 |     if(node == NULL) {
+           |      |       ~
+           |      |       |
+           |      |       (20) following 'true' branch (when 'node' is NULL)...
+           |
+         'newNode': event 21
+           |
+           |   12 |         return NULL;
+           |      |                ^~~~
+           |      |                |
+           |      |                (21) ...to here
+           |
+         'newNode': event 22
+           |
+           |   12 |         return NULL;
+           |      |                ^~~~
+           |      |                |
+           |      |                (22) '0' is NULL
+           |
+    <------+
+    |
+  'main': events 23-24
+    |
+    |   50 |     Node* b = newNode(4);
+    |      |               ^~~~~~~~~~
+    |      |               |
+    |      |               (23) returning to 'main' from 'newNode'
+    |   51 |     b->next = newNode(5);
+    |      |               ~~~~~~~~~~
+    |      |               |
+    |      |               (24) calling 'newNode' from 'main'
+    |
+    +--> 'newNode': events 25-26
+           |
+           |    9 | Node* newNode(int data) {
+           |      |       ^~~~~~~
+           |      |       |
+           |      |       (25) entry to 'newNode'
+           |   10 |     Node* node = (Node*)malloc(sizeof(Node));
+           |   11 |     if(node == NULL) {
+           |      |       ~
+           |      |       |
+           |      |       (26) following 'true' branch (when 'node' is NULL)...
+           |
+         'newNode': event 27
+           |
+           |   12 |         return NULL;
+           |      |                ^~~~
+           |      |                |
+           |      |                (27) ...to here
+           |
+         'newNode': event 28
+           |
+           |   12 |         return NULL;
+           |      |                ^~~~
+           |      |                |
+           |      |                (28) 'b' is NULL
+           |
+    <------+
+    |
+  'main': events 29-32
+    |
+    |   51 |     b->next = newNode(5);
+    |      |     ~~~~~~~~~~^~~~~~~~~~
+    |      |             | |
+    |      |             | (29) returning to 'main' from 'newNode'
+    |      |             (30) 'b' is NULL
+    |      |             (32) dereference of NULL 'b'
+    |   52 |     b->next->next = newNode(6);
+    |      |     ~~~~~~~    
+    |      |      |
+    |      |      (31) 'b' is NULL
+    |
+./collected_code_4/round2//heal_0/problem-578.c:52:19: warning: dereference of NULL '0' [CWE-476] [-Wanalyzer-null-dereference]
+   52 |     b->next->next = newNode(6);
+      |     ~~~~~~~~~~~~~~^~~~~~~~~~~~
+  'main': events 1-2
+    |
+    |   45 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |   46 |     Node* a = newNode(1);
+    |      |               ~~~~~~~~~~
+    |      |               |
+    |      |               (2) calling 'newNode' from 'main'
+    |
+    +--> 'newNode': events 3-5
+           |
+           |    9 | Node* newNode(int data) {
+           |      |       ^~~~~~~
+           |      |       |
+           |      |       (3) entry to 'newNode'
+           |   10 |     Node* node = (Node*)malloc(sizeof(Node));
+           |   11 |     if(node == NULL) {
+           |      |       ~
+           |      |       |
+           |      |       (4) following 'false' branch (when 'node' is non-NULL)...
+           |......
+           |   14 |     node->data = data;
+           |      |     ~~~~~~~~~~~~~~~~~
+           |      |                |
+           |      |                (5) ...to here
+           |
+    <------+
+    |
+  'main': events 6-7
+    |
+    |   46 |     Node* a = newNode(1);
+    |      |               ^~~~~~~~~~
+    |      |               |
+    |      |               (6) returning to 'main' from 'newNode'
+    |   47 |     a->next = newNode(2);
+    |      |               ~~~~~~~~~~
+    |      |               |
+    |      |               (7) calling 'newNode' from 'main'
+    |
+    +--> 'newNode': events 8-10
+           |
+           |    9 | Node* newNode(int data) {
+           |      |       ^~~~~~~
+           |      |       |
+           |      |       (8) entry to 'newNode'
+           |   10 |     Node* node = (Node*)malloc(sizeof(Node));
+           |   11 |     if(node == NULL) {
+           |      |       ~
+           |      |       |
+           |      |       (9) following 'false' branch (when 'node' is non-NULL)...
+           |......
+           |   14 |     node->data = data;
+           |      |     ~~~~~~~~~~~~~~~~~
+           |      |                |
+           |      |                (10) ...to here
+           |
+    <------+
+    |
+  'main': events 11-12
+    |
+    |   47 |     a->next = newNode(2);
+    |      |               ^~~~~~~~~~
+    |      |               |
+    |      |               (11) returning to 'main' from 'newNode'
+    |   48 |     a->next->next = newNode(3);
+    |      |                     ~~~~~~~~~~
+    |      |                     |
+    |      |                     (12) calling 'newNode' from 'main'
+    |
+    +--> 'newNode': events 13-14
+           |
+           |    9 | Node* newNode(int data) {
+           |      |       ^~~~~~~
+           |      |       |
+           |      |       (13) entry to 'newNode'
+           |   10 |     Node* node = (Node*)malloc(sizeof(Node));
+           |   11 |     if(node == NULL) {
+           |      |       ~
+           |      |       |
+           |      |       (14) following 'true' branch (when 'node' is NULL)...
+           |
+         'newNode': event 15
+           |
+           |   12 |         return NULL;
+           |      |                ^~~~
+           |      |                |
+           |      |                (15) ...to here
+           |
+         'newNode': event 16
+           |
+           |   12 |         return NULL;
+           |      |                ^~~~
+           |      |                |
+           |      |                (16) '0' is NULL
+           |
+    <------+
+    |
+  'main': events 17-18
+    |
+    |   48 |     a->next->next = newNode(3);
+    |      |                     ^~~~~~~~~~
+    |      |                     |
+    |      |                     (17) returning to 'main' from 'newNode'
+    |   49 | 
+    |   50 |     Node* b = newNode(4);
+    |      |               ~~~~~~~~~~
+    |      |               |
+    |      |               (18) calling 'newNode' from 'main'
+    |
+    +--> 'newNode': events 19-21
+           |
+           |    9 | Node* newNode(int data) {
+           |      |       ^~~~~~~
+           |      |       |
+           |      |       (19) entry to 'newNode'
+           |   10 |     Node* node = (Node*)malloc(sizeof(Node));
+           |   11 |     if(node == NULL) {
+           |      |       ~
+           |      |       |
+           |      |       (20) following 'false' branch (when 'node' is non-NULL)...
+           |......
+           |   14 |     node->data = data;
+           |      |     ~~~~~~~~~~~~~~~~~
+           |      |                |
+           |      |                (21) ...to here
+           |
+    <------+
+    |
+  'main': events 22-23
+    |
+    |   50 |     Node* b = newNode(4);
+    |      |               ^~~~~~~~~~
+    |      |               |
+    |      |               (22) returning to 'main' from 'newNode'
+    |   51 |     b->next = newNode(5);
+    |      |               ~~~~~~~~~~
+    |      |               |
+    |      |               (23) calling 'newNode' from 'main'
+    |
+    +--> 'newNode': events 24-25
+           |
+           |    9 | Node* newNode(int data) {
+           |      |       ^~~~~~~
+           |      |       |
+           |      |       (24) entry to 'newNode'
+           |   10 |     Node* node = (Node*)malloc(sizeof(Node));
+           |   11 |     if(node == NULL) {
+           |      |       ~
+           |      |       |
+           |      |       (25) following 'true' branch (when 'node' is NULL)...
+           |
+         'newNode': event 26
+           |
+           |   12 |         return NULL;
+           |      |                ^~~~
+           |      |                |
+           |      |                (26) ...to here
+           |
+         'newNode': event 27
+           |
+           |   12 |         return NULL;
+           |      |                ^~~~
+           |      |                |
+           |      |                (27) '0' is NULL
+           |
+    <------+
+    |
+  'main': events 28-30
+    |
+    |   51 |     b->next = newNode(5);
+    |      |               ^~~~~~~~~~
+    |      |               |
+    |      |               (28) returning to 'main' from 'newNode'
+    |   52 |     b->next->next = newNode(6);
+    |      |     ~~~~~~~         ~~~~~~~~~~
+    |      |      |              |
+    |      |      |              (30) calling 'newNode' from 'main'
+    |      |      (29) '0' is NULL
+    |
+    +--> 'newNode': events 31-32
+           |
+           |    9 | Node* newNode(int data) {
+           |      |       ^~~~~~~
+           |      |       |
+           |      |       (31) entry to 'newNode'
+           |   10 |     Node* node = (Node*)malloc(sizeof(Node));
+           |   11 |     if(node == NULL) {
+           |      |       ~
+           |      |       |
+           |      |       (32) following 'true' branch (when 'node' is NULL)...
+           |
+         'newNode': event 33
+           |
+           |   12 |         return NULL;
+           |      |                ^~~~
+           |      |                |
+           |      |                (33) ...to here
+           |
+         'newNode': event 34
+           |
+           |   12 |         return NULL;
+           |      |                ^~~~
+           |      |                |
+           |      |                (34) '0' is NULL
+           |
+    <------+
+    |
+  'main': events 35-37
+    |
+    |   52 |     b->next->next = newNode(6);
+    |      |     ~~~~~~~~~~~~~~~~^~~~~~~~~~
+    |      |                   | |
+    |      |                   | (35) returning to 'main' from 'newNode'
+    |      |                   (36) '0' is NULL
+    |      |                   (37) dereference of NULL '*b.next'
+    |

@@ -1,0 +1,171 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef enum {
+    TYPE_INT,
+    TYPE_LIST
+} ElementType;
+
+typedef struct List List;
+
+typedef struct {
+    ElementType type;
+    union {
+        int value;
+        List *list;
+    } data;
+} Element;
+
+struct List {
+    Element *elements;
+    size_t count;
+    size_t capacity;
+};
+
+List *list_create(size_t capacity) {
+    List *list = malloc(sizeof(List));
+    if (list == NULL) {
+        return NULL;
+    }
+    list->elements = malloc(capacity * sizeof(Element));
+    if (list->elements == NULL) {
+        free(list);
+        return NULL;
+    }
+    list->count = 0;
+    list->capacity = capacity;
+    return list;
+}
+
+void list_destroy(List *list) {
+    if (list == NULL) {
+        return;
+    }
+    for (size_t i = 0; i < list->count; i++) {
+        if (list->elements[i].type == TYPE_LIST) {
+            list_destroy(list->elements[i].data.list);
+        }
+    }
+    free(list->elements);
+    free(list);
+}
+
+int list_add_int(List *list, int value) {
+    if (list == NULL || list->count >= list->capacity) {
+        return -1;
+    }
+    list->elements[list->count].type = TYPE_INT;
+    list->elements[list->count].data.value = value;
+    list->count++;
+    return 0;
+}
+
+int list_add_list(List *list, List *sublist) {
+    if (list == NULL || sublist == NULL || list->count >= list->capacity) {
+        return -1;
+    }
+    list->elements[list->count].type = TYPE_LIST;
+    list->elements[list->count].data.list = sublist;
+    list->count++;
+    return 0;
+}
+
+size_t count_lists(const List *tuple) {
+    if (tuple == NULL) {
+        return 0;
+    }
+    size_t count = 0;
+    for (size_t i = 0; i < tuple->count; i++) {
+        if (tuple->elements[i].type == TYPE_LIST) {
+            count++;
+            count += count_lists(tuple->elements[i].data.list);
+        }
+    }
+    return count;
+}
+
+int main(void) {
+    List *tuple = list_create(5);
+    if (tuple == NULL) {
+        fprintf(stderr, "Failed to create tuple\n");
+        return EXIT_FAILURE;
+    }
+
+    List *sublist1 = list_create(3);
+    if (sublist1 == NULL) {
+        fprintf(stderr, "Failed to create sublist1\n");
+        list_destroy(tuple);
+        return EXIT_FAILURE;
+    }
+
+    List *sublist2 = list_create(2);
+    if (sublist2 == NULL) {
+        fprintf(stderr, "Failed to create sublist2\n");
+        list_destroy(sublist1);
+        list_destroy(tuple);
+        return EXIT_FAILURE;
+    }
+
+    List *nested = list_create(2);
+    if (nested == NULL) {
+        fprintf(stderr, "Failed to create nested list\n");
+        list_destroy(sublist2);
+        list_destroy(sublist1);
+        list_destroy(tuple);
+        return EXIT_FAILURE;
+    }
+
+    if (list_add_int(tuple, 1) != 0 ||
+        list_add_int(tuple, 2) != 0 ||
+        list_add_list(tuple, sublist1) != 0 ||
+        list_add_list(tuple, sublist2) != 0 ||
+        list_add_int(tuple, 5) != 0) {
+        fprintf(stderr, "Failed to add elements to tuple\n");
+        list_destroy(nested);
+        list_destroy(sublist2);
+        list_destroy(sublist1);
+        list_destroy(tuple);
+        return EXIT_FAILURE;
+    }
+
+    if (list_add_int(sublist1, 10) != 0 ||
+        list_add_int(sublist1, 20) != 0 ||
+        list_add_list(sublist1, nested) != 0) {
+        fprintf(stderr, "Failed to add elements to sublist1\n");
+        list_destroy(nested);
+        list_destroy(sublist2);
+        list_destroy(sublist1);
+        list_destroy(tuple);
+        return EXIT_FAILURE;
+    }
+
+    if (list_add_int(sublist2, 30) != 0 ||
+        list_add_int(sublist2, 40) != 0) {
+        fprintf(stderr, "Failed to add elements to sublist2\n");
+        list_destroy(nested);
+        list_destroy(sublist2);
+        list_destroy(sublist1);
+        list_destroy(tuple);
+        return EXIT_FAILURE;
+    }
+
+    if (list_add_int(nested, 100) != 0 ||
+        list_add_int(nested, 200) != 0) {
+        fprintf(stderr, "Failed to add elements to nested list\n");
+        list_destroy(nested);
+        list_destroy(sublist2);
+        list_destroy(sublist1);
+        list_destroy(tuple);
+        return EXIT_FAILURE;
+    }
+
+    size_t result = count_lists(tuple);
+    printf("Number of lists in tuple: %zu\n", result);
+
+    list_destroy(tuple);
+
+    return EXIT_SUCCESS;
+}
+```

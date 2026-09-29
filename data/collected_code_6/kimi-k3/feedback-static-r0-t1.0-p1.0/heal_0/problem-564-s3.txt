@@ -1,0 +1,48 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+#include <errno.h>
+
+long long count_unequal_pairs(const int *arr, size_t size)
+{
+    if (arr == NULL || size < 2) {
+        return 0;
+    }
+
+    if (size > (size_t)(LLONG_MAX / (long long)(size - 1))) {
+        return -1;
+    }
+
+    long long total_pairs = (long long)size * (long long)(size - 1) / 2;
+    long long equal_pairs = 0;
+    size_t i = 0;
+
+    while (i < size) {
+        size_t j = i + 1;
+        while (j < size && arr[j] == arr[i]) {
+            j++;
+        }
+        long long count = (long long)(j - i);
+        equal_pairs += count * (count - 1) / 2;
+        i = j;
+    }
+
+    return total_pairs - equal_pairs;
+}
+
+int main(void)
+{
+    int arr[] = {1, 2, 3, 2, 1, 4};
+    size_t size = sizeof(arr) / sizeof(arr[0]);
+    long long result = count_unequal_pairs(arr, size);
+
+    if (result < 0) {
+        fprintf(stderr, "Error: Integer overflow occurred\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Number of unequal pairs: %lld\n", result);
+    return EXIT_SUCCESS;
+}
+```

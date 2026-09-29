@@ -1,0 +1,119 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_INPUT_LEN 1024
+
+static long min_swaps_for_balancing(const char *str, size_t len);
+static int validate_input(const char *str, size_t len);
+
+static int validate_input(const char *str, size_t len)
+{
+    size_t i;
+    size_t open_count = 0;
+    size_t close_count = 0;
+
+    if (str == NULL) {
+        return -1;
+    }
+
+    if (len == 0U || (len % 2U) != 0U) {
+        return -1;
+    }
+
+    for (i = 0U; i < len; i++) {
+        if (str[i] == '[') {
+            open_count++;
+        } else if (str[i] == ']') {
+            close_count++;
+        } else {
+            return -1;
+        }
+    }
+
+    if (open_count != close_count) {
+        return -1;
+    }
+
+    return 0;
+}
+
+static long min_swaps_for_balancing(const char *str, size_t len)
+{
+    size_t i;
+    long open_seen = 0L;
+    long close_seen = 0L;
+    long imbalance = 0L;
+    long swaps = 0L;
+
+    if (str == NULL) {
+        return 0L;
+    }
+
+    for (i = 0U; i < len; i++) {
+        if (str[i] == '[') {
+            open_seen++;
+            if (imbalance > 0L) {
+                swaps += imbalance;
+                imbalance--;
+            }
+        } else {
+            close_seen++;
+            imbalance = close_seen - open_seen;
+        }
+    }
+
+    return swaps;
+}
+
+int main(void)
+{
+    char *buffer;
+    size_t len;
+    long result;
+
+    buffer = (char *)calloc((size_t)MAX_INPUT_LEN, sizeof(char));
+    if (buffer == NULL) {
+        (void)fprintf(stderr, "Error: memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    if (fgets(buffer, MAX_INPUT_LEN, stdin) == NULL) {
+        (void)fprintf(stderr, "Error: failed to read input\n");
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+
+    buffer[MAX_INPUT_LEN - 1] = '\0';
+
+    len = strnlen(buffer, (size_t)MAX_INPUT_LEN);
+
+    if (len == ((size_t)MAX_INPUT_LEN - 1U) && buffer[len - 1U] != '\n') {
+        (void)fprintf(stderr, "Error: input too long\n");
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+
+    if (len > 0U && buffer[len - 1U] == '\n') {
+        buffer[len - 1U] = '\0';
+        len--;
+    }
+
+    if (validate_input(buffer, len) != 0) {
+        (void)fprintf(stderr, "Error: invalid input string\n");
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+
+    result = min_swaps_for_balancing(buffer, len);
+
+    free(buffer);
+
+    if (printf("Minimum number of swaps: %ld\n", result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```

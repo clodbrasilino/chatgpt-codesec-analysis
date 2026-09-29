@@ -1,0 +1,43 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <stdint.h>
+
+bool is_prime(uint64_t n) {
+    if (n <= 1) return false;
+    if (n <= 3) return true;
+    if (n % 2 == 0 || n % 3 == 0) return false;
+    for (uint64_t i = 5; i * i <= n; i += 6) {
+        if (n % i == 0 || n % (i + 2) == 0) return false;
+    }
+    return true;
+}
+
+uint64_t ns_w_prime(int n) {
+    uint64_t a = 1, b = 1;
+    int count = 0;
+    while (true) {
+        uint64_t next = 4 * a + b;
+        a = b;
+        b = next;
+        if (is_prime(next)) {
+            count++;
+            if (count == n) return next;
+        }
+    }
+}
+
+int main() {
+    int n;
+    printf("Enter the nth Newman–Shanks–Williams prime to find: ");
+    if (scanf("%d", &n) != 1) {
+        fprintf(stderr, "Invalid input. Please enter an integer.\n");
+        return 1;
+    }
+    if (n > 0) {
+        uint64_t result = ns_w_prime(n);
+        printf("The %dth Newman–Shanks–Williams prime is: %lu\n", n, result);
+    } else {
+        printf("Please enter a positive integer.\n");
+    }
+    return 0;
+}

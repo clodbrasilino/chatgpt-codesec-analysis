@@ -1,0 +1,99 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+static void flip(int *arr, size_t k)
+{
+    size_t left = 0;
+    size_t right = k;
+
+    while (left < right) {
+        int temp = arr[left];
+        arr[left] = arr[right];
+        arr[right] = temp;
+        left++;
+        right--;
+    }
+}
+
+static size_t find_max_index(const int *arr, size_t n)
+{
+    size_t max_idx = 0;
+    size_t i;
+
+    for (i = 1; i < n; i++) {
+        if (arr[i] > arr[max_idx]) {
+            max_idx = i;
+        }
+    }
+    return max_idx;
+}
+
+static void pancake_sort(int *arr, size_t n)
+{
+    size_t curr_size;
+
+    if (arr == NULL || n < 2) {
+        return;
+    }
+
+    for (curr_size = n; curr_size > 1; curr_size--) {
+        size_t max_idx = find_max_index(arr, curr_size);
+
+        if (max_idx != curr_size - 1) {
+            if (max_idx != 0) {
+                flip(arr, max_idx);
+            }
+            flip(arr, curr_size - 1);
+        }
+    }
+}
+
+static void print_array(const int *arr, size_t n)
+{
+    size_t i;
+
+    if (arr == NULL) {
+        return;
+    }
+
+    for (i = 0; i < n; i++) {
+        printf("%d", arr[i]);
+        if (i + 1 < n) {
+            printf(" ");
+        }
+    }
+    printf("\n");
+}
+
+int main(void)
+{
+    size_t n = 8;
+    size_t i;
+    const int initial[] = { 23, -5, 42, 0, 17, -31, 8, 99 };
+    int *arr;
+
+    arr = malloc(n * sizeof(*arr));
+    if (arr == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i < n; i++) {
+        arr[i] = initial[i];
+    }
+
+    printf("Before: ");
+    print_array(arr, n);
+
+    pancake_sort(arr, n);
+
+    printf("After:  ");
+    print_array(arr, n);
+
+    free(arr);
+    arr = NULL;
+
+    return EXIT_SUCCESS;
+}
+```

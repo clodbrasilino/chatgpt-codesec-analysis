@@ -1,0 +1,139 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    int first;
+    int second;
+} Tuple;
+
+typedef struct Node {
+    int value;
+    struct Node* next;
+} Node;
+
+typedef struct {
+    int key;
+    Node* head;
+    Node* tail;
+} Group;
+
+typedef struct {
+    Group* groups;
+    size_t size;
+    size_t capacity;
+} GroupMap;
+
+GroupMap* create_map(size_t initial_capacity) {
+    if (initial_capacity == 0) return NULL;
+    GroupMap* map = malloc(sizeof(GroupMap));
+    if (!map) return NULL;
+    map->groups = malloc(initial_capacity * sizeof(Group));
+    if (!map->groups) {
+        free(map);
+        return NULL;
+    }
+    map->size = 0;
+    map->capacity = initial_capacity;
+    return map;
+}
+
+Group* find_or_create_group(GroupMap* map, int key) {
+    if (!map) return NULL;
+    for (size_t i = 0; i < map->size; i++) {
+        if (map->groups[i].key == key) {
+            return &map->groups[i];
+        }
+    }
+
+    if (map->size == map->capacity) {
+        size_t new_capacity = map->capacity * 2;
+        Group* temp = realloc(map->groups, new_capacity * sizeof(Group));
+        if (!temp) return NULL;
+        map->groups = temp;
+        map->capacity = new_capacity;
+    }
+
+    Group* new_group = &map->groups[map->size++];
+    new_group->key = key;
+    new_group->head = NULL;
+    new_group->tail = NULL;
+    return new_group;
+}
+
+int add_to_group(GroupMap* map, int first, int second) {
+    if (!map) return -1;
+    Group* group = find_or_create_group(map, second);
+    if (!group) return -1;
+
+    Node* new_node = malloc(sizeof(Node));
+    if (!new_node) return -1;
+    new_node->value = first;
+    new_node->next = NULL;
+
+    if (!group->head) {
+        group->head = new_node;
+        group->tail = new_node;
+    } else {
+        group->tail->next = new_node;
+        group->tail = new_node;
+    }
+    return 0;
+}
+
+void free_map(GroupMap* map) {
+    if (!map) return;
+    for (size_t i = 0; i < map->size; i++) {
+        Node* current = map->groups[i].head;
+        while (current) {
+            Node* temp = current;
+            current = current->next;
+            free(temp);
+        }
+    }
+    free(map->groups);
+    free(map);
+}
+
+void print_groups(const GroupMap* map) {
+    if (!map) return;
+    for (size_t i = 0; i < map->size; i++) {
+        printf("Key %d: [", map->groups[i].key);
+        Node* current = map->groups[i].head;
+        while (current) {
+            printf("%d", current->value);
+            if (current->next) printf(", ");
+            current = current->next;
+        }
+        printf("]\n");
+    }
+}
+
+int main(void) {
+    Tuple tuples[] = {
+        {10, 1}, {20, 2}, {30, 1},
+        {40, 3}, {50, 2}, {60, 4}
+    };
+    size_t num_tuples = sizeof(tuples) / sizeof(tuples[0]);
+
+    GroupMap* map = create_map(10);
+    if (!map) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return 1;
+    }
+
+    for (size_t i = 0; i < num_tuples; i++) {
+        if (add_to_group(map, tuples[i].first, tuples[i].second) != 0) {
+            fprintf(stderr, "Failed to add to group\n");
+            free_map(map);
+            return 1;
+        }
+    }
+
+    print_groups(map);
+
+    free_map(map);
+    return 0;
+}
+```

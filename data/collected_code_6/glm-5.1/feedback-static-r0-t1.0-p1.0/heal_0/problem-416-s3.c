@@ -1,0 +1,34 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int find_max_sum(int n) {
+    int *memo = (int *)calloc(n + 1, sizeof(int));
+    if (memo == NULL) {
+        return n;
+    }
+
+    for (int i = 0; i <= n; i++) {
+        if (i < 2) {
+            memo[i] = i;
+        } else {
+            int sum = i / 2 + i / 3 + i / 4;
+            if (sum > i) {
+                memo[i] = memo[i / 2] + memo[i / 3] + memo[i / 4];
+            } else {
+                memo[i] = i;
+            }
+        }
+    }
+
+    int result = memo[n];
+    free(memo);
+    return result;
+}
+
+int main(void) {
+    int num;
+    if (scanf("%d", &num) == 1) {
+        printf("%d\n", find_max_sum(num));
+    }
+    return 0;
+}

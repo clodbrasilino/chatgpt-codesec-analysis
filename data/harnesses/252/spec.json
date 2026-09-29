@@ -1,0 +1,53 @@
+{
+  "task_id": 252,
+  "text": "Write a C function to convert complex numbers to polar coordinates.",
+  "fn_candidates": [
+    "convert",
+    "Convert",
+    "convert",
+    "convert"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "convert",
+      "args": [
+        1
+      ],
+      "expected": [
+        1.0,
+        0.0
+      ],
+      "assert_src": "assert convert(1) == (1.0, 0.0)"
+    },
+    {
+      "fn_name": "convert",
+      "args": [
+        4
+      ],
+      "expected": [
+        4.0,
+        0.0
+      ],
+      "assert_src": "assert convert(4) == (4.0,0.0)"
+    },
+    {
+      "fn_name": "convert",
+      "args": [
+        5
+      ],
+      "expected": [
+        5.0,
+        0.0
+      ],
+      "assert_src": "assert convert(5) == (5.0,0.0)"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "float-list",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

@@ -1,0 +1,76 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int key;
+    int value;
+} dict;
+
+typedef struct {
+    dict **data;
+    int size;
+} dictList;
+
+dict* createDict() {
+    dict* newDict = (dict*) malloc(sizeof(dict));
+    if (newDict == NULL) {
+        return NULL;
+    }
+
+    newDict->key = 0;
+    newDict->value = 0;
+    return newDict;
+}
+
+dictList* createDictList(int size) {
+    dictList* newList = (dictList*) malloc(sizeof(dictList));
+    if (newList == NULL) {
+        return NULL;
+    }
+
+    newList->data = (dict**) malloc(sizeof(dict*) * size);
+    if (newList->data == NULL) {
+        free(newList);
+        return NULL;
+    }
+    
+    newList->size = size;
+    for(int i = 0; i < size; ++i) {
+        newList->data[i] = createDict();
+        
+        if (newList->data[i] == NULL) {
+            for (int j = 0; j < i; ++j) {
+                free(newList->data[j]);
+            }
+            free(newList->data);
+            free(newList);
+            return NULL;
+        }
+    }
+
+    return newList;
+}
+
+void freeDictList(dictList* list) {
+    if (list) {
+        for (int i = 0; i < list->size; ++i) {
+            free(list->data[i]);
+        }
+        free(list->data);
+        free(list);
+    }
+}
+
+int main() {
+    int len = 10;
+    dictList *listOfDicts = createDictList(len);
+    if(listOfDicts == NULL) {
+        printf("Failed to allocate memory.\n");
+        return 0;
+    }
+    
+    // Use listOfDicts here
+    
+    freeDictList(listOfDicts);
+    return 0;
+}

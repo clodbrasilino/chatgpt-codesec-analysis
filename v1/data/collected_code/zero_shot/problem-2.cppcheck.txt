@@ -1,0 +1,9 @@
+collected_code/problem-2-0.c:8:22: error: Cannot determine that 'list1[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+            if (list1[i] == list2[j]) {
+                     ^
+collected_code/problem-2-0.c:8:34: error: Cannot determine that 'list2[j]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+            if (list1[i] == list2[j]) {
+                                 ^
+collected_code/problem-2-0.c:9:36: error: Cannot determine that 'list1[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+                printf("%d ", list1[i]);
+                                   ^

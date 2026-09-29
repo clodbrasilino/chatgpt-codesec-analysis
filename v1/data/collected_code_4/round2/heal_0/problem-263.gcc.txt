@@ -1,0 +1,15 @@
+./collected_code_4/round2//heal_0/problem-263.c: In function 'insert':
+./collected_code_4/round2//heal_0/problem-263.c:25:15: warning: dereference of possibly-NULL 'item' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   25 |    item->data = data;
+      |    ~~~~~~~~~~~^~~~~~
+  'insert': events 1-2
+    |
+    |   24 |    DataItem *item = (DataItem*) malloc(sizeof(DataItem));
+    |      |                                 ^~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                                 |
+    |      |                                 (1) this call could return NULL
+    |   25 |    item->data = data;
+    |      |    ~~~~~~~~~~~~~~~~~             
+    |      |               |
+    |      |               (2) 'item' could be NULL: unchecked value from (1)
+    |

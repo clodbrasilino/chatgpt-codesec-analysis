@@ -1,0 +1,124 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+#define MAX_LITERAL_LEN 4096
+
+static int escape_literal(const char *literal, size_t literal_len, char *buffer, size_t buffer_size)
+{
+    size_t j = 0;
+    size_t i;
+
+    if (literal == NULL || buffer == NULL || buffer_size == 0) {
+        return -1;
+    }
+
+    for (i = 0; i < literal_len; i++) {
+        if (strchr(".^$*+?()[]{}|\\", literal[i]) != NULL) {
+            if (j + 2 >= buffer_size) {
+                return -1;
+            }
+            buffer[j++] = '\\';
+            buffer[j++] = literal[i];
+        } else {
+            if (j + 1 >= buffer_size) {
+                return -1;
+            }
+            buffer[j++] = literal[i];
+        }
+    }
+    buffer[j] = '\0';
+    return 0;
+}
+
+static void print_regex_error(int errcode, const regex_t *regex, const char *prefix)
+{
+    size_t needed = regerror(errcode, regex, NULL, 0);
+    char *errbuf = malloc(needed);
+
+    if (errbuf != NULL) {
+        regerror(errcode, regex, errbuf, needed);
+        fprintf(stderr, "%s: %s\n", prefix, errbuf);
+        free(errbuf);
+    } else {
+        fprintf(stderr, "%s: unknown error (allocation failed)\n", prefix);
+    }
+}
+
+int search_pattern(const char *text, const char *literal, long *start, long *end)
+{
+    regex_t regex;
+    regmatch_t match;
+    char *escaped = NULL;
+    size_t literal_len;
+    size_t escaped_size;
+    int ret;
+
+    if (text == NULL || literal == NULL || start == NULL || end == NULL) {
+        return -1;
+    }
+
+    literal_len = strnlen(literal, MAX_LITERAL_LEN + 1);
+    if (literal_len > MAX_LITERAL_LEN) {
+        return -1;
+    }
+
+    escaped_size = (literal_len * 2) + 1;
+    escaped = malloc(escaped_size);
+    if (escaped == NULL) {
+        return -1;
+    }
+
+    if (escape_literal(literal, literal_len, escaped, escaped_size) != 0) {
+        free(escaped);
+        return -1;
+    }
+
+    ret = regcomp(&regex, escaped, REG_EXTENDED);
+    free(escaped);
+    escaped = NULL;
+
+    if (ret != 0) {
+        print_regex_error(ret, &regex, "regcomp failed");
+        return -1;
+    }
+
+    ret = regexec(&regex, text, 1, &match, 0);
+    if (ret == 0) {
+        *start = (long)match.rm_so;
+        *end = (long)match.rm_eo;
+        regfree(&regex);
+        return 0;
+    } else if (ret == REG_NOMATCH) {
+        regfree(&regex);
+        return 1;
+    } else {
+        print_regex_error(ret, &regex, "regexec failed");
+        regfree(&regex);
+        return -1;
+    }
+}
+
+int main(void)
+{
+    const char *text = "The quick brown fox jumps over the lazy dog";
+    const char *literal = "brown fox";
+    long start = 0;
+    long end = 0;
+    int result;
+
+    result = search_pattern(text, literal, &start, &end);
+
+    if (result == 0) {
+        printf("Pattern \"%s\" found in text.\n", literal);
+        printf("Match starts at index %ld and ends at index %ld.\n", start, end - 1);
+    } else if (result == 1) {
+        printf("Pattern \"%s\" not found in text.\n", literal);
+    } else {
+        fprintf(stderr, "An error occurred during pattern search.\n");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

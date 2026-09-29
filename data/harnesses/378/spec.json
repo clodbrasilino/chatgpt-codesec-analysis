@@ -1,0 +1,74 @@
+{
+  "task_id": 378,
+  "text": "Write a C function to shift last element to first position in the given list.",
+  "fn_candidates": [
+    "move_first",
+    "MoveFirst",
+    "moveFirst",
+    "movefirst"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "move_first",
+      "args": [
+        [
+          1,
+          2,
+          3,
+          4
+        ]
+      ],
+      "expected": [
+        4,
+        1,
+        2,
+        3
+      ],
+      "assert_src": "assert move_first([1,2,3,4]) == [4,1,2,3]"
+    },
+    {
+      "fn_name": "move_first",
+      "args": [
+        [
+          0,
+          1,
+          2,
+          3
+        ]
+      ],
+      "expected": [
+        3,
+        0,
+        1,
+        2
+      ],
+      "assert_src": "assert move_first([0,1,2,3]) == [3,0,1,2]"
+    },
+    {
+      "fn_name": "move_first",
+      "args": [
+        [
+          9,
+          8,
+          7,
+          1
+        ]
+      ],
+      "expected": [
+        1,
+        9,
+        8,
+        7
+      ],
+      "assert_src": "assert move_first([9,8,7,1]) == [1,9,8,7]"
+    }
+  ],
+  "arg_kinds": [
+    "int-list"
+  ],
+  "return_kind": "int-list",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

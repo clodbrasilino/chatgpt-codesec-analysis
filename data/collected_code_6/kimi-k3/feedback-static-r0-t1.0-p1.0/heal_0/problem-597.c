@@ -1,0 +1,49 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+int findKthElement(int arr1[], int n1, int arr2[], int n2, int k) {
+    if (k < 1 || k > n1 + n2) {
+        return INT_MIN;
+    }
+    
+    if (n1 > n2) {
+        return findKthElement(arr2, n2, arr1, n1, k);
+    }
+    
+    if (n1 == 0) {
+        return arr2[k - 1];
+    }
+    
+    if (k == 1) {
+        return (arr1[0] < arr2[0]) ? arr1[0] : arr2[0];
+    }
+    
+    int i = (k / 2 < n1) ? k / 2 : n1;
+    int j = (k / 2 < n2) ? k / 2 : n2;
+    
+    if (arr1[i - 1] < arr2[j - 1]) {
+        return findKthElement(arr1 + i, n1 - i, arr2, n2, k - i);
+    } else {
+        return findKthElement(arr1, n1, arr2 + j, n2 - j, k - j);
+    }
+}
+
+int main(void) {
+    int arr1[] = {2, 3, 6, 7, 9};
+    int arr2[] = {1, 4, 8, 10};
+    int n1 = sizeof(arr1) / sizeof(arr1[0]);
+    int n2 = sizeof(arr2) / sizeof(arr2[0]);
+    int k = 5;
+    
+    int result = findKthElement(arr1, n1, arr2, n2, k);
+    
+    if (result == INT_MIN) {
+        fprintf(stderr, "Invalid input: k is out of range\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("The %dth element is: %d\n", k, result);
+    
+    return EXIT_SUCCESS;
+}

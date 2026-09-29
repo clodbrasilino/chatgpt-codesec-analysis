@@ -1,0 +1,45 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+double calculate_surface_area(double length, double width, double height);
+
+int main(void) {
+    double length = 0.0;
+    double width = 0.0;
+    double height = 0.0;
+    double surface_area = 0.0;
+
+    printf("Enter length: ");
+    if (scanf("%lf", &length) != 1) {
+        fprintf(stderr, "Invalid input for length\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter width: ");
+    if (scanf("%lf", &width) != 1) {
+        fprintf(stderr, "Invalid input for width\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter height: ");
+    if (scanf("%lf", &height) != 1) {
+        fprintf(stderr, "Invalid input for height\n");
+        return EXIT_FAILURE;
+    }
+
+    if (length <= 0.0 || width <= 0.0 || height <= 0.0) {
+        fprintf(stderr, "Dimensions must be positive values\n");
+        return EXIT_FAILURE;
+    }
+
+    surface_area = calculate_surface_area(length, width, height);
+    printf("Surface area: %.2f\n", surface_area);
+
+    return EXIT_SUCCESS;
+}
+
+double calculate_surface_area(double length, double width, double height) {
+    return 2.0 * (length * width + width * height + height * length);
+}
+```

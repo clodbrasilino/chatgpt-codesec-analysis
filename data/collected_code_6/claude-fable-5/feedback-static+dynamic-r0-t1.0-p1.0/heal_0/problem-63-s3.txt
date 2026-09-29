@@ -1,0 +1,63 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int first;
+    int second;
+} Tuple;
+
+int max_difference(const Tuple *tuples, size_t count, int *result)
+{
+    size_t i;
+    int diff;
+    int max_diff;
+
+    if (tuples == NULL || result == NULL || count == 0U) {
+        return -1;
+    }
+
+    if (tuples[0].second >= tuples[0].first) {
+        max_diff = tuples[0].second - tuples[0].first;
+    } else {
+        max_diff = tuples[0].first - tuples[0].second;
+    }
+
+    for (i = 1U; i < count; i++) {
+        if (tuples[i].second >= tuples[i].first) {
+            diff = tuples[i].second - tuples[i].first;
+        } else {
+            diff = tuples[i].first - tuples[i].second;
+        }
+        if (diff > max_diff) {
+            max_diff = diff;
+        }
+    }
+
+    *result = max_diff;
+    return 0;
+}
+
+int main(void)
+{
+    Tuple data[] = {
+        {3, 5},
+        {1, 7},
+        {10, 3},
+        {1, 2}
+    };
+    size_t count = sizeof(data) / sizeof(data[0]);
+    int result = 0;
+
+    if (max_difference(data, count, &result) != 0) {
+        (void)fprintf(stderr, "Error: invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Maximum difference: %d\n", result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```

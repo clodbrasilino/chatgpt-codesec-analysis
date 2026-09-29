@@ -1,0 +1,76 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char *remove_odd_index_chars(const char *input)
+{
+    size_t len;
+    size_t i;
+    size_t j;
+    char *result;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    len = strlen(input);
+    result = malloc((len / 2U) + 2U);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    j = 0U;
+    for (i = 0U; i < len; i++) {
+        if ((i % 2U) == 0U) {
+            result[j] = input[i];
+            j++;
+        }
+    }
+    result[j] = '\0';
+
+    return result;
+}
+
+int main(void)
+{
+    const char *test_strings[] = {
+        "abcdef",
+        "hello world",
+        "a",
+        ""
+    };
+    size_t count;
+    size_t i;
+    /* Possible weaknesses found:
+     *  The scope of the variable 'output' can be reduced. [variableScope]
+     */
+    char *output;
+    int status;
+
+    status = EXIT_SUCCESS;
+    count = sizeof(test_strings) / sizeof(test_strings[0]);
+
+    for (i = 0U; i < count; i++) {
+        output = remove_odd_index_chars(test_strings[i]);
+        if (output == NULL) {
+            if (fprintf(stderr, "Memory allocation failed\n") < 0) {
+                status = EXIT_FAILURE;
+                break;
+            }
+            status = EXIT_FAILURE;
+            break;
+        }
+        if (printf("Input: \"%s\" -> Output: \"%s\"\n", test_strings[i], output) < 0) {
+            free(output);
+            status = EXIT_FAILURE;
+            break;
+        }
+        free(output);
+        output = NULL;
+    }
+
+    return status;
+}

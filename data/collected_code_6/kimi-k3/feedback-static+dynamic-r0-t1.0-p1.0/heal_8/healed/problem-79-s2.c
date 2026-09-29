@@ -1,0 +1,41 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+#include <stdlib.h>
+
+bool is_odd_length(const char *word, size_t max_len)
+{
+    if (word == NULL)
+    {
+        return false;
+    }
+    return (strnlen(word, max_len) % 2) != 0;
+}
+
+int main(void)
+{
+    char *word = NULL;
+    size_t buffer_size = 0;
+    ssize_t len = getline(&word, &buffer_size, stdin);
+
+    if (len != -1)
+    {
+        if (len > 0 && word[len - 1] == '\n')
+        {
+            word[len - 1] = '\0';
+            len--;
+        }
+
+        if (is_odd_length(word, (size_t)len + 1))
+        {
+            printf("Odd length\n");
+        }
+        else
+        {
+            printf("Even length\n");
+        }
+    }
+
+    free(word);
+    return 0;
+}

@@ -1,0 +1,27 @@
+#include <stdio.h>
+#include <string.h>
+
+void replace_blank_spaces(char str[], char ch) {
+    int i;
+    for(i = 0; str[i]; i++) {
+        if(str[i] == ' ') {
+            str[i] = ch;
+        }
+    }
+}
+
+int main() {
+    char str[100];
+    char ch;
+
+    printf("Enter a string: ");
+    fgets(str, sizeof(str), stdin);
+
+    printf("Enter a character to replace blank spaces: ");
+    ch = getchar();
+
+    replace_blank_spaces(str, ch);
+
+    printf("String after replacing blank spaces: %s", str);
+    return 0;
+}

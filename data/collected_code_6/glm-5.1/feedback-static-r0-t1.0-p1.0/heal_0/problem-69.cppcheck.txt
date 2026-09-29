@@ -1,0 +1,7 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-69.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-69.c:4:28: style: Parameter 'list' can be declared as pointer to const [constParameterPointer]
+bool contains_sublist(int *list, size_t list_len, int *sublist, size_t sublist_len) {
+                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-69.c:4:56: style: Parameter 'sublist' can be declared as pointer to const [constParameterPointer]
+bool contains_sublist(int *list, size_t list_len, int *sublist, size_t sublist_len) {
+                                                       ^

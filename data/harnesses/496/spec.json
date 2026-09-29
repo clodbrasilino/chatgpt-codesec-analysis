@@ -1,0 +1,91 @@
+{
+  "task_id": 496,
+  "text": "Write a C function to find the smallest integers from a given list of numbers using heap queue algorithm.",
+  "fn_candidates": [
+    "heap_queue_smallest",
+    "HeapQueueSmallest",
+    "heapQueueSmallest",
+    "heapqueuesmallest"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "heap_queue_smallest",
+      "args": [
+        [
+          25,
+          35,
+          22,
+          85,
+          14,
+          65,
+          75,
+          25,
+          58
+        ],
+        3
+      ],
+      "expected": [
+        14,
+        22,
+        25
+      ],
+      "assert_src": "assert heap_queue_smallest( [25, 35, 22, 85, 14, 65, 75, 25, 58],3)==[14, 22, 25] "
+    },
+    {
+      "fn_name": "heap_queue_smallest",
+      "args": [
+        [
+          25,
+          35,
+          22,
+          85,
+          14,
+          65,
+          75,
+          25,
+          58
+        ],
+        2
+      ],
+      "expected": [
+        14,
+        22
+      ],
+      "assert_src": "assert heap_queue_smallest( [25, 35, 22, 85, 14, 65, 75, 25, 58],2)==[14, 22]"
+    },
+    {
+      "fn_name": "heap_queue_smallest",
+      "args": [
+        [
+          25,
+          35,
+          22,
+          85,
+          14,
+          65,
+          75,
+          22,
+          58
+        ],
+        5
+      ],
+      "expected": [
+        14,
+        22,
+        22,
+        25,
+        35
+      ],
+      "assert_src": "assert heap_queue_smallest( [25, 35, 22, 85, 14, 65, 75, 22, 58],5)==[14, 22, 22, 25, 35]"
+    }
+  ],
+  "arg_kinds": [
+    "int",
+    "int-list"
+  ],
+  "return_kind": "int-list",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

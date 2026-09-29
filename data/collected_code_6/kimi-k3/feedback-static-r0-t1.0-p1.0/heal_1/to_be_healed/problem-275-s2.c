@@ -1,0 +1,39 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+/* Possible weaknesses found:
+ *  Parameter 'arr' can be declared as const array [constParameter]
+ *  Parameter 'removed_elements' can be declared as const array [constParameter]
+ */
+int find_last_removed_position(int arr[], int size, int removed_elements[], int removed_size) {
+    if (arr == NULL || removed_elements == NULL || size <= 0 || removed_size <= 0) {
+        return -1;
+    }
+
+    int last_removed_position = -1;
+    int last_removed_value = removed_elements[removed_size - 1];
+
+    for (int i = 0; i < size; i++) {
+        if (arr[i] == last_removed_value) {
+            last_removed_position = i;
+        }
+    }
+
+    return last_removed_position;
+}
+
+int main() {
+    int arr[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    int removed_elements[] = {2, 4, 6, 8};
+    int size = sizeof(arr) / sizeof(arr[0]);
+    int removed_size = sizeof(removed_elements) / sizeof(removed_elements[0]);
+
+    int position = find_last_removed_position(arr, size, removed_elements, removed_size);
+    if (position != -1) {
+        printf("The position of the last removed element is: %d\n", position);
+    } else {
+        printf("The last removed element is not found in the array.\n");
+    }
+
+    return 0;
+}

@@ -1,0 +1,110 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+#define MAX_INPUT_LEN 4096U
+
+char *add_spaces(const char *input)
+{
+    regex_t regex;
+    regmatch_t match;
+    char *result;
+    size_t len;
+    size_t out;
+    size_t offset;
+    size_t capacity;
+    int rc;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    len = strnlen(input, MAX_INPUT_LEN);
+    if (len >= MAX_INPUT_LEN) {
+        return NULL;
+    }
+
+    rc = regcomp(&regex, "[A-Z]", REG_EXTENDED);
+    if (rc != 0) {
+        return NULL;
+    }
+
+    capacity = (2U * len) + 1U;
+    result = malloc(capacity);
+    if (result == NULL) {
+        regfree(&regex);
+        return NULL;
+    }
+
+    out = 0U;
+    offset = 0U;
+    while ((offset < len) &&
+           (regexec(&regex, input + offset, 1U, &match, 0) == 0)) {
+        size_t start = offset + (size_t)match.rm_so;
+        size_t chunk = (size_t)match.rm_so;
+
+        if ((out + chunk + 2U) > capacity) {
+            free(result);
+            regfree(&regex);
+            return NULL;
+        }
+
+        memcpy(result + out, input + offset, chunk);
+        out += chunk;
+
+        if ((start > 0U) && (input[start - 1U] != ' ')) {
+            result[out] = ' ';
+            out++;
+        }
+
+        result[out] = input[start];
+        out++;
+        offset = start + 1U;
+    }
+
+    if ((out + (len - offset) + 1U) > capacity) {
+        free(result);
+        regfree(&regex);
+        return NULL;
+    }
+
+    memcpy(result + out, input + offset, len - offset);
+    out += len - offset;
+    result[out] = '\0';
+
+    regfree(&regex);
+    return result;
+}
+
+int main(void)
+{
+    const char *text = "HelloWorldThisIsATestString";
+    char *spaced;
+
+    spaced = add_spaces(text);
+    if (spaced == NULL) {
+        fprintf(stderr, "Failed to process input string\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Input : %s\n", text);
+    printf("Output: %s\n", spaced);
+
+    free(spaced);
+    return EXIT_SUCCESS;
+}
+```
+
+**Key changes addressing the identified weaknesses:**
+
+1. **CWE-126 (over-read via `strlen`)**: Replaced `strlen` with `strnlen` bounded by `MAX_INPUT_LEN`. If the string is not properly terminated within that limit, the function rejects the input rather than reading past the buffer.
+
+2. **CWE-120 (unchecked `memcpy` in the loop)**: Before each copy, the code verifies that `out + chunk + 2U` (chunk plus a potential space and the matched character) fits within the allocated `capacity`. On violation it cleans up and returns `NULL`.
+
+3. **CWE-120 (unchecked final `memcpy`)**: The tail copy now validates `out + (len - offset) + 1U <= capacity` (including room for the NUL terminator) before copying.
+
+4. **Resource hygiene preserved**: All error paths still release both the compiled regex (`regfree`) and the allocated buffer (`free`), avoiding leaks introduced by the new bounds-check exits.
+
+The worst-case output size remains `2 * len + 1` (a space before every character plus the terminator), so the bounds checks should never trigger in practice — they serve as defense-in-depth against future logic changes.

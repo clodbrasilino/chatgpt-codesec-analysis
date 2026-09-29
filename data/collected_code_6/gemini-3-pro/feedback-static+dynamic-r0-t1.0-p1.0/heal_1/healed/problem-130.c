@@ -1,0 +1,62 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct ElementCount {
+    int value;
+    int count;
+};
+
+int findMaxFrequencyItem(const int* list, size_t size, int* result) {
+    if (list == NULL || size == 0 || result == NULL) {
+        return -1;
+    }
+
+    struct ElementCount* counts = (struct ElementCount*)calloc(size, sizeof(struct ElementCount));
+    if (counts == NULL) {
+        return -1;
+    }
+
+    size_t unique_elements = 0;
+    for (size_t i = 0; i < size; ++i) {
+        int found = 0;
+        for (size_t j = 0; j < unique_elements; ++j) {
+            if (counts[j].value == list[i]) {
+                counts[j].count++;
+                found = 1;
+                break;
+            }
+        }
+        if (!found) {
+            counts[unique_elements].value = list[i];
+            counts[unique_elements].count = 1;
+            unique_elements++;
+        }
+    }
+
+    int max_count = 0;
+    int max_item = list[0];
+    for (size_t i = 0; i < unique_elements; ++i) {
+        if (counts[i].count > max_count) {
+            max_count = counts[i].count;
+            max_item = counts[i].value;
+        }
+    }
+
+    *result = max_item;
+    free(counts);
+    return 0;
+}
+
+int main(void) {
+    int list[] = {1, 3, 2, 1, 4, 1, 2, 5, 2, 2, 3};
+    size_t size = sizeof(list) / sizeof(list[0]);
+    int max_freq_item;
+
+    if (findMaxFrequencyItem(list, size, &max_freq_item) == 0) {
+        printf("Item with maximum frequency: %d\n", max_freq_item);
+    } else {
+        printf("Error finding maximum frequency item.\n");
+    }
+
+    return 0;
+}

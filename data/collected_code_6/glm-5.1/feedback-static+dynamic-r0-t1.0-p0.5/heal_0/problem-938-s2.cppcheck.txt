@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-938-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-938-s2.c:8:9: style: The scope of the variable 'diff' can be reduced. [variableScope]
+    int diff, current_max, current_min;
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-938-s2.c:8:15: style: The scope of the variable 'current_max' can be reduced. [variableScope]
+    int diff, current_max, current_min;
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-938-s2.c:8:28: style: The scope of the variable 'current_min' can be reduced. [variableScope]
+    int diff, current_max, current_min;
+                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-938-s2.c:5:29: style: Parameter 'arr1' can be declared as const array [constParameter]
+void find_three_closest(int arr1[], int n1, int arr2[], int n2, int arr3[], int n3, int result[3]) {
+                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-938-s2.c:5:49: style: Parameter 'arr2' can be declared as const array [constParameter]
+void find_three_closest(int arr1[], int n1, int arr2[], int n2, int arr3[], int n3, int result[3]) {
+                                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-938-s2.c:5:69: style: Parameter 'arr3' can be declared as const array [constParameter]
+void find_three_closest(int arr1[], int n1, int arr2[], int n2, int arr3[], int n3, int result[3]) {
+                                                                    ^

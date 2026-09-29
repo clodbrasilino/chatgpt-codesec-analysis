@@ -1,0 +1,36 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#define ASCII_SIZE 256
+
+void mostCommonElements(char *str, int frequencyCounts[ASCII_SIZE]) {
+    int len = strlen(str);
+
+    for (int i = 0; i < len; i++)
+        frequencyCounts[str[i]]++;
+}
+
+int main() {
+    char str[] = "test string to find most common elements";
+    int frequencyCounts[ASCII_SIZE] = {0};
+
+    mostCommonElements(str, frequencyCounts);
+
+    int maxCount = 0;
+    char result;
+    for (int i = 0; i < ASCII_SIZE; i++) {
+        if (maxCount < frequencyCounts[i]) {
+            maxCount = frequencyCounts[i];
+            result = (char)i;
+        }
+    }
+
+    if (maxCount > 0) {
+        printf("Most common element : '%c' and its count : %d \n", result, maxCount);
+    } else {
+        printf("Unable to find the most common element.\n");
+    }
+
+    return 0;
+}
+```

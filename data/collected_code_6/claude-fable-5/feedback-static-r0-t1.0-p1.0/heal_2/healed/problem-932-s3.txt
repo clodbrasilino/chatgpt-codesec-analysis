@@ -1,0 +1,129 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_WORD_LEN 4096
+
+char **remove_duplicates(const char **words, size_t count, size_t *out_count)
+{
+    char **result = NULL;
+    size_t unique = 0;
+    size_t i;
+    size_t j;
+
+    if (out_count == NULL) {
+        return NULL;
+    }
+
+    *out_count = 0;
+
+    if (words == NULL || count == 0) {
+        return NULL;
+    }
+
+    result = calloc(count, sizeof(char *));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    for (i = 0; i < count; i++) {
+        int found = 0;
+        size_t len;
+        size_t alloc_size;
+
+        if (words[i] == NULL) {
+            continue;
+        }
+
+        len = strnlen(words[i], MAX_WORD_LEN);
+        if (len >= MAX_WORD_LEN) {
+            continue;
+        }
+
+        for (j = 0; j < unique; j++) {
+            if (strncmp(result[j], words[i], MAX_WORD_LEN) == 0) {
+                found = 1;
+                break;
+            }
+        }
+
+        if (!found) {
+            alloc_size = len + 1;
+            if (alloc_size < len) {
+                continue;
+            }
+
+            result[unique] = malloc(alloc_size);
+            if (result[unique] == NULL) {
+                for (j = 0; j < unique; j++) {
+                    free(result[j]);
+                }
+                free(result);
+                return NULL;
+            }
+
+            memcpy(result[unique], words[i], len);
+            result[unique][len] = '\0';
+            unique++;
+        }
+    }
+
+    *out_count = unique;
+    return result;
+}
+
+void free_word_list(char **words, size_t count)
+{
+    size_t i;
+
+    if (words == NULL) {
+        return;
+    }
+
+    for (i = 0; i < count; i++) {
+        free(words[i]);
+    }
+    free(words);
+}
+
+int main(void)
+{
+    const char *input[] = {
+        "apple", "banana", "apple", "cherry", "banana", "date", "apple"
+    };
+    size_t input_count = sizeof(input) / sizeof(input[0]);
+    size_t result_count = 0;
+    char **result;
+    size_t i;
+
+    result = remove_duplicates(input, input_count, &result_count);
+    if (result == NULL) {
+        fprintf(stderr, "Failed to remove duplicates\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Unique words:\n");
+    for (i = 0; i < result_count; i++) {
+        printf("%s\n", result[i]);
+    }
+
+    free_word_list(result, result_count);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The original code was already largely safe. The flagged `memcpy` (CWE-120) was not a genuine buffer overflow: the destination is allocated with `malloc(len + 1)` immediately before the copy of exactly `len` bytes, followed by explicit NUL-termination. The length itself is bounded by `strnlen(words[i], MAX_WORD_LEN)` with rejection of anything at or above the cap, so `len` is always in `[0, MAX_WORD_LEN)`.
+
+The rewrite hardens the code defensively:
+
+1. **Explicit allocation-size overflow guard** — `alloc_size = len + 1` is checked for wraparound before `malloc`. Given the `MAX_WORD_LEN` bound this cannot trigger in practice, but it makes the invariant (destination ≥ source + 1) locally verifiable, which silences the static-analysis concern by construction rather than by distant reasoning.
+
+2. **Invariants preserved** — the destination buffer size (`len + 1`) provably holds the `len` bytes copied plus the terminator, satisfying the CWE-120 requirement that the destination can always hold the source data.
+
+3. **Existing strengths retained** — bounded string operations (`strnlen`, `strncmp`), NULL checks on all pointer parameters, full cleanup on partial allocation failure (no leaks on the error path), and `calloc` for the pointer array so unassigned slots are NULL-safe for `free_word_list`.
+
+The algorithm remains O(n²) in comparisons, which is acceptable for small inputs; for large datasets a hash set would be preferable, but that is a performance concern, not a security one.

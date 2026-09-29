@@ -1,0 +1,50 @@
+```C
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX_VAL 100000
+
+int first_elem_k_times(int* arr, int n, int k) {
+    int* counter = malloc(MAX_VAL * sizeof(int));
+    if(counter == NULL) {
+        // handles CWE-703
+        printf("Memory allocation failed.\n");
+        exit(1);
+    }
+
+    for(int i = 0; i < MAX_VAL; i++) {
+        counter[i] = 0;
+    }
+
+    for(int i = 0; i < n; i++) {
+        counter[arr[i]]++;
+        if(counter[arr[i]] == k) {
+            int result = arr[i];
+            free(counter); 
+            // handles CWE-664
+            return result;
+        }
+    }
+
+    free(counter); 
+    // handles CWE-664
+
+    // if no element found, return -1.
+    return -1;
+}
+
+int main() {
+    int arr[] = {1, 1, 2, 2, 2, 3, 4, 4, 4, 4};
+    int n = sizeof(arr)/sizeof(arr[0]);
+    int k = 2;
+    int result = first_elem_k_times(arr, n, k);
+    if(result == -1) {
+        printf("No element occurs %d times\n", k);
+    } else {
+        printf("First element occurring %d times is %d\n", k, result);
+    }
+
+    return 0;
+}
+```
+In the above code, I am counting the frequency of every element in the array using a counter array. As soon as an element's frequency becomes equal to k, I return the element. If after scanning the entire array no such element is found, I return -1. To handle errors during memory allocation (CWE-703), I check whether malloc() has returned NULL. To ensure that the dynamically allocated memory is freed when it is not longer needed (CWE-664), I call free(). The code adheres to C coding standards (CWE-710).

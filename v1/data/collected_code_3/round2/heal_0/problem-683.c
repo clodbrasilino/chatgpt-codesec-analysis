@@ -1,0 +1,26 @@
+#include <stdio.h>
+#include <math.h>
+
+int isSumOfTwoSquares(int n) {
+    int i = 0;
+    int limit = sqrt(n);
+    for(i = 0; i <= limit; i++) {
+        int b = sqrt(n - i*i);
+        if(b*b == (n - i*i)) {
+            return 1;
+        }
+    }
+    return 0;
+}
+
+int main() {
+    int num;
+    printf("Enter a number: ");
+    scanf("%d", &num);
+    if(isSumOfTwoSquares(num)) {
+        printf("Yes, the number can be represented as sum of two squares.\n");
+    } else {
+        printf("No, the number cannot be represented as sum of two squares.\n");
+    }
+    return 0;
+}

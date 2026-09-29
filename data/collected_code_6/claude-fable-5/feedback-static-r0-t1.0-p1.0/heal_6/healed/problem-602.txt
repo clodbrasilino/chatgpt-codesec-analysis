@@ -1,0 +1,66 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdbool.h>
+
+#define BUFFER_SIZE 256
+
+int first_repeated_char(const char *str)
+{
+    bool seen[256] = { false };
+    size_t i;
+
+    if (str == NULL) {
+        return -1;
+    }
+
+    for (i = 0; str[i] != '\0'; i++) {
+        unsigned char c = (unsigned char)str[i];
+        if (seen[c]) {
+            return (int)c;
+        }
+        seen[c] = true;
+    }
+
+    return -1;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    int result;
+
+    printf("Enter a string: ");
+    fflush(stdout);
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+    buffer[strcspn(buffer, "\n")] = '\0';
+
+    result = first_repeated_char(buffer);
+
+    if (result == -1) {
+        printf("No repeated character found\n");
+    } else {
+        printf("First repeated character: %c\n", (char)result);
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The Flawfinder warning (CWE-119/CWE-120) flags the statically-sized `char buffer[BUFFER_SIZE]` as a *potential* risk, but the original code already mitigates it correctly:
+
+1. **Bounded read** — `fgets(buffer, sizeof(buffer), stdin)` limits input to the buffer size, preventing overflow. Using `sizeof(buffer)` rather than the macro directly ensures the bound stays correct even if the declaration changes.
+2. **Guaranteed termination** — `buffer[sizeof(buffer) - 1] = '\0'` is a defensive belt-and-suspenders measure (technically redundant since `fgets` always null-terminates, but harmless).
+3. **Safe newline stripping** — `strcspn(buffer, "\n")` handles the missing-newline case safely, unlike the common broken idiom `buffer[strlen(buffer) - 1] = '\0'`, which can underflow on an empty string.
+4. **Correct char handling** — `first_repeated_char` casts to `unsigned char` before indexing `seen[256]`, avoiding negative-index UB with high-bit characters, and checks for `NULL` input.
+
+The code is therefore already sound as written; the Flawfinder hit is a false positive given the bounded I/O, so the rewrite preserves the existing logic with the comments removed.

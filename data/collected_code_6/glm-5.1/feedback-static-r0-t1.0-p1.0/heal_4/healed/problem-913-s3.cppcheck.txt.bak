@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-913-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-913-s3.c:48:24: style: Condition 'test6' is always true [knownConditionTrueFalse]
+    printf("%s: %d\n", test6 ? test6 : "(null)", ends_with_number(test6));
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-913-s3.c:39:25: note: Assignment 'test6=(const char*)1', assigned value is 1
+    const char *test6 = (const char *)1;
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-913-s3.c:48:24: note: Condition 'test6' is always true
+    printf("%s: %d\n", test6 ? test6 : "(null)", ends_with_number(test6));
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-913-s3.c:53:24: style: Condition 'test6' is always false [knownConditionTrueFalse]
+    printf("%s: %d\n", test6 ? test6 : "(null)", ends_with_number(test6));
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-913-s3.c:52:13: note: Assignment 'test6=NULL', assigned value is 0
+    test6 = NULL;
+            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-913-s3.c:53:24: note: Condition 'test6' is always false
+    printf("%s: %d\n", test6 ? test6 : "(null)", ends_with_number(test6));
+                       ^

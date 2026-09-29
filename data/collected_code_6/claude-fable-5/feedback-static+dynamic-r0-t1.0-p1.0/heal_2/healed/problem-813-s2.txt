@@ -1,0 +1,65 @@
+```c
+#include <stdio.h>
+#include <stddef.h>
+#include <string.h>
+
+#define BUFFER_SIZE 256
+
+size_t string_length(const char *str)
+{
+    size_t length = 0;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    while (str[length] != '\0') {
+        length++;
+    }
+
+    return length;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t length;
+    size_t i;
+
+    printf("Enter a string: ");
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    i = 0;
+    while (i < sizeof(buffer) && buffer[i] != '\0') {
+        if (buffer[i] == '\n') {
+            buffer[i] = '\0';
+            break;
+        }
+        i++;
+    }
+
+    length = string_length(buffer);
+
+    printf("Length of the string: %zu\n", length);
+
+    return 0;
+}
+```
+
+**Analysis notes:**
+
+The original code was already well-protected against the Flawfinder warning (CWE-119/CWE-120). The warning on the statically-sized `char buffer[256]` is a low-risk heuristic flag, and the code mitigates it properly:
+
+1. **Bounded input:** `fgets(buffer, (int)sizeof(buffer), stdin)` limits the read to the buffer size, preventing overflow — unlike `gets()` or unbounded `scanf("%s", ...)`.
+2. **Guaranteed termination:** `buffer[sizeof(buffer) - 1] = '\0';` is defensive (technically redundant, since `fgets` always null-terminates on success, but harmless and safe).
+3. **Bounds-checked iteration:** The newline-stripping loop checks `i < sizeof(buffer)` before dereferencing, so it cannot walk past the array.
+4. **NULL-safe helper:** `string_length()` guards against `NULL` input and only reads up to the terminator, which is guaranteed to exist within the buffer.
+5. **Return-value checking:** The `fgets` result is validated, handling EOF/read errors gracefully.
+
+The only change made is replacing the magic number `256` with a named constant (`BUFFER_SIZE`), which improves maintainability and ensures the size is defined in exactly one place. No functional vulnerabilities existed to fix — the flagged weakness was already properly mitigated through bounds checking and length-limited I/O functions, exactly as the Flawfinder remediation advice recommends.

@@ -1,0 +1,55 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+bool isSubsetSum(const int *set, size_t n, int sum)
+{
+    if (sum < 0 || set == NULL) {
+        return false;
+    }
+
+    bool *dp = calloc((size_t)sum + 1, sizeof(bool));
+    if (dp == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(EXIT_FAILURE);
+    }
+
+    dp[0] = true;
+
+    for (size_t i = 0; i < n; i++) {
+        if (set[i] < 0) {
+            free(dp);
+            return false;
+        }
+        for (int j = sum; j >= set[i]; j--) {
+            if (dp[j - set[i]]) {
+                dp[j] = true;
+            }
+        }
+    }
+
+    bool result = dp[sum];
+    free(dp);
+    return result;
+}
+
+int main(void)
+{
+    int set[] = {3, 34, 4, 12, 5, 2};
+    size_t n = sizeof(set) / sizeof(set[0]);
+    int sum = 9;
+
+    if (isSubsetSum(set, n, sum)) {
+        if (printf("Found a subset with given sum\n") < 0) {
+            return EXIT_FAILURE;
+        }
+    } else {
+        if (printf("No subset with given sum\n") < 0) {
+            return EXIT_FAILURE;
+        }
+    }
+
+    return EXIT_SUCCESS;
+}
+```

@@ -1,0 +1,62 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+
+#define MAX_WORD_LENGTH 256
+
+bool is_word_length_odd(const char *word, size_t max_length)
+{
+    size_t length;
+
+    if (word == NULL) {
+        return false;
+    }
+
+    length = strnlen(word, max_length);
+    return (length % 2U) != 0U;
+}
+
+int main(void)
+{
+    char buffer[MAX_WORD_LENGTH];
+    size_t length;
+
+    printf("Enter a word: ");
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error: failed to read input.\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1U] = '\0';
+
+    length = strnlen(buffer, sizeof(buffer));
+    if (length > 0U && buffer[length - 1U] == '\n') {
+        buffer[length - 1U] = '\0';
+    }
+
+    if (buffer[0] == '\0') {
+        fprintf(stderr, "Error: empty input.\n");
+        return 1;
+    }
+
+    if (is_word_length_odd(buffer, sizeof(buffer))) {
+        printf("The length of the word \"%s\" is odd.\n", buffer);
+    } else {
+        printf("The length of the word \"%s\" is even.\n", buffer);
+    }
+
+    return 0;
+}
+```
+
+Key changes made to address the identified weaknesses:
+
+1. **CWE-126 (strlen over-read)**: Replaced both `strlen` calls with `strnlen`, which takes a maximum length parameter and guarantees the read never exceeds the buffer bounds, even if the string were somehow not null-terminated.
+
+2. **CWE-119/CWE-120 (statically-sized array)**: The buffer usage was already reasonably safe since `fgets` is bounded by `sizeof(buffer)`, but I added an explicit forced null-termination of the last byte (`buffer[sizeof(buffer) - 1U] = '\0'`) as defense-in-depth, guaranteeing the buffer is always a valid C string before any string operations occur.
+
+3. **API hardening**: `is_word_length_odd` now accepts an explicit `max_length` bound so the function itself can never over-read, regardless of what callers pass in.
+
+Note: `strnlen` is POSIX / C23; if strict C99 portability is required, a small manual bounded-length loop can be substituted.

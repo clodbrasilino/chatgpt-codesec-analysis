@@ -1,0 +1,38 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+
+unsigned int count_set_bits_up_to_n(unsigned int n) {
+    if (n == 0) {
+        return 0;
+    }
+    unsigned int msb_pos = 0;
+    unsigned int temp = n;
+    while (temp >>= 1) {
+        msb_pos++;
+    }
+    unsigned int msb = 1U << msb_pos;
+    unsigned int count = msb_pos * (msb >> 1);
+    count += (n - msb + 1);
+    count += count_set_bits_up_to_n(n - msb);
+    return count;
+}
+
+/* Possible weaknesses found:
+ * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+ */
+int main(int argc, const char * const argv[const]) {
+    if (argc != 2) {
+        fprintf(stderr, "Usage: %s <unsigned_int>\n", argv[0]);
+        return EXIT_FAILURE;
+    }
+    char *endptr;
+    unsigned long val = strtoul(argv[1], &endptr, 10);
+    if (*endptr != '\0' || val > UINT32_MAX) {
+        return EXIT_FAILURE;
+    }
+    unsigned int n = (unsigned int)val;
+    unsigned int result = count_set_bits_up_to_n(n);
+    printf("%u\n", result);
+    return EXIT_SUCCESS;
+}

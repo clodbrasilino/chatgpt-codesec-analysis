@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-314-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-314-s3.c:15:9: style: The scope of the variable 'exc_new' can be reduced. [variableScope]
+    int exc_new;
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-314-s3.c:45:9: style: Variable 'row1' can be declared as const array [constVariable]
+    int row1[] = {1, 4, 5, 3, 2};
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-314-s3.c:46:9: style: Variable 'row2' can be declared as const array [constVariable]
+    int row2[] = {2, 5, 1, 9, 6};
+        ^

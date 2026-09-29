@@ -1,0 +1,110 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char* minimize_by_removing_one_char(const char* str) {
+    if (str == NULL) {
+        return NULL;
+    }
+
+    size_t len = 0;
+    while (str[len] != '\0') {
+        len++;
+        if (len > 1024 * 1024) {
+            return NULL;
+        }
+    }
+
+    if (len == 0) {
+        char* empty = (char*)malloc(1);
+        if (empty == NULL) {
+            return NULL;
+        }
+        empty[0] = '\0';
+        return empty;
+    }
+
+    int freq[256] = {0};
+    for (size_t i = 0; i < len; i++) {
+        freq[(unsigned char)str[i]]++;
+    }
+
+    int max_freq = -1;
+    char char_to_remove = '\0';
+    for (int i = 0; i < 256; i++) {
+        if (freq[i] > max_freq) {
+            max_freq = freq[i];
+            char_to_remove = (char)i;
+        }
+    }
+
+    if (max_freq <= 0) {
+        char* copy = (char*)malloc(len + 1);
+        if (copy == NULL) {
+            return NULL;
+        }
+        size_t k = 0;
+        while (k < len) {
+            copy[k] = str[k];
+            k++;
+        }
+        copy[len] = '\0';
+        return copy;
+    }
+
+    size_t remaining = len - max_freq;
+    char* result = (char*)malloc(remaining + 1);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    size_t j = 0;
+    for (size_t i = 0; i < len; i++) {
+        if (str[i] != char_to_remove) {
+            result[j++] = str[i];
+        }
+    }
+    result[j] = '\0';
+
+    return result;
+}
+
+int main(void) {
+    const char* test_cases[] = {
+        "aabbbcc",
+        "abcd",
+        "aaabbb",
+        "abcabcabc",
+        "",
+        "aaaa"
+    };
+
+    for (size_t i = 0; i < sizeof(test_cases) / sizeof(test_cases[0]); i++) {
+        char* minimized = minimize_by_removing_one_char(test_cases[i]);
+        if (minimized == NULL) {
+            printf("Input: \"%s\", Result: (allocation failed or null input)\n",
+                   test_cases[i] ? test_cases[i] : "NULL");
+            continue;
+        }
+        size_t min_len = 0;
+        while (minimized[min_len] != '\0') {
+            min_len++;
+            if (min_len > 1024 * 1024) {
+                break;
+            }
+        }
+        printf("Input: \"%s\", Minimized: \"%s\", Length: %zu\n",
+               test_cases[i], minimized, min_len);
+        free(minimized);
+    }
+
+    char* null_result = minimize_by_removing_one_char(NULL);
+    if (null_result == NULL) {
+        printf("Input: NULL, Result: NULL (handled)\n");
+    } else {
+        printf("Input: NULL, Result: \"%s\"\n", null_result);
+        free(null_result);
+    }
+
+    return 0;
+}

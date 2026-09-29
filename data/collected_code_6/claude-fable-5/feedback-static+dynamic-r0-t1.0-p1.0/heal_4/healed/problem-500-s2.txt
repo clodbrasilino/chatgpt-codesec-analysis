@@ -1,0 +1,121 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+#define MAX_STRING_LEN 4096U
+
+char *concatenate_list(const char *const *list, size_t count)
+{
+    size_t total = 0;
+    size_t i;
+    size_t *lengths = NULL;
+    size_t remaining;
+    char *result = NULL;
+    char *pos = NULL;
+
+    if (list == NULL) {
+        return NULL;
+    }
+
+    if (count == 0) {
+        result = malloc(1);
+        if (result != NULL) {
+            result[0] = '\0';
+        }
+        return result;
+    }
+
+    if (count > SIZE_MAX / sizeof(size_t)) {
+        return NULL;
+    }
+
+    lengths = malloc(count * sizeof(size_t));
+    if (lengths == NULL) {
+        return NULL;
+    }
+
+    for (i = 0; i < count; i++) {
+        size_t len;
+
+        if (list[i] == NULL) {
+            free(lengths);
+            return NULL;
+        }
+
+        len = strnlen(list[i], MAX_STRING_LEN);
+        if (len >= MAX_STRING_LEN) {
+            free(lengths);
+            return NULL;
+        }
+
+        if (len > SIZE_MAX - 1 - total) {
+            free(lengths);
+            return NULL;
+        }
+
+        lengths[i] = len;
+        total += len;
+    }
+
+    result = malloc(total + 1);
+    if (result == NULL) {
+        free(lengths);
+        return NULL;
+    }
+
+    pos = result;
+    remaining = total;
+    for (i = 0; i < count; i++) {
+        if (lengths[i] > remaining) {
+            free(lengths);
+            free(result);
+            return NULL;
+        }
+        if (lengths[i] > 0) {
+            memcpy(pos, list[i], lengths[i]);
+        }
+        pos += lengths[i];
+        remaining -= lengths[i];
+    }
+    *pos = '\0';
+
+    free(lengths);
+    return result;
+}
+
+int main(void)
+{
+    const char *const list[] = { "Hello", ", ", "world", "!" };
+    size_t count = sizeof(list) / sizeof(list[0]);
+    char *joined = concatenate_list(list, count);
+
+    if (joined == NULL) {
+        fprintf(stderr, "Concatenation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("%s\n", joined) < 0) {
+        free(joined);
+        return EXIT_FAILURE;
+    }
+
+    free(joined);
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the flagged weakness and its mitigation:**
+
+The Flawfinder warning on `memcpy` (CWE-120) is a heuristic hit — the original code was already largely safe. The rewritten version preserves and tightens all defenses that make the `memcpy` provably bounded:
+
+1. **Destination sizing is exact.** `result` is allocated as `total + 1`, where `total` is the sum of all precomputed `lengths[i]`. The copy loop tracks `remaining` and verifies `lengths[i] <= remaining` before every copy, so the destination can always hold the source data.
+
+2. **Integer overflow prevention.** Both the `count * sizeof(size_t)` allocation and the running `total` accumulation are guarded against `SIZE_MAX` overflow, preventing an undersized buffer from ever being allocated.
+
+3. **Bounded string measurement.** `strnlen` with `MAX_STRING_LEN` prevents reading past unterminated buffers. I simplified the original check: the condition `len == MAX_STRING_LEN && list[i][MAX_STRING_LEN - 1] != '\0'` was redundant — if `strnlen` returns `MAX_STRING_LEN`, no terminator exists in the scanned range, so the second clause is always true. `len >= MAX_STRING_LEN` is equivalent, clearer, and avoids the extra out-of-pattern array access.
+
+4. **TOCTOU consideration.** Lengths are captured once into `lengths[]` and reused for the copy, so even if the underlying strings changed between measurement and copy (e.g., shared memory), the copy never exceeds the allocated destination — at worst it copies a truncated/stale byte sequence, never overflows.
+
+5. **No leaks on any path.** Every error path frees `lengths` (and `result` where applicable), and `main` frees `joined` on both success and `printf` failure.

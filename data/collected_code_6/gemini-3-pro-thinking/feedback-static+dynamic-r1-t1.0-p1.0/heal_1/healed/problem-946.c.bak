@@ -1,0 +1,124 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+typedef struct {
+    char *word;
+    size_t count;
+} ElementCount;
+
+static char *duplicate_string(const char *src) {
+    if (!src) {
+        return NULL;
+    }
+    size_t len = strlen(src);
+    char *dst = malloc(len + 1);
+    if (dst) {
+        memcpy(dst, src, len + 1);
+    }
+    return dst;
+}
+
+static int compare_counts(const void *a, const void *b) {
+    const ElementCount *ec1 = (const ElementCount *)a;
+    const ElementCount *ec2 = (const ElementCount *)b;
+    if (ec1->count < ec2->count) {
+        return 1;
+    }
+    if (ec1->count > ec2->count) {
+        return -1;
+    }
+    return strcmp(ec1->word, ec2->word);
+}
+
+void find_most_common_elements(const char *text, size_t top_n) {
+    if (!text || top_n == 0) {
+        return;
+    }
+
+    char *text_copy = duplicate_string(text);
+    if (!text_copy) {
+        return;
+    }
+
+    size_t len = strlen(text_copy);
+    if (len > ((size_t)-1) / sizeof(ElementCount) - 1) {
+        free(text_copy);
+        return;
+    }
+
+    size_t max_elements = len + 1;
+    ElementCount *counts = malloc(max_elements * sizeof(ElementCount));
+    if (!counts) {
+        free(text_copy);
+        return;
+    }
+
+    size_t unique_count = 0;
+    const char *delimiters = " \t\n\r\f\v.,;:!?\"'()[]{}<>-";
+    char *start = text_copy;
+    char *end;
+
+    while (*start) {
+        start += strspn(start, delimiters);
+        if (!*start) {
+            break;
+        }
+        end = start + strcspn(start, delimiters);
+        char saved_char = *end;
+        *end = '\0';
+
+        for (char *p = start; *p; ++p) {
+            *p = (char)tolower((unsigned char)*p);
+        }
+
+        int found = 0;
+        for (size_t i = 0; i < unique_count; ++i) {
+            if (strcmp(counts[i].word, start) == 0) {
+                counts[i].count++;
+                found = 1;
+                break;
+            }
+        }
+
+        if (!found) {
+            counts[unique_count].word = duplicate_string(start);
+            if (!counts[unique_count].word) {
+                for (size_t i = 0; i < unique_count; ++i) {
+                    free(counts[i].word);
+                }
+                free(counts);
+                free(text_copy);
+                return;
+            }
+            counts[unique_count].count = 1;
+            unique_count++;
+        }
+
+        if (saved_char == '\0') {
+            break;
+        }
+        start = end + 1;
+    }
+
+    if (unique_count > 0) {
+        qsort(counts, unique_count, sizeof(ElementCount), compare_counts);
+        size_t display_count = unique_count < top_n ? unique_count : top_n;
+        for (size_t i = 0; i < display_count; ++i) {
+            printf("%s: %zu\n", counts[i].word, counts[i].count);
+        }
+    }
+
+    for (size_t i = 0; i < unique_count; ++i) {
+        free(counts[i].word);
+    }
+    free(counts);
+    free(text_copy);
+}
+
+int main(void) {
+    const char *sample_text = "This is a test. This test is only a test, testing the test.";
+    find_most_common_elements(sample_text, 3);
+    return 0;
+}

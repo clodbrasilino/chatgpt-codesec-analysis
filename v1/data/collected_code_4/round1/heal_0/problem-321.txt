@@ -1,0 +1,40 @@
+```c
+#include <stdio.h>
+
+unsigned long long find_demlo(unsigned int n) {
+    unsigned long long num = 1;
+    for (unsigned int i = 0; i < n; i++) {
+        num = (num * 10) + 1;
+    }
+
+    return num * num;
+}
+
+int main() {
+    unsigned int n = 0;
+    unsigned long long demlo = 0;
+
+    printf("Enter the value for n: ");
+    if (scanf("%u", &n) != 1) {
+        printf("Invalid input. Please enter a valid number.\n");
+        return 1;
+    }
+    demlo = find_demlo(n);
+
+    printf("The Demlo number for n=%u is %llu\n", n, demlo);
+    return 0;
+}
+```
+In this code:
+
+1. The `find_demlo` function calculates and returns the Demlo number for a given n.
+
+2. The `main` function begins by accepting the number n from the user. It ensures the input is a valid number, returns an error message if it's not, and otherwise proceeds to calculate the Demlo number and print it. 
+
+This code avoids:
+
+1. CWE-703 by correctly checking if `scanf` returns 1 (which means it successfully read a number). If not, it prints an error message and exits with a non-zero status code.
+
+2. CWE-710 by adhering to common C coding standards such as defining the `find_demlo` function before it's used in `main`, ensuring each if statement has corresponding braces, and declaring variables at the beginning of functions.
+
+3. CWE-664 doesn't really apply here because the resources in this code (memory) are automatically managed by the system. The code doesn't have any dynamic memory allocations or file operations where we should handle the lifecycle of resources.

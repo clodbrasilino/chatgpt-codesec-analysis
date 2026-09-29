@@ -1,0 +1,59 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int maxProfit(int k, const int* prices, int pricesSize) {
+    if (pricesSize == 0 || k == 0) return 0;
+    if (2 * k >= pricesSize) {
+        int profit = 0;
+        for (int i = 1; i < pricesSize; ++i) {
+            if (prices[i] > prices[i - 1]) {
+                profit += prices[i] - prices[i - 1];
+            }
+        }
+        return profit;
+    }
+
+    int *buy = (int *)malloc((k + 1) * sizeof(int));
+    int *sell = (int *)malloc((k + 1) * sizeof(int));
+
+    for (int i = 1; i <= k; ++i) {
+        buy[i] = -prices[0];
+        sell[i] = 0;
+    }
+
+    for (int i = 1; i < pricesSize; ++i) {
+        for (int j = 1; j <= k; ++j) {
+            buy[j] = (buy[j] > sell[j - 1] - prices[i]) ? buy[j] : sell[j - 1] - prices[i];
+            sell[j] = (sell[j] > buy[j] + prices[i]) ? sell[j] : buy[j] + prices[i];
+        }
+    }
+
+    int max_profit = sell[k];
+
+    free(buy);
+    free(sell);
+
+    return max_profit;
+}
+
+int main() {
+    const int prices1[] = {7, 1, 5, 3, 6, 4};
+    int k1 = 3;
+    int pricesSize1 = sizeof(prices1) / sizeof(prices1[0]);
+    int profit1 = maxProfit(k1, prices1, pricesSize1);
+    printf("Maximum Profit: %d\n", profit1);
+
+    const int prices2[] = {1, 2, 3, 4, 5};
+    int k2 = 2;
+    int pricesSize2 = sizeof(prices2) / sizeof(prices2[0]);
+    int profit2 = maxProfit(k2, prices2, pricesSize2);
+    printf("Maximum Profit: %d\n", profit2);
+
+    const int prices3[] = {7, 6, 4, 3, 1};
+    int k3 = 1;
+    int pricesSize3 = sizeof(prices3) / sizeof(prices3[0]);
+    int profit3 = maxProfit(k3, prices3, pricesSize3);
+    printf("Maximum Profit: %d\n", profit3);
+
+    return 0;
+}

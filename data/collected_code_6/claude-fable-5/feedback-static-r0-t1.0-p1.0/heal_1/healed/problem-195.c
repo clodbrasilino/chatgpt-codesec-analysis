@@ -1,0 +1,74 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int find_first_position(const int *arr, size_t size, int target)
+{
+    size_t low;
+    size_t high;
+    int result;
+
+    if (arr == NULL || size == 0U) {
+        return -1;
+    }
+
+    low = 0U;
+    high = size - 1U;
+    result = -1;
+
+    while (low <= high) {
+        const size_t mid = low + ((high - low) / 2U);
+
+        if (arr[mid] == target) {
+            result = (int)mid;
+            if (mid == 0U) {
+                break;
+            }
+            high = mid - 1U;
+        } else if (arr[mid] < target) {
+            low = mid + 1U;
+        } else {
+            if (mid == 0U) {
+                break;
+            }
+            high = mid - 1U;
+        }
+    }
+
+    return result;
+}
+
+int main(void)
+{
+    int arr[] = {1, 2, 2, 2, 3, 4, 5, 5, 6};
+    size_t size = sizeof(arr) / sizeof(arr[0]);
+    int target = 2;
+    int position;
+
+    position = find_first_position(arr, size, target);
+
+    if (position >= 0) {
+        printf("First position of %d is %d\n", target, position);
+    } else {
+        printf("Element %d not found\n", target);
+    }
+
+    target = 5;
+    position = find_first_position(arr, size, target);
+
+    if (position >= 0) {
+        printf("First position of %d is %d\n", target, position);
+    } else {
+        printf("Element %d not found\n", target);
+    }
+
+    target = 10;
+    position = find_first_position(arr, size, target);
+
+    if (position >= 0) {
+        printf("First position of %d is %d\n", target, position);
+    } else {
+        printf("Element %d not found\n", target);
+    }
+
+    return EXIT_SUCCESS;
+}

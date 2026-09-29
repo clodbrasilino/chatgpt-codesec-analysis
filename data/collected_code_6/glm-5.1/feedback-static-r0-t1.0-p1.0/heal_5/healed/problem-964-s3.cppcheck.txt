@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-964-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-964-s3.c:34:9: style: Condition '!is_length_even(null_word,0)' is always true [knownConditionTrueFalse]
+    if (!is_length_even(null_word, 0)) {
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-964-s3.c:34:24: note: Calling function 'is_length_even' returns 0
+    if (!is_length_even(null_word, 0)) {
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-964-s3.c:34:9: note: Condition '!is_length_even(null_word,0)' is always true
+    if (!is_length_even(null_word, 0)) {
+        ^

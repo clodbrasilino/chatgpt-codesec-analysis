@@ -1,0 +1,28 @@
+```C
+#include <stdio.h>
+
+typedef struct {
+    int first;
+    int second;
+} Pair;
+
+void assignPairs(Pair *pairs, int n) {
+    for(int i = 0; i < n; i++) {
+        pairs[i].first = i;
+        pairs[i].second = n - i - 1;
+    }
+}
+
+int main() {
+    int n = 5;
+    Pair pairs[n];
+
+    assignPairs(pairs, n);
+
+    for(int i = 0; i < n; i++) {
+        printf("Pair %d: (%d, %d)\n", i+1, pairs[i].first, pairs[i].second);
+    }
+
+    return 0;
+}
+```

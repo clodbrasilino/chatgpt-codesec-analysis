@@ -1,0 +1,89 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node *next;
+};
+
+static struct Node *create_node(int data) {
+    struct Node *node = malloc(sizeof(*node));
+    if (node == NULL) {
+        exit(EXIT_FAILURE);
+    }
+    node->data = data;
+    node->next = NULL;
+    return node;
+}
+
+static void append(struct Node **head, int data) {
+    struct Node *node = create_node(data);
+    if (*head == NULL) {
+        *head = node;
+        return;
+    }
+    struct Node *current = *head;
+    while (current->next != NULL) {
+        current = current->next;
+    }
+    current->next = node;
+}
+
+static void print_list(const struct Node *head) {
+    while (head != NULL) {
+        printf("%d ", head->data);
+        head = head->next;
+    }
+    printf("\n");
+}
+
+static void free_list(struct Node *head) {
+    while (head != NULL) {
+        struct Node *next = head->next;
+        free(head);
+        head = next;
+    }
+}
+
+struct Node *split(struct Node **head, int length) {
+    if (head == NULL || length < 0) {
+        return NULL;
+    }
+
+    if (length == 0) {
+        struct Node *second = *head;
+        *head = NULL;
+        return second;
+    }
+
+    struct Node *current = *head;
+    for (int i = 1; i < length && current != NULL; ++i) {
+        current = current->next;
+    }
+
+    if (current == NULL) {
+        return NULL;
+    }
+
+    struct Node *second = current->next;
+    current->next = NULL;
+    return second;
+}
+
+int main(void) {
+    struct Node *list = NULL;
+
+    for (int i = 1; i <= 5; ++i) {
+        append(&list, i);
+    }
+
+    struct Node *second = split(&list, 3);
+
+    print_list(list);
+    print_list(second);
+
+    free_list(list);
+    free_list(second);
+
+    return 0;
+}

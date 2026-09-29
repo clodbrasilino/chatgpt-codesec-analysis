@@ -1,0 +1,23 @@
+```C
+#include <stdio.h>
+#include <math.h>
+
+double cylinder_volume(double radius, double height) {
+    return M_PI * radius * radius * height;
+}
+
+int main() {
+    double radius, height, volume;
+
+    printf("Enter radius of the cylinder: ");
+    scanf("%lf", &radius);
+    printf("Enter height of the cylinder: ");
+    scanf("%lf", &height);
+
+    volume = cylinder_volume(radius, height);
+
+    printf("Volume of the cylinder is %.2lf\n", volume);
+
+    return 0;
+}
+```

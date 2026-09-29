@@ -1,0 +1,62 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+unsigned long long binomial_coefficient(int n, int k) {
+    if (k < 0 || k > n) {
+        return 0;
+    }
+    if (k == 0 || k == n) {
+        return 1;
+    }
+    if (k > n / 2) {
+        k = n - k;
+    }
+    
+    unsigned long long res = 1;
+    for (int i = 1; i <= k; ++i) {
+        res = res * (n - i + 1);
+        res = res / i;
+    }
+    
+    return res;
+}
+
+unsigned long long lobb_number(int n, int m) {
+    if (n < 0 || m < 0 || n < m) {
+        return 0;
+    }
+    
+    unsigned long long bin_coeff = binomial_coefficient(2 * n, n + m);
+    unsigned long long lobb = ((2ULL * m + 1ULL) * bin_coeff) / (n + m + 1ULL);
+    
+    return lobb;
+}
+
+/* Possible weaknesses found:
+ *  Parameter 'argv' can be declared as const array [constParameter]
+ */
+int main(int argc, char *argv[]) {
+    if (argc < 3) {
+        fprintf(stderr, "Usage: %s <n> <m>\n", argv[0]);
+        return 1;
+    }
+    
+    /* Possible weaknesses found:
+     * Flawfinder atoi: Unless checked, the resulting number can exceed the expected range (CWE-190). If source untrusted, check both minimum and maximum, even if the input had no minus sign (large numbers can roll over into negative number; consider saving to an unsigned value if that is intended). (risk 2, integer)
+     */
+    int n = atoi(argv[1]);
+    /* Possible weaknesses found:
+     * Flawfinder atoi: Unless checked, the resulting number can exceed the expected range (CWE-190). If source untrusted, check both minimum and maximum, even if the input had no minus sign (large numbers can roll over into negative number; consider saving to an unsigned value if that is intended). (risk 2, integer)
+     */
+    int m = atoi(argv[2]);
+    
+    if (n < m || m < 0 || n < 0) {
+        fprintf(stderr, "Invalid input bounds. Ensure n >= m >= 0.\n");
+        return 1;
+    }
+    
+    unsigned long long result = lobb_number(n, m);
+    printf("%llu\n", result);
+    
+    return 0;
+}

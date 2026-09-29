@@ -1,0 +1,47 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+#include <errno.h>
+
+double calculate_tetrahedron_volume(double edge_length)
+{
+    if (edge_length <= 0.0 || !isfinite(edge_length)) {
+        errno = EINVAL;
+        return -1.0;
+    }
+    
+    double volume = pow(edge_length, 3.0) / (6.0 * sqrt(2.0));
+    
+    if (!isfinite(volume)) {
+        errno = ERANGE;
+        return -1.0;
+    }
+    
+    return volume;
+}
+
+int main(void)
+{
+    double edge_length;
+    double volume;
+    
+    printf("Enter the edge length of the tetrahedron: ");
+    
+    if (scanf("%lf", &edge_length) != 1) {
+        fprintf(stderr, "Error: Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    volume = calculate_tetrahedron_volume(edge_length);
+    
+    if (volume < 0.0) {
+        fprintf(stderr, "Error: Invalid edge length or calculation overflow\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("Volume of tetrahedron: %.6f\n", volume);
+    
+    return EXIT_SUCCESS;
+}
+```

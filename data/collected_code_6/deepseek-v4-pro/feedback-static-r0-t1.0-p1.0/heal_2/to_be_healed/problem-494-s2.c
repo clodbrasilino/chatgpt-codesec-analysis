@@ -1,0 +1,66 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int binary_tuple_to_int(const int *tuple, int size) {
+    int result = 0;
+    int i;
+    
+    for (i = 0; i < size; i++) {
+        if (tuple[i] != 0 && tuple[i] != 1) {
+            return -1;
+        }
+        result = (result << 1) | tuple[i];
+    }
+    
+    return result;
+}
+
+int main(void) {
+    /* Possible weaknesses found:
+     *  Variable 'tuple1' can be declared as const array [constVariable]
+     */
+    int tuple1[] = {1, 0, 1, 0};
+    /* Possible weaknesses found:
+     *  Variable 'tuple2' can be declared as const array [constVariable]
+     */
+    int tuple2[] = {1, 1, 1, 1};
+    /* Possible weaknesses found:
+     *  Variable 'tuple3' can be declared as const array [constVariable]
+     */
+    int tuple3[] = {0, 0, 0, 0};
+    /* Possible weaknesses found:
+     *  Variable 'invalid_tuple' can be declared as const array [constVariable]
+     */
+    int invalid_tuple[] = {1, 2, 0, 1};
+    int result;
+    
+    result = binary_tuple_to_int(tuple1, 4);
+    if (result != -1) {
+        printf("%d\n", result);
+    } else {
+        printf("Invalid tuple\n");
+    }
+    
+    result = binary_tuple_to_int(tuple2, 4);
+    if (result != -1) {
+        printf("%d\n", result);
+    } else {
+        printf("Invalid tuple\n");
+    }
+    
+    result = binary_tuple_to_int(tuple3, 4);
+    if (result != -1) {
+        printf("%d\n", result);
+    } else {
+        printf("Invalid tuple\n");
+    }
+    
+    result = binary_tuple_to_int(invalid_tuple, 4);
+    if (result != -1) {
+        printf("%d\n", result);
+    } else {
+        printf("Invalid tuple\n");
+    }
+    
+    return 0;
+}

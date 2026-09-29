@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-772-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-772-s2.c:39:49: style: Condition '(unsigned long)word_length>dest_remaining' is always false [knownConditionTrueFalse]
+                        if ((size_t)word_length > dest_remaining) {
+                                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-772-s2.c:34:49: note: Assuming condition '(unsigned long)word_length>len+1-j' is false
+                        if ((size_t)word_length > len + 1 - j) {
+                                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-772-s2.c:39:49: note: Condition '(unsigned long)word_length>dest_remaining' is always false
+                        if ((size_t)word_length > dest_remaining) {
+                                                ^

@@ -1,0 +1,120 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define TABLE_SIZE 100
+
+typedef struct Node {
+    char *key;
+    int value;
+    struct Node *next;
+} Node;
+
+typedef struct Dictionary {
+    Node *table[TABLE_SIZE];
+} Dictionary;
+
+unsigned int hash(const char *key) {
+    unsigned int hashValue = 0;
+    while (*key) {
+        hashValue = (hashValue << 5) + *key++;
+    }
+    return hashValue % TABLE_SIZE;
+}
+
+Dictionary* create_dictionary() {
+    Dictionary *dict = (Dictionary*)malloc(sizeof(Dictionary));
+    if (!dict) {
+        return NULL;
+    }
+    for (int i = 0; i < TABLE_SIZE; i++) {
+        dict->table[i] = NULL;
+    }
+    return dict;
+}
+
+int insert(Dictionary *dict, const char *key, int value) {
+    if (!dict || !key) {
+        return 0;
+    }
+    
+    unsigned int index = hash(key);
+    Node *newNode = (Node*)malloc(sizeof(Node));
+    if (!newNode) {
+        return 0;
+    }
+    
+    newNode->key = strdup(key);
+    if (!newNode->key) {
+        free(newNode);
+        return 0;
+    }
+    
+    newNode->value = value;
+    newNode->next = dict->table[index];
+    dict->table[index] = newNode;
+    return 1;
+}
+
+int is_key_present(Dictionary *dict, const char *key) {
+    if (!dict || !key) {
+        return 0;
+    }
+    
+    unsigned int index = hash(key);
+    Node *current = dict->table[index];
+    
+    while (current != NULL) {
+        if (strcmp(current->key, key) == 0) {
+            return 1;
+        }
+        current = current->next;
+    }
+    return 0;
+}
+
+void free_dictionary(Dictionary *dict) {
+    if (!dict) {
+        return;
+    }
+    
+    for (int i = 0; i < TABLE_SIZE; i++) {
+        Node *current = dict->table[i];
+        while (current != NULL) {
+            Node *temp = current;
+            current = current->next;
+            free(temp->key);
+            free(temp);
+        }
+    }
+    free(dict);
+}
+
+int main() {
+    Dictionary *dict = create_dictionary();
+    if (!dict) {
+        fprintf(stderr, "Failed to create dictionary.\n");
+        return 1;
+    }
+    
+    if (!insert(dict, "apple", 1)) {
+        fprintf(stderr, "Failed to insert.\n");
+        free_dictionary(dict);
+        return 1;
+    }
+    
+    if (!insert(dict, "banana", 2)) {
+        fprintf(stderr, "Failed to insert.\n");
+        free_dictionary(dict);
+        return 1;
+    }
+    
+    const char *key1 = "apple";
+    const char *key2 = "orange";
+    
+    printf("Is '%s' present? %s\n", key1, is_key_present(dict, key1) ? "Yes" : "No");
+    printf("Is '%s' present? %s\n", key2, is_key_present(dict, key2) ? "Yes" : "No");
+    
+    free_dictionary(dict);
+    return 0;
+}

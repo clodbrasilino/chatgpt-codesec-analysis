@@ -1,0 +1,56 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int* find_odd_numbers(const int* arr, size_t size, size_t* odd_count) {
+    if (arr == NULL || odd_count == NULL) {
+        return NULL;
+    }
+    
+    *odd_count = 0;
+    for (size_t i = 0; i < size; i++) {
+        if (arr[i] % 2 != 0) {
+            (*odd_count)++;
+        }
+    }
+    
+    if (*odd_count == 0) {
+        return NULL;
+    }
+    
+    int* result = (int*)malloc(*odd_count * sizeof(int));
+    if (result == NULL) {
+        return NULL;
+    }
+    
+    size_t index = 0;
+    for (size_t i = 0; i < size; i++) {
+        if (arr[i] % 2 != 0) {
+            result[index++] = arr[i];
+        }
+    }
+    
+    return result;
+}
+
+int main(void) {
+    int arr[] = {2, 5, 8, 11, 14, 17, 20, 23};
+    size_t size = sizeof(arr) / sizeof(arr[0]);
+    size_t odd_count = 0;
+    
+    int* odd_numbers = find_odd_numbers(arr, size, &odd_count);
+    
+    if (odd_numbers != NULL) {
+        printf("Odd numbers: ");
+        for (size_t i = 0; i < odd_count; i++) {
+            printf("%d ", odd_numbers[i]);
+        }
+        printf("\n");
+        free(odd_numbers);
+    } else {
+        printf("No odd numbers found or memory allocation failed.\n");
+    }
+    
+    return 0;
+}
+```

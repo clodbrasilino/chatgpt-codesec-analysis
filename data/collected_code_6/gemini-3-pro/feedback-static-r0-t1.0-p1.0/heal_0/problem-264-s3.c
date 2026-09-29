@@ -1,0 +1,41 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+double calculate_dog_years(double human_years, int *error_flag) {
+    if (human_years < 0.0) {
+        if (error_flag != NULL) {
+            *error_flag = 1;
+        }
+        return -1.0;
+    }
+
+    if (error_flag != NULL) {
+        *error_flag = 0;
+    }
+
+    if (human_years <= 2.0) {
+        return human_years * 10.5;
+    }
+
+    return 21.0 + ((human_years - 2.0) * 4.0);
+}
+
+int main(void) {
+    double human_age = 5.0;
+    double dog_age = 0.0;
+    int error_status = 0;
+
+    dog_age = calculate_dog_years(human_age, &error_status);
+
+    if (error_status != 0) {
+        fprintf(stderr, "Error: Age cannot be a negative value.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Human years: %.2f\nDog years: %.2f\n", human_age, dog_age) < 0) {
+        fprintf(stderr, "Error: Failed to write to standard output.\n");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

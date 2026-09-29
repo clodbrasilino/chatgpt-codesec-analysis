@@ -1,0 +1,44 @@
+{
+  "task_id": 499,
+  "text": "Write a C function to find the diameter of a circle.",
+  "fn_candidates": [
+    "diameter_circle",
+    "DiameterCircle",
+    "diameterCircle",
+    "diametercircle"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "diameter_circle",
+      "args": [
+        10
+      ],
+      "expected": 20,
+      "assert_src": "assert diameter_circle(10)==20"
+    },
+    {
+      "fn_name": "diameter_circle",
+      "args": [
+        40
+      ],
+      "expected": 80,
+      "assert_src": "assert diameter_circle(40)==80"
+    },
+    {
+      "fn_name": "diameter_circle",
+      "args": [
+        15
+      ],
+      "expected": 30,
+      "assert_src": "assert diameter_circle(15)==30"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

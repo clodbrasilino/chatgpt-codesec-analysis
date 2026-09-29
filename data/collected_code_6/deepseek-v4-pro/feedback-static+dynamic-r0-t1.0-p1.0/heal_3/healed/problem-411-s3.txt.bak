@@ -1,0 +1,84 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+#include <ctype.h>
+
+char *snake_to_camel(const char *input) {
+    if (input == NULL) {
+        return NULL;
+    }
+
+    size_t len = strlen(input);
+    char *result = malloc(len + 1);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    regex_t regex;
+    int ret = regcomp(&regex, "_([a-zA-Z])", REG_EXTENDED);
+    if (ret != 0) {
+        free(result);
+        return NULL;
+    }
+
+    size_t result_index = 0;
+    size_t input_index = 0;
+    regmatch_t match;
+
+    while (regexec(&regex, input + input_index, 1, &match, 0) == 0) {
+        if (match.rm_so > 0) {
+            size_t copy_len = match.rm_so;
+            memcpy(result + result_index, input + input_index, copy_len);
+            result_index += copy_len;
+        }
+
+        char upper = input[input_index + match.rm_so + 1];
+        result[result_index++] = (char)toupper((unsigned char)upper);
+
+        input_index += match.rm_eo;
+    }
+
+    if (input_index < len) {
+        size_t remaining = len - input_index;
+        memcpy(result + result_index, input + input_index, remaining);
+        result_index += remaining;
+    }
+
+    result[result_index] = '\0';
+    regfree(&regex);
+    return result;
+}
+
+int main(void) {
+    const char *test_cases[] = {
+        "hello_world",
+        "snake_case_string",
+        "alreadyCamel",
+        "multiple__underscores",
+        "_leading_underscore",
+        "trailing_underscore_",
+        "",
+        "no_underscores_here",
+        "a_b_c_d_e",
+        "android_tv",
+        "google_pixel",
+        "apple_watch"
+    };
+
+    size_t num_tests = sizeof(test_cases) / sizeof(test_cases[0]);
+
+    for (size_t i = 0; i < num_tests; i++) {
+        char *converted = snake_to_camel(test_cases[i]);
+        if (converted != NULL) {
+            printf("\"%s\" -> \"%s\"\n", test_cases[i], converted);
+            free(converted);
+        } else {
+            printf("\"%s\" -> NULL\n", test_cases[i]);
+        }
+    }
+
+    return 0;
+}
+```

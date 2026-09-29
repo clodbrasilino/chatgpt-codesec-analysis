@@ -1,0 +1,24 @@
+#include <stdio.h>
+
+#define MAX(a, b) ((a) > (b) ? (a) : (b))
+
+unsigned long long find_max_sum(unsigned long long n) {
+    if (n == 0 || n == 1) {
+        return n;
+    }
+
+    unsigned long long sum = find_max_sum(n / 2) + find_max_sum(n / 3) + find_max_sum(n / 4);
+
+    return MAX(sum, n);
+}
+
+int main(void) {
+    unsigned long long n;
+    
+    if (scanf("%llu", &n) == 1) {
+        unsigned long long result = find_max_sum(n);
+        printf("%llu\n", result);
+    }
+    
+    return 0;
+}

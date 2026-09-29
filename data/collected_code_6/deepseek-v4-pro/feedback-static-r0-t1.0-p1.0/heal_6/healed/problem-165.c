@@ -1,0 +1,43 @@
+#include <stdio.h>
+#include <ctype.h>
+#include <string.h>
+#include <stdlib.h>
+
+int count_matching_positions(const char *str) {
+    int count = 0;
+    int i = 0;
+    
+    if (str == NULL) {
+        return 0;
+    }
+    
+    size_t len = strlen(str);
+    size_t max_check = len < 26 ? len : 26;
+    
+    for (i = 0; i < (int)max_check; i++) {
+        if (isalpha((unsigned char)str[i])) {
+            char lower = tolower((unsigned char)str[i]);
+            if (lower == 'a' + i) {
+                count++;
+            }
+        }
+    }
+    
+    return count;
+}
+
+int main(void) {
+    const char *test1 = "AbC";
+    const char *test2 = "abcdefghijklmnopqrstuvwxyz";
+    const char *test3 = "ABC";
+    const char *test4 = "";
+    const char *test5 = NULL;
+    
+    printf("Test 1: %d\n", count_matching_positions(test1));
+    printf("Test 2: %d\n", count_matching_positions(test2));
+    printf("Test 3: %d\n", count_matching_positions(test3));
+    printf("Test 4: %d\n", count_matching_positions(test4));
+    printf("Test 5: %d\n", count_matching_positions(test5));
+    
+    return 0;
+}

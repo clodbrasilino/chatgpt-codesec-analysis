@@ -1,0 +1,36 @@
+```c
+#include <stdio.h>
+
+double findMaxVol(int sumOfSides){
+    double side = sumOfSides / 3.0;
+    return side * side * side;
+}
+
+int main(){
+    int sumOfSides;
+    
+    printf("Enter the sum of sides of the cuboid\n");    
+    if(scanf("%d", &sumOfSides) != 1){
+        printf("Invalid input\n");
+        return 1;
+    }
+    
+    if(sumOfSides <= 0){
+        printf("The sum of sides must be positive\n");
+        return 1;
+    }
+    
+    double volume = findMaxVol(sumOfSides);
+    
+    printf("The maximum volume of the cuboid is %.2lf\n", volume);
+
+    return 0;
+}
+```
+The code starts by including the stdio.h file. Then, it defines the function `findMaxVol`. This function accepts the sum of the sides of the cuboid as an argument. It calculates the side of the cuboid, assuming it's a cube for maximum volume, and returns this volume.
+
+In `main`, it asks the user to enter the sum of the sides of the cuboid. It uses `scanf` to read the value the user enters. If the user doesn't enter a number, `scanf` will not be able to read it, and `main` will print an error message and return 1 to signal an error.
+
+Then, it checks if the sum of the sides is positive. If it's not, it prints an error message and again returns 1. If the input is correct, it calls `findMaxVol`, obtains the volume, and then prints it.
+
+A few aspects of secure coding and error checking are included in this code. This code properly checks for bad user input, which helps it to avoid exceptional conditions that could otherwise cause the program to crash or behave unexpectedly. The code does not use any external resources, so there are no resource management issues. The code follows standard C coding conventions. The error messages and return values of `main` are consistent and coherent, which makes the program easier to understand and debug.

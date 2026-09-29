@@ -1,0 +1,63 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+void remove_digits_from_strings(char **str_list, size_t num_strings) {
+    if (str_list == NULL) {
+        return;
+    }
+
+    for (size_t i = 0; i < num_strings; i++) {
+        if (str_list[i] == NULL) {
+            continue;
+        }
+
+        char *read_ptr = str_list[i];
+        char *write_ptr = str_list[i];
+
+        while (*read_ptr != '\0') {
+            if (!isdigit((unsigned char)*read_ptr)) {
+                *write_ptr = *read_ptr;
+                write_ptr++;
+            }
+            read_ptr++;
+        }
+        *write_ptr = '\0';
+    }
+}
+
+int main(void) {
+    size_t num_strings = 3;
+    char **str_list = malloc(num_strings * sizeof(char *));
+    if (str_list == NULL) {
+        return EXIT_FAILURE;
+    }
+
+    str_list[0] = strdup("hello123world");
+    str_list[1] = strdup("456test789");
+    str_list[2] = strdup("no_digits_here");
+
+    for (size_t i = 0; i < num_strings; i++) {
+        if (str_list[i] == NULL) {
+            for (size_t j = 0; j < i; j++) {
+                free(str_list[j]);
+            }
+            free(str_list);
+            return EXIT_FAILURE;
+        }
+    }
+
+    remove_digits_from_strings(str_list, num_strings);
+
+    for (size_t i = 0; i < num_strings; i++) {
+        printf("%s\n", str_list[i]);
+    }
+
+    for (size_t i = 0; i < num_strings; i++) {
+        free(str_list[i]);
+    }
+    free(str_list);
+
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,55 @@
+#include <stdio.h>
+#include <math.h>
+#include <errno.h>
+
+double calculate_discriminant(double a, double b, double c, int *error_flag) {
+    double discriminant;
+    
+    *error_flag = 0;
+    
+    if (isnan(a) || isnan(b) || isnan(c)) {
+        *error_flag = 1;
+        return 0.0;
+    }
+    
+    if (isinf(a) || isinf(b) || isinf(c)) {
+        *error_flag = 2;
+        return 0.0;
+    }
+    
+    errno = 0;
+    discriminant = (b * b) - (4.0 * a * c);
+    
+    if (errno != 0) {
+        *error_flag = 3;
+        return 0.0;
+    }
+    
+    return discriminant;
+}
+
+int main(void) {
+    double a, b, c, discriminant;
+    int error_flag;
+    int scan_result;
+    
+    printf("Enter coefficients a, b, and c: ");
+    
+    scan_result = scanf("%lf %lf %lf", &a, &b, &c);
+    
+    if (scan_result != 3) {
+        fprintf(stderr, "Error: Invalid input. Expected three numeric values.\n");
+        return 1;
+    }
+    
+    discriminant = calculate_discriminant(a, b, c, &error_flag);
+    
+    if (error_flag != 0) {
+        fprintf(stderr, "Error: Calculation failed (error code: %d)\n", error_flag);
+        return 1;
+    }
+    
+    printf("Discriminant: %.6f\n", discriminant);
+    
+    return 0;
+}

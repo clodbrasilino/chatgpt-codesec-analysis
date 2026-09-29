@@ -1,0 +1,38 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+bool check_frequency(long long num) {
+    int freq[10] = {0};
+    
+    if (num < 0) {
+        num = -num;
+    }
+    
+    if (num == 0) {
+        freq[0]++;
+    }
+    
+    while (num > 0) {
+        freq[num % 10]++;
+        num /= 10;
+    }
+    
+    for (int i = 0; i < 10; i++) {
+        if (freq[i] > i) {
+            return false;
+        }
+    }
+    
+    return true;
+}
+
+int main(void) {
+    long long numbers[] = {123, 1223, 112233, 999999999, 0, -123, 9876543210};
+    int size = sizeof(numbers) / sizeof(numbers[0]);
+    
+    for (int i = 0; i < size; i++) {
+        printf("%lld: %s\n", numbers[i], check_frequency(numbers[i]) ? "true" : "false");
+    }
+    
+    return 0;
+}

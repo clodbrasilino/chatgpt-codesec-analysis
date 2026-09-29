@@ -1,0 +1,45 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+size_t count_in_range(const int *list, size_t length, int min_val, int max_val) {
+    if (list == NULL) {
+        return 0;
+    }
+
+    size_t count = 0;
+    for (size_t i = 0; i < length; ++i) {
+        if (list[i] >= min_val && list[i] <= max_val) {
+            count++;
+        }
+    }
+    
+    return count;
+}
+
+int main(void) {
+    const size_t length = 6;
+    int *list = (int *)malloc(length * sizeof(int));
+    if (list == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    list[0] = 5;
+    list[1] = 10;
+    list[2] = 15;
+    list[3] = 20;
+    list[4] = 25;
+    list[5] = 30;
+
+    int min_val = 10;
+    int max_val = 20;
+
+    size_t count = count_in_range(list, length, min_val, max_val);
+
+    printf("%zu\n", count);
+
+    free(list);
+    list = NULL;
+
+    return EXIT_SUCCESS;
+}

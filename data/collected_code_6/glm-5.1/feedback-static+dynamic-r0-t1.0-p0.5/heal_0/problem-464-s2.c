@@ -1,0 +1,119 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+typedef struct Node {
+    int key;
+    int value;
+    struct Node* next;
+} Node;
+
+typedef struct {
+    Node** buckets;
+    int size;
+} Dictionary;
+
+Dictionary* create_dictionary(int size) {
+    Dictionary* dict = (Dictionary*)malloc(sizeof(Dictionary));
+    if (dict == NULL) {
+        exit(EXIT_FAILURE);
+    }
+    dict->size = size;
+    dict->buckets = (Node**)calloc(size, sizeof(Node*));
+    if (dict->buckets == NULL) {
+        free(dict);
+        exit(EXIT_FAILURE);
+    }
+    return dict;
+}
+
+void insert_dictionary(Dictionary* dict, int key, int value) {
+    if (dict == NULL) return;
+    int index = abs(key) % dict->size;
+    Node* current = dict->buckets[index];
+    while (current != NULL) {
+        if (current->key == key) {
+            current->value = value;
+            return;
+        }
+        current = current->next;
+    }
+    Node* new_node = (Node*)malloc(sizeof(Node));
+    if (new_node == NULL) {
+        exit(EXIT_FAILURE);
+    }
+    new_node->key = key;
+    new_node->value = value;
+    new_node->next = dict->buckets[index];
+    dict->buckets[index] = new_node;
+}
+
+bool all_values_same(Dictionary* dict) {
+    if (dict == NULL || dict->buckets == NULL) {
+        return true;
+    }
+    int reference_value = 0;
+    bool reference_set = false;
+    for (int i = 0; i < dict->size; i++) {
+        Node* current = dict->buckets[i];
+        while (current != NULL) {
+            if (!reference_set) {
+                reference_value = current->value;
+                reference_set = true;
+            } else if (current->value != reference_value) {
+                return false;
+            }
+            current = current->next;
+        }
+    }
+    return true;
+}
+
+void free_dictionary(Dictionary* dict) {
+    if (dict == NULL) return;
+    for (int i = 0; i < dict->size; i++) {
+        Node* current = dict->buckets[i];
+        while (current != NULL) {
+            Node* temp = current;
+            current = current->next;
+            free(temp);
+        }
+    }
+    free(dict->buckets);
+    free(dict);
+}
+
+int main(void) {
+    Dictionary* dict1 = create_dictionary(10);
+    insert_dictionary(dict1, 1, 42);
+    insert_dictionary(dict1, 2, 42);
+    insert_dictionary(dict1, 3, 42);
+    if (all_values_same(dict1)) {
+        printf("Dictionary 1: All values are the same\n");
+    } else {
+        printf("Dictionary 1: Values differ\n");
+    }
+
+    Dictionary* dict2 = create_dictionary(10);
+    insert_dictionary(dict2, 1, 42);
+    insert_dictionary(dict2, 2, 99);
+    insert_dictionary(dict2, 3, 42);
+    if (all_values_same(dict2)) {
+        printf("Dictionary 2: All values are the same\n");
+    } else {
+        printf("Dictionary 2: Values differ\n");
+    }
+
+    Dictionary* dict3 = create_dictionary(10);
+    if (all_values_same(dict3)) {
+        printf("Dictionary 3: All values are the same\n");
+    } else {
+        printf("Dictionary 3: Values differ\n");
+    }
+
+    free_dictionary(dict1);
+    free_dictionary(dict2);
+    free_dictionary(dict3);
+
+    return 0;
+}

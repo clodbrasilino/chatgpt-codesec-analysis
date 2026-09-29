@@ -1,0 +1,53 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+const char** shortlist_long_words(const char** words, size_t word_count, size_t min_length, size_t* result_count) {
+    if (words == NULL || result_count == NULL) {
+        return NULL;
+    }
+
+    *result_count = 0;
+
+    const char** result = malloc(word_count * sizeof(const char*));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    for (size_t i = 0; i < word_count; i++) {
+        if (words[i] != NULL && strnlen(words[i], min_length + 1) > min_length) {
+            result[*result_count] = words[i];
+            (*result_count)++;
+        }
+    }
+
+    if (*result_count == 0) {
+        free(result);
+        return NULL;
+    }
+
+    const char** trimmed_result = realloc(result, (*result_count) * sizeof(const char*));
+    if (trimmed_result != NULL) {
+        result = trimmed_result;
+    }
+
+    return result;
+}
+
+int main(void) {
+    const char* words[] = {"apple", "banana", "kiwi", "strawberry", "fig", "orange"};
+    size_t word_count = sizeof(words) / sizeof(words[0]);
+    size_t min_length = 5;
+    size_t result_count = 0;
+
+    const char** long_words = shortlist_long_words(words, word_count, min_length, &result_count);
+
+    if (long_words != NULL) {
+        for (size_t i = 0; i < result_count; i++) {
+            printf("%s\n", long_words[i]);
+        }
+        free(long_words);
+    }
+
+    return 0;
+}

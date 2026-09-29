@@ -1,0 +1,53 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <math.h>
+
+double geometric_sum(int n, double ratio)
+{
+    if (n <= 0) {
+        return 0.0;
+    }
+    
+    if (ratio == 1.0) {
+        return (double)n;
+    }
+    
+    return (1.0 - pow(ratio, n)) / (1.0 - ratio);
+}
+
+int main(void)
+{
+    int n;
+    double ratio;
+    double result;
+    
+    printf("Enter the number of terms (n): ");
+    if (scanf("%d", &n) != 1) {
+        fprintf(stderr, "Error: Invalid input for n\n");
+        return EXIT_FAILURE;
+    }
+    
+    if (n <= 0) {
+        fprintf(stderr, "Error: n must be a positive integer\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("Enter the common ratio: ");
+    if (scanf("%lf", &ratio) != 1) {
+        fprintf(stderr, "Error: Invalid input for ratio\n");
+        return EXIT_FAILURE;
+    }
+    
+    errno = 0;
+    result = geometric_sum(n, ratio);
+    
+    if (errno == ERANGE) {
+        fprintf(stderr, "Error: Result out of range\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("Geometric sum of %d terms with ratio %.2f: %.6f\n", n, ratio, result);
+    
+    return EXIT_SUCCESS;
+}

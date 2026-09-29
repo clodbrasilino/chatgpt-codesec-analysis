@@ -1,0 +1,56 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+int shortest_common_supersequence_len(const char *str1, const char *str2) {
+    if (str1 == NULL || str2 == NULL) {
+        return -1;
+    }
+
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    int len1 = (int)strlen(str1);
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    int len2 = (int)strlen(str2);
+
+    int *prev = calloc(len2 + 1, sizeof(int));
+    int *curr = calloc(len2 + 1, sizeof(int));
+
+    if (prev == NULL || curr == NULL) {
+        free(prev);
+        free(curr);
+        return -1;
+    }
+
+    for (int i = 1; i <= len1; i++) {
+        for (int j = 0; j <= len2; j++) {
+            if (j == 0) {
+                curr[j] = 0;
+            } else if (str1[i - 1] == str2[j - 1]) {
+                curr[j] = prev[j - 1] + 1;
+            } else {
+                curr[j] = prev[j] > curr[j - 1] ? prev[j] : curr[j - 1];
+            }
+        }
+        int *temp = prev;
+        prev = curr;
+        curr = temp;
+    }
+
+    int lcs_len = prev[len2];
+    free(prev);
+    free(curr);
+
+    return len1 + len2 - lcs_len;
+}
+
+int main(void) {
+    const char *str1 = "AGGTAB";
+    const char *str2 = "GXTXAYB";
+    int result = shortest_common_supersequence_len(str1, str2);
+    printf("%d\n", result);
+    return 0;
+}

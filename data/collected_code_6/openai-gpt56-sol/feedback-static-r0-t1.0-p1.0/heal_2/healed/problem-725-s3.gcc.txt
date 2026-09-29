@@ -1,0 +1,11 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-725-s3.c: In function 'extract_quoted_values':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-725-s3.c:90:22: error: 'INT_MAX' undeclared (first use in this function)
+   90 |         if (count == INT_MAX) {
+      |                      ^~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-725-s3.c:8:1: note: 'INT_MAX' is defined in header '<limits.h>'; this is probably fixable by adding '#include <limits.h>'
+    7 | #include <inttypes.h>
+  +++ |+#include <limits.h>
+    8 | 
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-725-s3.c:90:22: note: each undeclared identifier is reported only once for each function it appears in
+   90 |         if (count == INT_MAX) {
+      |                      ^~~~~~~

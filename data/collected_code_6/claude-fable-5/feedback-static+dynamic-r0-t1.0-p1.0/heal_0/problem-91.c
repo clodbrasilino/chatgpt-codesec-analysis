@@ -1,0 +1,51 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+int substring_in_list(const char *substring, const char *list[], size_t count)
+{
+    size_t i;
+
+    if (substring == NULL || list == NULL) {
+        return -1;
+    }
+
+    for (i = 0; i < count; i++) {
+        if (list[i] == NULL) {
+            continue;
+        }
+        if (strstr(list[i], substring) != NULL) {
+            return 1;
+        }
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    const char *strings[] = {
+        "hello world",
+        "example string",
+        "c programming",
+        "substring search"
+    };
+    size_t count = sizeof(strings) / sizeof(strings[0]);
+    const char *target = "program";
+    int result;
+
+    result = substring_in_list(target, strings, count);
+
+    if (result < 0) {
+        fprintf(stderr, "Error: invalid input provided\n");
+        return EXIT_FAILURE;
+    }
+
+    if (result == 1) {
+        printf("Substring \"%s\" found in the list.\n", target);
+    } else {
+        printf("Substring \"%s\" not found in the list.\n", target);
+    }
+
+    return EXIT_SUCCESS;
+}

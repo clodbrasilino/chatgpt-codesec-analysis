@@ -1,0 +1,20 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+
+uint32_t set_odd_bits(uint32_t n);
+
+uint32_t set_odd_bits(uint32_t n) {
+    return n | 0xAAAAAAAA;
+}
+
+int main(void) {
+    uint32_t num = 42;
+    uint32_t result = set_odd_bits(num);
+
+    if (printf("%u\n", result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

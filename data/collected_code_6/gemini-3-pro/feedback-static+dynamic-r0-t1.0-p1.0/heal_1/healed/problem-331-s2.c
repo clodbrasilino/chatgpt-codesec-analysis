@@ -1,0 +1,30 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+unsigned int count_unset_bits(unsigned int n) {
+    if (n == 0) {
+        return 1;
+    }
+    
+    unsigned int count = 0;
+    while (n > 0) {
+        if ((n & 1) == 0) {
+            count++;
+        }
+        n >>= 1;
+    }
+    
+    return count;
+}
+
+int main(void) {
+    unsigned int number = 0;
+    
+    if (scanf("%u", &number) != 1) {
+        return EXIT_FAILURE;
+    }
+    
+    printf("%u\n", count_unset_bits(number));
+    
+    return EXIT_SUCCESS;
+}

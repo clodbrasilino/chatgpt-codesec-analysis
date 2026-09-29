@@ -1,0 +1,53 @@
+Here is the full solution:
+
+``` C
+#include<stdlib.h>
+#include<stdio.h>
+#include<stdbool.h>
+
+typedef struct
+{
+    int a, b;
+} pair;
+
+bool compare_pairs(pair *l1, pair *l2, size_t size1, size_t size2) 
+{
+    if(size1 != size2)
+        return false;
+   
+    for(int i = 0; i < size1; i++)
+        if(l1[i].a != l2[i].a || l1[i].b != l2[i].b)
+            return false;
+
+    return true;
+}
+
+int main() 
+{
+    pair list1[] = {{1, 2}, {3, 4}, {5, 6}};
+    pair list2[] = {{1, 2}, {3, 4}, {5, 6}};
+    pair list3[] = {{1, 2}, {3, 4}, {7, 8}};
+    
+    size_t size1 = sizeof(list1)/sizeof(pair);
+    size_t size2 = sizeof(list2)/sizeof(pair);
+    size_t size3 = sizeof(list3)/sizeof(pair);
+
+    if(compare_pairs(list1, list2, size1, size2))
+      printf("list1 and list2 are identical\n");
+    else
+      printf("list1 and list2 are not identical\n");
+  
+    if(compare_pairs(list1, list3, size1, size3))
+      printf("list1 and list3 are identical\n");
+    else
+      printf("list1 and list3 are not identical\n");
+
+    return 0;
+}
+```
+
+This program will print:
+```
+list1 and list2 are identical
+list1 and list3 are not identical
+```

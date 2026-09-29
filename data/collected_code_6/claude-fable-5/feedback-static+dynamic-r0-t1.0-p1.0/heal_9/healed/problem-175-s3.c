@@ -1,0 +1,181 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdbool.h>
+
+#define MAX_INPUT_LEN 4096
+
+static size_t bounded_strlen(const char *s, size_t max)
+{
+    size_t i;
+
+    if (s == NULL) {
+        return 0;
+    }
+
+    for (i = 0; i < max; i++) {
+        if (s[i] == '\0') {
+            return i;
+        }
+    }
+    return max;
+}
+
+static void trim_input(char *s, size_t capacity)
+{
+    size_t len;
+    size_t start = 0;
+
+    if (s == NULL || capacity == 0) {
+        return;
+    }
+
+    len = bounded_strlen(s, capacity);
+    if (len == capacity) {
+        len = capacity - 1;
+        s[len] = '\0';
+    }
+
+    while (len > 0 && isspace((unsigned char)s[len - 1])) {
+        s[--len] = '\0';
+    }
+
+    while (start < len && isspace((unsigned char)s[start])) {
+        start++;
+    }
+
+    if (start > 0) {
+        memmove(s, s + start, len - start + 1);
+        len -= start;
+    }
+
+    if (len >= 2 &&
+        ((s[0] == '"' && s[len - 1] == '"') ||
+         (s[0] == '\'' && s[len - 1] == '\''))) {
+        s[len - 1] = '\0';
+        memmove(s, s + 1, len - 1);
+    }
+}
+
+bool is_valid_parentheses(const char *s)
+{
+    size_t len;
+    char *stack;
+    size_t top = 0;
+    size_t i;
+    bool result = true;
+
+    if (s == NULL) {
+        return false;
+    }
+
+    len = bounded_strlen(s, MAX_INPUT_LEN);
+    if (len == MAX_INPUT_LEN && s[MAX_INPUT_LEN - 1] != '\0') {
+        return false;
+    }
+
+    if (len == 0) {
+        return true;
+    }
+
+    stack = (char *)malloc(len);
+    if (stack == NULL) {
+        return false;
+    }
+
+    for (i = 0; i < len; i++) {
+        char c = s[i];
+
+        if (c == '(' || c == '[' || c == '{') {
+            if (top >= len) {
+                result = false;
+                break;
+            }
+            stack[top] = c;
+            top++;
+        } else if (c == ')' || c == ']' || c == '}') {
+            if (top == 0) {
+                result = false;
+                break;
+            }
+            top--;
+            if ((c == ')' && stack[top] != '(') ||
+                (c == ']' && stack[top] != '[') ||
+                (c == '}' && stack[top] != '{')) {
+                result = false;
+                break;
+            }
+        } else {
+            result = false;
+            break;
+        }
+    }
+
+    if (result && top != 0) {
+        result = false;
+    }
+
+    free(stack);
+    return result;
+}
+
+static bool safe_copy_arg(char *dst, size_t dst_size, const char *src)
+{
+    size_t src_len;
+
+    if (dst == NULL || dst_size == 0 || src == NULL) {
+        return false;
+    }
+
+    src_len = bounded_strlen(src, dst_size - 1);
+    if (src_len >= dst_size) {
+        src_len = dst_size - 1;
+    }
+
+    memmove(dst, src, src_len);
+    dst[src_len] = '\0';
+    return true;
+}
+
+int main(int argc, const char *const argv[])
+{
+    char *buffer;
+    bool valid;
+
+    buffer = (char *)calloc(MAX_INPUT_LEN, sizeof(char));
+    if (buffer == NULL) {
+        return EXIT_FAILURE;
+    }
+
+    if (argc > 1 && argv[1] != NULL) {
+        if (!safe_copy_arg(buffer, MAX_INPUT_LEN, argv[1])) {
+            free(buffer);
+            return EXIT_FAILURE;
+        }
+    } else {
+        if (fgets(buffer, MAX_INPUT_LEN, stdin) == NULL) {
+            buffer[0] = '\0';
+        }
+    }
+
+    buffer[MAX_INPUT_LEN - 1] = '\0';
+    buffer[strcspn(buffer, "\r\n")] = '\0';
+
+    trim_input(buffer, MAX_INPUT_LEN);
+
+    valid = is_valid_parentheses(buffer);
+
+    free(buffer);
+    buffer = NULL;
+
+    if (printf("%s\n", valid ? "True" : "False") < 0) {
+        return EXIT_FAILURE;
+    }
+
+    if (fflush(stdout) != 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

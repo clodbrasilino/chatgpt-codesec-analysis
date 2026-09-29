@@ -1,0 +1,82 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_INPUT_LEN 64
+
+static void swap_chars(char *a, char *b)
+{
+    char tmp = *a;
+    *a = *b;
+    *b = tmp;
+}
+
+static void permute(char *str, size_t left, size_t right)
+{
+    size_t i;
+
+    if (left == right) {
+        if (printf("%s\n", str) < 0) {
+            exit(EXIT_FAILURE);
+        }
+        return;
+    }
+
+    for (i = left; i <= right; i++) {
+        swap_chars(&str[left], &str[i]);
+        permute(str, left + 1, right);
+        swap_chars(&str[left], &str[i]);
+    }
+}
+
+static int print_permutations(const char *input)
+{
+    char *buffer;
+    size_t len;
+
+    if (input == NULL) {
+        return -1;
+    }
+
+    len = strnlen(input, MAX_INPUT_LEN + 1);
+    if (len == 0 || len > MAX_INPUT_LEN) {
+        return -1;
+    }
+
+    buffer = malloc(len + 1);
+    if (buffer == NULL) {
+        return -1;
+    }
+
+    memcpy(buffer, input, len);
+    buffer[len] = '\0';
+
+    permute(buffer, 0, len - 1);
+    free(buffer);
+
+    return 0;
+}
+
+int main(void)
+{
+    const char *test_string = "ABC";
+
+    if (print_permutations(test_string) != 0) {
+        if (fprintf(stderr, "Error: failed to print permutations\n") < 0) {
+            return EXIT_FAILURE;
+        }
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+Key changes made to address the identified weaknesses:
+
+1. **CWE-126 (`strlen` over-read):** Replaced `strlen` with `strnlen` bounded by `MAX_INPUT_LEN + 1`. If the input is not NUL-terminated within the limit, the read stops at the bound and the function safely rejects the input (`len > MAX_INPUT_LEN`), rather than reading past the end of the buffer.
+
+2. **CWE-120 (`memcpy` overflow):** The copy is now exactly `len` bytes into a buffer of `len + 1` bytes, with the terminator written explicitly (`buffer[len] = '\0'`). Since `len` is bounded and validated before allocation, the destination is guaranteed to hold the source data, and we no longer rely on the source string containing a terminator at `input[len]`.
+
+A practical note: the recursive permutation algorithm is factorial in complexity, so the `MAX_INPUT_LEN` cap also serves as a sanity limit — even 20 characters would produce ~2.4 × 10¹⁸ lines of output. For real-world use you may want a much smaller cap (e.g., 12).

@@ -1,0 +1,13 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-805-s3.c: In function 'main':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-805-s3.c:49:11: error: initialization of 'int *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
+   49 |         {{1, 2, 3}, 3},
+      |           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-805-s3.c:49:11: note: (near initialization for 'lists[0].elements')
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-805-s3.c:50:11: error: initialization of 'int *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
+   50 |         {{4, 5, 6}, 3},
+      |           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-805-s3.c:50:11: note: (near initialization for 'lists[1].elements')
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-805-s3.c:51:11: error: initialization of 'int *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
+   51 |         {{7, 8, 9}, 3}
+      |           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-805-s3.c:51:11: note: (near initialization for 'lists[2].elements')

@@ -1,0 +1,19 @@
+#include<stdio.h>
+
+int findLastTwoDigitsInFactorial(int n) {
+    if (n < 0)
+        return -1;
+    int twoDigits[101] = {1, 1, 2, 6, 4, 2, 2, 4, 2, 8, 8, 8, 6, 8, 2, 6, 4, 4, 8, 6, 8, 4, 6, 8, 8};
+    if (n <= 20)
+        return twoDigits[n];
+    else
+        return (6 * findLastTwoDigitsInFactorial(n / 5) * twoDigits[n%20] % 100);
+}
+
+int main() {
+    int n;
+    printf("Enter a number: ");
+    scanf("%d", &n);
+    printf("Last two digits in factorial of %d are: %02d\n", n, findLastTwoDigitsInFactorial(n));
+    return 0;
+}

@@ -1,0 +1,53 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+#define ZODIAC_COUNT 12
+
+static const char *chinese_zodiac(int year)
+{
+    static const char *const signs[ZODIAC_COUNT] = {
+        "Monkey", "Rooster", "Dog", "Pig",
+        "Rat", "Ox", "Tiger", "Rabbit",
+        "Dragon", "Snake", "Horse", "Goat"
+    };
+    int index;
+
+    index = year % ZODIAC_COUNT;
+    if (index < 0) {
+        index += ZODIAC_COUNT;
+    }
+    if (index < 0 || index >= ZODIAC_COUNT) {
+        return "Unknown";
+    }
+    return signs[index];
+}
+
+int main(void)
+{
+    int year;
+    int result;
+
+    result = scanf("%d", &year);
+    if (result != 1) {
+        fprintf(stderr, "Error: invalid input, expected an integer year.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("%s\n", chinese_zodiac(year));
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The Flawfinder warning here is a **false positive**. Flawfinder flags any statically-sized array (`char` buffers in particular) as a potential CWE-119/CWE-120 risk, but it performs pattern matching, not data-flow analysis. In this case:
+
+1. **The array is read-only** — `signs` is declared `static const char *const`, so neither the pointers nor the pointed-to strings can be written to. Buffer *overflow* (a write past bounds) is impossible.
+
+2. **Index is fully bounds-checked** — the code already handles the classic pitfall of C's `%` operator returning negative results for negative operands (e.g., `-1 % 12 == -1` in C99+). The `index += ZODIAC_COUNT` correction plus the defensive range check guarantee `0 <= index < ZODIAC_COUNT` before any array access.
+
+3. **Input is validated** — `scanf`'s return value is checked, so `year` is never used uninitialized.
+
+The only micro-improvement one could argue for is that the second bounds check is unreachable dead code after the negative-modulo correction — but as defense-in-depth against future refactoring, it's reasonable to keep. The code is safe as written, so the rewrite preserves the logic unchanged.

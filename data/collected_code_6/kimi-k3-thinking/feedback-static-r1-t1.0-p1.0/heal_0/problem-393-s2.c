@@ -1,0 +1,152 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node *next;
+} Node;
+
+static Node *create_node(int data)
+{
+    Node *new_node = (Node *)malloc(sizeof(*new_node));
+    if (new_node == NULL) {
+        return NULL;
+    }
+    new_node->data = data;
+    new_node->next = NULL;
+    return new_node;
+}
+
+static int append_node(Node **head, int data)
+{
+    Node *new_node;
+    Node *current;
+
+    if (head == NULL) {
+        return -1;
+    }
+
+    new_node = create_node(data);
+    if (new_node == NULL) {
+        return -1;
+    }
+
+    if (*head == NULL) {
+        *head = new_node;
+        return 0;
+    }
+
+    current = *head;
+    while (current->next != NULL) {
+        current = current->next;
+    }
+    current->next = new_node;
+    return 0;
+}
+
+static size_t list_length(const Node *head)
+{
+    size_t length = 0;
+    const Node *current = head;
+
+    while (current != NULL) {
+        length++;
+        current = current->next;
+    }
+    return length;
+}
+
+Node *find_max_length_list(Node *const *lists, size_t num_lists)
+{
+    Node *max_list;
+    size_t max_length;
+    size_t i;
+
+    if (lists == NULL || num_lists == 0) {
+        return NULL;
+    }
+
+    max_list = lists[0];
+    max_length = list_length(lists[0]);
+
+    for (i = 1; i < num_lists; i++) {
+        size_t current_length = list_length(lists[i]);
+        if (current_length > max_length) {
+            max_length = current_length;
+            max_list = lists[i];
+        }
+    }
+
+    return max_list;
+}
+
+static void free_list(Node *head)
+{
+    while (head != NULL) {
+        Node *next = head->next;
+        free(head);
+        head = next;
+    }
+}
+
+static void print_list(const Node *head)
+{
+    const Node *current = head;
+
+    while (current != NULL) {
+        printf("%d", current->data);
+        if (current->next != NULL) {
+            printf(" -> ");
+        }
+        current = current->next;
+    }
+    printf("\n");
+}
+
+int main(void)
+{
+    Node *lists[3] = {NULL, NULL, NULL};
+    const int values1[] = {1, 2, 3};
+    const int values2[] = {4, 5, 6, 7, 8};
+    const int values3[] = {9, 10};
+    const int *values[] = {values1, values2, values3};
+    const size_t counts[] = {
+        sizeof(values1) / sizeof(values1[0]),
+        sizeof(values2) / sizeof(values2[0]),
+        sizeof(values3) / sizeof(values3[0])
+    };
+    const size_t num_lists = sizeof(lists) / sizeof(lists[0]);
+    Node *max_list;
+    size_t i;
+    size_t j;
+    size_t k;
+
+    for (i = 0; i < num_lists; i++) {
+        for (j = 0; j < counts[i]; j++) {
+            if (append_node(&lists[i], values[i][j]) != 0) {
+                fprintf(stderr, "Error: failed to allocate memory\n");
+                for (k = 0; k < num_lists; k++) {
+                    free_list(lists[k]);
+                    lists[k] = NULL;
+                }
+                return EXIT_FAILURE;
+            }
+        }
+    }
+
+    max_list = find_max_length_list(lists, num_lists);
+    if (max_list == NULL) {
+        fprintf(stderr, "Error: no lists available to search\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("List with maximum length (%zu elements): ", list_length(max_list));
+    print_list(max_list);
+
+    for (i = 0; i < num_lists; i++) {
+        free_list(lists[i]);
+        lists[i] = NULL;
+    }
+
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,151 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+#define TUPLE_MAX_ITEM_LEN 4096U
+
+typedef struct {
+    char **items;
+    size_t count;
+} Tuple;
+
+static Tuple *tuple_create(const char *const *list, size_t count);
+static void tuple_destroy(Tuple *tuple);
+static void tuple_print(const Tuple *tuple);
+
+static Tuple *tuple_create(const char *const *list, size_t count)
+{
+    Tuple *tuple = NULL;
+    size_t i = 0U;
+
+    if (list == NULL || count == 0U) {
+        return NULL;
+    }
+
+    if (count > (SIZE_MAX / sizeof(*tuple->items))) {
+        return NULL;
+    }
+
+    tuple = malloc(sizeof(*tuple));
+    if (tuple == NULL) {
+        return NULL;
+    }
+
+    tuple->items = calloc(count, sizeof(*tuple->items));
+    if (tuple->items == NULL) {
+        free(tuple);
+        return NULL;
+    }
+    tuple->count = count;
+
+    for (i = 0U; i < count; i++) {
+        size_t len = 0U;
+        size_t alloc_size = 0U;
+        char *dest = NULL;
+
+        if (list[i] == NULL) {
+            tuple_destroy(tuple);
+            return NULL;
+        }
+
+        len = strnlen(list[i], TUPLE_MAX_ITEM_LEN);
+        if (len >= TUPLE_MAX_ITEM_LEN) {
+            tuple_destroy(tuple);
+            return NULL;
+        }
+
+        alloc_size = len + 1U;
+
+        dest = malloc(alloc_size);
+        if (dest == NULL) {
+            tuple_destroy(tuple);
+            return NULL;
+        }
+
+        if (len > 0U) {
+            memcpy(dest, list[i], len);
+        }
+        dest[len] = '\0';
+
+        tuple->items[i] = dest;
+    }
+
+    return tuple;
+}
+
+static void tuple_destroy(Tuple *tuple)
+{
+    if (tuple == NULL) {
+        return;
+    }
+
+    if (tuple->items != NULL) {
+        size_t i = 0U;
+
+        for (i = 0U; i < tuple->count; i++) {
+            free(tuple->items[i]);
+        }
+        free(tuple->items);
+    }
+    free(tuple);
+}
+
+static void tuple_print(const Tuple *tuple)
+{
+    size_t i = 0U;
+
+    if (tuple == NULL || tuple->items == NULL) {
+        return;
+    }
+
+    if (printf("(") < 0) {
+        return;
+    }
+    for (i = 0U; i < tuple->count; i++) {
+        if (tuple->items[i] == NULL) {
+            return;
+        }
+        if (printf("'%s'", tuple->items[i]) < 0) {
+            return;
+        }
+        if (i + 1U < tuple->count) {
+            if (printf(", ") < 0) {
+                return;
+            }
+        }
+    }
+    if (printf(")\n") < 0) {
+        return;
+    }
+}
+
+int main(void)
+{
+    const char *const list[] = { "apple", "banana", "cherry", "date" };
+    const size_t count = sizeof(list) / sizeof(list[0]);
+    Tuple *tuple = NULL;
+
+    tuple = tuple_create(list, count);
+    if (tuple == NULL) {
+        (void)fprintf(stderr, "Failed to create tuple\n");
+        return EXIT_FAILURE;
+    }
+
+    tuple_print(tuple);
+    tuple_destroy(tuple);
+
+    return EXIT_SUCCESS;
+}
+```
+
+Key changes made to address the identified weaknesses:
+
+1. **Removed the dead check `len > (SIZE_MAX - 1U)`** — since `len` is already guaranteed to be less than `TUPLE_MAX_ITEM_LEN` (4096), the `len + 1U` computation can never overflow, so that branch was unreachable dead code.
+
+2. **Removed the always-true condition `len < alloc_size`** — flagged by cppcheck as `knownConditionTrueFalse`. Since `alloc_size = len + 1U` with no possible overflow, the comparison was tautological.
+
+3. **Addressed the Flawfinder `memcpy` finding (CWE-120)** — by using a local `dest` pointer allocated with exactly `alloc_size = len + 1U` bytes immediately before the copy, the invariant that the destination holds `len` bytes plus the terminator is made explicit and locally verifiable. The null terminator is written at `dest[len]` directly, which is clearer than the previous `alloc_size - 1U` indexing.
+
+4. **Preserved all legitimate defensive checks**: NULL argument validation, multiplication overflow guard for `calloc`, per-item NULL checks, length capping via `strnlen`, and full cleanup on every failure path (no memory leaks, since `tuple->items` is zero-initialized by `calloc` and `tuple_destroy` safely frees partial state).

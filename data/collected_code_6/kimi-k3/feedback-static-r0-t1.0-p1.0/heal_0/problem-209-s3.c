@@ -1,0 +1,245 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+typedef struct {
+    int *data;
+    size_t size;
+    size_t capacity;
+} Heap;
+
+int heap_init(Heap *heap, size_t capacity) {
+    if (heap == NULL || capacity == 0) {
+        return -1;
+    }
+    
+    heap->data = (int *)malloc(capacity * sizeof(int));
+    if (heap->data == NULL) {
+        return -1;
+    }
+    
+    heap->size = 0;
+    heap->capacity = capacity;
+    return 0;
+}
+
+void heap_free(Heap *heap) {
+    if (heap != NULL) {
+        free(heap->data);
+        heap->data = NULL;
+        heap->size = 0;
+        heap->capacity = 0;
+    }
+}
+
+void swap(int *a, int *b) {
+    if (a != NULL && b != NULL) {
+        int temp = *a;
+        *a = *b;
+        *b = temp;
+    }
+}
+
+void heapify_down(Heap *heap, size_t index) {
+    if (heap == NULL || heap->data == NULL || index >= heap->size) {
+        return;
+    }
+    
+    size_t smallest = index;
+    size_t left = 2 * index + 1;
+    size_t right = 2 * index + 2;
+    
+    if (left < heap->size && heap->data[left] < heap->data[smallest]) {
+        smallest = left;
+    }
+    
+    if (right < heap->size && heap->data[right] < heap->data[smallest]) {
+        smallest = right;
+    }
+    
+    if (smallest != index) {
+        swap(&heap->data[index], &heap->data[smallest]);
+        heapify_down(heap, smallest);
+    }
+}
+
+void heapify_up(Heap *heap, size_t index) {
+    if (heap == NULL || heap->data == NULL || index >= heap->size) {
+        return;
+    }
+    
+    while (index > 0) {
+        size_t parent = (index - 1) / 2;
+        if (heap->data[index] >= heap->data[parent]) {
+            break;
+        }
+        swap(&heap->data[index], &heap->data[parent]);
+        index = parent;
+    }
+}
+
+int heap_delete_min(Heap *heap, int *min_value) {
+    if (heap == NULL || heap->data == NULL || min_value == NULL) {
+        return -1;
+    }
+    
+    if (heap->size == 0) {
+        return -1;
+    }
+    
+    *min_value = heap->data[0];
+    
+    if (heap->size == 1) {
+        heap->size = 0;
+        return 0;
+    }
+    
+    heap->data[0] = heap->data[heap->size - 1];
+    heap->size--;
+    heapify_down(heap, 0);
+    
+    return 0;
+}
+
+int heap_insert(Heap *heap, int value) {
+    if (heap == NULL || heap->data == NULL) {
+        return -1;
+    }
+    
+    if (heap->size >= heap->capacity) {
+        return -1;
+    }
+    
+    heap->data[heap->size] = value;
+    heapify_up(heap, heap->size);
+    heap->size++;
+    
+    return 0;
+}
+
+int heap_delete_min_and_insert(Heap *heap, int new_value, int *deleted_value) {
+    if (heap == NULL || heap->data == NULL || deleted_value == NULL) {
+        return -1;
+    }
+    
+    if (heap->size == 0) {
+        return -1;
+    }
+    
+    *deleted_value = heap->data[0];
+    
+    if (heap->size == 1) {
+        heap->data[0] = new_value;
+        return 0;
+    }
+    
+    heap->data[0] = new_value;
+    heapify_down(heap, 0);
+    
+    return 0;
+}
+
+int heap_peek(const Heap *heap, int *value) {
+    if (heap == NULL || heap->data == NULL || value == NULL) {
+        return -1;
+    }
+    
+    if (heap->size == 0) {
+        return -1;
+    }
+    
+    *value = heap->data[0];
+    return 0;
+}
+
+void heap_print(const Heap *heap) {
+    if (heap == NULL || heap->data == NULL) {
+        printf("Heap is NULL\n");
+        return;
+    }
+    
+    if (heap->size == 0) {
+        printf("Heap is empty\n");
+        return;
+    }
+    
+    printf("Heap: ");
+    for (size_t i = 0; i < heap->size; i++) {
+        printf("%d ", heap->data[i]);
+    }
+    printf("\n");
+}
+
+int main(void) {
+    Heap heap;
+    int result;
+    int deleted_value;
+    int min_value;
+    
+    result = heap_init(&heap, 20);
+    if (result != 0) {
+        fprintf(stderr, "Failed to initialize heap\n");
+        return EXIT_FAILURE;
+    }
+    
+    int values[] = {10, 20, 15, 40, 50, 100, 25, 45};
+    size_t num_values = sizeof(values) / sizeof(values[0]);
+    
+    printf("Inserting values into heap:\n");
+    for (size_t i = 0; i < num_values; i++) {
+        result = heap_insert(&heap, values[i]);
+        if (result != 0) {
+            fprintf(stderr, "Failed to insert %d\n", values[i]);
+            heap_free(&heap);
+            return EXIT_FAILURE;
+        }
+        printf("Inserted %d: ", values[i]);
+        heap_print(&heap);
+    }
+    
+    printf("\n");
+    
+    result = heap_peek(&heap, &min_value);
+    if (result == 0) {
+        printf("Current minimum: %d\n", min_value);
+    }
+    
+    printf("\nDeleting minimum and inserting 5:\n");
+    result = heap_delete_min_and_insert(&heap, 5, &deleted_value);
+    if (result == 0) {
+        printf("Deleted: %d, Inserted: 5\n", deleted_value);
+        heap_print(&heap);
+    } else {
+        fprintf(stderr, "Failed to delete and insert\n");
+    }
+    
+    printf("\nDeleting minimum and inserting 30:\n");
+    result = heap_delete_min_and_insert(&heap, 30, &deleted_value);
+    if (result == 0) {
+        printf("Deleted: %d, Inserted: 30\n", deleted_value);
+        heap_print(&heap);
+    } else {
+        fprintf(stderr, "Failed to delete and insert\n");
+    }
+    
+    printf("\nDeleting minimum only:\n");
+    result = heap_delete_min(&heap, &deleted_value);
+    if (result == 0) {
+        printf("Deleted: %d\n", deleted_value);
+        heap_print(&heap);
+    } else {
+        fprintf(stderr, "Failed to delete minimum\n");
+    }
+    
+    printf("\nInserting 3:\n");
+    result = heap_insert(&heap, 3);
+    if (result == 0) {
+        heap_print(&heap);
+    } else {
+        fprintf(stderr, "Failed to insert\n");
+    }
+    
+    heap_free(&heap);
+    
+    return EXIT_SUCCESS;
+}

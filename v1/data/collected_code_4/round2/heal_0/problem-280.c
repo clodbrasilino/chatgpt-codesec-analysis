@@ -1,0 +1,22 @@
+#include <stdio.h>
+
+int sequentialSearch(int array[], int numOfElements, int searchElement) {
+    int i;
+    for (i = 0; i < numOfElements; i++) {
+        if (array[i] == searchElement) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+int main() {
+    int array[] = {20, 35, 18, 8, 14, 12, 22};
+    int numOfElements = sizeof(array) / sizeof(array[0]);
+    int searchElement = 14;
+    int result = sequentialSearch(array, numOfElements, searchElement);
+   
+    (result == -1) ? printf("Element is not present in array\n")
+                   : printf("Element is present at index %d\n", result);
+    return 0;
+}

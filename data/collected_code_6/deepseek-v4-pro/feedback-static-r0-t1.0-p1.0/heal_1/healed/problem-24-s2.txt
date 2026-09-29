@@ -1,0 +1,58 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+
+int binary_to_decimal(const char *binary) {
+    int decimal = 0;
+    size_t i = 0;
+    
+    while (binary[i] != '\0') {
+        if (binary[i] != '0' && binary[i] != '1') {
+            return -1;
+        }
+        
+        decimal = decimal * 2 + (binary[i] - '0');
+        i++;
+    }
+    
+    if (i == 0) {
+        return -1;
+    }
+    
+    return decimal;
+}
+
+int main(void) {
+    char input[65] = {0};
+    
+    printf("Enter a binary number: ");
+    
+    if (fgets(input, sizeof(input), stdin) == NULL) {
+        printf("Error reading input\n");
+        return 1;
+    }
+    
+    size_t len = strlen(input);
+    if (len > 0 && input[len - 1] == '\n') {
+        input[len - 1] = '\0';
+    }
+    else if (len + 1 >= sizeof(input)) {
+        int c;
+        while ((c = getchar()) != '\n' && c != EOF);
+        printf("Input too long\n");
+        return 1;
+    }
+    
+    int result = binary_to_decimal(input);
+    
+    if (result == -1) {
+        printf("Invalid binary number\n");
+        return 1;
+    }
+    
+    printf("Decimal equivalent: %d\n", result);
+    
+    return 0;
+}
+```

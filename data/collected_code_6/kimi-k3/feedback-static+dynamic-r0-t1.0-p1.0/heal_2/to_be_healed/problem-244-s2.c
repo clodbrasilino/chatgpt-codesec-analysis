@@ -1,0 +1,64 @@
+#include <stdio.h>
+#include <math.h>
+#include <limits.h>
+#include <stdint.h>
+#include <stdbool.h>
+
+bool next_perfect_square(long long n, long long *result) {
+    if (result == NULL) {
+        return false;
+    }
+    
+    if (n < 0) {
+        *result = 0;
+        return true;
+    }
+    
+    if (n >= LLONG_MAX - 1) {
+        return false;
+    }
+    
+    long long next_val = n + 1;
+    long long root = (long long)sqrt((double)next_val);
+    
+    while (root > 0 && root * root >= next_val) {
+        root--;
+    }
+    while (root < LLONG_MAX / root && root * root < next_val) {
+        root++;
+    }
+    
+    if (root > 0 && root > LLONG_MAX / root) {
+        return false;
+    }
+    
+    long long square = root * root;
+    if (square < next_val) {
+        return false;
+    }
+    
+    *result = square;
+    return true;
+}
+ /* Possible weaknesses found:
+  * Fuzzing found a crash (signal 6) on input id:000000,sig:06,src:000005,time:4602,execs:2018,op:havoc,rep:4; likely memory-safety defect
+  */
+
+int main(void) {
+    long long number;
+    long long result;
+    
+    printf("Enter a number: ");
+    if (scanf("%lld", &number) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return 1;
+    }
+    
+    if (next_perfect_square(number, &result)) {
+        printf("Next perfect square: %lld\n", result);
+    } else {
+        printf("No perfect square found within representable range\n");
+    }
+    
+    return 0;
+}

@@ -1,0 +1,61 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stddef.h>
+
+// Struct for Dictionary with Nested List
+typedef struct NestedDict {
+    char *key;
+    struct NestedDict *child;
+    struct NestedDict *next;
+} NestedDict;
+
+NestedDict* createNode(char *key) {
+    NestedDict* newNode = (NestedDict*)malloc(sizeof(NestedDict));
+    if(newNode == NULL) {
+        fprintf(stderr, "Out of memory\n");
+        exit(1);
+    } else {
+        newNode->key = key;
+        newNode->next = NULL;
+        newNode->child = NULL;
+        return newNode;
+    }
+}
+
+NestedDict* convertListsToNestedDict(char **lists, size_t size) {
+    NestedDict *root = createNode(lists[0]);
+    NestedDict *pred = root, *child;
+    size_t i;
+    for (i = 1; i < size; ++i) {
+        child = createNode(lists[i]);
+        pred->child = child;
+        pred = child;
+    }
+    return root;
+}
+
+void printNestedDict(NestedDict *root) {
+    NestedDict *temp = root;
+    while(temp) {
+        printf("%s -> ", temp->key);
+        temp = temp->child;
+    }
+    printf("NULL\n");
+}
+
+void freeNestedDict(NestedDict *root) {
+    NestedDict *temp;
+    while(root) {
+        temp = root;
+        root = root->child;
+        free(temp);
+    }
+}
+
+int main() {
+    char *lists[] = {"hello", "world", "good", "day", "y'all"};
+    NestedDict *root = convertListsToNestedDict(lists, 5);
+    printNestedDict(root);
+    freeNestedDict(root);
+    return 0;
+}

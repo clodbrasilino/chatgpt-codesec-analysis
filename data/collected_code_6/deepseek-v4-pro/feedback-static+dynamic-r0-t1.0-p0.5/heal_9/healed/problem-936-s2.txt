@@ -1,0 +1,132 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+typedef struct {
+    int id;
+    char *value;
+} Tuple;
+
+typedef struct {
+    Tuple *tuples;
+    size_t count;
+} TupleList;
+
+typedef struct {
+    int *order;
+    size_t length;
+} SortContext;
+
+static int compare_by_order(const void *a, const void *b, void *ctx) {
+    const Tuple *tuple_a = (const Tuple *)a;
+    const Tuple *tuple_b = (const Tuple *)b;
+    const SortContext *context = (const SortContext *)ctx;
+    size_t i;
+    int index_a = -1, index_b = -1;
+
+    for (i = 0; i < context->length; i++) {
+        if (tuple_a->id == context->order[i]) index_a = (int)i;
+        if (tuple_b->id == context->order[i]) index_b = (int)i;
+    }
+
+    if (index_a == -1 && index_b == -1) return 0;
+    if (index_a == -1) return 1;
+    if (index_b == -1) return -1;
+    return index_a - index_b;
+}
+
+static int *build_order_array(const int *ordered_ids, size_t order_count) {
+    int *order;
+    size_t total_size;
+
+    if (order_count > (SIZE_MAX - 1) / sizeof(int)) return NULL;
+
+    total_size = order_count + 1;
+    if (total_size > SIZE_MAX / sizeof(int)) return NULL;
+
+    order = malloc(total_size * sizeof(int));
+    if (!order) return NULL;
+
+    if (order_count > 0) {
+        size_t copy_size = order_count * sizeof(int);
+        if (copy_size > total_size * sizeof(int) - sizeof(int)) {
+            free(order);
+            return NULL;
+        }
+        memcpy(order, ordered_ids, copy_size);
+    }
+    order[order_count] = -1;
+    return order;
+}
+
+int rearrange_tuples(TupleList *list, const int *ordered_ids, size_t order_count) {
+    SortContext context;
+    Tuple *sorted;
+    int *order_copy;
+
+    if (!list || !ordered_ids || order_count == 0 || list->count == 0) {
+        return -1;
+    }
+
+    if (list->count > SIZE_MAX / sizeof(Tuple)) {
+        return -1;
+    }
+
+    order_copy = build_order_array(ordered_ids, order_count);
+    if (!order_copy) {
+        return -1;
+    }
+
+    context.order = order_copy;
+    context.length = order_count + 1;
+
+    sorted = malloc(list->count * sizeof(Tuple));
+    if (!sorted) {
+        free(order_copy);
+        return -1;
+    }
+
+    memcpy(sorted, list->tuples, list->count * sizeof(Tuple));
+
+    qsort_r(sorted, list->count, sizeof(Tuple), compare_by_order, &context);
+
+    free(order_copy);
+    free(list->tuples);
+    list->tuples = sorted;
+
+    return 0;
+}
+
+int main(void) {
+    TupleList list;
+    int ordered_ids[] = {3, 1, 2};
+    size_t i;
+
+    list.count = 4;
+    list.tuples = malloc(list.count * sizeof(Tuple));
+    if (!list.tuples) return 1;
+
+    list.tuples[0].id = 1;
+    list.tuples[0].value = "one";
+    list.tuples[1].id = 2;
+    list.tuples[1].value = "two";
+    list.tuples[2].id = 3;
+    list.tuples[2].value = "three";
+    list.tuples[3].id = 4;
+    list.tuples[3].value = "four";
+
+    if (rearrange_tuples(&list, ordered_ids, 3) != 0) {
+        free(list.tuples);
+        return 1;
+    }
+
+    for (i = 0; i < list.count; i++) {
+        printf("%d: %s\n", list.tuples[i].id, list.tuples[i].value);
+    }
+
+    free(list.tuples);
+    return 0;
+}
+```

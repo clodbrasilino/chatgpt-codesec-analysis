@@ -1,0 +1,100 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct DictNode {
+    char *key;
+    char *value;
+    struct DictNode *nested_dict;
+    struct DictNode *next;
+} DictNode;
+
+DictNode* create_node(const char *key, const char *value) {
+    if (!key) return NULL;
+    
+    DictNode *new_node = (DictNode *)malloc(sizeof(DictNode));
+    if (!new_node) return NULL;
+    
+    new_node->key = strdup(key);
+    if (!new_node->key) {
+        free(new_node);
+        return NULL;
+    }
+    
+    if (value) {
+        new_node->value = strdup(value);
+        if (!new_node->value) {
+            free(new_node->key);
+            free(new_node);
+            return NULL;
+        }
+    } else {
+        new_node->value = NULL;
+    }
+    
+    new_node->nested_dict = NULL;
+    new_node->next = NULL;
+    return new_node;
+}
+
+DictNode* lists_to_nested_dict(char **keys, char **values, int len) {
+    if (len <= 0 || !keys) return NULL;
+    
+    DictNode *head = create_node(keys[0], len == 1 ? (values ? values[0] : NULL) : NULL);
+    if (!head) return NULL;
+    
+    if (len > 1) {
+        head->nested_dict = lists_to_nested_dict(keys + 1, values && len > 1 ? values + 1 : NULL, len - 1);
+        if (!head->nested_dict) {
+            free(head->key);
+            if (head->value) free(head->value);
+            free(head);
+            return NULL;
+        }
+    }
+    
+    return head;
+}
+
+void free_dict(DictNode *node) {
+    while (node) {
+        DictNode *temp = node;
+        node = node->next;
+        free(temp->key);
+        if (temp->value) free(temp->value);
+        if (temp->nested_dict) free_dict(temp->nested_dict);
+        free(temp);
+    }
+}
+
+void print_dict(DictNode *node, int indent) {
+    while (node) {
+        for (int i = 0; i < indent; i++) printf("  ");
+        printf("Key: %s", node->key);
+        if (node->value) {
+            printf(", Value: %s\n", node->value);
+        } else {
+            printf("\n");
+        }
+        if (node->nested_dict) {
+            print_dict(node->nested_dict, indent + 1);
+        }
+        node = node->next;
+    }
+}
+
+int main(void) {
+    char *keys[] = {"level1", "level2", "level3"};
+    char *values[] = {NULL, NULL, "final_value"};
+    int len = 3;
+    
+    DictNode *dict = lists_to_nested_dict(keys, values, len);
+    if (dict) {
+        print_dict(dict, 0);
+        free_dict(dict);
+    } else {
+        fprintf(stderr, "Failed to create dictionary\n");
+    }
+    
+    return 0;
+}

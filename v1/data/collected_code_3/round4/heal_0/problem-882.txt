@@ -1,0 +1,17 @@
+```C
+#include <stdio.h>
+
+float calculatePerimeter(float base, float side) {
+    return 2 * (base + side);
+}
+
+int main() {
+    float base, side;
+    printf("Enter base of the parallelogram: ");
+    scanf("%f", &base);
+    printf("Enter side of the parallelogram: ");
+    scanf("%f", &side);
+    printf("Perimeter of the parallelogram: %.2f\n", calculatePerimeter(base, side));
+    return 0;
+}
+```

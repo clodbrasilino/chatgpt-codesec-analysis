@@ -1,0 +1,43 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int is_valid_even_number(int n) {
+    if (n <= 0) return 0;
+    if (n % 2 != 0) return 0;
+    return 1;
+}
+
+double average_of_even_numbers(int n) {
+    if (!is_valid_even_number(n)) {
+        return -1.0;
+    }
+    
+    int count = n / 2;
+    long long sum = 0;
+    
+    for (int i = 2; i <= n; i += 2) {
+        sum += i;
+    }
+    
+    return (double)sum / count;
+}
+
+int main(void) {
+    int number;
+    
+    printf("Enter an even number: ");
+    if (scanf("%d", &number) != 1) {
+        printf("Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    double result = average_of_even_numbers(number);
+    
+    if (result < 0) {
+        printf("Please enter a positive even number\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("Average of even numbers from 2 to %d: %.2f\n", number, result);
+    return EXIT_SUCCESS;
+}

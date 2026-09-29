@@ -1,0 +1,33 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+#include <stddef.h>
+
+typedef struct {
+    int count;
+} Dictionary;
+
+bool areAllDictionariesEmpty(const Dictionary *dictionaries, size_t length) {
+    for (size_t i = 0; i < length; ++i) {
+        if (dictionaries[i].count != 0) {
+            return false;
+        }
+    }
+    return true;
+}
+
+int main() {
+    Dictionary dictionaries[] = {
+        {0},
+        {0},
+        {0}
+    };
+    size_t length = sizeof(dictionaries) / sizeof(dictionaries[0]);
+    if (areAllDictionariesEmpty(dictionaries, length)) {
+        printf("All dictionaries are empty.\n");
+    } else {
+        printf("Not all dictionaries are empty.\n");
+    }
+    return 0;
+}
+```

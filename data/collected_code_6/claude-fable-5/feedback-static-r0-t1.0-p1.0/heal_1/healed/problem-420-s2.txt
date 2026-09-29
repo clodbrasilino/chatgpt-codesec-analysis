@@ -1,0 +1,46 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+unsigned long long cube_sum_even(unsigned int n)
+{
+    unsigned long long sum = 0;
+    unsigned int i;
+
+    for (i = 1; i <= n; i++) {
+        unsigned long long term = 2ULL * i;
+        sum += term * term * term;
+    }
+
+    return sum;
+}
+
+int main(void)
+{
+    unsigned int n;
+    int result;
+
+    printf("Enter the number of even natural numbers: ");
+    result = scanf("%u", &n);
+
+    if (result != 1) {
+        fprintf(stderr, "Error: invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (n > 100000U) {
+        fprintf(stderr, "Error: input too large\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Cube sum of first %u even natural numbers: %llu\n", n, cube_sum_even(n));
+
+    return EXIT_SUCCESS;
+}
+```
+
+The key changes made to address the identified weakness:
+
+1. **Variable scope reduction**: The variable `term` is now declared inside the loop body, limiting its scope to exactly where it is used. This resolves the `[variableScope]` warning and improves code maintainability.
+
+2. **Bonus hardening**: The cast `(unsigned long long)(2U * i)` was replaced with `2ULL * i`. The original computed `2U * i` in `unsigned int` arithmetic *before* casting, which would silently wrap for very large `i` on platforms with 32-bit `int`. While the `n > 100000U` guard prevents this in practice, promoting to `unsigned long long` before the multiplication is the more robust idiom and costs nothing.

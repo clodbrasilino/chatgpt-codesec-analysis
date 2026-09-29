@@ -1,0 +1,55 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+bool check_k_elements(int **tuples, int num_tuples, int k) {
+    if (tuples == NULL || num_tuples <= 0 || k <= 0) {
+        return false;
+    }
+
+    for (int i = 0; i < num_tuples; i++) {
+        if (tuples[i] == NULL) {
+            return false;
+        }
+    }
+
+    int *counts = (int *)calloc(k, sizeof(int));
+    if (counts == NULL) {
+        return false;
+    }
+
+    for (int i = 0; i < num_tuples; i++) {
+        int val = tuples[i][1];
+        if (val >= 0 && val < k) {
+            counts[val]++;
+        }
+    }
+
+    bool result = true;
+    for (int i = 0; i < k; i++) {
+        if (counts[i] == 0) {
+            result = false;
+            break;
+        }
+    }
+
+    free(counts);
+    return result;
+}
+
+int main() {
+    int t0[] = {1, 0};
+    int t1[] = {2, 1};
+    int t2[] = {3, 2};
+    int t3[] = {4, 3};
+    int *tuples[] = {t0, t1, t2, t3};
+    int num_tuples = sizeof(tuples) / sizeof(tuples[0]);
+    int k = 4;
+
+    bool res = check_k_elements(tuples, num_tuples, k);
+    printf("%d\n", res);
+
+    return 0;
+}
+```

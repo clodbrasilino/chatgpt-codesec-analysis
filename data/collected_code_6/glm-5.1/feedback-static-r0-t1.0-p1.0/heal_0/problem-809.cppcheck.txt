@@ -1,0 +1,7 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-809.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-809.c:5:24: style: Parameter 'tuple1' can be declared as pointer to const [constParameterPointer]
+bool check_tuples(int *tuple1, int *tuple2, size_t size) {
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-809.c:5:37: style: Parameter 'tuple2' can be declared as pointer to const [constParameterPointer]
+bool check_tuples(int *tuple1, int *tuple2, size_t size) {
+                                    ^

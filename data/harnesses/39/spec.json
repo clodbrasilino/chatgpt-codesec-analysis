@@ -1,0 +1,44 @@
+{
+  "task_id": 39,
+  "text": "Write a C function to check if the letters of a given string can be rearranged so that two characters that are adjacent to each other are different.",
+  "fn_candidates": [
+    "rearange_string",
+    "RearangeString",
+    "rearangeString",
+    "rearangestring"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "rearange_string",
+      "args": [
+        "aab"
+      ],
+      "expected": "aba",
+      "assert_src": "assert rearange_string(\"aab\")==('aba')"
+    },
+    {
+      "fn_name": "rearange_string",
+      "args": [
+        "aabb"
+      ],
+      "expected": "abab",
+      "assert_src": "assert rearange_string(\"aabb\")==('abab')"
+    },
+    {
+      "fn_name": "rearange_string",
+      "args": [
+        "abccdd"
+      ],
+      "expected": "cdabcd",
+      "assert_src": "assert rearange_string(\"abccdd\")==('cdabcd')"
+    }
+  ],
+  "arg_kinds": [
+    "str"
+  ],
+  "return_kind": "str",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

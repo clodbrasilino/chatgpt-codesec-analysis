@@ -1,0 +1,51 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+bool check_tuple_has_k_elements(const int *tuple, size_t size, size_t k)
+{
+    if (tuple == NULL)
+    {
+        return k == 0 && size == 0;
+    }
+    return size == k;
+}
+
+int main(void)
+{
+    int tuple1[] = {3, 5, 6, 5, 3, 6};
+    int tuple2[] = {1, 2, 3};
+    size_t size1 = sizeof(tuple1) / sizeof(tuple1[0]);
+    size_t size2 = sizeof(tuple2) / sizeof(tuple2[0]);
+
+    printf("tuple1 contains exactly 6 elements: %s\n",
+           check_tuple_has_k_elements(tuple1, size1, 6) ? "true" : "false");
+
+    printf("tuple2 contains exactly 6 elements: %s\n",
+           check_tuple_has_k_elements(tuple2, size2, 6) ? "true" : "false");
+
+    printf("NULL tuple check: %s\n",
+           check_tuple_has_k_elements(NULL, 0, 0) ? "true" : "false");
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the original code and the fixes applied:**
+
+1. **`knownConditionTrueFalse` weakness**: In the original code, `check_tuple_has_k_elements(NULL, 0, 0)` was *always* `false` because the function unconditionally returned `false` for a `NULL` pointer. This made the `if` branch dead code. The static analyzer correctly flagged this as a condition that can never be true.
+
+2. **The fix**: The function's semantics were adjusted so a `NULL` tuple is treated as a valid *empty* tuple. Now `check_tuple_has_k_elements(NULL, 0, 0)` returns `true` (an empty tuple has exactly 0 elements), which is both logically consistent and eliminates the dead branch — the condition is no longer statically determinable as always false.
+
+3. **Additional improvements**:
+   - Replaced the repetitive `if/else` printing blocks with ternary expressions, reducing code duplication and branch clutter.
+   - The `const int *` parameter, `size_t` for sizes, and the `sizeof(arr) / sizeof(arr[0])` idiom were retained, as these are already correct, portable practices.
+   - `EXIT_SUCCESS` is kept for portability over a bare `return 0`.
+
+**Expected output:**
+```
+tuple1 contains exactly 6 elements: true
+tuple2 contains exactly 6 elements: false
+NULL tuple check: true
+```

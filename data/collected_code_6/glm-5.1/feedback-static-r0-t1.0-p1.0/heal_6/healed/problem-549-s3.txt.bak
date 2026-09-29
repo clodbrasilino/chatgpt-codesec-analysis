@@ -1,0 +1,40 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+unsigned long long sum_fifth_power_odd(int n) {
+    if (n <= 0) {
+        return 0;
+    }
+
+    unsigned long long sum = 0;
+    int current = 1;
+
+    for (int count = 0; count < n; count++) {
+        unsigned long long term = (unsigned long long)current * current * current * current * current;
+        sum += term;
+        current += 2;
+    }
+
+    return sum;
+}
+
+int main(int argc, char * const * argv) {
+    int n;
+
+    if (argc != 2) {
+        fprintf(stderr, "Usage: %s <n>\n", argv[0]);
+        return EXIT_FAILURE;
+    }
+
+    n = atoi(argv[1]);
+
+    if (n <= 0) {
+        fprintf(stderr, "Error: n must be a positive integer.\n");
+        return EXIT_FAILURE;
+    }
+
+    unsigned long long result = sum_fifth_power_odd(n);
+    printf("%llu\n", result);
+
+    return EXIT_SUCCESS;
+}

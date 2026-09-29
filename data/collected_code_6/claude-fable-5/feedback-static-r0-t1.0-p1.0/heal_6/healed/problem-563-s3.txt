@@ -1,0 +1,80 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+char *extract_quoted(const char *input)
+{
+    const char *start;
+    const char *end;
+    char *result;
+    size_t length;
+    size_t buffer_size;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    start = strchr(input, '"');
+    if (start == NULL) {
+        return NULL;
+    }
+    start++;
+
+    end = strchr(start, '"');
+    if (end == NULL) {
+        return NULL;
+    }
+
+    length = (size_t)(end - start);
+    if (length >= SIZE_MAX - 1) {
+        return NULL;
+    }
+
+    buffer_size = length + 1;
+    result = (char *)malloc(buffer_size);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    if (length > 0) {
+        memcpy(result, start, length);
+    }
+    result[length] = '\0';
+
+    return result;
+}
+
+int main(void)
+{
+    const char *text = "He said \"hello world\" to everyone.";
+    char *extracted;
+
+    extracted = extract_quoted(text);
+    if (extracted == NULL) {
+        fprintf(stderr, "No quoted value found or allocation failed.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Extracted: %s\n", extracted) < 0) {
+        free(extracted);
+        return EXIT_FAILURE;
+    }
+
+    free(extracted);
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis summary:**
+
+- **`buffer_size = length + 1`** — Safe as written. The preceding guard `length >= SIZE_MAX - 1` guarantees no integer overflow, so the flagged assignment needs no change.
+
+- **`length >= buffer_size` check** — Removed. As cppcheck correctly noted (`knownConditionTrueFalse`), since `buffer_size = length + 1` with overflow already excluded, the condition can never be true. It was dead code and only added noise.
+
+- **Flawfinder's `memcpy` warning (CWE-120)** — A false positive here. The destination buffer is allocated with exactly `length + 1` bytes, `length` bytes are copied, and the terminator is written at index `length`. Bounds are provably respected, so `memcpy` remains, but the redundant guard around it is gone.
+
+- **`malloc` failure** — Already handled correctly with the `NULL` check; retained.
+
+The rewritten version is functionally identical, eliminates the dead-code warning, and keeps all genuine safety checks (NULL input, missing quotes, overflow guard, allocation failure) intact.

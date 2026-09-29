@@ -1,0 +1,56 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct List {
+    int *elements;
+    int size;
+} List;
+
+void remove_duplicates(List *list) {
+    if (list->size <= 1) return;
+
+    int *new_elements = (int *)malloc(list->size * sizeof(int));
+    if (new_elements == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(1);
+    }
+
+    int new_size = 0;
+    for (int i = 0; i < list->size; ++i) {
+        int is_duplicate = 0;
+        for (int j = 0; j < new_size; ++j) {
+            if (list->elements[i] == new_elements[j]) {
+                is_duplicate = 1;
+                break;
+            }
+        }
+        if (!is_duplicate) {
+            new_elements[new_size++] = list->elements[i];
+        }
+    }
+
+    free(list->elements);
+    list->elements = new_elements;
+    list->size = new_size;
+}
+
+int main() {
+    /* Possible weaknesses found:
+     *  Variable 'initial_elements' can be declared as const array [constVariable]
+     */
+    int initial_elements[] = {1, 2, 2, 3, 4, 4, 5};
+    List list = { .elements = (int *)malloc(7 * sizeof(int)), .size = 7 };
+    for (int i = 0; i < 7; ++i) {
+        list.elements[i] = initial_elements[i];
+    }
+
+    remove_duplicates(&list);
+
+    for (int i = 0; i < list.size; ++i) {
+        printf("%d ", list.elements[i]);
+    }
+    printf("\n");
+
+    free(list.elements);
+    return 0;
+}

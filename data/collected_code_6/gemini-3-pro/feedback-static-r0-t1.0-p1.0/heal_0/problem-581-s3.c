@@ -1,0 +1,36 @@
+#include <stdio.h>
+#include <math.h>
+
+double current_surface_area_square_pyramid(double base_edge, double height);
+
+int main() {
+    double base_edge;
+    double height;
+    double surface_area;
+
+    if (scanf("%lf %lf", &base_edge, &height) != 2) {
+        return 1;
+    }
+
+    if (base_edge < 0.0 || height < 0.0) {
+        return 1;
+    }
+
+    surface_area = current_surface_area_square_pyramid(base_edge, height);
+
+    printf("%f\n", surface_area);
+
+    return 0;
+}
+
+double current_surface_area_square_pyramid(double base_edge, double height) {
+    double base_area;
+    double slant_height;
+    double lateral_area;
+
+    base_area = base_edge * base_edge;
+    slant_height = sqrt((base_edge / 2.0) * (base_edge / 2.0) + height * height);
+    lateral_area = 2.0 * base_edge * slant_height;
+
+    return base_area + lateral_area;
+}

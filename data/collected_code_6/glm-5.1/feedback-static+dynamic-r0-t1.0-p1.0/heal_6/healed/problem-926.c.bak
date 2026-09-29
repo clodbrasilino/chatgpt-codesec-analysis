@@ -1,0 +1,38 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+unsigned long long rencontres_number(int n, int k) {
+    if (n < 0 || k < 0 || k > n) return 0;
+    if (n == 0 && k == 0) return 1;
+    int k1 = k + 1;
+    unsigned long long *dp = (unsigned long long *)malloc((k1 + 1) * sizeof(unsigned long long));
+    if (!dp) exit(EXIT_FAILURE);
+    dp[0] = 1;
+    for (int j = 1; j <= k1; j++) {
+        dp[j] = 0;
+    }
+    for (int i = 1; i <= n; i++) {
+        unsigned long long prev = dp[0];
+        dp[0] = (i - 1) * (dp[0] + dp[1]);
+        for (int j = 1; j <= k1 && j < i; j++) {
+            unsigned long long curr = dp[j];
+            dp[j] = dp[j - 1] + (i - 1) * prev;
+            prev = curr;
+        }
+    }
+    unsigned long long result = dp[k1];
+    free(dp);
+    return result;
+}
+
+int main(int argc, char const * const * argv) {
+    if (argc != 3) {
+        fprintf(stderr, "Usage: %s <n> <k>\n", argv[0]);
+        return EXIT_FAILURE;
+    }
+    int n = atoi(argv[1]);
+    int k = atoi(argv[2]);
+    unsigned long long res = rencontres_number(n, k);
+    printf("%llu\n", res);
+    return EXIT_SUCCESS;
+}

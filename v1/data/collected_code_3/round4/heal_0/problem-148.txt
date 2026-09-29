@@ -1,0 +1,24 @@
+```C
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+int compare(const void* a, const void* b) {
+    return *(char*)b - *(char*)a;
+}
+
+void maxSumOfDigits(int num) {
+    char str[50];
+    sprintf(str, "%d", num);
+    qsort(str, strlen(str), sizeof(char), compare);
+    printf("%s\n", str);
+}
+
+int main() {
+    int num;
+    printf("Enter a number: ");
+    scanf("%d", &num);
+    maxSumOfDigits(num);
+    return 0;
+}
+```

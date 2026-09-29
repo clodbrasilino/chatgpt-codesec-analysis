@@ -1,0 +1,22 @@
+collected_code/problem-208-0.c: In function 'checkPrecision':
+collected_code/problem-208-0.c:13:5: warning: implicit declaration of function 'snprintf' [-Wimplicit-function-declaration]
+   13 |     snprintf(buffer, sizeof(buffer), "%.2f", decimal);
+      |     ^~~~~~~~
+collected_code/problem-208-0.c:2:1: note: include '<stdio.h>' or provide a declaration of 'snprintf'
+    1 | #include <regex.h>
+  +++ |+#include <stdio.h>
+    2 | 
+collected_code/problem-208-0.c:13:5: warning: incompatible implicit declaration of built-in function 'snprintf' [-Wbuiltin-declaration-mismatch]
+   13 |     snprintf(buffer, sizeof(buffer), "%.2f", decimal);
+      |     ^~~~~~~~
+collected_code/problem-208-0.c:13:5: note: include '<stdio.h>' or provide a declaration of 'snprintf'
+collected_code/problem-208-0.c:15:39: error: 'NULL' undeclared (first use in this function)
+   15 |     reti = regexec(&regex, buffer, 0, NULL, 0);
+      |                                       ^~~~
+collected_code/problem-208-0.c:2:1: note: 'NULL' is defined in header '<stddef.h>'; did you forget to '#include <stddef.h>'?
+    1 | #include <regex.h>
+  +++ |+#include <stddef.h>
+    2 | 
+collected_code/problem-208-0.c:15:39: note: each undeclared identifier is reported only once for each function it appears in
+   15 |     reti = regexec(&regex, buffer, 0, NULL, 0);
+      |                                       ^~~~

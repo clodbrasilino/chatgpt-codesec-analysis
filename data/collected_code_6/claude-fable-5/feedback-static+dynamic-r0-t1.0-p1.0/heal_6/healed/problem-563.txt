@@ -1,0 +1,81 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+char *extract_quoted(const char *input)
+{
+    const char *start;
+    const char *end;
+    size_t length;
+    char *result;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    start = strchr(input, '"');
+    if (start == NULL) {
+        return NULL;
+    }
+
+    start++;
+    end = strchr(start, '"');
+    if (end == NULL) {
+        return NULL;
+    }
+
+    length = (size_t)(end - start);
+
+    if (length >= SIZE_MAX - 1U) {
+        return NULL;
+    }
+
+    result = malloc(length + 1U);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    if (length > 0U) {
+        memcpy(result, start, length);
+    }
+    result[length] = '\0';
+
+    return result;
+}
+
+int main(void)
+{
+    const char *test = "The value is \"hello world\" in this string";
+    char *extracted;
+
+    extracted = extract_quoted(test);
+    if (extracted == NULL) {
+        if (fprintf(stderr, "No quoted value found or allocation failed\n") < 0) {
+            return EXIT_FAILURE;
+        }
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Extracted: %s\n", extracted) < 0) {
+        free(extracted);
+        return EXIT_FAILURE;
+    }
+
+    free(extracted);
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the changes:**
+
+1. **Removed the redundant `end < start` check** — since `end` is found by `strchr(start, '"')`, it can never point before `start`. If no quote is found, `strchr` returns `NULL`, which is already handled.
+
+2. **Removed the redundant `length < alloc_size` condition** — this was the `knownConditionTrueFalse` finding. Since `alloc_size = length + 1` (with the overflow guard `length >= SIZE_MAX - 1U` ensuring no wraparound), the condition was tautologically true and only added noise.
+
+3. **Eliminated the `alloc_size` intermediate variable** — passing `length + 1U` directly to `malloc` keeps the allocation size and the copy length visibly coupled, which makes it easier for both humans and static analyzers to verify that the `memcpy` cannot overflow.
+
+4. **The Flawfinder `memcpy` warning (CWE-120) is a false positive here** — the destination buffer is allocated with exactly `length + 1` bytes and the copy writes exactly `length` bytes, leaving room for the NUL terminator. The overflow guard on `length` prevents integer wraparound in the size calculation, so the code is safe as written; no functional fix was required, only simplification so the invariant is obvious.
+
+The remaining logic (NULL input handling, malloc failure check, checked `printf`/`fprintf` return values, and freeing on all exit paths) was already correct and is preserved.

@@ -1,0 +1,23 @@
+```c
+#include <stdio.h>
+#include <ctype.h>
+
+void toLowerCase(char* str) {
+    for(int i = 0; str[i]; i++){
+      str[i] = tolower(str[i]);
+    }
+}
+
+int main() {
+    char str[100];
+
+    printf("Enter a string: ");
+    fgets(str, sizeof(str), stdin);
+
+    toLowerCase(str);
+
+    printf("Lowercase string: %s", str);
+
+    return 0;
+}
+```

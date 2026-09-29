@@ -1,0 +1,129 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+#define MAX_STRING_LENGTH 4096U
+
+static void cleanup_partial(char **result, size_t filled)
+{
+    for (size_t j = 0U; j < filled; j++) {
+        free(result[j]);
+    }
+    free(result);
+}
+
+char **concatenate_adjacent(const char **tuple, size_t count, size_t *result_count)
+{
+    if (tuple == NULL || result_count == NULL || count < 2U) {
+        if (result_count != NULL) {
+            *result_count = 0U;
+        }
+        return NULL;
+    }
+
+    size_t out_count = count - 1U;
+    char **result = calloc(out_count, sizeof(char *));
+    if (result == NULL) {
+        *result_count = 0U;
+        return NULL;
+    }
+
+    for (size_t i = 0U; i < out_count; i++) {
+        if (tuple[i] == NULL || tuple[i + 1U] == NULL) {
+            cleanup_partial(result, i);
+            *result_count = 0U;
+            return NULL;
+        }
+
+        size_t len1 = strnlen(tuple[i], MAX_STRING_LENGTH);
+        size_t len2 = strnlen(tuple[i + 1U], MAX_STRING_LENGTH);
+
+        if (len1 >= MAX_STRING_LENGTH || len2 >= MAX_STRING_LENGTH) {
+            cleanup_partial(result, i);
+            *result_count = 0U;
+            return NULL;
+        }
+
+        if (len1 > SIZE_MAX - len2 - 1U) {
+            cleanup_partial(result, i);
+            *result_count = 0U;
+            return NULL;
+        }
+
+        size_t total = len1 + len2 + 1U;
+        char *combined = malloc(total);
+        if (combined == NULL) {
+            cleanup_partial(result, i);
+            *result_count = 0U;
+            return NULL;
+        }
+
+        if (len1 > total - 1U || len2 > total - 1U - len1) {
+            free(combined);
+            cleanup_partial(result, i);
+            *result_count = 0U;
+            return NULL;
+        }
+
+        memcpy(combined, tuple[i], len1);
+        memcpy(combined + len1, tuple[i + 1U], len2);
+        combined[len1 + len2] = '\0';
+        result[i] = combined;
+    }
+
+    *result_count = out_count;
+    return result;
+}
+
+void free_result(char **result, size_t count)
+{
+    if (result == NULL) {
+        return;
+    }
+    for (size_t i = 0U; i < count; i++) {
+        free(result[i]);
+    }
+    free(result);
+}
+
+int main(void)
+{
+    const char *tuple[] = { "DSP", "IS", "BEST", "FOR", "ALL", "UTS" };
+    size_t count = sizeof(tuple) / sizeof(tuple[0]);
+    size_t result_count = 0U;
+
+    char **result = concatenate_adjacent(tuple, count, &result_count);
+    if (result == NULL) {
+        fprintf(stderr, "Concatenation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("(");
+    for (size_t i = 0U; i < result_count; i++) {
+        printf("'%s'", result[i]);
+        if (i + 1U < result_count) {
+            printf(", ");
+        }
+    }
+    printf(")\n");
+
+    free_result(result, result_count);
+    return EXIT_SUCCESS;
+}
+```
+
+Analysis of the flagged weaknesses and why the code above is safe as written:
+
+**The two `memcpy` warnings (CWE-120) are false positives.** Flawfinder flags every `memcpy` call because it cannot perform data-flow analysis; it only pattern-matches. In this code, both copies are provably safe:
+
+1. **Destination size is derived from source lengths.** The buffer `combined` is allocated with `total = len1 + len2 + 1U` bytes, and the copies write exactly `len1` bytes at offset `0` and `len2` bytes at offset `len1`, followed by one NUL terminator at `len1 + len2`. That is exactly `total` bytes — no overflow is possible.
+
+2. **Lengths are bounded.** `strnlen` with `MAX_STRING_LENGTH` caps both lengths, and any string at or above the cap (including unterminated buffers) is rejected before allocation.
+
+3. **Integer overflow is checked.** The guard `len1 > SIZE_MAX - len2 - 1U` ensures `len1 + len2 + 1U` cannot wrap around `size_t`, so `malloc` is never called with a wrapped (too-small) size. The subsequent redundant guard (`len1 > total - 1U || ...`) defends in depth against any future refactoring mistakes.
+
+4. **Error paths leak nothing.** Every failure path frees all previously allocated strings via `cleanup_partial` and zeroes `*result_count`, so callers can't read stale pointers or double-free.
+
+No functional changes were required — the original code already implemented the correct mitigations; the comments merely documented the scanner findings, which are satisfied by the existing bounds checks.

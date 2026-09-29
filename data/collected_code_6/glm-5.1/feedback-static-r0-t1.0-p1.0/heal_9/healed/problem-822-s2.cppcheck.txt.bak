@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-822-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-822-s2.c:67:59: style: Condition 'res==-1' is always true [knownConditionTrueFalse]
+    printf("Password: %-15s Valid: %s\n", "null_ptr", res == -1 ? "N/A" : (res ? "true" : "false"));
+                                                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-822-s2.c:66:24: note: Calling function 'nullcheck' returns -1
+    int res = nullcheck(NULL);
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-822-s2.c:66:24: note: Assignment 'res=nullcheck(NULL)', assigned value is -1
+    int res = nullcheck(NULL);
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-822-s2.c:67:59: note: Condition 'res==-1' is always true
+    printf("Password: %-15s Valid: %s\n", "null_ptr", res == -1 ? "N/A" : (res ? "true" : "false"));
+                                                          ^

@@ -1,0 +1,4 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-874-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-874-s3.c:10:55: style: Condition 'substr[i]!='\0'' is always true [knownConditionTrueFalse]
+        for (; i < len && str[i] != '\0' && substr[i] != '\0' && str[i] == substr[i]; i++);
+                                                      ^

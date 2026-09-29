@@ -1,0 +1,4 @@
+problem-268-s3.c:10:20:medium:UBSan: signed integer overflow: 9666666666 * 1611111110 cannot be represented in type 'long long' (AFL crash: id:000001,sig:06,src:000007,time:3196,execs:1421,op:havoc,rep:1)
+problem-268-s3.c:12:0:error:Fuzzing found a crash (signal 6) on input id:000000,sig:06,src:000000,time:409,execs:211,op:havoc,rep:3; likely memory-safety defect
+problem-268-s3.c:40:0:high:ASan: FPE (AFL crash: id:000002,sig:06,src:000006,time:7288,execs:3155,op:havoc,rep:7)
+problem-268-s3.c:40:43:medium:UBSan: division by zero (AFL crash: id:000002,sig:06,src:000006,time:7288,execs:3155,op:havoc,rep:7)

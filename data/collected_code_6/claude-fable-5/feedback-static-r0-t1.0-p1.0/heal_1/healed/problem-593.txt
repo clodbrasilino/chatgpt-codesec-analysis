@@ -1,0 +1,100 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+static char *remove_leading_zeroes(const char *ip)
+{
+    char *result;
+    size_t len;
+    size_t i;
+    size_t j;
+
+    if (ip == NULL) {
+        return NULL;
+    }
+
+    len = strlen(ip);
+    result = malloc(len + 1U);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    i = 0;
+    j = 0;
+    while (i <= len) {
+        size_t start = i;
+        size_t end;
+        size_t k;
+
+        while ((i < len) && (ip[i] != '.')) {
+            i++;
+        }
+        end = i;
+
+        k = start;
+        while ((end > start) && (k < end - 1U) && (ip[k] == '0')) {
+            k++;
+        }
+        if (start == end) {
+            k = start;
+        }
+
+        while (k < end) {
+            result[j] = ip[k];
+            j++;
+            k++;
+        }
+
+        if (i < len) {
+            result[j] = '.';
+            j++;
+        }
+        i++;
+    }
+
+    result[j] = '\0';
+    return result;
+}
+
+int main(void)
+{
+    const char *tests[] = {
+        "192.168.001.010",
+        "010.000.000.001",
+        "255.255.255.255",
+        "001.002.003.004",
+        "0.0.0.0"
+    };
+    size_t count;
+    size_t idx;
+
+    count = sizeof(tests) / sizeof(tests[0]);
+
+    for (idx = 0; idx < count; idx++) {
+        char *cleaned = remove_leading_zeroes(tests[idx]);
+
+        if (cleaned == NULL) {
+            (void)fprintf(stderr, "Memory allocation failed\n");
+            return EXIT_FAILURE;
+        }
+        if (printf("%s -> %s\n", tests[idx], cleaned) < 0) {
+            free(cleaned);
+            return EXIT_FAILURE;
+        }
+        free(cleaned);
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+Key changes made:
+
+1. **Variable scope reduction** (`variableScope` warnings): `start`, `end`, and `k` are now declared inside the outer `while` loop body in `remove_leading_zeroes`, and `cleaned` is declared inside the `for` loop body in `main`. This limits their lifetime to where they are actually used, which improves readability and reduces the chance of accidental misuse across iterations.
+
+2. **`strlen` over-read concern (CWE-126)**: The Flawfinder hit is largely a false positive here since the function already guards against `NULL` and all callers pass string literals, which are guaranteed to be NUL-terminated. The `NULL` check remains as the practical mitigation; the function's contract requires a NUL-terminated string.
+
+3. **Defensive condition reordering**: In the leading-zero skip loop, `(end > start)` is now evaluated *first*. In the original, when `end == 0`, the expression `end - 1U` would wrap around to `SIZE_MAX` before the guard was checked, making the first condition trivially true. Short-circuit evaluation now prevents the unsigned underflow from ever influencing the loop.
+
+4. **`static` linkage** added to the helper function since it is not used outside this translation unit.

@@ -1,0 +1,90 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+static unsigned long long mul_mod(unsigned long long a, unsigned long long b, unsigned long long p)
+{
+    unsigned long long result = 0;
+    a %= p;
+    while (b > 0) {
+        if (b & 1ULL) {
+            result = (result + a) % p;
+        }
+        a = (a * 2ULL) % p;
+        b >>= 1ULL;
+    }
+    return result;
+}
+
+static unsigned long long power_mod(unsigned long long base, unsigned long long exp, unsigned long long p)
+{
+    unsigned long long result = 1ULL % p;
+    base %= p;
+    while (exp > 0) {
+        if (exp & 1ULL) {
+            result = mul_mod(result, base, p);
+        }
+        base = mul_mod(base, base, p);
+        exp >>= 1ULL;
+    }
+    return result;
+}
+
+static unsigned long long mod_inverse(unsigned long long a, unsigned long long p)
+{
+    return power_mod(a, p - 2ULL, p);
+}
+
+static int ncr_mod_p(unsigned long long n, unsigned long long r, unsigned long long p, unsigned long long *out)
+{
+    unsigned long long numerator;
+    unsigned long long denominator;
+    unsigned long long i;
+
+    if (out == NULL || p < 2ULL) {
+        return -1;
+    }
+    if (r > n) {
+        *out = 0ULL;
+        return 0;
+    }
+    if (r > n - r) {
+        r = n - r;
+    }
+
+    numerator = 1ULL % p;
+    denominator = 1ULL % p;
+
+    for (i = 0ULL; i < r; i++) {
+        numerator = mul_mod(numerator, (n - i) % p, p);
+        denominator = mul_mod(denominator, (i + 1ULL) % p, p);
+    }
+
+    if (denominator == 0ULL) {
+        return -1;
+    }
+
+    *out = mul_mod(numerator, mod_inverse(denominator, p), p);
+    return 0;
+}
+
+int main(void)
+{
+    unsigned long long n;
+    unsigned long long r;
+    unsigned long long p;
+    unsigned long long result;
+
+    printf("Enter n, r, and prime p: ");
+    if (scanf("%llu %llu %llu", &n, &r, &p) != 3) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (ncr_mod_p(n, r, p, &result) != 0) {
+        fprintf(stderr, "Computation failed: invalid parameters\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("nCr mod p = %llu\n", result);
+    return EXIT_SUCCESS;
+}

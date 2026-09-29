@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-73.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-73.c:101:27: style: The comparison 'remaining_len > (unsigned long)(end-cursor)' is always false because 'remaining_len' and '(unsigned long)(end-cursor)' represent the same value. [knownConditionTrueFalse]
+        if (remaining_len > (size_t)(end - cursor)) {
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-73.c:99:32: note: 'remaining_len' is assigned value '(unsigned long)(end-cursor)' here.
+        size_t remaining_len = (size_t)(end - cursor);
+                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-73.c:101:27: note: The comparison 'remaining_len > (unsigned long)(end-cursor)' is always false because 'remaining_len' and '(unsigned long)(end-cursor)' represent the same value.
+        if (remaining_len > (size_t)(end - cursor)) {
+                          ^

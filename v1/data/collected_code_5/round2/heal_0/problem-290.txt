@@ -1,0 +1,57 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct List {
+    int* array;
+    int length;
+} List;
+
+List* findMaxList(List** listOfLists, int size) {
+    int maxLength = 0;
+    List* maxList = NULL;
+
+    for(int i = 0; i < size; i++) {
+        if(listOfLists[i] != NULL) {
+            if(listOfLists[i]->length > maxLength) {
+                maxLength = listOfLists[i]->length;
+                maxList = listOfLists[i];
+            }
+        }
+    }
+
+    if(maxList == NULL) {
+        printf("No valid list found\n");
+        exit(EXIT_FAILURE);
+    }
+
+    return maxList;
+}
+
+int main() {
+    int size = 3;
+    List** listOfLists = (List**)malloc(sizeof(List*) * size);
+    
+    for(int i = 0; i < size; i++) {
+        listOfLists[i] = (List*)malloc(sizeof(List));
+        listOfLists[i]->array = (int*)malloc(sizeof(int) * (i+1));
+        listOfLists[i]->length = i+1;
+    }
+
+    List* maxList = findMaxList(listOfLists, size);
+
+    printf("Max list size: %d\n", maxList->length);
+
+    for(int i = 0; i < size; i++) {
+        free(listOfLists[i]->array);
+        free(listOfLists[i]);
+    }
+
+    free(listOfLists);
+
+    return 0;
+}
+```
+This code defines a `List` structure which consists of an integer array and a length of array. `findMaxList` function then iterators over the list of lists to find the List with the maximum length. Note that before looking at the length, there's a check if the current list is NULL - which is a check for exceptional condition CWE-703. Max length and corresponding list is tracked and updated during each iteration. If no valid list (i.e., all given lists were NULL), the function prints an error message and exits with failure status. After the execution of findMaxList function, memory allocated for lists is properly freed - preventing memory leaks and aligning with CWE-664.
+
+The `main` function demonstrates the use of `findMaxList`. It first allocates memory for lists with sizes ranging from 1 to 3, then finds the list with the max length, prints its length and finally, frees the memory allocated.

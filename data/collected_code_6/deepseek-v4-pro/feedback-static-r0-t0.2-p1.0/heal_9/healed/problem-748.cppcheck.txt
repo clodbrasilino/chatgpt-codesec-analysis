@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_9/healed/problem-748.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_9/healed/problem-748.c:89:37: style: Condition 'remaining_space>0' is always true [knownConditionTrueFalse]
+                if (remaining_space > 0) {
+                                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_9/healed/problem-748.c:87:25: note: Assuming that condition 'dst_pos<max_result_len' is not redundant
+            if (dst_pos < max_result_len) {
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_9/healed/problem-748.c:88:57: note: Assignment 'remaining_space=max_result_len-dst_pos', assigned value is greater than 0
+                size_t remaining_space = max_result_len - dst_pos;
+                                                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_9/healed/problem-748.c:89:37: note: Condition 'remaining_space>0' is always true
+                if (remaining_space > 0) {
+                                    ^

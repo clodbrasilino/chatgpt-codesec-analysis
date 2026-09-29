@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-215.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-215.c:76:29: style: Condition 'encoded_size>0' is always true [knownConditionTrueFalse]
+    } else if (encoded_size > 0 && decoded.length == 0) {
+                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-215.c:64:43: note: Assignment 'encoded_size=sizeof(encoded)/sizeof(encoded[0])', assigned value is 5
+    size_t encoded_size = sizeof(encoded) / sizeof(encoded[0]);
+                                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-215.c:76:29: note: Condition 'encoded_size>0' is always true
+    } else if (encoded_size > 0 && decoded.length == 0) {
+                            ^

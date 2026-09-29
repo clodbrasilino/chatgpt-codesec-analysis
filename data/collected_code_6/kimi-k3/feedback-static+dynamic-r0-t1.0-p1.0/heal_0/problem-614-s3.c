@@ -1,0 +1,68 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *data;
+    size_t size;
+} IntTuple;
+
+typedef struct {
+    IntTuple *tuples;
+    size_t count;
+} TupleList;
+
+int calculate_cumulative_sum(const TupleList *list, long long *result)
+{
+    size_t i;
+    size_t j;
+    long long sum = 0;
+
+    if (list == NULL || result == NULL) {
+        return -1;
+    }
+
+    if (list->count > 0 && list->tuples == NULL) {
+        return -1;
+    }
+
+    for (i = 0; i < list->count; i++) {
+        if (list->tuples[i].size > 0 && list->tuples[i].data == NULL) {
+            return -1;
+        }
+        for (j = 0; j < list->tuples[i].size; j++) {
+            sum += (long long)list->tuples[i].data[j];
+        }
+    }
+
+    *result = sum;
+    return 0;
+}
+
+int main(void)
+{
+    int data1[] = {1, 2, 3};
+    int data2[] = {4, 5};
+    int data3[] = {6, 7, 8, 9};
+    
+    IntTuple tuples[] = {
+        {data1, sizeof(data1) / sizeof(data1[0])},
+        {data2, sizeof(data2) / sizeof(data2[0])},
+        {data3, sizeof(data3) / sizeof(data3[0])}
+    };
+    
+    TupleList list = {
+        tuples,
+        sizeof(tuples) / sizeof(tuples[0])
+    };
+    
+    long long result = 0;
+    
+    if (calculate_cumulative_sum(&list, &result) != 0) {
+        fprintf(stderr, "Error: Invalid input parameters\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("Cumulative sum: %lld\n", result);
+    
+    return EXIT_SUCCESS;
+}

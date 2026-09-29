@@ -1,0 +1,55 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+static unsigned long highest_power_of_two(unsigned long n)
+{
+    unsigned long result = 0UL;
+
+    if (n == 0UL) {
+        return 0UL;
+    }
+
+    result = 1UL;
+    while ((result << 1) != 0UL && (result << 1) <= n) {
+        result <<= 1;
+    }
+
+    return result;
+}
+
+int main(void)
+{
+    unsigned long number = 0UL;
+    unsigned long result = 0UL;
+    int scan_status = 0;
+
+    printf("Enter a positive number: ");
+    scan_status = scanf("%lu", &number);
+
+    if (scan_status != 1) {
+        fprintf(stderr, "Error: invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (number == 0UL) {
+        fprintf(stderr, "Error: no power of 2 is less than or equal to 0\n");
+        return EXIT_FAILURE;
+    }
+
+    result = highest_power_of_two(number);
+    printf("Highest power of 2 <= %lu is %lu\n", number, result);
+
+    return EXIT_SUCCESS;
+}
+```
+
+Key design decisions from an experienced C perspective:
+
+1. **Input validation (CWE-703)**: The return value of `scanf` is explicitly checked, and the zero case is rejected with a clear error message on `stderr`, returning `EXIT_FAILURE` rather than proceeding with an invalid state.
+
+2. **Overflow safety (CWE-664 / CWE-703)**: The loop condition `(result << 1) != 0UL` guards against unsigned overflow wrapping when `n` is near `ULONG_MAX`, ensuring the shift never silently corrupts the result.
+
+3. **Coding standards (CWE-710)**: The helper is declared `static` with a full prototype, `main` uses `(void)`, all variables are initialized at declaration, unsigned literals use the `UL` suffix, and standard exit codes (`EXIT_SUCCESS`/`EXIT_FAILURE`) are used instead of magic numbers.
+
+4. **Type choice**: `unsigned long` avoids undefined behavior from shifting into the sign bit that would occur with signed types.

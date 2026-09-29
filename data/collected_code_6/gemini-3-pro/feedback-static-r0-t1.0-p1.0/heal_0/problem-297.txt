@@ -1,0 +1,182 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct NestedList {
+    int is_integer;
+    int value;
+    struct NestedList** list;
+    size_t list_size;
+} NestedList;
+
+typedef struct FlattenedList {
+    int* array;
+    size_t size;
+    size_t capacity;
+} FlattenedList;
+
+FlattenedList* create_flattened_list(size_t initial_capacity) {
+    FlattenedList* fl = (FlattenedList*)malloc(sizeof(FlattenedList));
+    if (!fl) return NULL;
+    
+    fl->array = (int*)malloc(initial_capacity * sizeof(int));
+    if (!fl->array) {
+        free(fl);
+        return NULL;
+    }
+    
+    fl->size = 0;
+    fl->capacity = initial_capacity;
+    return fl;
+}
+
+void free_flattened_list(FlattenedList* fl) {
+    if (fl) {
+        if (fl->array) {
+            free(fl->array);
+        }
+        free(fl);
+    }
+}
+
+int append_to_flattened_list(FlattenedList* fl, int value) {
+    if (!fl) return 0;
+    
+    if (fl->size == fl->capacity) {
+        size_t new_capacity = fl->capacity == 0 ? 4 : fl->capacity * 2;
+        int* new_array = (int*)realloc(fl->array, new_capacity * sizeof(int));
+        if (!new_array) return 0;
+        
+        fl->array = new_array;
+        fl->capacity = new_capacity;
+    }
+    
+    fl->array[fl->size++] = value;
+    return 1;
+}
+
+int flatten_recursive(const NestedList* nested, FlattenedList* flattened) {
+    if (!nested || !flattened) return 0;
+
+    if (nested->is_integer) {
+        return append_to_flattened_list(flattened, nested->value);
+    } else {
+        if (nested->list != NULL) {
+            for (size_t i = 0; i < nested->list_size; i++) {
+                if (!flatten_recursive(nested->list[i], flattened)) {
+                    return 0;
+                }
+            }
+        }
+    }
+    return 1;
+}
+
+FlattenedList* flatten(const NestedList* nested) {
+    if (!nested) return NULL;
+    
+    FlattenedList* flattened = create_flattened_list(16);
+    if (!flattened) return NULL;
+    
+    if (!flatten_recursive(nested, flattened)) {
+        free_flattened_list(flattened);
+        return NULL;
+    }
+    
+    return flattened;
+}
+
+void print_flattened_list(const FlattenedList* fl) {
+    if (!fl) return;
+    printf("[");
+    for (size_t i = 0; i < fl->size; i++) {
+        printf("%d%s", fl->array[i], (i < fl->size - 1) ? ", " : "");
+    }
+    printf("]\n");
+}
+
+NestedList* create_integer_node(int value) {
+    NestedList* node = (NestedList*)malloc(sizeof(NestedList));
+    if (node) {
+        node->is_integer = 1;
+        node->value = value;
+        node->list = NULL;
+        node->list_size = 0;
+    }
+    return node;
+}
+
+NestedList* create_list_node(NestedList** elements, size_t size) {
+    NestedList* node = (NestedList*)malloc(sizeof(NestedList));
+    if (node) {
+        node->is_integer = 0;
+        node->value = 0;
+        node->list = elements;
+        node->list_size = size;
+    }
+    return node;
+}
+
+void free_nested_list(NestedList* node) {
+    if (!node) return;
+    if (!node->is_integer && node->list) {
+        for (size_t i = 0; i < node->list_size; i++) {
+            free_nested_list(node->list[i]);
+        }
+        free(node->list);
+    }
+    free(node);
+}
+
+int main(void) {
+    NestedList* val1 = create_integer_node(1);
+    NestedList* val2 = create_integer_node(2);
+    NestedList* val3 = create_integer_node(3);
+    
+    NestedList** inner_arr = (NestedList**)malloc(2 * sizeof(NestedList*));
+    if (!inner_arr) {
+        free_nested_list(val1);
+        free_nested_list(val2);
+        free_nested_list(val3);
+        return 1;
+    }
+    inner_arr[0] = val2;
+    inner_arr[1] = val3;
+    
+    NestedList* inner_list = create_list_node(inner_arr, 2);
+    if (!inner_list) {
+        free_nested_list(val1);
+        free_nested_list(val2);
+        free_nested_list(val3);
+        free(inner_arr);
+        return 1;
+    }
+    
+    NestedList** outer_arr = (NestedList**)malloc(2 * sizeof(NestedList*));
+    if (!outer_arr) {
+        free_nested_list(val1);
+        free_nested_list(inner_list);
+        return 1;
+    }
+    outer_arr[0] = val1;
+    outer_arr[1] = inner_list;
+    
+    NestedList* root = create_list_node(outer_arr, 2);
+    if (!root) {
+        free_nested_list(val1);
+        free_nested_list(inner_list);
+        free(outer_arr);
+        return 1;
+    }
+    
+    FlattenedList* flattened = flatten(root);
+    if (flattened) {
+        print_flattened_list(flattened);
+        free_flattened_list(flattened);
+    }
+    
+    free_nested_list(root);
+    
+    return 0;
+}
+```

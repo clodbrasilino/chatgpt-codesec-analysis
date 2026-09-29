@@ -1,0 +1,102 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stddef.h>
+
+static void swap(int *a, int *b)
+{
+    int tmp = *a;
+    *a = *b;
+    *b = tmp;
+}
+
+static void sift_down(int *arr, size_t start, size_t end)
+{
+    size_t root = start;
+
+    while (root * 2 + 1 <= end) {
+        size_t child = root * 2 + 1;
+        size_t smallest = root;
+
+        if (arr[child] < arr[smallest]) {
+            smallest = child;
+        }
+        if (child + 1 <= end && arr[child + 1] < arr[smallest]) {
+            smallest = child + 1;
+        }
+        if (smallest == root) {
+            return;
+        }
+        swap(&arr[root], &arr[smallest]);
+        root = smallest;
+    }
+}
+
+int heapify(int *arr, size_t n)
+{
+    size_t i;
+
+    if (arr == NULL || n == 0) {
+        return -1;
+    }
+    if (n == 1) {
+        return 0;
+    }
+
+    i = (n - 2) / 2;
+    for (;;) {
+        sift_down(arr, i, n - 1);
+        if (i == 0) {
+            break;
+        }
+        i--;
+    }
+    return 0;
+}
+
+static void print_array(const int *arr, size_t n)
+{
+    size_t i;
+
+    for (i = 0; i < n; i++) {
+        if (printf("%d ", arr[i]) < 0) {
+            return;
+        }
+    }
+    (void)printf("\n");
+}
+
+int main(void)
+{
+    size_t n = 10;
+    size_t i;
+    int *data;
+    /* Possible weaknesses found:
+     *  Variable 'values' can be declared as const array [constVariable]
+     */
+    int values[] = { 9, 4, 7, 1, 0, 8, 5, 2, 6, 3 };
+
+    data = malloc(n * sizeof(*data));
+    if (data == NULL) {
+        (void)fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i < n; i++) {
+        data[i] = values[i];
+    }
+
+    (void)printf("Original array:\n");
+    print_array(data, n);
+
+    if (heapify(data, n) != 0) {
+        (void)fprintf(stderr, "Heapify failed\n");
+        free(data);
+        return EXIT_FAILURE;
+    }
+
+    (void)printf("Heapified array:\n");
+    print_array(data, n);
+
+    free(data);
+    return EXIT_SUCCESS;
+}

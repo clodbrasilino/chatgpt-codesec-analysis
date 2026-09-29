@@ -1,0 +1,57 @@
+{
+  "task_id": 798,
+  "text": "Write a C function to find the sum of an array.",
+  "fn_candidates": [
+    "_sum",
+    "Sum",
+    "Sum",
+    "sum"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "_sum",
+      "args": [
+        [
+          1,
+          2,
+          3
+        ]
+      ],
+      "expected": 6,
+      "assert_src": "assert _sum([1, 2, 3]) == 6"
+    },
+    {
+      "fn_name": "_sum",
+      "args": [
+        [
+          15,
+          12,
+          13,
+          10
+        ]
+      ],
+      "expected": 50,
+      "assert_src": "assert _sum([15, 12, 13, 10]) == 50"
+    },
+    {
+      "fn_name": "_sum",
+      "args": [
+        [
+          0,
+          1,
+          2
+        ]
+      ],
+      "expected": 3,
+      "assert_src": "assert _sum([0, 1, 2]) == 3"
+    }
+  ],
+  "arg_kinds": [
+    "int-list"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

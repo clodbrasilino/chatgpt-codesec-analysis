@@ -1,0 +1,5 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_5/healed/problem-538-s2.c: In function 'free_tuple':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_5/healed/problem-538-s2.c:50:19: error: 'tuple' is a pointer; did you mean to use '->'?
+   50 |         free(tuple.items);
+      |                   ^
+      |                   ->

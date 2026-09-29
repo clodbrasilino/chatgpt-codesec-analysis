@@ -1,0 +1,117 @@
+## Analysis
+
+The flagged weakness (`unreadVariable`) occurs because variables like `j` and `k` were initialized at declaration (`size_t j = 0;`), but that initial value was never read — the variables were immediately reassigned in the `for` loop initializers. The cleanest fix is to declare the loop variables **inside the `for` statements** (C99+), which eliminates the dead initializations and also limits each variable's scope to where it's actually used. This same pattern is applied consistently to all loops, including in `free_2d_array` and `print_2d_array`.
+
+## Fixed Source Code
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+
+int **generate_2d_array(size_t rows, size_t cols, int fill_value)
+{
+    int **array = NULL;
+
+    if (rows == 0 || cols == 0)
+    {
+        return NULL;
+    }
+
+    if (rows > SIZE_MAX / sizeof(int *) || cols > SIZE_MAX / sizeof(int))
+    {
+        return NULL;
+    }
+
+    array = malloc(rows * sizeof(*array));
+    if (array == NULL)
+    {
+        return NULL;
+    }
+
+    for (size_t i = 0; i < rows; i++)
+    {
+        array[i] = NULL;
+    }
+
+    for (size_t i = 0; i < rows; i++)
+    {
+        array[i] = malloc(cols * sizeof(*array[i]));
+        if (array[i] == NULL)
+        {
+            for (size_t k = 0; k < i; k++)
+            {
+                free(array[k]);
+            }
+            free(array);
+            return NULL;
+        }
+
+        for (size_t j = 0; j < cols; j++)
+        {
+            array[i][j] = fill_value;
+        }
+    }
+
+    return array;
+}
+
+void free_2d_array(int **array, size_t rows)
+{
+    if (array == NULL)
+    {
+        return;
+    }
+
+    for (size_t i = 0; i < rows; i++)
+    {
+        free(array[i]);
+        array[i] = NULL;
+    }
+
+    free(array);
+}
+
+void print_2d_array(int **array, size_t rows, size_t cols)
+{
+    if (array == NULL)
+    {
+        return;
+    }
+
+    for (size_t i = 0; i < rows; i++)
+    {
+        for (size_t j = 0; j < cols; j++)
+        {
+            printf("%4d", array[i][j]);
+        }
+        printf("\n");
+    }
+}
+
+int main(void)
+{
+    const size_t rows = 4;
+    const size_t cols = 5;
+    int **array = NULL;
+
+    array = generate_2d_array(rows, cols, 7);
+    if (array == NULL)
+    {
+        fprintf(stderr, "Error: unable to allocate the 2D array.\n");
+        return EXIT_FAILURE;
+    }
+
+    print_2d_array(array, rows, cols);
+
+    free_2d_array(array, rows);
+    array = NULL;
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Summary of changes:**
+- Removed the unused initializations of `j` and `k` in `generate_2d_array`, and `j` in `print_2d_array`.
+- Moved all loop counter declarations into the `for` loop headers, giving them minimal scope and ensuring every assigned value is actually read.
+- All original safety features retained: zero-dimension checks, multiplication overflow guards, NULL-initialization of row pointers, and correct cleanup on partial allocation failure.

@@ -1,0 +1,56 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <ctype.h>
+#include <string.h>
+
+bool is_integer(const char *str) {
+    if (str == NULL || *str == '\0') {
+        return false;
+    }
+
+    if (*str == '+' || *str == '-') {
+        str++;
+    }
+
+    if (*str == '\0') {
+        return false;
+    }
+
+    while (*str != '\0') {
+        if (!isdigit((unsigned char)*str)) {
+            return false;
+        }
+        str++;
+    }
+
+    return true;
+}
+
+int main(void) {
+    const char *test_cases[] = {
+        "12345",
+        "-42",
+        "+99",
+        "0",
+        "-0",
+        "123a",
+        "abc",
+        "-",
+        "+",
+        "",
+        NULL
+    };
+    
+    size_t num_cases = sizeof(test_cases) / sizeof(test_cases[0]);
+
+    for (size_t i = 0; i < num_cases; i++) {
+        bool result = is_integer(test_cases[i]);
+        if (test_cases[i] != NULL) {
+            printf("\"%s\" -> %s\n", test_cases[i], result ? "true" : "false");
+        } else {
+            printf("NULL -> %s\n", result ? "true" : "false");
+        }
+    }
+
+    return 0;
+}

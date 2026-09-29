@@ -1,0 +1,75 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+char* remove_words_with_length(char* str, size_t max_len, int k) {
+    if (str == NULL || k <= 0 || max_len == 0) {
+        return str;
+    }
+
+    size_t len = strnlen(str, max_len);
+    if (len >= max_len) {
+        return NULL;
+    }
+
+    char* result = (char*)malloc(len + 1);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    size_t i = 0, j = 0;
+    while (i < len) {
+        while (i < len && isspace((unsigned char)str[i])) {
+            if (j < len) {
+                result[j++] = str[i++];
+            } else {
+                free(result);
+                return NULL;
+            }
+        }
+
+        size_t word_start = i;
+        while (i < len && !isspace((unsigned char)str[i])) {
+            i++;
+        }
+        size_t word_length = i - word_start;
+
+        if (word_length != (size_t)k) {
+            if (j + word_length < len + 1) {
+                size_t bytes_to_copy = word_length;
+                if (j + bytes_to_copy >= len + 1) {
+                    bytes_to_copy = (len + 1) - j - 1;
+                }
+                if (bytes_to_copy > 0) {
+                    memcpy(result + j, str + word_start, bytes_to_copy);
+                    j += bytes_to_copy;
+                }
+            } else {
+                free(result);
+                return NULL;
+            }
+        }
+    }
+
+    result[j] = '\0';
+    size_t result_len = j + 1;
+    if (result_len <= max_len) {
+        memmove(str, result, result_len);
+    }
+    free(result);
+    return str;
+}
+
+int main(void) {
+    char str[256];
+    strncpy(str, "This is a test string with words of various lengths", sizeof(str) - 1);
+    str[sizeof(str) - 1] = '\0';
+    int k = 2;
+    
+    printf("Original: %s\n", str);
+    remove_words_with_length(str, sizeof(str), k);
+    printf("After removing words of length %d: %s\n", k, str);
+    
+    return 0;
+}

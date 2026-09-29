@@ -1,0 +1,26 @@
+```c
+#include <stdio.h>
+#include <math.h>
+
+int check_decimal_precision(double num) {
+    int decimal_part = (num - (int)num) * 100;
+    return (decimal_part == ((int)round(decimal_part))) ? 1 : 0;
+}
+
+int main() {
+    double num;
+
+    printf("Enter a decimal number: ");
+    scanf("%lf", &num);
+
+    if(check_decimal_precision(num))
+        printf("The number has a precision of 2\n");
+    else
+        printf("The number does not have a precision of 2\n");
+
+    return 0;
+}
+```
+
+Explanation:
+We define the function check_decimal_precision which receives a number `num` and checks if it has a decimal precision of 2. The function multiplies the decimal part of `num` by 100 and checks if after rounding this equation results in an integer. If it does, the function returns 1 (indicating that the number does have a precision of 2), else it returns 0 (indicating that the number does not have a precision of 2). In the main function, we prompt the user to enter a decimal number and pass it to the function check_decimal_precision to check if it has a precision of 2 and print a corresponding message.

@@ -1,0 +1,23 @@
+#include <stdio.h>
+#include <string.h>
+
+char* remove_spaces(char *str) {
+    char *input = str;
+    char *output = str;
+
+    while (*input) {
+        *output = *input++;
+        if (*output != ' ')
+            output++;
+    }
+    *output = '\0';
+    return str;
+}
+
+int main() {
+    char str[] = "  Hello   World  ";
+    printf("Original: '%s'\n", str);
+    char *result = remove_spaces(str);
+    printf("Processed: '%s'\n", result);
+    return 0;
+}

@@ -1,0 +1,46 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int* extract_elements(const int* list, size_t list_size, size_t start_index, size_t num_elements) {
+    if (list == NULL || num_elements == 0 || start_index >= list_size) {
+        return NULL;
+    }
+
+    if (start_index + num_elements > list_size) {
+        return NULL;
+    }
+
+    int* extracted = (int*)malloc(num_elements * sizeof(int));
+    if (extracted == NULL) {
+        return NULL;
+    }
+
+    for (size_t i = 0; i < num_elements; i++) {
+        extracted[i] = list[start_index + i];
+    }
+
+    return extracted;
+}
+
+int main(void) {
+    int original_list[] = {10, 20, 30, 40, 50, 60, 70, 80, 90};
+    size_t list_size = sizeof(original_list) / sizeof(original_list[0]);
+    size_t start_index = 3;
+    size_t num_elements = 4;
+
+    int* result = extract_elements(original_list, list_size, start_index, num_elements);
+
+    if (result != NULL) {
+        for (size_t i = 0; i < num_elements; i++) {
+            printf("%d ", result[i]);
+        }
+        printf("\n");
+        free(result);
+    } else {
+        printf("Failed to extract elements.\n");
+    }
+
+    return 0;
+}
+```

@@ -1,0 +1,43 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+bool all_different(const int *numbers, size_t count)
+{
+    if (numbers == NULL) {
+        return false;
+    }
+    
+    if (count == 0) {
+        return true;
+    }
+    
+    for (size_t i = 0; i < count - 1; i++) {
+        for (size_t j = i + 1; j < count; j++) {
+            if (numbers[i] == numbers[j]) {
+                return false;
+            }
+        }
+    }
+    
+    return true;
+}
+
+int main(void)
+{
+    int numbers1[] = {1, 2, 3, 4, 5};
+    int numbers2[] = {1, 2, 3, 2, 5};
+    int numbers3[] = {1};
+    
+    size_t count1 = sizeof(numbers1) / sizeof(numbers1[0]);
+    size_t count2 = sizeof(numbers2) / sizeof(numbers2[0]);
+    size_t count3 = sizeof(numbers3) / sizeof(numbers3[0]);
+    
+    printf("Array 1: %s\n", all_different(numbers1, count1) ? "All different" : "Has duplicates");
+    printf("Array 2: %s\n", all_different(numbers2, count2) ? "All different" : "Has duplicates");
+    printf("Array 3: %s\n", all_different(numbers3, count3) ? "All different" : "Has duplicates");
+    
+    return EXIT_SUCCESS;
+}
+```

@@ -1,0 +1,134 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int compare_ints(const void *a, const void *b)
+{
+    int x = *(const int *)a;
+    int y = *(const int *)b;
+
+    if (x < y) {
+        return -1;
+    }
+    if (x > y) {
+        return 1;
+    }
+    return 0;
+}
+
+int find_similar_elements(const int *list1, size_t len1,
+                          const int *list2, size_t len2,
+                          int **result, size_t *result_len)
+{
+    int *sorted1 = NULL;
+    int *sorted2 = NULL;
+    int *temp = NULL;
+    size_t i = 0;
+    size_t j = 0;
+    size_t count = 0;
+
+    if (list1 == NULL || list2 == NULL || result == NULL || result_len == NULL) {
+        return -1;
+    }
+
+    *result = NULL;
+    *result_len = 0;
+
+    if (len1 == 0 || len2 == 0) {
+        return 0;
+    }
+
+    sorted1 = malloc(len1 * sizeof(int));
+    if (sorted1 == NULL) {
+        return -1;
+    }
+
+    sorted2 = malloc(len2 * sizeof(int));
+    if (sorted2 == NULL) {
+        free(sorted1);
+        return -1;
+    }
+
+    for (i = 0; i < len1; i++) {
+        sorted1[i] = list1[i];
+    }
+    for (i = 0; i < len2; i++) {
+        sorted2[i] = list2[i];
+    }
+
+    qsort(sorted1, len1, sizeof(int), compare_ints);
+    qsort(sorted2, len2, sizeof(int), compare_ints);
+
+    temp = malloc((len1 < len2 ? len1 : len2) * sizeof(int));
+    if (temp == NULL) {
+        free(sorted1);
+        free(sorted2);
+        return -1;
+    }
+
+    i = 0;
+    j = 0;
+    while (i < len1 && j < len2) {
+        if (sorted1[i] < sorted2[j]) {
+            i++;
+        } else if (sorted1[i] > sorted2[j]) {
+            j++;
+        } else {
+            if (count == 0 || temp[count - 1] != sorted1[i]) {
+                temp[count] = sorted1[i];
+                count++;
+            }
+            i++;
+            j++;
+        }
+    }
+
+    free(sorted1);
+    free(sorted2);
+
+    if (count == 0) {
+        free(temp);
+        return 0;
+    }
+
+    *result = malloc(count * sizeof(int));
+    if (*result == NULL) {
+        free(temp);
+        return -1;
+    }
+
+    for (i = 0; i < count; i++) {
+        (*result)[i] = temp[i];
+    }
+
+    free(temp);
+    *result_len = count;
+    return 0;
+}
+
+int main(void)
+{
+    int tuple1[] = {3, 4, 5, 6};
+    int tuple2[] = {5, 7, 4, 10};
+    int *similar = NULL;
+    size_t similar_len = 0;
+    size_t i = 0;
+    int status = 0;
+
+    status = find_similar_elements(tuple1, sizeof(tuple1) / sizeof(tuple1[0]),
+                                   tuple2, sizeof(tuple2) / sizeof(tuple2[0]),
+                                   &similar, &similar_len);
+
+    if (status != 0) {
+        fprintf(stderr, "Error finding similar elements\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Similar elements: ");
+    for (i = 0; i < similar_len; i++) {
+        printf("%d ", similar[i]);
+    }
+    printf("\n");
+
+    free(similar);
+    return EXIT_SUCCESS;
+}

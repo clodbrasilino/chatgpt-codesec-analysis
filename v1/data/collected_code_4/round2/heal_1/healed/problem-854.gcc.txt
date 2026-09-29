@@ -1,0 +1,216 @@
+./collected_code_4/round2//heal_1/healed/problem-854.c: In function 'insert':
+./collected_code_4/round2//heal_1/healed/problem-854.c:19:27: warning: double-'free' of 'array.arr' [CWE-415] [-Wanalyzer-double-free]
+   19 |         void* newMemory = realloc(array->arr, array->size * sizeof(int));
+      |                           ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  'main': events 1-2
+    |
+    |   77 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |   78 |     Array array;
+    |   79 |     create(&array, 1);
+    |      |     ~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) calling 'create' from 'main'
+    |
+    +--> 'create': events 3-4
+           |
+           |   10 | void create(Array* array, size_t initialSize) {
+           |      |      ^~~~~~
+           |      |      |
+           |      |      (3) entry to 'create'
+           |   11 |     array->arr = (int*)malloc(initialSize * sizeof(int));
+           |      |                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                        |
+           |      |                        (4) allocated here
+           |
+    <------+
+    |
+  'main': events 5-6
+    |
+    |   79 |     create(&array, 1);
+    |      |     ^~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (5) returning to 'main' from 'create'
+    |   80 | 
+    |   81 |     insert(&array, 10);
+    |      |     ~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (6) calling 'insert' from 'main'
+    |
+    +--> 'insert': events 7-10
+           |
+           |   16 | void insert(Array* array, int element) {
+           |      |      ^~~~~~
+           |      |      |
+           |      |      (7) entry to 'insert'
+           |   17 |     if (array->used == array->size) {
+           |      |        ~
+           |      |        |
+           |      |        (8) following 'false' branch...
+           |......
+           |   27 |     array->arr[array->used++] = element;
+           |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |          |                    |
+           |      |          (9) ...to here       (10) assuming 'array.arr' is non-NULL
+           |
+    <------+
+    |
+  'main': events 11-12
+    |
+    |   81 |     insert(&array, 10);
+    |      |     ^~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (11) returning to 'main' from 'insert'
+    |   82 |     insert(&array, 15);
+    |      |     ~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (12) calling 'insert' from 'main'
+    |
+    +--> 'insert': events 13-19
+           |
+           |   16 | void insert(Array* array, int element) {
+           |      |      ^~~~~~
+           |      |      |
+           |      |      (13) entry to 'insert'
+           |   17 |     if (array->used == array->size) {
+           |      |        ~
+           |      |        |
+           |      |        (14) following 'true' branch...
+           |   18 |         array->size *= 2;
+           |      |         ~~~~~~~~~~~
+           |      |              |
+           |      |              (15) ...to here
+           |   19 |         void* newMemory = realloc(array->arr, array->size * sizeof(int));
+           |      |                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                           |
+           |      |                           (16) when 'realloc' fails
+           |   20 | 
+           |   21 |         if (newMemory == NULL) {
+           |      |            ~
+           |      |            |
+           |      |            (17) following 'true' branch (when 'newMemory' is NULL)...
+           |   22 |             free(array->arr);
+           |      |             ~~~~~~~~~~~~~~~~
+           |      |             |         |
+           |      |             |         (18) ...to here
+           |      |             (19) first 'free' here
+           |
+    <------+
+    |
+  'main': events 20-21
+    |
+    |   82 |     insert(&array, 15);
+    |      |     ^~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (20) returning to 'main' from 'insert'
+    |   83 |     insert(&array, 30);
+    |      |     ~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (21) calling 'insert' from 'main'
+    |
+    +--> 'insert': events 22-24
+           |
+           |   16 | void insert(Array* array, int element) {
+           |      |      ^~~~~~
+           |      |      |
+           |      |      (22) entry to 'insert'
+           |   17 |     if (array->used == array->size) {
+           |      |        ~
+           |      |        |
+           |      |        (23) following 'false' branch...
+           |......
+           |   27 |     array->arr[array->used++] = element;
+           |      |     ~~~~~~~~~~
+           |      |          |
+           |      |          (24) ...to here
+           |
+    <------+
+    |
+  'main': events 25-26
+    |
+    |   83 |     insert(&array, 30);
+    |      |     ^~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (25) returning to 'main' from 'insert'
+    |   84 |     insert(&array, 40);
+    |      |     ~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (26) calling 'insert' from 'main'
+    |
+    +--> 'insert': events 27-30
+           |
+           |   16 | void insert(Array* array, int element) {
+           |      |      ^~~~~~
+           |      |      |
+           |      |      (27) entry to 'insert'
+           |   17 |     if (array->used == array->size) {
+           |      |        ~
+           |      |        |
+           |      |        (28) following 'true' branch...
+           |   18 |         array->size *= 2;
+           |      |         ~~~~~~~~~~~
+           |      |              |
+           |      |              (29) ...to here
+           |   19 |         void* newMemory = realloc(array->arr, array->size * sizeof(int));
+           |      |                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                           |
+           |      |                           (30) second 'free' here; first 'free' was at (19)
+           |
+./collected_code_4/round2//heal_1/healed/problem-854.c:27:31: warning: dereference of possibly-NULL 'array.arr' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   27 |     array->arr[array->used++] = element;
+      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~
+  'main': events 1-2
+    |
+    |   77 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |   78 |     Array array;
+    |   79 |     create(&array, 1);
+    |      |     ~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) calling 'create' from 'main'
+    |
+    +--> 'create': events 3-4
+           |
+           |   10 | void create(Array* array, size_t initialSize) {
+           |      |      ^~~~~~
+           |      |      |
+           |      |      (3) entry to 'create'
+           |   11 |     array->arr = (int*)malloc(initialSize * sizeof(int));
+           |      |                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                        |
+           |      |                        (4) this call could return NULL
+           |
+    <------+
+    |
+  'main': events 5-6
+    |
+    |   79 |     create(&array, 1);
+    |      |     ^~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (5) returning to 'main' from 'create'
+    |   80 | 
+    |   81 |     insert(&array, 10);
+    |      |     ~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (6) calling 'insert' from 'main'
+    |
+    +--> 'insert': events 7-10
+           |
+           |   16 | void insert(Array* array, int element) {
+           |      |      ^~~~~~
+           |      |      |
+           |      |      (7) entry to 'insert'
+           |   17 |     if (array->used == array->size) {
+           |      |        ~
+           |      |        |
+           |      |        (8) following 'false' branch...
+           |......
+           |   27 |     array->arr[array->used++] = element;
+           |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |          |                    |
+           |      |          (9) ...to here       (10) '*array.arr + *array.used * 4' could be NULL: unchecked value from (4)
+           |

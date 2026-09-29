@@ -1,0 +1,9 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p0.5/heal_0/problem-889.c: In function 'main':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p0.5/heal_0/problem-889.c:107:18: error: passing argument 1 of 'reverseLists' from incompatible pointer type [-Wincompatible-pointer-types]
+  107 |     reverseLists(lists, 3);
+      |                  ^~~~~
+      |                  |
+      |                  List **
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p0.5/heal_0/problem-889.c:26:25: note: expected 'List *' but argument is of type 'List **'
+   26 | void reverseLists(List *lists, int size) {
+      |                   ~~~~~~^~~~~

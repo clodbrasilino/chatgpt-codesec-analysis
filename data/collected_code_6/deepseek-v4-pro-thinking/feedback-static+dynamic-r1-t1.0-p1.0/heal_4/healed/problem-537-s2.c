@@ -1,0 +1,96 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+char *first_repeated_word(char *str)
+{
+    char **seen = NULL;
+    size_t count = 0;
+    const char *p = str;
+
+    if (str == NULL) {
+        return NULL;
+    }
+
+    while (*p != '\0') {
+        while (*p != '\0' && isspace((unsigned char)*p)) {
+            ++p;
+        }
+        if (*p == '\0') {
+            break;
+        }
+
+        const char *start = p;
+        while (*p != '\0' && !isspace((unsigned char)*p)) {
+            ++p;
+        }
+        size_t len = p - start;
+
+        char *word = malloc(len + 1);
+        if (word == NULL) {
+            for (size_t i = 0; i < count; ++i) {
+                free(seen[i]);
+            }
+            free(seen);
+            return NULL;
+        }
+
+        for (size_t k = 0; k < len; ++k) {
+            word[k] = start[k];
+        }
+        word[len] = '\0';
+
+        for (size_t i = 0; i < count; ++i) {
+            if (strcmp(seen[i], word) == 0) {
+                char *result = seen[i];
+                for (size_t j = 0; j < count; ++j) {
+                    if (j != i) {
+                        free(seen[j]);
+                    }
+                }
+                free(seen);
+                free(word);
+                return result;
+            }
+        }
+
+        char **tmp = realloc(seen, (count + 1) * sizeof(*seen));
+        if (tmp == NULL) {
+            free(word);
+            for (size_t i = 0; i < count; ++i) {
+                free(seen[i]);
+            }
+            free(seen);
+            return NULL;
+        }
+        seen = tmp;
+        seen[count] = word;
+        ++count;
+    }
+
+    for (size_t i = 0; i < count; ++i) {
+        free(seen[i]);
+    }
+    free(seen);
+
+    const char none_str[] = "None";
+    char *none = malloc(sizeof none_str);
+    if (none != NULL) {
+        memcpy(none, none_str, sizeof none_str);
+    }
+    return none;
+}
+
+int main(void)
+{
+    char text[] = "apple banana apple orange banana";
+    char *word = first_repeated_word(text);
+    if (word != NULL) {
+        printf("%s\n", word);
+        free(word);
+    } else {
+        printf("None\n");
+    }
+    return 0;
+}

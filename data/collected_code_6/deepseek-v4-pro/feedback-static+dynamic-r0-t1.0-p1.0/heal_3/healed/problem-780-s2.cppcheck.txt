@@ -1,0 +1,22 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-780-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-780-s2.c:43:30: warning: Identical inner 'if' condition is always true. [identicalInnerCondition]
+            if (current_size > 0) {
+                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-780-s2.c:36:41: note: outer condition: current_size>0
+    if (target_sum == 0 && current_size > 0) {
+                                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-780-s2.c:43:30: note: identical inner condition: current_size>0
+            if (current_size > 0) {
+                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-780-s2.c:48:28: style: The comparison 'nbytes > dest_capacity' is always false because 'nbytes' and 'dest_capacity' represent the same value. [knownConditionTrueFalse]
+                if (nbytes > dest_capacity) {
+                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-780-s2.c:44:46: note: 'nbytes' is assigned value 'current_size*sizeof(int)' here.
+                size_t nbytes = current_size * sizeof(int);
+                                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-780-s2.c:47:53: note: 'dest_capacity' is assigned value 'current_size*sizeof(int)' here.
+                size_t dest_capacity = current_size * sizeof(int);
+                                                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-780-s2.c:48:28: note: The comparison 'nbytes > dest_capacity' is always false because 'nbytes' and 'dest_capacity' represent the same value.
+                if (nbytes > dest_capacity) {
+                           ^

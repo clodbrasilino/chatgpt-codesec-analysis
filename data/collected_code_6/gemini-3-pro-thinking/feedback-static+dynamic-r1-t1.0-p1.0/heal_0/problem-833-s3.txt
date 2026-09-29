@@ -1,0 +1,120 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char *key;
+    int value;
+} DictItem;
+
+typedef struct {
+    DictItem *items;
+    size_t count;
+} Dictionary;
+
+typedef struct {
+    char **keys;
+    size_t count;
+} KeyList;
+
+KeyList* get_dictionary_keys(const Dictionary *dict);
+void free_key_list(KeyList *list);
+
+KeyList* get_dictionary_keys(const Dictionary *dict) {
+    KeyList *list;
+    size_t i;
+    size_t j;
+    size_t len;
+
+    if (!dict) {
+        return NULL;
+    }
+
+    list = (KeyList *)malloc(sizeof(KeyList));
+    if (!list) {
+        return NULL;
+    }
+
+    list->count = dict->count;
+    if (list->count == 0) {
+        list->keys = NULL;
+        return list;
+    }
+
+    list->keys = (char **)malloc(list->count * sizeof(char *));
+    if (!list->keys) {
+        free(list);
+        return NULL;
+    }
+
+    for (i = 0; i < list->count; ++i) {
+        if (!dict->items[i].key) {
+            list->keys[i] = NULL;
+            continue;
+        }
+
+        len = strlen(dict->items[i].key);
+        list->keys[i] = (char *)malloc(len + 1);
+        if (!list->keys[i]) {
+            for (j = 0; j < i; ++j) {
+                free(list->keys[j]);
+            }
+            free(list->keys);
+            free(list);
+            return NULL;
+        }
+        memcpy(list->keys[i], dict->items[i].key, len + 1);
+    }
+
+    return list;
+}
+
+void free_key_list(KeyList *list) {
+    size_t i;
+
+    if (!list) {
+        return;
+    }
+
+    if (list->keys) {
+        for (i = 0; i < list->count; ++i) {
+            free(list->keys[i]);
+        }
+        free(list->keys);
+    }
+    free(list);
+}
+
+int main(void) {
+    DictItem items[3];
+    Dictionary dict;
+    KeyList *keys;
+    size_t i;
+
+    items[0].key = "apple";
+    items[0].value = 1;
+    items[1].key = "banana";
+    items[1].value = 2;
+    items[2].key = "cherry";
+    items[2].value = 3;
+
+    dict.items = items;
+    dict.count = 3;
+
+    keys = get_dictionary_keys(&dict);
+    if (!keys) {
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i < keys->count; ++i) {
+        if (keys->keys[i]) {
+            printf("%s\n", keys->keys[i]);
+        }
+    }
+
+    free_key_list(keys);
+
+    return EXIT_SUCCESS;
+}
+```

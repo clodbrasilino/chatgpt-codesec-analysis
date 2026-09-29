@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_0/problem-751.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_0/problem-751.c:50:23: style: Condition 'is_min_heap(NULL,5)' is always false [knownConditionTrueFalse]
+           is_min_heap(NULL, 5) ? "true" : "false");
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_0/problem-751.c:50:23: note: Calling function 'is_min_heap' returns 0
+           is_min_heap(NULL, 5) ? "true" : "false");
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_0/problem-751.c:50:23: note: Condition 'is_min_heap(NULL,5)' is always false
+           is_min_heap(NULL, 5) ? "true" : "false");
+                      ^

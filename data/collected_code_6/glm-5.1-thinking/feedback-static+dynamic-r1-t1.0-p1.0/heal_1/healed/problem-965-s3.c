@@ -1,0 +1,58 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <ctype.h>
+
+char *camel_to_snake(const char *camel) {
+    if (camel == NULL) {
+        return NULL;
+    }
+
+    size_t capacity = 16;
+    size_t j = 0;
+    char *snake = malloc(capacity);
+    if (snake == NULL) {
+        return NULL;
+    }
+
+    for (size_t i = 0; camel[i] != '\0'; i++) {
+        if (j + 2 >= capacity) {
+            capacity *= 2;
+            char *temp = realloc(snake, capacity);
+            if (temp == NULL) {
+                free(snake);
+                return NULL;
+            }
+            snake = temp;
+        }
+        if (isupper((unsigned char)camel[i])) {
+            if (i > 0) {
+                snake[j++] = '_';
+            }
+            snake[j++] = tolower((unsigned char)camel[i]);
+        } else {
+            snake[j++] = camel[i];
+        }
+    }
+    snake[j] = '\0';
+
+    char *resized = realloc(snake, j + 1);
+    if (resized != NULL) {
+        return resized;
+    }
+    
+    return snake;
+}
+
+int main(void) {
+    const char *inputs[] = {"camelCaseString", "MyVariable", "simple", "HTMLParser", NULL};
+    
+    for (size_t i = 0; inputs[i] != NULL; i++) {
+        char *result = camel_to_snake(inputs[i]);
+        if (result != NULL) {
+            printf("%s -> %s\n", inputs[i], result);
+            free(result);
+        }
+    }
+    
+    return 0;
+}

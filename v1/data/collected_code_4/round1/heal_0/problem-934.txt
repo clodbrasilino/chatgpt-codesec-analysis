@@ -1,0 +1,32 @@
+Here you go:
+
+```c
+#include <stdio.h>
+
+long delannoy(int n, int m) {
+    if ((n == 0) || (m == 0)) {
+        return 1;
+    }
+    else {
+        return delannoy(n-1, m) + delannoy(n-1, m-1) + delannoy(n, m-1);
+    }
+}
+
+int main() {
+    int number;
+
+    printf("Enter a number: ");
+    scanf("%d", &number);
+
+    printf("The %d-th Delannoy number is: %ld\n", number, delannoy(number, number));
+
+    return 0;
+}
+```
+This C function calculates the nth Delannoy number using a recursive function. It calls itself to calculate the previous vertical, horizontal, and diagonal cells of a grid. The base case is when either n or m is zero, in which case the function returns 1. This C program includes the stdio.h for standard input/output operations.
+
+The nth Delannoy number is represented by the sum of n-1 by m, n-1 by m-1, and n by m-1. 
+
+The main function prompts the user to enter a number and then computes the corresponding Delannoy number. It handles potential exceptional conditions by testing whether n or m is zero. This program adheres to the coding standard since it avoids common pitfalls such as global variables and improper control of resources.
+
+Remember to always perform proper testing on user inputs to prevent unexpected behaviors and potential attacks on your program. If the input number is very large, this program will cause a stack overflow because of the recursion depth. Furthermore, it doesn't verify if the user's input is valid (i.e., a positive integer). These parts can be improved based on your specific needs.

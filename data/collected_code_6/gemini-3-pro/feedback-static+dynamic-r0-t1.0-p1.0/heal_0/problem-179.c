@@ -1,0 +1,69 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+bool is_keith_number(int num) {
+    if (num < 10) {
+        return false;
+    }
+
+    int temp = num;
+    int num_digits = 0;
+
+    while (temp > 0) {
+        num_digits++;
+        temp /= 10;
+    }
+
+    int *sequence = (int *)malloc(num_digits * sizeof(int));
+    if (sequence == NULL) {
+        return false;
+    }
+
+    temp = num;
+    for (int i = num_digits - 1; i >= 0; i--) {
+        sequence[i] = temp % 10;
+        temp /= 10;
+    }
+
+    int current_sum = 0;
+    
+    while (current_sum < num) {
+        current_sum = 0;
+        for (int i = 0; i < num_digits; i++) {
+            current_sum += sequence[i];
+        }
+
+        if (current_sum == num) {
+            free(sequence);
+            return true;
+        }
+        
+        if (current_sum > num) {
+            break;
+        }
+
+        for (int i = 0; i < num_digits - 1; i++) {
+            sequence[i] = sequence[i + 1];
+        }
+        sequence[num_digits - 1] = current_sum;
+    }
+
+    free(sequence);
+    return false;
+}
+
+int main(void) {
+    int test_cases[] = {197, 14, 742, 28, 10, -5, 1104};
+    size_t num_tests = sizeof(test_cases) / sizeof(test_cases[0]);
+
+    for (size_t i = 0; i < num_tests; i++) {
+        if (is_keith_number(test_cases[i])) {
+            printf("%d is a Keith number.\n", test_cases[i]);
+        } else {
+            printf("%d is not a Keith number.\n", test_cases[i]);
+        }
+    }
+
+    return 0;
+}

@@ -1,0 +1,17 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-102.c: In function 'snake_to_camel':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-102.c:7:28: error: implicit declaration of function 'malloc' [-Wimplicit-function-declaration]
+    7 |     char *result = (char *)malloc((len + 1) * sizeof(char));
+      |                            ^~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-102.c:4:1: note: include '<stdlib.h>' or provide a declaration of 'malloc'
+    3 | #include <ctype.h>
+  +++ |+#include <stdlib.h>
+    4 | 
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-102.c:14:17: error: implicit declaration of function 'strnfcat'; did you mean 'strncat'? [-Wimplicit-function-declaration]
+   14 |                 strnfcat(result, "%c", toupper(*str));
+      |                 ^~~~~~~~
+      |                 strncat
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-102.c: In function 'main':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-102.c:29:9: error: implicit declaration of function 'free' [-Wimplicit-function-declaration]
+   29 |         free(output);
+      |         ^~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-102.c:29:9: note: include '<stdlib.h>' or provide a declaration of 'free'

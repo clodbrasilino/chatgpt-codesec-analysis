@@ -1,0 +1,53 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int checkLastElementOddEven(int *arr, size_t size, int p) {
+    if (arr == NULL || size == 0 || p < 0) {
+        return -1;
+    }
+    
+    int lastElement = arr[size - 1];
+    
+    lastElement += p;
+    
+    if (lastElement % 2 == 0) {
+        return 0;
+    } else {
+        return 1;
+    }
+}
+
+int main(void) {
+    size_t size = 5;
+    int *arr = (int *)malloc(size * sizeof(int));
+    
+    if (arr == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+    
+    arr[0] = 1;
+    arr[1] = 2;
+    arr[2] = 3;
+    arr[3] = 4;
+    arr[4] = 5;
+    
+    int p = 3;
+    
+    int result = checkLastElementOddEven(arr, size, p);
+    
+    if (result == -1) {
+        printf("Invalid input\n");
+    } else if (result == 0) {
+        printf("Even\n");
+    } else {
+        printf("Odd\n");
+    }
+    
+    free(arr);
+    arr = NULL;
+    
+    return EXIT_SUCCESS;
+}
+```

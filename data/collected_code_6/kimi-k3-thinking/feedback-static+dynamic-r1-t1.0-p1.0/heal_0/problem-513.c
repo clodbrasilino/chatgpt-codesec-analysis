@@ -1,0 +1,142 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+static char *duplicate_string(const char *src)
+{
+    size_t len;
+    char *copy;
+
+    if (src == NULL)
+    {
+        return NULL;
+    }
+
+    len = strlen(src);
+    copy = malloc(len + 1);
+    if (copy == NULL)
+    {
+        return NULL;
+    }
+
+    memcpy(copy, src, len + 1);
+    return copy;
+}
+
+static void free_string_list(char **list, size_t count)
+{
+    size_t i;
+
+    if (list == NULL)
+    {
+        return;
+    }
+
+    for (i = 0; i < count; ++i)
+    {
+        free(list[i]);
+    }
+    free(list);
+}
+
+char **tuple_to_list(const char *const *tuple, size_t tuple_size,
+                     const char *str, size_t *list_size)
+{
+    char **list;
+    size_t capacity;
+    size_t i;
+    size_t j;
+
+    if (str == NULL || list_size == NULL)
+    {
+        return NULL;
+    }
+
+    if (tuple == NULL && tuple_size != 0)
+    {
+        return NULL;
+    }
+
+    if (tuple_size > (SIZE_MAX - 1) / 2)
+    {
+        return NULL;
+    }
+
+    capacity = tuple_size * 2 + 1;
+
+    if (capacity > SIZE_MAX / sizeof(char *))
+    {
+        return NULL;
+    }
+
+    list = calloc(capacity, sizeof(*list));
+    if (list == NULL)
+    {
+        return NULL;
+    }
+
+    j = 0;
+    for (i = 0; i < tuple_size; ++i)
+    {
+        if (tuple[i] == NULL)
+        {
+            free_string_list(list, j);
+            return NULL;
+        }
+
+        list[j] = duplicate_string(tuple[i]);
+        if (list[j] == NULL)
+        {
+            free_string_list(list, j);
+            return NULL;
+        }
+        ++j;
+
+        list[j] = duplicate_string(str);
+        if (list[j] == NULL)
+        {
+            free_string_list(list, j);
+            return NULL;
+        }
+        ++j;
+    }
+
+    *list_size = j;
+    return list;
+}
+
+int main(void)
+{
+    const char *tuple[] = {"apple", "banana", "cherry", "date"};
+    const size_t tuple_size = sizeof(tuple) / sizeof(tuple[0]);
+    const char *insert_str = "X";
+    char **list;
+    size_t list_size;
+    size_t i;
+
+    list = tuple_to_list(tuple, tuple_size, insert_str, &list_size);
+    if (list == NULL)
+    {
+        fprintf(stderr, "Error: failed to convert tuple to list\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Tuple: ");
+    for (i = 0; i < tuple_size; ++i)
+    {
+        printf("\"%s\" ", tuple[i]);
+    }
+    printf("\n");
+
+    printf("List:  ");
+    for (i = 0; i < list_size; ++i)
+    {
+        printf("\"%s\" ", list[i]);
+    }
+    printf("\n");
+
+    free_string_list(list, list_size);
+
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,55 @@
+```C
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char ch;
+    int count;
+} RunLength;
+
+RunLength* runLengthEncode(const char* str, int* size) {
+    if(str == NULL) {
+        *size = 0;
+        return NULL;
+    }
+    
+    int n = strlen(str);
+    RunLength* encoded = (RunLength*) malloc(sizeof(RunLength) * n);
+
+    int count = 1;
+    int index = 0;
+
+    for(int i = 1; i <= n; i++) {
+        if(str[i] != str[i-1]) {
+            encoded[index].ch = str[i-1];
+            encoded[index].count = count;
+            index++;
+            count = 1;
+        } else {
+            count++;
+        }
+    }
+
+    *size = index;
+    return encoded;
+}
+
+void printRunLength(const RunLength* encoded, int size) {
+    for(int i = 0; i < size; i++) {
+        printf("%c%d", encoded[i].ch, encoded[i].count);
+    }
+}
+
+int main() {
+    const char* str = "AAAABBBCCD";
+    int size;
+    RunLength* encoded = runLengthEncode(str, &size);
+    if(encoded != NULL) {
+        printRunLength(encoded, size);
+        free(encoded);
+    }
+    return 0;
+}
+```
+This program first encodes a given string with Run Length Encoding by the function `runLengthEncode`. Then it prints the encoded run length by the function `printRunLength`. In the `main` function we encode 'AAAABBBCCD' and then print it, and at the end we free up the allocated memory to avoid any memory leaks.

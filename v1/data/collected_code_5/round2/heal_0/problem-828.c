@@ -1,0 +1,37 @@
+#include <stdio.h>
+#include <string.h>
+
+void count_chars_digits_specials(char *str, int *alpha_count, int *digit_count, int *special_count) {
+    int i = 0;
+
+    *alpha_count = 0;
+    *digit_count = 0;
+    *special_count = 0;
+    
+    while (str[i] != '\0') {
+        if ((str[i] >= 'a' && str[i] <= 'z') || (str[i] >= 'A' && str[i] <= 'Z'))
+            (*alpha_count)++;
+        else if (str[i] >= '0' && str[i] <= '9')
+            (*digit_count)++;
+        else
+            (*special_count)++;
+
+        i++;
+    }
+}
+
+int main() {
+    char str[100];
+    int alpha_count, digit_count, special_count;
+
+    printf("Enter a string: ");
+    fgets(str, sizeof(str), stdin);
+    
+    count_chars_digits_specials(str, &alpha_count, &digit_count, &special_count);
+    
+    printf("Number of alphabets = %d\n", alpha_count);
+    printf("Number of digits = %d\n", digit_count);
+    printf("Number of special characters = %d\n", special_count);
+
+    return 0;
+}

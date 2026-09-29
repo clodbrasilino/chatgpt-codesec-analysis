@@ -1,0 +1,137 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int value;
+    struct Node *next;
+} Node;
+
+typedef struct SubList {
+    Node *head;
+    size_t length;
+    struct SubList *next;
+} SubList;
+
+Node *create_node(int value) {
+    Node *node = malloc(sizeof(Node));
+    if (node == NULL) {
+        return NULL;
+    }
+    node->value = value;
+    node->next = NULL;
+    return node;
+}
+
+SubList *create_sublist(const int *values, size_t count) {
+    if (count > 0 && values == NULL) {
+        return NULL;
+    }
+
+    SubList *sl = malloc(sizeof(SubList));
+    if (sl == NULL) {
+        return NULL;
+    }
+
+    sl->length = count;
+    sl->next = NULL;
+    sl->head = NULL;
+
+    if (count == 0) {
+        return sl;
+    }
+
+    Node *head = create_node(values[0]);
+    if (head == NULL) {
+        free(sl);
+        return NULL;
+    }
+    sl->head = head;
+
+    Node *current = head;
+    for (size_t i = 1; i < count; i++) {
+        Node *new_node = create_node(values[i]);
+        if (new_node == NULL) {
+            Node *temp = sl->head;
+            while (temp != NULL) {
+                Node *next = temp->next;
+                free(temp);
+                temp = next;
+            }
+            free(sl);
+            return NULL;
+        }
+        current->next = new_node;
+        current = new_node;
+    }
+
+    return sl;
+}
+
+void free_sublists(SubList *head) {
+    SubList *current_sl = head;
+    while (current_sl != NULL) {
+        SubList *next_sl = current_sl->next;
+        Node *current_node = current_sl->head;
+        while (current_node != NULL) {
+            Node *next_node = current_node->next;
+            free(current_node);
+            current_node = next_node;
+        }
+        free(current_sl);
+        current_sl = next_sl;
+    }
+}
+
+SubList *find_min_length_sublist(SubList *head) {
+    if (head == NULL) {
+        return NULL;
+    }
+
+    SubList *min_sublist = head;
+    SubList *current = head->next;
+
+    while (current != NULL) {
+        if (current->length < min_sublist->length) {
+            min_sublist = current;
+        }
+        current = current->next;
+    }
+
+    return min_sublist;
+}
+
+int main(void) {
+    const int v1[] = {1, 2, 3, 4, 5};
+    const int v2[] = {6, 7};
+    const int v3[] = {8, 9, 10, 11};
+
+    SubList *sl1 = create_sublist(v1, 5);
+    if (sl1 == NULL) {
+        return EXIT_FAILURE;
+    }
+
+    SubList *sl2 = create_sublist(v2, 2);
+    if (sl2 == NULL) {
+        free_sublists(sl1);
+        return EXIT_FAILURE;
+    }
+    sl1->next = sl2;
+
+    SubList *sl3 = create_sublist(v3, 4);
+    if (sl3 == NULL) {
+        free_sublists(sl1);
+        return EXIT_FAILURE;
+    }
+    sl2->next = sl3;
+
+    const SubList *min_sl = find_min_length_sublist(sl1);
+    if (min_sl != NULL) {
+        printf("Minimum length sublist has length: %zu\n", min_sl->length);
+    }
+
+    free_sublists(sl1);
+
+    return EXIT_SUCCESS;
+}
+```

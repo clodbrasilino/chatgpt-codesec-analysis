@@ -1,0 +1,70 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int* data;
+    size_t size;
+} Tuple;
+
+int get_initial_and_last(const Tuple* tuple, int* initial, int* last) {
+    if (tuple == NULL || tuple->data == NULL || tuple->size == 0) {
+        return -1;
+    }
+    if (initial != NULL) {
+        *initial = tuple->data[0];
+    }
+    if (last != NULL) {
+        *last = tuple->data[tuple->size - 1];
+    }
+    return 0;
+}
+
+Tuple* create_tuple(size_t size) {
+    if (size == 0) {
+        return NULL;
+    }
+    Tuple* tuple = (Tuple*)malloc(sizeof(Tuple));
+    if (tuple == NULL) {
+        return NULL;
+    }
+    tuple->data = (int*)malloc(size * sizeof(int));
+    if (tuple->data == NULL) {
+        free(tuple);
+        return NULL;
+    }
+    tuple->size = size;
+    return tuple;
+}
+
+void destroy_tuple(Tuple* tuple) {
+    if (tuple != NULL) {
+        free(tuple->data);
+        free(tuple);
+    }
+}
+
+int main() {
+    size_t size = 5;
+    Tuple* my_tuple = create_tuple(size);
+    if (my_tuple == NULL) {
+        return EXIT_FAILURE;
+    }
+
+    for (size_t i = 0; i < size; ++i) {
+        my_tuple->data[i] = (int)(i + 1) * 10;
+    }
+
+    int first = 0;
+    int last = 0;
+
+    if (get_initial_and_last(my_tuple, &first, &last) == 0) {
+        printf("Initial: %d\n", first);
+        printf("Last: %d\n", last);
+    } else {
+        printf("Failed to get data from tuple.\n");
+    }
+
+    destroy_tuple(my_tuple);
+
+    return EXIT_SUCCESS;
+}

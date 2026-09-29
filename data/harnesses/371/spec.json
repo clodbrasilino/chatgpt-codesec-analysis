@@ -1,0 +1,76 @@
+{
+  "task_id": 371,
+  "text": "Write a C function to find the smallest missing element in a sorted array.",
+  "fn_candidates": [
+    "smallest_missing",
+    "SmallestMissing",
+    "smallestMissing",
+    "smallestmissing"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "smallest_missing",
+      "args": [
+        [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ],
+        0,
+        6
+      ],
+      "expected": 7,
+      "assert_src": "assert smallest_missing([0, 1, 2, 3, 4, 5, 6], 0, 6) == 7"
+    },
+    {
+      "fn_name": "smallest_missing",
+      "args": [
+        [
+          0,
+          1,
+          2,
+          6,
+          9,
+          11,
+          15
+        ],
+        0,
+        6
+      ],
+      "expected": 3,
+      "assert_src": "assert smallest_missing([0, 1, 2, 6, 9, 11, 15], 0, 6) == 3"
+    },
+    {
+      "fn_name": "smallest_missing",
+      "args": [
+        [
+          1,
+          2,
+          3,
+          4,
+          6,
+          9,
+          11,
+          15
+        ],
+        0,
+        7
+      ],
+      "expected": 0,
+      "assert_src": "assert smallest_missing([1, 2, 3, 4, 6, 9, 11, 15], 0, 7) == 0"
+    }
+  ],
+  "arg_kinds": [
+    "int",
+    "int-list"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

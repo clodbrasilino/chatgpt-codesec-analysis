@@ -1,0 +1,63 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+static int add_with_range(int a, int b, int range_low, int range_high, int *result);
+
+static int add_with_range(int a, int b, int range_low, int range_high, int *result)
+{
+    long long sum;
+
+    if (result == NULL) {
+        return -1;
+    }
+
+    sum = (long long)a + (long long)b;
+
+    if (sum > INT_MAX || sum < INT_MIN) {
+        return -1;
+    }
+
+    if (sum >= (long long)range_low && sum <= (long long)range_high) {
+        *result = 20;
+    } else {
+        *result = (int)sum;
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    int a;
+    int b;
+    int result;
+
+    a = 10;
+    b = 5;
+
+    if (add_with_range(a, b, 10, 19, &result) != 0) {
+        fprintf(stderr, "Error: integer overflow detected\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Result: %d\n", result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    a = 100;
+    b = 200;
+
+    if (add_with_range(a, b, 10, 19, &result) != 0) {
+        fprintf(stderr, "Error: integer overflow detected\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Result: %d\n", result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```

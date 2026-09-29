@@ -1,0 +1,28 @@
+#include <stdio.h>
+
+int findLeftInsertionPoint(int arr[], int size, int target) {
+    int left = 0;
+    int right = size;
+    while (left < right) {
+        int mid = left + (right - left) / 2;
+        if (arr[mid] < target) {
+            left = mid + 1;
+        } else {
+            right = mid;
+        }
+    }
+    return left;
+}
+
+int main() {
+
+    int arr[] = {1, 2, 3, 4, 5, 6, 7, 8, 9};
+    int size = sizeof(arr)/sizeof(arr[0]);
+
+    int target = 5;
+    int index = findLeftInsertionPoint(arr, size, target);
+
+    printf("The left insertion point for %d is: %d\n", target, index);
+
+    return 0;
+}

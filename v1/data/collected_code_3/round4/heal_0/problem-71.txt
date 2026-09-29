@@ -1,0 +1,37 @@
+```C
+#include <stdio.h>
+
+void updateGap(int *gap) {
+    *gap = (*gap * 10) / 13;
+    if (*gap < 1) {
+        *gap = 1;
+    }
+}
+
+void combSort(int arr[], int n) {
+    int gap = n;
+    int swapped = 1;
+    while (gap != 1 || swapped == 1) {
+        updateGap(&gap);
+        swapped = 0;
+        for (int i = 0; i < n - gap; i++) {
+            if (arr[i] > arr[i + gap]) {
+                int temp = arr[i];
+                arr[i] = arr[i + gap];
+                arr[i + gap] = temp;
+                swapped = 1;
+            }
+        }
+    }
+}
+
+int main() {
+    int arr[] = {8, 4, 1, 3, -44, 23, -6, 28, 0};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    combSort(arr, n);
+    printf("Sorted array: \n");
+    for (int i = 0; i < n; i++)
+        printf("%d ", arr[i]);
+    return 0;
+}
+```

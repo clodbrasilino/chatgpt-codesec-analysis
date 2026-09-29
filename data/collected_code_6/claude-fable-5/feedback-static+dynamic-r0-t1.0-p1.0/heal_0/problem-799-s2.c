@@ -1,0 +1,43 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+unsigned int left_rotate(unsigned int value, unsigned int count)
+{
+    const unsigned int bits = (unsigned int)(sizeof(unsigned int) * CHAR_BIT);
+    count %= bits;
+    if (count == 0U) {
+        return value;
+    }
+    return (value << count) | (value >> (bits - count));
+}
+
+int main(void)
+{
+    unsigned int value = 0U;
+    unsigned int count = 0U;
+
+    if (printf("Enter an unsigned integer: ") < 0) {
+        return EXIT_FAILURE;
+    }
+    if (scanf("%u", &value) != 1) {
+        fprintf(stderr, "Invalid input for value.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Enter number of positions to rotate: ") < 0) {
+        return EXIT_FAILURE;
+    }
+    if (scanf("%u", &count) != 1) {
+        fprintf(stderr, "Invalid input for rotation count.\n");
+        return EXIT_FAILURE;
+    }
+
+    unsigned int result = left_rotate(value, count);
+
+    if (printf("Result: %u\n", result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

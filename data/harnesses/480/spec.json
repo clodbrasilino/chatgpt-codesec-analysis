@@ -1,0 +1,44 @@
+{
+  "task_id": 480,
+  "text": "Write a C function to find the maximum occurring character in a given string.",
+  "fn_candidates": [
+    "get_max_occuring_char",
+    "GetMaxOccuringChar",
+    "getMaxOccuringChar",
+    "getmaxoccuringchar"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "get_max_occuring_char",
+      "args": [
+        "data"
+      ],
+      "expected": "a",
+      "assert_src": "assert get_max_occuring_char(\"data\") == \"a\""
+    },
+    {
+      "fn_name": "get_max_occuring_char",
+      "args": [
+        "create"
+      ],
+      "expected": "e",
+      "assert_src": "assert get_max_occuring_char(\"create\") == \"e\""
+    },
+    {
+      "fn_name": "get_max_occuring_char",
+      "args": [
+        "brilliant girl"
+      ],
+      "expected": "i",
+      "assert_src": "assert get_max_occuring_char(\"brilliant girl\") == \"i\""
+    }
+  ],
+  "arg_kinds": [
+    "str"
+  ],
+  "return_kind": "str",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

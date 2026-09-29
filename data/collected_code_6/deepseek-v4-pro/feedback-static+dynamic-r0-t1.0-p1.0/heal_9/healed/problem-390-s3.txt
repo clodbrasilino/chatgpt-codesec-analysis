@@ -1,0 +1,185 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+typedef struct Node {
+    char *data;
+    struct Node *next;
+} Node;
+
+typedef struct {
+    Node *head;
+} List;
+
+Node *create_node(const char *data) {
+    Node *new_node;
+    size_t data_len;
+    
+    if (data == NULL) {
+        return NULL;
+    }
+    
+    data_len = strnlen(data, SIZE_MAX);
+    
+    if (data_len >= SIZE_MAX) {
+        return NULL;
+    }
+    
+    new_node = (Node *)malloc(sizeof(Node));
+    if (new_node == NULL) {
+        return NULL;
+    }
+    
+    new_node->data = (char *)malloc(data_len + 1);
+    if (new_node->data == NULL) {
+        free(new_node);
+        return NULL;
+    }
+    
+    if (data_len > 0) {
+        memcpy(new_node->data, data, data_len);
+    }
+    new_node->data[data_len] = '\0';
+    new_node->next = NULL;
+    return new_node;
+}
+
+void list_init(List *list) {
+    if (list != NULL) {
+        list->head = NULL;
+    }
+}
+
+int list_append(List *list, const char *data) {
+    Node *new_node;
+    Node *current;
+    
+    if (list == NULL || data == NULL) {
+        return 0;
+    }
+    
+    new_node = create_node(data);
+    if (new_node == NULL) {
+        return 0;
+    }
+    
+    if (list->head == NULL) {
+        list->head = new_node;
+        return 1;
+    }
+    
+    current = list->head;
+    while (current->next != NULL) {
+        current = current->next;
+    }
+    current->next = new_node;
+    return 1;
+}
+
+void list_free(List *list) {
+    Node *current;
+    Node *next;
+    
+    if (list == NULL) {
+        return;
+    }
+    
+    current = list->head;
+    while (current != NULL) {
+        next = current->next;
+        free(current->data);
+        free(current);
+        current = next;
+    }
+    list->head = NULL;
+}
+
+int list_prepend_string(List *list, const char *prefix) {
+    Node *current;
+    char *new_data;
+    size_t prefix_len;
+    
+    if (list == NULL || prefix == NULL) {
+        return 0;
+    }
+    
+    if (list->head == NULL) {
+        return 1;
+    }
+    
+    prefix_len = strnlen(prefix, SIZE_MAX);
+    if (prefix_len >= SIZE_MAX) {
+        return 0;
+    }
+    
+    current = list->head;
+    while (current != NULL) {
+        size_t data_len = strnlen(current->data, SIZE_MAX);
+        size_t total_len;
+        
+        if (data_len >= SIZE_MAX) {
+            return 0;
+        }
+        
+        if (prefix_len > SIZE_MAX - data_len) {
+            return 0;
+        }
+        
+        total_len = prefix_len + data_len;
+        
+        if (total_len >= SIZE_MAX) {
+            return 0;
+        }
+        
+        new_data = (char *)malloc(total_len + 1);
+        if (new_data == NULL) {
+            return 0;
+        }
+        
+        memcpy(new_data, prefix, prefix_len);
+        memcpy(new_data + prefix_len, current->data, data_len);
+        new_data[total_len] = '\0';
+        
+        free(current->data);
+        current->data = new_data;
+        current = current->next;
+    }
+    return 1;
+}
+
+void list_print(const List *list) {
+    Node *current;
+    
+    if (list == NULL) {
+        return;
+    }
+    
+    current = list->head;
+    while (current != NULL) {
+        printf("%s\n", current->data);
+        current = current->next;
+    }
+}
+
+int main(void) {
+    List list;
+    
+    list_init(&list);
+    list_append(&list, "world");
+    list_append(&list, "example");
+    list_append(&list, "test");
+    
+    printf("Before:\n");
+    list_print(&list);
+    
+    list_prepend_string(&list, "hello_");
+    
+    printf("After:\n");
+    list_print(&list);
+    
+    list_free(&list);
+    return 0;
+}
+```

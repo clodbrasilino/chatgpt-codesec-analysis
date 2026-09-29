@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_6/healed/problem-945-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_6/healed/problem-945-s3.c:47:23: style: The comparison 'copy_size <= dest_size' is always true because 'copy_size' and 'dest_size' represent the same value. [knownConditionTrueFalse]
+        if (copy_size <= dest_size) {
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_6/healed/problem-945-s3.c:45:41: note: 'copy_size' is assigned value 'unique_count*sizeof(int)' here.
+        size_t copy_size = unique_count * sizeof(int);
+                                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_6/healed/problem-945-s3.c:46:41: note: 'dest_size' is assigned value 'unique_count*sizeof(int)' here.
+        size_t dest_size = unique_count * sizeof(int);
+                                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_6/healed/problem-945-s3.c:47:23: note: The comparison 'copy_size <= dest_size' is always true because 'copy_size' and 'dest_size' represent the same value.
+        if (copy_size <= dest_size) {
+                      ^

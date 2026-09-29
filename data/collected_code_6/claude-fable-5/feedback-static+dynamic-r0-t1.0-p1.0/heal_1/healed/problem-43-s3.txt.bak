@@ -1,0 +1,72 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <regex.h>
+
+int match_lowercase_underscore(const char *text)
+{
+    regex_t regex;
+    int ret;
+
+    if (text == NULL) {
+        return -1;
+    }
+
+    ret = regcomp(&regex, "^[a-z]+_[a-z]+$", REG_EXTENDED | REG_NOSUB);
+    if (ret != 0) {
+        char errbuf[128];
+        regerror(ret, &regex, errbuf, sizeof(errbuf));
+        fprintf(stderr, "Regex compilation failed: %s\n", errbuf);
+        return -1;
+    }
+
+    ret = regexec(&regex, text, 0, NULL, 0);
+    regfree(&regex);
+
+    if (ret == 0) {
+        return 1;
+    }
+    if (ret == REG_NOMATCH) {
+        return 0;
+    }
+
+    fprintf(stderr, "Regex execution failed\n");
+    return -1;
+}
+
+int main(void)
+{
+    const char *tests[] = {
+        "aab_cbbbc",
+        "aab_Abbbc",
+        "Aaab_abbbc",
+        "hello_world",
+        "no_underscore_here_ok"
+    };
+    size_t count = sizeof(tests) / sizeof(tests[0]);
+    size_t i;
+
+    for (i = 0; i < count; i++) {
+        int result = match_lowercase_underscore(tests[i]);
+        if (result < 0) {
+            fprintf(stderr, "Error processing string: %s\n", tests[i]);
+            return EXIT_FAILURE;
+        }
+        if (result == 1) {
+            printf("\"%s\": Found a match!\n", tests[i]);
+        } else {
+            printf("\"%s\": Not matched!\n", tests[i]);
+        }
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+The two `variableScope` weaknesses have been addressed:
+
+1. **`errbuf`** — moved inside the `if (ret != 0)` block in `match_lowercase_underscore`, since it is only used when `regcomp` fails. This avoids allocating 128 bytes of stack space on the common success path.
+
+2. **`result`** — moved inside the `for` loop body in `main`, since its value is never carried across iterations. Declaring it at the point of use makes the code easier to reason about and prevents accidental reuse of stale values.
+
+All other logic is preserved: NULL-pointer guarding, proper `regfree` after `regexec` (no resource leak), correct distinction between match (`1`), no-match (`0`), and error (`-1`), and safe use of `regerror` with `sizeof(errbuf)`.

@@ -1,0 +1,27 @@
+collected_code/problem-130-0.c:7:23: warning: Uninitialized variable: arr [uninitvar]
+    int maxFreqItem = arr[0];
+                      ^
+collected_code/problem-130-0.c:37:23: note: Assuming condition is false
+    for (int i = 0; i < size; i++)
+                      ^
+collected_code/problem-130-0.c:40:40: note: Calling function 'findMaxFrequency', 1st argument 'arr' value is <Uninit>
+    int maxFreqItem = findMaxFrequency(arr, size);
+                                       ^
+collected_code/problem-130-0.c:7:23: note: Uninitialized variable: arr
+    int maxFreqItem = arr[0];
+                      ^
+collected_code/problem-130-0.c:7:26: error: Cannot determine that 'arr[0]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+    int maxFreqItem = arr[0];
+                         ^
+collected_code/problem-130-0.c:14:20: error: Cannot determine that 'arr[j]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+            if (arr[j] == arr[i])
+                   ^
+collected_code/problem-130-0.c:14:30: error: Cannot determine that 'arr[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+            if (arr[j] == arr[i])
+                             ^
+collected_code/problem-130-0.c:21:30: error: Cannot determine that 'arr[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+            maxFreqItem = arr[i];
+                             ^
+collected_code/problem-130-0.c:34:18: error: Cannot determine that 'size' is initialized [premium-bughuntingUninit]
+    scanf("%d", &size);
+                 ^

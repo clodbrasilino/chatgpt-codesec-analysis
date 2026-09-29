@@ -1,0 +1,53 @@
+{
+  "task_id": 190,
+  "text": "Write a C function to count the number of integral co-ordinates that lie inside a square.",
+  "fn_candidates": [
+    "count_Intgral_Points",
+    "CountIntgralPoints",
+    "countIntgralPoints",
+    "countIntgralPoints"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "count_Intgral_Points",
+      "args": [
+        1,
+        1,
+        4,
+        4
+      ],
+      "expected": 4,
+      "assert_src": "assert count_Intgral_Points(1,1,4,4) == 4"
+    },
+    {
+      "fn_name": "count_Intgral_Points",
+      "args": [
+        1,
+        2,
+        1,
+        2
+      ],
+      "expected": 1,
+      "assert_src": "assert count_Intgral_Points(1,2,1,2) == 1"
+    },
+    {
+      "fn_name": "count_Intgral_Points",
+      "args": [
+        4,
+        2,
+        6,
+        4
+      ],
+      "expected": 1,
+      "assert_src": "assert count_Intgral_Points(4,2,6,4) == 1"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

@@ -1,0 +1,95 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+#include <stdbool.h>
+
+typedef enum {
+    TYPE_INT,
+    TYPE_FLOAT,
+    TYPE_DOUBLE
+} DataType;
+
+typedef struct {
+    DataType type;
+    union {
+        int int_val;
+        float float_val;
+        double double_val;
+    } value;
+} ListItem;
+
+typedef struct {
+    ListItem *items;
+    size_t size;
+} HeterogeneousList;
+
+double find_minimum(const HeterogeneousList *list) {
+    if (list == NULL || list->size == 0 || list->items == NULL) {
+        return 0.0;
+    }
+
+    double min_val = (double)INT_MAX;
+    bool initialized = false;
+
+    for (size_t i = 0; i < list->size; ++i) {
+        double current_val;
+
+        switch (list->items[i].type) {
+            case TYPE_INT:
+                current_val = (double)list->items[i].value.int_val;
+                break;
+            case TYPE_FLOAT:
+                current_val = (double)list->items[i].value.float_val;
+                break;
+            case TYPE_DOUBLE:
+                current_val = list->items[i].value.double_val;
+                break;
+            default:
+                continue;
+        }
+
+        if (!initialized || current_val < min_val) {
+            min_val = current_val;
+            initialized = true;
+        }
+    }
+
+    if (!initialized) {
+        return 0.0;
+    }
+
+    return min_val;
+}
+
+int main(void) {
+    HeterogeneousList list;
+    list.size = 5;
+    list.items = (ListItem *)malloc(list.size * sizeof(ListItem));
+    if (list.items == NULL) {
+        return EXIT_FAILURE;
+    }
+
+    list.items[0].type = TYPE_INT;
+    list.items[0].value.int_val = 10;
+
+    list.items[1].type = TYPE_FLOAT;
+    list.items[1].value.float_val = -5.5f;
+
+    list.items[2].type = TYPE_DOUBLE;
+    list.items[2].value.double_val = 3.14159;
+
+    list.items[3].type = TYPE_INT;
+    list.items[3].value.int_val = -20;
+
+    list.items[4].type = TYPE_DOUBLE;
+    list.items[4].value.double_val = 0.0;
+
+    double min_val = find_minimum(&list);
+    printf("Minimum value: %f\n", min_val);
+
+    free(list.items);
+
+    return EXIT_SUCCESS;
+}
+```

@@ -1,0 +1,12 @@
+collected_code/problem-725-0.c:14:34: error: Cannot determine that 'string[0]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+    int result = regexec(&regex, string, 1, matches, 0);
+                                 ^
+collected_code/problem-725-0.c:16:28: error: Cannot determine that 'matches[0]' is initialized [premium-bughuntingUninit]
+        int start = matches[0].rm_so + 1;
+                           ^
+collected_code/problem-725-0.c:17:26: error: Cannot determine that 'matches[0]' is initialized [premium-bughuntingUninit]
+        int end = matches[0].rm_eo - 1;
+                         ^
+collected_code/problem-725-0.c:19:17: error: Cannot determine that 'extractedValue[0]' is initialized [premium-bughuntingUninit]
+        strncpy(extractedValue, string + start, end - start);
+                ^

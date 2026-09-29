@@ -1,0 +1,31 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+void remove_char(char *str, char c) {
+    if (str == NULL) {
+        return;
+    }
+
+    char *src = str;
+    char *dst = str;
+
+    while (*src != '\0') {
+        if (*src != c) {
+            *dst = *src;
+            dst++;
+        }
+        src++;
+    }
+    *dst = '\0';
+}
+
+int main() {
+    char str[] = "hello world";
+    char c = 'l';
+
+    remove_char(str, c);
+
+    printf("%s\n", str);
+
+    return 0;
+}

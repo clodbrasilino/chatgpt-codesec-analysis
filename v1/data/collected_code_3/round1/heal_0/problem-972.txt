@@ -1,0 +1,32 @@
+In C, there is no built-in support for tuples like in Python or other high-level languages. However, we can use structures to represent a tuple. Here is a simple implementation of concatenating two tuples to a nested tuple.
+
+```c
+#include <stdio.h>
+
+typedef struct {
+    int a;
+    int b;
+} Tuple;
+
+typedef struct {
+    Tuple t1;
+    Tuple t2;
+} NestedTuple;
+
+NestedTuple concatenate(Tuple t1, Tuple t2) {
+    NestedTuple nt;
+    nt.t1 = t1;
+    nt.t2 = t2;
+    return nt;
+}
+
+int main() {
+    Tuple t1 = {1, 2};
+    Tuple t2 = {3, 4};
+    NestedTuple nt = concatenate(t1, t2);
+    printf("Nested Tuple: ((%d, %d), (%d, %d))\n", nt.t1.a, nt.t1.b, nt.t2.a, nt.t2.b);
+    return 0;
+}
+```
+
+This program defines a `Tuple` structure with two integer members, and a `NestedTuple` structure with two `Tuple` members. The `concatenate` function takes two `Tuple` instances and returns a `NestedTuple` containing those instances. The `main` function demonstrates the usage of these structures and the `concatenate` function.

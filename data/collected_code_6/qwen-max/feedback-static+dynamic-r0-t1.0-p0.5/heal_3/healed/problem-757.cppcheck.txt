@@ -1,0 +1,7 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_3/healed/problem-757.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_3/healed/problem-757.c:10:23: style: Variable 'end_i' can be declared as pointer to const [constVariablePointer]
+                char *end_i = memchr(strings[i], '\0', 256);
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_3/healed/problem-757.c:11:23: style: Variable 'end_j' can be declared as pointer to const [constVariablePointer]
+                char *end_j = memchr(strings[j], '\0', 256);
+                      ^

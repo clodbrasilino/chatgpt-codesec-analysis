@@ -1,0 +1,61 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+  int data;
+  struct Node* next;
+} Node;
+
+Node* CreateNode(int data) {
+  Node* newNode = (Node*)malloc(sizeof(Node));
+  if (!newNode) {
+    printf("Memory error");
+    exit(0);
+  }
+  newNode->data = data;
+  newNode->next = NULL;
+  return newNode;
+}
+
+Node* AddLists(Node* list1, Node* list2) {
+  if (list1 == NULL) return list2;
+  if (list2 == NULL) return list1;
+
+  Node* result = NULL;
+  Node** lastPtrRef = &result;
+
+  while (list1 != NULL || list2 != NULL) {
+    int sum = (list1 != NULL ? list1->data : 0) + (list2 != NULL ? list2->data : 0);
+    *lastPtrRef = CreateNode(sum);
+
+    if (list1) list1 = list1->next;
+    if (list2) list2 = list2->next;
+
+    lastPtrRef = &((*lastPtrRef)->next);
+  }
+  return result;
+}
+
+int main() {
+  Node* list1 = CreateNode(3);
+  list1->next = CreateNode(1);
+  list1->next->next = CreateNode(5);
+
+  Node* list2 = CreateNode(5);
+  list2->next = CreateNode(9);
+  list2->next->next = CreateNode(2);
+
+  Node* result = AddLists(list1, list2);
+  Node* temp = result;
+
+  while (temp != NULL) {
+    printf("%d ", temp->data);
+    temp = temp->next;
+  }
+
+  free(list1);
+  free(list2);
+  free(result);
+
+  return 0;
+}

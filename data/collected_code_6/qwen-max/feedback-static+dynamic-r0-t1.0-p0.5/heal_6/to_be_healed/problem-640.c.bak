@@ -1,0 +1,80 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+ /* Possible weaknesses found:
+  *  test case 2 failed: expected 'alpha', got ��Z	
+  *  test case 1 failed: expected 'string', got `�Z	
+  *  test case 0 failed: expected 'python', got  �Z	
+  */
+
+char* remove_parenthesis_area(const char *input) {
+    int len = strlen(input);
+    int depth = 0;
+    int new_len = 0;
+
+    for (int i = 0; i < len; ++i) {
+        if (input[i] == '(') {
+            depth++;
+        } else if (input[i] == ')') {
+            if (depth > 0) {
+                depth--;
+            }
+        } else if (depth == 0) {
+            new_len++;
+        }
+    }
+
+    char *result = (char *)malloc(new_len + 1);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    int j = 0;
+    for (int i = 0; i < len; ++i) {
+        if (input[i] == '(') {
+            depth++;
+        } else if (input[i] == ')') {
+            if (depth > 0) {
+                depth--;
+            }
+        } else if (depth == 0) {
+            result[j++] = input[i];
+        }
+    }
+
+    result[j] = '\0';
+    return result;
+}
+
+int main() {
+    const char *input1 = "This is a (test string with (nested) parentheses)";
+    const char *input2 = "alpha(beta)gamma(delta)epsilon";
+    const char *input3 = "python";
+
+    char *output1 = remove_parenthesis_area(input1);
+    char *output2 = remove_parenthesis_area(input2);
+    char *output3 = remove_parenthesis_area(input3);
+
+    if (output1 != NULL) {
+        printf("%s\n", output1);
+        free(output1);
+    } else {
+        fprintf(stderr, "Memory allocation failed\n");
+    }
+
+    if (output2 != NULL) {
+        printf("%s\n", output2);
+        free(output2);
+    } else {
+        fprintf(stderr, "Memory allocation failed\n");
+    }
+
+    if (output3 != NULL) {
+        printf("%s\n", output3);
+        free(output3);
+    } else {
+        fprintf(stderr, "Memory allocation failed\n");
+    }
+
+    return 0;
+}

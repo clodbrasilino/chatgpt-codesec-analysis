@@ -1,0 +1,59 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <stddef.h>
+
+bool arrays_equal(const int *a, const int *b, size_t len_a, size_t len_b)
+{
+    if (len_a != len_b) {
+        return false;
+    }
+
+    if (len_a == 0U) {
+        return true;
+    }
+
+    if ((a == NULL) || (b == NULL)) {
+        return false;
+    }
+
+    for (size_t i = 0U; i < len_a; i++) {
+        if (a[i] != b[i]) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+int main(void)
+{
+    int arr1[] = {1, 2, 3, 4, 5};
+    int arr2[] = {1, 2, 3, 4, 5};
+    int arr3[] = {1, 2, 3, 4, 6};
+    int arr4[] = {1, 2, 3};
+
+    size_t len1 = sizeof(arr1) / sizeof(arr1[0]);
+    size_t len2 = sizeof(arr2) / sizeof(arr2[0]);
+    size_t len3 = sizeof(arr3) / sizeof(arr3[0]);
+    size_t len4 = sizeof(arr4) / sizeof(arr4[0]);
+
+    if (arrays_equal(arr1, arr2, len1, len2)) {
+        (void)printf("arr1 and arr2 are equal\n");
+    } else {
+        (void)printf("arr1 and arr2 are not equal\n");
+    }
+
+    if (arrays_equal(arr1, arr3, len1, len3)) {
+        (void)printf("arr1 and arr3 are equal\n");
+    } else {
+        (void)printf("arr1 and arr3 are not equal\n");
+    }
+
+    if (arrays_equal(arr1, arr4, len1, len4)) {
+        (void)printf("arr1 and arr4 are equal\n");
+    } else {
+        (void)printf("arr1 and arr4 are not equal\n");
+    }
+
+    return 0;
+}

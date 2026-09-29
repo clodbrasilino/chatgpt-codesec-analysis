@@ -1,0 +1,20 @@
+./collected_code_4/round1//heal_0//problem-522.c: In function 'Bitonic':
+./collected_code_4/round1//heal_0//problem-522.c:9:16: error: 'new' undeclared (first use in this function)
+    9 |    int* incr = new int[n];
+      |                ^~~
+./collected_code_4/round1//heal_0//problem-522.c:9:16: note: each undeclared identifier is reported only once for each function it appears in
+./collected_code_4/round1//heal_0//problem-522.c:9:20: error: expected ',' or ';' before 'int'
+    9 |    int* incr = new int[n];
+      |                    ^~~
+./collected_code_4/round1//heal_0//problem-522.c:10:20: error: expected ',' or ';' before 'int'
+   10 |    int* decr = new int[n];
+      |                    ^~~
+./collected_code_4/round1//heal_0//problem-522.c:30:4: error: 'delete' undeclared (first use in this function)
+   30 |    delete[] incr;
+      |    ^~~~~~
+./collected_code_4/round1//heal_0//problem-522.c:30:11: error: expected expression before ']' token
+   30 |    delete[] incr;
+      |           ^
+./collected_code_4/round1//heal_0//problem-522.c:31:11: error: expected expression before ']' token
+   31 |    delete[] decr;
+      |           ^

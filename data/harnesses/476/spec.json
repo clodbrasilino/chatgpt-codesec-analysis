@@ -1,0 +1,57 @@
+{
+  "task_id": 476,
+  "text": "Write a C function to find the sum of the largest and smallest value in a given array.",
+  "fn_candidates": [
+    "big_sum",
+    "BigSum",
+    "bigSum",
+    "bigsum"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "big_sum",
+      "args": [
+        [
+          1,
+          2,
+          3
+        ]
+      ],
+      "expected": 4,
+      "assert_src": "assert big_sum([1,2,3]) == 4"
+    },
+    {
+      "fn_name": "big_sum",
+      "args": [
+        [
+          -1,
+          2,
+          3,
+          4
+        ]
+      ],
+      "expected": 3,
+      "assert_src": "assert big_sum([-1,2,3,4]) == 3"
+    },
+    {
+      "fn_name": "big_sum",
+      "args": [
+        [
+          2,
+          3,
+          6
+        ]
+      ],
+      "expected": 8,
+      "assert_src": "assert big_sum([2,3,6]) == 8"
+    }
+  ],
+  "arg_kinds": [
+    "int-list"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

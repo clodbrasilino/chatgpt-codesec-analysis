@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-647.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-647.c:73:29: style: Condition 'part_length>=allocation_size' is always false [knownConditionTrueFalse]
+            if (part_length >= allocation_size) {
+                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-647.c:66:29: note: allocation_size is assigned 'part_length+1' here.
+            allocation_size = part_length + 1;
+                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-647.c:68:22: note: Assuming condition is false
+            if (part == NULL) {
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-647.c:73:29: note: Condition 'part_length>=allocation_size' is always false
+            if (part_length >= allocation_size) {
+                            ^

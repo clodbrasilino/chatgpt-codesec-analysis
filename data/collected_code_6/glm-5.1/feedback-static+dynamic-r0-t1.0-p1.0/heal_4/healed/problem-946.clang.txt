@@ -1,0 +1,8 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-946.c:73:70: error: use of undeclared identifier 'word_list_capability'; did you mean 'word_list_capacity'?
+   73 |                 size_t new_capacity = word_list_capacity == 0 ? 16 : word_list_capability * 2;
+      |                                                                      ^~~~~~~~~~~~~~~~~~~~
+      |                                                                      word_list_capacity
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-946.c:34:12: note: 'word_list_capacity' declared here
+   34 |     size_t word_list_capacity = 0;
+      |            ^
+1 error generated.

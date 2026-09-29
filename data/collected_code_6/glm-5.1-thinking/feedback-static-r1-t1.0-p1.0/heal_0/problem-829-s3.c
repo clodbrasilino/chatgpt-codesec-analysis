@@ -1,0 +1,86 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char *str;
+    int count;
+} StringCount;
+
+char *findSecondMostRepeated(char **arr, int n) {
+    if (arr == NULL || n <= 1) {
+        return NULL;
+    }
+
+    StringCount *counts = malloc(n * sizeof(StringCount));
+    if (counts == NULL) {
+        return NULL;
+    }
+
+    int unique_count = 0;
+    for (int i = 0; i < n; i++) {
+        if (arr[i] == NULL) {
+            continue;
+        }
+
+        int found = 0;
+        for (int j = 0; j < unique_count; j++) {
+            if (strcmp(arr[i], counts[j].str) == 0) {
+                counts[j].count++;
+                found = 1;
+                break;
+            }
+        }
+
+        if (!found) {
+            counts[unique_count].str = arr[i];
+            counts[unique_count].count = 1;
+            unique_count++;
+        }
+    }
+
+    if (unique_count < 2) {
+        free(counts);
+        return NULL;
+    }
+
+    int max_count = 0;
+    int second_max_count = 0;
+    int max_index = -1;
+    int second_max_index = -1;
+
+    for (int i = 0; i < unique_count; i++) {
+        if (counts[i].count > max_count) {
+            second_max_count = max_count;
+            second_max_index = max_index;
+            max_count = counts[i].count;
+            max_index = i;
+        } else if (counts[i].count > second_max_count && counts[i].count < max_count) {
+            second_max_count = counts[i].count;
+            second_max_index = i;
+        }
+    }
+
+    char *result = NULL;
+    if (second_max_index != -1) {
+        result = counts[second_max_index].str;
+    }
+
+    free(counts);
+    return result;
+}
+
+int main(void) {
+    char *arr[] = {"apple", "banana", "apple", "orange", "banana", "apple", "banana"};
+    int n = sizeof(arr) / sizeof(arr[0]);
+
+    char *second_most = findSecondMostRepeated(arr, n);
+
+    if (second_most != NULL) {
+        printf("%s\n", second_most);
+    } else {
+        printf("No second most repeated string found.\n");
+    }
+
+    return 0;
+}

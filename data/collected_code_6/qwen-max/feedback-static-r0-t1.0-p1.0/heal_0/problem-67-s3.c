@@ -1,0 +1,48 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+unsigned long long bell_number(int n, int k) {
+    if (n == 0 || k == 0 || n < k) return 0;
+    if (n == k) return 1;
+    if (k == 1) return 1;
+
+    unsigned long long **dp = (unsigned long long**)malloc((n+1) * sizeof(unsigned long long*));
+    for (int i = 0; i <= n; ++i) {
+        dp[i] = (unsigned long long*)calloc(k+1, sizeof(unsigned long long));
+    }
+
+    dp[0][0] = 1;
+
+    for (int i = 1; i <= n; ++i) {
+        for (int j = 1; j <= k; ++j) {
+            for (int m = 0; m <= i-1; ++m) {
+                dp[i][j] += dp[m][j-1];
+            }
+        }
+    }
+
+    unsigned long long result = 0;
+    for (int j = 1; j <= k; ++j) {
+        result += dp[n][j];
+    }
+
+    for (int i = 0; i <= n; ++i) {
+        free(dp[i]);
+    }
+    free(dp);
+
+    return result;
+}
+
+int main() {
+    int n, k;
+    printf("Enter the number of elements in the set: ");
+    scanf("%d", &n);
+    printf("Enter the number of partitions: ");
+    scanf("%d", &k);
+
+    unsigned long long result = bell_number(n, k);
+    printf("The number of ways to partition a set of %d elements into %d partitions is: %llu\n", n, k, result);
+
+    return 0;
+}

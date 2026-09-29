@@ -1,0 +1,45 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+long long nth_term(long long a, long long d, long long n)
+{
+    /* Possible weaknesses found:
+     * UBSan: signed integer overflow: 9223372036854775806 * 5 cannot be represented in type 'long long' (AFL crash: id:000001,sig:06,src:000006,time:40694,execs:24796,op:havoc,rep:1)
+     * UBSan: signed integer overflow: 9223372036854775807 + 5 cannot be represented in type 'long long' (AFL crash: id:000000,sig:06,src:000001,time:2798,execs:1762,op:havoc,rep:1)
+     */
+    return a + (n - 1LL) * d;
+}
+
+int main(void)
+{
+    long long a;
+    long long d;
+    long long n;
+
+    printf("Enter the first term: ");
+    if (scanf("%lld", &a) != 1) {
+        fprintf(stderr, "Invalid input for first term\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter the common difference: ");
+    if (scanf("%lld", &d) != 1) {
+        fprintf(stderr, "Invalid input for common difference\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter the term number: ");
+    if (scanf("%lld", &n) != 1) {
+        fprintf(stderr, "Invalid input for term number\n");
+        return EXIT_FAILURE;
+    }
+
+    if (n < 1) {
+        fprintf(stderr, "Term number must be a positive integer\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("The %lld-th term is: %lld\n", n, nth_term(a, d, n));
+
+    return EXIT_SUCCESS;
+}

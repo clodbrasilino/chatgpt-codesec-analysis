@@ -1,0 +1,267 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    int first;
+    int second;
+} Pair;
+
+typedef struct {
+    Pair *pairs;
+    size_t size;
+    size_t capacity;
+} PairList;
+
+typedef struct {
+    int first;
+    int second;
+    int sum;
+} HeapNode;
+
+typedef struct {
+    HeapNode *nodes;
+    size_t size;
+    size_t capacity;
+} MinHeap;
+
+static void swap_nodes(HeapNode *a, HeapNode *b)
+{
+    HeapNode temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+static int heap_init(MinHeap *heap, size_t capacity)
+{
+    if (heap == NULL || capacity == 0) {
+        return -1;
+    }
+    heap->nodes = malloc(capacity * sizeof(HeapNode));
+    if (heap->nodes == NULL) {
+        return -1;
+    }
+    heap->size = 0;
+    heap->capacity = capacity;
+    return 0;
+}
+
+static void heap_free(MinHeap *heap)
+{
+    if (heap != NULL) {
+        free(heap->nodes);
+        heap->nodes = NULL;
+        heap->size = 0;
+        heap->capacity = 0;
+    }
+}
+
+static int heap_push(MinHeap *heap, int first, int second, int sum)
+{
+    size_t i;
+    if (heap == NULL || heap->size >= heap->capacity) {
+        return -1;
+    }
+    i = heap->size;
+    heap->nodes[i].first = first;
+    heap->nodes[i].second = second;
+    heap->nodes[i].sum = sum;
+    heap->size++;
+    while (i > 0) {
+        size_t parent = (i - 1) / 2;
+        if (heap->nodes[parent].sum <= heap->nodes[i].sum) {
+            break;
+        }
+        swap_nodes(&heap->nodes[parent], &heap->nodes[i]);
+        i = parent;
+    }
+    return 0;
+}
+
+static int heap_pop(MinHeap *heap, HeapNode *result)
+{
+    size_t i = 0;
+    if (heap == NULL || heap->size == 0 || result == NULL) {
+        return -1;
+    }
+    *result = heap->nodes[0];
+    heap->size--;
+    if (heap->size > 0) {
+        heap->nodes[0] = heap->nodes[heap->size];
+        while (1) {
+            size_t left = 2 * i + 1;
+            size_t right = 2 * i + 2;
+            size_t smallest = i;
+            if (left < heap->size && heap->nodes[left].sum < heap->nodes[smallest].sum) {
+                smallest = left;
+            }
+            if (right < heap->size && heap->nodes[right].sum < heap->nodes[smallest].sum) {
+                smallest = right;
+            }
+            if (smallest == i) {
+                break;
+            }
+            swap_nodes(&heap->nodes[i], &heap->nodes[smallest]);
+            i = smallest;
+        }
+    }
+    return 0;
+}
+
+static int pair_list_init(PairList *list, size_t capacity)
+{
+    if (list == NULL || capacity == 0) {
+        return -1;
+    }
+    list->pairs = malloc(capacity * sizeof(Pair));
+    if (list->pairs == NULL) {
+        return -1;
+    }
+    list->size = 0;
+    list->capacity = capacity;
+    return 0;
+}
+
+static void pair_list_free(PairList *list)
+{
+    if (list != NULL) {
+        free(list->pairs);
+        list->pairs = NULL;
+        list->size = 0;
+        list->capacity = 0;
+    }
+}
+
+static int pair_list_add(PairList *list, int first, int second)
+{
+    if (list == NULL || list->size >= list->capacity) {
+        return -1;
+    }
+    list->pairs[list->size].first = first;
+    list->pairs[list->size].second = second;
+    list->size++;
+    return 0;
+}
+
+static int compare_ints(const void *a, const void *b)
+{
+    int ia = *(const int *)a;
+    int ib = *(const int *)b;
+    if (ia < ib) return -1;
+    if (ia > ib) return 1;
+    return 0;
+}
+
+int find_k_pairs(const int *arr1, size_t size1, const int *arr2, size_t size2,
+                 size_t k, PairList *result)
+{
+    MinHeap heap;
+    int *sorted1 = NULL;
+    int *sorted2 = NULL;
+    size_t i;
+    size_t count = 0;
+    int ret = -1;
+
+    if (arr1 == NULL || arr2 == NULL || result == NULL ||
+        size1 == 0 || size2 == 0 || k == 0) {
+        return -1;
+    }
+
+    sorted1 = malloc(size1 * sizeof(int));
+    if (sorted1 == NULL) {
+        goto cleanup;
+    }
+    sorted2 = malloc(size2 * sizeof(int));
+    if (sorted2 == NULL) {
+        goto cleanup;
+    }
+
+    memcpy(sorted1, arr1, size1 * sizeof(int));
+    memcpy(sorted2, arr2, size2 * sizeof(int));
+    qsort(sorted1, size1, sizeof(int), compare_ints);
+    qsort(sorted2, size2, sizeof(int), compare_ints);
+
+    if (heap_init(&heap, size1 < k ? size1 : k) != 0) {
+        goto cleanup;
+    }
+
+    for (i = 0; i < size1 && i < k; i++) {
+        if (heap_push(&heap, sorted1[i], sorted2[0],
+                      sorted1[i] + sorted2[0]) != 0) {
+            heap_free(&heap);
+            goto cleanup;
+        }
+    }
+
+    while (count < k && heap.size > 0) {
+        HeapNode node;
+        size_t idx2 = 0;
+        size_t j;
+
+        if (heap_pop(&heap, &node) != 0) {
+            break;
+        }
+
+        if (pair_list_add(result, node.first, node.second) != 0) {
+            heap_free(&heap);
+            goto cleanup;
+        }
+        count++;
+
+        for (j = 0; j < size2; j++) {
+            if (sorted2[j] == node.second) {
+                idx2 = j;
+                break;
+            }
+        }
+
+        if (idx2 + 1 < size2) {
+            if (heap_push(&heap, node.first, sorted2[idx2 + 1],
+                          node.first + sorted2[idx2 + 1]) != 0) {
+                break;
+            }
+        }
+    }
+
+    heap_free(&heap);
+    ret = (int)count;
+
+cleanup:
+    free(sorted1);
+    free(sorted2);
+    return ret;
+}
+
+int main(void)
+{
+    int arr1[] = {1, 7, 11};
+    int arr2[] = {2, 4, 6};
+    size_t size1 = sizeof(arr1) / sizeof(arr1[0]);
+    size_t size2 = sizeof(arr2) / sizeof(arr2[0]);
+    size_t k = 3;
+    PairList result;
+    int found;
+    size_t i;
+
+    if (pair_list_init(&result, k) != 0) {
+        fprintf(stderr, "Failed to initialize result list\n");
+        return EXIT_FAILURE;
+    }
+
+    found = find_k_pairs(arr1, size1, arr2, size2, k, &result);
+    if (found < 0) {
+        fprintf(stderr, "Failed to find pairs\n");
+        pair_list_free(&result);
+        return EXIT_FAILURE;
+    }
+
+    printf("Found %d pairs:\n", found);
+    for (i = 0; i < result.size; i++) {
+        printf("(%d, %d)\n", result.pairs[i].first, result.pairs[i].second);
+    }
+
+    pair_list_free(&result);
+    return EXIT_SUCCESS;
+}
+```

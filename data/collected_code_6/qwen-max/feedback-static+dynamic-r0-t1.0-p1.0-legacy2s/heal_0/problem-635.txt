@@ -1,0 +1,61 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+void pushHeap(int *heap, int *size, int value) {
+    int i = (*size)++;
+    heap[i] = value;
+    while (i != 0 && heap[(i - 1) / 2] > heap[i]) {
+        int temp = heap[i];
+        heap[i] = heap[(i - 1) / 2];
+        heap[(i - 1) / 2] = temp;
+        i = (i - 1) / 2;
+    }
+}
+
+int popHeap(int *heap, int *size) {
+    if (*size == 0) {
+        return -1; // Indicate an empty heap
+    }
+    int root = heap[0];
+    heap[0] = heap[--(*size)];
+    int i = 0;
+    while (1) {
+        int smallest = i;
+        if (2 * i + 1 < *size && heap[2 * i + 1] < heap[smallest]) {
+            smallest = 2 * i + 1;
+        }
+        if (2 * i + 2 < *size && heap[2 * i + 2] < heap[smallest]) {
+            smallest = 2 * i + 2;
+        }
+        if (smallest == i) {
+            break;
+        }
+        int temp = heap[i];
+        heap[i] = heap[smallest];
+        heap[smallest] = temp;
+        i = smallest;
+    }
+    return root;
+}
+
+int main() {
+    int heap[100];
+    int size = 0;
+    int data[] = {5, 3, 8, 1, 4, 7, 6, 2};
+    int n = sizeof(data) / sizeof(data[0]);
+
+    for (int i = 0; i < n; i++) {
+        pushHeap(heap, &size, data[i]);
+    }
+
+    for (int i = 0; i < n; i++) {
+        int value = popHeap(heap, &size);
+        if (value != -1) {
+            printf("%d\n", value);
+        }
+    }
+
+    return 0;
+}
+```

@@ -1,0 +1,16 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-118-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-118-s2.c:51:10: warning: Either the condition 'len<65536' is redundant or the array 'p[25]' is accessed at index 65536, which is out of bounds. [arrayIndexOutOfBoundsCond]
+    if (p[len] != '\0') {
+         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-118-s2.c:48:34: note: Assuming that condition 'len<65536' is not redundant
+    while (p[len] != '\0' && len < 65536) {
+                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-118-s2.c:51:10: note: Array index out of bounds
+    if (p[len] != '\0') {
+         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-118-s2.c:17:13: style: Array index 'len' is used before limits check. [arrayIndexThenCheck]
+    while (p[len] != '\0' && len < 4096) {
+            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-118-s2.c:48:13: style: Array index 'len' is used before limits check. [arrayIndexThenCheck]
+    while (p[len] != '\0' && len < 65536) {
+            ^

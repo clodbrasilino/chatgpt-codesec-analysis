@@ -1,0 +1,80 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+
+#define BUFFER_SIZE 256U
+
+bool is_binary_string(const char *str, size_t max_len)
+{
+    size_t i;
+
+    if (str == NULL) {
+        return false;
+    }
+
+    if (str[0] == '\0') {
+        return false;
+    }
+
+    for (i = 0U; (i < max_len) && (str[i] != '\0'); i++) {
+        if ((str[i] != '0') && (str[i] != '1')) {
+            return false;
+        }
+    }
+
+    if (i >= max_len) {
+        return false;
+    }
+
+    return true;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t len;
+    char *newline;
+
+    printf("Enter a string: ");
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1U] = '\0';
+
+    newline = memchr(buffer, '\n', sizeof(buffer));
+    if (newline != NULL) {
+        *newline = '\0';
+    }
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len >= sizeof(buffer)) {
+        fprintf(stderr, "Input too long\n");
+        return 1;
+    }
+
+    if (is_binary_string(buffer, sizeof(buffer))) {
+        printf("The string is a binary string\n");
+    } else {
+        printf("The string is not a binary string\n");
+    }
+
+    return 0;
+}
+```
+
+Key changes made to address the identified weaknesses:
+
+**CWE-119/CWE-120 (buffer overflow risk on `char buffer[256]`):**
+- `fgets` is still used with `sizeof(buffer)`, which is the correct bounded-read approach, but the buffer is now explicitly null-terminated at the last index as a defensive guarantee.
+- The buffer size is defined as a named constant, and `is_binary_string` now takes an explicit `max_len` parameter so it performs its own bounds checking rather than trusting null termination alone.
+
+**CWE-126 (`strlen` over-read on non-terminated strings):**
+- `strlen` is replaced with `strnlen`, which is bounded by the buffer size and cannot over-read.
+- The newline-stripping logic now uses `memchr` with an explicit length bound instead of indexing based on an unbounded `strlen` result.
+- An explicit sanity check rejects the pathological case where no terminator is found within bounds.
+
+The loop in `is_binary_string` also enforces the length bound, so even if a caller passes a non-terminated buffer, the function fails safely instead of reading past the end.

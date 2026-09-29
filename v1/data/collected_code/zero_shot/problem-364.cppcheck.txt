@@ -1,0 +1,9 @@
+collected_code/problem-364-0.c:7:24: error: Cannot determine that 'binary_string[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+    while(binary_string[i] != '\0') {
+                       ^
+collected_code/problem-364-0.c:8:25: error: Cannot determine that 'binary_string[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        if(binary_string[i] == binary_string[i+1]) {
+                        ^
+collected_code/problem-364-0.c:8:45: error: Cannot determine that 'binary_string[i+1]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        if(binary_string[i] == binary_string[i+1]) {
+                                            ^

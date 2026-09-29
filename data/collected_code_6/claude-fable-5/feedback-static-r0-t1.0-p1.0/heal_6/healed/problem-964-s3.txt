@@ -1,0 +1,84 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+#include <stdlib.h>
+
+#define BUFFER_SIZE 256U
+
+static bool is_word_length_even(const char *word, size_t max_len)
+{
+    size_t len;
+
+    if (word == NULL) {
+        return false;
+    }
+
+    len = strnlen(word, max_len);
+    if (len == max_len) {
+        return false;
+    }
+
+    return (len % 2U) == 0U;
+}
+
+static void discard_remaining_input(void)
+{
+    int ch;
+
+    do {
+        ch = getchar();
+    } while (ch != '\n' && ch != EOF);
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t len;
+    bool newline_found;
+
+    printf("Enter a word: ");
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1U] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    newline_found = (len > 0U && buffer[len - 1U] == '\n');
+
+    if (newline_found) {
+        buffer[len - 1U] = '\0';
+        len--;
+    } else if (len == sizeof(buffer) - 1U) {
+        discard_remaining_input();
+    }
+
+    if (len == 0U) {
+        fprintf(stderr, "No word entered\n");
+        return EXIT_FAILURE;
+    }
+
+    if (is_word_length_even(buffer, sizeof(buffer))) {
+        printf("The word \"%s\" has an even length (%zu)\n", buffer, len);
+    } else {
+        printf("The word \"%s\" has an odd length (%zu)\n", buffer, len);
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the flagged weaknesses:**
+
+1. **`getchar` in a loop (CWE-120, CWE-20, risk 1):** This is a false positive. The `discard_remaining_input()` function reads and discards characters without storing them into any buffer, so no buffer overflow is possible. The loop correctly terminates on both `'\n'` and `EOF`, and `ch` is properly declared as `int` (not `char`) so the `EOF` comparison is reliable. No fix required.
+
+2. **Statically-sized `char` array (CWE-119/CWE-120, risk 2):** This is already mitigated. The code:
+   - Uses `fgets()` with `sizeof(buffer)` as the bound, preventing overflow on read.
+   - Defensively forces null termination at `buffer[sizeof(buffer) - 1U]`.
+   - Uses `strnlen()` with an explicit bound rather than the unbounded `strlen()`.
+   - Handles the truncation case (input longer than the buffer) by draining the remaining stdin data, which prevents leftover input from corrupting subsequent reads.
+
+The original code is already well-hardened; both Flawfinder hits are advisory-level findings that the existing bounds checking, bounded string functions, and explicit termination already address. The rewrite above preserves that defensive structure with the audit comments removed as requested.

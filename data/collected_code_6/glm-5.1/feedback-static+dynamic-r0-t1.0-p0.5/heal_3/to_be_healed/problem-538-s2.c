@@ -1,0 +1,74 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char **items;
+    size_t count;
+} Tuple;
+
+Tuple string_list_to_tuple(char **list, size_t count) {
+    Tuple tuple;
+    tuple.count = 0;
+    tuple.items = NULL;
+
+    if (count > 0) {
+        tuple.items = (char **)malloc(count * sizeof(char *));
+        if (tuple.items == NULL) {
+            return tuple;
+        }
+
+        for (size_t i = 0; i < count; i++) {
+            if (list[i] != NULL) {
+                /* Possible weaknesses found:
+                 * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+                 */
+                size_t len = strlen(list[i]);
+                tuple.items[i] = (char *)malloc(len + 1);
+                if (tuple.items[i] == NULL) {
+                    for (size_t j = 0; j < i; j++) {
+                        free(tuple.items[j]);
+                    }
+                    free(tuple.items);
+                    tuple.items = NULL;
+                    return tuple;
+                }
+                snprintf(tuple.items[i], len + 1, "%s", list[i]);
+            } else {
+                tuple.items[i] = NULL;
+            }
+        }
+        tuple.count = count;
+    }
+
+    return tuple;
+}
+
+void free_tuple(Tuple *tuple) {
+    if (tuple != NULL && tuple->items != NULL) {
+        for (size_t i = 0; i < tuple->count; i++) {
+            free(tuple->items[i]);
+        }
+        free(tuple->items);
+        tuple->items = NULL;
+        tuple->count = 0;
+    }
+}
+
+int main(void) {
+    char *list[] = {"apple", "banana", "cherry"};
+    size_t count = sizeof(list) / sizeof(list[0]);
+
+    Tuple t = string_list_to_tuple(list, count);
+
+    if (t.items != NULL) {
+        for (size_t i = 0; i < t.count; i++) {
+            if (t.items[i] != NULL) {
+                printf("%s\n", t.items[i]);
+            }
+        }
+        free_tuple(&t);
+    }
+
+    return 0;
+}

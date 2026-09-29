@@ -1,0 +1,78 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdbool.h>
+
+#define BUFFER_SIZE 256
+
+bool has_letter_and_digit(const char *str)
+{
+    bool has_letter = false;
+    bool has_digit = false;
+
+    if (str == NULL) {
+        return false;
+    }
+
+    while (*str != '\0') {
+        unsigned char c = (unsigned char)*str;
+        if (isalpha(c)) {
+            has_letter = true;
+        } else if (isdigit(c)) {
+            has_digit = true;
+        }
+        if (has_letter && has_digit) {
+            return true;
+        }
+        str++;
+    }
+
+    return false;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+
+    printf("Enter a string: ");
+    fflush(stdout);
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    size_t len = strlen(buffer);
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    } else {
+        int c;
+        while ((c = getchar()) != '\n' && c != EOF) {
+        }
+    }
+
+    if (has_letter_and_digit(buffer)) {
+        printf("The string contains at least one letter and one number.\n");
+    } else {
+        printf("The string does not contain both a letter and a number.\n");
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the original code and fixes applied:**
+
+The original code was already fairly well-written from a security standpoint. The Flawfinder warning about the statically-sized `buffer` (CWE-119/CWE-120) is largely a false positive here, because the code correctly uses `fgets(buffer, sizeof(buffer), stdin)`, which performs bounds checking by construction and cannot overflow the buffer.
+
+That said, the rewrite hardens the code further:
+
+1. **Buffer size as a named constant** (`BUFFER_SIZE`) — avoids magic numbers and keeps the size definition in one place, addressing the "improperly restricted" concern.
+2. **Truncation handling** — if the input line exceeds the buffer, `fgets` truncates it and leaves the remainder in `stdin`. The rewrite detects the missing newline and drains the rest of the line, preventing leftover input from affecting subsequent reads.
+3. **Newline stripping** — the trailing `\n` from `fgets` is removed, which is good hygiene even though it didn't affect the letter/digit check.
+4. **`fflush(stdout)`** — guarantees the prompt appears before blocking on input, since `stdout` may be fully buffered when not attached to a terminal.
+5. **`EXIT_SUCCESS`/`EXIT_FAILURE`** — portable return codes from `<stdlib.h>`.
+
+The `has_letter_and_digit` function was already correct: it guards against `NULL`, casts to `unsigned char` before calling `isalpha`/`isdigit` (avoiding undefined behavior with negative `char` values), and short-circuits once both conditions are met — so it was retained as-is.

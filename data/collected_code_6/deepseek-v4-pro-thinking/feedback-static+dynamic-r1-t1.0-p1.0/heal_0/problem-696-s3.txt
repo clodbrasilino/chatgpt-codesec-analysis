@@ -1,0 +1,262 @@
+```c
+#include <stddef.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct IntNode {
+    int value;
+    struct IntNode *next;
+} IntNode;
+
+typedef struct IntList {
+    IntNode *head;
+    IntNode *tail;
+} IntList;
+
+typedef struct ListOfListsNode {
+    IntList *list;
+    struct ListOfListsNode *next;
+} ListOfListsNode;
+
+typedef struct ListOfLists {
+    ListOfListsNode *head;
+    ListOfListsNode *tail;
+} ListOfLists;
+
+typedef struct ZippedNode {
+    IntList *first;
+    IntList *second;
+    struct ZippedNode *next;
+} ZippedNode;
+
+static IntList *int_list_create(void) {
+    IntList *list = malloc(sizeof(*list));
+    if (!list) return NULL;
+    list->head = NULL;
+    list->tail = NULL;
+    return list;
+}
+
+static int int_list_append(IntList *list, int value) {
+    if (!list) return 0;
+    IntNode *node = malloc(sizeof(*node));
+    if (!node) return 0;
+    node->value = value;
+    node->next = NULL;
+    if (list->tail) {
+        list->tail->next = node;
+    } else {
+        list->head = node;
+    }
+    list->tail = node;
+    return 1;
+}
+
+static void int_list_free(IntList *list) {
+    if (!list) return;
+    IntNode *current = list->head;
+    while (current) {
+        IntNode *next = current->next;
+        free(current);
+        current = next;
+    }
+    free(list);
+}
+
+static IntList *int_list_clone(const IntList *source) {
+    if (!source) return NULL;
+    IntList *copy = int_list_create();
+    if (!copy) return NULL;
+    for (IntNode *node = source->head; node; node = node->next) {
+        if (!int_list_append(copy, node->value)) {
+            int_list_free(copy);
+            return NULL;
+        }
+    }
+    return copy;
+}
+
+static ListOfLists *list_of_lists_create(void) {
+    ListOfLists *list = malloc(sizeof(*list));
+    if (!list) return NULL;
+    list->head = NULL;
+    list->tail = NULL;
+    return list;
+}
+
+static int list_of_lists_append(ListOfLists *list, IntList *inner) {
+    if (!list || !inner) return 0;
+    ListOfListsNode *node = malloc(sizeof(*node));
+    if (!node) return 0;
+    node->list = inner;
+    node->next = NULL;
+    if (list->tail) {
+        list->tail->next = node;
+    } else {
+        list->head = node;
+    }
+    list->tail = node;
+    return 1;
+}
+
+static void list_of_lists_free(ListOfLists *list) {
+    if (!list) return;
+    ListOfListsNode *current = list->head;
+    while (current) {
+        ListOfListsNode *next = current->next;
+        int_list_free(current->list);
+        free(current);
+        current = next;
+    }
+    free(list);
+}
+
+static void zipped_list_free(ZippedNode *head) {
+    while (head) {
+        ZippedNode *next = head->next;
+        int_list_free(head->first);
+        int_list_free(head->second);
+        free(head);
+        head = next;
+    }
+}
+
+int zip_lists(const ListOfLists *a, const ListOfLists *b, ZippedNode **out) {
+    if (!a || !b || !out) return 0;
+    *out = NULL;
+
+    ZippedNode *head = NULL;
+    ZippedNode *tail = NULL;
+    const ListOfListsNode *pa = a->head;
+    const ListOfListsNode *pb = b->head;
+
+    while (pa && pb) {
+        ZippedNode *node = malloc(sizeof(*node));
+        if (!node) {
+            zipped_list_free(head);
+            return 0;
+        }
+
+        node->first = int_list_clone(pa->list);
+        if (!node->first) {
+            free(node);
+            zipped_list_free(head);
+            return 0;
+        }
+
+        node->second = int_list_clone(pb->list);
+        if (!node->second) {
+            int_list_free(node->first);
+            free(node);
+            zipped_list_free(head);
+            return 0;
+        }
+
+        node->next = NULL;
+        if (tail) {
+            tail->next = node;
+        } else {
+            head = node;
+        }
+        tail = node;
+
+        pa = pa->next;
+        pb = pb->next;
+    }
+
+    *out = head;
+    return 1;
+}
+
+static void print_int_list(const IntList *list) {
+    if (!list) {
+        printf("[]");
+        return;
+    }
+    printf("[");
+    for (const IntNode *node = list->head; node; node = node->next) {
+        printf("%d", node->value);
+        if (node->next) printf(", ");
+    }
+    printf("]");
+}
+
+static void print_zipped_list(const ZippedNode *head) {
+    printf("[");
+    for (const ZippedNode *node = head; node; node = node->next) {
+        printf("(");
+        print_int_list(node->first);
+        printf(", ");
+        print_int_list(node->second);
+        printf(")");
+        if (node->next) printf(", ");
+    }
+    printf("]\n");
+}
+
+static IntList *make_int_list(const int *values, size_t count) {
+    if (!values && count > 0) return NULL;
+    IntList *list = int_list_create();
+    if (!list) return NULL;
+    for (size_t i = 0; i < count; ++i) {
+        if (!int_list_append(list, values[i])) {
+            int_list_free(list);
+            return NULL;
+        }
+    }
+    return list;
+}
+
+static int add_int_list(ListOfLists *outer, const int *values, size_t count) {
+    IntList *inner = make_int_list(values, count);
+    if (!inner) return 0;
+    if (!list_of_lists_append(outer, inner)) {
+        int_list_free(inner);
+        return 0;
+    }
+    return 1;
+}
+
+int main(void) {
+    ListOfLists *a = list_of_lists_create();
+    if (!a) return EXIT_FAILURE;
+
+    ListOfLists *b = list_of_lists_create();
+    if (!b) {
+        list_of_lists_free(a);
+        return EXIT_FAILURE;
+    }
+
+    int a1[] = {1, 2, 3};
+    int a2[] = {4, 5};
+    int a3[] = {6};
+    int b1[] = {10, 20, 30};
+    int b2[] = {40, 50};
+    int b3[] = {60};
+
+    if (!add_int_list(a, a1, sizeof(a1) / sizeof(a1[0])) ||
+        !add_int_list(a, a2, sizeof(a2) / sizeof(a2[0])) ||
+        !add_int_list(a, a3, sizeof(a3) / sizeof(a3[0])) ||
+        !add_int_list(b, b1, sizeof(b1) / sizeof(b1[0])) ||
+        !add_int_list(b, b2, sizeof(b2) / sizeof(b2[0])) ||
+        !add_int_list(b, b3, sizeof(b3) / sizeof(b3[0]))) {
+        list_of_lists_free(a);
+        list_of_lists_free(b);
+        return EXIT_FAILURE;
+    }
+
+    ZippedNode *zipped = NULL;
+    if (!zip_lists(a, b, &zipped)) {
+        list_of_lists_free(a);
+        list_of_lists_free(b);
+        return EXIT_FAILURE;
+    }
+
+    print_zipped_list(zipped);
+
+    zipped_list_free(zipped);
+    list_of_lists_free(a);
+    list_of_lists_free(b);
+    return EXIT_SUCCESS;
+}
+```

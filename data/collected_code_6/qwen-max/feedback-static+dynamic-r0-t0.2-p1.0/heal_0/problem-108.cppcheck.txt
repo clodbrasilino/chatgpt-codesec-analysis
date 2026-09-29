@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-108.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-108.c:47:12: style: The scope of the variable 'left' can be reduced. [variableScope]
+    size_t left, right, smallest;
+           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-108.c:47:18: style: The scope of the variable 'right' can be reduced. [variableScope]
+    size_t left, right, smallest;
+                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-108.c:47:25: style: The scope of the variable 'smallest' can be reduced. [variableScope]
+    size_t left, right, smallest;
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-108.c:88:48: style: Parameter 'sizes' can be declared as pointer to const [constParameterPointer]
+int *merge_sorted_arrays(int **arrays, size_t *sizes, size_t count, size_t *result_size) {
+                                               ^

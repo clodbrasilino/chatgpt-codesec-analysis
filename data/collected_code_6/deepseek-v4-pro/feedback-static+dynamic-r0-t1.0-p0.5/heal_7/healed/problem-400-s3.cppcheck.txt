@@ -1,0 +1,37 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_7/healed/problem-400-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_7/healed/problem-400-s3.c:45:20: style: Condition 'alloc_size>0' is always true [knownConditionTrueFalse]
+    if (alloc_size > 0) {
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_7/healed/problem-400-s3.c:32:20: note: Assuming that condition 'alloc_size==0' is not redundant
+    if (alloc_size == 0) {
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_7/healed/problem-400-s3.c:39:19: note: Assuming condition is false
+    if (!sorted_a || !sorted_b) {
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_7/healed/problem-400-s3.c:45:20: note: Condition 'alloc_size>0' is always true
+    if (alloc_size > 0) {
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_7/healed/problem-400-s3.c:172:22: style: Condition 'tuples_alloc==0' is always false [knownConditionTrueFalse]
+    if (tuples_alloc == 0 || row_alloc == 0 || tuples_alloc > SIZE_MAX || row_alloc > SIZE_MAX) {
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_7/healed/problem-400-s3.c:162:23: note: Assignment 'tuple_count=6', assigned value is 6
+    int tuple_count = 6;
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_7/healed/problem-400-s3.c:169:40: note: Assignment 'tuples_alloc=(unsigned long)tuple_count*sizeof(int*)', assigned value is 48
+    tuples_alloc = (size_t)tuple_count * sizeof(int *);
+                                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_7/healed/problem-400-s3.c:172:22: note: Condition 'tuples_alloc==0' is always false
+    if (tuples_alloc == 0 || row_alloc == 0 || tuples_alloc > SIZE_MAX || row_alloc > SIZE_MAX) {
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_7/healed/problem-400-s3.c:172:40: style: Condition 'row_alloc==0' is always false [knownConditionTrueFalse]
+    if (tuples_alloc == 0 || row_alloc == 0 || tuples_alloc > SIZE_MAX || row_alloc > SIZE_MAX) {
+                                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_7/healed/problem-400-s3.c:161:22: note: Assignment 'tuple_size=3', assigned value is 3
+    int tuple_size = 3;
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_7/healed/problem-400-s3.c:170:36: note: Assignment 'row_alloc=(unsigned long)tuple_size*sizeof(int)', assigned value is 12
+    row_alloc = (size_t)tuple_size * sizeof(int);
+                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_7/healed/problem-400-s3.c:172:40: note: Condition 'row_alloc==0' is always false
+    if (tuples_alloc == 0 || row_alloc == 0 || tuples_alloc > SIZE_MAX || row_alloc > SIZE_MAX) {
+                                       ^

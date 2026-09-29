@@ -1,0 +1,104 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <limits.h>
+#include <errno.h>
+
+void multiply_by_base(char *result, int base, int len) {
+    int carry = 0;
+    for (int i = 0; i < len; i++) {
+        int product = (result[i] - '0') * base + carry;
+        result[i] = (product % 10) + '0';
+        carry = product / 10;
+    }
+    while (carry > 0) {
+        result[len] = (carry % 10) + '0';
+        carry /= 10;
+        len++;
+    }
+    result[len] = '\0';
+}
+
+int sum_of_digits(int base, int exponent) {
+    if (base < 0 || exponent < 0) {
+        return -1;
+    }
+    if (base == 0) {
+        return exponent == 0 ? 1 : 0;
+    }
+    if (exponent == 0) {
+        return 1;
+    }
+
+    size_t alloc_size = 10000;
+    char *result = (char *)malloc(alloc_size);
+    if (result == NULL) {
+        return -1;
+    }
+
+    result[0] = '1';
+    result[1] = '\0';
+
+    size_t current_len = 1;
+    for (int i = 0; i < exponent; i++) {
+        multiply_by_base(result, base, current_len);
+        current_len = 0;
+        while (result[current_len] != '\0') {
+            current_len++;
+        }
+        if (current_len + 1 >= alloc_size) {
+            free(result);
+            return -1;
+        }
+    }
+
+    int sum = 0;
+    for (size_t i = 0; result[i] != '\0'; i++) {
+        sum += result[i] - '0';
+    }
+
+    free(result);
+    return sum;
+}
+
+static int safe_str_to_long(const char *str, long *out) {
+    char *endptr;
+    errno = 0;
+    long val = strtol(str, &endptr, 10);
+    if (errno == ERANGE || val > INT_MAX || val < 0) {
+        return -1;
+    }
+    if (endptr == str || *endptr != '\0') {
+        return -1;
+    }
+    *out = val;
+    return 0;
+}
+
+int main(int argc, const char *argv[]) {
+    if (argc != 3) {
+        fprintf(stderr, "Usage: %s <base> <exponent>\n", argv[0]);
+        return 1;
+    }
+
+    long base_long, exponent_long;
+    if (safe_str_to_long(argv[1], &base_long) != 0 ||
+        safe_str_to_long(argv[2], &exponent_long) != 0) {
+        fprintf(stderr, "Error: Base and exponent must be non-negative integers within valid range.\n");
+        return 1;
+    }
+
+    int base = (int)base_long;
+    int exponent = (int)exponent_long;
+
+    int result = sum_of_digits(base, exponent);
+    if (result < 0) {
+        fprintf(stderr, "Error: Calculation failed or invalid input.\n");
+        return 1;
+    }
+
+    printf("%d\n", result);
+    return 0;
+}
+```

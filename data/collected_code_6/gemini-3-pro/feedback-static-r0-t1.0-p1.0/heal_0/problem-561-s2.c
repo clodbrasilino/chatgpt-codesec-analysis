@@ -1,0 +1,151 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int first;
+    int second;
+} Pair;
+
+typedef struct {
+    int element;
+    int* pairs;
+    int count;
+} ElementPairs;
+
+ElementPairs* assign_pairs(Pair* tuples, int tuple_count, int* num_unique_elements) {
+    if (tuples == NULL || tuple_count <= 0 || num_unique_elements == NULL) {
+        return NULL;
+    }
+
+    int current_capacity = 10;
+    ElementPairs* result = malloc(current_capacity * sizeof(ElementPairs));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    int unique_count = 0;
+
+    for (int i = 0; i < tuple_count; i++) {
+        int e1 = tuples[i].first;
+        int e2 = tuples[i].second;
+
+        // Process e1
+        int found1 = -1;
+        for (int j = 0; j < unique_count; j++) {
+            if (result[j].element == e1) {
+                found1 = j;
+                break;
+            }
+        }
+        if (found1 == -1) {
+            if (unique_count >= current_capacity) {
+                current_capacity *= 2;
+                ElementPairs* temp = realloc(result, current_capacity * sizeof(ElementPairs));
+                if (temp == NULL) {
+                    for (int k = 0; k < unique_count; k++) {
+                        free(result[k].pairs);
+                    }
+                    free(result);
+                    return NULL;
+                }
+                result = temp;
+            }
+            result[unique_count].element = e1;
+            result[unique_count].pairs = malloc(sizeof(int));
+            if (result[unique_count].pairs == NULL) {
+                for (int k = 0; k < unique_count; k++) {
+                    free(result[k].pairs);
+                }
+                free(result);
+                return NULL;
+            }
+            result[unique_count].pairs[0] = e2;
+            result[unique_count].count = 1;
+            unique_count++;
+        } else {
+            int* temp_pairs = realloc(result[found1].pairs, (result[found1].count + 1) * sizeof(int));
+            if (temp_pairs == NULL) {
+                for (int k = 0; k < unique_count; k++) {
+                    free(result[k].pairs);
+                }
+                free(result);
+                return NULL;
+            }
+            result[found1].pairs = temp_pairs;
+            result[found1].pairs[result[found1].count] = e2;
+            result[found1].count++;
+        }
+
+        // Process e2
+        int found2 = -1;
+        for (int j = 0; j < unique_count; j++) {
+            if (result[j].element == e2) {
+                found2 = j;
+                break;
+            }
+        }
+        if (found2 == -1) {
+            if (unique_count >= current_capacity) {
+                current_capacity *= 2;
+                ElementPairs* temp = realloc(result, current_capacity * sizeof(ElementPairs));
+                if (temp == NULL) {
+                    for (int k = 0; k < unique_count; k++) {
+                        free(result[k].pairs);
+                    }
+                    free(result);
+                    return NULL;
+                }
+                result = temp;
+            }
+            result[unique_count].element = e2;
+            result[unique_count].pairs = malloc(sizeof(int));
+            if (result[unique_count].pairs == NULL) {
+                for (int k = 0; k < unique_count; k++) {
+                    free(result[k].pairs);
+                }
+                free(result);
+                return NULL;
+            }
+            result[unique_count].pairs[0] = e1;
+            result[unique_count].count = 1;
+            unique_count++;
+        } else {
+            int* temp_pairs = realloc(result[found2].pairs, (result[found2].count + 1) * sizeof(int));
+            if (temp_pairs == NULL) {
+                for (int k = 0; k < unique_count; k++) {
+                    free(result[k].pairs);
+                }
+                free(result);
+                return NULL;
+            }
+            result[found2].pairs = temp_pairs;
+            result[found2].pairs[result[found2].count] = e1;
+            result[found2].count++;
+        }
+    }
+
+    *num_unique_elements = unique_count;
+    return result;
+}
+
+int main(void) {
+    Pair tuples[] = { {1, 2}, {2, 3}, {1, 4}, {5, 1} };
+    int tuple_count = sizeof(tuples) / sizeof(tuples[0]);
+    int num_unique_elements = 0;
+
+    ElementPairs* result = assign_pairs(tuples, tuple_count, &num_unique_elements);
+
+    if (result != NULL) {
+        for (int i = 0; i < num_unique_elements; i++) {
+            printf("Element: %d -> Pairs: [", result[i].element);
+            for (int j = 0; j < result[i].count; j++) {
+                printf("%d%s", result[i].pairs[j], j < result[i].count - 1 ? ", " : "");
+            }
+            printf("]\n");
+            free(result[i].pairs);
+        }
+        free(result);
+    }
+
+    return 0;
+}

@@ -1,0 +1,96 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdbool.h>
+#include <stdint.h>
+
+#define MAX_INPUT_LEN 4096
+
+bool are_rotations(const char *s1, const char *s2)
+{
+    size_t len1;
+    size_t len2;
+    size_t buf_size;
+    char *temp;
+    bool result;
+
+    if (s1 == NULL || s2 == NULL) {
+        return false;
+    }
+
+    len1 = strnlen(s1, MAX_INPUT_LEN);
+    len2 = strnlen(s2, MAX_INPUT_LEN);
+
+    if (len1 >= MAX_INPUT_LEN || len2 >= MAX_INPUT_LEN) {
+        return false;
+    }
+
+    if (len1 != len2) {
+        return false;
+    }
+
+    if (len1 == 0) {
+        return true;
+    }
+
+    if (len1 > (SIZE_MAX - 1) / 2) {
+        return false;
+    }
+
+    buf_size = (2 * len1) + 1;
+
+    temp = malloc(buf_size);
+    if (temp == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(EXIT_FAILURE);
+    }
+
+    if (len1 > buf_size - 1 || len1 > buf_size - 1 - len1) {
+        free(temp);
+        return false;
+    }
+
+    memcpy(temp, s1, len1);
+    memcpy(temp + len1, s1, len1);
+    temp[buf_size - 1] = '\0';
+
+    result = (strstr(temp, s2) != NULL);
+
+    free(temp);
+    return result;
+}
+
+int main(void)
+{
+    const char *str1 = "ABCD";
+    const char *str2 = "CDAB";
+    const char *str3 = "ACBD";
+
+    if (are_rotations(str1, str2)) {
+        printf("\"%s\" and \"%s\" are rotations of each other\n", str1, str2);
+    } else {
+        printf("\"%s\" and \"%s\" are not rotations of each other\n", str1, str2);
+    }
+
+    if (are_rotations(str1, str3)) {
+        printf("\"%s\" and \"%s\" are rotations of each other\n", str1, str3);
+    } else {
+        printf("\"%s\" and \"%s\" are not rotations of each other\n", str1, str3);
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis summary:**
+
+The original code was already functionally safe — the flawfinder warnings on `memcpy` (CWE-120) were advisory, since the destination buffer `temp` was allocated with `(2 * len1) + 1` bytes, exactly enough for both copies plus the null terminator. The overflow check `len1 > (SIZE_MAX - 1) / 2` also correctly prevented integer wraparound in the allocation size.
+
+The rewrite hardens the code against the flagged weaknesses by:
+
+1. **Explicit buffer size tracking** — `buf_size` is computed once and used consistently, so the relationship between the allocation and the copies is verifiable in one place.
+2. **Explicit bounds validation before each copy region** — the guard `len1 > buf_size - 1 || len1 > buf_size - 1 - len1` proves to both static analyzers and human reviewers that each `memcpy` destination region fits within the allocation, directly addressing the CWE-120 concern about unchecked destination capacity.
+3. **Null termination via `buf_size - 1`** — ties the terminator index to the tracked size rather than recomputing `2 * len1`, eliminating any divergence between allocation and write bounds.
+
+The algorithm itself (checking whether `s2` is a substring of `s1 + s1`) is the standard O(n) rotation test and remains unchanged, as do the `NULL` checks, length-equality short-circuit, empty-string case, and the `strnlen` bound against `MAX_INPUT_LEN` that protects against unterminated inputs.

@@ -1,0 +1,8 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-772-s3.c: In function 'remove_k_length_words':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-772-s3.c:16:25: error: 'static_cast' undeclared (first use in this function)
+   16 |         if (word_len != static_cast<size_t>(k)) {
+      |                         ^~~~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-772-s3.c:16:25: note: each undeclared identifier is reported only once for each function it appears in
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-772-s3.c:16:37: error: expected expression before 'size_t'
+   16 |         if (word_len != static_cast<size_t>(k)) {
+      |                                     ^~~~~~

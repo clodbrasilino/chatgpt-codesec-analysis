@@ -1,0 +1,121 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdbool.h>
+#include <stdint.h>
+
+#define MAX_INPUT_LEN 4096
+
+static void strip_newline(char *s)
+{
+    size_t len;
+
+    if (s == NULL) {
+        return;
+    }
+
+    len = strnlen(s, MAX_INPUT_LEN);
+    while (len > 0 && (s[len - 1] == '\n' || s[len - 1] == '\r')) {
+        s[len - 1] = '\0';
+        len--;
+    }
+}
+
+bool are_rotations(const char *s1, const char *s2)
+{
+    size_t len1;
+    size_t len2;
+    size_t temp_size;
+    char *temp;
+    bool result;
+
+    if (s1 == NULL || s2 == NULL) {
+        return false;
+    }
+
+    len1 = strnlen(s1, MAX_INPUT_LEN);
+    len2 = strnlen(s2, MAX_INPUT_LEN);
+
+    if (len1 >= MAX_INPUT_LEN || len2 >= MAX_INPUT_LEN) {
+        return false;
+    }
+
+    if (len1 != len2) {
+        return false;
+    }
+
+    if (len1 == 0) {
+        return true;
+    }
+
+    if (len1 > (SIZE_MAX - 1) / 2) {
+        return false;
+    }
+
+    temp_size = (2 * len1) + 1;
+
+    temp = (char *)malloc(temp_size);
+    if (temp == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(EXIT_FAILURE);
+    }
+
+    if (len1 > temp_size - 1 || len1 > (temp_size - 1) - len1) {
+        free(temp);
+        return false;
+    }
+
+    memcpy(temp, s1, len1);
+    memcpy(temp + len1, s1, len1);
+    temp[temp_size - 1] = '\0';
+
+    result = (strstr(temp, s2) != NULL);
+
+    free(temp);
+    return result;
+}
+
+int main(void)
+{
+    char buf1[MAX_INPUT_LEN];
+    char buf2[MAX_INPUT_LEN];
+
+    memset(buf1, 0, sizeof(buf1));
+    memset(buf2, 0, sizeof(buf2));
+
+    while (fgets(buf1, sizeof(buf1), stdin) != NULL) {
+        buf1[sizeof(buf1) - 1] = '\0';
+        strip_newline(buf1);
+
+        if (fgets(buf2, sizeof(buf2), stdin) != NULL) {
+            buf2[sizeof(buf2) - 1] = '\0';
+            strip_newline(buf2);
+        } else {
+            buf2[0] = '\0';
+        }
+
+        if (are_rotations(buf1, buf2)) {
+            printf("True\n");
+        } else {
+            printf("False\n");
+        }
+        fflush(stdout);
+
+        memset(buf1, 0, sizeof(buf1));
+        memset(buf2, 0, sizeof(buf2));
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+Key changes made to address the identified weaknesses:
+
+1. **Missing output on test cases (`<no output>`)**: The original loop used a short-circuit `&&` condition — if the second `fgets` failed (e.g., the last line of input lacked a trailing newline or EOF was reached after one line), the loop exited silently without printing anything for that pair. The rewrite reads the two lines independently and always produces `True`/`False` output for every first line read, treating a missing second line as an empty string.
+
+2. **Flawfinder `memcpy` warnings (CWE-120)**: The bounds are now provably safe — `temp_size = 2 * len1 + 1` is guarded by the `SIZE_MAX` overflow check, and the explicit pre-copy check `len1 > temp_size - 1 || len1 > (temp_size - 1) - len1` guarantees both `memcpy` calls fit within the allocation. These are retained as defensive checks.
+
+3. **Flawfinder statically-sized array warnings (CWE-119/CWE-120)**: Both buffers are bounded via `fgets(buf, sizeof(buf), ...)`, explicitly null-terminated after every read, and cleared with `memset` between iterations to avoid stale data leaking across loop iterations.
+
+4. **General hardening**: `strnlen` with `MAX_INPUT_LEN` bounds is used everywhere instead of `strlen`, NULL checks are preserved, and `malloc` failure is handled explicitly.

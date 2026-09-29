@@ -1,0 +1,57 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define TUPLE_STR_MAX 128
+
+struct tuple {
+    int first;
+    double second;
+    char third;
+};
+
+char *tuple_to_string(const struct tuple *t)
+{
+    char *result;
+    int written;
+
+    if (t == NULL) {
+        return NULL;
+    }
+
+    result = malloc(TUPLE_STR_MAX);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    written = snprintf(result, TUPLE_STR_MAX, "(%d, %.2f, %c)",
+                       t->first, t->second, t->third);
+    if (written < 0 || written >= TUPLE_STR_MAX) {
+        free(result);
+        return NULL;
+    }
+
+    return result;
+}
+
+int main(void)
+{
+    struct tuple t = { 42, 3.14, 'x' };
+    char *str;
+
+    str = tuple_to_string(&t);
+    if (str == NULL) {
+        fprintf(stderr, "Failed to convert tuple to string\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("%s\n", str) < 0) {
+        free(str);
+        return EXIT_FAILURE;
+    }
+
+    free(str);
+    return EXIT_SUCCESS;
+}
+```

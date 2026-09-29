@@ -1,0 +1,161 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+#define MAX_STRING_LEN 4096U
+
+typedef struct NestedEntry {
+    char *outer_key;
+    char *inner_key;
+    int value;
+} NestedEntry;
+
+typedef struct NestedDict {
+    NestedEntry *entries;
+    size_t count;
+} NestedDict;
+
+static char *duplicate_string(const char *src)
+{
+    if (src == NULL) {
+        return NULL;
+    }
+
+    size_t len = strnlen(src, MAX_STRING_LEN);
+    if (len >= MAX_STRING_LEN) {
+        return NULL;
+    }
+
+    if (len > SIZE_MAX - 1U) {
+        return NULL;
+    }
+
+    size_t buf_size = len + 1U;
+    char *copy = malloc(buf_size);
+    if (copy == NULL) {
+        return NULL;
+    }
+
+    if (len > 0U && len < buf_size) {
+        memcpy(copy, src, len);
+    }
+    copy[len] = '\0';
+    return copy;
+}
+
+void free_nested_dict(NestedDict *dict)
+{
+    if (dict == NULL) {
+        return;
+    }
+    if (dict->entries != NULL) {
+        for (size_t i = 0; i < dict->count; i++) {
+            free(dict->entries[i].outer_key);
+            free(dict->entries[i].inner_key);
+        }
+        free(dict->entries);
+    }
+    free(dict);
+}
+
+NestedDict *convert_lists_to_nested_dict(const char **keys,
+                                         const char **subkeys,
+                                         const int *values,
+                                         size_t count)
+{
+    if (keys == NULL || subkeys == NULL || values == NULL || count == 0U) {
+        return NULL;
+    }
+
+    if (count > SIZE_MAX / sizeof(NestedEntry)) {
+        return NULL;
+    }
+
+    NestedDict *dict = malloc(sizeof(NestedDict));
+    if (dict == NULL) {
+        return NULL;
+    }
+
+    dict->entries = calloc(count, sizeof(NestedEntry));
+    if (dict->entries == NULL) {
+        free(dict);
+        return NULL;
+    }
+    dict->count = count;
+
+    for (size_t i = 0; i < count; i++) {
+        dict->entries[i].outer_key = duplicate_string(keys[i]);
+        dict->entries[i].inner_key = duplicate_string(subkeys[i]);
+        dict->entries[i].value = values[i];
+        if (dict->entries[i].outer_key == NULL ||
+            dict->entries[i].inner_key == NULL) {
+            free_nested_dict(dict);
+            return NULL;
+        }
+    }
+
+    return dict;
+}
+
+void print_nested_dict(const NestedDict *dict)
+{
+    if (dict == NULL || dict->entries == NULL) {
+        return;
+    }
+
+    printf("[");
+    for (size_t i = 0; i < dict->count; i++) {
+        printf("{\"%s\": {\"%s\": %d}}",
+               dict->entries[i].outer_key,
+               dict->entries[i].inner_key,
+               dict->entries[i].value);
+        if (i + 1U < dict->count) {
+            printf(", ");
+        }
+    }
+    printf("]\n");
+}
+
+int main(void)
+{
+    const char *ids[] = { "S001", "S002", "S003", "S004" };
+    const char *names[] = { "Adina Park", "Leyton Marsh",
+                            "Duncan Boyle", "Saim Richards" };
+    const int scores[] = { 85, 98, 89, 92 };
+    size_t count = sizeof(scores) / sizeof(scores[0]);
+
+    NestedDict *dict = convert_lists_to_nested_dict(ids, names, scores, count);
+    if (dict == NULL) {
+        fprintf(stderr, "Failed to build nested dictionary\n");
+        return EXIT_FAILURE;
+    }
+
+    print_nested_dict(dict);
+    free_nested_dict(dict);
+
+    return EXIT_SUCCESS;
+}
+```
+
+Analysis of the original code and the flagged weakness:
+
+**The flawfinder `memcpy` warning (CWE-120)** is a false positive in this code. The destination buffer `copy` is allocated with `len + 1U` bytes, and exactly `len` bytes are copied, leaving room for the null terminator. The bounds are provably safe because:
+
+1. `strnlen(src, MAX_STRING_LEN)` guarantees `len <= MAX_STRING_LEN`, preventing unbounded reads on non-terminated input.
+2. The `len >= MAX_STRING_LEN` check rejects oversized/unterminated strings.
+3. The `len > SIZE_MAX - 1U` check prevents integer overflow in `len + 1U` (technically unreachable given the previous check, but harmless defense-in-depth).
+4. `malloc` return is checked before the copy.
+
+In the rewrite I added an explicit `len < buf_size` guard before `memcpy` as a defensive invariant check to satisfy static analyzers — it's always true here, but it makes the safety relationship between copy length and allocation size locally visible.
+
+**Other observations on the code's quality (all already handled correctly):**
+
+- `calloc(count, sizeof(NestedEntry))` zero-initializes entries, so `free_nested_dict` on a partially-built dictionary safely frees `NULL` pointers.
+- The `count > SIZE_MAX / sizeof(NestedEntry)` check prevents multiplication overflow (redundant with `calloc`'s own check, but explicit).
+- Cleanup paths are leak-free: partial allocation failures route through `free_nested_dict`.
+- `printf` uses constant format strings, so there is no format-string vulnerability.
+- No use of unsafe functions (`strcpy`, `sprintf`, `gets`, etc.).
+
+The code is well-written and the identified weakness does not represent an actual exploitable flaw.

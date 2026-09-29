@@ -49,7 +49,7 @@ def quarantine_model(model: str, max_round: int | None = None) -> tuple[int, int
     disk, so artifacts collected under an earlier, larger budget remain
     visible. Pass an explicit int to restrict the scan.
     """
-    cell = REPO / "collected_code_6" / model / SLUG
+    cell = REPO / "data" / "collected_code_6" / model / SLUG
     rounds = sorted(
         int(d.name.split("_")[1])
         for d in cell.glob("heal_*")

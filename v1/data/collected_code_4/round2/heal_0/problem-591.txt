@@ -1,0 +1,35 @@
+```C
+#include<stdio.h>
+  
+struct Node {
+    int data;
+    struct Node* next;
+};
+
+void swapNodes(struct Node **head_ref) {
+    struct Node *temp = *head_ref;
+    struct Node *prev = NULL;
+  
+    if (*head_ref == NULL || (*head_ref)->next == NULL) {
+        return;
+    }
+  
+   while (temp->next != NULL) {
+        prev = temp;
+        temp = temp->next;
+   }
+  
+    temp->next = (*head_ref)->next;
+    prev->next = *head_ref;
+    (*head_ref)->next = NULL;
+    *head_ref = temp;
+}
+
+int main() {
+    struct Node *head = NULL;
+    // Here you can add elements in the list.
+    // And then call the function swapNodes(&head);
+      
+    return 0;
+}
+```

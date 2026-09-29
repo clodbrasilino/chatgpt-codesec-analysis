@@ -1,0 +1,17 @@
+collected_code/healed/problem-523.c: In function 'main':
+collected_code/healed/problem-523.c:36:9: warning: implicit declaration of function 'printf' [-Wimplicit-function-declaration]
+   36 |         printf("String Passed\n");
+      |         ^~~~~~
+collected_code/healed/problem-523.c:4:1: note: include '<stdio.h>' or provide a declaration of 'printf'
+    3 | #include <ctype.h>
+  +++ |+#include <stdio.h>
+    4 | 
+collected_code/healed/problem-523.c:36:9: warning: incompatible implicit declaration of built-in function 'printf' [-Wbuiltin-declaration-mismatch]
+   36 |         printf("String Passed\n");
+      |         ^~~~~~
+collected_code/healed/problem-523.c:36:9: note: include '<stdio.h>' or provide a declaration of 'printf'
+collected_code/healed/problem-523.c:39:9: warning: incompatible implicit declaration of built-in function 'printf' [-Wbuiltin-declaration-mismatch]
+   39 |         printf("String Failed\n");
+      |         ^~~~~~
+collected_code/healed/problem-523.c:39:9: note: include '<stdio.h>' or provide a declaration of 'printf'
+-macosx_version_min has been renamed to -macos_version_min

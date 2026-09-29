@@ -1,0 +1,57 @@
+./collected_code_4/round2//heal_0/problem-272.c: In function 'append_to_list':
+./collected_code_4/round2//heal_0/problem-272.c:26:31: warning: dereference of possibly-NULL 'list.data' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   26 |     list->data[list->count++] = t;
+      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~^~~
+  'main': events 1-2
+    |
+    |   45 | int main(void) {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |   46 |     tuple_list list;
+    |   47 |     init_list(&list, 10);
+    |      |     ~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) calling 'init_list' from 'main'
+    |
+    +--> 'init_list': events 3-4
+           |
+           |   15 | void init_list(tuple_list *list, int initial_size) {
+           |      |      ^~~~~~~~~
+           |      |      |
+           |      |      (3) entry to 'init_list'
+           |   16 |     list->data = (tuple *)malloc(sizeof(tuple) * initial_size);
+           |      |                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                           |
+           |      |                           (4) this call could return NULL
+           |
+    <------+
+    |
+  'main': events 5-6
+    |
+    |   47 |     init_list(&list, 10);
+    |      |     ^~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (5) returning to 'main' from 'init_list'
+    |......
+    |   52 |     append_to_list(&list, t1);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (6) calling 'append_to_list' from 'main'
+    |
+    +--> 'append_to_list': events 7-10
+           |
+           |   21 | void append_to_list(tuple_list *list, tuple t) {
+           |      |      ^~~~~~~~~~~~~~
+           |      |      |
+           |      |      (7) entry to 'append_to_list'
+           |   22 |     if (list->count >= list->size) {
+           |      |        ~
+           |      |        |
+           |      |        (8) following 'false' branch...
+           |......
+           |   26 |     list->data[list->count++] = t;
+           |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |         |                     |
+           |      |         (9) ...to here        (10) '*list.data + (long unsigned int)*list.count * 8' could be NULL: unchecked value from (4)
+           |

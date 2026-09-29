@@ -1,0 +1,90 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_STR_LEN 4096
+
+int left_rotate(char *str, size_t buf_size, size_t d)
+{
+    size_t len;
+    size_t temp_size;
+    char *temp;
+
+    if (str == NULL || buf_size == 0 || buf_size > MAX_STR_LEN) {
+        return -1;
+    }
+
+    len = strnlen(str, buf_size);
+    if (len == buf_size) {
+        return -1;
+    }
+
+    if (len == 0) {
+        return 0;
+    }
+
+    d = d % len;
+    if (d == 0) {
+        return 0;
+    }
+
+    if (len + 1 > buf_size) {
+        return -1;
+    }
+
+    temp_size = len + 1;
+    temp = malloc(temp_size);
+    if (temp == NULL) {
+        return -1;
+    }
+
+    if (len - d > temp_size || d > temp_size - (len - d)) {
+        free(temp);
+        return -1;
+    }
+
+    memcpy(temp, str + d, len - d);
+    memcpy(temp + (len - d), str, d);
+    temp[len] = '\0';
+
+    if (temp_size > buf_size) {
+        free(temp);
+        return -1;
+    }
+
+    memcpy(str, temp, temp_size);
+    free(temp);
+
+    return 0;
+}
+
+int main(void)
+{
+    char str[] = "HelloWorld";
+    size_t d = 3;
+
+    printf("Original string: %s\n", str);
+
+    if (left_rotate(str, sizeof(str), d) != 0) {
+        fprintf(stderr, "Rotation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Rotated string:  %s\n", str);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis summary:**
+
+The original code was already well-defended against the flagged CWE-120 (buffer overflow) risks — the Flawfinder warnings on `memcpy` are heuristic, triggered by the mere presence of the function rather than an actual flaw. The rewrite makes the safety guarantees *explicit* rather than implicit:
+
+1. **First two `memcpy` calls (into `temp`):** Added an explicit check that `len - d` and `d` fit within the allocated `temp_size`. Mathematically this always holds (`(len - d) + d + 1 == temp_size`), but the explicit guard documents and enforces the invariant, satisfying static analyzers.
+
+2. **Third `memcpy` (back into `str`):** Added an explicit `temp_size > buf_size` check immediately before the copy. Previously this was guaranteed only indirectly by the earlier `len + 1 > buf_size` check; now the bound is verified adjacent to the copy itself.
+
+3. **Existing protections retained:** `strnlen` with `buf_size` cap prevents unbounded reads on non-terminated buffers, the `len == buf_size` check rejects unterminated input, `MAX_STR_LEN` bounds the allocation, `malloc` failure is handled, and `d % len` prevents out-of-range offsets.
+
+The function remains O(n) time, O(n) space, and returns `-1` on any error, `0` on success.

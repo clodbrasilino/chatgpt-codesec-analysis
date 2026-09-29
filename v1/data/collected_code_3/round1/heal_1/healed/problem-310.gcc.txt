@@ -1,0 +1,67 @@
+collected_code_3/round1/heal_1/healed/problem-310.c: In function 'main':
+collected_code_3/round1/heal_1/healed/problem-310.c:54:9: warning: use of uninitialized value '*tuple.second' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   54 |         printf("First: %s, Second: %s\n", tuple->first, tuple->second);
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  'main': events 1-2
+    |
+    |   49 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |   50 |     char str[] = "Hello World";
+    |   51 |     Tuple* tuple = string_to_tuple(str);
+    |      |                    ~~~~~~~~~~~~~~~~~~~~
+    |      |                    |
+    |      |                    (2) calling 'string_to_tuple' from 'main'
+    |
+    +--> 'string_to_tuple': events 3-8
+           |
+           |   10 | Tuple* string_to_tuple(char* str) {
+           |      |        ^~~~~~~~~~~~~~~
+           |      |        |
+           |      |        (3) entry to 'string_to_tuple'
+           |......
+           |   13 |     Tuple* tuple = (Tuple*) malloc(sizeof(Tuple));
+           |      |                             ~~~~~~~~~~~~~~~~~~~~~
+           |      |                             |
+           |      |                             (4) region created on heap here
+           |   14 | 
+           |   15 |     if (tuple == NULL) {
+           |      |        ~
+           |      |        |
+           |      |        (5) following 'false' branch (when 'tuple' is non-NULL)...
+           |......
+           |   19 |     token = strtok(str, delimiter);
+           |      |             ~~~~~~~~~~~~~~~~~~~~~~
+           |      |             |
+           |      |             (6) ...to here
+           |   20 | 
+           |   21 |     if (token != NULL) {
+           |      |        ~
+           |      |        |
+           |      |        (7) following 'false' branch (when 'token' is NULL)...
+           |......
+           |   46 |     return tuple;
+           |      |            ~~~~~
+           |      |            |
+           |      |            (8) ...to here
+           |
+    <------+
+    |
+  'main': events 9-12
+    |
+    |   51 |     Tuple* tuple = string_to_tuple(str);
+    |      |                    ^~~~~~~~~~~~~~~~~~~~
+    |      |                    |
+    |      |                    (9) returning to 'main' from 'string_to_tuple'
+    |   52 | 
+    |   53 |     if (tuple != NULL) {
+    |      |        ~            
+    |      |        |
+    |      |        (10) following 'true' branch (when 'tuple' is non-NULL)...
+    |   54 |         printf("First: %s, Second: %s\n", tuple->first, tuple->second);
+    |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |         |
+    |      |         (11) ...to here
+    |      |         (12) use of uninitialized value '*tuple.second' here
+    |

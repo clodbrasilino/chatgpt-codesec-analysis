@@ -1,0 +1,64 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct List {
+    int *data;
+    size_t length;
+} List;
+
+List* create_list(size_t length) {
+    List *list = (List *)malloc(sizeof(List));
+    list->data = (int *)malloc(length * sizeof(int));
+    list->length = length;
+    for (size_t i = 0; i < length; ++i) {
+        list->data[i] = i;
+    }
+    return list;
+}
+
+void free_list(List *list) {
+    free(list->data);
+    free(list);
+}
+
+void find_max_length_lists(List **lists, size_t num_lists, List ***max_lists, size_t *max_lists_count) {
+    size_t max_length = 0;
+    *max_lists_count = 0;
+    *max_lists = NULL;
+
+    for (size_t i = 0; i < num_lists; ++i) {
+        if (lists[i]->length > max_length) {
+            max_length = lists[i]->length;
+            *max_lists_count = 1;
+            *max_lists = (List **)realloc(*max_lists, (*max_lists_count) * sizeof(List *));
+            (*max_lists)[0] = lists[i];
+        } else if (lists[i]->length == max_length) {
+            (*max_lists_count)++;
+            *max_lists = (List **)realloc(*max_lists, (*max_lists_count) * sizeof(List *));
+            (*max_lists)[*max_lists_count - 1] = lists[i];
+        }
+    }
+}
+
+int main() {
+    size_t num_lists = 5;
+    List *lists[5] = {create_list(3), create_list(5), create_list(2), create_list(5), create_list(4)};
+
+    List **max_lists;
+    size_t max_lists_count;
+
+    find_max_length_lists(lists, num_lists, &max_lists, &max_lists_count);
+
+    for (size_t i = 0; i < max_lists_count; ++i) {
+        printf("List with max length: %zu\n", (max_lists[i])->length);
+        free_list(max_lists[i]);
+    }
+
+    free(max_lists);
+
+    for (size_t i = 0; i < num_lists; ++i) {
+        free_list(lists[i]);
+    }
+
+    return 0;
+}

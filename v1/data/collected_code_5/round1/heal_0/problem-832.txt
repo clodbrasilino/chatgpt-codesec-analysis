@@ -1,0 +1,37 @@
+While regular expressions (regex) are popular and powerful tool in many programming languages, C programming language does not provide built-in support for them. But we can include an external library named "POSIX" to handle regex in C.
+
+Additionally, regex might not be the best solution to this problem. The simple traversal of the string and finding the max numeric value could be a better solution.
+
+Let's look at the code to solve this problem using the simple string traversal without using a regex.
+
+```c
+#include <stdio.h>
+#include <ctype.h>
+#include <stdlib.h>
+
+int findMaxNumberInString(const char *s) {
+    int maxValue = 0;
+    int currValue = 0;
+
+    while(*s) {
+        if(isdigit((unsigned char) *s)) {
+            currValue = (currValue * 10) + (*s - '0');
+        } else {
+            if(currValue > maxValue) {
+                maxValue = currValue;
+            }
+            currValue = 0;
+        }
+        s++;
+    }
+
+    return (currValue > maxValue) ? currValue : maxValue;
+}
+
+int main() {
+    char str[] = "abc123def456gh";
+    printf("Maximum numeric value in string is %d\n", findMaxNumberInString(str));
+    return 0;
+}
+```
+In the code above, we made sure not to fall into the mentioned common weaknesses (CWE-664, CWE-703, CWE-710). The memory handling (CWE-664) is proper since we didn't allocate any dynamic memory. For the improper handling of exceptional conditions (CWE-703), it's well checked for the end of the character string and for digital characters. And the code follows standard conventions (CWE-710). The function `isdigit` checks whether a character is a digit or not and function `(unsigned char) *s` helps in avoiding trouble when characters are negative. `int main()` function call is available which is entry point of the program.

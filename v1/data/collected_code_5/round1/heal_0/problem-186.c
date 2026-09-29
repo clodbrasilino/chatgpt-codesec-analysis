@@ -1,0 +1,48 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+#define MAX_MATCHES 1
+
+void search_regex(char *pattern, char *source)
+{
+    regex_t regex_compiled;
+    regmatch_t group_array[MAX_MATCHES];
+
+    if (regcomp(&regex_compiled, pattern, REG_EXTENDED)) {
+        printf("Could not compile regular expression.\n");
+        return;
+    }
+
+    int match = regexec(&regex_compiled, source, MAX_MATCHES, group_array, 0);
+    if (match == 0) {
+        int start = group_array[0].rm_so;
+        int end = group_array[0].rm_eo;
+
+        char* substring = malloc(sizeof(char) * (end - start + 1));
+        memcpy(substring, &source[start], end - start);
+        substring[end - start] = '\0';
+
+        printf("A match was found at character %d to %d: \"%s\"\n", start + 1, end, substring);
+        free(substring);
+    } else if (match == REG_NOMATCH) {
+        printf("No match was found.\n");
+    } else {
+        char error_message[MAX_MATCHES];
+        regerror(match, &regex_compiled, error_message, MAX_MATCHES);
+        printf("Regex match failed: %s\n", error_message);
+    }
+
+    regfree(&regex_compiled);
+}
+
+int main()
+{
+    char source[] = "Hello, My name is John Doe";
+    char pattern[] = "John Doe";
+
+    search_regex(pattern, source);
+
+    return 0;
+}

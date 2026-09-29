@@ -1,0 +1,130 @@
+#define _POSIX_C_SOURCE 200809L
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <limits.h>
+#include <regex.h>
+
+static int append_token(char ***tokens, size_t *count, size_t *capacity, char *token)
+{
+    if (*count == *capacity) {
+        size_t new_capacity = *capacity == 0 ? 16 : *capacity * 2;
+        char **new_tokens = realloc(*tokens, new_capacity * sizeof(*new_tokens));
+        if (new_tokens == NULL) {
+            return -1;
+        }
+        *tokens = new_tokens;
+        *capacity = new_capacity;
+    }
+    (*tokens)[*count] = token;
+    (*count)++;
+    return 0;
+}
+
+char **split_regex(const char *str, const char *pattern, int *count)
+{
+    if (str == NULL || pattern == NULL || count == NULL) {
+        return NULL;
+    }
+    *count = 0;
+    regex_t regex;
+    if (regcomp(&regex, pattern, REG_EXTENDED) != 0) {
+        return NULL;
+    }
+    char **tokens = NULL;
+    size_t token_count = 0;
+    size_t capacity = 0;
+    size_t str_len = strlen(str);
+    size_t token_start = 0;
+    size_t search_offset = 0;
+    regmatch_t match;
+
+    while (1) {
+        int rc = regexec(&regex, str + search_offset, 1, &match, 0);
+        if (rc == REG_NOMATCH) {
+            size_t len = str_len - token_start;
+            char *token = malloc(len + 1);
+            if (token == NULL) {
+                goto error;
+            }
+            memcpy(token, str + token_start, len);
+            token[len] = '\0';
+            if (append_token(&tokens, &token_count, &capacity, token) != 0) {
+                free(token);
+                goto error;
+            }
+            break;
+        } else if (rc != 0) {
+            goto error;
+        }
+
+        size_t match_start = search_offset + (size_t)match.rm_so;
+        size_t match_end = search_offset + (size_t)match.rm_eo;
+        size_t token_len = match_start - token_start;
+        char *token = malloc(token_len + 1);
+        if (token == NULL) {
+            goto error;
+        }
+        memcpy(token, str + token_start, token_len);
+        token[token_len] = '\0';
+        if (append_token(&tokens, &token_count, &capacity, token) != 0) {
+            free(token);
+            goto error;
+        }
+
+        if (match.rm_eo == 0) {
+            if (match_start == str_len) {
+                char *empty = malloc(1);
+                if (empty == NULL) {
+                    goto error;
+                }
+                empty[0] = '\0';
+                if (append_token(&tokens, &token_count, &capacity, empty) != 0) {
+                    free(empty);
+                    goto error;
+                }
+                break;
+            }
+            search_offset = match_start + 1;
+            token_start = match_start;
+        } else {
+            search_offset = match_end;
+            token_start = match_end;
+        }
+    }
+
+    if (token_count > (size_t)INT_MAX) {
+        goto error;
+    }
+    regfree(&regex);
+    *count = (int)token_count;
+    return tokens;
+
+error:
+    regfree(&regex);
+    for (size_t i = 0; i < token_count; i++) {
+        free(tokens[i]);
+    }
+    free(tokens);
+    *count = 0;
+    return NULL;
+}
+
+int main(void)
+{
+    const char *text = "apple,banana;cherry|date";
+    const char *pattern = "[,;|]";
+    int count = 0;
+    char **tokens = split_regex(text, pattern, &count);
+    if (tokens == NULL) {
+        fprintf(stderr, "Failed to split string\n");
+        return EXIT_FAILURE;
+    }
+    for (int i = 0; i < count; i++) {
+        printf("%s\n", tokens[i]);
+        free(tokens[i]);
+    }
+    free(tokens);
+    return EXIT_SUCCESS;
+}

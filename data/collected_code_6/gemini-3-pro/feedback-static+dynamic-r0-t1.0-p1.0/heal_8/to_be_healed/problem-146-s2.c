@@ -1,0 +1,75 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+#include <string.h>
+
+long long int calculate_ascii_sum(const char *str) {
+    if (str == NULL) {
+        return 0;
+    }
+
+    long long int total_ascii_value = 0;
+    while (*str != '\0') {
+        total_ascii_value += (unsigned char)*str;
+        str++;
+    }
+
+    return total_ascii_value;
+}
+
+int main(void) {
+    size_t capacity = 256;
+    char *buffer = (char *)malloc(capacity);
+    
+    if (buffer == NULL) {
+        return 1;
+    }
+
+    buffer[0] = '\0';
+    size_t length = 0;
+
+    while (fgets(buffer + length, capacity - length, stdin) != NULL) {
+        /* Possible weaknesses found:
+         *  Variable 'null_pos' can be declared as pointer to const [constVariablePointer]
+         */
+        char *null_pos = (char *)memchr(buffer + length, '\0', capacity - length);
+        if (null_pos != NULL) {
+            length = (size_t)(null_pos - buffer);
+        } else {
+            length = capacity - 1;
+            buffer[length] = '\0';
+        }
+
+        if (length > 0 && buffer[length - 1] == '\n') {
+            buffer[length - 1] = '\0';
+            length--;
+            break;
+        }
+
+        if (length >= capacity - 1) {
+            if (capacity > (SIZE_MAX / 2)) {
+                free(buffer);
+                return 1;
+            }
+            size_t new_capacity = capacity * 2;
+            char *new_buffer = (char *)realloc(buffer, new_capacity);
+            if (new_buffer == NULL) {
+                free(buffer);
+                return 1;
+            }
+            buffer = new_buffer;
+            capacity = new_capacity;
+        }
+    }
+
+    if (length == 0 && feof(stdin)) {
+        free(buffer);
+        return 1;
+    }
+
+    long long int result = calculate_ascii_sum(buffer);
+    printf("%lld\n", result);
+
+    free(buffer);
+    return 0;
+}

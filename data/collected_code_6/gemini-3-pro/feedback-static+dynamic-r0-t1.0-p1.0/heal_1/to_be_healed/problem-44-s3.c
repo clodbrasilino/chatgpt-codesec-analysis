@@ -1,0 +1,47 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+
+bool match_word_at_beginning(const char *str, const char *word) {
+    if (str == NULL || word == NULL) {
+        return false;
+    }
+
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    size_t word_len = strlen(word);
+    
+    if (word_len == 0) {
+        return true;
+    }
+
+    if (strncmp(str, word, word_len) == 0) {
+        if (str[word_len] == ' ' || str[word_len] == '\t' || str[word_len] == '\n' || str[word_len] == '\0') {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+int main(void) {
+    const char *text1 = "hello world";
+    const char *word1 = "hello";
+    
+    if (match_word_at_beginning(text1, word1)) {
+        printf("Match found.\n");
+    } else {
+        printf("No match.\n");
+    }
+
+    const char *text2 = "helloworld";
+    
+    if (match_word_at_beginning(text2, word1)) {
+        printf("Match found.\n");
+    } else {
+        printf("No match.\n");
+    }
+
+    return 0;
+}

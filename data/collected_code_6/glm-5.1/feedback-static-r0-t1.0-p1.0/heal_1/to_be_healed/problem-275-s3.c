@@ -1,0 +1,45 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+/* Possible weaknesses found:
+ *  Parameter 'original_array' can be declared as pointer to const [constParameterPointer]
+ *  Parameter 'modified_array' can be declared as pointer to const [constParameterPointer]
+ */
+int find_last_removed_position(int *original_array, int original_size, int *modified_array, int modified_size) {
+    if (original_array == NULL || modified_array == NULL || original_size <= 0 || modified_size < 0 || modified_size >= original_size) {
+        return -1;
+    }
+
+    int original_index = 0;
+    int modified_index = 0;
+    int last_removed_pos = -1;
+
+    while (original_index < original_size && modified_index < modified_size) {
+        if (original_array[original_index] == modified_array[modified_index]) {
+            original_index++;
+            modified_index++;
+        } else {
+            last_removed_pos = original_index;
+            original_index++;
+        }
+    }
+
+    if (original_index < original_size) {
+        last_removed_pos = original_size - 1;
+    }
+
+    return last_removed_pos;
+}
+
+int main() {
+    int original_array[] = {10, 20, 30, 40, 50};
+    int modified_array[] = {10, 20, 40, 50};
+    int original_size = sizeof(original_array) / sizeof(original_array[0]);
+    int modified_size = sizeof(modified_array) / sizeof(modified_array[0]);
+
+    int position = find_last_removed_position(original_array, original_size, modified_array, modified_size);
+
+    printf("%d\n", position);
+
+    return 0;
+}

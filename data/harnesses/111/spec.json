@@ -1,0 +1,124 @@
+{
+  "task_id": 111,
+  "text": "Write a C function to find common elements in given nested lists. * list item * list item * list item * list item",
+  "fn_candidates": [
+    "common_in_nested_lists",
+    "CommonInNestedLists",
+    "commonInNestedLists",
+    "commoninnestedlists"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "common_in_nested_lists",
+      "args": [
+        [
+          [
+            12,
+            18,
+            23,
+            25,
+            45
+          ],
+          [
+            7,
+            12,
+            18,
+            24,
+            28
+          ],
+          [
+            1,
+            5,
+            8,
+            12,
+            15,
+            16,
+            18
+          ]
+        ]
+      ],
+      "expected": [
+        18,
+        12
+      ],
+      "assert_src": "assert common_in_nested_lists([[12, 18, 23, 25, 45], [7, 12, 18, 24, 28], [1, 5, 8, 12, 15, 16, 18]])==[18, 12]"
+    },
+    {
+      "fn_name": "common_in_nested_lists",
+      "args": [
+        [
+          [
+            12,
+            5,
+            23,
+            25,
+            45
+          ],
+          [
+            7,
+            11,
+            5,
+            23,
+            28
+          ],
+          [
+            1,
+            5,
+            8,
+            18,
+            23,
+            16
+          ]
+        ]
+      ],
+      "expected": [
+        5,
+        23
+      ],
+      "assert_src": "assert common_in_nested_lists([[12, 5, 23, 25, 45], [7, 11, 5, 23, 28], [1, 5, 8, 18, 23, 16]])==[5,23]"
+    },
+    {
+      "fn_name": "common_in_nested_lists",
+      "args": [
+        [
+          [
+            2,
+            3,
+            4,
+            1
+          ],
+          [
+            4,
+            5
+          ],
+          [
+            6,
+            4,
+            8
+          ],
+          [
+            4,
+            5
+          ],
+          [
+            6,
+            8,
+            4
+          ]
+        ]
+      ],
+      "expected": [
+        4
+      ],
+      "assert_src": "assert common_in_nested_lists([[2, 3,4, 1], [4, 5], [6,4, 8],[4, 5], [6, 8,4]])==[4]"
+    }
+  ],
+  "arg_kinds": [
+    "2d-int-list"
+  ],
+  "return_kind": "int-list",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

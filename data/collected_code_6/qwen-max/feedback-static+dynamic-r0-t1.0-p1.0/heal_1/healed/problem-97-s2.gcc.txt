@@ -1,0 +1,9 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-97-s2.c: In function 'main':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-97-s2.c:64:39: error: passing argument 3 of 'create_list_of_lists' from incompatible pointer type [-Wincompatible-pointer-types]
+   64 |     create_list_of_lists(&lol, sizes, elements, 3);
+      |                                       ^~~~~~~~
+      |                                       |
+      |                                       int **
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-97-s2.c:30:75: note: expected 'const int **' but argument is of type 'int **'
+   30 | void create_list_of_lists(ListOfLists *lol, const int *sizes, const int **elements, int count) {
+      |                                                               ~~~~~~~~~~~~^~~~~~~~

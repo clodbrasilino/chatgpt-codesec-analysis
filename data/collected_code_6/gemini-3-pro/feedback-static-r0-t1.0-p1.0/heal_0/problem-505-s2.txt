@@ -1,0 +1,38 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+void moveZeroesToEnd(int arr[], size_t n) {
+    if (arr == NULL || n == 0) {
+        return;
+    }
+
+    size_t nonZeroIndex = 0;
+
+    for (size_t i = 0; i < n; i++) {
+        if (arr[i] != 0) {
+            arr[nonZeroIndex] = arr[i];
+            nonZeroIndex++;
+        }
+    }
+
+    while (nonZeroIndex < n) {
+        arr[nonZeroIndex] = 0;
+        nonZeroIndex++;
+    }
+}
+
+int main(void) {
+    int arr[] = {0, 1, 9, 8, 4, 0, 0, 2, 7, 0, 6, 0, 9};
+    size_t n = sizeof(arr) / sizeof(arr[0]);
+
+    moveZeroesToEnd(arr, n);
+
+    for (size_t i = 0; i < n; i++) {
+        printf("%d ", arr[i]);
+    }
+    printf("\n");
+
+    return 0;
+}
+```

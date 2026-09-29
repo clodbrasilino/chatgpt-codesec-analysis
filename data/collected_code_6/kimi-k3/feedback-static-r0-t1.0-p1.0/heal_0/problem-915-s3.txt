@@ -1,0 +1,53 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+void rearrange(int arr[], int n) {
+    int *temp = (int *)malloc(n * sizeof(int));
+    if (temp == NULL) {
+        return;
+    }
+    
+    int i = 0;
+    int j = n - 1;
+    int k;
+    
+    for (k = 0; k < n; k++) {
+        if (arr[k] >= 0) {
+            temp[i] = arr[k];
+            i++;
+        } else {
+            temp[j] = arr[k];
+            j--;
+        }
+    }
+    
+    for (k = 0; k < n; k++) {
+        arr[k] = temp[k];
+    }
+    
+    free(temp);
+}
+
+int main(void) {
+    int arr[] = {-12, 11, -13, -5, 6, -7, 5, -3, -6};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    int i;
+    
+    printf("Original array: ");
+    for (i = 0; i < n; i++) {
+        printf("%d ", arr[i]);
+    }
+    printf("\n");
+    
+    rearrange(arr, n);
+    
+    printf("Rearranged array: ");
+    for (i = 0; i < n; i++) {
+        printf("%d ", arr[i]);
+    }
+    printf("\n");
+    
+    return 0;
+}
+```

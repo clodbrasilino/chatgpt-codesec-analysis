@@ -1,0 +1,35 @@
+#include <stdio.h>
+#include <stdint.h>
+#include <inttypes.h>
+
+static uint64_t sum_fifth_powers(uint64_t n)
+{
+    uint64_t sum = 0;
+    uint64_t i;
+
+    for (i = 1; i <= n; ++i)
+    {
+        uint64_t square = i * i;
+        uint64_t fifth = square * square * i;
+        sum += fifth;
+    }
+
+    return sum;
+}
+
+int main(void)
+{
+    uint64_t n;
+
+    /* Possible weaknesses found:
+     * Flawfinder scanf: The scanf() family's %s operation, without a limit specification, permits buffer overflows (CWE-120, CWE-20). Specify a limit to %s, or use a different input function. If the scanf format is influenceable by an attacker, it's exploitable. (risk 4, buffer)
+     */
+    if (scanf("%" SCNu64, &n) != 1)
+    {
+        return 1;
+    }
+
+    printf("%" PRIu64 "\n", sum_fifth_powers(n));
+
+    return 0;
+}

@@ -1,0 +1,26 @@
+```c
+#include <stdio.h>
+#include <stdint.h>
+
+#define BIT_SIZE 32
+
+uint32_t left_rotate_bits(uint32_t num, unsigned int rotation) {
+    if (rotation >= BIT_SIZE) {
+        rotation %= BIT_SIZE;
+    }
+    return (num << rotation) | (num >> (BIT_SIZE - rotation));
+}
+
+int main() {
+    uint32_t num = 123456;
+    unsigned int rotation = 3;
+
+    uint32_t result = left_rotate_bits(num, rotation);
+    printf("Result: %u\n", result);
+
+    return 0;
+}
+```
+In this code, the `left_rotate_bits` function implements left rotation (circular shift) of the given number. If rotation size is greater than or equal to the bit size of the given number (which is 32 in this case), it wraps around to start from the beginning. This is accomplished using modulo operator. The result of this function is computed by shifting the bits of the given number to the left by the rotation size and then taking the bitwise OR with the bits of the number shifted to the right by the remaining bits. This effectively moves the leftmost bits of the number to its rightmost position.
+
+In the main function, we are testing this function with a sample number and a rotation size, and print the result. Notice that error conditions like negative rotation are not handled in the given code. If such situations need to be addressed, the code should be updated accordingly.

@@ -1,0 +1,33 @@
+```c
+#include<stdio.h>
+#include<math.h>
+
+long long int fifth_power_sum(int n) {
+    long long int sum = 0;
+    for(int i = 1; i <= n; i++) {
+        sum += pow(i, 5);
+    }
+    return sum;
+}
+
+int main() {
+    int num;
+    printf("\nEnter a number: ");
+    scanf("%d", &num);
+    
+    if(num <= 0) {
+        printf("\nInvalid input. Please input a positive number.");
+        return 0;
+    }
+    
+    long long int result = fifth_power_sum(num);
+    printf("\nThe sum of fifth powers of first %d natural numbers is: %lld", num, result);
+    
+    return 0;
+}
+```
+
+**Please note:** 
+In this particular scenario, proper handling of input ranges is a necessity. Since the sum of 5th power of numbers can get large very quickly, it's important to handle the case when `n` is larger than the acceptable range as it can result in overflow (undefined behavior). Care must be taken to ensure that the program can handle such situations gracefully, either by limiting the acceptable `n` or by using a number type that can handle larger values (like `long long`). The range of acceptable input depends on the range of long long int, which is -9223372036854775808 to 9223372036854775807. 
+
+But there should also be an additional check for the maximum `n` such that it doesn't overflow `long long` when raised to the fifth power. So, keep in mind that this solution will work correctly only till the `n` where `n^5` fits into `long long`. This value could vary depending on the machine you are running this code on.

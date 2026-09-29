@@ -1,0 +1,8 @@
+collected_code/problem-127-0.c: In function 'multiply':
+collected_code/problem-127-0.c:12:12: warning: implicit declaration of function 'abs' [-Wimplicit-function-declaration]
+   12 |     num1 = abs(num1);
+      |            ^~~
+collected_code/problem-127-0.c:2:1: note: include '<stdlib.h>' or provide a declaration of 'abs'
+    1 | #include <stdio.h>
+  +++ |+#include <stdlib.h>
+    2 | 

@@ -1,0 +1,50 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <limits.h>
+
+#define PI 3.14159265358979323846
+
+double circle_area(double radius) {
+    if (radius < 0.0) {
+        fprintf(stderr, "Error: Radius cannot be negative\n");
+        exit(EXIT_FAILURE);
+    }
+    return PI * radius * radius;
+}
+
+int main(int argc, const char *argv[]) {
+    double radius = 5.0;
+    int surface_type = 0;
+
+    if (argc > 1) {
+        char *endptr;
+        errno = 0;
+        long val = strtol(argv[1], &endptr, 10);
+
+        if (errno == ERANGE || val > INT_MAX || val < INT_MIN) {
+            fprintf(stderr, "Error: Value out of range\n");
+            return EXIT_FAILURE;
+        }
+
+        if (*endptr != '\0') {
+            fprintf(stderr, "Error: Invalid integer argument\n");
+            return EXIT_FAILURE;
+        }
+
+        if (val < 0 || val > 1) {
+            fprintf(stderr, "Error: surface_type must be 0 (top) or 1 (bottom)\n");
+            return EXIT_FAILURE;
+        }
+
+        surface_type = (int)val;
+    }
+
+    double area = circle_area(radius);
+    printf("The %s surface area of the cylinder is: %.2f\n",
+           surface_type == 0 ? "top" : "bottom", area);
+
+    return 0;
+}
+```

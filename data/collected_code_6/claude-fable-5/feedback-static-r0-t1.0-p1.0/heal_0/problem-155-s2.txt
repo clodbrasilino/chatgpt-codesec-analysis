@@ -1,0 +1,42 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+unsigned int toggle_even_bits(unsigned int num)
+{
+    unsigned int mask = 0x55555555U;
+    return num ^ mask;
+}
+
+int main(void)
+{
+    unsigned int number = 0U;
+    unsigned int result = 0U;
+
+    printf("Enter an unsigned integer: ");
+    if (scanf("%u", &number) != 1)
+    {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    result = toggle_even_bits(number);
+
+    printf("Original number: %u\n", number);
+    printf("After toggling even bits: %u\n", result);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Explanation of key design choices:**
+
+- **`toggle_even_bits`**: Uses the mask `0x55555555U` (binary `0101...0101`), which has all even-positioned bits (0, 2, 4, ..., 30) set. XOR-ing with this mask flips exactly those bits.
+
+- **CWE-703 avoidance**: The return value of `scanf` is checked before using `number`, preventing operations on an uninitialized or garbage value if input parsing fails.
+
+- **CWE-710 avoidance**: The code adheres to standards by using `int main(void)`, returning `EXIT_SUCCESS`/`EXIT_FAILURE`, initializing all variables, and using the `U` suffix on unsigned literals to avoid implicit signedness issues.
+
+- **CWE-664 avoidance**: No dynamic resources (memory, files) are allocated, so there are no lifetime management issues; all variables have well-defined automatic storage duration.
+
+- **Unsigned type**: Using `unsigned int` avoids undefined/implementation-defined behavior that bitwise operations can cause on signed integers.

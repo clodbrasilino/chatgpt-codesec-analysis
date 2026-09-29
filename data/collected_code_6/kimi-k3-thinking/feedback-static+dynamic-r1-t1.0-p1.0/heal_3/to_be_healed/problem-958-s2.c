@@ -1,0 +1,133 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <errno.h>
+
+#define MIN_ROMAN_VALUE 1
+#define MAX_ROMAN_VALUE 3999
+#define MAX_ROMAN_LENGTH 15
+#define ROMAN_BUFFER_SIZE (MAX_ROMAN_LENGTH + 2)
+#define INPUT_BUFFER_SIZE 64
+
+_Static_assert(ROMAN_BUFFER_SIZE > MAX_ROMAN_LENGTH,
+               "roman buffer must hold the longest numeral plus its terminator");
+
+int int_to_roman(int value, char *buffer, size_t buffer_size)
+{
+    static const struct {
+        int value;
+        const char *numeral;
+        size_t length;
+    } roman_table[] = {
+        {1000, "M", 1},
+        {900, "CM", 2},
+        {500, "D", 1},
+        {400, "CD", 2},
+        {100, "C", 1},
+        {90, "XC", 2},
+        {50, "L", 1},
+        {40, "XL", 2},
+        {10, "X", 1},
+        {9, "IX", 2},
+        {5, "V", 1},
+        {4, "IV", 2},
+        {1, "I", 1}
+    };
+
+    size_t position;
+    size_t table_size;
+    size_t i;
+
+    if (buffer == NULL || buffer_size == 0) {
+        return -1;
+    }
+
+    if (buffer_size <= MAX_ROMAN_LENGTH) {
+        buffer[0] = '\0';
+        return -1;
+    }
+
+    if (value < MIN_ROMAN_VALUE || value > MAX_ROMAN_VALUE) {
+        buffer[0] = '\0';
+        return -1;
+    }
+
+    position = 0;
+    table_size = sizeof(roman_table) / sizeof(roman_table[0]);
+
+    for (i = 0; i < table_size; i++) {
+        while (value >= roman_table[i].value) {
+            if (roman_table[i].length >= buffer_size - position) {
+                buffer[0] = '\0';
+                return -1;
+            }
+            /* Possible weaknesses found:
+             * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+             */
+            memcpy(buffer + position, roman_table[i].numeral,
+                   roman_table[i].length);
+            position += roman_table[i].length;
+            value -= roman_table[i].value;
+        }
+    }
+
+    buffer[position] = '\0';
+    return 0;
+}
+
+int main(void)
+{
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char roman_buffer[ROMAN_BUFFER_SIZE];
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char input_buffer[INPUT_BUFFER_SIZE];
+    char *endptr;
+    long number;
+    int conversion_result;
+
+    printf("Enter an integer (1-3999): ");
+
+    if (fgets(input_buffer, sizeof(input_buffer), stdin) == NULL) {
+        fprintf(stderr, "Error: Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    errno = 0;
+    number = strtol(input_buffer, &endptr, 10);
+
+    if (errno != 0 || endptr == input_buffer) {
+        fprintf(stderr, "Error: Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    while (*endptr == ' ' || *endptr == '\t' || *endptr == '\n' ||
+           *endptr == '\r' || *endptr == '\f' || *endptr == '\v') {
+        endptr++;
+    }
+
+    if (*endptr != '\0') {
+        fprintf(stderr, "Error: Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (number < MIN_ROMAN_VALUE || number > MAX_ROMAN_VALUE) {
+        fprintf(stderr, "Error: Number must be between 1 and 3999\n");
+        return EXIT_FAILURE;
+    }
+
+    conversion_result = int_to_roman((int)number, roman_buffer,
+                                     sizeof(roman_buffer));
+
+    if (conversion_result != 0) {
+        fprintf(stderr, "Error: Number must be between 1 and 3999\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Roman numeral: %s\n", roman_buffer);
+
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,20 @@
+```C
+#include <stdio.h>
+#include <string.h>
+
+void leftRotate(char *input, int d) {
+    int len = strlen(input);
+    char temp[d];
+    strncpy(temp, input, d);
+    strcpy(input, input+d);
+    strncat(input, temp, d);
+}
+
+int main() {
+    char str[] = "HelloWorld";
+    int d = 2;
+    leftRotate(str, d);
+    printf("%s", str);
+    return 0;
+}
+```

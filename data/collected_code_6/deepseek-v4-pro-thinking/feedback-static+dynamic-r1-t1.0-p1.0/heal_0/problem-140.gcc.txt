@@ -1,0 +1,6 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-140.c: In function 'extract_single_occurrences':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-140.c:62:59: error: 'new_entries' undeclared (first use in this function); did you mean 'entries'?
+   62 |                     if (new_capacity > SIZE_MAX / sizeof(*new_entries)) {
+      |                                                           ^~~~~~~~~~~
+      |                                                           entries
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-140.c:62:59: note: each undeclared identifier is reported only once for each function it appears in

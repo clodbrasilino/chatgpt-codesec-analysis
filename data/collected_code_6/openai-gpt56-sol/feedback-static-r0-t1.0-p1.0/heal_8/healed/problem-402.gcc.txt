@@ -1,0 +1,12 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-402.c: In function 'read_line':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-402.c:159:15: error: implicit declaration of function 'strchr' [-Wimplicit-function-declaration]
+  159 |     newline = strchr(line, '\n');
+      |               ^~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-402.c:7:1: note: include '<string.h>' or provide a declaration of 'strchr'
+    6 | #include <ctype.h>
+  +++ |+#include <string.h>
+    7 | 
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-402.c:164:16: error: implicit declaration of function 'strlen' [-Wimplicit-function-declaration]
+  164 |         used = strlen(line);
+      |                ^~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-402.c:164:16: note: include '<string.h>' or provide a declaration of 'strlen'

@@ -1,0 +1,118 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdlib.h>
+
+#define MAX_WORD_LEN 64
+#define MAX_SENTENCE_LEN 4096
+
+typedef struct {
+    char word[MAX_WORD_LEN];
+    size_t position;
+} AdverbInfo;
+
+static int copy_word(AdverbInfo *entry, const char *src, size_t word_len, size_t position)
+{
+    if (entry == NULL || src == NULL) {
+        return -1;
+    }
+
+    if (word_len >= sizeof(entry->word)) {
+        word_len = sizeof(entry->word) - 1;
+    }
+
+    memcpy(entry->word, src, word_len);
+    entry->word[word_len] = '\0';
+    entry->position = position;
+
+    return 0;
+}
+
+size_t find_adverbs(const char *sentence, AdverbInfo *results, size_t max_results)
+{
+    size_t count = 0;
+    size_t i = 0;
+    size_t len;
+
+    if (sentence == NULL || results == NULL || max_results == 0) {
+        return 0;
+    }
+
+    len = strnlen(sentence, MAX_SENTENCE_LEN);
+
+    while (i < len && count < max_results) {
+        while (i < len && !isalpha((unsigned char)sentence[i])) {
+            i++;
+        }
+
+        if (i < len) {
+            size_t start = i;
+            size_t word_len;
+
+            while (i < len && isalpha((unsigned char)sentence[i])) {
+                i++;
+            }
+
+            word_len = i - start;
+
+            if (word_len >= 3 && word_len < sizeof(results[count].word)) {
+                if (tolower((unsigned char)sentence[i - 2]) == 'l' &&
+                    tolower((unsigned char)sentence[i - 1]) == 'y') {
+                    if (copy_word(&results[count], &sentence[start], word_len, start) == 0) {
+                        count++;
+                    }
+                }
+            }
+        }
+    }
+
+    return count;
+}
+
+int main(void)
+{
+    const char *sentence = "She quickly and quietly walked home, then suddenly stopped.";
+    AdverbInfo *results;
+    size_t count;
+    const size_t max_results = 32;
+
+    results = calloc(max_results, sizeof(AdverbInfo));
+    if (results == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    count = find_adverbs(sentence, results, max_results);
+
+    if (count == 0) {
+        printf("No adverbs found.\n");
+    } else {
+        printf("Found %zu adverb(s):\n", count);
+        for (size_t i = 0; i < count; i++) {
+            printf("  \"%s\" at position %zu\n", results[i].word, results[i].position);
+        }
+    }
+
+    free(results);
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis summary:**
+
+The original code was already well-defended against the flagged weakness (CWE-119/CWE-120, buffer overflow on the statically-sized `word` array). Here's why the rewritten version remains safe:
+
+1. **Bounds checking in `copy_word`**: `word_len` is clamped to `sizeof(entry->word) - 1` before copying, guaranteeing space for the null terminator. I replaced the manual byte-copy loop with `memcpy`, which is clearer and equally safe since the length is validated first.
+
+2. **Length-limited input scanning**: `strnlen(sentence, MAX_SENTENCE_LEN)` ensures the parser never reads past a bounded region, protecting against unterminated input strings.
+
+3. **Double bounds validation**: `find_adverbs` checks `word_len < sizeof(results[count].word)` before even calling `copy_word`, and `count < max_results` prevents writing past the results array.
+
+4. **NULL and zero-size guards**: Both functions validate their pointer arguments and `max_results` before use.
+
+5. **Safe `ctype` usage**: All `isalpha`/`tolower` calls cast to `unsigned char`, avoiding undefined behavior with negative `char` values.
+
+6. **Allocation checking**: `calloc` return is checked, memory is zero-initialized, and `free` is called on all exit paths where allocation succeeded.
+
+The Flawfinder hit was a level-2 informational warning about fixed-size buffers in general; the existing mitigations (clamping, explicit termination, size checks at both call site and callee) fully address it.

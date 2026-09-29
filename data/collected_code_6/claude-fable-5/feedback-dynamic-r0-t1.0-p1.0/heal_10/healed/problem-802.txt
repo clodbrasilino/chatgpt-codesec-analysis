@@ -1,0 +1,75 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+static int count_rotations(const int *arr, size_t n)
+{
+    size_t low;
+    size_t high;
+
+    if (arr == NULL || n == 0U) {
+        return -1;
+    }
+
+    low = 0U;
+    high = n - 1U;
+
+    while (low < high) {
+        size_t mid = low + ((high - low) / 2U);
+
+        if (arr[mid] > arr[high]) {
+            low = mid + 1U;
+        } else if (arr[mid] < arr[high]) {
+            high = mid;
+        } else {
+            high--;
+        }
+    }
+
+    return (int)low;
+}
+
+static int report_rotations(const int *arr, size_t n)
+{
+    int rotations = count_rotations(arr, n);
+
+    if (rotations < 0) {
+        if (fprintf(stderr, "Invalid input array\n") < 0) {
+            return -1;
+        }
+        return -1;
+    }
+
+    if (printf("Number of rotations: %d\n", rotations) < 0) {
+        return -1;
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    int arr1[] = {15, 18, 2, 3, 6, 12};
+    int arr2[] = {7, 9, 11, 12, 5};
+    int arr3[] = {7, 9, 11, 12, 15, 18, 2};
+    size_t n1 = sizeof(arr1) / sizeof(arr1[0]);
+    size_t n2 = sizeof(arr2) / sizeof(arr2[0]);
+    size_t n3 = sizeof(arr3) / sizeof(arr3[0]);
+
+    if (report_rotations(arr1, n1) != 0) {
+        return EXIT_FAILURE;
+    }
+
+    if (report_rotations(arr2, n2) != 0) {
+        return EXIT_FAILURE;
+    }
+
+    if (report_rotations(arr3, n3) != 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+Analysis notes: I traced the binary search against the reported failures before rewriting. The claimed weaknesses ("expected 2, got 3" and "expected 3, got 5") do not reproduce with this implementation — for `arr1` the search converges correctly to index 2, for `arr2` to index 4, and for `arr3` to index 6, which are the correct minimum-element indices (i.e., rotation counts). The comments likely came from an earlier buggy version that used `arr[mid] > arr[low]` comparisons or `high = mid - 1`, which misidentifies the pivot. The current version correctly compares `arr[mid]` against `arr[high]`, uses `high = mid` (not `mid - 1`) when the pivot may be at `mid`, handles duplicates via `high--`, guards against NULL/empty input, avoids `size_t` overflow with `low + (high - low) / 2`, and checks all I/O return values — so the rewrite preserves the logic as-is.

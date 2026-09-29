@@ -1,0 +1,77 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+static void capitalize_first_last(char *str, size_t max_len)
+{
+    size_t i;
+    size_t len;
+
+    if (str == NULL) {
+        return;
+    }
+
+    len = strnlen(str, max_len);
+    i = 0;
+
+    while (i < len) {
+        while (i < len && isspace((unsigned char)str[i])) {
+            i++;
+        }
+        if (i >= len) {
+            break;
+        }
+        {
+            size_t start = i;
+            size_t end;
+
+            while (i < len && !isspace((unsigned char)str[i])) {
+                i++;
+            }
+            end = i - 1;
+            str[start] = (char)toupper((unsigned char)str[start]);
+            str[end] = (char)toupper((unsigned char)str[end]);
+        }
+    }
+}
+
+int main(void)
+{
+    char buffer[256];
+    char *newline;
+
+    printf("Enter a string: ");
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    newline = strchr(buffer, '\n');
+    if (newline != NULL) {
+        *newline = '\0';
+    }
+
+    capitalize_first_last(buffer, sizeof(buffer));
+
+    if (printf("Result: %s\n", buffer) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+Key changes made:
+
+1. **Variable scope reduction (`start` and `end`)**: Both variables are now declared inside a block within the `while` loop, limiting their scope to exactly where they are used, addressing the `[variableScope]` warnings.
+
+2. **`strlen` over-read risk (CWE-126)**: Replaced `strlen` with `strnlen`, passing the buffer capacity from the caller. This guarantees the length computation never reads past the buffer bounds even if the string were not null-terminated. As an extra defensive measure, `main` explicitly null-terminates the last byte of the buffer.
+
+3. **Statically-sized buffer (CWE-119/CWE-120)**: The buffer usage was already bounded via `fgets(buffer, sizeof(buffer), stdin)`, which limits input length. The fix is reinforced by passing `sizeof(buffer)` into `capitalize_first_last` so all downstream operations remain bounds-aware, and by the explicit terminator assignment.
+
+The program's behavior is unchanged: it reads a line, strips the newline, uppercases the first and last character of each whitespace-delimited word, and prints the result.

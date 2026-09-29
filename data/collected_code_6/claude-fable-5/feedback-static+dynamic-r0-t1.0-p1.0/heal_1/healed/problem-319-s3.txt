@@ -1,0 +1,90 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <regex.h>
+
+#define MAX_ERR_LEN 256U
+#define NUM_GROUPS 3U
+
+static int find_five_letter_words(const char *text)
+{
+    regex_t regex;
+    regmatch_t groups[NUM_GROUPS];
+    char errbuf[MAX_ERR_LEN];
+    const char *pattern = "(^|[^[:alnum:]_])([[:alpha:]]{5})([^[:alnum:]_]|$)";
+    const char *cursor = text;
+    int rc;
+    int found = 0;
+
+    if (text == NULL) {
+        return -1;
+    }
+
+    rc = regcomp(&regex, pattern, REG_EXTENDED);
+    if (rc != 0) {
+        (void)regerror(rc, &regex, errbuf, sizeof(errbuf));
+        errbuf[sizeof(errbuf) - 1U] = '\0';
+        (void)fprintf(stderr, "Regex compilation failed: %s\n", errbuf);
+        return -1;
+    }
+
+    for (;;) {
+        rc = regexec(&regex, cursor, (size_t)NUM_GROUPS, groups, 0);
+        if (rc == REG_NOMATCH) {
+            break;
+        }
+        if (rc != 0) {
+            (void)regerror(rc, &regex, errbuf, sizeof(errbuf));
+            errbuf[sizeof(errbuf) - 1U] = '\0';
+            (void)fprintf(stderr, "Regex execution failed: %s\n", errbuf);
+            regfree(&regex);
+            return -1;
+        }
+        if ((groups[2].rm_so < 0) || (groups[2].rm_eo < groups[2].rm_so)) {
+            break;
+        }
+        if (printf("%.*s\n", (int)(groups[2].rm_eo - groups[2].rm_so),
+                   cursor + groups[2].rm_so) < 0) {
+            regfree(&regex);
+            return -1;
+        }
+        found++;
+        cursor += groups[2].rm_eo;
+        if (*cursor == '\0') {
+            break;
+        }
+    }
+
+    regfree(&regex);
+
+    if (found == 0) {
+        (void)printf("No five character words found.\n");
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    const char *text = "There might exist words which occur about seven times daily";
+    int result;
+
+    result = find_five_letter_words(text);
+    if (result != 0) {
+        (void)fprintf(stderr, "Failed to process the input string.\n");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+- **CWE-119/CWE-120 (statically-sized `errbuf`):** The original code was already safe here — `regerror()` is always called with `sizeof(errbuf)` as the size limit, so it cannot overflow the buffer. The Flawfinder hit is a false positive triggered simply by the presence of a fixed-size `char` array. As defense-in-depth, I added explicit NUL-termination of `errbuf` after each `regerror()` call, guaranteeing the subsequent `fprintf("%s", ...)` never reads past the buffer even if an implementation misbehaves with truncated messages.
+
+- **Bounds safety elsewhere:** `regexec()` is called with exactly `NUM_GROUPS` matching the size of the `groups` array, so no out-of-bounds writes occur there. The `printf("%.*s", ...)` correctly bounds output using the match offsets, and the code validates `rm_so`/`rm_eo` before use, guarding against negative or inverted offsets.
+
+- **Resource management:** `regfree()` is invoked on every exit path after successful compilation, so there are no regex object leaks.
+
+- **Loop termination:** The cursor always advances by at least `rm_eo > rm_so >= 0` per iteration (a five-character match guarantees forward progress), and the explicit `'\0'` check prevents re-matching `$` at the end of the string, so no infinite loop is possible.

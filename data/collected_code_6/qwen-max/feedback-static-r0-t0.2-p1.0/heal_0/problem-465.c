@@ -1,0 +1,71 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char *key;
+    char *value;
+} DictionaryItem;
+
+typedef struct {
+    DictionaryItem **items;
+    int size;
+    int capacity;
+} Dictionary;
+
+Dictionary* create_dictionary(int capacity) {
+    Dictionary *dict = (Dictionary*)malloc(sizeof(Dictionary));
+    dict->items = (DictionaryItem**)calloc(capacity, sizeof(DictionaryItem*));
+    dict->size = 0;
+    dict->capacity = capacity;
+    return dict;
+}
+
+void free_dictionary(Dictionary *dict) {
+    for (int i = 0; i < dict->size; ++i) {
+        free(dict->items[i]->key);
+        free(dict->items[i]->value);
+        free(dict->items[i]);
+    }
+    free(dict->items);
+    free(dict);
+}
+
+int add_item(Dictionary *dict, const char *key, const char *value) {
+    if (dict->size >= dict->capacity) {
+        return -1;
+    }
+    DictionaryItem *item = (DictionaryItem*)malloc(sizeof(DictionaryItem));
+    item->key = strdup(key);
+    item->value = strdup(value);
+    dict->items[dict->size++] = item;
+    return 0;
+}
+
+Dictionary* drop_empty_items(Dictionary *dict) {
+    Dictionary *new_dict = create_dictionary(dict->capacity);
+    for (int i = 0; i < dict->size; ++i) {
+        if (dict->items[i]->value && strlen(dict->items[i]->value) > 0) {
+            add_item(new_dict, dict->items[i]->key, dict->items[i]->value);
+        }
+    }
+    return new_dict;
+}
+
+int main() {
+    Dictionary *dict = create_dictionary(5);
+    add_item(dict, "key1", "value1");
+    add_item(dict, "key2", "");
+    add_item(dict, "key3", "value3");
+    add_item(dict, "key4", "");
+
+    Dictionary *filtered_dict = drop_empty_items(dict);
+
+    for (int i = 0; i < filtered_dict->size; ++i) {
+        printf("%s: %s\n", filtered_dict->items[i]->key, filtered_dict->items[i]->value);
+    }
+
+    free_dictionary(dict);
+    free_dictionary(filtered_dict);
+    return 0;
+}

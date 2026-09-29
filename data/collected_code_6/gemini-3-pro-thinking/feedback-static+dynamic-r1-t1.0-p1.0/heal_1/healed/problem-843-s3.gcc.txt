@@ -1,0 +1,14 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_1/healed/problem-843-s3.c: In function 'nth_super_ugly_number':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_1/healed/problem-843-s3.c:79:60: error: 'next_u' undeclared (first use in this function); did you mean 'next_val'?
+   79 |         uint64_t next_val = (uint64_t)primes[p_idx] * ugly[next_u
+      |                                                            ^~~~~~
+      |                                                            next_val
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_1/healed/problem-843-s3.c:79:60: note: each undeclared identifier is reported only once for each function it appears in
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_1/healed/problem-843-s3.c:79:66: error: expected ']' at end of input
+   79 |         uint64_t next_val = (uint64_t)primes[p_idx] * ugly[next_u
+      |                                                                  ^
+      |                                                                  ]
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_1/healed/problem-843-s3.c:79:9: error: expected declaration or statement at end of input
+   79 |         uint64_t next_val = (uint64_t)primes[p_idx] * ugly[next_u
+      |         ^~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_1/healed/problem-843-s3.c:79:9: error: expected declaration or statement at end of input

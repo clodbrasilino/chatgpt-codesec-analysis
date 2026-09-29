@@ -1,0 +1,88 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+typedef struct {
+    int x;
+    int y;
+} Tuple;
+
+typedef struct {
+    Tuple *data;
+    size_t size;
+} TupleList;
+
+void remove_matching_tuples(TupleList *list1, TupleList *list2) {
+    if (!list1 || !list1->data || !list2 || !list2->data) {
+        return;
+    }
+
+    size_t i = 0;
+    while (i < list1->size) {
+        bool matched = false;
+        for (size_t j = 0; j < list2->size; ++j) {
+            if (list1->data[i].x == list2->data[j].x && list1->data[i].y == list2->data[j].y) {
+                matched = true;
+                break;
+            }
+        }
+
+        if (matched) {
+            for (size_t k = i; k < list1->size - 1; ++k) {
+                list1->data[k] = list1->data[k + 1];
+            }
+            list1->size--;
+        } else {
+            i++;
+        }
+    }
+}
+
+void print_tuples(const TupleList *list) {
+    if (!list || !list->data) {
+        return;
+    }
+    for (size_t i = 0; i < list->size; ++i) {
+        printf("(%d, %d) ", list->data[i].x, list->data[i].y);
+    }
+    printf("\n");
+}
+
+int main(void) {
+    size_t initial_size = 5;
+    
+    TupleList list1;
+    list1.size = initial_size;
+    list1.data = (Tuple *)malloc(list1.size * sizeof(Tuple));
+    if (!list1.data) {
+        return EXIT_FAILURE;
+    }
+    
+    list1.data[0] = (Tuple){1, 2};
+    list1.data[1] = (Tuple){3, 4};
+    list1.data[2] = (Tuple){5, 6};
+    list1.data[3] = (Tuple){7, 8};
+    list1.data[4] = (Tuple){9, 10};
+
+    TupleList list2;
+    list2.size = 2;
+    list2.data = (Tuple *)malloc(list2.size * sizeof(Tuple));
+    if (!list2.data) {
+        free(list1.data);
+        return EXIT_FAILURE;
+    }
+
+    list2.data[0] = (Tuple){3, 4};
+    list2.data[1] = (Tuple){7, 8};
+
+    remove_matching_tuples(&list1, &list2);
+
+    print_tuples(&list1);
+
+    free(list1.data);
+    free(list2.data);
+
+    return EXIT_SUCCESS;
+}
+```

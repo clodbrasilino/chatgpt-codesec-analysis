@@ -1,0 +1,31 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int count_positive_numbers(const int *list, size_t length) {
+    int count = 0;
+    if (list == NULL) {
+        return -1;
+    }
+    for (size_t i = 0; i < length; i++) {
+        if (list[i] > 0) {
+            count++;
+        }
+    }
+    return count;
+}
+
+int main(void) {
+    int my_list[] = {-5, 3, 0, 8, -1, 4, 12};
+    size_t length = sizeof(my_list) / sizeof(my_list[0]);
+
+    int positive_count = count_positive_numbers(my_list, length);
+
+    if (positive_count != -1) {
+        printf("Number of positive numbers: %d\n", positive_count);
+    } else {
+        fprintf(stderr, "Error: Invalid list provided.\n");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

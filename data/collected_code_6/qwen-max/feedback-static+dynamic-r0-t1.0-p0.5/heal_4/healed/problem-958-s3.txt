@@ -1,0 +1,40 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+char* intToRoman(int num) {
+    char *roman = (char *)malloc(20 * sizeof(char));
+    if (!roman) return NULL;
+    roman[0] = '\0';
+
+    const int values[] = {1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1};
+    const char *symbols[] = {"M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I"};
+
+    for (int i = 0; num > 0; i++) {
+        while (num >= values[i]) {
+            size_t len = strlen(roman);
+            strncat(roman, symbols[i], 20 - len - 1);
+            num -= values[i];
+        }
+    }
+
+    return roman;
+}
+
+int main() {
+    int number = 1;
+    char *roman = intToRoman(number);
+    if (roman) {
+        printf("%d in Roman numerals is: %s\n", number, roman);
+        free(roman);
+    } else {
+        printf("Memory allocation failed.\n");
+    }
+    return 0;
+}
+```
+
+In this revision, I have:
+- Ensured that `roman` is initialized to an empty string.
+- Kept the use of `strncat` as it's being used with a correct maximum size, and there's no immediate safer alternative provided by the standard C library that fits the context. The potential risk is mitigated by the careful calculation of the remaining space in the `roman` buffer.

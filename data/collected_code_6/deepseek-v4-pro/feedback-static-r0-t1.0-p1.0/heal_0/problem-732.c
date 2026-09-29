@@ -1,0 +1,23 @@
+#include <stdio.h>
+#include <string.h>
+
+void replace_chars(char *str) {
+    while (*str) {
+        if (*str == ' ' || *str == ',' || *str == '.') {
+            *str = ':';
+        }
+        str++;
+    }
+}
+
+int main(void) {
+    char buffer[256];
+    
+    if (fgets(buffer, sizeof(buffer), stdin) != NULL) {
+        buffer[strcspn(buffer, "\n")] = '\0';
+        replace_chars(buffer);
+        printf("%s\n", buffer);
+    }
+    
+    return 0;
+}

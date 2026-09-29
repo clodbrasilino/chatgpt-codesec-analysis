@@ -1,0 +1,64 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+#include <stdint.h>
+ /* Possible weaknesses found:
+  *  test case 1 failed: expected 273, got 0
+  *  test case 2 failed: expected 2664, got 0
+  *  test case 0 failed: expected 30, got 1
+  */
+
+int is_smart_number(int num)
+{
+    if (num <= 0) {
+        return 0;
+    }
+    
+    int root = 1;
+    while (root <= num / root) {
+        root++;
+    }
+    root--;
+    
+    return (root * root == num);
+}
+
+int find_nth_smart_number(int n)
+{
+    if (n <= 0) {
+        return -1;
+    }
+    
+    int64_t square = (int64_t)n * (int64_t)n;
+    if (square > INT_MAX) {
+        return -1;
+    }
+    
+    return (int)square;
+}
+
+int main(void)
+{
+    int n;
+    int result;
+
+    if (scanf("%d", &n) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (n <= 0) {
+        fprintf(stderr, "n must be a positive integer\n");
+        return EXIT_FAILURE;
+    }
+
+    result = find_nth_smart_number(n);
+    if (result == -1) {
+        fprintf(stderr, "Error: Could not find the %dth smart number\n", n);
+        return EXIT_FAILURE;
+    }
+
+    printf("%d\n", result);
+
+    return EXIT_SUCCESS;
+}

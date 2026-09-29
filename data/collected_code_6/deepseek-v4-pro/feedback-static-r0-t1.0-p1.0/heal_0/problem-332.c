@@ -1,0 +1,111 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#define ASCII_SIZE 256
+
+typedef struct {
+    char character;
+    int frequency;
+} CharFrequency;
+
+int compare_frequencies(const void *a, const void *b) {
+    const CharFrequency *fa = (const CharFrequency *)a;
+    const CharFrequency *fb = (const CharFrequency *)b;
+    if (fb->frequency != fa->frequency) {
+        return fb->frequency - fa->frequency;
+    }
+    return fa->character - fb->character;
+}
+
+CharFrequency* count_character_frequency(const char *str, int *unique_count) {
+    if (str == NULL || unique_count == NULL) {
+        return NULL;
+    }
+    
+    int frequencies[ASCII_SIZE] = {0};
+    size_t len = strlen(str);
+    
+    for (size_t i = 0; i < len; i++) {
+        frequencies[(unsigned char)str[i]]++;
+    }
+    
+    int count = 0;
+    for (int i = 0; i < ASCII_SIZE; i++) {
+        if (frequencies[i] > 0) {
+            count++;
+        }
+    }
+    
+    if (count == 0) {
+        *unique_count = 0;
+        return NULL;
+    }
+    
+    CharFrequency *result = (CharFrequency *)malloc(count * sizeof(CharFrequency));
+    if (result == NULL) {
+        return NULL;
+    }
+    
+    int index = 0;
+    for (int i = 0; i < ASCII_SIZE; i++) {
+        if (frequencies[i] > 0) {
+            result[index].character = (char)i;
+            result[index].frequency = frequencies[i];
+            index++;
+        }
+    }
+    
+    qsort(result, count, sizeof(CharFrequency), compare_frequencies);
+    
+    *unique_count = count;
+    return result;
+}
+
+void print_frequency_table(const CharFrequency *freq_table, int count) {
+    if (freq_table == NULL || count <= 0) {
+        printf("No characters to display.\n");
+        return;
+    }
+    
+    printf("Character Frequency\n");
+    printf("--------- ---------\n");
+    for (int i = 0; i < count; i++) {
+        if (isprint((unsigned char)freq_table[i].character)) {
+            printf("'%c'       %d\n", freq_table[i].character, freq_table[i].frequency);
+        } else {
+            printf("0x%02X     %d\n", (unsigned char)freq_table[i].character, freq_table[i].frequency);
+        }
+    }
+}
+
+int main(void) {
+    const char *test_strings[] = {
+        "hello world",
+        "programming in C",
+        "aaaabbbccd",
+        "",
+        "12345 12345",
+        "!@#$%^&*()"
+    };
+    
+    size_t num_tests = sizeof(test_strings) / sizeof(test_strings[0]);
+    
+    for (size_t i = 0; i < num_tests; i++) {
+        printf("String: \"%s\"\n", test_strings[i]);
+        int unique_chars = 0;
+        CharFrequency *result = count_character_frequency(test_strings[i], &unique_chars);
+        
+        if (result == NULL && unique_chars > 0) {
+            printf("Memory allocation failed.\n");
+            return 1;
+        }
+        
+        print_frequency_table(result, unique_chars);
+        free(result);
+        printf("\n");
+    }
+    
+    return 0;
+}

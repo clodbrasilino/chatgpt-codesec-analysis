@@ -1,0 +1,68 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int* find_intersection(const int* arr1, size_t size1, const int* arr2, size_t size2, size_t* out_size) {
+    if (arr1 == NULL || arr2 == NULL || out_size == NULL) {
+        return NULL;
+    }
+
+    size_t min_size = size1 < size2 ? size1 : size2;
+    int* result = (int*)malloc(min_size * sizeof(int));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    size_t count = 0;
+    for (size_t i = 0; i < size1; i++) {
+        for (size_t j = 0; j < size2; j++) {
+            if (arr1[i] == arr2[j]) {
+                int already_added = 0;
+                for (size_t k = 0; k < count; k++) {
+                    if (result[k] == arr1[i]) {
+                        already_added = 1;
+                        break;
+                    }
+                }
+                if (!already_added) {
+                    result[count++] = arr1[i];
+                }
+                break;
+            }
+        }
+    }
+
+    if (count == 0) {
+        free(result);
+        *out_size = 0;
+        return NULL;
+    }
+
+    int* resized_result = (int*)realloc(result, count * sizeof(int));
+    if (resized_result == NULL) {
+        free(result);
+        return NULL;
+    }
+
+    *out_size = count;
+    return resized_result;
+}
+
+int main(void) {
+    int arr1[] = {1, 2, 2, 3, 4, 5};
+    int arr2[] = {2, 3, 5, 7};
+    size_t size1 = sizeof(arr1) / sizeof(arr1[0]);
+    size_t size2 = sizeof(arr2) / sizeof(arr2[0]);
+    size_t out_size = 0;
+
+    int* intersection = find_intersection(arr1, size1, arr2, size2, &out_size);
+
+    if (intersection != NULL) {
+        for (size_t i = 0; i < out_size; i++) {
+            printf("%d ", intersection[i]);
+        }
+        printf("\n");
+        free(intersection);
+    }
+
+    return 0;
+}

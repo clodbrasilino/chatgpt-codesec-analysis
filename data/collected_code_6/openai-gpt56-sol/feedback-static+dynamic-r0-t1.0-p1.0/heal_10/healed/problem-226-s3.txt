@@ -1,0 +1,93 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+
+static void remove_odd_indices(char *string)
+{
+    size_t read_index = 0;
+    size_t write_index = 0;
+
+    if (string == NULL) {
+        return;
+    }
+
+    while (string[read_index] != '\0') {
+        string[write_index++] = string[read_index++];
+
+        if (string[read_index] != '\0') {
+            ++read_index;
+        }
+    }
+
+    string[write_index] = '\0';
+}
+
+int main(void)
+{
+    size_t capacity = 128;
+    size_t length = 0;
+    char *string = malloc(capacity);
+
+    if (string == NULL) {
+        return EXIT_FAILURE;
+    }
+
+    for (;;) {
+        int character = fgetc(stdin);
+
+        if (character == EOF) {
+            if (ferror(stdin) || length == 0) {
+                free(string);
+                return EXIT_FAILURE;
+            }
+            break;
+        }
+
+        if (character == '\n') {
+            break;
+        }
+
+        if (length > SIZE_MAX - 2) {
+            free(string);
+            return EXIT_FAILURE;
+        }
+
+        if (length + 1 >= capacity) {
+            size_t required = length + 2;
+            size_t new_capacity;
+            char *resized;
+
+            if (capacity > SIZE_MAX / 2) {
+                new_capacity = SIZE_MAX;
+            } else {
+                new_capacity = capacity * 2;
+            }
+
+            if (new_capacity < required) {
+                new_capacity = required;
+            }
+
+            resized = realloc(string, new_capacity);
+            if (resized == NULL) {
+                free(string);
+                return EXIT_FAILURE;
+            }
+
+            string = resized;
+            capacity = new_capacity;
+        }
+
+        string[length++] = (char)(unsigned char)character;
+    }
+
+    string[length] = '\0';
+    remove_odd_indices(string);
+
+    if (puts(string) == EOF) {
+        free(string);
+        return EXIT_FAILURE;
+    }
+
+    free(string);
+    return EXIT_SUCCESS;
+}

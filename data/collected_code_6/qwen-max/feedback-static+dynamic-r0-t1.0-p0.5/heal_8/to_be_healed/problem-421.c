@@ -1,0 +1,70 @@
+#include <stdio.h>
+#include <stdlib.h>
+ /* Possible weaknesses found:
+  *  include '<string.h>' or provide a declaration of 'strlen'
+  */
+
+char *concat_with_delimiter(const char *tuple[], size_t tuple_size, const char *delimiter) {
+    if (tuple_size == 0) return NULL;
+
+    /* Possible weaknesses found:
+     *  call to undeclared library function 'strlen' with type 'unsigned long (const char *)'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     *  include the header <string.h> or explicitly provide a declaration for 'strlen'
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     *  implicit declaration of function 'strlen' [-Wimplicit-function-declaration]
+     */
+    size_t delimiter_len = (delimiter != NULL) ? strlen(delimiter) : 0;
+    size_t total_len = 0;
+    for (size_t i = 0; i < tuple_size; ++i) {
+        if (tuple[i] == NULL) return NULL;
+        /* Possible weaknesses found:
+         * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+         */
+        total_len += strlen(tuple[i]) + 1;
+    }
+    total_len += (tuple_size - 1) * delimiter_len + 1;
+
+    char *result = (char *)malloc(total_len);
+    if (result == NULL) return NULL;
+
+    size_t pos = 0;
+    for (size_t i = 0; i < tuple_size; ++i) {
+        /* Possible weaknesses found:
+         * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+         */
+        size_t len = strlen(tuple[i]);
+        /* Possible weaknesses found:
+         *  call to undeclared library function 'memcpy' with type 'void *(void *, const void *, unsigned long)'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+         *  include '<string.h>' or provide a declaration of 'memcpy'
+         *  implicit declaration of function 'memcpy' [-Wimplicit-function-declaration]
+         * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+         *  include the header <string.h> or explicitly provide a declaration for 'memcpy'
+         */
+        memcpy(result + pos, tuple[i], len);
+        pos += len;
+        if (i < tuple_size - 1) {
+            /* Possible weaknesses found:
+             * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+             */
+            memcpy(result + pos, delimiter, delimiter_len);
+            pos += delimiter_len;
+        }
+    }
+    result[total_len - 1] = '\0';
+
+    return result;
+}
+
+int main() {
+    const char *tuple[] = {"apple", "banana", "cherry"};
+    size_t tuple_size = 3;
+    const char *delimiter = ",";
+
+    char *result = concat_with_delimiter(tuple, tuple_size, delimiter);
+    if (result != NULL) {
+        printf("%s\n", result);
+        free(result);
+    }
+
+    return 0;
+}

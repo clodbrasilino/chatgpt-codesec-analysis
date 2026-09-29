@@ -1,0 +1,67 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int are_elements_same(const int *arr, size_t size) {
+    if (arr == NULL || size == 0) {
+        return 0;
+    }
+    
+    if (size == 1) {
+        return 1;
+    }
+    
+    int first = arr[0];
+    for (size_t i = 1; i < size; i++) {
+        if (arr[i] != first) {
+            return 0;
+        }
+    }
+    
+    return 1;
+}
+
+int main(void) {
+    int *arr1 = NULL;
+    int *arr2 = NULL;
+    size_t size1 = 5;
+    size_t size2 = 5;
+    int result = 0;
+    
+    arr1 = (int *)malloc(size1 * sizeof(int));
+    if (arr1 == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+    
+    arr2 = (int *)malloc(size2 * sizeof(int));
+    if (arr2 == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        free(arr1);
+        arr1 = NULL;
+        return EXIT_FAILURE;
+    }
+    
+    for (size_t i = 0; i < size1; i++) {
+        arr1[i] = 10;
+    }
+    
+    arr2[0] = 5;
+    arr2[1] = 5;
+    arr2[2] = 10;
+    arr2[3] = 5;
+    arr2[4] = 5;
+    
+    result = are_elements_same(arr1, size1);
+    printf("Array 1: %s\n", result ? "All elements are same" : "Elements are different");
+    
+    result = are_elements_same(arr2, size2);
+    printf("Array 2: %s\n", result ? "All elements are same" : "Elements are different");
+    
+    free(arr1);
+    arr1 = NULL;
+    
+    free(arr2);
+    arr2 = NULL;
+    
+    return EXIT_SUCCESS;
+}

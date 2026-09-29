@@ -1,0 +1,81 @@
+{
+  "task_id": 143,
+  "text": "Write a C function to find number of lists present in the given tuple.",
+  "fn_candidates": [
+    "find_lists",
+    "FindLists",
+    "findLists",
+    "findlists"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "find_lists",
+      "args": [
+        [
+          [
+            1,
+            2,
+            3,
+            4
+          ],
+          [
+            5,
+            6,
+            7,
+            8
+          ]
+        ]
+      ],
+      "expected": 2,
+      "assert_src": "assert find_lists(([1, 2, 3, 4], [5, 6, 7, 8])) == 2"
+    },
+    {
+      "fn_name": "find_lists",
+      "args": [
+        [
+          [
+            1,
+            2
+          ],
+          [
+            3,
+            4
+          ],
+          [
+            5,
+            6
+          ]
+        ]
+      ],
+      "expected": 3,
+      "assert_src": "assert find_lists(([1, 2], [3, 4], [5, 6]))  == 3"
+    },
+    {
+      "fn_name": "find_lists",
+      "args": [
+        [
+          9,
+          8,
+          7,
+          6,
+          5,
+          4,
+          3,
+          2,
+          1
+        ]
+      ],
+      "expected": 1,
+      "assert_src": "assert find_lists(([9, 8, 7, 6, 5, 4, 3, 2, 1])) == 1"
+    }
+  ],
+  "arg_kinds": [
+    "2d-int-list",
+    "int-list"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

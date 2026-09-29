@@ -1,0 +1,28 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_1/healed/problem-938.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_1/healed/problem-938.c:49:12: style: Condition 'n1>0' is always true [knownConditionTrueFalse]
+    if (n1 > 0 && n2 > 0 && n3 > 0) {
+           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_1/healed/problem-938.c:45:27: note: Assignment 'n1=sizeof(arr1)/sizeof(arr1[0])', assigned value is 3
+    int n1 = sizeof(arr1) / sizeof(arr1[0]);
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_1/healed/problem-938.c:49:12: note: Condition 'n1>0' is always true
+    if (n1 > 0 && n2 > 0 && n3 > 0) {
+           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_1/healed/problem-938.c:49:22: style: Condition 'n2>0' is always true [knownConditionTrueFalse]
+    if (n1 > 0 && n2 > 0 && n3 > 0) {
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_1/healed/problem-938.c:46:27: note: Assignment 'n2=sizeof(arr2)/sizeof(arr2[0])', assigned value is 3
+    int n2 = sizeof(arr2) / sizeof(arr2[0]);
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_1/healed/problem-938.c:49:22: note: Condition 'n2>0' is always true
+    if (n1 > 0 && n2 > 0 && n3 > 0) {
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_1/healed/problem-938.c:49:32: style: Condition 'n3>0' is always true [knownConditionTrueFalse]
+    if (n1 > 0 && n2 > 0 && n3 > 0) {
+                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_1/healed/problem-938.c:47:27: note: Assignment 'n3=sizeof(arr3)/sizeof(arr3[0])', assigned value is 2
+    int n3 = sizeof(arr3) / sizeof(arr3[0]);
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_1/healed/problem-938.c:49:32: note: Condition 'n3>0' is always true
+    if (n1 > 0 && n2 > 0 && n3 > 0) {
+                               ^

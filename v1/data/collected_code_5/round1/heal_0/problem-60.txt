@@ -1,0 +1,37 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int longestSeqLength(int *arr, int n) {
+    if (n <= 1) return n;
+
+    int *diff = malloc(sizeof(int) * (n - 1));
+    for (int i = 0; i < n - 1; i++) {
+        diff[i] = arr[i + 1] - arr[i];
+    }
+
+    int count = 1, maxLen = 1;
+
+    for (int i = 1; i < n - 1; i++) {
+        if (diff[i] * diff[i - 1] < 0) {
+            count++;
+            if (count > maxLen) maxLen = count;
+        } else {
+            count = 1;
+        }
+    }
+
+    free(diff);
+
+    return maxLen;
+}
+
+int main() {
+    int arr[] = {10, 22, 9, 33, 49, 50, 31, 60};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    int length = longestSeqLength(arr, n);
+    printf("Length of maximum length subsequence is %d\n", length);
+    return 0;
+}
+```
+This function first calculates the differences between each pair of adjacent elements in the given array, stores these differences in a new array, and then finds the longest subsequence in this difference array where each pair of adjacent differences have different signs. It uses dynamic memory allocation to create the difference array, and then properly frees the memory when it is no longer needed to avoid memory leaks (CWE-664). The function also properly checks if the length of the given array is less than or equal to 1 (CWE-703), in which case it returns the length of the array as the length of the longest subsequence. The C code adheres to standard C syntax, uses appropriate variablenames, and properly formats its output (CWE-710).

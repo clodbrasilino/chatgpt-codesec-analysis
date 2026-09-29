@@ -1,0 +1,25 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int findLargestK(int x, int y) {
+    if(x <= y) {
+        return -1;
+    }
+
+    return x + y - 1;
+}
+
+int main() {
+    int x = 5, y = 2;
+    int k = findLargestK(x, y);
+
+    if(k == -1) {
+        printf("X should be greater than Y\n");
+    } else {
+        printf("The largest value of K such that K mod X is Y is: %d\n", k);
+    }
+
+    return 0;
+}
+```

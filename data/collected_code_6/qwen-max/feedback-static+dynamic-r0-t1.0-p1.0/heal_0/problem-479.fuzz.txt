@@ -1,0 +1,5 @@
+problem-479.c:5:20:medium:UBSan: negation of -9223372036854775808 cannot be represented in type 'long'; cast to an unsigned type to negate this value to itself (AFL crash: id:000001,sig:06,src:000005,time:38109,execs:15329,op:havoc,rep:3)
+problem-479.c:6:12:medium:UBSan: nan is outside the range of representable values of type 'int' (AFL crash: id:000000,sig:06,src:000004,time:25571,execs:10390,op:havoc,rep:1)
+problem-479.c:6:12:medium:UBSan: -inf is outside the range of representable values of type 'int' (AFL crash: id:000001,sig:06,src:000005,time:38109,execs:15329,op:havoc,rep:3)
+problem-479.c:6:30:medium:UBSan: -inf is outside the range of representable values of type 'int' (AFL crash: id:000000,sig:06,src:000004,time:25571,execs:10390,op:havoc,rep:1)
+problem-479.c:6:30:medium:UBSan: nan is outside the range of representable values of type 'int' (AFL crash: id:000001,sig:06,src:000005,time:38109,execs:15329,op:havoc,rep:3)

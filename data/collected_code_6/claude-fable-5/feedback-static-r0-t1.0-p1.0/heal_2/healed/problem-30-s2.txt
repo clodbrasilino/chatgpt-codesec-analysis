@@ -1,0 +1,89 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define BUFFER_SIZE 1024
+
+unsigned long count_substrings(const char *str, size_t max_len)
+{
+    unsigned long counts[256];
+    unsigned long total;
+    size_t i;
+    size_t len;
+
+    if (str == NULL || max_len == 0) {
+        return 0UL;
+    }
+
+    memset(counts, 0, sizeof(counts));
+
+    len = strnlen(str, max_len);
+
+    for (i = 0; i < len; i++) {
+        counts[(unsigned char)str[i]]++;
+    }
+
+    total = 0UL;
+    for (i = 0; i < 256; i++) {
+        total += (counts[i] * (counts[i] + 1UL)) / 2UL;
+    }
+
+    return total;
+}
+
+int main(void)
+{
+    char *buffer;
+    unsigned long result;
+    size_t len;
+
+    buffer = calloc(BUFFER_SIZE, sizeof(char));
+    if (buffer == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    if (fgets(buffer, BUFFER_SIZE, stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+
+    buffer[BUFFER_SIZE - 1] = '\0';
+
+    len = strnlen(buffer, BUFFER_SIZE);
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    }
+
+    result = count_substrings(buffer, BUFFER_SIZE);
+
+    if (printf("%lu\n", result) < 0) {
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+
+    free(buffer);
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis summary:**
+
+The original code was already well-defended against the Flawfinder warning (CWE-119/CWE-120). The flagged issue was the statically-sized `char buffer[BUFFER_SIZE]`, which Flawfinder reports heuristically whenever it sees a fixed-size array — it does not necessarily indicate an actual vulnerability.
+
+The original mitigations that were already correct:
+
+- **`fgets(buffer, sizeof(buffer), stdin)`** — bounded read, cannot overflow the buffer.
+- **Explicit null termination** at `buffer[sizeof(buffer) - 1]` — defensive, guarantees a terminated string.
+- **`strnlen` instead of `strlen`** — bounded length computation, avoids reading past the buffer even if termination were missing.
+- **Bounds-safe indexing** in `count_substrings` via the `(unsigned char)` cast, preventing negative array indices on platforms where `char` is signed.
+
+Changes made in the rewrite:
+
+1. **Heap allocation via `calloc`** instead of a stack array — this removes the statically-sized stack buffer that triggered the warning, zero-initializes memory (replacing the `memset`), and adds an allocation-failure check.
+2. **Added a `max_len == 0` guard** in `count_substrings` for extra robustness.
+3. **`free()` on all exit paths** to avoid leaks now that the buffer is dynamically allocated.
+
+The counting logic itself (`n*(n+1)/2` per character class) is arithmetically safe for a 1024-byte input, since the maximum intermediate value (1023 × 1024 / 2) is far below `ULONG_MAX`.

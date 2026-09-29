@@ -1,0 +1,173 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+typedef struct Node {
+    int data;
+    struct Node* next;
+} Node;
+
+typedef struct List {
+    Node* head;
+    struct List* next;
+} List;
+
+Node* createNode(int data) {
+    Node* newNode = (Node*)malloc(sizeof(Node));
+    if (!newNode) {
+        exit(EXIT_FAILURE);
+    }
+    newNode->data = data;
+    newNode->next = NULL;
+    return newNode;
+}
+
+List* createList() {
+    List* newList = (List*)malloc(sizeof(List));
+    if (!newList) {
+        exit(EXIT_FAILURE);
+    }
+    newList->head = NULL;
+    newList->next = NULL;
+    return newList;
+}
+
+void appendNode(List* list, int data) {
+    if (!list) return;
+    Node* newNode = createNode(data);
+    if (!list->head) {
+        list->head = newNode;
+    } else {
+        Node* temp = list->head;
+        while (temp->next) {
+            temp = temp->next;
+        }
+        temp->next = newNode;
+    }
+}
+
+void appendList(List** head, List* newList) {
+    if (!head || !newList) return;
+    if (!*head) {
+        *head = newList;
+    } else {
+        List* temp = *head;
+        while (temp->next) {
+            temp = temp->next;
+        }
+        temp->next = newList;
+    }
+}
+
+bool areListsEqual(List* list1, List* list2) {
+    if (!list1 && !list2) return true;
+    if (!list1 || !list2) return false;
+    
+    Node* temp1 = list1->head;
+    Node* temp2 = list2->head;
+    
+    while (temp1 && temp2) {
+        if (temp1->data != temp2->data) {
+            return false;
+        }
+        temp1 = temp1->next;
+        temp2 = temp2->next;
+    }
+    
+    return temp1 == NULL && temp2 == NULL;
+}
+
+void freeNodeList(Node* head) {
+    while (head) {
+        Node* temp = head;
+        head = head->next;
+        free(temp);
+    }
+}
+
+void removeDuplicates(List** head) {
+    if (!head || !*head) return;
+    
+    List* current = *head;
+    while (current) {
+        List* runner = current;
+        while (runner->next) {
+            if (areListsEqual(current, runner->next)) {
+                List* duplicate = runner->next;
+                runner->next = runner->next->next;
+                freeNodeList(duplicate->head);
+                free(duplicate);
+            } else {
+                runner = runner->next;
+            }
+        }
+        current = current->next;
+    }
+}
+
+void printList(List* list) {
+    if (!list) return;
+    Node* temp = list->head;
+    printf("[");
+    while (temp) {
+        printf("%d", temp->data);
+        if (temp->next) printf(", ");
+        temp = temp->next;
+    }
+    printf("]");
+}
+
+void printListOfLists(List* head) {
+    List* temp = head;
+    printf("[\n");
+    while (temp) {
+        printf("  ");
+        printList(temp);
+        printf("\n");
+        temp = temp->next;
+    }
+    printf("]\n");
+}
+
+void freeListOfLists(List* head) {
+    while (head) {
+        List* temp = head;
+        head = head->next;
+        freeNodeList(temp->head);
+        free(temp);
+    }
+}
+
+int main() {
+    List* listOfLists = NULL;
+    
+    List* list1 = createList();
+    appendNode(list1, 1);
+    appendNode(list1, 2);
+    appendNode(list1, 3);
+    
+    List* list2 = createList();
+    appendNode(list2, 4);
+    appendNode(list2, 5);
+    
+    List* list3 = createList();
+    appendNode(list3, 1);
+    appendNode(list3, 2);
+    appendNode(list3, 3);
+    
+    List* list4 = createList();
+    appendNode(list4, 6);
+    
+    appendList(&listOfLists, list1);
+    appendList(&listOfLists, list2);
+    appendList(&listOfLists, list3);
+    appendList(&listOfLists, list4);
+    
+    removeDuplicates(&listOfLists);
+    
+    printListOfLists(listOfLists);
+    
+    freeListOfLists(listOfLists);
+    
+    return 0;
+}

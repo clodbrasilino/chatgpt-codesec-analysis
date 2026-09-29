@@ -1,0 +1,98 @@
+{
+  "task_id": 428,
+  "text": "Write a C function to sort the given array by using shell sort.",
+  "fn_candidates": [
+    "shell_sort",
+    "ShellSort",
+    "shellSort",
+    "shellsort"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "shell_sort",
+      "args": [
+        [
+          12,
+          23,
+          4,
+          5,
+          3,
+          2,
+          12,
+          81,
+          56,
+          95
+        ]
+      ],
+      "expected": [
+        2,
+        3,
+        4,
+        5,
+        12,
+        12,
+        23,
+        56,
+        81,
+        95
+      ],
+      "assert_src": "assert shell_sort([12, 23, 4, 5, 3, 2, 12, 81, 56, 95]) == [2, 3, 4, 5, 12, 12, 23, 56, 81, 95]"
+    },
+    {
+      "fn_name": "shell_sort",
+      "args": [
+        [
+          24,
+          22,
+          39,
+          34,
+          87,
+          73,
+          68
+        ]
+      ],
+      "expected": [
+        22,
+        24,
+        34,
+        39,
+        68,
+        73,
+        87
+      ],
+      "assert_src": "assert shell_sort([24, 22, 39, 34, 87, 73, 68]) == [22, 24, 34, 39, 68, 73, 87]"
+    },
+    {
+      "fn_name": "shell_sort",
+      "args": [
+        [
+          32,
+          30,
+          16,
+          96,
+          82,
+          83,
+          74
+        ]
+      ],
+      "expected": [
+        16,
+        30,
+        32,
+        74,
+        82,
+        83,
+        96
+      ],
+      "assert_src": "assert shell_sort([32, 30, 16, 96, 82, 83, 74]) == [16, 30, 32, 74, 82, 83, 96]"
+    }
+  ],
+  "arg_kinds": [
+    "int-list"
+  ],
+  "return_kind": "int-list",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

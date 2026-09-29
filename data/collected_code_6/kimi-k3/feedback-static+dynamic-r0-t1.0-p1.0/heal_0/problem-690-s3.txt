@@ -1,0 +1,92 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <limits.h>
+
+int multiply_consecutive(const int *list, size_t size, long long **result, size_t *result_size)
+{
+    size_t i;
+    long long *temp_result;
+
+    if (list == NULL || result == NULL || result_size == NULL || size == 0)
+    {
+        return -1;
+    }
+
+    if (size > SIZE_MAX / sizeof(long long))
+    {
+        return -1;
+    }
+
+    temp_result = malloc(size * sizeof(long long));
+    if (temp_result == NULL)
+    {
+        return -1;
+    }
+
+    for (i = 0; i < size; i++)
+    {
+        if (i == 0)
+        {
+            temp_result[i] = (long long)list[i];
+        }
+        else
+        {
+            if (list[i] != 0 && temp_result[i - 1] > LLONG_MAX / list[i])
+            {
+                free(temp_result);
+                temp_result = NULL;
+                return -1;
+            }
+            temp_result[i] = temp_result[i - 1] * (long long)list[i];
+        }
+    }
+
+    *result = temp_result;
+    *result_size = size;
+    return 0;
+}
+
+int main(void)
+{
+    int list[] = {1, 2, 3, 4, 5};
+    size_t list_size = sizeof(list) / sizeof(list[0]);
+    long long *result = NULL;
+    size_t result_size = 0;
+    size_t i;
+    int status;
+
+    status = multiply_consecutive(list, list_size, &result, &result_size);
+    if (status != 0)
+    {
+        fprintf(stderr, "Error: Failed to multiply consecutive numbers\n");
+        return EXIT_FAILURE;
+    }
+
+    if (result == NULL)
+    {
+        fprintf(stderr, "Error: Result is NULL\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Original list: ");
+    for (i = 0; i < list_size; i++)
+    {
+        printf("%d ", list[i]);
+    }
+    printf("\n");
+
+    printf("Consecutive multiplication results: ");
+    for (i = 0; i < result_size; i++)
+    {
+        printf("%lld ", result[i]);
+    }
+    printf("\n");
+
+    free(result);
+    result = NULL;
+
+    return EXIT_SUCCESS;
+}
+```

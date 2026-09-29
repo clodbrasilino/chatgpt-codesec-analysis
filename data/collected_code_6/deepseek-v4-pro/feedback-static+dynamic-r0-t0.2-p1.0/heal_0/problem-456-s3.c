@@ -1,0 +1,61 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+void reverse_string(char *str) {
+    if (str == NULL) {
+        return;
+    }
+    
+    size_t len = strlen(str);
+    if (len == 0) {
+        return;
+    }
+    
+    char *left = str;
+    char *right = str + len - 1;
+    
+    while (left < right) {
+        char temp = *left;
+        *left = *right;
+        *right = temp;
+        left++;
+        right--;
+    }
+}
+
+void reverse_strings(char **strings, size_t count) {
+    if (strings == NULL) {
+        return;
+    }
+    
+    for (size_t i = 0; i < count; i++) {
+        reverse_string(strings[i]);
+    }
+}
+
+int main(void) {
+    char *strings[] = {
+        "hello",
+        "world",
+        "programming",
+        "C",
+        ""
+    };
+    
+    size_t count = sizeof(strings) / sizeof(strings[0]);
+    
+    printf("Original strings:\n");
+    for (size_t i = 0; i < count; i++) {
+        printf("%s\n", strings[i]);
+    }
+    
+    reverse_strings(strings, count);
+    
+    printf("\nReversed strings:\n");
+    for (size_t i = 0; i < count; i++) {
+        printf("%s\n", strings[i]);
+    }
+    
+    return 0;
+}

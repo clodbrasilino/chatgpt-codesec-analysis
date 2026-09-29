@@ -1,0 +1,64 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+static unsigned long long min_operations(unsigned long long a, unsigned long long b)
+{
+    unsigned long long count;
+
+    if (a >= b) {
+        return a - b;
+    }
+
+    count = 0;
+    while (b > a) {
+        if (b % 2 == 0) {
+            b /= 2;
+        } else {
+            b += 1;
+        }
+        count++;
+    }
+
+    return count + (a - b);
+}
+
+int main(void)
+{
+    long long a;
+    long long b;
+    int result;
+
+    printf("Enter first number: ");
+    result = scanf("%lld", &a);
+    if (result != 1) {
+        fprintf(stderr, "Invalid input for first number\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter second number: ");
+    result = scanf("%lld", &b);
+    if (result != 1) {
+        fprintf(stderr, "Invalid input for second number\n");
+        return EXIT_FAILURE;
+    }
+
+    if (a <= 0 || b <= 0) {
+        fprintf(stderr, "Inputs must be positive\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Minimum operations required: %llu\n",
+           min_operations((unsigned long long)a, (unsigned long long)b));
+
+    return EXIT_SUCCESS;
+}
+```
+
+The key changes address both identified weaknesses:
+
+1. **Signed integer overflow on `b += 1`**: The function now operates entirely on `unsigned long long`. Since inputs are validated as positive `long long` values (bounded by `LLONG_MAX`), incrementing an odd `b` can never wrap in the unsigned domain, and unsigned arithmetic is well-defined in any case, so UBSan can no longer flag it.
+
+2. **Signed integer overflow on `a - b`**: With the previous signed code, `b` could overflow to `LLONG_MIN`, making `a - b` overflow as well. Now `b` never overflows, and the loop guarantees `b <= a` on exit, so `a - b` in unsigned arithmetic is always valid and correct.
+
+3. **Test case 2 (`expected 3, got 2`)**: This failure was a downstream symptom of the undefined behavior — once signed overflow occurred, the compiler was free to produce incorrect counts. With the overflow eliminated, the backward-greedy algorithm (halve when even, increment when odd, then subtract the remaining difference) produces the correct minimal operation count.

@@ -1,0 +1,136 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#include <regex.h>
+
+#define MAX_ERR_LEN 256
+#define MAX_SENTENCE_LEN 4096
+
+int find_adverbs(const char *sentence)
+{
+    regex_t regex;
+    regmatch_t match;
+    const char *pattern = "[A-Za-z]+ly";
+    char errbuf[MAX_ERR_LEN];
+    int ret;
+    size_t offset = 0;
+    size_t len;
+    int count = 0;
+
+    if (sentence == NULL) {
+        fprintf(stderr, "Error: sentence is NULL\n");
+        return -1;
+    }
+
+    len = strnlen(sentence, MAX_SENTENCE_LEN);
+    if (len >= MAX_SENTENCE_LEN) {
+        fprintf(stderr, "Error: sentence too long or not null-terminated\n");
+        return -1;
+    }
+
+    ret = regcomp(&regex, pattern, REG_EXTENDED);
+    if (ret != 0) {
+        regerror(ret, &regex, errbuf, sizeof(errbuf));
+        errbuf[sizeof(errbuf) - 1] = '\0';
+        fprintf(stderr, "Regex compilation failed: %s\n", errbuf);
+        return -1;
+    }
+
+    while (offset < len) {
+        ret = regexec(&regex, sentence + offset, 1, &match, 0);
+        if (ret == REG_NOMATCH) {
+            break;
+        }
+        if (ret != 0) {
+            regerror(ret, &regex, errbuf, sizeof(errbuf));
+            errbuf[sizeof(errbuf) - 1] = '\0';
+            fprintf(stderr, "Regex execution failed: %s\n", errbuf);
+            regfree(&regex);
+            return -1;
+        }
+
+        if (match.rm_so < 0 || match.rm_eo < 0 || match.rm_eo < match.rm_so) {
+            fprintf(stderr, "Error: invalid match offsets\n");
+            regfree(&regex);
+            return -1;
+        }
+
+        size_t start = offset + (size_t)match.rm_so;
+        size_t end = offset + (size_t)match.rm_eo;
+
+        if (start > len || end > len || start > end) {
+            fprintf(stderr, "Error: match out of bounds\n");
+            regfree(&regex);
+            return -1;
+        }
+
+        size_t word_len = end - start;
+
+        if (word_len == 0 || word_len >= MAX_SENTENCE_LEN) {
+            offset = (end > offset) ? end : offset + 1;
+            continue;
+        }
+
+        if (end < len && isalpha((unsigned char)sentence[end])) {
+            offset = end;
+            continue;
+        }
+
+        char *word = malloc(word_len + 1);
+        if (word == NULL) {
+            fprintf(stderr, "Memory allocation failed\n");
+            regfree(&regex);
+            return -1;
+        }
+
+        memcpy(word, sentence + start, word_len);
+        word[word_len] = '\0';
+
+        printf("Adverb: %-15s Position: %zu-%zu\n", word, start, end - 1);
+        count++;
+
+        free(word);
+
+        offset = end;
+    }
+
+    regfree(&regex);
+    return count;
+}
+
+int main(void)
+{
+    const char *sentence = "She quickly ran to the store and quietly bought some milk, then happily walked home.";
+    int result;
+
+    printf("Sentence: %s\n\n", sentence);
+
+    result = find_adverbs(sentence);
+    if (result < 0) {
+        fprintf(stderr, "Failed to search for adverbs\n");
+        return EXIT_FAILURE;
+    }
+
+    if (result == 0) {
+        printf("No adverbs found.\n");
+    } else {
+        printf("\nTotal adverbs found: %d\n", result);
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+Key changes from the original:
+
+1. **Removed the `\b` word-boundary escape** — `\b` is a GNU extension and is not guaranteed by POSIX `REG_EXTENDED`. On strict POSIX implementations it either fails to compile or matches a literal backspace. The word boundary is now enforced portably by checking that the character immediately following the match is not alphabetic (`isalpha`), skipping partial matches instead of reporting them.
+
+2. **Flawfinder `errbuf` warning (CWE-119/120)** — already mitigated: the buffer is always passed with `sizeof(errbuf)` to `regerror` and explicitly null-terminated afterwards. Retained as-is.
+
+3. **Flawfinder `memcpy` warning (CWE-120)** — the destination is heap-allocated at exactly `word_len + 1` bytes, and `word_len` is derived from validated offsets (`start`/`end` bounds-checked against `len`, which itself is bounded by `strnlen(..., MAX_SENTENCE_LEN)`), so the copy can never overflow. Retained with those guarantees intact.
+
+4. **Zero-length match handling simplified** — an empty or oversized match now advances the offset and continues instead of relying on the trailing `rm_eo == rm_so` check, eliminating a potential infinite-loop path and the now-unreachable `(end > 0) ? end - 1 : 0` ternary (a match here always has `word_len >= 1`, so `end - 1` is safe).
+
+5. **Added `<ctype.h>`** for `isalpha`, with the argument cast to `unsigned char` to avoid undefined behavior on negative `char` values.

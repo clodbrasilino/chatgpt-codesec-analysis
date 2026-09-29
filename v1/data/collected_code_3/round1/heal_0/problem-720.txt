@@ -1,0 +1,43 @@
+In C, there is no built-in support for data structures like dictionaries or tuples. However, we can use structures and arrays to create similar functionality. Here is a simple example of how you might create a dictionary-like structure and add it to an array (which is somewhat similar to a tuple).
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_SIZE 100
+
+typedef struct {
+    char key[MAX_SIZE];
+    char value[MAX_SIZE];
+} Dictionary;
+
+typedef struct {
+    Dictionary dictionaries[MAX_SIZE];
+    int size;
+} Tuple;
+
+void addDictionaryToTuple(Tuple *tuple, Dictionary dictionary) {
+    tuple->dictionaries[tuple->size] = dictionary;
+    tuple->size++;
+}
+
+int main() {
+    Tuple tuple;
+    tuple.size = 0;
+
+    Dictionary dictionary;
+    strcpy(dictionary.key, "key1");
+    strcpy(dictionary.value, "value1");
+
+    addDictionaryToTuple(&tuple, dictionary);
+
+    printf("Key: %s, Value: %s\n", tuple.dictionaries[0].key, tuple.dictionaries[0].value);
+
+    return 0;
+}
+```
+
+This code creates a `Dictionary` structure with `key` and `value` fields, and a `Tuple` structure that contains an array of `Dictionary` structures. The `addDictionaryToTuple` function adds a `Dictionary` to the `Tuple`.
+
+Please note that this is a very basic and simplified implementation. In a real-world application, you would need to add error checking, handle memory allocation and deallocation, and possibly use more advanced data structures.

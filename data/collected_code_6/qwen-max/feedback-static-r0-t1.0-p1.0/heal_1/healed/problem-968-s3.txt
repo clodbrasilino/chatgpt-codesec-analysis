@@ -1,0 +1,27 @@
+```c
+#include <stdio.h>
+#include <limits.h>
+#include <float.h>
+#include <math.h>
+
+double periodic_function(double x) {
+    return 3 * sin(x) + 4 * cos(2 * x);
+}
+
+double find_maximum_periodic_value(double (*func)(double), double start, double end, double step) {
+    double max_value = -DBL_MAX;
+    for (double x = start; x <= end; x += step) {
+        double value = func(x);
+        if (value > max_value) {
+            max_value = value;
+        }
+    }
+    return max_value;
+}
+
+int main() {
+    double max_val = find_maximum_periodic_value(periodic_function, 0.0, 2 * M_PI, 0.01);
+    printf("Maximum value: %f\n", max_val);
+    return 0;
+}
+```

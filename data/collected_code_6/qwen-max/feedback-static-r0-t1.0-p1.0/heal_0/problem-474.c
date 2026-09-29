@@ -1,0 +1,21 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+char *replace_char(char *str, char oldChar, char newChar) {
+    if (str == NULL) return NULL;
+    for (char *p = str; *p != '\0'; p++) {
+        if (*p == oldChar) {
+            *p = newChar;
+        }
+    }
+    return str;
+}
+
+int main() {
+    char *testStr = strdup("hello world");
+    testStr = replace_char(testStr, 'o', 'O');
+    printf("%s\n", testStr);
+    free(testStr);
+    return 0;
+}

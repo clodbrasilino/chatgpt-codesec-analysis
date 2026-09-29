@@ -1,0 +1,28 @@
+```C
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_NUMBERS 100
+
+void convert_tuple_string_to_int(char *tuple_str, int *result, int *count) {
+    char *token = strtok(tuple_str, ",");
+    *count = 0;
+    while (token != NULL) {
+        result[*count] = atoi(token);
+        (*count)++;
+        token = strtok(NULL, ",");
+    }
+}
+
+int main() {
+    char tuple_str[] = "1,2,3,4,5";
+    int result[MAX_NUMBERS];
+    int count;
+    convert_tuple_string_to_int(tuple_str, result, &count);
+    for (int i = 0; i < count; i++) {
+        printf("%d ", result[i]);
+    }
+    return 0;
+}
+```

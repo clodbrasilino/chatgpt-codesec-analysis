@@ -1,0 +1,161 @@
+./collected_code_4/round1//heal_1/healed//problem-423.c: In function 'solveGoldMine':
+./collected_code_4/round1//heal_1/healed//problem-423.c:28:51: warning: use of uninitialized value '*dp_108 + _54' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   28 |             int right_down = (i == m - 1) ? 0 : dp[i + 1][j + 1];
+      |                                                 ~~^~~~~~~
+  'solveGoldMine': events 1-18
+    |
+    |    9 |     int **dp = (int **)malloc(m * sizeof(int *));
+    |      |                        ^~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                        |
+    |      |                        (1) region created on heap here
+    |   10 |     if (dp == NULL)
+    |      |        ~                
+    |      |        |
+    |      |        (2) following 'false' branch (when 'dp' is non-NULL)...
+    |......
+    |   13 |     for (i = 0; i < m; i++) {
+    |      |          ~~~~~  ~~~~~   
+    |      |            |      |
+    |      |            |      (4) following 'true' branch (when 'i < m')...
+    |      |            |      (8) following 'false' branch (when 'i >= m')...
+    |      |            (3) ...to here
+    |   14 |         dp[i] = (int *)malloc(n * sizeof(int));
+    |      |                        ~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                        |
+    |      |                        (5) ...to here
+    |   15 |         if (dp[i] == NULL) {
+    |      |            ~            
+    |      |            |
+    |      |            (6) following 'false' branch...
+    |......
+    |   21 |         dp[i][n - 1] = gold[i][n - 1];
+    |      |                            ~
+    |      |                            |
+    |      |                            (7) ...to here
+    |......
+    |   24 |     for (j = n - 2; j >= 0; j--) {
+    |      |          ~~~~~~~~~  ~~~~~~
+    |      |            |          |
+    |      |            |          (10) following 'true' branch (when 'j >= 0')...
+    |      |            (9) ...to here
+    |   25 |         for (i = 0; i < m; i++) {
+    |      |              ~~~~~  ~~~~~
+    |      |                |      |
+    |      |                |      (12) following 'true' branch (when 'i < m')...
+    |      |                (11) ...to here
+    |   26 |             int right = dp[i][j + 1];
+    |      |                           ~
+    |      |                           |
+    |      |                           (13) ...to here
+    |   27 |             int right_up = (i == 0) ? 0 : dp[i - 1][j + 1];
+    |      |                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                                         |
+    |      |                                         (14) following 'false' branch (when 'i == 0')...
+    |      |                                         (15) ...to here
+    |   28 |             int right_down = (i == m - 1) ? 0 : dp[i + 1][j + 1];
+    |      |                              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                                               |   |
+    |      |                                               |   (17) ...to here
+    |      |                                               |   (18) use of uninitialized value '*dp_108 + _54' here
+    |      |                                               (16) following 'true' branch...
+    |
+./collected_code_4/round1//heal_1/healed//problem-423.c:33:20: warning: use of uninitialized value '*dp' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   33 |     int result = dp[0][0];
+      |                  ~~^~~
+  'solveGoldMine': events 1-8
+    |
+    |    9 |     int **dp = (int **)malloc(m * sizeof(int *));
+    |      |                        ^~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                        |
+    |      |                        (1) region created on heap here
+    |   10 |     if (dp == NULL)
+    |      |        ~                
+    |      |        |
+    |      |        (2) following 'false' branch (when 'dp' is non-NULL)...
+    |......
+    |   13 |     for (i = 0; i < m; i++) {
+    |      |          ~~~~~  ~~~~~   
+    |      |            |      |
+    |      |            |      (4) following 'false' branch (when 'i >= m')...
+    |      |            (3) ...to here
+    |......
+    |   24 |     for (j = n - 2; j >= 0; j--) {
+    |      |          ~~~~~~~~~  ~~~~~~
+    |      |            |          |
+    |      |            |          (6) following 'false' branch (when 'j < 0')...
+    |      |            (5) ...to here
+    |......
+    |   33 |     int result = dp[0][0];
+    |      |                  ~~~~~  
+    |      |                    |
+    |      |                    (7) ...to here
+    |      |                    (8) use of uninitialized value '*dp' here
+    |
+./collected_code_4/round1//heal_1/healed//problem-423.c:33:20: warning: use of uninitialized value '*dp' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   33 |     int result = dp[0][0];
+      |                  ~~^~~
+  'main': events 1-8
+    |
+    |   44 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   51 |     if (goldmine == NULL)
+    |      |        ~
+    |      |        |
+    |      |        (2) following 'false' branch (when 'goldmine' is non-NULL)...
+    |......
+    |   54 |     for(i = 0; i < r; i++) {
+    |      |         ~~~~~  ~~~~~
+    |      |           |      |
+    |      |           |      (4) following 'false' branch...
+    |      |           (3) ...to here
+    |......
+    |   64 |     printf("Enter %d elements of the gold mine:\n", r * c);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (5) ...to here
+    |   65 |     for(i = 0; i < r; i++)
+    |      |                ~~~~~
+    |      |                  |
+    |      |                  (6) following 'false' branch...
+    |......
+    |   69 |     printf("Maximum gold that can be collected is: %d\n", solveGoldMine(goldmine, r, c));
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (7) ...to here
+    |      |     (8) calling 'solveGoldMine' from 'main'
+    |
+    +--> 'solveGoldMine': events 9-15
+           |
+           |    6 | int solveGoldMine(int **gold, int m, int n) {
+           |      |     ^~~~~~~~~~~~~
+           |      |     |
+           |      |     (9) entry to 'solveGoldMine'
+           |......
+           |    9 |     int **dp = (int **)malloc(m * sizeof(int *));
+           |      |                        ~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                        |
+           |      |                        (10) region created on heap here
+           |   10 |     if (dp == NULL)
+           |      |        ~
+           |      |        |
+           |      |        (11) following 'false' branch (when 'dp' is non-NULL)...
+           |......
+           |   13 |     for (i = 0; i < m; i++) {
+           |      |          ~~~~~  ~~~~~
+           |      |            |      |
+           |      |            |      (13) following 'false' branch (when 'i >= m')...
+           |      |            (12) ...to here
+           |......
+           |   24 |     for (j = n - 2; j >= 0; j--) {
+           |      |          ~~~~~~~~~
+           |      |            |
+           |      |            (14) ...to here
+           |......
+           |   33 |     int result = dp[0][0];
+           |      |                  ~~~~~
+           |      |                    |
+           |      |                    (15) use of uninitialized value '*dp' here
+           |

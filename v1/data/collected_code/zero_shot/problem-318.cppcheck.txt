@@ -1,0 +1,9 @@
+collected_code/problem-318-0.c:13:19: error: Cannot determine that 'sumOfSides' is initialized [premium-bughuntingUninit]
+    scanf("%lf", &sumOfSides);
+                  ^
+collected_code/problem-318-0.c:15:31: error: Cannot determine that 'sumOfSides' is initialized [premium-bughuntingUninit]
+    double maxVol = maxVolume(sumOfSides);
+                              ^
+collected_code/problem-318-0.c:16:81: error: Cannot determine that 'sumOfSides' is initialized [premium-bughuntingUninit]
+    printf("The maximum volume of a cuboid with sum of sides %.2lf is %.2lf\n", sumOfSides, maxVol);
+                                                                                ^

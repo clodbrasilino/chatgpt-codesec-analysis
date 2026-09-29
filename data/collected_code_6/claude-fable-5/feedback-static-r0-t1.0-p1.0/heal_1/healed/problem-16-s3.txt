@@ -1,0 +1,93 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <regex.h>
+
+static void print_regex_error(int rc, const regex_t *re, const char *context)
+{
+    size_t needed;
+    char *errbuf;
+
+    needed = regerror(rc, re, NULL, 0);
+    errbuf = malloc(needed);
+    if (errbuf == NULL) {
+        fprintf(stderr, "%s failed: unable to allocate error buffer\n", context);
+        return;
+    }
+    regerror(rc, re, errbuf, needed);
+    fprintf(stderr, "%s failed: %s\n", context, errbuf);
+    free(errbuf);
+}
+
+int match_lowercase_underscore(const char *text)
+{
+    regex_t re;
+    int rc;
+    int result;
+
+    if (text == NULL) {
+        return -1;
+    }
+
+    rc = regcomp(&re, "^[a-z]+_[a-z]+$", REG_EXTENDED | REG_NOSUB);
+    if (rc != 0) {
+        print_regex_error(rc, &re, "regcomp");
+        return -1;
+    }
+
+    rc = regexec(&re, text, 0, NULL, 0);
+    if (rc == 0) {
+        result = 1;
+    } else if (rc == REG_NOMATCH) {
+        result = 0;
+    } else {
+        print_regex_error(rc, &re, "regexec");
+        result = -1;
+    }
+
+    regfree(&re);
+    return result;
+}
+
+int main(void)
+{
+    const char *tests[] = {
+        "aab_cbbbc",
+        "aab_Abbbc",
+        "Aaab_abbbc",
+        "hello_world",
+        "hello",
+        "abc_def_ghi"
+    };
+    size_t count = sizeof(tests) / sizeof(tests[0]);
+    size_t i;
+
+    for (i = 0; i < count; i++) {
+        int res = match_lowercase_underscore(tests[i]);
+        if (res < 0) {
+            fprintf(stderr, "Error processing string: %s\n", tests[i]);
+            return EXIT_FAILURE;
+        }
+        if (res == 1) {
+            printf("\"%s\": Found a match!\n", tests[i]);
+        } else {
+            printf("\"%s\": Not matched!\n", tests[i]);
+        }
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the changes:**
+
+The Flawfinder warnings flagged the two statically-sized `char errbuf[256]` arrays (CWE-119/CWE-120). While the original code was actually safe in practice — `regerror()` respects the buffer size passed to it and always null-terminates — the concern is that a fixed 256-byte buffer could silently truncate a longer error message, and static buffers are a general risk pattern.
+
+The fix replaces both fixed-size buffers with a dynamically sized allocation:
+
+1. **Size query first:** Calling `regerror(rc, re, NULL, 0)` returns the exact number of bytes required for the full error message, including the null terminator.
+2. **Exact allocation:** The buffer is `malloc`'d to precisely that size, eliminating both truncation risk and any possibility of an under-sized buffer.
+3. **Allocation failure handling:** If `malloc` fails, a fallback message is printed instead of dereferencing a null pointer.
+4. **Deduplication:** Since the identical error-handling block appeared twice, it was factored into a single helper function `print_regex_error()`, reducing the maintenance surface and ensuring both call sites stay consistent.
+
+All other behavior — the regex pattern, match semantics, return codes (`1` match, `0` no match, `-1` error), `regfree()` cleanup, and the test harness in `main` — remains unchanged.

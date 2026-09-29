@@ -1,0 +1,37 @@
+collected_code/healed/problem-528.c: In function 'findMinLengthLists':
+collected_code/healed/problem-528.c:25:36: warning: dereference of possibly-NULL 'minLists' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   25 |             minLists[*numMinLists] = lists[i];
+      |             ~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~
+  'findMinLengthLists': events 1-8
+    |
+    |   10 |     if (numLists <= 0 || lists == NULL) {
+    |      |        ^
+    |      |        |
+    |      |        (1) following 'false' branch...
+    |......
+    |   14 |     List** minLists = malloc(sizeof(List*) * numLists);
+    |      |                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                       |
+    |      |                       (2) ...to here
+    |      |                       (3) this call could return NULL
+    |......
+    |   18 |     for (int i = 0; i < numLists; i++) {
+    |      |                     ~~~~~~~~~~~~
+    |      |                       |
+    |      |                       (4) following 'true' branch (when 'i < numLists')...
+    |   19 |         if (lists[i]->length < minLen) {
+    |      |                  ~
+    |      |                  |
+    |      |                  (5) ...to here
+    |......
+    |   24 |         if (lists[i]->length == minLen) {
+    |      |            ~
+    |      |            |
+    |      |            (6) following 'true' branch...
+    |   25 |             minLists[*numMinLists] = lists[i];
+    |      |             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                                    |      |
+    |      |                                    |      (7) ...to here
+    |      |                                    (8) 'minLists + (long unsigned int)*numMinLists * 8' could be NULL: unchecked value from (3)
+    |
+-macosx_version_min has been renamed to -macos_version_min

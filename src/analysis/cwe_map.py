@@ -22,7 +22,7 @@ import pandas as pd
 from ..pipeline.comment_inject import extract_standard_messages
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
-CODE_ROOT = REPO_ROOT / "collected_code_6"
+CODE_ROOT = REPO_ROOT / "data" / "collected_code_6"
 RESULTS_ROOT = REPO_ROOT / "results"
 
 # ---------------------------------------------------------------------------

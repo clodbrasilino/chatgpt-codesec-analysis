@@ -1,0 +1,82 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+typedef struct Node {
+    int data;
+    struct Node* next;
+} Node;
+
+bool hasCommonElement(Node* list1, Node* list2) {
+    Node* current1 = list1;
+    while (current1 != NULL) {
+        Node* current2 = list2;
+        while (current2 != NULL) {
+            if (current1->data == current2->data) {
+                return true;
+            }
+            current2 = current2->next;
+        }
+        current1 = current1->next;
+    }
+    return false;
+}
+
+Node* createNode(int data) {
+    Node* newNode = (Node*)malloc(sizeof(Node));
+    if (newNode == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(EXIT_FAILURE);
+    }
+    newNode->data = data;
+    newNode->next = NULL;
+    return newNode;
+}
+
+void appendNode(Node** head, int data) {
+    Node* newNode = createNode(data);
+    if (*head == NULL) {
+        *head = newNode;
+        return;
+    }
+    Node* current = *head;
+    while (current->next != NULL) {
+        current = current->next;
+    }
+    current->next = newNode;
+}
+
+void freeList(Node* head) {
+    Node* current = head;
+    while (current != NULL) {
+        Node* temp = current;
+        current = current->next;
+        free(temp);
+    }
+}
+
+int main(void) {
+    Node* list1 = NULL;
+    Node* list2 = NULL;
+
+    appendNode(&list1, 1);
+    appendNode(&list1, 2);
+    appendNode(&list1, 3);
+
+    appendNode(&list2, 4);
+    appendNode(&list2, 5);
+    appendNode(&list2, 3);
+
+    if (hasCommonElement(list1, list2)) {
+        printf("Lists have a common element\n");
+    } else {
+        printf("Lists do not have a common element\n");
+    }
+
+    freeList(list1);
+    freeList(list2);
+
+    return 0;
+}
+```

@@ -1,0 +1,115 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_STRING_LEN 4096
+
+typedef struct {
+    char **elements;
+    size_t length;
+} StringTuple;
+
+StringTuple* create_tuple_from_list(const char *const *list, size_t count);
+void free_string_tuple(StringTuple *tuple);
+void print_tuple(const StringTuple *tuple);
+
+StringTuple* create_tuple_from_list(const char *const *list, size_t count) {
+    if (count > 0 && list == NULL) {
+        return NULL;
+    }
+
+    StringTuple *tuple = (StringTuple *)malloc(sizeof(StringTuple));
+    if (tuple == NULL) {
+        return NULL;
+    }
+
+    tuple->length = count;
+    tuple->elements = NULL;
+
+    if (count > 0) {
+        tuple->elements = (char **)calloc(count, sizeof(char *));
+        if (tuple->elements == NULL) {
+            free(tuple);
+            return NULL;
+        }
+
+        for (size_t i = 0; i < count; i++) {
+            if (list[i] == NULL) {
+                for (size_t j = 0; j < i; j++) {
+                    free(tuple->elements[j]);
+                }
+                free(tuple->elements);
+                free(tuple);
+                return NULL;
+            }
+
+            size_t len = 0;
+            while (len < MAX_STRING_LEN && list[i][len] != '\0') {
+                len++;
+            }
+
+            tuple->elements[i] = (char *)malloc(len + 1);
+            if (tuple->elements[i] == NULL) {
+                for (size_t j = 0; j < i; j++) {
+                    free(tuple->elements[j]);
+                }
+                free(tuple->elements);
+                free(tuple);
+                return NULL;
+            }
+
+            memcpy(tuple->elements[i], list[i], len);
+            tuple->elements[i][len] = '\0';
+        }
+    }
+
+    return tuple;
+}
+
+void free_string_tuple(StringTuple *tuple) {
+    if (tuple == NULL) {
+        return;
+    }
+
+    if (tuple->elements != NULL) {
+        for (size_t i = 0; i < tuple->length; i++) {
+            if (tuple->elements[i] != NULL) {
+                free(tuple->elements[i]);
+            }
+        }
+        free(tuple->elements);
+    }
+    free(tuple);
+}
+
+void print_tuple(const StringTuple *tuple) {
+    if (tuple == NULL) {
+        return;
+    }
+
+    printf("(");
+    for (size_t i = 0; i < tuple->length; i++) {
+        printf("\"%s\"", tuple->elements[i]);
+        if (i < tuple->length - 1) {
+            printf(", ");
+        }
+    }
+    printf(")\n");
+}
+
+int main(void) {
+    const char *string_list[] = {"apple", "banana", "cherry", "date"};
+    size_t list_length = sizeof(string_list) / sizeof(string_list[0]);
+
+    StringTuple *tuple = create_tuple_from_list(string_list, list_length);
+    if (tuple == NULL) {
+        fprintf(stderr, "Memory allocation failed.\n");
+        return EXIT_FAILURE;
+    }
+
+    print_tuple(tuple);
+
+    free_string_tuple(tuple);
+
+    return EXIT_SUCCESS;
+}

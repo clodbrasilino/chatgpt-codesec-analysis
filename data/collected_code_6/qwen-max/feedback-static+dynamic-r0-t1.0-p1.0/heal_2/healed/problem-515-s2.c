@@ -1,0 +1,35 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+bool isSubsetPresent(const int arr[], int n, int m) {
+    bool table[n+1][m];
+    for (int i = 0; i <= n; i++) {
+        table[i][0] = true;
+    }
+    for (int i = 0; i <= n; i++) {
+        for (int j = 1; j < m; j++) {
+            if (i == 0) {
+                table[i][j] = false;
+            } else {
+                table[i][j] = table[i-1][j];
+                if ((j - arr[i-1] + m) % m < m) {
+                    table[i][j] |= table[i-1][(j - arr[i-1] + m) % m];
+                }
+            }
+        }
+    }
+    return table[n][0];
+}
+
+int main() {
+    const int arr[] = {3, 34, 4, 12, 5, 2};
+    const int n = sizeof(arr)/sizeof(arr[0]);
+    const int m = 9;
+    if(isSubsetPresent(arr, n, m)) {
+        printf("Found a subset with sum divisible by %d\n", m);
+    } else {
+        printf("No subset with sum divisible by %d\n", m);
+    }
+    return 0;
+}

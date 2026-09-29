@@ -1,0 +1,89 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <limits.h>
+#include <stdlib.h>
+
+#define BUFFER_SIZE 256
+
+int count_char_frequency(const char *str, size_t str_max, size_t freq_size, unsigned long freq[])
+{
+    size_t i;
+
+    if (str == NULL || freq == NULL || freq_size < (size_t)UCHAR_MAX + 1) {
+        return -1;
+    }
+
+    for (i = 0; i < freq_size; i++) {
+        freq[i] = 0;
+    }
+
+    for (i = 0; i < str_max && str[i] != '\0'; i++) {
+        unsigned char c = (unsigned char)str[i];
+        if (freq[c] < ULONG_MAX) {
+            freq[c]++;
+        }
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    unsigned long freq[UCHAR_MAX + 1];
+    size_t len;
+    int i;
+
+    printf("Enter a string: ");
+    fflush(stdout);
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    }
+
+    if (count_char_frequency(buffer, sizeof(buffer), sizeof(freq) / sizeof(freq[0]), freq) != 0) {
+        fprintf(stderr, "Error counting character frequency\n");
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i <= UCHAR_MAX; i++) {
+        if (freq[i] > 0) {
+            if (i >= 32 && i < 127) {
+                printf("'%c' : %lu\n", (char)i, freq[i]);
+            } else {
+                printf("0x%02X : %lu\n", (unsigned int)i, freq[i]);
+            }
+        }
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+The original code already addressed the Flawfinder warning about the statically-sized `char buffer[BUFFER_SIZE]` (CWE-119/CWE-120), and the rewritten version preserves those mitigations:
+
+1. **Bounded input reading**: `fgets(buffer, sizeof(buffer), stdin)` limits input to the buffer size, preventing buffer overflow — unlike unsafe alternatives such as `gets()` or unbounded `scanf("%s", ...)`.
+
+2. **Guaranteed null termination**: `buffer[sizeof(buffer) - 1] = '\0'` is a defensive measure ensuring the buffer is always a valid C string.
+
+3. **Bounded length calculation**: `strnlen(buffer, sizeof(buffer))` is used instead of `strlen()`, so the scan can never run past the buffer even if termination were somehow missing.
+
+4. **Defensive API design in `count_char_frequency`**:
+   - Validates `str` and `freq` against `NULL`.
+   - Verifies `freq_size` is large enough for all `unsigned char` values before writing, preventing out-of-bounds writes to `freq`.
+   - The loop is doubly bounded by both `str_max` and the null terminator.
+   - Casting to `unsigned char` before indexing avoids negative-index undefined behavior on platforms where `char` is signed.
+   - The `ULONG_MAX` check guards against counter overflow (unsigned wraparound, CWE-190).
+
+5. **Safe output**: only printable ASCII (32–126) is printed as a character; everything else is shown as hex, avoiding terminal control-character injection issues.
+
+No further changes were required — the code as given is a correct remediation of the flagged weakness.

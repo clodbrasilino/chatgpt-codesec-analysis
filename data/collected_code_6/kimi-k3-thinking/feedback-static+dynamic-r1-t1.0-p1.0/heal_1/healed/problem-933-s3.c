@@ -1,0 +1,227 @@
+#define _POSIX_C_SOURCE 200809L
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#include <regex.h>
+#include <stdint.h>
+
+#define NMATCH 10
+#define MAX_INPUT_LENGTH ((size_t)64 * 1024 * 1024)
+
+static size_t replacement_length(const char *replacement,
+                                 const regmatch_t m[], size_t nmatch)
+{
+    size_t len = 0;
+    size_t i;
+
+    for (i = 0; replacement[i] != '\0'; i++) {
+        if (replacement[i] == '\\' &&
+            replacement[i + 1] >= '0' && replacement[i + 1] <= '9') {
+            size_t g = (size_t)(replacement[i + 1] - '0');
+            if (g < nmatch && m[g].rm_so != -1) {
+                len += (size_t)(m[g].rm_eo - m[g].rm_so);
+            }
+            i++;
+        } else {
+            len++;
+        }
+    }
+    return len;
+}
+
+static int replacement_expand(char *out, size_t *oi, size_t out_size,
+                              const char *replacement, const char *str,
+                              const regmatch_t m[], size_t nmatch)
+{
+    size_t i;
+
+    for (i = 0; replacement[i] != '\0'; i++) {
+        if (replacement[i] == '\\' &&
+            replacement[i + 1] >= '0' && replacement[i + 1] <= '9') {
+            size_t g = (size_t)(replacement[i + 1] - '0');
+            if (g < nmatch && m[g].rm_so != -1) {
+                size_t glen = (size_t)(m[g].rm_eo - m[g].rm_so);
+                if (glen >= out_size - *oi) {
+                    return -1;
+                }
+                memcpy(out + *oi, str + m[g].rm_so, glen);
+                *oi += glen;
+            }
+            i++;
+        } else {
+            if (*oi + 1 >= out_size) {
+                return -1;
+            }
+            out[(*oi)++] = replacement[i];
+        }
+    }
+    return 0;
+}
+
+static char *regex_replace_all(const char *input, const char *pattern,
+                               const char *replacement)
+{
+    regex_t re;
+    regmatch_t m[NMATCH];
+    size_t len;
+    size_t pos;
+    size_t out_size;
+    size_t oi;
+    char *out;
+
+    if (input == NULL || pattern == NULL || replacement == NULL) {
+        return NULL;
+    }
+
+    if (regcomp(&re, pattern, REG_EXTENDED) != 0) {
+        return NULL;
+    }
+
+    len = strnlen(input, MAX_INPUT_LENGTH);
+    if (len == MAX_INPUT_LENGTH) {
+        regfree(&re);
+        return NULL;
+    }
+    out_size = len + 1;
+
+    pos = 0;
+    while (pos < len && regexec(&re, input + pos, NMATCH, m, 0) == 0) {
+        if (m[0].rm_so == m[0].rm_eo) {
+            if (pos + (size_t)m[0].rm_eo >= len) {
+                break;
+            }
+            pos += (size_t)m[0].rm_eo + 1;
+            continue;
+        }
+        {
+            size_t match_len = (size_t)(m[0].rm_eo - m[0].rm_so);
+            size_t repl_len = replacement_length(replacement, m, NMATCH);
+            if (repl_len > SIZE_MAX - out_size) {
+                regfree(&re);
+                return NULL;
+            }
+            out_size += repl_len;
+            if (match_len > out_size) {
+                regfree(&re);
+                return NULL;
+            }
+            out_size -= match_len;
+        }
+        pos += (size_t)m[0].rm_eo;
+    }
+
+    out = malloc(out_size);
+    if (out == NULL) {
+        regfree(&re);
+        return NULL;
+    }
+
+    pos = 0;
+    oi = 0;
+    while (pos < len && regexec(&re, input + pos, NMATCH, m, 0) == 0) {
+        if (m[0].rm_so == m[0].rm_eo) {
+            size_t adv;
+            if (pos + (size_t)m[0].rm_eo >= len) {
+                break;
+            }
+            adv = (size_t)m[0].rm_eo + 1;
+            if (adv >= out_size - oi) {
+                free(out);
+                regfree(&re);
+                return NULL;
+            }
+            memcpy(out + oi, input + pos, adv);
+            oi += adv;
+            pos += adv;
+            continue;
+        }
+        {
+            size_t prefix = (size_t)m[0].rm_so;
+            if (prefix >= out_size - oi) {
+                free(out);
+                regfree(&re);
+                return NULL;
+            }
+            memcpy(out + oi, input + pos, prefix);
+            oi += prefix;
+        }
+        if (replacement_expand(out, &oi, out_size, replacement,
+                               input + pos, m, NMATCH) != 0) {
+            free(out);
+            regfree(&re);
+            return NULL;
+        }
+        pos += (size_t)m[0].rm_eo;
+    }
+    {
+        size_t tail = len - pos;
+        if (tail >= out_size - oi) {
+            free(out);
+            regfree(&re);
+            return NULL;
+        }
+        memcpy(out + oi, input + pos, tail);
+        oi += tail;
+    }
+    out[oi] = '\0';
+
+    regfree(&re);
+    return out;
+}
+
+char *camel_to_snake(const char *input)
+{
+    char *step1;
+    char *step2;
+    size_t i;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    step1 = regex_replace_all(input, "([A-Z]+)([A-Z][a-z])", "\\1_\\2");
+    if (step1 == NULL) {
+        return NULL;
+    }
+
+    step2 = regex_replace_all(step1, "([a-z0-9])([A-Z])", "\\1_\\2");
+    free(step1);
+    if (step2 == NULL) {
+        return NULL;
+    }
+
+    for (i = 0; step2[i] != '\0'; i++) {
+        step2[i] = (char)tolower((unsigned char)step2[i]);
+    }
+
+    return step2;
+}
+
+int main(void)
+{
+    const char *tests[] = {
+        "camelCaseString",
+        "HTTPSConnection",
+        "XMLHttpRequest",
+        "simpleTest",
+        "already_snake_case",
+        "A",
+        "",
+        NULL
+    };
+    size_t i;
+
+    for (i = 0; tests[i] != NULL; i++) {
+        char *snake = camel_to_snake(tests[i]);
+        if (snake == NULL) {
+            fprintf(stderr, "error: failed to convert \"%s\"\n", tests[i]);
+            return EXIT_FAILURE;
+        }
+        printf("%s -> %s\n", tests[i], snake);
+        free(snake);
+    }
+
+    return EXIT_SUCCESS;
+}

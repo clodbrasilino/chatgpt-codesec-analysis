@@ -1,0 +1,79 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+long long int_sqrt(long long n)
+{
+    long long low, high, mid, result;
+
+    if (n < 0) {
+        return -1;
+    }
+
+    if (n < 2) {
+        return n;
+    }
+
+    low = 1;
+    high = n / 2;
+    result = -1;
+
+    while (low <= high) {
+        mid = low + (high - low) / 2;
+
+        if (mid <= n / mid) {
+            if (mid * mid == n) {
+                return mid;
+            }
+            result = mid;
+            low = mid + 1;
+        } else {
+            high = mid - 1;
+        }
+    }
+
+    return result;
+}
+
+int is_perfect_square(long long n, long long *root)
+{
+    long long r;
+
+    if (n < 0 || root == NULL) {
+        return 0;
+    }
+
+    r = int_sqrt(n);
+
+    if (r >= 0 && r * r == n) {
+        *root = r;
+        return 1;
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    long long number;
+    long long root;
+
+    printf("Enter a non-negative integer: ");
+
+    if (scanf("%lld", &number) != 1) {
+        fprintf(stderr, "Error: invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (number < 0) {
+        fprintf(stderr, "Error: number must be non-negative.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (is_perfect_square(number, &root)) {
+        printf("The square root of %lld is %lld\n", number, root);
+    } else {
+        printf("%lld is not a perfect square.\n", number);
+    }
+
+    return EXIT_SUCCESS;
+}

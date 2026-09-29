@@ -1,0 +1,48 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+int starts_with_number(const char *str, int number)
+{
+    char num_str[32];
+    int ret;
+    size_t num_len;
+
+    if (str == NULL)
+    {
+        return 0;
+    }
+
+    ret = snprintf(num_str, sizeof(num_str), "%d", number);
+    if (ret < 0 || (size_t)ret >= sizeof(num_str))
+    {
+        return 0;
+    }
+
+    num_len = (size_t)ret;
+
+    if (strncmp(str, num_str, num_len) == 0)
+    {
+        return 1;
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    const char *test_string = "12345 is the number";
+    int test_number = 12345;
+
+    if (starts_with_number(test_string, test_number))
+    {
+        printf("String starts with %d\n", test_number);
+    }
+    else
+    {
+        printf("String does not start with %d\n", test_number);
+    }
+
+    return 0;
+}

@@ -1,0 +1,23 @@
+#include <stdio.h>
+#include <ctype.h>
+#include <string.h>
+
+void sanitize_string(char *str) {
+    char *src = str;
+    char *dst = str;
+    while (*src) {
+        if (isalnum((unsigned char)*src)) {
+            *dst++ = *src;
+        }
+        src++;
+    }
+    *dst = '\0';
+}
+
+int main() {
+    char input[] = "Hello, World! 123";
+    printf("Original: %s\n", input);
+    sanitize_string(input);
+    printf("Sanitized: %s\n", input);
+    return 0;
+}

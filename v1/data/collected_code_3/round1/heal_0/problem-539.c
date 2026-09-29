@@ -1,0 +1,60 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+typedef struct Node {
+    int data;
+    struct Node* next;
+} Node;
+
+Node* createNode(int data) {
+    Node* newNode = (Node*)malloc(sizeof(Node));
+    if (!newNode) {
+        printf("Memory error\n");
+        return NULL;
+    }
+    newNode->data = data;
+    newNode->next = NULL;
+    return newNode;
+}
+
+Node* createList(int base, int length) {
+    Node* head = NULL;
+    Node* temp = NULL;
+    Node* p = NULL;
+
+    for (int i = 0; i < length; i++) {
+        temp = createNode(pow(base, i));
+        if (!temp) {
+            return NULL;
+        }
+
+        if (head == NULL) {
+            head = temp;
+        } else {
+            p = head;
+            while (p->next != NULL) {
+                p = p->next;
+            }
+            p->next = temp;
+        }
+    }
+    return head;
+}
+
+void printList(Node* head) {
+    Node* p = head;
+    while (p) {
+        printf("%d ", p->data);
+        p = p->next;
+    }
+    printf("\n");
+}
+
+int main() {
+    int base = 2;
+    int length = 10;
+    Node* list = createList(base, length);
+    printList(list);
+    return 0;
+}

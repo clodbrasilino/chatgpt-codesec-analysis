@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-862-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-862-s2.c:116:22: warning: Either the condition 'text_pos<10000*100' is redundant or the array 'text[120]' is accessed at index 999999, which is out of bounds. [arrayIndexOutOfBoundsCond]
+        char c = text[text_pos];
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-862-s2.c:115:47: note: Assuming that condition 'text_pos<10000*100' is not redundant
+    while (text[text_pos] != '\0' && text_pos < MAX_WORDS * MAX_WORD_LEN) {
+                                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-862-s2.c:116:22: note: Array index out of bounds
+        char c = text[text_pos];
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-862-s2.c:115:16: style: Array index 'text_pos' is used before limits check. [arrayIndexThenCheck]
+    while (text[text_pos] != '\0' && text_pos < MAX_WORDS * MAX_WORD_LEN) {
+               ^

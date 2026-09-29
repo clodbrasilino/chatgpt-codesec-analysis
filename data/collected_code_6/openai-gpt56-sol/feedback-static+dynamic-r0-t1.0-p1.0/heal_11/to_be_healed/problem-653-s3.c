@@ -1,0 +1,370 @@
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    const char *key;
+    const char *value;
+} KeyValuePair;
+
+typedef struct {
+    char **items;
+    size_t count;
+    size_t capacity;
+} StringList;
+
+typedef struct {
+    char *key;
+    StringList values;
+} MapEntry;
+
+typedef struct {
+    MapEntry *entries;
+    size_t count;
+    size_t capacity;
+} ListMap;
+
+static char *duplicate_string(const char *source, size_t max_length)
+{
+    const char *terminator;
+    size_t length;
+    char *copy;
+
+    if (source == NULL || max_length == SIZE_MAX) {
+        return NULL;
+    }
+
+    terminator = memchr(source, '\0', max_length + 1U);
+    if (terminator == NULL) {
+        return NULL;
+    }
+
+    length = (size_t)(terminator - source);
+    if (length == SIZE_MAX) {
+        return NULL;
+    }
+
+    copy = malloc(length + 1U);
+    if (copy == NULL) {
+        return NULL;
+    }
+
+    if (length != 0U) {
+        /* Possible weaknesses found:
+         * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+         */
+        memcpy(copy, source, length);
+    }
+    copy[length] = '\0';
+
+    return copy;
+}
+
+static int grow_array(void **array, size_t element_size, size_t *capacity)
+{
+    size_t new_capacity;
+    void *new_array;
+
+    if (array == NULL || capacity == NULL || element_size == 0U) {
+        return 0;
+    }
+
+    if (*capacity == 0U) {
+        new_capacity = 4U;
+    } else {
+        if (*capacity > SIZE_MAX / 2U) {
+            return 0;
+        }
+        new_capacity = *capacity * 2U;
+    }
+
+    if (new_capacity > SIZE_MAX / element_size) {
+        return 0;
+    }
+
+    new_array = realloc(*array, new_capacity * element_size);
+    if (new_array == NULL) {
+        return 0;
+    }
+
+    *array = new_array;
+    *capacity = new_capacity;
+
+    return 1;
+}
+
+static void free_string_list(StringList *list)
+{
+    size_t i;
+
+    if (list == NULL) {
+        return;
+    }
+
+    for (i = 0U; i < list->count; ++i) {
+        free(list->items[i]);
+    }
+
+    free(list->items);
+    list->items = NULL;
+    list->count = 0U;
+    list->capacity = 0U;
+}
+
+static void free_list_map(ListMap *map)
+{
+    size_t i;
+
+    if (map == NULL) {
+        return;
+    }
+
+    for (i = 0U; i < map->count; ++i) {
+        free(map->entries[i].key);
+        free_string_list(&map->entries[i].values);
+    }
+
+    free(map->entries);
+    map->entries = NULL;
+    map->count = 0U;
+    map->capacity = 0U;
+}
+
+static MapEntry *find_entry(ListMap *map, const char *key)
+{
+    size_t i;
+
+    if (map == NULL || key == NULL) {
+        return NULL;
+    }
+
+    for (i = 0U; i < map->count; ++i) {
+        if (map->entries[i].key != NULL &&
+            strcmp(map->entries[i].key, key) == 0) {
+            return &map->entries[i];
+        }
+    }
+
+    return NULL;
+}
+
+static int append_value(StringList *list, const char *value,
+                        size_t max_length)
+{
+    char *copy;
+
+    if (list == NULL || value == NULL) {
+        return 0;
+    }
+
+    copy = duplicate_string(value, max_length);
+    if (copy == NULL) {
+        return 0;
+    }
+
+    if (list->count == list->capacity &&
+        !grow_array((void **)&list->items, sizeof(*list->items),
+                    &list->capacity)) {
+        free(copy);
+        return 0;
+    }
+
+    if (list->count >= list->capacity) {
+        free(copy);
+        return 0;
+    }
+
+    list->items[list->count++] = copy;
+    return 1;
+}
+
+static MapEntry *add_entry(ListMap *map, const char *key, size_t max_length)
+{
+    char *key_copy;
+    MapEntry *entry;
+
+    if (map == NULL || key == NULL) {
+        return NULL;
+    }
+
+    key_copy = duplicate_string(key, max_length);
+    if (key_copy == NULL) {
+        return NULL;
+    }
+
+    if (map->count == map->capacity &&
+        !grow_array((void **)&map->entries, sizeof(*map->entries),
+                    &map->capacity)) {
+        free(key_copy);
+        return NULL;
+    }
+
+    if (map->count >= map->capacity) {
+        free(key_copy);
+        return NULL;
+    }
+
+    entry = &map->entries[map->count++];
+    entry->key = key_copy;
+    entry->values.items = NULL;
+    entry->values.count = 0U;
+    entry->values.capacity = 0U;
+
+    return entry;
+}
+
+static int group_pairs(const KeyValuePair *pairs, size_t pair_count,
+                       size_t max_string_length, ListMap *result)
+{
+    ListMap temporary = {NULL, 0U, 0U};
+    size_t i;
+
+    if (result == NULL || max_string_length == SIZE_MAX ||
+        (pairs == NULL && pair_count != 0U)) {
+        return 0;
+    }
+
+    for (i = 0U; i < pair_count; ++i) {
+        MapEntry *entry;
+
+        if (pairs[i].key == NULL || pairs[i].value == NULL) {
+            free_list_map(&temporary);
+            return 0;
+        }
+
+        if (memchr(pairs[i].key, '\0', max_string_length + 1U) == NULL ||
+            memchr(pairs[i].value, '\0', max_string_length + 1U) == NULL) {
+            free_list_map(&temporary);
+            return 0;
+        }
+
+        entry = find_entry(&temporary, pairs[i].key);
+        if (entry == NULL) {
+            entry = add_entry(&temporary, pairs[i].key, max_string_length);
+            if (entry == NULL) {
+                free_list_map(&temporary);
+                return 0;
+            }
+        }
+
+        if (!append_value(&entry->values, pairs[i].value,
+                          max_string_length)) {
+            free_list_map(&temporary);
+            return 0;
+        }
+    }
+
+    free_list_map(result);
+    *result = temporary;
+    return 1;
+}
+
+static int print_quoted_string(const char *string)
+{
+    const unsigned char *p;
+
+    if (string == NULL || putchar('"') == EOF) {
+        return 0;
+    }
+
+    for (p = (const unsigned char *)string; *p != '\0'; ++p) {
+        switch (*p) {
+        case '"':
+            if (fputs("\\\"", stdout) == EOF) {
+                return 0;
+            }
+            break;
+        case '\\':
+            if (fputs("\\\\", stdout) == EOF) {
+                return 0;
+            }
+            break;
+        case '\n':
+            if (fputs("\\n", stdout) == EOF) {
+                return 0;
+            }
+            break;
+        case '\r':
+            if (fputs("\\r", stdout) == EOF) {
+                return 0;
+            }
+            break;
+        case '\t':
+            if (fputs("\\t", stdout) == EOF) {
+                return 0;
+            }
+            break;
+        default:
+            if (putchar((int)*p) == EOF) {
+                return 0;
+            }
+            break;
+        }
+    }
+
+    return putchar('"') != EOF;
+}
+
+static int print_list_map(const ListMap *map)
+{
+    size_t i;
+
+    if (map == NULL) {
+        return 0;
+    }
+
+    for (i = 0U; i < map->count; ++i) {
+        size_t j;
+
+        if (map->entries[i].key == NULL ||
+            printf("%s: [", map->entries[i].key) < 0) {
+            return 0;
+        }
+
+        for (j = 0U; j < map->entries[i].values.count; ++j) {
+            if ((j != 0U && fputs(", ", stdout) == EOF) ||
+                !print_quoted_string(map->entries[i].values.items[j])) {
+                return 0;
+            }
+        }
+
+        if (fputs("]\n", stdout) == EOF) {
+            return 0;
+        }
+    }
+
+    return 1;
+}
+
+int main(void)
+{
+    const KeyValuePair pairs[] = {
+        {"fruit", "apple"},
+        {"color", "red"},
+        {"fruit", "banana"},
+        {"color", "blue"},
+        {"fruit", "orange"}
+    };
+    const size_t pair_count = sizeof(pairs) / sizeof(pairs[0]);
+    const size_t max_string_length = 1024U;
+    ListMap map = {NULL, 0U, 0U};
+    int status = EXIT_SUCCESS;
+
+    if (!group_pairs(pairs, pair_count, max_string_length, &map)) {
+        fputs("Failed to group key-value pairs.\n", stderr);
+        return EXIT_FAILURE;
+    }
+
+    if (!print_list_map(&map)) {
+        status = EXIT_FAILURE;
+    }
+
+    free_list_map(&map);
+
+    if (fflush(stdout) == EOF) {
+        status = EXIT_FAILURE;
+    }
+
+    return status;
+}

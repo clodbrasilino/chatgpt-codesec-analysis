@@ -1,0 +1,49 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <stdlib.h>
+
+typedef struct {
+    char **keys;
+    char **values;
+    int size;
+} Dictionary;
+
+bool isDictionaryEmpty(Dictionary *dict) {
+    return dict->size == 0;
+}
+
+bool areAllDictionariesEmpty(Dictionary **dicts, int dictCount) {
+    for (int i = 0; i < dictCount; i++) {
+        if (!isDictionaryEmpty(dicts[i])) {
+            return false;
+        }
+    }
+    return true;
+}
+
+int main() {
+    Dictionary *dict1 = malloc(sizeof(Dictionary));
+    /* Possible weaknesses found:
+     *  dereference of possibly-NULL 'dict1' [CWE-690] [-Wanalyzer-possible-null-dereference]
+     */
+    dict1->size = 0;
+
+    Dictionary *dict2 = malloc(sizeof(Dictionary));
+    /* Possible weaknesses found:
+     *  dereference of possibly-NULL 'dict2' [CWE-690] [-Wanalyzer-possible-null-dereference]
+     */
+    dict2->size = 0;
+
+    Dictionary *dicts[] = {dict1, dict2};
+
+    if (areAllDictionariesEmpty(dicts, 2)) {
+        printf("All dictionaries are empty\n");
+    } else {
+        printf("Not all dictionaries are empty\n");
+    }
+
+    free(dict1);
+    free(dict2);
+
+    return 0;
+}

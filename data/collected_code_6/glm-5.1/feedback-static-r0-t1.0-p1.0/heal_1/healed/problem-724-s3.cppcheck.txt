@@ -1,0 +1,31 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-724-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-724-s3.c:67:46: style: Condition 'base<0' is always false [knownConditionTrueFalse]
+    if ((base == 0 && exponent == 0) || base < 0 || exponent < 0) {
+                                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-724-s3.c:54:58: note: Assuming that condition 'base_long<0' is not redundant
+    if (*endptr1 != '\0' || errno == ERANGE || base_long < 0 || base_long > INT_MAX) {
+                                                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-724-s3.c:60:66: note: Assuming condition is false
+    if (*endptr2 != '\0' || errno == ERANGE || exponent_long < 0 || exponent_long > INT_MAX) {
+                                                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-724-s3.c:64:16: note: Assignment 'base=(int)base_long', assigned value is greater than -1
+    int base = (int)base_long;
+               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-724-s3.c:67:46: note: Condition 'base<0' is always false
+    if ((base == 0 && exponent == 0) || base < 0 || exponent < 0) {
+                                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-724-s3.c:67:62: style: Condition 'exponent<0' is always false [knownConditionTrueFalse]
+    if ((base == 0 && exponent == 0) || base < 0 || exponent < 0) {
+                                                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-724-s3.c:60:62: note: Assuming that condition 'exponent_long<0' is not redundant
+    if (*endptr2 != '\0' || errno == ERANGE || exponent_long < 0 || exponent_long > INT_MAX) {
+                                                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-724-s3.c:65:20: note: Assignment 'exponent=(int)exponent_long', assigned value is greater than -1
+    int exponent = (int)exponent_long;
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-724-s3.c:67:62: note: Condition 'exponent<0' is always false
+    if ((base == 0 && exponent == 0) || base < 0 || exponent < 0) {
+                                                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-724-s3.c:47:33: style: Parameter 'argv' can be declared as const array [constParameter]
+int main(int argc, char * const argv[]) {
+                                ^

@@ -1,0 +1,107 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+typedef struct Node {
+    int data;
+    struct Node* next;
+} Node;
+
+Node* create_node(int data) {
+    Node* new_node = (Node*)malloc(sizeof(Node));
+    if (!new_node) {
+        exit(EXIT_FAILURE);
+    }
+    new_node->data = data;
+    new_node->next = NULL;
+    return new_node;
+}
+
+void append(Node** head, int data) {
+    if (!head) return;
+    Node* new_node = create_node(data);
+    if (!*head) {
+        *head = new_node;
+        return;
+    }
+    Node* current = *head;
+    while (current->next) {
+        current = current->next;
+    }
+    current->next = new_node;
+}
+
+void free_list(Node* head) {
+    Node* tmp;
+    while (head) {
+        tmp = head;
+        head = head->next;
+        free(tmp);
+    }
+}
+
+bool contains(Node* head, int data) {
+    while (head) {
+        if (head->data == data) {
+            return true;
+        }
+        head = head->next;
+    }
+    return false;
+}
+
+Node* list_difference(Node* list1, Node* list2) {
+    Node* result = NULL;
+    Node* current = list1;
+    
+    while (current) {
+        if (!contains(list2, current->data) && !contains(result, current->data)) {
+            append(&result, current->data);
+        }
+        current = current->next;
+    }
+    
+    current = list2;
+    while (current) {
+        if (!contains(list1, current->data) && !contains(result, current->data)) {
+            append(&result, current->data);
+        }
+        current = current->next;
+    }
+    
+    return result;
+}
+
+void print_list(Node* head) {
+    while (head) {
+        printf("%d ", head->data);
+        head = head->next;
+    }
+    printf("\n");
+}
+
+int main(void) {
+    Node* list1 = NULL;
+    Node* list2 = NULL;
+    Node* diff = NULL;
+
+    append(&list1, 1);
+    append(&list1, 2);
+    append(&list1, 3);
+    append(&list1, 4);
+
+    append(&list2, 3);
+    append(&list2, 4);
+    append(&list2, 5);
+    append(&list2, 6);
+
+    diff = list_difference(list1, list2);
+
+    print_list(diff);
+
+    free_list(list1);
+    free_list(list2);
+    free_list(diff);
+
+    return 0;
+}

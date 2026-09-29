@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_0/problem-391-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_0/problem-391-s2.c:13:28: warning: Possible null pointer dereference: key [nullPointer]
+    new_node->key = strdup(key);
+                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_0/problem-391-s2.c:14:43: note: Calling function 'create_node', 1st argument 'NULL' value is 0
+    new_node->value = value ? create_node(NULL, value) : NULL;  // If value is a string, it's a leaf node
+                                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_0/problem-391-s2.c:13:28: note: Null pointer dereference
+    new_node->key = strdup(key);
+                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_0/problem-391-s2.c:13:28: error: Null pointer dereference: key [ctunullpointer]
+    new_node->key = strdup(key);
+                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_0/problem-391-s2.c:14:42: note: Calling function create_node, 1st argument is null
+    new_node->value = value ? create_node(NULL, value) : NULL;  // If value is a string, it's a leaf node
+                                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_0/problem-391-s2.c:13:28: note: Dereferencing argument key that is null
+    new_node->key = strdup(key);
+                           ^

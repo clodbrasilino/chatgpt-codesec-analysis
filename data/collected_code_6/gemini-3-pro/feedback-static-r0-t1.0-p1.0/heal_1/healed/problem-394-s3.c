@@ -1,0 +1,40 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+bool checkDistinct(const int* tuple, size_t size) {
+    if (tuple == NULL || size == 0) {
+        return true; 
+    }
+
+    for (size_t i = 0; i < size - 1; i++) {
+        for (size_t j = i + 1; j < size; j++) {
+            if (tuple[i] == tuple[j]) {
+                return false; 
+            }
+        }
+    }
+    return true; 
+}
+
+int main(void) {
+    int tuple1[] = {1, 2, 3, 4, 5};
+    size_t size1 = sizeof(tuple1) / sizeof(tuple1[0]);
+
+    if (checkDistinct(tuple1, size1)) {
+        printf("Tuple 1 is distinct.\n");
+    } else {
+        printf("Tuple 1 is not distinct.\n");
+    }
+
+    int tuple2[] = {1, 2, 3, 2, 5};
+    size_t size2 = sizeof(tuple2) / sizeof(tuple2[0]);
+
+    if (checkDistinct(tuple2, size2)) {
+        printf("Tuple 2 is distinct.\n");
+    } else {
+        printf("Tuple 2 is not distinct.\n");
+    }
+
+    return 0;
+}

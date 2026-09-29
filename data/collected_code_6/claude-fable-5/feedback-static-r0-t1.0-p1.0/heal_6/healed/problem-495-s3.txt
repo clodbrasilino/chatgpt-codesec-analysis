@@ -1,0 +1,145 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+#define MAX_INPUT_LEN 4096
+
+static int append_segment(char *output, size_t output_size,
+                          size_t *out_len, const char *src, size_t seg_len)
+{
+    if (output == NULL || out_len == NULL || src == NULL) {
+        return -1;
+    }
+    if (*out_len >= output_size) {
+        return -1;
+    }
+    if (seg_len >= output_size - *out_len) {
+        return -1;
+    }
+    memmove(output + *out_len, src, seg_len);
+    *out_len += seg_len;
+    return 0;
+}
+
+int remove_lowercase(const char *input, char *output, size_t output_size)
+{
+    regex_t regex;
+    regmatch_t match;
+    int ret;
+    size_t out_len = 0;
+    const char *cursor;
+    size_t input_len;
+
+    if (input == NULL || output == NULL || output_size == 0) {
+        return -1;
+    }
+
+    input_len = strnlen(input, MAX_INPUT_LEN);
+    if (input_len >= MAX_INPUT_LEN) {
+        return -1;
+    }
+
+    ret = regcomp(&regex, "[a-z]+", REG_EXTENDED);
+    if (ret != 0) {
+        return -1;
+    }
+
+    cursor = input;
+    while (*cursor != '\0') {
+        ret = regexec(&regex, cursor, 1, &match, 0);
+        if (ret == REG_NOMATCH) {
+            size_t remaining = strnlen(cursor, MAX_INPUT_LEN);
+            if (remaining >= MAX_INPUT_LEN ||
+                append_segment(output, output_size, &out_len,
+                               cursor, remaining) != 0) {
+                regfree(&regex);
+                return -1;
+            }
+            break;
+        }
+        if (ret != 0) {
+            regfree(&regex);
+            return -1;
+        }
+        if (match.rm_so > 0) {
+            size_t seg_len = (size_t)match.rm_so;
+            if (append_segment(output, output_size, &out_len,
+                               cursor, seg_len) != 0) {
+                regfree(&regex);
+                return -1;
+            }
+        }
+        if (match.rm_eo <= 0) {
+            regfree(&regex);
+            return -1;
+        }
+        cursor += match.rm_eo;
+    }
+
+    if (out_len >= output_size) {
+        regfree(&regex);
+        return -1;
+    }
+    output[out_len] = '\0';
+    regfree(&regex);
+    return 0;
+}
+
+int main(void)
+{
+    const char *test_strings[] = {
+        "HelloWorldFooBAR",
+        "abcDEFghiJKL",
+        "ALLUPPERCASE",
+        "alllowercase",
+        "Mix3d C4s3 Str1ng"
+    };
+    size_t count = sizeof(test_strings) / sizeof(test_strings[0]);
+    size_t i;
+
+    for (i = 0; i < count; i++) {
+        size_t input_len = strnlen(test_strings[i], MAX_INPUT_LEN);
+        size_t buf_size;
+        char *result;
+
+        if (input_len >= MAX_INPUT_LEN) {
+            fprintf(stderr, "Input too long: %s\n", test_strings[i]);
+            return EXIT_FAILURE;
+        }
+
+        buf_size = input_len + 1;
+        result = calloc(buf_size, sizeof(char));
+        if (result == NULL) {
+            fprintf(stderr, "Memory allocation failed\n");
+            return EXIT_FAILURE;
+        }
+
+        if (remove_lowercase(test_strings[i], result, buf_size) == 0) {
+            printf("Input:  %s\n", test_strings[i]);
+            printf("Output: %s\n\n", result);
+        } else {
+            fprintf(stderr, "Failed to process string: %s\n", test_strings[i]);
+            free(result);
+            return EXIT_FAILURE;
+        }
+
+        free(result);
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis summary:**
+
+The original code was already defensively written — `append_segment()` performs strict bounds checking before every write, input length is capped via `strnlen()` against `MAX_INPUT_LEN`, the regex handle is freed on every exit path, and NUL termination is verified against the buffer size before writing.
+
+The single Flawfinder hit (CWE-119/CWE-120) concerned the statically-sized `char result[RESULT_SIZE]` array in `main`. While the original was not actually exploitable (since `sizeof(result)` was correctly passed and honored by `remove_lowercase`), the rewrite eliminates the finding by:
+
+1. **Replacing the fixed-size stack buffer with a dynamically sized heap allocation** — the output buffer is sized to `strnlen(input) + 1`, which is provably sufficient since removing characters can never grow the string. This removes any possibility of the output exceeding the buffer regardless of future input changes.
+2. **Using `calloc`** to guarantee zero-initialized memory (replacing the `memset`), with the allocation checked for failure.
+3. **Freeing the buffer on all paths**, including the error path, to avoid leaks.
+
+All existing bounds checks, overflow-safe length arithmetic (`seg_len >= output_size - *out_len` avoids integer overflow), and resource cleanup in `remove_lowercase` were preserved unchanged, as they were correct.

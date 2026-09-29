@@ -1,0 +1,30 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int diff_between_sum(int n) {
+    int diff = 0;
+    int digit;
+
+    while (n != 0) {
+        digit = n % 10;
+        if (digit % 2 == 0) {
+            diff += digit;
+        }
+        else {
+            diff -= digit;
+        }
+        n = n / 10;
+    }
+    return abs(diff);
+}
+
+int main() {
+    int num;
+    printf("Enter a number: ");
+    scanf("%d", &num);
+
+    printf("Difference between sums of even and odd digits: %d\n", diff_between_sum(num));
+    return 0;
+}
+```

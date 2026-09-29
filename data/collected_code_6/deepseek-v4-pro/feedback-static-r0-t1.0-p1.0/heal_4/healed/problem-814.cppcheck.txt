@@ -1,0 +1,37 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-814.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-814.c:36:13: style: Condition 'len>=1' is always true [knownConditionTrueFalse]
+    if (len >= 1 && input[len - 1] == '\n') {
+            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-814.c:31:13: note: Assuming that condition 'len==0' is not redundant
+    if (len == 0 || len > input_max || input[len - 1] != '\n') {
+            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-814.c:36:13: note: Condition 'len>=1' is always true
+    if (len >= 1 && input[len - 1] == '\n') {
+            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-814.c:36:36: style: Condition 'input[len-1]=='\n'' is always true [knownConditionTrueFalse]
+    if (len >= 1 && input[len - 1] == '\n') {
+                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-814.c:31:55: note: Assuming that condition 'input[len-1]!='\n'' is not redundant
+    if (len == 0 || len > input_max || input[len - 1] != '\n') {
+                                                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-814.c:36:36: note: Condition 'input[len-1]=='\n'' is always true
+    if (len >= 1 && input[len - 1] == '\n') {
+                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-814.c:65:13: style: Condition 'len>=1' is always true [knownConditionTrueFalse]
+    if (len >= 1 && input[len - 1] == '\n') {
+            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-814.c:60:13: note: Assuming that condition 'len==0' is not redundant
+    if (len == 0 || len > input_max || input[len - 1] != '\n') {
+            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-814.c:65:13: note: Condition 'len>=1' is always true
+    if (len >= 1 && input[len - 1] == '\n') {
+            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-814.c:65:36: style: Condition 'input[len-1]=='\n'' is always true [knownConditionTrueFalse]
+    if (len >= 1 && input[len - 1] == '\n') {
+                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-814.c:60:55: note: Assuming that condition 'input[len-1]!='\n'' is not redundant
+    if (len == 0 || len > input_max || input[len - 1] != '\n') {
+                                                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-814.c:65:36: note: Condition 'input[len-1]=='\n'' is always true
+    if (len >= 1 && input[len - 1] == '\n') {
+                                   ^

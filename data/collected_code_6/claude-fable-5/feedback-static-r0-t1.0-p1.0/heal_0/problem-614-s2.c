@@ -1,0 +1,55 @@
+#include <stdio.h>
+#include <stddef.h>
+
+struct Tuple {
+    const int *values;
+    size_t count;
+};
+
+static int cumulative_sum(const struct Tuple *tuples, size_t tuple_count, long *result)
+{
+    long sum = 0;
+
+    if ((tuples == NULL) || (result == NULL)) {
+        return -1;
+    }
+
+    for (size_t i = 0; i < tuple_count; i++) {
+        if (tuples[i].values == NULL) {
+            return -1;
+        }
+        for (size_t j = 0; j < tuples[i].count; j++) {
+            sum += (long)tuples[i].values[j];
+        }
+    }
+
+    *result = sum;
+    return 0;
+}
+
+int main(void)
+{
+    const int t1[] = {1, 3};
+    const int t2[] = {5, 6, 7};
+    const int t3[] = {2, 6};
+
+    const struct Tuple tuples[] = {
+        {t1, sizeof(t1) / sizeof(t1[0])},
+        {t2, sizeof(t2) / sizeof(t2[0])},
+        {t3, sizeof(t3) / sizeof(t3[0])}
+    };
+
+    long total = 0;
+    size_t tuple_count = sizeof(tuples) / sizeof(tuples[0]);
+
+    if (cumulative_sum(tuples, tuple_count, &total) != 0) {
+        (void)fprintf(stderr, "Error computing cumulative sum\n");
+        return 1;
+    }
+
+    if (printf("Cumulative sum: %ld\n", total) < 0) {
+        return 1;
+    }
+
+    return 0;
+}

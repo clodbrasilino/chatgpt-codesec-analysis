@@ -1,0 +1,273 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+#define NAME_MAX_LEN 64
+
+typedef struct {
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char name[NAME_MAX_LEN];
+    double price;
+} Item;
+
+typedef struct {
+    Item *data;
+    size_t size;
+    size_t capacity;
+} MinHeap;
+
+static size_t bounded_strlen(const char *s, size_t max_len)
+{
+    size_t len = 0;
+
+    while (len < max_len && s[len] != '\0') {
+        len++;
+    }
+    return len;
+}
+
+static MinHeap *heap_create(size_t capacity)
+{
+    MinHeap *heap;
+
+    if (capacity == 0 || capacity > SIZE_MAX / sizeof(Item)) {
+        return NULL;
+    }
+
+    heap = malloc(sizeof(MinHeap));
+    if (heap == NULL) {
+        return NULL;
+    }
+
+    heap->data = malloc(capacity * sizeof(Item));
+    if (heap->data == NULL) {
+        free(heap);
+        return NULL;
+    }
+
+    heap->size = 0;
+    heap->capacity = capacity;
+    return heap;
+}
+
+static void heap_destroy(MinHeap *heap)
+{
+    if (heap != NULL) {
+        free(heap->data);
+        free(heap);
+    }
+}
+
+static void heap_swap(Item *a, Item *b)
+{
+    Item tmp;
+
+    tmp = *a;
+    *a = *b;
+    *b = tmp;
+}
+
+static void heap_sift_up(MinHeap *heap, size_t index)
+{
+    while (index > 0) {
+        size_t parent = (index - 1) / 2;
+
+        if (heap->data[index].price < heap->data[parent].price) {
+            heap_swap(&heap->data[index], &heap->data[parent]);
+            index = parent;
+        } else {
+            break;
+        }
+    }
+}
+
+static void heap_sift_down(MinHeap *heap, size_t index)
+{
+    for (;;) {
+        size_t left = 2 * index + 1;
+        size_t right = 2 * index + 2;
+        size_t smallest = index;
+
+        if (left < heap->size &&
+            heap->data[left].price < heap->data[smallest].price) {
+            smallest = left;
+        }
+        if (right < heap->size &&
+            heap->data[right].price < heap->data[smallest].price) {
+            smallest = right;
+        }
+        if (smallest == index) {
+            break;
+        }
+        heap_swap(&heap->data[index], &heap->data[smallest]);
+        index = smallest;
+    }
+}
+
+static int heap_push(MinHeap *heap, const Item *item)
+{
+    if (heap == NULL || item == NULL || heap->size >= heap->capacity) {
+        return -1;
+    }
+
+    heap->data[heap->size] = *item;
+    heap_sift_up(heap, heap->size);
+    heap->size++;
+    return 0;
+}
+
+static int heap_replace_min(MinHeap *heap, const Item *item)
+{
+    if (heap == NULL || item == NULL || heap->size == 0) {
+        return -1;
+    }
+
+    heap->data[0] = *item;
+    heap_sift_down(heap, 0);
+    return 0;
+}
+
+static int compare_price_desc(const void *a, const void *b)
+{
+    const Item *ia = a;
+    const Item *ib = b;
+
+    if (ia->price < ib->price) {
+        return 1;
+    }
+    if (ia->price > ib->price) {
+        return -1;
+    }
+    return 0;
+}
+
+static int item_init(Item *item, const char *name, double price)
+{
+    size_t len;
+
+    if (item == NULL || name == NULL) {
+        return -1;
+    }
+
+    len = bounded_strlen(name, NAME_MAX_LEN);
+    if (len >= NAME_MAX_LEN || len >= sizeof(item->name)) {
+        return -1;
+    }
+
+    /* Possible weaknesses found:
+     * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+     */
+    memcpy(item->name, name, len);
+    item->name[len] = '\0';
+    item->price = price;
+    return 0;
+}
+
+static Item *find_n_expensive(const Item *items, size_t count, size_t n,
+                              size_t *result_count)
+{
+    MinHeap *heap;
+    Item *result;
+    size_t i;
+    size_t total_bytes;
+
+    if (items == NULL || result_count == NULL || n == 0 || count == 0) {
+        return NULL;
+    }
+
+    if (n > count) {
+        n = count;
+    }
+
+    heap = heap_create(n);
+    if (heap == NULL) {
+        return NULL;
+    }
+
+    for (i = 0; i < count; i++) {
+        if (heap->size < heap->capacity) {
+            if (heap_push(heap, &items[i]) != 0) {
+                heap_destroy(heap);
+                return NULL;
+            }
+        } else if (items[i].price > heap->data[0].price) {
+            if (heap_replace_min(heap, &items[i]) != 0) {
+                heap_destroy(heap);
+                return NULL;
+            }
+        }
+    }
+
+    if (heap->size == 0 || heap->size > heap->capacity ||
+        heap->size > SIZE_MAX / sizeof(Item)) {
+        heap_destroy(heap);
+        return NULL;
+    }
+
+    total_bytes = heap->size * sizeof(Item);
+
+    result = malloc(total_bytes);
+    if (result == NULL) {
+        heap_destroy(heap);
+        return NULL;
+    }
+
+    /* Possible weaknesses found:
+     * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+     */
+    memcpy(result, heap->data, total_bytes);
+    *result_count = heap->size;
+    heap_destroy(heap);
+
+    qsort(result, *result_count, sizeof(Item), compare_price_desc);
+    return result;
+}
+
+int main(void)
+{
+    static const struct {
+        const char *name;
+        double price;
+    } raw_data[] = {
+        {"Laptop", 1200.50},
+        {"Phone", 899.99},
+        {"Headphones", 199.99},
+        {"Monitor", 349.49},
+        {"Keyboard", 89.99},
+        {"Mouse", 49.99},
+        {"Tablet", 649.00},
+        {"Camera", 999.95},
+        {"Printer", 249.00},
+        {"Speaker", 159.99}
+    };
+    size_t count = sizeof(raw_data) / sizeof(raw_data[0]);
+    Item dataset[sizeof(raw_data) / sizeof(raw_data[0])];
+    size_t n = 3;
+    size_t result_count = 0;
+    Item *result;
+    size_t i;
+
+    for (i = 0; i < count; i++) {
+        if (item_init(&dataset[i], raw_data[i].name, raw_data[i].price) != 0) {
+            fprintf(stderr, "Failed to initialize dataset\n");
+            return EXIT_FAILURE;
+        }
+    }
+
+    result = find_n_expensive(dataset, count, n, &result_count);
+    if (result == NULL) {
+        fprintf(stderr, "Failed to find the most expensive items\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Top %zu most expensive items:\n", result_count);
+    for (i = 0; i < result_count; i++) {
+        printf("%s: %.2f\n", result[i].name, result[i].price);
+    }
+
+    free(result);
+    return EXIT_SUCCESS;
+}

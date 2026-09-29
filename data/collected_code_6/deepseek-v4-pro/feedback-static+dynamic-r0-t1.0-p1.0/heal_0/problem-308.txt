@@ -1,0 +1,89 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int product;
+    int index_a;
+    int index_b;
+} ProductInfo;
+
+static int compare_products(const void *a, const void *b) {
+    const ProductInfo *pa = (const ProductInfo *)a;
+    const ProductInfo *pb = (const ProductInfo *)b;
+    if (pa->product > pb->product) return -1;
+    if (pa->product < pb->product) return 1;
+    return 0;
+}
+
+int* find_largest_products(int *list_a, int size_a, int *list_b, int size_b, int k, int *result_size) {
+    if (list_a == NULL || list_b == NULL || size_a <= 0 || size_b <= 0 || k <= 0 || result_size == NULL) {
+        if (result_size != NULL) {
+            *result_size = 0;
+        }
+        return NULL;
+    }
+
+    int total_products = size_a * size_b;
+    if (k > total_products) {
+        k = total_products;
+    }
+
+    ProductInfo *products = (ProductInfo *)malloc((size_t)total_products * sizeof(ProductInfo));
+    if (products == NULL) {
+        *result_size = 0;
+        return NULL;
+    }
+
+    int idx = 0;
+    for (int i = 0; i < size_a; i++) {
+        for (int j = 0; j < size_b; j++) {
+            products[idx].product = list_a[i] * list_b[j];
+            products[idx].index_a = i;
+            products[idx].index_b = j;
+            idx++;
+        }
+    }
+
+    qsort(products, (size_t)total_products, sizeof(ProductInfo), compare_products);
+
+    int *result = (int *)malloc((size_t)k * sizeof(int));
+    if (result == NULL) {
+        free(products);
+        *result_size = 0;
+        return NULL;
+    }
+
+    for (int i = 0; i < k; i++) {
+        result[i] = products[i].product;
+    }
+
+    free(products);
+    *result_size = k;
+    return result;
+}
+
+int main(void) {
+    int list_a[] = {3, 1, 5, 2};
+    int list_b[] = {4, 0, 2, 6};
+    int size_a = sizeof(list_a) / sizeof(list_a[0]);
+    int size_b = sizeof(list_b) / sizeof(list_b[0]);
+    int k = 5;
+    int result_size = 0;
+
+    int *largest = find_largest_products(list_a, size_a, list_b, size_b, k, &result_size);
+
+    if (largest != NULL) {
+        printf("Largest %d products:\n", result_size);
+        for (int i = 0; i < result_size; i++) {
+            printf("%d ", largest[i]);
+        }
+        printf("\n");
+        free(largest);
+    } else {
+        printf("Failed to find products.\n");
+    }
+
+    return 0;
+}
+```

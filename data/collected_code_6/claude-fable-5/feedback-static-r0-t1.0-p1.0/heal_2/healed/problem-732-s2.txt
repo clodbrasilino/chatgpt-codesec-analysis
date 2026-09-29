@@ -1,0 +1,80 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_STR_LEN 1024
+
+void replace_chars(char *str, size_t max_len)
+{
+    size_t i;
+    size_t len;
+
+    if (str == NULL) {
+        return;
+    }
+
+    len = strnlen(str, max_len);
+    for (i = 0; i < len; i++) {
+        if (str[i] == ' ' || str[i] == ',' || str[i] == '.') {
+            str[i] = ':';
+        }
+    }
+}
+
+int safe_copy(char *dest, size_t dest_size, const char *src, size_t src_len)
+{
+    if (dest == NULL || src == NULL) {
+        return -1;
+    }
+    if (src_len >= dest_size) {
+        return -1;
+    }
+    memcpy(dest, src, src_len);
+    dest[src_len] = '\0';
+    return 0;
+}
+
+int main(void)
+{
+    const char source[] = "Hello, world. This is a test.";
+    char *buffer;
+    size_t len;
+    size_t size;
+
+    len = strnlen(source, MAX_STR_LEN);
+    if (len >= MAX_STR_LEN) {
+        fprintf(stderr, "Source string too long or not terminated\n");
+        return EXIT_FAILURE;
+    }
+
+    size = len + 1;
+    buffer = (char *)malloc(size);
+    if (buffer == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    if (safe_copy(buffer, size, source, len) != 0) {
+        fprintf(stderr, "String copy failed\n");
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+
+    replace_chars(buffer, size);
+
+    if (printf("Original: %s\n", source) < 0) {
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+    if (printf("Modified: %s\n", buffer) < 0) {
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+
+    free(buffer);
+    buffer = NULL;
+
+    return EXIT_SUCCESS;
+}
+```

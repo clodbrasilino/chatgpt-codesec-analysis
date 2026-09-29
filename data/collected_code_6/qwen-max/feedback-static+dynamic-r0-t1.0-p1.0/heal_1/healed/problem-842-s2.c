@@ -1,0 +1,18 @@
+#include <stdio.h>
+#include <stdint.h>
+
+uint32_t findOddOccurrence(const int *arr, size_t arrSize) {
+    uint32_t xorSum = 0;
+    for (size_t i = 0; i < arrSize; ++i) {
+        xorSum ^= arr[i];
+    }
+    return xorSum;
+}
+
+int main() {
+    int arr[] = {1, 2, 3, 2, 3, 1, 3};
+    size_t arrSize = sizeof(arr) / sizeof(arr[0]);
+    uint32_t result = findOddOccurrence(arr, arrSize);
+    printf("%u\n", result);
+    return 0;
+}

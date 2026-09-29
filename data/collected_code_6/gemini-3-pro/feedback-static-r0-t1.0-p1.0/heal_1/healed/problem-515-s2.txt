@@ -1,0 +1,70 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+bool hasSubsetSumDivisibleByM(const int arr[], int n, int m) {
+    if (n > m) {
+        return true;
+    }
+
+    bool *dp = (bool *)malloc(m * sizeof(bool));
+    if (dp == NULL) {
+        return false;
+    }
+
+    for (int i = 0; i < m; i++) {
+        dp[i] = false;
+    }
+
+    for (int i = 0; i < n; i++) {
+        if (dp[0]) {
+            free(dp);
+            return true;
+        }
+
+        bool *temp = (bool *)malloc(m * sizeof(bool));
+        if (temp == NULL) {
+            free(dp);
+            return false;
+        }
+
+        for (int j = 0; j < m; j++) {
+            temp[j] = false;
+        }
+
+        for (int j = 0; j < m; j++) {
+            if (dp[j]) {
+                temp[j] = true;
+                temp[(j + arr[i]) % m] = true;
+            }
+        }
+
+        temp[arr[i] % m] = true;
+
+        for (int j = 0; j < m; j++) {
+            dp[j] = temp[j];
+        }
+
+        free(temp);
+    }
+
+    bool result = dp[0];
+    free(dp);
+    return result;
+}
+
+int main(void) {
+    int arr[] = {3, 1, 7, 5};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    int m = 6;
+
+    if (hasSubsetSumDivisibleByM(arr, n, m)) {
+        printf("Yes\n");
+    } else {
+        printf("No\n");
+    }
+
+    return 0;
+}
+```

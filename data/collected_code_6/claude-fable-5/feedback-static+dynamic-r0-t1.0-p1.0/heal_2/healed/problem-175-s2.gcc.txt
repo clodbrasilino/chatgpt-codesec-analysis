@@ -1,0 +1,70 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-175-s2.c:101:12: error: expected '=', ',', ';', 'asm' or '__attribute__' before 'of'
+  101 | **Analysis of the weaknesses and fixes applied:**
+      |            ^~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-175-s2.c:101:12: error: unknown type name 'of'
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-175-s2.c:103:10: error: stray '`' in program
+  103 | The core `is_valid_parentheses` function was actually sound — proper NULL handling, bounded string length checking, allocation failure handling, and correct stack-based matching logic. The failures were an I/O contract problem, not a logic problem.
+      |          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-175-s2.c:103:31: error: stray '`' in program
+  103 | The core `is_valid_parentheses` function was actually sound — proper NULL handling, bounded string length checking, allocation failure handling, and correct stack-based matching logic. The failures were an I/O contract problem, not a logic problem.
+      |                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-175-s2.c:103:61: error: stray '\342' in program
+  103 | The core `is_valid_parentheses` function was actually sound <U+2014> proper NULL handling, bounded string length checking, allocation failure handling, and correct stack-based matching logic. The failures were an I/O contract problem, not a logic problem.
+      |                                                             ^~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-175-s2.c:105:27: error: stray '`' in program
+  105 | The test harness reported `expected True/False, got <no output>`, which tells us three things:
+      |                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-175-s2.c:105:64: error: stray '`' in program
+  105 | The test harness reported `expected True/False, got <no output>`, which tells us three things:
+      |                                                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-175-s2.c:107:31: error: stray '\342' in program
+  107 | 1. **Output format mismatch** <U+2014> the original printed `"()" -> valid`, but the harness expects the literal strings `True` / `False`. I changed the output to print exactly `True` or `False` per line.
+      |                               ^~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-175-s2.c:107:54: error: stray '`' in program
+  107 | 1. **Output format mismatch** — the original printed `"()" -> valid`, but the harness expects the literal strings `True` / `False`. I changed the output to print exactly `True` or `False` per line.
+      |                                                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-175-s2.c:107:68: error: stray '`' in program
+  107 | 1. **Output format mismatch** — the original printed `"()" -> valid`, but the harness expects the literal strings `True` / `False`. I changed the output to print exactly `True` or `False` per line.
+      |                                                                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-175-s2.c:107:115: error: stray '`' in program
+  107 | 1. **Output format mismatch** — the original printed `"()" -> valid`, but the harness expects the literal strings `True` / `False`. I changed the output to print exactly `True` or `False` per line.
+      |                                                                                                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-175-s2.c:107:120: error: stray '`' in program
+  107 | 1. **Output format mismatch** — the original printed `"()" -> valid`, but the harness expects the literal strings `True` / `False`. I changed the output to print exactly `True` or `False` per line.
+      |                                                                                                                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-175-s2.c:107:124: error: stray '`' in program
+  107 | 1. **Output format mismatch** — the original printed `"()" -> valid`, but the harness expects the literal strings `True` / `False`. I changed the output to print exactly `True` or `False` per line.
+      |                                                                                                                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-175-s2.c:107:130: error: stray '`' in program
+  107 | 1. **Output format mismatch** — the original printed `"()" -> valid`, but the harness expects the literal strings `True` / `False`. I changed the output to print exactly `True` or `False` per line.
+      |                                                                                                                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-175-s2.c:107:171: error: stray '`' in program
+  107 | 1. **Output format mismatch** — the original printed `"()" -> valid`, but the harness expects the literal strings `True` / `False`. I changed the output to print exactly `True` or `False` per line.
+      |                                                                                                                                                                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-175-s2.c:107:176: error: stray '`' in program
+  107 | 1. **Output format mismatch** — the original printed `"()" -> valid`, but the harness expects the literal strings `True` / `False`. I changed the output to print exactly `True` or `False` per line.
+      |                                                                                                                                                                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-175-s2.c:107:181: error: stray '`' in program
+  107 | 1. **Output format mismatch** — the original printed `"()" -> valid`, but the harness expects the literal strings `True` / `False`. I changed the output to print exactly `True` or `False` per line.
+      |                                                                                                                                                                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-175-s2.c:107:187: error: stray '`' in program
+  107 | 1. **Output format mismatch** — the original printed `"()" -> valid`, but the harness expects the literal strings `True` / `False`. I changed the output to print exactly `True` or `False` per line.
+      |                                                                                                                                                                                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-175-s2.c:109:31: error: stray '\342' in program
+  109 | 2. **Missing stdin handling** <U+2014> `<no output>` for all cases suggests the harness likely feeds input via stdin and the program never read it. The rewrite reads a line from stdin, strips the trailing newline, evaluates it, and prints the result. The hardcoded test battery is retained as a fallback when no stdin input is available, so the program still self-tests when run interactively with EOF on stdin.
+      |                               ^~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-175-s2.c:109:33: error: stray '`' in program
+  109 | 2. **Missing stdin handling** — `<no output>` for all cases suggests the harness likely feeds input via stdin and the program never read it. The rewrite reads a line from stdin, strips the trailing newline, evaluates it, and prints the result. The hardcoded test battery is retained as a fallback when no stdin input is available, so the program still self-tests when run interactively with EOF on stdin.
+      |                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-175-s2.c:109:45: error: stray '`' in program
+  109 | 2. **Missing stdin handling** — `<no output>` for all cases suggests the harness likely feeds input via stdin and the program never read it. The rewrite reads a line from stdin, strips the trailing newline, evaluates it, and prints the result. The hardcoded test battery is retained as a fallback when no stdin input is available, so the program still self-tests when run interactively with EOF on stdin.
+      |                                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-175-s2.c:111:24: error: stray '\342' in program
+  111 | 3. **Output flushing** <U+2014> `printf` return values are still checked, and normal program exit flushes stdout, so no output is silently lost on the happy path.
+      |                        ^~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-175-s2.c:111:26: error: stray '`' in program
+  111 | 3. **Output flushing** — `printf` return values are still checked, and normal program exit flushes stdout, so no output is silently lost on the happy path.
+      |                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-175-s2.c:111:33: error: stray '`' in program
+  111 | 3. **Output flushing** — `printf` return values are still checked, and normal program exit flushes stdout, so no output is silently lost on the happy path.
+      |                                 ^

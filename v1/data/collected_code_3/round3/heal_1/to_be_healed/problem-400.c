@@ -1,0 +1,53 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX 100
+
+typedef struct {
+    char tuple[MAX];
+    int count;
+} Tuple;
+
+int findTuple(Tuple *tuples, int tupleCount, char *tuple) {
+    for (int i = 0; i < tupleCount; i++) {
+        if (strcmp(tuples[i].tuple, tuple) == 0) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+void extractFrequency(char tuples[][MAX], int n) {
+    Tuple *tupleCount = (Tuple *)malloc(n * sizeof(Tuple));
+    int count = 0;
+
+    for (int i = 0; i < n; i++) {
+        int index = findTuple(tupleCount, count, tuples[i]);
+        if (index == -1) {
+            strcpy(tupleCount[count].tuple, tuples[i]);
+            /* Possible weaknesses found:
+             *  dereference of possibly-NULL 'tupleCount' [CWE-690] [-Wanalyzer-possible-null-dereference]
+             */
+            tupleCount[count].count = 1;
+            count++;
+        } else {
+            tupleCount[index].count++;
+        }
+    }
+
+    for (int i = 0; i < count; i++) {
+        printf("%s: %d\n", tupleCount[i].tuple, tupleCount[i].count);
+    }
+
+    free(tupleCount);
+}
+
+int main() {
+    char tuples[][MAX] = {"tuple1", "tuple2", "tuple3", "tuple1", "tuple2", "tuple1"};
+    int n = sizeof(tuples) / sizeof(tuples[0]);
+
+    extractFrequency(tuples, n);
+
+    return 0;
+}

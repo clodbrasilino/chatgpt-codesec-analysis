@@ -1,0 +1,73 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char **shortlist_words(const char **words, size_t word_count, size_t n, size_t *out_count) {
+    if (words == NULL || out_count == NULL) {
+        return NULL;
+    }
+
+    char **result = malloc((word_count + 1) * sizeof(char *));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    size_t count = 0;
+    for (size_t i = 0; i < word_count; i++) {
+        /* Possible weaknesses found:
+         * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+         */
+        if (words[i] != NULL && strlen(words[i]) > n) {
+            /* Possible weaknesses found:
+             * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+             */
+            size_t len = strlen(words[i]);
+            char *dup = malloc(len + 1);
+            if (dup == NULL) {
+                for (size_t j = 0; j < count; j++) {
+                    free(result[j]);
+                }
+                free(result);
+                *out_count = 0;
+                return NULL;
+            }
+            /* Possible weaknesses found:
+             * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+             */
+            memcpy(dup, words[i], len + 1);
+            result[count++] = dup;
+        }
+    }
+
+    char **shrunk = realloc(result, (count + 1) * sizeof(char *));
+    if (shrunk != NULL) {
+        result = shrunk;
+    }
+
+    result[count] = NULL;
+    *out_count = count;
+
+    return result;
+}
+
+int main(void) {
+    const char *words[] = {"apple", "banana", "kiwi", "strawberry", "fig"};
+    size_t word_count = sizeof(words) / sizeof(words[0]);
+    size_t n = 5;
+    size_t out_count = 0;
+
+    char **shortlisted = shortlist_words(words, word_count, n, &out_count);
+
+    if (shortlisted != NULL) {
+        for (size_t i = 0; i < out_count; i++) {
+            printf("%s\n", shortlisted[i]);
+        }
+
+        for (size_t i = 0; i < out_count; i++) {
+            free(shortlisted[i]);
+        }
+        free(shortlisted);
+    }
+
+    return 0;
+}

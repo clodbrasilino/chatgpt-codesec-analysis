@@ -1,0 +1,75 @@
+collected_code_3/problem-322-1.c: In function 'find_min_positions':
+collected_code_3/problem-322-1.c:5:9: warning: use of uninitialized value '*arr' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+    5 |     int min = arr[0];
+      |         ^~~
+  'main': events 1-5
+    |
+    |   20 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   24 |     int *arr = (int*)malloc(n * sizeof(int));
+    |      |                      ~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                      |
+    |      |                      (2) region created on heap here
+    |   25 |     printf("Enter the elements: ");
+    |   26 |     for(int i = 0; i < n; i++) {
+    |      |                    ~~~~~
+    |      |                      |
+    |      |                      (3) following 'false' branch...
+    |......
+    |   29 |     find_min_positions(arr, n);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (4) ...to here
+    |      |     (5) calling 'find_min_positions' from 'main'
+    |
+    +--> 'find_min_positions': events 6-7
+           |
+           |    4 | void find_min_positions(int *arr, int n) {
+           |      |      ^~~~~~~~~~~~~~~~~~
+           |      |      |
+           |      |      (6) entry to 'find_min_positions'
+           |    5 |     int min = arr[0];
+           |      |         ~~~
+           |      |         |
+           |      |         (7) use of uninitialized value '*arr' here
+           |
+collected_code_3/problem-322-1.c:5:9: warning: dereference of possibly-NULL 'arr' [CWE-690] [-Wanalyzer-possible-null-dereference]
+    5 |     int min = arr[0];
+      |         ^~~
+  'main': events 1-5
+    |
+    |   20 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   24 |     int *arr = (int*)malloc(n * sizeof(int));
+    |      |                      ~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                      |
+    |      |                      (2) this call could return NULL
+    |   25 |     printf("Enter the elements: ");
+    |   26 |     for(int i = 0; i < n; i++) {
+    |      |                    ~~~~~
+    |      |                      |
+    |      |                      (3) following 'false' branch...
+    |......
+    |   29 |     find_min_positions(arr, n);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (4) ...to here
+    |      |     (5) calling 'find_min_positions' from 'main'
+    |
+    +--> 'find_min_positions': events 6-7
+           |
+           |    4 | void find_min_positions(int *arr, int n) {
+           |      |      ^~~~~~~~~~~~~~~~~~
+           |      |      |
+           |      |      (6) entry to 'find_min_positions'
+           |    5 |     int min = arr[0];
+           |      |         ~~~
+           |      |         |
+           |      |         (7) 'arr' could be NULL: unchecked value from (2)
+           |

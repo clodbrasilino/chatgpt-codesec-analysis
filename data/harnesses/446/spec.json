@@ -1,0 +1,81 @@
+{
+  "task_id": 446,
+  "text": "Write a C function to count the occurence of all elements of list in a tuple.",
+  "fn_candidates": [
+    "count_Occurrence",
+    "CountOccurrence",
+    "countOccurrence",
+    "countOccurrence"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "count_Occurrence",
+      "args": [
+        [
+          "a",
+          "a",
+          "c",
+          "b",
+          "d"
+        ],
+        [
+          "a",
+          "b"
+        ]
+      ],
+      "expected": 3,
+      "assert_src": "assert count_Occurrence(('a', 'a', 'c', 'b', 'd'),['a', 'b'] ) == 3"
+    },
+    {
+      "fn_name": "count_Occurrence",
+      "args": [
+        [
+          1,
+          2,
+          3,
+          1,
+          4,
+          6,
+          7,
+          1,
+          4
+        ],
+        [
+          1,
+          4,
+          7
+        ]
+      ],
+      "expected": 6,
+      "assert_src": "assert count_Occurrence((1, 2, 3, 1, 4, 6, 7, 1, 4),[1, 4, 7]) == 6"
+    },
+    {
+      "fn_name": "count_Occurrence",
+      "args": [
+        [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ],
+        [
+          1,
+          2
+        ]
+      ],
+      "expected": 2,
+      "assert_src": "assert count_Occurrence((1,2,3,4,5,6),[1,2]) == 2"
+    }
+  ],
+  "arg_kinds": [
+    "int-list",
+    "str-list"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

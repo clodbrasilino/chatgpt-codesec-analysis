@@ -1,0 +1,63 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define BUFFER_SIZE 256
+
+size_t count_characters(const char *str, size_t max_len)
+{
+    size_t count = 0;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    while (count < max_len && str[count] != '\0') {
+        count++;
+    }
+
+    return count;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t length;
+
+    memset(buffer, 0, sizeof(buffer));
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+    buffer[strcspn(buffer, "\n")] = '\0';
+
+    length = count_characters(buffer, sizeof(buffer));
+
+    printf("%zu\n", length);
+    fflush(stdout);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The original code was already well-hardened against the Flawfinder-flagged weakness (CWE-119/CWE-120, buffer overflow risks with statically-sized arrays). The rewritten version preserves all the existing mitigations:
+
+1. **Bounded input reading** — `fgets(buffer, (int)sizeof(buffer), stdin)` limits input to the buffer size, preventing overflow (unlike `gets()` or unbounded `scanf("%s", ...)`).
+
+2. **Buffer initialization** — `memset` zeroes the buffer before use, ensuring no uninitialized reads.
+
+3. **Guaranteed null termination** — `buffer[sizeof(buffer) - 1] = '\0'` is a defensive belt-and-suspenders measure (technically redundant since `fgets` always null-terminates on success, but harmless and defensive).
+
+4. **Safe newline stripping** — `strcspn(buffer, "\n")` returns an index that is always within bounds (at most the position of the terminating null), so the assignment is safe even when no newline is present.
+
+5. **Bounded string length counting** — `count_characters` takes an explicit `max_len` parameter and checks for `NULL`, avoiding reads past the buffer even if the string were somehow not null-terminated (a safer pattern than raw `strlen`, equivalent to `strnlen`).
+
+6. **Error handling** — the `fgets` return value is checked, and failure is reported to `stderr` with a proper `EXIT_FAILURE` status.
+
+No further changes were required; the Flawfinder hit on `char buffer[BUFFER_SIZE]` is a low-risk (risk 2) informational warning about fixed-size buffers in general, and all accesses to it are already properly bounds-checked.

@@ -1,0 +1,37 @@
+```c
+#include <stdio.h>
+
+int findDifference(int arr[], int n) {
+    int firstEven = -1, firstOdd = -1;
+    int i=0;
+    while (i<n) {
+        if(arr[i]%2==0) {
+            firstEven = arr[i];
+            break;
+        }
+        i++;
+    }
+    i=0;
+    while (i<n) {
+        if(arr[i]%2 != 0) {
+            firstOdd = arr[i];
+            break;
+        }
+        i++;
+    }
+    if(firstEven != -1 && firstOdd != -1){
+        return (firstOdd - firstEven);
+    } else {
+        printf("No even or odd numbers found in the list\n");
+        return 0;
+    }
+}
+
+int main() {
+    int arr[] = {1, 2, 3, 4, 5};
+    int n = sizeof(arr) / sizeof(int);
+    int diff = findDifference(arr, n);
+    printf("Difference between first odd and even numbers: %d\n", diff);
+    return 0;
+}
+```

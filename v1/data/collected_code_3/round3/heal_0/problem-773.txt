@@ -1,0 +1,43 @@
+```C
+#include <stdio.h>
+#include <string.h>
+
+void find_substring(char* main_string, char* sub_string) {
+    int main_len = strlen(main_string);
+    int sub_len = strlen(sub_string);
+    int found = 0;
+
+    for(int i = 0; i <= main_len - sub_len; i++) {
+        int j;
+        for(j = 0; j < sub_len; j++) {
+            if(main_string[i + j] != sub_string[j]) {
+                break;
+            }
+        }
+        if(j == sub_len) {
+            printf("Substring found at position %d\n", i + 1);
+            found = 1;
+        }
+    }
+
+    if(!found) {
+        printf("Substring not found\n");
+    }
+}
+
+int main() {
+    char main_string[100], sub_string[50];
+
+    printf("Enter the main string: ");
+    fgets(main_string, sizeof(main_string), stdin);
+    main_string[strlen(main_string) - 1] = '\0';
+
+    printf("Enter the substring: ");
+    fgets(sub_string, sizeof(sub_string), stdin);
+    sub_string[strlen(sub_string) - 1] = '\0';
+
+    find_substring(main_string, sub_string);
+
+    return 0;
+}
+```

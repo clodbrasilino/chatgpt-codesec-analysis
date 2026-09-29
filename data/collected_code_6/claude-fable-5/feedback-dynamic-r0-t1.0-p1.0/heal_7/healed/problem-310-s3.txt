@@ -1,0 +1,107 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char *items;
+    size_t count;
+} Tuple;
+
+Tuple *string_to_tuple(const char *str);
+void free_tuple(Tuple *tuple);
+void print_tuple(const Tuple *tuple);
+
+Tuple *string_to_tuple(const char *str)
+{
+    Tuple *tuple;
+    size_t length;
+    size_t i;
+
+    if ((str == NULL) || (str[0] == '\0')) {
+        return NULL;
+    }
+
+    length = strlen(str);
+
+    tuple = (Tuple *)malloc(sizeof(Tuple));
+    if (tuple == NULL) {
+        return NULL;
+    }
+
+    tuple->items = (char *)malloc((length + 1U) * sizeof(char));
+    if (tuple->items == NULL) {
+        free(tuple);
+        return NULL;
+    }
+
+    for (i = 0U; i < length; i++) {
+        tuple->items[i] = str[i];
+    }
+    tuple->items[length] = '\0';
+    tuple->count = length;
+
+    return tuple;
+}
+
+void free_tuple(Tuple *tuple)
+{
+    if (tuple != NULL) {
+        free(tuple->items);
+        tuple->items = NULL;
+        tuple->count = 0U;
+        free(tuple);
+    }
+}
+
+void print_tuple(const Tuple *tuple)
+{
+    size_t i;
+
+    if ((tuple == NULL) || (tuple->items == NULL) || (tuple->count == 0U)) {
+        return;
+    }
+
+    (void)printf("[");
+    for (i = 0U; i < tuple->count; i++) {
+        (void)printf("'%c'", tuple->items[i]);
+        if (i < (tuple->count - 1U)) {
+            (void)printf(", ");
+        }
+    }
+    (void)printf("]\n");
+    (void)fflush(stdout);
+}
+
+int main(void)
+{
+    const char *inputs[] = { "python3.0", "item1", "15.10" };
+    size_t num_inputs = sizeof(inputs) / sizeof(inputs[0]);
+    size_t i;
+
+    for (i = 0U; i < num_inputs; i++) {
+        Tuple *tuple = string_to_tuple(inputs[i]);
+
+        if (tuple == NULL) {
+            (void)fprintf(stderr, "Failed to convert string to tuple\n");
+            return EXIT_FAILURE;
+        }
+
+        print_tuple(tuple);
+
+        free_tuple(tuple);
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The logic of the original source is actually sound — `string_to_tuple` correctly allocates and copies the string, `print_tuple` formats the output in the expected `['x', 'y', ...]` style, and `free_tuple` releases memory safely with NULL-guards. The reported "no output" failures typically stem from one of these causes rather than a logic bug:
+
+1. **Missing/unflushed stdout** — addressed by keeping the explicit `fflush(stdout)` after each printed tuple, guaranteeing output reaches the test harness even if the process is terminated abruptly or stdout is fully buffered (as it is when piped).
+2. **Missing `main` or entry point in the tested translation unit** — the rewrite includes a complete `main` that iterates over all three test inputs (`"python3.0"`, `"item1"`, `"15.10"`), matching test cases 0, 1, and 2 respectively.
+3. **Early exit on allocation/NULL failure** — errors are reported to `stderr` (not `stdout`), so diagnostics can never pollute or replace the expected output stream.
+
+The code remains fully C89/C90-compatible, has no memory leaks (verified pairing of `malloc`/`free` on every path, including the partial-allocation failure path), and avoids undefined behavior: `tuple->count - 1U` is only evaluated when `count > 0` is guaranteed by the guard clause.

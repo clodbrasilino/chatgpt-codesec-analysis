@@ -1,0 +1,138 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct Node {
+    int value;
+    struct Node* next;
+} Node;
+
+typedef struct DictEntry {
+    char* key;
+    Node* head;
+    Node* tail;
+    struct DictEntry* next;
+} DictEntry;
+
+typedef struct {
+    DictEntry* head;
+} Dictionary;
+
+Dictionary* create_dictionary() {
+    Dictionary* dict = (Dictionary*)malloc(sizeof(Dictionary));
+    if (!dict) {
+        return NULL;
+    }
+    dict->head = NULL;
+    return dict;
+}
+
+DictEntry* find_entry(Dictionary* dict, const char* key) {
+    if (!dict || !key) return NULL;
+    DictEntry* current = dict->head;
+    while (current) {
+        if (strcmp(current->key, key) == 0) {
+            return current;
+        }
+        current = current->next;
+    }
+    return NULL;
+}
+
+int add_to_dictionary(Dictionary* dict, const char* key, int value) {
+    if (!dict || !key) return -1;
+
+    DictEntry* entry = find_entry(dict, key);
+    
+    Node* new_node = (Node*)malloc(sizeof(Node));
+    if (!new_node) return -1;
+    new_node->value = value;
+    new_node->next = NULL;
+
+    if (entry) {
+        entry->tail->next = new_node;
+        entry->tail = new_node;
+    } else {
+        DictEntry* new_entry = (DictEntry*)malloc(sizeof(DictEntry));
+        if (!new_entry) {
+            free(new_node);
+            return -1;
+        }
+        
+        new_entry->key = strdup(key);
+        if (!new_entry->key) {
+            free(new_node);
+            free(new_entry);
+            return -1;
+        }
+        
+        new_entry->head = new_node;
+        new_entry->tail = new_node;
+        new_entry->next = dict->head;
+        dict->head = new_entry;
+    }
+    return 0;
+}
+
+void free_dictionary(Dictionary* dict) {
+    if (!dict) return;
+    
+    DictEntry* current_entry = dict->head;
+    while (current_entry) {
+        DictEntry* next_entry = current_entry->next;
+        
+        Node* current_node = current_entry->head;
+        while (current_node) {
+            Node* next_node = current_node->next;
+            free(current_node);
+            current_node = next_node;
+        }
+        
+        free(current_entry->key);
+        free(current_entry);
+        current_entry = next_entry;
+    }
+    free(dict);
+}
+
+void print_dictionary(Dictionary* dict) {
+    if (!dict) return;
+    
+    DictEntry* current_entry = dict->head;
+    while (current_entry) {
+        printf("%s: [", current_entry->key);
+        Node* current_node = current_entry->head;
+        while (current_node) {
+            printf("%d", current_node->value);
+            if (current_node->next) {
+                printf(", ");
+            }
+            current_node = current_node->next;
+        }
+        printf("]\n");
+        current_entry = current_entry->next;
+    }
+}
+
+int main(void) {
+    Dictionary* dict = create_dictionary();
+    if (!dict) {
+        fprintf(stderr, "Failed to create dictionary\n");
+        return 1;
+    }
+
+    if (add_to_dictionary(dict, "apple", 1) != 0 ||
+        add_to_dictionary(dict, "banana", 2) != 0 ||
+        add_to_dictionary(dict, "apple", 3) != 0 ||
+        add_to_dictionary(dict, "orange", 4) != 0 ||
+        add_to_dictionary(dict, "banana", 5) != 0) {
+        fprintf(stderr, "Failed to add elements\n");
+        free_dictionary(dict);
+        return 1;
+    }
+
+    print_dictionary(dict);
+
+    free_dictionary(dict);
+    return 0;
+}

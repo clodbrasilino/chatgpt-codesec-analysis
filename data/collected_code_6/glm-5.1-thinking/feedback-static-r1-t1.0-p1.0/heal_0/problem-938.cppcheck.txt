@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-938.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-938.c:11:9: style: The scope of the variable 'diff' can be reduced. [variableScope]
+    int diff, min_val, max_val;
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-938.c:11:15: style: The scope of the variable 'min_val' can be reduced. [variableScope]
+    int diff, min_val, max_val;
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-938.c:11:24: style: The scope of the variable 'max_val' can be reduced. [variableScope]
+    int diff, min_val, max_val;
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-938.c:4:22: style: Parameter 'A' can be declared as const array [constParameter]
+int find_closest(int A[], int n1, int B[], int n2, int C[], int n3, int *res_a, int *res_b, int *res_c) {
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-938.c:4:39: style: Parameter 'B' can be declared as const array [constParameter]
+int find_closest(int A[], int n1, int B[], int n2, int C[], int n3, int *res_a, int *res_b, int *res_c) {
+                                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-938.c:4:56: style: Parameter 'C' can be declared as const array [constParameter]
+int find_closest(int A[], int n1, int B[], int n2, int C[], int n3, int *res_a, int *res_b, int *res_c) {
+                                                       ^

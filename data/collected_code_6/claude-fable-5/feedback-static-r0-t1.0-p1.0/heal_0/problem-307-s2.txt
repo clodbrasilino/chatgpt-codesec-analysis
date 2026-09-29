@@ -1,0 +1,96 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stddef.h>
+
+typedef struct {
+    int *elements;
+    size_t size;
+} Tuple;
+
+int tuple_get_column(const Tuple *tuple, size_t column, int *out_value)
+{
+    if (tuple == NULL || out_value == NULL) {
+        return -1;
+    }
+    if (tuple->elements == NULL) {
+        return -1;
+    }
+    if (column >= tuple->size) {
+        return -1;
+    }
+    *out_value = tuple->elements[column];
+    return 0;
+}
+
+Tuple *tuple_create(const int *values, size_t size)
+{
+    Tuple *tuple = NULL;
+    size_t i;
+
+    if (values == NULL || size == 0) {
+        return NULL;
+    }
+
+    tuple = malloc(sizeof(Tuple));
+    if (tuple == NULL) {
+        return NULL;
+    }
+
+    tuple->elements = malloc(size * sizeof(int));
+    if (tuple->elements == NULL) {
+        free(tuple);
+        return NULL;
+    }
+
+    for (i = 0; i < size; i++) {
+        tuple->elements[i] = values[i];
+    }
+    tuple->size = size;
+
+    return tuple;
+}
+
+void tuple_destroy(Tuple *tuple)
+{
+    if (tuple != NULL) {
+        free(tuple->elements);
+        tuple->elements = NULL;
+        tuple->size = 0;
+        free(tuple);
+    }
+}
+
+int main(void)
+{
+    int values[] = {10, 20, 30, 40, 50};
+    size_t count = sizeof(values) / sizeof(values[0]);
+    Tuple *tuple = NULL;
+    int result = 0;
+    size_t i;
+
+    tuple = tuple_create(values, count);
+    if (tuple == NULL) {
+        fprintf(stderr, "Failed to create tuple\n");
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i < count; i++) {
+        if (tuple_get_column(tuple, i, &result) == 0) {
+            printf("Column %zu: %d\n", i, result);
+        } else {
+            fprintf(stderr, "Failed to get column %zu\n", i);
+            tuple_destroy(tuple);
+            return EXIT_FAILURE;
+        }
+    }
+
+    if (tuple_get_column(tuple, count, &result) != 0) {
+        printf("Out-of-range access correctly rejected\n");
+    }
+
+    tuple_destroy(tuple);
+
+    return EXIT_SUCCESS;
+}
+```

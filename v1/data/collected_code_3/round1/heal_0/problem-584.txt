@@ -1,0 +1,40 @@
+C language does not have built-in support for regular expressions (regex). However, you can use external libraries such as PCRE (Perl Compatible Regular Expressions) or POSIX regex library. Here's an example using POSIX regex library:
+
+```c
+#include <stdio.h>
+#include <string.h>
+#include <regex.h>
+
+#define MAX_MATCHES 100
+
+void find_adverbs(char* str) {
+    regex_t regex;
+    regmatch_t matches[MAX_MATCHES];
+    char* pattern = "\\b\\w+ly\\b"; // simple pattern to match adverbs ending in 'ly'
+
+    if (regcomp(&regex, pattern, REG_EXTENDED)) {
+        printf("Could not compile regex\n");
+        return;
+    }
+
+    char* cursor = str;
+    while (!regexec(&regex, cursor, MAX_MATCHES, matches, 0)) {
+        int offset = matches[0].rm_eo;
+        char result[offset + 1];
+        strncpy(result, cursor, offset);
+        result[offset] = '\0';
+        printf("Found adverb: %s at position: %ld\n", result, cursor - str);
+        cursor += offset;
+    }
+
+    regfree(&regex);
+}
+
+int main() {
+    char* sentence = "He quickly ran and quietly sat down.";
+    find_adverbs(sentence);
+    return 0;
+}
+```
+
+This program uses a simple regular expression to find words ending in 'ly', which are often adverbs in English. It prints each match and its position in the string. Please note that this is a very simplistic approach and will not correctly identify all adverbs or may incorrectly identify some non-adverbs as adverbs. For a more accurate identification of adverbs, you would need a more complex regular expression or a natural language processing library.

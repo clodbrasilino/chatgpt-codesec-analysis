@@ -1,0 +1,70 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+long long find_square_root(long long n)
+{
+    long long low;
+    long long high;
+    long long mid;
+    long long square;
+
+    if (n < 0) {
+        return -1;
+    }
+    if (n < 2) {
+        return n;
+    }
+
+    low = 1;
+    high = n / 2;
+
+    while (low <= high) {
+        mid = low + (high - low) / 2;
+        if (mid > n / mid) {
+            high = mid - 1;
+            continue;
+        }
+        square = mid * mid;
+        if (square == n) {
+            return mid;
+        }
+        if (square < n) {
+            low = mid + 1;
+        } else {
+            high = mid - 1;
+        }
+    }
+
+    return -1;
+}
+
+int main(void)
+{
+    long long number;
+    long long result;
+    int scan_status;
+
+    printf("Enter a perfect square number: ");
+    scan_status = scanf("%lld", &number);
+
+    if (scan_status != 1) {
+        fprintf(stderr, "Error: invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (number < 0) {
+        fprintf(stderr, "Error: negative numbers are not allowed.\n");
+        return EXIT_FAILURE;
+    }
+
+    result = find_square_root(number);
+
+    if (result < 0) {
+        fprintf(stderr, "Error: %lld is not a perfect square.\n", number);
+        return EXIT_FAILURE;
+    }
+
+    printf("The square root of %lld is %lld\n", number, result);
+
+    return EXIT_SUCCESS;
+}

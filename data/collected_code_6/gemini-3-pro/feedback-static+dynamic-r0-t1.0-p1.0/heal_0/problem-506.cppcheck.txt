@@ -1,0 +1,28 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-506.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-506.c:22:22: style: Condition 'n<0' is always false [knownConditionTrueFalse]
+    if (p == 0 && (n < 0 || k < 0 || k > n)) {
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-506.c:18:13: note: Assignment 'n=5', assigned value is 5
+    int n = 5;
+            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-506.c:22:22: note: Condition 'n<0' is always false
+    if (p == 0 && (n < 0 || k < 0 || k > n)) {
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-506.c:22:31: style: Condition 'k<0' is always false [knownConditionTrueFalse]
+    if (p == 0 && (n < 0 || k < 0 || k > n)) {
+                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-506.c:19:13: note: Assignment 'k=3', assigned value is 3
+    int k = 3;
+            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-506.c:22:31: note: Condition 'k<0' is always false
+    if (p == 0 && (n < 0 || k < 0 || k > n)) {
+                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-506.c:22:40: style: Condition 'k>n' is always false [knownConditionTrueFalse]
+    if (p == 0 && (n < 0 || k < 0 || k > n)) {
+                                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-506.c:19:13: note: Assignment 'k=3', assigned value is 3
+    int k = 3;
+            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-506.c:22:40: note: Condition 'k>n' is always false
+    if (p == 0 && (n < 0 || k < 0 || k > n)) {
+                                       ^

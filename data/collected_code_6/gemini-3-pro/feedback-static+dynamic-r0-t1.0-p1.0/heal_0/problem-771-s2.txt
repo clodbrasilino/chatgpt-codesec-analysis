@@ -1,0 +1,92 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+typedef struct Node {
+    char data;
+    struct Node* next;
+} Node;
+
+void push(Node** top_ref, char new_data) {
+    if (!top_ref) return;
+    
+    Node* new_node = (Node*)malloc(sizeof(Node));
+    if (!new_node) {
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(EXIT_FAILURE);
+    }
+    
+    new_node->data = new_data;
+    new_node->next = *top_ref;
+    *top_ref = new_node;
+}
+
+char pop(Node** top_ref) {
+    if (!top_ref || !*top_ref) return '\0';
+    
+    Node* current = *top_ref;
+    char res = current->data;
+    *top_ref = current->next;
+    free(current);
+    
+    return res;
+}
+
+bool is_matching_pair(char character1, char character2) {
+    if (character1 == '(' && character2 == ')') return true;
+    if (character1 == '{' && character2 == '}') return true;
+    if (character1 == '[' && character2 == ']') return true;
+    return false;
+}
+
+bool is_balanced(const char* exp) {
+    if (!exp) return false;
+    
+    Node* stack = NULL;
+    
+    for (int i = 0; exp[i] != '\0'; i++) {
+        if (exp[i] == '{' || exp[i] == '(' || exp[i] == '[') {
+            push(&stack, exp[i]);
+        }
+        else if (exp[i] == '}' || exp[i] == ')' || exp[i] == ']') {
+            if (stack == NULL) {
+                return false;
+            }
+            
+            char popped_char = pop(&stack);
+            if (!is_matching_pair(popped_char, exp[i])) {
+                while (stack != NULL) {
+                    pop(&stack);
+                }
+                return false;
+            }
+        }
+    }
+    
+    if (stack == NULL) {
+        return true;
+    } else {
+        while (stack != NULL) {
+            pop(&stack);
+        }
+        return false;
+    }
+}
+
+int main(void) {
+    const char* exp1 = "{[()]}";
+    const char* exp2 = "{[(])}";
+    const char* exp3 = "{{[[(())]]}}";
+    const char* exp4 = "[";
+    const char* exp5 = "]";
+    
+    printf("'%s' is %s\n", exp1, is_balanced(exp1) ? "balanced" : "not balanced");
+    printf("'%s' is %s\n", exp2, is_balanced(exp2) ? "balanced" : "not balanced");
+    printf("'%s' is %s\n", exp3, is_balanced(exp3) ? "balanced" : "not balanced");
+    printf("'%s' is %s\n", exp4, is_balanced(exp4) ? "balanced" : "not balanced");
+    printf("'%s' is %s\n", exp5, is_balanced(exp5) ? "balanced" : "not balanced");
+    
+    return EXIT_SUCCESS;
+}
+```

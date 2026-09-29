@@ -1,0 +1,27 @@
+```c
+#include <stdio.h>
+#include <math.h>
+
+int is_lucid(int num) {
+    int root = (int)sqrt(num);
+    if (root * root != num) return 0;
+    for (int i = 2; i <= sqrt(root); i++) {
+        if (root % i == 0) return 0;
+    }
+    return 1;
+}
+
+int get_lucid(int n) {
+    for (int i = n; i > 0; i--) {
+        if (is_lucid(i)) return i;
+    }
+    return 0;
+}
+
+int main() {
+    int n = 100;
+    int lucid = get_lucid(n);
+    printf("Largest lucid number <= %d: %d\n", n, lucid);
+    return 0;
+}
+```

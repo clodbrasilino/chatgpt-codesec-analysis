@@ -1,0 +1,30 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+double calculate_pentagon_perimeter(double side_a, double side_b, double side_c, double side_d, double side_e) {
+    if (side_a <= 0.0 || side_b <= 0.0 || side_c <= 0.0 || side_d <= 0.0 || side_e <= 0.0) {
+        return -1.0;
+    }
+    return side_a + side_b + side_c + side_d + side_e;
+}
+
+int main(void) {
+    double side1 = 5.0;
+    double side2 = 6.5;
+    double side3 = 4.2;
+    double side4 = 7.1;
+    double side5 = 5.8;
+
+    double perimeter = calculate_pentagon_perimeter(side1, side2, side3, side4, side5);
+
+    if (perimeter < 0.0) {
+        fprintf(stderr, "Invalid input: Side lengths must be strictly positive.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Perimeter of the pentagon: %.2f\n", perimeter);
+
+    return EXIT_SUCCESS;
+}
+```

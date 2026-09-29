@@ -1,0 +1,56 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdbool.h>
+
+bool isValidParentheses(const char *s) {
+    if (s == NULL) {
+        return false;
+    }
+
+    size_t len = strlen(s);
+    char *stack = malloc(len + 1);
+    if (stack == NULL) {
+        return false;
+    }
+
+    size_t top = 0;
+
+    for (size_t i = 0; i < len; i++) {
+        char c = s[i];
+
+        if (c == '(' || c == '[' || c == '{') {
+            stack[top++] = c;
+        } else if (c == ')' || c == ']' || c == '}') {
+            if (top == 0) {
+                free(stack);
+                return false;
+            }
+
+            char open = stack[--top];
+
+            if ((c == ')' && open != '(') ||
+                (c == ']' && open != '[') ||
+                (c == '}' && open != '{')) {
+                free(stack);
+                return false;
+            }
+        } else {
+            free(stack);
+            return false;
+        }
+    }
+
+    bool valid = (top == 0);
+    free(stack);
+    return valid;
+}
+
+int main(int argc, const char *argv[]) {
+    if (argc != 2) {
+        return 1;
+    }
+
+    printf("%s\n", isValidParentheses(argv[1]) ? "True" : "False");
+    return 0;
+}

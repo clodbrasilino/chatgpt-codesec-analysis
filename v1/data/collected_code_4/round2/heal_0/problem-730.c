@@ -1,0 +1,63 @@
+#include <stdlib.h>
+#include <stdio.h>
+
+typedef struct node {
+    int data;
+    struct node *next;
+} node;
+
+node *create_node(int data) {
+    node *new_node = (node *) malloc(sizeof(node));
+    if (new_node == NULL) {
+        exit(1);
+    }
+    new_node->data = data;
+    new_node->next = NULL;
+    return new_node;
+}
+
+void remove_duplicates(node *head) {
+    node *current = head;
+    node *next_next;
+
+    if (current == NULL) {
+        return;
+    }
+
+    while (current->next != NULL) {
+        if (current->data == current->next->data) {
+            next_next = current->next->next;
+            free(current->next);
+            current->next = next_next;
+        } else {
+            current = current->next;
+        }
+    }
+}
+
+void print_list(node *node) {
+    while (node != NULL) {
+        printf("%d ", node->data);
+        node = node->next;
+    }
+    printf("\n");
+}
+
+int main() {
+    node *head = create_node(1);
+    head->next = create_node(2);
+    head->next->next = create_node(2);
+    head->next->next->next = create_node(3);
+    head->next->next->next->next = create_node(3);
+    head->next->next->next->next->next = create_node(4);
+
+    printf("Before removal of duplicates\n");
+    print_list(head);
+
+    remove_duplicates(head);
+
+    printf("After removal of duplicates\n");
+    print_list(head);
+
+    return 0;
+}

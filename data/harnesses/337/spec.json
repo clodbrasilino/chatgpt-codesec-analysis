@@ -1,0 +1,44 @@
+{
+  "task_id": 337,
+  "text": "Write a C function that matches a word at the end of a string, with optional punctuation.",
+  "fn_candidates": [
+    "text_match_word",
+    "TextMatchWord",
+    "textMatchWord",
+    "textmatchword"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "text_match_word",
+      "args": [
+        "python."
+      ],
+      "expected": "Found a match!",
+      "assert_src": "assert text_match_word(\"python.\")==('Found a match!')"
+    },
+    {
+      "fn_name": "text_match_word",
+      "args": [
+        "python."
+      ],
+      "expected": "Found a match!",
+      "assert_src": "assert text_match_word(\"python.\")==('Found a match!')"
+    },
+    {
+      "fn_name": "text_match_word",
+      "args": [
+        "  lang  ."
+      ],
+      "expected": "Not matched!",
+      "assert_src": "assert text_match_word(\"  lang  .\")==('Not matched!')"
+    }
+  ],
+  "arg_kinds": [
+    "str"
+  ],
+  "return_kind": "str",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

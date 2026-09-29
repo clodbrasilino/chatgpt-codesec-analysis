@@ -1,0 +1,50 @@
+```c
+#include <stdio.h>
+#include <ctype.h>
+#include <stddef.h>
+
+void remove_whitespace(char *str)
+{
+    size_t read;
+    size_t write;
+
+    if (str == NULL) {
+        return;
+    }
+
+    read = 0;
+    write = 0;
+
+    while (str[read] != '\0') {
+        if (!isspace((unsigned char)str[read])) {
+            str[write] = str[read];
+            write++;
+        }
+        read++;
+    }
+    str[write] = '\0';
+}
+
+int main(void)
+{
+    char text[] = "  Hello,   World! \t This is a\ntest.  ";
+
+    printf("Before: \"%s\"\n", text);
+    remove_whitespace(text);
+    printf("After:  \"%s\"\n", text);
+
+    return 0;
+}
+```
+
+**Analysis notes:**
+
+The Flawfinder warnings here are low-risk (risk level 1) heuristic hits on array indexing inside a loop, not actual defects. Reviewing the original code as an experienced C developer:
+
+1. **NULL check** — `str == NULL` is guarded before any dereference. ✔
+2. **Buffer boundaries** — The `read` index only advances while `str[read] != '\0'`, so it never reads past the terminator of a properly NUL-terminated string. The `write` index can never exceed `read` (it only increments when `read` does), so `str[write] = '\0'` always writes within the original string bounds — the algorithm can only shrink the string, never grow it. ✔
+3. **`isspace` UB avoidance** — The cast to `(unsigned char)` before passing to `isspace()` is essential; passing a negative `char` value (e.g., from extended/UTF-8 bytes on platforms where `char` is signed) is undefined behavior per the C standard. The original already does this correctly. ✔
+4. **`size_t` for indices** — Correct type choice; avoids signed overflow issues on very long strings. ✔
+5. **In `main`** — `text` is a mutable stack array (not a string-literal pointer), so writing to it is legal. ✔
+
+Conclusion: the flagged weaknesses are false positives; the code is already sound, so the rewrite is functionally identical with the scanner comments stripped out.

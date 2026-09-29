@@ -1,0 +1,93 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdbool.h>
+
+#define MAX_WORDS 1000
+#define MAX_WORD_LENGTH 100
+
+typedef struct {
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char word[MAX_WORD_LENGTH];
+} Word;
+
+typedef struct {
+    Word words[MAX_WORDS];
+    int count;
+} WordList;
+
+void init_word_list(WordList *list) {
+    list->count = 0;
+}
+
+bool is_word_in_list(WordList *list, const char *word) {
+    for (int i = 0; i < list->count; ++i) {
+        if (strcmp(list->words[i].word, word) == 0) {
+            return true;
+        }
+    }
+    return false;
+}
+
+void add_word_to_list(WordList *list, const char *word) {
+    if (list->count < MAX_WORDS && !is_word_in_list(list, word)) {
+        /* Possible weaknesses found:
+         * Flawfinder strcpy: Does not check for buffer overflows when copying to destination [MS-banned] (CWE-120). Consider using snprintf, strcpy_s, or strlcpy (warning: strncpy easily misused). (risk 4, buffer)
+         */
+        strcpy(list->words[list->count].word, word);
+        list->count++;
+    }
+}
+
+char *remove_duplicate_words(const char *input) {
+    WordList list;
+    init_word_list(&list);
+
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    size_t input_len = strlen(input);
+    char *result = (char *)malloc(input_len + 1);
+    if (!result) {
+        return NULL;
+    }
+    result[0] = '\0';
+
+    char *token = strtok((char *)input, " ");
+    size_t result_len = 0;
+    while (token) {
+        if (!is_word_in_list(&list, token)) {
+            add_word_to_list(&list, token);
+            /* Possible weaknesses found:
+             * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+             */
+            size_t token_len = strlen(token);
+            /* Possible weaknesses found:
+             * Flawfinder strncat: Easily used incorrectly (e.g., incorrectly computing the correct maximum size to add) [MS-banned] (CWE-120). Consider strcat_s, strlcat, snprintf, or automatically resizing strings. (risk 1, buffer)
+             */
+            strncat(result, token, token_len);
+            result[result_len + token_len] = ' ';
+            result_len += token_len + 1;
+        }
+        token = strtok(NULL, " ");
+    }
+
+    if (result_len > 0) {
+        result[result_len - 1] = '\0';
+    }
+    return result;
+}
+
+int main() {
+    const char *input = "this this is a a test test string";
+    char *output = remove_duplicate_words(input);
+    if (output) {
+        printf("%s\n", output);
+        free(output);
+    } else {
+        fprintf(stderr, "Memory allocation failed\n");
+    }
+    return 0;
+}

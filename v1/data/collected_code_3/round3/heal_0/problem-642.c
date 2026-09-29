@@ -1,0 +1,46 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define ROW 5
+#define COL 3
+
+int areRowsSame(int mat[ROW][COL], int row1, int row2)
+{
+    int i;
+    for (i = 0; i < COL; i++)
+        if (mat[row1][i] != mat[row2][i])
+            return 0;
+    return 1;
+}
+
+void removeSimilarRows(int mat[ROW][COL])
+{
+    int i, j;
+    for (i = 0; i < ROW; i++)
+    {
+        int isRowPresent = 0;
+        for (j = 0; j < i; j++)
+            if (areRowsSame(mat, i, j))
+            {
+                isRowPresent = 1;
+            }
+        if (!isRowPresent)
+        {
+            for (j = 0; j < COL; j++)
+                printf("%d ", mat[i][j]);
+            printf("\n");
+        }
+    }
+}
+
+int main()
+{
+    int mat[ROW][COL] = {{1, 2, 3},
+                         {1, 2, 3},
+                         {4, 5, 6},
+                         {7, 8, 9},
+                         {4, 5, 6}};
+    removeSimilarRows(mat);
+    return 0;
+}

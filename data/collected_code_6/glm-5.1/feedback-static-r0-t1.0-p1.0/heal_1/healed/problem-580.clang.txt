@@ -1,0 +1,25 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-580.c:117:39: error: too many arguments to function call, expected single argument 'val', have 2 arguments
+  117 |                 element_create_int(5, NULL)
+      |                 ~~~~~~~~~~~~~~~~~~    ^~~~
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/sys/_types/_null.h:49:15: note: expanded from macro 'NULL'
+   49 | #define NULL  __DARWIN_NULL
+      |               ^~~~~~~~~~~~~
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/sys/_types.h:64:23: note: expanded from macro '__DARWIN_NULL'
+   64 | #define __DARWIN_NULL ((void *)0)
+      |                       ^~~~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-580.c:13:10: note: 'element_create_int' declared here
+   13 | Element *element_create_int(int val) {
+      |          ^                  ~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-580.c:127:43: error: too many arguments to function call, expected single argument 'val', have 2 arguments
+  127 |                     element_create_int(7, NULL)
+      |                     ~~~~~~~~~~~~~~~~~~    ^~~~
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/sys/_types/_null.h:49:15: note: expanded from macro 'NULL'
+   49 | #define NULL  __DARWIN_NULL
+      |               ^~~~~~~~~~~~~
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/sys/_types.h:64:23: note: expanded from macro '__DARWIN_NULL'
+   64 | #define __DARWIN_NULL ((void *)0)
+      |                       ^~~~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-580.c:13:10: note: 'element_create_int' declared here
+   13 | Element *element_create_int(int val) {
+      |          ^                  ~~~~~~~
+2 errors generated.

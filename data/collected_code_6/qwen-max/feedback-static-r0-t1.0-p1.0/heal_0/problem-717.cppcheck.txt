@@ -1,0 +1,7 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-717.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-717.c:5:31: style: Parameter 'data' can be declared as pointer to const [constParameterPointer]
+double calculate_mean(double *data, int n) {
+                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-717.c:13:35: style: Parameter 'data' can be declared as pointer to const [constParameterPointer]
+double calculate_variance(double *data, int n, double mean) {
+                                  ^

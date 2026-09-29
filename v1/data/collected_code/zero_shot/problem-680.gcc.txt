@@ -1,0 +1,16 @@
+collected_code/problem-680-0.c:1:1: error: unknown type name 'bool'
+    1 | bool isIncreasing(int numbers[], int length) {
+      | ^~~~
+collected_code/problem-680-0.c:1:1: note: 'bool' is defined in header '<stdbool.h>'; did you forget to '#include <stdbool.h>'?
+  +++ |+#include <stdbool.h>
+    1 | bool isIncreasing(int numbers[], int length) {
+collected_code/problem-680-0.c: In function 'isIncreasing':
+collected_code/problem-680-0.c:4:20: error: 'false' undeclared (first use in this function)
+    4 |             return false;
+      |                    ^~~~~
+collected_code/problem-680-0.c:4:20: note: 'false' is defined in header '<stdbool.h>'; did you forget to '#include <stdbool.h>'?
+collected_code/problem-680-0.c:4:20: note: each undeclared identifier is reported only once for each function it appears in
+collected_code/problem-680-0.c:7:12: error: 'true' undeclared (first use in this function)
+    7 |     return true;
+      |            ^~~~
+collected_code/problem-680-0.c:7:12: note: 'true' is defined in header '<stdbool.h>'; did you forget to '#include <stdbool.h>'?

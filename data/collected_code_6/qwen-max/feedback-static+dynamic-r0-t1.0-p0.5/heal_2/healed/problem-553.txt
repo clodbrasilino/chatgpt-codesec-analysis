@@ -1,0 +1,33 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+double tuple_to_float(const int *tuple, size_t length) {
+    if (length == 0) return 0.0;
+    double result = 0.0;
+    for (size_t i = 0; i < length; ++i) {
+        result += (double)tuple[i] * pow(10, length - i - 2);
+    }
+    return result / pow(10, length - 1);
+}
+
+int main() {
+    int tuple[] = {7, 2, 5, 6};
+    size_t length = sizeof(tuple) / sizeof(tuple[0]);
+    double float_value = tuple_to_float(tuple, length);
+    printf("%.3f\n", float_value);
+
+    int tuple2[] = {8, 1, 2, 3};
+    length = sizeof(tuple2) / sizeof(tuple2[0]);
+    float_value = tuple_to_float(tuple2, length);
+    printf("%.3f\n", float_value);
+
+    int tuple3[] = {4, 5, 6};
+    length = sizeof(tuple3) / sizeof(tuple3[0]);
+    float_value = tuple_to_float(tuple3, length);
+    printf("%.3f\n", float_value);
+
+    return 0;
+}
+```

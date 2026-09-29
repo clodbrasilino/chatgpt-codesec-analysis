@@ -1,0 +1,64 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-73-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-73-s2.c:79:29: style: Condition 'len>0' is always true [knownConditionTrueFalse]
+                    if (len > 0 && len <= str_len - start) {
+                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-73-s2.c:44:21: note: Assuming that condition 'end>start' is not redundant
+            if (end > start) {
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-73-s2.c:67:27: note: Assignment 'len=end-start', assigned value is greater than 0
+                len = end - start;
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-73-s2.c:70:38: note: Assuming condition is false
+                    if (result[size] == NULL) {
+                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-73-s2.c:79:29: note: Condition 'len>0' is always true
+                    if (len > 0 && len <= str_len - start) {
+                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-73-s2.c:79:40: style: Condition 'len<=str_len-start' is always true [knownConditionTrueFalse]
+                    if (len > 0 && len <= str_len - start) {
+                                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-73-s2.c:68:25: note: Assuming that condition 'len<=str_len-start' is not redundant
+                if (len <= str_len - start && len < SIZE_MAX) {
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-73-s2.c:70:38: note: Assuming condition is false
+                    if (result[size] == NULL) {
+                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-73-s2.c:79:40: note: Condition 'len<=str_len-start' is always true
+                    if (len > 0 && len <= str_len - start) {
+                                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-73-s2.c:130:21: style: Condition 'len>0' is always true [knownConditionTrueFalse]
+            if (len > 0 && len <= str_len - cursor) {
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-73-s2.c:94:16: note: Assuming that condition 'cursor<str_len' is not redundant
+    if (cursor < str_len) {
+               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-73-s2.c:95:23: note: Assignment 'len=str_len-cursor', assigned value is greater than 0
+        len = str_len - cursor;
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-73-s2.c:121:30: note: Assuming condition is false
+            if (result[size] == NULL) {
+                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-73-s2.c:130:21: note: Condition 'len>0' is always true
+            if (len > 0 && len <= str_len - cursor) {
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-73-s2.c:130:32: style: Condition 'len<=str_len-cursor' is always true [knownConditionTrueFalse]
+            if (len > 0 && len <= str_len - cursor) {
+                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-73-s2.c:95:13: note: len is assigned 'str_len-cursor' here.
+        len = str_len - cursor;
+            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-73-s2.c:121:30: note: Assuming condition is false
+            if (result[size] == NULL) {
+                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-73-s2.c:130:32: note: Condition 'len<=str_len-cursor' is always true
+            if (len > 0 && len <= str_len - cursor) {
+                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-73-s2.c:167:15: style: Condition 'input!=NULL' is always true [knownConditionTrueFalse]
+    if (input != NULL) {
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-73-s2.c:162:25: note: Assignment 'input="apple,banana;orange:grape|mango"', assigned value is "apple,banana;orange:grape|mango"
+    const char *input = "apple,banana;orange:grape|mango";
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-73-s2.c:167:15: note: Condition 'input!=NULL' is always true
+    if (input != NULL) {
+              ^

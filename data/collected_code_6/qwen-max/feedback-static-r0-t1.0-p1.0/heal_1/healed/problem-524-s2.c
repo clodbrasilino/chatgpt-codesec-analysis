@@ -1,0 +1,34 @@
+#include <stdio.h>
+#include <limits.h>
+
+int findSumOfMaxIncreasingSubsequence(const int arr[], int n) {
+    int sum[n];
+    for (int i = 0; i < n; i++) {
+        sum[i] = arr[i];
+    }
+
+    for (int i = 1; i < n; i++) {
+        for (int j = 0; j < i; j++) {
+            if (arr[i] > arr[j] && sum[i] < sum[j] + arr[i]) {
+                sum[i] = sum[j] + arr[i];
+            }
+        }
+    }
+
+    int maxSum = 0;
+    for (int i = 0; i < n; i++) {
+        if (maxSum < sum[i]) {
+            maxSum = sum[i];
+        }
+    }
+
+    return maxSum;
+}
+
+int main() {
+    const int arr[] = {1, 101, 2, 3, 100, 4, 5};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    int result = findSumOfMaxIncreasingSubsequence(arr, n);
+    printf("Sum of maximum increasing subsequence: %d\n", result);
+    return 0;
+}

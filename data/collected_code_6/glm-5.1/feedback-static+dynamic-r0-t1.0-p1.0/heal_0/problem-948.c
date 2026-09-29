@@ -1,0 +1,88 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdarg.h>
+
+typedef struct {
+    void **items;
+    size_t size;
+} Tuple;
+
+Tuple *tuple_create(size_t size, ...) {
+    Tuple *t = malloc(sizeof(Tuple));
+    if (t == NULL) {
+        return NULL;
+    }
+
+    t->items = malloc(size * sizeof(void *));
+    if (t->items == NULL) {
+        free(t);
+        return NULL;
+    }
+
+    t->size = size;
+
+    va_list args;
+    va_start(args, size);
+
+    for (size_t i = 0; i < size; i++) {
+        t->items[i] = va_arg(args, void *);
+    }
+
+    va_end(args);
+
+    return t;
+}
+
+void tuple_destroy(Tuple *t) {
+    if (t != NULL) {
+        free(t->items);
+        free(t);
+    }
+}
+
+void *tuple_get(Tuple *t, size_t index) {
+    if (t == NULL) {
+        return NULL;
+    }
+
+    if (index >= t->size) {
+        return NULL;
+    }
+
+    return t->items[index];
+}
+
+int main(void) {
+    int a = 10;
+    double b = 20.5;
+    char c = 'X';
+
+    Tuple *t = tuple_create(3, &a, &b, &c);
+    if (t == NULL) {
+        return EXIT_FAILURE;
+    }
+
+    int *item0 = tuple_get(t, 0);
+    if (item0 != NULL) {
+        printf("Item 0: %d\n", *item0);
+    }
+
+    double *item1 = tuple_get(t, 1);
+    if (item1 != NULL) {
+        printf("Item 1: %f\n", *item1);
+    }
+
+    char *item2 = tuple_get(t, 2);
+    if (item2 != NULL) {
+        printf("Item 2: %c\n", *item2);
+    }
+
+    void *item_oob = tuple_get(t, 5);
+    if (item_oob == NULL) {
+        printf("Out of bounds access safely returned NULL\n");
+    }
+
+    tuple_destroy(t);
+
+    return EXIT_SUCCESS;
+}

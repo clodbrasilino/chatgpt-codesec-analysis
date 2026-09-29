@@ -1,0 +1,71 @@
+collected_code_3/problem-260-2.c: In function 'newman_shanks_williams':
+collected_code_3/problem-260-2.c:13:12: warning: use of uninitialized value 'c' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   13 |     return c;
+      |            ^
+  'newman_shanks_williams': events 1-7
+    |
+    |    4 |     if (n == 0 || n == 1) {
+    |      |        ~               
+    |      |        |
+    |      |        (3) following 'false' branch...
+    |......
+    |    7 |     int a = 1, b = 1, c;
+    |      |         ~             ^
+    |      |         |             |
+    |      |         |             (1) region created on stack here
+    |      |         |             (2) capacity: 4 bytes
+    |      |         (4) ...to here
+    |    8 |     for (int i = 2; i <= n; i++) {
+    |      |                     ~~~~~~
+    |      |                       |
+    |      |                       (5) following 'false' branch (when 'i > n')...
+    |......
+    |   13 |     return c;
+    |      |            ~           
+    |      |            |
+    |      |            (6) ...to here
+    |      |            (7) use of uninitialized value 'c' here
+    |
+collected_code_3/problem-260-2.c:13:12: warning: use of uninitialized value 'c' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   13 |     return c;
+      |            ^
+  'main': events 1-2
+    |
+    |   16 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   20 |     printf("The %dth Newman-Shanks-Williams prime number is: %d\n", n, newman_shanks_williams(n));
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) calling 'newman_shanks_williams' from 'main'
+    |
+    +--> 'newman_shanks_williams': events 3-10
+           |
+           |    3 | int newman_shanks_williams(int n) {
+           |      |     ^~~~~~~~~~~~~~~~~~~~~~
+           |      |     |
+           |      |     (3) entry to 'newman_shanks_williams'
+           |    4 |     if (n == 0 || n == 1) {
+           |      |        ~
+           |      |        |
+           |      |        (6) following 'false' branch...
+           |......
+           |    7 |     int a = 1, b = 1, c;
+           |      |         ~             ~
+           |      |         |             |
+           |      |         |             (4) region created on stack here
+           |      |         |             (5) capacity: 4 bytes
+           |      |         (7) ...to here
+           |    8 |     for (int i = 2; i <= n; i++) {
+           |      |                     ~~~~~~
+           |      |                       |
+           |      |                       (8) following 'false' branch (when 'i > n')...
+           |......
+           |   13 |     return c;
+           |      |            ~
+           |      |            |
+           |      |            (9) ...to here
+           |      |            (10) use of uninitialized value 'c' here
+           |

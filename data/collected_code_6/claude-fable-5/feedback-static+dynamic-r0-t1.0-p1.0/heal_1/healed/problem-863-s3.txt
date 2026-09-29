@@ -1,0 +1,98 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+static int compare_ints(const void *a, const void *b)
+{
+    int x = *(const int *)a;
+    int y = *(const int *)b;
+
+    if (x < y) {
+        return -1;
+    }
+    if (x > y) {
+        return 1;
+    }
+    return 0;
+}
+
+static int longest_consecutive_subsequence(const int *arr, size_t n)
+{
+    int *sorted = NULL;
+    size_t i;
+    size_t bytes;
+    int max_len;
+    int current_len;
+
+    if (arr == NULL || n == 0) {
+        return 0;
+    }
+
+    if (n > SIZE_MAX / sizeof(*sorted)) {
+        return -1;
+    }
+
+    bytes = n * sizeof(*sorted);
+
+    sorted = malloc(bytes);
+    if (sorted == NULL) {
+        return -1;
+    }
+
+    memcpy(sorted, arr, bytes);
+    qsort(sorted, n, sizeof(*sorted), compare_ints);
+
+    max_len = 1;
+    current_len = 1;
+
+    for (i = 1; i < n; i++) {
+        if (sorted[i] == sorted[i - 1]) {
+            continue;
+        }
+        if (sorted[i] == sorted[i - 1] + 1) {
+            current_len++;
+            if (current_len > max_len) {
+                max_len = current_len;
+            }
+        } else {
+            current_len = 1;
+        }
+    }
+
+    free(sorted);
+    return max_len;
+}
+
+int main(void)
+{
+    int arr[] = {1, 9, 3, 10, 4, 20, 2};
+    size_t n = sizeof(arr) / sizeof(arr[0]);
+    int result;
+
+    result = longest_consecutive_subsequence(arr, n);
+    if (result < 0) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Length of the longest consecutive subsequence is %d\n", result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the fix:**
+
+The original code was already largely safe, but the Flawfinder warning about `memcpy` (CWE-120) pointed to one real latent issue: the expression `n * sizeof(*sorted)` can overflow `size_t` for very large `n`. If it wrapped around, `malloc` would allocate a small buffer while `memcpy` (using the same wrapped value) would still be consistent — however, guarding explicitly is the defensive-correct approach and satisfies the static analyzer's concern.
+
+Changes made:
+
+1. **Overflow guard before allocation:** `n > SIZE_MAX / sizeof(*sorted)` rejects any size that would wrap during multiplication, guaranteeing the destination buffer can always hold the source data.
+2. **Single computed `bytes` value:** The same value is used for both `malloc` and `memcpy`, making it structurally impossible for the copy size to exceed the allocation size — this directly addresses the CWE-120 pattern.
+3. **Added `<stdint.h>`** for `SIZE_MAX`.
+
+Everything else (NULL/zero-length input handling, allocation failure propagation via `-1`, freeing the buffer, checked `printf` return) was already sound and is preserved.

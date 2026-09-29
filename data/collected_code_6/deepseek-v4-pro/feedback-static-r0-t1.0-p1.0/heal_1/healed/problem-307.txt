@@ -1,0 +1,89 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    void **elements;
+    size_t size;
+} Tuple;
+
+void *tuple_get_colon(Tuple *tuple, size_t index) {
+    if (tuple == NULL || tuple->elements == NULL) {
+        return NULL;
+    }
+    if (index >= tuple->size) {
+        return NULL;
+    }
+    return tuple->elements[index];
+}
+
+Tuple *tuple_create(size_t size) {
+    Tuple *tuple = (Tuple *)malloc(sizeof(Tuple));
+    if (tuple == NULL) {
+        return NULL;
+    }
+    tuple->elements = (void **)calloc(size, sizeof(void *));
+    if (tuple->elements == NULL) {
+        free(tuple);
+        return NULL;
+    }
+    tuple->size = size;
+    return tuple;
+}
+
+void tuple_set(Tuple *tuple, size_t index, void *element) {
+    if (tuple == NULL || tuple->elements == NULL) {
+        return;
+    }
+    if (index >= tuple->size) {
+        return;
+    }
+    tuple->elements[index] = element;
+}
+
+void tuple_free(Tuple *tuple) {
+    if (tuple == NULL) {
+        return;
+    }
+    free(tuple->elements);
+    free(tuple);
+}
+
+int main(void) {
+    int a = 10;
+    double b = 3.14;
+    char *str = "hello";
+    
+    Tuple *tuple = tuple_create(3);
+    if (tuple == NULL) {
+        return EXIT_FAILURE;
+    }
+    
+    tuple_set(tuple, 0, &a);
+    tuple_set(tuple, 1, &b);
+    tuple_set(tuple, 2, str);
+    
+    const int *int_val = (const int *)tuple_get_colon(tuple, 0);
+    const double *double_val = (const double *)tuple_get_colon(tuple, 1);
+    char *str_val = (char *)tuple_get_colon(tuple, 2);
+    
+    if (int_val != NULL) {
+        printf("%d\n", *int_val);
+    }
+    if (double_val != NULL) {
+        printf("%.2f\n", *double_val);
+    }
+    if (str_val != NULL) {
+        printf("%s\n", str_val);
+    }
+    
+    const void *invalid = tuple_get_colon(tuple, 5);
+    if (invalid == NULL) {
+        printf("Invalid index\n");
+    }
+    
+    tuple_free(tuple);
+    return EXIT_SUCCESS;
+}
+```

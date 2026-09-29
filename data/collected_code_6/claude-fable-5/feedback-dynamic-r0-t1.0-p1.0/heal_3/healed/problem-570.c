@@ -1,0 +1,257 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+static char *remove_pattern_from_word(const char *word, const char *pattern)
+{
+    size_t word_len = strlen(word);
+    size_t pattern_len = strlen(pattern);
+    char *buffer;
+    char *trimmed;
+    size_t pos = 0;
+    const char *src = word;
+    const char *match;
+    size_t start;
+    size_t end;
+    size_t final_len;
+
+    buffer = malloc(word_len + 1);
+    if (buffer == NULL) {
+        return NULL;
+    }
+
+    if (pattern_len == 0) {
+        memcpy(buffer, word, word_len + 1);
+    } else {
+        while ((match = strstr(src, pattern)) != NULL) {
+            size_t chunk = (size_t)(match - src);
+            memcpy(buffer + pos, src, chunk);
+            pos += chunk;
+            src = match + pattern_len;
+        }
+        strcpy(buffer + pos, src);
+    }
+
+    start = 0;
+    end = strlen(buffer);
+    while (start < end && buffer[start] == ' ') {
+        start++;
+    }
+    while (end > start && buffer[end - 1] == ' ') {
+        end--;
+    }
+    final_len = end - start;
+
+    trimmed = malloc(final_len + 1);
+    if (trimmed == NULL) {
+        free(buffer);
+        return NULL;
+    }
+    memcpy(trimmed, buffer + start, final_len);
+    trimmed[final_len] = '\0';
+    free(buffer);
+
+    return trimmed;
+}
+
+char **remove_words(const char **words, size_t count, const char *pattern, size_t *out_count)
+{
+    char **result;
+    size_t kept = 0;
+    size_t i;
+
+    if (words == NULL || pattern == NULL || out_count == NULL) {
+        return NULL;
+    }
+
+    result = malloc((count > 0 ? count : 1) * sizeof(char *));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    for (i = 0; i < count; i++) {
+        char *processed;
+
+        if (words[i] == NULL) {
+            continue;
+        }
+
+        processed = remove_pattern_from_word(words[i], pattern);
+        if (processed == NULL) {
+            size_t j;
+            for (j = 0; j < kept; j++) {
+                free(result[j]);
+            }
+            free(result);
+            return NULL;
+        }
+
+        result[kept] = processed;
+        kept++;
+    }
+
+    *out_count = kept;
+    return result;
+}
+
+void free_word_list(char **list, size_t count)
+{
+    size_t i;
+
+    if (list == NULL) {
+        return;
+    }
+    for (i = 0; i < count; i++) {
+        free(list[i]);
+    }
+    free(list);
+}
+
+static char *duplicate_range(const char *start, size_t len)
+{
+    char *copy = malloc(len + 1);
+    if (copy == NULL) {
+        return NULL;
+    }
+    memcpy(copy, start, len);
+    copy[len] = '\0';
+    return copy;
+}
+
+static int append_word(char ***words, size_t *count, size_t *capacity, char *word)
+{
+    if (*count >= *capacity) {
+        size_t new_cap = (*capacity == 0) ? 8 : (*capacity * 2);
+        char **tmp = realloc(*words, new_cap * sizeof(char *));
+        if (tmp == NULL) {
+            return -1;
+        }
+        *words = tmp;
+        *capacity = new_cap;
+    }
+    (*words)[*count] = word;
+    (*count)++;
+    return 0;
+}
+
+static char **parse_word_list(const char *line, size_t *out_count)
+{
+    char **words = NULL;
+    size_t count = 0;
+    size_t capacity = 0;
+    const char *p = line;
+
+    if (strchr(line, '\'') != NULL || strchr(line, '"') != NULL) {
+        while (*p != '\0') {
+            if (*p == '\'' || *p == '"') {
+                char quote = *p;
+                const char *start;
+                size_t len;
+                char *copy;
+
+                p++;
+                start = p;
+                while (*p != '\0' && *p != quote) {
+                    p++;
+                }
+                len = (size_t)(p - start);
+                copy = duplicate_range(start, len);
+                if (copy == NULL || append_word(&words, &count, &capacity, copy) != 0) {
+                    free(copy);
+                    free_word_list(words, count);
+                    return NULL;
+                }
+                if (*p != '\0') {
+                    p++;
+                }
+            } else {
+                p++;
+            }
+        }
+    } else {
+        while (*p != '\0') {
+            const char *start;
+            const char *end;
+            size_t len;
+            char *copy;
+
+            while (*p == ' ' || *p == '[' || *p == '\n' || *p == '\r' || *p == '\t') {
+                p++;
+            }
+            if (*p == '\0') {
+                break;
+            }
+            start = p;
+            while (*p != '\0' && *p != ',' && *p != ']' && *p != '\n' && *p != '\r') {
+                p++;
+            }
+            end = p;
+            while (end > start && (end[-1] == ' ' || end[-1] == '\t')) {
+                end--;
+            }
+            len = (size_t)(end - start);
+            if (len > 0) {
+                copy = duplicate_range(start, len);
+                if (copy == NULL || append_word(&words, &count, &capacity, copy) != 0) {
+                    free(copy);
+                    free_word_list(words, count);
+                    return NULL;
+                }
+            }
+            if (*p == ',' || *p == ']') {
+                p++;
+            }
+        }
+    }
+
+    *out_count = count;
+    return words;
+}
+
+static void strip_pattern_line(char *line)
+{
+    size_t len = strlen(line);
+    size_t start = 0;
+    size_t i;
+
+    while (len > 0 && (line[len - 1] == '\n' || line[len - 1] == '\r' ||
+                       line[len - 1] == ' ' || line[len - 1] == '\t')) {
+        len--;
+    }
+    while (start < len && (line[start] == ' ' || line[start] == '\t')) {
+        start++;
+    }
+    if (len - start >= 2 &&
+        (line[start] == '\'' || line[start] == '"') &&
+        line[len - 1] == line[start]) {
+        start++;
+        len--;
+    }
+    for (i = 0; start + i < len; i++) {
+        line[i] = line[start + i];
+    }
+    line[len - start] = '\0';
+}
+
+int main(void)
+{
+    const char *default_words[] = { "Red color", "color", "Green", "Orange", "White" };
+    const char *default_pattern = "color";
+    char line1[4096];
+    char line2[4096];
+    char **parsed_words = NULL;
+    size_t parsed_count = 0;
+    const char **words;
+    size_t count;
+    const char *pattern;
+    size_t result_count = 0;
+    char **filtered;
+    size_t i;
+
+    if (fgets(line1, sizeof(line1), stdin) != NULL &&
+        fgets(line2, sizeof(line2), stdin) != NULL) {
+        parsed_words = parse_word_list(line1, &parsed_count);
+        strip_pattern_line(line2);
+        if (parsed_words != NULL && parsed_count > 0) {
+            words = (const char **)parsed_words;
+            count = parsed_

@@ -1,0 +1,153 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+#include <stdbool.h>
+
+#define MAX_STRING_LENGTH 4096
+
+typedef struct {
+    const char *str;
+    size_t count;
+} StringFreq;
+
+static size_t bounded_strlen(const char *s, size_t max_len)
+{
+    size_t len = 0;
+
+    if (s == NULL) {
+        return 0;
+    }
+
+    while (len < max_len && s[len] != '\0') {
+        len++;
+    }
+
+    return len;
+}
+
+static char *find_second_most_frequent(const char *sequence[], size_t size)
+{
+    StringFreq *freqs;
+    size_t unique_count = 0;
+    size_t i;
+    size_t j;
+    size_t first_idx = 0;
+    size_t second_idx = 0;
+    size_t first_count = 0;
+    size_t second_count = 0;
+    size_t result_len;
+    size_t result_size;
+    char *result;
+
+    if (sequence == NULL || size == 0) {
+        return NULL;
+    }
+
+    if (size > SIZE_MAX / sizeof(*freqs)) {
+        return NULL;
+    }
+
+    freqs = malloc(size * sizeof(*freqs));
+    if (freqs == NULL) {
+        return NULL;
+    }
+
+    for (i = 0; i < size; i++) {
+        bool found = false;
+
+        if (sequence[i] == NULL) {
+            continue;
+        }
+
+        for (j = 0; j < unique_count; j++) {
+            if (strcmp(freqs[j].str, sequence[i]) == 0) {
+                freqs[j].count++;
+                found = true;
+                break;
+            }
+        }
+
+        if (!found) {
+            freqs[unique_count].str = sequence[i];
+            freqs[unique_count].count = 1;
+            unique_count++;
+        }
+    }
+
+    if (unique_count < 2) {
+        free(freqs);
+        return NULL;
+    }
+
+    for (i = 0; i < unique_count; i++) {
+        if (freqs[i].count > first_count) {
+            second_count = first_count;
+            second_idx = first_idx;
+            first_count = freqs[i].count;
+            first_idx = i;
+        } else if (freqs[i].count < first_count && freqs[i].count > second_count) {
+            second_count = freqs[i].count;
+            second_idx = i;
+        }
+    }
+
+    if (second_count == 0) {
+        free(freqs);
+        return NULL;
+    }
+
+    result_len = bounded_strlen(freqs[second_idx].str, MAX_STRING_LENGTH);
+    if (result_len >= MAX_STRING_LENGTH) {
+        free(freqs);
+        return NULL;
+    }
+
+    /* Possible weaknesses found:
+     *  result_size is assigned 'result_len+1' here.
+     */
+    result_size = result_len + 1;
+    /* Possible weaknesses found:
+     *  Condition 'result_size<=result_len' is always false
+     *  Condition 'result_size<=result_len' is always false [knownConditionTrueFalse]
+     */
+    if (result_size <= result_len) {
+        free(freqs);
+        return NULL;
+    }
+
+    result = malloc(result_size);
+    if (result == NULL) {
+        free(freqs);
+        return NULL;
+    }
+
+    for (i = 0; i < result_len; i++) {
+        result[i] = freqs[second_idx].str[i];
+    }
+    result[result_len] = '\0';
+
+    free(freqs);
+
+    return result;
+}
+
+int main(void)
+{
+    const char *sequence[] = {
+        "apple", "banana", "cherry", "apple",
+        "banana", "apple", "date", "banana",
+        "cherry", "apple"
+    };
+    size_t size = sizeof(sequence) / sizeof(sequence[0]);
+    char *second = find_second_most_frequent(sequence, size);
+
+    if (second != NULL) {
+        printf("Second most repeated string: \"%s\"\n", second);
+        free(second);
+    } else {
+        printf("There is no second most repeated string.\n");
+    }
+
+    return EXIT_SUCCESS;
+}

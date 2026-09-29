@@ -1,0 +1,63 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+void find_words(const char *str, int min_len, int max_len) {
+    regex_t regex;
+    regmatch_t match;
+    const char *p = str;
+    char pattern[64];
+    int ret;
+
+    snprintf(pattern, sizeof(pattern), "\\b[A-Za-z]{%d,%d}\\b", min_len, max_len);
+
+    ret = regcomp(&regex, pattern, REG_EXTENDED);
+    if (ret) {
+        fprintf(stderr, "Could not compile regex\n");
+        return;
+    }
+
+    while (regexec(&regex, p, 1, &match, 0) == 0) {
+        int len = match.rm_eo - match.rm_so;
+        char *word = malloc(len + 1);
+        if (!word) {
+            regfree(&regex);
+            return;
+        }
+        strncpy(word, p + match.rm_so, len);
+        word[len] = '\0';
+        printf("%s\n", word);
+        free(word);
+        p += match.rm_eo;
+        if (*p == '\0') break;
+    }
+
+    regfree(&regex);
+}
+
+int main(int argc, char *argv[]) {
+    char *input = NULL;
+    size_t len = 0;
+
+    if (argc > 1) {
+        input = argv[1];
+    } else {
+        ssize_t read = getline(&input, &len, stdin);
+        if (read == -1) {
+            free(input);
+            return 1;
+        }
+        input[strcspn(input, "\n")] = '\0';
+    }
+
+    find_words(input, 3, 3);
+    find_words(input, 4, 4);
+    find_words(input, 5, 5);
+
+    if (argc == 1) {
+        free(input);
+    }
+
+    return 0;
+}

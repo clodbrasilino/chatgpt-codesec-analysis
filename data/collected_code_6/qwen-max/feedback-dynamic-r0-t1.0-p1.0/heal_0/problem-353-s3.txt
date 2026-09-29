@@ -1,0 +1,59 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct List {
+    int *data;
+    int size;
+} List;
+
+void free_list(List *l) {
+    free(l->data);
+    l->data = NULL;
+    l->size = 0;
+}
+
+List* remove_column(List **matrix, int rows, int col_index) {
+    for (int i = 0; i < rows; i++) {
+        if (matrix[i]->size <= col_index) continue;
+        int *new_data = realloc(matrix[i]->data, (matrix[i]->size - 1) * sizeof(int));
+        if (new_data == NULL) return NULL;
+        matrix[i]->data = new_data;
+        for (int j = col_index; j < matrix[i]->size - 1; j++) {
+            matrix[i]->data[j] = matrix[i]->data[j + 1];
+        }
+        matrix[i]->size--;
+    }
+    return matrix[0];
+}
+
+int main() {
+    int rows = 3, cols = 4;
+    List *matrix[rows];
+
+    for (int i = 0; i < rows; i++) {
+        matrix[i] = (List *)malloc(sizeof(List));
+        matrix[i]->data = (int *)malloc(cols * sizeof(int));
+        matrix[i]->size = cols;
+        for (int j = 0; j < cols; j++) {
+            matrix[i]->data[j] = i * cols + j;
+        }
+    }
+
+    int col_to_remove = 2;
+    remove_column(matrix, rows, col_to_remove);
+
+    for (int i = 0; i < rows; i++) {
+        for (int j = 0; j < matrix[i]->size; j++) {
+            printf("%d ", matrix[i]->data[j]);
+        }
+        printf("\n");
+    }
+
+    for (int i = 0; i < rows; i++) {
+        free_list(matrix[i]);
+        free(matrix[i]);
+    }
+    return 0;
+}
+```

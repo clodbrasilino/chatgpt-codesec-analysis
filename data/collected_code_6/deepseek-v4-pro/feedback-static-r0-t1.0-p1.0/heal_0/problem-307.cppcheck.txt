@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-307.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-307.c:66:10: style: Variable 'int_val' can be declared as pointer to const [constVariablePointer]
+    int *int_val = (int *)tuple_get_colon(tuple, 0);
+         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-307.c:67:13: style: Variable 'double_val' can be declared as pointer to const [constVariablePointer]
+    double *double_val = (double *)tuple_get_colon(tuple, 1);
+            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-307.c:80:11: style: Variable 'invalid' can be declared as pointer to const [constVariablePointer]
+    void *invalid = tuple_get_colon(tuple, 5);
+          ^

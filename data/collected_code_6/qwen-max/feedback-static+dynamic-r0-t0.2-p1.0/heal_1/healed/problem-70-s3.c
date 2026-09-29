@@ -1,0 +1,32 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int are_tuples_equal_length(int **tuples, int num_tuples) {
+    if (num_tuples == 0) return 1;
+    int length = 0;
+    for (int i = 0; i < num_tuples; ++i) {
+        if (i == 0) {
+            length = tuples[i][0];
+        } else if (tuples[i][0] != length) {
+            return 0;
+        }
+    }
+    return 1;
+}
+
+int main() {
+    int num_tuples = 3;
+    int tuple1[] = {5, 1, 2, 3, 4, 5};
+    int tuple2[] = {5, 6, 7, 8, 9, 10};
+    int tuple3[] = {5, 11, 12, 13, 14, 15};
+
+    int *tuples[] = {tuple1, tuple2, tuple3};
+
+    if (are_tuples_equal_length(tuples, num_tuples)) {
+        printf("All tuples have equal length.\n");
+    } else {
+        printf("Tuples do not have equal length.\n");
+    }
+
+    return 0;
+}

@@ -1,0 +1,51 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int a;
+    int b;
+} Tuple;
+
+void remove_empty_tuple(Tuple **list, int *size) {
+    for (int i = 0; i < *size; i++) {
+        if (list[i]->a == 0 && list[i]->b == 0) {
+            for (int j = i; j < *size - 1; j++) {
+                list[j] = list[j + 1];
+            }
+            (*size)--;
+            i--;  // Re-check the current index after shifting elements
+        }
+    }
+}
+
+int main() {
+    Tuple *list[5];
+    int n = 5;
+    int size = n;
+
+    // Initialize tuples
+    for (int i = 0; i < n; i++) {
+        list[i] = (Tuple *)malloc(sizeof(Tuple));
+        if (i % 2 == 0) {
+            list[i]->a = 0;
+            list[i]->b = 0;
+        } else {
+            list[i]->a = i + 1;
+            list[i]->b = i + 1;
+        }
+    }
+
+    remove_empty_tuple(list, &size);
+
+    // Print the list
+    for (int i = 0; i < size; i++) {
+        printf("(%d, %d)\n", list[i]->a, list[i]->b);
+    }
+
+    // Free memory
+    for (int i = 0; i < n; i++) {
+        free(list[i]);
+    }
+
+    return 0;
+}

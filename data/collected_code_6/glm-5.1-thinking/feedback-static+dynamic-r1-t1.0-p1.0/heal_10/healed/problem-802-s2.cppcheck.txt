@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_10/healed/problem-802-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_10/healed/problem-802-s2.c:16:22: style: Condition 'high>low' is always true [knownConditionTrueFalse]
+            if (high > low) {
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_10/healed/problem-802-s2.c:9:16: note: Assuming that condition 'low<high' is not redundant
+    while (low < high) {
+               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_10/healed/problem-802-s2.c:16:22: note: Condition 'high>low' is always true
+            if (high > low) {
+                     ^

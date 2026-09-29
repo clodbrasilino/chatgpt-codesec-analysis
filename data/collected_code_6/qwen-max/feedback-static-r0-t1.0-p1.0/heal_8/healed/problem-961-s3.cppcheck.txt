@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-961-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-961-s3.c:23:13: style: Condition 'len>0' is always true [knownConditionTrueFalse]
+    if (len > 0) {
+            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-961-s3.c:21:32: note: Assignment 'romanNumeral="MCMXCIV"', assigned value is "MCMXCIV"
+    const char *romanNumeral = "MCMXCIV";
+                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-961-s3.c:22:24: note: Assignment 'len=strlen(romanNumeral)', assigned value is 7
+    size_t len = strlen(romanNumeral);
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-961-s3.c:23:13: note: Condition 'len>0' is always true
+    if (len > 0) {
+            ^

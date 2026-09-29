@@ -1,0 +1,100 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+typedef struct {
+    int uppercase_count;
+    int lowercase_count;
+    int special_count;
+    int numeric_count;
+} CharCounts;
+
+void count_characters(const char *str, CharCounts *counts) {
+    regex_t uppercase_regex, lowercase_regex, special_regex, numeric_regex;
+    const char *uppercase_pattern = "[A-Z]";
+    const char *lowercase_pattern = "[a-z]";
+    const char *special_pattern = "[^a-zA-Z0-9]";
+    const char *numeric_pattern = "[0-9]";
+    int ret;
+    char errbuf[128];
+    size_t i;
+    char temp[2];
+
+    counts->uppercase_count = 0;
+    counts->lowercase_count = 0;
+    counts->special_count = 0;
+    counts->numeric_count = 0;
+
+    ret = regcomp(&uppercase_regex, uppercase_pattern, REG_EXTENDED);
+    if (ret) {
+        regerror(ret, &uppercase_regex, errbuf, sizeof(errbuf));
+        fprintf(stderr, "Error compiling uppercase regex: %s\n", errbuf);
+        exit(EXIT_FAILURE);
+    }
+
+    ret = regcomp(&lowercase_regex, lowercase_pattern, REG_EXTENDED);
+    if (ret) {
+        regerror(ret, &lowercase_regex, errbuf, sizeof(errbuf));
+        fprintf(stderr, "Error compiling lowercase regex: %s\n", errbuf);
+        regfree(&uppercase_regex);
+        exit(EXIT_FAILURE);
+    }
+
+    ret = regcomp(&special_regex, special_pattern, REG_EXTENDED);
+    if (ret) {
+        regerror(ret, &special_regex, errbuf, sizeof(errbuf));
+        fprintf(stderr, "Error compiling special regex: %s\n", errbuf);
+        regfree(&uppercase_regex);
+        regfree(&lowercase_regex);
+        exit(EXIT_FAILURE);
+    }
+
+    ret = regcomp(&numeric_regex, numeric_pattern, REG_EXTENDED);
+    if (ret) {
+        regerror(ret, &numeric_regex, errbuf, sizeof(errbuf));
+        fprintf(stderr, "Error compiling numeric regex: %s\n", errbuf);
+        regfree(&uppercase_regex);
+        regfree(&lowercase_regex);
+        regfree(&special_regex);
+        exit(EXIT_FAILURE);
+    }
+
+    temp[1] = '\0';
+
+    for (i = 0; i < strlen(str); i++) {
+        temp[0] = str[i];
+
+        if (regexec(&uppercase_regex, temp, 0, NULL, 0) == 0) {
+            counts->uppercase_count++;
+        } else if (regexec(&lowercase_regex, temp, 0, NULL, 0) == 0) {
+            counts->lowercase_count++;
+        } else if (regexec(&numeric_regex, temp, 0, NULL, 0) == 0) {
+            counts->numeric_count++;
+        } else if (regexec(&special_regex, temp, 0, NULL, 0) == 0) {
+            counts->special_count++;
+        }
+    }
+
+    regfree(&uppercase_regex);
+    regfree(&lowercase_regex);
+    regfree(&special_regex);
+    regfree(&numeric_regex);
+}
+
+int main(void) {
+    const char *test_string = "Hello World! 123";
+    CharCounts counts;
+
+    count_characters(test_string, &counts);
+
+    printf("Input string: %s\n", test_string);
+    printf("Uppercase characters: %d\n", counts.uppercase_count);
+    printf("Lowercase characters: %d\n", counts.lowercase_count);
+    printf("Special characters: %d\n", counts.special_count);
+    printf("Numeric characters: %d\n", counts.numeric_count);
+
+    return 0;
+}
+```

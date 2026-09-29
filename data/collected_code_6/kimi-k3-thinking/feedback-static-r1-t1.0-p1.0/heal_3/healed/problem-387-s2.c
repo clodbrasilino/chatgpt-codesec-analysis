@@ -1,0 +1,29 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stddef.h>
+
+int main(void)
+{
+    char buffer[256];
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL)
+    {
+        fprintf(stderr, "Failed to read input.\n");
+        return EXIT_FAILURE;
+    }
+
+    const char *nul = memchr(buffer, '\0', sizeof(buffer));
+
+    if (nul == NULL)
+    {
+        fprintf(stderr, "Failed to read input.\n");
+        return EXIT_FAILURE;
+    }
+
+    size_t length = (size_t)(nul - buffer);
+
+    printf("Input length: %zu\n", length);
+
+    return EXIT_SUCCESS;
+}

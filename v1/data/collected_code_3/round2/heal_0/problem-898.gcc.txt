@@ -1,0 +1,20 @@
+collected_code_3/problem-898-2.c: In function 'extractElements':
+collected_code_3/problem-898-2.c:7:19: warning: dereference of possibly-NULL 'result' [CWE-690] [-Wanalyzer-possible-null-dereference]
+    7 |         result[i] = arr[start + i];
+      |         ~~~~~~~~~~^~~~~~~~~~~~~~~~
+  'extractElements': events 1-4
+    |
+    |    5 |     int* result = (int*)malloc(sizeof(int) * count);
+    |      |                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                         |
+    |      |                         (1) this call could return NULL
+    |    6 |     for(int i = 0; i < count; i++) {
+    |      |                    ~~~~~~~~~
+    |      |                      |
+    |      |                      (2) following 'true' branch (when 'i < count')...
+    |    7 |         result[i] = arr[start + i];
+    |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                   |           |
+    |      |                   |           (3) ...to here
+    |      |                   (4) 'result + (long unsigned int)i * 4' could be NULL: unchecked value from (1)
+    |

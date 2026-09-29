@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_1/healed/problem-748-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_1/healed/problem-748-s2.c:83:46: style: Condition 'chunk>alloc_size-write_pos-1' is always false [knownConditionTrueFalse]
+        if (write_pos >= alloc_size || chunk > alloc_size - write_pos - 1) {
+                                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_1/healed/problem-748-s2.c:92:21: note: Assuming that condition 'cap_pos>0' is not redundant
+        if (cap_pos > 0 && safe_input[cap_pos - 1] != ' ') {
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_1/healed/problem-748-s2.c:81:25: note: Assignment 'chunk=cap_pos-read_pos', assigned value is less than 1
+        chunk = cap_pos - read_pos;
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_1/healed/problem-748-s2.c:83:46: note: Condition 'chunk>alloc_size-write_pos-1' is always false
+        if (write_pos >= alloc_size || chunk > alloc_size - write_pos - 1) {
+                                             ^

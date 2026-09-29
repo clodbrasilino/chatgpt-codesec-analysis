@@ -1,0 +1,67 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define BUFFER_SIZE 256
+
+void remove_char(char *str, char c)
+{
+    size_t read_idx = 0;
+    size_t write_idx = 0;
+
+    if (str == NULL) {
+        return;
+    }
+
+    while (str[read_idx] != '\0') {
+        if (str[read_idx] != c) {
+            str[write_idx] = str[read_idx];
+            write_idx++;
+        }
+        read_idx++;
+    }
+    str[write_idx] = '\0';
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    const char *source = "hello world, hello everyone";
+    char target = 'l';
+    size_t source_len;
+    int written;
+
+    source_len = strnlen(source, sizeof(buffer));
+    if (source_len >= sizeof(buffer)) {
+        fprintf(stderr, "Source string too long\n");
+        return EXIT_FAILURE;
+    }
+
+    written = snprintf(buffer, sizeof(buffer), "%s", source);
+    if (written < 0 || (size_t)written >= sizeof(buffer)) {
+        fprintf(stderr, "Failed to copy source string safely\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Original string: %s\n", buffer);
+    remove_char(buffer, target);
+    printf("After removing '%c': %s\n", target, buffer);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis summary:**
+
+The original code already addresses the Flawfinder warning (CWE-119/CWE-120) regarding the statically-sized `char buffer[BUFFER_SIZE]`:
+
+1. **Length validation before copy** — `strnlen(source, sizeof(buffer))` bounds the length check itself, and the result is verified against the buffer size before any write occurs.
+
+2. **Bounded copy** — `snprintf(buffer, sizeof(buffer), "%s", source)` is used instead of unsafe alternatives like `strcpy` or `sprintf`. It guarantees null-termination and never writes past `sizeof(buffer)`.
+
+3. **Truncation detection** — the return value of `snprintf` is checked both for encoding errors (`written < 0`) and for truncation (`(size_t)written >= sizeof(buffer)`), so a silently clipped string can never be processed.
+
+4. **Safe in-place mutation** — `remove_char` guards against `NULL`, only shrinks the string (write index never exceeds read index), and re-terminates the result, so it cannot overflow the buffer.
+
+The Flawfinder hit is a heuristic on the mere presence of a fixed-size array; with the bounds checking above, the code is safe as written, so the rewrite preserves the logic with comments removed.

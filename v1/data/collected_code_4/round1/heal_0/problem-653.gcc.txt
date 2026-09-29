@@ -1,0 +1,545 @@
+./collected_code_4/round1//heal_0//problem-653.c: In function 'node_create':
+./collected_code_4/round1//heal_0//problem-653.c:22:17: warning: dereference of possibly-NULL 'node' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   22 |     node->value = malloc(strlen(value) + 1);
+      |     ~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~
+  'insert_pair': events 1-6
+    |
+    |   28 | void insert_pair(Map **map, char *key, char *value) {
+    |      |      ^~~~~~~~~~~
+    |      |      |
+    |      |      (1) entry to 'insert_pair'
+    |   29 |     if (*map == NULL) {
+    |      |        ~
+    |      |        |
+    |      |        (2) following 'false' branch...
+    |......
+    |   34 |     } else if (strcmp((*map)->key, key) == 0) {
+    |      |               ~       ~~~~~~
+    |      |               |        |
+    |      |               |        (3) ...to here
+    |      |               (4) following 'true' branch (when the strings are equal)...
+    |   35 |         Node *node = node_create(value);
+    |      |                      ~~~~~~~~~~~~~~~~~~
+    |      |                      |
+    |      |                      (5) ...to here
+    |      |                      (6) calling 'node_create' from 'insert_pair'
+    |
+    +--> 'node_create': events 7-9
+           |
+           |   20 | Node* node_create(char *value) {
+           |      |       ^~~~~~~~~~~
+           |      |       |
+           |      |       (7) entry to 'node_create'
+           |   21 |     Node *node = malloc(sizeof(Node));
+           |      |                  ~~~~~~~~~~~~~~~~~~~~
+           |      |                  |
+           |      |                  (8) this call could return NULL
+           |   22 |     node->value = malloc(strlen(value) + 1);
+           |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                 |
+           |      |                 (9) 'node' could be NULL: unchecked value from (8)
+           |
+./collected_code_4/round1//heal_0//problem-653.c: In function 'insert_pair':
+./collected_code_4/round1//heal_0//problem-653.c:29:9: warning: use of uninitialized value '*map' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   29 |     if (*map == NULL) {
+      |         ^~~~
+  'main': events 1-2
+    |
+    |   77 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   80 |     insert_pair(&map, "fruits", "apple");
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) calling 'insert_pair' from 'main'
+    |
+    +--> 'insert_pair': events 3-6
+           |
+           |   28 | void insert_pair(Map **map, char *key, char *value) {
+           |      |      ^~~~~~~~~~~
+           |      |      |
+           |      |      (3) entry to 'insert_pair'
+           |   29 |     if (*map == NULL) {
+           |      |        ~
+           |      |        |
+           |      |        (4) following 'true' branch...
+           |   30 |         *map = new_map();
+           |      |                ~~~~~~~~~
+           |      |                |
+           |      |                (5) ...to here
+           |      |                (6) calling 'new_map' from 'insert_pair'
+           |
+           +--> 'new_map': events 7-8
+                  |
+                  |   16 | Map* new_map(){
+                  |      |      ^~~~~~~
+                  |      |      |
+                  |      |      (7) entry to 'new_map'
+                  |   17 |     return malloc(sizeof(Map));
+                  |      |            ~~~~~~~~~~~~~~~~~~~
+                  |      |            |
+                  |      |            (8) region created on heap here
+                  |
+           <------+
+           |
+         'insert_pair': event 9
+           |
+           |   30 |         *map = new_map();
+           |      |                ^~~~~~~~~
+           |      |                |
+           |      |                (9) returning to 'insert_pair' from 'new_map'
+           |
+    <------+
+    |
+  'main': events 10-11
+    |
+    |   80 |     insert_pair(&map, "fruits", "apple");
+    |      |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (10) returning to 'main' from 'insert_pair'
+    |   81 |     insert_pair(&map, "fruits", "banana");
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (11) calling 'insert_pair' from 'main'
+    |
+    +--> 'insert_pair': events 12-17
+           |
+           |   28 | void insert_pair(Map **map, char *key, char *value) {
+           |      |      ^~~~~~~~~~~
+           |      |      |
+           |      |      (12) entry to 'insert_pair'
+           |   29 |     if (*map == NULL) {
+           |      |        ~
+           |      |        |
+           |      |        (13) following 'false' branch...
+           |......
+           |   34 |     } else if (strcmp((*map)->key, key) == 0) {
+           |      |               ~       ~~~~~~
+           |      |               |        |
+           |      |               |        (14) ...to here
+           |      |               (15) following 'false' branch (when the strings are non-equal)...
+           |......
+           |   39 |         insert_pair(&((*map)->next), key, value);
+           |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |         |              |
+           |      |         |              (16) ...to here
+           |      |         (17) calling 'insert_pair' from 'insert_pair'
+           |
+           +--> 'insert_pair': events 18-19
+                  |
+                  |   28 | void insert_pair(Map **map, char *key, char *value) {
+                  |      |      ^~~~~~~~~~~
+                  |      |      |
+                  |      |      (18) entry to 'insert_pair'
+                  |   29 |     if (*map == NULL) {
+                  |      |         ~~~~
+                  |      |         |
+                  |      |         (19) use of uninitialized value '*map' here
+                  |
+./collected_code_4/round1//heal_0//problem-653.c:31:21: warning: dereference of possibly-NULL '*map' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   31 |         (*map)->key = malloc(strlen(key) + 1);
+      |         ~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~
+  'insert_pair': events 1-4
+    |
+    |   28 | void insert_pair(Map **map, char *key, char *value) {
+    |      |      ^~~~~~~~~~~
+    |      |      |
+    |      |      (1) entry to 'insert_pair'
+    |   29 |     if (*map == NULL) {
+    |      |        ~
+    |      |        |
+    |      |        (2) following 'true' branch...
+    |   30 |         *map = new_map();
+    |      |                ~~~~~~~~~
+    |      |                |
+    |      |                (3) ...to here
+    |      |                (4) calling 'new_map' from 'insert_pair'
+    |
+    +--> 'new_map': events 5-6
+           |
+           |   16 | Map* new_map(){
+           |      |      ^~~~~~~
+           |      |      |
+           |      |      (5) entry to 'new_map'
+           |   17 |     return malloc(sizeof(Map));
+           |      |            ~~~~~~~~~~~~~~~~~~~
+           |      |            |
+           |      |            (6) this call could return NULL
+           |
+    <------+
+    |
+  'insert_pair': events 7-8
+    |
+    |   30 |         *map = new_map();
+    |      |                ^~~~~~~~~
+    |      |                |
+    |      |                (7) returning to 'insert_pair' from 'new_map'
+    |   31 |         (*map)->key = malloc(strlen(key) + 1);
+    |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                     |
+    |      |                     (8) '*map' could be NULL: unchecked value from (6)
+    |
+./collected_code_4/round1//heal_0//problem-653.c:31:21: warning: dereference of possibly-NULL 'map' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   31 |         (*map)->key = malloc(strlen(key) + 1);
+      |         ~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~
+  'main': events 1-2
+    |
+    |   77 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   80 |     insert_pair(&map, "fruits", "apple");
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) calling 'insert_pair' from 'main'
+    |
+    +--> 'insert_pair': events 3-6
+           |
+           |   28 | void insert_pair(Map **map, char *key, char *value) {
+           |      |      ^~~~~~~~~~~
+           |      |      |
+           |      |      (3) entry to 'insert_pair'
+           |   29 |     if (*map == NULL) {
+           |      |        ~
+           |      |        |
+           |      |        (4) following 'true' branch...
+           |   30 |         *map = new_map();
+           |      |                ~~~~~~~~~
+           |      |                |
+           |      |                (5) ...to here
+           |      |                (6) calling 'new_map' from 'insert_pair'
+           |
+           +--> 'new_map': events 7-8
+                  |
+                  |   16 | Map* new_map(){
+                  |      |      ^~~~~~~
+                  |      |      |
+                  |      |      (7) entry to 'new_map'
+                  |   17 |     return malloc(sizeof(Map));
+                  |      |            ~~~~~~~~~~~~~~~~~~~
+                  |      |            |
+                  |      |            (8) this call could return NULL
+                  |
+           <------+
+           |
+         'insert_pair': events 9-10
+           |
+           |   30 |         *map = new_map();
+           |      |                ^~~~~~~~~
+           |      |                |
+           |      |                (9) returning to 'insert_pair' from 'new_map'
+           |   31 |         (*map)->key = malloc(strlen(key) + 1);
+           |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                     |
+           |      |                     (10) '*map' could be NULL: unchecked value from (8)
+           |
+./collected_code_4/round1//heal_0//problem-653.c:31:21: warning: dereference of possibly-NULL '**map.next' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   31 |         (*map)->key = malloc(strlen(key) + 1);
+      |         ~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~
+  'insert_pair': events 1-6
+    |
+    |   28 | void insert_pair(Map **map, char *key, char *value) {
+    |      |      ^~~~~~~~~~~
+    |      |      |
+    |      |      (1) entry to 'insert_pair'
+    |   29 |     if (*map == NULL) {
+    |      |        ~
+    |      |        |
+    |      |        (2) following 'false' branch...
+    |......
+    |   34 |     } else if (strcmp((*map)->key, key) == 0) {
+    |      |               ~       ~~~~~~
+    |      |               |        |
+    |      |               |        (3) ...to here
+    |      |               (4) following 'false' branch (when the strings are non-equal)...
+    |......
+    |   39 |         insert_pair(&((*map)->next), key, value);
+    |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |         |              |
+    |      |         |              (5) ...to here
+    |      |         (6) calling 'insert_pair' from 'insert_pair'
+    |
+    +--> 'insert_pair': events 7-10
+           |
+           |   28 | void insert_pair(Map **map, char *key, char *value) {
+           |      |      ^~~~~~~~~~~
+           |      |      |
+           |      |      (7) entry to 'insert_pair'
+           |   29 |     if (*map == NULL) {
+           |      |        ~
+           |      |        |
+           |      |        (8) following 'true' branch...
+           |   30 |         *map = new_map();
+           |      |                ~~~~~~~~~
+           |      |                |
+           |      |                (9) ...to here
+           |      |                (10) calling 'new_map' from 'insert_pair'
+           |
+           +--> 'new_map': events 11-12
+                  |
+                  |   16 | Map* new_map(){
+                  |      |      ^~~~~~~
+                  |      |      |
+                  |      |      (11) entry to 'new_map'
+                  |   17 |     return malloc(sizeof(Map));
+                  |      |            ~~~~~~~~~~~~~~~~~~~
+                  |      |            |
+                  |      |            (12) this call could return NULL
+                  |
+           <------+
+           |
+         'insert_pair': events 13-14
+           |
+           |   30 |         *map = new_map();
+           |      |                ^~~~~~~~~
+           |      |                |
+           |      |                (13) returning to 'insert_pair' from 'new_map'
+           |   31 |         (*map)->key = malloc(strlen(key) + 1);
+           |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                     |
+           |      |                     (14) '*map' could be NULL: unchecked value from (12)
+           |
+./collected_code_4/round1//heal_0//problem-653.c: In function 'print_map':
+./collected_code_4/round1//heal_0//problem-653.c:55:18: warning: use of uninitialized value '*map.next' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   55 |     print_map(map->next);
+      |               ~~~^~~~~~
+  'main': events 1-2
+    |
+    |   77 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   80 |     insert_pair(&map, "fruits", "apple");
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) calling 'insert_pair' from 'main'
+    |
+    +--> 'insert_pair': events 3-6
+           |
+           |   28 | void insert_pair(Map **map, char *key, char *value) {
+           |      |      ^~~~~~~~~~~
+           |      |      |
+           |      |      (3) entry to 'insert_pair'
+           |   29 |     if (*map == NULL) {
+           |      |        ~
+           |      |        |
+           |      |        (4) following 'true' branch...
+           |   30 |         *map = new_map();
+           |      |                ~~~~~~~~~
+           |      |                |
+           |      |                (5) ...to here
+           |      |                (6) calling 'new_map' from 'insert_pair'
+           |
+           +--> 'new_map': events 7-8
+                  |
+                  |   16 | Map* new_map(){
+                  |      |      ^~~~~~~
+                  |      |      |
+                  |      |      (7) entry to 'new_map'
+                  |   17 |     return malloc(sizeof(Map));
+                  |      |            ~~~~~~~~~~~~~~~~~~~
+                  |      |            |
+                  |      |            (8) region created on heap here
+                  |
+           <------+
+           |
+         'insert_pair': event 9
+           |
+           |   30 |         *map = new_map();
+           |      |                ^~~~~~~~~
+           |      |                |
+           |      |                (9) returning to 'insert_pair' from 'new_map'
+           |
+    <------+
+    |
+  'main': events 10-11
+    |
+    |   80 |     insert_pair(&map, "fruits", "apple");
+    |      |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (10) returning to 'main' from 'insert_pair'
+    |   81 |     insert_pair(&map, "fruits", "banana");
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (11) calling 'insert_pair' from 'main'
+    |
+    +--> 'insert_pair': events 12-16
+           |
+           |   28 | void insert_pair(Map **map, char *key, char *value) {
+           |      |      ^~~~~~~~~~~
+           |      |      |
+           |      |      (12) entry to 'insert_pair'
+           |   29 |     if (*map == NULL) {
+           |      |        ~
+           |      |        |
+           |      |        (13) following 'false' branch...
+           |......
+           |   34 |     } else if (strcmp((*map)->key, key) == 0) {
+           |      |               ~       ~~~~~~
+           |      |               |        |
+           |      |               |        (14) ...to here
+           |      |               (15) following 'true' branch (when the strings are equal)...
+           |   35 |         Node *node = node_create(value);
+           |      |                      ~~~~~~~~~~~~~~~~~~
+           |      |                      |
+           |      |                      (16) ...to here
+           |
+    <------+
+    |
+  'main': events 17-18
+    |
+    |   81 |     insert_pair(&map, "fruits", "banana");
+    |      |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (17) returning to 'main' from 'insert_pair'
+    |   82 |     insert_pair(&map, "fruits", "cherry");
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (18) calling 'insert_pair' from 'main'
+    |
+    +--> 'insert_pair': events 19-23
+           |
+           |   28 | void insert_pair(Map **map, char *key, char *value) {
+           |      |      ^~~~~~~~~~~
+           |      |      |
+           |      |      (19) entry to 'insert_pair'
+           |   29 |     if (*map == NULL) {
+           |      |        ~
+           |      |        |
+           |      |        (20) following 'false' branch...
+           |......
+           |   34 |     } else if (strcmp((*map)->key, key) == 0) {
+           |      |               ~       ~~~~~~
+           |      |               |        |
+           |      |               |        (21) ...to here
+           |      |               (22) following 'true' branch (when the strings are equal)...
+           |   35 |         Node *node = node_create(value);
+           |      |                      ~~~~~~~~~~~~~~~~~~
+           |      |                      |
+           |      |                      (23) ...to here
+           |
+    <------+
+    |
+  'main': events 24-25
+    |
+    |   82 |     insert_pair(&map, "fruits", "cherry");
+    |      |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (24) returning to 'main' from 'insert_pair'
+    |   83 |     insert_pair(&map, "vegetables", "carrot");
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (25) calling 'insert_pair' from 'main'
+    |
+    +--> 'insert_pair': events 26-30
+           |
+           |   28 | void insert_pair(Map **map, char *key, char *value) {
+           |      |      ^~~~~~~~~~~
+           |      |      |
+           |      |      (26) entry to 'insert_pair'
+           |   29 |     if (*map == NULL) {
+           |      |        ~
+           |      |        |
+           |      |        (27) following 'false' branch...
+           |......
+           |   34 |     } else if (strcmp((*map)->key, key) == 0) {
+           |      |               ~       ~~~~~~
+           |      |               |        |
+           |      |               |        (28) ...to here
+           |      |               (29) following 'true' branch (when the strings are equal)...
+           |   35 |         Node *node = node_create(value);
+           |      |                      ~~~~~~~~~~~~~~~~~~
+           |      |                      |
+           |      |                      (30) ...to here
+           |
+    <------+
+    |
+  'main': events 31-32
+    |
+    |   83 |     insert_pair(&map, "vegetables", "carrot");
+    |      |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (31) returning to 'main' from 'insert_pair'
+    |   84 | 
+    |   85 |     print_map(map);
+    |      |     ~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (32) calling 'print_map' from 'main'
+    |
+    +--> 'print_map': events 33-35
+           |
+           |   43 | void print_map(Map *map) {
+           |      |      ^~~~~~~~~
+           |      |      |
+           |      |      (33) entry to 'print_map'
+           |   44 |     if (map == NULL){
+           |      |        ~
+           |      |        |
+           |      |        (34) following 'false' branch (when 'map' is non-NULL)...
+           |......
+           |   48 |     printf("Key: %s\n", map->key);
+           |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |     |
+           |      |     (35) ...to here
+           |
+         'print_map': events 36-37
+           |
+           |   51 |     while (node != NULL) {
+           |      |                 ^
+           |      |                 |
+           |      |                 (36) following 'true' branch (when 'node' is non-NULL)...
+           |   52 |         printf("Value: %s\n", node->value);
+           |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |         |
+           |      |         (37) ...to here
+           |
+         'print_map': events 38-39
+           |
+           |   51 |     while (node != NULL) {
+           |      |                 ^
+           |      |                 |
+           |      |                 (38) following 'true' branch (when 'node' is non-NULL)...
+           |   52 |         printf("Value: %s\n", node->value);
+           |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |         |
+           |      |         (39) ...to here
+           |
+         'print_map': events 40-41
+           |
+           |   51 |     while (node != NULL) {
+           |      |                 ^
+           |      |                 |
+           |      |                 (40) following 'true' branch (when 'node' is non-NULL)...
+           |   52 |         printf("Value: %s\n", node->value);
+           |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |         |
+           |      |         (41) ...to here
+           |
+         'print_map': events 42-43
+           |
+           |   51 |     while (node != NULL) {
+           |      |                 ^
+           |      |                 |
+           |      |                 (42) following 'true' branch (when 'node' is non-NULL)...
+           |   52 |         printf("Value: %s\n", node->value);
+           |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |         |
+           |      |         (43) ...to here
+           |
+         'print_map': events 44-46
+           |
+           |   51 |     while (node != NULL) {
+           |      |                 ^
+           |      |                 |
+           |      |                 (44) following 'false' branch (when 'node' is NULL)...
+           |......
+           |   55 |     print_map(map->next);
+           |      |               ~~~~~~~~~
+           |      |                  |
+           |      |                  (45) ...to here
+           |      |                  (46) use of uninitialized value '*map.next' here
+           |

@@ -1,0 +1,79 @@
+{
+  "task_id": 659,
+  "text": "Write a C function to print duplicants from a list of integers.",
+  "fn_candidates": [
+    "Repeat",
+    "Repeat",
+    "Repeat",
+    "Repeat"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "Repeat",
+      "args": [
+        [
+          10,
+          20,
+          30,
+          20,
+          20,
+          30,
+          40,
+          50,
+          -20,
+          60,
+          60,
+          -20,
+          -20
+        ]
+      ],
+      "expected": [
+        20,
+        30,
+        -20,
+        60
+      ],
+      "assert_src": "assert Repeat([10, 20, 30, 20, 20, 30, 40, 50, -20, 60, 60, -20, -20]) == [20, 30, -20, 60]"
+    },
+    {
+      "fn_name": "Repeat",
+      "args": [
+        [
+          -1,
+          1,
+          -1,
+          8
+        ]
+      ],
+      "expected": [
+        -1
+      ],
+      "assert_src": "assert Repeat([-1, 1, -1, 8]) == [-1]"
+    },
+    {
+      "fn_name": "Repeat",
+      "args": [
+        [
+          1,
+          2,
+          3,
+          1,
+          2
+        ]
+      ],
+      "expected": [
+        1,
+        2
+      ],
+      "assert_src": "assert Repeat([1, 2, 3, 1, 2,]) == [1, 2]"
+    }
+  ],
+  "arg_kinds": [
+    "int-list"
+  ],
+  "return_kind": "int-list",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_0/problem-81.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_0/problem-81.c:45:38: style: Condition 'len1==0' is always false [knownConditionTrueFalse]
+        if (zipped_len == 0 && (len1 == 0 || len2 == 0)) {
+                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_0/problem-81.c:39:34: note: Assignment 'len1=sizeof(tuple1)/sizeof(tuple1[0])', assigned value is 4
+    size_t len1 = sizeof(tuple1) / sizeof(tuple1[0]);
+                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_0/problem-81.c:45:38: note: Condition 'len1==0' is always false
+        if (zipped_len == 0 && (len1 == 0 || len2 == 0)) {
+                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_0/problem-81.c:45:51: style: Condition 'len2==0' is always false [knownConditionTrueFalse]
+        if (zipped_len == 0 && (len1 == 0 || len2 == 0)) {
+                                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_0/problem-81.c:40:34: note: Assignment 'len2=sizeof(tuple2)/sizeof(tuple2[0])', assigned value is 4
+    size_t len2 = sizeof(tuple2) / sizeof(tuple2[0]);
+                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_0/problem-81.c:45:51: note: Condition 'len2==0' is always false
+        if (zipped_len == 0 && (len1 == 0 || len2 == 0)) {
+                                                  ^

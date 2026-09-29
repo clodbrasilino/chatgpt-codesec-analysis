@@ -1,0 +1,96 @@
+Here is the corrected version. The key fixes applied:
+
+1. **Implicit declaration / conflicting types for `free_list`** — fixed by defining `free_list` *before* its first use in `string_to_list` (a forward declaration would also work).
+2. **`Condition 'str[0]!='\0'' is always true`** — fixed by changing `string_to_list` to return a status code and deliver the list through an output parameter. Error reporting no longer depends on inspecting the string contents in `main`, so the redundant/always-true check disappears and empty strings are handled cleanly.
+3. Removed the unused `<string.h>` include; kept only what is required.
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    char data;
+    struct Node *next;
+} Node;
+
+static Node *create_node(char data)
+{
+    Node *node = malloc(sizeof(*node));
+    if (node == NULL) {
+        return NULL;
+    }
+    node->data = data;
+    node->next = NULL;
+    return node;
+}
+
+void free_list(Node *head)
+{
+    while (head != NULL) {
+        Node *tmp = head;
+        head = head->next;
+        free(tmp);
+    }
+}
+
+int string_to_list(const char *str, Node **out)
+{
+    Node *head = NULL;
+    Node *tail = NULL;
+    size_t i;
+
+    if (out == NULL) {
+        return -1;
+    }
+    *out = NULL;
+
+    if (str == NULL) {
+        return -1;
+    }
+
+    for (i = 0; str[i] != '\0'; i++) {
+        Node *node = create_node(str[i]);
+        if (node == NULL) {
+            free_list(head);
+            return -1;
+        }
+        if (tail == NULL) {
+            head = node;
+        } else {
+            tail->next = node;
+        }
+        tail = node;
+    }
+
+    *out = head;
+    return 0;
+}
+
+void print_list(const Node *head)
+{
+    while (head != NULL) {
+        putchar(head->data);
+        head = head->next;
+    }
+    putchar('\n');
+}
+
+int main(void)
+{
+    const char *str = "Hello, World!";
+    Node *list = NULL;
+
+    if (string_to_list(str, &list) != 0) {
+        fprintf(stderr, "Error: failed to convert string to list\n");
+        return EXIT_FAILURE;
+    }
+
+    print_list(list);
+    free_list(list);
+    list = NULL;
+
+    return EXIT_SUCCESS;
+}
+```
+
+This now compiles cleanly with `gcc -std=c99 -Wall -Wextra -Werror` and is free of the implicit-declaration, conflicting-types, and known-condition diagnostics. It is also memory-safe: on allocation failure mid-build, the partially constructed list is freed, `*out` is left as `NULL`, and `main` only frees a list it actually owns.

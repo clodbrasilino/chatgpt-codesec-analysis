@@ -1,0 +1,53 @@
+```c
+#include <stdio.h>
+#include <limits.h>
+
+int is_woodall(unsigned long long num)
+{
+    for (unsigned long long n = 1; n < 64; n++)
+    {
+        unsigned long long power = 1ULL << n;
+        unsigned long long woodall;
+
+        if (power > ULLONG_MAX / n)
+        {
+            break;
+        }
+
+        woodall = power * n - 1;
+
+        if (woodall == num)
+        {
+            return 1;
+        }
+
+        if (woodall > num)
+        {
+            break;
+        }
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    unsigned long long num;
+
+    if (scanf("%llu", &num) != 1)
+    {
+        return 1;
+    }
+
+    if (is_woodall(num))
+    {
+        printf("True\n");
+    }
+    else
+    {
+        printf("False\n");
+    }
+
+    return 0;
+}
+```

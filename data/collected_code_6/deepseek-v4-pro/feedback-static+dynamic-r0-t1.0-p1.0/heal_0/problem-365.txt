@@ -1,0 +1,40 @@
+```c
+#include <stdio.h>
+#include <limits.h>
+
+int count_digits(int num) {
+    int count = 0;
+    
+    if (num == 0) {
+        return 1;
+    }
+    
+    if (num == INT_MIN) {
+        return 10;
+    }
+    
+    if (num < 0) {
+        num = -num;
+    }
+    
+    while (num > 0) {
+        num /= 10;
+        count++;
+    }
+    
+    return count;
+}
+
+int main(void) {
+    int test_cases[] = {0, 5, -5, 123, -123, 12345, INT_MAX, INT_MIN};
+    int num_tests = sizeof(test_cases) / sizeof(test_cases[0]);
+    
+    for (int i = 0; i < num_tests; i++) {
+        printf("Number: %d, Digits: %d\n", 
+               test_cases[i], 
+               count_digits(test_cases[i]));
+    }
+    
+    return 0;
+}
+```

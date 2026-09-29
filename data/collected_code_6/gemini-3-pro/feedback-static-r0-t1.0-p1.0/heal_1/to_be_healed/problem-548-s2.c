@@ -1,0 +1,48 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+/* Possible weaknesses found:
+ *  Parameter 'nums' can be declared as pointer to const [constParameterPointer]
+ */
+int lengthOfLIS(int* nums, int numsSize) {
+    if (numsSize == 0) {
+        return 0;
+    }
+
+    int* dp = (int*)malloc(numsSize * sizeof(int));
+    if (dp == NULL) {
+        return -1;
+    }
+
+    int maxLength = 1;
+
+    for (int i = 0; i < numsSize; i++) {
+        dp[i] = 1;
+        for (int j = 0; j < i; j++) {
+            if (nums[i] > nums[j] && dp[i] < dp[j] + 1) {
+                dp[i] = dp[j] + 1;
+            }
+        }
+        if (dp[i] > maxLength) {
+            maxLength = dp[i];
+        }
+    }
+
+    free(dp);
+    return maxLength;
+}
+
+int main(void) {
+    int nums[] = {10, 9, 2, 5, 3, 7, 101, 18};
+    int numsSize = sizeof(nums) / sizeof(nums[0]);
+
+    int result = lengthOfLIS(nums, numsSize);
+    
+    if (result != -1) {
+        printf("Length of LIS: %d\n", result);
+    } else {
+        printf("Memory allocation failed.\n");
+    }
+
+    return 0;
+}

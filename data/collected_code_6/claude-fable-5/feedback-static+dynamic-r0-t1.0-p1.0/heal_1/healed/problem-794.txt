@@ -1,0 +1,84 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <regex.h>
+
+int match_pattern(const char *text)
+{
+    regex_t regex;
+    int result;
+    int match;
+
+    if (text == NULL) {
+        return 0;
+    }
+
+    result = regcomp(&regex, "^a.*b$", REG_EXTENDED | REG_NOSUB);
+    if (result != 0) {
+        size_t needed = regerror(result, &regex, NULL, 0);
+        char *error_buffer = malloc(needed);
+        if (error_buffer != NULL) {
+            regerror(result, &regex, error_buffer, needed);
+            fprintf(stderr, "Regex compilation failed: %s\n", error_buffer);
+            free(error_buffer);
+        } else {
+            fprintf(stderr, "Regex compilation failed\n");
+        }
+        return -1;
+    }
+
+    result = regexec(&regex, text, 0, NULL, 0);
+    regfree(&regex);
+
+    if (result == 0) {
+        match = 1;
+    } else if (result == REG_NOMATCH) {
+        match = 0;
+    } else {
+        fprintf(stderr, "Regex execution failed\n");
+        match = -1;
+    }
+
+    return match;
+}
+
+int main(void)
+{
+    const char *test_strings[] = {
+        "ab",
+        "acb",
+        "a123b",
+        "abc",
+        "xab",
+        "a",
+        "b",
+        "aXXXXb"
+    };
+    size_t count = sizeof(test_strings) / sizeof(test_strings[0]);
+    size_t i;
+
+    for (i = 0; i < count; i++) {
+        int result = match_pattern(test_strings[i]);
+        if (result < 0) {
+            fprintf(stderr, "Error matching string: %s\n", test_strings[i]);
+            return EXIT_FAILURE;
+        }
+        printf("\"%s\" -> %s\n", test_strings[i],
+               (result == 1) ? "match" : "no match");
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The original code was already largely safe — the flagged `char error_buffer[256]` was used correctly, since `regerror()` takes the buffer size (`sizeof(error_buffer)`) and guarantees null-terminated truncation. Flawfinder flags statically-sized arrays heuristically (CWE-119/CWE-120), not because an actual overflow existed.
+
+The rewrite eliminates the warning entirely by removing the fixed-size buffer:
+
+1. **Dynamic sizing:** `regerror(result, &regex, NULL, 0)` is called first to query the exact required buffer size (including the null terminator), then the buffer is allocated with `malloc()` to precisely that size. This guarantees the full error message is never truncated and no fixed bound can be exceeded.
+2. **Allocation failure handling:** if `malloc()` fails, a generic error message is printed rather than dereferencing a `NULL` pointer.
+3. **No leaks:** the buffer is freed immediately after use, and `regfree()` is still called on every path where compilation succeeded.
+
+All other logic (NULL input guard, `REG_NOMATCH` handling, return-value contract of `-1`/`0`/`1`) is preserved unchanged.

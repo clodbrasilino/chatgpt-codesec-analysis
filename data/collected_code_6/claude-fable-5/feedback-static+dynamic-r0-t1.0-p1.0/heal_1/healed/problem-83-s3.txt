@@ -1,0 +1,72 @@
+```c
+#include <stdio.h>
+#include <string.h>
+
+#define MAX_INPUT_LEN 256
+
+char sum_of_chars(const char *str, size_t max_len)
+{
+    unsigned long sum = 0UL;
+    size_t i;
+    size_t len;
+
+    if (str == NULL) {
+        return '\0';
+    }
+
+    len = 0U;
+    while (len < max_len && str[len] != '\0') {
+        len++;
+    }
+
+    if (len == max_len) {
+        return '\0';
+    }
+
+    for (i = 0U; i < len; i++) {
+        sum += (unsigned long)(unsigned char)str[i];
+    }
+
+    return (char)(((sum - (unsigned long)'a') % 26UL) + (unsigned long)'a');
+}
+
+int main(void)
+{
+    char buffer[MAX_INPUT_LEN];
+    char result;
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1U] = '\0';
+    buffer[strcspn(buffer, "\n")] = '\0';
+
+    if (buffer[0] == '\0') {
+        fprintf(stderr, "Empty input\n");
+        return 1;
+    }
+
+    result = sum_of_chars(buffer, sizeof(buffer));
+
+    if (result == '\0') {
+        fprintf(stderr, "Invalid string\n");
+        return 1;
+    }
+
+    if (printf("Resulting character: %c\n", result) < 0) {
+        return 1;
+    }
+
+    return 0;
+}
+```
+
+**Key changes addressing the identified weaknesses:**
+
+1. **CWE-126 (`strlen` over-read):** Replaced the unbounded `strlen()` call with a bounded manual length scan in `sum_of_chars()`, which now takes an explicit `max_len` parameter. The function can never read past the caller-specified buffer size, even if the string is not NUL-terminated. If no terminator is found within the bound, it fails safely by returning `'\0'`.
+
+2. **CWE-119/CWE-120 (statically-sized buffer):** The buffer size is defined once via `MAX_INPUT_LEN` and consistently referenced with `sizeof(buffer)`, both in `fgets()` (which already limits the read) and when passing the bound to `sum_of_chars()`. An explicit forced NUL-termination (`buffer[sizeof(buffer) - 1U] = '\0'`) was added as defense-in-depth, guaranteeing termination regardless of input behavior.
+
+The original logic, error handling, and return semantics are preserved.

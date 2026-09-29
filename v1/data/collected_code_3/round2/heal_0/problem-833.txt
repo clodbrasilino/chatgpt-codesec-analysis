@@ -1,0 +1,72 @@
+C does not have built-in support for dictionaries or lists like Python or other high-level languages. However, you can implement a dictionary using a hash table or a binary search tree. Here is a simple implementation using a hash table. The keys are stored in a dynamic array.
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define TABLE_SIZE 100
+
+typedef struct HashNode {
+    char* key;
+    struct HashNode* next;
+} HashNode;
+
+typedef struct HashTable {
+    HashNode* buckets[TABLE_SIZE];
+} HashTable;
+
+HashTable* create_table() {
+    HashTable* table = malloc(sizeof(HashTable));
+    memset(table, 0, sizeof(HashTable));
+    return table;
+}
+
+unsigned int hash(char* key) {
+    unsigned int i, hash = 0;
+    for (i = 0; key[i]; i++) {
+        hash += key[i];
+    }
+    return hash % TABLE_SIZE;
+}
+
+void insert(HashTable* table, char* key) {
+    unsigned int index = hash(key);
+    HashNode* node = malloc(sizeof(HashNode));
+    node->key = strdup(key);
+    node->next = table->buckets[index];
+    table->buckets[index] = node;
+}
+
+char** get_keys(HashTable* table, int* length) {
+    char** keys = malloc(TABLE_SIZE * sizeof(char*));
+    *length = 0;
+    for (int i = 0; i < TABLE_SIZE; i++) {
+        for (HashNode* node = table->buckets[i]; node; node = node->next) {
+            keys[(*length)++] = strdup(node->key);
+        }
+    }
+    return keys;
+}
+
+int main() {
+    HashTable* table = create_table();
+    insert(table, "key1");
+    insert(table, "key2");
+    insert(table, "key3");
+
+    int length;
+    char** keys = get_keys(table, &length);
+
+    for (int i = 0; i < length; i++) {
+        printf("%s\n", keys[i]);
+        free(keys[i]);
+    }
+    free(keys);
+    free(table);
+
+    return 0;
+}
+```
+
+This code creates a hash table and inserts three keys. Then it retrieves the keys and prints them. Note that the order of the keys is not guaranteed to be the same as the insertion order.

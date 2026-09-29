@@ -1,0 +1,75 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stddef.h>
+
+int remove_negatives(const int *input, size_t input_len, int **output, size_t *output_len)
+{
+    size_t count = 0;
+    size_t i;
+    int *result = NULL;
+
+    if (input == NULL || output == NULL || output_len == NULL) {
+        return -1;
+    }
+
+    *output = NULL;
+    *output_len = 0;
+
+    for (i = 0; i < input_len; i++) {
+        if (input[i] >= 0) {
+            count++;
+        }
+    }
+
+    if (count == 0) {
+        return 0;
+    }
+
+    result = malloc(count * sizeof(*result));
+    if (result == NULL) {
+        return -1;
+    }
+
+    count = 0;
+    for (i = 0; i < input_len; i++) {
+        if (input[i] >= 0) {
+            result[count] = input[i];
+            count++;
+        }
+    }
+
+    *output = result;
+    *output_len = count;
+    return 0;
+}
+
+int main(void)
+{
+    int numbers[] = { 3, -1, 7, -5, 0, 12, -8, 4 };
+    size_t numbers_len = sizeof(numbers) / sizeof(numbers[0]);
+    int *filtered = NULL;
+    size_t filtered_len = 0;
+    size_t i;
+
+    if (remove_negatives(numbers, numbers_len, &filtered, &filtered_len) != 0) {
+        fprintf(stderr, "Failed to remove negative numbers\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Original list: ");
+    for (i = 0; i < numbers_len; i++) {
+        printf("%d ", numbers[i]);
+    }
+    printf("\n");
+
+    printf("Filtered list: ");
+    for (i = 0; i < filtered_len; i++) {
+        printf("%d ", filtered[i]);
+    }
+    printf("\n");
+
+    free(filtered);
+    filtered = NULL;
+
+    return EXIT_SUCCESS;
+}

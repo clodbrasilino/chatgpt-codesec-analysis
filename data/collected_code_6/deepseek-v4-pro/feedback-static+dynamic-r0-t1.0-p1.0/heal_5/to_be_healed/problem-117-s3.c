@@ -1,0 +1,215 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#include <errno.h>
+#include <stdint.h>
+
+typedef struct Node {
+    char *data;
+    struct Node *next;
+} Node;
+
+typedef struct List {
+    Node *head;
+    size_t size;
+} List;
+
+static List *list_create(void) {
+    List *list = (List *)malloc(sizeof(List));
+    if (!list) {
+        return NULL;
+    }
+    list->head = NULL;
+    list->size = 0;
+    return list;
+}
+
+static void list_destroy(List *list) {
+    if (!list) {
+        return;
+    }
+    Node *current = list->head;
+    while (current) {
+        Node *next = current->next;
+        free(current->data);
+        free(current);
+        current = next;
+    }
+    free(list);
+}
+
+static int list_append(List *list, const char *str) {
+    if (!list || !str) {
+        return -1;
+    }
+
+    size_t len = strnlen(str, SIZE_MAX);
+    if (len >= SIZE_MAX) {
+        return -1;
+    }
+
+    Node *new_node = (Node *)malloc(sizeof(Node));
+    if (!new_node) {
+        return -1;
+    }
+
+    char *new_data = (char *)malloc(len + 1);
+    if (!new_data) {
+        free(new_node);
+        return -1;
+    }
+
+    if (len > 0) {
+        if (len > SIZE_MAX - 1) {
+            free(new_data);
+            free(new_node);
+            return -1;
+        }
+        /* Possible weaknesses found:
+         * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+         */
+        memcpy(new_data, str, len);
+    }
+    new_data[len] = '\0';
+    new_node->data = new_data;
+    new_node->next = NULL;
+    
+    if (!list->head) {
+        list->head = new_node;
+    } else {
+        Node *current = list->head;
+        while (current->next) {
+            current = current->next;
+        }
+        current->next = new_node;
+    }
+    list->size++;
+    return 0;
+}
+
+static int is_float_convertible(const char *str) {
+    if (!str || *str == '\0') {
+        return 0;
+    }
+    
+    char *endptr = NULL;
+    errno = 0;
+    float val = strtof(str, &endptr);
+    
+    if (errno == ERANGE) {
+        return 0;
+    }
+    if (endptr == str) {
+        return 0;
+    }
+    while (*endptr) {
+        if (!isspace((unsigned char)*endptr)) {
+            return 0;
+        }
+        endptr++;
+    }
+    (void)val;
+    return 1;
+}
+
+static void list_convert_to_float(List *list) {
+    if (!list) {
+        return;
+    }
+    
+    Node *current = list->head;
+    while (current) {
+        if (is_float_convertible(current->data)) {
+            char *endptr = NULL;
+            errno = 0;
+            float value = strtof(current->data, &endptr);
+            if (errno != ERANGE && endptr != current->data) {
+                /* Possible weaknesses found:
+                 * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+                 */
+                char buffer[128];
+                int written = snprintf(buffer, sizeof(buffer), "%.6f", value);
+                if (written < 0 || (size_t)written >= sizeof(buffer)) {
+                    current = current->next;
+                    continue;
+                }
+                
+                size_t buffer_len = strnlen(buffer, sizeof(buffer));
+                if (buffer_len >= sizeof(buffer)) {
+                    current = current->next;
+                    continue;
+                }
+                
+                char *new_data = (char *)malloc(buffer_len + 1);
+                if (new_data) {
+                    if (buffer_len > SIZE_MAX - 1) {
+                        free(new_data);
+                        current = current->next;
+                        continue;
+                    }
+                    /* Possible weaknesses found:
+                     * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+                     */
+                    memcpy(new_data, buffer, buffer_len);
+                    new_data[buffer_len] = '\0';
+                    free(current->data);
+                    current->data = new_data;
+                }
+            }
+        }
+        current = current->next;
+    }
+}
+
+static void list_print(const List *list) {
+    if (!list) {
+        return;
+    }
+    Node *current = list->head;
+    while (current) {
+        printf("%s\n", current->data);
+        current = current->next;
+    }
+}
+
+int main(void) {
+    List *list = list_create();
+    if (!list) {
+        fprintf(stderr, "Failed to create list\n");
+        return EXIT_FAILURE;
+    }
+    
+    const char *test_values[] = {
+        "123",
+        "45.67",
+        "hello",
+        "-89.01",
+        "3.14abc",
+        "  ",
+        "42.0",
+        "abc123",
+        "1e5",
+        "0x1A"
+    };
+    
+    size_t num_values = sizeof(test_values) / sizeof(test_values[0]);
+    for (size_t i = 0; i < num_values; i++) {
+        if (list_append(list, test_values[i]) != 0) {
+            fprintf(stderr, "Failed to append element\n");
+            list_destroy(list);
+            return EXIT_FAILURE;
+        }
+    }
+    
+    printf("Before conversion:\n");
+    list_print(list);
+    
+    list_convert_to_float(list);
+    
+    printf("\nAfter conversion:\n");
+    list_print(list);
+    
+    list_destroy(list);
+    return EXIT_SUCCESS;
+}

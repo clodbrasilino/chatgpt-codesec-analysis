@@ -1,0 +1,44 @@
+{
+  "task_id": 287,
+  "text": "Write a C function to find the sum of squares of first n even natural numbers.",
+  "fn_candidates": [
+    "square_Sum",
+    "SquareSum",
+    "squareSum",
+    "squareSum"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "square_Sum",
+      "args": [
+        2
+      ],
+      "expected": 20,
+      "assert_src": "assert square_Sum(2) == 20"
+    },
+    {
+      "fn_name": "square_Sum",
+      "args": [
+        3
+      ],
+      "expected": 56,
+      "assert_src": "assert square_Sum(3) == 56"
+    },
+    {
+      "fn_name": "square_Sum",
+      "args": [
+        4
+      ],
+      "expected": 120,
+      "assert_src": "assert square_Sum(4) == 120"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

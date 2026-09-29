@@ -1,0 +1,100 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+#define HEAP_SIZE 10
+
+typedef struct MinHeap {
+    int size;
+    int arr[HEAP_SIZE];
+} MinHeap;
+
+void swap(int *a, int *b) {
+    int temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+void heapify(MinHeap *heap, int idx) {
+    int smallest = idx;
+    int left = 2 * idx + 1;
+    int right = 2 * idx + 2;
+
+    if (left < heap->size && heap->arr[left] < heap->arr[smallest])
+        smallest = left;
+
+    if (right < heap->size && heap->arr[right] < heap->arr[smallest])
+        smallest = right;
+
+    if (smallest != idx) {
+        swap(&heap->arr[smallest], &heap->arr[idx]);
+        heapify(heap, smallest);
+    }
+}
+
+MinHeap *createHeap() {
+    MinHeap *minHeap = (MinHeap*) malloc(sizeof(MinHeap));
+    if (!minHeap) {
+        return NULL;
+    }
+    minHeap->size = 0;
+
+    return minHeap;
+}
+
+void insertHeap(MinHeap *minHeap, int value) {
+    if (minHeap) {
+        if(minHeap->size < HEAP_SIZE) {
+            minHeap->arr[minHeap->size] = value;
+            minHeap->size++;
+            heapify(minHeap, 0);
+        }
+    }
+}
+
+int removeMin(MinHeap *minHeap) {
+    if (!minHeap || minHeap->size == 0) {
+        return -1;
+    }
+    int min = minHeap->arr[0];
+    minHeap->arr[0] = minHeap->arr[minHeap->size - 1];
+    minHeap->size--;
+    heapify(minHeap, 0);
+
+    return min;
+}
+
+void freeHeap(MinHeap *heap) {
+    if (heap) {
+        free(heap);
+    }
+}
+
+int main() {
+    // Initialize the heap
+    MinHeap *minHeap = createHeap();
+    if (!minHeap) {
+        printf("Memory allocation failed! Terminate program...\n");
+        return -1;
+    }
+
+    // Insert values
+    insertHeap(minHeap, 10);
+    insertHeap(minHeap, 20);
+    insertHeap(minHeap, 30);
+    insertHeap(minHeap, 40);
+    insertHeap(minHeap, 50);
+
+    // Remove values
+    printf("min value from heap: %d\n", removeMin(minHeap));
+    printf("min value from heap: %d\n", removeMin(minHeap));
+    printf("min value from heap: %d\n", removeMin(minHeap));
+    printf("min value from heap: %d\n", removeMin(minHeap));
+    printf("min value from heap: %d\n", removeMin(minHeap));
+
+    // Free memory
+    freeHeap(minHeap);
+
+    return 0;
+}
+```

@@ -1,0 +1,156 @@
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+static int is_space(char character)
+{
+    return character == ' ' || character == '\t' ||
+           character == '\n' || character == '\r' ||
+           character == '\f' || character == '\v';
+}
+
+static void reverse_range(char *start, char *end)
+{
+    while (start < end) {
+        char temporary = *start;
+        *start++ = *end;
+        *end-- = temporary;
+    }
+}
+
+static void reverse_words(char *string, size_t length)
+{
+    char *cursor;
+    char *end;
+
+    if (string == NULL || length < 2U) {
+        return;
+    }
+
+    reverse_range(string, string + length - 1U);
+
+    cursor = string;
+    end = string + length;
+
+    while (cursor < end) {
+        char *word_start;
+
+        while (cursor < end && is_space(*cursor)) {
+            ++cursor;
+        }
+
+        word_start = cursor;
+
+        while (cursor < end && !is_space(*cursor)) {
+            ++cursor;
+        }
+
+        if (word_start < cursor) {
+            reverse_range(word_start, cursor - 1);
+        }
+    }
+}
+
+static int grow_buffer(char **buffer, size_t *capacity, size_t required)
+{
+    size_t new_capacity;
+    char *new_buffer;
+
+    if (buffer == NULL || capacity == NULL || *buffer == NULL) {
+        return 0;
+    }
+
+    if (required <= *capacity) {
+        return 1;
+    }
+
+    new_capacity = *capacity;
+
+    while (new_capacity < required) {
+        if (new_capacity > SIZE_MAX / 2U) {
+            new_capacity = required;
+            break;
+        }
+
+        new_capacity *= 2U;
+    }
+
+    new_buffer = realloc(*buffer, new_capacity);
+    if (new_buffer == NULL) {
+        return 0;
+    }
+
+    *buffer = new_buffer;
+    *capacity = new_capacity;
+    return 1;
+}
+
+static int read_line(char **line, size_t *length)
+{
+    size_t capacity = 128U;
+    char *buffer;
+
+    if (line == NULL || length == NULL) {
+        return 0;
+    }
+
+    *line = NULL;
+    *length = 0U;
+
+    buffer = malloc(capacity);
+    if (buffer == NULL) {
+        return 0;
+    }
+
+    for (;;) {
+        /* Possible weaknesses found:
+         * Flawfinder fgetc: Check buffer boundaries if used in a loop including recursive loops (CWE-120, CWE-20). (risk 1, buffer)
+         */
+        int character = fgetc(stdin);
+
+        if (character == EOF || character == '\n') {
+            break;
+        }
+
+        if (*length > SIZE_MAX - 2U ||
+            !grow_buffer(&buffer, &capacity, *length + 2U)) {
+            free(buffer);
+            *length = 0U;
+            return 0;
+        }
+
+        buffer[*length] = (char)character;
+        ++*length;
+    }
+
+    if (ferror(stdin)) {
+        free(buffer);
+        *length = 0U;
+        return 0;
+    }
+
+    buffer[*length] = '\0';
+    *line = buffer;
+    return 1;
+}
+
+int main(void)
+{
+    char *line = NULL;
+    size_t length = 0U;
+    int status = EXIT_SUCCESS;
+
+    if (!read_line(&line, &length)) {
+        return EXIT_FAILURE;
+    }
+
+    reverse_words(line, length);
+
+    if (fwrite(line, sizeof *line, length, stdout) != length ||
+        fputc('\n', stdout) == EOF) {
+        status = EXIT_FAILURE;
+    }
+
+    free(line);
+    return status;
+}

@@ -1,0 +1,48 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+#include <string.h>
+
+bool isBalanced(const char *expression, size_t len) {
+    int stack[len];
+    int top = -1;
+
+    for (int i = 0; i < len; ++i) {
+        if (expression[i] == '(' || expression[i] == '[' || expression[i] == '{') {
+            if (top + 1 >= (int)len) return false;
+            stack[++top] = expression[i];
+        } else if (expression[i] == ')' || expression[i] == ']' || expression[i] == '}') {
+            if (top == -1) return false;
+            char topChar = (char)stack[top--];
+            if ((expression[i] == ')' && topChar != '(') ||
+                (expression[i] == ']' && topChar != '[') ||
+                (expression[i] == '}' && topChar != '{')) {
+                return false;
+            }
+        }
+    }
+
+    return top == -1;
+}
+
+int main() {
+    const char *expressions[] = {
+        "([]{})",
+        "([)]",
+        "{[()]}}",
+        "((()))",
+        "(()"
+    };
+
+    for (size_t i = 0; i < sizeof(expressions) / sizeof(expressions[0]); ++i) {
+        size_t len = strlen(expressions[i]);
+        if (isBalanced(expressions[i], len)) {
+            printf("Expression %s is balanced.\n", expressions[i]);
+        } else {
+            printf("Expression %s is not balanced.\n", expressions[i]);
+        }
+    }
+
+    return 0;
+}
+```

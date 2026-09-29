@@ -1,0 +1,28 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-507.c: In function 'free_list':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-507.c:20:14: error: assignment to 'Node *' from incompatible pointer type 'struct Node *' [-Wincompatible-pointer-types]
+   20 |         head = head->next;
+      |              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-507.c: In function 'add_to_list':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-507.c:32:17: error: assignment to 'Node *' from incompatible pointer type 'struct Node *' [-Wincompatible-pointer-types]
+   32 |         current = current->next;
+      |                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-507.c:34:19: error: assignment to 'struct Node *' from incompatible pointer type 'Node *' [-Wincompatible-pointer-types]
+   34 |     current->next = create_node(word);
+      |                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-507.c: In function 'remove_words':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-507.c:40:17: error: assignment to 'struct Node *' from incompatible pointer type 'Node *' [-Wincompatible-pointer-types]
+   40 |     dummy->next = head;
+      |                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-507.c:49:21: error: assignment to 'Node *' from incompatible pointer type 'struct Node *' [-Wincompatible-pointer-types]
+   49 |             current = prev->next;
+      |                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-507.c:52:21: error: assignment to 'Node *' from incompatible pointer type 'struct Node *' [-Wincompatible-pointer-types]
+   52 |             current = current->next;
+      |                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-507.c:55:22: error: initialization of 'Node *' from incompatible pointer type 'struct Node *' [-Wincompatible-pointer-types]
+   55 |     Node *new_head = dummy->next;
+      |                      ^~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-507.c: In function 'print_list':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-507.c:64:14: error: assignment to 'Node *' from incompatible pointer type 'struct Node *' [-Wincompatible-pointer-types]
+   64 |         head = head->next;
+      |              ^

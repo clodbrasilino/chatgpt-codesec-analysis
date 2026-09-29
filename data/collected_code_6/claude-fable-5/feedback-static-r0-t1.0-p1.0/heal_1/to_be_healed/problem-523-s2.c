@@ -1,0 +1,87 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdbool.h>
+
+bool validate_string(const char *str, size_t required_length)
+{
+    size_t len;
+    size_t i;
+    bool has_upper = false;
+    bool has_lower = false;
+    bool has_digit = false;
+
+    if (str == NULL) {
+        return false;
+    }
+
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    len = strlen(str);
+    if (len != required_length) {
+        return false;
+    }
+
+    for (i = 0; i < len; i++) {
+        unsigned char c = (unsigned char)str[i];
+        if (isupper(c)) {
+            has_upper = true;
+        } else if (islower(c)) {
+            has_lower = true;
+        } else if (isdigit(c)) {
+            has_digit = true;
+        }
+    }
+
+    return has_upper && has_lower && has_digit;
+}
+
+int main(void)
+{
+    const char *test1 = "Abcdef12";
+    const char *test2 = "abcdef12";
+    const char *test3 = "ABCDEF12";
+    const char *test4 = "Abcdefgh";
+    const char *test5 = "Ab1";
+    size_t required_length = 8;
+
+    if (validate_string(test1, required_length)) {
+        printf("\"%s\" is valid\n", test1);
+    } else {
+        printf("\"%s\" is invalid\n", test1);
+    }
+
+    if (validate_string(test2, required_length)) {
+        printf("\"%s\" is valid\n", test2);
+    } else {
+        printf("\"%s\" is invalid\n", test2);
+    }
+
+    if (validate_string(test3, required_length)) {
+        printf("\"%s\" is valid\n", test3);
+    } else {
+        printf("\"%s\" is invalid\n", test3);
+    }
+
+    if (validate_string(test4, required_length)) {
+        printf("\"%s\" is valid\n", test4);
+    } else {
+        printf("\"%s\" is invalid\n", test4);
+    }
+
+    if (validate_string(test5, required_length)) {
+        printf("\"%s\" is valid\n", test5);
+    } else {
+        printf("\"%s\" is invalid\n", test5);
+    }
+
+    if (validate_string(NULL, required_length)) {
+        printf("NULL is valid\n");
+    } else {
+        printf("NULL is invalid\n");
+    }
+
+    return EXIT_SUCCESS;
+}

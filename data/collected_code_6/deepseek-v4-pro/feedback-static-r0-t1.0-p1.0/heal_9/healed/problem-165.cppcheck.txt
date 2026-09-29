@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-165.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-165.c:14:30: warning: Either the condition 'i<26' is redundant or the array 'str[1]' is accessed at index 25, which is out of bounds. [arrayIndexOutOfBoundsCond]
+    for (i = 0; i < 26 && str[i] != '\0'; i++) {
+                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-165.c:14:19: note: Assuming that condition 'i<26' is not redundant
+    for (i = 0; i < 26 && str[i] != '\0'; i++) {
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-165.c:14:30: note: Array index out of bounds
+    for (i = 0; i < 26 && str[i] != '\0'; i++) {
+                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-165.c:15:39: error: Array 'str[4]' accessed at index 25, which is out of bounds. [arrayIndexOutOfBounds]
+        if (isalpha((unsigned char)str[i])) {
+                                      ^

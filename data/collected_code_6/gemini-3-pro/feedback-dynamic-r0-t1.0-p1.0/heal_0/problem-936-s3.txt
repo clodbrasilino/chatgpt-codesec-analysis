@@ -1,0 +1,65 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char *key;
+    int value;
+} Tuple;
+
+Tuple* rearrange_tuples(Tuple *tuples, size_t num_tuples, const char **order, size_t num_order, size_t *out_size) {
+    if (!tuples || !order || !out_size) {
+        return NULL;
+    }
+
+    Tuple *result = (Tuple *)malloc(num_order * sizeof(Tuple));
+    if (!result) {
+        return NULL;
+    }
+
+    size_t count = 0;
+    for (size_t i = 0; i < num_order; ++i) {
+        if (!order[i]) continue;
+        for (size_t j = 0; j < num_tuples; ++j) {
+            if (tuples[j].key && strcmp(tuples[j].key, order[i]) == 0) {
+                result[count].key = tuples[j].key;
+                result[count].value = tuples[j].value;
+                count++;
+                break;
+            }
+        }
+    }
+
+    *out_size = count;
+    return result;
+}
+
+int main() {
+    Tuple tuples[] = {
+        {"apple", 1},
+        {"banana", 2},
+        {"cherry", 3},
+        {"date", 4}
+    };
+    size_t num_tuples = sizeof(tuples) / sizeof(tuples[0]);
+
+    const char *order[] = {"cherry", "apple", "date", "banana", "fig"};
+    size_t num_order = sizeof(order) / sizeof(order[0]);
+
+    size_t out_size = 0;
+    Tuple *rearranged = rearrange_tuples(tuples, num_tuples, order, num_order, &out_size);
+
+    if (rearranged) {
+        for (size_t i = 0; i < out_size; ++i) {
+            printf("%s: %d\n", rearranged[i].key, rearranged[i].value);
+        }
+        free(rearranged);
+    } else {
+        fprintf(stderr, "Memory allocation failed or invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```

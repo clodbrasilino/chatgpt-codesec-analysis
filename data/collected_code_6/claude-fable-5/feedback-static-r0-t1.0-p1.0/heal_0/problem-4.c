@@ -1,0 +1,117 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+static void swap_ints(int *a, int *b)
+{
+    int tmp = *a;
+    *a = *b;
+    *b = tmp;
+}
+
+static void sift_down(int *heap, size_t size, size_t index)
+{
+    while (1) {
+        size_t largest = index;
+        size_t left = 2u * index + 1u;
+        size_t right = 2u * index + 2u;
+
+        if (left < size && heap[left] > heap[largest]) {
+            largest = left;
+        }
+        if (right < size && heap[right] > heap[largest]) {
+            largest = right;
+        }
+        if (largest == index) {
+            break;
+        }
+        swap_ints(&heap[index], &heap[largest]);
+        index = largest;
+    }
+}
+
+static void build_max_heap(int *heap, size_t size)
+{
+    size_t i = size / 2u;
+
+    while (i > 0u) {
+        i--;
+        sift_down(heap, size, i);
+    }
+}
+
+static int extract_max(int *heap, size_t *size)
+{
+    int max = heap[0];
+
+    (*size)--;
+    heap[0] = heap[*size];
+    sift_down(heap, *size, 0u);
+    return max;
+}
+
+static int *find_largest(const int *numbers, size_t count, size_t k, size_t *result_count)
+{
+    int *heap = NULL;
+    int *result = NULL;
+    size_t heap_size;
+    size_t i;
+
+    if (numbers == NULL || count == 0u || k == 0u || result_count == NULL) {
+        return NULL;
+    }
+
+    if (k > count) {
+        k = count;
+    }
+
+    heap = malloc(count * sizeof(int));
+    if (heap == NULL) {
+        return NULL;
+    }
+
+    result = malloc(k * sizeof(int));
+    if (result == NULL) {
+        free(heap);
+        return NULL;
+    }
+
+    for (i = 0u; i < count; i++) {
+        heap[i] = numbers[i];
+    }
+
+    heap_size = count;
+    build_max_heap(heap, heap_size);
+
+    for (i = 0u; i < k; i++) {
+        result[i] = extract_max(heap, &heap_size);
+    }
+
+    free(heap);
+    *result_count = k;
+    return result;
+}
+
+int main(void)
+{
+    int numbers[] = { 25, 35, 22, 85, 14, 65, 75, 22, 58 };
+    size_t count = sizeof(numbers) / sizeof(numbers[0]);
+    size_t k = 3u;
+    size_t result_count = 0u;
+    size_t i;
+    int *largest;
+
+    largest = find_largest(numbers, count, k, &result_count);
+    if (largest == NULL) {
+        fprintf(stderr, "Failed to find largest numbers\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("The %zu largest numbers are:", result_count);
+    for (i = 0u; i < result_count; i++) {
+        printf(" %d", largest[i]);
+    }
+    printf("\n");
+
+    free(largest);
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,30 @@
+#include <stdio.h>
+
+int multiply(int a, int b);
+
+int multiply(int a, int b) {
+    unsigned int ua = (unsigned int)a;
+    unsigned int ub = (unsigned int)b;
+    unsigned int result = 0;
+
+    while (ub != 0) {
+        if (ub & 1u) {
+            result += ua;
+        }
+        ua <<= 1;
+        ub >>= 1;
+    }
+
+    return (int)result;
+}
+
+int main(void) {
+    int x = 15;
+    int y = -4;
+    int result;
+
+    result = multiply(x, y);
+    printf("%d\n", result);
+
+    return 0;
+}

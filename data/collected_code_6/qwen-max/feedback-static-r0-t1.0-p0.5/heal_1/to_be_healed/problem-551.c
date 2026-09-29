@@ -1,0 +1,132 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int value;
+    struct Node *next;
+} Node;
+
+typedef struct List {
+    Node *head;
+    struct List *sublist;
+} List;
+
+List* create_list() {
+    return (List*)calloc(1, sizeof(List));
+}
+
+Node* create_node(int value) {
+    Node *new_node = (Node*)malloc(sizeof(Node));
+    new_node->value = value;
+    new_node->next = NULL;
+    return new_node;
+}
+
+void add_node(List *list, int value) {
+    Node *new_node = create_node(value);
+    if (list->head == NULL) {
+        list->head = new_node;
+    } else {
+        Node *current = list->head;
+        while (current->next != NULL) {
+            current = current->next;
+        }
+        current->next = new_node;
+    }
+}
+
+/* Possible weaknesses found:
+ *  expected 'List *' but argument is of type 'struct Node *'
+ *  expected 'List *' but argument is of type 'Node *'
+ */
+void add_sublist(List *list, List *sublist) {
+    list->sublist = sublist;
+}
+
+List* extract_column(List *nested_list, int column_index) {
+    List *result = create_list();
+    if (nested_list == NULL || nested_list->head == NULL) {
+        return result;
+    }
+
+    Node *current = nested_list->head;
+    while (current != NULL) {
+        if (column_index == 0) {
+            add_node(result, current->value);
+        /* Possible weaknesses found:
+         *  no member named 'sublist' in 'struct Node'
+         *  'Node' has no member named 'sublist'
+         */
+        } else if (current->sublist != NULL) {
+            /* Possible weaknesses found:
+             *  no member named 'sublist' in 'struct Node'
+             *  'Node' has no member named 'sublist'
+             */
+            List *sub_result = extract_column(current->sublist, column_index - 1);
+            if (sub_result->head != NULL) {
+                add_node(result, sub_result->head->value);
+                free(sub_result->head);
+                free(sub_result);
+            }
+        }
+        current = current->next;
+    }
+    return result;
+}
+
+void print_list(List *list) {
+    Node *current = list->head;
+    while (current != NULL) {
+        printf("%d ", current->value);
+        current = current->next;
+    }
+    printf("\n");
+}
+
+void free_list(List *list) {
+    Node *current = list->head;
+    while (current != NULL) {
+        Node *temp = current;
+        current = current->next;
+        free(temp);
+    }
+    if (list->sublist != NULL) {
+        free_list(list->sublist);
+    }
+    free(list);
+}
+
+int main() {
+    List *root = create_list();
+    List *sublist1 = create_list();
+    List *sublist2 = create_list();
+
+    add_node(root, 1);
+    add_node(root, 2);
+    add_node(root, 3);
+
+    add_node(sublist1, 4);
+    add_node(sublist1, 5);
+    add_node(sublist1, 6);
+
+    add_node(sublist2, 7);
+    add_node(sublist2, 8);
+    add_node(sublist2, 9);
+
+    /* Possible weaknesses found:
+     *  passing argument 1 of 'add_sublist' from incompatible pointer type [-Wincompatible-pointer-types]
+     */
+    add_sublist(root->head, sublist1);
+    /* Possible weaknesses found:
+     *  passing argument 1 of 'add_sublist' from incompatible pointer type [-Wincompatible-pointer-types]
+     */
+    add_sublist(root->head->next, sublist2);
+
+    List *extracted = extract_column(root, 1);
+    print_list(extracted);
+
+    free_list(root);
+    free_list(extracted);
+
+    return 0;
+}

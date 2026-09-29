@@ -1,0 +1,29 @@
+#include <stdio.h>
+ /* Possible weaknesses found:
+  *  test case 1 failed: expected 8, got <no output>
+  *  test case 2 failed: expected 36, got <no output>
+  *  test case 0 failed: expected 3, got <no output>
+  */
+
+int findKthElement(const int arr[], int n, int k) {
+    if (k <= 0 || k > n) {
+        return -1;
+    }
+    return arr[k-1];
+}
+
+int main() {
+    const int arr[] = {10, 20, 30, 40, 50};
+    int n = sizeof(arr) / sizeof(arr[0]);
+
+    for (int k = 1; k <= n; k++) {
+        int result = findKthElement(arr, n, k);
+        if (result != -1) {
+            printf("The %dth element is: %d\n", k, result);
+        } else {
+            printf("Invalid k value.\n");
+        }
+    }
+
+    return 0;
+}

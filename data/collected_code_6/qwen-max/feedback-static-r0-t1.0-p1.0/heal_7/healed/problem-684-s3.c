@@ -1,0 +1,41 @@
+#include <stdio.h>
+#include <string.h>
+
+int count_chars_in_partial(int remaining, const char *s, size_t s_len, char c) {
+    int count = 0;
+    for (int i = 0; i < remaining; ++i) {
+        if (s[i] == c) {
+            count++;
+        }
+    }
+    return count;
+}
+
+int count_occurrences(const char *s, int n, char c) {
+    if (n <= 0 || s == NULL) {
+        return 0;
+    }
+
+    size_t len = 0;
+    while (len < (size_t)n && s[len] != '\0') {
+        len++;
+    }
+
+    int count = 0;
+    for (size_t i = 0; i < len; ++i) {
+        if (s[i] == c) {
+            count++;
+        }
+    }
+
+    return count * (n / len) + count_chars_in_partial(n % len, s, len, c);
+}
+
+int main() {
+    const char *s = "aba";
+    int n = 10;
+    char c = 'a';
+    int result = count_occurrences(s, n, c);
+    printf("The character '%c' appears %d times in the repeated string.\n", c, result);
+    return 0;
+}

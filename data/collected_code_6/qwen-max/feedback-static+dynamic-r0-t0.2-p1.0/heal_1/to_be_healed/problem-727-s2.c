@@ -1,0 +1,31 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+void sanitize_string(char *input) {
+    regex_t regex;
+    regmatch_t match[1];
+    char *p = input;
+    const char *pattern = "[^a-zA-Z0-9]";
+
+    if (regcomp(&regex, pattern, REG_EXTENDED | REG_NEWLINE) != 0) {
+        return;
+    }
+
+    while (regexec(&regex, p, 1, match, 0) == 0) {
+        /* Possible weaknesses found:
+         * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+         */
+        memmove(p + match[0].rm_so, p + match[0].rm_eo, strlen(p + match[0].rm_eo) + 1);
+    }
+
+    regfree(&regex);
+}
+
+int main() {
+    char input[] = "Hello, World! 123";
+    sanitize_string(input);
+    printf("%s\n", input);
+    return 0;
+}

@@ -1,0 +1,28 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-452-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-452-s2.c:22:14: style: Condition 'loss!=-1' is always true [knownConditionTrueFalse]
+    if (loss != -1) {
+             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-452-s2.c:17:14: note: Assignment 'cp=100', assigned value is 100
+    int cp = 100;
+             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-452-s2.c:20:30: note: Calling function 'calculate_loss' returns 20
+    int loss = calculate_loss(cp, sp);
+                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-452-s2.c:20:30: note: Assignment 'loss=calculate_loss(cp,sp)', assigned value is 20
+    int loss = calculate_loss(cp, sp);
+                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-452-s2.c:22:14: note: Condition 'loss!=-1' is always true
+    if (loss != -1) {
+             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-452-s2.c:33:15: style: Condition 'loss2!=-1' is always false [knownConditionTrueFalse]
+    if (loss2 != -1) {
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-452-s2.c:31:31: note: Calling function 'calculate_loss' returns -1
+    int loss2 = calculate_loss(cp2, sp2);
+                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-452-s2.c:31:31: note: Assignment 'loss2=calculate_loss(cp2,sp2)', assigned value is -1
+    int loss2 = calculate_loss(cp2, sp2);
+                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-452-s2.c:33:15: note: Condition 'loss2!=-1' is always false
+    if (loss2 != -1) {
+              ^

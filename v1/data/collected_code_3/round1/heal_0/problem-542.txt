@@ -1,0 +1,36 @@
+```C
+#include <stdio.h>
+#include <string.h>
+#include <regex.h>
+
+void replace_with_colon(char *str) {
+    regex_t regex;
+    int reti;
+    char msgbuf[100];
+
+    reti = regcomp(&regex, "[ ,.]", 0);
+    if (reti) {
+        fprintf(stderr, "Could not compile regex\n");
+        exit(1);
+    }
+
+    int i = 0;
+    while (str[i]) {
+        reti = regexec(&regex, &str[i], 0, NULL, 0);
+        if (!reti) {
+            str[i] = ':';
+        }
+        i++;
+    }
+
+    regfree(&regex);
+}
+
+int main() {
+    char str[] = "Hello, world. This is a test string.";
+    replace_with_colon(str);
+    printf("%s\n", str);
+    return 0;
+}
+```
+Please note that the C standard library does not support regex natively. The code above uses POSIX regex, which is available on Unix-like systems including Linux and MacOS. If you're using a different system or need to write portable code, you'll need to use a third-party library or write your own function to replace characters.

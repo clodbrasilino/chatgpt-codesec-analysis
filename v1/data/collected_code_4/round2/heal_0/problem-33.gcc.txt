@@ -1,0 +1,76 @@
+./collected_code_4/round2//heal_0/problem-33.c: In function 'decimalToBinary':
+./collected_code_4/round2//heal_0/problem-33.c:9:25: warning: dereference of possibly-NULL 'binary' [CWE-690] [-Wanalyzer-possible-null-dereference]
+    9 |         binary[index++] = num % 2;
+      |         ~~~~~~~~~~~~~~~~^~~~~~~~~
+  'decimalToBinary': events 1-4
+    |
+    |    5 |     int *binary = malloc(sizeof(int) * 32);
+    |      |                   ^~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                   |
+    |      |                   (1) this call could return NULL
+    |......
+    |    8 |     while (num > 0) {
+    |      |            ~~~~~~~ 
+    |      |                |
+    |      |                (2) following 'true' branch (when 'num > 0')...
+    |    9 |         binary[index++] = num % 2;
+    |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                     |   |
+    |      |                     |   (4) 'binary + (long unsigned int)index * 4' could be NULL: unchecked value from (1)
+    |      |                     (3) ...to here
+    |
+./collected_code_4/round2//heal_0/problem-33.c: In function 'main':
+./collected_code_4/round2//heal_0/problem-33.c:22:9: warning: use of uninitialized value '*binary_12 + _3' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   22 |         printf("%d", binary[i]);
+      |         ^~~~~~~~~~~~~~~~~~~~~~~
+  'main': events 1-2
+    |
+    |   16 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   20 |     int *binary = decimalToBinary(number);
+    |      |                   ~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                   |
+    |      |                   (2) calling 'decimalToBinary' from 'main'
+    |
+    +--> 'decimalToBinary': events 3-6
+           |
+           |    4 | int * decimalToBinary(int num) {
+           |      |       ^~~~~~~~~~~~~~~
+           |      |       |
+           |      |       (3) entry to 'decimalToBinary'
+           |    5 |     int *binary = malloc(sizeof(int) * 32);
+           |      |                   ~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                   |
+           |      |                   (4) region created on heap here
+           |......
+           |    8 |     while (num > 0) {
+           |      |            ~~~~~~~
+           |      |                |
+           |      |                (5) following 'false' branch (when 'num <= 0')...
+           |......
+           |   13 |     return binary;
+           |      |            ~~~~~~
+           |      |            |
+           |      |            (6) ...to here
+           |
+    <------+
+    |
+  'main': events 7-10
+    |
+    |   20 |     int *binary = decimalToBinary(number);
+    |      |                   ^~~~~~~~~~~~~~~~~~~~~~~
+    |      |                   |
+    |      |                   (7) returning to 'main' from 'decimalToBinary'
+    |   21 |     for(i = 31; i >= 0; i--) {
+    |      |                 ~~~~~~
+    |      |                   |
+    |      |                   (8) following 'true' branch (when 'i >= 0')...
+    |   22 |         printf("%d", binary[i]);
+    |      |         ~~~~~~~~~~~~~~~~~~~~~~~
+    |      |         |                  |
+    |      |         |                  (9) ...to here
+    |      |         (10) use of uninitialized value '*binary_12 + _3' here
+    |

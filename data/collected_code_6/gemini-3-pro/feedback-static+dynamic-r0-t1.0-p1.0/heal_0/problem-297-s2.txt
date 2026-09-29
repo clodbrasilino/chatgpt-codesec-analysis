@@ -1,0 +1,146 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct NestedList {
+    int isInteger;
+    int integer;
+    struct NestedList** list;
+    size_t listSize;
+} NestedList;
+
+typedef struct Node {
+    int val;
+    struct Node* next;
+} Node;
+
+typedef struct {
+    Node* head;
+    Node* tail;
+} FlatList;
+
+void flattenHelper(NestedList* nested, FlatList* flatList) {
+    if (!nested || !flatList) return;
+
+    if (nested->isInteger) {
+        Node* newNode = (Node*)malloc(sizeof(Node));
+        if (!newNode) {
+            fprintf(stderr, "Memory allocation failed\n");
+            exit(EXIT_FAILURE);
+        }
+        newNode->val = nested->integer;
+        newNode->next = NULL;
+
+        if (flatList->tail) {
+            flatList->tail->next = newNode;
+            flatList->tail = newNode;
+        } else {
+            flatList->head = newNode;
+            flatList->tail = newNode;
+        }
+    } else {
+        for (size_t i = 0; i < nested->listSize; ++i) {
+            flattenHelper(nested->list[i], flatList);
+        }
+    }
+}
+
+FlatList flatten(NestedList* nested) {
+    FlatList flatList = {NULL, NULL};
+    flattenHelper(nested, &flatList);
+    return flatList;
+}
+
+void printAndFreeFlatList(FlatList* flatList) {
+    Node* current = flatList->head;
+    while (current != NULL) {
+        printf("%d ", current->val);
+        Node* temp = current;
+        current = current->next;
+        free(temp);
+    }
+    printf("\n");
+}
+
+NestedList* createInteger(int value) {
+    NestedList* node = (NestedList*)malloc(sizeof(NestedList));
+    if (!node) {
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(EXIT_FAILURE);
+    }
+    node->isInteger = 1;
+    node->integer = value;
+    node->list = NULL;
+    node->listSize = 0;
+    return node;
+}
+
+NestedList* createList(NestedList** lists, size_t size) {
+    NestedList* node = (NestedList*)malloc(sizeof(NestedList));
+    if (!node) {
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(EXIT_FAILURE);
+    }
+    node->isInteger = 0;
+    node->integer = 0;
+    node->list = lists;
+    node->listSize = size;
+    return node;
+}
+
+void freeNestedList(NestedList* nested) {
+    if (!nested) return;
+    if (!nested->isInteger && nested->list) {
+        for (size_t i = 0; i < nested->listSize; ++i) {
+            freeNestedList(nested->list[i]);
+        }
+        free(nested->list);
+    }
+    free(nested);
+}
+
+int main(void) {
+    NestedList* el1 = createInteger(1);
+    NestedList*el2 = createInteger(2);
+    NestedList** sub1 = (NestedList**)malloc(2 * sizeof(NestedList*));
+    if (!sub1) exit(EXIT_FAILURE);
+    sub1[0] = el1;
+    sub1[1] = el2;
+    NestedList* list1 = createList(sub1, 2);
+
+    NestedList* el3 = createInteger(3);
+
+    NestedList* el4 = createInteger(4);
+    NestedList* el5 = createInteger(5);
+    NestedList** sub2 = (NestedList**)malloc(2 * sizeof(NestedList*));
+    if (!sub2) {
+        freeNestedList(list1);
+        free(el3);
+        free(el4);
+        free(el5);
+        exit(EXIT_FAILURE);
+    }
+    sub2[0] = el4;
+    sub2[1] = el5;
+    NestedList* list2 = createList(sub2, 2);
+
+    NestedList** rootList = (NestedList**)malloc(3 * sizeof(NestedList*));
+    if (!rootList) {
+        freeNestedList(list1);
+        freeNestedList(list2);
+        free(el3);
+        exit(EXIT_FAILURE);
+    }
+    rootList[0] = list1;
+    rootList[1] = el3;
+    rootList[2] = list2;
+    NestedList* root = createList(rootList, 3);
+
+    FlatList flat = flatten(root);
+    printAndFreeFlatList(&flat);
+
+    freeNestedList(root);
+
+    return 0;
+}
+```

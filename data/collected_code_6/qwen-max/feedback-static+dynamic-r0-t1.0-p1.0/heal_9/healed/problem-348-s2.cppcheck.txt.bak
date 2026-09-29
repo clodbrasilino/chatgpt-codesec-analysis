@@ -1,0 +1,46 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-348-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-348-s2.c:10:18: warning: Either the condition 'k+100<201' is redundant or the array 'dp[51][51][201]' is accessed at index dp[*][200][*], which is out of bounds. [arrayIndexOutOfBoundsCond]
+        return dp[n-1][k+100][offset];
+                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-348-s2.c:9:33: note: Assuming that condition 'k+100<201' is not redundant
+    if (k + 100 >= 0 && k + 100 < 201 && offset >= 0 && offset < 201 && dp[n-1][k+100][offset] != -1) {
+                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-348-s2.c:10:18: note: Array index out of bounds
+        return dp[n-1][k+100][offset];
+                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-348-s2.c:14:15: warning: Either the condition 'k+100<201' is redundant or the array 'dp[51][51][201]' is accessed at index dp[*][200][*], which is out of bounds. [arrayIndexOutOfBoundsCond]
+            dp[n-1][k+100][offset] = count_sequences(arr + 1, n - 1, k, dp);
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-348-s2.c:13:37: note: Assuming that condition 'k+100<201' is not redundant
+        if (k + 100 >= 0 && k + 100 < 201 && offset >= 0 && offset < 201) {
+                                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-348-s2.c:14:15: note: Array index out of bounds
+            dp[n-1][k+100][offset] = count_sequences(arr + 1, n - 1, k, dp);
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-348-s2.c:20:19: warning: Either the condition 'k+100<201' is redundant or the array 'dp[51][51][201]' is accessed at index dp[*][200][*], which is out of bounds. [arrayIndexOutOfBoundsCond]
+                dp[n-1][k+100][offset] = (count_sequences(arr + 1, n - 1, k - arr[0], dp) +
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-348-s2.c:19:41: note: Assuming that condition 'k+100<201' is not redundant
+            if (k + 100 >= 0 && k + 100 < 201 && offset >= 0 && offset < 201) {
+                                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-348-s2.c:20:19: note: Array index out of bounds
+                dp[n-1][k+100][offset] = (count_sequences(arr + 1, n - 1, k - arr[0], dp) +
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-348-s2.c:25:19: warning: Either the condition 'k+100<201' is redundant or the array 'dp[51][51][201]' is accessed at index dp[*][200][*], which is out of bounds. [arrayIndexOutOfBoundsCond]
+                dp[n-1][k+100][offset] = 0;
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-348-s2.c:24:41: note: Assuming that condition 'k+100<201' is not redundant
+            if (k + 100 >= 0 && k + 100 < 201 && offset >= 0 && offset < 201) {
+                                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-348-s2.c:25:19: note: Array index out of bounds
+                dp[n-1][k+100][offset] = 0;
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-348-s2.c:30:18: warning: Either the condition 'k+100<201' is redundant or the array 'dp[51][51][201]' is accessed at index dp[*][200][*], which is out of bounds. [arrayIndexOutOfBoundsCond]
+        return dp[n-1][k+100][offset];
+                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-348-s2.c:13:37: note: Assuming that condition 'k+100<201' is not redundant
+        if (k + 100 >= 0 && k + 100 < 201 && offset >= 0 && offset < 201) {
+                                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-348-s2.c:30:18: note: Array index out of bounds
+        return dp[n-1][k+100][offset];
+                 ^

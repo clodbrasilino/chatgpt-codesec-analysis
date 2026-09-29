@@ -1,0 +1,48 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+void fillSpiralMatrix(int n, int (*matrix)[n]) {
+    int value = 1;
+    int layer = 0;
+    while (value <= n * n) {
+        for (int i = layer; i < n - layer; i++) {
+            matrix[layer][i] = value++;
+        }
+        for (int i = layer + 1; i < n - layer; i++) {
+            matrix[i][n - layer - 1] = value++;
+        }
+        for (int i = n - layer - 2; i >= layer; i--) {
+            if (layer < n - layer - 1) {
+                matrix[n - layer - 1][i] = value++;
+            }
+        }
+        for (int i = n - layer - 2; i > layer; i--) {
+            matrix[i][layer] = value++;
+        }
+        layer++;
+    }
+}
+
+int main() {
+    int n;
+    printf("Enter the size of the matrix: ");
+    scanf("%d", &n);
+    if (n < 1) {
+        return 1;
+    }
+
+    int (*matrix)[n] = malloc(n * sizeof(int[n]));
+
+    fillSpiralMatrix(n, matrix);
+
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            printf("%4d", matrix[i][j]);
+        }
+        printf("\n");
+    }
+
+    free(matrix);
+
+    return 0;
+}

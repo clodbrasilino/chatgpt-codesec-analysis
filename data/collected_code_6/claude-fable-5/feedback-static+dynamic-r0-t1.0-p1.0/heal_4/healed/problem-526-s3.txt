@@ -1,0 +1,92 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+static void capitalize_first_last(char *str, size_t max_len)
+{
+    size_t i;
+    size_t len;
+
+    if (str == NULL || max_len == 0) {
+        return;
+    }
+
+    len = strnlen(str, max_len);
+    i = 0;
+
+    while (i < len) {
+        while (i < len && isspace((unsigned char)str[i])) {
+            i++;
+        }
+        if (i >= len) {
+            break;
+        }
+        {
+            size_t start = i;
+            size_t end;
+
+            while (i < len && !isspace((unsigned char)str[i])) {
+                i++;
+            }
+            end = i - 1;
+            str[start] = (char)toupper((unsigned char)str[start]);
+            str[end] = (char)toupper((unsigned char)str[end]);
+        }
+    }
+}
+
+int main(void)
+{
+    char buffer[256];
+    char *newline;
+
+    if (printf("Enter a string: ") < 0) {
+        return EXIT_FAILURE;
+    }
+
+    if (fflush(stdout) != 0) {
+        return EXIT_FAILURE;
+    }
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    newline = strchr(buffer, '\n');
+    if (newline != NULL) {
+        *newline = '\0';
+    }
+
+    capitalize_first_last(buffer, sizeof(buffer));
+
+    if (printf("Result: %s\n", buffer) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the original code and the fixes applied:**
+
+The original code was already quite defensively written. Here's my assessment as an experienced C developer:
+
+1. **The Flawfinder warning (CWE-119/CWE-120)** about the statically-sized `char buffer[256]` is a low-risk finding. The code already mitigates it correctly:
+   - `fgets(buffer, sizeof(buffer), stdin)` performs bounds-limited reading and always null-terminates on success.
+   - The explicit `buffer[sizeof(buffer) - 1] = '\0';` is defensive redundancy (harmless, kept for belt-and-suspenders safety).
+   - `strnlen(str, max_len)` in `capitalize_first_last` prevents reading past the buffer even if a non-terminated string were passed.
+
+2. **`isspace`/`toupper` casts** — the original correctly casts to `(unsigned char)` before passing to `<ctype.h>` functions, avoiding undefined behavior with negative `char` values. Preserved.
+
+3. **Improvements added:**
+   - Checked the return value of the prompt `printf` and added `fflush(stdout)` — since the prompt lacks a newline, stdout may be line-buffered and the prompt might not appear before `fgets` blocks.
+   - Explicit `(int)` cast on `sizeof(buffer)` for `fgets` to document the narrowing conversion (safe here since 256 fits in `int`).
+
+4. **Logic note:** `end = i - 1` is safe because the inner loop is only entered when a non-space character exists at `start`, guaranteeing `i >= start + 1` when `end` is computed — no underflow possible.
+
+The code contains no exploitable buffer overflow; the warning was a heuristic false positive that the existing mitigations already address.

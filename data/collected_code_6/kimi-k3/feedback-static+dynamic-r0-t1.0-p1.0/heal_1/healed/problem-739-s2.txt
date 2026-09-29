@@ -1,0 +1,62 @@
+```c
+#include <stdio.h>
+#include <math.h>
+#include <limits.h>
+#include <errno.h>
+
+int smallest_triangular_index(int n) {
+    if (n <= 0) {
+        return -1;
+    }
+    
+    if (n > 308) {
+        return -1;
+    }
+    
+    errno = 0;
+    double lower = pow(10.0, n - 1);
+    
+    if (errno == ERANGE || !isfinite(lower)) {
+        return -1;
+    }
+    
+    double discriminant = 1.0 + 8.0 * lower;
+    
+    if (!isfinite(discriminant) || discriminant < 0.0) {
+        return -1;
+    }
+    
+    double sqrt_val = sqrt(discriminant);
+    
+    if (!isfinite(sqrt_val)) {
+        return -1;
+    }
+    
+    double result = ceil((sqrt_val - 1.0) / 2.0);
+    
+    if (!isfinite(result) || result < 0.0 || result > (double)INT_MAX) {
+        return -1;
+    }
+    
+    return (int)result;
+}
+
+int main(void) {
+    int n;
+    
+    if (scanf("%d", &n) != 1) {
+        return 1;
+    }
+    
+    int result = smallest_triangular_index(n);
+    
+    if (result == -1) {
+        printf("Invalid input\n");
+        return 1;
+    }
+    
+    printf("%d\n", result);
+    
+    return 0;
+}
+```

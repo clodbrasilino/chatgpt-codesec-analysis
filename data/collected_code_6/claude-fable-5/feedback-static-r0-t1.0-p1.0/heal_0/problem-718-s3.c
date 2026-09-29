@@ -1,0 +1,106 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node *next;
+};
+
+static struct Node *create_node(int value)
+{
+    struct Node *node = malloc(sizeof(struct Node));
+    if (node == NULL) {
+        return NULL;
+    }
+    node->data = value;
+    node->next = NULL;
+    return node;
+}
+
+static void free_list(struct Node *head)
+{
+    while (head != NULL) {
+        struct Node *tmp = head;
+        head = head->next;
+        free(tmp);
+    }
+}
+
+static int append_node(struct Node **head, struct Node **tail, int value)
+{
+    struct Node *node = create_node(value);
+    if (node == NULL) {
+        return -1;
+    }
+    if (*head == NULL) {
+        *head = node;
+        *tail = node;
+    } else {
+        (*tail)->next = node;
+        *tail = node;
+    }
+    return 0;
+}
+
+static struct Node *alternate_list(const struct Node *source)
+{
+    struct Node *head = NULL;
+    struct Node *tail = NULL;
+    const struct Node *current = source;
+    int take = 1;
+
+    while (current != NULL) {
+        if (take) {
+            if (append_node(&head, &tail, current->data) != 0) {
+                free_list(head);
+                return NULL;
+            }
+        }
+        take = !take;
+        current = current->next;
+    }
+    return head;
+}
+
+static void print_list(const struct Node *head)
+{
+    while (head != NULL) {
+        printf("%d ", head->data);
+        head = head->next;
+    }
+    printf("\n");
+}
+
+int main(void)
+{
+    struct Node *original = NULL;
+    struct Node *tail = NULL;
+    struct Node *result = NULL;
+    int i;
+
+    for (i = 1; i <= 8; i++) {
+        if (append_node(&original, &tail, i) != 0) {
+            fprintf(stderr, "Memory allocation failed\n");
+            free_list(original);
+            return EXIT_FAILURE;
+        }
+    }
+
+    printf("Original list: ");
+    print_list(original);
+
+    result = alternate_list(original);
+    if (result == NULL && original != NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        free_list(original);
+        return EXIT_FAILURE;
+    }
+
+    printf("Alternate list: ");
+    print_list(result);
+
+    free_list(original);
+    free_list(result);
+
+    return EXIT_SUCCESS;
+}

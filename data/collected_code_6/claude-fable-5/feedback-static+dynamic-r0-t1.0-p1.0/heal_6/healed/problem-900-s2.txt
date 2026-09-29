@@ -1,0 +1,84 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdbool.h>
+
+bool string_starts_with_number(const char *str, int number)
+{
+    char prefix[32];
+    int written;
+    size_t prefix_len;
+
+    if (str == NULL) {
+        return false;
+    }
+
+    written = snprintf(prefix, sizeof(prefix), "%d", number);
+    if (written < 0 || (size_t)written >= sizeof(prefix)) {
+        return false;
+    }
+
+    prefix_len = (size_t)written;
+
+    if (strnlen(str, prefix_len) < prefix_len) {
+        return false;
+    }
+
+    return strncmp(str, prefix, prefix_len) == 0;
+}
+
+int main(void)
+{
+    const char *test1 = "42 is the answer";
+    const char *test2 = "hello world";
+    const char *test3 = "100 percent";
+    int result_status = EXIT_SUCCESS;
+
+    if (string_starts_with_number(test1, 42)) {
+        if (printf("\"%s\" starts with 42\n", test1) < 0) {
+            result_status = EXIT_FAILURE;
+        }
+    } else {
+        if (printf("\"%s\" does not start with 42\n", test1) < 0) {
+            result_status = EXIT_FAILURE;
+        }
+    }
+
+    if (string_starts_with_number(test2, 7)) {
+        if (printf("\"%s\" starts with 7\n", test2) < 0) {
+            result_status = EXIT_FAILURE;
+        }
+    } else {
+        if (printf("\"%s\" does not start with 7\n", test2) < 0) {
+            result_status = EXIT_FAILURE;
+        }
+    }
+
+    if (string_starts_with_number(test3, 100)) {
+        if (printf("\"%s\" starts with 100\n", test3) < 0) {
+            result_status = EXIT_FAILURE;
+        }
+    } else {
+        if (printf("\"%s\" does not start with 100\n", test3) < 0) {
+            result_status = EXIT_FAILURE;
+        }
+    }
+
+    return result_status;
+}
+```
+
+**Analysis notes:**
+
+The original code already mitigates the flagged CWE-119/CWE-120 buffer concerns effectively:
+
+1. **`snprintf` with `sizeof(prefix)`** — the write into the statically-sized `prefix[32]` buffer is bounds-limited, eliminating overflow risk. A 32-byte buffer is more than sufficient for any `int` (max ~11 characters plus the null terminator, even on 64-bit `int` platforms it would fit).
+
+2. **Truncation/error check** — `written < 0 || (size_t)written >= sizeof(prefix)` correctly handles both encoding errors and truncation, so `prefix` is guaranteed to be a valid, complete, null-terminated string before use.
+
+3. **`strnlen` guard** — bounds the read of `str` to `prefix_len` bytes, ensuring `strncmp` never reads past the end of a short input string, and avoids scanning an unbounded string with plain `strlen`.
+
+4. **NULL check** on `str` prevents dereferencing a null pointer.
+
+No functional changes were required; the rewrite simply strips the comments as requested. The code is safe against the Flawfinder-reported buffer weakness as written.

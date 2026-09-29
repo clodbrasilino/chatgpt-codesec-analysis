@@ -1,0 +1,39 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+void shift_last_to_first(int *arr, size_t size) {
+    if (arr == NULL || size < 2) {
+        return;
+    }
+    
+    int last = arr[size - 1];
+    size_t i;
+    
+    for (i = size - 1; i > 0; i--) {
+        arr[i] = arr[i - 1];
+    }
+    
+    arr[0] = last;
+}
+
+int main(void) {
+    int arr[] = {1, 2, 3, 4, 5};
+    size_t size = sizeof(arr) / sizeof(arr[0]);
+    size_t i;
+    
+    printf("Original array: ");
+    for (i = 0; i < size; i++) {
+        printf("%d ", arr[i]);
+    }
+    printf("\n");
+    
+    shift_last_to_first(arr, size);
+    
+    printf("Array after shift: ");
+    for (i = 0; i < size; i++) {
+        printf("%d ", arr[i]);
+    }
+    printf("\n");
+    
+    return 0;
+}

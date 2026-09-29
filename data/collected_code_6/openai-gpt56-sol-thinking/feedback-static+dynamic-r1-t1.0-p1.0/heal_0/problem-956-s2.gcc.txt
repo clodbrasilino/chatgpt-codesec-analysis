@@ -1,0 +1,33 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-956-s2.c: In function 'split_at_uppercase':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-956-s2.c:104:32: error: passing argument 1 of 'regexec' from incompatible pointer type [-Wincompatible-pointer-types]
+  104 |         result = regexec(input + search_offset, 1, &match, 0);
+      |                          ~~~~~~^~~~~~~~~~~~~~~
+      |                                |
+      |                                const char *
+In file included from /Library/Developer/CommandLineTools/SDKs/MacOSX15.sdk/usr/include/regex.h:89,
+                 from /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-956-s2.c:1:
+/Library/Developer/CommandLineTools/SDKs/MacOSX15.sdk/usr/include/_regex.h:218:17: note: expected 'const regex_t * restrict' but argument is of type 'const char *'
+  218 | int     regexec(const regex_t * __restrict, const char * __restrict, size_t __nmatch,
+      |                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-956-s2.c:104:49: error: passing argument 2 of 'regexec' makes pointer from integer without a cast [-Wint-conversion]
+  104 |         result = regexec(input + search_offset, 1, &match, 0);
+      |                                                 ^
+      |                                                 |
+      |                                                 int
+/Library/Developer/CommandLineTools/SDKs/MacOSX15.sdk/usr/include/_regex.h:218:45: note: expected 'const char * restrict' but argument is of type 'int'
+  218 | int     regexec(const regex_t * __restrict, const char * __restrict, size_t __nmatch,
+      |                                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-956-s2.c:104:52: error: passing argument 3 of 'regexec' makes integer from pointer without a cast [-Wint-conversion]
+  104 |         result = regexec(input + search_offset, 1, &match, 0);
+      |                                                    ^~~~~~
+      |                                                    |
+      |                                                    regmatch_t *
+/Library/Developer/CommandLineTools/SDKs/MacOSX15.sdk/usr/include/_regex.h:218:77: note: expected 'size_t' {aka 'long unsigned int'} but argument is of type 'regmatch_t *'
+  218 | int     regexec(const regex_t * __restrict, const char * __restrict, size_t __nmatch,
+      |                                                                      ~~~~~~~^~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-956-s2.c:104:18: error: too few arguments to function 'regexec'; expected 5, have 4
+  104 |         result = regexec(input + search_offset, 1, &match, 0);
+      |                  ^~~~~~~
+/Library/Developer/CommandLineTools/SDKs/MacOSX15.sdk/usr/include/_regex.h:218:9: note: declared here
+  218 | int     regexec(const regex_t * __restrict, const char * __restrict, size_t __nmatch,
+      |         ^~~~~~~

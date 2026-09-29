@@ -1,0 +1,141 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+typedef struct {
+    double x;
+    double y;
+} Point;
+
+typedef struct {
+    Point vertices[6];
+} Hexagon;
+
+typedef struct {
+    Hexagon *hexagons;
+    size_t count;
+} HexagonGrid;
+
+static int compute_hexagon(double center_x, double center_y, double radius, Hexagon *hex)
+{
+    size_t i;
+
+    if (hex == NULL) {
+        return -1;
+    }
+
+    if (!(radius > 0.0) || !isfinite(center_x) || !isfinite(center_y)) {
+        return -1;
+    }
+
+    for (i = 0U; i < 6U; i++) {
+        double angle = (M_PI / 3.0) * (double)i;
+        hex->vertices[i].x = center_x + (radius * cos(angle));
+        hex->vertices[i].y = center_y + (radius * sin(angle));
+    }
+
+    return 0;
+}
+
+HexagonGrid *create_hexagon_grid(size_t rows, size_t cols, double radius)
+{
+    HexagonGrid *grid;
+    size_t row;
+    size_t col;
+    size_t index;
+    double horizontal_spacing;
+    double vertical_spacing;
+
+    if ((rows == 0U) || (cols == 0U) || !(radius > 0.0) || !isfinite(radius)) {
+        return NULL;
+    }
+
+    if (cols > (SIZE_MAX / rows)) {
+        return NULL;
+    }
+
+    if ((rows * cols) > (SIZE_MAX / sizeof(Hexagon))) {
+        return NULL;
+    }
+
+    grid = malloc(sizeof(HexagonGrid));
+    if (grid == NULL) {
+        return NULL;
+    }
+
+    grid->count = rows * cols;
+    grid->hexagons = malloc(grid->count * sizeof(Hexagon));
+    if (grid->hexagons == NULL) {
+        free(grid);
+        return NULL;
+    }
+
+    horizontal_spacing = radius * 1.5;
+    vertical_spacing = radius * sqrt(3.0);
+
+    index = 0U;
+    for (row = 0U; row < rows; row++) {
+        for (col = 0U; col < cols; col++) {
+            double cx = (double)col * horizontal_spacing;
+            double cy = (double)row * vertical_spacing;
+
+            if ((col % 2U) == 1U) {
+                cy += vertical_spacing / 2.0;
+            }
+
+            if (compute_hexagon(cx, cy, radius, &grid->hexagons[index]) != 0) {
+                free(grid->hexagons);
+                free(grid);
+                return NULL;
+            }
+            index++;
+        }
+    }
+
+    return grid;
+}
+
+void destroy_hexagon_grid(HexagonGrid *grid)
+{
+    if (grid != NULL) {
+        free(grid->hexagons);
+        free(grid);
+    }
+}
+
+int main(void)
+{
+    HexagonGrid *grid;
+    size_t i;
+    size_t v;
+
+    grid = create_hexagon_grid(3U, 3U, 1.0);
+    if (grid == NULL) {
+        (void)fprintf(stderr, "Failed to create hexagon grid\n");
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0U; i < grid->count; i++) {
+        if (printf("Hexagon %zu: [", i) < 0) {
+            destroy_hexagon_grid(grid);
+            return EXIT_FAILURE;
+        }
+        for (v = 0U; v < 6U; v++) {
+            const char *sep = (v < 5U) ? ", " : "";
+            if (printf("(%.4f, %.4f)%s",
+                       grid->hexagons[i].vertices[v].x,
+                       grid->hexagons[i].vertices[v].y,
+                       sep) < 0) {
+                destroy_hexagon_grid(grid);
+                return EXIT_FAILURE;
+            }
+        }
+        if (printf("]\n") < 0) {
+            destroy_hexagon_grid(grid);
+            return EXIT_FAILURE;
+        }
+    }
+
+    destroy_hexagon_grid(grid);
+    return EXIT_SUCCESS;
+}

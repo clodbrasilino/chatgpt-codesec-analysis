@@ -1,0 +1,40 @@
+#include <stdio.h>
+#include <stdint.h>
+
+typedef struct {
+    int x;
+    int y;
+} Tuple;
+
+Tuple exponentiate_tuple(Tuple base, Tuple exp) {
+    Tuple result;
+    result.x = 1;
+    result.y = 1;
+
+    while (exp.x > 0 || exp.y > 0) {
+        if (exp.x % 2 == 1) {
+            result.x *= base.x;
+        }
+        if (exp.y % 2 == 1) {
+            result.y *= base.y;
+        }
+
+        base.x *= base.x;
+        base.y *= base.y;
+
+        exp.x /= 2;
+        exp.y /= 2;
+    }
+    return result;
+}
+
+int main() {
+    Tuple base = {2, 3};
+    Tuple exp = {3, 4};
+
+    Tuple result = exponentiate_tuple(base, exp);
+
+    printf("Result: (%d, %d)\n", result.x, result.y);
+
+    return 0;
+}

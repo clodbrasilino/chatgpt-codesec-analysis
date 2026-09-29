@@ -1,0 +1,73 @@
+{
+  "task_id": 324,
+  "text": "Write a C function to extract the sum of alternate chains of tuples.",
+  "fn_candidates": [
+    "sum_of_alternates",
+    "SumOfAlternates",
+    "sumOfAlternates",
+    "sumofalternates"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "sum_of_alternates",
+      "args": [
+        [
+          5,
+          6,
+          3,
+          6,
+          10,
+          34
+        ]
+      ],
+      "expected": [
+        46,
+        18
+      ],
+      "assert_src": "assert sum_of_alternates((5, 6, 3, 6, 10, 34)) == (46, 18)"
+    },
+    {
+      "fn_name": "sum_of_alternates",
+      "args": [
+        [
+          1,
+          2,
+          3,
+          4,
+          5
+        ]
+      ],
+      "expected": [
+        6,
+        9
+      ],
+      "assert_src": "assert sum_of_alternates((1, 2, 3, 4, 5)) == (6, 9)"
+    },
+    {
+      "fn_name": "sum_of_alternates",
+      "args": [
+        [
+          6,
+          7,
+          8,
+          9,
+          4,
+          5
+        ]
+      ],
+      "expected": [
+        21,
+        18
+      ],
+      "assert_src": "assert sum_of_alternates((6, 7, 8, 9, 4, 5)) == (21, 18)"
+    }
+  ],
+  "arg_kinds": [
+    "int-list"
+  ],
+  "return_kind": "int-list",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

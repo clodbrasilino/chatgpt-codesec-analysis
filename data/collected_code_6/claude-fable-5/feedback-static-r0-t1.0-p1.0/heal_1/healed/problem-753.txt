@@ -1,0 +1,134 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+#define NAME_MAX_LEN 64U
+
+typedef struct {
+    char name[NAME_MAX_LEN];
+    int value;
+} Tuple;
+
+static int compare_tuples(const void *a, const void *b)
+{
+    const Tuple *ta = (const Tuple *)a;
+    const Tuple *tb = (const Tuple *)b;
+
+    if (ta->value < tb->value) {
+        return -1;
+    }
+    if (ta->value > tb->value) {
+        return 1;
+    }
+    return 0;
+}
+
+static int set_tuple_name(Tuple *t, const char *name)
+{
+    size_t len;
+
+    if (t == NULL || name == NULL) {
+        return -1;
+    }
+
+    len = strlen(name);
+    if (len >= NAME_MAX_LEN) {
+        return -1;
+    }
+
+    memcpy(t->name, name, len);
+    t->name[len] = '\0';
+    return 0;
+}
+
+static Tuple *find_min_k_records(const Tuple *records, size_t n, size_t k)
+{
+    Tuple *sorted = NULL;
+    Tuple *result = NULL;
+
+    if (records == NULL || n == 0U || k == 0U || k > n) {
+        return NULL;
+    }
+
+    if (n > SIZE_MAX / sizeof(Tuple)) {
+        return NULL;
+    }
+
+    sorted = malloc(n * sizeof(Tuple));
+    if (sorted == NULL) {
+        return NULL;
+    }
+
+    memcpy(sorted, records, n * sizeof(Tuple));
+    qsort(sorted, n, sizeof(Tuple), compare_tuples);
+
+    result = malloc(k * sizeof(Tuple));
+    if (result == NULL) {
+        free(sorted);
+        return NULL;
+    }
+
+    memcpy(result, sorted, k * sizeof(Tuple));
+    free(sorted);
+
+    return result;
+}
+
+int main(void)
+{
+    Tuple records[5];
+    const char *names[5] = {"Manjeet", "Akshat", "Akash", "Nikhil", "Rohit"};
+    const int values[5] = {10, 4, 2, 8, 6};
+    size_t n = 5U;
+    size_t k = 2U;
+    Tuple *min_records = NULL;
+    size_t i;
+
+    memset(records, 0, sizeof(records));
+
+    for (i = 0U; i < n; i++) {
+        if (set_tuple_name(&records[i], names[i]) != 0) {
+            if (fprintf(stderr, "Failed to initialize record\n") < 0) {
+                return EXIT_FAILURE;
+            }
+            return EXIT_FAILURE;
+        }
+        records[i].value = values[i];
+    }
+
+    min_records = find_min_k_records(records, n, k);
+    if (min_records == NULL) {
+        if (fprintf(stderr, "Failed to find minimum records\n") < 0) {
+            return EXIT_FAILURE;
+        }
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Minimum %zu records:\n", k) < 0) {
+        free(min_records);
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0U; i < k; i++) {
+        if (printf("(%s, %d)\n", min_records[i].name, min_records[i].value) < 0) {
+            free(min_records);
+            return EXIT_FAILURE;
+        }
+    }
+
+    free(min_records);
+    return EXIT_SUCCESS;
+}
+```
+
+**Key changes addressing the identified weaknesses:**
+
+1. **CWE-119/CWE-120 (statically-sized `name` array):** All writes to the fixed-size `name` buffer now go through `set_tuple_name()`, which validates the source string length against `NAME_MAX_LEN` before copying and guarantees null termination. The buffer size is defined once as a named constant so the bound check and the declaration can't drift apart.
+
+2. **CWE-120 (first `memcpy`, unchecked size arithmetic):** Before `malloc(n * sizeof(Tuple))`, the code now checks `n > SIZE_MAX / sizeof(Tuple)` to guard against integer overflow in the size computation. Since the destination is allocated with exactly `n * sizeof(Tuple)` bytes and the copy uses the identical expression, the destination provably holds the source data.
+
+3. **CWE-120 (second `memcpy`):** The precondition `k <= n` is enforced at function entry, and since `n * sizeof(Tuple)` was already validated as non-overflowing, `k * sizeof(Tuple)` cannot overflow either. The destination allocation and copy again use the identical size expression, guaranteeing the buffer is large enough.
+
+4. **Defensive initialization:** `memset(records, 0, ...)` ensures no uninitialized padding or trailing bytes in the `name` buffers are ever copied or printed.

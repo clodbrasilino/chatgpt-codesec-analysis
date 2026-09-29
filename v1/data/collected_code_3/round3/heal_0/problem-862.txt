@@ -1,0 +1,66 @@
+```C
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_WORD_LENGTH 50
+#define MAX_WORDS 1000
+
+typedef struct {
+    char word[MAX_WORD_LENGTH];
+    int count;
+} Word;
+
+int find_word(Word words[], int num_words, char *word) {
+    for (int i = 0; i < num_words; i++) {
+        if (strcmp(words[i].word, word) == 0) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+void add_word(Word words[], int *num_words, char *word) {
+    int index = find_word(words, *num_words, word);
+    if (index == -1) {
+        strcpy(words[*num_words].word, word);
+        words[*num_words].count = 1;
+        (*num_words)++;
+    } else {
+        words[index].count++;
+    }
+}
+
+void print_most_common(Word words[], int num_words, int n) {
+    for (int i = 0; i < n && i < num_words; i++) {
+        int max = i;
+        for (int j = i + 1; j < num_words; j++) {
+            if (words[j].count > words[max].count) {
+                max = j;
+            }
+        }
+        Word temp = words[i];
+        words[i] = words[max];
+        words[max] = temp;
+        printf("%s: %d\n", words[i].word, words[i].count);
+    }
+}
+
+int main() {
+    char text[] = "This is a test. This is only a test. Testing, one, two, three.";
+    char delimiters[] = " .,;:!?\n\t";
+    char *word = strtok(text, delimiters);
+    Word words[MAX_WORDS];
+    int num_words = 0;
+
+    while (word != NULL) {
+        add_word(words, &num_words, word);
+        word = strtok(NULL, delimiters);
+    }
+
+    int n = 3;
+    print_most_common(words, num_words, n);
+
+    return 0;
+}
+```

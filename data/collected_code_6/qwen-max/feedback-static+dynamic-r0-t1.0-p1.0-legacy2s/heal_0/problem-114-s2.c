@@ -1,0 +1,78 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char *key;
+    int count;
+} Tuple;
+
+typedef struct {
+    Tuple *tuples;
+    size_t size;
+    size_t capacity;
+} TupleList;
+
+TupleList *init_tuple_list(size_t initial_capacity) {
+    TupleList *list = (TupleList *)malloc(sizeof(TupleList));
+    list->tuples = (Tuple *)malloc(initial_capacity * sizeof(Tuple));
+    list->size = 0;
+    list->capacity = initial_capacity;
+    return list;
+}
+
+void free_tuple_list(TupleList *list) {
+    for (size_t i = 0; i < list->size; ++i) {
+        free(list->tuples[i].key);
+    }
+    free(list->tuples);
+    free(list);
+}
+
+int find_tuple_index(TupleList *list, const char *key) {
+    for (size_t i = 0; i < list->size; ++i) {
+        if (strcmp(list->tuples[i].key, key) == 0) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+void add_or_update_tuple(TupleList *list, const char *key) {
+    int index = find_tuple_index(list, key);
+    if (index == -1) {
+        if (list->size >= list->capacity) {
+            list->capacity *= 2;
+            list->tuples = (Tuple *)realloc(list->tuples, list->capacity * sizeof(Tuple));
+        }
+        list->tuples[list->size].key = strdup(key);
+        list->tuples[list->size].count = 1;
+        list->size++;
+    } else {
+        list->tuples[index].count++;
+    }
+}
+
+void assign_frequencies(TupleList *list, const char *const *keys, size_t num_keys) {
+    for (size_t i = 0; i < num_keys; ++i) {
+        add_or_update_tuple(list, keys[i]);
+    }
+}
+
+void print_tuple_list(const TupleList *list) {
+    for (size_t i = 0; i < list->size; ++i) {
+        printf("%s: %d\n", list->tuples[i].key, list->tuples[i].count);
+    }
+}
+
+int main() {
+    const char *keys[] = {"apple", "banana", "apple", "orange", "banana", "apple"};
+    size_t num_keys = sizeof(keys) / sizeof(keys[0]);
+
+    TupleList *list = init_tuple_list(4);
+    assign_frequencies(list, keys, num_keys);
+    print_tuple_list(list);
+
+    free_tuple_list(list);
+    return 0;
+}

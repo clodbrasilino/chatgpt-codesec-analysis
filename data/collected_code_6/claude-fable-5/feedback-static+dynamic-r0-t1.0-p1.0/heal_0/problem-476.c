@@ -1,0 +1,49 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stddef.h>
+
+int sum_min_max(const int *arr, size_t len, long long *result)
+{
+    size_t i;
+    int min;
+    int max;
+
+    if (arr == NULL || len == 0U || result == NULL) {
+        return -1;
+    }
+
+    min = arr[0];
+    max = arr[0];
+
+    for (i = 1U; i < len; i++) {
+        if (arr[i] < min) {
+            min = arr[i];
+        }
+        if (arr[i] > max) {
+            max = arr[i];
+        }
+    }
+
+    *result = (long long)min + (long long)max;
+    return 0;
+}
+
+int main(void)
+{
+    int numbers[] = { 12, -5, 34, 7, 0, 21, -18, 9 };
+    size_t len = sizeof(numbers) / sizeof(numbers[0]);
+    long long sum = 0;
+
+    if (sum_min_max(numbers, len, &sum) != 0) {
+        if (fprintf(stderr, "Error: invalid input\n") < 0) {
+            return EXIT_FAILURE;
+        }
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Sum of smallest and largest: %lld\n", sum) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

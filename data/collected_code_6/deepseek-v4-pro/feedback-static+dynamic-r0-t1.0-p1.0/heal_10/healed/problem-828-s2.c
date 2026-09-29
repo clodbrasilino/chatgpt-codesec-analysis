@@ -1,0 +1,72 @@
+#include <stdio.h>
+#include <ctype.h>
+#include <string.h>
+#include <stddef.h>
+#include <stdbool.h>
+
+#define INPUT_SIZE 256
+
+void count_characters(const char *str, int *alphabets, int *digits, int *specials) {
+    *alphabets = 0;
+    *digits = 0;
+    *specials = 0;
+    
+    if (str == NULL) {
+        return;
+    }
+    
+    while (*str != '\0') {
+        if (isalpha((unsigned char)*str)) {
+            (*alphabets)++;
+        } else if (isdigit((unsigned char)*str)) {
+            (*digits)++;
+        } else {
+            (*specials)++;
+        }
+        str++;
+    }
+}
+
+static void clear_input_buffer(void) {
+    int c;
+    while ((c = getchar()) != '\n' && c != EOF) {
+        if (ferror(stdin)) {
+            clearerr(stdin);
+            break;
+        }
+    }
+}
+
+int main(void) {
+    char input[INPUT_SIZE];
+    int alphabets, digits, specials;
+    size_t len;
+    bool buffer_full;
+    
+    buffer_full = false;
+    
+    printf("Enter a string: ");
+    if (fgets(input, sizeof(input), stdin) == NULL) {
+        return 1;
+    }
+    
+    len = strnlen(input, sizeof(input));
+    
+    if (len > 0 && input[len - 1] == '\n') {
+        input[len - 1] = '\0';
+    } else {
+        buffer_full = true;
+    }
+    
+    if (buffer_full) {
+        clear_input_buffer();
+    }
+    
+    count_characters(input, &alphabets, &digits, &specials);
+    
+    printf("Alphabets: %d\n", alphabets);
+    printf("Digits: %d\n", digits);
+    printf("Special characters: %d\n", specials);
+    
+    return 0;
+}

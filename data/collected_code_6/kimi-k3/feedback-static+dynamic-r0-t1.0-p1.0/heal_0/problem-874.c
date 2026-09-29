@@ -1,0 +1,53 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+
+bool isConcatenation(const char *str, const char *substr) {
+    if (str == NULL || substr == NULL) {
+        return false;
+    }
+    
+    size_t str_len = strlen(str);
+    size_t sub_len = strlen(substr);
+    
+    if (sub_len == 0) {
+        return false;
+    }
+    
+    if (str_len % sub_len != 0) {
+        return false;
+    }
+    
+    for (size_t i = 0; i < str_len; i += sub_len) {
+        if (strncmp(str + i, substr, sub_len) != 0) {
+            return false;
+        }
+    }
+    
+    return true;
+}
+
+int main(void) {
+    const char *test1_str = "abcabcabc";
+    const char *test1_sub = "abc";
+    
+    const char *test2_str = "ababab";
+    const char *test2_sub = "ab";
+    
+    const char *test3_str = "abcdab";
+    const char *test3_sub = "ab";
+    
+    const char *test4_str = "aaaa";
+    const char *test4_sub = "aa";
+    
+    const char *test5_str = "xyz";
+    const char *test5_sub = "";
+    
+    printf("Test 1: %s\n", isConcatenation(test1_str, test1_sub) ? "true" : "false");
+    printf("Test 2: %s\n", isConcatenation(test2_str, test2_sub) ? "true" : "false");
+    printf("Test 3: %s\n", isConcatenation(test3_str, test3_sub) ? "true" : "false");
+    printf("Test 4: %s\n", isConcatenation(test4_str, test4_sub) ? "true" : "false");
+    printf("Test 5: %s\n", isConcatenation(test5_str, test5_sub) ? "true" : "false");
+    
+    return 0;
+}

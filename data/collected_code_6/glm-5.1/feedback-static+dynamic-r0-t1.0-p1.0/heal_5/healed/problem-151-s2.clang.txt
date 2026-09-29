@@ -1,0 +1,7 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-151-s2.c:29:5: error: use of undeclared identifier 'errno'
+   29 |     errno = 0;
+      |     ^~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-151-s2.c:32:9: error: use of undeclared identifier 'errno'
+   32 |     if (errno != 0 || *endptr1 != '\0' || *endptr2 != '\0' || val1 < INT_MIN || val1 > INT_MAX || val2 < INT_MIN || val2 > INT_MAX) {
+      |         ^~~~~
+2 errors generated.

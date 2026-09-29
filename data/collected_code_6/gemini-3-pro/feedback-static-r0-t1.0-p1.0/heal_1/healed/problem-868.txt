@@ -1,0 +1,44 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <ctype.h>
+
+int lengthOfLastWord(const char *s) {
+    if (s == NULL) {
+        return 0;
+    }
+
+    int length = 0;
+    
+    while (*s) {
+        if (!isspace((unsigned char)*s)) {
+            int current_length = 0;
+            while (*s && !isspace((unsigned char)*s)) {
+                current_length++;
+                s++;
+            }
+            length = current_length;
+        } else {
+            s++;
+        }
+    }
+
+    return length;
+}
+
+int main(void) {
+    const char *test1 = "Hello World";
+    const char *test2 = "   fly me   to   the moon  ";
+    const char *test3 = "luffy is still joyboy";
+    const char *test4 = "";
+    const char *test5 = NULL;
+
+    printf("%d\n", lengthOfLastWord(test1));
+    printf("%d\n", lengthOfLastWord(test2));
+    printf("%d\n", lengthOfLastWord(test3));
+    printf("%d\n", lengthOfLastWord(test4));
+    printf("%d\n", lengthOfLastWord(test5));
+
+    return 0;
+}
+```

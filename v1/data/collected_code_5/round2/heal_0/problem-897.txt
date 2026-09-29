@@ -1,0 +1,42 @@
+Here's a simple C program to check if a given word is present in a sentence or not.
+
+```c
+#include <stdio.h>
+#include <string.h>
+
+int wordChecker(char* sentence, char* word) {
+    if(sentence == NULL || word == NULL) {
+        return 0;
+    }
+    
+    char *token = strtok(sentence, " ");
+    while (token != NULL) {
+        if(strcmp(token,word) == 0){
+            return 1;
+        }
+        token = strtok(NULL, " ");
+    }
+    return 0;
+}
+
+int main() {
+    char sentence[200]; 
+    char word[50]; 
+
+    printf("Enter the sentence:\n");
+    fgets(sentence, sizeof(sentence), stdin);
+    sentence[strcspn(sentence, "\n")] = 0;
+
+    printf("Enter the word to be searched:\n");
+    fgets(word, sizeof(word), stdin);
+    word[strcspn(word, "\n")] = 0;
+
+    if(wordChecker(sentence, word)){
+        printf("Word Found!\n");
+    } else {
+        printf("Word Not Found!\n");
+    }
+    return 0;
+}
+```
+This C program includes two basic functions and necessary include statements. The function `wordChecker()` checks if a given `word` is present in the `sentence` or not. It tokenizes the `sentence` using " " (space) as the delimiter and compares each token with the given `word`. If it finds a match, it returns `1` else it continues this till the end of the `sentence`. If the `word` is not found, it returns `0`. The `main()` function is to test the functionality of the `wordChecker()`. It asks the user to enter a `sentence` and a `word` to be searched. It passes these inputs to the `wordChecker()`. It then checks the return value of this function. If it is `1`, it prints "Word Found!" and if it is `0`, it prints "Word Not Found!"

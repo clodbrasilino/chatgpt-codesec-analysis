@@ -1,0 +1,45 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+
+typedef struct {
+    int *elements;
+    size_t size;
+} Tuple;
+
+bool contains_only_k_elements(const Tuple *tuple, size_t k) {
+    if (tuple == NULL) {
+        return false;
+    }
+    if (tuple->elements == NULL && tuple->size > 0) {
+        return false;
+    }
+    return tuple->size == k;
+}
+
+int main(void) {
+    int data1[] = {1, 2, 3};
+    int data2[] = {1, 2, 3, 4, 5};
+    int data3[] = {0};
+    
+    Tuple tuple1 = {data1, 3};
+    Tuple tuple2 = {data2, 5};
+    Tuple tuple3 = {data3, 0};
+    Tuple tuple4 = {NULL, 0};
+    
+    printf("Tuple1 has exactly 3 elements: %s\n", 
+           contains_only_k_elements(&tuple1, 3) ? "true" : "false");
+    printf("Tuple1 has exactly 5 elements: %s\n", 
+           contains_only_k_elements(&tuple1, 5) ? "true" : "false");
+    printf("Tuple2 has exactly 5 elements: %s\n", 
+           contains_only_k_elements(&tuple2, 5) ? "true" : "false");
+    printf("Tuple3 has exactly 0 elements: %s\n", 
+           contains_only_k_elements(&tuple3, 0) ? "true" : "false");
+    printf("Tuple4 has exactly 0 elements: %s\n", 
+           contains_only_k_elements(&tuple4, 0) ? "true" : "false");
+    
+    printf("NULL tuple check: %s\n", "false");
+    
+    return 0;
+}
+```

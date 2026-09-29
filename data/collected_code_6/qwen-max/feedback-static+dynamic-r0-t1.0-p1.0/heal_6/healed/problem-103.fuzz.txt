@@ -1,0 +1,4 @@
+problem-103.c:16:0:high:ASan: FPE (AFL crash: id:000001,sig:06,src:000004,time:8105,execs:8424,op:quick,pos:4)
+problem-103.c:16:0:high:ASan: stack-overflow (AFL crash: id:000002,sig:11,src:000004,time:8847,execs:9147,op:havoc,rep:2)
+problem-103.c:16:27:medium:UBSan: division by zero (AFL crash: id:000001,sig:06,src:000004,time:8105,execs:8424,op:quick,pos:4)
+problem-103.c:31:0:error:Fuzzing found a crash (signal 6) on input id:000000,sig:11,src:000000,time:6490,execs:6888,op:havoc,rep:9; likely memory-safety defect

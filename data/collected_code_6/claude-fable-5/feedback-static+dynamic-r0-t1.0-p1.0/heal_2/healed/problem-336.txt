@@ -1,0 +1,90 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdlib.h>
+
+#define MONTH_BUF_SIZE 32
+#define INPUT_BUF_SIZE 64
+
+static int has_28_days(const char *month)
+{
+    char normalized[MONTH_BUF_SIZE];
+    size_t len;
+    size_t i;
+
+    if (month == NULL) {
+        return 0;
+    }
+
+    len = strnlen(month, sizeof(normalized));
+    if (len == 0 || len >= sizeof(normalized)) {
+        return 0;
+    }
+
+    for (i = 0; i < len; i++) {
+        normalized[i] = (char)tolower((unsigned char)month[i]);
+    }
+    normalized[len] = '\0';
+
+    if (strcmp(normalized, "february") == 0) {
+        return 1;
+    }
+
+    return 0;
+}
+
+static void discard_remaining_input(void)
+{
+    int c;
+
+    do {
+        c = getchar();
+    } while (c != '\n' && c != EOF);
+}
+
+int main(void)
+{
+    char input[INPUT_BUF_SIZE];
+    size_t len;
+
+    printf("Enter a month name: ");
+    if (fflush(stdout) != 0) {
+        return EXIT_FAILURE;
+    }
+
+    if (fgets(input, (int)sizeof(input), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    input[sizeof(input) - 1] = '\0';
+
+    len = strnlen(input, sizeof(input));
+    if (len > 0 && input[len - 1] == '\n') {
+        input[len - 1] = '\0';
+    } else if (len == sizeof(input) - 1) {
+        discard_remaining_input();
+    }
+
+    if (has_28_days(input)) {
+        printf("%s has 28 days.\n", input);
+    } else {
+        printf("%s does not have exactly 28 days.\n", input);
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the original code and the flagged weaknesses:**
+
+The original source is already in good shape — the Flawfinder hits are largely informational, and the code contains proper mitigations:
+
+1. **`char normalized[MONTH_BUF_SIZE]` (CWE-119/CWE-120):** Mitigated. The function uses `strnlen` bounded to `sizeof(normalized)` and rejects any string that would not fit (`len >= sizeof(normalized)`), guaranteeing the copy loop plus null terminator stay in bounds. It also correctly casts to `unsigned char` before calling `tolower`, avoiding undefined behavior for negative `char` values.
+
+2. **`char input[INPUT_BUF_SIZE]` (CWE-119/CWE-120):** Mitigated. Input is read with `fgets` bounded by `sizeof(input)`, which never overflows. The defensive `input[sizeof(input) - 1] = '\0'` is redundant with `fgets` semantics but harmless.
+
+3. **`getchar` loop (CWE-120/CWE-20):** Safe as written — it reads into no buffer and simply drains stdin when the line was truncated (detected by `len == sizeof(input) - 1` with no trailing newline). In the rewrite I extracted it into `discard_remaining_input()` for clarity.
+
+The only substantive additions in the rewrite are checking the return value of `fflush` and casting the `fgets` size argument explicitly; otherwise the original mitigations were retained since they were already correct.

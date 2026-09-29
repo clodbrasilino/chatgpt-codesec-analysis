@@ -1,0 +1,65 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int x;
+    int y;
+} Coordinate;
+
+typedef struct {
+    Coordinate *coords;
+    size_t count;
+} AdjacentCoordinates;
+
+AdjacentCoordinates get_adjacent_coordinates(int x, int y) {
+    AdjacentCoordinates result = {NULL, 0};
+    Coordinate *temp = (Coordinate *)malloc(8 * sizeof(Coordinate));
+    
+    if (temp == NULL) {
+        return result;
+    }
+    
+    temp[0].x = x - 1; temp[0].y = y - 1;
+    temp[1].x = x;     temp[1].y = y - 1;
+    temp[2].x = x + 1; temp[2].y = y - 1;
+    temp[3].x = x - 1; temp[3].y = y;
+    temp[4].x = x + 1; temp[4].y = y;
+    temp[5].x = x - 1; temp[5].y = y + 1;
+    temp[6].x = x;     temp[6].y = y + 1;
+    temp[7].x = x + 1; temp[7].y = y + 1;
+    
+    result.coords = temp;
+    result.count = 8;
+    
+    return result;
+}
+
+void free_adjacent_coordinates(AdjacentCoordinates *adj) {
+    if (adj != NULL && adj->coords != NULL) {
+        free(adj->coords);
+        adj->coords = NULL;
+        adj->count = 0;
+    }
+}
+
+int main(void) {
+    int x = 5;
+    int y = 10;
+    
+    AdjacentCoordinates adjacent = get_adjacent_coordinates(x, y);
+    
+    if (adjacent.coords == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("Adjacent coordinates of (%d, %d):\n", x, y);
+    
+    for (size_t i = 0; i < adjacent.count; i++) {
+        printf("(%d, %d)\n", adjacent.coords[i].x, adjacent.coords[i].y);
+    }
+    
+    free_adjacent_coordinates(&adjacent);
+    
+    return EXIT_SUCCESS;
+}

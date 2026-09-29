@@ -1,0 +1,25 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+bool is_last_element_even(int *array, int length, int p) {
+    if (length <= 0 || p < 0) return false;
+    
+    for (int i = 0; i < p; ++i) {
+        array[length - 1] += 2;
+    }
+
+    return (array[length - 1] % 2 == 0);
+}
+
+int main() {
+    int arr[] = {1, 2, 3, 4};
+    int len = sizeof(arr) / sizeof(arr[0]);
+    int p = 3;
+    
+    bool result = is_last_element_even(arr, len, p);
+    
+    printf("The last element is %s after performing the operation %d times.\n", 
+           result ? "even" : "odd", p);
+    
+    return 0;
+}

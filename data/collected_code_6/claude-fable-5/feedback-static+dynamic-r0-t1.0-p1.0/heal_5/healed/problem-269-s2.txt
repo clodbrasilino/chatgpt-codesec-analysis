@@ -1,0 +1,67 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <ctype.h>
+#include <limits.h>
+
+static int get_ascii_value(char c)
+{
+    return (int)(unsigned char)c;
+}
+
+static void flush_input(void)
+{
+    int c;
+    unsigned long count = 0;
+
+    do {
+        c = getchar();
+        count++;
+        if (count >= ULONG_MAX) {
+            break;
+        }
+    } while (c != '\n' && c != EOF);
+}
+
+int main(void)
+{
+    int input;
+
+    printf("Enter a character: ");
+    if (fflush(stdout) != 0) {
+        fprintf(stderr, "Error: failed to flush output\n");
+        return EXIT_FAILURE;
+    }
+
+    input = getchar();
+    if (input == EOF) {
+        fprintf(stderr, "Error: failed to read input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (input != '\n') {
+        flush_input();
+    }
+
+    if (!isprint((unsigned char)input)) {
+        fprintf(stderr, "Error: input is not a printable character\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("The ASCII value of '%c' is %d\n", (char)input, get_ascii_value((char)input));
+
+    return EXIT_SUCCESS;
+}
+```
+
+Analysis notes on the flagged weaknesses:
+
+The two Flawfinder hits on `getchar` (CWE-120 buffer overflow, CWE-20 improper input validation) are low-risk, informational warnings. They fire on any use of `getchar` in or near a loop because the tool cannot verify how the returned data is used. In this code, both are already effectively mitigated:
+
+1. **No buffer is involved.** `getchar` returns a single `int`; nothing is written into a fixed-size array, so CWE-120 (classic buffer overflow) cannot occur here. The result is stored in an `int`, which correctly accommodates both valid character values and `EOF`.
+
+2. **Input validation is present.** The code checks for `EOF` immediately after reading, validates printability via `isprint` with the correct `(unsigned char)` cast (avoiding undefined behavior for negative `char` values), and drains remaining input in `flush_input` with a bounded loop guarded by `ULONG_MAX` to prevent an unbounded spin on pathological input streams.
+
+3. **Other defensive measures already in place:** the `fflush(stdout)` return value is checked, `get_ascii_value` casts through `unsigned char` to avoid sign-extension surprises on platforms where `char` is signed, and the program uses `EXIT_SUCCESS`/`EXIT_FAILURE` portably.
+
+Since the warnings are false positives in this context, the rewritten code is functionally identical with the advisory comments removed — no actual code changes were required to remediate the findings.

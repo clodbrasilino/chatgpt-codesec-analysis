@@ -1,0 +1,10 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-932.c:24:17: error: call to undeclared function 'free_string_list'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   24 |                 free_string_list(output_list);
+      |                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-932.c:33:6: error: conflicting types for 'free_string_list'
+   33 | void free_string_list(StringList *list) {
+      |      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-932.c:24:17: note: previous implicit declaration is here
+   24 |                 free_string_list(output_list);
+      |                 ^
+2 errors generated.

@@ -1,0 +1,35 @@
+collected_code/heal_round_2/healed/problem-187.c: In function 'lcs':
+collected_code/heal_round_2/healed/problem-187.c:49:21: warning: use of uninitialized value '*L_117 + _58' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   49 |     size_t index = L[m][n];
+      |                    ~^~~
+  'lcs': events 1-8
+    |
+    |   15 |     int **L = (int**)malloc((m + 1) * sizeof(int *));
+    |      |                      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                      |
+    |      |                      (1) region created on heap here
+    |   16 | 
+    |   17 |     if(L == NULL)
+    |      |       ~               
+    |      |       |
+    |      |       (2) following 'false' branch (when 'L' is non-NULL)...
+    |......
+    |   22 |     for (size_t i = 0; i <= m; i++)
+    |      |                 ~      ~~~~~~
+    |      |                 |        |
+    |      |                 |        (4) following 'false' branch (when 'i > m')...
+    |      |                 (3) ...to here
+    |......
+    |   36 |     for (size_t i = 0; i <= m; i++)
+    |      |                 ~      ~~~~~~
+    |      |                 |        |
+    |      |                 |        (6) following 'false' branch (when 'i > m')...
+    |      |                 (5) ...to here
+    |......
+    |   49 |     size_t index = L[m][n];
+    |      |                    ~~~~
+    |      |                     |
+    |      |                     (7) ...to here
+    |      |                     (8) use of uninitialized value '*L_117 + _58' here
+    |
+-macosx_version_min has been renamed to -macos_version_min

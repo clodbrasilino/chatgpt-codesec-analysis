@@ -1,0 +1,67 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+char** split_string_at_lowercase(const char *input, int *count) {
+    *count = 0;
+    if (input == NULL) return NULL;
+
+    const char *p = input;
+    while (*p) {
+        if (islower((unsigned char)*p)) (*count)++;
+        p++;
+    }
+
+    char **result = (char **)malloc((*count + 1) * sizeof(char *));
+    if (result == NULL) return NULL;
+
+    *count = 0;
+    p = input;
+    while (*p) {
+        if (islower((unsigned char)*p)) {
+            const char *start = p + 1;
+            while (*p && !islower((unsigned char)*p)) p++;
+            size_t len = p - start;
+            result[*count] = (char *)malloc(len + 1);
+            if (result[*count] == NULL) {
+                for (int i = 0; i < *count; i++) free(result[i]);
+                free(result);
+                return NULL;
+            }
+            /* Possible weaknesses found:
+             * Flawfinder strncpy: Easily used incorrectly; doesn't always \0-terminate or check for invalid pointers [MS-banned] (CWE-120). (risk 1, buffer)
+             */
+            strncpy(result[*count], start, len);
+            result[*count][len] = '\0';
+            (*count)++;
+        } else {
+            p++;
+        }
+    }
+    result[*count] = NULL;
+    return result;
+}
+
+void free_split_strings(char **strings) {
+    if (strings == NULL) return;
+    for (int i = 0; strings[i] != NULL; i++) {
+        free(strings[i]);
+    }
+    free(strings);
+}
+
+int main() {
+    const char *input = "HelloWorldExample";
+    int count;
+    char **result = split_string_at_lowercase(input, &count);
+
+    if (result != NULL) {
+        for (int i = 0; i < count; i++) {
+            printf("%s\n", result[i]);
+        }
+        free_split_strings(result);
+    }
+
+    return 0;
+}

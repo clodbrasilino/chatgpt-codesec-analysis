@@ -1,0 +1,43 @@
+#include <stdio.h>
+#include <math.h>
+
+double calculate_mean(const double *data, int n) {
+    double sum = 0;
+    for (int i = 0; i < n; ++i) {
+        sum += data[i];
+    }
+    return sum / n;
+}
+
+double calculate_variance(const double *data, int n, double mean) {
+    double variance = 0;
+    for (int i = 0; i < n; ++i) {
+        variance += pow(data[i] - mean, 2);
+    }
+    return variance / n;
+}
+
+double calculate_standard_deviation(const double *data, int n) {
+    if (n <= 0) {
+        return -1;
+    }
+    
+    double mean = calculate_mean(data, n);
+    double variance = calculate_variance(data, n, mean);
+    return sqrt(variance);
+}
+
+int main() {
+    double data[] = {1.0, 2.0, 3.0, 4.0, 5.0};
+    int n = sizeof(data) / sizeof(data[0]);
+    
+    double std_dev = calculate_standard_deviation(data, n);
+    
+    if (std_dev >= 0) {
+        printf("Standard Deviation: %.2f\n", std_dev);
+    } else {
+        printf("Invalid input data.\n");
+    }
+    
+    return 0;
+}

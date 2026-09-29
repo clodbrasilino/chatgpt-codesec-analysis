@@ -1,0 +1,27 @@
+#include <stdio.h>
+#include <math.h>
+
+#define PI 3.14159
+
+double volume_of_a_sphere(double radius) {
+    if (radius < 0) {
+        printf("Error: Radius cannot be negative.\n");
+        return -1;
+    }
+    double volume = (4.0/3.0) * PI * pow(radius, 3);
+    return volume;
+}
+
+int main() {
+    double radius;
+    printf("Enter radius of the sphere: ");
+    if (scanf("%lf", &radius) != 1) {
+        printf("Error: Invalid input.\n");
+        return 1;
+    }
+    double volume = volume_of_a_sphere(radius);
+    if (volume != -1) {
+        printf("Volume of the sphere is %.2lf\n", volume);
+    }
+    return 0;
+}

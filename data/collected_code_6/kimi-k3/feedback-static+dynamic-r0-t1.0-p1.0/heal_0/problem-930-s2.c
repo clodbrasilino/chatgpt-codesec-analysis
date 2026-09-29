@@ -1,0 +1,50 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+int match_pattern(const char *input) {
+    regex_t regex;
+    int result;
+    const char *pattern = "^ab*$";
+
+    if (input == NULL) {
+        return 0;
+    }
+
+    result = regcomp(&regex, pattern, REG_EXTENDED);
+    if (result != 0) {
+        return 0;
+    }
+
+    result = regexec(&regex, input, 0, NULL, 0);
+    regfree(&regex);
+
+    return (result == 0) ? 1 : 0;
+}
+
+int main(void) {
+    const char *test_strings[] = {
+        "a",
+        "ab",
+        "abb",
+        "abbb",
+        "b",
+        "ba",
+        "abc",
+        "",
+        "aa"
+    };
+    size_t num_tests = sizeof(test_strings) / sizeof(test_strings[0]);
+    size_t i;
+
+    for (i = 0; i < num_tests; i++) {
+        if (match_pattern(test_strings[i])) {
+            printf("\"%s\": Match\n", test_strings[i]);
+        } else {
+            printf("\"%s\": No match\n", test_strings[i]);
+        }
+    }
+
+    return 0;
+}

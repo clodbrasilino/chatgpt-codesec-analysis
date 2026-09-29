@@ -1,0 +1,59 @@
+collected_code_3/problem-215-3.c: In function 'decode':
+collected_code_3/problem-215-3.c:16:29: warning: dereference of possibly-NULL 'result' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   16 |                 result[j++] = str[i];
+      |                 ~~~~~~~~~~~~^~~~~~~~
+  'decode': events 1-6
+    |
+    |    7 |     char* result = (char*)malloc(sizeof(char) * len * 10);
+    |      |                           ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                           |
+    |      |                           (1) this call could return NULL
+    |......
+    |   11 |     for (int i = 0; i < len; i++) {
+    |      |                     ~~~~~~~
+    |      |                       |
+    |      |                       (2) following 'true' branch (when 'i < len')...
+    |      |                       (4) following 'true' branch (when 'i < len')...
+    |   12 |         if (str[i] >= '0' && str[i] <= '9') {
+    |      |                ~           
+    |      |                |
+    |      |                (3) ...to here
+    |      |                (5) ...to here
+    |......
+    |   16 |                 result[j++] = str[i];
+    |      |                 ~~~~~~~~~~~~~~~~~~~~
+    |      |                             |
+    |      |                             (6) 'result + (sizetype)j' could be NULL: unchecked value from (1)
+    |
+collected_code_3/problem-215-3.c:21:15: warning: dereference of possibly-NULL 'result' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   21 |     result[j] = '\0';
+      |     ~~~~~~~~~~^~~~~~
+  'main': events 1-2
+    |
+    |   25 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |   26 |     char str[] = "2a3b4c";
+    |   27 |     char* decoded_str = decode(str);
+    |      |                         ~~~~~~~~~~~
+    |      |                         |
+    |      |                         (2) calling 'decode' from 'main'
+    |
+    +--> 'decode': events 3-5
+           |
+           |    5 | char* decode(char* str) {
+           |      |       ^~~~~~
+           |      |       |
+           |      |       (3) entry to 'decode'
+           |    6 |     int len = strlen(str);
+           |    7 |     char* result = (char*)malloc(sizeof(char) * len * 10);
+           |      |                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                           |
+           |      |                           (4) this call could return NULL
+           |......
+           |   21 |     result[j] = '\0';
+           |      |     ~~~~~~~~~~~~~~~~
+           |      |               |
+           |      |               (5) 'result + (sizetype)j' could be NULL: unchecked value from (4)
+           |

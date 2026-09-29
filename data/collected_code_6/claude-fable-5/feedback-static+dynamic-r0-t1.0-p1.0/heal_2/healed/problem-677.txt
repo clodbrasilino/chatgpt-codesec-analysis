@@ -1,0 +1,74 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+static void swap(double *x, double *y)
+{
+    double t = *x;
+    *x = *y;
+    *y = t;
+}
+
+int is_valid_triangle(double a, double b, double c)
+{
+    if (isnan(a) || isnan(b) || isnan(c))
+    {
+        return 0;
+    }
+    if (isinf(a) || isinf(b) || isinf(c))
+    {
+        return 0;
+    }
+    if (a <= 0.0 || b <= 0.0 || c <= 0.0)
+    {
+        return 0;
+    }
+
+    if (a > b)
+    {
+        swap(&a, &b);
+    }
+    if (b > c)
+    {
+        swap(&b, &c);
+    }
+    if (a > b)
+    {
+        swap(&a, &b);
+    }
+
+    if (a + b > c)
+    {
+        return 1;
+    }
+    return 0;
+}
+
+int main(void)
+{
+    double a;
+    double b;
+    double c;
+
+    printf("Enter the three sides of the triangle: ");
+    if (scanf("%lf %lf %lf", &a, &b, &c) != 3)
+    {
+        fprintf(stderr, "Error: invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (is_valid_triangle(a, b, c))
+    {
+        printf("The triangle is valid.\n");
+    }
+    else
+    {
+        printf("The triangle is not valid.\n");
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+The key change addressing the identified weaknesses: the original epsilon-based comparison `(a - (c - b)) > eps` with `eps = DBL_EPSILON * (a + b + c)` distorted results in both directions — it could accept degenerate triangles (test case 0: expected False, got True) when the subtraction `c - b` rounded downward, and reject legitimately valid triangles whose margin fell below the scaled epsilon (test case 2: expected True, got False). Replacing it with the direct, strict triangle inequality `a + b > c` on the sorted sides evaluates the condition exactly as the tests expect, while the NaN, infinity, and non-positive checks are retained to keep the input validation intact.

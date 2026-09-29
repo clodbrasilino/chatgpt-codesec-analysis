@@ -1,0 +1,26 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+
+bool areAllItemsEqual(const char *list[], size_t length, const char *target) {
+    for (size_t i = 0; i < length; ++i) {
+        if (strcmp(list[i], target) != 0) {
+            return false;
+        }
+    }
+    return true;
+}
+
+int main() {
+    const char *list[] = {"test", "test", "test"};
+    size_t length = sizeof(list) / sizeof(list[0]);
+    const char *target = "test";
+
+    if (areAllItemsEqual(list, length, target)) {
+        printf("All items are equal to the target string.\n");
+    } else {
+        printf("Not all items are equal to the target string.\n");
+    }
+
+    return 0;
+}

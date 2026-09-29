@@ -1,0 +1,39 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int sequential_search(int *array, size_t size, int target) {
+    if (array == NULL || size == 0) {
+        return -1;
+    }
+    for (size_t i = 0; i < size; i++) {
+        if (array[i] == target) {
+            return (int)i;
+        }
+    }
+    return -1;
+}
+
+int main(void) {
+    size_t n = 5;
+    int *arr = (int *)malloc(n * sizeof(int));
+    if (arr == NULL) {
+        return 1;
+    }
+    arr[0] = 10;
+    arr[1] = 20;
+    arr[2] = 30;
+    arr[3] = 40;
+    arr[4] = 50;
+    
+    int target = 30;
+    int index = sequential_search(arr, n, target);
+    
+    printf("%d\n", index);
+    
+    free(arr);
+    arr = NULL;
+    
+    return 0;
+}
+```

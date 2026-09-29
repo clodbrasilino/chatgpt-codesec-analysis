@@ -1,0 +1,70 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct node {
+    int value;
+    struct node* next;
+} Node;
+
+Node* insert(Node* head, int value) {
+    Node* temp = (Node*)malloc(sizeof(Node));
+    if (!temp) {
+        printf("Memory allocation error!\n");
+        exit(EXIT_FAILURE);
+    }
+    temp->value = value;
+    temp->next = head;
+    return temp;
+}
+
+Node* removeDuplicates(Node* head) {
+    Node* current = head;
+    Node* temp = NULL;
+    Node* dup = NULL;
+
+    while (current != NULL && current->next != NULL) {
+        temp = current;
+        while (temp->next != NULL) {
+            if (current->value == temp->next->value) {
+                dup = temp->next;
+                temp->next = temp->next->next;
+                free(dup);
+            } else {
+                temp = temp->next;
+            }
+        }
+        current = current->next;
+    }
+    return head;
+}
+
+void printList(Node* head) {
+    Node* iterator = head;
+    while(iterator) {
+        printf("%d ", iterator->value);
+        iterator = iterator->next;
+    }
+    printf("\n");
+}
+
+int main() {
+    Node* myList = NULL;
+
+    myList = insert(myList, 8);
+    myList = insert(myList, 2);
+    myList = insert(myList, 3);
+    myList = insert(myList, 2);
+    myList = insert(myList, 7);
+    myList = insert(myList, 8);
+    myList = insert(myList, 9);
+
+    printf("Before Removing Duplicates: ");
+    printList(myList);
+
+    removeDuplicates(myList);
+
+    printf("After Removing Duplicates: ");
+    printList(myList);
+
+    return 0;
+}

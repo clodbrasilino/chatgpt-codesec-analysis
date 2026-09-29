@@ -1,0 +1,35 @@
+#include <stdio.h>
+#include <string.h>
+
+void remove_odd_chars(char *str, size_t size) {
+    if (str == NULL || size == 0) {
+        return;
+    }
+    
+    size_t read_idx = 0;
+    size_t write_idx = 0;
+    
+    while (read_idx < size && str[read_idx] != '\0') {
+        if (read_idx % 2 == 0) {
+            str[write_idx] = str[read_idx];
+            write_idx++;
+        }
+        read_idx++;
+    }
+    
+    if (write_idx < size) {
+        str[write_idx] = '\0';
+    } else {
+        str[size - 1] = '\0';
+    }
+}
+
+int main(void) {
+    char test_string[] = "Hello World";
+    
+    printf("Original: %s\n", test_string);
+    remove_odd_chars(test_string, sizeof(test_string));
+    printf("Result: %s\n", test_string);
+    
+    return 0;
+}

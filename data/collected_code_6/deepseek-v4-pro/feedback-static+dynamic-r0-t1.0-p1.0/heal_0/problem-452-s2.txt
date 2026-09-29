@@ -1,0 +1,39 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+double calculate_loss(double cost_price, double selling_price) {
+    double loss = cost_price - selling_price;
+    if (loss > 0) {
+        return loss;
+    }
+    return -1.0;
+}
+
+int main(void) {
+    double cost_price, selling_price;
+    double result;
+
+    printf("Enter cost price: ");
+    if (scanf("%lf", &cost_price) != 1) {
+        fprintf(stderr, "Error: Invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter selling price: ");
+    if (scanf("%lf", &selling_price) != 1) {
+        fprintf(stderr, "Error: Invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    result = calculate_loss(cost_price, selling_price);
+
+    if (result < 0) {
+        printf("No loss\n");
+    } else {
+        printf("Loss amount: %.2f\n", result);
+    }
+
+    return EXIT_SUCCESS;
+}
+```

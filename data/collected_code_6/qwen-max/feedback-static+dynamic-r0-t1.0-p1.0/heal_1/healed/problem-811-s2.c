@@ -1,0 +1,73 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    int a;
+    int b;
+} Tuple;
+
+typedef struct Node {
+    Tuple data;
+    struct Node* next;
+} Node;
+
+Node* createNode(Tuple data) {
+    Node* newNode = (Node*)malloc(sizeof(Node));
+    if (newNode == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(EXIT_FAILURE);
+    }
+    newNode->data = data;
+    newNode->next = NULL;
+    return newNode;
+}
+
+void freeList(Node* head) {
+    Node* current = head;
+    while (current != NULL) {
+        Node* temp = current;
+        current = current->next;
+        free(temp);
+    }
+}
+
+int checkIdenticalLists(Node* list1, Node* list2) {
+    while (list1 != NULL && list2 != NULL) {
+        if (list1->data.a != list2->data.a || list1->data.b != list2->data.b) {
+            return 0;
+        }
+        list1 = list1->next;
+        list2 = list2->next;
+    }
+    if (list1 != NULL || list2 != NULL) {
+        return 0;
+    }
+    return 1;
+}
+
+int main() {
+    Tuple t1 = {1, 2};
+    Tuple t2 = {3, 4};
+    Tuple t3 = {1, 2};
+    Tuple t4 = {3, 4};
+
+    Node* list1 = createNode(t1);
+    Node* list2 = createNode(t2);
+    Node* list3 = createNode(t3);
+    Node* list4 = createNode(t4);
+
+    list1->next = list2;
+    list3->next = list4;
+
+    if (checkIdenticalLists(list1, list3)) {
+        printf("Lists are identical\n");
+    } else {
+        printf("Lists are not identical\n");
+    }
+
+    freeList(list1);
+    freeList(list3);
+
+    return 0;
+}

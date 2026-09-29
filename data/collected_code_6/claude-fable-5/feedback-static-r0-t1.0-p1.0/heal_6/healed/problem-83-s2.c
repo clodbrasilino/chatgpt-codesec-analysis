@@ -1,0 +1,78 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define BUFFER_SIZE 256U
+
+static size_t bounded_strlen(const char *str, size_t max_len)
+{
+    size_t i;
+
+    for (i = 0U; i < max_len; i++) {
+        if (str[i] == '\0') {
+            break;
+        }
+    }
+    return i;
+}
+
+static int get_added_char(const char *str, size_t max_len, char *result)
+{
+    unsigned long sum;
+    size_t i;
+    size_t len;
+
+    if (str == NULL || result == NULL || max_len == 0U) {
+        return -1;
+    }
+
+    len = bounded_strlen(str, max_len);
+    if (len == 0U || len == max_len) {
+        return -1;
+    }
+
+    sum = 0UL;
+    for (i = 0U; i < len; i++) {
+        sum += (unsigned long)(unsigned char)str[i];
+    }
+
+    *result = (char)((sum % 26UL) + (unsigned long)'a');
+    return 0;
+}
+
+int main(void)
+{
+    char *buffer;
+    char result;
+    size_t len;
+
+    buffer = (char *)calloc(BUFFER_SIZE, sizeof(char));
+    if (buffer == NULL) {
+        fprintf(stderr, "Memory allocation failed.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter a string: ");
+    if (fgets(buffer, (int)BUFFER_SIZE, stdin) == NULL) {
+        fprintf(stderr, "Error reading input.\n");
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+
+    buffer[BUFFER_SIZE - 1U] = '\0';
+
+    len = bounded_strlen(buffer, BUFFER_SIZE);
+    if (len > 0U && buffer[len - 1U] == '\n') {
+        buffer[len - 1U] = '\0';
+    }
+
+    if (get_added_char(buffer, BUFFER_SIZE, &result) != 0) {
+        fprintf(stderr, "Invalid or empty input.\n");
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+
+    printf("Resulting character: %c\n", result);
+    free(buffer);
+    return EXIT_SUCCESS;
+}

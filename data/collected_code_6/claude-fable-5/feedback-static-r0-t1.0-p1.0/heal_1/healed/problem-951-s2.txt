@@ -1,0 +1,56 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int first;
+    int second;
+} Tuple;
+
+Tuple *max_similar_indices(const Tuple *list1, const Tuple *list2, size_t length)
+{
+    Tuple *result = NULL;
+    size_t i;
+
+    if (list1 == NULL || list2 == NULL || length == 0U) {
+        return NULL;
+    }
+
+    result = malloc(length * sizeof(Tuple));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    for (i = 0U; i < length; i++) {
+        result[i].first = (list1[i].first > list2[i].first) ? list1[i].first : list2[i].first;
+        result[i].second = (list1[i].second > list2[i].second) ? list1[i].second : list2[i].second;
+    }
+
+    return result;
+}
+
+int main(void)
+{
+    const Tuple list1[] = { {2, 4}, {6, 7}, {5, 1} };
+    const Tuple list2[] = { {5, 4}, {8, 10}, {8, 14} };
+    size_t length = sizeof(list1) / sizeof(list1[0]);
+    Tuple *result = NULL;
+    size_t i;
+
+    result = max_similar_indices(list1, list2, length);
+    if (result == NULL) {
+        (void)fprintf(stderr, "Error: could not compute result\n");
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0U; i < length; i++) {
+        if (printf("(%d, %d)\n", result[i].first, result[i].second) < 0) {
+            free(result);
+            return EXIT_FAILURE;
+        }
+    }
+
+    free(result);
+    return EXIT_SUCCESS;
+}
+```

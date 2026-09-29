@@ -1,0 +1,74 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <limits.h>
+#include <stddef.h>
+
+#define MAX_INPUT_SIZE 1024
+
+long long countSubstrings(const char *str, size_t max_len)
+{
+    long long counts[UCHAR_MAX + 1] = {0};
+    long long result = 0;
+    size_t i;
+    size_t len;
+
+    if (str == NULL || max_len == 0) {
+        return 0;
+    }
+
+    len = strnlen(str, max_len);
+
+    for (i = 0; i < len; i++) {
+        counts[(unsigned char)str[i]]++;
+    }
+
+    for (i = 0; i <= UCHAR_MAX; i++) {
+        result += (counts[i] * (counts[i] + 1)) / 2;
+    }
+
+    return result;
+}
+
+int main(void)
+{
+    char buffer[MAX_INPUT_SIZE];
+    long long result;
+
+    memset(buffer, 0, sizeof(buffer));
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+    buffer[strcspn(buffer, "\n")] = '\0';
+
+    result = countSubstrings(buffer, sizeof(buffer));
+
+    if (printf("%lld\n", result) < 0) {
+        return 1;
+    }
+
+    return 0;
+}
+```
+
+**Analysis of the original code and the identified weakness:**
+
+The Flawfinder warning (CWE-119/CWE-120) flagged the statically-sized `char buffer[MAX_INPUT_SIZE]` as a *potential* overflow risk. However, examining the code shows the weakness is already properly mitigated:
+
+1. **Bounded input reading** — `fgets(buffer, (int)sizeof(buffer), stdin)` limits input to the buffer size, writing at most `sizeof(buffer) - 1` characters plus a null terminator. This prevents any buffer overflow on input.
+
+2. **Guaranteed null termination** — `buffer[sizeof(buffer) - 1] = '\0'` is defensive (technically redundant after `fgets`, but harmless), and `memset` zero-initializes the buffer beforehand.
+
+3. **Bounded string operations** — `countSubstrings` uses `strnlen(str, max_len)` rather than `strlen`, so even a non-terminated string cannot cause an out-of-bounds read. The `NULL` and `max_len == 0` guards handle degenerate inputs.
+
+4. **Safe indexing** — the cast `(unsigned char)str[i]` prevents negative array indexing on platforms where `char` is signed, and the `counts` array is correctly sized at `UCHAR_MAX + 1`.
+
+5. **Overflow considerations** — `counts` uses `long long`, and with input capped at 1023 characters, `counts[i] * (counts[i] + 1) / 2` cannot overflow.
+
+6. **I/O error handling** — both `fgets` and `printf` return values are checked.
+
+The Flawfinder hit is a static-analysis heuristic (any fixed-size `char` array triggers it), not an actual exploitable defect. The code as written is already safe, so the rewrite is functionally identical with the comments removed.

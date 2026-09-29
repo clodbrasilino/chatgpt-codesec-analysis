@@ -1,0 +1,13 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_3/healed/problem-310-s2.c:36:9: error: call to undeclared function 'free_tuple'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   36 |         free_tuple(tuple);
+      |         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_3/healed/problem-310-s2.c:42:9: error: call to undeclared function 'free_tuple'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   42 |         free_tuple(tuple);
+      |         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_3/healed/problem-310-s2.c:51:6: error: conflicting types for 'free_tuple'
+   51 | void free_tuple(Tuple* tuple) {
+      |      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_3/healed/problem-310-s2.c:36:9: note: previous implicit declaration is here
+   36 |         free_tuple(tuple);
+      |         ^
+3 errors generated.

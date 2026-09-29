@@ -1,0 +1,48 @@
+#include <stdio.h>
+#include <string.h>
+#include <limits.h>
+
+char find_max_occurring_char(const char *str, size_t len) {
+    if (str == NULL) {
+        return '\0';
+    }
+    
+    if (len == 0) {
+        return '\0';
+    }
+    
+    size_t count[UCHAR_MAX + 1] = {0};
+    size_t i;
+    
+    for (i = 0; i < len; i++) {
+        count[(unsigned char)str[i]]++;
+    }
+    
+    unsigned char max_char = 0;
+    size_t max_count = 0;
+    
+    for (i = 0; i <= UCHAR_MAX; i++) {
+        if (count[i] > max_count) {
+            max_count = count[i];
+            max_char = (unsigned char)i;
+        }
+    }
+    
+    return (char)max_char;
+}
+
+int main(void) {
+    const char *input = "experience";
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    char result = find_max_occurring_char(input, strlen(input));
+    
+    if (result != '\0') {
+        printf("%c\n", result);
+    } else {
+        printf("Empty\n");
+    }
+    
+    return 0;
+}

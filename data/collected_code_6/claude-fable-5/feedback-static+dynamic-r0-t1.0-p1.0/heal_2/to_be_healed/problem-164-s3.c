@@ -1,0 +1,139 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+#include <string.h>
+#include <errno.h>
+#include <limits.h>
+#include <ctype.h>
+
+static long sum_of_divisors(long n);
+static bool are_divisor_sums_equal(long a, long b);
+static bool read_long(const char *prompt, long *out);
+
+static long sum_of_divisors(long n)
+{
+    long sum = 0;
+    long i;
+
+    if (n <= 0) {
+        return 0;
+    }
+
+    for (i = 1; i <= n / i; i++) {
+        if (n % i == 0) {
+            long complement = n / i;
+
+            if (sum > LONG_MAX - i) {
+                return -1;
+            }
+            sum += i;
+
+            if (i != complement) {
+                if (sum > LONG_MAX - complement) {
+                    return -1;
+                }
+                sum += complement;
+            }
+        }
+    }
+
+    return sum;
+}
+
+static bool are_divisor_sums_equal(long a, long b)
+{
+    long sum_a = sum_of_divisors(a);
+    long sum_b = sum_of_divisors(b);
+
+    if (sum_a < 0 || sum_b < 0) {
+        return false;
+    }
+
+    return sum_a == sum_b;
+}
+
+static bool read_long(const char *prompt, long *out)
+{
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char buffer[64];
+    char *endptr;
+    long value;
+
+    if (prompt == NULL || out == NULL) {
+        return false;
+    }
+
+    printf("%s", prompt);
+    fflush(stdout);
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        return false;
+    }
+
+    if (strchr(buffer, '\n') == NULL && !feof(stdin)) {
+        int c;
+        /* Possible weaknesses found:
+         * Flawfinder getchar: Check buffer boundaries if used in a loop including recursive loops (CWE-120, CWE-20). (risk 1, buffer)
+         */
+        while ((c = getchar()) != '\n' && c != EOF) {
+        }
+        return false;
+    }
+
+    errno = 0;
+    value = strtol(buffer, &endptr, 10);
+
+    if (endptr == buffer) {
+        return false;
+    }
+
+    if (errno == ERANGE || value == LONG_MAX || value == LONG_MIN) {
+        return false;
+    }
+
+    while (*endptr != '\0') {
+        if (!isspace((unsigned char)*endptr)) {
+            return false;
+        }
+        endptr++;
+    }
+
+    *out = value;
+    return true;
+}
+
+int main(void)
+{
+    long num1;
+    long num2;
+
+    if (!read_long("Enter first number: ", &num1)) {
+        fprintf(stderr, "Invalid input for first number.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (!read_long("Enter second number: ", &num2)) {
+        fprintf(stderr, "Invalid input for second number.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (num1 <= 0 || num2 <= 0) {
+        fprintf(stderr, "Numbers must be positive.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (sum_of_divisors(num1) < 0 || sum_of_divisors(num2) < 0) {
+        fprintf(stderr, "Divisor sum overflow detected.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (are_divisor_sums_equal(num1, num2)) {
+        printf("The sum of divisors of %ld and %ld are the same.\n", num1, num2);
+    } else {
+        printf("The sum of divisors of %ld and %ld are not the same.\n", num1, num2);
+    }
+
+    return EXIT_SUCCESS;
+}

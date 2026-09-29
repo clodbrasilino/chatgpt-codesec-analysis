@@ -1,0 +1,82 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char* longestCommonPrefix(char** strs, int strsSize) {
+    if (strsSize == 0 || strs == NULL) {
+        char* empty = (char*)malloc(1);
+        if (empty) {
+            empty[0] = '\0';
+        }
+        return empty;
+    }
+
+    int prefixLen = 0;
+    if (strs[0] != NULL) {
+        int match = 1;
+        while (match && strs[0][prefixLen] != '\0') {
+            for (int i = 1; i < strsSize; i++) {
+                if (strs[i] == NULL) {
+                    char* empty = (char*)malloc(1);
+                    if (empty) {
+                        empty[0] = '\0';
+                    }
+                    return empty;
+                }
+                if (strs[i][prefixLen] != strs[0][prefixLen]) {
+                    match = 0;
+                    break;
+                }
+            }
+            if (match) {
+                prefixLen++;
+            }
+        }
+    } else {
+        char* empty = (char*)malloc(1);
+        if (empty) {
+            empty[0] = '\0';
+        }
+        return empty;
+    }
+
+    char* result = (char*)malloc((prefixLen + 1) * sizeof(char));
+    if (result == NULL) {
+        return NULL;
+    }
+    
+    if (prefixLen > 0) {
+        memcpy(result, strs[0], prefixLen);
+    }
+    result[prefixLen] = '\0';
+    
+    return result;
+}
+
+int main(void) {
+    char* test1[] = {"flower", "flow", "flight"};
+    int size1 = sizeof(test1) / sizeof(test1[0]);
+    char* res1 = longestCommonPrefix(test1, size1);
+    if (res1) {
+        printf("%s\n", res1);
+        free(res1);
+    }
+
+    char* test2[] = {"dog", "racecar", "car"};
+    int size2 = sizeof(test2) / sizeof(test2[0]);
+    char* res2 = longestCommonPrefix(test2, size2);
+    if (res2) {
+        printf("%s\n", res2);
+        free(res2);
+    }
+
+    char* test3[] = {"interstellar", "internet", "interval"};
+    int size3 = sizeof(test3) / sizeof(test3[0]);
+    char* res3 = longestCommonPrefix(test3, size3);
+    if (res3) {
+        printf("%s\n", res3);
+        free(res3);
+    }
+
+    return 0;
+}

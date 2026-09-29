@@ -1,0 +1,16 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-674-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-674-s2.c:45:31: style: Condition 'output' is always true [knownConditionTrueFalse]
+            memmove(output + (output ? strlen(output) : 0), token, len);
+                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-674-s2.c:46:31: style: Condition 'output' is always true [knownConditionTrueFalse]
+            memmove(output + (output ? strlen(output) : 0) + len, " ", 1);
+                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-674-s2.c:46:60: warning: Either the condition 'output' is redundant or there is pointer arithmetic with NULL pointer. [nullPointerArithmeticRedundantCheck]
+            memmove(output + (output ? strlen(output) : 0) + len, " ", 1);
+                                                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-674-s2.c:46:31: note: Assuming that condition 'output' is not redundant
+            memmove(output + (output ? strlen(output) : 0) + len, " ", 1);
+                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-674-s2.c:46:60: note: Null pointer addition
+            memmove(output + (output ? strlen(output) : 0) + len, " ", 1);
+                                                           ^

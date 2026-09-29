@@ -1,0 +1,98 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+typedef struct {
+    int *items;
+    size_t size;
+} Tuple;
+
+typedef struct {
+    int *items;
+    size_t size;
+} List;
+
+List *copy_list_from_tuple(const Tuple *t)
+{
+    List *l;
+    size_t bytes;
+
+    if (t == NULL || t->items == NULL || t->size == 0) {
+        return NULL;
+    }
+
+    if (t->size > SIZE_MAX / sizeof(int)) {
+        return NULL;
+    }
+
+    bytes = t->size * sizeof(int);
+
+    l = malloc(sizeof(List));
+    if (l == NULL) {
+        return NULL;
+    }
+
+    l->items = malloc(bytes);
+    if (l->items == NULL) {
+        free(l);
+        return NULL;
+    }
+
+    memcpy(l->items, t->items, bytes);
+    l->size = t->size;
+
+    return l;
+}
+
+void free_list(List *l)
+{
+    if (l != NULL) {
+        free(l->items);
+        free(l);
+    }
+}
+
+int main(void)
+{
+    int data[] = {42};
+    Tuple singleton;
+    List *copied;
+    size_t i;
+
+    singleton.items = data;
+    singleton.size = sizeof(data) / sizeof(data[0]);
+
+    copied = copy_list_from_tuple(&singleton);
+    if (copied == NULL) {
+        fprintf(stderr, "Failed to copy list from tuple\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Copied list contents:\n");
+    for (i = 0; i < copied->size; i++) {
+        printf("%d\n", copied->items[i]);
+    }
+
+    free_list(copied);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The original code was already largely safe; the Flawfinder warning on `memcpy` (CWE-120) is a heuristic flag rather than a confirmed defect. The rewrite hardens it as follows:
+
+1. **Single computation of the byte count** — `bytes = t->size * sizeof(int)` is calculated once, *after* the overflow guard (`t->size > SIZE_MAX / sizeof(int)`), and that exact same value is used for both the `malloc` of the destination and the `memcpy` length. This guarantees by construction that the destination buffer can always hold the copied data, directly addressing the CWE-120 concern.
+
+2. **Overflow check preserved** — the `SIZE_MAX / sizeof(int)` guard prevents integer wraparound in the size calculation, which would otherwise cause an undersized allocation followed by a heap overflow in `memcpy`.
+
+3. **NULL and empty-input validation preserved** — `t`, `t->items`, and `t->size` are validated before any allocation.
+
+4. **Allocation failure handling preserved** — both `malloc` calls are checked, and the partially constructed `List` is freed on failure, avoiding memory leaks.
+
+5. **Robust element count in `main`** — `sizeof(data) / sizeof(data[0])` replaces the hardcoded `1`, so the size stays correct if the array initializer changes.
+
+6. **Clean teardown** — `free_list` handles NULL safely and frees both the items buffer and the struct, with no double-free or leak paths.

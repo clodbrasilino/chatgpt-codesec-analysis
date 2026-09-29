@@ -1,0 +1,52 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_LEN 50
+#define MAX_LIST 10
+
+void sortList(char list[][MAX_LIST][MAX_LEN], int sublist_size[], int n)
+{
+    int i, j, k;
+    char temp[MAX_LEN];
+    
+    for(k = 0; k < n; k++)
+    {
+        for(i = 0; i < sublist_size[k] - 1; i++) 
+        {
+            for(j = i + 1; j < sublist_size[k]; j++)
+            {
+                if(strcmp(list[k][i], list[k][j]) > 0)
+                {
+                    strcpy(temp, list[k][i]);
+                    strcpy(list[k][i], list[k][j]);
+                    strcpy(list[k][j], temp);
+                }
+            }
+        }
+    }
+}
+
+int main()
+{
+    char list[3][MAX_LIST][MAX_LEN] ={
+        {"Python", "Java", "C", "C++"}, 
+        {"Apple", "Banana", "Pineapple"},
+        {"Tom", "Jerry", "Spike"}
+    };
+    int sublist_size[] = {4, 3, 3};
+    int i, j;
+    
+    sortList(list, sublist_size, 3);
+    
+    for(i = 0; i < 3; i++)
+    {
+        for(j = 0; j < sublist_size[i]; j++)
+        {
+            printf("%s ", list[i][j]);
+        }
+        printf("\n");
+    }
+    
+    return 0;
+}

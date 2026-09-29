@@ -1,0 +1,105 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+#define HEX_SIDES 6
+#define PI 3.14159265358979323846
+
+typedef struct {
+    double x;
+    double y;
+} Point;
+
+Point **calculate_hexagon_grid(int rows, int cols, double radius);
+void free_hexagon_grid(Point **grid, size_t count);
+
+void free_hexagon_grid(Point **grid, size_t count)
+{
+    size_t i;
+
+    if (grid == NULL) {
+        return;
+    }
+    for (i = 0; i < count; i++) {
+        free(grid[i]);
+    }
+    free(grid);
+}
+
+Point **calculate_hexagon_grid(int rows, int cols, double radius)
+{
+    Point **grid;
+    size_t count;
+    size_t idx;
+    double h_spacing;
+    double v_spacing;
+    int row;
+    int col;
+    int i;
+
+    if (rows <= 0 || cols <= 0 || radius <= 0.0) {
+        return NULL;
+    }
+
+    count = (size_t)rows * (size_t)cols;
+    grid = calloc(count, sizeof(*grid));
+    if (grid == NULL) {
+        return NULL;
+    }
+
+    h_spacing = 1.5 * radius;
+    v_spacing = sqrt(3.0) * radius;
+
+    for (row = 0; row < rows; row++) {
+        for (col = 0; col < cols; col++) {
+            double cx = (double)col * h_spacing;
+            double cy = (double)row * v_spacing
+                        + (double)(col % 2) * (v_spacing / 2.0);
+
+            idx = (size_t)row * (size_t)cols + (size_t)col;
+            grid[idx] = malloc(HEX_SIDES * sizeof(**grid));
+            if (grid[idx] == NULL) {
+                free_hexagon_grid(grid, count);
+                return NULL;
+            }
+
+            for (i = 0; i < HEX_SIDES; i++) {
+                double angle = (PI / 3.0) * (double)i;
+                grid[idx][i].x = cx + radius * cos(angle);
+                grid[idx][i].y = cy + radius * sin(angle);
+            }
+        }
+    }
+
+    return grid;
+}
+
+int main(void)
+{
+    int rows = 3;
+    int cols = 3;
+    double radius = 10.0;
+    size_t count;
+    size_t h;
+    int i;
+    Point **grid;
+
+    grid = calculate_hexagon_grid(rows, cols, radius);
+    if (grid == NULL) {
+        fprintf(stderr, "Error: failed to allocate hexagon grid\n");
+        return EXIT_FAILURE;
+    }
+
+    count = (size_t)rows * (size_t)cols;
+    for (h = 0; h < count; h++) {
+        printf("Hexagon %zu:\n", h);
+        for (i = 0; i < HEX_SIDES; i++) {
+            printf("  (%8.2f, %8.2f)\n", grid[h][i].x, grid[h][i].y);
+        }
+    }
+
+    free_hexagon_grid(grid, count);
+    grid = NULL;
+
+    return EXIT_SUCCESS;
+}

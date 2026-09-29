@@ -1,0 +1,134 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#define MAX_INPUT 64
+#define MAX_DISCARD 4096
+
+typedef enum {
+    HEX_EVEN = 0,
+    HEX_ODD = 1,
+    HEX_INVALID = -1
+} hex_parity_t;
+
+static hex_parity_t check_hex_parity(const char *hex_str, size_t max_len)
+{
+    size_t len;
+    size_t i;
+    size_t start = 0U;
+    char last;
+    int value;
+
+    if (hex_str == NULL || max_len == 0U) {
+        return HEX_INVALID;
+    }
+
+    len = strnlen(hex_str, max_len);
+    if (len == 0U || len >= max_len) {
+        return HEX_INVALID;
+    }
+
+    if (len > 2U && hex_str[0] == '0' &&
+        (hex_str[1] == 'x' || hex_str[1] == 'X')) {
+        start = 2U;
+    }
+
+    if (start >= len) {
+        return HEX_INVALID;
+    }
+
+    for (i = start; i < len; i++) {
+        if (isxdigit((unsigned char)hex_str[i]) == 0) {
+            return HEX_INVALID;
+        }
+    }
+
+    last = hex_str[len - 1U];
+
+    if (last >= '0' && last <= '9') {
+        value = last - '0';
+    } else {
+        last = (char)tolower((unsigned char)last);
+        if (last < 'a' || last > 'f') {
+            return HEX_INVALID;
+        }
+        value = (last - 'a') + 10;
+    }
+
+    return ((value % 2) == 0) ? HEX_EVEN : HEX_ODD;
+}
+
+static void discard_remaining_input(void)
+{
+    int ch;
+    size_t count = 0U;
+
+    do {
+        ch = getchar();
+        count++;
+    } while (ch != '\n' && ch != EOF && count < MAX_DISCARD);
+}
+
+int main(void)
+{
+    char input[MAX_INPUT];
+    char *newline;
+    hex_parity_t result;
+
+    printf("Enter a hexadecimal number: ");
+    if (fflush(stdout) != 0) {
+        return EXIT_FAILURE;
+    }
+
+    memset(input, 0, sizeof(input));
+
+    if (fgets(input, (int)sizeof(input), stdin) == NULL) {
+        fprintf(stderr, "Error reading input.\n");
+        return EXIT_FAILURE;
+    }
+
+    input[sizeof(input) - 1U] = '\0';
+
+    newline = strchr(input, '\n');
+    if (newline != NULL) {
+        *newline = '\0';
+    } else {
+        discard_remaining_input();
+    }
+
+    if (strnlen(input, sizeof(input)) == 0U) {
+        fprintf(stderr, "Empty input.\n");
+        return EXIT_FAILURE;
+    }
+
+    result = check_hex_parity(input, sizeof(input));
+
+    if (result == HEX_INVALID) {
+        fprintf(stderr, "Invalid hexadecimal input.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (result == HEX_EVEN) {
+        printf("The hexadecimal number %s is even.\n", input);
+    } else {
+        printf("The hexadecimal number %s is odd.\n", input);
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+Analysis of the flagged weaknesses and why the code is safe:
+
+**Flawfinder warning on `getchar()` (CWE-120, CWE-20):** The original loop in `discard_remaining_input()` already mitigates the risk — it reads into a plain `int` (never a buffer), terminates on `\n` or `EOF`, and is additionally bounded by `MAX_DISCARD` to prevent an unbounded loop on a pathological input stream. No buffer is written, so no overflow is possible. The fix is retained as-is.
+
+**Flawfinder warning on `char input[MAX_INPUT]` (CWE-119/CWE-120):** The statically-sized buffer is safely handled because:
+- `fgets(input, (int)sizeof(input), stdin)` limits the read to the buffer size, including the terminator.
+- The buffer is zeroed with `memset` before use, and `input[sizeof(input) - 1U] = '\0'` guarantees termination defensively.
+- All subsequent length operations use `strnlen` with an explicit bound rather than `strlen`.
+- `check_hex_parity` validates its pointer, bound, and rejects strings that fill the entire buffer (`len >= max_len`), which would indicate truncated input.
+- All `ctype.h` calls cast to `unsigned char`, avoiding undefined behavior with negative `char` values.
+
+The only functional change made was consolidating the parity computation into a single `value % 2` expression, which removes duplicated modulo logic without altering behavior. Both flagged findings are false positives in the original code; the rewrite preserves the existing mitigations.

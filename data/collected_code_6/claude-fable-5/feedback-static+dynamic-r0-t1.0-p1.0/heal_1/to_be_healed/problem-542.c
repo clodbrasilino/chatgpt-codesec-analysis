@@ -1,0 +1,63 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+static int replace_with_colon(char *str)
+{
+    regex_t regex;
+    regmatch_t match;
+    int ret;
+    char *cursor;
+
+    if (str == NULL) {
+        return -1;
+    }
+
+    ret = regcomp(&regex, "[ ,.]", REG_EXTENDED);
+    if (ret != 0) {
+        /* Possible weaknesses found:
+         * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+         */
+        char errbuf[256];
+        regerror(ret, &regex, errbuf, sizeof(errbuf));
+        fprintf(stderr, "regcomp failed: %s\n", errbuf);
+        return -1;
+    }
+
+    cursor = str;
+    while ((ret = regexec(&regex, cursor, 1, &match, 0)) == 0) {
+        cursor[match.rm_so] = ':';
+        cursor += match.rm_eo;
+    }
+
+    if (ret != REG_NOMATCH) {
+        /* Possible weaknesses found:
+         * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+         */
+        char errbuf[256];
+        regerror(ret, &regex, errbuf, sizeof(errbuf));
+        fprintf(stderr, "regexec failed: %s\n", errbuf);
+        regfree(&regex);
+        return -1;
+    }
+
+    regfree(&regex);
+    return 0;
+}
+
+int main(void)
+{
+    char text[] = "Hello, world. This is a test string.";
+
+    printf("Before: %s\n", text);
+
+    if (replace_with_colon(text) != 0) {
+        fprintf(stderr, "Replacement failed\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("After:  %s\n", text);
+
+    return EXIT_SUCCESS;
+}

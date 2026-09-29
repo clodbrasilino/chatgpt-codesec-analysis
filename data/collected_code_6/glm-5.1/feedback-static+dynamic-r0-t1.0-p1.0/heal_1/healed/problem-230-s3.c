@@ -1,0 +1,27 @@
+#include <stdio.h>
+#include <string.h>
+
+void replace_spaces(char *str, char c) {
+    if (str == NULL) {
+        return;
+    }
+    for (size_t i = 0; str[i] != '\0'; i++) {
+        if (str[i] == ' ') {
+            str[i] = c;
+        }
+    }
+}
+
+int main(int argc, char *argv[]) {
+    char buffer[256];
+    const char *input = "Replace blank spaces with any character";
+    snprintf(buffer, sizeof(buffer), "%s", input);
+    
+    printf("Original: %s\n", buffer);
+    
+    replace_spaces(buffer, '-');
+    
+    printf("Modified: %s\n", buffer);
+    
+    return 0;
+}

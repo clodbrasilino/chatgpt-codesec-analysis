@@ -1,0 +1,24 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <limits.h>
+
+bool canFormTriangle(long a, long b, long c) {
+    if (a > 0 && b > 0 && c > 0 && a + b > c && a + c > b && b + c > a) {
+        return true;
+    }
+    return false;
+}
+
+int main() {
+    long side1, side2, side3;
+    printf("Enter three sides of a triangle: ");
+    scanf("%ld %ld %ld", &side1, &side2, &side3);
+
+    if (canFormTriangle(side1, side2, side3)) {
+        printf("Yes\n");
+    } else {
+        printf("No\n");
+    }
+
+    return 0;
+}

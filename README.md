@@ -57,7 +57,7 @@ export OPENAI_API_KEY="<your api key here>"
 
 3. Run the collector
 ```bash
-cd v1
+cd v1/scripts
 python collect_code.py
 ```
 
@@ -85,11 +85,11 @@ If it does not generate C code (in some cases it generated python code), just tr
 
 ### Data preprocessing
 
-All data preprocessing information steps can be found in its [Jupyter Notebook](v1/data_preprocessing.ipynb).
+All data preprocessing information steps can be found in its [Jupyter Notebook](v1/notebooks/data_preprocessing.ipynb).
 
 ### Clustering analysis
 
-After the data preprocessing, a [frequency distribution over problem, CWE and static analysis tool](k-mean-clustring/cwes_by_problem.csv) is generated as output for a second stage of processing, present in the clustering analysis, which you can find in [this notebook](k-mean-clustring/cwe_clustering_analysis.ipynb).
+After the data preprocessing, a [frequency distribution over problem, CWE and static analysis tool](v1/k-means-clustering/cwes_by_problem.csv) is generated as output for a second stage of processing, present in the clustering analysis, which you can find in [this notebook](v1/k-means-clustering/cwe_clustering_analysis.ipynb).
 
 ## CWEs Graph
 
@@ -98,4 +98,4 @@ https://lucid.app/lucidspark/33c6e3b8-eeea-4df0-8f87-715afc602d08/edit?beaconFlo
 
 ## Data analysis visualizations
 
-Many of the paper data visualization figures were built in [this Orange data analysis file](v1/data-analysis.ows). We used Orange Data Mining v3.36.
+Many of the paper data visualization figures were built in [this Orange data analysis file](v1/notebooks/data-analysis.ows). We used Orange Data Mining v3.36.

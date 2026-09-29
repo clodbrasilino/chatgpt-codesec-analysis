@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-926-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-926-s3.c:15:69: style: Condition 'is_overflow(temp,0)' is always false [knownConditionTrueFalse]
+        if (is_overflow(a, b) || is_overflow(b, temp) || is_overflow(temp, 0)) return -1;
+                                                                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-926-s3.c:15:69: note: Calling function 'is_overflow' returns 0
+        if (is_overflow(a, b) || is_overflow(b, temp) || is_overflow(temp, 0)) return -1;
+                                                                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-926-s3.c:15:69: note: Condition 'is_overflow(temp,0)' is always false
+        if (is_overflow(a, b) || is_overflow(b, temp) || is_overflow(temp, 0)) return -1;
+                                                                    ^

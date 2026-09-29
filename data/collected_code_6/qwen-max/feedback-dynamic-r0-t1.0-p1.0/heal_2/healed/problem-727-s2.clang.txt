@@ -1,0 +1,4 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_2/healed/problem-727-s2.c:18:14: warning: Although the value stored to 'rc' is used in the enclosing expression, the value is never actually read from 'rc' [deadcode.DeadStores]
+   18 |         if ((rc = regexec(&regex, src, 1, pmatch, 0)) == 0 && pmatch[0].rm_so == 0) {
+      |              ^    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1 warning generated.

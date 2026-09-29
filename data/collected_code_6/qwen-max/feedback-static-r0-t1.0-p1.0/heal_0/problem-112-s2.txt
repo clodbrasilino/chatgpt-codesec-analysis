@@ -1,0 +1,16 @@
+```c
+#include <stdio.h>
+#include <math.h>
+
+double calculate_perimeter(double radius, double height) {
+    return 2 * (2 * M_PI * radius + 2 * height);
+}
+
+int main() {
+    double radius = 5.0;
+    double height = 10.0;
+    double perimeter = calculate_perimeter(radius, height);
+    printf("The perimeter of the cylinder is: %.2f\n", perimeter);
+    return 0;
+}
+```

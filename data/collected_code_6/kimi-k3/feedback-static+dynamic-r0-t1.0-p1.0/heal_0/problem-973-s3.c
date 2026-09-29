@@ -1,0 +1,91 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+int left_rotate_string(char *str, size_t positions)
+{
+    size_t len;
+    size_t i;
+    size_t j;
+    char *temp;
+
+    if (str == NULL)
+    {
+        return -1;
+    }
+
+    len = strlen(str);
+    if (len == 0)
+    {
+        return 0;
+    }
+
+    positions = positions % len;
+    if (positions == 0)
+    {
+        return 0;
+    }
+
+    temp = (char *)malloc(positions);
+    if (temp == NULL)
+    {
+        return -1;
+    }
+
+    for (i = 0; i < positions; i++)
+    {
+        temp[i] = str[i];
+    }
+
+    for (i = positions, j = 0; i < len; i++, j++)
+    {
+        str[j] = str[i];
+    }
+
+    for (i = 0; i < positions; i++)
+    {
+        str[len - positions + i] = temp[i];
+    }
+
+    free(temp);
+    temp = NULL;
+
+    return 0;
+}
+
+int main(void)
+{
+    char buffer[256];
+    char *input;
+    size_t positions;
+    int result;
+
+    printf("Enter a string: ");
+    input = fgets(buffer, sizeof(buffer), stdin);
+    if (input == NULL)
+    {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[strcspn(buffer, "\n")] = '\0';
+
+    printf("Enter number of positions to rotate: ");
+    result = scanf("%zu", &positions);
+    if (result != 1)
+    {
+        fprintf(stderr, "Invalid input for positions\n");
+        return EXIT_FAILURE;
+    }
+
+    result = left_rotate_string(buffer, positions);
+    if (result != 0)
+    {
+        fprintf(stderr, "Error rotating string\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Rotated string: %s\n", buffer);
+
+    return EXIT_SUCCESS;
+}

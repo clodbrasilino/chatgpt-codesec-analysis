@@ -1,0 +1,76 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int type;
+    union {
+        int i;
+        float f;
+        char c;
+    } value;
+} Element;
+
+typedef struct {
+    Element *elements;
+    size_t count;
+} Tuple;
+
+Tuple* create_tuple(size_t count) {
+    Tuple *tuple = (Tuple*)malloc(sizeof(Tuple));
+    if (!tuple) return NULL;
+    tuple->elements = (Element*)malloc(count * sizeof(Element));
+    if (!tuple->elements) {
+        free(tuple);
+        return NULL;
+    }
+    tuple->count = count;
+    return tuple;
+}
+
+void destroy_tuple(Tuple *tuple) {
+    if (tuple) {
+        free(tuple->elements);
+        free(tuple);
+    }
+}
+
+int remove_elements_by_type(Tuple *tuple, int type) {
+    if (!tuple || !tuple->elements) return -1;
+    size_t new_count = 0;
+    for (size_t i = 0; i < tuple->count; ++i) {
+        if (tuple->elements[i].type != type) {
+            tuple->elements[new_count++] = tuple->elements[i];
+        }
+    }
+    tuple->count = new_count;
+    return 0;
+}
+
+int main() {
+    Tuple *tuple = create_tuple(5);
+    if (!tuple) return -1;
+
+    tuple->elements[0].type = 1; // Assume 1 is int
+    tuple->elements[0].value.i = 42;
+    tuple->elements[1].type = 2; // Assume 2 is float
+    tuple->elements[1].value.f = 3.14f;
+    tuple->elements[2].type = 1; // Assume 1 is int
+    tuple->elements[2].value.i = 100;
+    tuple->elements[3].type = 3; // Assume 3 is char
+    tuple->elements[3].value.c = 'A';
+    tuple->elements[4].type = 2; // Assume 2 is float
+    tuple->elements[4].value.f = 2.718f;
+
+    remove_elements_by_type(tuple, 2); // Remove floats
+
+    for (size_t i = 0; i < tuple->count; ++i) {
+        switch (tuple->elements[i].type) {
+            case 1: printf("Int: %d\n", tuple->elements[i].value.i); break;
+            case 2: printf("Float: %.2f\n", tuple->elements[i].value.f); break;
+            case 3: printf("Char: %c\n", tuple->elements[i].value.c); break;
+        }
+    }
+
+    destroy_tuple(tuple);
+    return 0;
+}

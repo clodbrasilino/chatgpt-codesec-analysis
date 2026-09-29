@@ -1,0 +1,64 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node* next;
+} Node;
+
+Node* createNode(int data) {
+    Node* newNode = (Node*)malloc(sizeof(Node));
+    /* Possible weaknesses found:
+     *  dereference of possibly-NULL 'newNode' [CWE-690] [-Wanalyzer-possible-null-dereference]
+     */
+    newNode->data = data;
+    newNode->next = NULL;
+    return newNode;
+}
+
+void append(Node** head, int data) {
+    Node* newNode = createNode(data);
+    if (*head == NULL) {
+        *head = newNode;
+        return;
+    }
+    Node* last = *head;
+    while (last->next != NULL) {
+        last = last->next;
+    }
+    last->next = newNode;
+}
+
+void replaceLastWithList(Node** head, Node* list) {
+    if (*head == NULL) {
+        *head = list;
+        return;
+    }
+    Node* last = *head;
+    while (last->next != NULL) {
+        last = last->next;
+    }
+    last->next = list;
+}
+
+int main() {
+    Node* head = NULL;
+    append(&head, 1);
+    append(&head, 2);
+    append(&head, 3);
+
+    Node* list = NULL;
+    append(&list, 4);
+    append(&list, 5);
+    append(&list, 6);
+
+    replaceLastWithList(&head, list);
+
+    Node* temp = head;
+    while (temp != NULL) {
+        printf("%d ", temp->data);
+        temp = temp->next;
+    }
+
+    return 0;
+}

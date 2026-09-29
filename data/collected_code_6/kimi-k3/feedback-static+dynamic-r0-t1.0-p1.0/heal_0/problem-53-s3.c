@@ -1,0 +1,39 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+
+bool check_first_last_equal(const char *str) {
+    if (str == NULL) {
+        return false;
+    }
+    
+    size_t len = strlen(str);
+    if (len == 0) {
+        return false;
+    }
+    
+    return str[0] == str[len - 1];
+}
+
+int main(void) {
+    char buffer[256];
+    
+    printf("Enter a string: ");
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+    
+    size_t len = strlen(buffer);
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    }
+    
+    if (check_first_last_equal(buffer)) {
+        printf("First and last characters are equal.\n");
+    } else {
+        printf("First and last characters are not equal.\n");
+    }
+    
+    return 0;
+}

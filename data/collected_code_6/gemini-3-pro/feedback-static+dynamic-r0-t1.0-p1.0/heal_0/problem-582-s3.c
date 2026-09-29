@@ -1,0 +1,71 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+typedef struct {
+    char **keys;
+    int *values;
+    size_t count;
+    size_t capacity;
+} Dictionary;
+
+Dictionary* create_dictionary(size_t capacity);
+void destroy_dictionary(Dictionary *dict);
+bool is_dictionary_empty(const Dictionary *dict);
+
+Dictionary* create_dictionary(size_t capacity) {
+    Dictionary *dict = (Dictionary*)malloc(sizeof(Dictionary));
+    if (dict == NULL) {
+        return NULL;
+    }
+
+    dict->keys = (char**)calloc(capacity, sizeof(char*));
+    if (dict->keys == NULL) {
+        free(dict);
+        return NULL;
+    }
+
+    dict->values = (int*)calloc(capacity, sizeof(int));
+    if (dict->values == NULL) {
+        free(dict->keys);
+        free(dict);
+        return NULL;
+    }
+
+    dict->count = 0;
+    dict->capacity = capacity;
+    return dict;
+}
+
+void destroy_dictionary(Dictionary *dict) {
+    if (dict != NULL) {
+        free(dict->keys);
+        free(dict->values);
+        free(dict);
+    }
+}
+
+bool is_dictionary_empty(const Dictionary *dict) {
+    if (dict == NULL) {
+        return true;
+    }
+    return dict->count == 0;
+}
+
+int main(void) {
+    Dictionary *dict = create_dictionary(10);
+    if (dict == NULL) {
+        fprintf(stderr, "Failed to create dictionary.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (is_dictionary_empty(dict)) {
+        printf("Dictionary is empty.\n");
+    } else {
+        printf("Dictionary is not empty.\n");
+    }
+
+    destroy_dictionary(dict);
+    
+    return EXIT_SUCCESS;
+}

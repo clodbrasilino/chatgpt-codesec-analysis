@@ -1,0 +1,49 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-595-s3.c:38:11: error: cannot assign to variable 's2' with const-qualified type 'const char[5]'
+   38 |     s2[0] = '1'; s2[1] = '0'; s2[2] = '1'; s2[3] = '1';
+      |     ~~~~~ ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-595-s3.c:28:16: note: variable 's2' declared const here
+   28 |     const char s2[] = "0011";
+      |     ~~~~~~~~~~~^~~~~~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-595-s3.c:38:24: error: cannot assign to variable 's2' with const-qualified type 'const char[5]'
+   38 |     s2[0] = '1'; s2[1] = '0'; s2[2] = '1'; s2[3] = '1';
+      |                  ~~~~~ ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-595-s3.c:28:16: note: variable 's2' declared const here
+   28 |     const char s2[] = "0011";
+      |     ~~~~~~~~~~~^~~~~~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-595-s3.c:38:37: error: cannot assign to variable 's2' with const-qualified type 'const char[5]'
+   38 |     s2[0] = '1'; s2[1] = '0'; s2[2] = '1'; s2[3] = '1';
+      |                               ~~~~~ ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-595-s3.c:28:16: note: variable 's2' declared const here
+   28 |     const char s2[] = "0011";
+      |     ~~~~~~~~~~~^~~~~~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-595-s3.c:38:50: error: cannot assign to variable 's2' with const-qualified type 'const char[5]'
+   38 |     s2[0] = '1'; s2[1] = '0'; s2[2] = '1'; s2[3] = '1';
+      |                                            ~~~~~ ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-595-s3.c:28:16: note: variable 's2' declared const here
+   28 |     const char s2[] = "0011";
+      |     ~~~~~~~~~~~^~~~~~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-595-s3.c:48:11: error: cannot assign to variable 's2' with const-qualified type 'const char[5]'
+   48 |     s2[0] = '1'; s2[1] = '1'; s2[2] = '0'; s2[3] = '0';
+      |     ~~~~~ ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-595-s3.c:28:16: note: variable 's2' declared const here
+   28 |     const char s2[] = "0011";
+      |     ~~~~~~~~~~~^~~~~~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-595-s3.c:48:24: error: cannot assign to variable 's2' with const-qualified type 'const char[5]'
+   48 |     s2[0] = '1'; s2[1] = '1'; s2[2] = '0'; s2[3] = '0';
+      |                  ~~~~~ ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-595-s3.c:28:16: note: variable 's2' declared const here
+   28 |     const char s2[] = "0011";
+      |     ~~~~~~~~~~~^~~~~~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-595-s3.c:48:37: error: cannot assign to variable 's2' with const-qualified type 'const char[5]'
+   48 |     s2[0] = '1'; s2[1] = '1'; s2[2] = '0'; s2[3] = '0';
+      |                               ~~~~~ ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-595-s3.c:28:16: note: variable 's2' declared const here
+   28 |     const char s2[] = "0011";
+      |     ~~~~~~~~~~~^~~~~~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-595-s3.c:48:50: error: cannot assign to variable 's2' with const-qualified type 'const char[5]'
+   48 |     s2[0] = '1'; s2[1] = '1'; s2[2] = '0'; s2[3] = '0';
+      |                                            ~~~~~ ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-595-s3.c:28:16: note: variable 's2' declared const here
+   28 |     const char s2[] = "0011";
+      |     ~~~~~~~~~~~^~~~~~~~~~~~~
+8 errors generated.

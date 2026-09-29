@@ -1,0 +1,79 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *data;
+    size_t length;
+} Tuple;
+
+typedef struct {
+    Tuple **tuples;
+    size_t count;
+} TupleList;
+
+void free_tuple(Tuple *tuple) {
+    if (tuple->data) {
+        free(tuple->data);
+    }
+    free(tuple);
+}
+
+Tuple* create_tuple(size_t length) {
+    Tuple *tuple = (Tuple *)malloc(sizeof(Tuple));
+    tuple->data = (int *)malloc(length * sizeof(int));
+    tuple->length = length;
+    return tuple;
+}
+
+TupleList* create_tuple_list() {
+    TupleList *list = (TupleList *)malloc(sizeof(TupleList));
+    list->tuples = NULL;
+    list->count = 0;
+    return list;
+}
+
+void add_tuple(TupleList *list, Tuple *tuple) {
+    list->tuples = (Tuple **)realloc(list->tuples, (list->count + 1) * sizeof(Tuple *));
+    list->tuples[list->count++] = tuple;
+}
+
+void remove_empty_tuples(TupleList *list) {
+    for (size_t i = 0; i < list->count; ) {
+        if (list->tuples[i]->length == 0) {
+            free_tuple(list->tuples[i]);
+            for (size_t j = i; j < list->count - 1; ++j) {
+                list->tuples[j] = list->tuples[j + 1];
+            }
+            --list->count;
+            --i; // Adjust index after removal
+        } else {
+            ++i;
+        }
+    }
+}
+
+void free_tuple_list(TupleList *list) {
+    for (size_t i = 0; i < list->count; ++i) {
+        free_tuple(list->tuples[i]);
+    }
+    free(list->tuples);
+    free(list);
+}
+
+int main() {
+    TupleList *list = create_tuple_list();
+    add_tuple(list, create_tuple(0)); // Empty tuple
+    add_tuple(list, create_tuple(2)); // Non-empty tuple
+    add_tuple(list, create_tuple(0)); // Another empty tuple
+
+    remove_empty_tuples(list);
+
+    for (size_t i = 0; i < list->count; ++i) {
+        printf("Tuple %zu: Length = %zu\n", i, list->tuples[i]->length);
+    }
+
+    free_tuple_list(list);
+    return 0;
+}
+```

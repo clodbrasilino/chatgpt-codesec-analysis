@@ -1,0 +1,48 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+#include <stdbool.h>
+
+bool sum_range(const int *list, size_t length, size_t start, size_t end, long long *result)
+{
+    if (list == NULL || result == NULL) {
+        return false;
+    }
+    if (start > end || end >= length) {
+        return false;
+    }
+
+    long long sum = 0;
+    for (size_t i = start; i <= end; i++) {
+        if (list[i] > 0 && sum > LLONG_MAX - list[i]) {
+            return false;
+        }
+        if (list[i] < 0 && sum < LLONG_MIN - list[i]) {
+            return false;
+        }
+        sum += list[i];
+    }
+
+    *result = sum;
+    return true;
+}
+
+int main(void)
+{
+    int numbers[] = { 2, 1, 5, 6, 8, 3, 4, 9, 10, 11, 8, 12 };
+    size_t length = sizeof(numbers) / sizeof(numbers[0]);
+    size_t start = 8;
+    size_t end = 10;
+    long long result = 0;
+
+    if (sum_range(numbers, length, start, end, &result)) {
+        printf("Sum of elements from index %zu to %zu is %lld\n", start, end, result);
+    } else {
+        fprintf(stderr, "Error: invalid input or arithmetic overflow\n");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```

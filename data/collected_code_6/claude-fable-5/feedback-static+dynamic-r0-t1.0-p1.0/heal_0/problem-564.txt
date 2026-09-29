@@ -1,0 +1,40 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+size_t count_unequal_pairs(const int *arr, size_t n)
+{
+    size_t count = 0;
+    size_t i;
+    size_t j;
+
+    if (arr == NULL || n < 2U) {
+        return 0U;
+    }
+
+    for (i = 0U; i < n - 1U; i++) {
+        for (j = i + 1U; j < n; j++) {
+            if (arr[i] != arr[j]) {
+                count++;
+            }
+        }
+    }
+
+    return count;
+}
+
+int main(void)
+{
+    int data[] = { 1, 2, 1, 3, 2 };
+    size_t n = sizeof(data) / sizeof(data[0]);
+    size_t result;
+
+    result = count_unequal_pairs(data, n);
+
+    if (printf("Number of unequal pairs: %zu\n", result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```

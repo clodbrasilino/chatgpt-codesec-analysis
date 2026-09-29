@@ -1,0 +1,31 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+bool areRootsReciprocal(double a, double b, double c) {
+    if (a == 0.0) {
+        return false;
+    }
+    double discriminant = b * b - 4 * a * c;
+    if (discriminant < 0.0) {
+        return false;
+    }
+    return (a == c);
+}
+
+int main(void) {
+    double a = 0.0;
+    double b = 0.0;
+    double c = 0.0;
+
+    if (scanf("%lf %lf %lf", &a, &b, &c) != 3) {
+        return 1;
+    }
+
+    if (areRootsReciprocal(a, b, c)) {
+        printf("Yes\n");
+    } else {
+        printf("No\n");
+    }
+
+    return 0;
+}

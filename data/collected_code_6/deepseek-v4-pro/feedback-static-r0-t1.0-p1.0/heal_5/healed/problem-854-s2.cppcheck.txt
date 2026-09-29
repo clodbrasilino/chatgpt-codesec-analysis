@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-854-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-854-s2.c:151:15: warning: Identical condition 'count>heap->capacity', second condition is always false [identicalConditionAfterEarlyExit]
+    if (count > heap->capacity) {
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-854-s2.c:148:15: note: If condition 'count>heap->capacity' is true, the function will return/exit
+    if (count > heap->capacity) {
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-854-s2.c:151:15: note: Testing identical condition 'count>heap->capacity'
+    if (count > heap->capacity) {
+              ^

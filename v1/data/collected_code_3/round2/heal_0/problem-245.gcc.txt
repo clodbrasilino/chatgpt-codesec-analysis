@@ -1,0 +1,118 @@
+collected_code_3/problem-245-2.c: In function 'maxSumBitonic':
+collected_code_3/problem-245-2.c:25:19: warning: implicit declaration of function 'max' [-Wimplicit-function-declaration]
+   25 |         max_sum = max(max_sum, msis[i] + msds[i] - arr[i]);
+      |                   ^~~
+collected_code_3/problem-245-2.c:10:17: warning: dereference of possibly-NULL 'msis' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   10 |         msis[i] = arr[i];
+      |         ~~~~~~~~^~~~~~~~
+  'maxSumBitonic': events 1-4
+    |
+    |    5 |     int *msis = (int *) malloc(sizeof(int) * n);
+    |      |                         ^~~~~~~~~~~~~~~~~~~~~~~
+    |      |                         |
+    |      |                         (1) this call could return NULL
+    |......
+    |    9 |     for (i = 0; i < n; i++) {
+    |      |                 ~~~~~    
+    |      |                   |
+    |      |                   (2) following 'true' branch (when 'i < n')...
+    |   10 |         msis[i] = arr[i];
+    |      |         ~~~~~~~~~~~~~~~~ 
+    |      |                 |    |
+    |      |                 |    (3) ...to here
+    |      |                 (4) 'msis + (long unsigned int)i * 4' could be NULL: unchecked value from (1)
+    |
+collected_code_3/problem-245-2.c:11:17: warning: dereference of possibly-NULL 'msds' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   11 |         msds[i] = arr[i];
+      |         ~~~~~~~~^~~~~~~~
+  'maxSumBitonic': events 1-4
+    |
+    |    6 |     int *msds = (int *) malloc(sizeof(int) * n);
+    |      |                         ^~~~~~~~~~~~~~~~~~~~~~~
+    |      |                         |
+    |      |                         (1) this call could return NULL
+    |......
+    |    9 |     for (i = 0; i < n; i++) {
+    |      |                 ~~~~~    
+    |      |                   |
+    |      |                   (2) following 'true' branch (when 'i < n')...
+    |   10 |         msis[i] = arr[i];
+    |      |                      ~   
+    |      |                      |
+    |      |                      (3) ...to here
+    |   11 |         msds[i] = arr[i];
+    |      |         ~~~~~~~~~~~~~~~~ 
+    |      |                 |
+    |      |                 (4) 'msds + (long unsigned int)i * 4' could be NULL: unchecked value from (1)
+    |
+collected_code_3/problem-245-2.c:21:40: warning: use of uninitialized value '*msds_119 + _61' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   21 |             if (arr[i] > arr[j] && msds[i] < msds[j] + arr[i])
+      |                                    ~~~~^~~
+  'main': events 1-2
+    |
+    |   37 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   40 |     printf("Maximum Sum Bi-tonic sub-sequence is %d\n", maxSumBitonic(arr, n));
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) calling 'maxSumBitonic' from 'main'
+    |
+    +--> 'maxSumBitonic': events 3-23
+           |
+           |    4 | int maxSumBitonic(int *arr, int n) {
+           |      |     ^~~~~~~~~~~~~
+           |      |     |
+           |      |     (3) entry to 'maxSumBitonic'
+           |    5 |     int *msis = (int *) malloc(sizeof(int) * n);
+           |    6 |     int *msds = (int *) malloc(sizeof(int) * n);
+           |      |                         ~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                         |
+           |      |                         (4) region created on heap here
+           |......
+           |    9 |     for (i = 0; i < n; i++) {
+           |      |                 ~~~~~
+           |      |                   |
+           |      |                   (5) following 'true' branch (when 'i < n')...
+           |      |                   (7) following 'true' branch (when 'i < n')...
+           |      |                   (9) following 'false' branch (when 'i >= n')...
+           |   10 |         msis[i] = arr[i];
+           |      |                      ~
+           |      |                      |
+           |      |                      (6) ...to here
+           |      |                      (8) ...to here
+           |......
+           |   14 |     for (i = 1; i < n; i++)
+           |      |          ~~~~~  ~~~~~
+           |      |            |      |
+           |      |            |      (11) following 'true' branch (when 'i < n')...
+           |      |            (10) ...to here
+           |   15 |         for (j = 0; j < i; j++)
+           |      |              ~~~~~  ~~~~~
+           |      |                |      |
+           |      |                |      (13) following 'true' branch (when 'j < i')...
+           |      |                (12) ...to here
+           |   16 |             if (arr[i] > arr[j] && msis[i] < msis[j] + arr[i])
+           |      |                ~   ~                   ~
+           |      |                |   |                   |
+           |      |                |   (14) ...to here     (16) ...to here
+           |      |                (15) following 'true' branch...
+           |......
+           |   19 |     for (i = n - 2; i >= 0; i--)
+           |      |                     ~~~~~~
+           |      |                       |
+           |      |                       (17) following 'true' branch (when 'i >= 0')...
+           |   20 |         for (j = n - 1; j > i; j--)
+           |      |              ~~~~~~~~~  ~~~~~
+           |      |                |          |
+           |      |                |          (19) following 'true' branch (when 'j > i')...
+           |      |                (18) ...to here
+           |   21 |             if (arr[i] > arr[j] && msds[i] < msds[j] + arr[i])
+           |      |                ~   ~               ~~~~~~~
+           |      |                |   |                   |
+           |      |                |   |                   (22) ...to here
+           |      |                |   (20) ...to here     (23) use of uninitialized value '*msds_119 + _61' here
+           |      |                (21) following 'true' branch...
+           |

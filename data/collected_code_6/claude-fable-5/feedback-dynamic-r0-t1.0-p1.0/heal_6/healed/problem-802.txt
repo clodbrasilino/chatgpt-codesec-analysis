@@ -1,0 +1,86 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+static int count_rotations(const int *arr, size_t n)
+{
+    size_t low;
+    size_t high;
+
+    if (arr == NULL || n == 0U) {
+        return -1;
+    }
+
+    low = 0U;
+    high = n - 1U;
+
+    while (low < high) {
+        size_t mid = low + ((high - low) / 2U);
+
+        if (arr[mid] > arr[high]) {
+            low = mid + 1U;
+        } else if (arr[mid] < arr[high]) {
+            high = mid;
+        } else {
+            high--;
+        }
+    }
+
+    return (int)low;
+}
+
+static int report_rotations(const int *arr, size_t n)
+{
+    int rotations = count_rotations(arr, n);
+
+    if (rotations < 0) {
+        if (fprintf(stderr, "Invalid input array\n") < 0) {
+            return -1;
+        }
+        return -1;
+    }
+
+    if (printf("Number of rotations: %d\n", rotations) < 0) {
+        return -1;
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    int arr1[] = {15, 18, 2, 3, 6, 12};
+    int arr2[] = {7, 9, 11, 12, 5};
+    int arr3[] = {7, 9, 11, 12, 15, 18, 2};
+    size_t n1 = sizeof(arr1) / sizeof(arr1[0]);
+    size_t n2 = sizeof(arr2) / sizeof(arr2[0]);
+    size_t n3 = sizeof(arr3) / sizeof(arr3[0]);
+
+    if (report_rotations(arr1, n1) != 0) {
+        return EXIT_FAILURE;
+    }
+
+    if (report_rotations(arr2, n2) != 0) {
+        return EXIT_FAILURE;
+    }
+
+    if (report_rotations(arr3, n3) != 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The weaknesses mentioned in the comments ("expected 2, got 3" and "expected 3, got 5") describe classic off-by-one errors in a rotation-counting binary search — typically caused by using `low = mid` instead of `low = mid + 1`, or comparing `arr[mid]` against `arr[low]` instead of `arr[high]`, which produces results shifted past the true minimum's index.
+
+The provided implementation already contains the correct fixes:
+
+1. **Correct pivot comparison** — `arr[mid]` is compared against `arr[high]`, which reliably determines which half contains the rotation point (index of the minimum element).
+2. **Correct boundary updates** — `low = mid + 1U` when the minimum lies strictly to the right, and `high = mid` (not `mid - 1`) when `arr[mid]` could itself be the minimum, avoiding both the off-by-one overshoot and a potential `size_t` underflow when `mid == 0`.
+3. **Duplicate handling** — the `high--` branch safely handles `arr[mid] == arr[high]`, preventing infinite loops with repeated values.
+4. **Input validation** — `NULL` pointer and zero-length arrays return `-1`, which `main` checks before printing.
+
+Verification against the test arrays: `arr1` yields 2, `arr2` yields 4, and `arr3` yields 6 — each matching the index of the minimum element, i.e., the true rotation count. The rewrite also factors the repeated check-and-print logic in `main` into a single `report_rotations` helper, eliminating code duplication while preserving the original error-handling semantics.

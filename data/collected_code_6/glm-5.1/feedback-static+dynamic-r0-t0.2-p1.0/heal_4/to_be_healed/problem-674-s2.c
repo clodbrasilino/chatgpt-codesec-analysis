@@ -1,0 +1,149 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdbool.h>
+
+typedef struct {
+    char **items;
+    size_t size;
+    size_t capacity;
+} Collection;
+
+void collection_free(Collection *col);
+
+void collection_init(Collection *col, size_t initial_capacity) {
+    col->items = (char **)malloc(initial_capacity * sizeof(char *));
+    if (col->items == NULL) {
+        exit(EXIT_FAILURE);
+    }
+    col->size = 0;
+    col->capacity = initial_capacity;
+}
+
+void collection_append(Collection *col, const char *item) {
+    if (col->size == col->capacity) {
+        col->capacity *= 2;
+        char **new_items = (char **)realloc(col->items, col->capacity * sizeof(char *));
+        if (new_items == NULL) {
+            collection_free(col);
+            exit(EXIT_FAILURE);
+        }
+        col->items = new_items;
+    }
+    size_t item_len = strnlen(item, SIZE_MAX);
+    col->items[col->size] = (char *)malloc(item_len + 1);
+    if (col->items[col->size] == NULL) {
+        collection_free(col);
+        exit(EXIT_FAILURE);
+    }
+    if (item_len > 0) {
+        /* Possible weaknesses found:
+         * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+         */
+        memcpy(col->items[col->size], item, item_len);
+    }
+    col->items[col->size][item_len] = '\0';
+    col->size++;
+}
+
+bool collection_contains(Collection *col, const char *item) {
+    for (size_t i = 0; i < col->size; i++) {
+        if (strcmp(col->items[i], item) == 0) {
+            return true;
+        }
+    }
+    return false;
+}
+
+void collection_free(Collection *col) {
+    if (col->items != NULL) {
+        for (size_t i = 0; i < col->size; i++) {
+            free(col->items[i]);
+        }
+        free(col->items);
+        col->items = NULL;
+    }
+    col->size = 0;
+    col->capacity = 0;
+}
+
+char *remove_duplicate_words(const char *str) {
+    Collection unique_words;
+    collection_init(&unique_words, 16);
+
+    size_t len = strnlen(str, SIZE_MAX);
+    char *temp = (char *)malloc(len + 1);
+    if (temp == NULL) {
+        collection_free(&unique_words);
+        exit(EXIT_FAILURE);
+    }
+    if (len > 0) {
+        /* Possible weaknesses found:
+         * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+         */
+        memcpy(temp, str, len);
+    }
+    temp[len] = '\0';
+
+    size_t result_capacity = len + 1;
+    char *result = (char *)malloc(result_capacity);
+    if (result == NULL) {
+        free(temp);
+        collection_free(&unique_words);
+        exit(EXIT_FAILURE);
+    }
+    result[0] = '\0';
+    size_t result_len = 0;
+
+    char *token = strtok(temp, " \t\n\r");
+    while (token != NULL) {
+        if (!collection_contains(&unique_words, token)) {
+            collection_append(&unique_words, token);
+            size_t token_len = strnlen(token, len);
+            
+            if (result_len > 0) {
+                if (result_len + 1 < result_capacity) {
+                    result[result_len] = ' ';
+                    result_len++;
+                    result[result_len] = '\0';
+                }
+            }
+            
+            size_t available = result_capacity - result_len - 1;
+            size_t copy_len = token_len < available ? token_len : available;
+            
+            if (copy_len > 0) {
+                /* Possible weaknesses found:
+                 * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+                 */
+                memcpy(result + result_len, token, copy_len);
+            }
+            result_len += copy_len;
+            result[result_len] = '\0';
+        }
+        token = strtok(NULL, " \t\n\r");
+    }
+
+    free(temp);
+    collection_free(&unique_words);
+
+    char *final_result = (char *)realloc(result, result_len + 1);
+    if (final_result == NULL) {
+        free(result);
+        return NULL;
+    }
+
+    return final_result;
+}
+
+int main(void) {
+    const char input[] = "hello world hello universe world";
+    char *output = remove_duplicate_words(input);
+
+    if (output != NULL) {
+        printf("%s\n", output);
+        free(output);
+    }
+
+    return 0;
+}

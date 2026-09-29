@@ -1,0 +1,174 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#define MAX_WORD_LEN 64
+
+typedef struct {
+    char word[MAX_WORD_LEN];
+    size_t count;
+} WordEntry;
+
+typedef struct {
+    WordEntry *entries;
+    size_t size;
+    size_t capacity;
+} WordList;
+
+static int word_list_init(WordList *list)
+{
+    list->size = 0;
+    list->capacity = 16;
+    list->entries = malloc(list->capacity * sizeof(WordEntry));
+    if (list->entries == NULL) {
+        return -1;
+    }
+    return 0;
+}
+
+static void word_list_free(WordList *list)
+{
+    if (list != NULL) {
+        free(list->entries);
+        list->entries = NULL;
+        list->size = 0;
+        list->capacity = 0;
+    }
+}
+
+static int word_list_add(WordList *list, const char *word)
+{
+    size_t i;
+
+    for (i = 0; i < list->size; i++) {
+        if (strcmp(list->entries[i].word, word) == 0) {
+            list->entries[i].count++;
+            return 0;
+        }
+    }
+
+    if (list->size == list->capacity) {
+        size_t new_capacity = list->capacity * 2;
+        WordEntry *tmp = realloc(list->entries, new_capacity * sizeof(WordEntry));
+        if (tmp == NULL) {
+            return -1;
+        }
+        list->entries = tmp;
+        list->capacity = new_capacity;
+    }
+
+    strncpy(list->entries[list->size].word, word, MAX_WORD_LEN - 1);
+    list->entries[list->size].word[MAX_WORD_LEN - 1] = '\0';
+    list->entries[list->size].count = 1;
+    list->size++;
+    return 0;
+}
+
+static int compare_entries(const void *a, const void *b)
+{
+    const WordEntry *ea = (const WordEntry *)a;
+    const WordEntry *eb = (const WordEntry *)b;
+
+    if (eb->count > ea->count) {
+        return 1;
+    }
+    if (eb->count < ea->count) {
+        return -1;
+    }
+    return strcmp(ea->word, eb->word);
+}
+
+static int tokenize_and_count(const char *text, WordList *list)
+{
+    char buffer[MAX_WORD_LEN];
+    size_t i = 0;
+    size_t start = 0;
+    size_t len;
+    size_t j;
+    int in_word = 0;
+
+    for (i = 0; ; i++) {
+        unsigned char c = (unsigned char)text[i];
+
+        if (c != '\0' && isalpha(c)) {
+            if (!in_word) {
+                in_word = 1;
+                start = i;
+            }
+        } else {
+            if (in_word) {
+                len = i - start;
+                if (len > MAX_WORD_LEN - 1) {
+                    len = MAX_WORD_LEN - 1;
+                }
+                for (j = 0; j < len; j++) {
+                    buffer[j] = (char)tolower((unsigned char)text[start + j]);
+                }
+                buffer[len] = '\0';
+                if (word_list_add(list, buffer) != 0) {
+                    return -1;
+                }
+                in_word = 0;
+            }
+            if (c == '\0') {
+                break;
+            }
+        }
+    }
+
+    return 0;
+}
+
+int print_most_common_words(const char *text, size_t n)
+{
+    WordList list;
+    size_t i;
+    size_t limit;
+
+    if (text == NULL || n == 0) {
+        return -1;
+    }
+
+    if (word_list_init(&list) != 0) {
+        return -1;
+    }
+
+    if (tokenize_and_count(text, &list) != 0) {
+        word_list_free(&list);
+        return -1;
+    }
+
+    if (list.size == 0) {
+        word_list_free(&list);
+        return 0;
+    }
+
+    qsort(list.entries, list.size, sizeof(WordEntry), compare_entries);
+
+    limit = (n < list.size) ? n : list.size;
+    for (i = 0; i < limit; i++) {
+        if (printf("%s: %zu\n", list.entries[i].word, list.entries[i].count) < 0) {
+            word_list_free(&list);
+            return -1;
+        }
+    }
+
+    word_list_free(&list);
+    return 0;
+}
+
+int main(void)
+{
+    const char *text = "The quick brown fox jumps over the lazy dog. "
+                       "The dog barks and the fox runs. The quick fox "
+                       "is quick and the dog is lazy.";
+    size_t n = 5;
+
+    if (print_most_common_words(text, n) != 0) {
+        fprintf(stderr, "Error processing text\n");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

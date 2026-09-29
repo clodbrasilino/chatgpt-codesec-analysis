@@ -1,0 +1,13 @@
+collected_code/heal_round_3/healed/problem-83.c: In function 'main':
+collected_code/heal_round_3/healed/problem-83.c:17:18: warning: implicit declaration of function 'strlen' [-Wimplicit-function-declaration]
+   17 |     int length = strlen(str);
+      |                  ^~~~~~
+collected_code/heal_round_3/healed/problem-83.c:2:1: note: include '<string.h>' or provide a declaration of 'strlen'
+    1 | #include<stdio.h>
+  +++ |+#include <string.h>
+    2 | 
+collected_code/heal_round_3/healed/problem-83.c:17:18: warning: incompatible implicit declaration of built-in function 'strlen' [-Wbuiltin-declaration-mismatch]
+   17 |     int length = strlen(str);
+      |                  ^~~~~~
+collected_code/heal_round_3/healed/problem-83.c:17:18: note: include '<string.h>' or provide a declaration of 'strlen'
+-macosx_version_min has been renamed to -macos_version_min

@@ -1,0 +1,47 @@
+{
+  "task_id": 58,
+  "text": "Write a C function to check whether the given two integers have opposite sign or not.",
+  "fn_candidates": [
+    "opposite_Signs",
+    "OppositeSigns",
+    "oppositeSigns",
+    "oppositeSigns"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "opposite_Signs",
+      "args": [
+        1,
+        -2
+      ],
+      "expected": true,
+      "assert_src": "assert opposite_Signs(1,-2) == True"
+    },
+    {
+      "fn_name": "opposite_Signs",
+      "args": [
+        3,
+        2
+      ],
+      "expected": false,
+      "assert_src": "assert opposite_Signs(3,2) == False"
+    },
+    {
+      "fn_name": "opposite_Signs",
+      "args": [
+        -10,
+        -10
+      ],
+      "expected": false,
+      "assert_src": "assert opposite_Signs(-10,-10) == False"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "bool",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

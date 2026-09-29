@@ -1,0 +1,53 @@
+#include <stdio.h>
+#include <ctype.h>
+#include <string.h>
+
+void count_characters(const char *str, int *alphabets, int *digits, int *special) {
+    *alphabets = 0;
+    *digits = 0;
+    *special = 0;
+    
+    if (str == NULL) {
+        return;
+    }
+    
+    for (size_t i = 0; str[i] != '\0'; i++) {
+        if (isalpha((unsigned char)str[i])) {
+            (*alphabets)++;
+        } else if (isdigit((unsigned char)str[i])) {
+            (*digits)++;
+        } else {
+            (*special)++;
+        }
+    }
+}
+
+int main(void) {
+    char input[1000];
+    int alphabets = 0;
+    int digits = 0;
+    int special = 0;
+    size_t len;
+    
+    printf("Enter a string: ");
+    if (fgets(input, sizeof(input), stdin) == NULL) {
+        fprintf(stderr, "Error reading input.\n");
+        return 1;
+    }
+    
+    len = strlen(input);
+    if (len > 0 && input[len - 1] == '\n') {
+        input[len - 1] = '\0';
+    } else {
+        int c;
+        while ((c = getchar()) != '\n' && c != EOF);
+    }
+    
+    count_characters(input, &alphabets, &digits, &special);
+    
+    printf("Alphabets: %d\n", alphabets);
+    printf("Digits: %d\n", digits);
+    printf("Special characters: %d\n", special);
+    
+    return 0;
+}

@@ -1,0 +1,15 @@
+#include <stdio.h>
+#include <math.h>
+
+double round_up(double num, int digits) {
+    double factor = pow(10.0, digits);
+    return ceil(num * factor) / factor;
+}
+
+int main() {
+    double num = 123.456;
+    int digits = 2;
+    double result = round_up(num, digits);
+    printf("%.2f\n", result);
+    return 0;
+}

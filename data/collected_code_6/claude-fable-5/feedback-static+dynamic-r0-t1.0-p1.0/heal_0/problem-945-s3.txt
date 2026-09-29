@@ -1,0 +1,70 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+static bool contains(const int *set, size_t size, int value)
+{
+    for (size_t i = 0; i < size; i++) {
+        if (set[i] == value) {
+            return true;
+        }
+    }
+    return false;
+}
+
+static int *tuple_to_set(const int *tuple, size_t tuple_size, size_t *set_size)
+{
+    if (tuple == NULL || set_size == NULL || tuple_size == 0) {
+        if (set_size != NULL) {
+            *set_size = 0;
+        }
+        return NULL;
+    }
+
+    int *set = malloc(tuple_size * sizeof(int));
+    if (set == NULL) {
+        *set_size = 0;
+        return NULL;
+    }
+
+    size_t count = 0;
+    for (size_t i = 0; i < tuple_size; i++) {
+        if (!contains(set, count, tuple[i])) {
+            set[count] = tuple[i];
+            count++;
+        }
+    }
+
+    *set_size = count;
+    return set;
+}
+
+int main(void)
+{
+    int tuple[] = {1, 2, 2, 3, 4, 4, 5, 1};
+    size_t tuple_size = sizeof(tuple) / sizeof(tuple[0]);
+    size_t set_size = 0;
+
+    int *set = tuple_to_set(tuple, tuple_size, &set_size);
+    if (set == NULL) {
+        fprintf(stderr, "Failed to create set\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Tuple: ");
+    for (size_t i = 0; i < tuple_size; i++) {
+        printf("%d ", tuple[i]);
+    }
+    printf("\n");
+
+    printf("Set: ");
+    for (size_t i = 0; i < set_size; i++) {
+        printf("%d ", set[i]);
+    }
+    printf("\n");
+
+    free(set);
+    return EXIT_SUCCESS;
+}
+```

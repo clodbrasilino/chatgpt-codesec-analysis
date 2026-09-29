@@ -1,0 +1,98 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+struct node {
+    char data;
+    struct node *next;
+};
+
+static struct node *create_node(char c)
+{
+    struct node *n = malloc(sizeof(struct node));
+    if (n == NULL) {
+        return NULL;
+    }
+    n->data = c;
+    n->next = NULL;
+    return n;
+}
+
+static void free_list(struct node *head)
+{
+    while (head != NULL) {
+        struct node *tmp = head;
+        head = head->next;
+        free(tmp);
+    }
+}
+
+static struct node *string_to_list(const char *str)
+{
+    struct node *head = NULL;
+    struct node *tail = NULL;
+    size_t i;
+    size_t len;
+
+    if (str == NULL) {
+        return NULL;
+    }
+
+    len = strlen(str);
+
+    for (i = 0; i < len; i++) {
+        struct node *n = create_node(str[i]);
+        if (n == NULL) {
+            free_list(head);
+            return NULL;
+        }
+        if (head == NULL) {
+            head = n;
+            tail = n;
+        } else {
+            tail->next = n;
+            tail = n;
+        }
+    }
+
+    return head;
+}
+
+static void print_list(const struct node *head)
+{
+    const struct node *cur = head;
+
+    while (cur != NULL) {
+        if (printf("%c -> ", cur->data) < 0) {
+            return;
+        }
+        cur = cur->next;
+    }
+    (void)printf("NULL\n");
+}
+
+int main(void)
+{
+    const char *input = "Hello, World!";
+    struct node *list = string_to_list(input);
+
+    if (list == NULL) {
+        (void)fprintf(stderr, "Failed to build list\n");
+        return EXIT_FAILURE;
+    }
+
+    print_list(list);
+    free_list(list);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Summary of changes:**
+
+1. **Removed the redundant condition** `input[0] != '\0'` in `main`. The static analyzer flagged this as `knownConditionTrueFalse` because `input` is assigned a compile-time string literal `"Hello, World!"`, so `input[0]` is provably `'H'` and can never be `'\0'`. The check was dead code.
+
+2. **Simplified the error check** to `list == NULL` alone. Since the input string is known to be non-empty at compile time, a `NULL` return from `string_to_list` can only mean allocation failure, so this check is now both sufficient and meaningful.
+
+The remaining structure was already sound: allocation failures are handled with cleanup in `string_to_list`, `free_list` correctly walks the list without use-after-free, `printf` return values are checked or explicitly discarded, and there are no leaks on any path.

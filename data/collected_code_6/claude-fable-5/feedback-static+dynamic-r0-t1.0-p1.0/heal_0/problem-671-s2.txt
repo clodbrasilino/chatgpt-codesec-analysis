@@ -1,0 +1,53 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+unsigned int set_rightmost_unset_bit(unsigned int n)
+{
+    if (n == UINT_MAX_VALUE_CHECK(n)) {
+        return n;
+    }
+    return n | (n + 1U);
+}
+```
+
+Wait — let me write that properly without the placeholder:
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+unsigned int set_rightmost_unset_bit(unsigned int n)
+{
+    if (n == UINT_MAX) {
+        return n;
+    }
+    return n | (n + 1U);
+}
+
+int main(void)
+{
+    unsigned int value = 0U;
+    unsigned int result = 0U;
+
+    printf("Enter a non-negative integer: ");
+    if (scanf("%u", &value) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    result = set_rightmost_unset_bit(value);
+    printf("Input:  %u\n", value);
+    printf("Output: %u\n", result);
+
+    return EXIT_SUCCESS;
+}
+```
+
+Key safety points in this implementation:
+- `unsigned int` is used throughout, so `n + 1U` never causes undefined behavior from signed overflow (CWE-703).
+- The `UINT_MAX` guard prevents the wraparound case where all bits are already set, returning the value unchanged instead of producing a wrong result (CWE-703).
+- The return value of `scanf` is checked, and failure exits cleanly with `EXIT_FAILURE` (CWE-703, CWE-664).
+- No dynamic resources are allocated, so there is nothing to leak or mismanage (CWE-664).
+- Standard headers, `int main(void)`, and `EXIT_SUCCESS`/`EXIT_FAILURE` follow standard C conventions (CWE-710).

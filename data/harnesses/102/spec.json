@@ -1,0 +1,44 @@
+{
+  "task_id": 102,
+  "text": "Write a C function to convert snake case string to camel case string.",
+  "fn_candidates": [
+    "snake_to_camel",
+    "SnakeToCamel",
+    "snakeToCamel",
+    "snaketocamel"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "snake_to_camel",
+      "args": [
+        "python_program"
+      ],
+      "expected": "PythonProgram",
+      "assert_src": "assert snake_to_camel('python_program')=='PythonProgram'"
+    },
+    {
+      "fn_name": "snake_to_camel",
+      "args": [
+        "python_language"
+      ],
+      "expected": "PythonLanguage",
+      "assert_src": "assert snake_to_camel('python_language')==('PythonLanguage')"
+    },
+    {
+      "fn_name": "snake_to_camel",
+      "args": [
+        "programming_language"
+      ],
+      "expected": "ProgrammingLanguage",
+      "assert_src": "assert snake_to_camel('programming_language')==('ProgrammingLanguage')"
+    }
+  ],
+  "arg_kinds": [
+    "str"
+  ],
+  "return_kind": "str",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

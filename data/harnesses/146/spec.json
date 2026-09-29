@@ -1,0 +1,44 @@
+{
+  "task_id": 146,
+  "text": "Write a C function to find the ascii value of total characters in a string.",
+  "fn_candidates": [
+    "ascii_value_string",
+    "AsciiValueString",
+    "asciiValueString",
+    "asciivaluestring"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "ascii_value_string",
+      "args": [
+        "python"
+      ],
+      "expected": 112,
+      "assert_src": "assert ascii_value_string(\"python\")==112"
+    },
+    {
+      "fn_name": "ascii_value_string",
+      "args": [
+        "Program"
+      ],
+      "expected": 80,
+      "assert_src": "assert ascii_value_string(\"Program\")==80"
+    },
+    {
+      "fn_name": "ascii_value_string",
+      "args": [
+        "Language"
+      ],
+      "expected": 76,
+      "assert_src": "assert ascii_value_string(\"Language\")==76"
+    }
+  ],
+  "arg_kinds": [
+    "str"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

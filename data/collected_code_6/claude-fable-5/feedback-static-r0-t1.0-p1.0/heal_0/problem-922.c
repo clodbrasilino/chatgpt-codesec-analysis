@@ -1,0 +1,56 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+int find_max_product_pair(const int *arr, size_t n, int *first, int *second)
+{
+    size_t i;
+    size_t j;
+    long long best;
+    long long product;
+
+    if ((arr == NULL) || (first == NULL) || (second == NULL) || (n < 2U)) {
+        return -1;
+    }
+
+    best = (long long)arr[0] * (long long)arr[1];
+    *first = arr[0];
+    *second = arr[1];
+
+    for (i = 0U; i < (n - 1U); i++) {
+        for (j = i + 1U; j < n; j++) {
+            product = (long long)arr[i] * (long long)arr[j];
+            if (product > best) {
+                best = product;
+                *first = arr[i];
+                *second = arr[j];
+            }
+        }
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    int numbers[] = { 1, 4, 3, 6, 7, 0, -9, -8 };
+    size_t count = sizeof(numbers) / sizeof(numbers[0]);
+    int a = 0;
+    int b = 0;
+    long long product;
+
+    if (find_max_product_pair(numbers, count, &a, &b) != 0) {
+        if (fprintf(stderr, "Error: array must contain at least two elements.\n") < 0) {
+            return EXIT_FAILURE;
+        }
+        return EXIT_FAILURE;
+    }
+
+    product = (long long)a * (long long)b;
+
+    if (printf("Pair with highest product: (%d, %d) = %lld\n", a, b, product) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

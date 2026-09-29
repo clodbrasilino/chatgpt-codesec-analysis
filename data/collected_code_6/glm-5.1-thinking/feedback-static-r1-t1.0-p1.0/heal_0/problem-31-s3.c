@@ -1,0 +1,294 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+#include <limits.h>
+
+typedef struct {
+    int val;
+    int list_idx;
+    int elem_idx;
+} MergeNode;
+
+typedef struct {
+    MergeNode* data;
+    int size;
+    size_t capacity;
+} MergeHeap;
+
+typedef struct {
+    int val;
+    int freq;
+} FreqNode;
+
+typedef struct {
+    FreqNode* data;
+    int size;
+    size_t capacity;
+} FreqHeap;
+
+MergeHeap* create_merge_heap(size_t capacity) {
+    if (capacity > 0 && capacity > SIZE_MAX / sizeof(MergeNode)) return NULL;
+    MergeHeap* heap = (MergeHeap*)malloc(sizeof(MergeHeap));
+    if (!heap) return NULL;
+    if (capacity == 0) {
+        heap->data = NULL;
+    } else {
+        heap->data = (MergeNode*)malloc(sizeof(MergeNode) * capacity);
+        if (!heap->data) {
+            free(heap);
+            return NULL;
+        }
+    }
+    heap->size = 0;
+    heap->capacity = capacity;
+    return heap;
+}
+
+void free_merge_heap(MergeHeap* heap) {
+    if (heap) {
+        free(heap->data);
+        free(heap);
+    }
+}
+
+void merge_heap_push(MergeHeap* heap, MergeNode node) {
+    if (!heap || heap->size >= (int)heap->capacity) return;
+    int i = heap->size++;
+    heap->data[i] = node;
+    while (i > 0) {
+        int parent = (i - 1) / 2;
+        if (heap->data[parent].val > heap->data[i].val) {
+            MergeNode temp = heap->data[parent];
+            heap->data[parent] = heap->data[i];
+            heap->data[i] = temp;
+            i = parent;
+        } else {
+            break;
+        }
+    }
+}
+
+MergeNode merge_heap_pop(MergeHeap* heap) {
+    MergeNode empty = {0, 0, 0};
+    if (!heap || heap->size == 0) return empty;
+    MergeNode top = heap->data[0];
+    if (--heap->size > 0) {
+        heap->data[0] = heap->data[heap->size];
+        int i = 0;
+        while (1) {
+            int left = 2 * i + 1;
+            int right = 2 * i + 2;
+            int smallest = i;
+            if (left < heap->size && heap->data[left].val < heap->data[smallest].val) {
+                smallest = left;
+            }
+            if (right < heap->size && heap->data[right].val < heap->data[smallest].val) {
+                smallest = right;
+            }
+            if (smallest != i) {
+                MergeNode temp = heap->data[i];
+                heap->data[i] = heap->data[smallest];
+                heap->data[smallest] = temp;
+                i = smallest;
+            } else {
+                break;
+            }
+        }
+    }
+    return top;
+}
+
+FreqHeap* create_freq_heap(size_t capacity) {
+    if (capacity > 0 && capacity > SIZE_MAX / sizeof(FreqNode)) return NULL;
+    FreqHeap* heap = (FreqHeap*)malloc(sizeof(FreqHeap));
+    if (!heap) return NULL;
+    if (capacity == 0) {
+        heap->data = NULL;
+    } else {
+        heap->data = (FreqNode*)malloc(sizeof(FreqNode) * capacity);
+        if (!heap->data) {
+            free(heap);
+            return NULL;
+        }
+    }
+    heap->size = 0;
+    heap->capacity = capacity;
+    return heap;
+}
+
+void free_freq_heap(FreqHeap* heap) {
+    if (heap) {
+        free(heap->data);
+        free(heap);
+    }
+}
+
+void freq_heap_push(FreqHeap* heap, FreqNode node) {
+    if (!heap || heap->size >= (int)heap->capacity) return;
+    int i = heap->size++;
+    heap->data[i] = node;
+    while (i > 0) {
+        int parent = (i - 1) / 2;
+        if (heap->data[parent].freq > heap->data[i].freq) {
+            FreqNode temp = heap->data[parent];
+            heap->data[parent] = heap->data[i];
+            heap->data[i] = temp;
+            i = parent;
+        } else {
+            break;
+        }
+    }
+}
+
+void freq_heap_pop(FreqHeap* heap) {
+    if (!heap || heap->size == 0) return;
+    if (--heap->size > 0) {
+        heap->data[0] = heap->data[heap->size];
+        int i = 0;
+        while (1) {
+            int left = 2 * i + 1;
+            int right = 2 * i + 2;
+            int smallest = i;
+            if (left < heap->size && heap->data[left].freq < heap->data[smallest].freq) {
+                smallest = left;
+            }
+            if (right < heap->size && heap->data[right].freq < heap->data[smallest].freq) {
+                smallest = right;
+            }
+            if (smallest != i) {
+                FreqNode temp = heap->data[i];
+                heap->data[i] = heap->data[smallest];
+                heap->data[smallest] = temp;
+                i = smallest;
+            } else {
+                break;
+            }
+        }
+    }
+}
+
+int* topKFrequent(int** lists, int* listSizes, int numLists, int k, int* returnSize) {
+    if (returnSize) *returnSize = 0;
+    if (k <= 0 || numLists <= 0 || !lists || !listSizes || !returnSize) {
+        return NULL;
+    }
+
+    size_t m_cap = (size_t)numLists;
+    size_t f_cap = (size_t)k + 1;
+    if (f_cap < (size_t)k) return NULL;
+
+    MergeHeap* m_heap = create_merge_heap(m_cap);
+    if (!m_heap) return NULL;
+
+    for (int i = 0; i < numLists; i++) {
+        if (listSizes[i] > 0 && lists[i]) {
+            MergeNode node;
+            node.val = lists[i][0];
+            node.list_idx = i;
+            node.elem_idx = 0;
+            merge_heap_push(m_heap, node);
+        }
+    }
+
+    if (m_heap->size == 0) {
+        free_merge_heap(m_heap);
+        return NULL;
+    }
+
+    FreqHeap* f_heap = create_freq_heap(f_cap);
+    if (!f_heap) {
+        free_merge_heap(m_heap);
+        return NULL;
+    }
+
+    int current_val = m_heap->data[0].val;
+    int current_freq = 0;
+
+    while (m_heap->size > 0) {
+        MergeNode top = merge_heap_pop(m_heap);
+        if (top.val == current_val) {
+            current_freq++;
+        } else {
+            FreqNode f_node;
+            f_node.val = current_val;
+            f_node.freq = current_freq;
+            freq_heap_push(f_heap, f_node);
+            if (f_heap->size > k) {
+                freq_heap_pop(f_heap);
+            }
+            current_val = top.val;
+            current_freq = 1;
+        }
+
+        if (top.elem_idx < listSizes[top.list_idx] - 1) {
+            MergeNode next;
+            next.elem_idx = top.elem_idx + 1;
+            next.list_idx = top.list_idx;
+            next.val = lists[top.list_idx][next.elem_idx];
+            merge_heap_push(m_heap, next);
+        }
+    }
+
+    FreqNode f_node;
+    f_node.val = current_val;
+    f_node.freq = current_freq;
+    freq_heap_push(f_heap, f_node);
+    if (f_heap->size > k) {
+        freq_heap_pop(f_heap);
+    }
+
+    if (f_heap->size == 0) {
+        free_merge_heap(m_heap);
+        free_freq_heap(f_heap);
+        return NULL;
+    }
+
+    if ((size_t)f_heap->size > SIZE_MAX / sizeof(int)) {
+        free_merge_heap(m_heap);
+        free_freq_heap(f_heap);
+        return NULL;
+    }
+
+    int* result = (int*)malloc(sizeof(int) * f_heap->size);
+    if (!result) {
+        free_merge_heap(m_heap);
+        free_freq_heap(f_heap);
+        return NULL;
+    }
+
+    *returnSize = f_heap->size;
+    for (int i = f_heap->size - 1; i >= 0; i--) {
+        FreqNode popped = f_heap->data[0];
+        result[i] = popped.val;
+        freq_heap_pop(f_heap);
+    }
+
+    free_merge_heap(m_heap);
+    free_freq_heap(f_heap);
+
+    return result;
+}
+
+int main() {
+    int list1[] = {1, 4, 7};
+    int list2[] = {2, 4, 6, 8};
+    int list3[] = {1, 3, 4, 9};
+
+    int* lists[] = {list1, list2, list3};
+    int listSizes[] = {3, 4, 4};
+    int numLists = 3;
+    int k = 2;
+    int returnSize = 0;
+
+    int* result = topKFrequent(lists, listSizes, numLists, k, &returnSize);
+
+    if (result) {
+        for (int i = 0; i < returnSize; i++) {
+            printf("%d ", result[i]);
+        }
+        printf("\n");
+        free(result);
+    }
+
+    return 0;
+}

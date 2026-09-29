@@ -1,0 +1,29 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+double calculateSurfaceArea(double baseLength, double slantHeight) {
+    if(baseLength < 0 || slantHeight < 0) {
+        printf("Invalid inputs");
+        exit(0);
+    }
+    double  baseArea = baseLength * baseLength;
+    double sideArea = 2 * baseLength * slantHeight;
+    double totalArea = baseArea + sideArea;
+
+    return totalArea;
+}
+
+int main() {
+
+    double baseLength, slantHeight;
+    printf("Enter base length of square pyramid:");
+    scanf("%lf", &baseLength);
+    printf("Enter slant height of square pyramid:");
+    scanf("%lf", &slantHeight);
+    
+    double surfaceArea = calculateSurfaceArea(baseLength, slantHeight);
+
+    printf("Surface area of square pyramid is: %.2lf\n", surfaceArea);
+
+    return 0;
+}

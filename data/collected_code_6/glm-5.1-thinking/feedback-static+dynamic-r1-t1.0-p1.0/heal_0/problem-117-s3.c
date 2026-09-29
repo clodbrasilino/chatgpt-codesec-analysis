@@ -1,0 +1,76 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <errno.h>
+
+size_t convert_to_floats(const char * const *list, size_t len, float **out) {
+    if (len == 0 || list == NULL || out == NULL) {
+        if (out) *out = NULL;
+        return 0;
+    }
+
+    float *res = malloc(len * sizeof(float));
+    if (!res) {
+        *out = NULL;
+        return 0;
+    }
+
+    size_t count = 0;
+    for (size_t i = 0; i < len; i++) {
+        if (list[i] == NULL) {
+            continue;
+        }
+        char *endptr;
+        errno = 0;
+        float val = strtof(list[i], &endptr);
+
+        if (errno == 0 && endptr != list[i]) {
+            while (*endptr == ' ' || *endptr == '\t' || *endptr == '\n' || *endptr == '\r') {
+                endptr++;
+            }
+            if (*endptr == '\0') {
+                res[count++] = val;
+            }
+        }
+    }
+
+    if (count == 0) {
+        free(res);
+        *out = NULL;
+        return 0;
+    }
+
+    float *final_res = realloc(res, count * sizeof(float));
+    if (final_res) {
+        *out = final_res;
+    } else {
+        *out = res;
+    }
+
+    return count;
+}
+
+int main(void) {
+    const char *list[] = {
+        "3.14",
+        "invalid",
+        "  2.71  ",
+        "1e5",
+        "",
+        "1.23extra",
+        "9999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999",
+        NULL
+    };
+    size_t len = sizeof(list) / sizeof(list[0]);
+
+    float *floats = NULL;
+    size_t count = convert_to_floats(list, len, &floats);
+
+    for (size_t i = 0; i < count; i++) {
+        printf("%f\n", floats[i]);
+    }
+
+    free(floats);
+
+    return 0;
+}

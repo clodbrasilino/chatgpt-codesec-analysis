@@ -1,0 +1,89 @@
+#include <stdio.h>
+#include <regex.h>
+#include <string.h>
+#include <stdlib.h>
+
+void camelToSnake(char *str) {
+    char pattern[] = "([A-Z])";
+    char replacement[] = "_\\1";
+    regex_t regex;
+
+    if(regcomp(&regex, pattern, REG_EXTENDED) != 0) {
+        printf("Regex compilation failed");
+        return;
+    }
+
+    if (str == NULL) {
+        return;
+    }
+
+    size_t length = strlen(str);
+    if(length == (size_t)-1) {
+        printf("Input string over-read error\n");
+        return;
+    }
+
+    length += regerror(0, &regex, NULL, 0) + 1;  
+    char *result = calloc(length, sizeof(char));
+
+    if (result == NULL) {
+        printf("Memory allocation failed\n");
+        return;
+    }
+
+    regmatch_t match;
+    int offset = 0;
+    size_t i = 0;
+    
+    while (regexec(&regex, str + offset, 1, &match, 0) == 0) {
+        int start = match.rm_so;
+        int end = match.rm_eo;
+
+        if((i + start) > length) {
+            printf("Buffer overflow error\n");
+            return;
+        }
+        memcpy(result + i, str + offset, start);
+        i += start;
+
+        size_t replacement_length = strlen(replacement);
+        if(replacement_length == (size_t)-1) {
+            printf("Replacement string over-read error\n");
+            return;
+        }
+
+        if((i + replacement_length) > length) {
+            printf("Buffer overflow error\n");
+            return;
+        }
+        memcpy(result + i, replacement, replacement_length);
+        i += replacement_length;
+
+        offset += end;
+    }
+    
+    size_t remaining_length = strlen(str + offset);
+    if(remaining_length == (size_t)-1) {
+        printf("Input string over-read error\n");
+        return;
+    }
+
+    if((i + remaining_length) > length) {
+        printf("Buffer overflow error\n");
+        return;
+    }
+    memcpy(result + i, str + offset, remaining_length);
+    result[i + remaining_length] = '\0';
+    
+    printf("%s\n", result);
+    
+    free(result);
+    regfree(&regex);
+}
+
+int main() {
+    char input[] = "camelCaseString";
+    camelToSnake(input);
+
+    return 0;
+}

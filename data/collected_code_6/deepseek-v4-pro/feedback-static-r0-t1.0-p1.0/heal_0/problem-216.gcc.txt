@@ -1,0 +1,17 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-216.c: In function 'main':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-216.c:213:34: error: passing argument 1 of 'node_contains' from incompatible pointer type [-Wincompatible-pointer-types]
+  213 |         if (node_contains(current->children, node1->children[0])) {
+      |                           ~~~~~~~^~~~~~~~~~
+      |                                  |
+      |                                  struct Node **
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-216.c:66:26: note: expected 'Node *' but argument is of type 'struct Node **'
+   66 | bool node_contains(Node *container, Node *target) {
+      |                    ~~~~~~^~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-216.c:224:38: error: passing argument 1 of 'node_contains' from incompatible pointer type [-Wincompatible-pointer-types]
+  224 |             if (node_contains(current->children, search_node)) {
+      |                               ~~~~~~~^~~~~~~~~~
+      |                                      |
+      |                                      struct Node **
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-216.c:66:26: note: expected 'Node *' but argument is of type 'struct Node **'
+   66 | bool node_contains(Node *container, Node *target) {
+      |                    ~~~~~~^~~~~~~~~

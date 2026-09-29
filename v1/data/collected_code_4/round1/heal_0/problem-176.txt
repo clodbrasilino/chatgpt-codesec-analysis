@@ -1,0 +1,34 @@
+```C
+#include<stdio.h>
+
+float trianglePerimeter(float side1, float side2, float side3){
+    if(side1 <= 0 || side2 <= 0 || side3 <= 0){
+        return -1;
+    }
+
+    if(side1+side2<=side3 || side1+side3<=side2 || side2+side3<=side1){
+        return -1;
+    }
+
+    return side1 + side2 + side3;
+}
+
+int main(){
+    float side1,side2,side3;
+    float perimeter;
+
+    printf("Enter the sides of triangle: ");
+    scanf("%f %f %f",&side1,&side2,&side3);
+
+    perimeter=trianglePerimeter(side1, side2, side3);
+    if(perimeter==-1){
+        printf("Invalid sides for a triangle\n");
+    }
+    else{
+        printf("Perimeter of triangle is %.2f\n",perimeter);
+    }
+    return 0;
+}
+```  
+This C code calculates the perimeter of a triangle using the concept of functions. It checks for valid triangle sides before performing the calculation to avoid implications of using improper sides. It adheres to proper coding standards, handles exceptional conditions, and controls resources throughout their lifetime. The main function prompts the user for the sides of the triangle, calculates the perimeter with the trianglePerimeter() function, and then prints the result on the terminal. Note: The program checks for two conditions - if any side is less than or equal to zero and if the sum of any two sides is not greater than the third side as these conditions violate the triangle inequality.
+Also, the function returns -1 in case the sides entered can't form a triangle, and this condition is checked in the main() function.

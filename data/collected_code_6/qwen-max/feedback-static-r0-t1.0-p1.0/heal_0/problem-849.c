@@ -1,0 +1,33 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+bool is_prime(int n) {
+    if (n <= 1) return false;
+    for (int i = 2; i * i <= n; i++) {
+        if (n % i == 0) return false;
+    }
+    return true;
+}
+
+int sum_of_prime_divisors(int n) {
+    int sum = 0;
+    for (int i = 2; i * i <= n; i++) {
+        if (n % i == 0 && is_prime(i)) {
+            sum += i;
+            while (n % i == 0) n /= i;
+        }
+    }
+    if (n > 1 && is_prime(n)) {
+        sum += n;
+    }
+    return sum;
+}
+
+int main() {
+    int num;
+    printf("Enter a number: ");
+    scanf("%d", &num);
+    int result = sum_of_prime_divisors(num);
+    printf("Sum of prime divisors: %d\n", result);
+    return 0;
+}

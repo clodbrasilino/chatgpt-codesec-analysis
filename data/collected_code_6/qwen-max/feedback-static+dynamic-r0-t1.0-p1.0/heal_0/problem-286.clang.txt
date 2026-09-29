@@ -1,0 +1,4 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-286.c:34:42: error: call to undeclared function 'max'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   34 |     int maxSum = (k == 1) ? max_kadane : max(max_kadane, max_prefix_sum + max_suffix_sum + (k-2) * ((sum > 0) ? sum : 0));
+      |                                          ^
+1 error generated.

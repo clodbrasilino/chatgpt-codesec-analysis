@@ -1,0 +1,9 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-104-s2.c: In function 'main':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-104-s2.c:38:19: error: passing argument 1 of 'sort_sublists' from incompatible pointer type [-Wincompatible-pointer-types]
+   38 |     sort_sublists(list, sizes, num_sublists);
+      |                   ^~~~
+      |                   |
+      |                   char ***
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-104-s2.c:9:42: note: expected 'char * const* const*' but argument is of type 'char ***'
+    9 | void sort_sublists(char * const * const *list, const int *sizes, int num_sublists) {
+      |                    ~~~~~~~~~~~~~~~~~~~~~~^~~~

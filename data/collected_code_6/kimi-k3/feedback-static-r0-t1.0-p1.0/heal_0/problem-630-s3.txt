@@ -1,0 +1,85 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int x;
+    int y;
+} Coordinate;
+
+int get_adjacent_coordinates(Coordinate input, Coordinate **adjacent, size_t *count) {
+    if (adjacent == NULL || count == NULL) {
+        return -1;
+    }
+    
+    *count = 8;
+    *adjacent = (Coordinate *)malloc(*count * sizeof(Coordinate));
+    
+    if (*adjacent == NULL) {
+        return -1;
+    }
+    
+    (*adjacent)[0].x = input.x - 1;
+    (*adjacent)[0].y = input.y - 1;
+    
+    (*adjacent)[1].x = input.x;
+    (*adjacent)[1].y = input.y - 1;
+    
+    (*adjacent)[2].x = input.x + 1;
+    (*adjacent)[2].y = input.y - 1;
+    
+    (*adjacent)[3].x = input.x - 1;
+    (*adjacent)[3].y = input.y;
+    
+    (*adjacent)[4].x = input.x + 1;
+    (*adjacent)[4].y = input.y;
+    
+    (*adjacent)[5].x = input.x - 1;
+    (*adjacent)[5].y = input.y + 1;
+    
+    (*adjacent)[6].x = input.x;
+    (*adjacent)[6].y = input.y + 1;
+    
+    (*adjacent)[7].x = input.x + 1;
+    (*adjacent)[7].y = input.y + 1;
+    
+    return 0;
+}
+
+int main(void) {
+    Coordinate input;
+    Coordinate *adjacent = NULL;
+    size_t count = 0;
+    size_t i;
+    int result;
+    
+    printf("Enter x coordinate: ");
+    if (scanf("%d", &input.x) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("Enter y coordinate: ");
+    if (scanf("%d", &input.y) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    result = get_adjacent_coordinates(input, &adjacent, &count);
+    
+    if (result != 0) {
+        fprintf(stderr, "Failed to get adjacent coordinates\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("Adjacent coordinates:\n");
+    for (i = 0; i < count; i++) {
+        printf("(%d, %d)\n", adjacent[i].x, adjacent[i].y);
+    }
+    
+    free(adjacent);
+    adjacent = NULL;
+    
+    return EXIT_SUCCESS;
+}
+```

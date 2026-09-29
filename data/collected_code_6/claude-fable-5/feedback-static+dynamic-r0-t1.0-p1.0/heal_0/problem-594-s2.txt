@@ -1,0 +1,58 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int diff_even_odd(const int *arr, size_t n, int *result)
+{
+    int first_even = 0;
+    int first_odd = 0;
+    int found_even = 0;
+    int found_odd = 0;
+    size_t i;
+
+    if (arr == NULL || result == NULL) {
+        return -1;
+    }
+
+    for (i = 0; i < n; i++) {
+        if (!found_even && (arr[i] % 2 == 0)) {
+            first_even = arr[i];
+            found_even = 1;
+        }
+        if (!found_odd && (arr[i] % 2 != 0)) {
+            first_odd = arr[i];
+            found_odd = 1;
+        }
+        if (found_even && found_odd) {
+            break;
+        }
+    }
+
+    if (!found_even || !found_odd) {
+        return -1;
+    }
+
+    *result = first_even - first_odd;
+    return 0;
+}
+
+int main(void)
+{
+    int numbers[] = {2, 4, 7, 9, 10};
+    size_t count = sizeof(numbers) / sizeof(numbers[0]);
+    int result = 0;
+
+    if (diff_even_odd(numbers, count, &result) != 0) {
+        if (fprintf(stderr, "Error: could not find both an even and an odd number.\n") < 0) {
+            return EXIT_FAILURE;
+        }
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Difference of first even and first odd number: %d\n", result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```

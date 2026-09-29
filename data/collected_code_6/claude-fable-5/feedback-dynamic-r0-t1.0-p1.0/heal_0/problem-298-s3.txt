@@ -1,0 +1,184 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *data;
+    size_t size;
+} IntList;
+
+typedef struct {
+    IntList *lists;
+    size_t count;
+} NestedList;
+
+static int list_contains(const IntList *list, int value)
+{
+    size_t i;
+    if (list == NULL || list->data == NULL) {
+        return 0;
+    }
+    for (i = 0; i < list->size; i++) {
+        if (list->data[i] == value) {
+            return 1;
+        }
+    }
+    return 0;
+}
+
+static int find_nested_in_list(const NestedList *nested, const IntList *reference, NestedList *result)
+{
+    size_t i;
+    size_t j;
+    size_t k;
+
+    if (nested == NULL || reference == NULL || result == NULL) {
+        return -1;
+    }
+
+    result->lists = NULL;
+    result->count = 0;
+
+    if (nested->count == 0) {
+        return 0;
+    }
+
+    result->lists = calloc(nested->count, sizeof(IntList));
+    if (result->lists == NULL) {
+        return -1;
+    }
+    result->count = nested->count;
+
+    for (i = 0; i < nested->count; i++) {
+        const IntList *src = &nested->lists[i];
+        size_t matches = 0;
+
+        for (j = 0; j < src->size; j++) {
+            if (list_contains(reference, src->data[j])) {
+                matches++;
+            }
+        }
+
+        result->lists[i].data = NULL;
+        result->lists[i].size = matches;
+
+        if (matches > 0) {
+            result->lists[i].data = malloc(matches * sizeof(int));
+            if (result->lists[i].data == NULL) {
+                for (k = 0; k < i; k++) {
+                    free(result->lists[k].data);
+                }
+                free(result->lists);
+                result->lists = NULL;
+                result->count = 0;
+                return -1;
+            }
+            k = 0;
+            for (j = 0; j < src->size; j++) {
+                if (list_contains(reference, src->data[j])) {
+                    result->lists[i].data[k] = src->data[j];
+                    k++;
+                }
+            }
+        }
+    }
+    return 0;
+}
+
+static void free_nested_list(NestedList *nested)
+{
+    size_t i;
+    if (nested == NULL || nested->lists == NULL) {
+        return;
+    }
+    for (i = 0; i < nested->count; i++) {
+        free(nested->lists[i].data);
+        nested->lists[i].data = NULL;
+        nested->lists[i].size = 0;
+    }
+    free(nested->lists);
+    nested->lists = NULL;
+    nested->count = 0;
+}
+
+static void print_nested_list(const NestedList *nested)
+{
+    size_t i;
+    size_t j;
+    if (nested == NULL) {
+        return;
+    }
+    printf("[");
+    for (i = 0; i < nested->count; i++) {
+        printf("[");
+        if (nested->lists[i].data != NULL) {
+            for (j = 0; j < nested->lists[i].size; j++) {
+                printf("%d", nested->lists[i].data[j]);
+                if (j + 1 < nested->lists[i].size) {
+                    printf(", ");
+                }
+            }
+        }
+        printf("]");
+        if (i + 1 < nested->count) {
+            printf(", ");
+        }
+    }
+    printf("]\n");
+}
+
+int main(void)
+{
+    int sub1[] = {1, 2, 3};
+    int sub2[] = {4, 5, 6};
+    int sub3[] = {7, 8, 9, 10};
+    int ref[] = {2, 3, 5, 9, 10, 12};
+
+    IntList sublists[3];
+    NestedList nested;
+    IntList reference;
+    NestedList result;
+    int status;
+
+    sublists[0].data = sub1;
+    sublists[0].size = sizeof(sub1) / sizeof(sub1[0]);
+    sublists[1].data = sub2;
+    sublists[1].size = sizeof(sub2) / sizeof(sub2[0]);
+    sublists[2].data = sub3;
+    sublists[2].size = sizeof(sub3) / sizeof(sub3[0]);
+
+    nested.lists = sublists;
+    nested.count = sizeof(sublists) / sizeof(sublists[0]);
+
+    reference.data = ref;
+    reference.size = sizeof(ref) / sizeof(ref[0]);
+
+    result.lists = NULL;
+    result.count = 0;
+
+    status = find_nested_in_list(&nested, &reference, &result);
+    if (status != 0) {
+        fprintf(stderr, "Error: failed to compute nested intersection\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Nested list: ");
+    print_nested_list(&nested);
+    printf("Reference list: [");
+    {
+        size_t i;
+        for (i = 0; i < reference.size; i++) {
+            printf("%d", reference.data[i]);
+            if (i + 1 < reference.size) {
+                printf(", ");
+            }
+        }
+    }
+    printf("]\n");
+    printf("Matched elements: ");
+    print_nested_list(&result);
+
+    free_nested_list(&result);
+    return EXIT_SUCCESS;
+}
+```

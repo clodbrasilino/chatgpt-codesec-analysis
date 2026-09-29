@@ -1,0 +1,90 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+static int compare_ints(const void *a, const void *b)
+{
+    int x = *(const int *)a;
+    int y = *(const int *)b;
+
+    if (x < y) {
+        return -1;
+    }
+    if (x > y) {
+        return 1;
+    }
+    return 0;
+}
+
+static int frequency_difference(const int *arr, size_t n, int *result)
+{
+    int *sorted;
+    size_t i;
+    size_t count;
+    size_t max_freq;
+    size_t min_freq;
+
+    if (arr == NULL || result == NULL || n == 0) {
+        return -1;
+    }
+
+    sorted = malloc(n * sizeof(*sorted));
+    if (sorted == NULL) {
+        return -1;
+    }
+
+    for (i = 0; i < n; i++) {
+        sorted[i] = arr[i];
+    }
+
+    qsort(sorted, n, sizeof(*sorted), compare_ints);
+
+    max_freq = 1;
+    min_freq = n;
+    count = 1;
+
+    for (i = 1; i < n; i++) {
+        if (sorted[i] == sorted[i - 1]) {
+            count++;
+        } else {
+            if (count > max_freq) {
+                max_freq = count;
+            }
+            if (count < min_freq) {
+                min_freq = count;
+            }
+            count = 1;
+        }
+    }
+
+    if (count > max_freq) {
+        max_freq = count;
+    }
+    if (count < min_freq) {
+        min_freq = count;
+    }
+
+    free(sorted);
+
+    *result = (int)(max_freq - min_freq);
+    return 0;
+}
+
+int main(void)
+{
+    int arr[] = {1, 1, 2, 2, 7, 8, 4, 5, 1, 4};
+    size_t n = sizeof(arr) / sizeof(arr[0]);
+    int diff;
+
+    if (frequency_difference(arr, n, &diff) != 0) {
+        fprintf(stderr, "Error computing frequency difference\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Difference between highest and least frequencies: %d\n", diff) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```

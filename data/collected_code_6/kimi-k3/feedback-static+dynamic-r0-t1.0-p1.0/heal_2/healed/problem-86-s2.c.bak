@@ -1,0 +1,52 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <limits.h>
+
+long long centered_hexagonal(int n) {
+    if (n < 1) {
+        return -1;
+    }
+
+    if (n > 2097151) {
+        return -1;
+    }
+
+    long long ll_n = (long long)n;
+    long long ll_n_minus_1 = (long long)(n - 1);
+
+    return ll_n * ll_n * ll_n - ll_n_minus_1 * ll_n_minus_1 * ll_n_minus_1;
+}
+
+int main(void) {
+    char input[32];
+    char *endptr;
+    long val;
+    int n;
+    long long result;
+
+    if (fgets(input, sizeof(input), stdin) == NULL) {
+        return EXIT_FAILURE;
+    }
+
+    errno = 0;
+    val = strtol(input, &endptr, 10);
+
+    if (errno != 0 || endptr == input || (*endptr != '\n' && *endptr != '\0')) {
+        return EXIT_FAILURE;
+    }
+
+    if (val < 1 || val > INT_MAX) {
+        return EXIT_FAILURE;
+    }
+
+    n = (int)val;
+    result = centered_hexagonal(n);
+
+    if (result < 0) {
+        return EXIT_FAILURE;
+    }
+
+    printf("%lld\n", result);
+    return EXIT_SUCCESS;
+}

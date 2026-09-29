@@ -1,0 +1,77 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int size;
+    int *elements;
+} Tuple;
+
+Tuple* create_tuple(int n, const int arr[]) {
+    Tuple *t = malloc(sizeof(Tuple));
+    if (t) {
+        t->size = n;
+        t->elements = malloc(n * sizeof(int));
+        if (t->elements) {
+            for (int i = 0; i < n; ++i) {
+                t->elements[i] = arr[i];
+            }
+        } else {
+            free(t);
+            t = NULL;
+        }
+    }
+    return t;
+}
+
+void free_tuple(Tuple *t) {
+    if (t) {
+        free(t->elements);
+        free(t);
+    }
+}
+
+Tuple* multiply_tuples(const Tuple *a, const Tuple *b) {
+    if (a == NULL || b == NULL || a->size != b->size) {
+        return NULL;
+    }
+
+    Tuple *result = malloc(sizeof(Tuple));
+    if (result) {
+        result->size = a->size;
+        result->elements = malloc(result->size * sizeof(int));
+        if (result->elements) {
+            for (int i = 0; i < result->size; ++i) {
+                result->elements[i] = a->elements[i] * b->elements[i];
+            }
+        } else {
+            free(result);
+            result = NULL;
+        }
+    }
+    return result;
+}
+
+int main() {
+    const int arr1[] = {2, 3, 4};
+    const int arr2[] = {5, 6, 7};
+
+    Tuple *t1 = create_tuple(3, arr1);
+    Tuple *t2 = create_tuple(3, arr2);
+
+    Tuple *result = multiply_tuples(t1, t2);
+
+    if (result) {
+        for (int i = 0; i < result->size; ++i) {
+            printf("%d ", result->elements[i]);
+        }
+        printf("\n");
+    } else {
+        printf("Invalid tuples\n");
+    }
+
+    free_tuple(t1);
+    free_tuple(t2);
+    free_tuple(result);
+
+    return 0;
+}

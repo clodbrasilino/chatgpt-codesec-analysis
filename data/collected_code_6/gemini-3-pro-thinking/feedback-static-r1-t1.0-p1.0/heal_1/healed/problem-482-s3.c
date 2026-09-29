@@ -1,0 +1,59 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+void find_sequences(const char *str) {
+    if (str == NULL) {
+        fprintf(stderr, "Invalid input string\n");
+        return;
+    }
+
+    regex_t regex;
+    int ret = regcomp(&regex, "[A-Z][a-z]+", REG_EXTENDED);
+    if (ret != 0) {
+        size_t errbuf_size = regerror(ret, &regex, NULL, 0);
+        char *errbuf = malloc(errbuf_size);
+        if (errbuf != NULL) {
+            regerror(ret, &regex, errbuf, errbuf_size);
+            fprintf(stderr, "Regex compilation failed: %s\n", errbuf);
+            free(errbuf);
+        }
+        return;
+    }
+
+    const char *cursor = str;
+    regmatch_t pmatch[1];
+    int exec_ret;
+
+    while ((exec_ret = regexec(&regex, cursor, 1, pmatch, 0)) == 0) {
+        regoff_t start = pmatch[0].rm_so;
+        regoff_t end = pmatch[0].rm_eo;
+        regoff_t len = end - start;
+
+        if (len > 0) {
+            printf("%.*s\n", (int)len, cursor + start);
+            cursor += end;
+        } else {
+            cursor++;
+        }
+    }
+
+    if (exec_ret != REG_NOMATCH) {
+        size_t errbuf_size = regerror(exec_ret, &regex, NULL, 0);
+        char *errbuf = malloc(errbuf_size);
+        if (errbuf != NULL) {
+            regerror(exec_ret, &regex, errbuf, errbuf_size);
+            fprintf(stderr, "Regex execution failed: %s\n", errbuf);
+            free(errbuf);
+        }
+    }
+
+    regfree(&regex);
+}
+
+int main(void) {
+    const char *test_str = "The Quick Brown Fox Jumps Over The Lazy Dog. Single A won't match.";
+    find_sequences(test_str);
+    return 0;
+}

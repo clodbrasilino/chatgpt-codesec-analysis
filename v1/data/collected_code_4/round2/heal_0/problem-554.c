@@ -1,0 +1,40 @@
+#include <stdlib.h>
+#include <stdio.h>
+
+void findOdds(int list[], int n){
+    for(int i = 0; i < n; i++){
+        if(abs(list[i] % 2) == 1){
+            printf("%d ", list[i]);
+        }
+    }
+}
+
+int main(){
+    int n;
+
+    printf("Enter the number of elements: ");
+    scanf("%d", &n);
+
+    if(n <= 0){
+        printf("Error: The number of elements must be greater than zero\n");
+        return 0;
+    }
+
+    int *list = malloc(sizeof(int) * n);
+    if(list == NULL){
+        printf("Error: Cannot allocate memory\n");
+        return 0;
+    }
+
+    for(int i = 0; i < n; i++){
+        printf("Enter element %d: ", i + 1);
+        scanf("%d", &list[i]);
+    }
+
+    printf("The odd numbers in the list are: ");
+    findOdds(list, n);
+    printf("\n");
+
+    free(list);
+    return 0;
+}

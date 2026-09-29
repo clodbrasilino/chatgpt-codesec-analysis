@@ -1,0 +1,96 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char *remove_parentheses(const char *input)
+{
+    size_t len;
+    size_t i;
+    size_t j;
+    int depth;
+    char *result;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    len = strlen(input);
+    result = calloc(len + 1, sizeof(char));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    depth = 0;
+    j = 0;
+    for (i = 0; i < len; i++) {
+        if (input[i] == '(') {
+            depth++;
+        } else if (input[i] == ')') {
+            if (depth > 0) {
+                depth--;
+            }
+        } else if (depth == 0) {
+            result[j] = input[i];
+            j++;
+        }
+    }
+    result[j] = '\0';
+
+    return result;
+}
+
+int main(void)
+{
+    const char *tests[] = {
+        "py(remove)thon",
+        "str(nested (inner))ing",
+        "(leading)alpha"
+    };
+    const char *expected[] = {
+        "python",
+        "string",
+        "alpha"
+    };
+    size_t num_tests;
+    size_t i;
+    char *output;
+    int status;
+
+    num_tests = sizeof(tests) / sizeof(tests[0]);
+    status = EXIT_SUCCESS;
+
+    for (i = 0; i < num_tests; i++) {
+        output = remove_parentheses(tests[i]);
+        if (output == NULL) {
+            fprintf(stderr, "Memory allocation failed\n");
+            return EXIT_FAILURE;
+        }
+        if (strcmp(output, expected[i]) == 0) {
+            printf("test case %zu passed: '%s'\n", i, output);
+        } else {
+            fprintf(stderr, "test case %zu failed: expected '%s', got '%s'\n",
+                    i, expected[i], output);
+            status = EXIT_FAILURE;
+        }
+        free(output);
+        output = NULL;
+    }
+
+    return status;
+}
+```
+
+**Analysis of the weaknesses and how this version avoids them:**
+
+The garbage output in the failure comments (`�X` followed by stray bytes) is the classic signature of reading from freed or uninitialized heap memory. That happens when a buggy version of this program does one of the following:
+
+1. **Use-after-free** — calling `free(output)` *before* the `printf`/`strcmp` that consumes it. The heap allocator reuses the block (often writing internal bookkeeping pointers into it), which prints as garbage like `�X`. In the corrected code, `free(output)` occurs only after all reads of the buffer, and the pointer is set to `NULL` afterward to prevent double-free or dangling use.
+
+2. **Returning a stack buffer** — declaring `char result[len + 1]` inside `remove_parentheses` and returning it. The frame is destroyed on return, leaving the caller with a dangling pointer. Here the buffer is heap-allocated with `calloc`, so it survives the function's return and ownership is transferred to the caller.
+
+3. **Missing null terminator on uninitialized memory** — using `malloc` without writing `'\0'` at the end lets `strcmp`/`printf` run past the copied characters into indeterminate bytes. This version uses `calloc` (zero-initialized) *and* explicitly writes `result[j] = '\0'`, a belt-and-suspenders guarantee of termination.
+
+4. **Allocation failure unchecked** — `calloc`'s return is checked in the function and the caller checks for `NULL` before dereferencing, avoiding undefined behavior on OOM.
+
+The parenthesis logic itself (depth counter handling nested parentheses, ignoring unmatched `)` at depth 0) is correct and passes all three test cases, including the nested case `"str(nested (inner))ing"` → `"string"`.

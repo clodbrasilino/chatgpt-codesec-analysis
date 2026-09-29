@@ -1,0 +1,66 @@
+#include <stdio.h>
+#include <limits.h>
+
+unsigned int countSetBitsFrom1ToN(unsigned int n) {
+    unsigned int totalSetBits = 0;
+    unsigned int bitPosition = 1;
+    
+    while (bitPosition <= n && bitPosition <= (UINT_MAX >> 1)) {
+        unsigned int totalPairs = (n + 1) / (bitPosition * 2);
+        unsigned int remainder = (n + 1) % (bitPosition * 2);
+        
+        totalSetBits += totalPairs * bitPosition;
+        
+        if (remainder > bitPosition) {
+            totalSetBits += remainder - bitPosition;
+        }
+        
+        if (bitPosition > (UINT_MAX >> 1)) {
+            break;
+        }
+        bitPosition <<= 1;
+    }
+    
+    if (bitPosition <= n && bitPosition > 0) {
+        if (bitPosition > UINT_MAX / 2) {
+            unsigned int totalPairs = (n + 1) / 2;
+            totalSetBits += totalPairs;
+            
+            unsigned int remainder = (n + 1) % 2;
+            if (remainder > 1) {
+                totalSetBits += remainder - 1;
+            }
+        } else {
+            unsigned int totalPairs = (n + 1) / (bitPosition * 2);
+            unsigned int remainder = (n + 1) % (bitPosition * 2);
+            
+            totalSetBits += totalPairs * bitPosition;
+            
+            if (remainder > bitPosition) {
+                totalSetBits += remainder - bitPosition;
+            }
+        }
+    }
+    
+    return totalSetBits;
+}
+
+int main(void) {
+    unsigned int n;
+    
+    printf("Enter a positive integer: ");
+    if (scanf("%u", &n) != 1) {
+        printf("Invalid input\n");
+        return 1;
+    }
+    
+    if (n == 0) {
+        printf("Total set bits from 1 to 0: 0\n");
+        return 0;
+    }
+    
+    unsigned int result = countSetBitsFrom1ToN(n);
+    printf("Total set bits from 1 to %u: %u\n", n, result);
+    
+    return 0;
+}

@@ -1,0 +1,67 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+int convert_date_format(const char *input, char *output, size_t output_size) {
+    regex_t regex;
+    regmatch_t matches[4];
+    const char *pattern = "^([0-9]{4})-([0-9]{2})-([0-9]{2})$";
+    
+    if (input == NULL || output == NULL) {
+        return -1;
+    }
+    
+    if (regcomp(&regex, pattern, REG_EXTENDED) != 0) {
+        return -1;
+    }
+    
+    if (regexec(&regex, input, 4, matches, 0) != 0) {
+        regfree(&regex);
+        return -1;
+    }
+    
+    size_t day_len = (size_t)(matches[3].rm_eo - matches[3].rm_so);
+    size_t month_len = (size_t)(matches[2].rm_eo - matches[2].rm_so);
+    size_t year_len = (size_t)(matches[1].rm_eo - matches[1].rm_so);
+    
+    size_t required_size = day_len + month_len + year_len + 3;
+    
+    if (output_size < required_size) {
+        regfree(&regex);
+        return -1;
+    }
+    
+    snprintf(output, output_size, "%.*s-%.*s-%.*s",
+             (int)day_len, input + matches[3].rm_so,
+             (int)month_len, input + matches[2].rm_so,
+             (int)year_len, input + matches[1].rm_so);
+    
+    regfree(&regex);
+    return 0;
+}
+
+int main(void) {
+    /* Possible weaknesses found:
+     *  The scope of the variable 'input_date' can be reduced. [variableScope]
+     */
+    const char *input_date = "2024-03-15";
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char output_date[11] = {0};
+    
+    if (sizeof(output_date) >= 11) {
+        if (convert_date_format(input_date, output_date, sizeof(output_date)) == 0) {
+            printf("%s\n", output_date);
+        } else {
+            fprintf(stderr, "Invalid date format\n");
+            return EXIT_FAILURE;
+        }
+    } else {
+        fprintf(stderr, "Output buffer too small\n");
+        return EXIT_FAILURE;
+    }
+    
+    return EXIT_SUCCESS;
+}

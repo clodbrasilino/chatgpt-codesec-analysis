@@ -1,0 +1,38 @@
+```C
+#include <stdio.h>
+#include <string.h>
+
+int isPalindrome(int num) {
+    char str[20];
+    sprintf(str, "%d", num);
+    int len = strlen(str);
+    for(int i = 0; i < len / 2; i++) {
+        if(str[i] != str[len - 1 - i]) {
+            return 0;
+        }
+    }
+    return 1;
+}
+
+int previousPalindrome(int num) {
+    for(int i = num - 1; i >= 0; i--) {
+        if(isPalindrome(i)) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+int main() {
+    int num;
+    printf("Enter a number: ");
+    scanf("%d", &num);
+    int result = previousPalindrome(num);
+    if(result != -1) {
+        printf("The previous palindrome is: %d\n", result);
+    } else {
+        printf("No palindrome found.\n");
+    }
+    return 0;
+}
+```

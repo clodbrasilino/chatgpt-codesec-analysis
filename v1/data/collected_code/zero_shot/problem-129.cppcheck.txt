@@ -1,0 +1,6 @@
+collected_code/problem-129-0.c:30:37: error: Cannot determine that 'square[i][j]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+            printf("%3d ", square[i][j]);
+                                    ^
+collected_code/problem-129-0.c:39:18: error: Cannot determine that 'n' is initialized [premium-bughuntingUninit]
+    scanf("%d", &n);
+                 ^

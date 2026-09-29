@@ -1,0 +1,47 @@
+{
+  "task_id": 164,
+  "text": "Write a C function to check whether the sum of divisors are same or not.",
+  "fn_candidates": [
+    "areEquivalent",
+    "Areequivalent",
+    "areEquivalent",
+    "areEquivalent"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "areEquivalent",
+      "args": [
+        36,
+        57
+      ],
+      "expected": false,
+      "assert_src": "assert areEquivalent(36,57) == False"
+    },
+    {
+      "fn_name": "areEquivalent",
+      "args": [
+        2,
+        4
+      ],
+      "expected": false,
+      "assert_src": "assert areEquivalent(2,4) == False"
+    },
+    {
+      "fn_name": "areEquivalent",
+      "args": [
+        23,
+        47
+      ],
+      "expected": true,
+      "assert_src": "assert areEquivalent(23,47) == True"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "bool",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

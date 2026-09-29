@@ -1,0 +1,26 @@
+Here is a simple C program that calculates the area of the largest triangle that can be inscribed in an ellipse. This program assumes that the triangle is an equilateral triangle. 
+
+```c
+#include <stdio.h>
+#include <math.h>
+
+#define PI 3.14159265
+
+double findLargestTriangle(double a, double b) {
+    double area = (3 * sqrt(3) / 4) * (a * b);
+    return area;
+}
+
+int main() {
+    double a, b;
+    printf("Enter the semi-major axis length: ");
+    scanf("%lf", &a);
+    printf("Enter the semi-minor axis length: ");
+    scanf("%lf", &b);
+    double area = findLargestTriangle(a, b);
+    printf("The area of the largest inscribed triangle is: %.2lf\n", area);
+    return 0;
+}
+```
+
+This program first asks the user to input the lengths of the semi-major and semi-minor axes of the ellipse. It then calculates the area of the largest inscribed triangle using the formula `(3 * sqrt(3) / 4) * (a * b)`, where `a` and `b` are the lengths of the semi-major and semi-minor axes respectively. The area is then printed to the console.

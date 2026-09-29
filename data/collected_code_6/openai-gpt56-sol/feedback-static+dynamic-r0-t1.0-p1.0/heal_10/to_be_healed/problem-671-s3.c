@@ -1,0 +1,56 @@
+#include <errno.h>
+#include <inttypes.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+ /* Possible weaknesses found:
+  *  test case 2 failed: expected 15, got 31
+  */
+
+static uint32_t set_rightmost_unset_bit(uint32_t value)
+{
+    /* Possible weaknesses found:
+     *  Assignment 'unset_bits=~value', assigned value is greater than 0
+     */
+    uint32_t unset_bits = ~value;
+
+    /* Possible weaknesses found:
+     *  Condition 'unset_bits==0' is always false
+     *  Condition 'unset_bits==0' is always false [knownConditionTrueFalse]
+     */
+    if (unset_bits == 0) {
+        return value;
+    }
+
+    return value | (unset_bits & (UINT32_C(0) - unset_bits));
+}
+
+int main(int argc, char *argv[])
+{
+    char *end = NULL;
+    uintmax_t input;
+
+    if (argc != 2) {
+        fprintf(stderr, "Usage: %s <unsigned-32-bit-integer>\n", argv[0]);
+        return EXIT_FAILURE;
+    }
+
+    if (argv[1][0] == '-') {
+        fprintf(stderr, "Invalid 32-bit unsigned integer: %s\n", argv[1]);
+        return EXIT_FAILURE;
+    }
+
+    errno = 0;
+    input = strtoumax(argv[1], &end, 10);
+
+    if (errno == ERANGE || end == argv[1] || *end != '\0' ||
+        input > UINT32_MAX) {
+        fprintf(stderr, "Invalid 32-bit unsigned integer: %s\n", argv[1]);
+        return EXIT_FAILURE;
+    }
+
+    printf("%" PRIu32 "\n",
+           set_rightmost_unset_bit((uint32_t)input));
+
+    return EXIT_SUCCESS;
+}

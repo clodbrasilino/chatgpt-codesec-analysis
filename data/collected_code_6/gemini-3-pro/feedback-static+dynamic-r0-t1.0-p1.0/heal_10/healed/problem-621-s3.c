@@ -1,0 +1,143 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+char* increment_numeric_values(const char* input, int k) {
+    if (!input) return NULL;
+    size_t cap = 10000;
+    char* result = (char*)malloc(cap);
+    if (!result) return NULL;
+    
+    size_t result_len = 0;
+    result[result_len++] = '[';
+    result[result_len] = '\0';
+    
+    const char* p = input;
+    int first = 1;
+    
+    while (*p) {
+        while (*p && isspace((unsigned char)*p)) p++;
+        if (!*p) break;
+        
+        const char* start = p;
+        while (*p && !isspace((unsigned char)*p)) p++;
+        
+        int is_num = 1;
+        for (const char* q = start; q < p; q++) {
+            if (!isdigit((unsigned char)*q)) {
+                is_num = 0;
+                break;
+            }
+        }
+        
+        if (!first) {
+            if (result_len + 5 >= cap) {
+                cap = (cap * 2) + 5;
+                char* tmp = (char*)realloc(result, cap);
+                if (!tmp) {
+                    free(result);
+                    return NULL;
+                }
+                result = tmp;
+            }
+            result[result_len++] = ',';
+            result[result_len++] = ' ';
+            result[result_len] = '\0';
+        } else {
+            first = 0;
+        }
+        
+        if (is_num) {
+            long long num = 0;
+            for (const char* q = start; q < p; q++) {
+                num = num * 10 + (*q - '0');
+            }
+            
+            if (result_len + 128 >= cap) {
+                cap = cap * 2 + 128;
+                char* tmp = (char*)realloc(result, cap);
+                if (!tmp) {
+                    free(result);
+                    return NULL;
+                }
+                result = tmp;
+            }
+            
+            int written = snprintf(result + result_len, cap - result_len, "'%lld'", num + k);
+            if (written > 0 && (size_t)written < cap - result_len) {
+                result_len += written;
+            }
+        } else {
+            size_t word_len = p - start;
+            if (result_len + word_len + 5 >= cap) {
+                cap = cap * 2 + word_len + 5;
+                char* tmp = (char*)realloc(result, cap);
+                if (!tmp) {
+                    free(result);
+                    return NULL;
+                }
+                result = tmp;
+            }
+            result[result_len++] = '\'';
+            for (size_t i = 0; i < word_len; i++) {
+                result[result_len++] = start[i];
+            }
+            result[result_len++] = '\'';
+            result[result_len] = '\0';
+        }
+    }
+    
+    if (result_len + 3 >= cap) {
+        cap += 3;
+        char* tmp = (char*)realloc(result, cap);
+        if (!tmp) {
+            free(result);
+            return NULL;
+        }
+        result = tmp;
+    }
+    result[result_len++] = ']';
+    result[result_len] = '\0';
+    
+    return result;
+}
+
+int main(void) {
+    size_t buf_size = 100000;
+    char* buffer = (char*)malloc(buf_size);
+    if (!buffer) return 1;
+    
+    size_t i = 0;
+    int ch;
+    while ((ch = getchar()) != EOF && ch != '\n') {
+        if (i + 1 >= buf_size) {
+            buf_size *= 2;
+            char* tmp = (char*)realloc(buffer, buf_size);
+            if (!tmp) {
+                free(buffer);
+                return 1;
+            }
+            buffer = tmp;
+        }
+        buffer[i++] = (char)ch;
+    }
+    buffer[i] = '\0';
+    if (i > 0 && buffer[i-1] == '\r') {
+        buffer[i-1] = '\0';
+    }
+
+    int k = 0;
+    if (scanf("%d", &k) != 1) {
+        k = 0;
+    }
+
+    char* new_str = increment_numeric_values(buffer, k);
+    if (new_str) {
+        printf("%s\n", new_str);
+        free(new_str);
+    }
+
+    free(buffer);
+    return 0;
+}

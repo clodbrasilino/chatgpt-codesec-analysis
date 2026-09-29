@@ -1,0 +1,11 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_10/healed/problem-906-s2.c: In function 'extract_date':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_10/healed/problem-906-s2.c:25:31: error: 'INT_MAX' undeclared (first use in this function)
+   25 |             if (y > 0 && y <= INT_MAX) *year = y;
+      |                               ^~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_10/healed/problem-906-s2.c:5:1: note: 'INT_MAX' is defined in header '<limits.h>'; this is probably fixable by adding '#include <limits.h>'
+    4 | #include <string.h>
+  +++ |+#include <limits.h>
+    5 | 
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_10/healed/problem-906-s2.c:25:31: note: each undeclared identifier is reported only once for each function it appears in
+   25 |             if (y > 0 && y <= INT_MAX) *year = y;
+      |                               ^~~~~~~

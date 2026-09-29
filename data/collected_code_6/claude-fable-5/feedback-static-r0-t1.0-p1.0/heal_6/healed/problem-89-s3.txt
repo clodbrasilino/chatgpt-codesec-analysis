@@ -1,0 +1,92 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+#include <errno.h>
+#include <string.h>
+
+static int closest_smaller(int n, int *result)
+{
+    if (result == NULL) {
+        return -1;
+    }
+    if (n == INT_MIN) {
+        return -1;
+    }
+    *result = n - 1;
+    return 0;
+}
+
+static int parse_int(const char *str, int *value)
+{
+    char *endptr = NULL;
+    long parsed;
+
+    if (str == NULL || value == NULL) {
+        return -1;
+    }
+
+    errno = 0;
+    parsed = strtol(str, &endptr, 10);
+
+    if (errno == ERANGE) {
+        return -1;
+    }
+    if (endptr == str) {
+        return -1;
+    }
+    if (*endptr != '\0' && *endptr != '\n') {
+        return -1;
+    }
+    if (parsed > INT_MAX || parsed < INT_MIN) {
+        return -1;
+    }
+
+    *value = (int)parsed;
+    return 0;
+}
+
+int main(void)
+{
+    char buffer[64];
+    int n = 0;
+    int result = 0;
+
+    memset(buffer, 0, sizeof(buffer));
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error: failed to read input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    if (parse_int(buffer, &n) != 0) {
+        fprintf(stderr, "Error: invalid integer input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (closest_smaller(n, &result) != 0) {
+        fprintf(stderr, "Error: no smaller integer representable\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("%d\n", result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The original code was already well-hardened against the flagged weakness (CWE-119/CWE-120, buffer overflow via statically-sized array). The rewrite preserves all mitigations because they are correct as-is:
+
+- **Bounded read:** `fgets(buffer, sizeof(buffer), stdin)` limits input to the buffer size, preventing overflow — this directly addresses the Flawfinder warning about the fixed-size `char buffer[64]`.
+- **Guaranteed termination:** `buffer[sizeof(buffer) - 1] = '\0'` is defensive (technically redundant since `fgets` always null-terminates on success, but harmless).
+- **Safe integer parsing:** `strtol` is used instead of `atoi`/`sscanf`, with full error handling — `errno == ERANGE` for overflow, `endptr == str` for no digits, trailing-character validation, and explicit range checks against `INT_MAX`/`INT_MIN` before the narrowing cast.
+- **`INT_MIN` edge case:** `closest_smaller` correctly rejects `INT_MIN`, avoiding signed integer underflow (undefined behavior) from `n - 1`.
+- **Robust I/O:** return values of `fgets` and `printf` are checked, and errors go to `stderr` with proper exit codes.
+
+No functional changes were required; the code follows the identified mitigation strategy (bounds-checked, length-limited input) already.

@@ -1,0 +1,155 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+#define MAX_WORD_LEN 4096
+
+static size_t bounded_strlen(const char *s, size_t max_len)
+{
+    size_t len = 0;
+
+    while (len < max_len && s[len] != '\0') {
+        len++;
+    }
+    return len;
+}
+
+static char *duplicate_word(const char *word, size_t len)
+{
+    char *copy;
+
+    if (word == NULL || len >= MAX_WORD_LEN) {
+        return NULL;
+    }
+
+    copy = malloc(len + 1);
+    if (copy == NULL) {
+        return NULL;
+    }
+
+    memcpy(copy, word, len);
+    copy[len] = '\0';
+
+    return copy;
+}
+
+char **shortlist_words(const char **words, size_t count, size_t n, size_t *result_count)
+{
+    char **result = NULL;
+    size_t found = 0;
+    size_t i;
+
+    if (words == NULL || result_count == NULL) {
+        return NULL;
+    }
+
+    *result_count = 0;
+
+    for (i = 0; i < count; i++) {
+        if (words[i] != NULL) {
+            size_t len = bounded_strlen(words[i], MAX_WORD_LEN);
+            if (len < MAX_WORD_LEN && len > n) {
+                found++;
+            }
+        }
+    }
+
+    if (found == 0) {
+        return NULL;
+    }
+
+    if (found > SIZE_MAX / sizeof(char *)) {
+        return NULL;
+    }
+
+    result = calloc(found, sizeof(char *));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    for (i = 0; i < count && *result_count < found; i++) {
+        if (words[i] != NULL) {
+            size_t len = bounded_strlen(words[i], MAX_WORD_LEN);
+            if (len < MAX_WORD_LEN && len > n) {
+                char *copy = duplicate_word(words[i], len);
+                if (copy == NULL) {
+                    size_t j;
+                    for (j = 0; j < *result_count; j++) {
+                        free(result[j]);
+                    }
+                    free(result);
+                    *result_count = 0;
+                    return NULL;
+                }
+                result[*result_count] = copy;
+                (*result_count)++;
+            }
+        }
+    }
+
+    return result;
+}
+
+void free_shortlist(char **list, size_t count)
+{
+    size_t i;
+
+    if (list == NULL) {
+        return;
+    }
+
+    for (i = 0; i < count; i++) {
+        free(list[i]);
+    }
+    free(list);
+}
+
+int main(void)
+{
+    const char *words[] = { "apple", "cat", "banana", "dog", "elephant", "hi" };
+    size_t count = sizeof(words) / sizeof(words[0]);
+    size_t n = 3;
+    size_t result_count = 0;
+    char **result;
+    size_t i;
+
+    result = shortlist_words(words, count, n, &result_count);
+
+    if (result == NULL) {
+        if (printf("No words longer than %zu found.\n", n) < 0) {
+            return EXIT_FAILURE;
+        }
+        return EXIT_SUCCESS;
+    }
+
+    if (printf("Words longer than %zu:\n", n) < 0) {
+        free_shortlist(result, result_count);
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i < result_count; i++) {
+        if (printf("%s\n", result[i]) < 0) {
+            free_shortlist(result, result_count);
+            return EXIT_FAILURE;
+        }
+    }
+
+    free_shortlist(result, result_count);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the identified weakness and its fix:**
+
+The Flawfinder warning flagged the `memcpy` call as a potential CWE-120 (buffer overflow) risk. In the original code this was already a false positive, but the rewrite hardens it further:
+
+1. **Bounded copy guarantee** — The copy logic is isolated in `duplicate_word()`, which re-validates its inputs (`word != NULL`, `len < MAX_WORD_LEN`) independently of the caller. The destination buffer is allocated as `malloc(len + 1)`, so exactly `len` bytes are copied into a buffer that can hold `len + 1` bytes. The destination can therefore always hold the source data by construction.
+
+2. **No unbounded string functions** — Length is computed via `bounded_strlen()` (capped at `MAX_WORD_LEN`) rather than `strlen()`, so a non-terminated input string cannot cause an over-read, and the copy length can never exceed the cap.
+
+3. **Explicit NUL termination** — `copy[len] = '\0'` is written into the reserved extra byte, guaranteeing the result is a valid C string regardless of source termination.
+
+4. **Preserved integrity checks** — The overflow guard `found > SIZE_MAX / sizeof(char *)` before `calloc`, full cleanup on partial allocation failure, resetting `*result_count` on error, and checked `printf` return values are all retained.

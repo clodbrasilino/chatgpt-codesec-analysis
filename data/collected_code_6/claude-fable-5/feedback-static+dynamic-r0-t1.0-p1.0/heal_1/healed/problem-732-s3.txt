@@ -1,0 +1,77 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_STR_LEN 4096
+
+void replace_with_colon(char *str, size_t max_len)
+{
+    size_t i;
+    size_t len;
+
+    if (str == NULL) {
+        return;
+    }
+
+    len = strnlen(str, max_len);
+    for (i = 0; i < len; i++) {
+        if (str[i] == ' ' || str[i] == ',' || str[i] == '.') {
+            str[i] = ':';
+        }
+    }
+}
+
+int main(void)
+{
+    const char original[] = "Hello, world. This is a test.";
+    char *buffer;
+    size_t len;
+    size_t size;
+
+    len = strnlen(original, MAX_STR_LEN);
+    if (len >= MAX_STR_LEN) {
+        fprintf(stderr, "Input string too long\n");
+        return EXIT_FAILURE;
+    }
+
+    size = len + 1;
+    buffer = malloc(size);
+    if (buffer == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    memcpy(buffer, original, len);
+    buffer[len] = '\0';
+
+    replace_with_colon(buffer, size);
+
+    if (printf("Original: %s\n", original) < 0) {
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Modified: %s\n", buffer) < 0) {
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+
+    free(buffer);
+    buffer = NULL;
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Key changes made to address the identified weaknesses:**
+
+1. **CWE-126 (`strlen` over-read):** Replaced both `strlen` calls with `strnlen`, which bounds the read to `MAX_STR_LEN`. This guarantees no over-read occurs even if a non-terminated string were passed. The `replace_with_colon` function now takes an explicit buffer size parameter so it never scans past the caller's allocation.
+
+2. **CWE-120 (`memcpy` overflow):** The copy is now performed with a length (`len`) that was validated against `MAX_STR_LEN` *before* allocation, and the destination buffer is allocated as exactly `len + 1`. The null terminator is written explicitly (`buffer[len] = '\0'`), so the destination is guaranteed to hold the source data and be properly terminated.
+
+3. **Defensive validation:** If the source string reaches the length bound (indicating truncation or a missing terminator), the program fails safely with an error rather than proceeding with potentially corrupt data.
+
+4. **Preserved good practices from the original:** `NULL` check on `malloc`, checked `printf` return values, `free` followed by pointer nulling, and use of `EXIT_SUCCESS`/`EXIT_FAILURE`.
+
+Note that `strnlen` is POSIX (and C23); if strict C89/C99 portability is required, a small local bounded-length helper can replace it.

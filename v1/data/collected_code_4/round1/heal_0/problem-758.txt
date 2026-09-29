@@ -1,0 +1,39 @@
+```c
+#include <stdio.h>
+#include <string.h>
+
+typedef struct {
+    int list[10];
+    int size;
+} List;
+
+int countUniqueLists(List *array, int arraySize) {
+    int count = 0;
+    for (int i = 0; i < arraySize; i++) {
+        int isUnique = 1;
+        for (int j = 0; j < i; j++) {
+            if (array[i].size == array[j].size) {
+                if(memcmp(array[i].list, array[j].list, sizeof(int)*array[i].size) == 0) {
+                    isUnique = 0;
+                    break;
+                }
+            }
+        }
+        if (isUnique == 1) {
+            count++;
+        }
+    }
+    return count;
+}
+
+int main() {
+    List lists[3] = {
+        { .list = {1, 2, 3, 4, 5}, .size = 5 },
+        { .list = {2, 3, 4, 5, 6}, .size = 5 },
+        { .list = {1, 2, 3, 4, 5}, .size = 5 },
+    };
+
+    printf("Number of unique lists: %d\n", countUniqueLists(lists, 3));
+    return 0;
+}
+```

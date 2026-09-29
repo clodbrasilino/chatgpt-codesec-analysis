@@ -1,0 +1,63 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <string.h>
+#include <stdlib.h>
+
+bool are_characters_unique(const char *str) {
+    if (str == NULL) {
+        return true;
+    }
+
+    size_t len = strlen(str);
+    if (len > 256) {
+        return false;
+    }
+
+    bool *char_set = (bool *)calloc(256, sizeof(bool));
+    if (char_set == NULL) {
+        return false;
+    }
+
+    for (size_t i = 0; i < len; i++) {
+        unsigned char c = (unsigned char)str[i];
+        if (char_set[c]) {
+            free(char_set);
+            return false;
+        }
+        char_set[c] = true;
+    }
+
+    free(char_set);
+    return true;
+}
+
+int main(void) {
+    const char *test1 = "abcdef";
+    const char *test2 = "hello";
+    const char *test3 = NULL;
+
+    if (are_characters_unique(test1)) {
+        printf("%s: Unique\n", test1);
+    } else {
+        printf("%s: Not Unique\n", test1);
+    }
+
+    if (are_characters_unique(test2)) {
+        printf("%s: Unique\n", test2);
+    } else {
+        printf("%s: Not Unique\n", test2);
+    }
+
+    /* Possible weaknesses found:
+     *  Calling function 'are_characters_unique' returns 1
+     *  Condition 'are_characters_unique(test3)' is always true [knownConditionTrueFalse]
+     *  Condition 'are_characters_unique(test3)' is always true
+     */
+    if (are_characters_unique(test3)) {
+        printf("NULL: Unique\n");
+    } else {
+        printf("NULL: Not Unique\n");
+    }
+
+    return 0;
+}

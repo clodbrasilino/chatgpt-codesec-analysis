@@ -1,0 +1,29 @@
+#include <stdio.h>
+#include <string.h>
+#include <regex.h>
+
+void replace_characters(char *str) {
+    regex_t regex;
+    char pattern[] = "[ ,.]+";
+    const char replacement[] = ":";
+    if (regcomp(&regex, pattern, REG_EXTENDED) == 0) {
+        regmatch_t pmatch[1];
+        while (regexec(&regex, str, 1, pmatch, 0) != REG_NOMATCH) {
+            int len = 0, rep_len = strlen(replacement);
+            for (int i = 0; i <= pmatch[0].rm_eo - pmatch[0].rm_so; i++) {
+                str[pmatch[0].rm_so + len] = i < rep_len ? replacement[i] : replacement[rep_len-1];
+                len++;
+            }
+            memmove(str + pmatch[0].rm_so + len, str + pmatch[0].rm_eo, strlen(str) + 1 - (pmatch[0].rm_so));
+        }
+        regfree(&regex);
+    }
+}
+
+int main() {
+    char input[] = "This is a test, to check. the function works properly with spaces, commas, and dots.";
+    printf("Original: %s\n", input);
+    replace_characters(input);
+    printf("Modified: %s\n", input);
+    return 0;
+}

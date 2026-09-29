@@ -1,0 +1,65 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int value;
+    int count;
+} ItemCount;
+
+int compare(const void *a, const void *b) {
+    return ((ItemCount *)b)->count - ((ItemCount *)a)->count;
+}
+
+int* findMaxOccurrence(const int *list, int size) {
+    if (size <= 0) return NULL;
+    
+    ItemCount *counts = (ItemCount*)calloc(size, sizeof(ItemCount));
+    if (counts == NULL) return NULL;
+    int distinct = 0;
+    
+    for (int i = 0; i < size; ++i) {
+        int found = 0;
+        for (int j = 0; j < distinct; ++j) {
+            if (counts[j].value == list[i]) {
+                counts[j].count++;
+                found = 1;
+                break;
+            }
+        }
+        if (!found) {
+            counts[distinct].value = list[i];
+            counts[distinct].count = 1;
+            distinct++;
+        }
+    }
+    
+    qsort(counts, distinct, sizeof(ItemCount), compare);
+    
+    int *result = (int*)malloc(2 * sizeof(int));
+    if (result == NULL) {
+        free(counts);
+        return NULL;
+    }
+    result[0] = counts[0].value;
+    result[1] = counts[0].count;
+    
+    free(counts);
+    return result;
+}
+
+int main() {
+    int arr[] = {1, 3, 1, 2, 3, 3, 4};
+    int size = sizeof(arr) / sizeof(arr[0]);
+    
+    int *result = findMaxOccurrence(arr, size);
+    if (result != NULL) {
+        printf("The item with the maximum occurrences is %d, with %d occurrences.\n", result[0], result[1]);
+        free(result);
+    } else {
+        printf("Failed to find an item with maximum occurrences.\n");
+    }
+    
+    return 0;
+}
+```

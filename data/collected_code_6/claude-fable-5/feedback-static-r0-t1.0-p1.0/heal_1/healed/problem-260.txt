@@ -1,0 +1,92 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+#include <errno.h>
+
+static unsigned long long addmod(unsigned long long a, unsigned long long b,
+                                 unsigned long long m)
+{
+    a %= m;
+    b %= m;
+    if (a >= m - b) {
+        return a - (m - b);
+    }
+    return a + b;
+}
+
+static unsigned long long mulmod(unsigned long long a, unsigned long long b,
+                                 unsigned long long m)
+{
+    unsigned long long r = 0;
+
+    a %= m;
+    b %= m;
+
+    while (b > 0) {
+        if (b & 1ULL) {
+            r = addmod(r, a, m);
+        }
+        a = addmod(a, a, m);
+        b >>= 1;
+    }
+
+    return r;
+}
+
+static int parse_ull(const char *s, unsigned long long *out)
+{
+    char *end = NULL;
+    unsigned long long v;
+
+    errno = 0;
+    v = strtoull(s, &end, 10);
+
+    if (errno == ERANGE) {
+        return -1;
+    }
+    if (end == s || *end != '\0') {
+        return -1;
+    }
+
+    *out = v;
+    return 0;
+}
+
+int main(int argc, char *argv[])
+{
+    unsigned long long a, b, m;
+
+    if (argc != 4) {
+        fprintf(stderr, "usage: %s <a> <b> <m>\n", argv[0]);
+        return EXIT_FAILURE;
+    }
+
+    if (parse_ull(argv[1], &a) != 0 ||
+        parse_ull(argv[2], &b) != 0 ||
+        parse_ull(argv[3], &m) != 0) {
+        fprintf(stderr, "error: invalid unsigned integer argument\n");
+        return EXIT_FAILURE;
+    }
+
+    if (m == 0) {
+        fprintf(stderr, "error: modulus must be non-zero\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("(%llu + %llu) mod %llu = %llu\n", a, b, m, addmod(a, b, m));
+    printf("(%llu * %llu) mod %llu = %llu\n", a, b, m, mulmod(a, b, m));
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the original code and fixes applied:**
+
+1. **Unmatched braces / truncated `mulmod`**: The original `mulmod` was incomplete — it opened a brace, declared `r`, reduced `a % m`, and then ended. The static analyzer correctly flagged the missing `}` and missing statements. The rewrite completes it using the Russian peasant (double-and-add) algorithm, which computes `(a * b) % m` without ever overflowing `unsigned long long`, precisely because it delegates all additions to the overflow-safe `addmod`.
+
+2. **Latent bug in `addmod`**: The original `addmod` assumed `a < m` and `b < m` on entry. If either argument were `>= m`, the expression `m - b` could underflow logically and the comparison would produce wrong results. The rewrite normalizes both operands with `%= m` before the overflow-safe comparison, making the function safe for arbitrary inputs. Note the comparison `a >= m - b` is the correct idiom: it detects whether `a + b` would reach `m` without actually performing an addition that could wrap around `ULLONG_MAX`.
+
+3. **Missing `main` and input validation**: A `main` was added that parses three command-line arguments via `strtoull`, checking `errno == ERANGE` for overflow, rejecting trailing garbage (`*end != '\0'`) and empty input (`end == s`), and explicitly rejecting a zero modulus, which would otherwise cause a division-by-zero fault in the `%` operations.
+
+4. **Includes**: `<errno.h>` and `<stdlib.h>` are now actually used (for `errno`/`ERANGE` and `strtoull`/exit codes); `<limits.h>` is retained as it documents the reliance on `unsigned long long` range semantics.

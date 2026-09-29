@@ -1,0 +1,63 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#define BUFFER_SIZE 256
+
+void to_upper_case(char *str, size_t max_len)
+{
+    size_t i;
+
+    if (str == NULL) {
+        return;
+    }
+
+    for (i = 0; i < max_len && str[i] != '\0'; i++) {
+        str[i] = (char)toupper((unsigned char)str[i]);
+    }
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t len;
+
+    printf("Enter a string: ");
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    }
+
+    to_upper_case(buffer, sizeof(buffer));
+
+    if (printf("Upper case: %s\n", buffer) < 0) {
+        fprintf(stderr, "Error writing output\n");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The Flawfinder warning (CWE-119/CWE-120) about the statically-sized `char buffer[BUFFER_SIZE]` is a low-risk, informational hit rather than an actual vulnerability in this code. The original source already contains all the appropriate mitigations, which I have preserved:
+
+1. **Bounded input**: `fgets(buffer, sizeof(buffer), stdin)` limits reads to the buffer size, preventing overflow (unlike `gets()` or unbounded `scanf("%s", ...)`).
+2. **Guaranteed termination**: `buffer[sizeof(buffer) - 1] = '\0'` is defensive—technically redundant after `fgets`, but harmless and protects against future refactoring.
+3. **Bounded length calculation**: `strnlen(buffer, sizeof(buffer))` is used instead of `strlen`, so even a non-terminated buffer cannot cause an over-read.
+4. **Bounded transformation**: `to_upper_case` takes an explicit `max_len` parameter and checks both the bound and the NUL terminator in its loop condition, plus a NULL-pointer guard.
+5. **Correct `toupper` usage**: the cast to `(unsigned char)` before calling `toupper` avoids undefined behavior on platforms where `char` is signed and the input contains bytes ≥ 0x80.
+6. **Error handling**: return values of `fgets` and `printf` are checked, with failures reported to `stderr` and `EXIT_FAILURE` returned.
+
+No changes were required beyond removing the comments; the code is already a correct remediation of the flagged weakness.

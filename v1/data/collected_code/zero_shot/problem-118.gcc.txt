@@ -1,0 +1,38 @@
+collected_code/problem-118-0.c: In function 'createNode':
+collected_code/problem-118-0.c:13:19: warning: dereference of possibly-NULL 'newNode' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   13 |     newNode->data = value;
+      |     ~~~~~~~~~~~~~~^~~~~~~
+  'stringToList': events 1-4
+    |
+    |   19 | Node* stringToList(char* str)
+    |      |       ^~~~~~~~~~~~
+    |      |       |
+    |      |       (1) entry to 'stringToList'
+    |   20 | {
+    |   21 |     if (str == NULL)
+    |      |        ~
+    |      |        |
+    |      |        (2) following 'false' branch (when 'str' is non-NULL)...
+    |......
+    |   24 |     Node* head = createNode(str[0]);
+    |      |                  ~~~~~~~~~~~~~~~~~~
+    |      |                  |             |
+    |      |                  |             (3) ...to here
+    |      |                  (4) calling 'createNode' from 'stringToList'
+    |
+    +--> 'createNode': events 5-7
+           |
+           |   10 | Node* createNode(char value)
+           |      |       ^~~~~~~~~~
+           |      |       |
+           |      |       (5) entry to 'createNode'
+           |   11 | {
+           |   12 |     Node* newNode = (Node*)malloc(sizeof(Node));
+           |      |                            ~~~~~~~~~~~~~~~~~~~~
+           |      |                            |
+           |      |                            (6) this call could return NULL
+           |   13 |     newNode->data = value;
+           |      |     ~~~~~~~~~~~~~~~~~~~~~
+           |      |                   |
+           |      |                   (7) 'newNode' could be NULL: unchecked value from (6)
+           |

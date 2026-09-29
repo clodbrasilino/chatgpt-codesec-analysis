@@ -1,0 +1,18 @@
+collected_code/problem-880-0.c:18:24: error: Cannot determine that 'a' is initialized [premium-bughuntingUninit]
+    scanf("%f %f %f", &a, &b, &c);
+                       ^
+collected_code/problem-880-0.c:18:28: error: Cannot determine that 'b' is initialized [premium-bughuntingUninit]
+    scanf("%f %f %f", &a, &b, &c);
+                           ^
+collected_code/problem-880-0.c:18:32: error: Cannot determine that 'c' is initialized [premium-bughuntingUninit]
+    scanf("%f %f %f", &a, &b, &c);
+                               ^
+collected_code/problem-880-0.c:20:36: error: Cannot determine that 'a' is initialized [premium-bughuntingUninit]
+    int solutions = countSolutions(a, b, c);
+                                   ^
+collected_code/problem-880-0.c:20:39: error: Cannot determine that 'b' is initialized [premium-bughuntingUninit]
+    int solutions = countSolutions(a, b, c);
+                                      ^
+collected_code/problem-880-0.c:20:42: error: Cannot determine that 'c' is initialized [premium-bughuntingUninit]
+    int solutions = countSolutions(a, b, c);
+                                         ^

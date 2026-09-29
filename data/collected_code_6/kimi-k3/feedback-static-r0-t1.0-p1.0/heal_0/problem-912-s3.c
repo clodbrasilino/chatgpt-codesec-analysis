@@ -1,0 +1,67 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <limits.h>
+
+int lobb_number(int n, int m, unsigned long long *result) {
+    if (result == NULL || n < 0 || m < 0 || m > n) {
+        return -1;
+    }
+    
+    if (n == 0) {
+        *result = (m == 0) ? 1 : 0;
+        return 0;
+    }
+    
+    unsigned long long numerator = 1;
+    unsigned long long denominator = 1;
+    
+    for (int i = 1; i <= m; i++) {
+        if (numerator > ULLONG_MAX / (unsigned long long)(n - m + i)) {
+            return -2;
+        }
+        numerator *= (unsigned long long)(n - m + i);
+        
+        if (denominator > ULLONG_MAX / (unsigned long long)i) {
+            return -2;
+        }
+        denominator *= (unsigned long long)i;
+        
+        unsigned long long gcd_val = numerator % denominator;
+        if (gcd_val == 0) {
+            numerator /= denominator;
+            denominator = 1;
+        }
+    }
+    
+    if (denominator != 1 || numerator % (unsigned long long)(n + 1) != 0) {
+        return -2;
+    }
+    
+    *result = numerator / (unsigned long long)(n + 1);
+    return 0;
+}
+
+int main(void) {
+    int n, m;
+    unsigned long long result;
+    
+    printf("Enter n and m: ");
+    if (scanf("%d %d", &n, &m) != 2) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    int status = lobb_number(n, m, &result);
+    if (status == 0) {
+        printf("L(%d, %d) = %llu\n", n, m, result);
+    } else if (status == -1) {
+        fprintf(stderr, "Invalid arguments: n and m must satisfy 0 <= m <= n\n");
+        return EXIT_FAILURE;
+    } else {
+        fprintf(stderr, "Overflow occurred during calculation\n");
+        return EXIT_FAILURE;
+    }
+    
+    return EXIT_SUCCESS;
+}

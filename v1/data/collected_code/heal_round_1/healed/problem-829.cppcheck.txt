@@ -1,0 +1,12 @@
+collected_code/healed/problem-829.c:16:10: warning: Uninitialized variable: sequence [uninitvar]
+    if (!sequence[i]) continue;
+         ^
+collected_code/healed/problem-829.c:64:21: note: Assuming condition is false
+  for (int i = 0; i < n; i++) {
+                    ^
+collected_code/healed/problem-829.c:69:64: note: Calling function 'getSecondMostRepeatedString', 1st argument 'sequence' value is <Uninit>
+  char* secondMostRepeatedString = getSecondMostRepeatedString(sequence, n);
+                                                               ^
+collected_code/healed/problem-829.c:16:10: note: Uninitialized variable: sequence
+    if (!sequence[i]) continue;
+         ^

@@ -1,0 +1,68 @@
+{
+  "task_id": 27,
+  "text": "Write a C function to remove all digits from a list of strings.",
+  "fn_candidates": [
+    "remove",
+    "Remove",
+    "remove",
+    "remove"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "remove",
+      "args": [
+        [
+          "4words",
+          "3letters",
+          "4digits"
+        ]
+      ],
+      "expected": [
+        "words",
+        "letters",
+        "digits"
+      ],
+      "assert_src": "assert remove(['4words', '3letters', '4digits']) == ['words', 'letters', 'digits']"
+    },
+    {
+      "fn_name": "remove",
+      "args": [
+        [
+          "28Jan",
+          "12Jan",
+          "11Jan"
+        ]
+      ],
+      "expected": [
+        "Jan",
+        "Jan",
+        "Jan"
+      ],
+      "assert_src": "assert remove(['28Jan','12Jan','11Jan']) == ['Jan','Jan','Jan']"
+    },
+    {
+      "fn_name": "remove",
+      "args": [
+        [
+          "wonder1",
+          "wonder2",
+          "wonder3"
+        ]
+      ],
+      "expected": [
+        "wonder",
+        "wonder",
+        "wonder"
+      ],
+      "assert_src": "assert remove(['wonder1','wonder2','wonder3']) == ['wonder','wonder','wonder']"
+    }
+  ],
+  "arg_kinds": [
+    "str-list"
+  ],
+  "return_kind": "str-list",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

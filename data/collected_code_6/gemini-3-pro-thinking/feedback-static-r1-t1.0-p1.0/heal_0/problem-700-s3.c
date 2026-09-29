@@ -1,0 +1,48 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stddef.h>
+
+size_t count_in_range(const int *list, size_t size, int min_val, int max_val) {
+    size_t count = 0;
+
+    if (list == NULL || size == 0 || min_val > max_val) {
+        return 0;
+    }
+
+    for (size_t i = 0; i < size; ++i) {
+        if (list[i] >= min_val && list[i] <= max_val) {
+            count++;
+        }
+    }
+
+    return count;
+}
+
+int main(void) {
+    size_t size = 7;
+    int *list = (int *)malloc(size * sizeof(int));
+
+    if (list == NULL) {
+        return EXIT_FAILURE;
+    }
+
+    list[0] = 5;
+    list[1] = 10;
+    list[2] = 15;
+    list[3] = 20;
+    list[4] = 25;
+    list[5] = 30;
+    list[6] = 35;
+
+    int min_val = 12;
+    int max_val = 28;
+
+    size_t count = count_in_range(list, size, min_val, max_val);
+
+    printf("%zu\n", count);
+
+    free(list);
+    list = NULL;
+
+    return EXIT_SUCCESS;
+}

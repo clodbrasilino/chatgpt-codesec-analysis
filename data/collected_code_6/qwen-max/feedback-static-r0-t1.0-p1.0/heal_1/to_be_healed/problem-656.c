@@ -1,0 +1,27 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stddef.h>
+#include <limits.h>
+
+/* Possible weaknesses found:
+ *  Parameter 'arr1' can be declared as pointer to const [constParameterPointer]
+ *  Parameter 'arr2' can be declared as pointer to const [constParameterPointer]
+ */
+int minSumOfAbsoluteDifferences(int *arr1, int *arr2, size_t n) {
+    int sum = 0;
+    for (size_t i = 0; i < n; ++i) {
+        sum += abs(arr1[i] - arr2[i]);
+    }
+    return sum;
+}
+
+int main() {
+    int arr1[] = {1, 2, 3, 4};
+    int arr2[] = {4, 3, 2, 1};
+    size_t n = sizeof(arr1) / sizeof(arr1[0]);
+
+    int result = minSumOfAbsoluteDifferences(arr1, arr2, n);
+    printf("Minimum sum of absolute differences: %d\n", result);
+
+    return 0;
+}

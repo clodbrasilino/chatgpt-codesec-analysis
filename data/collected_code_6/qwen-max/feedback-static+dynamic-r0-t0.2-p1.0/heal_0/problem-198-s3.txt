@@ -1,0 +1,28 @@
+```c
+#include <stdio.h>
+#include <math.h>
+
+double ellipse_area(double a, double b) {
+    return M_PI * a * b;
+}
+
+double triangle_area_in_ellipse(double a, double b) {
+    return 0.5 * a * b * 3.0 / sqrt(2.0);
+}
+
+int main() {
+    double a, b;
+    printf("Enter the semi-major axis (a) and semi-minor axis (b) of the ellipse: ");
+    scanf("%lf %lf", &a, &b);
+
+    if (a <= 0 || b <= 0) {
+        printf("Semi-major and semi-minor axes must be positive.\n");
+        return 1;
+    }
+
+    double max_triangle_area = triangle_area_in_ellipse(a, b);
+    printf("The area of the largest inscribed triangle in the ellipse is: %.2f\n", max_triangle_area);
+
+    return 0;
+}
+```

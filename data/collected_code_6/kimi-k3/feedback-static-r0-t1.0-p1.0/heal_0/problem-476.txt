@@ -1,0 +1,40 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int find_sum_of_extremes(const int *array, size_t size, int *result) {
+    if (array == NULL || result == NULL || size == 0) {
+        return -1;
+    }
+
+    int min_val = array[0];
+    int max_val = array[0];
+
+    for (size_t i = 1; i < size; i++) {
+        if (array[i] < min_val) {
+            min_val = array[i];
+        }
+        if (array[i] > max_val) {
+            max_val = array[i];
+        }
+    }
+
+    *result = min_val + max_val;
+    return 0;
+}
+
+int main(void) {
+    int array[] = {12, 5, 8, 20, 3, 15};
+    size_t size = sizeof(array) / sizeof(array[0]);
+    int result;
+
+    if (find_sum_of_extremes(array, size, &result) == 0) {
+        printf("Sum of largest and smallest: %d\n", result);
+    } else {
+        fprintf(stderr, "Error: Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```

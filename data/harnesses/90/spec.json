@@ -1,0 +1,56 @@
+{
+  "task_id": 90,
+  "text": "Write a C function to find the length of the longest word.",
+  "fn_candidates": [
+    "len_log",
+    "LenLog",
+    "lenLog",
+    "lenlog"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "len_log",
+      "args": [
+        [
+          "python",
+          "PHP",
+          "bigdata"
+        ]
+      ],
+      "expected": 7,
+      "assert_src": "assert len_log([\"python\",\"PHP\",\"bigdata\"]) == 7"
+    },
+    {
+      "fn_name": "len_log",
+      "args": [
+        [
+          "a",
+          "ab",
+          "abc"
+        ]
+      ],
+      "expected": 3,
+      "assert_src": "assert len_log([\"a\",\"ab\",\"abc\"]) == 3"
+    },
+    {
+      "fn_name": "len_log",
+      "args": [
+        [
+          "small",
+          "big",
+          "tall"
+        ]
+      ],
+      "expected": 5,
+      "assert_src": "assert len_log([\"small\",\"big\",\"tall\"]) == 5"
+    }
+  ],
+  "arg_kinds": [
+    "str-list"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

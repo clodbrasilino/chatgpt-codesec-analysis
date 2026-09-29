@@ -1,0 +1,24 @@
+```C
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+
+void remove_special_characters(char* str) {
+    int i = 0, j = 0;
+    while (str[i]) {
+        if (isalnum(str[i])) {
+            str[j++] = str[i];
+        }
+        i++;
+    }
+    str[j] = '\0';
+}
+
+int main() {
+    char str[] = "Hello, World! 123";
+    remove_special_characters(str);
+    printf("%s\n", str);
+    return 0;
+}
+```
+Please note that C does not support regex natively. You would need to use a library like PCRE to use regex in C. The above code removes all characters from the string that are not letters or numbers by using the isalnum function from ctype.h. This function checks if a character is alphanumeric.

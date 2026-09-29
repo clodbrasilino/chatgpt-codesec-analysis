@@ -1,0 +1,126 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <errno.h>
+#include <limits.h>
+
+#define ZODIAC_COUNT 12
+#define INPUT_BUFFER_SIZE 64
+
+static const char *chinese_zodiac(int year)
+{
+    static const char *const signs[ZODIAC_COUNT] = {
+        "Monkey", "Rooster", "Dog", "Pig",
+        "Rat", "Ox", "Tiger", "Rabbit",
+        "Dragon", "Snake", "Horse", "Goat"
+    };
+    int index;
+
+    index = year % ZODIAC_COUNT;
+    if (index < 0) {
+        index += ZODIAC_COUNT;
+    }
+    if (index < 0 || index >= ZODIAC_COUNT) {
+        return "Unknown";
+    }
+    return signs[index];
+}
+
+static int parse_year(const char *text, int *out_year)
+{
+    char *endptr;
+    long value;
+
+    if (text == NULL || out_year == NULL) {
+        return 0;
+    }
+
+    errno = 0;
+    endptr = NULL;
+    value = strtol(text, &endptr, 10);
+
+    if (errno != 0 || endptr == text) {
+        return 0;
+    }
+
+    while (*endptr == ' ' || *endptr == '\t' ||
+           *endptr == '\n' || *endptr == '\r') {
+        endptr++;
+    }
+
+    if (*endptr != '\0') {
+        return 0;
+    }
+
+    if (value < INT_MIN || value > INT_MAX) {
+        return 0;
+    }
+
+    *out_year = (int)value;
+    return 1;
+}
+
+static int read_line(char *buffer, size_t size)
+{
+    size_t len;
+
+    if (buffer == NULL || size == 0) {
+        return 0;
+    }
+
+    if (fgets(buffer, (int)size, stdin) == NULL) {
+        return 0;
+    }
+
+    len = strnlen(buffer, size);
+    if (len == size - 1 && buffer[len - 1] != '\n') {
+        int ch;
+        do {
+            ch = getchar();
+        } while (ch != '\n' && ch != EOF);
+        return 0;
+    }
+
+    return 1;
+}
+
+int main(int argc, char const *argv[])
+{
+    int year;
+
+    if (argc > 1) {
+        if (!parse_year(argv[1], &year)) {
+            fprintf(stderr, "Error: invalid input, expected an integer year.\n");
+            return EXIT_FAILURE;
+        }
+    } else {
+        char buffer[INPUT_BUFFER_SIZE];
+
+        memset(buffer, 0, sizeof(buffer));
+
+        if (!read_line(buffer, sizeof(buffer))) {
+            fprintf(stderr, "Error: invalid input, expected an integer year.\n");
+            return EXIT_FAILURE;
+        }
+        if (!parse_year(buffer, &year)) {
+            fprintf(stderr, "Error: invalid input, expected an integer year.\n");
+            return EXIT_FAILURE;
+        }
+    }
+
+    printf("%s\n", chinese_zodiac(year));
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The two Flawfinder hits flagged in the original source are both **risk level 2 (low)** and are largely false positives, but the rewrite hardens them anyway:
+
+1. **`static const char *const signs[ZODIAC_COUNT]` (CWE-119/CWE-120):** The original code was already safe — the index is computed via `% ZODIAC_COUNT`, corrected for negative results, and then redundantly bounds-checked before use. This defensive check is retained since it costs nothing and satisfies the analyzer's concern about statically-sized array access.
+
+2. **`char buffer[64]` with `fgets` (CWE-119/CWE-120):** The original correctly used `fgets(buffer, sizeof(buffer), stdin)`, which cannot overflow. However, it had a subtle correctness/robustness gap: if the user typed more than 63 characters, `fgets` would silently truncate, potentially parsing a partial number and leaving residue in `stdin`. The rewrite adds `read_line()`, which detects truncation (buffer full without a trailing newline), drains the remainder of the line, and rejects the input outright. The buffer is also zero-initialized with `memset` as defense-in-depth, and `strnlen` is used instead of `strlen` to guarantee bounded scanning.
+
+Other pre-existing good practices preserved: `strtol` with `errno` and `endptr` validation instead of `atoi`, explicit `INT_MIN`/`INT_MAX` range checks before the narrowing cast, `NULL`-pointer guards in `parse_year`, and consistent `EXIT_FAILURE`/`EXIT_SUCCESS` return codes.

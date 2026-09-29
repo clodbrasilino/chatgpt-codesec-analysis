@@ -1,0 +1,23 @@
+```C
+#include <stdio.h>
+#include <ctype.h>
+#include <string.h>
+
+void convertToUpperCase(char* str) {
+    int i = 0;
+    while(str[i]) {
+        str[i] = toupper(str[i]);
+        i++;
+    }
+}
+
+int main() {
+    char str[100];
+    printf("Enter a string: ");
+    fgets(str, 100, stdin);
+    str[strlen(str) - 1] = '\0';
+    convertToUpperCase(str);
+    printf("Upper case string: %s\n", str);
+    return 0;
+}
+```

@@ -1,0 +1,4 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p0.5/heal_3/healed/problem-537.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p0.5/heal_3/healed/problem-537.c:21:13: portability: %n in format string (no. 2) requires 'int *' but the argument type is 'size_t * {aka unsigned long *}'. [invalidScanfArgType_int]
+        if (sscanf(token, "%99s%n", words[word_count], &token_length) == 1) {
+            ^

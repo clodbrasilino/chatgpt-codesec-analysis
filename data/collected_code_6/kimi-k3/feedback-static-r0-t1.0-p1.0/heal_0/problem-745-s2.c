@@ -1,0 +1,82 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <limits.h>
+
+bool is_self_dividing(int num) {
+    int original = num;
+    int temp = num;
+    
+    if (num <= 0) {
+        return false;
+    }
+    
+    while (temp > 0) {
+        int digit = temp % 10;
+        
+        if (digit == 0) {
+            return false;
+        }
+        
+        if (original % digit != 0) {
+            return false;
+        }
+        
+        temp /= 10;
+    }
+    
+    return true;
+}
+
+void find_self_dividing_numbers(int lower, int upper) {
+    if (lower > upper) {
+        fprintf(stderr, "Invalid range: lower bound exceeds upper bound\n");
+        return;
+    }
+    
+    if (lower < 1) {
+        lower = 1;
+    }
+    
+    bool found = false;
+    
+    for (int i = lower; i <= upper; i++) {
+        if (is_self_dividing(i)) {
+            if (found) {
+                printf(", ");
+            }
+            printf("%d", i);
+            found = true;
+        }
+        
+        if (i == INT_MAX) {
+            break;
+        }
+    }
+    
+    if (!found) {
+        printf("No self-dividing numbers found in the given range");
+    }
+    printf("\n");
+}
+
+int main(void) {
+    int lower = 0;
+    int upper = 0;
+    
+    printf("Enter lower bound: ");
+    if (scanf("%d", &lower) != 1) {
+        fprintf(stderr, "Invalid input for lower bound\n");
+        return 1;
+    }
+    
+    printf("Enter upper bound: ");
+    if (scanf("%d", &upper) != 1) {
+        fprintf(stderr, "Invalid input for upper bound\n");
+        return 1;
+    }
+    
+    printf("Self-dividing numbers in range [%d, %d]: ", lower, upper);
+    find_self_dividing_numbers(lower, upper);
+    
+    return 0;
+}

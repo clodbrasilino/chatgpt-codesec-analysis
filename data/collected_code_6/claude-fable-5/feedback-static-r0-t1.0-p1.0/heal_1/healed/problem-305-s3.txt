@@ -1,0 +1,82 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_MATCHES 2
+
+int match_p_words(const char *const words[], size_t count,
+                  const char *matches[], size_t max_matches,
+                  size_t *found_count)
+{
+    if (words == NULL || matches == NULL || found_count == NULL) {
+        return -1;
+    }
+
+    *found_count = 0U;
+
+    if (max_matches == 0U) {
+        return 0;
+    }
+
+    for (size_t i = 0U; i < count; i++) {
+        if (words[i] == NULL) {
+            return -1;
+        }
+        if ((words[i][0] == 'p') || (words[i][0] == 'P')) {
+            if (*found_count < max_matches) {
+                matches[*found_count] = words[i];
+                (*found_count)++;
+            }
+            if (*found_count == max_matches) {
+                break;
+            }
+        }
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    const char *const word_list[] = {
+        "apple", "pear", "banana", "peach", "grape", "plum"
+    };
+    const char *matched[MAX_MATCHES] = { NULL, NULL };
+    size_t word_count = sizeof(word_list) / sizeof(word_list[0]);
+    size_t found = 0U;
+    int status;
+
+    status = match_p_words(word_list, word_count, matched, MAX_MATCHES, &found);
+    if (status != 0) {
+        if (fprintf(stderr, "Error while matching words.\n") < 0) {
+            return EXIT_FAILURE;
+        }
+        return EXIT_FAILURE;
+    }
+
+    if (found < MAX_MATCHES) {
+        if (printf("Fewer than %d words starting with 'p' were found.\n",
+                   MAX_MATCHES) < 0) {
+            return EXIT_FAILURE;
+        }
+    } else {
+        for (size_t i = 0U; i < found && i < MAX_MATCHES; i++) {
+            if (matched[i] == NULL) {
+                return EXIT_FAILURE;
+            }
+            if (printf("Match %zu: %s\n", i + 1U, matched[i]) < 0) {
+                return EXIT_FAILURE;
+            }
+        }
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+The key changes address both identified weaknesses:
+
+1. **Variable scope (`variableScope`)**: The loop index `i` is now declared directly inside the `for` statements in both `match_p_words` and `main`, reducing its scope to the minimum required.
+
+2. **Statically-sized array concerns (CWE-119/CWE-120)**: The `matched` array access is now defensively bounds-checked in the print loop (`i < found && i < MAX_MATCHES`), guaranteeing no read beyond the array even if `found` were ever inconsistent. Additionally, `match_p_words` now explicitly handles `max_matches == 0` before entering the loop, and the existing `*found_count < max_matches` guard ensures writes never exceed the caller-provided buffer size. A `NULL` check on `matched[i]` before printing guards against dereferencing an unset slot.

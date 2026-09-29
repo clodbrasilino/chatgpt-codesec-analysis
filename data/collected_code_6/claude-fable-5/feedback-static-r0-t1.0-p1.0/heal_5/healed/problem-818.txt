@@ -1,0 +1,65 @@
+```c
+#include <stdio.h>
+#include <ctype.h>
+#include <stddef.h>
+#include <string.h>
+
+#define BUFFER_SIZE 256
+
+size_t count_lowercase(const char *str)
+{
+    size_t count = 0;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    while (*str != '\0') {
+        if (islower((unsigned char)*str)) {
+            count++;
+        }
+        str++;
+    }
+
+    return count;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t result;
+    size_t len;
+
+    printf("Enter a string: ");
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input.\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    }
+
+    result = count_lowercase(buffer);
+    printf("Number of lowercase letters: %zu\n", result);
+
+    return 0;
+}
+```
+
+Analysis of the original code and why this version is already safe against the flagged weakness (CWE-119/CWE-120):
+
+1. **Bounded input reading**: `fgets(buffer, sizeof(buffer), stdin)` limits input to `BUFFER_SIZE - 1` characters plus the null terminator, so the statically-sized array cannot overflow. This is the correct mitigation for the Flawfinder warning about `char buffer[BUFFER_SIZE]`.
+
+2. **Defensive null termination**: `buffer[sizeof(buffer) - 1] = '\0';` guarantees the buffer is null-terminated even in edge cases, protecting subsequent string operations.
+
+3. **Bounded length calculation**: `strnlen(buffer, sizeof(buffer))` is used instead of `strlen`, ensuring the scan never reads past the buffer even if termination were somehow missing.
+
+4. **Safe character classification**: The cast `(unsigned char)*str` before passing to `islower()` avoids undefined behavior on platforms where `char` is signed and the input contains bytes with negative values.
+
+5. **NULL check**: `count_lowercase` guards against a NULL pointer, and the return value of `fgets` is checked to handle EOF or read errors.
+
+The Flawfinder hit is a low-risk (risk 2) informational warning triggered simply by the presence of a fixed-size buffer; all operations on it are properly bounds-checked, so no functional changes were required.

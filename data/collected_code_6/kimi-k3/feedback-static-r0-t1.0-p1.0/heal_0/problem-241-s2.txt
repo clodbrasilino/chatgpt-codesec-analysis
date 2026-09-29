@@ -1,0 +1,90 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+char ***create_3d_array(int x, int y, int z)
+{
+    if (x <= 0 || y <= 0 || z <= 0)
+        return NULL;
+
+    char ***arr = malloc((size_t)x * sizeof(char **));
+    if (arr == NULL)
+        return NULL;
+
+    for (int i = 0; i < x; i++)
+    {
+        arr[i] = malloc((size_t)y * sizeof(char *));
+        if (arr[i] == NULL)
+        {
+            for (int k = 0; k < i; k++)
+                free(arr[k]);
+            free(arr);
+            return NULL;
+        }
+
+        for (int j = 0; j < y; j++)
+        {
+            arr[i][j] = malloc((size_t)z * sizeof(char));
+            if (arr[i][j] == NULL)
+            {
+                for (int k = 0; k < i; k++)
+                {
+                    for (int l = 0; l < y; l++)
+                        free(arr[k][l]);
+                    free(arr[k]);
+                }
+                for (int l = 0; l < j; l++)
+                    free(arr[i][l]);
+                free(arr[i]);
+                free(arr);
+                return NULL;
+            }
+
+            for (int k = 0; k < z; k++)
+                arr[i][j][k] = '*';
+        }
+    }
+
+    return arr;
+}
+
+void free_3d_array(char ***arr, int x, int y)
+{
+    if (arr == NULL)
+        return;
+
+    for (int i = 0; i < x; i++)
+    {
+        for (int j = 0; j < y; j++)
+            free(arr[i][j]);
+        free(arr[i]);
+    }
+    free(arr);
+}
+
+int main(void)
+{
+    int x = 3, y = 4, z = 5;
+
+    char ***array = create_3d_array(x, y, z);
+    if (array == NULL)
+    {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    for (int i = 0; i < x; i++)
+    {
+        for (int j = 0; j < y; j++)
+        {
+            for (int k = 0; k < z; k++)
+                putchar(array[i][j][k]);
+            putchar('\n');
+        }
+        putchar('\n');
+    }
+
+    free_3d_array(array, x, y);
+    return EXIT_SUCCESS;
+}
+```

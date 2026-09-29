@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-584-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-584-s2.c:67:24: style: Condition 'search_len==0' is always false [knownConditionTrueFalse]
+        if (search_len == 0) {
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-584-s2.c:62:56: note: Assuming that condition 'offset<sentence_len' is not redundant
+    while (match_count < (size_t)max_matches && offset < sentence_len) {
+                                                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-584-s2.c:64:42: note: Assignment 'search_len=sentence_len-offset', assigned value is greater than 0
+        size_t search_len = sentence_len - offset;
+                                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-584-s2.c:67:24: note: Condition 'search_len==0' is always false
+        if (search_len == 0) {
+                       ^

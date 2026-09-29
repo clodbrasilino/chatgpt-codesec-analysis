@@ -1,0 +1,105 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char *items;
+    size_t count;
+} Tuple;
+
+Tuple *string_to_tuple(const char *input)
+{
+    Tuple *tuple = NULL;
+    size_t length = 0;
+    size_t i = 0;
+    char *items = NULL;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    length = strlen(input);
+    if (length == 0) {
+        return NULL;
+    }
+
+    items = malloc(length * sizeof(char));
+    if (items == NULL) {
+        return NULL;
+    }
+
+    for (i = 0; i < length; i++) {
+        items[i] = input[i];
+    }
+
+    tuple = malloc(sizeof(Tuple));
+    if (tuple == NULL) {
+        free(items);
+        return NULL;
+    }
+
+    tuple->items = items;
+    tuple->count = length;
+    return tuple;
+}
+
+void free_tuple(Tuple *tuple)
+{
+    if (tuple != NULL) {
+        free(tuple->items);
+        free(tuple);
+    }
+}
+
+void print_tuple(const Tuple *tuple)
+{
+    size_t i;
+
+    if (tuple == NULL) {
+        return;
+    }
+
+    printf("[");
+    for (i = 0; i < tuple->count; i++) {
+        printf("'%c'", tuple->items[i]);
+        if (i + 1 < tuple->count) {
+            printf(", ");
+        }
+    }
+    printf("]\n");
+}
+
+int main(void)
+{
+    const char *inputs[] = { "python3.0", "item1", "15.10" };
+    size_t num_inputs = sizeof(inputs) / sizeof(inputs[0]);
+    size_t i;
+    Tuple *tuple = NULL;
+
+    for (i = 0; i < num_inputs; i++) {
+        tuple = string_to_tuple(inputs[i]);
+        if (tuple == NULL) {
+            fprintf(stderr, "Failed to convert string to tuple: \"%s\"\n", inputs[i]);
+            return EXIT_FAILURE;
+        }
+
+        print_tuple(tuple);
+
+        free_tuple(tuple);
+        tuple = NULL;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the weaknesses and fixes applied:**
+
+The test cases expected output in Python-list style format — `['i', 't', 'e', 'm', '1']` — but the original program produced output the test harness couldn't match at all (`<no output>` from the harness's perspective). Two issues caused this:
+
+1. **Wrong delimiters:** `print_tuple` used parentheses `(...)` instead of the expected square brackets `[...]`. The fix changes `printf("(")` / `printf(")\n")` to `printf("[")` / `printf("]\n")`.
+
+2. **Extra noise on stdout:** `main` printed prefix lines (`Input string: "..."` and `Tuple: `) before each tuple, so no output line matched the expected pattern exactly. The fix removes those extra `printf` calls so each line of output is exactly the bracketed tuple.
+
+The rest of the code was sound: `string_to_tuple` correctly validates `NULL`/empty input, checks both `malloc` results, and frees `items` on the second allocation failure; `free_tuple` guards against `NULL` and releases both allocations, so there are no leaks or double-frees. Note that `items` is intentionally not NUL-terminated — that's safe here because `count` bounds all iteration and the buffer is never passed to string functions.

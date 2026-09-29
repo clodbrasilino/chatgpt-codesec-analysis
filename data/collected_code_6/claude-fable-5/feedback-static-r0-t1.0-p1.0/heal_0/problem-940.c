@@ -1,0 +1,78 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stddef.h>
+
+static void swap(int *a, int *b)
+{
+    int tmp = *a;
+    *a = *b;
+    *b = tmp;
+}
+
+static void heapify(int arr[], size_t n, size_t i)
+{
+    size_t largest = i;
+    size_t left = 2U * i + 1U;
+    size_t right = 2U * i + 2U;
+
+    if ((left < n) && (arr[left] > arr[largest])) {
+        largest = left;
+    }
+
+    if ((right < n) && (arr[right] > arr[largest])) {
+        largest = right;
+    }
+
+    if (largest != i) {
+        swap(&arr[i], &arr[largest]);
+        heapify(arr, n, largest);
+    }
+}
+
+static int heap_sort(int arr[], size_t n)
+{
+    size_t i;
+
+    if (arr == NULL) {
+        return -1;
+    }
+
+    if (n < 2U) {
+        return 0;
+    }
+
+    for (i = n / 2U; i > 0U; i--) {
+        heapify(arr, n, i - 1U);
+    }
+
+    for (i = n - 1U; i > 0U; i--) {
+        swap(&arr[0], &arr[i]);
+        heapify(arr, i, 0U);
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    int arr[] = {12, 11, 13, 5, 6, 7, 1, 9, 3};
+    size_t n = sizeof(arr) / sizeof(arr[0]);
+    size_t i;
+
+    if (heap_sort(arr, n) != 0) {
+        (void)fprintf(stderr, "Sorting failed\n");
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0U; i < n; i++) {
+        if (printf("%d ", arr[i]) < 0) {
+            return EXIT_FAILURE;
+        }
+    }
+
+    if (printf("\n") < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

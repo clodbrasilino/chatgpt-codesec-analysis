@@ -1,0 +1,32 @@
+```C
+#include <stdio.h>
+#include <stdbool.h>
+
+struct Tuple {
+    int a;
+    int b;
+};
+
+bool contains_k(struct Tuple tuples[], int size, int k) {
+    for(int i = 0; i < size; i++) {
+        if(tuples[i].a == k || tuples[i].b == k) {
+            return true;
+        }
+    }
+    return false;
+}
+
+int main() {
+    struct Tuple tuples[] = {{1, 2}, {3, 4}, {5, 6}, {7, 8}};
+    int size = sizeof(tuples) / sizeof(tuples[0]);
+    int k = 5;
+
+    if(contains_k(tuples, size, k)) {
+        printf("The tuples contain %d\n", k);
+    } else {
+        printf("The tuples do not contain %d\n", k);
+    }
+
+    return 0;
+}
+```

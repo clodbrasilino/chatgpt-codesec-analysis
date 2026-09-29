@@ -1,0 +1,15 @@
+collected_code/problem-463-0.c: In function 'maxProductSubarray':
+collected_code/problem-463-0.c:11:28: warning: implicit declaration of function 'min' [-Wimplicit-function-declaration]
+   11 |          min_ending_here = min(min_ending_here * arr[i], 1);
+      |                            ^~~
+collected_code/problem-463-0.c:17:28: warning: implicit declaration of function 'max' [-Wimplicit-function-declaration]
+   17 |          max_ending_here = max(min_ending_here * arr[i], 1);
+      |                            ^~~
+Undefined symbols for architecture x86_64:
+  "_max", referenced from:
+      _maxProductSubarray in ccm5Q4jT.o
+     (maybe you meant: _maxProductSubarray)
+  "_min", referenced from:
+      _maxProductSubarray in ccm5Q4jT.o
+ld: symbol(s) not found for architecture x86_64
+collect2: error: ld returned 1 exit status

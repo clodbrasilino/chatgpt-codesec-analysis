@@ -1,0 +1,48 @@
+#include <stdio.h>
+#include <string.h>
+#include <regex.h>
+
+int search_pattern(char *base, char *search){
+    regex_t regex;
+    int reti;
+    regmatch_t matches[1];
+
+    reti = regcomp(&regex, search, 0);
+    if (reti) {
+        fprintf(stderr, "Could not compile regex\n");
+        return -1;
+    }
+
+    reti = regexec(&regex, base, 1, matches, 0);
+    if (!reti) {
+        printf("Pattern found at index %d\n", (int)matches[0].rm_so);
+        return (int)matches[0].rm_so;
+    } else if (reti == REG_NOMATCH) {
+        printf("No match\n");
+    } else {
+        char msgbuf[100];
+        regerror(reti, &regex, msgbuf, sizeof(msgbuf));
+        fprintf(stderr, "Regex match failed: %s\n", msgbuf);
+        return -1;
+    }
+
+    regfree(&regex);
+    return -1;
+}
+
+int main() {
+    char base[100];
+    char search[100];
+
+    printf("Enter a string: ");
+    fgets(base, 100, stdin);
+    base[strlen(base) - 1] = '\0';
+
+    printf("Enter a search pattern: ");
+    fgets(search, 100, stdin);
+    search[strlen(search) - 1] = '\0';
+
+    search_pattern(base, search);
+
+    return 0;
+}

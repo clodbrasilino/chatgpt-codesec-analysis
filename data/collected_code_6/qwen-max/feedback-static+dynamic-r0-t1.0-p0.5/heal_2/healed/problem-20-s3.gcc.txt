@@ -1,0 +1,11 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_2/healed/problem-20-s3.c: In function 'is_woodall_number':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_2/healed/problem-20-s3.c:11:23: error: 'LONG_MAX' undeclared (first use in this function)
+   11 |         if (woodall > LONG_MAX) break;
+      |                       ^~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_2/healed/problem-20-s3.c:5:1: note: 'LONG_MAX' is defined in header '<limits.h>'; this is probably fixable by adding '#include <limits.h>'
+    4 | #include <inttypes.h>
+  +++ |+#include <limits.h>
+    5 | 
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_2/healed/problem-20-s3.c:11:23: note: each undeclared identifier is reported only once for each function it appears in
+   11 |         if (woodall > LONG_MAX) break;
+      |                       ^~~~~~~~

@@ -1,0 +1,193 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *elements;
+    int size;
+    int capacity;
+} Set;
+
+typedef struct {
+    int first;
+    int second;
+} Tuple;
+
+typedef struct {
+    Tuple *tuples;
+    int size;
+    int capacity;
+} TupleList;
+
+Set *create_set(void) {
+    Set *set = malloc(sizeof(Set));
+    if (set == NULL) {
+        return NULL;
+    }
+    set->elements = malloc(4 * sizeof(int));
+    if (set->elements == NULL) {
+        free(set);
+        return NULL;
+    }
+    set->size = 0;
+    set->capacity = 4;
+    return set;
+}
+
+int set_add(Set *set, int value) {
+    if (set == NULL) {
+        return -1;
+    }
+    for (int i = 0; i < set->size; i++) {
+        if (set->elements[i] == value) {
+            return 0;
+        }
+    }
+    if (set->size == set->capacity) {
+        int new_capacity = set->capacity * 2;
+        int *new_elements = realloc(set->elements, new_capacity * sizeof(int));
+        if (new_elements == NULL) {
+            return -1;
+        }
+        set->elements = new_elements;
+        set->capacity = new_capacity;
+    }
+    set->elements[set->size++] = value;
+    return 1;
+}
+
+void destroy_set(Set *set) {
+    if (set == NULL) {
+        return;
+    }
+    free(set->elements);
+    free(set);
+}
+
+int compare_ints(const void *a, const void *b) {
+    int arg1 = *(const int *)a;
+    int arg2 = *(const int *)b;
+    if (arg1 < arg2) return -1;
+    if (arg1 > arg2) return 1;
+    return 0;
+}
+
+void sort_set(Set *set) {
+    if (set == NULL || set->size <= 1) {
+        return;
+    }
+    qsort(set->elements, set->size, sizeof(int), compare_ints);
+}
+
+TupleList *create_tuple_list(int capacity) {
+    TupleList *list = malloc(sizeof(TupleList));
+    if (list == NULL) {
+        return NULL;
+    }
+    if (capacity < 1) {
+        capacity = 1;
+    }
+    list->tuples = malloc(capacity * sizeof(Tuple));
+    if (list->tuples == NULL) {
+        free(list);
+        return NULL;
+    }
+    list->size = 0;
+    list->capacity = capacity;
+    return list;
+}
+
+int tuple_list_add(TupleList *list, int first, int second) {
+    if (list == NULL) {
+        return -1;
+    }
+    if (list->size == list->capacity) {
+        int new_capacity = list->capacity * 2;
+        Tuple *new_tuples = realloc(list->tuples, new_capacity * sizeof(Tuple));
+        if (new_tuples == NULL) {
+            return -1;
+        }
+        list->tuples = new_tuples;
+        list->capacity = new_capacity;
+    }
+    list->tuples[list->size].first = first;
+    list->tuples[list->size].second = second;
+    list->size++;
+    return 0;
+}
+
+void destroy_tuple_list(TupleList *list) {
+    if (list == NULL) {
+        return;
+    }
+    free(list->tuples);
+    free(list);
+}
+
+TupleList *set_to_ordered_tuples(Set *set) {
+    if (set == NULL || set->size < 2) {
+        return NULL;
+    }
+
+    sort_set(set);
+
+    int pair_count = set->size - 1;
+    TupleList *result = create_tuple_list(pair_count);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    for (int i = 0; i < pair_count; i++) {
+        if (tuple_list_add(result, set->elements[i], set->elements[i + 1]) != 0) {
+            destroy_tuple_list(result);
+            return NULL;
+        }
+    }
+
+    return result;
+}
+
+void print_tuple_list(const TupleList *list) {
+    if (list == NULL) {
+        printf("[]\n");
+        return;
+    }
+    printf("[");
+    for (int i = 0; i < list->size; i++) {
+        printf("(%d,%d)", list->tuples[i].first, list->tuples[i].second);
+        if (i < list->size - 1) {
+            printf(",");
+        }
+    }
+    printf("]\n");
+}
+
+int main(void) {
+    Set *set = create_set();
+    if (set == NULL) {
+        return EXIT_FAILURE;
+    }
+
+    int input[] = {5, 2, 8, 2, 1, 9, 3};
+    int input_size = sizeof(input) / sizeof(input[0]);
+
+    for (int i = 0; i < input_size; i++) {
+        if (set_add(set, input[i]) < 0) {
+            destroy_set(set);
+            return EXIT_FAILURE;
+        }
+    }
+
+    TupleList *tuples = set_to_ordered_tuples(set);
+    if (tuples == NULL) {
+        destroy_set(set);
+        return EXIT_FAILURE;
+    }
+
+    printf("Ordered tuples: ");
+    print_tuple_list(tuples);
+
+    destroy_tuple_list(tuples);
+    destroy_set(set);
+
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,44 @@
+{
+  "task_id": 264,
+  "text": "Write a C function to calculate a dog's age in dog's years.",
+  "fn_candidates": [
+    "dog_age",
+    "DogAge",
+    "dogAge",
+    "dogage"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "dog_age",
+      "args": [
+        12
+      ],
+      "expected": 61,
+      "assert_src": "assert dog_age(12)==61"
+    },
+    {
+      "fn_name": "dog_age",
+      "args": [
+        15
+      ],
+      "expected": 73,
+      "assert_src": "assert dog_age(15)==73"
+    },
+    {
+      "fn_name": "dog_age",
+      "args": [
+        24
+      ],
+      "expected": 109,
+      "assert_src": "assert dog_age(24)==109"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

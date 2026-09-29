@@ -1,0 +1,109 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int **data;
+    int rows;
+    int *cols;
+} NestedList;
+
+int remove_column(NestedList *list, int col_idx) {
+    if (list == NULL || list->data == NULL || list->cols == NULL) {
+        return -1;
+    }
+    if (list->rows <= 0) {
+        return -1;
+    }
+    if (col_idx < 0) {
+        return -1;
+    }
+
+    for (int i = 0; i < list->rows; i++) {
+        if (list->data[i] == NULL || list->cols[i] <= 0) {
+            continue;
+        }
+        if (col_idx >= list->cols[i]) {
+            continue;
+        }
+
+        int old_cols = list->cols[i];
+        int new_cols = old_cols - 1;
+
+        for (int j = col_idx; j < new_cols; j++) {
+            list->data[i][j] = list->data[i][j + 1];
+        }
+
+        if (new_cols == 0) {
+            free(list->data[i]);
+            list->data[i] = NULL;
+        } else {
+            int *temp = realloc(list->data[i], new_cols * sizeof(int));
+            if (temp != NULL) {
+                list->data[i] = temp;
+            }
+        }
+        list->cols[i] = new_cols;
+    }
+
+    return 0;
+}
+
+int main(void) {
+    NestedList list;
+    list.rows = 3;
+
+    list.cols = malloc(list.rows * sizeof(int));
+    if (list.cols == NULL) {
+        return 1;
+    }
+
+    list.data = malloc(list.rows * sizeof(int *));
+    if (list.data == NULL) {
+        free(list.cols);
+        return 1;
+    }
+
+    list.cols[0] = 4;
+    list.cols[1] = 2;
+    list.cols[2] = 3;
+
+    for (int i = 0; i < list.rows; i++) {
+        list.data[i] = malloc(list.cols[i] * sizeof(int));
+        if (list.data[i] == NULL) {
+            for (int k = 0; k < i; k++) {
+                free(list.data[k]);
+            }
+            free(list.data);
+            free(list.cols);
+            return 1;
+        }
+    }
+
+    int val = 0;
+    for (int i = 0; i < list.rows; i++) {
+        for (int j = 0; j < list.cols[i]; j++) {
+            list.data[i][j] = val++;
+        }
+    }
+
+    int result = remove_column(&list, 1);
+
+    if (result == 0) {
+        for (int i = 0; i < list.rows; i++) {
+            for (int j = 0; j < list.cols[i]; j++) {
+                printf("%d ", list.data[i][j]);
+            }
+            printf("\n");
+        }
+    }
+
+    for (int i = 0; i < list.rows; i++) {
+        free(list.data[i]);
+    }
+    free(list.data);
+    free(list.cols);
+
+    return 0;
+}
+```

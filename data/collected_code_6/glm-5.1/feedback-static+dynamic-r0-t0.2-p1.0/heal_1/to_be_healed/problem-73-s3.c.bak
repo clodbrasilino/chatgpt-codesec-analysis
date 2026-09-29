@@ -1,0 +1,155 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+char **split_string_regex(const char *str, const char *pattern, size_t *count) {
+    regex_t regex;
+    regmatch_t match;
+    int ret;
+    size_t capacity = 10;
+    size_t len;
+    char **result = NULL;
+    char *dup = NULL;
+    char *current;
+    /* Possible weaknesses found:
+     *  The scope of the variable 'empty' can be reduced. [variableScope]
+     */
+    const char *empty = "";
+
+    if (str == NULL || pattern == NULL || count == NULL) {
+        return NULL;
+    }
+
+    *count = 0;
+
+    ret = regcomp(&regex, pattern, REG_EXTENDED);
+    if (ret != 0) {
+        return NULL;
+    }
+
+    result = (char **)malloc(capacity * sizeof(char *));
+    if (result == NULL) {
+        regfree(&regex);
+        return NULL;
+    }
+
+    if (str[0] == '\0') {
+        result[0] = strdup(empty);
+        if (result[0] == NULL) {
+            free(result);
+            regfree(&regex);
+            return NULL;
+        }
+        *count = 1;
+        regfree(&regex);
+        return result;
+    }
+
+    dup = strdup(str);
+    if (dup == NULL) {
+        free(result);
+        regfree(&regex);
+        return NULL;
+    }
+
+    current = dup;
+
+    while (1) {
+        ret = regexec(&regex, current, 1, &match, 0);
+        if (ret == REG_NOMATCH) {
+            len = strlen(current);
+            if (*count >= capacity) {
+                capacity *= 2;
+                char **temp = (char **)realloc(result, capacity * sizeof(char *));
+                if (temp == NULL) {
+                    for (size_t i = 0; i < *count; i++) free(result[i]);
+                    free(result);
+                    free(dup);
+                    regfree(&regex);
+                    return NULL;
+                }
+                result = temp;
+            }
+            result[*count] = (char *)malloc(len + 1);
+            if (result[*count] == NULL) {
+                for (size_t i = 0; i < *count; i++) free(result[i]);
+                free(result);
+                free(dup);
+                regfree(&regex);
+                return NULL;
+            }
+            memcpy(result[*count], current, len + 1);
+            (*count)++;
+            break;
+        } else if (ret != 0) {
+            for (size_t i = 0; i < *count; i++) free(result[i]);
+            free(result);
+            free(dup);
+            regfree(&regex);
+            return NULL;
+        }
+
+        if (match.rm_so > 0) {
+            len = match.rm_so;
+            if (*count >= capacity) {
+                capacity *= 2;
+                char **temp = (char **)realloc(result, capacity * sizeof(char *));
+                if (temp == NULL) {
+                    for (size_t i = 0; i < *count; i++) free(result[i]);
+                    free(result);
+                    free(dup);
+                    regfree(&regex);
+                    return NULL;
+                }
+                result = temp;
+            }
+            result[*count] = (char *)malloc(len + 1);
+            if (result[*count] == NULL) {
+                for (size_t i = 0; i < *count; i++) free(result[i]);
+                free(result);
+                free(dup);
+                regfree(&regex);
+                return NULL;
+            }
+            memcpy(result[*count], current, len);
+            result[*count][len] = '\0';
+            (*count)++;
+        }
+
+        current += match.rm_eo;
+    }
+
+    free(dup);
+    regfree(&regex);
+    return result;
+}
+
+void free_split_result(char **result, size_t count) {
+    if (result == NULL) {
+        return;
+    }
+    for (size_t i = 0; i < count; i++) {
+        free(result[i]);
+    }
+    free(result);
+}
+
+int main(void) {
+    const char *str = "apple;banana|cherry,date";
+    const char *pattern = "[;|,]";
+    size_t count = 0;
+    char **result = split_string_regex(str, pattern, &count);
+
+    if (result == NULL) {
+        return EXIT_FAILURE;
+    }
+
+    for (size_t i = 0; i < count; i++) {
+        printf("%s\n", result[i]);
+    }
+
+    free_split_result(result, count);
+
+    return EXIT_SUCCESS;
+}

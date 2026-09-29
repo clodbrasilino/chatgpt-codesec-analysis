@@ -1,0 +1,33 @@
+#include <stdio.h>
+
+float find_third_angle(float angle1, float angle2);
+
+int main(void) {
+    float angle1, angle2, third_angle;
+    
+    printf("Enter first angle: ");
+    if (scanf("%f", &angle1) != 1) {
+        printf("Invalid input\n");
+        return 1;
+    }
+    
+    printf("Enter second angle: ");
+    if (scanf("%f", &angle2) != 1) {
+        printf("Invalid input\n");
+        return 1;
+    }
+    
+    if (angle1 <= 0 || angle2 <= 0 || angle1 + angle2 >= 180) {
+        printf("Invalid angles for a triangle\n");
+        return 1;
+    }
+    
+    third_angle = find_third_angle(angle1, angle2);
+    printf("Third angle: %.2f\n", third_angle);
+    
+    return 0;
+}
+
+float find_third_angle(float angle1, float angle2) {
+    return 180.0f - angle1 - angle2;
+}

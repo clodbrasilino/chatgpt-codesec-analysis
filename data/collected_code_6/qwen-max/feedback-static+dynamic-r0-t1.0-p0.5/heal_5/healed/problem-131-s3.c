@@ -1,0 +1,33 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+
+bool is_vowel(char c) {
+    return strchr("aeiouAEIOU", c) != NULL;
+}
+
+void reverse_vowels(char *str, size_t len) {
+    int left = 0, right = len - 1;
+
+    while (left < right) {
+        if (!is_vowel(str[left])) {
+            left++;
+        } else if (!is_vowel(str[right])) {
+            right--;
+        } else {
+            char temp = str[left];
+            str[left] = str[right];
+            str[right] = temp;
+            left++;
+            right--;
+        }
+    }
+}
+
+int main() {
+    char str[] = "hello world";
+    size_t len = sizeof(str) / sizeof(str[0]) - 1;
+    reverse_vowels(str, len);
+    printf("%s\n", str);
+    return 0;
+}

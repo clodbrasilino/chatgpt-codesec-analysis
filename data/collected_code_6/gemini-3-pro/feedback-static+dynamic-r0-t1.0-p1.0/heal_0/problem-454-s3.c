@@ -1,0 +1,40 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <stddef.h>
+
+bool contains_z(const char *word) {
+    if (word == NULL) {
+        return false;
+    }
+
+    while (*word != '\0') {
+        if (*word == 'z' || *word == 'Z') {
+            return true;
+        }
+        word++;
+    }
+
+    return false;
+}
+
+int main(void) {
+    const char *test_words[] = {
+        "zebra",
+        "pizza",
+        "hello",
+        "world",
+        NULL
+    };
+
+    size_t i = 0;
+    while (test_words[i] != NULL) {
+        if (contains_z(test_words[i])) {
+            printf("Match: %s\n", test_words[i]);
+        } else {
+            printf("No match: %s\n", test_words[i]);
+        }
+        i++;
+    }
+
+    return 0;
+}

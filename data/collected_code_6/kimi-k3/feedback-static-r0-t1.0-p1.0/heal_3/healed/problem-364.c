@@ -1,0 +1,60 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+
+int countFlips(const char *str, size_t len) {
+    int flips1 = 0, flips2 = 0;
+
+    for (size_t i = 0; i < len; i++) {
+        if (str[i] != (i % 2 == 0 ? '0' : '1')) {
+            flips1++;
+        } else {
+            flips2++;
+        }
+    }
+
+    return (flips1 < flips2) ? flips1 : flips2;
+}
+
+bool isValidBinaryString(const char *str, size_t len) {
+    for (size_t i = 0; i < len; i++) {
+        if (str[i] != '0' && str[i] != '1') {
+            return false;
+        }
+    }
+    return true;
+}
+
+int main() {
+    char str[100];
+    size_t len;
+
+    printf("Enter a binary string: ");
+
+    if (fgets(str, sizeof(str), stdin) == NULL) {
+        printf("Invalid input\n");
+        return 1;
+    }
+
+    len = strnlen(str, sizeof(str));
+
+    if (len > 0 && str[len - 1] == '\n') {
+        str[len - 1] = '\0';
+        len--;
+    }
+
+    if (len == 0) {
+        printf("Invalid input\n");
+        return 1;
+    }
+
+    if (!isValidBinaryString(str, len)) {
+        printf("Invalid input: not a binary string\n");
+        return 1;
+    }
+
+    int result = countFlips(str, len);
+    printf("Number of flips required: %d\n", result);
+
+    return 0;
+}

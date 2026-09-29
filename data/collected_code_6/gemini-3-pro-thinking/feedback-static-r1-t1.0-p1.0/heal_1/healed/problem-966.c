@@ -1,0 +1,158 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stddef.h>
+
+typedef struct {
+    int *data;
+    size_t size;
+} Tuple;
+
+typedef struct {
+    Tuple *items;
+    size_t count;
+    size_t capacity;
+} TupleList;
+
+TupleList* create_tuple_list(size_t capacity) {
+    if (capacity == 0) {
+        return NULL;
+    }
+    
+    TupleList *list = (TupleList *)malloc(sizeof(TupleList));
+    if (!list) {
+        return NULL;
+    }
+    
+    list->items = (Tuple *)malloc(capacity * sizeof(Tuple));
+    if (!list->items) {
+        free(list);
+        return NULL;
+    }
+    
+    list->count = 0;
+    list->capacity = capacity;
+    
+    return list;
+}
+
+int add_tuple(TupleList *list, const int *data, size_t size) {
+    if (!list || (size > 0 && !data)) {
+        return -1;
+    }
+    
+    if (list->count >= list->capacity) {
+        size_t new_capacity = list->capacity * 2;
+        if (new_capacity == 0) {
+            new_capacity = 2;
+        }
+        
+        Tuple *new_items = (Tuple *)realloc(list->items, new_capacity * sizeof(Tuple));
+        if (!new_items) {
+            return -1;
+        }
+        list->items = new_items;
+        list->capacity = new_capacity;
+    }
+    
+    list->items[list->count].size = size;
+    
+    if (size > 0) {
+        list->items[list->count].data = (int *)malloc(size * sizeof(int));
+        if (!list->items[list->count].data) {
+            return -1;
+        }
+        for (size_t i = 0; i < size; i++) {
+            list->items[list->count].data[i] = data[i];
+        }
+    } else {
+        list->items[list->count].data = NULL;
+    }
+    
+    list->count++;
+    return 0;
+}
+
+void remove_empty_tuples(TupleList *list) {
+    if (!list || !list->items) {
+        return;
+    }
+    
+    size_t i = 0;
+    while (i < list->count) {
+        if (list->items[i].size == 0) {
+            if (list->items[i].data != NULL) {
+                free(list->items[i].data);
+                list->items[i].data = NULL;
+            }
+            for (size_t j = i; j < list->count - 1; j++) {
+                list->items[j] = list->items[j + 1];
+            }
+            list->count--;
+        } else {
+            i++;
+        }
+    }
+}
+
+void destroy_tuple_list(TupleList *list) {
+    if (!list) {
+        return;
+    }
+    if (list->items) {
+        for (size_t i = 0; i < list->count; i++) {
+            if (list->items[i].data) {
+                free(list->items[i].data);
+            }
+        }
+        free(list->items);
+    }
+    free(list);
+}
+
+int main(void) {
+    TupleList *list = create_tuple_list(5);
+    if (!list) {
+        return EXIT_FAILURE;
+    }
+
+    const int t1[] = {1, 2, 3};
+    const int t2[] = {4, 5};
+    const int t3[] = {6};
+
+    if (add_tuple(list, t1, 3) != 0) {
+        destroy_tuple_list(list);
+        return EXIT_FAILURE;
+    }
+    if (add_tuple(list, NULL, 0) != 0) {
+        destroy_tuple_list(list);
+        return EXIT_FAILURE;
+    }
+    if (add_tuple(list, t2, 2) != 0) {
+        destroy_tuple_list(list);
+        return EXIT_FAILURE;
+    }
+    if (add_tuple(list, NULL, 0) != 0) {
+        destroy_tuple_list(list);
+        return EXIT_FAILURE;
+    }
+    if (add_tuple(list, t3, 1) != 0) {
+        destroy_tuple_list(list);
+        return EXIT_FAILURE;
+    }
+
+    remove_empty_tuples(list);
+
+    for (size_t i = 0; i < list->count; i++) {
+        printf("(");
+        for (size_t j = 0; j < list->items[i].size; j++) {
+            printf("%d", list->items[i].data[j]);
+            if (j < list->items[i].size - 1) {
+                printf(", ");
+            }
+        }
+        printf(")\n");
+    }
+
+    destroy_tuple_list(list);
+    return EXIT_SUCCESS;
+}

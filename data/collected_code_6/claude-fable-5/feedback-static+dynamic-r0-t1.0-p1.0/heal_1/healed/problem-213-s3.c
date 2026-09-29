@@ -1,0 +1,137 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+#define TUPLE_SIZE 3
+
+typedef struct {
+    char *items[TUPLE_SIZE];
+} StringTuple;
+
+static char *concat_strings(const char *a, const char *b)
+{
+    size_t len_a;
+    size_t len_b;
+    char *result;
+
+    if (a == NULL || b == NULL) {
+        return NULL;
+    }
+
+    len_a = strlen(a);
+    len_b = strlen(b);
+
+    if (len_a > SIZE_MAX - len_b - 1u) {
+        return NULL;
+    }
+
+    result = malloc(len_a + len_b + 1u);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    memcpy(result, a, len_a);
+    memcpy(result + len_a, b, len_b + 1u);
+
+    return result;
+}
+
+static int concat_tuples(const StringTuple *t1, const StringTuple *t2, StringTuple *out)
+{
+    size_t i;
+    size_t j;
+
+    if (t1 == NULL || t2 == NULL || out == NULL) {
+        return -1;
+    }
+
+    for (i = 0; i < TUPLE_SIZE; i++) {
+        out->items[i] = concat_strings(t1->items[i], t2->items[i]);
+        if (out->items[i] == NULL) {
+            for (j = 0; j < i; j++) {
+                free(out->items[j]);
+                out->items[j] = NULL;
+            }
+            return -1;
+        }
+    }
+
+    return 0;
+}
+
+static void free_tuple(StringTuple *t)
+{
+    size_t i;
+
+    if (t != NULL) {
+        for (i = 0; i < TUPLE_SIZE; i++) {
+            free(t->items[i]);
+            t->items[i] = NULL;
+        }
+    }
+}
+
+static int print_tuple(const StringTuple *t)
+{
+    size_t i;
+
+    if (t == NULL) {
+        return -1;
+    }
+
+    if (printf("[") < 0) {
+        return -1;
+    }
+
+    for (i = 0; i < TUPLE_SIZE; i++) {
+        if (printf("'%s'", t->items[i]) < 0) {
+            return -1;
+        }
+        if (i < TUPLE_SIZE - 1u) {
+            if (printf(", ") < 0) {
+                return -1;
+            }
+        }
+    }
+
+    if (printf("]\n") < 0) {
+        return -1;
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    StringTuple a;
+    StringTuple b;
+    StringTuple result;
+    size_t i;
+
+    a.items[0] = "Manjeet";
+    a.items[1] = "Nikhil";
+    a.items[2] = "Akshat";
+
+    b.items[0] = " Singh";
+    b.items[1] = " Meherwal";
+    b.items[2] = " Garg";
+
+    for (i = 0; i < TUPLE_SIZE; i++) {
+        result.items[i] = NULL;
+    }
+
+    if (concat_tuples(&a, &b, &result) != 0) {
+        fprintf(stderr, "Error: tuple concatenation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    if (print_tuple(&result) != 0) {
+        free_tuple(&result);
+        return EXIT_FAILURE;
+    }
+
+    free_tuple(&result);
+
+    return EXIT_SUCCESS;
+}

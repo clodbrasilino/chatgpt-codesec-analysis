@@ -1,0 +1,15 @@
+collected_code_3/round4/heal_0/problem-500.c: In function 'concatenate':
+collected_code_3/round4/heal_0/problem-500.c:12:15: warning: dereference of possibly-NULL 'result' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   12 |     result[0] = '\0';
+      |     ~~~~~~~~~~^~~~~~
+  'concatenate': events 1-2
+    |
+    |   11 |     char* result = malloc((totalLength + 1) * sizeof(char));
+    |      |                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                    |
+    |      |                    (1) this call could return NULL
+    |   12 |     result[0] = '\0';
+    |      |     ~~~~~~~~~~~~~~~~
+    |      |               |
+    |      |               (2) 'result' could be NULL: unchecked value from (1)
+    |

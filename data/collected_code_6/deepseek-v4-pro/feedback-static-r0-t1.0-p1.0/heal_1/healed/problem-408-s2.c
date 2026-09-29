@@ -1,0 +1,83 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int first;
+    int second;
+} Pair;
+
+int compare_pairs(const void *a, const void *b) {
+    const Pair *pa = (const Pair *)a;
+    const Pair *pb = (const Pair *)b;
+    int sum_a = pa->first + pa->second;
+    int sum_b = pb->first + pb->second;
+    return sum_a - sum_b;
+}
+
+Pair* find_k_pairs(const int *arr1, int n1, const int *arr2, int n2, int k, int *result_count) {
+    if (arr1 == NULL || arr2 == NULL || n1 <= 0 || n2 <= 0 || k <= 0 || result_count == NULL) {
+        if (result_count != NULL) {
+            *result_count = 0;
+        }
+        return NULL;
+    }
+
+    int total_pairs = n1 * n2;
+    if (k > total_pairs) {
+        k = total_pairs;
+    }
+
+    Pair *pairs = (Pair *)malloc((size_t)total_pairs * sizeof(Pair));
+    if (pairs == NULL) {
+        *result_count = 0;
+        return NULL;
+    }
+
+    int idx = 0;
+    for (int i = 0; i < n1; i++) {
+        for (int j = 0; j < n2; j++) {
+            pairs[idx].first = arr1[i];
+            pairs[idx].second = arr2[j];
+            idx++;
+        }
+    }
+
+    qsort(pairs, (size_t)total_pairs, sizeof(Pair), compare_pairs);
+
+    Pair *result = (Pair *)malloc((size_t)k * sizeof(Pair));
+    if (result == NULL) {
+        free(pairs);
+        *result_count = 0;
+        return NULL;
+    }
+
+    for (int i = 0; i < k; i++) {
+        result[i] = pairs[i];
+    }
+
+    free(pairs);
+    *result_count = k;
+    return result;
+}
+
+int main(void) {
+    int arr1[] = {1, 7, 11};
+    int arr2[] = {2, 4, 6};
+    int n1 = sizeof(arr1) / sizeof(arr1[0]);
+    int n2 = sizeof(arr2) / sizeof(arr2[0]);
+    int k = 3;
+    int count = 0;
+
+    Pair *result = find_k_pairs(arr1, n1, arr2, n2, k, &count);
+
+    if (result != NULL) {
+        for (int i = 0; i < count; i++) {
+            printf("(%d, %d)\n", result[i].first, result[i].second);
+        }
+        free(result);
+    } else {
+        printf("No pairs found\n");
+    }
+
+    return 0;
+}

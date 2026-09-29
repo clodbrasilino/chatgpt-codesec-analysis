@@ -1,0 +1,59 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+#include <string.h>
+
+#define MAX_INPUT_LEN 256
+
+bool all_chars_unique(const char *str, size_t max_len)
+{
+    bool seen[256] = { false };
+    size_t i;
+
+    if (str == NULL) {
+        return false;
+    }
+
+    for (i = 0; i < max_len && str[i] != '\0'; i++) {
+        unsigned char c = (unsigned char)str[i];
+        if (seen[c]) {
+            return false;
+        }
+        seen[c] = true;
+    }
+
+    return true;
+}
+
+int main(void)
+{
+    char buffer[MAX_INPUT_LEN];
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+    buffer[strcspn(buffer, "\n")] = '\0';
+
+    if (all_chars_unique(buffer, sizeof(buffer))) {
+        printf("All characters are unique\n");
+    } else {
+        printf("Duplicate characters found\n");
+    }
+
+    return 0;
+}
+```
+
+**Analysis of the flagged weakness (CWE-119/CWE-120):**
+
+The Flawfinder warning on the statically-sized `char buffer[MAX_INPUT_LEN]` is a low-risk, informational hit. The code already mitigates it correctly:
+
+1. **Bounded read:** `fgets(buffer, sizeof(buffer), stdin)` limits input to `sizeof(buffer) - 1` bytes plus the null terminator — no overflow is possible, unlike `gets()` or unbounded `scanf("%s", ...)`.
+2. **Guaranteed termination:** `buffer[sizeof(buffer) - 1] = '\0'` is defensive (redundant with `fgets`, but harmless), ensuring the string is always null-terminated before any string functions touch it.
+3. **Newline stripping:** `strcspn(buffer, "\n")` safely locates the newline (or the terminator if none exists) and truncates there — no out-of-bounds index is possible since `strcspn` never returns a value beyond the string length.
+4. **Bounds-checked iteration:** `all_chars_unique` takes an explicit `max_len` and checks both `i < max_len` and `str[i] != '\0'`, so it never reads past the buffer even if termination were somehow missed. It also null-checks the pointer and casts to `unsigned char` before indexing `seen[]`, avoiding negative-index UB on platforms where `char` is signed.
+
+No functional changes were required — the original code already implements the appropriate fixes, so the rewrite simply removes the comments as requested.

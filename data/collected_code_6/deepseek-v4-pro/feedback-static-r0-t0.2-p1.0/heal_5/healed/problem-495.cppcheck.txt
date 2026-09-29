@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_5/healed/problem-495.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_5/healed/problem-495.c:47:31: style: Condition 'copy_size>0' is always true [knownConditionTrueFalse]
+                if (copy_size > 0 && result_pos < max_output_size) {
+                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_5/healed/problem-495.c:45:29: note: Assuming that condition 'match.rm_so>0' is not redundant
+            if (match.rm_so > 0) {
+                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_5/healed/problem-495.c:46:36: note: Assignment 'copy_size=(unsigned long)match.rm_so', assigned value is greater than 0
+                size_t copy_size = (size_t)match.rm_so;
+                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_5/healed/problem-495.c:47:31: note: Condition 'copy_size>0' is always true
+                if (copy_size > 0 && result_pos < max_output_size) {
+                              ^

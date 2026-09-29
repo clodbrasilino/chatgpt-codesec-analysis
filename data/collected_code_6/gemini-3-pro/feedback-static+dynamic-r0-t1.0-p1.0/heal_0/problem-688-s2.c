@@ -1,0 +1,27 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+struct Complex {
+    double real;
+    double imag;
+};
+
+double get_complex_length(struct Complex c);
+
+double get_complex_length(struct Complex c) {
+    return hypot(c.real, c.imag);
+}
+
+int main(void) {
+    struct Complex c = {3.0, 4.0};
+    double length;
+
+    length = get_complex_length(c);
+
+    if (printf("Magnitude: %.2f\n", length) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

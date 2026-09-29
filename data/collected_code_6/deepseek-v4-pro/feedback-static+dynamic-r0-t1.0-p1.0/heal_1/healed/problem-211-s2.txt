@@ -1,0 +1,37 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int count_numbers_with_bits_set(const int *numbers, int size, int oth, int nth) {
+    if (numbers == NULL || size < 0 || oth < 0 || nth < 0 || oth >= 32 || nth >= 32) {
+        return -1;
+    }
+    
+    int count = 0;
+    unsigned int mask = (1U << oth) | (1U << nth);
+    
+    for (int i = 0; i < size; i++) {
+        if (((unsigned int)numbers[i] & mask) == mask) {
+            count++;
+        }
+    }
+    
+    return count;
+}
+
+int main(void) {
+    int numbers[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    int size = sizeof(numbers) / sizeof(numbers[0]);
+    
+    int result = count_numbers_with_bits_set(numbers, size, 0, 1);
+    
+    if (result >= 0) {
+        printf("%d\n", result);
+    } else {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    return EXIT_SUCCESS;
+}
+```

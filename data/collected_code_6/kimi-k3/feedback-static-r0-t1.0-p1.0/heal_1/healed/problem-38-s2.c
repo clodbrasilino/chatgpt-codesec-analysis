@@ -1,0 +1,52 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int find_division(const int arr[], int size, float *result) {
+    int first_even = -1;
+    int first_odd = -1;
+    int i;
+
+    if (arr == NULL || result == NULL || size <= 0) {
+        return -1;
+    }
+
+    for (i = 0; i < size; i++) {
+        if (first_even == -1 && arr[i] % 2 == 0) {
+            first_even = arr[i];
+        } else if (first_odd == -1 && arr[i] % 2 != 0) {
+            first_odd = arr[i];
+        }
+
+        if (first_even != -1 && first_odd != -1) {
+            break;
+        }
+    }
+
+    if (first_even == -1 || first_odd == -1) {
+        return -1;
+    }
+
+    if (first_odd == 0) {
+        return -1;
+    }
+
+    *result = (float)first_even / first_odd;
+    return 0;
+}
+
+int main(void) {
+    int arr[] = {3, 7, 8, 12, 5, 10};
+    int size = sizeof(arr) / sizeof(arr[0]);
+    float result = 0.0f;
+    int status;
+
+    status = find_division(arr, size, &result);
+
+    if (status == 0) {
+        printf("Division result: %.2f\n", result);
+    } else {
+        printf("Error: Could not find both even and odd numbers, or division by zero.\n");
+    }
+
+    return 0;
+}

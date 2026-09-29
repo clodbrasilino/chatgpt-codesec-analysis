@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-253-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-253-s3.c:32:21: style: Condition 'null_result!=-1' is always false [knownConditionTrueFalse]
+    if (null_result != -1) {
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-253-s3.c:30:37: note: Calling function 'count_integers' returns -1
+    int null_result = count_integers(NULL, max_elements);
+                                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-253-s3.c:30:37: note: Assignment 'null_result=count_integers(NULL,max_elements)', assigned value is -1
+    int null_result = count_integers(NULL, max_elements);
+                                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-253-s3.c:32:21: note: Condition 'null_result!=-1' is always false
+    if (null_result != -1) {
+                    ^

@@ -1,0 +1,90 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node* next;
+};
+
+int insert_before_each(struct Node** head_ref, int new_data);
+struct Node* create_node(int data);
+void free_list(struct Node* head);
+void print_list(const struct Node* head);
+
+int insert_before_each(struct Node** head_ref, int new_data) {
+    if (head_ref == NULL) {
+        return -1;
+    }
+
+    struct Node** current = head_ref;
+
+    while (*current != NULL) {
+        struct Node* new_node = (struct Node*)malloc(sizeof(struct Node));
+        if (new_node == NULL) {
+            return -1;
+        }
+
+        new_node->data = new_data;
+        new_node->next = *current;
+        *current = new_node;
+
+        current = &((*current)->next->next);
+    }
+
+    return 0;
+}
+
+struct Node* create_node(int data) {
+    struct Node* new_node = (struct Node*)malloc(sizeof(struct Node));
+    if (new_node != NULL) {
+        new_node->data = data;
+        new_node->next = NULL;
+    }
+    return new_node;
+}
+
+void free_list(struct Node* head) {
+    struct Node* temp;
+    while (head != NULL) {
+        temp = head;
+        head = head->next;
+        free(temp);
+    }
+}
+
+void print_list(const struct Node* head) {
+    while (head != NULL) {
+        printf("%d ", head->data);
+        head = head->next;
+    }
+    printf("\n");
+}
+
+int main(void) {
+    struct Node* head = create_node(1);
+    if (head == NULL) {
+        return EXIT_FAILURE;
+    }
+
+    head->next = create_node(2);
+    if (head->next == NULL) {
+        free_list(head);
+        return EXIT_FAILURE;
+    }
+
+    head->next->next = create_node(3);
+    if (head->next->next == NULL) {
+        free_list(head);
+        return EXIT_FAILURE;
+    }
+
+    if (insert_before_each(&head, 0) != 0) {
+        free_list(head);
+        return EXIT_FAILURE;
+    }
+
+    print_list(head);
+    free_list(head);
+
+    return EXIT_SUCCESS;
+}

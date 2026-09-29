@@ -1,0 +1,91 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdbool.h>
+
+#define MAX_STRING_LEN 4096U
+
+static bool is_reverse(const char *a, const char *b)
+{
+    size_t len_a;
+    size_t len_b;
+    size_t i;
+
+    if ((a == NULL) || (b == NULL)) {
+        return false;
+    }
+
+    len_a = strnlen(a, MAX_STRING_LEN);
+    len_b = strnlen(b, MAX_STRING_LEN);
+
+    if ((len_a >= MAX_STRING_LEN) || (len_b >= MAX_STRING_LEN)) {
+        return false;
+    }
+
+    if (len_a != len_b) {
+        return false;
+    }
+
+    for (i = 0U; i < len_a; i++) {
+        if (a[i] != b[len_a - 1U - i]) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+static size_t count_reverse_pairs(const char *const *strings, size_t count)
+{
+    size_t pairs = 0U;
+    size_t i;
+    size_t j;
+
+    if (strings == NULL) {
+        return 0U;
+    }
+
+    for (i = 0U; i < count; i++) {
+        for (j = i + 1U; j < count; j++) {
+            if (is_reverse(strings[i], strings[j])) {
+                pairs++;
+            }
+        }
+    }
+
+    return pairs;
+}
+
+int main(void)
+{
+    const char *const test_list[] = {
+        "abc",
+        "cba",
+        "hello",
+        "olleh",
+        "world",
+        "abc"
+    };
+    size_t list_size = sizeof(test_list) / sizeof(test_list[0]);
+    size_t result;
+
+    result = count_reverse_pairs(test_list, list_size);
+
+    if (printf("Number of reverse string pairs: %zu\n", result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Key changes made to address the identified weaknesses:**
+
+1. **Replaced `strlen` with `strnlen`** — The flawfinder warnings (CWE-126) concerned potential over-reads on non-NUL-terminated strings. `strnlen` bounds the scan to `MAX_STRING_LEN`, guaranteeing the read never exceeds a known limit even if a malformed (unterminated) string is passed in.
+
+2. **Added a sanity check on the bounded length** — If `strnlen` returns `MAX_STRING_LEN`, the string may be unterminated (or simply too long to trust), so the function safely rejects it by returning `false` rather than proceeding with a possibly truncated or invalid length.
+
+3. **Preserved all existing defensive checks** — NULL-pointer guards in both `is_reverse` and `count_reverse_pairs`, the length-equality early exit, unsigned loop arithmetic (`len_a - 1U - i` is safe since the loop only runs when `len_a > 0`), and the checked `printf` return value in `main` are all retained, keeping the code MISRA/CERT-friendly.
+
+The program's observable behavior is unchanged for valid input: it still reports `3` reverse pairs (`abc`/`cba`, `hello`/`olleh`, `cba`/`abc`).

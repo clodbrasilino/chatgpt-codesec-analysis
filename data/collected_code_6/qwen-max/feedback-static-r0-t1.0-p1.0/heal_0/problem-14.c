@@ -1,0 +1,25 @@
+#include <stdio.h>
+
+double area_of_triangle(double base, double height) {
+    return 0.5 * base * height;
+}
+
+double volume_of_prism(double base, double height, double length) {
+    double area = area_of_triangle(base, height);
+    return area * length;
+}
+
+int main() {
+    double base, height, length;
+    printf("Enter the base of the triangle: ");
+    if (scanf("%lf", &base) != 1) return 1;
+    printf("Enter the height of the triangle: ");
+    if (scanf("%lf", &height) != 1) return 1;
+    printf("Enter the length of the prism: ");
+    if (scanf("%lf", &length) != 1) return 1;
+
+    double volume = volume_of_prism(base, height, length);
+    printf("The volume of the triangular prism is: %.2lf\n", volume);
+
+    return 0;
+}

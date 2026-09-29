@@ -1,0 +1,25 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef void (*print_func)(const char*);
+
+void print_string(const char *str) {
+    printf("%s\n", str);
+}
+
+void map_strings(char **strings, int size, print_func func) {
+    for(int i = 0; i < size; ++i) {
+        if(strings[i] != NULL) {
+            func(strings[i]);
+        }
+    }
+}
+
+int main() {
+    char *strings[] = {"Hello", "World", "C", "Programming"};
+    int size = sizeof(strings) / sizeof(strings[0]);
+
+    map_strings(strings, size, print_string);
+
+    return 0;
+}

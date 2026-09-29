@@ -1,0 +1,113 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+int maxProfit(int k, const int *prices, int n)
+{
+    int i;
+    int j;
+    int result;
+    long long candidate;
+    long long *buy;
+    long long *sell;
+
+    if (prices == NULL || n <= 1 || k <= 0) {
+        return 0;
+    }
+
+    if (k > n / 2) {
+        result = 0;
+        for (i = 1; i < n; i++) {
+            if (prices[i] > prices[i - 1]) {
+                result += prices[i] - prices[i - 1];
+            }
+        }
+        return result;
+    }
+
+    buy = malloc((size_t)(k + 1) * sizeof(long long));
+    if (buy == NULL) {
+        return -1;
+    }
+
+    sell = malloc((size_t)(k + 1) * sizeof(long long));
+    if (sell == NULL) {
+        free(buy);
+        return -1;
+    }
+
+    for (j = 0; j <= k; j++) {
+        buy[j] = LLONG_MIN / 2;
+        sell[j] = 0;
+    }
+
+    for (i = 0; i < n; i++) {
+        for (j = 1; j <= k; j++) {
+            candidate = sell[j - 1] - (long long)prices[i];
+            if (candidate > buy[j]) {
+                buy[j] = candidate;
+            }
+            candidate = buy[j] + (long long)prices[i];
+            if (candidate > sell[j]) {
+                sell[j] = candidate;
+            }
+        }
+    }
+
+    result = (int)sell[k];
+
+    free(buy);
+    free(sell);
+
+    return result;
+}
+
+int main(void)
+{
+    int prices0[] = {3, 2, 6, 5, 0, 3};
+    int prices1[] = {2, 4, 1};
+    int prices2[] = {1, 2, 4, 2, 5, 7, 2, 4, 9, 0};
+    int n0 = (int)(sizeof(prices0) / sizeof(prices0[0]));
+    int n1 = (int)(sizeof(prices1) / sizeof(prices1[0]));
+    int n2 = (int)(sizeof(prices2) / sizeof(prices2[0]));
+    int profit;
+
+    profit = maxProfit(2, prices0, n0);
+    if (profit < 0) {
+        fprintf(stderr, "Error: memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+    printf("Maximum profit with at most %d transactions: %d\n", 2, profit);
+
+    profit = maxProfit(2, prices1, n1);
+    if (profit < 0) {
+        fprintf(stderr, "Error: memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+    printf("Maximum profit with at most %d transactions: %d\n", 2, profit);
+
+    profit = maxProfit(2, prices2, n2);
+    if (profit < 0) {
+        fprintf(stderr, "Error: memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+    printf("Maximum profit with at most %d transactions: %d\n", 2, profit);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The failed test cases in the original comments (`got 5`, `got 0`, `got 0`) point to a broken DP state initialization or update order in an earlier revision. The correct implementation above addresses those weaknesses as follows:
+
+1. **State initialization** — `buy[j]` must be initialized to a sentinel "negative infinity" (`LLONG_MIN / 2`, halved to prevent overflow when adding a price), while `sell[j]` starts at `0`. Initializing `buy` to `0` or `INT_MIN` directly is the classic cause of results like `0` in test cases 1 and 2, since either the first purchase never registers or an overflow wraps the value.
+
+2. **Update order within the inner loop** — `buy[j]` is updated from `sell[j-1]` *before* `sell[j]` is updated from `buy[j]`, allowing same-day buy/sell transitions and ensuring transaction `j` correctly chains off the completed transaction `j-1`. Reversing this order truncates achievable profit (the `got 5` symptom — only a partial transaction sequence is counted).
+
+3. **Overflow safety** — all intermediate arithmetic uses `long long`, with prices explicitly cast, so `INT_MAX`-adjacent prices cannot corrupt the DP table.
+
+4. **Edge cases and robustness** — `NULL` prices, `n <= 1`, and `k <= 0` return `0`; the `k > n/2` fast path degenerates to the unlimited-transactions greedy sum, avoiding a needless `O(nk)` pass and oversized allocations; both `malloc` results are checked, with `buy` freed if `sell` allocation fails, and `-1` is propagated and checked in `main`.
+
+With these fixes, the program prints `7`, `2`, and `13` for the three test vectors, matching the correct maxima for at most two transactions.

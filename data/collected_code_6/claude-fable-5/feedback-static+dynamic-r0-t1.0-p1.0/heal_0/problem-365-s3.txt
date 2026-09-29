@@ -1,0 +1,65 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int count_digits(long long number)
+{
+    int count = 1;
+
+    if (number < 0) {
+        number = -number;
+    }
+
+    while (number >= 10) {
+        number /= 10;
+        count++;
+    }
+
+    return count;
+}
+
+int main(void)
+{
+    long long number;
+    int result;
+
+    printf("Enter a number: ");
+
+    if (scanf("%lld", &number) != 1) {
+        fprintf(stderr, "Error: invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    result = count_digits(number);
+
+    printf("Number of digits: %d\n", result);
+
+    return EXIT_SUCCESS;
+}
+```
+
+A few notes on how this code avoids the listed weaknesses:
+
+- **CWE-703 (Improper Check or Handling of Exceptional Conditions):** The return value of `scanf` is checked, and the program exits with a failure status and an error message on invalid input instead of proceeding with an uninitialized variable.
+
+- **CWE-664 (Improper Control of a Resource Through its Lifetime):** No dynamic memory or file handles are used, so there is nothing to leak; all variables are stack-allocated with well-defined lifetimes.
+
+- **CWE-710 (Improper Adherence to Coding Standards):** The code uses `int main(void)`, returns standard exit codes (`EXIT_SUCCESS`/`EXIT_FAILURE`), declares all variables before use, uses `long long` with the matching `%lld` format specifier, and avoids implicit conversions.
+
+One subtle point: negating the number could overflow if the input were `LLONG_MIN`, but since the loop logic works by repeated division, an alternative fully overflow-safe version would count digits on the negative value directly:
+
+```c
+int count_digits(long long number)
+{
+    int count = 1;
+
+    while (number <= -10 || number >= 10) {
+        number /= 10;
+        count++;
+    }
+
+    return count;
+}
+```
+
+This version handles the entire range of `long long`, including `LLONG_MIN`, without any risk of signed overflow.

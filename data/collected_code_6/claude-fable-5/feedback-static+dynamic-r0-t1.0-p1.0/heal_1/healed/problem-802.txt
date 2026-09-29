@@ -1,0 +1,65 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+static int count_rotations(const int *arr, size_t n)
+{
+    size_t low;
+    size_t high;
+
+    if (arr == NULL || n == 0U) {
+        return -1;
+    }
+
+    low = 0U;
+    high = n - 1U;
+
+    while (low < high) {
+        size_t mid = low + ((high - low) / 2U);
+
+        if (arr[mid] > arr[high]) {
+            low = mid + 1U;
+        } else if (arr[mid] < arr[high]) {
+            high = mid;
+        } else {
+            high--;
+        }
+    }
+
+    return (int)low;
+}
+
+int main(void)
+{
+    int arr[] = {15, 18, 2, 3, 6, 12};
+    size_t n = sizeof(arr) / sizeof(arr[0]);
+    int rotations;
+
+    rotations = count_rotations(arr, n);
+
+    if (rotations < 0) {
+        if (fprintf(stderr, "Invalid input array\n") < 0) {
+            return EXIT_FAILURE;
+        }
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Number of rotations: %d\n", rotations) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the changes:**
+
+The original binary search only compared `arr[mid] > arr[high]` with a single `else` branch that unconditionally moved `high = mid`. That logic is correct only when all array elements are strictly distinct. When duplicate values are present (e.g., `{2, 2, 2, 0, 1, 2}`), the comparison `arr[mid] == arr[high]` is ambiguous — the pivot could lie on either side — and blindly setting `high = mid` can skip past the true minimum, producing off-by-N results exactly like the failed test cases noted in the comments (`expected 3, got 5`, `expected 2, got 3`).
+
+The fix introduces a three-way comparison:
+
+1. `arr[mid] > arr[high]` — the minimum lies strictly to the right, so `low = mid + 1`.
+2. `arr[mid] < arr[high]` — the minimum lies at `mid` or to its left, so `high = mid`.
+3. `arr[mid] == arr[high]` — ambiguous case; safely shrink the search window with `high--`, which never discards the minimum since `arr[high]` has an equal duplicate remaining in range.
+
+This preserves O(log n) behavior for distinct elements, degrading gracefully to O(n) only in the worst duplicate-heavy case, and retains the original defensive checks (`NULL`/zero-length input, checked `printf`/`fprintf` return values).

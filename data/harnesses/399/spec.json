@@ -1,0 +1,92 @@
+{
+  "task_id": 399,
+  "text": "Write a C function to perform the mathematical bitwise xor operation across the given tuples.",
+  "fn_candidates": [
+    "bitwise_xor",
+    "BitwiseXor",
+    "bitwiseXor",
+    "bitwisexor"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "bitwise_xor",
+      "args": [
+        [
+          10,
+          4,
+          6,
+          9
+        ],
+        [
+          5,
+          2,
+          3,
+          3
+        ]
+      ],
+      "expected": [
+        15,
+        6,
+        5,
+        10
+      ],
+      "assert_src": "assert bitwise_xor((10, 4, 6, 9), (5, 2, 3, 3)) == (15, 6, 5, 10)"
+    },
+    {
+      "fn_name": "bitwise_xor",
+      "args": [
+        [
+          11,
+          5,
+          7,
+          10
+        ],
+        [
+          6,
+          3,
+          4,
+          4
+        ]
+      ],
+      "expected": [
+        13,
+        6,
+        3,
+        14
+      ],
+      "assert_src": "assert bitwise_xor((11, 5, 7, 10), (6, 3, 4, 4)) == (13, 6, 3, 14)"
+    },
+    {
+      "fn_name": "bitwise_xor",
+      "args": [
+        [
+          12,
+          6,
+          8,
+          11
+        ],
+        [
+          7,
+          4,
+          5,
+          6
+        ]
+      ],
+      "expected": [
+        11,
+        2,
+        13,
+        13
+      ],
+      "assert_src": "assert bitwise_xor((12, 6, 8, 11), (7, 4, 5, 6)) == (11, 2, 13, 13)"
+    }
+  ],
+  "arg_kinds": [
+    "int-list"
+  ],
+  "return_kind": "int-list",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

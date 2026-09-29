@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_6/healed/problem-411-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_6/healed/problem-411-s2.c:55:39: style: Condition 'dst_pos+match_start<=max_result_len' is always true [knownConditionTrueFalse]
+            if (dst_pos + match_start <= max_result_len) {
+                                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_6/healed/problem-411-s2.c:50:39: note: Assuming that condition 'dst_pos+match_start>=max_result_len' is not redundant
+            if (dst_pos + match_start >= max_result_len) {
+                                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_6/healed/problem-411-s2.c:55:39: note: Condition 'dst_pos+match_start<=max_result_len' is always true
+            if (dst_pos + match_start <= max_result_len) {
+                                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_6/healed/problem-411-s2.c:79:33: style: Condition 'dst_pos+remaining<=max_result_len' is always true [knownConditionTrueFalse]
+        if (dst_pos + remaining <= max_result_len) {
+                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_6/healed/problem-411-s2.c:74:33: note: Assuming that condition 'dst_pos+remaining>=max_result_len' is not redundant
+        if (dst_pos + remaining >= max_result_len) {
+                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_6/healed/problem-411-s2.c:79:33: note: Condition 'dst_pos+remaining<=max_result_len' is always true
+        if (dst_pos + remaining <= max_result_len) {
+                                ^

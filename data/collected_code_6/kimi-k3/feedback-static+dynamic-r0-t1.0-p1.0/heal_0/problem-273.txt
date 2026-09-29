@@ -1,0 +1,96 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *data;
+    size_t size;
+} Tuple;
+
+Tuple* tuple_create(size_t size) {
+    Tuple *t = (Tuple*)malloc(sizeof(Tuple));
+    if (t == NULL) {
+        return NULL;
+    }
+    t->data = (int*)malloc(size * sizeof(int));
+    if (t->data == NULL) {
+        free(t);
+        return NULL;
+    }
+    t->size = size;
+    return t;
+}
+
+void tuple_destroy(Tuple *t) {
+    if (t != NULL) {
+        free(t->data);
+        free(t);
+    }
+}
+
+int tuple_subtract(const Tuple *t1, const Tuple *t2, Tuple *result) {
+    size_t i;
+    if (t1 == NULL || t2 == NULL || result == NULL) {
+        return -1;
+    }
+    if (t1->size != t2->size || t1->size != result->size) {
+        return -1;
+    }
+    for (i = 0; i < t1->size; i++) {
+        result->data[i] = t1->data[i] - t2->data[i];
+    }
+    return 0;
+}
+
+int main(void) {
+    Tuple *t1 = NULL;
+    Tuple *t2 = NULL;
+    Tuple *result = NULL;
+    size_t size = 5;
+    size_t i;
+    int status = 0;
+
+    t1 = tuple_create(size);
+    if (t1 == NULL) {
+        fprintf(stderr, "Failed to create tuple 1\n");
+        return 1;
+    }
+
+    t2 = tuple_create(size);
+    if (t2 == NULL) {
+        fprintf(stderr, "Failed to create tuple 2\n");
+        tuple_destroy(t1);
+        return 1;
+    }
+
+    result = tuple_create(size);
+    if (result == NULL) {
+        fprintf(stderr, "Failed to create result tuple\n");
+        tuple_destroy(t1);
+        tuple_destroy(t2);
+        return 1;
+    }
+
+    for (i = 0; i < size; i++) {
+        t1->data[i] = (int)(i * 10 + 10);
+        t2->data[i] = (int)(i + 1);
+    }
+
+    if (tuple_subtract(t1, t2, result) != 0) {
+        fprintf(stderr, "Subtraction failed\n");
+        status = 1;
+    } else {
+        printf("Result: ");
+        for (i = 0; i < size; i++) {
+            printf("%d ", result->data[i]);
+        }
+        printf("\n");
+    }
+
+    tuple_destroy(t1);
+    tuple_destroy(t2);
+    tuple_destroy(result);
+
+    return status;
+}
+```

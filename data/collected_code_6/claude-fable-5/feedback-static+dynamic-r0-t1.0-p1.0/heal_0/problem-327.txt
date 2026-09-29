@@ -1,0 +1,60 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+static int is_valid_triangle(double a, double b, double c)
+{
+    if (a <= 0.0 || b <= 0.0 || c <= 0.0) {
+        return 0;
+    }
+    if ((a + b) <= c || (b + c) <= a || (a + c) <= b) {
+        return 0;
+    }
+    return 1;
+}
+
+static int is_isosceles(double a, double b, double c)
+{
+    if (a == b || b == c || a == c) {
+        return 1;
+    }
+    return 0;
+}
+
+int main(void)
+{
+    double a;
+    double b;
+    double c;
+    int result;
+
+    printf("Enter the three sides of the triangle: ");
+
+    result = scanf("%lf %lf %lf", &a, &b, &c);
+    if (result != 3) {
+        fprintf(stderr, "Error: invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (!is_valid_triangle(a, b, c)) {
+        fprintf(stderr, "Error: the given sides do not form a valid triangle.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (is_isosceles(a, b, c)) {
+        printf("The triangle is isosceles.\n");
+    } else {
+        printf("The triangle is not isosceles.\n");
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Key safety measures taken:**
+
+- **CWE-703 (Improper Check or Handling of Exceptional Conditions):** The return value of `scanf` is checked to ensure exactly three values were read, and the program exits with a failure status on bad input. The sides are also validated to be positive and to satisfy the triangle inequality before classification.
+
+- **CWE-664 (Improper Control of a Resource Through its Lifetime):** No dynamic memory or file handles are allocated, so there are no resources to leak or misuse. All variables are stack-local with well-defined lifetimes.
+
+- **CWE-710 (Improper Adherence to Coding Standards):** The code uses `int main(void)`, returns `EXIT_SUCCESS`/`EXIT_FAILURE` from `<stdlib.h>`, declares helper functions `static` with full prototypes, avoids implicit conversions, uses braces on all control blocks, and writes error messages to `stderr`.

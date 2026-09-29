@@ -1,0 +1,90 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int **chunks;
+    size_t *chunk_sizes;
+    size_t num_chunks;
+} ChunkedArray;
+
+ChunkedArray chunk_tuples(int *array, size_t length, size_t n) {
+    ChunkedArray result = {NULL, NULL, 0};
+    
+    if (array == NULL || length == 0 || n == 0) {
+        return result;
+    }
+    
+    size_t num_chunks = length / n + (length % n != 0 ? 1 : 0);
+    result.chunks = malloc(num_chunks * sizeof(int *));
+    result.chunk_sizes = malloc(num_chunks * sizeof(size_t));
+    
+    if (result.chunks == NULL || result.chunk_sizes == NULL) {
+        free(result.chunks);
+        free(result.chunk_sizes);
+        result.chunks = NULL;
+        result.chunk_sizes = NULL;
+        return result;
+    }
+    
+    result.num_chunks = num_chunks;
+    
+    for (size_t i = 0; i < num_chunks; i++) {
+        size_t current_chunk_size = n;
+        if (i == num_chunks - 1 && length % n != 0) {
+            current_chunk_size = length % n;
+        }
+        result.chunk_sizes[i] = current_chunk_size;
+        result.chunks[i] = malloc(current_chunk_size * sizeof(int));
+        
+        if (result.chunks[i] == NULL) {
+            for (size_t j = 0; j < i; j++) {
+                free(result.chunks[j]);
+            }
+            free(result.chunks);
+            free(result.chunk_sizes);
+            result.chunks = NULL;
+            result.chunk_sizes = NULL;
+            result.num_chunks = 0;
+            return result;
+        }
+        
+        for (size_t k = 0; k < current_chunk_size; k++) {
+            result.chunks[i][k] = array[i * n + k];
+        }
+    }
+    
+    return result;
+}
+
+void free_chunked_array(ChunkedArray *ca) {
+    if (ca == NULL) {
+        return;
+    }
+    for (size_t i = 0; i < ca->num_chunks; i++) {
+        free(ca->chunks[i]);
+    }
+    free(ca->chunks);
+    free(ca->chunk_sizes);
+    ca->chunks = NULL;
+    ca->chunk_sizes = NULL;
+    ca->num_chunks = 0;
+}
+
+int main() {
+    int arr[] = {1, 2, 3, 4, 5, 6, 7, 8, 9};
+    size_t length = sizeof(arr) / sizeof(arr[0]);
+    size_t n = 4;
+    
+    ChunkedArray ca = chunk_tuples(arr, length, n);
+    
+    for (size_t i = 0; i < ca.num_chunks; i++) {
+        for (size_t j = 0; j < ca.chunk_sizes[i]; j++) {
+            printf("%d ", ca.chunks[i][j]);
+        }
+        printf("\n");
+    }
+    
+    free_chunked_array(&ca);
+    
+    return 0;
+}

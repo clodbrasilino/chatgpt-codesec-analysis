@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-154-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-154-s3.c:4:52: style: Parameter 'col_sizes' can be declared as pointer to const [constParameterPointer]
+int *extract_elements(int **matrix, int rows, int *col_sizes, int *req_rows, int *req_cols, int num_reqs, int *out_size) {
+                                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-154-s3.c:4:68: style: Parameter 'req_rows' can be declared as pointer to const [constParameterPointer]
+int *extract_elements(int **matrix, int rows, int *col_sizes, int *req_rows, int *req_cols, int num_reqs, int *out_size) {
+                                                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-154-s3.c:4:83: style: Parameter 'req_cols' can be declared as pointer to const [constParameterPointer]
+int *extract_elements(int **matrix, int rows, int *col_sizes, int *req_rows, int *req_cols, int num_reqs, int *out_size) {
+                                                                                  ^

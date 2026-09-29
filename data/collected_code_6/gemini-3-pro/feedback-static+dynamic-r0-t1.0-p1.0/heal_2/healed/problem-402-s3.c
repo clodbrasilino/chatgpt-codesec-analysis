@@ -1,0 +1,38 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+unsigned long long nCrModpDP(unsigned long long n, unsigned long long r, unsigned long long p) {
+    if (r == 0 || r == n) return 1;
+    if (n < r) return 0;
+    if (p == 0) return 0;
+
+    unsigned long long* C = (unsigned long long*)calloc(r + 1, sizeof(unsigned long long));
+    if (!C) return 0;
+
+    C[0] = 1;
+
+    for (unsigned long long i = 1; i <= n; i++) {
+        for (unsigned long long j = (i < r ? i : r); j > 0; j--) {
+            C[j] = (C[j] + C[j - 1]) % p;
+        }
+    }
+
+    unsigned long long result = C[r];
+    free(C);
+    return result;
+}
+
+unsigned long long nCrModP(unsigned long long n, unsigned long long r, unsigned long long p) {
+    return nCrModpDP(n, r, p);
+}
+
+int main(void) {
+    unsigned long long n = 10;
+    unsigned long long r = 2;
+    unsigned long long p = 13;
+
+    unsigned long long result = nCrModP(n, r, p);
+    printf("%llu\n", result);
+
+    return 0;
+}

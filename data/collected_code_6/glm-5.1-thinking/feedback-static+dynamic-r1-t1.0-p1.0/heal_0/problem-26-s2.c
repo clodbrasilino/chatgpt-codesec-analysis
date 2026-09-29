@@ -1,0 +1,72 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *elements;
+    int size;
+} Tuple;
+
+typedef struct {
+    Tuple *tuples;
+    int count;
+} TupleList;
+
+int check_all_k_elements(const TupleList *list, int k) {
+    if (list == NULL || k < 0) {
+        return 0;
+    }
+    if (list->count == 0) {
+        return 1;
+    }
+    if (list->tuples == NULL) {
+        return 0;
+    }
+    for (int i = 0; i < list->count; i++) {
+        if (list->tuples[i].size != k) {
+            return 0;
+        }
+        if (k > 0 && list->tuples[i].elements == NULL) {
+            return 0;
+        }
+    }
+    return 1;
+}
+
+int main(void) {
+    int k = 2;
+    TupleList list;
+    list.count = 2;
+    list.tuples = malloc(list.count * sizeof(Tuple));
+    if (list.tuples == NULL) {
+        return EXIT_FAILURE;
+    }
+
+    list.tuples[0].size = 2;
+    list.tuples[0].elements = malloc(2 * sizeof(int));
+    if (list.tuples[0].elements == NULL) {
+        free(list.tuples);
+        return EXIT_FAILURE;
+    }
+    list.tuples[0].elements[0] = 1;
+    list.tuples[0].elements[1] = 2;
+
+    list.tuples[1].size = 2;
+    list.tuples[1].elements = malloc(2 * sizeof(int));
+    if (list.tuples[1].elements == NULL) {
+        free(list.tuples[0].elements);
+        free(list.tuples);
+        return EXIT_FAILURE;
+    }
+    list.tuples[1].elements[0] = 3;
+    list.tuples[1].elements[1] = 4;
+
+    int result = check_all_k_elements(&list, k);
+    printf("%d\n", result);
+
+    for (int i = 0; i < list.count; i++) {
+        free(list.tuples[i].elements);
+    }
+    free(list.tuples);
+
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-774-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-774-s3.c:39:58: style: Condition 'capacity==0' is always false [knownConditionTrueFalse]
+    if (stream == NULL || length_out == NULL || capacity == 0) {
+                                                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-774-s3.c:34:34: note: Assignment 'capacity=max_length+1', assigned value is greater than 0
+    size_t capacity = max_length + 1;
+                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-774-s3.c:39:58: note: Condition 'capacity==0' is always false
+    if (stream == NULL || length_out == NULL || capacity == 0) {
+                                                         ^

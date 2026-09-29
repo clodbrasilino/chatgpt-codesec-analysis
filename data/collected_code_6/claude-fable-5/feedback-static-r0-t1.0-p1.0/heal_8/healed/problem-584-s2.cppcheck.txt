@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-584-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-584-s2.c:96:41: style: Condition 'word_len<=len-start' is always true [knownConditionTrueFalse]
+            if (start < len && word_len <= len - start) {
+                                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-584-s2.c:87:38: note: Assuming that condition 'word_len<=len-start' is not redundant
+        if (word_len > 0 && word_len <= len - start &&
+                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-584-s2.c:90:22: note: Assuming condition is false
+            if (word == NULL) {
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-584-s2.c:96:41: note: Condition 'word_len<=len-start' is always true
+            if (start < len && word_len <= len - start) {
+                                        ^

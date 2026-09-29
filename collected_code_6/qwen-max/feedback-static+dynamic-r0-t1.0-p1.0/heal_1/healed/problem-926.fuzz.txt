@@ -1,3 +1,0 @@
-problem-926.c:22:42:medium:UBSan: signed integer overflow: 2 * -4702111234474983745 cannot be represented in type 'int64_t' (aka 'long long') (AFL crash: id:000001,sig:06,src:000002,time:32260,execs:394,op:havoc,rep:15)
-problem-926.c:22:70:medium:UBSan: signed integer overflow: -4702111234474983746 + -4702111234474983746 cannot be represented in type 'int64_t' (aka 'long long') (AFL crash: id:000001,sig:06,src:000002,time:32260,execs:394,op:havoc,rep:15)
-problem-926.c:30:0:error:Fuzzing found a crash (signal 6) on input id:000000,sig:06,src:000002,time:285,execs:236,op:havoc,rep:8; likely memory-safety defect

@@ -1,0 +1,69 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <limits.h>
+
+#define BUF_SIZE 256
+
+void remove_chars(char *first, const char *second)
+{
+    int present[UCHAR_MAX + 1] = {0};
+    size_t i;
+    size_t j;
+
+    if (first == NULL || second == NULL) {
+        return;
+    }
+
+    for (i = 0; second[i] != '\0'; i++) {
+        present[(unsigned char)second[i]] = 1;
+    }
+
+    j = 0;
+    for (i = 0; first[i] != '\0'; i++) {
+        if (!present[(unsigned char)first[i]]) {
+            first[j] = first[i];
+            j++;
+        }
+    }
+    first[j] = '\0';
+}
+
+int main(void)
+{
+    char first[BUF_SIZE];
+    char second[BUF_SIZE];
+
+    if (fgets(first, sizeof(first), stdin) == NULL) {
+        fprintf(stderr, "Failed to read first string\n");
+        return 1;
+    }
+    first[strcspn(first, "\n")] = '\0';
+
+    if (fgets(second, sizeof(second), stdin) == NULL) {
+        fprintf(stderr, "Failed to read second string\n");
+        return 1;
+    }
+    second[strcspn(second, "\n")] = '\0';
+
+    remove_chars(first, second);
+
+    if (printf("%s\n", first) < 0) {
+        return 1;
+    }
+
+    return 0;
+}
+```
+
+Analysis of the flagged weaknesses:
+
+The Flawfinder warnings on `char first[BUF_SIZE]` and `char second[BUF_SIZE]` are informational, low-risk (risk 2) alerts triggered simply because statically-sized character arrays *can* be misused. In this code they are already properly mitigated:
+
+1. **Bounded reads** — Both buffers are filled exclusively via `fgets(buf, sizeof(buf), stdin)`, which limits input to `BUF_SIZE - 1` characters plus a null terminator. No overflow is possible.
+2. **Guaranteed termination** — `fgets` always null-terminates on success, and the `strcspn` trick safely strips the trailing newline (returning the full length if no newline exists, which still indexes a valid, null byte position within bounds).
+3. **Safe in-place filtering** — `remove_chars` only ever writes to index `j <= i`, so the compacted output can never exceed the original string length; the final `first[j] = '\0'` is within bounds.
+4. **NULL checks** — Both `fgets` return values and the pointer arguments in `remove_chars` are validated.
+5. **Correct char handling** — Indexing `present[]` with `(unsigned char)` casts avoids undefined behavior from negative `char` values on platforms where `char` is signed.
+
+No functional changes were required — the warnings are false positives, and the code as written already performs proper bounds checking and length-limited I/O.

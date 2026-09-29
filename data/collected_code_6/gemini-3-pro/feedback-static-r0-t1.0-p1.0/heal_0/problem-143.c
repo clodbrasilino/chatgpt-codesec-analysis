@@ -1,0 +1,101 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef enum {
+    TYPE_INT,
+    TYPE_LIST,
+    TYPE_TUPLE
+} ElementType;
+
+struct Element;
+
+typedef struct {
+    size_t size;
+    struct Element** elements;
+} Collection;
+
+typedef struct Element {
+    ElementType type;
+    union {
+        int int_val;
+        Collection collection_val;
+    } data;
+} Element;
+
+size_t count_lists_in_tuple(const Element* tuple) {
+    if (!tuple || tuple->type != TYPE_TUPLE) {
+        return 0;
+    }
+
+    size_t count = 0;
+    for (size_t i = 0; i < tuple->data.collection_val.size; i++) {
+        const Element* child = tuple->data.collection_val.elements[i];
+        if (child && child->type == TYPE_LIST) {
+            count++;
+        }
+    }
+    return count;
+}
+
+Element* create_int(int value) {
+    Element* el = (Element*)malloc(sizeof(Element));
+    if (!el) {
+        exit(EXIT_FAILURE);
+    }
+    el->type = TYPE_INT;
+    el->data.int_val = value;
+    return el;
+}
+
+Element* create_collection(ElementType type, size_t size) {
+    Element* el = (Element*)malloc(sizeof(Element));
+    if (!el) {
+        exit(EXIT_FAILURE);
+    }
+    el->type = type;
+    el->data.collection_val.size = size;
+    el->data.collection_val.elements = NULL;
+    
+    if (size > 0) {
+        el->data.collection_val.elements = (Element**)calloc(size, sizeof(Element*));
+        if (!el->data.collection_val.elements) {
+            free(el);
+            exit(EXIT_FAILURE);
+        }
+    }
+    return el;
+}
+
+void free_element(Element* el) {
+    if (!el) {
+        return;
+    }
+    if (el->type == TYPE_LIST || el->type == TYPE_TUPLE) {
+        for (size_t i = 0; i < el->data.collection_val.size; i++) {
+            free_element(el->data.collection_val.elements[i]);
+        }
+        free(el->data.collection_val.elements);
+    }
+    free(el);
+}
+
+int main(void) {
+    Element* tuple = create_collection(TYPE_TUPLE, 4);
+
+    tuple->data.collection_val.elements[0] = create_int(1);
+    tuple->data.collection_val.elements[1] = create_collection(TYPE_LIST, 0);
+    tuple->data.collection_val.elements[2] = create_int(2);
+    
+    Element* nested_list = create_collection(TYPE_LIST, 2);
+    nested_list->data.collection_val.elements[0] = create_int(10);
+    nested_list->data.collection_val.elements[1] = create_int(20);
+    tuple->data.collection_val.elements[3] = nested_list;
+
+    size_t list_count = count_lists_in_tuple(tuple);
+
+    printf("%zu\n", list_count);
+
+    free_element(tuple);
+
+    return EXIT_SUCCESS;
+}

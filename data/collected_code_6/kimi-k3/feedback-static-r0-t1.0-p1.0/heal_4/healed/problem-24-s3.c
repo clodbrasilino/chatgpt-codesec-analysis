@@ -1,0 +1,87 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <limits.h>
+#include <string.h>
+#include <stdint.h>
+#include <stdbool.h>
+
+#define MAX_BINARY_DIGITS 63
+#define INPUT_BUFFER_SIZE (MAX_BINARY_DIGITS + 2)
+
+int binary_to_decimal(const char *binary, long long *result) {
+    long long decimal;
+    const char *ptr;
+    size_t length;
+
+    if (binary == NULL || result == NULL) {
+        return -1;
+    }
+
+    if (*binary == '\0') {
+        return -1;
+    }
+
+    length = 0;
+    ptr = binary;
+    while (*ptr != '\0') {
+        if (*ptr != '0' && *ptr != '1') {
+            return -1;
+        }
+        length++;
+        if (length > MAX_BINARY_DIGITS) {
+            return -1;
+        }
+        ptr++;
+    }
+
+    decimal = 0;
+    ptr = binary;
+    while (*ptr != '\0') {
+        if (decimal > (LLONG_MAX - 1) / 2) {
+            return -1;
+        }
+        decimal = decimal * 2 + (*ptr - '0');
+        ptr++;
+    }
+
+    *result = decimal;
+    return 0;
+}
+
+int main(void) {
+    char input[INPUT_BUFFER_SIZE];
+    long long decimal;
+    size_t len;
+    char *newline_pos;
+
+    if (fgets(input, sizeof(input), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    len = strnlen(input, sizeof(input));
+
+    if (len == 0) {
+        fprintf(stderr, "Invalid binary number\n");
+        return EXIT_FAILURE;
+    }
+
+    if (len == sizeof(input) - 1 && input[len - 1] != '\n') {
+        fprintf(stderr, "Input too long\n");
+        return EXIT_FAILURE;
+    }
+
+    newline_pos = strchr(input, '\n');
+    if (newline_pos != NULL) {
+        *newline_pos = '\0';
+    }
+
+    if (binary_to_decimal(input, &decimal) != 0) {
+        fprintf(stderr, "Invalid binary number\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("%lld\n", decimal);
+    return EXIT_SUCCESS;
+}

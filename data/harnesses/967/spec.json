@@ -1,0 +1,44 @@
+{
+  "task_id": 967,
+  "text": "Write a C function to accept the strings which contains all vowels.",
+  "fn_candidates": [
+    "check",
+    "Check",
+    "check",
+    "check"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "check",
+      "args": [
+        "SEEquoiaL"
+      ],
+      "expected": "accepted",
+      "assert_src": "assert check(\"SEEquoiaL\") == 'accepted'"
+    },
+    {
+      "fn_name": "check",
+      "args": [
+        "program"
+      ],
+      "expected": "not accepted",
+      "assert_src": "assert check('program') == \"not accepted\""
+    },
+    {
+      "fn_name": "check",
+      "args": [
+        "fine"
+      ],
+      "expected": "not accepted",
+      "assert_src": "assert check('fine') == \"not accepted\""
+    }
+  ],
+  "arg_kinds": [
+    "str"
+  ],
+  "return_kind": "str",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

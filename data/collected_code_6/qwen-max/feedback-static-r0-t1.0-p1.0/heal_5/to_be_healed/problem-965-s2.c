@@ -1,0 +1,34 @@
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+
+char *camel_to_snake(const char *str, char *result, size_t result_size) {
+    if (result_size == 0) return NULL;
+    int j = 0;
+    for (int i = 0; str[i] && j < result_size - 1; i++) {
+        if (isupper(str[i])) {
+            if (i > 0 && str[i - 1] != '_') {
+                result[j++] = '_';
+                if (j >= result_size - 1) break;
+            }
+            result[j++] = tolower(str[i]);
+            if (j >= result_size - 1) break;
+        } else {
+            result[j++] = str[i];
+            if (j >= result_size - 1) break;
+        }
+    }
+    result[j < result_size - 1 ? j : result_size - 1] = '\0';
+    return result;
+}
+
+int main() {
+    const char input[] = "ThisIsACamelCaseString";
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char result[256];
+    camel_to_snake(input, result, sizeof(result));
+    printf("%s\n", result);
+    return 0;
+}

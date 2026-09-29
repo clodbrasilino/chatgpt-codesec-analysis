@@ -1,0 +1,61 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+typedef struct {
+    int value;
+    int count;
+} Frequency;
+
+Frequency* get_frequency(const int *arr, size_t size, size_t *unique_count) {
+    if (arr == NULL || unique_count == NULL || size == 0) {
+        return NULL;
+    }
+
+    Frequency *freq = malloc(size * sizeof(Frequency));
+    if (freq == NULL) {
+        return NULL;
+    }
+
+    size_t count = 0;
+    for (size_t i = 0; i < size; i++) {
+        bool found = false;
+        for (size_t j = 0; j < count; j++) {
+            if (freq[j].value == arr[i]) {
+                freq[j].count++;
+                found = true;
+                break;
+            }
+        }
+        if (!found) {
+            freq[count].value = arr[i];
+            freq[count].count = 1;
+            count++;
+        }
+    }
+
+    *unique_count = count;
+    return freq;
+}
+
+int main(void) {
+    int arr[] = {4, 2, 2, 8, 3, 3, 3, 4, 4, 5};
+    size_t size = sizeof(arr) / sizeof(arr[0]);
+    size_t unique_count = 0;
+
+    Frequency *freq = get_frequency(arr, size, &unique_count);
+    if (freq == NULL) {
+        fprintf(stderr, "Error: Failed to compute frequencies\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Element frequencies:\n");
+    for (size_t i = 0; i < unique_count; i++) {
+        printf("%d: %d\n", freq[i].value, freq[i].count);
+    }
+
+    free(freq);
+    return EXIT_SUCCESS;
+}
+```

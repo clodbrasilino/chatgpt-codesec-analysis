@@ -1,0 +1,134 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <errno.h>
+#include <regex.h>
+
+int extract_date_from_url(const char *url, int *year, int *month, int *day) {
+    int status = -1;
+    regex_t regex;
+    regmatch_t matches[4];
+    long y = 0;
+    long m = 0;
+    long d = 0;
+    size_t len = 0;
+    int regres = 0;
+    const char *pattern = "(19[0-9]{2}|20[0-9]{2})[-/]"
+                           "(0[1-9]|1[0-2])[-/]"
+                           "(0[1-9]|[12][0-9]|3[01])";
+    char *endptr = NULL;
+
+    if (url == NULL || year == NULL || month == NULL || day == NULL) {
+        return -1;
+    }
+
+    regres = regcomp(&regex, pattern, REG_EXTENDED);
+    if (regres != 0) {
+        return -1;
+    }
+
+    regres = regexec(&regex, url, 4, matches, 0);
+    if (regres == REG_NOMATCH) {
+        status = 1;
+        goto cleanup;
+    } else if (regres != 0) {
+        status = -1;
+        goto cleanup;
+    }
+
+    len = (size_t)(matches[1].rm_eo - matches[1].rm_so);
+    if (len == 0 || len > 4) {
+        status = -1;
+        goto cleanup;
+    }
+    {
+        /* Possible weaknesses found:
+         * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+         */
+        char year_buf[5];
+        snprintf(year_buf, sizeof(year_buf), "%.*s", (int)len, url + matches[1].rm_so);
+        errno = 0;
+        y = strtol(year_buf, &endptr, 10);
+        if (errno != 0 || endptr == year_buf || *endptr != '\0') {
+            status = -1;
+            goto cleanup;
+        }
+    }
+
+    len = (size_t)(matches[2].rm_eo - matches[2].rm_so);
+    if (len == 0 || len > 2) {
+        status = -1;
+        goto cleanup;
+    }
+    {
+        /* Possible weaknesses found:
+         * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+         */
+        char month_buf[3];
+        snprintf(month_buf, sizeof(month_buf), "%.*s", (int)len, url + matches[2].rm_so);
+        errno = 0;
+        m = strtol(month_buf, &endptr, 10);
+        if (errno != 0 || endptr == month_buf || *endptr != '\0') {
+            status = -1;
+            goto cleanup;
+        }
+    }
+
+    len = (size_t)(matches[3].rm_eo - matches[3].rm_so);
+    if (len == 0 || len > 2) {
+        status = -1;
+        goto cleanup;
+    }
+    {
+        /* Possible weaknesses found:
+         * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+         */
+        char day_buf[3];
+        snprintf(day_buf, sizeof(day_buf), "%.*s", (int)len, url + matches[3].rm_so);
+        errno = 0;
+        d = strtol(day_buf, &endptr, 10);
+        if (errno != 0 || endptr == day_buf || *endptr != '\0') {
+            status = -1;
+            goto cleanup;
+        }
+    }
+
+    if (y < 0 || y > 9999 || m < 1 || m > 12 || d < 1 || d > 31) {
+        status = -1;
+        goto cleanup;
+    }
+
+    *year = (int)y;
+    *month = (int)m;
+    *day = (int)d;
+    status = 0;
+
+cleanup:
+    regfree(&regex);
+    return status;
+}
+
+int main(void) {
+    const char *urls[] = {
+        "https://example.com/archive/2024/03/15/index.html",
+        "https://example.com?date=2023-12-01",
+        "https://example.com/nodate",
+        NULL
+    };
+    int year = 0;
+    int month = 0;
+    int day = 0;
+
+    for (int i = 0; urls[i] != NULL; i++) {
+        int ret = extract_date_from_url(urls[i], &year, &month, &day);
+        if (ret == 0) {
+            printf("%s => %04d-%02d-%02d\n", urls[i], year, month, day);
+        } else if (ret == 1) {
+            printf("%s => no match\n", urls[i]);
+        } else {
+            printf("%s => error\n", urls[i]);
+        }
+    }
+
+    return 0;
+}

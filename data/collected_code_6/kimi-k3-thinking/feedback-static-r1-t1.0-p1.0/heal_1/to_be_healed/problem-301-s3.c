@@ -1,0 +1,177 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef enum {
+    VALUE_INTEGER,
+    VALUE_DICTIONARY
+} ValueType;
+
+typedef struct DictionaryEntry DictionaryEntry;
+
+typedef struct {
+    ValueType type;
+    union {
+        long integer;
+        DictionaryEntry *dictionary;
+    } data;
+} Value;
+
+struct DictionaryEntry {
+    char *key;
+    Value value;
+    DictionaryEntry *next;
+};
+
+static char *copy_string(const char *source)
+{
+    char *copy;
+    size_t length;
+
+    if (source == NULL) {
+        return NULL;
+    }
+
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    length = strlen(source) + 1;
+    copy = malloc(length);
+    if (copy == NULL) {
+        return NULL;
+    }
+    /* Possible weaknesses found:
+     * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+     */
+    memcpy(copy, source, length);
+    return copy;
+}
+
+static DictionaryEntry *entry_create(const char *key)
+{
+    DictionaryEntry *entry = malloc(sizeof(*entry));
+
+    if (entry == NULL) {
+        return NULL;
+    }
+
+    entry->key = copy_string(key);
+    if (entry->key == NULL) {
+        free(entry);
+        return NULL;
+    }
+
+    entry->next = NULL;
+    return entry;
+}
+
+static int dictionary_add_integer(DictionaryEntry **dictionary, const char *key, long number)
+{
+    DictionaryEntry *entry;
+
+    if (dictionary == NULL || key == NULL) {
+        return -1;
+    }
+
+    entry = entry_create(key);
+    if (entry == NULL) {
+        return -1;
+    }
+
+    entry->value.type = VALUE_INTEGER;
+    entry->value.data.integer = number;
+    entry->next = *dictionary;
+    *dictionary = entry;
+    return 0;
+}
+
+static int dictionary_add_dictionary(DictionaryEntry **dictionary, const char *key,
+                                     DictionaryEntry *child)
+{
+    DictionaryEntry *entry;
+
+    if (dictionary == NULL || key == NULL) {
+        return -1;
+    }
+
+    entry = entry_create(key);
+    if (entry == NULL) {
+        return -1;
+    }
+
+    entry->value.type = VALUE_DICTIONARY;
+    entry->value.data.dictionary = child;
+    entry->next = *dictionary;
+    *dictionary = entry;
+    return 0;
+}
+
+int dictionary_depth(const DictionaryEntry *dictionary)
+{
+    int max_child_depth = 0;
+    const DictionaryEntry *entry;
+
+    for (entry = dictionary; entry != NULL; entry = entry->next) {
+        if (entry->value.type == VALUE_DICTIONARY) {
+            int child_depth = dictionary_depth(entry->value.data.dictionary);
+            if (child_depth > max_child_depth) {
+                max_child_depth = child_depth;
+            }
+        }
+    }
+
+    return max_child_depth + 1;
+}
+
+void dictionary_destroy(DictionaryEntry *dictionary)
+{
+    DictionaryEntry *entry = dictionary;
+
+    while (entry != NULL) {
+        DictionaryEntry *next = entry->next;
+        if (entry->value.type == VALUE_DICTIONARY) {
+            dictionary_destroy(entry->value.data.dictionary);
+        }
+        free(entry->key);
+        free(entry);
+        entry = next;
+    }
+}
+
+int main(void)
+{
+    DictionaryEntry *root = NULL;
+    DictionaryEntry *level_two = NULL;
+    DictionaryEntry *level_three = NULL;
+    int depth;
+
+    if (dictionary_add_integer(&level_three, "leaf", 3L) != 0) {
+        dictionary_destroy(level_three);
+        fprintf(stderr, "error: failed to build dictionary\n");
+        return EXIT_FAILURE;
+    }
+
+    if (dictionary_add_integer(&level_two, "b", 2L) != 0 ||
+        dictionary_add_dictionary(&level_two, "level_three", level_three) != 0) {
+        dictionary_destroy(level_three);
+        dictionary_destroy(level_two);
+        fprintf(stderr, "error: failed to build dictionary\n");
+        return EXIT_FAILURE;
+    }
+    level_three = NULL;
+
+    if (dictionary_add_integer(&root, "a", 1L) != 0 ||
+        dictionary_add_dictionary(&root, "level_two", level_two) != 0) {
+        dictionary_destroy(level_two);
+        dictionary_destroy(root);
+        fprintf(stderr, "error: failed to build dictionary\n");
+        return EXIT_FAILURE;
+    }
+    level_two = NULL;
+
+    depth = dictionary_depth(root);
+    printf("Dictionary depth: %d\n", depth);
+
+    dictionary_destroy(root);
+    return EXIT_SUCCESS;
+}

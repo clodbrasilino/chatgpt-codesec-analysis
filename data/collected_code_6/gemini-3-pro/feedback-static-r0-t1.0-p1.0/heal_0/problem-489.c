@@ -1,0 +1,51 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int find_frequency_of_largest(const int *array, size_t size) {
+    if (array == NULL || size == 0) {
+        return 0;
+    }
+
+    int max_value = array[0];
+    int frequency = 1;
+
+    for (size_t i = 1; i < size; ++i) {
+        if (array[i] > max_value) {
+            max_value = array[i];
+            frequency = 1;
+        } else if (array[i] == max_value) {
+            frequency++;
+        }
+    }
+
+    return frequency;
+}
+
+int main(void) {
+    size_t size = 10;
+    int *array = (int *)malloc(size * sizeof(int));
+    if (array == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    array[0] = 3;
+    array[1] = 5;
+    array[2] = 2;
+    array[3] = 7;
+    array[4] = 7;
+    array[5] = 5;
+    array[6] = 7;
+    array[7] = 1;
+    array[8] = 4;
+    array[9] = 7;
+
+    int frequency = find_frequency_of_largest(array, size);
+    
+    printf("Frequency of the largest value: %d\n", frequency);
+
+    free(array);
+    array = NULL;
+
+    return EXIT_SUCCESS;
+}

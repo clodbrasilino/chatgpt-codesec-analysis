@@ -1,0 +1,84 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#define BUFFER_SIZE 1024
+
+size_t longest_word_length(const char *str, size_t max_size)
+{
+    size_t max_len = 0;
+    size_t current_len = 0;
+    size_t i = 0;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    while (i < max_size && str[i] != '\0') {
+        if (isspace((unsigned char)str[i])) {
+            if (current_len > max_len) {
+                max_len = current_len;
+            }
+            current_len = 0;
+        } else {
+            current_len++;
+        }
+        i++;
+    }
+
+    if (current_len > max_len) {
+        max_len = current_len;
+    }
+
+    return max_len;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t result;
+    size_t len;
+
+    if (printf("Enter a sentence: ") < 0) {
+        return EXIT_FAILURE;
+    }
+
+    if (fflush(stdout) != 0) {
+        return EXIT_FAILURE;
+    }
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input.\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    }
+
+    result = longest_word_length(buffer, sizeof(buffer));
+
+    if (printf("Length of the longest word: %zu\n", result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis summary:**
+
+The original code was already well-defended against the Flawfinder warning (CWE-119/CWE-120), which is a generic heuristic triggered by any statically-sized `char` array rather than an actual proven vulnerability. The mitigations in place are:
+
+1. **`fgets(buffer, sizeof(buffer), stdin)`** — length-bounded input that can never overflow the buffer, unlike `gets()` or unbounded `scanf("%s", ...)`.
+2. **Explicit forced termination** — `buffer[sizeof(buffer) - 1] = '\0'` guarantees NUL-termination even in pathological cases (defense in depth; `fgets` already guarantees this on success).
+3. **`strnlen` instead of `strlen`** — bounded scanning that cannot run past the buffer even if termination were somehow missing.
+4. **Bounded parsing** — `longest_word_length` takes `max_size` and checks `i < max_size` before dereferencing, plus a `NULL` guard.
+5. **Correct `isspace` usage** — the cast to `(unsigned char)` avoids undefined behavior when `char` is signed and holds negative values.
+
+The only functional addition in the rewrite is `fflush(stdout)` after the prompt, ensuring the prompt is visible before blocking on `fgets` when stdout is fully buffered (e.g., piped output). All return codes of I/O functions are checked, satisfying strict error-handling standards (e.g., CERT C ERR33-C).

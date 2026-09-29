@@ -1,0 +1,44 @@
+{
+  "task_id": 266,
+  "text": "Write a C function to find the lateral surface area of a cube.",
+  "fn_candidates": [
+    "lateralsurface_cube",
+    "LateralsurfaceCube",
+    "lateralsurfaceCube",
+    "lateralsurfacecube"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "lateralsurface_cube",
+      "args": [
+        5
+      ],
+      "expected": 100,
+      "assert_src": "assert lateralsurface_cube(5)==100"
+    },
+    {
+      "fn_name": "lateralsurface_cube",
+      "args": [
+        9
+      ],
+      "expected": 324,
+      "assert_src": "assert lateralsurface_cube(9)==324"
+    },
+    {
+      "fn_name": "lateralsurface_cube",
+      "args": [
+        10
+      ],
+      "expected": 400,
+      "assert_src": "assert lateralsurface_cube(10)==400"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

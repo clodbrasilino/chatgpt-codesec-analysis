@@ -1,0 +1,47 @@
+{
+  "task_id": 204,
+  "text": "Write a C function to count the occurrence of a given character in a string.",
+  "fn_candidates": [
+    "count",
+    "Count",
+    "count",
+    "count"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "count",
+      "args": [
+        "abcc",
+        "c"
+      ],
+      "expected": 2,
+      "assert_src": "assert count(\"abcc\",\"c\") == 2"
+    },
+    {
+      "fn_name": "count",
+      "args": [
+        "ababca",
+        "a"
+      ],
+      "expected": 3,
+      "assert_src": "assert count(\"ababca\",\"a\") == 3"
+    },
+    {
+      "fn_name": "count",
+      "args": [
+        "mnmm0pm",
+        "m"
+      ],
+      "expected": 4,
+      "assert_src": "assert count(\"mnmm0pm\",\"m\") == 4"
+    }
+  ],
+  "arg_kinds": [
+    "str"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

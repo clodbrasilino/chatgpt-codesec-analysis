@@ -1,0 +1,137 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node* next;
+} Node;
+
+typedef struct SubList {
+    Node* head;
+    struct SubList* next;
+} SubList;
+
+Node* createNode(int data) {
+    Node* newNode = (Node*)malloc(sizeof(Node));
+    if (!newNode) {
+        exit(EXIT_FAILURE);
+    }
+    newNode->data = data;
+    newNode->next = NULL;
+    return newNode;
+}
+
+SubList* createSubList(Node* head) {
+    SubList* newSubList = (SubList*)malloc(sizeof(SubList));
+    if (!newSubList) {
+        exit(EXIT_FAILURE);
+    }
+    newSubList->head = head;
+    newSubList->next = NULL;
+    return newSubList;
+}
+
+SubList* packDuplicates(Node* head) {
+    if (!head) {
+        return NULL;
+    }
+
+    SubList* resultHead = NULL;
+    SubList* resultTail = NULL;
+    
+    Node* current = head;
+    
+    while (current) {
+        Node* subListHead = createNode(current->data);
+        Node* subListTail = subListHead;
+        
+        while (current->next && current->data == current->next->data) {
+            subListTail->next = createNode(current->next->data);
+            subListTail = subListTail->next;
+            current = current->next;
+        }
+        
+        SubList* newSubList = createSubList(subListHead);
+        
+        if (!resultHead) {
+            resultHead = newSubList;
+            resultTail = newSubList;
+        } else {
+            resultTail->next = newSubList;
+            resultTail = newSubList;
+        }
+        
+        current = current->next;
+    }
+    
+    return resultHead;
+}
+
+void appendNode(Node** head, int data) {
+    Node* newNode = createNode(data);
+    if (!*head) {
+        *head = newNode;
+        return;
+    }
+    Node* temp = *head;
+    while (temp->next) {
+        temp = temp->next;
+    }
+    temp->next = newNode;
+}
+
+void printSubLists(SubList* head) {
+    while (head) {
+        Node* current = head->head;
+        printf("[");
+        while (current) {
+            printf("%d", current->data);
+            if (current->next) {
+                printf(", ");
+            }
+            current = current->next;
+        }
+        printf("] ");
+        head = head->next;
+    }
+    printf("\n");
+}
+
+void freeList(Node* head) {
+    while (head) {
+        Node* temp = head;
+        head = head->next;
+        free(temp);
+    }
+}
+
+void freeSubLists(SubList* head) {
+    while (head) {
+        SubList* temp = head;
+        freeList(head->head);
+        head = head->next;
+        free(temp);
+    }
+}
+
+int main(void) {
+    Node* head = NULL;
+    
+    appendNode(&head, 1);
+    appendNode(&head, 1);
+    appendNode(&head, 1);
+    appendNode(&head, 2);
+    appendNode(&head, 3);
+    appendNode(&head, 3);
+    appendNode(&head, 1);
+    appendNode(&head, 1);
+    
+    SubList* packed = packDuplicates(head);
+    
+    printSubLists(packed);
+    
+    freeList(head);
+    freeSubLists(packed);
+    
+    return 0;
+}

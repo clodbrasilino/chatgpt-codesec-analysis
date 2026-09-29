@@ -1,0 +1,33 @@
+#include <stdio.h>
+
+int findSingleInSortedArray(int array[], int length) {
+    int low = 0, high = length - 1;
+
+    while (low < high) {
+        int mid = low + (high - low) / 2;
+        if (mid % 2 == 0) {
+            if (array[mid] == array[mid+1])
+                low = mid + 2;
+            else
+                high = mid;
+        } else {
+            if (array[mid] == array[mid-1])
+                low = mid + 1;
+            else
+                high = mid - 1;
+        }
+    }
+
+    return array[low];
+}
+
+
+int main() {
+    int array[] = {1, 1, 2, 4, 4, 5, 5, 6, 6};
+    int length = sizeof(array) / sizeof(array[0]);
+    
+    int singleElement = findSingleInSortedArray(array, length);
+    printf("The element that appears once is: %d\n", singleElement);
+
+    return 0;
+}

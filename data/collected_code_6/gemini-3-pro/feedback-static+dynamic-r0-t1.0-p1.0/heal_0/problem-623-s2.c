@@ -1,0 +1,41 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+double* calculate_powers(const double* elements, size_t count, double power) {
+    if (elements == NULL || count == 0) {
+        return NULL;
+    }
+
+    double* results = (double*)malloc(count * sizeof(double));
+    if (results == NULL) {
+        return NULL;
+    }
+
+    for (size_t i = 0; i < count; i++) {
+        results[i] = pow(elements[i], power);
+    }
+
+    return results;
+}
+
+int main(void) {
+    double numbers[] = {2.0, 3.0, 4.0, 5.0};
+    size_t count = sizeof(numbers) / sizeof(numbers[0]);
+    double power = 3.0;
+
+    double* powered_numbers = calculate_powers(numbers, count, power);
+    if (powered_numbers == NULL) {
+        fprintf(stderr, "Failed to allocate memory or invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    for (size_t i = 0; i < count; i++) {
+        printf("%f^%f = %f\n", numbers[i], power, powered_numbers[i]);
+    }
+
+    free(powered_numbers);
+    powered_numbers = NULL;
+
+    return EXIT_SUCCESS;
+}

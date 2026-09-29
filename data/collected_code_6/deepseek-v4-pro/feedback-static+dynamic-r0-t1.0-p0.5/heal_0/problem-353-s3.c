@@ -1,0 +1,147 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node *next;
+} Node;
+
+typedef struct {
+    Node **rows;
+    int num_rows;
+    int num_cols;
+} NestedList;
+
+NestedList *create_nested_list(int rows, int cols) {
+    NestedList *list = (NestedList *)malloc(sizeof(NestedList));
+    if (list == NULL) {
+        return NULL;
+    }
+    
+    list->rows = (Node **)calloc(rows, sizeof(Node *));
+    if (list->rows == NULL) {
+        free(list);
+        return NULL;
+    }
+    
+    list->num_rows = rows;
+    list->num_cols = cols;
+    
+    for (int i = 0; i < rows; i++) {
+        list->rows[i] = NULL;
+        for (int j = cols - 1; j >= 0; j--) {
+            Node *new_node = (Node *)malloc(sizeof(Node));
+            if (new_node == NULL) {
+                for (int k = 0; k < i; k++) {
+                    Node *current = list->rows[k];
+                    while (current != NULL) {
+                        Node *temp = current;
+                        current = current->next;
+                        free(temp);
+                    }
+                }
+                free(list->rows);
+                free(list);
+                return NULL;
+            }
+            new_node->data = 0;
+            new_node->next = list->rows[i];
+            list->rows[i] = new_node;
+        }
+    }
+    
+    return list;
+}
+
+void free_nested_list(NestedList *list) {
+    if (list == NULL) {
+        return;
+    }
+    
+    for (int i = 0; i < list->num_rows; i++) {
+        Node *current = list->rows[i];
+        while (current != NULL) {
+            Node *temp = current;
+            current = current->next;
+            free(temp);
+        }
+    }
+    
+    free(list->rows);
+    free(list);
+}
+
+int remove_column(NestedList *list, int col_index) {
+    if (list == NULL || col_index < 0 || col_index >= list->num_cols) {
+        return -1;
+    }
+    
+    for (int i = 0; i < list->num_rows; i++) {
+        Node *current = list->rows[i];
+        Node *prev = NULL;
+        int j = 0;
+        
+        while (current != NULL && j < col_index) {
+            prev = current;
+            current = current->next;
+            j++;
+        }
+        
+        if (current == NULL) {
+            return -1;
+        }
+        
+        if (prev == NULL) {
+            list->rows[i] = current->next;
+        } else {
+            prev->next = current->next;
+        }
+        
+        free(current);
+    }
+    
+    list->num_cols--;
+    return 0;
+}
+
+void print_nested_list(NestedList *list) {
+    if (list == NULL) {
+        return;
+    }
+    
+    for (int i = 0; i < list->num_rows; i++) {
+        Node *current = list->rows[i];
+        while (current != NULL) {
+            printf("%d ", current->data);
+            current = current->next;
+        }
+        printf("\n");
+    }
+}
+
+int main(void) {
+    NestedList *list = create_nested_list(3, 4);
+    if (list == NULL) {
+        return 1;
+    }
+    
+    int value = 1;
+    for (int i = 0; i < list->num_rows; i++) {
+        Node *current = list->rows[i];
+        while (current != NULL) {
+            current->data = value++;
+            current = current->next;
+        }
+    }
+    
+    printf("Original list:\n");
+    print_nested_list(list);
+    
+    if (remove_column(list, 1) == 0) {
+        printf("\nAfter removing column 1:\n");
+        print_nested_list(list);
+    }
+    
+    free_nested_list(list);
+    return 0;
+}

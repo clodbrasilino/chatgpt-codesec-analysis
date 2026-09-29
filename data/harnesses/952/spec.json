@@ -1,0 +1,50 @@
+{
+  "task_id": 952,
+  "text": "Write a C function to compute the value of ncr mod p.",
+  "fn_candidates": [
+    "nCr_mod_p",
+    "NcrModP",
+    "nCrModP",
+    "nCrmodp"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "nCr_mod_p",
+      "args": [
+        10,
+        2,
+        13
+      ],
+      "expected": 6,
+      "assert_src": "assert nCr_mod_p(10, 2, 13) == 6"
+    },
+    {
+      "fn_name": "nCr_mod_p",
+      "args": [
+        11,
+        3,
+        14
+      ],
+      "expected": 11,
+      "assert_src": "assert nCr_mod_p(11, 3, 14) == 11"
+    },
+    {
+      "fn_name": "nCr_mod_p",
+      "args": [
+        18,
+        14,
+        19
+      ],
+      "expected": 1,
+      "assert_src": "assert nCr_mod_p(18, 14, 19) == 1"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

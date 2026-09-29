@@ -1,0 +1,22 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-523-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-523-s3.c:16:13: style: Condition 'len>max_len' is always false [knownConditionTrueFalse]
+    if (len > max_len) {
+            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-523-s3.c:12:30: note: Assuming condition 'len>max_len' is false
+    if (len < min_len || len > max_len) {
+                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-523-s3.c:16:13: note: Condition 'len>max_len' is always false
+    if (len > max_len) {
+            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-523-s3.c:54:28: style: Condition 'result5' is always false [knownConditionTrueFalse]
+    printf("Test 5: %s\n", result5 ? "valid" : "invalid");
+                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-523-s3.c:53:34: note: Calling function 'check_password' returns 0
+    bool result5 = check_password(test5, 8, 20);
+                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-523-s3.c:53:34: note: Assignment 'result5=check_password(test5,8,20)', assigned value is 0
+    bool result5 = check_password(test5, 8, 20);
+                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-523-s3.c:54:28: note: Condition 'result5' is always false
+    printf("Test 5: %s\n", result5 ? "valid" : "invalid");
+                           ^

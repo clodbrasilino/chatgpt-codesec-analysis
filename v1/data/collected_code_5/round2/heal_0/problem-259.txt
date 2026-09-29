@@ -1,0 +1,43 @@
+```c
+#include <stdio.h>
+
+typedef struct Tuple {
+    int a;
+    int b;
+} Tuple;
+
+void maximize(Tuple *x, Tuple *y) {
+    if(!x || !y) {
+        printf("Error: Null pointer provided.\n");
+        return;
+    }
+
+    if(y->a > x->a) {
+        x->a = y->a;
+    }
+
+    if(y->b > x->b) {
+        x->b = y->b;
+    }
+}
+
+int main() {
+    Tuple x = {5, 10};
+    Tuple y = {10, 5};
+
+    maximize(&x, &y);
+
+    printf("Maximized tuple: a=%d, b=%d\n", x.a, x.b);
+
+    return 0;
+}
+```
+In the code above, there is a function `maximize` that accepts two pointers to tuples. The function compares the two integers `a` and `b` of each tuple and assigns the highest value to the corresponding integer of the first tuple.
+
+In the `main` function, I've created two tuples `x` and `y`, called the `maximize` function to maximize the values of tuple `x` relative to `y`, and then printed out the maximized values of tuple `x`.
+
+Error handling is performed by checking whether the input pointers are `NULL` before proceeding with the operation. Hence, it avoids CWE-703: Improper Check or Handling of Exceptional Conditions.
+
+Finally, the code adheres to common C coding standards and does not commit CWE-710: Improper Adherence to Coding Standards.
+
+Also, the code does not involve the creation or deletion of dynamic resources; hence, it avoids CWE-664: Improper Control of a Resource Through its Lifetime.

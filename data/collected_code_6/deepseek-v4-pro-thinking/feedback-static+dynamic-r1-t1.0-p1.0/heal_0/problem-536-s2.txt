@@ -1,0 +1,61 @@
+```c
+#include <stddef.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node *next;
+} Node;
+
+Node *list_nth(Node *head, size_t n) {
+    if (n == 0) {
+        return NULL;
+    }
+    while (head != NULL && n > 1) {
+        head = head->next;
+        --n;
+    }
+    return head;
+}
+
+int main(void) {
+    Node *head = NULL;
+    Node *tail = NULL;
+    int values[] = {10, 20, 30, 40, 50};
+    size_t count = sizeof(values) / sizeof(values[0]);
+
+    for (size_t i = 0; i < count; ++i) {
+        Node *node = malloc(sizeof(*node));
+        if (node == NULL) {
+            while (head != NULL) {
+                Node *tmp = head;
+                head = head->next;
+                free(tmp);
+            }
+            return EXIT_FAILURE;
+        }
+        node->data = values[i];
+        node->next = NULL;
+        if (head == NULL) {
+            head = node;
+        } else {
+            tail->next = node;
+        }
+        tail = node;
+    }
+
+    Node *third = list_nth(head, 3);
+    if (third != NULL) {
+        printf("%d\n", third->data);
+    }
+
+    while (head != NULL) {
+        Node *tmp = head;
+        head = head->next;
+        free(tmp);
+    }
+
+    return EXIT_SUCCESS;
+}
+```

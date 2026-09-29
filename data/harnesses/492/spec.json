@@ -1,0 +1,67 @@
+{
+  "task_id": 492,
+  "text": "Write a C function to search an element in the given array by using binary search.",
+  "fn_candidates": [
+    "binary_search",
+    "BinarySearch",
+    "binarySearch",
+    "binarysearch"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "binary_search",
+      "args": [
+        [
+          1,
+          2,
+          3,
+          5,
+          8
+        ],
+        6
+      ],
+      "expected": false,
+      "assert_src": "assert binary_search([1,2,3,5,8], 6) == False"
+    },
+    {
+      "fn_name": "binary_search",
+      "args": [
+        [
+          7,
+          8,
+          9,
+          10,
+          13
+        ],
+        10
+      ],
+      "expected": true,
+      "assert_src": "assert binary_search([7, 8, 9, 10, 13], 10) == True"
+    },
+    {
+      "fn_name": "binary_search",
+      "args": [
+        [
+          11,
+          13,
+          14,
+          19,
+          22,
+          36
+        ],
+        23
+      ],
+      "expected": false,
+      "assert_src": "assert binary_search([11, 13, 14, 19, 22, 36], 23) == False"
+    }
+  ],
+  "arg_kinds": [
+    "int",
+    "int-list"
+  ],
+  "return_kind": "bool",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

@@ -1,0 +1,37 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+size_t count_in_range(const int *arr, size_t len, int low, int high)
+{
+    size_t count = 0;
+    size_t i;
+
+    if (arr == NULL || low > high) {
+        return 0;
+    }
+
+    for (i = 0; i < len; i++) {
+        if (arr[i] >= low && arr[i] <= high) {
+            count++;
+        }
+    }
+
+    return count;
+}
+
+int main(void)
+{
+    int values[] = { 3, 12, 7, 25, 9, 14, 1, 30, 18, 5 };
+    size_t len = sizeof(values) / sizeof(values[0]);
+    int low = 5;
+    int high = 20;
+    size_t result;
+
+    result = count_in_range(values, len, low, high);
+
+    if (printf("Elements in range [%d, %d]: %zu\n", low, high, result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

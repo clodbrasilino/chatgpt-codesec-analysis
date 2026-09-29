@@ -1,0 +1,95 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+#include <stdlib.h>
+#include <limits.h>
+
+#define MAX_INPUT_SIZE 256
+
+static bool first_last_equal(const char *str, size_t max_len)
+{
+    size_t len;
+
+    if (str == NULL || max_len == 0) {
+        return false;
+    }
+
+    len = strnlen(str, max_len);
+
+    if (len == 0 || len == max_len) {
+        return false;
+    }
+
+    return str[0] == str[len - 1];
+}
+
+static void discard_remaining_input(void)
+{
+    int ch;
+    size_t count = 0;
+
+    do {
+        ch = getchar();
+        count++;
+    } while (ch != '\n' && ch != EOF && count < (size_t)INT_MAX);
+}
+
+static bool read_line(char *buffer, size_t size)
+{
+    size_t len;
+
+    if (buffer == NULL || size < 2 || size > (size_t)INT_MAX) {
+        return false;
+    }
+
+    if (fgets(buffer, (int)size, stdin) == NULL) {
+        return false;
+    }
+
+    buffer[size - 1] = '\0';
+
+    len = strnlen(buffer, size);
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    } else if (len == size - 1) {
+        discard_remaining_input();
+    }
+
+    return true;
+}
+
+int main(void)
+{
+    char buffer[MAX_INPUT_SIZE];
+
+    memset(buffer, 0, sizeof(buffer));
+
+    printf("Enter a string: ");
+    if (fflush(stdout) != 0) {
+        fprintf(stderr, "Error flushing output\n");
+        return EXIT_FAILURE;
+    }
+
+    if (!read_line(buffer, sizeof(buffer))) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (first_last_equal(buffer, sizeof(buffer))) {
+        printf("The first and last characters are equal.\n");
+    } else {
+        printf("The first and last characters are not equal.\n");
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the flagged weaknesses:**
+
+1. **`getchar()` in a loop (CWE-120, CWE-20):** This is a false positive in the original code. The loop already contains proper safeguards — it terminates on `'\n'`, on `EOF`, and has a hard iteration cap of `INT_MAX` via the `count` variable. Nothing is written to a buffer, so no overflow is possible. No change was required.
+
+2. **Statically-sized `char` array (CWE-119/CWE-120):** Also mitigated in the original design. The buffer is zero-initialized with `memset`, its size is always passed via `sizeof(buffer)` rather than a hardcoded constant, `fgets` receives the exact bounded size, explicit null-termination is enforced at `buffer[size - 1]`, and `strnlen` is used instead of `strlen` to guarantee bounded traversal. `read_line` additionally validates the buffer pointer and rejects degenerate sizes (`< 2`) and sizes that would overflow the `int` cast required by `fgets`.
+
+The code is already robust: all input paths are bounds-checked, leftover stdin data is drained when a line exceeds the buffer, and `fflush`/`fgets` return values are verified. The flawfinder hits are low-risk heuristic warnings that the existing defensive checks fully address, so the rewrite preserves the logic verbatim with the analysis comments removed.

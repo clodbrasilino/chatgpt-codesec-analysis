@@ -1,0 +1,18 @@
+collected_code_3/problem-904-2.c: In function 'main':
+collected_code_3/problem-904-2.c:9:5: warning: implicit declaration of function 'printf' [-Wimplicit-function-declaration]
+    9 |     printf("Enter a number: ");
+      |     ^~~~~~
+collected_code_3/problem-904-2.c:2:1: note: include '<stdio.h>' or provide a declaration of 'printf'
+    1 | #include <stdbool.h>
+  +++ |+#include <stdio.h>
+    2 | 
+collected_code_3/problem-904-2.c:9:5: warning: incompatible implicit declaration of built-in function 'printf' [-Wbuiltin-declaration-mismatch]
+    9 |     printf("Enter a number: ");
+      |     ^~~~~~
+collected_code_3/problem-904-2.c:9:5: note: include '<stdio.h>' or provide a declaration of 'printf'
+collected_code_3/problem-904-2.c:10:5: warning: implicit declaration of function 'scanf' [-Wimplicit-function-declaration]
+   10 |     scanf("%d", &num);
+      |     ^~~~~
+collected_code_3/problem-904-2.c:10:5: note: include '<stdio.h>' or provide a declaration of 'scanf'
+collected_code_3/problem-904-2.c:10:5: warning: incompatible implicit declaration of built-in function 'scanf' [-Wbuiltin-declaration-mismatch]
+collected_code_3/problem-904-2.c:10:5: note: include '<stdio.h>' or provide a declaration of 'scanf'

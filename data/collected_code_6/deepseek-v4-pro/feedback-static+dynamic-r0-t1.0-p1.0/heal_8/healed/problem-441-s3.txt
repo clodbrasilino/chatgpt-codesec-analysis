@@ -1,0 +1,76 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <errno.h>
+
+#define BUFFER_SIZE 256
+
+double cube_surface_area(double side_length) {
+    if (side_length <= 0) {
+        return -1.0;
+    }
+    return 6.0 * side_length * side_length;
+}
+
+int main(void) {
+    double input;
+    char buffer[BUFFER_SIZE];
+    char *endptr;
+    size_t len;
+
+    printf("Enter cube side length: ");
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    len = strlen(buffer);
+    if (len > 0 && buffer[len - 1] != '\n') {
+        if (len == sizeof(buffer) - 1) {
+            int c;
+            while ((c = getchar()) != '\n' && c != EOF) {
+            }
+            if (ferror(stdin)) {
+                fprintf(stderr, "Error reading input\n");
+                return EXIT_FAILURE;
+            }
+            fprintf(stderr, "Input too long\n");
+            return EXIT_FAILURE;
+        }
+    } else if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    }
+
+    errno = 0;
+    input = strtod(buffer, &endptr);
+
+    if (errno == ERANGE) {
+        fprintf(stderr, "Number out of range\n");
+        return EXIT_FAILURE;
+    }
+
+    if (endptr == buffer) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    while (*endptr != '\0') {
+        if (*endptr != ' ' && *endptr != '\t') {
+            fprintf(stderr, "Invalid input\n");
+            return EXIT_FAILURE;
+        }
+        endptr++;
+    }
+
+    double area = cube_surface_area(input);
+
+    if (area < 0) {
+        fprintf(stderr, "Side length must be positive\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Surface area: %.2f\n", area);
+    return EXIT_SUCCESS;
+}
+```

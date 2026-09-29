@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-725.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-725.c:59:27: style: Condition 'count>=max_matches' is always false [knownConditionTrueFalse]
+                if (count >= max_matches || len >= MAX_MATCH_LEN)
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-725.c:32:18: note: Assuming that condition 'count<max_matches' is not redundant
+    while (count < max_matches)
+                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-725.c:45:34: note: Assuming condition is false
+        if (match[1].rm_so == -1 || match[1].rm_eo == -1)
+                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-725.c:59:27: note: Condition 'count>=max_matches' is always false
+                if (count >= max_matches || len >= MAX_MATCH_LEN)
+                          ^

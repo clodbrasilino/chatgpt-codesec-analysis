@@ -1,0 +1,20 @@
+#include <stdio.h>
+#include <string.h>
+
+int check_substring(char *substring, char **string_list, int list_size) {
+    int i;
+    for(i = 0; i < list_size; i++) {
+        if(strstr(string_list[i], substring) != NULL) {
+            return 1;
+        }
+    }
+    return 0;
+}
+
+int main() {
+    char *list[] = {"apple", "orange", "banana"};
+    printf("%d\n", check_substring("app", list, 3));
+    printf("%d\n", check_substring("ber", list, 3));
+
+    return 0;
+}

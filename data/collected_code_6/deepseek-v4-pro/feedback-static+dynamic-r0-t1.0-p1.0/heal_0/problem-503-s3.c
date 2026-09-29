@@ -1,0 +1,25 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int add_consecutive_numbers(const int *list, size_t size) {
+    if (list == NULL || size == 0) {
+        return 0;
+    }
+    
+    int sum = 0;
+    for (size_t i = 0; i < size - 1; ++i) {
+        sum += list[i] + list[i + 1];
+    }
+    
+    return sum;
+}
+
+int main(void) {
+    int list[] = {1, 2, 3, 4, 5};
+    size_t size = sizeof(list) / sizeof(list[0]);
+    
+    int result = add_consecutive_numbers(list, size);
+    printf("Sum of consecutive numbers: %d\n", result);
+    
+    return 0;
+}

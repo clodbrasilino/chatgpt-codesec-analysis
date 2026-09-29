@@ -1,0 +1,81 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char *key;
+    int value;
+} DictionaryEntry;
+
+typedef struct {
+    DictionaryEntry *entries;
+    size_t count;
+    size_t capacity;
+} Dictionary;
+
+Dictionary* create_dictionary(size_t initial_capacity) {
+    Dictionary *dict = (Dictionary*)malloc(sizeof(Dictionary));
+    if (!dict) return NULL;
+    dict->entries = (DictionaryEntry*)calloc(initial_capacity, sizeof(DictionaryEntry));
+    if (!dict->entries) {
+        free(dict);
+        return NULL;
+    }
+    dict->count = 0;
+    dict->capacity = initial_capacity;
+    return dict;
+}
+
+void destroy_dictionary(Dictionary *dict) {
+    for (size_t i = 0; i < dict->count; ++i) {
+        free(dict->entries[i].key);
+    }
+    free(dict->entries);
+    free(dict);
+}
+
+int add_entry(Dictionary *dict, const char *key, int value) {
+    if (dict->count >= dict->capacity) {
+        size_t new_capacity = dict->capacity * 2;
+        DictionaryEntry *new_entries = (DictionaryEntry*)realloc(dict->entries, new_capacity * sizeof(DictionaryEntry));
+        if (!new_entries) return -1;
+        dict->entries = new_entries;
+        dict->capacity = new_capacity;
+    }
+    dict->entries[dict->count].key = strdup(key);
+    if (!dict->entries[dict->count].key) return -1;
+    dict->entries[dict->count].value = value;
+    dict->count++;
+    return 0;
+}
+
+int merge_dictionaries(Dictionary *dest, Dictionary *src) {
+    for (size_t i = 0; i < src->count; ++i) {
+        if (add_entry(dest, src->entries[i].key, src->entries[i].value) != 0) {
+            return -1;
+        }
+    }
+    return 0;
+}
+
+int main() {
+    Dictionary *dict1 = create_dictionary(2);
+    Dictionary *dict2 = create_dictionary(2);
+
+    add_entry(dict1, "one", 1);
+    add_entry(dict1, "two", 2);
+    add_entry(dict2, "three", 3);
+    add_entry(dict2, "four", 4);
+
+    if (merge_dictionaries(dict1, dict2) == 0) {
+        for (size_t i = 0; i < dict1->count; ++i) {
+            printf("%s: %d\n", dict1->entries[i].key, dict1->entries[i].value);
+        }
+    } else {
+        printf("Failed to merge dictionaries.\n");
+    }
+
+    destroy_dictionary(dict1);
+    destroy_dictionary(dict2);
+    return 0;
+}

@@ -1,0 +1,67 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+void int_to_roman(int num, char *result, size_t size) {
+    if (num <= 0 || num > 3999 || result == NULL || size < 16) {
+        if (result != NULL && size > 0) {
+            result[0] = '\0';
+        }
+        return;
+    }
+
+    static const char *const roman_numerals[] = {
+        "M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I"
+    };
+    static const int values[] = {
+        1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1
+    };
+    static const size_t roman_lengths[] = {
+        1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1
+    };
+
+    result[0] = '\0';
+    size_t offset = 0;
+
+    for (int i = 0; i < 13; i++) {
+        while (num >= values[i]) {
+            size_t len = roman_lengths[i];
+            if (offset + len + 1 > size) {
+                result[0] = '\0';
+                return;
+            }
+            strncpy(result + offset, roman_numerals[i], size - offset - 1);
+            offset += len;
+            result[offset] = '\0';
+            num -= values[i];
+        }
+    }
+}
+
+int main(void) {
+    int number;
+    char *roman = malloc(16);
+    if (roman == NULL) {
+        fprintf(stderr, "Memory allocation failed.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter an integer (1-3999): ");
+    if (scanf("%d", &number) != 1) {
+        fprintf(stderr, "Invalid input.\n");
+        free(roman);
+        return EXIT_FAILURE;
+    }
+
+    int_to_roman(number, roman, 16);
+
+    if (roman[0] == '\0') {
+        fprintf(stderr, "Number out of range or conversion failed.\n");
+        free(roman);
+        return EXIT_FAILURE;
+    }
+
+    printf("Roman numeral: %s\n", roman);
+    free(roman);
+    return EXIT_SUCCESS;
+}

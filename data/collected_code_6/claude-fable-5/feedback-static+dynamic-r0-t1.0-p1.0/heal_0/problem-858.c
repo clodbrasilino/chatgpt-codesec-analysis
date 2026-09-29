@@ -1,0 +1,47 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int count_lists_squared(int **lists, size_t num_lists)
+{
+    size_t count = 0;
+    size_t i;
+
+    if (lists == NULL) {
+        return 0;
+    }
+
+    for (i = 0; i < num_lists; i++) {
+        if (lists[i] != NULL) {
+            count++;
+        }
+    }
+
+    if (count > 46340) {
+        return -1;
+    }
+
+    return (int)(count * count);
+}
+
+int main(void)
+{
+    int list1[] = {1, 2, 3};
+    int list2[] = {4, 5};
+    int list3[] = {6, 7, 8, 9};
+    int *list_of_lists[] = {list1, list2, list3};
+    size_t num_lists = sizeof(list_of_lists) / sizeof(list_of_lists[0]);
+    int result;
+
+    result = count_lists_squared(list_of_lists, num_lists);
+
+    if (result < 0) {
+        fprintf(stderr, "Error: count too large to square safely\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Squared count of lists: %d\n", result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

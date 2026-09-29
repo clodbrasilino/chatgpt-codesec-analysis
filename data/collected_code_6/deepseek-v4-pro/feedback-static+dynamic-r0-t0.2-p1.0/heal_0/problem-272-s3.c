@@ -1,0 +1,220 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct Tuple {
+    void **elements;
+    size_t size;
+} Tuple;
+
+typedef struct TupleList {
+    Tuple *tuples;
+    size_t count;
+    size_t capacity;
+} TupleList;
+
+TupleList *create_tuple_list(size_t initial_capacity) {
+    TupleList *list = (TupleList *)malloc(sizeof(TupleList));
+    if (list == NULL) {
+        return NULL;
+    }
+    list->tuples = (Tuple *)malloc(initial_capacity * sizeof(Tuple));
+    if (list->tuples == NULL) {
+        free(list);
+        return NULL;
+    }
+    list->count = 0;
+    list->capacity = initial_capacity;
+    return list;
+}
+
+int add_tuple(TupleList *list, Tuple tuple) {
+    if (list->count >= list->capacity) {
+        size_t new_capacity = list->capacity * 2;
+        Tuple *new_tuples = (Tuple *)realloc(list->tuples, new_capacity * sizeof(Tuple));
+        if (new_tuples == NULL) {
+            return -1;
+        }
+        list->tuples = new_tuples;
+        list->capacity = new_capacity;
+    }
+    list->tuples[list->count] = tuple;
+    list->count++;
+    return 0;
+}
+
+void *extract_rear_element(TupleList *list, size_t tuple_index) {
+    if (list == NULL || tuple_index >= list->count) {
+        return NULL;
+    }
+    Tuple *tuple = &list->tuples[tuple_index];
+    if (tuple->size == 0 || tuple->elements == NULL) {
+        return NULL;
+    }
+    return tuple->elements[tuple->size - 1];
+}
+
+void destroy_tuple_list(TupleList *list) {
+    if (list == NULL) {
+        return;
+    }
+    for (size_t i = 0; i < list->count; i++) {
+        if (list->tuples[i].elements != NULL) {
+            free(list->tuples[i].elements);
+            list->tuples[i].elements = NULL;
+        }
+    }
+    free(list->tuples);
+    list->tuples = NULL;
+    free(list);
+}
+
+int main(void) {
+    TupleList *list = create_tuple_list(4);
+    if (list == NULL) {
+        return 1;
+    }
+
+    int *int_val1 = (int *)malloc(sizeof(int));
+    int *int_val2 = (int *)malloc(sizeof(int));
+    int *int_val3 = (int *)malloc(sizeof(int));
+    int *int_val4 = (int *)malloc(sizeof(int));
+    int *int_val5 = (int *)malloc(sizeof(int));
+    int *int_val6 = (int *)malloc(sizeof(int));
+
+    if (int_val1 == NULL || int_val2 == NULL || int_val3 == NULL ||
+        int_val4 == NULL || int_val5 == NULL || int_val6 == NULL) {
+        free(int_val1);
+        free(int_val2);
+        free(int_val3);
+        free(int_val4);
+        free(int_val5);
+        free(int_val6);
+        destroy_tuple_list(list);
+        return 1;
+    }
+
+    *int_val1 = 10;
+    *int_val2 = 20;
+    *int_val3 = 30;
+    *int_val4 = 40;
+    *int_val5 = 50;
+    *int_val6 = 60;
+
+    Tuple tuple1;
+    tuple1.elements = (void **)malloc(2 * sizeof(void *));
+    if (tuple1.elements == NULL) {
+        free(int_val1);
+        free(int_val2);
+        free(int_val3);
+        free(int_val4);
+        free(int_val5);
+        free(int_val6);
+        destroy_tuple_list(list);
+        return 1;
+    }
+    tuple1.elements[0] = int_val1;
+    tuple1.elements[1] = int_val2;
+    tuple1.size = 2;
+
+    Tuple tuple2;
+    tuple2.elements = (void **)malloc(3 * sizeof(void *));
+    if (tuple2.elements == NULL) {
+        free(tuple1.elements);
+        free(int_val1);
+        free(int_val2);
+        free(int_val3);
+        free(int_val4);
+        free(int_val5);
+        free(int_val6);
+        destroy_tuple_list(list);
+        return 1;
+    }
+    tuple2.elements[0] = int_val3;
+    tuple2.elements[1] = int_val4;
+    tuple2.elements[2] = int_val5;
+    tuple2.size = 3;
+
+    Tuple tuple3;
+    tuple3.elements = (void **)malloc(1 * sizeof(void *));
+    if (tuple3.elements == NULL) {
+        free(tuple1.elements);
+        free(tuple2.elements);
+        free(int_val1);
+        free(int_val2);
+        free(int_val3);
+        free(int_val4);
+        free(int_val5);
+        free(int_val6);
+        destroy_tuple_list(list);
+        return 1;
+    }
+    tuple3.elements[0] = int_val6;
+    tuple3.size = 1;
+
+    if (add_tuple(list, tuple1) != 0) {
+        free(tuple1.elements);
+        free(tuple2.elements);
+        free(tuple3.elements);
+        free(int_val1);
+        free(int_val2);
+        free(int_val3);
+        free(int_val4);
+        free(int_val5);
+        free(int_val6);
+        destroy_tuple_list(list);
+        return 1;
+    }
+    if (add_tuple(list, tuple2) != 0) {
+        free(tuple2.elements);
+        free(tuple3.elements);
+        free(int_val1);
+        free(int_val2);
+        free(int_val3);
+        free(int_val4);
+        free(int_val5);
+        free(int_val6);
+        destroy_tuple_list(list);
+        return 1;
+    }
+    if (add_tuple(list, tuple3) != 0) {
+        free(tuple3.elements);
+        free(int_val1);
+        free(int_val2);
+        free(int_val3);
+        free(int_val4);
+        free(int_val5);
+        free(int_val6);
+        destroy_tuple_list(list);
+        return 1;
+    }
+
+    int *rear1 = (int *)extract_rear_element(list, 0);
+    int *rear2 = (int *)extract_rear_element(list, 1);
+    int *rear3 = (int *)extract_rear_element(list, 2);
+    int *rear_invalid = (int *)extract_rear_element(list, 3);
+
+    if (rear1 != NULL) {
+        printf("%d\n", *rear1);
+    }
+    if (rear2 != NULL) {
+        printf("%d\n", *rear2);
+    }
+    if (rear3 != NULL) {
+        printf("%d\n", *rear3);
+    }
+    if (rear_invalid == NULL) {
+        printf("invalid index\n");
+    }
+
+    free(int_val1);
+    free(int_val2);
+    free(int_val3);
+    free(int_val4);
+    free(int_val5);
+    free(int_val6);
+
+    destroy_tuple_list(list);
+
+    return 0;
+}

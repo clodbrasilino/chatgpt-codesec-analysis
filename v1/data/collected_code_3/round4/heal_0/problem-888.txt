@@ -1,0 +1,22 @@
+```C
+#include <stdio.h>
+
+int subtract_tuples(int arr1[], int arr2[], int n) {
+    int result[n];
+    for (int i = 0; i < n; i++) {
+        result[i] = arr1[i] - arr2[i];
+    }
+    for (int i = 0; i < n; i++) {
+        printf("%d ", result[i]);
+    }
+    return 0;
+}
+
+int main() {
+    int arr1[] = {10, 20, 30, 40, 50};
+    int arr2[] = {5, 15, 25, 35, 45};
+    int n = sizeof(arr1) / sizeof(arr1[0]);
+    subtract_tuples(arr1, arr2, n);
+    return 0;
+}
+```

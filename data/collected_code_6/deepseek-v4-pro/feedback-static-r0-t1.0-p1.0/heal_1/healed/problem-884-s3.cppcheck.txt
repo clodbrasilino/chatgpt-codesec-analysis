@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-884-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-884-s3.c:71:50: style: Condition 'check_bits_in_range(0x00000000,8,3)==-1' is always true [knownConditionTrueFalse]
+           check_bits_in_range(0x00000000, 8, 3) == -1 ? "Invalid" : "Valid");
+                                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-884-s3.c:71:31: note: Calling function 'check_bits_in_range' returns -1
+           check_bits_in_range(0x00000000, 8, 3) == -1 ? "Invalid" : "Valid");
+                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-884-s3.c:71:50: note: Condition 'check_bits_in_range(0x00000000,8,3)==-1' is always true
+           check_bits_in_range(0x00000000, 8, 3) == -1 ? "Invalid" : "Valid");
+                                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-884-s3.c:73:51: style: Condition 'check_bits_in_range(0x00000000,0,32)==-1' is always true [knownConditionTrueFalse]
+           check_bits_in_range(0x00000000, 0, 32) == -1 ? "Invalid" : "Valid");
+                                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-884-s3.c:73:31: note: Calling function 'check_bits_in_range' returns -1
+           check_bits_in_range(0x00000000, 0, 32) == -1 ? "Invalid" : "Valid");
+                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-884-s3.c:73:51: note: Condition 'check_bits_in_range(0x00000000,0,32)==-1' is always true
+           check_bits_in_range(0x00000000, 0, 32) == -1 ? "Invalid" : "Valid");
+                                                  ^

@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-822-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-822-s3.c:46:55: style: Condition 'is_valid_password(password4)' is always false [knownConditionTrueFalse]
+    printf("Password 4 valid: %s\n", is_valid_password(password4) ? "true" : "false");
+                                                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-822-s3.c:46:55: note: Calling function 'is_valid_password' returns 0
+    printf("Password 4 valid: %s\n", is_valid_password(password4) ? "true" : "false");
+                                                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-822-s3.c:46:55: note: Condition 'is_valid_password(password4)' is always false
+    printf("Password 4 valid: %s\n", is_valid_password(password4) ? "true" : "false");
+                                                      ^

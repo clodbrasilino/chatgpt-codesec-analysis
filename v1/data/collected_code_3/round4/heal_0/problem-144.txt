@@ -1,0 +1,21 @@
+```C
+#include <stdio.h>
+#include <stdlib.h>
+
+int sumOfAbsoluteDifferences(int arr[], int n) {
+    int sum = 0;
+    for (int i = 0; i < n; i++) {
+        for (int j = i + 1; j < n; j++) {
+            sum += abs(arr[i] - arr[j]);
+        }
+    }
+    return sum;
+}
+
+int main() {
+    int arr[] = {1, 2, 3, 4, 5};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    printf("%d", sumOfAbsoluteDifferences(arr, n));
+    return 0;
+}
+```

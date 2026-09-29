@@ -1,0 +1,125 @@
+collected_code/problem-795-0.c: In function 'createHeap':
+collected_code/problem-795-0.c:41:16: warning: dereference of possibly-NULL 'heap' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   41 |     heap->data = (Item*)malloc(sizeof(Item) * capacity);
+      |     ~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  'main': events 1-2
+    |
+    |   99 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |  113 |     findNcheapItems(dataset, size, n);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) calling 'findNcheapItems' from 'main'
+    |
+    +--> 'findNcheapItems': events 3-4
+           |
+           |   79 | void findNcheapItems(Item* dataset, int size, int n) {
+           |      |      ^~~~~~~~~~~~~~~
+           |      |      |
+           |      |      (3) entry to 'findNcheapItems'
+           |   80 |     Heap* heap = createHeap(n);
+           |      |                  ~~~~~~~~~~~~~
+           |      |                  |
+           |      |                  (4) calling 'createHeap' from 'findNcheapItems'
+           |
+           +--> 'createHeap': events 5-7
+                  |
+                  |   39 | Heap* createHeap(int capacity) {
+                  |      |       ^~~~~~~~~~
+                  |      |       |
+                  |      |       (5) entry to 'createHeap'
+                  |   40 |     Heap* heap = (Heap*)malloc(sizeof(Heap));
+                  |      |                         ~~~~~~~~~~~~~~~~~~~~
+                  |      |                         |
+                  |      |                         (6) this call could return NULL
+                  |   41 |     heap->data = (Item*)malloc(sizeof(Item) * capacity);
+                  |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                  |      |                |
+                  |      |                (7) 'heap' could be NULL: unchecked value from (6)
+                  |
+collected_code/problem-795-0.c: In function 'insert':
+collected_code/problem-795-0.c:54:19: warning: dereference of possibly-NULL '*heap.data + (long unsigned int)i * 104' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   54 |     heap->data[i] = item;
+      |     ~~~~~~~~~~~~~~^~~~~~
+  'main': events 1-2
+    |
+    |   99 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |  113 |     findNcheapItems(dataset, size, n);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) calling 'findNcheapItems' from 'main'
+    |
+    +--> 'findNcheapItems': events 3-4
+           |
+           |   79 | void findNcheapItems(Item* dataset, int size, int n) {
+           |      |      ^~~~~~~~~~~~~~~
+           |      |      |
+           |      |      (3) entry to 'findNcheapItems'
+           |   80 |     Heap* heap = createHeap(n);
+           |      |                  ~~~~~~~~~~~~~
+           |      |                  |
+           |      |                  (4) calling 'createHeap' from 'findNcheapItems'
+           |
+           +--> 'createHeap': events 5-6
+                  |
+                  |   39 | Heap* createHeap(int capacity) {
+                  |      |       ^~~~~~~~~~
+                  |      |       |
+                  |      |       (5) entry to 'createHeap'
+                  |   40 |     Heap* heap = (Heap*)malloc(sizeof(Heap));
+                  |   41 |     heap->data = (Item*)malloc(sizeof(Item) * capacity);
+                  |      |                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                  |      |                         |
+                  |      |                         (6) this call could return NULL
+                  |
+           <------+
+           |
+         'findNcheapItems': events 7-12
+           |
+           |   80 |     Heap* heap = createHeap(n);
+           |      |                  ^~~~~~~~~~~~~
+           |      |                  |
+           |      |                  (7) returning to 'findNcheapItems' from 'createHeap'
+           |   81 | 
+           |   82 |     for (int i = 0; i < size; i++) {
+           |      |                     ~~~~~~~~
+           |      |                       |
+           |      |                       (8) following 'true' branch (when 'i < size')...
+           |   83 |         if (heap->size < n) {
+           |      |            ~~~~~~~~~~~
+           |      |            |    |
+           |      |            |    (9) ...to here
+           |      |            (10) following 'true' branch...
+           |   84 |             insert(heap, dataset[i]);
+           |      |             ~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |             |                   |
+           |      |             |                   (11) ...to here
+           |      |             (12) calling 'insert' from 'findNcheapItems'
+           |
+           +--> 'insert': events 13-16
+                  |
+                  |   47 | void insert(Heap* heap, Item item) {
+                  |      |      ^~~~~~
+                  |      |      |
+                  |      |      (13) entry to 'insert'
+                  |   48 |     if (heap->size == heap->capacity) {
+                  |      |        ~
+                  |      |        |
+                  |      |        (14) following 'false' branch...
+                  |......
+                  |   53 |     int i = heap->size;
+                  |      |         ~
+                  |      |         |
+                  |      |         (15) ...to here
+                  |   54 |     heap->data[i] = item;
+                  |      |     ~~~~~~~~~~~~~~~~~~~~
+                  |      |                   |
+                  |      |                   (16) '*heap.data + (long unsigned int)i * 104' could be NULL: unchecked value from (6)
+                  |

@@ -1,0 +1,38 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+
+uint64_t calculate_demlo_number(int n) {
+    if (n < 1 || n > 9) {
+        return 0;
+    }
+    
+    uint64_t repunit = 0;
+    for (int i = 0; i < n; i++) {
+        repunit = (repunit * 10) + 1;
+    }
+    
+    return repunit * repunit;
+}
+
+int main(void) {
+    int n = 0;
+    
+    if (scanf("%d", &n) != 1) {
+        return EXIT_FAILURE;
+    }
+    
+    if (n < 1 || n > 9) {
+        return EXIT_FAILURE;
+    }
+    
+    uint64_t demlo_number = calculate_demlo_number(n);
+    
+    if (demlo_number == 0) {
+        return EXIT_FAILURE;
+    }
+    
+    printf("%llu\n", (unsigned long long)demlo_number);
+    
+    return EXIT_SUCCESS;
+}

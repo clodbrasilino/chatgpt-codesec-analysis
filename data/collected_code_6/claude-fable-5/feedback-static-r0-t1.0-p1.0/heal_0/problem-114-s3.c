@@ -1,0 +1,101 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define TUPLE_SIZE 3
+
+typedef struct {
+    int values[TUPLE_SIZE];
+} Tuple;
+
+typedef struct {
+    Tuple tuple;
+    int frequency;
+} TupleFreq;
+
+static int tuples_equal(const Tuple *a, const Tuple *b)
+{
+    return memcmp(a->values, b->values, sizeof(a->values)) == 0;
+}
+
+static TupleFreq *assign_frequency(const Tuple *tuples, size_t count, size_t *result_count)
+{
+    TupleFreq *result = NULL;
+    size_t unique = 0;
+    size_t i;
+    size_t j;
+
+    if (tuples == NULL || result_count == NULL || count == 0) {
+        if (result_count != NULL) {
+            *result_count = 0;
+        }
+        return NULL;
+    }
+
+    result = calloc(count, sizeof(TupleFreq));
+    if (result == NULL) {
+        *result_count = 0;
+        return NULL;
+    }
+
+    for (i = 0; i < count; i++) {
+        int found = 0;
+        for (j = 0; j < unique; j++) {
+            if (tuples_equal(&tuples[i], &result[j].tuple)) {
+                result[j].frequency++;
+                found = 1;
+                break;
+            }
+        }
+        if (found == 0) {
+            result[unique].tuple = tuples[i];
+            result[unique].frequency = 1;
+            unique++;
+        }
+    }
+
+    *result_count = unique;
+    return result;
+}
+
+static void print_result(const TupleFreq *result, size_t count)
+{
+    size_t i;
+    int k;
+
+    for (i = 0; i < count; i++) {
+        printf("(");
+        for (k = 0; k < TUPLE_SIZE; k++) {
+            printf("%d", result[i].tuple.values[k]);
+            if (k < TUPLE_SIZE - 1) {
+                printf(", ");
+            }
+        }
+        printf("): %d\n", result[i].frequency);
+    }
+}
+
+int main(void)
+{
+    Tuple tuples[] = {
+        { {6, 5, 8} },
+        { {2, 7, 4} },
+        { {6, 5, 8} },
+        { {6, 5, 8} },
+        { {9, 1, 3} },
+        { {2, 7, 4} }
+    };
+    size_t count = sizeof(tuples) / sizeof(tuples[0]);
+    size_t result_count = 0;
+    TupleFreq *result = assign_frequency(tuples, count, &result_count);
+
+    if (result == NULL) {
+        fprintf(stderr, "Failed to compute tuple frequencies\n");
+        return EXIT_FAILURE;
+    }
+
+    print_result(result, result_count);
+    free(result);
+
+    return EXIT_SUCCESS;
+}

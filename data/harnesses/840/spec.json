@@ -1,0 +1,50 @@
+{
+  "task_id": 840,
+  "text": "Write a C function to check whether the roots of a quadratic equation are numerically equal but opposite in sign or not.",
+  "fn_candidates": [
+    "Check_Solution",
+    "CheckSolution",
+    "CheckSolution",
+    "CheckSolution"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "Check_Solution",
+      "args": [
+        2,
+        0,
+        -1
+      ],
+      "expected": "Yes",
+      "assert_src": "assert Check_Solution(2,0,-1) == \"Yes\""
+    },
+    {
+      "fn_name": "Check_Solution",
+      "args": [
+        1,
+        -5,
+        6
+      ],
+      "expected": "No",
+      "assert_src": "assert Check_Solution(1,-5,6) == \"No\""
+    },
+    {
+      "fn_name": "Check_Solution",
+      "args": [
+        2,
+        0,
+        2
+      ],
+      "expected": "Yes",
+      "assert_src": "assert Check_Solution(2,0,2) == \"Yes\""
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "str",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

@@ -1,0 +1,86 @@
+{
+  "task_id": 648,
+  "text": "Write a C function to exchange the position of every n-th value with (n+1)th value and (n+1)th value with n-th value in a given list.",
+  "fn_candidates": [
+    "exchange_elements",
+    "ExchangeElements",
+    "exchangeElements",
+    "exchangeelements"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "exchange_elements",
+      "args": [
+        [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5
+        ]
+      ],
+      "expected": [
+        1,
+        0,
+        3,
+        2,
+        5,
+        4
+      ],
+      "assert_src": "assert exchange_elements([0,1,2,3,4,5])==[1, 0, 3, 2, 5, 4] "
+    },
+    {
+      "fn_name": "exchange_elements",
+      "args": [
+        [
+          5,
+          6,
+          7,
+          8,
+          9,
+          10
+        ]
+      ],
+      "expected": [
+        6,
+        5,
+        8,
+        7,
+        10,
+        9
+      ],
+      "assert_src": "assert exchange_elements([5,6,7,8,9,10])==[6,5,8,7,10,9] "
+    },
+    {
+      "fn_name": "exchange_elements",
+      "args": [
+        [
+          25,
+          35,
+          45,
+          55,
+          75,
+          95
+        ]
+      ],
+      "expected": [
+        35,
+        25,
+        55,
+        45,
+        95,
+        75
+      ],
+      "assert_src": "assert exchange_elements([25,35,45,55,75,95])==[35,25,55,45,95,75] "
+    }
+  ],
+  "arg_kinds": [
+    "int-list"
+  ],
+  "return_kind": "int-list",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

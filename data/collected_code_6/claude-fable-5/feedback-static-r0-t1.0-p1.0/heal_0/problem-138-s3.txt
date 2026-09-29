@@ -1,0 +1,40 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int canBeSumOfNonZeroPowersOfTwo(long long n)
+{
+    if (n <= 0)
+    {
+        return 0;
+    }
+    return (n % 2 == 0) ? 1 : 0;
+}
+
+int main(void)
+{
+    long long number = 0;
+
+    printf("Enter a number: ");
+    if (scanf("%lld", &number) != 1)
+    {
+        fprintf(stderr, "Invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (canBeSumOfNonZeroPowersOfTwo(number))
+    {
+        printf("%lld can be represented as sum of non-zero powers of 2.\n", number);
+    }
+    else
+    {
+        printf("%lld cannot be represented as sum of non-zero powers of 2.\n", number);
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+The logic: any number expressible as a sum of non-zero powers of 2 (i.e., 2, 4, 8, ...) must be even and positive, since every term is even and at least 2. Conversely, any positive even number `n` can be written as a sum of `n/2` copies of 2. Therefore the check reduces to verifying the number is positive and divisible by 2.
+
+The code validates the `scanf` return value to handle malformed input, uses `long long` to avoid overflow on typical inputs, and returns standard exit codes.

@@ -1,0 +1,53 @@
+#include <stdio.h>
+#include <string.h>
+#include <stddef.h>
+
+int search_literals(const char *text, const char *const literals[], size_t count, size_t *found_index)
+{
+    size_t i;
+
+    if (text == NULL || literals == NULL || found_index == NULL) {
+        return -1;
+    }
+
+    for (i = 0; i < count; i++) {
+        if (literals[i] == NULL) {
+            return -1;
+        }
+        if (strstr(text, literals[i]) != NULL) {
+            *found_index = i;
+            return 1;
+        }
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    const char *const literals[] = { "world", "foo", "bar" };
+    const char *text = "hello world, this is a test";
+    size_t index = 0;
+    int result;
+
+    result = search_literals(text, literals, sizeof(literals) / sizeof(literals[0]), &index);
+
+    if (result < 0) {
+        if (fprintf(stderr, "Invalid arguments provided\n") < 0) {
+            return 1;
+        }
+        return 1;
+    }
+
+    if (result == 1) {
+        if (printf("Found literal \"%s\" at list index %zu\n", literals[index], index) < 0) {
+            return 1;
+        }
+    } else {
+        if (printf("No literal found in text\n") < 0) {
+            return 1;
+        }
+    }
+
+    return 0;
+}

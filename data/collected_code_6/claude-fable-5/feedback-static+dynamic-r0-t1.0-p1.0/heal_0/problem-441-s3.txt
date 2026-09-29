@@ -1,0 +1,40 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+double cube_surface_area(double side)
+{
+    return 6.0 * side * side;
+}
+
+int main(void)
+{
+    double side = 0.0;
+    int result;
+
+    printf("Enter the side length of the cube: ");
+    result = scanf("%lf", &side);
+
+    if (result != 1) {
+        fprintf(stderr, "Error: invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (side < 0.0) {
+        fprintf(stderr, "Error: side length cannot be negative.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Surface area of the cube: %.2f\n", cube_surface_area(side));
+
+    return EXIT_SUCCESS;
+}
+```
+
+This code addresses the specified weaknesses as follows:
+
+- **CWE-703 (Improper Check or Handling of Exceptional Conditions):** The return value of `scanf` is checked to ensure the input was successfully parsed, and negative side lengths are rejected with an error message and a failure exit code.
+
+- **CWE-664 (Improper Control of a Resource Through its Lifetime):** No dynamic memory or file handles are allocated, so there are no resources left unmanaged; all variables are stack-based and properly initialized before use.
+
+- **CWE-710 (Improper Adherence to Coding Standards):** The code uses `int main(void)` per the C standard, returns `EXIT_SUCCESS`/`EXIT_FAILURE` from `<stdlib.h>`, initializes all variables, and writes error messages to `stderr` rather than `stdout`.

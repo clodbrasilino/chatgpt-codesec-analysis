@@ -1,0 +1,25 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-285-s3.c:23:17: error: array initializer must be an initializer list
+   23 |     const char *test1[] = "abb";
+      |                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-285-s3.c:24:17: error: array initializer must be an initializer list
+   24 |     const char *test2[] = "abbb";
+      |                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-285-s3.c:25:17: error: array initializer must be an initializer list
+   25 |     const char *test3[] = "a";
+      |                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-285-s3.c:26:17: error: array initializer must be an initializer list
+   26 |     const char *test4[] = "abbbb";
+      |                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-285-s3.c:28:60: error: invalid application of 'sizeof' to an incomplete type 'const char *[]'
+   28 |     printf("%s: %s\n", test1, matches_pattern(test1, sizeof(test1) - 1) ? "Match" : "No Match");
+      |                                                            ^~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-285-s3.c:29:60: error: invalid application of 'sizeof' to an incomplete type 'const char *[]'
+   29 |     printf("%s: %s\n", test2, matches_pattern(test2, sizeof(test2) - 1) ? "Match" : "No Match");
+      |                                                            ^~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-285-s3.c:30:60: error: invalid application of 'sizeof' to an incomplete type 'const char *[]'
+   30 |     printf("%s: %s\n", test3, matches_pattern(test3, sizeof(test3) - 1) ? "Match" : "No Match");
+      |                                                            ^~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-285-s3.c:31:60: error: invalid application of 'sizeof' to an incomplete type 'const char *[]'
+   31 |     printf("%s: %s\n", test4, matches_pattern(test4, sizeof(test4) - 1) ? "Match" : "No Match");
+      |                                                            ^~~~~~~
+8 errors generated.

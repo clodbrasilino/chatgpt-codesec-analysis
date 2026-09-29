@@ -1,0 +1,55 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_0/problem-190.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_0/problem-190.c:43:25: warning: Either the condition 'square==NULL' is redundant or there is possible null pointer dereference: square. [nullPointerRedundantCheck]
+    long double min_x = square[0].x;
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_0/problem-190.c:54:16: note: Assuming that condition 'square==NULL' is not redundant
+    if (square == NULL || count == NULL) {
+               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_0/problem-190.c:43:25: note: Null pointer dereference
+    long double min_x = square[0].x;
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_0/problem-190.c:44:25: warning: Either the condition 'square==NULL' is redundant or there is possible null pointer dereference: square. [nullPointerRedundantCheck]
+    long double max_x = square[0].x;
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_0/problem-190.c:54:16: note: Assuming that condition 'square==NULL' is not redundant
+    if (square == NULL || count == NULL) {
+               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_0/problem-190.c:44:25: note: Null pointer dereference
+    long double max_x = square[0].x;
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_0/problem-190.c:45:25: warning: Either the condition 'square==NULL' is redundant or there is possible null pointer dereference: square. [nullPointerRedundantCheck]
+    long double min_y = square[0].y;
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_0/problem-190.c:54:16: note: Assuming that condition 'square==NULL' is not redundant
+    if (square == NULL || count == NULL) {
+               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_0/problem-190.c:45:25: note: Null pointer dereference
+    long double min_y = square[0].y;
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_0/problem-190.c:46:25: warning: Either the condition 'square==NULL' is redundant or there is possible null pointer dereference: square. [nullPointerRedundantCheck]
+    long double max_y = square[0].y;
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_0/problem-190.c:54:16: note: Assuming that condition 'square==NULL' is not redundant
+    if (square == NULL || count == NULL) {
+               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_0/problem-190.c:46:25: note: Null pointer dereference
+    long double max_y = square[0].y;
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_0/problem-190.c:43:17: style: Same expression used in consecutive assignments of 'min_x' and 'max_x'. [duplicateAssignExpression]
+    long double min_x = square[0].x;
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_0/problem-190.c:44:17: note: Same expression used in consecutive assignments of 'min_x' and 'max_x'.
+    long double max_x = square[0].x;
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_0/problem-190.c:43:17: note: Same expression used in consecutive assignments of 'min_x' and 'max_x'.
+    long double min_x = square[0].x;
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_0/problem-190.c:45:17: style: Same expression used in consecutive assignments of 'min_y' and 'max_y'. [duplicateAssignExpression]
+    long double min_y = square[0].y;
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_0/problem-190.c:46:17: note: Same expression used in consecutive assignments of 'min_y' and 'max_y'.
+    long double max_y = square[0].y;
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_0/problem-190.c:45:17: note: Same expression used in consecutive assignments of 'min_y' and 'max_y'.
+    long double min_y = square[0].y;
+                ^

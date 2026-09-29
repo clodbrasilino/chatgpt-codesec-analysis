@@ -1,0 +1,21 @@
+```c
+#include <stdio.h>
+#include <string.h>
+
+int countSubstrings(char* s) {
+    int length = strlen(s);
+    return length * (length + 1) / 2;
+}
+
+int main() {
+    char s[100];
+    printf("Enter a string: ");
+    scanf("%s", s);
+
+    int result = countSubstrings(s);
+    printf("Number of non-empty substrings is: %d\n", result);
+
+    return 0;
+}
+```
+In this code, the 'countSubstrings' function counts the number of non-empty substrings in the given string. This is done by calculating the sum of the series 1, 2, 3, ..., n which is n*(n+1)/2. Here, n is the length of the string. In the 'main' function, the string is input from the user, the number of substrings is calculated, and then printed.

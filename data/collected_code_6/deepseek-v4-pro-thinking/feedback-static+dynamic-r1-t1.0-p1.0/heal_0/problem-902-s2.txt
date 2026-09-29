@@ -1,0 +1,166 @@
+```c
+#include <limits.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define DICT_INITIAL_CAPACITY 8U
+
+typedef struct {
+    char *key;
+    int value;
+} Entry;
+
+typedef struct {
+    Entry *entries;
+    size_t size;
+    size_t capacity;
+} Dictionary;
+
+Dictionary *dict_create(void) {
+    Dictionary *dict = malloc(sizeof(*dict));
+    if (dict == NULL) {
+        return NULL;
+    }
+    dict->entries = malloc(DICT_INITIAL_CAPACITY * sizeof(*dict->entries));
+    if (dict->entries == NULL) {
+        free(dict);
+        return NULL;
+    }
+    dict->size = 0;
+    dict->capacity = DICT_INITIAL_CAPACITY;
+    return dict;
+}
+
+void dict_destroy(Dictionary *dict) {
+    if (dict == NULL) {
+        return;
+    }
+    for (size_t i = 0; i < dict->size; i++) {
+        free(dict->entries[i].key);
+    }
+    free(dict->entries);
+    free(dict);
+}
+
+int dict_find(const Dictionary *dict, const char *key) {
+    if (dict == NULL || key == NULL) {
+        return -1;
+    }
+    for (size_t i = 0; i < dict->size; i++) {
+        if (strcmp(dict->entries[i].key, key) == 0) {
+            return (int)i;
+        }
+    }
+    return -1;
+}
+
+int dict_insert(Dictionary *dict, const char *key, int value) {
+    if (dict == NULL || key == NULL) {
+        return -1;
+    }
+    int index = dict_find(dict, key);
+    if (index >= 0) {
+        dict->entries[index].value = value;
+        return 0;
+    }
+    if (dict->size == dict->capacity) {
+        if (dict->capacity > SIZE_MAX / 2U / sizeof(*dict->entries)) {
+            return -1;
+        }
+        size_t new_capacity = dict->capacity * 2U;
+        Entry *new_entries = realloc(dict->entries, new_capacity * sizeof(*new_entries));
+        if (new_entries == NULL) {
+            return -1;
+        }
+        dict->entries = new_entries;
+        dict->capacity = new_capacity;
+    }
+    char *key_copy = malloc(strlen(key) + 1U);
+    if (key_copy == NULL) {
+        return -1;
+    }
+    strcpy(key_copy, key);
+    dict->entries[dict->size].key = key_copy;
+    dict->entries[dict->size].value = value;
+    dict->size++;
+    return 0;
+}
+
+Dictionary *dict_combine_add(const Dictionary *a, const Dictionary *b) {
+    if (a == NULL || b == NULL) {
+        return NULL;
+    }
+    Dictionary *result = dict_create();
+    if (result == NULL) {
+        return NULL;
+    }
+    for (size_t i = 0; i < a->size; i++) {
+        if (dict_insert(result, a->entries[i].key, a->entries[i].value) != 0) {
+            dict_destroy(result);
+            return NULL;
+        }
+    }
+    for (size_t i = 0; i < b->size; i++) {
+        int index = dict_find(result, b->entries[i].key);
+        if (index >= 0) {
+            int existing = result->entries[index].value;
+            int add_value = b->entries[i].value;
+            if ((add_value > 0 && existing > INT_MAX - add_value) ||
+                (add_value < 0 && existing < INT_MIN - add_value)) {
+                dict_destroy(result);
+                return NULL;
+            }
+            result->entries[index].value = existing + add_value;
+        } else {
+            if (dict_insert(result, b->entries[i].key, b->entries[i].value) != 0) {
+                dict_destroy(result);
+                return NULL;
+            }
+        }
+    }
+    return result;
+}
+
+int main(void) {
+    Dictionary *d1 = dict_create();
+    if (d1 == NULL) {
+        return 1;
+    }
+    if (dict_insert(d1, "apple", 10) != 0 ||
+        dict_insert(d1, "banana", 20) != 0) {
+        dict_destroy(d1);
+        return 1;
+    }
+
+    Dictionary *d2 = dict_create();
+    if (d2 == NULL) {
+        dict_destroy(d1);
+        return 1;
+    }
+    if (dict_insert(d2, "banana", 5) != 0 ||
+        dict_insert(d2, "cherry", 30) != 0) {
+        dict_destroy(d1);
+        dict_destroy(d2);
+        return 1;
+    }
+
+    Dictionary *combined = dict_combine_add(d1, d2);
+    if (combined == NULL) {
+        dict_destroy(d1);
+        dict_destroy(d2);
+        return 1;
+    }
+
+    for (size_t i = 0; i < combined->size; i++) {
+        printf("%s: %d\n", combined->entries[i].key, combined->entries[i].value);
+    }
+
+    dict_destroy(combined);
+    dict_destroy(d1);
+    dict_destroy(d2);
+
+    return 0;
+}
+```

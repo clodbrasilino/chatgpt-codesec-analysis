@@ -1,0 +1,22 @@
+#include <stdio.h>
+#include <stddef.h>
+
+int min_length_by_removing_char(const char *str, char ch) {
+    int len = 0;
+    int count = 0;
+    while (str[len] != '\0') {
+        if (str[len] == ch) {
+            count++;
+        }
+        len++;
+    }
+    return len - count;
+}
+
+int main() {
+    const char *input = "programming";
+    char remove_char = 'm';
+    int new_length = min_length_by_removing_char(input, remove_char);
+    printf("New length: %d\n", new_length);
+    return 0;
+}

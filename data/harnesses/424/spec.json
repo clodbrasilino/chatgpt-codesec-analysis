@@ -1,0 +1,68 @@
+{
+  "task_id": 424,
+  "text": "Write a C function to extract only the rear index element of each string in the given tuple.",
+  "fn_candidates": [
+    "extract_rear",
+    "ExtractRear",
+    "extractRear",
+    "extractrear"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "extract_rear",
+      "args": [
+        [
+          "Mers",
+          "for",
+          "Vers"
+        ]
+      ],
+      "expected": [
+        "s",
+        "r",
+        "s"
+      ],
+      "assert_src": "assert extract_rear(('Mers', 'for', 'Vers') ) == ['s', 'r', 's']"
+    },
+    {
+      "fn_name": "extract_rear",
+      "args": [
+        [
+          "Avenge",
+          "for",
+          "People"
+        ]
+      ],
+      "expected": [
+        "e",
+        "r",
+        "e"
+      ],
+      "assert_src": "assert extract_rear(('Avenge', 'for', 'People') ) == ['e', 'r', 'e']"
+    },
+    {
+      "fn_name": "extract_rear",
+      "args": [
+        [
+          "Gotta",
+          "get",
+          "go"
+        ]
+      ],
+      "expected": [
+        "a",
+        "t",
+        "o"
+      ],
+      "assert_src": "assert extract_rear(('Gotta', 'get', 'go') ) == ['a', 't', 'o']"
+    }
+  ],
+  "arg_kinds": [
+    "str-list"
+  ],
+  "return_kind": "str-list",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

@@ -1,0 +1,45 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *data;
+    size_t size;
+} TupleRecord;
+
+int get_initial_and_last(const TupleRecord *record, int *initial, int *last)
+{
+    if (record == NULL || initial == NULL || last == NULL) {
+        return -1;
+    }
+    if (record->data == NULL || record->size == 0U) {
+        return -1;
+    }
+    *initial = record->data[0];
+    *last = record->data[record->size - 1U];
+    return 0;
+}
+
+int main(void)
+{
+    int values[] = { 10, 20, 30, 40, 50 };
+    TupleRecord record;
+    int initial = 0;
+    int last = 0;
+
+    record.data = values;
+    record.size = sizeof(values) / sizeof(values[0]);
+
+    if (get_initial_and_last(&record, &initial, &last) != 0) {
+        fprintf(stderr, "Error: unable to access tuple record\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Initial: %d\n", initial) < 0) {
+        return EXIT_FAILURE;
+    }
+    if (printf("Last: %d\n", last) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

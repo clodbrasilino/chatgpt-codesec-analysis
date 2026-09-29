@@ -1,0 +1,8 @@
+./collected_code_4/round2//heal_0/problem-622.c: In function 'getMedian':
+./collected_code_4/round2//heal_0/problem-622.c:27:25: warning: implicit declaration of function 'max' [-Wimplicit-function-declaration]
+   27 |     if (n == 2) return (max(arr1[0], arr2[0]) + min(arr1[1], arr2[1])) / 2;
+      |                         ^~~
+./collected_code_4/round2//heal_0/problem-622.c:27:49: warning: implicit declaration of function 'min'; did you mean 'main'? [-Wimplicit-function-declaration]
+   27 |     if (n == 2) return (max(arr1[0], arr2[0]) + min(arr1[1], arr2[1])) / 2;
+      |                                                 ^~~
+      |                                                 main

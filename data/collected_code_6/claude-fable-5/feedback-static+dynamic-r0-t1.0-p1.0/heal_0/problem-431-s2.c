@@ -1,0 +1,108 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+struct Node {
+    int value;
+    struct Node *next;
+};
+
+static struct Node *create_node(int value)
+{
+    struct Node *node = malloc(sizeof(struct Node));
+    if (node == NULL) {
+        return NULL;
+    }
+    node->value = value;
+    node->next = NULL;
+    return node;
+}
+
+static struct Node *build_list(const int *values, size_t count)
+{
+    struct Node *head = NULL;
+    struct Node *tail = NULL;
+    size_t i;
+
+    for (i = 0; i < count; i++) {
+        struct Node *node = create_node(values[i]);
+        if (node == NULL) {
+            while (head != NULL) {
+                struct Node *tmp = head;
+                head = head->next;
+                free(tmp);
+            }
+            return NULL;
+        }
+        if (head == NULL) {
+            head = node;
+            tail = node;
+        } else {
+            tail->next = node;
+            tail = node;
+        }
+    }
+    return head;
+}
+
+static void free_list(struct Node *head)
+{
+    while (head != NULL) {
+        struct Node *tmp = head;
+        head = head->next;
+        free(tmp);
+    }
+}
+
+static bool have_common_element(const struct Node *list1, const struct Node *list2)
+{
+    const struct Node *p1;
+    const struct Node *p2;
+
+    for (p1 = list1; p1 != NULL; p1 = p1->next) {
+        for (p2 = list2; p2 != NULL; p2 = p2->next) {
+            if (p1->value == p2->value) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+int main(void)
+{
+    const int values1[] = {1, 2, 3, 4, 5};
+    const int values2[] = {9, 8, 7, 3, 6};
+    const int values3[] = {10, 11, 12};
+    struct Node *list1 = NULL;
+    struct Node *list2 = NULL;
+    struct Node *list3 = NULL;
+    int status = EXIT_SUCCESS;
+
+    list1 = build_list(values1, sizeof(values1) / sizeof(values1[0]));
+    list2 = build_list(values2, sizeof(values2) / sizeof(values2[0]));
+    list3 = build_list(values3, sizeof(values3) / sizeof(values3[0]));
+
+    if (list1 == NULL || list2 == NULL || list3 == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        status = EXIT_FAILURE;
+    } else {
+        if (have_common_element(list1, list2)) {
+            printf("list1 and list2 have at least one common element\n");
+        } else {
+            printf("list1 and list2 have no common elements\n");
+        }
+
+        if (have_common_element(list1, list3)) {
+            printf("list1 and list3 have at least one common element\n");
+        } else {
+            printf("list1 and list3 have no common elements\n");
+        }
+    }
+
+    free_list(list1);
+    free_list(list2);
+    free_list(list3);
+
+    return status;
+}

@@ -1,0 +1,26 @@
+collected_code_3/problem-128-2.c: In function 'shortlist_words':
+collected_code_3/problem-128-2.c:11:51: warning: dereference of possibly-NULL 'shortlisted_words' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   11 |             shortlisted_words[*shortlisted_count] = words[i];
+      |             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~
+  'shortlist_words': events 1-6
+    |
+    |    6 |     char **shortlisted_words = (char **)malloc(sizeof(char *) * word_count);
+    |      |                                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                                         |
+    |      |                                         (1) this call could return NULL
+    |......
+    |    9 |     for (int i = 0; i < word_count; i++) {
+    |      |                     ~~~~~~~~~~~~~~       
+    |      |                       |
+    |      |                       (2) following 'true' branch (when 'i < word_count')...
+    |   10 |         if (strlen(words[i]) > n) {
+    |      |            ~            ~                
+    |      |            |            |
+    |      |            |            (3) ...to here
+    |      |            (4) following 'true' branch...
+    |   11 |             shortlisted_words[*shortlisted_count] = words[i];
+    |      |             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                                                   |      |
+    |      |                                                   |      (5) ...to here
+    |      |                                                   (6) 'shortlisted_words + (long unsigned int)*shortlisted_count * 8' could be NULL: unchecked value from (1)
+    |

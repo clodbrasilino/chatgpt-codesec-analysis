@@ -1,0 +1,59 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int find_missing_number(const int *arr, size_t size) {
+    if (arr == NULL || size == 0) {
+        return -1;
+    }
+
+    size_t left = 0;
+    size_t right = size - 1;
+
+    if (arr[0] != 0) {
+        return 0;
+    }
+
+    if (arr[right] == right) {
+        return right + 1;
+    }
+
+    while (left <= right) {
+        size_t mid = left + (right - left) / 2;
+
+        if (arr[mid] != mid) {
+            if (mid == 0 || arr[mid - 1] == mid - 1) {
+                return mid;
+            }
+            right = mid - 1;
+        } else {
+            left = mid + 1;
+        }
+    }
+
+    return -1;
+}
+
+int main(void) {
+    int arr[] = {0, 1, 2, 3, 4, 6, 7, 8};
+    size_t size = sizeof(arr) / sizeof(arr[0]);
+
+    int missing = find_missing_number(arr, size);
+
+    if (missing != -1) {
+        printf("The missing number is: %d\n", missing);
+    } else {
+        printf("No missing number found or invalid input.\n");
+    }
+
+    int arr2[] = {0, 1, 2, 3, 4, 5};
+    size_t size2 = sizeof(arr2) / sizeof(arr2[0]);
+    
+    missing = find_missing_number(arr2, size2);
+    if (missing != -1) {
+        printf("The missing number is: %d\n", missing);
+    } else {
+        printf("No missing number found or invalid input.\n");
+    }
+
+    return EXIT_SUCCESS;
+}

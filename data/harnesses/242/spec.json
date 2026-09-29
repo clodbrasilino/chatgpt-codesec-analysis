@@ -1,0 +1,44 @@
+{
+  "task_id": 242,
+  "text": "Write a C function to count total characters in a string.",
+  "fn_candidates": [
+    "count_charac",
+    "CountCharac",
+    "countCharac",
+    "countcharac"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "count_charac",
+      "args": [
+        "python programming"
+      ],
+      "expected": 18,
+      "assert_src": "assert count_charac(\"python programming\")==18"
+    },
+    {
+      "fn_name": "count_charac",
+      "args": [
+        "language"
+      ],
+      "expected": 8,
+      "assert_src": "assert count_charac(\"language\")==8"
+    },
+    {
+      "fn_name": "count_charac",
+      "args": [
+        "words"
+      ],
+      "expected": 5,
+      "assert_src": "assert count_charac(\"words\")==5"
+    }
+  ],
+  "arg_kinds": [
+    "str"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

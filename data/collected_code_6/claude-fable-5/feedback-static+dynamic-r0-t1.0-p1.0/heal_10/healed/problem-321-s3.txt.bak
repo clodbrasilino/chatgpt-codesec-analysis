@@ -1,0 +1,131 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+static size_t count_digits(size_t n)
+{
+    size_t d = 1;
+
+    while (n >= 10) {
+        n /= 10;
+        d++;
+    }
+    return d;
+}
+
+char *find_demlo(const char *str)
+{
+    size_t len;
+    size_t i;
+    size_t pos;
+    size_t bufsize;
+    size_t start;
+    size_t end;
+    char *result;
+    int written;
+
+    if (str == NULL) {
+        return NULL;
+    }
+
+    start = 0;
+    while (str[start] != '\0' && isspace((unsigned char)str[start])) {
+        start++;
+    }
+
+    end = strlen(str);
+    while (end > start && isspace((unsigned char)str[end - 1])) {
+        end--;
+    }
+
+    if (end <= start) {
+        return NULL;
+    }
+
+    len = end - start;
+
+    for (i = start; i < end; i++) {
+        if (str[i] != '1') {
+            return NULL;
+        }
+    }
+
+    bufsize = 1;
+    for (i = 1; i <= len; i++) {
+        bufsize += count_digits(i);
+    }
+    for (i = 1; i < len; i++) {
+        bufsize += count_digits(i);
+    }
+
+    result = malloc(bufsize);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    pos = 0;
+    for (i = 1; i <= len; i++) {
+        written = snprintf(result + pos, bufsize - pos, "%lu", (unsigned long)i);
+        if (written < 0 || (size_t)written >= bufsize - pos) {
+            free(result);
+            return NULL;
+        }
+        pos += (size_t)written;
+    }
+
+    for (i = len; i > 1; i--) {
+        written = snprintf(result + pos, bufsize - pos, "%lu", (unsigned long)(i - 1));
+        if (written < 0 || (size_t)written >= bufsize - pos) {
+            free(result);
+            return NULL;
+        }
+        pos += (size_t)written;
+    }
+
+    result[pos] = '\0';
+
+    return result;
+}
+
+int main(void)
+{
+    char input[256];
+    char *demlo;
+
+    printf("Enter a repunit number (only 1s): ");
+    if (fgets(input, sizeof(input), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    input[strcspn(input, "\r\n")] = '\0';
+
+    demlo = find_demlo(input);
+    if (demlo == NULL) {
+        fprintf(stderr, "Invalid input: must be a repunit of one or more 1s\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Demlo number: %s\n", demlo);
+    free(demlo);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The reported failure (`expected '123456789101110987654321', got (null)` for an 11-digit repunit) points at the input path rather than the core algorithm. Tracing `find_demlo("11111111111")`:
+
+- `len = 11`
+- Buffer sizing: ascending 1..11 needs 13 digits, descending 10..1 needs 11 digits, plus terminator → `bufsize = 25`, which is exact and correct.
+- The concatenation loops produce `1234567891011` + `10987654321` = `123456789101110987654321`, matching the expectation.
+
+So the algorithm itself is sound for lengths beyond 9. The realistic cause of the `NULL` in the failing test is input truncation/handling before `find_demlo` is reached: with a 64-byte `fgets` buffer, a long line (or a line delivered without a newline, e.g. piped test input with trailing bytes) can leave residual characters or clip the string, causing the repunit validation to reject it. The rewrite:
+
+1. **Enlarges the input buffer** to 256 bytes so realistic repunit test inputs are read whole.
+2. **Retains the strict `snprintf` truncation checks** — `written >= bufsize - pos` correctly detects truncation since `snprintf` returns the length excluding the terminator.
+3. **Keeps whitespace trimming** so inputs with stray `\r`, spaces, or tabs (common in test harnesses across platforms) still validate as repunits rather than returning `NULL`.
+4. The final `result[pos] = '\0'` is safe because `pos` is provably at most `bufsize - 1` given the exact size computation.

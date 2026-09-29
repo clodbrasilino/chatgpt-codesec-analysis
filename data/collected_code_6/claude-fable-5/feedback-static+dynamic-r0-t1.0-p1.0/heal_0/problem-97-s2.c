@@ -1,0 +1,126 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int value;
+    size_t count;
+} Frequency;
+
+typedef struct {
+    Frequency *items;
+    size_t size;
+    size_t capacity;
+} FrequencyTable;
+
+static int frequency_table_init(FrequencyTable *table)
+{
+    table->size = 0;
+    table->capacity = 16;
+    table->items = malloc(table->capacity * sizeof(Frequency));
+    if (table->items == NULL) {
+        return -1;
+    }
+    return 0;
+}
+
+static void frequency_table_destroy(FrequencyTable *table)
+{
+    if (table != NULL) {
+        free(table->items);
+        table->items = NULL;
+        table->size = 0;
+        table->capacity = 0;
+    }
+}
+
+static int frequency_table_add(FrequencyTable *table, int value)
+{
+    size_t i;
+
+    for (i = 0; i < table->size; i++) {
+        if (table->items[i].value == value) {
+            table->items[i].count++;
+            return 0;
+        }
+    }
+
+    if (table->size == table->capacity) {
+        size_t new_capacity;
+        Frequency *new_items;
+
+        if (table->capacity > SIZE_MAX / 2 / sizeof(Frequency)) {
+            return -1;
+        }
+        new_capacity = table->capacity * 2;
+        new_items = realloc(table->items, new_capacity * sizeof(Frequency));
+        if (new_items == NULL) {
+            return -1;
+        }
+        table->items = new_items;
+        table->capacity = new_capacity;
+    }
+
+    table->items[table->size].value = value;
+    table->items[table->size].count = 1;
+    table->size++;
+    return 0;
+}
+
+static int count_frequencies(const int *const *lists, const size_t *lengths,
+                             size_t num_lists, FrequencyTable *table)
+{
+    size_t i;
+    size_t j;
+
+    if (lists == NULL || lengths == NULL || table == NULL) {
+        return -1;
+    }
+
+    if (frequency_table_init(table) != 0) {
+        return -1;
+    }
+
+    for (i = 0; i < num_lists; i++) {
+        if (lists[i] == NULL && lengths[i] > 0) {
+            frequency_table_destroy(table);
+            return -1;
+        }
+        for (j = 0; j < lengths[i]; j++) {
+            if (frequency_table_add(table, lists[i][j]) != 0) {
+                frequency_table_destroy(table);
+                return -1;
+            }
+        }
+    }
+    return 0;
+}
+
+int main(void)
+{
+    const int list1[] = {1, 2, 3, 2};
+    const int list2[] = {4, 2, 5};
+    const int list3[] = {1, 1, 6, 7, 2};
+    const int *lists[] = {list1, list2, list3};
+    const size_t lengths[] = {
+        sizeof(list1) / sizeof(list1[0]),
+        sizeof(list2) / sizeof(list2[0]),
+        sizeof(list3) / sizeof(list3[0])
+    };
+    FrequencyTable table;
+    size_t i;
+
+    if (count_frequencies(lists, lengths, 3, &table) != 0) {
+        fprintf(stderr, "Failed to compute frequency counts\n");
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i < table.size; i++) {
+        if (printf("%d: %zu\n", table.items[i].value, table.items[i].count) < 0) {
+            frequency_table_destroy(&table);
+            return EXIT_FAILURE;
+        }
+    }
+
+    frequency_table_destroy(&table);
+    return EXIT_SUCCESS;
+}

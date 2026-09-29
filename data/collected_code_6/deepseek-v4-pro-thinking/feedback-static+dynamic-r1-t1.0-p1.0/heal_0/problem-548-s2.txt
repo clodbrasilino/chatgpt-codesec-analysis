@@ -1,0 +1,103 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+static int lower_bound_index(const int *arr, int len, int value) {
+    int left = 0;
+    int right = len - 1;
+
+    while (left < right) {
+        int mid = left + (right - left) / 2;
+
+        if (arr[mid] < value) {
+            left = mid + 1;
+        } else {
+            right = mid;
+        }
+    }
+
+    return left;
+}
+
+int longest_increasing_subsequence(const int *seq, int n) {
+    if (n < 0) {
+        return -1;
+    }
+
+    if (n == 0) {
+        return 0;
+    }
+
+    if (seq == NULL) {
+        return -1;
+    }
+
+    int *tails = (int *)malloc((size_t)n * sizeof(int));
+    if (tails == NULL) {
+        return -1;
+    }
+
+    int length = 1;
+    tails[0] = seq[0];
+
+    for (int i = 1; i < n; ++i) {
+        int value = seq[i];
+
+        if (value < tails[0]) {
+            tails[0] = value;
+        } else if (value > tails[length - 1]) {
+            tails[length] = value;
+            ++length;
+        } else {
+            int pos = lower_bound_index(tails, length, value);
+            tails[pos] = value;
+        }
+    }
+
+    int result = length;
+    free(tails);
+
+    return result;
+}
+
+int main(void) {
+    int n;
+
+    if (scanf("%d", &n) != 1) {
+        return 1;
+    }
+
+    if (n < 0) {
+        return 1;
+    }
+
+    if (n == 0) {
+        printf("0\n");
+        return 0;
+    }
+
+    int *seq = (int *)malloc((size_t)n * sizeof(int));
+    if (seq == NULL) {
+        return 1;
+    }
+
+    for (int i = 0; i < n; ++i) {
+        if (scanf("%d", &seq[i]) != 1) {
+            free(seq);
+            return 1;
+        }
+    }
+
+    int length = longest_increasing_subsequence(seq, n);
+    if (length < 0) {
+        free(seq);
+        return 1;
+    }
+
+    printf("%d\n", length);
+
+    free(seq);
+
+    return 0;
+}
+```

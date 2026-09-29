@@ -1,0 +1,53 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+unsigned int highest_power_of_two(unsigned int n)
+{
+    unsigned int result;
+
+    if (n == 0U) {
+        return 0U;
+    }
+
+    result = 1U;
+    while (result <= n / 2U) {
+        result *= 2U;
+    }
+
+    return result;
+}
+
+int main(void)
+{
+    unsigned int n;
+    unsigned int result;
+    int scan_status;
+
+    printf("Enter a positive integer: ");
+    scan_status = scanf("%u", &n);
+
+    if (scan_status != 1) {
+        fprintf(stderr, "Error: invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (n == 0U) {
+        fprintf(stderr, "Error: no power of 2 is less than or equal to 0.\n");
+        return EXIT_FAILURE;
+    }
+
+    result = highest_power_of_two(n);
+    printf("The highest power of 2 less than or equal to %u is %u\n", n, result);
+
+    return EXIT_SUCCESS;
+}
+```
+
+Key design decisions that address the specified weaknesses:
+
+- **CWE-703 (Improper Check or Handling of Exceptional Conditions):** The return value of `scanf` is checked, and the edge case `n == 0` is explicitly handled both in `main` and defensively inside the function, since no power of 2 satisfies the condition for zero.
+
+- **CWE-664 (Improper Control of a Resource Through its Lifetime):** No dynamic memory or file handles are used, so there are no resources to leak or misuse; all variables are stack-local with well-defined lifetimes.
+
+- **CWE-710 (Improper Adherence to Coding Standards):** The code uses `unsigned int` consistently to avoid signed overflow (which is undefined behavior), avoids overflow in the loop by comparing `result <= n / 2U` instead of multiplying first, uses `int main(void)` with explicit `EXIT_SUCCESS`/`EXIT_FAILURE` return codes, and writes error messages to `stderr`.

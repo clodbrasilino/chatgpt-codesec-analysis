@@ -1,0 +1,85 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+size_t replace_chars(char *str, size_t n)
+{
+    size_t count = 0;
+    size_t i;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    for (i = 0; str[i] != '\0' && count < n; i++) {
+        if (str[i] == ' ' || str[i] == ',' || str[i] == '.') {
+            str[i] = ':';
+            count++;
+        }
+    }
+
+    return count;
+}
+
+int main(void)
+{
+    static const char source[] = "Hello world, this is a test. Replace them all.";
+    char *buffer;
+    size_t buf_size;
+    size_t len;
+    size_t replaced;
+
+    buf_size = sizeof(source);
+    len = strnlen(source, buf_size - 1U);
+
+    if (len >= buf_size) {
+        fprintf(stderr, "Source length exceeds buffer capacity\n");
+        return EXIT_FAILURE;
+    }
+
+    if (len + 1U > buf_size) {
+        fprintf(stderr, "Copy would exceed destination buffer\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer = malloc(buf_size);
+    if (buffer == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    memcpy(buffer, source, len);
+    buffer[len] = '\0';
+
+    replaced = replace_chars(buffer, 5U);
+
+    if (printf("Original: %s\n", source) < 0) {
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+    if (printf("Modified: %s\n", buffer) < 0) {
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+    if (printf("Replacements made: %zu\n", replaced) < 0) {
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+
+    free(buffer);
+    buffer = NULL;
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the original code and the changes made:**
+
+The Flawfinder warning about `memcpy` (CWE-120) was flagged because `memcpy` performs no bounds checking on its own. However, the original code already mitigated this correctly:
+
+1. **Destination sizing:** `buffer` is allocated with `malloc(buf_size)` where `buf_size = sizeof(source)`, guaranteeing capacity for the full string plus its null terminator.
+2. **Length validation:** `len` is computed with `strnlen(source, buf_size - 1U)`, which caps the result at `buf_size - 1`, so `len + 1 <= buf_size` always holds before the copy.
+3. **Explicit guards:** The checks `len >= buf_size` and `len + 1U > buf_size` verify the invariant before `memcpy` executes, and `buffer[len] = '\0'` guarantees null termination.
+
+The only structural improvement in the rewrite is **reordering the validation checks before the allocation**. In the original, `malloc` was called first, forcing `free(buffer)` in each validation failure path. Validating first simplifies the error paths, eliminates two `free` calls, and avoids allocating memory that would be immediately discarded on failure. All other defensive properties are preserved: null-pointer check in `replace_chars`, bounded replacement count, checked `printf` return values, freeing the buffer on every exit path, and nulling the pointer after `free` to prevent accidental use-after-free.

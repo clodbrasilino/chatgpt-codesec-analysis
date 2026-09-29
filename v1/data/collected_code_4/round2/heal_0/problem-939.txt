@@ -1,0 +1,37 @@
+```C
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+struct dictionary {
+    char *key;
+    char *value;
+};
+
+int compare(const void *a, const void *b) {
+    struct dictionary *dictA = (struct dictionary *) a;
+    struct dictionary *dictB = (struct dictionary *) b;
+
+    return strcmp(dictA->key, dictB->key);
+}
+
+void sortDictionaries(struct dictionary *dict, int dictSize) {
+    qsort(dict, dictSize, sizeof(struct dictionary), compare);
+}
+
+int main() {
+    struct dictionary dict[] = {
+            {"apple", "a fruit"}, 
+            {"orange", "another fruit"},
+            {"banana", "yet another fruit"}};
+    int dictSize = sizeof(dict) / sizeof(dict[0]);
+
+    sortDictionaries(dict, dictSize);
+
+    for (int i = 0; i < dictSize; i++) {
+        printf("Key : %s, Value : %s\n", dict[i].key, dict[i].value);
+    }
+
+    return 0;
+}
+```

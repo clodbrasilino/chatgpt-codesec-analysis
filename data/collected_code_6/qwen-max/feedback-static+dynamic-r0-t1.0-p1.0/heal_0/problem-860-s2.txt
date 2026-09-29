@@ -1,0 +1,47 @@
+```c
+#include <stdio.h>
+#include <regex.h>
+
+int is_ending_with_alphanumeric(const char *str) {
+    regex_t regex;
+    int ret;
+    char pattern[] = ".*[a-zA-Z0-9]$";
+
+    ret = regcomp(&regex, pattern, REG_EXTENDED);
+    if (ret) {
+        fprintf(stderr, "Could not compile regex\n");
+        return -1;
+    }
+
+    ret = regexec(&regex, str, 0, NULL, 0);
+    regfree(&regex);
+
+    return !ret;
+}
+
+int main() {
+    const char *test1 = "HelloWorld123";
+    const char *test2 = "Hello World 123!";
+    const char *test3 = "";
+
+    if (is_ending_with_alphanumeric(test1)) {
+        printf("Test 1 passed: string ends with alphanumeric characters.\n");
+    } else {
+        printf("Test 1 failed: string does not end with alphanumeric characters.\n");
+    }
+
+    if (is_ending_with_alphanumeric(test2)) {
+        printf("Test 2 passed: string ends with alphanumeric characters.\n");
+    } else {
+        printf("Test 2 failed: string does not end with alphanumeric characters.\n");
+    }
+
+    if (is_ending_with_alphanumeric(test3)) {
+        printf("Test 3 passed: string ends with alphanumeric characters.\n");
+    } else {
+        printf("Test 3 failed: string does not end with alphanumeric characters.\n");
+    }
+
+    return 0;
+}
+```

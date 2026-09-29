@@ -1,0 +1,44 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdlib.h>
+
+void find_words_starting_with_a_or_e(const char *str) {
+    const char *p = str;
+
+    while (*p) {
+        while (*p && !isalpha((unsigned char)*p)) {
+            p++;
+        }
+
+        const char *start = p;
+        while (*p && isalpha((unsigned char)*p)) {
+            p++;
+        }
+
+        size_t len = (size_t)(p - start);
+        if (len > 0 && (start[0] == 'a' || start[0] == 'e' || start[0] == 'A' || start[0] == 'E')) {
+            printf("%.*s\n", (int)len, start);
+        }
+    }
+}
+
+int main(void) {
+    char *str = NULL;
+    size_t size = 0;
+    ssize_t nread;
+
+    printf("Enter a string: ");
+    nread = getline(&str, &size, stdin);
+    if (nread == -1) {
+        free(str);
+        return 1;
+    }
+
+    find_words_starting_with_a_or_e(str);
+
+    free(str);
+    return 0;
+}
+```

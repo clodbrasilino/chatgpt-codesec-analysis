@@ -1,0 +1,71 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node* next;
+};
+
+struct Node* createNode(int data) {
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    if (newNode == NULL) {
+        exit(EXIT_FAILURE);
+    }
+    newNode->data = data;
+    newNode->next = NULL;
+    return newNode;
+}
+
+void printList(struct Node* head) {
+    while (head != NULL) {
+        printf("%d ", head->data);
+        head = head->next;
+    }
+    printf("\n");
+}
+
+struct Node* removeConsecutiveDuplicates(struct Node* head) {
+    if (head == NULL || head->next == NULL) {
+        return head;
+    }
+
+    struct Node* current = head;
+    while (current != NULL && current->next != NULL) {
+        if (current->data == current->next->data) {
+            struct Node* temp = current->next;
+            current->next = current->next->next;
+            free(temp);
+        } else {
+            current = current->next;
+        }
+    }
+
+    return head;
+}
+
+int main() {
+    struct Node* head = createNode(1);
+    head->next = createNode(2);
+    head->next->next = createNode(2);
+    head->next->next->next = createNode(3);
+    head->next->next->next->next = createNode(3);
+    head->next->next->next->next->next = createNode(4);
+
+    printf("Original list: ");
+    printList(head);
+
+    head = removeConsecutiveDuplicates(head);
+
+    printf("List after removing consecutive duplicates: ");
+    printList(head);
+
+    // Free the remaining list
+    struct Node* current = head;
+    while (current != NULL) {
+        struct Node* temp = current;
+        current = current->next;
+        free(temp);
+    }
+
+    return 0;
+}

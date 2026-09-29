@@ -1,0 +1,83 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdbool.h>
+
+#define BUFFER_SIZE 256
+
+bool has_letter_and_digit(const char *str)
+{
+    bool has_letter = false;
+    bool has_digit = false;
+
+    if (str == NULL) {
+        return false;
+    }
+
+    while (*str != '\0') {
+        unsigned char c = (unsigned char)*str;
+        if (isalpha(c)) {
+            has_letter = true;
+        } else if (isdigit(c)) {
+            has_digit = true;
+        }
+        if (has_letter && has_digit) {
+            return true;
+        }
+        str++;
+    }
+
+    return false;
+}
+
+static void flush_stdin(void)
+{
+    int c;
+    while ((c = getchar()) != '\n' && c != EOF) {
+    }
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+
+    printf("Enter a string: ");
+    fflush(stdout);
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    size_t len = strnlen(buffer, sizeof(buffer));
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    } else {
+        flush_stdin();
+    }
+
+    if (has_letter_and_digit(buffer)) {
+        printf("The string contains at least one letter and one number.\n");
+    } else {
+        printf("The string does not contain both a letter and a number.\n");
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the original code and applied fixes:**
+
+The original code was already in reasonably good shape — the Flawfinder hits were mostly informational rather than actual vulnerabilities. Here's how each flagged weakness is addressed:
+
+1. **`char buffer[BUFFER_SIZE]` (CWE-119/CWE-120, statically-sized array):** The original code was already safe because `fgets(buffer, sizeof(buffer), stdin)` bounds the read to the buffer size. Using `sizeof(buffer)` rather than the macro directly keeps the size and the buffer coupled, so this remains correct even if the declaration changes.
+
+2. **`strlen` (CWE-126, over-read on non-terminated strings):** While `fgets` guarantees null termination on success, the rewrite adds two layers of defense: an explicit `buffer[sizeof(buffer) - 1] = '\0';` as a belt-and-suspenders guarantee, and `strnlen` with an explicit bound instead of `strlen`, so an over-read is impossible even if the buffer were somehow left unterminated.
+
+3. **`getchar` in a loop (CWE-120/CWE-20):** The drain loop never writes into any buffer — it only discards excess characters — so there was no real risk. It has been factored into a `flush_stdin` helper, which keeps the loop's discard-only intent explicit and correctly terminates on both `'\n'` and `EOF`, avoiding an infinite loop on a closed input stream.
+
+Other good practices already present and preserved: `isalpha`/`isdigit` receive an `unsigned char` cast (avoiding UB with negative `char` values), the `NULL` check in `has_letter_and_digit`, checking the `fgets` return value, and `fflush(stdout)` before reading input.

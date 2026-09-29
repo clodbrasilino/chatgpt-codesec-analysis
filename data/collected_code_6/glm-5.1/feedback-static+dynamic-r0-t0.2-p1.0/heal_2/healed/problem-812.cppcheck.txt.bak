@@ -1,0 +1,16 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_2/healed/problem-812.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_2/healed/problem-812.c:60:14: style: Condition 'res4==NULL' is always true [knownConditionTrueFalse]
+    if (res4 == NULL) {
+             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_2/healed/problem-812.c:59:33: note: Calling function 'abbreviate_road' returns 0
+    char *res4 = abbreviate_road(NULL);
+                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_2/healed/problem-812.c:59:33: note: Assignment 'res4=abbreviate_road(NULL)', assigned value is 0
+    char *res4 = abbreviate_road(NULL);
+                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_2/healed/problem-812.c:60:14: note: Condition 'res4==NULL' is always true
+    if (res4 == NULL) {
+             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_2/healed/problem-812.c:59:11: style: Variable 'res4' can be declared as pointer to const [constVariablePointer]
+    char *res4 = abbreviate_road(NULL);
+          ^

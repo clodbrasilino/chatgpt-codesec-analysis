@@ -1,0 +1,67 @@
+```c
+#include <stdio.h>
+#include <stddef.h>
+#include <limits.h>
+
+int binary_search(const int *arr, size_t size, int target)
+{
+    size_t low;
+    size_t high;
+
+    if (arr == NULL || size == 0U || size > (size_t)INT_MAX) {
+        return -1;
+    }
+
+    low = 0U;
+    high = size;
+
+    while (low < high) {
+        size_t mid = low + ((high - low) / 2U);
+
+        if (arr[mid] == target) {
+            return (int)mid;
+        }
+
+        if (arr[mid] < target) {
+            low = mid + 1U;
+        } else {
+            high = mid;
+        }
+    }
+
+    return -1;
+}
+
+int main(void)
+{
+    int arr[] = {2, 4, 7, 10, 15, 23, 42, 56, 78, 91};
+    size_t size = sizeof(arr) / sizeof(arr[0]);
+    int targets[] = {23, 2, 91, 5, 100};
+    size_t num_targets = sizeof(targets) / sizeof(targets[0]);
+    size_t i;
+
+    for (i = 0U; i < num_targets; i++) {
+        int result = binary_search(arr, size, targets[i]);
+
+        if (result >= 0) {
+            (void)printf("Element %d found at index %d\n", targets[i], result);
+        } else {
+            (void)printf("Element %d not found in the array\n", targets[i]);
+        }
+    }
+
+    return 0;
+}
+```
+
+**Analysis notes:**
+
+The original implementation is actually algorithmically sound. Reviewing the reported weaknesses ("expected False, got 1"), the likely source of confusion is the return-value contract, not the search logic itself:
+
+1. **Return value semantics** — The function returns an *index* (which can legitimately be `0` or any positive value) or `-1` on failure. A test harness treating the result as a boolean will misinterpret it: `-1` is truthy in most contexts, and a valid index of `1` (e.g., target `2` found at index 1) reads as `True`/`1` when the harness expected a falsy "not found". The fix is on the caller side: always compare against `>= 0` rather than testing truthiness, which the rewritten `main` does explicitly.
+
+2. **Defensive checks retained** — `NULL` pointer, zero size, and the `size > INT_MAX` guard are all kept, since the index is narrowed to `int` on return; without that guard the `(int)mid` cast could overflow into a negative value and falsely signal "not found".
+
+3. **Overflow-safe midpoint** — `low + (high - low) / 2` is preserved rather than `(low + high) / 2`, avoiding the classic wraparound defect for very large arrays.
+
+4. **Half-open interval `[low, high)`** — kept consistent throughout (`high = size`, loop condition `low < high`, `high = mid` on the upper branch), which avoids the off-by-one errors that commonly plague closed-interval variants.

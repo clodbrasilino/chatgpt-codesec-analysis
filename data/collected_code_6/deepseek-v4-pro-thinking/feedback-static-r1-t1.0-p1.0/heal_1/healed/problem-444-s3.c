@@ -1,0 +1,80 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+void trim_tuple(int **tuple, size_t *len, size_t k) {
+    if (tuple == NULL || len == NULL) {
+        return;
+    }
+    if (*tuple == NULL) {
+        *len = 0;
+        return;
+    }
+    size_t length = *len;
+    size_t half = length / 2 + (length % 2);
+    if (k >= half) {
+        free(*tuple);
+        *tuple = NULL;
+        *len = 0;
+        return;
+    }
+    size_t new_len = length - 2 * k;
+    memmove(*tuple, *tuple + k, new_len * sizeof(int));
+    int *resized = realloc(*tuple, new_len * sizeof(int));
+    if (resized != NULL) {
+        *tuple = resized;
+    }
+    *len = new_len;
+}
+
+void trim_tuple_list(int **tuples, size_t *lengths, size_t count, size_t k) {
+    if (tuples == NULL || lengths == NULL) {
+        return;
+    }
+    for (size_t i = 0; i < count; ++i) {
+        trim_tuple(&tuples[i], &lengths[i], k);
+    }
+}
+
+int main(void) {
+    size_t count = 3;
+    const size_t initial_lengths[] = {5, 4, 6};
+    int **tuples = malloc(count * sizeof(*tuples));
+    size_t *lengths = malloc(count * sizeof(*lengths));
+    if (tuples == NULL || lengths == NULL) {
+        free(tuples);
+        free(lengths);
+        return 1;
+    }
+    for (size_t i = 0; i < count; ++i) {
+        lengths[i] = initial_lengths[i];
+        tuples[i] = malloc(lengths[i] * sizeof(int));
+        if (tuples[i] == NULL) {
+            for (size_t j = 0; j < i; ++j) {
+                free(tuples[j]);
+            }
+            free(tuples);
+            free(lengths);
+            return 1;
+        }
+        for (size_t j = 0; j < lengths[i]; ++j) {
+            tuples[i][j] = (int)(i * 10 + j);
+        }
+    }
+    trim_tuple_list(tuples, lengths, count, 2);
+    for (size_t i = 0; i < count; ++i) {
+        printf("Tuple %zu: ", i);
+        if (tuples[i] != NULL) {
+            for (size_t j = 0; j < lengths[i]; ++j) {
+                printf("%d ", tuples[i][j]);
+            }
+        }
+        printf("\n");
+    }
+    for (size_t i = 0; i < count; ++i) {
+        free(tuples[i]);
+    }
+    free(tuples);
+    free(lengths);
+    return 0;
+}

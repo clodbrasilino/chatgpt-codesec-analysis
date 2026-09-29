@@ -1,0 +1,44 @@
+#include <stdio.h>
+#include <limits.h>
+
+void secondSmallest(int* array, int size, int* result) {
+    int smallest = INT_MAX;
+    int secondSmallest = INT_MAX;
+
+    if(size < 2) {
+        *result = INT_MAX;
+        return;
+    }       
+
+    for(int i = 0; i < size; i++) {
+        if(array[i] < smallest) {
+            secondSmallest = smallest;
+            smallest = array[i];
+        } else if (array[i] != smallest && array[i] < secondSmallest) {
+            secondSmallest = array[i];
+        }
+    }
+
+    if (secondSmallest == INT_MAX) {
+        *result = INT_MAX;
+        return;
+    }
+
+    *result = secondSmallest;
+}
+
+int main() {
+    int array[] = {12, 13, 1, 10, 34, 1};
+    int result;
+    int size = sizeof(array) / sizeof(array[0]);
+
+    secondSmallest(array, size, &result);
+
+    if(result == INT_MAX) {
+        printf("No second smallest number\n");
+    } else {
+        printf("The second smallest number is: %d\n", result);
+    }
+
+    return 0;
+}

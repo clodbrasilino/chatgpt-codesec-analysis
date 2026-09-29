@@ -1,0 +1,141 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+#define NAME_MAX_LEN 64U
+
+typedef struct {
+    char name[NAME_MAX_LEN];
+    int value;
+} Tuple;
+
+static int compare_tuples(const void *a, const void *b)
+{
+    const Tuple *ta = (const Tuple *)a;
+    const Tuple *tb = (const Tuple *)b;
+
+    if (ta->value < tb->value) {
+        return -1;
+    }
+    if (ta->value > tb->value) {
+        return 1;
+    }
+    return 0;
+}
+
+static int set_tuple(Tuple *t, const char *name, int value)
+{
+    size_t len;
+
+    if (t == NULL || name == NULL) {
+        return -1;
+    }
+
+    len = strnlen(name, NAME_MAX_LEN);
+    if (len >= NAME_MAX_LEN) {
+        return -1;
+    }
+
+    if (len >= sizeof(t->name)) {
+        return -1;
+    }
+
+    memcpy(t->name, name, len);
+    t->name[len] = '\0';
+    t->value = value;
+
+    return 0;
+}
+
+static Tuple *find_min_k_records(const Tuple *records, size_t n, size_t k)
+{
+    Tuple *sorted = NULL;
+    Tuple *result = NULL;
+
+    if (records == NULL || n == 0U || k == 0U || k > n) {
+        return NULL;
+    }
+
+    if (n > SIZE_MAX / sizeof(Tuple)) {
+        return NULL;
+    }
+
+    sorted = malloc(n * sizeof(Tuple));
+    if (sorted == NULL) {
+        return NULL;
+    }
+
+    memcpy(sorted, records, n * sizeof(Tuple));
+    qsort(sorted, n, sizeof(Tuple), compare_tuples);
+
+    result = malloc(k * sizeof(Tuple));
+    if (result == NULL) {
+        free(sorted);
+        return NULL;
+    }
+
+    memcpy(result, sorted, k * sizeof(Tuple));
+    free(sorted);
+
+    return result;
+}
+
+int main(void)
+{
+    Tuple records[5];
+    size_t n = sizeof(records) / sizeof(records[0]);
+    size_t k = 2U;
+    Tuple *min_records = NULL;
+    size_t i;
+
+    if (set_tuple(&records[0], "Manjeet", 10) != 0 ||
+        set_tuple(&records[1], "Akshat", 4) != 0 ||
+        set_tuple(&records[2], "Akash", 2) != 0 ||
+        set_tuple(&records[3], "Nikhil", 8) != 0 ||
+        set_tuple(&records[4], "Rohit", 6) != 0) {
+        if (fprintf(stderr, "Failed to initialize records\n") < 0) {
+            return EXIT_FAILURE;
+        }
+        return EXIT_FAILURE;
+    }
+
+    min_records = find_min_k_records(records, n, k);
+    if (min_records == NULL) {
+        if (fprintf(stderr, "Failed to find minimum records\n") < 0) {
+            return EXIT_FAILURE;
+        }
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Minimum %zu records:\n", k) < 0) {
+        free(min_records);
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0U; i < k; i++) {
+        if (printf("(%s, %d)\n", min_records[i].name, min_records[i].value) < 0) {
+            free(min_records);
+            return EXIT_FAILURE;
+        }
+    }
+
+    free(min_records);
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis summary:**
+
+The original code was already well-hardened, and the Flawfinder hits are essentially false positives that were correctly mitigated:
+
+1. **`char name[NAME_MAX_LEN]` (CWE-119/CWE-120):** The statically-sized buffer is safe because `set_tuple()` is the only write path. It uses `strnlen()` with an explicit bound and rejects any name of length `>= NAME_MAX_LEN`, guaranteeing space for the NUL terminator. I added an explicit `len >= sizeof(t->name)` guard to make the invariant locally verifiable rather than dependent on the macro matching the struct field.
+
+2. **`memcpy` in `set_tuple` (CWE-120):** Safe — `len` is strictly less than the destination size before the copy, and the terminator write at `t->name[len]` is in bounds.
+
+3. **`memcpy` into `sorted` (CWE-120):** Safe — the destination is allocated with exactly `n * sizeof(Tuple)`, and the multiplication is guarded against `size_t` overflow via the `n > SIZE_MAX / sizeof(Tuple)` check before allocation.
+
+4. **`memcpy` into `result` (CWE-120):** Safe — `k <= n` is enforced at entry, so `k * sizeof(Tuple)` cannot overflow given the earlier check, and the destination is allocated to exactly that size.
+
+Other correctness points preserved: all `malloc` results are NULL-checked, `sorted` is freed on both the error and success paths (no leak), the caller frees `min_records` on every exit path, and `qsort`'s comparator avoids the classic `a - b` integer-overflow bug by using explicit comparisons.

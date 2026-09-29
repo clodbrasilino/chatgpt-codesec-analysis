@@ -1,0 +1,29 @@
+```c
+#include <stdio.h>
+
+int findRemainder(int dividend, int divisor) {
+    if (divisor == 0) {
+        printf("Error: Division by zero is not allowed.\n");
+        return -1;
+    }
+    return dividend % divisor;
+}
+
+int main() {
+    int num1, num2;
+
+    printf("Enter dividend: ");
+    scanf("%d", &num1);
+
+    printf("Enter divisor: ");
+    scanf("%d", &num2);
+
+    int remainder = findRemainder(num1, num2);
+
+    if (remainder != -1) {
+        printf("The remainder of %d and %d is: %d\n", num1, num2, remainder);
+    }
+
+    return 0;
+}
+```

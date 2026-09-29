@@ -1,0 +1,31 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+char add_characters(const char *str) {
+    if (str == NULL) {
+        return '\0';
+    }
+
+    int sum = 0;
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    size_t len = strlen(str);
+
+    for (size_t i = 0; i < len; ++i) {
+        sum += (unsigned char)str[i];
+    }
+
+    return (char)(sum % 256);
+}
+
+int main(void) {
+    const char *test_string = "Hello, World!";
+    
+    char result = add_characters(test_string);
+    
+    printf("The character made by adding all characters is: '%c' (ASCII: %d)\n", result, (int)(unsigned char)result);
+    
+    return 0;
+}

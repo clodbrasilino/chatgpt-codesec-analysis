@@ -1,0 +1,154 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+#define MAX_LEN 4096
+
+static size_t bounded_len(const char *s, size_t max)
+{
+    size_t n = 0U;
+
+    if (s == NULL) {
+        return 0U;
+    }
+
+    while (n < max && s[n] != '\0') {
+        n++;
+    }
+
+    return n;
+}
+
+long min_swaps(const char *s1, const char *s2)
+{
+    size_t len1;
+    size_t len2;
+    size_t i;
+    long count01;
+    long count10;
+
+    if (s1 == NULL || s2 == NULL) {
+        return -1L;
+    }
+
+    len1 = bounded_len(s1, (size_t)MAX_LEN + 1U);
+    len2 = bounded_len(s2, (size_t)MAX_LEN + 1U);
+
+    if (len1 > (size_t)MAX_LEN || len2 > (size_t)MAX_LEN) {
+        return -1L;
+    }
+
+    if (len1 != len2 || len1 == 0U) {
+        return -1L;
+    }
+
+    count01 = 0L;
+    count10 = 0L;
+
+    for (i = 0U; i < len1; i++) {
+        if ((s1[i] != '0' && s1[i] != '1') ||
+            (s2[i] != '0' && s2[i] != '1')) {
+            return -1L;
+        }
+        if (s1[i] == '0' && s2[i] == '1') {
+            count01++;
+        } else if (s1[i] == '1' && s2[i] == '0') {
+            count10++;
+        }
+    }
+
+    if (count01 != count10) {
+        return -1L;
+    }
+
+    return count01;
+}
+
+static int read_line(char *buf, size_t size)
+{
+    size_t len;
+
+    if (buf == NULL || size < 2U) {
+        return -1;
+    }
+
+    if (fgets(buf, (int)size, stdin) == NULL) {
+        return -1;
+    }
+
+    buf[size - 1U] = '\0';
+
+    len = bounded_len(buf, size);
+
+    if (len == size - 1U && buf[len - 1U] != '\n') {
+        int ch;
+
+        do {
+            ch = getc(stdin);
+        } while (ch != '\n' && ch != EOF);
+    }
+
+    while (len > 0U && (buf[len - 1U] == '\n' || buf[len - 1U] == '\r')) {
+        buf[len - 1U] = '\0';
+        len--;
+    }
+
+    if (len == 0U) {
+        return -1;
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    char a[MAX_LEN + 2];
+    char b[MAX_LEN + 2];
+    long result;
+    int status;
+
+    memset(a, 0, sizeof(a));
+    memset(b, 0, sizeof(b));
+
+    status = EXIT_SUCCESS;
+
+    if (read_line(a, sizeof(a)) != 0 || read_line(b, sizeof(b)) != 0) {
+        if (printf("Not Possible\n") < 0) {
+            status = EXIT_FAILURE;
+        }
+        if (fflush(stdout) != 0) {
+            status = EXIT_FAILURE;
+        }
+        return status;
+    }
+
+    result = min_swaps(a, b);
+
+    if (result < 0L) {
+        if (printf("Not Possible\n") < 0) {
+            status = EXIT_FAILURE;
+        }
+    } else {
+        if (printf("%ld\n", result) < 0) {
+            status = EXIT_FAILURE;
+        }
+    }
+
+    if (fflush(stdout) != 0) {
+        status = EXIT_FAILURE;
+    }
+
+    return status;
+}
+```
+
+Key points about the fixes applied:
+
+1. **Variable scope (`ch` in `read_line`)**: The `int ch` declaration was moved inside the block where the excess-input drain loop runs, addressing the cppcheck `variableScope` warning. It is now only visible where it is actually used.
+
+2. **`getc` in a loop (CWE-120/CWE-20)**: The drain loop reads into a single `int` and never writes to a buffer, so no boundary issue exists — the flawfinder hit is a false positive, but the loop correctly terminates on both `'\n'` and `EOF`, preventing an infinite loop on truncated input.
+
+3. **Statically-sized arrays (CWE-119/CWE-120)**: Both `a` and `b` are sized `MAX_LEN + 2` (payload + newline + NUL), zero-initialized with `memset`, and every access path is bounds-checked: `fgets` receives the exact buffer size, `bounded_len` never scans past `size`, and `min_swaps` rejects any string longer than `MAX_LEN`. No unchecked copy functions (`strcpy`, `gets`, etc.) are used.
+
+4. **Missing output on failure paths (failed test cases)**: The program guarantees output on every path — a valid swap count on success and `"Not Possible"` on any failure (read failure, empty line, length mismatch, non-binary characters, or unbalanced `0→1`/`1→0` mismatch counts), with `fflush(stdout)` ensuring the output is actually emitted before exit even if the runtime buffers stdout.

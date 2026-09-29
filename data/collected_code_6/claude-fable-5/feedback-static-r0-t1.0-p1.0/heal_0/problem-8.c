@@ -1,0 +1,47 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int *square_elements(const int *input, size_t length)
+{
+    int *result;
+    size_t i;
+
+    if (input == NULL || length == 0) {
+        return NULL;
+    }
+
+    result = malloc(length * sizeof(*result));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    for (i = 0; i < length; i++) {
+        result[i] = input[i] * input[i];
+    }
+
+    return result;
+}
+
+int main(void)
+{
+    int numbers[] = {1, 2, 3, 4, 5};
+    size_t count = sizeof(numbers) / sizeof(numbers[0]);
+    size_t i;
+    int *squares;
+
+    squares = square_elements(numbers, count);
+    if (squares == NULL) {
+        fprintf(stderr, "Failed to compute squares\n");
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i < count; i++) {
+        if (printf("%d\n", squares[i]) < 0) {
+            free(squares);
+            return EXIT_FAILURE;
+        }
+    }
+
+    free(squares);
+    return EXIT_SUCCESS;
+}

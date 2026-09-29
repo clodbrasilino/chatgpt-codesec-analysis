@@ -1,0 +1,95 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int value;
+    struct Node *next;
+} Node;
+
+typedef struct List {
+    Node *head;
+} List;
+
+void addNode(List *list, int value) {
+    Node *newNode = (Node *)malloc(sizeof(Node));
+    newNode->value = value;
+    newNode->next = list->head;
+    list->head = newNode;
+}
+
+List* createList() {
+    List *list = (List *)malloc(sizeof(List));
+    list->head = NULL;
+    return list;
+}
+
+List* zipLists(List *list1, List *list2) {
+    if (!list1 || !list2) return NULL;
+
+    List *result = createList();
+    Node *current1 = list1->head;
+    Node *current2 = list2->head;
+
+    while (current1 && current2) {
+        addNode(result, current1->value);
+        addNode(result, current2->value);
+        current1 = current1->next;
+        current2 = current2->next;
+    }
+
+    while (current1) {
+        addNode(result, current1->value);
+        current1 = current1->next;
+    }
+
+    while (current2) {
+        addNode(result, current2->value);
+        current2 = current2->next;
+    }
+
+    return result;
+}
+
+void printList(List *list) {
+    Node *current = list->head;
+    while (current) {
+        printf("%d ", current->value);
+        current = current->next;
+    }
+    printf("\n");
+}
+
+void freeList(List *list) {
+    Node *current = list->head;
+    Node *temp;
+    while (current) {
+        temp = current;
+        current = current->next;
+        free(temp);
+    }
+    free(list);
+}
+
+int main() {
+    List *list1 = createList();
+    List *list2 = createList();
+
+    addNode(list1, 3);
+    addNode(list1, 2);
+    addNode(list1, 1);
+
+    addNode(list2, 6);
+    addNode(list2, 5);
+    addNode(list2, 4);
+
+    List *zippedList = zipLists(list1, list2);
+    printList(zippedList);
+
+    freeList(list1);
+    freeList(list2);
+    freeList(zippedList);
+
+    return 0;
+}
+```

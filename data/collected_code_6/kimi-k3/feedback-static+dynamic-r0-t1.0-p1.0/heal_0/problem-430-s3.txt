@@ -1,0 +1,89 @@
+```c
+#include <stdio.h>
+#include <math.h>
+
+typedef struct {
+    double h;
+    double k;
+    double p;
+} Parabola;
+
+typedef struct {
+    double a;
+    double b;
+    double c;
+} Line;
+
+int find_directrix_vertical(const Parabola *parabola, Line *directrix) {
+    if (parabola == NULL || directrix == NULL) {
+        return -1;
+    }
+    if (parabola->p == 0.0) {
+        return -1;
+    }
+    directrix->a = 0.0;
+    directrix->b = 1.0;
+    directrix->c = -(parabola->k - parabola->p);
+    return 0;
+}
+
+int find_directrix_horizontal(const Parabola *parabola, Line *directrix) {
+    if (parabola == NULL || directrix == NULL) {
+        return -1;
+    }
+    if (parabola->p == 0.0) {
+        return -1;
+    }
+    directrix->a = 1.0;
+    directrix->b = 0.0;
+    directrix->c = -(parabola->h - parabola->p);
+    return 0;
+}
+
+int main(void) {
+    Parabola parabola;
+    Line directrix;
+    int orientation;
+    int result;
+
+    printf("Enter vertex (h k): ");
+    if (scanf("%lf %lf", &parabola.h, &parabola.k) != 2) {
+        fprintf(stderr, "Invalid input\n");
+        return 1;
+    }
+
+    printf("Enter focal length p: ");
+    if (scanf("%lf", &parabola.p) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return 1;
+    }
+
+    printf("Enter orientation (0 for vertical, 1 for horizontal): ");
+    if (scanf("%d", &orientation) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return 1;
+    }
+
+    if (orientation == 0) {
+        result = find_directrix_vertical(&parabola, &directrix);
+    } else if (orientation == 1) {
+        result = find_directrix_horizontal(&parabola, &directrix);
+    } else {
+        fprintf(stderr, "Invalid orientation\n");
+        return 1;
+    }
+
+    if (result != 0) {
+        fprintf(stderr, "Error computing directrix\n");
+        return 1;
+    }
+
+    if (fabs(directrix.b) > 0.0) {
+        printf("Directrix: y = %.6f\n", -directrix.c);
+    } else {
+        printf("Directrix: x = %.6f\n", -directrix.c);
+    }
+
+    return 0;
+}
+```

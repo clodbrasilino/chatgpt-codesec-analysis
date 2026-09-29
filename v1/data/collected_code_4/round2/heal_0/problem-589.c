@@ -1,0 +1,35 @@
+#include <stdio.h>
+#include <math.h>
+
+void printPerfectSquares(int lower, int upper) {
+    if (lower > upper) {
+        printf("Invalid range! Lower limit is greater than upper limit.\n");
+        return;
+    }
+
+    int start = sqrt(lower);
+    if (start * start < lower) {
+        start++;
+    }
+
+    int i;
+    for (i = start; i*i <= upper; i++) {
+        printf("%d ", i * i);
+    }
+
+    printf("\n");
+}
+
+int main() {
+    int lower, upper;
+
+    printf("Enter lower limit: ");
+    scanf("%d", &lower);
+
+    printf("Enter upper limit: ");
+    scanf("%d", &upper);
+
+    printPerfectSquares(lower, upper);
+    
+    return 0;
+}

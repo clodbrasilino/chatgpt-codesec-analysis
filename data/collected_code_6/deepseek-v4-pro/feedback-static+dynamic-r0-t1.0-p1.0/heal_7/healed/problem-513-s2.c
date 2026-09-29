@@ -1,0 +1,106 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char **tuple_to_list(const char *tuple[], int tuple_size, const char *str, int *list_size) {
+    if (tuple == NULL || str == NULL || list_size == NULL || tuple_size <= 0) {
+        if (list_size != NULL) {
+            *list_size = 0;
+        }
+        return NULL;
+    }
+
+    size_t str_len = strnlen(str, SIZE_MAX);
+    size_t alloc_count = (size_t)tuple_size * 2;
+    if (alloc_count > SIZE_MAX / sizeof(char *)) {
+        *list_size = 0;
+        return NULL;
+    }
+
+    char **list = (char **)malloc(alloc_count * sizeof(char *));
+    if (list == NULL) {
+        *list_size = 0;
+        return NULL;
+    }
+
+    int index = 0;
+
+    for (int i = 0; i < tuple_size; i++) {
+        size_t elem_len = 0;
+        if (tuple[i] != NULL) {
+            elem_len = strnlen(tuple[i], SIZE_MAX);
+        }
+
+        if (elem_len > SIZE_MAX - 1) {
+            for (int j = 0; j < index; j++) {
+                free(list[j]);
+            }
+            free(list);
+            *list_size = 0;
+            return NULL;
+        }
+
+        char *elem = (char *)malloc(elem_len + 1);
+        if (elem == NULL) {
+            for (int j = 0; j < index; j++) {
+                free(list[j]);
+            }
+            free(list);
+            *list_size = 0;
+            return NULL;
+        }
+        if (tuple[i] != NULL && elem_len > 0) {
+            memcpy(elem, tuple[i], elem_len);
+        }
+        elem[elem_len] = '\0';
+        list[index] = elem;
+        index++;
+
+        if (str_len > SIZE_MAX - 1) {
+            for (int j = 0; j < index; j++) {
+                free(list[j]);
+            }
+            free(list);
+            *list_size = 0;
+            return NULL;
+        }
+
+        char *sep = (char *)malloc(str_len + 1);
+        if (sep == NULL) {
+            for (int j = 0; j < index; j++) {
+                free(list[j]);
+            }
+            free(list);
+            *list_size = 0;
+            return NULL;
+        }
+        if (str_len > 0) {
+            memcpy(sep, str, str_len);
+        }
+        sep[str_len] = '\0';
+        list[index] = sep;
+        index++;
+    }
+
+    *list_size = index;
+    return list;
+}
+
+int main(void) {
+    const char *tuple[] = {"a", "b", "c"};
+    int tuple_size = (int)(sizeof(tuple) / sizeof(tuple[0]));
+    int list_size = 0;
+
+    char **list = tuple_to_list(tuple, tuple_size, "-", &list_size);
+    if (list == NULL) {
+        return 1;
+    }
+
+    for (int i = 0; i < list_size; i++) {
+        printf("%s\n", list[i]);
+        free(list[i]);
+    }
+    free(list);
+
+    return 0;
+}

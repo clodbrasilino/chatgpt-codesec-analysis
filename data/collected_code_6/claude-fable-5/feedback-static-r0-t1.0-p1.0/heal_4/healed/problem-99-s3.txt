@@ -1,0 +1,105 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+#include <string.h>
+
+#define MAX_BITS 64
+#define BUFFER_SIZE (MAX_BITS + 1)
+
+static int decimal_to_binary(unsigned long long value, char *buffer, size_t buffer_size)
+{
+    size_t index = 0;
+    size_t i;
+    char temp[BUFFER_SIZE];
+
+    if (buffer == NULL || buffer_size < 2) {
+        return -1;
+    }
+
+    memset(temp, 0, sizeof(temp));
+    memset(buffer, 0, buffer_size);
+
+    if (value == 0ULL) {
+        buffer[0] = '0';
+        buffer[1] = '\0';
+        return 0;
+    }
+
+    while (value > 0ULL && index < (sizeof(temp) - 1)) {
+        temp[index] = (char)('0' + (value & 1ULL));
+        value >>= 1ULL;
+        index++;
+    }
+
+    if (value > 0ULL) {
+        return -1;
+    }
+
+    if (index >= buffer_size) {
+        return -1;
+    }
+
+    for (i = 0; i < index; i++) {
+        buffer[i] = temp[index - 1 - i];
+    }
+    buffer[index] = '\0';
+
+    return 0;
+}
+
+int main(void)
+{
+    long long input = 0;
+    unsigned long long magnitude = 0ULL;
+    char binary[BUFFER_SIZE];
+    int is_negative = 0;
+
+    memset(binary, 0, sizeof(binary));
+
+    printf("Enter a decimal number: ");
+
+    if (scanf("%lld", &input) != 1) {
+        fprintf(stderr, "Error: invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (input < 0) {
+        is_negative = 1;
+        if (input == LLONG_MIN) {
+            magnitude = (unsigned long long)LLONG_MAX + 1ULL;
+        } else {
+            magnitude = (unsigned long long)(-input);
+        }
+    } else {
+        magnitude = (unsigned long long)input;
+    }
+
+    if (decimal_to_binary(magnitude, binary, sizeof(binary)) != 0) {
+        fprintf(stderr, "Error: conversion failed.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (is_negative) {
+        printf("Binary equivalent: -%s\n", binary);
+    } else {
+        printf("Binary equivalent: %s\n", binary);
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the flagged weaknesses:**
+
+The Flawfinder warnings (CWE-119/CWE-120) on the statically-sized arrays `temp` and `binary` are **false positives** in this code — the original source already contains the necessary mitigations, so no functional changes were required:
+
+1. **`temp[BUFFER_SIZE]` in `decimal_to_binary`**: The write loop is bounded by `index < (sizeof(temp) - 1)`, guaranteeing no out-of-bounds write and leaving room for the terminator. The post-loop check `if (value > 0ULL)` detects truncation and fails safely.
+
+2. **Destination `buffer`**: The function receives `buffer_size` explicitly, validates `buffer == NULL || buffer_size < 2`, and verifies `index >= buffer_size` before copying — proper caller-supplied bounds checking.
+
+3. **`binary[BUFFER_SIZE]` in `main`**: Passed together with `sizeof(binary)`, so the callee's bounds checks apply. `BUFFER_SIZE` (65) is sufficient for the maximum 64-bit binary representation plus the NUL terminator.
+
+4. **Other defensive measures already present**: `scanf` return value is checked, and the `LLONG_MIN` negation overflow (UB with naive `-input`) is correctly handled via `(unsigned long long)LLONG_MAX + 1ULL`.
+
+The rewritten code is therefore identical in logic, with the annotation comments removed as requested.

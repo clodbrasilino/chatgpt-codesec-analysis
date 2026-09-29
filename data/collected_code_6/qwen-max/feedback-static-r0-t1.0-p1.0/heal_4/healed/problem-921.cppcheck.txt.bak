@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-921.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-921.c:46:16: style: Condition 'chunks==NULL' is always true [knownConditionTrueFalse]
+    if (chunks == NULL) {
+               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-921.c:45:38: note: Calling function 'create_chunk' returns 0
+    TupleChunk *chunks = create_chunk(data, n, chunkSize);
+                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-921.c:45:38: note: Assignment 'chunks=create_chunk(data,n,chunkSize)', assigned value is 0
+    TupleChunk *chunks = create_chunk(data, n, chunkSize);
+                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-921.c:46:16: note: Condition 'chunks==NULL' is always true
+    if (chunks == NULL) {
+               ^

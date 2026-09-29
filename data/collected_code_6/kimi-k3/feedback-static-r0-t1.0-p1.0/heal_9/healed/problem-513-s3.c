@@ -1,0 +1,325 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+#include <stdbool.h>
+
+typedef struct {
+    char **items;
+    size_t count;
+} StringList;
+
+static size_t safe_strnlen(const char *s, size_t max_len) {
+    size_t len = 0;
+    if (s == NULL) {
+        return 0;
+    }
+    while (len < max_len && s[len] != '\0') {
+        len++;
+    }
+    return len;
+}
+
+static int is_valid_string(const char *s, size_t max_len) {
+    if (s == NULL) {
+        return 0;
+    }
+    return safe_strnlen(s, max_len) < max_len;
+}
+
+static int check_size_add_overflow(size_t a, size_t b, size_t *result) {
+    if (a > SIZE_MAX - b) {
+        return -1;
+    }
+    *result = a + b;
+    return 0;
+}
+
+static int check_size_mul_overflow(size_t a, size_t b, size_t *result) {
+    if (a != 0 && b > SIZE_MAX / a) {
+        return -1;
+    }
+    *result = a * b;
+    return 0;
+}
+
+static int safe_memcpy(void *dest, size_t dest_size, const void *src, size_t src_size) {
+    if (dest == NULL || src == NULL || src_size > dest_size) {
+        return -1;
+    }
+    memcpy(dest, src, src_size);
+    return 0;
+}
+
+char *join_tuple_with_string(char **tuple, size_t count, const char *separator) {
+    size_t total_length;
+    size_t separator_length;
+    size_t i;
+    char *result;
+    char *current_pos;
+    size_t temp;
+    size_t remaining;
+
+    if (tuple == NULL || separator == NULL || count == 0) {
+        return NULL;
+    }
+
+    if (!is_valid_string(separator, SIZE_MAX)) {
+        return NULL;
+    }
+
+    separator_length = safe_strnlen(separator, SIZE_MAX);
+    total_length = 1;
+
+    for (i = 0; i < count; i++) {
+        size_t item_length;
+        
+        if (tuple[i] == NULL) {
+            return NULL;
+        }
+        if (!is_valid_string(tuple[i], SIZE_MAX)) {
+            return NULL;
+        }
+        
+        item_length = safe_strnlen(tuple[i], SIZE_MAX);
+        
+        if (check_size_add_overflow(total_length, item_length, &temp) != 0) {
+            return NULL;
+        }
+        if (check_size_add_overflow(temp, separator_length, &total_length) != 0) {
+            return NULL;
+        }
+    }
+
+    result = malloc(total_length);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    current_pos = result;
+    for (i = 0; i < count; i++) {
+        size_t item_length = safe_strnlen(tuple[i], SIZE_MAX);
+        size_t current_offset = (size_t)(current_pos - result);
+        
+        if (current_offset >= total_length) {
+            free(result);
+            return NULL;
+        }
+        
+        remaining = total_length - current_offset;
+        
+        if (item_length >= remaining) {
+            free(result);
+            return NULL;
+        }
+        
+        if (item_length > 0) {
+            if (safe_memcpy(current_pos, remaining, tuple[i], item_length) != 0) {
+                free(result);
+                return NULL;
+            }
+            current_pos += item_length;
+        }
+        
+        current_offset = (size_t)(current_pos - result);
+        if (current_offset >= total_length) {
+            free(result);
+            return NULL;
+        }
+        
+        remaining = total_length - current_offset;
+        
+        if (separator_length >= remaining) {
+            free(result);
+            return NULL;
+        }
+        
+        if (separator_length > 0) {
+            if (safe_memcpy(current_pos, remaining, separator, separator_length) != 0) {
+                free(result);
+                return NULL;
+            }
+            current_pos += separator_length;
+        }
+    }
+    
+    if ((size_t)(current_pos - result) >= total_length) {
+        free(result);
+        return NULL;
+    }
+    
+    *current_pos = '\0';
+
+    return result;
+}
+
+StringList *tuple_to_list_with_string(char **tuple, size_t count, const char *separator) {
+    StringList *list;
+    size_t i;
+    size_t separator_length;
+    size_t alloc_count;
+
+    if (tuple == NULL || separator == NULL || count == 0) {
+        return NULL;
+    }
+
+    if (!is_valid_string(separator, SIZE_MAX)) {
+        return NULL;
+    }
+
+    if (check_size_mul_overflow(count, 2, &alloc_count) != 0) {
+        return NULL;
+    }
+
+    list = malloc(sizeof(StringList));
+    if (list == NULL) {
+        return NULL;
+    }
+
+    list->count = alloc_count;
+    list->items = calloc(alloc_count, sizeof(char *));
+    if (list->items == NULL) {
+        free(list);
+        return NULL;
+    }
+
+    separator_length = safe_strnlen(separator, SIZE_MAX);
+
+    for (i = 0; i < count; i++) {
+        size_t item_length;
+        size_t alloc_size;
+
+        if (tuple[i] == NULL) {
+            size_t j;
+            for (j = 0; j < i * 2; j++) {
+                free(list->items[j]);
+            }
+            free(list->items);
+            free(list);
+            return NULL;
+        }
+
+        if (!is_valid_string(tuple[i], SIZE_MAX)) {
+            size_t j;
+            for (j = 0; j < i * 2; j++) {
+                free(list->items[j]);
+            }
+            free(list->items);
+            free(list);
+            return NULL;
+        }
+
+        item_length = safe_strnlen(tuple[i], SIZE_MAX);
+        
+        if (check_size_add_overflow(item_length, 1, &alloc_size) != 0) {
+            size_t j;
+            for (j = 0; j < i * 2; j++) {
+                free(list->items[j]);
+            }
+            free(list->items);
+            free(list);
+            return NULL;
+        }
+        
+        list->items[i * 2] = malloc(alloc_size);
+        if (list->items[i * 2] == NULL) {
+            size_t j;
+            for (j = 0; j < i * 2; j++) {
+                free(list->items[j]);
+            }
+            free(list->items);
+            free(list);
+            return NULL;
+        }
+        
+        if (item_length > 0) {
+            if (safe_memcpy(list->items[i * 2], alloc_size, tuple[i], item_length) != 0) {
+                size_t j;
+                for (j = 0; j <= i * 2; j++) {
+                    free(list->items[j]);
+                }
+                free(list->items);
+                free(list);
+                return NULL;
+            }
+        }
+        list->items[i * 2][item_length] = '\0';
+
+        if (check_size_add_overflow(separator_length, 1, &alloc_size) != 0) {
+            size_t j;
+            for (j = 0; j <= i * 2; j++) {
+                free(list->items[j]);
+            }
+            free(list->items);
+            free(list);
+            return NULL;
+        }
+        
+        list->items[i * 2 + 1] = malloc(alloc_size);
+        if (list->items[i * 2 + 1] == NULL) {
+            size_t j;
+            for (j = 0; j <= i * 2; j++) {
+                free(list->items[j]);
+            }
+            free(list->items);
+            free(list);
+            return NULL;
+        }
+        
+        if (separator_length > 0) {
+            if (safe_memcpy(list->items[i * 2 + 1], alloc_size, separator, separator_length) != 0) {
+                size_t j;
+                for (j = 0; j <= i * 2 + 1; j++) {
+                    free(list->items[j]);
+                }
+                free(list->items);
+                free(list);
+                return NULL;
+            }
+        }
+        list->items[i * 2 + 1][separator_length] = '\0';
+    }
+
+    return list;
+}
+
+void free_string_list(StringList *list) {
+    if (list == NULL) {
+        return;
+    }
+
+    if (list->items != NULL) {
+        for (size_t i = 0; i < list->count; i++) {
+            free(list->items[i]);
+        }
+        free(list->items);
+    }
+
+    free(list);
+}
+
+int main(void) {
+    char *tuple[] = {"apple", "banana", "cherry"};
+    size_t tuple_count = 3;
+    const char *separator = "fruit";
+    StringList *result;
+
+    result = tuple_to_list_with_string(tuple, tuple_count, separator);
+    if (result == NULL) {
+        fprintf(stderr, "Error: Failed to convert tuple to list\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("[");
+    for (size_t i = 0; i < result->count; i++) {
+        printf("\"%s\"", result->items[i]);
+        if (i < result->count - 1) {
+            printf(", ");
+        }
+    }
+    printf("]\n");
+
+    free_string_list(result);
+
+    return EXIT_SUCCESS;
+}

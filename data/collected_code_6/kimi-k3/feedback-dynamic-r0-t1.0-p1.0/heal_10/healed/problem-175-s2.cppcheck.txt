@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-dynamic-r0-t1.0-p1.0/heal_10/healed/problem-175-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-dynamic-r0-t1.0-p1.0/heal_10/healed/problem-175-s2.c:81:12: style: Condition 'null_result' is always false [knownConditionTrueFalse]
+           null_result ? "Valid" : "Invalid",
+           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-dynamic-r0-t1.0-p1.0/heal_10/healed/problem-175-s2.c:79:44: note: Calling function 'is_valid_parentheses' returns 0
+    bool null_result = is_valid_parentheses(NULL);
+                                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-dynamic-r0-t1.0-p1.0/heal_10/healed/problem-175-s2.c:79:44: note: Assignment 'null_result=is_valid_parentheses(NULL)', assigned value is 0
+    bool null_result = is_valid_parentheses(NULL);
+                                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-dynamic-r0-t1.0-p1.0/heal_10/healed/problem-175-s2.c:81:12: note: Condition 'null_result' is always false
+           null_result ? "Valid" : "Invalid",
+           ^

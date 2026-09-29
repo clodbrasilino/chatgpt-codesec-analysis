@@ -1,0 +1,59 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char *add_spaces(const char *str, size_t len) {
+    if (str == NULL) {
+        return NULL;
+    }
+
+    size_t safe_len = strnlen(str, len);
+
+    if (safe_len == 0) {
+        char *res = malloc(1);
+        if (res) {
+            res[0] = '\0';
+        }
+        return res;
+    }
+
+    size_t max_res_len = safe_len * 2 + 1;
+    char *result = malloc(max_res_len);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    size_t res_idx = 0;
+    for (size_t i = 0; i < safe_len; ++i) {
+        if (i > 0 && str[i - 1] >= 'a' && str[i - 1] <= 'z' && str[i] >= 'A' && str[i] <= 'Z') {
+            if (res_idx < max_res_len - 1) {
+                result[res_idx++] = ' ';
+            }
+        }
+        if (res_idx < max_res_len - 1) {
+            result[res_idx++] = str[i];
+        }
+    }
+
+    result[res_idx] = '\0';
+
+    char *shrunk = realloc(result, res_idx + 1);
+    if (shrunk != NULL) {
+        result = shrunk;
+    }
+
+    return result;
+}
+
+int main(void) {
+    const char *input = "HelloWorldThisIsATest";
+    size_t input_len = strnlen(input, 4096);
+    char *output = add_spaces(input, input_len);
+    if (output != NULL) {
+        printf("%s\n", output);
+        free(output);
+    }
+    return 0;
+}
+```

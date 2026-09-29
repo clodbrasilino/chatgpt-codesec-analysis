@@ -1,0 +1,89 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#define MAX_INPUT 1024
+
+char *snake_to_camel(const char *snake, size_t max_len)
+{
+    size_t len;
+    size_t i;
+    size_t j;
+    int capitalize_next;
+    char *camel;
+
+    if (snake == NULL) {
+        return NULL;
+    }
+
+    len = 0;
+    while (len < max_len && snake[len] != '\0') {
+        len++;
+    }
+
+    camel = malloc(len + 1);
+    if (camel == NULL) {
+        return NULL;
+    }
+
+    j = 0;
+    i = 0;
+    capitalize_next = 1;
+    while (i < len) {
+        if (snake[i] == '_') {
+            capitalize_next = 1;
+            i++;
+        } else {
+            if (capitalize_next) {
+                camel[j] = (char)toupper((unsigned char)snake[i]);
+                capitalize_next = 0;
+            } else {
+                camel[j] = snake[i];
+            }
+            j++;
+            i++;
+        }
+    }
+    camel[j] = '\0';
+
+    return camel;
+}
+
+int main(void)
+{
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char input[MAX_INPUT];
+    char *result;
+    size_t len;
+
+    if (fgets(input, sizeof(input), stdin) == NULL) {
+        fprintf(stderr, "Failed to read input\n");
+        return EXIT_FAILURE;
+    }
+
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    len = strlen(input);
+    while (len > 0 && (input[len - 1] == '\n' || input[len - 1] == '\r')) {
+        input[len - 1] = '\0';
+        len--;
+    }
+
+    result = snake_to_camel(input, sizeof(input));
+    if (result == NULL) {
+        fprintf(stderr, "Conversion failed\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("%s\n", result) < 0) {
+        free(result);
+        return EXIT_FAILURE;
+    }
+
+    free(result);
+    return EXIT_SUCCESS;
+}

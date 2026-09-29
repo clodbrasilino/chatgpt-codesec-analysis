@@ -1,0 +1,175 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stddef.h>
+
+#define INITIAL_BUCKET_COUNT 64
+
+typedef struct Pair {
+    const char *key;
+    int value;
+} Pair;
+
+typedef struct ValueNode {
+    int value;
+    struct ValueNode *next;
+} ValueNode;
+
+typedef struct KeyNode {
+    char *key;
+    ValueNode *values_head;
+    ValueNode *values_tail;
+    struct KeyNode *next;
+} KeyNode;
+
+typedef struct Dict {
+    KeyNode **buckets;
+    int bucket_count;
+} Dict;
+
+static char *duplicate_string(const char *s) {
+    size_t len = strlen(s);
+    char *copy = malloc(len + 1);
+    if (copy == NULL) {
+        return NULL;
+    }
+    memcpy(copy, s, len + 1);
+    return copy;
+}
+
+static unsigned int hash_key(const char *key, int bucket_count) {
+    unsigned int hash = 5381;
+    while (*key != '\0') {
+        hash = ((hash << 5) + hash) + (unsigned char)*key;
+        key++;
+    }
+    return hash % (unsigned int)bucket_count;
+}
+
+static void free_dict(Dict *dict) {
+    if (dict == NULL) {
+        return;
+    }
+    if (dict->buckets != NULL) {
+        for (int i = 0; i < dict->bucket_count; i++) {
+            KeyNode *key_node = dict->buckets[i];
+            while (key_node != NULL) {
+                KeyNode *next_key = key_node->next;
+                ValueNode *value_node = key_node->values_head;
+                while (value_node != NULL) {
+                    ValueNode *next_value = value_node->next;
+                    free(value_node);
+                    value_node = next_value;
+                }
+                free(key_node->key);
+                free(key_node);
+                key_node = next_key;
+            }
+        }
+        free(dict->buckets);
+    }
+    free(dict);
+}
+
+Dict *group_pairs(const Pair *pairs, size_t count) {
+    if (pairs == NULL || count == 0) {
+        return NULL;
+    }
+
+    Dict *dict = malloc(sizeof(Dict));
+    if (dict == NULL) {
+        return NULL;
+    }
+
+    dict->bucket_count = INITIAL_BUCKET_COUNT;
+    dict->buckets = calloc((size_t)dict->bucket_count, sizeof(KeyNode *));
+    if (dict->buckets == NULL) {
+        free(dict);
+        return NULL;
+    }
+
+    for (size_t i = 0; i < count; i++) {
+        if (pairs[i].key == NULL) {
+            free_dict(dict);
+            return NULL;
+        }
+
+        unsigned int bucket = hash_key(pairs[i].key, dict->bucket_count);
+        KeyNode *key_node = dict->buckets[bucket];
+        while (key_node != NULL && strcmp(key_node->key, pairs[i].key) != 0) {
+            key_node = key_node->next;
+        }
+
+        if (key_node == NULL) {
+            key_node = malloc(sizeof(KeyNode));
+            if (key_node == NULL) {
+                free_dict(dict);
+                return NULL;
+            }
+            key_node->key = duplicate_string(pairs[i].key);
+            if (key_node->key == NULL) {
+                free(key_node);
+                free_dict(dict);
+                return NULL;
+            }
+            key_node->values_head = NULL;
+            key_node->values_tail = NULL;
+            key_node->next = dict->buckets[bucket];
+            dict->buckets[bucket] = key_node;
+        }
+
+        ValueNode *value_node = malloc(sizeof(ValueNode));
+        if (value_node == NULL) {
+            free_dict(dict);
+            return NULL;
+        }
+        value_node->value = pairs[i].value;
+        value_node->next = NULL;
+
+        if (key_node->values_tail == NULL) {
+            key_node->values_head = value_node;
+        } else {
+            key_node->values_tail->next = value_node;
+        }
+        key_node->values_tail = value_node;
+    }
+
+    return dict;
+}
+
+int main(void) {
+    Pair pairs[] = {
+        {"apple", 1},
+        {"banana", 2},
+        {"apple", 3},
+        {"cherry", 4},
+        {"banana", 5},
+        {"apple", 6}
+    };
+    size_t count = sizeof(pairs) / sizeof(pairs[0]);
+
+    Dict *dict = group_pairs(pairs, count);
+    if (dict == NULL) {
+        fprintf(stderr, "Failed to group pairs\n");
+        return 1;
+    }
+
+    for (int i = 0; i < dict->bucket_count; i++) {
+        KeyNode *key_node = dict->buckets[i];
+        while (key_node != NULL) {
+            printf("%s:", key_node->key);
+            ValueNode *value_node = key_node->values_head;
+            while (value_node != NULL) {
+                printf(" %d", value_node->value);
+                value_node = value_node->next;
+            }
+            printf("\n");
+            key_node = key_node->next;
+        }
+    }
+
+    free_dict(dict);
+    return 0;
+}
+```

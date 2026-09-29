@@ -1,0 +1,98 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#define MAX_INPUT_LENGTH 4096
+
+static size_t bounded_strlen(const char *s, size_t max_len)
+{
+    size_t n = 0;
+
+    while (n < max_len && s[n] != '\0') {
+        n++;
+    }
+
+    return n;
+}
+
+char *remove_words_of_length(const char *str, size_t k)
+{
+    if (str == NULL) {
+        return NULL;
+    }
+
+    size_t len = bounded_strlen(str, MAX_INPUT_LENGTH);
+    if (len == MAX_INPUT_LENGTH) {
+        return NULL;
+    }
+
+    size_t capacity = len + 1;
+    char *result = malloc(capacity);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    size_t i = 0;
+    size_t out = 0;
+    int separator_needed = 0;
+
+    while (i < len) {
+        while (i < len && isspace((unsigned char)str[i])) {
+            i++;
+        }
+        if (i >= len) {
+            break;
+        }
+
+        size_t start = i;
+        while (i < len && !isspace((unsigned char)str[i])) {
+            i++;
+        }
+        size_t word_len = i - start;
+
+        if (word_len != k) {
+            size_t separator_len = separator_needed ? 1 : 0;
+            size_t remaining = capacity - out;
+
+            if (separator_len + word_len + 1 > remaining) {
+                free(result);
+                return NULL;
+            }
+            if (separator_needed) {
+                result[out++] = ' ';
+            }
+            if (word_len <= capacity - 1 - out) {
+                memcpy(result + out, str + start, word_len);
+                out += word_len;
+            } else {
+                free(result);
+                return NULL;
+            }
+            separator_needed = 1;
+        }
+    }
+    result[out] = '\0';
+
+    return result;
+}
+
+int main(void)
+{
+    const char *input = "The quick brown fox jumps over the lazy dog";
+    size_t k = 3;
+
+    char *modified = remove_words_of_length(input, k);
+    if (modified == NULL) {
+        fprintf(stderr, "Error: unable to process the input string\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Original string: %s\n", input);
+    printf("After removing words of length %zu: %s\n", k, modified);
+
+    free(modified);
+    modified = NULL;
+
+    return EXIT_SUCCESS;
+}

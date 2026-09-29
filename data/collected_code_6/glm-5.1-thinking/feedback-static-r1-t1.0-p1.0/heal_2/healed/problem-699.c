@@ -1,0 +1,49 @@
+#include <stdio.h>
+#include <string.h>
+
+int min_swaps_binary(const char *s1, const char *s2, size_t len) {
+    if (s1 == NULL || s2 == NULL) {
+        return -1;
+    }
+
+    size_t m1 = 0;
+    size_t m2 = 0;
+
+    for (size_t i = 0; i < len; i++) {
+        if (s1[i] != s2[i]) {
+            if (s1[i] == '1' && s2[i] == '0') {
+                m1++;
+            } else if (s1[i] == '0' && s2[i] == '1') {
+                m2++;
+            } else {
+                return -1;
+            }
+        }
+    }
+
+    if (m1 != m2) {
+        return -1;
+    }
+
+    return (int)m1;
+}
+
+int main(void) {
+    const char *str1 = "1100";
+    const char *str2 = "0011";
+    size_t max_len = 1024;
+    
+    size_t len1 = strnlen(str1, max_len);
+    size_t len2 = strnlen(str2, max_len);
+
+    if (len1 != len2 || len1 == max_len) {
+        printf("-1\n");
+        return 1;
+    }
+
+    int result = min_swaps_binary(str1, str2, len1);
+    
+    printf("%d\n", result);
+    
+    return 0;
+}

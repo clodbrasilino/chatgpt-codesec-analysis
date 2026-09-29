@@ -1,0 +1,31 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+#include <stdlib.h>
+
+bool is_sum_of_non_zero_powers_of_two(long long n) {
+    if (n <= 0) {
+        return false;
+    }
+    if (n % 2 != 0) {
+        return false;
+    }
+    return true;
+}
+
+int main(void) {
+    long long number = 0;
+    
+    if (scanf("%lld", &number) != 1) {
+        return EXIT_FAILURE;
+    }
+    
+    if (is_sum_of_non_zero_powers_of_two(number)) {
+        printf("Yes\n");
+    } else {
+        printf("No\n");
+    }
+    
+    return EXIT_SUCCESS;
+}
+```

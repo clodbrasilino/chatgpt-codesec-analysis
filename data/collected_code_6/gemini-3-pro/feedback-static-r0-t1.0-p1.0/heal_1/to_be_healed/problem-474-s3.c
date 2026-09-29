@@ -1,0 +1,49 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char* replace_char(const char* str, char find, char replace) {
+    if (str == NULL) {
+        return NULL;
+    }
+
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    size_t len = strlen(str);
+    char* result = (char*)malloc(len + 1);
+
+    if (result == NULL) {
+        return NULL;
+    }
+
+    for (size_t i = 0; i < len; i++) {
+        if (str[i] == find) {
+            result[i] = replace;
+        } else {
+            result[i] = str[i];
+        }
+    }
+    result[len] = '\0';
+
+    return result;
+}
+
+int main(void) {
+    const char* original_string = "Hello, World!";
+    char find_char = 'o';
+    char replace_char_val = 'X';
+
+    char* new_string = replace_char(original_string, find_char, replace_char_val);
+
+    if (new_string != NULL) {
+        printf("Original: %s\n", original_string);
+        printf("Modified: %s\n", new_string);
+        free(new_string);
+    } else {
+        printf("Memory allocation failed or input string was NULL.\n");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

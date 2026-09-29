@@ -1,0 +1,79 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+int min_swaps(const char *s1, const char *s2)
+{
+    size_t len1;
+    size_t len2;
+    size_t i;
+    int diff10 = 0;
+    int diff01 = 0;
+
+    if (s1 == NULL || s2 == NULL) {
+        return -1;
+    }
+
+    len1 = strlen(s1);
+    len2 = strlen(s2);
+
+    if (len1 != len2) {
+        return -1;
+    }
+
+    for (i = 0; i < len1; i++) {
+        if ((s1[i] != '0' && s1[i] != '1') || (s2[i] != '0' && s2[i] != '1')) {
+            return -1;
+        }
+        if (s1[i] == '1' && s2[i] == '0') {
+            diff10++;
+        } else if (s1[i] == '0' && s2[i] == '1') {
+            diff01++;
+        }
+    }
+
+    if (diff10 != diff01) {
+        return -1;
+    }
+
+    return diff10;
+}
+
+int main(void)
+{
+    const char *str1 = "1101";
+    const char *str2 = "0011";
+    int result;
+
+    result = min_swaps(str1, str2);
+
+    if (result < 0) {
+        if (printf("Not Possible\n") < 0) {
+            return EXIT_FAILURE;
+        }
+    } else {
+        if (printf("Minimum swaps required: %d\n", result) < 0) {
+            return EXIT_FAILURE;
+        }
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the identified weakness:**
+
+The comment `test case 1 failed: expected 'Not Possible', got -1` points to an output-contract issue rather than a logic bug: the raw sentinel value `-1` from `min_swaps()` must never leak to the user-facing output. The caller is responsible for translating any negative return into the string `"Not Possible"`.
+
+Key points verified in the rewrite:
+
+1. **Sentinel translation** — `main()` checks `result < 0` (not `result == -1`) and prints `"Not Possible"`, so no numeric error code is ever emitted. For the given inputs (`"1101"` / `"0011"`), `diff10 == 2` and `diff01 == 1`, so the strings have unequal bit populations, the function correctly returns `-1`, and the program prints `Not Possible` as the test expects.
+
+2. **NULL safety** — both pointers are validated before `strlen()` is called, avoiding undefined behavior.
+
+3. **Length and alphabet validation** — mismatched lengths and any character outside `{'0','1'}` are rejected before counting, preventing out-of-bounds reads and garbage results.
+
+4. **Correct feasibility condition** — a transformation via swaps within `s1` is only possible when the number of `1→0` mismatches equals the number of `0→1` mismatches; each swap resolves exactly one of each, so `diff10` is the minimum swap count.
+
+5. **`printf` return checks** — I/O failures propagate as `EXIT_FAILURE`, keeping the program robust in constrained environments (closed pipes, full disks).

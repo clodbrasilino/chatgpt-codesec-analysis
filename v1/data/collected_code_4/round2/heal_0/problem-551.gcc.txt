@@ -1,0 +1,109 @@
+./collected_code_4/round2//heal_0/problem-551.c: In function 'extractColumn':
+./collected_code_4/round2//heal_0/problem-551.c:16:23: warning: dereference of possibly-NULL 'columnList' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   16 |         columnList[i] = (int*)malloc(sizeof(int));
+      |         ~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~
+  'extractColumn': events 1-6
+    |
+    |    9 |     if(nestedList == NULL || extractIndex < 0 || extractIndex >= column) {
+    |      |       ^
+    |      |       |
+    |      |       (1) following 'false' branch...
+    |......
+    |   14 |     int** columnList = (int**)malloc(row*sizeof(int*));
+    |      |                               ~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                               |
+    |      |                               (2) ...to here
+    |      |                               (3) this call could return NULL
+    |   15 |     for(int i=0; i<row; ++i) {
+    |      |                  ~~~~~
+    |      |                   |
+    |      |                   (4) following 'true' branch (when 'i < row')...
+    |   16 |         columnList[i] = (int*)malloc(sizeof(int));
+    |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                   |   |
+    |      |                   |   (6) 'columnList + (long unsigned int)i * 8' could be NULL: unchecked value from (3)
+    |      |                   (5) ...to here
+    |
+./collected_code_4/round2//heal_0/problem-551.c:18:28: warning: dereference of possibly-NULL '*columnList_33 + _19' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   18 |             *columnList[i] = nestedList[i][extractIndex];
+      |             ~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  'extractColumn': events 1-8
+    |
+    |    9 |     if(nestedList == NULL || extractIndex < 0 || extractIndex >= column) {
+    |      |       ^
+    |      |       |
+    |      |       (1) following 'false' branch...
+    |......
+    |   14 |     int** columnList = (int**)malloc(row*sizeof(int*));
+    |      |                               ~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                               |
+    |      |                               (2) ...to here
+    |   15 |     for(int i=0; i<row; ++i) {
+    |      |                  ~~~~~
+    |      |                   |
+    |      |                   (3) following 'true' branch (when 'i < row')...
+    |   16 |         columnList[i] = (int*)malloc(sizeof(int));
+    |      |                   ~           ~~~~~~~~~~~~~~~~~~~
+    |      |                   |           |
+    |      |                   |           (5) this call could return NULL
+    |      |                   (4) ...to here
+    |   17 |         if(nestedList[i] != NULL) {
+    |      |           ~
+    |      |           |
+    |      |           (6) following 'true' branch...
+    |   18 |             *columnList[i] = nestedList[i][extractIndex];
+    |      |             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                            |           |
+    |      |                            |           (7) ...to here
+    |      |                            (8) '*columnList_33 + _19' could be NULL: unchecked value from (5)
+    |
+./collected_code_4/round2//heal_0/problem-551.c: In function 'main':
+./collected_code_4/round2//heal_0/problem-551.c:32:23: warning: dereference of possibly-NULL 'nestedList' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   32 |         nestedList[i] = (int*)malloc(COLUMN * sizeof(int));
+      |         ~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  'main': event 1
+    |
+    |   30 |     int** nestedList = (int**)malloc(ROW * sizeof(int*));
+    |      |                               ^~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                               |
+    |      |                               (1) this call could return NULL
+    |
+  'main': events 2-4
+    |
+    |   31 |     for(int i = 0; i < ROW; ++i) {
+    |      |                      ^
+    |      |                      |
+    |      |                      (2) following 'true' branch (when 'i <= 3')...
+    |   32 |         nestedList[i] = (int*)malloc(COLUMN * sizeof(int));
+    |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                   |   |
+    |      |                   |   (4) 'nestedList + (long unsigned int)i * 8' could be NULL: unchecked value from (1)
+    |      |                   (3) ...to here
+    |
+./collected_code_4/round2//heal_0/problem-551.c:34:30: warning: dereference of possibly-NULL '*nestedList_37 + _6 + (long unsigned int)j * 4' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   34 |             nestedList[i][j] = i + j;
+      |             ~~~~~~~~~~~~~~~~~^~~~~~~
+  'main': events 1-3
+    |
+    |   31 |     for(int i = 0; i < ROW; ++i) {
+    |      |                      ^
+    |      |                      |
+    |      |                      (1) following 'true' branch (when 'i <= 3')...
+    |   32 |         nestedList[i] = (int*)malloc(COLUMN * sizeof(int));
+    |      |                   ~           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                   |           |
+    |      |                   |           (3) this call could return NULL
+    |      |                   (2) ...to here
+    |
+  'main': events 4-6
+    |
+    |   33 |         for(int j = 0; j < COLUMN; ++j) {
+    |      |                          ^
+    |      |                          |
+    |      |                          (4) following 'true' branch (when 'j <= 2')...
+    |   34 |             nestedList[i][j] = i + j;
+    |      |             ~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                       |      |
+    |      |                       |      (6) '*nestedList_37 + _6 + (long unsigned int)j * 4' could be NULL: unchecked value from (3)
+    |      |                       (5) ...to here
+    |

@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_1/healed/problem-237.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_1/healed/problem-237.c:146:31: style: Condition 'occ_array.occurrences!=NULL' is always false [knownConditionTrueFalse]
+    if (occ_array.occurrences != NULL) {
+                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_1/healed/problem-237.c:115:29: note: Assignment 'occ_array.occurrences=NULL', assigned value is 0
+    occ_array.occurrences = NULL;
+                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_1/healed/problem-237.c:146:31: note: Condition 'occ_array.occurrences!=NULL' is always false
+    if (occ_array.occurrences != NULL) {
+                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_1/healed/problem-237.c:114:20: style: Variable 'occ_array.size' is assigned a value that is never used. [unreadVariable]
+    occ_array.size = 0;
+                   ^

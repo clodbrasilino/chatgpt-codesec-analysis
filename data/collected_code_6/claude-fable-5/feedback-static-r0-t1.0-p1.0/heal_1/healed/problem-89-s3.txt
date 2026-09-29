@@ -1,0 +1,96 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+#include <errno.h>
+#include <string.h>
+
+static int closest_smaller(int n, int *result)
+{
+    if (result == NULL) {
+        return -1;
+    }
+    if (n == INT_MIN) {
+        return -1;
+    }
+    *result = n - 1;
+    return 0;
+}
+
+static int parse_int(const char *str, int *value)
+{
+    char *endptr = NULL;
+    long parsed;
+
+    if (str == NULL || value == NULL) {
+        return -1;
+    }
+
+    errno = 0;
+    parsed = strtol(str, &endptr, 10);
+
+    if (errno == ERANGE) {
+        return -1;
+    }
+    if (endptr == str) {
+        return -1;
+    }
+    if (*endptr != '\0' && *endptr != '\n') {
+        return -1;
+    }
+    if (parsed > INT_MAX || parsed < INT_MIN) {
+        return -1;
+    }
+
+    *value = (int)parsed;
+    return 0;
+}
+
+int main(void)
+{
+    char buffer[64];
+    int n = 0;
+    int result = 0;
+
+    memset(buffer, 0, sizeof(buffer));
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error: failed to read input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    if (parse_int(buffer, &n) != 0) {
+        fprintf(stderr, "Error: invalid integer input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (closest_smaller(n, &result) != 0) {
+        fprintf(stderr, "Error: no smaller integer representable\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("%d\n", result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The original code was already largely sound. The Flawfinder warning about the statically-sized `char buffer[64]` (CWE-119/CWE-120) is a low-risk, pattern-based flag — the code already mitigated it correctly by using `fgets(buffer, sizeof(buffer), stdin)`, which enforces bounds checking and guarantees null termination on success.
+
+Changes made in the rewrite as defense-in-depth:
+
+1. **`memset` of the buffer** — ensures the buffer starts zeroed, avoiding any accidental use of uninitialized stack memory.
+2. **Explicit `buffer[sizeof(buffer) - 1] = '\0'`** — redundant with `fgets` semantics, but guarantees termination regardless of any future refactoring to a different input function.
+
+Everything else was preserved because it is already correct and defensive:
+
+- `strtol` with full error handling (`errno == ERANGE`, `endptr == str`, trailing-character validation, explicit range check against `INT_MAX`/`INT_MIN` before the narrowing cast).
+- `closest_smaller` guards against signed integer underflow (`n == INT_MIN`), preventing undefined behavior from `INT_MIN - 1` (CWE-191).
+- NULL-pointer checks on all output parameters.
+- Return values of `fgets` and `printf` are checked.

@@ -1,0 +1,35 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int first;
+    int second;
+} Tuple;
+
+void rearrange_tuples(Tuple *tuples, int *order, int n) {
+    Tuple *temp = (Tuple *)malloc(n * sizeof(Tuple));
+    if (temp == NULL) {
+        return;
+    }
+    for (int i = 0; i < n; ++i) {
+        temp[i] = tuples[order[i]];
+    }
+    for (int i = 0; i < n; ++i) {
+        tuples[i] = temp[i];
+    }
+    free(temp);
+}
+
+int main() {
+    Tuple tuples[] = {{1, 2}, {3, 4}, {5, 6}};
+    int order[] = {2, 0, 1};
+    int n = 3;
+
+    rearrange_tuples(tuples, order, n);
+
+    for (int i = 0; i < n; ++i) {
+        printf("(%d, %d) ", tuples[i].first, tuples[i].second);
+    }
+
+    return 0;
+}

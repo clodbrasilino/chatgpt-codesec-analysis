@@ -1,0 +1,87 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char **shortlist_words(char **words, int word_count, size_t n, int *result_count) {
+    char **result = NULL;
+    int count = 0;
+    int i;
+
+    if (words == NULL || result_count == NULL || word_count <= 0) {
+        if (result_count != NULL) {
+            *result_count = 0;
+        }
+        return NULL;
+    }
+
+    result = malloc(sizeof(char *) * word_count);
+    if (result == NULL) {
+        *result_count = 0;
+        return NULL;
+    }
+
+    for (i = 0; i < word_count; i++) {
+        if (words[i] != NULL) {
+            size_t len = strnlen(words[i], n + 1);
+            if (len > n) {
+                size_t word_len = strnlen(words[i], len + 1);
+                if (word_len > len) {
+                    word_len = len;
+                }
+                result[count] = malloc(word_len + 1);
+                if (result[count] == NULL) {
+                    int j;
+                    for (j = 0; j < count; j++) {
+                        free(result[j]);
+                    }
+                    free(result);
+                    *result_count = 0;
+                    return NULL;
+                }
+                if (word_len > 0) {
+                    memcpy(result[count], words[i], word_len);
+                    result[count][word_len] = '\0';
+                } else {
+                    result[count][0] = '\0';
+                }
+                count++;
+            }
+        }
+    }
+
+    if (count == 0) {
+        free(result);
+        *result_count = 0;
+        return NULL;
+    }
+
+    *result_count = count;
+    return result;
+}
+
+int main(void) {
+    char *words[] = {"apple", "banana", "kiwi", "strawberry", "pear", "grapefruit"};
+    int word_count = sizeof(words) / sizeof(words[0]);
+    size_t n = 5;
+    int result_count = 0;
+    char **result;
+    int i;
+
+    result = shortlist_words(words, word_count, n, &result_count);
+
+    if (result == NULL) {
+        printf("No words longer than %zu characters found.\n", n);
+        return 0;
+    }
+
+    printf("Words longer than %zu characters:\n", n);
+    for (i = 0; i < result_count; i++) {
+        printf("%s\n", result[i]);
+        free(result[i]);
+    }
+    free(result);
+
+    return 0;
+}
+```

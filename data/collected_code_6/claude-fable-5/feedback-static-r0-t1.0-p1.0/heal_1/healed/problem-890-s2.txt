@@ -1,0 +1,73 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int find_extra_element_index(const int *larger, const int *smaller, size_t smaller_len)
+{
+    size_t low = 0;
+    size_t high = smaller_len;
+
+    while (low < high) {
+        size_t mid = low + (high - low) / 2;
+        if (larger[mid] == smaller[mid]) {
+            low = mid + 1;
+        } else {
+            high = mid;
+        }
+    }
+
+    return (int)low;
+}
+
+static int process_arrays(const int *larger, size_t larger_len,
+                          const int *smaller, size_t smaller_len)
+{
+    if (larger == NULL || smaller == NULL) {
+        fprintf(stderr, "Invalid input: array pointer is NULL\n");
+        return EXIT_FAILURE;
+    }
+
+    if (larger_len != smaller_len + 1) {
+        fprintf(stderr, "Invalid input: larger array must contain exactly one extra element\n");
+        return EXIT_FAILURE;
+    }
+
+    int index = find_extra_element_index(larger, smaller, smaller_len);
+
+    if (index < 0 || (size_t)index >= larger_len) {
+        fprintf(stderr, "Error: computed index out of bounds\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Index of extra element: %d\n", index) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Extra element value: %d\n", larger[index]) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+
+int main(void)
+{
+    int larger[] = {2, 4, 6, 8, 9, 10, 12};
+    int smaller[] = {2, 4, 6, 8, 10, 12};
+
+    size_t larger_len = sizeof(larger) / sizeof(larger[0]);
+    size_t smaller_len = sizeof(smaller) / sizeof(smaller[0]);
+
+    return process_arrays(larger, larger_len, smaller, smaller_len);
+}
+```
+
+**Analysis and rationale for the changes:**
+
+1. **`knownConditionTrueFalse` warning:** The original static analyzer flagged `larger_len != smaller_len + 1` as always false because both lengths were compile-time constants derived from hardcoded arrays in `main`. By moving the validation logic into a separate function (`process_arrays`) that receives the lengths as runtime parameters, the condition becomes a genuine runtime check. This preserves the defensive validation while eliminating the dead-code warning, and makes the logic reusable for arrays whose sizes are not known at compile time.
+
+2. **The `larger_len = 7` note:** This wasn't a defect per se, just the analyzer tracking the assigned value. The refactoring resolves it naturally since the value is no longer statically propagated into the comparison.
+
+3. **Added `NULL` pointer validation:** Since `process_arrays` now accepts pointers as parameters, a `NULL` check was added as a defensive measure appropriate for a general-purpose function boundary.
+
+4. **Preserved correctness details:** The binary search retains the overflow-safe midpoint calculation `low + (high - low) / 2`, the `size_t`/`int` cast bounds check, and the `printf` return-value checks from the original.

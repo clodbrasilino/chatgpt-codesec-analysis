@@ -1,0 +1,7 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t0.2-p1.0/heal_2/healed/problem-500.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t0.2-p1.0/heal_2/healed/problem-500.c:11:45: style: Redundant condition: If 'list[i][current_len] != '\0'', the comparison 'list[i][current_len] != 0' is always true. [redundantCondition]
+        while (list[i][current_len] != '\0' && list[i][current_len] != 0) {
+                                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t0.2-p1.0/heal_2/healed/problem-500.c:24:45: style: Redundant condition: If 'list[i][current_len] != '\0'', the comparison 'list[i][current_len] != 0' is always true. [redundantCondition]
+        while (list[i][current_len] != '\0' && list[i][current_len] != 0) {
+                                            ^

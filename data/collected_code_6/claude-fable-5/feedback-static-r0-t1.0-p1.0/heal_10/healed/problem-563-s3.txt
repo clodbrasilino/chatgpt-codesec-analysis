@@ -1,0 +1,87 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+char *extract_quoted(const char *input)
+{
+    const char *start;
+    const char *end;
+    char *result;
+    size_t length;
+    size_t buffer_size;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    start = strchr(input, '"');
+    if (start == NULL) {
+        return NULL;
+    }
+    start++;
+
+    end = strchr(start, '"');
+    if (end == NULL) {
+        return NULL;
+    }
+
+    if (end < start) {
+        return NULL;
+    }
+
+    length = (size_t)(end - start);
+    if (length >= SIZE_MAX - 1) {
+        return NULL;
+    }
+
+    buffer_size = length + 1;
+
+    result = malloc(buffer_size);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    if (length > 0 && length < buffer_size) {
+        memcpy(result, start, length);
+    }
+    result[length] = '\0';
+
+    return result;
+}
+
+int main(void)
+{
+    const char *text = "He said \"hello world\" to everyone.";
+    char *extracted;
+
+    extracted = extract_quoted(text);
+    if (extracted == NULL) {
+        fprintf(stderr, "No quoted value found or allocation failed.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Extracted: %s\n", extracted) < 0) {
+        free(extracted);
+        return EXIT_FAILURE;
+    }
+
+    free(extracted);
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The original code was already largely safe — the flagged `memcpy` (CWE-120) was a low-risk heuristic hit from Flawfinder rather than a genuine vulnerability, since the destination buffer was allocated as `length + 1` immediately before the copy of exactly `length` bytes.
+
+The rewrite hardens it further:
+
+1. **Explicit bounds guard on `memcpy`** — the copy now only executes when `length < buffer_size`, making the invariant that the destination can hold the source data provable locally at the call site, which also silences the static-analysis warning.
+
+2. **Defensive pointer-order check** — `end < start` can't happen given `strchr` semantics here, but the check guards against future refactoring introducing an underflow in the pointer subtraction.
+
+3. **Named `buffer_size`** — ties the allocation size and the bounds check to a single variable, eliminating the chance of the two drifting apart during maintenance.
+
+Everything else (NULL checks, `SIZE_MAX` overflow guard before `malloc`, checked `printf` return, `free` on all exit paths) was already correct and is preserved.

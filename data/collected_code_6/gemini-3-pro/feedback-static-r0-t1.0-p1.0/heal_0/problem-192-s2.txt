@@ -1,0 +1,54 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+#include <ctype.h>
+
+bool has_letter_and_number(const char *str) {
+    if (str == NULL) {
+        return false;
+    }
+
+    bool has_letter = false;
+    bool has_number = false;
+
+    while (*str != '\0') {
+        if (isalpha((unsigned char)*str)) {
+            has_letter = true;
+        } else if (isdigit((unsigned char)*str)) {
+            has_number = true;
+        }
+        
+        if (has_letter && has_number) {
+            return true;
+        }
+        
+        str++;
+    }
+
+    return false;
+}
+
+int main(void) {
+    const char *test_strings[] = {
+        "Password123",
+        "JustWords",
+        "1234567890",
+        "P1",
+        "",
+        NULL
+    };
+    
+    size_t num_tests = sizeof(test_strings) / sizeof(test_strings[0]);
+    
+    for (size_t i = 0; i < num_tests; i++) {
+        bool result = has_letter_and_number(test_strings[i]);
+        if (test_strings[i] != NULL) {
+            printf("String: '%s' -> %s\n", test_strings[i], result ? "Valid" : "Invalid");
+        } else {
+            printf("String: NULL -> %s\n", result ? "Valid" : "Invalid");
+        }
+    }
+    
+    return 0;
+}
+```

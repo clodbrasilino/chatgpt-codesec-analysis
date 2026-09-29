@@ -1,0 +1,33 @@
+```c
+#include <stdio.h>
+#include <math.h>
+
+double calculateRegularPolygonArea(int numSides, double sideLength) {
+    if (numSides < 3 || sideLength <= 0.0) {
+        return -1.0;
+    }
+    
+    double area = (numSides * pow(sideLength, 2)) / (4.0 * tan(M_PI / numSides));
+    return area;
+}
+
+int main(void) {
+    int numSides;
+    double sideLength;
+
+    if (scanf("%d %lf", &numSides, &sideLength) != 2) {
+        fprintf(stderr, "Invalid input.\n");
+        return 1;
+    }
+
+    double area = calculateRegularPolygonArea(numSides, sideLength);
+    
+    if (area < 0.0) {
+        fprintf(stderr, "Invalid polygon parameters.\n");
+        return 1;
+    }
+
+    printf("%f\n", area);
+    return 0;
+}
+```

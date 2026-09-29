@@ -1,0 +1,12 @@
+collected_code/problem-598-0.c: In function 'isArmstrong':
+collected_code/problem-598-0.c:19:19: warning: implicit declaration of function 'pow' [-Wimplicit-function-declaration]
+   19 |         result += pow(remainder, digits);
+      |                   ^~~
+collected_code/problem-598-0.c:2:1: note: include '<math.h>' or provide a declaration of 'pow'
+    1 | #include <stdio.h>
+  +++ |+#include <math.h>
+    2 | 
+collected_code/problem-598-0.c:19:19: warning: incompatible implicit declaration of built-in function 'pow' [-Wbuiltin-declaration-mismatch]
+   19 |         result += pow(remainder, digits);
+      |                   ^~~
+collected_code/problem-598-0.c:19:19: note: include '<math.h>' or provide a declaration of 'pow'

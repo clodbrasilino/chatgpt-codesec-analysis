@@ -1,0 +1,67 @@
+```C
+#include <stdio.h>
+#include <limits.h>
+
+#define N 5
+
+typedef struct Pair {
+    int min;
+    int max;
+} Pair;
+
+Pair findSmallestRange(int arr[][N], int n, int k) {
+    int range = INT_MAX;
+    int min = INT_MAX, max = INT_MIN;
+    int i, j;
+
+    int ptr[k];
+    for (i = 0; i <= k; i++)
+        ptr[i] = 0;
+
+    Pair p;
+
+    while (1) {
+        min = INT_MAX;
+        int minIndex = 0;
+        for (i = 0; i < k; i++) {
+            if (ptr[i] < n && arr[i][ptr[i]] < min) {
+                minIndex = i;
+                min = arr[i][ptr[i]];
+            }
+            if (ptr[i] < n && arr[i][ptr[i]] > max) {
+                max = arr[i][ptr[i]];
+            }
+        }
+
+        if (range > max - min + 1) {
+            range = max - min + 1;
+            p.min = min;
+            p.max = max;
+        }
+
+        ptr[minIndex]++;
+
+        if (ptr[minIndex] == n) {
+            break;
+        }
+    }
+
+    return p;
+}
+
+int main() {
+    int arr[][N] = {
+        {4, 7, 9, 12, 15},
+        {0, 8, 10, 14, 20},
+        {6, 12, 16, 30, 50}
+    };
+
+    int k = sizeof(arr) / sizeof(arr[0]);
+
+    Pair p = findSmallestRange(arr, N, k);
+
+    printf("The smallest range is [%d, %d]\n", p.min, p.max);
+
+    return 0;
+}
+```

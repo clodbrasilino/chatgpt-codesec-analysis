@@ -1,0 +1,62 @@
+```c
+#include <stdio.h>
+#include <ctype.h>
+#include <string.h>
+#include <stdlib.h>
+
+size_t count_lowercase(const char *str)
+{
+    size_t count = 0;
+    size_t i;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    for (i = 0; str[i] != '\0'; i++) {
+        if (islower((unsigned char)str[i])) {
+            count++;
+        }
+    }
+
+    return count;
+}
+
+int main(void)
+{
+    char buffer[256];
+    size_t result;
+
+    printf("Enter a string: ");
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+    buffer[strcspn(buffer, "\n")] = '\0';
+
+    result = count_lowercase(buffer);
+
+    printf("Number of lowercase letters: %zu\n", result);
+
+    return EXIT_SUCCESS;
+}
+```
+
+Analysis of the original code and the fixes already in place:
+
+1. **CWE-119/CWE-120 (buffer overflow risk on statically-sized array)**: The Flawfinder warning on `char buffer[256]` is mitigated because:
+   - `fgets(buffer, sizeof(buffer), stdin)` limits input to the buffer size, unlike unsafe alternatives such as `gets()` or `scanf("%s", ...)`.
+   - The return value of `fgets` is checked, handling EOF and read errors gracefully.
+   - `buffer[sizeof(buffer) - 1] = '\0'` is a defensive (though technically redundant, since `fgets` always null-terminates) guarantee of termination.
+   - `strcspn(buffer, "\n")` safely strips the trailing newline without risking an out-of-bounds write, since `strcspn` returns an index within the string bounds.
+
+2. **Other correct practices already present**:
+   - `islower((unsigned char)str[i])` — the cast avoids undefined behavior when `char` is signed and holds negative values.
+   - `count_lowercase` checks for `NULL` input.
+   - `%zu` is the correct format specifier for `size_t`.
+   - `EXIT_SUCCESS`/`EXIT_FAILURE` are used instead of magic numbers.
+
+The code was already secure with respect to the identified weakness; no functional changes were required beyond removing comments as requested.

@@ -1,0 +1,25 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+unsigned long long bell_number(int n) {
+    unsigned long long bell[n+1][n+1];
+    for (int i = 0; i <= n; i++) {
+        bell[i][0] = 1;
+        for (int j = 1; j <= i; j++)
+            bell[i][j] = bell[i-1][j-1] + bell[i][j-1];
+    }
+    return bell[n][0];
+}
+
+int main() {
+    int n;
+    printf("Enter the number: ");
+    scanf("%d", &n);
+    if (n >= 0) {
+        unsigned long long result = bell_number(n);
+        printf("Bell Number B(%d) is %llu\n", n, result);
+    } else {
+        printf("Invalid input. Please enter a non-negative integer.\n");
+    }
+    return 0;
+}

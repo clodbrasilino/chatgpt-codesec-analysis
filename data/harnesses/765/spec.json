@@ -1,0 +1,44 @@
+{
+  "task_id": 765,
+  "text": "Write a C function to find nth polite number.",
+  "fn_candidates": [
+    "is_polite",
+    "IsPolite",
+    "isPolite",
+    "ispolite"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "is_polite",
+      "args": [
+        7
+      ],
+      "expected": 11,
+      "assert_src": "assert is_polite(7) == 11"
+    },
+    {
+      "fn_name": "is_polite",
+      "args": [
+        4
+      ],
+      "expected": 7,
+      "assert_src": "assert is_polite(4) == 7"
+    },
+    {
+      "fn_name": "is_polite",
+      "args": [
+        9
+      ],
+      "expected": 13,
+      "assert_src": "assert is_polite(9) == 13"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

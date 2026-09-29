@@ -1,0 +1,47 @@
+{
+  "task_id": 823,
+  "text": "Write a C function to check if the given string starts with a substring using regex.",
+  "fn_candidates": [
+    "check_substring",
+    "CheckSubstring",
+    "checkSubstring",
+    "checksubstring"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "check_substring",
+      "args": [
+        "dreams for dreams makes life fun",
+        "makes"
+      ],
+      "expected": "string doesnt start with the given substring",
+      "assert_src": "assert check_substring(\"dreams for dreams makes life fun\", \"makes\") == 'string doesnt start with the given substring'"
+    },
+    {
+      "fn_name": "check_substring",
+      "args": [
+        "Hi there how are you Hi alex",
+        "Hi"
+      ],
+      "expected": "string starts with the given substring",
+      "assert_src": "assert check_substring(\"Hi there how are you Hi alex\", \"Hi\") == 'string starts with the given substring'"
+    },
+    {
+      "fn_name": "check_substring",
+      "args": [
+        "Its been a long day",
+        "been"
+      ],
+      "expected": "string doesnt start with the given substring",
+      "assert_src": "assert check_substring(\"Its been a long day\", \"been\") == 'string doesnt start with the given substring'"
+    }
+  ],
+  "arg_kinds": [
+    "str"
+  ],
+  "return_kind": "str",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

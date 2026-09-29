@@ -1,0 +1,6 @@
+collected_code/problem-679-0.c:11:27: error: Cannot determine that 'dict[i].key[0]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        if (strcmp(dict[i].key, key) == 0) {
+                          ^
+collected_code/problem-679-0.c:11:33: error: Cannot determine that 'key[0]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        if (strcmp(dict[i].key, key) == 0) {
+                                ^

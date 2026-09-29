@@ -1,0 +1,58 @@
+./collected_code_4/round2//heal_0/problem-196.c: In function 'remove_tuples_of_length':
+./collected_code_4/round2//heal_0/problem-196.c:14:12: warning: use of possibly-NULL '*_1 + _3' where non-null expected [CWE-690] [-Wanalyzer-possible-null-argument]
+   14 |         if(strlen(ts->tuples[i]) != k) {
+      |            ^~~~~~~~~~~~~~~~~~~~~
+  'main': events 1-3
+    |
+    |   27 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   32 |     ts.tuples[0] = strdup("abc");
+    |      |                    ~~~~~~~~~~~~~
+    |      |                    |
+    |      |                    (2) this call could return NULL
+    |......
+    |   38 |     remove_tuples_of_length(&ts, 3);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (3) calling 'remove_tuples_of_length' from 'main'
+    |
+    +--> 'remove_tuples_of_length': events 4-7
+           |
+           |   10 | void remove_tuples_of_length(TupleSet* ts, int k) {
+           |      |      ^~~~~~~~~~~~~~~~~~~~~~~
+           |      |      |
+           |      |      (4) entry to 'remove_tuples_of_length'
+           |......
+           |   13 |     for (int i = 0; i < ts->count; ++i) {
+           |      |                     ~~~~~~~~~~~~~
+           |      |                       |
+           |      |                       (5) following 'true' branch...
+           |   14 |         if(strlen(ts->tuples[i]) != k) {
+           |      |            ~~~~~~~~~~~~~~~~~~~~~
+           |      |            |        |
+           |      |            |        (6) ...to here
+           |      |            (7) argument 1 ('*_1 + _3') from (2) could be NULL where non-null expected
+           |
+In file included from ./collected_code_4/round2//heal_0/problem-196.c:3:
+/Library/Developer/CommandLineTools/SDKs/MacOSX14.sdk/usr/include/string.h:82:10: note: argument 1 of 'strlen' must be non-null
+   82 | size_t   strlen(const char *__s);
+      |          ^~~~~~
+./collected_code_4/round2//heal_0/problem-196.c: In function 'main':
+./collected_code_4/round2//heal_0/problem-196.c:32:18: warning: dereference of possibly-NULL 'ts.tuples' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   32 |     ts.tuples[0] = strdup("abc");
+      |     ~~~~~~~~~~~~~^~~~~~~~~~~~~~~
+  'main': events 1-2
+    |
+    |   30 |     ts.tuples = malloc(sizeof(char*) * ts.count);
+    |      |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                 |
+    |      |                 (1) this call could return NULL
+    |   31 | 
+    |   32 |     ts.tuples[0] = strdup("abc");
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                  |
+    |      |                  (2) 'ts.tuples' could be NULL: unchecked value from (1)
+    |

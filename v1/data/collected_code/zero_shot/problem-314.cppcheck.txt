@@ -1,0 +1,9 @@
+collected_code/problem-314-0.c:7:25: error: Cannot determine that 'grid[0]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+    int inclusive = grid[0];
+                        ^
+collected_code/problem-314-0.c:13:50: error: Cannot determine that 'grid[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        inclusive = (inclusive > exclusive + grid[i]) ? inclusive : exclusive + grid[i];
+                                                 ^
+collected_code/problem-314-0.c:22:18: error: Cannot determine that 'n' is initialized [premium-bughuntingUninit]
+    scanf("%d", &n);
+                 ^

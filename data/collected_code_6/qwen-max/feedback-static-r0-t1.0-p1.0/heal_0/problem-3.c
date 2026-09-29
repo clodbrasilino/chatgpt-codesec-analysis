@@ -1,0 +1,40 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <stdlib.h>
+
+bool is_prime(int n) {
+    if (n <= 1) return false;
+    for (int i = 2; i * i <= n; ++i) {
+        if (n % i == 0) return false;
+    }
+    return true;
+}
+
+void identify_non_primes(int n, int* non_primes, int* count) {
+    *count = 0;
+    for (int i = 2; i < n; ++i) {
+        if (!is_prime(i)) {
+            non_primes[(*count)++] = i;
+        }
+    }
+}
+
+int main() {
+    int n = 50;
+    int* non_primes = (int*)malloc(n * sizeof(int));
+    if (non_primes == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    int count;
+    identify_non_primes(n, non_primes, &count);
+
+    for (int i = 0; i < count; ++i) {
+        printf("%d ", non_primes[i]);
+    }
+    printf("\n");
+
+    free(non_primes);
+    return 0;
+}

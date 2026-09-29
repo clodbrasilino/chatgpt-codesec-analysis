@@ -1,0 +1,119 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+void free_strings(char **strings, size_t count)
+{
+    size_t i;
+
+    if (strings == NULL) {
+        return;
+    }
+
+    for (i = 0; i < count; i++) {
+        free(strings[i]);
+    }
+    free(strings);
+}
+ /* Possible weaknesses found:
+  *  test case 0 failed: expected ['practice', 'solution'], got <no output>
+  *  test case 2 failed: expected ['exercises'], got <no output>
+  *  test case 1 failed: expected ['Python'], got <no output>
+  */
+
+char **extract_strings(const char *const *strings, size_t count, size_t size, size_t *out_count)
+{
+    char **result;
+    size_t i;
+
+    if (strings == NULL || out_count == NULL || count == 0) {
+        return NULL;
+    }
+
+    *out_count = 0;
+
+    result = calloc(count, sizeof(*result));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    for (i = 0; i < count; i++) {
+        size_t len;
+
+        if (strings[i] == NULL) {
+            continue;
+        }
+
+        len = strlen(strings[i]);
+        if (len != size) {
+            continue;
+        }
+
+        result[*out_count] = malloc(len + 1);
+        if (result[*out_count] == NULL) {
+            free_strings(result, count);
+            return NULL;
+        }
+
+        memcpy(result[*out_count], strings[i], len + 1);
+        (*out_count)++;
+    }
+
+    return result;
+}
+
+int main(void)
+{
+    size_t size = 0;
+    size_t count = 0;
+    size_t capacity = 0;
+    char **values = NULL;
+    char buffer[4096];
+    char **extracted;
+    size_t extracted_count = 0;
+    size_t i;
+
+    if (scanf("%zu", &size) != 1) {
+        return EXIT_FAILURE;
+    }
+
+    while (scanf("%4095s", buffer) == 1) {
+        char *copy;
+
+        if (count == capacity) {
+            size_t new_capacity = (capacity == 0) ? 8 : capacity * 2;
+            char **new_values = realloc(values, new_capacity * sizeof(*new_values));
+            if (new_values == NULL) {
+                free_strings(values, count);
+                return EXIT_FAILURE;
+            }
+            values = new_values;
+            capacity = new_capacity;
+        }
+
+        copy = malloc(strlen(buffer) + 1);
+        if (copy == NULL) {
+            free_strings(values, count);
+            return EXIT_FAILURE;
+        }
+        strcpy(copy, buffer);
+        values[count++] = copy;
+    }
+
+    extracted = extract_strings((const char *const *)values, count, size, &extracted_count);
+    if (extracted == NULL && count != 0) {
+        free_strings(values, count);
+        return EXIT_FAILURE;
+    }
+
+    printf("[");
+    for (i = 0; i < extracted_count; i++) {
+        printf("%s'%s'", (i == 0) ? "" : ", ", extracted[i]);
+    }
+    printf("]\n");
+
+    free_strings(extracted, count);
+    free_strings(values, count);
+
+    return EXIT_SUCCESS;
+}

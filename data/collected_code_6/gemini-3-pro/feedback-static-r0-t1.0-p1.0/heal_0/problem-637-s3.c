@@ -1,0 +1,37 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int checkNoProfitNoLoss(double costPrice, double sellingPrice) {
+    if (costPrice < 0.0 || sellingPrice < 0.0) {
+        return -1; 
+    }
+    
+    if (costPrice == sellingPrice) {
+        return 1;
+    }
+    
+    return 0;
+}
+
+int main(void) {
+    double costPrice = 0.0;
+    double sellingPrice = 0.0;
+    
+    if (scanf("%lf %lf", &costPrice, &sellingPrice) != 2) {
+        printf("Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    int result = checkNoProfitNoLoss(costPrice, sellingPrice);
+    
+    if (result == -1) {
+        printf("Invalid prices\n");
+        return EXIT_FAILURE;
+    } else if (result == 1) {
+        printf("No profit and no loss\n");
+    } else {
+        printf("Profit or loss occurred\n");
+    }
+    
+    return EXIT_SUCCESS;
+}

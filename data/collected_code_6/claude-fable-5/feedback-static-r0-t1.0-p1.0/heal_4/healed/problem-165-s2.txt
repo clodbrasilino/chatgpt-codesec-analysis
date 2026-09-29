@@ -1,0 +1,75 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+#define BUFFER_SIZE 256
+
+size_t count_position_matches(const char *str, size_t max_len)
+{
+    size_t count = 0;
+    size_t len;
+    size_t i;
+
+    if (str == NULL || max_len == 0) {
+        return 0;
+    }
+
+    len = strnlen(str, max_len);
+
+    for (i = 0; i < len && i < 26; i++) {
+        if (str[i] == (char)('a' + i) || str[i] == (char)('A' + i)) {
+            count++;
+        }
+    }
+
+    return count;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t result;
+    size_t len;
+
+    memset(buffer, 0, sizeof(buffer));
+
+    printf("Enter a string: ");
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    }
+
+    result = count_position_matches(buffer, sizeof(buffer));
+
+    printf("Characters at same position as in alphabet: %zu\n", result);
+
+    return EXIT_SUCCESS;
+}
+```
+
+Analysis of the original code and why this version is safe:
+
+**The flagged weakness (CWE-119/CWE-120, statically-sized buffer):** The Flawfinder warning on `char buffer[BUFFER_SIZE]` is a heuristic hit on any fixed-size array. The code already mitigates it correctly, and the rewrite preserves all of those mitigations:
+
+1. **Bounded input:** `fgets(buffer, (int)sizeof(buffer), stdin)` limits reads to at most `BUFFER_SIZE - 1` characters plus the null terminator — no overflow is possible, unlike `gets()` or unbounded `scanf("%s", ...)`.
+
+2. **Guaranteed termination:** `buffer[sizeof(buffer) - 1] = '\0'` is a defensive belt-and-suspenders guarantee that the buffer is null-terminated even if something unexpected happens, and `memset` zero-initializes the buffer beforehand.
+
+3. **Bounded string operations:** `strnlen(buffer, sizeof(buffer))` is used instead of `strlen`, so length computation can never run past the buffer even if termination were somehow lost.
+
+4. **Safe newline stripping:** The `len > 0` check before accessing `buffer[len - 1]` prevents an out-of-bounds read on an empty string.
+
+5. **Bounds-checked helper:** `count_position_matches` validates `str != NULL` and `max_len != 0`, uses `strnlen` with the caller-supplied cap, and its loop is doubly bounded (`i < len && i < 26`). The casts `(char)('a' + i)` avoid signed/unsigned comparison surprises.
+
+6. **Error handling:** The `fgets` return value is checked, with a proper error message to `stderr` and `EXIT_FAILURE`/`EXIT_SUCCESS` return codes.
+
+No functional changes were required — the original code was already hardened against the flagged CWE; only the comments were removed as requested.

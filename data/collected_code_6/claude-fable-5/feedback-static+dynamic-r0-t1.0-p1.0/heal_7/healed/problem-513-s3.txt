@@ -1,0 +1,141 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+#define MAX_STRING_LEN 4096U
+
+static char *duplicate_string(const char *src)
+{
+    size_t len;
+    size_t alloc_size;
+    char *copy;
+
+    if (src == NULL) {
+        return NULL;
+    }
+
+    len = strnlen(src, MAX_STRING_LEN);
+    if (len >= MAX_STRING_LEN) {
+        return NULL;
+    }
+
+    if (len > SIZE_MAX - 1U) {
+        return NULL;
+    }
+
+    alloc_size = len + 1U;
+    copy = malloc(alloc_size);
+    if (copy == NULL) {
+        return NULL;
+    }
+
+    if (len > 0U) {
+        memcpy(copy, src, len);
+    }
+    copy[len] = '\0';
+    return copy;
+}
+
+static void free_string_list(char **list, size_t count)
+{
+    size_t i;
+
+    if (list == NULL) {
+        return;
+    }
+
+    for (i = 0U; i < count; i++) {
+        free(list[i]);
+    }
+    free(list);
+}
+
+static char **tuple_to_list(const char *const *tuple, size_t tuple_len,
+                            const char *insert, size_t *out_len)
+{
+    char **result;
+    size_t total;
+    size_t i;
+    size_t pos;
+
+    if (tuple == NULL || insert == NULL || out_len == NULL) {
+        return NULL;
+    }
+
+    if (tuple_len == 0U) {
+        return NULL;
+    }
+
+    if (tuple_len > (SIZE_MAX / sizeof(char *)) / 2U) {
+        return NULL;
+    }
+
+    total = tuple_len * 2U;
+    result = malloc(total * sizeof(char *));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    pos = 0U;
+    for (i = 0U; i < tuple_len; i++) {
+        result[pos] = duplicate_string(tuple[i]);
+        if (result[pos] == NULL) {
+            free_string_list(result, pos);
+            return NULL;
+        }
+        pos++;
+
+        result[pos] = duplicate_string(insert);
+        if (result[pos] == NULL) {
+            free_string_list(result, pos);
+            return NULL;
+        }
+        pos++;
+    }
+
+    *out_len = total;
+    return result;
+}
+
+int main(void)
+{
+    const char *tuple[] = { "apple", "banana", "cherry" };
+    size_t tuple_len = sizeof(tuple) / sizeof(tuple[0]);
+    const char *insert = "FRUIT";
+    char **list;
+    size_t list_len = 0U;
+    size_t i;
+
+    list = tuple_to_list(tuple, tuple_len, insert, &list_len);
+    if (list == NULL) {
+        fprintf(stderr, "Conversion failed\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("[");
+    for (i = 0U; i < list_len; i++) {
+        printf("'%s'", list[i]);
+        if (i + 1U < list_len) {
+            printf(", ");
+        }
+    }
+    printf("]\n");
+
+    free_string_list(list, list_len);
+    return EXIT_SUCCESS;
+}
+```
+
+**Summary of changes made:**
+
+1. **Removed the redundant condition** `len < alloc_size` in `duplicate_string`. Since `alloc_size = len + 1U`, this condition was always true (as flagged by `knownConditionTrueFalse`). Dead conditions obscure intent and can mask real logic errors.
+
+2. **Added an explicit overflow guard** (`len > SIZE_MAX - 1U`) before computing `alloc_size = len + 1U`. In practice this is unreachable because `len < MAX_STRING_LEN`, but it makes the safety of the addition locally provable for static analyzers and future maintainers who might change `MAX_STRING_LEN`.
+
+3. **Addressed the Flawfinder `memcpy` warning (CWE-120)** by construction rather than suppression: the destination buffer is allocated with exactly `len + 1` bytes immediately before the copy of `len` bytes, so the destination is guaranteed to hold the source data, and the null terminator write at `copy[len]` remains in bounds.
+
+4. **Initialized `list_len` to `0U` in `main`** as defensive hardening — `out_len` is only written on success, but initializing it avoids any risk of reading an indeterminate value if the error-handling path is ever modified.
+
+The remaining warnings in the original ("assuming condition is false" on the `malloc` null check) were analyzer path assumptions, not defects — the null checks are correct and were retained.

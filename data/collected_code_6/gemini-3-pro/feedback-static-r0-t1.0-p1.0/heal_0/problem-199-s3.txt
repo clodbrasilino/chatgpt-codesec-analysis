@@ -1,0 +1,33 @@
+```c
+#include <stdio.h>
+#include <stdint.h>
+#include <stdlib.h>
+
+uint32_t highest_power_of_2(uint32_t n) {
+    if (n == 0) {
+        return 0;
+    }
+    
+    n |= n >> 1;
+    n |= n >> 2;
+    n |= n >> 4;
+    n |= n >> 8;
+    n |= n >> 16;
+    
+    return n - (n >> 1);
+}
+
+int main(void) {
+    uint32_t num = 0;
+    int result = scanf("%u", &num);
+    
+    if (result != 1) {
+        return EXIT_FAILURE;
+    }
+    
+    uint32_t hp2 = highest_power_of_2(num);
+    printf("%u\n", hp2);
+    
+    return EXIT_SUCCESS;
+}
+```

@@ -1,0 +1,80 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *elements;
+    size_t size;
+} Sublist;
+
+size_t count_sublists_with_element(const Sublist *sublists, size_t num_sublists, int target) {
+    if (!sublists) {
+        return 0;
+    }
+
+    size_t count = 0;
+    for (size_t i = 0; i < num_sublists; ++i) {
+        if (sublists[i].elements) {
+            for (size_t j = 0; j < sublists[i].size; ++j) {
+                if (sublists[i].elements[j] == target) {
+                    count++;
+                    break;
+                }
+            }
+        }
+    }
+
+    return count;
+}
+
+void free_sublists(Sublist *sublists, size_t num_sublists) {
+    if (!sublists) {
+        return;
+    }
+    for (size_t i = 0; i < num_sublists; ++i) {
+        free(sublists[i].elements);
+    }
+    free(sublists);
+}
+
+int main(void) {
+    size_t num_sublists = 3;
+    Sublist *sublists = malloc(num_sublists * sizeof(Sublist));
+    if (!sublists) {
+        return EXIT_FAILURE;
+    }
+
+    for (size_t i = 0; i < num_sublists; ++i) {
+        sublists[i].elements = NULL;
+        sublists[i].size = 0;
+    }
+
+    const size_t sizes[] = {3, 4, 2};
+    const int data0[] = {1, 2, 3};
+    const int data1[] = {4, 2, 6, 7};
+    const int data2[] = {8, 9};
+    const int *const data_ptrs[] = {data0, data1, data2};
+
+    for (size_t i = 0; i < num_sublists; ++i) {
+        sublists[i].size = sizes[i];
+        sublists[i].elements = malloc(sizes[i] * sizeof(int));
+        if (!sublists[i].elements) {
+            free_sublists(sublists, num_sublists);
+            return EXIT_FAILURE;
+        }
+        for (size_t j = 0; j < sizes[i]; ++j) {
+            sublists[i].elements[j] = data_ptrs[i][j];
+        }
+    }
+
+    int target = 2;
+    size_t count = count_sublists_with_element(sublists, num_sublists, target);
+    
+    if (printf("%zu\n", count) < 0) {
+        free_sublists(sublists, num_sublists);
+        return EXIT_FAILURE;
+    }
+
+    free_sublists(sublists, num_sublists);
+
+    return EXIT_SUCCESS;
+}

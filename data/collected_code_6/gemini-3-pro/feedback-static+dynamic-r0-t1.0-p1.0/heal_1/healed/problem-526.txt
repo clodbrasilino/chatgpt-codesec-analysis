@@ -1,0 +1,47 @@
+```c
+#include <stdio.h>
+#include <ctype.h>
+
+void capitalizeFirstAndLast(char *str) {
+    if (str == NULL) {
+        return;
+    }
+
+    int i = 0;
+
+    while (str[i] != '\0') {
+        while (str[i] != '\0' && isspace((unsigned char)str[i])) {
+            i++;
+        }
+
+        if (str[i] == '\0') {
+            break;
+        }
+
+        int start = i;
+
+        while (str[i] != '\0' && !isspace((unsigned char)str[i])) {
+            i++;
+        }
+
+        int end = i - 1;
+
+        if (start == end) {
+            str[start] = toupper((unsigned char)str[start]);
+        } else {
+            str[start] = toupper((unsigned char)str[start]);
+            str[end] = toupper((unsigned char)str[end]);
+        }
+    }
+}
+
+int main(void) {
+    char testStr[] = "hello world this is a test";
+
+    capitalizeFirstAndLast(testStr);
+    
+    printf("%s\n", testStr);
+
+    return 0;
+}
+```

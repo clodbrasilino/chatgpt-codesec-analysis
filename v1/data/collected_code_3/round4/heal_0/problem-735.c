@@ -1,0 +1,15 @@
+#include <stdio.h>
+
+unsigned int toggleBits(unsigned int num) {
+    unsigned int mask = ~0;
+    mask ^= (1 << 0);
+    mask ^= (1 << ((sizeof(num) * 8) - 1));
+    return num ^ mask;
+}
+
+int main() {
+    unsigned int num = 0b10101010;
+    unsigned int result = toggleBits(num);
+    printf("After toggling bits except first and last: %u\n", result);
+    return 0;
+}

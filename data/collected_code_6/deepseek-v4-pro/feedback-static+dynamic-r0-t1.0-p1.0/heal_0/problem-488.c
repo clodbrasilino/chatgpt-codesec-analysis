@@ -1,0 +1,25 @@
+#include <stdio.h>
+#include <math.h>
+
+double pentagon_area(double side) {
+    return (5.0 * side * side) / (4.0 * tan(M_PI / 5.0));
+}
+
+int main(void) {
+    double side;
+    
+    printf("Enter the side length of the pentagon: ");
+    if (scanf("%lf", &side) != 1) {
+        printf("Invalid input\n");
+        return 1;
+    }
+    
+    if (side <= 0) {
+        printf("Side length must be positive\n");
+        return 1;
+    }
+    
+    printf("Area of the pentagon: %.2f\n", pentagon_area(side));
+    
+    return 0;
+}

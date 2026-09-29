@@ -1,0 +1,20 @@
+#include <stdio.h>
+
+int factorial(int num) {
+    if (num == 0)
+        return 1;
+    else
+        return num * factorial(num - 1);
+}
+
+int permutation(int n, int k) {
+    return factorial(n) / factorial(n - k);
+}
+
+int main() {
+    int n, k;
+    printf("Enter the values of n and k: ");
+    scanf("%d %d", &n, &k);
+    printf("Permutation coefficient P(%d, %d) is %d\n", n, k, permutation(n, k));
+    return 0;
+}

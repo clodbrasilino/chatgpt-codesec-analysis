@@ -1,0 +1,20 @@
+#include<stdio.h>
+#include<stdbool.h>
+
+int count_true_bools(bool *arr, int size) {
+    int count = 0;
+    for(int i = 0; i < size; i++) {
+        if(arr[i] == true) {
+            count++;
+        }
+    }
+    return count;
+}
+
+int main() {
+    bool arr[] = {true, false, true, false, true, true, false};
+    int size = sizeof(arr)/sizeof(arr[0]);
+    int count = count_true_bools(arr, size);
+    printf("Number of true booleans: %d", count);
+    return 0;
+}

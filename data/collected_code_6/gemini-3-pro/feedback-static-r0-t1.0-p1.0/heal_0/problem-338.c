@@ -1,0 +1,37 @@
+#include <stdio.h>
+#include <string.h>
+
+int countSubstrings(const char *str) {
+    if (str == NULL) {
+        return 0;
+    }
+
+    int count = 0;
+    int length = strlen(str);
+
+    for (int i = 0; i < length; i++) {
+        for (int j = i; j < length; j++) {
+            if (str[i] == str[j]) {
+                count++;
+            }
+        }
+    }
+
+    return count;
+}
+
+int main(void) {
+    const char *testString = "abcab";
+    int result = countSubstrings(testString);
+    printf("%d\n", result);
+
+    const char *emptyString = "";
+    result = countSubstrings(emptyString);
+    printf("%d\n", result);
+
+    const char *nullString = NULL;
+    result = countSubstrings(nullString);
+    printf("%d\n", result);
+
+    return 0;
+}

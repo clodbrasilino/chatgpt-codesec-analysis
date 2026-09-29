@@ -1,0 +1,88 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int value;
+    struct Node *next;
+} Node;
+
+typedef struct LinkedList {
+    Node *head;
+} LinkedList;
+
+Node* create_node(int value) {
+    Node *new_node = (Node*) malloc(sizeof(Node));
+    if (new_node == NULL) {
+        exit(1);
+    }
+    new_node->value = value;
+    new_node->next = NULL;
+    return new_node;
+}
+
+void append_to_list(LinkedList *list, int value) {
+    Node *new_node = create_node(value);
+    if (list->head == NULL) {
+        list->head = new_node;
+    } else {
+        Node *current = list->head;
+        while (current->next != NULL) {
+            current = current->next;
+        }
+        current->next = new_node;
+    }
+}
+
+void print_list(const LinkedList *list) {
+    Node *current = list->head;
+    while (current != NULL) {
+        printf("%d -> ", current->value);
+        current = current->next;
+    }
+    printf("NULL\n");
+}
+
+LinkedList pack_duplicates(const LinkedList *input) {
+    LinkedList result;
+    result.head = NULL;
+    if (input->head == NULL) {
+        return result;
+    }
+
+    Node *current = input->head;
+    while (current != NULL) {
+        LinkedList sublist;
+        sublist.head = create_node(current->value);
+        Node *sublist_current = sublist.head;
+        while (current->next != NULL && current->value == current->next->value) {
+            sublist_current->next = create_node(current->value);
+            sublist_current = sublist_current->next;
+            current = current->next;
+        }
+        append_to_list(&result, (int)(intptr_t)sublist.head);
+        current = current->next;
+    }
+    return result;
+}
+
+int main() {
+    LinkedList list;
+    list.head = NULL;
+
+    append_to_list(&list, 1);
+    append_to_list(&list, 1);
+    append_to_list(&list, 2);
+    append_to_list(&list, 2);
+    append_to_list(&list, 2);
+    append_to_list(&list, 3);
+
+    printf("Original List: ");
+    print_list(&list);
+
+    LinkedList packed_list = pack_duplicates(&list);
+
+    printf("Packed List: ");
+    print_list(&packed_list);
+
+    return 0;
+}

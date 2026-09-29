@@ -1,0 +1,66 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+#include <string.h>
+
+#define BUFFER_SIZE 256
+
+bool all_chars_unique(const char *str, size_t max_len)
+{
+    bool seen[256] = { false };
+    size_t i;
+    size_t len;
+
+    if (str == NULL) {
+        return false;
+    }
+
+    len = strnlen(str, max_len);
+
+    for (i = 0; i < len; i++) {
+        unsigned char c = (unsigned char)str[i];
+        if (seen[c]) {
+            return false;
+        }
+        seen[c] = true;
+    }
+
+    return true;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+
+    memset(buffer, 0, sizeof(buffer));
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+    buffer[strcspn(buffer, "\n")] = '\0';
+
+    if (all_chars_unique(buffer, sizeof(buffer))) {
+        printf("All characters are unique\n");
+    } else {
+        printf("Duplicate characters found\n");
+    }
+
+    return 0;
+}
+```
+
+**Analysis summary:**
+
+The original code was already well-hardened against the Flawfinder warning (CWE-119/CWE-120). The rewritten version preserves all the existing mitigations:
+
+1. **Bounded input reading** — `fgets(buffer, sizeof(buffer), stdin)` limits input to the buffer size, preventing overflow (unlike `gets` or unbounded `scanf`).
+2. **Guaranteed null-termination** — `buffer[sizeof(buffer) - 1] = '\0'` is a defensive belt-and-suspenders measure, even though `fgets` already null-terminates.
+3. **Bounded string length calculation** — `strnlen(str, max_len)` instead of `strlen`, so even a non-terminated string cannot cause an out-of-bounds read.
+4. **NULL pointer check** in `all_chars_unique` before dereferencing.
+5. **Safe array indexing** — casting to `unsigned char` before indexing `seen[256]` prevents negative-index undefined behavior on platforms where `char` is signed.
+6. **Zero-initialization** of the buffer via `memset` and checked return value of `fgets`.
+
+The statically-sized array flagged by Flawfinder is properly bounds-checked at every point of use, so no functional changes were required — the code as written is the fix.

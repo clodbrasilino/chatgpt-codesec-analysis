@@ -1,0 +1,21 @@
+#include <stdio.h>
+#include <string.h>
+
+int has28Days(char *month) {
+    if (strcmp(month, "February") == 0) {
+        return 1;
+    }
+    return 0;
+}
+
+int main() {
+    char month[50];
+    printf("Enter the month name: ");
+    scanf("%s", month);
+    if (has28Days(month)) {
+        printf("%s has 28 days in a non-leap year.\n", month);
+    } else {
+        printf("%s does not have 28 days.\n", month);
+    }
+    return 0;
+}

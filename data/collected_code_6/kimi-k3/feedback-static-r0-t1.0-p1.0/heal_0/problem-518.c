@@ -1,0 +1,26 @@
+#include <stdio.h>
+#include <math.h>
+
+int findSquareRoot(int num) {
+    int sqrtNum = (int)sqrt(num);
+    if (sqrtNum * sqrtNum == num) {
+        return sqrtNum;
+    } else {
+        return -1;
+    }
+}
+
+int main() {
+    int num;
+    printf("Enter a perfect square number: ");
+    scanf("%d", &num);
+
+    int result = findSquareRoot(num);
+    if (result != -1) {
+        printf("Square root of %d is %d\n", num, result);
+    } else {
+        printf("%d is not a perfect square number\n", num);
+    }
+
+    return 0;
+}

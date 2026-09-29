@@ -1,0 +1,35 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int first;
+    int second;
+} Tuple;
+
+int tuple_compare(const void *a, const void *b) {
+    const Tuple *ta = a;
+    const Tuple *tb = b;
+    if (ta->first != tb->first) return ta->first - tb->first;
+    return ta->second - tb->second;
+}
+
+int count_unique_tuples(Tuple *tuples, int n) {
+    qsort(tuples, n, sizeof(Tuple), tuple_compare);
+    int unique_count = 1;
+    for (int i = 1; i < n; ++i) {
+        if (tuples[i].first != tuples[i-1].first || tuples[i].second != tuples[i-1].second) {
+            unique_count++;
+        }
+    }
+    return unique_count;
+}
+
+int main() {
+    Tuple tuples[] = {{1, 2}, {3, 4}, {1, 2}, {5, 6}, {3, 4}, {1, 2}};
+    int n = sizeof(tuples) / sizeof(tuples[0]);
+    int unique_count = count_unique_tuples(tuples, n);
+    printf("Unique tuples count: %d\n", unique_count);
+    return 0;
+}
+```

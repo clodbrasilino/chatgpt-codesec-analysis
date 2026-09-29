@@ -1,0 +1,97 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+void find_dissimilar(const int *tuple1, size_t size1, const int *tuple2, size_t size2, int **result, size_t *result_size) {
+    if (!tuple1 || !tuple2 || !result || !result_size) {
+        return;
+    }
+
+    size_t max_size = size1 + size2;
+    *result = (int *)malloc(max_size * sizeof(int));
+    if (!*result) {
+        *result_size = 0;
+        return;
+    }
+
+    size_t count = 0;
+
+    for (size_t i = 0; i < size1; ++i) {
+        bool found = false;
+        for (size_t j = 0; j < size2; ++j) {
+            if (tuple1[i] == tuple2[j]) {
+                found = true;
+                break;
+            }
+        }
+        if (!found) {
+            bool duplicate = false;
+            for (size_t k = 0; k < count; ++k) {
+                if ((*result)[k] == tuple1[i]) {
+                    duplicate = true;
+                    break;
+                }
+            }
+            if (!duplicate) {
+                (*result)[count++] = tuple1[i];
+            }
+        }
+    }
+
+    for (size_t i = 0; i < size2; ++i) {
+        bool found = false;
+        for (size_t j = 0; j < size1; ++j) {
+            if (tuple2[i] == tuple1[j]) {
+                found = true;
+                break;
+            }
+        }
+        if (!found) {
+            bool duplicate = false;
+            for (size_t k = 0; k < count; ++k) {
+                if ((*result)[k] == tuple2[i]) {
+                    duplicate = true;
+                    break;
+                }
+            }
+            if (!duplicate) {
+                (*result)[count++] = tuple2[i];
+            }
+        }
+    }
+
+    *result_size = count;
+
+    if (count == 0) {
+        free(*result);
+        *result = NULL;
+    } else {
+        int *temp = (int *)realloc(*result, count * sizeof(int));
+        if (temp) {
+            *result = temp;
+        }
+    }
+}
+
+int main(void) {
+    int tuple1[] = {1, 2, 3, 4, 5};
+    int tuple2[] = {4, 5, 6, 7, 8};
+    size_t size1 = sizeof(tuple1) / sizeof(tuple1[0]);
+    size_t size2 = sizeof(tuple2) / sizeof(tuple2[0]);
+
+    int *result = NULL;
+    size_t result_size = 0;
+
+    find_dissimilar(tuple1, size1, tuple2, size2, &result, &result_size);
+
+    for (size_t i = 0; i < result_size; ++i) {
+        printf("%d ", result[i]);
+    }
+    printf("\n");
+
+    free(result);
+
+    return 0;
+}
+```

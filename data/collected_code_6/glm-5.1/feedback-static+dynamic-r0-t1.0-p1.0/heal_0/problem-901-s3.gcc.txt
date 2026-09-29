@@ -1,0 +1,5 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-901-s3.c: In function 'smallest_multiple':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-901-s3.c:22:22: error: '__LLONG_MAX__' undeclared (first use in this function)
+   22 |         if (result > __LLONG_MAX__ / (i / common_divisor)) {
+      |                      ^~~~~~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-901-s3.c:22:22: note: each undeclared identifier is reported only once for each function it appears in

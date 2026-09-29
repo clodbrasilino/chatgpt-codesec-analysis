@@ -1,0 +1,80 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct Node {
+    char *key;
+    struct Node *value;
+    struct Node *next;
+} Node;
+
+Node* create_node(char *key, char *value) {
+    Node *new_node = (Node *)malloc(sizeof(Node));
+    if (new_node == NULL) return NULL;
+    new_node->key = strdup(key);
+    new_node->value = value ? (Node *)strdup(value) : NULL;
+    new_node->next = NULL;
+    return new_node;
+}
+
+void add_node(Node **head, char *key, char *value) {
+    Node *new_node = create_node(key, value);
+    if (*head == NULL) {
+        *head = new_node;
+    } else {
+        Node *current = *head;
+        while (current->next != NULL) {
+            current = current->next;
+        }
+        current->next = new_node;
+    }
+}
+
+Node* list_to_dict(char **keys, char **values, int length) {
+    Node *dict = NULL;
+    for (int i = 0; i < length; i++) {
+        add_node(&dict, keys[i], values[i]);
+    }
+    return dict;
+}
+
+void print_dict(Node *dict, int indent) {
+    while (dict != NULL) {
+        for (int i = 0; i < indent; i++) printf("  ");
+        printf("%s: %s\n", dict->key, (char *)dict->value);
+        dict = dict->next;
+    }
+}
+
+void free_dict(Node *dict) {
+    while (dict != NULL) {
+        Node *temp = dict;
+        dict = dict->next;
+        free(temp->key);
+        if (temp->value) free(temp->value);
+        free(temp);
+    }
+}
+
+int main() {
+    char *keys1[] = {"a", "b", "c"};
+    char *values1[] = {"1", "2", "3"};
+    int length1 = sizeof(keys1) / sizeof(keys1[0]);
+
+    char *keys2[] = {"d", "e", "f"};
+    char *values2[] = {"4", "5", "6"};
+    int length2 = sizeof(keys2) / sizeof(keys2[0]);
+
+    Node *dict1 = list_to_dict(keys1, values1, length1);
+    Node *dict2 = list_to_dict(keys2, values2, length2);
+
+    print_dict(dict1, 0);
+    print_dict(dict2, 0);
+
+    free_dict(dict1);
+    free_dict(dict2);
+
+    return 0;
+}
+```

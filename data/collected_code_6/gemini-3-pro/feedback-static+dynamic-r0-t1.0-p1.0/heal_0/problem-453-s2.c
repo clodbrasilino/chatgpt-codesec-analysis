@@ -1,0 +1,44 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+long long sum_of_even_factors(long long n) {
+    if (n < 0) {
+        n = -n;
+    }
+    
+    if (n == 0) {
+        return 0;
+    }
+
+    if (n % 2 != 0) {
+        return 0;
+    }
+
+    long long sum = 0;
+    for (long long i = 1; i * i <= n; i++) {
+        if (n % i == 0) {
+            if (i % 2 == 0) {
+                sum += i;
+            }
+            long long pair = n / i;
+            if (pair != i && pair % 2 == 0) {
+                sum += pair;
+            }
+        }
+    }
+
+    return sum;
+}
+
+int main(void) {
+    long long n;
+    
+    if (scanf("%lld", &n) != 1) {
+        return EXIT_FAILURE;
+    }
+
+    long long result = sum_of_even_factors(n);
+    printf("%lld\n", result);
+
+    return EXIT_SUCCESS;
+}

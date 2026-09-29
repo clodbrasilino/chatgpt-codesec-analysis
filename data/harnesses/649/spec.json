@@ -1,0 +1,77 @@
+{
+  "task_id": 649,
+  "text": "Write a C function to calculate the sum of the numbers in a list between the indices of a specified range.",
+  "fn_candidates": [
+    "sum_Range_list",
+    "SumRangeList",
+    "sumRangeList",
+    "sumRangelist"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "sum_Range_list",
+      "args": [
+        [
+          2,
+          1,
+          5,
+          6,
+          8,
+          3,
+          4,
+          9,
+          10,
+          11,
+          8,
+          12
+        ],
+        8,
+        10
+      ],
+      "expected": 29,
+      "assert_src": "assert sum_Range_list([2, 1, 5, 6, 8, 3, 4, 9, 10, 11, 8, 12],8,10) == 29"
+    },
+    {
+      "fn_name": "sum_Range_list",
+      "args": [
+        [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        1,
+        2
+      ],
+      "expected": 5,
+      "assert_src": "assert sum_Range_list([1,2,3,4,5],1,2) == 5"
+    },
+    {
+      "fn_name": "sum_Range_list",
+      "args": [
+        [
+          1,
+          0,
+          1,
+          2,
+          5,
+          6
+        ],
+        4,
+        5
+      ],
+      "expected": 11,
+      "assert_src": "assert sum_Range_list([1,0,1,2,5,6],4,5) == 11"
+    }
+  ],
+  "arg_kinds": [
+    "int",
+    "int-list"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

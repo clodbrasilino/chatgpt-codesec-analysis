@@ -1,0 +1,97 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <ctype.h>
+#include <limits.h>
+
+typedef struct {
+    int *data;
+    size_t size;
+} IntTuple;
+
+void free_tuple(IntTuple *tuple) {
+    if (tuple != NULL) {
+        if (tuple->data != NULL) {
+            free(tuple->data);
+            tuple->data = NULL;
+        }
+        tuple->size = 0;
+    }
+}
+
+IntTuple parse_string_to_tuple(const char *str) {
+    IntTuple tuple = {NULL, 0};
+    
+    if (str == NULL) {
+        return tuple;
+    }
+
+    size_t capacity = 4;
+    tuple.data = (int *)malloc(capacity * sizeof(int));
+    if (tuple.data == NULL) {
+        return tuple;
+    }
+
+    const char *ptr = str;
+    char *endptr;
+
+    while (*ptr != '\0') {
+        while (isspace((unsigned char)*ptr)) {
+            ptr++;
+        }
+        if (*ptr == '\0') {
+            break;
+        }
+
+        errno = 0;
+        long val = strtol(ptr, &endptr, 10);
+
+        if (ptr == endptr || errno == ERANGE || val < INT_MIN || val > INT_MAX) {
+            free_tuple(&tuple);
+            return tuple;
+        }
+
+        if (tuple.size >= capacity) {
+            size_t new_capacity = capacity * 2;
+            int *new_data = (int *)realloc(tuple.data, new_capacity * sizeof(int));
+            if (new_data == NULL) {
+                free_tuple(&tuple);
+                return tuple;
+            }
+            tuple.data = new_data;
+            capacity = new_capacity;
+        }
+
+        tuple.data[tuple.size++] = (int)val;
+        ptr = endptr;
+    }
+
+    if (tuple.size == 0) {
+        free_tuple(&tuple);
+    } else {
+        int *exact_data = (int *)realloc(tuple.data, tuple.size * sizeof(int));
+        if (exact_data != NULL) {
+            tuple.data = exact_data;
+        }
+    }
+
+    return tuple;
+}
+
+int main(void) {
+    const char *input_string = "42 -17 256 0 99";
+    IntTuple result_tuple = parse_string_to_tuple(input_string);
+
+    if (result_tuple.data != NULL) {
+        for (size_t i = 0; i < result_tuple.size; ++i) {
+            printf("%d\n", result_tuple.data[i]);
+        }
+        free_tuple(&result_tuple);
+    } else {
+        printf("Failed to parse string or string was empty.\n");
+    }
+
+    return 0;
+}
+```

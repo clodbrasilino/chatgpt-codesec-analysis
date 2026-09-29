@@ -1,0 +1,31 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+unsigned long long sum_of_squares_of_first_n_even(int n) {
+    if (n <= 0) {
+        return 0;
+    }
+    unsigned long long sum = 0;
+    for (int i = 1; i <= n; i++) {
+        unsigned long long even = 2ULL * i;
+        sum += even * even;
+    }
+    return sum;
+}
+
+int main(void) {
+    int n;
+    printf("Enter n: ");
+    if (scanf("%d", &n) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    if (n < 0) {
+        fprintf(stderr, "n must be non-negative\n");
+        return EXIT_FAILURE;
+    }
+    printf("%llu\n", sum_of_squares_of_first_n_even(n));
+    return EXIT_SUCCESS;
+}
+```

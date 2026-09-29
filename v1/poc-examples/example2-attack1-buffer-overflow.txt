@@ -1,0 +1,13 @@
+--- Target
+(venv) clodbrasilino@clod-note chatgpt % ./example2
+Server is listening on port 9000
+Client connected from 127.0.0.1:50095
+Received request, tag=27, length=23347, value=~
+
+zsh: illegal hardware instruction  ./example2
+(venv) clodbrasilino@clod-note chatgpt %
+
+--- Attacker
+(venv) clodbrasilino@clod-note chatgpt % nc localhost 9000 
+^[[3~
+(venv) clodbrasilino@clod-note chatgpt % 

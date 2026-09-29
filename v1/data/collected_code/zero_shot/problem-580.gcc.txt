@@ -1,0 +1,159 @@
+collected_code/problem-580-0.c: In function 'extractEvenElements':
+collected_code/problem-580-0.c:12:5: warning: stack-based buffer over-read [CWE-126] [-Wanalyzer-out-of-bounds]
+   12 |     extractEvenElements(*((void **)innerTuple));
+      |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  'main': events 1-3
+    |
+    |   22 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |   23 |   int num1 = 1;
+    |      |       ~~~~
+    |      |       |
+    |      |       (2) capacity: 4 bytes
+    |......
+    |   34 |   extractEvenElements(tuple);
+    |      |   ~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |   |
+    |      |   (3) calling 'extractEvenElements' from 'main'
+    |
+    +--> 'extractEvenElements': events 4-6
+           |
+           |    3 | void extractEvenElements(void *tuple) {
+           |      |      ^~~~~~~~~~~~~~~~~~~
+           |      |      |
+           |      |      (4) entry to 'extractEvenElements'
+           |    4 |   if (tuple == NULL)
+           |      |      ~
+           |      |      |
+           |      |      (5) following 'false' branch (when 'tuple' is non-NULL)...
+           |......
+           |    9 |   innerTuple = *(void **)tuple;
+           |      |   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |              |
+           |      |              (6) ...to here
+           |
+         'extractEvenElements': events 7-9
+           |
+           |   11 |   while (innerTuple != NULL) {
+           |      |                     ^
+           |      |                     |
+           |      |                     (7) following 'true' branch (when 'innerTuple' is non-NULL)...
+           |   12 |     extractEvenElements(*((void **)innerTuple));
+           |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |     |
+           |      |     (8) ...to here
+           |      |     (9) out-of-bounds read from byte 4 till byte 7 but 'num1' ends at byte 4
+           |
+collected_code/problem-580-0.c:12:5: note: read of 4 bytes from after the end of 'num1'
+   12 |     extractEvenElements(*((void **)innerTuple));
+      |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+collected_code/problem-580-0.c:14:12: warning: stack-based buffer over-read [CWE-126] [-Wanalyzer-out-of-bounds]
+   14 |     number = *(int **)(innerTuple + sizeof(void *));
+      |     ~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  'main': events 1-3
+    |
+    |   22 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |   23 |   int num1 = 1;
+    |      |       ~~~~
+    |      |       |
+    |      |       (2) capacity: 4 bytes
+    |......
+    |   34 |   extractEvenElements(tuple);
+    |      |   ~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |   |
+    |      |   (3) calling 'extractEvenElements' from 'main'
+    |
+    +--> 'extractEvenElements': events 4-6
+           |
+           |    3 | void extractEvenElements(void *tuple) {
+           |      |      ^~~~~~~~~~~~~~~~~~~
+           |      |      |
+           |      |      (4) entry to 'extractEvenElements'
+           |    4 |   if (tuple == NULL)
+           |      |      ~
+           |      |      |
+           |      |      (5) following 'false' branch (when 'tuple' is non-NULL)...
+           |......
+           |    9 |   innerTuple = *(void **)tuple;
+           |      |   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |              |
+           |      |              (6) ...to here
+           |
+         'extractEvenElements': events 7-9
+           |
+           |   11 |   while (innerTuple != NULL) {
+           |      |                     ^
+           |      |                     |
+           |      |                     (7) following 'true' branch (when 'innerTuple' is non-NULL)...
+           |   12 |     extractEvenElements(*((void **)innerTuple));
+           |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |     |
+           |      |     (8) ...to here
+           |   13 | 
+           |   14 |     number = *(int **)(innerTuple + sizeof(void *));
+           |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |            |
+           |      |            (9) out-of-bounds read from byte 8 till byte 15 but 'num1' ends at byte 4
+           |
+collected_code/problem-580-0.c:14:12: note: read of 8 bytes from after the end of 'num1'
+   14 |     number = *(int **)(innerTuple + sizeof(void *));
+      |     ~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+collected_code/problem-580-0.c:18:16: warning: stack-based buffer over-read [CWE-126] [-Wanalyzer-out-of-bounds]
+   18 |     innerTuple = *(void **)(innerTuple + sizeof(void *) + sizeof(int *));
+      |     ~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  'main': events 1-3
+    |
+    |   22 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |   23 |   int num1 = 1;
+    |      |       ~~~~
+    |      |       |
+    |      |       (2) capacity: 4 bytes
+    |......
+    |   34 |   extractEvenElements(tuple);
+    |      |   ~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |   |
+    |      |   (3) calling 'extractEvenElements' from 'main'
+    |
+    +--> 'extractEvenElements': events 4-6
+           |
+           |    3 | void extractEvenElements(void *tuple) {
+           |      |      ^~~~~~~~~~~~~~~~~~~
+           |      |      |
+           |      |      (4) entry to 'extractEvenElements'
+           |    4 |   if (tuple == NULL)
+           |      |      ~
+           |      |      |
+           |      |      (5) following 'false' branch (when 'tuple' is non-NULL)...
+           |......
+           |    9 |   innerTuple = *(void **)tuple;
+           |      |   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |              |
+           |      |              (6) ...to here
+           |
+         'extractEvenElements': events 7-9
+           |
+           |   11 |   while (innerTuple != NULL) {
+           |      |                     ^
+           |      |                     |
+           |      |                     (7) following 'true' branch (when 'innerTuple' is non-NULL)...
+           |   12 |     extractEvenElements(*((void **)innerTuple));
+           |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |     |
+           |      |     (8) ...to here
+           |......
+           |   18 |     innerTuple = *(void **)(innerTuple + sizeof(void *) + sizeof(int *));
+           |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                |
+           |      |                (9) out-of-bounds read from byte 16 till byte 23 but 'num1' ends at byte 4
+           |
+collected_code/problem-580-0.c:18:16: note: read of 8 bytes from after the end of 'num1'
+   18 |     innerTuple = *(void **)(innerTuple + sizeof(void *) + sizeof(int *));
+      |     ~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

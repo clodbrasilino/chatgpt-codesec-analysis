@@ -1,0 +1,25 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stddef.h>
+#include <limits.h>
+
+int minSumOfAbsoluteDifferences(const int *arr1, const int *arr2, size_t n) {
+    int sum = 0;
+    for (size_t i = 0; i < n; ++i) {
+        sum += abs(arr1[i] - arr2[i]);
+    }
+    return sum;
+}
+
+int main() {
+    int arr1[] = {1, 2, 3, 4};
+    const int arr2[] = {4, 3, 2, 1};
+    size_t n = sizeof(arr1) / sizeof(arr1[0]);
+
+    int result = minSumOfAbsoluteDifferences(arr1, arr2, n);
+    printf("Minimum sum of absolute differences: %d\n", result);
+
+    return 0;
+}
+```

@@ -1,0 +1,6 @@
+collected_code/problem-740-0.c:9:25: error: Cannot determine that 'tuple[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        dictionary[tuple[i]] = tuple[i + 1];
+                        ^
+collected_code/problem-740-0.c:9:37: error: Cannot determine that 'tuple[i+1]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        dictionary[tuple[i]] = tuple[i + 1];
+                                    ^

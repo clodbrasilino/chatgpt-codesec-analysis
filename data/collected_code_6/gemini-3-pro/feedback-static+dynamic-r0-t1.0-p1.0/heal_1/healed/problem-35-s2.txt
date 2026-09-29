@@ -1,0 +1,34 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+unsigned long long get_rectangular_number(unsigned int n);
+
+unsigned long long get_rectangular_number(unsigned int n) {
+    return (unsigned long long)n * (n + 1U);
+}
+
+int main(int argc, const char * const argv[]) {
+    unsigned int n;
+    unsigned long long result;
+    char *endptr;
+
+    if (argc != 2) {
+        fprintf(stderr, "Usage: %s <n>\n", argv[0]);
+        return EXIT_FAILURE;
+    }
+
+    n = (unsigned int)strtoul(argv[1], &endptr, 10);
+
+    if (*endptr != '\0') {
+        fprintf(stderr, "Invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    result = get_rectangular_number(n);
+
+    printf("%llu\n", result);
+
+    return EXIT_SUCCESS;
+}
+```

@@ -1,0 +1,94 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+double max_average_path(int **matrix, int n) {
+    if (!matrix || n <= 0) {
+        return 0.0;
+    }
+
+    long long **dp = (long long **)malloc(n * sizeof(long long *));
+    if (!dp) {
+        return 0.0;
+    }
+
+    for (int i = 0; i < n; i++) {
+        dp[i] = (long long *)malloc(n * sizeof(long long));
+        if (!dp[i]) {
+            for (int j = 0; j < i; j++) {
+                free(dp[j]);
+            }
+            free(dp);
+            return 0.0;
+        }
+    }
+
+    dp[0][0] = matrix[0][0];
+
+    for (int i = 1; i < n; i++) {
+        dp[i][0] = dp[i - 1][0] + matrix[i][0];
+    }
+
+    for (int j = 1; j < n; j++) {
+        dp[0][j] = dp[0][j - 1] + matrix[0][j];
+    }
+
+    for (int i = 1; i < n; i++) {
+        for (int j = 1; j < n; j++) {
+            long long from_top = dp[i - 1][j];
+            long long from_left = dp[i][j - 1];
+            long long max_prev = (from_top > from_left) ? from_top : from_left;
+            dp[i][j] = max_prev + matrix[i][j];
+        }
+    }
+
+    double max_avg = (double)dp[n - 1][n - 1] / (2.0 * n - 1.0);
+
+    for (int i = 0; i < n; i++) {
+        free(dp[i]);
+    }
+    free(dp);
+
+    return max_avg;
+}
+
+int main(void) {
+    int n = 3;
+    
+    int **matrix = (int **)malloc(n * sizeof(int *));
+    if (!matrix) {
+        return 1;
+    }
+
+    for (int i = 0; i < n; i++) {
+        matrix[i] = (int *)malloc(n * sizeof(int));
+        if (!matrix[i]) {
+            for (int j = 0; j < i; j++) {
+                free(matrix[j]);
+            }
+            free(matrix);
+            return 1;
+        }
+    }
+
+    int sample_data[3][3] = {
+        {1, 2, 3},
+        {4, 5, 6},
+        {7, 8, 9}
+    };
+
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            matrix[i][j] = sample_data[i][j];
+        }
+    }
+
+    double result = max_average_path(matrix, n);
+    printf("%f\n", result);
+
+    for (int i = 0; i < n; i++) {
+        free(matrix[i]);
+    }
+    free(matrix);
+
+    return 0;
+}

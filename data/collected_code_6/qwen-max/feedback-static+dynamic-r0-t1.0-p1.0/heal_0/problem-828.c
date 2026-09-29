@@ -1,0 +1,28 @@
+#include <stdio.h>
+#include <ctype.h>
+
+void count_chars(const char *str, int *alphabets, int *digits, int *specials) {
+    *alphabets = 0;
+    *digits = 0;
+    *specials = 0;
+
+    while (*str) {
+        if (isalpha((unsigned char)*str)) (*alphabets)++;
+        else if (isdigit((unsigned char)*str)) (*digits)++;
+        else (*specials)++;
+        str++;
+    }
+}
+
+int main() {
+    const char *input = "Hello, World! 123";
+    int alphabets, digits, specials;
+
+    count_chars(input, &alphabets, &digits, &specials);
+
+    printf("Alphabets: %d\n", alphabets);
+    printf("Digits: %d\n", digits);
+    printf("Special characters: %d\n", specials);
+
+    return 0;
+}

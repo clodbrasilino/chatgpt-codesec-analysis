@@ -1,0 +1,44 @@
+{
+  "task_id": 20,
+  "text": "Write a C function to check if the given number is woodball or not.",
+  "fn_candidates": [
+    "is_woodall",
+    "IsWoodall",
+    "isWoodall",
+    "iswoodall"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "is_woodall",
+      "args": [
+        383
+      ],
+      "expected": true,
+      "assert_src": "assert is_woodall(383) == True"
+    },
+    {
+      "fn_name": "is_woodall",
+      "args": [
+        254
+      ],
+      "expected": false,
+      "assert_src": "assert is_woodall(254) == False"
+    },
+    {
+      "fn_name": "is_woodall",
+      "args": [
+        200
+      ],
+      "expected": false,
+      "assert_src": "assert is_woodall(200) == False"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "bool",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

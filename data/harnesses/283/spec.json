@@ -1,0 +1,44 @@
+{
+  "task_id": 283,
+  "text": "Write a C function to check whether the frequency of each digit is less than or equal to the digit itself.",
+  "fn_candidates": [
+    "validate",
+    "Validate",
+    "validate",
+    "validate"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "validate",
+      "args": [
+        1234
+      ],
+      "expected": true,
+      "assert_src": "assert validate(1234) == True"
+    },
+    {
+      "fn_name": "validate",
+      "args": [
+        51241
+      ],
+      "expected": false,
+      "assert_src": "assert validate(51241) == False"
+    },
+    {
+      "fn_name": "validate",
+      "args": [
+        321
+      ],
+      "expected": true,
+      "assert_src": "assert validate(321) == True"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "bool",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

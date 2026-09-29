@@ -1,0 +1,24 @@
+#include <stdio.h>
+
+float DivisionOperation(float x, float y) {
+    if(y == 0) {
+        printf("Error: Division by zero is not allowed.\n");
+        return -1.0;
+    }
+    return (x / y);
+}
+
+int main() {
+    float x, y;
+    printf("Enter two numbers for division operation:\n");
+    if(scanf("%f %f", &x, &y) != 2) {
+        printf("Error: Invalid input.\n");
+        return 1;
+    }
+
+    float result = DivisionOperation(x, y);
+    if(result != -1.0) {
+        printf("The division result is: %.2f\n", result);
+    }
+    return 0;
+}

@@ -1,0 +1,113 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+#define MAX_STRING_LENGTH 4096
+
+static size_t bounded_strlen(const char *s, size_t max_length)
+{
+    size_t length = 0;
+
+    while (length < max_length && s[length] != '\0') {
+        length++;
+    }
+
+    return length;
+}
+
+char *concatenate_strings(const char *const *list, size_t count)
+{
+    size_t total_length = 0;
+    size_t offset = 0;
+    size_t capacity = 0;
+    size_t i;
+    char *result = NULL;
+    size_t *lengths = NULL;
+
+    if (list == NULL) {
+        return NULL;
+    }
+
+    if (count > 0) {
+        lengths = calloc(count, sizeof(*lengths));
+        if (lengths == NULL) {
+            return NULL;
+        }
+    }
+
+    for (i = 0; i < count; i++) {
+        if (list[i] == NULL) {
+            free(lengths);
+            return NULL;
+        }
+
+        lengths[i] = bounded_strlen(list[i], MAX_STRING_LENGTH);
+        if (lengths[i] == MAX_STRING_LENGTH) {
+            free(lengths);
+            return NULL;
+        }
+
+        if (lengths[i] > SIZE_MAX - total_length - 1) {
+            free(lengths);
+            return NULL;
+        }
+        total_length += lengths[i];
+    }
+
+    capacity = total_length + 1;
+
+    result = malloc(capacity);
+    if (result == NULL) {
+        free(lengths);
+        return NULL;
+    }
+
+    for (i = 0; i < count; i++) {
+        size_t remaining;
+
+        if (offset >= capacity) {
+            free(result);
+            free(lengths);
+            return NULL;
+        }
+
+        remaining = capacity - offset;
+
+        if (lengths[i] >= remaining) {
+            free(result);
+            free(lengths);
+            return NULL;
+        }
+
+        /* Possible weaknesses found:
+         * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+         */
+        memcpy(result + offset, list[i], lengths[i]);
+        offset += lengths[i];
+    }
+
+    result[offset] = '\0';
+
+    free(lengths);
+    return result;
+}
+
+int main(void)
+{
+    const char *list[] = {"Hello", ", ", "world", "!"};
+    size_t count = sizeof(list) / sizeof(list[0]);
+    char *result = concatenate_strings(list, count);
+
+    if (result == NULL) {
+        fprintf(stderr, "Error: failed to concatenate strings\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("%s\n", result);
+
+    free(result);
+    result = NULL;
+
+    return EXIT_SUCCESS;
+}

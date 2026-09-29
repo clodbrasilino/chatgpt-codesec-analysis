@@ -1,0 +1,111 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node* next;
+} Node;
+
+Node* createNode(int data) {
+    Node* newNode = (Node*)malloc(sizeof(Node));
+    if (!newNode) {
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(EXIT_FAILURE);
+    }
+    newNode->data = data;
+    newNode->next = NULL;
+    return newNode;
+}
+
+void append(Node** head, int data) {
+    if (!head) return;
+    Node* newNode = createNode(data);
+    if (!*head) {
+        *head = newNode;
+        return;
+    }
+    Node* temp = *head;
+    while (temp->next) {
+        temp = temp->next;
+    }
+    temp->next = newNode;
+}
+
+void freeList(Node* head) {
+    while (head) {
+        Node* temp = head;
+        head = head->next;
+        free(temp);
+    }
+}
+
+Node* divideLists(const Node* list1, const Node* list2) {
+    if (!list1 || !list2) {
+        return NULL;
+    }
+
+    Node* head = NULL;
+    Node* tail = NULL;
+
+    const Node* curr1 = list1;
+    const Node* curr2 = list2;
+
+    while (curr1 && curr2) {
+        if (curr2->data == 0) {
+            fprintf(stderr, "Division by zero encountered\n");
+            freeList(head);
+            return NULL;
+        }
+
+        int resultData = curr1->data / curr2->data;
+        Node* newNode = createNode(resultData);
+
+        if (!head) {
+            head = newNode;
+            tail = newNode;
+        } else {
+            tail->next = newNode;
+            tail = newNode;
+        }
+
+        curr1 = curr1->next;
+        curr2 = curr2->next;
+    }
+
+    return head;
+}
+
+void printList(const Node* head) {
+    const Node* temp = head;
+    while (temp) {
+        printf("%d ", temp->data);
+        temp = temp->next;
+    }
+    printf("\n");
+}
+
+int main(void) {
+    Node* list1 = NULL;
+    Node* list2 = NULL;
+    Node* result = NULL;
+
+    append(&list1, 10);
+    append(&list1, 20);
+    append(&list1, 30);
+
+    append(&list2, 2);
+    append(&list2, 5);
+    append(&list2, 3);
+
+    result = divideLists(list1, list2);
+
+    if (result) {
+        printList(result);
+    }
+
+    freeList(list1);
+    freeList(list2);
+    freeList(result);
+
+    return 0;
+}

@@ -1,0 +1,102 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+int search_literals(const char *text, const char **literals, size_t num_literals) {
+    if (text == NULL || literals == NULL || num_literals == 0) {
+        return -1;
+    }
+
+    size_t pattern_len = 0;
+    for (size_t i = 0; i < num_literals; i++) {
+        if (literals[i] != NULL) {
+            /* Possible weaknesses found:
+             * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+             */
+            pattern_len += strlen(literals[i]) + 1;
+        }
+    }
+
+    if (pattern_len == 0) {
+        return -1;
+    }
+
+    pattern_len += num_literals * 2; 
+
+    char *pattern = (char *)malloc(pattern_len + 1);
+    if (pattern == NULL) {
+        return -1;
+    }
+
+    pattern[0] = '\0';
+    int is_first = 1;
+    for (size_t i = 0; i < num_literals; i++) {
+        /* Possible weaknesses found:
+         * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+         */
+        if (literals[i] != NULL && strlen(literals[i]) > 0) {
+            if (!is_first) {
+                /* Possible weaknesses found:
+                 * Flawfinder strcat: Does not check for buffer overflows when concatenating to destination [MS-banned] (CWE-120). Consider using strcat_s, strncat, strlcat, or snprintf (warning: strncat is easily misused). Risk is low because the source is a constant character. (risk 1, buffer)
+                 */
+                strcat(pattern, "|");
+            }
+            /* Possible weaknesses found:
+             * Flawfinder strcat: Does not check for buffer overflows when concatenating to destination [MS-banned] (CWE-120). Consider using strcat_s, strncat, strlcat, or snprintf (warning: strncat is easily misused). Risk is low because the source is a constant character. (risk 1, buffer)
+             */
+            strcat(pattern, "(");
+            /* Possible weaknesses found:
+             * Flawfinder strcat: Does not check for buffer overflows when concatenating to destination [MS-banned] (CWE-120). Consider using strcat_s, strncat, strlcat, or snprintf (warning: strncat is easily misused). (risk 4, buffer)
+             */
+            strcat(pattern, literals[i]);
+            /* Possible weaknesses found:
+             * Flawfinder strcat: Does not check for buffer overflows when concatenating to destination [MS-banned] (CWE-120). Consider using strcat_s, strncat, strlcat, or snprintf (warning: strncat is easily misused). Risk is low because the source is a constant character. (risk 1, buffer)
+             */
+            strcat(pattern, ")");
+            is_first = 0;
+        }
+    }
+
+    if (is_first) {
+        free(pattern);
+        return -1;
+    }
+
+    regex_t regex;
+    int ret = regcomp(&regex, pattern, REG_EXTENDED);
+    free(pattern);
+
+    if (ret != 0) {
+        return -1;
+    }
+
+    ret = regexec(&regex, text, 0, NULL, 0);
+    regfree(&regex);
+
+    if (!ret) {
+        return 1;
+    } else if (ret == REG_NOMATCH) {
+        return 0;
+    } else {
+        return -1;
+    }
+}
+
+int main(void) {
+    const char *text = "The quick brown fox jumps over the lazy dog.";
+    const char *literals[] = {"fox", "cat", "dog"};
+    size_t num_literals = sizeof(literals) / sizeof(literals[0]);
+
+    int result = search_literals(text, literals, num_literals);
+
+    if (result == 1) {
+        printf("Match found.\n");
+    } else if (result == 0) {
+        printf("No match found.\n");
+    } else {
+        printf("An error occurred.\n");
+    }
+
+    return 0;
+}

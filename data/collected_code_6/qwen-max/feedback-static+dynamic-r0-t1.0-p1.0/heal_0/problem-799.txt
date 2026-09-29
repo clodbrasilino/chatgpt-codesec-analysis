@@ -1,0 +1,19 @@
+```c
+#include <stdio.h>
+#include <stdint.h>
+
+uint32_t left_rotate_bits(uint32_t value, int num_bits) {
+    return (value << num_bits) | (value >> (32 - num_bits));
+}
+
+int main() {
+    uint32_t number = 0x12345678;
+    int bits_to_rotate = 5;
+
+    uint32_t result = left_rotate_bits(number, bits_to_rotate);
+
+    printf("Left rotated: %08x\n", result);
+
+    return 0;
+}
+```

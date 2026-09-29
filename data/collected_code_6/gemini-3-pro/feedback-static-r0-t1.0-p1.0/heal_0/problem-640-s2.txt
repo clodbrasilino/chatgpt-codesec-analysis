@@ -1,0 +1,54 @@
+```c
+#include <stdio.h>
+#include <string.h>
+
+void remove_parenthesis_area(char *str) {
+    if (str == NULL) {
+        return;
+    }
+
+    int depth = 0;
+    char *read_ptr = str;
+    char *write_ptr = str;
+
+    while (*read_ptr != '\0') {
+        if (*read_ptr == '(') {
+            depth++;
+        } else if (*read_ptr == ')') {
+            if (depth > 0) {
+                depth--;
+            }
+        } else {
+            if (depth == 0) {
+                *write_ptr = *read_ptr;
+                write_ptr++;
+            }
+        }
+        read_ptr++;
+    }
+    *write_ptr = '\0';
+}
+
+int main(void) {
+    char test_str1[] = "Hello (world) this is a (test) string.";
+    char test_str2[] = "No parenthesis here.";
+    char test_str3[] = "Unmatched (parenthesis (test) string";
+    char test_str4[] = "Nested ((remove) this) area.";
+
+    remove_parenthesis_area(test_str1);
+    printf("%s\n", test_str1);
+
+    remove_parenthesis_area(test_str2);
+    printf("%s\n", test_str2);
+
+    remove_parenthesis_area(test_str3);
+    printf("%s\n", test_str3);
+
+    remove_parenthesis_area(test_str4);
+    printf("%s\n", test_str4);
+
+    remove_parenthesis_area(NULL);
+
+    return 0;
+}
+```

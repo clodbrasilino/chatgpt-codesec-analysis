@@ -1,0 +1,343 @@
+collected_code/problem-620-0.c: In function 'largestDivisibleSubset':
+collected_code/problem-620-0.c:10:23: warning: implicit declaration of function 'malloc' [-Wimplicit-function-declaration]
+   10 |     int *subsetSize = malloc(sizeof(int)*n);
+      |                       ^~~~~~
+collected_code/problem-620-0.c:2:1: note: include '<stdlib.h>' or provide a declaration of 'malloc'
+    1 | #include<stdio.h>
+  +++ |+#include <stdlib.h>
+    2 | 
+collected_code/problem-620-0.c:10:23: warning: incompatible implicit declaration of built-in function 'malloc' [-Wbuiltin-declaration-mismatch]
+   10 |     int *subsetSize = malloc(sizeof(int)*n);
+      |                       ^~~~~~
+collected_code/problem-620-0.c:10:23: note: include '<stdlib.h>' or provide a declaration of 'malloc'
+collected_code/problem-620-0.c:52:5: warning: implicit declaration of function 'free' [-Wimplicit-function-declaration]
+   52 |     free(subsetSize);
+      |     ^~~~
+collected_code/problem-620-0.c:52:5: note: include '<stdlib.h>' or provide a declaration of 'free'
+collected_code/problem-620-0.c:52:5: warning: incompatible implicit declaration of built-in function 'free' [-Wbuiltin-declaration-mismatch]
+collected_code/problem-620-0.c:52:5: note: include '<stdlib.h>' or provide a declaration of 'free'
+collected_code/problem-620-0.c:15:23: warning: dereference of possibly-NULL 'subsetSize' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   15 |         subsetSize[i] = 1;
+      |         ~~~~~~~~~~~~~~^~~
+  'largestDivisibleSubset': events 1-6
+    |
+    |    5 |     if (n == 0)
+    |      |        ^
+    |      |        |
+    |      |        (1) following 'false' branch (when 'n != 0')...
+    |......
+    |    8 |     int count = 1, maxSubsetSize = 1;
+    |      |         ~~~~~
+    |      |         |
+    |      |         (2) ...to here
+    |    9 |     int lastElementIndex = 0;
+    |   10 |     int *subsetSize = malloc(sizeof(int)*n);
+    |      |                       ~~~~~~~~~~~~~~~~~~~~~
+    |      |                       |
+    |      |                       (3) this call could return NULL
+    |......
+    |   13 |     for (int i = 0; i < n; i++)
+    |      |                     ~~~~~
+    |      |                       |
+    |      |                       (4) following 'true' branch (when 'i < n')...
+    |   14 |     {
+    |   15 |         subsetSize[i] = 1;
+    |      |         ~~~~~~~~~~~~~~~~~
+    |      |                   |   |
+    |      |                   |   (6) 'subsetSize + (long unsigned int)i * 4' could be NULL: unchecked value from (3)
+    |      |                   (5) ...to here
+    |
+collected_code/problem-620-0.c:16:26: warning: dereference of possibly-NULL 'previousIndex' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   16 |         previousIndex[i] = -1;
+      |         ~~~~~~~~~~~~~~~~~^~~~
+  'largestDivisibleSubset': events 1-6
+    |
+    |    5 |     if (n == 0)
+    |      |        ^
+    |      |        |
+    |      |        (1) following 'false' branch (when 'n != 0')...
+    |......
+    |    8 |     int count = 1, maxSubsetSize = 1;
+    |      |         ~~~~~
+    |      |         |
+    |      |         (2) ...to here
+    |......
+    |   11 |     int *previousIndex = malloc(sizeof(int)*n);
+    |      |                          ~~~~~~~~~~~~~~~~~~~~~
+    |      |                          |
+    |      |                          (3) this call could return NULL
+    |   12 | 
+    |   13 |     for (int i = 0; i < n; i++)
+    |      |                     ~~~~~
+    |      |                       |
+    |      |                       (4) following 'true' branch (when 'i < n')...
+    |   14 |     {
+    |   15 |         subsetSize[i] = 1;
+    |      |                   ~
+    |      |                   |
+    |      |                   (5) ...to here
+    |   16 |         previousIndex[i] = -1;
+    |      |         ~~~~~~~~~~~~~~~~~~~~~
+    |      |                          |
+    |      |                          (6) 'previousIndex + (long unsigned int)i * 4' could be NULL: unchecked value from (3)
+    |
+collected_code/problem-620-0.c:42:19: warning: dereference of possibly-NULL 'subset' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   42 |         subset[i] = arr[currentIndex];
+      |         ~~~~~~~~~~^~~~~~~~~~~~~~~~~~~
+  'largestDivisibleSubset': events 1-10
+    |
+    |    5 |     if (n == 0)
+    |      |        ^
+    |      |        |
+    |      |        (1) following 'false' branch (when 'n != 0')...
+    |......
+    |    8 |     int count = 1, maxSubsetSize = 1;
+    |      |         ~~~~~
+    |      |         |
+    |      |         (2) ...to here
+    |......
+    |   13 |     for (int i = 0; i < n; i++)
+    |      |                     ~~~~~
+    |      |                       |
+    |      |                       (3) following 'false' branch (when 'i >= n')...
+    |......
+    |   19 |     for (int i = 1; i < n; i++)
+    |      |              ~      ~~~~~
+    |      |              |        |
+    |      |              |        (5) following 'false' branch (when 'i >= n')...
+    |      |              (4) ...to here
+    |......
+    |   37 |     int *subset = malloc(sizeof(int)*maxSubsetSize);
+    |      |                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                   |
+    |      |                   (6) ...to here
+    |      |                   (7) this call could return NULL
+    |......
+    |   40 |     for (int i = maxSubsetSize - 1; i >= 0; i--)
+    |      |                                     ~~~~~~
+    |      |                                       |
+    |      |                                       (8) following 'true' branch (when 'i >= 0')...
+    |   41 |     {
+    |   42 |         subset[i] = arr[currentIndex];
+    |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                   |    |
+    |      |                   |    (9) ...to here
+    |      |                   (10) 'subset + (long unsigned int)i * 4' could be NULL: unchecked value from (7)
+    |
+collected_code/problem-620-0.c:43:22: warning: use of uninitialized value '*previousIndex_89 + _56' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   43 |         currentIndex = previousIndex[currentIndex];
+      |         ~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  'largestDivisibleSubset': events 1-10
+    |
+    |    5 |     if (n == 0)
+    |      |        ^
+    |      |        |
+    |      |        (1) following 'false' branch (when 'n != 0')...
+    |......
+    |    8 |     int count = 1, maxSubsetSize = 1;
+    |      |         ~~~~~
+    |      |         |
+    |      |         (2) ...to here
+    |......
+    |   11 |     int *previousIndex = malloc(sizeof(int)*n);
+    |      |                          ~~~~~~~~~~~~~~~~~~~~~
+    |      |                          |
+    |      |                          (3) region created on heap here
+    |   12 | 
+    |   13 |     for (int i = 0; i < n; i++)
+    |      |                     ~~~~~
+    |      |                       |
+    |      |                       (4) following 'false' branch (when 'i >= n')...
+    |......
+    |   19 |     for (int i = 1; i < n; i++)
+    |      |              ~      ~~~~~
+    |      |              |        |
+    |      |              |        (6) following 'false' branch (when 'i >= n')...
+    |      |              (5) ...to here
+    |......
+    |   37 |     int *subset = malloc(sizeof(int)*maxSubsetSize);
+    |      |                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                   |
+    |      |                   (7) ...to here
+    |......
+    |   40 |     for (int i = maxSubsetSize - 1; i >= 0; i--)
+    |      |                                     ~~~~~~
+    |      |                                       |
+    |      |                                       (8) following 'true' branch (when 'i >= 0')...
+    |   41 |     {
+    |   42 |         subset[i] = arr[currentIndex];
+    |      |                        ~
+    |      |                        |
+    |      |                        (9) ...to here
+    |   43 |         currentIndex = previousIndex[currentIndex];
+    |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                      |
+    |      |                      (10) use of uninitialized value '*previousIndex_89 + _56' here
+    |
+collected_code/problem-620-0.c:43:22: warning: dereference of possibly-NULL 'previousIndex' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   43 |         currentIndex = previousIndex[currentIndex];
+      |         ~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  'largestDivisibleSubset': events 1-10
+    |
+    |    5 |     if (n == 0)
+    |      |        ^
+    |      |        |
+    |      |        (1) following 'false' branch (when 'n != 0')...
+    |......
+    |    8 |     int count = 1, maxSubsetSize = 1;
+    |      |         ~~~~~
+    |      |         |
+    |      |         (2) ...to here
+    |......
+    |   11 |     int *previousIndex = malloc(sizeof(int)*n);
+    |      |                          ~~~~~~~~~~~~~~~~~~~~~
+    |      |                          |
+    |      |                          (3) this call could return NULL
+    |   12 | 
+    |   13 |     for (int i = 0; i < n; i++)
+    |      |                     ~~~~~
+    |      |                       |
+    |      |                       (4) following 'false' branch (when 'i >= n')...
+    |......
+    |   19 |     for (int i = 1; i < n; i++)
+    |      |              ~      ~~~~~
+    |      |              |        |
+    |      |              |        (6) following 'false' branch (when 'i >= n')...
+    |      |              (5) ...to here
+    |......
+    |   37 |     int *subset = malloc(sizeof(int)*maxSubsetSize);
+    |      |                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                   |
+    |      |                   (7) ...to here
+    |......
+    |   40 |     for (int i = maxSubsetSize - 1; i >= 0; i--)
+    |      |                                     ~~~~~~
+    |      |                                       |
+    |      |                                       (8) following 'true' branch (when 'i >= 0')...
+    |   41 |     {
+    |   42 |         subset[i] = arr[currentIndex];
+    |      |                        ~
+    |      |                        |
+    |      |                        (9) ...to here
+    |   43 |         currentIndex = previousIndex[currentIndex];
+    |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                      |
+    |      |                      (10) 'previousIndex + (long unsigned int)currentIndex * 4' could be NULL: unchecked value from (3)
+    |
+collected_code/problem-620-0.c:49:9: warning: use of uninitialized value '*subset_93 + _59' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   49 |         printf("%d ", subset[i]);
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~
+  'largestDivisibleSubset': events 1-14
+    |
+    |    5 |     if (n == 0)
+    |      |        ^
+    |      |        |
+    |      |        (1) following 'false' branch (when 'n != 0')...
+    |......
+    |    8 |     int count = 1, maxSubsetSize = 1;
+    |      |         ~~~~~
+    |      |         |
+    |      |         (2) ...to here
+    |......
+    |   13 |     for (int i = 0; i < n; i++)
+    |      |                     ~~~~~
+    |      |                       |
+    |      |                       (3) following 'true' branch (when 'i < n')...
+    |      |                       (5) following 'false' branch (when 'i >= n')...
+    |   14 |     {
+    |   15 |         subsetSize[i] = 1;
+    |      |                   ~
+    |      |                   |
+    |      |                   (4) ...to here
+    |......
+    |   19 |     for (int i = 1; i < n; i++)
+    |      |              ~
+    |      |              |
+    |      |              (6) ...to here
+    |   20 |     {
+    |   21 |         for (int j = 0; j < i; j++)
+    |      |                         ~~~~~
+    |      |                           |
+    |      |                           (7) following 'true' branch (when 'j < i')...
+    |   22 |         {
+    |   23 |             if (arr[i] % arr[j] == 0 && subsetSize[i] < subsetSize[j] + 1)
+    |      |                    ~
+    |      |                    |
+    |      |                    (8) ...to here
+    |......
+    |   37 |     int *subset = malloc(sizeof(int)*maxSubsetSize);
+    |      |                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                   |
+    |      |                   (9) region created on heap here
+    |......
+    |   40 |     for (int i = maxSubsetSize - 1; i >= 0; i--)
+    |      |                                     ~~~~~~
+    |      |                                       |
+    |      |                                       (10) following 'false' branch (when 'i < 0')...
+    |......
+    |   46 |     printf("Largest Divisible Subset: ");
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (11) ...to here
+    |   47 |     for (int i = 0; i < maxSubsetSize; i++)
+    |      |                     ~~~~~~~~~~~~~~~~~
+    |      |                       |
+    |      |                       (12) following 'true' branch (when 'i < maxSubsetSize')...
+    |   48 |     {
+    |   49 |         printf("%d ", subset[i]);
+    |      |         ~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |         |                   |
+    |      |         |                   (13) ...to here
+    |      |         (14) use of uninitialized value '*subset_93 + _59' here
+    |
+collected_code/problem-620-0.c:49:9: warning: dereference of possibly-NULL 'subset' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   49 |         printf("%d ", subset[i]);
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~
+  'largestDivisibleSubset': events 1-10
+    |
+    |    5 |     if (n == 0)
+    |      |        ^
+    |      |        |
+    |      |        (1) following 'false' branch (when 'n != 0')...
+    |......
+    |    8 |     int count = 1, maxSubsetSize = 1;
+    |      |         ~~~~~
+    |      |         |
+    |      |         (2) ...to here
+    |......
+    |   13 |     for (int i = 0; i < n; i++)
+    |      |                     ~~~~~
+    |      |                       |
+    |      |                       (3) following 'true' branch (when 'i < n')...
+    |   14 |     {
+    |   15 |         subsetSize[i] = 1;
+    |      |                   ~
+    |      |                   |
+    |      |                   (4) ...to here
+    |......
+    |   37 |     int *subset = malloc(sizeof(int)*maxSubsetSize);
+    |      |                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                   |
+    |      |                   (5) this call could return NULL
+    |......
+    |   40 |     for (int i = maxSubsetSize - 1; i >= 0; i--)
+    |      |                                     ~~~~~~
+    |      |                                       |
+    |      |                                       (6) following 'true' branch (when 'i >= 0')...
+    |   41 |     {
+    |   42 |         subset[i] = arr[currentIndex];
+    |      |                        ~
+    |      |                        |
+    |      |                        (7) ...to here
+    |......
+    |   47 |     for (int i = 0; i < maxSubsetSize; i++)
+    |      |                     ~~~~~~~~~~~~~~~~~
+    |      |                       |
+    |      |                       (8) following 'true' branch (when 'i < maxSubsetSize')...
+    |   48 |     {
+    |   49 |         printf("%d ", subset[i]);
+    |      |         ~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |         |                   |
+    |      |         |                   (9) ...to here
+    |      |         (10) 'subset + (long unsigned int)i * 4' could be NULL: unchecked value from (5)
+    |

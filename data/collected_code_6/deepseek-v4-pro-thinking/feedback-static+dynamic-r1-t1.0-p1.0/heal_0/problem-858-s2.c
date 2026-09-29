@@ -1,0 +1,108 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct ListNode {
+    struct List *list;
+    struct ListNode *next;
+} ListNode;
+
+typedef struct List {
+    ListNode *head;
+} List;
+
+List *list_create(void) {
+    List *list = malloc(sizeof(*list));
+    if (list == NULL) {
+        return NULL;
+    }
+    list->head = NULL;
+    return list;
+}
+
+int list_append(List *list, List *inner) {
+    ListNode *node;
+    ListNode *current;
+
+    if (list == NULL || inner == NULL) {
+        return -1;
+    }
+
+    node = malloc(sizeof(*node));
+    if (node == NULL) {
+        return -1;
+    }
+
+    node->list = inner;
+    node->next = NULL;
+
+    if (list->head == NULL) {
+        list->head = node;
+        return 0;
+    }
+
+    current = list->head;
+    while (current->next != NULL) {
+        current = current->next;
+    }
+    current->next = node;
+    return 0;
+}
+
+void list_free(List *list) {
+    ListNode *current;
+    ListNode *next;
+
+    if (list == NULL) {
+        return;
+    }
+
+    current = list->head;
+    while (current != NULL) {
+        next = current->next;
+        free(current);
+        current = next;
+    }
+    free(list);
+}
+
+int count_lists_squared(const List *list_of_lists) {
+    int count = 0;
+    const ListNode *current;
+
+    if (list_of_lists == NULL) {
+        return 0;
+    }
+
+    current = list_of_lists->head;
+    while (current != NULL) {
+        if (current->list != NULL) {
+            count++;
+        }
+        current = current->next;
+    }
+
+    return count * count;
+}
+
+int main(void) {
+    List inner1 = { NULL };
+    List inner2 = { NULL };
+    List inner3 = { NULL };
+    List *outer = list_create();
+
+    if (outer == NULL) {
+        return 1;
+    }
+
+    if (list_append(outer, &inner1) != 0 ||
+        list_append(outer, &inner2) != 0 ||
+        list_append(outer, &inner3) != 0) {
+        list_free(outer);
+        return 1;
+    }
+
+    printf("%d\n", count_lists_squared(outer));
+
+    list_free(outer);
+    return 0;
+}

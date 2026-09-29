@@ -1,0 +1,8 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_0/problem-512.c: In function 'find_and_increment':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_0/problem-512.c:243:21: error: incompatible types when assigning to type 'union <anonymous>' from type 'union <anonymous>'
+  243 |         temp.data = entries[i].data;
+      |                     ^~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_0/problem-512.c: In function 'flatten_and_count':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_0/problem-512.c:288:43: error: incompatible types when assigning to type 'union <anonymous>' from type 'union <anonymous>'
+  288 |                 (*entries)[*count].data = elem->data;
+      |                                           ^~~~

@@ -1,0 +1,36 @@
+```C
+#include <stdio.h>
+
+#define MAX_LEN 100
+
+int maxSum(int tri[][MAX_LEN], int m) {
+    for (int i=m-1; i>=0; i--) {
+        for (int j=0; j<=i; j++) {
+            if (tri[j][i+1] > tri[j+1][i+1]) {
+                tri[j][i] += tri[j][i+1];
+            } else {
+                tri[j][i] += tri[j+1][i+1];
+            }
+        }
+    }
+    return tri[0][0];
+}
+
+int main () {
+    int triangle[MAX_LEN][MAX_LEN] = {
+        {3, 0, 0, 0},
+        {7, 4, 0, 0},
+        {2, 4, 6, 0},
+        {8, 5, 9, 3}
+    };
+    printf("Max Sum: %d\n", maxSum(triangle, 4));
+    return 0;
+}
+```
+The function `maxSum()` takes a 2D array `tri` and its length `m` as its arguments. It starts from the second row from the bottom and for each element, it checks if the value directly below it is greater than the value below and to the right of it. If it is, it adds the greater value to the current value. This process continues up to the top of the triangle. 
+
+The maximum sum of the path from the top to the bottom is then stored in `tri[0][0]` and is the return value of the function.
+
+The 2D array `triangle` shows how the triangle of numbers is represented in the 2D array. The 0's are placeholders.
+
+The `main()` function is the entry point of the program. It defines a 2D array `triangle` containing the triangle of numbers and then prints the maximum sum obtained from the `maxSum()` function to the console. After that it returns 0 and ends the program.

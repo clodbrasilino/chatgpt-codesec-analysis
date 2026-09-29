@@ -1,0 +1,132 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+#define MAX_INPUT_LEN 99
+
+int min_swaps(const char *str1, const char *str2) {
+    if (str1 == NULL || str2 == NULL) {
+        return -1;
+    }
+    
+    size_t len1 = strnlen(str1, MAX_INPUT_LEN + 1);
+    size_t len2 = strnlen(str2, MAX_INPUT_LEN + 1);
+    
+    if (len1 > MAX_INPUT_LEN || len2 > MAX_INPUT_LEN) {
+        return -1;
+    }
+    
+    if (len1 != len2) {
+        return -1;
+    }
+    
+    int count0_str1 = 0, count1_str1 = 0;
+    int count0_str2 = 0, count1_str2 = 0;
+    
+    for (size_t i = 0; i < len1; i++) {
+        if (str1[i] == '0') {
+            count0_str1++;
+        } else if (str1[i] == '1') {
+            count1_str1++;
+        } else {
+            return -1;
+        }
+        
+        if (str2[i] == '0') {
+            count0_str2++;
+        } else if (str2[i] == '1') {
+            count1_str2++;
+        } else {
+            return -1;
+        }
+    }
+    
+    if (count0_str1 != count0_str2 || count1_str1 != count1_str2) {
+        return -1;
+    }
+    
+    char *str1_copy = malloc(len1 + 1);
+    if (str1_copy == NULL) {
+        return -1;
+    }
+    
+    strncpy(str1_copy, str1, len1);
+    str1_copy[len1] = '\0';
+    
+    int swaps = 0;
+    size_t i = 0, j = 0;
+    
+    while (i < len1 && j < len2) {
+        if (str1_copy[i] == str2[j]) {
+            i++;
+            j++;
+        } else {
+            size_t k = i + 1;
+            while (k < len1 && str1_copy[k] == str1_copy[i]) {
+                k++;
+            }
+            
+            if (k < len1) {
+                swaps++;
+                char temp = str1_copy[i];
+                str1_copy[i] = str1_copy[k];
+                str1_copy[k] = temp;
+            } else {
+                free(str1_copy);
+                return -1;
+            }
+        }
+    }
+    
+    free(str1_copy);
+    return swaps;
+}
+
+int main(void) {
+    char str1[MAX_INPUT_LEN + 1];
+    char str2[MAX_INPUT_LEN + 1];
+    
+    printf("Enter first binary string: ");
+    if (fgets(str1, sizeof(str1), stdin) == NULL) {
+        printf("Invalid input\n");
+        return 1;
+    }
+    
+    size_t len1 = strnlen(str1, sizeof(str1));
+    if (len1 > 0 && str1[len1 - 1] == '\n') {
+        str1[len1 - 1] = '\0';
+    } else if (len1 == sizeof(str1) - 1 && str1[len1 - 1] != '\n') {
+        int c;
+        while ((c = getchar()) != '\n' && c != EOF);
+        printf("Input too long\n");
+        return 1;
+    }
+    
+    printf("Enter second binary string: ");
+    if (fgets(str2, sizeof(str2), stdin) == NULL) {
+        printf("Invalid input\n");
+        return 1;
+    }
+    
+    size_t len2 = strnlen(str2, sizeof(str2));
+    if (len2 > 0 && str2[len2 - 1] == '\n') {
+        str2[len2 - 1] = '\0';
+    } else if (len2 == sizeof(str2) - 1 && str2[len2 - 1] != '\n') {
+        int c;
+        while ((c = getchar()) != '\n' && c != EOF);
+        printf("Input too long\n");
+        return 1;
+    }
+    
+    int result = min_swaps(str1, str2);
+    
+    if (result == -1) {
+        printf("Conversion not possible\n");
+    } else {
+        printf("Minimum swaps required: %d\n", result);
+    }
+    
+    return 0;
+}
+```

@@ -1,0 +1,97 @@
+{
+  "task_id": 232,
+  "text": "Write a C function to get the n largest items from a dataset.",
+  "fn_candidates": [
+    "larg_nnum",
+    "LargNnum",
+    "largNnum",
+    "largnnum"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "larg_nnum",
+      "args": [
+        [
+          10,
+          20,
+          50,
+          70,
+          90,
+          20,
+          50,
+          40,
+          60,
+          80,
+          100
+        ],
+        2
+      ],
+      "expected": [
+        100,
+        90
+      ],
+      "assert_src": "assert larg_nnum([10, 20, 50, 70, 90, 20, 50, 40, 60, 80, 100],2)==[100,90]"
+    },
+    {
+      "fn_name": "larg_nnum",
+      "args": [
+        [
+          10,
+          20,
+          50,
+          70,
+          90,
+          20,
+          50,
+          40,
+          60,
+          80,
+          100
+        ],
+        5
+      ],
+      "expected": [
+        100,
+        90,
+        80,
+        70,
+        60
+      ],
+      "assert_src": "assert larg_nnum([10, 20, 50, 70, 90, 20, 50, 40, 60, 80, 100],5)==[100,90,80,70,60]"
+    },
+    {
+      "fn_name": "larg_nnum",
+      "args": [
+        [
+          10,
+          20,
+          50,
+          70,
+          90,
+          20,
+          50,
+          40,
+          60,
+          80,
+          100
+        ],
+        3
+      ],
+      "expected": [
+        100,
+        90,
+        80
+      ],
+      "assert_src": "assert larg_nnum([10, 20, 50, 70, 90, 20, 50, 40, 60, 80, 100],3)==[100,90,80]"
+    }
+  ],
+  "arg_kinds": [
+    "int",
+    "int-list"
+  ],
+  "return_kind": "int-list",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

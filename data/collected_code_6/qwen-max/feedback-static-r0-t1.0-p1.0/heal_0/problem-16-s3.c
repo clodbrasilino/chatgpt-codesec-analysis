@@ -1,0 +1,41 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+#include <ctype.h>
+
+bool is_lowercase_underscore_sequence(const char *str) {
+    bool underscore_seen = false;
+    while (*str) {
+        if (islower(*str)) {
+            str++;
+            continue;
+        }
+        if (*str == '_') {
+            if (underscore_seen || !*(str + 1) || !islower(*(str + 1))) {
+                return false;
+            }
+            underscore_seen = true;
+            str++;
+        } else {
+            return false;
+        }
+    }
+    return underscore_seen;
+}
+
+int main() {
+    const char *test_strings[] = {
+        "hello_world",
+        "hello_world_",
+        "_hello_world",
+        "Hello_World",
+        "hello123_world",
+        "hello_world_test"
+    };
+    
+    for (size_t i = 0; i < sizeof(test_strings) / sizeof(test_strings[0]); ++i) {
+        printf("%s: %s\n", test_strings[i], is_lowercase_underscore_sequence(test_strings[i]) ? "Valid" : "Invalid");
+    }
+
+    return 0;
+}

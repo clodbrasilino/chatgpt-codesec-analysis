@@ -1,0 +1,92 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdbool.h>
+
+#define MAX_INPUT_LEN 256
+
+bool is_decimal_precision_two(const char *str, size_t max_len);
+
+bool is_decimal_precision_two(const char *str, size_t max_len)
+{
+    size_t i = 0;
+    size_t len;
+    size_t dot_pos = 0;
+    bool dot_found = false;
+    bool digit_before = false;
+
+    if (str == NULL) {
+        return false;
+    }
+
+    len = strnlen(str, max_len);
+    if (len == 0 || len >= max_len) {
+        return false;
+    }
+
+    if (str[i] == '+' || str[i] == '-') {
+        i++;
+        if (i >= len) {
+            return false;
+        }
+    }
+
+    for (; i < len; i++) {
+        if (isdigit((unsigned char)str[i])) {
+            if (!dot_found) {
+                digit_before = true;
+            }
+        } else if (str[i] == '.') {
+            if (dot_found) {
+                return false;
+            }
+            dot_found = true;
+            dot_pos = i;
+        } else {
+            return false;
+        }
+    }
+
+    if (!dot_found || !digit_before) {
+        return false;
+    }
+
+    if (len - dot_pos - 1 != 2) {
+        return false;
+    }
+
+    return true;
+}
+
+int main(void)
+{
+    const char *tests[] = {
+        "123.45",
+        "-0.99",
+        "+3.14",
+        "12.345",
+        "12.",
+        ".45",
+        "abc.12",
+        "12.4",
+        "100.00",
+        ""
+    };
+    size_t count = sizeof(tests) / sizeof(tests[0]);
+    size_t i;
+
+    for (i = 0; i < count; i++) {
+        if (is_decimal_precision_two(tests[i], MAX_INPUT_LEN)) {
+            if (printf("\"%s\" is a valid decimal with precision 2\n", tests[i]) < 0) {
+                return EXIT_FAILURE;
+            }
+        } else {
+            if (printf("\"%s\" is not a valid decimal with precision 2\n", tests[i]) < 0) {
+                return EXIT_FAILURE;
+            }
+        }
+    }
+
+    return EXIT_SUCCESS;
+}

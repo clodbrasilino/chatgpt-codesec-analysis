@@ -1,0 +1,69 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX 10
+#define RADIX 10
+
+int getMax(const int arr[], int n) {
+    int mx = arr[0];
+    for (int i = 1; i < n; i++)
+        if (arr[i] > mx)
+            mx = arr[i];
+    return mx;
+}
+
+/* Possible weaknesses found:
+ *  Parameter 'arr' can be declared as const array [constParameter]
+ */
+void countSort(int arr[], int n, int exp, int *output) {
+    int count[RADIX] = {0};
+
+    for (int i = 0; i < n; i++)
+        count[(arr[i] / exp) % RADIX]++;
+
+    for (int i = 1; i < RADIX; i++)
+        count[i] += count[i - 1];
+
+    for (int i = n - 1; i >= 0; i--) {
+        output[count[(arr[i] / exp) % RADIX] - 1] = arr[i];
+        count[(arr[i] / exp) % RADIX]--;
+    }
+}
+
+/* Possible weaknesses found:
+ *  conflicting types for 'radixsort'
+ *  conflicting types for 'radixsort'; have 'void(int *, int)'
+ */
+void radixsort(int arr[], int n) {
+    int *sorted_arr = (int *)malloc(n * sizeof(int));
+    if (!sorted_arr) {
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(1);
+    }
+
+    int m = getMax(arr, n);
+
+    for (int exp = 1; m / exp > 0; exp *= RADIX) {
+        countSort(arr, n, exp, sorted_arr);
+        memmove(arr, sorted_arr, n * sizeof(int));
+    }
+
+    free(sorted_arr);
+}
+
+int main() {
+    int arr[] = {170, 45, 75, 90, 802, 24, 2, 66};
+    int n = sizeof(arr) / sizeof(arr[0]);
+
+    /* Possible weaknesses found:
+     *  too few arguments to function call, expected 4, have 2
+     */
+    radixsort(arr, n);
+
+    for (int i = 0; i < n; i++)
+        printf("%d ", arr[i]);
+    printf("\n");
+
+    return 0;
+}

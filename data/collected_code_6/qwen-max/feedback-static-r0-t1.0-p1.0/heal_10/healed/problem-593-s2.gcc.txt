@@ -1,0 +1,8 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-593-s2.c: In function 'remove_leading_zeroes':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-593-s2.c:12:41: error: implicit declaration of function 'isdigit' [-Wimplicit-function-declaration]
+   12 |         if (len > 1 && *token == '0' && isdigit(*(token + 1))) {
+      |                                         ^~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-593-s2.c:3:1: note: include '<ctype.h>' or provide a declaration of 'isdigit'
+    2 | #include <string.h>
+  +++ |+#include <ctype.h>
+    3 | 

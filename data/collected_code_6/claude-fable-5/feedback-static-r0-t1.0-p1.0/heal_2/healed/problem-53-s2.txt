@@ -1,0 +1,67 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+
+#define BUFFER_SIZE 256
+
+bool first_last_equal(const char *str, size_t max_len)
+{
+    size_t len;
+
+    if (str == NULL) {
+        return false;
+    }
+
+    len = strnlen(str, max_len);
+    if (len == 0 || len == max_len) {
+        return false;
+    }
+
+    return str[0] == str[len - 1];
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t len;
+
+    printf("Enter a string: ");
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    }
+
+    if (buffer[0] == '\0') {
+        printf("Empty string provided\n");
+        return 1;
+    }
+
+    if (first_last_equal(buffer, sizeof(buffer))) {
+        printf("The first and last characters are equal\n");
+    } else {
+        printf("The first and last characters are not equal\n");
+    }
+
+    return 0;
+}
+```
+
+**Analysis notes:**
+
+The original code was already well-defended against the Flawfinder warning (CWE-119/CWE-120), which is a heuristic flag on any statically-sized `char` array rather than an actual detected vulnerability. The mitigations in place are:
+
+1. **Bounded input**: `fgets(buffer, sizeof(buffer), stdin)` never writes more than `BUFFER_SIZE - 1` characters plus the null terminator, so no overflow is possible on read.
+2. **Guaranteed termination**: `buffer[sizeof(buffer) - 1] = '\0'` is defensive redundancy — `fgets` already null-terminates, but this makes the invariant explicit.
+3. **Bounded length calculation**: `strnlen(buffer, sizeof(buffer))` is used instead of `strlen`, so even a non-terminated buffer could not cause an out-of-bounds scan.
+4. **NULL and edge-case checks**: `first_last_equal` validates for `NULL`, empty strings, and the `len == max_len` case (unterminated within bounds), returning `false` safely.
+5. **Return value checking**: The `fgets` result is checked against `NULL`, handling EOF and read errors.
+
+All array accesses (`buffer[0]`, `buffer[len - 1]`, `str[len - 1]`) are guarded by prior length checks, so the code contains no exploitable buffer overflow. The rewrite is therefore functionally identical with the comments removed, as no further hardening was required.

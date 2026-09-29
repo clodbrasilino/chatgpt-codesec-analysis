@@ -1,0 +1,140 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+typedef struct {
+    int *elements;
+    size_t size;
+} Tuple;
+
+typedef struct {
+    int *elements;
+    size_t size;
+} Set;
+
+int compare_ints(const void *a, const void *b) {
+    int arg1 = *(const int *)a;
+    int arg2 = *(const int *)b;
+    if (arg1 < arg2) return -1;
+    if (arg1 > arg2) return 1;
+    return 0;
+}
+
+Set tuple_to_set(const Tuple *tuple) {
+    Set result = {NULL, 0};
+    
+    if (tuple == NULL || tuple->elements == NULL || tuple->size == 0) {
+        return result;
+    }
+
+    if (tuple->size > SIZE_MAX / sizeof(int)) {
+        return result;
+    }
+
+    size_t alloc_size = tuple->size * sizeof(int);
+    int *temp = malloc(alloc_size);
+    if (temp == NULL) {
+        return result;
+    }
+
+    if (alloc_size / sizeof(int) == tuple->size) {
+        /* Possible weaknesses found:
+         * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+         */
+        memcpy(temp, tuple->elements, alloc_size);
+    } else {
+        free(temp);
+        return result;
+    }
+
+    qsort(temp, tuple->size, sizeof(int), compare_ints);
+
+    size_t unique_count = 0;
+    for (size_t i = 0; i < tuple->size; i++) {
+        if (i == 0 || temp[i] != temp[i - 1]) {
+            temp[unique_count++] = temp[i];
+        }
+    }
+
+    if (unique_count == 0) {
+        free(temp);
+        return result;
+    }
+
+    int *final_elements = realloc(temp, unique_count * sizeof(int));
+    if (final_elements == NULL) {
+        result.elements = temp;
+        result.size = unique_count;
+    } else {
+        result.elements = final_elements;
+        result.size = unique_count;
+    }
+
+    return result;
+}
+
+void free_set(Set *set) {
+    if (set != NULL) {
+        free(set->elements);
+        set->elements = NULL;
+        set->size = 0;
+    }
+}
+
+void free_tuple(Tuple *tuple) {
+    if (tuple != NULL) {
+        free(tuple->elements);
+        tuple->elements = NULL;
+        tuple->size = 0;
+    }
+}
+
+int main(void) {
+    int data[] = {5, 2, 8, 2, 9, 1, 5, 5, 8};
+    /* Possible weaknesses found:
+     *  Assignment 'data_size=sizeof(data)/sizeof(data[0])', assigned value is 9
+     */
+    size_t data_size = sizeof(data) / sizeof(data[0]);
+    
+    /* Possible weaknesses found:
+     *  Condition 'data_size==0' is always false
+     *  Condition 'data_size==0' is always false [knownConditionTrueFalse]
+     */
+    if (data_size == 0 || data_size > SIZE_MAX / sizeof(int)) {
+        return EXIT_FAILURE;
+    }
+
+    Tuple input = {NULL, 0};
+    input.elements = malloc(data_size * sizeof(int));
+    if (input.elements == NULL) {
+        return EXIT_FAILURE;
+    }
+
+    size_t copy_size = data_size * sizeof(int);
+    if (copy_size / sizeof(int) == data_size) {
+        /* Possible weaknesses found:
+         * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+         */
+        memcpy(input.elements, data, copy_size);
+    } else {
+        free(input.elements);
+        return EXIT_FAILURE;
+    }
+    input.size = data_size;
+
+    Set output = tuple_to_set(&input);
+
+    if (output.elements != NULL) {
+        printf("{ ");
+        for (size_t i = 0; i < output.size; i++) {
+            printf("%d ", output.elements[i]);
+        }
+        printf("}\n");
+    }
+
+    free_set(&output);
+    free_tuple(&input);
+
+    return EXIT_SUCCESS;
+}

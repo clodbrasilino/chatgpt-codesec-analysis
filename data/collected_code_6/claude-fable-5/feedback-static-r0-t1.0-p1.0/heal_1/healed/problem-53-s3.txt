@@ -1,0 +1,66 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+
+#define BUFFER_SIZE 256
+
+bool first_last_equal(const char *str, size_t max_len)
+{
+    size_t len;
+
+    if (str == NULL) {
+        return false;
+    }
+
+    len = strnlen(str, max_len);
+    if (len == 0 || len == max_len) {
+        return false;
+    }
+
+    return str[0] == str[len - 1];
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t len;
+
+    printf("Enter a string: ");
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input.\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    }
+
+    if (buffer[0] == '\0') {
+        fprintf(stderr, "Empty string provided.\n");
+        return 1;
+    }
+
+    if (first_last_equal(buffer, sizeof(buffer))) {
+        printf("The first and last characters are equal.\n");
+    } else {
+        printf("The first and last characters are not equal.\n");
+    }
+
+    return 0;
+}
+```
+
+**Key changes made to address the identified weaknesses:**
+
+1. **CWE-126 (`strlen` over-read):** Replaced both calls to `strlen()` with `strnlen()`, which takes an explicit maximum length. This guarantees the scan never reads past the buffer boundary, even if the string were somehow not null-terminated.
+
+2. **CWE-119/CWE-120 (statically-sized array):** The buffer size is now defined via a single `BUFFER_SIZE` constant, and a defensive `buffer[sizeof(buffer) - 1] = '\0';` is added after `fgets()` to guarantee null-termination regardless of input. All bounds are derived from `sizeof(buffer)` rather than hardcoded values, so the size cannot silently drift out of sync.
+
+3. **Hardened API contract:** `first_last_equal()` now accepts a `max_len` parameter so it never assumes termination, and it rejects the case where no terminator was found within bounds (`len == max_len`), making the function safe for reuse with any caller-supplied buffer.
+
+The original code was already fairly safe in practice (`fgets` with `sizeof(buffer)` null-terminates on success), but these changes eliminate the theoretical over-read paths flagged by Flawfinder and make the safety guarantees explicit rather than implicit.

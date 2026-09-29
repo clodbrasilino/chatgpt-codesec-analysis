@@ -1,0 +1,63 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+#include <stdlib.h>
+
+#define MAX_WORD_LEN 256
+
+bool is_length_odd(const char *word)
+{
+    size_t len;
+
+    if (word == NULL) {
+        return false;
+    }
+
+    len = strnlen(word, MAX_WORD_LEN);
+    return (len % 2U) != 0U;
+}
+
+int main(void)
+{
+    char buffer[MAX_WORD_LEN];
+    size_t len;
+
+    printf("Enter a word: ");
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1U] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len > 0U && buffer[len - 1U] == '\n') {
+        buffer[len - 1U] = '\0';
+    }
+
+    if (buffer[0] == '\0') {
+        fprintf(stderr, "No word entered\n");
+        return EXIT_FAILURE;
+    }
+
+    if (is_length_odd(buffer)) {
+        printf("The word \"%s\" has an odd length.\n", buffer);
+    } else {
+        printf("The word \"%s\" has an even length.\n", buffer);
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+The original code already mitigates the flagged weakness (CWE-119/CWE-120) correctly, so the rewritten version preserves those defenses:
+
+- **Bounded input**: `fgets(buffer, sizeof(buffer), stdin)` limits reads to the buffer size, preventing overflow — this addresses the Flawfinder warning about the statically-sized `char buffer[MAX_WORD_LEN]`.
+- **Guaranteed termination**: `buffer[sizeof(buffer) - 1U] = '\0';` forces null-termination even in edge cases.
+- **Bounded length checks**: `strnlen` is used instead of `strlen`, both in `main` and in `is_length_odd`, so length computation can never run past the buffer.
+- **NULL guard**: `is_length_odd` checks for a `NULL` pointer before dereferencing.
+- **Input validation**: the code handles `fgets` failure, strips the trailing newline safely (checking `len > 0U` before indexing `len - 1U`), and rejects empty input.
+
+No functional changes were required — the code is already a sound fix for the identified weakness; only the comments were removed as requested.

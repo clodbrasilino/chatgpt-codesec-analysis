@@ -1,0 +1,37 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int min_swaps(const int *arr, size_t n) {
+    if (arr == NULL || n == 0) {
+        return 0;
+    }
+
+    int zero_count = 0;
+    for (size_t i = 0; i < n; i++) {
+        if (arr[i] == 0) {
+            zero_count++;
+        }
+    }
+
+    int swaps = 0;
+    int current_zeros = 0;
+
+    for (size_t i = 0; i < n; i++) {
+        if (arr[i] == 0) {
+            swaps += (int)(i - current_zeros);
+            current_zeros++;
+        }
+    }
+
+    return swaps;
+}
+
+int main(void) {
+    int arr[] = {1, 0, 1, 0, 0, 1, 0};
+    size_t n = sizeof(arr) / sizeof(arr[0]);
+
+    int result = min_swaps(arr, n);
+    printf("Minimum adjacent swaps to sort the binary array: %d\n", result);
+
+    return 0;
+}

@@ -1,0 +1,39 @@
+```c
+#include <stdio.h>
+
+// Function to calculate the perimeter of a pentagon
+double perimeter_of_pentagon(double side) {
+    if(side <= 0) {
+        return -1; // Error condition for invalid side length
+    }
+
+    return 5 * side;
+}
+
+// Main function
+int main() {
+    double side;
+    double perimeter;
+
+    printf("Enter the length of the side of the pentagon: ");
+    int scanStatus = scanf("%lf", &side);
+
+    // Check for any input errors
+    if(scanStatus == 0 || side <= 0) {
+        printf("Invalid input\n");
+        return 1; // return error code
+    }
+
+    perimeter = perimeter_of_pentagon(side);
+
+    if(perimeter == -1) {
+        printf("Invalid side length\n");
+        return 1; // return error code
+    }
+    else {
+        printf("The perimeter of the pentagon is: %.2f\n", perimeter);
+    }
+
+    return 0;
+}
+```

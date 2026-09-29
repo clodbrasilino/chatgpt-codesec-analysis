@@ -1,0 +1,85 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define BUFFER_SIZE 256
+
+void remove_char(char *str, char ch)
+{
+    size_t i;
+    size_t j;
+
+    if (str == NULL) {
+        return;
+    }
+
+    j = 0;
+    for (i = 0; str[i] != '\0'; i++) {
+        if (str[i] != ch) {
+            str[j] = str[i];
+            j++;
+        }
+    }
+    str[j] = '\0';
+}
+
+static void flush_stdin(void)
+{
+    int discard;
+
+    do {
+        discard = getchar();
+    } while (discard != '\n' && discard != EOF);
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    char target;
+    int input;
+
+    printf("Enter a string: ");
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading string input\n");
+        return EXIT_FAILURE;
+    }
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    if (strchr(buffer, '\n') == NULL) {
+        flush_stdin();
+    }
+
+    buffer[strcspn(buffer, "\n")] = '\0';
+
+    printf("Enter the character to remove: ");
+    input = getchar();
+    if (input == EOF) {
+        fprintf(stderr, "Error reading character input\n");
+        return EXIT_FAILURE;
+    }
+    target = (char)input;
+
+    if (input != '\n') {
+        flush_stdin();
+    }
+
+    remove_char(buffer, target);
+
+    printf("Result: %s\n", buffer);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the identified weaknesses and their mitigations:**
+
+1. **`char buffer[BUFFER_SIZE]` (CWE-119/CWE-120, risk 2):** The statically-sized array is safe here because every write into it is bounds-checked. `fgets(buffer, sizeof(buffer), stdin)` limits input to `BUFFER_SIZE - 1` characters plus the null terminator, and the explicit `buffer[sizeof(buffer) - 1] = '\0'` guarantees termination as a defensive measure. `remove_char` only shrinks the string in place (`j <= i` always), so it can never write past the original terminator.
+
+2. **`getchar` in a loop (CWE-120/CWE-20, risk 1):** This is a false positive in this context. The characters read in `flush_stdin` are discarded into a single `int` and never stored in a buffer, so no overflow is possible. The loop correctly terminates on both `'\n'` and `EOF`, avoiding an infinite loop on closed/redirected input.
+
+3. **Single `getchar` for the target character (CWE-20, risk 1):** The return value is kept as an `int` and checked against `EOF` before being narrowed to `char`, which is the correct idiom. Leftover input is flushed afterward unless the user pressed only Enter.
+
+4. **Partial-line handling:** If the user enters more than `BUFFER_SIZE - 1` characters, `strchr(buffer, '\n') == NULL` detects the truncation and `flush_stdin` drains the excess, preventing stale input from being misinterpreted as the target character.
+
+The original code was already well-hardened; the rewrite preserves all mitigations while removing the audit comments.

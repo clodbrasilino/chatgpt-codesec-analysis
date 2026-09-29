@@ -1,0 +1,159 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+#include <inttypes.h>
+#include <errno.h>
+#include <ctype.h>
+
+static int read_int64(int64_t *value)
+{
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char buffer[128];
+    char *end;
+    /* Possible weaknesses found:
+     *  The scope of the variable 'ch' can be reduced. [variableScope]
+     */
+    int ch;
+
+    if (value == NULL || fgets(buffer, sizeof buffer, stdin) == NULL) {
+        return -1;
+    }
+
+    size_t length = 0;
+    while (length < sizeof buffer && buffer[length] != '\0') {
+        ++length;
+    }
+
+    if (length == sizeof buffer) {
+        return -1;
+    }
+
+    if (length > 0 && buffer[length - 1] != '\n' && !feof(stdin)) {
+        /* Possible weaknesses found:
+         * Flawfinder getchar: Check buffer boundaries if used in a loop including recursive loops (CWE-120, CWE-20). (risk 1, buffer)
+         */
+        while ((ch = getchar()) != '\n' && ch != EOF) {
+        }
+        return -1;
+    }
+
+    errno = 0;
+    end = NULL;
+    intmax_t parsed = strtoimax(buffer, &end, 10);
+
+    if (errno == ERANGE || end == buffer ||
+        parsed < INT64_MIN || parsed > INT64_MAX) {
+        return -1;
+    }
+
+    while (*end != '\0' && isspace((unsigned char)*end)) {
+        ++end;
+    }
+
+    if (*end != '\0') {
+        return -1;
+    }
+
+    *value = (int64_t)parsed;
+    return 0;
+}
+
+static int minimum_total(const int64_t *triangle, size_t rows,
+                         int64_t *result)
+{
+    if (triangle == NULL || result == NULL || rows == 0 ||
+        rows == SIZE_MAX || rows > SIZE_MAX / (rows + 1) ||
+        rows > SIZE_MAX / sizeof(int64_t)) {
+        return -1;
+    }
+
+    int64_t *dp = malloc(rows * sizeof *dp);
+    if (dp == NULL) {
+        return -1;
+    }
+
+    size_t last_offset = rows * (rows - 1) / 2;
+
+    for (size_t column = 0; column < rows; ++column) {
+        dp[column] = triangle[last_offset + column];
+    }
+
+    for (size_t row = rows - 1; row > 0; --row) {
+        size_t offset = (row - 1) * row / 2;
+
+        for (size_t column = 0; column < row; ++column) {
+            int64_t minimum =
+                dp[column] < dp[column + 1] ? dp[column] : dp[column + 1];
+            int64_t value = triangle[offset + column];
+
+            if ((minimum > 0 && value > INT64_MAX - minimum) ||
+                (minimum < 0 && value < INT64_MIN - minimum)) {
+                free(dp);
+                return -1;
+            }
+
+            dp[column] = value + minimum;
+        }
+    }
+
+    *result = dp[0];
+    free(dp);
+    return 0;
+}
+
+int main(void)
+{
+    int64_t input_rows;
+
+    if (read_int64(&input_rows) != 0 || input_rows <= 0 ||
+        (uintmax_t)input_rows > SIZE_MAX) {
+        fputs("Invalid number of rows\n", stderr);
+        return EXIT_FAILURE;
+    }
+
+    size_t rows = (size_t)input_rows;
+
+    if (rows == SIZE_MAX || rows > SIZE_MAX / (rows + 1)) {
+        fputs("Triangle is too large\n", stderr);
+        return EXIT_FAILURE;
+    }
+
+    size_t element_count = rows * (rows + 1) / 2;
+
+    if (element_count > SIZE_MAX / sizeof(int64_t)) {
+        fputs("Triangle is too large\n", stderr);
+        return EXIT_FAILURE;
+    }
+
+    int64_t *triangle = malloc(element_count * sizeof *triangle);
+    if (triangle == NULL) {
+        fputs("Memory allocation failed\n", stderr);
+        return EXIT_FAILURE;
+    }
+
+    for (size_t index = 0; index < element_count; ++index) {
+        if (read_int64(&triangle[index]) != 0) {
+            fputs("Invalid triangle value\n", stderr);
+            free(triangle);
+            return EXIT_FAILURE;
+        }
+    }
+
+    int64_t result;
+
+    if (minimum_total(triangle, rows, &result) != 0) {
+        fputs("Unable to calculate minimum path sum\n", stderr);
+        free(triangle);
+        return EXIT_FAILURE;
+    }
+
+    free(triangle);
+
+    if (printf("%" PRId64 "\n", result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

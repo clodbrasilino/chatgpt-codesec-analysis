@@ -16,7 +16,7 @@ from pathlib import Path
 from src.config import max_healing_rounds
 
 REPO = Path(__file__).resolve().parents[2]
-COLL = REPO / "collected_code_6"
+COLL = REPO / "data" / "collected_code_6"
 RES = REPO / "results"
 # Reporting cap: how many healing rounds the experiment configuration allows.
 CAP = max_healing_rounds()
@@ -144,7 +144,7 @@ def main() -> None:
             cells.append(audit_cell(model_dir.name, slug_dir.name))
 
     lines = [f"# Round-{CAP} Data-Completeness Audit", "",
-             f"Scope: every non-legacy cell in `collected_code_6`; a program is",
+             f"Scope: every non-legacy cell in `data/collected_code_6`; a program is",
              f"**complete** if it has full analysis artifacts through round {CAP}",
              "(or reached its terminal state earlier).", ""]
     lines.append("| Model | Cell | n | complete | heal_failed | missing_healed | "

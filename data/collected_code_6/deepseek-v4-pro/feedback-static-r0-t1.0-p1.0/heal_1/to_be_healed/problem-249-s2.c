@@ -1,0 +1,85 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+/* Possible weaknesses found:
+ *  Parameter 'nums2' can be declared as pointer to const [constParameterPointer]
+ *  Parameter 'nums1' can be declared as pointer to const [constParameterPointer]
+ */
+int* intersect(int* nums1, int nums1Size, int* nums2, int nums2Size, int* returnSize) {
+    int* result = (int*)malloc((nums1Size < nums2Size ? nums1Size : nums2Size) * sizeof(int));
+    int* visited = (int*)calloc(nums2Size, sizeof(int));
+    *returnSize = 0;
+    
+    if (result == NULL || visited == NULL) {
+        free(result);
+        free(visited);
+        *returnSize = -1;
+        return NULL;
+    }
+    
+    for (int i = 0; i < nums1Size; i++) {
+        for (int j = 0; j < nums2Size; j++) {
+            if (nums1[i] == nums2[j] && !visited[j]) {
+                result[(*returnSize)++] = nums1[i];
+                visited[j] = 1;
+                break;
+            }
+        }
+    }
+    
+    free(visited);
+    if (*returnSize == 0) {
+        free(result);
+        return NULL;
+    }
+    
+    /* Possible weaknesses found:
+     *  Common realloc mistake: 'result' nulled but not freed upon failure [memleakOnRealloc]
+     */
+    result = (int*)realloc(result, (*returnSize) * sizeof(int));
+    return result;
+}
+
+int main() {
+    int nums1[] = {1, 2, 2, 1};
+    int nums2[] = {2, 2};
+    int returnSize;
+    
+    int* result = intersect(nums1, 4, nums2, 2, &returnSize);
+    
+    if (result == NULL) {
+        printf("[]\n");
+    } else {
+        printf("[");
+        for (int i = 0; i < returnSize; i++) {
+            printf("%d", result[i]);
+            if (i < returnSize - 1) {
+                printf(", ");
+            }
+        }
+        printf("]\n");
+        free(result);
+    }
+    
+    int nums3[] = {4, 9, 5};
+    int nums4[] = {9, 4, 9, 8, 4};
+    returnSize = 0;
+    
+    result = intersect(nums3, 3, nums4, 5, &returnSize);
+    
+    if (result == NULL) {
+        printf("[]\n");
+    } else {
+        printf("[");
+        for (int i = 0; i < returnSize; i++) {
+            printf("%d", result[i]);
+            if (i < returnSize - 1) {
+                printf(", ");
+            }
+        }
+        printf("]\n");
+        free(result);
+    }
+    
+    return 0;
+}

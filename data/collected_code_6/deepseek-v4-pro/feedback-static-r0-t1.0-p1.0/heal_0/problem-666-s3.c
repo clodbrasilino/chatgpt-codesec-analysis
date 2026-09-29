@@ -1,0 +1,23 @@
+#include <stdio.h>
+
+int count_occurrence(const char *str, char ch) {
+    int count = 0;
+    if (str == NULL) {
+        return 0;
+    }
+    while (*str != '\0') {
+        if (*str == ch) {
+            count++;
+        }
+        str++;
+    }
+    return count;
+}
+
+int main(void) {
+    const char *text = "hello world";
+    char target = 'o';
+    int result = count_occurrence(text, target);
+    printf("Character '%c' occurs %d times\n", target, result);
+    return 0;
+}

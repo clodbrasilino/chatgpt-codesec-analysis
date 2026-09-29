@@ -1,0 +1,28 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int divide(int a, int b, int *result) {
+    if (b == 0) {
+        return -1;
+    }
+    *result = a / b;
+    return 0;
+}
+
+int main() {
+    int num1 = 10, num2 = 2, result;
+    /* Possible weaknesses found:
+     *  Condition 'divide(num1,num2,&result)==0' is always true [knownConditionTrueFalse]
+     *  Calling function 'divide' returns 0
+     *  Condition 'divide(num1,num2,&result)==0' is always true
+     */
+    if (divide(num1, num2, &result) == 0) {
+        /* Possible weaknesses found:
+         *  Uninitialized variable: result [legacyUninitvar]
+         */
+        printf("Quotient: %d\n", result);
+    } else {
+        fprintf(stderr, "Error: Division by zero\n");
+    }
+    return 0;
+}

@@ -1,0 +1,55 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+void reverse_range(char *str, size_t left, size_t right) {
+    while (left < right) {
+        char temp = str[left];
+        str[left] = str[right];
+        str[right] = temp;
+        left++;
+        right--;
+    }
+}
+
+void reverse_words(char *str) {
+    if (str == NULL) {
+        return;
+    }
+
+    size_t length = strlen(str);
+    if (length == 0) {
+        return;
+    }
+
+    reverse_range(str, 0, length - 1);
+
+    size_t start = 0;
+    for (size_t i = 0; i <= length; i++) {
+        if (str[i] == ' ' || str[i] == '\0') {
+            if (i > start) {
+                reverse_range(str, start, i - 1);
+            }
+            start = i + 1;
+        }
+    }
+}
+
+int main(void) {
+    char buffer[1024];
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        return EXIT_FAILURE;
+    }
+
+    size_t len = strnlen(buffer, sizeof(buffer));
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    }
+
+    reverse_words(buffer);
+
+    printf("%s\n", buffer);
+
+    return EXIT_SUCCESS;
+}

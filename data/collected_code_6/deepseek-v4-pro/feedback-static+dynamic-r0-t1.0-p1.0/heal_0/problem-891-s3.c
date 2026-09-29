@@ -1,0 +1,40 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+bool same_number_of_digits(int a, int b) {
+    if (a < 0) a = -a;
+    if (b < 0) b = -b;
+
+    int count_a = (a == 0) ? 1 : 0;
+    int count_b = (b == 0) ? 1 : 0;
+
+    while (a != 0) {
+        a /= 10;
+        count_a++;
+    }
+
+    while (b != 0) {
+        b /= 10;
+        count_b++;
+    }
+
+    return count_a == count_b;
+}
+
+int main(void) {
+    int num1, num2;
+
+    printf("Enter two numbers: ");
+    if (scanf("%d %d", &num1, &num2) != 2) {
+        printf("Invalid input.\n");
+        return 1;
+    }
+
+    if (same_number_of_digits(num1, num2)) {
+        printf("The numbers have the same number of digits.\n");
+    } else {
+        printf("The numbers have different number of digits.\n");
+    }
+
+    return 0;
+}

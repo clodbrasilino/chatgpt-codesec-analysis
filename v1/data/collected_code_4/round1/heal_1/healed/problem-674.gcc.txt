@@ -1,0 +1,616 @@
+./collected_code_4/round1//heal_1/healed//problem-674.c: In function 'hashSearch':
+./collected_code_4/round1//heal_1/healed//problem-674.c:56:27: warning: dereference of NULL 'hashTable' [CWE-476] [-Wanalyzer-null-dereference]
+   56 |     Node *node = hashTable->items[hashIndex];
+      |                  ~~~~~~~~~^~~~~~~
+  'removeDuplicates': events 1-2
+    |
+    |   79 | void removeDuplicates(char *str) {
+    |      |      ^~~~~~~~~~~~~~~~
+    |      |      |
+    |      |      (1) entry to 'removeDuplicates'
+    |   80 |     Hash *hashTable = createHashTable(MAX_CHAR);
+    |      |                       ~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                       |
+    |      |                       (2) calling 'createHashTable' from 'removeDuplicates'
+    |
+    +--> 'createHashTable': event 3
+           |
+           |   18 | Hash *createHashTable(int size) {
+           |      |       ^~~~~~~~~~~~~~~
+           |      |       |
+           |      |       (3) entry to 'createHashTable'
+           |
+         'createHashTable': event 4
+           |
+           |   20 |     if(!hashTable) return NULL;
+           |      |                           ^~~~
+           |      |                           |
+           |      |                           (4) '0' is NULL
+           |
+    <------+
+    |
+  'removeDuplicates': events 5-8
+    |
+    |   80 |     Hash *hashTable = createHashTable(MAX_CHAR);
+    |      |                       ^~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                       |
+    |      |                       (5) return of NULL to 'removeDuplicates' from 'createHashTable'
+    |......
+    |   84 |     while(word) {
+    |      |           ~~~~         
+    |      |           |
+    |      |           (6) following 'true' branch (when 'word' is non-NULL)...
+    |   85 |         if(!hashSearch(hashTable, word)) {
+    |      |             ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |             |
+    |      |             (7) ...to here
+    |      |             (8) calling 'hashSearch' from 'removeDuplicates'
+    |
+    +--> 'hashSearch': events 9-10
+           |
+           |   54 | int hashSearch(Hash *hashTable, char *data) {
+           |      |     ^~~~~~~~~~
+           |      |     |
+           |      |     (9) entry to 'hashSearch'
+           |   55 |     unsigned long hashIndex = hashFunction(data);
+           |   56 |     Node *node = hashTable->items[hashIndex];
+           |      |                  ~~~~~~~~~~~~~~~~
+           |      |                           |
+           |      |                           (10) dereference of NULL 'hashTable'
+           |
+./collected_code_4/round1//heal_1/healed//problem-674.c: In function 'freeHash':
+./collected_code_4/round1//heal_1/healed//problem-674.c:66:33: warning: dereference of NULL 'hashTable' [CWE-476] [-Wanalyzer-null-dereference]
+   66 |     for(int i = 0; i < hashTable->count; i++){
+      |                        ~~~~~~~~~^~~~~~~
+  'main': events 1-2
+    |
+    |  110 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |  111 |     char str[MAX_CHAR] = "Hello world. This is a C program. Hello world. This is a C program.";
+    |  112 |     removeDuplicates(str);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) calling 'removeDuplicates' from 'main'
+    |
+    +--> 'removeDuplicates': events 3-4
+           |
+           |   79 | void removeDuplicates(char *str) {
+           |      |      ^~~~~~~~~~~~~~~~
+           |      |      |
+           |      |      (3) entry to 'removeDuplicates'
+           |   80 |     Hash *hashTable = createHashTable(MAX_CHAR);
+           |      |                       ~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                       |
+           |      |                       (4) calling 'createHashTable' from 'removeDuplicates'
+           |
+           +--> 'createHashTable': event 5
+                  |
+                  |   18 | Hash *createHashTable(int size) {
+                  |      |       ^~~~~~~~~~~~~~~
+                  |      |       |
+                  |      |       (5) entry to 'createHashTable'
+                  |
+                'createHashTable': event 6
+                  |
+                  |   20 |     if(!hashTable) return NULL;
+                  |      |                           ^~~~
+                  |      |                           |
+                  |      |                           (6) '0' is NULL
+                  |
+           <------+
+           |
+         'removeDuplicates': events 7-12
+           |
+           |   80 |     Hash *hashTable = createHashTable(MAX_CHAR);
+           |      |                       ^~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                       |
+           |      |                       (7) return of NULL to 'removeDuplicates' from 'createHashTable'
+           |......
+           |   84 |     while(word) {
+           |      |           ~~~~         
+           |      |           |
+           |      |           (8) following 'false' branch (when 'word' is NULL)...
+           |......
+           |  100 |     Node *temp = start;
+           |      |           ~~~~         
+           |      |           |
+           |      |           (9) ...to here
+           |  101 |     while(temp) {
+           |      |           ~~~~         
+           |      |           |
+           |      |           (10) following 'false' branch (when 'temp' is NULL)...
+           |......
+           |  106 |     printf("\n");
+           |      |     ~~~~~~~~~~~~       
+           |      |     |
+           |      |     (11) ...to here
+           |  107 |     freeHash(hashTable);
+           |      |     ~~~~~~~~~~~~~~~~~~~
+           |      |     |
+           |      |     (12) calling 'freeHash' from 'removeDuplicates'
+           |
+           +--> 'freeHash': events 13-14
+                  |
+                  |   65 | void freeHash(Hash *hashTable) {
+                  |      |      ^~~~~~~~
+                  |      |      |
+                  |      |      (13) entry to 'freeHash'
+                  |   66 |     for(int i = 0; i < hashTable->count; i++){
+                  |      |                        ~~~~~~~~~~~~~~~~
+                  |      |                                 |
+                  |      |                                 (14) dereference of NULL 'hashTable'
+                  |
+./collected_code_4/round1//heal_1/healed//problem-674.c: In function 'removeDuplicates':
+./collected_code_4/round1//heal_1/healed//problem-674.c:108:1: warning: leak of 'start' [CWE-401] [-Wanalyzer-malloc-leak]
+  108 | }
+      | ^
+  'main': events 1-2
+    |
+    |  110 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |  111 |     char str[MAX_CHAR] = "Hello world. This is a C program. Hello world. This is a C program.";
+    |  112 |     removeDuplicates(str);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) calling 'removeDuplicates' from 'main'
+    |
+    +--> 'removeDuplicates': events 3-4
+           |
+           |   79 | void removeDuplicates(char *str) {
+           |      |      ^~~~~~~~~~~~~~~~
+           |      |      |
+           |      |      (3) entry to 'removeDuplicates'
+           |   80 |     Hash *hashTable = createHashTable(MAX_CHAR);
+           |      |                       ~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                       |
+           |      |                       (4) calling 'createHashTable' from 'removeDuplicates'
+           |
+           +--> 'createHashTable': events 5-9
+                  |
+                  |   18 | Hash *createHashTable(int size) {
+                  |      |       ^~~~~~~~~~~~~~~
+                  |      |       |
+                  |      |       (5) entry to 'createHashTable'
+                  |   19 |     Hash *hashTable = calloc(1, sizeof(Hash));
+                  |   20 |     if(!hashTable) return NULL;
+                  |      |       ~
+                  |      |       |
+                  |      |       (6) following 'false' branch (when 'hashTable' is non-NULL)...
+                  |   21 |     hashTable->count = size;
+                  |      |     ~~~~~~~~~~~~~~~~~~~~~~~
+                  |      |                      |
+                  |      |                      (7) ...to here
+                  |   22 |     hashTable->items = calloc(size, sizeof(Node *));
+                  |   23 |     if(!hashTable->items) {
+                  |      |       ~
+                  |      |       |
+                  |      |       (8) following 'false' branch...
+                  |......
+                  |   27 |     return hashTable;
+                  |      |            ~~~~~~~~~
+                  |      |            |
+                  |      |            (9) ...to here
+                  |
+           <------+
+           |
+         'removeDuplicates': events 10-15
+           |
+           |   80 |     Hash *hashTable = createHashTable(MAX_CHAR);
+           |      |                       ^~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                       |
+           |      |                       (10) returning to 'removeDuplicates' from 'createHashTable'
+           |......
+           |   84 |     while(word) {
+           |      |           ~~~~         
+           |      |           |
+           |      |           (11) following 'true' branch (when 'word' is non-NULL)...
+           |   85 |         if(!hashSearch(hashTable, word)) {
+           |      |           ~ ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |           | |
+           |      |           | (12) ...to here
+           |      |           (13) following 'true' branch...
+           |   86 |             Node *newNode = createNode(word);
+           |      |                             ~~~~~~~~~~~~~~~~
+           |      |                             |
+           |      |                             (14) ...to here
+           |      |                             (15) calling 'createNode' from 'removeDuplicates'
+           |
+           +--> 'createNode': events 16-20
+                  |
+                  |   37 | Node *createNode(char *data) {
+                  |      |       ^~~~~~~~~~
+                  |      |       |
+                  |      |       (16) entry to 'createNode'
+                  |   38 |     Node *newNode = calloc(1, sizeof(Node));
+                  |      |                     ~~~~~~~~~~~~~~~~~~~~~~~
+                  |      |                     |
+                  |      |                     (17) allocated here
+                  |   39 |     if(!newNode) return NULL;
+                  |      |       ~
+                  |      |       |
+                  |      |       (18) assuming 'newNode' is non-NULL
+                  |      |       (19) following 'false' branch (when 'newNode' is non-NULL)...
+                  |   40 |     newNode->data = strdup(data);
+                  |      |                     ~~~~~~~~~~~~
+                  |      |                     |
+                  |      |                     (20) ...to here
+                  |
+           <------+
+           |
+         'removeDuplicates': events 21-24
+           |
+           |   86 |             Node *newNode = createNode(word);
+           |      |                             ^~~~~~~~~~~~~~~~
+           |      |                             |
+           |      |                             (21) returning to 'removeDuplicates' from 'createNode'
+           |   87 |             if(!newNode) break;
+           |      |               ~              
+           |      |               |
+           |      |               (22) following 'false' branch (when 'newNode' is non-NULL)...
+           |   88 |             hashAdd(hashTable, word);
+           |      |             ~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |             |
+           |      |             (23) ...to here
+           |      |             (24) calling 'hashAdd' from 'removeDuplicates'
+           |
+           +--> 'hashAdd': events 25-26
+                  |
+                  |   46 | void hashAdd(Hash *hashTable, char *data) {
+                  |      |      ^~~~~~~
+                  |      |      |
+                  |      |      (25) entry to 'hashAdd'
+                  |   47 |     unsigned long hashIndex = hashFunction(data);
+                  |   48 |     Node *newNode = createNode(data);
+                  |      |                     ~~~~~~~~~~~~~~~~
+                  |      |                     |
+                  |      |                     (26) calling 'createNode' from 'hashAdd'
+                  |
+                  +--> 'createNode': events 27-28
+                         |
+                         |   37 | Node *createNode(char *data) {
+                         |      |       ^~~~~~~~~~
+                         |      |       |
+                         |      |       (27) entry to 'createNode'
+                         |   38 |     Node *newNode = calloc(1, sizeof(Node));
+                         |   39 |     if(!newNode) return NULL;
+                         |      |       ~
+                         |      |       |
+                         |      |       (28) following 'true' branch (when 'newNode' is NULL)...
+                         |
+                       'createNode': event 29
+                         |
+                         |   39 |     if(!newNode) return NULL;
+                         |      |                         ^~~~
+                         |      |                         |
+                         |      |                         (29) ...to here
+                         |
+                  <------+
+                  |
+                'hashAdd': events 30-32
+                  |
+                  |   48 |     Node *newNode = createNode(data);
+                  |      |                     ^~~~~~~~~~~~~~~~
+                  |      |                     |
+                  |      |                     (30) returning to 'hashAdd' from 'createNode'
+                  |   49 |     if(!newNode) return;
+                  |      |       ~          ~~~~~~
+                  |      |       |          |
+                  |      |       |          (32) ...to here
+                  |      |       (31) following 'true' branch (when 'newNode' is NULL)...
+                  |
+           <------+
+           |
+         'removeDuplicates': events 33-42
+           |
+           |   84 |     while(word) {
+           |      |           ~~~~
+           |      |           |
+           |      |           (36) following 'false' branch (when 'word' is NULL)...
+           |......
+           |   88 |             hashAdd(hashTable, word);
+           |      |             ^~~~~~~~~~~~~~~~~~~~~~~~
+           |      |             |
+           |      |             (33) returning to 'removeDuplicates' from 'hashAdd'
+           |   89 |             if(start == NULL) {
+           |      |               ~
+           |      |               |
+           |      |               (34) following 'true' branch (when 'start' is NULL)...
+           |   90 |                 start = newNode;
+           |      |                 ~~~~~~~~~~~~~~~
+           |      |                       |
+           |      |                       (35) ...to here
+           |......
+           |  100 |     Node *temp = start;
+           |      |           ~~~~
+           |      |           |
+           |      |           (37) ...to here
+           |  101 |     while(temp) {
+           |      |           ~~~~
+           |      |           |
+           |      |           (38) following 'true' branch (when 'temp' is non-NULL)...
+           |      |           (40) following 'false' branch (when 'temp' is NULL)...
+           |  102 |         printf("%s ", temp->data);
+           |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |         |
+           |      |         (39) ...to here
+           |......
+           |  106 |     printf("\n");
+           |      |     ~~~~~~~~~~~~
+           |      |     |
+           |      |     (41) ...to here
+           |  107 |     freeHash(hashTable);
+           |      |     ~~~~~~~~~~~~~~~~~~~
+           |      |     |
+           |      |     (42) calling 'freeHash' from 'removeDuplicates'
+           |
+           +--> 'freeHash': events 43-47
+                  |
+                  |   65 | void freeHash(Hash *hashTable) {
+                  |      |      ^~~~~~~~
+                  |      |      |
+                  |      |      (43) entry to 'freeHash'
+                  |   66 |     for(int i = 0; i < hashTable->count; i++){
+                  |      |                    ~~~~~~~~~~~~~~~~~~~~  ~~~
+                  |      |                      |                    |
+                  |      |                      |                    (47) ...to here
+                  |      |                      (44) following 'true' branch...
+                  |   67 |         Node *node = hashTable->items[i];
+                  |      |                      ~~~~~~~~~~~~~~~~
+                  |      |                               |
+                  |      |                               (45) ...to here
+                  |   68 |         while(node) {
+                  |      |               ~~~~
+                  |      |               |
+                  |      |               (46) following 'false' branch (when 'node' is NULL)...
+                  |
+           <------+
+           |
+         'removeDuplicates': events 48-49
+           |
+           |  107 |     freeHash(hashTable);
+           |      |     ^~~~~~~~~~~~~~~~~~~
+           |      |     |
+           |      |     (48) returning to 'removeDuplicates' from 'freeHash'
+           |  108 | }
+           |      | ~    
+           |      | |
+           |      | (49) 'start' leaks here; was allocated at (17)
+           |
+./collected_code_4/round1//heal_1/healed//problem-674.c:108:1: warning: leak of '<unknown>' [CWE-401] [-Wanalyzer-malloc-leak]
+  108 | }
+      | ^
+  'main': events 1-2
+    |
+    |  110 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |  111 |     char str[MAX_CHAR] = "Hello world. This is a C program. Hello world. This is a C program.";
+    |  112 |     removeDuplicates(str);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) calling 'removeDuplicates' from 'main'
+    |
+    +--> 'removeDuplicates': events 3-4
+           |
+           |   79 | void removeDuplicates(char *str) {
+           |      |      ^~~~~~~~~~~~~~~~
+           |      |      |
+           |      |      (3) entry to 'removeDuplicates'
+           |   80 |     Hash *hashTable = createHashTable(MAX_CHAR);
+           |      |                       ~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                       |
+           |      |                       (4) calling 'createHashTable' from 'removeDuplicates'
+           |
+           +--> 'createHashTable': events 5-9
+                  |
+                  |   18 | Hash *createHashTable(int size) {
+                  |      |       ^~~~~~~~~~~~~~~
+                  |      |       |
+                  |      |       (5) entry to 'createHashTable'
+                  |   19 |     Hash *hashTable = calloc(1, sizeof(Hash));
+                  |   20 |     if(!hashTable) return NULL;
+                  |      |       ~
+                  |      |       |
+                  |      |       (6) following 'false' branch (when 'hashTable' is non-NULL)...
+                  |   21 |     hashTable->count = size;
+                  |      |     ~~~~~~~~~~~~~~~~~~~~~~~
+                  |      |                      |
+                  |      |                      (7) ...to here
+                  |   22 |     hashTable->items = calloc(size, sizeof(Node *));
+                  |   23 |     if(!hashTable->items) {
+                  |      |       ~
+                  |      |       |
+                  |      |       (8) following 'false' branch...
+                  |......
+                  |   27 |     return hashTable;
+                  |      |            ~~~~~~~~~
+                  |      |            |
+                  |      |            (9) ...to here
+                  |
+           <------+
+           |
+         'removeDuplicates': events 10-15
+           |
+           |   80 |     Hash *hashTable = createHashTable(MAX_CHAR);
+           |      |                       ^~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                       |
+           |      |                       (10) returning to 'removeDuplicates' from 'createHashTable'
+           |......
+           |   84 |     while(word) {
+           |      |           ~~~~         
+           |      |           |
+           |      |           (11) following 'true' branch (when 'word' is non-NULL)...
+           |   85 |         if(!hashSearch(hashTable, word)) {
+           |      |           ~ ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |           | |
+           |      |           | (12) ...to here
+           |      |           (13) following 'true' branch...
+           |   86 |             Node *newNode = createNode(word);
+           |      |                             ~~~~~~~~~~~~~~~~
+           |      |                             |
+           |      |                             (14) ...to here
+           |      |                             (15) calling 'createNode' from 'removeDuplicates'
+           |
+           +--> 'createNode': events 16-19
+                  |
+                  |   37 | Node *createNode(char *data) {
+                  |      |       ^~~~~~~~~~
+                  |      |       |
+                  |      |       (16) entry to 'createNode'
+                  |   38 |     Node *newNode = calloc(1, sizeof(Node));
+                  |   39 |     if(!newNode) return NULL;
+                  |      |       ~
+                  |      |       |
+                  |      |       (17) following 'false' branch (when 'newNode' is non-NULL)...
+                  |   40 |     newNode->data = strdup(data);
+                  |      |                     ~~~~~~~~~~~~
+                  |      |                     |
+                  |      |                     (18) ...to here
+                  |      |                     (19) allocated here
+                  |
+           <------+
+           |
+         'removeDuplicates': events 20-23
+           |
+           |   86 |             Node *newNode = createNode(word);
+           |      |                             ^~~~~~~~~~~~~~~~
+           |      |                             |
+           |      |                             (20) returning to 'removeDuplicates' from 'createNode'
+           |   87 |             if(!newNode) break;
+           |      |               ~              
+           |      |               |
+           |      |               (21) following 'false' branch (when 'newNode' is non-NULL)...
+           |   88 |             hashAdd(hashTable, word);
+           |      |             ~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |             |
+           |      |             (22) ...to here
+           |      |             (23) calling 'hashAdd' from 'removeDuplicates'
+           |
+           +--> 'hashAdd': events 24-25
+                  |
+                  |   46 | void hashAdd(Hash *hashTable, char *data) {
+                  |      |      ^~~~~~~
+                  |      |      |
+                  |      |      (24) entry to 'hashAdd'
+                  |   47 |     unsigned long hashIndex = hashFunction(data);
+                  |   48 |     Node *newNode = createNode(data);
+                  |      |                     ~~~~~~~~~~~~~~~~
+                  |      |                     |
+                  |      |                     (25) calling 'createNode' from 'hashAdd'
+                  |
+                  +--> 'createNode': events 26-27
+                         |
+                         |   37 | Node *createNode(char *data) {
+                         |      |       ^~~~~~~~~~
+                         |      |       |
+                         |      |       (26) entry to 'createNode'
+                         |   38 |     Node *newNode = calloc(1, sizeof(Node));
+                         |   39 |     if(!newNode) return NULL;
+                         |      |       ~
+                         |      |       |
+                         |      |       (27) following 'true' branch (when 'newNode' is NULL)...
+                         |
+                       'createNode': event 28
+                         |
+                         |   39 |     if(!newNode) return NULL;
+                         |      |                         ^~~~
+                         |      |                         |
+                         |      |                         (28) ...to here
+                         |
+                  <------+
+                  |
+                'hashAdd': events 29-31
+                  |
+                  |   48 |     Node *newNode = createNode(data);
+                  |      |                     ^~~~~~~~~~~~~~~~
+                  |      |                     |
+                  |      |                     (29) returning to 'hashAdd' from 'createNode'
+                  |   49 |     if(!newNode) return;
+                  |      |       ~          ~~~~~~
+                  |      |       |          |
+                  |      |       |          (31) ...to here
+                  |      |       (30) following 'true' branch (when 'newNode' is NULL)...
+                  |
+           <------+
+           |
+         'removeDuplicates': events 32-41
+           |
+           |   84 |     while(word) {
+           |      |           ~~~~
+           |      |           |
+           |      |           (35) following 'false' branch (when 'word' is NULL)...
+           |......
+           |   88 |             hashAdd(hashTable, word);
+           |      |             ^~~~~~~~~~~~~~~~~~~~~~~~
+           |      |             |
+           |      |             (32) returning to 'removeDuplicates' from 'hashAdd'
+           |   89 |             if(start == NULL) {
+           |      |               ~
+           |      |               |
+           |      |               (33) following 'true' branch (when 'start' is NULL)...
+           |   90 |                 start = newNode;
+           |      |                 ~~~~~~~~~~~~~~~
+           |      |                       |
+           |      |                       (34) ...to here
+           |......
+           |  100 |     Node *temp = start;
+           |      |           ~~~~
+           |      |           |
+           |      |           (36) ...to here
+           |  101 |     while(temp) {
+           |      |           ~~~~
+           |      |           |
+           |      |           (37) following 'true' branch (when 'temp' is non-NULL)...
+           |      |           (39) following 'false' branch (when 'temp' is NULL)...
+           |  102 |         printf("%s ", temp->data);
+           |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |         |
+           |      |         (38) ...to here
+           |......
+           |  106 |     printf("\n");
+           |      |     ~~~~~~~~~~~~
+           |      |     |
+           |      |     (40) ...to here
+           |  107 |     freeHash(hashTable);
+           |      |     ~~~~~~~~~~~~~~~~~~~
+           |      |     |
+           |      |     (41) calling 'freeHash' from 'removeDuplicates'
+           |
+           +--> 'freeHash': events 42-46
+                  |
+                  |   65 | void freeHash(Hash *hashTable) {
+                  |      |      ^~~~~~~~
+                  |      |      |
+                  |      |      (42) entry to 'freeHash'
+                  |   66 |     for(int i = 0; i < hashTable->count; i++){
+                  |      |                    ~~~~~~~~~~~~~~~~~~~~  ~~~
+                  |      |                      |                    |
+                  |      |                      |                    (46) ...to here
+                  |      |                      (43) following 'true' branch...
+                  |   67 |         Node *node = hashTable->items[i];
+                  |      |                      ~~~~~~~~~~~~~~~~
+                  |      |                               |
+                  |      |                               (44) ...to here
+                  |   68 |         while(node) {
+                  |      |               ~~~~
+                  |      |               |
+                  |      |               (45) following 'false' branch (when 'node' is NULL)...
+                  |
+           <------+
+           |
+         'removeDuplicates': events 47-48
+           |
+           |  107 |     freeHash(hashTable);
+           |      |     ^~~~~~~~~~~~~~~~~~~
+           |      |     |
+           |      |     (47) returning to 'removeDuplicates' from 'freeHash'
+           |  108 | }
+           |      | ~    
+           |      | |
+           |      | (48) '<unknown>' leaks here; was allocated at (19)
+           |

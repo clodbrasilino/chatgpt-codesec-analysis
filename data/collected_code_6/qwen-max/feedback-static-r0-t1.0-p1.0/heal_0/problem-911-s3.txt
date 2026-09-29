@@ -1,0 +1,28 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int compare(const void *a, const void *b) {
+    return (*(int*)a - *(int*)b);
+}
+
+int maxProductOfThree(int *nums, int size) {
+    qsort(nums, size, sizeof(int), compare);
+
+    int n = size - 1;
+    int max1 = nums[n] * nums[n-1] * nums[n-2];
+    int max2 = nums[0] * nums[1] * nums[n];
+    if (max1 > max2) {
+        return max1;
+    } else {
+        return max2;
+    }
+}
+
+int main() {
+    int arr[] = {1, 10, 2, 6, 5, 3};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    printf("Maximum product of three numbers: %d\n", maxProductOfThree(arr, n));
+    return 0;
+}
+```

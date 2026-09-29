@@ -1,0 +1,4 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-660-s3.c:17:26: error: call to undeclared function 'getrandom'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   17 |         ssize_t result = getrandom(&random_value, sizeof(random_value), 0);
+      |                          ^
+1 error generated.

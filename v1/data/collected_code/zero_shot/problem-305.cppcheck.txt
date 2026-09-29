@@ -1,0 +1,6 @@
+collected_code/problem-305-0.c:6:17: error: Cannot determine that 'words[i][0]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+    if (words[i][0] == 'p') {
+                ^
+collected_code/problem-305-0.c:7:27: error: Cannot determine that 'words[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+      printf("%s\n", words[i]);
+                          ^

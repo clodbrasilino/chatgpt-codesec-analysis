@@ -1,0 +1,108 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node* next;
+};
+
+void shift_first_to_end(struct Node** head_ref);
+int append(struct Node** head_ref, int new_data);
+void print_list(const struct Node* node);
+void free_list(struct Node* node);
+
+void shift_first_to_end(struct Node** head_ref) {
+    if (head_ref == NULL || *head_ref == NULL || (*head_ref)->next == NULL) {
+        return;
+    }
+
+    struct Node* first = *head_ref;
+    struct Node* last = *head_ref;
+
+    while (last->next != NULL) {
+        last = last->next;
+    }
+
+    *head_ref = first->next;
+    first->next = NULL;
+    last->next = first;
+}
+
+int append(struct Node** head_ref, int new_data) {
+    if (head_ref == NULL) {
+        return -1;
+    }
+
+    struct Node* new_node = (struct Node*)malloc(sizeof(struct Node));
+    if (new_node == NULL) {
+        return -1;
+    }
+
+    new_node->data = new_data;
+    new_node->next = NULL;
+
+    if (*head_ref == NULL) {
+        *head_ref = new_node;
+        return 0;
+    }
+
+    struct Node* last = *head_ref;
+    while (last->next != NULL) {
+        last = last->next;
+    }
+
+    last->next = new_node;
+    return 0;
+}
+
+void print_list(const struct Node* node) {
+    while (node != NULL) {
+        printf("%d ", node->data);
+        node = node->next;
+    }
+    printf("\n");
+}
+
+void free_list(struct Node* node) {
+    struct Node* temp;
+    while (node != NULL) {
+        temp = node;
+        node = node->next;
+        free(temp);
+    }
+}
+
+int main(void) {
+    struct Node* head = NULL;
+
+    if (append(&head, 1) != 0) {
+        return 1;
+    }
+    if (append(&head, 2) != 0) {
+        free_list(head);
+        return 1;
+    }
+    if (append(&head, 3) != 0) {
+        free_list(head);
+        return 1;
+    }
+    if (append(&head, 4) != 0) {
+        free_list(head);
+        return 1;
+    }
+    if (append(&head, 5) != 0) {
+        free_list(head);
+        return 1;
+    }
+
+    print_list(head);
+
+    shift_first_to_end(&head);
+
+    print_list(head);
+
+    free_list(head);
+    head = NULL;
+
+    return 0;
+}

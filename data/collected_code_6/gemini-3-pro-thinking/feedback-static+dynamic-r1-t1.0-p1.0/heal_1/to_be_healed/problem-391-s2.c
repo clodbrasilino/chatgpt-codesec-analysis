@@ -1,0 +1,186 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct DictNode {
+    char *key;
+    struct DictNode **children;
+    size_t children_count;
+    size_t children_capacity;
+} DictNode;
+
+char *custom_strdup(const char *s) {
+    if (!s) {
+        return NULL;
+    }
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    size_t len = strlen(s) + 1;
+    char *dup = (char *)malloc(len);
+    if (dup) {
+        /* Possible weaknesses found:
+         * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+         */
+        memcpy(dup, s, len);
+    }
+    return dup;
+}
+
+DictNode *create_node(const char *key) {
+    DictNode *node = (DictNode *)malloc(sizeof(DictNode));
+    if (!node) {
+        return NULL;
+    }
+
+    if (key) {
+        node->key = custom_strdup(key);
+        if (!node->key) {
+            free(node);
+            return NULL;
+        }
+    } else {
+        node->key = NULL;
+    }
+
+    node->children = NULL;
+    node->children_count = 0;
+    node->children_capacity = 0;
+    return node;
+}
+
+int add_child(DictNode *parent, DictNode *child) {
+    if (!parent || !child) {
+        return -1;
+    }
+
+    if (parent->children_count == parent->children_capacity) {
+        size_t new_cap = parent->children_capacity == 0 ? 4 : parent->children_capacity * 2;
+        DictNode **new_children = (DictNode **)realloc(parent->children, new_cap * sizeof(DictNode *));
+        if (!new_children) {
+            return -1;
+        }
+
+        parent->children = new_children;
+        parent->children_capacity = new_cap;
+    }
+
+    parent->children[parent->children_count++] = child;
+    return 0;
+}
+
+DictNode *find_child(const DictNode *parent, const char *key) {
+    if (!parent || !key) {
+        return NULL;
+    }
+
+    for (size_t i = 0; i < parent->children_count; i++) {
+        if (parent->children[i]->key && strcmp(parent->children[i]->key, key) == 0) {
+            return parent->children[i];
+        }
+    }
+    return NULL;
+}
+
+int insert_list(DictNode *root, const char **list, size_t length) {
+    if (!root || !list) {
+        return -1;
+    }
+
+    DictNode *current = root;
+    for (size_t i = 0; i < length; i++) {
+        if (!list[i]) {
+            return -1;
+        }
+
+        DictNode *child = find_child(current, list[i]);
+        if (!child) {
+            child = create_node(list[i]);
+            if (!child) {
+                return -1;
+            }
+
+            if (add_child(current, child) != 0) {
+                free(child->key);
+                free(child);
+                return -1;
+            }
+        }
+        current = child;
+    }
+    return 0;
+}
+
+void free_dict(DictNode *node) {
+    if (!node) {
+        return;
+    }
+
+    for (size_t i = 0; i < node->children_count; i++) {
+        free_dict(node->children[i]);
+    }
+    free(node->children);
+    free(node->key);
+    free(node);
+}
+
+void print_dict(const DictNode *node, int depth) {
+    if (!node) {
+        return;
+    }
+
+    for (int i = 0; i < depth; i++) {
+        printf("  ");
+    }
+
+    if (node->key) {
+        printf("\"%s\": ", node->key);
+    }
+
+    if (node->children_count == 0) {
+        printf("{}\n");
+    } else {
+        printf("{\n");
+        for (size_t i = 0; i < node->children_count; i++) {
+            print_dict(node->children[i], depth + 1);
+        }
+        for (int i = 0; i < depth; i++) {
+            printf("  ");
+        }
+        printf("}\n");
+    }
+}
+
+int main(void) {
+    const char *list1[] = {"animal", "mammal", "dog"};
+    const char *list2[] = {"animal", "mammal", "cat"};
+    const char *list3[] = {"animal", "bird", "eagle"};
+    const char *list4[] = {"plant", "tree", "oak"};
+
+    DictNode *root = create_node(NULL);
+    if (!root) {
+        return EXIT_FAILURE;
+    }
+
+    int status = EXIT_SUCCESS;
+
+    if (insert_list(root, list1, sizeof(list1) / sizeof(list1[0])) != 0) {
+        status = EXIT_FAILURE;
+    }
+    if (status == EXIT_SUCCESS && insert_list(root, list2, sizeof(list2) / sizeof(list2[0])) != 0) {
+        status = EXIT_FAILURE;
+    }
+    if (status == EXIT_SUCCESS && insert_list(root, list3, sizeof(list3) / sizeof(list3[0])) != 0) {
+        status = EXIT_FAILURE;
+    }
+    if (status == EXIT_SUCCESS && insert_list(root, list4, sizeof(list4) / sizeof(list4[0])) != 0) {
+        status = EXIT_FAILURE;
+    }
+
+    if (status == EXIT_SUCCESS) {
+        print_dict(root, 0);
+    }
+
+    free_dict(root);
+    return status;
+}

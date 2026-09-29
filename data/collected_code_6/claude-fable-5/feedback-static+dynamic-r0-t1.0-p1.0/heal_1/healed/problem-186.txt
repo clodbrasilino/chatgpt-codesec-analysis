@@ -1,0 +1,113 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+#define ERRBUF_SIZE 256
+#define LITERAL_MAX 4096
+
+int search_literal(const char *text, const char *literal)
+{
+    regex_t regex;
+    char *pattern;
+    size_t literal_len;
+    size_t i;
+    size_t j;
+    int ret;
+
+    if (text == NULL || literal == NULL) {
+        return -1;
+    }
+
+    literal_len = strnlen(literal, LITERAL_MAX);
+    if (literal_len >= LITERAL_MAX) {
+        return -1;
+    }
+
+    if (literal_len > ((SIZE_MAX - 1U) / 2U)) {
+        return -1;
+    }
+
+    pattern = malloc((literal_len * 2U) + 1U);
+    if (pattern == NULL) {
+        return -1;
+    }
+
+    j = 0U;
+    for (i = 0U; i < literal_len; i++) {
+        if (strchr(".^$*+?()[]{}|\\", literal[i]) != NULL) {
+            pattern[j] = '\\';
+            j++;
+        }
+        pattern[j] = literal[i];
+        j++;
+    }
+    pattern[j] = '\0';
+
+    ret = regcomp(&regex, pattern, REG_EXTENDED | REG_NOSUB);
+    if (ret != 0) {
+        char errbuf[ERRBUF_SIZE];
+        (void)regerror(ret, &regex, errbuf, sizeof(errbuf));
+        (void)fprintf(stderr, "regcomp failed: %s\n", errbuf);
+        free(pattern);
+        return -1;
+    }
+
+    ret = regexec(&regex, text, 0U, NULL, 0);
+    regfree(&regex);
+    free(pattern);
+
+    if (ret == 0) {
+        return 1;
+    }
+    if (ret == REG_NOMATCH) {
+        return 0;
+    }
+    return -1;
+}
+
+int main(void)
+{
+    const char *text = "The quick brown fox jumps over the lazy dog. Price: $10.50 (discounted)";
+    const char *literals[] = { "brown fox", "$10.50", "(discounted)", "purple cow" };
+    size_t count = sizeof(literals) / sizeof(literals[0]);
+    size_t i;
+
+    for (i = 0U; i < count; i++) {
+        int result = search_literal(text, literals[i]);
+        if (result < 0) {
+            (void)fprintf(stderr, "Error searching for \"%s\"\n", literals[i]);
+            return EXIT_FAILURE;
+        }
+        if (result == 1) {
+            if (printf("Found: \"%s\"\n", literals[i]) < 0) {
+                return EXIT_FAILURE;
+            }
+        } else {
+            if (printf("Not found: \"%s\"\n", literals[i]) < 0) {
+                return EXIT_FAILURE;
+            }
+        }
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+Note: you'll also need `#include <stdint.h>` for `SIZE_MAX` — here is the corrected include list:
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+#include <regex.h>
+```
+
+Summary of fixes applied:
+
+1. **CWE-119/CWE-120 (statically-sized array `errbuf`)** — the buffer is still fixed-size (required by `regerror`), but its scope is reduced to the only block where it is used, and `regerror` is always called with `sizeof(errbuf)` to enforce bounds checking.
+2. **CWE-126 (`strlen` over-read on non-terminated strings)** — replaced `strlen` with `strnlen` bounded by `LITERAL_MAX`, rejecting inputs that reach the cap.
+3. **Integer overflow guard** — added a check that `literal_len * 2 + 1` cannot wrap before calling `malloc`.
+4. **Variable scope (`errbuf`, `result`)** — both variables moved into the narrowest scope where they are used, per the cppcheck `variableScope` findings.

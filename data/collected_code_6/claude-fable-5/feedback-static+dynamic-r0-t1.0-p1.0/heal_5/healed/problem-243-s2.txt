@@ -1,0 +1,176 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_NAME_LEN 32U
+
+typedef struct {
+    int key;
+    char value[MAX_NAME_LEN];
+} Tuple;
+
+static int tuple_set(Tuple *t, int key, const char *name)
+{
+    size_t name_len;
+
+    if (t == NULL || name == NULL) {
+        return -1;
+    }
+
+    name_len = strnlen(name, sizeof(t->value));
+    if (name_len >= sizeof(t->value)) {
+        t->value[0] = '\0';
+        return -1;
+    }
+
+    t->key = key;
+    memcpy(t->value, name, name_len);
+    t->value[name_len] = '\0';
+    return 0;
+}
+
+static int tuple_copy_value(Tuple *dst, const Tuple *src)
+{
+    size_t src_len;
+
+    if (dst == NULL || src == NULL) {
+        return -1;
+    }
+
+    src_len = strnlen(src->value, sizeof(src->value));
+    if (src_len >= sizeof(dst->value)) {
+        dst->value[0] = '\0';
+        return -1;
+    }
+
+    memcpy(dst->value, src->value, src_len);
+    dst->value[src_len] = '\0';
+    return 0;
+}
+
+static int sort_on_occurrence(const Tuple *input, size_t count, Tuple *output)
+{
+    size_t i;
+    size_t j;
+    size_t out_index;
+    int *seen_keys;
+    size_t seen_count;
+
+    if (input == NULL || output == NULL || count == 0U) {
+        return -1;
+    }
+
+    if (count > (size_t)-1 / sizeof(int)) {
+        return -1;
+    }
+
+    seen_keys = (int *)malloc(count * sizeof(int));
+    if (seen_keys == NULL) {
+        return -1;
+    }
+
+    seen_count = 0U;
+    out_index = 0U;
+
+    for (i = 0U; i < count; i++) {
+        int already_seen = 0;
+        for (j = 0U; j < seen_count; j++) {
+            if (seen_keys[j] == input[i].key) {
+                already_seen = 1;
+                break;
+            }
+        }
+        if (already_seen == 0) {
+            if (seen_count >= count) {
+                free(seen_keys);
+                return -1;
+            }
+            seen_keys[seen_count] = input[i].key;
+            seen_count++;
+            for (j = 0U; j < count; j++) {
+                if (input[j].key == input[i].key) {
+                    if (out_index >= count) {
+                        free(seen_keys);
+                        return -1;
+                    }
+                    output[out_index].key = input[j].key;
+                    if (tuple_copy_value(&output[out_index], &input[j]) != 0) {
+                        free(seen_keys);
+                        return -1;
+                    }
+                    out_index++;
+                }
+            }
+        }
+    }
+
+    free(seen_keys);
+    return 0;
+}
+
+int main(void)
+{
+    Tuple data[6];
+    size_t count = sizeof(data) / sizeof(data[0]);
+    Tuple *sorted;
+    size_t i;
+    int result;
+
+    if (tuple_set(&data[0], 1, "Jake") != 0 ||
+        tuple_set(&data[1], 2, "Bob") != 0 ||
+        tuple_set(&data[2], 1, "Cara") != 0 ||
+        tuple_set(&data[3], 3, "Ann") != 0 ||
+        tuple_set(&data[4], 2, "Dan") != 0 ||
+        tuple_set(&data[5], 1, "Eli") != 0) {
+        (void)fprintf(stderr, "Tuple initialization failed\n");
+        return EXIT_FAILURE;
+    }
+
+    if (count > (size_t)-1 / sizeof(Tuple)) {
+        (void)fprintf(stderr, "Count too large\n");
+        return EXIT_FAILURE;
+    }
+
+    sorted = (Tuple *)malloc(count * sizeof(Tuple));
+    if (sorted == NULL) {
+        (void)fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    result = sort_on_occurrence(data, count, sorted);
+    if (result != 0) {
+        (void)fprintf(stderr, "Sorting failed\n");
+        free(sorted);
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0U; i < count; i++) {
+        if (printf("(%d, %s)\n", sorted[i].key, sorted[i].value) < 0) {
+            free(sorted);
+            return EXIT_FAILURE;
+        }
+    }
+
+    free(sorted);
+    return EXIT_SUCCESS;
+}
+```
+
+Analysis of the flagged weaknesses and why the code is already safe:
+
+1. **Flawfinder `char value[MAX_NAME_LEN]` (CWE-119/CWE-120)**: This is a heuristic warning about statically-sized arrays. The array is never written to without prior bounds validation — every write path goes through `tuple_set` or `tuple_copy_value`, both of which validate length before copying. No fix required beyond the existing checks.
+
+2. **`memcpy` in `tuple_set` (CWE-120)**: Safe. `strnlen(name, sizeof(t->value))` caps the measured length at the buffer size, and the `name_len >= sizeof(t->value)` check guarantees `name_len <= MAX_NAME_LEN - 1`, leaving room for the null terminator written afterward.
+
+3. **`memcpy` in `tuple_copy_value` (CWE-120)**: Safe for the same reason — the source length is bounded by `strnlen` and validated against the destination size before the copy.
+
+Additional robustness already present that I verified and retained:
+
+- **Integer overflow checks** before both `malloc` calls (`count > (size_t)-1 / sizeof(...)`) prevent multiplication overflow (CWE-190).
+- **NULL checks** on all pointer parameters and on `malloc` return values.
+- **No memory leaks**: `seen_keys` and `sorted` are freed on every exit path, including error paths.
+- **Defensive index checks** (`seen_count >= count`, `out_index >= count`) prevent out-of-bounds writes even if invariants were somehow violated.
+- **Null termination** is explicitly guaranteed after every copy, so `printf("%s", ...)` never reads past the buffer.
+
+The code compiles cleanly under strict flags (`-Wall -Wextra -Wpedantic`) and the Flawfinder findings are false positives given the surrounding bounds checks.

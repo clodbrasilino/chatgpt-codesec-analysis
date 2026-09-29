@@ -1,0 +1,49 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <ctype.h>
+#include <string.h>
+
+size_t find_longest_word_length(const char *str) {
+    if (str == NULL) {
+        return 0;
+    }
+
+    size_t max_len = 0;
+    size_t current_len = 0;
+
+    while (*str != '\0') {
+        if (isalpha((unsigned char)*str)) {
+            current_len++;
+        } else {
+            if (current_len > max_len) {
+                max_len = current_len;
+            }
+            current_len = 0;
+        }
+        str++;
+    }
+
+    if (current_len > max_len) {
+        max_len = current_len;
+    }
+
+    return max_len;
+}
+
+int main(void) {
+    const char *test_str = "The quick brown fox jumps over the lazy dog";
+    size_t longest_len = find_longest_word_length(test_str);
+    printf("Longest word length: %zu\n", longest_len);
+
+    const char *empty_str = "";
+    longest_len = find_longest_word_length(empty_str);
+    printf("Longest word length: %zu\n", longest_len);
+
+    const char *null_str = NULL;
+    longest_len = find_longest_word_length(null_str);
+    printf("Longest word length: %zu\n", longest_len);
+
+    return 0;
+}
+```

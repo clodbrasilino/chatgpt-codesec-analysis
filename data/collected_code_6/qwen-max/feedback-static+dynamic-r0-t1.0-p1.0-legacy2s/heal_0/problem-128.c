@@ -1,0 +1,38 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char **filter_long_words(char *words[], int num_words, int min_length, int *filtered_count) {
+    char **result = (char **)malloc(num_words * sizeof(char *));
+    if (result == NULL) return NULL;
+
+    *filtered_count = 0;
+    for (int i = 0; i < num_words; ++i) {
+        if (strlen(words[i]) > min_length) {
+            result[*filtered_count] = words[i];
+            (*filtered_count)++;
+        }
+    }
+
+    return result;
+}
+
+int main() {
+    char *words[] = {"hello", "world", "a", "of", "programming"};
+    int num_words = 5;
+    int min_length = 3;
+    int filtered_count = 0;
+
+    char **filtered_words = filter_long_words(words, num_words, min_length, &filtered_count);
+    if (filtered_words == NULL) {
+        printf("Memory allocation failed.\n");
+        return 1;
+    }
+
+    for (int i = 0; i < filtered_count; ++i) {
+        printf("%s\n", filtered_words[i]);
+    }
+
+    free(filtered_words);
+    return 0;
+}

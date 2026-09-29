@@ -1,0 +1,58 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int get_max(int x, int y);
+int max_segments(int n, int a, int b, int c, int *result);
+
+int get_max(int x, int y) {
+    return (x > y) ? x : y;
+}
+
+int max_segments(int n, int a, int b, int c, int *result) {
+    if (n < 0 || a <= 0 || b <= 0 || c <= 0 || result == NULL) {
+        return -1;
+    }
+
+    int *dp = (int *)malloc(((size_t)n + 1) * sizeof(int));
+    if (dp == NULL) {
+        return -1;
+    }
+
+    dp[0] = 0;
+    for (int i = 1; i <= n; i++) {
+        dp[i] = -1;
+    }
+
+    for (int i = 1; i <= n; i++) {
+        if (i >= a && dp[i - a] != -1) {
+            dp[i] = get_max(dp[i], dp[i - a] + 1);
+        }
+        if (i >= b && dp[i - b] != -1) {
+            dp[i] = get_max(dp[i], dp[i - b] + 1);
+        }
+        if (i >= c && dp[i - c] != -1) {
+            dp[i] = get_max(dp[i], dp[i - c] + 1);
+        }
+    }
+
+    *result = dp[n];
+    free(dp);
+
+    return 0;
+}
+
+int main(void) {
+    int n = 7;
+    int a = 5;
+    int b = 2;
+    int c = 2;
+    int result = 0;
+
+    if (max_segments(n, a, b, c, &result) == 0) {
+        printf("%d\n", result);
+    } else {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

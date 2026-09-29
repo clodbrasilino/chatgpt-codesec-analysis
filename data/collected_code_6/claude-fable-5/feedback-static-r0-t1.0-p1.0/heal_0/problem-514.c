@@ -1,0 +1,44 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Tuple {
+    int first;
+    int second;
+};
+
+long sum_tuple_elements(const struct Tuple *tuples, size_t count)
+{
+    long total = 0L;
+    size_t i;
+
+    if (tuples == NULL) {
+        return 0L;
+    }
+
+    for (i = 0; i < count; i++) {
+        total += (long)tuples[i].first;
+        total += (long)tuples[i].second;
+    }
+
+    return total;
+}
+
+int main(void)
+{
+    struct Tuple tuple_list[] = {
+        {1, 2},
+        {3, 4},
+        {5, 6},
+        {7, 8}
+    };
+    size_t count = sizeof(tuple_list) / sizeof(tuple_list[0]);
+    long result;
+
+    result = sum_tuple_elements(tuple_list, count);
+
+    if (printf("Sum of tuple elements: %ld\n", result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

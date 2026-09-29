@@ -1,0 +1,56 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <stdlib.h>
+ /* Possible weaknesses found:
+  *  test case 0 failed: expected True, got 0
+  *  test case 1 failed: expected True, got 0
+  */
+
+static bool is_subset(const int *arr1, size_t size1, const int *arr2, size_t size2)
+{
+    size_t i;
+    size_t j;
+
+    if (arr1 == NULL || arr2 == NULL) {
+        return false;
+    }
+
+    if (size1 == 0) {
+        return true;
+    }
+
+    if (size2 == 0 || size1 > size2) {
+        return false;
+    }
+
+    for (i = 0; i < size1; i++) {
+        bool found = false;
+        for (j = 0; j < size2; j++) {
+            if (arr1[i] == arr2[j]) {
+                found = true;
+                break;
+            }
+        }
+        if (!found) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+int main(void)
+{
+    int arr1[] = {1, 3, 5};
+    int arr2[] = {1, 2, 3, 4, 5};
+    int arr3[] = {1, 6};
+    size_t size1 = sizeof(arr1) / sizeof(arr1[0]);
+    size_t size2 = sizeof(arr2) / sizeof(arr2[0]);
+    size_t size3 = sizeof(arr3) / sizeof(arr3[0]);
+
+    printf("%s\n", is_subset(arr1, size1, arr2, size2) ? "True" : "False");
+    printf("%s\n", is_subset(arr3, size3, arr2, size2) ? "True" : "False");
+    printf("%s\n", is_subset(arr1, 0, arr2, size2) ? "True" : "False");
+
+    return 0;
+}

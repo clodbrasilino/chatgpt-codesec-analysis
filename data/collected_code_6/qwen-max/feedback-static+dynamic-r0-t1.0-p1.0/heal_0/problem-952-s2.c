@@ -1,0 +1,39 @@
+#include <stdio.h>
+#include <stdint.h>
+
+uint64_t modPow(uint64_t base, uint64_t exp, uint64_t modulus) {
+    uint64_t result = 1;
+    base = base % modulus;
+    while (exp > 0) {
+        if (exp % 2 == 1) {
+            result = (result * base) % modulus;
+        }
+        exp = exp >> 1;
+        base = (base * base) % modulus;
+    }
+    return result;
+}
+
+uint64_t modInverse(uint64_t a, uint64_t m) {
+    return modPow(a, m - 2, m);
+}
+
+uint64_t nCrModPFermat(uint64_t n, uint64_t r, uint64_t p) {
+    if (r == 0 || r == n) return 1;
+    if (r > n - r) r = n - r;
+
+    uint64_t numerator = 1, denominator = 1;
+    for (uint64_t i = 0; i < r; ++i) {
+        numerator = (numerator * (n - i)) % p;
+        denominator = (denominator * (i + 1)) % p;
+    }
+
+    return (numerator * modInverse(denominator, p)) % p;
+}
+
+int main() {
+    uint64_t n, r, p;
+    scanf("%llu %llu %llu", &n, &r, &p);
+    printf("%llu\n", nCrModPFermat(n, r, p));
+    return 0;
+}

@@ -1,0 +1,129 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct KeyValuePair {
+    int key;
+    int value;
+} KeyValuePair;
+
+typedef struct Node {
+    int value;
+    struct Node* next;
+} Node;
+
+typedef struct MapEntry {
+    int key;
+    Node* list;
+    struct MapEntry* next;
+} MapEntry;
+
+typedef struct {
+    MapEntry* head;
+} Map;
+
+Node* create_node(int value) {
+    Node* new_node = (Node*)malloc(sizeof(Node));
+    if (new_node != NULL) {
+        new_node->value = value;
+        new_node->next = NULL;
+    }
+    return new_node;
+}
+
+MapEntry* create_map_entry(int key, int value) {
+    MapEntry* new_entry = (MapEntry*)malloc(sizeof(MapEntry));
+    if (new_entry != NULL) {
+        new_entry->key = key;
+        new_entry->list = create_node(value);
+        new_entry->next = NULL;
+        if (new_entry->list == NULL) {
+            free(new_entry);
+            return NULL;
+        }
+    }
+    return new_entry;
+}
+
+void add_to_map(Map* map, int key, int value) {
+    if (map == NULL) return;
+
+    MapEntry* current = map->head;
+    while (current != NULL) {
+        if (current->key == key) {
+            Node* new_node = create_node(value);
+            if (new_node != NULL) {
+                new_node->next = current->list;
+                current->list = new_node;
+            }
+            return;
+        }
+        current = current->next;
+    }
+
+    MapEntry* new_entry = create_map_entry(key, value);
+    if (new_entry != NULL) {
+        new_entry->next = map->head;
+        map->head = new_entry;
+    }
+}
+
+void free_map(Map* map) {
+    if (map == NULL) return;
+
+    MapEntry* current_entry = map->head;
+    while (current_entry != NULL) {
+        Node* current_node = current_entry->list;
+        while (current_node != NULL) {
+            Node* temp_node = current_node;
+            current_node = current_node->next;
+            free(temp_node);
+        }
+        MapEntry* temp_entry = current_entry;
+        current_entry = current_entry->next;
+        free(temp_entry);
+    }
+    map->head = NULL;
+}
+
+void print_map(const Map* map) {
+    if (map == NULL) return;
+
+    MapEntry* current_entry = map->head;
+    while (current_entry != NULL) {
+        printf("Key: %d, Values: ", current_entry->key);
+        Node* current_node = current_entry->list;
+        while (current_node != NULL) {
+            printf("%d ", current_node->value);
+            current_node = current_node->next;
+        }
+        printf("\n");
+        current_entry = current_entry->next;
+    }
+}
+
+int main(void) {
+    KeyValuePair pairs[] = {
+        {1, 10},
+        {2, 20},
+        {1, 15},
+        {3, 30},
+        {2, 25},
+        {1, 12}
+    };
+    size_t num_pairs = sizeof(pairs) / sizeof(pairs[0]);
+
+    Map map = {NULL};
+
+    for (size_t i = 0; i < num_pairs; ++i) {
+        add_to_map(&map, pairs[i].key, pairs[i].value);
+    }
+
+    print_map(&map);
+
+    free_map(&map);
+
+    return 0;
+}
+```

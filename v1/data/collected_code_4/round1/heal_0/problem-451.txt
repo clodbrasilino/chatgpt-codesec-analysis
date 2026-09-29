@@ -1,0 +1,45 @@
+Here is the pure C code to remove all whitespaces in the given string using regex. Note that the C standard library does not directly support regex, so I will use the POSIX regex library which is commonly available on Unix-like systems.
+
+```C
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <regex.h>
+
+char *remove_whitespace(char *input) {
+    regex_t regex;
+    regmatch_t match;
+    char *plaintext = malloc(strlen(input) + 1);
+
+    if (0 != regcomp(&regex, "[^ \t\n]", REG_EXTENDED)) {
+        free(plaintext);
+        return NULL; /* failed to compile regex */
+    }
+
+    int i, j = 0;
+    for (i = 0; input[i] != '\0'; ++i) {
+        /* execute the regex */
+        if (0 == regexec(&regex, input + i, 1, &match, 0)) {
+            plaintext[j++] = input[i + match.rm_so];
+        }
+    }
+
+    plaintext[j] = '\0';
+    regfree(&regex); /* free the compiled regex */
+    return plaintext;
+}
+
+int main(void) {
+    char *input = "Hello, world!   ";
+    char *plaintext = remove_whitespace(input);
+    if (plaintext != NULL) {
+        printf("%s", plaintext);
+        free(plaintext);
+    } else {
+        printf("Failed to remove whitespace from string.\n");
+    }
+    return 0;
+}
+```
+
+This code defines a `remove_whitespace` function, which takes a string as input, compiles and executes a regex pattern that matches any character except space, tab, and newline, and copies the matched characters to a newly-allocated string. The main function then calls `remove_whitespace` with a hard-coded string, and prints out the result. Note that if `remove_whitespace` fails to compile the regex, it returns NULL and frees the allocated memory for plaintext.

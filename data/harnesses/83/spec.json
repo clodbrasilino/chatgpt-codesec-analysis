@@ -1,0 +1,44 @@
+{
+  "task_id": 83,
+  "text": "Write a C function to find the character made by adding all the characters of the given string.",
+  "fn_candidates": [
+    "get_Char",
+    "GetChar",
+    "getChar",
+    "getChar"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "get_Char",
+      "args": [
+        "abc"
+      ],
+      "expected": "f",
+      "assert_src": "assert get_Char(\"abc\") == \"f\""
+    },
+    {
+      "fn_name": "get_Char",
+      "args": [
+        "gfg"
+      ],
+      "expected": "t",
+      "assert_src": "assert get_Char(\"gfg\") == \"t\""
+    },
+    {
+      "fn_name": "get_Char",
+      "args": [
+        "ab"
+      ],
+      "expected": "c",
+      "assert_src": "assert get_Char(\"ab\") == \"c\""
+    }
+  ],
+  "arg_kinds": [
+    "str"
+  ],
+  "return_kind": "str",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

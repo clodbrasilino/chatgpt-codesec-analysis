@@ -1,0 +1,88 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int key;
+    int value;
+} Pair;
+
+typedef struct {
+    Pair *pairs;
+    size_t count;
+} Dictionary;
+
+static Dictionary *tuple_to_dict(const int *tuple, size_t length)
+{
+    Dictionary *dict = NULL;
+    size_t i;
+    size_t idx;
+
+    if (tuple == NULL || length < 2U) {
+        return NULL;
+    }
+
+    dict = malloc(sizeof(Dictionary));
+    if (dict == NULL) {
+        return NULL;
+    }
+
+    dict->count = length / 2U;
+    dict->pairs = malloc(dict->count * sizeof(Pair));
+    if (dict->pairs == NULL) {
+        free(dict);
+        return NULL;
+    }
+
+    idx = 0U;
+    for (i = 0U; (i + 1U) < length; i += 2U) {
+        dict->pairs[idx].key = tuple[i];
+        dict->pairs[idx].value = tuple[i + 1U];
+        idx++;
+    }
+
+    return dict;
+}
+
+static void dict_free(Dictionary *dict)
+{
+    if (dict != NULL) {
+        free(dict->pairs);
+        free(dict);
+    }
+}
+
+static void dict_print(const Dictionary *dict)
+{
+    size_t i;
+
+    if (dict == NULL) {
+        return;
+    }
+
+    (void)printf("{");
+    for (i = 0U; i < dict->count; i++) {
+        (void)printf("%d: %d", dict->pairs[i].key, dict->pairs[i].value);
+        if ((i + 1U) < dict->count) {
+            (void)printf(", ");
+        }
+    }
+    (void)printf("}\n");
+}
+
+int main(void)
+{
+    int tuple[] = {1, 5, 7, 10, 13, 5};
+    size_t length = sizeof(tuple) / sizeof(tuple[0]);
+    Dictionary *dict;
+
+    dict = tuple_to_dict(tuple, length);
+    if (dict == NULL) {
+        (void)fprintf(stderr, "Failed to create dictionary\n");
+        return EXIT_FAILURE;
+    }
+
+    dict_print(dict);
+    dict_free(dict);
+
+    return EXIT_SUCCESS;
+}

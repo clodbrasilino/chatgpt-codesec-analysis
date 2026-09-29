@@ -1,0 +1,25 @@
+#include <stdio.h>
+
+void countDuplicates(int *arr, int len) {
+    int c, i;
+
+    for (i = 0; i < len - 1; i++) {
+        if (arr[i] == arr[i + 1]) {
+            c = 1;
+            while (arr[i] == arr[i + 1] && i < len - 1) {
+                c++;
+                i++;
+            }
+            printf("Number %d has %d duplicates.\n", arr[i], c);
+        }
+    }
+}
+
+int main() {
+    int arr[] = {1, 2, 2, 3, 4, 4, 4, 5, 5, 5, 5};
+    int len = sizeof(arr) / sizeof(arr[0]);
+
+    countDuplicates(arr, len);
+    
+    return 0;
+}

@@ -1,0 +1,20 @@
+#include <stdbool.h>
+#include <stdint.h>
+
+bool are_arrays_equal(const uint32_t *array1, const uint32_t *array2, size_t length) {
+    for (size_t i = 0; i < length; ++i) {
+        if (array1[i] != array2[i]) {
+            return false;
+        }
+    }
+    return true;
+}
+
+int main() {
+    uint32_t array1[] = {1, 2, 3, 4, 5};
+    uint32_t array2[] = {1, 2, 3, 4, 5};
+    size_t length = sizeof(array1) / sizeof(array1[0]);
+
+    bool result = are_arrays_equal(array1, array2, length);
+    return (result ? 0 : 1);
+}

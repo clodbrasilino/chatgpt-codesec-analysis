@@ -1,0 +1,15 @@
+#include <stdio.h>
+
+unsigned long long convertToBinary(unsigned long long num) {
+    if (num == 0) {
+        return 0;
+    } else {
+        return (num % 2) + 10 * convertToBinary(num / 2);
+    }
+}
+
+int main() {
+    unsigned long long num = 10;
+    printf("%llu in decimal = %llu in binary\n", num, convertToBinary(num));
+    return 0;
+}

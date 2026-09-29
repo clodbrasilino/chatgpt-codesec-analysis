@@ -1,0 +1,71 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct sublist {
+    int *data;
+    size_t length;
+};
+
+static const struct sublist *find_min_sublist(const struct sublist *lists, size_t count)
+{
+    size_t i;
+    const struct sublist *min_list;
+
+    if (lists == NULL || count == 0U) {
+        return NULL;
+    }
+
+    min_list = &lists[0];
+    for (i = 1U; i < count; i++) {
+        if (lists[i].length < min_list->length) {
+            min_list = &lists[i];
+        }
+    }
+
+    return min_list;
+}
+
+static void print_sublist(const struct sublist *list)
+{
+    size_t i;
+
+    if (list == NULL) {
+        (void)printf("No sublist found\n");
+        return;
+    }
+
+    (void)printf("Minimum length sublist (length %zu): [", list->length);
+    for (i = 0U; i < list->length; i++) {
+        if (i > 0U) {
+            (void)printf(", ");
+        }
+        (void)printf("%d", list->data[i]);
+    }
+    (void)printf("]\n");
+}
+
+int main(void)
+{
+    int a[] = {1, 2, 3, 4};
+    int b[] = {5, 6};
+    int c[] = {7, 8, 9};
+    struct sublist lists[3];
+    const struct sublist *result;
+
+    lists[0].data = a;
+    lists[0].length = sizeof(a) / sizeof(a[0]);
+    lists[1].data = b;
+    lists[1].length = sizeof(b) / sizeof(b[0]);
+    lists[2].data = c;
+    lists[2].length = sizeof(c) / sizeof(c[0]);
+
+    result = find_min_sublist(lists, sizeof(lists) / sizeof(lists[0]));
+    if (result == NULL) {
+        (void)fprintf(stderr, "Error: no sublists provided\n");
+        return EXIT_FAILURE;
+    }
+
+    print_sublist(result);
+
+    return EXIT_SUCCESS;
+}

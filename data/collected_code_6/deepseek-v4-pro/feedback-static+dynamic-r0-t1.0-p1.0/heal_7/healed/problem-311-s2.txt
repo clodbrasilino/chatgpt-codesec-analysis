@@ -1,0 +1,33 @@
+```c
+#include <stdio.h>
+#include <stdint.h>
+#include <limits.h>
+
+unsigned int set_leftmost_unset_bit(unsigned int num) {
+    unsigned int mask = 1u << (sizeof(unsigned int) * CHAR_BIT - 1);
+    
+    while (mask != 0) {
+        if ((num & mask) == 0) {
+            return num | mask;
+        }
+        mask >>= 1;
+    }
+    
+    return num;
+}
+
+int main(void) {
+    unsigned int test_values[] = {0, 1, 5, 255, 0x80000000u, 0xFFFFFFFFu};
+    int num_tests = sizeof(test_values) / sizeof(test_values[0]);
+    
+    for (int i = 0; i < num_tests; i++) {
+        unsigned int result = set_leftmost_unset_bit(test_values[i]);
+        printf("Input: 0x%08X, Output: %u (%u)\n", 
+               test_values[i], 
+               result,
+               __builtin_popcount(result));
+    }
+    
+    return 0;
+}
+```

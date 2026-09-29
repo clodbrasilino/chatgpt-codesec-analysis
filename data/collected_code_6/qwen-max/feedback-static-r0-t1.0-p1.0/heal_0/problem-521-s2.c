@@ -1,0 +1,21 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+bool is_scalene(int a, int b, int c) {
+    return (a != b) && (b != c) && (a != c);
+}
+
+int main() {
+    int side1, side2, side3;
+
+    printf("Enter three sides of a triangle: ");
+    scanf("%d %d %d", &side1, &side2, &side3);
+
+    if (is_scalene(side1, side2, side3)) {
+        printf("The triangle is scalene.\n");
+    } else {
+        printf("The triangle is not scalene.\n");
+    }
+
+    return 0;
+}

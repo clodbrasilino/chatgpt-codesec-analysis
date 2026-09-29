@@ -1,0 +1,89 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int* filter_even_numbers(const int *arr, int len, int *filtered_len) {
+    int count = 0;
+    for (int i = 0; i < len; ++i) {
+        if (arr[i] % 2 == 0) {
+            count++;
+        }
+    }
+    
+    *filtered_len = count;
+    if (count == 0) {
+        return NULL;
+    }
+    
+    int *result = (int*)malloc(count * sizeof(int));
+    if (result == NULL) {
+        *filtered_len = 0;
+        return NULL;
+    }
+    
+    count = 0;
+    for (int i = 0; i < len; ++i) {
+        if (arr[i] % 2 == 0) {
+            result[count++] = arr[i];
+        }
+    }
+    
+    return result;
+}
+
+void free_memory(int *ptr) {
+    free(ptr);
+}
+
+int main() {
+    int numbers1[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    int length1 = sizeof(numbers1) / sizeof(numbers1[0]);
+    int filtered_length1;
+
+    int *even_numbers1 = filter_even_numbers(numbers1, length1, &filtered_length1);
+
+    if (even_numbers1 != NULL) {
+        for (int i = 0; i < filtered_length1; ++i) {
+            printf("%d ", even_numbers1[i]);
+        }
+        printf("\n");
+        free_memory(even_numbers1);
+    } else {
+        printf("Memory allocation failed.\n");
+    }
+
+    int numbers2[] = {2, 4, 6, 8};
+    int length2 = sizeof(numbers2) / sizeof(numbers2[0]);
+    int filtered_length2;
+
+    int *even_numbers2 = filter_even_numbers(numbers2, length2, &filtered_length2);
+
+    if (even_numbers2 != NULL) {
+        for (int i = 0; i < filtered_length2; ++i) {
+            printf("%d ", even_numbers2[i]);
+        }
+        printf("\n");
+        free_memory(even_numbers2);
+    } else {
+        printf("Memory allocation failed.\n");
+    }
+
+    int numbers3[] = {10, 20, 84};
+    int length3 = sizeof(numbers3) / sizeof(numbers3[0]);
+    int filtered_length3;
+
+    int *even_numbers3 = filter_even_numbers(numbers3, length3, &filtered_length3);
+
+    if (even_numbers3 != NULL) {
+        for (int i = 0; i < filtered_length3; ++i) {
+            printf("%d ", even_numbers3[i]);
+        }
+        printf("\n");
+        free_memory(even_numbers3);
+    } else {
+        printf("Memory allocation failed.\n");
+    }
+
+    return 0;
+}
+```

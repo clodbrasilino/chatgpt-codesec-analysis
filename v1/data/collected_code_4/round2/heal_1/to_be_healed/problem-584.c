@@ -1,0 +1,76 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <regex.h>
+
+typedef struct{
+    int position;
+    char word[32];
+} WordPos;
+
+typedef struct{
+    WordPos *data;
+    size_t size;
+    size_t capacity;
+} WordArray;
+
+void append_word_data(WordArray *array, char* word, int position){
+    // resize array if not enough space
+    if(array->size == array->capacity){
+        array->capacity *= 2;
+        array->data = realloc(array->data, sizeof(WordPos) * array->capacity);
+        
+        if(array->data == NULL) {
+            printf("No memory to realloc\n");
+            exit(1);
+        }
+    }
+    WordPos wp = {position, ""};
+    strncpy(wp.word, word, strlen(word));
+    /* Possible weaknesses found:
+     *  dereference of possibly-NULL 'word_array.data' [CWE-690] [-Wanalyzer-possible-null-dereference]
+     */
+    array->data[array->size++] = wp;
+}
+
+void findAdverbs(const char* str, WordArray* array) {
+    const char *pattern = "\\b\\w+ly\\b";
+    regex_t re;
+    
+    if(regcomp(&re, pattern, REG_EXTENDED | REG_ICASE | REG_NEWLINE) != 0) {
+        printf("Failed to compile regex.\n");
+        return;
+    }
+    size_t len = strlen(str);
+    char *word = malloc(sizeof(char) * (len + 1));
+    regmatch_t pmatch;
+    int offset = 0;
+
+    while(regexec(&re, str + offset, 1, &pmatch, 0) == 0) {
+        int position = pmatch.rm_so + offset;
+        int length = pmatch.rm_eo - pmatch.rm_so;
+        strncpy(word, str + position, length);
+        word[length] = '\0';
+        append_word_data(array, word, position);
+        offset += pmatch.rm_eo;
+    }    
+    
+    regfree(&re);
+    free(word);
+}
+
+int main(){
+    const char* sentence = "He spoke cheerfully and naturally, quietly sipping his tea loudly.";
+    WordArray word_array = {malloc(sizeof(WordPos)*50), 0, 50};
+    findAdverbs(sentence, &word_array);
+
+    // Print found words
+    for (int i = 0; i < word_array.size; i++) {
+        printf("Adverb: %s, Position: %d\n", word_array.data[i].word, word_array.data[i].position);
+    }
+    
+    // Free memory
+    free(word_array.data);
+    
+    return 0;
+}

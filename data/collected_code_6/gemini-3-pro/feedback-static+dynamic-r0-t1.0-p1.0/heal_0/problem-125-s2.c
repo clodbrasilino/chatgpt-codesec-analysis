@@ -1,0 +1,53 @@
+#include <stdio.h>
+#include <string.h>
+
+int max_difference(const char *str) {
+    if (str == NULL) {
+        return -1;
+    }
+
+    int n = strlen(str);
+    if (n == 0) {
+        return -1;
+    }
+
+    int current_max = 0;
+    int max_so_far = -1;
+    int all_ones = 1;
+
+    for (int i = 0; i < n; i++) {
+        int val = (str[i] == '0') ? 1 : -1;
+        
+        if (str[i] == '0') {
+            all_ones = 0;
+        }
+
+        current_max += val;
+
+        if (current_max < 0) {
+            current_max = 0;
+        }
+
+        if (current_max > max_so_far) {
+            max_so_far = current_max;
+        }
+    }
+
+    if (all_ones) {
+        return -1;
+    }
+
+    return max_so_far;
+}
+
+int main(void) {
+    const char *binary_string1 = "11000010001";
+    int result1 = max_difference(binary_string1);
+    printf("Result 1: %d\n", result1);
+
+    const char *binary_string2 = "1111";
+    int result2 = max_difference(binary_string2);
+    printf("Result 2: %d\n", result2);
+
+    return 0;
+}

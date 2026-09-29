@@ -1,0 +1,108 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX_TUPLE_LEN 8
+
+typedef struct {
+    int elements[MAX_TUPLE_LEN];
+    size_t length;
+} Tuple;
+
+static int compare_by_last(const void *a, const void *b)
+{
+    const Tuple *ta = (const Tuple *)a;
+    const Tuple *tb = (const Tuple *)b;
+    int la = ta->elements[ta->length - 1];
+    int lb = tb->elements[tb->length - 1];
+
+    if (la < lb) {
+        return -1;
+    }
+    if (la > lb) {
+        return 1;
+    }
+    return 0;
+}
+
+int sort_tuples_by_last(Tuple *tuples, size_t count)
+{
+    size_t i;
+
+    if (tuples == NULL || count == 0) {
+        return -1;
+    }
+
+    for (i = 0; i < count; i++) {
+        if (tuples[i].length == 0 || tuples[i].length > MAX_TUPLE_LEN) {
+            return -1;
+        }
+    }
+
+    qsort(tuples, count, sizeof(Tuple), compare_by_last);
+    return 0;
+}
+
+static void print_tuples(const Tuple *tuples, size_t count)
+{
+    size_t i;
+    size_t j;
+
+    for (i = 0; i < count; i++) {
+        printf("(");
+        for (j = 0; j < tuples[i].length; j++) {
+            printf("%d", tuples[i].elements[j]);
+            if (j + 1 < tuples[i].length) {
+                printf(", ");
+            }
+        }
+        printf(")");
+        if (i + 1 < count) {
+            printf(", ");
+        }
+    }
+    printf("\n");
+}
+
+int main(void)
+{
+    Tuple *tuples;
+    size_t count = 4;
+
+    tuples = malloc(count * sizeof(Tuple));
+    if (tuples == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    tuples[0].elements[0] = 2;
+    tuples[0].elements[1] = 5;
+    tuples[0].length = 2;
+
+    tuples[1].elements[0] = 1;
+    tuples[1].elements[1] = 2;
+    tuples[1].length = 2;
+
+    tuples[2].elements[0] = 4;
+    tuples[2].elements[1] = 4;
+    tuples[2].elements[2] = 10;
+    tuples[2].length = 3;
+
+    tuples[3].elements[0] = 2;
+    tuples[3].elements[1] = 3;
+    tuples[3].length = 2;
+
+    printf("Before sorting: ");
+    print_tuples(tuples, count);
+
+    if (sort_tuples_by_last(tuples, count) != 0) {
+        fprintf(stderr, "Sorting failed due to invalid input\n");
+        free(tuples);
+        return EXIT_FAILURE;
+    }
+
+    printf("After sorting:  ");
+    print_tuples(tuples, count);
+
+    free(tuples);
+    return EXIT_SUCCESS;
+}

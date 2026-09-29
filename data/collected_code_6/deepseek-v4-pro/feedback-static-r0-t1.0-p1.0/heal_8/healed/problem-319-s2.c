@@ -1,0 +1,73 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#define INPUT_BUFFER_SIZE 1024
+
+static void find_five_char_words(const char *input) {
+    if (input == NULL) {
+        return;
+    }
+    
+    const char *cursor = input;
+    
+    while (*cursor != '\0') {
+        while (*cursor != '\0' && !isalpha((unsigned char)*cursor)) {
+            cursor++;
+        }
+        
+        if (*cursor == '\0') {
+            break;
+        }
+        
+        const char *start = cursor;
+        size_t word_len = 0;
+        
+        while (*cursor != '\0' && isalpha((unsigned char)*cursor)) {
+            word_len++;
+            cursor++;
+        }
+        
+        if (word_len == 5) {
+            char word[6];
+            
+            if (word_len >= sizeof(word)) {
+                fprintf(stderr, "Word length exceeds buffer size\n");
+                return;
+            }
+            
+            memcpy(word, start, word_len);
+            word[word_len] = '\0';
+            printf("%s\n", word);
+        }
+    }
+}
+
+int main(void) {
+    char input[INPUT_BUFFER_SIZE + 1];
+    
+    printf("Enter a string: ");
+    if (fgets(input, sizeof(input), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+    
+    size_t len = strlen(input);
+    
+    if (len == sizeof(input) - 1 && input[len - 1] != '\n') {
+        int c;
+        while ((c = getchar()) != '\n' && c != EOF) {
+        }
+        fprintf(stderr, "Input too long\n");
+        return EXIT_FAILURE;
+    }
+    
+    if (len > 0 && input[len - 1] == '\n') {
+        input[len - 1] = '\0';
+    }
+
+    find_five_char_words(input);
+
+    return EXIT_SUCCESS;
+}

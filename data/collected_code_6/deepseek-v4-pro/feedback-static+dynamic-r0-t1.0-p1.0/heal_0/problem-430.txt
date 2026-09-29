@@ -1,0 +1,35 @@
+```c
+#include <stdio.h>
+#include <math.h>
+#include <stdlib.h>
+
+typedef struct {
+    double h;
+    double k;
+    double p;
+} Parabola;
+
+double calculate_directrix(Parabola *parabola) {
+    if (parabola == NULL) {
+        fprintf(stderr, "Error: NULL parabola pointer\n");
+        exit(EXIT_FAILURE);
+    }
+    
+    if (fabs(parabola->p) < 1e-10) {
+        fprintf(stderr, "Error: Invalid parabola parameter p\n");
+        exit(EXIT_FAILURE);
+    }
+    
+    return parabola->k - parabola->p;
+}
+
+int main(void) {
+    Parabola par = {2.0, 3.0, 1.5};
+    double directrix_y = calculate_directrix(&par);
+    
+    printf("Parabola: vertex=(%.2f, %.2f), p=%.2f\n", par.h, par.k, par.p);
+    printf("Directrix: y = %.2f\n", directrix_y);
+    
+    return 0;
+}
+```

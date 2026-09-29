@@ -1,0 +1,24 @@
+```C
+#include <stdio.h>
+#include <math.h>
+
+long nextPerfectSquare(long n) {
+    long root = sqrt(n);
+    if(root * root == n) {
+        root++;
+    } else {
+        while(root * root < n) {
+            root++;
+        }
+    }
+    return root * root;
+}
+
+int main() {
+    long n;
+    printf("Enter a number: ");
+    scanf("%ld", &n);
+    printf("Next perfect square is: %ld\n", nextPerfectSquare(n));
+    return 0;
+}
+```

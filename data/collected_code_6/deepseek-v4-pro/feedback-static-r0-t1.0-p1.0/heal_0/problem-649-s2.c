@@ -1,0 +1,37 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int sum_in_range(const int *list, int size, int start, int end) {
+    if (list == NULL || size <= 0 || start < 0 || end >= size || start > end) {
+        return 0;
+    }
+
+    int sum = 0;
+    for (int i = start; i <= end; i++) {
+        sum += list[i];
+    }
+
+    return sum;
+}
+
+int main(void) {
+    int numbers[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    int size = sizeof(numbers) / sizeof(numbers[0]);
+
+    int result = sum_in_range(numbers, size, 2, 5);
+    printf("Sum of numbers from index 2 to 5: %d\n", result);
+
+    result = sum_in_range(numbers, size, 0, size - 1);
+    printf("Sum of all numbers: %d\n", result);
+
+    result = sum_in_range(numbers, size, -1, 3);
+    printf("Sum with invalid start: %d\n", result);
+
+    result = sum_in_range(numbers, size, 3, 15);
+    printf("Sum with invalid end: %d\n", result);
+
+    result = sum_in_range(NULL, size, 0, 5);
+    printf("Sum with NULL list: %d\n", result);
+
+    return 0;
+}

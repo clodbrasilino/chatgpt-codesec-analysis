@@ -1,0 +1,37 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int calculate_dog_years(int human_years) {
+    if (human_years < 0) {
+        return -1;
+    }
+    if (human_years == 0) {
+        return 0;
+    }
+    if (human_years == 1) {
+        return 15;
+    }
+    if (human_years == 2) {
+        return 24;
+    }
+    return 24 + ((human_years - 2) * 5);
+}
+
+int main(void) {
+    int human_ages[] = {3, 1, 0, -5, 10};
+    size_t num_ages = sizeof(human_ages) / sizeof(human_ages[0]);
+
+    for (size_t i = 0; i < num_ages; i++) {
+        int dog_age = calculate_dog_years(human_ages[i]);
+
+        if (dog_age < 0) {
+            fprintf(stderr, "Error: Invalid age %d provided.\n", human_ages[i]);
+        } else {
+            printf("Human years: %d -> Dog years: %d\n", human_ages[i], dog_age);
+        }
+    }
+
+    return EXIT_SUCCESS;
+}
+```

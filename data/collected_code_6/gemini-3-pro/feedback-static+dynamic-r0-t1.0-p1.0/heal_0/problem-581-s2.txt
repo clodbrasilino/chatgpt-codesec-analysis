@@ -1,0 +1,38 @@
+```c
+#include <stdio.h>
+#include <math.h>
+#include <stdlib.h>
+
+double calculateSquarePyramidSurfaceArea(double baseEdge, double height) {
+    if (baseEdge <= 0.0 || height <= 0.0) {
+        return -1.0;
+    }
+    
+    double baseArea = baseEdge * baseEdge;
+    double slantHeight = sqrt((baseEdge / 2.0) * (baseEdge / 2.0) + (height * height));
+    double lateralArea = 2.0 * baseEdge * slantHeight;
+    
+    return baseArea + lateralArea;
+}
+
+int main(void) {
+    double baseEdge = 0.0;
+    double height = 0.0;
+    
+    if (scanf("%lf %lf", &baseEdge, &height) != 2) {
+        fprintf(stderr, "Invalid input.\n");
+        return EXIT_FAILURE;
+    }
+    
+    double surfaceArea = calculateSquarePyramidSurfaceArea(baseEdge, height);
+    
+    if (surfaceArea < 0.0) {
+        fprintf(stderr, "Base edge and height must be positive values.\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("%.4f\n", surfaceArea);
+    
+    return EXIT_SUCCESS;
+}
+```

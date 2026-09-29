@@ -1,0 +1,146 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+#include <stdbool.h>
+
+#define MAX_STRING_LENGTH ((size_t)1048576)
+
+static size_t bounded_strlen(const char *s, size_t max_len)
+{
+    size_t len = 0;
+
+    while (len < max_len && s[len] != '\0') {
+        len++;
+    }
+
+    return len;
+}
+
+static bool bounded_copy(char *dest, size_t dest_remaining, const char *src, size_t src_len)
+{
+    size_t i;
+
+    if (dest == NULL || src == NULL) {
+        return false;
+    }
+
+    if (src_len >= dest_remaining) {
+        return false;
+    }
+
+    for (i = 0; i < src_len; i++) {
+        dest[i] = src[i];
+    }
+
+    return true;
+}
+
+char *join_tuple(const char *const *elements, size_t count, const char *delimiter)
+{
+    size_t total_length = 0;
+    size_t delimiter_length;
+    size_t i;
+    char *result;
+    char *dest;
+    size_t remaining;
+
+    if (elements == NULL || delimiter == NULL) {
+        return NULL;
+    }
+
+    if (count == 0) {
+        result = malloc(1);
+        if (result != NULL) {
+            result[0] = '\0';
+        }
+        return result;
+    }
+
+    delimiter_length = bounded_strlen(delimiter, MAX_STRING_LENGTH);
+    if (delimiter_length == MAX_STRING_LENGTH) {
+        return NULL;
+    }
+
+    for (i = 0; i < count; i++) {
+        size_t element_length;
+
+        if (elements[i] == NULL) {
+            return NULL;
+        }
+
+        element_length = bounded_strlen(elements[i], MAX_STRING_LENGTH);
+        if (element_length == MAX_STRING_LENGTH) {
+            return NULL;
+        }
+
+        if (element_length > SIZE_MAX - total_length) {
+            return NULL;
+        }
+        total_length += element_length;
+
+        if (i + 1 < count) {
+            if (delimiter_length > SIZE_MAX - total_length) {
+                return NULL;
+            }
+            total_length += delimiter_length;
+        }
+    }
+
+    if (total_length == SIZE_MAX) {
+        return NULL;
+    }
+
+    result = malloc(total_length + 1);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    dest = result;
+    remaining = total_length + 1;
+
+    for (i = 0; i < count; i++) {
+        size_t element_length = bounded_strlen(elements[i], MAX_STRING_LENGTH);
+
+        if (!bounded_copy(dest, remaining, elements[i], element_length)) {
+            free(result);
+            return NULL;
+        }
+        dest += element_length;
+        remaining -= element_length;
+
+        if (i + 1 < count) {
+            if (!bounded_copy(dest, remaining, delimiter, delimiter_length)) {
+                free(result);
+                return NULL;
+            }
+            dest += delimiter_length;
+            remaining -= delimiter_length;
+        }
+    }
+
+    *dest = '\0';
+
+    return result;
+}
+
+int main(void)
+{
+    const char *tuple[] = { "alpha", "beta", "gamma", "delta" };
+    const size_t count = sizeof(tuple) / sizeof(tuple[0]);
+    const char *delimiter = " | ";
+    char *joined;
+
+    joined = join_tuple(tuple, count, delimiter);
+    if (joined == NULL) {
+        fprintf(stderr, "Error: failed to join tuple elements\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("%s\n", joined);
+
+    free(joined);
+    joined = NULL;
+
+    return EXIT_SUCCESS;
+}

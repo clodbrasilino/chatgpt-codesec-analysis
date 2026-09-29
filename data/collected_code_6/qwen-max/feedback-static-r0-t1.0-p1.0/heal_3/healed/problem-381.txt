@@ -1,0 +1,48 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *items;
+    int size;
+} List;
+
+int compare(const void *a, const void *b, int index) {
+    const List *listA = (const List *)a;
+    const List *listB = (const List *)b;
+    return listA->items[index] - listB->items[index];
+}
+
+int compareWrapper(const void *a, const void *b, int index) {
+    return compare(a, b, index);
+}
+
+void sortListOfLists(List *lists, int count, int index) {
+    qsort(lists, count, sizeof(List), (int (*)(const void *, const void *))compareWrapper);
+}
+
+int main() {
+    int arr1[] = {5, 2, 3};
+    int arr2[] = {4, 6, 1};
+    int arr3[] = {7, 8, 9};
+    
+    List lists[] = {
+        {arr1, 3},
+        {arr2, 3},
+        {arr3, 3}
+    };
+    int count = sizeof(lists) / sizeof(lists[0]);
+    int index = 1;
+
+    sortListOfLists(lists, count, index);
+
+    for (int i = 0; i < count; i++) {
+        for (int j = 0; j < lists[i].size; j++) {
+            printf("%d ", lists[i].items[j]);
+        }
+        printf("\n");
+    }
+
+    return 0;
+}
+```

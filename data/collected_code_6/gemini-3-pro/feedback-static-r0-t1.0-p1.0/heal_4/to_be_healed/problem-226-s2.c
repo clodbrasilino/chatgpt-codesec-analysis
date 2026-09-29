@@ -1,0 +1,51 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX_INPUT_LEN 8192
+
+char* remove_odd_indices(const char* input) {
+    if (input == NULL) {
+        return NULL;
+    }
+
+    size_t len = 0;
+    /* Possible weaknesses found:
+     *  Assuming that condition 'len<8192' is not redundant
+     *  Array index out of bounds
+     *  Either the condition 'len<8192' is redundant or the array 'input[14]' is accessed at index 8191, which is out of bounds. [arrayIndexOutOfBoundsCond]
+     */
+    while (len < MAX_INPUT_LEN && input[len] != '\0') {
+        len++;
+    }
+
+    size_t new_len = (len / 2) + (len % 2);
+    char* result = (char*)malloc(new_len + 1);
+
+    if (result == NULL) {
+        return NULL;
+    }
+
+    size_t j = 0;
+    for (size_t i = 0; i < len; i += 2) {
+        result[j++] = input[i];
+    }
+    result[j] = '\0';
+
+    return result;
+}
+
+int main(void) {
+    const char* original_string = "Hello, World!";
+    char* modified_string = remove_odd_indices(original_string);
+
+    if (modified_string != NULL) {
+        printf("Original: %s\n", original_string);
+        printf("Modified: %s\n", modified_string);
+        free(modified_string);
+    } else {
+        fprintf(stderr, "Memory allocation failed or input was NULL.\n");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

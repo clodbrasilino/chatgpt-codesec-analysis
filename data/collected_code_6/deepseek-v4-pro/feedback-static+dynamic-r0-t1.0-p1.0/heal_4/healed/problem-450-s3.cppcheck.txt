@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-450-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-450-s3.c:44:22: style: The comparison 'copy_len > size' is always false because 'copy_len' and 'size' represent the same value. [knownConditionTrueFalse]
+        if (copy_len > size) {
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-450-s3.c:43:27: note: 'copy_len' is assigned value 'size' here.
+        size_t copy_len = size;
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-450-s3.c:44:22: note: The comparison 'copy_len > size' is always false because 'copy_len' and 'size' represent the same value.
+        if (copy_len > size) {
+                     ^

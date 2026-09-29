@@ -1,0 +1,16 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-683-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-683-s3.c:14:23: style: Condition 'remainder<0' is always false [knownConditionTrueFalse]
+        if (remainder < 0) {
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-683-s3.c:7:11: note: Assuming that condition 'n<0' is not redundant
+    if (n < 0) {
+          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-683-s3.c:11:24: note: Assignment 'a=0', assigned value is 0
+    for (long long a = 0; a * a <= n; a++) {
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-683-s3.c:12:33: note: Assignment 'remainder=n-a*a', assigned value is greater than -1
+        long long remainder = n - a * a;
+                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-683-s3.c:14:23: note: Condition 'remainder<0' is always false
+        if (remainder < 0) {
+                      ^

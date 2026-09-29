@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-747-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-747-s3.c:33:16: style: Condition 'X!=NULL' is always true [knownConditionTrueFalse]
+    int m = (X != NULL) ? strlen(X) : 0;
+               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-747-s3.c:34:16: style: Condition 'Y!=NULL' is always true [knownConditionTrueFalse]
+    int n = (Y != NULL) ? strlen(Y) : 0;
+               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-747-s3.c:35:16: style: Condition 'Z!=NULL' is always true [knownConditionTrueFalse]
+    int o = (Z != NULL) ? strlen(Z) : 0;
+               ^

@@ -1,0 +1,94 @@
+./collected_code_4/round1//heal_0//problem-740.c: In function 'tupleToDict':
+./collected_code_4/round1//heal_0//problem-740.c:26:13: warning: leak of '<unknown>' [CWE-401] [-Wanalyzer-malloc-leak]
+   26 |             free(dict);
+      |             ^~~~~~~~~~
+  'tupleToDict': events 1-10
+    |
+    |   11 |     if(tuple == NULL || size < 2 || (size % 2 != 0)) {
+    |      |       ^
+    |      |       |
+    |      |       (1) following 'false' branch...
+    |......
+    |   15 |     KeyValue* dict = malloc(sizeof(KeyValue) * (size/2));
+    |      |                                                ~~~~~~~~
+    |      |                                                     |
+    |      |                                                     (2) ...to here
+    |   16 | 
+    |   17 |     if(dict == NULL) {
+    |      |       ~
+    |      |       |
+    |      |       (3) following 'false' branch (when 'dict' is non-NULL)...
+    |......
+    |   21 |     for(int i=0; i<size; i+=2) {
+    |      |             ~    ~~~~~~
+    |      |             |     |
+    |      |             |     (5) following 'true' branch (when 'i < size')...
+    |      |             (4) ...to here
+    |   22 |         dict[i/2].key = malloc(strlen(tuple[i])+1);
+    |      |                                            ~
+    |      |                                            |
+    |      |                                            (6) ...to here
+    |   23 |         dict[i/2].value = malloc(strlen(tuple[i+1])+1);
+    |      |                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                           |
+    |      |                           (7) allocated here
+    |   24 | 
+    |   25 |         if(dict[i/2].key == NULL || dict[i/2].value == NULL) {
+    |      |           ~
+    |      |           |
+    |      |           (8) following 'true' branch...
+    |   26 |             free(dict);
+    |      |             ~~~~~~~~~~
+    |      |             |
+    |      |             (9) ...to here
+    |      |             (10) '<unknown>' leaks here; was allocated at (7)
+    |
+./collected_code_4/round1//heal_0//problem-740.c:26:13: warning: leak of '<unknown>' [CWE-401] [-Wanalyzer-malloc-leak]
+   26 |             free(dict);
+      |             ^~~~~~~~~~
+  'tupleToDict': events 1-10
+    |
+    |   11 |     if(tuple == NULL || size < 2 || (size % 2 != 0)) {
+    |      |       ^
+    |      |       |
+    |      |       (1) following 'false' branch...
+    |......
+    |   15 |     KeyValue* dict = malloc(sizeof(KeyValue) * (size/2));
+    |      |                                                ~~~~~~~~
+    |      |                                                     |
+    |      |                                                     (2) ...to here
+    |   16 | 
+    |   17 |     if(dict == NULL) {
+    |      |       ~
+    |      |       |
+    |      |       (3) following 'false' branch (when 'dict' is non-NULL)...
+    |......
+    |   21 |     for(int i=0; i<size; i+=2) {
+    |      |             ~    ~~~~~~
+    |      |             |     |
+    |      |             |     (5) following 'true' branch (when 'i < size')...
+    |      |             (4) ...to here
+    |   22 |         dict[i/2].key = malloc(strlen(tuple[i])+1);
+    |      |                         ~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                         |                  |
+    |      |                         (7) allocated here (6) ...to here
+    |......
+    |   25 |         if(dict[i/2].key == NULL || dict[i/2].value == NULL) {
+    |      |           ~                              ~~~
+    |      |           |                               |
+    |      |           |                               (10) ...to here
+    |      |           (8) assuming '<unknown>' is non-NULL
+    |      |           (9) following 'false' branch...
+    |
+  'tupleToDict': events 11-13
+    |
+    |   25 |         if(dict[i/2].key == NULL || dict[i/2].value == NULL) {
+    |      |                                  ^
+    |      |                                  |
+    |      |                                  (11) following 'true' branch...
+    |   26 |             free(dict);
+    |      |             ~~~~~~~~~~            
+    |      |             |
+    |      |             (12) ...to here
+    |      |             (13) '<unknown>' leaks here; was allocated at (7)
+    |

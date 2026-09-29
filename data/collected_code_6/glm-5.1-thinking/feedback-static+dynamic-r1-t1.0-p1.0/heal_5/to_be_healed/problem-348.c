@@ -1,0 +1,112 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+static int cmp_int(const void *a, const void *b) {
+    int va = *(const int *)a;
+    int vb = *(const int *)b;
+    return (va > vb) - (va < vb);
+}
+
+static long long backtrack(const int *values, int n, int *used,
+                           long long prefix_sum, int pos) {
+    if (pos == n) return 1;
+    long long count = 0;
+    int prev_val = 0;
+    int has_prev = 0;
+    for (int i = 0; i < n; i++) {
+        if (used[i]) continue;
+        if (has_prev && values[i] == prev_val) continue;
+        if (prefix_sum + values[i] < 0) continue;
+        used[i] = 1;
+        count += backtrack(values, n, used, prefix_sum + values[i], pos + 1);
+        used[i] = 0;
+        prev_val = values[i];
+        has_prev = 1;
+    }
+    return count;
+}
+
+static long long count_ballot(int pos, int neg) {
+    if (neg < 0 || pos < 0) return 0;
+    if (neg > pos) return 0;
+    size_t dp_size = (size_t)neg + 1;
+    if (dp_size > SIZE_MAX / sizeof(long long)) return 0;
+    long long *dp = calloc(dp_size, sizeof(long long));
+    if (!dp) return 0;
+    dp[0] = 1;
+    for (int i = 0; i <= pos; i++) {
+        for (int j = 0; j <= neg; j++) {
+            if (j > i) {
+                dp[j] = 0;
+            } else if (j > 0) {
+                dp[j] += dp[j - 1];
+            }
+        }
+    }
+    long long result = dp[neg];
+    free(dp);
+    return result;
+}
+
+static int is_unit_values(const int *values, int n) {
+    for (int i = 0; i < n; i++) {
+        if (values[i] != 1 && values[i] != -1) return 0;
+    }
+    return 1;
+}
+
+long long count_sequences(const int *values, int n) {
+    if (n < 0) return 0;
+    if (n == 0) return 1;
+    if (!values) return 0;
+    if (is_unit_values(values, n)) {
+        int pos = 0, neg = 0;
+        for (int i = 0; i < n; i++) {
+            if (values[i] == 1) pos++;
+            else neg++;
+        }
+        return count_ballot(pos, neg);
+    }
+    if ((size_t)n > SIZE_MAX / sizeof(int)) return 0;
+    size_t alloc_size = (size_t)n * sizeof(int);
+    int *sorted = malloc(alloc_size);
+    if (!sorted) return 0;
+    /* Possible weaknesses found:
+     * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+     */
+    memcpy(sorted, values, alloc_size);
+    qsort(sorted, (size_t)n, sizeof(int), cmp_int);
+    int *used = calloc((size_t)n, sizeof(int));
+    if (!used) {
+        free(sorted);
+        return 0;
+    }
+    long long result = backtrack(sorted, n, used, 0, 0);
+    free(used);
+    free(sorted);
+    return result;
+}
+
+int main(void) {
+    int n;
+    if (scanf("%d", &n) != 1 || n < 0) return 1;
+    if (n == 0) {
+        printf("1\n");
+        return 0;
+    }
+    if ((size_t)n > SIZE_MAX / sizeof(int)) return 1;
+    size_t alloc_size = (size_t)n * sizeof(int);
+    int *values = malloc(alloc_size);
+    if (!values) return 1;
+    for (int i = 0; i < n; i++) {
+        if (scanf("%d", &values[i]) != 1) {
+            free(values);
+            return 1;
+        }
+    }
+    printf("%lld\n", count_sequences(values, n));
+    free(values);
+    return 0;
+}

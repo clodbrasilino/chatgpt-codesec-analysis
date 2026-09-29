@@ -1,0 +1,12 @@
+collected_code/problem-784-0.c:8:20: error: Cannot determine that 'numbers[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        if (numbers[i] % 2 == 0 && even == -1) {
+                   ^
+collected_code/problem-784-0.c:9:27: error: Cannot determine that 'numbers[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+            even = numbers[i];
+                          ^
+collected_code/problem-784-0.c:10:27: error: Cannot determine that 'numbers[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        } else if (numbers[i] % 2 != 0 && odd == -1) {
+                          ^
+collected_code/problem-784-0.c:11:26: error: Cannot determine that 'numbers[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+            odd = numbers[i];
+                         ^

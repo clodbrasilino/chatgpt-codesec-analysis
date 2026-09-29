@@ -1,0 +1,47 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int find_odd_occurrence(const int *arr, size_t size, int *result)
+{
+    int xor_result;
+    size_t i;
+
+    if (arr == NULL || result == NULL || size == 0)
+    {
+        return -1;
+    }
+
+    xor_result = 0;
+
+    for (i = 0; i < size; i++)
+    {
+        xor_result ^= arr[i];
+    }
+
+    *result = xor_result;
+    return 0;
+}
+
+int main(void)
+{
+    int arr[] = {4, 3, 6, 2, 6, 4, 2, 3, 4};
+    size_t size;
+    int result;
+    int status;
+
+    size = sizeof(arr) / sizeof(arr[0]);
+
+    status = find_odd_occurrence(arr, size, &result);
+
+    if (status == 0)
+    {
+        printf("Element occurring odd number of times: %d\n", result);
+    }
+    else
+    {
+        fprintf(stderr, "Error: Invalid input parameters\n");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

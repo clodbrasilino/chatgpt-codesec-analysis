@@ -1,0 +1,51 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+static long long nth_rectangular(long long n, int *error)
+{
+    if (n <= 0)
+    {
+        *error = 1;
+        return 0;
+    }
+
+    if (n > 3037000498LL)
+    {
+        *error = 1;
+        return 0;
+    }
+
+    *error = 0;
+    return n * (n + 1LL);
+}
+
+int main(void)
+{
+    long long n = 0;
+    int error = 0;
+    long long result = 0;
+
+    printf("Enter n: ");
+
+    if (scanf("%lld", &n) != 1)
+    {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    result = nth_rectangular(n, &error);
+
+    if (error != 0)
+    {
+        fprintf(stderr, "Input out of valid range\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("The %lld-th rectangular number is %lld\n", n, result) < 0)
+    {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

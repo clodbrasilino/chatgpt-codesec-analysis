@@ -1,0 +1,37 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+/* Possible weaknesses found:
+ *  Parameter 'arr' can be declared as pointer to const [constParameterPointer]
+ */
+int find_largest_positive(int *arr, int size) {
+    int i, largest = -1;
+    int found = 0;
+
+    for (i = 0; i < size; i++) {
+        if (arr[i] > 0) {
+            if (!found || arr[i] > largest) {
+                largest = arr[i];
+                found = 1;
+            }
+        }
+    }
+
+    if (found) {
+        return largest;
+    }
+
+    printf("No positive numbers in the list.\n");
+    exit(1);
+}
+
+int main(void) {
+    int arr[] = {-5, -3, -1, 0, 2, 8, 4, 7, -9, 3};
+    int size = sizeof(arr) / sizeof(arr[0]);
+    int largest;
+
+    largest = find_largest_positive(arr, size);
+    printf("Largest positive number: %d\n", largest);
+
+    return 0;
+}

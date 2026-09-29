@@ -1,0 +1,91 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+static void swap_int(int *a, int *b)
+{
+    int tmp = *a;
+    *a = *b;
+    *b = tmp;
+}
+
+static size_t next_gap(size_t gap)
+{
+    gap = (gap * 10U) / 13U;
+    if (gap < 1U) {
+        gap = 1U;
+    }
+    return gap;
+}
+
+static void comb_sort(int *arr, size_t n)
+{
+    size_t gap;
+    bool swapped;
+    size_t i;
+
+    if (arr == NULL || n < 2U) {
+        return;
+    }
+
+    gap = n;
+    swapped = true;
+
+    while (gap != 1U || swapped) {
+        gap = next_gap(gap);
+        swapped = false;
+        for (i = 0U; i + gap < n; i++) {
+            if (arr[i] > arr[i + gap]) {
+                swap_int(&arr[i], &arr[i + gap]);
+                swapped = true;
+            }
+        }
+    }
+}
+
+static void print_array(const int *arr, size_t n)
+{
+    size_t i;
+
+    if (arr == NULL) {
+        return;
+    }
+
+    for (i = 0U; i < n; i++) {
+        if (printf("%d ", arr[i]) < 0) {
+            return;
+        }
+    }
+    (void)printf("\n");
+}
+
+int main(void)
+{
+    size_t n = 10U;
+    size_t i;
+    int *data;
+    const int values[10] = { 34, -7, 23, 0, 89, -45, 12, 5, 67, -1 };
+
+    data = malloc(n * sizeof(*data));
+    if (data == NULL) {
+        (void)fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0U; i < n; i++) {
+        data[i] = values[i];
+    }
+
+    (void)printf("Before sorting:\n");
+    print_array(data, n);
+
+    comb_sort(data, n);
+
+    (void)printf("After sorting:\n");
+    print_array(data, n);
+
+    free(data);
+    data = NULL;
+
+    return EXIT_SUCCESS;
+}

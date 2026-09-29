@@ -1,0 +1,108 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <limits.h>
+#include <string.h>
+#include <ctype.h>
+
+unsigned long long calculate_perrin_sum(int n) {
+    if (n < 0) {
+        return 0;
+    }
+    if (n == 0) {
+        return 3;
+    }
+    if (n == 1) {
+        return 3;
+    }
+    if (n == 2) {
+        return 5;
+    }
+
+    unsigned long long p0 = 3;
+    unsigned long long p1 = 0;
+    unsigned long long p2 = 2;
+    unsigned long long sum = 5;
+    int i;
+
+    for (i = 3; i <= n; i++) {
+        unsigned long long p_next;
+
+        if (p0 > ULLONG_MAX - p1) {
+            return 0;
+        }
+        p_next = p0 + p1;
+        if (sum > ULLONG_MAX - p_next) {
+            return 0;
+        }
+        sum += p_next;
+        p0 = p1;
+        p1 = p2;
+        p2 = p_next;
+    }
+    return sum;
+}
+
+int main(void) {
+    char *endptr;
+    long val;
+    int n;
+    unsigned long long result;
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char input[128];
+    size_t len;
+
+    printf("Enter n: ");
+    if (fgets(input, sizeof(input), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    len = strnlen(input, sizeof(input));
+    if (len == sizeof(input)) {
+        int c;
+        /* Possible weaknesses found:
+         * Flawfinder getchar: Check buffer boundaries if used in a loop including recursive loops (CWE-120, CWE-20). (risk 1, buffer)
+         */
+        while ((c = getchar()) != '\n' && c != EOF);
+        fprintf(stderr, "Input too long\n");
+        return EXIT_FAILURE;
+    }
+
+    if (len > 0 && input[len - 1] != '\n' && !feof(stdin)) {
+        int c;
+        /* Possible weaknesses found:
+         * Flawfinder getchar: Check buffer boundaries if used in a loop including recursive loops (CWE-120, CWE-20). (risk 1, buffer)
+         */
+        while ((c = getchar()) != '\n' && c != EOF);
+        fprintf(stderr, "Input too long\n");
+        return EXIT_FAILURE;
+    }
+
+    errno = 0;
+    val = strtol(input, &endptr, 10);
+    if (errno == ERANGE || endptr == input || val < 0 || val > INT_MAX) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    while (isspace((unsigned char)*endptr)) {
+        endptr++;
+    }
+    if (*endptr != '\0') {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    n = (int)val;
+    result = calculate_perrin_sum(n);
+    if (result == 0 && n > 2) {
+        fprintf(stderr, "Overflow occurred\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Sum: %llu\n", result);
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,15 @@
+collected_code/problem-586-0.c:15:18: warning: Uninitialized variable: temp [uninitvar]
+        arr[i] = temp[j];
+                 ^
+collected_code/problem-586-0.c:6:23: note: Assuming condition is false
+    for (int i = 0; i < k; i++) {
+                      ^
+collected_code/problem-586-0.c:15:18: note: Uninitialized variable: temp
+        arr[i] = temp[j];
+                 ^
+collected_code/problem-586-0.c:7:22: error: Cannot determine that 'arr[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        temp[i] = arr[i];
+                     ^
+collected_code/problem-586-0.c:11:21: error: Cannot determine that 'arr[i+k]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        arr[i] = arr[i + k];
+                    ^

@@ -1,0 +1,59 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+long long decimal_to_octal(long long decimal)
+{
+    long long octal = 0;
+    long long place = 1;
+    int negative = 0;
+
+    if (decimal < 0) {
+        negative = 1;
+        decimal = -decimal;
+    }
+
+    if (decimal == 0) {
+        return 0;
+    }
+
+    while (decimal > 0) {
+        octal += (decimal % 8) * place;
+        decimal /= 8;
+        place *= 10;
+    }
+
+    return negative ? -octal : octal;
+}
+
+int main(void)
+{
+    long long decimal;
+    long long octal;
+    int result;
+
+    printf("Enter a decimal number: ");
+    result = scanf("%lld", &decimal);
+
+    if (result != 1) {
+        fprintf(stderr, "Error: invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (decimal > 999999 || decimal < -999999) {
+        fprintf(stderr, "Error: input out of supported range\n");
+        return EXIT_FAILURE;
+    }
+
+    octal = decimal_to_octal(decimal);
+    printf("Octal equivalent: %lld\n", octal);
+
+    return EXIT_SUCCESS;
+}
+```
+
+A few notes on the safety measures taken:
+
+- **CWE-703**: The return value of `scanf` is checked to ensure valid input was actually read before using the value. Error messages go to `stderr` and the program exits with `EXIT_FAILURE` on error.
+- **CWE-664**: An input range check prevents `place *= 10` from overflowing the `long long` type, which would be undefined behavior. Negative inputs are handled explicitly rather than producing garbage.
+- **CWE-710**: The code uses `int main(void)`, standard exit codes from `<stdlib.h>`, consistent brace style, and avoids implicit conversions or non-standard constructs.

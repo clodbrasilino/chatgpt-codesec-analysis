@@ -1,0 +1,42 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+#include <stdbool.h>
+
+bool find_smallest(const int *list, size_t count, int *result)
+{
+    size_t i;
+
+    if (list == NULL || result == NULL || count == 0U) {
+        return false;
+    }
+
+    *result = list[0];
+    for (i = 1U; i < count; i++) {
+        if (list[i] < *result) {
+            *result = list[i];
+        }
+    }
+
+    return true;
+}
+
+int main(void)
+{
+    int numbers[] = { 42, -7, 19, 0, 88, -23, 5 };
+    size_t count = sizeof(numbers) / sizeof(numbers[0]);
+    int smallest = 0;
+
+    if (!find_smallest(numbers, count, &smallest)) {
+        if (fprintf(stderr, "Error: unable to find smallest value\n") < 0) {
+            return EXIT_FAILURE;
+        }
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Smallest number: %d\n", smallest) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

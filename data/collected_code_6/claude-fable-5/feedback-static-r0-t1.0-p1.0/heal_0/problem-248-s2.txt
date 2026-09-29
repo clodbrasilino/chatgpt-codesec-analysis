@@ -1,0 +1,55 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+double harmonic_sum(unsigned int n);
+
+double harmonic_sum(unsigned int n)
+{
+    double sum = 0.0;
+    unsigned int i;
+
+    if (n <= 1U) {
+        return 0.0;
+    }
+
+    for (i = 1U; i < n; i++) {
+        sum += 1.0 / (double)i;
+    }
+
+    return sum;
+}
+
+int main(void)
+{
+    unsigned int n = 0U;
+    double result;
+    int scan_status;
+
+    printf("Enter a positive integer n: ");
+    scan_status = scanf("%u", &n);
+
+    if (scan_status != 1) {
+        fprintf(stderr, "Error: invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (n == 0U) {
+        fprintf(stderr, "Error: n must be greater than zero.\n");
+        return EXIT_FAILURE;
+    }
+
+    result = harmonic_sum(n);
+    printf("Harmonic sum of %u is %f\n", n - 1U, result);
+
+    return EXIT_SUCCESS;
+}
+```
+
+This implementation addresses the specified weaknesses as follows:
+
+- **CWE-664 (Improper Control of a Resource Through its Lifetime):** No dynamic memory or file handles are used, so there are no resources that can leak or be used after release. All variables have well-defined automatic storage lifetimes.
+
+- **CWE-703 (Improper Check or Handling of Exceptional Conditions):** The return value of `scanf` is checked to detect invalid or missing input, and `n == 0` is rejected to prevent an unsigned underflow when computing `n - 1`. Error paths report a message to `stderr` and return `EXIT_FAILURE`.
+
+- **CWE-710 (Improper Adherence to Coding Standards):** The code uses a forward declaration, explicit types and casts, `main(void)` with proper return values, unsigned literals matching unsigned types, and standard exit codes from `stdlib.h`.

@@ -1,0 +1,39 @@
+C does not support lambda functions or tuples as they are known in languages like Python. However, you can achieve similar functionality using structures and function pointers. Here's an example of how you might sort a list of pairs of integers:
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int first;
+    int second;
+} Pair;
+
+int compare(const void* a, const void* b) {
+    Pair* pairA = (Pair*) a;
+    Pair* pairB = (Pair*) b;
+    if (pairA->first != pairB->first)
+        return pairA->first - pairB->first;
+    else
+        return pairA->second - pairB->second;
+}
+
+void sortPairs(Pair* pairs, size_t count) {
+    qsort(pairs, count, sizeof(Pair), compare);
+}
+
+int main() {
+    Pair pairs[] = {{1, 2}, {3, 4}, {5, 6}, {7, 8}, {9, 10}};
+    size_t count = sizeof(pairs) / sizeof(Pair);
+
+    sortPairs(pairs, count);
+
+    for (size_t i = 0; i < count; ++i) {
+        printf("(%d, %d)\n", pairs[i].first, pairs[i].second);
+    }
+
+    return 0;
+}
+```
+
+This program defines a `Pair` structure to represent a tuple of two integers. It also defines a `compare` function that can be used by the `qsort` function to sort an array of `Pair` structures. The `sortPairs` function is a convenience function that sorts an array of `Pair` structures. The `main` function demonstrates how to use these functions to sort an array of `Pair` structures.

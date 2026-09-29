@@ -1,0 +1,67 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+int nth_term(long long a, long long d, long long n, long long *result)
+{
+    long long steps;
+    long long product;
+    long long sum;
+
+    if (__builtin_sub_overflow(n, 1LL, &steps)) {
+        return -1;
+    }
+
+    if (__builtin_mul_overflow(steps, d, &product)) {
+        return -1;
+    }
+
+    if (__builtin_add_overflow(a, product, &sum)) {
+        return -1;
+    }
+
+    *result = sum;
+    return 0;
+}
+
+int main(void)
+{
+    long long a;
+    long long d;
+    long long n;
+    long long term;
+
+    printf("Enter first term: ");
+    if (scanf("%lld", &a) != 1) {
+        fprintf(stderr, "Invalid input for first term\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter common difference: ");
+    if (scanf("%lld", &d) != 1) {
+        fprintf(stderr, "Invalid input for common difference\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter term number: ");
+    if (scanf("%lld", &n) != 1) {
+        fprintf(stderr, "Invalid input for term number\n");
+        return EXIT_FAILURE;
+    }
+
+    if (n < 1) {
+        fprintf(stderr, "Term number must be a positive integer\n");
+        return EXIT_FAILURE;
+    }
+
+    if (nth_term(a, d, n, &term) != 0) {
+        fprintf(stderr, "Arithmetic overflow detected while computing the term\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Term %lld of the arithmetic progression is: %lld\n", n, term);
+
+    return EXIT_SUCCESS;
+}
+```

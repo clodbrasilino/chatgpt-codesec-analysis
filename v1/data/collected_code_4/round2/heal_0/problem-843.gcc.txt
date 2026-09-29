@@ -1,0 +1,9 @@
+./collected_code_4/round2//heal_0/problem-843.c: In function 'nthSuperUgly':
+./collected_code_4/round2//heal_0/problem-843.c:50:5: warning: implicit declaration of function 'makeHeap' [-Wimplicit-function-declaration]
+   50 |     makeHeap(heap, k);
+      |     ^~~~~~~~
+Undefined symbols for architecture x86_64:
+  "_makeHeap", referenced from:
+      _nthSuperUgly in ccGWRkwl.o
+ld: symbol(s) not found for architecture x86_64
+collect2: error: ld returned 1 exit status

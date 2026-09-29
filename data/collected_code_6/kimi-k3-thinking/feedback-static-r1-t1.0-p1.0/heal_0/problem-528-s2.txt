@@ -1,0 +1,130 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stddef.h>
+
+typedef struct {
+    int *data;
+    size_t length;
+} IntList;
+
+typedef struct {
+    IntList *lists;
+    size_t count;
+} ListOfLists;
+
+typedef struct {
+    const IntList **items;
+    size_t count;
+} MinListResult;
+
+MinListResult *find_min_length_lists(const ListOfLists *input)
+{
+    MinListResult *result;
+    size_t i;
+    size_t min_length;
+    size_t match_count;
+
+    if (input == NULL || (input->count > 0 && input->lists == NULL)) {
+        return NULL;
+    }
+
+    result = (MinListResult *)malloc(sizeof(MinListResult));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    result->items = NULL;
+    result->count = 0;
+
+    if (input->count == 0) {
+        return result;
+    }
+
+    min_length = input->lists[0].length;
+    for (i = 1; i < input->count; i++) {
+        if (input->lists[i].length < min_length) {
+            min_length = input->lists[i].length;
+        }
+    }
+
+    match_count = 0;
+    for (i = 0; i < input->count; i++) {
+        if (input->lists[i].length == min_length) {
+            match_count++;
+        }
+    }
+
+    result->items = (const IntList **)malloc(match_count * sizeof(const IntList *));
+    if (result->items == NULL) {
+        free(result);
+        return NULL;
+    }
+
+    match_count = 0;
+    for (i = 0; i < input->count; i++) {
+        if (input->lists[i].length == min_length) {
+            result->items[match_count] = &input->lists[i];
+            match_count++;
+        }
+    }
+
+    result->count = match_count;
+
+    return result;
+}
+
+void free_min_list_result(MinListResult *result)
+{
+    if (result == NULL) {
+        return;
+    }
+    free(result->items);
+    free(result);
+}
+
+int main(void)
+{
+    int a[] = {1, 2, 3};
+    int b[] = {4, 5};
+    int c[] = {6, 7, 8, 9};
+    int d[] = {10, 11};
+
+    IntList lists[4];
+    ListOfLists input;
+    MinListResult *result;
+    size_t i;
+
+    lists[0].data = a;
+    lists[0].length = sizeof(a) / sizeof(a[0]);
+    lists[1].data = b;
+    lists[1].length = sizeof(b) / sizeof(b[0]);
+    lists[2].data = c;
+    lists[2].length = sizeof(c) / sizeof(c[0]);
+    lists[3].data = d;
+    lists[3].length = sizeof(d) / sizeof(d[0]);
+
+    input.lists = lists;
+    input.count = sizeof(lists) / sizeof(lists[0]);
+
+    result = find_min_length_lists(&input);
+    if (result == NULL) {
+        fprintf(stderr, "Error: unable to find minimum length lists\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Number of lists with minimum length: %zu\n", result->count);
+    for (i = 0; i < result->count; i++) {
+        size_t j;
+        printf("List %zu (length %zu):", i + 1, result->items[i]->length);
+        for (j = 0; j < result->items[i]->length; j++) {
+            printf(" %d", result->items[i]->data[j]);
+        }
+        printf("\n");
+    }
+
+    free_min_list_result(result);
+
+    return EXIT_SUCCESS;
+}
+```

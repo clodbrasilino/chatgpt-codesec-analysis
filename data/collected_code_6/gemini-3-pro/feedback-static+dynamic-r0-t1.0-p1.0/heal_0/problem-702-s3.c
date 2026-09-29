@@ -1,0 +1,47 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int compare(const void *a, const void *b) {
+    int int_a = *((int *)a);
+    int int_b = *((int *)b);
+    if (int_a == int_b) return 0;
+    else if (int_a < int_b) return -1;
+    else return 1;
+}
+
+int min_elements_to_remove(int *arr, int n, int k) {
+    if (arr == NULL || n <= 0 || k < 0) {
+        return -1;
+    }
+
+    qsort(arr, n, sizeof(int), compare);
+
+    int max_length = 0;
+    int j = 0;
+
+    for (int i = 0; i < n; i++) {
+        while (j < n && arr[j] - arr[i] <= k) {
+            j++;
+        }
+        if (j - i > max_length) {
+            max_length = j - i;
+        }
+    }
+
+    return n - max_length;
+}
+
+int main(void) {
+    int arr[] = {1, 3, 4, 9, 10, 11, 12, 17, 20};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    int k = 4;
+
+    int result = min_elements_to_remove(arr, n, k);
+    if (result != -1) {
+        printf("%d\n", result);
+    } else {
+        printf("Invalid input\n");
+    }
+
+    return 0;
+}

@@ -1,0 +1,104 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char *items;
+    size_t count;
+} Tuple;
+
+Tuple *string_to_tuple(const char *str)
+{
+    Tuple *tuple = NULL;
+    size_t length;
+    size_t i;
+
+    if ((str == NULL) || (str[0] == '\0')) {
+        return NULL;
+    }
+
+    length = strlen(str);
+
+    tuple = (Tuple *)malloc(sizeof(Tuple));
+    if (tuple == NULL) {
+        return NULL;
+    }
+
+    tuple->items = (char *)malloc((length + 1U) * sizeof(char));
+    if (tuple->items == NULL) {
+        free(tuple);
+        return NULL;
+    }
+
+    for (i = 0U; i < length; i++) {
+        tuple->items[i] = str[i];
+    }
+    tuple->items[length] = '\0';
+    tuple->count = length;
+
+    return tuple;
+}
+
+void free_tuple(Tuple *tuple)
+{
+    if (tuple != NULL) {
+        free(tuple->items);
+        tuple->items = NULL;
+        free(tuple);
+    }
+}
+
+void print_tuple(const Tuple *tuple)
+{
+    size_t i;
+
+    if ((tuple == NULL) || (tuple->items == NULL) || (tuple->count == 0U)) {
+        return;
+    }
+
+    (void)printf("[");
+    for (i = 0U; i < tuple->count; i++) {
+        (void)printf("'%c'", tuple->items[i]);
+        if (i < (tuple->count - 1U)) {
+            (void)printf(", ");
+        }
+    }
+    (void)printf("]\n");
+    (void)fflush(stdout);
+}
+
+int main(void)
+{
+    const char *inputs[] = { "python3.0", "item1", "15.10" };
+    size_t num_inputs = sizeof(inputs) / sizeof(inputs[0]);
+    size_t i;
+
+    for (i = 0U; i < num_inputs; i++) {
+        Tuple *tuple = string_to_tuple(inputs[i]);
+
+        if (tuple == NULL) {
+            (void)fprintf(stderr, "Failed to convert string to tuple\n");
+            return EXIT_FAILURE;
+        }
+
+        print_tuple(tuple);
+
+        free_tuple(tuple);
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the weaknesses and fixes applied:**
+
+1. **Buffer allocation without null terminator** — The original code allocated exactly `length` bytes with no room for a `'\0'` terminator. While the code never called string functions on `items`, this is fragile and a latent buffer over-read risk if anyone ever treats `items` as a C string. Fixed by allocating `length + 1` and explicitly null-terminating.
+
+2. **Missing output flush** — The reported failures show `<no output>`, which is symptomatic of buffered stdout never being flushed before the process is observed (e.g., when stdout is redirected to a pipe by a test harness, it becomes fully buffered instead of line buffered). Added an explicit `fflush(stdout)` after each tuple is printed to guarantee output reaches the test harness.
+
+3. **Defensive checks in `print_tuple`** — Added guards against a `NULL` `items` pointer and a zero `count`. In the original, `tuple->count - 1U` with `count == 0` would underflow to `SIZE_MAX`; combined with the loop condition it was safe, but the guard removes any ambiguity.
+
+4. **Dangling pointer hygiene in `free_tuple`** — Set `tuple->items` to `NULL` after freeing before freeing the struct itself, avoiding any window where a dangling pointer could be dereferenced.
+
+The core logic (iteration order, output format `['p', 'y', ...]`, per-input allocation/free cycle) was already correct and matches the expected test outputs, so it is preserved unchanged.

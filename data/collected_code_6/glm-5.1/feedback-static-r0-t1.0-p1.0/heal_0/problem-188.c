@@ -1,0 +1,41 @@
+#include <stdio.h>
+#include <math.h>
+#include <stdbool.h>
+
+bool is_square(int n) {
+    if (n < 0) {
+        return false;
+    }
+    int r = (int)sqrt(n);
+    return r * r == n;
+}
+
+bool can_be_represented(int num) {
+    if (num < 0) {
+        return false;
+    }
+    if (num == 0) {
+        return true;
+    }
+    for (int i = 1; i * i <= num; i++) {
+        if (num % i == 0) {
+            if (is_square(i) && is_square(num / i)) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+int main() {
+    int num;
+    if (scanf("%d", &num) != 1) {
+        return 1;
+    }
+    if (can_be_represented(num)) {
+        printf("YES\n");
+    } else {
+        printf("NO\n");
+    }
+    return 0;
+}

@@ -1,0 +1,7 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-393.c:40:21: error: cannot assign to variable 'longest' with const-qualified type 'List *const' (aka 'struct List *const')
+   40 |             longest = lists[i];
+      |             ~~~~~~~ ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-393.c:37:17: note: variable 'longest' declared const here
+   37 |     List *const longest = lists[0];
+      |     ~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~
+1 error generated.

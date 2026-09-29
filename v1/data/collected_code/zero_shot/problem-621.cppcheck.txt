@@ -1,0 +1,9 @@
+collected_code/problem-621-0.c:5:15: error: Cannot determine that 'str[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+    while (str[i] != '\0') {
+              ^
+collected_code/problem-621-0.c:6:16: error: Cannot determine that 'str[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        if (str[i] >= '0' && str[i] <= '9') {
+               ^
+collected_code/problem-621-0.c:7:16: error: Cannot determine that 'str[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+            str[i] += k;
+               ^

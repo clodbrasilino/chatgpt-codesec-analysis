@@ -1,0 +1,80 @@
+collected_code_3/problem-114-3.c: In function 'assign_frequency':
+collected_code_3/problem-114-3.c:25:37: warning: dereference of possibly-NULL 'tuples' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   25 |             tuples[count].frequency = 1;
+      |             ~~~~~~~~~~~~~~~~~~~~~~~~^~~
+  'main': events 1-3
+    |
+    |   33 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   37 |     Tuple *tuples = (Tuple *)malloc(list_size * sizeof(Tuple));
+    |      |                              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                              |
+    |      |                              (2) this call could return NULL
+    |   38 |     assign_frequency(tuples, tuple_list, list_size);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (3) calling 'assign_frequency' from 'main'
+    |
+    +--> 'assign_frequency': events 4-7
+           |
+           |   19 | void assign_frequency(Tuple *tuples, char **tuple_list, int list_size) {
+           |      |      ^~~~~~~~~~~~~~~~
+           |      |      |
+           |      |      (4) entry to 'assign_frequency'
+           |   20 |     int count = 0;
+           |   21 |     for (int i = 0; i < list_size; i++) {
+           |      |                     ~~~~~~~~~~~~~
+           |      |                       |
+           |      |                       (5) following 'true' branch (when 'i < list_size')...
+           |   22 |         int index = find_tuple(tuples, count, tuple_list[i]);
+           |      |                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                     |                                   |
+           |      |                     |                                   (6) ...to here
+           |      |                     (7) calling 'find_tuple' from 'assign_frequency'
+           |
+           +--> 'find_tuple': events 8-10
+                  |
+                  |   10 | int find_tuple(Tuple *tuples, int count, char *tuple) {
+                  |      |     ^~~~~~~~~~
+                  |      |     |
+                  |      |     (8) entry to 'find_tuple'
+                  |   11 |     for (int i = 0; i < count; i++) {
+                  |      |                     ~~~~~~~~~
+                  |      |                       |
+                  |      |                       (9) following 'false' branch (when 'i >= count')...
+                  |......
+                  |   16 |     return -1;
+                  |      |            ~
+                  |      |            |
+                  |      |            (10) ...to here
+                  |
+           <------+
+           |
+         'assign_frequency': events 11-12
+           |
+           |   22 |         int index = find_tuple(tuples, count, tuple_list[i]);
+           |      |                     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                     |
+           |      |                     (11) returning to 'assign_frequency' from 'find_tuple'
+           |   23 |         if (index == -1) {
+           |      |            ~         
+           |      |            |
+           |      |            (12) following 'true' branch (when 'index == -1')...
+           |
+         'assign_frequency': event 13
+           |
+           |   24 |             strcpy(tuples[count].tuple, tuple_list[i]);
+           |      |                          ^
+           |      |                          |
+           |      |                          (13) ...to here
+           |
+         'assign_frequency': event 14
+           |
+           |   25 |             tuples[count].frequency = 1;
+           |      |             ~~~~~~~~~~~~~~~~~~~~~~~~^~~
+           |      |                                     |
+           |      |                                     (14) 'tuples + (long unsigned int)count * 104' could be NULL: unchecked value from (2)
+           |

@@ -1,0 +1,147 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    unsigned long long key;
+    unsigned long long value;
+    int occupied;
+} Entry;
+
+typedef struct {
+    Entry *entries;
+    size_t capacity;
+    size_t size;
+} Memo;
+
+static size_t hash_key(unsigned long long key) {
+    key ^= key >> 33;
+    key *= 0xff51afd7ed558ccdULL;
+    key ^= key >> 33;
+    key *= 0xc4ceb9fe1a85ec53ULL;
+    key ^= key >> 33;
+    return (size_t)key;
+}
+
+static int memo_init(Memo *memo, size_t capacity) {
+    memo->entries = calloc(capacity, sizeof(Entry));
+    if (!memo->entries) return -1;
+    memo->capacity = capacity;
+    memo->size = 0;
+    return 0;
+}
+
+static void memo_destroy(Memo *memo) {
+    free(memo->entries);
+    memo->entries = NULL;
+    memo->capacity = 0;
+    memo->size = 0;
+}
+
+static int memo_rehash(Memo *memo) {
+    size_t new_capacity = memo->capacity * 2;
+    Entry *new_entries = calloc(new_capacity, sizeof(Entry));
+    if (!new_entries) return -1;
+
+    for (size_t i = 0; i < memo->capacity; i++) {
+        if (!memo->entries[i].occupied) continue;
+
+        unsigned long long key = memo->entries[i].key;
+        unsigned long long value = memo->entries[i].value;
+        size_t idx = hash_key(key) & (new_capacity - 1);
+
+        while (new_entries[idx].occupied) {
+            idx = (idx + 1) & (new_capacity - 1);
+        }
+
+        new_entries[idx].key = key;
+        new_entries[idx].value = value;
+        new_entries[idx].occupied = 1;
+    }
+
+    free(memo->entries);
+    memo->entries = new_entries;
+    memo->capacity = new_capacity;
+    return 0;
+}
+
+static int memo_get(const Memo *memo, unsigned long long key, unsigned long long *value) {
+    if (!memo->entries || memo->capacity == 0) return 0;
+
+    size_t idx = hash_key(key) & (memo->capacity - 1);
+    while (memo->entries[idx].occupied) {
+        if (memo->entries[idx].key == key) {
+            *value = memo->entries[idx].value;
+            return 1;
+        }
+        idx = (idx + 1) & (memo->capacity - 1);
+    }
+
+    return 0;
+}
+
+static int memo_put(Memo *memo, unsigned long long key, unsigned long long value) {
+    if (!memo->entries || memo->capacity == 0) return -1;
+
+    if ((memo->size + 1) * 10 >= memo->capacity * 7) {
+        if (memo_rehash(memo) != 0) return -1;
+    }
+
+    size_t idx = hash_key(key) & (memo->capacity - 1);
+    while (memo->entries[idx].occupied) {
+        if (memo->entries[idx].key == key) {
+            memo->entries[idx].value = value;
+            return 0;
+        }
+        idx = (idx + 1) & (memo->capacity - 1);
+    }
+
+    memo->entries[idx].key = key;
+    memo->entries[idx].value = value;
+    memo->entries[idx].occupied = 1;
+    memo->size++;
+    return 0;
+}
+
+static int solve_memo(Memo *memo, unsigned long long n, unsigned long long *result) {
+    if (n <= 1) {
+        *result = n;
+        return 0;
+    }
+
+    if (memo_get(memo, n, result)) return 0;
+
+    unsigned long long a, b, c, d;
+    if (solve_memo(memo, n / 2, &a) != 0) return -1;
+    if (solve_memo(memo, n / 3, &b) != 0) return -1;
+    if (solve_memo(memo, n / 4, &c) != 0) return -1;
+    if (solve_memo(memo, n / 5, &d) != 0) return -1;
+
+    unsigned long long split = a + b + c + d;
+    unsigned long long answer = n > split ? n : split;
+
+    if (memo_put(memo, n, answer) != 0) return -1;
+
+    *result = answer;
+    return 0;
+}
+
+int main(void) {
+    Memo memo;
+    unsigned long long n;
+    unsigned long long result;
+
+    if (memo_init(&memo, 2048) != 0) return EXIT_FAILURE;
+
+    while (scanf("%llu", &n) == 1) {
+        if (solve_memo(&memo, n, &result) != 0) {
+            memo_destroy(&memo);
+            return EXIT_FAILURE;
+        }
+        printf("%llu\n", result);
+    }
+
+    memo_destroy(&memo);
+    return 0;
+}
+```

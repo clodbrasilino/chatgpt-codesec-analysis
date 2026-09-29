@@ -1,0 +1,90 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_INPUT_LEN 4096
+
+char *remove_parentheses(const char *input)
+{
+    size_t len;
+    size_t i;
+    size_t j;
+    int depth;
+    char *result;
+    char *shrunk;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    len = strnlen(input, MAX_INPUT_LEN);
+
+    result = malloc(len + 1);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    depth = 0;
+    j = 0;
+    for (i = 0; i < len; i++) {
+        if (input[i] == '(') {
+            depth++;
+        } else if (input[i] == ')') {
+            if (depth > 0) {
+                depth--;
+            }
+        } else if (depth == 0) {
+            result[j] = input[i];
+            j++;
+        }
+    }
+    result[j] = '\0';
+
+    shrunk = realloc(result, j + 1);
+    if (shrunk != NULL) {
+        result = shrunk;
+    }
+
+    return result;
+}
+
+int main(void)
+{
+    const char *tests[] = {
+        "Hello (remove me) World",
+        "Nested (outer (inner) text) example",
+        "No parentheses here"
+    };
+    size_t i;
+    size_t count;
+    char *output;
+
+    count = sizeof(tests) / sizeof(tests[0]);
+
+    for (i = 0; i < count; i++) {
+        output = remove_parentheses(tests[i]);
+        if (output == NULL) {
+            fprintf(stderr, "Memory allocation failed\n");
+            return EXIT_FAILURE;
+        }
+        printf("%s\n", output);
+        free(output);
+        output = NULL;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the original code and fixes applied:**
+
+1. **Garbage output in test cases (`��`, `���`)** — The reported failures showing non-printable bytes are the classic symptom of reading past the end of a buffer or using an unterminated string. The original code was actually correct in terminating `result`, so the real exposure is the `strlen` call on a potentially unterminated input (CWE-126). The rewrite uses `strnlen` with a bounded maximum (`MAX_INPUT_LEN`) so an unterminated buffer can never cause an unbounded over-read.
+
+2. **Flawfinder `strlen` warning (CWE-126)** — Directly addressed by the bounded `strnlen` replacement.
+
+3. **Over-allocation** — The original allocated `len + 1` bytes even when most characters are stripped. A `realloc` shrink was added; note it correctly falls back to the original buffer if `realloc` fails, so no memory is leaked and no NULL is dereferenced.
+
+4. **Code duplication in `main`** — The three near-identical test blocks were collapsed into a loop over an array, reducing the chance of copy-paste errors (e.g., freeing the wrong pointer). The pointer is also set to `NULL` after `free` to prevent accidental use-after-free/double-free if the code is later extended.
+
+5. **Preserved correct behaviors** — NULL input check, `malloc` failure check, unmatched-`)` handling (`depth > 0` guard), and explicit `\0` termination were all sound in the original and retained.

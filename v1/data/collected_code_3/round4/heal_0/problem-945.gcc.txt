@@ -1,0 +1,47 @@
+collected_code_3/round4/heal_0/problem-945.c: In function 'convertToSet':
+collected_code_3/round4/heal_0/problem-945.c:11:19: warning: dereference of possibly-NULL 'set' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   11 |     set->elements = (int*)malloc(sizeof(int) * size);
+      |     ~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  'convertToSet': events 1-2
+    |
+    |   10 |     Set *set = (Set*)malloc(sizeof(Set));
+    |      |                      ^~~~~~~~~~~~~~~~~~~
+    |      |                      |
+    |      |                      (1) this call could return NULL
+    |   11 |     set->elements = (int*)malloc(sizeof(int) * size);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                   |
+    |      |                   (2) 'set' could be NULL: unchecked value from (1)
+    |
+collected_code_3/round4/heal_0/problem-945.c:20:40: warning: dereference of possibly-NULL '*set.elements + (long unsigned int)*set.size * 4' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   20 |             set->elements[set->size++] = tuples[i];
+      |             ~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~
+  'convertToSet': events 1-8
+    |
+    |   11 |     set->elements = (int*)malloc(sizeof(int) * size);
+    |      |                           ^~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                           |
+    |      |                           (1) this call could return NULL
+    |......
+    |   14 |     for(int i = 0; i < size; i++) {
+    |      |                    ~~~~~~~~
+    |      |                      |
+    |      |                      (2) following 'true' branch (when 'i < size')...
+    |   15 |         int j;
+    |   16 |         for(j = 0; j < i; j++)
+    |      |             ~~~~~  ~~~~~   
+    |      |               |      |
+    |      |               |      (4) following 'false' branch (when 'j >= i')...
+    |      |               (3) ...to here
+    |......
+    |   19 |         if(i == j)
+    |      |           ~                
+    |      |           |
+    |      |           (5) ...to here
+    |      |           (6) following 'true' branch (when 'i == j')...
+    |   20 |             set->elements[set->size++] = tuples[i];
+    |      |             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                                        |       |
+    |      |                                        |       (7) ...to here
+    |      |                                        (8) '*set.elements + (long unsigned int)*set.size * 4' could be NULL: unchecked value from (1)
+    |

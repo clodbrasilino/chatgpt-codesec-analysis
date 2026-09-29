@@ -1,0 +1,52 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int findMaxOccurringDivisor(int start, int end) {
+    if (start < 1 || end < start) {
+        return -1;
+    }
+
+    int* freq = calloc(end + 1, sizeof(int));
+    if (!freq) {
+        return -1;
+    }
+
+    for (int i = start; i <= end; i++) {
+        for (int j = 1; j*j <= i; j++) {
+            if (i % j == 0) {
+                freq[j]++;
+
+                if (j != (i / j)) {
+                    freq[i / j]++;
+                }
+            }
+        }
+    }
+
+    int max_divisor = 0;
+    for (int i = 1; i <= end; i++) {
+        if (freq[i] > freq[max_divisor]) {
+            max_divisor = i;
+        }
+    }
+
+    free(freq);
+    return max_divisor;
+}
+
+int main() {
+    int start, end;
+    printf("Enter the start of the interval: ");
+    scanf("%d", &start);
+    printf("Enter the end of the interval: ");
+    scanf("%d", &end);
+
+    int result = findMaxOccurringDivisor(start, end);
+    if (result != -1) {
+        printf("The maximum occurring divisor in the given interval is: %d", result);
+    } else {
+        printf("Invalid input. Please ensure the start is greater than 1 and the end is greater than the start.");
+    }
+
+    return 0;
+}

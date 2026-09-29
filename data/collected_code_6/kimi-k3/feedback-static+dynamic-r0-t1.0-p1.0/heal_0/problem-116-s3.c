@@ -1,0 +1,29 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int tuple_to_int(const int *tuple, size_t size) {
+    int result = 0;
+    size_t i;
+    for (i = 0; i < size; ++i) {
+        if (tuple[i] < 0 || tuple[i] > 9) {
+            return -1;
+        }
+        if (result > (2147483647 - tuple[i]) / 10) {
+            return -1;
+        }
+        result = result * 10 + tuple[i];
+    }
+    return result;
+}
+
+int main(void) {
+    int tuple[] = {1, 2, 3, 4};
+    size_t size = sizeof(tuple) / sizeof(tuple[0]);
+    int result = tuple_to_int(tuple, size);
+    if (result == -1) {
+        fprintf(stderr, "Invalid input or overflow\n");
+        return EXIT_FAILURE;
+    }
+    printf("%d\n", result);
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,9 @@
+./collected_code_4/round2//heal_0/problem-325.c: In function 'minSquares':
+./collected_code_4/round2//heal_0/problem-325.c:21:21: warning: implicit declaration of function 'min' [-Wimplicit-function-declaration]
+   21 |             dp[n] = min(dp[n], 1+minSquares(n-temp));
+      |                     ^~~
+./collected_code_4/round2//heal_0/problem-325.c: In function 'main':
+./collected_code_4/round2//heal_0/problem-325.c:32:21: error: 'N' undeclared (first use in this function)
+   32 |     for(int i=0; i<=N; i++)
+      |                     ^
+./collected_code_4/round2//heal_0/problem-325.c:32:21: note: each undeclared identifier is reported only once for each function it appears in

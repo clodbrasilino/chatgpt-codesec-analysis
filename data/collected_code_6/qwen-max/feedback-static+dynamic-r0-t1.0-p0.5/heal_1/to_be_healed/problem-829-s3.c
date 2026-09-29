@@ -1,0 +1,67 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char *str;
+    int count;
+} StringCount;
+
+int compare(const void *a, const void *b) {
+    /* Possible weaknesses found:
+     *  Variable 'strA' can be declared as pointer to const [constVariablePointer]
+     */
+    StringCount *strA = (StringCount *)a;
+    /* Possible weaknesses found:
+     *  Variable 'strB' can be declared as pointer to const [constVariablePointer]
+     */
+    StringCount *strB = (StringCount *)b;
+    return (strB->count - strA->count);
+}
+
+char* findSecondMostFrequent(char *strings[], int n) {
+    StringCount *counts = (StringCount *)malloc(n * sizeof(StringCount));
+    if (!counts) return NULL;
+
+    for (int i = 0; i < n; i++) {
+        counts[i].str = strings[i];
+        counts[i].count = 1;
+    }
+
+    for (int i = 0; i < n; i++) {
+        for (int j = i + 1; j < n; j++) {
+            if (strcmp(counts[i].str, counts[j].str) == 0) {
+                counts[i].count++;
+                counts[j].count = 0;
+            }
+        }
+    }
+
+    qsort(counts, n, sizeof(StringCount), compare);
+
+    for (int i = 0; i < n; i++) {
+        if (counts[i].count > 0 && (i == 0 || counts[i].count < counts[0].count)) {
+            char *result = strdup(counts[i].str);
+            free(counts);
+            return result;
+        }
+    }
+
+    free(counts);
+    return NULL;
+}
+
+int main() {
+    char *strings[] = {"apple", "banana", "apple", "orange", "banana", "banana"};
+    int n = sizeof(strings) / sizeof(strings[0]);
+
+    char *secondMostFrequent = findSecondMostFrequent(strings, n);
+    if (secondMostFrequent) {
+        printf("Second most frequent string: %s\n", secondMostFrequent);
+        free(secondMostFrequent);
+    } else {
+        printf("No second most frequent string found.\n");
+    }
+
+    return 0;
+}

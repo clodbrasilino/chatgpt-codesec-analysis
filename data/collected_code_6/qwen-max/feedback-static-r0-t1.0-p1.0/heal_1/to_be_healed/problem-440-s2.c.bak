@@ -1,0 +1,52 @@
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdbool.h>
+ /* Possible weaknesses found:
+  *  include '<stdlib.h>' or provide a declaration of 'free'
+  */
+
+bool isAdverb(const char *word) {
+    size_t len = strlen(word);
+    if (len < 4) return false;
+    return (strcmp(word + len - 4, "ly") == 0);
+}
+
+void findAdverbs(const char *sentence, char **adverbs, int *positions, int *count) {
+    const char *delimiters = " ,.!?;:";  // Delimiters to split the sentence
+    const char *token;
+    const char *currentPos = sentence;
+    char *context = NULL;
+
+    token = strtok_r((char *)sentence, delimiters, &context);
+    while (token != NULL) {
+        if (isAdverb(token)) {
+            adverbs[*count] = strdup(token);
+            positions[*count] = currentPos - sentence;
+            (*count)++;
+        }
+        currentPos += strlen(token) + strspn(currentPos, delimiters);
+        token = strtok_r(NULL, delimiters, &context);
+    }
+}
+
+int main() {
+    const char *sentence = "He quickly and quietly walked away from the scene.";
+    char *adverbs[100];
+    int positions[100];
+    int count = 0;
+
+    findAdverbs(sentence, adverbs, positions, &count);
+
+    for (int i = 0; i < count; i++) {
+        printf("Adverb: %s, Position: %d\n", adverbs[i], positions[i]);
+        /* Possible weaknesses found:
+         *  implicit declaration of function 'free' [-Wimplicit-function-declaration]
+         *  call to undeclared library function 'free' with type 'void (void *)'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+         *  include the header <stdlib.h> or explicitly provide a declaration for 'free'
+         */
+        free(adverbs[i]);
+    }
+
+    return 0;
+}

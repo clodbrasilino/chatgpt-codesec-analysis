@@ -1,0 +1,93 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <limits.h>
+#include <string.h>
+
+unsigned long long sum_of_fourth_powers(int n) {
+    if (n <= 0) {
+        return 0;
+    }
+    
+    unsigned long long sum = 0;
+    for (int i = 1; i <= n; i++) {
+        unsigned long long fourth = (unsigned long long)i * i * i * i;
+        unsigned long long prev = sum;
+        sum += fourth;
+        if (sum < prev) {
+            return ULLONG_MAX;
+        }
+    }
+    return sum;
+}
+
+int main(void) {
+    char *input = NULL;
+    size_t len = 0;
+    /* Possible weaknesses found:
+     * Flawfinder read: Check buffer boundaries if used in a loop including recursive loops (CWE-120, CWE-20). (risk 1, buffer)
+     */
+    ssize_t read;
+    int n;
+    
+    printf("Enter a natural number: ");
+    read = getline(&input, &len, stdin);
+    if (read == -1) {
+        fprintf(stderr, "Error reading input\n");
+        free(input);
+        return 1;
+    }
+    
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    size_t input_len = strlen(input);
+    if (input_len > 0 && input[input_len - 1] == '\n') {
+        input[input_len - 1] = '\0';
+        input_len--;
+    }
+    
+    if (input_len == 0) {
+        fprintf(stderr, "Invalid input. Please enter a non-negative integer.\n");
+        free(input);
+        return 1;
+    }
+    
+    for (size_t i = 0; i < input_len; i++) {
+        if (input[i] < '0' || input[i] > '9') {
+            fprintf(stderr, "Invalid input. Please enter a non-negative integer.\n");
+            free(input);
+            return 1;
+        }
+    }
+    
+    char *endptr;
+    errno = 0;
+    unsigned long long value = strtoull(input, &endptr, 10);
+    
+    if (errno == ERANGE || value > 1000) {
+        fprintf(stderr, "Invalid input. Number out of range (0-1000).\n");
+        free(input);
+        return 1;
+    }
+    
+    if (endptr == input || *endptr != '\0') {
+        fprintf(stderr, "Invalid input. Please enter a non-negative integer.\n");
+        free(input);
+        return 1;
+    }
+    
+    n = (int)value;
+    unsigned long long result = sum_of_fourth_powers(n);
+    
+    if (result == ULLONG_MAX) {
+        fprintf(stderr, "Overflow occurred during calculation.\n");
+        free(input);
+        return 1;
+    }
+    
+    printf("Sum of fourth powers from 1 to %d: %llu\n", n, result);
+    
+    free(input);
+    return 0;
+}

@@ -1,0 +1,50 @@
+{
+  "task_id": 968,
+  "text": "Write a C function to find maximum possible value for the given periodic function.",
+  "fn_candidates": [
+    "floor_Max",
+    "FloorMax",
+    "floorMax",
+    "floorMax"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "floor_Max",
+      "args": [
+        11,
+        10,
+        9
+      ],
+      "expected": 9,
+      "assert_src": "assert floor_Max(11,10,9) == 9"
+    },
+    {
+      "fn_name": "floor_Max",
+      "args": [
+        5,
+        7,
+        4
+      ],
+      "expected": 2,
+      "assert_src": "assert floor_Max(5,7,4) == 2"
+    },
+    {
+      "fn_name": "floor_Max",
+      "args": [
+        2,
+        2,
+        1
+      ],
+      "expected": 1,
+      "assert_src": "assert floor_Max(2,2,1) == 1"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

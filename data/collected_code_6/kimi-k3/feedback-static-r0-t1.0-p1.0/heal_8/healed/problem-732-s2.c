@@ -1,0 +1,26 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+void replace_chars(char *str, size_t size) {
+    if (str == NULL || size == 0) {
+        return;
+    }
+    size_t i;
+    for (i = 0; i < size && str[i] != '\0'; i++) {
+        if (str[i] == ' ' || str[i] == ',' || str[i] == '.') {
+            str[i] = ':';
+        }
+    }
+}
+
+int main(void) {
+    char buffer[256];
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        return 1;
+    }
+    buffer[strcspn(buffer, "\n")] = '\0';
+    replace_chars(buffer, sizeof(buffer));
+    printf("%s\n", buffer);
+    return 0;
+}

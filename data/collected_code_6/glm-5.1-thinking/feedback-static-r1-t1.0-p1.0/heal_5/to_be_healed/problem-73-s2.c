@@ -1,0 +1,145 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+char **split_string_regex(const char *str, size_t str_len, const char *pattern, size_t *out_count) {
+    if (str == NULL || pattern == NULL) {
+        return NULL;
+    }
+
+    regex_t regex;
+    int ret;
+    size_t capacity = 8;
+    size_t count = 0;
+    char **result = NULL;
+    const char *p = str;
+    regmatch_t match;
+
+    ret = regcomp(&regex, pattern, REG_EXTENDED);
+    if (ret != 0) {
+        return NULL;
+    }
+
+    size_t alloc_size = capacity * sizeof(char *);
+    if (alloc_size / sizeof(char *) != capacity) {
+        regfree(&regex);
+        return NULL;
+    }
+    result = malloc(alloc_size);
+    if (result == NULL) {
+        regfree(&regex);
+        return NULL;
+    }
+
+    while (1) {
+        ret = regexec(&regex, p, 1, &match, 0);
+
+        if (ret == REG_NOMATCH) {
+            size_t len = str_len - (p - str);
+            if (len > 0) {
+                if (len + 1 <= len) {
+                    goto cleanup;
+                }
+                if (count >= capacity) {
+                    size_t new_capacity = capacity * 2;
+                    if (new_capacity <= capacity) goto cleanup;
+                    alloc_size = new_capacity * sizeof(char *);
+                    if (alloc_size / sizeof(char *) != new_capacity) goto cleanup;
+                    char **temp = realloc(result, alloc_size);
+                    if (temp == NULL) goto cleanup;
+                    result = temp;
+                    capacity = new_capacity;
+                }
+                result[count] = malloc(len + 1);
+                if (result[count] == NULL) goto cleanup;
+                /* Possible weaknesses found:
+                 * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+                 */
+                memcpy(result[count], p, len);
+                result[count][len] = '\0';
+                count++;
+            }
+            break;
+        }
+
+        if (match.rm_so > 0) {
+            if ((size_t)match.rm_so + 1 <= (size_t)match.rm_so) goto cleanup;
+            if (count >= capacity) {
+                size_t new_capacity = capacity * 2;
+                if (new_capacity <= capacity) goto cleanup;
+                alloc_size = new_capacity * sizeof(char *);
+                if (alloc_size / sizeof(char *) != new_capacity) goto cleanup;
+                char **temp = realloc(result, alloc_size);
+                if (temp == NULL) goto cleanup;
+                result = temp;
+                capacity = new_capacity;
+            }
+            result[count] = malloc(match.rm_so + 1);
+            if (result[count] == NULL) goto cleanup;
+            /* Possible weaknesses found:
+             * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+             */
+            memcpy(result[count], p, match.rm_so);
+            result[count][match.rm_so] = '\0';
+            count++;
+        }
+
+        p += match.rm_eo;
+        if (match.rm_so == match.rm_eo) {
+            if (*p == '\0') {
+                break;
+            }
+            p++;
+        }
+    }
+
+    if (count >= capacity) {
+        /* Possible weaknesses found:
+         *  new_capacity is assigned 'capacity+1' here.
+         */
+        size_t new_capacity = capacity + 1;
+        /* Possible weaknesses found:
+         *  Condition 'new_capacity<=capacity' is always false [knownConditionTrueFalse]
+         *  Condition 'new_capacity<=capacity' is always false
+         */
+        if (new_capacity <= capacity) goto cleanup;
+        alloc_size = new_capacity * sizeof(char *);
+        if (alloc_size / sizeof(char *) != new_capacity) goto cleanup;
+        char **temp = realloc(result, alloc_size);
+        if (temp == NULL) goto cleanup;
+        result = temp;
+    }
+    result[count] = NULL;
+    if (out_count != NULL) {
+        *out_count = count;
+    }
+    regfree(&regex);
+    return result;
+
+cleanup:
+    for (size_t i = 0; i < count; i++) {
+        free(result[i]);
+    }
+    free(result);
+    regfree(&regex);
+    return NULL;
+}
+
+int main(void) {
+    const char *str = "Hello, world! This;is a test.";
+    const char *pattern = "[, !;]+";
+    size_t count = 0;
+    size_t str_len = sizeof("Hello, world! This;is a test.") - 1;
+    char **tokens = split_string_regex(str, str_len, pattern, &count);
+
+    if (tokens != NULL) {
+        for (size_t i = 0; i < count; i++) {
+            printf("Token %zu: %s\n", i, tokens[i]);
+            free(tokens[i]);
+        }
+        free(tokens);
+    }
+
+    return 0;
+}

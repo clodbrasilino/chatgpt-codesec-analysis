@@ -1,0 +1,236 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+#include <ctype.h>
+#include <stdint.h>
+
+static long long llmax(long long a, long long b)
+{
+    return (a > b) ? a : b;
+}
+
+int maxProfit(int k, const int *prices, int pricesSize)
+{
+    if (prices == NULL || pricesSize < 2 || k < 1)
+    {
+        return 0;
+    }
+
+    if (k >= pricesSize / 2)
+    {
+        long long profit = 0;
+        for (int i = 1; i < pricesSize; i++)
+        {
+            long long diff = (long long)prices[i] - (long long)prices[i - 1];
+            if (diff > 0)
+            {
+                profit += diff;
+                if (profit > INT_MAX)
+                {
+                    profit = INT_MAX;
+                }
+            }
+        }
+        return (int)profit;
+    }
+
+    if ((size_t)k + 1u > SIZE_MAX / sizeof(long long))
+    {
+        return -1;
+    }
+
+    long long *buy = (long long *)malloc(((size_t)k + 1u) * sizeof(long long));
+    if (buy == NULL)
+    {
+        return -1;
+    }
+
+    long long *sell = (long long *)malloc(((size_t)k + 1u) * sizeof(long long));
+    if (sell == NULL)
+    {
+        free(buy);
+        buy = NULL;
+        return -1;
+    }
+
+    for (int j = 0; j <= k; j++)
+    {
+        buy[j] = LLONG_MIN / 2;
+        sell[j] = 0;
+    }
+
+    for (int i = 0; i < pricesSize; i++)
+    {
+        for (int j = 1; j <= k; j++)
+        {
+            buy[j] = llmax(buy[j], sell[j - 1] - (long long)prices[i]);
+            sell[j] = llmax(sell[j], buy[j] + (long long)prices[i]);
+            if (sell[j] > INT_MAX)
+            {
+                sell[j] = INT_MAX;
+            }
+        }
+    }
+
+    long long result = sell[k];
+
+    free(buy);
+    buy = NULL;
+    free(sell);
+    sell = NULL;
+
+    if (result < 0)
+    {
+        result = 0;
+    }
+    if (result > INT_MAX)
+    {
+        result = INT_MAX;
+    }
+
+    return (int)result;
+}
+
+int main(void)
+{
+    size_t capacity = 16;
+    size_t count = 0;
+    long long *values = (long long *)malloc(capacity * sizeof(long long));
+    if (values == NULL)
+    {
+        return EXIT_FAILURE;
+    }
+
+    int ch = 0;
+    while ((ch = getchar()) != EOF)
+    {
+        if (ch == '-' || isdigit((unsigned char)ch))
+        {
+            int sign = 1;
+            if (ch == '-')
+            {
+                int next = getchar();
+                if (next == EOF || !isdigit((unsigned char)next))
+                {
+                    if (next != EOF)
+                    {
+                        ungetc(next, stdin);
+                    }
+                    continue;
+                }
+                sign = -1;
+                ch = next;
+            }
+
+            long long value = 0;
+            int overflow = 0;
+            while (ch != EOF && isdigit((unsigned char)ch))
+            {
+                int digit = ch - '0';
+                if (value > (LLONG_MAX - (long long)digit) / 10)
+                {
+                    overflow = 1;
+                }
+                else
+                {
+                    value = value * 10 + (long long)digit;
+                }
+                ch = getchar();
+            }
+            if (ch != EOF)
+            {
+                ungetc(ch, stdin);
+            }
+
+            if (overflow)
+            {
+                free(values);
+                values = NULL;
+                return EXIT_FAILURE;
+            }
+
+            long long signedValue = (sign < 0) ? -value : value;
+
+            if (count == capacity)
+            {
+                if (capacity > SIZE_MAX / (2u * sizeof(long long)))
+                {
+                    free(values);
+                    values = NULL;
+                    return EXIT_FAILURE;
+                }
+                capacity *= 2u;
+                long long *grown = (long long *)realloc(values, capacity * sizeof(long long));
+                if (grown == NULL)
+                {
+                    free(values);
+                    values = NULL;
+                    return EXIT_FAILURE;
+                }
+                values = grown;
+            }
+            values[count++] = signedValue;
+        }
+    }
+
+    if (count < 1)
+    {
+        free(values);
+        values = NULL;
+        return EXIT_FAILURE;
+    }
+
+    long long kValue = values[0];
+    size_t n = count - 1;
+
+    if (kValue < 0 || kValue > INT_MAX || n > (size_t)INT_MAX || n > SIZE_MAX / sizeof(int))
+    {
+        free(values);
+        values = NULL;
+        return EXIT_FAILURE;
+    }
+
+    int *prices = NULL;
+    if (n > 0)
+    {
+        for (size_t i = 0; i < n; i++)
+        {
+            if (values[i + 1] < (long long)INT_MIN || values[i + 1] > (long long)INT_MAX)
+            {
+                free(values);
+                values = NULL;
+                return EXIT_FAILURE;
+            }
+        }
+
+        prices = (int *)malloc(n * sizeof(int));
+        if (prices == NULL)
+        {
+            free(values);
+            values = NULL;
+            return EXIT_FAILURE;
+        }
+        for (size_t i = 0; i < n; i++)
+        {
+            prices[i] = (int)values[i + 1];
+        }
+    }
+
+    free(values);
+    values = NULL;
+
+    int profit = maxProfit((int)kValue, prices, (int)n);
+    if (profit < 0)
+    {
+        free(prices);
+        prices = NULL;
+        return EXIT_FAILURE;
+    }
+
+    printf("%d\n", profit);
+
+    free(prices);
+    prices = NULL;
+
+    return EXIT_SUCCESS;
+}

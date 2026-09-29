@@ -1,0 +1,49 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int longest_increasing_subsequence(const int *sequence, int n) {
+    if (sequence == NULL || n <= 0) {
+        return 0;
+    }
+
+    int *lis = (int *)malloc(n * sizeof(int));
+    if (lis == NULL) {
+        return -1;
+    }
+
+    for (int i = 0; i < n; i++) {
+        lis[i] = 1;
+    }
+
+    int max_length = 1;
+
+    for (int i = 1; i < n; i++) {
+        for (int j = 0; j < i; j++) {
+            if (sequence[i] > sequence[j] && lis[i] < lis[j] + 1) {
+                lis[i] = lis[j] + 1;
+            }
+        }
+        if (lis[i] > max_length) {
+            max_length = lis[i];
+        }
+    }
+
+    free(lis);
+    return max_length;
+}
+
+int main(void) {
+    int sequence[] = {10, 22, 9, 33, 21, 50, 41, 60, 80};
+    int n = sizeof(sequence) / sizeof(sequence[0]);
+
+    int result = longest_increasing_subsequence(sequence, n);
+
+    if (result == -1) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Length of lis is %d\n", result);
+
+    return EXIT_SUCCESS;
+}

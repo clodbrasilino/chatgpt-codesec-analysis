@@ -1,0 +1,9 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-932.c: In function 'main':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-932.c:77:16: error: passing argument 1 of 'printArray' from incompatible pointer type [-Wincompatible-pointer-types]
+   77 |     printArray(result, newLength);
+      |                ^~~~~~
+      |                |
+      |                char **
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-932.c:65:29: note: expected 'const char **' but argument is of type 'char **'
+   65 | void printArray(const char* arr[], int size) {
+      |                 ~~~~~~~~~~~~^~~~~

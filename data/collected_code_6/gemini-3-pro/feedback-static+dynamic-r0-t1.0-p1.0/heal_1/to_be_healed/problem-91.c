@@ -1,0 +1,49 @@
+#include <stdio.h>
+#include <string.h>
+
+int isSubstringInList(const char *substring, const char *list[], int listSize) {
+    if (substring == NULL || list == NULL || listSize <= 0) {
+        return 0;
+    }
+
+    for (int i = 0; i < listSize; i++) {
+        if (list[i] != NULL && strstr(list[i], substring) != NULL) {
+            return 1;
+        }
+    }
+
+    return 0;
+}
+
+int main() {
+    const char *substring = "test";
+    const char *list[] = {
+        "hello world",
+        "this is a testing string",
+        "another string",
+        NULL
+    };
+    
+    /* Possible weaknesses found:
+     *  Assignment 'listSize=sizeof(list)/sizeof(list[0])-1', assigned value is 3
+     */
+    int listSize = sizeof(list) / sizeof(list[0]) - 1; 
+
+    /* Possible weaknesses found:
+     *  Condition 'listSize<0' is always false
+     *  Condition 'listSize<0' is always false [knownConditionTrueFalse]
+     */
+    if (listSize < 0) {
+        return 1;
+    }
+
+    int result = isSubstringInList(substring, list, listSize);
+
+    if (result) {
+        printf("Substring found in the list.\n");
+    } else {
+        printf("Substring not found in the list.\n");
+    }
+
+    return 0;
+}

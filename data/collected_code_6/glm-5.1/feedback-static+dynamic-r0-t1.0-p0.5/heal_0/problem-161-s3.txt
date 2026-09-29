@@ -1,0 +1,96 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node *next;
+} Node;
+
+Node *create_node(int data) {
+    Node *node = (Node *)malloc(sizeof(Node));
+    if (node == NULL) {
+        exit(EXIT_FAILURE);
+    }
+    node->data = data;
+    node->next = NULL;
+    return node;
+}
+
+void free_list(Node *head) {
+    Node *current = head;
+    Node *next;
+    while (current != NULL) {
+        next = current->next;
+        free(current);
+        current = next;
+    }
+}
+
+int is_present(Node *head, int value) {
+    Node *current = head;
+    while (current != NULL) {
+        if (current->data == value) {
+            return 1;
+        }
+        current = current->next;
+    }
+    return 0;
+}
+
+Node *remove_elements(Node *list1, Node *list2) {
+    Node dummy;
+    dummy.next = list1;
+    Node *prev = &dummy;
+    Node *current = list1;
+
+    while (current != NULL) {
+        if (is_present(list2, current->data)) {
+            prev->next = current->next;
+            free(current);
+            current = prev->next;
+        } else {
+            prev = current;
+            current = current->next;
+        }
+    }
+
+    return dummy.next;
+}
+
+void print_list(Node *head) {
+    Node *current = head;
+    while (current != NULL) {
+        printf("%d ", current->data);
+        current = current->next;
+    }
+    printf("\n");
+}
+
+int main(void) {
+    Node *list1 = create_node(1);
+    list1->next = create_node(2);
+    list1->next->next = create_node(3);
+    list1->next->next->next = create_node(4);
+    list1->next->next->next->next = create_node(5);
+
+    Node *list2 = create_node(2);
+    list2->next = create_node(4);
+    list2->next->next = create_node(6);
+
+    printf("List 1: ");
+    print_list(list1);
+    printf("List 2: ");
+    print_list(list2);
+
+    list1 = remove_elements(list1, list2);
+
+    printf("Result: ");
+    print_list(list1);
+
+    free_list(list1);
+    free_list(list2);
+
+    return 0;
+}
+```

@@ -1,0 +1,65 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-720-s3.c:22:8: error: expected parameter declarator
+   22 | size_t strlcpy(char* dst, const char* src, size_t dsize) {
+      |        ^
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/secure/_string.h:284:22: note: expanded from macro 'strlcpy'
+  284 | #define strlcpy(...) __strlcpy_chk_func (__VA_ARGS__)
+      |                      ^
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/secure/_string.h:154:47: note: expanded from macro '__strlcpy_chk_func'
+  154 |                 __builtin___strlcpy_chk (dest, __VA_ARGS__, __darwin_obsz (dest))
+      |                                                             ^
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/secure/_common.h:41:62: note: expanded from macro '__darwin_obsz'
+   41 | #define __darwin_obsz(object) __builtin_object_size (object, _USE_FORTIFY_LEVEL > 1 ? 1 : 0)
+      |                                                              ^
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/secure/_common.h:32:32: note: expanded from macro '_USE_FORTIFY_LEVEL'
+   32 | #    define _USE_FORTIFY_LEVEL 2
+      |                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-720-s3.c:22:8: error: expected ')'
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/secure/_string.h:284:22: note: expanded from macro 'strlcpy'
+  284 | #define strlcpy(...) __strlcpy_chk_func (__VA_ARGS__)
+      |                      ^
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/secure/_string.h:154:47: note: expanded from macro '__strlcpy_chk_func'
+  154 |                 __builtin___strlcpy_chk (dest, __VA_ARGS__, __darwin_obsz (dest))
+      |                                                             ^
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/secure/_common.h:41:62: note: expanded from macro '__darwin_obsz'
+   41 | #define __darwin_obsz(object) __builtin_object_size (object, _USE_FORTIFY_LEVEL > 1 ? 1 : 0)
+      |                                                              ^
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/secure/_common.h:32:32: note: expanded from macro '_USE_FORTIFY_LEVEL'
+   32 | #    define _USE_FORTIFY_LEVEL 2
+      |                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-720-s3.c:22:8: note: to match this '('
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/secure/_string.h:284:22: note: expanded from macro 'strlcpy'
+  284 | #define strlcpy(...) __strlcpy_chk_func (__VA_ARGS__)
+      |                      ^
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/secure/_string.h:154:47: note: expanded from macro '__strlcpy_chk_func'
+  154 |                 __builtin___strlcpy_chk (dest, __VA_ARGS__, __darwin_obsz (dest))
+      |                                                             ^
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/secure/_common.h:41:53: note: expanded from macro '__darwin_obsz'
+   41 | #define __darwin_obsz(object) __builtin_object_size (object, _USE_FORTIFY_LEVEL > 1 ? 1 : 0)
+      |                                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-720-s3.c:22:8: error: type specifier missing, defaults to 'int'; ISO C99 and later do not support implicit int [-Wimplicit-int]
+   22 | size_t strlcpy(char* dst, const char* src, size_t dsize) {
+      |        ^
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/secure/_string.h:284:22: note: expanded from macro 'strlcpy'
+  284 | #define strlcpy(...) __strlcpy_chk_func (__VA_ARGS__)
+      |                      ^
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/secure/_string.h:154:47: note: expanded from macro '__strlcpy_chk_func'
+  154 |                 __builtin___strlcpy_chk (dest, __VA_ARGS__, __darwin_obsz (dest))
+      |                                                             ^
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/secure/_common.h:41:31: note: expanded from macro '__darwin_obsz'
+   41 | #define __darwin_obsz(object) __builtin_object_size (object, _USE_FORTIFY_LEVEL > 1 ? 1 : 0)
+      |                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-720-s3.c:22:8: error: conflicting types for '__builtin___strlcpy_chk'
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/secure/_string.h:284:22: note: expanded from macro 'strlcpy'
+  284 | #define strlcpy(...) __strlcpy_chk_func (__VA_ARGS__)
+      |                      ^
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/secure/_string.h:154:3: note: expanded from macro '__strlcpy_chk_func'
+  154 |                 __builtin___strlcpy_chk (dest, __VA_ARGS__, __darwin_obsz (dest))
+      |                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-720-s3.c:22:8: note: '__builtin___strlcpy_chk' is a builtin with type 'unsigned long (char *, const char *, unsigned long, unsigned long)'
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/secure/_string.h:284:22: note: expanded from macro 'strlcpy'
+  284 | #define strlcpy(...) __strlcpy_chk_func (__VA_ARGS__)
+      |                      ^
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/secure/_string.h:154:3: note: expanded from macro '__strlcpy_chk_func'
+  154 |                 __builtin___strlcpy_chk (dest, __VA_ARGS__, __darwin_obsz (dest))
+      |                 ^
+4 errors generated.

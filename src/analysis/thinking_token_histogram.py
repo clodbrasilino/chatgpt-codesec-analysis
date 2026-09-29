@@ -89,7 +89,7 @@ def gen_est_per_task(model: str, slug: str, tasks: dict):
     """Estimated generation tokens per task (non-thinking arms), from the
     raw generation outputs on disk (~3.6 chars/token)."""
     per = {}
-    root = REPO_ROOT / "collected_code_6" / model / slug / "heal_0"
+    root = REPO_ROOT / "data" / "collected_code_6" / model / slug / "heal_0"
     for txt in _raw_txts(root):
         m = re.match(r"^problem-(\d+)(?:-s(\d+))?$", txt.stem)
         if not m:

@@ -1,0 +1,74 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <regex.h>
+
+int find_sequences(const char *str)
+{
+    regex_t regex;
+    regmatch_t match;
+    const char *cursor;
+    char *errbuf = NULL;
+    size_t errbuf_size;
+    int status;
+    int count = 0;
+
+    if (str == NULL) {
+        fprintf(stderr, "Input string is NULL\n");
+        return -1;
+    }
+
+    status = regcomp(&regex, "[[:upper:]][[:lower:]]+", REG_EXTENDED);
+    if (status != 0) {
+        errbuf_size = regerror(status, &regex, NULL, 0);
+        errbuf = malloc(errbuf_size);
+        if (errbuf == NULL) {
+            fprintf(stderr, "Regex compilation failed: out of memory\n");
+            return -1;
+        }
+        regerror(status, &regex, errbuf, errbuf_size);
+        fprintf(stderr, "Regex compilation failed: %s\n", errbuf);
+        free(errbuf);
+        return -1;
+    }
+
+    cursor = str;
+    while ((status = regexec(&regex, cursor, 1, &match, 0)) == 0) {
+        printf("Found: %.*s\n", (int)(match.rm_eo - match.rm_so),
+               cursor + match.rm_so);
+        count++;
+        cursor += match.rm_eo;
+    }
+
+    if (status != REG_NOMATCH) {
+        errbuf_size = regerror(status, &regex, NULL, 0);
+        errbuf = malloc(errbuf_size);
+        if (errbuf == NULL) {
+            fprintf(stderr, "Regex execution failed: out of memory\n");
+            regfree(&regex);
+            return -1;
+        }
+        regerror(status, &regex, errbuf, errbuf_size);
+        fprintf(stderr, "Regex execution failed: %s\n", errbuf);
+        free(errbuf);
+        regfree(&regex);
+        return -1;
+    }
+
+    regfree(&regex);
+    return count;
+}
+
+int main(void)
+{
+    const char *input =
+        "Hello World, this Is a Test String with Several Matches like Abc and Xyz";
+    int result;
+
+    result = find_sequences(input);
+    if (result < 0) {
+        return EXIT_FAILURE;
+    }
+
+    printf("Total sequences found: %d\n", result);
+    return EXIT_SUCCESS;
+}

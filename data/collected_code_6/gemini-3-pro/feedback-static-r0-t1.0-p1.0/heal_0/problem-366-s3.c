@@ -1,0 +1,50 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+int find_largest_adjacent_product(const int *arr, size_t size) {
+    if (arr == NULL || size < 2) {
+        return INT_MIN;
+    }
+
+    long long max_product = LLONG_MIN;
+
+    for (size_t i = 0; i < size - 1; i++) {
+        long long current_product = (long long)arr[i] * (long long)arr[i + 1];
+        if (current_product > max_product) {
+            max_product = current_product;
+        }
+    }
+
+    if (max_product > INT_MAX || max_product < INT_MIN) {
+        return INT_MIN;
+    }
+
+    return (int)max_product;
+}
+
+int main(void) {
+    int arr[] = {3, 6, -2, -5, 7, 3};
+    size_t size = sizeof(arr) / sizeof(arr[0]);
+
+    int result = find_largest_adjacent_product(arr, size);
+    
+    if (result != INT_MIN) {
+        printf("%d\n", result);
+    } else {
+        printf("Error: Invalid input or overflow occurred.\n");
+    }
+
+    int arr2[] = {-23, 4, -3, 8, -12};
+    size_t size2 = sizeof(arr2) / sizeof(arr2[0]);
+
+    int result2 = find_largest_adjacent_product(arr2, size2);
+    
+    if (result2 != INT_MIN) {
+        printf("%d\n", result2);
+    } else {
+        printf("Error: Invalid input or overflow occurred.\n");
+    }
+
+    return 0;
+}

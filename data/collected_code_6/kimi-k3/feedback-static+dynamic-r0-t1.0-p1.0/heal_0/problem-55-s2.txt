@@ -1,0 +1,60 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <math.h>
+
+double geometric_nth_term(double first_term, double common_ratio, unsigned int n)
+{
+    if (n == 0) {
+        return 0.0;
+    }
+    return first_term * pow(common_ratio, (double)(n - 1));
+}
+
+int main(void)
+{
+    double first_term;
+    double common_ratio;
+    unsigned int n;
+    int scan_result;
+    
+    printf("Enter the first term: ");
+    scan_result = scanf("%lf", &first_term);
+    if (scan_result != 1) {
+        fprintf(stderr, "Error: Invalid input for first term\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("Enter the common ratio: ");
+    scan_result = scanf("%lf", &common_ratio);
+    if (scan_result != 1) {
+        fprintf(stderr, "Error: Invalid input for common ratio\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("Enter the term number (n): ");
+    scan_result = scanf("%u", &n);
+    if (scan_result != 1) {
+        fprintf(stderr, "Error: Invalid input for term number\n");
+        return EXIT_FAILURE;
+    }
+    
+    if (n == 0) {
+        fprintf(stderr, "Error: Term number must be greater than 0\n");
+        return EXIT_FAILURE;
+    }
+    
+    errno = 0;
+    double result = geometric_nth_term(first_term, common_ratio, n);
+    
+    if (errno == ERANGE) {
+        fprintf(stderr, "Error: Result out of range\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("The %u-th term of the geometric series is: %lf\n", n, result);
+    
+    return EXIT_SUCCESS;
+}
+```

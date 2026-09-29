@@ -1,0 +1,59 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+
+bool is_break_even(double cost_price, double selling_price)
+{
+    double diff = selling_price - cost_price;
+    return (diff > -0.000001) && (diff < 0.000001);
+}
+
+int main(void)
+{
+    double cost_price = 0.0;
+    double selling_price = 0.0;
+
+    printf("Enter cost price: ");
+    if (scanf("%lf", &cost_price) != 1)
+    {
+        fprintf(stderr, "Invalid input for cost price.\n");
+        return 1;
+    }
+
+    printf("Enter selling price: ");
+    if (scanf("%lf", &selling_price) != 1)
+    {
+        fprintf(stderr, "Invalid input for selling price.\n");
+        return 1;
+    }
+
+    if (cost_price < 0.0 || selling_price < 0.0)
+    {
+        fprintf(stderr, "Prices must be non-negative.\n");
+        return 1;
+    }
+
+    if (is_break_even(cost_price, selling_price))
+    {
+        printf("No profit and no loss.\n");
+    }
+    else if (selling_price > cost_price)
+    {
+        printf("Profit of %.2f\n", selling_price - cost_price);
+    }
+    else
+    {
+        printf("Loss of %.2f\n", cost_price - selling_price);
+    }
+
+    return 0;
+}
+```
+
+**Key design decisions:**
+
+- **`is_break_even`** compares the two amounts using an epsilon tolerance rather than `==`, since floating-point equality comparison is unreliable and violates good coding standards (addresses CWE-710).
+- **Every `scanf` return value is checked** before the variables are used, so uninitialized or garbage values are never processed (addresses CWE-703).
+- **Negative price inputs are rejected** as an exceptional condition rather than silently producing meaningless results.
+- **No dynamic resources** (heap memory, file handles) are acquired, so there is nothing to leak or misuse across its lifetime (addresses CWE-664); all variables are initialized at declaration.
+- The program returns distinct exit codes (`0` success, `1` error) and prints errors to `stderr`, following standard C conventions.

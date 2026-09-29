@@ -1,0 +1,97 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <string.h>
+#include <ctype.h>
+
+#define MIN_LENGTH 8
+#define MAX_LENGTH 64
+#define BUFFER_SIZE 128
+
+static void secure_clear(void *buf, size_t size)
+{
+    volatile unsigned char *p = (volatile unsigned char *)buf;
+    while (size--) {
+        *p++ = 0;
+    }
+}
+
+bool is_valid_password(const char *password, size_t max_len)
+{
+    size_t length;
+    size_t i;
+    bool has_upper = false;
+    bool has_lower = false;
+    bool has_digit = false;
+    bool has_special = false;
+
+    if (password == NULL) {
+        return false;
+    }
+
+    length = strnlen(password, max_len);
+
+    if (length >= max_len) {
+        return false;
+    }
+
+    if (length < MIN_LENGTH || length > MAX_LENGTH) {
+        return false;
+    }
+
+    for (i = 0; i < length; i++) {
+        unsigned char c = (unsigned char)password[i];
+
+        if (!isprint(c)) {
+            return false;
+        }
+
+        if (isupper(c)) {
+            has_upper = true;
+        } else if (islower(c)) {
+            has_lower = true;
+        } else if (isdigit(c)) {
+            has_digit = true;
+        } else if (ispunct(c)) {
+            has_special = true;
+        } else {
+            return false;
+        }
+    }
+
+    return has_upper && has_lower && has_digit && has_special;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t length;
+
+    printf("Enter password: ");
+    fflush(stdout);
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+    length = strnlen(buffer, sizeof(buffer));
+
+    if (length > 0 && buffer[length - 1] == '\n') {
+        buffer[length - 1] = '\0';
+    } else {
+        int ch;
+        while ((ch = getchar()) != '\n' && ch != EOF) {
+        }
+    }
+
+    if (is_valid_password(buffer, sizeof(buffer))) {
+        printf("Password is valid\n");
+    } else {
+        printf("Password is invalid\n");
+    }
+
+    secure_clear(buffer, sizeof(buffer));
+
+    return 0;
+}

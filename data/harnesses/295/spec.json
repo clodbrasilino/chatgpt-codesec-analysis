@@ -1,0 +1,44 @@
+{
+  "task_id": 295,
+  "text": "Write a C function to return the sum of all divisors of a number.",
+  "fn_candidates": [
+    "sum_div",
+    "SumDiv",
+    "sumDiv",
+    "sumdiv"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "sum_div",
+      "args": [
+        8
+      ],
+      "expected": 7,
+      "assert_src": "assert sum_div(8)==7"
+    },
+    {
+      "fn_name": "sum_div",
+      "args": [
+        12
+      ],
+      "expected": 16,
+      "assert_src": "assert sum_div(12)==16"
+    },
+    {
+      "fn_name": "sum_div",
+      "args": [
+        7
+      ],
+      "expected": 1,
+      "assert_src": "assert sum_div(7)==1"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

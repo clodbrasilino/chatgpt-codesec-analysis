@@ -1,0 +1,87 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <stddef.h>
+#include <stdlib.h>
+
+int roman_to_int(const char *s, size_t length) {
+    int values[256] = {0};
+    values['I'] = 1;
+    values['V'] = 5;
+    values['X'] = 10;
+    values['L'] = 50;
+    values['C'] = 100;
+    values['D'] = 500;
+    values['M'] = 1000;
+    
+    int total = 0;
+    int prev = 0;
+    
+    if (s == NULL) {
+        return -1;
+    }
+    
+    for (size_t i = length; i > 0; i--) {
+        unsigned char c = (unsigned char)toupper((unsigned char)s[i - 1]);
+        
+        int curr = values[c];
+        
+        if (curr == 0) {
+            return -1;
+        }
+        
+        if (curr < prev) {
+            total -= curr;
+        } else {
+            total += curr;
+        }
+        prev = curr;
+    }
+    
+    return total;
+}
+
+int main(void) {
+    char *input = NULL;
+    size_t bufsize = 0;
+    ssize_t len;
+
+    printf("Enter a Roman numeral: ");
+    len = getline(&input, &bufsize, stdin);
+    if (len == -1) {
+        free(input);
+        return 1;
+    }
+
+    if (len > 0 && input[len - 1] == '\n') {
+        input[len - 1] = '\0';
+        len--;
+    }
+
+    if (len > 255) {
+        printf("Input too long\n");
+        free(input);
+        return 1;
+    }
+
+    if (len == 0) {
+        printf("Invalid Roman numeral\n");
+        free(input);
+        return 1;
+    }
+
+    int result = roman_to_int(input, (size_t)len);
+
+    if (result == -1) {
+        printf("Invalid Roman numeral\n");
+        free(input);
+        return 1;
+    }
+
+    printf("%d\n", result);
+    free(input);
+
+    return 0;
+}
+```

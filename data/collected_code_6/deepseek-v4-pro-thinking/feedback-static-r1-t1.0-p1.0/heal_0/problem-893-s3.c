@@ -1,0 +1,57 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int *get_last_elements(int **lists, const int *lengths, int count, int *result_count)
+{
+    int *result;
+    int i;
+
+    if (lists == NULL || lengths == NULL || count <= 0 || result_count == NULL) {
+        if (result_count != NULL) {
+            *result_count = 0;
+        }
+        return NULL;
+    }
+
+    result = malloc((size_t)count * sizeof(int));
+    if (result == NULL) {
+        *result_count = 0;
+        return NULL;
+    }
+
+    for (i = 0; i < count; i++) {
+        if (lists[i] == NULL || lengths[i] <= 0) {
+            free(result);
+            *result_count = 0;
+            return NULL;
+        }
+        result[i] = lists[i][lengths[i] - 1];
+    }
+
+    *result_count = count;
+    return result;
+}
+
+int main(void)
+{
+    int arr0[] = { 1, 2, 3 };
+    int arr1[] = { 4, 5 };
+    int arr2[] = { 6 };
+    int *lists[] = { arr0, arr1, arr2 };
+    int lengths[] = { 3, 2, 1 };
+    int count = 3;
+    int result_count = 0;
+    int *lasts;
+    int i;
+
+    lasts = get_last_elements(lists, lengths, count, &result_count);
+    if (lasts != NULL) {
+        for (i = 0; i < result_count; i++) {
+            printf("%d ", lasts[i]);
+        }
+        printf("\n");
+        free(lasts);
+    }
+
+    return 0;
+}

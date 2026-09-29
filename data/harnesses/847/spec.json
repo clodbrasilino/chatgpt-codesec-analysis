@@ -1,0 +1,74 @@
+{
+  "task_id": 847,
+  "text": "Write a C function to copy a list from a singleton tuple.",
+  "fn_candidates": [
+    "lcopy",
+    "Lcopy",
+    "lcopy",
+    "lcopy"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "lcopy",
+      "args": [
+        [
+          1,
+          2,
+          3
+        ]
+      ],
+      "expected": [
+        1,
+        2,
+        3
+      ],
+      "assert_src": "assert lcopy([1, 2, 3]) == [1, 2, 3]"
+    },
+    {
+      "fn_name": "lcopy",
+      "args": [
+        [
+          4,
+          8,
+          2,
+          10,
+          15,
+          18
+        ]
+      ],
+      "expected": [
+        4,
+        8,
+        2,
+        10,
+        15,
+        18
+      ],
+      "assert_src": "assert lcopy([4, 8, 2, 10, 15, 18]) == [4, 8, 2, 10, 15, 18]"
+    },
+    {
+      "fn_name": "lcopy",
+      "args": [
+        [
+          4,
+          5,
+          6
+        ]
+      ],
+      "expected": [
+        4,
+        5,
+        6
+      ],
+      "assert_src": "assert lcopy([4, 5, 6]) == [4, 5, 6]\n"
+    }
+  ],
+  "arg_kinds": [
+    "int-list"
+  ],
+  "return_kind": "int-list",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

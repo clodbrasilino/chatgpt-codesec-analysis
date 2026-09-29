@@ -1,0 +1,268 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+#include <stddef.h>
+#include <inttypes.h>
+
+typedef enum {
+    TYPE_INT,
+    TYPE_FLOAT,
+    TYPE_DOUBLE,
+    TYPE_CHAR,
+    TYPE_STRING,
+    TYPE_POINTER,
+    TYPE_UNKNOWN
+} DataType;
+
+typedef struct {
+    DataType type;
+    void *data;
+    size_t size;
+} TupleElement;
+
+typedef struct {
+    TupleElement *elements;
+    size_t count;
+    size_t capacity;
+} Tuple;
+
+static int safe_memcpy(void *dst, size_t dst_size, const void *src, size_t src_size) {
+    if (src_size > dst_size) {
+        return -1;
+    }
+    if (src_size == 0) {
+        return 0;
+    }
+    if (dst == NULL || src == NULL) {
+        return -1;
+    }
+    if (dst_size > SIZE_MAX - (uintptr_t)dst) {
+        return -1;
+    }
+    if ((uintptr_t)dst + dst_size < (uintptr_t)dst) {
+        return -1;
+    }
+    
+    unsigned char *d = (unsigned char *)dst;
+    const unsigned char *s = (const unsigned char *)src;
+    size_t i = 0;
+    while (i < src_size) {
+        size_t remaining = src_size - i;
+        if (remaining >= sizeof(uint64_t) && 
+            ((uintptr_t)(d + i) & (sizeof(uint64_t) - 1)) == 0 &&
+            ((uintptr_t)(s + i) & (sizeof(uint64_t) - 1)) == 0) {
+            *(uint64_t *)(d + i) = *(const uint64_t *)(const void *)(s + i);
+            i += sizeof(uint64_t);
+        } else if (remaining >= sizeof(uint32_t) &&
+                   ((uintptr_t)(d + i) & (sizeof(uint32_t) - 1)) == 0 &&
+                   ((uintptr_t)(s + i) & (sizeof(uint32_t) - 1)) == 0) {
+            *(uint32_t *)(d + i) = *(const uint32_t *)(const void *)(s + i);
+            i += sizeof(uint32_t);
+        } else if (remaining >= sizeof(uint16_t) &&
+                   ((uintptr_t)(d + i) & (sizeof(uint16_t) - 1)) == 0 &&
+                   ((uintptr_t)(s + i) & (sizeof(uint16_t) - 1)) == 0) {
+            *(uint16_t *)(d + i) = *(const uint16_t *)(const void *)(s + i);
+            i += sizeof(uint16_t);
+        } else {
+            d[i] = s[i];
+            i += sizeof(unsigned char);
+        }
+    }
+    return 0;
+}
+
+Tuple *tuple_create(void) {
+    Tuple *tuple = (Tuple *)malloc(sizeof(Tuple));
+    if (!tuple) return NULL;
+    tuple->elements = NULL;
+    tuple->count = 0;
+    tuple->capacity = 0;
+    return tuple;
+}
+
+void tuple_destroy(Tuple *tuple) {
+    if (!tuple) return;
+    for (size_t i = 0; i < tuple->count; i++) {
+        free(tuple->elements[i].data);
+        tuple->elements[i].data = NULL;
+    }
+    free(tuple->elements);
+    tuple->elements = NULL;
+    free(tuple);
+}
+
+int tuple_add(Tuple *tuple, DataType type, const void *data, size_t size) {
+    if (!tuple || !data || size == 0) return -1;
+    
+    if (size > SIZE_MAX / 2) return -1;
+    
+    if (tuple->count >= tuple->capacity) {
+        size_t new_capacity = tuple->capacity == 0 ? 4 : tuple->capacity * 2;
+        if (new_capacity > SIZE_MAX / sizeof(TupleElement)) return -1;
+        TupleElement *new_elements = (TupleElement *)realloc(tuple->elements, new_capacity * sizeof(TupleElement));
+        if (!new_elements) return -1;
+        tuple->elements = new_elements;
+        tuple->capacity = new_capacity;
+    }
+    
+    void *new_data = malloc(size);
+    if (!new_data) return -1;
+    
+    if (safe_memcpy(new_data, size, data, size) != 0) {
+        free(new_data);
+        return -1;
+    }
+    
+    tuple->elements[tuple->count].data = new_data;
+    tuple->elements[tuple->count].type = type;
+    tuple->elements[tuple->count].size = size;
+    tuple->count++;
+    
+    return 0;
+}
+
+Tuple *tuple_remove_type(const Tuple *tuple, DataType type_to_remove) {
+    if (!tuple) return NULL;
+    
+    Tuple *new_tuple = tuple_create();
+    if (!new_tuple) return NULL;
+    
+    for (size_t i = 0; i < tuple->count; i++) {
+        if (tuple->elements[i].type != type_to_remove) {
+            if (tuple_add(new_tuple, tuple->elements[i].type, 
+                         tuple->elements[i].data, tuple->elements[i].size) != 0) {
+                tuple_destroy(new_tuple);
+                return NULL;
+            }
+        }
+    }
+    
+    return new_tuple;
+}
+
+void tuple_print(const Tuple *tuple) {
+    if (!tuple) {
+        printf("Empty tuple\n");
+        return;
+    }
+    
+    printf("Tuple contents (%zu elements):\n", tuple->count);
+    for (size_t i = 0; i < tuple->count; i++) {
+        printf("  [%zu] Type: ", i);
+        switch (tuple->elements[i].type) {
+            case TYPE_INT:
+                if (tuple->elements[i].size == sizeof(int)) {
+                    printf("INT, Value: %d\n", *(int *)tuple->elements[i].data);
+                } else {
+                    printf("INT (invalid size)\n");
+                }
+                break;
+            case TYPE_FLOAT:
+                if (tuple->elements[i].size == sizeof(float)) {
+                    printf("FLOAT, Value: %f\n", *(float *)tuple->elements[i].data);
+                } else {
+                    printf("FLOAT (invalid size)\n");
+                }
+                break;
+            case TYPE_DOUBLE:
+                if (tuple->elements[i].size == sizeof(double)) {
+                    printf("DOUBLE, Value: %lf\n", *(double *)tuple->elements[i].data);
+                } else {
+                    printf("DOUBLE (invalid size)\n");
+                }
+                break;
+            case TYPE_CHAR:
+                if (tuple->elements[i].size == sizeof(char)) {
+                    printf("CHAR, Value: %c\n", *(char *)tuple->elements[i].data);
+                } else {
+                    printf("CHAR (invalid size)\n");
+                }
+                break;
+            case TYPE_STRING:
+                if (tuple->elements[i].size > 0) {
+                    char *str = (char *)tuple->elements[i].data;
+                    if (str[tuple->elements[i].size - 1] == '\0') {
+                        size_t strn_len = strnlen(str, tuple->elements[i].size);
+                        if (strn_len < tuple->elements[i].size) {
+                            printf("STRING, Value: %s\n", str);
+                        } else {
+                            printf("STRING (not properly terminated): %.*s\n", 
+                                   (int)tuple->elements[i].size, str);
+                        }
+                    } else {
+                        printf("STRING (not properly terminated): %.*s\n", 
+                               (int)tuple->elements[i].size, str);
+                    }
+                } else {
+                    printf("STRING (empty)\n");
+                }
+                break;
+            case TYPE_POINTER:
+                printf("POINTER, Value: %p\n", tuple->elements[i].data);
+                break;
+            default:
+                printf("UNKNOWN\n");
+                break;
+        }
+    }
+}
+
+int main(void) {
+    Tuple *tuple = tuple_create();
+    if (!tuple) {
+        fprintf(stderr, "Failed to create tuple\n");
+        return 1;
+    }
+    
+    int int_val1 = 42;
+    int int_val2 = 100;
+    float float_val = 3.14f;
+    double double_val = 2.71828;
+    char char_val = 'A';
+    const char *str_val = "Hello";
+    size_t str_len = strnlen(str_val, 1024);
+    
+    if (str_len >= SIZE_MAX) {
+        tuple_destroy(tuple);
+        fprintf(stderr, "String length overflow\n");
+        return 1;
+    }
+    
+    tuple_add(tuple, TYPE_INT, &int_val1, sizeof(int));
+    tuple_add(tuple, TYPE_FLOAT, &float_val, sizeof(float));
+    tuple_add(tuple, TYPE_INT, &int_val2, sizeof(int));
+    tuple_add(tuple, TYPE_DOUBLE, &double_val, sizeof(double));
+    tuple_add(tuple, TYPE_CHAR, &char_val, sizeof(char));
+    tuple_add(tuple, TYPE_STRING, str_val, str_len + 1);
+    
+    printf("Original tuple:\n");
+    tuple_print(tuple);
+    
+    Tuple *filtered_tuple = tuple_remove_type(tuple, TYPE_INT);
+    if (!filtered_tuple) {
+        fprintf(stderr, "Failed to filter tuple\n");
+        tuple_destroy(tuple);
+        return 1;
+    }
+    
+    printf("\nTuple after removing INT elements:\n");
+    tuple_print(filtered_tuple);
+    
+    Tuple *filtered_tuple2 = tuple_remove_type(tuple, TYPE_STRING);
+    if (!filtered_tuple2) {
+        fprintf(stderr, "Failed to filter tuple\n");
+        tuple_destroy(tuple);
+        tuple_destroy(filtered_tuple);
+        return 1;
+    }
+    
+    printf("\nTuple after removing STRING elements:\n");
+    tuple_print(filtered_tuple2);
+    
+    tuple_destroy(tuple);
+    tuple_destroy(filtered_tuple);
+    tuple_destroy(filtered_tuple2);
+    
+    return 0;
+}

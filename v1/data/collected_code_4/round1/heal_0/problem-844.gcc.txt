@@ -1,0 +1,60 @@
+./collected_code_4/round1//heal_0//problem-844.c: In function 'findKthElement':
+./collected_code_4/round1//heal_0//problem-844.c:19:19: warning: use of uninitialized value 'odd[k]' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   19 |         return odd[k];
+      |                ~~~^~~
+  'main': events 1-2
+    |
+    |   25 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   29 |     int result = findKthElement(arr, length, k);
+    |      |                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                  |
+    |      |                  (2) calling 'findKthElement' from 'main'
+    |
+    +--> 'findKthElement': events 3-15
+           |
+           |    3 | int findKthElement(int* arr, int length, int k) {
+           |      |     ^~~~~~~~~~~~~~
+           |      |     |
+           |      |     (3) entry to 'findKthElement'
+           |    4 |     if (k >= length || k < 0) {
+           |      |        ~
+           |      |        |
+           |      |        (5) following 'false' branch...
+           |......
+           |    9 |     int odd[100], even[100], odd_count = 0, even_count = 0;
+           |      |         ~~~                  ~~~~~~~~~
+           |      |         |                    |
+           |      |         |                    (6) ...to here
+           |      |         (4) region created on stack here
+           |   10 | 
+           |   11 |     for(int i = 0; i < length; i++) {
+           |      |                    ~~~~~~~~~~
+           |      |                      |
+           |      |                      (7) following 'true' branch (when 'i < length')...
+           |      |                      (11) following 'false' branch (when 'i >= length')...
+           |   12 |         if(arr[i] % 2 == 0)
+           |      |           ~   ~
+           |      |           |   |
+           |      |           |   (8) ...to here
+           |      |           (9) following 'false' branch...
+           |......
+           |   15 |             odd[odd_count++] = arr[i];
+           |      |                                   ~
+           |      |                                   |
+           |      |                                   (10) ...to here
+           |......
+           |   18 |     if (k < odd_count) {
+           |      |        ~
+           |      |        |
+           |      |        (12) ...to here
+           |      |        (13) following 'true' branch (when 'k < odd_count')...
+           |   19 |         return odd[k];
+           |      |                ~~~~~~
+           |      |                   |
+           |      |                   (14) ...to here
+           |      |                   (15) use of uninitialized value 'odd[k]' here
+           |

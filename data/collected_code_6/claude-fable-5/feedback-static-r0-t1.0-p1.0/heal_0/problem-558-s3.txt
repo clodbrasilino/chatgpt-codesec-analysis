@@ -1,0 +1,45 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+static unsigned int to_unsigned_abs(int n)
+{
+    if (n < 0) {
+        return (unsigned int)(-(n + 1)) + 1u;
+    }
+    return (unsigned int)n;
+}
+
+static unsigned int digit_distance(int a, int b)
+{
+    unsigned int ua = to_unsigned_abs(a);
+    unsigned int ub = to_unsigned_abs(b);
+    unsigned int dist = 0u;
+
+    while ((ua > 0u) || (ub > 0u)) {
+        unsigned int da = ua % 10u;
+        unsigned int db = ub % 10u;
+        dist += (da > db) ? (da - db) : (db - da);
+        ua /= 10u;
+        ub /= 10u;
+    }
+
+    return dist;
+}
+
+int main(void)
+{
+    int a = 0;
+    int b = 0;
+
+    printf("Enter two integers: ");
+    if (scanf("%d %d", &a, &b) != 2) {
+        fprintf(stderr, "Error: invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Digit distance: %u\n", digit_distance(a, b));
+
+    return EXIT_SUCCESS;
+}
+```

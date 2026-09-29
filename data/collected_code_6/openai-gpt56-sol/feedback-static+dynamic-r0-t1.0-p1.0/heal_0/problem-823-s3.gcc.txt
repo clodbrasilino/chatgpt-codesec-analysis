@@ -1,0 +1,12 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_0/problem-823-s3.c: In function 'starts_with_regex':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_0/problem-823-s3.c:17:22: error: implicit declaration of function 'strlen' [-Wimplicit-function-declaration]
+   17 |     pattern_length = strlen(pattern);
+      |                      ^~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_0/problem-823-s3.c:4:1: note: include '<string.h>' or provide a declaration of 'strlen'
+    3 | #include <regex.h>
+  +++ |+#include <string.h>
+    4 | 
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_0/problem-823-s3.c:28:5: error: implicit declaration of function 'memcpy' [-Wimplicit-function-declaration]
+   28 |     memcpy(anchored_pattern + 1, pattern, pattern_length + 1);
+      |     ^~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_0/problem-823-s3.c:28:5: note: include '<string.h>' or provide a declaration of 'memcpy'

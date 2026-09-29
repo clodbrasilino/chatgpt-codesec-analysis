@@ -1,0 +1,77 @@
+{
+  "task_id": 650,
+  "text": "Write a C function to check whether the given two arrays are equal or not.",
+  "fn_candidates": [
+    "are_Equal",
+    "AreEqual",
+    "areEqual",
+    "areEqual"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "are_Equal",
+      "args": [
+        [
+          1,
+          2,
+          3
+        ],
+        [
+          3,
+          2,
+          1
+        ],
+        3,
+        3
+      ],
+      "expected": true,
+      "assert_src": "assert are_Equal([1,2,3],[3,2,1],3,3) == True"
+    },
+    {
+      "fn_name": "are_Equal",
+      "args": [
+        [
+          1,
+          1,
+          1
+        ],
+        [
+          2,
+          2,
+          2
+        ],
+        3,
+        3
+      ],
+      "expected": false,
+      "assert_src": "assert are_Equal([1,1,1],[2,2,2],3,3) == False"
+    },
+    {
+      "fn_name": "are_Equal",
+      "args": [
+        [
+          8,
+          9
+        ],
+        [
+          4,
+          5,
+          6
+        ],
+        2,
+        3
+      ],
+      "expected": false,
+      "assert_src": "assert are_Equal([8,9],[4,5,6],2,3) == False"
+    }
+  ],
+  "arg_kinds": [
+    "int",
+    "int-list"
+  ],
+  "return_kind": "bool",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

@@ -1,0 +1,21 @@
+#include <stdio.h>
+
+int gcd(int a, int b) {
+    while (b != 0) {
+        int temp = a;
+        a = b;
+        b = temp % b;
+    }
+    return a;
+}
+
+int main() {
+    int num1, num2;
+    printf("Enter two positive integers: ");
+    if (scanf("%d %d", &num1, &num2) == 2 && num1 > 0 && num2 > 0) {
+        printf("GCD of %d and %d is %d\n", num1, num2, gcd(num1, num2));
+    } else {
+        printf("Please enter two positive integers.\n");
+    }
+    return 0;
+}

@@ -1,0 +1,78 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct List {
+    int value;
+    struct List *next;
+} List;
+
+List* create_node(int value) {
+    List *new_node = (List*)malloc(sizeof(List));
+    new_node->value = value;
+    new_node->next = NULL;
+    return new_node;
+}
+
+void append(List **head, int value) {
+    List *new_node = create_node(value);
+    if (*head == NULL) {
+        *head = new_node;
+    } else {
+        List *current = *head;
+        while (current->next != NULL) {
+            current = current->next;
+        }
+        current->next = new_node;
+    }
+}
+
+int is_in_list(List *list, int value) {
+    while (list != NULL) {
+        if (list->value == value) {
+            return 1;
+        }
+        list = list->next;
+    }
+    return 0;
+}
+
+void find_common_elements(List *list1, List *list2) {
+    while (list1 != NULL) {
+        if (is_in_list(list2, list1->value)) {
+            printf("%d ", list1->value);
+        }
+        list1 = list1->next;
+    }
+    printf("\n");
+}
+
+void free_list(List *head) {
+    List *current = head;
+    while (current != NULL) {
+        List *temp = current;
+        current = current->next;
+        free(temp);
+    }
+}
+
+int main() {
+    List *list1 = NULL;
+    List *list2 = NULL;
+
+    append(&list1, 1);
+    append(&list1, 2);
+    append(&list1, 3);
+    append(&list1, 4);
+
+    append(&list2, 3);
+    append(&list2, 4);
+    append(&list2, 5);
+    append(&list2, 6);
+
+    find_common_elements(list1, list2);
+
+    free_list(list1);
+    free_list(list2);
+
+    return 0;
+}

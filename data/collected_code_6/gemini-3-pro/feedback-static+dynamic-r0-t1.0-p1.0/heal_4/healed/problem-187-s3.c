@@ -1,0 +1,78 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+size_t safe_strlen(const char* str, size_t max_len) {
+    size_t len = 0;
+    while (str && str[len] != '\0' && len < max_len) {
+        len++;
+    }
+    return len;
+}
+
+char* longestCommonSubsequence(const char* str1, const char* str2) {
+    if (!str1 || !str2) {
+        return NULL;
+    }
+
+    size_t len1 = safe_strlen(str1, 1000000);
+    size_t len2 = safe_strlen(str2, 1000000);
+
+    size_t* dp = (size_t*)calloc((len1 + 1) * (len2 + 1), sizeof(size_t));
+    if (!dp) {
+        return NULL;
+    }
+
+    for (size_t i = 1; i <= len1; i++) {
+        for (size_t j = 1; j <= len2; j++) {
+            if (str1[i - 1] == str2[j - 1]) {
+                dp[i * (len2 + 1) + j] = dp[(i - 1) * (len2 + 1) + (j - 1)] + 1;
+            } else {
+                size_t val1 = dp[(i - 1) * (len2 + 1) + j];
+                size_t val2 = dp[i * (len2 + 1) + (j - 1)];
+                dp[i * (len2 + 1) + j] = (val1 > val2) ? val1 : val2;
+            }
+        }
+    }
+
+    size_t idx = dp[len1 * (len2 + 1) + len2];
+    char* lcs = (char*)malloc((idx + 1) * sizeof(char));
+    if (!lcs) {
+        free(dp);
+        return NULL;
+    }
+    
+    lcs[idx] = '\0';
+    size_t i = len1, j = len2;
+
+    while (i > 0 && j > 0) {
+        if (str1[i - 1] == str2[j - 1]) {
+            lcs[idx - 1] = str1[i - 1];
+            i--;
+            j--;
+            idx--;
+        } else if (dp[(i - 1) * (len2 + 1) + j] > dp[i * (len2 + 1) + (j - 1)]) {
+            i--;
+        } else {
+            j--;
+        }
+    }
+
+    free(dp);
+    return lcs;
+}
+
+int main(void) {
+    const char* str1 = "AGGTAB";
+    const char* str2 = "GXTXAYB";
+
+    char* result = longestCommonSubsequence(str1, str2);
+
+    if (result) {
+        printf("Longest Common Subsequence: %s\n", result);
+        free(result);
+    } else {
+        printf("Memory allocation failed or invalid input.\n");
+    }
+
+    return 0;
+}

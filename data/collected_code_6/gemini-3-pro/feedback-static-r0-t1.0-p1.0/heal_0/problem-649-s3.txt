@@ -1,0 +1,42 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stddef.h>
+
+int calculate_sum(const int *array, size_t size, size_t start_index, size_t end_index, long long *result) {
+    if (array == NULL || result == NULL) {
+        return -1;
+    }
+    
+    if (start_index >= size || end_index >= size || start_index > end_index) {
+        return -1;
+    }
+    
+    long long sum = 0;
+    for (size_t i = start_index; i <= end_index; ++i) {
+        sum += array[i];
+    }
+    
+    *result = sum;
+    return 0;
+}
+
+int main(void) {
+    const int numbers[] = {10, 20, 30, 40, 50, 60, 70, 80};
+    size_t size = sizeof(numbers) / sizeof(numbers[0]);
+    size_t start_index = 2;
+    size_t end_index = 5;
+    long long sum = 0;
+    
+    int status = calculate_sum(numbers, size, start_index, end_index, &sum);
+    
+    if (status == 0) {
+        printf("Sum: %lld\n", sum);
+    } else {
+        printf("Invalid input or range.\n");
+        return EXIT_FAILURE;
+    }
+    
+    return EXIT_SUCCESS;
+}
+```

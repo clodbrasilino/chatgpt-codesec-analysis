@@ -1,0 +1,113 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node *next;
+} Node;
+
+Node *create_node(int data) {
+    Node *new_node = (Node *)malloc(sizeof(Node));
+    if (new_node == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(EXIT_FAILURE);
+    }
+    new_node->data = data;
+    new_node->next = NULL;
+    return new_node;
+}
+
+void append_node(Node **head, int data) {
+    Node *new_node = create_node(data);
+    if (*head == NULL) {
+        *head = new_node;
+        return;
+    }
+    Node *current = *head;
+    while (current->next != NULL) {
+        current = current->next;
+    }
+    current->next = new_node;
+}
+
+Node *merge_sorted_lists(Node *list1, Node *list2) {
+    if (list1 == NULL) return list2;
+    if (list2 == NULL) return list1;
+
+    Node *merged_head = NULL;
+    Node *merged_tail = NULL;
+
+    if (list1->data <= list2->data) {
+        merged_head = list1;
+        list1 = list1->next;
+    } else {
+        merged_head = list2;
+        list2 = list2->next;
+    }
+    merged_tail = merged_head;
+
+    while (list1 != NULL && list2 != NULL) {
+        if (list1->data <= list2->data) {
+            merged_tail->next = list1;
+            list1 = list1->next;
+        } else {
+            merged_tail->next = list2;
+            list2 = list2->next;
+        }
+        merged_tail = merged_tail->next;
+    }
+
+    if (list1 != NULL) {
+        merged_tail->next = list1;
+    } else {
+        merged_tail->next = list2;
+    }
+
+    return merged_head;
+}
+
+void print_list(Node *head) {
+    Node *current = head;
+    while (current != NULL) {
+        printf("%d ", current->data);
+        current = current->next;
+    }
+    printf("\n");
+}
+
+void free_list(Node *head) {
+    Node *current = head;
+    while (current != NULL) {
+        Node *temp = current;
+        current = current->next;
+        free(temp);
+    }
+}
+
+int main(void) {
+    Node *list1 = NULL;
+    Node *list2 = NULL;
+
+    append_node(&list1, 1);
+    append_node(&list1, 3);
+    append_node(&list1, 5);
+    append_node(&list1, 7);
+
+    append_node(&list2, 2);
+    append_node(&list2, 4);
+    append_node(&list2, 6);
+    append_node(&list2, 8);
+
+    printf("List 1: ");
+    print_list(list1);
+    printf("List 2: ");
+    print_list(list2);
+
+    Node *merged = merge_sorted_lists(list1, list2);
+    printf("Merged: ");
+    print_list(merged);
+
+    free_list(merged);
+
+    return 0;
+}

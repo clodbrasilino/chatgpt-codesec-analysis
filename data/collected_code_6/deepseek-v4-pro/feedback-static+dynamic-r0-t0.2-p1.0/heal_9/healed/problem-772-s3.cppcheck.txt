@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_9/healed/problem-772-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_9/healed/problem-772-s3.c:8:32: warning: Either the condition 'len<max_len' is redundant or the array 'str[52]' is accessed at index 263, which is out of bounds. [arrayIndexOutOfBoundsCond]
+    while (len < max_len && str[len] != '\0') {
+                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_9/healed/problem-772-s3.c:82:61: note: Calling function 'safe_strnlen', 2nd argument 'sizeof(source)+sizeof(str)' value is 264
+    size_t source_len = safe_strnlen(source, sizeof(source) + sizeof(str));
+                                                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_9/healed/problem-772-s3.c:8:16: note: Assuming that condition 'len<max_len' is not redundant
+    while (len < max_len && str[len] != '\0') {
+               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_9/healed/problem-772-s3.c:8:32: note: Array index out of bounds
+    while (len < max_len && str[len] != '\0') {
+                               ^

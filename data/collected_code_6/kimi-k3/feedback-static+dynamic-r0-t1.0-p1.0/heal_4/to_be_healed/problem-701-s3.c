@@ -1,0 +1,54 @@
+#include <stdio.h>
+#include <stdlib.h>
+ /* Possible weaknesses found:
+  *  test case 1 failed: expected 3, got <no output>
+  *  test case 0 failed: expected 3, got <no output>
+  *  test case 2 failed: expected -1, got <no output>
+  */
+
+int findEquilibriumIndex(const int arr[], int n) {
+    if (arr == NULL || n <= 0) {
+        return -1;
+    }
+    
+    long long totalSum = 0;
+    long long leftSum = 0;
+    int i;
+    
+    for (i = 0; i < n; i++) {
+        totalSum += arr[i];
+    }
+    
+    for (i = 0; i < n; i++) {
+        totalSum -= arr[i];
+        
+        if (leftSum == totalSum) {
+            return i;
+        }
+        
+        leftSum += arr[i];
+    }
+    
+    return -1;
+}
+
+int main(void) {
+    int arr1[] = {-7, 1, 5, 2, -4, 3, 0};
+    int arr2[] = {1, 2, 3};
+    int arr3[] = {2, 1, -1};
+    int n1 = sizeof(arr1) / sizeof(arr1[0]);
+    int n2 = sizeof(arr2) / sizeof(arr2[0]);
+    int n3 = sizeof(arr3) / sizeof(arr3[0]);
+    int result;
+    
+    result = findEquilibriumIndex(arr1, n1);
+    printf("%d\n", result);
+    
+    result = findEquilibriumIndex(arr2, n2);
+    printf("%d\n", result);
+    
+    result = findEquilibriumIndex(arr3, n3);
+    printf("%d\n", result);
+    
+    return 0;
+}

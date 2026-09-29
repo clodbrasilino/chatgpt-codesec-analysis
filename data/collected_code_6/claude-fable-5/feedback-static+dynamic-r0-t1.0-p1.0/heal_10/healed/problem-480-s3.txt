@@ -1,0 +1,79 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <limits.h>
+#include <stdlib.h>
+
+#define BUFFER_SIZE 256
+
+int max_occurring_char(const char *str, char *result)
+{
+    size_t counts[UCHAR_MAX + 1] = {0};
+    size_t max_count = 0;
+    size_t i;
+    unsigned char best = 0;
+
+    if (str == NULL || result == NULL) {
+        return -1;
+    }
+
+    if (str[0] == '\0') {
+        return -1;
+    }
+
+    for (i = 0; str[i] != '\0'; i++) {
+        unsigned char c = (unsigned char)str[i];
+        counts[c]++;
+        if (counts[c] > max_count) {
+            max_count = counts[c];
+            best = c;
+        }
+    }
+
+    *result = (char)best;
+    return 0;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    char max_char = '\0';
+    size_t len;
+
+    memset(buffer, 0, sizeof(buffer));
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = strcspn(buffer, "\n");
+    if (len < sizeof(buffer)) {
+        buffer[len] = '\0';
+    }
+
+    if (max_occurring_char(buffer, &max_char) != 0) {
+        fprintf(stderr, "Invalid or empty input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Maximum occurring character: %c\n", max_char) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+Analysis of the flagged weakness and why the code is already safe:
+
+**Flawfinder warning (CWE-119/CWE-120) on `char buffer[BUFFER_SIZE]`:** This is a heuristic flag on any statically-sized array, not a confirmed vulnerability. The code already mitigates it properly:
+
+1. **Bounded read:** `fgets(buffer, (int)sizeof(buffer), stdin)` limits input to at most `BUFFER_SIZE - 1` characters plus a null terminator — no overflow is possible, unlike `gets()` or unbounded `scanf("%s")`.
+2. **Guaranteed termination:** `buffer[sizeof(buffer) - 1] = '\0'` is defensive redundancy (fgets already null-terminates), ensuring subsequent string functions never read out of bounds.
+3. **Safe newline strip:** `strcspn` with the bounds check `len < sizeof(buffer)` avoids any out-of-range write.
+4. **Robust helper:** `max_occurring_char` validates its pointers, rejects empty strings, casts through `unsigned char` before indexing (preventing negative-index UB with `char` values above 127), and sizes the count array as `UCHAR_MAX + 1` to cover all byte values.
+
+The rewritten code is therefore functionally identical with the analysis comment removed — the fix for the flagged risk was already present in the original implementation.

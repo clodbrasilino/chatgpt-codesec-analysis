@@ -1,0 +1,73 @@
+{
+  "task_id": 911,
+  "text": "Write a C function to compute maximum product of three numbers of a given array of integers using heap queue algorithm.",
+  "fn_candidates": [
+    "maximum_product",
+    "MaximumProduct",
+    "maximumProduct",
+    "maximumproduct"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "maximum_product",
+      "args": [
+        [
+          12,
+          74,
+          9,
+          50,
+          61,
+          41
+        ]
+      ],
+      "expected": 225700,
+      "assert_src": "assert maximum_product( [12, 74, 9, 50, 61, 41])==225700"
+    },
+    {
+      "fn_name": "maximum_product",
+      "args": [
+        [
+          25,
+          35,
+          22,
+          85,
+          14,
+          65,
+          75,
+          25,
+          58
+        ]
+      ],
+      "expected": 414375,
+      "assert_src": "assert maximum_product([25, 35, 22, 85, 14, 65, 75, 25, 58])==414375"
+    },
+    {
+      "fn_name": "maximum_product",
+      "args": [
+        [
+          18,
+          14,
+          10,
+          9,
+          8,
+          7,
+          9,
+          3,
+          2,
+          4,
+          1
+        ]
+      ],
+      "expected": 2520,
+      "assert_src": "assert maximum_product([18, 14, 10, 9, 8, 7, 9, 3, 2, 4, 1])==2520"
+    }
+  ],
+  "arg_kinds": [
+    "int-list"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

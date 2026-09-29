@@ -1,0 +1,83 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+#include <stdlib.h>
+
+bool string_starts_with_number(const char *str, long number)
+{
+    char prefix[32];
+    int written;
+    size_t prefix_len;
+    size_t i;
+
+    if (str == NULL) {
+        return false;
+    }
+
+    written = snprintf(prefix, sizeof(prefix), "%ld", number);
+    if (written < 0 || (size_t)written >= sizeof(prefix)) {
+        return false;
+    }
+
+    prefix_len = (size_t)written;
+
+    for (i = 0; i < prefix_len; i++) {
+        if (str[i] == '\0' || str[i] != prefix[i]) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+int main(void)
+{
+    const char *test1 = "42 is the answer";
+    const char *test2 = "hello world";
+    const char *test3 = "100apples";
+    long target1 = 42;
+    long target2 = 42;
+    long target3 = 100;
+
+    if (string_starts_with_number(test1, target1)) {
+        if (printf("\"%s\" starts with %ld\n", test1, target1) < 0) {
+            return EXIT_FAILURE;
+        }
+    } else {
+        if (printf("\"%s\" does not start with %ld\n", test1, target1) < 0) {
+            return EXIT_FAILURE;
+        }
+    }
+
+    if (string_starts_with_number(test2, target2)) {
+        if (printf("\"%s\" starts with %ld\n", test2, target2) < 0) {
+            return EXIT_FAILURE;
+        }
+    } else {
+        if (printf("\"%s\" does not start with %ld\n", test2, target2) < 0) {
+            return EXIT_FAILURE;
+        }
+    }
+
+    if (string_starts_with_number(test3, target3)) {
+        if (printf("\"%s\" starts with %ld\n", test3, target3) < 0) {
+            return EXIT_FAILURE;
+        }
+    } else {
+        if (printf("\"%s\" does not start with %ld\n", test3, target3) < 0) {
+            return EXIT_FAILURE;
+        }
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the fixes applied:**
+
+1. **CWE-119/CWE-120 (buffer overflow via statically-sized array):** The original code already mitigated this correctly by using `snprintf` with `sizeof(prefix)` and validating the return value against both negative results (encoding errors) and truncation (`written >= sizeof(prefix)`). A `long` rendered as decimal fits comfortably in 32 bytes (max ~20 characters plus sign and NUL on 64-bit platforms), so the buffer is adequately sized. This logic is preserved unchanged.
+
+2. **CWE-126 (over-read via `strlen` on potentially unterminated strings):** The `strlen(str)` call was the real concern — it scans the entire input string unboundedly just to compare its length against the prefix. The rewrite eliminates `strlen` entirely. Instead, the comparison loop reads at most `prefix_len` bytes (bounded by the 32-byte prefix buffer) and stops immediately upon hitting a NUL terminator or a mismatch. This means the function never reads beyond `prefix_len` characters of the input, removing the unbounded read while preserving identical semantics: if the string is shorter than the prefix, the NUL check causes an early `false` return, exactly as the old length check did.
+
+3. The `NULL` check, error-checked `printf` calls, and `EXIT_SUCCESS`/`EXIT_FAILURE` conventions are retained as they were already sound defensive practices.

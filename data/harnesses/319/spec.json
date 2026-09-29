@@ -1,0 +1,50 @@
+{
+  "task_id": 319,
+  "text": "Write a C function to find all five characters long word in the given string by using regex.",
+  "fn_candidates": [
+    "find_long_word",
+    "FindLongWord",
+    "findLongWord",
+    "findlongword"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "find_long_word",
+      "args": [
+        "Please move back to strem"
+      ],
+      "expected": [
+        "strem"
+      ],
+      "assert_src": "assert find_long_word('Please move back to strem') == ['strem']"
+    },
+    {
+      "fn_name": "find_long_word",
+      "args": [
+        "4K Ultra HD streaming player"
+      ],
+      "expected": [
+        "Ultra"
+      ],
+      "assert_src": "assert find_long_word('4K Ultra HD streaming player') == ['Ultra']"
+    },
+    {
+      "fn_name": "find_long_word",
+      "args": [
+        "Streaming Media Player"
+      ],
+      "expected": [
+        "Media"
+      ],
+      "assert_src": "assert find_long_word('Streaming Media Player') == ['Media']"
+    }
+  ],
+  "arg_kinds": [
+    "str"
+  ],
+  "return_kind": "str-list",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

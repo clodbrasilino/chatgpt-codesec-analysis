@@ -1,0 +1,23 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-344-s2.c: In function 'count_odd_factors':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-344-s2.c:14:25: error: implicit declaration of function 'sqrt' [-Wimplicit-function-declaration]
+   14 |         int root = (int)sqrt(i);
+      |                         ^~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-344-s2.c:3:1: note: include '<math.h>' or provide a declaration of 'sqrt'
+    2 | #include <stdlib.h>
+  +++ |+#include <math.h>
+    3 | 
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-344-s2.c: In function 'main':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-344-s2.c:37:19: error: 'INT_MAX' undeclared (first use in this function)
+   37 |     if (lower_l > INT_MAX || upper_l > INT_MAX || lower_l < INT_MIN || upper_l < INT_MIN) {
+      |                   ^~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-344-s2.c:3:1: note: 'INT_MAX' is defined in header '<limits.h>'; this is probably fixable by adding '#include <limits.h>'
+    2 | #include <stdlib.h>
+  +++ |+#include <limits.h>
+    3 | 
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-344-s2.c:37:19: note: each undeclared identifier is reported only once for each function it appears in
+   37 |     if (lower_l > INT_MAX || upper_l > INT_MAX || lower_l < INT_MIN || upper_l < INT_MIN) {
+      |                   ^~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-344-s2.c:37:61: error: 'INT_MIN' undeclared (first use in this function)
+   37 |     if (lower_l > INT_MAX || upper_l > INT_MAX || lower_l < INT_MIN || upper_l < INT_MIN) {
+      |                                                             ^~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-344-s2.c:37:61: note: 'INT_MIN' is defined in header '<limits.h>'; this is probably fixable by adding '#include <limits.h>'

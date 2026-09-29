@@ -1,0 +1,137 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#include <limits.h>
+
+#define MAX_INPUT_LEN 63
+
+static int roman_char_value(char c)
+{
+    switch (toupper((unsigned char)c)) {
+    case 'I': return 1;
+    case 'V': return 5;
+    case 'X': return 10;
+    case 'L': return 50;
+    case 'C': return 100;
+    case 'D': return 500;
+    case 'M': return 1000;
+    default:  return -1;
+    }
+}
+
+static size_t bounded_strlen(const char *s, size_t max_len)
+{
+    size_t i;
+
+    if (s == NULL) {
+        return 0;
+    }
+
+    for (i = 0; i < max_len; i++) {
+        if (s[i] == '\0') {
+            return i;
+        }
+    }
+    return max_len;
+}
+
+static int roman_to_int(const char *s, size_t max_len, int *result)
+{
+    size_t len;
+    size_t i;
+    int total = 0;
+
+    if (s == NULL || result == NULL || max_len == 0) {
+        return -1;
+    }
+
+    len = bounded_strlen(s, max_len);
+    if (len == 0 || len >= max_len) {
+        return -1;
+    }
+
+    for (i = 0; i < len; i++) {
+        int current = roman_char_value(s[i]);
+        if (current < 0) {
+            return -1;
+        }
+
+        if (i + 1 < len) {
+            int next = roman_char_value(s[i + 1]);
+            if (next < 0) {
+                return -1;
+            }
+            if (current < next) {
+                int diff = next - current;
+                if (total > INT_MAX - diff) {
+                    return -1;
+                }
+                total += diff;
+                i++;
+                continue;
+            }
+        }
+
+        if (total > INT_MAX - current) {
+            return -1;
+        }
+        total += current;
+    }
+
+    *result = total;
+    return 0;
+}
+
+static int flush_stdin(void)
+{
+    int c;
+    size_t guard = 0;
+
+    while ((c = getchar()) != '\n' && c != EOF) {
+        guard++;
+        if (guard > (size_t)INT_MAX) {
+            return -1;
+        }
+    }
+    return 0;
+}
+
+int main(void)
+{
+    char buffer[MAX_INPUT_LEN + 1];
+    int value = 0;
+    size_t len;
+
+    memset(buffer, 0, sizeof(buffer));
+
+    printf("Enter a Roman numeral: ");
+    fflush(stdout);
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = bounded_strlen(buffer, sizeof(buffer));
+    if (len == sizeof(buffer) - 1 && buffer[len - 1] != '\n') {
+        if (flush_stdin() != 0) {
+            fprintf(stderr, "Error clearing input\n");
+            return EXIT_FAILURE;
+        }
+        fprintf(stderr, "Input too long\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[strcspn(buffer, "\r\n")] = '\0';
+
+    if (roman_to_int(buffer, sizeof(buffer), &value) != 0) {
+        fprintf(stderr, "Invalid Roman numeral: %s\n", buffer);
+        return EXIT_FAILURE;
+    }
+
+    printf("%s = %d\n", buffer, value);
+    return EXIT_SUCCESS;
+}

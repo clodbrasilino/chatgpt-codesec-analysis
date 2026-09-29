@@ -1,0 +1,54 @@
+```c
+#include <stdio.h>
+#include <ctype.h>
+#include <stddef.h>
+
+void remove_whitespace(char *str)
+{
+    size_t read;
+    size_t write;
+
+    if (str == NULL) {
+        return;
+    }
+
+    read = 0;
+    write = 0;
+
+    while (str[read] != '\0') {
+        if (!isspace((unsigned char)str[read])) {
+            str[write] = str[read];
+            write++;
+        }
+        read++;
+    }
+    str[write] = '\0';
+}
+
+int main(void)
+{
+    char text[] = "  Hello,   World! \t This is a\ntest.  ";
+
+    printf("Before: \"%s\"\n", text);
+    remove_whitespace(text);
+    printf("After:  \"%s\"\n", text);
+
+    return 0;
+}
+```
+
+**Analysis of the flagged weaknesses:**
+
+The Flawfinder warnings (CWE-120 buffer overflow, CWE-20 improper input validation) are all **risk level 1 (informational)** and are effectively false positives here. Here's why the code is already safe:
+
+1. **NULL pointer check** — `str == NULL` is handled before any dereference.
+
+2. **No out-of-bounds reads** — The loop terminates on the null terminator, and `read` never advances past it. Since the function operates on a caller-provided, properly terminated string, `str[read]` stays within bounds.
+
+3. **No out-of-bounds writes** — The `write` index always trails or equals `read` (the compaction is strictly in-place and shrinking), so `str[write] = str[read]` and the final `str[write] = '\0'` never exceed the original string length.
+
+4. **Correct `isspace` usage** — The cast to `unsigned char` avoids undefined behavior when `char` is signed and holds negative values (e.g., extended characters), which is a common real bug that this code correctly avoids.
+
+5. **`main` uses a writable array** — `char text[]` (not `char *text = "..."`), so modifying the string in place is legal.
+
+The only residual caveat, inherent to any C string API, is that the function *requires* a null-terminated string as its contract. If a caller passes a non-terminated buffer, no fix inside this function can help — that would need a length-bounded variant (e.g., accepting a `size_t maxlen` parameter). As written, the code contains no actual defects to fix.

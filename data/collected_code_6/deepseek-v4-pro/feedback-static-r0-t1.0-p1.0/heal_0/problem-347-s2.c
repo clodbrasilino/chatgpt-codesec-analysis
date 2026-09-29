@@ -1,0 +1,44 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+long long count_squares(int length, int width) {
+    if (length <= 0 || width <= 0) {
+        return 0;
+    }
+    
+    int min_dim = length < width ? length : width;
+    int max_dim = length > width ? length : width;
+    long long total = 0;
+    
+    for (int side = 1; side <= min_dim; side++) {
+        total += (long long)(min_dim - side + 1) * (max_dim - side + 1);
+    }
+    
+    return total;
+}
+
+int main(void) {
+    int length, width;
+    
+    printf("Enter rectangle length: ");
+    if (scanf("%d", &length) != 1) {
+        fprintf(stderr, "Invalid input for length.\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("Enter rectangle width: ");
+    if (scanf("%d", &width) != 1) {
+        fprintf(stderr, "Invalid input for width.\n");
+        return EXIT_FAILURE;
+    }
+    
+    if (length <= 0 || width <= 0) {
+        fprintf(stderr, "Dimensions must be positive integers.\n");
+        return EXIT_FAILURE;
+    }
+    
+    long long result = count_squares(length, width);
+    printf("Number of squares in %dx%d rectangle: %lld\n", length, width, result);
+    
+    return EXIT_SUCCESS;
+}

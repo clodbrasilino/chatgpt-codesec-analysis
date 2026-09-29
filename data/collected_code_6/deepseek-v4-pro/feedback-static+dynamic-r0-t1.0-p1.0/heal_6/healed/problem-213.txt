@@ -1,0 +1,144 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+typedef struct {
+    char **items;
+    size_t count;
+} StringTuple;
+
+static char *safe_strdup(const char *s) {
+    char *copy;
+    size_t len;
+    
+    if (s == NULL) {
+        return NULL;
+    }
+    
+    len = strnlen(s, SIZE_MAX);
+    if (len == SIZE_MAX) {
+        return NULL;
+    }
+    
+    copy = (char *)malloc(len + 1);
+    if (copy == NULL) {
+        return NULL;
+    }
+    
+    memmove(copy, s, len);
+    copy[len] = '\0';
+    return copy;
+}
+
+static void cleanup_items(char **items, size_t count) {
+    size_t i;
+    if (items == NULL) {
+        return;
+    }
+    for (i = 0; i < count; i++) {
+        free(items[i]);
+    }
+    free(items);
+}
+
+StringTuple tuple_concat(const StringTuple *a, const StringTuple *b) {
+    StringTuple result;
+    size_t i;
+    size_t total_count;
+
+    if (a == NULL || b == NULL) {
+        result.items = NULL;
+        result.count = 0;
+        return result;
+    }
+
+    if (a->count > SIZE_MAX - b->count) {
+        result.items = NULL;
+        result.count = 0;
+        return result;
+    }
+
+    total_count = a->count + b->count;
+    result.count = total_count;
+    
+    if (result.count == 0) {
+        result.items = NULL;
+        return result;
+    }
+
+    result.items = (char **)calloc(result.count, sizeof(char *));
+    if (result.items == NULL) {
+        result.count = 0;
+        return result;
+    }
+
+    for (i = 0; i < a->count; i++) {
+        if (a->items[i] == NULL) {
+            cleanup_items(result.items, a->count + b->count);
+            result.items = NULL;
+            result.count = 0;
+            return result;
+        }
+        result.items[i] = safe_strdup(a->items[i]);
+        if (result.items[i] == NULL) {
+            cleanup_items(result.items, a->count + b->count);
+            result.items = NULL;
+            result.count = 0;
+            return result;
+        }
+    }
+
+    for (i = 0; i < b->count; i++) {
+        size_t index = a->count + i;
+        if (b->items[i] == NULL) {
+            cleanup_items(result.items, a->count + b->count);
+            result.items = NULL;
+            result.count = 0;
+            return result;
+        }
+        result.items[index] = safe_strdup(b->items[i]);
+        if (result.items[index] == NULL) {
+            cleanup_items(result.items, a->count + b->count);
+            result.items = NULL;
+            result.count = 0;
+            return result;
+        }
+    }
+
+    return result;
+}
+
+void tuple_free(StringTuple *tuple) {
+    if (tuple != NULL) {
+        cleanup_items(tuple->items, tuple->count);
+        tuple->items = NULL;
+        tuple->count = 0;
+    }
+}
+
+int main(void) {
+    char *items_a[] = {"hello", "world"};
+    char *items_b[] = {"foo", "bar", "baz"};
+    StringTuple a = {items_a, 2};
+    StringTuple b = {items_b, 3};
+    StringTuple result;
+    size_t i;
+
+    result = tuple_concat(&a, &b);
+
+    if (result.items == NULL) {
+        fprintf(stderr, "Failed to concatenate tuples\n");
+        return 1;
+    }
+
+    for (i = 0; i < result.count; i++) {
+        printf("%s\n", result.items[i]);
+    }
+
+    tuple_free(&result);
+
+    return 0;
+}
+```

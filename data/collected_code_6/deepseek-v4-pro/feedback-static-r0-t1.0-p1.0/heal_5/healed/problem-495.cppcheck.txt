@@ -1,0 +1,31 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-495.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-495.c:28:25: style: Condition 'output_size>0' is always true [knownConditionTrueFalse]
+        if (output_size > 0) {
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-495.c:7:56: note: Assuming that condition 'output_size==0' is not redundant
+    if (input == NULL || output == NULL || output_size == 0) {
+                                                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-495.c:14:13: note: Assuming condition is false
+    if (ret != 0) {
+            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-495.c:28:25: note: Condition 'output_size>0' is always true
+        if (output_size > 0) {
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-495.c:44:41: style: Condition 'out_pos<output_size' is always true [knownConditionTrueFalse]
+            if (copy_len > 0 && out_pos < output_size && copy_len <= output_size - out_pos) {
+                                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-495.c:37:42: note: Assuming that condition 'out_pos<output_size-1' is not redundant
+    while (in_pos < input_len && out_pos < output_size - 1) {
+                                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-495.c:44:41: note: Condition 'out_pos<output_size' is always true
+            if (copy_len > 0 && out_pos < output_size && copy_len <= output_size - out_pos) {
+                                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-495.c:54:45: style: Condition 'out_pos<output_size' is always true [knownConditionTrueFalse]
+                if (copy_len > 0 && out_pos < output_size && copy_len <= output_size - out_pos) {
+                                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-495.c:37:42: note: Assuming that condition 'out_pos<output_size-1' is not redundant
+    while (in_pos < input_len && out_pos < output_size - 1) {
+                                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-495.c:54:45: note: Condition 'out_pos<output_size' is always true
+                if (copy_len > 0 && out_pos < output_size && copy_len <= output_size - out_pos) {
+                                            ^

@@ -1,0 +1,6 @@
+collected_code/problem-378-0.c:4:20: error: Cannot determine that 'list[size-1]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+    int last = list[size-1];
+                   ^
+collected_code/problem-378-0.c:7:23: error: Cannot determine that 'list[i-1]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        list[i] = list[i-1];
+                      ^

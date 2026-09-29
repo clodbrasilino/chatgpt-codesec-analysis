@@ -1,0 +1,122 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+#include <errno.h>
+#include <stdint.h>
+#include <string.h>
+#include <ctype.h>
+
+long long sum_of_squares_of_odd_numbers(int n) {
+    if (n <= 0) {
+        return 0;
+    }
+    
+    if (n > INT_MAX / 3) {
+        return -1;
+    }
+    
+    long long term1 = (long long)n;
+    long long term2 = 2LL * n - 1;
+    long long term3 = 2LL * n + 1;
+    
+    if (term2 > LLONG_MAX / term1) {
+        return -1;
+    }
+    long long product = term1 * term2;
+    
+    if (term3 > LLONG_MAX / product) {
+        return -1;
+    }
+    product *= term3;
+    
+    return product / 3;
+}
+
+int main(void) {
+    char *input = NULL;
+    size_t len = 0;
+    ssize_t read;
+    char *endptr;
+    long val;
+    size_t i;
+    int valid;
+    
+    printf("Enter a positive integer n: ");
+    read = getline(&input, &len, stdin);
+    
+    if (read == -1) {
+        fprintf(stderr, "Error reading input\n");
+        free(input);
+        return EXIT_FAILURE;
+    }
+    
+    if (read > 0 && input[read - 1] == '\n') {
+        input[read - 1] = '\0';
+        read--;
+    }
+    
+    if (read == 0) {
+        fprintf(stderr, "Invalid input. Please enter a positive integer.\n");
+        free(input);
+        return EXIT_FAILURE;
+    }
+    
+    valid = 1;
+    for (i = 0; i < (size_t)read; i++) {
+        if (i == 0 && input[i] == '-') {
+            continue;
+        }
+        if (!isdigit((unsigned char)input[i])) {
+            valid = 0;
+            break;
+        }
+    }
+    
+    if (!valid) {
+        fprintf(stderr, "Invalid input. Please enter a positive integer.\n");
+        free(input);
+        return EXIT_FAILURE;
+    }
+    
+    errno = 0;
+    val = strtol(input, &endptr, 10);
+    
+    if (endptr == input || *endptr != '\0') {
+        fprintf(stderr, "Invalid input. Please enter a positive integer.\n");
+        free(input);
+        return EXIT_FAILURE;
+    }
+    
+    if (errno == ERANGE) {
+        fprintf(stderr, "n must be a positive integer within valid range.\n");
+        free(input);
+        return EXIT_FAILURE;
+    }
+    
+    if (val <= 0) {
+        fprintf(stderr, "n must be a positive integer.\n");
+        free(input);
+        return EXIT_FAILURE;
+    }
+    
+    if (val > INT_MAX) {
+        fprintf(stderr, "n must be a positive integer within valid range.\n");
+        free(input);
+        return EXIT_FAILURE;
+    }
+    
+    int n = (int)val;
+    long long result = sum_of_squares_of_odd_numbers(n);
+    
+    if (result == -1) {
+        fprintf(stderr, "Integer overflow detected. Please use a smaller value.\n");
+        free(input);
+        return EXIT_FAILURE;
+    }
+    
+    printf("Sum of squares of first %d odd natural numbers: %lld\n", 
+           n, result);
+    
+    free(input);
+    return EXIT_SUCCESS;
+}

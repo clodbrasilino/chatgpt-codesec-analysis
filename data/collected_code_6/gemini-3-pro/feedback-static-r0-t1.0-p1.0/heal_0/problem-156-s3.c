@@ -1,0 +1,70 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <limits.h>
+
+typedef struct {
+    char **strings;
+    size_t count;
+} StringTuple;
+
+typedef struct {
+    int *integers;
+    size_t count;
+} IntTuple;
+
+IntTuple convert_string_tuple_to_int_tuple(const StringTuple *str_tuple) {
+    IntTuple int_tuple = {NULL, 0};
+
+    if (!str_tuple || !str_tuple->strings || str_tuple->count == 0) {
+        return int_tuple;
+    }
+
+    int_tuple.integers = (int *)malloc(str_tuple->count * sizeof(int));
+    if (!int_tuple.integers) {
+        return int_tuple;
+    }
+
+    for (size_t i = 0; i < str_tuple->count; ++i) {
+        if (!str_tuple->strings[i]) {
+            free(int_tuple.integers);
+            int_tuple.integers = NULL;
+            int_tuple.count = 0;
+            return int_tuple;
+        }
+
+        char *endptr;
+        errno = 0;
+        long val = strtol(str_tuple->strings[i], &endptr, 10);
+
+        if (errno == ERANGE || val < INT_MIN || val > INT_MAX || endptr == str_tuple->strings[i] || *endptr != '\0') {
+            free(int_tuple.integers);
+            int_tuple.integers = NULL;
+            int_tuple.count = 0;
+            return int_tuple;
+        }
+
+        int_tuple.integers[i] = (int)val;
+    }
+
+    int_tuple.count = str_tuple->count;
+    return int_tuple;
+}
+
+int main(void) {
+    char *str_values[] = {"10", "-25", "42", "100", "0"};
+    StringTuple str_tuple = {str_values, 5};
+
+    IntTuple int_tuple = convert_string_tuple_to_int_tuple(&str_tuple);
+
+    if (int_tuple.integers) {
+        for (size_t i = 0; i < int_tuple.count; ++i) {
+            printf("%d\n", int_tuple.integers[i]);
+        }
+        free(int_tuple.integers);
+    } else {
+        printf("Conversion failed.\n");
+    }
+
+    return 0;
+}

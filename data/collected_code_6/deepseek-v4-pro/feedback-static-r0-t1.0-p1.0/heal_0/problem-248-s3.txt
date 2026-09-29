@@ -1,0 +1,32 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+double harmonic_sum(int n) {
+    if (n <= 0) {
+        return 0.0;
+    }
+    
+    double sum = 0.0;
+    for (int i = 1; i <= n; i++) {
+        sum += 1.0 / (double)i;
+    }
+    
+    return sum;
+}
+
+int main(void) {
+    int n;
+    
+    printf("Enter the value of n: ");
+    if (scanf("%d", &n) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    double result = harmonic_sum(n);
+    printf("Harmonic sum H(%d) = %.6f\n", n, result);
+    
+    return EXIT_SUCCESS;
+}
+```

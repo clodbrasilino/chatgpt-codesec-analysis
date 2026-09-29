@@ -1,0 +1,61 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <regex.h>
+#include <string.h>
+
+int check_pattern(const char *str, const char *pattern) {
+    regex_t regex;
+    int ret;
+    int result = 0;
+
+    ret = regcomp(&regex, pattern, REG_EXTENDED);
+    if (ret != 0) {
+        fprintf(stderr, "Could not compile regex\n");
+        return -1;
+    }
+
+    ret = regexec(&regex, str, 0, NULL, 0);
+    if (ret == 0) {
+        result = 1;
+    } else if (ret == REG_NOMATCH) {
+        result = 0;
+    } else {
+        char error_buffer[100];
+        regerror(ret, &regex, error_buffer, sizeof(error_buffer));
+        fprintf(stderr, "Regex match failed: %s\n", error_buffer);
+        result = -1;
+    }
+
+    regfree(&regex);
+    return result;
+}
+
+int main(void) {
+    char input[256];
+    int upper, lower, digit, special;
+
+    printf("Enter a string: ");
+    if (fgets(input, sizeof(input), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    input[strcspn(input, "\n")] = '\0';
+
+    upper = check_pattern(input, "[A-Z]");
+    lower = check_pattern(input, "[a-z]");
+    digit = check_pattern(input, "[0-9]");
+    special = check_pattern(input, "[^a-zA-Z0-9]");
+
+    if (upper == -1 || lower == -1 || digit == -1 || special == -1) {
+        fprintf(stderr, "Error processing regex patterns\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Uppercase: %s\n", upper ? "Yes" : "No");
+    printf("Lowercase: %s\n", lower ? "Yes" : "No");
+    printf("Digit: %s\n", digit ? "Yes" : "No");
+    printf("Special Character: %s\n", special ? "Yes" : "No");
+
+    return EXIT_SUCCESS;
+}

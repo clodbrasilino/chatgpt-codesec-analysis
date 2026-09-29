@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_2/healed/problem-956.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_2/healed/problem-956.c:86:33: warning: Identical inner 'if' condition is always true. [identicalInnerCondition]
+                if (segment_len > 0) {
+                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_2/healed/problem-956.c:59:29: note: outer condition: segment_len>0
+            if (segment_len > 0) {
+                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_2/healed/problem-956.c:86:33: note: identical inner condition: segment_len>0
+                if (segment_len > 0) {
+                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_2/healed/problem-956.c:120:22: style: Variable 'capacity' is assigned a value that is never used. [unreadVariable]
+            capacity = (int)new_capacity;
+                     ^

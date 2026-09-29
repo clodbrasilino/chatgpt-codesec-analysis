@@ -1,0 +1,57 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <ctype.h>
+
+int get_ascii_value(char c)
+{
+    return (int)(unsigned char)c;
+}
+
+int main(void)
+{
+    int input;
+    int extra;
+
+    printf("Enter a character: ");
+
+    input = getchar();
+    if (input == EOF) {
+        fprintf(stderr, "Error: failed to read input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (input < 0 || input > 255) {
+        fprintf(stderr, "Error: input out of valid character range\n");
+        return EXIT_FAILURE;
+    }
+
+    do {
+        extra = getchar();
+    } while (extra != '\n' && extra != EOF);
+
+    if (isprint(input)) {
+        printf("The ASCII value of '%c' is %d\n", (char)input, get_ascii_value((char)input));
+    } else {
+        printf("The ASCII value of the entered character is %d\n", get_ascii_value((char)input));
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The two Flawfinder findings (CWE-120 buffer overflow, CWE-20 improper input validation) flagged on `getchar()` are **false positives** in this code, and the original already contains the correct mitigations:
+
+1. **No buffer is involved.** `getchar()` reads a single character and the result is stored in an `int` — there is no destination buffer to overflow, unlike `gets()` or an unbounded `scanf("%s", ...)`. Flawfinder flags `getchar()` heuristically because developers sometimes accumulate its results into a fixed-size array inside a loop; that pattern does not occur here.
+
+2. **`int` (not `char`) holds the return value.** This is the critical correctness point: `getchar()` returns an `int` so that `EOF` (typically `-1`) can be distinguished from all valid `unsigned char` values. Storing it in a `char` would make the `== EOF` comparison unreliable (implementation-defined signedness). Both `input` and `extra` are correctly declared `int`.
+
+3. **EOF is checked** immediately after the first read, preventing use of an invalid value, and the drain loop terminates on both `'\n'` and `EOF`, so it cannot spin forever on a closed/redirected stdin.
+
+4. **Range validation** (`0..255`) guards the subsequent `isprint()` call — passing a value outside `unsigned char` range (other than `EOF`) to `isprint()` is undefined behavior per the C standard. The cast chain `(int)(unsigned char)c` in `get_ascii_value` likewise avoids sign-extension issues for characters ≥ 0x80 on platforms where `char` is signed.
+
+5. **Input drain loop** consumes trailing characters so leftover input can't affect later reads, which is the appropriate handling of "extra" input for a single-character program.
+
+Since the flagged weaknesses were already properly mitigated, the rewritten code is functionally identical with the comments removed — no substantive changes were required.

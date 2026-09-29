@@ -1,0 +1,36 @@
+#include <stdio.h>
+#include <math.h>
+
+typedef struct complex {
+    double real;
+    double imag;
+} Complex;
+
+typedef struct polar {
+    double magnitude;
+    double angle;
+} Polar;
+
+Polar complexToPolar(Complex c) {
+    Polar p;
+    p.magnitude = sqrt(pow(c.real, 2) + pow(c.imag, 2));
+    p.angle = atan2(c.imag, c.real);
+    return p;
+}
+
+int main() {
+    Complex c;
+    Polar p;
+
+    printf("Enter the real part: ");
+    scanf("%lf", &(c.real));
+
+    printf("Enter the imaginary part: ");
+    scanf("%lf", &(c.imag));
+
+    p = complexToPolar(c);
+
+    printf("Magnitude: %.2f, Angle: %.2f\n", p.magnitude, p.angle);
+
+    return 0;
+}

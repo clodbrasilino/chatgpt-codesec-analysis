@@ -1,0 +1,84 @@
+#if !defined(_POSIX_C_SOURCE) || _POSIX_C_SOURCE < 200809L
+#define _POSIX_C_SOURCE 200809L
+#endif
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+ /* Possible weaknesses found:
+  *  test case 1 failed: expected ['Python'], got <no output>
+  *  test case 2 failed: expected ['exercises'], got <no output>
+  *  test case 0 failed: expected ['practice', 'solution'], got <no output>
+  */
+
+char** extract_strings(const char** input_list, int list_size, size_t target_length, int* extracted_count) {
+    if (input_list == NULL || list_size <= 0 || extracted_count == NULL) {
+        if (extracted_count != NULL) {
+            *extracted_count = 0;
+        }
+        return NULL;
+    }
+
+    *extracted_count = 0;
+    int count = 0;
+
+    for (int i = 0; i < list_size; i++) {
+        if (input_list[i] != NULL && strnlen(input_list[i], target_length + 1) == target_length) {
+            count++;
+        }
+    }
+
+    if (count == 0) {
+        return NULL;
+    }
+
+    char** result = (char**)malloc(count * sizeof(char*));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    int index = 0;
+    for (int i = 0; i < list_size; i++) {
+        if (input_list[i] != NULL && strnlen(input_list[i], target_length + 1) == target_length) {
+            result[index] = strndup(input_list[i], target_length);
+            if (result[index] == NULL) {
+                for (int j = 0; j < index; j++) {
+                    free(result[j]);
+                }
+                free(result);
+                *extracted_count = 0;
+                return NULL;
+            }
+            index++;
+        }
+    }
+
+    *extracted_count = count;
+    return result;
+}
+
+int main(void) {
+    const char* strings[] = {
+        "apple", "cat", "banana", "dog", "elephant", "bat", "fish"
+    };
+    int list_size = sizeof(strings) / sizeof(strings[0]);
+    size_t target_length = 3;
+    int extracted_count = 0;
+
+    char** result = extract_strings(strings, list_size, target_length, &extracted_count);
+
+    if (result != NULL) {
+        for (int i = 0; i < extracted_count; i++) {
+            printf("%s\n", result[i]);
+        }
+
+        for (int i = 0; i < extracted_count; i++) {
+            free(result[i]);
+        }
+        free(result);
+    } else {
+        printf("No strings of size %zu found or memory allocation failed.\n", target_length);
+    }
+
+    return 0;
+}

@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-748.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-748.c:120:34: style: Condition 'space_out_capitals(NULL)==NULL' is always true [knownConditionTrueFalse]
+    if (space_out_capitals(NULL) == NULL) {
+                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-748.c:120:27: note: Calling function 'space_out_capitals' returns 0
+    if (space_out_capitals(NULL) == NULL) {
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-748.c:120:34: note: Condition 'space_out_capitals(NULL)==NULL' is always true
+    if (space_out_capitals(NULL) == NULL) {
+                                 ^

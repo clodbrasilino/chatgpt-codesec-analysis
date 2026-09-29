@@ -1,0 +1,16 @@
+#include <stdio.h>
+#include <stdint.h>
+
+uint32_t left_rotate(uint32_t value, int shift) {
+    const int bits = 32;
+    shift = shift % bits;  // Handle shifts larger than the number of bits
+    return (value << shift) | (value >> (bits - shift));
+}
+
+int main() {
+    uint32_t num = 0x12345678;
+    int shift = 5;
+    uint32_t result = left_rotate(num, shift);
+    printf("Left rotated 0x%x by %d: 0x%x\n", num, shift, result);
+    return 0;
+}

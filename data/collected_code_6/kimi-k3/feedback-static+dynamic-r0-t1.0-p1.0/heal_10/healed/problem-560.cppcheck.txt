@@ -1,0 +1,55 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-560.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-560.c:119:19: style: Condition 'arr1_size>0' is always true [knownConditionTrueFalse]
+    if (arr1_size > 0 && t1.size >= arr1_size) {
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-560.c:107:37: note: Assignment 'arr1_size=sizeof(arr1)/sizeof(arr1[0])', assigned value is 4
+    size_t arr1_size = sizeof(arr1) / sizeof(arr1[0]);
+                                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-560.c:113:55: note: Assuming that condition 't1.size!=arr1_size' is not redundant
+    if (t1.data == NULL || t2.data == NULL || t1.size != arr1_size || t2.size != arr2_size) {
+                                                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-560.c:113:55: note: Assuming that condition 't1.size!=arr1_size' is not redundant
+    if (t1.data == NULL || t2.data == NULL || t1.size != arr1_size || t2.size != arr2_size) {
+                                                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-560.c:119:19: note: Condition 'arr1_size>0' is always true
+    if (arr1_size > 0 && t1.size >= arr1_size) {
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-560.c:119:34: style: Condition 't1.size>=arr1_size' is always true [knownConditionTrueFalse]
+    if (arr1_size > 0 && t1.size >= arr1_size) {
+                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-560.c:107:37: note: Assignment 'arr1_size=sizeof(arr1)/sizeof(arr1[0])', assigned value is 4
+    size_t arr1_size = sizeof(arr1) / sizeof(arr1[0]);
+                                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-560.c:113:55: note: Assuming that condition 't1.size!=arr1_size' is not redundant
+    if (t1.data == NULL || t2.data == NULL || t1.size != arr1_size || t2.size != arr2_size) {
+                                                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-560.c:119:34: note: Condition 't1.size>=arr1_size' is always true
+    if (arr1_size > 0 && t1.size >= arr1_size) {
+                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-560.c:123:19: style: Condition 'arr2_size>0' is always true [knownConditionTrueFalse]
+    if (arr2_size > 0 && t2.size >= arr2_size) {
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-560.c:108:37: note: Assignment 'arr2_size=sizeof(arr2)/sizeof(arr2[0])', assigned value is 5
+    size_t arr2_size = sizeof(arr2) / sizeof(arr2[0]);
+                                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-560.c:113:79: note: Assuming that condition 't2.size!=arr2_size' is not redundant
+    if (t1.data == NULL || t2.data == NULL || t1.size != arr1_size || t2.size != arr2_size) {
+                                                                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-560.c:113:79: note: Assuming that condition 't2.size!=arr2_size' is not redundant
+    if (t1.data == NULL || t2.data == NULL || t1.size != arr1_size || t2.size != arr2_size) {
+                                                                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-560.c:123:19: note: Condition 'arr2_size>0' is always true
+    if (arr2_size > 0 && t2.size >= arr2_size) {
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-560.c:123:34: style: Condition 't2.size>=arr2_size' is always true [knownConditionTrueFalse]
+    if (arr2_size > 0 && t2.size >= arr2_size) {
+                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-560.c:108:37: note: Assignment 'arr2_size=sizeof(arr2)/sizeof(arr2[0])', assigned value is 5
+    size_t arr2_size = sizeof(arr2) / sizeof(arr2[0]);
+                                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-560.c:113:79: note: Assuming that condition 't2.size!=arr2_size' is not redundant
+    if (t1.data == NULL || t2.data == NULL || t1.size != arr1_size || t2.size != arr2_size) {
+                                                                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-560.c:123:34: note: Condition 't2.size>=arr2_size' is always true
+    if (arr2_size > 0 && t2.size >= arr2_size) {
+                                 ^

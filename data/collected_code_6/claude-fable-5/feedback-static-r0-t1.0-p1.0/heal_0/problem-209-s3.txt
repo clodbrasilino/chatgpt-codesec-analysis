@@ -1,0 +1,122 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX_HEAP_SIZE 100
+
+typedef struct {
+    int data[MAX_HEAP_SIZE];
+    int size;
+} MinHeap;
+
+static void swap_ints(int *a, int *b)
+{
+    int tmp = *a;
+    *a = *b;
+    *b = tmp;
+}
+
+static void sift_down(MinHeap *heap, int index)
+{
+    while (1) {
+        int smallest = index;
+        int left = 2 * index + 1;
+        int right = 2 * index + 2;
+
+        if (left < heap->size && heap->data[left] < heap->data[smallest]) {
+            smallest = left;
+        }
+        if (right < heap->size && heap->data[right] < heap->data[smallest]) {
+            smallest = right;
+        }
+        if (smallest == index) {
+            break;
+        }
+        swap_ints(&heap->data[index], &heap->data[smallest]);
+        index = smallest;
+    }
+}
+
+static void sift_up(MinHeap *heap, int index)
+{
+    while (index > 0) {
+        int parent = (index - 1) / 2;
+        if (heap->data[parent] <= heap->data[index]) {
+            break;
+        }
+        swap_ints(&heap->data[parent], &heap->data[index]);
+        index = parent;
+    }
+}
+
+int heap_insert(MinHeap *heap, int value)
+{
+    if (heap == NULL) {
+        return -1;
+    }
+    if (heap->size >= MAX_HEAP_SIZE) {
+        return -1;
+    }
+    heap->data[heap->size] = value;
+    heap->size++;
+    sift_up(heap, heap->size - 1);
+    return 0;
+}
+
+int heap_delete_min_and_insert(MinHeap *heap, int new_value, int *deleted_value)
+{
+    if (heap == NULL || deleted_value == NULL) {
+        return -1;
+    }
+    if (heap->size <= 0) {
+        return -1;
+    }
+    *deleted_value = heap->data[0];
+    heap->data[0] = new_value;
+    sift_down(heap, 0);
+    return 0;
+}
+
+int main(void)
+{
+    MinHeap heap;
+    int values[] = { 15, 3, 9, 27, 6, 12 };
+    size_t count = sizeof(values) / sizeof(values[0]);
+    size_t i;
+    int deleted;
+    int rc;
+
+    heap.size = 0;
+
+    for (i = 0; i < count; i++) {
+        rc = heap_insert(&heap, values[i]);
+        if (rc != 0) {
+            fprintf(stderr, "Failed to insert %d into heap\n", values[i]);
+            return EXIT_FAILURE;
+        }
+    }
+
+    printf("Heap before operation:");
+    for (i = 0; (int)i < heap.size; i++) {
+        printf(" %d", heap.data[i]);
+    }
+    printf("\n");
+
+    rc = heap_delete_min_and_insert(&heap, 8, &deleted);
+    if (rc != 0) {
+        fprintf(stderr, "Heap operation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Deleted smallest element: %d\n", deleted);
+    printf("Inserted new element: %d\n", 8);
+
+    printf("Heap after operation:");
+    for (i = 0; (int)i < heap.size; i++) {
+        printf(" %d", heap.data[i]);
+    }
+    printf("\n");
+
+    return EXIT_SUCCESS;
+}
+```

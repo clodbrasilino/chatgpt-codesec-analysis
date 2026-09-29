@@ -1,0 +1,91 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-712.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-712.c:160:14: style: Condition 'list==NULL' is always true [knownConditionTrueFalse]
+    if (list == NULL || !outer_list_append(&head, list)) {
+             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-712.c:159:33: note: Calling function 'inner_list_from_array' returns 0
+    list = inner_list_from_array(values1, 3);
+                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-712.c:159:33: note: Assignment 'list=inner_list_from_array(values1,3)', assigned value is 0
+    list = inner_list_from_array(values1, 3);
+                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-712.c:160:14: note: Condition 'list==NULL' is always true
+    if (list == NULL || !outer_list_append(&head, list)) {
+             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-712.c:167:14: style: Condition 'list==NULL' is always true [knownConditionTrueFalse]
+    if (list == NULL || !outer_list_append(&head, list)) {
+             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-712.c:166:33: note: Calling function 'inner_list_from_array' returns 0
+    list = inner_list_from_array(values2, 2);
+                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-712.c:166:33: note: Assignment 'list=inner_list_from_array(values2,2)', assigned value is 0
+    list = inner_list_from_array(values2, 2);
+                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-712.c:167:14: note: Condition 'list==NULL' is always true
+    if (list == NULL || !outer_list_append(&head, list)) {
+             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-712.c:174:14: style: Condition 'list==NULL' is always true [knownConditionTrueFalse]
+    if (list == NULL || !outer_list_append(&head, list)) {
+             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-712.c:173:33: note: Calling function 'inner_list_from_array' returns 0
+    list = inner_list_from_array(values3, 3);
+                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-712.c:173:33: note: Assignment 'list=inner_list_from_array(values3,3)', assigned value is 0
+    list = inner_list_from_array(values3, 3);
+                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-712.c:174:14: note: Condition 'list==NULL' is always true
+    if (list == NULL || !outer_list_append(&head, list)) {
+             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-712.c:181:14: style: Condition 'list==NULL' is always true [knownConditionTrueFalse]
+    if (list == NULL || !outer_list_append(&head, list)) {
+             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-712.c:180:33: note: Calling function 'inner_list_from_array' returns 0
+    list = inner_list_from_array(values4, 1);
+                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-712.c:180:33: note: Assignment 'list=inner_list_from_array(values4,1)', assigned value is 0
+    list = inner_list_from_array(values4, 1);
+                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-712.c:181:14: note: Condition 'list==NULL' is always true
+    if (list == NULL || !outer_list_append(&head, list)) {
+             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-712.c:188:14: style: Condition 'list==NULL' is always true [knownConditionTrueFalse]
+    if (list == NULL || !outer_list_append(&head, list)) {
+             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-712.c:187:33: note: Calling function 'inner_list_from_array' returns 0
+    list = inner_list_from_array(values5, 2);
+                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-712.c:187:33: note: Assignment 'list=inner_list_from_array(values5,2)', assigned value is 0
+    list = inner_list_from_array(values5, 2);
+                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-712.c:188:14: note: Condition 'list==NULL' is always true
+    if (list == NULL || !outer_list_append(&head, list)) {
+             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-712.c:195:14: style: Condition 'list==NULL' is always true [knownConditionTrueFalse]
+    if (list == NULL || !outer_list_append(&head, list)) {
+             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-712.c:194:33: note: Calling function 'inner_list_from_array' returns 0
+    list = inner_list_from_array(values6, 3);
+                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-712.c:194:33: note: Assignment 'list=inner_list_from_array(values6,3)', assigned value is 0
+    list = inner_list_from_array(values6, 3);
+                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-712.c:195:14: note: Condition 'list==NULL' is always true
+    if (list == NULL || !outer_list_append(&head, list)) {
+             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-712.c:152:9: style: Variable 'values1' can be declared as const array [constVariable]
+    int values1[] = {1, 2, 3};
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-712.c:153:9: style: Variable 'values2' can be declared as const array [constVariable]
+    int values2[] = {4, 5};
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-712.c:154:9: style: Variable 'values3' can be declared as const array [constVariable]
+    int values3[] = {1, 2, 3};
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-712.c:155:9: style: Variable 'values4' can be declared as const array [constVariable]
+    int values4[] = {6};
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-712.c:156:9: style: Variable 'values5' can be declared as const array [constVariable]
+    int values5[] = {4, 5};
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-712.c:157:9: style: Variable 'values6' can be declared as const array [constVariable]
+    int values6[] = {1, 2, 3};
+        ^

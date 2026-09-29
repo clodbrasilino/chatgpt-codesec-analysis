@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-427-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-427-s3.c:65:9: warning: %s in format string (no. 1) requires 'char *' but the argument type is 'signed int'. [invalidPrintfArgType_s]
+        snprintf(output, output_size, "%s-%s-%s",
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-427-s3.c:65:9: warning: %s in format string (no. 3) requires 'char *' but the argument type is 'signed int'. [invalidPrintfArgType_s]
+        snprintf(output, output_size, "%s-%s-%s",
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-427-s3.c:65:9: warning: snprintf format string requires 3 parameters but 6 are given. [wrongPrintfScanfArgNum]
+        snprintf(output, output_size, "%s-%s-%s",
+        ^

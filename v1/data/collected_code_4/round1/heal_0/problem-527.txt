@@ -1,0 +1,49 @@
+```C
+#include <stdio.h>
+#define MAX_SIZE 100
+
+void printPairs(int array[], int array_size, int sum)
+{
+    int i, j;
+	
+    for (i = 0; i < array_size - 1; i++) 
+    {     
+        for (j = i+1; j < array_size; j++) 
+        {       
+            if(array[i] + array[j] == sum)            
+            {
+                printf("Pairs with sum %d are (%d, %d)\n", sum, array[i], array[j]);
+            }
+        }
+    }
+}
+
+int main()
+{
+    int array[MAX_SIZE], i, n, sum;
+   
+    printf("Enter size of the array : ");
+    scanf("%d", &n);
+ 
+    printf("Enter elements in array : ");
+    for(i=0; i<n; i++)
+    {
+        scanf("%d", &array[i]);
+    }
+
+    printf("Enter the sum : ");
+    scanf("%d", &sum);
+
+    if (n > 2)
+    {
+        printPairs(array, n, sum);
+    }
+    else
+    {
+        printf("\nInsufficient elements in array.");
+    }
+
+    return 0;
+}
+```
+In the function printPairs, the time complexity is O(n^2) making a nested loop. This function goes through the array to find all pairs whose sum is equal to a given number and prints them. It does not handle any exceptions or resources that need management. The function adheres to coding standards and does not improperly control a resource throughout its lifetime. Thus it avoids CWE-664, CWE-703, and CWE-710. In the main function, if the size of the array is less than 2 then insufficient elements message will show, avoiding potential calculation mishaps.

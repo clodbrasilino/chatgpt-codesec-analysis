@@ -1,0 +1,68 @@
+```c
+#include <stdio.h>
+#include <string.h>
+
+#define BUFFER_SIZE 1024U
+
+unsigned long long count_substrings(const char *str, size_t max_len)
+{
+    unsigned long long n;
+
+    if (str == NULL)
+    {
+        return 0ULL;
+    }
+
+    n = (unsigned long long)strnlen(str, max_len);
+
+    return (n * (n + 1ULL)) / 2ULL;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    unsigned long long result;
+    size_t len;
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL)
+    {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1U] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len > 0U && buffer[len - 1U] == '\n')
+    {
+        buffer[len - 1U] = '\0';
+    }
+
+    result = count_substrings(buffer, sizeof(buffer));
+
+    if (printf("%llu\n", result) < 0)
+    {
+        return 1;
+    }
+
+    return 0;
+}
+```
+
+**Analysis of the original code and the flagged weakness:**
+
+The Flawfinder tool flagged the statically-sized `char buffer[BUFFER_SIZE]` as a potential CWE-119/CWE-120 (buffer overflow) risk. However, on review, the original code already mitigates this properly, so the rewrite preserves the same defensive structure:
+
+1. **Bounded input reading** — `fgets(buffer, (int)sizeof(buffer), stdin)` limits input to the buffer size, preventing overflow at the read site. The return value is checked against `NULL` to handle EOF and read errors.
+
+2. **Guaranteed null termination** — `buffer[sizeof(buffer) - 1U] = '\0';` is a belt-and-suspenders measure ensuring the buffer is always a valid C string, even though `fgets` already null-terminates on success.
+
+3. **Bounded string operations** — `strnlen` is used instead of `strlen`, both in `main` and in `count_substrings`, so length computation can never scan past the buffer even if termination were somehow lost.
+
+4. **Safe newline stripping** — the `len > 0U` check prevents an out-of-bounds access at `buffer[len - 1U]` when the input line is empty.
+
+5. **Defensive API design** — `count_substrings` validates `str != NULL` and takes an explicit `max_len`, so it cannot be misused to read out of bounds. The arithmetic `n * (n + 1) / 2` is done in `unsigned long long`, which cannot overflow since `n ≤ 1023` here.
+
+6. **Checked output** — the `printf` return value is verified, and distinct exit codes signal failure.
+
+The Flawfinder hit is a heuristic false positive in this case; the buffer usage is already correctly bounds-checked throughout.

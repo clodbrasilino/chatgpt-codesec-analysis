@@ -1,0 +1,42 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int is_valid_triangle(double a, double b, double c)
+{
+    if (a <= 0.0 || b <= 0.0 || c <= 0.0) {
+        return 0;
+    }
+    if ((a + b > c) && (b + c > a) && (a + c > b)) {
+        return 1;
+    }
+    return 0;
+}
+
+int main(void)
+{
+    double a;
+    double b;
+    double c;
+
+    printf("Enter the three sides of the triangle: ");
+    if (scanf("%lf %lf %lf", &a, &b, &c) != 3) {
+        fprintf(stderr, "Error: invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (is_valid_triangle(a, b, c)) {
+        printf("The triangle is valid.\n");
+    } else {
+        printf("The triangle is not valid.\n");
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+This implementation addresses the specified concerns:
+
+- **CWE-703**: The return value of `scanf` is checked to ensure exactly three values were successfully read; on failure, an error is reported to `stderr` and the program exits with a failure status.
+- **CWE-664**: No dynamically allocated resources or file handles are used, so there are no resource lifetime issues; all variables are stack-based with well-defined scope.
+- **CWE-710**: The code adheres to standard conventions — `main` is declared as `int main(void)`, `EXIT_SUCCESS`/`EXIT_FAILURE` are used for portable exit codes, braces are used consistently, and the validation logic rejects non-positive side lengths before applying the triangle inequality.

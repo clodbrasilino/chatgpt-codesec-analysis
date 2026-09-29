@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-282-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-282-s3.c:91:13: warning: Possible null pointer dereference: list1_tail [nullPointer]
+            list1_tail->next = new_node;
+            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-282-s3.c:79:24: note: Assignment 'list1_tail=NULL', assigned value is 0
+    Node* list1_tail = NULL;
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-282-s3.c:91:13: note: Null pointer dereference
+            list1_tail->next = new_node;
+            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-282-s3.c:102:13: warning: Possible null pointer dereference: list2_tail [nullPointer]
+            list2_tail->next = new_node;
+            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-282-s3.c:81:24: note: Assignment 'list2_tail=NULL', assigned value is 0
+    Node* list2_tail = NULL;
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-282-s3.c:102:13: note: Null pointer dereference
+            list2_tail->next = new_node;
+            ^

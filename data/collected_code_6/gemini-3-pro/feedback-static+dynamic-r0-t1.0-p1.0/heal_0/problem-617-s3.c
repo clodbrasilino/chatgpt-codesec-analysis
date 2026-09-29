@@ -1,0 +1,36 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int min_jumps(long long d) {
+    if (d == 0) {
+        return 0;
+    }
+    
+    if (d < 0) {
+        d = -d;
+    }
+
+    long long current_sum = 0;
+    int jumps = 0;
+    
+    while (current_sum < d || (current_sum - d) % 2 != 0) {
+        jumps++;
+        current_sum += jumps;
+    }
+    
+    return jumps;
+}
+
+int main(void) {
+    long long d;
+    
+    if (scanf("%lld", &d) != 1) {
+        return EXIT_FAILURE;
+    }
+    
+    int result = min_jumps(d);
+    
+    printf("%d\n", result);
+    
+    return EXIT_SUCCESS;
+}

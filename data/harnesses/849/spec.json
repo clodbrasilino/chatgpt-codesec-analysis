@@ -1,0 +1,44 @@
+{
+  "task_id": 849,
+  "text": "Write a C function to find sum of all prime divisors of a given number.",
+  "fn_candidates": [
+    "Sum",
+    "Sum",
+    "Sum",
+    "Sum"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "Sum",
+      "args": [
+        60
+      ],
+      "expected": 10,
+      "assert_src": "assert Sum(60) == 10"
+    },
+    {
+      "fn_name": "Sum",
+      "args": [
+        39
+      ],
+      "expected": 16,
+      "assert_src": "assert Sum(39) == 16"
+    },
+    {
+      "fn_name": "Sum",
+      "args": [
+        40
+      ],
+      "expected": 7,
+      "assert_src": "assert Sum(40) == 7"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

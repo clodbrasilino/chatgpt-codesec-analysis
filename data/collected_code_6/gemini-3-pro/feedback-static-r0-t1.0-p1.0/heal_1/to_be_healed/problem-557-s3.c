@@ -1,0 +1,40 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+void toggle_case(char *str) {
+    if (str == NULL) {
+        return;
+    }
+    
+    while (*str != '\0') {
+        if (isupper((unsigned char)*str)) {
+            *str = tolower((unsigned char)*str);
+        } else if (islower((unsigned char)*str)) {
+            *str = toupper((unsigned char)*str);
+        }
+        str++;
+    }
+}
+
+int main(void) {
+    char *input_str = malloc(256 * sizeof(char));
+    if (input_str == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    /* Possible weaknesses found:
+     * Flawfinder strcpy: Does not check for buffer overflows when copying to destination [MS-banned] (CWE-120). Consider using snprintf, strcpy_s, or strlcpy (warning: strncpy easily misused). Risk is low because the source is a constant string. (risk 2, buffer)
+     */
+    strcpy(input_str, "Hello World! 123");
+    
+    toggle_case(input_str);
+    printf("%s\n", input_str);
+
+    free(input_str);
+    input_str = NULL;
+
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,246 @@
+./collected_code_4/round1//heal_0//problem-118.c: In function 'convertToList':
+./collected_code_4/round1//heal_0//problem-118.c:18:20: warning: dereference of NULL 'temp' [CWE-476] [-Wanalyzer-null-dereference]
+   18 |         temp->data = str[i];
+      |         ~~~~~~~~~~~^~~~~~~~
+  'convertToList': events 1-6
+    |
+    |   11 |     if (str == NULL || *str == '\0') return NULL;
+    |      |        ^
+    |      |        |
+    |      |        (1) following 'false' branch...
+    |   12 | 
+    |   13 |     Node *head = malloc(sizeof(Node));
+    |      |                  ~~~~~~~~~~~~~~~~~~~~
+    |      |                  |
+    |      |                  (2) ...to here
+    |   14 |     if (head == NULL) return NULL;
+    |      |        ~
+    |      |        |
+    |      |        (3) following 'false' branch (when 'head' is non-NULL)...
+    |   15 | 
+    |   16 |     Node *temp = head;
+    |      |           ~~~~
+    |      |           |
+    |      |           (4) ...to here
+    |   17 |     for (size_t i = 0; i < strlen(str); i++) {
+    |      |                        ~~~~~~~~~~~~~~~
+    |      |                          |
+    |      |                          (5) following 'true' branch...
+    |   18 |         temp->data = str[i];
+    |      |                         ~
+    |      |                         |
+    |      |                         (6) ...to here
+    |
+  'convertToList': event 7
+    |
+    |   19 |         temp->next = i < strlen(str) - 1 ? malloc(sizeof(Node)) : NULL;
+    |      |                                                                 ^
+    |      |                                                                 |
+    |      |                                                                 (7) following 'false' branch...
+    |
+  'convertToList': event 8
+    |
+    |   19 |         temp->next = i < strlen(str) - 1 ? malloc(sizeof(Node)) : NULL;
+    |      |                                                                 ^
+    |      |                                                                 |
+    |      |                                                                 (8) ...to here
+    |
+  'convertToList': event 9
+    |
+    |   19 |         temp->next = i < strlen(str) - 1 ? malloc(sizeof(Node)) : NULL;
+    |      |                                                                 ^
+    |      |                                                                 |
+    |      |                                                                 (9) '0' is NULL
+    |
+  'convertToList': events 10-16
+    |
+    |   17 |     for (size_t i = 0; i < strlen(str); i++) {
+    |      |                        ~~~~~~~~~~~~~~~
+    |      |                          |
+    |      |                          (14) following 'true' branch...
+    |   18 |         temp->data = str[i];
+    |      |         ~~~~~~~~~~~~~~~~~~~
+    |      |                    |    |
+    |      |                    |    (15) ...to here
+    |      |                    (16) dereference of NULL 'temp'
+    |   19 |         temp->next = i < strlen(str) - 1 ? malloc(sizeof(Node)) : NULL;
+    |      |                    ^
+    |      |                    |
+    |      |                    (10) '0' is NULL
+    |   20 |         if (i < strlen(str) - 1 && temp->next == NULL) {
+    |      |            ~        
+    |      |            |
+    |      |            (11) following 'false' branch...
+    |......
+    |   29 |         temp = temp->next;
+    |      |         ~~~~~~~~~~~~~~~~~
+    |      |              |
+    |      |              (12) ...to here
+    |      |              (13) 'temp' is NULL
+    |
+./collected_code_4/round1//heal_0//problem-118.c:18:20: warning: dereference of possibly-NULL 'temp' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   18 |         temp->data = str[i];
+      |         ~~~~~~~~~~~^~~~~~~~
+  'convertToList': events 1-6
+    |
+    |   11 |     if (str == NULL || *str == '\0') return NULL;
+    |      |        ^
+    |      |        |
+    |      |        (1) following 'false' branch...
+    |   12 | 
+    |   13 |     Node *head = malloc(sizeof(Node));
+    |      |                  ~~~~~~~~~~~~~~~~~~~~
+    |      |                  |
+    |      |                  (2) ...to here
+    |   14 |     if (head == NULL) return NULL;
+    |      |        ~
+    |      |        |
+    |      |        (3) following 'false' branch (when 'head' is non-NULL)...
+    |   15 | 
+    |   16 |     Node *temp = head;
+    |      |           ~~~~
+    |      |           |
+    |      |           (4) ...to here
+    |   17 |     for (size_t i = 0; i < strlen(str); i++) {
+    |      |                        ~~~~~~~~~~~~~~~
+    |      |                          |
+    |      |                          (5) following 'true' branch...
+    |   18 |         temp->data = str[i];
+    |      |                         ~
+    |      |                         |
+    |      |                         (6) ...to here
+    |
+  'convertToList': events 7-14
+    |
+    |   17 |     for (size_t i = 0; i < strlen(str); i++) {
+    |      |                        ~~~~~~~~~~~~~~~                           
+    |      |                          |
+    |      |                          (12) following 'true' branch...
+    |   18 |         temp->data = str[i];
+    |      |         ~~~~~~~~~~~~~~~~~~~                                      
+    |      |                    |    |
+    |      |                    |    (13) ...to here
+    |      |                    (14) 'temp' could be NULL: unchecked value from (9)
+    |   19 |         temp->next = i < strlen(str) - 1 ? malloc(sizeof(Node)) : NULL;
+    |      |                                            ~~~~~~~~~~~~~~~~~~~~ ^
+    |      |                                            |                    |
+    |      |                                            (8) ...to here       (7) following 'true' branch...
+    |      |                                            (9) this call could return NULL
+    |   20 |         if (i < strlen(str) - 1 && temp->next == NULL) {
+    |      |            ~                                                     
+    |      |            |
+    |      |            (10) following 'false' branch...
+    |......
+    |   29 |         temp = temp->next;
+    |      |         ~~~~~~~~~~~~~~~~~                                        
+    |      |              |
+    |      |              (11) ...to here
+    |
+./collected_code_4/round1//heal_0//problem-118.c: In function 'main':
+./collected_code_4/round1//heal_0//problem-118.c:40:28: warning: use of uninitialized value '*temp.data' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   40 |         printf("%c ", temp -> data);
+      |                       ~~~~~^~~~~~~
+  'main': events 1-2
+    |
+    |   34 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |   35 |     char str[] = "Hello World!";
+    |   36 |     Node* list = convertToList(str);
+    |      |                  ~~~~~~~~~~~~~~~~~~
+    |      |                  |
+    |      |                  (2) calling 'convertToList' from 'main'
+    |
+    +--> 'convertToList': events 3-9
+           |
+           |   10 | Node* convertToList(char* str) {
+           |      |       ^~~~~~~~~~~~~
+           |      |       |
+           |      |       (3) entry to 'convertToList'
+           |   11 |     if (str == NULL || *str == '\0') return NULL;
+           |      |        ~
+           |      |        |
+           |      |        (4) following 'false' branch...
+           |   12 | 
+           |   13 |     Node *head = malloc(sizeof(Node));
+           |      |                  ~~~~~~~~~~~~~~~~~~~~
+           |      |                  |
+           |      |                  (5) ...to here
+           |   14 |     if (head == NULL) return NULL;
+           |      |        ~
+           |      |        |
+           |      |        (6) following 'false' branch (when 'head' is non-NULL)...
+           |   15 | 
+           |   16 |     Node *temp = head;
+           |      |           ~~~~
+           |      |           |
+           |      |           (7) ...to here
+           |   17 |     for (size_t i = 0; i < strlen(str); i++) {
+           |      |                        ~~~~~~~~~~~~~~~
+           |      |                          |
+           |      |                          (8) following 'true' branch...
+           |   18 |         temp->data = str[i];
+           |      |                         ~
+           |      |                         |
+           |      |                         (9) ...to here
+           |
+         'convertToList': events 10-16
+           |
+           |   17 |     for (size_t i = 0; i < strlen(str); i++) {
+           |      |                        ~~~~~~~~~~~~~~~                           
+           |      |                          |
+           |      |                          (15) following 'false' branch...
+           |   18 |         temp->data = str[i];
+           |   19 |         temp->next = i < strlen(str) - 1 ? malloc(sizeof(Node)) : NULL;
+           |      |                                            ~~~~~~~~~~~~~~~~~~~~ ^
+           |      |                                            |                    |
+           |      |                                            (11) ...to here      (10) following 'true' branch...
+           |      |                                            (12) region created on heap here
+           |   20 |         if (i < strlen(str) - 1 && temp->next == NULL) {
+           |      |            ~                                                     
+           |      |            |
+           |      |            (13) following 'false' branch...
+           |......
+           |   29 |         temp = temp->next;
+           |      |         ~~~~~~~~~~~~~~~~~                                        
+           |      |              |
+           |      |              (14) ...to here
+           |   30 |     }
+           |   31 |     return head;
+           |      |            ~~~~                                                  
+           |      |            |
+           |      |            (16) ...to here
+           |
+    <------+
+    |
+  'main': event 17
+    |
+    |   36 |     Node* list = convertToList(str);
+    |      |                  ^~~~~~~~~~~~~~~~~~
+    |      |                  |
+    |      |                  (17) returning to 'main' from 'convertToList'
+    |
+  'main': events 18-19
+    |
+    |   39 |     while(temp != NULL){
+    |      |                ^
+    |      |                |
+    |      |                (18) following 'true' branch (when 'temp' is non-NULL)...
+    |   40 |         printf("%c ", temp -> data);
+    |      |                       ~~~~~~~~~~~~
+    |      |                            |
+    |      |                            (19) ...to here
+    |
+  'main': events 20-22
+    |
+    |   39 |     while(temp != NULL){
+    |      |                ^
+    |      |                |
+    |      |                (20) following 'true' branch (when 'temp' is non-NULL)...
+    |   40 |         printf("%c ", temp -> data);
+    |      |                       ~~~~~~~~~~~~
+    |      |                            |
+    |      |                            (21) ...to here
+    |      |                            (22) use of uninitialized value '*temp.data' here
+    |

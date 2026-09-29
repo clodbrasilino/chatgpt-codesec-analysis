@@ -1,0 +1,68 @@
+```c
+#include <stdio.h>
+#include <ctype.h>
+#include <stddef.h>
+#include <string.h>
+
+#define BUFFER_SIZE 256
+
+size_t count_numeric(const char *str)
+{
+    size_t count = 0;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    while (*str != '\0') {
+        if (isdigit((unsigned char)*str)) {
+            count++;
+        }
+        str++;
+    }
+
+    return count;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t result;
+    size_t len;
+
+    printf("Enter a string: ");
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = strlen(buffer);
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    } else {
+        int ch;
+        while ((ch = getchar()) != '\n' && ch != EOF) {
+        }
+    }
+
+    result = count_numeric(buffer);
+
+    printf("Number of numeric characters: %zu\n", result);
+
+    return 0;
+}
+```
+
+**Analysis of the original code and fixes applied:**
+
+The original code was already largely safe — `fgets(buffer, sizeof(buffer), stdin)` performs proper bounds checking, which addresses the core concern of the Flawfinder CWE-119/CWE-120 warning about statically-sized arrays. The `isdigit()` call correctly casts to `unsigned char`, avoiding undefined behavior with negative `char` values, and `count_numeric()` guards against `NULL` input.
+
+The rewritten version hardens it further:
+
+1. **Explicit NUL termination** — `buffer[sizeof(buffer) - 1] = '\0'` is defensive, guaranteeing termination regardless of input.
+2. **Newline stripping** — removes the trailing `\n` that `fgets` retains, so the count reflects only user-entered characters.
+3. **Input drain on truncation** — if the line exceeded the buffer, remaining characters are consumed from `stdin`, preventing leftover data from affecting subsequent reads.
+4. **Named constant** — `BUFFER_SIZE` replaces the magic number, easing maintenance while `sizeof(buffer)` remains the single source of truth in calls.

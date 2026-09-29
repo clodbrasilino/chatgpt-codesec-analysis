@@ -1,0 +1,61 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <ctype.h>
+#include <stdint.h>
+
+char *camel_to_snake(const char *camel) {
+    if (camel == NULL) {
+        return NULL;
+    }
+
+    size_t camel_len = 0;
+    while (camel[camel_len] != '\0') {
+        camel_len++;
+    }
+
+    size_t match_count = 0;
+    for (size_t i = 1; i < camel_len; i++) {
+        if (islower((unsigned char)camel[i - 1]) && isupper((unsigned char)camel[i])) {
+            match_count++;
+        }
+    }
+
+    if (match_count > SIZE_MAX - camel_len) {
+        return NULL;
+    }
+
+    size_t out_len = camel_len + match_count;
+    if (out_len == SIZE_MAX) {
+        return NULL;
+    }
+
+    size_t alloc_size = out_len + 1;
+
+    char *out = malloc(alloc_size);
+    if (out == NULL) {
+        return NULL;
+    }
+
+    size_t j = 0;
+    for (size_t i = 0; i < camel_len; i++) {
+        if (i > 0 && islower((unsigned char)camel[i - 1]) && isupper((unsigned char)camel[i])) {
+            out[j++] = '_';
+        }
+        out[j++] = tolower((unsigned char)camel[i]);
+    }
+    out[j] = '\0';
+
+    return out;
+}
+
+int main(void) {
+    const char *input = "helloWorldThisIsATest";
+    char *output = camel_to_snake(input);
+    
+    if (output != NULL) {
+        printf("%s\n", output);
+        free(output);
+    }
+    
+    return 0;
+}

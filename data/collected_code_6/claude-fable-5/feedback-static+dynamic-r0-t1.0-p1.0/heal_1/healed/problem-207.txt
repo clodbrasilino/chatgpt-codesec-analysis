@@ -1,0 +1,102 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define BUFFER_SIZE 1024U
+
+static int max_int(int a, int b)
+{
+    return (a > b) ? a : b;
+}
+
+static int longest_repeating_subsequence(const char *str, size_t n)
+{
+    size_t i;
+    size_t j;
+    int result;
+    int **dp;
+
+    if (str == NULL || n == 0U) {
+        return 0;
+    }
+
+    dp = (int **)malloc((n + 1U) * sizeof(int *));
+    if (dp == NULL) {
+        return -1;
+    }
+
+    for (i = 0U; i <= n; i++) {
+        dp[i] = (int *)calloc(n + 1U, sizeof(int));
+        if (dp[i] == NULL) {
+            for (j = 0U; j < i; j++) {
+                free(dp[j]);
+            }
+            free(dp);
+            return -1;
+        }
+    }
+
+    for (i = 1U; i <= n; i++) {
+        for (j = 1U; j <= n; j++) {
+            if ((str[i - 1U] == str[j - 1U]) && (i != j)) {
+                dp[i][j] = dp[i - 1U][j - 1U] + 1;
+            } else {
+                dp[i][j] = max_int(dp[i - 1U][j], dp[i][j - 1U]);
+            }
+        }
+    }
+
+    result = dp[n][n];
+
+    for (i = 0U; i <= n; i++) {
+        free(dp[i]);
+    }
+    free(dp);
+
+    return result;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t len;
+    int result;
+
+    printf("Enter a string: ");
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1U] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if ((len > 0U) && (buffer[len - 1U] == '\n')) {
+        buffer[len - 1U] = '\0';
+        len--;
+    }
+
+    result = longest_repeating_subsequence(buffer, len);
+    if (result < 0) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Length of the longest repeating subsequence: %d\n", result);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the original code and applied fixes:**
+
+The original code was already largely safe, but the Flawfinder warnings were addressed as follows:
+
+1. **CWE-119/CWE-120 (statically-sized `char buffer[1024]`)** — The buffer was already used safely via `fgets(buffer, sizeof(buffer), stdin)`, which enforces bounds. In the rewrite, the size is defined as a named constant (`BUFFER_SIZE`), and an explicit defensive null terminator is written at `buffer[sizeof(buffer) - 1U]` to guarantee termination regardless of input.
+
+2. **CWE-126 (`strlen` on potentially non-terminated string)** — While `fgets` guarantees null termination on success, the rewrite replaces `strlen` with `strnlen(buffer, sizeof(buffer))`, which bounds the scan to the buffer size and can never over-read, even if the buffer somehow lost its terminator.
+
+3. **Memory management** — The DP table allocation/cleanup logic was already correct: it checks every `malloc`/`calloc` return value, performs proper partial-cleanup on allocation failure, and frees all rows plus the row-pointer array on both success and failure paths. This was preserved unchanged.
+
+4. **Edge cases** — `NULL` input and zero-length strings are handled up front, the allocation-failure sentinel (`-1`) is distinguished from a valid result of `0`, and the newline stripped from `fgets` input keeps `len` consistent with the actual string content.

@@ -1,0 +1,117 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+
+typedef struct {
+    int key;
+    int value;
+} Pair;
+
+typedef struct {
+    int value;
+    size_t uniqueKeyCount;
+} Result;
+
+static size_t count_unique_keys_per_value(const Pair *pairs, size_t n,
+                                          Result *results, size_t max_results)
+{
+    size_t result_count = 0U;
+    size_t i;
+    size_t j;
+    size_t k;
+    int *keys = NULL;
+
+    if ((pairs == NULL) || (results == NULL) || (n == 0U) || (max_results == 0U)) {
+        return 0U;
+    }
+
+    if (n > (SIZE_MAX / sizeof(int))) {
+        return 0U;
+    }
+
+    keys = (int *)malloc(n * sizeof(int));
+    if (keys == NULL) {
+        return 0U;
+    }
+
+    for (i = 0U; i < n; i++) {
+        int value_seen = 0;
+        size_t key_count = 0U;
+
+        for (j = 0U; j < i; j++) {
+            if (pairs[j].value == pairs[i].value) {
+                value_seen = 1;
+                break;
+            }
+        }
+
+        if (value_seen != 0) {
+            continue;
+        }
+
+        for (j = i; j < n; j++) {
+            if (pairs[j].value == pairs[i].value) {
+                int key_found = 0;
+                for (k = 0U; k < key_count; k++) {
+                    if (keys[k] == pairs[j].key) {
+                        key_found = 1;
+                        break;
+                    }
+                }
+                if (key_found == 0) {
+                    keys[key_count] = pairs[j].key;
+                    key_count++;
+                }
+            }
+        }
+
+        if (result_count < max_results) {
+            results[result_count].value = pairs[i].value;
+            results[result_count].uniqueKeyCount = key_count;
+            result_count++;
+        }
+    }
+
+    free(keys);
+    keys = NULL;
+
+    return result_count;
+}
+
+int main(void)
+{
+    const Pair tuples[] = {
+        {1, 100},
+        {2, 100},
+        {1, 100},
+        {3, 200},
+        {3, 200},
+        {4, 200},
+        {5, 300}
+    };
+    const size_t n = sizeof(tuples) / sizeof(tuples[0]);
+    Result results[16];
+    size_t result_count;
+    size_t i;
+
+    result_count = count_unique_keys_per_value(tuples, n, results,
+                                               sizeof(results) / sizeof(results[0]));
+
+    if (result_count == 0U) {
+        if (fprintf(stderr, "No results produced\n") < 0) {
+            return EXIT_FAILURE;
+        }
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0U; i < result_count; i++) {
+        if (printf("Value %d has %zu unique key(s)\n",
+                   results[i].value, results[i].uniqueKeyCount) < 0) {
+            return EXIT_FAILURE;
+        }
+    }
+
+    return EXIT_SUCCESS;
+}
+```

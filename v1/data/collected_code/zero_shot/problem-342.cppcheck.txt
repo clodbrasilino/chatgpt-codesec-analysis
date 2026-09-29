@@ -1,0 +1,15 @@
+collected_code/problem-342-0.c:21:34: error: Cannot determine that 'numCols[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+            if (ptr[i] >= numCols[i]) {
+                                 ^
+collected_code/problem-342-0.c:25:23: error: Cannot determine that 'arr[i][ptr[i]]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+            if (arr[i][ptr[i]] < min) {
+                      ^
+collected_code/problem-342-0.c:27:29: error: Cannot determine that 'arr[i][ptr[i]]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+                min = arr[i][ptr[i]];
+                            ^
+collected_code/problem-342-0.c:30:23: error: Cannot determine that 'arr[i][ptr[i]]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+            if (arr[i][ptr[i]] > max) {
+                      ^
+collected_code/problem-342-0.c:31:29: error: Cannot determine that 'arr[i][ptr[i]]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+                max = arr[i][ptr[i]];
+                            ^

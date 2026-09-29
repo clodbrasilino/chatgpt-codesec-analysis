@@ -1,0 +1,51 @@
+./collected_code_4/round2//heal_0/problem-444.c: In function 'trimByK':
+./collected_code_4/round2//heal_0/problem-444.c:22:24: warning: dereference of possibly-NULL 'trimmedTuple' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   22 |     trimmedTuple->size = inputTuple->size-k;
+      |     ~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~
+  'trimByK': events 1-4
+    |
+    |   17 |     if(inputTuple == NULL || k < 0 || k >= inputTuple->size){
+    |      |       ^
+    |      |       |
+    |      |       (1) following 'false' branch...
+    |......
+    |   21 |     Tuple *trimmedTuple = (Tuple*)malloc(sizeof(Tuple));
+    |      |                                   ~~~~~~~~~~~~~~~~~~~~~
+    |      |                                   |
+    |      |                                   (2) ...to here
+    |      |                                   (3) this call could return NULL
+    |   22 |     trimmedTuple->size = inputTuple->size-k;
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                        |
+    |      |                        (4) 'trimmedTuple' could be NULL: unchecked value from (3)
+    |
+./collected_code_4/round2//heal_0/problem-444.c:26:31: warning: dereference of possibly-NULL '*trimmedTuple.data + (long unsigned int)i * 4' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   26 |         trimmedTuple->data[i] = inputTuple->data[i];
+      |         ~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~
+  'trimByK': events 1-6
+    |
+    |   17 |     if(inputTuple == NULL || k < 0 || k >= inputTuple->size){
+    |      |       ^
+    |      |       |
+    |      |       (1) following 'false' branch...
+    |......
+    |   21 |     Tuple *trimmedTuple = (Tuple*)malloc(sizeof(Tuple));
+    |      |                                   ~~~~~~~~~~~~~~~~~~~~~
+    |      |                                   |
+    |      |                                   (2) ...to here
+    |   22 |     trimmedTuple->size = inputTuple->size-k;
+    |   23 |     trimmedTuple->data = malloc(trimmedTuple->size * sizeof(int));
+    |      |                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                          |
+    |      |                          (3) this call could return NULL
+    |   24 | 
+    |   25 |     for(int i = 0; i < trimmedTuple->size; i++) {
+    |      |                    ~~~~~~~~~~~~~~~~~~~~~~
+    |      |                      |
+    |      |                      (4) following 'true' branch...
+    |   26 |         trimmedTuple->data[i] = inputTuple->data[i];
+    |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                               |           |
+    |      |                               |           (5) ...to here
+    |      |                               (6) '*trimmedTuple.data + (long unsigned int)i * 4' could be NULL: unchecked value from (3)
+    |

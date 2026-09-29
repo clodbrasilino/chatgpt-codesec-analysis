@@ -1,0 +1,71 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+int contains_substring(const char *str, const char *substr) {
+    if (str == NULL || substr == NULL) return 0;
+    return strstr(str, substr) != NULL;
+}
+ /* Possible weaknesses found:
+  *  test case 1 failed: expected ['Red', '', 'Green', 'Orange', 'White'], got <no output>
+  *  test case 0 failed: expected ['Red', '', 'Green', 'Orange', 'White'], got <no output>
+  *  test case 2 failed: expected ['Red &', 'Orange+', 'Green', 'Orange', 'White'], got <no output>
+  */
+
+char **remove_words(char **list, size_t count, const char *substr, size_t *out_count) {
+    if (list == NULL || substr == NULL || out_count == NULL) {
+        return NULL;
+    }
+
+    char **result = (char **)malloc(count * sizeof(char *));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    size_t j = 0;
+    for (size_t i = 0; i < count; i++) {
+        if (list[i] != NULL && !contains_substring(list[i], substr)) {
+            /* Possible weaknesses found:
+             * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+             */
+            result[j] = (char *)list[i];
+            j++;
+        }
+    }
+
+    *out_count = j;
+
+    char **shrunk = (char **)realloc(result, j * sizeof(char *));
+    if (shrunk != NULL) {
+        result = shrunk;
+    }
+
+    return result;
+}
+
+int main(void) {
+    char *words[] = {
+        "Red &",
+        "Orange+",
+        "Green",
+        "Orange",
+        "White"
+    };
+    size_t word_count = sizeof(words) / sizeof(words[0]);
+    const char *filter = "an";
+
+    size_t out_count = 0;
+    char **filtered = remove_words(words, word_count, filter, &out_count);
+
+    if (filtered == NULL) {
+        return EXIT_FAILURE;
+    }
+
+    for (size_t i = 0; i < out_count; i++) {
+        printf("%s\n", filtered[i]);
+    }
+
+    free(filtered);
+
+    return EXIT_SUCCESS;
+}

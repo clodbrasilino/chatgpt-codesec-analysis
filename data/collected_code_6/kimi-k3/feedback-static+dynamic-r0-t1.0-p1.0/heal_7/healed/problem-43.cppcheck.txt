@@ -1,0 +1,34 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-43.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-43.c:69:19: warning: Opposite inner 'if' condition leads to a dead code block. [oppositeInnerCondition]
+        if (count >= max_matches) {
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-43.c:40:18: note: outer condition: count<max_matches
+    while (count < max_matches && remaining_len > 0) {
+                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-43.c:69:19: note: opposite inner condition: count>=max_matches
+        if (count >= max_matches) {
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-43.c:64:20: style: Condition 'length==0' is always true [knownConditionTrueFalse]
+        if (length == 0 || length >= MAX_MATCH_LEN) {
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-43.c:40:49: note: Assuming that condition 'remaining_len>0' is not redundant
+    while (count < max_matches && remaining_len > 0) {
+                                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-43.c:87:26: note: Assignment to 'remaining_len-=end'
+        remaining_len -= end;
+                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-43.c:62:29: note: Assignment 'length=end-start', assigned value is less than 1
+        size_t length = end - start;
+                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-43.c:64:20: note: Condition 'length==0' is always true
+        if (length == 0 || length >= MAX_MATCH_LEN) {
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-43.c:76:22: style: Condition 'copy_len>0' is always false [knownConditionTrueFalse]
+        if (copy_len > 0 && copy_len < MAX_MATCH_LEN) {
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-43.c:74:56: note: Assignment 'copy_len=(length<256-1)?length:256-1', assigned value is less than 1
+        size_t copy_len = (length < MAX_MATCH_LEN - 1) ? length : MAX_MATCH_LEN - 1;
+                                                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-43.c:76:22: note: Condition 'copy_len>0' is always false
+        if (copy_len > 0 && copy_len < MAX_MATCH_LEN) {
+                     ^

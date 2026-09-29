@@ -1,0 +1,51 @@
+./collected_code_3/round3/heal_2/healed/problem-15.c: In function 'splitString':
+./collected_code_3/round3/heal_2/healed/problem-15.c:19:11: warning: leak of '<unknown>' [CWE-401] [-Wanalyzer-malloc-leak]
+   19 |           free(splitArr);
+      |           ^~~~~~~~~~~~~~
+  'splitString': events 1-11
+    |
+    |   11 |     if (splitArr == NULL){
+    |      |        ^
+    |      |        |
+    |      |        (1) following 'false' branch (when 'splitArr' is non-NULL)...
+    |......
+    |   14 |     for(i = 0; i < len; i++) {
+    |      |         ~~~~~  ~~~~~~~  ~~~
+    |      |           |      |       |
+    |      |           |      |       (8) ...to here
+    |      |           |      (3) following 'true' branch...
+    |      |           |      (9) following 'true' branch...
+    |      |           (2) ...to here
+    |   15 |         splitArr[i] = (char*)calloc(len + 1, sizeof(char));
+    |      |                              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                              |
+    |      |                              (4) ...to here
+    |      |                              (5) allocated here
+    |      |                              (10) ...to here
+    |   16 |         if(splitArr[i] == NULL) {
+    |      |           ~
+    |      |           |
+    |      |           (6) assuming '<unknown>' is non-NULL
+    |      |           (7) following 'false' branch...
+    |      |           (11) following 'true' branch...
+    |
+  'splitString': event 12
+    |
+    |cc1:
+    | (12): ...to here
+    |
+  'splitString': events 13-15
+    |
+    |   17 |           for(; i >= 0; i--)
+    |      |                 ~~^~~~
+    |      |                   |
+    |      |                   (13) following 'true' branch (when 'i >= 0')...
+    |   18 |             free(splitArr[i]);
+    |      |                          ~
+    |      |                          |
+    |      |                          (14) ...to here
+    |   19 |           free(splitArr);
+    |      |           ~~~~~~~~~~~~~~
+    |      |           |
+    |      |           (15) '<unknown>' leaks here; was allocated at (5)
+    |

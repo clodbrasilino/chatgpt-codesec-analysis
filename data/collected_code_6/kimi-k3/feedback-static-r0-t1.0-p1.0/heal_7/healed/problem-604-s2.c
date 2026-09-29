@@ -1,0 +1,115 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <ctype.h>
+#include <limits.h>
+
+#define BUFFER_SIZE 1024
+
+void reverse_substring(char *start, char *end) {
+    if (start == NULL || end == NULL || start >= end) {
+        return;
+    }
+    
+    while (start < end) {
+        char temp = *start;
+        *start = *end;
+        *end = temp;
+        start++;
+        end--;
+    }
+}
+
+int reverse_words(char *str, size_t buffer_size) {
+    if (str == NULL || buffer_size == 0) {
+        return -1;
+    }
+    
+    size_t str_len = strnlen(str, buffer_size);
+    if (str_len == 0 || str_len >= buffer_size) {
+        return -1;
+    }
+    
+    char *word_start = NULL;
+    char *current = str;
+    const char *buffer_end = str + str_len;
+    
+    while (current < buffer_end && *current) {
+        if (word_start == NULL && !isspace((unsigned char)*current)) {
+            word_start = current;
+        }
+        if (word_start && current + 1 < buffer_end && 
+            (isspace((unsigned char)*(current + 1)) || *(current + 1) == '\0')) {
+            reverse_substring(word_start, current);
+            word_start = NULL;
+        }
+        current++;
+    }
+    
+    if (current > str) {
+        reverse_substring(str, current - 1);
+    }
+    
+    current = str;
+    char *write_ptr = str;
+    int space_found = 0;
+    size_t chars_written = 0;
+    
+    while (current < buffer_end && *current && isspace((unsigned char)*current)) {
+        current++;
+    }
+    
+    while (current < buffer_end && *current) {
+        if (isspace((unsigned char)*current)) {
+            space_found = 1;
+        } else {
+            if (space_found && write_ptr != str) {
+                *write_ptr++ = ' ';
+                chars_written++;
+            }
+            space_found = 0;
+            *write_ptr++ = *current;
+            chars_written++;
+        }
+        current++;
+    }
+    *write_ptr = '\0';
+    
+    return 0;
+}
+
+int main(void) {
+    char buffer[BUFFER_SIZE];
+    
+    printf("Enter a string: ");
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+    
+    size_t len = strnlen(buffer, sizeof(buffer));
+    if (len >= sizeof(buffer)) {
+        fprintf(stderr, "Input too long\n");
+        return EXIT_FAILURE;
+    }
+    
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    }
+    
+    if (buffer[0] == '\0') {
+        printf("Empty string provided\n");
+        return EXIT_SUCCESS;
+    }
+    
+    printf("Original: \"%s\"\n", buffer);
+    
+    if (reverse_words(buffer, sizeof(buffer)) != 0) {
+        fprintf(stderr, "Error processing string\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("Reversed: \"%s\"\n", buffer);
+    
+    return EXIT_SUCCESS;
+}

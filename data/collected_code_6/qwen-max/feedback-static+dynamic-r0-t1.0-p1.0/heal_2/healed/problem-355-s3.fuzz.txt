@@ -1,0 +1,3 @@
+problem-355-s3.c:9:17:medium:UBSan: 1.11111e+16 is outside the range of representable values of type 'int' (AFL crash: id:000000,sig:06,src:000002,time:14341,execs:143,op:havoc,rep:5)
+problem-355-s3.c:10:19:medium:UBSan: negation of -2147483648 cannot be represented in type 'int'; cast to an unsigned type to negate this value to itself (AFL crash: id:000000,sig:06,src:000002,time:14341,execs:143,op:havoc,rep:5)
+problem-355-s3.c:11:23:medium:UBSan: negation of -2147483648 cannot be represented in type 'int'; cast to an unsigned type to negate this value to itself (AFL crash: id:000000,sig:06,src:000002,time:14341,execs:143,op:havoc,rep:5)

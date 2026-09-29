@@ -1,0 +1,22 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_10/healed/problem-196.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_10/healed/problem-196.c:146:27: style: Condition 'write>=list->capacity' is always false [knownConditionTrueFalse]
+                if (write >= list->capacity || read >= list->capacity) {
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_10/healed/problem-196.c:139:35: note: Assuming that condition 'write>=list->capacity' is not redundant
+        if (write > read || write >= list->capacity) {
+                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_10/healed/problem-196.c:146:27: note: Condition 'write>=list->capacity' is always false
+                if (write >= list->capacity || read >= list->capacity) {
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_10/healed/problem-196.c:146:53: style: Condition 'read>=list->capacity' is always false [knownConditionTrueFalse]
+                if (write >= list->capacity || read >= list->capacity) {
+                                                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_10/healed/problem-196.c:136:18: note: Assuming that condition 'read>=list->capacity' is not redundant
+        if (read >= list->capacity) {
+                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_10/healed/problem-196.c:139:26: note: Assuming condition is false
+        if (write > read || write >= list->capacity) {
+                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_10/healed/problem-196.c:146:53: note: Condition 'read>=list->capacity' is always false
+                if (write >= list->capacity || read >= list->capacity) {
+                                                    ^

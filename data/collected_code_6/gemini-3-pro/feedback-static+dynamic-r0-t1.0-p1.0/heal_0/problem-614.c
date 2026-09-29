@@ -1,0 +1,42 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Tuple {
+    int value1;
+    int value2;
+};
+
+long long int cumulative_sum(const struct Tuple* tuples, size_t num_tuples) {
+    if (tuples == NULL && num_tuples > 0) {
+        return 0;
+    }
+
+    long long int sum = 0;
+    for (size_t i = 0; i < num_tuples; ++i) {
+        sum += (long long int)tuples[i].value1 + (long long int)tuples[i].value2;
+    }
+
+    return sum;
+}
+
+int main(void) {
+    size_t num_tuples = 4;
+    struct Tuple* tuples = (struct Tuple*)malloc(num_tuples * sizeof(struct Tuple));
+    if (tuples == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return 1;
+    }
+
+    tuples[0].value1 = 1; tuples[0].value2 = 2;
+    tuples[1].value1 = 3; tuples[1].value2 = 4;
+    tuples[2].value1 = 5; tuples[2].value2 = 6;
+    tuples[3].value1 = 7; tuples[3].value2 = 8;
+
+    long long int sum = cumulative_sum(tuples, num_tuples);
+    printf("Cumulative sum: %lld\n", sum);
+
+    free(tuples);
+    tuples = NULL;
+
+    return 0;
+}

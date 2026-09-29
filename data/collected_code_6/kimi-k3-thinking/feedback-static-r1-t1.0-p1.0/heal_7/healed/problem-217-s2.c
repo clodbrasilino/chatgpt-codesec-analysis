@@ -1,0 +1,75 @@
+#define _POSIX_C_SOURCE 200809L
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <limits.h>
+#include <sys/types.h>
+
+#define LOOKUP_SIZE ((size_t)UCHAR_MAX + 1u)
+
+char find_first_repeated(const char *str, size_t str_size)
+{
+    unsigned char *seen = NULL;
+    size_t i;
+    char result = '\0';
+
+    if (str == NULL || str_size == 0) {
+        return '\0';
+    }
+
+    seen = calloc(LOOKUP_SIZE, sizeof(*seen));
+    if (seen == NULL) {
+        return '\0';
+    }
+
+    for (i = 0; i < str_size && str[i] != '\0'; i++) {
+        size_t index = (size_t)(unsigned char)str[i];
+
+        if (index >= LOOKUP_SIZE) {
+            continue;
+        }
+
+        if (seen[index] != 0u) {
+            result = (char)(unsigned char)index;
+            break;
+        }
+
+        seen[index] = 1u;
+    }
+
+    free(seen);
+    return result;
+}
+
+int main(void)
+{
+    char *buffer = NULL;
+    size_t buffer_capacity = 0;
+    ssize_t read_len;
+    size_t len;
+    char result;
+
+    printf("Enter a string: ");
+
+    read_len = getline(&buffer, &buffer_capacity, stdin);
+    if (read_len < 0) {
+        fprintf(stderr, "Error: failed to read input\n");
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+
+    len = strcspn(buffer, "\n");
+    buffer[len] = '\0';
+
+    result = find_first_repeated(buffer, len);
+
+    if (result != '\0') {
+        printf("First repeated character: %c\n", result);
+    } else {
+        printf("No repeated character found\n");
+    }
+
+    free(buffer);
+    return EXIT_SUCCESS;
+}

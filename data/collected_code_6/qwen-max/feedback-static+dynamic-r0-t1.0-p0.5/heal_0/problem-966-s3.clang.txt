@@ -1,0 +1,43 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-966-s3.c:47:20: error: passing 'Tuple' to parameter of incompatible type 'Tuple *'; take the address with &
+   47 |         free_tuple(list->tuples[i]);
+      |                    ^~~~~~~~~~~~~~~
+      |                    &
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-966-s3.c:14:24: note: passing argument to parameter 'tuple' here
+   14 | void free_tuple(Tuple *tuple) {
+      |                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-966-s3.c:57:28: error: member reference type 'Tuple' is not a pointer; did you mean to use '.'?
+   57 |         if (list->tuples[i]->length > 0) {
+      |             ~~~~~~~~~~~~~~~^~
+      |                            .
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-966-s3.c:60:24: error: passing 'Tuple' to parameter of incompatible type 'Tuple *'; take the address with &
+   60 |             free_tuple(list->tuples[i]);
+      |                        ^~~~~~~~~~~~~~~
+      |                        &
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-966-s3.c:14:24: note: passing argument to parameter 'tuple' here
+   14 | void free_tuple(Tuple *tuple) {
+      |                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-966-s3.c:71:21: error: assigning to 'Tuple' from incompatible type 'Tuple *'; dereference with *
+   71 |     list->tuples[0] = create_tuple(2);
+      |                     ^ ~~~~~~~~~~~~~~~
+      |                       *
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-966-s3.c:72:21: error: assigning to 'Tuple' from incompatible type 'Tuple *'; dereference with *
+   72 |     list->tuples[1] = create_tuple(0);
+      |                     ^ ~~~~~~~~~~~~~~~
+      |                       *
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-966-s3.c:73:21: error: assigning to 'Tuple' from incompatible type 'Tuple *'; dereference with *
+   73 |     list->tuples[2] = create_tuple(3);
+      |                     ^ ~~~~~~~~~~~~~~~
+      |                       *
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-966-s3.c:74:21: error: assigning to 'Tuple' from incompatible type 'Tuple *'; dereference with *
+   74 |     list->tuples[3] = create_tuple(0);
+      |                     ^ ~~~~~~~~~~~~~~~
+      |                       *
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-966-s3.c:75:21: error: assigning to 'Tuple' from incompatible type 'Tuple *'; dereference with *
+   75 |     list->tuples[4] = create_tuple(1);
+      |                     ^ ~~~~~~~~~~~~~~~
+      |                       *
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-966-s3.c:83:63: error: member reference type 'Tuple' is not a pointer; did you mean to use '.'?
+   83 |         printf("Tuple %zu: Length = %zu\n", i, list->tuples[i]->length);
+      |                                                ~~~~~~~~~~~~~~~^~
+      |                                                               .
+9 errors generated.

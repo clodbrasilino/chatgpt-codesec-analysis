@@ -1,0 +1,39 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+void shell_sort(int *arr, size_t n) {
+    if (arr == NULL || n == 0) {
+        return;
+    }
+
+    for (size_t gap = n / 2; gap > 0; gap /= 2) {
+        for (size_t i = gap; i < n; i++) {
+            int temp = arr[i];
+            size_t j;
+            for (j = i; j >= gap && arr[j - gap] > temp; j -= gap) {
+                arr[j] = arr[j - gap];
+            }
+            arr[j] = temp;
+        }
+    }
+}
+
+void print_array(const int *arr, size_t n) {
+    if (arr == NULL) {
+        return;
+    }
+    for (size_t i = 0; i < n; i++) {
+        printf("%d ", arr[i]);
+    }
+    printf("\n");
+}
+
+int main(void) {
+    int arr[] = {12, 34, 54, 2, 3, 9, 21, 6, 85, 1};
+    size_t n = sizeof(arr) / sizeof(arr[0]);
+
+    shell_sort(arr, n);
+    print_array(arr, n);
+
+    return EXIT_SUCCESS;
+}

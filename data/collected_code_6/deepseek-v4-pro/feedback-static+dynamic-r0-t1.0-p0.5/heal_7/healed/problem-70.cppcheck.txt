@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_7/healed/problem-70.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_7/healed/problem-70.c:37:32: style: Condition 'all_tuples_equal_length(NULL,NULL,0)' is always true [knownConditionTrueFalse]
+    if (all_tuples_equal_length(NULL, NULL, 0)) {
+                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_7/healed/problem-70.c:37:32: note: Calling function 'all_tuples_equal_length' returns 1
+    if (all_tuples_equal_length(NULL, NULL, 0)) {
+                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_7/healed/problem-70.c:37:32: note: Condition 'all_tuples_equal_length(NULL,NULL,0)' is always true
+    if (all_tuples_equal_length(NULL, NULL, 0)) {
+                               ^

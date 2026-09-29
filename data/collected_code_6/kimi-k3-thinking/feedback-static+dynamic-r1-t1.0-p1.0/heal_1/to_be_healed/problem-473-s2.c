@@ -1,0 +1,120 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+static int compare_ints(const void *a, const void *b)
+{
+    int ia = *(const int *)a;
+    int ib = *(const int *)b;
+    if (ia < ib) {
+        return -1;
+    }
+    if (ia > ib) {
+        return 1;
+    }
+    return 0;
+}
+
+static int contains_element(const int *arr, int size, int value)
+{
+    int i;
+    for (i = 0; i < size; i++) {
+        if (arr[i] == value) {
+            return 1;
+        }
+    }
+    return 0;
+}
+
+int tuple_intersection(int **tuples, const int *sizes, int num_tuples, int **result)
+{
+    int *intersection;
+    int count = 0;
+    int i;
+    int j;
+
+    if (result == NULL) {
+        return 0;
+    }
+    *result = NULL;
+
+    if (tuples == NULL || sizes == NULL || num_tuples <= 0) {
+        return 0;
+    }
+
+    for (i = 0; i < num_tuples; i++) {
+        if (tuples[i] == NULL || sizes[i] <= 0) {
+            return 0;
+        }
+    }
+
+    intersection = (int *)malloc((size_t)sizes[0] * sizeof(int));
+    if (intersection == NULL) {
+        return 0;
+    }
+
+    for (i = 0; i < sizes[0]; i++) {
+        int value = tuples[0][i];
+        int in_all = 1;
+
+        if (contains_element(intersection, count, value)) {
+            continue;
+        }
+
+        for (j = 1; j < num_tuples; j++) {
+            if (!contains_element(tuples[j], sizes[j], value)) {
+                in_all = 0;
+                break;
+            }
+        }
+
+        if (in_all) {
+            intersection[count] = value;
+            count++;
+        }
+    }
+
+    if (count == 0) {
+        free(intersection);
+        return 0;
+    }
+
+    qsort(intersection, (size_t)count, sizeof(int), compare_ints);
+
+    *result = intersection;
+    return count;
+}
+
+int main(void)
+{
+    int t1[] = {3, 4, 5, 6};
+    int t2[] = {5, 7, 4, 10};
+    int t3[] = {1, 5, 7, 8, 4};
+    int *tuples[] = {t1, t2, t3};
+    /* Possible weaknesses found:
+     *  Variable 'sizes' can be declared as const array [constVariable]
+     */
+    int sizes[] = {4, 4, 5};
+    int num_tuples = 3;
+    int *result = NULL;
+    int result_size;
+    /* Possible weaknesses found:
+     *  The scope of the variable 'i' can be reduced. [variableScope]
+     */
+    int i;
+
+    result_size = tuple_intersection(tuples, sizes, num_tuples, &result);
+
+    printf("Intersection: ");
+    if (result_size > 0 && result != NULL) {
+        for (i = 0; i < result_size; i++) {
+            printf("%d ", result[i]);
+        }
+    } else {
+        printf("(empty)");
+    }
+    printf("\n");
+
+    free(result);
+
+    return 0;
+}

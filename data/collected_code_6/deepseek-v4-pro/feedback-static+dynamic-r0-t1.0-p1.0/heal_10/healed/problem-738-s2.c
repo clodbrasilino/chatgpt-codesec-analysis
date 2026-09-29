@@ -1,0 +1,105 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <errno.h>
+#include <limits.h>
+#include <float.h>
+
+double geometric_sum(int n) {
+    double result = 0.0;
+    double term = 1.0;
+    int i;
+
+    if (n < 1) {
+        return 0.0;
+    }
+
+    for (i = 0; i < n; i++) {
+        result += term;
+        term /= 2.0;
+    }
+
+    return result;
+}
+
+int main(void) {
+    char buffer[32] = {0};
+    long input_val;
+    int n;
+    size_t len;
+    size_t i;
+    double result;
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Invalid input\n");
+        fflush(stderr);
+        return EXIT_FAILURE;
+    }
+
+    len = 0;
+    for (i = 0; i < sizeof(buffer); i++) {
+        if (buffer[i] == '\0') {
+            len = i;
+            break;
+        }
+    }
+    if (i >= sizeof(buffer)) {
+        buffer[sizeof(buffer) - 1] = '\0';
+        len = sizeof(buffer) - 1;
+    }
+
+    if (len == 0) {
+        fprintf(stderr, "Invalid input\n");
+        fflush(stderr);
+        return EXIT_FAILURE;
+    }
+
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+        len--;
+    }
+    else {
+        int c;
+        while ((c = getchar()) != '\n' && c != EOF) {
+            if (c == EOF) break;
+        }
+    }
+
+    if (len == 0 || buffer[0] == '\0') {
+        fprintf(stderr, "Invalid input\n");
+        fflush(stderr);
+        return EXIT_FAILURE;
+    }
+
+    {
+        char *endptr;
+        errno = 0;
+        input_val = strtol(buffer, &endptr, 10);
+
+        if (errno == ERANGE || input_val > INT_MAX || input_val < INT_MIN) {
+            fprintf(stderr, "Invalid input\n");
+            fflush(stderr);
+            return EXIT_FAILURE;
+        }
+
+        if (endptr == buffer || *endptr != '\0') {
+            fprintf(stderr, "Invalid input\n");
+            fflush(stderr);
+            return EXIT_FAILURE;
+        }
+    }
+
+    n = (int)input_val;
+
+    if (n < 1) {
+        fprintf(stderr, "n must be at least 1\n");
+        fflush(stderr);
+        return EXIT_FAILURE;
+    }
+
+    result = geometric_sum(n);
+    printf("%.8f\n", result);
+    fflush(stdout);
+
+    return EXIT_SUCCESS;
+}

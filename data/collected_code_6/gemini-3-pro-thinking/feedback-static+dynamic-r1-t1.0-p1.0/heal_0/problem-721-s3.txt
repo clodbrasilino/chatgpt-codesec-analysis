@@ -1,0 +1,95 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+double findMaxAveragePath(int **matrix, int n) {
+    if (matrix == NULL || n <= 0) {
+        return 0.0;
+    }
+
+    long long **dp = (long long **)malloc((size_t)n * sizeof(long long *));
+    if (dp == NULL) {
+        return 0.0;
+    }
+
+    for (int i = 0; i < n; i++) {
+        dp[i] = (long long *)malloc((size_t)n * sizeof(long long));
+        if (dp[i] == NULL) {
+            for (int j = 0; j < i; j++) {
+                free(dp[j]);
+            }
+            free(dp);
+            return 0.0;
+        }
+    }
+
+    dp[0][0] = matrix[0][0];
+
+    for (int j = 1; j < n; j++) {
+        dp[0][j] = dp[0][j - 1] + matrix[0][j];
+    }
+
+    for (int i = 1; i < n; i++) {
+        dp[i][0] = dp[i - 1][0] + matrix[i][0];
+    }
+
+    for (int i = 1; i < n; i++) {
+        for (int j = 1; j < n; j++) {
+            long long from_top = dp[i - 1][j];
+            long long from_left = dp[i][j - 1];
+            dp[i][j] = matrix[i][j] + (from_top > from_left ? from_top : from_left);
+        }
+    }
+
+    long long max_sum = dp[n - 1][n - 1];
+    double max_average = (double)max_sum / (2.0 * n - 1.0);
+
+    for (int i = 0; i < n; i++) {
+        free(dp[i]);
+    }
+    free(dp);
+
+    return max_average;
+}
+
+int main(void) {
+    int n = 3;
+
+    int **matrix = (int **)malloc((size_t)n * sizeof(int *));
+    if (matrix == NULL) {
+        return EXIT_FAILURE;
+    }
+
+    for (int i = 0; i < n; i++) {
+        matrix[i] = (int *)malloc((size_t)n * sizeof(int));
+        if (matrix[i] == NULL) {
+            for (int j = 0; j < i; j++) {
+                free(matrix[j]);
+            }
+            free(matrix);
+            return EXIT_FAILURE;
+        }
+    }
+
+    matrix[0][0] = 1; 
+    matrix[0][1] = 2; 
+    matrix[0][2] = 3;
+    matrix[1][0] = 4; 
+    matrix[1][1] = 5; 
+    matrix[1][2] = 6;
+    matrix[2][0] = 7; 
+    matrix[2][1] = 8; 
+    matrix[2][2] = 9;
+
+    double max_avg = findMaxAveragePath(matrix, n);
+
+    printf("%f\n", max_avg);
+
+    for (int i = 0; i < n; i++) {
+        free(matrix[i]);
+    }
+    free(matrix);
+
+    return EXIT_SUCCESS;
+}
+```

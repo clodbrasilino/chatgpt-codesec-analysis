@@ -1,0 +1,45 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char **extract_strings(const char *const *input, size_t count, size_t size, size_t *output_count) {
+    if (input == NULL || output_count == NULL) return NULL;
+    char **result = (char **)malloc(count * sizeof(char *));
+    if (result == NULL) return NULL;
+    *output_count = 0;
+
+    for (size_t i = 0; i < count; ++i) {
+        if (strlen(input[i]) >= size) {
+            result[*output_count] = (char *)malloc(size + 1);
+            if (result[*output_count] == NULL) {
+                while (*output_count > 0) free(result[--*output_count]);
+                free(result);
+                return NULL;
+            }
+            strncpy(result[*output_count], input[i], size);
+            result[*output_count][size] = '\0';
+            (*output_count)++;
+        }
+    }
+
+    return result;
+}
+
+int main() {
+    const char *input[] = {"hello", "world", "example", "test", "C programming"};
+    size_t count = 5;
+    size_t size = 6;
+    size_t output_count;
+
+    char **result = extract_strings(input, count, size, &output_count);
+
+    if (result != NULL) {
+        for (size_t i = 0; i < output_count; ++i) {
+            printf("%s\n", result[i]);
+            free(result[i]);
+        }
+        free(result);
+    }
+
+    return 0;
+}

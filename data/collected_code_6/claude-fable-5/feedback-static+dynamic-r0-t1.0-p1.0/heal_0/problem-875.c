@@ -1,0 +1,64 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+typedef struct {
+    int first;
+    int second;
+} Tuple;
+
+int min_difference(const Tuple *tuples, size_t count, int *result)
+{
+    size_t i;
+    int min_diff;
+    int diff;
+
+    if (tuples == NULL || result == NULL || count == 0U) {
+        return -1;
+    }
+
+    min_diff = INT_MAX;
+
+    for (i = 0U; i < count; i++) {
+        long ldiff = (long)tuples[i].first - (long)tuples[i].second;
+        if (ldiff < 0L) {
+            ldiff = -ldiff;
+        }
+        if (ldiff > (long)INT_MAX) {
+            diff = INT_MAX;
+        } else {
+            diff = (int)ldiff;
+        }
+        if (diff < min_diff) {
+            min_diff = diff;
+        }
+    }
+
+    *result = min_diff;
+    return 0;
+}
+
+int main(void)
+{
+    Tuple tuples[] = {
+        {3, 5},
+        {1, 7},
+        {10, 3},
+        {1, 2}
+    };
+    size_t count = sizeof(tuples) / sizeof(tuples[0]);
+    int result = 0;
+
+    if (min_difference(tuples, count, &result) != 0) {
+        if (fprintf(stderr, "Error: invalid input\n") < 0) {
+            return EXIT_FAILURE;
+        }
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Minimum difference: %d\n", result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

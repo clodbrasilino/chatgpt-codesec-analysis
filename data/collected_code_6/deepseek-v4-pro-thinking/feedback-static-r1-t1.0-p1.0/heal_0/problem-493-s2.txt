@@ -1,0 +1,87 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+#include <stdint.h>
+
+#define PI 3.14159265358979323846
+
+typedef struct {
+    double x;
+    double y;
+} Point;
+
+typedef struct {
+    Point vertices[6];
+} Hexagon;
+
+Hexagon *calculate_hex_grid(size_t rows, size_t cols, double radius) {
+    if (rows == 0 || cols == 0 || !isfinite(radius) || radius <= 0.0) {
+        return NULL;
+    }
+
+    if (rows > SIZE_MAX / cols) {
+        return NULL;
+    }
+
+    size_t total = rows * cols;
+
+    if (total > SIZE_MAX / sizeof(Hexagon)) {
+        return NULL;
+    }
+
+    Hexagon *grid = malloc(total * sizeof(Hexagon));
+    if (grid == NULL) {
+        return NULL;
+    }
+
+    double horizontal_spacing = sqrt(3.0) * radius;
+    double vertical_spacing = 1.5 * radius;
+    double row_offset = horizontal_spacing / 2.0;
+
+    for (size_t row = 0; row < rows; ++row) {
+        double offset_x = (row % 2) * row_offset;
+        double center_y = row * vertical_spacing;
+
+        for (size_t col = 0; col < cols; ++col) {
+            double center_x = col * horizontal_spacing + offset_x;
+            size_t index = row * cols + col;
+
+            for (int vertex = 0; vertex < 6; ++vertex) {
+                double angle = PI / 6.0 + vertex * PI / 3.0;
+                grid[index].vertices[vertex].x = center_x + radius * cos(angle);
+                grid[index].vertices[vertex].y = center_y + radius * sin(angle);
+            }
+        }
+    }
+
+    return grid;
+}
+
+int main(void) {
+    size_t rows = 3;
+    size_t cols = 3;
+    double radius = 1.0;
+
+    Hexagon *grid = calculate_hex_grid(rows, cols, radius);
+    if (grid == NULL) {
+        fprintf(stderr, "Failed to calculate hexagon grid\n");
+        return EXIT_FAILURE;
+    }
+
+    size_t total = rows * cols;
+
+    for (size_t i = 0; i < total; ++i) {
+        printf("Hexagon %zu: ", i);
+        for (int j = 0; j < 6; ++j) {
+            printf("(%.3f, %.3f)%s",
+                   grid[i].vertices[j].x,
+                   grid[i].vertices[j].y,
+                   j < 5 ? " " : "\n");
+        }
+    }
+
+    free(grid);
+    return EXIT_SUCCESS;
+}
+```

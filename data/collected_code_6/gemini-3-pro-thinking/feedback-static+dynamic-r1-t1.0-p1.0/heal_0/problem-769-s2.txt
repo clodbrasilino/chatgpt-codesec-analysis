@@ -1,0 +1,89 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *data;
+    size_t size;
+} List;
+
+int is_in_list(const List *list, int value);
+List get_difference(const List *list_a, const List *list_b);
+void free_list(List *list);
+
+int is_in_list(const List *list, int value) {
+    if (list == NULL || list->data == NULL) {
+        return 0;
+    }
+    for (size_t i = 0; i < list->size; ++i) {
+        if (list->data[i] == value) {
+            return 1;
+        }
+    }
+    return 0;
+}
+
+List get_difference(const List *list_a, const List *list_b) {
+    List diff = {NULL, 0};
+
+    if (list_a == NULL || list_b == NULL || list_a->data == NULL || list_b->data == NULL) {
+        return diff;
+    }
+
+    if (list_a->size == 0) {
+        return diff;
+    }
+
+    diff.data = (int *)malloc(list_a->size * sizeof(int));
+    if (diff.data == NULL) {
+        return diff;
+    }
+
+    for (size_t i = 0; i < list_a->size; ++i) {
+        if (!is_in_list(list_b, list_a->data[i])) {
+            diff.data[diff.size] = list_a->data[i];
+            diff.size++;
+        }
+    }
+
+    if (diff.size == 0) {
+        free(diff.data);
+        diff.data = NULL;
+    } else {
+        int *temp = (int *)realloc(diff.data, diff.size * sizeof(int));
+        if (temp != NULL) {
+            diff.data = temp;
+        }
+    }
+
+    return diff;
+}
+
+void free_list(List *list) {
+    if (list != NULL) {
+        free(list->data);
+        list->data = NULL;
+        list->size = 0;
+    }
+}
+
+int main(void) {
+    int arr_a[] = {1, 2, 3, 4, 5, 6};
+    int arr_b[] = {4, 5, 6, 7, 8, 9};
+
+    List list_a = {arr_a, sizeof(arr_a) / sizeof(arr_a[0])};
+    List list_b = {arr_b, sizeof(arr_b) / sizeof(arr_b[0])};
+
+    List diff = get_difference(&list_a, &list_b);
+
+    if (diff.data != NULL) {
+        for (size_t i = 0; i < diff.size; ++i) {
+            printf("%d\n", diff.data[i]);
+        }
+    }
+
+    free_list(&diff);
+
+    return EXIT_SUCCESS;
+}
+```

@@ -1,0 +1,83 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char **extract_quoted_values(const char *str, int *count) {
+    if (str == NULL || count == NULL) {
+        return NULL;
+    }
+
+    int capacity = 10;
+    char **values = (char **)malloc(capacity * sizeof(char *));
+    if (values == NULL) {
+        *count = 0;
+        return NULL;
+    }
+
+    *count = 0;
+    const char *p = str;
+
+    while (*p != '\0') {
+        if (*p == '"') {
+            p++;
+            const char *start = p;
+            size_t len = 0;
+
+            while (*p != '\0' && *p != '"') {
+                len++;
+                p++;
+            }
+
+            if (*p == '"') {
+                if (*count >= capacity) {
+                    capacity *= 2;
+                    char **temp = (char **)realloc(values, capacity * sizeof(char *));
+                    if (temp == NULL) {
+                        for (int i = 0; i < *count; i++) {
+                            free(values[i]);
+                        }
+                        free(values);
+                        *count = 0;
+                        return NULL;
+                    }
+                    values = temp;
+                }
+
+                values[*count] = (char *)malloc((len + 1) * sizeof(char));
+                if (values[*count] == NULL) {
+                    for (int i = 0; i < *count; i++) {
+                        free(values[i]);
+                    }
+                    free(values);
+                    *count = 0;
+                    return NULL;
+                }
+
+                strncpy(values[*count], start, len);
+                values[*count][len] = '\0';
+                (*count)++;
+                p++;
+            }
+        } else {
+            p++;
+        }
+    }
+
+    return values;
+}
+
+int main(void) {
+    const char *test_str = "This is \"first value\" and \"second value\" end";
+    int count = 0;
+    char **result = extract_quoted_values(test_str, &count);
+
+    if (result != NULL) {
+        for (int i = 0; i < count; i++) {
+            printf("%s\n", result[i]);
+            free(result[i]);
+        }
+        free(result);
+    }
+
+    return 0;
+}

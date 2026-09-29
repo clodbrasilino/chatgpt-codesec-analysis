@@ -1,0 +1,48 @@
+#include <stdio.h>
+#include <string.h>
+
+int match_string(const char *str) {
+    if (str == NULL || *str == '\0') {
+        return 0;
+    }
+
+    if (*str != 'a') {
+        return 0;
+    }
+
+    str++;
+
+    if (*str != 'b') {
+        return 0;
+    }
+
+    while (*str == 'b') {
+        str++;
+    }
+
+    if (*str == '\0') {
+        return 1;
+    }
+
+    return 0;
+}
+
+int main(void) {
+    const char *test1 = "ab";
+    const char *test2 = "abbb";
+    const char *test3 = "a";
+    const char *test4 = "b";
+    const char *test5 = "abc";
+    const char *test6 = "abbbc";
+    const char *test7 = NULL;
+
+    printf("Result test1: %d\n", match_string(test1));
+    printf("Result test2: %d\n", match_string(test2));
+    printf("Result test3: %d\n", match_string(test3));
+    printf("Result test4: %d\n", match_string(test4));
+    printf("Result test5: %d\n", match_string(test5));
+    printf("Result test6: %d\n", match_string(test6));
+    printf("Result test7: %d\n", match_string(test7));
+
+    return 0;
+}

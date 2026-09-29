@@ -1,0 +1,294 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_STRING_LEN 4096U
+#define LIST_COUNT 3U
+#define LIST_SIZE 4U
+
+static int compare_strings(const void *a, const void *b)
+{
+    const char *const *sa = (const char *const *)a;
+    const char *const *sb = (const char *const *)b;
+    return strcmp(*sa, *sb);
+}
+
+static void sort_sublists(char ***lists, const size_t *sizes, size_t count)
+{
+    size_t i;
+
+    if (lists == NULL || sizes == NULL) {
+        return;
+    }
+
+    for (i = 0; i < count; i++) {
+        if (lists[i] != NULL && sizes[i] > 1) {
+            qsort(lists[i], sizes[i], sizeof(char *), compare_strings);
+        }
+    }
+}
+
+static char *duplicate_string(const char *src)
+{
+    size_t len;
+    char *copy;
+
+    if (src == NULL) {
+        return NULL;
+    }
+
+    len = strnlen(src, MAX_STRING_LEN);
+    if (len >= MAX_STRING_LEN) {
+        return NULL;
+    }
+
+    copy = malloc(len + 1U);
+    if (copy == NULL) {
+        return NULL;
+    }
+
+    memcpy(copy, src, len);
+    copy[len] = '\0';
+    return copy;
+}
+
+static void free_lists(char ***lists, const size_t *sizes, size_t count)
+{
+    size_t i;
+    size_t j;
+
+    if (lists == NULL || sizes == NULL) {
+        return;
+    }
+
+    for (i = 0; i < count; i++) {
+        if (lists[i] != NULL) {
+            for (j = 0; j < sizes[i]; j++) {
+                free(lists[i][j]);
+            }
+            free(lists[i]);
+        }
+    }
+    free(lists);
+}
+
+int main(void)
+{
+    static const char *const data[LIST_COUNT][LIST_SIZE] = {
+        { "banana", "apple", "cherry", "date" },
+        { "zebra", "yak", "xenon", "walrus" },
+        { "delta", "alpha", "charlie", "bravo" }
+    };
+    static const size_t sizes[LIST_COUNT] = { LIST_SIZE, LIST_SIZE, LIST_SIZE };
+    const size_t count = LIST_COUNT;
+    char ***lists;
+    size_t i;
+    size_t j;
+
+    if (count == 0U || count > (SIZE_MAX / sizeof(char **))) {
+        fprintf(stderr, "Invalid list count\n");
+        return EXIT_FAILURE;
+    }
+
+    lists = malloc(count * sizeof(char **));
+    if (lists == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i < count; i++) {
+        if (sizes[i] == 0U || sizes[i] > LIST_SIZE ||
+            sizes[i] > (SIZE_MAX / sizeof(char *))) {
+            fprintf(stderr, "Invalid list size\n");
+            free_lists(lists, sizes, i);
+            return EXIT_FAILURE;
+        }
+        lists[i] = malloc(sizes[i] * sizeof(char *));
+        if (lists[i] == NULL) {
+            fprintf(stderr, "Memory allocation failed\n");
+            free_lists(lists, sizes, i);
+            return EXIT_FAILURE;
+        }
+        for (j = 0; j < sizes[i]; j++) {
+            lists[i][j] = duplicate_string(data[i][j]);
+            if (lists[i][j] == NULL) {
+                size_t k;
+                fprintf(stderr, "Memory allocation failed\n");
+                for (k = 0; k < j; k++) {
+                    free(lists[i][k]);
+                }
+                free(lists[i]);
+                free_lists(lists, sizes, i);
+                return EXIT_FAILURE;
+            }
+        }
+    }
+
+    sort_sublists(lists, sizes, count);
+
+    for (i = 0; i < count; i++) {
+        printf("Sublist %zu:", i);
+        for (j = 0; j < sizes[i]; j++) {
+            printf(" %s", lists[i][j]);
+        }
+        printf("\n");
+    }
+
+    free_lists(lists, sizes, count);
+    return EXIT_SUCCESS;
+}
+```
+
+Wait — the above uses `SIZE_MAX` without including `<stdint.h>`. Here is the corrected, final version:
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+#define MAX_STRING_LEN 4096U
+#define LIST_COUNT 3U
+#define LIST_SIZE 4U
+
+static int compare_strings(const void *a, const void *b)
+{
+    const char *const *sa = (const char *const *)a;
+    const char *const *sb = (const char *const *)b;
+    return strcmp(*sa, *sb);
+}
+
+static void sort_sublists(char ***lists, const size_t *sizes, size_t count)
+{
+    size_t i;
+
+    if (lists == NULL || sizes == NULL) {
+        return;
+    }
+
+    for (i = 0; i < count; i++) {
+        if (lists[i] != NULL && sizes[i] > 1) {
+            qsort(lists[i], sizes[i], sizeof(char *), compare_strings);
+        }
+    }
+}
+
+static char *duplicate_string(const char *src)
+{
+    size_t len;
+    char *copy;
+
+    if (src == NULL) {
+        return NULL;
+    }
+
+    len = strnlen(src, MAX_STRING_LEN);
+    if (len >= MAX_STRING_LEN) {
+        return NULL;
+    }
+
+    copy = malloc(len + 1U);
+    if (copy == NULL) {
+        return NULL;
+    }
+
+    memcpy(copy, src, len);
+    copy[len] = '\0';
+    return copy;
+}
+
+static void free_lists(char ***lists, const size_t *sizes, size_t count)
+{
+    size_t i;
+    size_t j;
+
+    if (lists == NULL || sizes == NULL) {
+        return;
+    }
+
+    for (i = 0; i < count; i++) {
+        if (lists[i] != NULL) {
+            for (j = 0; j < sizes[i]; j++) {
+                free(lists[i][j]);
+            }
+            free(lists[i]);
+        }
+    }
+    free(lists);
+}
+
+int main(void)
+{
+    static const char *const data[LIST_COUNT][LIST_SIZE] = {
+        { "banana", "apple", "cherry", "date" },
+        { "zebra", "yak", "xenon", "walrus" },
+        { "delta", "alpha", "charlie", "bravo" }
+    };
+    static const size_t sizes[LIST_COUNT] = { LIST_SIZE, LIST_SIZE, LIST_SIZE };
+    const size_t count = LIST_COUNT;
+    char ***lists;
+    size_t i;
+    size_t j;
+
+    if (count == 0U || count > (SIZE_MAX / sizeof(char **))) {
+        fprintf(stderr, "Invalid list count\n");
+        return EXIT_FAILURE;
+    }
+
+    lists = malloc(count * sizeof(char **));
+    if (lists == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i < count; i++) {
+        if (sizes[i] == 0U || sizes[i] > LIST_SIZE ||
+            sizes[i] > (SIZE_MAX / sizeof(char *))) {
+            fprintf(stderr, "Invalid list size\n");
+            free_lists(lists, sizes, i);
+            return EXIT_FAILURE;
+        }
+        lists[i] = malloc(sizes[i] * sizeof(char *));
+        if (lists[i] == NULL) {
+            fprintf(stderr, "Memory allocation failed\n");
+            free_lists(lists, sizes, i);
+            return EXIT_FAILURE;
+        }
+        for (j = 0; j < sizes[i]; j++) {
+            lists[i][j] = duplicate_string(data[i][j]);
+            if (lists[i][j] == NULL) {
+                size_t k;
+                fprintf(stderr, "Memory allocation failed\n");
+                for (k = 0; k < j; k++) {
+                    free(lists[i][k]);
+                }
+                free(lists[i]);
+                free_lists(lists, sizes, i);
+                return EXIT_FAILURE;
+            }
+        }
+    }
+
+    sort_sublists(lists, sizes, count);
+
+    for (i = 0; i < count; i++) {
+        printf("Sublist %zu:", i);
+        for (j = 0; j < sizes[i]; j++) {
+            printf(" %s", lists[i][j]);
+        }
+        printf("\n");
+    }
+
+    free_lists(lists, sizes, count);
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis summary of the fixes:**
+
+1. **Flawfinder `memcpy` (CWE-120):** Already mitigated in the original — the destination buffer is allocated as `len + 1` where `len` is bounded by `strnlen(src, MAX_STRING_LEN)` and validated against `MAX_STRING_LEN` before allocation, so the copy can never exceed the destination. This safe pattern is preserved.
+
+2. **Flawfinder `char` static arrays (CWE-119/CWE-120):** The array is `static const` with compile-time fixed dimensions and every access is bounds-checked (`sizes[i] > LIST_SIZE` guard, loop bounds tied to `sizes[i]` and `count`). The rewrite adds explicit overflow guards on the `malloc` size computations (`count * sizeof(char **)` and `sizes[i] * sizeof(char *)`) against `SIZE_MAX` to rule out integer-overflow-driven under-allocation.
+
+3. **Memory hygiene:** The error paths keep the careful partial-cleanup logic (freeing only the `j` strings duplicated so far, then the sublist pointer array, then `free_lists` over the fully-constructed prefix `i`), avoiding double-frees and leaks.

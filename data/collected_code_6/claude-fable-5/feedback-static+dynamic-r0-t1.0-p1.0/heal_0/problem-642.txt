@@ -1,0 +1,140 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+#define COLS 2
+
+typedef struct {
+    int first;
+    int second;
+} Tuple;
+
+static int tuple_cmp(const void *p, const void *q)
+{
+    const Tuple *x = (const Tuple *)p;
+    const Tuple *y = (const Tuple *)q;
+
+    if (x->first != y->first) {
+        return (x->first < y->first) ? -1 : 1;
+    }
+    if (x->second != y->second) {
+        return (x->second < y->second) ? -1 : 1;
+    }
+    return 0;
+}
+
+static int rows_similar(const Tuple *r1, const Tuple *r2, size_t cols, int *similar)
+{
+    Tuple *c1;
+    Tuple *c2;
+    size_t i;
+
+    c1 = malloc(cols * sizeof(*c1));
+    if (c1 == NULL) {
+        return -1;
+    }
+    c2 = malloc(cols * sizeof(*c2));
+    if (c2 == NULL) {
+        free(c1);
+        return -1;
+    }
+
+    for (i = 0; i < cols; i++) {
+        c1[i] = r1[i];
+        c2[i] = r2[i];
+    }
+
+    qsort(c1, cols, sizeof(*c1), tuple_cmp);
+    qsort(c2, cols, sizeof(*c2), tuple_cmp);
+
+    *similar = 1;
+    for (i = 0; i < cols; i++) {
+        if (tuple_cmp(&c1[i], &c2[i]) != 0) {
+            *similar = 0;
+            break;
+        }
+    }
+
+    free(c1);
+    free(c2);
+    return 0;
+}
+
+static int remove_similar_rows(Tuple matrix[][COLS], size_t rows, size_t *new_rows)
+{
+    size_t kept = 0;
+    size_t i;
+    size_t j;
+    size_t k;
+
+    if (new_rows == NULL) {
+        return -1;
+    }
+
+    for (i = 0; i < rows; i++) {
+        int duplicate = 0;
+        for (j = 0; j < kept; j++) {
+            int similar = 0;
+            if (rows_similar(matrix[i], matrix[j], COLS, &similar) != 0) {
+                return -1;
+            }
+            if (similar) {
+                duplicate = 1;
+                break;
+            }
+        }
+        if (!duplicate) {
+            if (kept != i) {
+                for (k = 0; k < COLS; k++) {
+                    matrix[kept][k] = matrix[i][k];
+                }
+            }
+            kept++;
+        }
+    }
+
+    *new_rows = kept;
+    return 0;
+}
+
+static void print_matrix(const Tuple matrix[][COLS], size_t rows)
+{
+    size_t i;
+    size_t j;
+
+    for (i = 0; i < rows; i++) {
+        printf("[");
+        for (j = 0; j < COLS; j++) {
+            printf("(%d, %d)", matrix[i][j].first, matrix[i][j].second);
+            if (j + 1 < COLS) {
+                printf(", ");
+            }
+        }
+        printf("]\n");
+    }
+}
+
+int main(void)
+{
+    Tuple matrix[][COLS] = {
+        { {4, 5}, {3, 2} },
+        { {2, 2}, {4, 6} },
+        { {3, 2}, {4, 5} }
+    };
+    size_t rows = sizeof(matrix) / sizeof(matrix[0]);
+    size_t new_rows = 0;
+
+    printf("Original matrix:\n");
+    print_matrix(matrix, rows);
+
+    if (remove_similar_rows(matrix, rows, &new_rows) != 0) {
+        fprintf(stderr, "Error: failed to process matrix\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Matrix after removing similar rows:\n");
+    print_matrix(matrix, new_rows);
+
+    return EXIT_SUCCESS;
+}
+```

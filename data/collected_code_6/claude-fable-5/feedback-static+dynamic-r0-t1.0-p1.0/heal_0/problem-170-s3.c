@@ -1,0 +1,50 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+int sum_range(const int *arr, size_t len, size_t start, size_t end, long long *result)
+{
+    size_t i;
+    long long sum;
+
+    if (arr == NULL || result == NULL) {
+        return -1;
+    }
+
+    if (len == 0 || start > end || end >= len) {
+        return -1;
+    }
+
+    sum = 0;
+    for (i = start; i <= end; i++) {
+        if ((arr[i] > 0 && sum > LLONG_MAX - arr[i]) ||
+            (arr[i] < 0 && sum < LLONG_MIN - arr[i])) {
+            return -1;
+        }
+        sum += arr[i];
+    }
+
+    *result = sum;
+    return 0;
+}
+
+int main(void)
+{
+    int numbers[] = { 2, 1, 5, 6, 8, 3, 4, 9, 10, 11, 8, 12 };
+    size_t len = sizeof(numbers) / sizeof(numbers[0]);
+    size_t start = 8;
+    size_t end = 10;
+    long long result;
+
+    if (sum_range(numbers, len, start, end, &result) != 0) {
+        fprintf(stderr, "Error: invalid input or overflow\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Sum of elements from index %zu to %zu is %lld\n",
+               start, end, result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

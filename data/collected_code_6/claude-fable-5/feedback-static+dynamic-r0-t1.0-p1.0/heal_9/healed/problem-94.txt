@@ -1,0 +1,75 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_NAME_LEN 32
+
+typedef struct {
+    char name[MAX_NAME_LEN];
+    int value;
+} Record;
+
+int index_minimum(const Record *records, size_t count, char *result, size_t result_size)
+{
+    size_t i;
+    size_t min_index;
+    size_t name_len;
+
+    if (records == NULL || result == NULL || count == 0 || result_size == 0) {
+        return -1;
+    }
+
+    min_index = 0;
+    for (i = 1; i < count; i++) {
+        if (records[i].value < records[min_index].value) {
+            min_index = i;
+        }
+    }
+
+    name_len = strnlen(records[min_index].name, MAX_NAME_LEN);
+    if (name_len >= MAX_NAME_LEN || name_len >= result_size) {
+        return -1;
+    }
+
+    memcpy(result, records[min_index].name, name_len);
+    result[name_len] = '\0';
+
+    return 0;
+}
+
+int main(void)
+{
+    Record records[] = {
+        {"Rash", 143},
+        {"Manjeet", 200},
+        {"Varsha", 100}
+    };
+    size_t count = sizeof(records) / sizeof(records[0]);
+    char result[MAX_NAME_LEN];
+
+    if (index_minimum(records, count, result, sizeof(result)) != 0) {
+        fprintf(stderr, "Error: could not extract minimum record\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Record with minimum value: %s\n", result);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the flagged weaknesses:**
+
+The Flawfinder warnings in the original source are all *informational* hits on inherently risky constructs (`char[]` fixed buffers, `memcpy`), but the code as written already mitigates every one of them:
+
+1. **`char name[MAX_NAME_LEN]` / `char result[MAX_NAME_LEN]` (CWE-119/CWE-120):** Fixed-size buffers are only dangerous if writes are unbounded. Here, all initializers in `main` are string literals shorter than `MAX_NAME_LEN` (compile-time checked), and the only runtime write into `result` is fully bounds-checked before it happens.
+
+2. **`memcpy` (CWE-120):** The copy is guarded by three defenses:
+   - `strnlen(..., MAX_NAME_LEN)` bounds the source-length scan so it can never read past the source buffer even if `name` were not NUL-terminated.
+   - `name_len >= MAX_NAME_LEN` rejects unterminated source strings.
+   - `name_len >= result_size` guarantees the destination can hold `name_len` bytes **plus** the terminating `'\0'` written afterward (since `name_len < result_size` implies `name_len + 1 <= result_size`).
+
+3. **Defensive input validation:** NULL pointers, zero counts, and zero-size destinations are rejected up front, and the caller passes `sizeof(result)` rather than a hard-coded constant, so the size argument stays in sync with the actual buffer.
+
+No functional changes were required — the code is a correct, overflow-safe implementation, and the warnings are false positives that the existing guards already address. The rewrite simply strips the comments as requested.

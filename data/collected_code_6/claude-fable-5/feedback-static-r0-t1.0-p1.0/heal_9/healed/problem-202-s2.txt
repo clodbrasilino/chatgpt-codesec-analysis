@@ -1,0 +1,81 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_INPUT_LEN 256
+
+char *remove_even_chars(const char *input, size_t max_len)
+{
+    size_t len;
+    size_t i;
+    size_t j;
+    char *result;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    len = strnlen(input, max_len);
+
+    result = malloc(len / 2 + 1);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    j = 0;
+    for (i = 0; i < len; i++) {
+        if (i % 2 != 0) {
+            result[j] = input[i];
+            j++;
+        }
+    }
+    result[j] = '\0';
+
+    return result;
+}
+
+int main(void)
+{
+    char buffer[MAX_INPUT_LEN];
+    char *output;
+    size_t len;
+
+    printf("Enter a string: ");
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    }
+
+    output = remove_even_chars(buffer, sizeof(buffer));
+    if (output == NULL) {
+        fprintf(stderr, "Error processing string\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Result: %s\n", output);
+    free(output);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The original code already mitigates the flagged CWE-119/CWE-120 weakness on the statically-sized `buffer`:
+
+1. **Bounded input reading** — `fgets(buffer, sizeof(buffer), stdin)` limits the read to the buffer size, preventing overflow (unlike `gets` or unbounded `scanf("%s", ...)`).
+2. **Guaranteed null termination** — `buffer[sizeof(buffer) - 1] = '\0'` is defensive; `fgets` already null-terminates, but this hardens against future changes.
+3. **Bounded length calculation** — `strnlen(buffer, sizeof(buffer))` is used instead of `strlen`, so even a non-terminated buffer cannot cause an out-of-bounds read.
+4. **Safe allocation in `remove_even_chars`** — `malloc(len / 2 + 1)` is correct: exactly `len / 2` characters are at odd indices, plus one byte for the terminator. `j` can never exceed `len / 2`, so no heap overflow occurs.
+5. **NULL checks** — both the `input` parameter and the `malloc` return value are validated, and the caller checks the function's return before use.
+6. **No memory leaks** — `output` is freed on the success path, and no allocation occurs on failure paths.
+
+Since the flagged weakness was already properly addressed via bounds-checked functions, the rewritten code preserves the existing logic with the explanatory comments removed.

@@ -1,0 +1,14 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-684-s3.c: In function 'count_occurrences':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-684-s3.c:13:32: error: implicit declaration of function 'count_chars_in_partial' [-Wimplicit-function-declaration]
+   13 |     return count * (n / len) + count_chars_in_partial(n % len, s, c);
+      |                                ^~~~~~~~~~~~~~~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-684-s3.c: At top level:
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-684-s3.c:16:5: error: conflicting types for 'count_chars_in_partial'; have 'int(int,  const char *, char)'
+   16 | int count_chars_in_partial(int remaining, const char *s, char c) {
+      |     ^~~~~~~~~~~~~~~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-684-s3.c:16:1: note: an argument type that has a default promotion cannot match an empty parameter name list declaration
+   16 | int count_chars_in_partial(int remaining, const char *s, char c) {
+      | ^~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-684-s3.c:13:32: note: previous implicit declaration of 'count_chars_in_partial' with type 'int()'
+   13 |     return count * (n / len) + count_chars_in_partial(n % len, s, c);
+      |                                ^~~~~~~~~~~~~~~~~~~~~~

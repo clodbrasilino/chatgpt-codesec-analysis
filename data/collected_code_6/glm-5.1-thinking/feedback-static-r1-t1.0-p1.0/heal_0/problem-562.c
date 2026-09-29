@@ -1,0 +1,39 @@
+#include <stdio.h>
+#include <stddef.h>
+
+size_t find_max_sublist_length(const int *list, size_t length) {
+    if (list == NULL || length == 0) {
+        return 0;
+    }
+
+    size_t max_length = 1;
+    size_t current_length = 1;
+
+    for (size_t i = 1; i < length; i++) {
+        if (list[i] > list[i - 1]) {
+            current_length++;
+        } else {
+            if (current_length > max_length) {
+                max_length = current_length;
+            }
+            current_length = 1;
+        }
+    }
+
+    if (current_length > max_length) {
+        max_length = current_length;
+    }
+
+    return max_length;
+}
+
+int main(void) {
+    int data[] = {1, 2, 3, 1, 2, 3, 4, 5, 2, 1};
+    size_t data_length = sizeof(data) / sizeof(data[0]);
+
+    size_t result = find_max_sublist_length(data, data_length);
+
+    printf("%zu\n", result);
+
+    return 0;
+}

@@ -1,0 +1,105 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+
+static int is_present(const int *list, size_t size, int value)
+{
+    for (size_t i = 0; i < size; i++) {
+        if (list[i] == value) {
+            return 1;
+        }
+    }
+    return 0;
+}
+
+static int already_collected(const int *result, size_t count, int value)
+{
+    for (size_t i = 0; i < count; i++) {
+        if (result[i] == value) {
+            return 1;
+        }
+    }
+    return 0;
+}
+
+int *find_nested_elements_in_list(const int *nested, size_t rows, size_t cols,
+                                  const int *list, size_t list_size,
+                                  size_t *out_count)
+{
+    if (nested == NULL || list == NULL || out_count == NULL) {
+        return NULL;
+    }
+
+    if (rows != 0 && cols > SIZE_MAX / rows) {
+        return NULL;
+    }
+
+    size_t capacity = rows * cols;
+    if (capacity == 0) {
+        capacity = 1;
+    }
+
+    if (capacity > SIZE_MAX / sizeof(int)) {
+        return NULL;
+    }
+
+    int *result = malloc(capacity * sizeof(*result));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    size_t count = 0;
+    for (size_t i = 0; i < rows; i++) {
+        for (size_t j = 0; j < cols; j++) {
+            int value = nested[i * cols + j];
+
+            if (is_present(list, list_size, value) &&
+                !already_collected(result, count, value)) {
+                result[count] = value;
+                count++;
+            }
+        }
+    }
+
+    *out_count = count;
+    return result;
+}
+
+int main(void)
+{
+    int nested[][4] = {
+        {3, 7, 1, 9},
+        {4, 2, 8, 5},
+        {6, 0, 3, 7}
+    };
+    int list[] = {7, 3, 5, 12, 0};
+    size_t count = 0;
+
+    int *matches = find_nested_elements_in_list(&nested[0][0],
+                                                sizeof(nested) / sizeof(nested[0]),
+                                                sizeof(nested[0]) / sizeof(nested[0][0]),
+                                                list,
+                                                sizeof(list) / sizeof(list[0]),
+                                                &count);
+    if (matches == NULL) {
+        fprintf(stderr, "Error: unable to compute matching elements.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Nested list elements present in the other list: ");
+    if (count == 0) {
+        printf("(none)");
+    } else {
+        for (size_t i = 0; i < count; i++) {
+            printf("%d ", matches[i]);
+        }
+    }
+    printf("\n");
+
+    free(matches);
+    matches = NULL;
+
+    return EXIT_SUCCESS;
+}
+```

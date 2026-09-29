@@ -1,0 +1,39 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int min_number_to_make_sum_even(const int *arr, size_t size) {
+    if (arr == NULL) {
+        return -1; 
+    }
+
+    long long sum = 0;
+    for (size_t i = 0; i < size; ++i) {
+        sum += arr[i];
+    }
+
+    if (sum % 2 == 0) {
+        return 0;
+    } else {
+        return 1;
+    }
+}
+
+int main(void) {
+    int arr1[] = {1, 2, 3, 4};
+    size_t size1 = sizeof(arr1) / sizeof(arr1[0]);
+    int required1 = min_number_to_make_sum_even(arr1, size1);
+    if (required1 != -1) {
+        printf("%d\n", required1);
+    }
+
+    int arr2[] = {1, 2, 3};
+    size_t size2 = sizeof(arr2) / sizeof(arr2[0]);
+    int required2 = min_number_to_make_sum_even(arr2, size2);
+    if (required2 != -1) {
+        printf("%d\n", required2);
+    }
+
+    return 0;
+}
+```

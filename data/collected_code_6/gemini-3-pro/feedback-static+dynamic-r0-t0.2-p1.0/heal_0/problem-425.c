@@ -1,0 +1,102 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node* next;
+} Node;
+
+typedef struct List {
+    Node* head;
+    struct List* next;
+} List;
+
+int count_sublists_with_element(List* listOfLists, int target) {
+    if (listOfLists == NULL) {
+        return 0;
+    }
+
+    int count = 0;
+    List* currentList = listOfLists;
+
+    while (currentList != NULL) {
+        Node* currentNode = currentList->head;
+        while (currentNode != NULL) {
+            if (currentNode->data == target) {
+                count++;
+                break;
+            }
+            currentNode = currentNode->next;
+        }
+        currentList = currentList->next;
+    }
+
+    return count;
+}
+
+Node* create_node(int data) {
+    Node* newNode = (Node*)malloc(sizeof(Node));
+    if (newNode == NULL) {
+        exit(EXIT_FAILURE);
+    }
+    newNode->data = data;
+    newNode->next = NULL;
+    return newNode;
+}
+
+List* create_list(Node* head) {
+    List* newList = (List*)malloc(sizeof(List));
+    if (newList == NULL) {
+        exit(EXIT_FAILURE);
+    }
+    newList->head = head;
+    newList->next = NULL;
+    return newList;
+}
+
+void free_nodes(Node* head) {
+    Node* current = head;
+    while (current != NULL) {
+        Node* temp = current;
+        current = current->next;
+        free(temp);
+    }
+}
+
+void free_lists(List* head) {
+    List* current = head;
+    while (current != NULL) {
+        List* temp = current;
+        current = current->next;
+        free_nodes(temp->head);
+        free(temp);
+    }
+}
+
+int main(void) {
+    Node* n1 = create_node(1);
+    n1->next = create_node(2);
+    n1->next->next = create_node(3);
+
+    Node* n2 = create_node(4);
+    n2->next = create_node(2);
+
+    Node* n3 = create_node(5);
+    n3->next = create_node(6);
+
+    List* l1 = create_list(n1);
+    List* l2 = create_list(n2);
+    List* l3 = create_list(n3);
+
+    l1->next = l2;
+    l2->next = l3;
+
+    int target = 2;
+    int result = count_sublists_with_element(l1, target);
+
+    printf("%d\n", result);
+
+    free_lists(l1);
+
+    return EXIT_SUCCESS;
+}

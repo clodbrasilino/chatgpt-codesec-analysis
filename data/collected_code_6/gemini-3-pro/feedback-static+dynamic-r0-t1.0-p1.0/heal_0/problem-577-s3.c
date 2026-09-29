@@ -1,0 +1,31 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int findLastDigitOfFactorial(int n) {
+    if (n < 0) {
+        return -1; 
+    }
+    if (n == 0 || n == 1 || n == 2 || n == 3 || n == 4) {
+        int fact = 1;
+        for (int i = 2; i <= n; i++) {
+            fact *= i;
+        }
+        return fact % 10;
+    }
+    return 0;
+}
+
+int main(void) {
+    int n;
+    if (scanf("%d", &n) != 1) {
+        return EXIT_FAILURE;
+    }
+    
+    int result = findLastDigitOfFactorial(n);
+    if (result == -1) {
+        return EXIT_FAILURE;
+    }
+    
+    printf("%d\n", result);
+    return EXIT_SUCCESS;
+}

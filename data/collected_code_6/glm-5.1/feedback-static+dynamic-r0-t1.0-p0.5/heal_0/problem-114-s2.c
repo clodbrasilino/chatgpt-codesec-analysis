@@ -1,0 +1,90 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    int a;
+    int b;
+} Tuple;
+
+typedef struct {
+    Tuple tuple;
+    int frequency;
+} TupleFrequency;
+
+int compare_tuples(const void *p1, const void *p2) {
+    const Tuple *t1 = (const Tuple *)p1;
+    const Tuple *t2 = (const Tuple *)p2;
+    if (t1->a != t2->a) {
+        return t1->a - t2->a;
+    }
+    return t1->b - t2->b;
+}
+
+TupleFrequency *assign_frequencies(Tuple *tuples, size_t num_tuples, size_t *out_size) {
+    if (tuples == NULL || out_size == NULL || num_tuples == 0) {
+        if (out_size != NULL) {
+            *out_size = 0;
+        }
+        return NULL;
+    }
+
+    Tuple *sorted_tuples = (Tuple *)malloc(num_tuples * sizeof(Tuple));
+    if (sorted_tuples == NULL) {
+        *out_size = 0;
+        return NULL;
+    }
+
+    memcpy(sorted_tuples, tuples, num_tuples * sizeof(Tuple));
+    qsort(sorted_tuples, num_tuples, sizeof(Tuple), compare_tuples);
+
+    size_t unique_count = 0;
+    TupleFrequency *result = (TupleFrequency *)malloc(num_tuples * sizeof(TupleFrequency));
+    if (result == NULL) {
+        free(sorted_tuples);
+        *out_size = 0;
+        return NULL;
+    }
+
+    size_t i = 0;
+    while (i < num_tuples) {
+        size_t j = i;
+        while (j < num_tuples && compare_tuples(&sorted_tuples[i], &sorted_tuples[j]) == 0) {
+            j++;
+        }
+
+        result[unique_count].tuple = sorted_tuples[i];
+        result[unique_count].frequency = j - i;
+        unique_count++;
+
+        i = j;
+    }
+
+    TupleFrequency *final_result = (TupleFrequency *)realloc(result, unique_count * sizeof(TupleFrequency));
+    if (final_result == NULL) {
+        free(sorted_tuples);
+        free(result);
+        *out_size = 0;
+        return NULL;
+    }
+
+    free(sorted_tuples);
+    *out_size = unique_count;
+    return final_result;
+}
+
+int main(void) {
+    Tuple tuples[] = {{1, 2}, {3, 4}, {1, 2}, {5, 6}, {3, 4}, {1, 2}};
+    size_t num_tuples = sizeof(tuples) / sizeof(tuples[0]);
+    size_t out_size = 0;
+
+    TupleFrequency *freq_list = assign_frequencies(tuples, num_tuples, &out_size);
+    if (freq_list != NULL) {
+        for (size_t i = 0; i < out_size; i++) {
+            printf("(%d, %d): %d\n", freq_list[i].tuple.a, freq_list[i].tuple.b, freq_list[i].frequency);
+        }
+        free(freq_list);
+    }
+
+    return 0;
+}

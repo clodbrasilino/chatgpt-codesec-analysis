@@ -1,0 +1,78 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+int multiply_consecutive(const int *list, size_t length, long long *result, size_t result_size)
+{
+    size_t i;
+
+    if (list == NULL || result == NULL) {
+        return -1;
+    }
+
+    if (length < 2U) {
+        return -1;
+    }
+
+    if (result_size < (length - 1U)) {
+        return -1;
+    }
+
+    for (i = 0U; i < (length - 1U); i++) {
+        long long a = (long long)list[i];
+        long long b = (long long)list[i + 1U];
+
+        if (a != 0LL) {
+            if ((b > 0LL) && (a > (LLONG_MAX / b))) {
+                return -1;
+            }
+            if ((b > 0LL) && (a < (LLONG_MIN / b))) {
+                return -1;
+            }
+            if ((b < 0LL) && (a > 0LL) && (b < (LLONG_MIN / a))) {
+                return -1;
+            }
+            if ((b < 0LL) && (a < 0LL) && (b < (LLONG_MAX / a))) {
+                return -1;
+            }
+        }
+
+        result[i] = a * b;
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    int numbers[] = {2, 3, 4, 5, 6};
+    size_t count = sizeof(numbers) / sizeof(numbers[0]);
+    long long *products = NULL;
+    size_t i;
+    int status;
+
+    products = malloc((count - 1U) * sizeof(*products));
+    if (products == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    status = multiply_consecutive(numbers, count, products, count - 1U);
+    if (status != 0) {
+        fprintf(stderr, "Multiplication failed\n");
+        free(products);
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0U; i < (count - 1U); i++) {
+        if (printf("%d * %d = %lld\n", numbers[i], numbers[i + 1U], products[i]) < 0) {
+            free(products);
+            return EXIT_FAILURE;
+        }
+    }
+
+    free(products);
+    products = NULL;
+
+    return EXIT_SUCCESS;
+}

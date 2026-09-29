@@ -1,0 +1,22 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-861-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-861-s2.c:22:20: style: Condition 'alloc_size<=len' is always false [knownConditionTrueFalse]
+    if (alloc_size <= len) return NULL;
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-861-s2.c:21:23: note: alloc_size is assigned 'len+1' here.
+    size_t alloc_size = len + 1;
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-861-s2.c:22:20: note: Condition 'alloc_size<=len' is always false
+    if (alloc_size <= len) return NULL;
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-861-s2.c:72:87: style: Condition 'word_list[i][target_len]=='\0'' is always true [knownConditionTrueFalse]
+        if (memcmp(word_list[i], target, target_len) == 0 && word_list[i][target_len] == '\0') continue;
+                                                                                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-861-s2.c:71:22: note: Assuming that condition 'word_len!=target_len' is not redundant
+        if (word_len != target_len) continue;
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-861-s2.c:69:33: note: Return index of string to the first element that is 0
+        size_t word_len = strlen(word_list[i]);
+                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-861-s2.c:72:87: note: Condition 'word_list[i][target_len]=='\0'' is always true
+        if (memcmp(word_list[i], target, target_len) == 0 && word_list[i][target_len] == '\0') continue;
+                                                                                      ^

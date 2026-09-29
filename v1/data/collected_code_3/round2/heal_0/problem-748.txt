@@ -1,0 +1,29 @@
+Unfortunately, C does not natively support regular expressions (regex). However, you can achieve the desired functionality using string manipulation functions in C. Here is a simple C program that adds spaces before words starting with capital letters in a given string:
+
+```c
+#include <stdio.h>
+#include <ctype.h>
+#include <string.h>
+
+void addSpaces(char* str) {
+    int n = strlen(str);
+    char result[2*n];
+    int j = 0;
+    for (int i = 0; i < n; i++) {
+        if (isupper(str[i]) && i != 0) {
+            result[j++] = ' ';
+        }
+        result[j++] = str[i];
+    }
+    result[j] = '\0';
+    printf("%s\n", result);
+}
+
+int main() {
+    char str[] = "HelloWorldThisIsATest";
+    addSpaces(str);
+    return 0;
+}
+```
+
+This program works by iterating over the input string and checking if each character is an uppercase letter. If it is, it adds a space to the result string before adding the character. Note that it doesn't add a space if the uppercase letter is the first character in the string. The result string is then printed to the console.

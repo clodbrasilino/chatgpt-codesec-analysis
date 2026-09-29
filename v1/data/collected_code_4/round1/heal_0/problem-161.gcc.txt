@@ -1,0 +1,471 @@
+./collected_code_4/round1//heal_0//problem-161.c: In function 'push':
+./collected_code_4/round1//heal_0//problem-161.c:11:21: warning: dereference of possibly-NULL 'new_node' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   11 |     new_node->data  = new_data;
+      |     ~~~~~~~~~~~~~~~~^~~~~~~~~~
+  'push': events 1-2
+    |
+    |   10 |     struct Node* new_node = (struct Node*)malloc(sizeof(struct Node));
+    |      |                                           ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                                           |
+    |      |                                           (1) this call could return NULL
+    |   11 |     new_node->data  = new_data;
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~             
+    |      |                     |
+    |      |                     (2) 'new_node' could be NULL: unchecked value from (1)
+    |
+./collected_code_4/round1//heal_0//problem-161.c: In function 'removeElements':
+./collected_code_4/round1//heal_0//problem-161.c:24:21: warning: use after 'free' of 'temp1' [CWE-416] [-Wanalyzer-use-after-free]
+   24 |             if(temp1->data == temp2->data) {
+      |                ~~~~~^~~~~~
+  'removeElements': events 1-4
+    |
+    |   21 |     while(temp1 != NULL) {
+    |      |                 ^
+    |      |                 |
+    |      |                 (1) following 'true' branch (when 'temp1' is non-NULL)...
+    |   22 |         temp2 = listB;
+    |      |         ~~~~~~~~~~~~~
+    |      |               |
+    |      |               (2) ...to here
+    |   23 |         while(temp2 != NULL) {
+    |   24 |             if(temp1->data == temp2->data) {
+    |      |               ~  
+    |      |               |
+    |      |               (3) following 'false' branch...
+    |......
+    |   34 |             temp2 = temp2 -> next;
+    |      |             ~~~~~~~~~~~~~~~~~~~~~
+    |      |                   |
+    |      |                   (4) ...to here
+    |
+  'removeElements': events 5-6
+    |
+    |   21 |     while(temp1 != NULL) {
+    |      |                 ^
+    |      |                 |
+    |      |                 (5) following 'true' branch (when 'temp1' is non-NULL)...
+    |   22 |         temp2 = listB;
+    |      |         ~~~~~~~~~~~~~
+    |      |               |
+    |      |               (6) ...to here
+    |
+  'removeElements': events 7-11
+    |
+    |   23 |         while(temp2 != NULL) {
+    |      |                     ^
+    |      |                     |
+    |      |                     (7) following 'true' branch (when 'temp2' is non-NULL)...
+    |   24 |             if(temp1->data == temp2->data) {
+    |      |                ~~~~~~~~~~~
+    |      |                     |
+    |      |                     (8) ...to here
+    |   25 |                 if(temp1->next == NULL) {
+    |      |                   ~  
+    |      |                   |
+    |      |                   (9) following 'false' branch...
+    |......
+    |   30 |                     prev->next = temp1->next;
+    |      |                                  ~~~~~~~~~~~
+    |      |                                       |
+    |      |                                       (10) ...to here
+    |   31 |                     free(temp1);
+    |      |                     ~~~~~~~~~~~
+    |      |                     |
+    |      |                     (11) freed here
+    |
+  'removeElements': events 12-14
+    |
+    |   23 |         while(temp2 != NULL) {
+    |      |                     ^
+    |      |                     |
+    |      |                     (12) following 'true' branch (when 'temp2' is non-NULL)...
+    |   24 |             if(temp1->data == temp2->data) {
+    |      |                ~~~~~~~~~~~
+    |      |                     |
+    |      |                     (13) ...to here
+    |      |                     (14) use after 'free' of 'temp1'; freed at (11)
+    |
+./collected_code_4/round1//heal_0//problem-161.c:26:32: warning: use of uninitialized value 'prev' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   26 |                     prev->next = NULL;
+      |                                ^
+  'removeElements': events 1-2
+    |
+    |   19 |     struct Node* prev;
+    |      |                  ^~~~
+    |      |                  |
+    |      |                  (1) region created on stack here
+    |      |                  (2) capacity: 8 bytes
+    |
+  'removeElements': events 3-4
+    |
+    |   21 |     while(temp1 != NULL) {
+    |      |                 ^
+    |      |                 |
+    |      |                 (3) following 'true' branch (when 'temp1' is non-NULL)...
+    |   22 |         temp2 = listB;
+    |      |         ~~~~~~~~~~~~~
+    |      |               |
+    |      |               (4) ...to here
+    |
+  'removeElements': events 5-9
+    |
+    |   23 |         while(temp2 != NULL) {
+    |      |                     ^
+    |      |                     |
+    |      |                     (5) following 'true' branch (when 'temp2' is non-NULL)...
+    |   24 |             if(temp1->data == temp2->data) {
+    |      |               ~~~~~~~~~~~~
+    |      |               |     |
+    |      |               |     (6) ...to here
+    |      |               (7) following 'true' branch...
+    |   25 |                 if(temp1->next == NULL) {
+    |      |                   ~~~~~~~~~~~~
+    |      |                   |     |
+    |      |                   |     (8) ...to here
+    |      |                   (9) following 'true' branch...
+    |
+  'removeElements': event 10
+    |
+    |   26 |                     prev->next = NULL;
+    |      |                                ^
+    |      |                                |
+    |      |                                (10) ...to here
+    |
+  'removeElements': event 11
+    |
+    |   26 |                     prev->next = NULL;
+    |      |                                ^
+    |      |                                |
+    |      |                                (11) use of uninitialized value 'prev' here
+    |
+./collected_code_4/round1//heal_0//problem-161.c:30:32: warning: use of uninitialized value 'prev' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   30 |                     prev->next = temp1->next;
+      |                     ~~~~~~~~~~~^~~~~~~~~~~~~
+  'removeElements': events 1-2
+    |
+    |   19 |     struct Node* prev;
+    |      |                  ^~~~
+    |      |                  |
+    |      |                  (1) region created on stack here
+    |      |                  (2) capacity: 8 bytes
+    |
+  'removeElements': events 3-4
+    |
+    |   21 |     while(temp1 != NULL) {
+    |      |                 ^
+    |      |                 |
+    |      |                 (3) following 'true' branch (when 'temp1' is non-NULL)...
+    |   22 |         temp2 = listB;
+    |      |         ~~~~~~~~~~~~~
+    |      |               |
+    |      |               (4) ...to here
+    |
+  'removeElements': events 5-11
+    |
+    |   23 |         while(temp2 != NULL) {
+    |      |                     ^
+    |      |                     |
+    |      |                     (5) following 'true' branch (when 'temp2' is non-NULL)...
+    |   24 |             if(temp1->data == temp2->data) {
+    |      |               ~~~~~~~~~~~~
+    |      |               |     |
+    |      |               |     (6) ...to here
+    |      |               (7) following 'true' branch...
+    |   25 |                 if(temp1->next == NULL) {
+    |      |                   ~~~~~~~~~~~~
+    |      |                   |     |
+    |      |                   |     (8) ...to here
+    |      |                   (9) following 'false' branch...
+    |......
+    |   30 |                     prev->next = temp1->next;
+    |      |                     ~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                                |      |
+    |      |                                |      (10) ...to here
+    |      |                                (11) use of uninitialized value 'prev' here
+    |
+./collected_code_4/round1//heal_0//problem-161.c:30:32: warning: use of uninitialized value 'prev' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   30 |                     prev->next = temp1->next;
+      |                     ~~~~~~~~~~~^~~~~~~~~~~~~
+  'main': events 1-2
+    |
+    |   49 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   61 |     printList(listA);
+    |      |     ~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) calling 'printList' from 'main'
+    |
+    +--> 'printList': event 3
+           |
+           |   42 | void printList(struct Node *node) {
+           |      |      ^~~~~~~~~
+           |      |      |
+           |      |      (3) entry to 'printList'
+           |
+         'printList': events 4-5
+           |
+           |   43 |     while(node != NULL) {
+           |      |                ^
+           |      |                |
+           |      |                (4) following 'true' branch (when 'node' is non-NULL)...
+           |   44 |         printf(" %d ", node->data);
+           |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |         |
+           |      |         (5) ...to here
+           |
+         'printList': events 6-7
+           |
+           |   43 |     while(node != NULL) {
+           |      |                ^
+           |      |                |
+           |      |                (6) following 'true' branch (when 'node' is non-NULL)...
+           |   44 |         printf(" %d ", node->data);
+           |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |         |
+           |      |         (7) ...to here
+           |
+         'printList': events 8-9
+           |
+           |   43 |     while(node != NULL) {
+           |      |                ^
+           |      |                |
+           |      |                (8) following 'true' branch (when 'node' is non-NULL)...
+           |   44 |         printf(" %d ", node->data);
+           |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |         |
+           |      |         (9) ...to here
+           |
+         'printList': events 10-11
+           |
+           |   43 |     while(node != NULL) {
+           |      |                ^
+           |      |                |
+           |      |                (10) following 'false' branch (when 'node' is NULL)...
+           |......
+           |   47 | }
+           |      | ~               
+           |      | |
+           |      | (11) ...to here
+           |
+    <------+
+    |
+  'main': events 12-13
+    |
+    |   61 |     printList(listA);
+    |      |     ^~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (12) returning to 'main' from 'printList'
+    |   62 |     puts("\nList B before removing common elements: ");
+    |   63 |     printList(listB);
+    |      |     ~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (13) calling 'printList' from 'main'
+    |
+    +--> 'printList': event 14
+           |
+           |   42 | void printList(struct Node *node) {
+           |      |      ^~~~~~~~~
+           |      |      |
+           |      |      (14) entry to 'printList'
+           |
+         'printList': events 15-16
+           |
+           |   43 |     while(node != NULL) {
+           |      |                ^
+           |      |                |
+           |      |                (15) following 'true' branch (when 'node' is non-NULL)...
+           |   44 |         printf(" %d ", node->data);
+           |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |         |
+           |      |         (16) ...to here
+           |
+         'printList': events 17-18
+           |
+           |   43 |     while(node != NULL) {
+           |      |                ^
+           |      |                |
+           |      |                (17) following 'true' branch (when 'node' is non-NULL)...
+           |   44 |         printf(" %d ", node->data);
+           |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |         |
+           |      |         (18) ...to here
+           |
+         'printList': events 19-20
+           |
+           |   43 |     while(node != NULL) {
+           |      |                ^
+           |      |                |
+           |      |                (19) following 'true' branch (when 'node' is non-NULL)...
+           |   44 |         printf(" %d ", node->data);
+           |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |         |
+           |      |         (20) ...to here
+           |
+         'printList': events 21-22
+           |
+           |   43 |     while(node != NULL) {
+           |      |                ^
+           |      |                |
+           |      |                (21) following 'false' branch (when 'node' is NULL)...
+           |......
+           |   47 | }
+           |      | ~               
+           |      | |
+           |      | (22) ...to here
+           |
+    <------+
+    |
+  'main': events 23-24
+    |
+    |   63 |     printList(listB);
+    |      |     ^~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (23) returning to 'main' from 'printList'
+    |   64 | 
+    |   65 |     removeElements(listA, listB);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (24) calling 'removeElements' from 'main'
+    |
+    +--> 'removeElements': events 25-27
+           |
+           |   16 | void removeElements(struct Node *listA, struct Node *listB) {
+           |      |      ^~~~~~~~~~~~~~
+           |      |      |
+           |      |      (25) entry to 'removeElements'
+           |......
+           |   19 |     struct Node* prev;
+           |      |                  ~~~~
+           |      |                  |
+           |      |                  (26) region created on stack here
+           |      |                  (27) capacity: 8 bytes
+           |
+         'removeElements': events 28-29
+           |
+           |   21 |     while(temp1 != NULL) {
+           |      |                 ^
+           |      |                 |
+           |      |                 (28) following 'true' branch (when 'temp1' is non-NULL)...
+           |   22 |         temp2 = listB;
+           |      |         ~~~~~~~~~~~~~
+           |      |               |
+           |      |               (29) ...to here
+           |
+         'removeElements': events 30-33
+           |
+           |   23 |         while(temp2 != NULL) {
+           |      |                     ^
+           |      |                     |
+           |      |                     (30) following 'true' branch (when 'temp2' is non-NULL)...
+           |   24 |             if(temp1->data == temp2->data) {
+           |      |               ~~~~~~~~~~~~
+           |      |               |     |
+           |      |               |     (31) ...to here
+           |      |               (32) following 'false' branch...
+           |......
+           |   34 |             temp2 = temp2 -> next;
+           |      |             ~~~~~~~~~~~~~~~~~~~~~
+           |      |                   |
+           |      |                   (33) ...to here
+           |
+         'removeElements': events 34-40
+           |
+           |   23 |         while(temp2 != NULL) {
+           |      |                     ^
+           |      |                     |
+           |      |                     (34) following 'true' branch (when 'temp2' is non-NULL)...
+           |   24 |             if(temp1->data == temp2->data) {
+           |      |               ~~~~~~~~~~~~
+           |      |               |     |
+           |      |               |     (35) ...to here
+           |      |               (36) following 'true' branch...
+           |   25 |                 if(temp1->next == NULL) {
+           |      |                   ~~~~~~~~~~~~
+           |      |                   |     |
+           |      |                   |     (37) ...to here
+           |      |                   (38) following 'false' branch...
+           |......
+           |   30 |                     prev->next = temp1->next;
+           |      |                     ~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                                |      |
+           |      |                                |      (39) ...to here
+           |      |                                (40) use of uninitialized value 'prev' here
+           |
+./collected_code_4/round1//heal_0//problem-161.c:38:15: warning: use after 'free' of 'temp1' [CWE-416] [-Wanalyzer-use-after-free]
+   38 |         temp1 = temp1 -> next;
+      |         ~~~~~~^~~~~~~~~~~~~~~
+  'removeElements': events 1-4
+    |
+    |   21 |     while(temp1 != NULL) {
+    |      |                 ^
+    |      |                 |
+    |      |                 (1) following 'true' branch (when 'temp1' is non-NULL)...
+    |   22 |         temp2 = listB;
+    |      |         ~~~~~~~~~~~~~
+    |      |               |
+    |      |               (2) ...to here
+    |   23 |         while(temp2 != NULL) {
+    |   24 |             if(temp1->data == temp2->data) {
+    |      |               ~  
+    |      |               |
+    |      |               (3) following 'false' branch...
+    |......
+    |   34 |             temp2 = temp2 -> next;
+    |      |             ~~~~~~~~~~~~~~~~~~~~~
+    |      |                   |
+    |      |                   (4) ...to here
+    |
+  'removeElements': events 5-6
+    |
+    |   21 |     while(temp1 != NULL) {
+    |      |                 ^
+    |      |                 |
+    |      |                 (5) following 'true' branch (when 'temp1' is non-NULL)...
+    |   22 |         temp2 = listB;
+    |      |         ~~~~~~~~~~~~~
+    |      |               |
+    |      |               (6) ...to here
+    |
+  'removeElements': events 7-11
+    |
+    |   23 |         while(temp2 != NULL) {
+    |      |                     ^
+    |      |                     |
+    |      |                     (7) following 'true' branch (when 'temp2' is non-NULL)...
+    |   24 |             if(temp1->data == temp2->data) {
+    |      |                ~~~~~~~~~~~
+    |      |                     |
+    |      |                     (8) ...to here
+    |   25 |                 if(temp1->next == NULL) {
+    |      |                   ~  
+    |      |                   |
+    |      |                   (9) following 'false' branch...
+    |......
+    |   30 |                     prev->next = temp1->next;
+    |      |                                  ~~~~~~~~~~~
+    |      |                                       |
+    |      |                                       (10) ...to here
+    |   31 |                     free(temp1);
+    |      |                     ~~~~~~~~~~~
+    |      |                     |
+    |      |                     (11) freed here
+    |
+  'removeElements': events 12-14
+    |
+    |   23 |         while(temp2 != NULL) {
+    |      |                     ^
+    |      |                     |
+    |      |                     (12) following 'false' branch (when 'temp2' is NULL)...
+    |......
+    |   37 |         prev = temp1;
+    |      |         ~~~~~~~~~~~~ 
+    |      |              |
+    |      |              (13) ...to here
+    |   38 |         temp1 = temp1 -> next;
+    |      |         ~~~~~~~~~~~~~~~~~~~~~
+    |      |               |
+    |      |               (14) use after 'free' of 'temp1'; freed at (11)
+    |

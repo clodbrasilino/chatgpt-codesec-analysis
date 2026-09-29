@@ -1,0 +1,71 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+
+#define MAX_WORD_LENGTH 256
+
+bool is_word_length_odd(const char *word, size_t max_length)
+{
+    size_t length;
+
+    if (word == NULL) {
+        return false;
+    }
+
+    length = strnlen(word, max_length);
+    return (length % 2U) != 0U;
+}
+
+int main(void)
+{
+    char buffer[MAX_WORD_LENGTH];
+    size_t length;
+    int ch;
+
+    printf("Enter a word: ");
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error: failed to read input.\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1U] = '\0';
+
+    length = strnlen(buffer, sizeof(buffer));
+
+    if (length > 0U && buffer[length - 1U] == '\n') {
+        buffer[length - 1U] = '\0';
+        length--;
+    } else if (length == sizeof(buffer) - 1U) {
+        do {
+            ch = getchar();
+        } while (ch != '\n' && ch != EOF);
+    }
+
+    if (length == 0U || buffer[0] == '\0') {
+        fprintf(stderr, "Error: empty input.\n");
+        return 1;
+    }
+
+    if (is_word_length_odd(buffer, sizeof(buffer))) {
+        printf("The length of the word \"%s\" is odd.\n", buffer);
+    } else {
+        printf("The length of the word \"%s\" is even.\n", buffer);
+    }
+
+    return 0;
+}
+```
+
+**Analysis of the original code and applied fixes:**
+
+The original code was already fairly defensive, but the Flawfinder warnings pointed to a few areas that can be hardened further:
+
+1. **CWE-126 (`strlen` over-read):** Both uses of `strlen` were replaced with `strnlen`, which takes an explicit upper bound. Even though `fgets` guarantees NUL-termination on success, `strnlen` makes the bound explicit and protects against future refactoring where the buffer might not be terminated. The helper function `is_word_length_odd` now also accepts a `max_length` parameter so it can never scan beyond the caller's buffer.
+
+2. **CWE-119/CWE-120 (statically-sized array):** The buffer itself is retained (a fixed-size buffer with `fgets(buffer, sizeof(buffer), stdin)` is safe), but two additional safeguards were added:
+   - An explicit `buffer[sizeof(buffer) - 1U] = '\0'` as a belt-and-suspenders guarantee of termination.
+   - Detection of truncated input (no newline found and the buffer is full), in which case the remainder of the input line is drained from `stdin` so leftover characters can't affect subsequent reads.
+
+3. **Minor robustness improvements:** The cast to `int` on `sizeof(buffer)` avoids an implicit conversion warning on some compilers, and the empty-input check now uses the computed `length` directly.

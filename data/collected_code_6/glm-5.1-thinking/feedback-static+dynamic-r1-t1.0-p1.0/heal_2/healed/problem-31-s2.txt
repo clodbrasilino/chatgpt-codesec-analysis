@@ -1,0 +1,211 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    int val;
+    int count;
+} FreqNode;
+
+typedef struct {
+    FreqNode *arr;
+    int capacity;
+    int size;
+} MinHeap;
+
+void swap(FreqNode *a, FreqNode *b) {
+    FreqNode temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+void heapify_up(MinHeap *heap, int index) {
+    while (index > 0) {
+        int parent = (index - 1) / 2;
+        if (heap->arr[index].count >= heap->arr[parent].count) {
+            break;
+        }
+        swap(&heap->arr[index], &heap->arr[parent]);
+        index = parent;
+    }
+}
+
+void heapify_down(MinHeap *heap, int index) {
+    while (1) {
+        int left = 2 * index + 1;
+        int right = 2 * index + 2;
+        int smallest = index;
+        if (left < heap->size && heap->arr[left].count < heap->arr[smallest].count) {
+            smallest = left;
+        }
+        if (right < heap->size && heap->arr[right].count < heap->arr[smallest].count) {
+            smallest = right;
+        }
+        if (smallest == index) {
+            break;
+        }
+        swap(&heap->arr[index], &heap->arr[smallest]);
+        index = smallest;
+    }
+}
+
+MinHeap* create_heap(int capacity) {
+    MinHeap *heap = (MinHeap*)malloc(sizeof(MinHeap));
+    if (!heap) {
+        return NULL;
+    }
+    heap->arr = (FreqNode*)malloc(sizeof(FreqNode) * capacity);
+    if (!heap->arr) {
+        free(heap);
+        return NULL;
+    }
+    heap->capacity = capacity;
+    heap->size = 0;
+    return heap;
+}
+
+void free_heap(MinHeap *heap) {
+    if (heap) {
+        free(heap->arr);
+        free(heap);
+    }
+}
+
+void push_heap(MinHeap *heap, FreqNode node) {
+    if (heap->size < heap->capacity) {
+        heap->arr[heap->size] = node;
+        heapify_up(heap, heap->size);
+        heap->size++;
+    } else if (node.count > heap->arr[0].count) {
+        heap->arr[0] = node;
+        heapify_down(heap, 0);
+    }
+}
+
+FreqNode pop_heap(MinHeap *heap) {
+    FreqNode root = heap->arr[0];
+    heap->arr[0] = heap->arr[heap->size - 1];
+    heap->size--;
+    if (heap->size > 0) {
+        heapify_down(heap, 0);
+    }
+    return root;
+}
+
+int compare_ints(const void *a, const void *b) {
+    int int_a = *(const int*)a;
+    int int_b = *(const int*)b;
+    if (int_a < int_b) return -1;
+    if (int_a > int_b) return 1;
+    return 0;
+}
+
+int* topKFrequent(int** lists, const int* listSizes, int numLists, int k, int* returnSize) {
+    *returnSize = 0;
+    if (k <= 0) {
+        return NULL;
+    }
+
+    int totalSize = 0;
+    for (int i = 0; i < numLists; i++) {
+        totalSize += listSizes[i];
+    }
+
+    if (totalSize == 0) {
+        return NULL;
+    }
+
+    int *merged = (int*)malloc(sizeof(int) * totalSize);
+    if (!merged) {
+        return NULL;
+    }
+
+    int idx = 0;
+    for (int i = 0; i < numLists; i++) {
+        for (int j = 0; j < listSizes[i]; j++) {
+            merged[idx++] = lists[i][j];
+        }
+    }
+
+    qsort(merged, totalSize, sizeof(int), compare_ints);
+
+    FreqNode *freqs = (FreqNode*)malloc(sizeof(FreqNode) * totalSize);
+    if (!freqs) {
+        free(merged);
+        return NULL;
+    }
+
+    int freqCount = 0;
+    freqs[0].val = merged[0];
+    freqs[0].count = 1;
+    freqCount = 1;
+
+    for (int i = 1; i < totalSize; i++) {
+        if (merged[i] == merged[i - 1]) {
+            freqs[freqCount - 1].count++;
+        } else {
+            freqs[freqCount].val = merged[i];
+            freqs[freqCount].count = 1;
+            freqCount++;
+        }
+    }
+    free(merged);
+
+    MinHeap *heap = create_heap(k);
+    if (!heap) {
+        free(freqs);
+        return NULL;
+    }
+
+    for (int i = 0; i < freqCount; i++) {
+        push_heap(heap, freqs[i]);
+    }
+    free(freqs);
+
+    int actualK = freqCount < k ? freqCount : k;
+    if (actualK == 0) {
+        free_heap(heap);
+        return NULL;
+    }
+
+    int *result = (int*)malloc(sizeof(int) * actualK);
+    if (!result) {
+        free_heap(heap);
+        return NULL;
+    }
+
+    for (int i = 0; i < actualK; i++) {
+        FreqNode node = pop_heap(heap);
+        result[i] = node.val;
+    }
+    *returnSize = actualK;
+
+    free_heap(heap);
+    return result;
+}
+
+int main() {
+    int list1[] = {1, 3, 5};
+    int list2[] = {2, 3, 4, 5};
+    int list3[] = {1, 3, 5, 7};
+
+    int* lists[] = {list1, list2, list3};
+    const int listSizes[] = {3, 4, 4};
+    int numLists = 3;
+    int k = 2;
+    int returnSize = 0;
+
+    int* result = topKFrequent(lists, listSizes, numLists, k, &returnSize);
+
+    if (result) {
+        for (int i = 0; i < returnSize; i++) {
+            printf("%d ", result[i]);
+        }
+        printf("\n");
+        free(result);
+    }
+
+    return 0;
+}
+```

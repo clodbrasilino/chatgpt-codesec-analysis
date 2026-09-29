@@ -1,0 +1,56 @@
+collected_code_3/problem-889-1.c: In function 'push':
+collected_code_3/problem-889-1.c:35:20: warning: dereference of NULL 'new_node' [CWE-476] [-Wanalyzer-null-dereference]
+   35 |     new_node->next = (*head_ref);
+      |     ~~~~~~~~~~~~~~~^~~~~~~~~~~~~
+  'push': events 1-2
+    |
+    |   33 | void push(Node** head_ref, int new_data) {
+    |      |      ^~~~
+    |      |      |
+    |      |      (1) entry to 'push'
+    |   34 |     Node* new_node = createNode(new_data);
+    |      |                      ~~~~~~~~~~~~~~~~~~~~
+    |      |                      |
+    |      |                      (2) calling 'createNode' from 'push'
+    |
+    +--> 'createNode': events 3-5
+           |
+           |   22 | Node* createNode(int data) {
+           |      |       ^~~~~~~~~~
+           |      |       |
+           |      |       (3) entry to 'createNode'
+           |   23 |     Node* newNode = (Node*)malloc(sizeof(Node));
+           |   24 |     if (!newNode) {
+           |      |        ~
+           |      |        |
+           |      |        (4) following 'true' branch (when 'newNode' is NULL)...
+           |   25 |         printf("Memory error\n");
+           |      |         ~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |         |
+           |      |         (5) ...to here
+           |
+         'createNode': event 6
+           |
+           |   26 |         return NULL;
+           |      |                ^~~~
+           |      |                |
+           |      |                (6) '0' is NULL
+           |
+    <------+
+    |
+  'push': events 7-10
+    |
+    |   34 |     Node* new_node = createNode(new_data);
+    |      |                      ^~~~~~~~~~~~~~~~~~~~
+    |      |                      |
+    |      |                      (7) returning to 'push' from 'createNode'
+    |   35 |     new_node->next = (*head_ref);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                    |
+    |      |                    (10) dereference of NULL 'new_node'
+    |   36 |     (*head_ref) = new_node;
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~
+    |      |                 |
+    |      |                 (8) 'new_node' is NULL
+    |      |                 (9) 'new_node' is NULL
+    |

@@ -1,0 +1,54 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+bool get_elements(const int *list, size_t list_size,
+                  const size_t *indices, size_t indices_size,
+                  int *result)
+{
+    size_t i;
+
+    if (list == NULL || indices == NULL || result == NULL) {
+        return false;
+    }
+
+    for (i = 0; i < indices_size; i++) {
+        if (indices[i] >= list_size) {
+            return false;
+        }
+        result[i] = list[indices[i]];
+    }
+
+    return true;
+}
+
+int main(void)
+{
+    int list[] = {10, 20, 30, 40, 50, 60, 70};
+    size_t list_size = sizeof(list) / sizeof(list[0]);
+    size_t indices[] = {0, 2, 4, 6};
+    size_t indices_size = sizeof(indices) / sizeof(indices[0]);
+    int *result;
+    size_t i;
+
+    result = malloc(indices_size * sizeof(*result));
+    if (result == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    if (!get_elements(list, list_size, indices, indices_size, result)) {
+        fprintf(stderr, "Failed to access elements: invalid input or index out of range\n");
+        free(result);
+        return EXIT_FAILURE;
+    }
+
+    printf("Selected elements: ");
+    for (i = 0; i < indices_size; i++) {
+        printf("%d ", result[i]);
+    }
+    printf("\n");
+
+    free(result);
+    return EXIT_SUCCESS;
+}

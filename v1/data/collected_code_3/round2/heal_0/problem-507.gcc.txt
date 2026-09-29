@@ -1,0 +1,57 @@
+collected_code_3/problem-507-2.c: In function 'removeWord':
+collected_code_3/problem-507-2.c:11:12: warning: use of possibly-NULL '*words_29(D) + _2' where non-null expected [CWE-690] [-Wanalyzer-possible-null-argument]
+   11 |         if(strcmp(words[i], word) == 0) {
+      |            ^~~~~~~~~~~~~~~~~~~~~~
+  'main': events 1-15
+    |
+    |   20 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   25 |     for(int i = 0; i < size; i++) {
+    |      |                    ~~~~~~~~
+    |      |                      |
+    |      |                      (2) following 'true' branch...
+    |      |                      (5) following 'true' branch...
+    |      |                      (7) following 'true' branch...
+    |      |                      (9) following 'true' branch...
+    |      |                      (11) following 'true' branch...
+    |      |                      (13) following 'false' branch...
+    |   26 |         words[i] = strdup(words[i]);
+    |      |                    ~~~~~~~~~~~~~~~~
+    |      |                    |           |
+    |      |                    |           (3) ...to here
+    |      |                    |           (6) ...to here
+    |      |                    |           (8) ...to here
+    |      |                    |           (10) ...to here
+    |      |                    |           (12) ...to here
+    |      |                    (4) this call could return NULL
+    |......
+    |   29 |     removeWord(words, &size, word);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (14) ...to here
+    |      |     (15) calling 'removeWord' from 'main'
+    |
+    +--> 'removeWord': events 16-19
+           |
+           |    8 | void removeWord(char* words[], int* size, char* word) {
+           |      |      ^~~~~~~~~~
+           |      |      |
+           |      |      (16) entry to 'removeWord'
+           |    9 |     int i;
+           |   10 |     for(i = 0; i < *size; i++) {
+           |      |                ~~~~~~~~~
+           |      |                  |
+           |      |                  (17) following 'true' branch...
+           |   11 |         if(strcmp(words[i], word) == 0) {
+           |      |            ~~~~~~~~~~~~~~~~~~~~~~
+           |      |            |           |
+           |      |            |           (18) ...to here
+           |      |            (19) argument 1 ('*words_29(D) + _2') from (4) could be NULL where non-null expected
+           |
+In file included from collected_code_3/problem-507-2.c:2:
+/Library/Developer/CommandLineTools/SDKs/MacOSX14.sdk/usr/include/string.h:77:10: note: argument 1 of 'strcmp' must be non-null
+   77 | int      strcmp(const char *__s1, const char *__s2);
+      |          ^~~~~~

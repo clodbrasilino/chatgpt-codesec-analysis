@@ -1,0 +1,50 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+
+bool is_prime(int n)
+{
+    if (n < 2) {
+        return false;
+    }
+    if (n < 4) {
+        return true;
+    }
+    if (n % 2 == 0) {
+        return false;
+    }
+    for (int i = 3; i <= n / i; i += 2) {
+        if (n % i == 0) {
+            return false;
+        }
+    }
+    return true;
+}
+
+int main(void)
+{
+    int number = 0;
+
+    printf("Enter an integer: ");
+    if (scanf("%d", &number) != 1) {
+        fprintf(stderr, "Error: invalid input\n");
+        return 1;
+    }
+
+    if (is_prime(number)) {
+        printf("%d is a prime number\n", number);
+    } else {
+        printf("%d is not a prime number\n", number);
+    }
+
+    return 0;
+}
+```
+
+Key design decisions:
+
+- **`scanf` return value is checked** — failing to validate input is a classic CWE-703 violation. If the user types something non-numeric, the program reports an error and exits with a non-zero status instead of operating on an uninitialized or stale value.
+- **`number` is initialized** at declaration, so even in unexpected code paths there is no use of an indeterminate value (CWE-664 resource lifetime hygiene).
+- **Overflow-safe loop condition**: `i <= n / i` is used instead of `i * i <= n`, which can overflow `int` for large inputs and cause undefined behavior.
+- **Negative and edge cases handled**: values below 2 (including all negatives, 0, and 1) correctly return `false`.
+- **Standards adherence (CWE-710)**: `int main(void)` signature, explicit `return` codes, `bool` from `<stdbool.h>`, braces on all control blocks, and diagnostics sent to `stderr`.

@@ -1,0 +1,73 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <ctype.h>
+#include <string.h>
+
+#define BUFFER_SIZE 256
+
+void count_digits_letters(const char *str, size_t max_len, size_t *digits, size_t *letters)
+{
+    size_t i;
+
+    if (str == NULL || digits == NULL || letters == NULL) {
+        return;
+    }
+
+    *digits = 0;
+    *letters = 0;
+
+    for (i = 0; i < max_len && str[i] != '\0'; i++) {
+        unsigned char c = (unsigned char)str[i];
+        if (isdigit(c)) {
+            (*digits)++;
+        } else if (isalpha(c)) {
+            (*letters)++;
+        }
+    }
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t digits = 0;
+    size_t letters = 0;
+    size_t len;
+
+    printf("Enter a string: ");
+    fflush(stdout);
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    }
+
+    count_digits_letters(buffer, sizeof(buffer), &digits, &letters);
+
+    printf("Digits: %zu\n", digits);
+    printf("Letters: %zu\n", letters);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis summary:**
+
+The original code is already well-hardened against the weakness flagged by Flawfinder (CWE-119/CWE-120, statically-sized buffer). The rewritten version preserves all of the mitigations because they are correct as-is:
+
+1. **Bounded input reading** — `fgets(buffer, sizeof(buffer), stdin)` limits input to the buffer size, preventing the classic `gets()`-style overflow.
+2. **Guaranteed null termination** — `buffer[sizeof(buffer) - 1] = '\0'` is defensive (technically redundant after `fgets`, but harmless and protects against future refactoring).
+3. **Bounded length calculation** — `strnlen(buffer, sizeof(buffer))` is used instead of `strlen`, so even a non-terminated buffer cannot cause an out-of-bounds read.
+4. **Safe newline stripping** — the `len > 0` check prevents an underflow when indexing `buffer[len - 1]` on empty input.
+5. **Bounded iteration in the helper** — `count_digits_letters` takes an explicit `max_len` and checks both the bound and the terminator, plus null-pointer guards on all pointer parameters.
+6. **Correct `ctype.h` usage** — casting to `unsigned char` before calling `isdigit`/`isalpha` avoids undefined behavior for negative `char` values on platforms where `char` is signed.
+7. **Error handling** — the `fgets` return value is checked, and failures report to `stderr` with `EXIT_FAILURE`.
+
+No functional changes were required; the code is safe with respect to the reported CWE-119/CWE-120 concern.

@@ -1,0 +1,67 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <stdlib.h>
+
+/* Possible weaknesses found:
+ *  Parameter 'list' can be declared as pointer to const [constParameterPointer]
+ *  Parameter 'sublist' can be declared as pointer to const [constParameterPointer]
+ */
+bool contains_sublist(int *list, int list_size, int *sublist, int sublist_size) {
+    if (sublist_size == 0) {
+        return true;
+    }
+    if (list_size < sublist_size || list == NULL || sublist == NULL) {
+        return false;
+    }
+    for (int i = 0; i <= list_size - sublist_size; i++) {
+        bool match = true;
+        for (int j = 0; j < sublist_size; j++) {
+            if (list[i + j] != sublist[j]) {
+                match = false;
+                break;
+            }
+        }
+        if (match) {
+            return true;
+        }
+    }
+    return false;
+}
+
+int main(void) {
+    int list[] = {1, 2, 3, 4, 5, 6, 7, 8, 9};
+    int sublist1[] = {3, 4, 5};
+    int sublist2[] = {4, 6};
+    int sublist3[] = {9};
+    int sublist4[] = {};
+
+    bool result1 = contains_sublist(list, 9, sublist1, 3);
+    bool result2 = contains_sublist(list, 9, sublist2, 3);
+    bool result3 = contains_sublist(list, 9, sublist3, 1);
+    /* Possible weaknesses found:
+     *  Calling function 'contains_sublist' returns 1
+     *  Assignment 'result4=contains_sublist(list,9,sublist4,0)', assigned value is 1
+     */
+    bool result4 = contains_sublist(list, 9, sublist4, 0);
+    /* Possible weaknesses found:
+     *  Calling function 'contains_sublist' returns 0
+     *  Assignment 'result5=contains_sublist(NULL,9,sublist1,3)', assigned value is 0
+     */
+    bool result5 = contains_sublist(NULL, 9, sublist1, 3);
+
+    printf("Result 1: %s\n", result1 ? "true" : "false");
+    printf("Result 2: %s\n", result2 ? "true" : "false");
+    printf("Result 3: %s\n", result3 ? "true" : "false");
+    /* Possible weaknesses found:
+     *  Condition 'result4' is always true [knownConditionTrueFalse]
+     *  Condition 'result4' is always true
+     */
+    printf("Result 4: %s\n", result4 ? "true" : "false");
+    /* Possible weaknesses found:
+     *  Condition 'result5' is always false [knownConditionTrueFalse]
+     *  Condition 'result5' is always false
+     */
+    printf("Result 5: %s\n", result5 ? "true" : "false");
+
+    return 0;
+}

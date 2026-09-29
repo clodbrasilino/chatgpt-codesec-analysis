@@ -1,0 +1,18 @@
+collected_code/problem-694-0.c:13:27: error: Cannot determine that 'dictionary[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+            if (dictionary[i] == dictionary[j])
+                          ^
+collected_code/problem-694-0.c:13:44: error: Cannot determine that 'dictionary[j]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+            if (dictionary[i] == dictionary[j])
+                                           ^
+collected_code/problem-694-0.c:22:52: error: Cannot determine that 'dictionary[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+            uniqueValues[*uniqueCount] = dictionary[i];
+                                                   ^
+collected_code/problem-694-0.c:35:64: error: Cannot determine that 'uniqueCount' is initialized [premium-bughuntingUninit]
+    extractUniqueValues(dictionary, dictLength, uniqueValues, &uniqueCount);
+                                                               ^
+collected_code/problem-694-0.c:38:25: error: Cannot determine that 'uniqueCount' is initialized [premium-bughuntingUninit]
+    for (int i = 0; i < uniqueCount; i++)
+                        ^
+collected_code/problem-694-0.c:40:35: error: Cannot determine that 'uniqueValues[i]' is initialized [premium-bughuntingUninit]
+        printf("%d ", uniqueValues[i]);
+                                  ^

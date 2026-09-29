@@ -1,0 +1,112 @@
+## Analysis
+
+The failing outputs (`C`, empty string, ` D`) are the classic symptom of **reading uninitialized/non-null-terminated memory** — typically caused by returning a pointer to a stack-local buffer, using `malloc` without a terminating `'\0'`, or an off-by-one in the result length. The expected outputs (`python`, `string`, `alpha`) also show that trailing whitespace left after removing the parenthesized group must be trimmed.
+
+The rewrite below guarantees correct behavior by:
+
+1. **Heap-allocating with `calloc`** (zero-initialized, sized `len + 1`) so the result can never contain garbage bytes and is always terminated.
+2. **Explicitly writing `result[j] = '\0'`** after trimming — no reliance on implicit state.
+3. **Bounding the scan** with `safe_strlen` so a missing terminator can't cause an out-of-bounds read.
+4. **Tracking parenthesis depth** so nested/unbalanced parens are handled safely, and **trimming trailing whitespace** so `"python (chrome)"` yields exactly `"python"`.
+5. **Freeing and NULLing** the pointer in `main` to avoid leaks/use-after-free.
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_INPUT_LEN 4096
+
+static size_t safe_strlen(const char *s, size_t max)
+{
+    size_t n = 0;
+
+    if (s == NULL) {
+        return 0;
+    }
+
+    while (n < max && s[n] != '\0') {
+        n++;
+    }
+
+    return n;
+}
+
+char *remove_parentheses(const char *str)
+{
+    size_t len;
+    size_t i;
+    size_t j = 0;
+    int depth = 0;
+    char *result;
+
+    if (str == NULL) {
+        return NULL;
+    }
+
+    len = safe_strlen(str, MAX_INPUT_LEN);
+
+    result = (char *)calloc(len + 1, sizeof(char));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    for (i = 0; i < len; i++) {
+        if (str[i] == '(') {
+            depth++;
+        } else if (str[i] == ')') {
+            if (depth > 0) {
+                depth--;
+            }
+        } else if (depth == 0) {
+            result[j] = str[i];
+            j++;
+        }
+    }
+
+    while (j > 0 && (result[j - 1] == ' '  ||
+                     result[j - 1] == '\t' ||
+                     result[j - 1] == '\n' ||
+                     result[j - 1] == '\r')) {
+        j--;
+    }
+
+    result[j] = '\0';
+
+    return result;
+}
+
+int main(void)
+{
+    const char *inputs[] = {
+        "python (chrome)",
+        "string (abcd)",
+        "alpha (beta)"
+    };
+    size_t count = sizeof(inputs) / sizeof(inputs[0]);
+    size_t k;
+
+    for (k = 0; k < count; k++) {
+        char *output = remove_parentheses(inputs[k]);
+
+        if (output == NULL) {
+            fprintf(stderr, "Error: failed to process string\n");
+            return EXIT_FAILURE;
+        }
+
+        printf("%s\n", output);
+
+        free(output);
+        output = NULL;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Expected output:**
+```
+python
+string
+alpha
+```

@@ -1,0 +1,44 @@
+```C
+#include <stdio.h>
+#include <stdbool.h>
+
+bool isKeith(int n)
+{
+    int temp = n, sum = 0;
+    while (temp > 0)
+    {
+        sum += temp % 10;
+        temp /= 10;
+    }
+
+    int next_sum;
+    while (n > sum)
+    {
+        next_sum = sum + temp;
+        temp = sum;
+        sum = next_sum;
+    }
+
+    return n == sum;
+}
+
+int main()
+{
+    int n;
+    printf("Enter a number: ");
+    scanf("%d", &n);
+
+    if(isKeith(n)){
+        printf("Keith Number\n");
+    }
+    else{
+        printf("Not a Keith Number\n");
+    }
+
+    return 0;
+}
+```
+
+This code implements a function named 'isKeith' which takes an integer number as input and checks whether it is a Keith number or not. It uses a while loop to find out the digit sum of the number and later uses this sum to perform operations to check if the provided number is Keith number or not. Finally, it compares the calculated sum with the input number and returns true if they are equal, false otherwise.
+
+The main function takes input from the user, checks the number by calling isKeith function and then prints whether the number is a Keith number or not.

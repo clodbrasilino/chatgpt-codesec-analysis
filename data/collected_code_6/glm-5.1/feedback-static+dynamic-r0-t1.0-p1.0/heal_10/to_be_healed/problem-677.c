@@ -1,0 +1,33 @@
+#include <stdio.h>
+#include <stdlib.h>
+ /* Possible weaknesses found:
+  *  test case 0 failed: expected False, got 1
+  *  test case 2 failed: expected True, got 0
+  */
+
+int is_valid_triangle(long a, long b, long c) {
+    if (a <= 0 || b <= 0 || c <= 0) {
+        return 0;
+    }
+    if (a > c - b) {
+        if (b > a - c) {
+            if (c > b - a) {
+                return 1;
+            }
+        }
+    }
+    return 0;
+}
+
+int main(void) {
+    long a, b, c;
+    if (scanf("%ld %ld %ld", &a, &b, &c) != 3) {
+        return EXIT_FAILURE;
+    }
+    if (is_valid_triangle(a, b, c)) {
+        printf("True\n");
+    } else {
+        printf("False\n");
+    }
+    return EXIT_SUCCESS;
+}

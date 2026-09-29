@@ -1,0 +1,7 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-393-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-393-s3.c:39:24: style: Parameter 'elements' can be declared as pointer to const [constParameterPointer]
+List* create_list(int* elements, size_t num_elements) {
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-393-s3.c:83:11: style: Variable 'max_list' can be declared as pointer to const [constVariablePointer]
+    List* max_list = find_max_length_list(lists, num_lists);
+          ^

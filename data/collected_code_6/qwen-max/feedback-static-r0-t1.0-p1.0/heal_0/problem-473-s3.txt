@@ -1,0 +1,64 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    int *elements;
+    size_t length;
+} Tuple;
+
+int compare_ints(const void *a, const void *b) {
+    return (*(int *)a - *(int *)b);
+}
+
+int tuples_are_equal(Tuple *t1, Tuple *t2) {
+    if (t1->length != t2->length) return 0;
+    qsort(t1->elements, t1->length, sizeof(int), compare_ints);
+    qsort(t2->elements, t2->length, sizeof(int), compare_ints);
+    return memcmp(t1->elements, t2->elements, t1->length * sizeof(int)) == 0;
+}
+
+void tuple_intersection(Tuple *tuples, size_t count, Tuple **result, size_t *result_count) {
+    *result_count = 0;
+    for (size_t i = 0; i < count; ++i) {
+        int is_common = 1;
+        for (size_t j = 0; j < count; ++j) {
+            if (i != j && !tuples_are_equal(&tuples[i], &tuples[j])) {
+                is_common = 0;
+                break;
+            }
+        }
+        if (is_common) {
+            (*result)[*result_count] = tuples[i];
+            (*result_count)++;
+        }
+    }
+}
+
+int main() {
+    Tuple tuples[] = {
+        { .elements = (int []){1, 2, 3}, .length = 3 },
+        { .elements = (int []){3, 2, 1}, .length = 3 },
+        { .elements = (int []){4, 5, 6}, .length = 3 },
+        { .elements = (int []){6, 5, 4}, .length = 3 },
+    };
+    size_t tuple_count = sizeof(tuples) / sizeof(tuples[0]);
+
+    Tuple *result = (Tuple *)malloc(tuple_count * sizeof(Tuple));
+    size_t result_count = 0;
+
+    tuple_intersection(tuples, tuple_count, &result, &result_count);
+
+    for (size_t i = 0; i < result_count; ++i) {
+        printf("Common Tuple: ");
+        for (size_t j = 0; j < result[i].length; ++j) {
+            printf("%d ", result[i].elements[j]);
+        }
+        printf("\n");
+    }
+
+    free(result);
+    return 0;
+}
+```

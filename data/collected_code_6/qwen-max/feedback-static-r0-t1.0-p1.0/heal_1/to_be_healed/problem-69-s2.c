@@ -1,0 +1,36 @@
+#include <stdbool.h>
+#include <stdio.h>
+
+/* Possible weaknesses found:
+ *  Parameter 'sublist' can be declared as pointer to const [constParameterPointer]
+ *  Parameter 'list' can be declared as pointer to const [constParameterPointer]
+ */
+bool is_sublist(int *list, int list_size, int *sublist, int sublist_size) {
+    for (int i = 0; i <= list_size - sublist_size; ++i) {
+        bool match = true;
+        for (int j = 0; j < sublist_size; ++j) {
+            if (list[i + j] != sublist[j]) {
+                match = false;
+                break;
+            }
+        }
+        if (match) return true;
+    }
+    return false;
+}
+
+int main() {
+    int list[] = {1, 2, 3, 4, 5, 6};
+    int sublist[] = {4, 5, 6};
+    int list_size = sizeof(list) / sizeof(list[0]);
+    int sublist_size = sizeof(sublist) / sizeof(sublist[0]);
+
+    bool result = is_sublist(list, list_size, sublist, sublist_size);
+    if (result) {
+        printf("Sublist found.\n");
+    } else {
+        printf("Sublist not found.\n");
+    }
+
+    return 0;
+}

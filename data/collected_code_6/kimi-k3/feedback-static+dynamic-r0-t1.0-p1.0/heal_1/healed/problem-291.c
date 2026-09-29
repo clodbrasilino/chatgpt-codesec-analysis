@@ -1,0 +1,75 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+long long countWays(int n, int k) {
+    if (n <= 0 || k <= 0) {
+        return 0;
+    }
+    
+    if (n == 1) {
+        return k;
+    }
+    
+    if (k == 1) {
+        return (n <= 2) ? 1 : 0;
+    }
+    
+    long long same = k;
+    long long diff = (long long)k * (k - 1);
+    
+    for (int i = 3; i <= n; i++) {
+        long long newSame = diff;
+        
+        if (same > 0 && diff > 0 && same > LLONG_MAX - diff) {
+            return -1;
+        }
+        if (same < 0 && diff < 0 && same < LLONG_MIN - diff) {
+            return -1;
+        }
+        long long sum = same + diff;
+        
+        long long multiplier = k - 1;
+        if (sum != 0 && multiplier != 0) {
+            if (sum > 0 && multiplier > 0 && sum > LLONG_MAX / multiplier) {
+                return -1;
+            }
+            if (sum > 0 && multiplier < 0 && multiplier < LLONG_MIN / sum) {
+                return -1;
+            }
+            if (sum < 0 && multiplier > 0 && sum < LLONG_MIN / multiplier) {
+                return -1;
+            }
+            if (sum < 0 && multiplier < 0 && sum < LLONG_MAX / multiplier) {
+                return -1;
+            }
+        }
+        
+        long long newDiff = sum * multiplier;
+        same = newSame;
+        diff = newDiff;
+    }
+    
+    if (same > 0 && diff > 0 && same > LLONG_MAX - diff) {
+        return -1;
+    }
+    if (same < 0 && diff < 0 && same < LLONG_MIN - diff) {
+        return -1;
+    }
+    
+    return same + diff;
+}
+
+int main(void) {
+    int n, k;
+    
+    if (scanf("%d %d", &n, &k) != 2) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    long long result = countWays(n, k);
+    printf("%lld\n", result);
+    
+    return EXIT_SUCCESS;
+}

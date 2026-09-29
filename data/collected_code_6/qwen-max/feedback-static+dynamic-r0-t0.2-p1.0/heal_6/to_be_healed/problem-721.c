@@ -1,0 +1,79 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <float.h>
+
+double max(double a, double b) {
+    return (a > b) ? a : b;
+}
+
+double findMaxAveragePath(int** matrix, int n, int x, int y, double sum, int steps, double** dp) {
+    if (x < 0 || x >= n || y < 0 || y >= n) return -DBL_MAX;
+    if (x == n - 1 && y == n - 1) return (sum + matrix[x][y]) / (steps + 1);
+    if (dp[x][y] != -1.0) return dp[x][y];
+
+    double right = findMaxAveragePath(matrix, n, x, y + 1, sum + matrix[x][y], steps + 1, dp);
+    double down = findMaxAveragePath(matrix, n, x + 1, y, sum + matrix[x][y], steps + 1, dp);
+
+    /* Possible weaknesses found:
+     *  Assignment 'right=-DBL_MAX' is redundant
+     *  Assignment 'right=-DBL_MAX' is redundant with condition 'right==-DBL_MAX'. [duplicateConditionalAssign]
+     *  Condition 'right==-DBL_MAX'
+     */
+    if (right == -DBL_MAX) right = -DBL_MAX;
+    /* Possible weaknesses found:
+     *  Assignment 'down=-DBL_MAX' is redundant
+     *  Assignment 'down=-DBL_MAX' is redundant with condition 'down==-DBL_MAX'. [duplicateConditionalAssign]
+     *  Condition 'down==-DBL_MAX'
+     */
+    if (down == -DBL_MAX) down = -DBL_MAX;
+
+    dp[x][y] = max(right, down);
+    return dp[x][y];
+}
+ /* Possible weaknesses found:
+  *  test case 2 failed: expected 7.2, got 6
+  *  test case 1 failed: expected 6.2, got 5
+  *  test case 0 failed: expected 5.2, got 4
+  */
+
+double maxAveragePath(int** matrix, int n) {
+    double** dp = (double**)malloc(n * sizeof(double*));
+    for (int i = 0; i < n; ++i) {
+        dp[i] = (double*)calloc(n, sizeof(double));
+        for (int j = 0; j < n; ++j) {
+            dp[i][j] = -1.0;
+        }
+    }
+
+    double result = (n * n > 0) ? findMaxAveragePath(matrix, n, 0, 0, 0.0, 0, dp) : 0.0;
+
+    for (int i = 0; i < n; ++i) {
+        free(dp[i]);
+    }
+    free(dp);
+
+    return result;
+}
+
+int main() {
+    int n;
+    scanf("%d", &n);
+
+    int** matrix = (int**)malloc(n * sizeof(int*));
+    for (int i = 0; i < n; ++i) {
+        matrix[i] = (int*)malloc(n * sizeof(int));
+        for (int j = 0; j < n; ++j) {
+            scanf("%d", &matrix[i][j]);
+        }
+    }
+
+    double result = maxAveragePath(matrix, n);
+    printf("%.2f\n", result);
+
+    for (int i = 0; i < n; ++i) {
+        free(matrix[i]);
+    }
+    free(matrix);
+
+    return 0;
+}

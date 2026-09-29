@@ -1,0 +1,107 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *values;
+    size_t count;
+} Tuple;
+
+typedef struct {
+    Tuple *tuples;
+    size_t count;
+} TupleList;
+
+static long cumulative_sum(const TupleList *list)
+{
+    long total = 0;
+    size_t i;
+    size_t j;
+
+    if (list == NULL || list->tuples == NULL) {
+        return 0;
+    }
+
+    for (i = 0; i < list->count; i++) {
+        if (list->tuples[i].values == NULL) {
+            continue;
+        }
+        for (j = 0; j < list->tuples[i].count; j++) {
+            total += (long)list->tuples[i].values[j];
+        }
+    }
+
+    return total;
+}
+
+static int make_tuple(Tuple *t, const int *src, size_t n)
+{
+    size_t i;
+
+    if (t == NULL || src == NULL || n == 0) {
+        return -1;
+    }
+
+    t->values = malloc(n * sizeof(int));
+    if (t->values == NULL) {
+        return -1;
+    }
+
+    for (i = 0; i < n; i++) {
+        t->values[i] = src[i];
+    }
+    t->count = n;
+
+    return 0;
+}
+
+static void free_tuple_list(TupleList *list)
+{
+    size_t i;
+
+    if (list == NULL || list->tuples == NULL) {
+        return;
+    }
+
+    for (i = 0; i < list->count; i++) {
+        free(list->tuples[i].values);
+        list->tuples[i].values = NULL;
+        list->tuples[i].count = 0;
+    }
+
+    free(list->tuples);
+    list->tuples = NULL;
+    list->count = 0;
+}
+
+int main(void)
+{
+    TupleList list;
+    const int t1[] = {1, 3};
+    const int t2[] = {5, 6, 7};
+    const int t3[] = {2, 6};
+    long result;
+
+    list.count = 3;
+    list.tuples = malloc(list.count * sizeof(Tuple));
+    if (list.tuples == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    if (make_tuple(&list.tuples[0], t1, sizeof(t1) / sizeof(t1[0])) != 0 ||
+        make_tuple(&list.tuples[1], t2, sizeof(t2) / sizeof(t2[0])) != 0 ||
+        make_tuple(&list.tuples[2], t3, sizeof(t3) / sizeof(t3[0])) != 0) {
+        fprintf(stderr, "Failed to build tuple list\n");
+        free_tuple_list(&list);
+        return EXIT_FAILURE;
+    }
+
+    result = cumulative_sum(&list);
+    if (printf("Cumulative sum: %ld\n", result) < 0) {
+        free_tuple_list(&list);
+        return EXIT_FAILURE;
+    }
+
+    free_tuple_list(&list);
+    return EXIT_SUCCESS;
+}

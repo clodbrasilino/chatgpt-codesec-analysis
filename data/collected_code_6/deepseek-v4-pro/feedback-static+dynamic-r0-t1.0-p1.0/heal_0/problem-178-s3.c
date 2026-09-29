@@ -1,0 +1,46 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+int search_literals(const char *haystack, const char **needles, size_t needle_count, int **results) {
+    if (haystack == NULL || needles == NULL || results == NULL) {
+        return -1;
+    }
+
+    *results = (int *)calloc(needle_count, sizeof(int));
+    if (*results == NULL) {
+        return -1;
+    }
+
+    for (size_t i = 0; i < needle_count; ++i) {
+        if (needles[i] == NULL) {
+            (*results)[i] = -1;
+            continue;
+        }
+        const char *found = strstr(haystack, needles[i]);
+        (*results)[i] = (found != NULL) ? 1 : 0;
+    }
+
+    return 0;
+}
+
+int main(void) {
+    const char *text = "The quick brown fox jumps over the lazy dog";
+    const char *literals[] = {"quick", "fox", "cat", "dog", "lazy"};
+    size_t count = sizeof(literals) / sizeof(literals[0]);
+    int *matches = NULL;
+
+    if (search_literals(text, literals, count, &matches) != 0) {
+        fprintf(stderr, "Error during search\n");
+        return 1;
+    }
+
+    for (size_t i = 0; i < count; ++i) {
+        printf("'%s': %s\n", literals[i], matches[i] == 1 ? "found" : (matches[i] == 0 ? "not found" : "invalid needle"));
+    }
+
+    free(matches);
+    matches = NULL;
+
+    return 0;
+}

@@ -1,0 +1,106 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int id;
+    double value;
+} Tuple;
+
+typedef struct Node {
+    Tuple data;
+    struct Node *next;
+} Node;
+
+int extract_nth_tuple(const Node *head, size_t n, Tuple *result) {
+    if (head == NULL || result == NULL) {
+        return -1;
+    }
+
+    const Node *current = head;
+    size_t index = 0;
+
+    while (current != NULL) {
+        if (index == n) {
+            *result = current->data;
+            return 0;
+        }
+        index++;
+        current = current->next;
+    }
+
+    return -1;
+}
+
+Node* append_tuple(Node *head, int id, double value) {
+    Node *new_node = (Node *)malloc(sizeof(Node));
+    if (new_node == NULL) {
+        return NULL;
+    }
+
+    new_node->data.id = id;
+    new_node->data.value = value;
+    new_node->next = NULL;
+
+    if (head == NULL) {
+        return new_node;
+    }
+
+    Node *current = head;
+    while (current->next != NULL) {
+        current = current->next;
+    }
+    current->next = new_node;
+
+    return head;
+}
+
+void free_list(Node *head) {
+    Node *current = head;
+    Node *next_node = NULL;
+
+    while (current != NULL) {
+        next_node = current->next;
+        free(current);
+        current = next_node;
+    }
+}
+
+int main(void) {
+    Node *list = NULL;
+    Node *temp = NULL;
+
+    temp = append_tuple(list, 1, 10.5);
+    if (temp == NULL) {
+        return EXIT_FAILURE;
+    }
+    list = temp;
+
+    temp = append_tuple(list, 2, 20.5);
+    if (temp == NULL) {
+        free_list(list);
+        return EXIT_FAILURE;
+    }
+
+    temp = append_tuple(list, 3, 30.5);
+    if (temp == NULL) {
+        free_list(list);
+        return EXIT_FAILURE;
+    }
+
+    Tuple extracted;
+    if (extract_nth_tuple(list, 1, &extracted) == 0) {
+        printf("%d %f\n", extracted.id, extracted.value);
+    } else {
+        free_list(list);
+        return EXIT_FAILURE;
+    }
+
+    if (extract_nth_tuple(list, 5, &extracted) == 0) {
+        printf("%d %f\n", extracted.id, extracted.value);
+    }
+
+    free_list(list);
+    return EXIT_SUCCESS;
+}
+```

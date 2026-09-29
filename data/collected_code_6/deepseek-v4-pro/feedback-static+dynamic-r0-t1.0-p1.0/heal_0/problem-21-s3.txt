@@ -1,0 +1,54 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int *find_multiples(int n, int m, int *count) {
+    int *multiples = NULL;
+    int actual_count = 0;
+    int i;
+
+    if (m <= 0 || count == NULL) {
+        *count = 0;
+        return NULL;
+    }
+
+    multiples = (int *)malloc((size_t)m * sizeof(int));
+    if (multiples == NULL) {
+        *count = 0;
+        return NULL;
+    }
+
+    for (i = 1; i <= m; i++) {
+        multiples[actual_count] = n * i;
+        actual_count++;
+    }
+
+    *count = actual_count;
+    return multiples;
+}
+
+int main(void) {
+    int n = 5;
+    int m = 10;
+    int count = 0;
+    int *result;
+    int i;
+
+    result = find_multiples(n, m, &count);
+    if (result == NULL || count == 0) {
+        fprintf(stderr, "Failed to generate multiples.\n");
+        return 1;
+    }
+
+    printf("First %d multiples of %d:\n", m, n);
+    for (i = 0; i < count; i++) {
+        printf("%d ", result[i]);
+    }
+    printf("\n");
+
+    free(result);
+    result = NULL;
+
+    return 0;
+}
+```

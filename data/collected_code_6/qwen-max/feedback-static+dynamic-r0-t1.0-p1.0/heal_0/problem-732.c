@@ -1,0 +1,29 @@
+#include <stdio.h>
+#include <string.h>
+
+void replace_chars(char *str) {
+    for (char *p = str; *p; p++) {
+        if (*p == ' ' || *p == ',' || *p == '.') {
+            *p = ':';
+        }
+    }
+}
+
+int main() {
+    char input[256];
+
+    printf("Enter a string: ");
+    if (fgets(input, sizeof(input), stdin) != NULL) {
+        size_t len = strlen(input);
+        if (len > 0 && input[len - 1] == '\n') {
+            input[len - 1] = '\0';
+        }
+        replace_chars(input);
+        printf("Modified string: %s\n", input);
+    } else {
+        fprintf(stderr, "Error reading input.\n");
+        return 1;
+    }
+
+    return 0;
+}

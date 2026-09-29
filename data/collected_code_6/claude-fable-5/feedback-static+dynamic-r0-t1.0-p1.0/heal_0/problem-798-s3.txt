@@ -1,0 +1,35 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+long long array_sum(const int *arr, size_t length)
+{
+    long long sum = 0;
+    size_t i;
+
+    if (arr == NULL) {
+        return 0;
+    }
+
+    for (i = 0; i < length; i++) {
+        sum += (long long)arr[i];
+    }
+
+    return sum;
+}
+
+int main(void)
+{
+    int numbers[] = {10, 20, 30, 40, 50};
+    size_t length = sizeof(numbers) / sizeof(numbers[0]);
+    long long result;
+
+    result = array_sum(numbers, length);
+
+    if (printf("Sum of array: %lld\n", result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```

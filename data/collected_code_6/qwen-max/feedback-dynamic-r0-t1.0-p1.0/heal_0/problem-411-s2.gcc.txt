@@ -1,0 +1,8 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-411-s2.c: In function 'snake_to_camel':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-411-s2.c:15:33: error: implicit declaration of function 'toupper' [-Wimplicit-function-declaration]
+   15 |                 output[dst++] = toupper(input[i+1]);
+      |                                 ^~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-411-s2.c:4:1: note: include '<ctype.h>' or provide a declaration of 'toupper'
+    3 | #include <regex.h>
+  +++ |+#include <ctype.h>
+    4 | 

@@ -1,0 +1,11 @@
+./collected_code_4/round1//heal_0//problem-59.c:4: warning: "SIZE_MAX" redefined
+    4 | #define SIZE_MAX (~(size_t)0)
+      | 
+In file included from /usr/local/Cellar/gcc/13.2.0/lib/gcc/current/gcc/x86_64-apple-darwin23/13/include/stdint.h:9,
+                 from /Library/Developer/CommandLineTools/SDKs/MacOSX14.sdk/usr/include/sys/resource.h:72,
+                 from /Library/Developer/CommandLineTools/SDKs/MacOSX14.sdk/usr/include/sys/wait.h:110,
+                 from /Library/Developer/CommandLineTools/SDKs/MacOSX14.sdk/usr/include/stdlib.h:66,
+                 from ./collected_code_4/round1//heal_0//problem-59.c:2:
+/usr/local/Cellar/gcc/13.2.0/lib/gcc/current/gcc/x86_64-apple-darwin23/13/include-fixed/stdint.h:187: note: this is the location of the previous definition
+  187 | #define SIZE_MAX          UINTPTR_MAX
+      | 

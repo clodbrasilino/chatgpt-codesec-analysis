@@ -1,0 +1,77 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define HEAP_SIZE 3
+
+int parent(int i) {
+    return (i - 1) / 2;
+}
+
+int left(int i) {
+    return (2 * i + 1);
+}
+
+int right(int i) {
+    return (2 * i + 2);
+}
+
+void swap(int* a, int* b) {
+    int temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+void minHeapify(int heap[], int i, int heap_size) {
+    int l = left(i);
+    int r = right(i);
+    int smallest = i;
+
+    if (l < heap_size && heap[l] < heap[i])
+        smallest = l;
+    
+    if (r < heap_size && heap[r] < heap[smallest])
+        smallest = r;
+    
+    if (smallest != i) {
+        swap(&heap[i], &heap[smallest]);
+        minHeapify(heap, smallest, heap_size);
+    }
+}
+
+void buildHeap(int heap[], int heap_size) {
+    int i;
+
+    for(i = (heap_size-1)/2; i >= 0; --i)
+        minHeapify(heap, i, heap_size);
+}
+
+int getThreeMaxProduct(int array[], int n) {
+    int i;
+    int heap[HEAP_SIZE];
+
+    if (n < HEAP_SIZE)
+        return -1;
+
+    for (i = 0; i < HEAP_SIZE; ++i)
+        heap[i] = array[i];
+
+    buildHeap(heap, HEAP_SIZE);
+
+    for (i = HEAP_SIZE; i < n; ++i) {
+        if(array[i] > heap[0]) {
+            heap[0] = array[i];
+            minHeapify(heap, 0, HEAP_SIZE);
+        }
+    }
+
+    return heap[0] * heap[1] * heap[2];
+}
+
+int main() {
+    int array[] = {1, 3, 5, 6, 7, 10};
+    int n = sizeof(array) / sizeof(array[0]);
+
+    printf("Maximum product is %d", getThreeMaxProduct(array, n));
+    
+    return 0;
+}

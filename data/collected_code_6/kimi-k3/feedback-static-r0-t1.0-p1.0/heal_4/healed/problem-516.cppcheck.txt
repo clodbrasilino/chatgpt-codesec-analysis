@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-516.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-516.c:57:71: style: Condition 'copy_size<=temp_size' is always true [knownConditionTrueFalse]
+        if (copy_size > 0 && temp != NULL && arr != NULL && copy_size <= temp_size) {
+                                                                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-516.c:51:23: note: Assuming that condition 'copy_size>temp_size' is not redundant
+        if (copy_size > temp_size) {
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-516.c:57:71: note: Condition 'copy_size<=temp_size' is always true
+        if (copy_size > 0 && temp != NULL && arr != NULL && copy_size <= temp_size) {
+                                                                      ^

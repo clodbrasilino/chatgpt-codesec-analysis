@@ -1,0 +1,20 @@
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+
+int countSamePositionChars(const char *str) {
+    int count = 0;
+    for (int i = 0; str[i] != '\0'; ++i) {
+        if (tolower(str[i]) == (char)(tolower('a') + i % 26)) {
+            count++;
+        }
+    }
+    return count;
+}
+
+int main() {
+    const char *input = "abcdefghijklmnopqrstuvwxyz";
+    int result = countSamePositionChars(input);
+    printf("Count: %d\n", result);
+    return 0;
+}

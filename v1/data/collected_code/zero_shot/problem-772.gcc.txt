@@ -1,0 +1,8 @@
+collected_code/problem-772-0.c: In function 'removeWordsWithKLength':
+collected_code/problem-772-0.c:13:13: warning: implicit declaration of function 'isalnum' [-Wimplicit-function-declaration]
+   13 |         if (isalnum(str[i])) {
+      |             ^~~~~~~
+collected_code/problem-772-0.c:3:1: note: include '<ctype.h>' or provide a declaration of 'isalnum'
+    2 | #include <string.h>
+  +++ |+#include <ctype.h>
+    3 | 

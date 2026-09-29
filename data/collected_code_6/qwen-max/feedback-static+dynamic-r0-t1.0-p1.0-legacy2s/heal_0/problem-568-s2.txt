@@ -1,0 +1,73 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    void* data;  // placeholder for dictionary data
+} Dictionary;
+
+typedef struct {
+    Dictionary** dictionaries;
+    int capacity;
+    int count;
+} List;
+
+List* createList(int size) {
+    List* list = (List*)malloc(sizeof(List));
+    if (list == NULL) return NULL;
+
+    list->dictionaries = (Dictionary**)calloc(size, sizeof(Dictionary*));
+    if (list->dictionaries == NULL) {
+        free(list);
+        return NULL;
+    }
+
+    list->capacity = size;
+    list->count = 0;
+    return list;
+}
+
+void freeList(List* list) {
+    if (list != NULL) {
+        for (int i = 0; i < list->count; ++i) {
+            if (list->dictionaries[i] != NULL) {
+                free(list->dictionaries[i]);
+            }
+        }
+        free(list->dictionaries);
+        free(list);
+    }
+}
+
+int addEmptyDictionary(List* list) {
+    if (list->count >= list->capacity) return -1;
+
+    Dictionary* dict = (Dictionary*)malloc(sizeof(Dictionary));
+    if (dict == NULL) return -1;
+
+    dict->data = NULL;
+    list->dictionaries[list->count++] = dict;
+    return 0;
+}
+
+int main() {
+    int numDictionaries = 10;
+    List* list = createList(numDictionaries);
+
+    if (list == NULL) {
+        fprintf(stderr, "Failed to create list\n");
+        return EXIT_FAILURE;
+    }
+
+    for (int i = 0; i < numDictionaries; ++i) {
+        if (addEmptyDictionary(list) != 0) {
+            fprintf(stderr, "Failed to add empty dictionary\n");
+            freeList(list);
+            return EXIT_FAILURE;
+        }
+    }
+
+    freeList(list);
+    return EXIT_SUCCESS;
+}
+```

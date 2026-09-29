@@ -1,0 +1,62 @@
+./collected_code_4/round2//heal_0/problem-946.c: In function 'mostCommon':
+./collected_code_4/round2//heal_0/problem-946.c:21:5: warning: use of uninitialized value 'result' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   21 |     printf("Most common character: %c, Occurrences: %d\n", result, max);
+      |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  'mostCommon': events 1-5
+    |
+    |   11 |     int result;
+    |      |         ^~~~~~
+    |      |         |
+    |      |         (1) region created on stack here
+    |      |         (2) capacity: 4 bytes
+    |   12 | 
+    |   13 |     for (int i = 0; i < len; ++i) {
+    |      |                     ~~~~~~~
+    |      |                       |
+    |      |                       (3) following 'false' branch (when 'i >= len')...
+    |......
+    |   21 |     printf("Most common character: %c, Occurrences: %d\n", result, max);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (4) ...to here
+    |      |     (5) use of uninitialized value 'result' here
+    |
+./collected_code_4/round2//heal_0/problem-946.c:21:5: warning: use of uninitialized value 'result' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   21 |     printf("Most common character: %c, Occurrences: %d\n", result, max);
+      |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  'main': events 1-2
+    |
+    |   24 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   32 |     mostCommon(str);
+    |      |     ~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) calling 'mostCommon' from 'main'
+    |
+    +--> 'mostCommon': events 3-8
+           |
+           |    7 | void mostCommon(char *str) {
+           |      |      ^~~~~~~~~~
+           |      |      |
+           |      |      (3) entry to 'mostCommon'
+           |......
+           |   11 |     int result;
+           |      |         ~~~~~~
+           |      |         |
+           |      |         (4) region created on stack here
+           |      |         (5) capacity: 4 bytes
+           |   12 | 
+           |   13 |     for (int i = 0; i < len; ++i) {
+           |      |                     ~~~~~~~
+           |      |                       |
+           |      |                       (6) following 'false' branch (when 'i >= len')...
+           |......
+           |   21 |     printf("Most common character: %c, Occurrences: %d\n", result, max);
+           |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |     |
+           |      |     (7) ...to here
+           |      |     (8) use of uninitialized value 'result' here
+           |

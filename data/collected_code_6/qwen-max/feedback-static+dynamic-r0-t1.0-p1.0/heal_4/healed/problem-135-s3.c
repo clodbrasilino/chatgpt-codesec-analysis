@@ -1,0 +1,41 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <limits.h>
+#include <inttypes.h>
+
+bool is_within_limit(long n) {
+    return n > 0 && n <= (LONG_MAX - 1) / 4;
+}
+
+long nth_hexagonal_number(long n) {
+    if (is_within_limit(n)) {
+        long max_n = (LONG_MAX - 1) / 4;
+        if (n > max_n) {
+            return -1;
+        }
+        long term1 = 2 * n;
+        long term2 = 2 * n - 1;
+        if (term1 > LONG_MAX / term2) {
+            return -1;
+        }
+        return term1 * term2;
+    } else {
+        return -1;
+    }
+}
+
+int main() {
+    long n;
+    printf("Enter the value of n: ");
+    if (scanf("%ld", &n) == 1) {
+        long hex_num = nth_hexagonal_number(n);
+        if (hex_num != -1) {
+            printf("The %ldth hexagonal number is %ld\n", n, hex_num);
+        } else {
+            printf("Input too large for calculation.\n");
+        }
+    } else {
+        printf("Invalid input.\n");
+    }
+    return 0;
+}

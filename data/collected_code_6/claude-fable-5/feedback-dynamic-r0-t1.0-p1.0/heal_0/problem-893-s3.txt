@@ -1,0 +1,63 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int *get_last_elements(int **sublists, const size_t *lengths, size_t count)
+{
+    int *result;
+    size_t i;
+
+    if (sublists == NULL || lengths == NULL || count == 0U) {
+        return NULL;
+    }
+
+    result = malloc(count * sizeof(int));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    for (i = 0U; i < count; i++) {
+        if (sublists[i] == NULL || lengths[i] == 0U) {
+            free(result);
+            return NULL;
+        }
+        result[i] = sublists[i][lengths[i] - 1U];
+    }
+
+    return result;
+}
+
+int main(void)
+{
+    int a[] = {1, 2, 3};
+    int b[] = {4, 5};
+    int c[] = {6, 7, 8, 9};
+    int *sublists[3];
+    size_t lengths[3];
+    int *lasts;
+    size_t i;
+
+    sublists[0] = a;
+    sublists[1] = b;
+    sublists[2] = c;
+    lengths[0] = 3U;
+    lengths[1] = 2U;
+    lengths[2] = 4U;
+
+    lasts = get_last_elements(sublists, lengths, 3U);
+    if (lasts == NULL) {
+        fprintf(stderr, "Failed to get last elements\n");
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0U; i < 3U; i++) {
+        if (printf("%d\n", lasts[i]) < 0) {
+            free(lasts);
+            return EXIT_FAILURE;
+        }
+    }
+
+    free(lasts);
+    return EXIT_SUCCESS;
+}
+```

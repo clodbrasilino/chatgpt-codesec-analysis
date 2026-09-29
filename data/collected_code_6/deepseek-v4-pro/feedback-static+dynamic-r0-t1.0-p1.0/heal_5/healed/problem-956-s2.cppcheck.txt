@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-956-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-956-s2.c:117:30: style: Condition 'max_copy<=segment_len' is always true [knownConditionTrueFalse]
+                if (max_copy <= segment_len) {
+                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-956-s2.c:116:49: note: Assuming that condition 'segment_len+1>max_copy' is not redundant
+            if (max_copy > 0 && segment_len + 1 > max_copy) {
+                                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-956-s2.c:117:30: note: Condition 'max_copy<=segment_len' is always true
+                if (max_copy <= segment_len) {
+                             ^

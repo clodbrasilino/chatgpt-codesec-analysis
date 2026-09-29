@@ -1,0 +1,53 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int x;
+    int y;
+    int z;
+} Tuple;
+
+int find_max_element(const Tuple *records, size_t count, int *result) {
+    if (records == NULL || result == NULL || count == 0) {
+        return -1;
+    }
+
+    int max = records[0].x;
+    size_t i;
+
+    for (i = 0; i < count; i++) {
+        if (records[i].x > max) {
+            max = records[i].x;
+        }
+        if (records[i].y > max) {
+            max = records[i].y;
+        }
+        if (records[i].z > max) {
+            max = records[i].z;
+        }
+    }
+
+    *result = max;
+    return 0;
+}
+
+int main(void) {
+    Tuple records[] = {
+        {1, 5, 3},
+        {7, 2, 8},
+        {4, 9, 6}
+    };
+    size_t count = sizeof(records) / sizeof(records[0]);
+    int max_element;
+
+    if (find_max_element(records, count, &max_element) == 0) {
+        printf("Maximum element: %d\n", max_element);
+    } else {
+        fprintf(stderr, "Error: Invalid input parameters\n");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```

@@ -1,0 +1,57 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+bool is_divisible_by_digits(int num) {
+    int original = num;
+    
+    if (num < 0) {
+        num = -num;
+        original = -original;
+    }
+    
+    if (num == 0) {
+        return false;
+    }
+    
+    while (num > 0) {
+        int digit = num % 10;
+        if (digit == 0) {
+            return false;
+        }
+        if (original % digit != 0) {
+            return false;
+        }
+        num /= 10;
+    }
+    
+    return true;
+}
+
+void find_numbers_in_range(int start, int end) {
+    if (start > end) {
+        int temp = start;
+        start = end;
+        end = temp;
+    }
+    
+    for (int i = start; i <= end; i++) {
+        if (i != 0 && is_divisible_by_digits(i)) {
+            printf("%d\n", i);
+        }
+    }
+}
+
+int main(void) {
+    int start, end;
+    
+    printf("Enter the range (start end): ");
+    if (scanf("%d %d", &start, &end) != 2) {
+        fprintf(stderr, "Invalid input\n");
+        return 1;
+    }
+    
+    printf("Numbers divisible by all their digits in range [%d, %d]:\n", start, end);
+    find_numbers_in_range(start, end);
+    
+    return 0;
+}

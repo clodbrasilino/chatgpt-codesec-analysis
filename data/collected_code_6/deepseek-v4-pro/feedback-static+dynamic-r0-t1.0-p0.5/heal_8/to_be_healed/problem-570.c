@@ -1,0 +1,153 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+ /* Possible weaknesses found:
+  *  test case 1 failed: expected ['Red', '', 'Green', 'Orange', 'White'], got null
+  *  test case 2 failed: expected ['Red &', 'Orange+', 'Green', 'Orange', 'White'], got ["Red &"]
+  *  test case 0 failed: expected ['Red', '', 'Green', 'Orange', 'White'], got ["Red color","Orange#","Green"]
+  */
+
+char **remove_words(char **words, int word_count, const char *filter, int *new_count) {
+    if (words == NULL || filter == NULL || new_count == NULL || word_count <= 0) {
+        if (new_count != NULL) {
+            *new_count = 0;
+        }
+        return NULL;
+    }
+
+    if (filter[0] == '\0') {
+        *new_count = 0;
+        return NULL;
+    }
+
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    size_t filter_len = strlen(filter);
+
+    char **result = (char **)malloc((size_t)word_count * sizeof(char *));
+    if (result == NULL) {
+        *new_count = 0;
+        return NULL;
+    }
+
+    int count = 0;
+    for (int i = 0; i < word_count; i++) {
+        if (words[i] == NULL) {
+            continue;
+        }
+
+        /* Possible weaknesses found:
+         * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+         */
+        size_t word_len = strlen(words[i]);
+
+        int found = 0;
+
+        if (word_len >= filter_len) {
+            const char *word_ptr = words[i];
+            while (*word_ptr != '\0') {
+                if (strncmp(word_ptr, filter, filter_len) == 0) {
+                    found = 1;
+                    break;
+                }
+                word_ptr++;
+            }
+        }
+
+        if (!found) {
+            result[count] = (char *)malloc((word_len + 1) * sizeof(char));
+            if (result[count] == NULL) {
+                for (int j = 0; j < count; j++) {
+                    free(result[j]);
+                }
+                free(result);
+                *new_count = 0;
+                return NULL;
+            }
+
+            /* Possible weaknesses found:
+             * Flawfinder strcpy: Does not check for buffer overflows when copying to destination [MS-banned] (CWE-120). Consider using snprintf, strcpy_s, or strlcpy (warning: strncpy easily misused). (risk 4, buffer)
+             */
+            strcpy(result[count], words[i]);
+            count++;
+        }
+    }
+
+    if (count == 0) {
+        free(result);
+        *new_count = 0;
+        return NULL;
+    }
+
+    char **final_result = (char **)realloc(result, (size_t)count * sizeof(char *));
+    if (final_result == NULL) {
+        for (int j = 0; j < count; j++) {
+            free(result[j]);
+        }
+        free(result);
+        *new_count = 0;
+        return NULL;
+    }
+
+    *new_count = count;
+    return final_result;
+}
+
+void free_words(char **words, int count) {
+    if (words == NULL) {
+        return;
+    }
+    for (int i = 0; i < count; i++) {
+        free(words[i]);
+    }
+    free(words);
+}
+
+int main(void) {
+    char *words[] = {
+        "Red",
+        "",
+        "Green",
+        "Orange",
+        "White"
+    };
+    int word_count = (int)(sizeof(words) / sizeof(words[0]));
+    int new_count = 0;
+
+    char **filtered = remove_words(words, word_count, "a", &new_count);
+
+    if (filtered != NULL) {
+        printf("Filtered words (%d):\n", new_count);
+        for (int i = 0; i < new_count; i++) {
+            printf("%s\n", filtered[i]);
+        }
+        free_words(filtered, new_count);
+    } else {
+        printf("No words remained after filtering.\n");
+    }
+
+    char *words2[] = {
+        "Red &",
+        "Orange+",
+        "Green",
+        "Orange",
+        "White"
+    };
+    word_count = (int)(sizeof(words2) / sizeof(words2[0]));
+    new_count = 0;
+
+    filtered = remove_words(words2, word_count, "a", &new_count);
+
+    if (filtered != NULL) {
+        printf("Filtered words (%d):\n", new_count);
+        for (int i = 0; i < new_count; i++) {
+            printf("%s\n", filtered[i]);
+        }
+        free_words(filtered, new_count);
+    } else {
+        printf("No words remained after filtering.\n");
+    }
+
+    return 0;
+}

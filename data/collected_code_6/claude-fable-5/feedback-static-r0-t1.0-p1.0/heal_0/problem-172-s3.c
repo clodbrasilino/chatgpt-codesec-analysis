@@ -1,0 +1,36 @@
+#include <stdio.h>
+#include <string.h>
+#include <stddef.h>
+
+size_t count_std_occurrences(const char *str)
+{
+    size_t count = 0;
+    const char *pos = NULL;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    pos = strstr(str, "std");
+    while (pos != NULL) {
+        count++;
+        pos = strstr(pos + 1, "std");
+    }
+
+    return count;
+}
+
+int main(void)
+{
+    const char *test_string = "using namespace std; std::cout is part of std library";
+    size_t occurrences = 0;
+
+    occurrences = count_std_occurrences(test_string);
+
+    if (printf("The string \"%s\" contains 'std' %zu time(s).\n",
+               test_string, occurrences) < 0) {
+        return 1;
+    }
+
+    return 0;
+}

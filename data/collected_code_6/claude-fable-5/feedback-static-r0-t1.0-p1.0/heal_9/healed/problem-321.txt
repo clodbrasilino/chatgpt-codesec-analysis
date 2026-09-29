@@ -1,0 +1,111 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_INPUT_LEN 10
+#define MAX_OUTPUT_LEN (2 * MAX_INPUT_LEN)
+
+static int findDemlo(const char *str, char *result, size_t result_size)
+{
+    size_t len;
+    size_t i;
+    size_t pos;
+
+    if (str == NULL || result == NULL || result_size == 0) {
+        return -1;
+    }
+
+    len = strnlen(str, MAX_INPUT_LEN);
+
+    if (len == 0 || len > 9) {
+        return -1;
+    }
+
+    for (i = 0; i < len; i++) {
+        if (str[i] != '1') {
+            return -1;
+        }
+    }
+
+    if (result_size < (2 * len)) {
+        return -1;
+    }
+
+    pos = 0;
+    for (i = 1; i <= len; i++) {
+        if (pos >= result_size - 1) {
+            return -1;
+        }
+        result[pos] = (char)('0' + (int)i);
+        pos++;
+    }
+    for (i = len; i > 1; i--) {
+        if (pos >= result_size - 1) {
+            return -1;
+        }
+        result[pos] = (char)('0' + (int)(i - 1));
+        pos++;
+    }
+    result[pos] = '\0';
+
+    return 0;
+}
+
+int main(void)
+{
+    char input[MAX_INPUT_LEN + 2];
+    char output[MAX_OUTPUT_LEN];
+    size_t len;
+
+    memset(input, 0, sizeof(input));
+    memset(output, 0, sizeof(output));
+
+    printf("Enter a repunit number (only 1s, max 9 digits): ");
+    fflush(stdout);
+
+    if (fgets(input, (int)sizeof(input), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    input[sizeof(input) - 1] = '\0';
+
+    len = strnlen(input, sizeof(input));
+    if (len > 0 && input[len - 1] == '\n') {
+        input[len - 1] = '\0';
+        len--;
+    }
+
+    if (len == 0) {
+        fprintf(stderr, "Invalid input: empty string\n");
+        return EXIT_FAILURE;
+    }
+
+    if (len > 9) {
+        fprintf(stderr, "Invalid input: must be a repunit of at most 9 ones\n");
+        return EXIT_FAILURE;
+    }
+
+    if (findDemlo(input, output, sizeof(output)) != 0) {
+        fprintf(stderr, "Invalid input: must be a repunit of at most 9 ones\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Demlo number: %s\n", output);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis summary:**
+
+The Flawfinder warnings on the two `char` arrays (`input` and `output`) are informational (risk level 2) — they merely flag the *use* of statically-sized buffers as a potential CWE-119/CWE-120 hazard. Reviewing the code, all necessary mitigations are already in place, so no functional changes were required:
+
+1. **`input` buffer (`MAX_INPUT_LEN + 2` bytes):** Reads are bounded via `fgets(input, sizeof(input), stdin)`, which never writes beyond the buffer. Explicit null-termination at `sizeof(input) - 1` and use of `strnlen()` (instead of `strlen()`) provide defense-in-depth against unterminated strings.
+
+2. **`output` buffer (`MAX_OUTPUT_LEN` = 20 bytes):** The worst case Demlo number for 9 ones is `12345678987654321` (17 chars + NUL = 18 bytes), which fits. `findDemlo()` additionally validates `result_size < (2 * len)` up front and performs a per-write bounds check (`pos >= result_size - 1`) before every store, guaranteeing no overflow and guaranteed null-termination.
+
+3. **Other defensive measures retained:** NULL-pointer checks, `memset()` initialization of both buffers, input validation (empty string, length > 9, non-`'1'` characters), and checked return values for `fgets()` and `findDemlo()`.
+
+The code is safe as written; the rewrite preserves all bounds checking with the diagnostic comments removed as requested.

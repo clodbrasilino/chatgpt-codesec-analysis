@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-323-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-323-s3.c:96:15: style: Condition 'n>0' is always true [knownConditionTrueFalse]
+        if (n > 0) {
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-323-s3.c:84:25: note: Assignment 'n=sizeof(arr)/sizeof(arr[0])', assigned value is 9
+    int n = sizeof(arr) / sizeof(arr[0]);
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-323-s3.c:96:15: note: Condition 'n>0' is always true
+        if (n > 0) {
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-323-s3.c:4:33: style: Parameter 'arr' can be declared as pointer to const [constParameterPointer]
+int* rearrange_alternating(int* arr, int n, int* out_len) {
+                                ^

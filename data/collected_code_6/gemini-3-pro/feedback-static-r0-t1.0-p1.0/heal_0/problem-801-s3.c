@@ -1,0 +1,25 @@
+#include <stdio.h>
+
+int count_equal(int a, int b, int c) {
+    if (a == b && b == c) {
+        return 3;
+    } else if (a == b || a == c || b == c) {
+        return 2;
+    } else {
+        return 0;
+    }
+}
+
+int main(void) {
+    int a, b, c;
+    
+    if (scanf("%d %d %d", &a, &b, &c) != 3) {
+        fprintf(stderr, "Invalid input\n");
+        return 1;
+    }
+    
+    int result = count_equal(a, b, c);
+    printf("Number of equal numbers: %d\n", result);
+    
+    return 0;
+}

@@ -1,0 +1,16 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_0/problem-899-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_0/problem-899-s2.c:16:13: warning: Possible null pointer dereference: array [nullPointer]
+        if (array[left] <= array[right - 1]) {
+            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_0/problem-899-s2.c:45:18: note: Assignment 'array=NULL', assigned value is 0
+    int *array = NULL;
+                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_0/problem-899-s2.c:47:16: note: Assuming condition is false
+    if (length > 0) {
+               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_0/problem-899-s2.c:61:54: note: Calling function 'can_be_sorted_by_picking_corners', 1st argument 'array' value is 0
+    bool sortable = can_be_sorted_by_picking_corners(array, length);
+                                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_0/problem-899-s2.c:16:13: note: Null pointer dereference
+        if (array[left] <= array[right - 1]) {
+            ^

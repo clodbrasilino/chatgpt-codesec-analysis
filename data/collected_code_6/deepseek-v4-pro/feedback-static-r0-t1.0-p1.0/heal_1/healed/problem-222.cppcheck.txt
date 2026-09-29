@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-222.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-222.c:71:22: style: Condition 'all_same_type(NULL,0)' is always true [knownConditionTrueFalse]
+    if (all_same_type(NULL, 0)) {
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-222.c:71:22: note: Calling function 'all_same_type' returns 1
+    if (all_same_type(NULL, 0)) {
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-222.c:71:22: note: Condition 'all_same_type(NULL,0)' is always true
+    if (all_same_type(NULL, 0)) {
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-222.c:22:7: style: struct member 'TupleElement::value' is never used. [unusedStructMember]
+    } value;
+      ^

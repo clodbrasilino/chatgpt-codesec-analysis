@@ -1,0 +1,85 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+#define MAX_INPUT_SIZE 1024
+
+static unsigned long long count_substrings(const char *str, size_t max_len)
+{
+    size_t len;
+
+    if (str == NULL || max_len == 0) {
+        return 0ULL;
+    }
+
+    len = strnlen(str, max_len);
+
+    return ((unsigned long long)len * ((unsigned long long)len + 1ULL)) / 2ULL;
+}
+
+static void flush_stdin(void)
+{
+    int ch;
+    size_t guard = 0;
+    const size_t guard_limit = (size_t)MAX_INPUT_SIZE * 1024U;
+
+    do {
+        ch = getchar();
+        guard++;
+    } while (ch != '\n' && ch != EOF && guard < guard_limit);
+}
+
+int main(void)
+{
+    char buffer[MAX_INPUT_SIZE];
+    char *newline;
+    unsigned long long result;
+
+    memset(buffer, 0, sizeof(buffer));
+
+    printf("Enter a string: ");
+
+    if (fflush(stdout) != 0) {
+        fprintf(stderr, "Error: failed to flush output\n");
+        return EXIT_FAILURE;
+    }
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error: failed to read input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    newline = memchr(buffer, '\n', sizeof(buffer));
+    if (newline != NULL) {
+        *newline = '\0';
+    } else {
+        flush_stdin();
+    }
+
+    result = count_substrings(buffer, sizeof(buffer));
+
+    printf("Number of non-empty substrings: %llu\n", result);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the original code and the flagged weaknesses:**
+
+The two Flawfinder hits were both low-risk and already effectively mitigated in the original source:
+
+1. **`getchar()` in a loop (CWE-120/CWE-20, risk 1):** This is a false positive in practice — `getchar()` reads into an `int`, not a buffer, so no overflow is possible. The original code already added a `guard` counter to bound the loop against pathological input streams (e.g., a pipe feeding endless data with no newline), which is defense-in-depth beyond what's strictly required. I've kept that guard intact.
+
+2. **Statically-sized `char` array (CWE-119!/CWE-120, risk 2):** The mitigation is correct bounds-limited reading, which the original already did via `fgets(buffer, sizeof(buffer), stdin)`. The explicit NUL termination at `buffer[sizeof(buffer) - 1]` is redundant (since `fgets` always NUL-terminates on success) but harmless as belt-and-braces hardening, so it stays.
+
+**Other correctness points verified/improved:**
+
+- `count_substrings` uses `strnlen` bounded by the buffer size and performs the `n*(n+1)/2` computation in `unsigned long long`, avoiding overflow for any length representable here (max len 1023 → no overflow concern anyway). I made the promotion explicit with `1ULL` and added a `max_len == 0` early-out.
+- Added `fflush(stdout)` after the prompt — without it, the prompt may not appear before the blocking read when stdout is fully buffered (e.g., redirected output).
+- `memchr` over the full buffer (rather than `strchr`) is retained; it's safe because the buffer is fully initialized by `memset`.
+- The unread-input flush on truncated lines (`flush_stdin`) correctly prevents leftover input from affecting any subsequent reads and handles `EOF`.
+
+The code remains C89/C99-portable apart from `strnlen` (POSIX.1-2008 / C23) and `%llu` (C99); both are appropriate for any modern toolchain.

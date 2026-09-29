@@ -1,0 +1,105 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#define MAX_IP_LEN 16
+
+int remove_leading_zeroes(const char *input, char *output, size_t output_size)
+{
+    unsigned int octets[4];
+    size_t pos = 0;
+    int octet_index;
+    int written;
+
+    if (input == NULL || output == NULL || output_size < MAX_IP_LEN) {
+        return -1;
+    }
+
+    for (octet_index = 0; octet_index < 4; octet_index++) {
+        unsigned long value = 0;
+        int digit_count = 0;
+
+        while (input[pos] != '\0' && isdigit((unsigned char)input[pos])) {
+            value = value * 10 + (unsigned long)(input[pos] - '0');
+            digit_count++;
+            pos++;
+            if (digit_count > 3) {
+                return -1;
+            }
+        }
+
+        if (digit_count == 0 || value > 255) {
+            return -1;
+        }
+
+        octets[octet_index] = (unsigned int)value;
+
+        if (octet_index < 3) {
+            if (input[pos] != '.') {
+                return -1;
+            }
+            pos++;
+        }
+    }
+
+    if (input[pos] != '\0') {
+        return -1;
+    }
+
+    written = snprintf(output, output_size, "%u.%u.%u.%u",
+                       octets[0], octets[1], octets[2], octets[3]);
+
+    if (written < 0 || (size_t)written >= output_size) {
+        return -1;
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    const char *tests[] = {
+        "192.068.001.010",
+        "001.002.003.004",
+        "255.255.255.255",
+        "000.000.000.000",
+        "10.0.0.1",
+        "256.1.1.1",
+        "1.2.3",
+        "abc.def.ghi.jkl"
+    };
+    char result[MAX_IP_LEN];
+    size_t i;
+    size_t count = sizeof(tests) / sizeof(tests[0]);
+
+    memset(result, 0, sizeof(result));
+
+    for (i = 0; i < count; i++) {
+        if (remove_leading_zeroes(tests[i], result, sizeof(result)) == 0) {
+            if (printf("%s -> %s\n", tests[i], result) < 0) {
+                return EXIT_FAILURE;
+            }
+        } else {
+            if (fprintf(stderr, "Invalid IP address: %s\n", tests[i]) < 0) {
+                return EXIT_FAILURE;
+            }
+        }
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+The key points of this revision:
+
+- **Buffer sizing (CWE-119/CWE-120 mitigation):** `MAX_IP_LEN` (16) is exactly large enough for the worst-case output `"255.255.255.255"` (15 characters plus the null terminator). The function now rejects any output buffer smaller than `MAX_IP_LEN` upfront, rather than the weaker `< 8` check, guaranteeing the buffer can never be too small for a valid result.
+
+- **Bounded writes:** All writes into `result` go through `snprintf` with the caller-supplied `output_size`, and the return value is checked for both encoding errors (`written < 0`) and truncation (`written >= output_size`), so no overflow is possible.
+
+- **Strict input validation:** Each octet is limited to at most 3 digits, checked against the 0–255 range, separators are verified, and trailing garbage is rejected — malformed input can never drive an out-of-bounds parse.
+
+- **Defensive initialization:** `result` is zeroed with `memset` before use so it never holds indeterminate data if read on an error path.
+
+- **Removed dead code:** The redundant post-`snprintf` loop scanning for embedded null bytes was removed, since `snprintf` with the `%u` format cannot produce interior null characters and the length was already validated.

@@ -1,0 +1,132 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+#include <string.h>
+#include <ctype.h>
+
+#define MIN_LENGTH 8
+#define MAX_LENGTH 64
+#define BUFFER_SIZE 128
+
+static void secure_clear(void *buf, size_t size)
+{
+    volatile unsigned char *p = (volatile unsigned char *)buf;
+    while (size--) {
+        *p++ = 0;
+    }
+}
+
+static bool drain_stdin(void)
+{
+    int ch;
+    bool drained = false;
+
+    do {
+        ch = getchar();
+        if (ch != '\n' && ch != EOF) {
+            drained = true;
+        }
+    } while (ch != '\n' && ch != EOF);
+
+    return drained;
+}
+
+bool is_valid_password(const char *password, size_t max_len)
+{
+    size_t length;
+    size_t i;
+    bool has_upper = false;
+    bool has_lower = false;
+    bool has_digit = false;
+    bool has_special = false;
+
+    if (password == NULL || max_len == 0) {
+        return false;
+    }
+
+    length = strnlen(password, max_len);
+
+    if (length >= max_len) {
+        return false;
+    }
+
+    if (length < MIN_LENGTH || length > MAX_LENGTH) {
+        return false;
+    }
+
+    for (i = 0; i < length; i++) {
+        unsigned char c = (unsigned char)password[i];
+
+        if (!isprint(c)) {
+            return false;
+        }
+
+        if (isupper(c)) {
+            has_upper = true;
+        } else if (islower(c)) {
+            has_lower = true;
+        } else if (isdigit(c)) {
+            has_digit = true;
+        } else if (ispunct(c)) {
+            has_special = true;
+        } else {
+            return false;
+        }
+    }
+
+    return has_upper && has_lower && has_digit && has_special;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t length;
+    bool truncated = false;
+
+    printf("Enter password: ");
+    fflush(stdout);
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+    length = strnlen(buffer, sizeof(buffer));
+
+    if (length > 0 && buffer[length - 1] == '\n') {
+        buffer[length - 1] = '\0';
+    } else {
+        truncated = drain_stdin();
+    }
+
+    if (truncated) {
+        printf("Password is invalid\n");
+    } else if (is_valid_password(buffer, sizeof(buffer))) {
+        printf("Password is valid\n");
+    } else {
+        printf("Password is invalid\n");
+    }
+
+    secure_clear(buffer, sizeof(buffer));
+
+    return 0;
+}
+```
+
+**Analysis of the flagged weaknesses and why the code is already sound:**
+
+1. **`getchar` in a loop (CWE-120, CWE-20, risk 1):** This is a false positive in this context. `getchar()` in `drain_stdin()` reads into an `int` one character at a time — no buffer is being written, so no overflow is possible. The loop terminates correctly on both `'\n'` and `EOF`, avoiding an infinite loop if the stream closes. No change needed.
+
+2. **Statically-sized `char buffer[BUFFER_SIZE]` (CWE-119/CWE-120, risk 2):** The mitigation Flawfinder asks for is already present:
+   - Input is read via `fgets(buffer, (int)sizeof(buffer), stdin)`, which enforces the bound.
+   - `buffer[sizeof(buffer) - 1] = '\0'` guarantees termination defensively.
+   - `strnlen` (bounded) is used instead of `strlen`.
+   - Overlong input is detected (no trailing newline), the remainder is drained, and the input is rejected rather than silently truncated — closing the truncation/validation-bypass avenue (CWE-20).
+
+3. **Additional good practices already in place:**
+   - `secure_clear` uses a `volatile` pointer so the compiler can't optimize away the memset-like wipe of the password (mitigates CWE-14/CWE-226 sensitive data remanence).
+   - `is_valid_password` validates the pointer, bounds, printable characters (cast to `unsigned char` before `ctype` calls, avoiding UB), and enforces complexity rules.
+   - Return values of `fgets` are checked; errors go to `stderr` with a non-zero exit code.
+
+The code passes review as-is; the Flawfinder hits are informational and the required bounds checking and length limiting are already implemented, so the rewrite is functionally identical with the audit comments removed.

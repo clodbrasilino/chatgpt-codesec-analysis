@@ -1,0 +1,43 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-584-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-584-s2.c:100:24: warning: Identical condition 'alloc_size<=search_len', second condition is always false [identicalConditionAfterEarlyExit]
+        if (search_len >= alloc_size) {
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-584-s2.c:86:24: note: If condition 'alloc_size<=search_len' is true, the function will return/exit
+        if (alloc_size <= search_len) {
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-584-s2.c:100:24: note: Testing identical condition 'alloc_size<=search_len'
+        if (search_len >= alloc_size) {
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-584-s2.c:81:24: style: Condition 'search_len==0' is always false [knownConditionTrueFalse]
+        if (search_len == 0) {
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-584-s2.c:77:48: note: Assuming that condition 'offset<sentence_len' is not redundant
+    while (match_count < max_matches && offset < sentence_len) {
+                                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-584-s2.c:79:42: note: Assignment 'search_len=sentence_len-offset', assigned value is greater than 0
+        size_t search_len = sentence_len - offset;
+                                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-584-s2.c:81:24: note: Condition 'search_len==0' is always false
+        if (search_len == 0) {
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-584-s2.c:95:24: style: Condition 'search_len>=alloc_size' is always false [knownConditionTrueFalse]
+        if (search_len >= alloc_size) {
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-584-s2.c:85:27: note: alloc_size is assigned 'search_len+1' here.
+        size_t alloc_size = search_len + 1;
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-584-s2.c:91:18: note: Assuming condition is false
+        if (temp == NULL) {
+                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-584-s2.c:95:24: note: Condition 'search_len>=alloc_size' is always false
+        if (search_len >= alloc_size) {
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-584-s2.c:105:24: style: Condition 'search_len<alloc_size' is always true [knownConditionTrueFalse]
+        if (search_len < alloc_size) {
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-584-s2.c:100:24: note: Assuming that condition 'search_len>=alloc_size' is not redundant
+        if (search_len >= alloc_size) {
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-584-s2.c:105:24: note: Condition 'search_len<alloc_size' is always true
+        if (search_len < alloc_size) {
+                       ^

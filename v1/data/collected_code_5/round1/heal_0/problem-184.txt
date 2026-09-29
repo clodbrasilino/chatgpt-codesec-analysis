@@ -1,0 +1,23 @@
+```C
+#include <stdio.h>
+
+void find_values(int arr[], int size, int num) {
+    for(int i=0; i<size; i++) {
+        if(arr[i] > num) {
+            printf("%d ", arr[i]);
+        }
+    }
+    printf("\n");
+}
+
+int main() {
+    int arr[] = {10, 20, 30, 40, 50};
+    int size = sizeof(arr) / sizeof(arr[0]);
+    int num = 25;
+    
+    find_values(arr, size, num);
+
+    return 0;
+}
+```
+In this code, the function `find_values` is declared, which iterate through all elements of an array and print the values which are greater than a specified number. The program is free of the mentioned programming mistakes: it does not misuse any resources, handle exceptions improperly or violate coding standards. The array and its size are passed to the function, limiting the opportunity for resource misuse, out of bounds or null pointer exceptions.

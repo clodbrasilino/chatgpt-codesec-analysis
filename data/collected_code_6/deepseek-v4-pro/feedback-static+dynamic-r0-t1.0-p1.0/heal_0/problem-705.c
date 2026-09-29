@@ -1,0 +1,194 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node* next;
+} Node;
+
+typedef struct List {
+    Node* head;
+    struct List* next;
+} List;
+
+Node* create_node(int data) {
+    Node* new_node = (Node*)malloc(sizeof(Node));
+    if (new_node == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(EXIT_FAILURE);
+    }
+    new_node->data = data;
+    new_node->next = NULL;
+    return new_node;
+}
+
+List* create_list(void) {
+    List* new_list = (List*)malloc(sizeof(List));
+    if (new_list == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(EXIT_FAILURE);
+    }
+    new_list->head = NULL;
+    new_list->next = NULL;
+    return new_list;
+}
+
+void list_insert_tail(List* list, int data) {
+    if (list == NULL) return;
+    
+    Node* new_node = create_node(data);
+    if (list->head == NULL) {
+        list->head = new_node;
+    } else {
+        Node* current = list->head;
+        while (current->next != NULL) {
+            current = current->next;
+        }
+        current->next = new_node;
+    }
+}
+
+int list_length(List* list) {
+    if (list == NULL) return 0;
+    
+    int count = 0;
+    Node* current = list->head;
+    while (current != NULL) {
+        count++;
+        current = current->next;
+    }
+    return count;
+}
+
+int compare_lists(List* a, List* b) {
+    int len_a = list_length(a);
+    int len_b = list_length(b);
+    
+    if (len_a != len_b) {
+        return len_a - len_b;
+    }
+    
+    Node* node_a = a->head;
+    Node* node_b = b->head;
+    
+    while (node_a != NULL && node_b != NULL) {
+        if (node_a->data != node_b->data) {
+            return node_a->data - node_b->data;
+        }
+        node_a = node_a->next;
+        node_b = node_b->next;
+    }
+    
+    return 0;
+}
+
+void sort_lists(List** head) {
+    if (head == NULL || *head == NULL || (*head)->next == NULL) return;
+    
+    int swapped;
+    List* ptr1;
+    List* lptr = NULL;
+    
+    do {
+        swapped = 0;
+        ptr1 = *head;
+        
+        while (ptr1->next != lptr) {
+            if (compare_lists(ptr1, ptr1->next) > 0) {
+                Node* temp_head = ptr1->head;
+                ptr1->head = ptr1->next->head;
+                ptr1->next->head = temp_head;
+                
+                swapped = 1;
+            }
+            ptr1 = ptr1->next;
+        }
+        lptr = ptr1;
+    } while (swapped);
+}
+
+void print_lists(List* list_of_lists) {
+    if (list_of_lists == NULL) return;
+    
+    List* current_list = list_of_lists;
+    while (current_list != NULL) {
+        printf("[");
+        Node* current_node = current_list->head;
+        while (current_node != NULL) {
+            printf("%d", current_node->data);
+            if (current_node->next != NULL) {
+                printf(", ");
+            }
+            current_node = current_node->next;
+        }
+        printf("]");
+        if (current_list->next != NULL) {
+            printf(" -> ");
+        }
+        current_list = current_list->next;
+    }
+    printf("\n");
+}
+
+void free_lists(List* list_of_lists) {
+    List* current_list = list_of_lists;
+    
+    while (current_list != NULL) {
+        Node* current_node = current_list->head;
+        while (current_node != NULL) {
+            Node* temp_node = current_node;
+            current_node = current_node->next;
+            free(temp_node);
+        }
+        
+        List* temp_list = current_list;
+        current_list = current_list->next;
+        free(temp_list);
+    }
+}
+
+int main(void) {
+    List* list_of_lists = create_list();
+    
+    List* list1 = create_list();
+    list_insert_tail(list1, 3);
+    list_insert_tail(list1, 1);
+    list_insert_tail(list1, 2);
+    list1->next = NULL;
+    
+    List* list2 = create_list();
+    list_insert_tail(list2, 1);
+    list_insert_tail(list2, 4);
+    list2->next = NULL;
+    
+    List* list3 = create_list();
+    list_insert_tail(list3, 2);
+    list3->next = NULL;
+    
+    List* list4 = create_list();
+    list_insert_tail(list4, 1);
+    list_insert_tail(list4, 3);
+    list4->next = NULL;
+    
+    list1->next = list2;
+    list2->next = list3;
+    list3->next = list4;
+    
+    list_of_lists->head = list1->head;
+    list_of_lists->head = NULL;
+    
+    List* sorted_head = list1;
+    
+    printf("Before sorting:\n");
+    print_lists(sorted_head);
+    
+    sort_lists(&sorted_head);
+    
+    printf("After sorting:\n");
+    print_lists(sorted_head);
+    
+    free_lists(sorted_head);
+    free(list_of_lists);
+    
+    return 0;
+}

@@ -1,0 +1,41 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define TUPLE_MAX 5
+
+char *tuple_to_string(const int *tuple, size_t size) {
+    if (size == 0 || size > TUPLE_MAX) {
+        return NULL;
+    }
+
+    char *result = malloc(10 * size + 1); 
+    if (result == NULL) {
+        return NULL;
+    }
+
+    int len = 0;
+    for (size_t i = 0; i < size; ++i) {
+        len += snprintf(result + len, 10 * size + 1 - len, "%d", tuple[i]);
+        if (i < size - 1) {
+            len += snprintf(result + len, 10 * size + 1 - len, ",");
+        }
+    }
+
+    return result;
+}
+
+int main() {
+    int tuple[] = {1, 2, 3};
+    size_t size = sizeof(tuple) / sizeof(tuple[0]);
+
+    char *str = tuple_to_string(tuple, size);
+    if (str != NULL) {
+        printf("%s\n", str);
+        free(str);
+    } else {
+        fprintf(stderr, "Failed to convert tuple to string\n");
+    }
+
+    return 0;
+}

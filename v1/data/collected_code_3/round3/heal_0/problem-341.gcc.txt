@@ -1,0 +1,37 @@
+collected_code_3/problem-341-3.c: In function 'convertToOrderedTuples':
+collected_code_3/problem-341-3.c:22:29: warning: dereference of possibly-NULL 'tuples' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   22 |         tuples[i / 2].first = set[i];
+      |         ~~~~~~~~~~~~~~~~~~~~^~~~~~~~
+  'main': events 1-3
+    |
+    |   29 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   33 |     Tuple *tuples = malloc(sizeof(Tuple) * setSize / 2);
+    |      |                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                     |
+    |      |                     (2) this call could return NULL
+    |   34 | 
+    |   35 |     convertToOrderedTuples(set, setSize, tuples);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (3) calling 'convertToOrderedTuples' from 'main'
+    |
+    +--> 'convertToOrderedTuples': events 4-7
+           |
+           |   20 | void convertToOrderedTuples(int *set, int setSize, Tuple *tuples) {
+           |      |      ^~~~~~~~~~~~~~~~~~~~~~
+           |      |      |
+           |      |      (4) entry to 'convertToOrderedTuples'
+           |   21 |     for (int i = 0; i < setSize; i += 2) {
+           |      |                     ~~~~~~~~~~~
+           |      |                       |
+           |      |                       (5) following 'true' branch (when 'i < setSize')...
+           |   22 |         tuples[i / 2].first = set[i];
+           |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                             |    |
+           |      |                             |    (6) ...to here
+           |      |                             (7) 'tuples + (long unsigned int)(i / 2) * 8' could be NULL: unchecked value from (2)
+           |

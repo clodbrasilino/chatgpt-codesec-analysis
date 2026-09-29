@@ -1,0 +1,112 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+#include <sys/select.h>
+
+typedef struct {
+    char **items;
+    size_t len;
+} Tuple;
+
+void free_tuple(Tuple *tuple) {
+    if (tuple == NULL) {
+        return;
+    }
+    if (tuple->items != NULL) {
+        for (size_t i = 0; i < tuple->len; i++) {
+            free(tuple->items[i]);
+        }
+        free(tuple->items);
+    }
+    free(tuple);
+}
+
+Tuple *string_list_to_tuple(const char *str) {
+    if (str == NULL) {
+        return NULL;
+    }
+    size_t len = strlen(str);
+    Tuple *tuple = malloc(sizeof(Tuple));
+    if (tuple == NULL) {
+        return NULL;
+    }
+    tuple->len = len;
+    if (len == 0) {
+        tuple->items = NULL;
+        return tuple;
+    }
+    tuple->items = malloc(len * sizeof(char *));
+    if (tuple->items == NULL) {
+        free(tuple);
+        return NULL;
+    }
+    for (size_t i = 0; i < len; i++) {
+        tuple->items[i] = malloc(2);
+        if (tuple->items[i] == NULL) {
+            for (size_t j = 0; j < i; j++) {
+                free(tuple->items[j]);
+            }
+            free(tuple->items);
+            free(tuple);
+            return NULL;
+        }
+        tuple->items[i][0] = str[i];
+        tuple->items[i][1] = '\0';
+    }
+    return tuple;
+}
+
+int main(int argc, char *argv[]) {
+    char buffer[1024];
+    const char *str = "python3.0";
+    Tuple *tuple = NULL;
+
+    if (argc > 1 && argv[1] != NULL) {
+        str = argv[1];
+    } else {
+        fd_set rfds;
+        size_t bytes_read_total = 0;
+        while (bytes_read_total < sizeof(buffer) - 1) {
+            FD_ZERO(&rfds);
+            FD_SET(STDIN_FILENO, &rfds);
+            struct timeval tv = {0, 0};
+            if (select(STDIN_FILENO + 1, &rfds, NULL, NULL, &tv) <= 0) {
+                break;
+            }
+            ssize_t bytes_read = read(STDIN_FILENO, buffer + bytes_read_total, 1);
+            if (bytes_read <= 0) {
+                break;
+            }
+            bytes_read_total += bytes_read;
+        }
+        if (bytes_read_total > 0) {
+            buffer[bytes_read_total] = '\0';
+            size_t len = strlen(buffer);
+            while (len > 0 && (buffer[len - 1] == '\n' || buffer[len - 1] == '\r')) {
+                buffer[len - 1] = '\0';
+                len--;
+            }
+            if (len > 0) {
+                str = buffer;
+            }
+        }
+    }
+
+    tuple = string_list_to_tuple(str);
+    if (tuple == NULL) {
+        return EXIT_FAILURE;
+    }
+
+    printf("[");
+    for (size_t i = 0; i < tuple->len; i++) {
+        if (i > 0) {
+            printf(", ");
+        }
+        printf("'%s'", tuple->items[i]);
+    }
+    printf("]\n");
+
+    free_tuple(tuple);
+    return EXIT_SUCCESS;
+}

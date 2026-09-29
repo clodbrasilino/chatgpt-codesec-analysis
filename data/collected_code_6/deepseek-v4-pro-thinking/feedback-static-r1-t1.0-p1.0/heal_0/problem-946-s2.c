@@ -1,0 +1,52 @@
+#include <stdio.h>
+#include <limits.h>
+#include <ctype.h>
+
+void find_most_common_elements(const char *text) {
+    if (text == NULL) {
+        fprintf(stderr, "Error: NULL text input.\n");
+        return;
+    }
+
+    if (*text == '\0') {
+        printf("No elements found.\n");
+        return;
+    }
+
+    size_t counts[UCHAR_MAX + 1] = {0};
+    const unsigned char *u = (const unsigned char *)text;
+
+    while (*u != '\0') {
+        counts[*u]++;
+        u++;
+    }
+
+    size_t max_count = 0;
+    for (int i = 0; i <= UCHAR_MAX; ++i) {
+        if (counts[i] > max_count) {
+            max_count = counts[i];
+        }
+    }
+
+    for (int i = 0; i <= UCHAR_MAX; ++i) {
+        if (counts[i] == max_count) {
+            if (isprint(i)) {
+                printf("'%c': %zu\n", i, max_count);
+            } else {
+                printf("'\\x%02X': %zu\n", (unsigned int)i, max_count);
+            }
+        }
+    }
+}
+
+int main(int argc, char *argv[]) {
+    const char *program_name = (argc > 0 && argv[0] != NULL) ? argv[0] : "program";
+
+    if (argc != 2) {
+        fprintf(stderr, "Usage: %s <text>\n", program_name);
+        return 1;
+    }
+
+    find_most_common_elements(argv[1]);
+    return 0;
+}

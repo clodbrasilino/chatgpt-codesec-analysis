@@ -1,0 +1,46 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stddef.h>
+
+void shell_sort(int *array, size_t size)
+{
+    if (array == NULL || size <= 1) {
+        return;
+    }
+    
+    for (size_t gap = size / 2; gap > 0; gap /= 2) {
+        for (size_t i = gap; i < size; i++) {
+            int temp = array[i];
+            size_t j = i;
+            
+            while (j >= gap && array[j - gap] > temp) {
+                array[j] = array[j - gap];
+                j -= gap;
+            }
+            
+            array[j] = temp;
+        }
+    }
+}
+
+int main(void)
+{
+    int array[] = {64, 34, 25, 12, 22, 11, 90, 88, 45, 50};
+    size_t size = sizeof(array) / sizeof(array[0]);
+    
+    printf("Original array: ");
+    for (size_t i = 0; i < size; i++) {
+        printf("%d ", array[i]);
+    }
+    printf("\n");
+    
+    shell_sort(array, size);
+    
+    printf("Sorted array: ");
+    for (size_t i = 0; i < size; i++) {
+        printf("%d ", array[i]);
+    }
+    printf("\n");
+    
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,103 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+#include <errno.h>
+#include <float.h>
+#include <math.h>
+
+#define NUM_BUFFER_SIZE 64
+
+int extract_max_number(const char *input, double *result)
+{
+    regex_t regex;
+    regmatch_t match;
+    const char *cursor;
+    char buffer[NUM_BUFFER_SIZE];
+    double max_value;
+    int found;
+    int ret;
+    char *endptr;
+
+    if (input == NULL || result == NULL) {
+        return -1;
+    }
+
+    ret = regcomp(&regex, "-?[0-9]+(\\.[0-9]+)?", REG_EXTENDED);
+    if (ret != 0) {
+        return -1;
+    }
+
+    cursor = input;
+    found = 0;
+    max_value = -DBL_MAX;
+
+    while (regexec(&regex, cursor, 1, &match, 0) == 0) {
+        size_t len;
+
+        if (match.rm_so < 0 || match.rm_eo < match.rm_so) {
+            break;
+        }
+
+        len = (size_t)(match.rm_eo - match.rm_so);
+
+        if (len > 0 && len <= sizeof(buffer) - 1) {
+            double value;
+
+            memcpy(buffer, cursor + match.rm_so, len);
+            buffer[len] = '\0';
+
+            errno = 0;
+            value = strtod(buffer, &endptr);
+            if (errno == 0 && endptr != buffer && *endptr == '\0' && isfinite(value)) {
+                if (!found || value > max_value) {
+                    max_value = value;
+                    found = 1;
+                }
+            }
+        }
+
+        if (match.rm_eo == 0) {
+            break;
+        }
+        cursor += match.rm_eo;
+    }
+
+    regfree(&regex);
+
+    if (!found) {
+        return -1;
+    }
+
+    *result = max_value;
+    return 0;
+}
+
+int main(void)
+{
+    const char *test = "Values: 42, -17, 3.14, 1000.5, and 999";
+    double max_value;
+
+    if (extract_max_number(test, &max_value) != 0) {
+        fprintf(stderr, "No numeric value found\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Maximum value: %g\n", max_value) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the flagged weaknesses and how they are addressed:**
+
+1. **`char buffer[NUM_BUFFER_SIZE]` (CWE-119/CWE-120, statically-sized array):** The buffer is only ever written after an explicit bounds check. The rewritten condition `len <= sizeof(buffer) - 1` makes it unambiguous that space is always reserved for the null terminator, so `buffer[len] = '\0'` can never write out of bounds. The size is derived from `sizeof(buffer)` rather than the macro, so the check stays correct even if the buffer declaration changes.
+
+2. **`memcpy` (CWE-120, unchecked copy):** The copy length `len` is validated against the destination capacity *before* the `memcpy` executes, and the source region `cursor + match.rm_so` through `cursor + match.rm_eo` is guaranteed valid by `regexec` returning a successful match within the null-terminated input string. The additional sanity checks on `rm_so`/`rm_eo` guard against pathological regex results.
+
+3. **Hardening added beyond the flagged items:** The `*endptr == '\0'` check ensures `strtod` consumed the entire matched token, rejecting partially parsed garbage; `errno` and `isfinite` checks guard against overflow to `HUGE_VAL`/infinity; the `rm_eo == 0` check prevents an infinite loop on a zero-length match; and NULL-pointer parameters are rejected up front.
+
+The original code was already essentially safe — the Flawfinder hits were low-risk (risk 2) pattern matches, not confirmed vulnerabilities — but the rewrite makes the bounds guarantees explicit and easier to audit.

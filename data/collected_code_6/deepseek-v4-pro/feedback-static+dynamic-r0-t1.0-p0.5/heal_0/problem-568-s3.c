@@ -1,0 +1,74 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Dict {
+    void *data;
+    struct Dict *next;
+} Dict;
+
+Dict *create_empty_dict(void) {
+    Dict *dict = (Dict *)malloc(sizeof(Dict));
+    if (dict == NULL) {
+        return NULL;
+    }
+    dict->data = NULL;
+    dict->next = NULL;
+    return dict;
+}
+
+Dict **create_dict_list(int count) {
+    if (count <= 0) {
+        return NULL;
+    }
+    
+    Dict **list = (Dict **)malloc(sizeof(Dict *) * count);
+    if (list == NULL) {
+        return NULL;
+    }
+    
+    for (int i = 0; i < count; i++) {
+        list[i] = create_empty_dict();
+        if (list[i] == NULL) {
+            for (int j = 0; j < i; j++) {
+                free(list[j]);
+            }
+            free(list);
+            return NULL;
+        }
+    }
+    
+    return list;
+}
+
+void free_dict_list(Dict **list, int count) {
+    if (list == NULL) {
+        return;
+    }
+    
+    for (int i = 0; i < count; i++) {
+        free(list[i]);
+    }
+    free(list);
+}
+
+int main(void) {
+    int count = 5;
+    Dict **dict_list = create_dict_list(count);
+    
+    if (dict_list == NULL) {
+        fprintf(stderr, "Failed to create dictionary list\n");
+        return EXIT_FAILURE;
+    }
+    
+    for (int i = 0; i < count; i++) {
+        if (dict_list[i] == NULL) {
+            fprintf(stderr, "Dictionary %d is NULL\n", i);
+            free_dict_list(dict_list, count);
+            return EXIT_FAILURE;
+        }
+    }
+    
+    free_dict_list(dict_list, count);
+    
+    return EXIT_SUCCESS;
+}

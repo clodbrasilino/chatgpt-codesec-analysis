@@ -1,0 +1,41 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+long long multiply_list_items(const int *list, size_t size) {
+    if (list == NULL || size == 0) {
+        return 0;
+    }
+
+    long long result = 1;
+    for (size_t i = 0; i < size; ++i) {
+        result *= list[i];
+    }
+
+    return result;
+}
+
+int main(void) {
+    int *list = NULL;
+    size_t size = 5;
+
+    list = (int *)malloc(size * sizeof(int));
+    if (list == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    list[0] = 2;
+    list[1] = 3;
+    list[2] = 4;
+    list[3] = 5;
+    list[4] = 6;
+
+    long long product = multiply_list_items(list, size);
+    
+    printf("Product: %lld\n", product);
+
+    free(list);
+    list = NULL;
+
+    return EXIT_SUCCESS;
+}

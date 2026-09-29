@@ -1,0 +1,97 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+#include <stdint.h>
+
+char *replace_with_colon(const char *str, size_t len) {
+    if (str == NULL) {
+        return NULL;
+    }
+
+    if (len == SIZE_MAX) {
+        return NULL;
+    }
+
+    regex_t regex;
+    int ret = regcomp(&regex, "[ ,.]", REG_EXTENDED);
+    if (ret != 0) {
+        return NULL;
+    }
+
+    char *temp = malloc(len + 1);
+    if (temp == NULL) {
+        regfree(&regex);
+        return NULL;
+    }
+    for (size_t i = 0; i < len; i++) {
+        temp[i] = str[i];
+    }
+    temp[len] = '\0';
+
+    char *result = malloc(len + 1);
+    if (result == NULL) {
+        free(temp);
+        regfree(&regex);
+        return NULL;
+    }
+
+    size_t res_idx = 0;
+    const char *start = temp;
+    const char *end = temp + len;
+    regmatch_t pmatch[1];
+
+    while (start < end) {
+        ret = regexec(&regex, start, 1, pmatch, 0);
+        if (ret == REG_NOMATCH) {
+            while (start < end) {
+                result[res_idx++] = *start++;
+            }
+            break;
+        }
+
+        if (ret != 0) {
+            free(result);
+            free(temp);
+            regfree(&regex);
+            return NULL;
+        }
+
+        size_t match_start = (size_t)pmatch[0].rm_so;
+        size_t match_end = (size_t)pmatch[0].rm_eo;
+
+        for (size_t i = 0; i < match_start; i++) {
+            if (start + i < end) {
+                result[res_idx++] = start[i];
+            }
+        }
+
+        if (res_idx < len) {
+            result[res_idx++] = ':';
+        }
+
+        if (match_end > 0) {
+            start += match_end;
+        } else {
+            start++;
+        }
+    }
+
+    result[res_idx] = '\0';
+    free(temp);
+    regfree(&regex);
+    return result;
+}
+
+int main(void) {
+    const char *input = "Hello world, this.is a test.";
+    size_t len = sizeof("Hello world, this.is a test.") - 1;
+    char *output = replace_with_colon(input, len);
+
+    if (output != NULL) {
+        printf("%s\n", output);
+        free(output);
+    }
+
+    return 0;
+}

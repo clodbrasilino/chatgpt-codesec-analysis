@@ -1,0 +1,33 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+long long sum_of_divisors(int n) {
+    if (n <= 0) {
+        return 0;
+    }
+
+    long long sum = 0;
+    for (long long i = 1; i * i <= n; i++) {
+        if (n % i == 0) {
+            sum += i;
+            if (i * i != n) {
+                sum += n / i;
+            }
+        }
+    }
+    return sum;
+}
+
+int main(void) {
+    int num;
+    
+    if (scanf("%d", &num) != 1) {
+        return EXIT_FAILURE;
+    }
+
+    long long result = sum_of_divisors(num);
+    
+    printf("%lld\n", result);
+
+    return EXIT_SUCCESS;
+}

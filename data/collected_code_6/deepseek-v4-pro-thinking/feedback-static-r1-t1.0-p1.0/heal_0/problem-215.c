@@ -1,0 +1,82 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+
+typedef struct {
+    size_t count;
+    int value;
+} rle_token;
+
+int decode_rle(const rle_token *tokens, size_t token_count, int **decoded, size_t *decoded_len)
+{
+    size_t total = 0;
+    size_t i;
+    size_t j;
+    size_t pos;
+    int *out = NULL;
+
+    if (decoded == NULL || decoded_len == NULL) {
+        return -1;
+    }
+    if (tokens == NULL && token_count != 0) {
+        return -1;
+    }
+
+    *decoded = NULL;
+    *decoded_len = 0;
+
+    for (i = 0; i < token_count; i++) {
+        if (tokens[i].count > SIZE_MAX - total) {
+            return -1;
+        }
+        total += tokens[i].count;
+    }
+
+    if (total == 0) {
+        return 0;
+    }
+    if (total > SIZE_MAX / sizeof(*out)) {
+        return -1;
+    }
+
+    out = malloc(total * sizeof(*out));
+    if (out == NULL) {
+        return -1;
+    }
+
+    pos = 0;
+    for (i = 0; i < token_count; i++) {
+        for (j = 0; j < tokens[i].count; j++) {
+            out[pos++] = tokens[i].value;
+        }
+    }
+
+    *decoded = out;
+    *decoded_len = total;
+    return 0;
+}
+
+int main(void)
+{
+    rle_token tokens[] = {
+        {3, 5},
+        {2, 1},
+        {0, 9},
+        {4, 2}
+    };
+    int *decoded = NULL;
+    size_t decoded_len = 0;
+    size_t i;
+
+    if (decode_rle(tokens, sizeof(tokens) / sizeof(tokens[0]), &decoded, &decoded_len) != 0) {
+        return 1;
+    }
+
+    for (i = 0; i < decoded_len; i++) {
+        printf("%d ", decoded[i]);
+    }
+    printf("\n");
+
+    free(decoded);
+    return 0;
+}

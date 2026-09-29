@@ -1,0 +1,35 @@
+```c
+#include <stdio.h>
+
+int findCommonDivisor(int a, int b) {
+    while(a != b) {
+        if(a > b) {
+            a -= b;
+        } else {
+            b -= a;
+        }
+    }
+
+    return a;
+}
+
+int main(void) {
+    int num1, num2;
+
+    printf("Enter first number: ");
+    scanf("%d", &num1);
+
+    printf("Enter second number: ");
+    scanf("%d", &num2);
+
+    if(num1 < 1 || num2 < 1) {
+        printf("Invalid input. Numbers must be greater than 0.\n");
+        return 1;
+    }
+
+    printf("The greatest common divisor is: %d\n", findCommonDivisor(num1, num2));
+
+    return 0;
+}
+```
+In the above code snippet, "findCommonDivisor()" is a function to find the common divisor between two given numbers: num1 and num2. The function proceeds by decrementing the larger integer by the smaller one. After a few iterations, both numbers will equal the common divisor (Euclidean algorithm). The main function tests this function and verifies the entered data. If the user gives a negative number or zero, the program indicates that the input is invalid and returns an error code. After that, if everything is fine, it will print the greatest common divisor. The Errors CWE-664, CWE-703, and CWE-710 are not included in this code.

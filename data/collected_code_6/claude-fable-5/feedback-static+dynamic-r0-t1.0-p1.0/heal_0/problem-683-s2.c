@@ -1,0 +1,65 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+#include <stdbool.h>
+
+bool isSumOfTwoSquares(long long n);
+
+bool isSumOfTwoSquares(long long n)
+{
+    long long a;
+    long long limit;
+
+    if (n < 0)
+    {
+        return false;
+    }
+
+    limit = (long long)sqrt((double)n);
+
+    for (a = 0; a <= limit; a++)
+    {
+        long long remainder = n - (a * a);
+        long long b = (long long)sqrt((double)remainder);
+
+        if ((b * b) == remainder)
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+int main(void)
+{
+    long long number;
+    int result;
+
+    printf("Enter a non-negative integer: ");
+
+    result = scanf("%lld", &number);
+
+    if (result != 1)
+    {
+        fprintf(stderr, "Error: invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (number < 0)
+    {
+        fprintf(stderr, "Error: number must be non-negative.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (isSumOfTwoSquares(number))
+    {
+        printf("%lld can be represented as a sum of two squares.\n", number);
+    }
+    else
+    {
+        printf("%lld cannot be represented as a sum of two squares.\n", number);
+    }
+
+    return EXIT_SUCCESS;
+}

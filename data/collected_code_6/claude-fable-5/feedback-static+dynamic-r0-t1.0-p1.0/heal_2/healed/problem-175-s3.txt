@@ -1,0 +1,84 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdbool.h>
+
+#define MAX_INPUT_LEN 4096
+
+bool is_valid_parentheses(const char *s)
+{
+    size_t len;
+    char *stack;
+    size_t top = 0;
+    size_t i;
+    bool result = true;
+
+    if (s == NULL) {
+        return false;
+    }
+
+    len = strnlen(s, MAX_INPUT_LEN);
+    if (len == MAX_INPUT_LEN && s[MAX_INPUT_LEN - 1] != '\0') {
+        return false;
+    }
+
+    if (len == 0) {
+        return true;
+    }
+
+    stack = malloc(len);
+    if (stack == NULL) {
+        return false;
+    }
+
+    for (i = 0; i < len; i++) {
+        char c = s[i];
+        if (c == '(' || c == '[' || c == '{') {
+            stack[top] = c;
+            top++;
+        } else if (c == ')' || c == ']' || c == '}') {
+            if (top == 0) {
+                result = false;
+                break;
+            }
+            top--;
+            if ((c == ')' && stack[top] != '(') ||
+                (c == ']' && stack[top] != '[') ||
+                (c == '}' && stack[top] != '{')) {
+                result = false;
+                break;
+            }
+        } else {
+            result = false;
+            break;
+        }
+    }
+
+    if (result && top != 0) {
+        result = false;
+    }
+
+    free(stack);
+    return result;
+}
+
+int main(void)
+{
+    char buffer[MAX_INPUT_LEN];
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        buffer[0] = '\0';
+    }
+
+    buffer[strcspn(buffer, "\r\n")] = '\0';
+
+    if (printf("%s\n", is_valid_parentheses(buffer) ? "True" : "False") < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+The key weakness identified from the failing test cases was that the original program produced `<no output>` from the test harness's perspective: it ran a fixed set of hardcoded tests and printed results in the format `"()" -> valid` instead of reading the test input from stdin and emitting the expected `True`/`False` tokens. The rewrite reads a single line from standard input, strips the trailing newline (handling both `\n` and `\r\n`), and prints exactly `True` or `False`, which matches the expected outputs for test cases 0, 1, and 2. The validation logic itself was already sound (bounded length check via `strnlen`, NULL guard, heap-allocated stack sized to input length, rejection of non-bracket characters, and leftover-opener detection), so it was preserved unchanged.

@@ -1,0 +1,17 @@
+#include <stdio.h>
+#include <stdint.h>
+#include <limits.h>
+
+uint32_t left_rotate(uint32_t value, int n) {
+    const uint8_t bits = sizeof(value) * CHAR_BIT;
+    n %= bits;
+    return (value << n) | (value >> (bits - n));
+}
+
+int main() {
+    uint32_t value = 0b10110011;
+    int n = 3;
+    uint32_t result = left_rotate(value, n);
+    printf("Left rotated: %u\n", result);
+    return 0;
+}

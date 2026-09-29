@@ -1,0 +1,103 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+#define MAX_INPUT_LEN 4096
+
+int remove_non_alnum(const char *input, char *output, size_t output_size);
+
+int remove_non_alnum(const char *input, char *output, size_t output_size)
+{
+    regex_t regex;
+    regmatch_t match;
+    const char *cursor;
+    size_t out_index;
+    size_t input_len;
+    int ret;
+    int eflags;
+
+    if (input == NULL || output == NULL || output_size == 0) {
+        return -1;
+    }
+
+    input_len = strnlen(input, MAX_INPUT_LEN);
+    if (input_len >= MAX_INPUT_LEN) {
+        return -1;
+    }
+
+    ret = regcomp(&regex, "[^A-Za-z0-9]+", REG_EXTENDED);
+    if (ret != 0) {
+        return -1;
+    }
+
+    cursor = input;
+    out_index = 0;
+    eflags = 0;
+
+    while (*cursor != '\0') {
+        ret = regexec(&regex, cursor, 1, &match, eflags);
+        if (ret == REG_NOMATCH) {
+            size_t remaining = strnlen(cursor, input_len - (size_t)(cursor - input));
+            if (remaining >= output_size || out_index >= output_size - remaining) {
+                regfree(&regex);
+                return -1;
+            }
+            memmove(&output[out_index], cursor, remaining);
+            out_index += remaining;
+            break;
+        } else if (ret != 0) {
+            regfree(&regex);
+            return -1;
+        }
+
+        if (match.rm_so > 0) {
+            size_t copy_len = (size_t)match.rm_so;
+            if (copy_len >= output_size || out_index >= output_size - copy_len) {
+                regfree(&regex);
+                return -1;
+            }
+            memmove(&output[out_index], cursor, copy_len);
+            out_index += copy_len;
+        }
+
+        if (match.rm_eo <= 0) {
+            regfree(&regex);
+            return -1;
+        }
+
+        cursor += match.rm_eo;
+        eflags = REG_NOTBOL;
+    }
+
+    if (out_index >= output_size) {
+        regfree(&regex);
+        return -1;
+    }
+
+    output[out_index] = '\0';
+    regfree(&regex);
+    return 0;
+}
+
+int main(void)
+{
+    const char *test = "He!!llo, Wor@ld# 12$3.";
+    char result[256];
+
+    memset(result, 0, sizeof(result));
+
+    if (remove_non_alnum(test, result, sizeof(result)) != 0) {
+        fprintf(stderr, "Failed to process string\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Original: %s\n", test) < 0) {
+        return EXIT_FAILURE;
+    }
+    if (printf("Cleaned:  %s\n", result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

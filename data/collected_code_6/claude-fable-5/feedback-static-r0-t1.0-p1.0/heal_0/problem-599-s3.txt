@@ -1,0 +1,56 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+int sum_and_average(unsigned int n, unsigned long long *sum, double *average)
+{
+    if (sum == NULL || average == NULL) {
+        return -1;
+    }
+
+    if (n == 0U) {
+        return -1;
+    }
+
+    if (n > 4294967294U) {
+        return -1;
+    }
+
+    unsigned long long un = (unsigned long long)n;
+    *sum = (un * (un + 1ULL)) / 2ULL;
+    *average = (double)*sum / (double)n;
+
+    return 0;
+}
+
+int main(void)
+{
+    unsigned int n = 0U;
+    unsigned long long sum = 0ULL;
+    double average = 0.0;
+
+    printf("Enter n: ");
+
+    if (scanf("%u", &n) != 1) {
+        fprintf(stderr, "Error: invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (sum_and_average(n, &sum, &average) != 0) {
+        fprintf(stderr, "Error: n must be a positive natural number within range\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Sum of first %u natural numbers: %llu\n", n, sum);
+    printf("Average of first %u natural numbers: %.2f\n", n, average);
+
+    return EXIT_SUCCESS;
+}
+```
+
+Key safety measures in this implementation:
+
+- **CWE-703 avoided**: The return value of `scanf` is checked, and `sum_and_average` returns an error code that is validated by the caller before results are used.
+- **CWE-664 avoided**: All variables are initialized before use, pointers are null-checked before dereferencing, and no resources are left in an indeterminate state.
+- **CWE-710 avoided**: Uses `int main(void)` with explicit `EXIT_SUCCESS`/`EXIT_FAILURE` returns, avoids integer overflow by computing the sum in `unsigned long long` with an upper bound check on `n`, and rejects `n == 0` since natural numbers start at 1.

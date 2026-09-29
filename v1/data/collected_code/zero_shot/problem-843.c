@@ -1,0 +1,51 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+// Function to find the nth super ugly number
+int nthSuperUglyNumber(int n, int* primes, int k) {
+    int* uglyNumbers = (int*) malloc(sizeof(int) * n);
+    int* indices = (int*) malloc(sizeof(int) * k);
+    int* ugNums  = (int*) malloc(sizeof(int) * k);
+    
+    uglyNumbers[0] = 1;
+    
+    for(int i = 1; i < n; i++){
+        int minUgly = INT_MAX;
+        
+        for(int j = 0; j < k; j++){
+            ugNums[j] = uglyNumbers[indices[j]] * primes[j];
+            
+            if(ugNums[j] < minUgly){
+                minUgly = ugNums[j];
+            }
+        }
+        
+        uglyNumbers[i] = minUgly;
+        
+        for(int j = 0; j < k; j++){
+            if(minUgly == ugNums[j]){
+                indices[j]++;
+            }
+        }
+    }
+    
+    int nthUgly = uglyNumbers[n-1];
+    
+    free(uglyNumbers);
+    free(indices);
+    free(ugNums);
+    
+    return nthUgly;
+}
+
+int main() {
+    int n = 6;
+    int primes[] = {2, 7, 13, 19};
+    int k = sizeof(primes)/sizeof(primes[0]);
+    
+    int nthUgly = nthSuperUglyNumber(n, primes, k);
+    
+    printf("The %dth super ugly number is: %d", n, nthUgly);
+    
+    return 0;
+}

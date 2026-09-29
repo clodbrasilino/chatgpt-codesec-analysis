@@ -18,7 +18,7 @@ To place all arms on a common criterion we evaluate:
 FINAL version = the latest .c across heal_0 and heal_1..5/healed for
 each program (round-0 code when never repaired).
 
-Outputs land under cross_eval/{model}/{from_dynamic|from_static}/
+Outputs land under results/cross_eval/{model}/{from_dynamic|from_static}/
 (sources + reports), progress in results/cross_eval_progress.json.
 
 Usage:
@@ -42,7 +42,7 @@ R = REPO / "results"
 S_SLUG = "feedback-static-r0-t1.0-p1.0"
 D_SLUG = "feedback-dynamic-r0-t1.0-p1.0"
 ROUNDS = 5
-OUTROOT = REPO / "cross_eval"
+OUTROOT = REPO / "results" / "cross_eval"
 KEY_RE = re.compile(r"^problem-(?:\d+)(?:-s\d+)?$")
 PROGRESS = R / "cross_eval_progress.json"
 
@@ -61,7 +61,7 @@ def final_source(cell_dir: Path, base: str) -> Path | None:
 
 def gather(model: str, src_slug: str, bases: set[str], outdir: Path) -> int:
     outdir.mkdir(parents=True, exist_ok=True)
-    cell = REPO / "collected_code_6" / model / src_slug
+    cell = REPO / "data" / "collected_code_6" / model / src_slug
     n = 0
     for base in sorted(bases):
         src = final_source(cell, base)

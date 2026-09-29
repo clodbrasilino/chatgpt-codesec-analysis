@@ -1,0 +1,28 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+long long sumOfProductsOfSubarrays(const int *arr, int n) {
+    if (arr == NULL || n <= 0) {
+        return 0;
+    }
+
+    long long total_sum = 0;
+    for (int i = 0; i < n; i++) {
+        long long current_product = 1;
+        for (int j = i; j < n; j++) {
+            current_product *= arr[j];
+            total_sum += current_product;
+        }
+    }
+    return total_sum;
+}
+
+int main(void) {
+    int arr[] = {1, 2, 3};
+    int n = sizeof(arr) / sizeof(arr[0]);
+
+    long long result = sumOfProductsOfSubarrays(arr, n);
+    printf("%lld\n", result);
+
+    return 0;
+}

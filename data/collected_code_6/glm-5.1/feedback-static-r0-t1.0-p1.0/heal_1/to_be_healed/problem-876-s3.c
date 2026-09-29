@@ -1,0 +1,42 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int compute_gcd(int a, int b) {
+    while (b != 0) {
+        int temp = b;
+        b = a % b;
+        a = temp;
+    }
+    return a;
+}
+
+int compute_lcm(int a, int b) {
+    /* Possible weaknesses found:
+     *  Assuming that condition 'a<=0' is not redundant
+     *  Assuming that condition 'b<=0' is not redundant
+     */
+    if (a <= 0 || b <= 0) {
+        exit(EXIT_FAILURE);
+    }
+    /* Possible weaknesses found:
+     *  Condition 'b==0' is always false [knownConditionTrueFalse]
+     *  Condition 'a==0' is always false [knownConditionTrueFalse]
+     *  Condition 'b==0' is always false
+     *  Condition 'a==0' is always false
+     */
+    if (a == 0 || b == 0) {
+        return 0;
+    }
+    if (compute_gcd(a, b) == 0) {
+        exit(EXIT_FAILURE);
+    }
+    return (a / compute_gcd(a, b)) * b;
+}
+
+int main(void) {
+    int num1 = 12;
+    int num2 = 18;
+    int result = compute_lcm(num1, num2);
+    printf("%d\n", result);
+    return 0;
+}

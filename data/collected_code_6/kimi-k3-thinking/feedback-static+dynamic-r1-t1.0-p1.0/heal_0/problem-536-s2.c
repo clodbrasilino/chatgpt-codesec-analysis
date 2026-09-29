@@ -1,0 +1,117 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+#include <stddef.h>
+
+typedef struct Node {
+    int data;
+    struct Node *next;
+} Node;
+
+static Node *create_node(int data)
+{
+    Node *node = malloc(sizeof(*node));
+
+    if (node == NULL) {
+        return NULL;
+    }
+    node->data = data;
+    node->next = NULL;
+    return node;
+}
+
+static bool append_node(Node **head, int data)
+{
+    Node *new_node;
+    Node *current;
+
+    if (head == NULL) {
+        return false;
+    }
+
+    new_node = create_node(data);
+    if (new_node == NULL) {
+        return false;
+    }
+
+    if (*head == NULL) {
+        *head = new_node;
+        return true;
+    }
+
+    current = *head;
+    while (current->next != NULL) {
+        current = current->next;
+    }
+    current->next = new_node;
+    return true;
+}
+
+static bool select_nth(const Node *head, size_t n, int *result)
+{
+    size_t index = 0;
+
+    if (result == NULL) {
+        return false;
+    }
+
+    while (head != NULL) {
+        if (index == n) {
+            *result = head->data;
+            return true;
+        }
+        head = head->next;
+        index++;
+    }
+    return false;
+}
+
+static void free_list(Node **head)
+{
+    Node *current;
+    Node *next;
+
+    if (head == NULL) {
+        return;
+    }
+
+    current = *head;
+    while (current != NULL) {
+        next = current->next;
+        free(current);
+        current = next;
+    }
+    *head = NULL;
+}
+
+int main(void)
+{
+    Node *list = NULL;
+    int values[] = {10, 20, 30, 40, 50};
+    size_t count = sizeof(values) / sizeof(values[0]);
+    size_t i;
+    int result;
+
+    for (i = 0; i < count; i++) {
+        if (!append_node(&list, values[i])) {
+            fprintf(stderr, "Error: memory allocation failed\n");
+            free_list(&list);
+            return EXIT_FAILURE;
+        }
+    }
+
+    if (select_nth(list, 2, &result)) {
+        printf("Item at index 2: %d\n", result);
+    } else {
+        fprintf(stderr, "Error: index out of range\n");
+    }
+
+    if (select_nth(list, 10, &result)) {
+        printf("Item at index 10: %d\n", result);
+    } else {
+        fprintf(stderr, "Error: index out of range\n");
+    }
+
+    free_list(&list);
+    return EXIT_SUCCESS;
+}

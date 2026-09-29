@@ -1,0 +1,87 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int** generateSpiralMatrix(int n) {
+    if (n <= 0) {
+        return NULL;
+    }
+
+    int** matrix = (int**)malloc(n * sizeof(int*));
+    if (matrix == NULL) {
+        return NULL;
+    }
+
+    for (int i = 0; i < n; i++) {
+        matrix[i] = (int*)malloc(n * sizeof(int));
+        if (matrix[i] == NULL) {
+            for (int j = 0; j < i; j++) {
+                free(matrix[j]);
+            }
+            free(matrix);
+            return NULL;
+        }
+    }
+
+    int top = 0;
+    int bottom = n - 1;
+    int left = 0;
+    int right = n - 1;
+    int index = 1;
+
+    while (top <= bottom && left <= right) {
+        for (int i = left; i <= right; i++) {
+            matrix[top][i] = index * index;
+            index++;
+        }
+        top++;
+
+        for (int i = top; i <= bottom; i++) {
+            matrix[i][right] = index * index;
+            index++;
+        }
+        right--;
+
+        if (top <= bottom) {
+            for (int i = right; i >= left; i--) {
+                matrix[bottom][i] = index * index;
+                index++;
+            }
+            bottom--;
+        }
+
+        if (left <= right) {
+            for (int i = bottom; i >= top; i--) {
+                matrix[i][left] = index * index;
+                index++;
+            }
+            left++;
+        }
+    }
+
+    return matrix;
+}
+
+int main() {
+    int n = 4;
+    int** matrix = generateSpiralMatrix(n);
+
+    if (matrix != NULL) {
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                printf("%d\t", matrix[i][j]);
+            }
+            printf("\n");
+        }
+
+        for (int i = 0; i < n; i++) {
+            free(matrix[i]);
+        }
+        free(matrix);
+    } else {
+        printf("Failed to generate the matrix or n is invalid.\n");
+    }
+
+    return 0;
+}
+```

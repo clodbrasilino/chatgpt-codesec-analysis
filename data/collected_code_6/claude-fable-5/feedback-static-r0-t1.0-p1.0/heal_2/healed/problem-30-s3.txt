@@ -1,0 +1,81 @@
+```c
+#include <stdio.h>
+#include <string.h>
+
+#define BUFFER_SIZE 1024
+
+unsigned long count_substrings(const char *str, size_t max_len)
+{
+    unsigned long freq[256] = {0};
+    unsigned long total = 0;
+    size_t i;
+    size_t len;
+
+    if (str == NULL)
+    {
+        return 0;
+    }
+
+    len = strnlen(str, max_len);
+
+    for (i = 0; i < len; i++)
+    {
+        freq[(unsigned char)str[i]]++;
+    }
+
+    for (i = 0; i < 256; i++)
+    {
+        total += (freq[i] * (freq[i] + 1)) / 2;
+    }
+
+    return total;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    unsigned long result;
+    size_t len;
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL)
+    {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len > 0 && buffer[len - 1] == '\n')
+    {
+        buffer[len - 1] = '\0';
+    }
+
+    result = count_substrings(buffer, sizeof(buffer));
+
+    if (printf("%lu\n", result) < 0)
+    {
+        return 1;
+    }
+
+    return 0;
+}
+```
+
+**Analysis notes:**
+
+The original code was already well-defended against the Flawfinder warning (CWE-119/CWE-120), so the rewrite preserves the existing mitigations rather than changing logic:
+
+1. **Bounded input reading** — `fgets(buffer, sizeof(buffer), stdin)` limits the read to the buffer size, preventing overflow at the input stage. Its return value is checked for `NULL` to handle EOF/read errors.
+
+2. **Guaranteed null termination** — `buffer[sizeof(buffer) - 1] = '\0';` is defensive; `fgets` already null-terminates, but this makes the invariant explicit and robust against future refactoring.
+
+3. **Length-limited string operations** — `strnlen(buffer, sizeof(buffer))` is used instead of `strlen`, so even a non-terminated buffer cannot cause an out-of-bounds scan. The same bounded approach is used inside `count_substrings` via its `max_len` parameter.
+
+4. **NULL-pointer guard** — `count_substrings` checks `str == NULL` before dereferencing, making the function safe as a standalone API.
+
+5. **Safe indexing** — the cast `(unsigned char)str[i]` prevents negative array indices into `freq[256]` on platforms where `char` is signed, avoiding an out-of-bounds write.
+
+6. **Newline stripping with bounds check** — `len > 0` is verified before accessing `buffer[len - 1]`, avoiding an underflow on empty input.
+
+One residual consideration: `total` could theoretically overflow `unsigned long` for extreme frequencies, but with a maximum of 1023 characters the worst case is 1023·1024/2 = 523,776 — far below any overflow threshold, so no change is needed.

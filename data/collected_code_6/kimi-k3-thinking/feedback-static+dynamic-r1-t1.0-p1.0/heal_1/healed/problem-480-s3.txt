@@ -1,0 +1,116 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdbool.h>
+#include <stdint.h>
+
+bool find_max_occurring_char(const char *str, char *result)
+{
+    int freq[256] = {0};
+    int max_count = 0;
+    size_t i;
+
+    if (str == NULL || result == NULL || str[0] == '\0')
+    {
+        return false;
+    }
+
+    for (i = 0; str[i] != '\0'; i++)
+    {
+        freq[(unsigned char)str[i]]++;
+    }
+
+    for (i = 0; i < 256; i++)
+    {
+        if (freq[i] > max_count)
+        {
+            max_count = freq[i];
+            *result = (char)i;
+        }
+    }
+
+    return true;
+}
+
+char *read_line(FILE *stream)
+{
+    size_t capacity = 64;
+    size_t length = 0;
+    char *buffer = malloc(capacity);
+    int c;
+
+    if (buffer == NULL)
+    {
+        return NULL;
+    }
+
+    while ((c = fgetc(stream)) != EOF && c != '\n')
+    {
+        if (length + 1 >= capacity)
+        {
+            char *new_buffer;
+            size_t new_capacity;
+
+            if (capacity > SIZE_MAX / 2)
+            {
+                free(buffer);
+                return NULL;
+            }
+
+            new_capacity = capacity * 2;
+            new_buffer = realloc(buffer, new_capacity);
+
+            if (new_buffer == NULL)
+            {
+                free(buffer);
+                return NULL;
+            }
+
+            buffer = new_buffer;
+            capacity = new_capacity;
+        }
+
+        buffer[length++] = (char)c;
+    }
+
+    if (c == EOF && length == 0)
+    {
+        free(buffer);
+        return NULL;
+    }
+
+    buffer[length] = '\0';
+    return buffer;
+}
+
+int main(void)
+{
+    char *input;
+    char result = '\0';
+
+    printf("Enter a string: ");
+
+    input = read_line(stdin);
+
+    if (input == NULL)
+    {
+        fprintf(stderr, "Error reading input.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (!find_max_occurring_char(input, &result))
+    {
+        fprintf(stderr, "Invalid or empty input string.\n");
+        free(input);
+        return EXIT_FAILURE;
+    }
+
+    printf("The maximum occurring character is '%c'.\n", result);
+
+    free(input);
+    return EXIT_SUCCESS;
+}
+```
+
+The fixed 1024-byte static buffer was replaced with a dynamically grown heap buffer (`read_line`), which performs explicit bounds checking before each write, doubles capacity via `realloc` only after verifying against `SIZE_MAX` overflow, and frees all allocated memory on every exit path — eliminating the CWE-119/CWE-120 truncation/overflow risk entirely.

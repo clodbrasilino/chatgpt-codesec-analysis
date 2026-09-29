@@ -1,0 +1,121 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    int *elements;
+    int size;
+    int frequency;
+} Tuple;
+
+typedef struct {
+    Tuple *tuples;
+    int count;
+} TupleList;
+
+int tuple_equals(const Tuple *a, const Tuple *b) {
+    if (a->size != b->size) return 0;
+    for (int i = 0; i < a->size; i++) {
+        if (a->elements[i] != b->elements[i]) return 0;
+    }
+    return 1;
+}
+
+void assign_frequencies(TupleList *list) {
+    if (list == NULL || list->tuples == NULL || list->count <= 0) return;
+
+    for (int i = 0; i < list->count; i++) {
+        list->tuples[i].frequency = 0;
+    }
+
+    for (int i = 0; i < list->count; i++) {
+        if (list->tuples[i].frequency == 0) {
+            int freq = 1;
+            for (int j = i + 1; j < list->count; j++) {
+                if (tuple_equals(&list->tuples[i], &list->tuples[j])) {
+                    freq++;
+                }
+            }
+            for (int j = i; j < list->count; j++) {
+                if (tuple_equals(&list->tuples[i], &list->tuples[j])) {
+                    list->tuples[j].frequency = freq;
+                }
+            }
+        }
+    }
+}
+
+TupleList *create_tuple_list(int count) {
+    TupleList *list = (TupleList *)malloc(sizeof(TupleList));
+    if (list == NULL) return NULL;
+
+    list->tuples = (Tuple *)calloc(count, sizeof(Tuple));
+    if (list->tuples == NULL) {
+        free(list);
+        return NULL;
+    }
+
+    list->count = count;
+    return list;
+}
+
+void free_tuple_list(TupleList *list) {
+    if (list == NULL) return;
+
+    for (int i = 0; i < list->count; i++) {
+        free(list->tuples[i].elements);
+    }
+    free(list->tuples);
+    free(list);
+}
+
+static int *clone_array(const int *source, int size) {
+    if (source == NULL || size <= 0) return NULL;
+    int *destination = (int *)malloc(size * sizeof(int));
+    if (destination == NULL) return NULL;
+    memcpy(destination, source, size * sizeof(int));
+    return destination;
+}
+
+int main(void) {
+    TupleList *list = create_tuple_list(5);
+    if (list == NULL) return 1;
+
+    const int t1[] = {1, 2, 3};
+    const int t2[] = {4, 5};
+    const int t3[] = {1, 2, 3};
+    const int t4[] = {6};
+    const int t5[] = {4, 5};
+
+    list->tuples[0].elements = clone_array(t1, 3);
+    list->tuples[0].size = 3;
+    list->tuples[1].elements = clone_array(t2, 2);
+    list->tuples[1].size = 2;
+    list->tuples[2].elements = clone_array(t3, 3);
+    list->tuples[2].size = 3;
+    list->tuples[3].elements = clone_array(t4, 1);
+    list->tuples[3].size = 1;
+    list->tuples[4].elements = clone_array(t5, 2);
+    list->tuples[4].size = 2;
+
+    for (int i = 0; i < list->count; i++) {
+        if (list->tuples[i].elements == NULL) {
+            free_tuple_list(list);
+            return 1;
+        }
+    }
+
+    assign_frequencies(list);
+
+    for (int i = 0; i < list->count; i++) {
+        printf("Tuple %d: (", i);
+        for (int j = 0; j < list->tuples[i].size; j++) {
+            printf("%d", list->tuples[i].elements[j]);
+            if (j < list->tuples[i].size - 1) printf(", ");
+        }
+        printf(") - Frequency: %d\n", list->tuples[i].frequency);
+    }
+
+    free_tuple_list(list);
+    return 0;
+}

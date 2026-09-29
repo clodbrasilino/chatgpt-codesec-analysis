@@ -1,0 +1,105 @@
+collected_code_3/round1/heal_2/healed/problem-469.c: In function 'maxProfit':
+collected_code_3/round1/heal_2/healed/problem-469.c:48:9: warning: use of uninitialized value '*_86 + _89' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   48 |     int result = dp[k][n - 1];
+      |         ^~~~~~
+  'main': events 1-2
+    |
+    |   57 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   61 |     printf("Maximum profit is %d", maxProfit(k, n, prices));
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) calling 'maxProfit' from 'main'
+    |
+    +--> 'maxProfit': events 3-37
+           |
+           |    4 | int maxProfit(int k, int n, int prices[]) {
+           |      |     ^~~~~~~~~
+           |      |     |
+           |      |     (3) entry to 'maxProfit'
+           |    5 |     if (k == 0 || n == 0) {
+           |      |        ~
+           |      |        |
+           |      |        (4) following 'false' branch...
+           |......
+           |    9 |     if (k > n / 2) {
+           |      |        ~    ~~~~~
+           |      |        |      |
+           |      |        |      (5) ...to here
+           |      |        (6) following 'false' branch...
+           |......
+           |   19 |     int **dp = (int **)malloc((k + 1) * sizeof(int *));
+           |      |                               ~~~~~~~
+           |      |                                  |
+           |      |                                  (7) ...to here
+           |   20 |     if (!dp) {
+           |      |        ~
+           |      |        |
+           |      |        (8) following 'false' branch (when 'dp' is non-NULL)...
+           |......
+           |   24 |     for (int i = 0; i <= k; i++) {
+           |      |              ~      ~~~~~~  ~~~
+           |      |              |        |      |
+           |      |              |        |      (30) ...to here
+           |      |              |        (10) following 'true' branch (when 'i <= k')...
+           |      |              |        (16) following 'true' branch (when 'i <= k')...
+           |      |              |        (22) following 'true' branch (when 'i <= k')...
+           |      |              |        (31) following 'false' branch (when 'i > k')...
+           |      |              (9) ...to here
+           |   25 |         dp[i] = (int *)malloc((n + 1) * sizeof(int));
+           |      |                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                        |         |
+           |      |                        |         (11) ...to here
+           |      |                        |         (17) ...to here
+           |      |                        |         (23) ...to here
+           |      |                        (24) region created on heap here
+           |   26 |         if (!dp[i]) {
+           |      |            ~
+           |      |            |
+           |      |            (12) following 'false' branch...
+           |      |            (18) following 'false' branch...
+           |      |            (25) following 'false' branch...
+           |......
+           |   34 |             for (int j = 0; j <= n; j++) {
+           |      |                      ~      ~~~~~~
+           |      |                      |        |
+           |      |                      |        (14) following 'true' branch (when 'j <= n')...
+           |      |                      |        (20) following 'true' branch (when 'j <= n')...
+           |      |                      |        (27) following 'true' branch (when 'j <= n')...
+           |      |                      |        (29) following 'false' branch (when 'j > n')...
+           |      |                      (13) ...to here
+           |      |                      (19) ...to here
+           |      |                      (26) ...to here
+           |   35 |                 dp[i][j] = 0;
+           |      |                   ~
+           |      |                   |
+           |      |                   (15) ...to here
+           |      |                   (21) ...to here
+           |      |                   (28) ...to here
+           |......
+           |   40 |     for (int i = 1; i <= k; i++) {
+           |      |              ~      ~~~~~~
+           |      |              |        |
+           |      |              |        (33) following 'true' branch (when 'i <= k')...
+           |      |              (32) ...to here
+           |   41 |         int maxDiff = -prices[0];
+           |      |                        ~~~~~~~~~
+           |      |                              |
+           |      |                              (34) ...to here
+           |   42 |         for (int j = 1; j < n; j++) {
+           |      |                         ~~~~~
+           |      |                           |
+           |      |                           (35) following 'true' branch (when 'j < n')...
+           |   43 |             dp[i][j] = dp[i][j - 1] > (prices[j] + maxDiff) ? dp[i][j - 1] : (prices[j] + maxDiff);
+           |      |                                              ~
+           |      |                                              |
+           |      |                                              (36) ...to here
+           |......
+           |   48 |     int result = dp[k][n - 1];
+           |      |         ~~~~~~
+           |      |         |
+           |      |         (37) use of uninitialized value '*_86 + _89' here
+           |

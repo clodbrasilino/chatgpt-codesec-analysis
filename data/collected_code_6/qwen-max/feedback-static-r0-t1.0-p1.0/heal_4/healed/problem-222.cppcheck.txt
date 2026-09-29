@@ -1,0 +1,7 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-222.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-222.c:17:15: style: Array index 'str_length' is used before limits check. [arrayIndexThenCheck]
+    while (str[str_length] != '\0' && str_length < sizeof(uintptr_t)) {
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-222.c:27:26: portability: Casting from float * to const signed int * is not portable due to different binary data representations on different platforms. [invalidPointerCast]
+    if ((int32_t)u.i == *(const int32_t*)&u.f) return INTEGER;
+                         ^

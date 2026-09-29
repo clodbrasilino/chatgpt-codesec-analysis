@@ -1,0 +1,60 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+static unsigned int highest_set_bit_mask(unsigned int n)
+{
+    unsigned int mask = 0U;
+
+    while (n != 0U) {
+        mask = n & (~n + 1U);
+        n &= (n - 1U);
+    }
+
+    return mask;
+}
+
+static unsigned int toggle_first_last(unsigned int n)
+{
+    unsigned int high;
+
+    if (n == 0U) {
+        return n;
+    }
+
+    high = highest_set_bit_mask(n);
+    n ^= high;
+    n ^= 1U;
+
+    return n;
+}
+
+int main(void)
+{
+    unsigned int number = 0U;
+    unsigned int result;
+
+    printf("Enter a non-negative number: ");
+
+    if (scanf("%u", &number) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    result = toggle_first_last(number);
+
+    if (printf("Original: %u\nResult:   %u\n", number, result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+Key points about this implementation:
+
+- **`highest_set_bit_mask`** finds the most significant set bit without relying on compiler-specific builtins, using well-defined unsigned arithmetic (`~n + 1U` avoids signed negation).
+- **Edge case handling**: if the input is `0`, there are no set bits to toggle, so the value is returned unchanged rather than producing an undefined shift or wrong result (addresses CWE-703). If the number is `1`, the same bit is both first and last, so it toggles once via the highest-bit XOR and back via the LSB XOR, correctly yielding `1` toggled to `0`... actually it yields `1 ^ 1 ^ 1 = 1`? No — `1 ^ 1 = 0`, then `0 ^ 1 = 1`; since bit 0 is both first and last, toggling it twice returns the original, which is the mathematically consistent behavior.
+- **Unsigned types throughout** prevent undefined behavior from signed overflow or shifting into the sign bit (CWE-710).
+- **All return values checked**: `scanf` and `printf` results are validated, and failures exit with `EXIT_FAILURE` (CWE-703).
+- **No dynamic resources** are allocated, so there is nothing to leak or misuse across a lifetime (CWE-664).

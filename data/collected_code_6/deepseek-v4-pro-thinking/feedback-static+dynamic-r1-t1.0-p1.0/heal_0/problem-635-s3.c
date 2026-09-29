@@ -1,0 +1,143 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+
+typedef struct {
+    int *data;
+    size_t size;
+    size_t capacity;
+} Heap;
+
+static int heap_init(Heap *h, size_t capacity) {
+    if (h == NULL) return -1;
+    h->data = NULL;
+    h->size = 0;
+    h->capacity = 0;
+    if (capacity > 0) {
+        if (capacity > SIZE_MAX / sizeof(int)) return -1;
+        h->data = malloc(capacity * sizeof(int));
+        if (h->data == NULL) return -1;
+        h->capacity = capacity;
+    }
+    return 0;
+}
+
+static void heap_destroy(Heap *h) {
+    if (h != NULL) {
+        free(h->data);
+        h->data = NULL;
+        h->size = 0;
+        h->capacity = 0;
+    }
+}
+
+static void heap_swap(int *a, int *b) {
+    int tmp = *a;
+    *a = *b;
+    *b = tmp;
+}
+
+static void heap_sift_up(Heap *h, size_t index) {
+    while (index > 0) {
+        size_t parent = (index - 1) / 2;
+        if (h->data[parent] <= h->data[index]) break;
+        heap_swap(&h->data[parent], &h->data[index]);
+        index = parent;
+    }
+}
+
+static void heap_sift_down(Heap *h, size_t index) {
+    for (;;) {
+        size_t left = index * 2 + 1;
+        size_t right = left + 1;
+        size_t smallest = index;
+        if (left < h->size && h->data[left] < h->data[smallest]) smallest = left;
+        if (right < h->size && h->data[right] < h->data[smallest]) smallest = right;
+        if (smallest == index) break;
+        heap_swap(&h->data[index], &h->data[smallest]);
+        index = smallest;
+    }
+}
+
+static int heap_push(Heap *h, int value) {
+    if (h == NULL) return -1;
+    if (h->size == h->capacity) {
+        size_t new_capacity = (h->capacity == 0) ? 1 : h->capacity * 2;
+        if (new_capacity <= h->capacity) return -1;
+        if (new_capacity > SIZE_MAX / sizeof(int)) return -1;
+        int *new_data = realloc(h->data, new_capacity * sizeof(int));
+        if (new_data == NULL) return -1;
+        h->data = new_data;
+        h->capacity = new_capacity;
+    }
+    h->data[h->size] = value;
+    heap_sift_up(h, h->size);
+    h->size++;
+    return 0;
+}
+
+static int heap_pop(Heap *h, int *out) {
+    if (h == NULL || out == NULL || h->size == 0) return -1;
+    *out = h->data[0];
+    h->size--;
+    if (h->size > 0) {
+        h->data[0] = h->data[h->size];
+        heap_sift_down(h, 0);
+    }
+    return 0;
+}
+
+int heap_sort_ascending(const int *values, size_t count, int **sorted_out) {
+    if (sorted_out == NULL) return -1;
+    *sorted_out = NULL;
+    if (count > 0 && values == NULL) return -1;
+    if (count > SIZE_MAX / sizeof(int)) return -1;
+    if (count == 0) return 0;
+
+    int *result = malloc(count * sizeof(int));
+    if (result == NULL) return -1;
+
+    Heap heap;
+    if (heap_init(&heap, count) != 0) {
+        free(result);
+        return -1;
+    }
+
+    for (size_t i = 0; i < count; i++) {
+        if (heap_push(&heap, values[i]) != 0) {
+            heap_destroy(&heap);
+            free(result);
+            return -1;
+        }
+    }
+
+    for (size_t i = 0; i < count; i++) {
+        if (heap_pop(&heap, &result[i]) != 0) {
+            heap_destroy(&heap);
+            free(result);
+            return -1;
+        }
+    }
+
+    heap_destroy(&heap);
+    *sorted_out = result;
+    return 0;
+}
+
+int main(void) {
+    int values[] = {5, 2, 8, 1, 9, 3};
+    size_t count = sizeof(values) / sizeof(values[0]);
+    int *sorted = NULL;
+
+    if (heap_sort_ascending(values, count, &sorted) != 0) {
+        fprintf(stderr, "Error sorting values\n");
+        return EXIT_FAILURE;
+    }
+
+    for (size_t i = 0; i < count; i++) {
+        printf("%d\n", sorted[i]);
+    }
+
+    free(sorted);
+    return EXIT_SUCCESS;
+}

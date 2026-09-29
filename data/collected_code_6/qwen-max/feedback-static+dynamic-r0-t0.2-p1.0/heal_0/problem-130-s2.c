@@ -1,0 +1,59 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int value;
+    int count;
+} Item;
+
+int compare(const void *a, const void *b) {
+    return ((Item *)b)->count - ((Item *)a)->count;
+}
+
+Item* findMaxFrequency(int *arr, int n) {
+    if (n <= 0) return NULL;
+
+    Item *items = (Item *)malloc(n * sizeof(Item));
+    if (items == NULL) return NULL;
+
+    for (int i = 0; i < n; ++i) {
+        items[i].value = arr[i];
+        items[i].count = 1;
+    }
+
+    for (int i = 0; i < n; ++i) {
+        for (int j = i + 1; j < n; ++j) {
+            if (arr[j] == arr[i]) {
+                items[i].count++;
+                arr[j] = INT_MIN; // Mark as counted
+            }
+        }
+    }
+
+    qsort(items, n, sizeof(Item), compare);
+
+    Item *result = (Item *)malloc(sizeof(Item));
+    if (result == NULL) {
+        free(items);
+        return NULL;
+    }
+
+    *result = items[0];
+    free(items);
+    return result;
+}
+
+int main() {
+    int arr[] = {1, 2, 3, 2, 4, 2, 1, 1, 1};
+    int n = sizeof(arr) / sizeof(arr[0]);
+
+    Item *maxFreqItem = findMaxFrequency(arr, n);
+    if (maxFreqItem != NULL) {
+        printf("Item with maximum frequency: %d, Count: %d\n", maxFreqItem->value, maxFreqItem->count);
+        free(maxFreqItem);
+    } else {
+        printf("Failed to find the item with maximum frequency.\n");
+    }
+
+    return 0;
+}

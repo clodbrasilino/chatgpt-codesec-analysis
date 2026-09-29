@@ -1,0 +1,70 @@
+```C
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node* next;
+};
+
+struct Node* newNode(int data) {
+    struct Node* newNode = (struct Node*) malloc(sizeof(struct Node));
+    if(newNode == NULL) {
+        printf("Memory Allocation Failed. Exiting program now.");
+        exit(0);
+    }
+    newNode->data = data;
+    newNode->next = NULL;
+    return newNode;
+}
+
+struct Node* difference(struct Node* first, struct Node* second) {
+    struct Node* result = NULL;
+    struct Node* temp = second;
+    while (first != NULL) {
+        while(temp != NULL && first->data != temp->data) {
+            temp = temp->next;
+        }
+        if (temp == NULL) {
+            struct Node* tempResult = newNode(first->data);
+            tempResult->next = result;
+            result = tempResult;
+        }
+        first = first->next;
+        temp = second;
+    }
+    return result;
+}
+
+void printList(struct Node* node) {
+    while(node != NULL) {
+        printf(" %d", node->data);
+        node = node->next;
+    }
+    printf("\n");
+}
+
+int main() {
+    struct Node* first = newNode(1);
+    first->next = newNode(2);
+    first->next->next = newNode(3);
+    first->next->next->next = newNode(4);
+
+    printf("First list is");
+    printList(first);
+    
+    struct Node* second = newNode(3);
+    second->next = newNode(4);
+    second->next->next = newNode(5);
+    second->next->next->next = newNode(6);
+
+    printf("Second list is");
+    printList(second);
+
+    struct Node* diff = difference(first, second);
+    printf("Difference of the lists is");
+    printList(diff);
+
+    return 0;
+}
+```

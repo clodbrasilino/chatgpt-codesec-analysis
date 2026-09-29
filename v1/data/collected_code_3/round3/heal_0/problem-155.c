@@ -1,0 +1,12 @@
+#include <stdio.h>
+
+unsigned int toggleEvenBits(unsigned int num) {
+    unsigned int mask = 0xAAAAAAAA;
+    return num ^ mask;
+}
+
+int main() {
+    unsigned int x = 23;
+    printf("%u", toggleEvenBits(x));
+    return 0;
+}

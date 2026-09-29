@@ -1,0 +1,44 @@
+{
+  "task_id": 566,
+  "text": "Write a C function to get the sum of a non-negative integer.",
+  "fn_candidates": [
+    "sum_digits",
+    "SumDigits",
+    "sumDigits",
+    "sumdigits"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "sum_digits",
+      "args": [
+        345
+      ],
+      "expected": 12,
+      "assert_src": "assert sum_digits(345)==12"
+    },
+    {
+      "fn_name": "sum_digits",
+      "args": [
+        12
+      ],
+      "expected": 3,
+      "assert_src": "assert sum_digits(12)==3"
+    },
+    {
+      "fn_name": "sum_digits",
+      "args": [
+        97
+      ],
+      "expected": 16,
+      "assert_src": "assert sum_digits(97)==16"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

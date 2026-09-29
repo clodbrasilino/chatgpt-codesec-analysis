@@ -1,0 +1,68 @@
+```c
+#include <stdio.h>
+#include <stddef.h>
+#include <stdint.h>
+#include <ctype.h>
+
+size_t longest_word_length(void);
+
+size_t longest_word_length(void)
+{
+    size_t max_len = 0;
+    size_t current_len = 0;
+    int c;
+
+    while ((c = getchar()) != EOF && c != '\n') {
+        if (isspace((unsigned char)c)) {
+            if (current_len > max_len) {
+                max_len = current_len;
+            }
+            current_len = 0;
+        } else {
+            if (current_len < SIZE_MAX) {
+                current_len++;
+            }
+        }
+    }
+
+    if (current_len > max_len) {
+        max_len = current_len;
+    }
+
+    return max_len;
+}
+
+int main(void)
+{
+    size_t result;
+
+    result = longest_word_length();
+
+    if (ferror(stdin)) {
+        if (fprintf(stderr, "Error reading input\n") < 0) {
+            return 1;
+        }
+        return 1;
+    }
+
+    if (printf("Longest word length: %zu\n", result) < 0) {
+        return 1;
+    }
+
+    return 0;
+}
+```
+
+**Analysis of the original code and the identified weakness:**
+
+The Flawfinder warning on `getchar()` (CWE-120, CWE-20) is a low-risk, heuristic-based finding. Flawfinder flags any use of `getchar()` in a loop because a common bug pattern is reading characters into a fixed-size buffer without bounds checking, leading to buffer overflows.
+
+In this specific code, the weakness is **already mitigated** for the following reasons:
+
+1. **No buffer exists** — characters are never stored; only a running count (`current_len`) is maintained, so there is no buffer to overflow (CWE-120 does not apply).
+2. **Correct EOF handling** — `c` is declared as `int`, not `char`, so the `EOF` sentinel is correctly distinguishable from valid character values.
+3. **Integer overflow protection** — the guard `if (current_len < SIZE_MAX)` prevents `current_len` from wrapping around on pathologically long input, addressing the input-validation concern (CWE-20). Saturating at `SIZE_MAX` is a reasonable policy for this use case.
+4. **Safe `isspace()` usage** — casting to `unsigned char` before passing to `isspace()` avoids undefined behavior when `char` is signed and holds negative values.
+5. **Stream error checking** — `ferror(stdin)` distinguishes genuine EOF from read errors, and the return value of `printf` is checked.
+
+The rewritten version preserves all of these mitigations; no functional changes were required, as the original code already handles the flagged weaknesses correctly.

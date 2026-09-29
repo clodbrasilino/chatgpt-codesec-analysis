@@ -1,0 +1,56 @@
+#include <stdio.h>
+#include <math.h>
+
+double calculate_triangular_prism_volume(double base, double height, double length) {
+    double base_area;
+    double volume;
+    
+    if (base < 0.0 || height < 0.0 || length < 0.0) {
+        return -1.0;
+    }
+    
+    base_area = 0.5 * base * height;
+    volume = base_area * length;
+    
+    return volume;
+}
+
+int main(void) {
+    double base;
+    double height;
+    double length;
+    double volume;
+    int scan_result;
+    
+    printf("Enter the base of the triangle: ");
+    scan_result = scanf("%lf", &base);
+    if (scan_result != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return 1;
+    }
+    
+    printf("Enter the height of the triangle: ");
+    scan_result = scanf("%lf", &height);
+    if (scan_result != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return 1;
+    }
+    
+    printf("Enter the length of the prism: ");
+    scan_result = scanf("%lf", &length);
+    if (scan_result != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return 1;
+    }
+    
+    volume = calculate_triangular_prism_volume(base, height, length);
+    
+    if (volume < 0.0) {
+        fprintf(stderr, "Invalid dimensions provided\n");
+        return 1;
+    }
+    
+    printf("Volume of the triangular prism: %.2f\n", volume);
+    
+    return 0;
+}

@@ -1,0 +1,15 @@
+```c
+#include <stdio.h>
+
+double median_of_three(double a, double b, double c) {
+    if ((a - b) * (c - a) >= 0) return a;
+    else if ((b - a) * (c - b) >= 0) return b;
+    else return c;
+}
+
+int main() {
+    double x = 10.5, y = 20.5, z = 30.5;
+    printf("The median of %.1f, %.1f, and %.1f is %.1f\n", x, y, z, median_of_three(x, y, z));
+    return 0;
+}
+```

@@ -1,7 +1,7 @@
 """Per-cell metric extraction for the FSE 2027 extension.
 
 A *cell* is one experimental configuration (model x feedback x temp x top_p)
-stored under ``collected_code_6/{model}/{cell_slug}/`` with the outcome
+stored under ``data/collected_code_6/{model}/{cell_slug}/`` with the outcome
 manifest at ``results/{model}/{cell_slug}.manifest.json``.
 
 This module turns the raw artifacts into a tidy metrics table:
@@ -28,7 +28,7 @@ from ..pipeline.comment_inject import STATIC_SUFFIXES, DYNAMIC_SUFFIXES
 from ..config import max_healing_rounds
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
-CODE_ROOT = REPO_ROOT / "collected_code_6"
+CODE_ROOT = REPO_ROOT / "data" / "collected_code_6"
 RESULTS_ROOT = REPO_ROOT / "results"
 
 _PROBLEM_RE = re.compile(r"^problem-(\d+)(-s(\d+))?$")

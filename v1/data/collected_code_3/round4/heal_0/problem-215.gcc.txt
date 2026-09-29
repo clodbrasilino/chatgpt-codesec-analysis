@@ -1,0 +1,82 @@
+collected_code_3/round4/heal_0/problem-215.c: In function 'decode':
+collected_code_3/round4/heal_0/problem-215.c:21:29: warning: dereference of possibly-NULL 'result' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   21 |                 result[j++] = ch;
+      |                 ~~~~~~~~~~~~^~~~
+  'decode': events 1-4
+    |
+    |    7 |     char* result = (char*)malloc(sizeof(char) * len * 2);
+    |      |                           ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                           |
+    |      |                           (1) this call could return NULL
+    |......
+    |   11 |     for(i = 0; i < len; i++) {
+    |      |                ~~~~~~~     
+    |      |                  |
+    |      |                  (2) following 'true' branch (when 'i < len')...
+    |   12 |         count = 0;
+    |      |         ~~~~~~~~~          
+    |      |               |
+    |      |               (3) ...to here
+    |   13 |         if(str[i] >= '0' && str[i] <= '9') {
+    |      |           ~                
+    |      |           |
+    |      |           (4) following 'true' branch...
+    |
+  'decode': event 5
+    |
+    |cc1:
+    | (5): ...to here
+    |
+  'decode': events 6-10
+    |
+    |   14 |             while(str[i] >= '0' && str[i] <= '9') {
+    |      |                   ~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~
+    |      |                                 |
+    |      |                                 (6) following 'true' branch...
+    |   15 |                 num[count++] = str[i++];
+    |      |                                    ~~~
+    |      |                                     |
+    |      |                                     (7) ...to here
+    |......
+    |   20 |             while(count--) {
+    |      |                   ~~~~~          
+    |      |                   |
+    |      |                   (8) following 'true' branch...
+    |   21 |                 result[j++] = ch;
+    |      |                 ~~~~~~~~~~~~~~~~ 
+    |      |                         |   |
+    |      |                         |   (10) 'result + (sizetype)j' could be NULL: unchecked value from (1)
+    |      |                         (9) ...to here
+    |
+collected_code_3/round4/heal_0/problem-215.c:25:15: warning: dereference of possibly-NULL 'result' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   25 |     result[j] = '\0';
+      |     ~~~~~~~~~~^~~~~~
+  'main': events 1-2
+    |
+    |   29 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |   30 |     char str[] = "9A4B2C3D";
+    |   31 |     char* result = decode(str);
+    |      |                    ~~~~~~~~~~~
+    |      |                    |
+    |      |                    (2) calling 'decode' from 'main'
+    |
+    +--> 'decode': events 3-5
+           |
+           |    5 | char* decode(const char* str) {
+           |      |       ^~~~~~
+           |      |       |
+           |      |       (3) entry to 'decode'
+           |    6 |     int len = strlen(str);
+           |    7 |     char* result = (char*)malloc(sizeof(char) * len * 2);
+           |      |                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                           |
+           |      |                           (4) this call could return NULL
+           |......
+           |   25 |     result[j] = '\0';
+           |      |     ~~~~~~~~~~~~~~~~
+           |      |               |
+           |      |               (5) 'result + (sizetype)j' could be NULL: unchecked value from (4)
+           |

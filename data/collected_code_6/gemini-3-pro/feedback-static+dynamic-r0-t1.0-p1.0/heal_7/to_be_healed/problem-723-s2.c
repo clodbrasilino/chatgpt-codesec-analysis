@@ -1,0 +1,57 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int key;
+    int value;
+} KeyValuePair;
+
+typedef struct {
+    KeyValuePair *items;
+    size_t size;
+    size_t capacity;
+} Map;
+
+Map* create_map(size_t capacity) {
+    Map *map = (Map*)malloc(sizeof(Map));
+    if (!map) {
+        return NULL;
+    }
+    map->items = (KeyValuePair*)malloc(capacity * sizeof(KeyValuePair));
+    if (!map->items) {
+        free(map);
+        return NULL;
+    }
+    map->size = 0;
+    map->capacity = capacity;
+    return map;
+}
+
+void free_map(Map *map) {
+    if (map) {
+        free(map->items);
+        free(map);
+    }
+}
+
+void put(Map *map, int key) {
+    if (!map) return;
+    for (size_t i = 0; i < map->size; i++) {
+        if (map->items[i].key == key) {
+            map->items[i].value++;
+            return;
+        }
+    }
+    if (map->size < map->capacity) {
+        map->items[map->size].key = key;
+        map->items[map->size].value = 1;
+        map->size++;
+    }
+}
+
+/* Possible weaknesses found:
+ *  expected identifier or '(' at end of input
+ *  expected identifier or '('
+ *  syntax error [syntaxError]
+ */
+int

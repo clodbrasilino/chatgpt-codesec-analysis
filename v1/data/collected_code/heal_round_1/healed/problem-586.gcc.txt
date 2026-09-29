@@ -1,0 +1,7 @@
+collected_code/healed/problem-586.c: In function 'splitAndAdd':
+collected_code/healed/problem-586.c:11:16: error: assignment of read-only location '*(arr + (sizetype)((long unsigned int)i * 4))'
+   11 |         arr[i] = arr[i + k];
+      |                ^
+collected_code/healed/problem-586.c:15:16: error: assignment of read-only location '*(arr + (sizetype)((long unsigned int)i * 4))'
+   15 |         arr[i] = temp[j];
+      |                ^

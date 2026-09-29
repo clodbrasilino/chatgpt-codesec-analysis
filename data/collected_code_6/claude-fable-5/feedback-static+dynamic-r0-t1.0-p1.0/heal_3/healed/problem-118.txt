@@ -1,0 +1,173 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+#define MAX_INPUT 4096
+
+struct node {
+    char *word;
+    struct node *next;
+};
+
+static struct node *create_node(const char *start, size_t len)
+{
+    struct node *n;
+
+    if (start == NULL || len == SIZE_MAX) {
+        return NULL;
+    }
+
+    n = malloc(sizeof(struct node));
+    if (n == NULL) {
+        return NULL;
+    }
+
+    n->word = malloc(len + 1);
+    if (n->word == NULL) {
+        free(n);
+        return NULL;
+    }
+
+    if (len > 0) {
+        memcpy(n->word, start, len);
+    }
+    n->word[len] = '\0';
+    n->next = NULL;
+    return n;
+}
+
+static void free_list(struct node *head)
+{
+    while (head != NULL) {
+        struct node *tmp = head;
+        head = head->next;
+        free(tmp->word);
+        free(tmp);
+    }
+}
+
+static struct node *string_to_word_list(const char *str, size_t max_len)
+{
+    struct node *head = NULL;
+    struct node *tail = NULL;
+    size_t i = 0;
+    size_t len;
+
+    if (str == NULL || max_len == 0) {
+        return NULL;
+    }
+
+    len = strnlen(str, max_len);
+
+    while (i < len) {
+        size_t start;
+        size_t word_len;
+        struct node *n;
+
+        while (i < len && (str[i] == ' ' || str[i] == '\t')) {
+            i++;
+        }
+        if (i >= len) {
+            break;
+        }
+        start = i;
+        while (i < len && str[i] != ' ' && str[i] != '\t') {
+            i++;
+        }
+        word_len = i - start;
+
+        n = create_node(&str[start], word_len);
+        if (n == NULL) {
+            free_list(head);
+            return NULL;
+        }
+        if (head == NULL) {
+            head = n;
+            tail = n;
+        } else {
+            tail->next = n;
+            tail = n;
+        }
+    }
+
+    return head;
+}
+
+static int print_list(const struct node *head)
+{
+    const struct node *cur = head;
+
+    if (printf("[") < 0) {
+        return -1;
+    }
+    while (cur != NULL) {
+        if (printf("'%s'", cur->word) < 0) {
+            return -1;
+        }
+        if (cur->next != NULL) {
+            if (printf(", ") < 0) {
+                return -1;
+            }
+        }
+        cur = cur->next;
+    }
+    if (printf("]\n") < 0) {
+        return -1;
+    }
+    return 0;
+}
+
+int main(void)
+{
+    char input[MAX_INPUT];
+    struct node *list;
+    size_t len;
+
+    if (fgets(input, sizeof(input), stdin) == NULL) {
+        (void)fprintf(stderr, "Failed to read input\n");
+        return EXIT_FAILURE;
+    }
+
+    input[sizeof(input) - 1] = '\0';
+
+    len = strnlen(input, sizeof(input));
+    if (len > 0 && input[len - 1] == '\n') {
+        input[len - 1] = '\0';
+        len--;
+    }
+
+    list = string_to_word_list(input, sizeof(input));
+    if (list == NULL && len > 0) {
+        int only_spaces = 1;
+        size_t i;
+        for (i = 0; i < len; i++) {
+            if (input[i] != ' ' && input[i] != '\t') {
+                only_spaces = 0;
+                break;
+            }
+        }
+        if (!only_spaces) {
+            (void)fprintf(stderr, "Failed to build list\n");
+            return EXIT_FAILURE;
+        }
+    }
+
+    if (print_list(list) != 0) {
+        free_list(list);
+        return EXIT_FAILURE;
+    }
+
+    free_list(list);
+    return EXIT_SUCCESS;
+}
+```
+
+Analysis of the flagged weaknesses and why the code is safe as written:
+
+**1. `memcpy` in `create_node` (CWE-120, risk 2):** This is a false positive. The destination buffer is allocated with `malloc(len + 1)` immediately before the copy of exactly `len` bytes, so the destination always holds the source data plus the null terminator. The guard `len == SIZE_MAX` prevents integer overflow in `len + 1`, and both allocations are checked for failure before use. No fix required.
+
+**2. Statically-sized `char input[MAX_INPUT]` in `main` (CWE-119/CWE-120, risk 2):** Also a false positive. Input is read with `fgets(input, sizeof(input), stdin)`, which limits the read to the buffer size. The code additionally forces null termination defensively, uses `strnlen` bounded by `sizeof(input)` rather than `strlen`, and passes the buffer size explicitly to `string_to_word_list`. No overflow is possible.
+
+**One genuine fix applied:** The original code referenced `SIZE_MAX` without including `<stdint.h>`, which is a portability/correctness bug (it may fail to compile or, worse, an implicit macro definition could silently misbehave on pre-C99 setups). I added `#include <stdint.h>` to make the code standards-compliant. Everything else — the bounded copies, allocation failure handling, checked `printf` return values, and complete list cleanup on all paths — was already correct and is preserved.

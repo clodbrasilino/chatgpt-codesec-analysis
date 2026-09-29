@@ -1,0 +1,143 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+#define MAX_STRING_LEN 4096U
+
+static size_t bounded_strlen(const char *s, size_t max_len)
+{
+    size_t len = 0U;
+
+    while (len < max_len && s[len] != '\0') {
+        len++;
+    }
+
+    return len;
+}
+
+static char *extract_rear(const char *const *strings, size_t count)
+{
+    char *result = NULL;
+    size_t i;
+
+    if (strings == NULL || count == 0U || count >= (SIZE_MAX - 1U)) {
+        return NULL;
+    }
+
+    result = malloc(count + 1U);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    for (i = 0U; i < count; i++) {
+        size_t len;
+
+        if (strings[i] == NULL) {
+            free(result);
+            return NULL;
+        }
+
+        len = bounded_strlen(strings[i], MAX_STRING_LEN);
+        if (len >= MAX_STRING_LEN) {
+            free(result);
+            return NULL;
+        }
+
+        if (len == 0U) {
+            result[i] = ' ';
+        } else {
+            result[i] = strings[i][len - 1U];
+        }
+    }
+
+    result[count] = '\0';
+    return result;
+}
+
+static int print_rear(const char *rear, size_t count)
+{
+    size_t i;
+
+    if (rear == NULL) {
+        return -1;
+    }
+
+    if (printf("[") < 0) {
+        return -1;
+    }
+
+    for (i = 0U; i < count; i++) {
+        if (printf("'%c'", rear[i]) < 0) {
+            return -1;
+        }
+        if (i + 1U < count) {
+            if (printf(", ") < 0) {
+                return -1;
+            }
+        }
+    }
+
+    if (printf("]\n") < 0) {
+        return -1;
+    }
+
+    if (fflush(stdout) != 0) {
+        return -1;
+    }
+
+    return 0;
+}
+
+static int run_case(const char *const *words, size_t count)
+{
+    char *rear = extract_rear(words, count);
+
+    if (rear == NULL) {
+        (void)fprintf(stderr, "Extraction failed\n");
+        return -1;
+    }
+
+    if (print_rear(rear, count) != 0) {
+        free(rear);
+        return -1;
+    }
+
+    free(rear);
+    return 0;
+}
+
+int main(void)
+{
+    const char *const words0[] = { "Mers", "for", "Vers" };
+    const char *const words1[] = { "Avenge", "for", "People" };
+    const char *const words2[] = { "Gotta", "get", "go" };
+
+    if (run_case(words0, sizeof(words0) / sizeof(words0[0])) != 0) {
+        return EXIT_FAILURE;
+    }
+
+    if (run_case(words1, sizeof(words1) / sizeof(words1[0])) != 0) {
+        return EXIT_FAILURE;
+    }
+
+    if (run_case(words2, sizeof(words2) / sizeof(words2[0])) != 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis summary:**
+
+The core logic of `extract_rear`, `bounded_strlen`, and `print_rear` was sound — memory allocation is checked, NULL entries are rejected with proper cleanup, unbounded string reads are prevented via `bounded_strlen`, and the overflow guard on `count` protects the `malloc(count + 1U)` call.
+
+The reported weaknesses ("no output" for all three test cases) stem from `main`: it exercised only a single hard-coded input, so test cases 1 (`['e', 'r', 'e']`) and 2 (`['a', 't', 'o']`) had no corresponding execution path at all, and any failure aborted before producing bracketed output. The rewrite factors the extract/print/free sequence into `run_case` and drives all three expected inputs:
+
+- `{"Mers", "for", "Vers"}` → `['s', 'r', 's']`
+- `{"Avenge", "for", "People"}` → `['e', 'r', 'e']`
+- `{"Gotta", "get", "go"}` → `['a', 't', 'o']`
+
+A NULL guard was also added to `print_rear` for defensive completeness, and every failure path still frees the allocated buffer, so there are no leaks on either the success or error paths.

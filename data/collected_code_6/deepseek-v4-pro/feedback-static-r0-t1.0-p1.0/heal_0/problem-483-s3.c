@@ -1,0 +1,74 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int factorial_divisible_by(int x) {
+    if (x <= 0) {
+        return -1;
+    }
+    
+    int prime_factors[1000] = {0};
+    int factor_count[1000] = {0};
+    int num_factors = 0;
+    int temp = x;
+    
+    for (int i = 2; i * i <= temp; i++) {
+        if (temp % i == 0) {
+            prime_factors[num_factors] = i;
+            factor_count[num_factors] = 0;
+            while (temp % i == 0) {
+                factor_count[num_factors]++;
+                temp /= i;
+            }
+            num_factors++;
+        }
+    }
+    
+    if (temp > 1) {
+        prime_factors[num_factors] = temp;
+        factor_count[num_factors] = 1;
+        num_factors++;
+    }
+    
+    int max_result = 1;
+    
+    for (int i = 0; i < num_factors; i++) {
+        int p = prime_factors[i];
+        int required = factor_count[i];
+        int count = 0;
+        int j;
+        
+        for (j = p; count < required; j += p) {
+            int temp_j = j;
+            while (temp_j % p == 0) {
+                count++;
+                temp_j /= p;
+            }
+        }
+        
+        int result = j - p;
+        if (result > max_result) {
+            max_result = result;
+        }
+    }
+    
+    return max_result;
+}
+
+int main(void) {
+    int x;
+    
+    printf("Enter a number: ");
+    if (scanf("%d", &x) != 1) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+    
+    int result = factorial_divisible_by(x);
+    if (result == -1) {
+        printf("Invalid input: x must be positive\n");
+    } else {
+        printf("First natural number whose factorial is divisible by %d is: %d\n", x, result);
+    }
+    
+    return 0;
+}

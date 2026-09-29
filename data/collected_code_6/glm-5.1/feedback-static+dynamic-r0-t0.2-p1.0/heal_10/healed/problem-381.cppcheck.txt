@@ -1,0 +1,61 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_10/healed/problem-381.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_10/healed/problem-381.c:112:19: style: Condition 'copy_size>row_bytes' is always false [knownConditionTrueFalse]
+    if (copy_size > row_bytes) {
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_10/healed/problem-381.c:99:22: note: row_bytes is assigned 'row_size*sizeof(int)' here.
+    size_t row_bytes = row_size * sizeof(int);
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_10/healed/problem-381.c:107:34: note: Assuming condition is false
+        !outer.lists[2].elements || !outer.lists[3].elements) {
+                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_10/healed/problem-381.c:98:22: note: copy_size is assigned 'row_size*sizeof(int)' here.
+    size_t copy_size = row_size * sizeof(int);
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_10/healed/problem-381.c:112:19: note: Condition 'copy_size>row_bytes' is always false
+    if (copy_size > row_bytes) {
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_10/healed/problem-381.c:119:19: style: Condition 'copy_size>row_bytes' is always false [knownConditionTrueFalse]
+    if (copy_size > row_bytes) {
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_10/healed/problem-381.c:99:22: note: row_bytes is assigned 'row_size*sizeof(int)' here.
+    size_t row_bytes = row_size * sizeof(int);
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_10/healed/problem-381.c:107:34: note: Assuming condition is false
+        !outer.lists[2].elements || !outer.lists[3].elements) {
+                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_10/healed/problem-381.c:98:22: note: copy_size is assigned 'row_size*sizeof(int)' here.
+    size_t copy_size = row_size * sizeof(int);
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_10/healed/problem-381.c:119:19: note: Condition 'copy_size>row_bytes' is always false
+    if (copy_size > row_bytes) {
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_10/healed/problem-381.c:126:19: style: Condition 'copy_size>row_bytes' is always false [knownConditionTrueFalse]
+    if (copy_size > row_bytes) {
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_10/healed/problem-381.c:99:22: note: row_bytes is assigned 'row_size*sizeof(int)' here.
+    size_t row_bytes = row_size * sizeof(int);
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_10/healed/problem-381.c:107:34: note: Assuming condition is false
+        !outer.lists[2].elements || !outer.lists[3].elements) {
+                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_10/healed/problem-381.c:98:22: note: copy_size is assigned 'row_size*sizeof(int)' here.
+    size_t copy_size = row_size * sizeof(int);
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_10/healed/problem-381.c:126:19: note: Condition 'copy_size>row_bytes' is always false
+    if (copy_size > row_bytes) {
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_10/healed/problem-381.c:133:19: style: Condition 'copy_size>row_bytes' is always false [knownConditionTrueFalse]
+    if (copy_size > row_bytes) {
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_10/healed/problem-381.c:99:22: note: row_bytes is assigned 'row_size*sizeof(int)' here.
+    size_t row_bytes = row_size * sizeof(int);
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_10/healed/problem-381.c:107:34: note: Assuming condition is false
+        !outer.lists[2].elements || !outer.lists[3].elements) {
+                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_10/healed/problem-381.c:98:22: note: copy_size is assigned 'row_size*sizeof(int)' here.
+    size_t copy_size = row_size * sizeof(int);
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_10/healed/problem-381.c:133:19: note: Condition 'copy_size>row_bytes' is always false
+    if (copy_size > row_bytes) {
+                  ^

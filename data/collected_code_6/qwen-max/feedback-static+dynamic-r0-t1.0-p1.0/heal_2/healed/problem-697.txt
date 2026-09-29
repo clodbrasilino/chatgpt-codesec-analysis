@@ -1,0 +1,46 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int countEven(const int *arr, int size) {
+    if (arr == NULL || size <= 0) {
+        return 0;
+    }
+    int count = 0;
+    for (int i = 0; i < size; ++i) {
+        if (arr[i] % 2 == 0) {
+            count++;
+        }
+    }
+    return count;
+}
+
+int main() {
+    int arr1[] = {1, 3, 5};
+    int size1 = sizeof(arr1) / sizeof(arr1[0]);
+    int evenCount1 = countEven(arr1, size1);
+    printf("Number of even elements: %d\n", evenCount1);
+
+    int arr2[] = {};
+    int size2 = sizeof(arr2) / sizeof(arr2[0]);
+    int evenCount2 = countEven(arr2, size2);
+    printf("Number of even elements: %d\n", evenCount2);
+
+    int arr3[] = {2, 4, 6, 8, 10};
+    int size3 = sizeof(arr3) / sizeof(arr3[0]);
+    int evenCount3 = countEven(arr3, size3);
+    printf("Number of even elements: %d\n", evenCount3);
+
+    int arr4[] = {2, 3, 5, 7, 11};
+    int size4 = sizeof(arr4) / sizeof(arr4[0]);
+    int evenCount4 = countEven(arr4, size4);
+    printf("Number of even elements: %d\n", evenCount4);
+
+    int arr5[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    int size5 = sizeof(arr5) / sizeof(arr5[0]);
+    int evenCount5 = countEven(arr5, size5);
+    printf("Number of even elements: %d\n", evenCount5);
+
+    return 0;
+}
+```

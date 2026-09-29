@@ -1,0 +1,47 @@
+{
+  "task_id": 107,
+  "text": "Write a C function to count hexadecimal numbers for a given range.",
+  "fn_candidates": [
+    "count_Hexadecimal",
+    "CountHexadecimal",
+    "countHexadecimal",
+    "countHexadecimal"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "count_Hexadecimal",
+      "args": [
+        10,
+        15
+      ],
+      "expected": 6,
+      "assert_src": "assert count_Hexadecimal(10,15) == 6"
+    },
+    {
+      "fn_name": "count_Hexadecimal",
+      "args": [
+        2,
+        4
+      ],
+      "expected": 0,
+      "assert_src": "assert count_Hexadecimal(2,4) == 0"
+    },
+    {
+      "fn_name": "count_Hexadecimal",
+      "args": [
+        15,
+        16
+      ],
+      "expected": 1,
+      "assert_src": "assert count_Hexadecimal(15,16) == 1"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

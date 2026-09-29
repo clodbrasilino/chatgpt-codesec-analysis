@@ -1,0 +1,47 @@
+{
+  "task_id": 666,
+  "text": "Write a C function to count occurrence of a character in a string.",
+  "fn_candidates": [
+    "count_char",
+    "CountChar",
+    "countChar",
+    "countchar"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "count_char",
+      "args": [
+        "Python",
+        "o"
+      ],
+      "expected": 1,
+      "assert_src": "assert count_char(\"Python\",'o')==1"
+    },
+    {
+      "fn_name": "count_char",
+      "args": [
+        "little",
+        "t"
+      ],
+      "expected": 2,
+      "assert_src": "assert count_char(\"little\",'t')==2"
+    },
+    {
+      "fn_name": "count_char",
+      "args": [
+        "assert",
+        "s"
+      ],
+      "expected": 2,
+      "assert_src": "assert count_char(\"assert\",'s')==2"
+    }
+  ],
+  "arg_kinds": [
+    "str"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

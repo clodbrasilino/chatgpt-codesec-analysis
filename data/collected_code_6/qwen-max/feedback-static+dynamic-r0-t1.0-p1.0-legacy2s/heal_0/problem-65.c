@@ -1,0 +1,59 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct ListNode {
+    int value;
+    struct ListNode *next;
+} ListNode;
+
+ListNode* createNode(int value) {
+    ListNode *newNode = (ListNode *)malloc(sizeof(ListNode));
+    if (newNode == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(1);
+    }
+    newNode->value = value;
+    newNode->next = NULL;
+    return newNode;
+}
+
+void insertAtEnd(ListNode **head, int value) {
+    ListNode *newNode = createNode(value);
+    if (*head == NULL) {
+        *head = newNode;
+        return;
+    }
+    ListNode *current = *head;
+    while (current->next != NULL) {
+        current = current->next;
+    }
+    current->next = newNode;
+}
+
+int listSumRecursive(ListNode *head) {
+    if (head == NULL) {
+        return 0;
+    }
+    return head->value + listSumRecursive(head->next);
+}
+
+int main() {
+    ListNode *head = NULL;
+    insertAtEnd(&head, 1);
+    insertAtEnd(&head, 2);
+    insertAtEnd(&head, 3);
+    insertAtEnd(&head, 4);
+    insertAtEnd(&head, 5);
+
+    int sum = listSumRecursive(head);
+    printf("Sum of list: %d\n", sum);
+
+    // Free the allocated memory
+    while (head != NULL) {
+        ListNode *temp = head;
+        head = head->next;
+        free(temp);
+    }
+
+    return 0;
+}

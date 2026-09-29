@@ -1,0 +1,61 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_1/healed/problem-969-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_1/healed/problem-969-s3.c:81:19: style: Condition 'dest_cap0>=src_size0' is always true [knownConditionTrueFalse]
+    if (dest_cap0 >= src_size0) {
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_1/healed/problem-969-s3.c:77:22: note: src_size0 is assigned 'a1_size' here.
+    size_t src_size0 = a1_size;
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_1/healed/problem-969-s3.c:80:9: note: Assuming condition is false
+    if (!arr.tuples[0].elems) { free_tuple_array(arr); return EXIT_FAILURE; }
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_1/healed/problem-969-s3.c:76:22: note: dest_cap0 is assigned 'a1_size' here.
+    size_t dest_cap0 = a1_size;
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_1/healed/problem-969-s3.c:81:19: note: Condition 'dest_cap0>=src_size0' is always true
+    if (dest_cap0 >= src_size0) {
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_1/healed/problem-969-s3.c:91:19: style: Condition 'dest_cap1>=src_size1' is always true [knownConditionTrueFalse]
+    if (dest_cap1 >= src_size1) {
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_1/healed/problem-969-s3.c:87:22: note: src_size1 is assigned 'a2_size' here.
+    size_t src_size1 = a2_size;
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_1/healed/problem-969-s3.c:90:9: note: Assuming condition is false
+    if (!arr.tuples[1].elems) { free_tuple_array(arr); return EXIT_FAILURE; }
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_1/healed/problem-969-s3.c:86:22: note: dest_cap1 is assigned 'a2_size' here.
+    size_t dest_cap1 = a2_size;
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_1/healed/problem-969-s3.c:91:19: note: Condition 'dest_cap1>=src_size1' is always true
+    if (dest_cap1 >= src_size1) {
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_1/healed/problem-969-s3.c:101:19: style: Condition 'dest_cap2>=src_size2' is always true [knownConditionTrueFalse]
+    if (dest_cap2 >= src_size2) {
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_1/healed/problem-969-s3.c:97:22: note: src_size2 is assigned 'a3_size' here.
+    size_t src_size2 = a3_size;
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_1/healed/problem-969-s3.c:100:9: note: Assuming condition is false
+    if (!arr.tuples[2].elems) { free_tuple_array(arr); return EXIT_FAILURE; }
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_1/healed/problem-969-s3.c:96:22: note: dest_cap2 is assigned 'a3_size' here.
+    size_t dest_cap2 = a3_size;
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_1/healed/problem-969-s3.c:101:19: note: Condition 'dest_cap2>=src_size2' is always true
+    if (dest_cap2 >= src_size2) {
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_1/healed/problem-969-s3.c:111:19: style: Condition 'dest_cap3>=src_size3' is always true [knownConditionTrueFalse]
+    if (dest_cap3 >= src_size3) {
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_1/healed/problem-969-s3.c:107:22: note: src_size3 is assigned 'a4_size' here.
+    size_t src_size3 = a4_size;
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_1/healed/problem-969-s3.c:110:9: note: Assuming condition is false
+    if (!arr.tuples[3].elems) { free_tuple_array(arr); return EXIT_FAILURE; }
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_1/healed/problem-969-s3.c:106:22: note: dest_cap3 is assigned 'a4_size' here.
+    size_t dest_cap3 = a4_size;
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_1/healed/problem-969-s3.c:111:19: note: Condition 'dest_cap3>=src_size3' is always true
+    if (dest_cap3 >= src_size3) {
+                  ^

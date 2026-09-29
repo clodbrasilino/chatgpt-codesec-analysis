@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_7/healed/problem-674-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_7/healed/problem-674-s3.c:37:16: style: Array index 'word_len' is used before limits check. [arrayIndexThenCheck]
+    while (word[word_len] != '\0' && word_len < MAX_WORD_LEN - 1) {
+               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_7/healed/problem-674-s3.c:97:21: style: Array index 'token_len' is used before limits check. [arrayIndexThenCheck]
+        while (token[token_len] != '\0' && token_len < MAX_WORD_LEN - 1) {
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_7/healed/problem-674-s3.c:72:25: style: Condition 'result_capacity<input_len' is always false [knownConditionTrueFalse]
+    if (result_capacity < input_len) {
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_7/healed/problem-674-s3.c:71:28: note: result_capacity is assigned 'input_len+1' here.
+    size_t result_capacity = input_len + 1;
+                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_7/healed/problem-674-s3.c:72:25: note: Condition 'result_capacity<input_len' is always false
+    if (result_capacity < input_len) {
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_7/healed/problem-674-s3.c:92:22: style: Variable 'remaining' is assigned a value that is never used. [unreadVariable]
+    size_t remaining = result_capacity;
+                     ^

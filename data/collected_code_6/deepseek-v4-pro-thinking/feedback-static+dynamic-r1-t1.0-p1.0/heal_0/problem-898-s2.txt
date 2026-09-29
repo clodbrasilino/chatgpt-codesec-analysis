@@ -1,0 +1,52 @@
+```c
+#include <stdio.h>
+#include <stddef.h>
+#include <string.h>
+
+int extract_contiguous(const int *list, size_t list_len, size_t start, size_t count, int *result, size_t result_len)
+{
+    if (list == NULL || result == NULL)
+    {
+        return -1;
+    }
+    if (start > list_len)
+    {
+        return -2;
+    }
+    if (count > list_len - start)
+    {
+        return -3;
+    }
+    if (result_len < count)
+    {
+        return -4;
+    }
+    if (count > 0)
+    {
+        memmove(result, list + start, count * sizeof(int));
+    }
+    return 0;
+}
+
+int main(void)
+{
+    int list[] = { 1, 2, 3, 4, 5, 6 };
+    int result[3] = { 0 };
+    size_t list_len = sizeof(list) / sizeof(list[0]);
+    size_t result_len = sizeof(result) / sizeof(result[0]);
+    int status = extract_contiguous(list, list_len, 2, 3, result, result_len);
+
+    if (status != 0)
+    {
+        return 1;
+    }
+
+    for (size_t i = 0; i < result_len; i++)
+    {
+        printf("%d ", result[i]);
+    }
+    printf("\n");
+
+    return 0;
+}
+```

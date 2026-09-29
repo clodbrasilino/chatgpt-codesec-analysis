@@ -1,0 +1,72 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+int findMinimumRotations(const char* str) {
+    if (str == NULL) {
+        return -1;
+    }
+
+    /* Possible weaknesses found:
+     *  Assignment 'limit=1000000', assigned value is 1000000
+     */
+    size_t limit = 1000000;
+    size_t len = 0;
+    /* Possible weaknesses found:
+     *  Assuming that condition 'len<limit' is not redundant
+     *  Either the condition 'len<limit' is redundant or the array 'str[4]' is accessed at index 999999, which is out of bounds. [arrayIndexOutOfBoundsCond]
+     *  Array index out of bounds
+     */
+    while (len < limit && str[len] != '\0') {
+        len++;
+    }
+
+    if (len == 0 || len == limit) {
+        return 0;
+    }
+
+    char* concatStr = (char*)malloc(2 * len + 1);
+    if (concatStr == NULL) {
+        return -1;
+    }
+
+    /* Possible weaknesses found:
+     * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+     */
+    memcpy(concatStr, str, len);
+    /* Possible weaknesses found:
+     * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+     */
+    memcpy(concatStr + len, str, len);
+    concatStr[2 * len] = '\0';
+
+    int minRotations = (int)len;
+
+    for (size_t i = 1; i <= len; i++) {
+        if (strncmp(concatStr + i, str, len) == 0) {
+            minRotations = (int)i;
+            break;
+        }
+    }
+
+    free(concatStr);
+    concatStr = NULL;
+
+    return minRotations == (int)len ? (int)len : minRotations;
+}
+
+int main(void) {
+    const char* str1 = "abc";
+    int result1 = findMinimumRotations(str1);
+    printf("%d\n", result1);
+
+    const char* str2 = "aaaa";
+    int result2 = findMinimumRotations(str2);
+    printf("%d\n", result2);
+
+    const char* str3 = "abab";
+    int result3 = findMinimumRotations(str3);
+    printf("%d\n", result3);
+
+    return 0;
+}

@@ -1,0 +1,115 @@
+collected_code_3/problem-795-1.c: In function 'createHeap':
+collected_code_3/problem-795-1.c:12:16: warning: dereference of possibly-NULL 'h' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   12 |     h->heapArr = (int*) malloc(sizeof(int) * capacity);
+      |     ~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  'main': events 1-2
+    |
+    |   84 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   88 |     findNCheapItems(arr, n, size);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) calling 'findNCheapItems' from 'main'
+    |
+    +--> 'findNCheapItems': events 3-4
+           |
+           |   63 | void findNCheapItems(int* arr, int n, int size) {
+           |      |      ^~~~~~~~~~~~~~~
+           |      |      |
+           |      |      (3) entry to 'findNCheapItems'
+           |   64 |     Heap* h = createHeap(n);
+           |      |               ~~~~~~~~~~~~~
+           |      |               |
+           |      |               (4) calling 'createHeap' from 'findNCheapItems'
+           |
+           +--> 'createHeap': events 5-7
+                  |
+                  |   10 | Heap* createHeap(int capacity) {
+                  |      |       ^~~~~~~~~~
+                  |      |       |
+                  |      |       (5) entry to 'createHeap'
+                  |   11 |     Heap* h = (Heap*) malloc(sizeof(Heap));
+                  |      |                       ~~~~~~~~~~~~~~~~~~~~
+                  |      |                       |
+                  |      |                       (6) this call could return NULL
+                  |   12 |     h->heapArr = (int*) malloc(sizeof(int) * capacity);
+                  |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                  |      |                |
+                  |      |                (7) 'h' could be NULL: unchecked value from (6)
+                  |
+collected_code_3/problem-795-1.c: In function 'insertHeap':
+collected_code_3/problem-795-1.c:22:27: warning: dereference of possibly-NULL '*h.heapArr + (long unsigned int)*h.last * 4' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   22 |     h->heapArr[++h->last] = value;
+      |     ~~~~~~~~~~~~~~~~~~~~~~^~~~~~~
+  'main': events 1-2
+    |
+    |   84 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   88 |     findNCheapItems(arr, n, size);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) calling 'findNCheapItems' from 'main'
+    |
+    +--> 'findNCheapItems': events 3-4
+           |
+           |   63 | void findNCheapItems(int* arr, int n, int size) {
+           |      |      ^~~~~~~~~~~~~~~
+           |      |      |
+           |      |      (3) entry to 'findNCheapItems'
+           |   64 |     Heap* h = createHeap(n);
+           |      |               ~~~~~~~~~~~~~
+           |      |               |
+           |      |               (4) calling 'createHeap' from 'findNCheapItems'
+           |
+           +--> 'createHeap': events 5-6
+                  |
+                  |   10 | Heap* createHeap(int capacity) {
+                  |      |       ^~~~~~~~~~
+                  |      |       |
+                  |      |       (5) entry to 'createHeap'
+                  |   11 |     Heap* h = (Heap*) malloc(sizeof(Heap));
+                  |   12 |     h->heapArr = (int*) malloc(sizeof(int) * capacity);
+                  |      |                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                  |      |                         |
+                  |      |                         (6) this call could return NULL
+                  |
+           <------+
+           |
+         'findNCheapItems': events 7-10
+           |
+           |   64 |     Heap* h = createHeap(n);
+           |      |               ^~~~~~~~~~~~~
+           |      |               |
+           |      |               (7) returning to 'findNCheapItems' from 'createHeap'
+           |   65 |     for(int i = 0; i < n; i++) {
+           |      |                    ~~~~~
+           |      |                      |
+           |      |                      (8) following 'true' branch (when 'i < n')...
+           |   66 |         insertHeap(h, arr[i]);
+           |      |         ~~~~~~~~~~~~~~~~~~~~~
+           |      |         |                |
+           |      |         |                (9) ...to here
+           |      |         (10) calling 'insertHeap' from 'findNCheapItems'
+           |
+           +--> 'insertHeap': events 11-14
+                  |
+                  |   18 | void insertHeap(Heap* h, int value) {
+                  |      |      ^~~~~~~~~~
+                  |      |      |
+                  |      |      (11) entry to 'insertHeap'
+                  |   19 |     if(h->last == h->capacity - 1) {
+                  |      |       ~
+                  |      |       |
+                  |      |       (12) following 'false' branch...
+                  |......
+                  |   22 |     h->heapArr[++h->last] = value;
+                  |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                  |      |      |                    |
+                  |      |      (13) ...to here      (14) '*h.heapArr + (long unsigned int)*h.last * 4' could be NULL: unchecked value from (6)
+                  |

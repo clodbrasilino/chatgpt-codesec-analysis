@@ -1,0 +1,36 @@
+```C
+#include <stdio.h>
+#include <stdbool.h>
+#define MAX_CHAR 256
+
+bool check_unique_characters(char* str){
+    bool chars[MAX_CHAR] = {false};
+
+    for(int i = 0; str[i]; i++){
+        int index = (int)str[i];
+        if(chars[index] == true)
+            return false;
+
+        chars[index] = true;
+    }
+
+    return true;
+}
+
+int main() {
+    char* str1 = "Hello";
+    char* str2 = "World";
+
+    if(check_unique_characters(str1))
+        printf("The String %s contains all unique characters.\n",str1);
+    else
+        printf("The String %s does not contain all unique characters.\n",str1);
+
+    if(check_unique_characters(str2))
+        printf("The String %s contains all unique characters.\n",str2);
+    else
+        printf("The String %s does not contain all unique characters.\n",str2);
+
+    return 0;
+}
+```

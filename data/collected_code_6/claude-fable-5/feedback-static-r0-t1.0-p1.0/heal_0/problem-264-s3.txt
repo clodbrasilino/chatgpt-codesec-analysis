@@ -1,0 +1,58 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX_HUMAN_YEARS 30
+#define FIRST_YEAR_RATE 10.5
+#define SECOND_YEAR_RATE 10.5
+#define LATER_YEAR_RATE 4.0
+
+static int calculate_dog_years(double human_years, double *dog_years)
+{
+    if (dog_years == NULL) {
+        return -1;
+    }
+
+    if (human_years < 0.0 || human_years > (double)MAX_HUMAN_YEARS) {
+        return -1;
+    }
+
+    if (human_years <= 1.0) {
+        *dog_years = human_years * FIRST_YEAR_RATE;
+    } else if (human_years <= 2.0) {
+        *dog_years = FIRST_YEAR_RATE + (human_years - 1.0) * SECOND_YEAR_RATE;
+    } else {
+        *dog_years = FIRST_YEAR_RATE + SECOND_YEAR_RATE +
+                     (human_years - 2.0) * LATER_YEAR_RATE;
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    double human_years = 0.0;
+    double dog_years = 0.0;
+    int scan_result = 0;
+
+    printf("Enter the dog's age in human years: ");
+
+    scan_result = scanf("%lf", &human_years);
+    if (scan_result != 1) {
+        fprintf(stderr, "Error: invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (calculate_dog_years(human_years, &dog_years) != 0) {
+        fprintf(stderr, "Error: age must be between 0 and %d years.\n",
+                MAX_HUMAN_YEARS);
+        return EXIT_FAILURE;
+    }
+
+    printf("The dog's age in dog years is: %.1f\n", dog_years);
+
+    return EXIT_SUCCESS;
+}
+```
+
+This implementation validates all inputs, checks the return value of `scanf` before using the read value, guards against a `NULL` output pointer, bounds the input range to avoid nonsensical values, and uses `EXIT_SUCCESS`/`EXIT_FAILURE` for portable exit codes. No resources beyond standard streams are used, so there is nothing to leak or misuse across a lifetime.

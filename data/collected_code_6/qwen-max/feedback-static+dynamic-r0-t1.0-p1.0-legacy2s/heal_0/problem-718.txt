@@ -1,0 +1,74 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node* next;
+} Node;
+
+Node* createNode(int data) {
+    Node* newNode = (Node*)malloc(sizeof(Node));
+    if (newNode == NULL) exit(EXIT_FAILURE);
+    newNode->data = data;
+    newNode->next = NULL;
+    return newNode;
+}
+
+Node* alternateElements(Node* head) {
+    if (head == NULL || head->next == NULL) return head;
+    
+    Node* altList = createNode(head->data);
+    Node* currentAlt = altList;
+    Node* temp = head->next;
+    
+    while (temp != NULL && temp->next != NULL) {
+        currentAlt->next = createNode(temp->next->data);
+        currentAlt = currentAlt->next;
+        temp = temp->next->next;
+    }
+    
+    return altList;
+}
+
+void printList(Node* head) {
+    while (head != NULL) {
+        printf("%d -> ", head->data);
+        head = head->next;
+    }
+    printf("NULL\n");
+}
+
+int main() {
+    Node* head = createNode(1);
+    head->next = createNode(2);
+    head->next->next = createNode(3);
+    head->next->next->next = createNode(4);
+    head->next->next->next->next = createNode(5);
+
+    printf("Original list: ");
+    printList(head);
+
+    Node* alternateList = alternateElements(head);
+
+    printf("Alternate elements: ");
+    printList(alternateList);
+
+    // Free the original list
+    Node* temp;
+    while (head != NULL) {
+        temp = head;
+        head = head->next;
+        free(temp);
+    }
+
+    // Free the alternate list
+    while (alternateList != NULL) {
+        temp = alternateList;
+        alternateList = alternateList->next;
+        free(temp);
+    }
+
+    return 0;
+}
+```

@@ -1,0 +1,101 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct Node {
+    char *value;
+    struct Node *next;
+} Node;
+
+void free_list(Node *head) {
+    Node *current = head;
+    Node *next_node;
+    while (current != NULL) {
+        next_node = current->next;
+        free(current->value);
+        free(current);
+        current = next_node;
+    }
+}
+
+Node *string_to_list(const char *str, char delimiter) {
+    if (str == NULL || delimiter == '\0') {
+        return NULL;
+    }
+
+    Node *head = NULL;
+    Node *tail = NULL;
+
+    const char *start = str;
+    while (*start != '\0') {
+        while (*start == delimiter) {
+            start++;
+        }
+        if (*start == '\0') {
+            break;
+        }
+
+        const char *end = start;
+        while (*end != '\0' && *end != delimiter) {
+            end++;
+        }
+
+        size_t len = end - start;
+        size_t token_size = len + 1;
+        if (token_size <= len) {
+            free_list(head);
+            return NULL;
+        }
+
+        char *token = malloc(token_size);
+        if (token == NULL) {
+            free_list(head);
+            return NULL;
+        }
+
+        memcpy(token, start, len);
+        token[len] = '\0';
+
+        Node *new_node = malloc(sizeof(Node));
+        if (new_node == NULL) {
+            free(token);
+            free_list(head);
+            return NULL;
+        }
+
+        new_node->value = token;
+        new_node->next = NULL;
+
+        if (head == NULL) {
+            head = new_node;
+            tail = new_node;
+        } else {
+            tail->next = new_node;
+            tail = new_node;
+        }
+
+        start = end;
+    }
+
+    return head;
+}
+
+int main(void) {
+    const char *input = "Convert this string to a list";
+    char delimiter = ' ';
+
+    Node *list = string_to_list(input, delimiter);
+    if (list == NULL) {
+        return EXIT_FAILURE;
+    }
+
+    Node *current = list;
+    while (current != NULL) {
+        printf("%s\n", current->value);
+        current = current->next;
+    }
+
+    free_list(list);
+
+    return EXIT_SUCCESS;
+}

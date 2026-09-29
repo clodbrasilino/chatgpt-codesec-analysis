@@ -1,0 +1,40 @@
+#include <stdio.h>
+#include <string.h>
+#include <regex.h>
+
+void remove_lowercase_substrings(char *str) {
+    regex_t reg;
+    /* Possible weaknesses found:
+     *  Unused variable: buf [unusedVariable]
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char buf[1024];
+    regmatch_t pmatch[1];
+
+    if (regcomp(&reg, "[a-z]+", REG_EXTENDED)) {
+        fprintf(stderr, "Could not compile regex\n");
+        return;
+    }
+
+    while (regexec(&reg, str, 1, pmatch, 0) == 0) {
+        int start = pmatch[0].rm_so;
+        int end = pmatch[0].rm_eo;
+
+        /* Possible weaknesses found:
+         * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+         */
+        memmove(str + start, str + end, strlen(str + end) + 1);
+    }
+
+    regfree(&reg);
+}
+
+int main() {
+    char str[] = "TesTIngStrIng";
+
+    remove_lowercase_substrings(str);
+
+    printf("Result: %s\n", str);
+
+    return 0;
+}

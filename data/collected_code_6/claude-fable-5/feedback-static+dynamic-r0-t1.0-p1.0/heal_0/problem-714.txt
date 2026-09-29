@@ -1,0 +1,72 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+static int count_distinct_prime_powers(long long n)
+{
+    int count = 0;
+    long long i;
+
+    if (n < 2)
+    {
+        return 0;
+    }
+
+    for (i = 2; i * i <= n; i++)
+    {
+        if (n % i == 0)
+        {
+            int exponent = 0;
+            while (n % i == 0)
+            {
+                n /= i;
+                exponent++;
+            }
+            count += exponent;
+        }
+    }
+
+    if (n > 1)
+    {
+        count += 1;
+    }
+
+    return count;
+}
+
+int main(void)
+{
+    long long n = 0;
+    int result;
+
+    printf("Enter a positive integer: ");
+    if (scanf("%lld", &n) != 1)
+    {
+        fprintf(stderr, "Error: invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (n < 1)
+    {
+        fprintf(stderr, "Error: number must be positive.\n");
+        return EXIT_FAILURE;
+    }
+
+    result = count_distinct_prime_powers(n);
+    printf("Number of distinct powers of prime factors: %d\n", result);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**How it works:**
+
+For a number N = p1^a1 × p2^a2 × ... × pk^ak, the distinct powers of prime factors are p1, p1², ..., p1^a1, p2, p2², ..., etc. So the answer is simply the sum of all exponents (a1 + a2 + ... + ak).
+
+**Example:** For N = 24 = 2³ × 3¹, the distinct prime powers are 2, 4, 8, and 3, giving a count of **4**.
+
+**Safety considerations addressed:**
+
+- **CWE-703**: The return value of `scanf` is checked, and negative/zero inputs are rejected with an error message rather than producing undefined behavior.
+- **CWE-664**: No dynamic resources (heap memory, file handles) are allocated, so there is nothing to leak or misuse across its lifetime.
+- **CWE-710**: The code uses `int main(void)`, standard exit codes (`EXIT_SUCCESS`/`EXIT_FAILURE`), a `static` helper with internal linkage, braces on all blocks, and `i * i <= n` instead of `i <= sqrt(n)` to avoid floating-point comparison issues and potential overflow.

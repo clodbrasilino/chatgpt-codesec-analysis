@@ -1,0 +1,83 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct DictNode {
+    char *key;
+    struct DictNode *child;
+    struct DictNode *next;
+} DictNode;
+
+DictNode *create_node(const char *key) {
+    DictNode *node = (DictNode *)malloc(sizeof(DictNode));
+    if (node == NULL) {
+        return NULL;
+    }
+    node->key = (char *)malloc(strlen(key) + 1);
+    if (node->key == NULL) {
+        free(node);
+        return NULL;
+    }
+    strcpy(node->key, key);
+    node->child = NULL;
+    node->next = NULL;
+    return node;
+}
+
+void free_dict(DictNode *root) {
+    if (root == NULL) {
+        return;
+    }
+    DictNode *current = root;
+    while (current != NULL) {
+        DictNode *next = current->next;
+        free_dict(current->child);
+        free(current->key);
+        free(current);
+        current = next;
+    }
+}
+
+int dict_depth(DictNode *root) {
+    if (root == NULL) {
+        return 0;
+    }
+    int max_depth = 0;
+    DictNode *current = root;
+    while (current != NULL) {
+        int child_depth = dict_depth(current->child);
+        if (child_depth > max_depth) {
+            max_depth = child_depth;
+        }
+        current = current->next;
+    }
+    return max_depth + 1;
+}
+
+int main(void) {
+    DictNode *root = create_node("root");
+    if (root == NULL) {
+        return 1;
+    }
+    
+    DictNode *level1_a = create_node("a");
+    DictNode *level1_b = create_node("b");
+    DictNode *level2_a = create_node("c");
+    DictNode *level3_a = create_node("d");
+    
+    if (level1_a == NULL || level1_b == NULL || level2_a == NULL || level3_a == NULL) {
+        free_dict(root);
+        return 1;
+    }
+    
+    root->child = level1_a;
+    level1_a->next = level1_b;
+    level1_a->child = level2_a;
+    level2_a->child = level3_a;
+    
+    int depth = dict_depth(root);
+    printf("%d\n", depth);
+    
+    free_dict(root);
+    return 0;
+}

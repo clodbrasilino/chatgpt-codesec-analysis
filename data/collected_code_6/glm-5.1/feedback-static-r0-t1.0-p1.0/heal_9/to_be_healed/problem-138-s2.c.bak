@@ -1,0 +1,38 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+
+int can_be_sum_of_nonzero_powers_of_2(long long n) {
+    if (n <= 1) {
+        return 0;
+    }
+    if (n & (n - 1)) {
+        return 1;
+    }
+    return 0;
+}
+
+/* Possible weaknesses found:
+ *  Parameter 'argv' can be declared as const array [constParameter]
+ */
+int main(int argc, char * const argv[const]) {
+    long long num;
+    if (argc != 2) {
+        if (fscanf(stdin, "%lld", &num) != 1) {
+            return EXIT_FAILURE;
+        }
+    } else {
+        char *endptr;
+        errno = 0;
+        num = strtoll(argv[1], &endptr, 10);
+        if (*endptr != '\0' || errno == ERANGE) {
+            return EXIT_FAILURE;
+        }
+    }
+    if (can_be_sum_of_nonzero_powers_of_2(num)) {
+        printf("YES\n");
+    } else {
+        printf("NO\n");
+    }
+    return EXIT_SUCCESS;
+}

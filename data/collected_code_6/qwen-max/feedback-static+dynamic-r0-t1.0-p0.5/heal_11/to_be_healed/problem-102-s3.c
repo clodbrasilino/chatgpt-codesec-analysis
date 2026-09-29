@@ -1,0 +1,50 @@
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+ /* Possible weaknesses found:
+  *  test case 0 failed: expected 'PythonProgram', got <no output>
+  *  test case 2 failed: expected 'ProgrammingLanguage', got <no output>
+  *  test case 1 failed: expected 'PythonLanguage', got <no output>
+  */
+
+char* snake_to_camel(char *snake_str) {
+    char *p = snake_str;
+    int capitalize_next = 1;
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    size_t len = strlen(snake_str);
+    
+    while (p < snake_str + len) {
+        if (capitalize_next && islower((unsigned char)*p)) {
+            *p = toupper((unsigned char)*p);
+            capitalize_next = 0;
+        } else if (*p == '_') {
+            memmove(p, p + 1, snake_str + len - p);
+            --len;
+            capitalize_next = 1;
+            --p;
+        } else {
+            capitalize_next = 0;
+        }
+        p++;
+    }
+
+    return snake_str;
+}
+
+int main() {
+    char snake_case[] = "this_is_a_snake_case_string";
+    printf("%s\n", snake_to_camel(snake_case));
+
+    char test_case_0[] = "python_program";
+    printf("%s\n", snake_to_camel(test_case_0));
+
+    char test_case_1[] = "python_language";
+    printf("%s\n", snake_to_camel(test_case_1));
+
+    char test_case_2[] = "programming_language";
+    printf("%s\n", snake_to_camel(test_case_2));
+
+    return 0;
+}

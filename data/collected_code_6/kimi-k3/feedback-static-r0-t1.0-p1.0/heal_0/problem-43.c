@@ -1,0 +1,80 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+#define MAX_MATCHES 100
+#define MAX_MATCH_LEN 256
+
+int find_lowercase_underscore_sequences(const char *input, char matches[][MAX_MATCH_LEN], int max_matches) {
+    regex_t regex;
+    regmatch_t match[1];
+    const char *pattern = "[a-z]+(_[a-z]+)+";
+    int ret;
+    int count = 0;
+    const char *cursor = input;
+
+    if (input == NULL || matches == NULL || max_matches <= 0) {
+        return -1;
+    }
+
+    ret = regcomp(&regex, pattern, REG_EXTENDED);
+    if (ret != 0) {
+        return -1;
+    }
+
+    while (count < max_matches) {
+        ret = regexec(&regex, cursor, 1, match, 0);
+        if (ret == REG_NOMATCH) {
+            break;
+        } else if (ret != 0) {
+            regfree(&regex);
+            return -1;
+        }
+
+        int start = match[0].rm_so;
+        int end = match[0].rm_eo;
+        int length = end - start;
+
+        if (length >= MAX_MATCH_LEN) {
+            regfree(&regex);
+            return -1;
+        }
+
+        strncpy(matches[count], cursor + start, length);
+        matches[count][length] = '\0';
+        count++;
+
+        cursor += end;
+    }
+
+    regfree(&regex);
+    return count;
+}
+
+int main(void) {
+    char input[1024];
+    char matches[MAX_MATCHES][MAX_MATCH_LEN];
+    int result;
+
+    printf("Enter a string: ");
+    if (fgets(input, sizeof(input), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    input[strcspn(input, "\n")] = '\0';
+
+    result = find_lowercase_underscore_sequences(input, matches, MAX_MATCHES);
+    if (result < 0) {
+        fprintf(stderr, "Error processing regex\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Found %d sequence(s):\n", result);
+    for (int i = 0; i < result; i++) {
+        printf("%d: %s\n", i + 1, matches[i]);
+    }
+
+    return EXIT_SUCCESS;
+}

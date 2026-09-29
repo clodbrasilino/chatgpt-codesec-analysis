@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_1/healed/problem-495.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_1/healed/problem-495.c:29:13: style: Variable 'ret' is reassigned a value before the old one has been used. [redundantAssignment]
+        ret = regexec(&regex, str + str_idx, 1, &match, 0);
+            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_1/healed/problem-495.c:26:13: note: ret is assigned
+        ret = regexec(&regex, str + str_idx, 1, (regmatch_t[1]){0}, 0);
+            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_1/healed/problem-495.c:29:13: note: ret is overwritten
+        ret = regexec(&regex, str + str_idx, 1, &match, 0);
+            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_1/healed/problem-495.c:57:32: style: Parameter 'argv' can be declared as const array [constParameter]
+int main(int argc, char* const argv[]) {
+                               ^

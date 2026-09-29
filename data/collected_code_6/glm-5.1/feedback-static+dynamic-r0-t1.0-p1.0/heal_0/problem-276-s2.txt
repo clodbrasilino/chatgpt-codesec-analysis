@@ -1,0 +1,25 @@
+```c
+#include <stdio.h>
+#include <math.h>
+
+double calculate_cylinder_volume(double radius, double height) {
+    if (radius < 0.0 || height < 0.0) {
+        return -1.0;
+    }
+    return M_PI * radius * radius * height;
+}
+
+int main(void) {
+    double r = 3.0;
+    double h = 5.0;
+    double vol = calculate_cylinder_volume(r, h);
+    
+    if (vol < 0.0) {
+        fprintf(stderr, "Invalid input\n");
+        return 1;
+    }
+    
+    printf("%.6f\n", vol);
+    return 0;
+}
+```

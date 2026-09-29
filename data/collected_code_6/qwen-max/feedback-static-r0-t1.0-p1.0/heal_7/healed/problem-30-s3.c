@@ -1,0 +1,22 @@
+#include <stdio.h>
+#include <string.h>
+
+int countSubstringsWithSameStartAndEnd(const char *str, size_t len) {
+    int count = 0;
+    for (size_t i = 0; i < len; ++i) {
+        for (size_t j = i + 1; j <= len; ++j) {
+            if (str[i] == str[j - 1]) {
+                count++;
+            }
+        }
+    }
+    return count;
+}
+
+int main() {
+    const char exampleString[] = "abcab";
+    size_t exampleStringLength = sizeof(exampleString) - 1;
+    int result = countSubstringsWithSameStartAndEnd(exampleString, exampleStringLength);
+    printf("Number of substrings: %d\n", result);
+    return 0;
+}

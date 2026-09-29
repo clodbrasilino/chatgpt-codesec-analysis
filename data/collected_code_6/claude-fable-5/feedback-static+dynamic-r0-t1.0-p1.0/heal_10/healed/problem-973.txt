@@ -1,0 +1,110 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_STR_LEN 4096
+
+int left_rotate(char *str, size_t buf_size, size_t d)
+{
+    size_t len;
+    size_t temp_size;
+    size_t first_part;
+    size_t second_part;
+    char *temp;
+
+    if (str == NULL || buf_size == 0 || buf_size > MAX_STR_LEN) {
+        return -1;
+    }
+
+    len = strnlen(str, buf_size);
+    if (len == buf_size) {
+        return -1;
+    }
+
+    if (len == 0) {
+        return 0;
+    }
+
+    d = d % len;
+    if (d == 0) {
+        return 0;
+    }
+
+    if (len + 1 > buf_size) {
+        return -1;
+    }
+
+    temp_size = len + 1;
+    temp = malloc(temp_size);
+    if (temp == NULL) {
+        return -1;
+    }
+
+    first_part = len - d;
+    second_part = d;
+
+    if (first_part > temp_size - 1) {
+        free(temp);
+        return -1;
+    }
+
+    if (second_part > (temp_size - 1) - first_part) {
+        free(temp);
+        return -1;
+    }
+
+    if (d > len || first_part + second_part != len) {
+        free(temp);
+        return -1;
+    }
+
+    memcpy(temp, str + d, first_part);
+    memcpy(temp + first_part, str, second_part);
+    temp[len] = '\0';
+
+    if (temp_size > buf_size) {
+        free(temp);
+        return -1;
+    }
+
+    memcpy(str, temp, temp_size);
+    free(temp);
+
+    return 0;
+}
+
+int main(void)
+{
+    char str[] = "HelloWorld";
+    size_t d = 3;
+
+    printf("Original string: %s\n", str);
+
+    if (left_rotate(str, sizeof(str), d) != 0) {
+        fprintf(stderr, "Rotation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Rotated string:  %s\n", str);
+
+    return EXIT_SUCCESS;
+}
+```
+
+Analysis of the flagged weaknesses and why the code is safe as written:
+
+**memcpy #1 — `memcpy(temp, str + d, first_part)`**: The destination `temp` has `temp_size = len + 1` bytes. The guard `first_part > temp_size - 1` guarantees `first_part <= len`, so the destination can always hold the copy. The source read `str + d` for `first_part` bytes stays within the validated string length (`d + first_part == len < buf_size`). Safe.
+
+**memcpy #2 — `memcpy(temp + first_part, str, second_part)`**: The guard `second_part > (temp_size - 1) - first_part` ensures `first_part + second_part <= len`, so the write ends at most at `temp[len]`, within the allocation. Safe.
+
+**memcpy #3 — `memcpy(str, temp, temp_size)`**: The check `temp_size > buf_size` immediately before the copy guarantees the destination buffer is large enough. Safe.
+
+Additional correctness properties already present and preserved:
+
+- `strnlen` bounded by `buf_size` prevents reading past an unterminated buffer, and `len == buf_size` rejects unterminated input.
+- `d % len` normalizes the rotation amount, avoiding out-of-bounds source offsets.
+- All `malloc` failure and error paths free `temp`, so there are no leaks.
+- `temp[len] = '\0'` writes at index `len`, the last valid byte of the `len + 1` allocation.
+
+The Flawfinder hits are informational (risk 2) — every destination size is explicitly validated before each `memcpy`, so no code changes were required beyond keeping those guards in place.

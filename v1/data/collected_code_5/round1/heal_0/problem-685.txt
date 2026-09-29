@@ -1,0 +1,38 @@
+```c
+#include<stdio.h>
+#include<math.h>
+
+int isPrime(int num) {
+    int sqrtNum,i;
+    if(num <= 1)
+        return 0;
+    if(num== 2)
+        return 1;
+    if(num%2== 0)
+        return 0;
+    sqrtNum= (int)sqrt(num);
+    for(i= 3; i <= sqrtNum; i += 2) {
+        if (num % i == 0)
+            return 0;
+    }
+    return 1;
+}
+
+int SumOfPrimes(int n) {
+    int i, sum = 0;
+    for(i = 2; i <= n; i++) {
+        if(isPrime(i)) {
+            sum += i;
+        }
+    }
+    return sum;
+}
+
+int main() {
+    int n;
+    printf("Enter the value of n: ");
+    scanf("%d", &n);
+    printf("Sum of primes: %d\n", SumOfPrimes(n));
+    return 0;
+}
+```

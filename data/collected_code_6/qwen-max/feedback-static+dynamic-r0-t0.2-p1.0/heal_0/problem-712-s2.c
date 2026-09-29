@@ -1,0 +1,75 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node *next;
+} Node;
+
+typedef struct List {
+    Node *head;
+} List;
+
+void addNode(List *list, int data) {
+    Node *newNode = (Node *)malloc(sizeof(Node));
+    newNode->data = data;
+    newNode->next = list->head;
+    list->head = newNode;
+}
+
+int contains(Node *head, int data) {
+    while (head != NULL) {
+        if (head->data == data) {
+            return 1;
+        }
+        head = head->next;
+    }
+    return 0;
+}
+
+List* removeDuplicates(List *list) {
+    if (list == NULL || list->head == NULL) {
+        return list;
+    }
+
+    Node *current = list->head;
+    while (current != NULL && current->next != NULL) {
+        if (contains(current->next, current->data)) {
+            Node *temp = current->next;
+            current->next = temp->next;
+            free(temp);
+        } else {
+            current = current->next;
+        }
+    }
+    return list;
+}
+
+void printList(List *list) {
+    Node *current = list->head;
+    while (current != NULL) {
+        printf("%d -> ", current->data);
+        current = current->next;
+    }
+    printf("NULL\n");
+}
+
+int main() {
+    List list = {NULL};
+    addNode(&list, 1);
+    addNode(&list, 2);
+    addNode(&list, 3);
+    addNode(&list, 2);
+    addNode(&list, 4);
+    addNode(&list, 1);
+
+    printf("Original list: ");
+    printList(&list);
+
+    removeDuplicates(&list);
+
+    printf("List after removing duplicates: ");
+    printList(&list);
+
+    return 0;
+}

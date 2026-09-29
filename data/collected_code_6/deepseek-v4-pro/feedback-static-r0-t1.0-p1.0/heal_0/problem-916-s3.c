@@ -1,0 +1,72 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int compare_ints(const void *a, const void *b) {
+    int arg1 = *(const int*)a;
+    int arg2 = *(const int*)b;
+    if (arg1 < arg2) return -1;
+    if (arg1 > arg2) return 1;
+    return 0;
+}
+
+int find_triplet(int *arr, int n, int target) {
+    if (arr == NULL || n < 3) {
+        return 0;
+    }
+    
+    int *sorted = malloc(n * sizeof(int));
+    if (sorted == NULL) {
+        return 0;
+    }
+    
+    for (int i = 0; i < n; i++) {
+        sorted[i] = arr[i];
+    }
+    
+    qsort(sorted, n, sizeof(int), compare_ints);
+    
+    for (int i = 0; i < n - 2; i++) {
+        int left = i + 1;
+        int right = n - 1;
+        
+        while (left < right) {
+            int sum = sorted[i] + sorted[left] + sorted[right];
+            
+            if (sum == target) {
+                free(sorted);
+                return 1;
+            } else if (sum < target) {
+                left++;
+            } else {
+                right--;
+            }
+        }
+    }
+    
+    free(sorted);
+    return 0;
+}
+
+int main(void) {
+    int arr1[] = {12, 3, 4, 1, 6, 9};
+    int target1 = 24;
+    int n1 = sizeof(arr1) / sizeof(arr1[0]);
+    
+    if (find_triplet(arr1, n1, target1)) {
+        printf("Triplet found\n");
+    } else {
+        printf("Triplet not found\n");
+    }
+    
+    int arr2[] = {1, 2, 3, 4, 5};
+    int target2 = 10;
+    int n2 = sizeof(arr2) / sizeof(arr2[0]);
+    
+    if (find_triplet(arr2, n2, target2)) {
+        printf("Triplet found\n");
+    } else {
+        printf("Triplet not found\n");
+    }
+    
+    return 0;
+}

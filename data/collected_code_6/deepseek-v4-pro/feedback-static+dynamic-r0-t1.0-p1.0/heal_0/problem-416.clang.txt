@@ -1,0 +1,7 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-416.c:26:98: error: too few arguments to function call, expected 3, have 2
+   26 |         result = max3(n, compute_max_sum(part1) + compute_max_sum(part2) + compute_max_sum(part3));
+      |                  ~~~~                                                                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-416.c:7:12: note: 'max3' declared here
+    7 | static int max3(int a, int b, int c) {
+      |            ^    ~~~~~~~~~~~~~~~~~~~
+1 error generated.

@@ -1,0 +1,7 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-484.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-484.c:13:38: style: Parameter 'tuple1' can be declared as pointer to const [constParameterPointer]
+Tuple* remove_matching_tuples(Tuple* tuple1, int size1, Tuple* tuple2, int size2, int* result_size) {
+                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-484.c:13:64: style: Parameter 'tuple2' can be declared as pointer to const [constParameterPointer]
+Tuple* remove_matching_tuples(Tuple* tuple1, int size1, Tuple* tuple2, int size2, int* result_size) {
+                                                               ^

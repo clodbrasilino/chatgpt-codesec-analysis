@@ -1,0 +1,85 @@
+```c
+#include <stdio.h>
+#include <ctype.h>
+#include <string.h>
+#include <stdlib.h>
+
+#define MAX_INPUT_LEN 4096
+
+char *remove_non_alnum(char *str, size_t max_len);
+
+char *remove_non_alnum(char *str, size_t max_len)
+{
+    size_t read;
+    size_t write;
+    size_t len;
+
+    if (str == NULL || max_len == 0) {
+        return NULL;
+    }
+
+    len = strnlen(str, max_len);
+    if (len >= max_len) {
+        return NULL;
+    }
+
+    write = 0;
+    for (read = 0; read < len; read++) {
+        if (isalnum((unsigned char)str[read])) {
+            if (write >= max_len - 1) {
+                return NULL;
+            }
+            str[write] = str[read];
+            write++;
+        }
+    }
+
+    if (write >= max_len) {
+        return NULL;
+    }
+    str[write] = '\0';
+
+    return str;
+}
+
+int main(void)
+{
+    char input[] = "Hello, World! 123 #$%^ test_case-42";
+    char *result;
+
+    if (sizeof(input) > MAX_INPUT_LEN) {
+        if (fprintf(stderr, "Error: input exceeds maximum length\n") < 0) {
+            return EXIT_FAILURE;
+        }
+        return EXIT_FAILURE;
+    }
+
+    result = remove_non_alnum(input, sizeof(input));
+    if (result == NULL) {
+        if (fprintf(stderr, "Error: invalid input string\n") < 0) {
+            return EXIT_FAILURE;
+        }
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Result: %s\n", result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis summary of the changes:**
+
+1. **Bounds checking in the loop (CWE-120, CWE-20):** The original loop condition `read < len && read < max_len` was redundant since `len` is already guaranteed to be less than `max_len` after the `strnlen` check. The simplified condition `read < len` is sufficient and provably safe.
+
+2. **Silent truncation eliminated:** In the original code, if `write` reached `max_len - 1`, additional alphanumeric characters were silently dropped while the loop continued. Since `write <= read < len < max_len` always holds (the write index can never exceed the read index), truncation is actually impossible here—but the rewrite makes the failure path explicit by returning `NULL` rather than silently discarding data, which is defensively safer if the function is ever modified.
+
+3. **NUL termination guaranteed:** The final write of `'\0'` is guarded by an explicit bounds check, ensuring the buffer is always properly terminated within `max_len`.
+
+4. **Safe `ctype` usage preserved:** The cast to `unsigned char` before calling `isalnum()` is retained, avoiding undefined behavior for negative `char` values on platforms where `char` is signed.
+
+5. **Input validation preserved:** `NULL` pointer and zero-length checks, plus the `strnlen`-based validation that the string is properly terminated within the buffer, remain in place, addressing CWE-20 (improper input validation).
+
+The function performs in-place filtering with `write <= read` as an invariant, so no out-of-bounds writes can occur; all Flawfinder-flagged buffer accesses are provably within bounds.

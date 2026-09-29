@@ -1,0 +1,56 @@
+{
+  "task_id": 201,
+  "text": "Write a C function to check whether the elements in a list are same or not.",
+  "fn_candidates": [
+    "chkList",
+    "Chklist",
+    "chkList",
+    "chkList"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "chkList",
+      "args": [
+        [
+          "one",
+          "one",
+          "one"
+        ]
+      ],
+      "expected": true,
+      "assert_src": "assert chkList(['one','one','one']) == True"
+    },
+    {
+      "fn_name": "chkList",
+      "args": [
+        [
+          "one",
+          "Two",
+          "Three"
+        ]
+      ],
+      "expected": false,
+      "assert_src": "assert chkList(['one','Two','Three']) == False"
+    },
+    {
+      "fn_name": "chkList",
+      "args": [
+        [
+          "bigdata",
+          "python",
+          "Django"
+        ]
+      ],
+      "expected": false,
+      "assert_src": "assert chkList(['bigdata','python','Django']) == False"
+    }
+  ],
+  "arg_kinds": [
+    "str-list"
+  ],
+  "return_kind": "bool",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

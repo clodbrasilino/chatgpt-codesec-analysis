@@ -1,0 +1,130 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+#define MAX_INPUT_LEN 4096
+
+char *remove_non_alnum(const char *input)
+{
+    regex_t regex;
+    regmatch_t match;
+    char *result;
+    size_t len;
+    size_t pos;
+    const char *cursor;
+    int ret;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    len = strnlen(input, MAX_INPUT_LEN);
+    if (len >= MAX_INPUT_LEN) {
+        return NULL;
+    }
+
+    result = malloc(len + 1);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    ret = regcomp(&regex, "[^[:alnum:]]+", REG_EXTENDED);
+    if (ret != 0) {
+        free(result);
+        return NULL;
+    }
+
+    pos = 0;
+    cursor = input;
+    while (*cursor != '\0') {
+        ret = regexec(&regex, cursor, 1, &match, 0);
+        if (ret == REG_NOMATCH) {
+            size_t offset = (size_t)(cursor - input);
+            size_t remaining;
+
+            if (offset > len) {
+                regfree(&regex);
+                free(result);
+                return NULL;
+            }
+            remaining = strnlen(cursor, len - offset);
+            if (remaining > len || pos > len - remaining) {
+                regfree(&regex);
+                free(result);
+                return NULL;
+            }
+            memcpy(result + pos, cursor, remaining);
+            pos += remaining;
+            break;
+        }
+        if (ret != 0) {
+            regfree(&regex);
+            free(result);
+            return NULL;
+        }
+        if (match.rm_so < 0 || match.rm_eo < match.rm_so) {
+            regfree(&regex);
+            free(result);
+            return NULL;
+        }
+        if ((size_t)match.rm_so > len || pos > len - (size_t)match.rm_so) {
+            regfree(&regex);
+            free(result);
+            return NULL;
+        }
+        if ((size_t)(cursor - input) > len ||
+            (size_t)match.rm_eo > len - (size_t)(cursor - input)) {
+            regfree(&regex);
+            free(result);
+            return NULL;
+        }
+        memcpy(result + pos, cursor, (size_t)match.rm_so);
+        pos += (size_t)match.rm_so;
+        cursor += match.rm_eo;
+    }
+
+    if (pos > len) {
+        regfree(&regex);
+        free(result);
+        return NULL;
+    }
+
+    result[pos] = '\0';
+    regfree(&regex);
+    return result;
+}
+
+int main(void)
+{
+    const char *test = "Hello, World! 123 @#$ abc_def";
+    char *cleaned;
+
+    cleaned = remove_non_alnum(test);
+    if (cleaned == NULL) {
+        fprintf(stderr, "Failed to process string\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Original: %s\n", test) < 0) {
+        free(cleaned);
+        return EXIT_FAILURE;
+    }
+    if (printf("Cleaned:  %s\n", cleaned) < 0) {
+        free(cleaned);
+        return EXIT_FAILURE;
+    }
+
+    free(cleaned);
+    return EXIT_SUCCESS;
+}
+```
+
+Regarding the flagged `memcpy` calls: both flawfinder warnings (CWE-120) were already mitigated in the original code, and the rewrite preserves and strengthens those mitigations.
+
+**First `memcpy` (tail copy on `REG_NOMATCH`):** The destination `result` has capacity `len + 1`. Before copying, `remaining` is bounded via `strnlen(cursor, len - offset)`, and the guard `pos > len - remaining` guarantees `pos + remaining <= len`, so the copy plus the final NUL terminator can never exceed the allocation. I added an explicit check that `offset <= len` before computing `len - offset` to rule out any unsigned underflow.
+
+**Second `memcpy` (copying the segment before a match):** The guard `pos > len - (size_t)match.rm_so` (combined with `match.rm_so <= len`) ensures `pos + match.rm_so <= len` before the copy. The additional check on `match.rm_eo` relative to the remaining input length prevents `cursor` from ever advancing past the end of the input, which indirectly protects subsequent iterations. Here too I added the `(cursor - input) > len` pre-check to guard the subtraction.
+
+Finally, a defensive `pos > len` check before writing the NUL terminator makes the invariant explicit. The invariant throughout is `pos <= len`, so `result[pos] = '\0'` is always within the `len + 1` allocation. All error paths correctly release both the compiled regex and the allocated buffer, so there are no leaks.

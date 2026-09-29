@@ -1,0 +1,44 @@
+{
+  "task_id": 964,
+  "text": "Write a C function to check whether the length of the word is even or not.",
+  "fn_candidates": [
+    "word_len",
+    "WordLen",
+    "wordLen",
+    "wordlen"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "word_len",
+      "args": [
+        "program"
+      ],
+      "expected": false,
+      "assert_src": "assert word_len(\"program\") == False"
+    },
+    {
+      "fn_name": "word_len",
+      "args": [
+        "solution"
+      ],
+      "expected": true,
+      "assert_src": "assert word_len(\"solution\") == True"
+    },
+    {
+      "fn_name": "word_len",
+      "args": [
+        "data"
+      ],
+      "expected": true,
+      "assert_src": "assert word_len(\"data\") == True"
+    }
+  ],
+  "arg_kinds": [
+    "str"
+  ],
+  "return_kind": "bool",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

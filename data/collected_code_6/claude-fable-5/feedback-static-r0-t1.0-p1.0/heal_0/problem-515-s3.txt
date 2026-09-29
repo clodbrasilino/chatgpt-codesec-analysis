@@ -1,0 +1,101 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+bool has_subset_divisible(const int *arr, size_t n, int m)
+{
+    bool *dp;
+    bool *next;
+    size_t i;
+    int j;
+    bool result;
+
+    if (arr == NULL || m <= 0)
+    {
+        return false;
+    }
+
+    if (n >= (size_t)m)
+    {
+        return true;
+    }
+
+    dp = calloc((size_t)m, sizeof(bool));
+    if (dp == NULL)
+    {
+        return false;
+    }
+
+    next = calloc((size_t)m, sizeof(bool));
+    if (next == NULL)
+    {
+        free(dp);
+        return false;
+    }
+
+    result = false;
+
+    for (i = 0; i < n && !result; i++)
+    {
+        int rem = arr[i] % m;
+        if (rem < 0)
+        {
+            rem += m;
+        }
+
+        for (j = 0; j < m; j++)
+        {
+            next[j] = dp[j];
+        }
+
+        next[rem] = true;
+
+        for (j = 0; j < m; j++)
+        {
+            if (dp[j])
+            {
+                next[(j + rem) % m] = true;
+            }
+        }
+
+        for (j = 0; j < m; j++)
+        {
+            dp[j] = next[j];
+        }
+
+        if (dp[0])
+        {
+            result = true;
+        }
+    }
+
+    free(dp);
+    free(next);
+    return result;
+}
+
+int main(void)
+{
+    int arr[] = {3, 1, 7, 5};
+    size_t n = sizeof(arr) / sizeof(arr[0]);
+    int m = 6;
+
+    if (has_subset_divisible(arr, n, m))
+    {
+        if (printf("Yes\n") < 0)
+        {
+            return EXIT_FAILURE;
+        }
+    }
+    else
+    {
+        if (printf("No\n") < 0)
+        {
+            return EXIT_FAILURE;
+        }
+    }
+
+    return EXIT_SUCCESS;
+}
+```

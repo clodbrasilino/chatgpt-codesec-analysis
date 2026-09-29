@@ -1,0 +1,17 @@
+collected_code/heal_round_9/healed/problem-39.c: In function 'canRearrangeAdjacentDifferent':
+collected_code/heal_round_9/healed/problem-39.c:12:8: warning: check of 'str' for NULL after already dereferencing it [-Wanalyzer-deref-before-check]
+   12 |     if (!str || len > MAX_STRING_LEN)
+      |        ^
+  'canRearrangeAdjacentDifferent': events 1-2
+    |
+    |   10 |     int len = strlen(str);
+    |      |               ^~~~~~~~~~~
+    |      |               |
+    |      |               (1) pointer 'str' is dereferenced here
+    |   11 | 
+    |   12 |     if (!str || len > MAX_STRING_LEN)
+    |      |        ~       
+    |      |        |
+    |      |        (2) pointer 'str' is checked for NULL here but it was already dereferenced at (1)
+    |
+-macosx_version_min has been renamed to -macos_version_min

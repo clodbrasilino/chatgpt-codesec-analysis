@@ -1,0 +1,174 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node *next;
+} Node;
+
+typedef struct List {
+    Node *head;
+} List;
+
+static Node *create_node(int data)
+{
+    Node *new_node = (Node *)malloc(sizeof(Node));
+    if (new_node == NULL) {
+        return NULL;
+    }
+    new_node->data = data;
+    new_node->next = NULL;
+    return new_node;
+}
+
+static int append_node(Node **head, int data)
+{
+    Node *new_node;
+    Node *current;
+
+    if (head == NULL) {
+        return -1;
+    }
+    new_node = create_node(data);
+    if (new_node == NULL) {
+        return -1;
+    }
+    if (*head == NULL) {
+        *head = new_node;
+        return 0;
+    }
+    current = *head;
+    while (current->next != NULL) {
+        current = current->next;
+    }
+    current->next = new_node;
+    return 0;
+}
+
+static void reverse_list(Node **head)
+{
+    Node *prev = NULL;
+    Node *current;
+    Node *next = NULL;
+
+    if (head == NULL) {
+        return;
+    }
+    current = *head;
+    while (current != NULL) {
+        next = current->next;
+        current->next = prev;
+        prev = current;
+        current = next;
+    }
+    *head = prev;
+}
+
+void reverse_each_list(List *lists, size_t count)
+{
+    size_t i;
+
+    if (lists == NULL) {
+        return;
+    }
+    for (i = 0; i < count; i++) {
+        reverse_list(&lists[i].head);
+    }
+}
+
+static void print_list(const Node *head)
+{
+    const Node *current = head;
+
+    while (current != NULL) {
+        printf("%d", current->data);
+        if (current->next != NULL) {
+            printf(" -> ");
+        }
+        current = current->next;
+    }
+    printf("\n");
+}
+
+static void free_list(Node **head)
+{
+    Node *current;
+
+    if (head == NULL) {
+        return;
+    }
+    current = *head;
+    while (current != NULL) {
+        Node *temp = current;
+        current = current->next;
+        free(temp);
+    }
+    *head = NULL;
+}
+
+static void free_lists(List *lists, size_t count)
+{
+    size_t i;
+
+    if (lists == NULL) {
+        return;
+    }
+    for (i = 0; i < count; i++) {
+        free_list(&lists[i].head);
+    }
+    free(lists);
+}
+
+int main(void)
+{
+    size_t count = 3;
+    size_t nodes_per_list = 4;
+    List *lists;
+    size_t i;
+    size_t j;
+    int status = 0;
+    int values[3][4] = {
+        {1, 2, 3, 4},
+        {10, 20, 30, 40},
+        {5, 15, 25, 35}
+    };
+
+    lists = (List *)calloc(count, sizeof(List));
+    if (lists == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i < count && status == 0; i++) {
+        for (j = 0; j < nodes_per_list; j++) {
+            if (append_node(&lists[i].head, values[i][j]) != 0) {
+                fprintf(stderr, "Failed to append node\n");
+                status = -1;
+                break;
+            }
+        }
+    }
+
+    if (status == 0) {
+        printf("Original lists:\n");
+        for (i = 0; i < count; i++) {
+            print_list(lists[i].head);
+        }
+
+        reverse_each_list(lists, count);
+
+        printf("Reversed lists:\n");
+        for (i = 0; i < count; i++) {
+            print_list(lists[i].head);
+        }
+    }
+
+    free_lists(lists, count);
+
+    if (status != 0) {
+        return EXIT_FAILURE;
+    }
+    return EXIT_SUCCESS;
+}
+```

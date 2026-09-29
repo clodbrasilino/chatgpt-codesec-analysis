@@ -1,0 +1,16 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-928.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-928.c:99:51: style: Condition '(unsigned long)written>=output_size' is always false [knownConditionTrueFalse]
+    if (written != DATE_LENGTH || (size_t)written >= output_size) {
+                                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-928.c:99:17: note: Assuming that condition 'written!=DATE_LENGTH' is not redundant
+    if (written != DATE_LENGTH || (size_t)written >= output_size) {
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-928.c:86:49: note: Assuming that condition 'output_size<OUTPUT_SIZE' is not redundant
+        input_size != INPUT_SIZE || output_size < OUTPUT_SIZE) {
+                                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-928.c:92:60: note: Assuming condition is false
+    if (parse_date(input, input_size, &year, &month, &day) != 0) {
+                                                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-928.c:99:51: note: Condition '(unsigned long)written>=output_size' is always false
+    if (written != DATE_LENGTH || (size_t)written >= output_size) {
+                                                  ^

@@ -1,0 +1,151 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct KeyValuePair {
+    char *key;
+    char *value;
+} KeyValuePair;
+
+typedef struct ListNode {
+    char *value;
+    struct ListNode *next;
+} ListNode;
+
+typedef struct MapNode {
+    char *key;
+    ListNode *values;
+    struct MapNode *next;
+} MapNode;
+
+typedef struct Map {
+    MapNode *head;
+} Map;
+
+ListNode* create_list_node(const char *value) {
+    ListNode *node = (ListNode *)malloc(sizeof(ListNode));
+    if (!node) return NULL;
+    node->value = strdup(value);
+    if (!node->value) {
+        free(node);
+        return NULL;
+    }
+    node->next = NULL;
+    return node;
+}
+
+MapNode* create_map_node(const char *key, const char *value) {
+    MapNode *node = (MapNode *)malloc(sizeof(MapNode));
+    if (!node) return NULL;
+    node->key = strdup(key);
+    if (!node->key) {
+        free(node);
+        return NULL;
+    }
+    node->values = create_list_node(value);
+    if (!node->values) {
+        free(node->key);
+        free(node);
+        return NULL;
+    }
+    node->next = NULL;
+    return node;
+}
+
+Map* create_map() {
+    Map *map = (Map *)malloc(sizeof(Map));
+    if (!map) return NULL;
+    map->head = NULL;
+    return map;
+}
+
+int add_to_map(Map *map, const char *key, const char *value) {
+    if (!map || !key || !value) return -1;
+
+    MapNode *current = map->head;
+    while (current) {
+        if (strcmp(current->key, key) == 0) {
+            ListNode *new_val = create_list_node(value);
+            if (!new_val) return -1;
+            ListNode *val_current = current->values;
+            while (val_current->next) {
+                val_current = val_current->next;
+            }
+            val_current->next = new_val;
+            return 0;
+        }
+        current = current->next;
+    }
+
+    MapNode *new_node = create_map_node(key, value);
+    if (!new_node) return -1;
+    new_node->next = map->head;
+    map->head = new_node;
+    return 0;
+}
+
+void free_map(Map *map) {
+    if (!map) return;
+    MapNode *current = map->head;
+    while (current) {
+        MapNode *next_map_node = current->next;
+        ListNode *val_current = current->values;
+        while (val_current) {
+            ListNode *next_val_node = val_current->next;
+            free(val_current->value);
+            free(val_current);
+            val_current = next_val_node;
+        }
+        free(current->key);
+        free(current);
+        current = next_map_node;
+    }
+    free(map);
+}
+
+void print_map(Map *map) {
+    if (!map) return;
+    MapNode *current = map->head;
+    while (current) {
+        printf("%s: [", current->key);
+        ListNode *val_current = current->values;
+        while (val_current) {
+            printf("\"%s\"", val_current->value);
+            if (val_current->next) printf(", ");
+            val_current = val_current->next;
+        }
+        printf("]\n");
+        current = current->next;
+    }
+}
+
+int main() {
+    KeyValuePair pairs[] = {
+        {"fruit", "apple"},
+        {"color", "red"},
+        {"fruit", "banana"},
+        {"animal", "dog"},
+        {"color", "blue"},
+        {"fruit", "cherry"}
+    };
+    size_t num_pairs = sizeof(pairs) / sizeof(pairs[0]);
+
+    Map *map = create_map();
+    if (!map) {
+        fprintf(stderr, "Failed to create map\n");
+        return 1;
+    }
+
+    for (size_t i = 0; i < num_pairs; ++i) {
+        if (add_to_map(map, pairs[i].key, pairs[i].value) != 0) {
+            fprintf(stderr, "Failed to add pair to map\n");
+            free_map(map);
+            return 1;
+        }
+    }
+
+    print_map(map);
+    free_map(map);
+
+    return 0;
+}

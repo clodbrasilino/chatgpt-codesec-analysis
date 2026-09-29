@@ -1,0 +1,49 @@
+```c
+#include <stdio.h>
+
+int find_maximum(int first, int second, int third);
+
+int find_maximum(int first, int second, int third)
+{
+    int maximum = first;
+    
+    if (second > maximum) {
+        maximum = second;
+    }
+    
+    if (third > maximum) {
+        maximum = third;
+    }
+    
+    return maximum;
+}
+
+int main(void)
+{
+    int first_number;
+    int second_number;
+    int third_number;
+    int result;
+    
+    if (printf("Enter three integers separated by spaces: ") < 0) {
+        return 1;
+    }
+    
+    if (fflush(stdout) != 0) {
+        return 1;
+    }
+    
+    if (scanf("%d %d %d", &first_number, &second_number, &third_number) != 3) {
+        fprintf(stderr, "Error: Invalid input. Please enter three integers.\n");
+        return 1;
+    }
+    
+    result = find_maximum(first_number, second_number, third_number);
+    
+    if (printf("The maximum is: %d\n", result) < 0) {
+        return 1;
+    }
+    
+    return 0;
+}
+```

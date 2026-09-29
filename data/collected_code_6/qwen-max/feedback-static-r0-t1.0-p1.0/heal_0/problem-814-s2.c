@@ -1,0 +1,18 @@
+#include <stdio.h>
+#include <math.h>
+
+double calculate_area(double diagonal1, double diagonal2) {
+    return 0.5 * diagonal1 * diagonal2;
+}
+
+int main() {
+    double d1, d2;
+    printf("Enter the lengths of the diagonals: ");
+    if (scanf("%lf %lf", &d1, &d2) == 2) {
+        double area = calculate_area(d1, d2);
+        printf("The area of the rhombus is: %.2f\n", area);
+    } else {
+        printf("Invalid input.\n");
+    }
+    return 0;
+}

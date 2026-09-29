@@ -1,0 +1,33 @@
+```c
+#include <stdio.h>
+#include <math.h>
+#include <stdlib.h>
+
+double tetrahedron_area(double a, double b, double c, double d, double e, double f) {
+    double term1 = a * a * f * f * (b * b + c * c + d * d + e * e - a * a - f * f);
+    double term2 = b * b * e * e * (a * a + c * c + d * d + f * f - b * b - e * e);
+    double term3 = c * c * d * d * (a * a + b * b + e * e + f * f - c * c - d * d);
+    double term4 = -(a * a * d * d * e * e) - (b * b * c * c * f * f) - (c * c * a * a * e * e) - (d * d * b * b * f * f);
+    double sum = term1 + term2 + term3 + term4;
+    if (sum < 0.0) {
+        sum = 0.0;
+    }
+    return sqrt(sum) / 4.0;
+}
+
+int main(void) {
+    double a, b, c, d, e, f;
+    printf("Enter six edge lengths of a tetrahedron: ");
+    if (scanf("%lf %lf %lf %lf %lf %lf", &a, &b, &c, &d, &e, &f) != 6) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    if (a <= 0 || b <= 0 || c <= 0 || d <= 0 || e <= 0 || f <= 0) {
+        fprintf(stderr, "Edge lengths must be positive\n");
+        return EXIT_FAILURE;
+    }
+    double area = tetrahedron_area(a, b, c, d, e, f);
+    printf("Surface area: %.10f\n", area);
+    return EXIT_SUCCESS;
+}
+```

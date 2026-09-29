@@ -1,0 +1,51 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/types.h>
+
+void replace_chars(char *str, size_t max_len) {
+    size_t i;
+    
+    if (str == NULL || max_len == 0) {
+        return;
+    }
+    
+    for (i = 0; i < max_len && str[i] != '\0'; i++) {
+        if (str[i] == ' ' || str[i] == ',' || str[i] == '.') {
+            str[i] = ':';
+        }
+    }
+}
+
+int main(void) {
+    char *buffer = NULL;
+    size_t buffer_size = 0;
+    ssize_t read;
+    size_t len;
+
+    read = getline(&buffer, &buffer_size, stdin);
+    if (read == -1) {
+        free(buffer);
+        return 1;
+    }
+
+    if (buffer != NULL && read > 0) {
+        len = strnlen(buffer, (size_t)read);
+        if (len > 0 && buffer[len - 1] == '\n') {
+            buffer[len - 1] = '\0';
+            len--;
+        }
+        
+        if (len < (size_t)read) {
+            buffer[len] = '\0';
+        }
+    }
+
+    if (buffer != NULL) {
+        replace_chars(buffer, (size_t)read);
+        printf("%s\n", buffer);
+    }
+
+    free(buffer);
+    return 0;
+}

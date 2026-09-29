@@ -1,0 +1,99 @@
+./collected_code_4/round2//heal_0/problem-709.c: In function 'countUniqueKeys':
+./collected_code_4/round2//heal_0/problem-709.c:27:29: warning: leak of 'counter.counts' [CWE-401] [-Wanalyzer-malloc-leak]
+   27 |             counter->counts = realloc(counter->counts, (counter->length+1)*sizeof(int));
+      |             ~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  'main': events 1-2
+    |
+    |   38 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   51 |     countUniqueKeys(&tuple, &counter);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) calling 'countUniqueKeys' from 'main'
+    |
+    +--> 'countUniqueKeys': events 3-23
+           |
+           |   16 | void countUniqueKeys(struct Tuple* tuple, struct Counter* counter) {
+           |      |      ^~~~~~~~~~~~~~~
+           |      |      |
+           |      |      (3) entry to 'countUniqueKeys'
+           |   17 |     for(int i = 0; i < tuple->length; i++) {
+           |      |                    ~~~~~~~~~~~~~~~~~
+           |      |                      |
+           |      |                      (4) following 'true' branch...
+           |      |                      (14) following 'true' branch...
+           |   18 |         int found = 0;
+           |      |             ~~~~~
+           |      |             |
+           |      |             (5) ...to here
+           |      |             (15) ...to here
+           |   19 |         int key = tuple->values[i];
+           |   20 |         for(int j = 0; j < counter->length; j++) {
+           |      |                        ~~~~~~~~~~~~~~~~~~~  ~~~
+           |      |                          |                   |
+           |      |                          |                   (19) ...to here
+           |      |                          (6) following 'false' branch...
+           |      |                          (16) following 'true' branch...
+           |   21 |             if(counter->counts[j] == key) {
+           |      |               ~~~~~~~~~~~~~~~~
+           |      |               |       |
+           |      |               |       (17) ...to here
+           |      |               (18) following 'false' branch...
+           |......
+           |   26 |         if(found == 0) {
+           |      |           ~
+           |      |           |
+           |      |           (7) ...to here
+           |      |           (8) following 'true' branch (when 'found == 0')...
+           |      |           (20) following 'true' branch (when 'found == 0')...
+           |   27 |             counter->counts = realloc(counter->counts, (counter->length+1)*sizeof(int));
+           |      |             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                             | |                                |
+           |      |                             | |                                (9) ...to here
+           |      |                             | (10) allocated here              (21) ...to here
+           |      |                             | (11) when 'realloc' succeeds, moving buffer
+           |      |                             | (22) when 'realloc' fails
+           |      |                             (23) 'counter.counts' leaks here; was allocated at (10)
+           |   28 |             if(counter->counts == NULL) {
+           |      |               ~
+           |      |               |
+           |      |               (12) following 'false' branch...
+           |......
+           |   32 |             counter->counts[counter->length] = key;
+           |      |             ~~~~~~~~~~~~~~~
+           |      |                    |
+           |      |                    (13) ...to here
+           |
+./collected_code_4/round2//heal_0/problem-709.c: In function 'main':
+./collected_code_4/round2//heal_0/problem-709.c:42:19: warning: dereference of possibly-NULL 'tuple.keys' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   42 |     tuple.keys[0] = "Key1"; tuple.values[0] = 10;
+      |     ~~~~~~~~~~~~~~^~~~~~~~
+  'main': events 1-2
+    |
+    |   40 |     tuple.keys = malloc(sizeof(char*)*3);
+    |      |                  ^~~~~~~~~~~~~~~~~~~~~~~
+    |      |                  |
+    |      |                  (1) this call could return NULL
+    |   41 |     tuple.values = malloc(sizeof(int)*3);
+    |   42 |     tuple.keys[0] = "Key1"; tuple.values[0] = 10;
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~
+    |      |                   |
+    |      |                   (2) 'tuple.keys' could be NULL: unchecked value from (1)
+    |
+./collected_code_4/round2//heal_0/problem-709.c:42:45: warning: dereference of possibly-NULL 'tuple.values' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   42 |     tuple.keys[0] = "Key1"; tuple.values[0] = 10;
+      |                             ~~~~~~~~~~~~~~~~^~~~
+  'main': events 1-2
+    |
+    |   41 |     tuple.values = malloc(sizeof(int)*3);
+    |      |                    ^~~~~~~~~~~~~~~~~~~~~
+    |      |                    |
+    |      |                    (1) this call could return NULL
+    |   42 |     tuple.keys[0] = "Key1"; tuple.values[0] = 10;
+    |      |                             ~~~~~~~~~~~~~~~~~~~~
+    |      |                                             |
+    |      |                                             (2) 'tuple.values' could be NULL: unchecked value from (1)
+    |

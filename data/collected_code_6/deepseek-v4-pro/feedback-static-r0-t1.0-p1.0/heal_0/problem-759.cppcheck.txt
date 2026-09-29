@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-759.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-759.c:78:51: warning: Identical condition 'digits_after_decimal==0', second condition is always false [identicalConditionAfterEarlyExit]
+    if (total_digits == 0 && digits_after_decimal == 0) {
+                                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-759.c:74:30: note: If condition 'digits_after_decimal==0' is true, the function will return/exit
+    if (digits_after_decimal == 0) {
+                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-759.c:78:51: note: Testing identical condition 'digits_after_decimal==0'
+    if (total_digits == 0 && digits_after_decimal == 0) {
+                                                  ^

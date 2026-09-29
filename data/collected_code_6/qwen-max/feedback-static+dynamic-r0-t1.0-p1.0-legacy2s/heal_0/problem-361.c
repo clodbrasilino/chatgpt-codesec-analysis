@@ -1,0 +1,73 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct List {
+    int *data;
+    size_t size;
+    struct List *next;
+} List;
+
+List* create_list(int size) {
+    List *new_list = (List *)malloc(sizeof(List));
+    new_list->data = (int *)malloc(size * sizeof(int));
+    new_list->size = size;
+    new_list->next = NULL;
+    for (int i = 0; i < size; ++i) {
+        new_list->data[i] = 0; // Initialize with zeros
+    }
+    return new_list;
+}
+
+void free_list(List *list) {
+    while (list) {
+        free(list->data);
+        List *temp = list;
+        list = list->next;
+        free(temp);
+    }
+}
+
+List* remove_empty_lists(List *head) {
+    if (!head) return NULL;
+
+    List *current = head;
+    List *prev = NULL;
+    while (current) {
+        if (current->size == 0) {
+            if (prev) {
+                prev->next = current->next;
+                free(current->data);
+                free(current);
+                current = prev->next;
+            } else {
+                head = current->next;
+                free(current->data);
+                free(current);
+                current = head;
+            }
+        } else {
+            prev = current;
+            current = current->next;
+        }
+    }
+    return head;
+}
+
+int main() {
+    List *head = create_list(3);
+    head->next = create_list(0);
+    head->next->next = create_list(2);
+
+    head = remove_empty_lists(head);
+
+    for (List *itr = head; itr != NULL; itr = itr->next) {
+        for (size_t i = 0; i < itr->size; ++i) {
+            printf("%d ", itr->data[i]);
+        }
+        printf("\n");
+    }
+
+    free_list(head);
+
+    return 0;
+}

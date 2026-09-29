@@ -1,0 +1,69 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+#include <errno.h>
+
+int find_max_difference(const int *arr, size_t size, int *result) {
+    if (arr == NULL || result == NULL || size < 2) {
+        return -1;
+    }
+
+    int min_element = arr[0];
+    int max_diff = INT_MIN;
+
+    for (size_t i = 1; i < size; i++) {
+        if (arr[i] - min_element > max_diff) {
+            max_diff = arr[i] - min_element;
+        }
+        if (arr[i] < min_element) {
+            min_element = arr[i];
+        }
+    }
+
+    *result = max_diff;
+    return 0;
+}
+
+int main(void) {
+    size_t n;
+    int *arr = NULL;
+    int result = 0;
+    int ret = EXIT_FAILURE;
+
+    printf("Enter the number of elements: ");
+    if (scanf("%zu", &n) != 1 || n < 2) {
+        fprintf(stderr, "Invalid input: number of elements must be at least 2\n");
+        return EXIT_FAILURE;
+    }
+
+    if (n > SIZE_MAX / sizeof(int)) {
+        fprintf(stderr, "Invalid input: size too large\n");
+        return EXIT_FAILURE;
+    }
+
+    arr = malloc(n * sizeof(int));
+    if (arr == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter %zu integers: ", n);
+    for (size_t i = 0; i < n; i++) {
+        if (scanf("%d", &arr[i]) != 1) {
+            fprintf(stderr, "Invalid input: failed to read integer\n");
+            goto cleanup;
+        }
+    }
+
+    if (find_max_difference(arr, n, &result) != 0) {
+        fprintf(stderr, "Error calculating maximum difference\n");
+        goto cleanup;
+    }
+
+    printf("Maximum difference: %d\n", result);
+    ret = EXIT_SUCCESS;
+
+cleanup:
+    free(arr);
+    return ret;
+}

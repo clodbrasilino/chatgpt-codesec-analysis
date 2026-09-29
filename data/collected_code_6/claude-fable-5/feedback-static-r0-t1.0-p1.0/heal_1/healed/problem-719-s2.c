@@ -1,0 +1,54 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+int match_a_followed_by_bs(const char *text)
+{
+    regex_t regex;
+    int result;
+    int matched;
+
+    if (text == NULL) {
+        return -1;
+    }
+
+    result = regcomp(&regex, "ab*", REG_EXTENDED);
+    if (result != 0) {
+        return -1;
+    }
+
+    result = regexec(&regex, text, 0, NULL, 0);
+    if (result == 0) {
+        matched = 1;
+    } else if (result == REG_NOMATCH) {
+        matched = 0;
+    } else {
+        matched = -1;
+    }
+
+    regfree(&regex);
+    return matched;
+}
+
+int main(void)
+{
+    const char *tests[] = { "a", "ab", "abbbb", "ac", "bbb", "xyz", "" };
+    size_t count = sizeof(tests) / sizeof(tests[0]);
+    size_t i;
+
+    for (i = 0; i < count; i++) {
+        int result = match_a_followed_by_bs(tests[i]);
+        if (result < 0) {
+            fprintf(stderr, "Error processing string: %s\n", tests[i]);
+            return EXIT_FAILURE;
+        }
+        if (result == 1) {
+            printf("\"%s\" -> match\n", tests[i]);
+        } else {
+            printf("\"%s\" -> no match\n", tests[i]);
+        }
+    }
+
+    return EXIT_SUCCESS;
+}

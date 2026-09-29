@@ -1,0 +1,96 @@
+collected_code/heal_round_2/healed/problem-620.c: In function 'largestDivisibleSubset':
+collected_code/heal_round_2/healed/problem-620.c:58:9: warning: use of uninitialized value '*subset_95 + _59' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   58 |         printf("%d ", subset[i]);
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~
+  'main': events 1-2
+    |
+    |   66 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   70 |     largestDivisibleSubset(arr, n);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) calling 'largestDivisibleSubset' from 'main'
+    |
+    +--> 'largestDivisibleSubset': events 3-23
+           |
+           |    4 | void largestDivisibleSubset(int arr[], int n) {
+           |      |      ^~~~~~~~~~~~~~~~~~~~~~
+           |      |      |
+           |      |      (3) entry to 'largestDivisibleSubset'
+           |    5 |     if (n == 0)
+           |      |        ~
+           |      |        |
+           |      |        (4) following 'false' branch (when 'n != 0')...
+           |......
+           |    8 |     int count = 1, maxSubsetSize = 1;
+           |      |         ~~~~~
+           |      |         |
+           |      |         (5) ...to here
+           |......
+           |   13 |     if(subsetSize == NULL || previousIndex == NULL){
+           |      |       ~
+           |      |       |
+           |      |       (6) following 'false' branch...
+           |......
+           |   22 |     for (int i = 0; i < n; i++) {
+           |      |              ~      ~~~~~
+           |      |              |        |
+           |      |              |        (8) following 'true' branch (when 'i < n')...
+           |      |              (7) ...to here
+           |   23 |         subsetSize[i] = 1;
+           |      |                   ~
+           |      |                   |
+           |      |                   (9) ...to here
+           |......
+           |   27 |     for (int i = 1; i < n; i++) {
+           |      |                     ~~~~~
+           |      |                       |
+           |      |                       (10) following 'true' branch (when 'i < n')...
+           |   28 |         for (int j = 0; j < i; j++) {
+           |      |                  ~      ~~~~~
+           |      |                  |        |
+           |      |                  |        (12) following 'true' branch (when 'j < i')...
+           |      |                  (11) ...to here
+           |   29 |             if (arr[i] % arr[j] == 0 && subsetSize[i] < subsetSize[j] + 1) {
+           |      |                ~   ~                                              ~
+           |      |                |   |                                              |
+           |      |                |   (13) ...to here                                (15) ...to here
+           |      |                (14) following 'true' branch...
+           |......
+           |   41 |     int *subset = (int*)malloc(sizeof(int)*maxSubsetSize);
+           |      |                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                         |
+           |      |                         (16) region created on heap here
+           |   42 | 
+           |   43 |     if(subset == NULL){
+           |      |       ~
+           |      |       |
+           |      |       (17) following 'false' branch (when 'subset' is non-NULL)...
+           |......
+           |   50 |     int currentIndex = lastElementIndex;
+           |      |         ~~~~~~~~~~~~
+           |      |         |
+           |      |         (18) ...to here
+           |   51 |     for (int i = maxSubsetSize - 1; i >= 0; i--) {
+           |      |                                     ~~~~~~
+           |      |                                       |
+           |      |                                       (19) following 'false' branch (when 'i < 0')...
+           |......
+           |   56 |     printf("Largest Divisible Subset: ");
+           |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |     |
+           |      |     (20) ...to here
+           |   57 |     for (int i = 0; i < maxSubsetSize; i++) {
+           |      |                     ~~~~~~~~~~~~~~~~~
+           |      |                       |
+           |      |                       (21) following 'true' branch (when 'i < maxSubsetSize')...
+           |   58 |         printf("%d ", subset[i]);
+           |      |         ~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |         |                   |
+           |      |         |                   (22) ...to here
+           |      |         (23) use of uninitialized value '*subset_95 + _59' here
+           |
+-macosx_version_min has been renamed to -macos_version_min

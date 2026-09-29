@@ -1,0 +1,45 @@
+#include <stdio.h>
+
+#define SIZE 5
+
+void findDissimilar(int arr1[], int arr2[], int n) {
+    int flag;
+
+    for (int i = 0; i < n; i++) {
+        flag = 0;
+
+        for (int j = 0; j < n; j++) {
+            if (arr1[i] == arr2[j]) {
+                flag = 1;
+                break;
+            }
+        }
+
+        if (flag == 0)
+            printf("%d ", arr1[i]);
+    }
+
+    for (int i = 0; i < n; i++) {
+        flag = 0;
+
+        for (int j = 0; j < n; j++) {
+            if (arr2[i] == arr1[j]) {
+                flag = 1;
+                break;
+            }
+        }
+
+        if (flag == 0)
+            printf("%d ", arr2[i]);
+    }
+
+}
+
+int main() {
+    int arr1[SIZE] = {1, 2, 3, 4, 5};
+    int arr2[SIZE] = {2, 3, 5, 7, 8};
+
+    findDissimilar(arr1, arr2, SIZE);
+
+    return 0;
+}

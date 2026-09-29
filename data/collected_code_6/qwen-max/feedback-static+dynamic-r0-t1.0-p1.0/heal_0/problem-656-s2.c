@@ -1,0 +1,32 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+int abs(int x) {
+    return x < 0 ? -x : x;
+}
+
+int min_sum_abs_diff(int *arr1, int *arr2, int n) {
+    int min_sum = INT_MAX;
+    for (int i = 0; i < n; ++i) {
+        int current_sum = 0;
+        for (int j = 0; j < n; ++j) {
+            current_sum += abs(arr1[(i + j) % n] - arr2[j]);
+        }
+        if (current_sum < min_sum) {
+            min_sum = current_sum;
+        }
+    }
+    return min_sum;
+}
+
+int main() {
+    int arr1[] = {4, 3, 2, 1};
+    int arr2[] = {1, 3, 2, 4};
+    int n = 4;
+
+    int result = min_sum_abs_diff(arr1, arr2, n);
+    printf("Minimum sum of absolute differences: %d\n", result);
+
+    return 0;
+}

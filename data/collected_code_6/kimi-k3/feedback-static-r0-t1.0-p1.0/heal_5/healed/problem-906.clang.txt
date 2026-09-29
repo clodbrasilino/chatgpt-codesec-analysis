@@ -1,0 +1,27 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-906.c:19:5: error: use of undeclared identifier 'ptrdiff_t'
+   19 |     ptrdiff_t match_len;
+      |     ^~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-906.c:57:5: error: use of undeclared identifier 'match_len'; did you mean 'matches'?
+   57 |     match_len = matches[0].rm_eo - matches[0].rm_so;
+      |     ^~~~~~~~~
+      |     matches
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-906.c:14:16: note: 'matches' declared here
+   14 |     regmatch_t matches[1];
+      |                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-906.c:57:15: error: array type 'regmatch_t[1]' is not assignable
+   57 |     match_len = matches[0].rm_eo - matches[0].rm_so;
+      |     ~~~~~~~~~ ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-906.c:58:9: error: use of undeclared identifier 'match_len'; did you mean 'matches'?
+   58 |     if (match_len != DATE_LEN || (size_t)match_len >= sizeof(date_str))
+      |         ^~~~~~~~~
+      |         matches
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-906.c:14:16: note: 'matches' declared here
+   14 |     regmatch_t matches[1];
+      |                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-906.c:58:42: error: use of undeclared identifier 'match_len'
+   58 |     if (match_len != DATE_LEN || (size_t)match_len >= sizeof(date_str))
+      |                                          ^~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-906.c:64:19: error: use of undeclared identifier 'match_len'
+   64 |     len = (size_t)match_len;
+      |                   ^~~~~~~~~
+6 errors generated.

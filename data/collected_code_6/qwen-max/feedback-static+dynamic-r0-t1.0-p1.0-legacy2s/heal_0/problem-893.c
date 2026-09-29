@@ -1,0 +1,47 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *array;
+    size_t length;
+} IntList;
+
+int* get_last_elements(IntList *lists, size_t n_lists, size_t *out_length) {
+    if (n_lists == 0 || lists == NULL) {
+        *out_length = 0;
+        return NULL;
+    }
+    int *result = (int *)malloc(n_lists * sizeof(int));
+    if (result == NULL) {
+        *out_length = 0;
+        return NULL;
+    }
+    for (size_t i = 0; i < n_lists; ++i) {
+        if (lists[i].length > 0 && lists[i].array != NULL) {
+            result[i] = lists[i].array[lists[i].length - 1];
+        } else {
+            result[i] = 0; // assuming 0 is a safe default value
+        }
+    }
+    *out_length = n_lists;
+    return result;
+}
+
+int main() {
+    IntList lists[] = {
+        { .array = (int[]){1, 2, 3}, .length = 3 },
+        { .array = (int[]){4, 5}, .length = 2 },
+        { .array = (int[]){6}, .length = 1 },
+        { .array = NULL, .length = 0 }
+    };
+    size_t n_lists = sizeof(lists) / sizeof(lists[0]);
+    size_t out_length;
+    int *last_elements = get_last_elements(lists, n_lists, &out_length);
+    if (last_elements != NULL) {
+        for (size_t i = 0; i < out_length; ++i) {
+            printf("Last element of list %zu: %d\n", i, last_elements[i]);
+        }
+        free(last_elements);
+    }
+    return 0;
+}

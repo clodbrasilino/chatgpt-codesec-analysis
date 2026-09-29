@@ -1,0 +1,55 @@
+#include <stdio.h>
+#include <ctype.h>
+#include <stdbool.h>
+#include <stddef.h>
+
+bool check_password(const char *str, size_t min_len, size_t max_len) {
+    if (str == NULL) {
+        return false;
+    }
+
+    bool has_upper = false;
+    bool has_lower = false;
+    bool has_digit = false;
+    size_t len = 0;
+
+    for (size_t i = 0; str[i] != '\0'; i++) {
+        if (i >= max_len) {
+            return false;
+        }
+
+        unsigned char c = (unsigned char)str[i];
+
+        if (isupper(c)) {
+            has_upper = true;
+        } else if (islower(c)) {
+            has_lower = true;
+        } else if (isdigit(c)) {
+            has_digit = true;
+        }
+
+        len++;
+    }
+
+    if (len < min_len) {
+        return false;
+    }
+
+    return has_upper && has_lower && has_digit;
+}
+
+int main(void) {
+    const char *test1 = "Password123";
+    const char *test2 = "password";
+    const char *test3 = "PASSWORD123";
+    const char *test4 = "Pass123";
+    const char *test5 = NULL;
+
+    printf("Test 1: %s\n", check_password(test1, 8, 20) ? "valid" : "invalid");
+    printf("Test 2: %s\n", check_password(test2, 8, 20) ? "valid" : "invalid");
+    printf("Test 3: %s\n", check_password(test3, 8, 20) ? "valid" : "invalid");
+    printf("Test 4: %s\n", check_password(test4, 8, 20) ? "valid" : "invalid");
+    printf("Test 5: %s\n", test5 == NULL ? "invalid" : (check_password(test5, 8, 20) ? "valid" : "invalid"));
+
+    return 0;
+}

@@ -1,0 +1,60 @@
+```C
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+
+typedef struct Tuple {
+    int a;
+    int b;
+} Tuple;
+
+Tuple* removeMatchingTuples(Tuple* tuple1, Tuple* tuple2, int size1, int size2, int* newSize) {
+    if (!tuple1 || !tuple2 || size1 <= 0 || size2 <= 0) {
+        *newSize = 0;
+        return NULL;
+    }
+
+    Tuple* result = (Tuple*)malloc(sizeof(Tuple) * size1);
+    if (!result) {
+        *newSize = 0;
+        return NULL;
+    }
+
+    int index = 0;
+    for (int i = 0; i < size1; i++) {
+        int found = 0;
+        for (int j = 0; j < size2; j++) {
+            if (tuple1[i].a == tuple2[j].a && tuple1[i].b == tuple2[j].b) {
+                found = 1;
+                break;
+            }
+        }
+        if (!found) {
+            result[index++] = tuple1[i];
+        }
+    }
+
+    *newSize = index;
+    return result;
+}
+
+int main() {
+    int size1 = 5;
+    int size2 = 3;
+    Tuple tuple1[5] = {{1, 2}, {3, 4}, {5, 6}, {7, 8}, {9, 10}};
+    Tuple tuple2[3] = {{5, 6}, {7, 8}, {11, 12}};
+
+    int newSize;
+    Tuple* result = removeMatchingTuples(tuple1, tuple2, size1, size2, &newSize);
+    
+    if (result) {
+        for (int i = 0; i < newSize; i++) {
+            printf("Tuple: (%d, %d)\n", result[i].a, result[i].b);
+        }
+        free(result);
+    }
+    
+    return 0;
+}
+```

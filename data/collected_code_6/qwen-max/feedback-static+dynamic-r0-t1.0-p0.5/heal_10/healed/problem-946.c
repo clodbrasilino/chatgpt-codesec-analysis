@@ -1,0 +1,77 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char* element;
+    int count;
+} ElementCount;
+
+int compare(const void* a, const void* b) {
+    return strcmp(((ElementCount*)a)->element, ((ElementCount*)b)->element);
+}
+
+void findMostCommonElements(const char* text, ElementCount** result, int* resultSize) {
+    if (text == NULL || result == NULL || resultSize == NULL) return;
+
+    char* copyText = strdup(text);
+    if (copyText == NULL) return;
+
+    char* token = strtok(copyText, " ");
+    if (token == NULL) {
+        free(copyText);
+        return;
+    }
+
+    char* words[100] = {NULL};
+    int wordCount = 0;
+
+    while (token) {
+        words[wordCount++] = strdup(token);
+        token = strtok(NULL, " ");
+    }
+    free(copyText);
+
+    qsort(words, wordCount, sizeof(char*), (int(*)(const void*, const void*))compare);
+
+    *result = (ElementCount*)malloc(wordCount * sizeof(ElementCount));
+    if (*result == NULL) {
+        for (int i = 0; i < wordCount; i++) {
+            free(words[i]);
+        }
+        return;
+    }
+
+    *resultSize = 0;
+
+    for (int i = 0; i < wordCount; i++) {
+        if (*resultSize == 0 || strcmp(words[i], (*result)[*resultSize - 1].element) != 0) {
+            (*result)[*resultSize].element = strdup(words[i]);
+            (*result)[*resultSize].count = 1;
+            (*resultSize)++;
+        } else {
+            free(words[i]);
+            (*result)[*resultSize - 1].count++;
+        }
+    }
+
+    for (int i = 0; i < wordCount; i++) {
+        free(words[i]);
+    }
+}
+
+int main() {
+    const char* text = "hello world hello world hello";
+    ElementCount* result = NULL;
+    int resultSize = 0;
+
+    findMostCommonElements(text, &result, &resultSize);
+
+    for (int i = 0; i < resultSize; i++) {
+        printf("%s: %d\n", result[i].element, result[i].count);
+        free(result[i].element);
+    }
+
+    free(result);
+    return 0;
+}

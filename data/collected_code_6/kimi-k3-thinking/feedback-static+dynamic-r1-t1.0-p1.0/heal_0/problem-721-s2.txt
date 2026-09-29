@@ -1,0 +1,97 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+
+int findMaxAveragePath(const int *matrix, size_t n, double *maxAverage, size_t *path)
+{
+    if (matrix == NULL || maxAverage == NULL || n == 0 || n > SIZE_MAX / n) {
+        return -1;
+    }
+
+    double *dp = (double *)malloc(n * n * sizeof(*dp));
+    if (dp == NULL) {
+        return -1;
+    }
+
+    dp[0] = (double)matrix[0];
+
+    for (size_t j = 1; j < n; j++) {
+        dp[j] = dp[j - 1] + (double)matrix[j];
+    }
+
+    for (size_t i = 1; i < n; i++) {
+        dp[i * n] = dp[(i - 1) * n] + (double)matrix[i * n];
+        for (size_t j = 1; j < n; j++) {
+            double fromTop = dp[(i - 1) * n + j];
+            double fromLeft = dp[i * n + j - 1];
+            dp[i * n + j] = (double)matrix[i * n + j] +
+                            (fromTop > fromLeft ? fromTop : fromLeft);
+        }
+    }
+
+    if (path != NULL) {
+        size_t i = n - 1;
+        size_t j = n - 1;
+        size_t pos = 2 * n - 1;
+        path[--pos] = i * n + j;
+        while (i > 0 || j > 0) {
+            if (i == 0) {
+                j--;
+            } else if (j == 0) {
+                i--;
+            } else if (dp[(i - 1) * n + j] >= dp[i * n + j - 1]) {
+                i--;
+            } else {
+                j--;
+            }
+            path[--pos] = i * n + j;
+        }
+    }
+
+    *maxAverage = dp[n * n - 1] / (double)(2 * n - 1);
+
+    free(dp);
+    dp = NULL;
+
+    return 0;
+}
+
+int main(void)
+{
+    const size_t n = 4;
+    const int matrix[] = {
+        1,  2,  3,  4,
+        6,  5,  4,  3,
+        7,  8,  9,  2,
+        1,  2,  3, 10
+    };
+
+    double maxAverage = 0.0;
+    size_t pathLength = 2 * n - 1;
+
+    size_t *path = (size_t *)malloc(pathLength * sizeof(*path));
+    if (path == NULL) {
+        fprintf(stderr, "Memory allocation failed.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (findMaxAveragePath(matrix, n, &maxAverage, path) != 0) {
+        fprintf(stderr, "Failed to compute the maximum average path.\n");
+        free(path);
+        path = NULL;
+        return EXIT_FAILURE;
+    }
+
+    printf("Path with maximum average (row, col) -> value:\n");
+    for (size_t k = 0; k < pathLength; k++) {
+        printf("(%zu, %zu) -> %d\n", path[k] / n, path[k] % n, matrix[path[k]]);
+    }
+    printf("Maximum average: %.4f\n", maxAverage);
+
+    free(path);
+    path = NULL;
+
+    return EXIT_SUCCESS;
+}
+```

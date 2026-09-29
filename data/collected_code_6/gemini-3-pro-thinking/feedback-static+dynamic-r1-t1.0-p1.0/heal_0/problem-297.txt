@@ -1,0 +1,120 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef enum {
+    ITEM_INT,
+    ITEM_LIST
+} ItemType;
+
+typedef struct NestedList {
+    ItemType type;
+    union {
+        int value;
+        struct NestedList* list;
+    } data;
+    struct NestedList* next;
+} NestedList;
+
+typedef struct FlatList {
+    int value;
+    struct FlatList* next;
+} FlatList;
+
+NestedList* create_int_node(int value) {
+    NestedList* node = (NestedList*)malloc(sizeof(NestedList));
+    if (!node) {
+        exit(EXIT_FAILURE);
+    }
+    node->type = ITEM_INT;
+    node->data.value = value;
+    node->next = NULL;
+    return node;
+}
+
+NestedList* create_list_node(NestedList* list) {
+    NestedList* node = (NestedList*)malloc(sizeof(NestedList));
+    if (!node) {
+        exit(EXIT_FAILURE);
+    }
+    node->type = ITEM_LIST;
+    node->data.list = list;
+    node->next = NULL;
+    return node;
+}
+
+void free_nested_list(NestedList* node) {
+    while (node) {
+        NestedList* next = node->next;
+        if (node->type == ITEM_LIST) {
+            free_nested_list(node->data.list);
+        }
+        free(node);
+        node = next;
+    }
+}
+
+void free_flat_list(FlatList* node) {
+    while (node) {
+        FlatList* next = node->next;
+        free(node);
+        node = next;
+    }
+}
+
+void flatten_helper(const NestedList* nested, FlatList*** tail_ptr) {
+    const NestedList* current = nested;
+    while (current) {
+        if (current->type == ITEM_INT) {
+            FlatList* new_node = (FlatList*)malloc(sizeof(FlatList));
+            if (!new_node) {
+                exit(EXIT_FAILURE);
+            }
+            new_node->value = current->data.value;
+            new_node->next = NULL;
+            **tail_ptr = new_node;
+            *tail_ptr = &new_node->next;
+        } else if (current->type == ITEM_LIST) {
+            flatten_helper(current->data.list, tail_ptr);
+        }
+        current = current->next;
+    }
+}
+
+FlatList* flatten(const NestedList* nested) {
+    FlatList* head = NULL;
+    FlatList** tail = &head;
+    flatten_helper(nested, &tail);
+    return head;
+}
+
+void print_flat_list(const FlatList* node) {
+    while (node) {
+        printf("%d ", node->value);
+        node = node->next;
+    }
+    printf("\n");
+}
+
+int main(void) {
+    NestedList* inner_list = create_int_node(2);
+    inner_list->next = create_int_node(3);
+
+    NestedList* root_list = create_int_node(1);
+    root_list->next = create_list_node(inner_list);
+    root_list->next->next = create_int_node(4);
+    
+    NestedList* deeper_list = create_int_node(5);
+    deeper_list->next = create_int_node(6);
+    root_list->next->next->next = create_list_node(deeper_list);
+
+    FlatList* flat = flatten(root_list);
+
+    print_flat_list(flat);
+
+    free_nested_list(root_list);
+    free_flat_list(flat);
+
+    return 0;
+}
+```

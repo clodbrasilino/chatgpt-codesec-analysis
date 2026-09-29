@@ -1,0 +1,43 @@
+```c
+#include <stdio.h>
+#include <stddef.h>
+
+void remove_digits_from_list(char **strings, size_t count) {
+    if (strings == NULL) {
+        return;
+    }
+
+    for (size_t i = 0; i < count; ++i) {
+        if (strings[i] == NULL) {
+            continue;
+        }
+
+        char *src = strings[i];
+        char *dst = strings[i];
+
+        while (*src) {
+            if (*src < '0' || *src > '9') {
+                *dst++ = *src;
+            }
+            ++src;
+        }
+        *dst = '\0';
+    }
+}
+
+int main(void) {
+    char s1[] = "a1b2c3";
+    char s2[] = "12345";
+    char s3[] = "abc";
+    char *list[] = { s1, s2, s3 };
+    size_t count = sizeof(list) / sizeof(list[0]);
+
+    remove_digits_from_list(list, count);
+
+    for (size_t i = 0; i < count; ++i) {
+        printf("%s\n", list[i]);
+    }
+
+    return 0;
+}
+```

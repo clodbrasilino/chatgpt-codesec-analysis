@@ -1,0 +1,63 @@
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdlib.h>
+
+char* findFirstMaxEvenWord(const char* str) {
+    if (str == NULL) {
+        return NULL;
+    }
+
+    size_t maxLength = 0;
+    const char* maxWordStart = NULL;
+
+    const char* current = str;
+    while (*current != '\0') {
+        while (*current != '\0' && isspace((unsigned char)*current)) {
+            current++;
+        }
+
+        if (*current == '\0') {
+            break;
+        }
+
+        const char* wordStart = current;
+        size_t length = 0;
+
+        while (*current != '\0' && !isspace((unsigned char)*current)) {
+            length++;
+            current++;
+        }
+
+        if (length % 2 == 0 && length > maxLength) {
+            maxLength = length;
+            maxWordStart = wordStart;
+        }
+    }
+
+    if (maxWordStart != NULL) {
+        char* result = (char*)malloc(maxLength + 1);
+        if (result != NULL) {
+            strncpy(result, maxWordStart, maxLength);
+            result[maxLength] = '\0';
+        }
+        return result;
+    }
+
+    return NULL;
+}
+
+int main(void) {
+    const char* text = "This is a test sentence with some even length words like absolute";
+    
+    char* maxEvenWord = findFirstMaxEvenWord(text);
+    
+    if (maxEvenWord != NULL) {
+        printf("First max even word: %s\n", maxEvenWord);
+        free(maxEvenWord);
+    } else {
+        printf("No even length word found.\n");
+    }
+
+    return 0;
+}

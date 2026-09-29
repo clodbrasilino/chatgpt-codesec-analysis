@@ -1,0 +1,47 @@
+{
+  "task_id": 239,
+  "text": "Write a C function to find the number of possible sequences of length n such that each of the next element is greater than or equal to twice of the previous element but less than or equal to m.",
+  "fn_candidates": [
+    "get_total_number_of_sequences",
+    "GetTotalNumberOfSequences",
+    "getTotalNumberOfSequences",
+    "gettotalnumberofsequences"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "get_total_number_of_sequences",
+      "args": [
+        10,
+        4
+      ],
+      "expected": 4,
+      "assert_src": "assert get_total_number_of_sequences(10, 4) == 4"
+    },
+    {
+      "fn_name": "get_total_number_of_sequences",
+      "args": [
+        5,
+        2
+      ],
+      "expected": 6,
+      "assert_src": "assert get_total_number_of_sequences(5, 2) == 6"
+    },
+    {
+      "fn_name": "get_total_number_of_sequences",
+      "args": [
+        16,
+        3
+      ],
+      "expected": 84,
+      "assert_src": "assert get_total_number_of_sequences(16, 3) == 84"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

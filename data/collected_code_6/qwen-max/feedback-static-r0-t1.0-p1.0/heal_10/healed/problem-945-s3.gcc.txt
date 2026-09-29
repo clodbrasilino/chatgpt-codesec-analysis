@@ -1,0 +1,33 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-945-s3.c:6:5: error: unknown type name 'UT_hash_handle'
+    6 |     UT_hash_handle hh;
+      |     ^~~~~~~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-945-s3.c: In function 'add_to_set':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-945-s3.c:11:5: error: implicit declaration of function 'HASH_FIND_INT' [-Wimplicit-function-declaration]
+   11 |     HASH_FIND_INT(*set, &item, s);
+      |     ^~~~~~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-945-s3.c:16:13: error: implicit declaration of function 'HASH_ADD_INT' [-Wimplicit-function-declaration]
+   16 |             HASH_ADD_INT(*set, key, s);
+      |             ^~~~~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-945-s3.c:16:32: error: 'key' undeclared (first use in this function)
+   16 |             HASH_ADD_INT(*set, key, s);
+      |                                ^~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-945-s3.c:16:32: note: each undeclared identifier is reported only once for each function it appears in
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-945-s3.c: In function 'print_set':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-945-s3.c:31:5: error: implicit declaration of function 'HASH_ITER' [-Wimplicit-function-declaration]
+   31 |     HASH_ITER(hh, set, current, tmp) {
+      |     ^~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-945-s3.c:31:15: error: 'hh' undeclared (first use in this function)
+   31 |     HASH_ITER(hh, set, current, tmp) {
+      |               ^~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-945-s3.c:31:37: error: expected ';' before '{' token
+   31 |     HASH_ITER(hh, set, current, tmp) {
+      |                                     ^~
+      |                                     ;
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-945-s3.c: In function 'free_set':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-945-s3.c:39:15: error: 'hh' undeclared (first use in this function)
+   39 |     HASH_ITER(hh, set, current, tmp) {
+      |               ^~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-945-s3.c:39:37: error: expected ';' before '{' token
+   39 |     HASH_ITER(hh, set, current, tmp) {
+      |                                     ^~
+      |                                     ;

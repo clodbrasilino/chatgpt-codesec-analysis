@@ -1,0 +1,43 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+
+uint64_t count_equilateral_triangles(uint64_t n) {
+    uint64_t count = 0;
+    for (uint64_t i = 1; i <= n; i++) {
+        count += i * (n - i + 1);
+    }
+    for (uint64_t i = 1; i <= n / 2; i++) {
+        count += i * (n - 2 * i + 1);
+    }
+    return count;
+}
+
+/* Possible weaknesses found:
+ *  Parameter 'argv' can be declared as const array [constParameter]
+ */
+int main(int argc, char *const argv[]) {
+    if (argc != 2) {
+        fprintf(stderr, "Usage: %s <side_length>\n", argv[0]);
+        return EXIT_FAILURE;
+    }
+
+    char *endptr;
+    long val = strtol(argv[1], &endptr, 10);
+
+    if (endptr == argv[1] || *endptr != '\0') {
+        fprintf(stderr, "Error: Invalid input, must be an integer\n");
+        return EXIT_FAILURE;
+    }
+
+    if (val <= 0 || val > 1000000) {
+        fprintf(stderr, "Error: side_length must be between 1 and 1000000\n");
+        return EXIT_FAILURE;
+    }
+
+    uint64_t n = (uint64_t)val;
+    uint64_t result = count_equilateral_triangles(n);
+    printf("%llu\n", (unsigned long long)result);
+
+    return EXIT_SUCCESS;
+}

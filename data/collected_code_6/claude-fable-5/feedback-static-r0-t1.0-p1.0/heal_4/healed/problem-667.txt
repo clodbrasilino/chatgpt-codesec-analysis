@@ -1,0 +1,66 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdlib.h>
+
+#define BUFFER_SIZE 1024
+
+size_t count_vowels(const char *str)
+{
+    size_t count = 0;
+    size_t i;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    for (i = 0; str[i] != '\0'; i++) {
+        int c = tolower((unsigned char)str[i]);
+        if (c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u') {
+            count++;
+        }
+    }
+
+    return count;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t vowels;
+
+    printf("Enter a string: ");
+    fflush(stdout);
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+    buffer[strcspn(buffer, "\n")] = '\0';
+
+    vowels = count_vowels(buffer);
+
+    printf("Number of vowels: %zu\n", vowels);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the flagged weakness (CWE-119/CWE-120):**
+
+The Flawfinder warning on `char buffer[BUFFER_SIZE]` is a low-risk, informational hit. Statically-sized buffers are only dangerous when writes to them are unbounded. This code already mitigates the risk correctly:
+
+1. **Bounded read:** `fgets(buffer, sizeof(buffer), stdin)` limits input to `BUFFER_SIZE - 1` characters and always null-terminates on success. Using `sizeof(buffer)` rather than a repeated literal keeps the bound tied to the actual array size.
+
+2. **Return value checked:** The `NULL` return from `fgets` (EOF or read error) is handled, avoiding operations on indeterminate buffer contents.
+
+3. **Defensive termination:** `buffer[sizeof(buffer) - 1] = '\0';` is technically redundant after a successful `fgets`, but it is harmless belt-and-suspenders hardening.
+
+4. **Safe newline stripping:** `buffer[strcspn(buffer, "\n")] = '\0';` correctly handles both the newline-present and newline-absent (truncated input) cases without risk of out-of-bounds access, since `strcspn` never returns an index past the terminator.
+
+5. **Safe character handling:** The cast `(unsigned char)str[i]` before `tolower()` avoids undefined behavior for negative `char` values on platforms where `char` is signed.
+
+No functional changes were required — the original code already fixes the potential overflow the scanner flagged; the rewrite simply removes the comments as requested.

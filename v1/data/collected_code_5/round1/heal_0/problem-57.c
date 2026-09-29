@@ -1,0 +1,22 @@
+#include<stdio.h>
+#include<string.h>
+#include<stdlib.h>
+
+int compare(const void* a, const void* b) {
+   return *(char*)b - *(char*)a;
+}
+
+void findLargestNum(char* num) {
+    int len = strlen(num);
+  
+    qsort(num, len, sizeof(char), compare);
+
+    printf("%s\n", num);
+}
+
+int main(){
+    char num[] = "124597865";
+    findLargestNum(num);
+
+    return 0;
+}

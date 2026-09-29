@@ -1,0 +1,55 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <stdlib.h>
+
+typedef struct ListNode {
+    int value;
+    struct ListNode *next;
+} ListNode;
+
+typedef struct List {
+    ListNode *head;
+} List;
+
+bool isSubset(List *superList, List *subList) {
+    for (ListNode *subNode = subList->head; subNode != NULL; subNode = subNode->next) {
+        bool found = false;
+        for (ListNode *superNode = superList->head; superNode != NULL && !found; superNode = superNode->next) {
+            if (superNode->value == subNode->value) {
+                found = true;
+            }
+        }
+        if (!found) {
+            return false;
+        }
+    }
+    return true;
+}
+
+int main() {
+    List superList = {NULL};
+    List subList = {NULL};
+
+    // Insert elements into lists here
+
+    if (isSubset(&superList, &subList)) {
+        printf("The sublist is a subset of the super list.\n");
+    } else {
+        printf("The sublist is not a subset of the super list.\n");
+    }
+
+    // Free allocated memory for nodes
+    for (ListNode *node = superList.head; node != NULL; ) {
+        ListNode *next = node->next;
+        free(node);
+        node = next;
+    }
+
+    for (ListNode *node = subList.head; node != NULL; ) {
+        ListNode *next = node->next;
+        free(node);
+        node = next;
+    }
+
+    return 0;
+}

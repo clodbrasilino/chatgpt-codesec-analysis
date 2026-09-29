@@ -1,0 +1,55 @@
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdbool.h>
+
+bool match_word_at_end(const char *str, const char *word) {
+    if (str == NULL || word == NULL) {
+        return false;
+    }
+
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    size_t str_len = strlen(str);
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    size_t word_len = strlen(word);
+
+    if (word_len == 0 || str_len < word_len) {
+        return false;
+    }
+
+    size_t end = str_len;
+    while (end > 0 && ispunct((unsigned char)str[end - 1])) {
+        end--;
+    }
+
+    if (end < word_len) {
+        return false;
+    }
+
+    if (strncmp(str + end - word_len, word, word_len) != 0) {
+        return false;
+    }
+
+    if (end > word_len && !isspace((unsigned char)str[end - word_len - 1])) {
+        return false;
+    }
+
+    return true;
+}
+
+int main(void) {
+    const char *test_string = "Hello, world!";
+    const char *test_word = "world";
+
+    if (match_word_at_end(test_string, test_word)) {
+        printf("Match found\n");
+    } else {
+        printf("No match\n");
+    }
+
+    return 0;
+}

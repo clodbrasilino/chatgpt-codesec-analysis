@@ -1,0 +1,92 @@
+#include <stdio.h>
+#include <ctype.h>
+#include <string.h>
+#include <stdbool.h>
+#include <stdlib.h>
+
+#define INPUT_BUFFER_SIZE 1024
+#define MAX_INPUT_LENGTH 1000
+
+void count_characters(const char *str, int *alphabets, int *digits, int *special) {
+    *alphabets = 0;
+    *digits = 0;
+    *special = 0;
+    
+    if (str == NULL) {
+        return;
+    }
+    
+    for (size_t i = 0; str[i] != '\0'; i++) {
+        if (isalpha((unsigned char)str[i])) {
+            (*alphabets)++;
+        } else if (isdigit((unsigned char)str[i])) {
+            (*digits)++;
+        } else {
+            (*special)++;
+        }
+    }
+}
+
+static void clear_input_buffer(void) {
+    int c;
+    while ((c = getchar()) != '\n' && c != EOF) {
+    }
+    if (ferror(stdin)) {
+        clearerr(stdin);
+    }
+}
+
+static char* read_input_line(char *buffer, size_t buffer_size) {
+    if (fgets(buffer, (int)buffer_size, stdin) == NULL) {
+        return NULL;
+    }
+    
+    size_t len = strnlen(buffer, buffer_size);
+    bool newline_found = false;
+    
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+        newline_found = true;
+    }
+    
+    if (!newline_found && len == buffer_size - 1) {
+        clear_input_buffer();
+    }
+    
+    return buffer;
+}
+
+int main(void) {
+    char *input = NULL;
+    int alphabets = 0;
+    int digits = 0;
+    int special = 0;
+    
+    input = (char*)calloc(INPUT_BUFFER_SIZE, sizeof(char));
+    if (input == NULL) {
+        fprintf(stderr, "Memory allocation failed.\n");
+        return 1;
+    }
+    
+    printf("Enter a string: ");
+    if (read_input_line(input, INPUT_BUFFER_SIZE) == NULL) {
+        fprintf(stderr, "Error reading input.\n");
+        free(input);
+        return 1;
+    }
+    
+    if (input[0] == '\0') {
+        fprintf(stderr, "Input is empty.\n");
+        free(input);
+        return 1;
+    }
+    
+    count_characters(input, &alphabets, &digits, &special);
+    
+    printf("Alphabets: %d\n", alphabets);
+    printf("Digits: %d\n", digits);
+    printf("Special characters: %d\n", special);
+    
+    free(input);
+    return 0;
+}

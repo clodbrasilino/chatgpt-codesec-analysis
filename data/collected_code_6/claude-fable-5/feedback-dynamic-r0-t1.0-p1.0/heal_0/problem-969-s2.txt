@@ -1,0 +1,121 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX_TUPLE_LEN 16
+
+typedef struct {
+    int values[MAX_TUPLE_LEN];
+    size_t count;
+} Tuple;
+
+static int join_tuples(const Tuple *input, size_t input_count,
+                       Tuple **output, size_t *output_count)
+{
+    Tuple *result = NULL;
+    size_t result_count = 0;
+    size_t i;
+    size_t j;
+
+    if (input == NULL || output == NULL || output_count == NULL) {
+        return -1;
+    }
+
+    if (input_count == 0) {
+        *output = NULL;
+        *output_count = 0;
+        return 0;
+    }
+
+    result = calloc(input_count, sizeof(Tuple));
+    if (result == NULL) {
+        return -1;
+    }
+
+    for (i = 0; i < input_count; i++) {
+        if (input[i].count == 0 || input[i].count > MAX_TUPLE_LEN) {
+            free(result);
+            return -1;
+        }
+
+        if (result_count > 0 &&
+            result[result_count - 1].values[0] == input[i].values[0]) {
+            Tuple *last = &result[result_count - 1];
+            for (j = 1; j < input[i].count; j++) {
+                if (last->count >= MAX_TUPLE_LEN) {
+                    free(result);
+                    return -1;
+                }
+                last->values[last->count] = input[i].values[j];
+                last->count++;
+            }
+        } else {
+            for (j = 0; j < input[i].count; j++) {
+                result[result_count].values[j] = input[i].values[j];
+            }
+            result[result_count].count = input[i].count;
+            result_count++;
+        }
+    }
+
+    *output = result;
+    *output_count = result_count;
+    return 0;
+}
+
+static void print_tuples(const Tuple *tuples, size_t count)
+{
+    size_t i;
+    size_t j;
+
+    if (tuples == NULL) {
+        return;
+    }
+
+    printf("[");
+    for (i = 0; i < count; i++) {
+        printf("(");
+        for (j = 0; j < tuples[i].count; j++) {
+            printf("%d", tuples[i].values[j]);
+            if (j + 1 < tuples[i].count) {
+                printf(", ");
+            }
+        }
+        printf(")");
+        if (i + 1 < count) {
+            printf(", ");
+        }
+    }
+    printf("]\n");
+}
+
+int main(void)
+{
+    Tuple input[] = {
+        { {5, 6}, 2 },
+        { {5, 7}, 2 },
+        { {6, 8}, 2 },
+        { {6, 10}, 2 },
+        { {7, 13}, 2 }
+    };
+    size_t input_count = sizeof(input) / sizeof(input[0]);
+    Tuple *output = NULL;
+    size_t output_count = 0;
+    int status;
+
+    printf("Input:  ");
+    print_tuples(input, input_count);
+
+    status = join_tuples(input, input_count, &output, &output_count);
+    if (status != 0) {
+        fprintf(stderr, "Failed to join tuples\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Output: ");
+    print_tuples(output, output_count);
+
+    free(output);
+    return EXIT_SUCCESS;
+}
+```

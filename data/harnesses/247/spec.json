@@ -1,0 +1,44 @@
+{
+  "task_id": 247,
+  "text": "Write a C function to find the longest palindromic subsequence in the given string.",
+  "fn_candidates": [
+    "lps",
+    "Lps",
+    "lps",
+    "lps"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "lps",
+      "args": [
+        "TENS FOR TENS"
+      ],
+      "expected": 5,
+      "assert_src": "assert lps(\"TENS FOR TENS\") == 5 "
+    },
+    {
+      "fn_name": "lps",
+      "args": [
+        "CARDIO FOR CARDS"
+      ],
+      "expected": 7,
+      "assert_src": "assert lps(\"CARDIO FOR CARDS\") == 7"
+    },
+    {
+      "fn_name": "lps",
+      "args": [
+        "PART OF THE JOURNEY IS PART"
+      ],
+      "expected": 9,
+      "assert_src": "assert lps(\"PART OF THE JOURNEY IS PART\") == 9 "
+    }
+  ],
+  "arg_kinds": [
+    "str"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

@@ -1,0 +1,47 @@
+{
+  "task_id": 52,
+  "text": "Write a C function to caluclate area of a parallelogram.",
+  "fn_candidates": [
+    "parallelogram_area",
+    "ParallelogramArea",
+    "parallelogramArea",
+    "parallelogramarea"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "parallelogram_area",
+      "args": [
+        10,
+        20
+      ],
+      "expected": 200,
+      "assert_src": "assert parallelogram_area(10,20)==200"
+    },
+    {
+      "fn_name": "parallelogram_area",
+      "args": [
+        15,
+        20
+      ],
+      "expected": 300,
+      "assert_src": "assert parallelogram_area(15,20)==300"
+    },
+    {
+      "fn_name": "parallelogram_area",
+      "args": [
+        8,
+        9
+      ],
+      "expected": 72,
+      "assert_src": "assert parallelogram_area(8,9)==72"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

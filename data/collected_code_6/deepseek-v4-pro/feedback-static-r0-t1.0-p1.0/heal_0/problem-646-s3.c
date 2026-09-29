@@ -1,0 +1,36 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+long long count_cubes(int n, int k) {
+    if (n < 0 || k < 0 || k > n) {
+        return 0;
+    }
+    long long diff = (long long)n - k + 1;
+    return diff * diff * diff;
+}
+
+int main(void) {
+    int n, k;
+    
+    printf("Enter cube size n: ");
+    if (scanf("%d", &n) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("Enter sub-cube size k: ");
+    if (scanf("%d", &k) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    if (n < 0 || k < 0) {
+        fprintf(stderr, "Sizes must be non-negative\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("Number of %d-sized cubes in %d-sized cube: %lld\n", 
+           k, n, count_cubes(n, k));
+    
+    return EXIT_SUCCESS;
+}

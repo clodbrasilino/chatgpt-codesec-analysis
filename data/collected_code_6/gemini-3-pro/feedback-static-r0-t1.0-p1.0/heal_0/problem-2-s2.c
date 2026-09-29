@@ -1,0 +1,60 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int first;
+    int second;
+} Tuple;
+
+void find_similar_elements(Tuple* list1, size_t size1, Tuple* list2, size_t size2, Tuple** result, size_t* result_size) {
+    if (!list1 || !list2 || !result || !result_size) {
+        return;
+    }
+
+    size_t max_size = size1 < size2 ? size1 : size2;
+    *result = (Tuple*)malloc(max_size * sizeof(Tuple));
+    if (!*result) {
+        *result_size = 0;
+        return;
+    }
+
+    *result_size = 0;
+
+    for (size_t i = 0; i < size1; i++) {
+        for (size_t j = 0; j < size2; j++) {
+            if (list1[i].first == list2[j].first && list1[i].second == list2[j].second) {
+                (*result)[*result_size] = list1[i];
+                (*result_size)++;
+                break;
+            }
+        }
+    }
+
+    if (*result_size < max_size) {
+        Tuple* temp = (Tuple*)realloc(*result, *result_size * sizeof(Tuple));
+        if (temp || *result_size == 0) {
+            *result = temp;
+        }
+    }
+}
+
+int main() {
+    Tuple list1[] = {{1, 2}, {3, 4}, {5, 6}, {7, 8}};
+    Tuple list2[] = {{3, 4}, {9, 10}, {1, 2}, {11, 12}};
+    size_t size1 = sizeof(list1) / sizeof(list1[0]);
+    size_t size2 = sizeof(list2) / sizeof(list2[0]);
+
+    Tuple* result = NULL;
+    size_t result_size = 0;
+
+    find_similar_elements(list1, size1, list2, size2, &result, &result_size);
+
+    if (result) {
+        for (size_t i = 0; i < result_size; i++) {
+            printf("(%d, %d)\n", result[i].first, result[i].second);
+        }
+        free(result);
+    }
+
+    return 0;
+}

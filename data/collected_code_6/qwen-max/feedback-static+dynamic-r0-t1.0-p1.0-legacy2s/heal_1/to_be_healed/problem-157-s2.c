@@ -1,0 +1,59 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int value;
+    int count;
+    struct Node *next;
+} Node;
+
+/* Possible weaknesses found:
+ *  Parameter 'array' can be declared as pointer to const [constParameterPointer]
+ */
+Node* compress(int *array, int n) {
+    if (n == 0) return NULL;
+    
+    Node *head = (Node *)malloc(sizeof(Node));
+    head->value = array[0];
+    head->count = 1;
+    head->next = NULL;
+    
+    Node *current = head;
+    for (int i = 1; i < n; i++) {
+        if (array[i] == current->value) {
+            current->count++;
+        } else {
+            Node *newNode = (Node *)malloc(sizeof(Node));
+            newNode->value = array[i];
+            newNode->count = 1;
+            newNode->next = NULL;
+            current->next = newNode;
+            current = newNode;
+        }
+    }
+    return head;
+}
+
+void printList(Node *head) {
+    while (head != NULL) {
+        printf("(%d, %d) ", head->value, head->count);
+        head = head->next;
+    }
+    printf("\n");
+}
+
+int main() {
+    int array[] = {1, 1, 2, 2, 2, 3};
+    int n = sizeof(array) / sizeof(array[0]);
+    
+    Node *compressedList = compress(array, n);
+    printList(compressedList);
+    
+    while (compressedList != NULL) {
+        Node *temp = compressedList;
+        compressedList = compressedList->next;
+        free(temp);
+    }
+    
+    return 0;
+}

@@ -1,0 +1,105 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#define MAX_IP_LEN 16
+
+int remove_leading_zeroes(const char *input, char *output, size_t output_size);
+
+int remove_leading_zeroes(const char *input, char *output, size_t output_size)
+{
+    unsigned int octets[4];
+    size_t pos = 0;
+    size_t input_len;
+    int octet_index;
+    int written;
+
+    if (input == NULL || output == NULL || output_size < MAX_IP_LEN) {
+        return -1;
+    }
+
+    input_len = strnlen(input, MAX_IP_LEN);
+    if (input_len == 0 || input_len >= MAX_IP_LEN) {
+        return -1;
+    }
+
+    for (octet_index = 0; octet_index < 4; octet_index++) {
+        unsigned long value = 0;
+        int digit_count = 0;
+
+        while (pos < input_len && isdigit((unsigned char)input[pos])) {
+            value = value * 10UL + (unsigned long)(input[pos] - '0');
+            digit_count++;
+            pos++;
+            if (digit_count > 3) {
+                return -1;
+            }
+        }
+
+        if (digit_count == 0 || value > 255UL) {
+            return -1;
+        }
+
+        octets[octet_index] = (unsigned int)value;
+
+        if (octet_index < 3) {
+            if (pos >= input_len || input[pos] != '.') {
+                return -1;
+            }
+            pos++;
+        }
+    }
+
+    if (pos != input_len) {
+        return -1;
+    }
+
+    written = snprintf(output, output_size, "%u.%u.%u.%u",
+                       octets[0], octets[1], octets[2], octets[3]);
+
+    if (written < 0 || (size_t)written >= output_size) {
+        return -1;
+    }
+
+    output[output_size - 1] = '\0';
+
+    return 0;
+}
+
+int main(void)
+{
+    const char *tests[] = {
+        "192.068.001.010",
+        "001.002.003.004",
+        "255.255.255.255",
+        "000.000.000.000",
+        "10.0.0.1",
+        "256.1.1.1",
+        "1.2.3",
+        "abc.def.ghi.jkl"
+    };
+    char result[MAX_IP_LEN];
+    size_t i;
+    size_t count = sizeof(tests) / sizeof(tests[0]);
+
+    memset(result, 0, sizeof(result));
+
+    for (i = 0; i < count; i++) {
+        if (tests[i] == NULL) {
+            continue;
+        }
+        if (remove_leading_zeroes(tests[i], result, sizeof(result)) == 0) {
+            result[sizeof(result) - 1] = '\0';
+            if (printf("%s -> %s\n", tests[i], result) < 0) {
+                return EXIT_FAILURE;
+            }
+        } else {
+            if (fprintf(stderr, "Invalid IP address: %s\n", tests[i]) < 0) {
+                return EXIT_FAILURE;
+            }
+        }
+    }
+
+    return EXIT_SUCCESS;
+}

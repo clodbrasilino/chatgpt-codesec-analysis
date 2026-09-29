@@ -1,0 +1,24 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+char findFirstRepeatedCharacter(const char *str) {
+    int count[256] = {0};
+    for (int i = 0; str[i] != '\0'; ++i) {
+        if (count[str[i]] == 1) {
+            return str[i];
+        }
+        count[str[i]]++;
+    }
+    return '\0';
+}
+
+int main() {
+    const char *testString = "programming";
+    char result = findFirstRepeatedCharacter(testString);
+    if (result != '\0') {
+        printf("First repeated character: %c\n", result);
+    } else {
+        printf("No repeated characters found.\n");
+    }
+    return 0;
+}

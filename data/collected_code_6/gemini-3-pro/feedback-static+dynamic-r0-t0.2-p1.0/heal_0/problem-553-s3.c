@@ -1,0 +1,47 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+typedef struct {
+    int integer_part;
+    int fractional_part;
+} Tuple;
+
+double tuple_to_float(Tuple t) {
+    if (t.fractional_part < 0) {
+        return NAN;
+    }
+
+    double fractional = (double)t.fractional_part;
+    while (fractional >= 1.0) {
+        fractional /= 10.0;
+    }
+
+    double result = (double)t.integer_part;
+    if (t.integer_part < 0) {
+        result -= fractional;
+    } else {
+        result += fractional;
+    }
+
+    return result;
+}
+
+int main(void) {
+    Tuple t1 = {5, 25};
+    Tuple t2 = {-3, 1415};
+    Tuple t3 = {0, 5};
+    Tuple t4 = {10, -1};
+
+    double f1 = tuple_to_float(t1);
+    double f2 = tuple_to_float(t2);
+    double f3 = tuple_to_float(t3);
+    double f4 = tuple_to_float(t4);
+
+    printf("%f\n", f1);
+    printf("%f\n", f2);
+    printf("%f\n", f3);
+    printf("%f\n", f4);
+
+    return 0;
+}

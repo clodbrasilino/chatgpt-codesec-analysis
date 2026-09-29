@@ -1,0 +1,47 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+ /* Possible weaknesses found:
+  *  test case 1 failed: expected 0, got <no output>
+  *  test case 0 failed: expected 3.5, got <no output>
+  *  test case 2 failed: expected 1, got <no output>
+  */
+
+int min_jumps(int a, int b, int d) {
+    if (a == 0 && b == 0 && d == 0) return 0;
+    if (a == 0 && b == 0 && d != 0) return -1;
+    
+    int max_step = abs(a) > abs(b) ? abs(a) : abs(b);
+    int min_step = abs(a) < abs(b) ? abs(a) : abs(b);
+    int target = abs(d);
+    
+    if (max_step == 0) return -1;
+    
+    if (target == 0) return 0;
+    
+    int steps = target / max_step;
+    int remainder = target % max_step;
+    
+    if (remainder == 0) {
+        return steps;
+    }
+    
+    if (remainder <= min_step || remainder == max_step) {
+        return steps + 1;
+    }
+    
+    return steps + 2;
+}
+
+int main(void) {
+    int a, b, d;
+    
+    if (scanf("%d %d %d", &a, &b, &d) != 3) {
+        return 1;
+    }
+    
+    int result = min_jumps(a, b, d);
+    printf("%d\n", result);
+    
+    return 0;
+}

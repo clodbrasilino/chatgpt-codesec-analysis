@@ -1,0 +1,31 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int number_of_divisors(int number) {
+    int count = 0;
+    for(int i = 1; i <= number; i++) {
+        if(number % i == 0) {
+            count++;
+        }
+    }
+    return count;
+}
+
+int main(int argc, char* argv[]) {
+    if(argc < 2) {
+        printf("Please provide a number as an argument.\n");
+        return EXIT_FAILURE;
+    }
+
+    int number = atoi(argv[1]);
+    if(number <= 0) {
+        printf("Please provide a positive integer number.\n");
+        return EXIT_FAILURE;
+    }
+
+    int count = number_of_divisors(number);
+    
+    printf("The number of divisors for %d is %d.\n", number, count);
+    
+    return EXIT_SUCCESS;
+}

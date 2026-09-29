@@ -1,0 +1,65 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+
+#define BUFFER_SIZE 256
+
+char find_first_repeated(const char *str)
+{
+    bool seen[256] = { false };
+    size_t i;
+
+    if (str == NULL) {
+        return '\0';
+    }
+
+    for (i = 0; str[i] != '\0'; i++) {
+        unsigned char c = (unsigned char)str[i];
+        if (seen[c]) {
+            return str[i];
+        }
+        seen[c] = true;
+    }
+
+    return '\0';
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    char result;
+
+    printf("Enter a string: ");
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[strcspn(buffer, "\n")] = '\0';
+
+    result = find_first_repeated(buffer);
+
+    if (result != '\0') {
+        printf("First repeated character: %c\n", result);
+    } else {
+        printf("No repeated character found\n");
+    }
+
+    return 0;
+}
+```
+
+**Analysis notes:**
+
+The Flawfinder warning on `char buffer[256]` is a **false positive** in this case. Flawfinder flags all statically-sized character arrays because they are *potentially* misused (CWE-119/CWE-120), but the original code already handles it correctly:
+
+1. **`fgets(buffer, sizeof(buffer), stdin)`** — input is bounds-limited using `sizeof(buffer)` rather than a hardcoded magic number, so the buffer cannot overflow. `fgets` always null-terminates within the given size.
+
+2. **Return value of `fgets` is checked** — EOF/read errors are handled rather than operating on uninitialized data.
+
+3. **`strcspn(buffer, "\n")`** — safely strips the trailing newline without risking out-of-bounds access; if no newline exists, it returns the index of the existing null terminator, which is safely overwritten with `'\0'`.
+
+4. **`find_first_repeated`** guards against `NULL`, casts to `unsigned char` before indexing (avoiding undefined behavior with negative `char` values on platforms where `char` is signed), and its `seen[256]` table covers the full range of `unsigned char`.
+
+The only change made is replacing the magic number `256` with a named constant `BUFFER_SIZE`, which improves maintainability and makes the size intent explicit — no functional security fix was required, as the code was already resistant to buffer overflow.

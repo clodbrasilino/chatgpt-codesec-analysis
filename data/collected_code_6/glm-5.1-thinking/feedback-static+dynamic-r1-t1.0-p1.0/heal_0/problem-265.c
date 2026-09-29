@@ -1,0 +1,95 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+
+int** split_list(const int* list, size_t length, size_t n, size_t** out_lengths, size_t* out_num_splits) {
+    if (list == NULL || out_lengths == NULL || out_num_splits == NULL || n == 0) {
+        return NULL;
+    }
+
+    if (length == 0) {
+        *out_num_splits = 0;
+        *out_lengths = NULL;
+        return NULL;
+    }
+
+    size_t num_splits = length / n;
+    if (length % n != 0) {
+        num_splits++;
+    }
+
+    if (num_splits > SIZE_MAX / sizeof(int*) || num_splits > SIZE_MAX / sizeof(size_t)) {
+        return NULL;
+    }
+
+    int** splits = malloc(num_splits * sizeof(int*));
+    *out_lengths = malloc(num_splits * sizeof(size_t));
+
+    if (splits == NULL || *out_lengths == NULL) {
+        free(splits);
+        free(*out_lengths);
+        *out_lengths = NULL;
+        return NULL;
+    }
+
+    for (size_t i = 0; i < num_splits; ++i) {
+        size_t current_length = n;
+        if (i == num_splits - 1 && length % n != 0) {
+            current_length = length % n;
+        }
+
+        if (current_length > SIZE_MAX / sizeof(int)) {
+            for (size_t j = 0; j < i; ++j) {
+                free(splits[j]);
+            }
+            free(splits);
+            free(*out_lengths);
+            *out_lengths = NULL;
+            return NULL;
+        }
+
+        (*out_lengths)[i] = current_length;
+        splits[i] = malloc(current_length * sizeof(int));
+
+        if (splits[i] == NULL) {
+            for (size_t j = 0; j < i; ++j) {
+                free(splits[j]);
+            }
+            free(splits);
+            free(*out_lengths);
+            *out_lengths = NULL;
+            return NULL;
+        }
+
+        for (size_t j = 0; j < current_length; ++j) {
+            splits[i][j] = list[i * n + j];
+        }
+    }
+
+    *out_num_splits = num_splits;
+    return splits;
+}
+
+int main(void) {
+    int list[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    size_t length = sizeof(list) / sizeof(list[0]);
+    size_t n = 3;
+    size_t* lengths = NULL;
+    size_t num_splits = 0;
+
+    int** result = split_list(list, length, n, &lengths, &num_splits);
+
+    if (result != NULL) {
+        for (size_t i = 0; i < num_splits; ++i) {
+            for (size_t j = 0; j < lengths[i]; ++j) {
+                printf("%d ", result[i][j]);
+            }
+            printf("\n");
+            free(result[i]);
+        }
+        free(result);
+        free(lengths);
+    }
+
+    return 0;
+}

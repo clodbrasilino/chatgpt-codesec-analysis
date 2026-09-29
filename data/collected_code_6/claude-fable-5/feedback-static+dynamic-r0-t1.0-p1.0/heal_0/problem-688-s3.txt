@@ -1,0 +1,55 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+typedef struct {
+    double real;
+    double imag;
+} Complex;
+
+double complex_length(const Complex *c)
+{
+    if (c == NULL) {
+        return NAN;
+    }
+    return hypot(c->real, c->imag);
+}
+
+int main(void)
+{
+    Complex c;
+    double length;
+
+    printf("Enter real part: ");
+    if (scanf("%lf", &c.real) != 1) {
+        fprintf(stderr, "Invalid input for real part\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter imaginary part: ");
+    if (scanf("%lf", &c.imag) != 1) {
+        fprintf(stderr, "Invalid input for imaginary part\n");
+        return EXIT_FAILURE;
+    }
+
+    length = complex_length(&c);
+    if (isnan(length)) {
+        fprintf(stderr, "Failed to compute length\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Length of complex number (%.6f + %.6fi) = %.6f\n",
+           c.real, c.imag, length);
+
+    return EXIT_SUCCESS;
+}
+```
+
+A few notes on why the code is written this way:
+
+- **`hypot()`** is used instead of `sqrt(r*r + i*i)` because it avoids intermediate overflow/underflow for very large or very small component values (addresses CWE-703).
+- **`scanf` return values are checked** so malformed input is detected and handled rather than proceeding with uninitialized data (CWE-703, CWE-664).
+- **NULL pointer check** in `complex_length` guards against misuse of the function, and the `NAN` result is verified in `main` (CWE-703).
+- **`EXIT_SUCCESS`/`EXIT_FAILURE`** and `int main(void)` follow standard-conforming conventions (CWE-710).
+- The struct is passed by **const pointer**, making the resource lifetime and ownership explicit — no dynamic allocation means nothing to leak (CWE-664).

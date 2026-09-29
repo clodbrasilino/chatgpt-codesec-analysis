@@ -1,0 +1,60 @@
+./collected_code_4/round2//heal_0/problem-277.c: In function 'filterDict':
+./collected_code_4/round2//heal_0/problem-277.c:27:17: warning: leak of 'tempOutputDict' [CWE-401] [-Wanalyzer-malloc-leak]
+   27 |     *outputDict = (dictItem*)realloc(tempOutputDict, sizeof(dictItem) * j);
+      |     ~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  'main': events 1-2
+    |
+    |   30 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   42 |     filterDict(dict, dictSize, filterValue, &outputDict, &outputSize);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) calling 'filterDict' from 'main'
+    |
+    +--> 'filterDict': events 3-15
+           |
+           |   10 | void filterDict(dictItem* dict, int dictSize, int filterValue, dictItem** outputDict, int* outputSize) {
+           |      |      ^~~~~~~~~~
+           |      |      |
+           |      |      (3) entry to 'filterDict'
+           |   11 |     int i, j = 0;
+           |   12 |     dictItem* tempOutputDict = (dictItem*)malloc(sizeof(dictItem) * dictSize);
+           |      |                                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                                           |
+           |      |                                           (4) allocated here
+           |   13 | 
+           |   14 |     if(tempOutputDict == NULL) {
+           |      |       ~
+           |      |       |
+           |      |       (5) assuming 'tempOutputDict' is non-NULL
+           |      |       (6) following 'false' branch (when 'tempOutputDict' is non-NULL)...
+           |......
+           |   19 |     for(i = 0; i < dictSize; i++) {
+           |      |         ~~~~~  ~~~~~~~~~~~~
+           |      |           |      |
+           |      |           |      (8) following 'true' branch (when 'i < dictSize')...
+           |      |           |      (12) following 'false' branch (when 'i >= dictSize')...
+           |      |           (7) ...to here
+           |   20 |         if(dict[i].value > filterValue) {
+           |      |           ~    ~
+           |      |           |    |
+           |      |           |    (9) ...to here
+           |      |           (10) following 'true' branch...
+           |   21 |             tempOutputDict[j] = dict[i];
+           |      |                                     ~
+           |      |                                     |
+           |      |                                     (11) ...to here
+           |......
+           |   26 |     *outputSize = j;
+           |      |     ~~~~~~~~~~~~~~~
+           |      |                 |
+           |      |                 (13) ...to here
+           |   27 |     *outputDict = (dictItem*)realloc(tempOutputDict, sizeof(dictItem) * j);
+           |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                 |            |
+           |      |                 |            (14) when 'realloc' fails
+           |      |                 (15) 'tempOutputDict' leaks here; was allocated at (4)
+           |

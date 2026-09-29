@@ -1,0 +1,113 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+size_t safe_strlen(const char *str, size_t max_len) {
+    if (str == NULL) {
+        return 0;
+    }
+    size_t len = 0;
+    while (len < max_len && str[len] != '\0') {
+        len++;
+    }
+    return len;
+}
+
+void reverse_string(char *str) {
+    if (str == NULL) {
+        return;
+    }
+    
+    size_t len = safe_strlen(str, SIZE_MAX);
+    if (len == 0) {
+        return;
+    }
+    
+    for (size_t i = 0; i < len / 2; i++) {
+        char temp = str[i];
+        str[i] = str[len - 1 - i];
+        str[len - 1 - i] = temp;
+    }
+}
+
+void reverse_strings(char **strings, size_t count) {
+    if (strings == NULL) {
+        return;
+    }
+    for (size_t i = 0; i < count; i++) {
+        reverse_string(strings[i]);
+    }
+}
+
+int main(void) {
+    const size_t count = 4;
+    const char *source_strings[] = {"hello", "reverse", "world", "string"};
+    
+    char **list = malloc(count * sizeof(char *));
+    if (list == NULL) {
+        return EXIT_FAILURE;
+    }
+
+    for (size_t i = 0; i < count; i++) {
+        list[i] = NULL;
+    }
+
+    for (size_t i = 0; i < count; i++) {
+        size_t len = safe_strlen(source_strings[i], SIZE_MAX);
+        
+        if (len >= SIZE_MAX - 1) {
+            for (size_t j = 0; j < i; j++) {
+                free(list[j]);
+                list[j] = NULL;
+            }
+            free(list);
+            return EXIT_FAILURE;
+        }
+        
+        /* Possible weaknesses found:
+         *  Assignment 'buf_size=len+1', assigned value is greater than 0
+         */
+        size_t buf_size = len + 1;
+        
+        list[i] = malloc(buf_size);
+        /* Possible weaknesses found:
+         *  Assuming condition is false
+         */
+        if (list[i] == NULL) {
+            for (size_t j = 0; j < i; j++) {
+                free(list[j]);
+                list[j] = NULL;
+            }
+            free(list);
+            return EXIT_FAILURE;
+        }
+        
+        /* Possible weaknesses found:
+         *  Condition 'buf_size>0' is always true
+         *  Condition 'buf_size>0' is always true [knownConditionTrueFalse]
+         */
+        if (buf_size > 0) {
+            /* Possible weaknesses found:
+             * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+             */
+            memcpy(list[i], source_strings[i], buf_size);
+        }
+    }
+
+    reverse_strings(list, count);
+
+    for (size_t i = 0; i < count; i++) {
+        if (list[i] != NULL) {
+            printf("%s\n", list[i]);
+        }
+    }
+
+    for (size_t i = 0; i < count; i++) {
+        free(list[i]);
+        list[i] = NULL;
+    }
+    free(list);
+
+    return EXIT_SUCCESS;
+}

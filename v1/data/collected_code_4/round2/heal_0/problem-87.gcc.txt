@@ -1,0 +1,74 @@
+./collected_code_4/round2//heal_0/problem-87.c: In function 'main':
+./collected_code_4/round2//heal_0/problem-87.c:55:9: warning: implicit declaration of function 'printf' [-Wimplicit-function-declaration]
+   55 |         printf("%s: %s\n", result.items[i].key, result.items[i].value);
+      |         ^~~~~~
+./collected_code_4/round2//heal_0/problem-87.c:3:1: note: include '<stdio.h>' or provide a declaration of 'printf'
+    2 | #include <string.h>
+  +++ |+#include <stdio.h>
+    3 | 
+./collected_code_4/round2//heal_0/problem-87.c:55:9: warning: incompatible implicit declaration of built-in function 'printf' [-Wbuiltin-declaration-mismatch]
+   55 |         printf("%s: %s\n", result.items[i].key, result.items[i].value);
+      |         ^~~~~~
+./collected_code_4/round2//heal_0/problem-87.c:55:9: note: include '<stdio.h>' or provide a declaration of 'printf'
+./collected_code_4/round2//heal_0/problem-87.c: In function 'addItem':
+./collected_code_4/round2//heal_0/problem-87.c:16:8: warning: leak of '<unknown>' [CWE-401] [-Wanalyzer-malloc-leak]
+   16 |     if (!items) {
+      |        ^
+  'main': events 1-2
+    |
+    |   39 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |   40 |     dictionary dict1 = {0, NULL};
+    |   41 |     dict1.items = addItem(dict1.items, &dict1.size, "key1", "value1");
+    |      |                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                   |
+    |      |                   (2) calling 'addItem' from 'main'
+    |
+    +--> 'addItem': events 3-7
+           |
+           |   14 | item* addItem(item* items, size_t* size, char* key, char* value) {
+           |      |       ^~~~~~~
+           |      |       |
+           |      |       (3) entry to 'addItem'
+           |   15 |     items = realloc(items, (*size + 1) * sizeof(item));
+           |      |             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |             |
+           |      |             (4) when 'realloc' succeeds, moving buffer
+           |   16 |     if (!items) {
+           |      |        ~
+           |      |        |
+           |      |        (5) following 'false' branch (when 'items' is non-NULL)...
+           |......
+           |   19 |     items[*size].key = strdup(key);
+           |      |           ~~~~~        ~~~~~~~~~~~
+           |      |           |            |
+           |      |           |            (7) allocated here
+           |      |           (6) ...to here
+           |
+    <------+
+    |
+  'main': events 8-9
+    |
+    |   41 |     dict1.items = addItem(dict1.items, &dict1.size, "key1", "value1");
+    |      |                   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                   |
+    |      |                   (8) returning to 'main' from 'addItem'
+    |   42 |     dict1.items = addItem(dict1.items, &dict1.size, "key2", "value2");
+    |      |                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                   |
+    |      |                   (9) calling 'addItem' from 'main'
+    |
+    +--> 'addItem': events 10-11
+           |
+           |   14 | item* addItem(item* items, size_t* size, char* key, char* value) {
+           |      |       ^~~~~~~
+           |      |       |
+           |      |       (10) entry to 'addItem'
+           |   15 |     items = realloc(items, (*size + 1) * sizeof(item));
+           |   16 |     if (!items) {
+           |      |        ~
+           |      |        |
+           |      |        (11) '<unknown>' leaks here; was allocated at (7)
+           |

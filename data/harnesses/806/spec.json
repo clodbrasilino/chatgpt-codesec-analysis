@@ -1,0 +1,44 @@
+{
+  "task_id": 806,
+  "text": "Write a C function to find maximum run of uppercase characters in the given string.",
+  "fn_candidates": [
+    "max_run_uppercase",
+    "MaxRunUppercase",
+    "maxRunUppercase",
+    "maxrunuppercase"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "max_run_uppercase",
+      "args": [
+        "GeMKSForGERksISBESt"
+      ],
+      "expected": 5,
+      "assert_src": "assert max_run_uppercase('GeMKSForGERksISBESt') == 5"
+    },
+    {
+      "fn_name": "max_run_uppercase",
+      "args": [
+        "PrECIOusMOVemENTSYT"
+      ],
+      "expected": 6,
+      "assert_src": "assert max_run_uppercase('PrECIOusMOVemENTSYT') == 6"
+    },
+    {
+      "fn_name": "max_run_uppercase",
+      "args": [
+        "GooGLEFluTTER"
+      ],
+      "expected": 4,
+      "assert_src": "assert max_run_uppercase('GooGLEFluTTER') == 4"
+    }
+  ],
+  "arg_kinds": [
+    "str"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

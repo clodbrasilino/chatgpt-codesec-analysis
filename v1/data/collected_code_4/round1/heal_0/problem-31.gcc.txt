@@ -1,0 +1,157 @@
+./collected_code_4/round1//heal_0//problem-31.c: In function 'createHeap':
+./collected_code_4/round1//heal_0//problem-31.c:16:17: warning: dereference of possibly-NULL 'h' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   16 |     h->capacity = capacity;
+      |     ~~~~~~~~~~~~^~~~~~~~~~
+  'main': events 1-2
+    |
+    |   96 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |  100 |     findKTop(arr, n, k);
+    |      |     ~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) calling 'findKTop' from 'main'
+    |
+    +--> 'findKTop': events 3-4
+           |
+           |   70 | void findKTop(int *array, int n, int k) {
+           |      |      ^~~~~~~~
+           |      |      |
+           |      |      (3) entry to 'findKTop'
+           |   71 |     Heap* h = createHeap(k);
+           |      |               ~~~~~~~~~~~~~
+           |      |               |
+           |      |               (4) calling 'createHeap' from 'findKTop'
+           |
+           +--> 'createHeap': events 5-7
+                  |
+                  |   14 | Heap* createHeap(int capacity) {
+                  |      |       ^~~~~~~~~~
+                  |      |       |
+                  |      |       (5) entry to 'createHeap'
+                  |   15 |     Heap* h = (Heap*)malloc(sizeof(Heap));
+                  |      |                      ~~~~~~~~~~~~~~~~~~~~
+                  |      |                      |
+                  |      |                      (6) this call could return NULL
+                  |   16 |     h->capacity = capacity;
+                  |      |     ~~~~~~~~~~~~~~~~~~~~~~
+                  |      |                 |
+                  |      |                 (7) 'h' could be NULL: unchecked value from (6)
+                  |
+./collected_code_4/round1//heal_0//problem-31.c: In function 'createNode':
+./collected_code_4/round1//heal_0//problem-31.c:24:12: warning: dereference of possibly-NULL 'n' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   24 |     n->key = key;
+      |     ~~~~~~~^~~~~
+  'main': events 1-2
+    |
+    |   96 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |  100 |     findKTop(arr, n, k);
+    |      |     ~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) calling 'findKTop' from 'main'
+    |
+    +--> 'findKTop': events 3-8
+           |
+           |   70 | void findKTop(int *array, int n, int k) {
+           |      |      ^~~~~~~~
+           |      |      |
+           |      |      (3) entry to 'findKTop'
+           |   71 |     Heap* h = createHeap(k);
+           |   72 |     for(int i = 0; i < n; i++) {
+           |      |                    ~~~~~
+           |      |                      |
+           |      |                      (4) following 'true' branch (when 'i < n')...
+           |   73 |         if(i < k) {
+           |      |           ~
+           |      |           |
+           |      |           (5) ...to here
+           |      |           (6) following 'true' branch (when 'i < k')...
+           |   74 |             h->array[i] = createNode(array[i], array[i]);
+           |      |                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                           |                         |
+           |      |                           |                         (7) ...to here
+           |      |                           (8) calling 'createNode' from 'findKTop'
+           |
+           +--> 'createNode': events 9-11
+                  |
+                  |   22 | Node* createNode(int key, int freq) {
+                  |      |       ^~~~~~~~~~
+                  |      |       |
+                  |      |       (9) entry to 'createNode'
+                  |   23 |     Node* n = (Node*)malloc(sizeof(Node));
+                  |      |                      ~~~~~~~~~~~~~~~~~~~~
+                  |      |                      |
+                  |      |                      (10) this call could return NULL
+                  |   24 |     n->key = key;
+                  |      |     ~~~~~~~~~~~~
+                  |      |            |
+                  |      |            (11) 'n' could be NULL: unchecked value from (10)
+                  |
+./collected_code_4/round1//heal_0//problem-31.c: In function 'findKTop':
+./collected_code_4/round1//heal_0//problem-31.c:74:25: warning: dereference of possibly-NULL '*h.array + (long unsigned int)i * 8' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   74 |             h->array[i] = createNode(array[i], array[i]);
+      |             ~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  'main': events 1-2
+    |
+    |   96 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |  100 |     findKTop(arr, n, k);
+    |      |     ~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) calling 'findKTop' from 'main'
+    |
+    +--> 'findKTop': events 3-4
+           |
+           |   70 | void findKTop(int *array, int n, int k) {
+           |      |      ^~~~~~~~
+           |      |      |
+           |      |      (3) entry to 'findKTop'
+           |   71 |     Heap* h = createHeap(k);
+           |      |               ~~~~~~~~~~~~~
+           |      |               |
+           |      |               (4) calling 'createHeap' from 'findKTop'
+           |
+           +--> 'createHeap': events 5-6
+                  |
+                  |   14 | Heap* createHeap(int capacity) {
+                  |      |       ^~~~~~~~~~
+                  |      |       |
+                  |      |       (5) entry to 'createHeap'
+                  |......
+                  |   18 |     h->array = (Node**)malloc(h->capacity * sizeof(Node*));
+                  |      |                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                  |      |                        |
+                  |      |                        (6) this call could return NULL
+                  |
+           <------+
+           |
+         'findKTop': events 7-12
+           |
+           |   71 |     Heap* h = createHeap(k);
+           |      |               ^~~~~~~~~~~~~
+           |      |               |
+           |      |               (7) returning to 'findKTop' from 'createHeap'
+           |   72 |     for(int i = 0; i < n; i++) {
+           |      |                    ~~~~~
+           |      |                      |
+           |      |                      (8) following 'true' branch (when 'i < n')...
+           |   73 |         if(i < k) {
+           |      |           ~    
+           |      |           |
+           |      |           (9) ...to here
+           |      |           (10) following 'true' branch (when 'i < k')...
+           |   74 |             h->array[i] = createNode(array[i], array[i]);
+           |      |             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                         |                           |
+           |      |                         |                           (11) ...to here
+           |      |                         (12) '*h.array + (long unsigned int)i * 8' could be NULL: unchecked value from (6)
+           |

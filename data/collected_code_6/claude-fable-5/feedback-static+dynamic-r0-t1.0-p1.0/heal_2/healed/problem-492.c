@@ -1,0 +1,70 @@
+#include <stdio.h>
+#include <stddef.h>
+#include <stdbool.h>
+
+bool binary_search(const int *arr, size_t size, int target, size_t *index)
+{
+    size_t low;
+    size_t high;
+
+    if (arr == NULL || size == 0U || index == NULL) {
+        return false;
+    }
+
+    low = 0U;
+    high = size - 1U;
+
+    while (low <= high) {
+        size_t mid = low + (high - low) / 2U;
+
+        if (arr[mid] == target) {
+            *index = mid;
+            return true;
+        } else if (arr[mid] < target) {
+            low = mid + 1U;
+        } else {
+            if (mid == 0U) {
+                break;
+            }
+            high = mid - 1U;
+        }
+    }
+
+    return false;
+}
+
+int main(void)
+{
+    int arr[] = {2, 5, 8, 12, 16, 23, 38, 56, 72, 91};
+    size_t size = sizeof(arr) / sizeof(arr[0]);
+    int target = 23;
+    size_t index = 0U;
+    bool found;
+
+    found = binary_search(arr, size, target, &index);
+
+    if (found) {
+        if (printf("Element %d found at index %zu\n", target, index) < 0) {
+            return 1;
+        }
+    } else {
+        if (printf("Element %d not found in the array\n", target) < 0) {
+            return 1;
+        }
+    }
+
+    target = 100;
+    found = binary_search(arr, size, target, &index);
+
+    if (found) {
+        if (printf("Element %d found at index %zu\n", target, index) < 0) {
+            return 1;
+        }
+    } else {
+        if (printf("Element %d not found in the array\n", target) < 0) {
+            return 1;
+        }
+    }
+
+    return 0;
+}

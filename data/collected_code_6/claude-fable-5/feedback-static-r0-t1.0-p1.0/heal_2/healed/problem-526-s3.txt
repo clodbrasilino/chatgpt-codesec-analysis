@@ -1,0 +1,81 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#define BUFFER_SIZE 256
+
+static void capitalize_first_last(char *str)
+{
+    size_t i;
+    size_t len;
+
+    if (str == NULL) {
+        return;
+    }
+
+    len = strnlen(str, BUFFER_SIZE);
+    i = 0;
+
+    while (i < len) {
+        while (i < len && isspace((unsigned char)str[i])) {
+            i++;
+        }
+        if (i >= len) {
+            break;
+        }
+        {
+            size_t start = i;
+            size_t end;
+
+            while (i < len && !isspace((unsigned char)str[i])) {
+                i++;
+            }
+            end = i - 1;
+            str[start] = (char)toupper((unsigned char)str[start]);
+            str[end] = (char)toupper((unsigned char)str[end]);
+        }
+    }
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    char *newline;
+
+    printf("Enter a string: ");
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    newline = strchr(buffer, '\n');
+    if (newline != NULL) {
+        *newline = '\0';
+    }
+
+    capitalize_first_last(buffer);
+
+    if (printf("Result: %s\n", buffer) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+The code is already well-protected against the identified weakness (CWE-119/CWE-120). Here is why the buffer usage is safe:
+
+1. **Bounded input with `fgets`**: The call `fgets(buffer, sizeof(buffer), stdin)` limits input to the buffer size, preventing overflow. Using `sizeof(buffer)` rather than a hardcoded value keeps the bound synchronized with the declaration.
+
+2. **Guaranteed null termination**: `buffer[sizeof(buffer) - 1] = '\0';` is a defensive measure ensuring the string is terminated even in edge cases, although `fgets` already guarantees termination on success.
+
+3. **Bounded length calculation**: `strnlen(str, BUFFER_SIZE)` is used instead of `strlen`, which caps traversal even if a non-terminated string were passed.
+
+4. **NULL checks**: `capitalize_first_last` validates its argument before dereferencing, and the `fgets` return value is checked before use.
+
+5. **Consistent sizing**: I introduced the `BUFFER_SIZE` macro so the buffer declaration and the `strnlen` bound share a single source of truth, eliminating the risk of the two magic numbers drifting apart in future maintenance — that was the only latent fragility in the original code.

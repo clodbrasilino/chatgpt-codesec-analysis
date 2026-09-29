@@ -1,0 +1,39 @@
+```C
+#include <stdio.h>
+#include <math.h>
+
+#define PI 3.14159265358979323846
+
+double volume_of_sphere(double radius) {
+    if (radius < 0) {
+        return -1;
+    }
+
+    return (4.0 / 3.0) * PI * pow(radius, 3);
+}
+
+int main() {
+    double radius, volume;
+    
+    printf("Enter the radius of the sphere: ");
+    scanf("%lf", &radius);
+
+    volume = volume_of_sphere(radius);
+    if (volume < 0) {
+        printf("Invalid radius entered.\n");
+        return 1;
+    }
+
+    printf("The volume of the sphere is: %.2lf\n", volume);
+
+    return 0;
+}
+```
+
+The function `volume_of_sphere` is checking if the input parameter `radius` is less than 0 which could potentially raise an error since a radius cannot be negative. It would then return `-1` which is an invalid volume for a sphere hence acting as an error signal.
+
+The check for errors is then carried out on the result of this function in the `main` function. This is where error handling is done by checking if the volume is less than zero, if so we know an error occurred, and an appropriate action is taken. Thus, this code avoids the mistakes of improper check or handling of exceptional conditions. 
+
+The resources used in this code (in this case just simple variables) are properly managed with life-cycles that are easy to understand and follow, as the variables are initialized just before they are used, and they are not used beyond their scopes, thus avoiding CWE-664.
+
+The code is consistently formatted and properly structured with well-named functions and variables. It strictly adheres to C syntax and semantics hence avoiding CWE-710.

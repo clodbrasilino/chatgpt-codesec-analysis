@@ -1,0 +1,68 @@
+```c
+#include <stddef.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char *concat_tuple(const char *elements[], size_t count, const char *delimiter) {
+    if (elements == NULL && count > 0) {
+        return NULL;
+    }
+    if (delimiter == NULL) {
+        delimiter = "";
+    }
+
+    size_t total = 1;
+    size_t delim_len = strlen(delimiter);
+
+    for (size_t i = 0; i < count; i++) {
+        if (elements[i] == NULL) {
+            return NULL;
+        }
+        size_t elem_len = strlen(elements[i]);
+        if (total > SIZE_MAX - elem_len) {
+            return NULL;
+        }
+        total += elem_len;
+        if (i < count - 1) {
+            if (total > SIZE_MAX - delim_len) {
+                return NULL;
+            }
+            total += delim_len;
+        }
+    }
+
+    char *result = malloc(total);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    char *dest = result;
+    for (size_t i = 0; i < count; i++) {
+        size_t elem_len = strlen(elements[i]);
+        memcpy(dest, elements[i], elem_len);
+        dest += elem_len;
+        if (i < count - 1) {
+            memcpy(dest, delimiter, delim_len);
+            dest += delim_len;
+        }
+    }
+    *dest = '\0';
+
+    return result;
+}
+
+int main(void) {
+    const char *tuple[] = {"apple", "banana", "cherry"};
+    char *joined = concat_tuple(tuple, 3, ", ");
+    if (joined == NULL) {
+        return EXIT_FAILURE;
+    }
+
+    printf("%s\n", joined);
+    free(joined);
+
+    return EXIT_SUCCESS;
+}
+```

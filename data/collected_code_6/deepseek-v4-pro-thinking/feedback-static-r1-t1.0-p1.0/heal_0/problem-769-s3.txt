@@ -1,0 +1,160 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stddef.h>
+
+typedef struct Node {
+    int data;
+    struct Node *next;
+} Node;
+
+Node *create_node(int value);
+int contains(const Node *list, int value);
+int list_difference(const Node *list1, const Node *list2, Node **result);
+int append(Node **head, int value);
+void free_list(Node *head);
+void print_list(const Node *head);
+
+int main(void) {
+    Node *list1 = NULL;
+    Node *list2 = NULL;
+    Node *diff = NULL;
+    int arr1[] = {1, 2, 3, 4, 2};
+    int arr2[] = {2, 4};
+    size_t i;
+
+    for (i = 0; i < sizeof(arr1) / sizeof(arr1[0]); ++i) {
+        if (append(&list1, arr1[i]) != 0) {
+            free_list(list1);
+            free_list(list2);
+            return 1;
+        }
+    }
+
+    for (i = 0; i < sizeof(arr2) / sizeof(arr2[0]); ++i) {
+        if (append(&list2, arr2[i]) != 0) {
+            free_list(list1);
+            free_list(list2);
+            return 1;
+        }
+    }
+
+    if (list_difference(list1, list2, &diff) != 0) {
+        free_list(list1);
+        free_list(list2);
+        return 1;
+    }
+
+    print_list(diff);
+
+    free_list(diff);
+    free_list(list1);
+    free_list(list2);
+
+    return 0;
+}
+
+Node *create_node(int value) {
+    Node *node = malloc(sizeof(*node));
+    if (node == NULL) {
+        return NULL;
+    }
+    node->data = value;
+    node->next = NULL;
+    return node;
+}
+
+int contains(const Node *list, int value) {
+    while (list != NULL) {
+        if (list->data == value) {
+            return 1;
+        }
+        list = list->next;
+    }
+    return 0;
+}
+
+int list_difference(const Node *list1, const Node *list2, Node **result) {
+    Node *head = NULL;
+    Node *tail = NULL;
+    const Node *current;
+
+    if (result == NULL) {
+        return -1;
+    }
+
+    *result = NULL;
+
+    if (list1 == NULL) {
+        return 0;
+    }
+
+    current = list1;
+
+    while (current != NULL) {
+        if (!contains(list2, current->data)) {
+            Node *new_node = create_node(current->data);
+            if (new_node == NULL) {
+                free_list(head);
+                return -1;
+            }
+
+            if (head == NULL) {
+                head = new_node;
+                tail = new_node;
+            } else {
+                tail->next = new_node;
+                tail = new_node;
+            }
+        }
+
+        current = current->next;
+    }
+
+    *result = head;
+    return 0;
+}
+
+int append(Node **head, int value) {
+    Node *new_node;
+    Node *current;
+
+    if (head == NULL) {
+        return -1;
+    }
+
+    new_node = create_node(value);
+    if (new_node == NULL) {
+        return -1;
+    }
+
+    if (*head == NULL) {
+        *head = new_node;
+        return 0;
+    }
+
+    current = *head;
+    while (current->next != NULL) {
+        current = current->next;
+    }
+
+    current->next = new_node;
+    return 0;
+}
+
+void free_list(Node *head) {
+    while (head != NULL) {
+        Node *temp = head;
+        head = head->next;
+        free(temp);
+    }
+}
+
+void print_list(const Node *head) {
+    while (head != NULL) {
+        printf("%d ", head->data);
+        head = head->next;
+    }
+    printf("\n");
+}
+```

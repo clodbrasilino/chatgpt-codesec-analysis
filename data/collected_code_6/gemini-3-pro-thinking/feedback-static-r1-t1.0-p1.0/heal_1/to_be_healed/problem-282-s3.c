@@ -1,0 +1,130 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+typedef struct Node {
+    int data;
+    struct Node* next;
+} Node;
+
+Node* create_node(int data);
+bool contains(Node* head, int target);
+Node* subtract_lists(Node* list1, Node* list2);
+void free_list(Node* head);
+void print_list(Node* head);
+
+Node* create_node(int data) {
+    Node* new_node = (Node*)malloc(sizeof(Node));
+    if (new_node == NULL) {
+        exit(EXIT_FAILURE);
+    }
+    new_node->data = data;
+    new_node->next = NULL;
+    return new_node;
+}
+
+bool contains(Node* head, int target) {
+    Node* current = head;
+    while (current != NULL) {
+        if (current->data == target) {
+            return true;
+        }
+        current = current->next;
+    }
+    return false;
+}
+
+Node* subtract_lists(Node* list1, Node* list2) {
+    Node* result_head = NULL;
+    Node* result_tail = NULL;
+    Node* current = list1;
+
+    while (current != NULL) {
+        if (!contains(list2, current->data)) {
+            Node* new_node = create_node(current->data);
+            if (result_head == NULL) {
+                result_head = new_node;
+                result_tail = new_node;
+            } else {
+                result_tail->next = new_node;
+                result_tail = new_node;
+            }
+        }
+        current = current->next;
+    }
+    
+    return result_head;
+}
+
+void free_list(Node* head) {
+    Node* current = head;
+    while (current != NULL) {
+        Node* next_node = current->next;
+        free(current);
+        current = next_node;
+    }
+}
+
+void print_list(Node* head) {
+    Node* current = head;
+    while (current != NULL) {
+        printf("%d ", current->data);
+        current = current->next;
+    }
+    printf("\n");
+}
+
+int main(void) {
+    Node* list1_head = NULL;
+    /* Possible weaknesses found:
+     *  Assignment 'list1_tail=NULL', assigned value is 0
+     */
+    Node* list1_tail = NULL;
+    Node* list2_head = NULL;
+    /* Possible weaknesses found:
+     *  Assignment 'list2_tail=NULL', assigned value is 0
+     */
+    Node* list2_tail = NULL;
+    Node* result = NULL;
+    int i;
+
+    for (i = 1; i <= 5; i++) {
+        Node* new_node = create_node(i);
+        if (list1_head == NULL) {
+            list1_head = new_node;
+            list1_tail = new_node;
+        } else {
+            /* Possible weaknesses found:
+             *  Possible null pointer dereference: list1_tail [nullPointer]
+             *  Null pointer dereference
+             */
+            list1_tail->next = new_node;
+            list1_tail = new_node;
+        }
+    }
+
+    for (i = 2; i <= 4; i += 2) {
+        Node* new_node = create_node(i);
+        if (list2_head == NULL) {
+            list2_head = new_node;
+            list2_tail = new_node;
+        } else {
+            /* Possible weaknesses found:
+             *  Possible null pointer dereference: list2_tail [nullPointer]
+             *  Null pointer dereference
+             */
+            list2_tail->next = new_node;
+            list2_tail = new_node;
+        }
+    }
+
+    result = subtract_lists(list1_head, list2_head);
+    
+    print_list(result);
+
+    free_list(list1_head);
+    free_list(list2_head);
+    free_list(result);
+
+    return EXIT_SUCCESS;
+}

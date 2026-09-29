@@ -1,0 +1,65 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int product;
+    int i;
+    int j;
+} ProductInfo;
+
+int compare(const void *a, const void *b) {
+    const ProductInfo *arg1 = (const ProductInfo *)a;
+    const ProductInfo *arg2 = (const ProductInfo *)b;
+    if (arg1->product > arg2->product) return -1;
+    if (arg1->product < arg2->product) return 1;
+    return 0;
+}
+
+void find_largest_products(const int *list1, size_t size1, const int *list2, size_t size2, size_t k) {
+    if (!list1 || !list2 || size1 == 0 || size2 == 0 || k == 0) {
+        return;
+    }
+
+    size_t total_pairs = size1 * size2;
+    if (k > total_pairs) {
+        k = total_pairs;
+    }
+
+    ProductInfo *products = (ProductInfo *)malloc(total_pairs * sizeof(ProductInfo));
+    if (!products) {
+        return;
+    }
+
+    size_t index = 0;
+    for (size_t i = 0; i < size1; ++i) {
+        for (size_t j = 0; j < size2; ++j) {
+            products[index].product = list1[i] * list2[j];
+            products[index].i = list1[i];
+            products[index].j = list2[j];
+            index++;
+        }
+    }
+
+    qsort(products, total_pairs, sizeof(ProductInfo), compare);
+
+    for (size_t i = 0; i < k; ++i) {
+        printf("%d ", products[i].product);
+    }
+    printf("\n");
+
+    free(products);
+}
+
+int main(void) {
+    int list1[] = {1, 2, 3, 4};
+    int list2[] = {5, 6, 7, 8};
+    size_t size1 = sizeof(list1) / sizeof(list1[0]);
+    size_t size2 = sizeof(list2) / sizeof(list2[0]);
+    size_t k = 3;
+
+    find_largest_products(list1, size1, list2, size2, k);
+
+    return 0;
+}
+```

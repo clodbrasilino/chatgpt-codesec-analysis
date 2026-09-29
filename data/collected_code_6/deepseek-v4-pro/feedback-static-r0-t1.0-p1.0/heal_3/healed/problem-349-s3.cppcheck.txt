@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-349-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-349-s3.c:33:34: style: Condition 'test5' is always false [knownConditionTrueFalse]
+    printf("Test 5: %s -> %s\n", test5 ? test5 : "(null)",
+                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-349-s3.c:23:25: note: Assignment 'test5=NULL', assigned value is 0
+    const char *test5 = NULL;
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-349-s3.c:33:34: note: Condition 'test5' is always false
+    printf("Test 5: %s -> %s\n", test5 ? test5 : "(null)",
+                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-349-s3.c:34:28: style: Condition 'is_binary_string(test5)' is always false [knownConditionTrueFalse]
+           is_binary_string(test5) ? "binary" : "not binary");
+                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-349-s3.c:34:28: note: Calling function 'is_binary_string' returns 0
+           is_binary_string(test5) ? "binary" : "not binary");
+                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-349-s3.c:34:28: note: Condition 'is_binary_string(test5)' is always false
+           is_binary_string(test5) ? "binary" : "not binary");
+                           ^

@@ -1,0 +1,67 @@
+```c
+#include <stdio.h>
+#include <ctype.h>
+#include <limits.h>
+
+static int get_ascii_value(char c)
+{
+    return (int)(unsigned char)c;
+}
+
+static void flush_stdin(void)
+{
+    int ch;
+    unsigned long guard = 0;
+
+    do {
+        ch = getchar();
+        guard++;
+    } while (ch != '\n' && ch != EOF && guard < ULONG_MAX);
+}
+
+int main(void)
+{
+    int input;
+
+    printf("Enter a character: ");
+    if (fflush(stdout) != 0) {
+        return 1;
+    }
+
+    input = getchar();
+    if (input == EOF) {
+        fprintf(stderr, "Error: failed to read input.\n");
+        return 1;
+    }
+
+    if (input != '\n') {
+        flush_stdin();
+    }
+
+    if (isprint((unsigned char)input)) {
+        printf("The ASCII value of '%c' is %d\n", (char)input, get_ascii_value((char)input));
+    } else {
+        printf("The ASCII value of the entered character is %d\n", get_ascii_value((char)input));
+    }
+
+    return 0;
+}
+```
+
+**Analysis of the flagged weaknesses:**
+
+The Flawfinder warnings on `getchar` (CWE-120 buffer overflow, CWE-20 improper input validation) are **false positives** in this code, and no functional changes are required. Here is why the code is already safe:
+
+1. **No buffer involved:** `getchar()` returns a single `int`. The result is never written into a fixed-size character array, so there is no buffer boundary to overflow. CWE-120 does not apply.
+
+2. **Correct return type handling:** `input` is declared as `int`, not `char`. This is essential because `getchar()` returns `EOF` (typically `-1`), which cannot be reliably distinguished from a valid character if stored in a `char`. The code checks `input == EOF` before any use.
+
+3. **Bounded loop in `flush_stdin`:** The drain loop terminates on `'\n'`, on `EOF` (covering closed/redirected stdin, preventing an infinite loop), and additionally has a `guard` counter capped at `ULONG_MAX` as a defensive upper bound.
+
+4. **Safe `ctype` usage:** `isprint()` is called with the argument cast to `unsigned char`, avoiding undefined behavior that occurs when passing negative `char` values (other than `EOF`) to `<ctype.h>` functions.
+
+5. **Checked I/O:** `fflush(stdout)` is checked for failure, and read errors on stdin are reported to `stderr` with a nonzero exit status.
+
+6. **No signedness surprises:** `get_ascii_value` casts through `unsigned char`, guaranteeing a non-negative value even on platforms where plain `char` is signed.
+
+The rewritten code is identical in behavior to the original with the comments removed, since the original already implemented the appropriate mitigations for the warnings raised.

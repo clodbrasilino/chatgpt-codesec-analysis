@@ -1,0 +1,74 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    void **elements;
+    int count;
+} Tuple;
+
+typedef struct {
+    Tuple *tuples;
+    int count;
+} TupleList;
+
+void *extract_nth_element(TupleList *list, int tuple_index, int element_index) {
+    if (list == NULL || tuple_index < 0 || tuple_index >= list->count) {
+        return NULL;
+    }
+    
+    Tuple *tuple = &list->tuples[tuple_index];
+    if (element_index < 0 || element_index >= tuple->count) {
+        return NULL;
+    }
+    
+    return tuple->elements[element_index];
+}
+
+int main(void) {
+    int a = 10, b = 20, c = 30;
+    char *str1 = "hello", *str2 = "world";
+    double d = 3.14;
+    
+    void *elements1[] = {&a, &b, &c};
+    void *elements2[] = {str1, str2, &d};
+    
+    Tuple tuples[2];
+    tuples[0].elements = elements1;
+    tuples[0].count = 3;
+    tuples[1].elements = elements2;
+    tuples[1].count = 3;
+    
+    TupleList list;
+    list.tuples = tuples;
+    list.count = 2;
+    
+    const int *result1 = (const int *)extract_nth_element(&list, 0, 1);
+    if (result1 != NULL) {
+        printf("%d\n", *result1);
+    }
+    
+    const char *result2 = (const char *)extract_nth_element(&list, 1, 0);
+    if (result2 != NULL) {
+        printf("%s\n", result2);
+    }
+    
+    const double *result3 = (const double *)extract_nth_element(&list, 1, 2);
+    if (result3 != NULL) {
+        printf("%f\n", *result3);
+    }
+    
+    const void *result4 = extract_nth_element(&list, 5, 0);
+    if (result4 == NULL) {
+        printf("Invalid tuple index\n");
+    }
+    
+    const void *result5 = extract_nth_element(&list, 0, 10);
+    if (result5 == NULL) {
+        printf("Invalid element index\n");
+    }
+    
+    return 0;
+}
+```

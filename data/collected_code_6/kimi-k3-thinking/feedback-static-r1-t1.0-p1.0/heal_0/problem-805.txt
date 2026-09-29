@@ -1,0 +1,125 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int *find_max_sum_list(int **lists, size_t num_lists, const size_t *sizes, size_t *max_index)
+{
+    size_t i;
+    size_t j;
+    long max_sum = 0;
+    long current_sum;
+    int *result = NULL;
+
+    if (lists == NULL || sizes == NULL || num_lists == 0 || max_index == NULL)
+    {
+        return NULL;
+    }
+
+    for (i = 0; i < num_lists; i++)
+    {
+        if (lists[i] == NULL)
+        {
+            continue;
+        }
+
+        current_sum = 0;
+        for (j = 0; j < sizes[i]; j++)
+        {
+            current_sum += lists[i][j];
+        }
+
+        if (result == NULL || current_sum > max_sum)
+        {
+            max_sum = current_sum;
+            result = lists[i];
+            *max_index = i;
+        }
+    }
+
+    return result;
+}
+
+int main(void)
+{
+    const size_t num_lists = 4;
+    const size_t init_sizes[4] = {3, 5, 2, 5};
+    const int init_values[4][5] = {
+        {1, 2, 3, 0, 0},
+        {10, 20, 30, 40, 50},
+        {5, 5, 0, 0, 0},
+        {100, 200, 300, 400, 500}
+    };
+    int **lists = NULL;
+    size_t *sizes = NULL;
+    size_t i;
+    size_t j;
+    size_t max_index = 0;
+    int *max_list = NULL;
+
+    sizes = malloc(num_lists * sizeof(*sizes));
+    if (sizes == NULL)
+    {
+        fprintf(stderr, "Error: failed to allocate memory for sizes.\n");
+        return EXIT_FAILURE;
+    }
+
+    lists = malloc(num_lists * sizeof(*lists));
+    if (lists == NULL)
+    {
+        fprintf(stderr, "Error: failed to allocate memory for lists.\n");
+        free(sizes);
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i < num_lists; i++)
+    {
+        lists[i] = NULL;
+    }
+
+    for (i = 0; i < num_lists; i++)
+    {
+        sizes[i] = init_sizes[i];
+        lists[i] = malloc(sizes[i] * sizeof(*lists[i]));
+        if (lists[i] == NULL)
+        {
+            fprintf(stderr, "Error: failed to allocate memory for list %zu.\n", i);
+            for (j = 0; j < num_lists; j++)
+            {
+                free(lists[j]);
+            }
+            free(lists);
+            free(sizes);
+            return EXIT_FAILURE;
+        }
+        for (j = 0; j < sizes[i]; j++)
+        {
+            lists[i][j] = init_values[i][j];
+        }
+    }
+
+    max_list = find_max_sum_list(lists, num_lists, sizes, &max_index);
+
+    if (max_list != NULL)
+    {
+        printf("List with the highest sum (index %zu): ", max_index);
+        for (j = 0; j < sizes[max_index]; j++)
+        {
+            printf("%d ", max_list[j]);
+        }
+        printf("\n");
+    }
+    else
+    {
+        printf("No list found.\n");
+    }
+
+    for (i = 0; i < num_lists; i++)
+    {
+        free(lists[i]);
+    }
+    free(lists);
+    free(sizes);
+
+    return EXIT_SUCCESS;
+}
+```

@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_0/problem-911.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_0/problem-911.c:106:24: warning: Uninitialized variable: heap [uninitvar]
+    } else if (value > heap[0]) {
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_0/problem-911.c:135:30: note: Calling function 'retain_three_largest', 1st argument 'largest' value is <Uninit>
+        retain_three_largest(largest, &largest_size, array[i]);
+                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_0/problem-911.c:106:24: note: Uninitialized variable: heap
+    } else if (value > heap[0]) {
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_0/problem-911.c:116:24: warning: Uninitialized variable: heap [uninitvar]
+    } else if (value < heap[0]) {
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_0/problem-911.c:136:29: note: Calling function 'retain_two_smallest', 1st argument 'smallest' value is <Uninit>
+        retain_two_smallest(smallest, &smallest_size, array[i]);
+                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_0/problem-911.c:116:24: note: Uninitialized variable: heap
+    } else if (value < heap[0]) {
+                       ^

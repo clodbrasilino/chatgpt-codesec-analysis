@@ -1,0 +1,152 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdint.h>
+
+#define MAX_WORD_LENGTH 127
+#define MAX_CAPACITY 1024
+
+typedef struct {
+    char word[MAX_WORD_LENGTH + 1];
+    int position;
+} AdverbInfo;
+
+static int is_adverb(const char *word, size_t word_len) {
+    if (word == NULL || word_len < 2) {
+        return 0;
+    }
+    return word[word_len - 2] == 'l' && word[word_len - 1] == 'y';
+}
+
+static size_t safe_strlen(const char *str, size_t max_len) {
+    if (str == NULL) {
+        return 0;
+    }
+    size_t i;
+    for (i = 0; i < max_len && str[i] != '\0'; i++) {
+    }
+    return i;
+}
+
+static int find_all_adverbs(const char *sentence, AdverbInfo **adverbs, int *count) {
+    if (sentence == NULL || adverbs == NULL || count == NULL) {
+        return -1;
+    }
+
+    *adverbs = NULL;
+    *count = 0;
+
+    size_t len = strnlen(sentence, INT32_MAX);
+    if (len == 0) {
+        return 0;
+    }
+
+    size_t buffer_size = len + 1;
+    if (buffer_size == 0) {
+        return -1;
+    }
+
+    char *buffer = (char *)malloc(buffer_size);
+    if (buffer == NULL) {
+        return -1;
+    }
+
+    if (len >= buffer_size) {
+        free(buffer);
+        return -1;
+    }
+
+    memcpy(buffer, sentence, len);
+    buffer[len] = '\0';
+
+    int capacity = 0;
+    AdverbInfo *result = NULL;
+
+    char *saveptr;
+    const char *delimiters = " ,.;:!?\"'()\t\n";
+    char *token = strtok_r(buffer, delimiters, &saveptr);
+    while (token != NULL) {
+        size_t token_len = safe_strlen(token, MAX_WORD_LENGTH + 1);
+        if (token_len == 0 || token_len > MAX_WORD_LENGTH) {
+            free(result);
+            free(buffer);
+            return -1;
+        }
+
+        if (is_adverb(token, token_len)) {
+            if (*count >= capacity) {
+                int new_capacity = capacity == 0 ? 4 : capacity * 2;
+                if (new_capacity > MAX_CAPACITY || new_capacity <= capacity) {
+                    free(result);
+                    free(buffer);
+                    return -1;
+                }
+
+                size_t alloc_size = (size_t)new_capacity * sizeof(AdverbInfo);
+                if (alloc_size / sizeof(AdverbInfo) != (size_t)new_capacity) {
+                    free(result);
+                    free(buffer);
+                    return -1;
+                }
+
+                AdverbInfo *new_result = (AdverbInfo *)realloc(result, alloc_size);
+                if (new_result == NULL) {
+                    free(result);
+                    free(buffer);
+                    return -1;
+                }
+                result = new_result;
+                capacity = new_capacity;
+            }
+
+            size_t copy_len = token_len < MAX_WORD_LENGTH ? token_len : MAX_WORD_LENGTH;
+
+            if (copy_len > 0) {
+                memcpy(result[*count].word, token, copy_len);
+            }
+            result[*count].word[copy_len] = '\0';
+
+            const char *pos_ptr = sentence + (token - buffer);
+            while (pos_ptr > sentence && !isspace((unsigned char)*(pos_ptr - 1)) &&
+                   strchr(delimiters, *(pos_ptr - 1)) == NULL) {
+                pos_ptr--;
+            }
+            result[*count].position = (int)(pos_ptr - sentence);
+
+            (*count)++;
+        }
+        token = strtok_r(NULL, delimiters, &saveptr);
+    }
+
+    free(buffer);
+
+    if (*count == 0) {
+        free(result);
+        *adverbs = NULL;
+    } else {
+        *adverbs = result;
+    }
+
+    return 0;
+}
+
+int main(void) {
+    const char *sentence = "The cat quickly ran very slowly and happily through the garden.";
+    AdverbInfo *adverbs = NULL;
+    int count = 0;
+
+    int status = find_all_adverbs(sentence, &adverbs, &count);
+    if (status != 0) {
+        fprintf(stderr, "Error processing sentence\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Adverbs found: %d\n", count);
+    for (int i = 0; i < count; i++) {
+        printf("Position %d: %s\n", adverbs[i].position, adverbs[i].word);
+    }
+
+    free(adverbs);
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,83 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node* next;
+};
+
+void shift_last_to_first(struct Node** head) {
+    if (head == NULL || *head == NULL || (*head)->next == NULL) {
+        return;
+    }
+
+    struct Node* last = *head;
+    struct Node* prev = NULL;
+
+    while (last->next != NULL) {
+        prev = last;
+        last = last->next;
+    }
+
+    if (prev != NULL) {
+        prev->next = NULL;
+        last->next = *head;
+        *head = last;
+    }
+}
+
+void insert(struct Node** head, int data) {
+    struct Node* new_node = (struct Node*)malloc(sizeof(struct Node));
+    if (new_node == NULL) {
+        exit(EXIT_FAILURE);
+    }
+    new_node->data = data;
+    new_node->next = NULL;
+
+    if (*head == NULL) {
+        *head = new_node;
+    } else {
+        struct Node* temp = *head;
+        while (temp->next != NULL) {
+            temp = temp->next;
+        }
+        temp->next = new_node;
+    }
+}
+
+void print_list(struct Node* head) {
+    struct Node* temp = head;
+    while (temp != NULL) {
+        printf("%d ", temp->data);
+        temp = temp->next;
+    }
+    printf("\n");
+}
+
+void free_list(struct Node* head) {
+    while (head != NULL) {
+        struct Node* temp = head;
+        head = head->next;
+        free(temp);
+    }
+}
+
+int main() {
+    struct Node* head = NULL;
+
+    insert(&head, 1);
+    insert(&head, 2);
+    insert(&head, 3);
+    insert(&head, 4);
+    insert(&head, 5);
+
+    print_list(head);
+
+    shift_last_to_first(&head);
+
+    print_list(head);
+
+    free_list(head);
+
+    return 0;
+}

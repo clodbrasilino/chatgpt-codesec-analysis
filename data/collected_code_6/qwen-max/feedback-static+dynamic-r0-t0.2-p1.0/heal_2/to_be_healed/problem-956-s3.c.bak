@@ -1,0 +1,62 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+void split_string_at_uppercase(const char *input, char ***result, int *count) {
+    regex_t regex;
+    regmatch_t matches[1];
+    /* Possible weaknesses found:
+     *  Variable 'input_len' is assigned a value that is never used. [unreadVariable]
+     */
+    size_t input_len = strlen(input);
+    char *str_copy = strdup(input);
+
+    if (regcomp(&regex, "[A-Z]", REG_EXTENDED) != 0) {
+        free(str_copy);
+        return;
+    }
+
+    *count = 1;
+    int match_count = 0;
+
+    while (regexec(&regex, str_copy + match_count, 1, matches, 0) == 0) {
+        (*count)++;
+        match_count += matches[0].rm_so + 1;
+    }
+
+    *result = (char **)malloc((*count) * sizeof(char *));
+    if (*result == NULL) {
+        free(str_copy);
+        regfree(&regex);
+        return;
+    }
+
+    match_count = 0;
+    int index = 0;
+    while (regexec(&regex, str_copy + match_count, 1, matches, 0) == 0) {
+        (*result)[index] = strndup(str_copy + match_count, matches[0].rm_so);
+        match_count += matches[0].rm_so + 1;
+        index++;
+    }
+    (*result)[index] = strdup(str_copy + match_count);
+
+    free(str_copy);
+    regfree(&regex);
+}
+
+int main() {
+    const char *input = "HelloWorldExample";
+    char **result = NULL;
+    int count = 0;
+
+    split_string_at_uppercase(input, &result, &count);
+
+    for (int i = 0; i < count; i++) {
+        printf("%s\n", result[i]);
+        free(result[i]);
+    }
+    free(result);
+
+    return 0;
+}

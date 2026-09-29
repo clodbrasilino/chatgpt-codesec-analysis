@@ -1,0 +1,74 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+char* lcs_three(char *s1, char *s2, char *s3) {
+    int len1 = strlen(s1);
+    int len2 = strlen(s2);
+    int len3 = strlen(s3);
+    
+    int ***dp = (int***)malloc((len1 + 1) * sizeof(int**));
+    for (int i = 0; i <= len1; i++) {
+        dp[i] = (int**)malloc((len2 + 1) * sizeof(int*));
+        for (int j = 0; j <= len2; j++) {
+            dp[i][j] = (int*)calloc(len3 + 1, sizeof(int));
+        }
+    }
+    
+    for (int i = 1; i <= len1; i++) {
+        for (int j = 1; j <= len2; j++) {
+            for (int k = 1; k <= len3; k++) {
+                if (s1[i-1] == s2[j-1] && s2[j-1] == s3[k-1]) {
+                    dp[i][j][k] = dp[i-1][j-1][k-1] + 1;
+                } else {
+                    int max = dp[i-1][j][k];
+                    if (dp[i][j-1][k] > max) max = dp[i][j-1][k];
+                    if (dp[i][j][k-1] > max) max = dp[i][j][k-1];
+                    dp[i][j][k] = max;
+                }
+            }
+        }
+    }
+    
+    int index = dp[len1][len2][len3];
+    char *result = (char*)malloc((index + 1) * sizeof(char));
+    result[index] = '\0';
+    
+    int row = len1, col = len2, dep = len3;
+    while (row > 0 && col > 0 && dep > 0) {
+        if (s1[row-1] == s2[col-1] && s2[col-1] == s3[dep-1]) {
+            result[index-1] = s1[row-1];
+            index--;
+            row--; col--; dep--;
+        } else if (dp[row-1][col][dep] >= dp[row][col-1][dep] && dp[row-1][col][dep] >= dp[row][col][dep-1]) {
+            row--;
+        } else if (dp[row][col-1][dep] >= dp[row-1][col][dep] && dp[row][col-1][dep] >= dp[row][col][dep-1]) {
+            col--;
+        } else {
+            dep--;
+        }
+    }
+    
+    for (int x = 0; x <= len1; x++) {
+        for (int y = 0; y <= len2; y++) {
+            free(dp[x][y]);
+        }
+        free(dp[x]);
+    }
+    free(dp);
+    
+    return result;
+}
+
+int main() {
+    char str1[] = "ABCBDAB";
+    char str2[] = "BDCABA";
+    char str3[] = "BADBCA";
+    
+    char *lcs = lcs_three(str1, str2, str3);
+    printf("Longest Common Subsequence: %s\n", lcs);
+    printf("Length: %zu\n", strlen(lcs));
+    
+    free(lcs);
+    return 0;
+}

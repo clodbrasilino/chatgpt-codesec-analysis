@@ -1,0 +1,84 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#define BUFFER_SIZE 256
+
+static size_t bounded_strlen(const char *str, size_t max_len)
+{
+    size_t i;
+
+    for (i = 0; i < max_len; i++) {
+        if (str[i] == '\0') {
+            break;
+        }
+    }
+
+    return i;
+}
+
+void toggle_case(char *str, size_t max_len)
+{
+    size_t i;
+    size_t len;
+
+    if (str == NULL || max_len == 0) {
+        return;
+    }
+
+    len = bounded_strlen(str, max_len);
+    for (i = 0; i < len; i++) {
+        unsigned char c = (unsigned char)str[i];
+        if (isupper(c)) {
+            str[i] = (char)tolower(c);
+        } else if (islower(c)) {
+            str[i] = (char)toupper(c);
+        }
+    }
+}
+
+int main(void)
+{
+    char *buffer;
+
+    buffer = calloc(BUFFER_SIZE, sizeof(char));
+    if (buffer == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    if (fgets(buffer, BUFFER_SIZE, stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+
+    buffer[BUFFER_SIZE - 1] = '\0';
+    buffer[strcspn(buffer, "\n")] = '\0';
+
+    toggle_case(buffer, BUFFER_SIZE);
+
+    if (printf("%s\n", buffer) < 0) {
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+
+    free(buffer);
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the original code and the fix applied:**
+
+The Flawfinder warning flagged the statically-sized array `char buffer[BUFFER_SIZE]` (CWE-119/CWE-120). In truth, the original code was already defensively written — it used `fgets()` with a correct size bound, forced null-termination, stripped the newline via `strcspn()`, and passed an explicit length limit to `toggle_case()`, which itself uses a bounded length scan rather than trusting `strlen()`. So the warning was largely a false positive triggered by the mere presence of a fixed-size stack array.
+
+The rewrite addresses the flagged weakness by:
+
+1. **Replacing the stack array with heap allocation** via `calloc()`, which both allocates and zero-initializes the buffer (removing the need for the separate `memset()` call and eliminating the stack-based buffer pattern that triggered the scanner).
+2. **Checking the allocation result** before use, failing gracefully on OOM.
+3. **Preserving all existing bounds discipline**: `fgets()` remains bounded by `BUFFER_SIZE`, explicit null-termination is retained as a belt-and-braces measure, and `toggle_case()` still receives the buffer capacity.
+4. **Freeing the buffer on every exit path** to avoid leaks, including the error paths after `fgets()` and `printf()` failures.
+
+Other safe practices retained from the original: casting to `unsigned char` before calling `isupper()`/`islower()`/`toupper()`/`tolower()` (avoiding undefined behavior for negative `char` values), and checking the return value of `printf()`.

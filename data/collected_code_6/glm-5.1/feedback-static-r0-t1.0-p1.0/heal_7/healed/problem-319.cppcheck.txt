@@ -1,0 +1,16 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-319.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-319.c:56:21: style: Condition 'len<=max_copy' is always true [knownConditionTrueFalse]
+            if (len <= max_copy) {
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-319.c:55:29: note: max_copy is assigned '(len+1)>(len+1)?len+1:(len+1)' here.
+            size_t max_copy = (len + 1) > (len + 1) ? (len + 1) : (len + 1);
+                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-319.c:56:21: note: Condition 'len<=max_copy' is always true
+            if (len <= max_copy) {
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-319.c:55:41: style: Same expression on both sides of '>'. [duplicateExpression]
+            size_t max_copy = (len + 1) > (len + 1) ? (len + 1) : (len + 1);
+                                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-319.c:55:65: style: Same expression in both branches of ternary operator. [duplicateExpressionTernary]
+            size_t max_copy = (len + 1) > (len + 1) ? (len + 1) : (len + 1);
+                                                                ^

@@ -1,0 +1,22 @@
+#include <stdio.h>
+
+long long difference_square_sum(long long n) {
+    long long sum = n * (n + 1) / 2;
+    long long square_sum = sum * sum;
+    long long sum_squares = n * (n + 1) * (2 * n + 1) / 6;
+    return square_sum - sum_squares;
+}
+
+int main(void) {
+    long long n;
+    printf("Enter a natural number n: ");
+    if (scanf("%lld", &n) != 1 || n < 1) {
+        printf("Invalid input. Please enter a valid natural number.\n");
+        return 1;
+    }
+
+    long long result = difference_square_sum(n);
+    printf("Difference: %lld\n", result);
+
+    return 0;
+}

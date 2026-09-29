@@ -1,0 +1,82 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_STRING_LEN 4096U
+
+char *longest_common_prefix(const char *const *strs, size_t count)
+{
+    if (strs == NULL || count == 0U) {
+        return NULL;
+    }
+
+    for (size_t i = 0U; i < count; i++) {
+        if (strs[i] == NULL) {
+            return NULL;
+        }
+    }
+
+    size_t prefix_len = strnlen(strs[0], MAX_STRING_LEN);
+    if (prefix_len == MAX_STRING_LEN) {
+        return NULL;
+    }
+
+    for (size_t i = 1U; i < count; i++) {
+        size_t j = 0U;
+        while (j < prefix_len && strs[i][j] != '\0' && strs[i][j] == strs[0][j]) {
+            j++;
+        }
+        prefix_len = j;
+        if (prefix_len == 0U) {
+            break;
+        }
+    }
+
+    char *result = malloc(prefix_len + 1U);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    memcpy(result, strs[0], prefix_len);
+    result[prefix_len] = '\0';
+
+    return result;
+}
+
+int main(void)
+{
+    const char *const strings[] = {
+        "flower",
+        "flow",
+        "flight"
+    };
+    size_t count = sizeof(strings) / sizeof(strings[0]);
+
+    char *prefix = longest_common_prefix(strings, count);
+    if (prefix == NULL) {
+        if (fprintf(stderr, "Failed to compute longest common prefix\n") < 0) {
+            return EXIT_FAILURE;
+        }
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Longest common prefix: \"%s\"\n", prefix) < 0) {
+        free(prefix);
+        return EXIT_FAILURE;
+    }
+
+    free(prefix);
+    return EXIT_SUCCESS;
+}
+```
+
+Key changes made to address the identified weaknesses:
+
+1. **Variable scope (`j`)**: Moved the declaration of `j` inside the `for` loop body, reducing its scope to exactly where it is used, as flagged by cppcheck. The same was done for `i` by using C99-style loop declarations.
+
+2. **`strlen` over-read (CWE-126)**: Replaced `strlen` with `strnlen` bounded by `MAX_STRING_LEN`. If the string is not NUL-terminated within that bound, the function safely returns `NULL` instead of over-reading.
+
+3. **`memcpy` buffer overflow (CWE-120)**: The destination buffer is allocated as `prefix_len + 1U` immediately before the copy of exactly `prefix_len` bytes plus a manually written NUL terminator, so the destination is guaranteed to hold the source data. This was already correct in the original; the structure is preserved and the bound is now additionally guaranteed by the `strnlen` limit upstream.
+
+The `malloc` result is still checked, all `printf`/`fprintf` return values are checked, and `free` is called on every exit path after allocation, so there are no leaks or unchecked I/O errors.

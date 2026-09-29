@@ -1,0 +1,47 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+void shell_sort(int *arr, size_t n)
+{
+    size_t gap;
+    size_t i;
+    size_t j;
+    int temp;
+
+    if (arr == NULL || n < 2U) {
+        return;
+    }
+
+    for (gap = n / 2U; gap > 0U; gap /= 2U) {
+        for (i = gap; i < n; i++) {
+            temp = arr[i];
+            j = i;
+            while (j >= gap && arr[j - gap] > temp) {
+                arr[j] = arr[j - gap];
+                j -= gap;
+            }
+            arr[j] = temp;
+        }
+    }
+}
+
+int main(void)
+{
+    int data[] = { 23, 5, -10, 0, 42, 17, 8, 99, -3, 12 };
+    size_t n = sizeof(data) / sizeof(data[0]);
+    size_t i;
+
+    shell_sort(data, n);
+
+    for (i = 0U; i < n; i++) {
+        if (printf("%d ", data[i]) < 0) {
+            return EXIT_FAILURE;
+        }
+    }
+
+    if (printf("\n") < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

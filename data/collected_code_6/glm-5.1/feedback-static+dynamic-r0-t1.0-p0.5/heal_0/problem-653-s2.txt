@@ -1,0 +1,136 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct Node {
+    char *value;
+    struct Node *next;
+} Node;
+
+typedef struct MapEntry {
+    char *key;
+    Node *head;
+    struct MapEntry *next;
+} MapEntry;
+
+typedef struct {
+    MapEntry *head;
+} Map;
+
+Map *map_create() {
+    Map *m = malloc(sizeof(Map));
+    if (!m) return NULL;
+    m->head = NULL;
+    return m;
+}
+
+Node *node_create(const char *value) {
+    Node *n = malloc(sizeof(Node));
+    if (!n) return NULL;
+    n->value = malloc(strlen(value) + 1);
+    if (!n->value) {
+        free(n);
+        return NULL;
+    }
+    strcpy(n->value, value);
+    n->next = NULL;
+    return n;
+}
+
+MapEntry *mapentry_create(const char *key) {
+    MapEntry *e = malloc(sizeof(MapEntry));
+    if (!e) return NULL;
+    e->key = malloc(strlen(key) + 1);
+    if (!e->key) {
+        free(e);
+        return NULL;
+    }
+    strcpy(e->key, key);
+    e->head = NULL;
+    e->next = NULL;
+    return e;
+}
+
+int map_insert(Map *m, const char *key, const char *value) {
+    if (!m || !key || !value) return -1;
+
+    MapEntry *entry = NULL;
+    MapEntry *curr = m->head;
+    while (curr) {
+        if (strcmp(curr->key, key) == 0) {
+            entry = curr;
+            break;
+        }
+        curr = curr->next;
+    }
+
+    if (!entry) {
+        entry = mapentry_create(key);
+        if (!entry) return -1;
+        entry->next = m->head;
+        m->head = entry;
+    }
+
+    Node *n = node_create(value);
+    if (!n) return -1;
+
+    n->next = entry->head;
+    entry->head = n;
+
+    return 0;
+}
+
+void map_free(Map *m) {
+    if (!m) return;
+    MapEntry *e = m->head;
+    while (e) {
+        MapEntry *next_e = e->next;
+        Node *n = e->head;
+        while (n) {
+            Node *next_n = n->next;
+            free(n->value);
+            free(n);
+            n = next_n;
+        }
+        free(e->key);
+        free(e);
+        e = next_e;
+    }
+    free(m);
+}
+
+void map_print(Map *m) {
+    if (!m) return;
+    MapEntry *e = m->head;
+    while (e) {
+        printf("%s: [", e->key);
+        Node *n = e->head;
+        while (n) {
+            printf("\"%s\"", n->value);
+            if (n->next) printf(", ");
+            n = n->next;
+        }
+        printf("]\n");
+        e = e->next;
+    }
+}
+
+int main(void) {
+    Map *m = map_create();
+    if (!m) return EXIT_FAILURE;
+
+    if (map_insert(m, "fruits", "apple") != 0) goto cleanup;
+    if (map_insert(m, "colors", "red") != 0) goto cleanup;
+    if (map_insert(m, "fruits", "banana") != 0) goto cleanup;
+    if (map_insert(m, "colors", "blue") != 0) goto cleanup;
+    if (map_insert(m, "fruits", "cherry") != 0) goto cleanup;
+    if (map_insert(m, "animals", "dog") != 0) goto cleanup;
+
+    map_print(m);
+
+cleanup:
+    map_free(m);
+    return EXIT_SUCCESS;
+}
+```

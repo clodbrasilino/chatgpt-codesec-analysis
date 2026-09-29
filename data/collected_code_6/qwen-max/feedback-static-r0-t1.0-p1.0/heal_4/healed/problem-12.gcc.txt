@@ -1,0 +1,11 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-12.c: In function 'sort_matrix':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-12.c:17:19: error: assignment to 'int **' from incompatible pointer type 'int *' [-Wincompatible-pointer-types]
+   17 |         matrix[i] = (int *)realloc(matrix[i], (cols + 1) * sizeof(int));
+      |                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-12.c:18:25: error: assignment to 'int *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
+   18 |         matrix[i][cols] = cols;
+      |                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-12.c: In function 'main':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-12.c:30:28: error: variable-sized object may not be initialized except with an empty initializer
+   30 |     int data[rows][cols] = {
+      |                            ^

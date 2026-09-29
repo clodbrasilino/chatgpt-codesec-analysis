@@ -1,0 +1,58 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char* minimize_string_length(const char* str) {
+    if (str == NULL) {
+        return NULL;
+    }
+
+    int freq[256] = {0};
+    int len = strlen(str);
+    int i, j;
+    char char_to_remove;
+    int max_freq = 0;
+    int new_len;
+
+    for (i = 0; i < len; i++) {
+        freq[(unsigned char)str[i]]++;
+    }
+
+    for (i = 0; i < 256; i++) {
+        if (freq[i] > max_freq) {
+            max_freq = freq[i];
+            char_to_remove = (char)i;
+        }
+    }
+
+    new_len = len - max_freq;
+    char* result = (char*)malloc((new_len + 1) * sizeof(char));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    j = 0;
+    for (i = 0; i < len; i++) {
+        if (str[i] != char_to_remove) {
+            result[j++] = str[i];
+        }
+    }
+    result[j] = '\0';
+
+    return result;
+}
+
+int main(void) {
+    const char* input = "aabbbcc";
+    char* minimized = minimize_string_length(input);
+
+    if (minimized != NULL) {
+        printf("Original: %s\n", input);
+        printf("Minimized: %s\n", minimized);
+        free(minimized);
+    } else {
+        printf("Error: Unable to minimize string\n");
+    }
+
+    return 0;
+}

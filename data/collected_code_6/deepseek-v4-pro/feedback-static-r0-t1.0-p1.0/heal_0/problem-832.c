@@ -1,0 +1,91 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+int extract_max_numeric(const char *str, long *max_value) {
+    regex_t regex;
+    regmatch_t match[1];
+    const char *p = str;
+    int found = 0;
+    long current_value;
+    int ret;
+
+    if (str == NULL || max_value == NULL) {
+        return -1;
+    }
+
+    ret = regcomp(&regex, "-?[0-9]+", REG_EXTENDED);
+    if (ret != 0) {
+        return -1;
+    }
+
+    *max_value = 0;
+
+    while (regexec(&regex, p, 1, match, 0) == 0) {
+        char *endptr;
+        long len = match[0].rm_eo - match[0].rm_so;
+        char *num_str = (char *)malloc(len + 1);
+        
+        if (num_str == NULL) {
+            regfree(&regex);
+            return -1;
+        }
+        
+        strncpy(num_str, p + match[0].rm_so, len);
+        num_str[len] = '\0';
+        
+        current_value = strtol(num_str, &endptr, 10);
+        
+        if (endptr != num_str && *endptr == '\0') {
+            if (!found || current_value > *max_value) {
+                *max_value = current_value;
+                found = 1;
+            }
+        }
+        
+        free(num_str);
+        
+        if (match[0].rm_eo == match[0].rm_so) {
+            p++;
+        } else {
+            p += match[0].rm_eo;
+        }
+    }
+
+    regfree(&regex);
+    
+    if (!found) {
+        return -1;
+    }
+    
+    return 0;
+}
+
+int main(void) {
+    const char *test_strings[] = {
+        "abc123def456",
+        "no numbers here",
+        "-100 and 50 and 200",
+        "42",
+        "1a2b3c4d5e6f7g8h9i10",
+        NULL
+    };
+    
+    int i;
+    
+    for (i = 0; test_strings[i] != NULL; i++) {
+        long max_val;
+        int result = extract_max_numeric(test_strings[i], &max_val);
+        
+        printf("String: \"%s\"\n", test_strings[i]);
+        if (result == 0) {
+            printf("Maximum numeric value: %ld\n", max_val);
+        } else {
+            printf("No numeric values found or error occurred\n");
+        }
+        printf("\n");
+    }
+    
+    return 0;
+}

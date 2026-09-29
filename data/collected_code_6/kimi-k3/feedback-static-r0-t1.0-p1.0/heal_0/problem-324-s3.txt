@@ -1,0 +1,102 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stddef.h>
+
+typedef struct {
+    int *data;
+    size_t size;
+} Tuple;
+
+typedef struct {
+    Tuple *tuples;
+    size_t count;
+} TupleArray;
+
+int sum_alternate_chains(const TupleArray *arr, int start_index, long *result) {
+    size_t i;
+    size_t j;
+    long sum;
+
+    if (arr == NULL || result == NULL) {
+        return -1;
+    }
+
+    if (arr->count == 0 || arr->tuples == NULL) {
+        *result = 0;
+        return 0;
+    }
+
+    if (start_index != 0 && start_index != 1) {
+        return -1;
+    }
+
+    sum = 0;
+
+    for (i = (size_t)start_index; i < arr->count; i += 2) {
+        if (arr->tuples[i].data != NULL && arr->tuples[i].size > 0) {
+            for (j = 0; j < arr->tuples[i].size; j++) {
+                sum += arr->tuples[i].data[j];
+            }
+        }
+    }
+
+    *result = sum;
+    return 0;
+}
+
+int main(void) {
+    TupleArray arr;
+    long result_even;
+    long result_odd;
+    int status_even;
+    int status_odd;
+    size_t i;
+    size_t j;
+
+    int data0[] = {1, 2, 3};
+    int data1[] = {4, 5};
+    int data2[] = {6, 7, 8, 9};
+    int data3[] = {10};
+    int data4[] = {11, 12};
+
+    Tuple tuples[] = {
+        {data0, 3},
+        {data1, 2},
+        {data2, 4},
+        {data3, 1},
+        {data4, 2}
+    };
+
+    arr.tuples = tuples;
+    arr.count = 5;
+
+    status_even = sum_alternate_chains(&arr, 0, &result_even);
+    status_odd = sum_alternate_chains(&arr, 1, &result_odd);
+
+    if (status_even == 0) {
+        printf("Sum of even-indexed chains (0, 2, 4): %ld\n", result_even);
+    } else {
+        fprintf(stderr, "Error calculating even-indexed chains\n");
+    }
+
+    if (status_odd == 0) {
+        printf("Sum of odd-indexed chains (1, 3): %ld\n", result_odd);
+    } else {
+        fprintf(stderr, "Error calculating odd-indexed chains\n");
+    }
+
+    for (i = 0; i < arr.count; i++) {
+        printf("Tuple %zu: [", i);
+        for (j = 0; j < arr.tuples[i].size; j++) {
+            printf("%d", arr.tuples[i].data[j]);
+            if (j < arr.tuples[i].size - 1) {
+                printf(", ");
+            }
+        }
+        printf("]\n");
+    }
+
+    return (status_even == 0 && status_odd == 0) ? EXIT_SUCCESS : EXIT_FAILURE;
+}
+```

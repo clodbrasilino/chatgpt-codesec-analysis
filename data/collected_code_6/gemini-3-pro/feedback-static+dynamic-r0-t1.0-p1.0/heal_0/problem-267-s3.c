@@ -1,0 +1,46 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+unsigned long long sumOfSquaresOfOddNumbers(unsigned int n) {
+    if (n == 0) {
+        return 0;
+    }
+    
+    unsigned long long sum = 0;
+    
+    for (unsigned int i = 1; i <= n; i++) {
+        unsigned long long oddNumber = 2ULL * i - 1;
+        
+        if (oddNumber > UINT_MAX / oddNumber) {
+            fprintf(stderr, "Error: Integer overflow would occur during multiplication.\n");
+            exit(EXIT_FAILURE);
+        }
+        
+        unsigned long long square = oddNumber * oddNumber;
+        
+        if (sum > ULLONG_MAX - square) {
+            fprintf(stderr, "Error: Integer overflow would occur during addition.\n");
+            exit(EXIT_FAILURE);
+        }
+        
+        sum += square;
+    }
+    
+    return sum;
+}
+
+int main(void) {
+    unsigned int n;
+    
+    printf("Enter the value of n: ");
+    if (scanf("%u", &n) != 1) {
+        fprintf(stderr, "Error: Invalid input.\n");
+        return EXIT_FAILURE;
+    }
+    
+    unsigned long long result = sumOfSquaresOfOddNumbers(n);
+    printf("Sum of squares of the first %u odd natural numbers is %llu\n", n, result);
+    
+    return EXIT_SUCCESS;
+}

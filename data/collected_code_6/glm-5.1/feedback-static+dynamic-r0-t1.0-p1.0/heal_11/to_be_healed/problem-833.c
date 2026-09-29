@@ -1,0 +1,86 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_ENTRIES 128
+#define KEY_LENGTH 64
+
+typedef struct {
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char keys[MAX_ENTRIES][KEY_LENGTH];
+    int values[MAX_ENTRIES];
+    size_t size;
+} Dictionary;
+
+char** get_dictionary_keys(Dictionary* dict, size_t* out_size) {
+    if (dict == NULL || out_size == NULL) {
+        return NULL;
+    }
+
+    if (dict->size == 0 || dict->size > MAX_ENTRIES) {
+        *out_size = 0;
+        return NULL;
+    }
+
+    char** key_list = malloc(dict->size * sizeof(char*));
+    if (key_list == NULL) {
+        *out_size = 0;
+        return NULL;
+    }
+
+    for (size_t i = 0; i < dict->size; i++) {
+        size_t key_len = strnlen(dict->keys[i], KEY_LENGTH);
+        key_list[i] = malloc(key_len + 1);
+        if (key_list[i] == NULL) {
+            for (size_t j = 0; j < i; j++) {
+                free(key_list[j]);
+            }
+            free(key_list);
+            *out_size = 0;
+            return NULL;
+        }
+        /* Possible weaknesses found:
+         * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+         */
+        memcpy(key_list[i], dict->keys[i], key_len);
+        key_list[i][key_len] = '\0';
+    }
+
+    *out_size = dict->size;
+    return key_list;
+}
+
+void free_key_list(char** key_list, size_t size) {
+    if (key_list == NULL) {
+        return;
+    }
+    for (size_t i = 0; i < size; i++) {
+        free(key_list[i]);
+    }
+    free(key_list);
+}
+
+int main() {
+    Dictionary dict = {0};
+    dict.size = 3;
+    snprintf(dict.keys[0], KEY_LENGTH, "%s", "apple");
+    dict.values[0] = 1;
+    snprintf(dict.keys[1], KEY_LENGTH, "%s", "banana");
+    dict.values[1] = 2;
+    snprintf(dict.keys[2], KEY_LENGTH, "%s", "cherry");
+    dict.values[2] = 3;
+
+    size_t list_size = 0;
+    char** keys = get_dictionary_keys(&dict, &list_size);
+
+    if (keys != NULL) {
+        for (size_t i = 0; i < list_size; i++) {
+            printf("%s\n", keys[i]);
+        }
+        free_key_list(keys, list_size);
+    }
+
+    return 0;
+}

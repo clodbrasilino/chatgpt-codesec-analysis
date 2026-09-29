@@ -52,7 +52,7 @@ p("rounds-to-detection-free distribution (repaired samples, all models): "
 p("\n## 2. Channel comparison (unique model x basename, anywhere in chain)")
 T_or = T_fz = T_bo = 0
 for m in MODELS:
-    d = REPO / "collected_code_6" / m / SLUG
+    d = REPO / "data" / "collected_code_6" / m / SLUG
     oracle, fuzz = set(), set()
     for f in d.rglob("*.asan.txt"):
         if DET.search(f.read_text(errors="replace")):
@@ -73,7 +73,7 @@ p(f"TOTAL oracle={T_or} AFL={T_fz} overlap={T_bo} "
 # ---------- 3. fuzzable share at round 0 ----------
 p("\n## 3. Fuzzable share at round 0")
 for m in MODELS:
-    h0 = REPO / "collected_code_6" / m / SLUG / "heal_0"
+    h0 = REPO / "data" / "collected_code_6" / m / SLUG / "heal_0"
     tot_f = noif = 0
     for f in h0.glob("*.fuzz.txt"):
         tot_f += 1
@@ -85,7 +85,7 @@ for m in MODELS:
 p("\n## 4. Detection classes at round 0 (fuzz channel, attributed + signal-only)")
 cls = Counter()
 for m in MODELS:
-    h0 = REPO / "collected_code_6" / m / SLUG / "heal_0"
+    h0 = REPO / "data" / "collected_code_6" / m / SLUG / "heal_0"
     for f in h0.glob("*.fuzz.txt"):
         for line in f.read_text(errors="replace").splitlines():
             if not DET.search(line):
@@ -114,7 +114,7 @@ for k, v in cls.most_common(15):
 p("\n## 5. Sanitizer-oracle classes (anywhere in chain, for complementarity)")
 ocls = Counter()
 for m in MODELS:
-    d = REPO / "collected_code_6" / m / SLUG
+    d = REPO / "data" / "collected_code_6" / m / SLUG
     for f in d.rglob("*.asan.txt"):
         for line in f.read_text(errors="replace").splitlines():
             if DET.search(line):

@@ -1,0 +1,66 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-493.c: In function 'calculateHexagonGrid':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-493.c:28:41: error: '(Point *)(*(hexGrid + (sizetype)((long unsigned int)(i * cols + j) * 8)) + (sizetype)((long unsigned int)k * 96))' is a pointer; did you mean to use '->'?
+   28 |                 hexGrid[i * cols + j][k].x = 0.0;
+      |                                         ^
+      |                                         ->
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-493.c:29:41: error: '(Point *)(*(hexGrid + (sizetype)((long unsigned int)(i * cols + j) * 8)) + (sizetype)((long unsigned int)k * 96))' is a pointer; did you mean to use '->'?
+   29 |                 hexGrid[i * cols + j][k].y = 0.0;
+      |                                         ^
+      |                                         ->
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-493.c:35:37: error: '(Point *)*(hexGrid + (sizetype)((long unsigned int)(i * cols + j) * 8))' is a pointer; did you mean to use '->'?
+   35 |             hexGrid[i * cols + j][0].x = x_offset;
+      |                                     ^
+      |                                     ->
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-493.c:36:37: error: '(Point *)*(hexGrid + (sizetype)((long unsigned int)(i * cols + j) * 8))' is a pointer; did you mean to use '->'?
+   36 |             hexGrid[i * cols + j][0].y = y_offset;
+      |                                     ^
+      |                                     ->
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-493.c:37:37: error: '(Point *)(*(hexGrid + (sizetype)((long unsigned int)(i * cols + j) * 8)) + 96)' is a pointer; did you mean to use '->'?
+   37 |             hexGrid[i * cols + j][1].x = x_offset + size * 0.5;
+      |                                     ^
+      |                                     ->
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-493.c:38:37: error: '(Point *)(*(hexGrid + (sizetype)((long unsigned int)(i * cols + j) * 8)) + 96)' is a pointer; did you mean to use '->'?
+   38 |             hexGrid[i * cols + j][1].y = y_offset - (size * 0.866);
+      |                                     ^
+      |                                     ->
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-493.c:39:37: error: '(Point *)(*(hexGrid + (sizetype)((long unsigned int)(i * cols + j) * 8)) + 192)' is a pointer; did you mean to use '->'?
+   39 |             hexGrid[i * cols + j][2].x = x_offset + size * 1.5;
+      |                                     ^
+      |                                     ->
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-493.c:40:37: error: '(Point *)(*(hexGrid + (sizetype)((long unsigned int)(i * cols + j) * 8)) + 192)' is a pointer; did you mean to use '->'?
+   40 |             hexGrid[i * cols + j][2].y = y_offset;
+      |                                     ^
+      |                                     ->
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-493.c:41:37: error: '(Point *)(*(hexGrid + (sizetype)((long unsigned int)(i * cols + j) * 8)) + 288)' is a pointer; did you mean to use '->'?
+   41 |             hexGrid[i * cols + j][3].x = x_offset + size * 1.5;
+      |                                     ^
+      |                                     ->
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-493.c:42:37: error: '(Point *)(*(hexGrid + (sizetype)((long unsigned int)(i * cols + j) * 8)) + 288)' is a pointer; did you mean to use '->'?
+   42 |             hexGrid[i * cols + j][3].y = y_offset + (size * 0.866);
+      |                                     ^
+      |                                     ->
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-493.c:43:37: error: '(Point *)(*(hexGrid + (sizetype)((long unsigned int)(i * cols + j) * 8)) + 384)' is a pointer; did you mean to use '->'?
+   43 |             hexGrid[i * cols + j][4].x = x_offset + size * 0.5;
+      |                                     ^
+      |                                     ->
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-493.c:44:37: error: '(Point *)(*(hexGrid + (sizetype)((long unsigned int)(i * cols + j) * 8)) + 384)' is a pointer; did you mean to use '->'?
+   44 |             hexGrid[i * cols + j][4].y = y_offset + (size * 1.732);
+      |                                     ^
+      |                                     ->
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-493.c:45:37: error: '(Point *)(*(hexGrid + (sizetype)((long unsigned int)(i * cols + j) * 8)) + 480)' is a pointer; did you mean to use '->'?
+   45 |             hexGrid[i * cols + j][5].x = x_offset;
+      |                                     ^
+      |                                     ->
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-493.c:46:37: error: '(Point *)(*(hexGrid + (sizetype)((long unsigned int)(i * cols + j) * 8)) + 480)' is a pointer; did you mean to use '->'?
+   46 |             hexGrid[i * cols + j][5].y = y_offset + (size * 0.866);
+      |                                     ^
+      |                                     ->
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-493.c: In function 'printHexagonGrid':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-493.c:57:82: error: '(Point *)(*(hexGrid + (sizetype)((long unsigned int)(i * cols + j) * 8)) + (sizetype)((long unsigned int)k * 96))' is a pointer; did you mean to use '->'?
+   57 |                 printf("  Vertex %d: (%.2f, %.2f)\n", k, hexGrid[i * cols + j][k].x, hexGrid[i * cols + j][k].y);
+      |                                                                                  ^
+      |                                                                                  ->
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-493.c:57:110: error: '(Point *)(*(hexGrid + (sizetype)((long unsigned int)(i * cols + j) * 8)) + (sizetype)((long unsigned int)k * 96))' is a pointer; did you mean to use '->'?
+   57 |                 printf("  Vertex %d: (%.2f, %.2f)\n", k, hexGrid[i * cols + j][k].x, hexGrid[i * cols + j][k].y);
+      |                                                                                                              ^
+      |                                                                                                              ->

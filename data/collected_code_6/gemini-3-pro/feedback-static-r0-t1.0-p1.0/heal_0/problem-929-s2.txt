@@ -1,0 +1,74 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Tuple {
+    int *elements;
+    size_t size;
+};
+
+struct CountResult {
+    int element;
+    size_t count;
+};
+
+struct CountArray {
+    struct CountResult *results;
+    size_t size;
+};
+
+struct CountArray count_repeated_items(const struct Tuple *tuple) {
+    struct CountArray count_array = {NULL, 0};
+
+    if (tuple == NULL || tuple->elements == NULL || tuple->size == 0) {
+        return count_array;
+    }
+
+    count_array.results = calloc(tuple->size, sizeof(struct CountResult));
+    if (count_array.results == NULL) {
+        return count_array;
+    }
+
+    for (size_t i = 0; i < tuple->size; ++i) {
+        int current = tuple->elements[i];
+        int found = 0;
+
+        for (size_t j = 0; j < count_array.size; ++j) {
+            if (count_array.results[j].element == current) {
+                count_array.results[j].count++;
+                found = 1;
+                break;
+            }
+        }
+
+        if (!found) {
+            count_array.results[count_array.size].element = current;
+            count_array.results[count_array.size].count = 1;
+            count_array.size++;
+        }
+    }
+
+    return count_array;
+}
+
+int main(void) {
+    int data[] = {1, 2, 2, 3, 4, 4, 4, 5};
+    struct Tuple tuple;
+    tuple.elements = data;
+    tuple.size = sizeof(data) / sizeof(data[0]);
+
+    struct CountArray counts = count_repeated_items(&tuple);
+
+    if (counts.results != NULL) {
+        for (size_t i = 0; i < counts.size; ++i) {
+            printf("Element: %d, Count: %zu\n", counts.results[i].element, counts.results[i].count);
+        }
+        free(counts.results);
+        counts.results = NULL;
+    } else {
+        printf("Failed to count items or empty tuple.\n");
+    }
+
+    return 0;
+}
+```

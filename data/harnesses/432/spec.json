@@ -1,0 +1,50 @@
+{
+  "task_id": 432,
+  "text": "Write a C function to find the median of a trapezium.",
+  "fn_candidates": [
+    "median_trapezium",
+    "MedianTrapezium",
+    "medianTrapezium",
+    "mediantrapezium"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "median_trapezium",
+      "args": [
+        15,
+        25,
+        35
+      ],
+      "expected": 20,
+      "assert_src": "assert median_trapezium(15,25,35)==20"
+    },
+    {
+      "fn_name": "median_trapezium",
+      "args": [
+        10,
+        20,
+        30
+      ],
+      "expected": 15,
+      "assert_src": "assert median_trapezium(10,20,30)==15"
+    },
+    {
+      "fn_name": "median_trapezium",
+      "args": [
+        6,
+        9,
+        4
+      ],
+      "expected": 7.5,
+      "assert_src": "assert median_trapezium(6,9,4)==7.5"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

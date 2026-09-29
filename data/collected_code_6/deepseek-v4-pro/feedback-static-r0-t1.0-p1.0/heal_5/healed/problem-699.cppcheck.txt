@@ -1,0 +1,4 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-699.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-699.c:53:65: style: Same value in both branches of ternary operator. [duplicateValueTernary]
+    size_t max_len = sizeof(str1) > sizeof(str2) ? sizeof(str1) : sizeof(str2);
+                                                                ^

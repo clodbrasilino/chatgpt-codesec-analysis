@@ -1,0 +1,162 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node *next;
+};
+
+struct Node *createNode(int data)
+{
+    struct Node *newNode = (struct Node *)malloc(sizeof(struct Node));
+    if (newNode == NULL) {
+        return NULL;
+    }
+    newNode->data = data;
+    newNode->next = NULL;
+    return newNode;
+}
+
+void freeList(struct Node *head)
+{
+    struct Node *current = head;
+    while (current != NULL) {
+        struct Node *next = current->next;
+        free(current);
+        current = next;
+    }
+}
+
+int appendNode(struct Node **head, struct Node **tail, int data)
+{
+    struct Node *newNode;
+    if (head == NULL || tail == NULL || data < 0 || data > 9) {
+        return 0;
+    }
+    newNode = createNode(data);
+    if (newNode == NULL) {
+        return 0;
+    }
+    if (*head == NULL) {
+        *head = newNode;
+        *tail = newNode;
+    } else {
+        (*tail)->next = newNode;
+        *tail = newNode;
+    }
+    return 1;
+}
+
+struct Node *addTwoLists(const struct Node *list1, const struct Node *list2)
+{
+    struct Node *resultHead = NULL;
+    struct Node *resultTail = NULL;
+    int carry = 0;
+
+    while (list1 != NULL || list2 != NULL || carry != 0) {
+        int sum = carry;
+        int digit;
+        struct Node *newNode;
+
+        if (list1 != NULL) {
+            if (list1->data < 0 || list1->data > 9) {
+                freeList(resultHead);
+                return NULL;
+            }
+            sum += list1->data;
+            list1 = list1->next;
+        }
+        if (list2 != NULL) {
+            if (list2->data < 0 || list2->data > 9) {
+                freeList(resultHead);
+                return NULL;
+            }
+            sum += list2->data;
+            list2 = list2->next;
+        }
+
+        carry = sum / 10;
+        digit = sum % 10;
+
+        newNode = createNode(digit);
+        if (newNode == NULL) {
+            freeList(resultHead);
+            return NULL;
+        }
+
+        if (resultHead == NULL) {
+            resultHead = newNode;
+            resultTail = newNode;
+        } else {
+            resultTail->next = newNode;
+            resultTail = newNode;
+        }
+    }
+
+    if (resultHead == NULL) {
+        resultHead = createNode(0);
+    }
+
+    return resultHead;
+}
+
+void printList(const struct Node *head)
+{
+    const struct Node *current = head;
+    while (current != NULL) {
+        printf("%d", current->data);
+        if (current->next != NULL) {
+            printf(" -> ");
+        }
+        current = current->next;
+    }
+    printf("\n");
+}
+
+int main(void)
+{
+    struct Node *list1Head = NULL;
+    struct Node *list1Tail = NULL;
+    struct Node *list2Head = NULL;
+    struct Node *list2Tail = NULL;
+    struct Node *sumList = NULL;
+
+    if (!appendNode(&list1Head, &list1Tail, 2) ||
+        !appendNode(&list1Head, &list1Tail, 4) ||
+        !appendNode(&list1Head, &list1Tail, 3)) {
+        fprintf(stderr, "Error: failed to build first list\n");
+        freeList(list1Head);
+        return EXIT_FAILURE;
+    }
+
+    if (!appendNode(&list2Head, &list2Tail, 5) ||
+        !appendNode(&list2Head, &list2Tail, 6) ||
+        !appendNode(&list2Head, &list2Tail, 4)) {
+        fprintf(stderr, "Error: failed to build second list\n");
+        freeList(list1Head);
+        freeList(list2Head);
+        return EXIT_FAILURE;
+    }
+
+    printf("List 1: ");
+    printList(list1Head);
+    printf("List 2: ");
+    printList(list2Head);
+
+    sumList = addTwoLists(list1Head, list2Head);
+    if (sumList == NULL) {
+        fprintf(stderr, "Error: failed to add lists\n");
+        freeList(list1Head);
+        freeList(list2Head);
+        return EXIT_FAILURE;
+    }
+
+    printf("Sum:    ");
+    printList(sumList);
+
+    freeList(list1Head);
+    freeList(list2Head);
+    freeList(sumList);
+
+    return EXIT_SUCCESS;
+}

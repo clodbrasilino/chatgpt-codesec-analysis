@@ -1,0 +1,24 @@
+#include <stdio.h>
+#include <string.h>
+
+int count_odd_rotations(const char *str, size_t len) {
+    int count = 0;
+    for (size_t i = 0; i < len; i++) {
+        int sum = 0;
+        for (size_t j = 0; j < len; j++) {
+            sum += str[(i + j) % len] - '0';
+        }
+        if (sum % 2 != 0) {
+            count++;
+        }
+    }
+    return count;
+}
+
+int main() {
+    const char binary_string[] = "1001";
+    size_t len = 4;
+    int result = count_odd_rotations(binary_string, len);
+    printf("Count of rotations with odd value: %d\n", result);
+    return 0;
+}

@@ -1,0 +1,39 @@
+#include <stdio.h>
+#include <stddef.h>
+
+int sum_column(const int * const *matrix, size_t rows, size_t cols, size_t column, long long *sum) {
+    if (matrix == NULL || sum == NULL || column >= cols) {
+        return -1;
+    }
+
+    long long total = 0;
+    for (size_t row = 0; row < rows; ++row) {
+        if (matrix[row] == NULL) {
+            return -1;
+        }
+        total += matrix[row][column];
+    }
+
+    *sum = total;
+    return 0;
+}
+
+int main(void) {
+    const int row0[] = {1, 2, 3};
+    const int row1[] = {4, 5, 6};
+    const int row2[] = {7, 8, 9};
+    const int *matrix[] = {row0, row1, row2};
+
+    size_t rows = sizeof(matrix) / sizeof(matrix[0]);
+    size_t cols = sizeof(row0) / sizeof(row0[0]);
+    size_t column = 1;
+    long long sum = 0;
+
+    if (sum_column(matrix, rows, cols, column, &sum) != 0) {
+        fprintf(stderr, "Error\n");
+        return 1;
+    }
+
+    printf("%lld\n", sum);
+    return 0;
+}

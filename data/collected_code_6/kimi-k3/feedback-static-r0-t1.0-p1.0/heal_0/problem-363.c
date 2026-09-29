@@ -1,0 +1,40 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+int add_k_to_tuple(int *tuple, size_t size, int k) {
+    if (tuple == NULL) {
+        return -1;
+    }
+    
+    for (size_t i = 0; i < size; i++) {
+        tuple[i] += k;
+    }
+    
+    return 0;
+}
+
+int main(void) {
+    int tuple[] = {1, 2, 3, 4, 5};
+    size_t size = sizeof(tuple) / sizeof(tuple[0]);
+    int k = 10;
+    
+    printf("Original tuple: ");
+    for (size_t i = 0; i < size; i++) {
+        printf("%d ", tuple[i]);
+    }
+    printf("\n");
+    
+    if (add_k_to_tuple(tuple, size, k) != 0) {
+        fprintf(stderr, "Error: Failed to add k to tuple\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("Modified tuple: ");
+    for (size_t i = 0; i < size; i++) {
+        printf("%d ", tuple[i]);
+    }
+    printf("\n");
+    
+    return EXIT_SUCCESS;
+}

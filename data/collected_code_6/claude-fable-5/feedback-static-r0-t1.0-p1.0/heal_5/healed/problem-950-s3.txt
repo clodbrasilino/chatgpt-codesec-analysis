@@ -1,0 +1,59 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+#define ZODIAC_COUNT 12
+
+static const char *chinese_zodiac(int year)
+{
+    static const char *const signs[ZODIAC_COUNT] = {
+        "Monkey", "Rooster", "Dog", "Pig",
+        "Rat", "Ox", "Tiger", "Rabbit",
+        "Dragon", "Snake", "Horse", "Goat"
+    };
+    int index;
+
+    index = year % ZODIAC_COUNT;
+    if (index < 0) {
+        index += ZODIAC_COUNT;
+    }
+    if (index < 0 || index >= ZODIAC_COUNT) {
+        return "Unknown";
+    }
+    return signs[index];
+}
+
+int main(void)
+{
+    int year;
+    int result;
+
+    printf("Enter a year: ");
+    result = scanf("%d", &year);
+    if (result != 1) {
+        fprintf(stderr, "Error: invalid input, expected an integer year.\n");
+        return EXIT_FAILURE;
+    }
+    if (year < 1) {
+        fprintf(stderr, "Error: year must be a positive integer.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("The Chinese zodiac sign for year %d is: %s\n",
+           year, chinese_zodiac(year));
+
+    return EXIT_SUCCESS;
+}
+```
+
+Analysis of the flagged weakness (CWE-119/CWE-120, statically-sized array, risk 2):
+
+- **The warning is a false positive in practice.** Flawfinder flags any fixed-size array declaration (`signs[ZODIAC_COUNT]`) because such arrays *can* be misused, but it performs no data-flow analysis. Here the array is read-only (`const char *const`), never written to after initialization, so a buffer overflow via writes is impossible.
+
+- **Index bounds are already fully guarded.** The only access, `signs[index]`, is protected twice:
+  1. `index = year % ZODIAC_COUNT` mathematically constrains the value to `(-11, 11)`; the `if (index < 0) index += ZODIAC_COUNT;` normalization handles negative remainders (defensive, since `year` is validated as positive, but correct if the function were reused elsewhere).
+  2. An explicit range check `if (index < 0 || index >= ZODIAC_COUNT)` acts as a belt-and-suspenders guard before dereferencing.
+
+- **Input handling is sound.** `scanf("%d", &year)` return value is checked, and negative/zero years are rejected before use, so no unvalidated data reaches the indexing logic.
+
+No functional changes were required — the original code already implements the recommended mitigations (bounds checking, size defined via a single macro, immutable data). The rewrite simply removes the analysis comments as requested.

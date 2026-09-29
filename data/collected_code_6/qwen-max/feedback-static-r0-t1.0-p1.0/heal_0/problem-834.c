@@ -1,0 +1,70 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+void generateSpiralMatrix(int n, int **matrix) {
+    int num = 1;
+    int left = 0, right = n - 1, top = 0, bottom = n - 1;
+
+    while (left <= right && top <= bottom) {
+        for (int i = left; i <= right; i++) {
+            matrix[top][i] = num++;
+        }
+        top++;
+
+        for (int i = top; i <= bottom; i++) {
+            matrix[i][right] = num++;
+        }
+        right--;
+
+        if (top <= bottom) {
+            for (int i = right; i >= left; i--) {
+                matrix[bottom][i] = num++;
+            }
+            bottom--;
+        }
+
+        if (left <= right) {
+            for (int i = bottom; i >= top; i--) {
+                matrix[i][left] = num++;
+            }
+            left++;
+        }
+    }
+}
+
+int main() {
+    int n;
+    scanf("%d", &n);
+
+    int **matrix = (int **)malloc(n * sizeof(int *));
+    if (matrix == NULL) {
+        return 1;
+    }
+
+    for (int i = 0; i < n; i++) {
+        matrix[i] = (int *)malloc(n * sizeof(int));
+        if (matrix[i] == NULL) {
+            for (int j = 0; j < i; j++) {
+                free(matrix[j]);
+            }
+            free(matrix);
+            return 1;
+        }
+    }
+
+    generateSpiralMatrix(n, matrix);
+
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            printf("%d ", matrix[i][j]);
+        }
+        printf("\n");
+    }
+
+    for (int i = 0; i < n; i++) {
+        free(matrix[i]);
+    }
+    free(matrix);
+
+    return 0;
+}

@@ -1,0 +1,11 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_0/problem-886-s3.c: In function 'calculate_average':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_0/problem-886-s3.c:27:29: error: 'DBL_MAX' undeclared (first use in this function)
+   27 |         if (fabs(list[i]) > DBL_MAX - sum) {
+      |                             ^~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_0/problem-886-s3.c:6:1: note: 'DBL_MAX' is defined in header '<float.h>'; this is probably fixable by adding '#include <float.h>'
+    5 | #include <math.h>
+  +++ |+#include <float.h>
+    6 | 
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_0/problem-886-s3.c:27:29: note: each undeclared identifier is reported only once for each function it appears in
+   27 |         if (fabs(list[i]) > DBL_MAX - sum) {
+      |                             ^~~~~~~

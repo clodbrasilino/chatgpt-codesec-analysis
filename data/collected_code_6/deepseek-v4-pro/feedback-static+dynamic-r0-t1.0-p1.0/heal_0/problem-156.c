@@ -1,0 +1,119 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <errno.h>
+#include <limits.h>
+
+typedef struct {
+    int *values;
+    size_t size;
+} IntTuple;
+
+static int parse_single_int(const char *str, int *out) {
+    if (str == NULL || *str == '\0') {
+        return -1;
+    }
+
+    errno = 0;
+    char *endptr = NULL;
+    long val = strtol(str, &endptr, 10);
+
+    if (errno == ERANGE || val > INT_MAX || val < INT_MIN) {
+        return -1;
+    }
+    if (endptr == str || *endptr != '\0') {
+        return -1;
+    }
+
+    *out = (int)val;
+    return 0;
+}
+
+int strings_to_ints(const char **strs, size_t count, IntTuple *result) {
+    if (strs == NULL && count > 0) {
+        return -1;
+    }
+    if (result == NULL) {
+        return -1;
+    }
+
+    result->values = NULL;
+    result->size = 0;
+
+    if (count == 0) {
+        return 0;
+    }
+
+    int *tmp = (int *)malloc(count * sizeof(int));
+    if (tmp == NULL) {
+        return -1;
+    }
+
+    for (size_t i = 0; i < count; i++) {
+        if (parse_single_int(strs[i], &tmp[i]) != 0) {
+            free(tmp);
+            return -1;
+        }
+    }
+
+    result->values = tmp;
+    result->size = count;
+    return 0;
+}
+
+void free_int_tuple(IntTuple *t) {
+    if (t != NULL) {
+        free(t->values);
+        t->values = NULL;
+        t->size = 0;
+    }
+}
+
+int main(void) {
+    const char *input1[] = {"10", "20", "30", "40"};
+    IntTuple t1;
+    
+    if (strings_to_ints(input1, 4, &t1) == 0) {
+        for (size_t i = 0; i < t1.size; i++) {
+            printf("%d ", t1.values[i]);
+        }
+        printf("\n");
+        free_int_tuple(&t1);
+    } else {
+        printf("Conversion failed for input1\n");
+    }
+
+    const char *input2[] = {"5", "abc", "15"};
+    IntTuple t2;
+    
+    if (strings_to_ints(input2, 3, &t2) == 0) {
+        for (size_t i = 0; i < t2.size; i++) {
+            printf("%d ", t2.values[i]);
+        }
+        printf("\n");
+        free_int_tuple(&t2);
+    } else {
+        printf("Conversion failed for input2\n");
+    }
+
+    const char *input3[] = {NULL};
+    IntTuple t3;
+
+    if (strings_to_ints(input3, 1, &t3) == 0) {
+        for (size_t i = 0; i < t3.size; i++) {
+            printf("%d ", t3.values[i]);
+        }
+        printf("\n");
+        free_int_tuple(&t3);
+    } else {
+        printf("Conversion failed for input3\n");
+    }
+
+    IntTuple t4;
+    if (strings_to_ints(NULL, 0, &t4) == 0) {
+        printf("Empty tuple size: %zu\n", t4.size);
+        free_int_tuple(&t4);
+    }
+
+    return 0;
+}

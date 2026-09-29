@@ -1,0 +1,83 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <limits.h>
+
+typedef struct {
+    int type; // 0 for int, 1 for float, 2 for string
+    union {
+        int i;
+        float f;
+        char *s;
+    } value;
+} HeteroItem;
+
+int compareHeteroItems(const void *a, const void *b) {
+    const HeteroItem *itemA = (const HeteroItem *)a;
+    const HeteroItem *itemB = (const HeteroItem *)b;
+
+    if (itemA->type == 0 && itemB->type == 0) {
+        return (itemA->value.i - itemB->value.i);
+    }
+    if (itemA->type == 1 && itemB->type == 1) {
+        if (itemA->value.f < itemB->value.f) return -1;
+        if (itemA->value.f > itemB->value.f) return 1;
+        return 0;
+    }
+    if (itemA->type == 2 && itemB->type == 2) {
+        return strcmp(itemA->value.s, itemB->value.s);
+    }
+    if (itemA->type == 0 && itemB->type == 1) {
+        return (itemA->value.i < itemB->value.f) ? -1 : 1;
+    }
+    if (itemA->type == 1 && itemB->type == 0) {
+        return (itemA->value.f < itemB->value.i) ? -1 : 1;
+    }
+    if (itemA->type == 0 && itemB->type == 2) {
+        return 1;
+    }
+    if (itemA->type == 2 && itemB->type == 0) {
+        return -1;
+    }
+    if (itemA->type == 1 && itemB->type == 2) {
+        return 1;
+    }
+    if (itemA->type == 2 && itemB->type == 1) {
+        return -1;
+    }
+    return 0;
+}
+
+const HeteroItem *findMinHeteroItem(const HeteroItem *list, size_t count) {
+    if (count == 0) return NULL;
+    qsort((void *)list, count, sizeof(HeteroItem), compareHeteroItems);
+    return &list[0];
+}
+
+void printHeteroItem(const HeteroItem *item) {
+    if (item->type == 0) {
+        printf("%d\n", item->value.i);
+    } else if (item->type == 1) {
+        printf("%.2f\n", item->value.f);
+    } else if (item->type == 2) {
+        printf("%s\n", item->value.s);
+    }
+}
+
+int main() {
+    HeteroItem list[] = {
+        {0, .value = {.i = 10}},
+        {1, .value = {.f = 5.5f}},
+        {2, .value = {.s = "hello"}},
+        {0, .value = {.i = 3}},
+        {1, .value = {.f = 7.2f}},
+        {2, .value = {.s = "world"}},
+    };
+    size_t count = sizeof(list) / sizeof(list[0]);
+
+    const HeteroItem *minItem = findMinHeteroItem(list, count);
+    if (minItem != NULL) {
+        printHeteroItem(minItem);
+    }
+    return 0;
+}

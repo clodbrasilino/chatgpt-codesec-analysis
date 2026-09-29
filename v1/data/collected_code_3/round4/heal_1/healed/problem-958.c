@@ -1,0 +1,72 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+char* intToRoman(int num) {
+    char* result = (char*)malloc(sizeof(char) * 16);
+    if(result == NULL) return NULL;
+    char* ptr = result;
+    while(num != 0) {
+        if(num >= 1000) {
+            *ptr++ = 'M';
+            num -= 1000;
+        } else if(num >= 900) {
+            *ptr++ = 'C';
+            *ptr++ = 'M';
+            num -= 900;
+        } else if(num >= 500) {
+            *ptr++ = 'D';
+            num -= 500;
+        } else if(num >= 400) {
+            *ptr++ = 'C';
+            *ptr++ = 'D';
+            num -= 400;
+        } else if(num >= 100) {
+            *ptr++ = 'C';
+            num -= 100;
+        } else if(num >= 90) {
+            *ptr++ = 'X';
+            *ptr++ = 'C';
+            num -= 90;
+        } else if(num >= 50) {
+            *ptr++ = 'L';
+            num -= 50;
+        } else if(num >= 40) {
+            *ptr++ = 'X';
+            *ptr++ = 'L';
+            num -= 40;
+        } else if(num >= 10) {
+            *ptr++ = 'X';
+            num -= 10;
+        } else if(num >= 9) {
+            *ptr++ = 'I';
+            *ptr++ = 'X';
+            num -= 9;
+        } else if(num >= 5) {
+            *ptr++ = 'V';
+            num -= 5;
+        } else if(num >= 4) {
+            *ptr++ = 'I';
+            *ptr++ = 'V';
+            num -= 4;
+        } else if(num >= 1) {
+            *ptr++ = 'I';
+            num -= 1;
+        }
+    }
+    *ptr = '\0';
+    return result;
+}
+
+int main() {
+    int num;
+    printf("Enter a number: ");
+    scanf("%d", &num);
+    char* roman = intToRoman(num);
+    if (roman == NULL) {
+        fprintf(stderr, "Could not allocate memory for roman numerals.\n");
+        return 1;
+    }
+    printf("Roman numeral: %s\n", roman);
+    free(roman);
+    return 0;
+}

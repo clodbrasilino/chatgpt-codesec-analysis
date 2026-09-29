@@ -1,0 +1,34 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+#define MAX 100
+
+void removeWord(char* str, char* word) {
+    char* temp;
+    char* newStr;
+    newStr = (char*)malloc(MAX * sizeof(char));
+    temp = strtok(str, " ");
+
+    while (temp) {
+        if (strcmp(temp, word) != 0) {
+            strcat(newStr, temp);
+            strcat(newStr, " ");
+        }
+        temp = strtok(NULL, " ");
+    }
+
+    strcpy(str, newStr);
+    free(newStr);
+}
+
+int main() {
+    char str[MAX] = "I am a C developer";
+    char word[MAX] = "C";
+
+    printf("Original string: %s\n", str);
+    removeWord(str, word);
+    printf("Modified string: %s\n", str);
+
+    return 0;
+}

@@ -1,0 +1,21 @@
+./collected_code_4/round1//heal_0//problem-524.c: In function 'maxSumOfIncSubseq':
+./collected_code_4/round1//heal_0//problem-524.c:12:19: warning: dereference of possibly-NULL 'maxsum' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   12 |         maxsum[i] = arr[i];
+      |         ~~~~~~~~~~^~~~~~~~
+  'maxSumOfIncSubseq': events 1-4
+    |
+    |    9 |     maxsum = (int*)malloc(sizeof(int) * n);
+    |      |                    ^~~~~~~~~~~~~~~~~~~~~~~
+    |      |                    |
+    |      |                    (1) this call could return NULL
+    |   10 | 
+    |   11 |     for (i = 0; i < n; i++)
+    |      |                 ~~~~~
+    |      |                   |
+    |      |                   (2) following 'true' branch (when 'i < n')...
+    |   12 |         maxsum[i] = arr[i];
+    |      |         ~~~~~~~~~~~~~~~~~~
+    |      |                   |    |
+    |      |                   |    (3) ...to here
+    |      |                   (4) 'maxsum + (long unsigned int)i * 4' could be NULL: unchecked value from (1)
+    |
